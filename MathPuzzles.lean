@@ -1,1 +1,2 @@
+import MathPuzzles.imo1959_q1
 import MathPuzzles.russia1998_q42
