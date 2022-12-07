@@ -70,4 +70,3 @@ by
                    _ = a ⋆ b ⋆ 0 := (stardef _ _ _).symm
                    _ = a ⋆ b := lemma4 _
   exact this.symm
-
