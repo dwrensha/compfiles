@@ -6,6 +6,7 @@ Authors: Kevin Lacker
 
 import Mathlib.Algebra.Divisibility.Basic
 import Mathlib.Tactic.Ring
+import Mathlib.Data.Nat.Prime
 
 /-!
 # IMO 1959 Q1
@@ -28,7 +29,5 @@ lemma calculation
   exact (Nat.dvd_add_right h3).mp (h5 ▸ h4)
 
 theorem imo1959_q1 : ∀ n : ℕ, Nat.coprime (21 * n + 4) (14 * n + 3) :=
-sorry
--- need coprime_of_dvd', which needs `prime`.
--- fun n => coprime_of_dvd' <| λ k hp h1 h2 => calculation n k h1 h2
+fun n => Nat.coprime_of_dvd' <| λ k _ h1 h2 => calculation n k h1 h2
 
