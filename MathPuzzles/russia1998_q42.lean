@@ -1,7 +1,4 @@
-import Mathlib.Algebra.NeZero
-import Mathlib.Algebra.GroupWithZero.Basic
-import Mathlib.Algebra.Ring.Defs
-import Mathlib.Data.Int.Cast.Defs
+import Mathlib.Data.Real.Basic
 
 /-
  Russian Mathematical Olympiad 1998, problem 42
@@ -13,14 +10,7 @@ import Mathlib.Data.Int.Cast.Defs
 
 -/
 
--- Mathlib4 does not have real numbers yet, so instead we work in an arbitrary
--- commutative ring R.
-
-class RealLike (R : Type) extends
-  CommRing R, NeZero (2:R), CancelMonoidWithZero R
-
-variable (R : Type) [RealLike R]
-variable (star : R → R → R)
+variable (star : ℝ → ℝ → ℝ)
 local infixl:80 " ⋆ " => star
 
 theorem russia1998_q42
@@ -60,7 +50,7 @@ by
                         _ = a + 0 + a := stardef _ _ _
                         _ = a + a := by rw [add_zero]
                         _ = 2 * a := (two_mul a).symm
-    have h3 : (2:R) ≠ 0 := two_ne_zero
+    have h3 : (2:ℝ) ≠ 0 := two_ne_zero
     have h4 : x = a := (mul_right_inj' h3).mp h2
     exact h4
 
