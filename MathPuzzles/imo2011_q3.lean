@@ -47,22 +47,17 @@ theorem imo2011_q3 (f : ℝ → ℝ) (hf : ∀ x y, f (x + y) ≤ y * f x + f (f
          ≤ (min 0 s - 1) * f x - x * f x + f (f x) := hxt x (min 0 s - 1)
        _ < s * f x - x * f x + f (f x) :=
                by linarith [(mul_lt_mul_right hp).mpr hm]
-       _ = 0 := sorry --by { rw [(eq_div_iff hp.ne.symm).mp rfl], linarith }
+       _ = 0 := by rw [(eq_div_iff hp.ne.symm).mp rfl]; linarith
 
-  sorry
-/-
+  have h_fx_zero_of_neg : ∀ x < 0, f x = 0 := by
+    intros x hxz
+    exact (h_f_nonpos x).antisymm (h_f_nonneg_of_pos x hxz)
 
-  have h_fx_zero_of_neg : ∀ x < 0, f x = 0,
-  { intros x hxz,
-    exact (h_f_nonpos x).antisymm (h_f_nonneg_of_pos x hxz) },
-
-  intros x hx,
-  obtain (h_x_neg : x < 0) | (rfl : x = 0) := hx.lt_or_eq,
-  { exact h_fx_zero_of_neg _ h_x_neg },
-  { suffices : 0 ≤ f 0, from (h_f_nonpos 0).antisymm this,
-    have hno : f (-1) = 0 := h_fx_zero_of_neg (-1) neg_one_lt_zero,
-    have hp := hxt (-1) (-1),
-    rw hno at hp,
-    linarith },
-end
--/
+  intros x hx
+  obtain (h_x_neg : x < 0) | (rfl : x = 0) := hx.lt_or_eq
+  · exact h_fx_zero_of_neg _ h_x_neg
+  · suffices 0 ≤ f 0 by exact (h_f_nonpos 0).antisymm this
+    have hno : f (-1) = 0 := h_fx_zero_of_neg (-1) neg_one_lt_zero
+    have hp := hxt (-1) (-1)
+    rw [hno] at hp
+    linarith
