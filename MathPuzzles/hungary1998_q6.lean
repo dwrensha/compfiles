@@ -45,15 +45,16 @@ theorem hungary1998_q6 (x y : ℤ) (z : ℕ) (hz : 1 < z) :
 
   have h2 : (∑ i in Finset.range 99, (x^2)) = 99 * x^2 := by norm_num
 
-  have h3 : (∑ i in Finset.range 99, (2 * x * (i + 1))) =
-         2 * x * ∑ i in Finset.range 99, (i + 1) := sorry --Finset.mul_sum.symm
+  have h3 : (∑ i in Finset.range 99, (2 * x * ((i:ℤ) + 1))) =
+         2 * x * ∑ i in Finset.range 99, ((i:ℤ) + 1) := Finset.mul_sum.symm
+
+  have h4 : (∑ i in Finset.range 99, ((i:ℤ) + 1)) =
+          ∑ i in Finset.range 100, (i:ℤ) := by
+    rw[@Finset.sum_range_succ' _ _ _ 99]
+    rfl
+
   sorry
-
 /-
-  have h4 : ∑(i : ℕ) in finset.range 99, ((i:ℤ) + 1) =
-          ∑(i : ℕ) in finset.range 100, (i:ℤ) := by
-  { rw[@finset.sum_range_succ' _ _ _ 99], refl},
-
   have h5 : ∑(i : ℕ) in finset.range 100, (i:ℤ) = 99 * 100 / 2,
   { rw[← nat.cast_sum, finset.sum_range_id], norm_num},
 
