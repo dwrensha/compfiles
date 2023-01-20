@@ -23,12 +23,12 @@ lemma sum_range_square_mul_six (n : ℕ) :
     ring_nf
 
 lemma sum_range_square (n : ℕ) :
-    (∑i in Finset.range n, (i+1)^2) = n * (n + 1) * (2*n + 1)/6 :=
+    ∑i in Finset.range n, (i+1)^2 = n * (n + 1) * (2*n + 1)/6 :=
   by rw [← sum_range_square_mul_six n, Nat.mul_div_cancel]
      norm_num
 
 lemma cast_sum_square (n : ℕ) :
-  (∑i in Finset.range n, ((i:ℤ)+1)^2) =
+  ∑i in Finset.range n, ((i:ℤ)+1)^2 =
    (((∑i in Finset.range n, (i+1)^2):ℕ) :ℤ) := by norm_cast
 
 theorem hungary1998_q6 (x y : ℤ) (z : ℕ) (hz : 1 < z) :
@@ -43,12 +43,12 @@ theorem hungary1998_q6 (x y : ℤ) (z : ℕ) (hz : 1 < z) :
   --     = 99x² + 2[(99 ⬝ 100)/2]x + (99 ⬝ 100 ⬝ 199)/6
   --     = 33(3x² + 300x + 50 ⬝ 199).
 
-  have h2 : (∑ i in Finset.range 99, (x^2)) = 99 * x^2 := by norm_num
+  have h2 : ∑ i in Finset.range 99, (x^2) = 99 * x^2 := by norm_num
 
-  have h3 : (∑ i in Finset.range 99, (2 * x * ((i:ℤ) + 1))) =
+  have h3 : ∑ i in Finset.range 99, (2 * x * ((i:ℤ) + 1)) =
          2 * x * ∑ i in Finset.range 99, ((i:ℤ) + 1) := Finset.mul_sum.symm
 
-  have h4 : (∑ i in Finset.range 99, ((i:ℤ) + 1)) =
+  have h4 : ∑ i in Finset.range 99, ((i:ℤ) + 1) =
           ∑ i in Finset.range 100, (i:ℤ) := by
     rw[@Finset.sum_range_succ' _ _ _ 99]
     rfl
