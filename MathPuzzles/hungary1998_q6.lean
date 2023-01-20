@@ -53,64 +53,58 @@ theorem hungary1998_q6 (x y : ℤ) (z : ℕ) (hz : 1 < z) :
     rw[@Finset.sum_range_succ' _ _ _ 99]
     rfl
 
-  sorry
-/-
-  have h5 : ∑(i : ℕ) in finset.range 100, (i:ℤ) = 99 * 100 / 2,
-  { rw[← nat.cast_sum, finset.sum_range_id], norm_num},
+  have h5 : ∑ i in Finset.range 100, (i:ℤ) = 99 * 100 / 2 := sorry
+--  { rw[← nat.cast_sum, finset.sum_range_id], norm_num},
 
-  have h6 : ∑(i : ℕ) in finset.range 99, ((i:ℤ) + 1)^2 = (99 * 100 * 199)/6,
-  { rw[cast_sum_square, sum_range_square], norm_num },
+  have h6 : ∑ i in Finset.range 99, ((i:ℤ) + 1)^2 = (99 * 100 * 199)/6 := by
+    rw[cast_sum_square, sum_range_square]; norm_num
 
   have h7 := calc y^z
-      = ∑(i : ℕ) in finset.range 99, ((x + i) + 1)^2 : he.symm
-  ... = ∑(i : ℕ) in finset.range 99,
-          (x^2 + 2 * x * (i + 1) + (i + 1)^2) : by {congr, funext, ring}
-  ... = ∑(i : ℕ) in finset.range 99, (x^2 + 2 * x * (i + 1)) +
-         ∑(i : ℕ) in finset.range 99, ((i + 1)^2) : finset.sum_add_distrib
-  ... = ∑(i : ℕ) in finset.range 99, (x^2) +
-          ∑(i : ℕ) in finset.range 99, (2 * x * (i + 1)) +
-         ∑(i : ℕ) in finset.range 99, ((i + 1)^2) : by rw[finset.sum_add_distrib]
-  ... = 99 * x^2 + 2 * x * (99 * 100 / 2) +  (99 * 100 * 199)/6
-        : by rw[h2, h3, h4, h5, h6]
-  ... = 3 * (11 * (3 * x^2 + 300 * x + 50 * 199)) : by {norm_num, ring},
+      = ∑ i in Finset.range 99, ((x + i) + 1)^2 := he.symm
+    _ = ∑ i in Finset.range 99,
+          (x^2 + 2 * x * ((i:ℤ) + 1) + ((i:ℤ) + 1)^2) := by sorry --congr; funext; ring
+    _ = ∑ i in Finset.range 99, (x^2 + 2 * x * ((i:ℤ) + 1)) +
+         ∑ i in Finset.range 99, (((i:ℤ) + 1)^2) := Finset.sum_add_distrib
+    _ = ∑ i in Finset.range 99, x^2 +
+          ∑ i in Finset.range 99, (2 * x * ((i:ℤ) + 1)) +
+         ∑ i in Finset.range 99, (((i:ℤ) + 1)^2) := by rw[Finset.sum_add_distrib]
+    _ = 99 * x^2 + 2 * x * (99 * 100 / 2) +  (99 * 100 * 199)/6
+        := by rw[h2, h3, h4, h5, h6]
+    _ = 3 * (11 * (3 * x^2 + 300 * x + 50 * 199)) := sorry --by norm_num; ring
 
   -- which implies that 3∣y.
-  have h8 : 3 ∣ y^z := dvd.intro _ (eq.symm h7),
-  have h9 : 3 ∣ y := prime.dvd_of_dvd_pow int.prime_three h8,
+  have h8 : 3 ∣ y^z := Dvd.intro _ (Eq.symm h7)
+  have h9 : 3 ∣ y := Prime.dvd_of_dvd_pow Int.prime_three h8
 
-  obtain ⟨k,hk⟩ := h9,
-  rw[hk] at h7,
-  cases z, { exact nat.not_lt_zero 1 hz },
-  cases z, { exact nat.lt_asymm hz hz },
-  rw[pow_succ,pow_succ] at h7,
+  obtain ⟨k,hk⟩ := h9
+  rw[hk] at h7
+
+  cases z with | zero => exact Nat.not_lt_zero 1 hz | succ z =>
+  cases z with | zero => exact Nat.lt_asymm hz hz | succ z =>
+  rw[pow_succ,pow_succ] at h7
 
   -- Since z ≥ 2, 3²∣yᶻ, but 3² does not divide
   -- 33(3x² + 300x + 50 ⬝ 199), contradiction.
 
   have h10 : 3 * k * (3 * k * (3 * k) ^ z) = 3 * (k * (3 * k * (3 * k) ^ z))
-       := by ring,
-  rw[h10] at h7,
-
-  have h11 : (3:ℤ) ≠ 0 := by norm_num,
-
-  have h12 : k * (3 * k * (3 * k) ^ z) = (11 * (3 * x ^ 2 + 300 * x + 50 * 199)),
-  { exact (mul_right_inj' h11).mp h7 },
-
+       := by ring
+  rw[h10] at h7
+  have h11 : (3:ℤ) ≠ 0 := by norm_num
+  have h12 : k * (3 * k * (3 * k) ^ z) = (11 * (3 * x ^ 2 + 300 * x + 50 * 199)) :=
+    (mul_right_inj' h11).mp h7
   have h14 : (k * (3 * k * (3 * k) ^ z)) = (3 * (k * k * (3 * k) ^ z)) :=
-    by ring,
+    by ring
   have h16 : 11 * (3 * x ^ 2 + 300 * x + 50 * 199) =
-    3 * (11 * (x ^ 2 + 100 * x + 3316) + 7) + 1 := by ring,
-
-  rw[h14,h16] at h12,
+    3 * (11 * (x ^ 2 + 100 * x + 3316) + 7) + 1 := by ring
+  rw[h14,h16] at h12
 
   have h18 : (3 * (k * k * (3 * k) ^ z)) % 3 =
     (3 * (11 * (x ^ 2 + 100 * x + 3316) + 7) + 1) % 3 :=
-    congr_fun (congr_arg has_mod.mod h12) 3,
+    congr_fun (congr_arg HMod.hMod h12) 3
 
   have h19 : (3 * (11 * (x ^ 2 + 100 * x + 3316) + 7) + 1) % 3 =
-   (((3 * (11 * (x ^ 2 + 100 * x + 3316) + 7))% 3) + (1%3)) % 3 :=
-   int.add_mod _ _ _,
-  rw[h19] at h18,
-  norm_num at h18
+     (((3 * (11 * (x ^ 2 + 100 * x + 3316) + 7))% 3) + (1%3)) % 3 :=
+   Int.add_emod _ _ _
 
--/
+  rw[h19] at h18
+  norm_num at h18
