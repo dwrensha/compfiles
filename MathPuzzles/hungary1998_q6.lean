@@ -43,10 +43,6 @@ theorem hungary1998_q6 (x y : ℤ) (z : ℕ) (hz : 1 < z) :
   --     = 99x² + 2[(99 ⬝ 100)/2]x + (99 ⬝ 100 ⬝ 199)/6
   --     = 33(3x² + 300x + 50 ⬝ 199).
 
-  have h1 : ∀ i : ℕ, i ∈ Finset.range 99 →
-     (x + i + 1)^2 = x^2 + 2 * x * ((i:ℤ) + 1) + ((i:ℤ) + 1)^2 :=
-    by intros i _; ring
-
   have h2 : ∑ i in Finset.range 99, (x^2) = 99 * x^2 := by norm_num
 
   have h3 : ∑ i in Finset.range 99, (2 * x * ((i:ℤ) + 1)) =
@@ -66,7 +62,8 @@ theorem hungary1998_q6 (x y : ℤ) (z : ℕ) (hz : 1 < z) :
   have h7 := calc y^z
       = ∑ i in Finset.range 99, ((x + i) + 1)^2 := he.symm
     _ = ∑ i in Finset.range 99,
-          (x^2 + 2 * x * ((i:ℤ) + 1) + ((i:ℤ) + 1)^2) := Finset.sum_congr rfl h1
+          (x^2 + 2 * x * ((i:ℤ) + 1) + ((i:ℤ) + 1)^2) :=
+               by with_reducible congr; funext; ring
     _ = ∑ i in Finset.range 99, (x^2 + 2 * x * ((i:ℤ) + 1)) +
          ∑ i in Finset.range 99, (((i:ℤ) + 1)^2) := Finset.sum_add_distrib
     _ = ∑ i in Finset.range 99, x^2 +
