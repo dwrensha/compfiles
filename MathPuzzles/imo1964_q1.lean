@@ -8,8 +8,6 @@ import Mathlib.Data.Nat.Basic
      divisible by 7.
 -/
 
-theorem imo_1964_q1b
-    (n : ℕ) :
-    ¬ 7 ∣ (2^n + 1) := by
+theorem imo_1964_q1b (n : ℕ) : ¬ 7 ∣ (2^n + 1) := by
   sorry
 
