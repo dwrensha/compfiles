@@ -1,5 +1,4 @@
 import Mathlib.Data.Nat.Basic
-import Mathlib.Data.ZMod.Defs
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.LibrarySearch
 
@@ -11,7 +10,7 @@ Prove that there is no positive integer n for which 2ⁿ + 1 is divisible by 7.
 
 /-
 Informal proof (credit to twitch.tv viewer int_fast64_t):
-  let 2^n = 2^{3k + j},j < 2
+  let 2^n = 2^{3k + j},j < 3
   (i.e. write n as 3k + j)
   =>
     2^n mod 7 = (2^3 mod 7)^k * 2^j mod 7 = 1 mod 7 * 2^j mod 7,
