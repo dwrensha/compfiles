@@ -34,17 +34,15 @@ theorem imo_1964_q1b (n : ℕ) : ¬ 7 ∣ (2^n + 1) := by
      _ = (1 % 7 * (2 ^ (n % 3) % 7) % 7 + 1 % 7) % 7 := by rw[one_pow]
      _ = (2 ^ (n % 3) % 7 + 1) % 7 := by rw[h4, one_mul, Nat.mod_mod]
 
-  have hn : ∃ n', n' = n % 3 := ⟨n%3, rfl⟩
-  obtain ⟨n', hn'⟩ := hn
-  cases n' with
-  | zero => rw[← hn'] at h; norm_num at h
+  cases hn' : n%3 with
+  | zero => rw[hn'] at h; norm_num at h
   | succ n' =>
     cases n' with
-    | zero => rw[← hn'] at h; norm_num at h
+    | zero => rw[hn'] at h; norm_num at h
     | succ n' =>
       cases n' with
-      | zero => rw[← hn'] at h; norm_num at h
+      | zero => rw[hn'] at h; norm_num at h
       | succ n' => have h5 : 3 > 0 := by norm_num
                    have h6 := Nat.mod_lt n h5
-                   rw[←hn'] at h6
+                   rw[hn'] at h6
                    linarith
