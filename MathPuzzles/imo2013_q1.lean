@@ -38,19 +38,20 @@ theorem imo2013_q1 (n : ℕ+) (k : ℕ) :
   | zero => intro n; use (fun _ ↦ 1); simp -- For the base case, any m works.
   | succ pk hpk =>
     intro n
-    sorry
+    obtain ⟨t, ht : ↑n = t + t⟩ | ⟨t, ht : ↑n = 2 * t + 1⟩ := (n : ℕ).even_or_odd
+    · -- even case
+      rw [←two_mul] at ht
+      cases t with -- Eliminate the zero case to simplify later calculations.
+      | zero => exfalso; rw [Nat.mul_zero] at ht; exact PNat.ne_zero n ht
+      | succ t =>
+        -- Now we have ht : ↑n = 2 * (t + 1).
+        let t_succ : ℕ+ := ⟨t + 1, t.succ_pos⟩
+        obtain ⟨pm, hpm⟩ := hpk t_succ
+        let m := λi => if i < pk then pm i else ⟨2 * t + 2^pk.succ, by positivity⟩
+        use m
+        sorry
+    · sorry
 /-
-  obtain ⟨t, ht : ↑n = t + t⟩ | ⟨t, ht : ↑n = 2 * t + 1⟩ := (n : ℕ).even_or_odd,
-  { -- even case
-    rw ← two_mul at ht,
-    cases t, -- Eliminate the zero case to simplify later calculations.
-    { exfalso, rw mul_zero at ht, exact pnat.ne_zero n ht },
-
-    -- Now we have ht : ↑n = 2 * (t + 1).
-    let t_succ : ℕ+ := ⟨t + 1, t.succ_pos⟩,
-    obtain ⟨pm, hpm⟩ := hpk t_succ,
-    let m := λi, if i < pk then pm i else ⟨2 * t + 2^pk.succ, by positivity⟩,
-    use m,
 
     have hmpk : (m pk : ℚ) = 2 * t + 2^pk.succ,
     { have : m pk = ⟨2 * t + 2^pk.succ, _⟩ := if_neg (irrefl pk), simp [this] },
