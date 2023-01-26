@@ -1,6 +1,5 @@
 import Mathlib.Data.Nat.Basic
 import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.LibrarySearch
 
 /-!
 # International Mathematical Olympiad 1964, Problem 1b
@@ -19,8 +18,7 @@ Informal proof (credit to twitch.tv viewer int_fast64_t):
 theorem imo_1964_q1b (n : ℕ) : ¬ 7 ∣ (2^n + 1) := by
   intro h
   replace h := Nat.mod_eq_zero_of_dvd h
-  have h1 := Nat.div_add_mod n 3
-  rw[←h1] at h; clear h1
+  rw[←Nat.div_add_mod n 3] at h
 
   have h3 : (2 ^ 3) % 7 = 1 := by rfl
   have h4 : 1 % 7 = 1 := by rfl
