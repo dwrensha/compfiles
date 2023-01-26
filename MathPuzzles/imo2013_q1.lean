@@ -51,27 +51,34 @@ theorem imo2013_q1 (n : ℕ+) (k : ℕ) :
         use m
         have hmpk : (m pk : ℚ) = 2 * t + 2^pk.succ := by
           have : m pk = ⟨2 * t + 2^pk.succ, _⟩ := if_neg (irrefl pk)
-          simp [this]
-          sorry
+          rw [this]
+          norm_cast
 
-        sorry
-    · sorry
+        have denom_ne_zero : (2 * (t:ℚ) + 2^pk.succ) ≠ 0 := sorry --by positivity
+
+        have := calc (1 : ℚ) + (2 ^ pk.succ - 1) / ↑n
+          = 1 + (2 * 2 ^ pk - 1) / (2 * (t + 1) : ℕ)  := by rw [ht, pow_succ]; sorry
+
+        _ = (1 + 1 / (2 * t + 2 * 2^pk)) *
+          (1 + (2 ^ pk - 1) / (↑t + 1))               := by sorry
 /-
 
-
-    have denom_ne_zero : (2 * (t:ℚ) + 2^pk.succ) ≠ 0 := by positivity,
-
-    calc (1 : ℚ) + (2 ^ pk.succ - 1) / ↑n
-        = 1 + (2 * 2 ^ pk - 1) / (2 * (t + 1) : ℕ)    : by rw [coe_coe n, ht, pow_succ]
-    ... = (1 + 1 / (2 * t + 2 * 2^pk)) *
-          (1 + (2 ^ pk - 1) / (↑t + 1))               : by { field_simp [t.cast_add_one_ne_zero],
+{ field_simp [t.cast_add_one_ne_zero],
                                                              ring }
+
     ... = (1 + 1 / (2 * t + 2^pk.succ)) *
           (1 + (2 ^ pk - 1) / t_succ)                 : by norm_cast
     ... = (1 + 1 / ↑(m pk)) *
           ∏ (i : ℕ) in finset.range pk, (1 + 1 / m i) : by rw [hpm, prod_lemma, ←hmpk]
     ... = ∏ (i : ℕ) in finset.range pk.succ,
-                                        (1 + 1 / m i) : (finset.prod_range_succ_comm _ pk).symm },
+                                        (1 + 1 / m i) : (finset.prod_range_succ_comm _ pk).symm
+-/
+        sorry
+    · sorry
+/-
+
+
+ },
   { -- odd case
     let t_succ : ℕ+ := ⟨t + 1, t.succ_pos⟩,
     obtain ⟨pm, hpm⟩ := hpk t_succ,
