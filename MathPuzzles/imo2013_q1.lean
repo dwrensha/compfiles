@@ -49,12 +49,15 @@ theorem imo2013_q1 (n : ℕ+) (k : ℕ) :
         obtain ⟨pm, hpm⟩ := hpk t_succ
         let m := λi => if i < pk then pm i else ⟨2 * t + 2^pk.succ, by positivity⟩
         use m
+        have hmpk : (m pk : ℚ) = 2 * t + 2^pk.succ := by
+          have : m pk = ⟨2 * t + 2^pk.succ, _⟩ := if_neg (irrefl pk)
+          simp [this]
+          sorry
+
         sorry
     · sorry
 /-
 
-    have hmpk : (m pk : ℚ) = 2 * t + 2^pk.succ,
-    { have : m pk = ⟨2 * t + 2^pk.succ, _⟩ := if_neg (irrefl pk), simp [this] },
 
     have denom_ne_zero : (2 * (t:ℚ) + 2^pk.succ) ≠ 0 := by positivity,
 
