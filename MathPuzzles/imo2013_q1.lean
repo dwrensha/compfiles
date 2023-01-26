@@ -21,27 +21,25 @@ We prove a slightly more general version where k does not need to be strictly po
 
 
 lemma prod_lemma (m : ℕ → ℕ+) (k : ℕ) (nm : ℕ+):
-      ∏ i in Finset.range k, ((1 : ℚ) + 1 / ↑(if i < k then m i else nm)) =
+      ∏ i in Finset.range k, ((1 : ℚ) + 1 / ((if i < k then m i else nm)):ℚ) =
       ∏ i in Finset.range k, (1 + 1 / ((m i):ℕ)) := by
   have : ∀ i, i ∈ Finset.range k →
       (1 : ℚ) + 1 / ↑(if i < k then m i else nm) = 1 + 1 / m i := by
     intros i hi
     simp [Finset.mem_range.mp hi]
   sorry
-  --exact Finset.prod_congr sorry this
-
-
+  --exact Finset.prod_congr rfl this
 
 theorem imo2013_q1 (n : ℕ+) (k : ℕ) :
-    (∃ m : ℕ → ℕ+, (1 : ℚ) + (2^k - 1) / n =
+    (∃ m : ℕ → ℕ+, (1 : ℚ) + (2^k - 1) / (n:ℚ) =
     (∏ i in Finset.range k, (1 + 1 / ((m i):ℕ)))) := by
   revert n
-  sorry
+  induction k with
+  | zero => intro n; use (fun _ ↦ 1); simp -- For the base case, any m works.
+  | succ pk hpk =>
+    intro n
+    sorry
 /-
-  induction k with pk hpk,
-  { intro n, use (λ_, 1), simp }, -- For the base case, any m works.
-
-  intro n,
   obtain ⟨t, ht : ↑n = t + t⟩ | ⟨t, ht : ↑n = 2 * t + 1⟩ := (n : ℕ).even_or_odd,
   { -- even case
     rw ← two_mul at ht,
