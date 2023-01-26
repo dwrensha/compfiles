@@ -22,7 +22,7 @@ theorem imo_1964_q1b (n : ℕ) : ¬ 7 ∣ (2^n + 1) := by
 
   have h := calc
      0 = (2 ^ (3 * (n / 3) + n % 3) + 1) % 7       := h.symm
-     _ = ((2 ^ 3)^ (n / 3) * 2 ^ (n % 3) + 1) % 7  := by rw[pow_add, pow_mul]
+     _ = ((2 ^ 3) ^ (n / 3) * 2 ^ (n % 3) + 1) % 7 := by rw[pow_add, pow_mul]
      _ = ((2 ^ 3 % 7) ^ (n / 3) % 7 * (2 ^ (n % 3) % 7) % 7 + 1 % 7) % 7 :=
                    by rw[Nat.add_mod, Nat.mul_mod, Nat.pow_mod]
      _ = (1 ^ (n / 3) % 7 * (2 ^ (n % 3) % 7) % 7 + 1 % 7) % 7 :=
@@ -31,7 +31,7 @@ theorem imo_1964_q1b (n : ℕ) : ¬ 7 ∣ (2^n + 1) := by
      _ = (2 ^ (n % 3) % 7 + 1) % 7 :=
                    by rw[show 1 % 7 = 1 by rfl, one_mul, Nat.mod_mod]
 
-  cases hn' : n%3 with
+  cases hn' : n % 3 with
   | zero => rw[hn'] at h; norm_num at h
   | succ n' =>
     cases n' with
