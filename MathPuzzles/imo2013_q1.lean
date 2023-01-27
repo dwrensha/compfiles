@@ -56,11 +56,10 @@ theorem imo2013_q1 (n : ℕ+) (k : ℕ) :
 
         have denom_ne_zero : (2 * (t:ℚ) + 2^pk.succ) ≠ 0 := sorry --by positivity
 
-        have := calc (1 : ℚ) + (2 ^ pk.succ - 1) / ↑n
-          = 1 + (2 * 2 ^ pk - 1) / (2 * (t + 1) : ℕ)  := by rw [ht, pow_succ]; sorry
-
-        _ = (1 + 1 / (2 * t + 2 * 2^pk)) *
-          (1 + (2 ^ pk - 1) / (↑t + 1))               := by sorry
+--        have := calc (1 : ℚ) + (2 ^ pk.succ - 1) / ↑↑n
+--            = 1 + (2 * 2 ^ pk - 1) / (2 * (t + 1) : ℕ) := by rw [ht, pow_succ]; sorry
+--         _  = (1 + 1 / (2 * t + 2 * 2^pk)) *
+--           (1 + (2 ^ pk - 1) / (↑t + 1))              := by sorry
 /-
 
 { field_simp [t.cast_add_one_ne_zero],
