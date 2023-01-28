@@ -1,4 +1,4 @@
---import algebra.big_operators.intervals
+import Mathlib.Algebra.BigOperators.Intervals
 import Mathlib.Algebra.BigOperators.Ring
 import Mathlib.Data.Nat.Prime
 import Mathlib.Algebra.Associated
@@ -53,8 +53,8 @@ theorem hungary1998_q6 (x y : ℤ) (z : ℕ) (hz : 1 < z) :
     rw[@Finset.sum_range_succ' _ _ _ 99]
     rfl
 
-  have h5 : ∑ i in Finset.range 100, (i:ℤ) = 99 * 100 / 2 := sorry
---  { rw[← nat.cast_sum, finset.sum_range_id], norm_num},
+  have h5 : ∑ i in Finset.range 100, (i:ℤ) = 99 * 100 / 2 := by
+    rw[←Nat.cast_sum, Finset.sum_range_id]; norm_num
 
   have h6 : ∑ i in Finset.range 99, ((i:ℤ) + 1)^2 = (99 * 100 * 199)/6 := by
     rw[cast_sum_square, sum_range_square]; norm_num
