@@ -1,4 +1,6 @@
 import Mathlib.Data.Fin.Basic
+import Mathlib.Combinatorics.Pigeonhole
+import Mathlib.Tactic.LibrarySearch
 
 /-!
 # International Mathematical Olympiad 1964, Problem 4

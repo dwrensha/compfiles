@@ -52,12 +52,12 @@
   {"git":
    {"url": "https://github.com/leanprover/std4",
     "subDir?": null,
-    "rev": "04b3c9831e0c141713a70e68af7e40973ec9a1ff",
+    "rev": "7977f08b1c427b4e8070ba4cc1f599617ebda867",
     "name": "std",
     "inputRev?": "main"}},
   {"git":
    {"url": "https://github.com/leanprover-community/mathlib4",
     "subDir?": null,
-    "rev": "b5d2e9a3c73fabc383b43ce5ec50a001cccc56a5",
+    "rev": "287f7f54001df8bff2c88883d91d94e988af37af",
     "name": "Mathlib",
-    "inputRev?": "b5d2e9a3c73fabc383b43ce5ec50a001cccc56a5"}}]}
+    "inputRev?": "287f7f54001df8bff2c88883d91d94e988af37af"}}]}
