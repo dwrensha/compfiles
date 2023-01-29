@@ -13,13 +13,14 @@ about the same topic.
 
 -/
 
-def Person := Fin 17
-def Topic := Fin 3
-
 theorem imo1964_q4
+    (Person Topic : Type)
+    [Fintype Person]
+    [Fintype Topic]
+    (hp : Fintype.card Person = 17)
+    (hp : Fintype.card Topic = 3)
     (discusses : Person → Person → Topic)
     (discussion_sym : ∀ p1 p2 : Person, discusses p1 p2 = discusses p2 p1) :
     ∃ t : Topic, ∃ s : Finset Person,
       2 < s.card ∧
         ∀ p1 ∈ s, ∀ p2 ∈ s, p1 ≠ p2 → discusses p1 p2 = t := sorry
-
