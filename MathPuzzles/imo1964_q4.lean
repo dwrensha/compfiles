@@ -14,11 +14,12 @@ about the same topic.
 -/
 
 def Person := Fin 17
+def Topic := Fin 3
 
 theorem imo1964_q4
-    (topic : Person → Person → Fin 3)
-    (topic_sym : ∀ p1 p2 : Person, topic p1 p2 = topic p2 p1) :
-    ∃ p1 p2 p3 : Person,
-      topic p1 p2 = topic p2 p3 ∧ topic p2 p3 = topic p3 p1 := by
-  sorry
+    (discusses : Person → Person → Topic)
+    (discussion_sym : ∀ p1 p2 : Person, discusses p1 p2 = discusses p2 p1) :
+    ∃ t : Topic, ∃ s : Finset Person,
+      2 < s.card ∧
+        ∀ p1 ∈ s, ∀ p2 ∈ s, p1 ≠ p2 → discusses p1 p2 = t := sorry
 
