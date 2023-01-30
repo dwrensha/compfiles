@@ -19,6 +19,7 @@ Adaptation of the solution found in https://www.imo-official.org/problems/IMO201
 We prove a slightly more general version where k does not need to be strictly positive.
 -/
 
+open BigOperators
 
 lemma prod_lemma (m : ℕ → ℕ+) (k : ℕ) (nm : ℕ+):
       ∏ i in Finset.range k, ((1 : ℚ) + 1 / ((if i < k then m i else nm)):ℚ) =

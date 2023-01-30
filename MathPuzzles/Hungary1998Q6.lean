@@ -13,6 +13,8 @@ Let x, y, z be integers with z > 1. Show that
  (x + 1)² + (x + 2)² + ... + (x + 99)² ≠ yᶻ.
 -/
 
+open BigOperators
+
 lemma sum_range_square_mul_six (n : ℕ) :
     (∑i in Finset.range n, (i+1)^2) * 6 = n * (n + 1) * (2*n + 1) := by
   induction n with

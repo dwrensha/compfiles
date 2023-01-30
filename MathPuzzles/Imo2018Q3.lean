@@ -22,6 +22,7 @@ No.
 
 -/
 
+open BigOperators
 
 structure Coords where
 (row : Nat) (col : Nat)
