@@ -180,9 +180,7 @@ lemma fixed_point_of_gt_1 {f : ℚ → ℝ} {x : ℚ} (hx : 1 < x)
               _ = (x:ℝ) + ((a^N:ℝ) - (x:ℝ))     := by ring
 
   have heq := h1.antisymm (by exact_mod_cast h2)
-  --linarith [H5 x hx, H5 _ h_big_enough]
-
-  sorry
+  linarith [H5 x hx, H5 _ h_big_enough]
 
 /-
 theorem imo2013_q5
