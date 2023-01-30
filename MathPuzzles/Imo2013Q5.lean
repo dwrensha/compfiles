@@ -1,5 +1,6 @@
 import Mathlib.Algebra.GeomSum
 import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.LibrarySearch
 import Mathlib.Data.Real.Basic
 
 /-!
@@ -182,47 +183,49 @@ lemma fixed_point_of_gt_1 {f : ℚ → ℝ} {x : ℚ} (hx : 1 < x)
   have heq := h1.antisymm (by exact_mod_cast h2)
   linarith [H5 x hx, H5 _ h_big_enough]
 
-/-
-theorem imo2013_q5
-  (f : ℚ → ℝ)
-  (H1 : ∀ x y, 0 < x → 0 < y → f (x * y) ≤ f x * f y)
-  (H2 : ∀ x y, 0 < x → 0 < y → f x + f y ≤ f (x + y))
-  (H_fixed_point : ∃ a, 1 < a ∧ f a = a) :
-  ∀ x, 0 < x → f x = x :=
-begin
-  obtain ⟨a, ha1, hae⟩ := H_fixed_point,
-  have H3 : ∀ x : ℚ, 0 < x → ∀ n : ℕ, 0 < n → ↑n * f x ≤ f (n * x),
-  { intros x hx n hn,
-    cases n,
-    { exfalso, exact nat.lt_asymm hn hn },
-    induction n with pn hpn,
-    { simp only [one_mul, nat.cast_one] },
-    calc    ↑(pn + 2) * f x
-          = (↑pn + 1 + 1) * f x            : by norm_cast
-      ... = ((pn : ℝ) + 1) * f x + 1 * f x : add_mul (↑pn + 1) 1 (f x)
-      ... = (↑pn + 1) * f x + f x          : by rw one_mul
-      ... ≤ f ((↑pn.succ) * x) + f x       : by exact_mod_cast add_le_add_right
-                                                  (hpn pn.succ_pos) (f x)
-      ... ≤ f ((↑pn + 1) * x + x)          : by exact_mod_cast H2 _ _
-                                                  (mul_pos pn.cast_add_one_pos hx) hx
-      ... = f ((↑pn + 1) * x + 1 * x)      : by rw one_mul
-      ... = f ((↑pn + 1 + 1) * x)          : congr_arg f (add_mul (↑pn + 1) 1 x).symm
-      ... = f (↑(pn + 2) * x)              : by norm_cast },
-  have H4 : ∀ n : ℕ, 0 < n → (n : ℝ) ≤ f n,
-  { intros n hn,
-    have hf1 : 1 ≤ f 1,
-    { have a_pos : (0 : ℝ) < a := rat.cast_pos.mpr (zero_lt_one.trans ha1),
-      suffices : ↑a * 1 ≤ ↑a * f 1, from (mul_le_mul_left a_pos).mp this,
-      calc ↑a * 1 = ↑a        : mul_one ↑a
-              ... = f a       : hae.symm
-              ... = f (a * 1) : by rw mul_one
-              ... ≤ f a * f 1 : (H1 a 1) (zero_lt_one.trans ha1) zero_lt_one
-              ... = ↑a * f 1  : by rw hae },
+#check add_mul
 
-    calc (n : ℝ) = (n : ℝ) * 1   : (mul_one _).symm
-             ... ≤ (n : ℝ) * f 1 : (mul_le_mul_left (nat.cast_pos.mpr hn)).mpr hf1
-             ... ≤ f (n * 1)     : H3 1 zero_lt_one n hn
-             ... = f n           : by rw mul_one },
+theorem imo2013_q5
+    (f : ℚ → ℝ)
+    (H1 : ∀ x y, 0 < x → 0 < y → f (x * y) ≤ f x * f y)
+    (H2 : ∀ x y, 0 < x → 0 < y → f x + f y ≤ f (x + y))
+    (H_fixed_point : ∃ a, 1 < a ∧ f a = a) :
+    ∀ x, 0 < x → f x = x := by
+  obtain ⟨a, ha1, hae⟩ := H_fixed_point
+  have H3 : ∀ x : ℚ, 0 < x → ∀ n : ℕ, 0 < n → ↑n * f x ≤ f (n * x) := by
+    intros x hx n hn
+    cases n with
+    | zero => exfalso; exact Nat.lt_asymm hn hn
+    | succ n =>
+      induction n with
+      | zero => simp [one_mul, Nat.cast_one]
+      | succ pn hpn =>
+        calc  ↑(pn + 2) * f x
+            = (↑pn + 1 + 1) * f x            := by norm_cast
+          _ = (↑pn + 1) * f x + f x          := by ring
+          _ ≤ f ((↑pn.succ) * x) + f x       := by exact_mod_cast add_le_add_right
+                                                    (hpn pn.succ_pos) (f x)
+          _ ≤ f ((↑pn + 1) * x + x)          := by exact_mod_cast H2 _ _
+                                                    (mul_pos pn.cast_add_one_pos hx) hx
+          _ = f ((↑pn + 1 + 1) * x)          := by ring_nf
+          _ = f (↑(pn + 2) * x)              := by norm_cast
+
+  have H4 : ∀ n : ℕ, 0 < n → (n : ℝ) ≤ f n := by
+    intros n hn
+    have hf1 : 1 ≤ f 1 := by
+      have a_pos : (0 : ℝ) < a := Rat.cast_pos.mpr (zero_lt_one.trans ha1)
+      suffices ↑a * 1 ≤ ↑a * f 1 by exact (mul_le_mul_left a_pos).mp this
+      calc (a:ℝ) * 1 = ↑a        := mul_one _
+                   _ = f a       := hae.symm
+                   _ = f (a * 1) := by rw[mul_one]
+                   _ ≤ f a * f 1 := (H1 a 1) (zero_lt_one.trans ha1) zero_lt_one
+                   _ = ↑a * f 1  := by rw[hae]
+
+    calc (n : ℝ) = (n : ℝ) * 1   := (mul_one _).symm
+               _ ≤ (n : ℝ) * f 1 := (mul_le_mul_left (Nat.cast_pos.mpr hn)).mpr hf1
+               _ ≤ f (n * 1)     := H3 1 zero_lt_one n hn
+               _ = f n           := by rw [mul_one]
+/-
 
   have H5 : ∀ x : ℚ, 1 < x → (x : ℝ) ≤ f x,
   { intros x hx,
