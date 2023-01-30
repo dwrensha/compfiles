@@ -225,6 +225,7 @@ theorem imo2013_q5
                _ ≤ (n : ℝ) * f 1 := (mul_le_mul_left (Nat.cast_pos.mpr hn)).mpr hf1
                _ ≤ f (n * 1)     := H3 1 zero_lt_one n hn
                _ = f n           := by rw [mul_one]
+  sorry
 /-
 
   have H5 : ∀ x : ℚ, 1 < x → (x : ℝ) ≤ f x,
