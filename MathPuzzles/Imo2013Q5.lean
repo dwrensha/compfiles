@@ -225,68 +225,66 @@ theorem imo2013_q5
                _ ≤ (n : ℝ) * f 1 := (mul_le_mul_left (Nat.cast_pos.mpr hn)).mpr hf1
                _ ≤ f (n * 1)     := H3 1 zero_lt_one n hn
                _ = f n           := by rw [mul_one]
-  sorry
-/-
 
-  have H5 : ∀ x : ℚ, 1 < x → (x : ℝ) ≤ f x,
-  { intros x hx,
-    have hxnm1 : ∀ n : ℕ, 0 < n → (x : ℝ)^n - 1 < (f x)^n,
-    { intros n hn,
-      calc (x : ℝ)^n - 1 < f (x^n) : by exact_mod_cast fx_gt_xm1 (one_le_pow_of_one_le hx.le n)
-                                          H1 H2 H4
-                     ... ≤ (f x)^n : pow_f_le_f_pow hn hx H1 H4 },
-    have hx' : 1 < (x : ℝ) := by exact_mod_cast hx,
-    have hxp : 0 < x := zero_lt_one.trans hx,
-    exact le_of_all_pow_lt_succ' hx' (f_pos_of_pos hxp H1 H4) hxnm1 },
+  have H5 : ∀ x : ℚ, 1 < x → (x : ℝ) ≤ f x := by
+    intros x hx
+    have hxnm1 : ∀ n : ℕ, 0 < n → (x : ℝ)^n - 1 < (f x)^n := by
+      intros n hn
+      calc (x : ℝ)^n - 1 < f (x^n) := by exact_mod_cast fx_gt_xm1 (one_le_pow_of_one_le hx.le n)
+                                           H1 H2 H4
+                       _ ≤ (f x)^n := pow_f_le_f_pow hn hx H1 H4
+    have hx' : 1 < (x : ℝ) := by exact_mod_cast hx
+    have hxp : 0 < x := zero_lt_one.trans hx
+    exact le_of_all_pow_lt_succ' hx' (f_pos_of_pos hxp H1 H4) hxnm1
 
-  have h_f_commutes_with_pos_nat_mul : ∀ n : ℕ, 0 < n → ∀ x : ℚ, 0 < x → f (n * x) = n * f x,
-  { intros n hn x hx,
-    have h2 : f (n * x) ≤ n * f x,
-    { cases n,
-      { exfalso, exact nat.lt_asymm hn hn },
-      cases n,
-      { simp only [one_mul, nat.cast_one] },
-      have hfneq : f (n.succ.succ) = n.succ.succ,
-      { have := fixed_point_of_gt_1
-                  (nat.one_lt_cast.mpr (nat.succ_lt_succ n.succ_pos)) H1 H2 H4 H5 ha1 hae,
-        rwa (rat.cast_coe_nat n.succ.succ) at this },
-      rw ← hfneq,
-      exact H1 (n.succ.succ : ℚ) x (nat.cast_pos.mpr hn) hx },
-    exact h2.antisymm (H3 x hx n hn) },
+  have h_f_commutes_with_pos_nat_mul : ∀ n : ℕ, 0 < n → ∀ x : ℚ, 0 < x → f (n * x) = n * f x := by
+    intros n hn x hx
+    have h2 : f (n * x) ≤ n * f x := by
+      cases n with
+      | zero => exfalso; exact Nat.lt_asymm hn hn
+      | succ n => cases n with
+        | zero => simp [one_mul, Nat.cast_one]
+        | succ n =>
+          have hfneq : f (n.succ.succ) = n.succ.succ := by
+            have := fixed_point_of_gt_1
+                  (Nat.one_lt_cast.mpr (Nat.succ_lt_succ n.succ_pos)) H1 H2 H4 H5 ha1 hae
+            rwa [Rat.cast_coe_nat n.succ.succ] at this
+          rw [←hfneq]
+          exact H1 (n.succ.succ : ℚ) x (Nat.cast_pos.mpr hn) hx
+    exact h2.antisymm (H3 x hx n hn)
 
   -- For the final calculation, we expand x as (2*x.num) / (2*x.denom), because
   -- we need the top of the fraction to be strictly greater than 1 in order
   -- to apply fixed_point_of_gt_1.
-  intros x hx,
-  let x2denom := 2 * x.denom,
-  let x2num := 2 * x.num,
+  intros x hx
+  let x2denom := 2 * x.den
+  let x2num := 2 * x.num
 
-  have hx2pos : 0 < 2 * x.denom := by linarith[x.pos],
-  have hxcnez   : (x.denom : ℚ) ≠ (0 : ℚ) := ne_of_gt (nat.cast_pos.mpr x.pos),
-  have hx2cnezr : (x2denom : ℝ) ≠ (0 : ℝ) := nat.cast_ne_zero.mpr (ne_of_gt hx2pos),
+  have hx2pos : 0 < 2 * x.den := by linarith[x.pos]
+  have hxcnez   : (x.den : ℚ) ≠ (0 : ℚ) := ne_of_gt (Nat.cast_pos.mpr x.pos)
+  have hx2cnezr : (x2denom : ℝ) ≠ (0 : ℝ) := Nat.cast_ne_zero.mpr (ne_of_gt hx2pos)
 
-  have hrat_expand2 := calc x = x.num / x.denom : by exact_mod_cast rat.num_denom.symm
-                          ... = x2num / x2denom : by { field_simp[-rat.num_div_denom], ring},
+  have hrat_expand2 := calc x = x.num / x.den := sorry --by exact_mod_cast Rat.num_denom.symm
+                            _ = x2num / x2denom := sorry -- by { field_simp[-rat.num_div_denom], ring},
 
   have h_denom_times_fx :=
-    calc (x2denom : ℝ) * f x = f (x2denom * x)                 : (h_f_commutes_with_pos_nat_mul
+    calc (x2denom : ℝ) * f x = f (x2denom * x)                 := (h_f_commutes_with_pos_nat_mul
                                                                     x2denom hx2pos x hx).symm
-                         ... = f (x2denom * (x2num / x2denom)) : by rw hrat_expand2
-                         ... = f x2num                         : by { congr, field_simp, ring },
+                           _ = f (x2denom * (x2num / x2denom)) := by rw[hrat_expand2]
+                           _ = f x2num                         := sorry --by { congr, field_simp, ring },
 
-  have h_fx2num_fixed : f x2num = x2num,
-  { have hx2num_gt_one : (1 : ℚ) < (2 * x.num : ℤ),
-    { norm_cast, linarith [rat.num_pos_iff_pos.mpr hx] },
-    have hh := fixed_point_of_gt_1 hx2num_gt_one H1 H2 H4 H5 ha1 hae,
-    rwa (rat.cast_coe_int x2num) at hh },
 
-  calc f x = f x * 1                                 : (mul_one (f x)).symm
-       ... = f x * (x2denom / x2denom)               : by rw ←(div_self hx2cnezr)
-       ... = (f x * x2denom) / x2denom               : mul_div_assoc' (f x) _ _
-       ... = (x2denom * f x) / x2denom               : by rw mul_comm
-       ... = f x2num / x2denom                       : by rw h_denom_times_fx
-       ... = x2num / x2denom                         : by rw h_fx2num_fixed
-       ... = (((x2num : ℚ) / (x2denom : ℚ) : ℚ) : ℝ) : by norm_cast
-       ... = x                                       : by rw ←hrat_expand2
-end
--/
+  have h_fx2num_fixed : f x2num = x2num := by
+    have hx2num_gt_one : (1 : ℚ) < (2 * x.num : ℤ) := by
+      norm_cast; linarith [Rat.num_pos_iff_pos.mpr hx]
+    have hh := fixed_point_of_gt_1 hx2num_gt_one H1 H2 H4 H5 ha1 hae
+    rwa [Rat.cast_coe_int x2num] at hh
+
+  calc f x = f x * 1                                 := (mul_one (f x)).symm
+         _ = f x * (x2denom / x2denom)               := by rw [←div_self hx2cnezr]
+         _ = (f x * x2denom) / x2denom               := mul_div_assoc' (f x) _ _
+         _ = (x2denom * f x) / x2denom               := by rw[mul_comm]
+         _ = f x2num / x2denom                       := by rw[h_denom_times_fx]
+         _ = x2num / x2denom                         := by rw[h_fx2num_fixed]
+         _ = (((x2num : ℚ) / (x2denom : ℚ) : ℚ) : ℝ) := sorry --by norm_cast
+         _ = x                                       := by rw[←hrat_expand2]
