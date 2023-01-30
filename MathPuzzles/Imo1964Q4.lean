@@ -23,4 +23,18 @@ theorem imo1964_q4
     (discussion_sym : ∀ p1 p2 : Person, discusses p1 p2 = discusses p2 p1) :
     ∃ t : Topic, ∃ s : Finset Person,
       2 < s.card ∧
-        ∀ p1 ∈ s, ∀ p2 ∈ s, p1 ≠ p2 → discusses p1 p2 = t := sorry
+        ∀ p1 ∈ s, ∀ p2 ∈ s, p1 ≠ p2 → discusses p1 p2 = t := by
+  -- Choose a person p1.
+  -- By the pigeonhole principle, there must be some topic t1 such
+  -- that the size of the set {p2 // p2 ≠ p1 ∧ discusses p1 p2 = t1}
+  -- is at least 6. Call that set P1.
+  -- If any pair of people p2 p3 in P1 discusses topic t1, then we are done.
+  -- So the people in P1 must all discuss only the remaining two topics.
+  -- Choose a persion p2 in P1.
+  -- By the pigeonhole principle, there must be some topic t2 such that the
+  -- size of the set {p3 // p3 ≠ p2 ∧ discusses p2 p3 = t2} is at least 3.
+  -- Call that set P2.
+  -- If any pair of people p4 p5 in P2 discusses topic t2, then we are done.
+  -- So the people in P2 must all discuss only the remaining one topic t3.
+  -- Since P2 has at least 3 members, we are done.
+  sorry
