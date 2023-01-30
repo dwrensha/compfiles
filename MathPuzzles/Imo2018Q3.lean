@@ -1,3 +1,5 @@
+import Mathlib.Algebra.BigOperators.Basic
+
 /-!
 # IMO 2018 Q3
 
@@ -42,15 +44,7 @@ structure antipascal_triangle (n : Nat) where
 structure a_and_b where
 (a : Coords) (b : Coords)
 
-def range : Nat → List Nat
-| 0 => []
-| n+1 => (n+1)::(range n)
-
-def sumList : List Nat → Nat
-| [] => 0
-| a :: as => a + sumList as
-
 theorem imo2018_q3 (t : antipascal_triangle 2018)
-  (h_contains_all : ∀ n, n ≤ sumList (range 2018) →
-    ∃ r, r ≤ 2018 ∧ ∃ c, c < r ∧ t.f ⟨r,c⟩ = n) :
-  False := by admit
+    (h_contains_all : ∀ n, n ≤ ∑ i in Finset.range 2018, (i + 1) →
+                      ∃ r, r ≤ 2018 ∧ ∃ c, c < r ∧ t.f ⟨r,c⟩ = n) :
+    False := by sorry
