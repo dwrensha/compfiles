@@ -96,7 +96,7 @@ lemma f_pos_of_pos {f : ℚ → ℝ} {q : ℚ} (hq : 0 < q)
   have hqna : (q.num.natAbs : ℤ) = q.num := Int.natAbs_of_nonneg num_pos.le
 
   have hqfn' := calc (q.num : ℝ)
-         = ((q.num.natAbs : ℤ) : ℝ) := sorry --congr_arg coe (eq.symm hqna)
+         = ((q.num.natAbs : ℤ) : ℝ) := congr_arg Int.cast (Eq.symm hqna)
        _ ≤ f q.num.natAbs           := H4 q.num.natAbs
                                             (Int.natAbs_pos.mpr (ne_of_gt num_pos))
        _ = f q.num                   := by rw [Nat.cast_natAbs, abs_of_nonneg num_pos.le]
