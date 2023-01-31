@@ -1,4 +1,5 @@
 import Mathlib.Data.Nat.Basic
+import Mathlib.Algebra.GroupPower.Basic
 import Mathlib.Tactic.Linarith
 
 /-!
@@ -43,3 +44,10 @@ theorem imo_1964_q1b (n : ℕ) : ¬ 7 ∣ (2^n + 1) := by
                    have h6 := Nat.mod_lt n h5
                    rw[hn'] at h6
                    linarith
+
+/- An alternative proof, heavily golfed. The statement here is slightly modified from the original one. -/
+theorem imo_1964_q1b' : ∀ (n : ℕ), (2 ^ n + 1) % 7 ≠ 0
+    | 0 | 1 | 2 => by decide
+    | n + 3 => by
+      rw [pow_add, Nat.add_mod, Nat.mul_mod, show 2 ^ 3 % 7 = 1 from by rfl]
+      simp [imo_1964_q1b' n]
