@@ -14,10 +14,14 @@ about the same topic.
 
 -/
 
+#check Subtype.val_injective
+#check Fintype.card_eq_one_iff
+
 theorem lemma1
     (Person Topic : Type)
     [Fintype Person]
     [Fintype Topic]
+    [DecidableEq Topic]
     (card_person : Fintype.card Person = 6)
     (card_topic : Fintype.card Topic = 2)
     (discusses : Person → Person → Topic)
@@ -32,10 +36,10 @@ theorem lemma1
   have p2 := (truncOfCardPos nonzero_people).out
   let Person' := {p3 // p3 ≠ p2}
   -- want to prove that (Fintype α) and (Fintype.card α = 5).
-  have hfα : Fintype Person' := sorry
+  have hfα : Fintype Person' := Fintype.ofFinite Person'
   have hfcα : Fintype.card Person' = 5 := sorry
-  have h1 : Fintype.card Topic * 2 < Fintype.card Person' := sorry
-  have hd : DecidableEq Topic := sorry
+  have h1 : Fintype.card Topic * 2 < Fintype.card Person' := by
+      rw[hfcα, card_topic]; norm_num
   have h2 := Fintype.exists_lt_card_fiber_of_mul_lt_card
               (fun (p3: Person') ↦ discusses p2 p3.val) h1
   obtain ⟨t2, ht2⟩ := h2
@@ -48,12 +52,14 @@ theorem lemma1
   -- If any pair of people p4 p5 in P2 discusses topic t2, then we are done.
   -- So the people in P2 must all discuss only the remaining one topic t3.
   let Topic' := {t3 // t3 ≠ t2}
-  have h3 : Fintype Topic' := sorry
+  have h3 : Fintype Topic' := Fintype.ofFinite Topic'
   have h4 : Fintype.card Topic' = 1 := sorry
 
   -- let t3 be the other element of Topic
-  have nonzero_topic' : Fintype.card Topic' > 0 := by rw[h4]; norm_num
-  have t3 := (truncOfCardPos nonzero_topic').out
+  obtain ⟨t3, ht3⟩ := Fintype.card_eq_one_iff.mp h4
+
+  --have nonzero_topic' : Fintype.card Topic' > 0 := by rw[h4]; norm_num
+  --have t3 := (truncOfCardPos nonzero_topic').out
   have h5 : t3.val ≠ t2 := by sorry
 
   obtain h6 | h7 := Classical.em (∃ p3 p4 : α, p3 ≠ p4 ∧
@@ -62,8 +68,17 @@ theorem lemma1
     use t2
     -- the set we want is {p2,p3,p4}
     let s1 : Finset Person := {p3.val.val}
-    let s2 : Finset Person := Finset.cons p4.val s1 sorry
-    let s3 : Finset Person := Finset.cons p2 s2 sorry
+    let s2 : Finset Person := Finset.cons p4.val s1
+                               (by simp; intro hp
+                                   exact (hp1 (Subtype.val_injective
+                                          (Subtype.val_injective hp)).symm).elim)
+    let s3 : Finset Person := Finset.cons p2 s2
+                               (by simp; intro hp;
+                                   cases hp with
+                                   | inl hp =>
+                                     exact (p4.val.property.symm hp).elim
+                                   | inr hp =>
+                                     exact (p3.val.property.symm hp).elim)
     use s3
     constructor
     · norm_num
@@ -98,13 +113,26 @@ theorem lemma1
     use α'
     constructor
     · rw[Finset.card_map]; exact ht2
-    · intros p1' hp1' p2' hp2' hp1p2'
-      sorry
+    · intros p3' hp3' p4' hp4' hp3p4'
+      have : p3' ≠ p2 := by
+        intro hh
+        rw[hh] at hp3p4'
+        simp at hp4'
+        obtain ⟨p4'',hp41, hp42, hp43⟩ := hp4'
+        sorry
+      let p3 : { x // x ∈ α} := ⟨⟨p3', by sorry⟩, sorry⟩
+      let p4 : { x // x ∈ α} := ⟨⟨p4', sorry⟩, sorry⟩
+      have h5 : p3 ≠ p4 := sorry
+      have h8 := h7 p3 p4 h5
+      let t3': Topic' := ⟨discusses p3.val.val p4.val.val, sorry⟩
+      have h9 := ht3 t3'
+      rw[←h9]
 
 theorem imo1964_q4
     (Person Topic : Type)
     [Fintype Person]
     [Fintype Topic]
+    [DecidableEq Topic]
     (card_person : Fintype.card Person = 17)
     (card_topic : Fintype.card Topic = 3)
     (discusses : Person → Person → Topic)
