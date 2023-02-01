@@ -114,17 +114,31 @@ theorem lemma1
     constructor
     · rw[Finset.card_map]; exact ht2
     · intros p3' hp3' p4' hp4' hp3p4'
-      have : p3' ≠ p2 := by
-        intro hh
-        rw[hh] at hp3p4'
+      have h11 : p3' ≠ p2 := by
+        intro hh; rw[hh] at hp3'; simp at hp3'
+      have h12 : p4' ≠ p2 := by
+        intro hh; rw[hh] at hp4'; simp at hp4'
+
+      have h13 : discusses p2 p3' = t2 := by
+        simp at hp3'
+        obtain ⟨x, hx1, hx2, hx3⟩ := hp3'
+        rwa[ hx3] at hx1
+
+      have h14 : discusses p2 p4' = t2 := by
         simp at hp4'
-        obtain ⟨p4'',hp41, hp42, hp43⟩ := hp4'
-        sorry
-      let p3 : { x // x ∈ α} := ⟨⟨p3', by sorry⟩, sorry⟩
-      let p4 : { x // x ∈ α} := ⟨⟨p4', sorry⟩, sorry⟩
-      have h5 : p3 ≠ p4 := sorry
+        obtain ⟨x, hx1, hx2, hx3⟩ := hp4'
+        rwa[hx3] at hx1
+
+      let p3 : { x // x ∈ α} := ⟨⟨p3', h11⟩, by simp[h13]⟩
+      let p4 : { x // x ∈ α} := ⟨⟨p4', h12⟩, by simp[h14]⟩
+      have h5 : p3 ≠ p4 := by
+        intro hp3p4
+        have hp3p4A : p3.val = p4.val := (congrArg Subtype.val hp3p4)
+        have hp3p4B : p3.val.val = p4.val.val := (congrArg Subtype.val hp3p4A)
+        simp at hp3p4B
+        exact hp3p4' hp3p4B
       have h8 := h7 p3 p4 h5
-      let t3': Topic' := ⟨discusses p3.val.val p4.val.val, sorry⟩
+      let t3': Topic' := ⟨discusses p3.val.val p4.val.val, h8⟩
       have h9 := ht3 t3'
       rw[←h9]
 
