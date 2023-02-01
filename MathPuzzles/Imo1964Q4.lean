@@ -2,6 +2,7 @@ import Mathlib.Data.Fin.Basic
 import Mathlib.Combinatorics.Pigeonhole
 import Mathlib.Tactic.CasesM
 import Mathlib.Tactic.LibrarySearch
+import Mathlib.Tactic.Linarith
 
 /-!
 # International Mathematical Olympiad 1964, Problem 4
@@ -16,6 +17,9 @@ about the same topic.
 
 #check Subtype.val_injective
 #check Fintype.card_eq_one_iff
+#check Fintype.subtype
+#check Fintype.card_of_subtype
+#check Fintype.card_unique
 
 theorem lemma1
     (Person Topic : Type)
@@ -31,15 +35,14 @@ theorem lemma1
         ∀ p1 ∈ s, ∀ p2 ∈ s, p1 ≠ p2 → discusses p1 p2 = t := by
   -- By the pigeonhole principle, there must be some topic t2 such that the
   -- size of the set {p3 // p3 ≠ p2 ∧ discusses p2 p3 = t2} is at least 3.
-  have nonzero_people : Fintype.card Person > 0 := sorry --by rw[card_person]; norm_num
+  have nonzero_people : Fintype.card Person > 0 := by linarith
   have nonzero_topic : Fintype.card Topic > 0 := by rw[card_topic]; norm_num
   have p2 := (truncOfCardPos nonzero_people).out
   let Person' := {p3 // p3 ≠ p2}
   -- want to prove that (Fintype α) and (Fintype.card α = 5).
   have hfα : Fintype Person' := Fintype.ofFinite Person'
   have hfcα : 4 < Fintype.card Person' := sorry
-  have h1 : Fintype.card Topic * 2 < Fintype.card Person' := by
-      sorry --rw[hfcα, card_topic]; norm_num
+  have h1 : Fintype.card Topic * 2 < Fintype.card Person' := by linarith
   have h2 := Fintype.exists_lt_card_fiber_of_mul_lt_card
               (fun (p3: Person') ↦ discusses p2 p3.val) h1
   obtain ⟨t2, ht2⟩ := h2
@@ -47,13 +50,15 @@ theorem lemma1
   --  (Finset.filter (fun x => discusses p2 ↑x = t2) Finset.univ)
   -- Call that set α.
   let α := (Finset.filter (fun (x : Person') ↦ discusses p2 ↑x = t2) Finset.univ)
---  let Person' := (Finset.filter (fun (p3: α) ↦ discusses p2 p3.val = t2) Finset.univ)
 
   -- If any pair of people p4 p5 in P2 discusses topic t2, then we are done.
   -- So the people in P2 must all discuss only the remaining one topic t3.
   let Topic' := {t3 // t3 ≠ t2}
   have h3 : Fintype Topic' := Fintype.ofFinite Topic'
-  have h4 : Fintype.card Topic' = 1 := sorry
+  have h4 : Fintype.card Topic' = 1 := by
+    --have := Fintype.elems Topic'
+    --have := Fintype.card_of_subtype
+    sorry
 
   -- let t3 be the other element of Topic
   obtain ⟨t3, ht3⟩ := Fintype.card_eq_one_iff.mp h4
