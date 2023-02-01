@@ -20,6 +20,7 @@ about the same topic.
 #check Fintype.subtype
 #check Fintype.card_of_subtype
 #check Fintype.card_unique
+#check Fintype.card_subtype_compl
 
 theorem lemma1
     (Person Topic : Type)
@@ -36,12 +37,14 @@ theorem lemma1
   -- By the pigeonhole principle, there must be some topic t2 such that the
   -- size of the set {p3 // p3 ≠ p2 ∧ discusses p2 p3 = t2} is at least 3.
   have nonzero_people : Fintype.card Person > 0 := by linarith
-  have nonzero_topic : Fintype.card Topic > 0 := by rw[card_topic]; norm_num
   have p2 := (truncOfCardPos nonzero_people).out
   let Person' := {p3 // p3 ≠ p2}
   -- want to prove that (Fintype α) and (Fintype.card α = 5).
   have hfα : Fintype Person' := Fintype.ofFinite Person'
-  have hfcα : 4 < Fintype.card Person' := sorry
+  have hfcα : 4 < Fintype.card Person' := by
+    rw[Fintype.card_subtype_compl]
+    simp
+    exact lt_tsub_of_add_lt_left card_person
   have h1 : Fintype.card Topic * 2 < Fintype.card Person' := by linarith
   have h2 := Fintype.exists_lt_card_fiber_of_mul_lt_card
               (fun (p3: Person') ↦ discusses p2 p3.val) h1
@@ -56,14 +59,11 @@ theorem lemma1
   let Topic' := {t3 // t3 ≠ t2}
   have h3 : Fintype Topic' := Fintype.ofFinite Topic'
   have h4 : Fintype.card Topic' = 1 := by
-    --have := Fintype.elems Topic'
-    --have := Fintype.card_of_subtype
-    sorry
+    rw[Fintype.card_subtype_compl, card_topic]
+    simp
 
   -- let t3 be the other element of Topic
   obtain ⟨t3, ht3⟩ := Fintype.card_eq_one_iff.mp h4
-
-  have h5 : t3.val ≠ t2 := by sorry
 
   obtain h6 | h7 := Classical.em (∃ p3 p4 : α, p3 ≠ p4 ∧
                                     discusses p3.val p4.val = t2)
@@ -124,12 +124,12 @@ theorem lemma1
 
       have h13 : discusses p2 p3' = t2 := by
         simp at hp3'
-        obtain ⟨x, hx1, hx2, hx3⟩ := hp3'
+        obtain ⟨x, hx1, _, hx3⟩ := hp3'
         rwa[ hx3] at hx1
 
       have h14 : discusses p2 p4' = t2 := by
         simp at hp4'
-        obtain ⟨x, hx1, hx2, hx3⟩ := hp4'
+        obtain ⟨x, hx1, _, hx3⟩ := hp4'
         rwa[hx3] at hx1
 
       let p3 : { x // x ∈ α} := ⟨⟨p3', h11⟩, by simp[h13]⟩
@@ -144,8 +144,6 @@ theorem lemma1
       let t3': Topic' := ⟨discusses p3.val.val p4.val.val, h8⟩
       have h9 := ht3 t3'
       rw[←h9]
-
-#check Finset.card_cons
 
 theorem imo1964_q4
     (Person Topic : Type)
@@ -171,12 +169,15 @@ theorem imo1964_q4
   -- is at least 6.
 
   have hfα : Fintype Person' := Fintype.ofFinite Person'
-  have hfcα : Fintype.card Person' = 16 := sorry
+  have hfcα : Fintype.card Person' = 16 := by
+    rw[Fintype.card_subtype_compl, card_person]
+    simp
   have h1 : Fintype.card Topic * 5 < Fintype.card Person' := by
       rw[hfcα, card_topic]; norm_num
 
   have h2 := Fintype.exists_lt_card_fiber_of_mul_lt_card
               (fun (p2: Person') ↦ discusses p1 p2.val) h1
+  clear h1
   obtain ⟨t1, ht1⟩ := h2
 
   -- Call that set α.
