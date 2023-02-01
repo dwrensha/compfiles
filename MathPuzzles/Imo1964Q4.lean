@@ -98,7 +98,7 @@ theorem lemma1
     use α'
     constructor
     · rw[Finset.card_map]; exact ht2
-    · intros p1 hp1 p2 hp2 hp1p2
+    · intros p1' hp1' p2' hp2' hp1p2'
       sorry
 
 theorem imo1964_q4
