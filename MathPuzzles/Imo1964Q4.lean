@@ -14,20 +14,6 @@ about the same topic.
 
 -/
 
--- ∀ {α : Type u} {β : Type v}
--- [inst : DecidableEq β] [inst_1 : Fintype α] [inst_2 : Fintype β]
---  (f : α → β) {n : ℕ},
---    Fintype.card β * n < Fintype.card α →
---       ∃ y, n < Finset.card (Finset.filter (fun x => f x = y) Finset.univ)
--- α = "people who aren't p2",
--- β = Topic,
--- n = 2
--- f = fun p3 ↦ discusses p2 p3
-#check Fintype.exists_lt_card_fiber_of_mul_lt_card
-#check Subtype
-#check Finset.univ
-#check Finset.cons
-
 theorem lemma1
     (Person Topic : Type)
     [Fintype Person]
@@ -56,7 +42,7 @@ theorem lemma1
   -- 2 < Finset.card
   --  (Finset.filter (fun x => discusses p2 ↑x = t2) Finset.univ)
   -- Call that set α.
-  let α := (Finset.filter (fun x ↦ discusses p2 ↑x = t2) Finset.univ)
+  let α := (Finset.filter (fun (x : Person') ↦ discusses p2 ↑x = t2) Finset.univ)
 --  let Person' := (Finset.filter (fun (p3: α) ↦ discusses p2 p3.val = t2) Finset.univ)
 
   -- If any pair of people p4 p5 in P2 discusses topic t2, then we are done.
@@ -75,7 +61,7 @@ theorem lemma1
   · obtain ⟨p3, p4, hp1, hp2⟩ := h6
     use t2
     -- the set we want is {p2,p3,p4}
-    let s1 : Finset Person := {p3.val}
+    let s1 : Finset Person := {p3.val.val}
     let s2 : Finset Person := Finset.cons p4.val s1 sorry
     let s3 : Finset Person := Finset.cons p2 s2 sorry
     use s3
@@ -108,12 +94,12 @@ theorem lemma1
               | inr hp2' => rw[hp1', hp2'] at hp1p2; exact (hp1p2 rfl).elim
   · push_neg at h7
     use t3
-    use α
+    let α' := Finset.map ⟨λ (x :Person') => x.val, Subtype.coe_injective⟩ α
+    use α'
     constructor
-    · sorry
-    · sorry
-
-#check Finset.mem_cons
+    · rw[Finset.card_map]; exact ht2
+    · intros p1 hp1 p2 hp2 hp1p2
+      sorry
 
 theorem imo1964_q4
     (Person Topic : Type)
