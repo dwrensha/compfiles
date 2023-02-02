@@ -15,13 +15,6 @@ about the same topic.
 
 -/
 
-#check Subtype.val_injective
-#check Fintype.card_eq_one_iff
-#check Fintype.subtype
-#check Fintype.card_of_subtype
-#check Fintype.card_unique
-#check Fintype.card_subtype_compl
-
 theorem lemma1
     (Person Topic : Type)
     [Fintype Person]
@@ -160,7 +153,6 @@ theorem imo1964_q4
         ∀ p1 ∈ s, ∀ p2 ∈ s, p1 ≠ p2 → discusses p1 p2 = t := by
   -- Choose a person p1.
   have nonzero_people : Fintype.card Person > 0 := by rw[card_person]; norm_num
-  have nonzero_topic : Fintype.card Topic > 0 := by rw[card_topic]; norm_num
   have p1 := (truncOfCardPos nonzero_people).out
   let Person' := {p2 // p2 ≠ p1}
 
@@ -182,8 +174,7 @@ theorem imo1964_q4
 
   -- Call that set α.
   let α := (Finset.filter (fun (x : Person') ↦ discusses p1 ↑x = t1) Finset.univ)
-
-  have cardα : 5 < Fintype.card α := by sorry
+  have cardα : 5 < Fintype.card α := by rw[Fintype.card_coe]; exact ht1;
 
   -- If any pair of people p2 p3 in α discusses topic t1, then we are done.
   obtain h6 | h7 := Classical.em (∃ p2 p3 : α, p2 ≠ p3 ∧
@@ -235,13 +226,13 @@ theorem imo1964_q4
               | inl hp2' => rw[hp1', hp2']; exact hp2
               | inr hp2' => rw[hp1', hp2'] at hp1p2; exact (hp1p2 rfl).elim
 
-  · sorry
-/-
-    -- So the people in α must all discuss only the remaining two topics.
+  · -- So the people in α must all discuss only the remaining two topics.
     push_neg at h7
     let Topic' := {t2 // t2 ≠ t1}
     have h3 : Fintype Topic' := Fintype.ofFinite Topic'
-    have h4 : Fintype.card Topic' = 2 := sorry
+    have h4 : Fintype.card Topic' = 2 := by
+      rw[Fintype.card_subtype_compl, card_topic]
+      simp
     have nonzero_topic' : Fintype.card Topic' > 0 := by rw[h4]; norm_num
     have t0 := (truncOfCardPos nonzero_topic').out
 
@@ -278,7 +269,7 @@ theorem imo1964_q4
 
       have h13 : discusses p1 p3 = t1 := by
         simp at hp3
-        obtain ⟨x, hx1, hx2⟩ := hp3
+        obtain ⟨x, hx1, _⟩ := hp3
         exact hx1
 
       let p3' : {x // x ∈ α} := ⟨⟨p3, h11⟩, (by simp[h13])⟩
@@ -292,7 +283,7 @@ theorem imo1964_q4
 
       have h14 : discusses p1 p4 = t1 := by
         simp at hp4
-        obtain ⟨x, hx1, hx2⟩ := hp4
+        obtain ⟨x, hx1, _⟩ := hp4
         exact hx1
 
       let p4' : {x // x ∈ α} := ⟨⟨p4, h12⟩, by simp[h14]⟩
@@ -310,4 +301,4 @@ theorem imo1964_q4
       have h6 := hs2 p3' hp3' p4' hp4' h7
       simp[hp34] at h6
       exact (congrArg Subtype.val h6)
--/
+
