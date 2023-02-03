@@ -256,8 +256,7 @@ theorem imo1964_q4
     constructor
     · rwa[Finset.card_map, Finset.card_map]
     · intros p3 hp3 p4 hp4 hp34
-      have h11 : p3 ≠ p1 := by
-        intro hh; rw[hh] at hp3; simp at hp3
+      have h11 : p3 ≠ p1 := by intro hh; simp[hh] at hp3
 
       have h13 : discusses p1 p3 = t1 := by
         simp at hp3
@@ -268,10 +267,9 @@ theorem imo1964_q4
       have hp3' : p3' ∈ s := by
         simp at hp3
         obtain ⟨x,hx1,hx2⟩ := hp3
-        simp[hx2]
+        simp only [hx2]
 
-      have h12 : p4 ≠ p1 := by
-        intro hh; rw[hh] at hp4; simp at hp4
+      have h12 : p4 ≠ p1 := by intro hh; simp[hh] at hp4
 
       have h14 : discusses p1 p4 = t1 := by
         simp at hp4
@@ -282,7 +280,7 @@ theorem imo1964_q4
       have hp4' : p4' ∈ s := by
         simp at hp4
         obtain ⟨x,hx1,hx2⟩ := hp4
-        simp[hx2]
+        simp only [hx2]
 
       have h7 : p3' ≠ p4' := by
         intro hp3p4
