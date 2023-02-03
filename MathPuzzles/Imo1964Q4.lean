@@ -266,8 +266,8 @@ theorem imo1964_q4
       let p3' : {x // x ∈ α} := ⟨⟨p3, h11⟩, (by simp[h13])⟩
       have hp3' : p3' ∈ s := by
         simp at hp3
-        obtain ⟨x,hx1,hx2⟩ := hp3
-        simp only [hx2]
+        obtain ⟨x,_,hx2⟩ := hp3
+        exact hx2
 
       have h12 : p4 ≠ p1 := by intro hh; simp[hh] at hp4
 
@@ -279,8 +279,8 @@ theorem imo1964_q4
       let p4' : {x // x ∈ α} := ⟨⟨p4, h12⟩, by simp[h14]⟩
       have hp4' : p4' ∈ s := by
         simp at hp4
-        obtain ⟨x,hx1,hx2⟩ := hp4
-        simp only [hx2]
+        obtain ⟨x,_,hx2⟩ := hp4
+        exact hx2
 
       have h7 : p3' ≠ p4' := by
         intro hp3p4
