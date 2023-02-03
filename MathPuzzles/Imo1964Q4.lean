@@ -237,12 +237,7 @@ theorem imo1964_q4
       fun (p2 p3 : α) ↦
         if heq : p2 = p3 then t0
         else
-        ⟨discusses p2.val p3.val,
-         by have := h7 ⟨p2, Finset.coe_mem p2⟩ ⟨p3, Finset.coe_mem p3⟩
-            simp at this
-            push_neg at this
-            apply this
-            exact heq⟩
+        ⟨discusses p2.val p3.val, h7 ⟨p2, p2.property⟩ ⟨p3, p3.property⟩ heq⟩
     have discusses_sym' :
         ∀ (p1 p2 : { x // x ∈ α }), discusses' p1 p2 = discusses' p2 p1 := by
       intros p3 p4
