@@ -1,7 +1,4 @@
-import Mathlib.Data.Fin.Basic
 import Mathlib.Combinatorics.Pigeonhole
-import Mathlib.Tactic.CasesM
-import Mathlib.Tactic.LibrarySearch
 import Mathlib.Tactic.Linarith
 
 /-!
