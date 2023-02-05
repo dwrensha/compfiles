@@ -60,11 +60,12 @@ theorem lemma1
     -- the set we want is {p2,p3,p4}
     let s1 : Finset Person := {p3.val.val}
     let s2 : Finset Person := Finset.cons p4.val s1
-                               (by simp; intro hp
+                               (by rw[Finset.mem_singleton]; intro hp
                                    exact (hp1 (Subtype.val_injective
                                           (Subtype.val_injective hp)).symm).elim)
     let s3 : Finset Person := Finset.cons p2 s2
-                               (by simp; intro hp;
+                               (by rw[Finset.mem_cons, Finset.mem_singleton]
+                                   intro hp;
                                    cases hp with
                                    | inl hp =>
                                      exact (p4.val.property.symm hp).elim
@@ -162,13 +163,13 @@ theorem imo1964_q4
     let s1 : Finset Person := {p3.val.val}
 
     have hs1 : ¬ p4.val.val ∈ s1 := by
-      simp; intro hp
+      rw[Finset.mem_singleton]; intro hp
       exact (hp1 (Subtype.val_injective (Subtype.val_injective hp)).symm).elim
 
     let s2 : Finset Person := Finset.cons p4.val s1 hs1
 
     have hs2 : ¬ p1 ∈ s2 := by
-      simp; intro hp
+      rw[Finset.mem_cons, Finset.mem_singleton]; intro hp
       cases hp with
       | inl hp => exact (p4.val.property.symm hp).elim
       | inr hp => exact (p3.val.property.symm hp).elim
