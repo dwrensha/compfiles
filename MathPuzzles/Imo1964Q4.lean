@@ -107,31 +107,14 @@ theorem lemma1
     constructor
     · rw[Finset.card_map]; exact ht2
     · intros p3' hp3' p4' hp4' hp3p4'
-      have h11 : p3' ≠ p2 := by
-        intro hh; rw[hh] at hp3'; simp at hp3'
-      have h12 : p4' ≠ p2 := by
-        intro hh; rw[hh] at hp4'; simp at hp4'
-
-      have h13 : discusses p2 p3' = t2 := by
-        simp at hp3'
-        obtain ⟨x, hx1, _, hx3⟩ := hp3'
-        rwa[ hx3] at hx1
-
-      have h14 : discusses p2 p4' = t2 := by
-        simp at hp4'
-        obtain ⟨x, hx1, _, hx3⟩ := hp4'
-        rwa[hx3] at hx1
-
-      let p3 : { x // x ∈ α} := ⟨⟨p3', h11⟩, by simp[h13]⟩
-      let p4 : { x // x ∈ α} := ⟨⟨p4', h12⟩, by simp[h14]⟩
-      have h5 : p3 ≠ p4 := by
-        intro hp3p4
-        have hp3p4A : p3.val = p4.val := (congrArg Subtype.val hp3p4)
-        have hp3p4B : p3.val.val = p4.val.val := (congrArg Subtype.val hp3p4A)
-        simp at hp3p4B
-        exact hp3p4' hp3p4B
-      have h8 := h7 p3 p4 h5
-      let t3': Topic' := ⟨discusses p3.val.val p4.val.val, h8⟩
+      rw[Finset.mem_map] at hp3' hp4'
+      obtain ⟨⟨p3, p3_ne⟩, p3_mem_α, p3_eq⟩ := hp3'
+      obtain ⟨⟨p4, p4_ne⟩, p4_mem_α, p4_eq⟩ := hp4'
+      dsimp at p3_eq p4_eq
+      rw [←p3_eq, ←p4_eq]
+      have hne : p3 ≠ p4 := by rwa[p3_eq, p4_eq]
+      have h8 := h7 ⟨⟨p3, p3_ne⟩, p3_mem_α⟩ ⟨⟨p4, p4_ne⟩, p4_mem_α⟩ (by simp[hne])
+      let t3': Topic' := ⟨discusses p3 p4, h8⟩
       have h9 := ht3 t3'
       rw[←h9]
 
