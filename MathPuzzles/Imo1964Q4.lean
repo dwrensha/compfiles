@@ -32,8 +32,7 @@ theorem lemma1
   -- want to prove that (Fintype α) and (Fintype.card α = 5).
   have hfα : Fintype Person' := Fintype.ofFinite Person'
   have hfcα : 4 < Fintype.card Person' := by
-    rw[Fintype.card_subtype_compl]
-    simp
+    simp[Fintype.card_subtype_compl]
     exact lt_tsub_of_add_lt_left card_person
   have h1 : Fintype.card Topic * 2 < Fintype.card Person' := by linarith
   have h2 := Fintype.exists_lt_card_fiber_of_mul_lt_card
@@ -49,8 +48,7 @@ theorem lemma1
   let Topic' := {t3 // t3 ≠ t2}
   have h3 : Fintype Topic' := Fintype.ofFinite Topic'
   have h4 : Fintype.card Topic' = 1 := by
-    rw[Fintype.card_subtype_compl, card_topic]
-    simp
+    simp[Fintype.card_subtype_compl, card_topic]
 
   -- let t3 be the other element of Topic
   obtain ⟨t3, ht3⟩ := Fintype.card_eq_one_iff.mp h4
@@ -142,8 +140,7 @@ theorem imo1964_q4
 
   have hfα : Fintype Person' := Fintype.ofFinite Person'
   have hfcα : Fintype.card Person' = 16 := by
-    rw[Fintype.card_subtype_compl, card_person]
-    simp
+      simp[Fintype.card_subtype_compl, card_person]
   have h1 : Fintype.card Topic * 5 < Fintype.card Person' := by
       rw[hfcα, card_topic]; norm_num
 
