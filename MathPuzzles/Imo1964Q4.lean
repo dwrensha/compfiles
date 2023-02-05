@@ -44,8 +44,8 @@ theorem lemma1
   -- Call that set α.
   let α := (Finset.filter (fun (x : Person') ↦ discusses p2 ↑x = t2) Finset.univ)
 
-  -- If any pair of people p4 p5 in P2 discusses topic t2, then we are done.
-  -- So the people in P2 must all discuss only the remaining one topic t3.
+  -- If any pair of people p4 p5 in α discusses topic t2, then we are done.
+  -- So the people in α must all discuss only the remaining one topic t3.
   let Topic' := {t3 // t3 ≠ t2}
   have h3 : Fintype Topic' := Fintype.ofFinite Topic'
   have h4 : Fintype.card Topic' = 1 := by
