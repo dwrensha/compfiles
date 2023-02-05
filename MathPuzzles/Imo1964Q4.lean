@@ -250,45 +250,20 @@ theorem imo1964_q4
     have h5 := lemma1 α Topic' cardα h4 discusses' discusses_sym'
     obtain ⟨t2, s, hs1, hs2⟩ := h5
     use t2
-    let s' := Finset.map ⟨λ (x : α) => x.val, Subtype.coe_injective⟩ s
-    let s'' := Finset.map ⟨λ (x : Person') => x.val, Subtype.coe_injective⟩ s'
-    use s''
+    let s' := Finset.map ⟨λ (x : α) => x.val.val,
+                          fun x y hxy ↦ Subtype.coe_injective (Subtype.coe_injective hxy)⟩ s
+    use s'
     constructor
-    · rwa[Finset.card_map, Finset.card_map]
+    · rwa[Finset.card_map]
     · intros p3 hp3 p4 hp4 hp34
-      have h11 : p3 ≠ p1 := by intro hh; simp[hh] at hp3
-
-      have h13 : discusses p1 p3 = t1 := by
-        simp at hp3
-        obtain ⟨x, hx1, _⟩ := hp3
-        exact hx1
-
-      let p3' : {x // x ∈ α} := ⟨⟨p3, h11⟩, (by simp[h13])⟩
-      have hp3' : p3' ∈ s := by
-        simp at hp3
-        obtain ⟨x,_,hx2⟩ := hp3
-        exact hx2
-
-      have h12 : p4 ≠ p1 := by intro hh; simp[hh] at hp4
-
-      have h14 : discusses p1 p4 = t1 := by
-        simp at hp4
-        obtain ⟨x, hx1, _⟩ := hp4
-        exact hx1
-
-      let p4' : {x // x ∈ α} := ⟨⟨p4, h12⟩, by simp[h14]⟩
-      have hp4' : p4' ∈ s := by
-        simp at hp4
-        obtain ⟨x,_,hx2⟩ := hp4
-        exact hx2
-
-      have h7 : p3' ≠ p4' := by
-        intro hp3p4
-        have hp3p4A : p3'.val = p4'.val := (congrArg Subtype.val hp3p4)
-        have hp3p4B : p3'.val.val = p4'.val.val := (congrArg Subtype.val hp3p4A)
-        simp at hp3p4B
-        exact hp34 hp3p4B
-      have h6 := hs2 p3' hp3' p4' hp4' h7
-      simp[hp34] at h6
+      rw[Finset.mem_map] at hp3 hp4
+      obtain ⟨⟨⟨p3', p3_mem_person'⟩, p3_mem_α⟩, p3_mem_s, hp3eq⟩ := hp3
+      obtain ⟨⟨⟨p4', p4_mem_person'⟩, p4_mem_α⟩, p4_mem_s, hp4eq⟩ := hp4
+      dsimp at hp3eq hp4eq
+      rw [←hp3eq, ←hp4eq]
+      simp at p3_mem_s
+      have hne : p3' ≠ p4' := by rwa[hp3eq, hp4eq]
+      have h6 := hs2 ⟨⟨p3', p3_mem_person'⟩, p3_mem_α⟩ p3_mem_s
+                     ⟨⟨p4', p4_mem_person'⟩, p4_mem_α⟩ p4_mem_s (by simp[hne])
+      simp[hne] at h6
       exact (congrArg Subtype.val h6)
-
