@@ -261,7 +261,6 @@ theorem imo1964_q4
       obtain ⟨⟨⟨p4', p4_mem_person'⟩, p4_mem_α⟩, p4_mem_s, hp4eq⟩ := hp4
       dsimp at hp3eq hp4eq
       rw [←hp3eq, ←hp4eq]
-      simp at p3_mem_s
       have hne : p3' ≠ p4' := by rwa[hp3eq, hp4eq]
       have h6 := hs2 ⟨⟨p3', p3_mem_person'⟩, p3_mem_α⟩ p3_mem_s
                      ⟨⟨p4', p4_mem_person'⟩, p4_mem_α⟩ p4_mem_s (by simp[hne])
