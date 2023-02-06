@@ -167,7 +167,7 @@ theorem imo1964_q4
     let s3 : Finset Person := Finset.cons p1 s2 hs2
     use s3
     constructor
-    · simp only[Finset.card_cons hs2, Finset.card_cons hs1, Finset.card_singleton]
+    · simp only[Finset.card_cons, Finset.card_singleton]
     · intros p1' hp1' p2' hp2' hp1p2
       rw[Finset.mem_cons, Finset.mem_cons, Finset.mem_singleton] at hp1' hp2'
       have hp2_sym : discusses ↑↑p4 ↑↑p3 = t1 := hp2 ▸ discussion_sym _ _
