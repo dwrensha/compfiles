@@ -1,5 +1,6 @@
 import Mathlib.Combinatorics.Pigeonhole
 import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.LibrarySearch
 
 /-!
 # International Mathematical Olympiad 1964, Problem 4
@@ -180,29 +181,18 @@ theorem imo1964_q4
     · rw[Finset.card_cons hs2, Finset.card_cons hs1]; simp
     · intros p1' hp1' p2' hp2' hp1p2
       rw[Finset.mem_cons, Finset.mem_cons, Finset.mem_singleton] at hp1' hp2'
-      -- TODO?
-      -- casesm* (_ ∨ _) + congruence closure?
-      cases hp1' with
-      | inl hp1' => cases hp2' with
-        | inl hp2' => rw[hp1', hp2'] at hp1p2; exact (hp1p2 rfl).elim
-        | inr hp2' => cases hp2' with
-          | inl hp2' => rw[hp1', hp2']; have := p4.property; simp at this
-                        exact this
-          | inr hp2' => rw[hp1', hp2']; have := p3.property; simp at this
-                        exact this
-      | inr hp1' => cases hp1' with
-        | inl hp1' => cases hp2' with
-          | inl hp2' => rw[hp1', hp2']; have := p4.property; simp at this
-                        rwa[discussion_sym (p4.val) p1]
-          | inr hp2' => cases hp2' with
-            | inl hp2' => rw[hp1', hp2'] at hp1p2; exact (hp1p2 rfl).elim
-            | inr hp2' => rw[hp1', hp2']; rwa[discussion_sym p4.val p3.val]
-        | inr hp1' => cases hp2' with
-            | inl hp2' => rw[hp1', hp2']; have := p3.property; simp at this
-                          rwa[discussion_sym (p3.val) p1]
-            | inr hp2' => cases hp2' with
-              | inl hp2' => rw[hp1', hp2']; exact hp2
-              | inr hp2' => rw[hp1', hp2'] at hp1p2; exact (hp1p2 rfl).elim
+      have hp2_sym : discusses ↑↑p4 ↑↑p3 = t1 := by rwa[discussion_sym]
+      have hp4d : discusses p1 ↑↑p4 = t1 := by
+         have := p4.property; simp at this; exact this
+      have hp4d_sym : discusses ↑↑p4 p1 = t1 := by rwa[discussion_sym]
+      have hp3d : discusses p1 ↑↑p3 = t1 := by
+         have := p3.property; simp at this; exact this
+      have hp3d_sym : discusses ↑↑p3 p1 = t1 := by rwa[discussion_sym]
+
+      repeat (first | cases' hp1' with hp1' hp1' | cases' hp2' with hp2' hp2'
+                    | rw[hp1', hp2'] at *
+                    | exact (hp1p2 rfl).elim -- deal with p1' = p2' cases
+                    | assumption)
 
   · -- So the people in α must all discuss only the remaining two topics.
     push_neg at h7
