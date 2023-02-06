@@ -74,8 +74,8 @@ lemma le_of_all_pow_lt_succ' {x y : ℝ} (hx : 1 < x) (hy : 0 < y)
 
   have h1_lt_y' : 1 < y' := by
     have hh' : 1 * 2 / 2 < (x + 1) / 2 := sorry --by linarith
-    calc 1 = 1 * 2 / 2 := sorry -- by field_simp
-         _ < y'        := hh'
+    calc (1:ℝ) = 1 * 2 / 2 := sorry -- by field_simp
+             _ < y'        := hh'
 
   have h_y_lt_y' : y < y' := hy''.trans_lt h1_lt_y'
   have hh : ∀ n, 0 < n → x^n - 1 < y'^n := by
