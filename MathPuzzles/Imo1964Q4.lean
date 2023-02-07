@@ -30,7 +30,6 @@ theorem lemma1
   have nonzero_people : Fintype.card Person > 0 := by linarith
   have p2 := (truncOfCardPos nonzero_people).out
   let Person' := {p3 // p3 ≠ p2}
-  -- want to prove that (Fintype α) and (Fintype.card α = 5).
   have hfα : Fintype Person' := Fintype.ofFinite Person'
   have hfcα : 4 < Fintype.card Person' := by
     simp[Fintype.card_subtype_compl]
@@ -39,8 +38,6 @@ theorem lemma1
   have h2 := Fintype.exists_lt_card_fiber_of_mul_lt_card
               (fun (p3: Person') ↦ discusses p2 p3.val) h1
   obtain ⟨t2, ht2⟩ := h2
-  -- 2 < Finset.card
-  --  (Finset.filter (fun x => discusses p2 ↑x = t2) Finset.univ)
   -- Call that set α.
   let α := (Finset.filter (fun (x : Person') ↦ discusses p2 ↑x = t2) Finset.univ)
 
@@ -139,7 +136,6 @@ theorem imo1964_q4
               (fun (p2: Person') ↦ discusses p1 p2.val) h1
   clear h1
   obtain ⟨t1, ht1⟩ := h2
-
   -- Call that set α.
   let α := (Finset.filter (fun (x : Person') ↦ discusses p1 ↑x = t1) Finset.univ)
   have cardα : 5 < Fintype.card α := by rw[Fintype.card_coe]; exact ht1;
