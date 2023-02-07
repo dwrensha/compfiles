@@ -13,6 +13,9 @@ about the same topic.
 
 -/
 
+/--
+ Smaller version of the problem, with 6 (or more) people and 2 topics.
+-/
 theorem lemma1
     (Person Topic : Type)
     [Fintype Person]
@@ -25,16 +28,17 @@ theorem lemma1
     ∃ t : Topic, ∃ s : Finset Person,
       2 < s.card ∧
         ∀ p1 ∈ s, ∀ p2 ∈ s, p1 ≠ p2 → discusses p1 p2 = t := by
-  -- By the pigeonhole principle, there must be some topic t2 such that the
-  -- size of the set {p3 // p3 ≠ p2 ∧ discusses p2 p3 = t2} is at least 3.
-  have nonzero_people : Fintype.card Person > 0 := by linarith
-  have p2 := (truncOfCardPos nonzero_people).out
+  -- Choose a person p2.
+  have p2 : Person := (truncOfCardPos (by linarith)).out
   let Person' := {p3 // p3 ≠ p2}
   have hfα : Fintype Person' := Fintype.ofFinite Person'
   have hfcα : 4 < Fintype.card Person' := by
-    simp[Fintype.card_subtype_compl]
+    rw[Fintype.card_subtype_compl, Fintype.card_ofSubsingleton]
     exact lt_tsub_of_add_lt_left card_person
   have h1 : Fintype.card Topic * 2 < Fintype.card Person' := by linarith
+
+  -- By the pigeonhole principle, there must be some topic t2 such that the
+  -- size of the set {p3 // p3 ≠ p2 ∧ discusses p2 p3 = t2} is at least 3.
   have h2 := Fintype.exists_lt_card_fiber_of_mul_lt_card
               (fun (p3: Person') ↦ discusses p2 p3.val) h1
   obtain ⟨t2, ht2⟩ := h2
@@ -118,8 +122,7 @@ theorem imo1964_q4
       2 < s.card ∧
         ∀ p1 ∈ s, ∀ p2 ∈ s, p1 ≠ p2 → discusses p1 p2 = t := by
   -- Choose a person p1.
-  have nonzero_people : Fintype.card Person > 0 := by rw[card_person]; norm_num
-  have p1 := (truncOfCardPos nonzero_people).out
+  have p1 : Person := (truncOfCardPos (by linarith)).out
   let Person' := {p2 // p2 ≠ p1}
 
   -- By the pigeonhole principle, there must be some topic t1 such
@@ -184,10 +187,8 @@ theorem imo1964_q4
     let Topic' := {t2 // t2 ≠ t1}
     have h3 : Fintype Topic' := Fintype.ofFinite Topic'
     have h4 : Fintype.card Topic' = 2 := by
-      rw[Fintype.card_subtype_compl, card_topic]
-      simp
-    have nonzero_topic' : Fintype.card Topic' > 0 := by rw[h4]; norm_num
-    have t0 := (truncOfCardPos nonzero_topic').out
+      simp[Fintype.card_subtype_compl, card_topic]
+    have t0 : Topic' := (truncOfCardPos (by linarith)).out
 
     let discusses' : α → α → Topic' :=
       fun (p2 p3 : α) ↦
