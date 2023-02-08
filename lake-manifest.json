@@ -10,18 +10,18 @@
   {"git":
    {"url": "https://github.com/JLimperg/aesop",
     "subDir?": null,
-    "rev": "ccff5d4ae7411c5fe741f3139950e8bddf353dea",
+    "rev": "ba61f7fec6174d8c7d2796457da5a8d0b0da44c6",
     "name": "aesop",
     "inputRev?": "master"}},
   {"git":
    {"url": "https://github.com/leanprover/std4",
     "subDir?": null,
-    "rev": "14ac0a9637e10d36e05544e84baf56e76dd6adf8",
+    "rev": "de7e2a79905a3f87cad1ad5bf57045206f9738c7",
     "name": "std",
     "inputRev?": "main"}},
   {"git":
    {"url": "https://github.com/leanprover-community/mathlib4",
     "subDir?": null,
-    "rev": "b10a815021cd3883517812f6ae0202e85942031d",
+    "rev": "c16c0c414d4ea87bd10716ffd38b93d9d66aa215",
     "name": "Mathlib",
-    "inputRev?": "b10a815021cd3883517812f6ae0202e85942031d"}}]}
+    "inputRev?": "c16c0c414d4ea87bd10716ffd38b93d9d66aa215"}}]}
