@@ -36,7 +36,7 @@ theorem lemma1
     exact lt_tsub_of_add_lt_left card_person
   have h1 : Fintype.card Topic * 2 < Fintype.card Person' := by linarith
 
-  classical -- for DecidableEq Topic
+  have := Classical.decEq Topic
 
   -- By the pigeonhole principle, there must be some topic t2 such that the
   -- size of the set {p3 // p3 ≠ p2 ∧ discusses p2 p3 = t2} is at least 3.
@@ -134,7 +134,7 @@ theorem imo1964_q4
   have h1 : Fintype.card Topic * 5 < Fintype.card Person' := by
       rw[hfcα, card_topic]; norm_num
 
-  classical -- for `DecidableEq Person` and `DecidableEq Topic`
+  have := Classical.decEq Topic; have := Classical.decEq Person
 
   have h2 := Fintype.exists_lt_card_fiber_of_mul_lt_card
               (fun (p2: Person') ↦ discusses p1 p2.val) h1
