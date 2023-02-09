@@ -20,7 +20,6 @@ theorem lemma1
     (Person Topic : Type)
     [Fintype Person]
     [Fintype Topic]
-    [DecidableEq Topic]
     (card_person : 5 < Fintype.card Person)
     (card_topic : Fintype.card Topic = 2)
     (discusses : Person → Person → Topic)
@@ -36,6 +35,8 @@ theorem lemma1
     rw[Fintype.card_subtype_compl, Fintype.card_ofSubsingleton]
     exact lt_tsub_of_add_lt_left card_person
   have h1 : Fintype.card Topic * 2 < Fintype.card Person' := by linarith
+
+  classical -- for DecidableEq Topic
 
   -- By the pigeonhole principle, there must be some topic t2 such that the
   -- size of the set {p3 // p3 ≠ p2 ∧ discusses p2 p3 = t2} is at least 3.
@@ -75,7 +76,7 @@ theorem lemma1
                                      exact (p3.val.property.symm hp).elim)
     use s3
     constructor
-    · norm_num
+    · simp only[Finset.card_cons, Finset.card_singleton]
     · intros p1' hp1' p2' hp2' hp1p2
       rw[Finset.mem_cons, Finset.mem_cons, Finset.mem_singleton] at hp1' hp2'
       have hp2_sym : discusses ↑↑p4 ↑↑p3 = t2 := hp2 ▸ discussion_sym _ _
@@ -111,9 +112,7 @@ theorem lemma1
 theorem imo1964_q4
     (Person Topic : Type)
     [Fintype Person]
-    [DecidableEq Person]
     [Fintype Topic]
-    [DecidableEq Topic]
     (card_person : Fintype.card Person = 17)
     (card_topic : Fintype.card Topic = 3)
     (discusses : Person → Person → Topic)
@@ -134,6 +133,8 @@ theorem imo1964_q4
       simp[Fintype.card_subtype_compl, card_person]
   have h1 : Fintype.card Topic * 5 < Fintype.card Person' := by
       rw[hfcα, card_topic]; norm_num
+
+  classical -- for `DecidableEq Person` and `DecidableEq Topic`
 
   have h2 := Fintype.exists_lt_card_fiber_of_mul_lt_card
               (fun (p2: Person') ↦ discusses p1 p2.val) h1
