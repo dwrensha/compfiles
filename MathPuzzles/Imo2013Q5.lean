@@ -186,8 +186,6 @@ lemma fixed_point_of_gt_1 {f : ℚ → ℝ} {x : ℚ} (hx : 1 < x)
   have heq := h1.antisymm (by exact_mod_cast h2)
   linarith [H5 x hx, H5 _ h_big_enough]
 
-#check add_mul
-
 theorem imo2013_q5
     (f : ℚ → ℝ)
     (H1 : ∀ x y, 0 < x → 0 < y → f (x * y) ≤ f x * f y)
