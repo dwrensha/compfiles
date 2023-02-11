@@ -1,4 +1,5 @@
 import Mathlib.Algebra.GeomSum
+import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.LibrarySearch
 import Mathlib.Data.Real.Basic
@@ -30,9 +31,9 @@ lemma le_of_all_pow_lt_succ {x y : ℝ} (hx : 1 < x) (hy : 1 < y)
   push_neg at hxy
   have hxmy : 0 < x - y := sub_pos.mpr hxy
   have hn : ∀ n : ℕ, 0 < n → (x - y) * (n : ℝ) ≤ x^n - y^n := by
-    intros n hn
+    intros n _
     have hterm : ∀ i : ℕ, i ∈ Finset.range n → 1 ≤ x^i * y^(n - 1 - i) := by
-      intros i hi
+      intros i _
       have hx' : 1 ≤ x ^ i := one_le_pow_of_one_le hx.le i
       have hy' : 1 ≤ y ^ (n - 1 - i) := one_le_pow_of_one_le hy.le (n - 1 - i)
       calc 1 ≤ x^i             := hx'
@@ -40,7 +41,7 @@ lemma le_of_all_pow_lt_succ {x y : ℝ} (hx : 1 < x) (hy : 1 < y)
            _ ≤ x^i * y^(n-1-i) := mul_le_mul_of_nonneg_left hy' (zero_le_one.trans hx')
     calc (x - y) * (n : ℝ)
             = (n : ℝ) * (x - y) := mul_comm _ _
-          _ = (∑ i in Finset.range n, (1 : ℝ)) * (x - y) :=
+          _ = (∑ _i in Finset.range n, (1 : ℝ)) * (x - y) :=
                                   by simp only [mul_one, Finset.sum_const, nsmul_eq_mul,
                                     Finset.card_range]
           _ ≤ (∑ i in Finset.range n, x ^ i * y ^ (n - 1 - i)) * (x-y) :=
@@ -50,7 +51,7 @@ lemma le_of_all_pow_lt_succ {x y : ℝ} (hx : 1 < x) (hy : 1 < y)
   -- Choose n larger than 1 / (x - y).
   obtain ⟨N, hN⟩ := exists_nat_gt (1 / (x - y))
   have hNp : 0 < N := by exact_mod_cast (one_div_pos.mpr hxmy).trans hN
-  have := calc 1 = (x - y) * (1 / (x - y)) := sorry --by field_simp [ne_of_gt hxmy]
+  have := calc 1 = (x - y) * (1 / (x - y)) := by field_simp [ne_of_gt hxmy]
                _ < (x - y) * N             := (mul_lt_mul_left hxmy).mpr hN
                _ ≤ x^N - y^N               := hn N hNp
   linarith [h N hNp]
@@ -68,13 +69,13 @@ lemma le_of_all_pow_lt_succ' {x y : ℝ} (hx : 1 < x) (hy : 0 < y)
   -- Then there exists y' such that 0 < y ≤ 1 < y' < x.
   let y' := (x + 1) / 2
   have h_y'_lt_x : y' < x := by
-    have hh : (x + 1)/2 < (x * 2) / 2 := sorry --by linarith
+    have hh : (x + 1)/2 < (x * 2) / 2 :=  sorry --by linarith
     calc y' < (x * 2) / 2 := hh
-          _ = x           := sorry --by field_simp
+          _ = x           := by field_simp
 
   have h1_lt_y' : 1 < y' := by
     have hh' : 1 * 2 / 2 < (x + 1) / 2 := sorry --by linarith
-    calc (1:ℝ) = 1 * 2 / 2 := sorry -- by field_simp
+    calc (1:ℝ) = 1 * 2 / 2 := by field_simp
              _ < y'        := hh'
 
   have h_y_lt_y' : y < y' := hy''.trans_lt h1_lt_y'
@@ -267,14 +268,13 @@ theorem imo2013_q5
   have hx2cnezr : (x2denom : ℝ) ≠ (0 : ℝ) := Nat.cast_ne_zero.mpr (ne_of_gt hx2pos)
 
   have hrat_expand2 := calc x = x.num / x.den := sorry --by exact_mod_cast Rat.num_denom.symm
-                            _ = x2num / x2denom := sorry -- by { field_simp[-rat.num_div_denom], ring},
+                            _ = x2num / x2denom := by { field_simp; ring}
 
   have h_denom_times_fx :=
     calc (x2denom : ℝ) * f x = f (x2denom * x)                 := (h_f_commutes_with_pos_nat_mul
                                                                     x2denom hx2pos x hx).symm
                            _ = f (x2denom * (x2num / x2denom)) := by rw[hrat_expand2]
-                           _ = f x2num                         := sorry --by { congr, field_simp, ring },
-
+                           _ = f x2num                         := by congr; field_simp; ring
 
   have h_fx2num_fixed : f x2num = x2num := by
     have hx2num_gt_one : (1 : ℚ) < (2 * x.num : ℤ) := by
