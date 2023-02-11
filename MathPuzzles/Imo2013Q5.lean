@@ -267,7 +267,7 @@ theorem imo2013_q5
   have hxcnez   : (x.den : ℚ) ≠ (0 : ℚ) := ne_of_gt (Nat.cast_pos.mpr x.pos)
   have hx2cnezr : (x2denom : ℝ) ≠ (0 : ℝ) := Nat.cast_ne_zero.mpr (ne_of_gt hx2pos)
 
-  have hrat_expand2 := calc x = x.num / x.den := sorry --by exact_mod_cast Rat.num_denom.symm
+  have hrat_expand2 := calc x = x.num / x.den := by exact_mod_cast Rat.num_den.symm
                             _ = x2num / x2denom := by { field_simp; ring}
 
   have h_denom_times_fx :=
