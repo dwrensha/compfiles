@@ -286,5 +286,6 @@ theorem imo2013_q5
          _ = (x2denom * f x) / x2denom               := by rw[mul_comm]
          _ = f x2num / x2denom                       := by rw[h_denom_times_fx]
          _ = x2num / x2denom                         := by rw[h_fx2num_fixed]
-         _ = (((x2num : ℚ) / (x2denom : ℚ) : ℚ) : ℝ) := sorry --by norm_cast
+         _ = ((x2num:ℚ):ℝ) / ((x2denom:ℚ):ℝ)         := rfl
+         _ = (((x2num : ℚ) / (x2denom : ℚ) : ℚ) : ℝ) := by norm_cast
          _ = x                                       := by rw[←hrat_expand2]
