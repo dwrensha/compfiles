@@ -69,14 +69,14 @@ lemma le_of_all_pow_lt_succ' {x y : ℝ} (hx : 1 < x) (hy : 0 < y)
   -- Then there exists y' such that 0 < y ≤ 1 < y' < x.
   let y' := (x + 1) / 2
   have h_y'_lt_x : y' < x := by
-    have hh : (x + 1)/2 < (x * 2) / 2 :=  sorry --by linarith
-    calc y' < (x * 2) / 2 := hh
+    have hh : (x + 1) < (x * 2) := by linarith
+    calc y' < (x * 2) / 2 := div_lt_div_of_lt two_pos hh
           _ = x           := by field_simp
 
   have h1_lt_y' : 1 < y' := by
-    have hh' : 1 * 2 / 2 < (x + 1) / 2 := sorry --by linarith
+    have hh' : 1 * 2 < (x + 1) := by linarith
     calc (1:ℝ) = 1 * 2 / 2 := by field_simp
-             _ < y'        := hh'
+             _ < y'        := div_lt_div_of_lt two_pos hh'
 
   have h_y_lt_y' : y < y' := hy''.trans_lt h1_lt_y'
   have hh : ∀ n, 0 < n → x^n - 1 < y'^n := by
