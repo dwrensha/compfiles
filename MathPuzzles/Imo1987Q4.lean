@@ -135,8 +135,16 @@ theorem imo1987_q4 : (¬∃ f : ℕ → ℕ, ∀ n, f (f n) = n + 1987) := by
   -- same number of elements, which is impossible since {0, 1, ... , 1986}
   -- has an odd number of elements.
 
-  have : @Fintype.card {x | x < 1987} (Set.fintypeIio _) = 1987 :=
+  have h1 : @Fintype.card {x | x < 1987} (Set.fintypeIio _) = 1987 :=
     Nat.card_fintypeIio 1987
+
+  have ab_finite : Fintype ↑(A ∪ B) := by rw[ab_range]; exact Set.fintypeIio _
+
+  have h2 : Fintype.card ↑(A ∪ B) = 1987 := by
+    simp_rw[ab_range]
+    --rw[h1]
+    -- getting weird problems here about maxRecDepth
+    sorry
 
   sorry
 
