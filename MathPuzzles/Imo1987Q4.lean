@@ -1,4 +1,5 @@
 import Mathlib.Data.Nat.Basic
+import Mathlib.Data.Nat.Interval
 import Mathlib.Init.Set
 import Mathlib.Data.Set.Basic
 import Mathlib.Data.Fintype.Card
@@ -133,6 +134,9 @@ theorem imo1987_q4 : (¬∃ f : ℕ → ℕ, ∀ n, f (f n) = n + 1987) := by
   -- But since f is injective they have the
   -- same number of elements, which is impossible since {0, 1, ... , 1986}
   -- has an odd number of elements.
+
+  have : @Fintype.card {x | x < 1987} (Set.fintypeIio _) = 1987 :=
+    Nat.card_fintypeIio 1987
 
   sorry
 
