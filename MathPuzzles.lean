@@ -1,4 +1,5 @@
 import MathPuzzles.Bulgaria1998Q8
+import MathPuzzles.Canada1998Q3
 import MathPuzzles.Hungary1998Q6
 import MathPuzzles.Imo1959Q1
 import MathPuzzles.Imo1964Q1B
