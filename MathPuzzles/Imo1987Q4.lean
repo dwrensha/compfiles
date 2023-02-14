@@ -28,11 +28,8 @@ theorem imo1987_q4 : (¬∃ f : ℕ → ℕ, ∀ n, f (f n) = n + 1987) := by
     have hfm := hf m
     rw[hff] at hfn
     rw[hfn] at hfm
-    clear hf hnm hff hfn
-    have h2 : n + 1987 - 1987 = m + 1987 - 1987 :=
-        congrFun (congrArg HSub.hSub hfm) 1987
-    simp at h2
-    exact h2
+    simp at hfm
+    exact hfm
 
   -- Let A := ℕ - f(ℕ) and B := f(A).
   let NN : Set ℕ := {_x | True}
