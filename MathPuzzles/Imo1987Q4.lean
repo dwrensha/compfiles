@@ -107,7 +107,7 @@ theorem imo1987_q4_generalized (m : ℕ) :
           exact (hx' z hy).elim
         · exact hy
 
-  -- ... which is {0, 1, 2, ... , 1986}.
+  -- ... which is {0, 1, ... , 2 * m}.
   have ab_range : A ∪ B = {n | n < 2*m + 1} := by
     apply Set.eq_of_subset_of_subset
     · rw[ab_union]
