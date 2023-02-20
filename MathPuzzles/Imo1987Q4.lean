@@ -134,7 +134,7 @@ theorem imo1987_q4_generalized (m : ℕ) :
       norm_num at hx
 
   -- But since f is injective they have the
-  -- same number of elements, which is impossible since {0, 1, ... , 2 * m + 1}
+  -- same number of elements, which is impossible since {0, 1, ... , 2 * m}
   -- has an odd number of elements.
 
   have ab_finite : Fintype ↑(A ∪ B) := by
