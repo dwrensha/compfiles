@@ -28,7 +28,6 @@ jobs:
         id: build
         run: |
           set -o pipefail
-          echo "::set-output name=started::true"
           echo "Starting build at $(date +'%T')"
           lake build
           result_run1=$?
