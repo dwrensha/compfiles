@@ -137,16 +137,15 @@ theorem imo1987_q4_generalized (m : ℕ) :
   -- same number of elements, which is impossible since {0, 1, ... , 2 * m + 1}
   -- has an odd number of elements.
 
-  have h1 : @Fintype.card {x | x < 2 * m + 1} (Set.fintypeIio _) = 2 * m + 1 :=
-    Nat.card_fintypeIio _
-
-  have ab_finite : Fintype ↑(A ∪ B) := by rw[ab_range]; exact Set.fintypeIio _
+  have ab_finite : Fintype ↑(A ∪ B) := by
+    rw[ab_range]
+    exact inferInstance--exact Set.fintypeIio _
 
   have h2 : Fintype.card ↑(A ∪ B) = 2 * m + 1 := by
-    --simp_rw[ab_range]
-    --rw[h1]
-    --simp
-    sorry
+    have hc := @Fintype.card_congr' ↑(A ∪ B)
+                  {x | x < 2 * m + 1} _ _ (by rw[ab_range])
+    rw[hc]
+    simp only [Fintype.card_ofFinset, Finset.card_range]
 
   sorry
 
