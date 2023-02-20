@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: install elan
+        run: |
+          set -o pipefail
+          curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- --default-toolchain none -y
+          ~/.elan/bin/lean --version
+          echo "$HOME/.elan/bin" >> $GITHUB_PATH
+          echo "short_lean_version=$(~/.elan/bin/lean --run scripts/lean_version.lean)" >> $GITHUB_ENV
+
+      - name: get mathlib cache
+        run: lake exe cache get
+
+      - name: lake build
+        id: build
+        run: |
+          set -o pipefail
+          echo "::set-output name=started::true"
+          echo "Starting build at $(date +'%T')"
+          lake build
+          result_run1=$?
+          echo "Complete at $(date +'%T'); return value $result_run1"
+
+
