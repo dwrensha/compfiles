@@ -30,8 +30,7 @@ theorem imo1987_q4_generalized (m : ℕ) :
     have hfn := hf n
     have hfm := hf m
     rw[hff] at hfn
-    rw[hfn] at hfm
-    simp at hfm
+    rw[hfn, add_left_inj] at hfm
     exact hfm
 
   -- Let A := ℕ - f(ℕ) and B := f(A).
