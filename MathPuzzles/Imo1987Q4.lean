@@ -85,7 +85,7 @@ theorem imo1987_q4_generalized (m : ℕ) :
     exact hfm
 
   -- Let A := ℕ - f(ℕ) and B := f(A).
-  let NN : Set ℕ := {_x | True}
+  let NN : Set ℕ := Set.univ
   let A : Set ℕ := NN \ (f '' NN)
   let B : Set ℕ := f '' A
 
