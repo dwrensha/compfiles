@@ -13,20 +13,10 @@ Prove that there is no function f : ℕ → ℕ such that f(f(n)) = n + 1987
 for every n.
 -/
 
--- Should we be using Finset.card instead of Fintype.card?
-
-#check Set.card_image_of_injective
-
-#check Finset.disjUnion
-#check Finset.card_disjUnion
-
 theorem baz' (A B : Finset ℕ) (hd : Disjoint A B) :
     Finset.card (A ∪ B) = A.card + B.card := by
   rw[←Finset.disjUnion_eq_union A B hd]
   exact Finset.card_disjUnion A B hd
-
-theorem bar0' (A B : Set ℕ) (ha : Fintype A) (hb : Fintype B) (hd : A ⊆ B) :
-    A.toFinset ⊆ B.toFinset := Set.toFinset_mono hd
 
 theorem bar0'' (A : Set ℕ) (B : Finset ℕ) (ha : Fintype A)
     (hd : B ⊆ A.toFinset) : B.toSet ⊆ A := by
@@ -48,27 +38,10 @@ theorem bar (f : ℕ → ℕ) (A : Set ℕ) (h : Fintype A) (hi : f.Injective) :
     Fintype.card (f '' A) = Fintype.card A := by
   exact Set.card_image_of_injective A hi
 
--- ab_finite : Fintype ↑(A ∪ B)
--- Set.toFinset (A ∪ B) : Finset ℕ
-
--- Set.toFinset (A ∪ B) = Set.toFinset A ∪ Set.toFinset B
-#check Set.toFinset_union
-
-
 theorem bar1 (A B : Set ℕ) (ha : Fintype A) (hb : Fintype B)
     (hab : Fintype ↑(A ∪ B)):
     @Set.toFinset _ (A ∪ B) hab = @Set.toFinset _ A ha ∪ @Set.toFinset _ B hb :=
   Set.toFinset_union A B
-
-#check (· ⊆ ·)
-
-theorem bar2 (A B : Set ℕ) (hab : Fintype ↑(A ∪ B)) : Fintype A := by
-  sorry
-
-#check Fintype
-#check Finite
-#check Set.Finite
-#check Set.Finite.subset
 
 theorem bar3 (A B : Set ℕ) (h : A ⊆ B) (hab : B.Finite) : A.Finite := by
   exact Set.Finite.subset hab h
@@ -97,11 +70,6 @@ theorem bar7 (A B : Set ℕ) (hab : Fintype ↑(A ∪ B)) : Fintype ↑B := by
 
 theorem bar8 (A : Set ℕ) (h: Fintype ↑A) :
     Fintype.card ↑(A) = (Set.toFinset A).card := (Set.toFinset_card A).symm
-
-theorem baz (A B : Set ℕ) (hA : Fintype A) (hB : Fintype ↑B)
-    (hd : Disjoint A B) :
-    Fintype.card ↑(A ∪ B) = Fintype.card A + Fintype.card B := by
-  sorry
 
 theorem imo1987_q4_generalized (m : ℕ) :
     (¬∃ f : ℕ → ℕ, ∀ n, f (f n) = n + (2 * m + 1)) := by
@@ -245,7 +213,10 @@ theorem imo1987_q4_generalized (m : ℕ) :
   have ab_disjoint' := bar0 a_finite b_finite ab_disjoint
   rw[baz' A.toFinset B.toFinset ab_disjoint'] at h2
   rw[Set.toFinset_card, Set.toFinset_card] at h2
-  sorry
+  rw[Set.card_image_of_injective A f_injective] at h2
+  ring_nf at h2
+  have h4 := congrFun (congrArg HMod.hMod (f_injective (congrArg f h2))) 2
+  norm_num at h4
 
 theorem imo1987_q4 : (¬∃ f : ℕ → ℕ, ∀ n, f (f n) = n + 1987) := by
   rw[show 1987 = (2 * 993 + 1) by norm_num]
