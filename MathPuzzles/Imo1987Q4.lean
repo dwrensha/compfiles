@@ -1,7 +1,6 @@
 import Mathlib.Data.Nat.Basic
 import Mathlib.Data.Nat.Interval
 import Mathlib.Data.Set.Basic
-import Mathlib.Data.Finset.NAry
 import Mathlib.Data.Fintype.Card
 import Mathlib.Tactic.LibrarySearch
 import Mathlib.Tactic.Ring
