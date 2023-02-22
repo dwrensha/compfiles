@@ -4,7 +4,7 @@ import Mathlib.Data.Set.Basic
 import Mathlib.Data.Finset.NAry
 import Mathlib.Data.Fintype.Card
 import Mathlib.Tactic.LibrarySearch
-import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.Ring
 
 /-!
 # International Mathematical Olympiad 1987, Problem 4
