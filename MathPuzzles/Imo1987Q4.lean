@@ -51,9 +51,6 @@ theorem bar4 (A B : Set ℕ) (h : A ⊆ B) (hab : Finite ↑B) : Finite ↑A := 
   rw[Set.finite_coe_iff] at hab
   exact Set.Finite.subset hab h
 
-#check Fintype.ofFinite
-#check Finite.of_fintype
-
 theorem bar5 (A B : Set ℕ) (h : A ⊆ B) (hab : Fintype ↑B) : Fintype ↑A := by
   suffices Finite ↑A by exact Fintype.ofFinite A
   apply bar4 A B h
@@ -68,7 +65,7 @@ theorem bar7 (A B : Set ℕ) (hab : Fintype ↑(A ∪ B)) : Fintype ↑B := by
   have h : B ⊆ A ∪ B := Set.subset_union_right A B
   exact bar5 B (A ∪ B) h hab
 
-theorem bar8 (A : Set ℕ) (h: Fintype ↑A) :
+theorem bar8 (A : Set ℕ) (_h: Fintype ↑A) :
     Fintype.card ↑(A) = (Set.toFinset A).card := (Set.toFinset_card A).symm
 
 theorem imo1987_q4_generalized (m : ℕ) :
@@ -95,45 +92,23 @@ theorem imo1987_q4_generalized (m : ℕ) :
   let A : Set ℕ := NN \ (f '' NN)
   let B : Set ℕ := f '' A
 
-  -- We claim that B = f(ℕ) - f(f(ℕ)).
-  have B_eq : B = f '' NN \ (f '' (f '' NN)) := by
-    apply Set.eq_of_subset_of_subset
-    · -- Obviously B is a subset of f(ℕ) and if k belongs to B,
-      -- then it does not belong to f(f(ℕ)) since f is injective.
-      intros b hb
-      simp
-      constructor
-      · obtain ⟨b',hb1', hb2'⟩ := hb
-        use b'
-        exact hb2'
-      · intro x hx
-        obtain ⟨b',hb1', hb2'⟩ := hb
-        obtain ⟨c, hc⟩ := hb1'
-        rw[←hx] at hb2'
-        have hfi := f_injective hb2'
-        simp at hc
-        exact (hc x hfi.symm).elim
-    · -- Similarly, a member of f(f(ℕ)) cannot belong to B.
-      intros x hx
-      simp at hx
-      obtain ⟨⟨y, hy⟩, hx2⟩ := hx
-      use y
-      constructor
-      · simp
-        intros z hz
-        rw[← hz] at hy
-        exact (hx2 z hy).elim
-      · assumption
-
   -- A and B are disjoint and have union ℕ - f(f(ℕ)).
-  have ab_disjoint : Disjoint A B := sorry
+  have ab_disjoint : Disjoint A B := by
+    intros _C hca hcb c hc
+    have hcca := hca hc
+    have hccb := hcb hc
+    rw[Set.mem_diff] at hcca
+    simp at hccb
+    obtain ⟨x, _, hx2⟩ := hccb
+    simp at hcca
+    exact ((hcca x) hx2).elim
 
   have ab_union : A ∪ B = NN \ (f '' (f '' NN)) := by
     apply Set.eq_of_subset_of_subset
     · intros x hx
       cases hx with
       | inl hxa =>
-        obtain ⟨y, hy⟩ := hxa
+        obtain ⟨_y, hy⟩ := hxa
         simp
         intros x1 hx1
         simp at hy
@@ -147,7 +122,7 @@ theorem imo1987_q4_generalized (m : ℕ) :
         have hz3 := f_injective hy
         exact (hz1 y hz3).elim
     · intros x hx
-      obtain ⟨hx, hx'⟩ := hx
+      obtain ⟨_hx, hx'⟩ := hx
       cases Classical.em (x ∈ A) with
       | inl hxa => exact Set.mem_union_left B hxa
       | inr hxna =>
