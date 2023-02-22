@@ -30,6 +30,25 @@ theorem baz' (A B : Finset ℕ) (hd : Disjoint A B) :
   rw[←Finset.disjUnion_eq_union A B hd]
   exact Finset.card_disjUnion A B hd
 
+theorem bar0' (A B : Set ℕ) (ha : Fintype A) (hb : Fintype B) (hd : A ⊆ B) :
+    A.toFinset ⊆ B.toFinset := Set.toFinset_mono hd
+
+theorem bar0'' (A : Set ℕ) (B : Finset ℕ) (ha : Fintype A)
+    (hd : B ⊆ A.toFinset) : B.toSet ⊆ A := by
+  intros x hx
+  rw[Finset.mem_coe] at hx
+  have := hd hx
+  rw [Set.mem_toFinset] at this
+  exact this
+
+theorem bar0 {A B : Set ℕ} (ha : Fintype A) (hb : Fintype B) (hd : Disjoint A B) :
+    Disjoint A.toFinset B.toFinset := by
+  intros C hCa hCb
+  have hCa' : C.toSet ≤ A := bar0'' A C _ hCa
+  have hCb' : C.toSet ≤ B := bar0'' B C _ hCb
+  intros c hc
+  exact (hd hCa' hCb' hc).elim
+
 #check Set.card_image_of_inj_on
 #check Set.card_image_of_injective
 
@@ -229,8 +248,10 @@ theorem imo1987_q4_generalized (m : ℕ) :
   have h3 := bar1 A B a_finite b_finite ab_finite
   have ab_finite' := ab_finite
   have h4 := bar8 (A ∪ B) ab_finite
-  rw[h4] at h2
-  rw[h3] at h2
+  rw[h4] at h2; clear h4
+  rw[h3] at h2; clear h3
+  have ab_disjoint' := bar0 a_finite b_finite ab_disjoint
+  rw[baz' A.toFinset B.toFinset ab_disjoint'] at h2
   sorry
 
 theorem imo1987_q4 : (¬∃ f : ℕ → ℕ, ∀ n, f (f n) = n + 1987) := by
