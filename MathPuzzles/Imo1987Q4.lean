@@ -13,6 +13,8 @@ Prove that there is no function f : ℕ → ℕ such that f(f(n)) = n + 1987
 for every n.
 -/
 
+namespace Imo1987Q4
+
 theorem baz' (A B : Finset ℕ) (hd : Disjoint A B) :
     Finset.card (A ∪ B) = A.card + B.card := by
   rw[←Finset.disjUnion_eq_union A B hd]
