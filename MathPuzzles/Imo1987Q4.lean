@@ -57,9 +57,6 @@ theorem bar7 (A B : Set ℕ) (hab : Fintype ↑(A ∪ B)) : Fintype ↑B := by
   have h : B ⊆ A ∪ B := Set.subset_union_right A B
   exact bar5 B (A ∪ B) h hab
 
-theorem bar8 (A : Set ℕ) (_h: Fintype ↑A) :
-    Fintype.card ↑(A) = (Set.toFinset A).card := (Set.toFinset_card A).symm
-
 /--
 More general version of the problem.
 -/
@@ -178,8 +175,7 @@ theorem imo1987_q4_generalized (m : ℕ) :
   have a_finite := bar6 A B ab_finite
   have b_finite := bar7 A B ab_finite
   have h3 := bar1 A B a_finite b_finite ab_finite
-  have h4 := bar8 (A ∪ B) ab_finite
-  rw[h4] at h2; clear h4
+  rw[←@Set.toFinset_card _ (A ∪ B) ab_finite] at h2
   rw[h3] at h2; clear h3
   have ab_disjoint' := bar0 a_finite b_finite ab_disjoint
   rw[baz' A.toFinset B.toFinset ab_disjoint'] at h2
