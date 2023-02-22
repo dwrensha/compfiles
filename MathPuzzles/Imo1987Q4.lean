@@ -44,8 +44,9 @@ theorem bar (f : ℕ → ℕ) (A : Set ℕ) (h : Fintype A) (hi : f.Injective) :
 #check Set.toFinset_union
 
 
-theorem bar1 (A B : Set ℕ) (ha : Fintype A) (hb : Fintype B) :
-    Set.toFinset (A ∪ B) = Set.toFinset A ∪ Set.toFinset B :=
+theorem bar1 (A B : Set ℕ) (ha : Fintype A) (hb : Fintype B)
+    (hab : Fintype ↑(A ∪ B)):
+    @Set.toFinset _ (A ∪ B) hab = @Set.toFinset _ A ha ∪ @Set.toFinset _ B hb :=
   Set.toFinset_union A B
 
 #check (· ⊆ ·)
@@ -225,11 +226,11 @@ theorem imo1987_q4_generalized (m : ℕ) :
 
   have a_finite := bar6 A B ab_finite
   have b_finite := bar7 A B ab_finite
-  have h3 := bar1 A B a_finite b_finite
+  have h3 := bar1 A B a_finite b_finite ab_finite
   have ab_finite' := ab_finite
   have h4 := bar8 (A ∪ B) ab_finite
   rw[h4] at h2
-  --rw[h3] at h2
+  rw[h3] at h2
   sorry
 
 theorem imo1987_q4 : (¬∃ f : ℕ → ℕ, ∀ n, f (f n) = n + 1987) := by
