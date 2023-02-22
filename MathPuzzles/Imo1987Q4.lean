@@ -15,12 +15,7 @@ for every n.
 
 -- Should we be using Finset.card instead of Fintype.card?
 
-
-#check Set.toFinset
-
-theorem foo (f : ℕ → ℕ) (A : Finset ℕ) (hi : f.Injective) :
-    Fintype.card A = Fintype.card (f '' A) := by
-  sorry
+#check Set.card_image_of_injective
 
 #check Finset.disjUnion
 #check Finset.card_disjUnion
@@ -48,9 +43,6 @@ theorem bar0 {A B : Set ℕ} (ha : Fintype A) (hb : Fintype B) (hd : Disjoint A 
   have hCb' : C.toSet ≤ B := bar0'' B C _ hCb
   intros c hc
   exact (hd hCa' hCb' hc).elim
-
-#check Set.card_image_of_inj_on
-#check Set.card_image_of_injective
 
 theorem bar (f : ℕ → ℕ) (A : Set ℕ) (h : Fintype A) (hi : f.Injective) :
     Fintype.card (f '' A) = Fintype.card A := by
@@ -252,6 +244,7 @@ theorem imo1987_q4_generalized (m : ℕ) :
   rw[h3] at h2; clear h3
   have ab_disjoint' := bar0 a_finite b_finite ab_disjoint
   rw[baz' A.toFinset B.toFinset ab_disjoint'] at h2
+  rw[Set.toFinset_card, Set.toFinset_card] at h2
   sorry
 
 theorem imo1987_q4 : (¬∃ f : ℕ → ℕ, ∀ n, f (f n) = n + 1987) := by
