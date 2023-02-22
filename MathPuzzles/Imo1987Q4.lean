@@ -35,11 +35,6 @@ theorem bar0 {A B : Set ℕ} (ha : Fintype A) (hb : Fintype B) (hd : Disjoint A 
   intros c hc
   exact (hd hCa' hCb' hc).elim
 
-theorem bar1 (A B : Set ℕ) (ha : Fintype A) (hb : Fintype B)
-    (hab : Fintype ↑(A ∪ B)):
-    @Set.toFinset _ (A ∪ B) hab = @Set.toFinset _ A ha ∪ @Set.toFinset _ B hb :=
-  Set.toFinset_union A B
-
 theorem bar4 (A B : Set ℕ) (h : A ⊆ B) (hab : Finite ↑B) : Finite ↑A := by
   rw[Set.finite_coe_iff]
   rw[Set.finite_coe_iff] at hab
@@ -163,18 +158,16 @@ theorem imo1987_q4_generalized (m : ℕ) :
   -- has an odd number of elements.
 
   have ab_finite : Fintype ↑(A ∪ B) := by
-    rw[ab_range]
-    exact inferInstance--exact Set.fintypeIio _
+    rw[ab_range]; exact inferInstance
 
   have h2 : Fintype.card ↑(A ∪ B) = 2 * m + 1 := by
     have hc := @Fintype.card_congr' ↑(A ∪ B)
                   {x | x < 2 * m + 1} _ _ (by rw[ab_range])
-    rw[hc]
-    simp only [Fintype.card_ofFinset, Finset.card_range]
+    simp only [hc, Fintype.card_ofFinset, Finset.card_range]
 
   have a_finite := bar6 A B ab_finite
   have b_finite := bar7 A B ab_finite
-  have h3 := bar1 A B a_finite b_finite ab_finite
+  have h3 := @Set.toFinset_union ℕ A B _ a_finite b_finite ab_finite
   rw[←@Set.toFinset_card _ (A ∪ B) ab_finite] at h2
   rw[h3] at h2; clear h3
   have ab_disjoint' := bar0 a_finite b_finite ab_disjoint
