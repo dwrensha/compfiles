@@ -179,7 +179,6 @@ theorem imo1987_q4_generalized (m : ℕ) :
   have a_finite := bar6 A B ab_finite
   have b_finite := bar7 A B ab_finite
   have h3 := bar1 A B a_finite b_finite ab_finite
-  have ab_finite' := ab_finite
   have h4 := bar8 (A ∪ B) ab_finite
   rw[h4] at h2; clear h4
   rw[h3] at h2; clear h3
