@@ -47,9 +47,7 @@ theorem bar4 (A B : Set ℕ) (h : A ⊆ B) (hab : Finite ↑B) : Finite ↑A := 
 
 theorem bar5 (A B : Set ℕ) (h : A ⊆ B) (hab : Fintype ↑B) : Fintype ↑A := by
   suffices Finite ↑A by exact Fintype.ofFinite A
-  apply bar4 A B h
-  -- library_search -- TODO: namedPattern brokenness!
-  exact (Finite.of_fintype ↑B)
+  exact bar4 A B h (Finite.of_fintype ↑B)
 
 theorem bar6 (A B : Set ℕ) (hab : Fintype ↑(A ∪ B)) : Fintype ↑A := by
   have h : A ⊆ A ∪ B := Set.subset_union_left A B
