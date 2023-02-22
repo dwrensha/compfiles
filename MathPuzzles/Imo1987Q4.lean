@@ -34,17 +34,10 @@ theorem bar0 {A B : Set ℕ} (ha : Fintype A) (hb : Fintype B) (hd : Disjoint A 
   intros c hc
   exact (hd hCa' hCb' hc).elim
 
-theorem bar (f : ℕ → ℕ) (A : Set ℕ) (h : Fintype A) (hi : f.Injective) :
-    Fintype.card (f '' A) = Fintype.card A := by
-  exact Set.card_image_of_injective A hi
-
 theorem bar1 (A B : Set ℕ) (ha : Fintype A) (hb : Fintype B)
     (hab : Fintype ↑(A ∪ B)):
     @Set.toFinset _ (A ∪ B) hab = @Set.toFinset _ A ha ∪ @Set.toFinset _ B hb :=
   Set.toFinset_union A B
-
-theorem bar3 (A B : Set ℕ) (h : A ⊆ B) (hab : B.Finite) : A.Finite := by
-  exact Set.Finite.subset hab h
 
 theorem bar4 (A B : Set ℕ) (h : A ⊆ B) (hab : Finite ↑B) : Finite ↑A := by
   rw[Set.finite_coe_iff]
@@ -68,6 +61,9 @@ theorem bar7 (A B : Set ℕ) (hab : Fintype ↑(A ∪ B)) : Fintype ↑B := by
 theorem bar8 (A : Set ℕ) (_h: Fintype ↑A) :
     Fintype.card ↑(A) = (Set.toFinset A).card := (Set.toFinset_card A).symm
 
+/--
+More general version of the problem.
+-/
 theorem imo1987_q4_generalized (m : ℕ) :
     (¬∃ f : ℕ → ℕ, ∀ n, f (f n) = n + (2 * m + 1)) := by
   -- Informal solution by Sawa Pavlov, listed at
@@ -98,10 +94,12 @@ theorem imo1987_q4_generalized (m : ℕ) :
     have hcca := hca hc
     have hccb := hcb hc
     rw[Set.mem_diff] at hcca
-    simp at hccb
-    obtain ⟨x, _, hx2⟩ := hccb
-    simp at hcca
-    exact ((hcca x) hx2).elim
+    obtain ⟨_, hcaa⟩ := hcca
+    have hid := Set.image_diff f_injective NN (f '' NN)
+    have hh : f '' (NN \ f '' NN) = B := rfl
+    rw[hh] at hid
+    rw[hid] at hccb
+    exact (hcaa (Set.mem_of_mem_diff hccb)).elim
 
   have ab_union : A ∪ B = NN \ (f '' (f '' NN)) := by
     apply Set.eq_of_subset_of_subset
