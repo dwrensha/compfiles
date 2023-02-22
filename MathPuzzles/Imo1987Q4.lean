@@ -1,7 +1,7 @@
 import Mathlib.Data.Nat.Basic
 import Mathlib.Data.Nat.Interval
-import Mathlib.Init.Set
 import Mathlib.Data.Set.Basic
+import Mathlib.Data.Finset.NAry
 import Mathlib.Data.Fintype.Card
 import Mathlib.Tactic.LibrarySearch
 import Mathlib.Tactic.Linarith
@@ -13,6 +13,83 @@ Prove that there is no function f : ℕ → ℕ such that f(f(n)) = n + 1987
 for every n.
 -/
 
+-- Should we be using Finset.card instead of Fintype.card?
+
+
+#check Set.toFinset
+
+theorem foo (f : ℕ → ℕ) (A : Finset ℕ) (hi : f.Injective) :
+    Fintype.card A = Fintype.card (f '' A) := by
+  sorry
+
+#check Finset.disjUnion
+#check Finset.card_disjUnion
+
+theorem baz' (A B : Finset ℕ) (hd : Disjoint A B) :
+    Finset.card (A ∪ B) = A.card + B.card := by
+  rw[←Finset.disjUnion_eq_union A B hd]
+  exact Finset.card_disjUnion A B hd
+
+#check Set.card_image_of_inj_on
+#check Set.card_image_of_injective
+
+theorem bar (f : ℕ → ℕ) (A : Set ℕ) (h : Fintype A) (hi : f.Injective) :
+    Fintype.card (f '' A) = Fintype.card A := by
+  exact Set.card_image_of_injective A hi
+
+-- ab_finite : Fintype ↑(A ∪ B)
+-- Set.toFinset (A ∪ B) : Finset ℕ
+
+-- Set.toFinset (A ∪ B) = Set.toFinset A ∪ Set.toFinset B
+#check Set.toFinset_union
+
+
+theorem bar1 (A B : Set ℕ) (ha : Fintype A) (hb : Fintype B) :
+    Set.toFinset (A ∪ B) = Set.toFinset A ∪ Set.toFinset B :=
+  Set.toFinset_union A B
+
+#check (· ⊆ ·)
+
+theorem bar2 (A B : Set ℕ) (hab : Fintype ↑(A ∪ B)) : Fintype A := by
+  sorry
+
+#check Fintype
+#check Finite
+#check Set.Finite
+#check Set.Finite.subset
+
+theorem bar3 (A B : Set ℕ) (h : A ⊆ B) (hab : B.Finite) : A.Finite := by
+  exact Set.Finite.subset hab h
+
+theorem bar4 (A B : Set ℕ) (h : A ⊆ B) (hab : Finite ↑B) : Finite ↑A := by
+  rw[Set.finite_coe_iff]
+  rw[Set.finite_coe_iff] at hab
+  exact Set.Finite.subset hab h
+
+#check Fintype.ofFinite
+#check Finite.of_fintype
+
+theorem bar5 (A B : Set ℕ) (h : A ⊆ B) (hab : Fintype ↑B) : Fintype ↑A := by
+  suffices Finite ↑A by exact Fintype.ofFinite A
+  apply bar4 A B h
+  -- library_search -- TODO: namedPattern brokenness!
+  exact (Finite.of_fintype ↑B)
+
+theorem bar6 (A B : Set ℕ) (hab : Fintype ↑(A ∪ B)) : Fintype ↑A := by
+  have h : A ⊆ A ∪ B := Set.subset_union_left A B
+  exact bar5 A (A ∪ B) h hab
+
+theorem bar7 (A B : Set ℕ) (hab : Fintype ↑(A ∪ B)) : Fintype ↑B := by
+  have h : B ⊆ A ∪ B := Set.subset_union_right A B
+  exact bar5 B (A ∪ B) h hab
+
+theorem bar8 (A : Set ℕ) (h: Fintype ↑A) :
+    Fintype.card ↑(A) = (Set.toFinset A).card := (Set.toFinset_card A).symm
+
+theorem baz (A B : Set ℕ) (hA : Fintype A) (hB : Fintype ↑B)
+    (hd : Disjoint A B) :
+    Fintype.card ↑(A ∪ B) = Fintype.card A + Fintype.card B := by
+  sorry
 
 theorem imo1987_q4_generalized (m : ℕ) :
     (¬∃ f : ℕ → ℕ, ∀ n, f (f n) = n + (2 * m + 1)) := by
@@ -146,6 +223,13 @@ theorem imo1987_q4_generalized (m : ℕ) :
     rw[hc]
     simp only [Fintype.card_ofFinset, Finset.card_range]
 
+  have a_finite := bar6 A B ab_finite
+  have b_finite := bar7 A B ab_finite
+  have h3 := bar1 A B a_finite b_finite
+  have ab_finite' := ab_finite
+  have h4 := bar8 (A ∪ B) ab_finite
+  rw[h4] at h2
+  --rw[h3] at h2
   sorry
 
 theorem imo1987_q4 : (¬∃ f : ℕ → ℕ, ∀ n, f (f n) = n + 1987) := by
