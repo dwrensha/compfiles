@@ -14,31 +14,31 @@ for every n.
 
 namespace Imo1987Q4
 
-theorem baz' (A B : Finset ℕ) (hd : Disjoint A B) :
+lemma finset_card_disjUnion' (A B : Finset ℕ) (hd : Disjoint A B) :
     Finset.card (A ∪ B) = A.card + B.card := by
   rw[←Finset.disjUnion_eq_union A B hd]
   exact Finset.card_disjUnion A B hd
 
-theorem bar0'' (A : Set ℕ) (B : Finset ℕ) (ha : Fintype A)
+lemma set_subset_of_finset_subset {A : Set ℕ} {B : Finset ℕ} [ha : Fintype A]
     (hd : B ⊆ A.toFinset) : B.toSet ⊆ A := by
   intros x hx
   rw[Finset.mem_coe] at hx
   exact Set.mem_toFinset.mp (hd hx)
 
-theorem bar0 {A B : Set ℕ} (ha : Fintype A) (hb : Fintype B) (hd : Disjoint A B) :
-    Disjoint A.toFinset B.toFinset := by
+lemma finset_disjoint_of_set_disjoint {A B : Set ℕ} (ha : Fintype A)
+    (hb : Fintype B) (hd : Disjoint A B) : Disjoint A.toFinset B.toFinset := by
   intros C hCa hCb
-  have hCa' : C.toSet ≤ A := bar0'' A C _ hCa
-  have hCb' : C.toSet ≤ B := bar0'' B C _ hCb
+  have hCa' : C.toSet ≤ A := set_subset_of_finset_subset hCa
+  have hCb' : C.toSet ≤ B := set_subset_of_finset_subset hCb
   intros c hc
   exact (hd hCa' hCb' hc).elim
 
-theorem subset_finite {A B : Set ℕ} (h : A ⊆ B) (hab : Finite ↑B) : Finite ↑A := by
+lemma subset_finite {A B : Set ℕ} (h : A ⊆ B) (hab : Finite ↑B) : Finite ↑A := by
   rw[Set.finite_coe_iff]
   rw[Set.finite_coe_iff] at hab
   exact Set.Finite.subset hab h
 
-theorem bar5 {A B : Set ℕ} (h : A ⊆ B) (hab : Fintype ↑B) : Fintype ↑A := by
+lemma subset_fintype {A B : Set ℕ} (h : A ⊆ B) (hab : Fintype ↑B) : Fintype ↑A := by
   exact @Fintype.ofFinite A (subset_finite h (Finite.of_fintype ↑B))
 
 /--
@@ -142,21 +142,20 @@ theorem imo1987_q4_generalized (m : ℕ) :
   -- same number of elements, which is impossible since {0, 1, ... , 2 * m}
   -- has an odd number of elements.
 
-  have ab_finite : Fintype ↑(A ∪ B) := by
-    rw[ab_range]; exact inferInstance
+  have ab_fintype : Fintype ↑(A ∪ B) := by rw[ab_range]; exact inferInstance
 
   have h2 : Fintype.card ↑(A ∪ B) = 2 * m + 1 := by
     have hc := @Fintype.card_congr' ↑(A ∪ B)
                   {x | x < 2 * m + 1} _ _ (by rw[ab_range])
     simp only [hc, Fintype.card_ofFinset, Finset.card_range]
 
-  have a_finite := bar5 (Set.subset_union_left A B) ab_finite
-  have b_finite := bar5 (Set.subset_union_right A B) ab_finite
-  have h3 := @Set.toFinset_union ℕ A B _ a_finite b_finite ab_finite
-  rw[←@Set.toFinset_card _ (A ∪ B) ab_finite] at h2
+  have a_fintype := subset_fintype (Set.subset_union_left A B) ab_fintype
+  have b_fintype := subset_fintype (Set.subset_union_right A B) ab_fintype
+  have h3 := @Set.toFinset_union ℕ A B _ a_fintype b_fintype ab_fintype
+  rw[←@Set.toFinset_card _ (A ∪ B) ab_fintype] at h2
   rw[h3] at h2; clear h3
-  have ab_disjoint' := bar0 a_finite b_finite ab_disjoint
-  rw[baz' A.toFinset B.toFinset ab_disjoint'] at h2
+  have ab_disjoint' := finset_disjoint_of_set_disjoint a_fintype b_fintype ab_disjoint
+  rw[finset_card_disjUnion' A.toFinset B.toFinset ab_disjoint'] at h2
   rw[Set.toFinset_card, Set.toFinset_card] at h2
   rw[Set.card_image_of_injective A f_injective] at h2
   ring_nf at h2
