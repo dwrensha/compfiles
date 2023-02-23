@@ -79,6 +79,9 @@ theorem imo1987_q4_generalized (m : ℕ) :
   let A : Set ℕ := NN \ (f '' NN)
   let B : Set ℕ := f '' A
 
+  have hid := Set.image_diff f_injective NN (f '' NN)
+  rw[show f '' (NN \ f '' NN) = B by rfl] at hid
+
   -- A and B are disjoint and have union ℕ - f(f(ℕ)).
   have ab_disjoint : Disjoint A B := by
     intros _C hca hcb c hc
@@ -86,13 +89,11 @@ theorem imo1987_q4_generalized (m : ℕ) :
     have hccb := hcb hc
     rw[Set.mem_diff] at hcca
     obtain ⟨_, hcaa⟩ := hcca
-    have hid := Set.image_diff f_injective NN (f '' NN)
-    have hh : f '' (NN \ f '' NN) = B := rfl
-    rw[hh] at hid
     rw[hid] at hccb
     exact (hcaa (Set.mem_of_mem_diff hccb)).elim
 
   have ab_union : A ∪ B = NN \ (f '' (f '' NN)) := by
+    rw[hid]
     apply Set.eq_of_subset_of_subset
     · intros x hx
       cases hx with
@@ -106,26 +107,21 @@ theorem imo1987_q4_generalized (m : ℕ) :
         simp
         intros y hy
         simp at hxb
-        obtain ⟨z, hz1, hz2⟩ := hxb
-        rw[←hz2] at hy
-        have hz3 := f_injective hy
-        exact (hz1 y hz3).elim
+        obtain ⟨_, hz2⟩ := hxb
+        cases hz2 y hy
     · intros x hx
       obtain ⟨_hx, hx'⟩ := hx
       cases Classical.em (x ∈ A) with
-      | inl hxa => exact Set.mem_union_left B hxa
+      | inl hxa => exact Set.mem_union_left _ hxa
       | inr hxna =>
         simp
         right
         simp at hxna
-        obtain ⟨y, hy⟩ := hxna
-        use y
         constructor
+        · exact hxna
         · intros z hz
-          rw[←hz] at hy
           simp at hx'
-          exact (hx' z hy).elim
-        · exact hy
+          exact (hx' z hz).elim
 
   -- ... which is {0, 1, ... , 2 * m}.
   have ab_range : A ∪ B = {n | n < 2*m + 1} := by
