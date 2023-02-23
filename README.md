@@ -12,3 +12,11 @@ Make sure you have `elan` installed, then do:
 $ lake exe cache get
 $ lake build
 ```
+
+
+## videos
+
+|  |  |
+| [IMO 1964 Problem 4](/MathPuzzles/Imo1964Q4.lean) | https://youtu.be/TOzS4aC_K1g |
+| [IMO 1964 Problem 1b](/MathPuzzles/Imo1964Q1B.lean) | https://youtu.be/9d2nicgd68Q |
+
