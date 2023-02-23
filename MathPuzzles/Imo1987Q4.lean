@@ -33,22 +33,13 @@ theorem bar0 {A B : Set ℕ} (ha : Fintype A) (hb : Fintype B) (hd : Disjoint A 
   intros c hc
   exact (hd hCa' hCb' hc).elim
 
-theorem bar4 (A B : Set ℕ) (h : A ⊆ B) (hab : Finite ↑B) : Finite ↑A := by
+theorem subset_finite {A B : Set ℕ} (h : A ⊆ B) (hab : Finite ↑B) : Finite ↑A := by
   rw[Set.finite_coe_iff]
   rw[Set.finite_coe_iff] at hab
   exact Set.Finite.subset hab h
 
-theorem bar5 (A B : Set ℕ) (h : A ⊆ B) (hab : Fintype ↑B) : Fintype ↑A := by
-  suffices Finite ↑A by exact Fintype.ofFinite A
-  exact bar4 A B h (Finite.of_fintype ↑B)
-
-theorem bar6 (A B : Set ℕ) (hab : Fintype ↑(A ∪ B)) : Fintype ↑A := by
-  have h : A ⊆ A ∪ B := Set.subset_union_left A B
-  exact bar5 A (A ∪ B) h hab
-
-theorem bar7 (A B : Set ℕ) (hab : Fintype ↑(A ∪ B)) : Fintype ↑B := by
-  have h : B ⊆ A ∪ B := Set.subset_union_right A B
-  exact bar5 B (A ∪ B) h hab
+theorem bar5 {A B : Set ℕ} (h : A ⊆ B) (hab : Fintype ↑B) : Fintype ↑A := by
+  exact @Fintype.ofFinite A (subset_finite h (Finite.of_fintype ↑B))
 
 /--
 More general version of the problem.
@@ -159,8 +150,8 @@ theorem imo1987_q4_generalized (m : ℕ) :
                   {x | x < 2 * m + 1} _ _ (by rw[ab_range])
     simp only [hc, Fintype.card_ofFinset, Finset.card_range]
 
-  have a_finite := bar6 A B ab_finite
-  have b_finite := bar7 A B ab_finite
+  have a_finite := bar5 (Set.subset_union_left A B) ab_finite
+  have b_finite := bar5 (Set.subset_union_right A B) ab_finite
   have h3 := @Set.toFinset_union ℕ A B _ a_finite b_finite ab_finite
   rw[←@Set.toFinset_card _ (A ∪ B) ab_finite] at h2
   rw[h3] at h2; clear h3
