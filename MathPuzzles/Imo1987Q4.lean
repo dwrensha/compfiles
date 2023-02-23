@@ -23,9 +23,7 @@ theorem bar0'' (A : Set ℕ) (B : Finset ℕ) (ha : Fintype A)
     (hd : B ⊆ A.toFinset) : B.toSet ⊆ A := by
   intros x hx
   rw[Finset.mem_coe] at hx
-  have := hd hx
-  rw [Set.mem_toFinset] at this
-  exact this
+  exact Set.mem_toFinset.mp (hd hx)
 
 theorem bar0 {A B : Set ℕ} (ha : Fintype A) (hb : Fintype B) (hd : Disjoint A B) :
     Disjoint A.toFinset B.toFinset := by
