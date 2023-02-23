@@ -10,3 +10,4 @@ import MathPuzzles.Imo2013Q1
 import MathPuzzles.Imo2013Q5
 import MathPuzzles.Imo2018Q3
 import MathPuzzles.Russia1998Q42
+import MathPuzzles.Usa1998Q5
