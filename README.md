@@ -18,6 +18,6 @@ $ lake build
 
 |  |  |
 | ----- | ---- |
-| [IMO 1964 Problem 4](/MathPuzzles/Imo1964Q4.lean) | https://youtu.be/TOzS4aC_K1g |
+| [IMO 1964 Problem 4](/MathPuzzles/Imo1964Q4.lean) | [![video](http://img.youtube.com/vi/TOzS4aC_K1g/0.jpg)](http://www.youtu.be/TOzS4aC_K1g)|
 | [IMO 1964 Problem 1b](/MathPuzzles/Imo1964Q1B.lean) | https://youtu.be/9d2nicgd68Q |
 
