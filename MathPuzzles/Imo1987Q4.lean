@@ -1,3 +1,4 @@
+import Aesop
 import Mathlib.Data.Nat.Basic
 import Mathlib.Data.Nat.Interval
 import Mathlib.Data.Set.Basic
@@ -13,25 +14,6 @@ for every n.
 -/
 
 namespace Imo1987Q4
-
-lemma finset_card_disjUnion' (A B : Finset ℕ) (hd : Disjoint A B) :
-    Finset.card (A ∪ B) = A.card + B.card := by
-  rw[←Finset.disjUnion_eq_union A B hd]
-  exact Finset.card_disjUnion A B hd
-
-lemma set_subset_of_finset_subset {A : Set ℕ} {B : Finset ℕ} [ha : Fintype A]
-    (hd : B ⊆ A.toFinset) : B.toSet ⊆ A := by
-  intros x hx
-  rw[Finset.mem_coe] at hx
-  exact Set.mem_toFinset.mp (hd hx)
-
-lemma finset_disjoint_of_set_disjoint {A B : Set ℕ} (ha : Fintype A)
-    (hb : Fintype B) (hd : Disjoint A B) : Disjoint A.toFinset B.toFinset := by
-  intros C hCa hCb
-  have hCa' : C.toSet ≤ A := set_subset_of_finset_subset hCa
-  have hCb' : C.toSet ≤ B := set_subset_of_finset_subset hCb
-  intros c hc
-  exact (hd hCa' hCb' hc).elim
 
 lemma subset_finite {A B : Set ℕ} (h : A ⊆ B) (hab : Finite ↑B) : Finite ↑A := by
   rw[Set.finite_coe_iff]
@@ -55,13 +37,7 @@ theorem imo1987_q4_generalized (m : ℕ) :
   -- Note that f is injective, because if f(n) = f(m),
   -- then f(f(n)) = f(f(m)), so m = n.
   have f_injective : f.Injective := by
-    intros n m hnm
-    have hff : f (f n) = f (f m) := congrArg _ hnm
-    have hfn := hf n
-    have hfm := hf m
-    rw[hff] at hfn
-    rw[hfn, add_left_inj] at hfm
-    exact hfm
+    intros n m hnm; have hfn := hf n; simp_all only [add_left_inj]
 
   -- Let A := ℕ - f(ℕ) and B := f(A).
   let NN : Set ℕ := Set.univ
@@ -76,41 +52,16 @@ theorem imo1987_q4_generalized (m : ℕ) :
     intros _C hca hcb c hc
     have hcca := hca hc
     have hccb := hcb hc
-    rw[Set.mem_diff] at hcca
-    obtain ⟨_, hcaa⟩ := hcca
-    rw[hid] at hccb
-    exact (hcaa (Set.mem_of_mem_diff hccb)).elim
+    aesop
 
   have ab_union : A ∪ B = NN \ (f '' (f '' NN)) := by
     rw[hid]
     apply Set.eq_of_subset_of_subset
     · intros x hx
-      cases hx with
-      | inl hxa =>
-        obtain ⟨_y, hy⟩ := hxa
-        simp
-        intros x1 hx1
-        simp at hy
-        exact (hy (f x1) hx1).elim
-      | inr hxb =>
-        simp
-        intros y hy
-        simp at hxb
-        obtain ⟨_, hz2⟩ := hxb
-        cases hz2 y hy
+      cases hx <;> aesop
     · intros x hx
       obtain ⟨_hx, hx'⟩ := hx
-      cases Classical.em (x ∈ A) with
-      | inl hxa => exact Set.mem_union_left _ hxa
-      | inr hxna =>
-        simp
-        right
-        simp at hxna
-        constructor
-        · exact hxna
-        · intros z hz
-          simp at hx'
-          exact (hx' z hz).elim
+      cases Classical.em (x ∈ A) <;> aesop
 
   -- ... which is {0, 1, ... , 2 * m}.
   have ab_range : A ∪ B = {n | n < 2*m + 1} := by
@@ -130,13 +81,7 @@ theorem imo1987_q4_generalized (m : ℕ) :
       exact (hzz rfl).elim
     · rw[ab_union]
       intros x hx
-      simp at hx
-      simp
-      intros y hy
-      have hfy := hf y
-      rw[hy] at hfy
-      rw[hfy] at hx
-      norm_num at hx
+      aesop
 
   -- But since f is injective they have the
   -- same number of elements, which is impossible since {0, 1, ... , 2 * m}
@@ -154,8 +99,9 @@ theorem imo1987_q4_generalized (m : ℕ) :
   have h3 := @Set.toFinset_union ℕ A B _ a_fintype b_fintype ab_fintype
   rw[←@Set.toFinset_card _ (A ∪ B) ab_fintype] at h2
   rw[h3] at h2; clear h3
-  have ab_disjoint' := finset_disjoint_of_set_disjoint a_fintype b_fintype ab_disjoint
-  rw[finset_card_disjUnion' A.toFinset B.toFinset ab_disjoint'] at h2
+  have ab_disjoint' :=
+    (@Set.disjoint_toFinset _ _ _ a_fintype b_fintype).mpr ab_disjoint
+  rw[Finset.card_disjoint_union ab_disjoint'] at h2
   rw[Set.toFinset_card, Set.toFinset_card] at h2
   rw[Set.card_image_of_injective A f_injective] at h2
   ring_nf at h2
