@@ -1,3 +1,4 @@
+import Aesop
 import Mathlib.Combinatorics.Pigeonhole
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.LibrarySearch
@@ -68,7 +69,7 @@ theorem lemma1
                                           (Subtype.val_injective hp)).symm).elim)
     let s3 : Finset Person := Finset.cons p2 s2
                                (by rw[Finset.mem_cons, Finset.mem_singleton]
-                                   intro hp;
+                                   intro hp
                                    cases hp with
                                    | inl hp =>
                                      exact (p4.val.property.symm hp).elim
@@ -79,18 +80,12 @@ theorem lemma1
     · simp only[Finset.card_cons, Finset.card_singleton]
     · intros p1' hp1' p2' hp2' hp1p2
       rw[Finset.mem_cons, Finset.mem_cons, Finset.mem_singleton] at hp1' hp2'
-      have hp2_sym : discusses ↑↑p4 ↑↑p3 = t2 := hp2 ▸ discussion_sym _ _
       have hp4d : discusses p2 ↑↑p4 = t2 := by
          have := p4.property; simp at this; exact this
-      have hp4d_sym : discusses ↑↑p4 p2 = t2 := hp4d ▸ discussion_sym _ _
       have hp3d : discusses p2 ↑↑p3 = t2 := by
          have := p3.property; simp at this; exact this
-      have hp3d_sym : discusses ↑↑p3 p2 = t2 := hp3d ▸ discussion_sym _ _
+      aesop
 
-      repeat (first | cases' hp1' with hp1' hp1' | cases' hp2' with hp2' hp2'
-                    | rw[hp1', hp2'] at *
-                    | exact (hp1p2 rfl).elim -- deal with p1' = p2' cases
-                    | assumption)
   · push_neg at h7
     use t3
     let α' := Finset.map ⟨λ (x :Person') => x.val, Subtype.coe_injective⟩ α
@@ -170,18 +165,11 @@ theorem imo1964_q4
     · simp only[Finset.card_cons, Finset.card_singleton]
     · intros p1' hp1' p2' hp2' hp1p2
       rw[Finset.mem_cons, Finset.mem_cons, Finset.mem_singleton] at hp1' hp2'
-      have hp2_sym : discusses ↑↑p4 ↑↑p3 = t1 := hp2 ▸ discussion_sym _ _
       have hp4d : discusses p1 ↑↑p4 = t1 := by
          have := p4.property; simp at this; exact this
-      have hp4d_sym : discusses ↑↑p4 p1 = t1 := hp4d ▸ discussion_sym _ _
       have hp3d : discusses p1 ↑↑p3 = t1 := by
          have := p3.property; simp at this; exact this
-      have hp3d_sym : discusses ↑↑p3 p1 = t1 := hp3d ▸ discussion_sym _ _
-
-      repeat (first | cases' hp1' with hp1' hp1' | cases' hp2' with hp2' hp2'
-                    | rw[hp1', hp2'] at *
-                    | exact (hp1p2 rfl).elim -- deal with p1' = p2' cases
-                    | assumption)
+      aesop
 
   · -- So the people in α must all discuss only the remaining two topics.
     push_neg at h7
