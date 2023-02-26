@@ -1,5 +1,5 @@
 import Mathlib.Data.Int.Basic
-import Mathlib.Data.Set.Basic
+import Mathlib.Data.Finset.Card
 import Mathlib.Tactic.LibrarySearch
 
 /-!
@@ -12,7 +12,9 @@ Prove that for each n ≥ 2, there is a set S of n integers such that
 namespace Usa1998Q5
 
 theorem usa1998_q5 (n : ℕ) (hn : 2 ≤ n) :
-    ∃ S: Set ℤ, ∀ a b : ℤ, a ∈ S → b ∈ S → a ≠ b → (a - b)^2 ∣ a * b := by
+    ∃ S : Finset ℤ,
+       S.card = n ∧
+       ∀ a ∈ S, ∀ b ∈ S, a ≠ b → (a - b)^2 ∣ a * b := by
   -- (Informal proof from Andreescu & Feng.)
   -- We will prove by induction on n that we can find such a set Sₙ all
   -- of whose elements are nonnegative.
