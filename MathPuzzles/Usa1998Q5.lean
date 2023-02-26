@@ -25,7 +25,7 @@ theorem usa1998_q5 (n : ℕ) (hn : 2 ≤ n) :
   -- distinct elements from Sₙ. Define
   --   Sₙ₊₁ = { L + a : a ∈ Sₙ } ∪ { 0 }.
   -- Then Sₙ₊₁ consists of n + 1 nonnegative integers, since L > 0.
-  -- If α,β ∈ Sₙ₊₁ and either α or β is zero, then (α - β)² divides α\B.
+  -- If α,β ∈ Sₙ₊₁ and either α or β is zero, then (α - β)² divides αβ.
   -- If L + a, L + b ∈ Sₙ₊₁, with a,b distinct elements of Sₙ, then
   --   (L + a)(L + b) ≡ ab ≡ 0 (mod (a - b)²),
   -- so [(L + a) - (L + b)]² divides (L + a)(L + b), completing the inductive
