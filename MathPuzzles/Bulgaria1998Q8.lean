@@ -60,10 +60,10 @@ theorem bulgaria1998_q8 (n : ℕ) (x y : R) : P n x y = P n y x := by
                    (y - y^2) * (P n.succ y x) := by
     intros x y
     calc P (n.succ.succ) x y
-              = (x + y - 1) * (y + 1) * (P n.succ x (y + 2)) +
-                   (y - y^2) * (P n.succ x y) := rfl
-            _ = (x + y - 1) * (y + 1) * (P n.succ (y + 2) x) +
-                   (y - y^2) * (P n.succ y x) := by rw[ih1 x y, ih1 x (y+2)]
+        = (x + y - 1) * (y + 1) * (P n.succ x (y + 2)) +
+          (y - y^2) * (P n.succ x y) := rfl
+      _ = (x + y - 1) * (y + 1) * (P n.succ (y + 2) x) +
+          (y - y^2) * (P n.succ y x) := by rw[ih1 x y, ih1 x (y+2)]
 
   have h2 : ∀ x y : R, (x + y - 1) * (y + 1) * P n.succ (y + 2) x
         = S n x y + (x + y - 1)* (y + 1) * (x - x^2)* P n (y+2) x := by
@@ -89,8 +89,9 @@ theorem bulgaria1998_q8 (n : ℕ) (x y : R) : P n x y = P n y x := by
   have h9 : n < n.succ.succ := Nat.lt.step h8
 
   intros x y
-  calc P n.succ.succ x y = S n x y + T n x y + U n x y := h7 x y
-                       _ = S n y x + T n x y + U n x y := by rw[h_s_symm n h9 x y]
-                       _ = S n y x + T n y x + U n x y := by rw[h_t_symm n h9 x y]
-                       _ = S n y x + T n y x + U n y x := by rw[h_u_symm n h9 x y]
-                       _ = P n.succ.succ y x := (h7 y x).symm
+  calc P n.succ.succ x y
+      = S n x y + T n x y + U n x y := h7 x y
+    _ = S n y x + T n x y + U n x y := by rw[h_s_symm n h9 x y]
+    _ = S n y x + T n y x + U n x y := by rw[h_t_symm n h9 x y]
+    _ = S n y x + T n y x + U n y x := by rw[h_u_symm n h9 x y]
+    _ = P n.succ.succ y x := (h7 y x).symm
