@@ -1,7 +1,5 @@
 import Aesop
-import Mathlib.Data.Nat.Basic
 import Mathlib.Data.Nat.Prime
-import Mathlib.Data.Fintype.Card
 import Mathlib.Tactic.LibrarySearch
 import Mathlib.Tactic.Ring
 
@@ -16,4 +14,14 @@ namespace Imo1989Q5
 
 theorem imo1989_q5 (n : ℕ) :
     ∃ m : ℕ, m > 0 ∧ ∀ j, j < n → ¬ ∃ p k, p.Prime ∧ m + j = p ^ k := by
+  -- (informal solution from https://artofproblemsolving.com)
+  -- Let p₁,p₂,...pₙ,q₁,q₂,...,qₙ be distinct primes.
+  -- By Chinese Remainder theorem, there exists x such that
+  --   x ≡ -1 mod p₁q₁
+  --   x ≡ -2 mod p₂ q₂
+  --   ...
+  --   x ≡ -n mod pₙ qₙ
+  -- The n consecutive numbers x+1, x+2, ..., x+n each have at least
+  -- two prime factors, so none of them can be expressed as an integral
+  -- power of a prime.
   sorry
