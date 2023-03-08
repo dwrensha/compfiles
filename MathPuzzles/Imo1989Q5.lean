@@ -14,11 +14,6 @@ integers, none of which is an integral power of a prime number.
 
 namespace Imo1989Q5
 
-#check Nat.chineseRemainder
-#check List.Pairwise
-#check List.Pairwise.tail
-#check List.prod_cons
-
 lemma coprime_of_product (n : ℕ) (lst : List ℕ) (h : ∀ y ∈ lst, n.coprime y) :
     n.coprime lst.prod := by
   induction lst with
