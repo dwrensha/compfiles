@@ -82,7 +82,7 @@ theorem canada1998_q3 (n : ℕ) (hn : 2 ≤ n) :
                           (1:ℝ) / (2 * ↑(k' + 1) + 1 + 1) := by
       intros k' _
       apply div_lt_div_of_lt_left zero_lt_one
-      · sorry -- positivity should handle this
+      · positivity
       · exact lt_add_one _
 
     have h3 : (∑i in Finset.range k, 1 / (2 * (i:ℝ) + 1)) + (k+1)/(2 * k + 1)
