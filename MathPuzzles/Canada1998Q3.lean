@@ -32,10 +32,6 @@ private theorem lemma1 {a b c d : ℝ} (ha : 0 < a) (hb : 0 < b)
   rw[one_mul] at h2
   linarith
 
-private theorem lemma2 (f g : ℕ → ℝ) (n : ℕ) (hn : n ≠ 0)
-   (h : ∀ i ∈ Finset.range n, f i < g i) :
-   ∑ i in Finset.range n, f i < ∑ i in Finset.range n, g i := sorry
-
 private theorem lemma3 (a b c d : ℝ) (h1 : b < a) (h2 : a + c = d) :
     b + c < d := by linarith
 
