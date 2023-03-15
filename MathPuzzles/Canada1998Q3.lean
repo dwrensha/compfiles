@@ -15,9 +15,11 @@ Let n be a natural number such that n ≥ 2. Show that
   (1/(n + 1))(1 + 1/3 + ... + 1/(2n - 1)) > (1/n)(1/2 + 1/4 + ... + 1/2n).
 -/
 
+namespace Canada1998Q3
+
 open BigOperators
 
-private theorem lemma1 {a b c d : ℝ} (ha : 0 < a) (hb : 0 < b)
+theorem lemma1 {a b c d : ℝ} (ha : 0 < a) (hb : 0 < b)
     (h : a * c > b * d) : (1 / b) * c > (1/a) * d := by
   have ha' : a ≠ 0 := (ne_of_lt ha).symm
   have hb' : b ≠ 0 := (ne_of_lt hb).symm
@@ -26,14 +28,15 @@ private theorem lemma1 {a b c d : ℝ} (ha : 0 < a) (hb : 0 < b)
   have h3 : a * c / a = c := mul_div_cancel_left c ha'
   rw[h3] at h2; clear h3
   ring_nf at h2
-  have h4 : b * b⁻¹ = 1 := CommGroupWithZero.mul_inv_cancel b hb'
-  rw[h4] at h2; clear h4
+  rw[CommGroupWithZero.mul_inv_cancel b hb', one_mul] at h2
   ring_nf
-  rw[one_mul] at h2
   linarith
 
-private theorem lemma3 (a b c d : ℝ) (h1 : b < a) (h2 : a + c = d) :
+theorem lemma3 (a b c d : ℝ) (h1 : b < a) (h2 : a + c = d) :
     b + c < d := by linarith
+
+theorem lemma4 {a b c : ℝ} (h1 : a > b) : c + a > c + b :=
+  Iff.mpr (add_lt_add_iff_left c) h1
 
 theorem canada1998_q3 (n : ℕ) (hn : 2 ≤ n) :
     (1/((n:ℝ) + 1)) * ∑ i in Finset.range n, (1/(2 * (i:ℝ) + 1)) >
@@ -90,23 +93,74 @@ theorem canada1998_q3 (n : ℕ) (hn : 2 ≤ n) :
     have h4 : Finset.Nonempty (Finset.range (m + 1)) :=
       Finset.nonempty_range_succ
     have h5 := Finset.sum_lt_sum_of_nonempty h4 h2
+    norm_cast at h5
 
-    have :=
+    have h6 : (∑i in Finset.range k, 1 / (2 * (i:ℝ) + 1 + 1)) = _ := rfl
+    nth_rewrite 1 [Finset.sum_range_succ'] at h6
+
+    have h7 : 1 / 2 > 1 / (2 * (k:ℝ) + 2) := by sorry
+    have h8 : ((k:ℝ)+1)/(2 * (k:ℝ) + 1) > ((k:ℝ)+1)/(2 * (k:ℝ) + 2) := by sorry
+
+    have h9 :=
+           --  (1 + 1/3 + ... + 1/(2k-1)) + (k+1)/(2k+1)
       calc (∑i in Finset.range k, 1 / (2 * (i:ℝ) + 1)) + (k+1)/(2 * k + 1)
+
+      --    = (1/3 + ... + 1/(2k-1)) + (1 + (k+1)/(2k+1))
          = (∑i in Finset.range (m+1), 1 / (2 * ((i + 1):ℝ) + 1))
                + (1 + (k+1)/(2 * k + 1)) := by rw[←h3]; norm_cast
                                         -- TODO shouldn't need casting?
+
+       --    > (1/4 + ... + 1/2k) + (1 + (k+1)/(2k+1))
        _ > (∑i in Finset.range (m+1), 1 / (2 * ((i + 1):ℝ) + 1 + 1))
-              + (1 + (k+1)/(2 * k + 1)) := sorry
+              + (1 + (k+1)/(2 * k + 1)) := by norm_cast; linarith
+
+       _ = (∑i in Finset.range (m+1), 1 / (2 * ((i + 1):ℝ) + 1 + 1))
+              + (1/2 + 1/2 + (k+1)/(2 * k + 1)) := by field_simp
+       _ = (∑i in Finset.range (m+1), 1 / (2 * ((i + 1):ℝ) + 1 + 1))
+              + 1/2 + (1/2 + (k+1)/(2 * k + 1)) := by ring
+       _ = (∑i in Finset.range (m+1), 1 / (2 * ((i + 1):ℝ) + 1 + 1))
+              + 1/(2 *(((0:ℕ)):ℝ) + 1 + 1) + (1/2 + (k+1)/(2 * k + 1)) :=
+                      by norm_num
+       _ = (∑i in Finset.range k, 1 / (2 * (i:ℝ) + 1 + 1)) +
+              (1/2 + (k+1)/(2 * k + 1)) := by rw[←h6]; norm_cast
+
+       --    > (1/2 + 1/4 + ... + 1/2k) + (k + 1)/(2k + 2) + 1/(2k+1)
+       _ > (∑i in Finset.range k, 1 / (2 * (i:ℝ) + 1 + 1)) +
+              ((k+1)/(2 * k + 2) + 1/(2 * k + 2)) := by linarith
+
+       --    = (1/2 + 1/4 + ... + 1/2k) + (k + 2)/(2k + 2).
+       _ = (∑i in Finset.range k, 1 / (2 * (i:ℝ) + 1 + 1)) +
+              (k+2)/(2 * k + 2) := by field_simp; ring
+
+   --
+   -- Then we are done because
+   -- (k + 1)(1 + 1/3 + ... + 1/(2k - 1) + 1/(2k + 1))
+   --  = k (1 + 1/3 + ... + 1/(2k - 1))
+   --     + (1 + 1/3 + ... + 1/(2k - 1)) + (k + 1)/(2k + 1)
+   --  > k (1 + 1/3 + ... + 1/(2k - 1))
+   --     + (1/2 + 1/4 + ... + 1/2k)) + (k + 2)/(2k + 2)
+   --    (by h9, proved above)
+
+   --  > (k + 2)(1/2 + 1/4 + ... + 1/(2k + 2)).
+
+    have :=
+      calc (k + 1) * (∑i in Finset.range k.succ, 1 / (2 * (k:ℝ) + 1))
+         = k * (∑i in Finset.range k, 1 / (2 * (k:ℝ) + 1)) +
+             ((∑i in Finset.range k, 1 / (2 * (k:ℝ) + 1)) +
+                (k + 1) / (2 * k + 1)) := by
+                   rw[Finset.sum_range_succ]; ring
+       _ > k * (∑i in Finset.range k, 1 / (2 * (k:ℝ) + 1)) +
+             ((∑i in Finset.range k, 1 / (2 * (k:ℝ) + 1 + 1)) +
+                (k + 2) / (2 * k + 2)) := by
+                     apply lemma4
+                     --exact h9
+                     sorry
+
+
+
+
+
 
     sorry
 
-  --
-  -- Then we are done because
-  -- (k + 1)(1 + 1/3 + ... + 1/(2k - 1) + 1/(2k + 1))
-  --  = k (1 + 1/3 + ... + 1/(2k - 1))
-  --     + (1 + 1/3 + ... + 1/(2k - 1)) + (k + 1)/(2k + 1)
-  --  > k(1 + 1/3 + ... + 1/(2k - 1))
-  --     + (1 + 1/2 + ... + 1/2k)) + (k + 2)/(2k + 1)
-  --  > (k + 2)(1/2 + 1/4 + ... + 1/(2k + 2)).
 
