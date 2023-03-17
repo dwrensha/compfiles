@@ -21,16 +21,13 @@ open BigOperators
 
 theorem lemma1 {a b c d : ℝ} (ha : 0 < a) (hb : 0 < b)
     (h : a * c > b * d) : (1 / b) * c > (1/a) * d := by
-  have ha' : a ≠ 0 := (ne_of_lt ha).symm
-  have hb' : b ≠ 0 := (ne_of_lt hb).symm
-  have h1 : a * c / a > b * d / a := div_lt_div_of_lt ha h
-  have h2 : a * c / a / b > b * d / a / b := div_lt_div_of_lt hb h1
-  have h3 : a * c / a = c := mul_div_cancel_left c ha'
-  rw[h3] at h2; clear h3
-  ring_nf at h2
-  rw[CommGroupWithZero.mul_inv_cancel b hb', one_mul] at h2
-  ring_nf
-  linarith
+  rw [mul_comm, ←div_eq_mul_one_div c b, mul_comm, ←div_eq_mul_one_div d a]
+  have h' := (div_lt_div_right (mul_pos ha hb)).mpr h
+  nth_rewrite 1 [mul_comm a b] at h'
+  rw [mul_comm b d, mul_comm a c, mul_div_assoc, mul_div_assoc] at h'
+  rw[div_mul_right b (ne_of_lt ha).symm, div_mul_right a (ne_of_lt hb).symm,
+     ←div_eq_mul_one_div, ←div_eq_mul_one_div] at h'
+  exact h'
 
 theorem lemma3 (a b c d : ℝ) (h1 : b < a) (h2 : a + c = d) :
     b + c < d := by linarith
