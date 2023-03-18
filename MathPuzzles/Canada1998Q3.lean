@@ -29,9 +29,6 @@ theorem lemma1 {a b c d : ℝ} (ha : 0 < a) (hb : 0 < b)
      ←div_eq_mul_one_div, ←div_eq_mul_one_div] at h'
   exact h'
 
-theorem lemma3 (a b c d : ℝ) (h1 : b < a) (h2 : a + c = d) :
-    b + c < d := by linarith
-
 theorem lemma4 {a b c : ℝ} (h1 : a > b) : c + a > c + b :=
   Iff.mpr (add_lt_add_iff_left c) h1
 
