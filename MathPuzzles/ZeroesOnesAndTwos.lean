@@ -326,11 +326,10 @@ lemma even_5_pow_plus_one (n : ℕ) : 2 ∣ 5 ^ n + 1 := by
   apply Nat.dvd_of_mod_eq_zero
   have h0 : 5 ^ n % 2 = 1 := by
     induction' n with n' ih
-    · simp
-    · rw[pow_succ, Nat.mul_mod, ih]
-      simp
+    · norm_num
+    · simp only [pow_succ, Nat.mul_mod, ih, mul_one, Nat.mod_mod]
   rw[Nat.add_mod, h0]
-  simp
+  norm_num
 
 lemma ones_and_twos_aux (n : ℕ) :
   ∃ k : ℕ+, (List.length (Nat.digits 10 (2^n.succ * k)) = n.succ) ∧
