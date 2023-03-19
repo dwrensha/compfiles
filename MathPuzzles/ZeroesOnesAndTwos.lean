@@ -351,7 +351,8 @@ lemma ones_and_twos_aux (n : ℕ) :
     have hd : 2 ^ pn.succ.succ ∣ prepend_two (2 ^ pn.succ * ↑pk) := by
       rw [prepend_two, factor_ten_pow, hpk1, ht]
       have hr : 2 * (2 ^ pn.succ * 5 ^ pn.succ) + 2 ^ pn.succ * (2 * t) =
-                   2 ^ pn.succ.succ * (5 ^ pn.succ + t) := by sorry --ring_exp
+                   2 ^ pn.succ.succ * (5 ^ pn.succ + t) := by
+        repeat rw[pow_succ]; ring_nf
       rw[hr]
       exact Dvd.intro (5 ^ Nat.succ pn + t) rfl
     obtain ⟨k', hk'⟩ := hd
@@ -375,12 +376,14 @@ lemma ones_and_twos_aux (n : ℕ) :
     have hd : 2 ^ pn.succ.succ ∣ prepend_one (2 ^ pn.succ * ↑pk) := by
       rw[prepend_one, hpk1, factor_ten_pow, ht]
       have h5 : 2 ^ pn.succ * 5 ^ pn.succ + 2 ^ pn.succ * (2 * t + 1) =
-            2^pn.succ * (2 * (2 * 5 ^ pn + t) + (5^pn + 1)) := by sorry --ring_exp,
+            2^pn.succ * (2 * (2 * 5 ^ pn + t) + (5^pn + 1)) := by
+        repeat rw[pow_succ]; ring_nf
       rw[h5]
       obtain ⟨k5,hk5⟩:= even_5_pow_plus_one pn
       rw[hk5]
       have h5' : 2 ^ pn.succ * (2 * (2 * 5 ^ pn + t) + 2 * k5) =
-           2^pn.succ.succ * (2 * 5 ^ pn + t + k5) := by sorry --ring_exp,
+           2^pn.succ.succ * (2 * 5 ^ pn + t + k5) := by
+        repeat rw[pow_succ]; ring_nf
       rw[h5']
       exact Dvd.intro (2 * 5 ^ pn + t + k5) rfl
     obtain ⟨k', hk'⟩ := hd
