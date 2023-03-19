@@ -7,9 +7,9 @@ import Mathlib.Data.Nat.Digits
 import Mathlib.Data.Nat.GCD.Basic
 import Mathlib.Algebra.BigOperators.Ring
 
---import tactic.ring_exp
-
 /-!
+(From Mathematical Puzzles: A Connoisseur's Collection by Peter Winkler.)
+
 Let n be a natural number. Prove that
 
   (a) n has a (nonzero) multiple whose representation in base 10 contains
@@ -222,7 +222,7 @@ def prepend_one (n : ℕ) := 10 ^ (List.length (Nat.digits 10 n)) + n
 
 lemma prepend_one_pos (n: ℕ) : 0 < prepend_one n := by
   cases' n
-  · simp[prepend_one]
+  · norm_num
   · rw[prepend_one]; norm_num
 
 lemma digits_len' (n : ℕ) (hn : 0 < n) :
@@ -266,14 +266,13 @@ lemma prepend_one_all_one_or_two (n : ℕ) (hn : all_one_or_two (Nat.digits 10 n
  cases' he with he he
  · exact hn e he
  · rw[List.mem_singleton] at he
-   rw[he]
-   simp[is_one_or_two]
+   simp only [he, is_one_or_two]
 
 def prepend_two (n : ℕ) := 2 * (10 ^ (List.length (Nat.digits 10 n))) + n
 
 lemma prepend_two_pos (n: ℕ) : 0 < prepend_two n := by
   cases n
-  · simp[prepend_two]
+  · norm_num
   · rw[prepend_two]; norm_num
 
 lemma prepend_two_div (n : ℕ) (hn : 0 < n) : prepend_two n / 10 = prepend_two (n / 10) := by
@@ -313,14 +312,12 @@ lemma prepend_two_all_one_or_two (n : ℕ) (hn : all_one_or_two (Nat.digits 10 n
   cases' he with he he
   · exact hn e he
   · rw[List.mem_singleton] at he
-    rw[he]
-    simp[is_one_or_two]
+    simp only [he, is_one_or_two]
 
 lemma factor_ten_pow (k : ℕ) : 10 ^ k = (2^k) * (5^k) := by
   induction' k with k' ih
   · simp only [pow_zero, mul_one]
-  · rw[pow_succ, pow_succ, pow_succ]
-    linarith
+  · rw[pow_succ, pow_succ, pow_succ, ih]; ring
 
 lemma even_5_pow_plus_one (n : ℕ) : 2 ∣ 5 ^ n + 1 := by
   apply Nat.dvd_of_mod_eq_zero
