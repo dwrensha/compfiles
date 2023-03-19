@@ -364,14 +364,11 @@ lemma ones_and_twos_aux (n : ℕ) :
         linarith
       · exact Nat.succ_pos _
     use ⟨k', hkp'⟩
-    dsimp
-    sorry
-    /-
-    rw[← hk']
+    rw[PNat.mk_coe, ←hk']
     constructor
     · rw[prepend_two_eq_append]
-      rw [list.length_append, list.length_singleton, hpk1]
-    · exact prepend_two_all_one_or_two _ hpk2 -/
+      rw [List.length_append, List.length_singleton, hpk1]
+    · exact prepend_two_all_one_or_two _ hpk2
   · -- Odd case. Prepend 1.
     have hd : 2 ^ pn.succ.succ ∣ prepend_one (2 ^ pn.succ * ↑pk) := by
       rw[prepend_one, hpk1, factor_ten_pow, ht]
@@ -395,14 +392,11 @@ lemma ones_and_twos_aux (n : ℕ) :
         linarith
       · exact Nat.succ_pos _
     use ⟨k', hkp'⟩
-    dsimp
-    sorry
-/-
-    rw[← hk'],
-    split,
-    { rw [prepend_one_eq_append],
-      rw [list.length_append, list.length_singleton, hpk1] },
-    { exact prepend_one_all_one_or_two _ hpk2, }},-/
+    rw[PNat.mk_coe,←hk']
+    constructor
+    · rw [prepend_one_eq_append]
+      rw [List.length_append, List.length_singleton, hpk1]
+    · exact prepend_one_all_one_or_two _ hpk2
 
 --
 -- Prove that 2^n has a positive multiple whose representation contains only ones and twos.
