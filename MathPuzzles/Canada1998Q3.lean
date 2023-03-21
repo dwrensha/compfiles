@@ -146,10 +146,9 @@ theorem canada1998_q3 (n : ℕ) (hn : 2 ≤ n) :
        _ > k * (∑i in Finset.range k, 1 / (2 * (i:ℝ) + 1)) +
              ((∑i in Finset.range k, 1 / (2 * (i:ℝ) + 1 + 1)) +
                 (k + 2) / (2 * k + 2)) := lemma4 h9
-
-
-
-
+       _ > (k + 1) * (∑i in Finset.range k, 1 / (2 * (i:ℝ) + 2)) +
+             ((∑i in Finset.range k, 1 / (2 * (i:ℝ) + 1 + 1)) +
+                (k + 2) / (2 * k + 2)) := add_lt_add_right ih _
 
     sorry
 
