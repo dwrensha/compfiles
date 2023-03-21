@@ -92,8 +92,16 @@ theorem canada1998_q3 (n : ℕ) (hn : 2 ≤ n) :
     have h6 : (∑i in Finset.range k, 1 / (2 * (i:ℝ) + 1 + 1)) = _ := rfl
     nth_rewrite 1 [Finset.sum_range_succ'] at h6
 
-    have h7 : 1 / 2 > 1 / (2 * (k:ℝ) + 2) := by sorry
-    have h8 : ((k:ℝ)+1)/(2 * (k:ℝ) + 1) > ((k:ℝ)+1)/(2 * (k:ℝ) + 2) := by sorry
+    have h7' : (2:ℝ) * (k:ℝ) ≥ 4 := by
+      have hh2' : k ≥ 2 := Nat.succ_le_succ (Nat.succ_le_succ (Nat.zero_le m))
+      have hh2 : (k:ℝ) ≥ 2 := by exact_mod_cast hh2'
+      calc
+        (2:ℝ) * (k:ℝ) ≥ (2:ℝ) * 2 := mul_le_mul_of_nonneg_left hh2 (by linarith)
+        _ = 4 := by norm_num
+
+    have h7 : 1 / 2 > 1 / (2 * (k:ℝ) + 2) := by apply div_lt_div' <;> linarith
+    have h8 : ((k:ℝ)+1)/(2 * (k:ℝ) + 1) > ((k:ℝ)+1)/(2 * (k:ℝ) + 2) :=
+      by apply div_lt_div' <;> linarith
 
     have h9 :=
            --  (1 + 1/3 + ... + 1/(2k-1)) + (k+1)/(2k+1)
@@ -151,7 +159,8 @@ theorem canada1998_q3 (n : ℕ) (hn : 2 ≤ n) :
                 (k + 2) / (2 * k + 2)) := add_lt_add_right ih _
        _ = (k + 1) * (∑i in Finset.range k, 1 / (2 * (i:ℝ) + 2)) +
              ((∑i in Finset.range k, 1 / (2 * (i:ℝ) + 2)) +
-                (k + 2) / (2 * k + 2)) := sorry
+                (k + 2) / (2 * k + 2)) := by
+             congr; funext x; rw [add_assoc, show (1:ℝ) + 1 = 2 by norm_num]
        _ = (k + 2) * ((∑i in Finset.range k, 1 / (2 * (i:ℝ) + 2)) +
                 1 / (2 * k + 2)) := by ring
        _ = (k + 2) * (∑i in Finset.range k.succ, 1 / (2 * (i:ℝ) + 2))
