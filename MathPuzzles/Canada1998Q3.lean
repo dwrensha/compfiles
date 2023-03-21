@@ -138,18 +138,14 @@ theorem canada1998_q3 (n : ℕ) (hn : 2 ≤ n) :
    --  > (k + 2)(1/2 + 1/4 + ... + 1/(2k + 2)).
 
     have :=
-      calc (k + 1) * (∑i in Finset.range k.succ, 1 / (2 * (k:ℝ) + 1))
-         = k * (∑i in Finset.range k, 1 / (2 * (k:ℝ) + 1)) +
-             ((∑i in Finset.range k, 1 / (2 * (k:ℝ) + 1)) +
+      calc (k + 1) * (∑i in Finset.range k.succ, 1 / (2 * (i:ℝ) + 1))
+         = k * (∑i in Finset.range k, 1 / (2 * (i:ℝ) + 1)) +
+             ((∑i in Finset.range k, 1 / (2 * (i:ℝ) + 1)) +
                 (k + 1) / (2 * k + 1)) := by
                    rw[Finset.sum_range_succ]; ring
-       _ > k * (∑i in Finset.range k, 1 / (2 * (k:ℝ) + 1)) +
-             ((∑i in Finset.range k, 1 / (2 * (k:ℝ) + 1 + 1)) +
-                (k + 2) / (2 * k + 2)) := by
-                     apply lemma4
-                     --exact h9
-                     sorry
-
+       _ > k * (∑i in Finset.range k, 1 / (2 * (i:ℝ) + 1)) +
+             ((∑i in Finset.range k, 1 / (2 * (i:ℝ) + 1 + 1)) +
+                (k + 2) / (2 * k + 2)) := lemma4 h9
 
 
 
