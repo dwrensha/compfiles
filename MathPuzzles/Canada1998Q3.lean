@@ -149,7 +149,15 @@ theorem canada1998_q3 (n : ℕ) (hn : 2 ≤ n) :
        _ > (k + 1) * (∑i in Finset.range k, 1 / (2 * (i:ℝ) + 2)) +
              ((∑i in Finset.range k, 1 / (2 * (i:ℝ) + 1 + 1)) +
                 (k + 2) / (2 * k + 2)) := add_lt_add_right ih _
+       _ = (k + 1) * (∑i in Finset.range k, 1 / (2 * (i:ℝ) + 2)) +
+             ((∑i in Finset.range k, 1 / (2 * (i:ℝ) + 2)) +
+                (k + 2) / (2 * k + 2)) := sorry
+       _ = (k + 2) * ((∑i in Finset.range k, 1 / (2 * (i:ℝ) + 2)) +
+                1 / (2 * k + 2)) := by ring
+       _ = (k + 2) * (∑i in Finset.range k.succ, 1 / (2 * (i:ℝ) + 2))
+                 := by rw[←Finset.sum_range_succ]
+    norm_cast at this
+    norm_cast
 
-    sorry
 
 
