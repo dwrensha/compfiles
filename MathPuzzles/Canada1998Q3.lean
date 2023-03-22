@@ -29,9 +29,6 @@ theorem lemma1 {a b c d : ℝ} (ha : 0 < a) (hb : 0 < b)
      ←div_eq_mul_one_div, ←div_eq_mul_one_div] at h'
   exact h'
 
-theorem lemma4 {a b c : ℝ} (h1 : a > b) : c + a > c + b :=
-  Iff.mpr (add_lt_add_iff_left c) h1
-
 theorem canada1998_q3 (n : ℕ) (hn : 2 ≤ n) :
     (1/((n:ℝ) + 1)) * ∑ i in Finset.range n, (1/(2 * (i:ℝ) + 1)) >
     (1/(n:ℝ)) * ∑ i in Finset.range n, (1/(2 * (i:ℝ) + 2)) := by
@@ -153,7 +150,7 @@ theorem canada1998_q3 (n : ℕ) (hn : 2 ≤ n) :
                    rw[Finset.sum_range_succ]; ring
        _ > k * (∑i in Finset.range k, 1 / (2 * (i:ℝ) + 1)) +
              ((∑i in Finset.range k, 1 / (2 * (i:ℝ) + 1 + 1)) +
-                (k + 2) / (2 * k + 2)) := lemma4 h9
+                (k + 2) / (2 * k + 2)) := (add_lt_add_iff_left _).mpr h9
        _ > (k + 1) * (∑i in Finset.range k, 1 / (2 * (i:ℝ) + 2)) +
              ((∑i in Finset.range k, 1 / (2 * (i:ℝ) + 1 + 1)) +
                 (k + 2) / (2 * k + 2)) := add_lt_add_right ih _
