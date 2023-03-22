@@ -19,12 +19,6 @@ namespace Canada1998Q3
 
 open BigOperators
 
-theorem lemma1 {a b c d : ℝ} (ha : 0 < a) (hb : 0 < b)
-    (h : b * d < a * c) : (1 / a) * d < (1 / b) * c := by
-  rw[div_mul_eq_mul_div₀, one_mul, div_mul_eq_mul_div₀, one_mul]
-  apply (div_lt_div_iff ha hb).mpr
-  rwa [mul_comm d b, mul_comm c a]
-
 theorem canada1998_q3 (n : ℕ) (hn : 2 ≤ n) :
     (1/((n:ℝ) + 1)) * ∑ i in Finset.range n, (1/(2 * (i:ℝ) + 1)) >
     (1/(n:ℝ)) * ∑ i in Finset.range n, (1/(2 * (i:ℝ) + 2)) := by
@@ -43,7 +37,9 @@ theorem canada1998_q3 (n : ℕ) (hn : 2 ≤ n) :
       by have h3 : 0 < (n.succ.succ:ℝ) := by norm_cast; exact Nat.zero_lt_succ _
          have h4 : 0 < (n.succ.succ:ℝ) + 1 :=
            by norm_cast; exact Nat.zero_lt_succ _
-         apply lemma1 h3 h4 this
+         rw[div_mul_eq_mul_div₀, one_mul, div_mul_eq_mul_div₀, one_mul]
+         apply (div_lt_div_iff h3 h4).mpr
+         linarith
 
   induction n with
   | zero =>
