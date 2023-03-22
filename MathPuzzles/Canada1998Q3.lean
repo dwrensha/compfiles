@@ -34,11 +34,8 @@ theorem canada1998_q3 (n : ℕ) (hn : 2 ≤ n) :
   suffices
    (n.succ.succ:ℝ) * ∑ i in Finset.range n.succ.succ, (1/(2 * (i:ℝ) + 1)) >
     ((n.succ.succ:ℝ) + 1) * ∑ i in Finset.range n.succ.succ, (1/(2 * (i:ℝ) + 2))
-      by have h3 : 0 < (n.succ.succ:ℝ) := by norm_cast; exact Nat.zero_lt_succ _
-         have h4 : 0 < (n.succ.succ:ℝ) + 1 :=
-           by norm_cast; exact Nat.zero_lt_succ _
-         rw[div_mul_eq_mul_div₀, one_mul, div_mul_eq_mul_div₀, one_mul]
-         apply (div_lt_div_iff h3 h4).mpr
+      by rw[div_mul_eq_mul_div₀, one_mul, div_mul_eq_mul_div₀, one_mul]
+         apply (div_lt_div_iff (by positivity) (by positivity)).mpr
          linarith
 
   induction n with
@@ -156,6 +153,3 @@ theorem canada1998_q3 (n : ℕ) (hn : 2 ≤ n) :
                  := by rw[←Finset.sum_range_succ]
     norm_cast at this
     norm_cast
-
-
-
