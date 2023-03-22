@@ -20,8 +20,8 @@ namespace Canada1998Q3
 open BigOperators
 
 theorem lemma1 {a b c d : ℝ} (ha : 0 < a) (hb : 0 < b)
-    (h : a * c > b * d) : (1 / b) * c > (1/a) * d := by
-  rw [mul_comm, ←div_eq_mul_one_div c b, mul_comm, ←div_eq_mul_one_div d a]
+    (h : b * d < a * c) : (1/a) * d  < (1 / b) * c := by
+  rw [mul_comm, ←div_eq_mul_one_div d a, mul_comm, ←div_eq_mul_one_div c b]
   have h' := (div_lt_div_right (mul_pos ha hb)).mpr h
   nth_rewrite 1 [mul_comm a b] at h'
   rw [mul_comm b d, mul_comm a c, mul_div_assoc, mul_div_assoc] at h'
