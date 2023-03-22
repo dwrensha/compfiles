@@ -20,14 +20,10 @@ namespace Canada1998Q3
 open BigOperators
 
 theorem lemma1 {a b c d : ℝ} (ha : 0 < a) (hb : 0 < b)
-    (h : b * d < a * c) : (1/a) * d < (1 / b) * c := by
-  rw [mul_comm, ←div_eq_mul_one_div d a, mul_comm, ←div_eq_mul_one_div c b]
-  have h' := (div_lt_div_right (mul_pos ha hb)).mpr h
-  nth_rewrite 1 [mul_comm a b] at h'
-  rw [mul_comm b d, mul_comm a c, mul_div_assoc, mul_div_assoc] at h'
-  rw[div_mul_right b (ne_of_lt ha).symm, div_mul_right a (ne_of_lt hb).symm,
-     ←div_eq_mul_one_div, ←div_eq_mul_one_div] at h'
-  exact h'
+    (h : b * d < a * c) : (1 / a) * d < (1 / b) * c := by
+  rw[div_mul_eq_mul_div₀, one_mul, div_mul_eq_mul_div₀, one_mul]
+  apply (div_lt_div_iff ha hb).mpr
+  rwa [mul_comm d b, mul_comm c a]
 
 theorem canada1998_q3 (n : ℕ) (hn : 2 ≤ n) :
     (1/((n:ℝ) + 1)) * ∑ i in Finset.range n, (1/(2 * (i:ℝ) + 1)) >
