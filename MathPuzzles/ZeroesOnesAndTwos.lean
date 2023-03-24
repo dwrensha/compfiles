@@ -307,11 +307,7 @@ lemma factor_ten_pow (k : ℕ) : 10 ^ k = (2^k) * (5^k) := by
 
 lemma even_5_pow_plus_one (n : ℕ) : 2 ∣ 5 ^ n + 1 := by
   apply Nat.dvd_of_mod_eq_zero
-  have h0 : 5 ^ n % 2 = 1 := by
-    induction' n with n' ih
-    · norm_num
-    · simp only [pow_succ, Nat.mul_mod, ih, mul_one, Nat.mod_mod]
-  rw[Nat.add_mod, h0]
+  rw[Nat.add_mod, Nat.pow_mod]
   norm_num
 
 lemma ones_and_twos_aux (n : ℕ) :
