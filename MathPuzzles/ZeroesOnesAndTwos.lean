@@ -150,16 +150,8 @@ lemma lemma_2'
   lemma_2'' a b hlt (λi ↦ 10^i)
 
 lemma lemma_2_aux (n a b c: ℕ) (hc : a + b = c) (hab: a % n = c % n) : b % n = 0 := by
-  have h1: a ≡ c [MOD n] := hab
-  have h2 : a + b ≡ c + b [MOD n] := Nat.ModEq.add h1 rfl
-  rw [hc] at h2
-  have h2' : c + 0 = c := self_eq_add_right.mpr rfl
-  have h2'' : c + 0 ≡ c + b [MOD n] := by rwa [h2']
-  have h3 : 0 ≡ b [MOD n] := Nat.ModEq.add_left_cancel' c h2''
-  have h4 : 0 % n = b % n := h3
-  rw [Nat.zero_mod] at h4
-  exact h4.symm
-
+  rw [show a = a + 0 by rfl, ←hc] at hab
+  exact (Nat.ModEq.add_left_cancel' _ hab).symm
 
 lemma lemma_2
     (n : ℕ)
