@@ -164,15 +164,9 @@ lemma lemma_2
   rwa [add_comm]
 
 lemma lemma_3 {a n : ℕ} (ha : 0 < a) (hm : a % n = 0) : (∃ k : ℕ+, a = n * k) := by
-  have h2 : n ∣ a := Nat.dvd_of_mod_eq_zero hm
-  obtain ⟨k', hk'⟩ := exists_eq_mul_right_of_dvd h2
-  have hkp : 0 < k' := by
-    cases' k' with k'
-    · rw [hk'] at ha
-      rwa [Nat.mul_zero] at ha
-    · exact Nat.succ_pos k'
-  use ⟨k', hkp⟩
-  simpa [hkp]
+  obtain ⟨k', hk'⟩ := exists_eq_mul_right_of_dvd (Nat.dvd_of_mod_eq_zero hm)
+  have hkp : 0 < k' := lt_of_mul_lt_mul_left' (hk' ▸ ha)
+  exact ⟨⟨k', hkp⟩, hk'⟩
 
 lemma lemma_4 {k : ℕ} (hk : 0 < k) (f: ℕ → ℕ) (hf0 : 0 < f 0) :
       0 < ∑ i in Finset.range k, f i := by
