@@ -10,6 +10,7 @@ import MathPuzzles.Imo2011Q3
 import MathPuzzles.Imo2013Q1
 import MathPuzzles.Imo2013Q5
 import MathPuzzles.Imo2018Q3
+import MathPuzzles.India1998Q1
 import MathPuzzles.Russia1998Q42
 import MathPuzzles.Usa1998Q5
 import MathPuzzles.ZeroesOnesAndTwos
