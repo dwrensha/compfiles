@@ -23,24 +23,22 @@ theorem india1998_q1a (a₁ a₂ b₁ b₂ : ℤ) :
 lemma make_nonneg (a b: ℤ) (hb : 0 < b) : 0 ≤ a + b * ((b - a) / b) := by
   linarith[Int.emod_lt_of_pos (b-a) hb, (b - a).emod_add_ediv b]
 
-#exit
+lemma lemma1' (a : ℤ) (b : ℕ) (hb : 0 < b) : ((a : ZMod b).val : ℤ) = a % (b : ℤ) := by
+  have h1: (a : ZMod b) = ((( a + b * ((b - a )/ b)) : ℤ): ZMod b) := by simp
+  rw [←Int.add_mul_emod_self_left a b ((b - a)/ b), h1]
+  have h2 : 0 ≤ (( a + b * ((b - a )/ b)) : ℤ) := make_nonneg a ↑b (Int.coe_nat_pos.mpr hb)
+  obtain ⟨A, hA⟩ := Int.eq_ofNat_of_zero_le h2
+  simp [hA, ZMod.val_nat_cast A]
 
-lemma lemma1' (a : ℤ) (b : ℕ) (hb : 0 < b) : ((a : zmod b).val : ℤ) = a % (b : ℤ) :=
-begin
-  have h1: (a : zmod b) = ((( a + b * ((b - a )/ b)) : ℤ): zmod b) := by simp,
-  rw [←int.add_mul_mod_self_left a b ((b - a)/ b), h1],
-  have h2 : 0 ≤ (( a + b * ((b - a )/ b)) : ℤ) := make_nonneg a ↑b (int.coe_nat_pos.mpr hb),
-  obtain ⟨A, hA⟩ := int.eq_coe_of_zero_le h2,
-  simp [hA, zmod.val_nat_cast A],
-end
-
-lemma lemma1 (a: ℤ) : ((a : zmod 7).val : ℤ) = a % 7 := lemma1' a 7 (by norm_num)
+lemma lemma1 (a: ℤ) : ((a : ZMod 7).val : ℤ) = a % 7 := lemma1' a 7 (by norm_num)
 
 theorem india1998_q1b (n a b: ℤ) (hn : a^2 + 3 * b^2 = 7 * n) :
-  (∃ a b : ℤ, a^2 + 3 * b^2 = n) :=
-begin
-  let az : zmod 7 := a,
-  let bz : zmod 7 := b,
+    (∃ a b : ℤ, a^2 + 3 * b^2 = n) := by
+  let az : ZMod 7 := a
+  let bz : ZMod 7 := b
+  sorry
+
+#exit
 
   have h1 := calc az ^ 2 + (-4) * bz ^ 2
         = az^2 + ((3:ℤ):zmod 7) * bz^2 : by ring
