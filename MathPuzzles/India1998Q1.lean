@@ -3,6 +3,7 @@ import Mathlib.Data.Int.ModEq
 --import data.nat.prime_norm_num
 import Mathlib.Data.ZMod.Basic
 
+import Mathlib.Tactic.LibrarySearch
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
 
@@ -19,10 +20,10 @@ theorem india1998_q1a (a₁ a₂ b₁ b₂ : ℤ) :
     (∃ a₃ b₃, (a₁^2 + 3 * b₁^2) * (a₂^2 + 3 * b₂^2) = (a₃^2 + 3 * b₃^2)) :=
   ⟨a₁ * a₂ + 3 * b₁ * b₂, ⟨a₁ * b₂ - b₁ * a₂, by ring⟩⟩
 
-#exit
+lemma make_nonneg (a b: ℤ) (hb : 0 < b) : 0 ≤ a + b * ((b - a) / b) := by
+  linarith[Int.emod_lt_of_pos (b-a) hb, (b - a).emod_add_ediv b]
 
-lemma make_nonneg (a b: ℤ) (hb : 0 < b) : 0 ≤ a + b * ((b - a) / b) :=
-by linarith[Int.mod_lt_of_pos (b-a) hb, (b - a).mod_add_div b]
+#exit
 
 lemma lemma1' (a : ℤ) (b : ℕ) (hb : 0 < b) : ((a : zmod b).val : ℤ) = a % (b : ℤ) :=
 begin
