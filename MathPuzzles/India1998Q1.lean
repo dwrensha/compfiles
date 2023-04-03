@@ -36,18 +36,19 @@ theorem india1998_q1b (n a b: ℤ) (hn : a^2 + 3 * b^2 = 7 * n) :
     (∃ a b : ℤ, a^2 + 3 * b^2 = n) := by
   let az : ZMod 7 := a
   let bz : ZMod 7 := b
+
+  have h1 := calc az ^ 2 + (-4) * bz ^ 2
+        = az^2 + ((3:ℤ): ZMod 7) * bz^2 := by rw [show -4 = ((3:ℤ):ZMod 7) by rfl]
+      _ = ((a^2 : ℤ) : ZMod 7) + ((3:ℤ): ZMod 7) * (((b^2) : ℤ) : ZMod 7)
+                                   := by rw [Int.cast_pow a 2, Int.cast_pow b 2]
+      _ = ((a^2 : ℤ) : ZMod 7) + (((3 * b^2) : ℤ) : ZMod 7) := by rw [Int.cast_mul 3 (b^2)]
+      _ = (((a^2 + 3 * b^2) : ℤ) : ZMod 7) := (Int.cast_add _ _).symm
+      _ = (((7 * n) : ℤ) : ZMod 7) := congrArg Int.cast hn
+      _ = 0 := by {rw [Int.cast_mul]; exact zero_mul _}
+
   sorry
 
 #exit
-
-  have h1 := calc az ^ 2 + (-4) * bz ^ 2
-        = az^2 + ((3:ℤ):zmod 7) * bz^2 : by ring
-    ... = ((a^2 : ℤ) : zmod 7) + ((3:ℤ):zmod 7) * (((b^2) : ℤ) : zmod 7)
-                                                            : by rw [int.cast_pow a 2, int.cast_pow b 2]
-    ... = ((a^2 : ℤ) : zmod 7) + (((3 * b^2) : ℤ) : zmod 7) : by rw [int.cast_mul 3 (b^2)]
-    ... = (((a^2 + 3 * b^2) : ℤ) : zmod 7) : (int.cast_add _ _).symm
-    ... = (((7 * n) : ℤ) : zmod 7) : congr_arg coe hn
-    ... = 0 : by {rw [int.cast_mul], exact zero_mul _},
 
   have h9: az ^ 2 + (-4) * bz ^ 2 + 4 * bz^2 = 0 + 4 * bz^2 := congr_fun (congr_arg has_add.add h1) _,
   rw [neg_mul, neg_add_cancel_right, fin.zero_add] at h9,
