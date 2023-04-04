@@ -32,6 +32,11 @@ lemma lemma1' (a : ℤ) (b : ℕ) (hb : 0 < b) : ((a : ZMod b).val : ℤ) = a % 
 
 lemma lemma1 (a: ℤ) : ((a : ZMod 7).val : ℤ) = a % 7 := lemma1' a 7 (by norm_num)
 
+lemma seven_is_prime : Nat.Prime 7 := by
+  have h1 : 7 ≠ 1 := by norm_num
+  have h : Nat.minFac 7 = 7 := by rfl
+  exact h ▸ Nat.minFac_prime h1
+
 theorem india1998_q1b (n a b: ℤ) (hn : a^2 + 3 * b^2 = 7 * n) :
     (∃ a b : ℤ, a^2 + 3 * b^2 = n) := by
   let az : ZMod 7 := a
@@ -50,7 +55,7 @@ theorem india1998_q1b (n a b: ℤ) (hn : a^2 + 3 * b^2 = 7 * n) :
   rw [neg_mul, neg_add_cancel_right, Fin.zero_add] at h9
   have h10 : 4 * bz^2 = (2 * bz) ^ 2 := by ring
   rw [h10] at h9
-  haveI : Fact (Nat.Prime 7) := sorry --⟨by norm_num⟩
+  haveI : Fact (Nat.Prime 7) := ⟨seven_is_prime⟩
   obtain (hep : az = 2 * bz) | (hen : az = - (2 * bz)) := eq_or_eq_neg_of_sq_eq_sq _ _ h9
   · have h11: (2 * az + 3 * bz) = 0 := by
       rw [hep]; ring_nf;
@@ -90,7 +95,6 @@ theorem india1998_q1b (n a b: ℤ) (hn : a^2 + 3 * b^2 = 7 * n) :
     have h20 : (7 * m1) ^ 2 + 3 * (7 * m2) ^ 2 = 7 * 7 * n := by
       rw [←hm1, ←hm2]
       ring_nf
-      have h21 : (2 * a + 3 * b) ^ 2 + 3 * (a - 2 * b) ^ 2 = 7 * (a ^2 + 3 * b^2) := by ring
       have h18: 7 * (a ^ 2 + 3 * b ^ 2) = 7 * (7 * n) := congrArg (HMul.hMul 7) hn
       ring_nf at h18
       rw [h18]
