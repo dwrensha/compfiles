@@ -29,20 +29,50 @@ lemma mod_plus_pow (m n : ℕ) : (m + 3)^n % 3 = m^n % 3 := by
     rw[Nat.add_mod, h2, add_zero, Nat.mod_mod, pow_succ]
     exact Nat.ModEq.mul rfl hpn
 
-lemma foo (m n A : ℕ) (h : 3 * m * A = (m + 3)^n + 1) (ha : Even A)
-    : Even m := by
-  sorry
+lemma foo (x n : ℕ) (h: Odd x) : Odd (x ^ n) := Odd.pow h
+
+lemma three_odd : Odd 3 := Iff.mpr Nat.odd_iff rfl
+
+lemma foo1 (m n : ℕ) (hn : 0 < n) (ho : Odd m) : (m + 3) ^ n % 2 = 0 := by
+  cases' ho with w hw
+  rw[hw]
+  cases' n with n
+  · exact ((Nat.lt_irrefl 0) hn).elim
+  · rw[Nat.pow_succ]
+    have h1 : 2 * w + 1 + 3 = 2 * (w + 2) := by ring
+    rw[h1, Nat.mul_mod]
+    simp only [Nat.mul_mod_right, mul_zero, Nat.zero_mod]
 
 theorem bulgaria1998_q11
-    (m n A : ℕ) (h : 3 * m * A = (m + 3)^n + 1) : Odd A := by
+    (m n A : ℕ)
+    (hn : 0 < n)
+    (h : 3 * m * A = (m + 3)^n + 1) : Odd A := by
   -- We prove by contradiction.
   -- Assume, on the contrary, that A is even.
   by_contra hno
   -- Then m is even.
   have hae : Even A := Iff.mpr Nat.even_iff_not_odd hno
   have hme : Even m := by
-    sorry
+    cases' hae with k hk
+    rw [hk, show k + k = 2 * k by ring] at h
+    by_contra hmo
+    rw[←Nat.odd_iff_not_even] at hmo
+    have h1 : (3 * m * (2 * k)) % 2 = ((m + 3) ^ n + 1) % 2 :=
+      congrFun (congrArg HMod.hMod h) 2
+    simp[Nat.mul_mod] at h1
+    rw[Nat.add_mod] at h1
+    rw[foo1 m n hn hmo] at h1
+    simp at h1
+
   -- Since A is an integer, 0 ≡ (m + 3)ⁿ + 1 ≡ mⁿ + 1 (mod 3)
+  have h1 : 0 ≡ m ^ n + 1 [MOD 3] := by
+    have h2 :=
+      calc 0 % 3 = 3 * m * A % 3 := sorry
+           _ = ((m + 3) ^ n + 1) % 3 := by sorry
+           _ = (m ^ n + 1) % 3 := by sorry -- use mod_plus_pow
+           _ = (m ^ n + 1) % 3 := rfl
+    exact h2
+
   -- yields n = 2k + 1 and m = 3t + 2.
   -- Let m = 2ˡm₁, where l ≥ 1 and m₁ is odd.
   -- In fact, l > 1, as otherwise m ≡ 2 (mod 4),
