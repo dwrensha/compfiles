@@ -67,8 +67,9 @@ theorem bulgaria1998_q11
   -- Since A is an integer, 0 ≡ (m + 3)ⁿ + 1 ≡ mⁿ + 1 (mod 3)
   have h1 : 0 ≡ m ^ n + 1 [MOD 3] := by
     have h2 :=
-      calc 0 % 3 = 3 * m * A % 3 := sorry
-           _ = ((m + 3) ^ n + 1) % 3 := by sorry
+      calc 0 % 3 = 3 * m * A % 3 := by
+               rw[mul_assoc]; simp only [Nat.zero_mod, Nat.mul_mod_right]
+           _ = ((m + 3) ^ n + 1) % 3 := by rw[h];
            _ = (m ^ n + 1) % 3 := by sorry -- use mod_plus_pow
            _ = (m ^ n + 1) % 3 := rfl
     exact h2
