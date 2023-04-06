@@ -30,30 +30,25 @@ lemma mod_plus_pow (m n : ℕ) : (m + 3)^n % 3 = m^n % 3 := by
     rw[Nat.add_mod, h2, add_zero, Nat.mod_mod, pow_succ]
     exact Nat.ModEq.mul rfl hpn
 
-theorem n_is_positive
-    (m n A : ℕ)
-    (h : 3 * m * A = (m + 3)^n + 1) : 0 < n := by
-  cases n with
-  | succ n => exact Nat.succ_pos _
-  | zero => exfalso
-            simp only [Nat.zero_eq, pow_zero] at h
-            have h1 : (3 * m * A) % 3 = (1 + 1) % 3 := congrFun (congrArg HMod.hMod h) 3
-            simp[Nat.mul_mod] at h1
 
-lemma foo1 (m n : ℕ) (hn : 0 < n) (ho : Odd m) : (m + 3) ^ n % 2 = 0 := by
+lemma foo1 (m n : ℕ) (ho : Odd m) : (m + 3) ^ n.succ % 2 = 0 := by
   cases' ho with w hw
   rw[hw]
-  cases' n with n
-  · exact ((Nat.lt_irrefl 0) hn).elim
-  · rw[Nat.pow_succ]
-    have h1 : 2 * w + 1 + 3 = 2 * (w + 2) := by ring
-    rw[h1, Nat.mul_mod]
-    simp only [Nat.mul_mod_right, mul_zero, Nat.zero_mod]
+  rw[Nat.pow_succ]
+  have h1 : 2 * w + 1 + 3 = 2 * (w + 2) := by ring
+  rw[h1, Nat.mul_mod]
+  simp only [Nat.mul_mod_right, mul_zero, Nat.zero_mod]
 
 theorem bulgaria1998_q11
     (m n A : ℕ)
     (h : 3 * m * A = (m + 3)^n + 1) : Odd A := by
-  have hn := n_is_positive m n A h
+  -- First show that n must be positive.
+  cases n with
+  | zero => exfalso
+            simp only [Nat.zero_eq, pow_zero] at h
+            have h1 : (3 * m * A) % 3 = (1 + 1) % 3 := congrFun (congrArg HMod.hMod h) 3
+            simp[Nat.mul_mod] at h1
+  | succ n =>
 
   -- We prove by contradiction.
   -- Assume, on the contrary, that A is even.
@@ -65,19 +60,19 @@ theorem bulgaria1998_q11
     rw [hk, show k + k = 2 * k by ring] at h
     by_contra hmo
     rw[←Nat.odd_iff_not_even] at hmo
-    have h1 : (3 * m * (2 * k)) % 2 = ((m + 3) ^ n + 1) % 2 :=
+    have h1 : (3 * m * (2 * k)) % 2 = ((m + 3) ^ n.succ + 1) % 2 :=
       congrFun (congrArg HMod.hMod h) 2
     simp[Nat.mul_mod] at h1
     rw[Nat.add_mod] at h1
-    rw[foo1 m n hn hmo] at h1
+    rw[foo1 m n hmo] at h1
     simp at h1
 
   -- Since A is an integer, 0 ≡ (m + 3)ⁿ + 1 ≡ mⁿ + 1 (mod 3)
-  have h1 : 0 ≡ m ^ n + 1 [MOD 3] := by
+  have h1 : 0 ≡ m ^ n.succ + 1 [MOD 3] := by
     calc 0 % 3
       = 3 * m * A % 3 := by rw[mul_assoc]; simp only [Nat.zero_mod, Nat.mul_mod_right]
-    _ = ((m + 3) ^ n + 1) % 3 := by rw[h];
-    _ = (m ^ n + 1) % 3 := Nat.ModEq.add_right _ (mod_plus_pow _ _)
+    _ = ((m + 3) ^ n.succ + 1) % 3 := by rw[h];
+    _ = (m ^ n.succ + 1) % 3 := Nat.ModEq.add_right _ (mod_plus_pow _ _)
 
   -- yields n = 2k + 1 and m = 3t + 2.
   have h2 : m % 3 = 2 := by
