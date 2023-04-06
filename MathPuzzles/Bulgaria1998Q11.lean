@@ -5,6 +5,7 @@ import Mathlib.Algebra.GroupPower.Basic
 import Mathlib.Algebra.Parity
 
 import Mathlib.Tactic.LibrarySearch
+import Mathlib.Tactic.ModCases
 import Mathlib.Tactic.Ring
 
 /-
@@ -29,6 +30,16 @@ lemma mod_plus_pow (m n : ℕ) : (m + 3)^n % 3 = m^n % 3 := by
     rw[Nat.add_mod, h2, add_zero, Nat.mod_mod, pow_succ]
     exact Nat.ModEq.mul rfl hpn
 
+theorem n_is_positive
+    (m n A : ℕ)
+    (h : 3 * m * A = (m + 3)^n + 1) : 0 < n := by
+  cases n with
+  | succ n => exact Nat.succ_pos _
+  | zero => exfalso
+            simp only [Nat.zero_eq, pow_zero] at h
+            have h1 : (3 * m * A) % 3 = (1 + 1) % 3 := congrFun (congrArg HMod.hMod h) 3
+            simp[Nat.mul_mod] at h1
+
 lemma foo1 (m n : ℕ) (hn : 0 < n) (ho : Odd m) : (m + 3) ^ n % 2 = 0 := by
   cases' ho with w hw
   rw[hw]
@@ -41,8 +52,9 @@ lemma foo1 (m n : ℕ) (hn : 0 < n) (ho : Odd m) : (m + 3) ^ n % 2 = 0 := by
 
 theorem bulgaria1998_q11
     (m n A : ℕ)
-    (hn : 0 < n)
     (h : 3 * m * A = (m + 3)^n + 1) : Odd A := by
+  have hn := n_is_positive m n A h
+
   -- We prove by contradiction.
   -- Assume, on the contrary, that A is even.
   by_contra hno
@@ -68,6 +80,9 @@ theorem bulgaria1998_q11
     _ = (m ^ n + 1) % 3 := Nat.ModEq.add_right _ (mod_plus_pow _ _)
 
   -- yields n = 2k + 1 and m = 3t + 2.
+  have h2 : m % 3 = 2 := by
+    sorry
+
   -- Let m = 2ˡm₁, where l ≥ 1 and m₁ is odd.
   -- In fact, l > 1, as otherwise m ≡ 2 (mod 4),
   --   (m + 3)ⁿ + 1 ≡ (2 + 3)ⁿ + 1 ≡ 2 (mod 4)
