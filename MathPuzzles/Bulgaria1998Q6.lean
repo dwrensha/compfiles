@@ -32,7 +32,7 @@ lemma lemma_1
     (ht : 0 < t)
     (hu : 0 < u)
     (h : s^4 - t^4 = u^2) : False := by
-  let S := { a : ℕ | ∃ b c : ℕ, a^4 - b^4 = c^2 }
+  let S := { a : ℕ | 0 < a ∧ ∃ b c : ℕ, a^4 - b^4 = c^2 }
   have hns : S.Nonempty := by sorry
   have := WellFounded.min Nat.lt_wfRel.wf S hns
   sorry
