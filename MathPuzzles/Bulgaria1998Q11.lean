@@ -62,10 +62,7 @@ theorem bulgaria1998_q11
     rw[←Nat.odd_iff_not_even] at hmo
     have h1 : (3 * m * (2 * k)) % 2 = ((m + 3) ^ n.succ + 1) % 2 :=
       congrFun (congrArg HMod.hMod h) 2
-    simp[Nat.mul_mod] at h1
-    rw[Nat.add_mod] at h1
-    rw[foo1 m n hmo] at h1
-    simp at h1
+    simp[Nat.mul_mod, Nat.add_mod, foo1 m n hmo] at h1
 
   -- Since A is an integer, 0 ≡ (m + 3)ⁿ + 1 ≡ mⁿ + 1 (mod 3)
   have h1 : 0 ≡ m ^ n.succ + 1 [MOD 3] := by
