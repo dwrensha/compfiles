@@ -43,6 +43,9 @@ lemma lemma_1
     (ht : 0 < t)
     (hu : 0 < u)
     (h : s^4 - t^4 = u^2) : False := by
+  let hs' := Int.toNat_of_nonneg (le_of_lt hs)
+  let ht' := Int.toNat_of_nonneg (le_of_lt ht)
+  rw [←hs'] at h
   sorry
 
 theorem bulgaria1998_q6
