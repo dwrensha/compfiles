@@ -48,7 +48,6 @@ theorem bulgaria1998_q3
     have h1 := hf x (f x) hx h0
     have h2 : 0 < f x + f x := add_pos h0 h0
     have h3 : 0 ≠ f x + f x := ne_of_lt h2
-    have h5 := ne_of_lt h0
     have h6: 2 * f x ≠ 0 := by positivity
     have h7 : (f x / (2 * f x)) = 1 / 2 := by { rw [div_eq_iff h6]; ring }
     calc f (x + f x)
@@ -58,9 +57,7 @@ theorem bulgaria1998_q3
        _ ≤ (f x)^2 / (f x + f x)                 := (div_le_div_right h2).mpr h1
        _ = (f x) * (f x / (f x + f x))           := by field_simp [pow_two]
        _ = (f x) * (f x / (2 * f x))             := by rw[two_mul]
-       _ = (f x) * (1 /2 )                      := by rw[h7]
-       _ = f x / 2                              := by field_simp
-
+       _ = f x / 2                               := by field_simp[h7]
 
   let x_seq : ℕ → ℝ := λ n : ℕ ↦ 1 + ∑ i in Finset.range n, (f 1) / (2^i)
   have hz : x_seq 0 = 1 := by simp only [add_right_eq_self, Finset.sum_empty, Finset.range_zero]
@@ -71,7 +68,7 @@ theorem bulgaria1998_q3
     rw [show x_seq n = 1 + ∑ i in Finset.range n, (f 1) / (2^i) by rfl]
     have sum_nonneg : 0 ≤ ∑ i in Finset.range n, f 1 / 2 ^ i := by
       apply Finset.sum_nonneg
-      intros i hi
+      intros i _
       have h2 : (0:ℝ) < 2 ^ i := pow_pos (by norm_num) i
       exact le_of_lt (div_pos_iff.mpr (Or.inl ⟨hf1, h2⟩))
     linarith
