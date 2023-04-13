@@ -62,10 +62,8 @@ theorem india1998_q1b (n a b: ℤ) (hn : a^2 + 3 * b^2 = 7 * n) :
       rw [show (7 : ZMod 7) = 0 by rfl, mul_zero]
     have h13: 7 ∣ (2 * a + 3 * b) := by
       have h50 : (2 * az + 3 * bz).val = (0 : ZMod 7).val := congr_arg ZMod.val h11
-      have h51 : (2 * az + 3 * bz).val = ((2 * az).val + (3 * bz).val) % 7 := ZMod.val_add _ _
-      have h52 : (2 * az).val = (2 : ZMod 7).val * az.val % 7 := ZMod.val_mul _ _
-      have h53 : (3 * bz).val = (3 : ZMod 7).val * bz.val % 7 := ZMod.val_mul _ _
-      rw [h51, h52, h53, Nat.add_mod_mod, Nat.mod_add_mod, ZMod.val_zero] at h50
+      rw [ZMod.val_add, ZMod.val_mul, ZMod.val_mul,
+          Nat.add_mod_mod, Nat.mod_add_mod, ZMod.val_zero] at h50
       have h52 : ((2 * (az.val:ℤ) + 3 * (bz.val:ℤ))) % 7 = 0 := by norm_cast
       rw [lemma1 a, lemma1 b] at h52
       rw [←Int.emod_add_ediv a 7, ←Int.emod_add_ediv b 7]
@@ -78,9 +76,7 @@ theorem india1998_q1b (n a b: ℤ) (hn : a^2 + 3 * b^2 = 7 * n) :
     have h15 : (az + (- 2) * bz) = 0 := by{ rw [hep]; ring_nf }
     have h16: 7 ∣ (a + (-2) * b) := by
       have h50 : (az + (-2) * bz).val = (0 : ZMod 7).val := congr_arg ZMod.val h15
-      have h51 : (az + (-2) * bz).val = (az.val + ((-2) * bz).val) % 7 := ZMod.val_add _ _
-      have h53 : ((-2) * bz).val = (-2 : ZMod 7).val * bz.val % 7 := ZMod.val_mul _ _
-      rw [h51, h53, Nat.add_mod_mod, ZMod.val_zero] at h50
+      rw [ZMod.val_add, ZMod.val_mul, Nat.add_mod_mod, ZMod.val_zero] at h50
       have h52 : (((az.val:ℤ) + 5 * (bz.val:ℤ))) % 7 = 0 :=  by { norm_cast }
       rw [lemma1 a, lemma1 b] at h52
       have h52' : 7 ∣ a % 7 + 5 * (b % 7) := Int.dvd_of_emod_eq_zero h52
@@ -110,10 +106,8 @@ theorem india1998_q1b (n a b: ℤ) (hn : a^2 + 3 * b^2 = 7 * n) :
 
     have h13: 7 ∣ (2 * a + (-3) * b) := by
       have h50 : (2 * az + (-3) * bz).val = (0 : ZMod 7).val := congr_arg ZMod.val h11
-      have h51 : (2 * az + (-3) * bz).val = ((2 * az).val + ((-3) * bz).val) % 7 := ZMod.val_add _ _
-      have h52 : (2 * az).val = (2 : ZMod 7).val * az.val % 7 := ZMod.val_mul _ _
-      have h53 : ((-3) * bz).val = (-3 : ZMod 7).val * bz.val % 7 := ZMod.val_mul _ _
-      rw[h51, h52, h53, Nat.add_mod_mod, Nat.mod_add_mod, ZMod.val_zero] at h50
+      rw[ZMod.val_add, ZMod.val_mul, ZMod.val_mul,
+         Nat.add_mod_mod, Nat.mod_add_mod, ZMod.val_zero] at h50
       have h51 : (2 * az.val + 4 * bz.val) % 7 = 0 := h50
       have h52 : ((2 * (az.val:ℤ) + 4 * (bz.val:ℤ))) % 7 = 0 := by norm_cast
       rw [lemma1 a, lemma1 b] at h52
@@ -131,9 +125,7 @@ theorem india1998_q1b (n a b: ℤ) (hn : a^2 + 3 * b^2 = 7 * n) :
 
     have h16: 7 ∣ (a + 2 * b) := by
       have h50 : (az + 2 * bz).val = (0 : ZMod 7).val := congr_arg ZMod.val h15
-      have h51 : (az + 2 * bz).val = (az.val + (2 * bz).val) % 7 := ZMod.val_add _ _
-      have h53 : (2 * bz).val = (2 : ZMod 7).val * bz.val % 7 := ZMod.val_mul _ _
-      rw [h51, h53, Nat.add_mod_mod, ZMod.val_zero] at h50
+      rw [ZMod.val_add, ZMod.val_mul, Nat.add_mod_mod, ZMod.val_zero] at h50
       have h51 : (az.val + 2 * bz.val) % 7 = 0 := h50
       have h52 : (((az.val:ℤ) + 2 * (bz.val:ℤ))) % 7 = 0 := by norm_cast
       rw [lemma1 a, lemma1 b] at h52
