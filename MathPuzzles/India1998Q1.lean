@@ -42,14 +42,13 @@ theorem india1998_q1b (n a b: ℤ) (hn : a^2 + 3 * b^2 = 7 * n) :
   let az : ZMod 7 := a
   let bz : ZMod 7 := b
 
-  have h1 := calc az ^ 2 + (-4) * bz ^ 2
-        = az^2 + ((3:ℤ): ZMod 7) * bz^2 := by rw [show -4 = ((3:ℤ):ZMod 7) by rfl]
-      _ = (((a^2 + 3 * b^2) : ℤ) : ZMod 7) := by norm_cast
+  have h1 := calc az ^ 2 + 3 * bz ^ 2
+        = (((a^2 + 3 * b^2) : ℤ) : ZMod 7) := by norm_cast
       _ = (((7 * n) : ℤ) : ZMod 7) := congrArg Int.cast hn
       _ = 0 := by {rw [Int.cast_mul]; exact zero_mul _}
 
-  have h9: az ^ 2 + (-4) * bz ^ 2 + 4 * bz^2 = 0 + 4 * bz^2 := congrFun (congrArg HAdd.hAdd h1) _
-  rw [neg_mul, neg_add_cancel_right, Fin.zero_add] at h9
+  have h9: az ^ 2 + 3 * bz ^ 2 - 3 * bz^2 = 0 - 3 * bz^2 := congrFun (congrArg HSub.hSub h1) _
+  rw [add_sub_cancel, zero_sub, ←neg_mul, show ((-3):ZMod 7) = 4 by rfl] at h9
   have h10 : 4 * bz^2 = (2 * bz) ^ 2 := by ring
   rw [h10] at h9
   haveI : Fact (Nat.Prime 7) := ⟨seven_is_prime⟩
