@@ -18,4 +18,5 @@ import MathPuzzles.Imo2019Q1
 import MathPuzzles.India1998Q1
 import MathPuzzles.Russia1998Q42
 import MathPuzzles.Usa1998Q5
+import MathPuzzles.Usa2022Q1
 import MathPuzzles.ZeroesOnesAndTwos
