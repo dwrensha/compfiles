@@ -20,8 +20,7 @@ lemma sum_range_square_mul_six (n : ℕ) :
   induction n with
   | zero => rfl
   | succ n ih =>
-    have h : n.succ = n + 1 := rfl
-    rw[Finset.sum_range_succ, add_mul, ih, h]
+    rw[Finset.sum_range_succ, add_mul, ih, Nat.succ_eq_add_one]
     ring
 
 lemma sum_range_square (n : ℕ) :
