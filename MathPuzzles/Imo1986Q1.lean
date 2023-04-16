@@ -61,7 +61,7 @@ theorem imo1986_q1' (d : ℤ):
     nth_rw 1 [← one_mul 2] at hp
     rw [← add_mul, ← add_mul, mul_left_inj' two_ne_zero] at hp
     rw [← hp]
-    ring_nf
+    ring
   have hdodd : Odd d := by use (k + k ^ 2); exact hdp
   have hd_sub_one : Even (d - 1) := by use (k + k ^ 2); rw [hdp]; ring
   have hqeven : Even q := by
@@ -108,7 +108,7 @@ theorem imo1986_q1' (d : ℤ):
   exact Int.even_iff_not_odd.mp hdeven hdodd
 
 
-theorem imo1986_q1 (d : ℤ) (hdpos : 1 ≤ d) (h2 : d ≠ 2) (h5 : d ≠ 5) (h13 : d ≠ 13) :
+theorem imo1986_q1 (d : ℤ) (_hdpos : 1 ≤ d) (h2 : d ≠ 2) (h5 : d ≠ 5) (h13 : d ≠ 13) :
     ∃ a b :({2, 5, 13, d} : Finset ℤ), (a ≠ b) ∧ ¬ ∃ z, z^2 = (a * (b : ℤ) - 1) := by
   by_contra h
   simp only [ne_eq, Subtype.exists, Finset.mem_singleton, Finset.mem_insert, false_or,

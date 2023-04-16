@@ -22,7 +22,7 @@ lemma sum_range_square_mul_six (n : ℕ) :
   | succ n ih =>
     have h : n.succ = n + 1 := rfl
     rw[Finset.sum_range_succ, add_mul, ih, h]
-    ring_nf
+    ring
 
 lemma sum_range_square (n : ℕ) :
     ∑i in Finset.range n, (i+1)^2 = n * (n + 1) * (2*n + 1)/6 :=
