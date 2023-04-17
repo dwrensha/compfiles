@@ -39,22 +39,13 @@ lemma odd_pow' {m : ℤ} {n : ℕ} (h : n ≠ 0) : (Odd (m^n)) ↔ (Odd m) := by
 
 theorem imo1986_q1' (d : ℤ):
     ¬ ((IsSquare (2 * d - 1)) ∧ (IsSquare (5 * d - 1)) ∧ (IsSquare (d * 13 - 1))) := by
-  by_contra h_squares
-  cases' h_squares  with hp h_squares
-  cases' h_squares with hq hr
-  cases' hp with p hp
-  cases' hq with q hq
-  cases' hr with r hr
+  rintro ⟨⟨p, hp⟩, ⟨q, hq⟩, ⟨r, hr⟩⟩
   rw [← pow_two] at hp hq hr
-  have hpodd : Odd p  := by
-    refine' (odd_pow' two_ne_zero).mp _
-    use d - 1
-    rw [← hp]
-    ring
-  cases' hpodd with k hpodd'
+  have hpodd : Odd p := (odd_pow' two_ne_zero).mp (by use d - 1; rw [← hp]; ring)
+  cases' hpodd with k hk
   have hp := hp.symm
   have hdp : d  = 2*(k + k^2) + 1 := by
-    rw [hpodd', ←(add_left_inj 1), sub_add_cancel _] at hp
+    rw [hk, ←(add_left_inj 1), sub_add_cancel _] at hp
     ring_nf at hp
     have h422 : (4 : ℤ) = 2 * 2 := by norm_num
     simp only [h422,  ← mul_assoc] at hp
@@ -62,7 +53,7 @@ theorem imo1986_q1' (d : ℤ):
     rw [← add_mul, ← add_mul, mul_left_inj' two_ne_zero] at hp
     rw [← hp]
     ring
-  have hdodd : Odd d := by use (k + k ^ 2); exact hdp
+  have hdodd : Odd d := by use k + k ^ 2; exact hdp
   have hd_sub_one : Even (d - 1) := by use (k + k ^ 2); rw [hdp]; ring
   have hqeven : Even q := by
     refine' (Int.even_pow' two_ne_zero).mp _
@@ -83,10 +74,7 @@ theorem imo1986_q1' (d : ℤ):
           _ = r^2 - q^2 := by rw [hr, hq]
           _ = (m + m)^2 - (n + n)^2 := by rw [hqeven', hreven']
           _ = 4*m^2 - 4*n^2 := by ring
-  have h4d : 4 * (2 * d) = 4 * (m^2 - n^2) := by
-    ring_nf
-    rw [h8d]
-    ring_nf
+  have h4d : 4 * (2 * d) = 4 * (m^2 - n^2) := by ring_nf; rw [h8d]; ring_nf
   have hnm' : 2*d = (m + n)*(m - n):= by
     rw [← pow_two_sub_pow_two]
     refine' ((mul_right_inj' _).mp h4d)
@@ -98,6 +86,7 @@ theorem imo1986_q1' (d : ℤ):
     · exact Int.even_sub.mp hmneven
   have hnm_sub : Even (m - n) := Int.even_sub.mpr hnm_parity
   have hnm_add : Even (m + n) := Int.even_add.mpr hnm_parity
+
   have hdeven : Even d := by
     cases' hnm_sub with v hnm_sub
     cases' hnm_add with w hnm_add
