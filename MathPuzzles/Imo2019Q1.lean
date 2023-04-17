@@ -75,9 +75,7 @@ theorem imo2019_q1 (f : ℤ → ℤ) (hf : ∀ a b, f (2 * a) + 2 * (f b) = f (f
   cases' this with d h
   have hz : ∀ z, f z = d * z + f 0 := by
     intro z
-    rw [← h z]
-    rw [hg]
-    rw [sub_add_cancel]
+    rw [← h z, hg, sub_add_cancel]
   cases' em (d = 0) with hd hd
   · left
     have : f 0 = 0 := by
