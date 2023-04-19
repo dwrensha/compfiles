@@ -32,16 +32,11 @@ The fact that d is odd follows from the fact that p is odd.
 The fact that d is even follows from examining the difference 13 * d - 5 * d.
 -/
 
--- replace by Int.odd_pow' when this is added:
--- https://github.com/leanprover-community/mathlib4/pull/3402
-lemma odd_pow' {m : ℤ} {n : ℕ} (h : n ≠ 0) : (Odd (m^n)) ↔ (Odd m) := by
-  rw [← not_iff_not, ← Int.even_iff_not_odd, ← Int.even_iff_not_odd, Int.even_pow' h]
-
 theorem imo1986_q1' (d : ℤ):
     ¬ ((IsSquare (2 * d - 1)) ∧ (IsSquare (5 * d - 1)) ∧ (IsSquare (d * 13 - 1))) := by
   rintro ⟨⟨p, hp⟩, ⟨q, hq⟩, ⟨r, hr⟩⟩
   rw [← pow_two] at hp hq hr
-  have hpodd : Odd p := (odd_pow' two_ne_zero).mp (by use d - 1; rw [← hp]; ring)
+  have hpodd : Odd p := (Int.odd_pow' two_ne_zero).mp (by use d - 1; rw [← hp]; ring)
   cases' hpodd with k hk
   have hp := hp.symm
   have hdp : d  = 2*(k + k^2) + 1 := by
