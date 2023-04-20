@@ -71,9 +71,6 @@ lemma usa1998_q5_stronger (n : ℕ) :
           obtain ⟨z, hz, hz2⟩ := hxx
           replace hz2 : L + z = 0 := hz2
           have := sp_nonnegative z hz
-          -- Finset ≤ relation confuses linarith.
-          -- Should be fixed by https://github.com/leanprover-community/mathlib4/pull/2611
-          clear hX h0
           linarith
         rw[Finset.card_disjoint_union hdisj, Finset.card_singleton,
            Finset.card_map, sp_card]
