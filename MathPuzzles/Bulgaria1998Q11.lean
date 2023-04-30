@@ -7,7 +7,7 @@ import Mathlib.Algebra.Parity
 import Mathlib.Tactic.LibrarySearch
 import Mathlib.Tactic.ModCases
 import Mathlib.Tactic.Ring
-
+import Mathlib.Tactic.Zify
 /-
 Bulgarian Mathematical Olympiad 1998, Problem 11
 
@@ -72,8 +72,17 @@ theorem bulgaria1998_q11
     _ = (m ^ n.succ + 1) % 3 := Nat.ModEq.add_right _ (mod_plus_pow _ _)
 
   -- yields n = 2k + 1 and m = 3t + 2.
-  have h2 : m % 3 = 2 := by
-    sorry
+  have h2 := Nat.ModEq.add_right 2 h1
+  rw[add_assoc, show 1 + 2 = 3 by rfl, zero_add] at h2
+  have h5: 2 % 3 = (m ^ (Nat.succ n) + 3) % 3 := h2
+  have h3 : m % 3 = 2 := by
+    zify
+    mod_cases hm : ↑m % 3
+    · have h4: ↑m % 3 = (0:ℤ) % 3 := hm; norm_cast at h4
+      simp[Nat.pow_mod, h4] at h5
+    · have h4: ↑m % 3 = (1:ℤ) % 3 := hm; norm_cast at h4
+      simp[Nat.pow_mod, h4] at h5
+    · have h4: ↑m % 3 = (2:ℤ) % 3 := hm; norm_cast at h4
 
   -- Let m = 2ˡm₁, where l ≥ 1 and m₁ is odd.
   -- In fact, l > 1, as otherwise m ≡ 2 (mod 4),
