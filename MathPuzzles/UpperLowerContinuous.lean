@@ -14,6 +14,15 @@ open intervals (a,b)) and also monotone nondecreasing.
 
 namespace UpperLowerContinuous
 
+lemma real_induction
+    (S : Set ℝ)
+    (h1 : ∀ x ∈ S, ∃ y, x < y ∧ Set.Ico x y ⊆ S)
+    (h2 : ∀ x ∈ S, ∀ y ∈ S, x < y → Set.Ico x y ⊆ S → y ∈ S)
+    (z : ℝ)
+    (hz : z ∈ S)
+    : Set.Ici z ⊆ S := by
+  sorry
+
 def ℝₗ : Type := ℝ
 def ℝᵤ : Type := ℝ
 
@@ -28,4 +37,6 @@ theorem upper_lower_continuous
     (hlc : @Continuous ℝₗ ℝₗ _ _ f)
     (huc : @Continuous ℝᵤ ℝᵤ _ _ f)
     : @Continuous ℝ ℝ _ _ f ∧ Monotone f := by
-  sorry
+  constructor
+  · sorry
+  · sorry
