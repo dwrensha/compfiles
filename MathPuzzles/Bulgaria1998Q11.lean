@@ -80,6 +80,15 @@ theorem bulgaria1998_q11
       simp[Nat.pow_mod, h4] at h5
     · have h4: ↑m % 3 = (2:ℤ) % 3 := hm; norm_cast at h4
 
+  have h6: n % 2 = 1 := by
+    zify
+    mod_cases hn : ↑n % 2
+    · have h4 : ↑n % 2 = (0:ℤ) % 2 := hn
+      --norm_cast at h4
+      have h5: Nat.succ n % 2 = 1 := by sorry
+      sorry
+    · exact hn
+
   -- Let m = 2ˡm₁, where l ≥ 1 and m₁ is odd.
   -- In fact, l > 1, as otherwise m ≡ 2 (mod 4),
   --   (m + 3)ⁿ + 1 ≡ (2 + 3)ⁿ + 1 ≡ 2 (mod 4)
