@@ -30,7 +30,7 @@ instance : TopologicalSpace ℝₗ :=
   TopologicalSpace.generateFrom {s : Set ℝₗ | ∃ a b : ℝ, Set.Ico a b = s}
 
 instance : TopologicalSpace ℝᵤ :=
-  TopologicalSpace.generateFrom {s : Set ℝₗ | ∃ a b : ℝ, Set.Ioc a b = s}
+  TopologicalSpace.generateFrom {s : Set ℝᵤ | ∃ a b : ℝ, Set.Ioc a b = s}
 
 theorem upper_lower_continuous
     (f : ℝ → ℝ)
