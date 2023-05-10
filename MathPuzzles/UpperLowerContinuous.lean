@@ -50,7 +50,6 @@ lemma real_induction
     intros s₁ hs
     have h3: s₁ ∉ W := by
       intro hw
-      have h4 : s₁ < w₀ := by aesop
       have h5 : w₀ ≤ s₁ := by
         have : BddBelow W := by
            have h6 : z ∈ lowerBounds W := by
@@ -58,11 +57,17 @@ lemma real_induction
            rw[BddBelow]
            exact Set.nonempty_of_mem h6
         exact cinfₛ_le this hw
+      have h4 : s₁ < w₀ := by aesop
       linarith
     aesop
 
   have h9: ∀ w ∈ W, z ≤ w := by aesop
   have h10 : z ≤ w₀ := le_cinfₛ hwne h9
+
+  have h11 : z ≠ w₀ := by
+    by_contra H
+    obtain ⟨y, hy1, hy2⟩ := h1 z hz
+    sorry
 
   -- So we can apply h2, to get that w₀ ∈ S.
   have h8 := h2 z hz w₀
