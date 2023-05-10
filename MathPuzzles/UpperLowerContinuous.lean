@@ -75,9 +75,8 @@ lemma real_induction
     have h12 : y ∈ lowerBounds W := by
       intros a ha;
       by_contra H'; push_neg at H'
-      have h14 : a ∈ S := hy2 ⟨h9 a ha, H'⟩
       rw [Set.mem_setOf_eq] at ha
-      exact ha.2 h14
+      exact ha.2 (hy2 ⟨h9 a ha, H'⟩)
     exact (not_le.mpr hy1) ((isGLB_iff_le_iff.mp h13 y).mpr h12)
 
   have h15: z < w₀ := Ne.lt_of_le h11 h10
@@ -87,18 +86,19 @@ lemma real_induction
 
   -- Then we can apply h1 to get some y
   -- such that w₀ < y and Set.Ico w₀ y ⊆ S.
-  --
-  -- We'll be done if we can find some w₁ such that
-  --   w₀ < w₁
-  --   ∀ w ∈ W, w₁ ≤ w.
-  --
-  -- plug in y for w₁?
-  --   w₀ < y -- yep
-  --   ∀ w ∈ W, y ≤ w
-  --   suppose not. then there is w₂ ∈ W, w₂ < y.
-  --       in particular, w₂ ∉ S
 
-  sorry
+  obtain ⟨y, hwy, hy⟩ := h1 w₀ h8
+
+  have h12 : y ∈ lowerBounds W := by
+    intros a ha;
+    by_contra H'; push_neg at H'
+    rw [Set.mem_setOf_eq] at ha
+    obtain hlt | hle := lt_or_le a w₀
+    · exact ha.2 (h7 ⟨ha.1, hlt⟩)
+    · exact ha.2 (hy ⟨hle, H'⟩)
+
+  exact (not_le.mpr hwy) ((isGLB_iff_le_iff.mp h13 y).mpr h12)
+
 
 def ℝₗ : Type := ℝ
 def ℝᵤ : Type := ℝ
