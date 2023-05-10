@@ -35,6 +35,7 @@ lemma foo1 (m n : ℕ) (ho : Odd m) : (m + 3) ^ n.succ % 2 = 0 := by
   rw[hw, Nat.pow_succ, show 2 * w + 1 + 3 = 2 * (w + 2) by ring, Nat.mul_mod,
      Nat.mul_mod_right, mul_zero, Nat.zero_mod]
 
+set_option maxHeartbeats 0
 theorem bulgaria1998_q11
     (m n A : ℕ)
     (h : 3 * m * A = (m + 3)^n + 1) : Odd A := by
@@ -80,13 +81,19 @@ theorem bulgaria1998_q11
       simp[Nat.pow_mod, h4] at h5
     · have h4: ↑m % 3 = (2:ℤ) % 3 := hm; norm_cast at h4
 
-  have h6: n % 2 = 1 := by
+  have h6: Nat.succ n % 2 = 1 := by
     zify
-    mod_cases hn : ↑n % 2
-    · have h4 : ↑n % 2 = (0:ℤ) % 2 := hn
-      --norm_cast at h4
-      have h5: Nat.succ n % 2 = 1 := by sorry
-      sorry
+    mod_cases hn : ↑(Nat.succ n) % 2
+    · exfalso
+      have h4: (↑(Nat.succ n)) % 2 = (0:ℤ) % 2 := hn
+      norm_cast at h4
+      have h9: Even (Nat.succ n) := Iff.mpr Nat.even_iff h4
+      cases' h9 with k hk
+      rw[hk] at h1
+      have h1' : 0 % 3 = ( m ^ (k + k) + 1) % 3 := h1
+      rw[Nat.add_mod, Nat.pow_mod, h3, ←Nat.two_mul, pow_mul, Nat.pow_mod,
+         show 2 ^ 2 % 3 = 1 by rfl] at h1'
+      simp at h1'
     · exact hn
 
   -- Let m = 2ˡm₁, where l ≥ 1 and m₁ is odd.
