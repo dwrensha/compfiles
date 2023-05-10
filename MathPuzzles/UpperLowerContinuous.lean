@@ -45,18 +45,19 @@ lemma real_induction
   -- let w₀ be its greatest lower bound.
   let w₀ := infₛ W
 
+  have h6 : z ∈ lowerBounds W := by rw[lowerBounds]; aesop
+
+  have hwbb : BddBelow W := by
+    rw[BddBelow]
+    exact Set.nonempty_of_mem h6
+
   -- Note that [z, w₀) ⊆ S.
   have h7: Set.Ico z w₀ ⊆ S := by
     intros s₁ hs
     have h3: s₁ ∉ W := by
       intro hw
       have h5 : w₀ ≤ s₁ := by
-        have : BddBelow W := by
-           have h6 : z ∈ lowerBounds W := by
-             rw[lowerBounds]; aesop
-           rw[BddBelow]
-           exact Set.nonempty_of_mem h6
-        exact cinfₛ_le this hw
+        exact cinfₛ_le hwbb hw
       have h4 : s₁ < w₀ := by aesop
       linarith
     aesop
@@ -64,13 +65,25 @@ lemma real_induction
   have h9: ∀ w ∈ W, z ≤ w := by aesop
   have h10 : z ≤ w₀ := le_cinfₛ hwne h9
 
+  have h13 := Real.is_glb_infₛ W hwne hwbb
+
   have h11 : z ≠ w₀ := by
     by_contra H
     obtain ⟨y, hy1, hy2⟩ := h1 z hz
-    sorry
+    rw[H] at hy1 h6
+
+    have h12 : y ∈ lowerBounds W := by
+      intros a ha;
+      by_contra H'; push_neg at H'
+      have h14 : a ∈ S := hy2 ⟨h9 a ha, H'⟩
+      rw [Set.mem_setOf_eq] at ha
+      exact ha.2 h14
+    exact (not_le.mpr hy1) ((isGLB_iff_le_iff.mp h13 y).mpr h12)
+
+  have h15: z < w₀ := Ne.lt_of_le h11 h10
 
   -- So we can apply h2, to get that w₀ ∈ S.
-  have h8 := h2 z hz w₀
+  have h8 := h2 z hz w₀ h15 h7
 
   -- Then we can apply h1 to get some y
   -- such that w₀ < y and Set.Ico w₀ y ⊆ S.
