@@ -3,6 +3,10 @@ import Mathlib.Data.Real.Basic
 import Mathlib.Data.Set.Intervals.Basic
 import Mathlib.Topology.Order
 import Mathlib.Topology.MetricSpace.Basic
+import Mathlib.Topology.Algebra.Ring.Basic
+
+import Mathlib.Tactic.LibrarySearch
+import Mathlib.Tactic.Linarith
 
 /-
 Suppose f : ℝ -> ℝ is continuous in both the upper topology (where
@@ -14,13 +18,73 @@ open intervals (a,b)) and also monotone nondecreasing.
 
 namespace UpperLowerContinuous
 
+#check Nonempty
+#check Set.Nonempty
+
 lemma real_induction
     (S : Set ℝ)
+
+    -- If x ∈ S, then we can find y > x such that [x, y) ⊆ S.
     (h1 : ∀ x ∈ S, ∃ y, x < y ∧ Set.Ico x y ⊆ S)
-    (h2 : ∀ x ∈ S, ∀ y ∈ S, x < y → Set.Ico x y ⊆ S → y ∈ S)
+
+    -- If [x, y) ⊆ S, then y ∈ S.
+    (h2 : ∀ x ∈ S, ∀ y, x < y → Set.Ico x y ⊆ S → y ∈ S)
+
     (z : ℝ)
     (hz : z ∈ S)
+
+    -- then [z,∞) ⊆ S
     : Set.Ici z ⊆ S := by
+
+  by_contra H; rw[Set.subset_def] at H; push_neg at H
+  obtain ⟨w₁, hw₁, hw₁'⟩ := H
+
+  -- take the set W = {w | z ≤ w ∧ w ∉ S}.
+  let W : Set ℝ := {w | z ≤ w ∧ w ∉ S}
+
+  have hwne : Nonempty W := by aesop
+
+  -- let w₀ be its greatest lower bound.
+  let w₀ := infₛ W
+
+  -- Note that [z, w₀) ⊆ S.
+  have h7: Set.Ico z w₀ ⊆ S := by
+    intros s₁ hs
+    have h3: s₁ ∉ W := by
+      intro hw
+      have h4 : s₁ < w₀ := by aesop
+      have h5 : w₀ ≤ s₁ := by
+        have : BddBelow W := by
+           have h6 : z ∈ lowerBounds W := by
+             rw[lowerBounds]; aesop
+           rw[BddBelow]
+           exact Set.nonempty_of_mem h6
+        exact cinfₛ_le this hw
+      linarith
+    aesop
+
+  have h9: ∀ w ∈ W, z ≤ w := by aesop
+  have : z ≤ w₀ := by
+    refine le_cinfₛ ?_ h9
+    --have Nonempty but need Set.Nonempty
+    sorry
+
+  -- So we can apply h2, to get that w₀ ∈ S.
+  have h8 := h2 z hz w₀
+
+  -- Then we can apply h1 to get some y
+  -- such that w₀ < y and Set.Ico w₀ y ⊆ S.
+  --
+  -- We'll be done if we can find some w₁ such that
+  --   w₀ < w₁
+  --   ∀ w ∈ W, w₁ ≤ w.
+  --
+  -- plug in y for w₁?
+  --   w₀ < y -- yep
+  --   ∀ w ∈ W, y ≤ w
+  --   suppose not. then there is w₂ ∈ W, w₂ < y.
+  --       in particular, w₂ ∉ S
+
   sorry
 
 def ℝₗ : Type := ℝ
