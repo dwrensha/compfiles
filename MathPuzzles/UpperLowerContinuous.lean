@@ -18,9 +18,6 @@ open intervals (a,b)) and also monotone nondecreasing.
 
 namespace UpperLowerContinuous
 
-#check Nonempty
-#check Set.Nonempty
-
 lemma real_induction
     (S : Set ℝ)
 
@@ -42,7 +39,8 @@ lemma real_induction
   -- take the set W = {w | z ≤ w ∧ w ∉ S}.
   let W : Set ℝ := {w | z ≤ w ∧ w ∉ S}
 
-  have hwne : Nonempty W := by aesop
+  have hwne' : Nonempty W := by aesop
+  have hwne : Set.Nonempty W := Iff.mp Set.nonempty_coe_sort hwne'
 
   -- let w₀ be its greatest lower bound.
   let w₀ := infₛ W
@@ -64,10 +62,7 @@ lemma real_induction
     aesop
 
   have h9: ∀ w ∈ W, z ≤ w := by aesop
-  have : z ≤ w₀ := by
-    refine le_cinfₛ ?_ h9
-    --have Nonempty but need Set.Nonempty
-    sorry
+  have h10 : z ≤ w₀ := le_cinfₛ hwne h9
 
   -- So we can apply h2, to get that w₀ ∈ S.
   have h8 := h2 z hz w₀
