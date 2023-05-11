@@ -56,13 +56,11 @@ lemma real_induction
     intros s₁ hs
     have h3: s₁ ∉ W := by
       intro hw
-      have h5 : w₀ ≤ s₁ := by
-        exact cinfₛ_le hwbb hw
-      have h4 : s₁ < w₀ := by aesop
-      linarith
+      have h5 : w₀ ≤ s₁ := cinfₛ_le hwbb hw
+      exact (not_le.mpr hs.2) h5
     aesop
 
-  have h9: ∀ w ∈ W, z ≤ w := by aesop
+  have h9 : ∀ w ∈ W, z ≤ w := fun w h ↦ h.1
   have h10 : z ≤ w₀ := le_cinfₛ hwne h9
 
   have h13 := Real.is_glb_infₛ W hwne hwbb
