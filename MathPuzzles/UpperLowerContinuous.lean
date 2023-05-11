@@ -18,38 +18,38 @@ open intervals (a,b)) and also monotone nondecreasing.
 
 namespace UpperLowerContinuous
 
+/--
+ Let S be a set of real numbers such that:
+  1. If x ∈ S, then we can find y > x such that [x, y) ⊆ S.
+  2. If [x, y) ⊆ S, then y ∈ S.
+ Then, given z ∈ S, we have [z, ∞) ⊆ S.
+-/
 lemma real_induction
     (S : Set ℝ)
-
-    -- If x ∈ S, then we can find y > x such that [x, y) ⊆ S.
     (h1 : ∀ x ∈ S, ∃ y, x < y ∧ Set.Ico x y ⊆ S)
-
-    -- If [x, y) ⊆ S, then y ∈ S.
     (h2 : ∀ x ∈ S, ∀ y, x < y → Set.Ico x y ⊆ S → y ∈ S)
-
     (z : ℝ)
     (hz : z ∈ S)
-
-    -- then [z,∞) ⊆ S
     : Set.Ici z ⊆ S := by
 
+  -- Suppose not. Then there is w₁ in [z,∞) that is not in S.
   by_contra H; rw[Set.subset_def] at H; push_neg at H
   obtain ⟨w₁, hw₁, hw₁'⟩ := H
 
-  -- take the set W = {w | z ≤ w ∧ w ∉ S}.
+  -- Take the set W = {w | z ≤ w ∧ w ∉ S}.
   let W : Set ℝ := {w | z ≤ w ∧ w ∉ S}
 
+  -- Let w₀ be its greatest lower bound.
+  let w₀ := infₛ W
+
+  -- W is nonempty.
   have hwne' : Nonempty W := ⟨w₁, hw₁, hw₁'⟩
   have hwne : Set.Nonempty W := Iff.mp Set.nonempty_coe_sort hwne'
 
-  -- let w₀ be its greatest lower bound.
-  let w₀ := infₛ W
 
   have h6 : z ∈ lowerBounds W := by rw[lowerBounds]; aesop
 
-  have hwbb : BddBelow W := by
-    rw[BddBelow]
-    exact Set.nonempty_of_mem h6
+  have hwbb : BddBelow W := Set.nonempty_of_mem h6
 
   -- Note that [z, w₀) ⊆ S.
   have h7: Set.Ico z w₀ ⊆ S := by
@@ -73,7 +73,6 @@ lemma real_induction
     have h12 : y ∈ lowerBounds W := by
       intros a ha;
       by_contra H'; push_neg at H'
-      rw [Set.mem_setOf_eq] at ha
       exact ha.2 (hy2 ⟨h9 a ha, H'⟩)
     exact (not_le.mpr hy1) ((isGLB_iff_le_iff.mp h13 y).mpr h12)
 
@@ -90,10 +89,10 @@ lemma real_induction
   have h12 : y ∈ lowerBounds W := by
     intros a ha;
     by_contra H'; push_neg at H'
-    rw [Set.mem_setOf_eq] at ha
+    apply ha.2
     obtain hlt | hle := lt_or_le a w₀
-    · exact ha.2 (h7 ⟨ha.1, hlt⟩)
-    · exact ha.2 (hy ⟨hle, H'⟩)
+    · exact h7 ⟨ha.1, hlt⟩
+    · exact hy ⟨hle, H'⟩
 
   exact (not_le.mpr hwy) ((isGLB_iff_le_iff.mp h13 y).mpr h12)
 
