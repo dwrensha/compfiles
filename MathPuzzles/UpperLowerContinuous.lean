@@ -39,7 +39,7 @@ lemma real_induction
   -- take the set W = {w | z ≤ w ∧ w ∉ S}.
   let W : Set ℝ := {w | z ≤ w ∧ w ∉ S}
 
-  have hwne' : Nonempty W := by aesop
+  have hwne' : Nonempty W := ⟨w₁, hw₁, hw₁'⟩
   have hwne : Set.Nonempty W := Iff.mp Set.nonempty_coe_sort hwne'
 
   -- let w₀ be its greatest lower bound.
