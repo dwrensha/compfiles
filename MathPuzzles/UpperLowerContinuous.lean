@@ -53,12 +53,8 @@ lemma real_induction
   -- Note that [z, w₀) ⊆ S.
   have h7: Set.Ico z w₀ ⊆ S := by
     intros s₁ hs
-    have h3: s₁ ∉ W := by
-      intro hw
-      have h5 : w₀ ≤ s₁ := cinfₛ_le hwbb hw
-      exact (not_le.mpr hs.2) h5
     by_contra H
-    exact h3 ⟨hs.1, H⟩
+    exact (not_le.mpr hs.2) (cinfₛ_le hwbb ⟨hs.1, H⟩)
 
   have h9 : ∀ w ∈ W, z ≤ w := fun w h ↦ h.1
   have h10 : z ≤ w₀ := le_cinfₛ hwne h9
