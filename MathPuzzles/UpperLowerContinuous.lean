@@ -43,8 +43,7 @@ lemma real_induction
   let w₀ := infₛ W
 
   -- W is nonempty.
-  have hwne' : Nonempty W := ⟨w₁, hw₁, hw₁'⟩
-  have hwne : Set.Nonempty W := Iff.mp Set.nonempty_coe_sort hwne'
+  have hwne : Set.Nonempty W := ⟨w₁, hw₁, hw₁'⟩
 
   have h6 : z ∈ lowerBounds W := by rw[lowerBounds]; aesop
 
