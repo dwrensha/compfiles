@@ -46,7 +46,6 @@ lemma real_induction
   have hwne' : Nonempty W := ⟨w₁, hw₁, hw₁'⟩
   have hwne : Set.Nonempty W := Iff.mp Set.nonempty_coe_sort hwne'
 
-
   have h6 : z ∈ lowerBounds W := by rw[lowerBounds]; aesop
 
   have hwbb : BddBelow W := Set.nonempty_of_mem h6
@@ -58,7 +57,8 @@ lemma real_induction
       intro hw
       have h5 : w₀ ≤ s₁ := cinfₛ_le hwbb hw
       exact (not_le.mpr hs.2) h5
-    aesop
+    by_contra H
+    exact h3 ⟨hs.1, H⟩
 
   have h9 : ∀ w ∈ W, z ≤ w := fun w h ↦ h.1
   have h10 : z ≤ w₀ := le_cinfₛ hwne h9
