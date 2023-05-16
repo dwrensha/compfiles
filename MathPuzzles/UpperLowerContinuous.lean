@@ -94,9 +94,11 @@ lemma real_induction
 def ℝᵤ : Type := ℝ
 def ℝₗ : Type := ℝ
 
+/-- Generate the toplogy on ℝᵤ by intervals of the form (a, b]. -/
 instance tᵤ : TopologicalSpace ℝᵤ :=
   TopologicalSpace.generateFrom {s : Set ℝᵤ | ∃ a b : ℝ, Set.Ioc a b = s}
 
+/-- Generate the toplogy on ℝₗ by intervals of the form [a, b). -/
 instance tₗ : TopologicalSpace ℝₗ :=
   TopologicalSpace.generateFrom {s : Set ℝₗ | ∃ a b : ℝ, Set.Ico a b = s}
 
@@ -126,18 +128,18 @@ lemma continuous_of_upper_lower_continuous
     Let an open set (a,b) be given. Let a point c ∈ f⁻¹(a,b) be given.
     To show f⁻¹(a,b) is open, we must show there's an open interval
     (a',b') containing c, and contained in f⁻¹(a,b). We know f(c) ∈ (a,b),
-    so we can consider (a,f(c)] and [f(c),b). Because f is R- and L-continuous,
-     - f⁻¹(a,f(c)] is R-open
-     - f⁻¹[f(c),b) is L-open
+    so we can consider (a,f(c)] and [f(c),b). Because f is tᵤ- and tₗ-continuous,
+     - f⁻¹(a,f(c)] is tᵤ-open
+     - f⁻¹[f(c),b) is tₗ-open
     Note that also we know
      - c ∈ f⁻¹(a,f(c)]
      - c ∈ f⁻¹[f(c),b)
     therefore
      - There is a half-open interval (a', c] contained in f⁻¹(a,f(c)]
-     - There is a half-open interval (c, b'] contained in f⁻¹[f(c),b)
+     - There is a half-open interval [c, b') contained in f⁻¹[f(c),b)
     therefore
      - f(a', c] ⊆ (a,f(c)]
-     - f(c, b'] ⊆ [f(c),b)
+     - f[c, b') ⊆ [f(c),b)
     hence
      f(a',b') ⊆ (a,b)
     as required.
