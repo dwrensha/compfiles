@@ -29,10 +29,6 @@ def a : ℕ → ℕ
     have _ : (n.succ / 2) < n.succ := Nat.div_lt_self' n 0
     a n + a (n.succ / 2)
 
-lemma a_1_is_1 : a 1 = 1 := rfl
-lemma a_2_is_2 : a 2 = 2 := by rfl
-lemma a_5_is_7 : a 5 = 7 := by rfl
-
 lemma a_recurrence (n : ℕ) (hn : 2 ≤ n) : a n = a (n - 1) + a (n / 2) := by
   cases' n with n
   · exact (Nat.not_succ_le_zero _ hn).elim
@@ -305,5 +301,5 @@ lemma strengthen
       exact h (pn.succ) hmp
 
 theorem poland1998_q4 : (∀ N : ℕ, ∃ M : ℕ, N < M ∧ 7 ∣ a M) := by
-  have he: 7 ∣ a 5 := by rw [a_5_is_7]
+  have he: 7 ∣ a 5 := by rw [show a 5 = 7 by rfl]
   exact strengthen can_get_a_later_one ⟨5, he⟩
