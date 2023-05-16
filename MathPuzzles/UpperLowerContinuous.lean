@@ -100,6 +100,17 @@ instance tᵤ : TopologicalSpace ℝᵤ :=
 instance tₗ : TopologicalSpace ℝₗ :=
   TopologicalSpace.generateFrom {s : Set ℝₗ | ∃ a b : ℝ, Set.Ico a b = s}
 
+
+/-- Newtype for the standard topology on ℝ, defined as being generated
+by open intervals. This should be equivalent to the default instance
+for `TopologicalSpace ℝ`, which goes through `UniformSpace`, but for
+now I don't want to bother with proving that equivalence.
+-/
+def ℝₛ : Type := ℝ
+
+instance tₛ : TopologicalSpace ℝₛ :=
+  TopologicalSpace.generateFrom {s : Set ℝₛ | ∃ a b : ℝ, Set.Ioo a b = s}
+
 #check Continuous
 #check continuous_generateFrom
 
@@ -110,7 +121,7 @@ lemma continuous_of_upper_lower_continuous
     (f : ℝ → ℝ)
     (huc : Continuous[tᵤ, tᵤ] f)
     (hlc : Continuous[tₗ, tₗ] f)
-    : Continuous f := by
+    : Continuous[tₛ, tₛ] f := by
   /-
     Let an open set (a,b) be given. Let a point c ∈ f⁻¹(a,b) be given.
     To show f⁻¹(a,b) is open, we must show there's an open interval
@@ -137,7 +148,7 @@ theorem upper_lower_continuous
     (f : ℝ → ℝ)
     (huc : Continuous[tᵤ, tᵤ] f)
     (hlc : Continuous[tₗ, tₗ] f)
-    : Continuous f ∧ Monotone f := by
+    : Continuous[tₛ, tₛ] f ∧ Monotone f := by
   constructor
   · exact continuous_of_upper_lower_continuous f huc hlc
   · sorry
