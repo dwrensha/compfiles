@@ -94,17 +94,23 @@ lemma real_induction
 def ℝᵤ : Type := ℝ
 def ℝₗ : Type := ℝ
 
-instance : TopologicalSpace ℝᵤ :=
+instance tᵤ : TopologicalSpace ℝᵤ :=
   TopologicalSpace.generateFrom {s : Set ℝᵤ | ∃ a b : ℝ, Set.Ioc a b = s}
 
-instance : TopologicalSpace ℝₗ :=
+instance tₗ : TopologicalSpace ℝₗ :=
   TopologicalSpace.generateFrom {s : Set ℝₗ | ∃ a b : ℝ, Set.Ico a b = s}
+
+#check Continuous
+#check continuous_generateFrom
+
+-- activate the Continuous[t1, t2] notation
+open Topology
 
 lemma continuous_of_upper_lower_continuous
     (f : ℝ → ℝ)
-    (huc : @Continuous ℝᵤ ℝᵤ _ _ f)
-    (hlc : @Continuous ℝₗ ℝₗ _ _ f)
-    : @Continuous ℝ ℝ _ _ f := by
+    (huc : Continuous[tᵤ, tᵤ] f)
+    (hlc : Continuous[tₗ, tₗ] f)
+    : Continuous f := by
   /-
     Let an open set (a,b) be given. Let a point c ∈ f⁻¹(a,b) be given.
     To show f⁻¹(a,b) is open, we must show there's an open interval
@@ -118,20 +124,20 @@ lemma continuous_of_upper_lower_continuous
     therefore
      - There is a half-open interval (a', c] contained in f⁻¹(a,f(c)]
      - There is a half-open interval (c, b'] contained in f⁻¹[f(c),b)
-   therefore
-    - f(a', c] ⊆ (a,f(c)]
-    - f(c, b'] ⊆ [f(c),b)
-   hence
+    therefore
+     - f(a', c] ⊆ (a,f(c)]
+     - f(c, b'] ⊆ [f(c),b)
+    hence
      f(a',b') ⊆ (a,b)
-   as required.
+    as required.
   -/
   sorry
 
 theorem upper_lower_continuous
     (f : ℝ → ℝ)
-    (huc : @Continuous ℝᵤ ℝᵤ _ _ f)
-    (hlc : @Continuous ℝₗ ℝₗ _ _ f)
-    : @Continuous ℝ ℝ _ _ f ∧ Monotone f := by
+    (huc : Continuous[tᵤ, tᵤ] f)
+    (hlc : Continuous[tₗ, tₗ] f)
+    : Continuous f ∧ Monotone f := by
   constructor
   · exact continuous_of_upper_lower_continuous f huc hlc
   · sorry
