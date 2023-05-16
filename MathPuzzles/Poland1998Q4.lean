@@ -55,7 +55,6 @@ lemma lemma2 (n : ℕ) : (2 * n + 1) / 2 = n := by
   rw [Nat.succ_div_of_not_dvd h1]
   exact Nat.mul_div_right n zero_lt_two
 
-
 def a' : ℕ → ZMod 7
 | n => ⟨(a n) % 7, Nat.mod_lt _ (by norm_num)⟩
 
@@ -276,16 +275,12 @@ lemma can_get_a_later_one : (∀ N : ℕ, 7 ∣ a N → (∃ M : ℕ, N < M ∧ 
   have ha' : a' n = 0 := by
     have : a' n = ⟨a n % 7, Nat.mod_lt _ (by norm_num)⟩ := by simp[a']
     rw [this]
-    have :=  Nat.mod_eq_zero_of_dvd hn
+    have := Nat.mod_eq_zero_of_dvd hn
     aesop
   obtain ⟨m, hmgt, hm7⟩ := can_get_a_later_one_zmod n ha'
   use m
   use hmgt
-  have : a m % 7 = 0 := by
-    --injections_and_clear
-    --assumption
-    dsimp only [a'] at hm7
-    sorry
+  have : a m % 7 = 0 := by injections
   exact Nat.dvd_of_mod_eq_zero this
 
 lemma strengthen
