@@ -45,8 +45,7 @@ lemma real_induction
   -- W is nonempty.
   have hwne : Set.Nonempty W := ⟨w₁, hw₁, hw₁'⟩
 
-  have h6 : z ∈ lowerBounds W := by rw[lowerBounds]; aesop
-
+  have h6 : z ∈ lowerBounds W := fun _ ha ↦ ha.1
   have hwbb : BddBelow W := Set.nonempty_of_mem h6
 
   -- Note that [z, w₀) ⊆ S.
