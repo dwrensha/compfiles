@@ -40,7 +40,7 @@ lemma real_induction
   let W : Set ℝ := {w | z ≤ w ∧ w ∉ S}
 
   -- Let w₀ be its greatest lower bound.
-  let w₀ := infₛ W
+  let w₀ := sInf W
 
   -- W is nonempty.
   have hwne : Set.Nonempty W := ⟨w₁, hw₁, hw₁'⟩
@@ -53,12 +53,12 @@ lemma real_induction
   have h7: Set.Ico z w₀ ⊆ S := by
     intros s₁ hs
     by_contra H
-    exact (not_le.mpr hs.2) (cinfₛ_le hwbb ⟨hs.1, H⟩)
+    exact (not_le.mpr hs.2) (csInf_le hwbb ⟨hs.1, H⟩)
 
   have h9 : ∀ w ∈ W, z ≤ w := fun w h ↦ h.1
-  have h10 : z ≤ w₀ := le_cinfₛ hwne h9
+  have h10 : z ≤ w₀ := le_csInf hwne h9
 
-  have h13 := Real.is_glb_infₛ W hwne hwbb
+  have h13 := Real.is_glb_sInf W hwne hwbb
 
   have h11 : z ≠ w₀ := by
     by_contra H
