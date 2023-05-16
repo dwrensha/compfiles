@@ -16,6 +16,7 @@ import MathPuzzles.Imo2013Q5
 import MathPuzzles.Imo2018Q3
 import MathPuzzles.Imo2019Q1
 import MathPuzzles.India1998Q1
+import MathPuzzles.Poland1998Q4
 import MathPuzzles.Russia1998Q42
 import MathPuzzles.UpperLowerContinuous
 import MathPuzzles.Usa1998Q5
