@@ -90,34 +90,29 @@ lemma real_induction
 
   exact (not_le.mpr hwy) ((isGLB_iff_le_iff.mp h13 y).mpr h12)
 
-/-- newtypes for upper and lower topologies -/
-def ℝᵤ : Type := ℝ
-def ℝₗ : Type := ℝ
-
 /-- Generate the toplogy on ℝᵤ by intervals of the form (a, b]. -/
-instance tᵤ : TopologicalSpace ℝᵤ :=
-  TopologicalSpace.generateFrom {s : Set ℝᵤ | ∃ a b : ℝ, Set.Ioc a b = s}
+def tᵤ : TopologicalSpace ℝ :=
+  TopologicalSpace.generateFrom {s : Set ℝ | ∃ a b : ℝ, Set.Ioc a b = s}
 
 /-- Generate the toplogy on ℝₗ by intervals of the form [a, b). -/
-instance tₗ : TopologicalSpace ℝₗ :=
-  TopologicalSpace.generateFrom {s : Set ℝₗ | ∃ a b : ℝ, Set.Ico a b = s}
+def tₗ : TopologicalSpace ℝ :=
+  TopologicalSpace.generateFrom {s : Set ℝ | ∃ a b : ℝ, Set.Ico a b = s}
 
 
-/-- Newtype for the standard topology on ℝ, defined as being generated
-by open intervals. This should be equivalent to the default instance
+/-- This should be equivalent to the default instance
 for `TopologicalSpace ℝ`, which goes through `UniformSpace`, but for
 now I don't want to bother with proving that equivalence.
 -/
-def ℝₛ : Type := ℝ
-
-instance tₛ : TopologicalSpace ℝₛ :=
-  TopologicalSpace.generateFrom {s : Set ℝₛ | ∃ a b : ℝ, Set.Ioo a b = s}
+def tₛ : TopologicalSpace ℝ :=
+  TopologicalSpace.generateFrom {s : Set ℝ | ∃ a b : ℝ, Set.Ioo a b = s}
 
 #check Continuous
 #check continuous_generateFrom
 
 -- activate the Continuous[t1, t2] notation
 open Topology
+
+#check IsOpen
 
 lemma continuous_of_upper_lower_continuous
     (f : ℝ → ℝ)
@@ -144,7 +139,24 @@ lemma continuous_of_upper_lower_continuous
      f(a',b') ⊆ (a,b)
     as required.
   -/
+  apply continuous_generateFrom
+  intros ab hab
+  obtain ⟨a,b, hab⟩ := hab
+  have h1 : ∀ c ∈ f ⁻¹' ab, ∃ a' b', c ∈ Set.Ioo a' b' ∧
+                                  Set.Ioo a' b' ⊆ f ⁻¹' ab := by
+    intros c hc
+    have hc' : f c ∈ ab := hc
+    have h2 : IsOpen[tᵤ] (Set.Ioc a (f c)) := by
+      apply TopologicalSpace.isOpen_generateFrom_of_mem
+      aesop
+    have h3 : IsOpen[tᵤ] (f ⁻¹' (Set.Ioc a (f c))) := by
+      apply continuous_def.mp huc
+      exact h2
+    sorry
   sorry
+
+#check Continuous
+#check continuous_def
 
 theorem upper_lower_continuous
     (f : ℝ → ℝ)
