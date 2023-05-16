@@ -91,21 +91,48 @@ lemma real_induction
 
   exact (not_le.mpr hwy) ((isGLB_iff_le_iff.mp h13 y).mpr h12)
 
-
-def ℝₗ : Type := ℝ
+/-- newtypes for upper and lower topologies -/
 def ℝᵤ : Type := ℝ
-
-instance : TopologicalSpace ℝₗ :=
-  TopologicalSpace.generateFrom {s : Set ℝₗ | ∃ a b : ℝ, Set.Ico a b = s}
+def ℝₗ : Type := ℝ
 
 instance : TopologicalSpace ℝᵤ :=
   TopologicalSpace.generateFrom {s : Set ℝᵤ | ∃ a b : ℝ, Set.Ioc a b = s}
 
+instance : TopologicalSpace ℝₗ :=
+  TopologicalSpace.generateFrom {s : Set ℝₗ | ∃ a b : ℝ, Set.Ico a b = s}
+
+lemma continuous_of_upper_lower_continuous
+    (f : ℝ → ℝ)
+    (huc : @Continuous ℝᵤ ℝᵤ _ _ f)
+    (hlc : @Continuous ℝₗ ℝₗ _ _ f)
+    : @Continuous ℝ ℝ _ _ f := by
+  /-
+    Let an open set (a,b) be given. Let a point c ∈ f⁻¹(a,b) be given.
+    To show f⁻¹(a,b) is open, we must show there's an open interval
+    (a',b') containing c, and contained in f⁻¹(a,b). We know f(c) ∈ (a,b),
+    so we can consider (a,f(c)] and [f(c),b). Because f is R- and L-continuous,
+     - f⁻¹(a,f(c)] is R-open
+     - f⁻¹[f(c),b) is L-open
+    Note that also we know
+     - c ∈ f⁻¹(a,f(c)]
+     - c ∈ f⁻¹[f(c),b)
+    therefore
+     - There is a half-open interval (a', c] contained in f⁻¹(a,f(c)]
+     - There is a half-open interval (c, b'] contained in f⁻¹[f(c),b)
+   therefore
+    - f(a', c] ⊆ (a,f(c)]
+    - f(c, b'] ⊆ [f(c),b)
+   hence
+     f(a',b') ⊆ (a,b)
+   as required.
+  -/
+  sorry
+
 theorem upper_lower_continuous
     (f : ℝ → ℝ)
-    (hlc : @Continuous ℝₗ ℝₗ _ _ f)
     (huc : @Continuous ℝᵤ ℝᵤ _ _ f)
+    (hlc : @Continuous ℝₗ ℝₗ _ _ f)
     : @Continuous ℝ ℝ _ _ f ∧ Monotone f := by
   constructor
-  · sorry
+  · exact continuous_of_upper_lower_continuous f huc hlc
   · sorry
