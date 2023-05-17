@@ -189,12 +189,6 @@ lemma continuous_of_upper_lower_continuous
     sorry
   sorry
 
-#check TopologicalSpace.IsTopologicalBasis.isOpen_iff
-#check TopologicalSpace.GenerateOpen
-
-#check Continuous
-#check continuous_def
-
 theorem upper_lower_continuous
     (f : ℝ → ℝ)
     (huc : Continuous[tᵤ, tᵤ] f)
