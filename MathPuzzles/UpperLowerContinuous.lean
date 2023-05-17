@@ -114,14 +114,13 @@ open Topology
 lemma upper_basis :
     @TopologicalSpace.IsTopologicalBasis ℝ tᵤ upper_intervals := by
   refine'
-   @TopologicalSpace.IsTopologicalBasis.mk ℝ tᵤ upper_intervals _ _ _
+   @TopologicalSpace.IsTopologicalBasis.mk ℝ tᵤ upper_intervals _ _ rfl
   · intros I1 hI1 I2 hI2 x hx;
     obtain ⟨a, b, hab⟩ := hI1
     obtain ⟨c, d, hcd⟩ := hI2
     use Set.Ioc (Sup.sup a c) (Inf.inf b d)
     constructor
-    · use Sup.sup a c
-      use Inf.inf b d
+    · exact ⟨Sup.sup a c, Inf.inf b d, rfl⟩
     · constructor
       · aesop
       · intros y hy
@@ -131,9 +130,8 @@ lemma upper_basis :
     · intro _; apply Set.mem_sUnion.mpr;
       use Set.Ioc (x-1) x
       constructor
-      · use (x-1); use x
+      · exact ⟨x-1, x, rfl⟩
       · simp
-  · rfl
 
 lemma continuous_of_upper_lower_continuous
     (f : ℝ → ℝ)
