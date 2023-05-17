@@ -4,6 +4,7 @@ import Mathlib.Data.Set.Intervals.Basic
 import Mathlib.Topology.Order
 import Mathlib.Topology.MetricSpace.Basic
 import Mathlib.Topology.Algebra.Ring.Basic
+import Mathlib.Topology.Bases
 
 import Mathlib.Tactic.LibrarySearch
 import Mathlib.Tactic.Linarith
@@ -106,13 +107,31 @@ now I don't want to bother with proving that equivalence.
 def tₛ : TopologicalSpace ℝ :=
   TopologicalSpace.generateFrom {s : Set ℝ | ∃ a b : ℝ, Set.Ioo a b = s}
 
-#check Continuous
-#check continuous_generateFrom
-
 -- activate the Continuous[t1, t2] notation
 open Topology
 
-#check IsOpen
+def upper_intervals : Set (Set ℝ) :=
+  {s : Set ℝ | ∃ a b : ℝ, a < b ∧ Set.Ioc a b = s}
+
+#check TopologicalSpace.IsTopologicalBasis
+-- TopologicalSpace.IsTopologicalBasis.{u}
+--   {α : Type u} [t : TopologicalSpace α] (s : Set (Set α)) : Prop
+
+lemma upper_basis :
+    @TopologicalSpace.IsTopologicalBasis ℝ tᵤ upper_intervals := by
+  refine'
+   @TopologicalSpace.IsTopologicalBasis.mk ℝ tᵤ upper_intervals _ _ _
+  · intros I1 hI1 I2 hI2 x hx;
+    obtain ⟨a, b, hab⟩ := hI1
+    sorry
+  · ext x; constructor
+    · aesop
+    · intro y; apply Set.mem_sUnion.mpr;
+      use Set.Ioc (x-1) x
+      constructor
+      · sorry --simp[upper_intervals]; use (x-1); use x
+      · simp
+  · sorry --rfl
 
 lemma continuous_of_upper_lower_continuous
     (f : ℝ → ℝ)
@@ -152,8 +171,12 @@ lemma continuous_of_upper_lower_continuous
     have h3 : IsOpen[tᵤ] (f ⁻¹' (Set.Ioc a (f c))) := by
       apply continuous_def.mp huc
       exact h2
+    have h4 : ∃ a' c', Set.Ioc a' c' ⊆ (f ⁻¹' (Set.Ioc a (f c'))) := by
+      sorry
     sorry
   sorry
+
+#check TopologicalSpace.GenerateOpen
 
 #check Continuous
 #check continuous_def
