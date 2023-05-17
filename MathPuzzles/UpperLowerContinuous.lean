@@ -91,9 +91,10 @@ lemma real_induction
 
   exact (not_le.mpr hwy) ((isGLB_iff_le_iff.mp h13 y).mpr h12)
 
+def upper_intervals : Set (Set ℝ) := {s : Set ℝ | ∃ a b : ℝ, Set.Ioc a b = s}
+
 /-- Generate the toplogy on ℝᵤ by intervals of the form (a, b]. -/
-def tᵤ : TopologicalSpace ℝ :=
-  TopologicalSpace.generateFrom {s : Set ℝ | ∃ a b : ℝ, Set.Ioc a b = s}
+def tᵤ : TopologicalSpace ℝ := TopologicalSpace.generateFrom upper_intervals
 
 /-- Generate the toplogy on ℝₗ by intervals of the form [a, b). -/
 def tₗ : TopologicalSpace ℝ :=
@@ -110,28 +111,29 @@ def tₛ : TopologicalSpace ℝ :=
 -- activate the Continuous[t1, t2] notation
 open Topology
 
-def upper_intervals : Set (Set ℝ) :=
-  {s : Set ℝ | ∃ a b : ℝ, a < b ∧ Set.Ioc a b = s}
-
-#check TopologicalSpace.IsTopologicalBasis
--- TopologicalSpace.IsTopologicalBasis.{u}
---   {α : Type u} [t : TopologicalSpace α] (s : Set (Set α)) : Prop
-
 lemma upper_basis :
     @TopologicalSpace.IsTopologicalBasis ℝ tᵤ upper_intervals := by
   refine'
    @TopologicalSpace.IsTopologicalBasis.mk ℝ tᵤ upper_intervals _ _ _
   · intros I1 hI1 I2 hI2 x hx;
     obtain ⟨a, b, hab⟩ := hI1
-    sorry
+    obtain ⟨c, d, hcd⟩ := hI2
+    use Set.Ioc (Sup.sup a c) (Inf.inf b d)
+    constructor
+    · use Sup.sup a c
+      use Inf.inf b d
+    · constructor
+      · aesop
+      · intros y hy
+        aesop
   · ext x; constructor
     · aesop
-    · intro y; apply Set.mem_sUnion.mpr;
+    · intro _; apply Set.mem_sUnion.mpr;
       use Set.Ioc (x-1) x
       constructor
-      · sorry --simp[upper_intervals]; use (x-1); use x
+      · use (x-1); use x
       · simp
-  · sorry --rfl
+  · rfl
 
 lemma continuous_of_upper_lower_continuous
     (f : ℝ → ℝ)
@@ -167,7 +169,7 @@ lemma continuous_of_upper_lower_continuous
     have hc' : f c ∈ ab := hc
     have h2 : IsOpen[tᵤ] (Set.Ioc a (f c)) := by
       apply TopologicalSpace.isOpen_generateFrom_of_mem
-      aesop
+      unfold upper_intervals; aesop
     have h3 : IsOpen[tᵤ] (f ⁻¹' (Set.Ioc a (f c))) := by
       apply continuous_def.mp huc
       exact h2
