@@ -171,11 +171,25 @@ lemma continuous_of_upper_lower_continuous
     have h3 : IsOpen[tᵤ] (f ⁻¹' (Set.Ioc a (f c))) := by
       apply continuous_def.mp huc
       exact h2
-    have h4 : ∃ a' c', Set.Ioc a' c' ⊆ (f ⁻¹' (Set.Ioc a (f c'))) := by
-      sorry
+    have h4 : c ∈ f ⁻¹' Set.Ioc a (f c) := by aesop
+    have h5 :=
+     (@TopologicalSpace.IsTopologicalBasis.isOpen_iff _ tᵤ _
+       upper_intervals upper_basis).mp h3 c h4
+    obtain ⟨t, ⟨a', c', hac'⟩, htc, ht⟩ := h5
+    have h6 : Set.Ioc a' c ⊆ f ⁻¹' Set.Ioc a (f c) := by
+       intros x hx
+       have h7 : x ∈ Set.Ioc a' c' := by
+         cases' hx with hxl hxr
+         constructor
+         · exact hxl
+         · rw[←hac'] at htc
+           exact hxr.trans htc.2
+       rw [hac'] at h7
+       exact ht h7
     sorry
   sorry
 
+#check TopologicalSpace.IsTopologicalBasis.isOpen_iff
 #check TopologicalSpace.GenerateOpen
 
 #check Continuous
