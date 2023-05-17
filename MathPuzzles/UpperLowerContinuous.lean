@@ -92,24 +92,46 @@ lemma real_induction
   exact (not_le.mpr hwy) ((isGLB_iff_le_iff.mp h13 y).mpr h12)
 
 def upper_intervals : Set (Set ℝ) := {s : Set ℝ | ∃ a b : ℝ, Set.Ioc a b = s}
+def lower_intervals : Set (Set ℝ) := {s : Set ℝ | ∃ a b : ℝ, Set.Ico a b = s}
+def open_intervals : Set (Set ℝ) := {s : Set ℝ | ∃ a b : ℝ, Set.Ioo a b = s}
 
 /-- Generate the toplogy on ℝᵤ by intervals of the form (a, b]. -/
 def tᵤ : TopologicalSpace ℝ := TopologicalSpace.generateFrom upper_intervals
 
 /-- Generate the toplogy on ℝₗ by intervals of the form [a, b). -/
-def tₗ : TopologicalSpace ℝ :=
-  TopologicalSpace.generateFrom {s : Set ℝ | ∃ a b : ℝ, Set.Ico a b = s}
+def tₗ : TopologicalSpace ℝ := TopologicalSpace.generateFrom lower_intervals
 
 
 /-- This should be equivalent to the default instance
 for `TopologicalSpace ℝ`, which goes through `UniformSpace`, but for
 now I don't want to bother with proving that equivalence.
 -/
-def tₛ : TopologicalSpace ℝ :=
-  TopologicalSpace.generateFrom {s : Set ℝ | ∃ a b : ℝ, Set.Ioo a b = s}
+def tₛ : TopologicalSpace ℝ := TopologicalSpace.generateFrom open_intervals
 
 -- activate the Continuous[t1, t2] notation
 open Topology
+
+lemma lower_basis :
+    @TopologicalSpace.IsTopologicalBasis ℝ tₗ lower_intervals := by
+  refine'
+   @TopologicalSpace.IsTopologicalBasis.mk ℝ tₗ lower_intervals _ _ rfl
+  · intros I1 hI1 I2 hI2 x hx;
+    obtain ⟨a, b, hab⟩ := hI1
+    obtain ⟨c, d, hcd⟩ := hI2
+    use Set.Ico (Sup.sup a c) (Inf.inf b d)
+    constructor
+    · exact ⟨Sup.sup a c, Inf.inf b d, rfl ⟩
+    · constructor
+      · aesop
+      · intros y hy
+        aesop
+  · ext x; constructor
+    · aesop
+    · intro _; apply Set.mem_sUnion.mpr;
+      use Set.Ico x (x+1)
+      constructor
+      · exact ⟨x, x+1, rfl⟩
+      · simp
 
 lemma upper_basis :
     @TopologicalSpace.IsTopologicalBasis ℝ tᵤ upper_intervals := by
@@ -132,6 +154,37 @@ lemma upper_basis :
       constructor
       · exact ⟨x-1, x, rfl⟩
       · simp
+
+lemma open_basis :
+    @TopologicalSpace.IsTopologicalBasis ℝ tₛ open_intervals := by 
+ refine'
+   @TopologicalSpace.IsTopologicalBasis.mk ℝ tₛ open_intervals _ _ rfl
+ · intros I1 hI1 I2 hI2 x hx
+   obtain ⟨a, b, hab⟩ := hI1
+   obtain ⟨c, d, hcd⟩ := hI2
+   use Set.Ioo (Sup.sup a c) (Inf.inf b d)
+   constructor
+   · exact ⟨Sup.sup a c, Inf.inf b d, rfl⟩
+   · constructor
+     · aesop
+     · intros y hy; aesop
+ · ext x; constructor
+   · aesop
+   · intro _; apply Set.mem_sUnion.mpr; 
+     use Set.Ioo (x-1) (x+1)
+     constructor
+     · exact ⟨x-1, x+1, rfl⟩
+     · simp
+
+lemma union_preimage_lemma 
+    {A B : Set ℝ} : (f : ℝ → ℝ) → f ⁻¹' A ∪ f ⁻¹' B = f ⁻¹' (A ∪ B) := by
+    aesop
+
+lemma union_subset_lemma 
+    {A1 B1 A2 B2 : Set ℝ} (s1 : A1 ⊆ B1) (s2 : A2 ⊆ B2) :
+    (A1 ∪ A2) ⊆ (B1 ∪ B2) := by 
+    intros x hx
+    aesop
 
 lemma continuous_of_upper_lower_continuous
     (f : ℝ → ℝ)
@@ -161,10 +214,8 @@ lemma continuous_of_upper_lower_continuous
   apply continuous_generateFrom
   intros ab hab
   obtain ⟨a,b, hab⟩ := hab
-  have h1 : ∀ c ∈ f ⁻¹' ab, ∃ a' b', c ∈ Set.Ioo a' b' ∧
-                                  Set.Ioo a' b' ⊆ f ⁻¹' ab := by
+  have h6oc : ∀ c ∈ f ⁻¹' ab, ∃ a', Set.Ioc a' c ⊆ f ⁻¹' Set.Ioc a (f c) ∧ (a' < c ∧ a < f c) := by
     intros c hc
-    have hc' : f c ∈ ab := hc
     have h2 : IsOpen[tᵤ] (Set.Ioc a (f c)) := by
       apply TopologicalSpace.isOpen_generateFrom_of_mem
       unfold upper_intervals; aesop
@@ -176,20 +227,67 @@ lemma continuous_of_upper_lower_continuous
      (@TopologicalSpace.IsTopologicalBasis.isOpen_iff _ tᵤ _
        upper_intervals upper_basis).mp h3 c h4
     obtain ⟨t, ⟨a', c', hac'⟩, htc, ht⟩ := h5
-    have h6 : Set.Ioc a' c ⊆ f ⁻¹' Set.Ioc a (f c) := by
-       intros x hx
-       have h7 : x ∈ Set.Ioc a' c' := by
-         cases' hx with hxl hxr
-         constructor
-         · exact hxl
-         · rw[←hac'] at htc
-           exact hxr.trans htc.2
-       rw [hac'] at h7
-       exact ht h7
-    sorry
-  sorry
+    use a'
+    rw[←hac'] at htc
+    constructor
+    · intros x hx
+      have h7 : x ∈ Set.Ioc a' c' := by
+          cases' hx with hxl hxr
+          constructor
+          · exact hxl
+          · exact hxr.trans htc.2
+      rw [hac'] at h7
+      exact ht h7
+    · exact ⟨ htc.1, h4.1 ⟩ 
 
-theorem upper_lower_continuous
+  have h6co : ∀ c ∈ f ⁻¹' ab, ∃ b', Set.Ico c b' ⊆ f ⁻¹' Set.Ico (f c) b ∧ (c < b' ∧ f c < b) := by
+    intros c hc
+    have h2 : IsOpen[tₗ] (Set.Ico (f c) b) := by
+      apply TopologicalSpace.isOpen_generateFrom_of_mem
+      unfold lower_intervals; aesop
+    have h3 : IsOpen[tₗ] (f ⁻¹' (Set.Ico (f c) b)) := by
+      apply continuous_def.mp hlc
+      exact h2
+    have h4 : c ∈ f ⁻¹' Set.Ico (f c) b := by aesop
+    have h5 :=
+     (@TopologicalSpace.IsTopologicalBasis.isOpen_iff _ tₗ _
+       lower_intervals lower_basis).mp h3 c h4
+    obtain ⟨t, ⟨c', b', hcb'⟩, htc, ht⟩ := h5
+    use b'
+    rw [←hcb'] at htc            
+    constructor
+    · intros x hx
+      have h7 : x ∈ Set.Ico c' b' := by
+          cases' hx with hxl hxr
+          constructor
+          · exact htc.1.trans hxl
+          · exact hxr
+      rw [hcb'] at h7
+      exact ht h7
+    · exact ⟨htc.2, h4.2⟩
+    
+  have h1 : ∀ c ∈ f ⁻¹' ab, ∃ t, t ∈ open_intervals ∧ c ∈ t ∧ t ⊆ f ⁻¹' ab := by
+    intros c hc
+    obtain ⟨ a', ha', ⟨ ineq1a, ineq1b⟩ ⟩ := h6oc c hc
+    obtain ⟨ b', hb', ⟨ ineq2a, ineq2b⟩ ⟩ := h6co c hc
+    use Set.Ioo a' b'
+    constructor
+    · exact ⟨a', b', rfl⟩ 
+    · constructor
+      · aesop
+      · have ilem1 : Set.Ioc a' c ∪ Set.Ico c b' = Set.Ioo a' b' := by aesop
+        have ilem2 : Set.Ioc a (f c) ∪ Set.Ico (f c) b = Set.Ioo a b := by aesop
+        have subeq :
+          Set.Ioc a' c ∪ Set.Ico c b' ⊆ f ⁻¹' Set.Ioc a (f c) ∪ f ⁻¹' Set.Ico (f c) b
+          := union_subset_lemma ha' hb'
+        rw [ilem1, union_preimage_lemma f, ilem2, hab] at subeq
+        exact subeq
+  exact
+     (@TopologicalSpace.IsTopologicalBasis.isOpen_iff ℝ tₛ (f ⁻¹' ab)
+       open_intervals open_basis).mpr h1
+
+
+theorem monotone_of_upper_lower_continuous
     (f : ℝ → ℝ)
     (huc : Continuous[tᵤ, tᵤ] f)
     (hlc : Continuous[tₗ, tₗ] f)
