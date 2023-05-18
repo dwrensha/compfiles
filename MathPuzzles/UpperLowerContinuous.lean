@@ -176,10 +176,6 @@ lemma open_basis :
      · exact ⟨x-1, x+1, rfl⟩
      · simp
 
-lemma union_preimage_lemma
-    {A B : Set ℝ} : (f : ℝ → ℝ) → f ⁻¹' A ∪ f ⁻¹' B = f ⁻¹' (A ∪ B) := by
-    aesop
-
 lemma continuous_of_upper_lower_continuous
     (f : ℝ → ℝ)
     (huc : Continuous[tᵤ, tᵤ] f)
@@ -274,7 +270,7 @@ lemma continuous_of_upper_lower_continuous
         have subeq :
           Set.Ioc a' c ∪ Set.Ico c b' ⊆ f ⁻¹' Set.Ioc a (f c) ∪ f ⁻¹' Set.Ico (f c) b
           := Set.union_subset_union ha' hb'
-        rw [ilem1, union_preimage_lemma f, ilem2, hab] at subeq
+        rw [ilem1, ←Set.preimage_union, ilem2, hab] at subeq
         exact subeq
   exact
      (@TopologicalSpace.IsTopologicalBasis.isOpen_iff ℝ tₛ (f ⁻¹' ab)
