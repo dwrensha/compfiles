@@ -265,8 +265,8 @@ lemma continuous_of_upper_lower_continuous
     · exact ⟨a', b', rfl⟩
     · constructor
       · aesop
-      · have ilem1 : Set.Ioc a' c ∪ Set.Ico c b' = Set.Ioo a' b' := by aesop
-        have ilem2 : Set.Ioc a (f c) ∪ Set.Ico (f c) b = Set.Ioo a b := by aesop
+      · have ilem1 := Set.Ioc_union_Ico_eq_Ioo ineq1a ineq2a
+        have ilem2 := Set.Ioc_union_Ico_eq_Ioo ineq1b ineq2b
         have subeq :
           Set.Ioc a' c ∪ Set.Ico c b' ⊆ f ⁻¹' Set.Ioc a (f c) ∪ f ⁻¹' Set.Ico (f c) b
           := Set.union_subset_union ha' hb'
