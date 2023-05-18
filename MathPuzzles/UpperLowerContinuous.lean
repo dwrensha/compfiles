@@ -149,14 +149,14 @@ lemma upper_basis :
         aesop
   · ext x; constructor
     · aesop
-    · intro _; apply Set.mem_sUnion.mpr;
+    · intro _; apply Set.mem_sUnion.mpr
       use Set.Ioc (x-1) x
       constructor
       · exact ⟨x-1, x, rfl⟩
       · simp
 
 lemma open_basis :
-    @TopologicalSpace.IsTopologicalBasis ℝ tₛ open_intervals := by 
+    @TopologicalSpace.IsTopologicalBasis ℝ tₛ open_intervals := by
  refine'
    @TopologicalSpace.IsTopologicalBasis.mk ℝ tₛ open_intervals _ _ rfl
  · intros I1 hI1 I2 hI2 x hx
@@ -170,20 +170,14 @@ lemma open_basis :
      · intros y hy; aesop
  · ext x; constructor
    · aesop
-   · intro _; apply Set.mem_sUnion.mpr; 
+   · intro _; apply Set.mem_sUnion.mpr
      use Set.Ioo (x-1) (x+1)
      constructor
      · exact ⟨x-1, x+1, rfl⟩
      · simp
 
-lemma union_preimage_lemma 
+lemma union_preimage_lemma
     {A B : Set ℝ} : (f : ℝ → ℝ) → f ⁻¹' A ∪ f ⁻¹' B = f ⁻¹' (A ∪ B) := by
-    aesop
-
-lemma union_subset_lemma 
-    {A1 B1 A2 B2 : Set ℝ} (s1 : A1 ⊆ B1) (s2 : A2 ⊆ B2) :
-    (A1 ∪ A2) ⊆ (B1 ∪ B2) := by 
-    intros x hx
     aesop
 
 lemma continuous_of_upper_lower_continuous
@@ -238,7 +232,7 @@ lemma continuous_of_upper_lower_continuous
           · exact hxr.trans htc.2
       rw [hac'] at h7
       exact ht h7
-    · exact ⟨ htc.1, h4.1 ⟩ 
+    · exact ⟨ htc.1, h4.1 ⟩
 
   have h6co : ∀ c ∈ f ⁻¹' ab, ∃ b', Set.Ico c b' ⊆ f ⁻¹' Set.Ico (f c) b ∧ (c < b' ∧ f c < b) := by
     intros c hc
@@ -254,7 +248,7 @@ lemma continuous_of_upper_lower_continuous
        lower_intervals lower_basis).mp h3 c h4
     obtain ⟨t, ⟨c', b', hcb'⟩, htc, ht⟩ := h5
     use b'
-    rw [←hcb'] at htc            
+    rw [←hcb'] at htc
     constructor
     · intros x hx
       have h7 : x ∈ Set.Ico c' b' := by
@@ -265,21 +259,21 @@ lemma continuous_of_upper_lower_continuous
       rw [hcb'] at h7
       exact ht h7
     · exact ⟨htc.2, h4.2⟩
-    
+
   have h1 : ∀ c ∈ f ⁻¹' ab, ∃ t, t ∈ open_intervals ∧ c ∈ t ∧ t ⊆ f ⁻¹' ab := by
     intros c hc
     obtain ⟨ a', ha', ⟨ ineq1a, ineq1b⟩ ⟩ := h6oc c hc
     obtain ⟨ b', hb', ⟨ ineq2a, ineq2b⟩ ⟩ := h6co c hc
     use Set.Ioo a' b'
     constructor
-    · exact ⟨a', b', rfl⟩ 
+    · exact ⟨a', b', rfl⟩
     · constructor
       · aesop
       · have ilem1 : Set.Ioc a' c ∪ Set.Ico c b' = Set.Ioo a' b' := by aesop
         have ilem2 : Set.Ioc a (f c) ∪ Set.Ico (f c) b = Set.Ioo a b := by aesop
         have subeq :
           Set.Ioc a' c ∪ Set.Ico c b' ⊆ f ⁻¹' Set.Ioc a (f c) ∪ f ⁻¹' Set.Ico (f c) b
-          := union_subset_lemma ha' hb'
+          := Set.union_subset_union ha' hb'
         rw [ilem1, union_preimage_lemma f, ilem2, hab] at subeq
         exact subeq
   exact
