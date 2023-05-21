@@ -276,12 +276,74 @@ lemma continuous_of_upper_lower_continuous
      (@TopologicalSpace.IsTopologicalBasis.isOpen_iff ℝ tₛ (f ⁻¹' ab)
        open_intervals open_basis).mpr h1
 
+-- Should be easy to show:
+-- An infinite left-closed interval is in fact
+-- open in the lower limit topology.
+lemma infinite_interval_lower_open (x : ℝ) : @IsOpen ℝ tₗ (Set.Ici x) := by
+  sorry
 
 theorem monotone_of_upper_lower_continuous
+    (f : ℝ → ℝ)
+    (huc : Continuous[tᵤ, tᵤ] f)
+    (hlc : Continuous[tₗ, tₗ] f)
+    : Monotone f := by
+/- Paper proof:
+    Consider the disjoint sets
+
+    A = (-∞, f(z))
+    B = [f(z), ∞)
+
+    We show by real induction that [z, ∞) ⊆ f⁻¹(B).
+
+    We must show
+     (L1) ∀x ∈ f⁻¹(B). ∃y. [x,y) ⊆ f⁻¹(B)
+    Follows because f is an L-map.
+
+     (L2) ∀xy. [x, y) ⊆ f⁻¹(B) ⇒ y ∈ f⁻¹(B)
+
+    Assume towards a contradiction that y ∉ f⁻¹(B), therefore y ∈ f⁻¹(A).
+    Since f is an R-map, there is an open interval (y-ε,y] such that
+    f(y-ε,y] ⊆ A. But we have by assumption that f[x,y) ⊆ B, and
+    y-ε/2 ∈ [x,y) ∩ (y-ε,y], so we have f(y-ε/2) ∈ A but also f(y-ε/2) ∈ B, a contradiction.
+-/
+  intro z b hz
+  let A := (Set.Iio (f z))
+  let B := Set.Ici (f z)
+
+  have L1 : ∀ (x : ℝ), x ∈ f ⁻¹' Set.Ici (f z) → ∃ y, x < y ∧ Set.Ico x y ⊆ f ⁻¹' Set.Ici (f z) := by
+    intro x hx
+    have inverse_image_open : @IsOpen ℝ tₗ (f ⁻¹' Set.Ici (f z)) := by 
+      apply @IsOpen.preimage ℝ ℝ tₗ tₗ f hlc (Set.Ici (f z)) 
+      exact infinite_interval_lower_open (f z)
+    have h2 := (@TopologicalSpace.IsTopologicalBasis.isOpen_iff ℝ tₗ (f ⁻¹' (Set.Ici (f z)))
+       lower_intervals lower_basis).mp inverse_image_open x hx
+    obtain ⟨ t , ht, xint, tsub ⟩ := h2
+    obtain ⟨ ta, ⟨ tb, htb ⟩⟩ := ht
+    use tb
+    constructor
+    · rw [←htb] at xint
+      exact xint.2
+    · have auxsub : Set.Ico x tb ⊆ t := by 
+        intro xx hxx
+        rw[←htb] 
+        rw[←htb] at xint
+        constructor
+        · exact xint.1.trans hxx.1
+        · exact hxx.2
+      exact auxsub.trans tsub
+
+  have L2 : ∀ (x : ℝ), x ∈ f ⁻¹' Set.Ici (f z) → ∀ (y : ℝ), x < y → Set.Ico x y ⊆ f ⁻¹' Set.Ici (f z) → y ∈ f ⁻¹' Set.Ici (f z) := by
+    sorry
+
+  have h0 : Set.Ici z ⊆ f ⁻¹' (Set.Ici (f z)) := real_induction _ L1 L2 _ (by aesop)
+  aesop
+
+
+theorem properties_of_upper_lower_continuous
     (f : ℝ → ℝ)
     (huc : Continuous[tᵤ, tᵤ] f)
     (hlc : Continuous[tₗ, tₗ] f)
     : Continuous[tₛ, tₛ] f ∧ Monotone f := by
   constructor
   · exact continuous_of_upper_lower_continuous f huc hlc
-  · sorry
+  · exact monotone_of_upper_lower_continuous f huc hlc
