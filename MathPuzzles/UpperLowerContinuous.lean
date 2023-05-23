@@ -312,8 +312,8 @@ theorem monotone_of_upper_lower_continuous
 
   have L1 : ∀ (x : ℝ), x ∈ f ⁻¹' Set.Ici (f z) → ∃ y, x < y ∧ Set.Ico x y ⊆ f ⁻¹' Set.Ici (f z) := by
     intro x hx
-    have inverse_image_open : @IsOpen ℝ tₗ (f ⁻¹' Set.Ici (f z)) := by 
-      apply @IsOpen.preimage ℝ ℝ tₗ tₗ f hlc (Set.Ici (f z)) 
+    have inverse_image_open : @IsOpen ℝ tₗ (f ⁻¹' Set.Ici (f z)) := by
+      apply @IsOpen.preimage ℝ ℝ tₗ tₗ f hlc (Set.Ici (f z))
       exact infinite_interval_lower_open (f z)
     have h2 := (@TopologicalSpace.IsTopologicalBasis.isOpen_iff ℝ tₗ (f ⁻¹' (Set.Ici (f z)))
        lower_intervals lower_basis).mp inverse_image_open x hx
@@ -323,9 +323,9 @@ theorem monotone_of_upper_lower_continuous
     constructor
     · rw [←htb] at xint
       exact xint.2
-    · have auxsub : Set.Ico x tb ⊆ t := by 
+    · have auxsub : Set.Ico x tb ⊆ t := by
         intro xx hxx
-        rw[←htb] 
+        rw[←htb]
         rw[←htb] at xint
         constructor
         · exact xint.1.trans hxx.1
