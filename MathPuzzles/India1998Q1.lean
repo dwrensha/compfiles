@@ -1,11 +1,12 @@
 import Mathlib.Data.Int.Basic
 import Mathlib.Data.Int.ModEq
---import data.nat.prime_norm_num
 import Mathlib.Data.ZMod.Basic
 
 import Mathlib.Tactic.LibrarySearch
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
+import Mathlib.Tactic.NormNum.Prime
+
 
 /-
 Indian Mathematical Olympiad 1998, problem 1
@@ -32,11 +33,6 @@ lemma lemma1' (a : ℤ) (b : ℕ) (hb : 0 < b) : ((a : ZMod b).val : ℤ) = a % 
 
 lemma lemma1 (a: ℤ) : ((a : ZMod 7).val : ℤ) = a % 7 := lemma1' a 7 (by norm_num)
 
-lemma seven_is_prime : Nat.Prime 7 := by
-  have h1 : 7 ≠ 1 := by norm_num
-  have h : Nat.minFac 7 = 7 := by rfl
-  exact h ▸ Nat.minFac_prime h1
-
 theorem india1998_q1b (n a b: ℤ) (hn : a^2 + 3 * b^2 = 7 * n) :
     (∃ a b : ℤ, a^2 + 3 * b^2 = n) := by
   let az : ZMod 7 := a
@@ -51,7 +47,7 @@ theorem india1998_q1b (n a b: ℤ) (hn : a^2 + 3 * b^2 = 7 * n) :
   rw [add_sub_cancel, zero_sub, ←neg_mul, show ((-3):ZMod 7) = 4 by rfl] at h9
   have h10 : 4 * bz^2 = (2 * bz) ^ 2 := by ring
   rw [h10] at h9
-  haveI : Fact (Nat.Prime 7) := ⟨seven_is_prime⟩
+  haveI : Fact (Nat.Prime 7) := ⟨by norm_num⟩
   obtain (hep : az = 2 * bz) | (hen : az = - (2 * bz)) := eq_or_eq_neg_of_sq_eq_sq _ _ h9
   · have h11: (2 * az + 3 * bz) = 0 := by
       rw [hep]; ring_nf;

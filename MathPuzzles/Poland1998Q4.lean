@@ -7,6 +7,7 @@ import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.IntervalCases
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
+import Mathlib.Tactic.NormNum.Prime
 import Mathlib.Tactic.LibrarySearch
 
 /-
@@ -73,18 +74,13 @@ lemma a'_recurrence (n : ℕ) (hn : 2 ≤ n) : a' n = a' (n - 1) + a' (n / 2) :=
     simp
   exact zmod_ext _ _ this
 
-lemma seven_is_prime : Nat.Prime 7 := by
-  have h1 : 7 ≠ 1 := by norm_num
-  have h : Nat.minFac 7 = 7 := by rfl
-  exact h ▸ Nat.minFac_prime h1
-
 lemma lemma3
     (N0 : ℕ)
     (k : ZMod 7)
     (hk : k ≠ 0)
     (hN : ∀ i : ℕ, i < 7 → a' (N0 + i) = a' N0 + k * i) :
     (∃ i : ℕ, i < 7 ∧ a' (N0 + i) = 0) := by
-  have hp : Fact (Nat.Prime 7) := ⟨seven_is_prime⟩
+  have hp : Fact (Nat.Prime 7) := ⟨by norm_num⟩
   let ii := - (a' N0) / k
   use ii.val
   constructor
