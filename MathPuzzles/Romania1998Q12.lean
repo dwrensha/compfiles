@@ -3,15 +3,18 @@ import Mathlib.Data.Real.Basic
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 /-
-Romanian Mathematical Olympiad 1998, Problem 12
+# Romanian Mathematical Olympiad 1998, Problem 12
 
 Find all functions u : ℝ → ℝ for which there exists a strictly monotonic
 function f : ℝ → ℝ such that
 
   ∀ x,y ∈ ℝ, f(x + y) = f(x)u(y) + f(y)
 
--/
+# Solution
 
+f(x) = eᵏˣ for some k : ℝ.
+
+-/
 
 namespace Romania1998Q12
 
@@ -36,21 +39,17 @@ lemma find_rational_in_ball_right (y δ : ℝ) (hδ : 0 < δ) :
 
   have hyy' : y < y' := by
     obtain ⟨ha, ha'⟩ | ⟨hb, _⟩ := abs_cases (y' - (y + δ / 2))
-    · rw[ha] at hy3
-      linarith
-    · rw[hb] at hy3
-      linarith
+    · linarith
+    · linarith
   constructor
   · exact hyy'
   · apply Metric.mem_ball.mpr
     rw[Real.dist_eq]
     have hy4 : 0 ≤ y' - y := by linarith
     rw[abs_eq_self.mpr hy4]
-    obtain ⟨ha, ha'⟩ | ⟨hb, hb'⟩ := abs_cases (y' - (y + δ / 2))
-    · rw[ha] at hy3
-      linarith
-    · rw[hb] at hy3
-      linarith
+    obtain ⟨ha, _⟩ | ⟨hb, hb'⟩ := abs_cases (y' - (y + δ / 2))
+    · linarith
+    · linarith
 
 lemma find_rational_in_ball_left (y δ : ℝ) (hδ : 0 < δ) :
      ∃ (z : ℚ), ((z:ℝ) < y) ∧ (z : ℝ) ∈ Metric.ball y δ := by
@@ -65,21 +64,17 @@ lemma find_rational_in_ball_left (y δ : ℝ) (hδ : 0 < δ) :
   rw[Real.dist_eq] at hy3
   have hyy' : y' < y := by
     obtain ⟨ha, _⟩ | ⟨hb, hb'⟩ := abs_cases (y' - (y - δ / 2))
-    · rw[ha] at hy3
-      linarith
-    · rw[hb] at hy3
-      linarith
+    · linarith
+    · linarith
   constructor
   · exact hyy'
   · apply Metric.mem_ball.mpr
     rw[Real.dist_eq]
     have hy4 : y' - y ≤ 0 := by linarith
     rw[abs_eq_neg_self.mpr hy4]
-    obtain ⟨ha, ha'⟩ | ⟨hb, hb'⟩ := abs_cases (y' - (y - δ / 2))
-    · rw[ha] at hy3
-      linarith
-    · rw[hb] at hy3
-      linarith
+    obtain ⟨ha, ha'⟩ | ⟨hb, _⟩ := abs_cases (y' - (y - δ / 2))
+    · linarith
+    · linarith
 
 
 lemma extend_function_mono
@@ -121,8 +116,7 @@ lemma extend_function_mono
       have hua : ε = -(u y - f y) := abs_of_neg hufp
       rw [hua, Real.dist_eq] at hbzb
       obtain h5 | h6 := em (f y < u z)
-      · have : 0 ≤ u z - f y := by linarith
-        linarith
+      · linarith
       · have : u z - f y ≤ 0 := by linarith
         rw[abs_eq_neg_self.mpr this] at hbzb
         linarith
@@ -135,10 +129,7 @@ lemma extend_function_mono
   · -- pick a rational point z greater than y that's in the ball s,
     have : ∃ z : ℚ, y < z ∧ dist (z:ℝ) y < δ := by
       obtain ⟨z, hz1, hz2⟩ := find_rational_in_ball_right y δ hδ0
-      use z
-      constructor
-      · exact hz1
-      · exact Metric.mem_ball.mp hz2
+      exact ⟨z, hz1, Metric.mem_ball.mp hz2⟩
     obtain ⟨z, h_y_lt_z, hyz⟩ := this
     -- then dist (f z) (f y) < ε.
     have hzb : (↑z) ∈ Metric.ball y δ := Metric.mem_ball.mpr hyz
@@ -154,7 +145,7 @@ lemma extend_function_mono
         linarith
       · linarith
     -- so u(z) < u(y), contradicting u_mono.
-    have h_y_le_z := le_of_lt  h_y_lt_z
+    have h_y_le_z := le_of_lt h_y_lt_z
     have := u_mono h_y_le_z
     linarith
 
@@ -197,8 +188,7 @@ lemma extend_function_anti
       have hua : ε = -(u y - f y) := abs_of_neg hufp
       rw [hua, Real.dist_eq] at hbzb
       cases em (f y < u z)
-      · have : 0 ≤ u z - f y := by linarith
-        linarith
+      · linarith
       · have : u z - f y ≤ 0 := by linarith
         rw[abs_eq_neg_self.mpr this] at hbzb
         linarith
@@ -209,10 +199,7 @@ lemma extend_function_anti
   · -- pick a rational point less than y that's in the ball s,
     have : ∃ z : ℚ, (z:ℝ) < y ∧ dist (z:ℝ) y < δ := by
       obtain ⟨z, hz1, hz2⟩ := find_rational_in_ball_left y δ hδ0
-      use z
-      constructor
-      · exact hz1
-      · exact Metric.mem_ball.mp hz2
+      exact ⟨z, hz1, Metric.mem_ball.mp hz2⟩
 
     obtain ⟨z, h_z_lt_y, hyz⟩ := this
     -- then dist (f z) (f y) < ε.
