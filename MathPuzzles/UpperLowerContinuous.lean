@@ -26,10 +26,10 @@ namespace UpperLowerContinuous
  Then, given z ∈ S, we have [z, ∞) ⊆ S.
 -/
 lemma real_induction
-    (S : Set ℝ)
+    {S : Set ℝ}
     (h1 : ∀ x ∈ S, ∃ y, x < y ∧ Set.Ico x y ⊆ S)
     (h2 : ∀ x ∈ S, ∀ y, x < y → Set.Ico x y ⊆ S → y ∈ S)
-    (z : ℝ)
+    {z : ℝ}
     (hz : z ∈ S)
     : Set.Ici z ⊆ S := by
 
@@ -335,7 +335,8 @@ theorem monotone_of_upper_lower_continuous
   have L2 : ∀ (x : ℝ), x ∈ f ⁻¹' Set.Ici (f z) → ∀ (y : ℝ), x < y → Set.Ico x y ⊆ f ⁻¹' Set.Ici (f z) → y ∈ f ⁻¹' Set.Ici (f z) := by
     sorry
 
-  have h0 : Set.Ici z ⊆ f ⁻¹' (Set.Ici (f z)) := real_induction _ L1 L2 _ (by aesop)
+  have h0 : Set.Ici z ⊆ f ⁻¹' (Set.Ici (f z)) :=
+    real_induction L1 L2 (@Set.left_mem_Ici _ _ (f z))
   aesop
 
 
