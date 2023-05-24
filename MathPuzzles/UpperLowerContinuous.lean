@@ -28,7 +28,7 @@ namespace UpperLowerContinuous
 lemma real_induction
     {S : Set ℝ}
     (h1 : ∀ x ∈ S, ∃ y, x < y ∧ Set.Ico x y ⊆ S)
-    (h2 : ∀ x ∈ S, ∀ y, x < y → Set.Ico x y ⊆ S → y ∈ S)
+    (h2 : ∀ x y, x < y → Set.Ico x y ⊆ S → y ∈ S)
     {z : ℝ}
     (hz : z ∈ S)
     : Set.Ici z ⊆ S := by
@@ -74,7 +74,7 @@ lemma real_induction
   have h15: z < w₀ := Ne.lt_of_le h11 h10
 
   -- So we can apply h2, to get that w₀ ∈ S.
-  have h8 := h2 z hz w₀ h15 h7
+  have h8 := h2 z w₀ h15 h7
 
   -- Then we can apply h1 to get some y
   -- such that w₀ < y and Set.Ico w₀ y ⊆ S.
@@ -346,14 +346,13 @@ theorem monotone_of_upper_lower_continuous
         · exact hxx.2
       exact auxsub.trans tsub
 
-  have L2 : ∀ (x : ℝ), x ∈ f ⁻¹' Set.Ici (f z) →
-            ∀ (y : ℝ), x < y →
+  have L2 : ∀ (x y : ℝ), x < y →
             Set.Ico x y ⊆ f ⁻¹' Set.Ici (f z) →
             y ∈ f ⁻¹' Set.Ici (f z) := by
     -- A = (-∞, f(z))
     -- B = [f(z), ∞)
     -- Assume towards a contradiction that y ∉ f⁻¹(B), therefore y ∈ f⁻¹(A).
-    intros x _hx
+    intro x
     by_contra' H
     obtain ⟨y, hxy, hxyz, hy⟩ := H
 
