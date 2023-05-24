@@ -354,7 +354,7 @@ theorem monotone_of_upper_lower_continuous
     -- A = (-∞, f(z))
     -- B = [f(z), ∞)
     -- Assume towards a contradiction that y ∉ f⁻¹(B), therefore y ∈ f⁻¹(A).
-    intros x _
+    intros x _hx
     by_contra' H
     obtain ⟨y, hxy, hxyz, hy⟩ :=  H
 
@@ -405,7 +405,7 @@ theorem monotone_of_upper_lower_continuous
       · exact le_of_lt h6r
 
     -- so we have f(m) ∈ A
-    have h8 : f m < f z := by aesop
+    have h8 : f m < f z := h5 ⟨(le_max_left _ _).trans_lt h7.1, h7.2⟩
 
     have h9 : ¬ f m  < f z := not_lt.mpr (hxyz h6)
     exact h9 h8
