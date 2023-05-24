@@ -377,10 +377,8 @@ theorem monotone_of_upper_lower_continuous
           intros w hw
           constructor
           · exact hw.1
-          · rw[← hiiu'] at hyii
-            cases' hyii with hyiil hyiir
-            cases' hw with hwl hwr
-            linarith
+          · rw[←hiiu'] at hyii
+            exact hw.2.trans hyii.2
       rw [hiiu'] at h999
       exact h999.trans hiis
 
