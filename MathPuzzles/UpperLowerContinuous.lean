@@ -314,13 +314,6 @@ lemma infinite_interval_upper_open (x : ℝ) : IsOpen[tᵤ] (Set.Iio x) := by
       rw[Set.mem_Iio]
       linarith
 
-#check TopologicalSpace.IsTopologicalBasis.isOpen_iff
--- TopologicalSpace.IsTopologicalBasis.isOpen_iff.{u}
---   {α : Type u} [t : TopologicalSpace α] {s : Set α} {b : Set (Set α)}
--- (hb : TopologicalSpace.IsTopologicalBasis b)
---  : IsOpen s ↔ ∀ (a : α), a ∈ s → ∃ t, t ∈ b ∧ a ∈ t ∧ t ⊆ s
-
-
 set_option maxHeartbeats 0 in
 theorem monotone_of_upper_lower_continuous
     (f : ℝ → ℝ)
@@ -334,23 +327,11 @@ theorem monotone_of_upper_lower_continuous
     B = [f(z), ∞)
 
     We show by real induction that [z, ∞) ⊆ f⁻¹(B).
-
-    We must show
-     (L1) ∀x ∈ f⁻¹(B). ∃y. [x,y) ⊆ f⁻¹(B)
-    Follows because f is an L-map.
-
-     (L2) ∀xy. [x, y) ⊆ f⁻¹(B) ⇒ y ∈ f⁻¹(B)
-
-    Assume towards a contradiction that y ∉ f⁻¹(B), therefore y ∈ f⁻¹(A).
-    Since f is an R-map, there is an open interval (y-ε,y] such that
-    f(y-ε,y] ⊆ A. But we have by assumption that f[x,y) ⊆ B, and
-    y-ε/2 ∈ [x,y) ∩ (y-ε,y], so we have f(y-ε/2) ∈ A but also f(y-ε/2) ∈ B, a contradiction.
 -/
   intro z b hz
-  let A := (Set.Iio (f z))
-  let B := Set.Ici (f z)
 
   have L1 : ∀ (x : ℝ), x ∈ f ⁻¹' Set.Ici (f z) → ∃ y, x < y ∧ Set.Ico x y ⊆ f ⁻¹' Set.Ici (f z) := by
+    --  Follows because f is an L-map.
     intro x hx
     have inverse_image_open : IsOpen[tₗ] (f ⁻¹' Set.Ici (f z)) := by
       apply @IsOpen.preimage ℝ ℝ tₗ tₗ f hlc (Set.Ici (f z))
@@ -379,7 +360,7 @@ theorem monotone_of_upper_lower_continuous
     -- A = (-∞, f(z))
     -- B = [f(z), ∞)
     -- Assume towards a contradiction that y ∉ f⁻¹(B), therefore y ∈ f⁻¹(A).
-    intros x hx
+    intros x _
     by_contra' H
     obtain ⟨y, hxy, hxyz, hy⟩ :=  H
 
