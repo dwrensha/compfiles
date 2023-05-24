@@ -208,9 +208,7 @@ lemma continuous_of_upper_lower_continuous
     have h2 : IsOpen[tᵤ] (Set.Ioc a (f c)) := by
       apply TopologicalSpace.isOpen_generateFrom_of_mem
       exact ⟨a, f c, rfl⟩
-    have h3 : IsOpen[tᵤ] (f ⁻¹' (Set.Ioc a (f c))) := by
-      apply continuous_def.mp huc
-      exact h2
+    have h3 : IsOpen[tᵤ] (f ⁻¹' (Set.Ioc a (f c))) := continuous_def.mp huc _ h2
     have h4 : c ∈ f ⁻¹' Set.Ioc a (f c) := by aesop
     have h5 :=
      (@TopologicalSpace.IsTopologicalBasis.isOpen_iff _ tᵤ _
@@ -220,11 +218,7 @@ lemma continuous_of_upper_lower_continuous
     rw[←hac'] at htc
     constructor
     · intros x hx
-      have h7 : x ∈ Set.Ioc a' c' := by
-          cases' hx with hxl hxr
-          constructor
-          · exact hxl
-          · exact hxr.trans htc.2
+      have h7 : x ∈ Set.Ioc a' c' := ⟨hx.1, hx.2.trans htc.2⟩
       rw [hac'] at h7
       exact ht h7
     · exact ⟨ htc.1, h4.1 ⟩
@@ -234,9 +228,7 @@ lemma continuous_of_upper_lower_continuous
     have h2 : IsOpen[tₗ] (Set.Ico (f c) b) := by
       apply TopologicalSpace.isOpen_generateFrom_of_mem
       exact ⟨f c, b, rfl⟩
-    have h3 : IsOpen[tₗ] (f ⁻¹' (Set.Ico (f c) b)) := by
-      apply continuous_def.mp hlc
-      exact h2
+    have h3 : IsOpen[tₗ] (f ⁻¹' (Set.Ico (f c) b)) := continuous_def.mp hlc _ h2
     have h4 : c ∈ f ⁻¹' Set.Ico (f c) b := by aesop
     have h5 :=
      (@TopologicalSpace.IsTopologicalBasis.isOpen_iff _ tₗ _
@@ -327,9 +319,7 @@ theorem monotone_of_upper_lower_continuous
   have L1 : ∀ (x : ℝ), x ∈ f ⁻¹' Set.Ici (f z) → ∃ y, x < y ∧ Set.Ico x y ⊆ f ⁻¹' Set.Ici (f z) := by
     --  Follows because f is tₗ continuous.
     intro x hx
-    have inverse_image_open : IsOpen[tₗ] (f ⁻¹' Set.Ici (f z)) := by
-      exact @IsOpen.preimage ℝ ℝ tₗ tₗ f hlc (Set.Ici (f z))
-             (infinite_interval_lower_open (f z))
+    have inverse_image_open := continuous_def.mp hlc _ (infinite_interval_lower_open (f z))
     have h2 := (@TopologicalSpace.IsTopologicalBasis.isOpen_iff ℝ tₗ (f ⁻¹' (Set.Ici (f z)))
        lower_intervals lower_basis).mp inverse_image_open x hx
     obtain ⟨t , ⟨ta, tb, htb⟩, xint, tsub⟩ := h2
@@ -360,7 +350,7 @@ theorem monotone_of_upper_lower_continuous
     have h1 := infinite_interval_upper_open (f z)
 
     -- Since f is tᵤ-continuous, `f ⁻¹' A` is open
-    have h2 := @IsOpen.preimage _ _ tᵤ tᵤ f huc (Set.Iio (f z)) h1
+    have h2 := continuous_def.mp huc (Set.Iio (f z)) h1
 
     -- Then there is an tᵤ-open interval ii such that
     -- f '' ii ⊆ A.
