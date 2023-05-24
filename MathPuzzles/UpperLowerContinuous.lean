@@ -207,7 +207,7 @@ lemma continuous_of_upper_lower_continuous
     intros c hc
     have h2 : IsOpen[tᵤ] (Set.Ioc a (f c)) := by
       apply TopologicalSpace.isOpen_generateFrom_of_mem
-      unfold upper_intervals; aesop
+      exact ⟨a, f c, rfl⟩
     have h3 : IsOpen[tᵤ] (f ⁻¹' (Set.Ioc a (f c))) := by
       apply continuous_def.mp huc
       exact h2
@@ -233,7 +233,7 @@ lemma continuous_of_upper_lower_continuous
     intros c hc
     have h2 : IsOpen[tₗ] (Set.Ico (f c) b) := by
       apply TopologicalSpace.isOpen_generateFrom_of_mem
-      unfold lower_intervals; aesop
+      exact ⟨f c, b, rfl⟩
     have h3 : IsOpen[tₗ] (f ⁻¹' (Set.Ico (f c) b)) := by
       apply continuous_def.mp hlc
       exact h2
@@ -263,7 +263,7 @@ lemma continuous_of_upper_lower_continuous
     constructor
     · exact ⟨a', b', rfl⟩
     · constructor
-      · aesop
+      · exact ⟨ineq1a, ineq2a⟩
       · have ilem1 := Set.Ioc_union_Ico_eq_Ioo ineq1a ineq2a
         have ilem2 := Set.Ioc_union_Ico_eq_Ioo ineq1b ineq2b
         have subeq :
@@ -284,16 +284,14 @@ lemma infinite_interval_lower_open (x : ℝ) : IsOpen[tₗ] (Set.Ici x) := by
   -- choose [a, a + 1)
   use Set.Ico a (a + 1)
   constructor
-  · unfold lower_intervals; aesop
+  · exact ⟨a, a + 1, rfl⟩
   · constructor
     · constructor
       · exact Eq.le rfl
       · exact lt_add_one a
     · intros y hy
-      cases' hy with hyl hyr
       rw[Set.mem_Ici] at ha
-      rw[Set.mem_Ici]
-      linarith
+      exact ha.trans hy.1
 
 -- (-∞, x) is open in tᵤ
 lemma infinite_interval_upper_open (x : ℝ) : IsOpen[tᵤ] (Set.Iio x) := by
@@ -303,18 +301,14 @@ lemma infinite_interval_upper_open (x : ℝ) : IsOpen[tᵤ] (Set.Iio x) := by
   intros a ha
   use Set.Ioc (a - 1) a
   constructor
-  · unfold upper_intervals; aesop
+  · exact ⟨a - 1, a, rfl⟩
   · constructor
     · constructor
-      · linarith
+      · simp only [Set.mem_Iio, sub_lt_self_iff, zero_lt_one]
       · exact Eq.le rfl
     · intros y hy
-      cases' hy with hyl hyr
-      rw[Set.mem_Iio] at ha
-      rw[Set.mem_Iio]
-      linarith
+      exact hy.2.trans_lt ha
 
-set_option maxHeartbeats 0 in
 theorem monotone_of_upper_lower_continuous
     (f : ℝ → ℝ)
     (huc : Continuous[tᵤ, tᵤ] f)
@@ -331,7 +325,7 @@ theorem monotone_of_upper_lower_continuous
   intro z b hz
 
   have L1 : ∀ (x : ℝ), x ∈ f ⁻¹' Set.Ici (f z) → ∃ y, x < y ∧ Set.Ico x y ⊆ f ⁻¹' Set.Ici (f z) := by
-    --  Follows because f is an L-map.
+    --  Follows because f is tₗ continuous.
     intro x hx
     have inverse_image_open : IsOpen[tₗ] (f ⁻¹' Set.Ici (f z)) := by
       apply @IsOpen.preimage ℝ ℝ tₗ tₗ f hlc (Set.Ici (f z))
@@ -382,7 +376,7 @@ theorem monotone_of_upper_lower_continuous
       have h999 : Set.Ioc ii0 y ⊆ Set.Ioc ii0 ii1 := by
           intros w hw
           constructor
-          · aesop
+          · exact hw.1
           · rw[← hiiu'] at hyii
             cases' hyii with hyiil hyiir
             cases' hw with hwl hwr
@@ -420,18 +414,14 @@ theorem monotone_of_upper_lower_continuous
       · exact le_of_lt h6r
 
     -- so we have f(m) ∈ A
-    have h8 : f m ∈ Set.Iio (f z) := by aesop
+    have h8 : f m < f z := by aesop
 
-    -- but also f(m) ∈ B, a contradiction.
-    have h9 : f m ∈ Set.Ici (f z) := by aesop
-
-    rw[Set.mem_Iio] at h8
-    rw[Set.mem_Ici] at h9
-    linarith
+    have h9 : ¬ f m  < f z := not_lt.mpr (hxyz h6)
+    exact h9 h8
 
   have h0 : Set.Ici z ⊆ f ⁻¹' (Set.Ici (f z)) :=
     real_induction L1 L2 (@Set.left_mem_Ici _ _ (f z))
-  aesop
+  exact h0 hz
 
 theorem properties_of_upper_lower_continuous
     (f : ℝ → ℝ)
