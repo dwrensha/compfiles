@@ -95,12 +95,11 @@ def upper_intervals : Set (Set ℝ) := {s : Set ℝ | ∃ a b : ℝ, Set.Ioc a b
 def lower_intervals : Set (Set ℝ) := {s : Set ℝ | ∃ a b : ℝ, Set.Ico a b = s}
 def open_intervals : Set (Set ℝ) := {s : Set ℝ | ∃ a b : ℝ, Set.Ioo a b = s}
 
-/-- Generate the toplogy on ℝᵤ by intervals of the form (a, b]. -/
+/-- Generate the toplogy on ℝ by intervals of the form (a, b]. -/
 def tᵤ : TopologicalSpace ℝ := TopologicalSpace.generateFrom upper_intervals
 
-/-- Generate the toplogy on ℝₗ by intervals of the form [a, b). -/
+/-- Generate the toplogy on ℝ by intervals of the form [a, b). -/
 def tₗ : TopologicalSpace ℝ := TopologicalSpace.generateFrom lower_intervals
-
 
 /-- This should be equivalent to the default instance
 for `TopologicalSpace ℝ`, which goes through `UniformSpace`, but for
@@ -276,12 +275,53 @@ lemma continuous_of_upper_lower_continuous
      (@TopologicalSpace.IsTopologicalBasis.isOpen_iff ℝ tₛ (f ⁻¹' ab)
        open_intervals open_basis).mpr h1
 
--- Should be easy to show:
--- An infinite left-closed interval is in fact
--- open in the lower limit topology.
-lemma infinite_interval_lower_open (x : ℝ) : @IsOpen ℝ tₗ (Set.Ici x) := by
-  sorry
+-- [x, ∞) is open in tₗ
+lemma infinite_interval_lower_open (x : ℝ) : IsOpen[tₗ] (Set.Ici x) := by
+  rw [@TopologicalSpace.IsTopologicalBasis.isOpen_iff
+          ℝ tₗ _ lower_intervals lower_basis]
+  intros a ha
+  -- `Set.Ici x` means the interval [x, ∞).
+  -- choose [a, a + 1)
+  use Set.Ico a (a + 1)
+  constructor
+  · unfold lower_intervals; aesop
+  · constructor
+    · constructor
+      · exact Eq.le rfl
+      · exact lt_add_one a
+    · intros y hy
+      cases' hy with hyl hyr
+      rw[Set.mem_Ici] at ha
+      rw[Set.mem_Ici]
+      linarith
 
+-- (-∞, x) is open in tᵤ
+lemma infinite_interval_upper_open (x : ℝ) : IsOpen[tᵤ] (Set.Iio x) := by
+  -- in tᵤ, open sets are of the form (a, b].
+  rw [@TopologicalSpace.IsTopologicalBasis.isOpen_iff
+          ℝ tᵤ _ upper_intervals upper_basis]
+  intros a ha
+  use Set.Ioc (a - 1) a
+  constructor
+  · unfold upper_intervals; aesop
+  · constructor
+    · constructor
+      · linarith
+      · exact Eq.le rfl
+    · intros y hy
+      cases' hy with hyl hyr
+      rw[Set.mem_Iio] at ha
+      rw[Set.mem_Iio]
+      linarith
+
+#check TopologicalSpace.IsTopologicalBasis.isOpen_iff
+-- TopologicalSpace.IsTopologicalBasis.isOpen_iff.{u}
+--   {α : Type u} [t : TopologicalSpace α] {s : Set α} {b : Set (Set α)}
+-- (hb : TopologicalSpace.IsTopologicalBasis b)
+--  : IsOpen s ↔ ∀ (a : α), a ∈ s → ∃ t, t ∈ b ∧ a ∈ t ∧ t ⊆ s
+
+
+set_option maxHeartbeats 0 in
 theorem monotone_of_upper_lower_continuous
     (f : ℝ → ℝ)
     (huc : Continuous[tᵤ, tᵤ] f)
@@ -312,7 +352,7 @@ theorem monotone_of_upper_lower_continuous
 
   have L1 : ∀ (x : ℝ), x ∈ f ⁻¹' Set.Ici (f z) → ∃ y, x < y ∧ Set.Ico x y ⊆ f ⁻¹' Set.Ici (f z) := by
     intro x hx
-    have inverse_image_open : @IsOpen ℝ tₗ (f ⁻¹' Set.Ici (f z)) := by
+    have inverse_image_open : IsOpen[tₗ] (f ⁻¹' Set.Ici (f z)) := by
       apply @IsOpen.preimage ℝ ℝ tₗ tₗ f hlc (Set.Ici (f z))
       exact infinite_interval_lower_open (f z)
     have h2 := (@TopologicalSpace.IsTopologicalBasis.isOpen_iff ℝ tₗ (f ⁻¹' (Set.Ici (f z)))
@@ -332,13 +372,85 @@ theorem monotone_of_upper_lower_continuous
         · exact hxx.2
       exact auxsub.trans tsub
 
-  have L2 : ∀ (x : ℝ), x ∈ f ⁻¹' Set.Ici (f z) → ∀ (y : ℝ), x < y → Set.Ico x y ⊆ f ⁻¹' Set.Ici (f z) → y ∈ f ⁻¹' Set.Ici (f z) := by
-    sorry
+  have L2 : ∀ (x : ℝ), x ∈ f ⁻¹' Set.Ici (f z) →
+            ∀ (y : ℝ), x < y →
+            Set.Ico x y ⊆ f ⁻¹' Set.Ici (f z) →
+            y ∈ f ⁻¹' Set.Ici (f z) := by
+    -- A = (-∞, f(z))
+    -- B = [f(z), ∞)
+    -- Assume towards a contradiction that y ∉ f⁻¹(B), therefore y ∈ f⁻¹(A).
+    intros x hx
+    by_contra' H
+    obtain ⟨y, hxy, hxyz, hy⟩ :=  H
+
+    -- A is open in tᵤ
+    have h1 := infinite_interval_upper_open (f z)
+
+    -- Since f is tᵤ-continuous, `f ⁻¹' A` is open
+    have h2 := @IsOpen.preimage _ _ tᵤ tᵤ f huc (Set.Iio (f z)) h1
+
+    -- Then there is an tᵤ-open interval ii such that
+    -- f '' ii ⊆ A.
+
+    have h3 : y ∈ f ⁻¹' Set.Iio (f z) := by aesop
+    have h4 := (@TopologicalSpace.IsTopologicalBasis.isOpen_iff
+                 ℝ tᵤ _ upper_intervals upper_basis).mp h2 y h3
+    obtain ⟨ii, ⟨ii0, ii1, hiiu'⟩, hyii, hiis⟩ := h4
+
+    have h5 : Set.Ioc ii0 y ⊆ f ⁻¹' Set.Iio (f z) := by
+      have h999 : Set.Ioc ii0 y ⊆ Set.Ioc ii0 ii1 := by
+          intros w hw
+          constructor
+          · aesop
+          · rw[← hiiu'] at hyii
+            cases' hyii with hyiil hyiir
+            cases' hw with hwl hwr
+            linarith
+      rw [hiiu'] at h999
+      exact h999.trans hiis
+
+    let ii0' := max ii0 x
+
+    let m := (ii0' + y) / 2
+    -- But we have by assumption that f[x,y) ⊆ B, (hxyz)
+    -- and m ∈ [x,y) ∩ (ii0, y]
+    have h6 : m ∈ Set.Ico x y := by
+      constructor
+      · have h10 : x ≤ ii0' := by aesop
+        have h11 : x + x < y + ii0' := add_lt_add_of_lt_of_le hxy h10
+        have h13 : (x + x) / 2 < (y + ii0') / 2 :=
+          div_lt_div_of_lt two_pos h11
+        rw[←two_mul, show 2 * x / 2 = x by ring, add_comm] at h13
+        exact le_of_lt h13
+      · have h14 : ii0' < y := by aesop
+        have h15 : y + ii0' < y + y := Iff.mpr (Real.add_lt_add_iff_left y) h14
+        have h16 : (y + ii0') / 2 < (y + y) / 2 := div_lt_div_of_lt two_pos h15
+        rw[←two_mul, show 2 * y / 2 = y by ring, add_comm] at h16
+        exact h16
+
+    have h7 : m ∈ Set.Ioc ii0' y := by
+      cases' h6 with h6l h6r
+      constructor
+      · have h17 : ii0' < y := by aesop
+        have h18 : ii0' + ii0' < y + ii0' := add_lt_add_right h17 ii0'
+        have h19 : (ii0' + ii0')/2 < (y + ii0')/2 := div_lt_div_of_lt two_pos h18
+        rw[←two_mul, show 2 * ii0' / 2 = ii0' by ring, add_comm] at h19
+        exact h19
+      · exact le_of_lt h6r
+
+    -- so we have f(m) ∈ A
+    have h8 : f m ∈ Set.Iio (f z) := by aesop
+
+    -- but also f(m) ∈ B, a contradiction.
+    have h9 : f m ∈ Set.Ici (f z) := by aesop
+
+    rw[Set.mem_Iio] at h8
+    rw[Set.mem_Ici] at h9
+    linarith
 
   have h0 : Set.Ici z ⊆ f ⁻¹' (Set.Ici (f z)) :=
     real_induction L1 L2 (@Set.left_mem_Ici _ _ (f z))
   aesop
-
 
 theorem properties_of_upper_lower_continuous
     (f : ℝ → ℝ)
