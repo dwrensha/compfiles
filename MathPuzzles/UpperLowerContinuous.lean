@@ -328,12 +328,11 @@ theorem monotone_of_upper_lower_continuous
     --  Follows because f is tₗ continuous.
     intro x hx
     have inverse_image_open : IsOpen[tₗ] (f ⁻¹' Set.Ici (f z)) := by
-      apply @IsOpen.preimage ℝ ℝ tₗ tₗ f hlc (Set.Ici (f z))
-      exact infinite_interval_lower_open (f z)
+      exact @IsOpen.preimage ℝ ℝ tₗ tₗ f hlc (Set.Ici (f z))
+             (infinite_interval_lower_open (f z))
     have h2 := (@TopologicalSpace.IsTopologicalBasis.isOpen_iff ℝ tₗ (f ⁻¹' (Set.Ici (f z)))
        lower_intervals lower_basis).mp inverse_image_open x hx
-    obtain ⟨ t , ht, xint, tsub ⟩ := h2
-    obtain ⟨ ta, ⟨ tb, htb ⟩⟩ := ht
+    obtain ⟨t , ⟨ta, tb, htb⟩, xint, tsub⟩ := h2
     use tb
     constructor
     · rw [←htb] at xint
@@ -356,7 +355,7 @@ theorem monotone_of_upper_lower_continuous
     -- Assume towards a contradiction that y ∉ f⁻¹(B), therefore y ∈ f⁻¹(A).
     intros x _hx
     by_contra' H
-    obtain ⟨y, hxy, hxyz, hy⟩ :=  H
+    obtain ⟨y, hxy, hxyz, hy⟩ := H
 
     -- A is open in tᵤ
     have h1 := infinite_interval_upper_open (f z)
