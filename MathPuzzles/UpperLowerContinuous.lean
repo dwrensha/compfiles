@@ -387,30 +387,23 @@ theorem monotone_of_upper_lower_continuous
     let ii0' := max ii0 x
 
     let m := (ii0' + y) / 2
+    have h14 : ii0' < y := by aesop
+
     -- But we have by assumption that f[x,y) ⊆ B, (hxyz)
     -- and m ∈ [x,y) ∩ (ii0, y]
     have h6 : m ∈ Set.Ico x y := by
       constructor
-      · have h10 : x ≤ ii0' := by aesop
-        have h11 : x + x < y + ii0' := add_lt_add_of_lt_of_le hxy h10
-        have h13 : (x + x) / 2 < (y + ii0') / 2 :=
-          div_lt_div_of_lt two_pos h11
-        rw[←two_mul, show 2 * x / 2 = x by ring, add_comm] at h13
-        exact le_of_lt h13
-      · have h14 : ii0' < y := by aesop
-        have h15 : y + ii0' < y + y := Iff.mpr (Real.add_lt_add_iff_left y) h14
-        have h16 : (y + ii0') / 2 < (y + y) / 2 := div_lt_div_of_lt two_pos h15
-        rw[←two_mul, show 2 * y / 2 = y by ring, add_comm] at h16
-        exact h16
+      · have h10 : x ≤ ii0' := le_max_right _ _
+        have h13 : (x * 2) / 2 ≤ (ii0' + y) / 2 := by linarith
+        rwa[show x * 2 / 2 = x by ring] at h13
+      · have h16 : (ii0' + y) / 2 < (y * 2) / 2 := by linarith
+        rwa[show y * 2 / 2 = y by ring] at h16
 
     have h7 : m ∈ Set.Ioc ii0' y := by
       cases' h6 with h6l h6r
       constructor
-      · have h17 : ii0' < y := by aesop
-        have h18 : ii0' + ii0' < y + ii0' := add_lt_add_right h17 ii0'
-        have h19 : (ii0' + ii0')/2 < (y + ii0')/2 := div_lt_div_of_lt two_pos h18
-        rw[←two_mul, show 2 * ii0' / 2 = ii0' by ring, add_comm] at h19
-        exact h19
+      · have h19 : (ii0' * 2)/2 < (ii0' + y)/2 := by linarith
+        rwa[show ii0' * 2 / 2 = ii0' by ring] at h19
       · exact le_of_lt h6r
 
     -- so we have f(m) ∈ A
