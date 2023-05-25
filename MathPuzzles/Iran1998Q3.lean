@@ -141,7 +141,6 @@ theorem iran1998_q3
       have hs : ∀ i ∈ ((Finset.range 4).erase j),
         (λ (ii : ℕ) ↦ (1:ℝ) / 3) i * (λ (ii : ℕ) ↦ x ii ^ (3:ℝ)) i =
          ((1:ℝ)/3) * x i ^ (3:ℝ) := by simp
-      have := Finset.sum_congr rfl hs
       rw [Finset.sum_congr rfl hs, ←Finset.mul_sum] at amgm
       exact amgm
     have h3 : ∀ j ∈ (Finset.range 4), ∏ i in (Finset.range 4).erase j, x i = 1 / x j := by
