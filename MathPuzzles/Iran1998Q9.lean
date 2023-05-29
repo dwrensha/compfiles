@@ -16,15 +16,15 @@ Let x,y,z > 1 and 1/x + 1/y + 1/z = 2. Prove that
 namespace Iran1998Q9
 open BigOperators
 
+
 lemma compute_norm (v : EuclideanSpace ℝ (Fin 3)) : ‖v‖ = Real.sqrt (∑i : Fin 3, (v i)^2) := by
   have hvi : (∀ i : Fin 3, (v i)^2 = ‖v i‖^2) := by
-    intro i; rw [Real.norm_eq_abs]; sorry --exact (sq_abs (v i)).symm
+    intro i; rw [Real.norm_eq_abs]; simp only [Real.rpow_two, sq_abs]
   have := Fintype.sum_congr ((λ jj ↦ (v jj)^2): Fin 3 → ℝ) (λ jj ↦ ‖v jj‖^2) hvi
-  rw[this]
-  sorry --exact EuclideanSpace.norm_eq v
+  rw[this, EuclideanSpace.norm_eq v]
+  congr; ext
+  simp only [Real.norm_eq_abs, Real.rpow_two]
 
-
-set_option maxHeartbeats 0 in
 theorem iran1998_q9
     (x y z : ℝ)
     (hx : 1 < x)
@@ -52,12 +52,6 @@ theorem iran1998_q9
   have hy1 : 0 ≤ y - 1 := by linarith
   have hz1 : 0 ≤ z - 1 := by linarith
 
-  have hxf : (x-1)/x = 1 - 1/x := by field_simp
-  have hyf : (y-1)/y = 1 - 1/y := by field_simp
-  have hzf : (z-1)/z = 1 - 1/z := by field_simp
-
-  have h1 : (x-1)/x + (y-1)/y + (z-1)/z = 1 := by rw[hxf, hyf, hzf]; linarith
-
   let v₁ : EuclideanSpace ℝ (Fin 3) := ![Real.sqrt x, Real.sqrt y, Real.sqrt z]
   let v₂ : EuclideanSpace ℝ (Fin 3) :=
       ![Real.sqrt ((x - 1)/x), Real.sqrt ((y-1)/y), Real.sqrt ((z-1)/z)]
@@ -77,8 +71,8 @@ theorem iran1998_q9
     have hv3 : v₁ 2 = Real.sqrt z := rfl
     rw [hv1, hv2, hv3] at hn
     have hxx : (Real.sqrt x) ^ 2 = x := by rw[Real.rpow_two]; exact Real.sq_sqrt hx0
-    have hyy : (Real.sqrt y) ^ 2 = y := sorry --Real.sq_sqrt hy0
-    have hzz : (Real.sqrt z) ^ 2 = z := sorry --Real.sq_sqrt hz0
+    have hyy : (Real.sqrt y) ^ 2 = y := by rw[Real.rpow_two]; exact Real.sq_sqrt hy0
+    have hzz : (Real.sqrt z) ^ 2 = z := by rw[Real.rpow_two]; exact Real.sq_sqrt hz0
 
     rwa [hxx, hyy, hzz] at hn
 
@@ -94,13 +88,13 @@ theorem iran1998_q9
     have hv3 : v₂ 2 = Real.sqrt ((z-1)/z) := rfl
     rw [hv1, hv2, hv3] at hn
     have hxx : 0 ≤ (x-1)/x := div_nonneg hx1 hx0
-    have hxx' : Real.sqrt (((x - 1) / x)) ^2 = (x - 1) / x := sorry --Real.sq_sqrt hxx
+    have hxx' : Real.sqrt (((x - 1) / x)) ^2 = (x - 1) / x := by rw[Real.rpow_two]; exact Real.sq_sqrt hxx
 
     have hyy : 0 ≤ (y-1)/y := div_nonneg hy1 hy0
-    have hyy' : Real.sqrt (((y - 1) / y)) ^2 = (y - 1) / y := sorry --Real.sq_sqrt hyy
+    have hyy' : Real.sqrt (((y - 1) / y)) ^2 = (y - 1) / y := by rw[Real.rpow_two]; exact Real.sq_sqrt hyy
 
     have hzz : 0 ≤ (z-1)/z := div_nonneg hz1 hz0
-    have hzz' : Real.sqrt (((z - 1) / z)) ^2 = (z - 1) / z := sorry --Real.sq_sqrt hzz
+    have hzz' : Real.sqrt (((z - 1) / z)) ^2 = (z - 1) / z := by rw[Real.rpow_two]; exact Real.sq_sqrt hzz
 
     rw[hxx', hyy', hzz'] at hn
     have hfs: (x - 1) / x + (y - 1) / y + (z - 1) / z = 3 - (1/x + 1/y + 1/z) := by {field_simp; ring}
@@ -115,7 +109,7 @@ theorem iran1998_q9
     calc ((inner v₁ v₂): ℝ)
           = ∑ i : Fin 3, v₁ i * v₂ i := rfl
         _ = v₁ 0 * v₂ 0 + v₁ 1 * v₂ 1 + v₁ 2 * v₂ 2 :=
-               by sorry --rw[Fin.sum_univ_succ, Fin.sum_univ_succ, Fin.sum_univ_one]; ring
+               by rw[Fin.sum_univ_succ, Fin.sum_univ_succ, Fin.sum_univ_one]; ring_nf; simp
         _ = Real.sqrt x * Real.sqrt ((x - 1) / x) +
             Real.sqrt y * Real.sqrt ((y - 1) / y) +
             Real.sqrt z * Real.sqrt ((z - 1) / z) := rfl
