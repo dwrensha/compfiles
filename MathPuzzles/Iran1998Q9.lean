@@ -16,10 +16,14 @@ Let x,y,z > 1 and 1/x + 1/y + 1/z = 2. Prove that
 namespace Iran1998Q9
 open BigOperators
 
+-- This workaround is required to make exponent of `x ^ 2` be interpreted as type ℕ.
+-- See https://github.com/leanprover/lean4/issues/2220.
+local macro_rules | `($x ^ $y)  => `(HPow.hPow $x $y)
+
 lemma compute_norm (v : EuclideanSpace ℝ (Fin 3)) : ‖v‖ = Real.sqrt (∑i : Fin 3, (v i)^2) := by
   rw[EuclideanSpace.norm_eq v]
   congr; ext
-  rw [Real.norm_eq_abs, sq_abs, Real.rpow_two]
+  rw [Real.norm_eq_abs, sq_abs]
 
 theorem iran1998_q9
     (x y z : ℝ)
@@ -66,9 +70,9 @@ theorem iran1998_q9
     have hv2 : v₁ 1 = Real.sqrt y := rfl
     have hv3 : v₁ 2 = Real.sqrt z := rfl
     rw [hv1, hv2, hv3] at hn
-    have hxx : (Real.sqrt x) ^ 2 = x := by rw[Real.rpow_two]; exact Real.sq_sqrt hx0
-    have hyy : (Real.sqrt y) ^ 2 = y := by rw[Real.rpow_two]; exact Real.sq_sqrt hy0
-    have hzz : (Real.sqrt z) ^ 2 = z := by rw[Real.rpow_two]; exact Real.sq_sqrt hz0
+    have hxx : (Real.sqrt x) ^ 2 = x := Real.sq_sqrt hx0
+    have hyy : (Real.sqrt y) ^ 2 = y := Real.sq_sqrt hy0
+    have hzz : (Real.sqrt z) ^ 2 = z := Real.sq_sqrt hz0
 
     rwa [hxx, hyy, hzz] at hn
 
@@ -84,13 +88,13 @@ theorem iran1998_q9
     have hv3 : v₂ 2 = Real.sqrt ((z-1)/z) := rfl
     rw [hv1, hv2, hv3] at hn
     have hxx : 0 ≤ (x-1)/x := div_nonneg hx1 hx0
-    have hxx' : Real.sqrt (((x - 1) / x)) ^2 = (x - 1) / x := by rw[Real.rpow_two]; exact Real.sq_sqrt hxx
+    have hxx' : Real.sqrt (((x - 1) / x)) ^2 = (x - 1) / x := Real.sq_sqrt hxx
 
     have hyy : 0 ≤ (y-1)/y := div_nonneg hy1 hy0
-    have hyy' : Real.sqrt (((y - 1) / y)) ^2 = (y - 1) / y := by rw[Real.rpow_two]; exact Real.sq_sqrt hyy
+    have hyy' : Real.sqrt (((y - 1) / y)) ^2 = (y - 1) / y := Real.sq_sqrt hyy
 
     have hzz : 0 ≤ (z-1)/z := div_nonneg hz1 hz0
-    have hzz' : Real.sqrt (((z - 1) / z)) ^2 = (z - 1) / z := by rw[Real.rpow_two]; exact Real.sq_sqrt hzz
+    have hzz' : Real.sqrt (((z - 1) / z)) ^2 = (z - 1) / z := Real.sq_sqrt hzz
 
     rw[hxx', hyy', hzz'] at hn
     have hfs: (x - 1) / x + (y - 1) / y + (z - 1) / z = 3 - (1/x + 1/y + 1/z) := by {field_simp; ring}
@@ -121,4 +125,3 @@ theorem iran1998_q9
 
   rw [hinner] at cauchy_schwarz
   exact le_of_abs_le cauchy_schwarz
-
