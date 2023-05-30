@@ -17,11 +17,10 @@ namespace Imo1989Q5
 lemma coprime_of_product (n : ℕ) (lst : List ℕ) (h : ∀ y ∈ lst, n.coprime y) :
     n.coprime lst.prod := by
   induction lst with
-  | nil => simp
+  | nil => simp only [List.prod_nil, Nat.coprime_one_right_eq_true]
   | cons x xs ih =>
-    have hy : ∀ (y : ℕ), y ∈ xs → Nat.coprime n y := by
-      intro y hy
-      aesop
+    have hy : ∀ (y : ℕ), y ∈ xs → Nat.coprime n y :=
+      fun y hy ↦ h y (List.mem_cons.mpr (Or.inr hy))
     have h1 := h x (by simp)
     rw[List.prod_cons]
     exact Nat.coprime.mul_right h1 (ih hy)
