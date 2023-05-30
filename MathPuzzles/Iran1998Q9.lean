@@ -16,14 +16,10 @@ Let x,y,z > 1 and 1/x + 1/y + 1/z = 2. Prove that
 namespace Iran1998Q9
 open BigOperators
 
-
 lemma compute_norm (v : EuclideanSpace ℝ (Fin 3)) : ‖v‖ = Real.sqrt (∑i : Fin 3, (v i)^2) := by
-  have hvi : (∀ i : Fin 3, (v i)^2 = ‖v i‖^2) := by
-    intro i; rw [Real.norm_eq_abs]; simp only [Real.rpow_two, sq_abs]
-  have := Fintype.sum_congr ((λ jj ↦ (v jj)^2): Fin 3 → ℝ) (λ jj ↦ ‖v jj‖^2) hvi
-  rw[this, EuclideanSpace.norm_eq v]
+  rw[EuclideanSpace.norm_eq v]
   congr; ext
-  simp only [Real.norm_eq_abs, Real.rpow_two]
+  rw [Real.norm_eq_abs, sq_abs, Real.rpow_two]
 
 theorem iran1998_q9
     (x y z : ℝ)
