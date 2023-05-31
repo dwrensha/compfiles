@@ -2,6 +2,7 @@ import Mathlib.Algebra.IsPrimePow
 import Mathlib.Data.Nat.ModEq
 import Mathlib.Data.Nat.Prime
 import Mathlib.Tactic.Common
+import Mathlib.Tactic.Linarith
 import Std.Data.List.Lemmas
 
 /-!
@@ -66,19 +67,34 @@ lemma general_chinese_remainder (xs : List ChinesePair)
       have h4 := modulus_of_product hk2 _ h3
       exact Nat.ModEq.trans h4 h2
 
-#check Nat.exists_infinite_primes
-#check List.maximum
-#check WithBot
-
-theorem get_primes (n : ℕ) :
-    ∃ lst : List ℕ, lst.length = n ∧ lst.Nodup ∧ ∀ x ∈ lst, x.Prime := by
+theorem get_primes (n m : ℕ) :
+    ∃ lst : List ℕ, lst.length = n ∧ lst.Nodup ∧
+               ∀ x ∈ lst, x.Prime ∧ m ≤ x := by
   induction n with
   | zero => use ∅; simp
   | succ n ih =>
     obtain ⟨l', hl', hlnd, hlp⟩ := ih
-    have := l'.maximum
---    use (l'.maximum + 1)::l'
-    sorry
+    match h : l'.maximum with
+    | none => rw [List.maximum_eq_none] at h;
+              obtain ⟨p, hpm, hp⟩ := Nat.exists_infinite_primes m
+              use [p]
+              aesop
+    | some mx =>
+              obtain ⟨p, hpm, hp⟩ := Nat.exists_infinite_primes (max m (mx + 1))
+              use p :: l'
+              constructor
+              · aesop
+              · constructor
+                · rw[List.nodup_cons]
+                  constructor
+                  · intro hpl
+                    have h1 : ∀ x ∈ l', x ≤ mx :=
+                        fun x a => List.le_maximum_of_mem a h
+                    have h2 := h1 p hpl
+                    have h3 : mx + 1 ≤ p := le_of_max_le_right hpm
+                    linarith
+                  · exact hlnd
+                · aesop
 
 lemma prime_of_prime (n : ℕ) : Nat.Prime n ↔ Prime n := by
   exact Nat.prime_iff
@@ -110,6 +126,11 @@ lemma not_prime_power_of_two_factors
 theorem imo1989_q5 (n : ℕ) : ∃ m > 0, ∀ j < n, ¬IsPrimePow (m + j) := by
   -- (informal solution from https://artofproblemsolving.com)
   -- Let p₁,p₂,...pₙ,q₁,q₂,...,qₙ be distinct primes.
+  obtain ⟨l, hll, hld, hl⟩ := get_primes (2 * n) n
+  let pl := l.drop n
+  let ql := l.take n
+  let z : List ChinesePair := (pl.zip ql).map (fun (p,q) ↦ ⟨p * q, sorry⟩)
+
   -- By the Chinese Remainder theorem, there exists x such that
   --   x ≡ -1 mod p₁q₁
   --   x ≡ -2 mod p₂q₂
