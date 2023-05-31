@@ -68,7 +68,8 @@ lemma general_chinese_remainder (xs : List ChinesePair)
 
 lemma list_upper_bound (l : List ℕ) : ∃ m : ℕ, ∀ x ∈ l, x ≤ m := by
   match h : l.maximum with
-  | none => use 0; aesop
+  | none => use 0; intro x a; rw[List.maximum_eq_none] at h
+            rw[h] at a; exact (List.not_mem_nil _ a).elim
   | some mx => use mx; intros x hx; exact List.le_maximum_of_mem hx h
 
 theorem get_primes (n m : ℕ) :
