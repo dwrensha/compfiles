@@ -94,10 +94,6 @@ theorem get_primes (n m : ℕ) :
         · exact hlnd
       · aesop
 
-lemma prime_of_prime (n : ℕ) : Nat.Prime n ↔ Prime n := by
-  exact Nat.prime_iff
-  -- TODO: library_search bug? works in this direction, but not the other.
-
 lemma not_prime_power_of_two_factors
      (n : ℕ) (p q : ℕ)
      (hp : Nat.Prime p) (hq : Nat.Prime q)
