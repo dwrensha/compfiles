@@ -67,6 +67,11 @@ lemma general_chinese_remainder (xs : List ChinesePair)
       have h4 := modulus_of_product hk2 _ h3
       exact Nat.ModEq.trans h4 h2
 
+lemma list_upper_bound (l : List ℕ) : ∃ m : ℕ, ∀ x ∈ l, x ≤ m := by
+  match h : l.maximum with
+  | none => use 0; aesop
+  | some mx => use mx; intros x hx; exact List.le_maximum_of_mem hx h
+
 theorem get_primes (n m : ℕ) :
     ∃ lst : List ℕ, lst.length = n ∧ lst.Nodup ∧
                ∀ x ∈ lst, x.Prime ∧ m ≤ x := by
@@ -74,27 +79,20 @@ theorem get_primes (n m : ℕ) :
   | zero => use ∅; simp
   | succ n ih =>
     obtain ⟨l', hl', hlnd, hlp⟩ := ih
-    match h : l'.maximum with
-    | none => rw [List.maximum_eq_none] at h;
-              obtain ⟨p, hpm, hp⟩ := Nat.exists_infinite_primes m
-              use [p]
-              aesop
-    | some mx =>
-              obtain ⟨p, hpm, hp⟩ := Nat.exists_infinite_primes (max m (mx + 1))
-              use p :: l'
-              constructor
-              · aesop
-              · constructor
-                · rw[List.nodup_cons]
-                  constructor
-                  · intro hpl
-                    have h1 : ∀ x ∈ l', x ≤ mx :=
-                        fun x a => List.le_maximum_of_mem a h
-                    have h2 := h1 p hpl
-                    have h3 : mx + 1 ≤ p := le_of_max_le_right hpm
-                    linarith
-                  · exact hlnd
-                · aesop
+    obtain ⟨mx, hmx⟩ := list_upper_bound l'
+    obtain ⟨p, hpm, hp⟩ := Nat.exists_infinite_primes (max m (mx + 1))
+    use p :: l'
+    constructor
+    · aesop
+    · constructor
+      · rw[List.nodup_cons]
+        constructor
+        · intro hpl
+          have h2 := hmx p hpl
+          have h3 : mx + 1 ≤ p := le_of_max_le_right hpm
+          linarith
+        · exact hlnd
+      · aesop
 
 lemma prime_of_prime (n : ℕ) : Nat.Prime n ↔ Prime n := by
   exact Nat.prime_iff
