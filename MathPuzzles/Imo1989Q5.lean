@@ -123,20 +123,28 @@ lemma not_prime_power_of_two_factors
    rw[h3, h4] at hpq
    exact hpq rfl
 
-theorem imo1989_q5 (n : ℕ) : ∃ m > 0, ∀ j < n, ¬IsPrimePow (m + j) := by
+theorem imo1989_q5 (n : ℕ) : ∃ m, ∀ j < n, ¬IsPrimePow (m + j) := by
   -- (informal solution from https://artofproblemsolving.com)
   -- Let p₁,p₂,...pₙ,q₁,q₂,...,qₙ be distinct primes.
   obtain ⟨l, hll, hld, hl⟩ := get_primes (2 * n) n
-  let pl := l.drop n
-  let ql := l.take n
-  let z : List ChinesePair := (pl.zip ql).map (fun (p,q) ↦ ⟨p * q, sorry⟩)
+  let ci : List ChinesePair :=
+    List.ofFn (fun x : Fin n ↦ ⟨l.get ⟨x.1, sorry⟩ * l.get ⟨x.1 + n, sorry⟩,
+                                n - (x.1 + 1)⟩)
+
+  have lcp : ci.Pairwise (fun x y => Nat.coprime x.modulus y.modulus) := by
+     sorry
 
   -- By the Chinese Remainder theorem, there exists x such that
   --   x ≡ -1 mod p₁q₁
   --   x ≡ -2 mod p₂q₂
   --   ...
   --   x ≡ -n mod pₙqₙ
+
+  obtain ⟨m, hm⟩ := general_chinese_remainder ci lcp
+
   -- The n consecutive numbers x+1, x+2, ..., x+n each have at least
   -- two prime factors, so none of them can be expressed as an integral
   -- power of a prime.
+  use m + 1
+  intros j hj
   sorry
