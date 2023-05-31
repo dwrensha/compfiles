@@ -2,7 +2,6 @@ import Mathlib.Algebra.IsPrimePow
 import Mathlib.Data.Nat.ModEq
 import Mathlib.Data.Nat.Prime
 import Mathlib.Tactic.Common
-import Mathlib.Tactic.Linarith
 import Std.Data.List.Lemmas
 
 /-!
@@ -88,9 +87,7 @@ theorem get_primes (n m : ℕ) :
       · rw[List.nodup_cons]
         constructor
         · intro hpl
-          have h2 := hmx p hpl
-          have h3 : mx + 1 ≤ p := le_of_max_le_right hpm
-          linarith
+          exact Iff.mpr Nat.not_le (le_of_max_le_right hpm) (hmx p hpl)
         · exact hlnd
       · aesop
 
