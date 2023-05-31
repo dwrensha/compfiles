@@ -1,9 +1,8 @@
-import Aesop
 import Mathlib.Algebra.IsPrimePow
 import Mathlib.Data.Nat.ModEq
 import Mathlib.Data.Nat.Prime
-import Mathlib.Tactic.LibrarySearch
-import Mathlib.Tactic.Ring
+import Mathlib.Tactic.Common
+import Std.Data.List.Lemmas
 
 /-!
 # International Mathematical Olympiad 1989, Problem 5
@@ -80,6 +79,33 @@ theorem get_primes (n : ℕ) :
     have := l'.maximum
 --    use (l'.maximum + 1)::l'
     sorry
+
+lemma prime_of_prime (n : ℕ) : Nat.Prime n ↔ Prime n := by
+  exact Nat.prime_iff
+  -- TODO: library_search bug? works in this direction, but not the other.
+
+lemma not_prime_power_of_two_factors
+     (n : ℕ) (p q : ℕ)
+     (hp : Nat.Prime p) (hq : Nat.Prime q)
+     (hpq : p ≠ q)
+     (hpn : p ∣ n) (hqn : q ∣ n) : ¬IsPrimePow n := by
+   intro hpp
+   have h0 : n ≠ 0 := by
+     have h : ¬IsPrimePow 0 := not_isPrimePow_zero
+     intro hn
+     rw[←hn] at h
+     exact h hpp
+   obtain ⟨r, k, hr, hk, hrk⟩ := hpp
+   rw[← Nat.prime_iff] at hr
+   rw[← hrk] at hqn hpn h0; clear hrk
+   have h1 := (Nat.mem_factors h0).mpr ⟨hp, hpn⟩
+   rw [Nat.Prime.factors_pow hr] at h1
+   have h3 := (List.mem_replicate.mp h1).2
+   have h2 := (Nat.mem_factors h0).mpr ⟨hq, hqn⟩
+   rw [Nat.Prime.factors_pow hr] at h2
+   have h4 := (List.mem_replicate.mp h2).2
+   rw[h3, h4] at hpq
+   exact hpq rfl
 
 theorem imo1989_q5 (n : ℕ) : ∃ m > 0, ∀ j < n, ¬IsPrimePow (m + j) := by
   -- (informal solution from https://artofproblemsolving.com)
