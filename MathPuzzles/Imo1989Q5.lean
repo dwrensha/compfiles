@@ -115,6 +115,35 @@ lemma not_prime_power_of_two_factors
    rw[h3, h4] at hpq
    exact hpq rfl
 
+#check Nat.factors
+#check Nat.coprime_factors_disjoint
+#check Nat.coprime_primes
+
+lemma lemma1 {p1 p2 q : ℕ}
+    (hp1 : Nat.Prime p1)
+    (hp2 : Nat.Prime p2)
+    (hq : Nat.Prime q)
+    (hp1q : p1 ≠ q)
+    (hp2q : p2 ≠ q) :
+    Nat.coprime (p1 * p2) q := by
+  have h1 : Nat.coprime p1 q := Iff.mpr (Nat.coprime_primes hp1 hq) hp1q
+  have h2 : Nat.coprime p2 q := Iff.mpr (Nat.coprime_primes hp2 hq) hp2q
+  exact Nat.coprime.mul h1 h2
+
+lemma lemma2 {p1 q1 p2 q2 : ℕ}
+    (hp1 : Nat.Prime p1)
+    (hq1 : Nat.Prime q1)
+    (hp2 : Nat.Prime p2)
+    (hq2 : Nat.Prime q2)
+    (hp1q1 : p1 ≠ q1)
+    (hp1q2 : p1 ≠ q2)
+    (hp2q1 : p2 ≠ q1)
+    (hp2q2 : p2 ≠ q2) :
+    Nat.coprime (p1 * p2) (q1 * q2) := by
+  have h1 := lemma1 hp1 hp2 hq1 hp1q1 hp2q1
+  have h2 := lemma1 hp1 hp2 hq2 hp1q2 hp2q2
+  exact Nat.coprime.mul_right h1 h2
+
 theorem imo1989_q5 (n : ℕ) : ∃ m, ∀ j < n, ¬IsPrimePow (m + j) := by
   -- (informal solution from https://artofproblemsolving.com)
   -- Let p₁,p₂,...pₙ,q₁,q₂,...,qₙ be distinct primes.
@@ -124,7 +153,17 @@ theorem imo1989_q5 (n : ℕ) : ∃ m, ∀ j < n, ¬IsPrimePow (m + j) := by
                                 n - (x.1 + 1)⟩)
 
   have lcp : ci.Pairwise (fun x y => Nat.coprime x.modulus y.modulus) := by
-     sorry
+     simp only [ge_iff_le, List.pairwise_ofFn]
+     intros i j hij
+     apply lemma2
+           (hl _ (List.get_mem _ _ _)).1
+           (hl _ (List.get_mem _ _ _)).1
+           (hl _ (List.get_mem _ _ _)).1
+           (hl _ (List.get_mem _ _ _)).1
+     · sorry
+     · sorry
+     · sorry
+     · sorry
 
   -- By the Chinese Remainder theorem, there exists x such that
   --   x ≡ -1 mod p₁q₁
