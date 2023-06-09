@@ -50,9 +50,7 @@ theorem imo1987_q4_generalized (m : ℕ) :
   -- A and B are disjoint and have union ℕ - f(f(ℕ)).
   have ab_disjoint : Disjoint A B := by
     intros _C hca hcb c hc
-    have hcca := hca hc
-    have hccb := hcb hc
-    aesop
+    exact Set.not_mem_of_mem_diff (hca hc) (Set.image_subset f sdiff_le (hcb hc))
 
   have ab_union : A ∪ B = NN \ (f '' (f '' NN)) := by
     rw[hid]
@@ -76,8 +74,7 @@ theorem imo1987_q4_generalized (m : ℕ) :
       obtain ⟨z, hz⟩ := hz
       rw[hz] at hx
       have hzz := hx z
-      rw[hf z] at hzz
-      rw[add_comm] at hzz
+      rw[hf z, add_comm] at hzz
       exact (hzz rfl).elim
     · rw[ab_union]
       intros x hx
