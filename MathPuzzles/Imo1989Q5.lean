@@ -115,10 +115,6 @@ lemma not_prime_power_of_two_factors
    rw[h3, h4] at hpq
    exact hpq rfl
 
-#check Nat.factors
-#check Nat.coprime_factors_disjoint
-#check Nat.coprime_primes
-
 lemma lemma1 {p1 p2 q : ℕ}
     (hp1 : Nat.Prime p1)
     (hp2 : Nat.Prime p2)
@@ -144,6 +140,15 @@ lemma lemma2 {p1 q1 p2 q2 : ℕ}
   have h2 := lemma1 hp1 hp2 hq2 hp1q2 hp2q2
   exact Nat.coprime.mul_right h1 h2
 
+lemma lemma3 {α : Type} (l : List α)
+    (hl : List.Nodup l)
+    {i j : Fin l.length}
+    (hij : i ≠ j)
+    : l.get i ≠ l.get j := by
+  intro hij'
+  --TODO why do neither aesop nor library_search succeed here?
+  exact hij (List.nodup_iff_injective_get.mp hl hij')
+
 theorem imo1989_q5 (n : ℕ) : ∃ m, ∀ j < n, ¬IsPrimePow (m + j) := by
   -- (informal solution from https://artofproblemsolving.com)
   -- Let p₁,p₂,...pₙ,q₁,q₂,...,qₙ be distinct primes.
@@ -160,7 +165,7 @@ theorem imo1989_q5 (n : ℕ) : ∃ m, ∀ j < n, ¬IsPrimePow (m + j) := by
            (hl _ (List.get_mem _ _ _)).1
            (hl _ (List.get_mem _ _ _)).1
            (hl _ (List.get_mem _ _ _)).1
-     · sorry
+     · exact lemma3 l hld (by exact LT.lt.ne hij)
      · sorry
      · sorry
      · sorry
