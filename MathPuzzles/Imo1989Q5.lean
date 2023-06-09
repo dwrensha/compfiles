@@ -188,4 +188,6 @@ theorem imo1989_q5 (n : ℕ) : ∃ m, ∀ j < n, ¬IsPrimePow (m + j) := by
   -- power of a prime.
   use m + 1
   intros j hj
+  let cp := ci.get ⟨n - (j + 1), sorry⟩
+  have h1 := hm cp (List.get_mem _ _ _)
   sorry
