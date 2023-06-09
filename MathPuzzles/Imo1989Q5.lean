@@ -165,7 +165,7 @@ theorem imo1989_q5 (n : ℕ) : ∃ m, ∀ j < n, ¬IsPrimePow (m + j) := by
            (hl _ (List.get_mem _ _ _)).1
            (hl _ (List.get_mem _ _ _)).1
            (hl _ (List.get_mem _ _ _)).1
-     · exact lemma3 l hld (by exact LT.lt.ne hij)
+     · exact lemma3 l hld (Fin.ne_of_vne (LT.lt.ne hij))
      · sorry
      · sorry
      · sorry
