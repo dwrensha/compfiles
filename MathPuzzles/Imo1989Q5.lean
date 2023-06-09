@@ -165,10 +165,15 @@ theorem imo1989_q5 (n : ℕ) : ∃ m, ∀ j < n, ¬IsPrimePow (m + j) := by
            (hl _ (List.get_mem _ _ _)).1
            (hl _ (List.get_mem _ _ _)).1
            (hl _ (List.get_mem _ _ _)).1
-     · exact lemma3 l hld (Fin.ne_of_vne (LT.lt.ne hij))
-     · sorry
-     · sorry
-     · sorry
+     · exact lemma3 l hld (LT.lt.ne hij)
+     · have hijn : i < j + n := Nat.lt_add_right _ _ n hij
+       exact lemma3 l hld (Fin.ne_of_vne (LT.lt.ne hijn))
+     · have hijn' := calc j < n := j.prop
+                          _ ≤ i + n := Nat.le_add_left _ _
+       have hijn : i + n ≠ j := Nat.ne_of_gt hijn'
+       exact lemma3 l hld (Fin.ne_of_vne hijn)
+     · have hijn : i + n < j + n := Nat.add_lt_add_right hij n
+       exact lemma3 l hld (Fin.ne_of_vne (LT.lt.ne hijn))
 
   -- By the Chinese Remainder theorem, there exists x such that
   --   x ≡ -1 mod p₁q₁
