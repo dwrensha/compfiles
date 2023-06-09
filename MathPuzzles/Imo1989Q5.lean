@@ -154,8 +154,9 @@ theorem imo1989_q5 (n : ℕ) : ∃ m, ∀ j < n, ¬IsPrimePow (m + j) := by
   -- Let p₁,p₂,...pₙ,q₁,q₂,...,qₙ be distinct primes.
   obtain ⟨l, hll, hld, hl⟩ := get_primes (2 * n) n
   let ci : List ChinesePair :=
-    List.ofFn (fun x : Fin n ↦ ⟨l.get ⟨x.1, sorry⟩ * l.get ⟨x.1 + n, sorry⟩,
-                                n - (x.1 + 1)⟩)
+    List.ofFn (fun x : Fin n ↦ let p := l.get ⟨x.1, sorry⟩
+                               let q := l.get ⟨x.1 + n, sorry⟩
+                               ⟨p * q, p * q - x.1⟩)
 
   have lcp : ci.Pairwise (fun x y => Nat.coprime x.modulus y.modulus) := by
      simp only [ge_iff_le, List.pairwise_ofFn]
@@ -176,18 +177,18 @@ theorem imo1989_q5 (n : ℕ) : ∃ m, ∀ j < n, ¬IsPrimePow (m + j) := by
        exact lemma3 l hld (Fin.ne_of_vne (LT.lt.ne hijn))
 
   -- By the Chinese Remainder theorem, there exists x such that
-  --   x ≡ -1 mod p₁q₁
-  --   x ≡ -2 mod p₂q₂
+  --   x ≡ 0 mod p₁q₁
+  --   x ≡ -1 mod p₂q₂
   --   ...
-  --   x ≡ -n mod pₙqₙ
+  --   x ≡ -(n - 1) mod pₙqₙ
 
   obtain ⟨m, hm⟩ := general_chinese_remainder ci lcp
 
-  -- The n consecutive numbers x+1, x+2, ..., x+n each have at least
+  -- The n consecutive numbers x, x, ..., x+n-1 each have at least
   -- two prime factors, so none of them can be expressed as an integral
   -- power of a prime.
-  use m + 1
+  use m
   intros j hj
-  let cp := ci.get ⟨n - (j + 1), sorry⟩
-  have h1 := hm cp (List.get_mem _ _ _)
+  have h1 := hm (ci.get ⟨j, sorry⟩) (List.get_mem _ _ _)
+  simp only [List.get_ofFn, ge_iff_le, Fin.cast_mk] at h1
   sorry
