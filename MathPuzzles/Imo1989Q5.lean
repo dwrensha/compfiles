@@ -93,7 +93,7 @@ theorem get_primes (n m : ℕ) :
       · aesop
 
 lemma not_prime_power_of_two_factors
-     (n : ℕ) (p q : ℕ)
+     {n p q : ℕ}
      (hp : Nat.Prime p) (hq : Nat.Prime q)
      (hpq : p ≠ q)
      (hpn : p ∣ n) (hqn : q ∣ n) : ¬IsPrimePow n := by
@@ -149,13 +149,26 @@ lemma lemma3 {α : Type} (l : List α)
   --TODO why do neither aesop nor library_search succeed here?
   exact hij (List.nodup_iff_injective_get.mp hl hij')
 
+lemma lemma4 {a b : ℕ} (h : a ≡ b [MOD b]) : a ≡ 0 [MOD b] := by
+  have h1 : a % b = b % b := h
+  have h2 : b % b = 0 := Nat.mod_self b
+  rw[h2] at h1
+  exact h1
+
+
 theorem imo1989_q5 (n : ℕ) : ∃ m, ∀ j < n, ¬IsPrimePow (m + j) := by
   -- (informal solution from https://artofproblemsolving.com)
   -- Let p₁,p₂,...pₙ,q₁,q₂,...,qₙ be distinct primes.
   obtain ⟨l, hll, hld, hl⟩ := get_primes (2 * n) n
   let ci : List ChinesePair :=
-    List.ofFn (fun x : Fin n ↦ let p := l.get ⟨x.1, sorry⟩
-                               let q := l.get ⟨x.1 + n, sorry⟩
+    List.ofFn (fun x : Fin n ↦ have hx0: ↑x < List.length l := by
+                                 rw[hll, Nat.two_mul]
+                                 exact Nat.lt_add_right _ n n x.2
+                               have hx1: ↑x + n < List.length l := by
+                                 rw[hll, Nat.two_mul]
+                                 exact Nat.add_lt_add_right x.2 n
+                               let p := l.get ⟨x.1, hx0⟩
+                               let q := l.get ⟨x.1 + n, hx1⟩
                                ⟨p * q, p * q - x.1⟩)
 
   have lcp : ci.Pairwise (fun x y => Nat.coprime x.modulus y.modulus) := by
@@ -189,6 +202,34 @@ theorem imo1989_q5 (n : ℕ) : ∃ m, ∀ j < n, ¬IsPrimePow (m + j) := by
   -- power of a prime.
   use m
   intros j hj
-  have h1 := hm (ci.get ⟨j, sorry⟩) (List.get_mem _ _ _)
+  have hcil : ci.length = n := by aesop
+  have hj1 : j < ci.length := by rwa[hcil]
+  have hj2 : j < l.length := by rw[hll, Nat.two_mul]
+                                exact Nat.lt_add_right j n n hj
+  have hj3 : j + n < l.length := by rw[hll, Nat.two_mul]
+                                    exact Nat.add_lt_add_right hj n
+  have h1 := hm (ci.get ⟨j, hj1⟩) (List.get_mem _ _ _)
+  obtain ⟨h2, h3⟩ := hl (l.get ⟨j, hj2⟩) (List.get_mem _ _ _)
+  obtain ⟨h4, _⟩ := hl (l.get ⟨j + n, hj3⟩) (List.get_mem _ _ _)
   simp only [List.get_ofFn, ge_iff_le, Fin.cast_mk] at h1
-  sorry
+  have h6 := Nat.ModEq.add_right j h1
+  have h7 : j ≤ l.get ⟨j, hj2⟩ * l.get ⟨j + n, hj3⟩ := by
+      have h0 : 0 < l.get ⟨j + n, hj3⟩ := Nat.Prime.pos h4
+      have := calc
+                j < n := hj
+                _ ≤ List.get l { val := j, isLt := hj2 } := h3
+                _ ≤ l.get ⟨j, hj2⟩  * l.get ⟨j + n, hj3⟩ := Nat.le_mul_of_pos_right h0
+      exact Nat.le_of_lt this
+  rw [Nat.sub_add_cancel h7] at h6
+  clear h1 h7
+  have h8 := lemma4 h6
+  replace h8 := Nat.dvd_of_mod_eq_zero h8
+  have h9 := dvd_of_mul_right_dvd h8
+  have h10 := dvd_of_mul_left_dvd h8
+  have h11 : l.get ⟨j, hj2⟩ ≠ l.get ⟨j + n, hj3⟩ := by
+    intro h12
+    have h13 := (List.Nodup.get_inj_iff hld).mp h12
+    simp only [Fin.mk.injEq, self_eq_add_right] at h13
+    rw [h13] at hj
+    simp only [not_lt_zero'] at hj
+  exact not_prime_power_of_two_factors h2 h4 h11 h9 h10
