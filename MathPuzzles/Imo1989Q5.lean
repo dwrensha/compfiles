@@ -155,7 +155,6 @@ lemma lemma4 {a b : ℕ} (h : a ≡ b [MOD b]) : a ≡ 0 [MOD b] := by
   rw[h2] at h1
   exact h1
 
-
 theorem imo1989_q5 (n : ℕ) : ∃ m, ∀ j < n, ¬IsPrimePow (m + j) := by
   -- (informal solution from https://artofproblemsolving.com)
   -- Let p₁,p₂,...pₙ,q₁,q₂,...,qₙ be distinct primes.
@@ -214,12 +213,12 @@ theorem imo1989_q5 (n : ℕ) : ∃ m, ∀ j < n, ¬IsPrimePow (m + j) := by
   simp only [List.get_ofFn, ge_iff_le, Fin.cast_mk] at h1
   have h6 := Nat.ModEq.add_right j h1
   have h7 : j ≤ l.get ⟨j, hj2⟩ * l.get ⟨j + n, hj3⟩ := by
-      have h0 : 0 < l.get ⟨j + n, hj3⟩ := Nat.Prime.pos h4
-      have := calc
-                j < n := hj
-                _ ≤ List.get l { val := j, isLt := hj2 } := h3
-                _ ≤ l.get ⟨j, hj2⟩  * l.get ⟨j + n, hj3⟩ := Nat.le_mul_of_pos_right h0
-      exact Nat.le_of_lt this
+      apply Nat.le_of_lt
+      calc
+        j < n := hj
+        _ ≤ l.get ⟨j, hj2⟩ := h3
+        _ ≤ l.get ⟨j, hj2⟩ * l.get ⟨j + n, hj3⟩ := Nat.le_mul_of_pos_right (Nat.Prime.pos h4)
+
   rw [Nat.sub_add_cancel h7] at h6
   clear h1 h7
   have h8 := lemma4 h6
@@ -230,6 +229,5 @@ theorem imo1989_q5 (n : ℕ) : ∃ m, ∀ j < n, ¬IsPrimePow (m + j) := by
     intro h12
     have h13 := (List.Nodup.get_inj_iff hld).mp h12
     simp only [Fin.mk.injEq, self_eq_add_right] at h13
-    rw [h13] at hj
-    simp only [not_lt_zero'] at hj
+    simp only [h13, not_lt_zero'] at hj
   exact not_prime_power_of_two_factors h2 h4 h11 h9 h10
