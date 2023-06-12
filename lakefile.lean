@@ -7,5 +7,5 @@ package mathpuzzles
 @[default_target]
 lean_lib MathPuzzles
 
-require mathlib from git "https://github.com/leanprover-community/mathlib4" @ "0b889932439ea5520a56d3a4ea5790e811eb9cce"
+require mathlib from git "https://github.com/leanprover-community/mathlib4" @ "5068808d2b4c25cf905cf7fee10ded8e447c2346"
 
