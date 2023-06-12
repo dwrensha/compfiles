@@ -62,8 +62,7 @@ lemma general_chinese_remainder (xs : List ChinesePair)
     | head => exact hk1
     | tail w hw =>
       have h2 := hb z hw
-      have h3 : z.modulus ∈ (List.map (fun x => x.modulus) xs) := by aesop
-      have h4 := modulus_of_product hk2 _ h3
+      have h4 := modulus_of_product hk2 _ (List.mem_map_of_mem ChinesePair.modulus hw)
       exact Nat.ModEq.trans h4 h2
 
 lemma list_upper_bound (l : List ℕ) : ∃ m : ℕ, ∀ x ∈ l, x ≤ m := by
@@ -83,7 +82,7 @@ theorem get_primes (n m : ℕ) :
     obtain ⟨p, hpm, hp⟩ := Nat.exists_infinite_primes (max m (mx + 1))
     use p :: l'
     constructor
-    · aesop
+    · exact Iff.mpr Nat.succ_inj' hl'
     · constructor
       · rw[List.nodup_cons]
         constructor
