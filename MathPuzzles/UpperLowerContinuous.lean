@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2023 David Renshaw. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: David Renshaw, Jason Reed
+-/
+
 import Mathlib.Algebra.Ring.Equiv
 import Mathlib.Data.Real.Basic
 import Mathlib.Data.Set.Intervals.Basic

@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2023 David Renshaw. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: David Renshaw
+-/
+
 import Mathlib.Algebra.Order.Archimedean
 import Mathlib.Data.Real.Basic
 import Mathlib.Algebra.BigOperators.Basic
@@ -15,6 +21,7 @@ for every x,y ∈ ℝ⁺.
 
 -/
 
+namespace Bulgaria1998Q3
 open BigOperators
 
 lemma geom_sum_bound (n : ℕ) : ∑ i in Finset.range n, (1:ℝ) / (2^i) < 3 :=

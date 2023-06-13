@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2023 David Renshaw. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: David Renshaw
+-/
+
 import Mathlib.Algebra.BigOperators.Intervals
 import Mathlib.Algebra.BigOperators.Ring
 import Mathlib.Data.Nat.Prime
@@ -13,6 +19,7 @@ Let x, y, z be integers with z > 1. Show that
  (x + 1)² + (x + 2)² + ... + (x + 99)² ≠ yᶻ.
 -/
 
+namespace Hungary1998Q6
 open BigOperators
 
 lemma sum_range_square_mul_six (n : ℕ) :

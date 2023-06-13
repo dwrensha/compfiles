@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2023 David Renshaw. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: David Renshaw, Anand Rao
+-/
+
 import Mathlib.Data.Nat.Basic
 import Mathlib.Algebra.GroupPower.Basic
 import Mathlib.Tactic.Linarith
@@ -7,6 +13,8 @@ import Mathlib.Tactic.Linarith
 
 Prove that there is no positive integer n for which 2ⁿ + 1 is divisible by 7.
 -/
+
+namespace Imo1964Q1
 
 /-
 Informal proof (credit to twitch.tv viewer int_fast64_t):

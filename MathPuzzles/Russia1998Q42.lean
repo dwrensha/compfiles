@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2023 David Renshaw. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: David Renshaw
+-/
+
 import Mathlib.Data.Real.Basic
 
 /-
@@ -9,6 +15,8 @@ import Mathlib.Data.Real.Basic
  Prove that a ⋆ b = a + b.
 
 -/
+
+namespace Russia1998Q42
 
 variable (star : ℝ → ℝ → ℝ)
 local infixl:80 " ⋆ " => star

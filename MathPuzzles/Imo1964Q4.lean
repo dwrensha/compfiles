@@ -1,7 +1,12 @@
+/-
+Copyright (c) 2023 David Renshaw. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: David Renshaw
+-/
+
 import Aesop
 import Mathlib.Combinatorics.Pigeonhole
 import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.LibrarySearch
 
 /-!
 # International Mathematical Olympiad 1964, Problem 4
@@ -13,6 +18,8 @@ Prove that there are at least three people who write to each other
 about the same topic.
 
 -/
+
+namespace Imo1964Q4
 
 /--
  Smaller version of the problem, with 6 (or more) people and 2 topics.
