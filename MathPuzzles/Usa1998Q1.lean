@@ -32,5 +32,16 @@ theorem usa1998_q1
     (hab : Disjoint (a '' (Set.Icc 1 999)) (b '' (Set.Icc 1 999)))
     (habd : ∀ i ∈ Set.Icc 1 999, |a i - b i| = 1 ∨ |a i - b i| = 6)
     : (∑ i in Finset.range 999, |a (i + 1) - b (i + 1)|) % 10 = 9 := by
+  -- Informal solution from Andreescu & Feng.
+  -- Let k denote the number of pairs {aᵢ,bᵢ} with |aᵢ - bᵢ| = 6.
+  -- Then the sum in question is k⬝6 + (999 - k)⬝1 = 999 + 5k,
+  -- which ends in 9 provided that k is even.
+  -- Hence it suffices to show that k is even.
+  --
+  -- Write k = kₒ + kₑ where kₒ (resp. kₑ) is equal to the number of pairs
+  -- {aᵢ,bᵢ} with aᵢ,bᵢ both odd (resp. even). Since there are as many
+  -- even numbers as odd numbers between 1 and 1998, and since each pair
+  -- {aᵢ,bᵢ} with |aᵢ - bᵢ| contains one number of each type, we must have
+  -- kₒ = kₑ. Hence k is even, as claimed.
   sorry
 
