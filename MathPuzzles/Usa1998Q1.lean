@@ -30,6 +30,7 @@ theorem usa1998_q1
     (ha : a '' (Set.Icc 1 999) ⊆ Set.Icc 1 1998)
     (hb : b '' (Set.Icc 1 999) ⊆ Set.Icc 1 1998)
     (hab : Disjoint (a '' (Set.Icc 1 999)) (b '' (Set.Icc 1 999)))
+    (habd : ∀ i ∈ Set.Icc 1 999, |a i - b i| = 1 ∨ |a i - b i| = 6)
     : (∑ i in Finset.range 999, |a (i + 1) - b (i + 1)|) % 10 = 9 := by
   sorry
 
