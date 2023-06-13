@@ -1,18 +1,24 @@
 # math-puzzles-in-lean4
 
-Math puzzles formalized in Lean 4,
-using the Lean 3 repo https://github.com/dwrensha/math-puzzles-in-lean
-as a starting point.
+Math puzzles and their solutions, formalized in [Lean 4](https://github.com/leanprover/lean4).
+
+This is a continuation of
+the work in the Lean 3 repo https://github.com/dwrensha/math-puzzles-in-lean.
 
 ## building
 
-Make sure you have `elan` installed, then do:
+Make sure you have [`elan`](https://github.com/leanprover/elan) installed, then do:
 
 ```
 $ lake exe cache get
 $ lake build
 ```
 
+## contributing
+
+Contributions are welcome!
+You may take credit for you work by adding yourself
+to the "authors" field in the copyright header.
 
 ## videos
 
