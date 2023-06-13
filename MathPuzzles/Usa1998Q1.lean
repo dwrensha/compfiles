@@ -43,5 +43,17 @@ theorem usa1998_q1
   -- even numbers as odd numbers between 1 and 1998, and since each pair
   -- {aᵢ,bᵢ} with |aᵢ - bᵢ| contains one number of each type, we must have
   -- kₒ = kₑ. Hence k is even, as claimed.
+
+
+  -- Informal solution from https://artofproblemsolving.com:
+  -- Notice that |aᵢ-bᵢ| ≡ 1 MOD 5,
+  -- so S=|a₁-b₁|+|a₂-b₂|+ ⋯ +|a₉₉₉ - b₉₉₉| ≡ 1+1+ ⋯ + 1 ≡ 999 ≡ 4 MOD 5.
+  --
+  -- Also, for integers M,N we have |M-N| ≡ M-N ≡ M+N MOD 2.
+  --
+  -- Thus, we also have
+  -- S ≡ a₁ + b₁ + a₂ + b₂ + ⋯ + a₉₉₉ + b₉₉₉ ≡ 1 + 2 + ⋯ + 1998 ≡ 999*1999 ≡ 1 MOD 2
+  -- so by the Chinese Remainder Theorem S ≡ 9 MOD 10.
+  -- Thus, $S$ ends in the digit 9, as desired.
   sorry
 
