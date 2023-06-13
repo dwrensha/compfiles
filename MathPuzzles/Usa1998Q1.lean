@@ -29,12 +29,22 @@ theorem usa1998_q1
     (ha : a '' (Set.Icc 1 999) ⊆ Set.Icc 1 1998)
     (hb : b '' (Set.Icc 1 999) ⊆ Set.Icc 1 1998)
     (hab : Disjoint (a '' (Set.Icc 1 999)) (b '' (Set.Icc 1 999)))
+    (hai : a.Injective)
+    (hbi : b.Injective)
     (habd : ∀ i ∈ Set.Icc 1 999, |a i - b i| = 1 ∨ |a i - b i| = 6)
     : (∑ i in Finset.range 999, |a (i + 1) - b (i + 1)|) % 10 = 9 := by
 
   -- Informal solution from https://artofproblemsolving.com:
   -- Notice that |aᵢ-bᵢ| ≡ 1 MOD 5,
+  have h1 : ∀ i ∈ (Set.Icc 1 999), |a i - b i| ≡ 1 [ZMOD 5] := by
+    intros i hi
+    replace habd := habd i hi
+    cases' habd with habd habd
+    · rw[habd]
+    · rw[habd]; rfl
+
   -- so S=|a₁-b₁|+|a₂-b₂|+ ⋯ +|a₉₉₉ - b₉₉₉| ≡ 1+1+ ⋯ + 1 ≡ 999 ≡ 4 MOD 5.
+
   --
   -- Also, for integers M,N we have |M-N| ≡ M-N ≡ M+N MOD 2.
   --
