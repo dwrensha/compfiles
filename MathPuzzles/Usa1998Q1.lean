@@ -41,22 +41,32 @@ lemma mod2_diff (a b : ℤ) : |a - b| % 2 = (a + b) % 2 := by
 
 lemma lemma1
     (a : ℕ → ℕ)
-    (ha : a.Injective)
-    (g : ℕ → ℤ)
     (s : Finset ℕ)
+    (ha : Set.InjOn a s)
+    (g : ℕ → ℤ)
     : ∑ i in s, g (a i) =
       ∑ i in Finset.image a s, g i := by
   induction' s using Finset.induction with n s hs ih
   · simp
   · rw[Finset.sum_insert hs]
     rw[Finset.image_insert]
+    have h4 : Set.InjOn a s := by
+      intros x hx y hy hxy
+      have h7 : x ∈ insert n s := Finset.mem_insert_of_mem hx
+      have h8 : y ∈ insert n s := Finset.mem_insert_of_mem hy
+      exact ha h7 h8 hxy
+
     have h2 : a n ∉ Finset.image a s := by
       simp only [Finset.mem_image, not_exists, not_and]
       intros x hx
       have h3 : x ≠ n := by aesop
       clear ih
-      exact Function.Injective.ne ha h3
+      intro h6
+      have h7 : x ∈ insert n s := Finset.mem_insert_of_mem hx
+      have h8 : n ∈ insert n s := Finset.mem_insert_self n s
+      exact h3 (ha h7 h8 h6)
     rw[Finset.sum_insert h2]
+    have h5 := ih h4
     congr
 
 lemma lemma2
@@ -78,8 +88,8 @@ theorem usa1998_q1
     (hb : Finset.image b (Finset.Icc 1 999) ⊆ Finset.Icc 1 1998)
     (hab : Disjoint (Finset.image a (Finset.Icc 1 999))
                     (Finset.image b (Finset.Icc 1 999)))
-    (hai : a.Injective)
-    (hbi : b.Injective)
+    (hai : Set.InjOn a (Finset.Icc 1 999))
+    (hbi : Set.InjOn b (Finset.Icc 1 999))
     (habd : ∀ i ∈ Finset.Icc 1 999, |(a i : ℤ) - b i| = 1 ∨
                                     |(a i : ℤ) - b i| = 6)
     : (∑ i in Finset.Icc 1 999, |(a i : ℤ) - b i|) % 10 = 9 := by
@@ -110,10 +120,10 @@ theorem usa1998_q1
     have h20 : (Finset.Icc 1 999).card = 999 := by rw[Nat.card_Icc]
     have h21 : (Finset.image a (Finset.Icc 1 999)).card = 999 :=
        by nth_rewrite 2 [← h20]
-          exact Finset.card_image_of_injective _ hai
+          exact Iff.mpr Finset.card_image_iff hai
     have h22 : (Finset.image b (Finset.Icc 1 999)).card = 999 :=
        by nth_rewrite 2 [← h20]
-          exact Finset.card_image_of_injective _ hbi
+          exact Iff.mpr Finset.card_image_iff hbi
 
     have h23 : 1998 = (Finset.image a (Finset.Icc 1 999)).card
                      + (Finset.image b (Finset.Icc 1 999)).card := by
@@ -152,11 +162,11 @@ theorem usa1998_q1
     rw[Finset.sum_add_distrib]
     have h10 : ∑ i in Finset.Icc 1 999, (a i : ℤ) % 2 =
         ∑ i in Finset.image a (Finset.Icc 1 999), (i : ℤ) % 2 := by
-      exact lemma1 a hai (fun i ↦ ((i:ℤ) % 2)) (Finset.Icc 1 999)
+      exact lemma1 a (Finset.Icc 1 999) hai (fun i ↦ ((i:ℤ) % 2))
 
     have h11 : ∑ i in Finset.Icc 1 999, (b i : ℤ) % 2 =
         ∑ i in Finset.image b (Finset.Icc 1 999), (i : ℤ) % 2 := by
-      exact lemma1 b hbi (fun i ↦ ((i:ℤ) % 2)) (Finset.Icc 1 999)
+      exact lemma1 b (Finset.Icc 1 999) hbi (fun i ↦ ((i:ℤ) % 2))
 
     rw[h10, h11, ←Finset.sum_union hab, h5, ←Finset.sum_int_mod]
     norm_cast
