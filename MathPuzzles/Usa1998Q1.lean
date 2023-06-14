@@ -114,7 +114,7 @@ theorem usa1998_q1
   have h5 : Finset.image a (Finset.Icc 1 999) ∪
             Finset.image b (Finset.Icc 1 999) =
        Finset.Icc 1 1998 := by
-    have h20 : (Finset.Icc 1 999).card = 999 := by rw[Nat.card_Icc]
+    have h20 : (Finset.Icc 1 999).card = 999 := Nat.card_Icc _ _
     have h21 : (Finset.image a (Finset.Icc 1 999)).card = 999 :=
        by nth_rewrite 2 [← h20]
           exact Iff.mpr Finset.card_image_iff hai
@@ -122,22 +122,9 @@ theorem usa1998_q1
        by nth_rewrite 2 [← h20]
           exact Iff.mpr Finset.card_image_iff hbi
 
-    have h23 : 1998 = (Finset.image a (Finset.Icc 1 999)).card
-                     + (Finset.image b (Finset.Icc 1 999)).card := by
-       rw[h21, h22]
-
-    have h24 : ((Finset.image a (Finset.Icc 1 999)) ∪
-                (Finset.image b (Finset.Icc 1 999))).card = 1998 := by
-      rw[h23, Finset.card_union_eq hab]
-
     -- therefore they hit every value in Finset.Icc 1 1998
-    have h25 : (Finset.Icc 1 1998).card = 1998 := by rw[Nat.card_Icc]
-    rw[←h25] at h24
-    apply lemma2
-    · aesop
-    · simp[h21, h22]
-    · exact ha
-    · exact hb
+    exact lemma2 hab (by simp[h21, h22]) ha hb
+
   --
   -- Also, for integers M,N we have |M-N| ≡ M-N ≡ M+N MOD 2.
   -- (see mod2_diff above).
