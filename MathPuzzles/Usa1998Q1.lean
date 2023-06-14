@@ -6,7 +6,9 @@ Authors: David Renshaw
 
 import Mathlib.Data.Set.Intervals.Basic
 import Mathlib.Algebra.BigOperators.Basic
+import Mathlib.Algebra.BigOperators.Intervals
 import Mathlib.Data.Int.ModEq
+import Mathlib.Data.Finset.Interval
 
 /-!
 # USA Mathematical Olympiad 1998, Problem 1
@@ -37,54 +39,98 @@ lemma mod2_diff (a b : ℤ) : |a - b| % 2 = (a + b) % 2 := by
     rw[mod2_neg]
     rw[Int.sub_eq_add_neg, Int.add_emod, mod2_neg, ←Int.add_emod]
 
+lemma lemma1
+    (a : ℕ → ℕ)
+    (ha : a.Injective)
+    (g : ℕ → ℤ)
+    (s : Finset ℕ)
+    : ∑ i in s, g (a i) =
+      ∑ i in Finset.image a s, g i := by
+  induction' s using Finset.induction with n s hs ih
+  · simp
+  · rw[Finset.sum_insert hs]
+    rw[Finset.image_insert]
+    have h2 : a n ∉ Finset.image a s := by
+      simp only [Finset.mem_image, not_exists, not_and]
+      intros x hx
+      have h3 : x ≠ n := by aesop
+      clear ih
+      exact Function.Injective.ne ha h3
+    rw[Finset.sum_insert h2]
+    congr
+
+lemma lemma2
+    {a b c : Finset ℕ}
+    (hab : Disjoint a b)
+    (hc : a.card + b.card = c.card)
+    (hac : a ⊆ c)
+    (hbc : b ⊆ c)
+    : a ∪ b = c := by
+  have habc : a ∪ b ⊆ c := Finset.union_subset hac hbc
+  have h1 : (a ∪ b).card = a.card + b.card := Finset.card_union_eq hab
+  rw[←h1] at hc
+  have h2 := le_of_eq hc.symm
+  exact Iff.mp (Finset.subset_iff_eq_of_card_le h2) habc
+
 theorem usa1998_q1
-    (a b : ℤ → ℤ)
-    (ha : a '' (Set.Icc 1 999) ⊆ Set.Icc 1 1998)
-    (hb : b '' (Set.Icc 1 999) ⊆ Set.Icc 1 1998)
-    (hab : Disjoint (a '' (Set.Icc 1 999)) (b '' (Set.Icc 1 999)))
+    (a b : ℕ → ℕ)
+    (ha : Finset.image a (Finset.Icc 1 999) ⊆ Finset.Icc 1 1998)
+    (hb : Finset.image b (Finset.Icc 1 999) ⊆ Finset.Icc 1 1998)
+    (hab : Disjoint (Finset.image a (Finset.Icc 1 999))
+                    (Finset.image b (Finset.Icc 1 999)))
     (hai : a.Injective)
     (hbi : b.Injective)
-    (habd : ∀ i ∈ Set.Icc 1 999, |a i - b i| = 1 ∨ |a i - b i| = 6)
-    : (∑ i in Finset.range 999, |a (i + 1) - b (i + 1)|) % 10 = 9 := by
+    (habd : ∀ i ∈ Finset.Icc 1 999, |(a i : ℤ) - b i| = 1 ∨
+                                    |(a i : ℤ) - b i| = 6)
+    : (∑ i in Finset.Icc 1 999, |(a i : ℤ) - b i|) % 10 = 9 := by
 
   -- Informal solution from https://artofproblemsolving.com:
   -- Notice that |aᵢ-bᵢ| ≡ 1 MOD 5,
-  have h1 : ∀ i ∈ (Set.Icc 1 999), |a i - b i| ≡ 1 [ZMOD 5] := by
+  have h1 : ∀ i ∈ (Finset.Icc 1 999), |a i - b i| ≡ 1 [ZMOD 5] := by
     intros i hi
     replace habd := habd i hi
     cases' habd with habd habd
     · rw[habd]
     · rw[habd]; rfl
 
-  have h1' : ∀ i ∈ Finset.range 999, |a (i+1) - b (i+1)| % 5 = 1 := by
+  have h1' : ∀ i ∈ Finset.Icc 1 999, |(a i : ℤ) - b i| % 5 = 1 := by
     intros i hi
-    have h2 : ((i:ℤ) + 1) ∈ Set.Icc 1 999 := by
-      rw[Set.mem_Icc]
-      constructor
-      · simp only [le_add_iff_nonneg_left, Nat.cast_nonneg]
-      · rw[Finset.mem_range] at hi
-        norm_cast
-    have h3 := h1 (i + 1) h2
-    exact h3
+    exact h1 i hi
 
   -- so S=|a₁-b₁|+|a₂-b₂|+ ⋯ +|a₉₉₉ - b₉₉₉| ≡ 1+1+ ⋯ + 1 ≡ 999 ≡ 4 MOD 5.
-  have h2 : (∑ i in Finset.range 999, |a (i + 1) - b (i + 1)|) ≡ 4 [ZMOD 5] :=
+  have h2 : (∑ i in Finset.Icc 1 999, |a i - b i|) ≡ 4 [ZMOD 5] :=
   by rw[zmod_eq, Finset.sum_int_mod, Finset.sum_congr rfl h1']
-     simp only [Finset.sum_const, Finset.card_range, nsmul_eq_mul,
+     simp only [gt_iff_lt, Finset.sum_const, Nat.card_Icc,
+                ge_iff_le, add_tsub_cancel_right, nsmul_eq_mul,
                 Nat.cast_ofNat, mul_one]
 
-  have h5 : a '' Set.Icc 1 999 ∪ b '' Set.Icc 1 999 = Set.Icc 1 1998 := by
-    sorry
+  have h5 : Finset.image a (Finset.Icc 1 999) ∪
+            Finset.image b (Finset.Icc 1 999) =
+       Finset.Icc 1 1998 := by
+    have h20 : (Finset.Icc 1 999).card = 999 := by rw[Nat.card_Icc]
+    have h21 : (Finset.image a (Finset.Icc 1 999)).card = 999 :=
+       by nth_rewrite 2 [← h20]
+          exact Finset.card_image_of_injective _ hai
+    have h22 : (Finset.image b (Finset.Icc 1 999)).card = 999 :=
+       by nth_rewrite 2 [← h20]
+          exact Finset.card_image_of_injective _ hbi
 
-  let a' : ℕ → ℤ := λ n ↦ a ↑n
-  let b' : ℕ → ℤ := λ n ↦ b ↑n
+    have h23 : 1998 = (Finset.image a (Finset.Icc 1 999)).card
+                     + (Finset.image b (Finset.Icc 1 999)).card := by
+       rw[h21, h22]
 
-  have h5' : a' '' Finset.range 999 ∪ b' '' Finset.range 999 = Set.Icc 1 1998 := by
-    sorry
+    have h24 : ((Finset.image a (Finset.Icc 1 999)) ∪
+                (Finset.image b (Finset.Icc 1 999))).card = 1998 := by
+      rw[h23, Finset.card_union_eq hab]
 
-  have h6 : Disjoint (a' '' Finset.range 999) (b' '' Finset.range 999) := by
-    sorry
-
+    -- therefore they hit every value in Finset.Icc 1 1998
+    have h25 : (Finset.Icc 1 1998).card = 1998 := by rw[Nat.card_Icc]
+    rw[←h25] at h24
+    apply lemma2
+    · aesop
+    · simp[h21, h22]
+    · exact ha
+    · exact hb
   --
   -- Also, for integers M,N we have |M-N| ≡ M-N ≡ M+N MOD 2.
   -- (see mod2_diff above).
@@ -93,24 +139,31 @@ theorem usa1998_q1
   -- S ≡ a₁ + b₁ + a₂ + b₂ + ⋯ + a₉₉₉ + b₉₉₉ [MOD 2]
   --   ≡ 1 + 2 + ⋯ + 1998 [MOD 2]
   --   ≡ 999*1999 ≡ 1 [MOD 2]
-  have h3 : ∑ i in Finset.range 999, |a (i + 1) - b (i + 1)| ≡ 1 [ZMOD 2] := by
+  have h3 : ∑ i in Finset.Icc 1 999, |a i - b i| ≡ 1 [ZMOD 2] := by
     rw[zmod_eq, Finset.sum_int_mod]
-    have h4 : ∀ i ∈ Finset.range 999,
-        |a (i + 1) - b (i + 1)| % 2 =
-          ((a (i + 1) % 2) + (b (i + 1) % 2)) % 2 := by
-      intros i hi
+    have h4 : ∀ i ∈ Finset.Icc 1 999,
+        |(a i : ℤ) - b i| % 2 =
+          ((a i % 2) + (b i % 2)) % 2 := by
+      intros i _
       rw[mod2_diff, Int.add_emod]
 
     rw[Finset.sum_congr rfl h4]
     rw[←Finset.sum_int_mod]
     rw[Finset.sum_add_distrib]
-    --have : ∑ x in Finset.range 999, a (↑x + 1) % 2 = 
-    --    ∑ x in a' '' Finset.range 999, x % 2
-    sorry
+    have h10 : ∑ i in Finset.Icc 1 999, (a i : ℤ) % 2 =
+        ∑ i in Finset.image a (Finset.Icc 1 999), (i : ℤ) % 2 := by
+      exact lemma1 a hai (fun i ↦ ((i:ℤ) % 2)) (Finset.Icc 1 999)
+
+    have h11 : ∑ i in Finset.Icc 1 999, (b i : ℤ) % 2 =
+        ∑ i in Finset.image b (Finset.Icc 1 999), (i : ℤ) % 2 := by
+      exact lemma1 b hbi (fun i ↦ ((i:ℤ) % 2)) (Finset.Icc 1 999)
+
+    rw[h10, h11, ←Finset.sum_union hab, h5, ←Finset.sum_int_mod]
+    norm_cast
 
   --
   -- Combining these facts gives S ≡ 9 MOD 10.
-  have hmn : Nat.coprime (Int.natAbs 2) (Int.natAbs 5) := by sorry
+  have hmn : Nat.coprime (Int.natAbs 2) (Int.natAbs 5) := by norm_cast
   rw[show (9:ℤ) = 9 % 10 by norm_num,
      ← zmod_eq,
      show (10:ℤ) = 2 * 5 by norm_num]
@@ -118,7 +171,7 @@ theorem usa1998_q1
   -- TODO why do I need to supply this implicit arguments? a direct rw
   -- does not work here.
   have h4 := @Int.modEq_and_modEq_iff_modEq_mul
-       ((∑ i in Finset.range 999, |a (i + 1) - b (i + 1)|))
+       ((∑ i in Finset.Icc 1 999, |a i - b i|))
        9 2 5 hmn
   rw[←h4]
   constructor
@@ -130,9 +183,3 @@ theorem usa1998_q1
     rw[zmod_eq] at h2
     rw[h2]
     norm_num
-
-#check Finset.sum_union
--- Finset.sum_union.{u, v} {β : Type u} {α : Type v} {s₁ s₂ : Finset α}
--- {f : α → β} [inst : AddCommMonoid β]
--- [inst¹ : DecidableEq α] (h : Disjoint s₁ s₂)
--- : ∑ x in s₁ ∪ s₂, f x = ∑ x in s₁, f x + ∑ x in s₂, f x
