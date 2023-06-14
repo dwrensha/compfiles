@@ -267,8 +267,7 @@ lemma can_get_a_later_one : (∀ N : ℕ, 7 ∣ a N → (∃ M : ℕ, N < M ∧ 
   have ha' : a' n = 0 := by
     have : a' n = ⟨a n % 7, Nat.mod_lt _ (by norm_num)⟩ := by simp[a']
     rw [this]
-    have := Nat.mod_eq_zero_of_dvd hn
-    aesop
+    simp only [Nat.mod_eq_zero_of_dvd hn, Fin.mk_zero]
   obtain ⟨m, hmgt, hm7⟩ := can_get_a_later_one_zmod n ha'
   use m
   use hmgt
