@@ -45,7 +45,7 @@ lemma lemma1
     : ∑ i in s, g (a i) =
       ∑ i in Finset.image a s, g i := by
   induction' s using Finset.induction with n s hs ih
-  · simp
+  · simp only [Finset.sum_empty, Finset.image_empty]
   · rw[Finset.sum_insert hs]
     rw[Finset.image_insert]
     have h4 : Set.InjOn a s := by
@@ -57,12 +57,11 @@ lemma lemma1
     have h2 : a n ∉ Finset.image a s := by
       simp only [Finset.mem_image, not_exists, not_and]
       intros x hx
-      have h3 : x ≠ n := by aesop
       clear ih
       intro h6
       have h7 : x ∈ insert n s := Finset.mem_insert_of_mem hx
       have h8 : n ∈ insert n s := Finset.mem_insert_self n s
-      exact h3 (ha h7 h8 h6)
+      exact hs ((ha h7 h8 h6) ▸ hx)
     rw[Finset.sum_insert h2]
     have h5 := ih h4
     congr
