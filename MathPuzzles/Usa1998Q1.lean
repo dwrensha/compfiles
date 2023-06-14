@@ -73,6 +73,9 @@ theorem usa1998_q1
      simp only [Finset.sum_const, Finset.card_range, nsmul_eq_mul,
                 Nat.cast_ofNat, mul_one]
 
+  have h5 : a '' Set.Icc 1 999 ∪ b '' Set.Icc 1 999 = Set.Icc 1 1998 := by
+    sorry
+
   --
   -- Also, for integers M,N we have |M-N| ≡ M-N ≡ M+N MOD 2.
   -- (see mod2_diff above).
@@ -82,10 +85,13 @@ theorem usa1998_q1
   have h3 : ∑ i in Finset.range 999, |a (i + 1) - b (i + 1)| ≡ 1 [ZMOD 2] := by
     rw[zmod_eq, Finset.sum_int_mod]
     have h4 : ∀ i ∈ Finset.range 999,
-        |a (i + 1) - b (i + 1)| % 2 = (a (i + 1) + b (i + 1)) % 2 := by
-      intros i hi; exact mod2_diff _ _
+        |a (i + 1) - b (i + 1)| % 2 =
+          ((a (i + 1) % 2) + (b (i + 1) % 2)) % 2 := by
+      intros i hi
+      rw[mod2_diff, Int.add_emod]
 
     rw[Finset.sum_congr rfl h4]
+    rw[←Finset.sum_int_mod]
     sorry
 
   --
@@ -110,3 +116,10 @@ theorem usa1998_q1
     rw[zmod_eq] at h2
     rw[h2]
     norm_num
+
+
+#check Finset.sum_union
+-- Finset.sum_union.{u, v} {β : Type u} {α : Type v} {s₁ s₂ : Finset α}
+-- {f : α → β} [inst : AddCommMonoid β]
+-- [inst¹ : DecidableEq α] (h : Disjoint s₁ s₂)
+-- : ∑ x in s₁ ∪ s₂, f x = ∑ x in s₁, f x + ∑ x in s₂, f x
