@@ -100,13 +100,9 @@ theorem usa1998_q1
     · rw[habd]
     · rw[habd]; rfl
 
-  have h1' : ∀ i ∈ Finset.Icc 1 999, |(a i : ℤ) - b i| % 5 = 1 := by
-    intros i hi
-    exact h1 i hi
-
   -- so S=|a₁-b₁|+|a₂-b₂|+ ⋯ +|a₉₉₉ - b₉₉₉| ≡ 1+1+ ⋯ + 1 ≡ 999 ≡ 4 MOD 5.
   have h2 : (∑ i in Finset.Icc 1 999, |a i - b i|) ≡ 4 [ZMOD 5] :=
-  by rw[zmod_eq, Finset.sum_int_mod, Finset.sum_congr rfl h1']
+  by rw[zmod_eq, Finset.sum_int_mod, Finset.sum_congr rfl h1]
      simp only [gt_iff_lt, Finset.sum_const, Nat.card_Icc,
                 ge_iff_le, add_tsub_cancel_right, nsmul_eq_mul,
                 Nat.cast_ofNat, mul_one]
@@ -116,11 +112,9 @@ theorem usa1998_q1
        Finset.Icc 1 1998 := by
     have h20 : (Finset.Icc 1 999).card = 999 := Nat.card_Icc _ _
     have h21 : (Finset.image a (Finset.Icc 1 999)).card = 999 :=
-       by nth_rewrite 2 [← h20]
-          exact Iff.mpr Finset.card_image_iff hai
+       by rw[Finset.card_image_iff.mpr hai, h20]
     have h22 : (Finset.image b (Finset.Icc 1 999)).card = 999 :=
-       by nth_rewrite 2 [← h20]
-          exact Iff.mpr Finset.card_image_iff hbi
+       by rw[Finset.card_image_iff.mpr hbi, h20]
 
     -- therefore they hit every value in Finset.Icc 1 1998
     exact lemma2 hab (by simp[h21, h22]) ha hb
@@ -162,12 +156,7 @@ theorem usa1998_q1
      ← zmod_eq,
      show (10:ℤ) = 2 * 5 by norm_num]
 
-  -- TODO why do I need to supply this implicit arguments? a direct rw
-  -- does not work here.
-  have h4 := @Int.modEq_and_modEq_iff_modEq_mul
-       ((∑ i in Finset.Icc 1 999, |a i - b i|))
-       9 2 5 hmn
-  rw[←h4]
+  rw[←Int.modEq_and_modEq_iff_modEq_mul hmn]
   constructor
   · rw[zmod_eq]
     rw[zmod_eq] at h3
