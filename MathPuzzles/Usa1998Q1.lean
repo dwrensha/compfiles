@@ -76,12 +76,23 @@ theorem usa1998_q1
   have h5 : a '' Set.Icc 1 999 ∪ b '' Set.Icc 1 999 = Set.Icc 1 1998 := by
     sorry
 
+  let a' : ℕ → ℤ := λ n ↦ a ↑n
+  let b' : ℕ → ℤ := λ n ↦ b ↑n
+
+  have h5' : a' '' Finset.range 999 ∪ b' '' Finset.range 999 = Set.Icc 1 1998 := by
+    sorry
+
+  have h6 : Disjoint (a' '' Finset.range 999) (b' '' Finset.range 999) := by
+    sorry
+
   --
   -- Also, for integers M,N we have |M-N| ≡ M-N ≡ M+N MOD 2.
   -- (see mod2_diff above).
   --
   -- Thus, we also have
-  -- S ≡ a₁ + b₁ + a₂ + b₂ + ⋯ + a₉₉₉ + b₉₉₉ ≡ 1 + 2 + ⋯ + 1998 ≡ 999*1999 ≡ 1 MOD 2
+  -- S ≡ a₁ + b₁ + a₂ + b₂ + ⋯ + a₉₉₉ + b₉₉₉ [MOD 2]
+  --   ≡ 1 + 2 + ⋯ + 1998 [MOD 2]
+  --   ≡ 999*1999 ≡ 1 [MOD 2]
   have h3 : ∑ i in Finset.range 999, |a (i + 1) - b (i + 1)| ≡ 1 [ZMOD 2] := by
     rw[zmod_eq, Finset.sum_int_mod]
     have h4 : ∀ i ∈ Finset.range 999,
@@ -92,6 +103,9 @@ theorem usa1998_q1
 
     rw[Finset.sum_congr rfl h4]
     rw[←Finset.sum_int_mod]
+    rw[Finset.sum_add_distrib]
+    --have : ∑ x in Finset.range 999, a (↑x + 1) % 2 = 
+    --    ∑ x in a' '' Finset.range 999, x % 2
     sorry
 
   --
@@ -116,7 +130,6 @@ theorem usa1998_q1
     rw[zmod_eq] at h2
     rw[h2]
     norm_num
-
 
 #check Finset.sum_union
 -- Finset.sum_union.{u, v} {β : Type u} {α : Type v} {s₁ s₂ : Finset α}
