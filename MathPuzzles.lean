@@ -18,6 +18,7 @@ import MathPuzzles.Imo2019Q1
 import MathPuzzles.India1998Q1
 import MathPuzzles.Iran1998Q3
 import MathPuzzles.Iran1998Q9
+import MathPuzzles.KolmogorovStreams
 import MathPuzzles.Poland1998Q4
 import MathPuzzles.Romania1998Q12
 import MathPuzzles.Russia1998Q42
