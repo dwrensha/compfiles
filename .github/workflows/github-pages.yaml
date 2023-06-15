@@ -54,7 +54,7 @@ jobs:
           echo "Complete at $(date +'%T'); return value $result_run1"
 
       - name: lake build buildWebpage
-        id: build
+        id: build-buildWebpage
         run: |
           set -o pipefail
           echo "Starting build at $(date +'%T')"
@@ -63,7 +63,7 @@ jobs:
           echo "Complete at $(date +'%T'); return value $result_run1"
 
       - name: run buildWebpage
-        id: build
+        id: run-buildWebpage
         run: |
           set -o pipefail
           echo "Starting build at $(date +'%T')"
