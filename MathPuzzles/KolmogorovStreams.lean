@@ -47,6 +47,44 @@ def all_same_class
 
 def all_prefixes (p : List α → Prop) (a : Stream' α) : Prop := a.inits.All p
 
+lemma take_prefix
+    (is_decent : List α → Prop)
+    (a : Stream' α)
+    (ha : all_prefixes is_decent a)
+    (n : ℕ)
+    (hn : 0 < n) : is_decent (a.take n) := by
+  cases' n with n
+  · exfalso; exact Nat.lt_asymm hn hn
+  · have ht := ha n
+    rwa [Stream'.nth_inits] at ht
+
+structure decent_word (a : Stream' α) (is_decent: List α → Prop) : Type :=
+  (start : ℕ)
+  (length : ℕ)
+  (nonempty : 0 < length)
+  (h : is_decent ((a.drop start).take length))
+
+structure decent_accumulator (a: Stream' α) (is_decent : List α → Prop) : Type :=
+  (start : ℕ)
+  (prefix_decent : all_prefixes is_decent (a.drop start))
+
+noncomputable def choose_decent_words
+    (is_decent : List α → Prop)
+    (a : Stream' α)
+    (hinit: all_prefixes is_decent a)
+    (hnot: ∀ (n : ℕ), ∃ (k : ℕ), 0 < k ∧
+            all_prefixes is_decent (a.drop (n + k)))
+     : Stream' (decent_word a is_decent) :=
+Stream'.corec (λ (acc: decent_accumulator a is_decent) ↦
+                  let new_word_length := Classical.choose (hnot acc.start)
+                  let new_word_nonempty := (Classical.choose_spec (hnot acc.start)).1
+                  ⟨acc.start, new_word_length, new_word_nonempty,
+                   take_prefix
+                    is_decent _ acc.prefix_decent new_word_length new_word_nonempty⟩)
+             (λ acc ↦ ⟨acc.start + Classical.choose (hnot acc.start),
+                      (Classical.choose_spec (hnot acc.start)).2⟩)
+             ⟨0, hinit⟩
+
 theorem kolmogorov_streams
     (is_decent : List α → Prop)
     (a : Stream' α)
@@ -64,4 +102,7 @@ theorem kolmogorov_streams
       have hnk := hn (k + 1) (Nat.succ_pos _)
       rwa [Stream'.drop_drop, Nat.add_left_comm]
     sorry
-  · sorry
+  · push_neg at hnot
+    --obtain ⟨k, hkp, hinit⟩ := hnot 0
+    --have hdka : a.drop (0 + k) = a.drop k := by { rw [←Stream'.drop_drop]; rfl }
+    sorry
