@@ -45,10 +45,23 @@ def all_same_class
     : Prop :=
   b.All is_decent ∨ b.All (λ w ↦ ¬is_decent w)
 
+def all_prefixes (p : List α → Prop) (a : Stream' α) : Prop := a.inits.All p
+
 theorem kolmogorov_streams
     (is_decent : List α → Prop)
     (a : Stream' α)
     : (∃ (lengths : Stream' ℕ),
        (lengths.All (0 < ·)  ∧
         all_same_class is_decent (break_into_words lengths a).tail)) := by
-  sorry
+  let p : Prop :=
+     (∃ (n : ℕ), ∀ (k : ℕ), 0 < k → ¬all_prefixes is_decent (a.drop (n + k)))
+
+  obtain h | hnot := Classical.em p
+  · obtain ⟨n, hn⟩ := h
+    let a' := a.drop (n + 1)
+    have hn' : ∀ (k : ℕ), ¬all_prefixes is_decent (a'.drop k) := by
+      intro k
+      have hnk := hn (k + 1) (Nat.succ_pos _)
+      rwa [Stream'.drop_drop, Nat.add_left_comm]
+    sorry
+  · sorry
