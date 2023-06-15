@@ -58,10 +58,15 @@ unsafe def main (_args : List String) : IO Unit := do
                  if v.hasSorry then proved := false
           infos := ⟨m.toString, url, proved⟩  :: infos
       -- now write the file
+      let num_proved := (infos.filter (·.proved)).length
       IO.FS.createDirAll "_site"
       let h ← IO.FS.Handle.mk "_site/index.html" IO.FS.Mode.write
       h.putStr HEADER
       h.putStr "<body>"
+      h.putStr $ "<p>This is a dashboard for the " ++
+         "<a href=\"https://github.com/dwrensha/math-puzzles-in-lean4\">" ++
+         "Math Puzzles in Lean 4</a> repository.</p>"
+      h.putStr s!"<p>{num_proved} / {infos.length} problems have a complete solution.<p>"
       h.putStr "<ul>"
       for info in infos.reverse do
         h.putStr "<li>"
