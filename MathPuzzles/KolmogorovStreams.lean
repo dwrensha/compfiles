@@ -6,6 +6,7 @@ Authors: David Renshaw
 
 import Mathlib.Data.Stream.Defs
 import Mathlib.Data.Stream.Init
+import Mathlib.Tactic.Ring
 
 /-
 
@@ -25,6 +26,7 @@ Answer: yes.
 
 
 namespace KolmogorovStreams
+open Stream'
 
 variable {α : Type}
 
@@ -38,6 +40,17 @@ def break_into_words :
        (λ ⟨lengths, a'⟩ ↦ ⟨lengths.tail, a'.drop lengths.head⟩))
 
 --#eval ((break_into_words id id).take 10 )
+
+/--
+  Dropping the first word is equivalent to dropping `first_length` symbols of the original stream.
+-/
+lemma break_into_words_cons
+    (lengths : Stream' ℕ)
+    (first_length : ℕ)
+    (a : Stream' α) :
+    (break_into_words (first_length::lengths) a).tail =
+           break_into_words lengths (a.drop first_length) := by
+  simp[break_into_words, corec, tail_map, tail_iterate]
 
 def all_same_class
     (is_decent : List α → Prop)
@@ -102,7 +115,28 @@ theorem kolmogorov_streams
       have hnk := hn (k + 1) (Nat.succ_pos _)
       rwa [Stream'.drop_drop, Nat.add_left_comm]
     sorry
-  · push_neg at hnot
-    --obtain ⟨k, hkp, hinit⟩ := hnot 0
-    --have hdka : a.drop (0 + k) = a.drop k := by { rw [←Stream'.drop_drop]; rfl }
-    sorry
+  · push_neg at hnot; push_neg at hnot -- Bug in push_neg?
+    obtain ⟨k, hkp, hinit⟩ := hnot 0
+    have hdka : a.drop (0 + k) = a.drop k := by { rw [←Stream'.drop_drop]; rfl }
+    rw [hdka] at hinit
+    let a' := a.drop k
+    have hnot' : ∀ (n : ℕ), ∃ (k : ℕ), 0 < k ∧ all_prefixes is_decent (a'.drop (n + k)) := by
+      intros n'
+      obtain ⟨k', hk0', hk'⟩ := hnot (k + n')
+      use k'
+      constructor
+      · exact hk0'
+      · have hd: (a.drop (k + n' + k')) = (a'.drop (n' + k')) := by
+          rw [Stream'.drop_drop]
+          ring_nf
+        rwa [←hd]
+    let d := choose_decent_words is_decent a' hinit hnot'
+    use k::(λ i ↦ (d.nth i).length)
+    constructor
+    · intro i
+      cases' i with i
+      · exact hkp
+      · exact (d.nth i).nonempty
+    · left
+      rw [break_into_words_cons]
+      sorry
