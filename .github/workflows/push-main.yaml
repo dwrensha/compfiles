@@ -1,5 +1,4 @@
-# Simple workflow for deploying static content to GitHub Pages
-name: Deploy static content to Pages
+name: push to main
 
 on:
   # Runs on pushes targeting the default branch
@@ -14,11 +13,6 @@ permissions:
   contents: read
   pages: write
   id-token: write
-
-# Allow one concurrent deployment
-concurrency:
-  group: "pages"
-  cancel-in-progress: true
 
 jobs:
   # Single deploy job since we're just deploying
@@ -50,15 +44,6 @@ jobs:
           set -o pipefail
           echo "Starting build at $(date +'%T')"
           lake build
-          result_run1=$?
-          echo "Complete at $(date +'%T'); return value $result_run1"
-
-      - name: lake build buildWebpage
-        id: build-buildWebpage
-        run: |
-          set -o pipefail
-          echo "Starting build at $(date +'%T')"
-          lake build buildWebpage
           result_run1=$?
           echo "Complete at $(date +'%T'); return value $result_run1"
 
