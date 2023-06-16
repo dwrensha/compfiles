@@ -16,6 +16,7 @@ permissions:
 
 jobs:
   build-and-deploy:
+    name: Build library and deploy dashboard to Github Pages
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
