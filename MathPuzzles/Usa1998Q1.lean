@@ -63,10 +63,8 @@ theorem usa1998_q1
 
   -- Informal solution from https://artofproblemsolving.com:
   -- Notice that |aᵢ-bᵢ| ≡ 1 MOD 5,
-  have h1 : ∀ i ∈ (Finset.Icc 1 999), |a i - b i| ≡ 1 [ZMOD 5] := by
-    intros i hi
-    replace habd := habd i hi
-    cases' habd with habd habd
+  have h1 : ∀ i ∈ (Finset.Icc 1 999), |a i - b i| ≡ 1 [ZMOD 5] := fun i hi ↦ by
+    cases' habd i hi with habd habd
     · rw[habd]
     · rw[habd]; rfl
 
@@ -125,13 +123,7 @@ theorem usa1998_q1
      ← zmod_eq,
      show (10:ℤ) = 2 * 5 by norm_num]
 
-  rw[←Int.modEq_and_modEq_iff_modEq_mul hmn]
+  rw[←Int.modEq_and_modEq_iff_modEq_mul hmn, zmod_eq, zmod_eq]
   constructor
-  · rw[zmod_eq]
-    rw[zmod_eq] at h3
-    rw[h3]
-    norm_num
-  · rw[zmod_eq]
-    rw[zmod_eq] at h2
-    rw[h2]
-    norm_num
+  · rw[h3]; norm_num
+  · rw[h2]; norm_num
