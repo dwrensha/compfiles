@@ -28,14 +28,14 @@ open BigOperators
 
 lemma zmod_eq (a b c : ℤ) : a ≡ b [ZMOD c] ↔ a % c = b % c := by rfl
 
+lemma mod2_abs (a : ℤ) : |a| % 2 = a % 2 := by
+  obtain ⟨h, _⟩ | ⟨h, _⟩ := abs_cases a
+  · rw[h]
+  · rw[h, Int.neg_emod_two]
+
 -- For integers M,N we have |M-N| ≡ M-N ≡ M+N MOD 2.
 lemma mod2_diff (a b : ℤ) : |a - b| % 2 = (a + b) % 2 := by
-  obtain ⟨h1, _⟩ | ⟨h1, _⟩ := abs_cases (a - b)
-  · rw[h1]
-    rw[Int.sub_eq_add_neg, Int.add_emod, Int.neg_emod_two, ←Int.add_emod]
-  · rw[h1]
-    rw[Int.neg_emod_two]
-    rw[Int.sub_eq_add_neg, Int.add_emod, Int.neg_emod_two, ←Int.add_emod]
+  rw[mod2_abs, Int.sub_eq_add_neg, Int.add_emod, Int.neg_emod_two, ←Int.add_emod]
 
 lemma lemma2
     {a b c : Finset ℕ}
