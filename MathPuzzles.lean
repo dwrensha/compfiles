@@ -16,6 +16,7 @@ import MathPuzzles.Imo2013Q5
 import MathPuzzles.Imo2018Q3
 import MathPuzzles.Imo2019Q1
 import MathPuzzles.India1998Q1
+import MathPuzzles.IntegersInACircle
 import MathPuzzles.Iran1998Q3
 import MathPuzzles.Iran1998Q9
 import MathPuzzles.KolmogorovStreams
