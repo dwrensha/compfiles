@@ -24,6 +24,7 @@ import MathPuzzles.Romania1998Q12
 import MathPuzzles.Russia1998Q42
 import MathPuzzles.UpperLowerContinuous
 import MathPuzzles.Usa1998Q1
+import MathPuzzles.Usa1998Q3
 import MathPuzzles.Usa1998Q5
 import MathPuzzles.Usa2022Q1
 import MathPuzzles.ZeroesOnesAndTwos
