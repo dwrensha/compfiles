@@ -101,21 +101,20 @@ theorem usa1998_q1
   have h3 : ∑ i in Finset.Icc 1 999, |a i - b i| ≡ 1 [ZMOD 2] := by
     rw[zmod_eq, Finset.sum_int_mod]
     have h4 : ∀ i ∈ Finset.Icc 1 999,
-        |(a i : ℤ) - b i| % 2 =
-          ((a i % 2) + (b i % 2)) % 2 := by
+        |(a i : ℤ) - b i| % 2 = ((a i % 2) + (b i % 2)) % 2 := by
       intros i _
       rw[mod2_diff, Int.add_emod]
 
-    rw[Finset.sum_congr rfl h4]
-    rw[←Finset.sum_int_mod]
-    rw[Finset.sum_add_distrib]
+    rw[Finset.sum_congr rfl h4, ←Finset.sum_int_mod, Finset.sum_add_distrib]
+
     have h10 : ∑ i in Finset.Icc 1 999, (a i : ℤ) % 2 =
-        ∑ i in Finset.image a (Finset.Icc 1 999), (i : ℤ) % 2 := by
-      rw [Finset.sum_image hai]
+        ∑ i in Finset.image a (Finset.Icc 1 999), (i : ℤ) % 2 :=
+      -- specify `f` to avoid "maximum recursion depth has been reached"
+      (Finset.sum_image (f := (fun (i:ℕ) ↦ ((i:ℤ) % 2))) hai).symm
 
     have h11 : ∑ i in Finset.Icc 1 999, (b i : ℤ) % 2 =
-        ∑ i in Finset.image b (Finset.Icc 1 999), (i : ℤ) % 2 := by
-      rw [Finset.sum_image hbi]
+        ∑ i in Finset.image b (Finset.Icc 1 999), (i : ℤ) % 2 :=
+      (Finset.sum_image (f := (fun (i:ℕ) ↦ ((i:ℤ) % 2))) hbi).symm
 
     rw[h10, h11, ←Finset.sum_union hab, h5, ←Finset.sum_int_mod]
     norm_cast
