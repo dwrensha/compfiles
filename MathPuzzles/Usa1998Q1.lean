@@ -37,35 +37,6 @@ lemma mod2_diff (a b : ℤ) : |a - b| % 2 = (a + b) % 2 := by
     rw[Int.neg_emod_two]
     rw[Int.sub_eq_add_neg, Int.add_emod, Int.neg_emod_two, ←Int.add_emod]
 
-lemma lemma1
-    (a : ℕ → ℕ)
-    (s : Finset ℕ)
-    (ha : Set.InjOn a s)
-    (g : ℕ → ℤ)
-    : ∑ i in s, g (a i) =
-      ∑ i in Finset.image a s, g i := by
-  induction' s using Finset.induction with n s hs ih
-  · simp only [Finset.sum_empty, Finset.image_empty]
-  · rw[Finset.sum_insert hs]
-    rw[Finset.image_insert]
-    have h4 : Set.InjOn a s := by
-      intros x hx y hy hxy
-      have h7 : x ∈ insert n s := Finset.mem_insert_of_mem hx
-      have h8 : y ∈ insert n s := Finset.mem_insert_of_mem hy
-      exact ha h7 h8 hxy
-
-    have h2 : a n ∉ Finset.image a s := by
-      simp only [Finset.mem_image, not_exists, not_and]
-      intros x hx
-      clear ih
-      intro h6
-      have h7 : x ∈ insert n s := Finset.mem_insert_of_mem hx
-      have h8 : n ∈ insert n s := Finset.mem_insert_self n s
-      exact hs ((ha h7 h8 h6) ▸ hx)
-    rw[Finset.sum_insert h2]
-    have h5 := ih h4
-    congr
-
 lemma lemma2
     {a b c : Finset ℕ}
     (hab : Disjoint a b)
@@ -140,11 +111,11 @@ theorem usa1998_q1
     rw[Finset.sum_add_distrib]
     have h10 : ∑ i in Finset.Icc 1 999, (a i : ℤ) % 2 =
         ∑ i in Finset.image a (Finset.Icc 1 999), (i : ℤ) % 2 := by
-      exact lemma1 a (Finset.Icc 1 999) hai (fun i ↦ ((i:ℤ) % 2))
+      rw [Finset.sum_image hai]
 
     have h11 : ∑ i in Finset.Icc 1 999, (b i : ℤ) % 2 =
         ∑ i in Finset.image b (Finset.Icc 1 999), (i : ℤ) % 2 := by
-      exact lemma1 b (Finset.Icc 1 999) hbi (fun i ↦ ((i:ℤ) % 2))
+      rw [Finset.sum_image hbi]
 
     rw[h10, h11, ←Finset.sum_union hab, h5, ←Finset.sum_int_mod]
     norm_cast
