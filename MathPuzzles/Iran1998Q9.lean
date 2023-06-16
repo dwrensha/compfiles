@@ -62,7 +62,7 @@ theorem iran1998_q9
   let v₂ : EuclideanSpace ℝ (Fin 3) :=
       ![Real.sqrt ((x - 1)/x), Real.sqrt ((y-1)/y), Real.sqrt ((z-1)/z)]
 
-  have cauchy_schwarz := @abs_real_inner_le_norm (EuclideanSpace ℝ (Fin 3)) _ _ v₁ v₂
+  have cauchy_schwarz := abs_real_inner_le_norm v₁ v₂
 
   have hv₁ : ‖v₁‖ = Real.sqrt (x + y + z) := by
     have hn := compute_norm v₁

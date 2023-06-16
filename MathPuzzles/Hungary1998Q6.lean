@@ -58,8 +58,7 @@ theorem hungary1998_q6 (x y : ℤ) (z : ℕ) (hz : 1 < z) :
 
   have h4 : ∑ i in Finset.range 99, ((i:ℤ) + 1) =
           ∑ i in Finset.range 100, (i:ℤ) := by
-    rw[@Finset.sum_range_succ' _ _ _ 99]
-    rfl
+    rw[Finset.sum_range_succ']; rfl
 
   have h5 : ∑ i in Finset.range 100, (i:ℤ) = 99 * 100 / 2 := by
     rw[←Nat.cast_sum, Finset.sum_range_id]; norm_num
