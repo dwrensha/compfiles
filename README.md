@@ -5,8 +5,11 @@ Math puzzles and their solutions, formalized in [Lean 4](https://github.com/lean
 This is a continuation of
 the work in the Lean 3 repo https://github.com/dwrensha/math-puzzles-in-lean.
 
-See the [dashboard](https://dwrensha.github.io/math-puzzles-in-lean4/)
-for an overview of the current status.
+## dashboard
+
+A list of all the problems and their status is
+available as a [dashboard](https://dwrensha.github.io/math-puzzles-in-lean4/)
+that gets automatically updated on every push to the `main` branch of this repo.
 
 ## building
 
