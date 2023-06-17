@@ -56,7 +56,7 @@ unsafe def main (_args : List String) : IO Unit := do
             | none => pure ()
             | some v => do
                  if v.hasSorry then proved := false
-          infos := ⟨m.toString, url, proved⟩  :: infos
+          infos := ⟨m.toString.stripPrefix "MathPuzzles.", url, proved⟩  :: infos
       -- now write the file
       let num_proved := (infos.filter (·.proved)).length
       let some commit_sha ← IO.getEnv "GITHUB_SHA" | throwError "GITHUB_SHA not found"
@@ -76,9 +76,9 @@ unsafe def main (_args : List String) : IO Unit := do
       for info in infos.reverse do
         h.putStr "<li>"
         if info.proved then
-          h.putStr "✅"
+          h.putStr "✅  "
         else
-          h.putStr "❌"
+          h.putStr "❌  "
         h.putStr s!"<a href=\"{info.url}\">{info.name}</a>"
         h.putStr "</li>"
       h.putStr "</ul>"
