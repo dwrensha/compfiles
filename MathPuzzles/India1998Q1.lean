@@ -4,6 +4,7 @@ import Mathlib.Data.ZMod.Basic
 
 import Mathlib.Tactic.LibrarySearch
 import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.LinearCombination
 import Mathlib.Tactic.Ring
 import Mathlib.Tactic.NormNum.Prime
 
@@ -43,10 +44,8 @@ theorem india1998_q1b (n a b: ℤ) (hn : a^2 + 3 * b^2 = 7 * n) :
       _ = (((7 * n) : ℤ) : ZMod 7) := congrArg Int.cast hn
       _ = 0 := by {rw [Int.cast_mul]; exact zero_mul _}
 
-  have h9: az ^ 2 + 3 * bz ^ 2 - 3 * bz^2 = 0 - 3 * bz^2 := congrFun (congrArg HSub.hSub h1) _
-  rw [add_sub_cancel, zero_sub, ←neg_mul, show ((-3):ZMod 7) = 4 by rfl] at h9
-  have h10 : 4 * bz^2 = (2 * bz) ^ 2 := by ring
-  rw [h10] at h9
+  rw [show (3 : ZMod 7) = -4 by norm_num] at h1
+  have h9 : az^2 = (2 * bz)^2 := by linear_combination h1
   haveI : Fact (Nat.Prime 7) := ⟨by norm_num⟩
   obtain (hep : az = 2 * bz) | (hen : az = - (2 * bz)) := eq_or_eq_neg_of_sq_eq_sq _ _ h9
   · have h11: (2 * az + 3 * bz) = 0 := by
