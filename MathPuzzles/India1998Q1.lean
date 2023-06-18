@@ -25,12 +25,9 @@ theorem india1998_q1a (a₁ a₂ b₁ b₂ : ℤ) :
 lemma make_nonneg (a b: ℤ) (hb : 0 < b) : 0 ≤ a + b * ((b - a) / b) := by
   linarith[Int.emod_lt_of_pos (b-a) hb, (b - a).emod_add_ediv b]
 
-lemma lemma1' (a : ℤ) (b : ℕ) (hb : 0 < b) : ((a : ZMod b).val : ℤ) = a % (b : ℤ) := by
-  have h1: (a : ZMod b) = ((( a + b * ((b - a )/ b)) : ℤ): ZMod b) := by simp
-  rw [←Int.add_mul_emod_self_left a b ((b - a)/ b), h1]
-  have h2 : 0 ≤ (( a + b * ((b - a )/ b)) : ℤ) := make_nonneg a ↑b (Int.coe_nat_pos.mpr hb)
-  obtain ⟨A, hA⟩ := Int.eq_ofNat_of_zero_le h2
-  simp [hA, ZMod.val_nat_cast A]
+lemma lemma1' (a : ℤ) (b : ℕ) (hb : b ≠ 0) : ((a : ZMod b).val : ℤ) = a % (b : ℤ) := by
+  have : NeZero b := ⟨hb⟩
+  exact ZMod.val_int_cast a
 
 lemma lemma1 (a: ℤ) : ((a : ZMod 7).val : ℤ) = a % 7 := lemma1' a 7 (by norm_num)
 
