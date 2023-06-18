@@ -38,31 +38,18 @@ theorem india1998_q1b (n a b: ℤ) (hn : a^2 + 3 * b^2 = 7 * n) :
   obtain (hep : az = 2 * bz) | (hen : az = - (2 * bz)) := eq_or_eq_neg_of_sq_eq_sq _ _ h9
   · have h11: (2 * az + 3 * bz) = 0 := by rw[h2]; linear_combination 2 * hep
     have h13: 7 ∣ (2 * a + 3 * b) := by
-      have h50 : (2 * az + 3 * bz).val = (0 : ZMod 7).val := congr_arg ZMod.val h11
-      rw [ZMod.val_add, ZMod.val_mul, ZMod.val_mul,
-          Nat.add_mod_mod, Nat.mod_add_mod, ZMod.val_zero] at h50
-      have h52 : ((2 * (az.val:ℤ) + 3 * (bz.val:ℤ))) % 7 = 0 := by norm_cast
-      rw [ZMod.val_int_cast a, ZMod.val_int_cast b] at h52
-      rw [←Int.emod_add_ediv a 7, ←Int.emod_add_ediv b 7]
-      have h53 : 2 * (a % 7 + 7 * (a / 7)) + 3 * (b % 7 + 7 * (b / 7)) =
-              2 * (a % 7) + 3 * (b % 7) + 7 * (2 * (a / 7) + 3 * (b / 7)) := by ring
-      rw [h53]
-      have h54 : 7 ∣ 7 * (2 * (a / 7) + 3 * (b / 7)) := Dvd.intro _ rfl
-      exact dvd_add (Int.dvd_of_emod_eq_zero h52) h54
+      have h50 : (((2 * a + 3 * b):ℤ) : ZMod 7) = 0 := by
+        rw[show az = (a: ZMod 7) by rfl, show bz = (b: ZMod 7) by rfl] at h11
+        norm_cast at h11
+      exact (ZMod.int_cast_zmod_eq_zero_iff_dvd _ 7).mp h50
+
     obtain ⟨m1, hm1⟩ := exists_eq_mul_right_of_dvd h13
     have h15 : (az + (- 2) * bz) = 0 := by rw [hep]; ring_nf
     have h16: 7 ∣ (a + (-2) * b) := by
-      have h50 : (az + (-2) * bz).val = (0 : ZMod 7).val := congr_arg ZMod.val h15
-      rw [ZMod.val_add, ZMod.val_mul, Nat.add_mod_mod, ZMod.val_zero] at h50
-      have h52 : (((az.val:ℤ) + 5 * (bz.val:ℤ))) % 7 = 0 :=  by { norm_cast }
-      rw [ZMod.val_int_cast a, ZMod.val_int_cast b] at h52
-      have h52' : 7 ∣ a % 7 + 5 * (b % 7) := Int.dvd_of_emod_eq_zero h52
-      rw [←Int.emod_add_ediv a 7, ←Int.emod_add_ediv b 7]
-      have h53 : a % 7 + 7 * (a / 7) + (-2) * (b % 7 + 7 * (b / 7)) =
-              a % 7 + 5 * (b % 7) + 7 * (a / 7 - 2 * (b / 7) - (b % 7)) := by ring
-      rw [h53]
-      have h54 : 7 ∣ 7 * (a / 7 - 2 * (b / 7) - (b % 7)) := Dvd.intro _ rfl
-      exact dvd_add h52' h54
+      have h50 : (((a + (-2) * b):ℤ) : ZMod 7) = 0 := by
+        rw[show az = (a: ZMod 7) by rfl, show bz = (b: ZMod 7) by rfl] at h15
+        norm_cast at h15
+      exact (ZMod.int_cast_zmod_eq_zero_iff_dvd _ 7).mp h50
     obtain ⟨m2, hm2⟩ := exists_eq_mul_right_of_dvd h16
     use m1; use m2
     have h20 : (7 * m1) ^ 2 + 3 * (7 * m2) ^ 2 = 7 * 7 * n := by
@@ -79,18 +66,10 @@ theorem india1998_q1b (n a b: ℤ) (hn : a^2 + 3 * b^2 = 7 * n) :
       simp[show (7 : ZMod 7) = 0 by rfl]
 
     have h13: 7 ∣ (2 * a + (-3) * b) := by
-      have h50 : (2 * az + (-3) * bz).val = (0 : ZMod 7).val := congr_arg ZMod.val h11
-      rw[ZMod.val_add, ZMod.val_mul, ZMod.val_mul,
-         Nat.add_mod_mod, Nat.mod_add_mod, ZMod.val_zero] at h50
-      have h51 : (2 * az.val + 4 * bz.val) % 7 = 0 := h50
-      have h52 : ((2 * (az.val:ℤ) + 4 * (bz.val:ℤ))) % 7 = 0 := by norm_cast
-      rw [ZMod.val_int_cast a, ZMod.val_int_cast b] at h52
-      rw [←Int.emod_add_ediv a 7, ←Int.emod_add_ediv b 7]
-      have h53 : 2 * (a % 7 + 7 * (a / 7)) + (-3) * (b % 7 + 7 * (b / 7)) =
-               2 * (a % 7) + 4 * (b % 7) + 7 * (2 * (a / 7) + (-3) * (b / 7) - (b % 7) ) := by ring
-      rw [h53]
-      have h54 : 7 ∣ 7 * (2 * (a / 7) + (-3) * (b / 7) - b % 7) := Dvd.intro _ rfl
-      exact dvd_add (Int.dvd_of_emod_eq_zero h52) h54
+      have h50 : (((2 * a + (-3) * b):ℤ) : ZMod 7) = 0 := by
+        rw[show az = (a: ZMod 7) by rfl, show bz = (b: ZMod 7) by rfl] at h11
+        norm_cast at h11
+      exact (ZMod.int_cast_zmod_eq_zero_iff_dvd _ 7).mp h50
 
     have h14 : (∃ m1, 2 * a + (-3) * b = 7 * m1) := exists_eq_mul_right_of_dvd h13
     obtain ⟨m1, hm1⟩ := h14
@@ -98,18 +77,10 @@ theorem india1998_q1b (n a b: ℤ) (hn : a^2 + 3 * b^2 = 7 * n) :
     have h15: (az + 2 * bz) = 0 := by { rw [hen]; ring_nf }
 
     have h16: 7 ∣ (a + 2 * b) := by
-      have h50 : (az + 2 * bz).val = (0 : ZMod 7).val := congr_arg ZMod.val h15
-      rw [ZMod.val_add, ZMod.val_mul, Nat.add_mod_mod, ZMod.val_zero] at h50
-      have h51 : (az.val + 2 * bz.val) % 7 = 0 := h50
-      have h52 : (((az.val:ℤ) + 2 * (bz.val:ℤ))) % 7 = 0 := by norm_cast
-      rw [ZMod.val_int_cast a, ZMod.val_int_cast b] at h52
-      have h52' : 7 ∣ a % 7 + 2 * (b % 7) := Int.dvd_of_emod_eq_zero h52
-      rw [←Int.emod_add_ediv a 7, ←Int.emod_add_ediv b 7]
-      have h53 : a % 7 + 7 * (a / 7) + 2 * (b % 7 + 7 * (b / 7)) =
-              a % 7 + 2 * (b % 7) + 7 * (a / 7 + 2 * (b / 7)) := by ring
-      rw [h53]
-      have h54 : 7 ∣ 7 * (a / 7 + 2 * (b / 7)) := Dvd.intro _ rfl
-      exact dvd_add h52' h54
+      have h50 : (((a + 2 * b):ℤ) : ZMod 7) = 0 := by
+        rw[show az = (a: ZMod 7) by rfl, show bz = (b: ZMod 7) by rfl] at h15
+        norm_cast at h15
+      exact (ZMod.int_cast_zmod_eq_zero_iff_dvd _ 7).mp h50
 
     have h17 : (∃ m2, a + 2 * b = 7 * m2) := exists_eq_mul_right_of_dvd h16
     obtain ⟨m2, hm2⟩ := h17
