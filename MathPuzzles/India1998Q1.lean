@@ -62,25 +62,19 @@ theorem india1998_q1b (n a b: ℤ) (hn : a^2 + 3 * b^2 = 7 * n) :
         dsimp at h11; norm_cast at h11
       exact (ZMod.int_cast_zmod_eq_zero_iff_dvd _ 7).mp h50
 
-    have h14 : (∃ m1, 2 * a + (-3) * b = 7 * m1) := exists_eq_mul_right_of_dvd h13
-    obtain ⟨m1, hm1⟩ := h14
-
+    obtain ⟨m1, hm1⟩ := exists_eq_mul_right_of_dvd h13
     have h15 : az + 2 * bz = 0 := by rw [hen]; ring_nf
-
     have h16 : 7 ∣ (a + 2 * b) := by
       have h50 : (((a + 2 * b):ℤ) : ZMod 7) = 0 := by dsimp at h15; norm_cast at h15
       exact (ZMod.int_cast_zmod_eq_zero_iff_dvd _ 7).mp h50
 
-    have h17 : (∃ m2, a + 2 * b = 7 * m2) := exists_eq_mul_right_of_dvd h16
-    obtain ⟨m2, hm2⟩ := h17
-
+    obtain ⟨m2, hm2⟩ := exists_eq_mul_right_of_dvd h16
     use m1; use m2
 
     have h20 : (7 * m1) ^ 2 + 3 * (7 * m2) ^ 2 = 7 * 7 * n := by
       rw [←hm1, ←hm2]; linear_combination 7 * hn
 
     have h21 : (7 * m1) ^ 2 + 3 * (7 * m2) ^ 2 = 7 * 7 * (m1 ^ 2 + 3 * m2 ^ 2) := by ring
-
     rw[h21] at h20
     have h22 : (7:ℤ) * 7 ≠ 0 := by norm_num
     exact (mul_right_inj' h22).mp h20
