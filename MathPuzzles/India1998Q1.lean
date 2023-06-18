@@ -80,11 +80,8 @@ theorem india1998_q1b (n a b: ℤ) (hn : a^2 + 3 * b^2 = 7 * n) :
     obtain ⟨m2, hm2⟩ := exists_eq_mul_right_of_dvd h16
     use m1; use m2
     have h20 : (7 * m1) ^ 2 + 3 * (7 * m2) ^ 2 = 7 * 7 * n := by
-      rw [←hm1, ←hm2]
-      ring_nf
-      have h18: 7 * (a ^ 2 + 3 * b ^ 2) = 7 * (7 * n) := congrArg (HMul.hMul 7) hn
-      ring_nf at h18
-      rw [h18]
+      rw [←hm1, ←hm2]; linear_combination 7 * hn
+
     have h21 : (7 * m1) ^ 2 + 3 * (7 * m2) ^ 2 = 7 * 7 * (m1 ^ 2 + 3 * m2 ^ 2) := by ring
     rw[h21] at h20
     have h22 : (7:ℤ) * 7 ≠ 0 := by norm_num
