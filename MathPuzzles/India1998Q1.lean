@@ -44,13 +44,12 @@ theorem india1998_q1b (n a b: ℤ) (hn : a^2 + 3 * b^2 = 7 * n) :
       _ = (((7 * n) : ℤ) : ZMod 7) := congrArg Int.cast hn
       _ = 0 := by {rw [Int.cast_mul]; exact zero_mul _}
 
-  rw [show (3 : ZMod 7) = -4 by norm_num] at h1
+  have h2 := show (3 : ZMod 7) = -4 by norm_num
+  rw [h2] at h1
   have h9 : az^2 = (2 * bz)^2 := by linear_combination h1
-  haveI : Fact (Nat.Prime 7) := ⟨by norm_num⟩
+  have : Fact (Nat.Prime 7) := ⟨by norm_num⟩
   obtain (hep : az = 2 * bz) | (hen : az = - (2 * bz)) := eq_or_eq_neg_of_sq_eq_sq _ _ h9
-  · have h11: (2 * az + 3 * bz) = 0 := by
-      rw [hep]; ring_nf;
-      rw [show (7 : ZMod 7) = 0 by rfl, mul_zero]
+  · have h11: (2 * az + 3 * bz) = 0 := by rw[h2]; linear_combination 2 * hep
     have h13: 7 ∣ (2 * a + 3 * b) := by
       have h50 : (2 * az + 3 * bz).val = (0 : ZMod 7).val := congr_arg ZMod.val h11
       rw [ZMod.val_add, ZMod.val_mul, ZMod.val_mul,
@@ -64,7 +63,7 @@ theorem india1998_q1b (n a b: ℤ) (hn : a^2 + 3 * b^2 = 7 * n) :
       have h54 : 7 ∣ 7 * (2 * (a / 7) + 3 * (b / 7)) := Dvd.intro _ rfl
       exact dvd_add (Int.dvd_of_emod_eq_zero h52) h54
     obtain ⟨m1, hm1⟩ := exists_eq_mul_right_of_dvd h13
-    have h15 : (az + (- 2) * bz) = 0 := by{ rw [hep]; ring_nf }
+    have h15 : (az + (- 2) * bz) = 0 := by rw [hep]; ring_nf
     have h16: 7 ∣ (a + (-2) * b) := by
       have h50 : (az + (-2) * bz).val = (0 : ZMod 7).val := congr_arg ZMod.val h15
       rw [ZMod.val_add, ZMod.val_mul, Nat.add_mod_mod, ZMod.val_zero] at h50
