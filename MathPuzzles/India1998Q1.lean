@@ -3,7 +3,6 @@ import Mathlib.Data.Int.ModEq
 import Mathlib.Data.ZMod.Basic
 
 import Mathlib.Tactic.LibrarySearch
-import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.LinearCombination
 import Mathlib.Tactic.Ring
 import Mathlib.Tactic.NormNum.Prime
@@ -21,15 +20,6 @@ namespace India1998Q1
 theorem india1998_q1a (a₁ a₂ b₁ b₂ : ℤ) :
     (∃ a₃ b₃, (a₁^2 + 3 * b₁^2) * (a₂^2 + 3 * b₂^2) = (a₃^2 + 3 * b₃^2)) :=
   ⟨a₁ * a₂ + 3 * b₁ * b₂, ⟨a₁ * b₂ - b₁ * a₂, by ring⟩⟩
-
-lemma make_nonneg (a b: ℤ) (hb : 0 < b) : 0 ≤ a + b * ((b - a) / b) := by
-  linarith[Int.emod_lt_of_pos (b-a) hb, (b - a).emod_add_ediv b]
-
-lemma lemma1' (a : ℤ) (b : ℕ) (hb : b ≠ 0) : ((a : ZMod b).val : ℤ) = a % (b : ℤ) := by
-  have : NeZero b := ⟨hb⟩
-  exact ZMod.val_int_cast a
-
-lemma lemma1 (a: ℤ) : ((a : ZMod 7).val : ℤ) = a % 7 := lemma1' a 7 (by norm_num)
 
 theorem india1998_q1b (n a b: ℤ) (hn : a^2 + 3 * b^2 = 7 * n) :
     (∃ a b : ℤ, a^2 + 3 * b^2 = n) := by
@@ -52,7 +42,7 @@ theorem india1998_q1b (n a b: ℤ) (hn : a^2 + 3 * b^2 = 7 * n) :
       rw [ZMod.val_add, ZMod.val_mul, ZMod.val_mul,
           Nat.add_mod_mod, Nat.mod_add_mod, ZMod.val_zero] at h50
       have h52 : ((2 * (az.val:ℤ) + 3 * (bz.val:ℤ))) % 7 = 0 := by norm_cast
-      rw [lemma1 a, lemma1 b] at h52
+      rw [ZMod.val_int_cast a, ZMod.val_int_cast b] at h52
       rw [←Int.emod_add_ediv a 7, ←Int.emod_add_ediv b 7]
       have h53 : 2 * (a % 7 + 7 * (a / 7)) + 3 * (b % 7 + 7 * (b / 7)) =
               2 * (a % 7) + 3 * (b % 7) + 7 * (2 * (a / 7) + 3 * (b / 7)) := by ring
@@ -65,7 +55,7 @@ theorem india1998_q1b (n a b: ℤ) (hn : a^2 + 3 * b^2 = 7 * n) :
       have h50 : (az + (-2) * bz).val = (0 : ZMod 7).val := congr_arg ZMod.val h15
       rw [ZMod.val_add, ZMod.val_mul, Nat.add_mod_mod, ZMod.val_zero] at h50
       have h52 : (((az.val:ℤ) + 5 * (bz.val:ℤ))) % 7 = 0 :=  by { norm_cast }
-      rw [lemma1 a, lemma1 b] at h52
+      rw [ZMod.val_int_cast a, ZMod.val_int_cast b] at h52
       have h52' : 7 ∣ a % 7 + 5 * (b % 7) := Int.dvd_of_emod_eq_zero h52
       rw [←Int.emod_add_ediv a 7, ←Int.emod_add_ediv b 7]
       have h53 : a % 7 + 7 * (a / 7) + (-2) * (b % 7 + 7 * (b / 7)) =
@@ -94,7 +84,7 @@ theorem india1998_q1b (n a b: ℤ) (hn : a^2 + 3 * b^2 = 7 * n) :
          Nat.add_mod_mod, Nat.mod_add_mod, ZMod.val_zero] at h50
       have h51 : (2 * az.val + 4 * bz.val) % 7 = 0 := h50
       have h52 : ((2 * (az.val:ℤ) + 4 * (bz.val:ℤ))) % 7 = 0 := by norm_cast
-      rw [lemma1 a, lemma1 b] at h52
+      rw [ZMod.val_int_cast a, ZMod.val_int_cast b] at h52
       rw [←Int.emod_add_ediv a 7, ←Int.emod_add_ediv b 7]
       have h53 : 2 * (a % 7 + 7 * (a / 7)) + (-3) * (b % 7 + 7 * (b / 7)) =
                2 * (a % 7) + 4 * (b % 7) + 7 * (2 * (a / 7) + (-3) * (b / 7) - (b % 7) ) := by ring
@@ -112,7 +102,7 @@ theorem india1998_q1b (n a b: ℤ) (hn : a^2 + 3 * b^2 = 7 * n) :
       rw [ZMod.val_add, ZMod.val_mul, Nat.add_mod_mod, ZMod.val_zero] at h50
       have h51 : (az.val + 2 * bz.val) % 7 = 0 := h50
       have h52 : (((az.val:ℤ) + 2 * (bz.val:ℤ))) % 7 = 0 := by norm_cast
-      rw [lemma1 a, lemma1 b] at h52
+      rw [ZMod.val_int_cast a, ZMod.val_int_cast b] at h52
       have h52' : 7 ∣ a % 7 + 2 * (b % 7) := Int.dvd_of_emod_eq_zero h52
       rw [←Int.emod_add_ediv a 7, ←Int.emod_add_ediv b 7]
       have h53 : a % 7 + 7 * (a / 7) + 2 * (b % 7 + 7 * (b / 7)) =
