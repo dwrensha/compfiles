@@ -27,8 +27,7 @@ theorem india1998_q1b (n a b: ℤ) (hn : a^2 + 3 * b^2 = 7 * n) :
 
   have h1 := calc az ^ 2 + 3 * bz ^ 2
         = (((a^2 + 3 * b^2) : ℤ) : ZMod 7) := by norm_cast
-      _ = (((7 * n) : ℤ) : ZMod 7) := congrArg Int.cast hn
-      _ = 0 := by {rw [Int.cast_mul]; exact zero_mul _}
+      _ = 0 := by rw [hn, Int.cast_mul]; exact zero_mul _
 
   have h2 : (3 : ZMod 7) = -4 := rfl
   rw [h2] at h1
