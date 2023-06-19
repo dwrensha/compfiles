@@ -30,7 +30,7 @@ theorem india1998_q1b (n a b: ℤ) (hn : a^2 + 3 * b^2 = 7 * n) :
       _ = (((7 * n) : ℤ) : ZMod 7) := congrArg Int.cast hn
       _ = 0 := by {rw [Int.cast_mul]; exact zero_mul _}
 
-  have h2 := show (3 : ZMod 7) = -4 by norm_num
+  have h2 : (3 : ZMod 7) = -4 := rfl
   rw [h2] at h1
   have h9 : az^2 = (2 * bz)^2 := by linear_combination h1
   have : Fact (Nat.Prime 7) := ⟨by norm_num⟩
