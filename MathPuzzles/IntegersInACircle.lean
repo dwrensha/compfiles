@@ -24,4 +24,11 @@ theorem integers_in_a_circle
     (ha : ∀ i, 1 ≤ a i)
     (ha_sum : ∑ i : ZMod 101, a i = 300)
     : ∃ j : ZMod 101, ∃ n : ℕ, ∑ i in Finset.range n, a (j + n) = 200 := by
+  -- informal solution (from the math.stackexchange link above)
+  -- Start at any position and form sums of subsequences of length 0, 1, ... 100
+  -- starting at that position.
+  -- By the pigeonhole principle, two of these sums are equivalent mod 100.
+  -- The difference between those sums either 100 or 200.
+  -- If it's 200, then we choose that subsequence.
+  -- If it's 100, then we choose its complement.
   sorry
