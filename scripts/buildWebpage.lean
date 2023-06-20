@@ -59,7 +59,7 @@ unsafe def main (_args : List String) : IO Unit := do
           infos := ⟨m.toString.stripPrefix "MathPuzzles.", url, proved⟩  :: infos
       -- now write the file
       let num_proved := (infos.filter (·.proved)).length
-      let some commit_sha ← IO.getEnv "GITHUB_SHA" | throwError "GITHUB_SHA not found"
+      let commit_sha := ((← IO.getEnv "GITHUB_SHA").getD "GITHUB_SHA_env_var_not_found")
       let commit_url :=
         s!"https://github.com/dwrensha/math-puzzles-in-lean4/commit/{commit_sha}"
 
