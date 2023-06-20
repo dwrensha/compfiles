@@ -39,16 +39,15 @@ def coloring_of_eight : Set.Icc 1 8 → Fin 2
 | _ => 0 -- unreachable
 
 theorem bulgaria1998_q1a :
-  ∃ f: Set.Icc 1 (n - 1) → Fin 2, ¬coloring_has_desired_points (n - 1) f := by
+    ∃ f: Set.Icc 1 (n - 1) → Fin 2, ¬coloring_has_desired_points (n - 1) f := by
   use coloring_of_eight
   intro h
   obtain ⟨⟨i, hi1, hi2⟩, ⟨j, hj1, hj2⟩, hij1, hij2, hc1, hc2⟩ := h
   have hn1 : n - 1 = 8 := by simp[n]
   rw[hn1] at hi2 hj2
-  unfold coloring_of_eight at *
-  dsimp at *
+  dsimp[coloring_of_eight] at *
   interval_cases i <;> interval_cases j <;> aesop
 
 theorem bulgaria1998_q1b (color : Set.Icc 1 n → Fin 2) : coloring_has_desired_points n f := by
-    sorry
+  sorry
 
