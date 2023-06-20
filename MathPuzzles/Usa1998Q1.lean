@@ -123,7 +123,5 @@ theorem usa1998_q1
      ← zmod_eq,
      show (10:ℤ) = 2 * 5 by norm_num]
 
-  rw[←Int.modEq_and_modEq_iff_modEq_mul hmn, zmod_eq, zmod_eq]
-  constructor
-  · rw[h3]; norm_num
-  · rw[h2]; norm_num
+  rw[←Int.modEq_and_modEq_iff_modEq_mul hmn, zmod_eq, zmod_eq, h3, h2]
+  norm_num
