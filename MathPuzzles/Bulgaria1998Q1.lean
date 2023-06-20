@@ -5,8 +5,8 @@ Authors: David Renshaw
 -/
 
 import Mathlib.Data.Set.Intervals.Basic
-import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
+import Mathlib.Tactic.IntervalCases
 
 /-!
 Bulgarian Mathematical Olympiad 1998, Problem 1
@@ -27,24 +27,28 @@ def coloring_has_desired_points (m : ℕ) (color : Set.Icc 1 m → Fin 2) : Prop
 
 def n := 9
 
-theorem bulgaria1998_q1a (color : Set.Icc 1 n → Fin 2) : coloring_has_desired_points n f := by
-    sorry
-
 def coloring_of_eight : Set.Icc 1 8 → Fin 2
-| ⟨0, _⟩ => 0
-| ⟨1, _⟩ => 1
-| ⟨2, _⟩ => 0
-| ⟨3, _⟩ => 1
+| ⟨1, _⟩ => 0
+| ⟨2, _⟩ => 1
+| ⟨3, _⟩ => 0
 | ⟨4, _⟩ => 1
-| ⟨5, _⟩ => 0
-| ⟨6, _⟩ => 1
-| ⟨7, _⟩ => 0
+| ⟨5, _⟩ => 1
+| ⟨6, _⟩ => 0
+| ⟨7, _⟩ => 1
+| ⟨8, _⟩ => 0
 | _ => 0 -- unreachable
 
-theorem bulgaria1998_q1b :
+theorem bulgaria1998_q1a :
   ∃ f: Set.Icc 1 (n - 1) → Fin 2, ¬coloring_has_desired_points (n - 1) f := by
   use coloring_of_eight
   intro h
-  obtain ⟨i, j, hij1, hij2, hc1, hc2⟩ := h
-  sorry
+  obtain ⟨⟨i, hi1, hi2⟩, ⟨j, hj1, hj2⟩, hij1, hij2, hc1, hc2⟩ := h
+  have hn1 : n - 1 = 8 := by simp[n]
+  rw[hn1] at hi2 hj2
+  unfold coloring_of_eight at *
+  dsimp at *
+  interval_cases i <;> interval_cases j <;> aesop
+
+theorem bulgaria1998_q1b (color : Set.Icc 1 n → Fin 2) : coloring_has_desired_points n f := by
+    sorry
 
