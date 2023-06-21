@@ -53,9 +53,8 @@ theorem integers_in_a_circle
 
   have h8 : (Finset.Ico x.val y.val).card < 101 := by
      rw[Nat.card_Ico]
-     have hy := y.prop
      have hy': y.val - x.val ≤ y.val := Nat.sub_le _ _
-     exact lt_of_le_of_lt hy' hy
+     exact lt_of_le_of_lt hy' y.prop
 
   have h7 :
     ((Finset.Ico x.val y.val).image
