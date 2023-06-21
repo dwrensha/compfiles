@@ -7,7 +7,8 @@ Authors: David Renshaw
 import Mathlib.Algebra.BigOperators.Basic
 import Mathlib.Algebra.BigOperators.Intervals
 import Mathlib.Algebra.BigOperators.Order
-import Mathlib.Data.ZMod.Defs
+import Mathlib.Data.Int.ModEq
+import Mathlib.Data.ZMod.Basic
 import Mathlib.Order.LocallyFinite
 
 /-!
@@ -20,7 +21,7 @@ https://math.stackexchange.com/questions/282589/101-positive-integers-placed-on-
 -/
 
 namespace IntegersInACircle
-open BigOperators
+open scoped BigOperators
 
 theorem integers_in_a_circle
     (a : ZMod 101 → ℤ)
@@ -58,12 +59,6 @@ theorem integers_in_a_circle
 
   have h7 :
     ((Finset.Ico x.val y.val).image
-     (λ (i:ℕ) ↦ (i : ZMod 101))).card < 101 :=
-    calc _ ≤ (Finset.Ico x.val y.val).card := Finset.card_image_le
-         _ < 101 := h8
-
-  have h7' :
-    ((Finset.Ico x.val y.val).image
      (λ (i:ℕ) ↦ (i : ZMod 101))).card < (@Finset.univ (ZMod 101)).card :=
     calc _ ≤ (Finset.Ico x.val y.val).card := Finset.card_image_le
          _ < 101 := h8
@@ -72,8 +67,12 @@ theorem integers_in_a_circle
     have h10 : ∀ a ∈ Finset.Ico x.val y.val,
                ∀ b ∈ Finset.Ico x.val y.val, (a : ZMod 101) = b → a = b := by
       intros a ha b hb hab
-      --have : a ≡ b [ZMOD 101] := by sorry
-      sorry
+      have h13 : a % 101 = b % 101 :=
+        Iff.mp (ZMod.nat_cast_eq_nat_cast_iff' a b 101) hab
+      rw[Finset.mem_Ico] at ha hb
+      have h11 : a < 101 := lt_trans ha.2 y.prop
+      have h12 : b < 101 := lt_trans hb.2 y.prop
+      rwa[Nat.mod_eq_of_lt h11, Nat.mod_eq_of_lt h12] at h13
     have h6 := @Finset.sum_image _
                (g := λ i:ℕ ↦ (i : ZMod 101)) a _ _ (Finset.Ico x.val y.val)
                h10
@@ -82,7 +81,7 @@ theorem integers_in_a_circle
        ⊂ Finset.univ := by
       rw[Finset.ssubset_univ_iff]
       intro hn
-      rw[hn] at h7'
+      rw[hn] at h7
       aesop
     rw[Finset.ssubset_iff] at h9
     obtain ⟨z, hzn, hz⟩ := h9
