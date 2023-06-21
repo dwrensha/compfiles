@@ -68,12 +68,9 @@ lemma lemma3
     (hfxy : ∑ i in Finset.range x.val, a i ≡
               ∑ i in Finset.range y.val, a i [ZMOD 100]) :
     ∃ j : ZMod 101, ∃ n : ℕ, ∑ i in Finset.range n, a (j + i) = 200 := by
-  have h0 : (Finset.Ico x.val y.val).Nonempty := by aesop
   have h1 : 0 < ∑ i in Finset.Ico x.val y.val, a ↑i := by
-    refine' Finset.sum_pos _ h0
+    refine' Finset.sum_pos _ (Finset.nonempty_Ico.mpr hxy)
     aesop
-
-  have h5 : y.val ∉ Finset.Ico x.val y.val := Finset.right_not_mem_Ico
 
   have h8 : (Finset.Ico x.val y.val).card < 101 := by
      rw[Nat.card_Ico]
@@ -182,6 +179,8 @@ theorem integers_in_a_circle
   dsimp only [Function.comp_apply] at hfxy
   rw[ZMod.int_cast_eq_int_cast_iff] at hfxy
 
+  -- TODO use `wlog` tactic here, once this issue is fixed:
+  -- https://github.com/leanprover-community/mathlib4/issues/5348
   obtain hxy1 | hxy2 | hxy3 := lt_trichotomy x.val y.val
   · exact lemma3 a ha ha_sum x y hxy1 hfxy
   · exact (hxy (Fin.ext hxy2)).elim
