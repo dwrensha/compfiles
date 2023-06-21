@@ -39,24 +39,29 @@ lemma lemma1 {a : ℤ} (h1 : a % 100 = 0) (h2 : 0 < a) (h3 : a < 300) :
 lemma lemma3 {f : ZMod 101 → ℤ} (y : ZMod 101)
     : ∑ z : ZMod 101, f z = ∑ i in Finset.range 101, f (y + i) := by
   let g := λ (i:ℕ) ↦ y + (i:ZMod 101)
-  have hg : g.Injective := by
-    intros a b hgab
+  have hg: ∀ (x : ℕ),
+      x ∈ Finset.range 101 → ∀ (y : ℕ), y ∈ Finset.range 101 → g x = g y → x = y := by
+    intros a ha b hb hgab
     dsimp at hgab
-    sorry
-  have h1 := Finset.sum_map (Finset.range 101) ⟨g, hg⟩ f
-  dsimp at h1
+    have h5 : (a : ZMod 101) = (b : ZMod 101) := by linear_combination hgab
+    have h8: a % 101 = b % 101 := Iff.mp (ZMod.nat_cast_eq_nat_cast_iff' a b 101) h5
+    rw[Finset.mem_range] at ha hb
+    have h6: a % 101 = a := Nat.mod_eq_of_lt ha
+    have h7: b % 101 = b := Nat.mod_eq_of_lt hb
+    rwa[h6, h7] at h8
+  have h1 := Finset.sum_image (f := f) (g := g) (s := Finset.range 101) hg
+  --have h2 : ∑ z : ZMod 101, f z = ∑ z in Finset.univ, f z := rfl
   rw[← h1]
-  congr
-  ext a
-  constructor
-  · intro ha
-    rw[Finset.mem_map]
-    use (a - y).val
-    constructor
-    · rw[Finset.mem_range]
-      exact ZMod.val_lt (a - y)
-    · simp
-  · intro _; exact Finset.mem_univ a
+  have h3 : Finset.image g (Finset.range 101) = Finset.univ := by
+     rw[Finset.eq_univ_iff_forall]
+     intros a
+     rw[Finset.mem_image]
+     use (a - y).val
+     constructor
+     · rw[Finset.mem_range]
+       exact ZMod.val_lt (a - y)
+     · simp
+  rw[h3]
 
 lemma lemma2
     (a : ZMod 101 → ℤ)
@@ -111,13 +116,13 @@ lemma lemma2
       rw[hn] at h7
       aesop
     rw[Finset.ssubset_iff] at h9
-    obtain ⟨z, hzn, hz⟩ := h9
+    obtain ⟨z, hzn, _⟩ := h9
     apply Finset.sum_lt_sum_of_subset (f := a) (i:= z)
     · exact Finset.subset_univ _
     · exact Finset.mem_univ z
     · exact hzn
     · exact ha z
-    · intros j hj hj'
+    · intros j _ _
       exact Int.le_of_lt (ha j)
 
   -- The difference between those sums is either 100 or 200.
