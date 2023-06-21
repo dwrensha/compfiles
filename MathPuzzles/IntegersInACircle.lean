@@ -30,7 +30,7 @@ lemma lemma1 {a : ℤ} (h1 : a % 100 = 0) (h2 : 0 < a) (h3 : a < 300) :
     a = 100 ∨ a = 200 := by
  rw[show (0:ℤ) = 0 % 100 by rfl] at h1
  have h5 : 100 ∣ a := Iff.mp Int.modEq_zero_iff_dvd h1
- obtain ⟨k,hk⟩ := exists_eq_mul_left_of_dvd h5
+ obtain ⟨k, hk⟩ := exists_eq_mul_left_of_dvd h5
  rw[hk] at h2 h3 ⊢
  have h6 : k < 3 := by linarith
  have h7 : 0 < k := by linarith
@@ -49,9 +49,7 @@ lemma lemma3 {f : ZMod 101 → ℤ} (y : ZMod 101)
     have h6: a % 101 = a := Nat.mod_eq_of_lt ha
     have h7: b % 101 = b := Nat.mod_eq_of_lt hb
     rwa[h6, h7] at h8
-  have h1 := Finset.sum_image (f := f) (g := g) (s := Finset.range 101) hg
-  --have h2 : ∑ z : ZMod 101, f z = ∑ z in Finset.univ, f z := rfl
-  rw[← h1]
+  rw[← Finset.sum_image hg]
   have h3 : Finset.image g (Finset.range 101) = Finset.univ := by
      rw[Finset.eq_univ_iff_forall]
      intros a
@@ -109,21 +107,15 @@ lemma lemma2
                (g := λ i:ℕ ↦ (i : ZMod 101)) a _ _ (Finset.Ico x.val y.val)
                h10
     rw[←h6, ←ha_sum]
-    have h9 : (Finset.Ico x.val y.val).image (λ i:ℕ ↦ (i : ZMod 101))
-       ⊂ Finset.univ := by
+    have h9 : (Finset.Ico x.val y.val).image (λ i:ℕ ↦ (i : ZMod 101)) ⊂ Finset.univ := by
       rw[Finset.ssubset_univ_iff]
       intro hn
       rw[hn] at h7
       aesop
     rw[Finset.ssubset_iff] at h9
     obtain ⟨z, hzn, _⟩ := h9
-    apply Finset.sum_lt_sum_of_subset (f := a) (i:= z)
-    · exact Finset.subset_univ _
-    · exact Finset.mem_univ z
-    · exact hzn
-    · exact ha z
-    · intros j _ _
-      exact Int.le_of_lt (ha j)
+    exact Finset.sum_lt_sum_of_subset (Finset.subset_univ _)
+      (Finset.mem_univ z) hzn (ha z) (λ j _ _ ↦ Int.le_of_lt (ha j))
 
   -- The difference between those sums is either 100 or 200.
 
@@ -192,8 +184,7 @@ theorem integers_in_a_circle
   -- Start at any position and form sums of subsequences of length 0, 1, ... 100
   -- starting at that position.
   -- By the pigeonhole principle, two of these sums are equivalent mod 100.
-  let f : ZMod 101 → ZMod 100 :=
-    λ x ↦ ∑ i in Finset.range x.val, a i
+  let f : ZMod 101 → ZMod 100 := λ x ↦ ∑ i in Finset.range x.val, a i
   obtain ⟨x,y,hxy,hfxy⟩ := Fintype.exists_ne_map_eq_of_card_lt f
             (Nat.lt.base (Fintype.card (ZMod 100)))
 
