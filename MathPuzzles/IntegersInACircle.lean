@@ -44,12 +44,12 @@ theorem integers_in_a_circle
   -- Start at any position and form sums of subsequences of length 0, 1, ... 100
   -- starting at that position.
   -- By the pigeonhole principle, two of these sums are equivalent mod 100.
-  let f : Fin 101 → ZMod 100 :=
+  let f : ZMod 101 → ZMod 100 :=
     λ x ↦ ∑ i in Finset.range x.val, a i
   obtain ⟨x,y,hxy,hfxy⟩ := Fintype.exists_ne_map_eq_of_card_lt f
             (Nat.lt.base (Fintype.card (ZMod 100)))
 
-  have hlt : x < y := sorry -- wlog tactic, or something
+  have hlt : x.val < y.val := sorry -- wlog tactic, or something
 
   have h0 : (Finset.Ico x.val y.val).Nonempty := by aesop
   have h1 : 0 < ∑ i in Finset.Ico x.val y.val, a ↑i := by
@@ -118,12 +118,20 @@ theorem integers_in_a_circle
   -- If it's 200, then we choose that subsequence.
   -- If it's 100, then we choose its complement.
   obtain h100 | h200 := h11
-  · sorry
-  · let x' : ZMod 101 := x
-    use x'
-    use y - x'.val
-    rw[Finset.sum_Ico_eq_sum_range] at h200
-    have h12 : ∀ k, k ∈ Finset.range (y - x'.val) → a ↑((x:ℕ) + k) = a (x' + (k : ZMod 101)) := by sorry
-    have h13 := Finset.sum_congr rfl h12
+  · use y.val
+    use 101 - (y.val - x.val)
     sorry
-
+  · use x
+    use y.val - x.val
+    rw[Finset.sum_Ico_eq_sum_range] at h200
+    have h12 : ∀ k, k ∈ Finset.range (y.val - x.val) → a ↑(x.val + k) = a (x + ↑k) := by
+      intros k hk
+      congr
+      have h15: k < 101 := by
+         rw[Finset.mem_range] at hk
+         calc k < y.val - x.val := hk
+              _ ≤ y.val := Nat.sub_le _ _
+              _ < 101 := y.prop
+      exact (Nat.mod_eq_of_lt h15).symm
+    have h13 := Finset.sum_congr rfl h12
+    rwa[h13] at h200
