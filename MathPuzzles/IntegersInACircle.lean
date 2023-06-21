@@ -27,7 +27,7 @@ namespace IntegersInACircle
 open scoped BigOperators
 
 lemma lemma1 {a : ℤ} (h1 : a % 100 = 0) (h2 : 0 < a) (h3 : a < 300) :
-    a = 100 ∨ a = 200 := by
+    a = 200 ∨ a = 100 := by
  rw[show (0:ℤ) = 0 % 100 by rfl] at h1
  have h5 : 100 ∣ a := Iff.mp Int.modEq_zero_iff_dvd h1
  obtain ⟨k, hk⟩ := exists_eq_mul_left_of_dvd h5
@@ -36,7 +36,7 @@ lemma lemma1 {a : ℤ} (h1 : a % 100 = 0) (h2 : 0 < a) (h3 : a < 300) :
  have h7 : 0 < k := by linarith
  interval_cases k <;> norm_num
 
-lemma lemma3 {f : ZMod 101 → ℤ} (y : ZMod 101)
+lemma lemma2 {f : ZMod 101 → ℤ} (y : ZMod 101)
     : ∑ z : ZMod 101, f z = ∑ i in Finset.range 101, f (y + i) := by
   let g := λ (i:ℕ) ↦ y + (i:ZMod 101)
   have hg: ∀ (x : ℕ),
@@ -59,7 +59,7 @@ lemma lemma3 {f : ZMod 101 → ℤ} (y : ZMod 101)
      · simp
   rw[h3]
 
-lemma lemma2
+lemma lemma3
     (a : ZMod 101 → ℤ)
     (ha : ∀ i, 1 ≤ a i)
     (ha_sum : ∑ i : ZMod 101, a i = 300)
@@ -129,11 +129,15 @@ lemma lemma2
 
   -- If it's 200, then we choose that subsequence.
   -- If it's 100, then we choose its complement.
-  obtain h100 | h200 := lemma1 h3 h1 h4
+  obtain h200 | h100 := lemma1 h3 h1 h4
+  · use x
+    use y.val - x.val
+    rw[Finset.sum_Ico_eq_sum_range] at h200
+    rwa[Finset.sum_congr rfl h12] at h200
   · use y.val
     use 101 - (y.val - x.val)
     rw[Finset.sum_Ico_eq_sum_range, Finset.sum_congr rfl h12] at h100
-    rw[lemma3 x] at ha_sum
+    rw[lemma2 x] at ha_sum
     have h20 : 101 = ((y.val - x.val) + (101 - (y.val - x.val))) := by
       have : y.val - x.val ≤ 101 :=
            calc _ ≤ y.val := Nat.sub_le _ _
@@ -159,10 +163,6 @@ lemma lemma2
 
     rw[Finset.sum_congr rfl h21] at h19
     linarith
-  · use x
-    use y.val - x.val
-    rw[Finset.sum_Ico_eq_sum_range] at h200
-    rwa[Finset.sum_congr rfl h12] at h200
 
 theorem integers_in_a_circle
     (a : ZMod 101 → ℤ)
@@ -183,6 +183,6 @@ theorem integers_in_a_circle
   rw[ZMod.int_cast_eq_int_cast_iff] at hfxy
 
   obtain hxy1 | hxy2 | hxy3 := lt_trichotomy x.val y.val
-  · exact lemma2 a ha ha_sum x y hxy1 hfxy
+  · exact lemma3 a ha ha_sum x y hxy1 hfxy
   · exact (hxy (Fin.ext hxy2)).elim
-  · exact lemma2 a ha ha_sum y x hxy3 hfxy.symm
+  · exact lemma3 a ha ha_sum y x hxy3 hfxy.symm
