@@ -46,9 +46,7 @@ lemma lemma3 {f : ZMod 101 → ℤ} (y : ZMod 101)
     have h5 : (a : ZMod 101) = (b : ZMod 101) := by linear_combination hgab
     have h8: a % 101 = b % 101 := Iff.mp (ZMod.nat_cast_eq_nat_cast_iff' a b 101) h5
     rw[Finset.mem_range] at ha hb
-    have h6: a % 101 = a := Nat.mod_eq_of_lt ha
-    have h7: b % 101 = b := Nat.mod_eq_of_lt hb
-    rwa[h6, h7] at h8
+    rwa[Nat.mod_eq_of_lt ha, Nat.mod_eq_of_lt hb] at h8
   rw[← Finset.sum_image hg]
   have h3 : Finset.image g (Finset.range 101) = Finset.univ := by
      rw[Finset.eq_univ_iff_forall]
