@@ -12,6 +12,7 @@ import Mathlib.Data.ZMod.Basic
 import Mathlib.Order.LocallyFinite
 import Mathlib.Tactic.IntervalCases
 import Mathlib.Tactic.LibrarySearch
+import Mathlib.Tactic.LinearCombination
 
 /-!
 There are 101 positive integers arranged in a circle.
@@ -34,6 +35,28 @@ lemma lemma1 {a : ℤ} (h1 : a % 100 = 0) (h2 : 0 < a) (h3 : a < 300) :
  have h6 : k < 3 := by linarith
  have h7 : 0 < k := by linarith
  interval_cases k <;> norm_num
+
+lemma lemma3 {f : ZMod 101 → ℤ} (y : ZMod 101)
+    : ∑ z : ZMod 101, f z = ∑ i in Finset.range 101, f (y + i) := by
+  let g := λ (i:ℕ) ↦ y + (i:ZMod 101)
+  have hg : g.Injective := by
+    intros a b hgab
+    dsimp at hgab
+    sorry
+  have h1 := Finset.sum_map (Finset.range 101) ⟨g, hg⟩ f
+  dsimp at h1
+  rw[← h1]
+  congr
+  ext a
+  constructor
+  · intro ha
+    rw[Finset.mem_map]
+    use (a - y).val
+    constructor
+    · rw[Finset.mem_range]
+      exact ZMod.val_lt (a - y)
+    · simp
+  · intro _; exact Finset.mem_univ a
 
 lemma lemma2
     (a : ZMod 101 → ℤ)
@@ -108,16 +131,7 @@ lemma lemma2
   norm_num at h3
   have h11 := lemma1 h3 h1 h4
 
-  -- If it's 200, then we choose that subsequence.
-  -- If it's 100, then we choose its complement.
-  obtain h100 | h200 := h11
-  · use y.val
-    use 101 - (y.val - x.val)
-    sorry
-  · use x
-    use y.val - x.val
-    rw[Finset.sum_Ico_eq_sum_range] at h200
-    have h12 : ∀ k, k ∈ Finset.range (y.val - x.val) → a ↑(x.val + k) = a (x + ↑k) := by
+  have h12 : ∀ k, k ∈ Finset.range (y.val - x.val) → a ↑(x.val + k) = a (x + ↑k) := by
       intros k hk
       congr
       have h15: k < 101 := by
@@ -126,9 +140,43 @@ lemma lemma2
               _ ≤ y.val := Nat.sub_le _ _
               _ < 101 := y.prop
       exact (Nat.mod_eq_of_lt h15).symm
-    have h13 := Finset.sum_congr rfl h12
-    rwa[h13] at h200
 
+  -- If it's 200, then we choose that subsequence.
+  -- If it's 100, then we choose its complement.
+  obtain h100 | h200 := h11
+  · use y.val
+    use 101 - (y.val - x.val)
+    rw[Finset.sum_Ico_eq_sum_range, Finset.sum_congr rfl h12] at h100
+    rw[lemma3 x] at ha_sum
+    have h20 : 101 = ((y.val - x.val) + (101 - (y.val - x.val))) := by
+      have : y.val - x.val ≤ 101 :=
+           calc _ ≤ y.val := Nat.sub_le _ _
+                _ ≤ 101 := le_of_lt y.prop
+      rw[add_comm]
+      exact Iff.mp (Nat.sub_eq_iff_eq_add this) rfl
+
+    have h18 : Finset.range 101 =
+        Finset.range ((y.val - x.val) + (101 - (y.val - x.val))) := by congr
+    have h19 := Finset.sum_range_add (λi ↦ a (x + i)) (y.val - x.val) (101 - (y.val - x.val))
+    rw[h100, ←h18, ha_sum] at h19
+    have h21 : ∀ i ∈ Finset.range (101 - (y.val - x.val)),
+          a (x + ↑(y.val - x.val + i)) = a (↑(ZMod.val y) + ↑i) := by
+      intros i _
+      apply congrArg
+      have h22 : x + ↑(y.val - x.val + i) = ↑(x.val + (y.val - x.val + i)) :=
+        by have : x = (x.val : ZMod 101) := Eq.symm (ZMod.nat_cast_zmod_val x)
+           nth_rewrite 1 [this]
+           norm_cast
+      rw[h22]
+      norm_cast
+      rw[←Nat.add_assoc, add_comm x.val _, Nat.sub_add_cancel (le_of_lt hxy)]
+
+    rw[Finset.sum_congr rfl h21] at h19
+    linarith
+  · use x
+    use y.val - x.val
+    rw[Finset.sum_Ico_eq_sum_range] at h200
+    rwa[Finset.sum_congr rfl h12] at h200
 
 theorem integers_in_a_circle
     (a : ZMod 101 → ℤ)
