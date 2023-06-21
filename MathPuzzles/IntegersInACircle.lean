@@ -76,7 +76,7 @@ lemma lemma2
   have h3 : ((∑ i in Finset.Ico x.val y.val, a ↑i) : ZMod 100) = 0 := by
      have h4 : x.val ≤ y.val := by norm_cast; exact LT.lt.le hxy
      rw[Finset.sum_Ico_eq_sub _ h4]
-     aesop
+     exact sub_eq_zero.mpr hfxy.symm
 
   have h5 : y.val ∉ Finset.Ico x.val y.val := Finset.right_not_mem_Ico
 
