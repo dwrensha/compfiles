@@ -35,29 +35,22 @@ lemma lemma1 {a : ℤ} (h1 : a % 100 = 0) (h2 : 0 < a) (h3 : a < 300) :
  have h7 : 0 < k := by linarith
  interval_cases k <;> norm_num
 
-theorem integers_in_a_circle
+lemma lemma2
     (a : ZMod 101 → ℤ)
     (ha : ∀ i, 1 ≤ a i)
     (ha_sum : ∑ i : ZMod 101, a i = 300)
-    : ∃ j : ZMod 101, ∃ n : ℕ, ∑ i in Finset.range n, a (j + i) = 200 := by
-  -- informal solution (from the math.stackexchange link above)
-  -- Start at any position and form sums of subsequences of length 0, 1, ... 100
-  -- starting at that position.
-  -- By the pigeonhole principle, two of these sums are equivalent mod 100.
-  let f : ZMod 101 → ZMod 100 :=
-    λ x ↦ ∑ i in Finset.range x.val, a i
-  obtain ⟨x,y,hxy,hfxy⟩ := Fintype.exists_ne_map_eq_of_card_lt f
-            (Nat.lt.base (Fintype.card (ZMod 100)))
-
-  have hlt : x.val < y.val := sorry -- wlog tactic, or something
-
+    (x y : ZMod 101)
+    (hxy : x.val < y.val)
+    (hfxy : ∑ i in Finset.range x.val, (a ↑i : ZMod 100) =
+              ∑ i in Finset.range y.val, (a ↑i : ZMod 100)) :
+    ∃ j : ZMod 101, ∃ n : ℕ, ∑ i in Finset.range n, a (j + i) = 200 := by
   have h0 : (Finset.Ico x.val y.val).Nonempty := by aesop
   have h1 : 0 < ∑ i in Finset.Ico x.val y.val, a ↑i := by
     refine' Finset.sum_pos _ h0
     aesop
 
   have h3 : ((∑ i in Finset.Ico x.val y.val, a ↑i) : ZMod 100) = 0 := by
-     have h4 : x.val ≤ y.val := by norm_cast; exact LT.lt.le hlt
+     have h4 : x.val ≤ y.val := by norm_cast; exact LT.lt.le hxy
      rw[Finset.sum_Ico_eq_sub _ h4]
      aesop
 
@@ -135,3 +128,23 @@ theorem integers_in_a_circle
       exact (Nat.mod_eq_of_lt h15).symm
     have h13 := Finset.sum_congr rfl h12
     rwa[h13] at h200
+
+
+theorem integers_in_a_circle
+    (a : ZMod 101 → ℤ)
+    (ha : ∀ i, 1 ≤ a i)
+    (ha_sum : ∑ i : ZMod 101, a i = 300)
+    : ∃ j : ZMod 101, ∃ n : ℕ, ∑ i in Finset.range n, a (j + i) = 200 := by
+  -- informal solution (from the math.stackexchange link above)
+  -- Start at any position and form sums of subsequences of length 0, 1, ... 100
+  -- starting at that position.
+  -- By the pigeonhole principle, two of these sums are equivalent mod 100.
+  let f : ZMod 101 → ZMod 100 :=
+    λ x ↦ ∑ i in Finset.range x.val, a i
+  obtain ⟨x,y,hxy,hfxy⟩ := Fintype.exists_ne_map_eq_of_card_lt f
+            (Nat.lt.base (Fintype.card (ZMod 100)))
+
+  obtain hxy1 | hxy2 | hxy3 := lt_trichotomy x.val y.val
+  · exact lemma2 a ha ha_sum x y hxy1 hfxy
+  · exact (hxy (Fin.ext hxy2)).elim
+  · exact lemma2 a ha ha_sum y x hxy3 hfxy.symm
