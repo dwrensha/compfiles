@@ -65,18 +65,13 @@ lemma lemma2
     (ha_sum : ∑ i : ZMod 101, a i = 300)
     (x y : ZMod 101)
     (hxy : x.val < y.val)
-    (hfxy : ∑ i in Finset.range x.val, (a ↑i : ZMod 100) =
-              ∑ i in Finset.range y.val, (a ↑i : ZMod 100)) :
+    (hfxy : ∑ i in Finset.range x.val, a i ≡
+              ∑ i in Finset.range y.val, a i [ZMOD 100]) :
     ∃ j : ZMod 101, ∃ n : ℕ, ∑ i in Finset.range n, a (j + i) = 200 := by
   have h0 : (Finset.Ico x.val y.val).Nonempty := by aesop
   have h1 : 0 < ∑ i in Finset.Ico x.val y.val, a ↑i := by
     refine' Finset.sum_pos _ h0
     aesop
-
-  have h3 : ((∑ i in Finset.Ico x.val y.val, a ↑i) : ZMod 100) = 0 := by
-     have h4 : x.val ≤ y.val := by norm_cast; exact LT.lt.le hxy
-     rw[Finset.sum_Ico_eq_sub _ h4]
-     exact sub_eq_zero.mpr hfxy.symm
 
   have h5 : y.val ∉ Finset.Ico x.val y.val := Finset.right_not_mem_Ico
 
@@ -117,14 +112,10 @@ lemma lemma2
 
   -- The difference between those sums is either 100 or 200.
 
-  have h10 : ∑ i in Finset.Ico x.val y.val, (a ↑i : ZMod 100) =
-        (((∑ i in Finset.Ico x.val y.val, ((a ↑i))): ℤ) : ZMod 100) :=
-     by norm_cast
-  rw[h10] at h3; clear h10
-  rw[show (0:ZMod 100) = ((0 :ℤ): ZMod 100) by rfl] at h3
-  rw[ZMod.int_cast_eq_int_cast_iff'] at h3
-  norm_num at h3
-  have h11 := lemma1 h3 h1 h4
+  have h3 : (∑ i in Finset.Ico x.val y.val, a ↑i) ≡ 0 [ZMOD 100] := by
+     have h4 : x.val ≤ y.val := by norm_cast; exact LT.lt.le hxy
+     rw[Finset.sum_Ico_eq_sub _ h4, Int.modEq_zero_iff_dvd]
+     exact Int.ModEq.dvd hfxy
 
   have h12 : ∀ k, k ∈ Finset.range (y.val - x.val) → a ↑(x.val + k) = a (x + ↑k) := by
       intros k hk
@@ -138,7 +129,7 @@ lemma lemma2
 
   -- If it's 200, then we choose that subsequence.
   -- If it's 100, then we choose its complement.
-  obtain h100 | h200 := h11
+  obtain h100 | h200 := lemma1 h3 h1 h4
   · use y.val
     use 101 - (y.val - x.val)
     rw[Finset.sum_Ico_eq_sum_range, Finset.sum_congr rfl h12] at h100
@@ -181,10 +172,15 @@ theorem integers_in_a_circle
   -- informal solution (from the math.stackexchange link above)
   -- Start at any position and form sums of subsequences of length 0, 1, ... 100
   -- starting at that position.
+
+  let f : ZMod 101 → ℤ := λ x ↦ ∑ i in Finset.range x.val, a i
+
   -- By the pigeonhole principle, two of these sums are equivalent mod 100.
-  let f : ZMod 101 → ZMod 100 := λ x ↦ ∑ i in Finset.range x.val, a i
-  obtain ⟨x,y,hxy,hfxy⟩ := Fintype.exists_ne_map_eq_of_card_lt f
+  obtain ⟨x,y,hxy,hfxy⟩ := Fintype.exists_ne_map_eq_of_card_lt (Int.cast ∘ f)
             (Nat.lt.base (Fintype.card (ZMod 100)))
+
+  dsimp only [Function.comp_apply] at hfxy
+  rw[ZMod.int_cast_eq_int_cast_iff] at hfxy
 
   obtain hxy1 | hxy2 | hxy3 := lt_trichotomy x.val y.val
   · exact lemma2 a ha ha_sum x y hxy1 hfxy
