@@ -10,6 +10,8 @@ import Mathlib.Algebra.BigOperators.Order
 import Mathlib.Data.Int.ModEq
 import Mathlib.Data.ZMod.Basic
 import Mathlib.Order.LocallyFinite
+import Mathlib.Tactic.IntervalCases
+import Mathlib.Tactic.LibrarySearch
 
 /-!
 There are 101 positive integers arranged in a circle.
@@ -23,11 +25,21 @@ https://math.stackexchange.com/questions/282589/101-positive-integers-placed-on-
 namespace IntegersInACircle
 open scoped BigOperators
 
+lemma lemma1 {a : ℤ} (h1 : a % 100 = 0) (h2 : 0 < a) (h3 : a < 300) :
+    a = 100 ∨ a = 200 := by
+ rw[show (0:ℤ) = 0 % 100 by rfl] at h1
+ have h5 : 100 ∣ a := Iff.mp Int.modEq_zero_iff_dvd h1
+ obtain ⟨k,hk⟩ := exists_eq_mul_left_of_dvd h5
+ rw[hk] at h2 h3 ⊢
+ have h6 : k < 3 := by linarith
+ have h7 : 0 < k := by linarith
+ interval_cases k <;> norm_num
+
 theorem integers_in_a_circle
     (a : ZMod 101 → ℤ)
     (ha : ∀ i, 1 ≤ a i)
     (ha_sum : ∑ i : ZMod 101, a i = 300)
-    : ∃ j : ZMod 101, ∃ n : ℕ, ∑ i in Finset.range n, a (j + n) = 200 := by
+    : ∃ j : ZMod 101, ∃ n : ℕ, ∑ i in Finset.range n, a (j + i) = 200 := by
   -- informal solution (from the math.stackexchange link above)
   -- Start at any position and form sums of subsequences of length 0, 1, ... 100
   -- starting at that position.
@@ -92,9 +104,26 @@ theorem integers_in_a_circle
     · intros j hj hj'
       exact Int.le_of_lt (ha j)
 
-  --have : ((∑ i in Finset.Ico x.val y.val, a ↑i) % 100) = 0 := by aesop
   -- The difference between those sums is either 100 or 200.
+
+  have h10 : ∑ i in Finset.Ico x.val y.val, (a ↑i : ZMod 100) =
+        (((∑ i in Finset.Ico x.val y.val, ((a ↑i))): ℤ) : ZMod 100) :=
+     by norm_cast
+  rw[h10] at h3; clear h10
+  rw[show (0:ZMod 100) = ((0 :ℤ): ZMod 100) by rfl] at h3
+  rw[ZMod.int_cast_eq_int_cast_iff'] at h3
+  norm_num at h3
+  have h11 := lemma1 h3 h1 h4
 
   -- If it's 200, then we choose that subsequence.
   -- If it's 100, then we choose its complement.
-  sorry
+  obtain h100 | h200 := h11
+  · sorry
+  · let x' : ZMod 101 := x
+    use x'
+    use y - x'.val
+    rw[Finset.sum_Ico_eq_sum_range] at h200
+    have h12 : ∀ k, k ∈ Finset.range (y - x'.val) → a ↑((x:ℕ) + k) = a (x' + (k : ZMod 101)) := by sorry
+    have h13 := Finset.sum_congr rfl h12
+    sorry
+
