@@ -5,11 +5,14 @@ Authors: David Renshaw
 -/
 
 import Mathlib.Algebra.BigOperators.Basic
+import Mathlib.Algebra.BigOperators.Intervals
+import Mathlib.Algebra.BigOperators.Order
 import Mathlib.Data.ZMod.Defs
-
+import Mathlib.Order.LocallyFinite
 
 /-!
 There are 101 positive integers arranged in a circle.
+Suppose that the integers sum to 300.
 Prove that there exists a contiguous subarray that sums to 200.
 
 https://mathstodon.xyz/@alexdbolton/110292738044661739
@@ -18,6 +21,12 @@ https://math.stackexchange.com/questions/282589/101-positive-integers-placed-on-
 
 namespace IntegersInACircle
 open BigOperators
+
+#check Finset.univ
+#check Finset.card_image_le
+
+--lemma foo (a b : ℕ) : a < b.succ ↔ a ≤ b := Nat.lt_succ _ _ _ _
+
 
 theorem integers_in_a_circle
     (a : ZMod 101 → ℤ)
@@ -28,7 +37,47 @@ theorem integers_in_a_circle
   -- Start at any position and form sums of subsequences of length 0, 1, ... 100
   -- starting at that position.
   -- By the pigeonhole principle, two of these sums are equivalent mod 100.
-  -- The difference between those sums either 100 or 200.
+  let f : Fin 101 → ZMod 100 :=
+    λ x ↦ ∑ i in Finset.range x.val, a i
+  obtain ⟨x,y,hxy,hfxy⟩ := Fintype.exists_ne_map_eq_of_card_lt f
+            (Nat.lt.base (Fintype.card (ZMod 100)))
+
+  have hlt : x < y := sorry -- wlog tactic, or something
+
+  have h0 : (Finset.Ico x.val y.val).Nonempty := by aesop
+  have h1 : 0 < ∑ i in Finset.Ico x.val y.val, a ↑i := by
+    refine' Finset.sum_pos _ h0
+    aesop
+
+  have h3 : ((∑ i in Finset.Ico x.val y.val, a ↑i) : ZMod 100) = 0 := by
+     have h4 : x.val ≤ y.val := by norm_cast; exact LT.lt.le hlt
+     rw[Finset.sum_Ico_eq_sub _ h4]
+     aesop
+
+  have h5 : y.val ∉ Finset.Ico x.val y.val := Finset.right_not_mem_Ico
+
+  have h8 : (Finset.Ico x.val y.val).card < 101 := by
+     rw[Nat.card_Ico]
+     have hy := y.prop
+     have hy': y.val - x.val ≤ y.val := Nat.sub_le _ _
+     exact lt_of_le_of_lt hy' hy
+
+  have h7 :
+    ((Finset.Ico x.val y.val).image
+     (λ (i:ℕ) ↦ (i : ZMod 101))).card < 101 :=
+    calc _ ≤ (Finset.Ico x.val y.val).card := Finset.card_image_le
+         _ < 101 := h8
+
+  have h4 : ∑ i in Finset.Ico x.val y.val, a ↑i < 300 := by
+    have h6 := @Finset.sum_image _
+               (g := λ i:ℕ ↦ (i : ZMod 101)) a _ _ (Finset.Ico x.val y.val)
+               (by sorry)
+    rw[←h6]
+    sorry
+
+  --have : ((∑ i in Finset.Ico x.val y.val, a ↑i) % 100) = 0 := by aesop
+  -- The difference between those sums is either 100 or 200.
+
   -- If it's 200, then we choose that subsequence.
   -- If it's 100, then we choose its complement.
   sorry
