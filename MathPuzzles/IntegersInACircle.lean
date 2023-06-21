@@ -22,12 +22,6 @@ https://math.stackexchange.com/questions/282589/101-positive-integers-placed-on-
 namespace IntegersInACircle
 open BigOperators
 
-#check Finset.univ
-#check Finset.card_image_le
-
---lemma foo (a b : ℕ) : a < b.succ ↔ a ≤ b := Nat.lt_succ _ _ _ _
-
-
 theorem integers_in_a_circle
     (a : ZMod 101 → ℤ)
     (ha : ∀ i, 1 ≤ a i)
@@ -68,12 +62,37 @@ theorem integers_in_a_circle
     calc _ ≤ (Finset.Ico x.val y.val).card := Finset.card_image_le
          _ < 101 := h8
 
+  have h7' :
+    ((Finset.Ico x.val y.val).image
+     (λ (i:ℕ) ↦ (i : ZMod 101))).card < (@Finset.univ (ZMod 101)).card :=
+    calc _ ≤ (Finset.Ico x.val y.val).card := Finset.card_image_le
+         _ < 101 := h8
+
   have h4 : ∑ i in Finset.Ico x.val y.val, a ↑i < 300 := by
+    have h10 : ∀ a ∈ Finset.Ico x.val y.val,
+               ∀ b ∈ Finset.Ico x.val y.val, (a : ZMod 101) = b → a = b := by
+      intros a ha b hb hab
+      --have : a ≡ b [ZMOD 101] := by sorry
+      sorry
     have h6 := @Finset.sum_image _
                (g := λ i:ℕ ↦ (i : ZMod 101)) a _ _ (Finset.Ico x.val y.val)
-               (by sorry)
-    rw[←h6]
-    sorry
+               h10
+    rw[←h6, ←ha_sum]
+    have h9 : (Finset.Ico x.val y.val).image (λ i:ℕ ↦ (i : ZMod 101))
+       ⊂ Finset.univ := by
+      rw[Finset.ssubset_univ_iff]
+      intro hn
+      rw[hn] at h7'
+      aesop
+    rw[Finset.ssubset_iff] at h9
+    obtain ⟨z, hzn, hz⟩ := h9
+    apply Finset.sum_lt_sum_of_subset (f := a) (i:= z)
+    · exact Finset.subset_univ _
+    · exact Finset.mem_univ z
+    · exact hzn
+    · exact ha z
+    · intros j hj hj'
+      exact Int.le_of_lt (ha j)
 
   --have : ((∑ i in Finset.Ico x.val y.val, a ↑i) % 100) = 0 := by aesop
   -- The difference between those sums is either 100 or 200.
