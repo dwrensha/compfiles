@@ -28,9 +28,7 @@ open scoped BigOperators
 
 lemma lemma1 {a : ℤ} (h1 : a % 100 = 0) (h2 : 0 < a) (h3 : a < 300) :
     a = 200 ∨ a = 100 := by
- rw[show (0:ℤ) = 0 % 100 by rfl] at h1
- have h5 : 100 ∣ a := Iff.mp Int.modEq_zero_iff_dvd h1
- obtain ⟨k, hk⟩ := exists_eq_mul_left_of_dvd h5
+ obtain ⟨k, hk⟩ := exists_eq_mul_left_of_dvd (Int.modEq_zero_iff_dvd.mp h1)
  rw[hk] at h2 h3 ⊢
  have h6 : k < 3 := by linarith
  have h7 : 0 < k := by linarith
@@ -54,8 +52,7 @@ lemma lemma2 {f : ZMod 101 → ℤ} (y : ZMod 101)
      rw[Finset.mem_image]
      use (a - y).val
      constructor
-     · rw[Finset.mem_range]
-       exact ZMod.val_lt (a - y)
+     · exact Finset.mem_range.mpr (ZMod.val_lt (a - y))
      · simp
   rw[h3]
 
@@ -87,16 +84,11 @@ lemma lemma3
     have h10 : ∀ a ∈ Finset.Ico x.val y.val,
                ∀ b ∈ Finset.Ico x.val y.val, (a : ZMod 101) = b → a = b := by
       intros a ha b hb hab
-      have h13 : a % 101 = b % 101 :=
-        Iff.mp (ZMod.nat_cast_eq_nat_cast_iff' a b 101) hab
+      have h13 : a % 101 = b % 101 := (ZMod.nat_cast_eq_nat_cast_iff' a b 101).mp hab
       rw[Finset.mem_Ico] at ha hb
-      have h11 : a < 101 := lt_trans ha.2 y.prop
-      have h12 : b < 101 := lt_trans hb.2 y.prop
-      rwa[Nat.mod_eq_of_lt h11, Nat.mod_eq_of_lt h12] at h13
-    have h6 := @Finset.sum_image _
-               (g := λ i:ℕ ↦ (i : ZMod 101)) a _ _ (Finset.Ico x.val y.val)
-               h10
-    rw[←h6, ←ha_sum]
+      rwa[Nat.mod_eq_of_lt (ha.2.trans y.prop),
+          Nat.mod_eq_of_lt (hb.2.trans y.prop)] at h13
+    rw[←Finset.sum_image h10, ←ha_sum]
     have h9 : (Finset.Ico x.val y.val).image (λ i:ℕ ↦ (i : ZMod 101)) ⊂ Finset.univ := by
       rw[Finset.ssubset_univ_iff]
       intro hn
