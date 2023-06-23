@@ -29,5 +29,6 @@ import MathPuzzles.UpperLowerContinuous
 import MathPuzzles.Usa1998Q1
 import MathPuzzles.Usa1998Q3
 import MathPuzzles.Usa1998Q5
+import MathPuzzles.Usa2000Q1
 import MathPuzzles.Usa2022Q1
 import MathPuzzles.ZeroesOnesAndTwos
