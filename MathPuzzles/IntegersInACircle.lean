@@ -76,8 +76,7 @@ theorem integers_in_a_circle
 
   wlog hxy : x.val < y.val with H
   · obtain he | hle := Iff.mp le_iff_eq_or_lt (Nat.not_lt.mp hxy)
-    · have : y = x := by obtain ⟨x1,x2⟩ := x; obtain ⟨y1,y2⟩ := y; congr
-      exact (hxy'.symm this).elim
+    · exact (hxy'.symm (Fin.ext he)).elim
     · exact H a ha ha_sum y x hxy'.symm hfxy.symm hle
 
   have h1 : 0 < ∑ i in Finset.Ico x.val y.val, a ↑i := by
