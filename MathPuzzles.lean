@@ -1,4 +1,5 @@
 import MathPuzzles.Bulgaria1998Q1
+import MathPuzzles.Bulgaria1998Q2
 import MathPuzzles.Bulgaria1998Q3
 import MathPuzzles.Bulgaria1998Q6
 import MathPuzzles.Bulgaria1998Q8
