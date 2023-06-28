@@ -167,9 +167,3 @@ theorem integers_in_a_circle
 
     rw[Finset.sum_congr rfl h21] at h19
     linarith
-
-
-lemma foo (a b : ZMod 101) (h: a.val = b.val) : a = b := by
-  obtain ⟨a1,a2⟩ := a
-  obtain ⟨b1,b2⟩ := b
-  congr
