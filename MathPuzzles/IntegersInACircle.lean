@@ -56,15 +56,30 @@ lemma lemma2 {f : ZMod 101 → ℤ} (y : ZMod 101)
      · simp
   rw[h3]
 
-lemma lemma3
+theorem integers_in_a_circle
     (a : ZMod 101 → ℤ)
     (ha : ∀ i, 1 ≤ a i)
     (ha_sum : ∑ i : ZMod 101, a i = 300)
-    (x y : ZMod 101)
-    (hxy : x.val < y.val)
-    (hfxy : ∑ i in Finset.range x.val, a i ≡
-              ∑ i in Finset.range y.val, a i [ZMOD 100]) :
-    ∃ j : ZMod 101, ∃ n : ℕ, ∑ i in Finset.range n, a (j + i) = 200 := by
+    : ∃ j : ZMod 101, ∃ n : ℕ, ∑ i in Finset.range n, a (j + i) = 200 := by
+  -- informal solution (from the math.stackexchange link above)
+  -- Start at any position and form sums of subsequences of length 0, 1, ... 100
+  -- starting at that position.
+
+  let f : ZMod 101 → ℤ := λ x ↦ ∑ i in Finset.range x.val, a i
+
+  -- By the pigeonhole principle, two of these sums are equivalent mod 100.
+  obtain ⟨x,y,hxy',hfxy⟩ := Fintype.exists_ne_map_eq_of_card_lt (Int.cast ∘ f)
+            (Nat.lt.base (Fintype.card (ZMod 100)))
+
+  dsimp only [Function.comp_apply] at hfxy
+  rw[ZMod.int_cast_eq_int_cast_iff] at hfxy
+
+  wlog hxy : x.val < y.val with H
+  · obtain he | hle := Iff.mp le_iff_eq_or_lt (Nat.not_lt.mp hxy)
+    · have : y = x := by obtain ⟨x1,x2⟩ := x; obtain ⟨y1,y2⟩ := y; congr
+      exact (hxy'.symm this).elim
+    · exact H a ha ha_sum y x hxy'.symm hfxy.symm hle
+
   have h1 : 0 < ∑ i in Finset.Ico x.val y.val, a ↑i := by
     refine' Finset.sum_pos _ (Finset.nonempty_Ico.mpr hxy)
     aesop
@@ -153,27 +168,8 @@ lemma lemma3
     rw[Finset.sum_congr rfl h21] at h19
     linarith
 
-theorem integers_in_a_circle
-    (a : ZMod 101 → ℤ)
-    (ha : ∀ i, 1 ≤ a i)
-    (ha_sum : ∑ i : ZMod 101, a i = 300)
-    : ∃ j : ZMod 101, ∃ n : ℕ, ∑ i in Finset.range n, a (j + i) = 200 := by
-  -- informal solution (from the math.stackexchange link above)
-  -- Start at any position and form sums of subsequences of length 0, 1, ... 100
-  -- starting at that position.
 
-  let f : ZMod 101 → ℤ := λ x ↦ ∑ i in Finset.range x.val, a i
-
-  -- By the pigeonhole principle, two of these sums are equivalent mod 100.
-  obtain ⟨x,y,hxy,hfxy⟩ := Fintype.exists_ne_map_eq_of_card_lt (Int.cast ∘ f)
-            (Nat.lt.base (Fintype.card (ZMod 100)))
-
-  dsimp only [Function.comp_apply] at hfxy
-  rw[ZMod.int_cast_eq_int_cast_iff] at hfxy
-
-  -- TODO use `wlog` tactic here, once this issue is fixed:
-  -- https://github.com/leanprover-community/mathlib4/issues/5348
-  obtain hxy1 | hxy2 | hxy3 := lt_trichotomy x.val y.val
-  · exact lemma3 a ha ha_sum x y hxy1 hfxy
-  · exact (hxy (Fin.ext hxy2)).elim
-  · exact lemma3 a ha ha_sum y x hxy3 hfxy.symm
+lemma foo (a b : ZMod 101) (h: a.val = b.val) : a = b := by
+  obtain ⟨a1,a2⟩ := a
+  obtain ⟨b1,b2⟩ := b
+  congr
