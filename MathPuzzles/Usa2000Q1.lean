@@ -76,20 +76,28 @@ theorem usa2000_q1 :
     induction' n with n hpn
     · simp
     · have h3 := h1 n
-      have hpn' : f (2 ^ (-(n:ℝ)))/2 ≤ (A - 2 * ↑n) / 2 ^ ↑n.succ := by sorry
+      have h6 : 2 ^ (n.succ : ℝ) = 2 ^ (n : ℝ) * 2 := by norm_cast
+      replace hpn : f (2 ^ (-(n:ℝ)))/2 ≤ (A - 2 * ↑n) / 2 ^ ↑n.succ := by
+         rw[h6, div_mul_eq_div_div]; linarith
       have h4 : f (2 ^ (-↑(Nat.succ n)))
             = f (2 ^ (-(↑n + 1))) := by congr; norm_cast
       rw[h4]
+      have h5' : 0 ≤ 1 / 2^(n:ℝ) := by sorry
       have h5 :
          f (2 ^ (-((n:ℝ) + 1))) ≤
-           (f 0 + f (2 ^ (-(n:ℝ)))) / 2 - 1 / 2 ^ (n:ℝ) := by sorry
---      calc  _
---            _ ≤ f (2 ^ (-(↑n + 1))) + 1 / 2 ^ (n : ℝ) := by sorry
---            _ ≤ _ := h3
---            _ = f (2 ^ (-(n:ℝ))) / 2 := by rw[hf0]; ring
---            _ ≤ _ := hpn'
---            _ ≤ _ := by sorry
-      sorry
+           (f 0 + f (2 ^ (-(n:ℝ)))) / 2 - 1 / 2 ^ (n:ℝ) := by linarith
+      have h2ne0 : (2: ℝ) ≠ 0 := by norm_num
+      have h7 : (1:ℝ) / 2 ^ (n:ℝ) = 2 / 2 ^ (n.succ:ℝ) := by
+        rw[h6, div_mul_left h2ne0]
+
+      have h8' : (n.succ : ℝ) = (n:ℝ) + 1 := by norm_cast
+      have h8 : A - 2 * ↑n - 2 = A - 2 * ↑n.succ := by
+        rw[Nat.succ_eq_add_one, h8']; ring
+
+      calc _ ≤ _ := h5
+           _ = _ := by rw[hf0, zero_add]
+           _ ≤ (A - 2 * ↑n) / 2 ^ (n.succ:ℝ) - 1 / 2 ^ (n:ℝ) := sub_le_sub_right hpn _
+           _ ≤ _ := by rw[h7, ←sub_div, h8]
 
   -- Using a similar line of reasoning as above, f(-2⁻ⁿ) ≤ (B - 2n)/2ⁿ.
   -- Therefore, for every nonnegative integer n, f(2⁻ⁿ) + f(-2⁻ⁿ) ≤ (A+B-4n)/2ⁿ.
