@@ -117,6 +117,8 @@ theorem usa2000_q1 :
            _ ≤ (A - 2 * ↑n) / 2 ^ (n.succ:ℝ) - 1 / 2 ^ (n:ℝ) := sub_le_sub_right hpn _
            _ ≤ _ := by rw[h7, ←sub_div, h8]
 
+  -- Using a similar line of reasoning as above, f(-2⁻ⁿ) ≤ (B - 2n)/2ⁿ.
+
   have h3 : ∀ n : ℕ, f (- 2 ^ (- (n : ℝ))) ≤ (B - 2 * (n:ℝ)) / 2^(n:ℝ) := by
     intro n
     induction' n with n hpn
@@ -139,8 +141,14 @@ theorem usa2000_q1 :
            _ ≤ (B - 2 * ↑n) / 2 ^ (n.succ:ℝ) - 1 / 2 ^ (n:ℝ) := sub_le_sub_right hpn _
            _ ≤ _ := by rw[h7, ←sub_div, h8]
 
-  -- Using a similar line of reasoning as above, f(-2⁻ⁿ) ≤ (B - 2n)/2ⁿ.
   -- Therefore, for every nonnegative integer n, f(2⁻ⁿ) + f(-2⁻ⁿ) ≤ (A+B-4n)/2ⁿ.
+  have h4 : ∀ n : ℕ,
+      f (2^(-(n:ℝ))) + f (-2^(-(n:ℝ))) ≤ (A + B - 4 * n) / 2^(n:ℝ) := by
+    intro n
+    have h2n := h2 n
+    have h3n := h3 n
+    sorry
+
   -- Now, we choose n large enough such that n > (A+B)/4 - 1.
   -- It follows that f(2⁻ⁿ) + f(-2⁻ⁿ) < 1/2ⁿ⁻².
   -- However, by the very convex condition, f(2⁻ⁿ) + f(-2⁻ⁿ) ≥ 1/2ⁿ⁻².
