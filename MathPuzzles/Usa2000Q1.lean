@@ -155,4 +155,3 @@ theorem usa2000_q1 :
   -- This is a contradiction.
   sorry
 
---lemma foo (a : ℝ) (h : 0 < a) : -a < 0 := by exact?
