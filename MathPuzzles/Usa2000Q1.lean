@@ -55,8 +55,7 @@ theorem usa2000_q1 :
       rw[h4, div_eq_mul_one_div]
       have h5 : (1:ℝ) / 2 = 2 ^ (-(1:ℝ)) := by
          rw[Real.rpow_neg (by norm_num)]; norm_num
-      rw[h5]
-      rw[←Real.rpow_add h2p]
+      rw[h5, ←Real.rpow_add h2p]
       congr
     rw[h3] at h2
     rw[←neg_eq_zero_sub, abs_neg] at h2
@@ -80,12 +79,11 @@ theorem usa2000_q1 :
       rw[h4, div_eq_mul_one_div]
       have h5 : (1:ℝ) / 2 = 2 ^ (-(1:ℝ)) := by
          rw[Real.rpow_neg (by norm_num)]; norm_num
-      rw[h5]
-      sorry--rw[←Real.rpow_add h2p]
-      --congr
+      rw[h5, neg_mul, ←Real.rpow_add h2p]
+      congr
     rw[h3] at h2; clear h3
     rw[←neg_eq_zero_sub, abs_neg] at h2
-    have h6 : -(2:ℝ) ^ (-(n:ℝ)) < 0 := sorry
+    have h6 : -(2:ℝ) ^ (-(n:ℝ)) < 0 := neg_lt_zero.mpr (Real.rpow_pos_of_pos h2p _)
     rw[abs_of_neg h6, neg_neg] at h2
     have h7 : (2:ℝ) ^ (- (n : ℝ)) = 1 / 2^(n:ℝ) := by
       have h9 : (0:ℝ) ≤ (2:ℝ) := by norm_num
@@ -148,3 +146,5 @@ theorem usa2000_q1 :
   -- However, by the very convex condition, f(2⁻ⁿ) + f(-2⁻ⁿ) ≥ 1/2ⁿ⁻².
   -- This is a contradiction.
   sorry
+
+--lemma foo (a : ℝ) (h : 0 < a) : -a < 0 := by exact?
