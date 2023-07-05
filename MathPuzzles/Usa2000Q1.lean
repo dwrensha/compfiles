@@ -32,11 +32,7 @@ theorem usa2000_q1 :
   -- is any constant. Thus, we can set f(0) = 0 for convenience.
 
   wlog hf0 : f 0 = 0 with H
-  · -- let binding here causes an error! (bug in wlog)
-    -- let g : λ x ↦ f x - f 0
-    -- sorry
-    replace H1 := H (fun x ↦ f x - f 0)
-    apply H1
+  · apply H (fun x ↦ f x - f 0)
     · intros x y
       have := hc x y
       linarith
