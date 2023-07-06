@@ -145,13 +145,16 @@ theorem usa2000_q1 :
   have h4 : ∀ n : ℕ,
       f (2^(-(n:ℝ))) + f (-2^(-(n:ℝ))) ≤ (A + B - 4 * n) / 2^(n:ℝ) := by
     intro n
-    have h2n := h2 n
-    have h3n := h3 n
-    sorry
+    have h5 := add_le_add (h2 n) (h3 n)
+    have h6 : A - 2 * ↑n + (B - 2 * ↑n) = A + B - 4 * ↑n := by ring
+    rwa [←add_div, h6] at h5
 
   -- Now, we choose n large enough such that n > (A+B)/4 - 1.
+  let N := (A + B) / 4
   -- It follows that f(2⁻ⁿ) + f(-2⁻ⁿ) < 1/2ⁿ⁻².
+  have h7 : f (2 ^ (-(N:ℝ))) + f (-2 ^ (-(N:ℝ))) < 1 / 2^((N:ℝ) - 2) := by
+     sorry
+
   -- However, by the very convex condition, f(2⁻ⁿ) + f(-2⁻ⁿ) ≥ 1/2ⁿ⁻².
   -- This is a contradiction.
   sorry
-
