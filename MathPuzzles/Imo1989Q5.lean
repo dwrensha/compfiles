@@ -209,7 +209,7 @@ theorem imo1989_q5 (n : ℕ) : ∃ m, ∀ j < n, ¬IsPrimePow (m + j) := by
   have h1 := hm (ci.get ⟨j, hj1⟩) (List.get_mem _ _ _)
   obtain ⟨h2, h3⟩ := hl (l.get ⟨j, hj2⟩) (List.get_mem _ _ _)
   obtain ⟨h4, _⟩ := hl (l.get ⟨j + n, hj3⟩) (List.get_mem _ _ _)
-  simp only [List.get_ofFn, ge_iff_le, Fin.cast_mk] at h1
+  simp only [List.get_ofFn, ge_iff_le, Fin.castIso_mk] at h1
   have h6 := Nat.ModEq.add_right j h1
   have h7 : j ≤ l.get ⟨j, hj2⟩ * l.get ⟨j + n, hj3⟩ := by
       apply Nat.le_of_lt
