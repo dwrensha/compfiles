@@ -150,11 +150,19 @@ theorem usa2000_q1 :
     rwa [←add_div, h6] at h5
 
   -- Now, we choose n large enough such that n > (A+B)/4 - 1.
-  let N := (A + B) / 4
+  let N := Nat.ceil ((A + B) / 4)
   -- It follows that f(2⁻ⁿ) + f(-2⁻ⁿ) < 1/2ⁿ⁻².
   have h7 : f (2 ^ (-(N:ℝ))) + f (-2 ^ (-(N:ℝ))) < 1 / 2^((N:ℝ) - 2) := by
-     sorry
+     have h10 : (0:ℝ) ≤ 2 := by norm_num
+     have h8 : A + B - 4 * ↑N < 0 := by sorry
+     have h9 : (A + B - 4 * ↑N) / 2 ^ (N : ℝ) < 0 := by sorry
+     calc _ ≤ _ := h4 N
+          _ < 0 := h9
+          _ ≤ _ := by rw[one_div_nonneg]; exact Real.rpow_nonneg_of_nonneg h10 _
 
   -- However, by the very convex condition, f(2⁻ⁿ) + f(-2⁻ⁿ) ≥ 1/2ⁿ⁻².
+  have h20 := hc (2 ^(-(N:ℝ))) (-2 ^(-(N:ℝ)))
+
   -- This is a contradiction.
+  rw[add_neg_self, zero_div, hf0, zero_add, sub_neg_eq_add] at h20
   sorry
