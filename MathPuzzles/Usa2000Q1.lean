@@ -153,16 +153,28 @@ theorem usa2000_q1 :
   let N := Nat.ceil ((A + B) / 4)
   -- It follows that f(2⁻ⁿ) + f(-2⁻ⁿ) < 1/2ⁿ⁻².
   have h7 : f (2 ^ (-(N:ℝ))) + f (-2 ^ (-(N:ℝ))) < 1 / 2^((N:ℝ) - 2) := by
-     have h10 : (0:ℝ) ≤ 2 := by norm_num
-     have h8 : A + B - 4 * ↑N < 0 := by sorry
-     have h9 : (A + B - 4 * ↑N) / 2 ^ (N : ℝ) < 0 := by sorry
+     have h10 : (0:ℝ) < 2 := by norm_num
+     have h130 : (0:ℝ) ≤ (2:ℝ)^(N:ℝ) := by norm_num
+     have h8' : (A + B) / 4 ≤ N := Nat.le_ceil _
+     have h8 : A + B - 4 * ↑N ≤ 0 := by linarith
+     have h9 : (A + B - 4 * ↑N) / 2 ^ (N : ℝ) ≤ 0 := div_nonpos_of_nonpos_of_nonneg h8 h130
      calc _ ≤ _ := h4 N
-          _ < 0 := h9
-          _ ≤ _ := by rw[one_div_nonneg]; exact Real.rpow_nonneg_of_nonneg h10 _
+          _ ≤ 0 := h9
+          _ < _ := by rw[one_div_pos]; exact Real.rpow_pos_of_pos h10 _
 
   -- However, by the very convex condition, f(2⁻ⁿ) + f(-2⁻ⁿ) ≥ 1/2ⁿ⁻².
   have h20 := hc (2 ^(-(N:ℝ))) (-2 ^(-(N:ℝ)))
 
   -- This is a contradiction.
-  rw[add_neg_self, zero_div, hf0, zero_add, sub_neg_eq_add] at h20
-  sorry
+  rw[add_neg_self, zero_div, hf0, zero_add, sub_neg_eq_add, ←two_mul] at h20
+  nth_rewrite 1 [show (2:ℝ) = (2:ℝ) ^ (1:ℝ) by norm_num] at h20
+  rw[←Real.rpow_add (by norm_num)] at h20
+  have h21 := calc _ ≤ _ := le_abs_self ((2 : ℝ) ^ (1 + -(N : ℝ)))
+               _ ≤ _ := h20
+  replace h20 : (2:ℝ) * 2^(1 + -(N:ℝ)) ≤ f ((2:ℝ)^(-(N:ℝ))) + f (-(2:ℝ) ^ (-(N:ℝ))) := by linarith
+  nth_rewrite 1 [show (2:ℝ) = (2:ℝ) ^ (1:ℝ) by norm_num] at h20
+  rw[←Real.rpow_add (by norm_num)] at h20
+  have h22 : (1 + (1 + -(N:ℝ))) = -((N : ℝ) - 2) := by ring
+  have h23 : (0 :ℝ) ≤ 2 := by norm_num
+  rw[h22, Real.rpow_neg h23, inv_eq_one_div] at h20
+  linarith
