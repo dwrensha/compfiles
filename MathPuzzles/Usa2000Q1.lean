@@ -178,4 +178,3 @@ theorem usa2000_q1 :
   have h23 : (0 :ℝ) ≤ 2 := by norm_num
   rw[h22, Real.rpow_neg h23, inv_eq_one_div] at h20
   exact not_lt.mpr h20 h7
-
