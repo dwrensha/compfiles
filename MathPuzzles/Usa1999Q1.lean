@@ -37,5 +37,6 @@ theorem usa1999_q1 (n : ℕ) (c : Finset (checkerboard n))
       ∃ p : List (checkerboard n),
         List.Chain' adjacent p ∧
         List.head? p = x ∧
-        List.getLast? p = y) : n^2 - 2 / 3 ≤ c.card := by
+        List.getLast? p = y) :
+    n^2 ≤ c.card * 3 + 2 := by
   sorry
