@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: David Renshaw
 -/
 
+import Mathlib.Algebra.QuadraticDiscriminant
 import Mathlib.Data.Int.Basic
 import Mathlib.Order.WellFounded
 import Mathlib.Tactic.LibrarySearch
@@ -25,7 +26,13 @@ namespace Bulgaria1998Q6
 lemma lemma_0
     (a b c x : ℤ)
     (h : a * x^2 + b * x + c = 0) :
-    (∃ d : ℤ, d^2 = b^2 - 4 * a * c) := sorry
+    (∃ d : ℤ, d^2 = b^2 - 4 * a * c) := by
+  by_cases ha : a ≠ 0
+  · use 2 * a * x + b
+    refine' ((quadratic_eq_zero_iff_discrim_eq_sq ha x).mp _).symm
+    rw [←h, pow_two, mul_assoc]
+  · rw [not_not] at ha
+    simp only [ha, mul_zero, zero_mul, sub_zero, ge_iff_le, exists_apply_eq_apply] at *
 
 #check WellFounded.min_mem
 #check WellFounded.not_lt_min
