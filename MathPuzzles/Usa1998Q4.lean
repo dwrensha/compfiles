@@ -50,11 +50,15 @@ def possible_num_clicks : Set ℕ :=
     (all_same_color (rs.foldl recolor_rect start_coloring) ∧
      rs.length = n) }
 
-def min_clicks : ℕ := sorry
+-- @[solution_data]
+def min_clicks : ℕ := 98
 
 theorem usa1998_q4 : IsLeast possible_num_clicks min_clicks := by
   constructor
-  · sorry
+  · use (List.range 49).map (λ x ↦ ⟨x, 0, 1, 98⟩) ++ (List.range 49).map (λ y ↦ ⟨0, y, 98, 1⟩)
+    constructor
+    · sorry
+    · simp only
   · rw[mem_lowerBounds]
     intros n hn
     obtain ⟨rs, hrs, hrsl⟩ := hn
