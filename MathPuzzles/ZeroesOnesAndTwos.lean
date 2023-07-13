@@ -320,7 +320,12 @@ lemma ones_and_twos_aux (n : ℕ) :
   ∃ k : ℕ+, (List.length (Nat.digits 10 (2^n.succ * k)) = n.succ) ∧
              all_one_or_two (Nat.digits 10 (2^n.succ * k)) := by
   induction' n with pn hpn
-  · use 1; simp[all_one_or_two]; norm_cast
+  · use 1
+    simp[all_one_or_two]
+    constructor
+    · norm_cast
+    · intros a ha
+      norm_cast
   obtain ⟨pk, hpk1, hpk2⟩ := hpn
 
   /-

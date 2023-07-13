@@ -1,3 +1,4 @@
+import Std.Data.String.Basic
 import Std.Tactic.Lint
 import Lean.Environment
 import Mathlib.Data.String.Defs
@@ -14,7 +15,7 @@ def olean_path_to_github_url (path: String) : String :=
   let pfx := "./build/lib/"
   let sfx := ".olean"
   assert!(pfx.isPrefixOf path)
-  assert!(sfx.isSuffixOf path)
+  assert!(sfx.data.isSuffixOf path.data)
   "https://github.com/dwrensha/math-puzzles-in-lean4/blob/main/" ++
     ((path.stripPrefix pfx).stripSuffix sfx) ++ ".lean"
 
