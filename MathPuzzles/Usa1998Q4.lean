@@ -52,5 +52,11 @@ def possible_num_clicks : Set ℕ :=
 
 def min_clicks : ℕ := sorry
 
-theorem usa1998_q4 : IsGLB possible_num_clicks min_clicks := sorry
+theorem usa1998_q4 : IsLeast possible_num_clicks min_clicks := by
+  constructor
+  · sorry
+  · rw[mem_lowerBounds]
+    intros n hn
+    obtain ⟨rs, hrs, hrsl⟩ := hn
+    sorry
 
