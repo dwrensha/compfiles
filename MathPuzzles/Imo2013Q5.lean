@@ -3,6 +3,8 @@ import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.LibrarySearch
 import Mathlib.Data.Real.Basic
+import Mathlib.Tactic.Positivity
+import Mathlib.Tactic.LinearCombination
 
 /-!
 # IMO 2013 Q5
@@ -27,18 +29,15 @@ open BigOperators
 lemma le_of_all_pow_lt_succ {x y : ℝ} (hx : 1 < x) (hy : 1 < y)
     (h : ∀ n : ℕ, 0 < n → x^n - 1 < y^n) :
     x ≤ y := by
-  by_contra hxy
-  push_neg at hxy
+  by_contra' hxy
   have hxmy : 0 < x - y := sub_pos.mpr hxy
   have hn : ∀ n : ℕ, 0 < n → (x - y) * (n : ℝ) ≤ x^n - y^n := by
     intros n _
     have hterm : ∀ i : ℕ, i ∈ Finset.range n → 1 ≤ x^i * y^(n - 1 - i) := by
       intros i _
-      have hx' : 1 ≤ x ^ i := one_le_pow_of_one_le hx.le i
-      have hy' : 1 ≤ y ^ (n - 1 - i) := one_le_pow_of_one_le hy.le (n - 1 - i)
-      calc 1 ≤ x^i             := hx'
+      calc 1 ≤ x^i             := one_le_pow_of_one_le hx.le i
            _ = x^i * 1         := (mul_one _).symm
-           _ ≤ x^i * y^(n-1-i) := mul_le_mul_of_nonneg_left hy' (zero_le_one.trans hx')
+           _ ≤ x^i * y^(n-1-i) := by gcongr; apply one_le_pow_of_one_le hy.le
     calc (x - y) * (n : ℝ)
         = (n : ℝ) * (x - y) := mul_comm _ _
       _ = (∑ _i in Finset.range n, (1 : ℝ)) * (x - y) :=
@@ -223,7 +222,7 @@ theorem imo2013_q5
            _ = ↑a * f 1   := by rw[hae]
 
     calc (n : ℝ) = (n : ℝ) * 1 := (mul_one _).symm
-         _ ≤ (n : ℝ) * f 1     := (mul_le_mul_left (Nat.cast_pos.mpr hn)).mpr hf1
+         _ ≤ (n : ℝ) * f 1     := by gcongr
          _ ≤ f (n * 1)         := H3 1 zero_lt_one n hn
          _ = f n               := by rw [mul_one]
 
@@ -257,35 +256,22 @@ theorem imo2013_q5
   -- For the final calculation, we expand x as (2*x.num) / (2*x.denom), because
   -- we need the top of the fraction to be strictly greater than 1 in order
   -- to apply fixed_point_of_gt_1.
-  intros x hx
-  let x2denom := 2 * x.den
-  let x2num := 2 * x.num
-
-  have hx2pos : 0 < 2 * x.den := by linarith[x.pos]
-  have hxcnez   : (x.den : ℚ) ≠ (0 : ℚ) := ne_of_gt (Nat.cast_pos.mpr x.pos)
-  have hx2cnezr : (x2denom : ℝ) ≠ (0 : ℝ) := Nat.cast_ne_zero.mpr (ne_of_gt hx2pos)
-
-  have hrat_expand2 := calc x = x.num / x.den := by exact_mod_cast Rat.num_den.symm
-                            _ = x2num / x2denom := by { field_simp; ring}
-
-  have h_denom_times_fx :=
-    calc (x2denom : ℝ) * f x = f (x2denom * x) := (h_f_commutes_with_pos_nat_mul
-                                                   x2denom hx2pos x hx).symm
-         _ = f (x2denom * (x2num / x2denom))   := by rw[hrat_expand2]
-         _ = f x2num                           := by congr; field_simp; ring
-
-  have h_fx2num_fixed : f x2num = x2num := by
-    have hx2num_gt_one : (1 : ℚ) < (2 * x.num : ℤ) := by
-      norm_cast; linarith [Rat.num_pos_iff_pos.mpr hx]
-    have hh := fixed_point_of_gt_1 hx2num_gt_one H1 H2 H4 H5 ha1 hae
-    rwa [Rat.cast_coe_int x2num] at hh
-
-  calc f x = f x * 1                               := (mul_one (f x)).symm
-       _ = f x * (x2denom / x2denom)               := by rw [←div_self hx2cnezr]
-       _ = (f x * x2denom) / x2denom               := mul_div_assoc' (f x) _ _
-       _ = (x2denom * f x) / x2denom               := by rw[mul_comm]
-       _ = f x2num / x2denom                       := by rw[h_denom_times_fx]
-       _ = x2num / x2denom                         := by rw[h_fx2num_fixed]
-       _ = ((x2num:ℚ):ℝ) / ((x2denom:ℚ):ℝ)         := rfl
-       _ = (((x2num : ℚ) / (x2denom : ℚ) : ℚ) : ℝ) := by norm_cast
-       _ = x                                       := by rw[←hrat_expand2]
+  intro x hx
+  have H₀ : x * x.den = x.num := Rat.mul_den_eq_num
+  have H : x * (↑(2 * x.den) : ℚ) = (↑(2 * x.num) : ℚ) := by push_cast; linear_combination 2 * H₀
+  set x2denom := 2 * x.den
+  set x2num := 2 * x.num
+  have := x.pos
+  have hx2pos : 0 < 2 * x.den := by positivity
+  have hx2cnezr : (x2denom : ℝ) ≠ (0 : ℝ) := by positivity
+  have : 0 < x.num := by rwa [Rat.num_pos_iff_pos]
+  have hx2num_gt_one : (1 : ℚ) < (2 * x.num : ℤ) := by norm_cast; linarith
+  apply mul_left_cancel₀ hx2cnezr
+  calc
+    x2denom * f x = f (x2denom * x) :=
+        (h_f_commutes_with_pos_nat_mul x2denom hx2pos x hx).symm
+    _ = f x2num := by congr; linear_combination H
+    _ = x2num := fixed_point_of_gt_1 hx2num_gt_one H1 H2 H4 H5 ha1 hae
+    _ = ((x2num : ℚ) : ℝ) := by norm_cast
+    _ = (↑(x2denom * x) : ℝ) := by congr; linear_combination -H
+    _ = x2denom * x := by push_cast; rfl
