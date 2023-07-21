@@ -27,7 +27,9 @@ def possible_num_colors : Set ℕ :=
         (¬ (x ∈ f j ∧ y ∈ f j))) }
 
 -- @[solution_data]
-def min_colors : ℕ := sorry
+def min_colors : ℕ := 23
 
 theorem usa2001_q1 : IsLeast possible_num_colors min_colors := by
-  sorry
+  constructor
+  · sorry
+  · sorry
