@@ -48,7 +48,7 @@ theorem imo1986_q1' (d : ℤ):
     rw [← add_mul, ← add_mul, mul_left_inj' two_ne_zero] at hp
     rw [← hp]
     ring
-  have hdodd : Odd d := by use k + k ^ 2; exact hdp
+  have hdodd : Odd d := by use k + k ^ 2
   have hd_sub_one : Even (d - 1) := by use (k + k ^ 2); rw [hdp]; ring
   have hqeven : Even q := by
     refine' (Int.even_pow' two_ne_zero).mp _
@@ -87,8 +87,7 @@ theorem imo1986_q1' (d : ℤ):
     cases' hnm_add with w hnm_add
     simp only [hnm_sub, hnm_add, ← two_mul] at hnm'
     rw [mul_assoc,  mul_right_inj' two_ne_zero, ← mul_assoc, mul_comm w, mul_assoc, two_mul] at hnm'
-    use w * v
-    exact hnm'
+    exact ⟨w * v, hnm'⟩
   exact Int.even_iff_not_odd.mp hdeven hdodd
 
 
