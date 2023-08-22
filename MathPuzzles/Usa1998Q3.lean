@@ -97,7 +97,7 @@ theorem usa1998_q3
       let y1 x := x - Real.pi / 4
       have h5 : StrictMonoOn y1 (Set.Icc 0 (Real.pi / 2)) := by
         intros a ha b hb hab
-        dsimp; aesop
+        exact sub_lt_sub_right hab _
 
       have h10 : Set.Icc (-Real.pi / 4) (Real.pi / 4) ⊆
                Set.Ioo (-(Real.pi / 2)) (Real.pi/2) := by
