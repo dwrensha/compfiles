@@ -113,18 +113,10 @@ theorem usa1998_q3
           constructor
           · dsimp; linarith
           · dsimp; linarith
-      have h11 : Real.pi / 2 ∈ Set.Icc 0 (Real.pi / 2) := by
-        constructor
-        · exact le_of_lt Real.pi_div_two_pos
-        · exact Eq.le rfl
-      have h8 : y' (a j) ≤ y' (Real.pi / 2) := by
-        apply le_of_lt
-        have h9 : a j ∈ Set.Icc 0 (Real.pi / 2) := by
-          constructor
-          · exact le_of_lt haj.1
-          · exact le_of_lt haj.2
-        exact h6 h9 h11 haj.2
-      exact Iff.mpr sub_nonneg h8
+      have h8 : y' (a j) ≤ y' (Real.pi / 2) :=
+        le_of_lt (h6 ⟨le_of_lt haj.1, le_of_lt haj.2⟩
+                     ⟨le_of_lt Real.pi_div_two_pos, Eq.le rfl⟩ haj.2)
+      exact sub_nonneg.mpr h8
     have := Real.geom_mean_le_arith_mean_weighted
               ((Finset.range (n + 1)).erase i)
               w (λ j ↦ 1 - y j)
