@@ -85,8 +85,50 @@ theorem usa1998_q3
       rw[Finset.mem_erase, Finset.mem_range] at hj
       have haj := ha j hj.2
       rw[Set.mem_Ioo] at haj
-      -- use Real.strictMonoOn_tan ...
-      sorry
+      rw[← Real.tan_pi_div_four]
+
+      let y' x := Real.tan (x - Real.pi / 4)
+      have h4 : Real.tan (Real.pi / 4) = y' (Real.pi / 2) := by
+         dsimp
+         have h5 : Real.pi / 2 - Real.pi / 4 = Real.pi / 4 := by field_simp; ring
+         rw[h5]
+      have h4' : y j = y' (a j) := rfl
+      rw[h4, h4']
+      let y1 x := x - Real.pi / 4
+      have h5 : StrictMonoOn y1 (Set.Icc 0 (Real.pi / 2)) := by
+        intros a ha b hb hab
+        dsimp; aesop
+
+      have h10 : Set.Icc (-Real.pi / 4) (Real.pi / 4) ⊆
+               Set.Ioo (-(Real.pi / 2)) (Real.pi/2) := by
+        intros a ha
+        cases ha
+        constructor
+        · linarith
+        · linarith
+
+      have h6 : StrictMonoOn y' (Set.Icc 0 (Real.pi / 2)) := by
+        apply StrictMonoOn.comp (g := Real.tan) (f := y1)
+                (t := (Set.Icc (-Real.pi / 4) (Real.pi / 4)))
+                (StrictMonoOn.mono Real.strictMonoOn_tan h10)
+                h5
+        · intro a ha
+          obtain ⟨ha1, ha2⟩ := ha
+          constructor
+          · dsimp; linarith
+          · dsimp; linarith
+      have h11 : Real.pi / 2 ∈ Set.Icc 0 (Real.pi / 2) := by
+        constructor
+        · exact le_of_lt Real.pi_div_two_pos
+        · exact Eq.le rfl
+      have h8 : y' (a j) ≤ y' (Real.pi / 2) := by
+        apply le_of_lt
+        have h9 : a j ∈ Set.Icc 0 (Real.pi / 2) := by
+          constructor
+          · exact le_of_lt haj.1
+          · exact le_of_lt haj.2
+        exact h6 h9 h11 haj.2
+      exact Iff.mpr sub_nonneg h8
     have := Real.geom_mean_le_arith_mean_weighted
               ((Finset.range (n + 1)).erase i)
               w (λ j ↦ 1 - y j)
@@ -98,6 +140,5 @@ theorem usa1998_q3
   -- ... a bunch more steps...
   sorry
 
-#check Real.strictMonoOn_tan
 #check Finset.card_erase_of_mem
 #check Real.geom_mean_le_arith_mean_weighted
