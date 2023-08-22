@@ -69,7 +69,7 @@ theorem usa1998_q3
   -- Then, by AM-GM,
   -- (1/n) ∑_{j ≠ i} (1 - yⱼ) ≥ ∏_{j ≠ i} (1 - yⱼ)^{1/n}
   have h4 : ∀ i, i < n + 1 →
-     ∏ j in (Finset.range (n + 1)).erase i, (1 - y i)^(1 / (n : ℝ)) ≤
+     ∏ j in (Finset.range (n + 1)).erase i, (1 - y j)^(1 / (n : ℝ)) ≤
      (1/(n:ℝ)) * ∑ j in (Finset.range (n + 1)).erase i, (1 - y j) := by
     intros i hi
     have hi' : i ∈ Finset.range (n + 1) := Finset.mem_range.mpr hi
@@ -117,11 +117,12 @@ theorem usa1998_q3
         le_of_lt (h6 ⟨le_of_lt haj.1, le_of_lt haj.2⟩
                      ⟨le_of_lt Real.pi_div_two_pos, Eq.le rfl⟩ haj.2)
       exact sub_nonneg.mpr h8
-    have := Real.geom_mean_le_arith_mean_weighted
+    have h5 := Real.geom_mean_le_arith_mean_weighted
               ((Finset.range (n + 1)).erase i)
               w (λ j ↦ 1 - y j)
               hw hw' hz
-    sorry
+    rw[Finset.mul_sum]
+    exact h5
 
   -- (1 + yᵢ)/n ≥ ∏_{j ≠ i} (1 - yⱼ)^{1/n}
   -- ∏ᵢ(1 + yᵢ)/n ≥ ∏ᵢ∏_{j ≠ i} (1 - yⱼ)^{1/n}
