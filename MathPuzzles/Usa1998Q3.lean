@@ -24,8 +24,6 @@ Prove that
 namespace Usa1998Q3
 open BigOperators
 
-#check Real.tan_nonneg_of_nonneg_of_le_pi_div_two
-
 theorem usa1998_q3
     (n : ℕ)
     (a : ℕ → ℝ)
