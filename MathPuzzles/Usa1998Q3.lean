@@ -101,11 +101,7 @@ theorem usa1998_q3
 
       have h10 : Set.Icc (-Real.pi / 4) (Real.pi / 4) ⊆
                Set.Ioo (-(Real.pi / 2)) (Real.pi/2) := by
-        intros a ha
-        cases ha
-        constructor
-        · linarith
-        · linarith
+        intros a ha; exact ⟨by linarith[ha.1], by linarith[ha.2]⟩
 
       have h6 : StrictMonoOn y' (Set.Icc 0 (Real.pi / 2)) := by
         apply StrictMonoOn.comp (g := Real.tan) (f := y1)
