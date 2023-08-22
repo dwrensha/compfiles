@@ -125,6 +125,21 @@ theorem usa1998_q3
     exact h5
 
   -- (1 + yᵢ)/n ≥ ∏_{j ≠ i} (1 - yⱼ)^{1/n}
+  have h5 : ∀ i, i < n + 1 →
+      ∏ j in Finset.erase (Finset.range (n + 1)) i, (1 - y j) ^ (1 / ↑n) ≤
+      (1 + y i) / ↑n := fun i hi ↦ (h4 i hi).trans (h3 i hi)
+
   -- ∏ᵢ(1 + yᵢ)/n ≥ ∏ᵢ∏_{j ≠ i} (1 - yⱼ)^{1/n}
   -- ... a bunch more steps...
+  -- ∏ᵢ(1 + yᵢ)/(1-yᵢ) ≥ nⁿ⁺¹
+  have h6 : ∀ i, i < n + 1 →
+      (n:ℝ) ^ ((n:ℝ) + 1) ≤ ∏ j in Finset.range (n + 1), (1 + y j) / (1 - y j) := by
+    sorry
+
+  -- by the addition formula for tangents,
+  -- tan(aᵢ) = tan((aᵢ - π/4) + π/4) = (1 + tan(aᵢ - π/4))/(1 - tan(aᵢ-π/4))
+  --     ... = (1 + yᵢ)/(1 - yᵢ)
+
+  -- so ∏ᵢ(1 + yᵢ)/(1-yᵢ) = ∏ᵢtan(aᵢ) ≥ nⁿ⁺¹, as desired
+
   sorry
