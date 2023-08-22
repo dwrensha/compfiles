@@ -128,6 +128,3 @@ theorem usa1998_q3
   -- ∏ᵢ(1 + yᵢ)/n ≥ ∏ᵢ∏_{j ≠ i} (1 - yⱼ)^{1/n}
   -- ... a bunch more steps...
   sorry
-
-#check Finset.card_erase_of_mem
-#check Real.geom_mean_le_arith_mean_weighted
