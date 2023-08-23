@@ -136,7 +136,8 @@ theorem usa1998_q3
       (1 + y i) / ↑n := fun i hi ↦ (h4 i hi).trans (h3 i hi)
 
   -- ∏ᵢ(1 + yᵢ)/n ≥ ∏ᵢ∏_{j ≠ i} (1 - yⱼ)^{1/n}
-  -- ... a bunch more steps...
+  -- ∏ᵢ(1 + yᵢ)/n ≥ ∏ᵢ(1 - yᵢ)
+  -- ∏ᵢ(1 + yᵢ)/(1 - yᵢ) ≥ ∏ᵢn
   -- ∏ᵢ(1 + yᵢ)/(1-yᵢ) ≥ nⁿ⁺¹
   have h6 : (n:ℝ) ^ ((n:ℝ) + 1) ≤ ∏ j in Finset.range (n + 1), (1 + y j) / (1 - y j) := by
     sorry
