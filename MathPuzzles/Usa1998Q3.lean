@@ -138,8 +138,7 @@ theorem usa1998_q3
   -- ∏ᵢ(1 + yᵢ)/n ≥ ∏ᵢ∏_{j ≠ i} (1 - yⱼ)^{1/n}
   -- ... a bunch more steps...
   -- ∏ᵢ(1 + yᵢ)/(1-yᵢ) ≥ nⁿ⁺¹
-  have h6 : ∀ i, i < n + 1 →
-      (n:ℝ) ^ ((n:ℝ) + 1) ≤ ∏ j in Finset.range (n + 1), (1 + y j) / (1 - y j) := by
+  have h6 : (n:ℝ) ^ ((n:ℝ) + 1) ≤ ∏ j in Finset.range (n + 1), (1 + y j) / (1 - y j) := by
     sorry
 
   -- by the addition formula for tangents,
@@ -178,7 +177,7 @@ theorem usa1998_q3
         · have hk0 : kk = 0 := by rw[←hkk']; norm_cast
           rw[hk0] at hk
           norm_num at hk
-          linarith[Real.pi_pos]
+          exact Real.pi_ne_zero hk
         · have hk2 : 1 ≤ k := hk'
           have : 1 ≤ kk := by rw[← hkk']; norm_cast
           nlinarith[Real.pi_pos]
@@ -190,5 +189,12 @@ theorem usa1998_q3
     rw[h11]
 
   -- so ∏ᵢ(1 + yᵢ)/(1-yᵢ) = ∏ᵢtan(aᵢ) ≥ nⁿ⁺¹, as desired
+  have h8 : ∏ i in Finset.range (n + 1), Real.tan (a i) =
+              ∏ j in Finset.range (n + 1), (1 + y j) / (1 - y j) := by
+     apply Finset.prod_congr rfl
+     · intros x hx
+       rw[Finset.mem_range] at hx
+       exact h7 x hx
 
-  sorry
+  rw[h8]
+  exact h6
