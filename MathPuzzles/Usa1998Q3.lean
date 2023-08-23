@@ -145,7 +145,29 @@ theorem usa1998_q3
   -- by the addition formula for tangents,
   -- tan(aᵢ) = tan((aᵢ - π/4) + π/4) = (1 + tan(aᵢ - π/4))/(1 - tan(aᵢ-π/4))
   --     ... = (1 + yᵢ)/(1 - yᵢ)
+  have h7 : ∀ i, i < n + 1 → Real.tan (a i) = (1 + y i) / (1 - y i) := by
+    intros i hi
+    have h8 : a i = a i - Real.pi / 4 + Real.pi / 4 := eq_add_of_sub_eq rfl
+    rw[h8]
+    have : Real.tan (Real.pi / 4) = 1 := Real.tan_pi_div_four
+    --
+    have h10 : (∀ (k : ℤ), a i - Real.pi / 4 ≠ (2 * ↑k + 1) * Real.pi / 2) ∧
+                ∀ (l : ℤ), Real.pi / 4 ≠ (2 * ↑l + 1) * Real.pi / 2 := by
+      constructor
+      · intros k hk
+        field_simp at hk
+        sorry
+      · intros l hl
+        field_simp at hl
+        sorry
+    have h11 := Real.tan_add' h10
+    have h12 : Real.tan (a i - Real.pi / 4) + 1 =
+                 1 + Real.tan (a i - Real.pi / 4) := add_comm _ _
+
+    rw[Real.tan_pi_div_four, mul_one, h12] at h11
+    rw[h11]
 
   -- so ∏ᵢ(1 + yᵢ)/(1-yᵢ) = ∏ᵢtan(aᵢ) ≥ nⁿ⁺¹, as desired
 
   sorry
+
