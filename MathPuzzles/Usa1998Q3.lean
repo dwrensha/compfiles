@@ -153,13 +153,35 @@ theorem usa1998_q3
     --
     have h10 : (∀ (k : ℤ), a i - Real.pi / 4 ≠ (2 * ↑k + 1) * Real.pi / 2) ∧
                 ∀ (l : ℤ), Real.pi / 4 ≠ (2 * ↑l + 1) * Real.pi / 2 := by
+      have ⟨ha1, ha2⟩ := ha i hi
       constructor
       · intros k hk
         field_simp at hk
-        sorry
-      · intros l hl
-        field_simp at hl
-        sorry
+        have hkk : ∃ kk : ℝ, ↑k = kk := ⟨↑k, rfl⟩
+        have ⟨kk, hkk'⟩ := hkk
+        rw[hkk'] at hk
+        cases' lt_or_le k 0 with hk' hk'
+        · have hk2 : k ≤ -1 := Iff.mp Int.lt_add_one_iff hk'
+          have : kk ≤ -1 := by rw[← hkk']; norm_cast
+          nlinarith[Real.pi_pos]
+        · have : 0 ≤ kk := by rw[← hkk']; norm_cast
+          nlinarith[Real.pi_pos]
+      · intros k hk
+        field_simp at hk
+        have hkk : ∃ kk : ℝ, ↑k = kk := ⟨↑k, rfl⟩
+        have ⟨kk, hkk'⟩ := hkk
+        rw[hkk'] at hk
+        obtain hk' | hk' | hk' := lt_trichotomy k 0
+        · have hk2 : k ≤ -1 := Iff.mp Int.lt_add_one_iff hk'
+          have : kk ≤ -1 := by rw[← hkk']; norm_cast
+          nlinarith[Real.pi_pos]
+        · have hk0 : kk = 0 := by rw[←hkk']; norm_cast
+          rw[hk0] at hk
+          norm_num at hk
+          linarith[Real.pi_pos]
+        · have hk2 : 1 ≤ k := hk'
+          have : 1 ≤ kk := by rw[← hkk']; norm_cast
+          nlinarith[Real.pi_pos]
     have h11 := Real.tan_add' h10
     have h12 : Real.tan (a i - Real.pi / 4) + 1 =
                  1 + Real.tan (a i - Real.pi / 4) := add_comm _ _
@@ -170,4 +192,3 @@ theorem usa1998_q3
   -- so ∏ᵢ(1 + yᵢ)/(1-yᵢ) = ∏ᵢtan(aᵢ) ≥ nⁿ⁺¹, as desired
 
   sorry
-
