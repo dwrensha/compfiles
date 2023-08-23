@@ -148,8 +148,6 @@ theorem usa1998_q3
     intros i hi
     have h8 : a i = a i - Real.pi / 4 + Real.pi / 4 := eq_add_of_sub_eq rfl
     rw[h8]
-    have : Real.tan (Real.pi / 4) = 1 := Real.tan_pi_div_four
-    --
     have h10 : (∀ (k : ℤ), a i - Real.pi / 4 ≠ (2 * ↑k + 1) * Real.pi / 2) ∧
                 ∀ (l : ℤ), Real.pi / 4 ≠ (2 * ↑l + 1) * Real.pi / 2 := by
       have ⟨ha1, ha2⟩ := ha i hi
