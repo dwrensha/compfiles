@@ -29,6 +29,39 @@ lemma lemma0 : Set.Icc (-Real.pi / 4) (Real.pi / 4) ⊆
    intros a ha; exact ⟨by linarith[ha.1, Real.pi_pos],
                        by linarith[ha.2, Real.pi_pos]⟩
 
+lemma lemma1 (x : ℝ) (hx : x ∈ Set.Ioo 0 (Real.pi / 2)) :
+    Real.tan (x - Real.pi / 4) ≤ 1 := by
+  let y' x := Real.tan (x - Real.pi / 4)
+  have h4 : Real.tan (Real.pi / 4) = y' (Real.pi / 2) := by
+    dsimp
+    have h5 : Real.pi / 2 - Real.pi / 4 = Real.pi / 4 := by field_simp; ring
+    rw[h5]
+  rw[← Real.tan_pi_div_four]
+  rw[h4]
+  let y1 x := x - Real.pi / 4
+  have h5 : StrictMonoOn y1 (Set.Icc 0 (Real.pi / 2)) := by
+    intros a _ b _ hab
+    exact sub_lt_sub_right hab _
+
+  have h6 : StrictMonoOn y' (Set.Icc 0 (Real.pi / 2)) := by
+    apply StrictMonoOn.comp (g := Real.tan) (f := y1)
+         (t := (Set.Icc (-Real.pi / 4) (Real.pi / 4)))
+         (StrictMonoOn.mono Real.strictMonoOn_tan lemma0)
+         h5
+    · intro a ha
+      obtain ⟨ha1, ha2⟩ := ha
+      constructor
+      · dsimp; linarith
+      · dsimp; linarith
+
+  apply le_of_lt
+  apply h6
+  · exact ⟨le_of_lt hx.1, le_of_lt hx.2⟩
+  · constructor
+    . exact le_of_lt Real.pi_div_two_pos
+    . exact Eq.le rfl
+  · exact hx.2
+
 theorem usa1998_q3
     (n : ℕ)
     (a : ℕ → ℝ)
@@ -88,36 +121,8 @@ theorem usa1998_q3
     have hz : ∀ j ∈ (Finset.range (n + 1)).erase i, 0 ≤ 1 - y j := by
       intros j hj
       rw[Finset.mem_erase, Finset.mem_range] at hj
-      have haj := ha j hj.2
-      rw[Set.mem_Ioo] at haj
-      rw[← Real.tan_pi_div_four]
+      exact sub_nonneg.mpr (lemma1 (a j) (ha j hj.2))
 
-      let y' x := Real.tan (x - Real.pi / 4)
-      have h4 : Real.tan (Real.pi / 4) = y' (Real.pi / 2) := by
-         dsimp
-         have h5 : Real.pi / 2 - Real.pi / 4 = Real.pi / 4 := by field_simp; ring
-         rw[h5]
-      have h4' : y j = y' (a j) := rfl
-      rw[h4, h4']
-      let y1 x := x - Real.pi / 4
-      have h5 : StrictMonoOn y1 (Set.Icc 0 (Real.pi / 2)) := by
-        intros a ha b hb hab
-        exact sub_lt_sub_right hab _
-
-      have h6 : StrictMonoOn y' (Set.Icc 0 (Real.pi / 2)) := by
-        apply StrictMonoOn.comp (g := Real.tan) (f := y1)
-                (t := (Set.Icc (-Real.pi / 4) (Real.pi / 4)))
-                (StrictMonoOn.mono Real.strictMonoOn_tan lemma0)
-                h5
-        · intro a ha
-          obtain ⟨ha1, ha2⟩ := ha
-          constructor
-          · dsimp; linarith
-          · dsimp; linarith
-      have h8 : y' (a j) ≤ y' (Real.pi / 2) :=
-        le_of_lt (h6 ⟨le_of_lt haj.1, le_of_lt haj.2⟩
-                     ⟨le_of_lt Real.pi_div_two_pos, Eq.le rfl⟩ haj.2)
-      exact sub_nonneg.mpr h8
     have h5 := Real.geom_mean_le_arith_mean_weighted
               ((Finset.range (n + 1)).erase i)
               w (λ j ↦ 1 - y j)
