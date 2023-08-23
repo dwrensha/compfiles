@@ -24,6 +24,11 @@ Prove that
 namespace Usa1998Q3
 open BigOperators
 
+lemma lemma0 : Set.Icc (-Real.pi / 4) (Real.pi / 4) ⊆
+               Set.Ioo (-(Real.pi / 2)) (Real.pi/2) := by
+   intros a ha; exact ⟨by linarith[ha.1, Real.pi_pos],
+                       by linarith[ha.2, Real.pi_pos]⟩
+
 theorem usa1998_q3
     (n : ℕ)
     (a : ℕ → ℝ)
@@ -99,14 +104,10 @@ theorem usa1998_q3
         intros a ha b hb hab
         exact sub_lt_sub_right hab _
 
-      have h10 : Set.Icc (-Real.pi / 4) (Real.pi / 4) ⊆
-               Set.Ioo (-(Real.pi / 2)) (Real.pi/2) := by
-        intros a ha; exact ⟨by linarith[ha.1], by linarith[ha.2]⟩
-
       have h6 : StrictMonoOn y' (Set.Icc 0 (Real.pi / 2)) := by
         apply StrictMonoOn.comp (g := Real.tan) (f := y1)
                 (t := (Set.Icc (-Real.pi / 4) (Real.pi / 4)))
-                (StrictMonoOn.mono Real.strictMonoOn_tan h10)
+                (StrictMonoOn.mono Real.strictMonoOn_tan lemma0)
                 h5
         · intro a ha
           obtain ⟨ha1, ha2⟩ := ha
