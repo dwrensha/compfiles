@@ -63,17 +63,7 @@ lemma lemma1 (x : ℝ) (hx : x ∈ Set.Ioo 0 (Real.pi / 2)) :
   · exact hx.2
 
 lemma lemma2' (n : ℕ) : Finset.erase (Finset.range (n + 1)) n = Finset.range n :=
-by ext a
-   rw[Finset.mem_erase, Finset.mem_range, Finset.mem_range]
-   constructor
-   · intro ⟨ha1, ha2⟩
-     obtain h1 | h2 := Iff.mp Order.lt_succ_iff_eq_or_lt ha2
-     · exact (ha1 h1).elim
-     · exact h2
-   · intro ha
-     constructor
-     · exact Nat.ne_of_lt ha
-     · exact Nat.lt_add_right a n 1 ha
+by rw[←Nat.succ_eq_add_one, Finset.range_succ]; simp
 
 lemma lemma2 (f : ℕ → ℝ) :
     ∏ i in Finset.range (n + 1), ∏ j in Finset.erase (Finset.range (n + 1)) i, f j =
