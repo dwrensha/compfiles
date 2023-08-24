@@ -24,13 +24,14 @@ Prove that
 namespace Usa1998Q3
 open BigOperators
 
+
 lemma lemma0 : Set.Icc (-Real.pi / 4) (Real.pi / 4) ⊆
                Set.Ioo (-(Real.pi / 2)) (Real.pi/2) := by
    intros a ha; exact ⟨by linarith[ha.1, Real.pi_pos],
                        by linarith[ha.2, Real.pi_pos]⟩
 
 lemma lemma1 (x : ℝ) (hx : x ∈ Set.Ioo 0 (Real.pi / 2)) :
-    Real.tan (x - Real.pi / 4) ≤ 1 := by
+    Real.tan (x - Real.pi / 4) < 1 := by
   let y' x := Real.tan (x - Real.pi / 4)
   have h4 : Real.tan (Real.pi / 4) = y' (Real.pi / 2) := by
     dsimp
@@ -54,7 +55,6 @@ lemma lemma1 (x : ℝ) (hx : x ∈ Set.Ioo 0 (Real.pi / 2)) :
       · dsimp; linarith
       · dsimp; linarith
 
-  apply le_of_lt
   apply h6
   · exact ⟨le_of_lt hx.1, le_of_lt hx.2⟩
   · constructor
@@ -62,10 +62,126 @@ lemma lemma1 (x : ℝ) (hx : x ∈ Set.Ioo 0 (Real.pi / 2)) :
     . exact Eq.le rfl
   · exact hx.2
 
+lemma lemma2' (n : ℕ) : Finset.erase (Finset.range (n + 1)) n = Finset.range n :=
+by ext a
+   rw[Finset.mem_erase, Finset.mem_range, Finset.mem_range]
+   constructor
+   · intro ⟨ha1, ha2⟩
+     obtain h1 | h2 := Iff.mp Order.lt_succ_iff_eq_or_lt ha2
+     · exact (ha1 h1).elim
+     · exact h2
+   · intro ha
+     constructor
+     · exact Nat.ne_of_lt ha
+     · exact Nat.lt_add_right a n 1 ha
+
+lemma lemma2 (f : ℕ → ℝ) :
+    ∏ i in Finset.range (n + 1), ∏ j in Finset.erase (Finset.range (n + 1)) i, f j =
+    ∏ i in Finset.range (n + 1), (f i)^n := by
+  induction n with
+  | zero => simp
+  | succ n ih =>
+    have h1 : ∏ i in Finset.range (Nat.succ n + 1), f i ^ ↑(Nat.succ n) =
+            (∏ i in Finset.range (n + 1), f i ^ ↑(Nat.succ n)) * f (n + 1) ^ ↑(Nat.succ n) :=
+     by rw[Finset.prod_range_succ]
+    rw[h1]; clear h1
+    have h2 : ∏ i in Finset.range (n + 1), f i ^ ↑(Nat.succ n) =
+              ∏ i in Finset.range (n + 1), (f i ^ ↑n * f i) := by
+       congr; funext x
+       norm_cast
+       exact pow_succ' (f x) _
+    rw[h2]; clear h2
+    rw[Finset.prod_mul_distrib]
+
+    rw[Finset.prod_range_succ]
+    rw[lemma2']
+
+    have h3 :
+       (∏ x in Finset.range (n + 1),
+          ∏ j in Finset.erase (Finset.range (Nat.succ n + 1)) x, f j) =
+        ∏ x in Finset.range (n + 1),
+          ((∏ j in Finset.erase (Finset.range (n + 1)) x, f j) * f (n + 1)) := by
+      apply Finset.prod_congr rfl
+      intros x hx
+      have h7' : (n + 1) ∉ (Finset.erase (Finset.range (n + 1)) x) := by simp_all
+      have h7 : Finset.erase (Finset.range (Nat.succ n + 1)) x =
+          Finset.cons (n + 1) (Finset.erase (Finset.range (n + 1)) x) h7' := by
+        ext y
+        constructor
+        · intro hy
+          simp at hy
+          simp
+          obtain ⟨hy1, hy2⟩ := hy
+          by_contra' H
+          obtain ⟨H0, H1⟩ := H
+          have HH := H1 hy1
+          have H0' := H0.symm
+          have HH' : n + 2 ≤ y := Nat.lt_of_le_of_ne HH H0'
+          linarith
+        · intro hy
+          simp_all
+          cases' hy with hy hy
+          · rw[hy]
+            constructor
+            · exact Nat.ne_of_gt hx
+            · exact Nat.lt.base (n + 1)
+          · obtain ⟨hy1, hy2⟩ := hy
+            use hy1
+            exact Nat.lt_add_right y (Nat.succ n) 1 hy2
+      rw[h7, Finset.prod_cons]
+      ring
+    rw[h3]
+
+    have h4 :
+        ∏ x in Finset.range (n + 1),
+          ((∏ j in Finset.erase (Finset.range (n + 1)) x, f j) * f (n + 1)) =
+         (∏ x in Finset.range (n + 1),
+            ∏ j in Finset.erase (Finset.range (n + 1)) x, f j) * f (n + 1) ^ (n+1) := by
+      rw[Finset.prod_mul_distrib, Finset.prod_const, Finset.card_range]
+      norm_cast
+    rw[h4]
+
+    rw[ih]
+    have h6 : ((Nat.succ n):ℝ) = (↑n + 1) := by norm_cast
+    rw[h6]
+    ring
+
+lemma lemma3 (y : ℝ) (f : ℕ → ℝ) :
+  ∏ x in Finset.range (n + 1), (f x * y) =
+   (∏ x in Finset.range (n + 1), f x) * (∏ _x in Finset.range (n + 1), y) := by
+ induction n with
+ | zero => simp
+ | succ n ih =>
+   rw[Finset.prod_range_succ, ih]
+   have h1 :
+      ((∏ x in Finset.range (n + 1), f x) * ∏ _x in Finset.range (n + 1), y) * (f (n + 1) * y) =
+       (∏ x in Finset.range (n + 1), f x) * f (n + 1) * ((∏ _x in Finset.range (n + 1), y) * y) :=
+     by ring
+   rw [h1]
+   rw[←Finset.prod_range_succ, ←Finset.prod_range_succ]
+
+lemma lemma4 (f : ℕ → ℝ) (g : ℕ → ℝ) :
+    ∏ x in Finset.range (n + 1), (f x / g x) =
+     (∏ x in Finset.range (n + 1), f x) / (∏ x in Finset.range (n + 1), g x) := by
+ induction n with
+ | zero => simp
+ | succ n ih =>
+    rw[Finset.prod_range_succ, ih]
+    clear ih
+    have h1 : ((∏ x in Finset.range (n + 1), f x) / ∏ x in Finset.range (n + 1), g x) * (f (n + 1) / g (n + 1)) =
+       ((∏ x in Finset.range (n + 1), f x) * f (n + 1)) / ((∏ x in Finset.range (n + 1), g x) * g (n + 1)) :=
+      by ring
+    rw[h1]
+    rw[←Finset.prod_range_succ, ←Finset.prod_range_succ]
+
+lemma lemma5 {a b c : ℝ} (ha : 0 < a) (hb : 0 < b) (h : a ≤ c / b) : b ≤ c / a := by
+  have h1 : a * b ≤ c := Iff.mp (le_div_iff hb) h
+  exact Iff.mpr (le_div_iff' ha) h1
+
 theorem usa1998_q3
     (n : ℕ)
     (a : ℕ → ℝ)
-    (ha : ∀ i, i < n + 1 → a i ∈ Set.Ioo 0 (Real.pi / 2))
+    (ha : ∀ i ∈ Finset.range (n + 1), a i ∈ Set.Ioo 0 (Real.pi / 2))
     (hs : n - 1 ≤ ∑ i in Finset.range (n + 1), Real.tan (a i - (Real.pi / 4)))
     : Real.rpow n (n + 1) ≤ ∏ i in Finset.range (n + 1), Real.tan (a i) := by
 
@@ -84,21 +200,19 @@ theorem usa1998_q3
   have h1 : n - 1 ≤ ∑ i in Finset.range (n + 1), y i := hs
 
   --  1 + yᵢ ≥ ∑_{j ≠ i} (1 - yⱼ)
-  have h2 : ∀ i, i < n + 1 →
+  have h2 : ∀ i ∈ Finset.range (n + 1),
       ∑ j in (Finset.range (n + 1)).erase i, (1 - y j) ≤ 1 + y i := by
     intros i hi
-    have hi' : i ∈ Finset.range (n + 1) := Finset.mem_range.mpr hi
-    rw[Finset.sum_erase_eq_sub hi']
+    rw[Finset.sum_erase_eq_sub hi]
     simp only [Finset.sum_sub_distrib, Finset.sum_const, Finset.card_range,
                nsmul_eq_mul, Nat.cast_add, Nat.cast_one]
     linarith
 
   --  (1 + yᵢ)/n ≥ (1/n) ∑_{j ≠ i} (1 - yⱼ)
-  have h3 : ∀ i, i < n + 1 →
+  have h3 : ∀ i ∈ Finset.range (n + 1),
       (1/(n:ℝ)) * ∑ j in (Finset.range (n + 1)).erase i, (1 - y j)
           ≤ (1 + y i)/n := by
     intros i hi
-    have h2' := h2 i hi
     have hn : 0 ≤ (n : ℝ) := Nat.cast_nonneg n
     rw[div_mul_eq_mul_div, one_mul]
     exact div_le_div_of_le hn (h2 i hi)
@@ -106,22 +220,21 @@ theorem usa1998_q3
   --
   -- Then, by AM-GM,
   -- (1/n) ∑_{j ≠ i} (1 - yⱼ) ≥ ∏_{j ≠ i} (1 - yⱼ)^{1/n}
-  have h4 : ∀ i, i < n + 1 →
+  have h4 : ∀ i ∈ Finset.range (n + 1),
      ∏ j in (Finset.range (n + 1)).erase i, (1 - y j)^(1 / (n : ℝ)) ≤
      (1/(n:ℝ)) * ∑ j in (Finset.range (n + 1)).erase i, (1 - y j) := by
     intros i hi
-    have hi' : i ∈ Finset.range (n + 1) := Finset.mem_range.mpr hi
     let w : ℕ → ℝ := fun i ↦ 1 / (n:ℝ)
     have hn : (n:ℝ) ≠ 0 := Nat.cast_ne_zero.mpr h0
-    have hw' : ∑ j in (Finset.range (n + 1)).erase i, w i = 1 := by
-       simp[Finset.card_erase_of_mem hi']; field_simp
+    have hw' : ∑ _j in (Finset.range (n + 1)).erase i, w i = 1 := by
+       simp[Finset.card_erase_of_mem hi]; field_simp
     have hw : ∀ j ∈ (Finset.range (n + 1)).erase i, 0 ≤ w j := by
-      intros j hj
+      intros j _hj
       simp only [one_div, inv_nonneg, Nat.cast_nonneg]
     have hz : ∀ j ∈ (Finset.range (n + 1)).erase i, 0 ≤ 1 - y j := by
       intros j hj
-      rw[Finset.mem_erase, Finset.mem_range] at hj
-      exact sub_nonneg.mpr (lemma1 (a j) (ha j hj.2))
+      rw[Finset.mem_erase] at hj
+      exact sub_nonneg.mpr (le_of_lt (lemma1 (a j) (ha j hj.2)))
 
     have h5 := Real.geom_mean_le_arith_mean_weighted
               ((Finset.range (n + 1)).erase i)
@@ -131,7 +244,7 @@ theorem usa1998_q3
     exact h5
 
   -- (1 + yᵢ)/n ≥ ∏_{j ≠ i} (1 - yⱼ)^{1/n}
-  have h5 : ∀ i, i < n + 1 →
+  have h5 : ∀ i ∈ Finset.range (n + 1),
       ∏ j in Finset.erase (Finset.range (n + 1)) i, (1 - y j) ^ (1 / ↑n) ≤
       (1 + y i) / ↑n := fun i hi ↦ (h4 i hi).trans (h3 i hi)
 
@@ -140,12 +253,60 @@ theorem usa1998_q3
   -- ∏ᵢ(1 + yᵢ)/(1 - yᵢ) ≥ ∏ᵢn
   -- ∏ᵢ(1 + yᵢ)/(1-yᵢ) ≥ nⁿ⁺¹
   have h6 : (n:ℝ) ^ ((n:ℝ) + 1) ≤ ∏ j in Finset.range (n + 1), (1 + y j) / (1 - y j) := by
-    sorry
+    have h20 : ∀ i ∈ Finset.range (n + 1),
+        0 ≤ ∏ j in Finset.erase (Finset.range (n + 1)) i, (1 - y j) ^ (1 / ↑n) := by
+      intros i _hi
+      apply Finset.prod_nonneg
+      intros ii hii
+      rw[Finset.mem_erase] at hii
+      have := sub_nonneg.mpr (le_of_lt (lemma1 (a ii) (ha ii hii.2)))
+      have := Real.rpow_nonneg_of_nonneg this (1 / ↑n)
+      exact this -- if I try to collapse this to the previous line, i get timeouts.
+    have h21 := Finset.prod_le_prod h20 h5
+    have h23 : ∏ i in Finset.range (n + 1),
+                ∏ j in Finset.erase (Finset.range (n + 1)) i, (1 - y j) ^ (1 / ↑n)
+                = ∏ i in Finset.range (n + 1), (1 - y i) := by
+      rw[lemma2]
+      apply Finset.prod_congr rfl
+      intros x hx
+      have h30 : 0 ≤ 1 - y x := sub_nonneg.mpr (le_of_lt (lemma1 (a x) (ha x hx)))
+      rw[←Real.rpow_mul h30]
+      have h31 : (1:ℝ) / n * n = n / n := by field_simp
+      rw[h31]
+      have h32' : (n:ℝ) ≠ 0 := by norm_cast
+      have h32 : (n:ℝ) / n = 1 := by field_simp
+      rw[h32, Real.rpow_one]
+    rw[h23] at h21; clear h23
+    have h24 : ∏ i in Finset.range (n + 1), (1 + y i) / ↑n =
+                 (∏ i in Finset.range (n + 1), (1 + y i)) / (↑n)^(↑n + 1) := by
+      have h41 : ∏ i in Finset.range (n + 1), (1 + y i) / ↑n =
+                   ∏ i in Finset.range (n + 1), (1 + y i) * (1 / ↑n) := by
+        apply Finset.prod_congr rfl
+        intros x _hx
+        field_simp
+      rw[h41]; clear h41
+      rw[lemma3]
+      rw[Finset.prod_const, Finset.card_range]
+      have h43 : HPow.hPow ((1:ℝ) / (n:ℝ)) (n + 1) = (1:ℝ) / (↑n ^ (n + 1)) := by
+        rw[div_pow, one_pow]
+        norm_cast
+      rw[h43]; clear h43
+      field_simp
+    rw[h24] at h21; clear h24
+    rw[lemma4]
+    have h25 : 0 < (n:ℝ) ^ (↑n + 1) := by
+      norm_cast
+      exact Nat.pos_pow_of_pos (n + 1) (Nat.pos_of_ne_zero h0)
+    have h26 : 0 < ∏ x in Finset.range (n + 1), (1 - y x) := by
+      apply Finset.prod_pos
+      intros x hx
+      exact sub_pos.mpr (lemma1 (a x) (ha x hx))
+    exact lemma5 h26 h25 h21
 
   -- by the addition formula for tangents,
   -- tan(aᵢ) = tan((aᵢ - π/4) + π/4) = (1 + tan(aᵢ - π/4))/(1 - tan(aᵢ-π/4))
   --     ... = (1 + yᵢ)/(1 - yᵢ)
-  have h7 : ∀ i, i < n + 1 → Real.tan (a i) = (1 + y i) / (1 - y i) := by
+  have h7 : ∀ i ∈ Finset.range (n + 1), Real.tan (a i) = (1 + y i) / (1 - y i) := by
     intros i hi
     have h8 : a i = a i - Real.pi / 4 + Real.pi / 4 := eq_add_of_sub_eq rfl
     rw[h8]
@@ -189,11 +350,8 @@ theorem usa1998_q3
 
   -- so ∏ᵢ(1 + yᵢ)/(1-yᵢ) = ∏ᵢtan(aᵢ) ≥ nⁿ⁺¹, as desired
   have h8 : ∏ i in Finset.range (n + 1), Real.tan (a i) =
-              ∏ j in Finset.range (n + 1), (1 + y j) / (1 - y j) := by
-     apply Finset.prod_congr rfl
-     · intros x hx
-       rw[Finset.mem_range] at hx
-       exact h7 x hx
+              ∏ j in Finset.range (n + 1), (1 + y j) / (1 - y j) :=
+     Finset.prod_congr rfl (fun x hx ↦ h7 x hx)
 
   rw[h8]
   exact h6
