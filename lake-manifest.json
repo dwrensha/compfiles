@@ -20,10 +20,10 @@
   {"git":
    {"url": "https://github.com/leanprover-community/mathlib4",
     "subDir?": null,
-    "rev": "425f4caef91e0d88691dc858895c4562ad53bbda",
+    "rev": "1239d77cc5fdd1ecb8fc2f8a70ee5f0cfed53aff",
     "opts": {},
     "name": "mathlib",
-    "inputRev?": "425f4caef91e0d88691dc858895c4562ad53bbda",
+    "inputRev?": "1239d77cc5fdd1ecb8fc2f8a70ee5f0cfed53aff",
     "inherited": false}},
   {"git":
    {"url": "https://github.com/gebner/quote4",
@@ -44,7 +44,7 @@
   {"git":
    {"url": "https://github.com/leanprover/std4",
     "subDir?": null,
-    "rev": "61a6507eff4dd71c01e0c7e194bc569d4719a6d3",
+    "rev": "b5f7bd40d2162fe148e585543f284a5d8cc0ef26",
     "opts": {},
     "name": "std",
     "inputRev?": "main",
