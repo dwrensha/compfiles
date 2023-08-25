@@ -134,33 +134,6 @@ lemma lemma2 (f : ℕ → ℝ) :
     rw[h6]
     ring
 
-lemma lemma3 (y : ℝ) (f : ℕ → ℝ) :
-  ∏ x in Finset.range (n + 1), (f x * y) =
-   (∏ x in Finset.range (n + 1), f x) * (∏ _x in Finset.range (n + 1), y) := by
- induction n with
- | zero => simp
- | succ n ih =>
-   rw[Finset.prod_range_succ, ih]
-   have h1 :
-      ((∏ x in Finset.range (n + 1), f x) * ∏ _x in Finset.range (n + 1), y) * (f (n + 1) * y) =
-       (∏ x in Finset.range (n + 1), f x) * f (n + 1) * ((∏ _x in Finset.range (n + 1), y) * y) :=
-     by ring
-   rw [h1]
-   rw[←Finset.prod_range_succ, ←Finset.prod_range_succ]
-
-lemma lemma4 (f : ℕ → ℝ) (g : ℕ → ℝ) :
-    ∏ x in Finset.range (n + 1), (f x / g x) =
-     (∏ x in Finset.range (n + 1), f x) / (∏ x in Finset.range (n + 1), g x) := by
- induction n with
- | zero => simp
- | succ n ih =>
-    rw[Finset.prod_range_succ, ih]
-    clear ih
-    have h1 : ((∏ x in Finset.range (n + 1), f x) / ∏ x in Finset.range (n + 1), g x) * (f (n + 1) / g (n + 1)) =
-       ((∏ x in Finset.range (n + 1), f x) * f (n + 1)) / ((∏ x in Finset.range (n + 1), g x) * g (n + 1)) :=
-      by ring
-    rw[h1, ←Finset.prod_range_succ, ←Finset.prod_range_succ]
-
 theorem usa1998_q3
     (n : ℕ)
     (a : ℕ → ℝ)
@@ -268,15 +241,14 @@ theorem usa1998_q3
         intros x _hx
         field_simp
       rw[h41]; clear h41
-      rw[lemma3]
-      rw[Finset.prod_const, Finset.card_range]
+      rw[Finset.prod_mul_distrib, Finset.prod_const, Finset.card_range]
       have h43 : HPow.hPow ((1:ℝ) / (n:ℝ)) (n + 1) = (1:ℝ) / (↑n ^ (n + 1)) := by
         rw[div_pow, one_pow]
         norm_cast
       rw[h43]; clear h43
       field_simp
     rw[h24] at h21; clear h24
-    rw[lemma4]
+    rw[Finset.prod_div_distrib]
     have h25 : 0 < (n:ℝ) ^ (↑n + 1) := by
       norm_cast
       exact Nat.pos_pow_of_pos (n + 1) (Nat.pos_of_ne_zero h0)
