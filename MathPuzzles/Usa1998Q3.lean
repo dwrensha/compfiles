@@ -104,9 +104,7 @@ lemma lemma2 (f : ℕ → ℝ) :
           obtain ⟨hy1, hy2⟩ := hy
           by_contra' H
           obtain ⟨H0, H1⟩ := H
-          have HH := H1 hy1
-          have H0' := H0.symm
-          have HH' : n + 2 ≤ y := Nat.lt_of_le_of_ne HH H0'
+          have HH' : n + 2 ≤ y := Nat.lt_of_le_of_ne (H1 hy1) H0.symm
           linarith
         · intro hy
           rw[Finset.mem_insert, Finset.mem_erase, Finset.mem_range] at hy
@@ -131,9 +129,7 @@ lemma lemma2 (f : ℕ → ℝ) :
             ∏ j in Finset.erase (Finset.range (n + 1)) x, f j) * f (n + 1) ^ (n+1) := by
       rw[Finset.prod_mul_distrib, Finset.prod_const, Finset.card_range]
       norm_cast
-    rw[h4]
-
-    rw[ih]
+    rw[h4, ih]
     have h6 : ((Nat.succ n):ℝ) = (↑n + 1) := by norm_cast
     rw[h6]
     ring
@@ -163,12 +159,7 @@ lemma lemma4 (f : ℕ → ℝ) (g : ℕ → ℝ) :
     have h1 : ((∏ x in Finset.range (n + 1), f x) / ∏ x in Finset.range (n + 1), g x) * (f (n + 1) / g (n + 1)) =
        ((∏ x in Finset.range (n + 1), f x) * f (n + 1)) / ((∏ x in Finset.range (n + 1), g x) * g (n + 1)) :=
       by ring
-    rw[h1]
-    rw[←Finset.prod_range_succ, ←Finset.prod_range_succ]
-
-lemma lemma5 {a b c : ℝ} (ha : 0 < a) (hb : 0 < b) (h : a ≤ c / b) : b ≤ c / a := by
-  have h1 : a * b ≤ c := Iff.mp (le_div_iff hb) h
-  exact Iff.mpr (le_div_iff' ha) h1
+    rw[h1, ←Finset.prod_range_succ, ←Finset.prod_range_succ]
 
 theorem usa1998_q3
     (n : ℕ)
@@ -293,7 +284,8 @@ theorem usa1998_q3
       apply Finset.prod_pos
       intros x hx
       exact sub_pos.mpr (lemma1 (a x) (ha x hx))
-    exact lemma5 h26 h25 h21
+    rw[le_div_iff h26, ←le_div_iff' h25]
+    exact h21
 
   -- by the addition formula for tangents,
   -- tan(aᵢ) = tan((aᵢ - π/4) + π/4) = (1 + tan(aᵢ - π/4))/(1 - tan(aᵢ-π/4))
