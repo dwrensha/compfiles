@@ -95,12 +95,12 @@ lemma lemma2 (f : ℕ → ℝ) :
       intros x hx
       have h7' : (n + 1) ∉ (Finset.erase (Finset.range (n + 1)) x) := by simp_all
       have h7 : Finset.erase (Finset.range (Nat.succ n + 1)) x =
-          Finset.cons (n + 1) (Finset.erase (Finset.range (n + 1)) x) h7' := by
+          insert (n + 1) (Finset.erase (Finset.range (n + 1)) x)  := by
         ext y
         constructor
         · intro hy
-          simp at hy
-          simp
+          rw[Finset.mem_erase, Finset.mem_range] at hy
+          rw[Finset.mem_insert, Finset.mem_erase, Finset.mem_range]
           obtain ⟨hy1, hy2⟩ := hy
           by_contra' H
           obtain ⟨H0, H1⟩ := H
@@ -109,7 +109,9 @@ lemma lemma2 (f : ℕ → ℝ) :
           have HH' : n + 2 ≤ y := Nat.lt_of_le_of_ne HH H0'
           linarith
         · intro hy
-          simp_all
+          rw[Finset.mem_insert, Finset.mem_erase, Finset.mem_range] at hy
+          rw[Finset.mem_range] at hx
+          rw[Finset.mem_erase, Finset.mem_range]
           cases' hy with hy hy
           · rw[hy]
             constructor
@@ -118,7 +120,7 @@ lemma lemma2 (f : ℕ → ℝ) :
           · obtain ⟨hy1, hy2⟩ := hy
             use hy1
             exact Nat.lt_add_right y (Nat.succ n) 1 hy2
-      rw[h7, Finset.prod_cons]
+      rw[h7, Finset.prod_insert h7']
       ring
     rw[h3]
 
