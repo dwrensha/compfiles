@@ -46,10 +46,6 @@ theorem iran1998_q9
   --
   -- The desired result follows.
 
-  have hxz : x ≠ 0 := by positivity
-  have hyz : y ≠ 0 := by positivity
-  have hzz : z ≠ 0 := by positivity
-
   have hx0 : 0 ≤ x := by positivity
   have hy0 : 0 ≤ y := by positivity
   have hz0 : 0 ≤ z := by positivity
