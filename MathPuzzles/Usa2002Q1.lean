@@ -31,9 +31,32 @@ inductive Color : Type where
 | red : Color
 | blue : Color
 
-theorem usa2002q1 (α : Type) [DecidableEq α] [Fintype α] (hs : Fintype.card α = 2002)
+theorem usa2002q1
+    {α : Type} [DecidableEq α] [Fintype α] (hs : Fintype.card α = 2002)
     (N : ℕ) (hN : N ≤ 2 ^ 2002) :
     ∃ f : Finset α → Color,
       ((∀ s1 s2 : Finset α, f s1 = f s2 → f (s1 ∪ s2) = f s1) ∧
-       ( @Fintype.card { a : Finset α // f a = Color.red} (Fintype.ofFinite _) = N)) := by
+       (@Fintype.card
+           { a : Finset α // f a = Color.red } (Fintype.ofFinite _) = N)) := by
+
+  -- Informal solution from https://artofproblemsolving.com.
+  -- Let a set colored in such a manner be called *properly colored*.
+  -- We prove that any set with n elements can be properly colored for any
+  -- 0 ≤ N ≤ 2ⁿ. We proceed by induction.
+
+  -- The base case, $n = 0$, is trivial.
+
+  -- Suppose that our claim holds for n = k. Let s ∈ S, |S| = k + 1, and let
+  -- S' denote the set of all elements of S other than s.
+
+  -- If N ≤ 2ᵏ, then we may color all subsets of S which contain s blue,
+  -- and we may properly color S'. This is a proper coloring because the union
+  -- of any two red sets must be a subset of S', which is properly colored, and
+  -- any the union of any two blue sets either must be in S', which is properly
+  -- colored, or must contain $s$ and therefore be blue.
+
+  -- If N > 2ᵏ, then we color all subsets containing s red, and we color
+  -- N - 2ᵏ elements of S' red in such a way that S' is colored properly.
+  -- Then S is properly colored, using similar reasoning as before.
+  -- Thus the induction is complete.
   sorry
