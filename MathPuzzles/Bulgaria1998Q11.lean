@@ -4,6 +4,7 @@ import Mathlib.Data.Nat.Parity
 import Mathlib.Algebra.GroupPower.Basic
 import Mathlib.Algebra.Parity
 
+import Mathlib.Tactic.ApplyFun
 import Mathlib.Tactic.LibrarySearch
 import Mathlib.Tactic.ModCases
 import Mathlib.Tactic.Ring
@@ -35,7 +36,6 @@ lemma foo1 (m n : ℕ) (ho : Odd m) : (m + 3) ^ n.succ % 2 = 0 := by
   rw[hw, Nat.pow_succ, show 2 * w + 1 + 3 = 2 * (w + 2) by ring, Nat.mul_mod,
      Nat.mul_mod_right, mul_zero, Nat.zero_mod]
 
-set_option maxHeartbeats 0
 theorem bulgaria1998_q11
     (m n A : ℕ)
     (h : 3 * m * A = (m + 3)^n + 1) : Odd A := by
@@ -43,8 +43,8 @@ theorem bulgaria1998_q11
   cases n with
   | zero => exfalso
             simp only [Nat.zero_eq, pow_zero] at h
-            have h1 : (3 * m * A) % 3 = (1 + 1) % 3 := congrFun (congrArg HMod.hMod h) 3
-            simp[Nat.mul_mod] at h1
+            apply_fun (· % 3) at h
+            simp[Nat.mul_mod] at h
   | succ n =>
 
   -- We prove by contradiction.
@@ -57,9 +57,8 @@ theorem bulgaria1998_q11
     rw [hk, show k + k = 2 * k by ring] at h
     by_contra hmo
     rw[←Nat.odd_iff_not_even] at hmo
-    have h1 : (3 * m * (2 * k)) % 2 = ((m + 3) ^ n.succ + 1) % 2 :=
-      congrFun (congrArg HMod.hMod h) 2
-    simp[Nat.mul_mod, Nat.add_mod, foo1 m n hmo] at h1
+    apply_fun (· % 2) at h
+    simp[Nat.mul_mod, Nat.add_mod, foo1 m n hmo] at h
 
   -- Since A is an integer, 0 ≡ (m + 3)ⁿ + 1 ≡ mⁿ + 1 (mod 3)
   have h1 : 0 ≡ m ^ n.succ + 1 [MOD 3] := by

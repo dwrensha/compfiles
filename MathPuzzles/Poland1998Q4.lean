@@ -102,9 +102,8 @@ lemma lemma6' (n : ℕ) : (4 * (n - 1) + 1 + 4) / 2 = (2 * (n - 1) + 1 + 1) := b
 
 lemma lemma7 (n : ℕ) : (4 * (n - 1) + 1 + 5) / 2 = (2 * (n - 1) + 1 + 2) := by
   have h1 : (4 * (n - 1) + 1 + 5) = 2 * (2 * (n - 1) + 1 + 2) := by ring
-  have h2 : (4 * (n - 1) + 1 + 5) / 2 = (2 * (2 * (n - 1) + 1 + 2)) / 2 :=
-    congrFun (congrArg HDiv.hDiv h1) 2
-  rwa[Nat.mul_div_right _ (show 0 < 2 by norm_num)] at h2
+  apply_fun (· / 2) at h1
+  rwa[Nat.mul_div_right _ (show 0 < 2 by norm_num)] at h1
 
 lemma lemma7' (n : ℕ) : (4 * (n - 1) + 1 + 6) / 2 = (2 * (n - 1) + 1 + 2) := by
   have h1 : (4 * (n - 1) + 1 + 6) = 2 * (2 * (n - 1) + 1 + 2) + 1 := by ring

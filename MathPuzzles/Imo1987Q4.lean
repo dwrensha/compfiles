@@ -102,8 +102,8 @@ theorem imo1987_q4_generalized (m : ℕ) :
   rw[Set.toFinset_card, Set.toFinset_card] at h2
   rw[Set.card_image_of_injective A f_injective] at h2
   ring_nf at h2
-  have h4 := congrFun (congrArg HMod.hMod (f_injective (congrArg f h2))) 2
-  norm_num at h4
+  apply_fun (· % 2) at h2
+  norm_num at h2
 
 theorem imo1987_q4 : (¬∃ f : ℕ → ℕ, ∀ n, f (f n) = n + 1987) := by
   rw[show 1987 = (2 * 993 + 1) by norm_num]
