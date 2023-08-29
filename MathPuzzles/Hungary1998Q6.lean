@@ -109,13 +109,11 @@ theorem hungary1998_q6 (x y : ℤ) (z : ℕ) (hz : 1 < z) :
     3 * (11 * (x ^ 2 + 100 * x + 3316) + 7) + 1 := by ring
   rw[h14,h16] at h12
 
-  have h18 : (3 * (k * k * (3 * k) ^ z)) % 3 =
-    (3 * (11 * (x ^ 2 + 100 * x + 3316) + 7) + 1) % 3 :=
-    congr_fun (congr_arg HMod.hMod h12) 3
+  apply_fun (· % 3) at h12
 
   have h19 : (3 * (11 * (x ^ 2 + 100 * x + 3316) + 7) + 1) % 3 =
      (((3 * (11 * (x ^ 2 + 100 * x + 3316) + 7))% 3) + (1%3)) % 3 :=
    Int.add_emod _ _ _
 
-  rw[h19] at h18
-  norm_num at h18
+  rw[h19] at h12
+  norm_num at h12
