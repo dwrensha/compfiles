@@ -12,4 +12,4 @@ lean_exe buildWebpage where
   root := `scripts.buildWebpage
   supportInterpreter := true
 
-require mathlib from git "https://github.com/leanprover-community/mathlib4" @ "81b27a4280624d4e3545a858c6ccfeb38f508b66"
+require mathlib from git "https://github.com/leanprover-community/mathlib4" @ "0469f845e132ccd0e56c40aafd34bd9084c104bb"
