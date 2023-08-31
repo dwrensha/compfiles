@@ -45,7 +45,7 @@ lemma usa2002q1_generalized
   -- 0 ≤ N ≤ 2ⁿ. We proceed by induction.
 
   revert N α
-  induction' n
+  induction' n with n ih
   · -- The base case, n = 0, is trivial.
     intros α hde hft hs N hN
     rw[Nat.pow_zero] at hN
@@ -56,6 +56,7 @@ lemma usa2002q1_generalized
       simp [Fintype.card_subtype, Finset.card_univ, hs]
   · -- Suppose that our claim holds for n = k. Let s ∈ S, |S| = k + 1, and let
     -- S' denote the set of all elements of S other than s.
+    intros α hde hft hs N hN
 
     sorry
     -- If N ≤ 2ᵏ, then we may color blue all subsets of S which contain s,
