@@ -31,14 +31,14 @@ namespace Usa2002Q1
 inductive Color : Type where
 | red : Color
 | blue : Color
+deriving DecidableEq
 
 lemma usa2002q1_generalized
     {α : Type} [DecidableEq α] [Fintype α] (n : ℕ) (hs : Fintype.card α = n)
     (N : ℕ) (hN : N ≤ 2 ^ n) :
     ∃ f : Finset α → Color,
       ((∀ s1 s2 : Finset α, f s1 = f s2 → f (s1 ∪ s2) = f s1) ∧
-       (@Fintype.card
-           { a : Finset α // f a = Color.red } (Fintype.ofFinite _) = N)) := by
+       (Fintype.card { a : Finset α // f a = Color.red } = N)) := by
   -- Informal solution from https://artofproblemsolving.com.
   -- Let a set colored in such a manner be called *properly colored*.
   -- We prove that any set with n elements can be properly colored for any
@@ -55,15 +55,16 @@ lemma usa2002q1_generalized
       have h1 : ∀ a : Finset α, ¬ Color.blue = Color.red := λ s ↦ by
          intro; injections
       have h2 := Subtype.isEmpty_of_false h1
-      exact @Fintype.card_eq_zero _ (Fintype.ofFinite _) h2
+      exact Fintype.card_eq_zero
     · use λ s ↦ Color.red
       simp only [forall_true_left, forall_const, true_and]
       let p := λ a : Finset α ↦ Color.red = Color.red
       have h1 : ∀ a : Finset α, p a := λ s ↦ rfl
       have h3 : Fintype.card (Finset α) = 1 := by simp[hs]
-      classical
-      have := Fintype.card_subtype (λ a : Finset α ↦ Color.red = Color.red)
-      sorry
+      convert_to Fintype.card Set.univ = 1
+      simp only [Fintype.card_ofFinset, Finset.mem_univ, forall_true_left, forall_const,
+                 Finset.filter_true_of_mem]
+      exact h3
   · -- Suppose that our claim holds for n = k. Let s ∈ S, |S| = k + 1, and let
     -- S' denote the set of all elements of S other than s.
 
