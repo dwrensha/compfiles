@@ -85,6 +85,6 @@ theorem usa2002q1
     (N : ℕ) (hN : N ≤ 2 ^ 2002) :
     ∃ f : Finset α → Color,
       ((∀ s1 s2 : Finset α, f s1 = f s2 → f (s1 ∪ s2) = f s1) ∧
-       (@Fintype.card
-           { a : Finset α // f a = Color.red } (Fintype.ofFinite _) = N)) := by
+       (Fintype.card
+           { a : Finset α // f a = Color.red } = N)) := by
   exact usa2002q1_generalized 2002 hs N hN
