@@ -51,20 +51,9 @@ lemma usa2002q1_generalized
     rw[Nat.pow_zero] at hN
     interval_cases N
     · use λ s ↦ Color.blue
-      simp only [forall_true_left, forall_const, true_and]
-      have h1 : ∀ a : Finset α, ¬ Color.blue = Color.red := λ s ↦ by
-         intro; injections
-      have h2 := Subtype.isEmpty_of_false h1
-      exact Fintype.card_eq_zero
+      simp only [forall_true_left, forall_const, true_and, Fintype.card_eq_zero]
     · use λ s ↦ Color.red
-      simp only [forall_true_left, forall_const, true_and]
-      let p := λ a : Finset α ↦ Color.red = Color.red
-      have h1 : ∀ a : Finset α, p a := λ s ↦ rfl
-      have h3 : Fintype.card (Finset α) = 1 := by simp[hs]
-      convert_to Fintype.card Set.univ = 1
-      simp only [Fintype.card_ofFinset, Finset.mem_univ, forall_true_left, forall_const,
-                 Finset.filter_true_of_mem]
-      exact h3
+      simp [Fintype.card_subtype, Finset.card_univ, hs]
   · -- Suppose that our claim holds for n = k. Let s ∈ S, |S| = k + 1, and let
     -- S' denote the set of all elements of S other than s.
 
