@@ -45,7 +45,7 @@ lemma usa2002q1_generalized
   -- 0 ≤ N ≤ 2ⁿ. We proceed by induction.
 
   revert N α
-  induction' n with n ih
+  induction' n with k ih
   · -- The base case, n = 0, is trivial.
     intros α hde hft hs N hN
     rw[Nat.pow_zero] at hN
@@ -58,17 +58,18 @@ lemma usa2002q1_generalized
     -- S' denote the set of all elements of S other than s.
     intros α hde hft hs N hN
 
-    sorry
-    -- If N ≤ 2ᵏ, then we may color blue all subsets of S which contain s,
-    -- and we may properly color S'. This is a proper coloring because the union
-    -- of any two red sets must be a subset of S', which is properly colored, and
-    -- any the union of any two blue sets either must be in S', which is properly
-    -- colored, or must contain s and therefore be blue.
-
-    -- If N > 2ᵏ, then we color all subsets containing s red, and we color
-    -- N - 2ᵏ elements of S' red in such a way that S' is colored properly.
-    -- Then S is properly colored, using similar reasoning as before.
-    -- Thus the induction is complete.
+    obtain hl | hg := le_or_gt N (2 ^ k)
+    · -- If N ≤ 2ᵏ, then we may color blue all subsets of S which contain s,
+      -- and we may properly color S'. This is a proper coloring because the union
+      -- of any two red sets must be a subset of S', which is properly colored, and
+      -- any the union of any two blue sets either must be in S', which is properly
+      -- colored, or must contain s and therefore be blue.
+      sorry
+    . -- If N > 2ᵏ, then we color all subsets containing s red, and we color
+      -- N - 2ᵏ elements of S' red in such a way that S' is colored properly.
+      -- Then S is properly colored, using similar reasoning as before.
+      -- Thus the induction is complete.
+      sorry
 
 theorem usa2002q1
     {α : Type} [DecidableEq α] [Fintype α] (hs : Fintype.card α = 2002)
