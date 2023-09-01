@@ -56,7 +56,9 @@ lemma usa2002q1_generalized
       simp [Fintype.card_subtype, Finset.card_univ, hs]
   · -- Suppose that our claim holds for n = k. Let s ∈ S, |S| = k + 1, and let
     -- S' denote the set of all elements of S other than s.
-    intros α hde hft hs N hN
+    intros S hde hft hs N hN
+    have s : S := Nonempty.some (Fintype.card_pos_iff.mp (by rw[hs]; exact Nat.succ_pos k))
+    let S' := {a : S // a ≠ s}
 
     obtain hl | hg := le_or_gt N (2 ^ k)
     · -- If N ≤ 2ᵏ, then we may color blue all subsets of S which contain s,
@@ -64,7 +66,17 @@ lemma usa2002q1_generalized
       -- of any two red sets must be a subset of S', which is properly colored, and
       -- any the union of any two blue sets either must be in S', which is properly
       -- colored, or must contain s and therefore be blue.
-      sorry
+      have hs' : Fintype.card S' = k := by simp[Fintype.card_subtype_compl, hs]
+      obtain ⟨f', hf1', hf2'⟩ := ih hs' N hl
+      let f (x: Finset S) : Color :=
+        if h: s ∈ x
+        then Color.blue
+        else f' (Finset.subtype _ x)
+      use f
+      constructor
+      · intros s1 s2 hs12
+        sorry
+      · sorry
     . -- If N > 2ᵏ, then we color all subsets containing s red, and we color
       -- N - 2ᵏ elements of S' red in such a way that S' is colored properly.
       -- Then S is properly colored, using similar reasoning as before.
