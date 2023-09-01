@@ -123,7 +123,7 @@ theorem imo1964_q4
       2 < s.card ∧
         ∀ p1 ∈ s, ∀ p2 ∈ s, p1 ≠ p2 → discusses p1 p2 = t := by
   -- Choose a person p1.
-  have p1 : Person := (truncOfCardPos (by linarith)).out
+  have p1 : Person := Nonempty.some (Fintype.card_pos_iff.mp (by linarith))
   let Person' := {p2 // p2 ≠ p1}
 
   -- By the pigeonhole principle, there must be some topic t1 such
@@ -184,7 +184,7 @@ theorem imo1964_q4
     have h3 : Fintype Topic' := Fintype.ofFinite Topic'
     have h4 : Fintype.card Topic' = 2 := by
       simp[Fintype.card_subtype_compl, card_topic]
-    have t0 : Topic' := (truncOfCardPos (by linarith)).out
+    have t0 : Topic' := Nonempty.some (Fintype.card_pos_iff.mp (by rw[h4]; norm_num))
 
     let discusses' : α → α → Topic' :=
       fun (p2 p3 : α) ↦
