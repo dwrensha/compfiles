@@ -36,7 +36,7 @@ theorem lemma1
       2 < s.card ∧
         ∀ p1 ∈ s, ∀ p2 ∈ s, p1 ≠ p2 → discusses p1 p2 = t := by
   -- Choose a person p2.
-  have p2 : Person := (truncOfCardPos (by linarith)).out
+  have p2 : Person := Nonempty.some (Fintype.card_pos_iff.mp (by linarith))
   let Person' := {p3 // p3 ≠ p2}
   have hfα : Fintype Person' := Fintype.ofFinite Person'
   have hfcα : 4 < Fintype.card Person' := by
