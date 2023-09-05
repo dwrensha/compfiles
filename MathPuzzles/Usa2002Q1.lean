@@ -73,9 +73,26 @@ lemma usa2002q1_generalized
         then Color.blue
         else f' (Finset.subtype _ x)
       use f
+      have h2 : ∀ a : Finset S, (f a = Color.red ↔ s ∉ a ∧ f' (Finset.subtype _ a) = Color.red) := by
+        intros a
+        constructor
+        · intro ha
+          have haa : s ∉ a := by
+            intro hns
+            simp [hns] at ha
+          constructor
+          · exact haa
+          · simp [haa] at ha
+            exact ha
+        · intro hsa
+          simp[hsa]
       constructor
       · intros s1 s2 hs12
+        have h3 := h2 s1
+        obtain ⟨h4, h5⟩ := h3
         sorry
+
+
       · sorry
     . -- If N > 2ᵏ, then we color all subsets containing s red, and we color
       -- N - 2ᵏ elements of S' red in such a way that S' is colored properly.
