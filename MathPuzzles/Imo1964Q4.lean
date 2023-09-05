@@ -26,8 +26,8 @@ namespace Imo1964Q4
 -/
 theorem lemma1
     (Person Topic : Type)
-    [Fintype Person]
-    [Fintype Topic]
+    [Fintype Person] [DecidableEq Person]
+    [Fintype Topic] [DecidableEq Topic]
     (card_person : 5 < Fintype.card Person)
     (card_topic : Fintype.card Topic = 2)
     (discusses : Person → Person → Topic)
@@ -38,13 +38,10 @@ theorem lemma1
   -- Choose a person p2.
   have p2 : Person := Nonempty.some (Fintype.card_pos_iff.mp (by linarith))
   let Person' := {p3 // p3 ≠ p2}
-  have hfα : Fintype Person' := Fintype.ofFinite Person'
   have hfcα : 4 < Fintype.card Person' := by
     rw[Fintype.card_subtype_compl, Fintype.card_ofSubsingleton]
     exact lt_tsub_of_add_lt_left card_person
   have h1 : Fintype.card Topic * 2 < Fintype.card Person' := by linarith
-
-  have := Classical.decEq Topic
 
   -- By the pigeonhole principle, there must be some topic t2 such that the
   -- size of the set {p3 // p3 ≠ p2 ∧ discusses p2 p3 = t2} is at least 3.
@@ -57,7 +54,6 @@ theorem lemma1
   -- If any pair of people p4 p5 in α discusses topic t2, then we are done.
   -- So the people in α must all discuss only the remaining one topic t3.
   let Topic' := {t3 // t3 ≠ t2}
-  have h3 : Fintype Topic' := Fintype.ofFinite Topic'
   have h4 : Fintype.card Topic' = 1 := by
     simp[Fintype.card_subtype_compl, card_topic]
 
@@ -113,8 +109,8 @@ theorem lemma1
 
 theorem imo1964_q4
     (Person Topic : Type)
-    [Fintype Person]
-    [Fintype Topic]
+    [Fintype Person] [DecidableEq Person]
+    [Fintype Topic] [DecidableEq Topic]
     (card_person : Fintype.card Person = 17)
     (card_topic : Fintype.card Topic = 3)
     (discusses : Person → Person → Topic)
@@ -130,13 +126,10 @@ theorem imo1964_q4
   -- that the size of the set {p2 // p2 ≠ p1 ∧ discusses p1 p2 = t1}
   -- is at least 6.
 
-  have hfα : Fintype Person' := Fintype.ofFinite Person'
   have hfcα : Fintype.card Person' = 16 := by
       simp[Fintype.card_subtype_compl, card_person]
   have h1 : Fintype.card Topic * 5 < Fintype.card Person' := by
       rw[hfcα, card_topic]; norm_num
-
-  have := Classical.decEq Topic; have := Classical.decEq Person
 
   have h2 := Fintype.exists_lt_card_fiber_of_mul_lt_card
               (fun (p2: Person') ↦ discusses p1 p2.val) h1
