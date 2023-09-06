@@ -23,38 +23,11 @@ theorem Nat.digits_add'
     (b : ℕ) (hb : 1 < b) (x y : ℕ) (hxb : x < b) (hx0 : x ≠ 0) :
     Nat.digits b (x * b ^ (Nat.digits b y).length + y) =
       Nat.digits b y ++ [x] := by
-  have hd : ∃ ds, ds = Nat.digits b y := exists_eq
-  obtain ⟨ds, hd⟩ := hd
-  revert x y
-  induction ds with
-  | nil =>
-    intros x y hx1 hx2 hy
-    simp[Nat.digits_eq_nil_iff_eq_zero.mp hy.symm, Nat.digits_of_lt b x hx2 hx1]
-  | cons d ds ih =>
-    intros x y hx1 hx2 hd
-    rw[←hd, List.length_cons, Nat.pow_succ, List.cons_append]
-    have hyp : 0 < y := by
-       by_contra H
-       simp[Nat.eq_zero_of_nonpos y H] at hd
-    have h3 := Nat.digits_def' hb hyp
-    rw[h3] at hd
-    have h4 : d = y % b := by aesop
-    have h5 : ds = Nat.digits b (y/b) := by aesop
-    have h2 := ih x (y/b) hx1 hx2 h5
-    rw[←h5] at h2
-    have h6 : 0 < x * (b ^ List.length ds * b) + y := by positivity
-    rw[Nat.digits_def' hb h6, ←Nat.mul_assoc]
-    congr
-    · rw[Nat.add_mod, Nat.mul_mod_left, zero_add, Nat.mod_mod]
-      exact h4.symm
-    · rw[← h2]
-      congr
-      have hbz : 0 < b := Nat.zero_lt_one.trans hb
-      rw[Nat.add_div hbz]
-      have h6: ¬ (b ≤ y % b) := Nat.not_le.mpr (Nat.mod_lt y hbz)
-      simp[h6]
-      rw[Nat.mul_div_left _ hbz]
-
+  have : x * b ^ (Nat.digits b y).length + y = Nat.ofDigits b (Nat.digits b y ++ [x])
+  · simp [Nat.ofDigits_append, Nat.ofDigits_digits, add_comm, mul_comm]
+  rw [this, Nat.digits_ofDigits _ hb]
+  · simpa [forall_and, or_imp, hxb] using fun _ => Nat.digits_lt_base hb
+  · simpa
 
 theorem usa2003Q1 (n : ℕ) :
     ∃ m, ((Nat.digits 10 m).length = n ∧
