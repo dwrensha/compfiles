@@ -20,29 +20,48 @@ namespace Usa2003Q1
 
 -- lemma for mathlib?
 theorem Nat.digits_add'
-    (b : ℕ) (h : 1 < b) (x : ℕ) (y : ℕ) (hxb : x < b) (hx0 : x ≠ 0) :
+    (b : ℕ) (hb : 1 < b) (x y : ℕ) (hxb : x < b) (hx0 : x ≠ 0) :
     Nat.digits b (x * b ^ (Nat.digits b y).length + y) =
       Nat.digits b y ++ [x] := by
   have hd : ∃ ds, ds = Nat.digits b y := exists_eq
   obtain ⟨ds, hd⟩ := hd
   revert x y
   induction ds with
-  | nil => sorry
-  | cons d ds ih => sorry
-/-
-  have h1 : ∃ N, N = (Nat.digits b y).length := exists_eq
-  obtain ⟨N, hN⟩ := h1
-  revert hN y
-  induction' N with N' ih
-  · intro y hy h0
-    rw[←h0, Nat.pow_zero, Nat.mul_one]
-    have h1 : y = 0 :=
-      Nat.digits_eq_nil_iff_eq_zero.mp (List.length_eq_zero.mp h0.symm)
-    rw[h1]
-    aesop
-  · intro y hy h2
-    sorry
--/
+  | nil =>
+    intros x y hx1 hx2 hy
+    have hyy : y = 0 := Nat.digits_eq_nil_iff_eq_zero.mp hy.symm
+    rw[hyy]
+    simp
+    exact Nat.digits_of_lt b x hx2 hx1
+  | cons d ds ih =>
+    intros x y hx1 hx2 hd
+    rw[←hd, List.length_cons, Nat.pow_succ, List.cons_append]
+    have hyp : 0 < y := by
+       by_contra H
+       replace H : y = 0 := Nat.eq_zero_of_nonpos y H
+       rw[H] at hd
+       simp at hd
+    have h3 := Nat.digits_def' hb hyp
+    have hdd := hd
+    rw[h3] at hdd
+    have h4 : d = y % b := by aesop
+    have h5 : ds = Nat.digits b (y/b) := by aesop
+    have h2 := ih x (y/b) hx1 hx2 h5
+    rw[←h5] at h2
+    have h6 : 0 < x * (b ^ List.length ds * b) + y := by positivity
+    rw[Nat.digits_def' hb h6]
+    rw[←Nat.mul_assoc]
+
+    congr
+    · rw[Nat.add_mod, Nat.mul_mod_left, zero_add, Nat.mod_mod]
+      exact h4.symm
+    · rw[← h2]
+      congr
+      have hbz : 0 < b := Nat.zero_lt_one.trans hb
+      rw[Nat.add_div hbz]
+      have h6: ¬ (b ≤ y % b) := Nat.not_le.mpr (Nat.mod_lt y hbz)
+      simp[h6]
+      rw[Nat.mul_div_left _ hbz]
 
 
 theorem usa2003Q1 (n : ℕ) :
@@ -67,13 +86,16 @@ theorem usa2003Q1 (n : ℕ) :
     -- divisible by 5ⁿ⁺¹.
     suffices h : ∃ k, Odd k ∧ k < 10 ∧ 5^(n + 1) ∣ (10^n * k + 5^n * a) by
       obtain ⟨k, hk0, hk1, hk2⟩ := h
-      use Nat.ofDigits 10 (Nat.digits 10 (5^n * a) ++ [k])
+      use k * 10 ^ n  + 5 ^ n * a
       have hkn : k ≠ 0 := Nat.ne_of_odd_add hk0
-
-      --have h1 := Nat.digits_add 10 (by norm_num) (5^n * a) k hk1 --(Or.inl hkn)
+      have h1 := Nat.digits_add' 10 (by norm_num) k pm hk1 hkn
+      rw[hpm1, ha] at h1
+      rw[h1]
       constructor
-      · sorry
-      · sorry
+      · rw[←ha]; simp[hpm1]
+      · constructor
+        · sorry-- exact hk2
+        · sorry
 
     -- This is equivalent to proving that there exists an odd digit k such that
     -- k·2ⁿ + a is divisible by 5,
