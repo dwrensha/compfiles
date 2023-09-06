@@ -86,8 +86,18 @@ theorem usa2003Q1 (n : ℕ) :
       constructor
       · rw[←ha]; simp[hpm1]
       · constructor
-        · sorry-- exact hk2
-        · sorry
+        · rw[Nat.succ_eq_add_one]
+          nth_rewrite 1 [Nat.mul_comm]
+          exact hk2
+        · rw[List.all_eq_true]
+          rw[List.all_eq_true, ha] at hpm3
+          intro x hx
+          rw[List.mem_append] at hx
+          cases' hx with hx hx
+          · exact hpm3 x hx
+          · simp at hx
+            rw[hx]
+            exact decide_eq_true hk0
 
     -- This is equivalent to proving that there exists an odd digit k such that
     -- k·2ⁿ + a is divisible by 5,
