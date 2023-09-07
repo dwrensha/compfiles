@@ -27,6 +27,7 @@ import MathPuzzles.Poland1998Q4
 import MathPuzzles.Romania1998Q12
 import MathPuzzles.Russia1998Q42
 import MathPuzzles.UpperLowerContinuous
+import MathPuzzles.Usa1996Q1
 import MathPuzzles.Usa1998Q1
 import MathPuzzles.Usa1998Q3
 import MathPuzzles.Usa1998Q4
