@@ -30,7 +30,7 @@ theorem Nat.digits_add'
   · simpa
 
 lemma nat_mod_inv (a : ℕ) : ∃ b, (a + b) % 5 = 0 := by
-  use (5 - (a % 5))
+  use 5 - (a % 5)
   have h : a % 5 < 5 := Nat.mod_lt _ (by norm_num)
   have h' : a % 5 ≤ 5 := Nat.le_of_lt h
   rw[Nat.add_mod]
@@ -96,7 +96,7 @@ theorem usa2003Q1 (n : ℕ) :
           rw[List.mem_append] at hx
           cases' hx with hx hx
           · exact hpm3 x hx
-          · simp at hx
+          · rw[List.mem_singleton] at hx
             rw[hx]
             exact decide_eq_true hk0
 
@@ -122,8 +122,7 @@ theorem usa2003Q1 (n : ℕ) :
     obtain ⟨b, hb⟩ := nat_mod_inv (2^n + a)
     have h11 : ¬ 2^(n + 1) ≡ 0 [MOD 5] := by
       have h14 : Nat.coprime 5 2 := by norm_num
-      have h15 : Nat.coprime (5^1) (2^(n+1)) := Nat.coprime.pow _ _ h14
-      rw[Nat.pow_one] at h15
+      have h15 : Nat.coprime 5 (2^(n+1)) := Nat.coprime.pow_right (n + 1) h14
       have h5 : Nat.Prime 5 := by norm_num
       have h16 := (Nat.Prime.coprime_iff_not_dvd h5).mp h15
       intro h17
@@ -137,4 +136,4 @@ theorem usa2003Q1 (n : ℕ) :
       rw[hb] at h12
       have h13 : (2 ^ n + a + 2 ^ (n + 1) * aa) = 2 ^ n * (2 * aa + 1) + a := by ring
       rw[h13] at h12
-      exact Iff.mp Nat.modEq_zero_iff_dvd h12
+      exact Nat.modEq_zero_iff_dvd.mp h12
