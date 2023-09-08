@@ -18,17 +18,6 @@ number divisible by 5ⁿ, all of whose digits are odd.
 
 namespace Usa2003Q1
 
--- lemma for mathlib?
-theorem Nat.digits_add'
-    (b : ℕ) (hb : 1 < b) (x y : ℕ) (hxb : x < b) (hx0 : x ≠ 0) :
-    Nat.digits b (x * b ^ (Nat.digits b y).length + y) =
-      Nat.digits b y ++ [x] := by
-  have : x * b ^ (Nat.digits b y).length + y = Nat.ofDigits b (Nat.digits b y ++ [x])
-  · simp [Nat.ofDigits_append, Nat.ofDigits_digits, add_comm, mul_comm]
-  rw [this, Nat.digits_ofDigits _ hb]
-  · simpa [forall_and, or_imp, hxb] using fun _ => Nat.digits_lt_base hb
-  · simpa
-
 lemma nat_mod_inv (a : ℕ) : ∃ b, (a + b) % 5 = 0 := by
   use 5 - (a % 5)
   have h : a % 5 < 5 := Nat.mod_lt _ (by norm_num)
@@ -81,9 +70,12 @@ theorem usa2003Q1 (n : ℕ) :
       obtain ⟨k, hk0, hk1, hk2⟩ := h
       use k * 10 ^ n  + 5 ^ n * a
       have hkn : k ≠ 0 := Nat.ne_of_odd_add hk0
-      have h1 := Nat.digits_add' 10 (by norm_num) k pm hk1 hkn
-      rw[hpm1, ha] at h1
-      rw[h1]
+      have h1' : Nat.digits 10 pm ++ Nat.digits 10 k =
+        Nat.digits 10 (pm + 10 ^ List.length (Nat.digits 10 pm) * k) :=
+          Nat.digits_append_digits (by norm_num)
+      have h1'' : 5 ^ n * a + 10 ^ n * k = k * 10 ^ n + 5 ^ n * a := by ring
+      rw[hpm1, ha, h1'', Nat.digits_of_lt 10 k hkn hk1] at h1'
+      rw[←h1']
       constructor
       · rw[←ha]; simp[hpm1]
       · constructor
