@@ -34,17 +34,16 @@ lemma lemma2 (a c : ℕ) (h : ¬ a ≡ 0 [MOD 5]) : ∃ k, k < 5 ∧ a * k ≡ c
   have hc : Nat.coprime 5 a := by
     have h5 : Nat.Prime 5 := by norm_num
     refine' (Nat.Prime.coprime_iff_not_dvd h5).mpr _
-    rw[Nat.modEq_zero_iff_dvd] at h
+    rw [Nat.modEq_zero_iff_dvd] at h
     exact h
   let ⟨N, HN2, HN1⟩ := Nat.chineseRemainder hc c 0
-  have ⟨x, hx⟩ : a ∣ N := Iff.mp Nat.modEq_zero_iff_dvd HN1
+  have ⟨x, hx⟩ : a ∣ N := Nat.modEq_zero_iff_dvd.mp HN1
   use x % 5
   constructor
   · exact Nat.mod_lt _ (by norm_num)
   · have h2 : N % 5 = c % 5 := HN2
-    suffices h : (a * (x % 5)) % 5 = c % 5 by exact h
-    rw[← h2, hx]
-    rw[Nat.mul_mod, Nat.mod_mod, ← Nat.mul_mod]
+    change (a * (x % 5)) % 5 = c % 5
+    rw [← h2, hx, Nat.mul_mod, Nat.mod_mod, ←Nat.mul_mod]
 
 theorem usa2003Q1 (n : ℕ) :
     ∃ m, ((Nat.digits 10 m).length = n ∧
@@ -64,7 +63,7 @@ theorem usa2003Q1 (n : ℕ) :
     obtain ⟨pm, hpm1, ⟨a, ha⟩, hpm3⟩ := ih
 
     -- It is then sufficient to prove that there exists
-    -- an odd digit k such that k·10ⁿ + a·5ⁿ = 5ⁿ(k·2ⁿ + a) is
+    -- an odd digit k such that 5ⁿ⬝a + 10ⁿ⬝k = 5ⁿ(k·2ⁿ + a) is
     -- divisible by 5ⁿ⁺¹.
     suffices h : ∃ k, Odd k ∧ k < 10 ∧ 5^(n + 1) ∣ 5 ^ n * a + 10 ^ n * k by
       obtain ⟨k, hk0, hk1, hk2⟩ := h
