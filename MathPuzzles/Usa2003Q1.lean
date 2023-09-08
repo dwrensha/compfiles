@@ -70,11 +70,10 @@ theorem usa2003Q1 (n : ℕ) :
       obtain ⟨k, hk0, hk1, hk2⟩ := h
       use 5 ^ n * a + 10 ^ n * k
       have hkn : k ≠ 0 := Nat.ne_of_odd_add hk0
-      have h1' : Nat.digits 10 pm ++ Nat.digits 10 k =
-        Nat.digits 10 (pm + 10 ^ List.length (Nat.digits 10 pm) * k) :=
-          Nat.digits_append_digits (by norm_num)
-      rw[hpm1, ha, Nat.digits_of_lt 10 k hkn hk1] at h1'
-      rw[←h1']
+      have ten_pos : 0 < 10 := by norm_num
+      have h1 := Nat.digits_append_digits (m := k) (n := pm) ten_pos
+      rw[hpm1, ha, Nat.digits_of_lt 10 k hkn hk1] at h1
+      rw[←h1]
       constructor
       · rw[←ha]; simp[hpm1]
       · constructor
