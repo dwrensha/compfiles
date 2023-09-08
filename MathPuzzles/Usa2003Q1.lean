@@ -28,22 +28,17 @@ lemma nat_mod_inv (a : ℕ) : ∃ b, (a + b) % 5 = 0 := by
   rw[Nat.add_sub_of_le h']
   rfl
 
-lemma lemma2 (a c : ℕ) (h : ¬ a ≡ 0 [MOD 5]) : ∃ k, k < 5 ∧ a * k ≡ c [MOD 5] := by
-  -- use chinese remainder to find something that's
-  -- 0 mod a and c MOD 5.
-  have hc : Nat.coprime 5 a := by
-    have h5 : Nat.Prime 5 := by norm_num
-    refine' (Nat.Prime.coprime_iff_not_dvd h5).mpr _
-    rw [Nat.modEq_zero_iff_dvd] at h
-    exact h
-  let ⟨N, HN2, HN1⟩ := Nat.chineseRemainder hc c 0
+lemma lemma2 (a b c : ℕ) (hb : 0 < b) (h : Nat.coprime a b) : ∃ k, k < b ∧ a * k ≡ c [MOD b] := by
+  let ⟨N, HN1, HN2⟩ := Nat.chineseRemainder h 0 c
   have ⟨x, hx⟩ : a ∣ N := Nat.modEq_zero_iff_dvd.mp HN1
-  use x % 5
+  use x % b
   constructor
-  · exact Nat.mod_lt _ (by norm_num)
-  · have h2 : N % 5 = c % 5 := HN2
-    change (a * (x % 5)) % 5 = c % 5
-    rw [← h2, hx, Nat.mul_mod, Nat.mod_mod, ←Nat.mul_mod]
+  · exact Nat.mod_lt _ hb
+  · change N % b = c % b at HN2
+    change (a * (x % b)) % b = c % b
+    rw [← HN2, hx, Nat.mul_mod, Nat.mod_mod, ←Nat.mul_mod]
+
+lemma prime_five : Nat.Prime 5 := by norm_num
 
 theorem usa2003Q1 (n : ℕ) :
     ∃ m, ((Nat.digits 10 m).length = n ∧
@@ -69,8 +64,7 @@ theorem usa2003Q1 (n : ℕ) :
       obtain ⟨k, hk0, hk1, hk2⟩ := h
       use 5 ^ n * a + 10 ^ n * k
       have hkn : k ≠ 0 := Nat.ne_of_odd_add hk0
-      have ten_pos : 0 < 10 := by norm_num
-      have h1 := Nat.digits_append_digits (m := k) (n := pm) ten_pos
+      have h1 := Nat.digits_append_digits (m := k) (n := pm) (Nat.succ_pos 9)
       rw[hpm1, ha, Nat.digits_of_lt 10 k hkn hk1] at h1
       rw[←h1]
       constructor
@@ -111,12 +105,12 @@ theorem usa2003Q1 (n : ℕ) :
     have h11 : ¬ 2^(n + 1) ≡ 0 [MOD 5] := by
       have h14 : Nat.coprime 5 2 := by norm_num
       have h15 : Nat.coprime 5 (2^(n+1)) := Nat.coprime.pow_right (n + 1) h14
-      have h5 : Nat.Prime 5 := by norm_num
-      have h16 := (Nat.Prime.coprime_iff_not_dvd h5).mp h15
+      have h16 := (Nat.Prime.coprime_iff_not_dvd prime_five).mp h15
       intro h17
       have h18 : 5 ∣ 2 ^ (n + 1) := Iff.mp Nat.modEq_zero_iff_dvd h17
       exact (h16 h18).elim
-    obtain ⟨aa, haa1, haa2⟩ := lemma2 (2^(n + 1)) b h11
+    obtain ⟨aa, haa1, haa2⟩ := lemma2 (2^(n + 1)) 5 b (Nat.succ_pos 4)
+      ((Nat.Prime.coprime_iff_not_dvd prime_five).mpr (Nat.modEq_zero_iff_dvd.not.mp h11)).symm
     use aa
     constructor
     · exact haa1
