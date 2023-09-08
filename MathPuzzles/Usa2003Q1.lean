@@ -66,21 +66,19 @@ theorem usa2003Q1 (n : ℕ) :
     -- It is then sufficient to prove that there exists
     -- an odd digit k such that k·10ⁿ + a·5ⁿ = 5ⁿ(k·2ⁿ + a) is
     -- divisible by 5ⁿ⁺¹.
-    suffices h : ∃ k, Odd k ∧ k < 10 ∧ 5^(n + 1) ∣ (10^n * k + 5^n * a) by
+    suffices h : ∃ k, Odd k ∧ k < 10 ∧ 5^(n + 1) ∣ 5 ^ n * a + 10 ^ n * k by
       obtain ⟨k, hk0, hk1, hk2⟩ := h
-      use k * 10 ^ n  + 5 ^ n * a
+      use 5 ^ n * a + 10 ^ n * k
       have hkn : k ≠ 0 := Nat.ne_of_odd_add hk0
       have h1' : Nat.digits 10 pm ++ Nat.digits 10 k =
         Nat.digits 10 (pm + 10 ^ List.length (Nat.digits 10 pm) * k) :=
           Nat.digits_append_digits (by norm_num)
-      have h1'' : 5 ^ n * a + 10 ^ n * k = k * 10 ^ n + 5 ^ n * a := by ring
-      rw[hpm1, ha, h1'', Nat.digits_of_lt 10 k hkn hk1] at h1'
+      rw[hpm1, ha, Nat.digits_of_lt 10 k hkn hk1] at h1'
       rw[←h1']
       constructor
       · rw[←ha]; simp[hpm1]
       · constructor
         · rw[Nat.succ_eq_add_one]
-          nth_rewrite 1 [Nat.mul_comm]
           exact hk2
         · rw[List.all_eq_true]
           rw[List.all_eq_true, ha] at hpm3
