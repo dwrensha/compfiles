@@ -11,6 +11,7 @@ import Mathlib.Data.Nat.ModEq
 import Mathlib.Data.Nat.Parity
 import Mathlib.Data.Nat.Digits
 import Mathlib.Data.Nat.GCD.Basic
+import Mathlib.Algebra.BigOperators.Order
 import Mathlib.Algebra.BigOperators.Ring
 
 /-!
@@ -174,14 +175,6 @@ lemma lemma_3 {a n : ℕ} (ha : 0 < a) (hm : a % n = 0) : (∃ k : ℕ+, a = n *
   have hkp : 0 < k' := lt_of_mul_lt_mul_left' (hk' ▸ ha)
   exact ⟨⟨k', hkp⟩, hk'⟩
 
-lemma lemma_4 {k : ℕ} (hk : 0 < k) (f: ℕ → ℕ) (hf0 : 0 < f 0) :
-      0 < ∑ i in Finset.range k, f i := by
-  cases' k with k
-  · exact (Nat.lt_asymm hk hk).elim
-  · calc 0 < f 0                                     := hf0
-         _ ≤ (∑ i in Finset.range k, f i.succ) + f 0 := Nat.le_add_left _ _
-         _ = (∑ i in Finset.range k.succ, f i)       := (Finset.sum_range_succ' _ _).symm
-
 lemma two_le_ten : (2 : ℕ) ≤ 10 := tsub_eq_zero_iff_le.mp rfl
 
 --
@@ -196,7 +189,7 @@ theorem zeroes_and_ones (n : ℕ) : ∃ k : ℕ+, all_zero_or_one (Nat.digits 10
   have ha : 0 < ∑ i in Finset.range (b - a), 10^(i + a) := by
     have hm : 0 < b - a := Nat.sub_pos_of_lt hlt
     have hp : 0 < 10 ^ (0 + a) := pow_pos (Nat.succ_pos _) _
-    exact lemma_4 hm (λ (i : ℕ) ↦ 10 ^ (i + a)) hp
+    exact Finset.sum_pos' (λ _ _ ↦ Nat.zero_le _) ⟨0, Finset.mem_range.mpr hm, hp⟩
 
   obtain ⟨k, hk⟩ := lemma_3 ha h'
   use k
