@@ -140,21 +140,14 @@ lemma lemma_2'''
 
     linarith
 
-lemma lemma_2''
+lemma lemma_2'
     (a b : ℕ)
     (hlt : a < b)
-    (f: ℕ → ℕ) :
+    (f : ℕ → ℕ) :
     (∑ i in Finset.range (b - a), f (i + a)) + (∑ i in Finset.range a, f i)  =
        ∑ i in Finset.range b, f i := by
   have := lemma_2''' (b - a) a f
   rwa [Nat.sub_add_cancel (le_of_lt hlt)] at this
-
-lemma lemma_2'
-    (a b : ℕ)
-    (hlt : a < b) :
-    (∑ i in Finset.range (b - a), 10^(i + a)) + (∑ i in Finset.range a, 10^i) =
-       ∑ i in Finset.range b, 10^i :=
-  lemma_2'' a b hlt (λi ↦ 10^i)
 
 lemma lemma_2_aux (n a b c: ℕ) (hc : a + b = c) (hab: a % n = c % n) : b % n = 0 := by
   rw [show a = a + 0 by rfl, ←hc] at hab
@@ -166,7 +159,7 @@ lemma lemma_2
     (hlt : a < b)
     (hab : (∑ i in Finset.range a, 10^i) % n = (∑ i in Finset.range b, 10^i) % n) :
     (∑ i in Finset.range (b - a), 10^(i + a)) % n = 0 := by
-  have h1 := lemma_2' a b hlt
+  have h1 := lemma_2' a b hlt (λi ↦ 10^i)
   refine' lemma_2_aux n _ (∑ i in Finset.range (b - a), 10^(i + a)) _ _ hab
   rwa [add_comm]
 
