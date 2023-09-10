@@ -8,7 +8,6 @@ import Mathlib.Data.Nat.Basic
 import Mathlib.Data.Nat.ModEq
 import Mathlib.Data.Nat.Parity
 import Mathlib.Data.Nat.Digits
-import Mathlib.Data.Nat.GCD.Basic
 
 /-!
 (From Mathematical Puzzles: A Connoisseur's Collection by Peter Winkler.)
