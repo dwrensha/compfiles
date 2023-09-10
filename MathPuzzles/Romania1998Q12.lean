@@ -342,7 +342,6 @@ lemma exp_characterization
     rw[h14]
     have h15 := le_of_lt (hunz (x / ↑(p.succ)))
     rw[←Real.rpow_mul h15 _]
-    have : ((p:ℝ) + 1) ≠ 0 := by { norm_cast; exact ne_of_gt hp }
     field_simp
 
   have hq : ∀ q : ℚ, u q = Real.exp (k * q) := by
