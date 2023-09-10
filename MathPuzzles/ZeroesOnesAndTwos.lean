@@ -27,19 +27,14 @@ def ones (b : ℕ) : ℕ → ℕ
 
 lemma of_digits_zeros_eq_zero (b m : ℕ) : Nat.ofDigits b (List.replicate m 0) = 0 := by
   induction' m with m ih
-  · dsimp; rfl
-  · rw [List.replicate_succ]
-    dsimp[Nat.ofDigits]
-    rw[ih]
-    simp
+  · dsimp only; rfl
+  · simp only [Nat.ofDigits, Nat.cast_zero, ih, mul_zero, add_zero]
 
 lemma ones_add (b m n : ℕ) :
     ones b (m + n) = ones b m + Nat.ofDigits b ((List.replicate m 0) ++ (List.replicate n 1)) := by
-  unfold ones; dsimp
-  rw [List.replicate_add]
-  rw [Nat.ofDigits_append, Nat.ofDigits_append]
-  rw [List.length_replicate, List.length_replicate]
-  rw [of_digits_zeros_eq_zero, zero_add]
+  unfold ones; dsimp only
+  rw [List.replicate_add, Nat.ofDigits_append, Nat.ofDigits_append]
+  rw [List.length_replicate, List.length_replicate, of_digits_zeros_eq_zero, zero_add]
 
 def map_mod (n : ℕ) (hn: 0 < n) (f : ℕ → ℕ) : ℕ → Fin n
 | m => ⟨f m % n, Nat.mod_lt (f m) hn⟩
@@ -77,8 +72,7 @@ theorem zeroes_and_ones (n : ℕ) : ∃ k : ℕ+, all_zero_or_one (Nat.digits 10
   change ones 10 b ≡ ones 10 a [MOD n] at hab
 
   have hab2 := ones_add 10 a (b-a)
-  have h3 : a + (b - a) = b := Nat.add_sub_of_le (Nat.le_of_lt hlt)
-  rw[h3] at hab2; clear h3
+  rw[Nat.add_sub_of_le (Nat.le_of_lt hlt)] at hab2
   rw[hab2] at hab; clear hab2
   have hab' : (Nat.ofDigits 10 ((List.replicate a 0) ++ (List.replicate (b-a) 1))) ≡ 0 [MOD n] :=
     Nat.ModEq.add_left_cancel (Nat.ModEq.symm hab) rfl
@@ -104,18 +98,16 @@ theorem zeroes_and_ones (n : ℕ) : ∃ k : ℕ+, all_zero_or_one (Nat.digits 10
       List.getLast (List.replicate a 0 ++ List.replicate (b - a) 1) h ≠ 0 := by
     rw[hc] at *
     intro h6
-    have h7 : List.replicate (c+1) 1 ≠ [] := Iff.mp List.getLast?_isSome rfl
+    have h7 : List.replicate (c+1) 1 ≠ [] := List.getLast?_isSome.mp rfl
     have := List.getLast_append' (List.replicate a 0) _ h7
     rw[this, List.getLast_replicate_succ]
     exact Nat.one_ne_zero
-  rw[Nat.digits_ofDigits _ one_lt_ten _ h4 h5]
+  rw [Nat.digits_ofDigits _ one_lt_ten _ h4 h5]
   unfold all_zero_or_one
   intro e he
   rw[List.mem_append, List.mem_replicate, List.mem_replicate] at he
   unfold is_zero_or_one
-  cases' he with he he
-  · rw[he.2]; dsimp
-  · rw[he.2]; dsimp
+  cases' he with he he <;> (rw[he.2]; dsimp)
 
 def is_one_or_two : ℕ → Prop
 | 1 => True
