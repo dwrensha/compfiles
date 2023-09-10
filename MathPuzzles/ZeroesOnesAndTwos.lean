@@ -49,8 +49,6 @@ def is_zero_or_one : ℕ → Prop
 | 1 => True
 | _ => False
 
-def all_zero_or_one (l : List ℕ) : Prop := ∀ e ∈ l, is_zero_or_one e
-
 lemma lemma_3 {a n : ℕ} (ha : 0 < a) (hm : a % n = 0) : (∃ k : ℕ+, a = n * k) := by
   obtain ⟨k', hk'⟩ := exists_eq_mul_right_of_dvd (Nat.dvd_of_mod_eq_zero hm)
   have hkp : 0 < k' := lt_of_mul_lt_mul_left' (hk' ▸ ha)
@@ -63,9 +61,10 @@ lemma one_le_ten : (1 : ℕ) ≤ 10 := tsub_eq_zero_iff_le.mp rfl
 --
 -- Prove that n has a positive multiple whose representation contains only zeroes and ones.
 --
-theorem zeroes_and_ones (n : ℕ) : ∃ k : ℕ+, all_zero_or_one (Nat.digits 10 (n * k)) := by
+theorem zeroes_and_ones
+    (n : ℕ) : ∃ k : ℕ+, ∀ e ∈ (Nat.digits 10 (n * k)), is_zero_or_one e := by
   obtain (hn0 : n = 0 ) | (hn : n > 0) := Nat.eq_zero_or_pos n
-  · use 1; rw [hn0]; simp[all_zero_or_one]
+  · use 1; rw [hn0]; simp
   obtain ⟨a, b, hlt, hab⟩ := pigeonhole n (λm ↦ map_mod n hn (ones 10) m)
   dsimp[map_mod] at hab
   replace hab : ones 10 b % n = ones 10 a % n := (Fin.mk_eq_mk.mp hab).symm
@@ -103,7 +102,6 @@ theorem zeroes_and_ones (n : ℕ) : ∃ k : ℕ+, all_zero_or_one (Nat.digits 10
     rw[this, List.getLast_replicate_succ]
     exact Nat.one_ne_zero
   rw [Nat.digits_ofDigits _ one_lt_ten _ h4 h5]
-  unfold all_zero_or_one
   intro e he
   rw[List.mem_append, List.mem_replicate, List.mem_replicate] at he
   unfold is_zero_or_one
