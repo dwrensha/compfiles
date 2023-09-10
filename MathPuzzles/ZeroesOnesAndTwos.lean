@@ -44,11 +44,6 @@ lemma pigeonhole (n : ℕ) (f : ℕ → Fin n) :
 let ⟨a, b, hne, hfe⟩ := Finite.exists_ne_map_eq_of_infinite f
 hne.lt_or_lt.elim (λ h ↦ ⟨a, b, h, hfe⟩) (λ h ↦ ⟨b, a, h, hfe.symm⟩)
 
-def is_zero_or_one : ℕ → Prop
-| 0 => True
-| 1 => True
-| _ => False
-
 lemma lemma_3 {a n : ℕ} (ha : 0 < a) (hm : a % n = 0) : (∃ k : ℕ+, a = n * k) := by
   obtain ⟨k', hk'⟩ := exists_eq_mul_right_of_dvd (Nat.dvd_of_mod_eq_zero hm)
   have hkp : 0 < k' := lt_of_mul_lt_mul_left' (hk' ▸ ha)
@@ -62,23 +57,23 @@ lemma one_le_ten : (1 : ℕ) ≤ 10 := tsub_eq_zero_iff_le.mp rfl
 -- Prove that n has a positive multiple whose representation contains only zeroes and ones.
 --
 theorem zeroes_and_ones
-    (n : ℕ) : ∃ k : ℕ+, ∀ e ∈ (Nat.digits 10 (n * k)), is_zero_or_one e := by
+    (n : ℕ) : ∃ k : ℕ+, ∀ e ∈ (Nat.digits 10 (n * k)), e = 0 ∨ e = 1 := by
   obtain (hn0 : n = 0 ) | (hn : n > 0) := Nat.eq_zero_or_pos n
   · use 1; rw [hn0]; simp
   obtain ⟨a, b, hlt, hab⟩ := pigeonhole n (λm ↦ map_mod n hn (ones 10) m)
-  dsimp[map_mod] at hab
+  dsimp [map_mod] at hab
   replace hab : ones 10 b % n = ones 10 a % n := (Fin.mk_eq_mk.mp hab).symm
   change ones 10 b ≡ ones 10 a [MOD n] at hab
 
   have hab2 := ones_add 10 a (b-a)
-  rw[Nat.add_sub_of_le (Nat.le_of_lt hlt)] at hab2
-  rw[hab2] at hab; clear hab2
+  rw [Nat.add_sub_of_le (Nat.le_of_lt hlt)] at hab2
+  rw [hab2] at hab; clear hab2
   have hab' : (Nat.ofDigits 10 ((List.replicate a 0) ++ (List.replicate (b-a) 1))) ≡ 0 [MOD n] :=
     Nat.ModEq.add_left_cancel (Nat.ModEq.symm hab) rfl
 
   obtain ⟨c, hc⟩ := Nat.exists_eq_add_of_le' (Nat.sub_pos_of_lt hlt)
   have h8 : 0 < Nat.ofDigits 10 (List.replicate a 0 ++ List.replicate (b - a) 1) := by
-    rw[hc, List.replicate_succ]
+    rw [hc, List.replicate_succ]
     calc 0 < 1 := zero_lt_one
          _ ≤ List.sum (List.replicate a 0 ++ 1 :: List.replicate c 1) := by
            rw[List.sum_append, List.sum_cons, List.sum_replicate, List.sum_replicate]
@@ -88,24 +83,23 @@ theorem zeroes_and_ones
 
   obtain ⟨k, hk⟩ := lemma_3 h8 hab'
   use k
-  rw[←hk]
+  rw [←hk]
   have h4 : ∀ (l : ℕ), l ∈ List.replicate a 0 ++ List.replicate (b - a) 1 → l < 10 := by
     intro l hl
-    rw[List.mem_append, List.mem_replicate, List.mem_replicate] at hl
+    rw [List.mem_append, List.mem_replicate, List.mem_replicate] at hl
     aesop
   have h5 : ∀ (h : List.replicate a 0 ++ List.replicate (b - a) 1 ≠ []),
       List.getLast (List.replicate a 0 ++ List.replicate (b - a) 1) h ≠ 0 := by
-    rw[hc] at *
+    rw [hc] at *
     intro h6
     have h7 : List.replicate (c+1) 1 ≠ [] := List.getLast?_isSome.mp rfl
     have := List.getLast_append' (List.replicate a 0) _ h7
-    rw[this, List.getLast_replicate_succ]
+    rw [this, List.getLast_replicate_succ]
     exact Nat.one_ne_zero
   rw [Nat.digits_ofDigits _ one_lt_ten _ h4 h5]
   intro e he
-  rw[List.mem_append, List.mem_replicate, List.mem_replicate] at he
-  unfold is_zero_or_one
-  cases' he with he he <;> (rw[he.2]; dsimp)
+  rw [List.mem_append, List.mem_replicate, List.mem_replicate] at he
+  aesop
 
 def is_one_or_two : ℕ → Prop
 | 1 => True
