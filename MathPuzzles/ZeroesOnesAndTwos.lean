@@ -4,15 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: David Renshaw
 -/
 
-import Mathlib.Data.Fintype.Card
-import Mathlib.Data.Int.ModEq
 import Mathlib.Data.Nat.Basic
 import Mathlib.Data.Nat.ModEq
 import Mathlib.Data.Nat.Parity
 import Mathlib.Data.Nat.Digits
 import Mathlib.Data.Nat.GCD.Basic
-import Mathlib.Algebra.BigOperators.Order
-import Mathlib.Algebra.BigOperators.Ring
 
 /-!
 (From Mathematical Puzzles: A Connoisseur's Collection by Peter Winkler.)
@@ -26,10 +22,24 @@ Let n be a natural number. Prove that
 
 namespace ZerosOnesAndTwos
 
-open BigOperators
-
 def ones (b : ℕ) : ℕ → ℕ
-| k => ∑i in Finset.range k, b^i
+| k => Nat.ofDigits b (List.replicate k 1)
+
+lemma of_digits_zeros_eq_zero (b m : ℕ) : Nat.ofDigits b (List.replicate m 0) = 0 := by
+  induction' m with m ih
+  · dsimp; rfl
+  · rw [List.replicate_succ]
+    dsimp[Nat.ofDigits]
+    rw[ih]
+    simp
+
+lemma ones_add (b m n : ℕ) :
+    ones b (m + n) = ones b m + Nat.ofDigits b ((List.replicate m 0) ++ (List.replicate n 1)) := by
+  unfold ones; dsimp
+  rw [List.replicate_add]
+  rw [Nat.ofDigits_append, Nat.ofDigits_append]
+  rw [List.length_replicate, List.length_replicate]
+  rw [of_digits_zeros_eq_zero, zero_add]
 
 def map_mod (n : ℕ) (hn: 0 < n) (f : ℕ → ℕ) : ℕ → Fin n
 | m => ⟨f m % n, Nat.mod_lt (f m) hn⟩
@@ -46,129 +56,14 @@ def is_zero_or_one : ℕ → Prop
 
 def all_zero_or_one (l : List ℕ) : Prop := ∀ e ∈ l, is_zero_or_one e
 
-lemma digits_lemma
-    (base : ℕ)
-    (h2 : 2 ≤ base)
-    (n : ℕ)
-    (hn : 0 < n)
-    : (Nat.digits base (base * n)) = 0 :: (Nat.digits base n) := by
-  have := Nat.digits_add base h2 0 n (Nat.lt_of_succ_lt (Nat.succ_le_iff.mp h2))
-                              (Or.inr (ne_of_gt hn))
-  rwa [zero_add (base * n)] at this
-
-lemma times_base_still_all_zero_or_one
-    (base : ℕ)
-    (h2 : 2 ≤ base)
-    (n : ℕ)
-    (hn : all_zero_or_one (Nat.digits base n))
-    : all_zero_or_one (Nat.digits base (base * n)) := by
-  cases' (Nat.eq_zero_or_pos n) with hz hp
-  · rw [hz]
-    simp [mul_zero, Nat.digits_zero, all_zero_or_one]
-  · rw [digits_lemma base h2 n hp]
-    simpa[is_zero_or_one, all_zero_or_one]
-
-lemma base_pow_still_all_zero_or_one
-    (base : ℕ)
-    (h2 : 2 ≤ base)
-    (k n : ℕ)
-    (hn : all_zero_or_one (Nat.digits base n))
-    : all_zero_or_one (Nat.digits base ((base ^ k) * n)) := by
-  induction' k with pk hpk
-  · simpa
-  · have := times_base_still_all_zero_or_one base h2 _ hpk
-    rwa [←Nat.add_one pk, pow_succ' base pk, mul_comm (base^pk) base, mul_assoc]
-
-lemma times_base_plus_one_still_all_zero_or_one
-    (base : ℕ)
-    (h2 : 2 ≤ base)
-    (n : ℕ)
-    (hazoo : all_zero_or_one (Nat.digits base n))
-    : all_zero_or_one (Nat.digits base (1 + base * n)) := by
-  rw [Nat.digits_add base h2 1 n (Nat.succ_le_iff.mp h2) (Or.inl Nat.one_ne_zero)]
-  simpa[all_zero_or_one, is_zero_or_one]
-
-lemma lemma_0 (k b : ℕ) (h2 : 2 ≤ b) :
-    all_zero_or_one (b.digits (∑ i in Finset.range k, b^i)) := by
-  induction' k with pk hpk
-  · simp[all_zero_or_one]
-  · have hh := calc
-          ∑ i : ℕ in Finset.range pk.succ, b ^ i
-        = ∑ i : ℕ in Finset.range pk, b ^ i.succ + b ^ 0 :=
-               Finset.sum_range_succ' (λ (i : ℕ) ↦ b ^ i) pk
-      _ = b ^ 0 + ∑ i in Finset.range pk, b ^ i.succ := add_comm _ _
-      _ = 1 + ∑ i in Finset.range pk, b ^ i.succ := by rw [pow_zero]
-      _ = 1 + ∑ i in Finset.range pk, b * b ^ i :=
-          by {simp; exact Finset.sum_congr rfl (λx _ ↦ pow_succ _ _)}
-      _ =  1 + b * ∑ i in Finset.range pk, b ^ i := by simp [Finset.mul_sum]
-    have := times_base_plus_one_still_all_zero_or_one
-               b h2
-               (∑ i in Finset.range pk, b ^ i) hpk
-    rwa [hh]
-
-lemma lemma_1 (k b m: ℕ) (h2 : 2 ≤ b) :
-    all_zero_or_one (b.digits (∑i in Finset.range k, b^(i + m))) := by
-  have h := calc
-          (∑ i in Finset.range k, b ^ (i + m))
-        = (∑ i in Finset.range k, b ^ i * b ^ m) :=
-             by { refine Finset.sum_congr rfl ?_; intros x _; exact pow_add b x m }
-      _ = (∑ i in Finset.range k, b ^ m * b ^ i) :=
-             by { refine Finset.sum_congr rfl ?_; intros x _;
-                  exact mul_comm (b ^ x) (b ^ m) }
-      _ = b^m * (∑ i in Finset.range k, b ^ i) := Finset.mul_sum.symm
-
-  have := base_pow_still_all_zero_or_one b h2 m
-                       (∑ i in Finset.range k, b ^ i)
-                       (lemma_0 k b h2)
-  rwa [h]
-
-lemma lemma_2'''
-    (c d : ℕ)
-    (f: ℕ → ℕ) :
-    (∑ i in Finset.range c, f (i + d)) + (∑ i in Finset.range d, f i)  =
-     ∑ i in Finset.range (c+d), f i := by
-  induction' c with pc hpc
-  · simp
-  · have h1 : ∑ i in Finset.range pc.succ, f (i + d) =
-              ∑ i in Finset.range pc, f (i + d) + f (pc + d) :=
-         Finset.sum_range_succ (λ (x : ℕ) ↦ f (x + d)) pc
-
-    have h2 := calc
-          ∑ i in Finset.range (pc.succ + d), f i
-        = ∑ i in Finset.range (pc + d).succ, f i        := by rw [Nat.succ_add]
-      _ = ∑ i in Finset.range (pc + d), f i + f (pc + d) := Finset.sum_range_succ f _
-
-    linarith
-
-lemma lemma_2'
-    (a b : ℕ)
-    (hlt : a < b)
-    (f : ℕ → ℕ) :
-    (∑ i in Finset.range (b - a), f (i + a)) + (∑ i in Finset.range a, f i)  =
-       ∑ i in Finset.range b, f i := by
-  have := lemma_2''' (b - a) a f
-  rwa [Nat.sub_add_cancel (le_of_lt hlt)] at this
-
-lemma lemma_2_aux (n a b c: ℕ) (hc : a + b = c) (hab: a % n = c % n) : b % n = 0 := by
-  rw [show a = a + 0 by rfl, ←hc] at hab
-  exact (Nat.ModEq.add_left_cancel' _ hab).symm
-
-lemma lemma_2
-    (n : ℕ)
-    (a b : ℕ)
-    (hlt : a < b)
-    (hab : (∑ i in Finset.range a, 10^i) % n = (∑ i in Finset.range b, 10^i) % n) :
-    (∑ i in Finset.range (b - a), 10^(i + a)) % n = 0 := by
-  have h1 := lemma_2' a b hlt (λi ↦ 10^i)
-  refine' lemma_2_aux n _ (∑ i in Finset.range (b - a), 10^(i + a)) _ _ hab
-  rwa [add_comm]
-
 lemma lemma_3 {a n : ℕ} (ha : 0 < a) (hm : a % n = 0) : (∃ k : ℕ+, a = n * k) := by
   obtain ⟨k', hk'⟩ := exists_eq_mul_right_of_dvd (Nat.dvd_of_mod_eq_zero hm)
   have hkp : 0 < k' := lt_of_mul_lt_mul_left' (hk' ▸ ha)
   exact ⟨⟨k', hkp⟩, hk'⟩
 
 lemma two_le_ten : (2 : ℕ) ≤ 10 := tsub_eq_zero_iff_le.mp rfl
+lemma one_lt_ten : (2 : ℕ) ≤ 10 := tsub_eq_zero_iff_le.mp rfl
+lemma one_le_ten : (1 : ℕ) ≤ 10 := tsub_eq_zero_iff_le.mp rfl
 
 --
 -- Prove that n has a positive multiple whose representation contains only zeroes and ones.
@@ -177,17 +72,50 @@ theorem zeroes_and_ones (n : ℕ) : ∃ k : ℕ+, all_zero_or_one (Nat.digits 10
   obtain (hn0 : n = 0 ) | (hn : n > 0) := Nat.eq_zero_or_pos n
   · use 1; rw [hn0]; simp[all_zero_or_one]
   obtain ⟨a, b, hlt, hab⟩ := pigeonhole n (λm ↦ map_mod n hn (ones 10) m)
-  have h' : (∑ i in Finset.range (b - a), 10^(i + a)) % n = 0 :=
-    lemma_2 n a b hlt (Fin.mk.inj hab)
-  have ha : 0 < ∑ i in Finset.range (b - a), 10^(i + a) := by
-    have hm : 0 < b - a := Nat.sub_pos_of_lt hlt
-    have hp : 0 < 10 ^ (0 + a) := pow_pos (Nat.succ_pos _) _
-    exact Finset.sum_pos' (λ _ _ ↦ Nat.zero_le _) ⟨0, Finset.mem_range.mpr hm, hp⟩
+  dsimp[map_mod] at hab
+  replace hab : ones 10 b % n = ones 10 a % n := (Fin.mk_eq_mk.mp hab).symm
+  change ones 10 b ≡ ones 10 a [MOD n] at hab
 
-  obtain ⟨k, hk⟩ := lemma_3 ha h'
+  have hab2 := ones_add 10 a (b-a)
+  have h3 : a + (b - a) = b := Nat.add_sub_of_le (Nat.le_of_lt hlt)
+  rw[h3] at hab2; clear h3
+  rw[hab2] at hab; clear hab2
+  have hab' : (Nat.ofDigits 10 ((List.replicate a 0) ++ (List.replicate (b-a) 1))) ≡ 0 [MOD n] :=
+    Nat.ModEq.add_left_cancel (Nat.ModEq.symm hab) rfl
+
+  obtain ⟨c, hc⟩ := Nat.exists_eq_add_of_le' (Nat.sub_pos_of_lt hlt)
+  have h8 : 0 < Nat.ofDigits 10 (List.replicate a 0 ++ List.replicate (b - a) 1) := by
+    rw[hc, List.replicate_succ]
+    calc 0 < 1 := zero_lt_one
+         _ ≤ List.sum (List.replicate a 0 ++ 1 :: List.replicate c 1) := by
+           rw[List.sum_append, List.sum_cons, List.sum_replicate, List.sum_replicate]
+           linarith
+         _ ≤ Nat.ofDigits 10 (List.replicate a 0 ++ 1 :: List.replicate c 1) :=
+                          Nat.sum_le_ofDigits _ one_le_ten
+
+  obtain ⟨k, hk⟩ := lemma_3 h8 hab'
   use k
-  rw [←hk]
-  exact lemma_1 (b - a) 10 a two_le_ten
+  rw[←hk]
+  have h4 : ∀ (l : ℕ), l ∈ List.replicate a 0 ++ List.replicate (b - a) 1 → l < 10 := by
+    intro l hl
+    rw[List.mem_append, List.mem_replicate, List.mem_replicate] at hl
+    aesop
+  have h5 : ∀ (h : List.replicate a 0 ++ List.replicate (b - a) 1 ≠ []),
+      List.getLast (List.replicate a 0 ++ List.replicate (b - a) 1) h ≠ 0 := by
+    rw[hc] at *
+    intro h6
+    have h7 : List.replicate (c+1) 1 ≠ [] := Iff.mp List.getLast?_isSome rfl
+    have := List.getLast_append' (List.replicate a 0) _ h7
+    rw[this, List.getLast_replicate_succ]
+    exact Nat.one_ne_zero
+  rw[Nat.digits_ofDigits _ one_lt_ten _ h4 h5]
+  unfold all_zero_or_one
+  intro e he
+  rw[List.mem_append, List.mem_replicate, List.mem_replicate] at he
+  unfold is_zero_or_one
+  cases' he with he he
+  · rw[he.2]; dsimp
+  · rw[he.2]; dsimp
 
 def is_one_or_two : ℕ → Prop
 | 1 => True
