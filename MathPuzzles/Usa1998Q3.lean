@@ -181,9 +181,8 @@ theorem usa1998_q3
      (1/(n:ℝ)) * ∑ j in (Finset.range (n + 1)).erase i, (1 - y j) := by
     intros i hi
     let w : ℕ → ℝ := fun i ↦ 1 / (n:ℝ)
-    have hn : (n:ℝ) ≠ 0 := Nat.cast_ne_zero.mpr h0
     have hw' : ∑ _j in (Finset.range (n + 1)).erase i, w i = 1 := by
-       simp[Finset.card_erase_of_mem hi]; field_simp
+       field_simp[Finset.card_erase_of_mem hi]
     have hw : ∀ j ∈ (Finset.range (n + 1)).erase i, 0 ≤ w j := by
       intros j _hj
       simp only [one_div, inv_nonneg, Nat.cast_nonneg]
@@ -229,7 +228,6 @@ theorem usa1998_q3
       rw[←Real.rpow_mul h30]
       have h31 : (1:ℝ) / n * n = n / n := by field_simp
       rw[h31]
-      have h32' : (n:ℝ) ≠ 0 := by norm_cast
       have h32 : (n:ℝ) / n = 1 := by field_simp
       rw[h32, Real.rpow_one]
     rw[h23] at h21; clear h23
