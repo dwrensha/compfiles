@@ -10,6 +10,8 @@ import Mathlib.Data.Nat.ModEq
 import Mathlib.Data.ZMod.Basic
 import Mathlib.Tactic
 
+import MathPuzzles.Meta.Attributes
+
 /-!
 # IMO 1986 Q1
 
@@ -90,7 +92,7 @@ theorem imo1986_q1' (d : ℤ):
     exact ⟨w * v, hnm'⟩
   exact Int.even_iff_not_odd.mp hdeven hdodd
 
-
+@[problem_statement]
 theorem imo1986_q1 (d : ℤ) (_hdpos : 1 ≤ d) (h2 : d ≠ 2) (h5 : d ≠ 5) (h13 : d ≠ 13) :
     ∃ a b :({2, 5, 13, d} : Finset ℤ), (a ≠ b) ∧ ¬ ∃ z, z^2 = (a * (b : ℤ) - 1) := by
   by_contra h

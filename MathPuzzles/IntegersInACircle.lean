@@ -14,6 +14,8 @@ import Mathlib.Tactic.IntervalCases
 import Mathlib.Tactic.LibrarySearch
 import Mathlib.Tactic.LinearCombination
 
+import MathPuzzles.Meta.Attributes
+
 /-!
 There are 101 positive integers arranged in a circle.
 Suppose that the integers sum to 300.
@@ -56,6 +58,7 @@ lemma lemma2 {f : ZMod 101 → ℤ} (y : ZMod 101)
      · simp
   rw[h3]
 
+@[problem_statement]
 theorem integers_in_a_circle
     (a : ZMod 101 → ℤ)
     (ha : ∀ i, 1 ≤ a i)

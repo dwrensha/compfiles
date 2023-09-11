@@ -10,7 +10,9 @@ import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.NormNum.Prime
 import Mathlib.Tactic.LibrarySearch
 
-/-
+import MathPuzzles.Meta.Attributes
+
+/-!
 Polish Mathematical Olympiad 1998, Problem 4
 
 Prove that the sequence {a_n} defined by a_1 = 1 and
@@ -23,6 +25,7 @@ contains infinitely many integers divisible by 7.
 
 namespace Poland1998Q4
 
+@[problem_setup]
 def a : ℕ → ℕ
 | 0 => 1 -- unused dummy value
 | 1 => 1
@@ -293,6 +296,7 @@ lemma strengthen
       rw [heq] at hmp
       exact h (pn.succ) hmp
 
+@[problem_statement]
 theorem poland1998_q4 : (∀ N : ℕ, ∃ M : ℕ, N < M ∧ 7 ∣ a M) := by
   have he: 7 ∣ a 5 := by rw [show a 5 = 7 by rfl]
   exact strengthen can_get_a_later_one ⟨5, he⟩

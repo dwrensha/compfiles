@@ -9,6 +9,8 @@ import Mathlib.Data.Real.Basic
 import Mathlib.Algebra.BigOperators.Basic
 import Mathlib.Analysis.SpecificLimits.Basic
 
+import MathPuzzles.Meta.Attributes
+
 /-
 Bulgarian Mathematical Olympiad 1998, Problem 3
 
@@ -30,6 +32,7 @@ lemma geom_sum_bound (n : ℕ) : ∑ i in Finset.range n, (1:ℝ) / (2^i) < 3 :=
         _ ≤ 2 := sum_geometric_two_le n
         _ < 3 := by norm_num
 
+@[problem_statement]
 theorem bulgaria1998_q3
     (f : ℝ → ℝ)
     (hpos : ∀ x : ℝ, 0 < x → 0 < f x)

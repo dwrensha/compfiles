@@ -9,7 +9,9 @@ import Mathlib.Data.Stream.Defs
 import Mathlib.Data.Stream.Init
 import Mathlib.Tactic.Ring
 
-/-
+import MathPuzzles.Meta.Attributes
+
+/-!
 
 Puzzle referenced from this tweet: https://twitter.com/sigfpe/status/1474173467016589323
 
@@ -21,6 +23,10 @@ Problem: Suppose each (finite) word is either "decent" or "indecent". Given an i
 sequence of characters, can you always break it into finite words so that all of them
 except perhaps the first one belong to the same class?
 
+-/
+
+/-
+
 Answer: yes.
 
 -/
@@ -31,6 +37,7 @@ open Stream' BigOperators
 
 variable {α : Type}
 
+@[problem_setup]
 def break_into_words :
    (Stream' ℕ) → -- word lengths
    (Stream' α) → -- original sequence
@@ -79,6 +86,7 @@ lemma break_into_words_closed_form
           drop_drop, Finset.sum_range_succ']
       congr
 
+@[problem_statement]
 def all_same_class
     (is_decent : List α → Prop)
     (b : Stream' (List α))
@@ -213,6 +221,7 @@ lemma check_indecent_words
   intro j
   exact ((choose_indecent_words is_decent a h).nth j).h
 
+@[problem_statement]
 theorem kolmogorov_streams
     (is_decent : List α → Prop)
     (a : Stream' α)

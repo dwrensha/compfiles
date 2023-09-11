@@ -8,7 +8,9 @@ import Mathlib.Algebra.Ring.Basic
 import Mathlib.Data.Rat.Basic
 import Mathlib.Tactic.Ring
 
-/-
+import MathPuzzles.Meta.Attributes
+
+/-!
 Bulgarian Mathematical Olympiad 1998, Problem 8
 The polynomials Pₙ(x,y) for n = 1, 2, ... are defined by P₁(x,y) = 1 and
   Pₙ₊₁(x,y) = (x + y - 1)(y + 1)Pₙ(x,y+2) + (y - y²)Pₙ(x,y)
@@ -19,6 +21,7 @@ namespace Bulgaria1998Q8
 
 variable {R : Type} [CommRing R]
 
+@[problem_setup]
 def P : ℕ → R → R → R
 | 0, _, _ => 1
 | n+1, x, y => (x + y - 1) * (y + 1) * P n x (y + 2) + (y - y^2) * P n x y
@@ -43,6 +46,7 @@ def U : ℕ → R → R → R
 | n, x, y => (x + y - 1) *((y + 1)*(x - x^2) * P n (y + 2) x
                            + (x + 1) * (y - y^2) * P n y (x + 2))
 
+@[problem_statement]
 theorem bulgaria1998_q8 (n : ℕ) (x y : R) : P n x y = P n y x := by
   -- We induct on n. For n = 1,2 the result is evident.
   -- So we take n > 1 and suppose that the result is true for

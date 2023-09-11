@@ -9,6 +9,8 @@ import Mathlib.Data.Nat.Parity
 
 import Mathlib.Tactic
 
+import MathPuzzles.Meta.Attributes
+
 /-!
 # USA Mathematical Olympiad 2003, Problem 1
 
@@ -40,6 +42,7 @@ lemma lemma2 (a b c : ℕ) (hb : 0 < b) (h : Nat.coprime a b) : ∃ k, k < b ∧
 
 lemma prime_five : Nat.Prime 5 := by norm_num
 
+@[problem_statement]
 theorem usa2003Q1 (n : ℕ) :
     ∃ m, ((Nat.digits 10 m).length = n ∧
           5^n ∣ m ∧

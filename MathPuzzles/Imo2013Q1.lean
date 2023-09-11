@@ -9,6 +9,8 @@ import Mathlib.Algebra.BigOperators.Pi
 import Mathlib.Tactic.Ring
 import Mathlib.Tactic.FieldSimp
 
+import MathPuzzles.Meta.Attributes
+
 /-!
 # IMO 2013 Q1
 
@@ -17,6 +19,9 @@ m₁, m₂, ..., mₖ (not necessarily different) such that
 
   1 + (2ᵏ - 1)/ n = (1 + 1/m₁) * (1 + 1/m₂) * ... * (1 + 1/mₖ).
 
+-/
+
+/-
 # Solution
 
 Adaptation of the solution found in https://www.imo-official.org/problems/IMO2013SL.pdf
@@ -35,8 +40,10 @@ theorem prod_lemma (m : ℕ → ℕ+) (k : ℕ) (nm : ℕ+) :
   intro i hi
   simp [Finset.mem_range.mp hi]
 
+@[problem_statement]
 theorem imo2013_q1 (n : ℕ+) (k : ℕ) :
-    ∃ m : ℕ → ℕ+, (1 : ℚ) + (2 ^ k - 1) / n = ∏ i in Finset.range k, (1 + 1 / (m i : ℚ)) := by
+    ∃ m : ℕ → ℕ+,
+      (1 : ℚ) + (2 ^ k - 1) / n = ∏ i in Finset.range k, (1 + 1 / (m i : ℚ)) := by
   revert n
   induction' k with pk hpk
   · intro n; use fun (_ : ℕ) => (1 : ℕ+); simp

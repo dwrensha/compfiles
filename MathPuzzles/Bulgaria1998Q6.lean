@@ -10,6 +10,8 @@ import Mathlib.Order.WellFounded
 import Mathlib.Tactic.LibrarySearch
 import Mathlib.Tactic.Ring
 
+import MathPuzzles.Meta.Attributes
+
 /-
 Bulgarian Mathematical Olympiad 1998, Problem 6
 
@@ -61,6 +63,7 @@ lemma lemma_1
   rw [←hs'] at h
   sorry
 
+@[problem_statement]
 theorem bulgaria1998_q6
     (x y z : ℤ)
     (hx : 0 < x)

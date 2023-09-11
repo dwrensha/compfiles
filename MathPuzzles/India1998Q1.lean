@@ -7,6 +7,8 @@ import Mathlib.Tactic.LinearCombination
 import Mathlib.Tactic.Ring
 import Mathlib.Tactic.NormNum.Prime
 
+import MathPuzzles.Meta.Attributes
+
 /-
 Indian Mathematical Olympiad 1998, problem 1
 
@@ -16,10 +18,12 @@ Indian Mathematical Olympiad 1998, problem 1
 
 namespace India1998Q1
 
+@[problem_statement]
 theorem india1998_q1a (a₁ a₂ b₁ b₂ : ℤ) :
     (∃ a₃ b₃, (a₁^2 + 3 * b₁^2) * (a₂^2 + 3 * b₂^2) = (a₃^2 + 3 * b₃^2)) :=
   ⟨a₁ * a₂ + 3 * b₁ * b₂, ⟨a₁ * b₂ - b₁ * a₂, by ring⟩⟩
 
+@[problem_statement]
 theorem india1998_q1b (n a b: ℤ) (hn : a^2 + 3 * b^2 = 7 * n) :
     (∃ a b : ℤ, a^2 + 3 * b^2 = n) := by
   let az : ZMod 7 := a

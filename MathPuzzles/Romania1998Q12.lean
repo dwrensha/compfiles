@@ -2,7 +2,9 @@ import Mathlib.Data.Rat.Basic
 import Mathlib.Data.Real.Basic
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
-/-
+import MathPuzzles.Meta.Attributes
+
+/-!
 # Romanian Mathematical Olympiad 1998, Problem 12
 
 Find all functions u : ℝ → ℝ for which there exists a strictly monotonic
@@ -554,6 +556,11 @@ lemma romania1998_q12_mpr (u : ℝ → ℝ) :
            _ = (Real.exp (k * x) - 1) * Real.exp (k * y) +
                   (Real.exp (k * y) - 1) := by ring
 
+-- TODO define solution_set
+-- def solution_set : Set (ℝ → ℝ) :=
+-- { u | ∃ k : ℝ, ∀ x : ℝ, u x = Real.exp (k * x) }
+
+@[problem_statement]
 theorem romania1998_q12 (u : ℝ → ℝ) :
     (∃ f : ℝ → ℝ, (StrictMono f ∨ StrictAnti f)
           ∧ ∀ x y : ℝ, f (x + y) = f x * u y + f y) ↔

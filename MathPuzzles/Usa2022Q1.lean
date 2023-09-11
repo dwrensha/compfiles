@@ -4,6 +4,8 @@ import Mathlib.Data.Fintype.Prod
 import Mathlib.Tactic.LibrarySearch
 import Mathlib.Tactic.Positivity
 
+import MathPuzzles.Meta.Attributes
+
 /-!
 # USA Mathematical Olympiad 2022, Problem 1
 
@@ -16,6 +18,7 @@ of the a + b chosen cells lie in the same row or column.
 
 namespace Usa2022Q1
 
+@[problem_statement]
 theorem usa2022q1
     (a b : ℕ)
     (ha : 0 < a)

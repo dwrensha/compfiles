@@ -12,8 +12,9 @@ import Mathlib.Topology.MetricSpace.Basic
 import Mathlib.Topology.Algebra.Ring.Basic
 import Mathlib.Topology.Bases
 
-import Mathlib.Tactic.LibrarySearch
 import Mathlib.Tactic.Linarith
+
+import MathPuzzles.Meta.Attributes
 
 /-
 Suppose f : ℝ -> ℝ is continuous in both the upper topology (where
@@ -102,15 +103,18 @@ def lower_intervals : Set (Set ℝ) := {s : Set ℝ | ∃ a b : ℝ, Set.Ico a b
 def open_intervals : Set (Set ℝ) := {s : Set ℝ | ∃ a b : ℝ, Set.Ioo a b = s}
 
 /-- Generate the toplogy on ℝ by intervals of the form (a, b]. -/
+@[problem_setup]
 def tᵤ : TopologicalSpace ℝ := TopologicalSpace.generateFrom upper_intervals
 
 /-- Generate the toplogy on ℝ by intervals of the form [a, b). -/
+@[problem_setup]
 def tₗ : TopologicalSpace ℝ := TopologicalSpace.generateFrom lower_intervals
 
 /-- This should be equivalent to the default instance
 for `TopologicalSpace ℝ`, which goes through `UniformSpace`, but for
 now I don't want to bother with proving that equivalence.
 -/
+@[problem_setup]
 def tₛ : TopologicalSpace ℝ := TopologicalSpace.generateFrom open_intervals
 
 -- activate the Continuous[t1, t2] notation
@@ -408,6 +412,7 @@ theorem monotone_of_upper_lower_continuous
     real_induction L1 L2 (@Set.left_mem_Ici _ _ (f z))
   exact h0 hz
 
+@[problem_statement]
 theorem properties_of_upper_lower_continuous
     (f : ℝ → ℝ)
     (huc : Continuous[tᵤ, tᵤ] f)

@@ -52,6 +52,7 @@ jobs:
         run: |
           set -o pipefail
           echo "Starting build at $(date +'%T')"
+          export GITHUB_PAGES_BASEURL="https://dwrensha.github.io/math-puzzles-in-lean4/"
           build/bin/buildWebpage
           result_run1=$?
           echo "Complete at $(date +'%T'); return value $result_run1"

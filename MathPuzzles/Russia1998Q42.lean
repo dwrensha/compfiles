@@ -6,6 +6,8 @@ Authors: David Renshaw
 
 import Mathlib.Data.Real.Basic
 
+import MathPuzzles.Meta.Attributes
+
 /-
  Russian Mathematical Olympiad 1998, problem 42
 
@@ -19,8 +21,11 @@ import Mathlib.Data.Real.Basic
 namespace Russia1998Q42
 
 variable (star : ℝ → ℝ → ℝ)
+
+@[problem_setup]
 local infixl:80 " ⋆ " => star
 
+@[problem_statement]
 theorem russia1998_q42
   (stardef : ∀ a b c, a ⋆ b ⋆ c = a + b + c) :
   (∀ a b, a ⋆ b = a + b) :=

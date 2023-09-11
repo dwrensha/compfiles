@@ -8,6 +8,8 @@ import Std.Data.List.Basic
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Finset.Card
 
+import MathPuzzles.Meta.Attributes
+
 /-!
 USA Mathematical Olympiad 1999, Problem 1
 
@@ -22,8 +24,10 @@ Prove that at least (n²-2)/3 checkers have been placed on the board.
 
 namespace Usa1999Q1
 
+@[problem_setup]
 def checkerboard (n : ℕ) := Fin n × Fin n
 
+@[problem_setup]
 def adjacent {n : ℕ} : checkerboard n → checkerboard n → Prop
 | ⟨a1, a2⟩, ⟨b1, b2⟩ =>
   (a1.val = b1.val ∧ a2.val = b2.val + 1) ∨
@@ -31,6 +35,7 @@ def adjacent {n : ℕ} : checkerboard n → checkerboard n → Prop
   (a2.val = b2.val ∧ a1.val = b1.val + 1) ∨
   (a2.val = b2.val ∧ a1.val + 1 = b1.val )
 
+@[problem_statement]
 theorem usa1999_q1 (n : ℕ) (c : Finset (checkerboard n))
     (ha : ∀ x : checkerboard n, x ∈ c ∨ (∃ y ∈ c, adjacent x y))
     (hb : ∀ x ∈ c, ∀ y ∈ c,

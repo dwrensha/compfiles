@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2023 Moritz Firsching. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: David Renshaw
+-/
+
 import Aesop
 import Mathlib.Data.Nat.Basic
 import Mathlib.Data.Nat.Interval
@@ -5,6 +11,8 @@ import Mathlib.Data.Set.Basic
 import Mathlib.Data.Fintype.Card
 import Mathlib.Tactic.LibrarySearch
 import Mathlib.Tactic.Ring
+
+import MathPuzzles.Meta.Attributes
 
 /-!
 # International Mathematical Olympiad 1987, Problem 4
@@ -105,6 +113,7 @@ theorem imo1987_q4_generalized (m : ℕ) :
   apply_fun (· % 2) at h2
   norm_num at h2
 
+@[problem_statement]
 theorem imo1987_q4 : (¬∃ f : ℕ → ℕ, ∀ n, f (f n) = n + 1987) := by
   rw[show 1987 = (2 * 993 + 1) by norm_num]
   exact imo1987_q4_generalized 993

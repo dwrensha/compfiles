@@ -8,6 +8,8 @@ import Aesop
 import Mathlib.Combinatorics.Pigeonhole
 import Mathlib.Tactic.Linarith
 
+import MathPuzzles.Meta.Attributes
+
 /-!
 # International Mathematical Olympiad 1964, Problem 4
 
@@ -107,6 +109,7 @@ theorem lemma1
       have h9 := ht3 t3'
       rw[←h9]
 
+@[problem_statement]
 theorem imo1964_q4
     (Person Topic : Type)
     [Fintype Person] [DecidableEq Person]

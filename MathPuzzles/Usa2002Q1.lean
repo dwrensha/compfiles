@@ -11,6 +11,8 @@ import Mathlib.Data.Finite.Basic
 
 import Mathlib.Tactic.IntervalCases
 
+import MathPuzzles.Meta.Attributes
+
 /-!
 # USA Mathematical Olympiad 2002, Problem 1
 
@@ -28,6 +30,7 @@ red so that the following conditions hold:
 
 namespace Usa2002Q1
 
+@[problem_setup]
 inductive Color : Type where
 | red : Color
 | blue : Color
@@ -100,6 +103,7 @@ lemma usa2002q1_generalized
       -- Thus the induction is complete.
       sorry
 
+@[problem_statement]
 theorem usa2002q1
     {α : Type} [DecidableEq α] [Fintype α] (hs : Fintype.card α = 2002)
     (N : ℕ) (hN : N ≤ 2 ^ 2002) :

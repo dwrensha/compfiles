@@ -9,6 +9,8 @@ import Mathlib.LinearAlgebra.AffineSpace.Midpoint
 import Mathlib.Geometry.Euclidean.Basic
 import Mathlib.Geometry.Euclidean.Triangle
 
+import MathPuzzles.Meta.Attributes
+
 /-!
 Bulgarian Mathematical Olympiad 1998, Problem 2
 
@@ -23,6 +25,7 @@ namespace Bulgaria1998Q2
 
 open EuclideanGeometry
 
+@[problem_statement]
 theorem bulgaria1998_q2
     (A B C D E M: EuclideanSpace ℝ (Fin 2))
     (H1 : dist D A = dist D C)

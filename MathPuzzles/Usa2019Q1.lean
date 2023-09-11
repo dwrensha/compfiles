@@ -9,6 +9,8 @@ import Mathlib.Data.Nat.Parity
 
 import Mathlib.Tactic
 
+import MathPuzzles.Meta.Attributes
+
 /-!
 # USA Mathematical Olympiad 2019, Problem 1
 
@@ -113,10 +115,10 @@ lemma lemma_2
   sorry
 
 
--- @[solution_data]
+@[solution_data]
 def solution_set : Set ℕ+ := { x : ℕ+ | Even x }
 
--- @[problem_statement]
+@[problem_statement]
 theorem usa2019Q1 (m : ℕ+) :
    m ∈ solution_set ↔
     (∃ f : ℕ+ → ℕ+,

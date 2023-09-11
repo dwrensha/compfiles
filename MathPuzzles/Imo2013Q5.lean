@@ -6,6 +6,8 @@ import Mathlib.Data.Real.Basic
 import Mathlib.Tactic.Positivity
 import Mathlib.Tactic.LinearCombination
 
+import MathPuzzles.Meta.Attributes
+
 /-!
 # IMO 2013 Q5
 
@@ -18,6 +20,9 @@ the conditions
 for all x,y ∈ ℚ>₀. Given that f(a) = a for some rational a > 1, prove that f(x) = x for
 all x ∈ ℚ>₀.
 
+-/
+
+/-
 # Solution
 
 We provide a direct translation of the solution found in
@@ -185,6 +190,7 @@ lemma fixed_point_of_gt_1 {f : ℚ → ℝ} {x : ℚ} (hx : 1 < x)
   have heq := h1.antisymm (by exact_mod_cast h2)
   linarith [H5 x hx, H5 _ h_big_enough]
 
+@[problem_statement]
 theorem imo2013_q5
     (f : ℚ → ℝ)
     (H1 : ∀ x y, 0 < x → 0 < y → f (x * y) ≤ f x * f y)

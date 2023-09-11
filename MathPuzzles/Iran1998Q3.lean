@@ -1,7 +1,9 @@
 import Mathlib.Data.Real.Basic
 import Mathlib.Analysis.MeanInequalities
 
-/-
+import MathPuzzles.Meta.Attributes
+
+/-!
 Iranian Mathematical Olympiad 1998, problem 3
 
 Let x₁, x₂, x₃, x₄ be positive real numbers such that
@@ -37,6 +39,7 @@ lemma prod_pow' (S : Finset ℕ) (e : ℝ) (f : ℕ → ℝ) (hf : ∀ s ∈ S, 
       exact mul_nonneg hs0 hsnn
     · exact (Real.mul_rpow hsnn hs0).symm
 
+@[problem_statement]
 theorem iran1998_q3
     (x : ℕ → ℝ)
     (x_positive : ∀ i, 0 < x i)

@@ -8,6 +8,8 @@ import Mathlib.Data.Real.Basic
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 import Mathlib.Algebra.GroupPower.Lemmas
 
+import MathPuzzles.Meta.Attributes
+
 /-!
 USA Mathematical Olympiad 2000, Problem 1
 
@@ -20,6 +22,7 @@ Show that there exist no very convex functions.
 
 namespace Usa2000Q1
 
+@[problem_statement]
 theorem usa2000_q1 :
     ¬∃ f : ℝ → ℝ,
       ∀ x y : ℝ, f ((x + y) / 2) + |x - y| ≤ (f x + f y) / 2 := by

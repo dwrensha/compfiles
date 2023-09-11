@@ -8,6 +8,8 @@ import Mathlib.Data.Real.Basic
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 import Mathlib.Analysis.MeanInequalities
 
+import MathPuzzles.Meta.Attributes
+
 /-!
 # USA Mathematical Olympiad 1998, Problem 3
 
@@ -134,6 +136,7 @@ lemma lemma2 (f : ℕ → ℝ) :
     rw[h6]
     ring
 
+@[problem_statement]
 theorem usa1998_q3
     (n : ℕ)
     (a : ℕ → ℝ)

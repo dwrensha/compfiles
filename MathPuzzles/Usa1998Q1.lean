@@ -10,6 +10,8 @@ import Mathlib.Algebra.BigOperators.Intervals
 import Mathlib.Data.Int.ModEq
 import Mathlib.Data.Finset.Interval
 
+import MathPuzzles.Meta.Attributes
+
 /-!
 # USA Mathematical Olympiad 1998, Problem 1
 
@@ -49,6 +51,7 @@ lemma lemma2
   have h2 := le_of_eq hc.symm
   exact Iff.mp (Finset.subset_iff_eq_of_card_le h2) habc
 
+@[problem_statement]
 theorem usa1998_q1
     (a b : ℕ → ℕ)
     (ha : Finset.image a (Finset.Icc 1 999) ⊆ Finset.Icc 1 1998)

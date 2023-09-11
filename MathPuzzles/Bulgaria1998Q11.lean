@@ -9,7 +9,10 @@ import Mathlib.Tactic.LibrarySearch
 import Mathlib.Tactic.ModCases
 import Mathlib.Tactic.Ring
 import Mathlib.Tactic.Zify
-/-
+
+import MathPuzzles.Meta.Attributes
+
+/-!
 Bulgarian Mathematical Olympiad 1998, Problem 11
 
 Let m,n be natural numbers such that
@@ -36,6 +39,7 @@ lemma foo1 (m n : ℕ) (ho : Odd m) : (m + 3) ^ n.succ % 2 = 0 := by
   rw[hw, Nat.pow_succ, show 2 * w + 1 + 3 = 2 * (w + 2) by ring, Nat.mul_mod,
      Nat.mul_mod_right, mul_zero, Nat.zero_mod]
 
+@[problem_statement]
 theorem bulgaria1998_q11
     (m n A : ℕ)
     (h : 3 * m * A = (m + 3)^n + 1) : Odd A := by

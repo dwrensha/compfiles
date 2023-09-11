@@ -10,6 +10,8 @@ import Mathlib.Data.Real.Sqrt
 import Mathlib.Analysis.InnerProductSpace.PiL2
 import Mathlib.Analysis.NormedSpace.PiLp
 
+import MathPuzzles.Meta.Attributes
+
 /-
 Iranian Mathematical Olympiad 1998, Problem 9
 
@@ -31,6 +33,7 @@ lemma compute_norm (v : EuclideanSpace ℝ (Fin 3)) : ‖v‖ = Real.sqrt (∑i 
   congr; ext
   rw [Real.norm_eq_abs, sq_abs]
 
+@[problem_statement]
 theorem iran1998_q9
     (x y z : ℝ)
     (hx : 1 < x)

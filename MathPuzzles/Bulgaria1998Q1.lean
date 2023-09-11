@@ -8,6 +8,8 @@ import Mathlib.Data.Set.Intervals.Basic
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.IntervalCases
 
+import MathPuzzles.Meta.Attributes
+
 /-!
 Bulgarian Mathematical Olympiad 1998, Problem 1
 
@@ -19,12 +21,14 @@ the same color.
 
 namespace Bulgaria1998Q1
 
+@[problem_setup]
 def coloring_has_desired_points (m : ℕ) (color : Set.Icc 1 m → Fin 2) : Prop :=
   ∃ i j : Set.Icc 1 m,
     i < j ∧
     ∃ h3 : 2 * j.val - i ∈ Set.Icc 1 m,
     color i = color j ∧ color i = color ⟨2 * j - i, h3⟩
 
+@[solution_data]
 def n := 9
 
 def coloring_of_eight : Set.Icc 1 8 → Fin 2
@@ -38,6 +42,7 @@ def coloring_of_eight : Set.Icc 1 8 → Fin 2
 | ⟨8, _⟩ => 0
 | _ => 0 -- unreachable
 
+@[problem_statement]
 theorem bulgaria1998_q1a :
     ∃ f: Set.Icc 1 (n - 1) → Fin 2, ¬coloring_has_desired_points (n - 1) f := by
   use coloring_of_eight
@@ -48,6 +53,7 @@ theorem bulgaria1998_q1a :
   dsimp[coloring_of_eight] at *
   interval_cases i <;> interval_cases j <;> aesop
 
+@[problem_statement]
 theorem bulgaria1998_q1b (color : Set.Icc 1 n → Fin 2) : coloring_has_desired_points n f := by
   sorry
 
