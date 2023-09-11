@@ -8,9 +8,9 @@ import Mathlib.Algebra.BigOperators.Basic
 import Mathlib.Algebra.BigOperators.Order
 import Mathlib.Data.Int.Basic
 import Mathlib.Data.Finset.Card
-import Mathlib.Tactic.LibrarySearch
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Positivity
+import Mathlib.Tactic.Ring
 
 /-!
 # USA Mathematical Olympiad 1998, Problem 5
