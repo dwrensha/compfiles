@@ -19,7 +19,6 @@ A function f: ℕ+ → ℕ+ satisfies the equation
 
 for all positive integers n, where fᵏ(m) means f iterated k times on m.
 Given this information, determine all possible values of f(1000).
-
 -/
 
 namespace Usa2019Q1
@@ -33,4 +32,11 @@ theorem usa2019Q1 (m : ℕ+) :
     (∃ f : ℕ+ → ℕ+,
       (∀ n, f^[f n] n * f (f n) = n ^ 2) ∧
       m = f 1000) := by
- sorry
+  -- (informal proof outline from artofproblemsolving.com)
+  -- 1. prove that f is injective.
+  -- 2. prove that if f^r(b)=a and f(a)=a, then b=a.
+  -- 3. prove that if f^2(m)=f^{f(m)}(m)=m and m is odd, then f(m)=m.
+  -- 4. prove by contradiction that f(m)=m for all odd m.
+  -- 5. by injectivity, f(1000) is not odd.
+  -- 6. prove that f(1000) can equal any even number.
+  sorry
