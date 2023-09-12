@@ -37,5 +37,6 @@ import MathPuzzles.Usa2000Q1
 import MathPuzzles.Usa2001Q1
 import MathPuzzles.Usa2002Q1
 import MathPuzzles.Usa2003Q1
+import MathPuzzles.Usa2019Q1
 import MathPuzzles.Usa2022Q1
 import MathPuzzles.ZeroesOnesAndTwos
