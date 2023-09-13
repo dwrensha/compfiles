@@ -98,9 +98,12 @@ lemma lemma_2
   -- Let f(m)=k.
   let k := f m
   -- Since f^2(m)=m, f(k)=m.
-  have h1 : f k = m := by unfold_let k; sorry
+  have h1 : f k = m := by
+    unfold_let k; dsimp at hm1 hm2; rw[hm1, hm2]
 
   -- So, f^2(k)=k.
+  have h2 : f^[2] k = k := by dsimp; rw[h1]
+
   -- f^2(k) · f^{f(k)}(k) = k^2.
 
   -- Since k≠0, f^{f(k)}(k)=k.
