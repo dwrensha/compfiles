@@ -37,6 +37,48 @@ def HEADER : String :=
  "<title>Math Puzzles in Lean 4</title>" ++
  "</head>"
 
+def getStubDecl (name : Name) (ty : Expr) : MetaM String := do
+  let msg ← withoutModifyingEnv <| withoutModifyingState do
+    let sig ← addMessageContext <| MessageData.ofPPFormat { pp := fun
+                | some ctx => ctx.runMetaM <| PrettyPrinter.ppSignature name
+                | none     => unreachable!
+              }
+    let cmd := if ← Meta.isProp ty then "theorem" else "def"
+    m!"{cmd} {sig} := sorry\n".toString
+  pure msg
+
+def matchDecl : Syntax → CoreM (String.Pos × String.Pos)
+| `(command| $_:declModifiers theorem%$thm $_:declId $_:declSig :=%$colEq $_:term) => do
+    let .some startPos := thm.getPos? | throwError "thm syntax has no pos"
+    let .some endPos := colEq.getTailPos? | throwError "colEq syntax has no pos"
+    pure ⟨startPos, endPos⟩
+| `(command| $_:declModifiers def%$df $_:declId $_:optDeclSig :=%$colEq $_:term) => do
+    let .some startPos := df.getPos? | throwError "df syntax has no pos"
+    let .some endPos := colEq.getTailPos? | throwError "colEq syntax has no pos"
+    pure ⟨startPos, endPos⟩
+| _ => throwError "no match"
+
+def matchProblemSetup (stx: Syntax) : CoreM (String.Pos × String.Pos) := do
+  let .some endPos := stx.getTailPos? | throwError "no end pos"
+  match stx with
+  | `(command| $_:declModifiers abbrev%$ab $_:ident $_:declVal) => do
+      let .some startPos := ab.getPos? | throwError "ab syntax has no pos"
+      pure ⟨startPos, endPos⟩
+  | `(command| $_:declModifiers def%$df $_:declId $_:optDeclSig $_:declVal) => do
+      let .some startPos := df.getPos? | throwError "df syntax has no pos"
+      pure ⟨startPos, endPos⟩
+  | `(command| $_:declModifiers structure%$st $_:declId $[$ids:bracketedBinder]* where
+               $[$_:structCtor]? $_:structFields) => do
+      let .some startPos := st.getPos? | throwError "st syntax has no pos"
+      pure ⟨startPos, endPos⟩
+  | `(command| $_:declModifiers inductive%$st $_:declId $_:optDeclSig where
+               $[$_:ctor]* $[$_:computedFields]? $_:optDeriving) => do
+      let .some startPos := st.getPos? | throwError "st syntax has no pos"
+      pure ⟨startPos, endPos⟩
+
+  | _ => throwError "no match"
+
+
 unsafe def main (_args : List String) : IO Unit := do
   IO.println "hello world"
   IO.FS.createDirAll "_site"
@@ -49,6 +91,16 @@ unsafe def main (_args : List String) : IO Unit := do
     let ctx := {fileName := "", fileMap := default}
     let state := {env}
     Prod.fst <$> (CoreM.toIO · ctx state) do
+      let ⟨problem_statements,_⟩ ←
+        Lean.Meta.MetaM.run (Mathlib.Tactic.LabelAttr.labelled `problem_statement)
+      IO.println f!"problem statements: {problem_statements}"
+      let ⟨problem_setups,_⟩ ←
+        Lean.Meta.MetaM.run (Mathlib.Tactic.LabelAttr.labelled `problem_setup)
+      IO.println f!"problem setups: {problem_setups}"
+      let ⟨solution_datas,_⟩ ←
+        Lean.Meta.MetaM.run (Mathlib.Tactic.LabelAttr.labelled `solution_data)
+      IO.println f!"solution_datas: {solution_datas}"
+
       let mut infos : List PuzzleInfo := []
       let pkg := `MathPuzzles
       let modules := env.header.moduleNames.filter (pkg.isPrefixOf ·)
