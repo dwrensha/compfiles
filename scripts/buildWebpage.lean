@@ -113,53 +113,56 @@ unsafe def main (_args : List String) : IO Unit := do
           let src ← Lean.Elab.IO.moduleSource m
           let solutionUrl := olean_path_to_github_url p.toString
           IO.println s!"MODULE: {m}"
-          let steps ← Lean.Elab.IO.compileModule m
-          IO.println f!"number of steps = {steps.length}"
+          --let steps ← Lean.Elab.IO.compileModule m
+          --IO.println f!"number of steps = {steps.length}"
           let problem_file := s!"problems/{m}.lean"
           let problemUrl := s!"{baseurl}{problem_file}"
-          let h ← IO.FS.Handle.mk ("_site/" ++ problem_file) IO.FS.Mode.write
-          match steps with
-          | s :: _ =>
-            for im in s.before.header.imports do
-              if im.module ≠ "Init" && im.module ≠ `MathPuzzles.Meta.Attributes
-              then h.putStrLn s!"import {im}"
-            h.putStrLn ""
-          | [] => pure ()
-          for s in steps do
-             let csrc : String ← match s.stx.getPos?, s.stx.getTailPos? with
-             | .some pos, .some tailPos =>
-                pure s!"{(Substring.mk src pos tailPos).toString}\n"
-             | _, _ => throwError "failed to get source positions"
-             if s.diff.length = 0
-             then
-               if "/-!".isPrefixOf csrc
-               then h.putStrLn csrc
-               else if "/-".isPrefixOf csrc || "--".isPrefixOf csrc
-                    then pure ()
-                    else
-                      -- this includes things like `variables` and `namespace`
-                      h.putStrLn csrc
-             else
-               for c in s.diff do
-                 let name := c.toConstantVal.name
 
-                 if problem_statements.contains name
-                 then -- keep the type and replace the body with `sorry`
-                      let ⟨startPos, endPos⟩ ← matchDecl s.stx
-                      let decl1 := s!"{(Substring.mk src startPos endPos)} sorry\n"
-                      h.putStrLn decl1
-                 else if problem_setups.contains name
-                 then -- keep everything, but strip the attribute
-                      let ⟨startPos, endPos⟩ ← matchProblemSetup s.stx
-                      let decl1 := s!"{(Substring.mk src startPos endPos)}\n"
-                      h.putStrLn decl1
-                 else if solution_datas.contains name
-                 then -- keep the type and replace the body with `sorry`
-                      let ⟨startPos, endPos⟩ ← matchDecl s.stx
-                      let decl1 := s!"{(Substring.mk src startPos endPos)} sorry\n"
-                      h.putStrLn s!"/- @[solution_data] -/\n{decl1}"
-                 pure ()
-          h.flush
+--          let h ← IO.FS.Handle.mk ("_site/" ++ problem_file) IO.FS.Mode.write
+
+--          match steps with
+--          | s :: _ =>
+--            for im in s.before.header.imports do
+--              if im.module ≠ "Init" && im.module ≠ `MathPuzzles.Meta.Attributes
+--              then h.putStrLn s!"import {im}"
+--            h.putStrLn ""
+--          | [] => pure ()
+--          for s in steps do
+--             let csrc : String ← match s.stx.getPos?, s.stx.getTailPos? with
+--             | .some pos, .some tailPos =>
+--                pure s!"{(Substring.mk src pos tailPos).toString}\n"
+--             | _, _ => throwError "failed to get source positions"
+--             if s.diff.length = 0
+--             then
+--               if "/-!".isPrefixOf csrc
+--               then h.putStrLn csrc
+--               else if "/-".isPrefixOf csrc || "--".isPrefixOf csrc
+--                    then pure ()
+--                    else
+--                      -- this includes things like `variables` and `namespace`
+--                      h.putStrLn csrc
+--             else
+--               for c in s.diff do
+--                 let name := c.toConstantVal.name
+--
+--                 if problem_statements.contains name
+--                 then -- keep the type and replace the body with `sorry`
+--                      let ⟨startPos, endPos⟩ ← matchDecl s.stx
+--                      let decl1 := s!"{(Substring.mk src startPos endPos)} sorry\n"
+--                      h.putStrLn decl1
+--                 else if problem_setups.contains name
+--                 then -- keep everything, but strip the attribute
+--                      let ⟨startPos, endPos⟩ ← matchProblemSetup s.stx
+--                      let decl1 := s!"{(Substring.mk src startPos endPos)}\n"
+--                      h.putStrLn decl1
+--                 else if solution_datas.contains name
+--                 then -- keep the type and replace the body with `sorry`
+--                      let ⟨startPos, endPos⟩ ← matchDecl s.stx
+--                      let decl1 := s!"{(Substring.mk src startPos endPos)} sorry\n"
+--                      h.putStrLn s!"/- @[solution_data] -/\n{decl1}"
+--                 pure ()
+--          h.flush
+
           let mut proved := true
           let decls ← getDeclsInPackage m
           for d in decls do
@@ -193,7 +196,7 @@ unsafe def main (_args : List String) : IO Unit := do
         else
           h.putStr "❌  "
         h.putStr "</a>"
-        h.putStr s!"<a href=\"{info.problemUrl}\">{info.name}</a>"
+        h.putStr s!"<a href=\"{info.solutionUrl}\">{info.name}</a>"
         h.putStr "</li>"
       h.putStr "</ul>"
       h.putStr "</body></html>"
