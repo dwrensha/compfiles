@@ -125,40 +125,6 @@ unsafe def main (_args : List String) : IO Unit := do
               then h.putStrLn s!"import {im}"
             h.putStrLn ""
           | [] => pure ()
-          for s in steps do
-             let csrc : String ← match s.stx.getPos?, s.stx.getTailPos? with
-             | .some pos, .some tailPos =>
-                pure s!"{(Substring.mk src pos tailPos).toString}\n"
-             | _, _ => throwError "failed to get source positions"
-             if s.diff.length = 0
-             then
-               if "/-!".isPrefixOf csrc
-               then h.putStrLn csrc
-               else if "/-".isPrefixOf csrc || "--".isPrefixOf csrc
-                    then pure ()
-                    else
-                      -- this includes things like `variables` and `namespace`
-                      h.putStrLn csrc
-             else
-               for c in s.diff do
-                 let name := c.toConstantVal.name
-
-                 if problem_statements.contains name
-                 then -- keep the type and replace the body with `sorry`
-                      let ⟨startPos, endPos⟩ ← matchDecl s.stx
-                      let decl1 := s!"{(Substring.mk src startPos endPos)} sorry\n"
-                      h.putStrLn decl1
-                 else if problem_setups.contains name
-                 then -- keep everything, but strip the attribute
-                      let ⟨startPos, endPos⟩ ← matchProblemSetup s.stx
-                      let decl1 := s!"{(Substring.mk src startPos endPos)}\n"
-                      h.putStrLn decl1
-                 else if solution_datas.contains name
-                 then -- keep the type and replace the body with `sorry`
-                      let ⟨startPos, endPos⟩ ← matchDecl s.stx
-                      let decl1 := s!"{(Substring.mk src startPos endPos)} sorry\n"
-                      h.putStrLn s!"/- @[solution_data] -/\n{decl1}"
-                 pure ()
           h.flush
           let mut proved := true
           let decls ← getDeclsInPackage m
