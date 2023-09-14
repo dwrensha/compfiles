@@ -38,6 +38,10 @@ def HEADER : String :=
  "</head>"
 
 unsafe def main (_args : List String) : IO Unit := do
+  IO.println "hello world"
+  IO.FS.createDirAll "_site"
+  IO.FS.createDirAll "_site/problems"
+
   let module := `MathPuzzles
   searchPathRef.set compileTimeSearchPath
 
