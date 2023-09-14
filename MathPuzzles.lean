@@ -1,3 +1,4 @@
+import MathPuzzles.Meta.Frontend
 import MathPuzzles.Bulgaria1998Q1
 import MathPuzzles.Bulgaria1998Q2
 import MathPuzzles.Bulgaria1998Q3
