@@ -113,18 +113,18 @@ unsafe def main (_args : List String) : IO Unit := do
           let src ← Lean.Elab.IO.moduleSource m
           let solutionUrl := olean_path_to_github_url p.toString
           IO.println s!"MODULE: {m}"
-          let steps ← Lean.Elab.IO.compileModule m
-          IO.println f!"number of steps = {steps.length}"
+          --let steps ← Lean.Elab.IO.compileModule m
+          --IO.println f!"number of steps = {steps.length}"
           let problem_file := s!"problems/{m}.lean"
           let problemUrl := s!"{baseurl}{problem_file}"
           let h ← IO.FS.Handle.mk ("_site/" ++ problem_file) IO.FS.Mode.write
-          match steps with
-          | s :: _ =>
-            for im in s.before.header.imports do
-              if im.module ≠ "Init" && im.module ≠ `MathPuzzles.Meta.Attributes
-              then h.putStrLn s!"import {im}"
-            h.putStrLn ""
-          | [] => pure ()
+          --match steps with
+          --| s :: _ =>
+          --  for im in s.before.header.imports do
+          --    if im.module ≠ "Init" && im.module ≠ `MathPuzzles.Meta.Attributes
+          --    then h.putStrLn s!"import {im}"
+          --  h.putStrLn ""
+          --| [] => pure ()
           h.flush
           let mut proved := true
           let decls ← getDeclsInPackage m
