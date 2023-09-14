@@ -110,14 +110,14 @@ unsafe def main (_args : List String) : IO Unit := do
       for m in modules do
         if m ≠ pkg && m ≠ `MathPuzzles.Meta.Attributes then do
           let p ← findOLean m
-          let src ← Lean.Elab.IO.moduleSource m
+          --let src ← Lean.Elab.IO.moduleSource m
           let solutionUrl := olean_path_to_github_url p.toString
           IO.println s!"MODULE: {m}"
           --let steps ← Lean.Elab.IO.compileModule m
           --IO.println f!"number of steps = {steps.length}"
           let problem_file := s!"problems/{m}.lean"
           let problemUrl := s!"{baseurl}{problem_file}"
-          let h ← IO.FS.Handle.mk ("_site/" ++ problem_file) IO.FS.Mode.write
+          --let h ← IO.FS.Handle.mk ("_site/" ++ problem_file) IO.FS.Mode.write
           --match steps with
           --| s :: _ =>
           --  for im in s.before.header.imports do
@@ -125,7 +125,7 @@ unsafe def main (_args : List String) : IO Unit := do
           --    then h.putStrLn s!"import {im}"
           --  h.putStrLn ""
           --| [] => pure ()
-          h.flush
+          --h.flush
           let mut proved := true
           let decls ← getDeclsInPackage m
           for d in decls do
