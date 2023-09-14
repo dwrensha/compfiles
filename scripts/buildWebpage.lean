@@ -2,6 +2,10 @@ import Std.Data.String.Basic
 import Std.Tactic.Lint
 import Lean.Environment
 import Mathlib.Data.String.Defs
+import Mathlib.Tactic.LabelAttr
+import MathPuzzles.Meta.Attributes
+import MathPuzzles.Meta.Frontend
+import Lean.Meta.Basic
 
 open Lean Core Elab Command Std.Tactic.Lint
 
