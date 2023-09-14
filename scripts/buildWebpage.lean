@@ -104,8 +104,10 @@ unsafe def main (_args : List String) : IO Unit := do
       let mut infos : List PuzzleInfo := []
       let pkg := `MathPuzzles
       let modules := env.header.moduleNames.filter (pkg.isPrefixOf ·)
+      let baseurl := ((← IO.getEnv "GITHUB_PAGES_BASEURL").getD "")
+
       for m in modules do
-        if m ≠ pkg then do
+        if m ≠ pkg && m ≠ `MathPuzzles.Meta.Attributes then do
           let p ← findOLean m
           let url := olean_path_to_github_url p.toString
           IO.println s!"MODULE: {m}"
@@ -124,7 +126,6 @@ unsafe def main (_args : List String) : IO Unit := do
       let commit_url :=
         s!"https://github.com/dwrensha/math-puzzles-in-lean4/commit/{commit_sha}"
 
-      IO.FS.createDirAll "_site"
       let h ← IO.FS.Handle.mk "_site/index.html" IO.FS.Mode.write
       h.putStr HEADER
       h.putStr "<body>"
