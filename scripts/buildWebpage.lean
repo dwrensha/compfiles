@@ -84,7 +84,7 @@ unsafe def main (_args : List String) : IO Unit := do
           IO.println s!"MODULE: {m}"
           --let steps ← Lean.Elab.IO.compileModule m
           --IO.println f!"number of steps = {steps.length}"
-          let problem_file := s!"problems/{m}.lean"
+          let problem_file := s!"problems/{m}.lean.txt"
           let problemUrl := s!"{baseurl}{problem_file}"
 
           let entries := (mst.find? m).getD #[]
