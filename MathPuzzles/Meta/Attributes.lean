@@ -52,8 +52,8 @@ structure Entry where
 abbrev ProblemExtractionExtension :=
   SimplePersistentEnvExtension Entry (Array Entry)
 
-initialize problemExtractionExtensionRef : IO.Ref ProblemExtractionExtension ← do
-  let ext ← registerSimplePersistentEnvExtension {
+initialize problemExtractionExtension : ProblemExtractionExtension ←
+  registerSimplePersistentEnvExtension {
     name := `problem_extraction
     addImportedFn := fun arrays =>
       arrays.foldl (init := ∅) fun acc as =>
@@ -61,8 +61,6 @@ initialize problemExtractionExtensionRef : IO.Ref ProblemExtractionExtension ←
     addEntryFn    := fun s n => s.push n
     toArrayFn     := fun es => es.toArray
   }
-
-  IO.mkRef ext
 
 def matchDecl : Syntax → Command.CommandElabM (String.Pos × String.Pos)
 | `(command| $_:declModifiers theorem%$thm $_:declId $_:declSig :=%$colEq $_:term) => do
@@ -79,7 +77,7 @@ elab_rules : command
 | `(command| #[problem_statement] $cmd:command) => do
   let ⟨startPos, endPos⟩ ← matchDecl cmd
   let mod := (←getEnv).header.mainModule
-  let ext ← problemExtractionExtensionRef.get
+  let ext := problemExtractionExtension
   modifyEnv fun env => ext.addEntry env ⟨mod, startPos, endPos, "", " sorry"⟩
   Lean.Elab.Command.elabCommand cmd
 
@@ -88,7 +86,7 @@ elab_rules : command
   let .some startPos := cmd.raw.getPos? | throwError "cmd syntax has no pos"
   let .some endPos := cmd.raw.getTailPos? | throwError "cmd syntax has no tail pos"
   let mod := (←getEnv).header.mainModule
-  let ext ← problemExtractionExtensionRef.get
+  let ext := problemExtractionExtension
   modifyEnv fun env => ext.addEntry env ⟨mod, startPos, endPos, "", ""⟩
 
 --  for some weird reason, this alternate way of updating the state fails
@@ -103,7 +101,7 @@ elab_rules : command
 | `(command| #[solution_data] $cmd:command) => do
   let ⟨startPos, endPos⟩ ← matchDecl cmd
   let mod := (←getEnv).header.mainModule
-  let ext ← problemExtractionExtensionRef.get
+  let ext := problemExtractionExtension
   modifyEnv fun env => ext.addEntry env ⟨mod, startPos, endPos,
     "/- #[solution_data] -/\n",  " sorry"⟩
   Lean.Elab.Command.elabCommand cmd
@@ -112,7 +110,7 @@ syntax (name := showExtraction) "#show_problem_extraction" : command
 
 elab_rules : command
 | `(command| #show_problem_extraction) => do
-  let ext ← problemExtractionExtensionRef.get
+  let ext := problemExtractionExtension
   let env ← getEnv
   let st := ext.getState env
   IO.println s!"st.size = {st.size}"

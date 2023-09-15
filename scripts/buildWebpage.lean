@@ -66,7 +66,7 @@ unsafe def main (_args : List String) : IO Unit := do
     let ctx := {fileName := "", fileMap := default}
     let state := {env}
     Prod.fst <$> (CoreM.toIO · ctx state) do
-      let ext ← MathPuzzles.Meta.problemExtractionExtensionRef.get
+      let ext := MathPuzzles.Meta.problemExtractionExtension
       let st := ext.getState env
       IO.println s!"{st.size} entries"
       let mst := processExtState st
