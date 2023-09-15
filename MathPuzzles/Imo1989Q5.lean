@@ -15,16 +15,16 @@ integers, none of which is an integral power of a prime number.
 
 namespace Imo1989Q5
 
-lemma coprime_of_product (n : ℕ) (lst : List ℕ) (h : ∀ y ∈ lst, n.coprime y) :
-    n.coprime lst.prod := by
+lemma coprime_of_product (n : ℕ) (lst : List ℕ) (h : ∀ y ∈ lst, n.Coprime y) :
+    n.Coprime lst.prod := by
   induction lst with
   | nil => simp only [List.prod_nil, Nat.coprime_one_right_eq_true]
   | cons x xs ih =>
-    have hy : ∀ (y : ℕ), y ∈ xs → Nat.coprime n y :=
+    have hy : ∀ (y : ℕ), y ∈ xs → Nat.Coprime n y :=
       fun y hy ↦ h y (List.mem_cons.mpr (Or.inr hy))
     have h1 := h x (by simp)
     rw[List.prod_cons]
-    exact Nat.coprime.mul_right h1 (ih hy)
+    exact Nat.Coprime.mul_right h1 (ih hy)
 
 lemma modulus_of_product {a b : ℕ} {xs : List ℕ}
     (h : a ≡ b [MOD xs.prod])
@@ -45,7 +45,7 @@ structure ChinesePair where
   remainder : ℕ
 
 lemma general_chinese_remainder (xs : List ChinesePair)
-    (x_coprime : xs.Pairwise (fun x y ↦ Nat.coprime x.modulus y.modulus)) :
+    (x_coprime : xs.Pairwise (fun x y ↦ Nat.Coprime x.modulus y.modulus)) :
     ∃ m : ℕ, ∀ x ∈ xs, m ≡ x.remainder [MOD x.modulus] := by
   induction xs with
   | nil => use 0; simp only
@@ -122,10 +122,10 @@ lemma lemma1 {p1 p2 q : ℕ}
     (hq : Nat.Prime q)
     (hp1q : p1 ≠ q)
     (hp2q : p2 ≠ q) :
-    Nat.coprime (p1 * p2) q := by
-  have h1 : Nat.coprime p1 q := Iff.mpr (Nat.coprime_primes hp1 hq) hp1q
-  have h2 : Nat.coprime p2 q := Iff.mpr (Nat.coprime_primes hp2 hq) hp2q
-  exact Nat.coprime.mul h1 h2
+    Nat.Coprime (p1 * p2) q := by
+  have h1 : Nat.Coprime p1 q := Iff.mpr (Nat.coprime_primes hp1 hq) hp1q
+  have h2 : Nat.Coprime p2 q := Iff.mpr (Nat.coprime_primes hp2 hq) hp2q
+  exact Nat.Coprime.mul h1 h2
 
 lemma lemma2 {p1 q1 p2 q2 : ℕ}
     (hp1 : Nat.Prime p1)
@@ -136,10 +136,10 @@ lemma lemma2 {p1 q1 p2 q2 : ℕ}
     (hp1q2 : p1 ≠ q2)
     (hp2q1 : p2 ≠ q1)
     (hp2q2 : p2 ≠ q2) :
-    Nat.coprime (p1 * p2) (q1 * q2) := by
+    Nat.Coprime (p1 * p2) (q1 * q2) := by
   have h1 := lemma1 hp1 hp2 hq1 hp1q1 hp2q1
   have h2 := lemma1 hp1 hp2 hq2 hp1q2 hp2q2
-  exact Nat.coprime.mul_right h1 h2
+  exact Nat.Coprime.mul_right h1 h2
 
 lemma lemma3 {α : Type} (l : List α)
     (hl : List.Nodup l)
@@ -172,7 +172,7 @@ theorem imo1989_q5 (n : ℕ) : ∃ m, ∀ j < n, ¬IsPrimePow (m + j) := by
                                let q := l.get ⟨x.1 + n, hx1⟩
                                ⟨p * q, p * q - x.1⟩)
 
-  have lcp : ci.Pairwise (fun x y => Nat.coprime x.modulus y.modulus) := by
+  have lcp : ci.Pairwise (fun x y => Nat.Coprime x.modulus y.modulus) := by
      simp only [ge_iff_le, List.pairwise_ofFn]
      intros i j hij
      apply lemma2

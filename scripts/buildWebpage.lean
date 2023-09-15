@@ -88,7 +88,7 @@ unsafe def main (_args : List String) : IO Unit := do
   let module := `MathPuzzles
   searchPathRef.set compileTimeSearchPath
 
-  withImportModules [{module}] {} (trustLevel := 1024) fun env =>
+  withImportModules #[{module}] {} (trustLevel := 1024) fun env =>
     let ctx := {fileName := "", fileMap := default}
     let state := {env}
     Prod.fst <$> (CoreM.toIO · ctx state) do

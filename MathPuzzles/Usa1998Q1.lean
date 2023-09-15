@@ -121,7 +121,7 @@ theorem usa1998_q1
 
   --
   -- Combining these facts gives S ≡ 9 MOD 10.
-  have hmn : Nat.coprime (Int.natAbs 2) (Int.natAbs 5) := by norm_cast
+  have hmn : Nat.Coprime (Int.natAbs 2) (Int.natAbs 5) := by norm_cast
   rw[show (9:ℤ) = 9 % 10 by norm_num,
      ← zmod_eq,
      show (10:ℤ) = 2 * 5 by norm_num]

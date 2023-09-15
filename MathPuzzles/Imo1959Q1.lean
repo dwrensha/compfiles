@@ -31,6 +31,6 @@ lemma calculation
   exact (Nat.dvd_add_right h3).mp (h5 ▸ h4)
 
 @[problem_statement]
-theorem imo1959_q1 : ∀ n : ℕ, Nat.coprime (21 * n + 4) (14 * n + 3) :=
+theorem imo1959_q1 : ∀ n : ℕ, Nat.Coprime (21 * n + 4) (14 * n + 3) :=
 fun n => Nat.coprime_of_dvd' <| λ k _ h1 h2 => calculation n k h1 h2
 

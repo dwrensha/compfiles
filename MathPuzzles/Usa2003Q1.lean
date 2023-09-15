@@ -30,7 +30,7 @@ lemma nat_mod_inv (a : ℕ) : ∃ b, (a + b) % 5 = 0 := by
   rw[Nat.add_sub_of_le h']
   rfl
 
-lemma lemma2 (a b c : ℕ) (hb : 0 < b) (h : Nat.coprime a b) : ∃ k, k < b ∧ a * k ≡ c [MOD b] := by
+lemma lemma2 (a b c : ℕ) (hb : 0 < b) (h : Nat.Coprime a b) : ∃ k, k < b ∧ a * k ≡ c [MOD b] := by
   let ⟨N, HN1, HN2⟩ := Nat.chineseRemainder h 0 c
   have ⟨x, hx⟩ : a ∣ N := Nat.modEq_zero_iff_dvd.mp HN1
   use x % b
@@ -106,8 +106,8 @@ theorem usa2003Q1 (n : ℕ) :
 
     obtain ⟨b, hb⟩ := nat_mod_inv (2^n + a)
     have h11 : ¬ 2^(n + 1) ≡ 0 [MOD 5] := by
-      have h14 : Nat.coprime 5 2 := by norm_num
-      have h15 : Nat.coprime 5 (2^(n+1)) := Nat.coprime.pow_right (n + 1) h14
+      have h14 : Nat.Coprime 5 2 := by norm_num
+      have h15 : Nat.Coprime 5 (2^(n+1)) := Nat.Coprime.pow_right (n + 1) h14
       have h16 := (Nat.Prime.coprime_iff_not_dvd prime_five).mp h15
       intro h17
       have h18 : 5 ∣ 2 ^ (n + 1) := Iff.mp Nat.modEq_zero_iff_dvd h17
