@@ -14,14 +14,14 @@ import Mathlib.Tactic.Ring
 
 import MathPuzzles.Meta.Attributes
 
-/-!
+#[problem_setup]/-!
 # USA Mathematical Olympiad 1998, Problem 5
 
 Prove that for each n ≥ 2, there is a set S of n integers such that
 (a-b)² divides ab for every distinct a,b ∈ S.
 -/
 
-namespace Usa1998Q5
+#[problem_setup] namespace Usa1998Q5
 
 open BigOperators
 
@@ -121,7 +121,7 @@ lemma usa1998_q5_stronger (n : ℕ) :
             rw[ha2, hb2, hab] at Lmod'
             exact Int.dvd_of_emod_eq_zero Lmod'
 
-@[problem_statement]
+#[problem_statement]
 theorem usa1998_q5 (n : ℕ) (_hn : 2 ≤ n) :
     ∃ S : Finset ℤ,
        S.card = n ∧

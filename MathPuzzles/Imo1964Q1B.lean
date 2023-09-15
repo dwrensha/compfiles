@@ -10,13 +10,13 @@ import Mathlib.Tactic.Linarith
 
 import MathPuzzles.Meta.Attributes
 
-/-!
+#[problem_setup]/-!
 # International Mathematical Olympiad 1964, Problem 1b
 
 Prove that there is no positive integer n for which 2ⁿ + 1 is divisible by 7.
 -/
 
-namespace Imo1964Q1
+#[problem_setup] namespace Imo1964Q1
 
 /-
 Informal proof (credit to twitch.tv viewer int_fast64_t):
@@ -26,7 +26,7 @@ Informal proof (credit to twitch.tv viewer int_fast64_t):
     2^n mod 7 = (2^3 mod 7)^k * 2^j mod 7 = 1 mod 7 * 2^j mod 7,
   but 2^j < 5
 -/
-@[problem_statement]
+#[problem_statement]
 theorem imo_1964_q1b (n : ℕ) : ¬ 7 ∣ (2^n + 1) := by
   intro h
   replace h := Nat.mod_eq_zero_of_dvd h

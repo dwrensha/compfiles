@@ -10,7 +10,7 @@ import Mathlib.Tactic.Linarith
 
 import MathPuzzles.Meta.Attributes
 
-/-!
+#[problem_setup]/-!
 # International Mathematical Olympiad 1964, Problem 4
 
 Seventeen people correspond by mail with one another -- each one with
@@ -21,7 +21,7 @@ about the same topic.
 
 -/
 
-namespace Imo1964Q4
+#[problem_setup] namespace Imo1964Q4
 
 /--
  Smaller version of the problem, with 6 (or more) people and 2 topics.
@@ -109,7 +109,7 @@ theorem lemma1
       have h9 := ht3 t3'
       rw[←h9]
 
-@[problem_statement]
+#[problem_statement]
 theorem imo1964_q4
     (Person Topic : Type)
     [Fintype Person] [DecidableEq Person]

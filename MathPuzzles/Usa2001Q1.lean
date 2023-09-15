@@ -9,7 +9,7 @@ import Mathlib.Order.Bounds.Basic
 
 import MathPuzzles.Meta.Attributes
 
-/-!
+#[problem_setup]/-!
 # USA Mathematical Olympiad 2001, Problem 1
 
 Each of eight boxes contains six balls.
@@ -19,9 +19,9 @@ more than one box. Determine, with justification, the smallest integer n
 for which this is possible.
 -/
 
-namespace Usa2001Q1
+#[problem_setup] namespace Usa2001Q1
 
-@[problem_setup]
+#[problem_setup]
 def possible_num_colors : Set ℕ :=
 { n : ℕ | ∃ f : Fin 8 → Finset (Fin n),
     (∀ i, (f i).card = 6) ∧
@@ -29,10 +29,10 @@ def possible_num_colors : Set ℕ :=
       i ≠ j → x ∈ f i → y ∈ f i →
         (¬ (x ∈ f j ∧ y ∈ f j))) }
 
-@[solution_data]
+#[solution_data]
 def min_colors : ℕ := 23
 
-@[problem_statement]
+#[problem_statement]
 theorem usa2001_q1 : IsLeast possible_num_colors min_colors := by
   constructor
   · sorry

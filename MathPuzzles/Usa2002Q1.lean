@@ -13,7 +13,7 @@ import Mathlib.Tactic.IntervalCases
 
 import MathPuzzles.Meta.Attributes
 
-/-!
+#[problem_setup]/-!
 # USA Mathematical Olympiad 2002, Problem 1
 
 Let S be a set with 2002 elements, and let N be an integer with
@@ -28,9 +28,9 @@ red so that the following conditions hold:
  c) there are exactly N red subsets.
 -/
 
-namespace Usa2002Q1
+#[problem_setup] namespace Usa2002Q1
 
-@[problem_setup]
+#[problem_setup]
 inductive Color : Type where
 | red : Color
 | blue : Color
@@ -103,7 +103,7 @@ lemma usa2002q1_generalized
       -- Thus the induction is complete.
       sorry
 
-@[problem_statement]
+#[problem_statement]
 theorem usa2002q1
     {α : Type} [DecidableEq α] [Fintype α] (hs : Fintype.card α = 2002)
     (N : ℕ) (hN : N ≤ 2 ^ 2002) :

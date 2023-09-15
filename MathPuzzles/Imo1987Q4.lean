@@ -9,19 +9,18 @@ import Mathlib.Data.Nat.Basic
 import Mathlib.Data.Nat.Interval
 import Mathlib.Data.Set.Basic
 import Mathlib.Data.Fintype.Card
-import Mathlib.Tactic.LibrarySearch
 import Mathlib.Tactic.Ring
 
 import MathPuzzles.Meta.Attributes
 
-/-!
+#[problem_setup]/-!
 # International Mathematical Olympiad 1987, Problem 4
 
 Prove that there is no function f : ℕ → ℕ such that f(f(n)) = n + 1987
 for every n.
 -/
 
-namespace Imo1987Q4
+#[problem_setup] namespace Imo1987Q4
 
 lemma subset_finite {A B : Set ℕ} (h : A ⊆ B) (hab : Finite ↑B) : Finite ↑A := by
   rw[Set.finite_coe_iff]
@@ -113,7 +112,7 @@ theorem imo1987_q4_generalized (m : ℕ) :
   apply_fun (· % 2) at h2
   norm_num at h2
 
-@[problem_statement]
+#[problem_statement]
 theorem imo1987_q4 : (¬∃ f : ℕ → ℕ, ∀ n, f (f n) = n + 1987) := by
   rw[show 1987 = (2 * 993 + 1) by norm_num]
   exact imo1987_q4_generalized 993

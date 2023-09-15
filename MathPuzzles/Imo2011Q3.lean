@@ -2,7 +2,7 @@ import Mathlib.Data.Real.Basic
 
 import MathPuzzles.Meta.Attributes
 
-/-!
+#[problem_setup]/-!
 # IMO 2011 Q3
 
 Let f : ℝ → ℝ be a function that satisfies
@@ -18,7 +18,7 @@ for all x and y. Prove that f(x) = 0 for all x ≤ 0.
 Direct translation of the solution found in https://www.imo-official.org/problems/IMO2011SL.pdf
 -/
 
-@[problem_statement]
+#[problem_statement]
 theorem imo2011_q3 (f : ℝ → ℝ) (hf : ∀ x y, f (x + y) ≤ y * f x + f (f x)) :
   ∀ x ≤ 0, f x = 0 := by
   -- reparameterize

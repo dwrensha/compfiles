@@ -12,7 +12,7 @@ import Mathlib.Analysis.NormedSpace.PiLp
 
 import MathPuzzles.Meta.Attributes
 
-/-
+#[problem_setup]/-!
 Iranian Mathematical Olympiad 1998, Problem 9
 
 Let x,y,z > 1 and 1/x + 1/y + 1/z = 2. Prove that
@@ -21,7 +21,7 @@ Let x,y,z > 1 and 1/x + 1/y + 1/z = 2. Prove that
 
 -/
 
-namespace Iran1998Q9
+#[problem_setup] namespace Iran1998Q9
 open BigOperators
 
 -- This workaround is required to make exponent of `x ^ 2` be interpreted as type ℕ.
@@ -33,7 +33,7 @@ lemma compute_norm (v : EuclideanSpace ℝ (Fin 3)) : ‖v‖ = Real.sqrt (∑i 
   congr; ext
   rw [Real.norm_eq_abs, sq_abs]
 
-@[problem_statement]
+#[problem_statement]
 theorem iran1998_q9
     (x y z : ℝ)
     (hx : 1 < x)

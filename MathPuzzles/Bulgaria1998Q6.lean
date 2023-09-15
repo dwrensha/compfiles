@@ -12,7 +12,7 @@ import Mathlib.Tactic.Ring
 
 import MathPuzzles.Meta.Attributes
 
-/-
+#[problem_setup]/-
 Bulgarian Mathematical Olympiad 1998, Problem 6
 
 Prove that the equation
@@ -23,7 +23,7 @@ has no solutions in positive integers.
 
 -/
 
-namespace Bulgaria1998Q6
+#[problem_setup] namespace Bulgaria1998Q6
 
 lemma lemma_0
     (a b c x : ℤ)
@@ -63,7 +63,7 @@ lemma lemma_1
   rw [←hs'] at h
   sorry
 
-@[problem_statement]
+#[problem_statement]
 theorem bulgaria1998_q6
     (x y z : ℤ)
     (hx : 0 < x)

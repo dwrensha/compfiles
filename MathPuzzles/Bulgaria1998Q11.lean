@@ -12,7 +12,7 @@ import Mathlib.Tactic.Zify
 
 import MathPuzzles.Meta.Attributes
 
-/-!
+#[problem_setup]/-!
 Bulgarian Mathematical Olympiad 1998, Problem 11
 
 Let m,n be natural numbers such that
@@ -22,7 +22,7 @@ Let m,n be natural numbers such that
 is an integer. Prove that A is odd.
 -/
 
-namespace Bulgaria1998Q11
+#[problem_setup] namespace Bulgaria1998Q11
 
 lemma mod_plus_pow (m n : ℕ) : (m + 3)^n % 3 = m^n % 3 := by
   induction' n with pn hpn
@@ -39,7 +39,7 @@ lemma foo1 (m n : ℕ) (ho : Odd m) : (m + 3) ^ n.succ % 2 = 0 := by
   rw[hw, Nat.pow_succ, show 2 * w + 1 + 3 = 2 * (w + 2) by ring, Nat.mul_mod,
      Nat.mul_mod_right, mul_zero, Nat.zero_mod]
 
-@[problem_statement]
+#[problem_statement]
 theorem bulgaria1998_q11
     (m n A : ℕ)
     (h : 3 * m * A = (m + 3)^n + 1) : Odd A := by

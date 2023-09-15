@@ -6,14 +6,14 @@ import Std.Data.List.Lemmas
 
 import MathPuzzles.Meta.Attributes
 
-/-!
+#[problem_setup]/-!
 # International Mathematical Olympiad 1989, Problem 5
 
 Prove that for each positive integer n there exist n consecutive positive
 integers, none of which is an integral power of a prime number.
 -/
 
-namespace Imo1989Q5
+#[problem_setup] namespace Imo1989Q5
 
 lemma coprime_of_product (n : ℕ) (lst : List ℕ) (h : ∀ y ∈ lst, n.Coprime y) :
     n.Coprime lst.prod := by
@@ -156,7 +156,7 @@ lemma lemma4 {a b : ℕ} (h : a ≡ b [MOD b]) : a ≡ 0 [MOD b] := by
   rw[h2] at h1
   exact h1
 
-@[problem_statement]
+#[problem_statement]
 theorem imo1989_q5 (n : ℕ) : ∃ m, ∀ j < n, ¬IsPrimePow (m + j) := by
   -- (informal solution from https://artofproblemsolving.com)
   -- Let p₁,p₂,...pₙ,q₁,q₂,...,qₙ be distinct primes.

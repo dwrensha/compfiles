@@ -8,7 +8,7 @@ import Mathlib.Algebra.BigOperators.Basic
 
 import MathPuzzles.Meta.Attributes
 
-/-!
+#[problem_setup]/-!
 # IMO 2018 Q3
 
 An anti-Pascal triangle is an equilateral triangular array of numbers such that,
@@ -33,25 +33,25 @@ integer from 1 to 1 + 2 + ... + 2018?
 No.
 -/
 
-namespace Imo2018Q3
-open BigOperators
+#[problem_setup] namespace Imo2018Q3
+#[problem_setup] open BigOperators
 
-@[problem_setup]
+#[problem_setup]
 structure Coords where
 (row : Nat) (col : Nat)
 
-@[problem_setup]
+#[problem_setup]
 def left_child (c : Coords) : Coords :=
  ⟨c.row.succ, c.col⟩
 
-@[problem_setup]
+#[problem_setup]
 def right_child (c : Coords) : Coords :=
   ⟨c.row.succ, c.col.succ⟩
 
+#[problem_setup]
 /--
 antipascal triangle with n rows
 -/
-@[problem_setup]
 structure antipascal_triangle (n : Nat) where
 (f : Coords → Nat)
 (antipascal : ∀ x: Coords, x.row.succ < n ∧ x.col ≤ x.row →
@@ -61,7 +61,7 @@ structure antipascal_triangle (n : Nat) where
 structure a_and_b where
 (a : Coords) (b : Coords)
 
-@[problem_statement]
+#[problem_statement]
 theorem imo2018_q3 (t : antipascal_triangle 2018)
     (h_contains_all : ∀ n, n ≤ ∑ i in Finset.range 2018, (i + 1) →
                       ∃ r, r ≤ 2018 ∧ ∃ c, c < r ∧ t.f ⟨r,c⟩ = n) :

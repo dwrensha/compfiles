@@ -6,7 +6,7 @@ import Mathlib.Tactic.Positivity
 
 import MathPuzzles.Meta.Attributes
 
-/-!
+#[problem_setup]/-!
 # USA Mathematical Olympiad 2022, Problem 1
 
 Let a and b be positive integers. The cells of an (a+b+1) × (a+b+1) grid
@@ -16,9 +16,9 @@ possible to choose a amber cells and b bronze cells such that no two
 of the a + b chosen cells lie in the same row or column.
 -/
 
-namespace Usa2022Q1
+#[problem_setup] namespace Usa2022Q1
 
-@[problem_statement]
+#[problem_statement]
 theorem usa2022q1
     (a b : ℕ)
     (ha : 0 < a)

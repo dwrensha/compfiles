@@ -1,14 +1,13 @@
 import Mathlib.Algebra.GeomSum
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.LibrarySearch
 import Mathlib.Data.Real.Basic
 import Mathlib.Tactic.Positivity
 import Mathlib.Tactic.LinearCombination
 
 import MathPuzzles.Meta.Attributes
 
-/-!
+#[problem_setup]/-!
 # IMO 2013 Q5
 
 Let ℚ>₀ be the set of positive rational numbers. Let f: ℚ>₀ → ℝ be a function satisfying
@@ -28,6 +27,8 @@ all x ∈ ℚ>₀.
 We provide a direct translation of the solution found in
 https://www.imo-official.org/problems/IMO2013SL.pdf
 -/
+
+#[problem_setup] namespace Imo2013Q5
 
 open BigOperators
 
@@ -190,7 +191,7 @@ lemma fixed_point_of_gt_1 {f : ℚ → ℝ} {x : ℚ} (hx : 1 < x)
   have heq := h1.antisymm (by exact_mod_cast h2)
   linarith [H5 x hx, H5 _ h_big_enough]
 
-@[problem_statement]
+#[problem_statement]
 theorem imo2013_q5
     (f : ℚ → ℝ)
     (H1 : ∀ x y, 0 < x → 0 < y → f (x * y) ≤ f x * f y)

@@ -8,7 +8,7 @@ import Mathlib.Data.Real.Basic
 
 import MathPuzzles.Meta.Attributes
 
-/-
+#[problem_setup]/-!
  Russian Mathematical Olympiad 1998, problem 42
 
  A binary operation ⋆ on real numbers has the property that
@@ -18,14 +18,13 @@ import MathPuzzles.Meta.Attributes
 
 -/
 
-namespace Russia1998Q42
+#[problem_setup] namespace Russia1998Q42
 
-variable (star : ℝ → ℝ → ℝ)
+#[problem_setup] variable (star : ℝ → ℝ → ℝ)
 
-@[problem_setup]
-local infixl:80 " ⋆ " => star
+#[problem_setup] local infixl:80 " ⋆ " => star
 
-@[problem_statement]
+#[problem_statement]
 theorem russia1998_q42
   (stardef : ∀ a b c, a ⋆ b ⋆ c = a + b + c) :
   (∀ a b, a ⋆ b = a + b) :=

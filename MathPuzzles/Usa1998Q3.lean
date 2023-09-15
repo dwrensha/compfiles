@@ -10,7 +10,7 @@ import Mathlib.Analysis.MeanInequalities
 
 import MathPuzzles.Meta.Attributes
 
-/-!
+#[problem_setup]/-!
 # USA Mathematical Olympiad 1998, Problem 3
 
 Let a₀,a₁,...,aₙ be real numbers from the interval (0,π/2) such that
@@ -23,8 +23,8 @@ Prove that
 
 -/
 
-namespace Usa1998Q3
-open BigOperators
+#[problem_setup] namespace Usa1998Q3
+#[problem_setup] open BigOperators
 
 
 lemma lemma0 : Set.Icc (-Real.pi / 4) (Real.pi / 4) ⊆
@@ -136,7 +136,7 @@ lemma lemma2 (f : ℕ → ℝ) :
     rw[h6]
     ring
 
-@[problem_statement]
+#[problem_statement]
 theorem usa1998_q3
     (n : ℕ)
     (a : ℕ → ℝ)

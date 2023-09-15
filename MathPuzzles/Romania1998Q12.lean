@@ -4,7 +4,7 @@ import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 import MathPuzzles.Meta.Attributes
 
-/-!
+#[problem_setup]/-!
 # Romanian Mathematical Olympiad 1998, Problem 12
 
 Find all functions u : ℝ → ℝ for which there exists a strictly monotonic
@@ -18,7 +18,7 @@ f(x) = eᵏˣ for some k : ℝ.
 
 -/
 
-namespace Romania1998Q12
+#[problem_setup] namespace Romania1998Q12
 
 lemma abs_pos' {x y : ℝ} (hy : x ≠ y) : 0 < |x - y| :=
   abs_pos.mpr (sub_ne_zero.mpr hy)
@@ -560,7 +560,7 @@ lemma romania1998_q12_mpr (u : ℝ → ℝ) :
 -- def solution_set : Set (ℝ → ℝ) :=
 -- { u | ∃ k : ℝ, ∀ x : ℝ, u x = Real.exp (k * x) }
 
-@[problem_statement]
+#[problem_statement]
 theorem romania1998_q12 (u : ℝ → ℝ) :
     (∃ f : ℝ → ℝ, (StrictMono f ∨ StrictAnti f)
           ∧ ∀ x y : ℝ, f (x + y) = f x * u y + f y) ↔

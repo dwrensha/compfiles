@@ -10,7 +10,7 @@ import Mathlib.Data.Nat.Prime
 
 import MathPuzzles.Meta.Attributes
 
-/-!
+#[problem_setup]/-!
 # IMO 1959 Q1
 Prove that the fraction `(21n+4)/(14n+3)` is irreducible for every
 natural number `n`.
@@ -30,7 +30,7 @@ lemma calculation
   have h5 : 3 * (14 * n + 3) = 2 * (21 * n + 4) + 1 := by ring
   exact (Nat.dvd_add_right h3).mp (h5 ▸ h4)
 
-@[problem_statement]
+#[problem_statement]
 theorem imo1959_q1 : ∀ n : ℕ, Nat.Coprime (21 * n + 4) (14 * n + 3) :=
 fun n => Nat.coprime_of_dvd' <| λ k _ h1 h2 => calculation n k h1 h2
 

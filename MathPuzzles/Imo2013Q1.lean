@@ -11,7 +11,7 @@ import Mathlib.Tactic.FieldSimp
 
 import MathPuzzles.Meta.Attributes
 
-/-!
+#[problem_setup]/-!
 # IMO 2013 Q1
 
 Prove that for any pair of positive integers k and n, there exist k positive integers
@@ -29,8 +29,8 @@ Adaptation of the solution found in https://www.imo-official.org/problems/IMO201
 We prove a slightly more general version where k does not need to be strictly positive.
 -/
 
-open scoped BigOperators
-namespace Imo2013Q1
+#[problem_setup] open scoped BigOperators
+#[problem_setup] namespace Imo2013Q1
 
 theorem prod_lemma (m : ℕ → ℕ+) (k : ℕ) (nm : ℕ+) :
     ∏ i : ℕ in Finset.range k, ((1 : ℚ) + 1 / ↑(if i < k then m i else nm)) =
@@ -40,7 +40,7 @@ theorem prod_lemma (m : ℕ → ℕ+) (k : ℕ) (nm : ℕ+) :
   intro i hi
   simp [Finset.mem_range.mp hi]
 
-@[problem_statement]
+#[problem_statement]
 theorem imo2013_q1 (n : ℕ+) (k : ℕ) :
     ∃ m : ℕ → ℕ+,
       (1 : ℚ) + (2 ^ k - 1) / n = ∏ i in Finset.range k, (1 + 1 / (m i : ℚ)) := by

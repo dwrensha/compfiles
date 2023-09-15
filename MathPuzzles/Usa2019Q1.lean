@@ -11,7 +11,7 @@ import Mathlib.Tactic
 
 import MathPuzzles.Meta.Attributes
 
-/-!
+#[problem_setup]/-!
 # USA Mathematical Olympiad 2019, Problem 1
 
 Let ℕ+ be the set of positive integers.
@@ -23,7 +23,7 @@ for all positive integers n, where fᵏ(m) means f iterated k times on m.
 Given this information, determine all possible values of f(1000).
 -/
 
-namespace Usa2019Q1
+#[problem_setup] namespace Usa2019Q1
 
 lemma f_injective
     (f : ℕ+ → ℕ+)
@@ -115,10 +115,10 @@ lemma lemma_2
   sorry
 
 
-@[solution_data]
+#[solution_data]
 def solution_set : Set ℕ+ := { x : ℕ+ | Even x }
 
-@[problem_statement]
+#[problem_statement]
 theorem usa2019Q1 (m : ℕ+) :
    m ∈ solution_set ↔
     (∃ f : ℕ+ → ℕ+,

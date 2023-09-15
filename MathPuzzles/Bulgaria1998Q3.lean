@@ -11,7 +11,7 @@ import Mathlib.Analysis.SpecificLimits.Basic
 
 import MathPuzzles.Meta.Attributes
 
-/-
+#[problem_setup]/-!
 Bulgarian Mathematical Olympiad 1998, Problem 3
 
 Let ℝ⁺ be the set of positive real numbers. Prove that there does not exist a function
@@ -23,7 +23,8 @@ for every x,y ∈ ℝ⁺.
 
 -/
 
-namespace Bulgaria1998Q3
+#[problem_setup] namespace Bulgaria1998Q3
+
 open BigOperators
 
 lemma geom_sum_bound (n : ℕ) : ∑ i in Finset.range n, (1:ℝ) / (2^i) < 3 :=
@@ -32,7 +33,7 @@ lemma geom_sum_bound (n : ℕ) : ∑ i in Finset.range n, (1:ℝ) / (2^i) < 3 :=
         _ ≤ 2 := sum_geometric_two_le n
         _ < 3 := by norm_num
 
-@[problem_statement]
+#[problem_statement]
 theorem bulgaria1998_q3
     (f : ℝ → ℝ)
     (hpos : ∀ x : ℝ, 0 < x → 0 < f x)

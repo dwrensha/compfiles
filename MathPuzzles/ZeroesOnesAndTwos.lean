@@ -11,7 +11,7 @@ import Mathlib.Data.Nat.Digits
 
 import MathPuzzles.Meta.Attributes
 
-/-!
+#[problem_setup]/-!
 (From Mathematical Puzzles: A Connoisseur's Collection by Peter Winkler.)
 
 Let n be a natural number. Prove that
@@ -21,7 +21,7 @@ Let n be a natural number. Prove that
   (b) 2^n has a multiple whose representation contains only ones and twos.
 -/
 
-namespace ZerosOnesAndTwos
+#[problem_setup] namespace ZerosOnesAndTwos
 
 def ones (b : ℕ) : ℕ → ℕ
 | k => Nat.ofDigits b (List.replicate k 1)
@@ -57,7 +57,7 @@ lemma one_le_ten : (1 : ℕ) ≤ 10 := tsub_eq_zero_iff_le.mp rfl
 --
 -- Prove that n has a positive multiple whose representation contains only zeroes and ones.
 --
-@[problem_statement]
+#[problem_statement]
 theorem zeroes_and_ones
     (n : ℕ) : ∃ k : ℕ+, ∀ e ∈ (Nat.digits 10 (n * k)), e = 0 ∨ e = 1 := by
   obtain (hn0 : n = 0 ) | (hn : n > 0) := Nat.eq_zero_or_pos n
@@ -103,13 +103,13 @@ theorem zeroes_and_ones
   rw [List.mem_append, List.mem_replicate, List.mem_replicate] at he
   aesop
 
-@[problem_setup]
+#[problem_setup]
 def is_one_or_two : ℕ → Prop
 | 1 => True
 | 2 => True
 | _ => False
 
-@[problem_setup]
+#[problem_setup]
 def all_one_or_two (l : List ℕ) : Prop := ∀ e ∈ l, is_one_or_two e
 
 def prepend_one (n : ℕ) := 10 ^ (List.length (Nat.digits 10 n)) + n
@@ -293,7 +293,7 @@ lemma ones_and_twos_aux (n : ℕ) :
 --
 -- Prove that 2^n has a positive multiple whose representation contains only ones and twos.
 --
-@[problem_statement]
+#[problem_statement]
 theorem ones_and_twos (n : ℕ) : ∃ k : ℕ+, all_one_or_two (Nat.digits 10 (2^n * k)) := by
   cases' n with n
   · use 1; simp[all_one_or_two]; norm_cast
