@@ -2,7 +2,6 @@ import Mathlib.Data.Int.Basic
 import Mathlib.Data.Int.ModEq
 import Mathlib.Data.ZMod.Basic
 
-import Mathlib.Tactic.LibrarySearch
 import Mathlib.Tactic.LinearCombination
 import Mathlib.Tactic.Ring
 import Mathlib.Tactic.NormNum.Prime
