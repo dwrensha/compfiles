@@ -12,10 +12,12 @@ function f : ℝ → ℝ such that
 
   ∀ x,y ∈ ℝ, f(x + y) = f(x)u(y) + f(y)
 
+-/
+
+/-
 # Solution
 
 f(x) = eᵏˣ for some k : ℝ.
-
 -/
 
 #[problem_setup] namespace Romania1998Q12
