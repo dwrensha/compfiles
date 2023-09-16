@@ -111,9 +111,12 @@ lemma lemma_2
   rw[h2] at h3
 
   -- Since k≠0, f^{f(k)}(k)=k.
-  have h4 : f^[f k] k = k := by sorry
+  have h4 : f^[f k] k = k := by
+    rwa[sq k, mul_left_inj] at h3
 
   -- ⇒ f^m(k)=k
+  rw[h1] at h4
+
   -- ⇒ f^{gcd(m, 2)}(k)=k
   -- ⇒ f(k)=k
   sorry
