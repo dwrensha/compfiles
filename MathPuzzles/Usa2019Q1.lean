@@ -107,8 +107,12 @@ lemma lemma_2
   have h2 : f^[2] k = k := by dsimp; rw[h1]
 
   -- f^2(k) · f^{f(k)}(k) = k^2.
+  have h3 : f^[f k] k * f^[2] k = k^2 := hf k
+  rw[h2] at h3
 
   -- Since k≠0, f^{f(k)}(k)=k.
+  have h4 : f^[f k] k = k := by sorry
+
   -- ⇒ f^m(k)=k
   -- ⇒ f^{gcd(m, 2)}(k)=k
   -- ⇒ f(k)=k
