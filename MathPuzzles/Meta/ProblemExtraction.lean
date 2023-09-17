@@ -130,7 +130,7 @@ elab_rules : command
   let .some sStartPos := di.raw.getPos? | throwError "di syntax has no pos"
   let sEndPos ← match ds.raw.getTailPos? with
   | .some p => pure p
-  | .none => match di.raw.getPos? with
+  | .none => match di.raw.getTailPos? with
              | .some p => pure p
              | .none => throwError "ds syntax has no pos"
 
