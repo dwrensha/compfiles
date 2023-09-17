@@ -52,13 +52,6 @@ elab_rules : command
   let src := (←read).fileMap.source
   let ext := problemExtractionExtension
   modifyEnv fun env => ext.addEntry env ⟨mod, s!"{Substring.mk src startPos endPos}"⟩
-
---  for some weird reason, this alternate way of updating the state fails
---  to persist the data:
---  let st := ext.getState env
---  let st' := st.push ⟨filename, startPos, endPos⟩
---  setEnv (ext.setState env st')
-
   Lean.Elab.Command.elabCommand cmd
 
 syntax (name := showExtraction) "#show_problem_extraction" : command
