@@ -44,17 +44,6 @@ initialize problemExtractionExtension : ProblemExtractionExtension ←
     toArrayFn     := fun es => es.toArray
   }
 
-def matchDecl : Syntax → Command.CommandElabM (String.Pos × String.Pos)
-| `(command| $_:declModifiers theorem%$thm $_:declId $_:declSig :=%$colEq $_:term) => do
-    let .some startPos := thm.getPos? | throwError "thm syntax has no pos"
-    let .some endPos := colEq.getTailPos? | throwError "colEq syntax has no pos"
-    pure ⟨startPos, endPos⟩
-| `(command| $_:declModifiers def%$df $_:declId $_:optDeclSig :=%$colEq $_:term) => do
-    let .some startPos := df.getPos? | throwError "df syntax has no pos"
-    let .some endPos := colEq.getTailPos? | throwError "colEq syntax has no pos"
-    pure ⟨startPos, endPos⟩
-| _ => throwError "no match"
-
 elab_rules : command
 | `(command| #[problem_setup] $cmd:command) => do
   let .some startPos := cmd.raw.getPos? | throwError "cmd syntax has no pos"
