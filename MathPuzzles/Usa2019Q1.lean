@@ -118,12 +118,22 @@ lemma lemma_2
   rw[h1] at h4
 
   -- ⇒ f^{gcd(m, 2)}(k)=k
-  --obtain ⟨m', hm'⟩ := hm3
-  --rw[hm'] at h4
-
   -- ⇒ f(k)=k
-  sorry
+  have h6 : ∀ r , f^[2*r] k = k := fun r ↦ by
+    induction' r with r ih
+    · simp
+    · rw [Nat.mul_succ]
+      rw [Function.iterate_add]
+      change f^[2 * r] (f^[2] k) = k
+      rw[h2]
+      exact ih
+  obtain ⟨m', hm'⟩ := hm3
+  rw[hm', add_comm, Function.iterate_add, Function.iterate_one] at h4
+  change f (f^[2 * m'] k) = k at h4
+  rw[h6 m'] at h4
 
+  rw[h1] at h4
+  exact h4.symm
 
 fill_in_the_blank solution_set : Set ℕ+ := { x : ℕ+ | Even x }
 
