@@ -80,8 +80,6 @@ unsafe def main (_args : List String) : IO Unit := do
           let p ← findOLean m
           let solutionUrl := olean_path_to_github_url p.toString
           IO.println s!"MODULE: {m}"
-          --let steps ← Lean.Elab.IO.compileModule m
-          --IO.println f!"number of steps = {steps.length}"
           let problem_file := s!"problems/{m}.lean.txt"
           let problemUrl := s!"{baseurl}{problem_file}"
 
