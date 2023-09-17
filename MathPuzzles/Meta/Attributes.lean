@@ -44,10 +44,7 @@ syntax (name := solutionData) "#[solution_data]" command : command
 
 structure Entry where
 (module : Name)
-(startPos : String.Pos)
-(endPos : String.Pos)
-(addPrefix : String)
-(addSuffix : String)
+(string : String)
 
 abbrev ProblemExtractionExtension :=
   SimplePersistentEnvExtension Entry (Array Entry)
@@ -77,8 +74,9 @@ elab_rules : command
 | `(command| #[problem_statement] $cmd:command) => do
   let ⟨startPos, endPos⟩ ← matchDecl cmd
   let mod := (←getEnv).header.mainModule
+  let src := (←read).fileMap.source
   let ext := problemExtractionExtension
-  modifyEnv fun env => ext.addEntry env ⟨mod, startPos, endPos, "", " sorry"⟩
+  modifyEnv fun env => ext.addEntry env ⟨mod, s!"{Substring.mk src startPos endPos} sorry"⟩
   Lean.Elab.Command.elabCommand cmd
 
 elab_rules : command
@@ -86,8 +84,9 @@ elab_rules : command
   let .some startPos := cmd.raw.getPos? | throwError "cmd syntax has no pos"
   let .some endPos := cmd.raw.getTailPos? | throwError "cmd syntax has no tail pos"
   let mod := (←getEnv).header.mainModule
+  let src := (←read).fileMap.source
   let ext := problemExtractionExtension
-  modifyEnv fun env => ext.addEntry env ⟨mod, startPos, endPos, "", ""⟩
+  modifyEnv fun env => ext.addEntry env ⟨mod, s!"{Substring.mk src startPos endPos}"⟩
 
 --  for some weird reason, this alternate way of updating the state fails
 --  to persist the data:
@@ -101,9 +100,10 @@ elab_rules : command
 | `(command| #[solution_data] $cmd:command) => do
   let ⟨startPos, endPos⟩ ← matchDecl cmd
   let mod := (←getEnv).header.mainModule
+  let src := (←read).fileMap.source
   let ext := problemExtractionExtension
-  modifyEnv fun env => ext.addEntry env ⟨mod, startPos, endPos,
-    "/- #[solution_data] -/\n",  " sorry"⟩
+  modifyEnv fun env => ext.addEntry env ⟨mod,
+    s!"/- #[solution_data] -/\n{Substring.mk src startPos endPos} sorry"⟩
   Lean.Elab.Command.elabCommand cmd
 
 syntax (name := showExtraction) "#show_problem_extraction" : command
@@ -114,7 +114,7 @@ elab_rules : command
   let env ← getEnv
   let st := ext.getState env
   IO.println s!"st.size = {st.size}"
-  for ⟨filename, startPos, endPos, _, _⟩ in st do
-     IO.println s!"{filename}:{startPos}-{endPos}"
+  for ⟨filename, _⟩ in st do
+     IO.println s!"{filename}"
 
 

@@ -3,7 +3,6 @@ import Std.Tactic.Lint
 import Lean.Environment
 import Mathlib.Data.String.Defs
 import MathPuzzles.Meta.Attributes
-import MathPuzzles.Meta.Frontend
 import Lean.Meta.Basic
 
 open Lean Core Elab Command Std.Tactic.Lint
@@ -79,7 +78,6 @@ unsafe def main (_args : List String) : IO Unit := do
       for m in modules do
         if m ≠ pkg && m ≠ `MathPuzzles.Meta.Attributes then do
           let p ← findOLean m
-          let src ← Lean.Elab.IO.moduleSource m
           let solutionUrl := olean_path_to_github_url p.toString
           IO.println s!"MODULE: {m}"
           --let steps ← Lean.Elab.IO.compileModule m
@@ -94,8 +92,8 @@ unsafe def main (_args : List String) : IO Unit := do
               then h.putStrLn s!"import {im}"
           h.putStrLn ""
 
-          for ⟨_, startPos, endPos, addPrefix, addSuffix⟩ in entries do
-            h.putStrLn s!"{addPrefix}{Substring.mk src startPos endPos}{addSuffix}\n"
+          for ⟨_, str⟩ in entries do
+            h.putStrLn s!"{str}\n"
           h.flush
 
           let mut proved := true
