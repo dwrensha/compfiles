@@ -24,11 +24,9 @@ which contains every integer from 1 to 10:
 
 Does there exist an anti-Pascal triangle with 2018 rows which contains every
 integer from 1 to 1 + 2 + ... + 2018?
-
 -/
 
 /-
-
 # Solution
 No.
 -/
@@ -61,8 +59,16 @@ structure antipascal_triangle (n : Nat) where
 structure a_and_b where
 (a : Coords) (b : Coords)
 
+#[problem_setup]
+def exists_desired_triangle : Prop :=
+   ∃ t : antipascal_triangle 2018,
+     ∀ n, (n ≤ ∑ i in Finset.range 2018, (i + 1)) →
+         ∃ r, r ≤ 2018 ∧ ∃ c, c < r ∧ t.f ⟨r,c⟩ = n
+
+#[solution_data]
+def does_exist : Bool := false
+
 #[problem_statement]
-theorem imo2018_q3 (t : antipascal_triangle 2018)
-    (h_contains_all : ∀ n, n ≤ ∑ i in Finset.range 2018, (i + 1) →
-                      ∃ r, r ≤ 2018 ∧ ∃ c, c < r ∧ t.f ⟨r,c⟩ = n) :
-    False := by sorry
+theorem imo2018_q3 :
+    if does_exist then exists_desired_triangle else ¬ exists_desired_triangle := by
+  sorry

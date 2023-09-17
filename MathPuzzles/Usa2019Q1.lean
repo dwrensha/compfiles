@@ -118,6 +118,9 @@ lemma lemma_2
   rw[h1] at h4
 
   -- ⇒ f^{gcd(m, 2)}(k)=k
+  --obtain ⟨m', hm'⟩ := hm3
+  --rw[hm'] at h4
+
   -- ⇒ f(k)=k
   sorry
 
