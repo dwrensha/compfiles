@@ -412,8 +412,7 @@ theorem monotone_of_upper_lower_continuous
     real_induction L1 L2 (@Set.left_mem_Ici _ _ (f z))
   exact h0 hz
 
-#[problem_statement]
-theorem properties_of_upper_lower_continuous
+problem properties_of_upper_lower_continuous
     (f : ℝ → ℝ)
     (huc : Continuous[tᵤ, tᵤ] f)
     (hlc : Continuous[tₗ, tₗ] f)

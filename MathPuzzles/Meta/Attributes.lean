@@ -20,12 +20,6 @@ namespace MathPuzzles.Meta
 open Lean Elab
 
 /--
-Indicates that a theorem is a problem statement. During problem extraction,
-the proof is replaced by a `sorry`.
--/
-syntax (name := problemStatement) "#[problem_statement]" command : command
-
-/--
 Indicates that a declaration is required to set up a problem statement.
 During problem extraction, the declaration is kept completely intact.
 -/
@@ -71,15 +65,6 @@ def matchDecl : Syntax → Command.CommandElabM (String.Pos × String.Pos)
 | _ => throwError "no match"
 
 elab_rules : command
-| `(command| #[problem_statement] $cmd:command) => do
-  let ⟨startPos, endPos⟩ ← matchDecl cmd
-  let mod := (←getEnv).header.mainModule
-  let src := (←read).fileMap.source
-  let ext := problemExtractionExtension
-  modifyEnv fun env => ext.addEntry env ⟨mod, s!"{Substring.mk src startPos endPos} sorry"⟩
-  Lean.Elab.Command.elabCommand cmd
-
-elab_rules : command
 | `(command| #[problem_setup] $cmd:command) => do
   let .some startPos := cmd.raw.getPos? | throwError "cmd syntax has no pos"
   let .some endPos := cmd.raw.getTailPos? | throwError "cmd syntax has no tail pos"
@@ -117,4 +102,27 @@ elab_rules : command
   for ⟨filename, _⟩ in st do
      IO.println s!"{filename}"
 
+/--
+Indicates that a theorem is a problem statement. During problem extraction,
+the proof is replaced by a `sorry`.
+-/
+syntax (name := problem) declModifiers "problem " declId ppIndent(declSig) declVal : command
 
+elab_rules : command
+| `(command| $dm:declModifiers problem $di:declId $ds:declSig $dv:declVal) => do
+  let src := (←read).fileMap.source
+
+  let pfx  := match dm.raw.getPos?, dm.raw.getTailPos? with
+  | .some dmStartPos, .some dmEndPos => s!"{Substring.mk src dmStartPos dmEndPos}\n"
+  | _,_ => ""
+
+  let .some sStartPos := di.raw.getPos? | throwError "di syntax has no pos"
+  let .some sEndPos := ds.raw.getTailPos? | throwError "ts syntax has no pos"
+
+  let mod := (←getEnv).header.mainModule
+
+  let ext := problemExtractionExtension
+  modifyEnv fun env => ext.addEntry env ⟨mod,
+    s!"{pfx}theorem {Substring.mk src sStartPos sEndPos} := sorry"⟩
+  let cmd ← `(command | $dm:declModifiers theorem $di $ds $dv)
+  Lean.Elab.Command.elabCommand cmd

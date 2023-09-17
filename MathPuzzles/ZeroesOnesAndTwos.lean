@@ -57,8 +57,7 @@ lemma one_le_ten : (1 : ℕ) ≤ 10 := tsub_eq_zero_iff_le.mp rfl
 --
 -- Prove that n has a positive multiple whose representation contains only zeroes and ones.
 --
-#[problem_statement]
-theorem zeroes_and_ones
+problem zeroes_and_ones
     (n : ℕ) : ∃ k : ℕ+, ∀ e ∈ (Nat.digits 10 (n * k)), e = 0 ∨ e = 1 := by
   obtain (hn0 : n = 0 ) | (hn : n > 0) := Nat.eq_zero_or_pos n
   · use 1; rw [hn0]; simp
@@ -293,8 +292,7 @@ lemma ones_and_twos_aux (n : ℕ) :
 --
 -- Prove that 2^n has a positive multiple whose representation contains only ones and twos.
 --
-#[problem_statement]
-theorem ones_and_twos (n : ℕ) : ∃ k : ℕ+, all_one_or_two (Nat.digits 10 (2^n * k)) := by
+problem ones_and_twos (n : ℕ) : ∃ k : ℕ+, all_one_or_two (Nat.digits 10 (2^n * k)) := by
   cases' n with n
   · use 1; simp[all_one_or_two]; norm_cast
   · obtain ⟨k, _, hk2⟩ := ones_and_twos_aux n

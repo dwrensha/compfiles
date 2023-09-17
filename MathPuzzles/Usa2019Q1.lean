@@ -128,8 +128,7 @@ lemma lemma_2
 #[solution_data]
 def solution_set : Set ℕ+ := { x : ℕ+ | Even x }
 
-#[problem_statement]
-theorem usa2019Q1 (m : ℕ+) :
+problem usa2019Q1 (m : ℕ+) :
    m ∈ solution_set ↔
     (∃ f : ℕ+ → ℕ+,
       (∀ n, f^[f n] n * f (f n) = n ^ 2) ∧

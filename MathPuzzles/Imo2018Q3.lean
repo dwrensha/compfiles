@@ -68,7 +68,6 @@ def exists_desired_triangle : Prop :=
 #[solution_data]
 def does_exist : Bool := false
 
-#[problem_statement]
-theorem imo2018_q3 :
+problem imo2018_q3 :
     if does_exist then exists_desired_triangle else ¬ exists_desired_triangle := by
   sorry

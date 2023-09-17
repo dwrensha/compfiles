@@ -57,8 +57,7 @@ lemma lemma2 {f : ZMod 101 → ℤ} (y : ZMod 101)
      · simp
   rw[h3]
 
-#[problem_statement]
-theorem integers_in_a_circle
+problem integers_in_a_circle
     (a : ZMod 101 → ℤ)
     (ha : ∀ i, 1 ≤ a i)
     (ha_sum : ∑ i : ZMod 101, a i = 300)

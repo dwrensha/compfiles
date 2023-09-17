@@ -296,7 +296,6 @@ lemma strengthen
       rw [heq] at hmp
       exact h (pn.succ) hmp
 
-#[problem_statement]
-theorem poland1998_q4 : (∀ N : ℕ, ∃ M : ℕ, N < M ∧ 7 ∣ a M) := by
+problem poland1998_q4 : (∀ N : ℕ, ∃ M : ℕ, N < M ∧ 7 ∣ a M) := by
   have he: 7 ∣ a 5 := by rw [show a 5 = 7 by rfl]
   exact strengthen can_get_a_later_one ⟨5, he⟩

@@ -562,8 +562,7 @@ lemma romania1998_q12_mpr (u : ℝ → ℝ) :
 def solution_set : Set (ℝ → ℝ) :=
   { u | ∃ k : ℝ, ∀ x : ℝ, u x = Real.exp (k * x) }
 
-#[problem_statement]
-theorem romania1998_q12 (u : ℝ → ℝ) :
+problem romania1998_q12 (u : ℝ → ℝ) :
     (∃ f : ℝ → ℝ, (StrictMono f ∨ StrictAnti f)
           ∧ ∀ x y : ℝ, f (x + y) = f x * u y + f y) ↔
     u ∈ solution_set :=

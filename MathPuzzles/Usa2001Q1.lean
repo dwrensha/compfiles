@@ -32,8 +32,7 @@ def possible_num_colors : Set ℕ :=
 #[solution_data]
 def min_colors : ℕ := 23
 
-#[problem_statement]
-theorem usa2001_q1 : IsLeast possible_num_colors min_colors := by
+problem usa2001_q1 : IsLeast possible_num_colors min_colors := by
   constructor
   · sorry
   · sorry

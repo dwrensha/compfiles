@@ -121,8 +121,7 @@ lemma usa1998_q5_stronger (n : ℕ) :
             rw[ha2, hb2, hab] at Lmod'
             exact Int.dvd_of_emod_eq_zero Lmod'
 
-#[problem_statement]
-theorem usa1998_q5 (n : ℕ) (_hn : 2 ≤ n) :
+problem usa1998_q5 (n : ℕ) (_hn : 2 ≤ n) :
     ∃ S : Finset ℤ,
        S.card = n ∧
        ∀ a ∈ S, ∀ b ∈ S, a ≠ b → (a - b)^2 ∣ a * b := by

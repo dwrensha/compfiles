@@ -40,8 +40,7 @@ theorem prod_lemma (m : ℕ → ℕ+) (k : ℕ) (nm : ℕ+) :
   intro i hi
   simp [Finset.mem_range.mp hi]
 
-#[problem_statement]
-theorem imo2013_q1 (n : ℕ+) (k : ℕ) :
+problem imo2013_q1 (n : ℕ+) (k : ℕ) :
     ∃ m : ℕ → ℕ+,
       (1 : ℚ) + (2 ^ k - 1) / n = ∏ i in Finset.range k, (1 + 1 / (m i : ℚ)) := by
   revert n

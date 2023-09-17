@@ -35,8 +35,7 @@ def adjacent {n : ℕ} : checkerboard n → checkerboard n → Prop
   (a2.val = b2.val ∧ a1.val = b1.val + 1) ∨
   (a2.val = b2.val ∧ a1.val + 1 = b1.val )
 
-#[problem_statement]
-theorem usa1999_q1 (n : ℕ) (c : Finset (checkerboard n))
+problem usa1999_q1 (n : ℕ) (c : Finset (checkerboard n))
     (ha : ∀ x : checkerboard n, x ∈ c ∨ (∃ y ∈ c, adjacent x y))
     (hb : ∀ x ∈ c, ∀ y ∈ c,
       ∃ p : List (checkerboard n),

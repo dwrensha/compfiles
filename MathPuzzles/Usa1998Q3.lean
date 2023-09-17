@@ -136,8 +136,7 @@ lemma lemma2 (f : ℕ → ℝ) :
     rw[h6]
     ring
 
-#[problem_statement]
-theorem usa1998_q3
+problem usa1998_q3
     (n : ℕ)
     (a : ℕ → ℝ)
     (ha : ∀ i ∈ Finset.range (n + 1), a i ∈ Set.Ioo 0 (Real.pi / 2))

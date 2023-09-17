@@ -26,8 +26,7 @@ Let n be a natural number such that n ≥ 2. Show that
 
 #[problem_setup] open BigOperators
 
-#[problem_statement]
-theorem canada1998_q3 (n : ℕ) (hn : 2 ≤ n) :
+problem canada1998_q3 (n : ℕ) (hn : 2 ≤ n) :
     (1/((n:ℝ) + 1)) * ∑ i in Finset.range n, (1/(2 * (i:ℝ) + 1)) >
     (1/(n:ℝ)) * ∑ i in Finset.range n, (1/(2 * (i:ℝ) + 2)) := by
   cases' n with n; norm_num at hn

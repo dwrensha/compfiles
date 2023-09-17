@@ -24,8 +24,7 @@ import MathPuzzles.Meta.Attributes
 
 #[problem_setup] local infixl:80 " ⋆ " => star
 
-#[problem_statement]
-theorem russia1998_q42
+problem russia1998_q42
   (stardef : ∀ a b c, a ⋆ b ⋆ c = a + b + c) :
   (∀ a b, a ⋆ b = a + b) :=
 by

@@ -41,8 +41,7 @@ lemma cast_sum_square (n : ℕ) :
   ∑i in Finset.range n, ((i:ℤ)+1)^2 =
    (((∑i in Finset.range n, (i+1)^2):ℕ) :ℤ) := by norm_cast
 
-#[problem_statement]
-theorem hungary1998_q6 (x y : ℤ) (z : ℕ) (hz : 1 < z) :
+problem hungary1998_q6 (x y : ℤ) (z : ℕ) (hz : 1 < z) :
     (∑ i in Finset.range 99, (x + i + 1)^2) ≠ y^z := by
   -- Suppose (x + 1)² + (x + 2)² + ... + (x + 99)² = yᶻ.
 

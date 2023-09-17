@@ -18,8 +18,7 @@ of the a + b chosen cells lie in the same row or column.
 
 #[problem_setup] namespace Usa2022Q1
 
-#[problem_statement]
-theorem usa2022q1
+problem usa2022q1
     (a b : ℕ)
     (ha : 0 < a)
     (hb : 0 < b)

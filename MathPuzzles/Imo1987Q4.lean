@@ -112,7 +112,6 @@ theorem imo1987_q4_generalized (m : ℕ) :
   apply_fun (· % 2) at h2
   norm_num at h2
 
-#[problem_statement]
-theorem imo1987_q4 : (¬∃ f : ℕ → ℕ, ∀ n, f (f n) = n + 1987) := by
+problem imo1987_q4 : (¬∃ f : ℕ → ℕ, ∀ n, f (f n) = n + 1987) := by
   rw[show 1987 = (2 * 993 + 1) by norm_num]
   exact imo1987_q4_generalized 993

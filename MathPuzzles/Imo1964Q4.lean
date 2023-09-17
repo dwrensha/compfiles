@@ -109,8 +109,7 @@ theorem lemma1
       have h9 := ht3 t3'
       rw[←h9]
 
-#[problem_statement]
-theorem imo1964_q4
+problem imo1964_q4
     (Person Topic : Type)
     [Fintype Person] [DecidableEq Person]
     [Fintype Topic] [DecidableEq Topic]

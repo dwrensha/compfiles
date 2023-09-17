@@ -94,8 +94,7 @@ theorem imo1986_q1' (d : ℤ):
     exact ⟨w * v, hnm'⟩
   exact Int.even_iff_not_odd.mp hdeven hdodd
 
-#[problem_statement]
-theorem imo1986_q1 (d : ℤ) (_hdpos : 1 ≤ d) (h2 : d ≠ 2) (h5 : d ≠ 5) (h13 : d ≠ 13) :
+problem imo1986_q1 (d : ℤ) (_hdpos : 1 ≤ d) (h2 : d ≠ 2) (h5 : d ≠ 5) (h13 : d ≠ 13) :
     ∃ a b :({2, 5, 13, d} : Finset ℤ), (a ≠ b) ∧ ¬ ∃ z, z^2 = (a * (b : ℤ) - 1) := by
   by_contra h
   simp only [ne_eq, Subtype.exists, Finset.mem_singleton, Finset.mem_insert, false_or,

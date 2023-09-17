@@ -33,8 +33,7 @@ lemma compute_norm (v : EuclideanSpace ℝ (Fin 3)) : ‖v‖ = Real.sqrt (∑i 
   congr; ext
   rw [Real.norm_eq_abs, sq_abs]
 
-#[problem_statement]
-theorem iran1998_q9
+problem iran1998_q9
     (x y z : ℝ)
     (hx : 1 < x)
     (hy : 1 < y)

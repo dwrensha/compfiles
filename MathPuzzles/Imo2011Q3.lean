@@ -18,8 +18,9 @@ for all x and y. Prove that f(x) = 0 for all x ≤ 0.
 Direct translation of the solution found in https://www.imo-official.org/problems/IMO2011SL.pdf
 -/
 
-#[problem_statement]
-theorem imo2011_q3 (f : ℝ → ℝ) (hf : ∀ x y, f (x + y) ≤ y * f x + f (f x)) :
+#[problem_setup] namespace Imo2011Q3
+
+problem imo2011_q3 (f : ℝ → ℝ) (hf : ∀ x y, f (x + y) ≤ y * f x + f (f x)) :
   ∀ x ≤ 0, f x = 0 := by
   -- reparameterize
   have hxt : ∀ x t, f t ≤ t * f x - x * f x + f (f x) := by

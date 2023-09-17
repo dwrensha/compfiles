@@ -31,8 +31,7 @@ lemma additive_to_int_linear (f : ℤ → ℤ) (h: ∀ (x y : ℤ), f (x + y) = 
   change g a = g 1 * a
   rw [mul_comm, ← smul_eq_mul, ← LinearMap.map_smul, smul_eq_mul, mul_one]
 
-#[problem_statement]
-theorem imo2019_q1 (f : ℤ → ℤ) (hf : ∀ a b, f (2 * a) + 2 * (f b) = f (f (a + b))) :
+problem imo2019_q1 (f : ℤ → ℤ) (hf : ∀ a b, f (2 * a) + 2 * (f b) = f (f (a + b))) :
   (∀ z,  f z = 0) ∨ (∃ c, ∀ z, f z = 2 * z + c) := by
   let g : ℤ → ℤ := fun z => f z - f 0
   have hg : ∀z, g z = f z - f 0 := fun z => by rfl

@@ -63,8 +63,7 @@ lemma lemma_1
   rw [←hs'] at h
   sorry
 
-#[problem_statement]
-theorem bulgaria1998_q6
+problem bulgaria1998_q6
     (x y z : ℤ)
     (hx : 0 < x)
     (hy : 0 < y)

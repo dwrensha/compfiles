@@ -86,7 +86,7 @@ lemma break_into_words_closed_form
           drop_drop, Finset.sum_range_succ']
       congr
 
-#[problem_statement]
+#[problem_setup]
 def all_same_class
     (is_decent : List α → Prop)
     (b : Stream' (List α))
@@ -221,8 +221,7 @@ lemma check_indecent_words
   intro j
   exact ((choose_indecent_words is_decent a h).nth j).h
 
-#[problem_statement]
-theorem kolmogorov_streams
+problem kolmogorov_streams
     (is_decent : List α → Prop)
     (a : Stream' α)
     : (∃ (lengths : Stream' ℕ),

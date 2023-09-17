@@ -103,8 +103,7 @@ lemma usa2002q1_generalized
       -- Thus the induction is complete.
       sorry
 
-#[problem_statement]
-theorem usa2002q1
+problem usa2002q1
     {α : Type} [DecidableEq α] [Fintype α] (hs : Fintype.card α = 2002)
     (N : ℕ) (hN : N ≤ 2 ^ 2002) :
     ∃ f : Finset α → Color,

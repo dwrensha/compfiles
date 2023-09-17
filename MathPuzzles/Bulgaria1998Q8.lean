@@ -46,8 +46,7 @@ def U : ℕ → R → R → R
 | n, x, y => (x + y - 1) *((y + 1)*(x - x^2) * P n (y + 2) x
                            + (x + 1) * (y - y^2) * P n y (x + 2))
 
-#[problem_statement]
-theorem bulgaria1998_q8 (n : ℕ) (x y : R) : P n x y = P n y x := by
+problem bulgaria1998_q8 (n : ℕ) (x y : R) : P n x y = P n y x := by
   -- We induct on n. For n = 1,2 the result is evident.
   -- So we take n > 1 and suppose that the result is true for
   -- Pₙ₋₁(x,y) and Pₙ₋₂(x,y).

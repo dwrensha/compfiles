@@ -156,8 +156,7 @@ lemma lemma4 {a b : ℕ} (h : a ≡ b [MOD b]) : a ≡ 0 [MOD b] := by
   rw[h2] at h1
   exact h1
 
-#[problem_statement]
-theorem imo1989_q5 (n : ℕ) : ∃ m, ∀ j < n, ¬IsPrimePow (m + j) := by
+problem imo1989_q5 (n : ℕ) : ∃ m, ∀ j < n, ¬IsPrimePow (m + j) := by
   -- (informal solution from https://artofproblemsolving.com)
   -- Let p₁,p₂,...pₙ,q₁,q₂,...,qₙ be distinct primes.
   obtain ⟨l, hll, hld, hl⟩ := get_primes (2 * n) n

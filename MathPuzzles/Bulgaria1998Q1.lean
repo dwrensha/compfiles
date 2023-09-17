@@ -42,8 +42,7 @@ def coloring_of_eight : Set.Icc 1 8 → Fin 2
 | ⟨8, _⟩ => 0
 | _ => 0 -- unreachable
 
-#[problem_statement]
-theorem bulgaria1998_q1a :
+problem bulgaria1998_q1a :
     ∃ f: Set.Icc 1 (n - 1) → Fin 2, ¬coloring_has_desired_points (n - 1) f := by
   use coloring_of_eight
   intro h
@@ -53,6 +52,5 @@ theorem bulgaria1998_q1a :
   dsimp[coloring_of_eight] at *
   interval_cases i <;> interval_cases j <;> aesop
 
-#[problem_statement]
-theorem bulgaria1998_q1b (color : Set.Icc 1 n → Fin 2) : coloring_has_desired_points n f := by
+problem bulgaria1998_q1b (color : Set.Icc 1 n → Fin 2) : coloring_has_desired_points n f := by
   sorry

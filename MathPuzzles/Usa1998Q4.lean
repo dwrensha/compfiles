@@ -62,8 +62,7 @@ def possible_num_clicks : Set ℕ :=
 #[solution_data]
 def min_clicks : ℕ := 98
 
-#[problem_statement]
-theorem usa1998_q4 : IsLeast possible_num_clicks min_clicks := by
+problem usa1998_q4 : IsLeast possible_num_clicks min_clicks := by
   constructor
   · use (List.range 49).map
       (λ x ↦ ⟨2 * x, 0, 1, 98⟩) ++ (List.range 49).map (λ y ↦ ⟨0, 2 * y, 98, 1⟩)

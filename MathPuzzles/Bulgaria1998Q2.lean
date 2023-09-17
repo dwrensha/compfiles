@@ -20,12 +20,11 @@ in point E. Prove that ∠BEC = ∠DAC. (Note: The problem is valid
 without the assumption ∠ABC < 90°.)
 -/
 
-namespace Bulgaria1998Q2
+#[problem_setup] namespace Bulgaria1998Q2
 
-open EuclideanGeometry
+#[problem_setup] open EuclideanGeometry
 
-#[problem_statement]
-theorem bulgaria1998_q2
+problem bulgaria1998_q2
     (A B C D E M: EuclideanSpace ℝ (Fin 2))
     (H1 : dist D A = dist D C)
     (H2 : ∠ D A B = ∠ A B C)

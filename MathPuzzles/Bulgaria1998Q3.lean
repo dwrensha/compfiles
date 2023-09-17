@@ -33,8 +33,7 @@ lemma geom_sum_bound (n : ℕ) : ∑ i in Finset.range n, (1:ℝ) / (2^i) < 3 :=
         _ ≤ 2 := sum_geometric_two_le n
         _ < 3 := by norm_num
 
-#[problem_statement]
-theorem bulgaria1998_q3
+problem bulgaria1998_q3
     (f : ℝ → ℝ)
     (hpos : ∀ x : ℝ, 0 < x → 0 < f x)
     (hf : (∀ x y : ℝ, 0 < x → 0 < y → (f (x + y)) * (f x + y) ≤ (f x)^2)) :

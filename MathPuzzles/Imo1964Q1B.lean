@@ -26,8 +26,7 @@ Informal proof (credit to twitch.tv viewer int_fast64_t):
     2^n mod 7 = (2^3 mod 7)^k * 2^j mod 7 = 1 mod 7 * 2^j mod 7,
   but 2^j < 5
 -/
-#[problem_statement]
-theorem imo_1964_q1b (n : ℕ) : ¬ 7 ∣ (2^n + 1) := by
+problem imo_1964_q1b (n : ℕ) : ¬ 7 ∣ (2^n + 1) := by
   intro h
   replace h := Nat.mod_eq_zero_of_dvd h
   rw[←Nat.div_add_mod n 3] at h
@@ -57,7 +56,7 @@ theorem imo_1964_q1b (n : ℕ) : ¬ 7 ∣ (2^n + 1) := by
                    linarith
 
 /- An alternative proof, heavily golfed. The statement here is slightly modified from the original one. -/
-theorem imo_1964_q1b' : ∀ (n : ℕ), (2 ^ n + 1) % 7 ≠ 0
+problem imo_1964_q1b' : ∀ (n : ℕ), (2 ^ n + 1) % 7 ≠ 0
     | 0 | 1 | 2 => by decide
     | n + 3 => by
       rw [pow_add, Nat.add_mod, Nat.mul_mod, show 2 ^ 3 % 7 = 1 from by rfl]
