@@ -29,8 +29,7 @@ def possible_num_colors : Set ℕ :=
       i ≠ j → x ∈ f i → y ∈ f i →
         (¬ (x ∈ f j ∧ y ∈ f j))) }
 
-#[solution_data]
-def min_colors : ℕ := 23
+fill_in_the_blank min_colors : ℕ := 23
 
 problem usa2001_q1 : IsLeast possible_num_colors min_colors := by
   constructor

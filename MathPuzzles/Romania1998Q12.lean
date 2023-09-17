@@ -558,8 +558,7 @@ lemma romania1998_q12_mpr (u : ℝ → ℝ) :
            _ = (Real.exp (k * x) - 1) * Real.exp (k * y) +
                   (Real.exp (k * y) - 1) := by ring
 
-#[solution_data]
-def solution_set : Set (ℝ → ℝ) :=
+fill_in_the_blank solution_set : Set (ℝ → ℝ) :=
   { u | ∃ k : ℝ, ∀ x : ℝ, u x = Real.exp (k * x) }
 
 problem romania1998_q12 (u : ℝ → ℝ) :

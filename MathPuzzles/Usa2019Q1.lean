@@ -125,8 +125,7 @@ lemma lemma_2
   sorry
 
 
-#[solution_data]
-def solution_set : Set ℕ+ := { x : ℕ+ | Even x }
+fill_in_the_blank solution_set : Set ℕ+ := { x : ℕ+ | Even x }
 
 problem usa2019Q1 (m : ℕ+) :
    m ∈ solution_set ↔

@@ -25,15 +25,6 @@ During problem extraction, the declaration is kept completely intact.
 -/
 syntax (name := problemSetup) "#[problem_setup]" command : command
 
-/--
-Indicates that a declaration represents data that is intended to
-be filled in as part of a solution.
-During problem extraction, the body is replaced by a `sorry`.
-During judging, a human will inspect the filled-in body
-to see whether it is reasonable.
--/
-syntax (name := solutionData) "#[solution_data]" command : command
-
 --------------------------------
 
 structure Entry where
@@ -81,16 +72,6 @@ elab_rules : command
 
   Lean.Elab.Command.elabCommand cmd
 
-elab_rules : command
-| `(command| #[solution_data] $cmd:command) => do
-  let ⟨startPos, endPos⟩ ← matchDecl cmd
-  let mod := (←getEnv).header.mainModule
-  let src := (←read).fileMap.source
-  let ext := problemExtractionExtension
-  modifyEnv fun env => ext.addEntry env ⟨mod,
-    s!"/- #[solution_data] -/\n{Substring.mk src startPos endPos} sorry"⟩
-  Lean.Elab.Command.elabCommand cmd
-
 syntax (name := showExtraction) "#show_problem_extraction" : command
 
 elab_rules : command
@@ -117,7 +98,7 @@ elab_rules : command
   | _,_ => ""
 
   let .some sStartPos := di.raw.getPos? | throwError "di syntax has no pos"
-  let .some sEndPos := ds.raw.getTailPos? | throwError "ts syntax has no pos"
+  let .some sEndPos := ds.raw.getTailPos? | throwError "ds syntax has no pos"
 
   let mod := (←getEnv).header.mainModule
 
@@ -126,3 +107,38 @@ elab_rules : command
     s!"{pfx}theorem {Substring.mk src sStartPos sEndPos} := sorry"⟩
   let cmd ← `(command | $dm:declModifiers theorem $di $ds $dv)
   Lean.Elab.Command.elabCommand cmd
+
+/--
+Indicates that a declaration represents data that is intended to
+be filled in as part of a solution.
+During problem extraction, the body is replaced by a `sorry`.
+During judging, a human will inspect the filled-in body
+to see whether it is reasonable.
+-/
+syntax (name := fillInTheBlank)
+  declModifiers "fill_in_the_blank " declId ppIndent(optDeclSig) declVal : command
+
+
+elab_rules : command
+| `(command| $dm:declModifiers fill_in_the_blank $di:declId $ds:optDeclSig $dv:declVal) => do
+  let src := (←read).fileMap.source
+
+  let pfx  := match dm.raw.getPos?, dm.raw.getTailPos? with
+  | .some dmStartPos, .some dmEndPos => s!"{Substring.mk src dmStartPos dmEndPos}\n"
+  | _,_ => ""
+
+  let .some sStartPos := di.raw.getPos? | throwError "di syntax has no pos"
+  let sEndPos ← match ds.raw.getTailPos? with
+  | .some p => pure p
+  | .none => match di.raw.getPos? with
+             | .some p => pure p
+             | .none => throwError "ds syntax has no pos"
+
+  let mod := (←getEnv).header.mainModule
+
+  let ext := problemExtractionExtension
+  modifyEnv fun env => ext.addEntry env ⟨mod,
+    s!"/- fill_in_the_blank -/\n{pfx}def {Substring.mk src sStartPos sEndPos} := sorry"⟩
+  let cmd ← `(command | $dm:declModifiers def $di:declId $ds:optDeclSig $dv:declVal)
+  Lean.Elab.Command.elabCommand cmd
+

@@ -28,8 +28,7 @@ def coloring_has_desired_points (m : ℕ) (color : Set.Icc 1 m → Fin 2) : Prop
     ∃ h3 : 2 * j.val - i ∈ Set.Icc 1 m,
     color i = color j ∧ color i = color ⟨2 * j - i, h3⟩
 
-#[solution_data]
-def n := 9
+fill_in_the_blank n := 9
 
 def coloring_of_eight : Set.Icc 1 8 → Fin 2
 | ⟨1, _⟩ => 0

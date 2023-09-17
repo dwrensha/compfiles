@@ -59,8 +59,7 @@ def possible_num_clicks : Set ℕ :=
     (all_same_color (rs.foldl recolor_rect start_coloring) ∧
      rs.length = n) }
 
-#[solution_data]
-def min_clicks : ℕ := 98
+fill_in_the_blank min_clicks : ℕ := 98
 
 problem usa1998_q4 : IsLeast possible_num_clicks min_clicks := by
   constructor
