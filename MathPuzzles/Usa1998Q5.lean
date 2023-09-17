@@ -12,7 +12,7 @@ import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Positivity
 import Mathlib.Tactic.Ring
 
-import MathPuzzles.Meta.Attributes
+import MathPuzzles.Meta.ProblemExtraction
 
 #[problem_setup]/-!
 # USA Mathematical Olympiad 1998, Problem 5

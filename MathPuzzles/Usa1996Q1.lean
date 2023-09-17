@@ -7,7 +7,7 @@ Authors: David Renshaw
 import Mathlib.Data.Real.Basic
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 
-import MathPuzzles.Meta.Attributes
+import MathPuzzles.Meta.ProblemExtraction
 
 #[problem_setup] /-!
 # USA Mathematical Olympiad 1996, Problem 1

@@ -7,7 +7,7 @@ Authors: David Renshaw
 import Mathlib.Data.Finset.Card
 import Mathlib.Order.Bounds.Basic
 
-import MathPuzzles.Meta.Attributes
+import MathPuzzles.Meta.ProblemExtraction
 
 #[problem_setup]/-!
 # USA Mathematical Olympiad 2001, Problem 1

@@ -2,7 +2,7 @@ import Std.Data.String.Basic
 import Std.Tactic.Lint
 import Lean.Environment
 import Mathlib.Data.String.Defs
-import MathPuzzles.Meta.Attributes
+import MathPuzzles.Meta.ProblemExtraction
 import Lean.Meta.Basic
 
 open Lean Core Elab Command Std.Tactic.Lint
@@ -76,7 +76,7 @@ unsafe def main (_args : List String) : IO Unit := do
       let baseurl := ((← IO.getEnv "GITHUB_PAGES_BASEURL").getD "")
 
       for m in modules do
-        if m ≠ pkg && m ≠ `MathPuzzles.Meta.Attributes then do
+        if m ≠ pkg && m ≠ `MathPuzzles.Meta.ProblemExtraction then do
           let p ← findOLean m
           let solutionUrl := olean_path_to_github_url p.toString
           IO.println s!"MODULE: {m}"
@@ -88,7 +88,7 @@ unsafe def main (_args : List String) : IO Unit := do
           let entries := (mst.find? m).getD #[]
           let h ← IO.FS.Handle.mk ("_site/" ++ problem_file) IO.FS.Mode.write
           for im in ← findModuleImports env m do
-              if im.module ≠ "Init" && im.module ≠ `MathPuzzles.Meta.Attributes
+              if im.module ≠ "Init" && im.module ≠ `MathPuzzles.Meta.ProblemExtraction
               then h.putStrLn s!"import {im}"
           h.putStrLn ""
 

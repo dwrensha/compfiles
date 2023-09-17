@@ -12,7 +12,7 @@ import Mathlib.Tactic.Ring
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Positivity
 
-import MathPuzzles.Meta.Attributes
+import MathPuzzles.Meta.ProblemExtraction
 
 #[problem_setup]/-!
 Canadian Mathematical Olympiad 1998, Problem 3

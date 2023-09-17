@@ -11,7 +11,7 @@ import Mathlib.Algebra.Associated
 import Mathlib.Data.Int.Basic
 import Mathlib.Tactic.Ring
 
-import MathPuzzles.Meta.Attributes
+import MathPuzzles.Meta.ProblemExtraction
 
 #[problem_setup]/-!
 Hungarian Mathematical Olympiad 1998, Problem 6

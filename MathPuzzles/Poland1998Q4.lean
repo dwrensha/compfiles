@@ -10,7 +10,7 @@ import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.NormNum.Prime
 import Mathlib.Tactic.LibrarySearch
 
-import MathPuzzles.Meta.Attributes
+import MathPuzzles.Meta.ProblemExtraction
 
 #[problem_setup]/-!
 Polish Mathematical Olympiad 1998, Problem 4

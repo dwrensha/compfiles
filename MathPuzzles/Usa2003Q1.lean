@@ -9,7 +9,7 @@ import Mathlib.Data.Nat.Parity
 
 import Mathlib.Tactic
 
-import MathPuzzles.Meta.Attributes
+import MathPuzzles.Meta.ProblemExtraction
 
 #[problem_setup]/-!
 # USA Mathematical Olympiad 2003, Problem 1

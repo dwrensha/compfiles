@@ -8,7 +8,7 @@ import Mathlib.Data.Set.Intervals.Basic
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.IntervalCases
 
-import MathPuzzles.Meta.Attributes
+import MathPuzzles.Meta.ProblemExtraction
 
 #[problem_setup]/-!
 Bulgarian Mathematical Olympiad 1998, Problem 1

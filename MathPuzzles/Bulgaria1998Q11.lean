@@ -10,7 +10,7 @@ import Mathlib.Tactic.ModCases
 import Mathlib.Tactic.Ring
 import Mathlib.Tactic.Zify
 
-import MathPuzzles.Meta.Attributes
+import MathPuzzles.Meta.ProblemExtraction
 
 #[problem_setup]/-!
 Bulgarian Mathematical Olympiad 1998, Problem 11

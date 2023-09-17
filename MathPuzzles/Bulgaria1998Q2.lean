@@ -9,7 +9,7 @@ import Mathlib.LinearAlgebra.AffineSpace.Midpoint
 import Mathlib.Geometry.Euclidean.Basic
 import Mathlib.Geometry.Euclidean.Triangle
 
-import MathPuzzles.Meta.Attributes
+import MathPuzzles.Meta.ProblemExtraction
 
 #[problem_setup]/-!
 Bulgarian Mathematical Olympiad 1998, Problem 2

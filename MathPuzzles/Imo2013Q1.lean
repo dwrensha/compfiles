@@ -9,7 +9,7 @@ import Mathlib.Algebra.BigOperators.Pi
 import Mathlib.Tactic.Ring
 import Mathlib.Tactic.FieldSimp
 
-import MathPuzzles.Meta.Attributes
+import MathPuzzles.Meta.ProblemExtraction
 
 #[problem_setup]/-!
 # IMO 2013 Q1

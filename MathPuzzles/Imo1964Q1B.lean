@@ -8,7 +8,7 @@ import Mathlib.Data.Nat.Basic
 import Mathlib.Algebra.GroupPower.Basic
 import Mathlib.Tactic.Linarith
 
-import MathPuzzles.Meta.Attributes
+import MathPuzzles.Meta.ProblemExtraction
 
 #[problem_setup]/-!
 # International Mathematical Olympiad 1964, Problem 1b

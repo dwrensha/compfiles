@@ -8,7 +8,7 @@ import Mathlib.Algebra.Ring.Basic
 import Mathlib.Data.Rat.Basic
 import Mathlib.Tactic.Ring
 
-import MathPuzzles.Meta.Attributes
+import MathPuzzles.Meta.ProblemExtraction
 
 #[problem_setup]/-!
 Bulgarian Mathematical Olympiad 1998, Problem 8

@@ -6,7 +6,7 @@ Authors: David Renshaw
 
 import Mathlib.Data.Int.Basic
 
-import MathPuzzles.Meta.Attributes
+import MathPuzzles.Meta.ProblemExtraction
 
 #[problem_setup]/-!
 Canadian Mathematical Olympiad 1998, Problem 5

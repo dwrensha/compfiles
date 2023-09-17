@@ -14,7 +14,7 @@ import Mathlib.Topology.Bases
 
 import Mathlib.Tactic.Linarith
 
-import MathPuzzles.Meta.Attributes
+import MathPuzzles.Meta.ProblemExtraction
 
 #[problem_setup]/-!
 Suppose f : ℝ -> ℝ is continuous in both the upper topology (where

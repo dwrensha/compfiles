@@ -9,7 +9,7 @@ import Mathlib.Data.Nat.ModEq
 import Mathlib.Data.Nat.Parity
 import Mathlib.Data.Nat.Digits
 
-import MathPuzzles.Meta.Attributes
+import MathPuzzles.Meta.ProblemExtraction
 
 #[problem_setup]/-!
 (From Mathematical Puzzles: A Connoisseur's Collection by Peter Winkler.)

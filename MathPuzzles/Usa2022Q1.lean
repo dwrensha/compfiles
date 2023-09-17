@@ -4,7 +4,7 @@ import Mathlib.Data.Fintype.Prod
 import Mathlib.Tactic.LibrarySearch
 import Mathlib.Tactic.Positivity
 
-import MathPuzzles.Meta.Attributes
+import MathPuzzles.Meta.ProblemExtraction
 
 #[problem_setup]/-!
 # USA Mathematical Olympiad 2022, Problem 1

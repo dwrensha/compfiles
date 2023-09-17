@@ -11,7 +11,7 @@ import Mathlib.Data.Finite.Basic
 
 import Mathlib.Tactic.IntervalCases
 
-import MathPuzzles.Meta.Attributes
+import MathPuzzles.Meta.ProblemExtraction
 
 #[problem_setup]/-!
 # USA Mathematical Olympiad 2002, Problem 1

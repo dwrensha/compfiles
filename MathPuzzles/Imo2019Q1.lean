@@ -7,7 +7,7 @@ import Mathlib.Algebra.Module.LinearMap
 import Mathlib.Data.Int.Basic
 import Mathlib.Tactic
 
-import MathPuzzles.Meta.Attributes
+import MathPuzzles.Meta.ProblemExtraction
 
 #[problem_setup]/-!
 # IMO 2019 Q1

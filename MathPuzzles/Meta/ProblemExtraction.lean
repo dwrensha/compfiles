@@ -4,7 +4,7 @@ import Mathlib.Tactic.LabelAttr
 import Std.Lean.NameMapAttribute
 
 /-!
-Attributes to aid in "problem extraction".
+ProblemExtraction to aid in "problem extraction".
 
 For the math problems that we archive, we aim to include proofs in-line.
 That presents a problem, however, if someone wants to try solving the

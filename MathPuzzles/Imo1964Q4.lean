@@ -8,7 +8,7 @@ import Aesop
 import Mathlib.Combinatorics.Pigeonhole
 import Mathlib.Tactic.Linarith
 
-import MathPuzzles.Meta.Attributes
+import MathPuzzles.Meta.ProblemExtraction
 
 #[problem_setup]/-!
 # International Mathematical Olympiad 1964, Problem 4

@@ -13,7 +13,7 @@ import Mathlib.Order.LocallyFinite
 import Mathlib.Tactic.IntervalCases
 import Mathlib.Tactic.LinearCombination
 
-import MathPuzzles.Meta.Attributes
+import MathPuzzles.Meta.ProblemExtraction
 
 #[problem_setup]/-!
 There are 101 positive integers arranged in a circle.

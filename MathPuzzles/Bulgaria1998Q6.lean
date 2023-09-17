@@ -10,7 +10,7 @@ import Mathlib.Order.WellFounded
 import Mathlib.Tactic.LibrarySearch
 import Mathlib.Tactic.Ring
 
-import MathPuzzles.Meta.Attributes
+import MathPuzzles.Meta.ProblemExtraction
 
 #[problem_setup]/-
 Bulgarian Mathematical Olympiad 1998, Problem 6

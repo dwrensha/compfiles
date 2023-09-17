@@ -10,7 +10,7 @@ import Mathlib.Algebra.BigOperators.Intervals
 import Mathlib.Data.Int.ModEq
 import Mathlib.Data.Finset.Interval
 
-import MathPuzzles.Meta.Attributes
+import MathPuzzles.Meta.ProblemExtraction
 
 #[problem_setup] /-!
 # USA Mathematical Olympiad 1998, Problem 1

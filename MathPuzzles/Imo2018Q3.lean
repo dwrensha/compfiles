@@ -6,7 +6,7 @@ Authors: David Renshaw
 
 import Mathlib.Algebra.BigOperators.Basic
 
-import MathPuzzles.Meta.Attributes
+import MathPuzzles.Meta.ProblemExtraction
 
 #[problem_setup]/-!
 # IMO 2018 Q3

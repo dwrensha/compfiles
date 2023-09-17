@@ -8,7 +8,7 @@ import Mathlib.Algebra.Divisibility.Basic
 import Mathlib.Tactic.Ring
 import Mathlib.Data.Nat.Prime
 
-import MathPuzzles.Meta.Attributes
+import MathPuzzles.Meta.ProblemExtraction
 
 #[problem_setup]/-!
 # IMO 1959 Q1

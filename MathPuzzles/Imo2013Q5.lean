@@ -5,7 +5,7 @@ import Mathlib.Data.Real.Basic
 import Mathlib.Tactic.Positivity
 import Mathlib.Tactic.LinearCombination
 
-import MathPuzzles.Meta.Attributes
+import MathPuzzles.Meta.ProblemExtraction
 
 #[problem_setup]/-!
 # IMO 2013 Q5

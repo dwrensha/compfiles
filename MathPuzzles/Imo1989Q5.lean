@@ -4,7 +4,7 @@ import Mathlib.Data.Nat.Prime
 import Mathlib.Tactic.Common
 import Std.Data.List.Lemmas
 
-import MathPuzzles.Meta.Attributes
+import MathPuzzles.Meta.ProblemExtraction
 
 #[problem_setup]/-!
 # International Mathematical Olympiad 1989, Problem 5

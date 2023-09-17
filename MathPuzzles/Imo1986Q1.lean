@@ -10,7 +10,7 @@ import Mathlib.Data.Nat.ModEq
 import Mathlib.Data.ZMod.Basic
 import Mathlib.Tactic
 
-import MathPuzzles.Meta.Attributes
+import MathPuzzles.Meta.ProblemExtraction
 
 #[problem_setup]/-!
 # IMO 1986 Q1

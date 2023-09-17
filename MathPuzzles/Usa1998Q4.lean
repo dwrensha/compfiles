@@ -7,7 +7,7 @@ Authors: David Renshaw
 import Mathlib.Data.ZMod.Basic
 import Mathlib.Order.Bounds.Basic
 
-import MathPuzzles.Meta.Attributes
+import MathPuzzles.Meta.ProblemExtraction
 
 #[problem_setup]/-!
 # USA Mathematical Olympiad 1998, Problem 4

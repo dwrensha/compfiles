@@ -10,7 +10,7 @@ import Mathlib.Data.Real.Sqrt
 import Mathlib.Analysis.InnerProductSpace.PiL2
 import Mathlib.Analysis.NormedSpace.PiLp
 
-import MathPuzzles.Meta.Attributes
+import MathPuzzles.Meta.ProblemExtraction
 
 #[problem_setup]/-!
 Iranian Mathematical Olympiad 1998, Problem 9
