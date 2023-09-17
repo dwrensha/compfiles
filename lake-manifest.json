@@ -4,10 +4,10 @@
  [{"git":
    {"url": "https://github.com/leanprover-community/mathlib4",
     "subDir?": null,
-    "rev": "6f8e81040eae7655f51d145b8026569b91d66e0d",
+    "rev": "bfaffcf10e6d088ae7c1c22462cbd7ae46f6c358",
     "opts": {},
     "name": "mathlib",
-    "inputRev?": "6f8e81040eae7655f51d145b8026569b91d66e0d",
+    "inputRev?": "bfaffcf10e6d088ae7c1c22462cbd7ae46f6c358",
     "inherited": false}},
   {"git":
    {"url": "https://github.com/EdAyers/ProofWidgets4",
