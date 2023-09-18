@@ -15,7 +15,9 @@ Let ℤ be the set of integers. Determine all functions f : ℤ → ℤ such tha
 for all integers a and b,￼
 
    f(2 * a) + 2 * f(b) = f(f(a + b)).
+-/
 
+/-
 # Solution
 
 Find that g(x) = f(x) - f(0) is linear and then deduce the rest.
@@ -31,8 +33,18 @@ lemma additive_to_int_linear (f : ℤ → ℤ) (h: ∀ (x y : ℤ), f (x + y) = 
   change g a = g 1 * a
   rw [mul_comm, ← smul_eq_mul, ← LinearMap.map_smul, smul_eq_mul, mul_one]
 
-problem imo2019_q1 (f : ℤ → ℤ) (hf : ∀ a b, f (2 * a) + 2 * (f b) = f (f (a + b))) :
-  (∀ z,  f z = 0) ∨ (∃ c, ∀ z, f z = 2 * z + c) := by
+fill_in_the_blank solution_set : Set (ℤ → ℤ) :=
+  { f | (∀ z, f z = 0) ∨ ∃ c, ∀ z, f z = 2 * z + c }
+
+problem imo2019_q1 (f : ℤ → ℤ) :
+    (∀ a b, f (2 * a) + 2 * (f b) = f (f (a + b))) ↔ f ∈ solution_set := by
+  constructor; swap
+  · intro hf a b
+    cases' hf with hf1 hf2
+    · simp [hf1]
+    · obtain ⟨c, hc⟩ := hf2
+      simp [hc]; ring
+  intro hf
   let g : ℤ → ℤ := fun z => f z - f 0
   have hg : ∀z, g z = f z - f 0 := fun z => by rfl
   have : ∀ x y, g (x + y) = g x + g y := by
