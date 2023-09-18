@@ -135,6 +135,21 @@ lemma lemma_2
   rw[h1] at h4
   exact h4.symm
 
+lemma lemma_3
+    (f : ℕ+ → ℕ+)
+    (hf : ∀ n, f^[f n] n * f (f n) = n ^ 2)
+    (m : ℕ+)
+    (hm3 : Odd m.val) :
+    f m = m := by
+  -- Otherwise, let m be the least counterexample.
+  -- Since f^2(m)⬝f^{f(m)}(m)=m^2, either
+  --  (1) f^2(m) = k < m, contradicted by Lemma 1 since k is odd and f^2(k)=k.
+  --  (2) f^{f(m)}(m) = k<m, also contradicted by Lemma 1 by similar logic.
+  --  (3) f^2(m)=m and f^{f(m)}(m)=m, which implies that f(m)=m by Lemma 2.
+
+  by_contra H
+  sorry
+
 fill_in_the_blank solution_set : Set ℕ+ := { x : ℕ+ | Even x }
 
 problem usa2019Q1 (m : ℕ+) :
@@ -149,4 +164,14 @@ problem usa2019Q1 (m : ℕ+) :
   -- 3. prove by contradiction that f(m)=m for all odd m.
   -- 4. by injectivity, f(1000) is not odd.
   -- 5. prove that f(1000) can equal any even number.
-  sorry
+  constructor
+  · intro hm
+    simp only [solution_set, Set.mem_setOf_eq] at hm
+    use fun x ↦ if x = m then 1000 else (if x = 1000 then m else x)
+    constructor
+    · intro n
+      simp only [ite_eq_left_iff, mul_ite]
+      sorry
+    · sorry
+
+  · sorry
