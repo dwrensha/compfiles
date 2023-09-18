@@ -172,6 +172,10 @@ problem usa2019Q1 (m : ℕ+) :
     · intro n
       simp only [ite_eq_left_iff, mul_ite]
       sorry
-    · sorry
+    · simp only [ite_true]
+      obtain heq | hne := eq_or_ne 1000 m
+      · rw[heq]; simp
+      · simp_rw[eq_false hne]
+        simp
 
   · sorry
