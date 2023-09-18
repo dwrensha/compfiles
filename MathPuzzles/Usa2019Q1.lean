@@ -204,4 +204,13 @@ problem usa2019Q1 (m : ℕ+) :
           rw[Function.iterate_fixed hn]
           exact (sq n).symm
     · exact hmeq
-  · sorry
+  · intro h
+    obtain ⟨f, hf1, hf2⟩ := h
+    suffices h : Even m.val by exact h
+    by_contra H
+    have h1 : Odd m.val := Nat.odd_iff_not_even.mpr H
+    have h2 := lemma_3 f hf1 m h1
+    rw[hf2] at h2
+    have h3 := f_injective f hf1 h2
+    rw[hf2, h3] at h1
+    simp only at h1
