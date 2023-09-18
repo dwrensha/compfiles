@@ -150,7 +150,7 @@ lemma lemma_3
   by_contra H
   sorry
 
-fill_in_the_blank solution_set : Set ℕ+ := { x : ℕ+ | Even x }
+fill_in_the_blank solution_set : Set ℕ+ := { x : ℕ+ | Even x.val }
 
 problem usa2019Q1 (m : ℕ+) :
    m ∈ solution_set ↔
@@ -167,15 +167,41 @@ problem usa2019Q1 (m : ℕ+) :
   constructor
   · intro hm
     simp only [solution_set, Set.mem_setOf_eq] at hm
-    use fun x ↦ if x = m then 1000 else (if x = 1000 then m else x)
-    constructor
-    · intro n
-      simp only [ite_eq_left_iff, mul_ite]
-      sorry
-    · simp only [ite_true]
+    have : ∃ f : ℕ+ → ℕ+, f = fun x ↦ if x = m then 1000 else (if x = 1000 then m else x)
+      := ⟨fun x ↦ if x = m then 1000 else (if x = 1000 then m else x), rfl⟩
+    obtain ⟨f, hf⟩ := this
+    have hmeq : m = f 1000 := by
+      simp only [hf, ite_true]
       obtain heq | hne := eq_or_ne 1000 m
-      · rw[heq]; simp
+      · rw [heq]; simp
       · simp_rw[eq_false hne]
         simp
+    have hmeq1 : f m = 1000 := by simp [hf]
+    have hmsq : f^[2] m = m := by simp [hf]
+    have hmsq' : f^[2] 1000 = 1000 := by simp [hf]
 
+    use f
+    constructor
+    · intro n
+      obtain heq | hne := eq_or_ne n 1000
+      · rw [heq, ←hmeq, hmeq1]
+        obtain ⟨m', hm'⟩ := hm
+        rw [←Nat.two_mul] at hm'
+        rw [hm', Function.iterate_mul, Function.iterate_fixed hmsq']
+        simp only
+      · obtain heq' | hne' := eq_or_ne n m
+        · rw [heq', hmeq1]
+          rw [← hmeq]
+          convert_to f^[2 * 500] m * m = m ^ 2
+          · congr
+          · rw [Function.iterate_mul, Function.iterate_fixed hmsq]
+            exact (sq m).symm
+        · have hn : f n = n := by
+            simp[hf]
+            simp_rw[eq_false hne']
+            simp only [ite_false, ite_eq_right_iff]; intro h2; exact (hne h2).elim
+          rw[hn, hn]
+          rw[Function.iterate_fixed hn]
+          exact (sq n).symm
+    · exact hmeq
   · sorry
