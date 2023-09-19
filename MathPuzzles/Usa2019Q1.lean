@@ -135,6 +135,19 @@ lemma lemma_2
   rw[h1] at h4
   exact h4.symm
 
+lemma pnat_odd_mul {a b c : ℕ+} (h : a * b = c * c) (hc : Odd c.val) :
+    Odd a.val ∧ Odd b.val := by
+  obtain ⟨a, ha⟩ := a
+  obtain ⟨b, hb⟩ := b
+  obtain ⟨c, hc⟩ := c
+  simp only [PNat.mk_coe]
+  rw [PNat.mk_coe] at hc
+  apply_fun (fun x ↦ x.val) at h
+  dsimp at h
+  have h1 : Odd (c * c) := Odd.mul hc hc
+  rw [←h] at h1
+  exact Nat.odd_mul.mp h1
+
 lemma lemma_3
     (f : ℕ+ → ℕ+)
     (hf : ∀ n, f^[f n] n * f (f n) = n ^ 2)
@@ -143,12 +156,42 @@ lemma lemma_3
     f m = m := by
   -- Otherwise, let m be the least counterexample.
   -- Since f^2(m)⬝f^{f(m)}(m)=m^2, either
-  --  (1) f^2(m) = k < m, contradicted by Lemma 1 since k is odd and f^2(k)=k.
+  --  (1) f^2(m) = k < m, contradicted by Lemma 1 since k is odd and therefore f(k)=k.
   --  (2) f^{f(m)}(m) = k<m, also contradicted by Lemma 1 by similar logic.
   --  (3) f^2(m)=m and f^{f(m)}(m)=m, which implies that f(m)=m by Lemma 2.
 
-  by_contra H
-  sorry
+  induction' m using PNat.strongInductionOn with m2 ih
+
+  have h1 := hf m2
+  rw [sq] at h1
+  obtain h2 | h2 := Classical.em (f^[2] m2 < m2)
+  · let k := f^[2] m2
+    have hkodd : Odd k.val := (pnat_odd_mul h1 hm3).2
+    have h3 : f k = k := ih k h2 hkodd
+    rw[lemma_1 f hf k m2 2 rfl h3]
+    exact h3
+  · obtain h4 | h4 := Classical.em (f^[f m2] m2 < m2)
+    · let k := f^[f m2] m2
+      have hkodd : Odd k.val := (pnat_odd_mul h1 hm3).1
+      have h3 : f k = k := ih k h4 hkodd
+      rw[lemma_1 f hf k m2 _ rfl h3]
+      exact h3
+    · have h5 : f^[2] m2 = m2 ∧ f^[f m2] m2 = m2 := by
+         simp at h2 h4
+         by_contra H
+         rw [not_and_or] at H
+         obtain h9 | h9 := H
+         · replace h2 : m2 < f (f m2) := Ne.lt_of_le' h9 h2
+           have h10 : m2 * m2 < f^[↑(f m2)] m2 * f (f m2) := mul_lt_mul_of_le_of_lt h4 h2
+           rw [←h1] at h10
+           exact LT.lt.false h10
+         · replace h4 : m2 < f^[f m2] m2 := Ne.lt_of_le' h9 h4
+           have h10 : m2 * m2 < f^[↑(f m2)] m2 * f (f m2) := mul_lt_mul_of_lt_of_le h4 h2
+           rw [←h1] at h10
+           exact LT.lt.false h10
+      obtain ⟨h6, h7⟩ := h5
+      have h8 : f^[2] m2 = f^[↑(f m2)] m2 := by rw[h7]; exact h6
+      exact lemma_2 f hf _ h8 h7 hm3
 
 fill_in_the_blank solution_set : Set ℕ+ := { x : ℕ+ | Even x.val }
 
