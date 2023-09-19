@@ -38,6 +38,9 @@ problem bulgaria1998_q3
     (hpos : ∀ x : ℝ, 0 < x → 0 < f x)
     (hf : (∀ x y : ℝ, 0 < x → 0 < y → (f (x + y)) * (f x + y) ≤ (f x)^2)) :
     False := by
+  -- Follows the "second solution" of _Mathematical Olympiads 1998-1999_
+  -- (edited by Titu Andreescu and Zuming Feng)
+
   have f_decr : ∀ x y : ℝ, 0 < x → 0 < y → f (x + y) < f x := by
     intros x y hx hy
     have h1 := hf x y hx hy

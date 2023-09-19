@@ -40,6 +40,9 @@ problem iran1998_q9
     (hz : 1 < z)
     (h : 1/x + 1/y + 1/z = 2) :
     Real.sqrt (x - 1) + Real.sqrt (y - 1) + Real.sqrt (z - 1) ≤ Real.sqrt (x + y + z) := by
+  -- Follows the proof in _Mathematical Olympiads 1998-1999_
+  -- (edited by Titu Andreescu and Zuming Feng)
+
   -- By cauchy schwarz,
   -- √(x + y + z) √((x-1)/x + (y-1)/y + (z-1)/z) ≥ √(x - 1) + √(y - 1) + √(z - 1).
   --

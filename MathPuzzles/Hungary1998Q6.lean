@@ -43,6 +43,9 @@ lemma cast_sum_square (n : ℕ) :
 
 problem hungary1998_q6 (x y : ℤ) (z : ℕ) (hz : 1 < z) :
     (∑ i in Finset.range 99, (x + i + 1)^2) ≠ y^z := by
+  -- Follows the proof in _Mathematical Olympiads 1998-1999_
+  -- (edited by Titu Andreescu and Zuming Feng)
+
   -- Suppose (x + 1)² + (x + 2)² + ... + (x + 99)² = yᶻ.
 
   intro he

@@ -29,6 +29,9 @@ Let n be a natural number such that n ≥ 2. Show that
 problem canada1998_q3 (n : ℕ) (hn : 2 ≤ n) :
     (1/((n:ℝ) + 1)) * ∑ i in Finset.range n, (1/(2 * (i:ℝ) + 1)) >
     (1/(n:ℝ)) * ∑ i in Finset.range n, (1/(2 * (i:ℝ) + 2)) := by
+  -- Follows the proof in _Mathematical Olympiads 1998-1999_
+  -- (edited by Titu Andreescu and Zuming Feng)
+
   cases' n with n; norm_num at hn
   cases' n with n; norm_num at hn
 

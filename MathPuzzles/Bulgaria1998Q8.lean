@@ -47,6 +47,9 @@ def U : ℕ → R → R → R
                            + (x + 1) * (y - y^2) * P n y (x + 2))
 
 problem bulgaria1998_q8 (n : ℕ) (x y : R) : P n x y = P n y x := by
+  -- Follows the proof in _Mathematical Olympiads 1998-1999_
+  -- (edited by Titu Andreescu and Zuming Feng)
+
   -- We induct on n. For n = 1,2 the result is evident.
   -- So we take n > 1 and suppose that the result is true for
   -- Pₙ₋₁(x,y) and Pₙ₋₂(x,y).

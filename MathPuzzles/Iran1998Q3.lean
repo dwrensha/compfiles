@@ -45,6 +45,9 @@ problem iran1998_q3
     (h : ∏ i in Finset.range 4, x i = 1)
     : max (∑ i in Finset.range 4, x i) (∑ i in Finset.range 4, 1 / x i)
      ≤ ∑ i in Finset.range 4, (x i)^(3 : ℝ) := by
+  -- Follows the proof in _Mathematical Olympiads 1998-1999_
+  -- (edited by Titu Andreescu and Zuming Feng)
+
   rw[max_le_iff]
   constructor
   · have amgm' := Real.geom_mean_le_arith_mean_weighted
