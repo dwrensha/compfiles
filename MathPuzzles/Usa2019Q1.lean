@@ -17,7 +17,7 @@ import MathPuzzles.Meta.ProblemExtraction
 Let ℕ+ be the set of positive integers.
 A function f: ℕ+ → ℕ+ satisfies the equation
 
-  fᶠ⁽ⁿ⁾(n) ⬝ f²(n) = n^2
+  fᶠ⁽ⁿ⁾(n)⬝f²(n) = n^2
 
 for all positive integers n, where fᵏ(m) means f iterated k times on m.
 Given this information, determine all possible values of f(1000).
