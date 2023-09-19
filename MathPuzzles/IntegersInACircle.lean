@@ -9,7 +9,6 @@ import Mathlib.Algebra.BigOperators.Intervals
 import Mathlib.Algebra.BigOperators.Order
 import Mathlib.Data.Int.ModEq
 import Mathlib.Data.ZMod.Basic
-import Mathlib.Order.LocallyFinite
 import Mathlib.Tactic.IntervalCases
 import Mathlib.Tactic.LinearCombination
 
