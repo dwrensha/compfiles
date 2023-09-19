@@ -43,9 +43,8 @@ lemma lemma2 (a b c : ℕ) (hb : 0 < b) (h : Nat.Coprime a b) : ∃ k, k < b ∧
 lemma prime_five : Nat.Prime 5 := by norm_num
 
 problem usa2003Q1 (n : ℕ) :
-    ∃ m, ((Nat.digits 10 m).length = n ∧
-          5^n ∣ m ∧
-          (Nat.digits 10 m).all (λ d ↦ Odd d)) := by
+    ∃ m, (Nat.digits 10 m).length = n ∧
+          5^n ∣ m ∧ (Nat.digits 10 m).all (Odd ·) := by
   -- Informal solution from artofproblemsolving.com
   --
   -- We proceed by induction.
