@@ -1,6 +1,5 @@
 import Lean.Elab.Command
 import Lean.Meta.Basic
-import Mathlib.Tactic.LabelAttr
 import Std.Lean.NameMapAttribute
 
 /-!
