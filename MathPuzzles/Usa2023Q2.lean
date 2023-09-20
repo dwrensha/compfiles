@@ -78,6 +78,12 @@ problem usa2023Q2 (f : ℝ+ → ℝ+) :
       --  ... = [a * (f b - f a) + f (a) * (a - b)] / (a - b)
       --  ... = (a * f (b) - b * f (a)) / (a - b)
       have hpab : a * y + f a = b * y + f b := by
+        apply mul_right_cancel (b := yden)
+        rw [add_mul, add_mul]
+        unfold_let y
+        rw [mul_assoc a (ynum / yden) yden, div_mul_cancel']
+        rw [mul_assoc b (ynum / yden) yden, div_mul_cancel']
+        unfold_let ynum yden
         sorry
       rw [hpab] at hpa
       rw [hpa] at hpb
