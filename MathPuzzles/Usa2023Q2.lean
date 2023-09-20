@@ -5,6 +5,7 @@ Authors: David Renshaw
 -/
 
 import Mathlib.Data.Real.Basic
+import Mathlib.Algebra.Order.Positive.Field
 import Mathlib.Tactic
 
 import MathPuzzles.Meta.ProblemExtraction
@@ -69,7 +70,7 @@ problem usa2023Q2 (f : ℝ+ → ℝ+) :
       -- choose y := (f b - f a) / (a - b)
       let ynum : ℝ+ := ⟨(f b).val - (f a).val, sub_pos.mpr H⟩
       let yden : ℝ+ := ⟨(a).val - (b).val, sub_pos.mpr hab⟩
-      let y : ℝ+ := ⟨ynum.val / yden.val, div_pos ynum.prop yden.prop⟩
+      let y : ℝ+ := ynum / yden
       have hpa := P a y
       have hpb := P b y
       -- a * y + f(a) = a * (f b - f a) / (a - b) + f (a)
