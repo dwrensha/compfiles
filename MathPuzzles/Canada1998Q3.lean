@@ -27,8 +27,8 @@ Let n be a natural number such that n ≥ 2. Show that
 #[problem_setup] open BigOperators
 
 problem canada1998_q3 (n : ℕ) (hn : 2 ≤ n) :
-    (1/((n:ℝ) + 1)) * ∑ i in Finset.range n, (1/(2 * (i:ℝ) + 1)) >
-    (1/(n:ℝ)) * ∑ i in Finset.range n, (1/(2 * (i:ℝ) + 2)) := by
+    (1/(n:ℝ)) * ∑ i in Finset.range n, (1/(2 * (i:ℝ) + 2)) <
+    (1/((n:ℝ) + 1)) * ∑ i in Finset.range n, (1/(2 * (i:ℝ) + 1)) := by
   -- Follows the proof in _Mathematical Olympiads 1998-1999_
   -- (edited by Titu Andreescu and Zuming Feng)
 
@@ -39,11 +39,11 @@ problem canada1998_q3 (n : ℕ) (hn : 2 ≤ n) :
   intro h2; clear h2
 
   -- We prove
-  -- n(1 + 1/3 + ... + 1/(2n - 1)) > (n + 1)(1/2 + 1/4 + ... + 1/2n)
+  -- (n + 1)(1/2 + 1/4 + ... + 1/2n) < n(1 + 1/3 + ... + 1/(2n - 1))
   -- by induction.
   suffices
-   (n.succ.succ:ℝ) * ∑ i in Finset.range n.succ.succ, (1/(2 * (i:ℝ) + 1)) >
-    ((n.succ.succ:ℝ) + 1) * ∑ i in Finset.range n.succ.succ, (1/(2 * (i:ℝ) + 2))
+   ((n.succ.succ:ℝ) + 1) * ∑ i in Finset.range n.succ.succ, (1/(2 * (i:ℝ) + 2)) <
+   (n.succ.succ:ℝ) * ∑ i in Finset.range n.succ.succ, (1/(2 * (i:ℝ) + 1))
       by rw[div_mul_eq_mul_div₀, one_mul, div_mul_eq_mul_div₀, one_mul]
          apply (div_lt_div_iff (by positivity) (by positivity)).mpr
          linarith
@@ -67,8 +67,8 @@ problem canada1998_q3 (n : ℕ) (hn : 2 ≤ n) :
 
     have h1 : (1:ℝ) / (2 * ↑(0:ℕ) + 1) = 1 := by norm_num
 
-    have h2 : ∀ k' ∈ Finset.range (m + 1), (1:ℝ) / (2 * ↑(k' + 1) + 1) >
-                          (1:ℝ) / (2 * ↑(k' + 1) + 1 + 1) := by
+    have h2 : ∀ k' ∈ Finset.range (m + 1), (1:ℝ) / (2 * ↑(k' + 1) + 1 + 1) <
+                                           (1:ℝ) / (2 * ↑(k' + 1) + 1) := by
       intros k' _
       apply div_lt_div_of_lt_left zero_lt_one
       · positivity
@@ -95,8 +95,8 @@ problem canada1998_q3 (n : ℕ) (hn : 2 ≤ n) :
         (2:ℝ) * (k:ℝ) ≥ (2:ℝ) * 2 := mul_le_mul_of_nonneg_left hh2 (by linarith)
         _ = 4 := by norm_num
 
-    have h7 : 1 / 2 > 1 / (2 * (k:ℝ) + 2) := by apply div_lt_div' <;> linarith
-    have h8 : ((k:ℝ)+1)/(2 * (k:ℝ) + 1) > ((k:ℝ)+1)/(2 * (k:ℝ) + 2) :=
+    have h7 : 1 / (2 * (k:ℝ) + 2) < 1 / 2 := by apply div_lt_div' <;> linarith
+    have h8 : ((k:ℝ)+1)/(2 * (k:ℝ) + 2) < ((k:ℝ)+1)/(2 * (k:ℝ) + 1) :=
       by apply div_lt_div' <;> linarith
 
     have h9 :=
