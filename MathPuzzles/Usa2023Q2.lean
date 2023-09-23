@@ -55,9 +55,15 @@ problem usa2023Q2 (f : ℝ+ → ℝ+) :
       rw [solution_set, Set.mem_singleton_iff]
       obtain ⟨a, b, hab⟩ := h
       rw [hab] at P
-      have h1 := P 1 1
-      have h2 := P ⟨2, two_pos⟩ 1
-      simp at h1 h2
+      have P1 : ∀ x, a^2 * x + a * b + b = b * x + ⟨2, two_pos⟩ := by
+        intro x
+        have P2 := P x 1
+        simp only at P2
+        rw [←Subtype.coe_inj] at P2
+        rw [←Subtype.coe_inj]
+        simp only [mul_one, Positive.coe_add, Positive.val_mul] at P2
+        simp only [Positive.coe_add, Positive.val_mul, Positive.val_pow]
+        linarith
       sorry
     -- 1. prove that f is monotone ("weakly increasing")
     have h1 : Monotone f := by
