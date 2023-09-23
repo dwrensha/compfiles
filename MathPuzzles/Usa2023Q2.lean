@@ -84,7 +84,9 @@ problem usa2023Q2 (f : ℝ+ → ℝ+) :
         rw [mul_assoc a (ynum / yden) yden, div_mul_cancel']
         rw [mul_assoc b (ynum / yden) yden, div_mul_cancel']
         unfold_let ynum yden
-        sorry
+        rw [←Subtype.coe_inj]
+        simp only [Positive.coe_add, Positive.val_mul]
+        ring
       rw [hpab] at hpa
       rw [hpa] at hpb
       -- ... gives a⬝f(y) + 2 = b⬝f(y) + 2, which is impossible
