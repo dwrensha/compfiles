@@ -4,10 +4,10 @@
  [{"git":
    {"url": "https://github.com/leanprover-community/mathlib4",
     "subDir?": null,
-    "rev": "c97e6da04bc2bb4f3eee3b91c971524b34539cf5",
+    "rev": "e876531bc97ae579fdfe15106bcf2da81527f011",
     "opts": {},
     "name": "mathlib",
-    "inputRev?": "c97e6da04bc2bb4f3eee3b91c971524b34539cf5",
+    "inputRev?": "e876531bc97ae579fdfe15106bcf2da81527f011",
     "inherited": false}},
   {"git":
    {"url": "https://github.com/mhuisi/lean4-cli.git",
