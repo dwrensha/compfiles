@@ -55,6 +55,7 @@ problem usa2023Q2 (f : ℝ+ → ℝ+) :
       rw [solution_set, Set.mem_singleton_iff]
       obtain ⟨a, b, hab⟩ := h
       rw [hab] at P
+      suffices h : a = 1 ∧ b = 1 by funext x; simp [hab, h]
       have P1 : ∀ x, a^2 * x + a * b + b = b * x + ⟨2, two_pos⟩ := by
         intro x
         have P2 := P x 1
@@ -64,7 +65,25 @@ problem usa2023Q2 (f : ℝ+ → ℝ+) :
         simp only [mul_one, Positive.coe_add, Positive.val_mul] at P2
         simp only [Positive.coe_add, Positive.val_mul, Positive.val_pow]
         linarith
-      sorry
+      obtain ⟨a, ha⟩ := a
+      obtain ⟨b, hb⟩ := b
+      have P3 : ∀ x : ℝ, 0 < x → a^2 * x + a * b + b = b * x + 2 := by
+        intro x hx
+        have hp1 := P1 ⟨x, hx⟩
+        rw [←Subtype.coe_inj] at hp1
+        simp only [Positive.coe_add, Positive.val_mul, Positive.val_pow] at hp1
+        exact hp1
+      have hp1 := P3 1 (by norm_num)
+      have hp2 := P3 2 (by norm_num)
+
+      constructor
+      · rw [←Subtype.coe_inj]; simp only [Positive.val_one]; nlinarith
+      · rw [←Subtype.coe_inj]; simp only [Positive.val_one]
+        clear hp2
+        have hp3 := P3 3 (by norm_num)
+        sorry
+        -- (slow)
+        -- nlinarith
     -- 1. prove that f is monotone ("weakly increasing")
     have h1 : Monotone f := by
       intros b a hab
