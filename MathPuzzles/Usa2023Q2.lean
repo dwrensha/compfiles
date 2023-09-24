@@ -75,15 +75,12 @@ problem usa2023Q2 (f : ℝ+ → ℝ+) :
         exact hp1
       have hp1 := P3 1 (by norm_num)
       have hp2 := P3 2 (by norm_num)
-
-      constructor
-      · rw [←Subtype.coe_inj]; simp only [Positive.val_one]; nlinarith
-      · rw [←Subtype.coe_inj]; simp only [Positive.val_one]
-        clear hp2
-        have hp3 := P3 3 (by norm_num)
-        sorry
-        -- (slow)
-        -- nlinarith
+      have h0 : a^2 = b := by linear_combination hp2 - hp1
+      simp only [←Subtype.coe_inj]; simp only [Positive.val_one]
+      rw [←h0] at hp1 hp2
+      have h1 : a = 1 := by nlinarith
+      rw [h1, sq, mul_one] at h0
+      exact ⟨h1, h0.symm⟩
     -- 1. prove that f is monotone ("weakly increasing")
     have h1 : Monotone f := by
       intros b a hab
