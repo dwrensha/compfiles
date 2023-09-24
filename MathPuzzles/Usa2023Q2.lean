@@ -60,8 +60,7 @@ problem usa2023Q2 (f : ℝ+ → ℝ+) :
         intro x
         have P2 := P x 1
         simp only at P2
-        rw [←Subtype.coe_inj] at P2
-        rw [←Subtype.coe_inj]
+        rw [←Subtype.coe_inj] at P2 ⊢
         simp only [mul_one, Positive.coe_add, Positive.val_mul] at P2
         simp only [Positive.coe_add, Positive.val_mul, Positive.val_pow]
         linarith
