@@ -40,7 +40,6 @@ initialize problemExtractionExtension : ProblemExtractionExtension ←
       arrays.foldl (init := ∅) fun acc as =>
         as.foldl (init := acc) fun acc' a => acc'.push a
     addEntryFn    := fun s n => s.push n
-    toArrayFn     := fun es => es.toArray
   }
 
 elab_rules : command
