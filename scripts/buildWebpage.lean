@@ -71,15 +71,14 @@ unsafe def main (_args : List String) : IO Unit := do
           let problem_file := s!"problems/{m}.lean.txt"
           let problemUrl := s!"{baseurl}{problem_file}"
 
-          let entries := (mst.find? m).getD #[]
+          let problem_src := (mst.find? m).getD ""
           let h ← IO.FS.Handle.mk ("_site/" ++ problem_file) IO.FS.Mode.write
           for im in ← findModuleImports env m do
               if im.module ≠ "Init" && im.module ≠ `MathPuzzles.Meta.ProblemExtraction
               then h.putStrLn s!"import {im}"
           h.putStrLn ""
 
-          for str in entries do
-            h.putStrLn s!"{str}\n"
+          h.putStrLn problem_src
           h.flush
 
           let mut proved := true

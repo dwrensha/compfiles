@@ -88,7 +88,6 @@ to see whether it is reasonable.
 syntax (name := fillInTheBlank)
   declModifiers "fill_in_the_blank " declId ppIndent(optDeclSig) declVal : command
 
-
 elab_rules : command
 | `(command| $dm:declModifiers fill_in_the_blank $di:declId $ds:optDeclSig $dv:declVal) => do
   let src := (←read).fileMap.source
@@ -127,13 +126,19 @@ elab_rules : command
   for ⟨filename, _⟩ in st do
      IO.println s!"{filename}"
 
+/-- Retrieves the problem from the problem extraction environment extension. -/
 def extractProblems {m : Type → Type} [Monad m] [MonadEnv m] :
-    m (NameMap (Array String)) := do
+    m (NameMap String) := do
   let env ← getEnv
   let st := problemExtractionExtension.getState env
-  pure (st.foldl (init := mkNameMap _)
+  let nm1 := (st.foldl (init := mkNameMap _)
     (fun acc e =>
       let a' := match acc.find? e.module with
       | .none => #[e.string]
       | .some a => a.push e.string
       acc.insert e.module a'))
+
+  let mut result := mkNameMap _
+  for ⟨k,v⟩ in nm1 do
+    result := result.insert k (Array.foldl (fun acc l ↦ acc ++ "\n" ++ l) "" v)
+  pure result
