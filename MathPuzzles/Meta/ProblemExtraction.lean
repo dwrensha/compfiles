@@ -18,16 +18,11 @@ namespace MathPuzzles.Meta
 
 open Lean Elab
 
-/--
-Indicates that a declaration is required to set up a problem statement.
-During problem extraction, the declaration is kept completely intact.
--/
-syntax (name := problemSetup) "#[problem_setup]" command : command
-
---------------------------------
-
+/-- An entry in the state of the Problem Extraction environment extension -/
 structure Entry where
+/-- The module where the entry originated. -/
 (module : Name)
+/-- Lean code to be included in the extracted problem file. -/
 (string : String)
 
 abbrev ProblemExtractionExtension :=
@@ -41,6 +36,12 @@ initialize problemExtractionExtension : ProblemExtractionExtension ←
         as.foldl (init := acc) fun acc' a => acc'.push a
     addEntryFn    := fun s n => s.push n
   }
+
+/--
+Indicates that a declaration is required to set up a problem statement.
+During problem extraction, the declaration is kept completely intact.
+-/
+syntax (name := problemSetup) "#[problem_setup]" command : command
 
 elab_rules : command
 | `(command| #[problem_setup] $cmd:command) => do
