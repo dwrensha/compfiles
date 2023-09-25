@@ -58,7 +58,7 @@ lemma one_le_ten : (1 : ℕ) ≤ 10 := tsub_eq_zero_iff_le.mp rfl
 -- Prove that n has a positive multiple whose representation contains only zeroes and ones.
 --
 problem zeroes_and_ones
-    (n : ℕ) : ∃ k : ℕ+, ∀ e ∈ (Nat.digits 10 (n * k)), e = 0 ∨ e = 1 := by
+    (n : ℕ) : ∃ k : ℕ+, ∀ e ∈ Nat.digits 10 (n * k), e = 0 ∨ e = 1 := by
   obtain (hn0 : n = 0 ) | (hn : n > 0) := Nat.eq_zero_or_pos n
   · use 1; rw [hn0]; simp
   obtain ⟨a, b, hlt, hab⟩ := pigeonhole n (λm ↦ map_mod n hn (ones 10) m)
