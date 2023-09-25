@@ -3,7 +3,7 @@ import Lean.Meta.Basic
 import Std.Lean.NameMapAttribute
 
 /-!
-ProblemExtraction to aid in "problem extraction".
+Command wrappers to aid in "problem extraction".
 
 For the math problems that we archive, we aim to include proofs in-line.
 That presents a problem, however, if someone wants to try solving the
@@ -11,7 +11,7 @@ problems without seeing the solutions.
 Therefore, we have "problem extraction" -- a means of stripping solutions.
 
 During problem extraction, all declarations are removed
-except those that have been tagged with one of the below attributes.
+except those that have been tagged with one of the below command wrappers.
 -/
 
 namespace MathPuzzles.Meta
@@ -52,17 +52,6 @@ elab_rules : command
   let ext := problemExtractionExtension
   modifyEnv fun env => ext.addEntry env ⟨mod, s!"{Substring.mk src startPos endPos}"⟩
   Lean.Elab.Command.elabCommand cmd
-
-syntax (name := showExtraction) "#show_problem_extraction" : command
-
-elab_rules : command
-| `(command| #show_problem_extraction) => do
-  let ext := problemExtractionExtension
-  let env ← getEnv
-  let st := ext.getState env
-  IO.println s!"st.size = {st.size}"
-  for ⟨filename, _⟩ in st do
-     IO.println s!"{filename}"
 
 /--
 Indicates that a theorem is a problem statement. During problem extraction,
@@ -122,4 +111,19 @@ elab_rules : command
     s!"/- fill_in_the_blank -/\n{pfx}def {Substring.mk src sStartPos sEndPos} := sorry"⟩
   let cmd ← `(command | $dm:declModifiers def $di:declId $ds:optDeclSig $dv:declVal)
   Lean.Elab.Command.elabCommand cmd
+
+
+/--
+Prints the current contents of the Problem Extraction extension.
+-/
+syntax (name := showExtraction) "#show_problem_extraction" : command
+
+elab_rules : command
+| `(command| #show_problem_extraction) => do
+  let ext := problemExtractionExtension
+  let env ← getEnv
+  let st := ext.getState env
+  IO.println s!"st.size = {st.size}"
+  for ⟨filename, _⟩ in st do
+     IO.println s!"{filename}"
 
