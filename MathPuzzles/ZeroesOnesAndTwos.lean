@@ -103,13 +103,7 @@ problem zeroes_and_ones
   aesop
 
 #[problem_setup]
-def is_one_or_two : ℕ → Prop
-| 1 => True
-| 2 => True
-| _ => False
-
-#[problem_setup]
-def all_one_or_two (l : List ℕ) : Prop := ∀ e ∈ l, is_one_or_two e
+def all_one_or_two (l : List ℕ) : Prop := ∀ e ∈ l, e = 1 ∨ e = 2
 
 def prepend_one (n : ℕ) := 10 ^ (List.length (Nat.digits 10 n)) + n
 
@@ -159,7 +153,7 @@ lemma prepend_one_all_one_or_two (n : ℕ) (hn : all_one_or_two (Nat.digits 10 n
  cases' he with he he
  · exact hn e he
  · rw[List.mem_singleton] at he
-   simp only [he, is_one_or_two]
+   simp only [he]
 
 def prepend_two (n : ℕ) := 2 * (10 ^ (List.length (Nat.digits 10 n))) + n
 
@@ -205,7 +199,7 @@ lemma prepend_two_all_one_or_two (n : ℕ) (hn : all_one_or_two (Nat.digits 10 n
   cases' he with he he
   · exact hn e he
   · rw[List.mem_singleton] at he
-    simp only [he, is_one_or_two]
+    simp only [he]
 
 lemma factor_ten_pow (k : ℕ) : 10 ^ k = (2^k) * (5^k) := by
   induction' k with k' ih
@@ -223,10 +217,6 @@ lemma ones_and_twos_aux (n : ℕ) :
   induction' n with pn hpn
   · use 1
     simp[all_one_or_two]
-    constructor
-    · norm_cast
-    · intros a ha
-      norm_cast
   obtain ⟨pk, hpk1, hpk2⟩ := hpn
 
   /-
@@ -294,6 +284,6 @@ lemma ones_and_twos_aux (n : ℕ) :
 --
 problem ones_and_twos (n : ℕ) : ∃ k : ℕ+, all_one_or_two (Nat.digits 10 (2^n * k)) := by
   cases' n with n
-  · use 1; simp[all_one_or_two]; norm_cast
+  · use 1; simp[all_one_or_two]
   · obtain ⟨k, _, hk2⟩ := ones_and_twos_aux n
     exact ⟨k, hk2⟩
