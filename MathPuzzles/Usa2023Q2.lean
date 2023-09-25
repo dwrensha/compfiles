@@ -114,7 +114,6 @@ problem usa2023Q2 (f : ℝ+ → ℝ+) :
       replace hpb := add_right_cancel hpb
       apply_fun (fun x ↦ x.val) at hpb
       replace hpb : a.val * ↑(f y) = b.val * ↑(f y) := hpb
-      have habv : b.val < a.val := hab
       have hfyp : 0 < (f y).val := (f y).prop
       have h10 : b.val * ↑(f y) < a.val * ↑(f y) :=
         (mul_lt_mul_right hfyp).mpr hab
