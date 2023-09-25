@@ -128,7 +128,7 @@ elab_rules : command
 
 /--
 Using the data in the problem extraction environment extension,
-constructs a map from module name to problem souce code.
+constructs a map from module name to problem source code.
 -/
 def extractProblems {m : Type → Type} [Monad m] [MonadEnv m] :
     m (NameMap String) := do
