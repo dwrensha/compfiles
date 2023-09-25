@@ -42,7 +42,7 @@ problem bulgaria1998_q3
   -- (edited by Titu Andreescu and Zuming Feng)
 
   have f_decr : ∀ x y : ℝ, 0 < x → 0 < y → f (x + y) < f x := by
-    intros x y hx hy
+    intro x y hx hy
     have h1 := hf x y hx hy
     have h2 : 0 < f x + y := add_pos (hpos x hx) hy
     have h4 : f x < f x + y := lt_add_of_pos_right (f x) hy
@@ -56,7 +56,7 @@ problem bulgaria1998_q3
        _ < f x                                 := (mul_lt_iff_lt_one_right (hpos x hx)).mpr h5
 
   have f_half : ∀ x : ℝ, 0 < x → f (x + f x) ≤ f x / 2 := by
-    intros x hx
+    intro x hx
     have h0 := hpos x hx
     have h1 := hf x (f x) hx h0
     have h2 : 0 < f x + f x := add_pos h0 h0
@@ -81,7 +81,7 @@ problem bulgaria1998_q3
     rw [show x_seq n = 1 + ∑ i in Finset.range n, (f 1) / (2^i) by rfl]
     have sum_nonneg : 0 ≤ ∑ i in Finset.range n, f 1 / 2 ^ i := by
       apply Finset.sum_nonneg
-      intros i _
+      intro i _
       have h2 : (0:ℝ) < 2 ^ i := pow_pos (by norm_num) i
       exact le_of_lt (div_pos_iff.mpr (Or.inl ⟨hf1, h2⟩))
     linarith

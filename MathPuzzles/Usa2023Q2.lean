@@ -37,7 +37,7 @@ problem usa2023Q2 (f : ℝ+ → ℝ+) :
   constructor
   · intro hf
     rw [solution_set, Set.mem_singleton_iff] at hf
-    intros x y
+    intro x y
     rw [hf]
     dsimp only
     rw [mul_add, ←add_assoc (x*y), mul_one, add_assoc (x * y + x)]
@@ -82,7 +82,7 @@ problem usa2023Q2 (f : ℝ+ → ℝ+) :
       exact ⟨h1, h0.symm⟩
     -- 1. prove that f is monotone ("weakly increasing")
     have h1 : Monotone f := by
-      intros b a hab
+      intro b a hab
       obtain hab | hab := eq_or_lt_of_le hab
       · rw [hab]
       by_contra H
