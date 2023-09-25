@@ -126,7 +126,10 @@ elab_rules : command
   for ⟨filename, _⟩ in st do
      IO.println s!"{filename}"
 
-/-- Retrieves the problem from the problem extraction environment extension. -/
+/--
+Using the data in the problem extraction environment extension,
+constructs a map from module name to problem souce code.
+-/
 def extractProblems {m : Type → Type} [Monad m] [MonadEnv m] :
     m (NameMap String) := do
   let env ← getEnv
