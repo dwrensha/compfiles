@@ -36,15 +36,6 @@ def HEADER : String :=
  "<title>Math Puzzles in Lean 4</title>" ++
  "</head>"
 
-def processExtState (entries : Array MathPuzzles.Meta.Entry) :
-    NameMap (Array String) :=
-  entries.foldl (init := mkNameMap _)
-    (fun acc e =>
-      let a' := match acc.find? e.module with
-      | .none => #[e.string]
-      | .some a => a.push e.string
-      acc.insert e.module a')
-
 def findModuleImports (env : Environment) (m : Name) : CoreM (Array Import) := do
   let moduleNames := env.header.moduleNames
   let mut idx := 0
@@ -65,10 +56,7 @@ unsafe def main (_args : List String) : IO Unit := do
     let ctx := {fileName := "", fileMap := default}
     let state := {env}
     Prod.fst <$> (CoreM.toIO · ctx state) do
-      let ext := MathPuzzles.Meta.problemExtractionExtension
-      let st := ext.getState env
-      IO.println s!"{st.size} entries"
-      let mst := processExtState st
+      let mst ← MathPuzzles.Meta.extractProblems
 
       let mut infos : List PuzzleInfo := []
       let pkg := `MathPuzzles

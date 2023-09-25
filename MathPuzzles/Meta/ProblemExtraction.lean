@@ -127,3 +127,13 @@ elab_rules : command
   for ⟨filename, _⟩ in st do
      IO.println s!"{filename}"
 
+def extractProblems {m : Type → Type} [Monad m] [MonadEnv m] :
+    m (NameMap (Array String)) := do
+  let env ← getEnv
+  let st := problemExtractionExtension.getState env
+  pure (st.foldl (init := mkNameMap _)
+    (fun acc e =>
+      let a' := match acc.find? e.module with
+      | .none => #[e.string]
+      | .some a => a.push e.string
+      acc.insert e.module a'))
