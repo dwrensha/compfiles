@@ -126,11 +126,23 @@ elab_rules : command
   for ⟨filename, _⟩ in st do
      IO.println s!"{filename}"
 
+
+private def findModuleImports
+    {m : Type → Type} [Monad m] [MonadError m] (env : Environment) (md : Name) :
+    m (Array Import) := do
+  let moduleNames := env.header.moduleNames
+  let mut idx := 0
+  for m1 in moduleNames do
+    if m1 = md
+    then return (env.header.moduleData.get! idx).imports
+    else idx := 1 + idx
+  throwError s!"module {md} not found"
+
 /--
 Using the data in the problem extraction environment extension,
 constructs a map from module name to problem source code.
 -/
-def extractProblems {m : Type → Type} [Monad m] [MonadEnv m] :
+def extractProblems {m : Type → Type} [Monad m] [MonadEnv m] [MonadError m] :
     m (NameMap String) := do
   let env ← getEnv
   let st := problemExtractionExtension.getState env
@@ -143,5 +155,10 @@ def extractProblems {m : Type → Type} [Monad m] [MonadEnv m] :
 
   let mut result := mkNameMap _
   for ⟨k,v⟩ in nm1 do
-    result := result.insert k (Array.foldl (fun acc l ↦ acc ++ "\n" ++ l) "" v)
+    let mut imports := ""
+    for im in ← findModuleImports env k do
+      if im.module ≠ "Init" && im.module ≠ `MathPuzzles.Meta.ProblemExtraction
+      then imports := imports ++ s!"import {im}\n"
+    imports := imports ++ "\n"
+    result := result.insert k (Array.foldl (fun acc l ↦ acc ++ "\n" ++ l) imports v)
   pure result

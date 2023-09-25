@@ -36,15 +36,6 @@ def HEADER : String :=
  "<title>Math Puzzles in Lean 4</title>" ++
  "</head>"
 
-def findModuleImports (env : Environment) (m : Name) : CoreM (Array Import) := do
-  let moduleNames := env.header.moduleNames
-  let mut idx := 0
-  for m1 in moduleNames do
-    if m1 = m
-    then return (env.header.moduleData.get! idx).imports
-    else idx := 1 + idx
-  throwError s!"module {m} not found"
-
 unsafe def main (_args : List String) : IO Unit := do
   IO.FS.createDirAll "_site"
   IO.FS.createDirAll "_site/problems"
@@ -73,11 +64,6 @@ unsafe def main (_args : List String) : IO Unit := do
 
           let problem_src := (mst.find? m).getD ""
           let h ← IO.FS.Handle.mk ("_site/" ++ problem_file) IO.FS.Mode.write
-          for im in ← findModuleImports env m do
-              if im.module ≠ "Init" && im.module ≠ `MathPuzzles.Meta.ProblemExtraction
-              then h.putStrLn s!"import {im}"
-          h.putStrLn ""
-
           h.putStrLn problem_src
           h.flush
 
