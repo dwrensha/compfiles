@@ -102,8 +102,7 @@ problem zeroes_and_ones
   rw [List.mem_append, List.mem_replicate, List.mem_replicate] at he
   aesop
 
-#[problem_setup]
-def all_one_or_two (l : List ℕ) : Prop := ∀ e ∈ l, e = 1 ∨ e = 2
+abbrev all_one_or_two (l : List ℕ) : Prop := ∀ e ∈ l, e = 1 ∨ e = 2
 
 def prepend_one (n : ℕ) := 10 ^ (List.length (Nat.digits 10 n)) + n
 
@@ -282,8 +281,9 @@ lemma ones_and_twos_aux (n : ℕ) :
 --
 -- Prove that 2^n has a positive multiple whose representation contains only ones and twos.
 --
-problem ones_and_twos (n : ℕ) : ∃ k : ℕ+, all_one_or_two (Nat.digits 10 (2^n * k)) := by
+problem ones_and_twos
+    (n : ℕ) : ∃ k : ℕ+, ∀ e ∈ Nat.digits 10 (2^n * k), e = 1 ∨ e = 2 := by
   cases' n with n
-  · use 1; simp[all_one_or_two]
+  · use 1; simp only
   · obtain ⟨k, _, hk2⟩ := ones_and_twos_aux n
     exact ⟨k, hk2⟩
