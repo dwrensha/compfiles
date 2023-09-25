@@ -37,12 +37,12 @@ def HEADER : String :=
  "</head>"
 
 def processExtState (entries : Array MathPuzzles.Meta.Entry) :
-    NameMap (Array MathPuzzles.Meta.Entry) :=
+    NameMap (Array String) :=
   entries.foldl (init := mkNameMap _)
     (fun acc e =>
       let a' := match acc.find? e.module with
-      | .none => #[e]
-      | .some a => a.push e
+      | .none => #[e.string]
+      | .some a => a.push e.string
       acc.insert e.module a')
 
 def findModuleImports (env : Environment) (m : Name) : CoreM (Array Import) := do
@@ -90,7 +90,7 @@ unsafe def main (_args : List String) : IO Unit := do
               then h.putStrLn s!"import {im}"
           h.putStrLn ""
 
-          for ⟨_, str⟩ in entries do
+          for str in entries do
             h.putStrLn s!"{str}\n"
           h.flush
 
