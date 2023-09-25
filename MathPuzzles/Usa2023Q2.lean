@@ -119,8 +119,19 @@ problem usa2023Q2 (f : ℝ+ → ℝ+) :
         (mul_lt_mul_right hfyp).mpr hab
       rw [hpb] at h10
       simp only [lt_self_iff_false] at h10
+
     -- 2. prove that |f (x) − (Kx + C)| ≤ 2, where K = 2/f(1)
     --    and C = f (f (1)) − 2 are constants
+    have h2 :
+        ∀ x, |(f x).val - (((⟨2,two_pos⟩ / f 1) * x).val + (f (f 1)).val - 2)| ≤ 2 := by
+      intro x
+      have P1 : ∀ (y : ℝ+), f (y + f 1) = f y + ⟨2, two_pos⟩ := by
+        intro y
+        have := P 1 y
+        simp only [one_mul] at this
+        exact this
+      sorry
+
     -- 3. show that x⬝(K⬝y + K² − f (y)) = O(1) for all x,y
     -- 4. fix x and consider large y
     sorry
