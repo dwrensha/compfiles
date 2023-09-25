@@ -83,8 +83,8 @@ problem usa2023Q2 (f : ℝ+ → ℝ+) :
     -- 1. prove that f is monotone ("weakly increasing")
     have h1 : Monotone f := by
       intro b a hab
-      obtain hab | hab := eq_or_lt_of_le hab
-      · rw [hab]
+      rcases eq_or_lt_of_le hab with rfl | hab
+      · exact le_rfl
       by_contra H
 
       rw [not_le] at H
