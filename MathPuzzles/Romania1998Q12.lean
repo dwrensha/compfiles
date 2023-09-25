@@ -278,9 +278,8 @@ lemma exp_characterization
   have h4 : ∀ z : ℤ, ∀ x : ℝ, u (z * x) = (u x) ^ z := by
     intros z x
     obtain ⟨n, hn⟩ := int_dichotomy z
-    cases' hn with hn hn
-    · rw[←hn]
-      norm_cast
+    rcases hn with rfl | hn
+    · norm_cast
       have := h1 n x
       norm_cast at this
     · have h10 := h1 n x
@@ -311,12 +310,10 @@ lemma exp_characterization
   have hzexp : ∀ z : ℤ, u z = Real.exp (k * z) := by
     intro z
     obtain ⟨n, hn⟩ := int_dichotomy z
-    cases' hn with hn hn
-    · rw[←hn]
-      norm_cast
+    rcases hn with rfl | rfl
+    · norm_cast
       exact hnexp n
-    · rw[←hn]
-      have := h4 (-↑n) 1
+    · have := h4 (-↑n) 1
       rw[mul_one] at this
       rw[this, ←hk]
       rw [Real.exp_mul]
@@ -479,8 +476,8 @@ lemma romania1998_q12_mp (u : ℝ → ℝ) :
   -- since u(0) = 1, f(0) = 0, this equation also holds for x = 0.
   have h6 : ∀ x : ℝ, u x = 1 + C * f x := by
     intro x
-    cases' em (x = 0) with hz hnz
-    · rw [hz, hf0, h00]; ring
+    rcases em (x = 0) with rfl | hnz
+    · rw [hf0, h00]; ring
     · exact h5 x hnz
 
   -- If C = 0, then u(x) = 1 for all x and we are done.
