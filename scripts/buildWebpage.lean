@@ -50,12 +50,21 @@ unsafe def main (_args : List String) : IO Unit := do
           let p ← findOLean m
           let solutionUrl := olean_path_to_github_url p.toString
           IO.println s!"MODULE: {m}"
-          let problem_file := s!"problems/{m}.lean.txt"
+          let problem_file := s!"problems/{m}.html"
           let problemUrl := s!"{baseurl}{problem_file}"
 
           let problem_src := (mst.find? m).getD ""
           let h ← IO.FS.Handle.mk ("_site/" ++ problem_file) IO.FS.Mode.write
+          h.putStrLn <|
+            "<!DOCTYPE html><html><head>" ++
+            "<meta name=\"viewport\" content=\"width=device-width\">" ++
+            s!"<title>{m}</title>" ++
+            "</head>"
+          h.putStrLn "<body>"
+          h.putStrLn "<pre>"
           h.putStrLn problem_src
+          h.putStrLn "</pre>"
+          h.putStrLn "</body></html>"
           h.flush
 
           let mut proved := true
