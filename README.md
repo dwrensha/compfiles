@@ -23,7 +23,7 @@ $ lake build
 
 ## extracting problems
 
-This repo defines some [/MathPuzzles/Meta/ProblemExtraction.lean](special command wrappers)
+This repo defines some [special command wrappers](/MathPuzzles/Meta/ProblemExtraction.lean)
 to support problem extraction.
 
 To generate problem statements with all solution information stripped, do:
