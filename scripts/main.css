@@ -6,6 +6,13 @@ body {
   background-color: #d7f4f7;
   width: 750px;
 }
+@media (max-width: 755px) {
+  body {
+     width: 97vw;
+  }
+}
+
+
 * {
   box-sizing: border-box;
 }
