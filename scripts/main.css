@@ -4,6 +4,7 @@ body {
   margin-left: auto;
   margin-right: auto;
   background-color: #d7f4f7;
+  width: 900px;
 }
 * {
   box-sizing: border-box;
@@ -18,4 +19,5 @@ pre.problem {
     text-align: left;
     font-size: 15px;
     background-color: #fcfff2;
+    overflow: scroll;
 }
