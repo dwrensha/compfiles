@@ -43,6 +43,7 @@ def HEADER : String :=
 unsafe def main (_args : List String) : IO Unit := do
   IO.FS.createDirAll "_site"
   IO.FS.createDirAll "_site/problems"
+  IO.FS.writeFile "_site/main.css" (←IO.FS.readFile "scripts/main.css")
 
   let module := `MathPuzzles
   searchPathRef.set compile_time_search_path%
@@ -56,7 +57,8 @@ unsafe def main (_args : List String) : IO Unit := do
       let mut infos : List PuzzleInfo := []
       let pkg := `MathPuzzles
       let modules := env.header.moduleNames.filter (pkg.isPrefixOf ·)
-      let baseurl := ((← IO.getEnv "GITHUB_PAGES_BASEURL").getD "")
+      let cwd ← IO.currentDir
+      let baseurl := ((← IO.getEnv "GITHUB_PAGES_BASEURL").getD s!"file://{cwd}/_site/")
 
       for m in modules do
         if m ≠ pkg && m ≠ `MathPuzzles.Meta.ProblemExtraction then do
@@ -71,10 +73,11 @@ unsafe def main (_args : List String) : IO Unit := do
           h.putStrLn <|
             "<!DOCTYPE html><html><head>" ++
             "<meta name=\"viewport\" content=\"width=device-width\">" ++
+            s!"<link rel=\"stylesheet\" type=\"text/css\" href=\"{baseurl}main.css\" >" ++
             s!"<title>{m}</title>" ++
             "</head>"
           h.putStrLn "<body>"
-          h.putStrLn "<pre>"
+          h.putStrLn "<pre class=\"problem\">"
           h.putStrLn (htmlEscape problem_src)
           h.putStrLn "</pre>"
           h.putStrLn "</body></html>"
