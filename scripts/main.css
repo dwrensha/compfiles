@@ -1,8 +1,8 @@
-body { font-family: Helvetica, Sans, Arial;
-        font-size: 24px;
-        margin-left: auto;
-        margin-right: auto;
-        text-align: center;
+body {
+  font-family: Helvetica, Sans, Arial;
+  font-size: 19px;
+  margin-left: auto;
+  margin-right: auto;
 }
 * {
   box-sizing: border-box;
@@ -11,5 +11,5 @@ body { font-family: Helvetica, Sans, Arial;
 pre.problem {
     font-family: monospace;
     text-align: left;
-    font-size: 17px;
+    font-size: 15px;
 }
