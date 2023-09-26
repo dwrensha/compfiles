@@ -56,7 +56,7 @@ problem imo_1964_q1b (n : ℕ) : ¬ 7 ∣ (2^n + 1) := by
                    linarith
 
 /- An alternative proof, heavily golfed. The statement here is slightly modified from the original one. -/
-problem imo_1964_q1b' : ∀ (n : ℕ), (2 ^ n + 1) % 7 ≠ 0
+theorem imo_1964_q1b' : ∀ (n : ℕ), (2 ^ n + 1) % 7 ≠ 0
     | 0 | 1 | 2 => by decide
     | n + 3 => by
       rw [pow_add, Nat.add_mod, Nat.mul_mod, show 2 ^ 3 % 7 = 1 from by rfl]
