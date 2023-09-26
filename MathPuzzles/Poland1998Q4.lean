@@ -2,13 +2,7 @@ import Mathlib.Data.Nat.Basic
 import Mathlib.Data.Nat.ModEq
 import Mathlib.Data.ZMod.Basic
 import Mathlib.Data.Int.Basic
-
-import Mathlib.Tactic.FieldSimp
-import Mathlib.Tactic.IntervalCases
-import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.NormNum
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.LibrarySearch
+import Mathlib.Tactic
 
 import MathPuzzles.Meta.ProblemExtraction
 
