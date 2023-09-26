@@ -1,10 +1,10 @@
 body {
   font-family: Helvetica, Sans, Arial;
-  font-size: 19px;
+  font-size: 15px;
   margin-left: auto;
   margin-right: auto;
   background-color: #d7f4f7;
-  width: 900px;
+  width: 750px;
 }
 * {
   box-sizing: border-box;
@@ -17,7 +17,7 @@ body {
 pre.problem {
     font-family: monospace;
     text-align: left;
-    font-size: 15px;
+    font-size: 13px;
     background-color: #fcfff2;
     overflow: scroll;
 }
