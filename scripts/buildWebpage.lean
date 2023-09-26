@@ -14,6 +14,19 @@ structure PuzzleInfo where
   problemUrl : String
   proved : Bool
 
+def htmlEscapeAux (racc : List Char) : List Char → String
+| [] => String.mk racc.reverse
+| '&'::cs => htmlEscapeAux (("&amp;".data.reverse)++racc) cs
+| '<'::cs => htmlEscapeAux (("&lt;".data.reverse)++racc) cs
+| '>'::cs => htmlEscapeAux (("&gt;".data.reverse)++racc) cs
+| '\"'::cs => htmlEscapeAux (("&quot;".data.reverse)++racc) cs
+-- TODO other things that need escaping
+-- https://developer.mozilla.org/en-US/docs/Glossary/Entity#reserved_characters
+| c::cs => htmlEscapeAux (c::racc) cs
+
+def htmlEscape (s : String) : String :=
+  htmlEscapeAux [] s.data
+
 def olean_path_to_github_url (path: String) : String :=
   let pfx := "./build/lib/"
   let sfx := ".olean"
@@ -62,7 +75,7 @@ unsafe def main (_args : List String) : IO Unit := do
             "</head>"
           h.putStrLn "<body>"
           h.putStrLn "<pre>"
-          h.putStrLn problem_src
+          h.putStrLn (htmlEscape problem_src)
           h.putStrLn "</pre>"
           h.putStrLn "</body></html>"
           h.flush
