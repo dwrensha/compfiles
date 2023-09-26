@@ -68,7 +68,8 @@ unsafe def main (_args : List String) : IO Unit := do
                  if v.hasSorry then proved := false
           infos := ⟨m.toString.stripPrefix "MathPuzzles.",
                     solutionUrl, problemUrl, proved⟩ :: infos
-      -- now write the file
+
+      -- now write the main index.html
       let num_proved := (infos.filter (·.proved)).length
       let commit_sha := ((← IO.getEnv "GITHUB_SHA").getD "GITHUB_SHA_env_var_not_found")
       let commit_url :=
