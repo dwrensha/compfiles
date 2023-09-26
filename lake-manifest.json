@@ -1,13 +1,13 @@
-{"version": 5,
+{"version": 6,
  "packagesDir": "lake-packages",
  "packages":
  [{"git":
    {"url": "https://github.com/leanprover-community/mathlib4",
     "subDir?": null,
-    "rev": "e876531bc97ae579fdfe15106bcf2da81527f011",
+    "rev": "bf1ceb82960fe37c5f22a2b07d26ca12f27716ba",
     "opts": {},
     "name": "mathlib",
-    "inputRev?": "e876531bc97ae579fdfe15106bcf2da81527f011",
+    "inputRev?": "bf1ceb82960fe37c5f22a2b07d26ca12f27716ba",
     "inherited": false}},
   {"git":
    {"url": "https://github.com/mhuisi/lean4-cli.git",
@@ -48,4 +48,5 @@
     "opts": {},
     "name": "proofwidgets",
     "inputRev?": "v0.0.16",
-    "inherited": true}}]}
+    "inherited": true}}],
+ "name": "mathpuzzles"}
