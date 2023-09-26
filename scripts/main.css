@@ -1,3 +1,7 @@
+* {
+  box-sizing: border-box;
+}
+
 body {
   font-family: Helvetica, Sans, Arial;
   font-size: 15px;
@@ -6,21 +10,6 @@ body {
   background-color: #d7f4f7;
   width: 750px;
 }
-@media (max-width: 755px) {
-  body {
-     width: 97vw;
-  }
-}
-
-
-* {
-  box-sizing: border-box;
-}
-
-.full-width {
-   width: 700px;
-}
-
 pre.problem {
     font-family: monospace;
     text-align: left;
@@ -28,3 +17,15 @@ pre.problem {
     background-color: #fcfff2;
     overflow: scroll;
 }
+
+@media (max-width: 755px) {
+  body {
+     width: 97vw;
+  }
+
+  pre.problem {
+    font-size: 10px;
+ }
+}
+
+
