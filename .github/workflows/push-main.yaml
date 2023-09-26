@@ -47,6 +47,15 @@ jobs:
           result_run1=$?
           echo "Complete at $(date +'%T'); return value $result_run1"
 
+      - name: run extractProblems
+        id: run-extractProblems
+        run: |
+          set -o pipefail
+          echo "Starting build at $(date +'%T')"
+          build/bin/extractProblems
+          result_run1=$?
+          echo "Complete at $(date +'%T'); return value $result_run1"
+
       - name: run buildWebpage
         id: run-buildWebpage
         env:
