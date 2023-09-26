@@ -14,7 +14,6 @@ structure PuzzleInfo where
   problemUrl : String
   proved : Bool
 
-
 def olean_path_to_github_url (path: String) : String :=
   let pfx := "./build/lib/"
   let sfx := ".olean"
@@ -22,9 +21,6 @@ def olean_path_to_github_url (path: String) : String :=
   assert!(sfx.data.isSuffixOf path.data)
   "https://github.com/dwrensha/math-puzzles-in-lean4/blob/main/" ++
     ((path.stripPrefix pfx).stripSuffix sfx) ++ ".lean"
-
-elab "compileTimeSearchPath" : term =>
-  return toExpr (← searchPathRef.get)
 
 def HEADER : String :=
  "<!DOCTYPE html><html><head> <meta name=\"viewport\" content=\"width=device-width\">" ++
@@ -36,7 +32,7 @@ unsafe def main (_args : List String) : IO Unit := do
   IO.FS.createDirAll "_site/problems"
 
   let module := `MathPuzzles
-  searchPathRef.set compileTimeSearchPath
+  searchPathRef.set compile_time_search_path%
 
   withImportModules #[{module}] {} (trustLevel := 1024) fun env =>
     let ctx := {fileName := "", fileMap := default}
