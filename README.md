@@ -13,12 +13,24 @@ that gets automatically updated on every push to the `main` branch of this repo.
 
 ## building
 
-Make sure you have [`elan`](https://github.com/leanprover/elan) installed, then do:
+Make sure you have [`elan`](https://github.com/leanprover/elan) installed.
+Then do:
 
 ```
 $ lake exe cache get
 $ lake build
 ```
+
+## extracting problems
+
+This repo defines some [/MathPuzzles/Meta/ProblemExtraction.lean](special command wrappers)
+to support problem extraction.
+
+To generate problem statements with all solution information stripped, do:
+```
+$ lake exe extractProblems
+```
+and then look in the `_extracted/` directory.
 
 ## contributing
 
@@ -32,4 +44,3 @@ to the "authors" field in the copyright header.
 | ----- | ---- |
 | [IMO 1964 Problem 4](/MathPuzzles/Imo1964Q4.lean) | [<img src="http://img.youtube.com/vi/TOzS4aC_K1g/maxresdefault.jpg" height="120px">](http://youtu.be/TOzS4aC_K1g)|
 | [IMO 1964 Problem 1b](/MathPuzzles/Imo1964Q1B.lean) | [<img src="http://img.youtube.com/vi/9d2nicgd68Q/maxresdefault.jpg" height="120px">](http://youtu.be/9d2nicgd68Q)|
-
