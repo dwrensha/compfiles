@@ -100,7 +100,7 @@ unsafe def main (_args : List String) : IO Unit := do
               s!"<p>This problem <a href=\"{solutionUrl}\">has a complete solution</a>.</p>"
           else
             h.putStrLn
-              s!"<p>This problem <a href=\"{solutionUrl}\">does not yet have a comlete solution</a>.</p>"
+              s!"<p>This problem <a href=\"{solutionUrl}\">does not yet have a complete solution</a>.</p>"
           h.putStrLn "<pre class=\"problem\">"
           h.putStrLn (htmlEscape problem_src)
           h.putStrLn "</pre>"
