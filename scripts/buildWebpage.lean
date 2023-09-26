@@ -78,15 +78,7 @@ unsafe def main (_args : List String) : IO Unit := do
           IO.println s!"MODULE: {m}"
           let problem_file := s!"problems/{m}.html"
           let problemUrl := s!"{←getBaseUrl}{problem_file}"
-
-          let problem_src := (mst.find? m).getD ""
-          let h ← IO.FS.Handle.mk ("_site/" ++ problem_file) IO.FS.Mode.write
-          h.putStrLn <| ←htmlHeader m.toString
-          h.putStrLn "<pre class=\"problem\">"
-          h.putStrLn (htmlEscape problem_src)
-          h.putStrLn "</pre>"
-          h.putStrLn "</body></html>"
-          h.flush
+          let homeUrl := s!"{←getBaseUrl}index.html"
 
           let mut proved := true
           let decls ← getDeclsInPackage m
@@ -98,6 +90,25 @@ unsafe def main (_args : List String) : IO Unit := do
                  if v.hasSorry then proved := false
           infos := ⟨m.toString.stripPrefix "MathPuzzles.",
                     solutionUrl, problemUrl, proved⟩ :: infos
+
+          let problem_src := (mst.find? m).getD ""
+          let h ← IO.FS.Handle.mk ("_site/" ++ problem_file) IO.FS.Mode.write
+          h.putStrLn <| ←htmlHeader m.toString
+          if proved
+          then
+            h.putStrLn
+              s!"<p>This problem <a href=\"{solutionUrl}\">has a complete solution</a>.</p>"
+          else
+            h.putStrLn
+              s!"<p>This problem <a href=\"{solutionUrl}\">does not yet have a comlete solution</a>.</p>"
+          h.putStrLn "<pre class=\"problem\">"
+          h.putStrLn (htmlEscape problem_src)
+          h.putStrLn "</pre>"
+          h.putStrLn "<br>"
+          h.putStrLn s!"<a href=\"{homeUrl}\">Math Puzzles in Lean 4</a>"
+          h.putStrLn "</body></html>"
+          h.flush
+
 
       -- now write the main index.html
       let num_proved := (infos.filter (·.proved)).length
