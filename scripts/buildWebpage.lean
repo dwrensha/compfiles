@@ -1,4 +1,5 @@
 import Std.Data.String.Basic
+import Std.Lean.Util.Path
 import Std.Tactic.Lint
 import Lean.Environment
 import Mathlib.Data.String.Defs
@@ -21,12 +22,6 @@ def olean_path_to_github_url (path: String) : String :=
   assert!(sfx.data.isSuffixOf path.data)
   "https://github.com/dwrensha/math-puzzles-in-lean4/blob/main/" ++
     ((path.stripPrefix pfx).stripSuffix sfx) ++ ".lean"
-
-open System in
-instance : ToExpr FilePath where
-  toTypeExpr := mkConst ``FilePath
-  toExpr path := mkApp (mkConst ``FilePath.mk) (toExpr path.1)
-
 
 elab "compileTimeSearchPath" : term =>
   return toExpr (← searchPathRef.get)
