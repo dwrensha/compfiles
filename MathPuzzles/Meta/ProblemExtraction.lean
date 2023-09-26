@@ -159,6 +159,5 @@ def extractProblems {m : Type → Type} [Monad m] [MonadEnv m] [MonadError m] :
     for im in ← findModuleImports env k do
       if im.module ≠ "Init" && im.module ≠ `MathPuzzles.Meta.ProblemExtraction
       then imports := imports ++ s!"import {im}\n"
-    imports := imports ++ "\n"
-    result := result.insert k (Array.foldl (fun acc l ↦ acc ++ "\n" ++ l) imports v)
+    result := result.insert k (Array.foldl (fun acc l ↦ acc ++ "\n\n" ++ l) imports v)
   pure result
