@@ -12,7 +12,7 @@ import Mathlib.Tactic.Ring
 
 import MathPuzzles.Meta.ProblemExtraction
 
-#[problem_setup]/-
+#[problem_setup]/-!
 Bulgarian Mathematical Olympiad 1998, Problem 6
 
 Prove that the equation
