@@ -128,9 +128,9 @@ unsafe def main (_args : List String) : IO Unit := do
         h.putStr "<li>"
         h.putStr s!"<a href=\"{info.solutionUrl}\">"
         if info.proved then
-          h.putStr "✅  "
+          h.putStr "☑  "
         else
-          h.putStr "❌  "
+          h.putStr "☐  "
         h.putStr "</a>"
         h.putStr s!"<a href=\"{info.problemUrl}\">{info.name}</a>"
         h.putStr "</li>"
