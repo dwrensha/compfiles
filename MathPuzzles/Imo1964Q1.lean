@@ -5,8 +5,9 @@ Authors: David Renshaw, Anand Rao
 -/
 
 import Mathlib.Data.Nat.Basic
+import Mathlib.Data.Nat.ModEq
 import Mathlib.Algebra.GroupPower.Basic
-import Mathlib.Tactic.Linarith
+import Mathlib.Tactic
 
 import MathPuzzles.Meta.ProblemExtraction
 
@@ -21,8 +22,32 @@ import MathPuzzles.Meta.ProblemExtraction
 
 fill_in_the_blank solution_set : Set ℕ := { n | n % 3 = 0 }
 
-problem imo_1964_q1a (n : ℕ) : n ∈ solution_set ↔ 7 ∣ 2^n - 1 := by
-  sorry
+problem imo_1964_q1a (n : ℕ) : n ∈ solution_set ↔ 2^n ≡ 1 [MOD 7] := by
+  constructor
+  · intro hn
+    change n % 3 = 0 at hn
+    obtain ⟨m, hm⟩ := Nat.dvd_of_mod_eq_zero hn
+    change 2^n % 7 = 1
+    rw [hm]
+    rw [Nat.pow_mul, Nat.pow_mod]
+    norm_num
+  · intro hn
+    change n % 3 = 0
+    change 2^n % 7 = 1 at hn
+    rw [(Nat.div_add_mod' n 3).symm] at hn
+    rw [pow_add, pow_mul', Nat.mul_mod, Nat.pow_mod] at hn
+    norm_num at hn
+    cases hn' : n % 3 with
+    | zero => rfl
+    | succ n' =>
+      cases n' with
+      | zero => rw [hn'] at hn; norm_num at hn
+      | succ n' =>
+        cases n' with
+        | zero => rw [hn'] at hn; norm_num at hn
+        | succ n' => have h5 : 3 > 0 := by norm_num
+                     have h6 := Nat.mod_lt n h5
+                     linarith
 
 /-
 Informal proof (credit to twitch.tv viewer int_fast64_t):
