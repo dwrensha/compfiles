@@ -8,7 +8,7 @@ import MathPuzzles.Canada1998Q3
 import MathPuzzles.Canada1998Q5
 import MathPuzzles.Hungary1998Q6
 import MathPuzzles.Imo1959Q1
-import MathPuzzles.Imo1964Q1B
+import MathPuzzles.Imo1964Q1
 import MathPuzzles.Imo1964Q4
 import MathPuzzles.Imo1986Q1
 import MathPuzzles.Imo1987Q4

@@ -11,12 +11,18 @@ import Mathlib.Tactic.Linarith
 import MathPuzzles.Meta.ProblemExtraction
 
 #[problem_setup]/-!
-# International Mathematical Olympiad 1964, Problem 1b
+# International Mathematical Olympiad 1964, Problem 1
 
-Prove that there is no positive integer n for which 2ⁿ + 1 is divisible by 7.
+(a) Find all natural numbers n for which 2ⁿ - 1 is divisible by 7.
+(b) Prove that there is no positive integer n for which 2ⁿ + 1 is divisible by 7.
 -/
 
 #[problem_setup] namespace Imo1964Q1
+
+fill_in_the_blank solution_set : Set ℕ := { n | n % 3 = 0 }
+
+problem imo_1964_q1a (n : ℕ) : n ∈ solution_set ↔ 7 ∣ 2^n - 1 := by
+  sorry
 
 /-
 Informal proof (credit to twitch.tv viewer int_fast64_t):
