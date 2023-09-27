@@ -25,11 +25,9 @@ fill_in_the_blank solution_set : Set ℕ := { n | n % 3 = 0 }
 problem imo_1964_q1a (n : ℕ) : n ∈ solution_set ↔ 2^n ≡ 1 [MOD 7] := by
   constructor
   · intro hn
-    change n % 3 = 0 at hn
     obtain ⟨m, hm⟩ := Nat.dvd_of_mod_eq_zero hn
     change 2^n % 7 = 1
-    rw [hm]
-    rw [Nat.pow_mul, Nat.pow_mod]
+    rw [hm, Nat.pow_mul, Nat.pow_mod]
     norm_num
   · intro hn
     change n % 3 = 0
