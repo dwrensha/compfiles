@@ -209,7 +209,7 @@ problem usa2019Q1 (m : ℕ+) :
   -- 5. prove that f(1000) can equal any even number.
   constructor
   · intro hm
-    simp only [solution_set, Set.mem_setOf_eq] at hm
+    simp only [Set.mem_setOf_eq] at hm
     have : ∃ f : ℕ+ → ℕ+, f = fun x ↦ if x = m then 1000 else (if x = 1000 then m else x)
       := ⟨fun x ↦ if x = m then 1000 else (if x = 1000 then m else x), rfl⟩
     obtain ⟨f, hf⟩ := this

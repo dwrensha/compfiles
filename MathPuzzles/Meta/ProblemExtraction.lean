@@ -38,8 +38,8 @@ initialize problemExtractionExtension : ProblemExtractionExtension ←
   }
 
 /--
-Indicates that a declaration is required to set up a problem statement.
-During problem extraction, the declaration is kept completely intact.
+Indicates that a command is required to set up a problem statement.
+During problem extraction, the command is kept completely intact.
 -/
 syntax (name := problemSetup) "#[problem_setup]" command : command
 
@@ -54,8 +54,8 @@ elab_rules : command
   Lean.Elab.Command.elabCommand cmd
 
 /--
-Indicates that a theorem is a problem statement. During problem extraction,
-the proof is replaced by a `sorry`.
+A synonym for `theorem`. Indicates that a declaration is a problem statement.
+During problem extraction, the proof is replaced by a `sorry`.
 -/
 syntax (name := problem) declModifiers "problem " declId ppIndent(declSig) declVal : command
 
@@ -79,9 +79,8 @@ elab_rules : command
   Lean.Elab.Command.elabCommand cmd
 
 /--
-Indicates that a declaration represents data that is intended to
-be filled in as part of a solution.
-During problem extraction, the body is replaced by a `sorry`.
+A synonym for `abbrev`. Marks data that is intended to be filled in as part of
+a solution. During problem extraction, the body of the decl is replaced by a `sorry`.
 During judging, a human will inspect the filled-in body
 to see whether it is reasonable.
 -/
@@ -107,10 +106,9 @@ elab_rules : command
 
   let ext := problemExtractionExtension
   modifyEnv fun env => ext.addEntry env ⟨mod,
-    s!"/- fill_in_the_blank -/\n{pfx}def {Substring.mk src sStartPos sEndPos} := sorry"⟩
-  let cmd ← `(command | $dm:declModifiers def $di:declId $ds:optDeclSig $dv:declVal)
+    s!"/- fill_in_the_blank -/\n{pfx}abbrev {Substring.mk src sStartPos sEndPos} := sorry"⟩
+  let cmd ← `(command | $dm:declModifiers abbrev $di:declId $ds:optDeclSig $dv:declVal)
   Lean.Elab.Command.elabCommand cmd
-
 
 /--
 Prints the current contents of the Problem Extraction extension.
@@ -126,7 +124,9 @@ elab_rules : command
   for ⟨filename, _⟩ in st do
      IO.println s!"{filename}"
 
-
+/--
+Helper function for extractProblems.
+-/
 private def findModuleImports
     {m : Type → Type} [Monad m] [MonadError m] (env : Environment) (md : Name) :
     m (Array Import) := do
