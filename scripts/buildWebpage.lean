@@ -105,7 +105,7 @@ unsafe def main (_args : List String) : IO Unit := do
           h.putStrLn (htmlEscape problem_src)
           h.putStrLn "</pre>"
           h.putStrLn "<br>"
-          h.putStrLn s!"<a href=\"{homeUrl}\">Math Puzzles in Lean 4</a>"
+          h.putStrLn s!"<a href=\"{homeUrl}\">full problem list</a>"
           h.putStrLn "</body></html>"
           h.flush
 
