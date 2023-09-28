@@ -33,17 +33,10 @@ notation "ℝ+" => PosReal
 lemma val_div (a b : ℝ+) : (a / b).val = a.val / b.val := by rfl
 
 lemma lemma_1 (a b c : ℝ+) : (a + b)/c = a/c + b/c := by
-  obtain ⟨a, ha⟩ := a
-  obtain ⟨b, hb⟩ := b
-  obtain ⟨c, hc⟩ := c
-  rw [←Subtype.coe_inj]
-  simp [val_div]
-  exact add_div a b c
+  rw [←Subtype.coe_inj, val_div, Positive.coe_add]
+  exact add_div _ _ _
 
 lemma lemma_2 (a b c : ℝ+) : a / (b / c) = a * c / b := by
-  obtain ⟨a, ha⟩ := a
-  obtain ⟨b, hb⟩ := b
-  obtain ⟨c, hc⟩ := c
   rw [←Subtype.coe_inj]
   field_simp [val_div]
 
