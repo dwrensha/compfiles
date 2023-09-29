@@ -157,7 +157,7 @@ problem usa2023Q2 (f : ℝ+ → ℝ+) :
       obtain ⟨x, hx⟩ := x
       change 1 ≤ c at h10
       simp only [Positive.coe_add, sub_pos]
-      linarith
+      exact lt_add_of_pos_of_le hx h10
 
     have h12 : ∀ x, c + ⟨2,two_pos⟩ * ⟨(x + c).val - 1, h11 _⟩ / c = f x + ⟨2, two_pos⟩ := by
       intro x
