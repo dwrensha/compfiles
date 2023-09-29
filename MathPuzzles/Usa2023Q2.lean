@@ -171,10 +171,7 @@ problem usa2023Q2 (f : ℝ+ → ℝ+) :
         simp
       rw [h21] at h20
       simp only at h20
-      have h16 : ∃ cc, cc = f 1 := exists_eq
-
-      obtain ⟨cc, hcc⟩ := h16
-      simp_rw [← hcc] at h20 ⊢
+      obtain ⟨_, rfl⟩ : ∃ cc, cc = f 1 := exists_eq
       obtain ⟨x, hx⟩ := x
       simp only [Positive.coe_add] at h20
       simp only [Positive.coe_add]
@@ -191,11 +188,9 @@ problem usa2023Q2 (f : ℝ+ → ℝ+) :
     obtain ⟨x, hx⟩ := x
     simp only [Positive.coe_add] at h15
     simp only
-    have h16 : ∃ cc, cc = f 1 := exists_eq
-    obtain ⟨cc, hcc⟩ := h16
-    rw [← hcc] at h15 ⊢
+    obtain ⟨cc, rfl⟩ : ∃ cc, cc = f 1 := exists_eq
     rw [mul_sub, mul_add, mul_one, sub_div, add_div] at h15
-    have h18 : cc.val ≠ 0 := ne_of_gt cc.prop
+    have h18 : (f 1).val ≠ 0 := ne_of_gt (f 1).prop
     rw [mul_div_cancel _ h18] at h15
     symm
     linear_combination h15

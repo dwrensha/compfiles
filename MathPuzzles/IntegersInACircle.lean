@@ -28,8 +28,7 @@ https://math.stackexchange.com/questions/282589/101-positive-integers-placed-on-
 
 lemma lemma1 {a : ℤ} (h1 : a % 100 = 0) (h2 : 0 < a) (h3 : a < 300) :
     a = 200 ∨ a = 100 := by
- obtain ⟨k, hk⟩ := exists_eq_mul_left_of_dvd (Int.modEq_zero_iff_dvd.mp h1)
- rw[hk] at h2 h3 ⊢
+ obtain ⟨k, rfl⟩ := exists_eq_mul_left_of_dvd (Int.modEq_zero_iff_dvd.mp h1)
  have h6 : k < 3 := by linarith
  have h7 : 0 < k := by linarith
  interval_cases k <;> norm_num
