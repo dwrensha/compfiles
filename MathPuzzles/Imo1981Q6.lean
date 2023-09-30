@@ -35,5 +35,5 @@ problem Imo1981Q6 (f : ℕ → ℕ → ℕ)
     f 4 1981 = solution_value := by
   have h4 : ∀ y, f 1 y = y + 2 := by sorry
   have h5 : ∀ y, f 1 (y + 1) = f 1 y + 1 := by sorry
-  have h6 : ∀ y, f 4 y + 3 = 2^(f 4 y + 3) := by sorry
+  have h6 : ∀ y, f 4 (y + 1) + 3 = 2^(f 4 y + 3) := by sorry
   sorry
