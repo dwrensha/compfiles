@@ -34,8 +34,6 @@ def no_eval (x : ℕ) : ℕ := x
 
 fill_in_the_blank solution_value : ℕ := no_eval ((2^·)^[1984] 1 - 3)
 
-example : solution_value = no_eval ((2^·)^[1984] 1 - 3) := rfl
-
 problem Imo1981Q6 (f : ℕ → ℕ → ℕ)
     (h1 : ∀ y, f 0 y = y + 1)
     (h2 : ∀ x, f (x + 1) 0 = f x 1)
