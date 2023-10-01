@@ -39,10 +39,31 @@ problem Imo1981Q6 (f : ℕ → ℕ → ℕ)
     (h2 : ∀ x, f (x + 1) 0 = f x 1)
     (h3 : ∀ x y, f (x + 1) (y + 1) = f x (f (x + 1) y)) :
     f 4 1981 = solution_value := by
-  have h4 : ∀ y, f 1 y = y + 2 := by sorry
+  have h4 : ∀ y, f 1 y = y + 2 := by
+    intro y
+    induction' y using Nat.strongInductionOn with y ih
+    cases' y with y
+    · simp [h1, h2]
+    · rw [h3 0 y, ih y (Nat.lt.base y)]
+      rw [h1 (y + 2)]
   have h5 : ∀ y, f 1 (y + 1) = f 1 y + 1 := by sorry
-  have h6 : ∀ y, f 4 (y + 1) + 3 = 2^(f 4 y + 3) := by sorry
-  have h7 : ∀ y, f 4 y = no_eval ((2^·)^[y + 3] 1 - 3) := by sorry
+  have h6 : ∀ y, f 4 (y + 1) + 3 = 2^(f 4 y + 3) := by
+    intro y
+    induction' y with y ih
+    · rw [h3 3 0, h2 3]
+      sorry
+    · sorry
+  have h7' : ∀ y, f 4 y + 3 = (2^·)^[y + 3] 1 := by
+    intro y
+    induction' y with y ih
+    · simp [h1, h2, h3, h4]
+    · rw [show Nat.succ y + 3 = Nat.succ (y + 3) by rfl]
+      rw [Function.iterate_succ']
+      rw [h6 y, ih]
+      rfl
+  have h7 : ∀ y, f 4 y = no_eval ((2^·)^[y + 3] 1 - 3) := by
+    intro y
+    exact eq_tsub_of_add_eq (h7' y)
   have h8 := h7 1981
   rw [show 1981 + 3 = 1984 by rfl] at h8
   exact h8
