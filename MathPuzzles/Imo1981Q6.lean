@@ -46,13 +46,24 @@ problem Imo1981Q6 (f : ℕ → ℕ → ℕ)
     · simp [h1, h2]
     · rw [h3 0 y, ih y (Nat.lt.base y)]
       rw [h1 (y + 2)]
-  have h5 : ∀ y, f 1 (y + 1) = f 1 y + 1 := by sorry
+  have h20 : ∀ y, f 2 y = 2 * y + 3 := by
+    intro y;
+    induction' y with y ih
+    · simp [h1, h2, h3]
+    · rw [h3, ih, h3, h3, h3, h4, h1, h1, h1, Nat.succ_eq_add_one]
+      ring
+  have h21 : ∀ y, f 3 y + 3 = 2^(y + 3) := by
+    intro y
+    induction' y with y ih
+    · simp [h1, h2, h3, h4, h20]
+    · rw [h3, h20]
+      rw [show 2 * f (2 + 1) y + 3 + 3 = 2 * (f 3 y + 3) by ring]
+      rw [ih, ←pow_succ]
   have h6 : ∀ y, f 4 (y + 1) + 3 = 2^(f 4 y + 3) := by
     intro y
     induction' y with y ih
-    · rw [h3 3 0, h2 3]
-      sorry
-    · sorry
+    · rw [h3 3 0, h2 3, h21]
+    · rw [h3, ih, h21, ih]
   have h7' : ∀ y, f 4 y + 3 = (2^·)^[y + 3] 1 := by
     intro y
     induction' y with y ih
