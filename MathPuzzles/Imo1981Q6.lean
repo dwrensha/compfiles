@@ -26,7 +26,15 @@ Determine f (4, 1981).
 
 #[problem_setup] namespace Imo1981Q6
 
-fill_in_the_blank solution_value : ℕ := (2^·)^[1984] 1 - 3
+/--
+Wrapper to prevent the Lean kernel from eagerly trying to normalize
+the solution value, which happens to be way too large to normalize.
+-/
+def no_eval (x : ℕ) : ℕ := x
+
+fill_in_the_blank solution_value : ℕ := no_eval ((2^·)^[1984] 1 - 3)
+
+example : solution_value = no_eval ((2^·)^[1984] 1 - 3) := rfl
 
 problem Imo1981Q6 (f : ℕ → ℕ → ℕ)
     (h1 : ∀ y, f 0 y = y + 1)
@@ -36,4 +44,7 @@ problem Imo1981Q6 (f : ℕ → ℕ → ℕ)
   have h4 : ∀ y, f 1 y = y + 2 := by sorry
   have h5 : ∀ y, f 1 (y + 1) = f 1 y + 1 := by sorry
   have h6 : ∀ y, f 4 (y + 1) + 3 = 2^(f 4 y + 3) := by sorry
-  sorry
+  have h7 : ∀ y, f 4 y = no_eval ((2^·)^[y + 3] 1 - 3) := by sorry
+  have h8 := h7 1981
+  rw [show 1981 + 3 = 1984 by rfl] at h8
+  exact h8
