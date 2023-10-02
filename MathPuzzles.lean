@@ -22,6 +22,7 @@ import MathPuzzles.Imo1997P5
 import MathPuzzles.Imo2011P3
 import MathPuzzles.Imo2013P1
 import MathPuzzles.Imo2013P5
+import MathPuzzles.Imo2017P1
 import MathPuzzles.Imo2017P2
 import MathPuzzles.Imo2017P6
 import MathPuzzles.Imo2018P3
