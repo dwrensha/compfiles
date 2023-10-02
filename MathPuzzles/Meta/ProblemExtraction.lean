@@ -84,11 +84,11 @@ a solution. During problem extraction, the body of the decl is replaced by a `so
 During judging, a human will inspect the filled-in body
 to see whether it is reasonable.
 -/
-syntax (name := fillInTheBlank)
-  declModifiers "fill_in_the_blank " declId ppIndent(optDeclSig) declVal : command
+syntax (name := determine)
+  declModifiers "determine " declId ppIndent(optDeclSig) declVal : command
 
 elab_rules : command
-| `(command| $dm:declModifiers fill_in_the_blank $di:declId $ds:optDeclSig $dv:declVal) => do
+| `(command| $dm:declModifiers determine $di:declId $ds:optDeclSig $dv:declVal) => do
   let src := (←read).fileMap.source
 
   let pfx  := match dm.raw.getPos?, dm.raw.getTailPos? with
@@ -106,7 +106,7 @@ elab_rules : command
 
   let ext := problemExtractionExtension
   modifyEnv fun env => ext.addEntry env ⟨mod,
-    s!"/- fill_in_the_blank -/\n{pfx}abbrev {Substring.mk src sStartPos sEndPos} := sorry"⟩
+    s!"/- determine -/\n{pfx}abbrev {Substring.mk src sStartPos sEndPos} := sorry"⟩
   let cmd ← `(command | $dm:declModifiers abbrev $di:declId $ds:optDeclSig $dv:declVal)
   Lean.Elab.Command.elabCommand cmd
 

@@ -17,7 +17,7 @@ Find all integers 1 < a < b < c such that
 
 #[problem_setup] namespace Imo1992P1
 
-fill_in_the_blank solution_set : Set (ℤ × ℤ × ℤ) := sorry
+determine solution_set : Set (ℤ × ℤ × ℤ) := sorry
 
 problem imo1992_p1 (a b c : ℤ) (ha : 1 < a) (hb : a < b) (hc : b < c) :
     ⟨a, b, c⟩ ∈ solution_set ↔

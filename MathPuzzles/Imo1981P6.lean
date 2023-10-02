@@ -32,7 +32,7 @@ the solution value, which happens to be way too large to normalize.
 -/
 def no_eval (x : ℕ) : ℕ := x
 
-fill_in_the_blank solution_value : ℕ := no_eval ((2^·)^[1984] 1 - 3)
+determine solution_value : ℕ := no_eval ((2^·)^[1984] 1 - 3)
 
 problem imo1981_p6 (f : ℕ → ℕ → ℕ)
     (h1 : ∀ y, f 0 y = y + 1)

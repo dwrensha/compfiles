@@ -20,7 +20,7 @@ import MathPuzzles.Meta.ProblemExtraction
 
 #[problem_setup] namespace Imo1964P1
 
-fill_in_the_blank solution_set : Set ℕ := { n | n % 3 = 0 }
+determine solution_set : Set ℕ := { n | n % 3 = 0 }
 
 problem imo_1964_p1a (n : ℕ) : n ∈ solution_set ↔ 2^n ≡ 1 [MOD 7] := by
   constructor

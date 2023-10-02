@@ -16,7 +16,7 @@ Determine all pairs of integers 1 ≤ a,b that satisfy a ^ (b ^ 2) = b ^ a.
 
 #[problem_setup] namespace Imo1997P5
 
-fill_in_the_blank solution_set : Set (ℕ × ℕ) := sorry
+determine solution_set : Set (ℕ × ℕ) := sorry
 
 problem imo1997_p5 (a b : ℕ) (ha : 1 ≤ a) (hb : 1 ≤ b) :
     ⟨a,b⟩ ∈ solution_set ↔ a ^ (b ^ 2) = b ^ a := by

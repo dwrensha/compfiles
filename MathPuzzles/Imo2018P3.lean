@@ -65,7 +65,7 @@ def exists_desired_triangle : Prop :=
      ∀ n, (n ≤ ∑ i in Finset.range 2018, (i + 1)) →
          ∃ r, r ≤ 2018 ∧ ∃ c, c < r ∧ t.f ⟨r,c⟩ = n
 
-fill_in_the_blank does_exist : Bool := false
+determine does_exist : Bool := false
 
 problem imo2018_p3 :
     if does_exist then exists_desired_triangle else ¬ exists_desired_triangle := by

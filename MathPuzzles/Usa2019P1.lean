@@ -193,7 +193,7 @@ lemma lemma_3
       have h8 : f^[2] m2 = f^[↑(f m2)] m2 := by rw[h7]; exact h6
       exact lemma_2 f hf _ h8 h7 hm3
 
-fill_in_the_blank solution_set : Set ℕ+ := { x : ℕ+ | Even x.val }
+determine solution_set : Set ℕ+ := { x : ℕ+ | Even x.val }
 
 problem usa2019_p1 (m : ℕ+) :
    m ∈ solution_set ↔

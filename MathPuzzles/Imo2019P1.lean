@@ -33,7 +33,7 @@ lemma additive_to_int_linear (f : ℤ → ℤ) (h: ∀ (x y : ℤ), f (x + y) = 
   change g a = g 1 * a
   rw [mul_comm, ← smul_eq_mul, ← LinearMap.map_smul, smul_eq_mul, mul_one]
 
-fill_in_the_blank solution_set : Set (ℤ → ℤ) :=
+determine solution_set : Set (ℤ → ℤ) :=
   { f | (∀ z, f z = 0) ∨ ∃ c, ∀ z, f z = 2 * z + c }
 
 problem imo2019_p1 (f : ℤ → ℤ) :

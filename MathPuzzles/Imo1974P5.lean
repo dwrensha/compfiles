@@ -20,7 +20,7 @@ as a,b,c,d range over the positive real numbers?
 
 #[problem_setup] namespace Imo1974P5
 
-fill_in_the_blank solution_set : Set ℝ := Set.Ioo 1 2
+determine solution_set : Set ℝ := Set.Ioo 1 2
 
 lemma easy_direction (s : ℝ)
     (h : ∃ a b c d : ℝ, 0 < a ∧ 0 < b ∧ 0 < c ∧ 0 < d ∧

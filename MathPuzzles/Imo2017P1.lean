@@ -30,7 +30,7 @@ noncomputable def a (a0 : ℕ) : ℕ → ℕ
            then Nat.sqrt (a a0 n)
            else a a0 n + 3
 
-fill_in_the_blank solution_set : Set ℕ := sorry
+determine solution_set : Set ℕ := sorry
 
 problem imo2017_p1 (a0 : ℕ) :
     a0 ∈ solution_set ↔ ∃ A, { n | a a0 n = A }.Infinite := by

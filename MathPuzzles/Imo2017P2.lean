@@ -19,7 +19,7 @@ Find all functions `f : ℝ → ℝ` that satisfy
 
 #[problem_setup] namespace Imo2017P2
 
-fill_in_the_blank solution_set : Set (ℝ → ℝ) :=
+determine solution_set : Set (ℝ → ℝ) :=
   { fun _ ↦ 0, fun x ↦ x - 1, fun x ↦ 1 - x }
 
 problem imo2017_p2 (f : ℝ → ℝ) :

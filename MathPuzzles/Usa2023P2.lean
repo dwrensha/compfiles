@@ -49,7 +49,7 @@ lemma lemma_3 {a b c : ℝ+} (h : a = b + c) : c < a := by
   simp only [Subtype.mk_lt_mk]
   linarith
 
-fill_in_the_blank solution_set : Set (ℝ+ → ℝ+) := { fun x ↦ x + 1 }
+determine solution_set : Set (ℝ+ → ℝ+) := { fun x ↦ x + 1 }
 
 problem usa2023_p2 (f : ℝ+ → ℝ+) :
     f ∈ solution_set ↔

@@ -17,7 +17,7 @@ for all x,y ∈ ℝ, f(x² + f(y)) = y + (f(x))².
 
 #[problem_setup] namespace Imo1992P2
 
-fill_in_the_blank solution_set : Set (ℝ → ℝ) := sorry
+determine solution_set : Set (ℝ → ℝ) := sorry
 
 problem imo1992_p2 (f : ℝ → ℝ) :
     f ∈ solution_set ↔
