@@ -13,7 +13,7 @@ import Mathlib.Tactic
 import MathPuzzles.Meta.ProblemExtraction
 
 #[problem_setup]/-!
-# IMO 1986 Q1
+# International Mathematical Olympiad 1986, Problem 1
 
 Let d be any positive integer not equal to 2, 5 or 13.
 Show that one can find distinct a, b in the set {2, 5, 13, d} such that ab - 1
