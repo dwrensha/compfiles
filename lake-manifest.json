@@ -4,10 +4,10 @@
  [{"git":
    {"url": "https://github.com/leanprover-community/mathlib4",
     "subDir?": null,
-    "rev": "071f47d27115f6b801ba2e4ba42334817abf2446",
+    "rev": "df7b04231c9920b36d13328cb3f0f402d88e7da5",
     "opts": {},
     "name": "mathlib",
-    "inputRev?": "071f47d27115f6b801ba2e4ba42334817abf2446",
+    "inputRev?": "df7b04231c9920b36d13328cb3f0f402d88e7da5",
     "inherited": false}},
   {"git":
    {"url": "https://github.com/gebner/quote4",
