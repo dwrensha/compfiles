@@ -27,6 +27,7 @@ import MathPuzzles.Imo2017P2
 import MathPuzzles.Imo2017P6
 import MathPuzzles.Imo2018P3
 import MathPuzzles.Imo2019P1
+import MathPuzzles.Imo2022P2
 import MathPuzzles.Imo2022P5
 import MathPuzzles.India1998P1
 import MathPuzzles.IntegersInACircle
