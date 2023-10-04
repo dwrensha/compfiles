@@ -91,7 +91,6 @@ lemma lemma6 (n : ℕ) : (4 * (n - 1) + 1 + 3) / 2 = (2 * (n - 1) + 1 + 1) := by
   rw [this, Nat.mul_div_right]
   exact two_pos
 
-
 lemma lemma6' (n : ℕ) : (4 * (n - 1) + 1 + 4) / 2 = (2 * (n - 1) + 1 + 1) := by
   have h1 : (4 * (n - 1) + 1 + 4) = 2 * (2 * (n - 1) + 1 + 1) + 1 := by linarith
   rw [h1]
@@ -109,7 +108,7 @@ lemma lemma7' (n : ℕ) : (4 * (n - 1) + 1 + 6) / 2 = (2 * (n - 1) + 1 + 2) := b
 
 lemma can_get_a_later_one_zmod :
     (∀ N : ℕ, a' N = 0 → (∃ M : ℕ, N < M ∧ a' M = 0)) := by
-  intros n hn
+  intro n hn
 
   obtain (hlt : n < 2) | (hlte : 2 ≤ n) := lt_or_ge n 2
   · use 5
@@ -125,11 +124,7 @@ lemma can_get_a_later_one_zmod :
   have npos := calc 0 < 2 := by norm_num
                     _ ≤ n := hlte
   have hn1v : n1 = 2 * n - 1 := lemma1 n npos
-  have hn2: 2 ≤ n1 + 1 := by
-    have : 1 ≤ n1 := le_add_self
-    exact Nat.succ_le_succ this
-
-  have hn3: 2 ≤ n1 + 2 := le_add_self
+  have hn2 : 2 ≤ n1 + 1 := Nat.succ_le_succ le_add_self
 
   let an1 := a' n1
 
@@ -155,7 +150,7 @@ lemma can_get_a_later_one_zmod :
 
   have ha2 : a' (n1 + 2) = a' (n1 + 1) +  a' n := by
     have haa : a' (n1 + 2) = a' (n1 + 1) + a' (n1.succ.succ / 2) :=
-      a'_recurrence (n1 + 2) hn3
+      a'_recurrence (n1 + 2) le_add_self
     have h1 : (2 * n + 1) / 2 = n := lemma2 n
     have hn1v' : 2 * n = n1 + 1 := by
       have hrw : n1 + 1 = 2 * (n - 1) + 1 + 1 := rfl
@@ -169,8 +164,7 @@ lemma can_get_a_later_one_zmod :
     rw [this, ←hn1v', h1]
 
   have ha1' : a' (n1 + 1) = a' n1 := by
-    rw [hn] at ha1
-    simp at ha1
+    simp only [hn, add_zero] at ha1
     exact ha1
 
   have ha2' : a' (n1 + 2) = a' n1 := by
@@ -207,7 +201,7 @@ lemma can_get_a_later_one_zmod :
   let n2: ℕ := 4 * (n - 1) + 1
 
   have hii : ∀ i, i < 6 → a' (n2 + i + 1) = a' (n2 + i) + a' n1 := by
-    intros i hi
+    intro i hi
     have hn2ge2 : 2 ≤ n2 + i + 1 := by linarith
     have hr := a'_recurrence (n2 + i + 1) hn2ge2
     interval_cases i
@@ -232,9 +226,9 @@ lemma can_get_a_later_one_zmod :
       exact hr
 
   have hik : ∀ i, i < 7 → a' (n2 + i) = a' n2 + a' n1 * i := by
-    intros i
+    intro i
     induction' i with p hp
-    · intro; simp
+    · simp
     · intro hpi7
       have hpi6 : p < 6 := Nat.succ_lt_succ_iff.mp hpi7
       have hinc := hii p hpi6
@@ -259,7 +253,7 @@ lemma can_get_a_later_one_zmod :
     · assumption
 
 lemma can_get_a_later_one : (∀ N : ℕ, 7 ∣ a N → (∃ M : ℕ, N < M ∧ 7 ∣ a M)) := by
-  intros n hn
+  intro n hn
   have ha' : a' n = 0 := by
     have : a' n = ⟨a n % 7, Nat.mod_lt _ (by norm_num)⟩ := by simp[a']
     rw [this]
