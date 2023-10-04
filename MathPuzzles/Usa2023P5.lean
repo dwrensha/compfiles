@@ -33,11 +33,11 @@ def PermutedArithSeq {n : ℕ} (hn : 0 < n) (f : Fin n ↪ Fin (n^2)) : Prop :=
 
 #[problem_setup]
 def row_valid {n : ℕ} (hn : 0 < n) (f : Fin n → Fin n → Fin (n^2)) (hf : f.Injective2) : Prop :=
-    ∀ m : Fin n, PermutedArithSeq hn ⟨fun x ↦ f x m, Function.Injective2.left hf m⟩
+    ∀ m : Fin n, PermutedArithSeq hn ⟨(f · m), Function.Injective2.left hf m⟩
 
 #[problem_setup]
 def col_valid {n : ℕ} (hn : 0 < n) (f : Fin n → Fin n → Fin (n^2)) (hf : f.Injective2) : Prop :=
-    ∀ m : Fin n, PermutedArithSeq hn ⟨fun x ↦ f m x, Function.Injective2.right hf m⟩
+    ∀ m : Fin n, PermutedArithSeq hn ⟨(f m ·), Function.Injective2.right hf m⟩
 
 #[problem_setup]
 theorem injective_of_permuted_rows {α β γ : Type}
