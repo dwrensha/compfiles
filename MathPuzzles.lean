@@ -51,4 +51,5 @@ import MathPuzzles.Usa2003P1
 import MathPuzzles.Usa2019P1
 import MathPuzzles.Usa2022P1
 import MathPuzzles.Usa2023P2
+import MathPuzzles.Usa2023P5
 import MathPuzzles.ZeroesOnesAndTwos
