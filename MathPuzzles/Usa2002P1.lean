@@ -98,7 +98,16 @@ lemma usa2002_p1_generalized
         · obtain ⟨h6, h7⟩ := h4 hfs1
           have hfs2 : f s2 = Color.red := by rwa [hs12] at hfs1
           obtain ⟨h6', h7'⟩ := h4' hfs2
-          sorry
+          rw [←h7] at h7'
+          have h8 := hf1' _ _ h7'
+          rw [hs12]
+          unfold_let f
+          simp [h6, h6']
+          rw [←h8]
+          congr
+          ext a
+          simp only [Finset.mem_subtype, Finset.mem_union]
+          exact or_comm
         · sorry
 
 
