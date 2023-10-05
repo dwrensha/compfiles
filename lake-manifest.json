@@ -4,11 +4,19 @@
  [{"git":
    {"url": "https://github.com/leanprover-community/mathlib4",
     "subDir?": null,
-    "rev": "df7b04231c9920b36d13328cb3f0f402d88e7da5",
+    "rev": "49f7188978c151b67c924ea228ae2a7defc76140",
     "opts": {},
     "name": "mathlib",
-    "inputRev?": "df7b04231c9920b36d13328cb3f0f402d88e7da5",
+    "inputRev?": "49f7188978c151b67c924ea228ae2a7defc76140",
     "inherited": false}},
+  {"git":
+   {"url": "https://github.com/leanprover/std4",
+    "subDir?": null,
+    "rev": "f2df4ab8c0726fce3bafb73a5727336b0c3120ea",
+    "opts": {},
+    "name": "std",
+    "inputRev?": "main",
+    "inherited": true}},
   {"git":
    {"url": "https://github.com/gebner/quote4",
     "subDir?": null,
@@ -20,7 +28,7 @@
   {"git":
    {"url": "https://github.com/JLimperg/aesop",
     "subDir?": null,
-    "rev": "4f8b397237411249930791f1cba0a9d2880a02dd",
+    "rev": "41c6370eb2f0c9052bee6af0e0a017b9ba8da2b8",
     "opts": {},
     "name": "aesop",
     "inputRev?": "master",
@@ -34,19 +42,11 @@
     "inputRev?": "nightly",
     "inherited": true}},
   {"git":
-   {"url": "https://github.com/leanprover/std4",
-    "subDir?": null,
-    "rev": "f2df4ab8c0726fce3bafb73a5727336b0c3120ea",
-    "opts": {},
-    "name": "std",
-    "inputRev?": "main",
-    "inherited": true}},
-  {"git":
    {"url": "https://github.com/EdAyers/ProofWidgets4",
     "subDir?": null,
-    "rev": "9f68f14df384f43b74aeb2908b97ae54a0ad9d95",
+    "rev": "27715d1daf32b9657dc38cd52172d77b19bde4ba",
     "opts": {},
     "name": "proofwidgets",
-    "inputRev?": "v0.0.17",
+    "inputRev?": "v0.0.18",
     "inherited": true}}],
  "name": "mathpuzzles"}
