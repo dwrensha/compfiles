@@ -29,7 +29,7 @@ lemma f_injective
     (f : ℕ+ → ℕ+)
     (hf : ∀ n, f^[f n] n * f (f n) = n ^ 2) :
     f.Injective := by
-  intros p q hpq
+  intro p q hpq
   -- If f(p)=f(q), then f^2(p)=f^2(q) and f^{f(p)}(p) = f^{f(q)}(q)
   have h1 : f^[2] p = f^[2] q := by
     apply_fun f at hpq
@@ -54,8 +54,8 @@ lemma f_injective
   obtain ⟨q, hq⟩ := q
   congr
   apply_fun (fun x ↦ x.val) at h4
-  rw[PNat.pow_coe, PNat.pow_coe, PNat.mk_coe, PNat.mk_coe] at h4
-  rw[pow_left_inj (le_of_lt hp) (le_of_lt hq) zero_lt_two] at h4
+  rw [PNat.pow_coe, PNat.pow_coe, PNat.mk_coe, PNat.mk_coe] at h4
+  rw [pow_left_inj (le_of_lt hp) (le_of_lt hq) zero_lt_two] at h4
   exact h4
 
 lemma f_iterated_injective
@@ -64,9 +64,9 @@ lemma f_iterated_injective
     (r : ℕ) :
     (f^[r]).Injective := by
   induction' r with r ih
-  · simp[Function.injective_id]
+  · simp [Function.injective_id]
   · have h1 : f.Injective := f_injective f hf
-    rw[Function.iterate_succ]
+    rw [Function.iterate_succ]
     exact Function.Injective.comp ih h1
 
 lemma lemma_1
@@ -108,14 +108,14 @@ lemma lemma_2
 
   -- f^2(k) · f^{f(k)}(k) = k^2.
   have h3 : f^[f k] k * f^[2] k = k^2 := hf k
-  rw[h2] at h3
+  rw [h2] at h3
 
   -- Since k≠0, f^{f(k)}(k)=k.
   have h4 : f^[f k] k = k := by
-    rwa[sq k, mul_left_inj] at h3
+    rwa [sq k, mul_left_inj] at h3
 
   -- ⇒ f^m(k)=k
-  rw[h1] at h4
+  rw [h1] at h4
 
   -- ⇒ f^{gcd(m, 2)}(k)=k
   -- ⇒ f(k)=k
@@ -128,11 +128,11 @@ lemma lemma_2
       rw[h2]
       exact ih
   obtain ⟨m', hm'⟩ := hm3
-  rw[hm', add_comm, Function.iterate_add, Function.iterate_one] at h4
+  rw [hm', add_comm, Function.iterate_add, Function.iterate_one] at h4
   change f (f^[2 * m'] k) = k at h4
-  rw[h6 m'] at h4
+  rw [h6 m'] at h4
 
-  rw[h1] at h4
+  rw [h1] at h4
   exact h4.symm
 
 lemma pnat_odd_mul {a b c : ℕ+} (h : a * b = c * c) (hc : Odd c.val) :
@@ -210,9 +210,8 @@ problem usa2019_p1 (m : ℕ+) :
   constructor
   · intro hm
     simp only [Set.mem_setOf_eq] at hm
-    have : ∃ f : ℕ+ → ℕ+, f = fun x ↦ if x = m then 1000 else (if x = 1000 then m else x)
-      := ⟨fun x ↦ if x = m then 1000 else (if x = 1000 then m else x), rfl⟩
-    obtain ⟨f, hf⟩ := this
+    obtain ⟨f, hf⟩ : ∃ f : ℕ+ → ℕ+, f = fun x ↦ if x = m then 1000 else (if x = 1000 then m else x)
+      := exists_eq
     have hmeq : m = f 1000 := by
       simp only [hf, ite_true]
       obtain heq | hne := eq_or_ne 1000 m
@@ -240,11 +239,11 @@ problem usa2019_p1 (m : ℕ+) :
           · rw [Function.iterate_mul, Function.iterate_fixed hmsq]
             exact (sq m).symm
         · have hn : f n = n := by
-            simp[hf]
+            simp [hf]
             simp_rw[eq_false hne']
             simp only [ite_false, ite_eq_right_iff]; intro h2; exact (hne h2).elim
-          rw[hn, hn]
-          rw[Function.iterate_fixed hn]
+          rw [hn, hn]
+          rw [Function.iterate_fixed hn]
           exact (sq n).symm
     · exact hmeq
   · intro h
@@ -253,7 +252,6 @@ problem usa2019_p1 (m : ℕ+) :
     by_contra H
     have h1 : Odd m.val := Nat.odd_iff_not_even.mpr H
     have h2 := lemma_3 f hf1 m h1
-    rw[hf2] at h2
-    have h3 := f_injective f hf1 h2
-    rw[hf2, h3] at h1
+    rw [hf2] at h2
+    rw [hf2, f_injective f hf1 h2] at h1
     simp only at h1
