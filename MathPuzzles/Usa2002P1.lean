@@ -42,7 +42,8 @@ lemma usa2002_p1_generalized
     ∃ f : Finset α → Color,
       ((∀ s1 s2 : Finset α, f s1 = f s2 → f (s1 ∪ s2) = f s1) ∧
        (Fintype.card { a : Finset α // f a = Color.red } = N)) := by
-  -- Informal solution from https://artofproblemsolving.com.
+  -- Informal solution from
+  -- https://artofproblemsolving.com/wiki/index.php/2002_USAMO_Problems/Problem_1
   -- Let a set colored in such a manner be called *properly colored*.
   -- We prove that any set with n elements can be properly colored for any
   -- 0 ≤ N ≤ 2ⁿ. We proceed by induction.
@@ -50,15 +51,15 @@ lemma usa2002_p1_generalized
   revert N α
   induction' n with k ih
   · -- The base case, n = 0, is trivial.
-    intros α hde hft hs N hN
-    rw[Nat.pow_zero] at hN
+    intro α hde hft hs N hN
+    rw [Nat.pow_zero] at hN
     interval_cases N
     · use λ s ↦ Color.blue
       simp only [forall_true_left, forall_const, Fintype.card_eq_zero]
     · use λ s ↦ Color.red
       simp [Fintype.card_subtype, Finset.card_univ, hs]
-  · -- Suppose that our claim holds for n = k. Let s ∈ S, |S| = k + 1, and let
-    -- S' denote the set of all elements of S other than s.
+  · -- Suppose that our claim holds for n = k. Let s ∈ S, |S| = k + 1,
+    -- and let S' denote the set of all elements of S other than s.
     intros S hde hft hs N hN
     have s : S := Nonempty.some (Fintype.card_pos_iff.mp (by rw[hs]; exact Nat.succ_pos k))
     let S' := {a : S // a ≠ s}
@@ -77,7 +78,7 @@ lemma usa2002_p1_generalized
         else f' (Finset.subtype _ x)
       use f
       have h2 : ∀ a : Finset S, (f a = Color.red ↔ s ∉ a ∧ f' (Finset.subtype _ a) = Color.red) := by
-        intros a
+        intro a
         constructor
         · intro ha
           have haa : s ∉ a := by
@@ -85,15 +86,20 @@ lemma usa2002_p1_generalized
             simp [hns] at ha
           constructor
           · exact haa
-          · simp [haa] at ha
+          · simp only [haa] at ha
             exact ha
         · intro hsa
           simp[hsa]
       constructor
-      · intros s1 s2 hs12
-        have h3 := h2 s1
-        obtain ⟨h4, h5⟩ := h3
-        sorry
+      · intro s1 s2 hs12
+        obtain ⟨h4, h5⟩ := h2 s1
+        obtain ⟨h4', h5'⟩ := h2 s2
+        obtain hfs1 | hfs1 := Classical.em (f s1 = Color.red)
+        · obtain ⟨h6, h7⟩ := h4 hfs1
+          have hfs2 : f s2 = Color.red := by rwa [hs12] at hfs1
+          obtain ⟨h6', h7'⟩ := h4' hfs2
+          sorry
+        · sorry
 
 
       · sorry
