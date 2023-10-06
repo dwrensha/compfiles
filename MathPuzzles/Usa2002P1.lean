@@ -133,7 +133,25 @@ lemma usa2002_p1_generalized
               simp [hss.1, hss.2] at hs12
               exact hs12
 
-      · sorry
+      · let b : { a : Finset S // f a = Color.red } → { a : Finset S' // f' a = Color.red } :=
+            fun ⟨a, ha⟩ ↦ ⟨Finset.subtype _ a, by
+               unfold_let f at ha
+               simp at ha
+               split_ifs at ha
+               exact ha
+              ⟩
+        have h3 : Function.Bijective b := by
+          constructor
+          · rintro ⟨x,hx⟩ ⟨y,hy⟩ hxy
+            unfold_let b at hxy
+            simp at hxy
+            sorry
+          · intro x
+            use ⟨Finset.map (Function.Embedding.subtype _) x.val,
+                 by unfold_let f; simp; sorry⟩
+            sorry
+        rw [Fintype.card_of_bijective h3]
+        exact hf2'
     . -- If N > 2ᵏ, then we color all subsets containing s red, and we color
       -- N - 2ᵏ elements of S' red in such a way that S' is colored properly.
       -- Then S is properly colored, using similar reasoning as before.
