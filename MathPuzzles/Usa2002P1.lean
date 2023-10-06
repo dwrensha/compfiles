@@ -36,6 +36,11 @@ inductive Color : Type where
 | blue : Color
 deriving DecidableEq, Fintype
 
+-- Seems like this maybe belongs in mathlib?
+def Finset.subtype_union {α} (p : α → Prop) [DecidableEq α] [DecidablePred p] (s1 s2 : Finset α) :
+    Finset.subtype p (s1 ∪ s2) = Finset.subtype p s1 ∪ Finset.subtype p s2 := by
+  ext a; simp
+
 lemma usa2002_p1_generalized
     {α : Type} [DecidableEq α] [Fintype α] (n : ℕ) (hs : Fintype.card α = n)
     (N : ℕ) (hN : N ≤ 2 ^ n) :
@@ -103,11 +108,7 @@ lemma usa2002_p1_generalized
           rw [hs12]
           unfold_let f
           simp [h6, h6']
-          rw [←h8]
-          congr
-          ext a
-          simp only [Finset.mem_subtype, Finset.mem_union]
-          exact or_comm
+          rw [←h8, Finset.subtype_union, Finset.union_comm]
         · obtain hss | hss := Classical.em (s ∈ s1 ∪ s2)
           · unfold_let f
             simp only [Finset.mem_union] at hss
@@ -121,10 +122,16 @@ lemma usa2002_p1_generalized
                 match h20 : (f' (Finset.subtype (fun a => ¬a = s) s1)) with
                 | Color.red => exact (hfs1 h20).elim
                 | Color.blue => rfl
-          · unfold_let f
-            simp only [Finset.mem_union] at hss
-            simp [hss]
-            sorry
+          · -- s1 ∪ s2 is in S'
+            unfold_let f
+            simp only [hss, dite_false]
+            rw [Finset.mem_union, not_or] at hss
+            simp only [hss.1, dite_false]
+            rw [Finset.subtype_union]
+            apply hf1'
+            · unfold_let at hs12
+              simp [hss.1, hss.2] at hs12
+              exact hs12
 
       · sorry
     . -- If N > 2ᵏ, then we color all subsets containing s red, and we color
