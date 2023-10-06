@@ -9,7 +9,7 @@ import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Finset.Card
 import Mathlib.Data.Finite.Basic
 
-import Mathlib.Tactic.IntervalCases
+import Mathlib.Tactic
 
 import MathPuzzles.Meta.ProblemExtraction
 
@@ -34,7 +34,7 @@ red so that the following conditions hold:
 inductive Color : Type where
 | red : Color
 | blue : Color
-deriving DecidableEq
+deriving DecidableEq, Fintype
 
 lemma usa2002_p1_generalized
     {α : Type} [DecidableEq α] [Fintype α] (n : ℕ) (hs : Fintype.card α = n)
@@ -108,8 +108,23 @@ lemma usa2002_p1_generalized
           ext a
           simp only [Finset.mem_subtype, Finset.mem_union]
           exact or_comm
-        · sorry
-
+        · obtain hss | hss := Classical.em (s ∈ s1 ∪ s2)
+          · unfold_let f
+            simp only [Finset.mem_union] at hss
+            simp only [Finset.mem_union, hss, dite_eq_ite, ite_true]
+            cases' hss with hss hss
+            · simp [hss]
+            · split_ifs with h
+              · rfl
+              · unfold_let f at hfs1
+                simp only [h, dite_eq_ite, ite_false] at hfs1
+                match h20 : (f' (Finset.subtype (fun a => ¬a = s) s1)) with
+                | Color.red => exact (hfs1 h20).elim
+                | Color.blue => rfl
+          · unfold_let f
+            simp only [Finset.mem_union] at hss
+            simp [hss]
+            sorry
 
       · sorry
     . -- If N > 2ᵏ, then we color all subsets containing s red, and we color
