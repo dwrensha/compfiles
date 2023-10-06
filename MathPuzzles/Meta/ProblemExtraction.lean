@@ -6,8 +6,8 @@ import Std.Lean.NameMapAttribute
 Command wrappers to aid in "problem extraction".
 
 For the math problems that we archive, we aim to include proofs in-line.
-That presents a problem, however, if someone wants to try solving the
-problems without seeing the solutions.
+Sometimes, however, we want to present the problems without giving away
+information about the solutions.
 Therefore, we have "problem extraction" -- a means of stripping solutions.
 
 During problem extraction, all declarations are removed
