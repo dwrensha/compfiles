@@ -44,7 +44,7 @@ problem canada1998_p3 (n : ℕ) (hn : 2 ≤ n) :
   suffices
    ((n.succ.succ:ℝ) + 1) * ∑ i in Finset.range n.succ.succ, (1/(2 * (i:ℝ) + 2)) <
    (n.succ.succ:ℝ) * ∑ i in Finset.range n.succ.succ, (1/(2 * (i:ℝ) + 1))
-      by rw[div_mul_eq_mul_div₀, one_mul, div_mul_eq_mul_div₀, one_mul]
+      by rw [div_mul_eq_mul_div₀, one_mul, div_mul_eq_mul_div₀, one_mul]
          apply (div_lt_div_iff (by positivity) (by positivity)).mpr
          linarith
 
@@ -69,7 +69,7 @@ problem canada1998_p3 (n : ℕ) (hn : 2 ≤ n) :
 
     have h2 : ∀ k' ∈ Finset.range (m + 1), (1:ℝ) / (2 * ↑(k' + 1) + 1 + 1) <
                                            (1:ℝ) / (2 * ↑(k' + 1) + 1) := by
-      intros k' _
+      intro k' _
       apply div_lt_div_of_lt_left zero_lt_one
       · positivity
       · exact lt_add_one _
@@ -78,7 +78,7 @@ problem canada1998_p3 (n : ℕ) (hn : 2 ≤ n) :
             = _ := rfl
 
     nth_rewrite 1 [Finset.sum_range_succ'] at h3
-    rw[h1, add_assoc] at h3
+    rw [h1, add_assoc] at h3
 
     have h4 : Finset.Nonempty (Finset.range (m + 1)) :=
       Finset.nonempty_range_succ
@@ -105,7 +105,7 @@ problem canada1998_p3 (n : ℕ) (hn : 2 ≤ n) :
 
       --    = (1/3 + ... + 1/(2k-1)) + (1 + (k+1)/(2k+1))
          = (∑i in Finset.range (m+1), 1 / (2 * ((i + 1):ℝ) + 1))
-               + (1 + (k+1)/(2 * k + 1)) := by rw[←h3]; norm_cast
+               + (1 + (k+1)/(2 * k + 1)) := by rw [←h3]; norm_cast
                                         -- TODO shouldn't need casting?
 
        --    > (1/4 + ... + 1/2k) + (1 + (k+1)/(2k+1))
@@ -120,7 +120,7 @@ problem canada1998_p3 (n : ℕ) (hn : 2 ≤ n) :
               + 1/(2 *(((0:ℕ)):ℝ) + 1 + 1) + (1/2 + (k+1)/(2 * k + 1)) :=
                       by norm_num
        _ = (∑i in Finset.range k, 1 / (2 * (i:ℝ) + 1 + 1)) +
-              (1/2 + (k+1)/(2 * k + 1)) := by rw[←h6]; norm_cast
+              (1/2 + (k+1)/(2 * k + 1)) := by rw [←h6]; norm_cast
 
        --    > (1/2 + 1/4 + ... + 1/2k) + (k + 1)/(2k + 2) + 1/(2k+1)
        _ > (∑i in Finset.range k, 1 / (2 * (i:ℝ) + 1 + 1)) +
@@ -146,7 +146,7 @@ problem canada1998_p3 (n : ℕ) (hn : 2 ≤ n) :
          = k * (∑i in Finset.range k, 1 / (2 * (i:ℝ) + 1)) +
              ((∑i in Finset.range k, 1 / (2 * (i:ℝ) + 1)) +
                 (k + 1) / (2 * k + 1)) := by
-                   rw[Finset.sum_range_succ]; ring
+                   rw [Finset.sum_range_succ]; ring
        _ > k * (∑i in Finset.range k, 1 / (2 * (i:ℝ) + 1)) +
              ((∑i in Finset.range k, 1 / (2 * (i:ℝ) + 1 + 1)) +
                 (k + 2) / (2 * k + 2)) := add_lt_add_left h9 _
@@ -160,6 +160,6 @@ problem canada1998_p3 (n : ℕ) (hn : 2 ≤ n) :
        _ = (k + 2) * ((∑i in Finset.range k, 1 / (2 * (i:ℝ) + 2)) +
                 1 / (2 * k + 2)) := by ring
        _ = (k + 2) * (∑i in Finset.range k.succ, 1 / (2 * (i:ℝ) + 2))
-                 := by rw[←Finset.sum_range_succ]
+                 := by rw [←Finset.sum_range_succ]
     norm_cast at this
     norm_cast

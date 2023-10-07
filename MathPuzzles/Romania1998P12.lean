@@ -495,10 +495,10 @@ lemma romania1998_p12_mp (u : ℝ → ℝ) :
   --              = u(x) u(y)
   -- for all x,y ∈ ℝ.
   have h7 : ∀ x y : ℝ, u (x + y) = u x * u y := by
-    intros x y
+    intro x y
     calc u (x + y) = 1 + C * f (x + y) := h6 (x + y)
          _         = 1 + C * (f x * u y  + f y) := by rw [hf x y]
-         _         = u y + C * f x * u y := by rw[h6 y]; ring
+         _         = u y + C * f x * u y := by rw [h6 y]; ring
          _         = u y * (1 + C * f x) := by ring
          _         = u y * u x := by rw [h6 x]
          _         = u x * u y := mul_comm (u y) (u x)
@@ -506,13 +506,13 @@ lemma romania1998_p12_mp (u : ℝ → ℝ) :
   have hum : (StrictMono u ∨ StrictAnti u) := by
     cases' hm with hm hm
     · obtain h1 | h2 | h3 := lt_trichotomy C 0
-      · right; intros x y hxy; nlinarith[hm hxy, h6 x, h6 y]
+      · right; intro x y hxy; nlinarith [hm hxy, h6 x, h6 y]
       · rw [h2] at hCnz; exfalso; apply hCnz; rfl
-      · left; intros x y hxy; nlinarith [hm hxy, h6 x, h6 y]
+      · left; intro x y hxy; nlinarith [hm hxy, h6 x, h6 y]
     · obtain h1 | h2 | h3 := lt_trichotomy C 0
-      · left; intros x y hxy; nlinarith[hm hxy, h6 x, h6 y]
+      · left; intro x y hxy; nlinarith [hm hxy, h6 x, h6 y]
       · rw [h2] at hCnz; exfalso; apply hCnz; rfl
-      · right; intros x y hxy; nlinarith [hm hxy, h6 x, h6 y]
+      · right; intro x y hxy; nlinarith [hm hxy, h6 x, h6 y]
 
   exact exp_characterization u h7 h00 hum
 
@@ -549,8 +549,8 @@ lemma romania1998_p12_mpr (u : ℝ → ℝ) :
     intro x y
     rw [hk y]
     calc Real.exp (k * (x + y)) - 1
-             = Real.exp (k * x + k * y) - 1 := by rw[mul_add]
-           _ = Real.exp (k * x) * Real.exp (k * y) - 1 := by rw[Real.exp_add]
+             = Real.exp (k * x + k * y) - 1 := by rw [mul_add]
+           _ = Real.exp (k * x) * Real.exp (k * y) - 1 := by rw [Real.exp_add]
            _ = (Real.exp (k * x) - 1) * Real.exp (k * y) +
                   (Real.exp (k * y) - 1) := by ring
 

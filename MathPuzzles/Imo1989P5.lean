@@ -23,7 +23,7 @@ lemma coprime_of_product (n : ℕ) (lst : List ℕ) (h : ∀ y ∈ lst, n.Coprim
     have hy : ∀ (y : ℕ), y ∈ xs → Nat.Coprime n y :=
       fun y hy ↦ h y (List.mem_cons.mpr (Or.inr hy))
     have h1 := h x (by simp)
-    rw[List.prod_cons]
+    rw [List.prod_cons]
     exact Nat.Coprime.mul_right h1 (ih hy)
 
 lemma modulus_of_product {a b : ℕ} {xs : List ℕ}
@@ -34,7 +34,7 @@ lemma modulus_of_product {a b : ℕ} {xs : List ℕ}
   induction xs with
   | nil => aesop
   | cons y ys ih =>
-    rw[ List.prod_cons] at h
+    rw [List.prod_cons] at h
     cases hx with
     | head => exact Nat.ModEq.of_mul_right _ h
     | tail w hw =>
@@ -53,13 +53,13 @@ lemma general_chinese_remainder (xs : List ChinesePair)
     obtain ⟨b, hb⟩ := ih x_coprime.tail
     clear ih
     -- then we use Nat.chineseRemainder on x and ⟨List.prod(xs.map modulus), b⟩
-    rw[List.pairwise_cons] at x_coprime
+    rw [List.pairwise_cons] at x_coprime
     -- need that `Nat.Coprime x.modulus y`
     have h1 := coprime_of_product x.modulus (xs.map (·.modulus))
-      (by intros z hz; aesop)
+      (by intro z hz; aesop)
     obtain ⟨k, hk1, hk2⟩ := Nat.chineseRemainder h1 x.remainder b
     use k
-    intros z hz
+    intro z hz
     cases hz with
     | head => exact hk1
     | tail w hw =>
@@ -69,9 +69,9 @@ lemma general_chinese_remainder (xs : List ChinesePair)
 
 lemma list_upper_bound (l : List ℕ) : ∃ m : ℕ, ∀ x ∈ l, x ≤ m := by
   match h : l.maximum with
-  | none => use 0; intro x a; rw[List.maximum_eq_none] at h
-            rw[h] at a; exact (List.not_mem_nil _ a).elim
-  | some mx => use mx; intros x hx; exact List.le_maximum_of_mem hx h
+  | none => use 0; intro x a; rw [List.maximum_eq_none] at h
+            rw [h] at a; exact (List.not_mem_nil _ a).elim
+  | some mx => use mx; intro x hx; exact List.le_maximum_of_mem hx h
 
 theorem get_primes (n m : ℕ) :
     ∃ lst : List ℕ, lst.length = n ∧ lst.Nodup ∧
@@ -86,7 +86,7 @@ theorem get_primes (n m : ℕ) :
     constructor
     · exact Iff.mpr Nat.succ_inj' hl'
     · constructor
-      · rw[List.nodup_cons]
+      · rw [List.nodup_cons]
         constructor
         · intro hpl
           exact Iff.mpr Nat.not_le (le_of_max_le_right hpm) (hmx p hpl)
@@ -102,18 +102,18 @@ lemma not_prime_power_of_two_factors
    have h0 : n ≠ 0 := by
      have h : ¬IsPrimePow 0 := not_isPrimePow_zero
      intro hn
-     rw[←hn] at h
+     rw [←hn] at h
      exact h hpp
    obtain ⟨r, k, hr, hk, hrk⟩ := hpp
-   rw[← Nat.prime_iff] at hr
-   rw[← hrk] at hqn hpn h0; clear hrk
+   rw [← Nat.prime_iff] at hr
+   rw [← hrk] at hqn hpn h0; clear hrk
    have h1 := (Nat.mem_factors h0).mpr ⟨hp, hpn⟩
    rw [Nat.Prime.factors_pow hr] at h1
    have h3 := (List.mem_replicate.mp h1).2
    have h2 := (Nat.mem_factors h0).mpr ⟨hq, hqn⟩
    rw [Nat.Prime.factors_pow hr] at h2
    have h4 := (List.mem_replicate.mp h2).2
-   rw[h3, h4] at hpq
+   rw [h3, h4] at hpq
    exact hpq rfl
 
 lemma lemma1 {p1 p2 q : ℕ}
@@ -153,7 +153,7 @@ lemma lemma3 {α : Type} (l : List α)
 lemma lemma4 {a b : ℕ} (h : a ≡ b [MOD b]) : a ≡ 0 [MOD b] := by
   have h1 : a % b = b % b := h
   have h2 : b % b = 0 := Nat.mod_self b
-  rw[h2] at h1
+  rw [h2] at h1
   exact h1
 
 problem imo1989_p5 (n : ℕ) : ∃ m, ∀ j < n, ¬IsPrimePow (m + j) := by
@@ -162,10 +162,10 @@ problem imo1989_p5 (n : ℕ) : ∃ m, ∀ j < n, ¬IsPrimePow (m + j) := by
   obtain ⟨l, hll, hld, hl⟩ := get_primes (2 * n) n
   let ci : List ChinesePair :=
     List.ofFn (fun x : Fin n ↦ have hx0: ↑x < List.length l := by
-                                 rw[hll, Nat.two_mul]
+                                 rw [hll, Nat.two_mul]
                                  exact Nat.lt_add_right _ n n x.2
                                have hx1: ↑x + n < List.length l := by
-                                 rw[hll, Nat.two_mul]
+                                 rw [hll, Nat.two_mul]
                                  exact Nat.add_lt_add_right x.2 n
                                let p := l.get ⟨x.1, hx0⟩
                                let q := l.get ⟨x.1 + n, hx1⟩
@@ -173,7 +173,7 @@ problem imo1989_p5 (n : ℕ) : ∃ m, ∀ j < n, ¬IsPrimePow (m + j) := by
 
   have lcp : ci.Pairwise (fun x y => Nat.Coprime x.modulus y.modulus) := by
      simp only [ge_iff_le, List.pairwise_ofFn]
-     intros i j hij
+     intro i j hij
      apply lemma2
            (hl _ (List.get_mem _ _ _)).1
            (hl _ (List.get_mem _ _ _)).1
@@ -201,12 +201,12 @@ problem imo1989_p5 (n : ℕ) : ∃ m, ∀ j < n, ¬IsPrimePow (m + j) := by
   -- two prime factors, so none of them can be expressed as an integral
   -- power of a prime.
   use m
-  intros j hj
+  intro j hj
   have hcil : ci.length = n := by aesop
-  have hj1 : j < ci.length := by rwa[hcil]
-  have hj2 : j < l.length := by rw[hll, Nat.two_mul]
+  have hj1 : j < ci.length := by rwa [hcil]
+  have hj2 : j < l.length := by rw [hll, Nat.two_mul]
                                 exact Nat.lt_add_right j n n hj
-  have hj3 : j + n < l.length := by rw[hll, Nat.two_mul]
+  have hj3 : j + n < l.length := by rw [hll, Nat.two_mul]
                                     exact Nat.add_lt_add_right hj n
   have h1 := hm (ci.get ⟨j, hj1⟩) (List.get_mem _ _ _)
   obtain ⟨h2, h3⟩ := hl (l.get ⟨j, hj2⟩) (List.get_mem _ _ _)

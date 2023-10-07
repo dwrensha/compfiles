@@ -175,7 +175,7 @@ lemma can_get_a_later_one_zmod :
   clear ha1 ha2
 
   have : ∀ i, i ≤ 2 → a' (n1 + i) = a' n1 := by
-    intros i hi
+    intro i hi
     interval_cases i
     · rfl
     · exact ha1'
@@ -198,7 +198,7 @@ lemma can_get_a_later_one_zmod :
 
   -- n2 = 4 * n - 3
   --   = 4 * (n - 1) + 1
-  let n2: ℕ := 4 * (n - 1) + 1
+  let n2 : ℕ := 4 * (n - 1) + 1
 
   have hii : ∀ i, i < 6 → a' (n2 + i + 1) = a' (n2 + i) + a' n1 := by
     intro i hi

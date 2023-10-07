@@ -29,7 +29,7 @@ problem russia1998_p42
   (∀ a b, a ⋆ b = a + b) :=
 by
   have lemma2 : ∀ a b d, a ⋆ b = d ⋆ b → a = d := by
-    intros a b d hab
+    intro a b d hab
     have := calc a + b + a
         = a ⋆ b ⋆ a := (stardef _ _ _).symm
       _ = d ⋆ b ⋆ a := by rw [hab]
@@ -39,7 +39,7 @@ by
     exact this
 
   have lemma3 : ∀ a b, a ⋆ b = b ⋆ a := by
-    intros a b
+    intro a b
     let d1 := a ⋆ b
     let d2 := b ⋆ a
     have h1 := calc d1 ⋆ 1 = a + b + 1 := stardef _ _ _
@@ -68,7 +68,7 @@ by
     have h4 : x = a := (mul_right_inj' h3).mp h2
     exact h4
 
-  intros a b
+  intro a b
 
   have := calc a + b = a + b + 0 := by rw [add_zero]
                    _ = a ⋆ b ⋆ 0 := (stardef _ _ _).symm

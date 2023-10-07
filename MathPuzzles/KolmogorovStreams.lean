@@ -58,7 +58,7 @@ lemma break_into_words_cons
     (a : Stream' α) :
     (break_into_words (first_length::lengths) a).tail =
            break_into_words lengths (a.drop first_length) := by
-  simp[break_into_words, corec, tail_map, tail_iterate]
+  simp [break_into_words, corec, tail_map, tail_iterate]
 
 lemma break_into_words_closed_form
     (lengths : Stream' ℕ)
@@ -74,14 +74,14 @@ lemma break_into_words_closed_form
   congr
   · revert a lengths
     induction' n with pn hpn
-    · intros a b; rfl
-    · intros a b
-      rw[Stream'.nth_succ, Stream'.iterate_eq, Stream'.tail_cons, hpn]
+    · intro a b; rfl
+    · intro a b
+      rw [Stream'.nth_succ, Stream'.iterate_eq, Stream'.tail_cons, hpn]
       rfl
   · revert a lengths
     induction' n with pn hpn
-    · intros a b; rfl
-    · intros a b
+    · intro a b; rfl
+    · intro a b
       rw [Stream'.nth_succ, Stream'.iterate_eq, Stream'.tail_cons, hpn,
           drop_drop, Finset.sum_range_succ']
       congr
@@ -145,7 +145,7 @@ lemma chosen_decent_closed_form
   intro n
   induction' n with n pn
   · rfl
-  · rw[Finset.sum_range_succ, ← pn]; rfl
+  · rw [Finset.sum_range_succ, ← pn]; rfl
 
 lemma check_decent_words
     (is_decent : List α → Prop)
@@ -204,7 +204,7 @@ lemma chosen_indecent_closed_form
   intro n
   induction' n with n pn
   · rfl
-  · rw[Finset.sum_range_succ, ← pn]
+  · rw [Finset.sum_range_succ, ← pn]
     rfl
 
 lemma check_indecent_words
@@ -254,7 +254,7 @@ problem kolmogorov_streams
     rw [hdka] at hinit
     let a' := a.drop k
     have hnot' : ∀ (n : ℕ), ∃ (k : ℕ), 0 < k ∧ all_prefixes is_decent (a'.drop (n + k)) := by
-      intros n'
+      intro n'
       obtain ⟨k', hk0', hk'⟩ := hnot (k + n')
       use k'
       constructor

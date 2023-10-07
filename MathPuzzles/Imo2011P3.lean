@@ -24,22 +24,22 @@ problem imo2011_p3 (f : ℝ → ℝ) (hf : ∀ x y, f (x + y) ≤ y * f x + f (f
   ∀ x ≤ 0, f x = 0 := by
   -- reparameterize
   have hxt : ∀ x t, f t ≤ t * f x - x * f x + f (f x) := by
-    intros x t
+    intro x t
     calc f t = f (x + (t - x))             := by rw [add_eq_of_eq_sub' rfl]
            _ ≤ (t - x) * f x + f (f x)     := hf x (t - x)
            _ = t * f x - x * f x + f (f x) := by rw [sub_mul]
 
   have h_ab_combined : ∀ a b, a * f a + b * f b ≤ 2 * f a * f b := by
-    intros a b
+    intro a b
     linarith [hxt b (f a), hxt a (f b)]
 
   have h_f_nonneg_of_pos : ∀ a < 0, 0 ≤ f a := by
-    intros a han
+    intro a han
     have : a * f a ≤ 0 := add_le_iff_nonpos_left.mp (h_ab_combined a (2 * f a))
     exact nonneg_of_mul_nonpos_right this han
 
   have h_f_nonpos : ∀ x, f x ≤ 0 := by
-    intros x
+    intro x
     by_contra h_suppose_not
     -- If we choose a small enough argument for f, then we get a contradiction.
     let s := (x * f x - f (f x)) / (f x)
@@ -56,10 +56,10 @@ problem imo2011_p3 (f : ℝ → ℝ) (hf : ∀ x y, f (x + y) ≤ y * f x + f (f
        _ = 0 := by rw [(eq_div_iff hp.ne.symm).mp rfl]; linarith
 
   have h_fx_zero_of_neg : ∀ x < 0, f x = 0 := by
-    intros x hxz
+    intro x hxz
     exact (h_f_nonpos x).antisymm (h_f_nonneg_of_pos x hxz)
 
-  intros x hx
+  intro x hx
   obtain (h_x_neg : x < 0) | (rfl : x = 0) := hx.lt_or_eq
   · exact h_fx_zero_of_neg _ h_x_neg
   · suffices 0 ≤ f 0 by exact (h_f_nonpos 0).antisymm this
