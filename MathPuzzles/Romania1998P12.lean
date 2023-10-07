@@ -276,7 +276,7 @@ lemma exp_characterization
     exact h2 x
 
   have h4 : ∀ z : ℤ, ∀ x : ℝ, u (z * x) = (u x) ^ z := by
-    intros z x
+    intro z x
     obtain ⟨n, hn⟩ := int_dichotomy z
     rcases hn with rfl | hn
     · norm_cast
@@ -319,7 +319,7 @@ lemma exp_characterization
       rw [Real.exp_mul]
 
   have hp : ∀ p : ℕ, 0 < p → ∀ x : ℝ, u (x / p) = (u x) ^ (1 / (p:ℝ)) := by
-    intros p hp x
+    intro p hp x
     cases' p with p p
     · exfalso; exact Nat.lt_asymm hp hp
     have h12: ∀ n : ℕ, (u (x / p.succ))^n = u (x * n / p.succ) := by
@@ -391,7 +391,7 @@ lemma romania1998_p12_mp (u : ℝ → ℝ) :
 
   -- thus u(0) ≠ 1 would imply f(x) = f(0) / (1 - u(0)) for all x,
   have h0 : (u 0 ≠ 1) → ∀ x : ℝ, f x = f 0 / (1 - u 0) := by
-    intros hu0 x
+    intro hu0 x
     have hy0x1 :=
                 calc f 0 = f x - f x * u 0 := (sub_eq_of_eq_add' (hy0 x)).symm
                 _ = f x * (1 - u 0) := by ring
@@ -403,7 +403,7 @@ lemma romania1998_p12_mp (u : ℝ → ℝ) :
 
   -- which implies that f is constant, which we know is not the case
   have h0' : (u 0 ≠ 1) → False := by
-    intros hu0
+    intro hu0
     have hu0' := h0 hu0
     cases' hm with hm hm <;>
     · have hu00 := hu0' 0
@@ -421,7 +421,7 @@ lemma romania1998_p12_mp (u : ℝ → ℝ) :
 
   -- Then f(x) ≠ 0 for all x ≠ 0.
   have hfx0 : ∀ x, x ≠ 0 → f x ≠ 0 := by
-    intros x hx
+    intro x hx
     cases' hm with hm1 hm2
     · obtain h1 | h2 | h3 := lt_trichotomy x 0
       · rw [←hf0];
@@ -441,17 +441,17 @@ lemma romania1998_p12_mp (u : ℝ → ℝ) :
   -- Next, we have
   -- f(x)u(y) + f(y) = f (x + y) = f(x) + f(y)u(x)
   have h1 : ∀ x y : ℝ, f x * u y + f y = f x + f y * u x := by
-    intros x y
-    rw[(hf x y).symm, add_comm]
+    intro x y
+    rw [←hf, add_comm]
     linarith[hf y x]
 
   -- so f(x)(u(y) - 1) = f(y)(u(x) - 1) for all x,y ∈ ℝ.
   have h2 : ∀ x y : ℝ, f x * (u y - 1) = f y * (u x - 1) := by
-    intros x y; have := h1 x y; linarith
+    intro x y; linarith [h1 x y]
 
   -- Thus for any x ≠ 0, y ≠ 0, we have (u(x) - 1) / f(x) = (u(y) - 1) / f(y).
   have h3 : ∀ x y : ℝ, x ≠ 0 → y ≠ 0 → (u x - 1) / f x =  (u y - 1) / f y := by
-    intros x y hx hy
+    intro x y hx hy
     have hx1 := hfx0 x hx
     have hy1 := hfx0 y hy
     have := h2 x y
@@ -461,13 +461,13 @@ lemma romania1998_p12_mp (u : ℝ → ℝ) :
   -- So there exists C ∈ ℝ such that (u(x) - 1) / f(x) = C for all x ≠ 0.
   have h4: ∃ C : ℝ, ∀ x : ℝ, x ≠ 0 → (u x - 1) / f x = C := by
     use (u 1 - 1) / f 1
-    intros x hx
+    intro x hx
     exact h3 x 1 hx one_ne_zero
   obtain ⟨C, hC⟩ := h4
 
   -- So u(x) = 1 + C f(x) for x ≠ 0;
   have h5 : ∀ x : ℝ, x ≠ 0 → u x = 1 + C * f x := by
-    intros x hx
+    intro x hx
     have hc1 := hC x hx
     have hx1 := hfx0 x hx
     field_simp at hc1
@@ -486,7 +486,7 @@ lemma romania1998_p12_mp (u : ℝ → ℝ) :
     intro x
     rw [zero_mul, Real.exp_zero]
     have := h6 x
-    rwa[hCz, zero_mul, add_zero] at this
+    rwa [hCz, zero_mul, add_zero] at this
 
   -- Otherwise, observe
   --     u(x + y) = 1 + C f(x + y)
@@ -507,15 +507,14 @@ lemma romania1998_p12_mp (u : ℝ → ℝ) :
     cases' hm with hm hm
     · obtain h1 | h2 | h3 := lt_trichotomy C 0
       · right; intros x y hxy; nlinarith[hm hxy, h6 x, h6 y]
-      · rw[h2] at hCnz; exfalso; apply hCnz; rfl
-      · left; intros x y hxy; nlinarith[hm hxy, h6 x, h6 y]
+      · rw [h2] at hCnz; exfalso; apply hCnz; rfl
+      · left; intros x y hxy; nlinarith [hm hxy, h6 x, h6 y]
     · obtain h1 | h2 | h3 := lt_trichotomy C 0
       · left; intros x y hxy; nlinarith[hm hxy, h6 x, h6 y]
-      · rw[h2] at hCnz; exfalso; apply hCnz; rfl
-      · right; intros x y hxy; nlinarith[hm hxy, h6 x, h6 y]
+      · rw [h2] at hCnz; exfalso; apply hCnz; rfl
+      · right; intros x y hxy; nlinarith [hm hxy, h6 x, h6 y]
 
   exact exp_characterization u h7 h00 hum
-
 
 lemma romania1998_p12_mpr (u : ℝ → ℝ) :
  (∃ k : ℝ, ∀ x : ℝ, u x = Real.exp (k * x)) →
@@ -528,18 +527,18 @@ lemma romania1998_p12_mpr (u : ℝ → ℝ) :
     use id
     constructor
     · left; exact strictMono_id
-    · intros x y
+    · intro x y
       rw [hk y, hkz, zero_mul, Real.exp_zero, mul_one, id.def, id.def, id.def]
   · -- k ≠ 0
     let f : ℝ → ℝ := λ x ↦ Real.exp (k * x) - 1
     have hfm : (StrictMono f ∨ StrictAnti f) := by
       cases' Classical.em (0 < k) with hkp hkn
       · left
-        intros x y hxy
+        intro x y hxy
         have := exp_strict_mono' k x y hkp hxy
         exact sub_lt_sub_right this 1
       · right
-        intros x y hxy
+        intro x y hxy
         have hkn' : k < 0 := by
           simp only [not_lt] at *
           exact Ne.lt_of_le hknz hkn
@@ -547,7 +546,7 @@ lemma romania1998_p12_mpr (u : ℝ → ℝ) :
         exact sub_lt_sub_right this 1
     use f
     use hfm
-    intros x y
+    intro x y
     rw [hk y]
     calc Real.exp (k * (x + y)) - 1
              = Real.exp (k * x + k * y) - 1 := by rw[mul_add]

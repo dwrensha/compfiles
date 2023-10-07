@@ -58,7 +58,7 @@ lemma real_induction
 
   -- Note that [z, w₀) ⊆ S.
   have h7: Set.Ico z w₀ ⊆ S := by
-    intros s₁ hs
+    intro s₁ hs
     by_contra H
     exact (not_le.mpr hs.2) (csInf_le hwbb ⟨hs.1, H⟩)
 
@@ -73,7 +73,7 @@ lemma real_induction
     rw[H] at hy1 h6
 
     have h12 : y ∈ lowerBounds W := by
-      intros a ha;
+      intro a ha;
       by_contra H'; push_neg at H'
       exact ha.2 (hy2 ⟨h9 a ha, H'⟩)
     exact (not_le.mpr hy1) ((isGLB_iff_le_iff.mp h13 y).mpr h12)
@@ -89,7 +89,7 @@ lemma real_induction
   obtain ⟨y, hwy, hy⟩ := h1 w₀ h8
 
   have h12 : y ∈ lowerBounds W := by
-    intros a ha;
+    intro a ha;
     by_contra H'; push_neg at H'
     apply ha.2
     obtain hlt | hle := lt_or_le a w₀
@@ -124,7 +124,7 @@ lemma lower_basis :
     @TopologicalSpace.IsTopologicalBasis ℝ tₗ lower_intervals := by
   refine'
    @TopologicalSpace.IsTopologicalBasis.mk ℝ tₗ lower_intervals _ _ rfl
-  · intros I1 hI1 I2 hI2 x hx;
+  · intro I1 hI1 I2 hI2 x hx;
     obtain ⟨a, b, hab⟩ := hI1
     obtain ⟨c, d, hcd⟩ := hI2
     use Set.Ico (Sup.sup a c) (Inf.inf b d)
@@ -132,7 +132,7 @@ lemma lower_basis :
     · exact ⟨Sup.sup a c, Inf.inf b d, rfl ⟩
     · constructor
       · aesop
-      · intros y hy
+      · intro y hy
         aesop
   · ext x; constructor
     · aesop
@@ -146,7 +146,7 @@ lemma upper_basis :
     @TopologicalSpace.IsTopologicalBasis ℝ tᵤ upper_intervals := by
   refine'
    @TopologicalSpace.IsTopologicalBasis.mk ℝ tᵤ upper_intervals _ _ rfl
-  · intros I1 hI1 I2 hI2 x hx;
+  · intro I1 hI1 I2 hI2 x hx;
     obtain ⟨a, b, hab⟩ := hI1
     obtain ⟨c, d, hcd⟩ := hI2
     use Set.Ioc (Sup.sup a c) (Inf.inf b d)
@@ -154,7 +154,7 @@ lemma upper_basis :
     · exact ⟨Sup.sup a c, Inf.inf b d, rfl⟩
     · constructor
       · aesop
-      · intros y hy
+      · intro y hy
         aesop
   · ext x; constructor
     · aesop
@@ -168,7 +168,7 @@ lemma open_basis :
     @TopologicalSpace.IsTopologicalBasis ℝ tₛ open_intervals := by
  refine'
    @TopologicalSpace.IsTopologicalBasis.mk ℝ tₛ open_intervals _ _ rfl
- · intros I1 hI1 I2 hI2 x hx
+ · intro I1 hI1 I2 hI2 x hx
    obtain ⟨a, b, hab⟩ := hI1
    obtain ⟨c, d, hcd⟩ := hI2
    use Set.Ioo (Sup.sup a c) (Inf.inf b d)
@@ -176,7 +176,7 @@ lemma open_basis :
    · exact ⟨Sup.sup a c, Inf.inf b d, rfl⟩
    · constructor
      · aesop
-     · intros y hy; aesop
+     · intro y hy; aesop
  · ext x; constructor
    · aesop
    · intro _; apply Set.mem_sUnion.mpr
@@ -211,10 +211,10 @@ lemma continuous_of_upper_lower_continuous
     as required.
   -/
   apply continuous_generateFrom
-  intros ab hab
+  intro ab hab
   obtain ⟨a,b, hab⟩ := hab
   have h6oc : ∀ c ∈ f ⁻¹' ab, ∃ a', Set.Ioc a' c ⊆ f ⁻¹' Set.Ioc a (f c) ∧ (a' < c ∧ a < f c) := by
-    intros c hc
+    intro c hc
     have h2 : IsOpen[tᵤ] (Set.Ioc a (f c)) := by
       apply TopologicalSpace.isOpen_generateFrom_of_mem
       exact ⟨a, f c, rfl⟩
@@ -225,16 +225,16 @@ lemma continuous_of_upper_lower_continuous
        upper_intervals upper_basis).mp h3 c h4
     obtain ⟨t, ⟨a', c', hac'⟩, htc, ht⟩ := h5
     use a'
-    rw[←hac'] at htc
+    rw [←hac'] at htc
     constructor
-    · intros x hx
+    · intro x hx
       have h7 : x ∈ Set.Ioc a' c' := ⟨hx.1, hx.2.trans htc.2⟩
       rw [hac'] at h7
       exact ht h7
     · exact ⟨ htc.1, h4.1 ⟩
 
   have h6co : ∀ c ∈ f ⁻¹' ab, ∃ b', Set.Ico c b' ⊆ f ⁻¹' Set.Ico (f c) b ∧ (c < b' ∧ f c < b) := by
-    intros c hc
+    intro c hc
     have h2 : IsOpen[tₗ] (Set.Ico (f c) b) := by
       apply TopologicalSpace.isOpen_generateFrom_of_mem
       exact ⟨f c, b, rfl⟩
@@ -247,7 +247,7 @@ lemma continuous_of_upper_lower_continuous
     use b'
     rw [←hcb'] at htc
     constructor
-    · intros x hx
+    · intro x hx
       have h7 : x ∈ Set.Ico c' b' := by
           cases' hx with hxl hxr
           constructor
@@ -258,7 +258,7 @@ lemma continuous_of_upper_lower_continuous
     · exact ⟨htc.2, h4.2⟩
 
   have h1 : ∀ c ∈ f ⁻¹' ab, ∃ t, t ∈ open_intervals ∧ c ∈ t ∧ t ⊆ f ⁻¹' ab := by
-    intros c hc
+    intro c hc
     obtain ⟨ a', ha', ⟨ ineq1a, ineq1b⟩ ⟩ := h6oc c hc
     obtain ⟨ b', hb', ⟨ ineq2a, ineq2b⟩ ⟩ := h6co c hc
     use Set.Ioo a' b'
@@ -281,7 +281,7 @@ lemma continuous_of_upper_lower_continuous
 lemma infinite_interval_lower_open (x : ℝ) : IsOpen[tₗ] (Set.Ici x) := by
   rw [@TopologicalSpace.IsTopologicalBasis.isOpen_iff
           ℝ tₗ _ lower_intervals lower_basis]
-  intros a ha
+  intro a ha
   -- `Set.Ici x` means the interval [x, ∞).
   -- choose [a, a + 1)
   use Set.Ico a (a + 1)
@@ -291,7 +291,7 @@ lemma infinite_interval_lower_open (x : ℝ) : IsOpen[tₗ] (Set.Ici x) := by
     · constructor
       · exact Eq.le rfl
       · exact lt_add_one a
-    · intros y hy
+    · intro y hy
       rw[Set.mem_Ici] at ha
       exact ha.trans hy.1
 
@@ -300,7 +300,7 @@ lemma infinite_interval_upper_open (x : ℝ) : IsOpen[tᵤ] (Set.Iio x) := by
   -- in tᵤ, open sets are of the form (a, b].
   rw [@TopologicalSpace.IsTopologicalBasis.isOpen_iff
           ℝ tᵤ _ upper_intervals upper_basis]
-  intros a ha
+  intro a ha
   use Set.Ioc (a - 1) a
   constructor
   · exact ⟨a - 1, a, rfl⟩
@@ -308,7 +308,7 @@ lemma infinite_interval_upper_open (x : ℝ) : IsOpen[tᵤ] (Set.Iio x) := by
     · constructor
       · simp only [Set.mem_Iio, sub_lt_self_iff, zero_lt_one]
       · exact Eq.le rfl
-    · intros y hy
+    · intro y hy
       exact hy.2.trans_lt ha
 
 theorem monotone_of_upper_lower_continuous
@@ -372,10 +372,10 @@ theorem monotone_of_upper_lower_continuous
 
     have h5 : Set.Ioc ii0 y ⊆ f ⁻¹' Set.Iio (f z) := by
       have h999 : Set.Ioc ii0 y ⊆ Set.Ioc ii0 ii1 := by
-          intros w hw
+          intro w hw
           constructor
           · exact hw.1
-          · rw[←hiiu'] at hyii
+          · rw [←hiiu'] at hyii
             exact hw.2.trans hyii.2
       rw [hiiu'] at h999
       exact h999.trans hiis
@@ -391,15 +391,15 @@ theorem monotone_of_upper_lower_continuous
       constructor
       · have h10 : x ≤ ii0' := le_max_right _ _
         have h13 : (x * 2) / 2 ≤ (ii0' + y) / 2 := by linarith
-        rwa[mul_div_cancel x two_ne_zero] at h13
+        rwa [mul_div_cancel x two_ne_zero] at h13
       · have h16 : (ii0' + y) / 2 < (y * 2) / 2 := by linarith
-        rwa[mul_div_cancel y two_ne_zero] at h16
+        rwa [mul_div_cancel y two_ne_zero] at h16
 
     have h7 : m ∈ Set.Ioc ii0' y := by
       cases' h6 with h6l h6r
       constructor
       · have h19 : (ii0' * 2)/2 < (ii0' + y)/2 := by linarith
-        rwa[mul_div_cancel ii0' two_ne_zero] at h19
+        rwa [mul_div_cancel ii0' two_ne_zero] at h19
       · exact le_of_lt h6r
 
     -- so we have f(m) ∈ A

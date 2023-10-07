@@ -41,7 +41,7 @@ theorem lemma1
   have p2 : Person := Nonempty.some (Fintype.card_pos_iff.mp (by linarith))
   let Person' := {p3 // p3 ≠ p2}
   have hfcα : 4 < Fintype.card Person' := by
-    rw[Fintype.card_subtype_compl, Fintype.card_ofSubsingleton]
+    rw [Fintype.card_subtype_compl, Fintype.card_ofSubsingleton]
     exact lt_tsub_of_add_lt_left card_person
   have h1 : Fintype.card Topic * 2 < Fintype.card Person' := by linarith
 
@@ -69,11 +69,11 @@ theorem lemma1
     -- the set we want is {p2,p3,p4}
     let s1 : Finset Person := {p3.val.val}
     let s2 : Finset Person := Finset.cons p4.val s1
-                               (by rw[Finset.mem_singleton]; intro hp
+                               (by rw [Finset.mem_singleton]; intro hp
                                    exact (hp1 (Subtype.val_injective
                                           (Subtype.val_injective hp)).symm).elim)
     let s3 : Finset Person := Finset.cons p2 s2
-                               (by rw[Finset.mem_cons, Finset.mem_singleton]
+                               (by rw [Finset.mem_cons, Finset.mem_singleton]
                                    intro hp
                                    cases hp with
                                    | inl hp =>
@@ -83,8 +83,8 @@ theorem lemma1
     use s3
     constructor
     · simp only[Finset.card_cons, Finset.card_singleton]
-    · intros p1' hp1' p2' hp2' hp1p2
-      rw[Finset.mem_cons, Finset.mem_cons, Finset.mem_singleton] at hp1' hp2'
+    · intro p1' hp1' p2' hp2' hp1p2
+      rw [Finset.mem_cons, Finset.mem_cons, Finset.mem_singleton] at hp1' hp2'
       have hp4d : discusses p2 ↑↑p4 = t2 := by
          have := p4.property; simp at this; exact this
       have hp3d : discusses p2 ↑↑p3 = t2 := by
@@ -96,18 +96,18 @@ theorem lemma1
     let α' := Finset.map ⟨λ (x :Person') => x.val, Subtype.coe_injective⟩ α
     use α'
     constructor
-    · rw[Finset.card_map]; exact ht2
-    · intros p3' hp3' p4' hp4' hp3p4'
-      rw[Finset.mem_map] at hp3' hp4'
+    · rw [Finset.card_map]; exact ht2
+    · intro p3' hp3' p4' hp4' hp3p4'
+      rw [Finset.mem_map] at hp3' hp4'
       obtain ⟨⟨p3, p3_ne⟩, p3_mem_α, p3_eq⟩ := hp3'
       obtain ⟨⟨p4, p4_ne⟩, p4_mem_α, p4_eq⟩ := hp4'
       dsimp at p3_eq p4_eq
       rw [←p3_eq, ←p4_eq]
-      have hne : p3 ≠ p4 := by rwa[p3_eq, p4_eq]
+      have hne : p3 ≠ p4 := by rwa [p3_eq, p4_eq]
       have h8 := h7 ⟨⟨p3, p3_ne⟩, p3_mem_α⟩ ⟨⟨p4, p4_ne⟩, p4_mem_α⟩ (by simp[hne])
       let t3': Topic' := ⟨discusses p3 p4, h8⟩
       have h9 := ht3 t3'
-      rw[←h9]
+      rw [←h9]
 
 problem imo1964_p4
     (Person Topic : Type)
@@ -131,7 +131,7 @@ problem imo1964_p4
   have hfcα : Fintype.card Person' = 16 := by
       simp[Fintype.card_subtype_compl, card_person]
   have h1 : Fintype.card Topic * 5 < Fintype.card Person' := by
-      rw[hfcα, card_topic]; norm_num
+      rw [hfcα, card_topic]; norm_num
 
   have h2 := Fintype.exists_lt_card_fiber_of_mul_lt_card
               (fun (p2: Person') ↦ discusses p1 p2.val) h1
@@ -139,7 +139,7 @@ problem imo1964_p4
   obtain ⟨t1, ht1⟩ := h2
   -- Call that set α.
   let α := (Finset.filter (fun (x : Person') ↦ discusses p1 ↑x = t1) Finset.univ)
-  have cardα : 5 < Fintype.card α := by rw[Fintype.card_coe]; exact ht1;
+  have cardα : 5 < Fintype.card α := by rw [Fintype.card_coe]; exact ht1;
 
   -- If any pair of people p2 p3 in α discusses topic t1, then we are done.
   obtain h6 | h7 := Classical.em (∃ p2 p3 : α, p2 ≠ p3 ∧
@@ -150,13 +150,13 @@ problem imo1964_p4
     let s1 : Finset Person := {p3.val.val}
 
     have hs1 : ¬ p4.val.val ∈ s1 := by
-      rw[Finset.mem_singleton]; intro hp
+      rw [Finset.mem_singleton]; intro hp
       exact (hp1 (Subtype.val_injective (Subtype.val_injective hp)).symm).elim
 
     let s2 : Finset Person := Finset.cons p4.val s1 hs1
 
     have hs2 : ¬ p1 ∈ s2 := by
-      rw[Finset.mem_cons, Finset.mem_singleton]; intro hp
+      rw [Finset.mem_cons, Finset.mem_singleton]; intro hp
       cases hp with
       | inl hp => exact (p4.val.property.symm hp).elim
       | inr hp => exact (p3.val.property.symm hp).elim
@@ -164,9 +164,9 @@ problem imo1964_p4
     let s3 : Finset Person := Finset.cons p1 s2 hs2
     use s3
     constructor
-    · simp only[Finset.card_cons, Finset.card_singleton]
-    · intros p1' hp1' p2' hp2' hp1p2
-      rw[Finset.mem_cons, Finset.mem_cons, Finset.mem_singleton] at hp1' hp2'
+    · simp only [Finset.card_cons, Finset.card_singleton]
+    · intro p1' hp1' p2' hp2' hp1p2
+      rw [Finset.mem_cons, Finset.mem_cons, Finset.mem_singleton] at hp1' hp2'
       have hp4d : discusses p1 ↑↑p4 = t1 := by
          have := p4.property; simp at this; exact this
       have hp3d : discusses p1 ↑↑p3 = t1 := by
@@ -179,7 +179,7 @@ problem imo1964_p4
     have h3 : Fintype Topic' := Fintype.ofFinite Topic'
     have h4 : Fintype.card Topic' = 2 := by
       simp[Fintype.card_subtype_compl, card_topic]
-    have t0 : Topic' := Nonempty.some (Fintype.card_pos_iff.mp (by rw[h4]; norm_num))
+    have t0 : Topic' := Nonempty.some (Fintype.card_pos_iff.mp (by rw [h4]; norm_num))
 
     let discusses' : α → α → Topic' :=
       fun (p2 p3 : α) ↦
@@ -188,7 +188,7 @@ problem imo1964_p4
         ⟨discusses p2.val p3.val, h7 ⟨p2, p2.property⟩ ⟨p3, p3.property⟩ heq⟩
     have discusses_sym' :
         ∀ (p1 p2 : { x // x ∈ α }), discusses' p1 p2 = discusses' p2 p1 := by
-      intros p3 p4
+      intro p3 p4
       simp
       split_ifs with hf1 hf2 hf3
       · rfl
@@ -202,9 +202,9 @@ problem imo1964_p4
                           fun x y hxy ↦ Subtype.coe_injective (Subtype.coe_injective hxy)⟩ s
     use s'
     constructor
-    · rwa[Finset.card_map]
-    · intros p3 hp3 p4 hp4 hp34
-      rw[Finset.mem_map] at hp3 hp4
+    · rwa [Finset.card_map]
+    · intro p3 hp3 p4 hp4 hp34
+      rw [Finset.mem_map] at hp3 hp4
       obtain ⟨⟨⟨p3', p3_mem_person'⟩, p3_mem_α⟩, p3_mem_s, hp3eq⟩ := hp3
       obtain ⟨⟨⟨p4', p4_mem_person'⟩, p4_mem_α⟩, p4_mem_s, hp4eq⟩ := hp4
       dsimp at hp3eq hp4eq

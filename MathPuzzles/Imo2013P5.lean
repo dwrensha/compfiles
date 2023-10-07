@@ -38,9 +38,9 @@ lemma le_of_all_pow_lt_succ {x y : ℝ} (hx : 1 < x) (hy : 1 < y)
   by_contra' hxy
   have hxmy : 0 < x - y := sub_pos.mpr hxy
   have hn : ∀ n : ℕ, 0 < n → (x - y) * (n : ℝ) ≤ x^n - y^n := by
-    intros n _
+    intro n _
     have hterm : ∀ i : ℕ, i ∈ Finset.range n → 1 ≤ x^i * y^(n - 1 - i) := by
-      intros i _
+      intro i _
       calc 1 ≤ x^i             := one_le_pow_of_one_le hx.le i
            _ = x^i * 1         := (mul_one _).symm
            _ ≤ x^i * y^(n-1-i) := by gcongr; apply one_le_pow_of_one_le hy.le
@@ -85,7 +85,7 @@ lemma le_of_all_pow_lt_succ' {x y : ℝ} (hx : 1 < x) (hy : 0 < y)
 
   have h_y_lt_y' : y < y' := hy''.trans_lt h1_lt_y'
   have hh : ∀ n, 0 < n → x^n - 1 < y'^n := by
-    intros n hn
+    intro n hn
     calc x^n - 1 < y^n  := h n hn
          _  ≤ y'^n := pow_le_pow_of_le_left hy.le h_y_lt_y'.le n
 
@@ -199,7 +199,7 @@ problem imo2013_p5
     ∀ x, 0 < x → f x = x := by
   obtain ⟨a, ha1, hae⟩ := H_fixed_point
   have H3 : ∀ x : ℚ, 0 < x → ∀ n : ℕ, 0 < n → ↑n * f x ≤ f (n * x) := by
-    intros x hx n hn
+    intro x hx n hn
     cases n with
     | zero => exfalso; exact Nat.lt_asymm hn hn
     | succ n =>
@@ -217,15 +217,15 @@ problem imo2013_p5
           _ = f (↑(pn + 2) * x)              := by norm_cast
 
   have H4 : ∀ n : ℕ, 0 < n → (n : ℝ) ≤ f n := by
-    intros n hn
+    intro n hn
     have hf1 : 1 ≤ f 1 := by
       have a_pos : (0 : ℝ) < a := Rat.cast_pos.mpr (zero_lt_one.trans ha1)
       suffices ↑a * 1 ≤ ↑a * f 1 by exact (mul_le_mul_left a_pos).mp this
       calc (a:ℝ) * 1 = ↑a := mul_one _
            _ = f a        := hae.symm
-           _ = f (a * 1)  := by rw[mul_one]
+           _ = f (a * 1)  := by rw [mul_one]
            _ ≤ f a * f 1  := (H1 a 1) (zero_lt_one.trans ha1) zero_lt_one
-           _ = ↑a * f 1   := by rw[hae]
+           _ = ↑a * f 1   := by rw [hae]
 
     calc (n : ℝ) = (n : ℝ) * 1 := (mul_one _).symm
          _ ≤ (n : ℝ) * f 1     := by gcongr
@@ -233,9 +233,9 @@ problem imo2013_p5
          _ = f n               := by rw [mul_one]
 
   have H5 : ∀ x : ℚ, 1 < x → (x : ℝ) ≤ f x := by
-    intros x hx
+    intro x hx
     have hxnm1 : ∀ n : ℕ, 0 < n → (x : ℝ)^n - 1 < (f x)^n := by
-      intros n hn
+      intro n hn
       calc (x : ℝ)^n - 1 < f (x^n) := by exact_mod_cast fx_gt_xm1 (one_le_pow_of_one_le hx.le n)
                                            H1 H2 H4
                        _ ≤ (f x)^n := pow_f_le_f_pow hn hx H1 H4
@@ -244,7 +244,7 @@ problem imo2013_p5
     exact le_of_all_pow_lt_succ' hx' (f_pos_of_pos hxp H1 H4) hxnm1
 
   have h_f_commutes_with_pos_nat_mul : ∀ n : ℕ, 0 < n → ∀ x : ℚ, 0 < x → f (n * x) = n * f x := by
-    intros n hn x hx
+    intro n hn x hx
     have h2 : f (n * x) ≤ n * f x := by
       cases n with
       | zero => exfalso; exact Nat.lt_asymm hn hn

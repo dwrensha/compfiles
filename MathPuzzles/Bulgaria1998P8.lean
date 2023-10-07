@@ -72,40 +72,40 @@ problem bulgaria1998_p8 (n : ℕ) (x y : R) : P n x y = P n y x := by
   have h1 : ∀ x y : R, P n.succ.succ x y =
                (x + y - 1) * (y + 1) * (P n.succ (y + 2) x) +
                    (y - y^2) * (P n.succ y x) := by
-    intros x y
+    intro x y
     calc P (n.succ.succ) x y
         = (x + y - 1) * (y + 1) * (P n.succ x (y + 2)) +
           (y - y^2) * (P n.succ x y) := rfl
       _ = (x + y - 1) * (y + 1) * (P n.succ (y + 2) x) +
-          (y - y^2) * (P n.succ y x) := by rw[ih1 x y, ih1 x (y+2)]
+          (y - y^2) * (P n.succ y x) := by rw [ih1 x y, ih1 x (y+2)]
 
   have h2 : ∀ x y : R, (x + y - 1) * (y + 1) * P n.succ (y + 2) x
         = S n x y + (x + y - 1)* (y + 1) * (x - x^2)* P n (y+2) x := by
-     intros x y; dsimp only [S, P]; ring
+     intro x y; dsimp only [S, P]; ring
 
   have h_s_symm : ∀ m : ℕ, m < n.succ.succ → ∀ x y : R, S m x y = S m y x := by
-    intros m hm x y; dsimp only [S]; rw[ih m hm (x + 2) (y + 2)]; ring
+    intro m hm x y; dsimp only [S]; rw [ih m hm (x + 2) (y + 2)]; ring
 
   have h4 : ∀ x y : R, (y - y^2) * P n.succ y x =
               (y - y^2) * (x + y -1) * (x + 1) * P n y (x + 2) + T n x y := by
-    intros x y; dsimp only[T, P]; ring
+    intro x y; dsimp only [T, P]; ring
 
   have h_t_symm : ∀ m : ℕ, m < n.succ.succ → ∀ x y : R, T m x y = T m y x := by
-    intros m hm x y; dsimp only[T]; rw[ih m hm x y]; ring
+    intro m hm x y; dsimp only[T]; rw [ih m hm x y]; ring
 
   have h_u_symm : ∀ m : ℕ, m < n.succ.succ → ∀ x y : R, U m x y = U m y x := by
-    intros m hm x y; dsimp only [U]; rw[ih m hm (y+2) x, ih m hm (x+2) y]; ring
+    intro m hm x y; dsimp only [U]; rw [ih m hm (y+2) x, ih m hm (x+2) y]; ring
 
   have h7 : ∀ x y : R, P n.succ.succ x y = S n x y + T n x y + U n x y := by
-    intros x y; rw[h1 x y, h2 x y, h4 x y]; dsimp only [U]; ring
+    intro x y; rw [h1 x y, h2 x y, h4 x y]; dsimp only [U]; ring
 
   have h8 : n < n.succ := lt_add_one n
   have h9 : n < n.succ.succ := Nat.lt.step h8
 
-  intros x y
+  intro x y
   calc P n.succ.succ x y
       = S n x y + T n x y + U n x y := h7 x y
-    _ = S n y x + T n x y + U n x y := by rw[h_s_symm n h9 x y]
-    _ = S n y x + T n y x + U n x y := by rw[h_t_symm n h9 x y]
-    _ = S n y x + T n y x + U n y x := by rw[h_u_symm n h9 x y]
+    _ = S n y x + T n x y + U n x y := by rw [h_s_symm n h9 x y]
+    _ = S n y x + T n y x + U n x y := by rw [h_t_symm n h9 x y]
+    _ = S n y x + T n y x + U n y x := by rw [h_u_symm n h9 x y]
     _ = P n.succ.succ y x := (h7 y x).symm

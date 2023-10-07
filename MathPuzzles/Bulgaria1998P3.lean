@@ -49,7 +49,7 @@ problem bulgaria1998_p3
     have h5 : f x / (f x + y) < 1 := by rwa [div_lt_iff h2, one_mul]
     calc f (x + y)
          = f (x + y) * 1                       := (mul_one (f (x + y))).symm
-       _ = f (x + y) * ((f x + y) / (f x + y)) := by rw[div_self (Ne.symm (ne_of_lt h2))]
+       _ = f (x + y) * ((f x + y) / (f x + y)) := by rw [div_self (Ne.symm (ne_of_lt h2))]
        _ = (f (x + y) * (f x + y)) / (f x + y) := mul_div_assoc' _ _ _
        _ ≤ (f x)^2 / (f x + y)                 := (div_le_div_right h2).mpr h1
        _ = (f x) * (f x / (f x + y))           := by field_simp [pow_two]
@@ -69,11 +69,12 @@ problem bulgaria1998_p3
        _ = (f (x + f x) * (f x + f x)) / (f x + f x) := mul_div_assoc' _ _ _
        _ ≤ (f x)^2 / (f x + f x)                 := (div_le_div_right h2).mpr h1
        _ = (f x) * (f x / (f x + f x))           := by field_simp [pow_two]
-       _ = (f x) * (f x / (2 * f x))             := by rw[two_mul]
-       _ = f x / 2                               := by field_simp[h7]
+       _ = (f x) * (f x / (2 * f x))             := by rw [two_mul]
+       _ = f x / 2                               := by field_simp [h7]
 
   let x_seq : ℕ → ℝ := λ n : ℕ ↦ 1 + ∑ i in Finset.range n, (f 1) / (2^i)
-  have hz : x_seq 0 = 1 := by simp only [add_right_eq_self, Finset.sum_empty, Finset.range_zero]
+  have hz : x_seq 0 = 1 := by
+    simp only [add_right_eq_self, Finset.sum_empty, Finset.range_zero]
   have hf1 := hpos 1 zero_lt_one
 
   have x_seq_pos : ∀ n: ℕ, 0 < x_seq n := by
@@ -89,7 +90,7 @@ problem bulgaria1998_p3
   have f_x_seq: ∀ n : ℕ, f (x_seq n) ≤ f 1 / 2^n := by
     intro n
     induction' n with pn hpn
-    · rw[hz]; simp only [Nat.zero_eq, pow_zero, div_one, le_refl]
+    · rw [hz]; simp only [Nat.zero_eq, pow_zero, div_one, le_refl]
     have hpp : x_seq pn.succ = x_seq pn + f 1 / 2^pn := by
       rw [show x_seq _ = 1 + ∑ i in Finset.range _, (f 1) / (2^i) by rfl]
       have : ∑ i in Finset.range pn.succ, f 1 / 2 ^ i =
@@ -99,26 +100,26 @@ problem bulgaria1998_p3
       ring
 
     have h1 : f (x_seq pn.succ) ≤ f (x_seq pn + f (x_seq pn)) := by
-     rw[hpp]
+     rw [hpp]
      obtain heq | hlt := eq_or_lt_of_le hpn
-     · rw[heq]
+     · rw [heq]
      · have := le_of_lt (f_decr (x_seq pn + f (x_seq pn)) (f 1 / 2 ^ pn - f (x_seq pn))
                                 (add_pos (x_seq_pos pn) (hpos (x_seq pn) (x_seq_pos pn)))
                                 (sub_pos.mpr hlt))
-       rw[add_add_sub_cancel] at this
+       rw [add_add_sub_cancel] at this
        exact this
 
     calc f (x_seq pn.succ)
          ≤ f (x_seq pn + f (x_seq pn)) := h1
        _ ≤ f (x_seq pn) / 2 := f_half (x_seq pn) (x_seq_pos pn)
        _ ≤ (f 1 / 2 ^ pn) / 2 := (div_le_div_right two_pos).mpr hpn
-       _ = f 1 / 2 ^ pn.succ := by {field_simp[ne_of_gt hf1]; rw[pow_succ]; ring_nf}
+       _ = f 1 / 2 ^ pn.succ := by field_simp [ne_of_gt hf1]; rw [pow_succ]; ring_nf
 
   have h1: ∀ n: ℕ, x_seq n < 1 + 3 * f 1 := by
     intro n
     norm_num
     calc ∑ i in Finset.range n, f 1 / (2:ℝ) ^ i
-         = (∑ i in Finset.range n, 1 / (2:ℝ) ^ i) * f 1 := by {rw [Finset.sum_mul]; field_simp }
+         = (∑ i in Finset.range n, 1 / (2:ℝ) ^ i) * f 1 := by rw [Finset.sum_mul]; field_simp
        _ < 3 * f 1 := (mul_lt_mul_right hf1).mpr (geom_sum_bound n)
 
   have h2 : ∀ n : ℕ, 0 < 1 + 3 * f 1 - x_seq n := by intro n; linarith [h1 n]

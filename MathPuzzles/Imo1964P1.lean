@@ -62,26 +62,26 @@ problem imo_1964_p1b (n : ℕ) : ¬ 7 ∣ (2^n + 1) := by
 
   have h := calc
      0 = (2 ^ (3 * (n / 3) + n % 3) + 1) % 7       := h.symm
-     _ = ((2 ^ 3) ^ (n / 3) * 2 ^ (n % 3) + 1) % 7 := by rw[pow_add, pow_mul]
+     _ = ((2 ^ 3) ^ (n / 3) * 2 ^ (n % 3) + 1) % 7 := by rw [pow_add, pow_mul]
      _ = ((2 ^ 3 % 7) ^ (n / 3) % 7 * (2 ^ (n % 3) % 7) % 7 + 1 % 7) % 7 :=
-                   by rw[Nat.add_mod, Nat.mul_mod, Nat.pow_mod]
+                   by rw [Nat.add_mod, Nat.mul_mod, Nat.pow_mod]
      _ = (1 ^ (n / 3) % 7 * (2 ^ (n % 3) % 7) % 7 + 1 % 7) % 7 :=
-                   by rw[show (2 ^ 3) % 7 = 1 by rfl]
+                   by rw [show (2 ^ 3) % 7 = 1 by rfl]
      _ = (1 % 7 * (2 ^ (n % 3) % 7) % 7 + 1 % 7) % 7 := by rw[one_pow]
      _ = (2 ^ (n % 3) % 7 + 1) % 7 :=
-                   by rw[show 1 % 7 = 1 by rfl, one_mul, Nat.mod_mod]
+                   by rw [show 1 % 7 = 1 by rfl, one_mul, Nat.mod_mod]
 
   cases hn' : n % 3 with
-  | zero => rw[hn'] at h; norm_num at h
+  | zero => rw [hn'] at h; norm_num at h
   | succ n' =>
     cases n' with
-    | zero => rw[hn'] at h; norm_num at h
+    | zero => rw [hn'] at h; norm_num at h
     | succ n' =>
       cases n' with
-      | zero => rw[hn'] at h; norm_num at h
+      | zero => rw [hn'] at h; norm_num at h
       | succ n' => have h5 : 3 > 0 := by norm_num
                    have h6 := Nat.mod_lt n h5
-                   rw[hn'] at h6
+                   rw [hn'] at h6
                    linarith
 
 /- An alternative proof, heavily golfed. The statement here is slightly modified from the original one. -/
