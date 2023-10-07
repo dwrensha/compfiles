@@ -133,19 +133,38 @@ lemma usa2002_p1_generalized
               simp [hss.1, hss.2] at hs12
               exact hs12
 
-      · let b : { a : Finset S // f a = Color.red } → { a : Finset S' // f' a = Color.red } :=
+      · -- red iff (does not contain s (i.e. is in S')
+        --          and is red in the recursively-chosen coloring f')
+        let b : { a : Finset S // f a = Color.red } → { a : Finset S' // f' a = Color.red } :=
             fun ⟨a, ha⟩ ↦ ⟨Finset.subtype _ a, by
                unfold_let f at ha
                simp at ha
                split_ifs at ha
                exact ha
               ⟩
+
         have h3 : Function.Bijective b := by
           constructor
           · rintro ⟨x,hx⟩ ⟨y,hy⟩ hxy
             unfold_let b at hxy
             simp at hxy
-            sorry
+            have h3 : ¬ s ∈ x := by
+              intro hsx
+              unfold_let f at hx
+              simp [hsx] at hx
+            have h4 : ¬ s ∈ y := by
+              intro hsy
+              unfold_let f at hy
+              simp [hsy] at hy
+            apply_fun (Finset.map (Function.Embedding.subtype _) ·) at hxy
+            have h3' : ∀ x1 ∈ x, x1 ≠ s := by
+              intro x1 hx1 hx1n; rw[hx1n] at hx1; exact h3 hx1
+            have h4' : ∀ y1 ∈ y, y1 ≠ s := by
+              intro y1 hy1 hy1n; rw[hy1n] at hy1; exact h4 hy1
+            rw [Finset.subtype_map_of_mem h3',
+                Finset.subtype_map_of_mem h4'] at hxy
+            rw [Subtype.mk.injEq]
+            exact hxy
           · intro x
             use ⟨Finset.map (Function.Embedding.subtype _) x.val,
                  by unfold_let f; simp; sorry⟩
