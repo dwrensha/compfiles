@@ -149,17 +149,11 @@ lemma usa2002_p1_generalized
 
         have h3 : Function.Bijective b := by
           constructor
-          · rintro ⟨x,hx⟩ ⟨y,hy⟩ hxy
+          · rintro ⟨x, hx⟩ ⟨y,hy⟩ hxy
             unfold_let b at hxy
             simp at hxy
-            have h3 : ¬ s ∈ x := by
-              intro hsx
-              unfold_let f at hx
-              simp [hsx] at hx
-            have h4 : ¬ s ∈ y := by
-              intro hsy
-              unfold_let f at hy
-              simp [hsy] at hy
+            obtain ⟨h3, h6⟩ := (h2 x).mp hx
+            obtain ⟨h4, h7⟩ := (h2 y).mp hy
             apply_fun (Finset.map (Function.Embedding.subtype _) ·) at hxy
             have h3' : ∀ x1 ∈ x, x1 ≠ s := by
               intro x1 hx1 hx1n; rw[hx1n] at hx1; exact h3 hx1
