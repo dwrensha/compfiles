@@ -185,8 +185,58 @@ lemma usa2002_p1_generalized
         then Color.red
         else f' (Finset.subtype _ x)
       use f
-
-      sorry
+      have h2 : ∀ a : Finset S,
+          (f a = Color.blue ↔ s ∉ a ∧ f' (Finset.subtype _ a) = Color.blue) := by
+        intro a
+        constructor
+        · intro ha
+          have haa : s ∉ a := by
+            intro hns
+            simp [hns] at ha
+          constructor
+          · exact haa
+          · simp only [haa] at ha
+            exact ha
+        · intro hsa
+          simp[hsa]
+      constructor
+      · intro s1 s2 hs12
+        obtain ⟨h4, h5⟩ := h2 s1
+        obtain ⟨h4', h5'⟩ := h2 s2
+        obtain hfs1 | hfs1 := Classical.em (f s1 = Color.blue)
+        · obtain ⟨h6, h7⟩ := h4 hfs1
+          have hfs2 : f s2 = Color.blue := by rwa [hs12] at hfs1
+          obtain ⟨h6', h7'⟩ := h4' hfs2
+          rw [←h7] at h7'
+          have h8 := hf1' _ _ h7'
+          rw [hs12]
+          unfold_let f
+          simp [h6, h6']
+          rw [←h8, Finset.subtype_union, Finset.union_comm]
+        · obtain hss | hss := Classical.em (s ∈ s1 ∪ s2)
+          · unfold_let f
+            simp only [Finset.mem_union] at hss
+            simp only [Finset.mem_union, hss, dite_eq_ite, ite_true]
+            cases' hss with hss hss
+            · simp [hss]
+            · split_ifs with h
+              · rfl
+              · unfold_let f at hfs1
+                simp only [h, dite_eq_ite, ite_false] at hfs1
+                match h20 : (f' (Finset.subtype (fun a => ¬a = s) s1)) with
+                | Color.blue => exact (hfs1 h20).elim
+                | Color.red => rfl
+          · -- s1 ∪ s2 is in S'
+            unfold_let f
+            simp only [hss, dite_false]
+            rw [Finset.mem_union, not_or] at hss
+            simp only [hss.1, dite_false]
+            rw [Finset.subtype_union]
+            apply hf1'
+            · unfold_let at hs12
+              simp [hss.1, hss.2] at hs12
+              exact hs12
+      · sorry
 
 problem usa2002_p1
     {α : Type} [DecidableEq α] [Fintype α] (hs : Fintype.card α = 2002)
