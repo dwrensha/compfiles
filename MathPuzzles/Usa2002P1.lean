@@ -74,6 +74,7 @@ lemma usa2002_p1_generalized
     intros S hde hft hs N hN
     have s : S := Nonempty.some (Fintype.card_pos_iff.mp (by rw[hs]; exact Nat.succ_pos k))
     let S' := {a : S // a ≠ s}
+    have hs' : Fintype.card S' = k := by simp [Fintype.card_subtype_compl, hs]
 
     obtain hl | hg := le_or_gt N (2 ^ k)
     · -- If N ≤ 2ᵏ, then we may color blue all subsets of S which contain s,
@@ -81,10 +82,9 @@ lemma usa2002_p1_generalized
       -- of any two red sets must be a subset of S', which is properly colored, and
       -- any the union of any two blue sets either must be in S', which is properly
       -- colored, or must contain s and therefore be blue.
-      have hs' : Fintype.card S' = k := by simp[Fintype.card_subtype_compl, hs]
       obtain ⟨f', hf1', hf2'⟩ := ih hs' N hl
       let f (x: Finset S) : Color :=
-        if h: s ∈ x
+        if h : s ∈ x
         then Color.blue
         else f' (Finset.subtype _ x)
       use f
@@ -139,9 +139,7 @@ lemma usa2002_p1_generalized
               simp [hss.1, hss.2] at hs12
               exact hs12
 
-      · -- red iff (does not contain s (i.e. is in S')
-        --          and is red in the recursively-chosen coloring f')
-        let b : { a : Finset S // f a = Color.red } → { a : Finset S' // f' a = Color.red } :=
+      · let b : { a : Finset S // f a = Color.red } → { a : Finset S' // f' a = Color.red } :=
             fun ⟨a, ha⟩ ↦ ⟨Finset.subtype _ a, by
                unfold_let f at ha
                simp at ha
@@ -184,6 +182,16 @@ lemma usa2002_p1_generalized
       -- N - 2ᵏ elements of S' red in such a way that S' is colored properly.
       -- Then S is properly colored, using similar reasoning as before.
       -- Thus the induction is complete.
+      have hl : N - 2^k ≤ 2^k := by
+        rw [pow_succ, two_mul] at hN
+        exact Nat.sub_le_of_le_add hN
+      obtain ⟨f', hf1', hf2'⟩ := ih hs' (N - 2^k) hl
+      let f (x : Finset S) : Color :=
+        if h : s ∈ x
+        then Color.red
+        else f' (Finset.subtype _ x)
+      use f
+
       sorry
 
 problem usa2002_p1
