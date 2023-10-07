@@ -37,9 +37,15 @@ inductive Color : Type where
 deriving DecidableEq, Fintype
 
 -- Seems like this maybe belongs in mathlib?
-def Finset.subtype_union {α} (p : α → Prop) [DecidableEq α] [DecidablePred p] (s1 s2 : Finset α) :
+lemma Finset.subtype_union {α} (p : α → Prop) [DecidableEq α] [DecidablePred p] (s1 s2 : Finset α) :
     Finset.subtype p (s1 ∪ s2) = Finset.subtype p s1 ∪ Finset.subtype p s2 := by
   ext a; simp
+
+lemma Finset.subtype_map_subtype {α : Type} {p : α → Prop} [DecidablePred p]
+    (x : Finset {a : α // p a}) :
+    Finset.subtype p (Finset.map (Function.Embedding.subtype p) x) = x := by
+  ext ⟨y, hy⟩
+  simp [hy]
 
 lemma usa2002_p1_generalized
     {α : Type} [DecidableEq α] [Fintype α] (n : ℕ) (hs : Fintype.card α = n)
@@ -165,10 +171,13 @@ lemma usa2002_p1_generalized
                 Finset.subtype_map_of_mem h4'] at hxy
             rw [Subtype.mk.injEq]
             exact hxy
-          · intro x
-            use ⟨Finset.map (Function.Embedding.subtype _) x.val,
-                 by unfold_let f; simp; sorry⟩
-            sorry
+          · rintro ⟨x, hx⟩
+            use ⟨Finset.map (Function.Embedding.subtype _) x,
+                 by simp [Finset.subtype_map_subtype, hx]⟩
+            unfold_let b
+            simp only [Subtype.mk.injEq]
+            congr
+            simp [Finset.subtype_map_subtype]
         rw [Fintype.card_of_bijective h3]
         exact hf2'
     . -- If N > 2ᵏ, then we color all subsets containing s red, and we color
