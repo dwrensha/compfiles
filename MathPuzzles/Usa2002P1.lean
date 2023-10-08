@@ -236,7 +236,38 @@ lemma usa2002_p1_generalized
             · unfold_let at hs12
               simp [hss.1, hss.2] at hs12
               exact hs12
-      · sorry
+      · have h2' : ∀ (a : Finset S),
+            f a = Color.red ↔ s ∈ a ∨
+                 f' (Finset.subtype (fun a => a ≠ s) a) = Color.red := by
+          intro a
+          simp only [ne_eq, dite_eq_ite, ite_eq_left_iff]
+          tauto
+        let b : { a // f a = Color.red } →
+               { a : Finset S // s ∈ a } ⊕ { a' // f' a' = Color.red } :=
+          fun ⟨a, ha⟩ ↦
+            if h : s ∈ a
+            then Sum.inl ⟨a, h⟩
+            else Sum.inr ⟨Finset.subtype _ a, by
+              match (h2' a).mp ha with
+              | .inl h' => contradiction
+              | .inr hh => exact hh ⟩
+
+        have h3 : Function.Bijective b := by
+          constructor
+          · intro x y hxy
+            simp only [dite_eq_ite] at hxy
+            split_ifs at hxy
+            · simp at hxy; exact SetCoe.ext hxy
+            · sorry
+          · intro x
+            match x with
+            | .inl y => sorry
+            | .inr y => sorry
+        rw [Fintype.card_of_bijective h3]
+        have h4 : Fintype.card { a : Finset S // s ∈ a } = 2^k := sorry
+        simp only [Fintype.card_sum, h4, hf2']
+        rw [add_tsub_cancel_iff_le]
+        exact Nat.le_of_lt hg
 
 problem usa2002_p1
     {α : Type} [DecidableEq α] [Fintype α] (hs : Fintype.card α = 2002)
