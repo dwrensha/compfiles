@@ -4,7 +4,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: David Renshaw
 -/
 
-import Mathlib.Data.Set.Intervals.Basic
 import Mathlib.Algebra.BigOperators.Basic
 import Mathlib.Algebra.BigOperators.Intervals
 import Mathlib.Data.Int.ModEq
@@ -32,12 +31,12 @@ ends in the digit 9.
 lemma zmod_eq (a b c : ℤ) : a ≡ b [ZMOD c] ↔ a % c = b % c := by rfl
 
 lemma mod2_abs (a : ℤ) : |a| % 2 = a % 2 := by
-  cases' abs_cases a with h h <;> rw[h.1]
-  rw[Int.neg_emod_two]
+  cases' abs_cases a with h h <;> rw [h.1]
+  rw [Int.neg_emod_two]
 
 -- For integers M,N we have |M-N| ≡ M-N ≡ M+N MOD 2.
 lemma mod2_diff (a b : ℤ) : |a - b| % 2 = (a + b) % 2 := by
-  rw[mod2_abs, Int.sub_eq_add_neg, Int.add_emod, Int.neg_emod_two, ←Int.add_emod]
+  rw [mod2_abs, Int.sub_eq_add_neg, Int.add_emod, Int.neg_emod_two, ←Int.add_emod]
 
 /--
  `ab 0 i` is aᵢ and `ab 1 i` is `bᵢ`
@@ -59,7 +58,7 @@ problem usa1998_p1
 
   -- so S=|a₁-b₁|+|a₂-b₂|+ ⋯ +|a₉₉₉ - b₉₉₉| ≡ 1+1+ ⋯ + 1 ≡ 999 ≡ 4 MOD 5.
   have h2 : (∑ i : Fin 999, |ab 0 i - ab 1 i|) ≡ 4 [ZMOD 5] :=
-  by rw[zmod_eq, Finset.sum_int_mod, Fintype.sum_congr _ _ h1]
+  by rw [zmod_eq, Finset.sum_int_mod, Fintype.sum_congr _ _ h1]
      rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin]
      norm_num
 
@@ -72,13 +71,13 @@ problem usa1998_p1
   --   ≡ 1 + 2 + ⋯ + 1998 [MOD 2]
   --   ≡ 999*1999 ≡ 1 [MOD 2]
   have h3 : ∑ i : Fin 999, |(ab 0 i : ℤ) - ab 1 i| ≡ 1 [ZMOD 2] := by
-    rw[zmod_eq, Finset.sum_int_mod]
+    rw [zmod_eq, Finset.sum_int_mod]
     have h4 : ∀ i : Fin 999,
         |(ab 0 i : ℤ) - ab 1 i| % 2 = ((ab 0 i % 2) + (ab 1 i % 2)) % 2 := by
       intro i
-      rw[mod2_diff, Int.add_emod]
+      rw [mod2_diff, Int.add_emod]
 
-    rw[Fintype.sum_congr _ _ h4, ←Finset.sum_int_mod, Finset.sum_add_distrib]
+    rw [Fintype.sum_congr _ _ h4, ←Finset.sum_int_mod, Finset.sum_add_distrib]
 
     have h9 : ∑ x : Fin 999, ((ab 0 x : ℤ) % 2) + ∑ x : Fin 999, ((ab 1 x : ℤ) % 2) =
          ∑ x : Fin 2 × Fin 999, (↑↑(ab.uncurry x) % 2) := by
