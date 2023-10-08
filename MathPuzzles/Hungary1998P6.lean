@@ -25,7 +25,7 @@ Let x, y, z be integers with z > 1. Show that
 #[problem_setup] open BigOperators
 
 lemma sum_range_square_mul_six (n : ℕ) :
-    (∑i in Finset.range n, (i+1)^2) * 6 = n * (n + 1) * (2*n + 1) := by
+    (∑i in Finset.range n, (i + 1)^2) * 6 = n * (n + 1) * (2 * n + 1) := by
   induction n with
   | zero => rfl
   | succ n ih =>
@@ -33,18 +33,18 @@ lemma sum_range_square_mul_six (n : ℕ) :
     ring
 
 lemma sum_range_square (n : ℕ) :
-    ∑i in Finset.range n, (i+1)^2 = n * (n + 1) * (2*n + 1)/6 :=
+    ∑i in Finset.range n, (i + 1)^2 = n * (n + 1) * (2 * n + 1)/6 :=
   by rw [← sum_range_square_mul_six n, Nat.mul_div_cancel]
      norm_num
 
 lemma cast_sum_square (n : ℕ) :
   ∑i in Finset.range n, ((i:ℤ)+1)^2 =
-   (((∑i in Finset.range n, (i+1)^2):ℕ) :ℤ) := by norm_cast
+   (((∑i in Finset.range n, (i+1)^2) : ℕ) : ℤ) := by norm_cast
 
 problem hungary1998_p6 (x y : ℤ) (z : ℕ) (hz : 1 < z) :
-    (∑ i in Finset.range 99, (x + i + 1)^2) ≠ y^z := by
+    ∑ i in Finset.range 99, (x + i + 1)^2 ≠ y^z := by
   -- Follows the proof in _Mathematical Olympiads 1998-1999_
-  -- (edited by Titu Andreescu and Zuming Feng)
+  -- by Titu Andreescu and Zuming Feng.
 
   -- Suppose (x + 1)² + (x + 2)² + ... + (x + 99)² = yᶻ.
 
@@ -120,5 +120,5 @@ problem hungary1998_p6 (x y : ℤ) (z : ℕ) (hz : 1 < z) :
      (((3 * (11 * (x ^ 2 + 100 * x + 3316) + 7))% 3) + (1%3)) % 3 :=
    Int.add_emod _ _ _
 
-  rw[h19] at h12
+  rw [h19] at h12
   norm_num at h12
