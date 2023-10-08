@@ -254,11 +254,15 @@ lemma usa2002_p1_generalized
 
         have h3 : Function.Bijective b := by
           constructor
-          · intro x y hxy
+          · rintro ⟨x, hx⟩ ⟨y, hy⟩ hxy
             simp only [dite_eq_ite] at hxy
-            split_ifs at hxy
+            split_ifs at hxy with h4 h5 h6
             · simp at hxy; exact SetCoe.ext hxy
-            · sorry
+            · simp only [Sum.inr.injEq, Subtype.mk.injEq] at hxy
+              cases' (h2' x).mp hx with hxx hxx
+              · contradiction
+              · rw [Finset.ext_iff] at hxy
+                sorry
           · intro x
             match x with
             | .inl y => sorry
