@@ -51,8 +51,8 @@ problem usa1998_p1
   -- Informal solution from
   -- https://artofproblemsolving.com/wiki/index.php/1998_USAMO_Problems/Problem_1
   -- Notice that |aᵢ-bᵢ| ≡ 1 MOD 5,
-  have h1 : ∀ i : Fin 999, |(ab 0 i : ℤ) - ab 1 i| % 5 = 1 % 5 := fun ⟨i, hi⟩ ↦ by
-    cases' habd ⟨i, hi⟩ with habd habd
+  have h1 : ∀ i : Fin 999, |(ab 0 i : ℤ) - ab 1 i| % 5 = 1 % 5 := fun i ↦ by
+    cases' habd i with habd habd
     · rw [habd]
     · rw [habd]; rfl
 
@@ -83,7 +83,9 @@ problem usa1998_p1
          ∑ x : Fin 2 × Fin 999, (↑↑(ab.uncurry x) % 2) := by
 
       have h12 : (Finset.univ : Finset (Fin 2)) =
-                  Finset.cons 0 (Finset.cons 1 {} (Finset.not_mem_empty _)) (by simp) := by simp
+                  Finset.cons 0
+                    (Finset.cons 1
+                      {} (Finset.not_mem_empty _)) (by simp) := by simp
       have h11 : ∑ x : Fin 999, ((ab 0 x : ℤ) % 2) + ∑ x : Fin 999, ((ab 1 x : ℤ) % 2) =
           ∑ x : Fin 2, ∑ y : Fin 999, ((ab x y : ℤ) % 2) := by
         rw [h12, Finset.sum_cons, Finset.sum_cons, Finset.sum_empty]
