@@ -47,6 +47,23 @@ lemma Finset.subtype_map_subtype {α : Type} {p : α → Prop} [DecidablePred p]
   ext ⟨y, hy⟩
   simp [hy]
 
+lemma lemma1 {α : Type} [Fintype α] [DecidableEq α] (s : α) :
+   Fintype.card {a : Finset α // s ∈ a} = Fintype.card {a : Finset α // s ∉ a} := by
+  let b : {a : Finset α // s ∉ a} → {a : Finset α // s ∈ a} :=
+     fun ⟨a, ha⟩ ↦ ⟨Finset.cons s a ha, Finset.mem_cons_self s a⟩
+  have hb : b.Bijective := by
+    constructor
+    · rintro ⟨x, hx⟩ ⟨y, hy⟩ hxy
+      simp only [Subtype.mk.injEq] at hxy
+      rw [Subtype.mk.injEq]
+      apply_fun (Finset.erase · s) at hxy
+      simp [Finset.erase_eq_of_not_mem hx, Finset.erase_eq_of_not_mem hy] at hxy
+      exact hxy
+    · rintro ⟨x, hx⟩
+      use ⟨x.erase s, Finset.not_mem_erase s x⟩
+      simp [Finset.insert_erase hx]
+  rw [Fintype.card_of_bijective hb]
+
 lemma usa2002_p1_generalized
     {α : Type} [DecidableEq α] [Fintype α] (n : ℕ) (hs : Fintype.card α = n)
     (N : ℕ) (hN : N ≤ 2 ^ n) :
@@ -65,9 +82,9 @@ lemma usa2002_p1_generalized
     intro α hde hft hs N hN
     rw [Nat.pow_zero] at hN
     interval_cases N
-    · use λ s ↦ Color.blue
+    · use λ _ ↦ Color.blue
       simp only [forall_true_left, forall_const, Fintype.card_eq_zero]
-    · use λ s ↦ Color.red
+    · use λ _ ↦ Color.red
       simp [Fintype.card_subtype, Finset.card_univ, hs]
   · -- Suppose that our claim holds for n = k. Let s ∈ S, |S| = k + 1,
     -- and let S' denote the set of all elements of S other than s.
@@ -84,11 +101,12 @@ lemma usa2002_p1_generalized
       -- colored, or must contain s and therefore be blue.
       obtain ⟨f', hf1', hf2'⟩ := ih hs' N hl
       let f (x: Finset S) : Color :=
-        if h : s ∈ x
+        if s ∈ x
         then Color.blue
         else f' (Finset.subtype _ x)
       use f
-      have h2 : ∀ a : Finset S, (f a = Color.red ↔ s ∉ a ∧ f' (Finset.subtype _ a) = Color.red) := by
+      have h2 : ∀ a : Finset S,
+                (f a = Color.red ↔ s ∉ a ∧ f' (Finset.subtype _ a) = Color.red) := by
         intro a
         constructor
         · intro ha
@@ -103,8 +121,8 @@ lemma usa2002_p1_generalized
           simp[hsa]
       constructor
       · intro s1 s2 hs12
-        obtain ⟨h4, h5⟩ := h2 s1
-        obtain ⟨h4', h5'⟩ := h2 s2
+        obtain ⟨h4, _⟩ := h2 s1
+        obtain ⟨h4', _⟩ := h2 s2
         obtain hfs1 | hfs1 := Classical.em (f s1 = Color.red)
         · obtain ⟨h6, h7⟩ := h4 hfs1
           have hfs2 : f s2 = Color.red := by rwa [hs12] at hfs1
@@ -152,8 +170,8 @@ lemma usa2002_p1_generalized
           · rintro ⟨x, hx⟩ ⟨y,hy⟩ hxy
             unfold_let b at hxy
             simp at hxy
-            obtain ⟨h3, h6⟩ := (h2 x).mp hx
-            obtain ⟨h4, h7⟩ := (h2 y).mp hy
+            obtain ⟨h3, _⟩ := (h2 x).mp hx
+            obtain ⟨h4, _⟩ := (h2 y).mp hy
             apply_fun (Finset.map (Function.Embedding.subtype _) ·) at hxy
             have h3' : ∀ x1 ∈ x, x1 ≠ s := by
               intro x1 hx1 hx1n; rw[hx1n] at hx1; exact h3 hx1
@@ -181,9 +199,7 @@ lemma usa2002_p1_generalized
         exact Nat.sub_le_of_le_add hN
       obtain ⟨f', hf1', hf2'⟩ := ih hs' (N - 2^k) hl
       let f (x : Finset S) : Color :=
-        if h : s ∈ x
-        then Color.red
-        else f' (Finset.subtype _ x)
+        if s ∈ x then Color.red else f' (Finset.subtype _ x)
       use f
       have h2 : ∀ a : Finset S,
           (f a = Color.blue ↔ s ∉ a ∧ f' (Finset.subtype _ a) = Color.blue) := by
@@ -201,8 +217,8 @@ lemma usa2002_p1_generalized
           simp[hsa]
       constructor
       · intro s1 s2 hs12
-        obtain ⟨h4, h5⟩ := h2 s1
-        obtain ⟨h4', h5'⟩ := h2 s2
+        obtain ⟨h4, _⟩ := h2 s1
+        obtain ⟨h4', _⟩ := h2 s2
         obtain hfs1 | hfs1 := Classical.em (f s1 = Color.blue)
         · obtain ⟨h6, h7⟩ := h4 hfs1
           have hfs2 : f s2 = Color.blue := by rwa [hs12] at hfs1
@@ -290,7 +306,28 @@ lemma usa2002_p1_generalized
                   by simp [Finset.subtype_map_subtype, hy]⟩
               simp [Finset.subtype_map_subtype]
         rw [Fintype.card_of_bijective h3]
-        have h4 : Fintype.card { a : Finset S // s ∈ a } = 2^k := sorry
+        have h4 : Fintype.card { a : Finset S // s ∈ a } = 2^k := by
+          clear h3 b h2' h2 f hf2' hf1'
+          have h5 : Fintype.card (Finset S') = 2 ^ k := by rw [Fintype.card_finset, hs']
+          rw [lemma1]
+          let b : Finset S' → { a : Finset S // s ∉ a } :=
+            fun a ↦ ⟨Finset.map (Function.Embedding.subtype _) a, by simp⟩
+          have hb : b.Bijective := by
+            constructor
+            · rintro x y hxy
+              simp only [Subtype.mk.injEq, Finset.map_inj] at hxy
+              exact hxy
+            · rintro ⟨x, hx⟩
+              use Finset.subtype _ x
+              simp only [Finset.subtype_map, Subtype.mk.injEq]
+              have h7 : ∀ a ∈ x, ¬ a = s := by
+                intro a ha has
+                rw [has] at ha
+                contradiction
+              exact Finset.filter_eq_self.mpr h7
+          rw [←Fintype.card_of_bijective hb]
+          exact h5
+
         simp only [Fintype.card_sum, h4, hf2']
         rw [add_tsub_cancel_iff_le]
         exact Nat.le_of_lt hg
