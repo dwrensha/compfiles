@@ -265,8 +265,19 @@ lemma usa2002_p1_generalized
                 sorry
           · intro x
             match x with
-            | .inl y => sorry
-            | .inr y => sorry
+            | .inl y =>
+              have h5 : f y = Color.red := by
+                simp only [dite_eq_ite, ite_eq_left_iff]
+                intro hsn
+                have := y.prop
+                contradiction
+              use ⟨y.val, h5⟩
+              simp only [dite_eq_ite, Subtype.coe_eta, dite_eq_left_iff]
+              intro hsn
+              have := y.prop
+              contradiction
+            | .inr y =>
+              sorry
         rw [Fintype.card_of_bijective h3]
         have h4 : Fintype.card { a : Finset S // s ∈ a } = 2^k := sorry
         simp only [Fintype.card_sum, h4, hf2']
