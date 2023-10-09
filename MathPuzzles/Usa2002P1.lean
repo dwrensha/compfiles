@@ -262,7 +262,20 @@ lemma usa2002_p1_generalized
               cases' (h2' x).mp hx with hxx hxx
               · contradiction
               · rw [Finset.ext_iff] at hxy
-                sorry
+                cases' (h2' y).mp hy with hyy hyy
+                · contradiction
+                · simp [hxx, hyy] at hxy;
+                  rw [Subtype.mk.injEq]
+                  ext a
+                  constructor
+                  · intro ha
+                    have h6 : ¬ a = s := by intro has; rw [has] at ha; contradiction
+                    have h5 := hxy a h6
+                    rwa [←h5]
+                  · intro ha
+                    have h6 : ¬ a = s := by intro has; rw [has] at ha; contradiction
+                    have h5 := hxy a h6
+                    rwa [h5]
           · intro x
             match x with
             | .inl ⟨y, hy⟩ =>
