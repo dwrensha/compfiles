@@ -265,19 +265,17 @@ lemma usa2002_p1_generalized
                 sorry
           · intro x
             match x with
-            | .inl y =>
+            | .inl ⟨y, hy⟩ =>
               have h5 : f y = Color.red := by
                 simp only [dite_eq_ite, ite_eq_left_iff]
                 intro hsn
-                have := y.prop
                 contradiction
-              use ⟨y.val, h5⟩
-              simp only [dite_eq_ite, Subtype.coe_eta, dite_eq_left_iff]
-              intro hsn
-              have := y.prop
-              contradiction
-            | .inr y =>
-              sorry
+              use ⟨y, h5⟩
+              simp only [ne_eq, dite_eq_ite, hy, dite_true]
+            | .inr ⟨y, hy⟩ =>
+              use ⟨Finset.map (Function.Embedding.subtype _) y,
+                  by simp [Finset.subtype_map_subtype, hy]⟩
+              simp [Finset.subtype_map_subtype]
         rw [Fintype.card_of_bijective h3]
         have h4 : Fintype.card { a : Finset S // s ∈ a } = 2^k := sorry
         simp only [Fintype.card_sum, h4, hf2']
