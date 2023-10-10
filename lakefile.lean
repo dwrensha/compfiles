@@ -17,4 +17,4 @@ lean_exe extractProblems where
   root := `scripts.extractProblems
   supportInterpreter := true
 
-require mathlib from git "https://github.com/leanprover-community/mathlib4" @ "81fa8d9e845905d1ca6d742d17f63e2facb0eb88"
+require mathlib from git "https://github.com/leanprover-community/mathlib4" @ "3f4910debcdd03d6ca9f9063b698a36fd2e3c211"
