@@ -89,8 +89,8 @@ lemma usa2002_p1_generalized
   · -- Suppose that our claim holds for n = k. Let s ∈ S, |S| = k + 1,
     -- and let S' denote the set of all elements of S other than s.
     intros S hde hft hs N hN
-    have s : S := Nonempty.some (Fintype.card_pos_iff.mp (by rw[hs]; exact Nat.succ_pos k))
-    let S' := {a : S // a ≠ s}
+    have s : S := Nonempty.some (Fintype.card_pos_iff.mp (by rw [hs]; exact Nat.succ_pos k))
+    let S' := { a : S // a ≠ s }
     have hs' : Fintype.card S' = k := by simp [Fintype.card_subtype_compl, hs]
 
     obtain hl | hg := le_or_gt N (2 ^ k)
@@ -101,9 +101,7 @@ lemma usa2002_p1_generalized
       -- colored, or must contain s and therefore be blue.
       obtain ⟨f', hf1', hf2'⟩ := ih hs' N hl
       let f (x: Finset S) : Color :=
-        if s ∈ x
-        then Color.blue
-        else f' (Finset.subtype _ x)
+        if s ∈ x then Color.blue else f' (Finset.subtype _ x)
       use f
       have h2 : ∀ a : Finset S,
                 (f a = Color.red ↔ s ∉ a ∧ f' (Finset.subtype _ a) = Color.red) := by
@@ -113,12 +111,10 @@ lemma usa2002_p1_generalized
           have haa : s ∉ a := by
             intro hns
             simp [hns] at ha
-          constructor
-          · exact haa
-          · simp only [haa] at ha
-            exact ha
+          simp only [haa] at ha
+          exact ⟨haa, ha⟩
         · intro hsa
-          simp[hsa]
+          simp [hsa]
       constructor
       · intro s1 s2 hs12
         obtain ⟨h4, _⟩ := h2 s1
@@ -129,9 +125,7 @@ lemma usa2002_p1_generalized
           obtain ⟨h6', h7'⟩ := h4' hfs2
           rw [←h7] at h7'
           have h8 := hf1' _ _ h7'
-          rw [hs12]
-          unfold_let f
-          simp [h6, h6']
+          simp [hs12, h6, h6']
           rw [←h8, Finset.subtype_union, Finset.union_comm]
         · obtain hss | hss := Classical.em (s ∈ s1 ∪ s2)
           · unfold_let f
@@ -141,26 +135,22 @@ lemma usa2002_p1_generalized
             · simp [hss]
             · split_ifs with h
               · rfl
-              · unfold_let f at hfs1
-                simp only [h, dite_eq_ite, ite_false] at hfs1
+              · simp only [h, dite_eq_ite] at hfs1
                 match h20 : (f' (Finset.subtype (fun a => ¬a = s) s1)) with
                 | Color.red => exact (hfs1 h20).elim
                 | Color.blue => rfl
           · -- s1 ∪ s2 is in S'
-            unfold_let f
-            simp only [hss, dite_false]
+            simp only [hss]
             rw [Finset.mem_union, not_or] at hss
             simp only [hss.1, dite_false]
             rw [Finset.subtype_union]
             apply hf1'
-            · unfold_let at hs12
-              simp [hss.1, hss.2] at hs12
+            · simp [hss.1, hss.2] at hs12
               exact hs12
 
       · let b : { a : Finset S // f a = Color.red } → { a : Finset S' // f' a = Color.red } :=
             fun ⟨a, ha⟩ ↦ ⟨Finset.subtype _ a, by
-               unfold_let f at ha
-               simp at ha
+               simp only at ha
                split_ifs at ha
                exact ha
               ⟩
@@ -174,9 +164,9 @@ lemma usa2002_p1_generalized
             obtain ⟨h4, _⟩ := (h2 y).mp hy
             apply_fun (Finset.map (Function.Embedding.subtype _) ·) at hxy
             have h3' : ∀ x1 ∈ x, x1 ≠ s := by
-              intro x1 hx1 hx1n; rw[hx1n] at hx1; exact h3 hx1
+              intro x1 hx1 hx1n; rw [hx1n] at hx1; exact h3 hx1
             have h4' : ∀ y1 ∈ y, y1 ≠ s := by
-              intro y1 hy1 hy1n; rw[hy1n] at hy1; exact h4 hy1
+              intro y1 hy1 hy1n; rw [hy1n] at hy1; exact h4 hy1
             rw [Finset.subtype_map_of_mem h3',
                 Finset.subtype_map_of_mem h4'] at hxy
             rw [Subtype.mk.injEq]
@@ -206,15 +196,11 @@ lemma usa2002_p1_generalized
         intro a
         constructor
         · intro ha
-          have haa : s ∉ a := by
-            intro hns
-            simp [hns] at ha
-          constructor
-          · exact haa
-          · simp only [haa] at ha
-            exact ha
+          have haa : s ∉ a := fun hns ↦ by simp [hns] at ha
+          simp only [haa] at ha
+          exact ⟨haa, ha⟩
         · intro hsa
-          simp[hsa]
+          simp [hsa]
       constructor
       · intro s1 s2 hs12
         obtain ⟨h4, _⟩ := h2 s1
@@ -225,9 +211,7 @@ lemma usa2002_p1_generalized
           obtain ⟨h6', h7'⟩ := h4' hfs2
           rw [←h7] at h7'
           have h8 := hf1' _ _ h7'
-          rw [hs12]
-          unfold_let f
-          simp [h6, h6']
+          simp only [hs12, Finset.mem_union, h6, h6']
           rw [←h8, Finset.subtype_union, Finset.union_comm]
         · obtain hss | hss := Classical.em (s ∈ s1 ∪ s2)
           · unfold_let f
@@ -237,20 +221,16 @@ lemma usa2002_p1_generalized
             · simp [hss]
             · split_ifs with h
               · rfl
-              · unfold_let f at hfs1
-                simp only [h, dite_eq_ite, ite_false] at hfs1
+              · simp only [h] at hfs1
                 match h20 : (f' (Finset.subtype (fun a => ¬a = s) s1)) with
                 | Color.blue => exact (hfs1 h20).elim
                 | Color.red => rfl
           · -- s1 ∪ s2 is in S'
-            unfold_let f
             simp only [hss, dite_false]
             rw [Finset.mem_union, not_or] at hss
-            simp only [hss.1, dite_false]
-            rw [Finset.subtype_union]
+            simp only [hss.1, Finset.subtype_union, ite_false]
             apply hf1'
-            · unfold_let at hs12
-              simp [hss.1, hss.2] at hs12
+            · simp only [hss.1, hss.2] at hs12
               exact hs12
       · have h2' : ∀ (a : Finset S),
             f a = Color.red ↔ s ∈ a ∨
@@ -280,25 +260,22 @@ lemma usa2002_p1_generalized
               · rw [Finset.ext_iff] at hxy
                 cases' (h2' y).mp hy with hyy hyy
                 · contradiction
-                · simp [hxx, hyy] at hxy;
+                · simp only [Finset.mem_subtype, Subtype.forall] at hxy
                   rw [Subtype.mk.injEq]
                   ext a
                   constructor
                   · intro ha
                     have h6 : ¬ a = s := by intro has; rw [has] at ha; contradiction
-                    have h5 := hxy a h6
-                    rwa [←h5]
+                    rwa [←hxy a h6]
                   · intro ha
                     have h6 : ¬ a = s := by intro has; rw [has] at ha; contradiction
-                    have h5 := hxy a h6
-                    rwa [h5]
+                    rwa [hxy a h6]
           · intro x
             match x with
             | .inl ⟨y, hy⟩ =>
               have h5 : f y = Color.red := by
                 simp only [dite_eq_ite, ite_eq_left_iff]
-                intro hsn
-                contradiction
+                exact fun a ↦ (a hy).elim
               use ⟨y, h5⟩
               simp only [ne_eq, dite_eq_ite, hy, dite_true]
             | .inr ⟨y, hy⟩ =>
