@@ -33,7 +33,7 @@ Answer: yes.
 
 
 #[problem_setup] namespace KolmogorovStreams
-#[problem_setup] open Stream' BigOperators
+#[problem_setup] open scoped Stream'
 
 #[problem_setup] variable {α : Type}
 
@@ -58,7 +58,9 @@ lemma break_into_words_cons
     (a : Stream' α) :
     (break_into_words (first_length::lengths) a).tail =
            break_into_words lengths (a.drop first_length) := by
-  simp [break_into_words, corec, tail_map, tail_iterate]
+  simp [break_into_words, Stream'.corec, Stream'.tail_map, Stream'.tail_iterate]
+
+open scoped BigOperators
 
 lemma break_into_words_closed_form
     (lengths : Stream' ℕ)
@@ -83,7 +85,7 @@ lemma break_into_words_closed_form
     · intro a b; rfl
     · intro a b
       rw [Stream'.nth_succ, Stream'.iterate_eq, Stream'.tail_cons, hpn,
-          drop_drop, Finset.sum_range_succ']
+          Stream'.drop_drop, Finset.sum_range_succ']
       congr
 
 #[problem_setup]
