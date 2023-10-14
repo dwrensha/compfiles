@@ -1,14 +1,12 @@
-# math-puzzles-in-lean4
+# Compfiles: Catalog Of Math Problems Formalized In Lean, Emphasizing Solutions
 
-Math puzzles and their solutions, formalized in [Lean 4](https://github.com/leanprover/lean4).
-
-This is a continuation of
-the work in the Lean 3 repo https://github.com/dwrensha/math-puzzles-in-lean.
+A collection of olympiad-style math problems and their solutions,
+formalized in [Lean 4](https://github.com/leanprover/lean4).
 
 ## dashboard
 
 A list of all the problems and their status is
-available as a [dashboard](https://dwrensha.github.io/math-puzzles-in-lean4/)
+available as a [dashboard](https://dwrensha.github.io/compfiles/)
 that gets automatically updated on every push to the `main` branch of this repo.
 
 ## building
@@ -23,7 +21,7 @@ $ lake build
 
 ## extracting problems
 
-This repo defines some [special command wrappers](/MathPuzzles/Meta/ProblemExtraction.lean)
+This repo defines some [special command wrappers](/Compfiles/Meta/ProblemExtraction.lean)
 to support problem extraction.
 
 To generate problem statements with all solution information stripped, do:
@@ -42,5 +40,5 @@ to the "authors" field in the copyright header.
 
 |  |  |
 | ----- | ---- |
-| [IMO 1964 Problem 4](/MathPuzzles/Imo1964P4.lean) | [<img src="http://img.youtube.com/vi/TOzS4aC_K1g/maxresdefault.jpg" height="120px">](http://youtu.be/TOzS4aC_K1g)|
-| [IMO 1964 Problem 1b](/MathPuzzles/Imo1964P1.lean) | [<img src="http://img.youtube.com/vi/9d2nicgd68Q/maxresdefault.jpg" height="120px">](http://youtu.be/9d2nicgd68Q)|
+| [IMO 1964 Problem 4](/Compfiles/Imo1964P4.lean) | [<img src="http://img.youtube.com/vi/TOzS4aC_K1g/maxresdefault.jpg" height="120px">](http://youtu.be/TOzS4aC_K1g)|
+| [IMO 1964 Problem 1b](/Compfiles/Imo1964P1.lean) | [<img src="http://img.youtube.com/vi/9d2nicgd68Q/maxresdefault.jpg" height="120px">](http://youtu.be/9d2nicgd68Q)|

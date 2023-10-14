@@ -2,10 +2,10 @@ import Lake
 
 open Lake DSL
 
-package mathpuzzles
+package compfiles
 
 @[default_target]
-lean_lib MathPuzzles
+lean_lib Compfiles
 
 @[default_target]
 lean_exe buildWebpage where

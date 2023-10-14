@@ -59,7 +59,7 @@ jobs:
       - name: run buildWebpage
         id: run-buildWebpage
         env:
-          GITHUB_PAGES_BASEURL: https://dwrensha.github.io/math-puzzles-in-lean4/
+          GITHUB_PAGES_BASEURL: https://dwrensha.github.io/compfiles/
         run: |
           set -o pipefail
           echo "Starting build at $(date +'%T')"
