@@ -96,11 +96,10 @@ elab_rules : command
   | _,_ => ""
 
   let .some sStartPos := di.raw.getPos? | throwError "di syntax has no pos"
-  let sEndPos ← match ds.raw.getTailPos? with
-  | .some p => pure p
-  | .none => match di.raw.getTailPos? with
-             | .some p => pure p
-             | .none => throwError "ds syntax has no pos"
+  let sEndPos ← match ds.raw.getTailPos?, di.raw.getTailPos? with
+  | .some p, _  => pure p
+  | _, .some p  => pure p
+  | .none, .none => throwError "ds syntax has no pos"
 
   let mod := (←getEnv).header.mainModule
 
