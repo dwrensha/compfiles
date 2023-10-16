@@ -19,8 +19,8 @@ Similarly, such an arrangement is called *column-valid* if the numbers
 in each column can be permuted to make an arithmetic progression.
 
 Determine the values of n for which it possible to transform
-any row-valid arrangement into a column-valid arrangment by permuting
-the numbers in each row?
+any row-valid arrangement into a column-valid arrangement by permuting
+the numbers in each row.
 
 -/
 
