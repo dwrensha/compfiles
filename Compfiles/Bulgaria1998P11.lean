@@ -3,16 +3,13 @@ import Mathlib.Data.Nat.ModEq
 import Mathlib.Data.Nat.Parity
 import Mathlib.Algebra.GroupPower.Basic
 import Mathlib.Algebra.Parity
-
-import Mathlib.Tactic.ApplyFun
-import Mathlib.Tactic.LibrarySearch
-import Mathlib.Tactic.ModCases
-import Mathlib.Tactic.Ring
-import Mathlib.Tactic.Zify
+import Mathlib.Tactic
 
 import Compfiles.Meta.ProblemExtraction
 
-#[problem_setup]/-!
+problem_file
+
+/-!
 Bulgarian Mathematical Olympiad 1998, Problem 11
 
 Let m,n be natural numbers such that
@@ -22,7 +19,9 @@ Let m,n be natural numbers such that
 is an integer. Prove that A is odd.
 -/
 
-#[problem_setup] namespace Bulgaria1998P11
+namespace Bulgaria1998P11
+
+snip begin
 
 lemma mod_plus_pow (m n : ℕ) : (m + 3)^n % 3 = m^n % 3 := by
   induction' n with pn hpn
@@ -38,6 +37,8 @@ lemma foo1 (m n : ℕ) (ho : Odd m) : (m + 3) ^ n.succ % 2 = 0 := by
   cases' ho with w hw
   rw[hw, Nat.pow_succ, show 2 * w + 1 + 3 = 2 * (w + 2) by ring, Nat.mul_mod,
      Nat.mul_mod_right, mul_zero, Nat.zero_mod]
+
+snip end
 
 problem bulgaria1998_p11
     (m n A : ℕ)

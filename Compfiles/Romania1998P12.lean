@@ -4,23 +4,26 @@ import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 import Compfiles.Meta.ProblemExtraction
 
-#[problem_setup]/-!
+problem_file
+
+/-!
 # Romanian Mathematical Olympiad 1998, Problem 12
 
 Find all functions u : ℝ → ℝ for which there exists a strictly monotonic
 function f : ℝ → ℝ such that
 
   ∀ x,y ∈ ℝ, f(x + y) = f(x)u(y) + f(y)
-
 -/
+
+namespace Romania1998P12
+
+snip begin
 
 /-
 # Solution
 
 f(x) = eᵏˣ for some k : ℝ.
 -/
-
-#[problem_setup] namespace Romania1998P12
 
 lemma abs_pos' {x y : ℝ} (hy : x ≠ y) : 0 < |x - y| :=
   abs_pos.mpr (sub_ne_zero.mpr hy)
@@ -553,6 +556,8 @@ lemma romania1998_p12_mpr (u : ℝ → ℝ) :
            _ = Real.exp (k * x) * Real.exp (k * y) - 1 := by rw [Real.exp_add]
            _ = (Real.exp (k * x) - 1) * Real.exp (k * y) +
                   (Real.exp (k * y) - 1) := by ring
+
+snip end
 
 determine solution_set : Set (ℝ → ℝ) :=
   { u | ∃ k : ℝ, ∀ x : ℝ, u x = Real.exp (k * x) }

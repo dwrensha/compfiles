@@ -8,13 +8,15 @@ import Mathlib.Tactic
 
 import Compfiles.Meta.ProblemExtraction
 
-#[problem_setup]/-!
+problem_file
+
+/-!
 # International Mathematical Olympiad 1990, Problem 3
 
 Find all integers n > 1 such that n² divides 2ⁿ + 1.
 -/
 
-#[problem_setup] namespace Imo1990P3
+namespace Imo1990P3
 
 determine solution_set : Set ℕ := { 3 }
 

@@ -10,7 +10,9 @@ import Mathlib.Tactic
 
 import Compfiles.Meta.ProblemExtraction
 
-#[problem_setup]/-!
+problem_file
+
+/-!
 # International Mathematical Olympiad 2022, Problem 2
 
 Let ℝ+ be the set of positive real numbers.
@@ -21,12 +23,10 @@ satisfying
   x·f(y) + y·f(x) ≤ 2
 -/
 
-#[problem_setup] namespace Imo2022P2
+namespace Imo2022P2
 
-#[problem_setup]
 abbrev PosReal : Type := { x : ℝ // 0 < x }
 
-#[problem_setup]
 notation "ℝ+" => PosReal
 
 determine solution_set : Set (ℝ+ → ℝ+) := { fun x ↦ 1 / x }

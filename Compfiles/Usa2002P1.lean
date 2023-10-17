@@ -13,7 +13,9 @@ import Mathlib.Tactic
 
 import Compfiles.Meta.ProblemExtraction
 
-#[problem_setup]/-!
+problem_file
+
+/-!
 # USA Mathematical Olympiad 2002, Problem 1
 
 Let S be a set with 2002 elements, and let N be an integer with
@@ -28,13 +30,14 @@ red so that the following conditions hold:
  c) there are exactly N red subsets.
 -/
 
-#[problem_setup] namespace Usa2002P1
+namespace Usa2002P1
 
-#[problem_setup]
 inductive Color : Type where
 | red : Color
 | blue : Color
 deriving DecidableEq, Fintype
+
+snip begin
 
 -- Seems like this maybe belongs in mathlib?
 lemma Finset.subtype_union {α} (p : α → Prop) [DecidableEq α] [DecidablePred p] (s1 s2 : Finset α) :
@@ -308,6 +311,8 @@ lemma usa2002_p1_generalized
         simp only [Fintype.card_sum, h4, hf2']
         rw [add_tsub_cancel_iff_le]
         exact Nat.le_of_lt hg
+
+snip end
 
 problem usa2002_p1
     {α : Type} [DecidableEq α] [Fintype α] (hs : Fintype.card α = 2002)

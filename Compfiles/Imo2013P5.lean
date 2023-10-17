@@ -7,7 +7,9 @@ import Mathlib.Tactic.LinearCombination
 
 import Compfiles.Meta.ProblemExtraction
 
-#[problem_setup]/-!
+problem_file
+
+/-!
 # International Mathematical Olympiad 2013, Problem 5
 
 Let ℚ>₀ be the set of positive rational numbers. Let f: ℚ>₀ → ℝ be a function satisfying
@@ -21,16 +23,18 @@ all x ∈ ℚ>₀.
 
 -/
 
+namespace Imo2013P5
+
+snip begin
+
+open BigOperators
+
 /-
 # Solution
 
 We provide a direct translation of the solution found in
 https://www.imo-official.org/problems/IMO2013SL.pdf
 -/
-
-#[problem_setup] namespace Imo2013P5
-
-open BigOperators
 
 lemma le_of_all_pow_lt_succ {x y : ℝ} (hx : 1 < x) (hy : 1 < y)
     (h : ∀ n : ℕ, 0 < n → x^n - 1 < y^n) :
@@ -190,6 +194,8 @@ lemma fixed_point_of_gt_1 {f : ℚ → ℝ} {x : ℚ} (hx : 1 < x)
 
   have heq := h1.antisymm (by exact_mod_cast h2)
   linarith [H5 x hx, H5 _ h_big_enough]
+
+snip end
 
 problem imo2013_p5
     (f : ℚ → ℝ)

@@ -6,7 +6,9 @@ import Mathlib.Tactic
 
 import Compfiles.Meta.ProblemExtraction
 
-#[problem_setup]/-!
+problem_file
+
+/-!
 Polish Mathematical Olympiad 1998, Problem 4
 
 Prove that the sequence {a_n} defined by a_1 = 1 and
@@ -17,15 +19,16 @@ contains infinitely many integers divisible by 7.
 
 -/
 
-#[problem_setup] namespace Poland1998P4
+namespace Poland1998P4
 
-#[problem_setup]
 def a : ℕ → ℕ
 | 0 => 1 -- unused dummy value
 | 1 => 1
 | Nat.succ n =>
     have _ : (n.succ / 2) < n.succ := Nat.div_lt_self' n 0
     a n + a (n.succ / 2)
+
+snip begin
 
 lemma a_recurrence (n : ℕ) (hn : 2 ≤ n) : a n = a (n - 1) + a (n / 2) := by
   cases' n with n
@@ -283,6 +286,8 @@ lemma strengthen
     · have heq : m = pn + 1 := le_antisymm hlte hm
       rw [heq] at hmp
       exact h (pn.succ) hmp
+
+snip end
 
 problem poland1998_p4 : (∀ N : ℕ, ∃ M : ℕ, N < M ∧ 7 ∣ a M) := by
   have he: 7 ∣ a 5 := by rw [show a 5 = 7 by rfl]

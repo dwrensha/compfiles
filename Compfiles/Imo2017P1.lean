@@ -8,7 +8,9 @@ import Mathlib.Tactic
 
 import Compfiles.Meta.ProblemExtraction
 
-#[problem_setup]/-!
+problem_file
+
+/-!
 # International Mathematical Olympiad 2017, Problem 1
 
 For any integer a₀ > 1, define the sequence
@@ -18,12 +20,10 @@ For any integer a₀ > 1, define the sequence
 
 Find all values of a₀ for which there exists A such that aₙ = A for
 infinitely many values of n.
-
 -/
 
-#[problem_setup] namespace Imo2017P1
+namespace Imo2017P1
 
-#[problem_setup]
 noncomputable def a (a0 : ℕ) : ℕ → ℕ
 | 0 => a0
 | n + 1 => if (Nat.sqrt (a a0 n))^2 = a a0 n

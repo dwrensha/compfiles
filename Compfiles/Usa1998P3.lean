@@ -10,7 +10,9 @@ import Mathlib.Analysis.MeanInequalities
 
 import Compfiles.Meta.ProblemExtraction
 
-#[problem_setup]/-!
+problem_file
+
+/-!
 # USA Mathematical Olympiad 1998, Problem 3
 
 Let a₀,a₁,...,aₙ be real numbers from the interval (0,π/2) such that
@@ -23,9 +25,10 @@ Prove that
 
 -/
 
-#[problem_setup] namespace Usa1998P3
-#[problem_setup] open BigOperators
+namespace Usa1998P3
+open BigOperators
 
+snip begin
 
 lemma lemma0 : Set.Icc (-Real.pi / 4) (Real.pi / 4) ⊆
                Set.Ioo (-(Real.pi / 2)) (Real.pi/2) := by
@@ -134,6 +137,8 @@ lemma lemma2 (f : ℕ → ℝ) :
     have h6 : ((Nat.succ n):ℝ) = (↑n + 1) := by norm_cast
     rw [h6]
     ring
+
+snip end
 
 problem usa1998_p3
     (n : ℕ)

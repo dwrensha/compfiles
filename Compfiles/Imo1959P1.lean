@@ -10,7 +10,9 @@ import Mathlib.Data.Nat.Prime
 
 import Compfiles.Meta.ProblemExtraction
 
-#[problem_setup]/-!
+problem_file
+
+/-!
 # International Mathematical Olympiad 1959, Problem 1.
 Prove that the fraction `(21n+4)/(14n+3)` is irreducible for every
 natural number `n`.
@@ -22,6 +24,8 @@ relatively prime.
 
 namespace Imo1959P1
 
+snip begin
+
 lemma calculation
     (n k : ℕ)
     (h1 : k ∣ 21 * n + 4)
@@ -32,6 +36,7 @@ lemma calculation
   have h5 : 3 * (14 * n + 3) = 2 * (21 * n + 4) + 1 := by ring
   exact (Nat.dvd_add_right h3).mp (h5 ▸ h4)
 
+snip end
+
 problem imo1959_p1 : ∀ n : ℕ, Nat.Coprime (21 * n + 4) (14 * n + 3) :=
 fun n => Nat.coprime_of_dvd' <| λ k _ h1 h2 => calculation n k h1 h2
-

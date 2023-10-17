@@ -2,7 +2,9 @@ import Mathlib.Data.Real.Basic
 
 import Compfiles.Meta.ProblemExtraction
 
-#[problem_setup]/-!
+problem_file
+
+/-!
 # International Mathematical Olympiad 2011, Problem 3
 
 Let f : ℝ → ℝ be a function that satisfies
@@ -12,16 +14,13 @@ Let f : ℝ → ℝ be a function that satisfies
 for all x and y. Prove that f(x) = 0 for all x ≤ 0.
 -/
 
-/-
-# Solution
-
-Direct translation of the solution found in https://www.imo-official.org/problems/IMO2011SL.pdf
--/
-
-#[problem_setup] namespace Imo2011P3
+namespace Imo2011P3
 
 problem imo2011_p3 (f : ℝ → ℝ) (hf : ∀ x y, f (x + y) ≤ y * f x + f (f x)) :
   ∀ x ≤ 0, f x = 0 := by
+  -- Direct translation of the solution found in
+  -- https://www.imo-official.org/problems/IMO2011SL.pdf
+
   -- reparameterize
   have hxt : ∀ x t, f t ≤ t * f x - x * f x + f (f x) := by
     intro x t

@@ -9,7 +9,9 @@ import Mathlib.Tactic
 
 import Compfiles.Meta.ProblemExtraction
 
-#[problem_setup]/-!
+problem_file
+
+/-!
 # International Mathematical Olympiad 1981, Problem 6
 
 Suppose that f : ℕ × ℕ → ℕ satisfies
@@ -21,16 +23,19 @@ Suppose that f : ℕ × ℕ → ℕ satisfies
 for all x y ∈ ℕ.
 
 Determine f (4, 1981).
-
 -/
 
-#[problem_setup] namespace Imo1981P6
+namespace Imo1981P6
+
+snip begin
 
 /--
 Wrapper to prevent the Lean kernel from eagerly trying to normalize
 the solution value, which happens to be way too large to normalize.
 -/
 def no_eval (x : ℕ) : ℕ := x
+
+snip end
 
 determine solution_value : ℕ := no_eval ((2^·)^[1984] 1 - 3)
 

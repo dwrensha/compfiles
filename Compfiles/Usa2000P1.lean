@@ -10,7 +10,9 @@ import Mathlib.Algebra.GroupPower.Lemmas
 
 import Compfiles.Meta.ProblemExtraction
 
-#[problem_setup]/-!
+problem_file
+
+/-!
 USA Mathematical Olympiad 2000, Problem 1
 
 A function f : ℝ → ℝ is called "very convex" if it satisfies
@@ -20,7 +22,7 @@ A function f : ℝ → ℝ is called "very convex" if it satisfies
 Show that there exist no very convex functions.
 -/
 
-#[problem_setup] namespace Usa2000P1
+namespace Usa2000P1
 
 problem usa2000_p1 :
     ¬∃ f : ℝ → ℝ,

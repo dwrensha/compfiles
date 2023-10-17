@@ -13,7 +13,9 @@ import Mathlib.Tactic.Ring
 
 import Compfiles.Meta.ProblemExtraction
 
-#[problem_setup]/-!
+problem_file
+
+/-!
 Hungarian Mathematical Olympiad 1998, Problem 6
 
 Let x, y, z be integers with z > 1. Show that
@@ -21,8 +23,10 @@ Let x, y, z be integers with z > 1. Show that
  (x + 1)² + (x + 2)² + ... + (x + 99)² ≠ yᶻ.
 -/
 
-#[problem_setup] namespace Hungary1998P6
-#[problem_setup] open BigOperators
+namespace Hungary1998P6
+open BigOperators
+
+snip begin
 
 lemma sum_range_square_mul_six (n : ℕ) :
     (∑i in Finset.range n, (i + 1)^2) * 6 = n * (n + 1) * (2 * n + 1) := by
@@ -40,6 +44,8 @@ lemma sum_range_square (n : ℕ) :
 lemma cast_sum_square (n : ℕ) :
   ∑i in Finset.range n, ((i:ℤ)+1)^2 =
    (((∑i in Finset.range n, (i+1)^2) : ℕ) : ℤ) := by norm_cast
+
+snip end
 
 problem hungary1998_p6 (x y : ℤ) (z : ℕ) (hz : 1 < z) :
     ∑ i in Finset.range 99, (x + i + 1)^2 ≠ y^z := by

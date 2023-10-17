@@ -12,7 +12,9 @@ import Mathlib.Data.Fintype.BigOperators
 
 import Compfiles.Meta.ProblemExtraction
 
-#[problem_setup] /-!
+problem_file
+
+/-!
 # USA Mathematical Olympiad 1998, Problem 1
 
 Suppose that the set { 1, 2, ..., 1998 } has been partitioned into disjoint
@@ -25,8 +27,10 @@ Prove that the sum
 ends in the digit 9.
 -/
 
-#[problem_setup] namespace Usa1998P1
-#[problem_setup] open BigOperators
+namespace Usa1998P1
+open BigOperators
+
+snip begin
 
 lemma zmod_eq (a b c : ℤ) : a ≡ b [ZMOD c] ↔ a % c = b % c := by rfl
 
@@ -37,6 +41,8 @@ lemma mod2_abs (a : ℤ) : |a| % 2 = a % 2 := by
 -- For integers M,N we have |M-N| ≡ M-N ≡ M+N MOD 2.
 lemma mod2_diff (a b : ℤ) : |a - b| % 2 = (a + b) % 2 := by
   rw [mod2_abs, Int.sub_eq_add_neg, Int.add_emod, Int.neg_emod_two, ←Int.add_emod]
+
+snip end
 
 /--
  `ab 0 i` is aᵢ and `ab 1 i` is `bᵢ`

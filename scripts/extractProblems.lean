@@ -27,22 +27,14 @@ unsafe def main (_args : List String) : IO Unit := do
     let state := {env}
     Prod.fst <$> (CoreM.toIO · ctx state) do
       let mst ← Compfiles.Meta.extractProblems
+      for ⟨m, problem_src⟩ in mst do
+        let p ← findOLean m
+        IO.println s!"MODULE: {m}"
+        let extracted_path := olean_path_to_extracted_path p.toString
 
-      let pkg := `Compfiles
-      let modules := env.header.moduleNames.filter (pkg.isPrefixOf ·)
-
-      for m in modules do
-        if m ≠ pkg && m ≠ `Compfiles.Meta.ProblemExtraction then do
-          let p ← findOLean m
-          IO.println s!"MODULE: {m}"
-          let extracted_path := olean_path_to_extracted_path p.toString
-
-          match mst.find? m with
-          | .some problem_src => do
-            -- TODO mkdir if necessary
-            let h ← IO.FS.Handle.mk extracted_path IO.FS.Mode.write
-            h.putStrLn problem_src
-            h.flush
-          | .none => pure ()
+        -- TODO mkdir if necessary
+        let h ← IO.FS.Handle.mk extracted_path IO.FS.Mode.write
+        h.putStr problem_src
+        h.flush
 
       pure ()

@@ -76,8 +76,8 @@ unsafe def main (_args : List String) : IO Unit := do
           let p ← findOLean m
           let solutionUrl := olean_path_to_github_url p.toString
           IO.println s!"MODULE: {m}"
-          let problem_file := s!"problems/{m}.html"
-          let problemUrl := s!"{←getBaseUrl}{problem_file}"
+          let problemFile := s!"problems/{m}.html"
+          let problemUrl := s!"{←getBaseUrl}{problemFile}"
           let homeUrl := s!"{←getBaseUrl}index.html"
 
           let mut proved := true
@@ -92,7 +92,7 @@ unsafe def main (_args : List String) : IO Unit := do
                     solutionUrl, problemUrl, proved⟩ :: infos
 
           let problem_src := (mst.find? m).getD ""
-          let h ← IO.FS.Handle.mk ("_site/" ++ problem_file) IO.FS.Mode.write
+          let h ← IO.FS.Handle.mk ("_site/" ++ problemFile) IO.FS.Mode.write
           h.putStrLn <| ←htmlHeader m.toString
           if proved
           then
@@ -102,7 +102,7 @@ unsafe def main (_args : List String) : IO Unit := do
             h.putStrLn
               s!"<p>This problem <a href=\"{solutionUrl}\">does not yet have a complete solution</a>.</p>"
           h.putStrLn "<pre class=\"problem\">"
-          h.putStrLn (htmlEscape problem_src)
+          h.putStr (htmlEscape problem_src)
           h.putStrLn "</pre>"
           h.putStrLn "<br>"
           h.putStrLn s!"<a href=\"{homeUrl}\">full problem list</a>"

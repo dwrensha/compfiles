@@ -8,7 +8,9 @@ import Mathlib.Tactic
 
 import Compfiles.Meta.ProblemExtraction
 
-#[problem_setup]/-!
+problem_file
+
+/-!
 # International Mathematical Olympiad 2017, Problem 2
 
 Find all functions `f : ℝ → ℝ` that satisfy
@@ -17,7 +19,7 @@ Find all functions `f : ℝ → ℝ` that satisfy
 
 -/
 
-#[problem_setup] namespace Imo2017P2
+namespace Imo2017P2
 
 determine solution_set : Set (ℝ → ℝ) :=
   { fun _ ↦ 0, fun x ↦ x - 1, fun x ↦ 1 - x }

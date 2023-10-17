@@ -7,14 +7,13 @@ Authors: David Renshaw
 import Mathlib.Algebra.BigOperators.Basic
 import Mathlib.Algebra.BigOperators.Order
 import Mathlib.Data.Real.Basic
-import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.Ring
-import Mathlib.Tactic.FieldSimp
-import Mathlib.Tactic.Positivity
+import Mathlib.Tactic
 
 import Compfiles.Meta.ProblemExtraction
 
-#[problem_setup]/-!
+problem_file
+
+/-!
 Canadian Mathematical Olympiad 1998, Problem 3
 
 Let n be a natural number such that n ≥ 2. Show that
@@ -22,9 +21,9 @@ Let n be a natural number such that n ≥ 2. Show that
   (1/(n + 1))(1 + 1/3 + ... + 1/(2n - 1)) > (1/n)(1/2 + 1/4 + ... + 1/2n).
 -/
 
-#[problem_setup] namespace Canada1998P3
+namespace Canada1998P3
 
-#[problem_setup] open BigOperators
+open BigOperators
 
 problem canada1998_p3 (n : ℕ) (hn : 2 ≤ n) :
     (1/(n:ℝ)) * ∑ i in Finset.range n, (1/(2 * (i:ℝ) + 2)) <

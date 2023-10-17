@@ -8,7 +8,9 @@ import Mathlib.Algebra.BigOperators.Basic
 
 import Compfiles.Meta.ProblemExtraction
 
-#[problem_setup]/-!
+problem_file
+
+/-!
 # International Mathematical Olympiad 2018, Problem 3
 
 An anti-Pascal triangle is an equilateral triangular array of numbers such that,
@@ -26,27 +28,18 @@ Does there exist an anti-Pascal triangle with 2018 rows which contains every
 integer from 1 to 1 + 2 + ... + 2018?
 -/
 
-/-
-# Solution
-No.
--/
+namespace Imo2018P3
+open BigOperators
 
-#[problem_setup] namespace Imo2018P3
-#[problem_setup] open BigOperators
-
-#[problem_setup]
 structure Coords where
 (row : Nat) (col : Nat)
 
-#[problem_setup]
 def left_child (c : Coords) : Coords :=
  ⟨c.row.succ, c.col⟩
 
-#[problem_setup]
 def right_child (c : Coords) : Coords :=
   ⟨c.row.succ, c.col.succ⟩
 
-#[problem_setup]
 /--
 antipascal triangle with n rows
 -/
@@ -56,14 +49,17 @@ structure antipascal_triangle (n : Nat) where
   f x + f (left_child x) = f (right_child x) ∨
   f x + f (right_child x) = f (left_child x))
 
-structure a_and_b where
-(a : Coords) (b : Coords)
-
-#[problem_setup]
 def exists_desired_triangle : Prop :=
    ∃ t : antipascal_triangle 2018,
      ∀ n, (n ≤ ∑ i in Finset.range 2018, (i + 1)) →
          ∃ r, r ≤ 2018 ∧ ∃ c, c < r ∧ t.f ⟨r,c⟩ = n
+
+snip begin
+
+structure a_and_b where
+(a : Coords) (b : Coords)
+
+snip end
 
 determine does_exist : Bool := false
 

@@ -11,7 +11,9 @@ import Mathlib.Geometry.Euclidean.Triangle
 
 import Compfiles.Meta.ProblemExtraction
 
-#[problem_setup]/-!
+problem_file
+
+/-!
 Bulgarian Mathematical Olympiad 1998, Problem 2
 
 A convex quadrilateral ABCD has AD = CD and ∠DAB = ∠ABC < 90°.
@@ -20,9 +22,9 @@ in point E. Prove that ∠BEC = ∠DAC. (Note: The problem is valid
 without the assumption ∠ABC < 90°.)
 -/
 
-#[problem_setup] namespace Bulgaria1998P2
+namespace Bulgaria1998P2
 
-#[problem_setup] open EuclideanGeometry
+open EuclideanGeometry
 
 problem bulgaria1998_p2
     (A B C D E M: EuclideanSpace ℝ (Fin 2))

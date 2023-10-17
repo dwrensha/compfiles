@@ -8,7 +8,9 @@ import Mathlib.Data.Real.Basic
 
 import Compfiles.Meta.ProblemExtraction
 
-#[problem_setup]/-!
+problem_file
+
+/-!
  Russian Mathematical Olympiad 1998, problem 42
 
  A binary operation ⋆ on real numbers has the property that
@@ -18,11 +20,11 @@ import Compfiles.Meta.ProblemExtraction
 
 -/
 
-#[problem_setup] namespace Russia1998P42
+namespace Russia1998P42
 
-#[problem_setup] variable (star : ℝ → ℝ → ℝ)
+variable (star : ℝ → ℝ → ℝ)
 
-#[problem_setup] local infixl:80 " ⋆ " => star
+local infixl:80 " ⋆ " => star
 
 problem russia1998_p42
   (stardef : ∀ a b c, a ⋆ b ⋆ c = a + b + c) :

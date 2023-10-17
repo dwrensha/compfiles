@@ -12,7 +12,9 @@ import Mathlib.Tactic.Ring
 
 import Compfiles.Meta.ProblemExtraction
 
-#[problem_setup]/-!
+problem_file
+
+/-!
 Bulgarian Mathematical Olympiad 1998, Problem 6
 
 Prove that the equation
@@ -23,7 +25,9 @@ has no solutions in positive integers.
 
 -/
 
-#[problem_setup] namespace Bulgaria1998P6
+namespace Bulgaria1998P6
+
+snip begin
 
 lemma lemma_0
     (a b c x : ℤ)
@@ -62,6 +66,8 @@ lemma lemma_1
   let ht' := Int.toNat_of_nonneg (le_of_lt ht)
   rw [←hs'] at h
   sorry
+
+snip end
 
 problem bulgaria1998_p6
     (x y z : ℤ)

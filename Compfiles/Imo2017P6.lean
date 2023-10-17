@@ -8,7 +8,9 @@ import Mathlib.Tactic
 
 import Compfiles.Meta.ProblemExtraction
 
-#[problem_setup]/-!
+problem_file
+
+/-!
 # International Mathematical Olympiad 2017, Problem 6
 
 A point (x,y) ∈ ℤ × ℤ is called primitive if gcd(x,y) = 1.
@@ -22,9 +24,9 @@ for each (x,y) ∈ S.
 
 -/
 
-#[problem_setup] namespace Imo2017P6
+namespace Imo2017P6
 
-#[problem_setup] open scoped BigOperators
+open scoped BigOperators
 
 problem imo2017_p6 (S : Finset (ℤ × ℤ)) (hS : ∀ s ∈ S, gcd s.1 s.2 = 1) :
     ∃ n : ℕ, 0 < n ∧ ∃ a : ℕ → ℤ,

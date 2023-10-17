@@ -3,7 +3,7 @@ import Lean.Meta.Basic
 import Std.Lean.NameMapAttribute
 
 /-!
-Command wrappers to aid in "problem extraction".
+Special commands to aid in "problem extraction".
 
 For the math problems that we archive, we aim to include proofs in-line.
 Sometimes, however, we want to present the problems without giving away
@@ -18,40 +18,74 @@ namespace Compfiles.Meta
 
 open Lean Elab
 
+structure Replacement where
+  startPos : String.Pos
+  endPos : String.Pos
+  newValue : String
+deriving Inhabited
+
+inductive EntryVariant where
+  /-- full file text and the position where extraction should start-/
+  | file : String → String.Pos → EntryVariant
+
+  /-- substring replacement. positions are relative to the full file -/
+  | replace : Replacement → EntryVariant
+
+  | snip_begin : String.Pos → EntryVariant
+  | snip_end : String.Pos → EntryVariant
+
+
 /-- An entry in the state of the Problem Extraction environment extension -/
 structure Entry where
 /-- The module where the entry originated. -/
 (module : Name)
 /-- Lean code to be included in the extracted problem file. -/
-(string : String)
+(variant : EntryVariant)
 
 abbrev ProblemExtractionExtension :=
   SimplePersistentEnvExtension Entry (Array Entry)
 
 initialize problemExtractionExtension : ProblemExtractionExtension ←
   registerSimplePersistentEnvExtension {
-    name := `problem_extraction
+    name := `problem_extraction'
     addImportedFn := fun arrays =>
       arrays.foldl (init := ∅) fun acc as =>
         as.foldl (init := acc) fun acc' a => acc'.push a
     addEntryFn    := fun s n => s.push n
   }
 
-/--
-Indicates that a command is required to set up a problem statement.
-During problem extraction, the command is kept completely intact.
--/
-syntax (name := problemSetup) "#[problem_setup]" command : command
+syntax (name := problemFile) "problem_file" : command
 
 elab_rules : command
-| `(command| #[problem_setup] $cmd:command) => do
-  let .some startPos := cmd.raw.getPos? | throwError "cmd syntax has no pos"
-  let .some endPos := cmd.raw.getTailPos? | throwError "cmd syntax has no tail pos"
-  let mod := (←getEnv).header.mainModule
+| `(command| problem_file%$tk) => do
+  let .some startPos := tk.getTailPos? | throwError "problem_file syntax has no tail pos"
   let src := (←read).fileMap.source
+  let startPos := ⟨startPos.byteIdx + 1⟩ -- HACK: add one to consume unwanted newline
+
+  let mod := (←getEnv).header.mainModule
   let ext := problemExtractionExtension
-  modifyEnv fun env => ext.addEntry env ⟨mod, s!"{Substring.mk src startPos endPos}"⟩
-  Lean.Elab.Command.elabCommand cmd
+  modifyEnv fun env => ext.addEntry env ⟨mod, EntryVariant.file src startPos⟩
+
+syntax (name := snipBegin) "snip begin" : command
+
+syntax (name := snipEnd) "snip end" : command
+
+elab_rules : command
+| `(command| snip begin%$tk1) => do
+  let .some startPos := tk1.getPos? | throwError "snip syntax has no start pos"
+  let startPos := ⟨startPos.byteIdx - 1⟩ -- HACK: subtract one to consume unwanted newline
+
+  let mod := (←getEnv).header.mainModule
+  let ext := problemExtractionExtension
+  modifyEnv fun env => ext.addEntry env ⟨mod, EntryVariant.snip_begin startPos⟩
+
+| `(command| snip end%$tk2) => do
+  let .some endPos := tk2.getTailPos? | throwError "snip syntax has no end pos"
+  let endPos := ⟨endPos.byteIdx + 1⟩ -- HACK: add one to consume unwanted newline
+
+  let mod := (←getEnv).header.mainModule
+  let ext := problemExtractionExtension
+  modifyEnv fun env => ext.addEntry env ⟨mod, EntryVariant.snip_end endPos⟩
 
 /--
 A synonym for `theorem`. Indicates that a declaration is a problem statement.
@@ -60,21 +94,21 @@ During problem extraction, the proof is replaced by a `sorry`.
 syntax (name := problem) declModifiers "problem " declId ppIndent(declSig) declVal : command
 
 elab_rules : command
-| `(command| $dm:declModifiers problem $di:declId $ds:declSig $dv:declVal) => do
-  let src := (←read).fileMap.source
-
-  let pfx  := match dm.raw.getPos?, dm.raw.getTailPos? with
-  | .some dmStartPos, .some dmEndPos => s!"{Substring.mk src dmStartPos dmEndPos}\n"
-  | _,_ => ""
-
-  let .some sStartPos := di.raw.getPos? | throwError "di syntax has no pos"
-  let .some sEndPos := ds.raw.getTailPos? | throwError "ds syntax has no pos"
-
+| `(command| $dm:declModifiers problem%$pb $di:declId $ds:declSig $dv:declVal) => do
   let mod := (←getEnv).header.mainModule
 
-  let ext := problemExtractionExtension
-  modifyEnv fun env => ext.addEntry env ⟨mod,
-    s!"{pfx}theorem {Substring.mk src sStartPos sEndPos} := sorry"⟩
+  let (.some pStartPos, .some pEndPos) := (pb.getPos?, pb.getTailPos?)
+   | throwError "failed to get problem syntax"
+
+  modifyEnv fun env => problemExtractionExtension.addEntry env ⟨mod,
+    EntryVariant.replace ⟨pStartPos, pEndPos, "theorem"⟩⟩
+
+  let (.some vStartPos, .some vEndPos) := (dv.raw.getPos?, dv.raw.getTailPos?)
+   | throwError "failed to get declVal syntax"
+
+  modifyEnv fun env => problemExtractionExtension.addEntry env ⟨mod,
+    EntryVariant.replace ⟨vStartPos, vEndPos, ":= sorry"⟩⟩
+
   let cmd ← `(command | $dm:declModifiers theorem $di $ds $dv)
   Lean.Elab.Command.elabCommand cmd
 
@@ -88,24 +122,21 @@ syntax (name := determine)
   declModifiers "determine " declId ppIndent(optDeclSig) declVal : command
 
 elab_rules : command
-| `(command| $dm:declModifiers determine $di:declId $ds:optDeclSig $dv:declVal) => do
-  let src := (←read).fileMap.source
-
-  let pfx  := match dm.raw.getPos?, dm.raw.getTailPos? with
-  | .some dmStartPos, .some dmEndPos => s!"{Substring.mk src dmStartPos dmEndPos}\n"
-  | _,_ => ""
-
-  let .some sStartPos := di.raw.getPos? | throwError "di syntax has no pos"
-  let sEndPos ← match ds.raw.getTailPos?, di.raw.getTailPos? with
-  | .some p, _  => pure p
-  | _, .some p  => pure p
-  | .none, .none => throwError "ds syntax has no pos"
-
+| `(command| $dm:declModifiers determine%$dt $di:declId $ds:optDeclSig $dv:declVal) => do
   let mod := (←getEnv).header.mainModule
 
-  let ext := problemExtractionExtension
-  modifyEnv fun env => ext.addEntry env ⟨mod,
-    s!"/- determine -/\n{pfx}abbrev {Substring.mk src sStartPos sEndPos} := sorry"⟩
+  let (.some dStartPos, .some dEndPos) := (dt.getPos?, dt.getTailPos?)
+   | throwError "failed to get problem syntax"
+
+  modifyEnv fun env => problemExtractionExtension.addEntry env ⟨mod,
+    EntryVariant.replace ⟨dStartPos, dEndPos, "/- determine -/ abbrev"⟩⟩
+
+  let (.some vStartPos, .some vEndPos) := (dv.raw.getPos?, dv.raw.getTailPos?)
+   | throwError "failed to get declVal syntax"
+
+  modifyEnv fun env => problemExtractionExtension.addEntry env ⟨mod,
+    EntryVariant.replace ⟨vStartPos, vEndPos, ":= sorry"⟩⟩
+
   let cmd ← `(command | $dm:declModifiers abbrev $di:declId $ds:optDeclSig $dv:declVal)
   Lean.Elab.Command.elabCommand cmd
 
@@ -145,18 +176,38 @@ def extractProblems {m : Type → Type} [Monad m] [MonadEnv m] [MonadError m] :
     m (NameMap String) := do
   let env ← getEnv
   let st := problemExtractionExtension.getState env
-  let nm1 := (st.foldl (init := mkNameMap _)
-    (fun acc e =>
-      let a' := match acc.find? e.module with
-      | .none => #[e.string]
-      | .some a => a.push e.string
-      acc.insert e.module a'))
+
+  let mut inProgress : NameMap (String × String.Pos × String) := mkNameMap _
+  for ⟨module, variant⟩ in st do
+    match variant with
+    | .file s p =>
+        inProgress := inProgress.insert module ⟨s, p, ""⟩
+    | .replace ⟨startPos, endPos, s⟩ =>
+      match inProgress.find? module with
+      | .some ⟨src, cur, acc⟩ =>
+         inProgress := inProgress.insert module
+            ⟨src, endPos, acc ++ (Substring.mk src cur startPos).toString ++ s⟩
+      | .none => pure ()
+    | .snip_begin pos =>
+      match inProgress.find? module with
+      | .some ⟨src, cur, acc⟩ =>
+         inProgress := inProgress.insert module
+            ⟨src, pos, acc ++ (Substring.mk src cur pos).toString⟩
+      | .none => pure ()
+    | .snip_end pos =>
+      match inProgress.find? module with
+      | .some ⟨src, _, acc⟩ =>
+         inProgress := inProgress.insert module ⟨src, pos, acc⟩
+      | .none => pure ()
 
   let mut result := mkNameMap _
-  for ⟨k,v⟩ in nm1 do
+  for ⟨module, ⟨src, endPos, acc⟩⟩ in inProgress do
     let mut imports := ""
-    for im in ← findModuleImports env k do
+    for im in ← findModuleImports env module do
       if im.module ≠ "Init" && im.module ≠ `Compfiles.Meta.ProblemExtraction
       then imports := imports ++ s!"import {im}\n"
-    result := result.insert k (Array.foldl (fun acc l ↦ acc ++ "\n\n" ++ l) imports v)
+
+    result := result.insert module
+      (imports ++ acc ++ (Substring.mk src endPos src.endPos).toString)
+
   pure result

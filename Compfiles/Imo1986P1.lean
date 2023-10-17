@@ -12,7 +12,9 @@ import Mathlib.Tactic
 
 import Compfiles.Meta.ProblemExtraction
 
-#[problem_setup]/-!
+problem_file
+
+/-!
 # International Mathematical Olympiad 1986, Problem 1
 
 Let d be any positive integer not equal to 2, 5 or 13.
@@ -20,10 +22,12 @@ Show that one can find distinct a, b in the set {2, 5, 13, d} such that ab - 1
 is not a perfect square.
 -/
 
-/-
-# Solution
+namespace Imo1986P1
 
-We proof a slightly stronger statement, namely the statement:
+snip begin
+
+/-
+We prove a slightly stronger statement, namely:
 Let d be any integer, then 2 * d - 1, 5 * d - 1 and 13 * d - 1 can't all be perfect squares.
 We follow "Solution 2" on https://artofproblemsolving.com/wiki/index.php/1986_IMO_Problems/Problem_1
 by showing a contradiction: we show d is odd and d is even.
@@ -35,8 +39,6 @@ First we assume that there are p, q and r such that:
 The fact that d is odd follows from the fact that p is odd.
 The fact that d is even follows from examining the difference 13 * d - 5 * d.
 -/
-
-#[problem_setup] namespace Imo1986P1
 
 theorem imo1986_p1' (d : ℤ):
     ¬ ((IsSquare (2 * d - 1)) ∧ (IsSquare (5 * d - 1)) ∧ (IsSquare (d * 13 - 1))) := by
@@ -95,6 +97,8 @@ theorem imo1986_p1' (d : ℤ):
     rw [mul_assoc,  mul_right_inj' two_ne_zero, ← mul_assoc, mul_comm w, mul_assoc, two_mul] at hnm'
     exact ⟨w * v, hnm'⟩
   exact Int.even_iff_not_odd.mp hdeven hdodd
+
+snip end
 
 problem imo1986_p1 (d : ℤ) (_hdpos : 1 ≤ d) (h2 : d ≠ 2) (h5 : d ≠ 5) (h13 : d ≠ 13) :
     ∃ a b :({2, 5, 13, d} : Finset ℤ), (a ≠ b) ∧ ¬ ∃ z, z^2 = (a * (b : ℤ) - 1) := by

@@ -11,14 +11,16 @@ import Mathlib.Tactic
 
 import Compfiles.Meta.ProblemExtraction
 
-#[problem_setup]/-!
+problem_file
+
+/-!
 # International Mathematical Olympiad 1964, Problem 1
 
 (a) Find all natural numbers n for which 2ⁿ - 1 is divisible by 7.
 (b) Prove that there is no positive integer n for which 2ⁿ + 1 is divisible by 7.
 -/
 
-#[problem_setup] namespace Imo1964P1
+namespace Imo1964P1
 
 determine solution_set : Set ℕ := { n | n % 3 = 0 }
 
@@ -47,15 +49,15 @@ problem imo_1964_p1a (n : ℕ) : n ∈ solution_set ↔ 2^n ≡ 1 [MOD 7] := by
                      have h6 := Nat.mod_lt n h5
                      linarith
 
-/-
-Informal proof (credit to twitch.tv viewer int_fast64_t):
-  let 2^n = 2^{3k + j},j < 3
-  (i.e. write n as 3k + j)
-  =>
-    2^n mod 7 = (2^3 mod 7)^k * 2^j mod 7 = 1 mod 7 * 2^j mod 7,
-  but 2^j < 5
--/
 problem imo_1964_p1b (n : ℕ) : ¬ 7 ∣ (2^n + 1) := by
+  /-
+  Informal proof (credit to twitch.tv viewer int_fast64_t):
+    let 2^n = 2^{3k + j},j < 3
+    (i.e. write n as 3k + j)
+    =>
+      2^n mod 7 = (2^3 mod 7)^k * 2^j mod 7 = 1 mod 7 * 2^j mod 7,
+    but 2^j < 5
+  -/
   intro h
   replace h := Nat.mod_eq_zero_of_dvd h
   rw[←Nat.div_add_mod n 3] at h
@@ -84,9 +86,13 @@ problem imo_1964_p1b (n : ℕ) : ¬ 7 ∣ (2^n + 1) := by
                    rw [hn'] at h6
                    linarith
 
+snip begin
+
 /- An alternative proof, heavily golfed. The statement here is slightly modified from the original one. -/
 theorem imo_1964_p1b' : ∀ (n : ℕ), (2 ^ n + 1) % 7 ≠ 0
     | 0 | 1 | 2 => by decide
     | n + 3 => by
       rw [pow_add, Nat.add_mod, Nat.mul_mod, show 2 ^ 3 % 7 = 1 from by rfl]
       simp [imo_1964_p1b' n]
+
+snip end

@@ -8,14 +8,16 @@ import Mathlib.Tactic
 
 import Compfiles.Meta.ProblemExtraction
 
-#[problem_setup]/-!
+problem_file
+
+/-!
 # International Mathematical Olympiad 1992, Problem 2
 
 Determine all functions f : ℝ → ℝ such that
 for all x,y ∈ ℝ, f(x² + f(y)) = y + (f(x))².
 -/
 
-#[problem_setup] namespace Imo1992P2
+namespace Imo1992P2
 
 determine solution_set : Set (ℝ → ℝ) := sorry
 

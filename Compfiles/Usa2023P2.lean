@@ -10,7 +10,9 @@ import Mathlib.Tactic
 
 import Compfiles.Meta.ProblemExtraction
 
-#[problem_setup]/-!
+problem_file
+
+/-!
 # USA Mathematical Olympiad 2023, Problem 2
 
 Let ℝ+ be the set of positive real numbers.
@@ -21,13 +23,13 @@ Find all functions f: ℝ+ → ℝ+ that satisfy the equation
 for all x,y ∈ ℝ+.
 -/
 
-#[problem_setup] namespace Usa2023P2
+namespace Usa2023P2
 
-#[problem_setup]
 abbrev PosReal : Type := { x : ℝ // 0 < x }
 
-#[problem_setup]
 notation "ℝ+" => PosReal
+
+snip begin
 
 -- Should this be in mathlib as `Positive.val_div`?
 lemma val_div (a b : ℝ+) : (a / b).val = a.val / b.val := by rfl
@@ -48,6 +50,8 @@ lemma lemma_3 {a b c : ℝ+} (h : a = b + c) : c < a := by
   simp only [Positive.coe_add] at h
   simp only [Subtype.mk_lt_mk]
   linarith
+
+snip end
 
 determine solution_set : Set (ℝ+ → ℝ+) := { fun x ↦ x + 1 }
 

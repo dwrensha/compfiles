@@ -9,7 +9,9 @@ import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 
 import Compfiles.Meta.ProblemExtraction
 
-#[problem_setup] /-!
+problem_file
+
+/-!
 # USA Mathematical Olympiad 1996, Problem 1
 
 Prove that the average of the numbers n⬝sin(n π / 180)
@@ -17,8 +19,8 @@ for n ∈ {2,4,6,…,180} is 1/tan(π/180).
 
 -/
 
-#[problem_setup] namespace Usa1996P1
-#[problem_setup] open BigOperators
+namespace Usa1996P1
+open BigOperators
 
 problem usa1996_p1 :
     (1 / (n:ℝ)) * ∑ n in Finset.range 90, (2 * (n+1)) * Real.sin ((2 * (n+1)) * Real.pi / 180)

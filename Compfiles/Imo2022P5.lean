@@ -8,7 +8,9 @@ import Mathlib.Tactic
 
 import Compfiles.Meta.ProblemExtraction
 
-#[problem_setup]/-!
+problem_file
+
+/-!
 # International Mathematical Olympiad 2022, Problem 5
 
 Determine all possible triples of positive integers a,b,p that satisfy
@@ -19,7 +21,7 @@ where p is prime.
 
 -/
 
-#[problem_setup] namespace Imo2022P5
+namespace Imo2022P5
 
 determine solution_set : Set (ℕ × ℕ × ℕ) := { ⟨2,2,2⟩, ⟨3,4,3⟩ }
 

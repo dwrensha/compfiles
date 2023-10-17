@@ -8,14 +8,16 @@ import Mathlib.Tactic
 
 import Compfiles.Meta.ProblemExtraction
 
-#[problem_setup]/-!
+problem_file
+
+/-!
 # International Mathematical Olympiad 1992, Problem 1
 
 Find all integers 1 < a < b < c such that
 (a - 1)(b - 1)(c - 1) divides abc - 1.
 -/
 
-#[problem_setup] namespace Imo1992P1
+namespace Imo1992P1
 
 determine solution_set : Set (ℤ × ℤ × ℤ) := sorry
 

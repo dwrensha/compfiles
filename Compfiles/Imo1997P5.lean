@@ -8,13 +8,15 @@ import Mathlib.Tactic
 
 import Compfiles.Meta.ProblemExtraction
 
-#[problem_setup]/-!
+problem_file
+
+/-!
 # International Mathematical Olympiad 1997, Problem 5
 
 Determine all pairs of integers 1 ≤ a,b that satisfy a ^ (b ^ 2) = b ^ a.
 -/
 
-#[problem_setup] namespace Imo1997P5
+namespace Imo1997P5
 
 determine solution_set : Set (ℕ × ℕ) := sorry
 

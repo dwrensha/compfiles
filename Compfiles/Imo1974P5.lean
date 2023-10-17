@@ -8,7 +8,9 @@ import Mathlib.Tactic
 
 import Compfiles.Meta.ProblemExtraction
 
-#[problem_setup]/-!
+problem_file
+
+/-!
 # International Mathematical Olympiad 1974, Problem 5
 
 What are the possible values of
@@ -18,9 +20,11 @@ What are the possible values of
 as a,b,c,d range over the positive real numbers?
 -/
 
-#[problem_setup] namespace Imo1974P5
+namespace Imo1974P5
 
 determine solution_set : Set ℝ := Set.Ioo 1 2
+
+snip begin
 
 lemma easy_direction (s : ℝ)
     (h : ∃ a b c d : ℝ, 0 < a ∧ 0 < b ∧ 0 < c ∧ 0 < d ∧
@@ -64,6 +68,8 @@ lemma easy_direction (s : ℝ)
   rw [←h1] at h12
   rw [h2] at h7
   exact ⟨h12, h7⟩
+
+snip end
 
 problem imo1974_p5 (s : ℝ) :
     s ∈ solution_set ↔

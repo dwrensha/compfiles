@@ -9,7 +9,9 @@ import Mathlib.Tactic
 
 import Compfiles.Meta.ProblemExtraction
 
-#[problem_setup]/-!
+problem_file
+
+/-!
 # International Mathematical Olympiad 2019, Problem 1
 Let ℤ be the set of integers. Determine all functions f : ℤ → ℤ such that,
 for all integers a and b,￼
@@ -17,13 +19,9 @@ for all integers a and b,￼
    f(2 * a) + 2 * f(b) = f(f(a + b)).
 -/
 
-/-
-# Solution
+namespace Imo2019P1
 
-Find that g(x) = f(x) - f(0) is linear and then deduce the rest.
--/
-
-#[problem_setup] namespace Imo2019P1
+snip begin
 
 -- proof of the following lemma suggested on Zulip by Riccardo Brasca
 lemma additive_to_int_linear (f : ℤ → ℤ) (h: ∀ (x y : ℤ), f (x + y) = f x + f y):
@@ -33,11 +31,15 @@ lemma additive_to_int_linear (f : ℤ → ℤ) (h: ∀ (x y : ℤ), f (x + y) = 
   change g a = g 1 * a
   rw [mul_comm, ← smul_eq_mul, ← LinearMap.map_smul, smul_eq_mul, mul_one]
 
+snip end
+
 determine solution_set : Set (ℤ → ℤ) :=
   { f | (∀ z, f z = 0) ∨ ∃ c, ∀ z, f z = 2 * z + c }
 
 problem imo2019_p1 (f : ℤ → ℤ) :
     (∀ a b, f (2 * a) + 2 * (f b) = f (f (a + b))) ↔ f ∈ solution_set := by
+  -- Find that g(x) = f(x) - f(0) is linear and then deduce the rest.
+
   constructor; swap
   · intro hf a b
     cases' hf with hf1 hf2

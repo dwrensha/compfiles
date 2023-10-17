@@ -3,7 +3,9 @@ import Mathlib.Analysis.MeanInequalities
 
 import Compfiles.Meta.ProblemExtraction
 
-#[problem_setup]/-!
+problem_file
+
+/-!
 Iranian Mathematical Olympiad 1998, problem 3
 
 Let x₁, x₂, x₃, x₄ be positive real numbers such that
@@ -15,9 +17,11 @@ Prove that
 
 -/
 
-#[problem_setup] namespace Iran1998P3
+namespace Iran1998P3
 
-#[problem_setup] open BigOperators
+open BigOperators
+
+snip begin
 
 lemma cube_root_cube (x : ℝ) (h: 0 ≤ x): (x^(3:ℝ)) ^ ((1:ℝ)/3) = x := by
   rw [←Real.rpow_mul h, mul_div_cancel' (1 : ℝ) three_ne_zero]
@@ -38,6 +42,8 @@ lemma prod_pow' (S : Finset ℕ) (e : ℝ) (f : ℕ → ℝ) (hf : ∀ s ∈ S, 
     · rw [mul_comm]
       exact mul_nonneg hs0 hsnn
     · exact (Real.mul_rpow hsnn hs0).symm
+
+snip end
 
 problem iran1998_p3
     (x : ℕ → ℝ)

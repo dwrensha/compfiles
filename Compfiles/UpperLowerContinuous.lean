@@ -16,7 +16,9 @@ import Mathlib.Tactic.Linarith
 
 import Compfiles.Meta.ProblemExtraction
 
-#[problem_setup]/-!
+problem_file
+
+/-!
 Suppose f : ℝ -> ℝ is continuous in both the upper topology (where
 the basic open sets are half-open intervals (a, b]) and lower topology
 (where the basic open sets are half-open intervals [a,b)).
@@ -24,7 +26,28 @@ Then f is continuous in the usual topology (where the basic open sets are
 open intervals (a,b)) and also monotone nondecreasing.
 -/
 
-#[problem_setup] namespace UpperLowerContinuous
+namespace UpperLowerContinuous
+
+def upper_intervals : Set (Set ℝ) := {s : Set ℝ | ∃ a b : ℝ, Set.Ioc a b = s}
+def lower_intervals : Set (Set ℝ) := {s : Set ℝ | ∃ a b : ℝ, Set.Ico a b = s}
+def open_intervals : Set (Set ℝ) := {s : Set ℝ | ∃ a b : ℝ, Set.Ioo a b = s}
+
+/-- Generate the toplogy on ℝ by intervals of the form (a, b]. -/
+def tᵤ : TopologicalSpace ℝ := TopologicalSpace.generateFrom upper_intervals
+
+/-- Generate the toplogy on ℝ by intervals of the form [a, b). -/
+def tₗ : TopologicalSpace ℝ := TopologicalSpace.generateFrom lower_intervals
+
+/-- This should be equivalent to the default instance
+for `TopologicalSpace ℝ`, which goes through `UniformSpace`, but for
+now I don't want to bother with proving that equivalence.
+-/
+def tₛ : TopologicalSpace ℝ := TopologicalSpace.generateFrom open_intervals
+
+-- activate the Continuous[t1, t2] notation
+open Topology
+
+snip begin
 
 /--
  Let S be a set of real numbers such that:
@@ -97,28 +120,6 @@ lemma real_induction
     · exact hy ⟨hle, H'⟩
 
   exact (not_le.mpr hwy) ((isGLB_iff_le_iff.mp h13 y).mpr h12)
-
-def upper_intervals : Set (Set ℝ) := {s : Set ℝ | ∃ a b : ℝ, Set.Ioc a b = s}
-def lower_intervals : Set (Set ℝ) := {s : Set ℝ | ∃ a b : ℝ, Set.Ico a b = s}
-def open_intervals : Set (Set ℝ) := {s : Set ℝ | ∃ a b : ℝ, Set.Ioo a b = s}
-
-#[problem_setup]
-/-- Generate the toplogy on ℝ by intervals of the form (a, b]. -/
-def tᵤ : TopologicalSpace ℝ := TopologicalSpace.generateFrom upper_intervals
-
-#[problem_setup]
-/-- Generate the toplogy on ℝ by intervals of the form [a, b). -/
-def tₗ : TopologicalSpace ℝ := TopologicalSpace.generateFrom lower_intervals
-
-#[problem_setup]
-/-- This should be equivalent to the default instance
-for `TopologicalSpace ℝ`, which goes through `UniformSpace`, but for
-now I don't want to bother with proving that equivalence.
--/
-def tₛ : TopologicalSpace ℝ := TopologicalSpace.generateFrom open_intervals
-
--- activate the Continuous[t1, t2] notation
-#[problem_setup] open Topology
 
 lemma lower_basis :
     @TopologicalSpace.IsTopologicalBasis ℝ tₗ lower_intervals := by
@@ -411,6 +412,8 @@ theorem monotone_of_upper_lower_continuous
   have h0 : Set.Ici z ⊆ f ⁻¹' (Set.Ici (f z)) :=
     real_induction L1 L2 (@Set.left_mem_Ici _ _ (f z))
   exact h0 hz
+
+snip end
 
 problem properties_of_upper_lower_continuous
     (f : ℝ → ℝ)

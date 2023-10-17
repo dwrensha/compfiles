@@ -8,7 +8,9 @@ import Mathlib.Data.Int.Basic
 
 import Compfiles.Meta.ProblemExtraction
 
-#[problem_setup]/-!
+problem_file
+
+/-!
 Canadian Mathematical Olympiad 1998, Problem 5
 
 Let m be a positive integer. Define the sequence {aₙ} by a₀ = 0,
@@ -20,9 +22,8 @@ a₁ = m, and aₙ₊₁ = m²aₙ - aₙ₋₁ for n ≥ 1. Prove that an order
 if an only if (a,b) = (aₙ,aₙ₊₁) for some n ≥ 0.
 -/
 
-#[problem_setup] namespace Canada1998P5
+namespace Canada1998P5
 
-#[problem_setup]
 def A (m : ℕ) (hm : 0 < m) : ℕ → ℤ
 | 0 => 0
 | 1 => (↑m)

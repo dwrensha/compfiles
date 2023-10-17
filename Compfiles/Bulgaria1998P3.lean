@@ -11,7 +11,9 @@ import Mathlib.Analysis.SpecificLimits.Basic
 
 import Compfiles.Meta.ProblemExtraction
 
-#[problem_setup]/-!
+problem_file
+
+/-!
 Bulgarian Mathematical Olympiad 1998, Problem 3
 
 Let ℝ⁺ be the set of positive real numbers. Prove that there does not exist a function
@@ -23,15 +25,19 @@ for every x,y ∈ ℝ⁺.
 
 -/
 
-#[problem_setup] namespace Bulgaria1998P3
+namespace Bulgaria1998P3
 
-open BigOperators
+snip begin
+
+open scoped BigOperators
 
 lemma geom_sum_bound (n : ℕ) : ∑ i in Finset.range n, (1:ℝ) / (2^i) < 3 :=
   calc ∑ i in Finset.range n, (1:ℝ) / ((2:ℝ)^i)
           = ∑ i in Finset.range n, ((1:ℝ) / 2)^i := by {congr; simp [div_eq_mul_inv]}
         _ ≤ 2 := sum_geometric_two_le n
         _ < 3 := by norm_num
+
+snip end
 
 problem bulgaria1998_p3
     (f : ℝ → ℝ)

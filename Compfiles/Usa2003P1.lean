@@ -11,14 +11,18 @@ import Mathlib.Tactic
 
 import Compfiles.Meta.ProblemExtraction
 
-#[problem_setup]/-!
+problem_file
+
+/-!
 # USA Mathematical Olympiad 2003, Problem 1
 
 Prove that for every positive integer n there exists an n-digit
 number divisible by 5ⁿ, all of whose digits are odd.
 -/
 
-#[problem_setup] namespace Usa2003P1
+namespace Usa2003P1
+
+snip begin
 
 lemma nat_mod_inv (a : ℕ) : ∃ b, (a + b) % 5 = 0 := by
   use 5 - (a % 5)
@@ -41,6 +45,8 @@ lemma lemma2 (a b c : ℕ) (hb : 0 < b) (h : Nat.Coprime a b) : ∃ k, k < b ∧
     rw [← HN2, hx, Nat.mul_mod, Nat.mod_mod, ←Nat.mul_mod]
 
 lemma prime_five : Nat.Prime 5 := by norm_num
+
+snip end
 
 problem usa2003_p1 (n : ℕ) :
     ∃ m, (Nat.digits 10 m).length = n ∧

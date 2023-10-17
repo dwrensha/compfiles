@@ -10,7 +10,9 @@ import Mathlib.Tactic.Linarith
 
 import Compfiles.Meta.ProblemExtraction
 
-#[problem_setup]/-!
+problem_file
+
+/-!
 # International Mathematical Olympiad 1964, Problem 4
 
 Seventeen people correspond by mail with one another -- each one with
@@ -21,7 +23,9 @@ about the same topic.
 
 -/
 
-#[problem_setup] namespace Imo1964P4
+namespace Imo1964P4
+
+snip begin
 
 /--
  Smaller version of the problem, with 6 (or more) people and 2 topics.
@@ -108,6 +112,8 @@ theorem lemma1
       let t3': Topic' := ⟨discusses p3 p4, h8⟩
       have h9 := ht3 t3'
       rw [←h9]
+
+snip end
 
 problem imo1964_p4
     (Person Topic : Type)

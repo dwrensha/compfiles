@@ -9,7 +9,9 @@ import Mathlib
 
 import Compfiles.Meta.ProblemExtraction
 
-#[problem_setup]/-!
+problem_file
+
+/-!
 # USA Mathematical Olympiad 2023, Problem 5
 
 Let n be an integer greater than 2. We will be arranging the numbers
@@ -24,22 +26,18 @@ the numbers in each row.
 
 -/
 
-#[problem_setup] namespace Usa2023P5
+namespace Usa2023P5
 
-#[problem_setup]
 def PermutedArithSeq {n : ℕ} (hn : 0 < n) (a : Fin n ↪ Fin (n^2)) : Prop :=
     ∃ p : Fin n → Fin n, p.Bijective ∧
       ∃ k : ℕ, ∀ m : Fin n, (a (p m)).val = a (p ⟨0, hn⟩) + m.val * k
 
-#[problem_setup]
 def row_valid {n : ℕ} (hn : 0 < n) (a : Fin n → Fin n → Fin (n^2)) (ha : a.Injective2) : Prop :=
     ∀ r : Fin n, PermutedArithSeq hn ⟨(a r ·), Function.Injective2.right ha r⟩
 
-#[problem_setup]
 def col_valid {n : ℕ} (hn : 0 < n) (a : Fin n → Fin n → Fin (n^2)) (ha : a.Injective2) : Prop :=
     ∀ c : Fin n, PermutedArithSeq hn ⟨(a · c), Function.Injective2.left ha c⟩
 
-#[problem_setup]
 theorem injective_of_permuted_rows {α β γ : Type}
     {f : α → β → γ} (hf : f.Injective2) {p : α → β → β} (hp : ∀ a, (p a).Injective) :
     Function.Injective2 (fun r c ↦ f r (p r c)) := by

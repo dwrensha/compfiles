@@ -11,7 +11,9 @@ import Mathlib.Tactic.Ring
 
 import Compfiles.Meta.ProblemExtraction
 
-#[problem_setup]/-!
+problem_file
+
+/-!
 
 Puzzle referenced from this tweet: https://twitter.com/sigfpe/status/1474173467016589323
 
@@ -25,19 +27,11 @@ except perhaps the first one belong to the same class?
 
 -/
 
-/-
+namespace KolmogorovStreams
+open scoped Stream'
 
-Answer: yes.
+variable {α : Type}
 
--/
-
-
-#[problem_setup] namespace KolmogorovStreams
-#[problem_setup] open scoped Stream'
-
-#[problem_setup] variable {α : Type}
-
-#[problem_setup]
 def break_into_words :
    (Stream' ℕ) → -- word lengths
    (Stream' α) → -- original sequence
@@ -46,6 +40,8 @@ def break_into_words :
      (Stream'.corec
        (λ ⟨lengths, a'⟩ ↦ a'.take lengths.head)
        (λ ⟨lengths, a'⟩ ↦ ⟨lengths.tail, a'.drop lengths.head⟩))
+
+snip begin
 
 --#eval ((break_into_words id id).take 10 )
 
@@ -88,12 +84,6 @@ lemma break_into_words_closed_form
           Stream'.drop_drop, Finset.sum_range_succ']
       congr
 
-#[problem_setup]
-def all_same_class
-    (is_decent : List α → Prop)
-    (b : Stream' (List α))
-    : Prop :=
-  b.All is_decent ∨ b.All (λ w ↦ ¬is_decent w)
 
 def all_prefixes (p : List α → Prop) (a : Stream' α) : Prop := a.inits.All p
 
@@ -223,11 +213,19 @@ lemma check_indecent_words
   intro j
   exact ((choose_indecent_words is_decent a h).nth j).h
 
+snip end
+
+def all_same_class
+    (is_decent : List α → Prop)
+    (b : Stream' (List α))
+    : Prop :=
+  b.All is_decent ∨ b.All (λ w ↦ ¬is_decent w)
+
 problem kolmogorov_streams
     (is_decent : List α → Prop)
     (a : Stream' α)
     : (∃ (lengths : Stream' ℕ),
-       (lengths.All (0 < ·)  ∧
+       (lengths.All (0 < ·) ∧
         all_same_class is_decent (break_into_words lengths a).tail)) := by
   let p : Prop :=
      (∃ (n : ℕ), ∀ (k : ℕ), 0 < k → ¬all_prefixes is_decent (a.drop (n + k)))

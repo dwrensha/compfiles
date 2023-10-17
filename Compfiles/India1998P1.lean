@@ -1,21 +1,20 @@
 import Mathlib.Data.Int.Basic
 import Mathlib.Data.Int.ModEq
 import Mathlib.Data.ZMod.Basic
-
-import Mathlib.Tactic.LinearCombination
-import Mathlib.Tactic.Ring
-import Mathlib.Tactic.NormNum.Prime
+import Mathlib.Tactic
 
 import Compfiles.Meta.ProblemExtraction
 
-#[problem_setup]/-!
+problem_file
+
+/-!
 Indian Mathematical Olympiad 1998, problem 1
 
 (a) Show that the product of two numbers of the form a² + 3b² is again of that form.
 (b) If an integer n is such that 7n is of the form a² + 3b², prove that n is also of that form.
 -/
 
-#[problem_setup] namespace India1998P1
+namespace India1998P1
 
 problem india1998_p1a (a₁ a₂ b₁ b₂ : ℤ) :
     (∃ a₃ b₃, (a₁^2 + 3 * b₁^2) * (a₂^2 + 3 * b₂^2) = (a₃^2 + 3 * b₃^2)) :=

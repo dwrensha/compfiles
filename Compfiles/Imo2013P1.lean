@@ -6,12 +6,13 @@ Authors: David Renshaw
 import Mathlib.Data.PNat.Basic
 import Mathlib.Data.Nat.Parity
 import Mathlib.Algebra.BigOperators.Pi
-import Mathlib.Tactic.Ring
-import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic
 
 import Compfiles.Meta.ProblemExtraction
 
-#[problem_setup]/-!
+problem_file
+
+/-!
 # International Mathematical Olympiad 2013, Problem 1
 
 Prove that for any pair of positive integers k and n, there exist k positive integers
@@ -21,6 +22,11 @@ m₁, m₂, ..., mₖ (not necessarily different) such that
 
 -/
 
+open scoped BigOperators
+namespace Imo2013P1
+
+snip begin
+
 /-
 # Solution
 
@@ -29,9 +35,6 @@ Adaptation of the solution found in https://www.imo-official.org/problems/IMO201
 We prove a slightly more general version where k does not need to be strictly positive.
 -/
 
-#[problem_setup] open scoped BigOperators
-#[problem_setup] namespace Imo2013P1
-
 theorem prod_lemma (m : ℕ → ℕ+) (k : ℕ) (nm : ℕ+) :
     ∏ i : ℕ in Finset.range k, ((1 : ℚ) + 1 / ↑(if i < k then m i else nm)) =
       ∏ i : ℕ in Finset.range k, (1 + 1 / (m i : ℚ)) := by
@@ -39,6 +42,8 @@ theorem prod_lemma (m : ℕ → ℕ+) (k : ℕ) (nm : ℕ+) :
   exact Finset.prod_congr rfl this
   intro i hi
   simp [Finset.mem_range.mp hi]
+
+snip end
 
 problem imo2013_p1 (n : ℕ+) (k : ℕ) :
     ∃ m : ℕ → ℕ+,
