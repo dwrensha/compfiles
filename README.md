@@ -21,8 +21,13 @@ $ lake build
 
 ## extracting problems
 
-This repo defines some [special command wrappers](/Compfiles/Meta/ProblemExtraction.lean)
+This repo defines some [special commands](/Compfiles/Meta/ProblemExtraction.lean)
 to support problem extraction.
+
+* a `problem` declaration is the main theorem to be proved
+* a `determine` declaration indicates data the must be provided as part of the solution
+* a `snip begin` ... `snip end` sequence indicates commands that should be omitted
+  in the extracted problem
 
 To generate problem statements with all solution information stripped, do:
 ```

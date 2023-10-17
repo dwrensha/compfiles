@@ -54,6 +54,7 @@ initialize problemExtractionExtension : ProblemExtractionExtension ←
     addEntryFn    := fun s n => s.push n
   }
 
+/-- Top-level command to mark a file as a problem file. -/
 syntax (name := problemFile) "problem_file" : command
 
 elab_rules : command
@@ -66,8 +67,8 @@ elab_rules : command
   let ext := problemExtractionExtension
   modifyEnv fun env => ext.addEntry env ⟨mod, EntryVariant.file src startPos⟩
 
+/-- Commands between `snip begin` and `snip end` will be discarded by problem extraction. -/
 syntax (name := snipBegin) "snip begin" : command
-
 syntax (name := snipEnd) "snip end" : command
 
 elab_rules : command
