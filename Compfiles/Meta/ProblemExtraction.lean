@@ -54,7 +54,9 @@ initialize problemExtractionExtension : ProblemExtractionExtension ←
     addEntryFn    := fun s n => s.push n
   }
 
-/-- Top-level command to mark a file as a problem file. -/
+/-- Top-level command to mark that a file should participate in problem extraction.
+This should be at the top of the file (after imports); content above it is ignored
+during problem extraction (except for imports). -/
 syntax (name := problemFile) "problem_file" : command
 
 elab_rules : command

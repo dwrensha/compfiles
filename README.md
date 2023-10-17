@@ -24,6 +24,7 @@ $ lake build
 This repo defines some [special commands](/Compfiles/Meta/ProblemExtraction.lean)
 to support problem extraction.
 
+* A `problem_file` command marks a file that should participate in problem extraction.
 * A `problem` declaration is the main theorem to be proved.
 * A `determine` declaration indicates data the must be provided as part of the solution.
 * A `snip begin` ... `snip end` sequence indicates commands that should be omitted
