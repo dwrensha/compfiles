@@ -23,6 +23,24 @@ determine solution_set : Set (ℕ × ℕ) := sorry
 problem usa2022_p4 (p q : ℕ) :
     (p, q) ∈ solution_set ↔
     p.Prime ∧ q.Prime ∧
-    ∃ n, n^2 + q = p ∧ ∃ m, m^2 + q = p * q := by
-  -- https://web.evanchen.cc/exams/USAMO-2022-notes.pdf
+    ∃ a, a^2 + q = p ∧ ∃ b, b^2 + q = p * q := by
+  -- Informal proof outline taken from https://web.evanchen.cc/exams/USAMO-2022-notes.pdf
+
+  -- Note that 0 < p and 0 < q because they are prime.
+
+  -- Note that we then have 0 < a < p, and 0 < b < p (because q ≤ p).
+
+  -- Subtracting our equations gives (b - a)(b + a) = b² - a² = p(q - 1),
+
+  -- Since b - a < p and p is prime, we have that p divides b + a.
+  -- Since and b + a < 2p, we have that a + b must in fact equal p.
+
+  -- Hence q - 1 = b - a.
+
+  -- Note that b - a and b + a have the same parity.
+  -- Therefore p and q - 1 have the same parity.
+  -- If they are both even, then q > p, contradiction.
+  -- Therefore, they are both odd, and q = 2.
+
+  -- Moreover, p ≡ 0 mod 3, so (3,2) is the only possibility.
   sorry
