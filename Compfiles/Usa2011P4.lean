@@ -30,7 +30,7 @@ inductive SolutionData where
 
 determine solution_data : SolutionData := sorry
 
-problem use2011_p4 :
+problem usa2011_p4 :
     match solution_data with
     | .AlwaysTrue => ∀ n, 2 ≤ n → P n
     | .CounterExample m => 2 ≤ m ∧ ¬ P m := by
