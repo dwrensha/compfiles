@@ -13,9 +13,9 @@ problem_file
 /-!
 # USA Mathematical Olympiad 2011, Problem 4
 
-For any integer n ≥ 2, let P(n) be the proposition:
+For any integer n ≥ 2, define P(n) to be the proposition:
 
-  2^(2^n) % (2^n - 1) is a power of 4
+  P(n) ≡  2^(2^n) % (2^n - 1) is a power of 4
 
 Either prove that P(n) is always true, or find a counterexample.
 -/
@@ -40,7 +40,10 @@ problem usa2011_p4 :
   rw [not_exists]
   intro x hx
   rw [show 4 = 2^2 by rfl, ←Nat.pow_mul] at hx
+
+  -- 2^(2^25) is small enough that we can just normalize it.
   rw [show 2 ^ 2 ^ 25 % (2 ^ 25 - 1) = 2 ^ 7 by rfl] at hx
+
   have h2 : 2 ≤ 2 := by norm_num
   have h3 := Nat.pow_right_injective h2 hx
   apply_fun (· % 2) at h3
