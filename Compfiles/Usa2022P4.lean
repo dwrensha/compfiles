@@ -78,13 +78,35 @@ problem usa2022_p4 (p q : ℕ) :
     have h7 : p < q := (mul_lt_mul_left hp_pos).mp h6
     exact Nat.le_lt_antisymm hqlep h7
 
-  have hab : a ≤ b := by zify at ha hb ⊢; sorry
-
   -- Subtracting our equations gives (b - a)(b + a) = b² - a² = p(q - 1),
-  have h1 : (b - a) * (b + a) = p * (q - 1) := by
-    sorry
+  have h1 : (b + a) * (b - a) = p * (q - 1) := by
+    rw [←Nat.sq_sub_sq, Nat.mul_sub_left_distrib, mul_one]
+    have h2 : (b^2 + q) - (a^2 + q) = p * q - p := hb ▸ ha ▸ rfl
+    rw [Nat.add_sub_add_right] at h2
+    exact h2
+
+  have hba : a < b := by
+    have h2' : 1 < q := Nat.Prime.one_lt hpq
+    have h2 : p < p * q := lt_mul_right hp_pos h2'
+    have h3 := calc
+              a^2 + q = p := ha
+              _ < p * q := h2
+              _ = b^2 + q := hb.symm
+    have h4 : a^2 < b^2 := (Nat.add_lt_add_iff_right q (a ^ 2) (b ^ 2)).mp h3
+    exact lt_of_pow_lt_pow' 2 h4
+  have hba' : 0 < b - a := Nat.sub_pos_of_lt hba
 
   -- Since b - a < p and p is prime, we have that p divides b + a.
+  have h2 : b - a < p := tsub_lt_of_lt hbp
+  have h3 : ¬ p ∣ b - a := Nat.not_dvd_of_pos_of_lt hba' h2
+
+  have h4 : p ∣ p * (q - 1) := Nat.dvd_mul_right p (q - 1)
+  rw [←h1, mul_comm] at h4
+  have h5 : p ∣ b + a := by
+    cases' (Nat.Prime.dvd_mul hpp).mp h4 with h6 h6
+    · contradiction
+    · exact h6
+
   -- Since and b + a < 2p, we have that a + b must in fact equal p.
 
   -- Hence q - 1 = b - a.
