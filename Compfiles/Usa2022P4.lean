@@ -61,8 +61,7 @@ problem usa2022_p4 (p q : ℕ) :
     exact h2
 
   have hba : a < b := by
-    have h2' : 1 < q := Nat.Prime.one_lt hpq
-    have h2 : p < p * q := lt_mul_right hp_pos h2'
+    have h2 : p < p * q := lt_mul_right hp_pos (Nat.Prime.one_lt hpq)
     have h3 := calc
               a^2 + q = p := ha
               _ < p * q := h2
@@ -126,8 +125,7 @@ problem usa2022_p4 (p q : ℕ) :
         cases' Nat.Prime.eq_one_or_self_of_dvd hpq _ h15 with h16 h16
         · norm_num at h16
         · exact h16.symm
-      · have h13 : 0 < 2 := zero_lt_two
-        have h14 := Nat.mod_lt p h13
+      · have h14 := Nat.mod_lt p zero_lt_two
         rw [h] at h14
         exact (not_lt_zero' (Nat.succ_lt_succ_iff.mp (Nat.succ_lt_succ_iff.mp h14))).elim
 
