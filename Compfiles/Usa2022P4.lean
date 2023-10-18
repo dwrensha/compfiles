@@ -108,13 +108,40 @@ problem usa2022_p4 (p q : ℕ) :
     · exact h6
 
   -- Since and b + a < 2p, we have that a + b must in fact equal p.
+  have h6 : b + a < 2 * p := by linarith
+  have h7 : b + a = p := by
+    obtain ⟨k, hk⟩ := h5
+    rw [mul_comm, hk] at h6
+    have : k < 2 := (mul_lt_mul_left hp_pos).mp h6
+    sorry --interval_cases k <;> linarith
 
   -- Hence q - 1 = b - a.
+  have h8 : q - 1 = b - a := by
+    rw [h7] at h1
+    exact (Nat.eq_of_mul_eq_mul_left hp_pos h1).symm
 
   -- Note that b - a and b + a have the same parity.
   -- Therefore p and q - 1 have the same parity.
   -- If they are both even, then q > p, contradiction.
   -- Therefore, they are both odd, and q = 2.
+  have h9 : q = 2 := by sorry
 
   -- Moreover, p ≡ 0 mod 3, so (3,2) is the only possibility.
-  sorry
+  have h10 : 3 ∣ p := by
+    rw [←Nat.sq_sub_sq] at h1
+    apply_fun (· % 3) at h1
+    have h11 : (b ^ 2 - a ^ 2) % 3 = 0 := by
+      sorry
+    rw [h11] at h1
+    have h12 : 3 ∣ p * (q - 1) := Nat.modEq_zero_iff_dvd.mp h1.symm
+    cases' (Nat.Prime.dvd_mul Nat.prime_three).mp h12 with h13 h13
+    · exact h13
+    · rw [h9] at h13
+      norm_num at h13
+
+  have h11 : p = 3 := by
+    obtain ⟨k, hk⟩ := h10
+    have : 2 ≤ p := Nat.Prime.two_le hpp
+    sorry
+
+  simp only [h9, h11]
