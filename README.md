@@ -26,7 +26,11 @@ to support problem extraction.
 
 * A `problem_file` command marks a file that should participate in problem extraction.
 * A `problem` declaration is the main theorem to be proved.
+  The body of the declaration (everything to the right of `:=`) is replaced by `sorry`
+  in the extracted problem.
 * A `determine` declaration indicates data the must be provided as part of the solution.
+  Like with `problem`, the body of the declaration is replaced by `sorry` in the
+  extracted problem.
 * A `snip begin` ... `snip end` sequence indicates commands that should be omitted
   in the extracted problem.
 
