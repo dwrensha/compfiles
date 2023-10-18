@@ -28,9 +28,7 @@ problem usa2022_p4 (p q : ℕ) :
   constructor
   · -- easy direction
     intro hpq
-    rw [Set.mem_singleton_iff, Prod.mk.injEq] at hpq
-    obtain ⟨hp, hq⟩ := hpq
-    rw [hp, hq]
+    obtain ⟨rfl, rfl⟩ := hpq
     exact ⟨by norm_num, by norm_num, 1, by norm_num, 2, by norm_num⟩
 
   -- Informal proof outline taken from
@@ -42,9 +40,7 @@ problem usa2022_p4 (p q : ℕ) :
   have hq_pos : 0 < q := Nat.Prime.pos hpq
 
   -- Note that we then have 0 < a < p, and 0 < b < p (because q ≤ p).
-  have hqlep : q ≤ p := by
-    have h1 : q ≤ a^2 + q := Nat.le_add_left q (a ^ 2)
-    exact Eq.trans_ge ha h1
+  have hqlep : q ≤ p := (Nat.le_add_left q (a ^ 2)).trans_eq ha
 
   have hbp : b < p := by
     by_contra' H
