@@ -124,7 +124,39 @@ problem usa2022_p4 (p q : ℕ) :
   -- Therefore p and q - 1 have the same parity.
   -- If they are both even, then q > p, contradiction.
   -- Therefore, they are both odd, and q = 2.
-  have h9 : q = 2 := by sorry
+  have h9 : q = 2 := by
+    have h10 : (b + a) % 2 = (b - a) % 2 := by
+      have h11 : b + a = b - a + 2 * a := by
+        rw [Nat.two_mul, ←add_assoc, add_left_inj]
+        exact Nat.eq_add_of_sub_eq (Nat.le_of_lt hba) rfl
+      rw [h11, Nat.add_mod]
+      simp only [Nat.mul_mod_right, add_zero, Nat.mod_mod]
+    rw [h7, ←h8] at h10
+    cases' h : p % 2 with p'
+    · have h14 : p = 2 := by
+        have h15 : 2 ∣ p := Nat.modEq_zero_iff_dvd.mp h
+        cases' Nat.Prime.eq_one_or_self_of_dvd hpp _ h15 with h16 h16
+        · norm_num at h16
+        · exact h16.symm
+      rw [h14] at hqlep
+      interval_cases q
+      · norm_num at h8
+        rw [h8] at hba'
+        norm_num at hba'
+      · rfl
+    · cases' p' with p''
+      · norm_num at h
+        rw [h] at h10
+        apply_fun (fun x ↦ (x + (1%2))%2) at h10
+        rw [←Nat.add_mod, Nat.sub_add_cancel hq_pos] at h10
+        norm_num at h10
+        have h15 : 2 ∣ q := Nat.modEq_zero_iff_dvd.mp h10.symm
+        cases' Nat.Prime.eq_one_or_self_of_dvd hpq _ h15 with h16 h16
+        · norm_num at h16
+        · exact h16.symm
+      · have h13 : 0 < 2 := zero_lt_two
+        have h14 := Nat.mod_lt p h13
+        linarith
 
   -- Moreover, p ≡ 0 mod 3, so (3,2) is the only possibility.
   have h10 : 3 ∣ p := by
