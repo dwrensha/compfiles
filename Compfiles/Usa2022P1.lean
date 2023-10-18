@@ -28,8 +28,8 @@ problem usa2022_p1
     (c0 : a^2 + a * b - b ≤ Fintype.card {s // color s = 0})
     (c1 : b^2 + a * b - a ≤ Fintype.card {s // color s = 1}) :
     ∃ A B : Finset (Fin (a + b + 1) × Fin (a + b + 1)),
-      Finset.card A = a ∧ Finset.card B = b ∧
-       (∀ x ∈ A, color x = 0) ∧
-       (∀ y ∈ B, color y = 1) ∧
-         ∀ x ∈ A ∪ B, ∀ y ∈ A ∪ B, x ≠ y → x.fst ≠ y.fst ∧ x.snd ≠ y.snd := by
+      A.card = a ∧ B.card = b ∧
+      (∀ x ∈ A, color x = 0) ∧
+      (∀ y ∈ B, color y = 1) ∧
+      ∀ x ∈ A ∪ B, ∀ y ∈ A ∪ B, x ≠ y → x.fst ≠ y.fst ∧ x.snd ≠ y.snd := by
   sorry
