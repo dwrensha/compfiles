@@ -135,7 +135,8 @@ problem usa2022_p4 (p q : ℕ) :
         · exact h16.symm
       · have h13 : 0 < 2 := zero_lt_two
         have h14 := Nat.mod_lt p h13
-        linarith
+        rw [h] at h14
+        exact (not_lt_zero' (Nat.succ_lt_succ_iff.mp (Nat.succ_lt_succ_iff.mp h14))).elim
 
   have h11 : p = 3 := by
     have h20 : b - a = 1 := by rw [h9] at h8; exact h8.symm
@@ -144,11 +145,10 @@ problem usa2022_p4 (p q : ℕ) :
     have h23 : p = 2 * a + 1 := by
       rw [h21, add_assoc, ←Nat.two_mul, add_comm] at h7
       exact h7.symm
-    rw [h23, h9] at ha
-    rw [Nat.succ_inj'] at ha
+    rw [h23, h9, Nat.succ_inj'] at ha
     have h30 : a = 1 := by
       zify at ha
-      have h26 : ((a:ℤ) - 1)^2 = 0 := by linarith
+      have h26 : ((a:ℤ) - 1)^2 = 0 := by linear_combination ha
       have h27 : (a:ℤ) - 1 = 0 := pow_eq_zero h26
       have h28 : (a:ℤ) = 1 := Int.sub_eq_zero.mp h27
       exact Int.ofNat_inj.mp h28
