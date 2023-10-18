@@ -36,5 +36,5 @@ problem imo1968_p5a (f : ℝ → ℝ) (a : ℝ) (hf : P a f) : ∃ b, f.Periodic
   sorry
 
 problem imo1968_p5b :
-    P a solution_func ∧ ¬∃c, solution_func = Function.const ℝ c := by
+    P 1 solution_func ∧ ¬∃c, solution_func = Function.const ℝ c := by
   sorry
