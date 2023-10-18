@@ -140,8 +140,9 @@ problem usa2022_p4 (p q : ℕ) :
       norm_num at h13
 
   have h11 : p = 3 := by
-    obtain ⟨k, hk⟩ := h10
-    have : 2 ≤ p := Nat.Prime.two_le hpp
-    sorry
+    have h12 := Nat.Prime.eq_one_or_self_of_dvd hpp _ h10
+    cases' h12 with h13 h13
+    · norm_num at h13
+    · exact h13.symm
 
   simp only [h9, h11]
