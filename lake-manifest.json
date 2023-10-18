@@ -4,10 +4,10 @@
  [{"git":
    {"url": "https://github.com/leanprover-community/mathlib4",
     "subDir?": null,
-    "rev": "c5594244d6b6e5e0c0a479a4501c34b0ea194fce",
+    "rev": "e05d9aec5693639a96b65bd82615c34f2e0096f8",
     "opts": {},
     "name": "mathlib",
-    "inputRev?": "c5594244d6b6e5e0c0a479a4501c34b0ea194fce",
+    "inputRev?": "e05d9aec5693639a96b65bd82615c34f2e0096f8",
     "inherited": false}},
   {"git":
    {"url": "https://github.com/gebner/quote4",
@@ -34,19 +34,19 @@
     "inputRev?": "v0.0.18",
     "inherited": true}},
   {"git":
-   {"url": "https://github.com/leanprover/std4",
-    "subDir?": null,
-    "rev": "85a0d4891518518edfccee16cbceac139efa460c",
-    "opts": {},
-    "name": "std",
-    "inputRev?": "main",
-    "inherited": true}},
-  {"git":
    {"url": "https://github.com/JLimperg/aesop",
     "subDir?": null,
     "rev": "0bd8465d8a5cfdd53c1ff0fd57ca5eaa53eb455c",
     "opts": {},
     "name": "aesop",
     "inputRev?": "master",
+    "inherited": true}},
+  {"git":
+   {"url": "https://github.com/leanprover/std4",
+    "subDir?": null,
+    "rev": "0d90d74628daa9ee7d4039a3b035240ff6d64da5",
+    "opts": {},
+    "name": "std",
+    "inputRev?": "main",
     "inherited": true}}],
  "name": "compfiles"}
