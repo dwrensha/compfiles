@@ -46,27 +46,6 @@ problem usa2022_p4 (p q : ℕ) :
     have h1 : q ≤ a^2 + q := Nat.le_add_left q (a ^ 2)
     exact Eq.trans_ge ha h1
 
-  /-
-  have ha_pos : 0 < a := by
-    by_contra H
-    have h1 : a = 0 := Nat.eq_zero_of_nonpos a H
-    rw [h1] at ha
-    simp only [ne_eq, zero_pow', zero_add] at ha
-    rw [ha] at hb
-    sorry
-  have hb_pos : 0 < b := by nlinarith
-  -/
-  have hap : a < p := by
-    by_contra' H
-    have h2 : p^2 ≤ a^2 := Nat.pow_le_pow_of_le_left H 2
-    have h6 :=
-      calc p < p * p := Nat.lt_mul_self_iff.mpr (Nat.Prime.one_lt hpp)
-           _ = p^2 := (Nat.pow_two p).symm
-           _ ≤ p^2 + q := Nat.le_add_right (p ^ 2) q
-           _ ≤ _ := Nat.add_le_add_right h2 q
-           _ = p := ha
-    exact LT.lt.false h6
-
   have hbp : b < p := by
     by_contra' H
     have h2 : p^2 ≤ b^2 := Nat.pow_le_pow_of_le_left H 2
@@ -113,7 +92,7 @@ problem usa2022_p4 (p q : ℕ) :
     obtain ⟨k, hk⟩ := h5
     rw [mul_comm, hk] at h6
     have : k < 2 := (mul_lt_mul_left hp_pos).mp h6
-    sorry --interval_cases k <;> linarith
+    interval_cases k <;> linarith
 
   -- Hence q - 1 = b - a.
   have h8 : q - 1 = b - a := by
@@ -158,23 +137,22 @@ problem usa2022_p4 (p q : ℕ) :
         have h14 := Nat.mod_lt p h13
         linarith
 
-  -- Moreover, p ≡ 0 mod 3, so (3,2) is the only possibility.
-  have h10 : 3 ∣ p := by
-    rw [←Nat.sq_sub_sq] at h1
-    apply_fun (· % 3) at h1
-    have h11 : (b ^ 2 - a ^ 2) % 3 = 0 := by
-      sorry
-    rw [h11] at h1
-    have h12 : 3 ∣ p * (q - 1) := Nat.modEq_zero_iff_dvd.mp h1.symm
-    cases' (Nat.Prime.dvd_mul Nat.prime_three).mp h12 with h13 h13
-    · exact h13
-    · rw [h9] at h13
-      norm_num at h13
-
   have h11 : p = 3 := by
-    have h12 := Nat.Prime.eq_one_or_self_of_dvd hpp _ h10
-    cases' h12 with h13 h13
-    · norm_num at h13
-    · exact h13.symm
+    have h20 : b - a = 1 := by rw [h9] at h8; exact h8.symm
+    have h22 : a ≤ b := Nat.le_of_lt hba
+    have h21 : b = 1 + a := Nat.eq_add_of_sub_eq h22 h20
+    have h23 : p = 2 * a + 1 := by
+      rw [h21, add_assoc, ←Nat.two_mul, add_comm] at h7
+      exact h7.symm
+    rw [h23, h9] at ha
+    rw [Nat.succ_inj'] at ha
+    have h30 : a = 1 := by
+      zify at ha
+      have h26 : ((a:ℤ) - 1)^2 = 0 := by linarith
+      have h27 : (a:ℤ) - 1 = 0 := pow_eq_zero h26
+      have h28 : (a:ℤ) = 1 := Int.sub_eq_zero.mp h27
+      exact Int.ofNat_inj.mp h28
+    rw [h30] at h23
+    exact h23
 
   simp only [h9, h11]
