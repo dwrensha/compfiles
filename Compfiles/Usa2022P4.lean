@@ -77,10 +77,7 @@ problem usa2022_p4 (p q : ℕ) :
 
   have h4 : p ∣ p * (q - 1) := Nat.dvd_mul_right p (q - 1)
   rw [←h1, mul_comm] at h4
-  have h5 : p ∣ b + a := by
-    cases' (Nat.Prime.dvd_mul hpp).mp h4 with h6 h6
-    · contradiction
-    · exact h6
+  have h5 : p ∣ b + a := Or.resolve_left ((Nat.Prime.dvd_mul hpp).mp h4) h3
 
   -- Since and b + a < 2p, we have that a + b must in fact equal p.
   have h6 : b + a < 2 * p := by linarith
