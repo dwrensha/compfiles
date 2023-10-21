@@ -54,7 +54,10 @@ lemma lemma1 (x : ℕ) (xpos : 0 < x) : List.prod (Nat.digits 10 x) ≤ x := by
 
   have h8 : List.prod (List.dropLast (Nat.digits 10 x)) ≤
             10^(List.length (List.dropLast (Nat.digits 10 x))) := by
-    sorry
+    have h10 : ∀ d ∈ List.dropLast (Nat.digits 10 x), d ≤ 10 := by
+      intro d hd
+      exact Nat.le_of_lt (Nat.digits_lt_base' (List.mem_of_mem_dropLast hd))
+    exact List.prod_le_pow_card (List.dropLast (Nat.digits 10 x)) 10 h10
 
   calc _ ≤ _ := Nat.mul_le_mul_right _ h8
        _ ≤ _ := h6
