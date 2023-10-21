@@ -79,9 +79,9 @@ lemma lemma2 :
 
 snip end
 
-determine solution_data : ℕ := 9
+determine solution_value : ℕ := 9
 
-problem bulgaria1998_p1 : IsLeast { m | all_colorings_are_good m } solution_data := by
+problem bulgaria1998_p1 : IsLeast { m | all_colorings_are_good m } solution_value := by
   constructor
   · rw [Set.mem_setOf_eq]
     refine' ⟨by norm_num, _⟩
@@ -91,7 +91,7 @@ problem bulgaria1998_p1 : IsLeast { m | all_colorings_are_good m } solution_data
     intro n hn
     rw [Set.mem_setOf_eq] at hn
     by_contra' H
-    have h1 : n ≤ solution_data - 1 := Nat.le_pred_of_lt H
+    have h1 : n ≤ solution_value - 1 := Nat.le_pred_of_lt H
     have ⟨h2, h3⟩ := lemma1 h1 hn
     obtain ⟨f, hf⟩ := lemma2
     exact (hf (h3 f)).elim
