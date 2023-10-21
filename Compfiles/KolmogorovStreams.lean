@@ -74,13 +74,13 @@ lemma break_into_words_closed_form
     induction' n with pn hpn
     · intro a b; rfl
     · intro a b
-      rw [Stream'.nth_succ, Stream'.iterate_eq, Stream'.tail_cons, hpn]
+      rw [Stream'.get_succ, Stream'.iterate_eq, Stream'.tail_cons, hpn]
       rfl
   · revert a lengths
     induction' n with pn hpn
     · intro a b; rfl
     · intro a b
-      rw [Stream'.nth_succ, Stream'.iterate_eq, Stream'.tail_cons, hpn,
+      rw [Stream'.get_succ, Stream'.iterate_eq, Stream'.tail_cons, hpn,
           Stream'.drop_drop, Finset.sum_range_succ']
       congr
 
@@ -96,7 +96,7 @@ lemma take_prefix
   cases' n with n
   · exfalso; exact Nat.lt_asymm hn hn
   · have ht := ha n
-    rwa [Stream'.nth_inits] at ht
+    rwa [Stream'.get_inits] at ht
 
 structure decent_word (a : Stream' α) (is_decent: List α → Prop) : Type :=
   (start : ℕ)
@@ -131,8 +131,8 @@ lemma chosen_decent_closed_form
     (hinit: all_prefixes is_decent a)
     (hnot: ∀ (n : ℕ), ∃ (k : ℕ), 0 < k ∧
             all_prefixes is_decent (a.drop (n + k)))
-    : ∀ n : ℕ, (((choose_decent_words is_decent a hinit hnot).nth n).start =
-              ∑ j in Finset.range n, ((choose_decent_words is_decent a hinit hnot).nth j).length)
+    : ∀ n : ℕ, (((choose_decent_words is_decent a hinit hnot).get n).start =
+              ∑ j in Finset.range n, ((choose_decent_words is_decent a hinit hnot).get j).length)
             := by
   intro n
   induction' n with n pn
@@ -148,11 +148,11 @@ lemma check_decent_words
     : Stream'.All
       is_decent
       (break_into_words
-          (λ i ↦ ((choose_decent_words is_decent a hinit hnot).nth i).length) a) := by
+          (λ i ↦ ((choose_decent_words is_decent a hinit hnot).get i).length) a) := by
   rw [break_into_words_closed_form]
   simp_rw [←chosen_decent_closed_form]
   intro j
-  exact ((choose_decent_words is_decent a hinit hnot).nth j).h
+  exact ((choose_decent_words is_decent a hinit hnot).get j).h
 
 structure indecent_word (a : Stream' α) (is_decent : List α → Prop) : Type :=
   (start : ℕ)
@@ -190,8 +190,8 @@ lemma chosen_indecent_closed_form
     (is_decent : List α → Prop)
     (a : Stream' α)
     (h: ∀ (k : ℕ), ¬all_prefixes is_decent (a.drop k))
-    : ∀ n : ℕ, (((choose_indecent_words is_decent a h).nth n).start =
-                ∑ j in Finset.range n, ((choose_indecent_words is_decent a h).nth j).length)
+    : ∀ n : ℕ, (((choose_indecent_words is_decent a h).get n).start =
+                ∑ j in Finset.range n, ((choose_indecent_words is_decent a h).get j).length)
              := by
   intro n
   induction' n with n pn
@@ -206,12 +206,12 @@ lemma check_indecent_words
     : Stream'.All
       (λ x ↦ ¬ is_decent x)
       (break_into_words
-          (λ i ↦ ((choose_indecent_words is_decent a h).nth i).length)
+          (λ i ↦ ((choose_indecent_words is_decent a h).get i).length)
           a) := by
   rw [break_into_words_closed_form]
   simp_rw [←chosen_indecent_closed_form]
   intro j
-  exact ((choose_indecent_words is_decent a h).nth j).h
+  exact ((choose_indecent_words is_decent a h).get j).h
 
 snip end
 
@@ -238,12 +238,12 @@ problem kolmogorov_streams
       have hnk := hn (k + 1) (Nat.succ_pos _)
       rwa [Stream'.drop_drop, Nat.add_left_comm]
     let d := choose_indecent_words is_decent a' hn'
-    use n.succ::(λ i ↦ (d.nth i).length)
+    use n.succ::(λ i ↦ (d.get i).length)
     constructor
     · intro i
       cases' i with i
       · exact Nat.succ_pos n
-      · exact (d.nth i).nonempty
+      · exact (d.get i).nonempty
     · right
       rw [break_into_words_cons]
       exact check_indecent_words is_decent a' hn'
@@ -264,12 +264,12 @@ problem kolmogorov_streams
           ring_nf
         rwa [←hd]
     let d := choose_decent_words is_decent a' hinit hnot'
-    use k::(λ i ↦ (d.nth i).length)
+    use k::(λ i ↦ (d.get i).length)
     constructor
     · intro i
       cases' i with i
       · exact hkp
-      · exact (d.nth i).nonempty
+      · exact (d.get i).nonempty
     · left
       rw [break_into_words_cons]
       exact check_decent_words is_decent a' hinit hnot'
