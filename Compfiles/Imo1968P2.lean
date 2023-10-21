@@ -69,4 +69,23 @@ problem imo1968_p2 (x : ℕ) :
   constructor
   · rintro rfl; norm_num
   · intro hs
-    sorry
+    have h0 : 0 < x := by
+      by_contra' H
+      have h1 : x = 0 := Nat.le_zero.mp H
+      simp [h1] at hs
+    have h1 : List.prod (Nat.digits 10 x) ≤ x := lemma1 x h0
+    have h2 : x^2 ≤ 10 * x + 22 + x := le_add_of_le_add_left (le_of_eq hs) h1
+    have h3 : x < 13 := by
+      by_contra' H
+      qify at h0 h2 H
+      have h4 : (x:ℚ)^2 - 11 * (x:ℚ) ≤ 22 := by linarith
+      have h5 : (x:ℚ)^2 - 11 * (x:ℚ) = ((x:ℚ) - 11/2)^2 - (11^2)/(2^2) := by ring
+      rw [h5] at h4; clear h5
+      have h6 : 15/2 ≤ (x:ℚ) - 11 / 2 := by linarith
+      have h7 : (15/2)^2 ≤ ((x:ℚ) - 11 / 2)^2 := by
+        have h10 : 0 ≤ (15:ℚ)/2 := by norm_num
+        exact pow_le_pow_of_le_left h10 h6 2
+      have h8 : ((15:ℚ) / 2) ^ 2 - 11 ^ 2 / 2 ^ 2 ≤ 22 := by linarith
+      norm_num at h8
+    rw [Set.mem_singleton_iff]
+    interval_cases x <;> norm_num at hs ⊢
