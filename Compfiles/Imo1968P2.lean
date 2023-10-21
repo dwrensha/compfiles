@@ -26,11 +26,11 @@ lemma lemma0 {α β : Type} {f : ℕ → α → β} (l : List α)
      (h1 : List.mapIdx f l ≠ []) (h2 : l ≠ []) :
      List.getLast (List.mapIdx f l) h1 =
     f (l.dropLast).length (List.getLast l h2) := by
-  induction' l with x xs ih
-  · exfalso; exact h1 rfl
-  · cases' xs with y ys
-    · simp
-    · simp_rw [List.mapIdx_cons]; sorry
+  simp_rw [List.mapIdx_eq_enum_map]
+  rw [List.getLast_eq_get, List.get_map, List.get_enum]
+  simp only [List.length_map, List.length_enum, Function.uncurry_apply_pair, List.length_dropLast]
+  congr
+  exact List.get_length_sub_one _
 
 lemma lemma1 (x : ℕ) (xpos : 0 < x) : List.prod (Nat.digits 10 x) ≤ x := by
   have h1 : Nat.digits 10 x ≠ [] :=
