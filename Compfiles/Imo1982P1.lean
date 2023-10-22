@@ -81,6 +81,9 @@ problem imo1982_p1 (f : ℕ → ℕ)
   have h20 : ∀ k, 0 < k → f k ≤ f (k + 1) := by
     intro k hk
     cases' hf k 1 hk one_pos with h21 h21 <;> rw [h21] <;> linarith
+  have h30 : ∀ k l, 0 < k → l ≤ f k → l + l ≤ f (k + k) := by
+    intro k l hk hl
+    cases' hf k k hk hk with h21 h21 <;> rw [h21] <;> linarith
   have h10 : ∀ k, 0 < k → 12 * k + 9 ≤ 9999 → f (3 * k + 2) = k := by
     intro k hk hk1
     cases' hf (3*k) 2 (Nat.succ_mul_pos 2 hk) two_pos with h11 h11
@@ -91,23 +94,13 @@ problem imo1982_p1 (f : ℕ → ℕ)
       have h12 : 2 * k + 2 ≤ f (6 * k + 4) := by
         have h14 : 3 * k + 2 + (3 * k + 2) = 6 * k + 4 := by ring
         have h15 : k + 1 + (k + 1) = 2 * k + 2 := by ring
-        cases' hf (3 * k + 2) (3 * k + 2) (Nat.succ_pos _) (Nat.succ_pos _) with h13 h13
-        · rw [h11, h14] at h13
-          rw [h13, h15]
-        · rw [h11, h14] at h13
-          rw [h13, h15]
-          exact Nat.le_add_right _ _
+        rw [←h14, ←h15]
+        exact h30 _ _ (Nat.succ_pos _) (Nat.le_of_eq h11.symm)
       have h13 : 4 * k + 4 ≤ f (12 * k + 8) := by
         have h14 : 6 * k + 4 + (6 * k + 4) = 12 * k + 8 := by ring
         have h15 : 2 * k + 2 + (2 * k + 2) = 4 * k + 4 := by ring
-        cases' hf (6 * k + 4) (6 * k + 4) (Nat.succ_pos _) (Nat.succ_pos _) with h16 h16
-        · rw [h14] at h16
-          rw [h16, ←h15]
-          gcongr
-        · rw [h14] at h16
-          rw [h16, ←h15]
-          have h17 : 2 * k + 2 + (2 * k + 2) ≤ f (6 * k + 4) + f (6 * k + 4) := by gcongr
-          exact Nat.le_step h17
+        rw [←h14, ←h15]
+        exact h30 _ _ (Nat.succ_pos _) h12
       have h14 : f (12 * k + 8) ≤ f (12 * k + 9) := by
         have h15 : 12 * k + 8 + 1 = 12 * k + 9 := by ring
         rw [←h15]
