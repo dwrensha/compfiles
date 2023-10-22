@@ -4,15 +4,15 @@
  [{"git":
    {"url": "https://github.com/leanprover-community/mathlib4",
     "subDir?": null,
-    "rev": "30c94754f9063d6bc090079e2527087f224f5d6d",
+    "rev": "004800e44b832e4ca875eab23bd21f31a693687a",
     "opts": {},
     "name": "mathlib",
-    "inputRev?": "30c94754f9063d6bc090079e2527087f224f5d6d",
+    "inputRev?": "004800e44b832e4ca875eab23bd21f31a693687a",
     "inherited": false}},
   {"git":
    {"url": "https://github.com/leanprover/std4",
     "subDir?": null,
-    "rev": "727fa6aa1113c376ea1873812d1ab5c17a24f1d2",
+    "rev": "b35ae7244d3372031b56646689117a3e4edf19b7",
     "opts": {},
     "name": "std",
     "inputRev?": "main",
@@ -28,7 +28,7 @@
   {"git":
    {"url": "https://github.com/leanprover-community/aesop",
     "subDir?": null,
-    "rev": "b601328752091a1cfcaebdd6b6b7c30dc5ffd946",
+    "rev": "9dc4a1097a690216eaa7cf2d2290efd447e60d7a",
     "opts": {},
     "name": "aesop",
     "inputRev?": "master",
