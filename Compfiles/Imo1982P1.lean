@@ -78,6 +78,9 @@ problem imo1982_p1 (f : ℕ → ℕ)
      have h16 : k + (3333 - k) < f (3 * k) + (3333 - k) := Nat.add_lt_add_right h13 _
      rw [h15] at h16
      exact LT.lt.false (h16.trans_le h14)
+  have h20 : ∀ k, 0 < k → f k ≤ f (k + 1) := by
+    intro k hk
+    cases' hf k 1 hk one_pos with h21 h21 <;> rw [h21] <;> linarith
   have h10 : ∀ k, 0 < k → 12 * k + 9 ≤ 9999 → f (3 * k + 2) = k := by
     intro k hk hk1
     cases' hf (3*k) 2 (Nat.succ_mul_pos 2 hk) two_pos with h11 h11
@@ -107,20 +110,13 @@ problem imo1982_p1 (f : ℕ → ℕ)
           exact Nat.le_step h17
       have h14 : f (12 * k + 8) ≤ f (12 * k + 9) := by
         have h15 : 12 * k + 8 + 1 = 12 * k + 9 := by ring
-        cases' hf (12 * k + 8) 1 (Nat.succ_pos _) one_pos with h16 h16
-        · rw [h15] at h16
-          rw [h16]
-          exact Nat.le_add_right _ _
-        · rw [h15] at h16
-          rw [h16]
-          have h17 : f (12 * k + 8) ≤ f (12 * k + 8) + f 1 := Nat.le_add_right _ _
-          exact Nat.le_step h17
+        rw [←h15]
+        exact h20 _ (Nat.succ_pos _)
       have h15 : f (12 * k + 9) = 4 * k + 3 := by
          have h16 : 3 * (4 * k + 3) = 12 * k + 9 := by ring
          have h17 := h8 (4 * k + 3) (Nat.succ_pos _) (by linarith)
          rw [h16] at h17
          exact h17
       rw [h15] at h14
-      have := h13.trans h14
-      linarith
+      exact Nat.le_lt_antisymm h14 h13
   exact h10 660 (Nat.succ_pos _) (by norm_num)
