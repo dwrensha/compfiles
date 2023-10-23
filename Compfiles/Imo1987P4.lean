@@ -76,10 +76,11 @@ theorem imo1987_p4_generalized (m : ℕ) :
     apply Set.eq_of_subset_of_subset
     · rw [ab_union]
       intro x hx
-      simp at hx
+      simp only [Set.image_univ, Set.mem_diff, Set.mem_univ, Set.mem_image,
+                 Set.mem_range, exists_exists_eq_and, not_exists,
+                 true_and] at hx
       simp only [Set.mem_setOf_eq]
-      by_contra H
-      push_neg at H
+      by_contra' H
       obtain ⟨z, hz⟩ : ∃ z, x = (2 * m + 1) + z := exists_add_of_le H
       rw [hz] at hx
       have hzz := hx z
@@ -110,7 +111,6 @@ theorem imo1987_p4_generalized (m : ℕ) :
   rw [Finset.card_disjoint_union ab_disjoint'] at h2
   rw [Set.toFinset_card, Set.toFinset_card] at h2
   rw [Set.card_image_of_injective A f_injective] at h2
-  ring_nf at h2
   apply_fun (· % 2) at h2
   norm_num at h2
 
