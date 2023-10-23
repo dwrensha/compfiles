@@ -31,19 +31,22 @@ there is a ninja path containing at least k red dots.
 namespace Imo2023P5
 
 structure JapaneseTriangle (n : ℕ) where
-  red : (i : Fin n) → Fin i.val
+  red : (i : Finset.Icc 1 n) → Fin i.val
+
+def next_row {n} (i : Finset.Icc 1 n) (h : i.val + 1 ≤ n) : Finset.Icc 1 n :=
+  ⟨i.val + 1, by aesop⟩
 
 structure NinjaPath (n : ℕ) where
-  steps : (i : Fin n) → Fin i.val
-  steps_valid : ∀ i : Fin n, (h : i.val + 1 < n) →
-     ((steps i).val = steps ⟨i.val+1, h⟩ ∨
-      (steps i).val + 1 = steps ⟨i.val+1, h⟩)
+  steps : (i : Finset.Icc 1 n) → Fin i.val
+  steps_valid : ∀ i : Finset.Icc 1 n, (h : i.val + 1 ≤ n) →
+     ((steps i).val = steps (next_row i h) ∨
+      (steps i).val + 1 = steps (next_row i h))
 
 determine solution_value (n : ℕ) : ℕ := sorry
 
 problem imo2023_p5 (n : ℕ) :
     IsGreatest {k | ∀ j : JapaneseTriangle n,
                     ∃ p : NinjaPath n,
-                      k ≤ Fintype.card {i : Fin n // j.red i = p.steps i}}
+                      k ≤ Fintype.card {i // j.red i = p.steps i}}
                (solution_value n) := by
   sorry
