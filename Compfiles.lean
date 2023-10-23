@@ -34,6 +34,7 @@ import Compfiles.Imo2019P1
 import Compfiles.Imo2022P2
 import Compfiles.Imo2022P5
 import Compfiles.Imo2023P1
+import Compfiles.Imo2023P4
 import Compfiles.India1998P1
 import Compfiles.IntegersInACircle
 import Compfiles.Iran1998P3
