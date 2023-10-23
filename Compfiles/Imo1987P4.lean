@@ -116,6 +116,6 @@ theorem imo1987_p4_generalized (m : ℕ) :
 
 snip end
 
-problem imo1987_p4 : (¬∃ f : ℕ → ℕ, ∀ n, f (f n) = n + 1987) := by
+problem imo1987_p4 : ¬∃ f : ℕ → ℕ, ∀ n, f (f n) = n + 1987 := by
   rw [show 1987 = (2 * 993 + 1) by norm_num]
   exact imo1987_p4_generalized 993
