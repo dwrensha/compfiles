@@ -111,6 +111,7 @@ theorem imo1987_p4_generalized (m : ℕ) :
   rw [Finset.card_disjoint_union ab_disjoint'] at h2
   rw [Set.toFinset_card, Set.toFinset_card] at h2
   rw [Set.card_image_of_injective A f_injective] at h2
+  ring_nf at h2
   apply_fun (· % 2) at h2
   norm_num at h2
 
