@@ -33,8 +33,6 @@ lemma subset_finite {A B : Set ℕ} (h : A ⊆ B) (hab : Finite ↑B) : Finite �
 lemma subset_fintype {A B : Set ℕ} (h : A ⊆ B) (hab : Fintype ↑B) : Fintype ↑A := by
   exact @Fintype.ofFinite A (subset_finite h (Finite.of_fintype ↑B))
 
-snip end
-
 /--
 More general version of the problem.
 -/
@@ -115,6 +113,8 @@ theorem imo1987_p4_generalized (m : ℕ) :
   ring_nf at h2
   apply_fun (· % 2) at h2
   norm_num at h2
+
+snip end
 
 problem imo1987_p4 : (¬∃ f : ℕ → ℕ, ∀ n, f (f n) = n + 1987) := by
   rw [show 1987 = (2 * 993 + 1) by norm_num]
