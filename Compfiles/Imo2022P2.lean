@@ -37,14 +37,15 @@ problem imo2022_p2 (f : ℝ+ → ℝ+) :
   constructor
   · intro hf
     simp only [Set.mem_singleton_iff] at hf
+    rw [hf] at *; clear hf
     intro x
     use x
     constructor
-    · simp [hf]
-      suffices h : (1:ℝ+) + 1 = ⟨2, two_pos⟩ by exact Eq.le h
+    · suffices h : (1:ℝ+) + 1 = ⟨2, two_pos⟩ by
+        simp only [one_div, mul_right_inv, ge_iff_le]
+        exact Eq.le h
       norm_num [Subtype.ext_iff]
     · intro y hxy
-      rw [hf] at hxy
       change (x * (1 / y) + y * (1 / x)).val ≤ _  at hxy
       obtain ⟨x, hx⟩ := x
       obtain ⟨y, hy⟩ := y
