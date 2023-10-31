@@ -54,8 +54,26 @@ problem imo2022_p2 (f : ℝ+ → ℝ+) :
       have hxyp : 0 < y * x := Real.mul_pos hy hx
       have hxynz : y * x ≠ 0 := ne_of_gt hxyp
       field_simp at hxy
-      have h1 : (x * x + y * y)  ≤ 2 * (y * x) := (div_le_iff hxyp).mp hxy
+      have h1 : (x * x + y * y) ≤ 2 * (y * x) := (div_le_iff hxyp).mp hxy
       nlinarith
   · intro hf
     rw [Set.mem_singleton_iff]
+    -- We follow Evan Chen's writeup: https://web.evanchen.cc/exams/IMO-2022-notes.pdf
+    let friend : ℝ+ → ℝ+ := fun x ↦ Classical.choose (hf x).exists
+    have h0 : ∀ x, friend (friend x) = x := fun x ↦ by
+      simp [friend]
+      sorry
+    have h1 : ∀ x, friend x = x := fun x ↦ by
+      by_contra' H
+      have h2 : ⟨2, two_pos⟩ < x * f x + x * f x := by
+        obtain ⟨y, hy1, hy2⟩ := hf x
+        by_contra' H2
+        have h3 := hy2 x H2
+        have h4 : y = friend x := by
+          have h5 := Classical.choose_spec (hf x).exists
+          exact (hy2 (friend x) h5).symm
+        rw [h4] at h3
+        exact H h3.symm
+      have h6 : 1/x < f x := by sorry
+      sorry
     sorry
