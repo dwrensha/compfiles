@@ -287,8 +287,16 @@ lemma strengthen
       rw [heq] at hmp
       exact h (pn.succ) hmp
 
-snip end
-
-problem poland1998_p4 : (∀ N : ℕ, ∃ M : ℕ, N < M ∧ 7 ∣ a M) := by
+theorem poland1998_p4' : (∀ N : ℕ, ∃ M : ℕ, N < M ∧ 7 ∣ a M) := by
   have he: 7 ∣ a 5 := by rw [show a 5 = 7 by rfl]
   exact strengthen can_get_a_later_one ⟨5, he⟩
+
+snip end
+
+problem poland1998_p4 : Set.Infinite { n | 7 ∣ a n } := by
+  apply Set.infinite_of_not_bddAbove
+  intro h
+  rw [bddAbove_def] at h
+  obtain ⟨x, hx⟩ := h
+  obtain ⟨y, hy1, hy2⟩ := poland1998_p4' x
+  exact Nat.lt_le_antisymm hy1 (hx y hy2)
