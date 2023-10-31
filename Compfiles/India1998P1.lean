@@ -26,7 +26,7 @@ problem india1998_p1b (n a b : ℤ) (hn : a^2 + 3 * b^2 = 7 * n) :
   let bz : ZMod 7 := b
 
   have h1 := calc az ^ 2 + 3 * bz ^ 2
-        = (((a^2 + 3 * b^2) : ℤ) : ZMod 7) := by norm_cast
+        = (((a^2 + 3 * b^2) : ℤ) : ZMod 7) := by push_cast; rfl
       _ = 0 := by rw [hn, Int.cast_mul]; exact zero_mul _
 
   have h2 : (3 : ZMod 7) = -4 := rfl

@@ -220,7 +220,7 @@ lemma ones_and_twos_aux (n : ℕ) :
              all_one_or_two (Nat.digits 10 (2^n.succ * k)) := by
   induction' n with pn hpn
   · use 1
-    simp [all_one_or_two]
+    norm_num [all_one_or_two]
   obtain ⟨pk, hpk1, hpk2⟩ := hpn
 
   /-
@@ -288,6 +288,6 @@ snip end
 problem ones_and_twos
     (n : ℕ) : ∃ k : ℕ+, ∀ e ∈ Nat.digits 10 (2^n * k), e = 1 ∨ e = 2 := by
   cases' n with n
-  · use 1; simp only
+  · use 1; norm_num
   · obtain ⟨k, _, hk2⟩ := ones_and_twos_aux n
     exact ⟨k, hk2⟩
