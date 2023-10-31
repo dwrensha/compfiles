@@ -74,6 +74,11 @@ problem imo2022_p2 (f : ℝ+ → ℝ+) :
           exact (hy2 (friend x) h5).symm
         rw [h4] at h3
         exact H h3.symm
-      have h6 : 1/x < f x := by sorry
+      have h6' : 1 < x * f x := by
+        change 2 < (x * f x).val + (x * f x).val at h2
+        change 1 < (x * f x).val
+        linarith
+      have h6 : 1 / x < f x := div_lt_iff_lt_mul'.mpr h6'
       sorry
     sorry
+
