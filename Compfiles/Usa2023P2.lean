@@ -35,8 +35,7 @@ snip begin
 lemma val_div (a b : ℝ+) : (a / b).val = a.val / b.val := by rfl
 
 lemma lemma_1 (a b c : ℝ+) : (a + b)/c = a/c + b/c := by
-  rw [←Subtype.coe_inj, val_div, Positive.coe_add]
-  exact add_div _ _ _
+  rw [division_def, add_mul, ←division_def, ←division_def]
 
 lemma lemma_3 {a b c : ℝ+} (h : a = b + c) : c < a := by
   obtain ⟨a, ha⟩ := a
