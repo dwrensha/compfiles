@@ -169,7 +169,6 @@ problem usa2023_p2 (f : ℝ+ → ℝ+) :
         rw [←Subtype.coe_inj]
         simp
       rw [h21] at h20
-      simp only at h20
       obtain ⟨_, rfl⟩ : ∃ cc, cc = f 1 := exists_eq
       obtain ⟨x, hx⟩ := x
       simp only [Positive.coe_add] at h20
