@@ -38,10 +38,6 @@ lemma lemma_1 (a b c : ℝ+) : (a + b)/c = a/c + b/c := by
   rw [←Subtype.coe_inj, val_div, Positive.coe_add]
   exact add_div _ _ _
 
-lemma lemma_2 (a b c : ℝ+) : a / (b / c) = a * c / b := by
-  rw [←Subtype.coe_inj]
-  field_simp [val_div]
-
 lemma lemma_3 {a b c : ℝ+} (h : a = b + c) : c < a := by
   obtain ⟨a, ha⟩ := a
   obtain ⟨b, hb⟩ := b
@@ -141,7 +137,7 @@ problem usa2023_p2 (f : ℝ+ → ℝ+) :
     have h9 : ∀ x, f (x + 1) = c + ⟨2,two_pos⟩ * x / c := by
       intro x
       have h10 := h8 (c/x)
-      rwa [div_div_cancel, lemma_2] at h10
+      rwa [div_div_cancel, div_div_eq_mul_div] at h10
 
     have h10 : 1 ≤ c := by
       by_contra' H
