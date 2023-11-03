@@ -27,29 +27,24 @@ namespace Imo2022P2
 
 snip begin
 
-lemma lemma1 {α : Type} {p : α → α → Prop}
-    (h1 : ∀ x, ∃! y, p x y) (h2 : ∀ y, ∃! x, p x y) :
+lemma lemma0 {α : Type} {p : α → α → Prop}
+    (h1 : ∀ x, ∃! y, p x y) (h2 : ∀ x y, p x y ↔ p y x) :
     ∀ x, Classical.choose (h1 (Classical.choose (h1 x).exists)).exists = x := by
   intro x
   obtain ⟨y, h1e, h1u⟩ := h1 x
   have h2' : Classical.choose (h1 x).exists = y := by
     apply h1u
     exact Classical.choose_spec (h1 x).exists
-
   rw [h2']
-  obtain ⟨w, h1e', h1u'⟩ := h1 y
-  obtain ⟨z, h3e, h3u⟩ := h2 y
-  dsimp at h3u h1u'
-  have hxz : x = z := h3u x h1e
-  rw [←hxz] at h3u
-  apply h3u
 
+  obtain ⟨w, h1e', h1u'⟩ := h1 y
+  have h4 := Classical.choose_spec (h1 y).exists
   have hxw : x = w := by
     apply h1u'
-    have := Classical.choose_spec (h1 y).exists
-    sorry
-  have := Classical.choose_spec (h1 y).exists
-  sorry
+    rw [h2]
+    exact h1e
+  rw [hxw]
+  exact h1u' _ h4
 
 snip end
 
@@ -88,19 +83,13 @@ problem imo2022_p2 (f : ℝ+ → ℝ+) :
     rw [Set.mem_singleton_iff]
     -- We follow Evan Chen's writeup: https://web.evanchen.cc/exams/IMO-2022-notes.pdf
     let friend : ℝ+ → ℝ+ := fun x ↦ Classical.choose (hf x).exists
-    have h10 : ∀ y, ∃! x, x * f y + y * f x ≤ ⟨2, two_pos⟩ := by
-      intro y
-      obtain ⟨x, hx1, hx2⟩ := hf y
-      rw [add_comm] at hx1
-      refine' ⟨x, hx1, _⟩
-      intro z hz
-      have hz1 := hx2 z
-      dsimp only at hz1
-      rw [add_comm] at hz1
-      exact hz1 hz
+    have h10 : ∀ x y, x * f y + y * f x ≤ ⟨2, two_pos⟩ ↔
+                      y * f x + x * f y ≤ ⟨2, two_pos⟩ := by
+      intro x y
+      constructor <;> intro h <;> rwa [add_comm]
     have h0 : ∀ x, friend (friend x) = x := fun x ↦ by
       simp only [friend]
-      exact lemma1 hf h10 x
+      exact lemma0 hf h10 x
     have h1 : ∀ x, friend x = x := fun x ↦ by
       by_contra' H
       have h2 : ⟨2, two_pos⟩ < x * f x + x * f x := by
