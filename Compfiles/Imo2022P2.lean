@@ -25,6 +25,10 @@ satisfying
 
 namespace Imo2022P2
 
+abbrev PosReal : Type := { x : ℝ // 0 < x }
+
+notation "ℝ+" => PosReal
+
 snip begin
 
 lemma lemma0 {α : Type} {p : α → α → Prop}
@@ -46,11 +50,18 @@ lemma lemma0 {α : Type} {p : α → α → Prop}
   rw [hxw]
   exact h1u' _ h4
 
+lemma amgm (a b : ℝ+) : ⟨2, two_pos⟩ ≤ a / b + b / a := by
+  change 2 ≤ a.val/b.val + b.val/a.val
+  obtain ⟨a, ha⟩ := a
+  obtain ⟨b, hb⟩ := b
+  dsimp only
+  field_simp
+  have h1 : 0 < b * a := Real.mul_pos hb ha
+  suffices H : 2 * (b * a) ≤ a * a + b * b by exact (le_div_iff h1).mpr H
+  suffices H : 0 ≤ (a - b)^2 by linarith
+  exact sq_nonneg (a - b)
+
 snip end
-
-abbrev PosReal : Type := { x : ℝ // 0 < x }
-
-notation "ℝ+" => PosReal
 
 determine solution_set : Set (ℝ+ → ℝ+) := { fun x ↦ 1 / x }
 
@@ -106,5 +117,27 @@ problem imo2022_p2 (f : ℝ+ → ℝ+) :
         change 1 < (x * f x).val
         linarith
       have h6 : 1 / x < f x := div_lt_iff_lt_mul'.mpr h6'
-      sorry
+      have h7 : 1 / friend x < f (friend x) := by
+        have h8 : ⟨2, two_pos⟩ < (friend x) * f (friend x) + (friend x) * f (friend x) := by
+          obtain ⟨y, hy1, hy2⟩ := hf (friend x)
+          by_contra' H2
+          have h3 := hy2 (friend x) H2
+          have h4 : y = (friend (friend x)) := by
+            have h5 := Classical.choose_spec (hf (friend x)).exists
+            exact (hy2 (friend (friend x)) h5).symm
+          rw [h0] at h4
+          rw [h4] at h3
+          exact H h3
+        have h9 : 1 < friend x * f (friend x) := by
+          change 2 < (friend x * f (friend x)).val + (friend x * f (friend x)).val at h8
+          change 1 < (friend x * f (friend x)).val
+          linarith
+        exact div_lt_iff_lt_mul'.mpr h9
+      have h11 := Classical.choose_spec (hf x).exists
+      have := calc ⟨2, two_pos⟩ ≤ x / friend x + friend x / x := amgm x (friend x)
+                   _ = x * (1 / friend x) + friend x * (1 / x) := by
+                       rw [mul_one_div, add_left_cancel_iff, mul_one_div]
+                   _ < x * f (friend x) + friend x * f x := by gcongr
+                   _ ≤ ⟨2, two_pos⟩ := h11
+      exact LT.lt.false this
     sorry
