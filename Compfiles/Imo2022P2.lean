@@ -68,6 +68,14 @@ lemma lemma1 (a : ℝ+) : a + a = ⟨2, two_pos⟩ * a := by
   dsimp
   exact (two_mul a).symm
 
+lemma lemma2 {a b : ℝ+} (h1 : a ≤ b) (h2 : b ≤ a) : a = b := by
+  obtain ⟨a, ha⟩ := a
+  obtain ⟨b, hb⟩ := b
+  change a ≤ b at h1
+  change b ≤ a at h2
+  rw [Subtype.mk.injEq]
+  linarith
+
 snip end
 
 determine solution_set : Set (ℝ+ → ℝ+) := { fun x ↦ 1 / x }
@@ -93,7 +101,6 @@ problem imo2022_p2 (f : ℝ+ → ℝ+) :
       simp only [Positive.coe_add, Positive.val_mul, one_div, Positive.coe_inv] at hxy
       rw [Subtype.mk_eq_mk]
       have hxyp : 0 < y * x := Real.mul_pos hy hx
-      have hxynz : y * x ≠ 0 := ne_of_gt hxyp
       field_simp at hxy
       have h1 : (x * x + y * y) ≤ 2 * (y * x) := (div_le_iff hxyp).mp hxy
       nlinarith
@@ -114,7 +121,7 @@ problem imo2022_p2 (f : ℝ+ → ℝ+) :
     have h1 : ∀ x, friend x = x := fun x ↦ by
       by_contra' H
       have h2 : ⟨2, two_pos⟩ < x * f x + x * f x := by
-        obtain ⟨y, hy1, hy2⟩ := hf x
+        obtain ⟨y, _, hy2⟩ := hf x
         by_contra' H2
         have h3 := hy2 x H2
         have h4 : y = friend x := by
@@ -129,7 +136,7 @@ problem imo2022_p2 (f : ℝ+ → ℝ+) :
       have h6 : 1 / x < f x := div_lt_iff_lt_mul'.mpr h6'
       have h7 : 1 / friend x < f (friend x) := by
         have h8 : ⟨2, two_pos⟩ < (friend x) * f (friend x) + (friend x) * f (friend x) := by
-          obtain ⟨y, hy1, hy2⟩ := hf (friend x)
+          obtain ⟨y, _, hy2⟩ := hf (friend x)
           by_contra' H2
           have h3 := hy2 (friend x) H2
           have h4 : y = (friend (friend x)) := by
@@ -159,10 +166,27 @@ problem imo2022_p2 (f : ℝ+ → ℝ+) :
       exact (mul_le_mul_iff_left _).mp h12
     have hf1' : ∀ x y, x ≠ y → ⟨2, two_pos⟩ < x * f y + y * f x := fun x y hxy ↦ by
       by_contra' H
-      obtain ⟨y1, hy1, hy2⟩ := hf x
+      obtain ⟨y1, _, hy2⟩ := hf x
       have h15 := hy2 (friend x) (h11 x)
       have h16 := hy2 y H
       rw [← h16] at h15
       rw [← h15] at hxy
       exact hxy (h1 x).symm
-    sorry
+    funext x
+    by_contra' H
+    have H' : x ≠ 1 / f x := by
+      intro hxfx
+      nth_rw 2 [hxfx] at H
+      rw [one_div_one_div] at H
+      exact H rfl
+    have h17 := hf1' x (1 / f x) H'
+    have h18 : 1 / f x * f x = 1 := div_mul_cancel' 1 (f x)
+    rw [h18] at h17
+    have h19 := hf' (1 / f x)
+    rw [one_div_one_div] at h19
+    have h20 := calc ⟨2, two_pos⟩ < x * f (1 / f x) + 1 := h17
+                 _ ≤ x * f x + 1 := by gcongr
+                 _ ≤ x * (1 / x) + 1 := by have := hf' x; gcongr
+                 _ = 1 + 1 := by rw [add_right_cancel_iff, mul_one_div, div_eq_one]
+                 _ = ⟨2, two_pos⟩ := by apply Subtype.val_injective; norm_num
+    exact LT.lt.false h20
