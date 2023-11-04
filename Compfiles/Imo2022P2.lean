@@ -36,9 +36,8 @@ lemma lemma0 {α : Type} {p : α → α → Prop}
     ∀ x, Classical.choose (h1 (Classical.choose (h1 x).exists)).exists = x := by
   intro x
   obtain ⟨y, h1e, h1u⟩ := h1 x
-  have h2' : Classical.choose (h1 x).exists = y := by
-    apply h1u
-    exact Classical.choose_spec (h1 x).exists
+  have h2' : Classical.choose (h1 x).exists = y :=
+    h1u _ (Classical.choose_spec (h1 x).exists)
   rw [h2']
 
   obtain ⟨w, h1e', h1u'⟩ := h1 y
@@ -60,7 +59,6 @@ lemma amgm (a b : ℝ+) : ⟨2, two_pos⟩ ≤ a / b + b / a := by
   suffices H : 2 * (b * a) ≤ a * a + b * b by exact (le_div_iff h1).mpr H
   suffices H : 0 ≤ (a - b)^2 by linarith
   exact sq_nonneg (a - b)
-
 
 lemma lemma1 (a : ℝ+) : a + a = ⟨2, two_pos⟩ * a := by
   obtain ⟨a, ha⟩ := a
@@ -168,20 +166,17 @@ problem imo2022_p2 (f : ℝ+ → ℝ+) :
       by_contra' H
       obtain ⟨y1, _, hy2⟩ := hf x
       have h15 := hy2 (friend x) (h11 x)
-      have h16 := hy2 y H
-      rw [← h16] at h15
+      rw [← hy2 y H] at h15
       rw [← h15] at hxy
       exact hxy (h1 x).symm
     funext x
     by_contra' H
-    have H' : x ≠ 1 / f x := by
-      intro hxfx
+    have H' : x ≠ 1 / f x := fun hxfx ↦ by
       nth_rw 2 [hxfx] at H
       rw [one_div_one_div] at H
       exact H rfl
     have h17 := hf1' x (1 / f x) H'
-    have h18 : 1 / f x * f x = 1 := div_mul_cancel' 1 (f x)
-    rw [h18] at h17
+    rw [div_mul_cancel'] at h17
     have h19 := hf' (1 / f x)
     rw [one_div_one_div] at h19
     have h20 := calc ⟨2, two_pos⟩ < x * f (1 / f x) + 1 := h17
