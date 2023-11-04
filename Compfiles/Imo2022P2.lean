@@ -61,6 +61,13 @@ lemma amgm (a b : ℝ+) : ⟨2, two_pos⟩ ≤ a / b + b / a := by
   suffices H : 0 ≤ (a - b)^2 by linarith
   exact sq_nonneg (a - b)
 
+
+lemma lemma1 (a : ℝ+) : a + a = ⟨2, two_pos⟩ * a := by
+  obtain ⟨a, ha⟩ := a
+  apply Subtype.val_injective
+  dsimp
+  exact (two_mul a).symm
+
 snip end
 
 determine solution_set : Set (ℝ+ → ℝ+) := { fun x ↦ 1 / x }
@@ -98,6 +105,9 @@ problem imo2022_p2 (f : ℝ+ → ℝ+) :
                       y * f x + x * f y ≤ ⟨2, two_pos⟩ := by
       intro x y
       constructor <;> intro h <;> rwa [add_comm]
+    have h11 : ∀ x, x * f (friend x) + friend x * f x ≤ ⟨2, two_pos⟩ :=
+      fun  x ↦ Classical.choose_spec (hf x).exists
+
     have h0 : ∀ x, friend (friend x) = x := fun x ↦ by
       simp only [friend]
       exact lemma0 hf h10 x
@@ -133,11 +143,26 @@ problem imo2022_p2 (f : ℝ+ → ℝ+) :
           change 1 < (friend x * f (friend x)).val
           linarith
         exact div_lt_iff_lt_mul'.mpr h9
-      have h11 := Classical.choose_spec (hf x).exists
       have := calc ⟨2, two_pos⟩ ≤ x / friend x + friend x / x := amgm x (friend x)
                    _ = x * (1 / friend x) + friend x * (1 / x) := by
                        rw [mul_one_div, add_left_cancel_iff, mul_one_div]
                    _ < x * f (friend x) + friend x * f x := by gcongr
-                   _ ≤ ⟨2, two_pos⟩ := h11
+                   _ ≤ ⟨2, two_pos⟩ := h11 _
       exact LT.lt.false this
+    have hf' : ∀ x, f x ≤ 1 / x := fun x ↦ by
+      have h12 := h11 x
+      rw [h1] at h12
+      suffices H : x * f x ≤ 1 by exact le_div_iff_mul_le'.mpr H
+      have h14 : (⟨2, two_pos⟩ : ℝ+) = ⟨2, two_pos⟩ * 1 := self_eq_mul_right.mpr rfl
+      have h13 : x * f x + x * f x = ⟨2, two_pos⟩ * (x * f x) := lemma1 _
+      rw [h14, h13] at h12
+      exact (mul_le_mul_iff_left _).mp h12
+    have hf1' : ∀ x y, x ≠ y → ⟨2, two_pos⟩ < x * f y + y * f x := fun x y hxy ↦ by
+      by_contra' H
+      obtain ⟨y1, hy1, hy2⟩ := hf x
+      have h15 := hy2 (friend x) (h11 x)
+      have h16 := hy2 y H
+      rw [← h16] at h15
+      rw [← h15] at hxy
+      exact hxy (h1 x).symm
     sorry
