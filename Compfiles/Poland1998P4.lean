@@ -55,12 +55,6 @@ lemma lemma2 (n : ℕ) : (2 * n + 1) / 2 = n := by
 def a' : ℕ → ZMod 7
 | n => ⟨(a n) % 7, Nat.mod_lt _ (by norm_num)⟩
 
-lemma a'_5_is_0 : a' 5 = 0 := by
-  simp [a',a, Nat.succ_eq_one_add,
-        show 1 + 1 / 2 = 1 by norm_num,
-        show (1 + 3) / 2 = 2 by norm_num,
-        show (1 + 4) / 2 = 2 by norm_num ]
-
 lemma zmod_ext (a b : ZMod 7) (hz : ZMod.val a = ZMod.val b) : a = b := by
   have : ((ZMod.val a) : ZMod 7)  = ((ZMod.val b) : ZMod 7) := congrArg Nat.cast hz
   simp only [ZMod.nat_cast_val, ZMod.cast_id', id_eq] at this
@@ -118,7 +112,7 @@ lemma can_get_a_later_one_zmod :
     constructor
     · calc n < 2 := hlt
            _ < 5 := by norm_num
-    · exact a'_5_is_0
+    · norm_num
 
   let n1 : ℕ := 2 * (n - 1) + 1
 
