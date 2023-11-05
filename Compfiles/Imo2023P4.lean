@@ -27,7 +27,7 @@ namespace Imo2023P4
 open BigOperators
 
 noncomputable def a (x : Fin 2023 → ℝ) (n : Fin 2023) : ℝ :=
-  Real.sqrt ((∑ i : Fin n.val, x ⟨i, Nat.lt_trans i.prop n.prop⟩) +
+  Real.sqrt ((∑ i : Fin n.val, x ⟨i, Nat.lt_trans i.prop n.prop⟩) *
              (∑ i : Fin n.val, (1 / x ⟨i, Nat.lt_trans i.prop n.prop⟩)))
 
 problem imo2023_p4
