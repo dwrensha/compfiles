@@ -32,7 +32,7 @@ namespace Imo2018P3
 open BigOperators
 
 structure Coords where
-(row : Nat) (col : Nat)
+(row : ℕ) (col : ℕ)
 
 def left_child (c : Coords) : Coords :=
  ⟨c.row.succ, c.col⟩
@@ -43,8 +43,8 @@ def right_child (c : Coords) : Coords :=
 /--
 antipascal triangle with n rows
 -/
-structure antipascal_triangle (n : Nat) where
-(f : Coords → Nat)
+structure antipascal_triangle (n : ℕ) where
+(f : Coords → ℕ)
 (antipascal : ∀ x: Coords, x.row.succ < n ∧ x.col ≤ x.row →
   f x + f (left_child x) = f (right_child x) ∨
   f x + f (right_child x) = f (left_child x))
