@@ -45,7 +45,7 @@ antipascal triangle with n rows
 -/
 structure antipascal_triangle (n : ℕ) where
 (f : Coords → ℕ)
-(antipascal : ∀ x: Coords, x.row.succ < n ∧ x.col ≤ x.row →
+(antipascal : ∀ x : Coords, x.row + 1 < n ∧ x.col ≤ x.row →
   f x + f (left_child x) = f (right_child x) ∨
   f x + f (right_child x) = f (left_child x))
 
@@ -65,4 +65,5 @@ determine does_exist : Bool := false
 
 problem imo2018_p3 :
     if does_exist then exists_desired_triangle else ¬ exists_desired_triangle := by
+  simp only [ite_false]
   sorry
