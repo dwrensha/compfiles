@@ -26,10 +26,7 @@ namespace Imo2023P4
 
 open BigOperators
 
-/--
- Given that `n` in is the interval `Finset.Icc k m`, and that `i` is in the interval
- `Finset.Icc k n`, cast `i` as a `Finset.Icc k m`.
--/
+/-- Cast `i` from `Finset.Icc k n` into the larger interval `Finset.Icc k m`. -/
 def iccCastLE {k m : ℕ} (n : Finset.Icc k m) (i : Finset.Icc k n) : Finset.Icc k m :=
   ⟨i.val, Finset.Icc_subset_Icc_right (by aesop) i.prop⟩
 
