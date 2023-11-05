@@ -26,17 +26,21 @@ namespace Imo2023P4
 
 open BigOperators
 
-def iccCastLE {k n m : ℕ} (hn : n ≤ m) (i : Finset.Icc k n) : Finset.Icc k m :=
-  ⟨i.val, Finset.Icc_subset_Icc_right hn i.prop⟩
+/--
+ Given that `n` in is the interval `Finset.Icc k m`, and that `i` is in the interval
+ `Finset.Icc k n`, cast `i` as a `Finset.Icc k m`.
+-/
+def iccCastLE {k m : ℕ} (n : Finset.Icc k m) (i : Finset.Icc k n) : Finset.Icc k m :=
+  ⟨i.val, Finset.Icc_subset_Icc_right (by aesop) i.prop⟩
 
-noncomputable def a (x : Finset.Icc 1 2023 → ℝ) (n : ℕ) (hn : n ≤ 2023) : ℝ :=
-  Real.sqrt ((∑ i : Finset.Icc 1 n, x (iccCastLE hn i)) *
-             (∑ i : Finset.Icc 1 n, (1 / x (iccCastLE hn i))))
+noncomputable def a (x : Finset.Icc 1 2023 → ℝ) (n : Finset.Icc 1 2023) : ℝ :=
+  Real.sqrt ((∑ i : Finset.Icc 1 ↑n, x (iccCastLE n i)) *
+             (∑ i : Finset.Icc 1 ↑n, (1 / x (iccCastLE n i))))
 
 problem imo2023_p4
     (x : Finset.Icc 1 2023 → ℝ)
     (hxp : ∀ i, 0 < x i)
     (hxi : x.Injective)
-    (hxa : ∀ i : Finset.Icc 1 2023, ∃ k : ℤ, a x i.val (by aesop) = k)
-    : 3034 ≤ a x 2023 (by norm_num) := by
+    (hxa : ∀ i : Finset.Icc 1 2023, ∃ k : ℤ, a x i = k)
+    : 3034 ≤ a x ⟨2023, by norm_num⟩ := by
   sorry
