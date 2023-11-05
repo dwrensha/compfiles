@@ -51,7 +51,7 @@ problem usa2022_p4 (p q : ℕ) :
            _ ≤ _ := Nat.add_le_add_right h2 q
            _ = p * q := hb
     have h7 : p < q := (mul_lt_mul_left hp_pos).mp h6
-    exact Nat.le_lt_antisymm hqlep h7
+    exact Nat.le_lt_asymm hqlep h7
 
   -- Subtracting our equations gives (b - a)(b + a) = b² - a² = p(q - 1),
   have h1 : (b + a) * (b - a) = p * (q - 1) := by

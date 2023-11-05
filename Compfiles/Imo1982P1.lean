@@ -111,5 +111,5 @@ problem imo1982_p1 (f : ℕ → ℕ)
          rw [h16] at h17
          exact h17
       rw [h15] at h14
-      exact Nat.le_lt_antisymm h14 h13
+      exact Nat.lt_le_asymm h13 h14
   exact h10 660 (Nat.succ_pos _) (by norm_num)
