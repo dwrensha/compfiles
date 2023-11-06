@@ -207,7 +207,7 @@ def extractProblems {m : Type → Type} [Monad m] [MonadEnv m] [MonadError m] :
   for ⟨module, ⟨src, endPos, acc⟩⟩ in inProgress do
     let mut imports := ""
     for im in ← findModuleImports env module do
-      if im.module ≠ "Init" && im.module ≠ `Compfiles.Meta.ProblemExtraction
+      if im.module ≠ "Init" && im.module ≠ `ProblemExtraction
       then imports := imports ++ s!"import {im}\n"
 
     result := result.insert module
