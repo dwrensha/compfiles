@@ -21,7 +21,7 @@ $ lake build
 
 ## extracting problems
 
-This repo defines some [special commands](/Compfiles/Meta/ProblemExtraction.lean)
+This repo defines some [special commands](/ProblemExtraction.lean)
 to support problem extraction.
 
 * A `problem_file` command marks a file that should participate in problem extraction.
