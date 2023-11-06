@@ -16,7 +16,6 @@ problem_file
 
 Prove that the average of the numbers n⬝sin(n π / 180)
 for n ∈ {2,4,6,…,180} is 1/tan(π/180).
-
 -/
 
 namespace Usa1996P1

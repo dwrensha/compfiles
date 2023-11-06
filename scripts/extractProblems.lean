@@ -8,7 +8,8 @@ import Lean.Meta.Basic
 
 open Lean Core Elab
 
-def olean_path_to_extracted_path (path: String) : String :=
+def olean_path_to_extracted_path (path : System.FilePath) : System.FilePath :=
+  let path := path.toString
   let pfx := "./build/lib/Compfiles/"
   let sfx := ".olean"
   assert!(pfx.isPrefixOf path)
@@ -30,7 +31,7 @@ unsafe def main (_args : List String) : IO Unit := do
       for ⟨m, problem_src⟩ in mst do
         let p ← findOLean m
         IO.println s!"MODULE: {m}"
-        let extracted_path := olean_path_to_extracted_path p.toString
+        let extracted_path := olean_path_to_extracted_path p
 
         -- TODO mkdir if necessary
         let h ← IO.FS.Handle.mk extracted_path IO.FS.Mode.write
