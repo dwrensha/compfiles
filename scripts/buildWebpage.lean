@@ -66,7 +66,7 @@ unsafe def main (_args : List String) : IO Unit := do
     let ctx := {fileName := "", fileMap := default}
     let state := {env}
     Prod.fst <$> (CoreM.toIO · ctx state) do
-      let mst ← Compfiles.Meta.extractProblems
+      let mst ← ProblemExtraction.extractProblems
 
       let mut infos : List ProblemInfo := []
       for ⟨m, problem_src⟩ in mst do

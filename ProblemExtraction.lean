@@ -14,7 +14,7 @@ During problem extraction, all declarations are removed
 except those that have been tagged with one of the below command wrappers.
 -/
 
-namespace Compfiles.Meta
+namespace ProblemExtraction
 
 open Lean Elab
 
