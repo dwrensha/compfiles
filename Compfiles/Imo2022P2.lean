@@ -66,14 +66,6 @@ lemma lemma1 (a : ℝ+) : a + a = ⟨2, two_pos⟩ * a := by
   dsimp
   exact (two_mul a).symm
 
-lemma lemma2 {a b : ℝ+} (h1 : a ≤ b) (h2 : b ≤ a) : a = b := by
-  obtain ⟨a, ha⟩ := a
-  obtain ⟨b, hb⟩ := b
-  change a ≤ b at h1
-  change b ≤ a at h2
-  rw [Subtype.mk.injEq]
-  linarith
-
 snip end
 
 determine solution_set : Set (ℝ+ → ℝ+) := { fun x ↦ 1 / x }
