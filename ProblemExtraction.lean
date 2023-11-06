@@ -34,7 +34,6 @@ inductive EntryVariant where
   | snip_begin : String.Pos → EntryVariant
   | snip_end : String.Pos → EntryVariant
 
-
 /-- An entry in the state of the Problem Extraction environment extension -/
 structure Entry where
 /-- The module where the entry originated. -/
@@ -42,12 +41,31 @@ structure Entry where
 /-- Lean code to be included in the extracted problem file. -/
 (variant : EntryVariant)
 
-abbrev ProblemExtractionExtension :=
-  SimplePersistentEnvExtension Entry (Array Entry)
+abbrev ExtractionExtension := SimplePersistentEnvExtension Entry (Array Entry)
 
-initialize problemExtractionExtension : ProblemExtractionExtension ←
+initialize problemExtractionExtension : ExtractionExtension ←
   registerSimplePersistentEnvExtension {
     name := `problem_extraction'
+    addImportedFn := fun arrays =>
+      arrays.foldl (init := ∅) fun acc as =>
+        as.foldl (init := acc) fun acc' a => acc'.push a
+    addEntryFn    := fun s n => s.push n
+  }
+
+initialize solutionExtractionExtension : ExtractionExtension ←
+  registerSimplePersistentEnvExtension {
+    name := `solution_extraction'
+    addImportedFn := fun arrays =>
+      arrays.foldl (init := ∅) fun acc as =>
+        as.foldl (init := acc) fun acc' a => acc'.push a
+    addEntryFn    := fun s n => s.push n
+  }
+
+abbrev DetermineDeclsExtension := SimplePersistentEnvExtension Name (Array Name)
+
+initialize determineDeclsExtension : DetermineDeclsExtension ←
+  registerSimplePersistentEnvExtension {
+    name := `determine_decls'
     addImportedFn := fun arrays =>
       arrays.foldl (init := ∅) fun acc as =>
         as.foldl (init := acc) fun acc' a => acc'.push a
@@ -66,8 +84,10 @@ elab_rules : command
   let startPos := ⟨startPos.byteIdx + 1⟩ -- HACK: add one to consume unwanted newline
 
   let mod := (←getEnv).header.mainModule
-  let ext := problemExtractionExtension
-  modifyEnv fun env => ext.addEntry env ⟨mod, EntryVariant.file src startPos⟩
+  modifyEnv fun env =>
+    problemExtractionExtension.addEntry env ⟨mod, EntryVariant.file src startPos⟩
+  modifyEnv fun env =>
+    solutionExtractionExtension.addEntry env ⟨mod, EntryVariant.file src startPos⟩
 
 /-- Commands between `snip begin` and `snip end` will be discarded by problem extraction. -/
 syntax (name := snipBegin) "snip begin" : command
@@ -76,19 +96,27 @@ syntax (name := snipEnd) "snip end" : command
 elab_rules : command
 | `(command| snip begin%$tk1) => do
   let .some startPos := tk1.getPos? | throwError "snip syntax has no start pos"
+  let .some endPos := tk1.getTailPos? | throwError "snip syntax has no tail pos"
   let startPos := ⟨startPos.byteIdx - 1⟩ -- HACK: subtract one to consume unwanted newline
 
   let mod := (←getEnv).header.mainModule
   let ext := problemExtractionExtension
   modifyEnv fun env => ext.addEntry env ⟨mod, EntryVariant.snip_begin startPos⟩
 
+  modifyEnv fun env => solutionExtractionExtension.addEntry env
+    ⟨mod, EntryVariant.replace ⟨startPos, endPos, ""⟩⟩
+
 | `(command| snip end%$tk2) => do
+  let .some startPos := tk2.getPos? | throwError "snip syntax has no start pos"
   let .some endPos := tk2.getTailPos? | throwError "snip syntax has no end pos"
   let endPos := ⟨endPos.byteIdx + 1⟩ -- HACK: add one to consume unwanted newline
 
   let mod := (←getEnv).header.mainModule
   let ext := problemExtractionExtension
   modifyEnv fun env => ext.addEntry env ⟨mod, EntryVariant.snip_end endPos⟩
+
+  modifyEnv fun env => solutionExtractionExtension.addEntry env
+    ⟨mod, EntryVariant.replace ⟨startPos, endPos, ""⟩⟩
 
 /--
 A synonym for `theorem`. Indicates that a declaration is a problem statement.
@@ -104,6 +132,9 @@ elab_rules : command
    | throwError "failed to get problem syntax"
 
   modifyEnv fun env => problemExtractionExtension.addEntry env ⟨mod,
+    EntryVariant.replace ⟨pStartPos, pEndPos, "theorem"⟩⟩
+
+  modifyEnv fun env => solutionExtractionExtension.addEntry env ⟨mod,
     EntryVariant.replace ⟨pStartPos, pEndPos, "theorem"⟩⟩
 
   let (.some vStartPos, .some vEndPos) := (dv.raw.getPos?, dv.raw.getTailPos?)
@@ -134,6 +165,9 @@ elab_rules : command
   modifyEnv fun env => problemExtractionExtension.addEntry env ⟨mod,
     EntryVariant.replace ⟨dStartPos, dEndPos, "/- determine -/ abbrev"⟩⟩
 
+  modifyEnv fun env => solutionExtractionExtension.addEntry env ⟨mod,
+    EntryVariant.replace ⟨dStartPos, dEndPos, "/- determine -/ abbrev"⟩⟩
+
   let (.some vStartPos, .some vEndPos) := (dv.raw.getPos?, dv.raw.getTailPos?)
    | throwError "failed to get declVal syntax"
 
@@ -142,6 +176,12 @@ elab_rules : command
 
   let cmd ← `(command | $dm:declModifiers abbrev $di:declId $ds:optDeclSig $dv:declVal)
   Lean.Elab.Command.elabCommand cmd
+
+  match di with
+  | `(Lean.Parser.Command.declId | $i:ident) =>
+    let name ← Lean.Elab.resolveGlobalConstNoOverloadWithInfo i
+    modifyEnv fun env => determineDeclsExtension.addEntry env name
+  | _ => throwError "explicit universes in `determine` are currently unsupported"
 
 /--
 Prints the current contents of the Problem Extraction extension.
@@ -153,9 +193,14 @@ elab_rules : command
   let ext := problemExtractionExtension
   let env ← getEnv
   let st := ext.getState env
-  IO.println s!"st.size = {st.size}"
+  IO.println s!"ProblemExtraction st.size = {st.size}"
   for ⟨filename, _⟩ in st do
      IO.println s!"{filename}"
+
+  let st := determineDeclsExtension.getState env
+  IO.println s!"Determine decls:"
+  for n in st do
+     IO.println s!"{n}"
 
 /--
 Helper function for extractProblems.
@@ -171,14 +216,10 @@ private def findModuleImports
     else idx := 1 + idx
   throwError s!"module {md} not found"
 
-/--
-Using the data in the problem extraction environment extension,
-constructs a map from module name to problem source code.
--/
-def extractProblems {m : Type → Type} [Monad m] [MonadEnv m] [MonadError m] :
-    m (NameMap String) := do
+def extractFromExt {m : Type → Type} [Monad m] [MonadEnv m] [MonadError m]
+    (ext : ExtractionExtension) : m (NameMap String) := do
   let env ← getEnv
-  let st := problemExtractionExtension.getState env
+  let st := ext.getState env
 
   let mut inProgress : NameMap (String × String.Pos × String) := mkNameMap _
   for ⟨module, variant⟩ in st do
@@ -214,3 +255,19 @@ def extractProblems {m : Type → Type} [Monad m] [MonadEnv m] [MonadError m] :
       (imports ++ acc ++ (Substring.mk src endPos src.endPos).toString)
 
   pure result
+
+/--
+Using the data in the problem extraction environment extension,
+constructs a map from module name to problem source code.
+-/
+def extractProblems {m : Type → Type} [Monad m] [MonadEnv m] [MonadError m] :
+    m (NameMap String) :=
+  extractFromExt problemExtractionExtension
+
+/--
+Using the data in the solution extraction environment extension,
+constructs a map from module name to solution source code.
+-/
+def extractSolutions {m : Type → Type} [Monad m] [MonadEnv m] [MonadError m] :
+    m (NameMap String) :=
+  extractFromExt solutionExtractionExtension
