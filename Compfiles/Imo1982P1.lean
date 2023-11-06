@@ -38,7 +38,7 @@ problem imo1982_p1 (f : ℕ → ℕ)
     have h5 := hf 1 1 Nat.one_pos Nat.one_pos
     rw [h2] at h5
     cases' h5 with h6 h6
-    · exact Nat.bit0_eq_zero.mp h6.symm
+    · exact Nat.eq_zero_of_add_eq_zero_left h6.symm
     · rw [add_assoc] at h6
       exact Nat.eq_zero_of_add_eq_zero_right h6.symm
   have h5 : f 3 = 1 := by
