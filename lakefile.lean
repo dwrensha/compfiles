@@ -5,6 +5,9 @@ open Lake DSL
 package compfiles
 
 @[default_target]
+lean_lib ProblemExtraction
+
+@[default_target]
 lean_lib Compfiles
 
 @[default_target]

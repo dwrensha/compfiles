@@ -11,7 +11,7 @@ import Mathlib.Data.Set.Basic
 import Mathlib.Data.Fintype.Card
 import Mathlib.Tactic.Ring
 
-import Compfiles.Meta.ProblemExtraction
+import ProblemExtraction
 
 problem_file
 

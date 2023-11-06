@@ -1,6 +1,6 @@
 import Mathlib.Data.Real.Basic
 
-import Compfiles.Meta.ProblemExtraction
+import ProblemExtraction
 
 problem_file
 

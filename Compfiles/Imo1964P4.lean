@@ -8,7 +8,7 @@ import Aesop
 import Mathlib.Combinatorics.Pigeonhole
 import Mathlib.Tactic.Linarith
 
-import Compfiles.Meta.ProblemExtraction
+import ProblemExtraction
 
 problem_file
 

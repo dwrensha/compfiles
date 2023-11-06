@@ -9,7 +9,7 @@ import Mathlib.Data.Real.Basic
 import Mathlib.Algebra.BigOperators.Basic
 import Mathlib.Analysis.SpecificLimits.Basic
 
-import Compfiles.Meta.ProblemExtraction
+import ProblemExtraction
 
 problem_file
 

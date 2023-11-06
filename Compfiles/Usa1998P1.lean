@@ -10,7 +10,7 @@ import Mathlib.Data.Int.ModEq
 import Mathlib.Data.Finset.Interval
 import Mathlib.Data.Fintype.BigOperators
 
-import Compfiles.Meta.ProblemExtraction
+import ProblemExtraction
 
 problem_file
 

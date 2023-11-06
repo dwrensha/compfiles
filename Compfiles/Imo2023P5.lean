@@ -7,7 +7,7 @@ Authors: David Renshaw
 import Mathlib.Data.Fintype.Card
 import Mathlib.Tactic
 
-import Compfiles.Meta.ProblemExtraction
+import ProblemExtraction
 
 problem_file
 

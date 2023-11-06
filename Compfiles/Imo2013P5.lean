@@ -5,7 +5,7 @@ import Mathlib.Data.Real.Basic
 import Mathlib.Tactic.Positivity
 import Mathlib.Tactic.LinearCombination
 
-import Compfiles.Meta.ProblemExtraction
+import ProblemExtraction
 
 problem_file
 

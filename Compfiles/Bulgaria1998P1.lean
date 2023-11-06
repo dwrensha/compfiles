@@ -8,7 +8,7 @@ import Mathlib.Data.Set.Intervals.Basic
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.IntervalCases
 
-import Compfiles.Meta.ProblemExtraction
+import ProblemExtraction
 
 problem_file
 

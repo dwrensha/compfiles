@@ -10,7 +10,7 @@ import Mathlib.Data.Real.Sqrt
 import Mathlib.Analysis.InnerProductSpace.PiL2
 import Mathlib.Analysis.NormedSpace.PiLp
 
-import Compfiles.Meta.ProblemExtraction
+import ProblemExtraction
 
 problem_file
 

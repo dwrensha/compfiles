@@ -8,7 +8,7 @@ import Mathlib.Data.Real.Basic
 import Mathlib.Algebra.Order.Positive.Field
 import Mathlib.Tactic
 
-import Compfiles.Meta.ProblemExtraction
+import ProblemExtraction
 
 problem_file
 

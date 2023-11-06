@@ -7,7 +7,7 @@ Authors: David Renshaw
 import Mathlib.Algebra.Periodic
 import Mathlib.Tactic
 
-import Compfiles.Meta.ProblemExtraction
+import ProblemExtraction
 
 problem_file
 

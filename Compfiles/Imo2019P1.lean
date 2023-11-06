@@ -7,7 +7,7 @@ import Mathlib.Algebra.Module.LinearMap
 import Mathlib.Data.Int.Basic
 import Mathlib.Tactic
 
-import Compfiles.Meta.ProblemExtraction
+import ProblemExtraction
 
 problem_file
 

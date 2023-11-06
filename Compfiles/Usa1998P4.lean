@@ -7,7 +7,7 @@ Authors: David Renshaw
 import Mathlib.Data.ZMod.Basic
 import Mathlib.Order.Bounds.Basic
 
-import Compfiles.Meta.ProblemExtraction
+import ProblemExtraction
 
 problem_file
 

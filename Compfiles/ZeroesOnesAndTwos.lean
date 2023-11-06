@@ -9,7 +9,7 @@ import Mathlib.Data.Nat.ModEq
 import Mathlib.Data.Nat.Parity
 import Mathlib.Data.Nat.Digits
 
-import Compfiles.Meta.ProblemExtraction
+import ProblemExtraction
 
 problem_file
 

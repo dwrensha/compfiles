@@ -7,7 +7,7 @@ Authors: David Renshaw
 import Mathlib.Data.Finset.Card
 import Mathlib.Order.Bounds.Basic
 
-import Compfiles.Meta.ProblemExtraction
+import ProblemExtraction
 
 problem_file
 

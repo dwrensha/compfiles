@@ -8,7 +8,7 @@ import Mathlib.Algebra.Divisibility.Basic
 import Mathlib.Tactic.Ring
 import Mathlib.Data.Nat.Prime
 
-import Compfiles.Meta.ProblemExtraction
+import ProblemExtraction
 
 problem_file
 

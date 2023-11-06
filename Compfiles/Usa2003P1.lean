@@ -9,7 +9,7 @@ import Mathlib.Data.Nat.Parity
 
 import Mathlib.Tactic
 
-import Compfiles.Meta.ProblemExtraction
+import ProblemExtraction
 
 problem_file
 

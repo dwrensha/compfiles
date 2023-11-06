@@ -10,7 +10,7 @@ import Mathlib.Data.Nat.ModEq
 import Mathlib.Data.ZMod.Basic
 import Mathlib.Tactic
 
-import Compfiles.Meta.ProblemExtraction
+import ProblemExtraction
 
 problem_file
 

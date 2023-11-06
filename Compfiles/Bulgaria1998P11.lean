@@ -5,7 +5,7 @@ import Mathlib.Algebra.GroupPower.Basic
 import Mathlib.Algebra.Parity
 import Mathlib.Tactic
 
-import Compfiles.Meta.ProblemExtraction
+import ProblemExtraction
 
 problem_file
 

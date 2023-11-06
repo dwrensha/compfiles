@@ -8,7 +8,7 @@ import Mathlib.Data.Nat.Parity
 import Mathlib.Algebra.BigOperators.Pi
 import Mathlib.Tactic
 
-import Compfiles.Meta.ProblemExtraction
+import ProblemExtraction
 
 problem_file
 

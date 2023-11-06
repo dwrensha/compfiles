@@ -4,7 +4,7 @@ import Mathlib.Data.Fintype.Prod
 import Mathlib.Tactic.LibrarySearch
 import Mathlib.Tactic.Positivity
 
-import Compfiles.Meta.ProblemExtraction
+import ProblemExtraction
 
 problem_file
 

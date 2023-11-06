@@ -9,7 +9,7 @@ import Mathlib.Data.Nat.ModEq
 import Mathlib.Algebra.GroupPower.Basic
 import Mathlib.Tactic
 
-import Compfiles.Meta.ProblemExtraction
+import ProblemExtraction
 
 problem_file
 

@@ -6,7 +6,7 @@ Authors: David Renshaw
 
 import Mathlib.Algebra.BigOperators.Basic
 
-import Compfiles.Meta.ProblemExtraction
+import ProblemExtraction
 
 problem_file
 

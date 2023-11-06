@@ -4,7 +4,7 @@ import Mathlib.Data.Nat.Prime
 import Mathlib.Tactic.Common
 import Std.Data.List.Lemmas
 
-import Compfiles.Meta.ProblemExtraction
+import ProblemExtraction
 
 problem_file
 

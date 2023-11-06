@@ -9,7 +9,7 @@ import Mathlib.LinearAlgebra.AffineSpace.Midpoint
 import Mathlib.Geometry.Euclidean.Basic
 import Mathlib.Geometry.Euclidean.Triangle
 
-import Compfiles.Meta.ProblemExtraction
+import ProblemExtraction
 
 problem_file
 

@@ -9,7 +9,7 @@ import Mathlib.Algebra.BigOperators.Order
 import Mathlib.Data.Real.Basic
 import Mathlib.Tactic
 
-import Compfiles.Meta.ProblemExtraction
+import ProblemExtraction
 
 problem_file
 

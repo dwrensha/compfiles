@@ -1,7 +1,7 @@
 import Mathlib.Data.Real.Basic
 import Mathlib.Analysis.MeanInequalities
 
-import Compfiles.Meta.ProblemExtraction
+import ProblemExtraction
 
 problem_file
 

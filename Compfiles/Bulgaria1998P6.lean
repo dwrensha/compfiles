@@ -10,7 +10,7 @@ import Mathlib.Order.WellFounded
 import Mathlib.Tactic.LibrarySearch
 import Mathlib.Tactic.Ring
 
-import Compfiles.Meta.ProblemExtraction
+import ProblemExtraction
 
 problem_file
 

@@ -11,7 +11,7 @@ import Mathlib.Data.Finite.Basic
 
 import Mathlib.Tactic
 
-import Compfiles.Meta.ProblemExtraction
+import ProblemExtraction
 
 problem_file
 

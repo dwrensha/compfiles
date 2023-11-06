@@ -3,8 +3,9 @@ import Std.Lean.Util.Path
 import Std.Tactic.Lint
 import Lean.Environment
 import Mathlib.Data.String.Defs
-import Compfiles.Meta.ProblemExtraction
 import Lean.Meta.Basic
+
+import ProblemExtraction
 
 open Lean Core Elab
 

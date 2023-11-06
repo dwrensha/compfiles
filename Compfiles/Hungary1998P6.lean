@@ -11,7 +11,7 @@ import Mathlib.Algebra.Associated
 import Mathlib.Data.Int.Basic
 import Mathlib.Tactic.Ring
 
-import Compfiles.Meta.ProblemExtraction
+import ProblemExtraction
 
 problem_file
 

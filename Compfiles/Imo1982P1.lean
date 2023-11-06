@@ -6,7 +6,7 @@ Authors: David Renshaw
 
 import Mathlib.Tactic
 
-import Compfiles.Meta.ProblemExtraction
+import ProblemExtraction
 
 problem_file
 

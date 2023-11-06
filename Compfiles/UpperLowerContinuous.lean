@@ -14,7 +14,7 @@ import Mathlib.Topology.Bases
 
 import Mathlib.Tactic.Linarith
 
-import Compfiles.Meta.ProblemExtraction
+import ProblemExtraction
 
 problem_file
 

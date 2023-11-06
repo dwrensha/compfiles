@@ -8,7 +8,7 @@ import Mathlib.Algebra.BigOperators.Order
 import Mathlib.Data.Nat.Multiplicity
 import Mathlib.Tactic
 
-import Compfiles.Meta.ProblemExtraction
+import ProblemExtraction
 
 problem_file
 
