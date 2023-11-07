@@ -48,12 +48,11 @@ problem imo2015_p5 :
     obtain ⟨L, R, hL, hR, hcard, hLR⟩ := hj
     have h1 : ∃ i, i ∈ Finset.Icc 1 2016 ∧ i ∉ L ∧ i ∉ R := by
       by_contra' H2
-      have H3 : ∀ i ∈ Finset.Icc 1 2016, i ∈ L ∨ i ∈ R := by
-        intro i hi
-        specialize H2 i hi
-        exact or_iff_not_imp_left.mpr H2
       have h2 : Finset.card (L ∪ R) ≤ L.card + R.card := Finset.card_union_le L R
-      have h3 : Finset.Icc 1 2016 ⊆ (L ∪ R) := by intro a ha; aesop
+      have h3 : Finset.Icc 1 2016 ⊆ (L ∪ R) := fun a ha ↦ by
+        specialize H2 a ha
+        rw [←or_iff_not_imp_left] at H2
+        exact Finset.mem_union.mpr H2
       have h4 : (Finset.Icc 1 2016).card ≤ (L ∪ R).card := Finset.card_le_of_subset h3
       rw [Nat.card_Icc, add_tsub_cancel_right] at h4
       rw [←hcard] at H
