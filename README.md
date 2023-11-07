@@ -39,7 +39,10 @@ To generate problem statements with all solution information stripped, do:
 $ lake exe extractProblems
 ```
 and then look in the `_extracted/problems` directory.
-The `_extracted/solutions` directory will contain
+
+Files in the `_extracted/solutions` directory retain their solution
+information, but are stripped of their dependency on
+the `ProblemExtraction` library.
 
 ## checking solutions
 
