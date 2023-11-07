@@ -38,7 +38,27 @@ To generate problem statements with all solution information stripped, do:
 ```
 $ lake exe extractProblems
 ```
-and then look in the `_extracted/` directory.
+and then look in the `_extracted/problems` directory.
+The `_extracted/solutions` directory will contain
+
+## checking solutions
+
+The `checkSolution` executable takes as input a problem ID
+and a path to a lean source code file. For example:
+```
+$ lake exe checkSolution Imo2022P2 _extracted/solutions/Imo2022P2.lean
+```
+This will check that the extracted solution file
+`_extracted/solutions/Imo2022P2.lean`
+does indeed pass verification for problem `Imo2022P2`. It will print the terms
+for any `determine` declarations in the solution, so that
+they can be judged by a human. In this example, that will look like:
+```
+determine Imo2022P2.solution_set := {fun x => 1 / x}
+```
+
+This solution checker could be used as a
+grader for the for the [Imo Grand Challenge](https://imo-grand-challenge.github.io/).
 
 ## contributing
 
