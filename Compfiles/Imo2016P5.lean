@@ -33,7 +33,7 @@ problem imo2015_p5 :
     IsLeast { k | ∃ L R : Finset ℕ,
                   L ⊂ Finset.Icc 1 2016 ∧
                   R ⊂ Finset.Icc 1 2016 ∧
-                  R.card + L.card = k ∧
+                  L.card + R.card = k ∧
                   ¬∃ x : ℝ,
                    ∏ i in Finset.Icc 1 2016, (if i ∈ L then 1 else (x - (i : ℝ))) =
                    ∏ i in Finset.Icc 1 2016, (if i ∈ R then 1 else (x - (i : ℝ))) }
@@ -44,5 +44,22 @@ problem imo2015_p5 :
   · rw [mem_lowerBounds]
     intro j hj
     by_contra' H
-    sorry
-
+    rw [Set.mem_setOf_eq] at hj
+    obtain ⟨L, R, hL, hR, hcard, hLR⟩ := hj
+    have h1 : ∃ i, i ∈ Finset.Icc 1 2016 ∧ i ∉ L ∧ i ∉ R := by
+      by_contra' H2
+      have H3 : ∀ i ∈ Finset.Icc 1 2016, i ∈ L ∨ i ∈ R := by
+        intro i hi
+        specialize H2 i hi
+        exact or_iff_not_imp_left.mpr H2
+      have h2 : Finset.card (L ∪ R) ≤ L.card + R.card := Finset.card_union_le L R
+      have h3 : Finset.Icc 1 2016 ⊆ (L ∪ R) := by intro a ha; aesop
+      have h4 : (Finset.Icc 1 2016).card ≤ (L ∪ R).card := Finset.card_le_of_subset h3
+      rw [Nat.card_Icc, add_tsub_cancel_right] at h4
+      rw [←hcard] at H
+      exact ((h4.trans h2).trans_lt H).false
+    obtain ⟨i, hic, hiL, hiR⟩ := h1
+    push_neg at hLR
+    specialize hLR i
+    rw [←Finset.prod_erase_mul _ _ hic, ←Finset.prod_erase_mul _ _ hic] at hLR
+    simp only [sub_self, ite_false, hiL, hiR, mul_zero, ne_eq] at hLR
