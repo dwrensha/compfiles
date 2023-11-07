@@ -148,7 +148,7 @@ problem usa2023_p2 (f : ℝ+ → ℝ+) :
       rw [h13] at h12; clear h13
       have h14 : ⟨2, two_pos⟩ < f 1 := lemma_3 h12
       have h15 : (1:ℝ+) < ⟨2, two_pos⟩ := by rw [Subtype.mk_lt_mk]; exact one_lt_two
-      exact LT.lt.false ((lt_trans H h15).trans h14)
+      exact ((H.trans h15).trans h14).false
 
     have h11 : ∀ x : ℝ+, 0 < (x + c).val - 1 := by
       intro x
