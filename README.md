@@ -21,7 +21,16 @@ $ lake build
 
 ## extracting problems
 
-This repo defines some [special commands](/ProblemExtraction.lean)
+In this repo,
+each solution (proof) is recorded inline, in the same file that its problem is declared.
+In some situations, however, solution data is undesired.
+For example, we might want a [website](https://dwrensha.github.io/compfiles/)
+to display only the problem statement,
+or we might
+want to invoke an [Imo Grand Challenge](https://imo-grand-challenge.github.io/)
+solver without providing spoilers.
+
+To that end, this repo defines some [special commands](/ProblemExtraction.lean)
 to support problem extraction.
 
 * A `problem_file` command marks a file that should participate in problem extraction.
@@ -60,8 +69,8 @@ they can be judged by a human. In this example, that will look like:
 determine Imo2022P2.solution_set := {fun x => 1 / x}
 ```
 
-This solution checker could be used as a
-grader for the for the [Imo Grand Challenge](https://imo-grand-challenge.github.io/).
+The intention is that this solution checker could be used as a
+grader for the [Imo Grand Challenge](https://imo-grand-challenge.github.io/).
 
 ## contributing
 
