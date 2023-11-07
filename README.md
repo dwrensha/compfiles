@@ -27,7 +27,7 @@ In some situations, however, solution data is undesired.
 For example, we might want a [website](https://dwrensha.github.io/compfiles/)
 to display only the problem statement,
 or we might
-want to invoke an [Imo Grand Challenge](https://imo-grand-challenge.github.io/)
+want to invoke an [IMO Grand Challenge](https://imo-grand-challenge.github.io/)
 solver without providing spoilers.
 
 To that end, this repo defines some [special commands](/ProblemExtraction.lean)
@@ -70,7 +70,7 @@ determine Imo2022P2.solution_set := {fun x => 1 / x}
 ```
 
 The intention is that this solution checker could be used as a
-grader for the [Imo Grand Challenge](https://imo-grand-challenge.github.io/).
+grader for the [IMO Grand Challenge](https://imo-grand-challenge.github.io/).
 
 ## contributing
 
