@@ -40,7 +40,25 @@ problem imo2015_p5 :
             solution_value := by
   constructor
   · rw [Set.mem_setOf_eq]
-    sorry
+    -- We follow the proof from Evan Chen:
+    -- https://web.evanchen.cc/exams/IMO-2016-notes.pdf
+    use (Finset.Icc 1 2016).filter (fun n ↦ n % 4 = 2 ∨ n % 4 = 3)
+    use (Finset.Icc 1 2016).filter (fun n ↦ n % 4 = 0 ∨ n % 4 = 1)
+    refine' ⟨_,_,_,_⟩
+    · refine ⟨Finset.filter_subset _ _, ?_⟩
+      intro h
+      have h1 : 1 ∈ Finset.Icc 1 2016 := by simp only [Finset.mem_Icc]
+      have h2 := h h1
+      simp only [Finset.mem_Icc, Finset.mem_filter] at h2
+    · refine ⟨Finset.filter_subset _ _, ?_⟩
+      intro h
+      have h1 : 2 ∈ Finset.Icc 1 2016 := by simp only [Finset.mem_Icc]
+      have h2 := h h1
+      simp only [Finset.mem_Icc, Finset.mem_filter] at h2
+    · sorry
+    · push_neg
+      intro x
+      sorry
   · rw [mem_lowerBounds]
     intro j hj
     by_contra' H
