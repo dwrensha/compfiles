@@ -29,6 +29,7 @@ import Compfiles.Imo2012P4
 import Compfiles.Imo2013P1
 import Compfiles.Imo2013P5
 import Compfiles.Imo2014P1
+import Compfiles.Imo2015P5
 import Compfiles.Imo2016P5
 import Compfiles.Imo2017P1
 import Compfiles.Imo2017P2
