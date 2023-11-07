@@ -71,19 +71,22 @@ unsafe def verifyTypesAndAxioms (problem_mod : Name) (solution_mod : Name)
       let prob_ctx := {fileName := "", fileMap := default}
       let prob_state := {env := prob_env}
       let prob_infos ← Prod.fst <$> (CoreM.toIO · prob_ctx prob_state) do
-        let mut infos : NameMap ConstantInfo := {}
+        let mut infos : RBMap Name ConstantInfo Name.quickCmp := {}
         let decls ← Std.Tactic.Lint.getDeclsInPackage problem_mod
         for d in decls do
-          infos := infos.insert d (← getConstInfo d)
-          pure ()
+          if not d.isInternal then
+            infos := infos.insert d (← getConstInfo d)
         pure infos
 
       let sol_ctx := {fileName := "", fileMap := default}
       let sol_state := {env := sol_env}
       Prod.fst <$> (CoreM.toIO · sol_ctx sol_state) do
         let decls ← Std.Tactic.Lint.getDeclsInPackage solution_mod
+        let mut prob_infos := prob_infos
         for d in decls do
-          if let .some prob_const := prob_infos.find? d then
+          if not d.isInternal then
+           if let .some prob_const := prob_infos.find? d then
+            prob_infos := prob_infos.erase d
             let sol_const ← getConstInfo d
             Lean.Meta.MetaM.run' do
               if not (←Lean.Meta.isDefEq prob_const.type sol_const.type) then
@@ -95,9 +98,8 @@ unsafe def verifyTypesAndAxioms (problem_mod : Name) (solution_mod : Name)
             for a in s.axioms do
                if not (a ∈ [``propext, ``Classical.choice, ``Quot.sound]) then
                  throwError s!"prohibited axiom: {a}"
-            pure ()
-          pure ()
-        pure ()
+        for ⟨k, _⟩ in prob_infos do
+          throwError s!"no decl found for {k}"
       pure ()
   pure ()
 
@@ -179,7 +181,7 @@ unsafe def main (args : List String) : IO Unit := do
   replayFromImports solution_mod
 
   -- 6. print any `determine` terms, to be inspected by human judge.
-  IO.println "* collecting any 'deterine' declarations ..."
+  IO.println "* collecting any 'determine' declarations ..."
   printDetermineVals r.determineDecls solution_mod
 
   IO.println "* verified!"
