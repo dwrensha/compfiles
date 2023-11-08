@@ -15,7 +15,7 @@ problem_file
 
 Determine all functions f : ℝ → ℝ such that for all x,y ∈ ℝ,
 
-  f(⌊x⌋y) = f(x)⌊f(y)⌋.
+               f(⌊x⌋y) = f(x)⌊f(y)⌋.
 -/
 
 namespace Imo2010P1
