@@ -27,8 +27,50 @@ snip begin
 
 lemma lemma1 (s : ℕ → ℤ) (hs : ∀ i, s i < s (i + 1)) (z : ℤ) (hs0 : s 0 < z) :
     ∃! i, s i < z ∧ z ≤ s (i + 1) := by
-  let S := { i | z ≤ s i }
-  sorry
+  have hmono : StrictMono s := strictMono_nat_of_lt_succ hs
+
+  let S := { i | z ≤ s (i + 1) }
+  have h3 : ∃ j, j ∈ S := by
+    have h1 : 0 < z - s 0 := Int.sub_pos_of_lt hs0
+    have h5 : ∀ i, s 0 + i ≤ s i := fun i ↦ by
+      induction' i with i ih
+      · simp
+      · have h10 : (Nat.succ i : ℤ) = (i : ℤ) + 1 := by norm_cast
+        rw [h10, ←add_assoc]
+        have h10 : s i + 1 ≤ s (Nat.succ i) := hs i
+        linarith
+    use Int.toNat (z - s 0)
+    rw [Set.mem_setOf_eq]
+    have h8 := h5 (Int.toNat (z - s 0))
+    have h6 : 0 ≤ z - s 0 := by linarith
+    have h7 : ((Int.toNat (z - s 0)) :ℤ) = z - s 0 := Int.toNat_of_nonneg h6
+    rw [h7] at h8
+    rw [add_sub_cancel'_right] at h8
+    have h12 : s (Int.toNat (z - s 0)) < s (Int.toNat (z - s 0) + 1) := hs _
+    linarith
+  use Nat.find h3
+  dsimp
+  refine' ⟨⟨_, _⟩, _⟩
+  · have h4 := Nat.find_min h3 (m := (Nat.find h3 - 1))
+    cases' Nat.eq_zero_or_pos (Nat.find h3) with h5 h5
+    · rwa [h5]
+    · have h6 : Nat.find h3 - 1 < Nat.find h3 := by
+        suffices H : Nat.find h3 < Nat.find h3 + 1 by
+          exact Nat.sub_lt_right_of_lt_add h5 H
+        exact Nat.lt.base (Nat.find h3)
+      have h7 := h4 h6
+      rw [Set.mem_setOf_eq] at h7
+      push_neg at h7
+      rwa [Nat.sub_add_cancel h5] at h7
+  · exact Nat.find_spec h3
+  · rintro m ⟨hm1, hm2⟩
+    symm
+    rw [Nat.find_eq_iff]
+    refine' ⟨hm2, _⟩
+    intro k hk
+    intro hkk
+    have h9 : s (k + 1) ≤ s m := (StrictMono.le_iff_le hmono).mpr hk
+    linarith
 
 snip end
 
