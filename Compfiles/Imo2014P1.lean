@@ -25,8 +25,8 @@ open scoped BigOperators
 
 problem imo2014_p1 (a : ℕ → ℤ) (apos : ∀ i, 0 < a i) (ha : ∀ i, a i < a (i + 1)) :
     ∃! n : ℕ, 0 < a ∧
-              a n < (∑ i in Finset.range (n + 1), a i)/n ∧
-              (∑ i in Finset.range (n + 1), a i)/n ≤ a (n + 1) := by
+              n * a n < (∑ i in Finset.range (n + 1), a i) ∧
+              (∑ i in Finset.range (n + 1), a i) ≤ n * a (n + 1) := by
   -- Informal solution by Fedor Petrov, via Evan Chen:
   -- https://web.evanchen.cc/exams/IMO-2014-notes.pdf
 
