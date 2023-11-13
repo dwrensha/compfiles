@@ -4,10 +4,10 @@
  [{"git":
    {"url": "https://github.com/leanprover-community/mathlib4",
     "subDir?": null,
-    "rev": "2def5da53028838240e47d0e5a8541d97ceca426",
+    "rev": "30d39f9a058b13ec1786a90af4c051d650762951",
     "opts": {},
     "name": "mathlib",
-    "inputRev?": "2def5da53028838240e47d0e5a8541d97ceca426",
+    "inputRev?": "30d39f9a058b13ec1786a90af4c051d650762951",
     "inherited": false}},
   {"git":
    {"url": "https://github.com/leanprover/std4",
