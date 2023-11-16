@@ -8,6 +8,7 @@ import Compfiles.Canada1998P3
 import Compfiles.Canada1998P5
 import Compfiles.Hungary1998P6
 import Compfiles.Imo1959P1
+import Compfiles.Imo1961P1
 import Compfiles.Imo1964P1
 import Compfiles.Imo1964P4
 import Compfiles.Imo1968P2
