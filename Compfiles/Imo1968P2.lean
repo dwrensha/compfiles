@@ -43,8 +43,7 @@ lemma prod_digits_le {x b : ℕ} (hb : 2 ≤ b) (xpos : 0 < x) :
   have h4 : List.mapIdx (fun i a => a * b ^ i) (Nat.digits b x) ≠ [] := by
     rw [Nat.digits_of_two_le_of_pos hb xpos, List.mapIdx_cons]
     exact List.cons_ne_nil _ _
-  have h5 := List.dropLast_append_getLast h4
-  rw [←h5, List.sum_append, List.sum_singleton] at h3; clear h5
+  rw [←List.dropLast_append_getLast h4, List.sum_append, List.sum_singleton] at h3
   have h6 : List.getLast (List.mapIdx (fun i a => a * b ^ i) (Nat.digits b x)) h4 ≤ x :=
      by nth_rewrite 2 [←h3]; exact Nat.le_add_left _ _
   have h7 : List.getLast (List.mapIdx (fun i a => a * b ^ i) (Nat.digits b x)) h4 =
