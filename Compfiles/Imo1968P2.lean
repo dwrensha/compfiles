@@ -83,9 +83,6 @@ problem imo1968_p2 (x : ℕ) :
     have h3 : x < 13 := by
       by_contra' H
       qify at h0 h2 H
-      have h4 : (x:ℚ)^2 - 11 * (x:ℚ) ≤ 22 := by linarith
-      have h5 : (x:ℚ)^2 - 11 * (x:ℚ) = ((x:ℚ) - 11/2)^2 - (11^2)/(2^2) := by ring
-      rw [h5] at h4; clear h5
       have h6 : 15/2 ≤ (x:ℚ) - 11 / 2 := by linarith
       have h7 : (15/2)^2 ≤ ((x:ℚ) - 11 / 2)^2 := by
         have h10 : 0 ≤ (15:ℚ)/2 := by norm_num
