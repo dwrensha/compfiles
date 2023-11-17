@@ -77,7 +77,7 @@ problem hungary1998_p6 (x y : ℤ) (z : ℕ) (hz : 1 < z) :
   have h6 : ∑ i in Finset.range 99, ((i:ℤ) + 1)^2 = (99 * 100 * 199)/6 := by
     rw [cast_sum_square, sum_range_square]; decide
 
-  have hnn1 : (99:ℤ) * 100 / 2 = 99 * 50 := by norm_num; sorry
+  have hnn1 : (99:ℤ) * 100 / 2 = 99 * 50 := by decide
   have hnn2 : ((99:ℤ) * 100 * 199)/6 = 33 * 50 * 199 := by decide
 
   have h7 := calc y^z
