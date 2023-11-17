@@ -7,6 +7,7 @@ Authors: David Renshaw
 import Mathlib.Data.Real.Basic
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 import Mathlib.Analysis.MeanInequalities
+import Mathlib.Tactic
 
 import ProblemExtraction
 
@@ -72,16 +73,16 @@ by rw [←Nat.succ_eq_add_one, Finset.range_succ]; simp
 
 lemma lemma2 (f : ℕ → ℝ) :
     ∏ i in Finset.range (n + 1), ∏ j in Finset.erase (Finset.range (n + 1)) i, f j =
-    ∏ i in Finset.range (n + 1), (f i)^n := by
+    ∏ i in Finset.range (n + 1), (f i)^(n:ℝ) := by
   induction n with
   | zero => simp
   | succ n ih =>
-    have h1 : ∏ i in Finset.range (Nat.succ n + 1), f i ^ ↑(Nat.succ n) =
-            (∏ i in Finset.range (n + 1), f i ^ ↑(Nat.succ n)) * f (n + 1) ^ ↑(Nat.succ n) :=
+    have h1 : ∏ i in Finset.range (Nat.succ n + 1), f i ^ ((Nat.succ n):ℝ) =
+            (∏ i in Finset.range (n + 1), f i ^ ((Nat.succ n):ℝ)) * f (n + 1) ^ ((Nat.succ n):ℝ) :=
      by rw [Finset.prod_range_succ]
     rw [h1]; clear h1
-    have h2 : ∏ i in Finset.range (n + 1), f i ^ ↑(Nat.succ n) =
-              ∏ i in Finset.range (n + 1), (f i ^ ↑n * f i) := by
+    have h2 : ∏ i in Finset.range (n + 1), f i ^ ((Nat.succ n):ℝ) =
+              ∏ i in Finset.range (n + 1), (f i ^ (n:ℝ) * f i) := by
        congr; funext x
        norm_cast
        exact pow_succ' (f x) _
@@ -132,11 +133,8 @@ lemma lemma2 (f : ℕ → ℝ) :
          (∏ x in Finset.range (n + 1),
             ∏ j in Finset.erase (Finset.range (n + 1)) x, f j) * f (n + 1) ^ (n+1) := by
       rw [Finset.prod_mul_distrib, Finset.prod_const, Finset.card_range]
-      norm_cast
-    rw [h4, ih]
-    have h6 : ((Nat.succ n):ℝ) = (↑n + 1) := by norm_cast
-    rw [h6]
-    ring
+    rw [h4, ih, mul_right_comm]
+    norm_cast
 
 snip end
 
@@ -206,7 +204,7 @@ problem usa1998_p3
 
   -- (1 + yᵢ)/n ≥ ∏_{j ≠ i} (1 - yⱼ)^{1/n}
   have h5 : ∀ i ∈ Finset.range (n + 1),
-      ∏ j in Finset.erase (Finset.range (n + 1)) i, (1 - y j) ^ (1 / ↑n) ≤
+      ∏ j in Finset.erase (Finset.range (n + 1)) i, (1 - y j) ^ (1 / (n:ℝ)) ≤
       (1 + y i) / ↑n := fun i hi ↦ (h4 i hi).trans (h3 i hi)
 
   -- ∏ᵢ(1 + yᵢ)/n ≥ ∏ᵢ∏_{j ≠ i} (1 - yⱼ)^{1/n}
@@ -215,7 +213,7 @@ problem usa1998_p3
   -- ∏ᵢ(1 + yᵢ)/(1-yᵢ) ≥ nⁿ⁺¹
   have h6 : (n:ℝ) ^ ((n:ℝ) + 1) ≤ ∏ j in Finset.range (n + 1), (1 + y j) / (1 - y j) := by
     have h20 : ∀ i ∈ Finset.range (n + 1),
-        0 ≤ ∏ j in Finset.erase (Finset.range (n + 1)) i, (1 - y j) ^ (1 / ↑n) := by
+        0 ≤ ∏ j in Finset.erase (Finset.range (n + 1)) i, (1 - y j) ^ (1 / (n:ℝ)) := by
       intro i _hi
       apply Finset.prod_nonneg
       intro ii hii
@@ -225,35 +223,38 @@ problem usa1998_p3
       exact this -- if I try to collapse this to the previous line, i get timeouts.
     have h21 := Finset.prod_le_prod h20 h5
     have h23 : ∏ i in Finset.range (n + 1),
-                ∏ j in Finset.erase (Finset.range (n + 1)) i, (1 - y j) ^ (1 / ↑n)
+                ∏ j in Finset.erase (Finset.range (n + 1)) i, (1 - y j) ^ (1 / (n:ℝ))
                 = ∏ i in Finset.range (n + 1), (1 - y i) := by
       rw [lemma2]
       apply Finset.prod_congr rfl
       intro x hx
       have h30 : 0 ≤ 1 - y x := sub_nonneg.mpr (le_of_lt (lemma1 (a x) (ha x hx)))
-      rw [←Real.rpow_mul h30]
       have h31 : (1:ℝ) / n * n = n / n := by field_simp
-      rw [h31]
       have h32 : (n:ℝ) / n = 1 := by field_simp
+      have := Real.rpow_mul h30
+      rw [←Real.rpow_mul h30]
+      rw [h31]
+
       rw [h32, Real.rpow_one]
     rw [h23] at h21; clear h23
     have h24 : ∏ i in Finset.range (n + 1), (1 + y i) / ↑n =
-                 (∏ i in Finset.range (n + 1), (1 + y i)) / (↑n)^(↑n + 1) := by
+                 (∏ i in Finset.range (n + 1), (1 + y i)) / (↑n)^((n:ℝ) + 1) := by
       have h41 : ∏ i in Finset.range (n + 1), (1 + y i) / ↑n =
-                   ∏ i in Finset.range (n + 1), (1 + y i) * (1 / ↑n) := by
+                   ∏ i in Finset.range (n + 1), (1 + y i) * (1 / (n:ℝ)) := by
         apply Finset.prod_congr rfl
         intro x _hx
         field_simp
       rw [h41]; clear h41
       rw [Finset.prod_mul_distrib, Finset.prod_const, Finset.card_range]
-      have h43 : HPow.hPow ((1:ℝ) / (n:ℝ)) (n + 1) = (1:ℝ) / (↑n ^ (n + 1)) := by
+      have h43 : HPow.hPow ((1:ℝ) / (n:ℝ)) (n + 1) = (1:ℝ) / (↑n ^ ((n:ℝ) + 1)) := by
+        norm_cast
         rw [div_pow, one_pow]
         norm_cast
       rw [h43]; clear h43
       field_simp
     rw [h24] at h21; clear h24
     rw [Finset.prod_div_distrib]
-    have h25 : 0 < (n:ℝ) ^ (↑n + 1) := by
+    have h25 : 0 < (n:ℝ) ^ ((n:ℝ) + 1) := by
       norm_cast
       exact Nat.pos_pow_of_pos (n + 1) (Nat.pos_of_ne_zero h0)
     have h26 : 0 < ∏ x in Finset.range (n + 1), (1 - y x) := by

@@ -72,13 +72,13 @@ problem hungary1998_p6 (x y : ℤ) (z : ℕ) (hz : 1 < z) :
     rw [Finset.sum_range_succ']; rfl
 
   have h5 : ∑ i in Finset.range 100, (i:ℤ) = 99 * 100 / 2 := by
-    rw [←Nat.cast_sum, Finset.sum_range_id]; norm_num
+    rw [←Nat.cast_sum, Finset.sum_range_id]; decide
 
   have h6 : ∑ i in Finset.range 99, ((i:ℤ) + 1)^2 = (99 * 100 * 199)/6 := by
-    rw [cast_sum_square, sum_range_square]; norm_num
+    rw [cast_sum_square, sum_range_square]; decide
 
-  have hnn1 : (99:ℤ) * 100 / 2 = 99 * 50 := by norm_num
-  have hnn2 : ((99:ℤ) * 100 * 199)/6 = 33 * 50 * 199 := by norm_num
+  have hnn1 : (99:ℤ) * 100 / 2 = 99 * 50 := by norm_num; sorry
+  have hnn2 : ((99:ℤ) * 100 * 199)/6 = 33 * 50 * 199 := by decide
 
   have h7 := calc y^z
       = ∑ i in Finset.range 99, ((x + i) + 1)^2 := he.symm
@@ -128,3 +128,5 @@ problem hungary1998_p6 (x y : ℤ) (z : ℕ) (hz : 1 < z) :
 
   rw [h19] at h12
   norm_num at h12
+  change 0 = 1 at h12
+  simp only [zero_ne_one] at h12

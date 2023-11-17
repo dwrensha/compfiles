@@ -67,7 +67,7 @@ theorem upper_bound {k n : ℕ} (hk : k > 0)
     _ ≤ k ! := by gcongr
   clear h h2
   induction' n, hn using Nat.le_induction with n' hn' IH
-  · norm_num
+  · decide
   let A := ∑ i in Finset.range n', i
   have le_sum : ∑ i in Finset.range 6, i ≤ A
   · apply Finset.sum_le_sum_of_subset
@@ -92,23 +92,23 @@ problem imo2018_p2 (n k : ℕ) :
   constructor
   · intro nk
     simp only [Set.mem_insert_iff, Set.mem_singleton_iff, Prod.mk.injEq] at nk
-    obtain ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ := nk <;> norm_num
+    obtain ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ := nk <;> decide
   rintro ⟨npos, kpos, h⟩
   -- We know that n < 6.
   have := Imo2019P4.upper_bound kpos h
   interval_cases n
   -- n = 1
-  · left; congr; norm_num at h; rw [Nat.factorial_eq_one] at h; apply antisymm h
-    exact Nat.succ_le_of_lt kpos
+  · left; congr; norm_num at h
+    exact Nat.le_antisymm h kpos
   -- n = 2
   · right; congr; norm_num [Finset.prod_range_succ] at h; norm_cast at h
-    rw [← Nat.factorial_inj]
-    exact h; rw [h]; norm_num
+    rwa [← Nat.factorial_inj']; norm_num
+
   all_goals exfalso; norm_num [Finset.prod_range_succ] at h; norm_cast at h
   -- n = 3
-  · refine' Nat.monotone_factorial.ne_of_lt_of_lt_nat 5 _ _ _ h <;> norm_num
+  · refine' Nat.monotone_factorial.ne_of_lt_of_lt_nat 5 _ _ _ h <;> decide
   -- n = 4
-  · refine' Nat.monotone_factorial.ne_of_lt_of_lt_nat 7 _ _ _ h <;> norm_num
+  · refine' Nat.monotone_factorial.ne_of_lt_of_lt_nat 7 _ _ _ h <;> decide
   -- n = 5
-  · refine' Nat.monotone_factorial.ne_of_lt_of_lt_nat 10 _ _ _ h <;> norm_num
+  · refine' Nat.monotone_factorial.ne_of_lt_of_lt_nat 10 _ _ _ h <;> decide
 

@@ -81,7 +81,7 @@ problem bulgaria1998_p11
     · have h4: ↑m % 3 = (0:ℤ) % 3 := hm; norm_cast at h4
       simp[Nat.pow_mod, h4] at h5
     · have h4: ↑m % 3 = (1:ℤ) % 3 := hm; norm_cast at h4
-      simp[Nat.pow_mod, h4] at h5
+      simp (config := {decide := true}) [Nat.pow_mod, h4] at h5
     · have h4: ↑m % 3 = (2:ℤ) % 3 := hm; norm_cast at h4
 
   have h6: Nat.succ n % 2 = 1 := by

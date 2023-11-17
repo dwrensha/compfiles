@@ -113,7 +113,7 @@ def prepend_one (n : ℕ) := 10 ^ (List.length (Nat.digits 10 n)) + n
 
 lemma prepend_one_pos (n: ℕ) : 0 < prepend_one n := by
   cases' n
-  · norm_num
+  · decide
   · rw [prepend_one]; norm_num
 
 lemma digits_len' (n : ℕ) (hn : 0 < n) :
@@ -157,13 +157,13 @@ lemma prepend_one_all_one_or_two (n : ℕ) (hn : all_one_or_two (Nat.digits 10 n
  cases' he with he he
  · exact hn e he
  · rw [List.mem_singleton] at he
-   simp only [he]
+   simp only [he, OfNat.one_ne_ofNat, or_false]
 
 def prepend_two (n : ℕ) := 2 * (10 ^ (List.length (Nat.digits 10 n))) + n
 
 lemma prepend_two_pos (n: ℕ) : 0 < prepend_two n := by
   cases n
-  · norm_num
+  · norm_num [prepend_two]
   · rw [prepend_two]; norm_num
 
 lemma prepend_two_div (n : ℕ) (hn : 0 < n) : prepend_two n / 10 = prepend_two (n / 10) := by
@@ -186,7 +186,7 @@ lemma prepend_two_eq_append (n : ℕ) :
     Nat.digits 10 (prepend_two n) = (Nat.digits 10 n) ++ [2] := by
   induction' n using Nat.strong_induction_on with n' ih
   cases' n' with n'
-  · simp[prepend_two]
+  · norm_num [prepend_two]
   · rw [Nat.digits_def' two_le_ten (prepend_two_pos _)]
     rw [prepend_two_div _ (Nat.succ_pos n')]
     have hns : n'.succ / 10 < n'.succ := Nat.div_lt_self' n' 8
@@ -203,7 +203,7 @@ lemma prepend_two_all_one_or_two (n : ℕ) (hn : all_one_or_two (Nat.digits 10 n
   cases' he with he he
   · exact hn e he
   · rw [List.mem_singleton] at he
-    simp only [he]
+    right; exact he
 
 lemma factor_ten_pow (k : ℕ) : 10 ^ k = (2^k) * (5^k) := by
   induction' k with k' ih

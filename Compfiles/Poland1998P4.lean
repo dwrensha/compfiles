@@ -112,7 +112,7 @@ lemma can_get_a_later_one_zmod :
     constructor
     · calc n < 2 := hlt
            _ < 5 := by norm_num
-    · norm_num
+    · norm_num; decide
 
   let n1 : ℕ := 2 * (n - 1) + 1
 

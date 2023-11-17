@@ -86,7 +86,7 @@ theorem lemma1
                                      exact (p3.val.property.symm hp).elim)
     use s3
     constructor
-    · simp only[Finset.card_cons, Finset.card_singleton]
+    · simp (config := {decide := true}) only [Finset.card_cons, Finset.card_singleton]
     · intro p1' hp1' p2' hp2' hp1p2
       rw [Finset.mem_cons, Finset.mem_cons, Finset.mem_singleton] at hp1' hp2'
       have hp4d : discusses p2 ↑↑p4 = t2 := by
@@ -170,7 +170,7 @@ problem imo1964_p4
     let s3 : Finset Person := Finset.cons p1 s2 hs2
     use s3
     constructor
-    · simp only [Finset.card_cons, Finset.card_singleton]
+    · simp (config := {decide := true}) only [Finset.card_cons, Finset.card_singleton]
     · intro p1' hp1' p2' hp2' hp1p2
       rw [Finset.mem_cons, Finset.mem_cons, Finset.mem_singleton] at hp1' hp2'
       have hp4d : discusses p1 ↑↑p4 = t1 := by

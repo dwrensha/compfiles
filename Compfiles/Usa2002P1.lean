@@ -86,7 +86,8 @@ lemma usa2002_p1_generalized
     rw [Nat.pow_zero] at hN
     interval_cases N
     · use λ _ ↦ Color.blue
-      simp only [forall_true_left, forall_const, Fintype.card_eq_zero]
+      simp (config := {decide := true}) only
+        [forall_true_left, forall_const, Fintype.card_eq_zero]
     · use λ _ ↦ Color.red
       simp [Fintype.card_subtype, Finset.card_univ, hs]
   · -- Suppose that our claim holds for n = k. Let s ∈ S, |S| = k + 1,
@@ -214,7 +215,7 @@ lemma usa2002_p1_generalized
           obtain ⟨h6', h7'⟩ := h4' hfs2
           rw [←h7] at h7'
           have h8 := hf1' _ _ h7'
-          simp only [hs12, Finset.mem_union, h6, h6']
+          simp (config := {decide := true}) only [hs12, Finset.mem_union, h6, h6']
           rw [←h8, Finset.subtype_union, Finset.union_comm]
         · obtain hss | hss := Classical.em (s ∈ s1 ∪ s2)
           · unfold_let f

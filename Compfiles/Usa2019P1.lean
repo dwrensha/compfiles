@@ -236,14 +236,13 @@ problem usa2019_p1 (m : ℕ+) :
         obtain ⟨m', hm'⟩ := hm
         rw [←Nat.two_mul] at hm'
         rw [hm', Function.iterate_mul, Function.iterate_fixed hmsq']
-        simp only
+        decide
       · obtain heq' | hne' := eq_or_ne n m
         · rw [heq', hmeq1]
           rw [← hmeq]
-          convert_to f^[2 * 500] m * m = m ^ 2
-          · congr
-          · rw [Function.iterate_mul, Function.iterate_fixed hmsq]
-            exact (sq m).symm
+          rw [show ((1000:ℕ+):ℕ) = 2 * 500 by rfl]
+          rw [Function.iterate_mul, Function.iterate_fixed hmsq]
+          exact (sq m).symm
         · have hn : f n = n := by
             simp [hf]
             simp_rw[eq_false hne']
@@ -260,4 +259,4 @@ problem usa2019_p1 (m : ℕ+) :
     have h2 := lemma_3 f hf1 m h1
     rw [hf2] at h2
     rw [hf2, f_injective f hf1 h2] at h1
-    simp only at h1
+    simp (config := {decide := true}) only at h1

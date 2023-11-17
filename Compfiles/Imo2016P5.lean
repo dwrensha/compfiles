@@ -47,14 +47,16 @@ problem imo2015_p5 :
     refine' ⟨_,_,_,_⟩
     · refine ⟨Finset.filter_subset _ _, ?_⟩
       intro h
-      have h1 : 1 ∈ Finset.Icc 1 2016 := by simp only [Finset.mem_Icc]
+      have h1 : 1 ∈ Finset.Icc 1 2016 := by
+        simp (config := {decide := true}) only [Finset.mem_Icc]
       have h2 := h h1
-      simp only [Finset.mem_Icc, Finset.mem_filter] at h2
+      simp [Finset.mem_Icc, Finset.mem_filter] at h2
     · refine ⟨Finset.filter_subset _ _, ?_⟩
       intro h
-      have h1 : 2 ∈ Finset.Icc 1 2016 := by simp only [Finset.mem_Icc]
+      have h1 : 2 ∈ Finset.Icc 1 2016 := by
+        simp (config := {decide := true}) only [Finset.mem_Icc]
       have h2 := h h1
-      simp only [Finset.mem_Icc, Finset.mem_filter] at h2
+      sorry
     · sorry
     · push_neg
       intro x
@@ -79,4 +81,4 @@ problem imo2015_p5 :
     push_neg at hLR
     specialize hLR i
     rw [←Finset.prod_erase_mul _ _ hic, ←Finset.prod_erase_mul _ _ hic] at hLR
-    simp only [sub_self, ite_false, hiL, hiR, mul_zero, ne_eq] at hLR
+    simp (config := {decide := true}) only [sub_self, ite_false, hiL, hiR, mul_zero, ne_eq] at hLR

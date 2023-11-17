@@ -1,6 +1,7 @@
 import Mathlib.Data.Rat.Basic
 import Mathlib.Data.Real.Basic
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
+import Mathlib.Tactic
 
 import ProblemExtraction
 
@@ -290,9 +291,8 @@ lemma exp_characterization
       have h11: ↑(-((↑n):ℤ)) * x = - (n * x) := by norm_num
       rw[h11, h3 _]
       have := hunz (↑n * x)
-      have h13 : (((-(n : ℤ)):ℤ):ℝ) = -(n : ℝ) := by norm_cast
-      rw[h10, h13]
-      rw[Real.rpow_neg (le_of_lt (hunz x)), one_div]
+      rw[h10, one_div]
+      rw [hn, inv_eq_iff_eq_inv, ← hn, zpow_neg, zpow_ofNat, ← h1, inv_inv]
 
   -- Let eᵏ = u(1);
   have hek : ∃ k, Real.exp k = u 1 := by
@@ -320,6 +320,7 @@ lemma exp_characterization
       rw[mul_one] at this
       rw[this, ←hk]
       rw [Real.exp_mul]
+      exact (Real.rpow_int_cast _ _).symm
 
   have hp : ∀ p : ℕ, 0 < p → ∀ x : ℝ, u (x / p) = (u x) ^ (1 / (p:ℝ)) := by
     intro p hp x

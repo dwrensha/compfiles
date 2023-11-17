@@ -29,10 +29,6 @@ snip begin
 
 open BigOperators
 
--- This workaround is required to make exponent of `x ^ 2` be interpreted as type ℕ.
--- See https://github.com/leanprover/lean4/issues/2220.
-local macro_rules | `($x ^ $y)  => `(HPow.hPow $x $y)
-
 lemma compute_norm (v : EuclideanSpace ℝ (Fin 3)) : ‖v‖ = Real.sqrt (∑i : Fin 3, (v i)^2) := by
   rw[EuclideanSpace.norm_eq v]
   congr; ext

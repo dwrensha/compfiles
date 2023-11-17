@@ -52,7 +52,7 @@ lemma general_chinese_remainder (xs : List ChinesePair)
     (x_coprime : xs.Pairwise (fun x y ↦ Nat.Coprime x.modulus y.modulus)) :
     ∃ m : ℕ, ∀ x ∈ xs, m ≡ x.remainder [MOD x.modulus] := by
   induction xs with
-  | nil => use 0; simp only
+  | nil => use 0; decide
   | cons x xs ih =>
     obtain ⟨b, hb⟩ := ih x_coprime.tail
     clear ih

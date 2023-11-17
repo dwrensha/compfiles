@@ -128,7 +128,7 @@ problem iran1998_p3
   · let A := ∑ i in Finset.range 4, (x i)^(3:ℝ)
     let B : ℕ → ℝ := λ j ↦ (∑ i in (Finset.range 4).erase j, (x i)^(3:ℝ))
     have hab : A = (1/3) * (∑ i in Finset.range 4, B i) := by
-      simp [Finset.sum_range_succ]; ring
+      simp (config := {decide := true}) [Finset.sum_range_succ]; ring
     have h2 : ∀ j ∈ (Finset.range 4), ∏ i in (Finset.range 4).erase j, x i ≤ (1/3) * B j := by
       intro j hj
       have hcard1 : (Finset.range 4).card = 4 := Finset.card_range 4
