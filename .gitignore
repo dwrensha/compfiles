@@ -1,4 +1,5 @@
 lakefile.olean
+.lake
 build/
 lake-packages/
 _site
