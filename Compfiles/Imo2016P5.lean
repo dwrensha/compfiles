@@ -56,7 +56,8 @@ problem imo2015_p5 :
       have h1 : 2 ∈ Finset.Icc 1 2016 := by
         simp (config := {decide := true}) only [Finset.mem_Icc]
       have h2 := h h1
-      sorry
+      simp only [Finset.mem_Icc, Finset.mem_filter] at h2
+      norm_num at h2
     · sorry
     · push_neg
       intro x
