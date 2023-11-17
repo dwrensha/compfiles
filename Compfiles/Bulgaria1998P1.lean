@@ -75,7 +75,7 @@ lemma lemma2 :
   intro h
   obtain ⟨⟨i, hi1, hi2⟩, ⟨j, hj1, hj2⟩, hij1, hij2, hc1, hc2⟩ := h
   dsimp [coloring_of_eight] at *
-  interval_cases i <;> interval_cases j <;> sorry -- was aesop
+  interval_cases i <;> interval_cases j <;> aesop (simp_options := {decide := true})
 
 snip end
 
