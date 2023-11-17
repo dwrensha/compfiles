@@ -36,7 +36,7 @@ jobs:
         run: |
           set -o pipefail
           echo "Starting build at $(date +'%T')"
-          build/bin/extractProblems
+          lake exe extractProblems
           result_run1=$?
           echo "Complete at $(date +'%T'); return value $result_run1"
 
@@ -47,6 +47,6 @@ jobs:
         run: |
           set -o pipefail
           echo "Starting build at $(date +'%T')"
-          build/bin/buildWebpage
+          lake exe buildWebpage
           result_run1=$?
           echo "Complete at $(date +'%T'); return value $result_run1"

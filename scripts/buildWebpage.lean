@@ -29,7 +29,7 @@ def htmlEscape (s : String) : String :=
   htmlEscapeAux [] s.data
 
 def olean_path_to_github_url (path: String) : String :=
-  let pfx := "./build/lib/"
+  let pfx := "./.lake/build/lib/"
   let sfx := ".olean"
   assert!(pfx.isPrefixOf path)
   assert!(sfx.data.isSuffixOf path.data)
