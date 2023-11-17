@@ -231,11 +231,7 @@ problem usa1998_p3
       have h30 : 0 ≤ 1 - y x := sub_nonneg.mpr (le_of_lt (lemma1 (a x) (ha x hx)))
       have h31 : (1:ℝ) / n * n = n / n := by field_simp
       have h32 : (n:ℝ) / n = 1 := by field_simp
-      have := Real.rpow_mul h30
-      rw [←Real.rpow_mul h30]
-      rw [h31]
-
-      rw [h32, Real.rpow_one]
+      rw [←Real.rpow_mul h30, h31, h32, Real.rpow_one]
     rw [h23] at h21; clear h23
     have h24 : ∏ i in Finset.range (n + 1), (1 + y i) / ↑n =
                  (∏ i in Finset.range (n + 1), (1 + y i)) / (↑n)^((n:ℝ) + 1) := by
