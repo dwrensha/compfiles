@@ -22,9 +22,19 @@ namespace Imo1968P2
 
 snip begin
 
-lemma lemma0 {α β : Type} {f : ℕ → α → β} (l : List α)
-     (h1 : List.mapIdx f l ≠ []) (h2 : l ≠ []) :
-     List.getLast (List.mapIdx f l) h1 =
+@[simp] theorem List.mapIdx_eq_nil {α β : Type*} {f : ℕ → α → β} {l : List α}
+    : List.mapIdx f l = [] ↔ l = [] := by
+  rw [List.mapIdx_eq_enum_map]
+  constructor
+  · intro hf
+    cases' l with l'
+    · rfl
+    · rw [List.enum_cons, List.map_cons] at hf
+      simp only [Function.uncurry_apply_pair] at hf
+  · exact fun _ => match l with | [] => rfl
+
+lemma lemma0 {α β : Type} {f : ℕ → α → β} (l : List α) (h2 : l ≠ []) :
+    List.getLast (List.mapIdx f l) (List.mapIdx_eq_nil.not.mpr h2) =
     f (l.dropLast).length (List.getLast l h2) := by
   simp_rw [List.mapIdx_eq_enum_map]
   rw [List.getLast_eq_get, List.get_map, List.get_enum]
@@ -40,15 +50,16 @@ lemma prod_digits_le {x b : ℕ} (hb : 2 ≤ b) (xpos : 0 < x) :
 
   have h3 := Nat.ofDigits_digits b x
   rw [Nat.ofDigits_eq_sum_mapIdx] at h3
-  have h4 : List.mapIdx (fun i a => a * b ^ i) (Nat.digits b x) ≠ [] := by
-    rw [Nat.digits_of_two_le_of_pos hb xpos, List.mapIdx_cons]
-    exact List.cons_ne_nil _ _
-  rw [←List.dropLast_append_getLast h4, List.sum_append, List.sum_singleton] at h3
+  have h4 : List.mapIdx (fun i a => a * b ^ i) (Nat.digits b x) ≠ [] :=
+    List.mapIdx_eq_nil.not.mpr h1
+
+  rw [←List.dropLast_append_getLast (List.mapIdx_eq_nil.not.mpr h1),
+      List.sum_append, List.sum_singleton] at h3
   have h6 : List.getLast (List.mapIdx (fun i a => a * b ^ i) (Nat.digits b x)) h4 ≤ x :=
      by nth_rewrite 2 [←h3]; exact Nat.le_add_left _ _
   have h7 : List.getLast (List.mapIdx (fun i a => a * b ^ i) (Nat.digits b x)) h4 =
        b ^ (List.dropLast (Nat.digits b x)).length * List.getLast (Nat.digits b x) h1 := by
-    rw [lemma0 _ h4 h1, mul_comm]
+    rw [lemma0 _ h1, mul_comm]
   rw [h7] at h6; clear h7
 
   have h8 : List.prod (List.dropLast (Nat.digits b x)) ≤
