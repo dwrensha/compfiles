@@ -51,8 +51,7 @@ lemma lemma0 (n : ℕ) :
       Finset.sum_Ioc_succ_top (by norm_num), Finset.sum_Ioc_succ_top (by norm_num),
       Finset.Ioc_self, Finset.sum_empty, zero_add]
   norm_cast
-  simp [Nat.add_mod, Nat.mul_mod]
-  norm_num
+  norm_num [Nat.add_mod, Nat.mul_mod]
 
 lemma lemma1 (n : ℕ) :
     (∑ x in Finset.attach (Finset.Icc 1 (4 * n + 2)), ((x:ℕ):ℤ) % 2) % 2 = 1 % 2 := by
@@ -85,11 +84,7 @@ lemma lemma1 (n : ℕ) :
        rw [Finset.mem_Icc] at ha ⊢
        rw [Finset.mem_Ioc] at ha
        cases' ha with ha1 ha2 <;> constructor <;> linarith
-   rw [hu]
-   rw [Finset.sum_disjUnion]
-   rw [Int.add_emod]
-   rw [ih]
-   rw [lemma0 n]
+   rw [hu, Finset.sum_disjUnion, Int.add_emod, ih, lemma0 n]
    norm_num
 
 snip end
@@ -141,7 +136,7 @@ problem usa1998_p1
       have h12 : (Finset.univ : Finset (Fin 2)) =
                   Finset.cons 0
                     (Finset.cons 1
-                      {} (Finset.not_mem_empty _)) (by simp) := by simp (config := {decide := true})
+                      {} (Finset.not_mem_empty _)) (by decide) := by decide
       have h11 : ∑ x : Fin 999, ((ab 0 x : ℤ) % 2) + ∑ x : Fin 999, ((ab 1 x : ℤ) % 2) =
           ∑ x : Fin 2, ∑ y : Fin 999, ((ab x y : ℤ) % 2) := by
         rw [h12, Finset.sum_cons, Finset.sum_cons, Finset.sum_empty]
@@ -155,11 +150,8 @@ problem usa1998_p1
       by apply Fintype.sum_bijective _ hab
          · exact congr_fun rfl
     rw [h9, h10]
-    norm_num
-    rw [lemma1 499]
-    norm_num
+    norm_num [lemma1 499]
 
-  --
   -- Combining these facts gives S ≡ 9 MOD 10.
   have hmn : Nat.Coprime (Int.natAbs 2) (Int.natAbs 5) := by norm_cast
   rw [show (9:ℤ) = 9 % 10 by decide,
