@@ -31,8 +31,6 @@ abbrev P (a : ℝ) (f : ℝ → ℝ) : Prop :=
   0 < a ∧
   ∀ x, (f x)^2 ≤ f x ∧ f (x + a) = 1/2 + Real.sqrt (f x - (f x)^2)
 
-determine solution_func : ℝ → ℝ := sorry
-
 problem imo1968_p5a (f : ℝ → ℝ) (a : ℝ) (hf : P a f) :
     ∃ b, 0 < b ∧ f.Periodic b := by
   obtain ⟨hf1, hf2⟩ := hf
@@ -62,6 +60,28 @@ problem imo1968_p5a (f : ℝ → ℝ) (a : ℝ) (hf : P a f) :
   rw [sub_add_cancel] at h2'
   rw [add_eq_of_eq_sub' h2']
 
+noncomputable determine solution_func : ℝ → ℝ := fun x ↦
+ if Even ⌊x⌋ then 1 else 1/2
+
 problem imo1968_p5b :
     P 1 solution_func ∧ ¬∃c, solution_func = Function.const ℝ c := by
-  sorry
+  constructor
+  · constructor
+    · exact Real.zero_lt_one
+    · intro x
+      constructor
+      · sorry
+      · sorry
+  · rintro ⟨c, hc⟩
+    have h1 : Function.const ℝ c 0 = c := rfl
+    rw [←hc] at h1
+    have h1' : Function.const ℝ c 1 = c := rfl
+    rw [←hc] at h1'
+    have h2 : solution_func 0 = 1 := by simp
+    have h3 : c = 1 := h1.symm.trans h2
+    have h4 : solution_func 1 = 1/2 := by
+      have h6 : ¬ Even ⌊(1:ℝ)⌋ := by simp
+      simp [h6, solution_func]
+    have h5 : c = 1/2 := h1'.symm.trans h4
+    rw [h3] at h5
+    norm_num at h5
