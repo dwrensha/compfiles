@@ -43,15 +43,24 @@ problem imo1968_p5a (f : ℝ → ℝ) (a : ℝ) (hf : P a f) :
     rw [(hf2 x).2, le_add_iff_nonneg_right]
     exact Real.sqrt_nonneg (f x - f x ^ 2)
   have h2 : ∀ x, 0 ≤ f (x + a) - 1/2 := fun x ↦ by linarith [h1 x]
-  have h3 : ∀ x, f (x + a) * (1 - f (x + a)) = (1/2 - f x) ^2 := fun x ↦ by
-    sorry
+  have h3 : ∀ x, f (x + a) * (1 - f (x + a)) = (f x - 1/2) ^2 := fun x ↦ by
+    have h6 : f (x + a) * (1 - f (x + a)) =
+       -((f (x + a) - 1/2)^2  - (1/2)^2) := by ring
+    rw [h6]
+    obtain ⟨hf2x1, hf2x2⟩ := hf2 x
+    rw [hf2x2, add_sub_cancel']
+    have h7 : 0 ≤ f x - f x ^ 2 := sub_nonneg.mpr hf2x1
+    rw [Real.sq_sqrt h7]
+    ring
   intro x
-  obtain ⟨ha1, ha2⟩ := hf2 (x + a)
+  obtain ⟨_, ha2⟩ := hf2 (x + a)
   have h4 : f (x + a) - f (x + a) ^ 2 = f (x + a) * (1 - f (x + a)) := by ring
-  rw [two_mul, ←add_assoc, ha2, h4, h3]
+  rw [two_mul, ←add_assoc, ha2, h4]
+  rw [h3]
   rw [Real.sqrt_sq_eq_abs]
-  have h2' := abs_of_nonneg (h2 x)
-  sorry
+  have h2' := abs_of_nonneg (h2 (x-a))
+  rw [sub_add_cancel] at h2'
+  rw [add_eq_of_eq_sub' h2']
 
 problem imo1968_p5b :
     P 1 solution_func ∧ ¬∃c, solution_func = Function.const ℝ c := by
