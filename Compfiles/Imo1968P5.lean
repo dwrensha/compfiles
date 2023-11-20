@@ -28,11 +28,12 @@ holds for all x.
 namespace Imo1968P5
 
 abbrev P (a : ℝ) (f : ℝ → ℝ) : Prop :=
-  ∀ x, f (x + a) = 1/2 + Real.sqrt (f x - (f x)^2)
+  0 < a ∧ ∀ x, f (x + a) = 1/2 + Real.sqrt (f x - (f x)^2)
 
 determine solution_func : ℝ → ℝ := sorry
 
-problem imo1968_p5a (f : ℝ → ℝ) (a : ℝ) (hf : P a f) : ∃ b, f.Periodic b := by
+problem imo1968_p5a (f : ℝ → ℝ) (a : ℝ) (hf : P a f) :
+    ∃ b, 0 < b ∧ f.Periodic b := by
   sorry
 
 problem imo1968_p5b :
