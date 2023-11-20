@@ -34,6 +34,12 @@ determine solution_func : ℝ → ℝ := sorry
 
 problem imo1968_p5a (f : ℝ → ℝ) (a : ℝ) (hf : P a f) :
     ∃ b, 0 < b ∧ f.Periodic b := by
+  obtain ⟨hf1, hf2⟩ := hf
+  use 2 * a
+  constructor
+  · positivity
+  have h1 : ∀ x, 1 / 2 ≤ f (x + 1) := fun x ↦ by
+    sorry
   sorry
 
 problem imo1968_p5b :
