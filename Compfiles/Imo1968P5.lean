@@ -75,14 +75,9 @@ problem imo1968_p5b :
       · have h1 : ¬ Even (⌊x⌋ + 1) :=
           Int.odd_iff_not_even.mp (Even.add_one heven)
         simp [solution_func, h1, heven]
-      · have h1 : Even (⌊x⌋ + 1) := Int.even_add_one.mpr hodd
-        simp [solution_func, h1, hodd]
-        norm_num
-        have h2 : Real.sqrt 4 = 2 := by
-          have h3 : (4 : ℝ) = 2^2 := by norm_num
-          rw [h3, Real.sqrt_sq_eq_abs]
-          exact abs_two
-        norm_num [h2]
+      · have h2 : Real.sqrt 4 = 2 := by
+          rw [show (4 : ℝ) = 2^2 by norm_num, Real.sqrt_sq_eq_abs, abs_two]
+        norm_num [solution_func, Int.even_add_one.mpr hodd, h2, hodd]
   · rintro ⟨c, hc⟩
     have h1 : Function.const ℝ c 0 = c := rfl
     rw [←hc] at h1
