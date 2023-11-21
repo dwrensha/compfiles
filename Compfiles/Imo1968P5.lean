@@ -33,6 +33,7 @@ abbrev P (a : ℝ) (f : ℝ → ℝ) : Prop :=
 
 problem imo1968_p5a (f : ℝ → ℝ) (a : ℝ) (hf : P a f) :
     ∃ b, 0 < b ∧ f.Periodic b := by
+  -- https://artofproblemsolving.com/wiki/index.php/1968_IMO_Problems/Problem_5
   obtain ⟨hf1, hf2⟩ := hf
   use 2 * a
   constructor
@@ -65,13 +66,23 @@ noncomputable determine solution_func : ℝ → ℝ := fun x ↦
 
 problem imo1968_p5b :
     P 1 solution_func ∧ ¬∃c, solution_func = Function.const ℝ c := by
+  -- https://artofproblemsolving.com/wiki/index.php/1968_IMO_Problems/Problem_5
   constructor
   · constructor
     · exact Real.zero_lt_one
     · intro x
-      constructor
-      · sorry
-      · sorry
+      obtain heven | hodd :=  Classical.em (Even ⌊x⌋)
+      · have h1 : ¬ Even (⌊x⌋ + 1) :=
+          Int.odd_iff_not_even.mp (Even.add_one heven)
+        simp [solution_func, h1, heven]
+      · have h1 : Even (⌊x⌋ + 1) := Int.even_add_one.mpr hodd
+        simp [solution_func, h1, hodd]
+        norm_num
+        have h2 : Real.sqrt 4 = 2 := by
+          have h3 : (4 : ℝ) = 2^2 := by norm_num
+          rw [h3, Real.sqrt_sq_eq_abs]
+          exact abs_two
+        norm_num [h2]
   · rintro ⟨c, hc⟩
     have h1 : Function.const ℝ c 0 = c := rfl
     rw [←hc] at h1
