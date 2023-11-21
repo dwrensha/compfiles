@@ -45,6 +45,7 @@ import Compfiles.Imo2018P2
 import Compfiles.Imo2018P3
 import Compfiles.Imo2019P1
 import Compfiles.Imo2019P4
+import Compfiles.Imo2020P2
 import Compfiles.Imo2021P2
 import Compfiles.Imo2021P6
 import Compfiles.Imo2022P2
