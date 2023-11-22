@@ -128,5 +128,3 @@ problem hungary1998_p6 (x y : ℤ) (z : ℕ) (hz : 1 < z) :
 
   rw [h19] at h12
   norm_num at h12
-  change 0 = 1 at h12
-  simp only [zero_ne_one] at h12
