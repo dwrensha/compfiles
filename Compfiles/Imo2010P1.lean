@@ -47,9 +47,9 @@ problem imo2010_p1 (f : ℝ → ℝ) :
     suffices ⌊f 2⁻¹⌋ = 0
       from let h1 := (h 2 2⁻¹).trans (mul_eq_zero_of_right _ $ Int.cast_eq_zero.mpr this)
            suffices (⌊(2 : ℝ)⌋ : ℝ) * 2⁻¹ = 1 from this ▸ h1
-      (mul_inv_eq_one₀ two_ne_zero).mpr $ (by rw [←Int.cast_two, Int.floor_intCast])
+      (mul_inv_eq_one₀ two_ne_zero).mpr $
+        (Int.cast_two (R := ℝ) ▸ Int.floor_intCast (α := ℝ) _ ▸ rfl)
     -- Now prove that `⌊f(1/2)⌋ = 0`
     (mul_eq_zero.mp $ (h 2⁻¹ 2⁻¹).symm.trans $ (congr_arg f $ mul_eq_zero_of_left
         (by norm_num) _).trans h0).elim
       (λ h1 ↦ h1.symm ▸ Int.floor_zero) Int.cast_eq_zero.mp)⟩
-
