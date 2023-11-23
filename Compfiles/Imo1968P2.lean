@@ -22,14 +22,6 @@ namespace Imo1968P2
 
 snip begin
 
-@[simp] theorem List.enum_eq_nil {α : Type*} {l : List α}
-    : List.enum l = [] ↔ l = [] := by
-  cases l <;> simp [List.enum_cons]
-
-@[simp] theorem List.mapIdx_eq_nil {α β : Type*} {f : ℕ → α → β} {l : List α}
-    : List.mapIdx f l = [] ↔ l = [] := by
-  rw [List.mapIdx_eq_enum_map, List.map_eq_nil, List.enum_eq_nil]
-
 lemma lemma0 {α β : Type} {f : ℕ → α → β} (l : List α) (h2 : l ≠ []) :
     List.getLast (List.mapIdx f l) (List.mapIdx_eq_nil.not.mpr h2) =
     f (l.dropLast).length (List.getLast l h2) := by
