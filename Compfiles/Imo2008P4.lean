@@ -6,7 +6,6 @@ Authors: Gian Sanjaya
 
 import Mathlib.Algebra.Order.Positive.Field
 import Mathlib.Tactic
-import Mathlib
 
 import ProblemExtraction
 
