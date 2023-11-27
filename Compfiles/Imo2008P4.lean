@@ -46,7 +46,7 @@ lemma PosReal.two_mul (x : PosReal) : ⟨2, two_pos⟩ * x = x + x := by
 
 snip end
 
-determine solution_set : Set (PosReal → PosReal) := { f | f = id ∨ ∀ x, x * f x = 1 }
+determine solution_set : Set (PosReal → PosReal) := { f | f = id ∨ f = fun x ↦ 1 / x }
 
 problem imo2008_p4 (f : PosReal → PosReal) :
     f ∈ solution_set ↔
@@ -55,9 +55,10 @@ problem imo2008_p4 (f : PosReal → PosReal) :
   -- Solution adapted from
   -- https://github.com/mortarsanjaya/imo-A-and-N/blob/main/src/IMO2008/A1/A1.lean
   refine ⟨fun h p q r s h0 ↦ ?_, fun h ↦ ?_⟩
-  · rcases h with rfl | h
+  · rcases h with rfl | h'
     · rfl
-    · rw [← mul_right_inj (p ^ 2 * q ^ 2), ← mul_assoc, mul_add _ (f p ^ 2), mul_right_comm,
+    · have h : ∀ x, x * f x = 1 := fun x ↦ by simp [h']
+      rw [← mul_right_inj (p ^ 2 * q ^ 2), ← mul_assoc, mul_add _ (f p ^ 2), mul_right_comm,
         ← mul_pow, h, mul_assoc, ← mul_pow q, h, one_pow, mul_one, one_mul, add_comm,
         mul_left_comm, mul_right_inj, ← mul_pow, h0, mul_pow, mul_add, mul_right_comm,
         h, one_mul, mul_assoc, h, mul_one, add_comm]
@@ -86,7 +87,15 @@ problem imo2008_p4 (f : PosReal → PosReal) :
     ---- Finishing
     rw [Set.mem_setOf_eq, Function.funext_iff]
     by_contra' h2
-    rcases h2 with ⟨⟨a, h2⟩, b, h3⟩
+    rcases h2 with ⟨⟨a, h2⟩, bh3⟩
+    have ⟨b, h3⟩ : ∃ b, b * f b ≠ 1 := by
+      rw [@Function.ne_iff] at bh3
+      obtain ⟨b, hb⟩ := bh3
+      use b
+      intro hbb
+      apply_fun (· / b) at hbb
+      rw [mul_div_cancel'''] at hbb
+      contradiction
     have h4 := h1 b; rw [or_iff_left h3] at h4
     replace h := h a b; rw [h4] at h
     replace h4 := h1 (a * b)
