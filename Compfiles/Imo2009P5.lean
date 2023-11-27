@@ -150,7 +150,7 @@ snip end
 
 determine solution_set : Set (ℕ+ → ℕ+) := { id }
 
-theorem imo2009_p5 (f : ℕ+ → ℕ+) :
+problem imo2009_p5 (f : ℕ+ → ℕ+) :
     f ∈ solution_set ↔
     ∀ a b, (f (b + f a - 1) < f b + a ∧
             a < f b + f (b + f a - 1) ∧
