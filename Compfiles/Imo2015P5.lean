@@ -22,9 +22,19 @@ for all x,y.
 
 namespace Imo2012P5
 
-determine solution_set : Set (ℝ → ℝ) := sorry
+determine solution_set : Set (ℝ → ℝ) := { fun x ↦ x, fun x ↦ 2 - x }
 
 problem imo2015_p5 (f : ℝ → ℝ) :
     f ∈ solution_set ↔
     ∀ x y, f (x + f (x + y)) + f (x * y) = x + f (x + y) + y * f x := by
-  sorry
+  -- https://web.evanchen.cc/exams/IMO-2015-notes.pdf
+  constructor
+  · rintro (rfl | rfl) x y <;> ring
+  · intro hf
+    let P x y := f (x + f (x + y)) + f (x * y) = x + f (x + y) + y * f x
+    let S : Set ℝ := {t | f t = t}
+    have h1 : f (f 0) = 0 := by
+      have := hf 0 0
+      simp only [add_zero, zero_add, mul_zero, zero_mul, add_left_eq_self] at this
+      exact this
+    sorry
