@@ -3,6 +3,15 @@
 A collection of olympiad-style math problems and their solutions,
 formalized in [Lean 4](https://github.com/leanprover/lean4).
 
+## external sources
+
+Some problems were imported from external sources:
+
+* [mathlib4/Archive/Imo](https://github.com/leanprover-community/mathlib4/tree/master/Archive/Imo).
+* Gian Sanjaya's [Lean 3](https://github.com/mortarsanjaya/imo-A-and-N) and
+  [Lean 4](https://github.com/mortarsanjaya/IMOSLLean4) formalizations of
+  IMO shortlist problems.
+
 ## dashboard
 
 A list of all the problems and their status is
