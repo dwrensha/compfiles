@@ -78,5 +78,7 @@ problem imo1974_p5 (s : ℝ) :
          c / (b + c + d) + d / (a + c + d) := by
   constructor
   · intro hx
+    rw [Set.mem_Ioo] at hx
+    obtain ⟨hx1, hx2⟩ := hx
     sorry
   · intro hs; exact easy_direction s hs
