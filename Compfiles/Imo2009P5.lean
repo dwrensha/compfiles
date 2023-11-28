@@ -32,24 +32,13 @@ snip begin
 
 section extra_lemmas
 
-variable {α : Type*} [LinearOrder α] (f : ℕ → α)
-
-def seq_max : ℕ → α
-| 0 => f 0
-| n + 1 => max (seq_max n) (f $ n+1)
-
-lemma le_seq_max_self : ∀ n, f n ≤ seq_max f n
-| 0 => le_refl (f 0)
-| n + 1 => le_max_right (seq_max f n) (f $ n+1)
-
-lemma seq_max_mono : Monotone (seq_max f) :=
-  monotone_nat_of_le_succ $ λ n ↦ le_max_left (seq_max f n) (f $ n+1)
-
-lemma le_seq_max_of_le {m n : ℕ} (h : m ≤ n) : f m ≤ seq_max f n :=
-  (le_seq_max_self f m).trans (seq_max_mono f h)
-
-private lemma exists_sup_fn_fin (f : ℕ → ℕ) (c : ℕ) : ∃ K : ℕ, ∀ n : ℕ, n < c → f n ≤ K :=
- ⟨seq_max f c, λ _ h ↦ le_seq_max_of_le f (le_of_lt h)⟩
+lemma exists_sup_fn_fin (f : ℕ → ℕ) (c : ℕ) : ∃ K : ℕ, ∀ n : ℕ, n < c → f n ≤ K := by
+  induction' c with c ih
+  · simp
+  · obtain ⟨k, hk⟩ := ih
+    use max k (f c)
+    intro n hn
+    obtain hlt | rfl := Nat.lt_succ_iff_lt_or_eq.mp hn <;> aesop
 
 private lemma pnat_to_nat_prop {P : ℕ+ → Prop} :
   (∀ n : ℕ+, P n) ↔ (∀ n : ℕ, P n.succPNat) :=
