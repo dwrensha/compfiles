@@ -68,6 +68,7 @@ import Compfiles.Poland1998P4
 import Compfiles.Romania1998P12
 import Compfiles.Russia1998P42
 import Compfiles.UpperLowerContinuous
+import Compfiles.Usa1981P5
 import Compfiles.Usa1996P1
 import Compfiles.Usa1998P1
 import Compfiles.Usa1998P3
