@@ -134,7 +134,7 @@ lemma prepend_one_mod (n : ℕ) (hn : 0 < n) : prepend_one n % 10 = n % 10 := by
   rw [prepend_one]
   rw [Nat.digits_len _ _ two_le_ten (ne_of_gt hn)]
   rw [pow_add, pow_one]
-  exact Nat.mul_add_mod _ 10 n
+  exact Nat.mul_add_mod' _ 10 n
 
 lemma prepend_one_eq_append (n : ℕ) :
     Nat.digits 10 (prepend_one n) = (Nat.digits 10 n) ++ [1] := by
@@ -180,7 +180,7 @@ lemma prepend_two_mod (n : ℕ) (hn : 0 < n) : prepend_two n % 10 = n % 10 := by
   rw [prepend_two]
   rw [Nat.digits_len _ _ two_le_ten (ne_of_gt hn)]
   rw [pow_add, pow_one, ←mul_assoc]
-  exact Nat.mul_add_mod _ 10 n
+  exact Nat.mul_add_mod' _ 10 n
 
 lemma prepend_two_eq_append (n : ℕ) :
     Nat.digits 10 (prepend_two n) = (Nat.digits 10 n) ++ [2] := by
