@@ -64,11 +64,11 @@ problem imo2015_p5 :
       sorry
   · rw [mem_lowerBounds]
     intro j hj
-    by_contra' H
+    by_contra! H
     rw [Set.mem_setOf_eq] at hj
     obtain ⟨L, R, hL, hR, hcard, hLR⟩ := hj
     have h1 : ∃ i, i ∈ Finset.Icc 1 2016 ∧ i ∉ L ∧ i ∉ R := by
-      by_contra' H2
+      by_contra! H2
       have h2 : Finset.card (L ∪ R) ≤ L.card + R.card := Finset.card_union_le L R
       have h3 : Finset.Icc 1 2016 ⊆ (L ∪ R) := fun a ha ↦ by
         specialize H2 a ha

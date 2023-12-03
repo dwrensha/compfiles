@@ -90,7 +90,7 @@ problem bulgaria1998_p1 : IsLeast { m | all_colorings_are_good m } solution_valu
   · rw [mem_lowerBounds]
     intro n hn
     rw [Set.mem_setOf_eq] at hn
-    by_contra' H
+    by_contra! H
     have h1 : n ≤ solution_value - 1 := Nat.le_pred_of_lt H
     have ⟨h2, h3⟩ := lemma1 h1 hn
     obtain ⟨f, hf⟩ := lemma2

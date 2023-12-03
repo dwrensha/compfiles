@@ -109,10 +109,10 @@ problem imo2022_p2 (f : ℝ+ → ℝ+) :
       simp only [friend]
       exact lemma0 hf h10 x
     have h1 : ∀ x, friend x = x := fun x ↦ by
-      by_contra' H
+      by_contra! H
       have h2 : ⟨2, two_pos⟩ < x * f x + x * f x := by
         obtain ⟨y, _, hy2⟩ := hf x
-        by_contra' H2
+        by_contra! H2
         have h3 := hy2 x H2
         have h4 : y = friend x := by
           have h5 := Classical.choose_spec (hf x).exists
@@ -127,7 +127,7 @@ problem imo2022_p2 (f : ℝ+ → ℝ+) :
       have h7 : 1 / friend x < f (friend x) := by
         have h8 : ⟨2, two_pos⟩ < (friend x) * f (friend x) + (friend x) * f (friend x) := by
           obtain ⟨y, _, hy2⟩ := hf (friend x)
-          by_contra' H2
+          by_contra! H2
           have h3 := hy2 (friend x) H2
           have h4 : y = (friend (friend x)) := by
             have h5 := Classical.choose_spec (hf (friend x)).exists
@@ -155,14 +155,14 @@ problem imo2022_p2 (f : ℝ+ → ℝ+) :
       rw [h14, h13] at h12
       exact (mul_le_mul_iff_left _).mp h12
     have hf1' : ∀ x y, x ≠ y → ⟨2, two_pos⟩ < x * f y + y * f x := fun x y hxy ↦ by
-      by_contra' H
+      by_contra! H
       obtain ⟨y1, _, hy2⟩ := hf x
       have h15 := hy2 (friend x) (h11 x)
       rw [← hy2 y H] at h15
       rw [← h15] at hxy
       exact hxy (h1 x).symm
     funext x
-    by_contra' H
+    by_contra! H
     have H' : x ≠ 1 / f x := fun hxfx ↦ by
       nth_rw 2 [hxfx] at H
       rw [one_div_one_div] at H

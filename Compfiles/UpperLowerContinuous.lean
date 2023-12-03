@@ -354,7 +354,7 @@ theorem monotone_of_upper_lower_continuous
     -- B = [f(z), ∞)
     -- Assume towards a contradiction that y ∉ f⁻¹(B), therefore y ∈ f⁻¹(A).
     intro x
-    by_contra' H
+    by_contra! H
     obtain ⟨y, hxy, hxyz, hy⟩ := H
 
     -- A is open in tᵤ

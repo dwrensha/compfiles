@@ -67,7 +67,7 @@ problem imo1982_p1 (f : ℕ → ℕ)
            _ ≤ _ := h13
   have h8 : ∀ k, 0 < k → k ≤ 3333 → f (3 * k) = k := by
      intro k hk0 hk1
-     by_contra' H
+     by_contra! H
      have h11 := h9 1 (k - 1) zero_lt_one
      have h12 : 1 + (k - 1) = k := Nat.add_sub_of_le hk0
      rw [mul_one, h5, h12] at h11

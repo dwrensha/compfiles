@@ -104,7 +104,7 @@ theorem generalized_imo2007_p5 {n : ℤ} (hn : 1 < n) :
   classical
   replace h := nat_pred_descent h
   intro a b ha hb h0
-  by_contra' h1
+  by_contra! h1
   exact (lt_or_gt_of_ne h1).elim (λ h1 ↦ h a ⟨ha, b, h1, h0⟩)
     (λ h1 ↦ h b ⟨hb, a, h1, bad_symm h0⟩)
 

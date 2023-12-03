@@ -87,7 +87,7 @@ problem imo2008_p4 (f : PosReal → PosReal) :
 
     ---- Finishing
     rw [Set.mem_setOf_eq, Function.funext_iff]
-    by_contra' h2
+    by_contra! h2
     rcases h2 with ⟨⟨a, h2⟩, bh3⟩
     have ⟨b, h3⟩ : ∃ b, b * f b ≠ 1 := by
       rw [@Function.ne_iff] at bh3

@@ -107,7 +107,7 @@ lemma lemma2 (f : ℕ → ℝ) :
           rw [Finset.mem_erase, Finset.mem_range] at hy
           rw [Finset.mem_insert, Finset.mem_erase, Finset.mem_range]
           obtain ⟨hy1, hy2⟩ := hy
-          by_contra' H
+          by_contra! H
           obtain ⟨H0, H1⟩ := H
           have HH' : n + 2 ≤ y := Nat.lt_of_le_of_ne (H1 hy1) H0.symm
           linarith

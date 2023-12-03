@@ -80,7 +80,7 @@ theorem imo1987_p4_generalized (m : ℕ) :
                  Set.mem_range, exists_exists_eq_and, not_exists,
                  true_and] at hx
       simp only [Set.mem_setOf_eq]
-      by_contra' H
+      by_contra! H
       obtain ⟨z, hz⟩ : ∃ z, x = (2 * m + 1) + z := exists_add_of_le H
       rw [hz] at hx
       have hzz := hx z

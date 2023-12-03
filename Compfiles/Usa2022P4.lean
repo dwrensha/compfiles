@@ -43,7 +43,7 @@ problem usa2022_p4 (p q : ℕ) :
   have hqlep : q ≤ p := (Nat.le_add_left q (a ^ 2)).trans_eq ha
 
   have hbp : b < p := by
-    by_contra' H
+    by_contra! H
     have h2 : p^2 ≤ b^2 := Nat.pow_le_pow_of_le_left H 2
     have h6 :=
       calc p * p = p^2 := (Nat.pow_two p).symm

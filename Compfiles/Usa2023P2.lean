@@ -139,7 +139,7 @@ problem usa2023_p2 (f : ℝ+ → ℝ+) :
       rwa [div_div_cancel, div_div_eq_mul_div] at h10
 
     have h10 : 1 ≤ c := by
-      by_contra' H
+      by_contra! H
       have h11 : 0 < 1 - (f 1).val := Iff.mpr sub_pos H
       have h12 := P 1 ⟨1 - (f 1).val, h11⟩
       rw [one_mul, one_mul] at h12
