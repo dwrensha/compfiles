@@ -29,13 +29,9 @@ open scoped BigOperators
 
 snip begin
 
-lemma lemma1 {α : Type*} [DecidableEq α] (s : Finset α) (p : α → Prop)
-    [DecidablePred p] :
+lemma lemma1 {α : Type*} [DecidableEq α] (s : Finset α) (p : α → Prop) [DecidablePred p] :
     Finset.card (s \ s.filter p) + Finset.card (s.filter p) = Finset.card s := by
-  have h2 : s = (s \ s.filter p) ∪ (s.filter p) := by ext a; aesop
-  nth_rw 4 [h2]
-  rw [Finset.sdiff_union_self_eq_union]
-  exact Finset.card_sdiff_add_card
+  rw [Finset.card_sdiff_add_card, Finset.union_eq_left.mpr (Finset.filter_subset p s)]
 
 snip end
 
