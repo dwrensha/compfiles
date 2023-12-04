@@ -27,6 +27,18 @@ namespace Imo2016P5
 
 open scoped BigOperators
 
+snip begin
+
+lemma lemma1 {α : Type*} [DecidableEq α] (s : Finset α) (p : α → Prop)
+    [DecidablePred p] :
+    Finset.card (s \ s.filter p) + Finset.card (s.filter p) = Finset.card s := by
+  have h2 : s = (s \ s.filter p) ∪ (s.filter p) := by ext a; aesop
+  nth_rw 4 [h2]
+  rw [Finset.sdiff_union_self_eq_union]
+  exact Finset.card_sdiff_add_card
+
+snip end
+
 determine solution_value : ℕ := 2016
 
 problem imo2015_p5 :
@@ -44,6 +56,9 @@ problem imo2015_p5 :
     -- https://web.evanchen.cc/exams/IMO-2016-notes.pdf
     use (Finset.Icc 1 2016).filter (fun n ↦ n % 4 = 2 ∨ n % 4 = 3)
     use (Finset.Icc 1 2016).filter (fun n ↦ n % 4 = 0 ∨ n % 4 = 1)
+    have hp : ∀ n, (n % 4 = 2 ∨ n % 4 = 3) =  ¬ (n % 4 = 0 ∨ n % 4 = 1) := fun n ↦ by
+      have : n % 4 < 4 := Nat.mod_lt _ (by norm_num)
+      interval_cases n % 4 <;> norm_num
     refine' ⟨_,_,_,_⟩
     · refine ⟨Finset.filter_subset _ _, ?_⟩
       intro h
@@ -58,7 +73,9 @@ problem imo2015_p5 :
       have h2 := h h1
       simp only [Finset.mem_Icc, Finset.mem_filter] at h2
       norm_num at h2
-    · sorry
+    · simp_rw [hp]
+      rw [Finset.filter_not, lemma1]
+      simp
     · push_neg
       intro x
       sorry
