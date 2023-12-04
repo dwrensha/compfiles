@@ -30,8 +30,8 @@ open scoped BigOperators
 snip begin
 
 lemma lemma1 {α : Type*} [DecidableEq α] (s : Finset α) (p : α → Prop) [DecidablePred p] :
-    Finset.card (s \ s.filter p) + Finset.card (s.filter p) = Finset.card s := by
-  rw [Finset.card_sdiff_add_card, Finset.union_eq_left.mpr (Finset.filter_subset p s)]
+    Finset.card (s \ s.filter p) + Finset.card (s.filter p) = Finset.card s :=
+  Finset.card_sdiff_add_card_eq_card (Finset.filter_subset p s)
 
 snip end
 
@@ -69,9 +69,7 @@ problem imo2015_p5 :
       have h2 := h h1
       simp only [Finset.mem_Icc, Finset.mem_filter] at h2
       norm_num at h2
-    · simp_rw [hp]
-      rw [Finset.filter_not, lemma1]
-      simp
+    · simp_rw [hp]; rw [Finset.filter_not, lemma1]; simp
     · push_neg
       intro x
       sorry
