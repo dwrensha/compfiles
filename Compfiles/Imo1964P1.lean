@@ -37,17 +37,11 @@ problem imo_1964_p1a (n : ℕ) : n ∈ solution_set ↔ 2^n ≡ 1 [MOD 7] := by
     rw [(Nat.div_add_mod' n 3).symm] at hn
     rw [pow_add, pow_mul', Nat.mul_mod, Nat.pow_mod] at hn
     norm_num at hn
-    cases hn' : n % 3 with
-    | zero => rfl
-    | succ n' =>
-      cases n' with
-      | zero => rw [hn'] at hn; norm_num at hn
-      | succ n' =>
-        cases n' with
-        | zero => rw [hn'] at hn; norm_num at hn
-        | succ n' => have h5 : 3 > 0 := by norm_num
-                     have h6 := Nat.mod_lt n h5
-                     linarith
+    have : n % 3 < 3 := Nat.mod_lt _ (by norm_num)
+    interval_cases n % 3
+    · rfl
+    · norm_num at hn
+    · norm_num at hn
 
 problem imo_1964_p1b (n : ℕ) : ¬ 7 ∣ (2^n + 1) := by
   /-
@@ -60,7 +54,7 @@ problem imo_1964_p1b (n : ℕ) : ¬ 7 ∣ (2^n + 1) := by
   -/
   intro h
   replace h := Nat.mod_eq_zero_of_dvd h
-  rw[←Nat.div_add_mod n 3] at h
+  rw [←Nat.div_add_mod n 3] at h
 
   have h := calc
      0 = (2 ^ (3 * (n / 3) + n % 3) + 1) % 7       := h.symm
@@ -73,18 +67,8 @@ problem imo_1964_p1b (n : ℕ) : ¬ 7 ∣ (2^n + 1) := by
      _ = (2 ^ (n % 3) % 7 + 1) % 7 :=
                    by rw [show 1 % 7 = 1 by rfl, one_mul, Nat.mod_mod]
 
-  cases hn' : n % 3 with
-  | zero => rw [hn'] at h; norm_num at h
-  | succ n' =>
-    cases n' with
-    | zero => rw [hn'] at h; norm_num at h
-    | succ n' =>
-      cases n' with
-      | zero => rw [hn'] at h; norm_num at h
-      | succ n' => have h5 : 3 > 0 := by norm_num
-                   have h6 := Nat.mod_lt n h5
-                   rw [hn'] at h6
-                   linarith
+  have : n % 3 < 3 := Nat.mod_lt _ (by norm_num)
+  interval_cases n % 3 <;> norm_num at h
 
 snip begin
 
