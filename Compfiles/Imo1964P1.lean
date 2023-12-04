@@ -36,7 +36,6 @@ problem imo_1964_p1a (n : ℕ) : n ∈ solution_set ↔ 2^n ≡ 1 [MOD 7] := by
     change 2^n % 7 = 1 at hn
     rw [(Nat.div_add_mod' n 3).symm] at hn
     rw [pow_add, pow_mul', Nat.mul_mod, Nat.pow_mod] at hn
-    norm_num at hn
     have : n % 3 < 3 := Nat.mod_lt _ (by norm_num)
     interval_cases n % 3
     · rfl
