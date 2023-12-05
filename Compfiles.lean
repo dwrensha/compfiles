@@ -77,6 +77,7 @@ import Compfiles.Usa1998P5
 import Compfiles.Usa1999P1
 import Compfiles.Usa2000P1
 import Compfiles.Usa2001P1
+import Compfiles.Usa2001P3
 import Compfiles.Usa2002P1
 import Compfiles.Usa2003P1
 import Compfiles.Usa2011P4
