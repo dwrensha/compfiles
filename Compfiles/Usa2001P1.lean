@@ -6,6 +6,7 @@ Authors: David Renshaw
 
 import Mathlib.Data.Finset.Card
 import Mathlib.Order.Bounds.Basic
+import Mathlib.Tactic
 
 import ProblemExtraction
 
@@ -33,6 +34,23 @@ def possible_num_colors : Set ℕ :=
 determine min_colors : ℕ := 23
 
 problem usa2001_p1 : IsLeast possible_num_colors min_colors := by
+  -- Informal solution from
+  -- https://artofproblemsolving.com/wiki/index.php/2001_USAMO_Problems/Problem_1
   constructor
-  · sorry
+  · rw [Set.mem_def, possible_num_colors, Set.setOf_app_iff]
+    let f : Fin 8 → Finset (Fin 23)
+        | 0 => {1, 2, 3, 4, 5, 6}
+        | 1 => {1, 7, 8, 9, 10, 11}
+        | 2 => {1, 12, 13, 14, 15, 16}
+        | 3 => {2, 7, 12, 17, 18, 19}
+        | 4 => {3, 8, 13, 17, 20, 21}
+        | 5 => {4, 9, 14, 17, 22, 23}
+        | 6 => {5, 10, 15, 18, 20, 22}
+        | 7 => {6, 11, 16, 19, 21, 23}
+    use f
+    constructor
+    · intro i
+      fin_cases i <;> simp (config := {decide := true})
+    · intro x y i j hij hx hy
+      sorry
   · sorry
