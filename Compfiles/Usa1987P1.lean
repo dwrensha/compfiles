@@ -66,15 +66,98 @@ problem usa2001_p1 (m n : ℤ) :
     · norm_num at h6
       obtain rfl : n = -1 := by linarith [pow_eq_zero h6.symm]
       simp
-    obtain rfl | hm8 := eq_or_ne m 8
-    · norm_num at h6
-      obtain rfl : n = -10 := by linarith [pow_eq_zero h6.symm]
-      simp
-
     have h9 : m + 1 ≠ 0 := by intro hm1
                               have : m = -1 := by linarith
                               contradiction
     replace h8 := Or.resolve_right h8 h9
     obtain ⟨k, hk⟩ := h8
-    have h10 : (m - 4 + k) * (m - 4 - k) = 16 := by linarith
-    sorry
+    have h11 : 1 * m * m + - 8 * m + - k * k = 0 := by linarith
+    have h12 := (quadratic_eq_zero_iff_discrim_eq_sq one_ne_zero m).mp h11
+    rw [discrim] at h12
+    have h13 : 16 + (k * k) = (m -4) ^ 2 := by linarith
+    let m' := |m - 4|
+    have hm' : (m - 4)^2 = m'^2 := (sq_abs _).symm
+    have hm0' : 0 ≤ m' := abs_nonneg _
+
+    let k' := |k|
+    have hk' : k^2 = k'^2 := (sq_abs _).symm
+    have hk0' : 0 ≤ k' := abs_nonneg _
+
+    rw [ ←sq] at h13
+    have h20 : k' < 8 := by
+      by_contra! H
+      rw [hm', hk'] at h13
+      have h14 : k' < m' := by
+        have h14' : k'^2 < m'^2 := by linarith
+        exact lt_of_pow_lt_pow 2 hm0' h14'
+      have h15 : k' + 1 ≤ m' := h14
+      have h16 : (k' + 1)^2 ≤ m'^2 := by gcongr
+      rw [←h13] at h16
+      have h17 : 2 * k' + 1 ≤ 16 := by linarith
+      linarith
+    interval_cases k' <;> rw [hk'] at h13 <;> norm_num at h13
+    · rw [hm'] at h13
+      have h21 : m' = 4 := by
+        clear h3 h6 hm h9 hk h11 h12
+        nlinarith
+      obtain h25 | h25 := eq_or_eq_neg_of_abs_eq h21
+      · obtain rfl : m = 8 := by linarith
+        norm_num at h6
+        obtain rfl : n = -10 := by linarith [pow_eq_zero h6.symm]
+        simp
+      · have h26 : m = 0 := by linarith
+        contradiction
+    · rw [hm'] at h13
+      have h21 : 4^2 < m'^2 := by linarith
+      have h23 : 4 < m' := lt_of_pow_lt_pow 2 hm0' h21
+      have h22 : m'^2 < 5^2 := by linarith
+      have h24 : m' < 5 := lt_of_pow_lt_pow 2 (by norm_num) h22
+      linarith
+    · rw [hm'] at h13
+      have h21 : 4^2 < m'^2 := by linarith
+      have h23 : 4 < m' := lt_of_pow_lt_pow 2 hm0' h21
+      have h22 : m'^2 < 5^2 := by linarith
+      have h24 : m' < 5 := lt_of_pow_lt_pow 2 (by norm_num) h22
+      linarith
+    · rw [hm'] at h13
+      have h21 : m' = 5 := by
+        clear h3 h6 hm h9 hk h11 h12 hm' hk' hk0'
+        nlinarith
+      obtain h25 | h25 := eq_or_eq_neg_of_abs_eq h21
+      · have h26 : m = 9 := by linarith
+        rw [h26] at h6 ⊢
+        norm_num at h6
+        have h27 : (30:ℤ)^2 = (4 * n + 54) ^2 := by linarith
+        obtain h28 | h28 := eq_or_eq_neg_of_sq_eq_sq _ _ h27
+        · obtain rfl : n = -6 := by linarith
+          simp
+        · obtain rfl : n = -21 := by linarith
+          simp
+      · obtain rfl : m = -1 := by linarith
+        norm_num at h6
+        obtain rfl : n = -1 := by linarith [pow_eq_zero h6.symm]
+        simp
+    · rw [hm'] at h13
+      have h21 : 5^2 < m'^2 := by linarith
+      have h23 : 5 < m' := lt_of_pow_lt_pow 2 hm0' h21
+      have h22 : m'^2 < 6^2 := by linarith
+      have h24 : m' < 6 := lt_of_pow_lt_pow 2 (by norm_num) h22
+      linarith
+    · rw [hm'] at h13
+      have h21 : 6^2 < m'^2 := by linarith
+      have h23 : 6 < m' := lt_of_pow_lt_pow 2 hm0' h21
+      have h22 : m'^2 < 7^2 := by linarith
+      have h24 : m' < 7 := lt_of_pow_lt_pow 2 (by norm_num) h22
+      linarith
+    · rw [hm'] at h13
+      have h21 : 7^2 < m'^2 := by linarith
+      have h23 : 7 < m' := lt_of_pow_lt_pow 2 hm0' h21
+      have h22 : m'^2 < 8^2 := by linarith
+      have h24 : m' < 8 := lt_of_pow_lt_pow 2 (by norm_num) h22
+      linarith
+    · rw [hm'] at h13
+      have h21 : 8^2 < m'^2 := by linarith
+      have h23 : 8 < m' := lt_of_pow_lt_pow 2 hm0' h21
+      have h22 : m'^2 < 9^2 := by linarith
+      have h24 : m' < 9 := lt_of_pow_lt_pow 2 (by norm_num) h22
+      linarith
