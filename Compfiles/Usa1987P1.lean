@@ -93,7 +93,9 @@ problem usa2001_p1 (m n : ℤ) :
       have h16 : (k' + 1)^2 ≤ m'^2 := by gcongr
       rw [←h13] at h16
       have h17 : 2 * k' + 1 ≤ 16 := by linarith
-      linarith
+      have h18 : 2 * 8 + 1 ≤ 2 * k' + 1 := by gcongr
+      have h19 := h18.trans h17
+      norm_num at h19
     interval_cases k' <;> rw [hk'] at h13 <;> norm_num at h13
     · rw [hm'] at h13
       have h21 : m' = 4 := by
@@ -104,8 +106,7 @@ problem usa2001_p1 (m n : ℤ) :
         norm_num at h6
         obtain rfl : n = -10 := by linarith [pow_eq_zero h6.symm]
         simp only [Set.mem_insert_iff, true_or, or_true]
-      · have h26 : m = 0 := by linarith
-        contradiction
+      · exact (h1 (sub_eq_neg_self.mp h25)).elim
     · rw [hm'] at h13
       have h21 : 4^2 < m'^2 := by rw [←h13]; norm_num
       have h23 : 4 < m' := lt_of_pow_lt_pow 2 hm0' h21
@@ -123,7 +124,7 @@ problem usa2001_p1 (m n : ℤ) :
         clear h1 h2 h3 h4 h5 h6 hm h9 hk h11 h12 hm' hk' hk0' h20
         nlinarith
       obtain h25 | h25 := eq_or_eq_neg_of_abs_eq h21
-      · have h26 : m = 9 := by linarith
+      · have h26 : m = 9 := eq_add_of_sub_eq h25
         rw [h26] at h6 ⊢
         norm_num at h6
         have h27 : (30:ℤ)^2 = (4 * n + 54) ^2 := by linarith
@@ -132,7 +133,7 @@ problem usa2001_p1 (m n : ℤ) :
           simp only [Set.mem_insert_iff, true_or, or_true]
         · obtain rfl : n = -21 := by linarith
           simp only [Set.mem_insert_iff, Set.mem_singleton_iff, true_or, or_true]
-      · obtain rfl : m = -1 := by linarith
+      · obtain rfl : m = -1 := eq_add_of_sub_eq h25
         norm_num at h6
         obtain rfl : n = -1 := by linarith [pow_eq_zero h6.symm]
         simp only [Set.mem_insert_iff, true_or, or_true]
