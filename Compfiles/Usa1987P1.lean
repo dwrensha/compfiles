@@ -27,7 +27,7 @@ snip begin
 
 lemma lemma2 {a b c : ℤ} (h : a * b^2 = c^2) : IsSquare a ∨ b = 0 := by
   obtain rfl | hb := eq_or_ne b 0
-  · simp
+  · right; rfl
   simp only [hb, or_false]
   -- from Eric Wieser on Zulip
   -- https://leanprover.zulipchat.com/#narrow/stream/217875-Is-there-code-for-X.3F/topic/a.20*.20b.5E2.20.3D.20c.5E2.20implies.20IsSquare.20a/near/406203283
@@ -65,10 +65,8 @@ problem usa2001_p1 (m n : ℤ) :
     obtain rfl | hm := eq_or_ne m (-1)
     · norm_num at h6
       obtain rfl : n = -1 := by linarith [pow_eq_zero h6.symm]
-      simp
-    have h9 : m + 1 ≠ 0 := by intro hm1
-                              have : m = -1 := by linarith
-                              contradiction
+      simp only [Set.mem_insert_iff, true_or]
+    have h9 : m + 1 ≠ 0 := fun hm1 ↦ hm (Int.sub_eq_zero.mp hm1)
     replace h8 := Or.resolve_right h8 h9
     obtain ⟨k, hk⟩ := h8
     have h11 : 1 * m * m + - 8 * m + - k * k = 0 := by linarith
@@ -88,7 +86,8 @@ problem usa2001_p1 (m n : ℤ) :
       by_contra! H
       rw [hm', hk'] at h13
       have h14 : k' < m' := by
-        have h14' : k'^2 < m'^2 := by linarith
+        have h14' : k'^2 < m'^2 := by
+          rw [←h13]; exact Int.lt_add_of_pos_left _ (by norm_num)
         exact lt_of_pow_lt_pow 2 hm0' h14'
       have h15 : k' + 1 ≤ m' := h14
       have h16 : (k' + 1)^2 ≤ m'^2 := by gcongr
@@ -98,30 +97,30 @@ problem usa2001_p1 (m n : ℤ) :
     interval_cases k' <;> rw [hk'] at h13 <;> norm_num at h13
     · rw [hm'] at h13
       have h21 : m' = 4 := by
-        clear h3 h6 hm h9 hk h11 h12
+        clear h1 h2 h3 h4 h5 h6 hm h9 hk h11 h12 hm' hk' hk0' h20
         nlinarith
       obtain h25 | h25 := eq_or_eq_neg_of_abs_eq h21
-      · obtain rfl : m = 8 := by linarith
+      · obtain rfl : m = 8 := eq_add_of_sub_eq h25
         norm_num at h6
         obtain rfl : n = -10 := by linarith [pow_eq_zero h6.symm]
-        simp
+        simp only [Set.mem_insert_iff, true_or, or_true]
       · have h26 : m = 0 := by linarith
         contradiction
     · rw [hm'] at h13
-      have h21 : 4^2 < m'^2 := by linarith
+      have h21 : 4^2 < m'^2 := by rw [←h13]; norm_num
       have h23 : 4 < m' := lt_of_pow_lt_pow 2 hm0' h21
-      have h22 : m'^2 < 5^2 := by linarith
+      have h22 : m'^2 < 5^2 := by rw [←h13]; norm_num
       have h24 : m' < 5 := lt_of_pow_lt_pow 2 (by norm_num) h22
-      linarith
+      exact (Int.not_le.mpr h24 h23).elim
     · rw [hm'] at h13
-      have h21 : 4^2 < m'^2 := by linarith
+      have h21 : 4^2 < m'^2 := by rw [←h13]; norm_num
       have h23 : 4 < m' := lt_of_pow_lt_pow 2 hm0' h21
-      have h22 : m'^2 < 5^2 := by linarith
+      have h22 : m'^2 < 5^2 := by rw [←h13]; norm_num
       have h24 : m' < 5 := lt_of_pow_lt_pow 2 (by norm_num) h22
-      linarith
+      exact (Int.not_le.mpr h24 h23).elim
     · rw [hm'] at h13
       have h21 : m' = 5 := by
-        clear h3 h6 hm h9 hk h11 h12 hm' hk' hk0'
+        clear h1 h2 h3 h4 h5 h6 hm h9 hk h11 h12 hm' hk' hk0' h20
         nlinarith
       obtain h25 | h25 := eq_or_eq_neg_of_abs_eq h21
       · have h26 : m = 9 := by linarith
@@ -130,34 +129,34 @@ problem usa2001_p1 (m n : ℤ) :
         have h27 : (30:ℤ)^2 = (4 * n + 54) ^2 := by linarith
         obtain h28 | h28 := eq_or_eq_neg_of_sq_eq_sq _ _ h27
         · obtain rfl : n = -6 := by linarith
-          simp
+          simp only [Set.mem_insert_iff, true_or, or_true]
         · obtain rfl : n = -21 := by linarith
-          simp
+          simp only [Set.mem_insert_iff, Set.mem_singleton_iff, true_or, or_true]
       · obtain rfl : m = -1 := by linarith
         norm_num at h6
         obtain rfl : n = -1 := by linarith [pow_eq_zero h6.symm]
-        simp
+        simp only [Set.mem_insert_iff, true_or, or_true]
     · rw [hm'] at h13
-      have h21 : 5^2 < m'^2 := by linarith
+      have h21 : 5^2 < m'^2 := by rw [←h13]; norm_num
       have h23 : 5 < m' := lt_of_pow_lt_pow 2 hm0' h21
-      have h22 : m'^2 < 6^2 := by linarith
+      have h22 : m'^2 < 6^2 := by rw [←h13]; norm_num
       have h24 : m' < 6 := lt_of_pow_lt_pow 2 (by norm_num) h22
-      linarith
+      exact (Int.not_le.mpr h24 h23).elim
     · rw [hm'] at h13
-      have h21 : 6^2 < m'^2 := by linarith
+      have h21 : 6^2 < m'^2 := by rw [←h13]; norm_num
       have h23 : 6 < m' := lt_of_pow_lt_pow 2 hm0' h21
-      have h22 : m'^2 < 7^2 := by linarith
+      have h22 : m'^2 < 7^2 := by rw [←h13]; norm_num
       have h24 : m' < 7 := lt_of_pow_lt_pow 2 (by norm_num) h22
-      linarith
+      exact (Int.not_le.mpr h24 h23).elim
     · rw [hm'] at h13
-      have h21 : 7^2 < m'^2 := by linarith
+      have h21 : 7^2 < m'^2 := by rw [←h13]; norm_num
       have h23 : 7 < m' := lt_of_pow_lt_pow 2 hm0' h21
-      have h22 : m'^2 < 8^2 := by linarith
+      have h22 : m'^2 < 8^2 := by rw [←h13]; norm_num
       have h24 : m' < 8 := lt_of_pow_lt_pow 2 (by norm_num) h22
-      linarith
+      exact (Int.not_le.mpr h24 h23).elim
     · rw [hm'] at h13
-      have h21 : 8^2 < m'^2 := by linarith
+      have h21 : 8^2 < m'^2 := by rw [←h13]; norm_num
       have h23 : 8 < m' := lt_of_pow_lt_pow 2 hm0' h21
-      have h22 : m'^2 < 9^2 := by linarith
+      have h22 : m'^2 < 9^2 := by rw [←h13]; norm_num
       have h24 : m' < 9 := lt_of_pow_lt_pow 2 (by norm_num) h22
-      linarith
+      exact (Int.not_le.mpr h24 h23).elim
