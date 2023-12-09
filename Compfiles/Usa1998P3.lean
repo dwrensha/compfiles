@@ -121,8 +121,7 @@ lemma lemma2 (f : ℕ → ℝ) :
             · exact Nat.ne_of_gt hx
             · exact Nat.lt.base (n + 1)
           · obtain ⟨hy1, hy2⟩ := hy
-            use hy1
-            exact Nat.lt_add_right y (Nat.succ n) 1 hy2
+            exact ⟨hy1, Nat.lt_add_right 1 hy2⟩
       rw [h7, Finset.prod_insert h7']
       ring
     rw [h3]

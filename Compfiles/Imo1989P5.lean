@@ -169,7 +169,7 @@ problem imo1989_p5 (n : ℕ) : ∃ m, ∀ j < n, ¬IsPrimePow (m + j) := by
   let ci : List ChinesePair :=
     List.ofFn (fun x : Fin n ↦ have hx0: ↑x < List.length l := by
                                  rw [hll, Nat.two_mul]
-                                 exact Nat.lt_add_right _ n n x.2
+                                 exact Nat.lt_add_right n x.2
                                have hx1: ↑x + n < List.length l := by
                                  rw [hll, Nat.two_mul]
                                  exact Nat.add_lt_add_right x.2 n
@@ -186,7 +186,7 @@ problem imo1989_p5 (n : ℕ) : ∃ m, ∀ j < n, ¬IsPrimePow (m + j) := by
            (hl _ (List.get_mem _ _ _)).1
            (hl _ (List.get_mem _ _ _)).1
      · exact lemma3 l hld (LT.lt.ne hij)
-     · have hijn : i < j + n := Nat.lt_add_right _ _ n hij
+     · have hijn : i < j + n := Nat.lt_add_right n hij
        exact lemma3 l hld (Fin.ne_of_vne (LT.lt.ne hijn))
      · have hijn' := calc j < n := j.prop
                           _ ≤ i + n := Nat.le_add_left _ _
@@ -211,7 +211,7 @@ problem imo1989_p5 (n : ℕ) : ∃ m, ∀ j < n, ¬IsPrimePow (m + j) := by
   have hcil : ci.length = n := by aesop
   have hj1 : j < ci.length := by rwa [hcil]
   have hj2 : j < l.length := by rw [hll, Nat.two_mul]
-                                exact Nat.lt_add_right j n n hj
+                                exact Nat.lt_add_right n hj
   have hj3 : j + n < l.length := by rw [hll, Nat.two_mul]
                                     exact Nat.add_lt_add_right hj n
   have h1 := hm (ci.get ⟨j, hj1⟩) (List.get_mem _ _ _)
