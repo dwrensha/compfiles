@@ -29,17 +29,6 @@ namespace Bulgaria1998P6
 
 snip begin
 
-lemma lemma_0
-    (a b c x : ℤ)
-    (h : a * x^2 + b * x + c = 0) :
-    (∃ d : ℤ, d^2 = b^2 - 4 * a * c) := by
-  by_cases ha : a ≠ 0
-  · use 2 * a * x + b
-    refine' ((quadratic_eq_zero_iff_discrim_eq_sq ha x).mp _).symm
-    rw [←h, pow_two, mul_assoc]
-  · rw [not_not] at ha
-    simp only [ha, mul_zero, zero_mul, sub_zero, ge_iff_le, exists_apply_eq_apply] at *
-
 lemma lemma_1'
     (s t u : ℕ)
     (hs : 0 < s)
@@ -50,7 +39,7 @@ lemma lemma_1'
   sorry
 
 lemma lemma_1
-    (s t u : ℤ)
+    {s t u : ℤ}
     (hs : 0 < s)
     (ht : 0 < t)
     (hu : 0 < u)
@@ -74,5 +63,33 @@ problem bulgaria1998_p6
     (hz : 0 < z)
     (h : x^2 * y^2 = z^2 * (z^2 - x^2 - y^2)) :
     False := by
-  have : 0 = (z^2)^2 - z^2 * (x^2 + y^2) - x^2 * y^2 := by rw[h]; ring
-  sorry
+  -- Follows the informal solution in _Mathematical Olympiads 1998-1999_
+  -- (edited by Titu Andreescu and Zuming Feng)
+
+  have h1 : 1 * (z^2) * (z^2) + (- (x^2 + y^2)) * z^2 + - (x^2 * y^2) = 0 := by
+    rw[h]; ring
+  have : NeZero (2 : ℤ) := CharZero.NeZero.two ℤ
+  have h2 := (quadratic_eq_zero_iff_discrim_eq_sq one_ne_zero (z^2)).mp h1
+  dsimp [discrim] at h2
+  let a := x^2 + y^2
+  let b := 2 * x * y
+  have h3 : a^2 + b^2  = (2 * z ^ 2 - (x ^ 2 + y ^ 2)) ^ 2 :=
+     by linear_combination h2
+  have h4 : IsSquare (a^2 + b^2) := by use 2 * z ^ 2 - (x ^ 2 + y ^ 2); rwa [←sq]
+  have h5 : IsSquare (a^2 - b^2) := by use (x^2 - y^2); ring
+  have h6 : IsSquare ((a^2 + b^2) * (a^2 - b^2)) := IsSquare.mul h4 h5
+  rw [show (a^2 + b^2) * (a^2 - b^2) = a^4 - b^4 by ring] at h6
+  obtain ⟨c, hc⟩ := h6
+  rw [←sq, ←sq_abs] at hc
+  obtain ⟨c', rfl⟩ := @exists_eq _ |c|
+  have ha' : 0 < a := by positivity
+  have hb' : 0 < b := by positivity
+  have hc' : 0 < |c| := by
+    obtain hc1 | hc2 | hc3 := lt_trichotomy 0 |c|
+    · exact hc1
+    · have hab : a^2 = b^2 := by sorry
+      rw [hab] at h4
+      obtain ⟨r, hr⟩ := h4
+      sorry
+    · exact (Int.not_lt.mpr (abs_nonneg c) hc3).elim
+  exact lemma_1 ha' hb' hc' hc
