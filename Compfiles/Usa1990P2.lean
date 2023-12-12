@@ -26,7 +26,7 @@ For each nonnegative integer n, find all real solutions of the equation
 namespace Usa1990P2
 
 noncomputable def f : ℕ → ℝ → ℝ
-| 0    , _ => 8
+|     0, _ => 8
 | n + 1, x => Real.sqrt (x^2 + 6 * f n x)
 
 determine solution_set (n : ℕ) : Set ℝ := sorry
