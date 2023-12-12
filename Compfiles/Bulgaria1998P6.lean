@@ -5,10 +5,7 @@ Authors: David Renshaw
 -/
 
 import Mathlib.Algebra.QuadraticDiscriminant
-import Mathlib.Data.Int.Basic
-import Mathlib.Order.WellFounded
-import Mathlib.Tactic.LibrarySearch
-import Mathlib.Tactic.Ring
+import Mathlib.Tactic
 
 import ProblemExtraction
 
@@ -60,7 +57,7 @@ problem bulgaria1998_p6
     (x y z : ℤ)
     (hx : 0 < x)
     (hy : 0 < y)
-    (hz : 0 < z)
+    (_hz : 0 < z)
     (h : x^2 * y^2 = z^2 * (z^2 - x^2 - y^2)) :
     False := by
   -- Follows the informal solution in _Mathematical Olympiads 1998-1999_
@@ -87,9 +84,33 @@ problem bulgaria1998_p6
   have hc' : 0 < |c| := by
     obtain hc1 | hc2 | hc3 := lt_trichotomy 0 |c|
     · exact hc1
-    · have hab : a^2 = b^2 := by sorry
+    · have hab : a^2 = b^2 := by
+        rw [← hc2, zero_pow (by norm_num)] at hc
+        have hc3 : (a^2)^2 = (b^2)^2 := by linear_combination hc
+        have hap : 0 ≤ a^2 := by positivity
+        have hbp : 0 ≤ b^2 := by positivity
+        exact (pow_left_inj hap hbp two_pos).mp hc3
       rw [hab] at h4
       obtain ⟨r, hr⟩ := h4
-      sorry
+      rw [←two_mul, ←sq] at hr
+      have h10 : b^2 ∣ r^2 := Dvd.intro_left _ hr
+      rw [Int.pow_dvd_pow_iff two_pos] at h10
+      obtain ⟨e, rfl⟩ := h10
+      rw [show (b * e)^2 = e^2 * b^2 by ring] at hr
+      have h11 : b^2 ≠ 0 := by positivity
+      have h12 : 2 = e^2 := (Int.mul_eq_mul_right_iff h11).mp hr
+      clear h h1 h3 h5 hab
+      have h13 : e < 2 := by
+        by_contra! H
+        have h20 : 2^2 ≤ e^2 := by gcongr
+        rw [←h12] at h20
+        norm_num at h20
+      have h14 : -2 < e := by
+        by_contra! H
+        replace H : 2 ≤ -e := Int.le_neg_of_le_neg H
+        have h20 : 2^2 ≤ (-e)^2 := by gcongr
+        rw [neg_sq, ←h12] at h20
+        norm_num at h20
+      interval_cases e <;> linarith
     · exact (Int.not_lt.mpr (abs_nonneg c) hc3).elim
   exact lemma_1 ha' hb' hc' hc
