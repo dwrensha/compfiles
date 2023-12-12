@@ -40,20 +40,13 @@ lemma lemma_0
   · rw [not_not] at ha
     simp only [ha, mul_zero, zero_mul, sub_zero, ge_iff_le, exists_apply_eq_apply] at *
 
-#check WellFounded.min_mem
-#check WellFounded.not_lt_min
-
 lemma lemma_1'
     (s t u : ℕ)
     (hs : 0 < s)
     (ht : 0 < t)
     (hu : 0 < u)
-    (h : s^4 - t^4 = u^2) : False := by
-  let S := { a : ℕ | 0 < a ∧ ∃ b c : ℕ, a^4 - b^4 = c^2 }
-  have hns : S.Nonempty := ⟨s, hs, t, u, h⟩
-  let a := WellFounded.min Nat.lt_wfRel.wf S hns
-  have ha : a ∈ S := WellFounded.min_mem Nat.lt_wfRel.wf S hns
-  obtain ⟨hap, b, c, habc⟩ := ha
+    (h : s^4 = t^4 + u^2) : False := by
+  induction' s using Nat.strongInductionOn with s ih
   sorry
 
 lemma lemma_1
@@ -62,10 +55,15 @@ lemma lemma_1
     (ht : 0 < t)
     (hu : 0 < u)
     (h : s^4 - t^4 = u^2) : False := by
-  let hs' := Int.toNat_of_nonneg (le_of_lt hs)
-  let ht' := Int.toNat_of_nonneg (le_of_lt ht)
-  rw [←hs'] at h
-  sorry
+  replace h : s^4 = t^4 + u^2 := eq_add_of_sub_eq' h
+  lift s to ℕ using Int.le_of_lt hs
+  lift t to ℕ using Int.le_of_lt ht
+  lift u to ℕ using Int.le_of_lt hu
+  replace hs : 0 < s := Int.ofNat_pos.mp hs
+  replace ht : 0 < t := Int.ofNat_pos.mp ht
+  replace hy : 0 < u := Int.ofNat_pos.mp hu
+  have h' : s ^ 4 = t ^ 4 + u ^ 2 := by exact Int.ofNat_inj.mp h
+  exact lemma_1' s t u hs ht hy h'
 
 snip end
 
@@ -76,5 +74,5 @@ problem bulgaria1998_p6
     (hz : 0 < z)
     (h : x^2 * y^2 = z^2 * (z^2 - x^2 - y^2)) :
     False := by
-  have : 0 = (z^2)^2 - z^2 * (x^2 + y^2) - x^2 * y^2 := by {rw[h]; ring}
+  have : 0 = (z^2)^2 - z^2 * (x^2 + y^2) - x^2 * y^2 := by rw[h]; ring
   sorry
