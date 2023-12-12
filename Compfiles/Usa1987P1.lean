@@ -43,7 +43,7 @@ snip end
 determine solution_set : Set (ℤ × ℤ) :=
   { (-1, -1), (8, -10), (9, -6), (9, -21) }
 
-problem usa2001_p1 (m n : ℤ) :
+problem usa1987_p1 (m n : ℤ) :
     (m, n) ∈ solution_set ↔
     m ≠ 0 ∧ n ≠ 0 ∧ (m^2 + n) * (m + n^2) = (m - n)^3 := by
   -- Follows the informal solution at
