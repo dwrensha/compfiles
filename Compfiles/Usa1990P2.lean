@@ -29,7 +29,101 @@ noncomputable def f : ℕ → ℝ → ℝ
 |     0, _ => 8
 | n + 1, x => Real.sqrt (x^2 + 6 * f n x)
 
-determine solution_set (n : ℕ) : Set ℝ := sorry
+determine solution_set (n : ℕ) : Set ℝ := { 4 }
 
 problem usa1990_p2 (n : ℕ) (x : ℝ) : x ∈ solution_set n ↔ f n x = 2 * x := by
-  sorry
+  -- based on solution from
+  -- https://artofproblemsolving.com/wiki/index.php/1990_USAMO_Problems/Problem_2
+  have hfnn : ∀ n x, 0 ≤ f n x := fun n x ↦ by
+    cases' n
+    · norm_num [f]
+    · unfold f; positivity
+
+  have hx : ∀ n x, f n x = 2 * x → 0 ≤ x := fun n x ↦ by
+    specialize hfnn n x
+    intro h1
+    rw [h1] at hfnn
+    linarith
+
+  suffices H : ((4 < x → f n x < 2 * x) ∧ (x = 4 → f n x = 2 * x) ∧
+                     (x < 4 → 2 * x < f n x)) by
+    constructor
+    · aesop
+    · intro h
+      by_contra! H2
+      rw [Set.mem_singleton_iff] at H2
+      obtain h1 | h2 | h3 := lt_trichotomy x 4 <;> aesop
+  revert x
+  induction n with
+  | zero =>
+    intro x
+    simp only [f]
+    obtain h1 | rfl | h3 := lt_trichotomy x 4
+    · exact ⟨fun h1' ↦ ((lt_asymm h1) h1').elim,
+             fun h1' ↦ ((LT.lt.ne h1) h1').elim,
+             fun h1' ↦ by linarith⟩
+    · norm_num
+    · exact ⟨fun h1' ↦ by linarith,
+             fun h1' ↦ by linarith,
+             fun h1' ↦ by linarith⟩
+
+  | succ n ih =>
+    intro x
+    refine ⟨?_, ?_, ?_⟩
+    · intro hx1
+      have h2 : f n x < 2 * x := by
+        specialize ih x
+        exact ih.1 hx1
+      have hc :=
+        calc x ^ 2 + 6 * f n x < x ^ 2 + 6 * (2 * x) := by gcongr
+             _ = x ^ 2 + 3 * (4 * x) := by ring
+             _ < x ^ 2 + 3 * (x * x) := by gcongr
+             _ = 4 * x^2 := by ring
+      have hc' : Real.sqrt (x ^ 2 + 6 * f n x) < Real.sqrt (4 * x ^ 2) := by
+        have h4 : 0 < 4 * x ^ 2 := by nlinarith
+        exact (Real.sqrt_lt_sqrt_iff_of_pos h4).mpr hc
+      have h5 : Real.sqrt (4 * x^2) = 2 * x := by
+        rw [show 4 * x^2 = (2 * x)^2 by ring]
+        have h6 : 0 ≤ 2 * x := by positivity
+        exact Real.sqrt_sq h6
+      rwa [h5] at hc'
+    · intro hx1
+      have h2 : f n x = 2 * x := by
+        specialize ih x
+        exact ih.2.1 hx1
+      unfold f
+      have hc :=
+        calc x ^ 2 + 6 * f n x = x ^ 2 + 6 * (2 * x) := by rw [h2]
+             _ = x ^ 2 + 3 * (4 * x) := by ring
+             _ = x ^ 2 + 3 * (x * x) := by rw[hx1]
+             _ = 4 * x^2 := by ring
+
+      have hc' : Real.sqrt (x ^ 2 + 6 * f n x) = Real.sqrt (4 * x ^ 2) := by
+        have h4 : 0 < 4 * x ^ 2 := by nlinarith
+        exact congrArg Real.sqrt hc
+      have h5 : Real.sqrt (4 * x^2) = 2 * x := by
+        rw [show 4 * x^2 = (2 * x)^2 by ring]
+        have h6 : 0 ≤ 2 * x := by positivity
+        exact Real.sqrt_sq h6
+      rwa [h5] at hc'
+
+    · intro hx1
+      have h2 : 2 * x < f n x := by
+        specialize ih x
+        exact ih.2.2 hx1
+      have hxnn : 0 ≤ x := by
+        sorry
+      have hxp : 0 < x := sorry
+      have hc :=
+/-
+        calc x ^ 2 + 6 * f n x > x ^ 2 + 6 * (2 * x) := by gcongr
+             _ = x ^ 2 + 3 * (4 * x) := by ring
+             _ > x ^ 2 + 3 * (x * x) := by sorry
+             _ = 4 * x^2 := by ring -/
+
+        calc 4 * x^2 = x ^ 2 + 3 * (x * x) := by ring
+                   _ < x ^ 2 + 3 * (4 * x) := by gcongr
+                   _ = x ^ 2 + 6 * (2 * x) := by ring
+                   _ < x ^ 2 + 6 * f n x := by gcongr
+
+      sorry
