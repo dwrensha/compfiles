@@ -74,6 +74,11 @@ problem usa1990_p2 (n : ℕ) (x : ℝ) : x ∈ solution_set n ↔ f n x = 2 * x 
 
   | succ n ih =>
     intro x hx5
+    have h5 : Real.sqrt (4 * x^2) = 2 * x := by
+        rw [show 4 * x^2 = (2 * x)^2 by ring]
+        have h6 : 0 ≤ 2 * x := by positivity
+        exact Real.sqrt_sq h6
+
     refine ⟨?_, ?_, ?_⟩
     · intro hx1
       have h2 : f n x < 2 * x := by
@@ -87,10 +92,6 @@ problem usa1990_p2 (n : ℕ) (x : ℝ) : x ∈ solution_set n ↔ f n x = 2 * x 
       have hc' : Real.sqrt (x ^ 2 + 6 * f n x) < Real.sqrt (4 * x ^ 2) := by
         have h4 : 0 < 4 * x ^ 2 := by nlinarith
         exact (Real.sqrt_lt_sqrt_iff_of_pos h4).mpr hc
-      have h5 : Real.sqrt (4 * x^2) = 2 * x := by
-        rw [show 4 * x^2 = (2 * x)^2 by ring]
-        have h6 : 0 ≤ 2 * x := by positivity
-        exact Real.sqrt_sq h6
       rwa [h5] at hc'
     · intro hx1
       have h2 : f n x = 2 * x := by
@@ -100,15 +101,11 @@ problem usa1990_p2 (n : ℕ) (x : ℝ) : x ∈ solution_set n ↔ f n x = 2 * x 
       have hc :=
         calc x ^ 2 + 6 * f n x = x ^ 2 + 6 * (2 * x) := by rw [h2]
              _ = x ^ 2 + 3 * (4 * x) := by ring
-             _ = x ^ 2 + 3 * (x * x) := by rw[hx1]
+             _ = x ^ 2 + 3 * (x * x) := by rw [hx1]
              _ = 4 * x^2 := by ring
 
       have hc' : Real.sqrt (x ^ 2 + 6 * f n x) = Real.sqrt (4 * x ^ 2) := by
         exact congrArg Real.sqrt hc
-      have h5 : Real.sqrt (4 * x^2) = 2 * x := by
-        rw [show 4 * x^2 = (2 * x)^2 by ring]
-        have h6 : 0 ≤ 2 * x := by positivity
-        exact Real.sqrt_sq h6
       rwa [h5] at hc'
 
     · intro hx1
@@ -129,10 +126,4 @@ problem usa1990_p2 (n : ℕ) (x : ℝ) : x ∈ solution_set n ↔ f n x = 2 * x 
           have := hfnp n x
           positivity
         exact (Real.sqrt_lt_sqrt_iff_of_pos h4).mpr hc
-
-      have h5 : Real.sqrt (4 * x^2) = 2 * x := by
-        rw [show 4 * x^2 = (2 * x)^2 by ring]
-        have h6 : 0 ≤ 2 * x := by positivity
-        exact Real.sqrt_sq h6
-
       rwa [h5] at hc'
