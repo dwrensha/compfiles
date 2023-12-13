@@ -78,9 +78,7 @@ problem usa1990_p2 (n : ℕ) (x : ℝ) : x ∈ solution_set n ↔ f n x = 2 * x 
 
     refine ⟨?_, ?_, ?_⟩
     · intro hx1
-      have h2 : f n x < 2 * x := by
-        specialize ih x
-        exact (ih hx5).1 hx1
+      have h2 : f n x < 2 * x := (ih x hx5).1 hx1
       have hc :=
         calc x ^ 2 + 6 * f n x < x ^ 2 + 6 * (2 * x) := by gcongr
              _ = x ^ 2 + 3 * (4 * x) := by ring
@@ -91,9 +89,7 @@ problem usa1990_p2 (n : ℕ) (x : ℝ) : x ∈ solution_set n ↔ f n x = 2 * x 
         exact (Real.sqrt_lt_sqrt_iff_of_pos h4).mpr hc
       rwa [h5] at hc'
     · intro hx1
-      have h2 : f n x = 2 * x := by
-        specialize ih x
-        exact (ih hx5).2.1 hx1
+      have h2 : f n x = 2 * x := (ih x hx5).2.1 hx1
       unfold f
       have hc :=
         calc x ^ 2 + 6 * f n x = x ^ 2 + 6 * (2 * x) := by rw [h2]
@@ -106,9 +102,7 @@ problem usa1990_p2 (n : ℕ) (x : ℝ) : x ∈ solution_set n ↔ f n x = 2 * x 
       rwa [h5] at hc'
 
     · intro hx1
-      have h2 : 2 * x < f n x := by
-        specialize ih x
-        exact (ih hx5).2.2 hx1
+      have h2 : 2 * x < f n x := (ih x hx5).2.2 hx1
       obtain rfl | hx6 := LE.le.eq_or_gt hx5
       · simp [hfnp]
 
