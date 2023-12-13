@@ -174,7 +174,7 @@ elab_rules : command
   modifyEnv fun env => problemExtractionExtension.addEntry env ⟨mod,
     EntryVariant.replace ⟨vStartPos, vEndPos, ":= sorry"⟩⟩
 
-  let cmd ← `(command | $dm:declModifiers abbrev $di:declId $ds:optDeclSig $dv:declVal)
+  let cmd ← `(command | set_option linter.unusedVariables false in $dm:declModifiers abbrev $di:declId $ds:optDeclSig $dv:declVal)
   Lean.Elab.Command.elabCommand cmd
 
   match di with
