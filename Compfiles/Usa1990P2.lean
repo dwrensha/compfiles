@@ -109,7 +109,6 @@ problem usa1990_p2 (n : ℕ) (x : ℝ) : x ∈ solution_set n ↔ f n x = 2 * x 
              _ = 4 * x^2 := by ring
 
       have hc' : Real.sqrt (x ^ 2 + 6 * f n x) = Real.sqrt (4 * x ^ 2) := by
-        have h4 : 0 < 4 * x ^ 2 := by nlinarith
         exact congrArg Real.sqrt hc
       have h5 : Real.sqrt (4 * x^2) = 2 * x := by
         rw [show 4 * x^2 = (2 * x)^2 by ring]
