@@ -34,11 +34,6 @@ determine solution_set (n : ℕ) : Set ℝ := { 4 }
 problem usa1990_p2 (n : ℕ) (x : ℝ) : x ∈ solution_set n ↔ f n x = 2 * x := by
   -- based on solution from
   -- https://artofproblemsolving.com/wiki/index.php/1990_USAMO_Problems/Problem_2
-  have hfnn : ∀ n x, 0 ≤ f n x := fun n x ↦ by
-    cases' n
-    · norm_num [f]
-    · unfold f; positivity
-
   have hfnp : ∀ n x, 0 < f n x := fun n x ↦ by
     induction' n with n ih
     · norm_num [f]
@@ -46,9 +41,9 @@ problem usa1990_p2 (n : ℕ) (x : ℝ) : x ∈ solution_set n ↔ f n x = 2 * x 
       positivity
 
   have hx : ∀ n x, f n x = 2 * x → 0 ≤ x := fun n x ↦ by
-    specialize hfnn n x
+    specialize hfnp n x
     intro h1
-    rw [h1] at hfnn
+    rw [h1] at hfnp
     linarith
 
   suffices H : ∀ x, 0 ≤ x → ((4 < x → f n x < 2 * x) ∧ (x = 4 → f n x = 2 * x) ∧
