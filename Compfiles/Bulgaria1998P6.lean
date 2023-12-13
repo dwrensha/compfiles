@@ -27,13 +27,18 @@ namespace Bulgaria1998P6
 snip begin
 
 lemma lemma_1'
-    (s t u : ℕ)
-    (hs : 0 < s)
-    (ht : 0 < t)
-    (hu : 0 < u)
-    (h : s^4 = t^4 + u^2) : False := by
-  induction' s using Nat.strongInductionOn with s ih
-  sorry
+    (a b c : ℕ)
+    (ha : 0 < a)
+    (hb : 0 < b)
+    (hc : 0 < c)
+    (h : a^4 = b^4 + c^2) : False := by
+  induction' a using Nat.strongInductionOn with a ih
+  have hab : Nat.gcd a b = 1 := sorry
+  obtain c_even | c_odd := Nat.even_or_odd c
+  · have a_odd : Odd a := sorry
+    have b_odd : Odd b := sorry
+    sorry
+  · sorry
 
 lemma lemma_1
     {s t u : ℤ}
