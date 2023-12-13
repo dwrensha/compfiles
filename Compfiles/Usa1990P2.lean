@@ -40,12 +40,6 @@ problem usa1990_p2 (n : ℕ) (x : ℝ) : x ∈ solution_set n ↔ f n x = 2 * x 
     · unfold f
       positivity
 
-  have hx : ∀ n x, f n x = 2 * x → 0 ≤ x := fun n x ↦ by
-    specialize hfnp n x
-    intro h1
-    rw [h1] at hfnp
-    linarith
-
   suffices H : ∀ x, 0 ≤ x → ((4 < x → f n x < 2 * x) ∧ (x = 4 → f n x = 2 * x) ∧
                      (x < 4 → 2 * x < f n x)) by
     constructor
@@ -54,7 +48,10 @@ problem usa1990_p2 (n : ℕ) (x : ℝ) : x ∈ solution_set n ↔ f n x = 2 * x 
       have := H 4 (by norm_num)
       aesop
     · intro h
-      replace hx := hx n x h
+      have hx : 0 ≤ x := by
+        specialize hfnp n x
+        rw [h] at hfnp
+        linarith
       replace H := H x hx
       by_contra! H2
       rw [Set.mem_singleton_iff] at H2
