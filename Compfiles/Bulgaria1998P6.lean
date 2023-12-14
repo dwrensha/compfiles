@@ -70,7 +70,7 @@ problem bulgaria1998_p6
 
   have h1 : 1 * (z^2) * (z^2) + (- (x^2 + y^2)) * z^2 + - (x^2 * y^2) = 0 := by
     rw[h]; ring
-  have : NeZero (2 : ℤ) := CharZero.NeZero.two ℤ
+  have : NeZero (2 : ℤ) := CharZero.NeZero.two
   have h2 := (quadratic_eq_zero_iff_discrim_eq_sq one_ne_zero (z^2)).mp h1
   dsimp [discrim] at h2
   let a := x^2 + y^2
