@@ -77,16 +77,16 @@ problem bulgaria1998_p11
   have h5: 2 % 3 = (m ^ (Nat.succ n) + 3) % 3 := h2
   have h3 : m % 3 = 2 := by
     zify
-    mod_cases hm : ↑m % 3
-    · have h4: ↑m % 3 = (0:ℤ) % 3 := hm; norm_cast at h4
-      simp[Nat.pow_mod, h4] at h5
+    mod_cases hm : (m:ℤ) % 3
+    · change ↑m % 3 = (0:ℤ) % 3 at hm; norm_cast at hm
+      simp[Nat.pow_mod, hm] at h5
     · have h4: ↑m % 3 = (1:ℤ) % 3 := hm; norm_cast at h4
       simp (config := {decide := true}) [Nat.pow_mod, h4] at h5
     · have h4: ↑m % 3 = (2:ℤ) % 3 := hm; norm_cast at h4
 
   have h6: Nat.succ n % 2 = 1 := by
     zify
-    mod_cases hn : ↑(Nat.succ n) % 2
+    mod_cases hn : ((Nat.succ n):ℤ) % 2
     · exfalso
       have h4: (↑(Nat.succ n)) % 2 = (0:ℤ) % 2 := hn
       norm_cast at h4
