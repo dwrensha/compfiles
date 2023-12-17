@@ -36,11 +36,10 @@ problem imo_1964_p1a (n : ℕ) : n ∈ solution_set ↔ 2^n ≡ 1 [MOD 7] := by
     change 2^n % 7 = 1 at hn
     rw [(Nat.div_add_mod' n 3).symm] at hn
     rw [pow_add, pow_mul', Nat.mul_mod, Nat.pow_mod] at hn
-    have : n % 3 < 3 := Nat.mod_lt _ (by norm_num)
-    interval_cases n % 3
-    · rfl
-    · norm_num at hn
-    · norm_num at hn
+    mod_cases H : n % 3
+    · exact H
+    · rw [H] at hn; norm_num at hn
+    · rw [H] at hn; norm_num at hn
 
 problem imo_1964_p1b (n : ℕ) : ¬ 7 ∣ (2^n + 1) := by
   /-
@@ -66,8 +65,7 @@ problem imo_1964_p1b (n : ℕ) : ¬ 7 ∣ (2^n + 1) := by
      _ = (2 ^ (n % 3) % 7 + 1) % 7 :=
                    by rw [show 1 % 7 = 1 by rfl, one_mul, Nat.mod_mod]
 
-  have : n % 3 < 3 := Nat.mod_lt _ (by norm_num)
-  interval_cases n % 3 <;> norm_num at h
+  mod_cases H : n % 3 <;> rw [H] at h <;> norm_num at h
 
 snip begin
 
