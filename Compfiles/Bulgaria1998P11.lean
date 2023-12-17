@@ -76,21 +76,18 @@ problem bulgaria1998_p11
   rw[add_assoc, show 1 + 2 = 3 by rfl, zero_add] at h2
   have h5: 2 % 3 = (m ^ (Nat.succ n) + 3) % 3 := h2
   have h3 : m % 3 = 2 := by
-    zify
-    mod_cases hm : (m:ℤ) % 3
-    · change ↑m % 3 = (0:ℤ) % 3 at hm; norm_cast at hm
+    mod_cases hm : m % 3
+    · change m % 3 = 0 % 3 at hm
       simp[Nat.pow_mod, hm] at h5
-    · have h4: ↑m % 3 = (1:ℤ) % 3 := hm; norm_cast at h4
-      simp (config := {decide := true}) [Nat.pow_mod, h4] at h5
-    · have h4: ↑m % 3 = (2:ℤ) % 3 := hm; norm_cast at h4
+    · change m % 3 = 1 % 3 at hm
+      simp (config := {decide := true}) [Nat.pow_mod, hm] at h5
+    · change m % 3 = 2 % 3 at hm; exact hm
 
   have h6: Nat.succ n % 2 = 1 := by
-    zify
-    mod_cases hn : ((Nat.succ n):ℤ) % 2
+    mod_cases hn : (Nat.succ n) % 2
     · exfalso
-      have h4: (↑(Nat.succ n)) % 2 = (0:ℤ) % 2 := hn
-      norm_cast at h4
-      have h9: Even (Nat.succ n) := Iff.mpr Nat.even_iff h4
+      change (Nat.succ n) % 2 = 0 % 2 at hn
+      have h9: Even (Nat.succ n) := Iff.mpr Nat.even_iff hn
       cases' h9 with k hk
       rw[hk] at h1
       have h1' : 0 % 3 = ( m ^ (k + k) + 1) % 3 := h1
