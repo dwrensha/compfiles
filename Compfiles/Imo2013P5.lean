@@ -94,7 +94,7 @@ lemma le_of_all_pow_lt_succ' {x y : ℝ} (hx : 1 < x) (hy : 0 < y)
   have hh : ∀ n, 0 < n → x^n - 1 < y'^n := by
     intro n hn
     calc x^n - 1 < y^n  := h n hn
-         _  ≤ y'^n := pow_le_pow_of_le_left hy.le h_y_lt_y'.le n
+         _  ≤ y'^n := pow_le_pow_left hy.le h_y_lt_y'.le n
 
   exact h_y'_lt_x.not_le (le_of_all_pow_lt_succ hx h1_lt_y' hh)
 

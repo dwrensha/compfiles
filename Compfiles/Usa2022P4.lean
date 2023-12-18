@@ -68,7 +68,7 @@ problem usa2022_p4 (p q : ℕ) :
               _ < p * q := h2
               _ = b^2 + q := hb.symm
     have h4 : a^2 < b^2 := Nat.add_lt_add_iff_right.mp h3
-    exact lt_of_pow_lt_pow' 2 h4
+    exact lt_of_pow_lt_pow_left' 2 h4
   have hba' : 0 < b - a := Nat.sub_pos_of_lt hba
 
   -- Since b - a < p and p is prime, we have that p divides b + a.
