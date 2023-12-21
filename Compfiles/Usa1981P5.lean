@@ -120,4 +120,5 @@ problem usa1981_p5 (x : ℝ) (n : ℕ) :
       exact Nat.sub_sub_self hm4
     rw [h20, ←mul_div_assoc] at h19
     exact h19
-  linarith
+  calc _ ≤ a (n - m) + a m := h11
+       _ ≤ _ := add_le_add h9 h14
