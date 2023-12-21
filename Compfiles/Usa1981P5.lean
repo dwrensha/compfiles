@@ -91,10 +91,10 @@ problem usa1981_p5 (x : ℝ) (n : ℕ) :
 
   have h11 := h4 (n - m) m
   rw [Nat.sub_add_cancel hm4] at h11
-  have h12 : 1 ≤ n - m + 1 := by linarith
+  have h12 : 1 ≤ n - m + 1 := Nat.le_add_left 1 (n - m)
   have h13 : n - m + 1 ≤ n + 1 := by
     rw [Nat.add_le_add_iff_right]
-    aesop
+    exact Nat.sub_le n m
   rw [show Finset.Icc 1 n = Finset.Ico 1 (n + 1) by rfl]
   rw [show Finset.Icc 1 (n - m) = Finset.Ico 1 (n - m + 1) by rfl] at h9
   rw [←Finset.sum_Ico_consecutive _ h12 h13]
