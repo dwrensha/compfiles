@@ -60,12 +60,11 @@ problem usa1981_p5 (x : ℝ) (n : ℕ) :
 
   clear h1 h2
   induction' n using Nat.strongInductionOn with n ih
-  wlog H : 0 < n with hn
-  · obtain rfl : n = 0 := Nat.eq_zero_of_not_pos H
-    simp
+  obtain rfl | hn := Nat.eq_zero_or_pos n
+  · simp
 
   have : Nonempty (Finset.Icc 1 n) := by
-    use 1; rw [Finset.mem_Icc]; simp only [le_refl, true_and]; exact H
+    use 1; rw [Finset.mem_Icc]; simp only [le_refl, true_and]; exact hn
   obtain ⟨⟨m, hm1⟩, hm2⟩ :=
     Finite.exists_min (fun (m : Finset.Icc 1 n) ↦ a m / m)
 
@@ -86,7 +85,7 @@ problem usa1981_p5 (x : ℝ) (n : ℕ) :
     rw [h8]
     exact h7
 
-  have h9 := ih (n - m) (Nat.sub_lt H hm3)
+  have h9 := ih (n - m) (Nat.sub_lt hn hm3)
   have h10 := ih m hlt
 
   have h11 := h4 (n - m) m
