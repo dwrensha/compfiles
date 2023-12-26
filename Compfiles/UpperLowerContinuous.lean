@@ -211,7 +211,7 @@ lemma continuous_of_upper_lower_continuous
      f(a',b') ⊆ (a,b)
     as required.
   -/
-  apply continuous_generateFrom
+  apply continuous_generateFrom_iff.mpr
   intro ab hab
   obtain ⟨a,b, hab⟩ := hab
   have h6oc : ∀ c ∈ f ⁻¹' ab, ∃ a', Set.Ioc a' c ⊆ f ⁻¹' Set.Ioc a (f c) ∧ (a' < c ∧ a < f c) := by
