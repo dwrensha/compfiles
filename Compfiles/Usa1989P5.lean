@@ -109,26 +109,6 @@ problem usa1989_p5
       linarith
     linarith
 
-  have h2' : ¬ 9/10 ≤ v := by
-    intro hv9
-    have : 8 < V v := by
-      have h3 : (9/10)^11 ≤ v^11 := pow_le_pow_left (by norm_num) hv9 11
-      have h4 : ∀ i ∈ Finset.range 10, (9/10)^(i+1) ≤ v^(i+1) := fun i _hi ↦ by
-        exact pow_le_pow_left (by norm_num) hv9 (i + 1)
-
-      have h5 : ∑ i in Finset.range 10, ((9:ℝ)/10) ^ (i + 1) ≤
-                ∑ i in Finset.range 10, v^(i + 1) :=
-        Finset.sum_le_sum h4
-
-      have h6 : V (9 / 10) ≤ V v := by
-        dsimp only [U]; gcongr
-      have h7 : (9:ℝ)/10 ≠ 1 := by norm_num
-      rw [hV _ h7] at h6
-      norm_num at h6
-      dsimp only [U]
-      linarith
-    linarith
-
   have h4 : 10 * u - 9 < 0 := by linarith
   have h5 : 0 < u := not_le.mp h1u
   have h5' : 0 < u^9 := pow_pos h5 9
@@ -147,4 +127,23 @@ problem usa1989_p5
          _ = U u + (10 * u^11 + u^10 - 9 * u^9) := by rw [h9]
          _ = U u + u^9 * (10 * u - 9) * (u + 1) := by ring
          _ < _ := by linarith
-  sorry
+  have h10 : V u < V v := by
+    calc _ < _ := h3
+         _ = 8 := hu
+         _ = _ := hv.symm
+
+  by_contra! H
+
+  have h11 : 0 < v := not_le.mp h1v
+  have h13 : v^11 ≤ u^11 := pow_le_pow_left (le_of_lt h11) H 11
+
+  have h14 : ∀ i ∈ Finset.range 10, v^(i+1) ≤ u^(i+1) := fun i _hi ↦ by
+    exact pow_le_pow_left (le_of_lt h11) H (i + 1)
+
+  have h15 : ∑ i in Finset.range 10, v ^ (i + 1) ≤
+             ∑ i in Finset.range 10, u^(i + 1) :=
+        Finset.sum_le_sum h14
+
+  have h16 : V v ≤ V u := by dsimp only; gcongr
+
+  exact (not_lt.mpr h16 h10).elim
