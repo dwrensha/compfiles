@@ -33,10 +33,13 @@ problem usa1989_p5
     if u_is_larger then v < u else u < v := by
   -- solution from
   -- https://artofproblemsolving.com/wiki/index.php/1989_USAMO_Problems/Problem_5
-  simp only [ite_self]
+  simp only [ite_false]
 
   let U (x : ℝ) : ℝ := (∑ i in Finset.range 8, x^(i + 1)) + 10 * x^ 9
   let V (x : ℝ) : ℝ := (∑ i in Finset.range 10, x^(i + 1)) + 10 * x^11
+
+  change U u = 8 at hu
+  change V v = 8 at hv
 
   have hU : ∀ x, x ≠ 1 → U x = (x^10 - x) / (x - 1) + 9 * x^9 := fun x hx ↦ by
     convert_to U x = x * ((x^9 - 1) / (x - 1)) + 9 * x^9
@@ -59,28 +62,31 @@ problem usa1989_p5
     have h4 : x - 1 < 0 := by
       suffices H : x < 1 from sub_neg.mpr H
       exact lt_of_le_of_lt hx zero_lt_one
-    have h5 : 9 * x^9 ≤ 0 := by
-      suffices H : 0 ≤ (-x)^9 by linarith
-      positivity
     have h6 : x ≠ 1 := by linarith
     constructor
     · have h3 : 0 ≤ x^10 - x := by change 0 ≤ x^10 + - x; positivity
       rw [hU x h6]
-      have : (x ^ 10 - x) / (x - 1) ≤ 0 := by
+      have h8 : (x ^ 10 - x) / (x - 1) ≤ 0 := by
         obtain h7 | h7 : x^10 - x = 0 ∨ 0 < x^10 - x := LE.le.eq_or_gt h3
         · rw [h7]; simp
         · exact LT.lt.le (div_neg_of_pos_of_neg h7 h4)
-      exact add_nonpos this h5
+      have h5 : 9 * x^9 ≤ 0 := by
+        suffices H : 0 ≤ (-x)^9 by linarith
+        positivity
+      exact add_nonpos h8 h5
     · have h3 : 0 ≤ x^12 - x := by change 0 ≤ x^12 + - x; positivity
       rw [hV x h6]
-      have : (x ^ 12 - x) / (x - 1) ≤ 0 := by
+      have h8 : (x ^ 12 - x) / (x - 1) ≤ 0 := by
         obtain h7 | h7 : x^12 - x = 0 ∨ 0 < x^12 - x := LE.le.eq_or_gt h3
         · rw [h7]; simp
         · exact LT.lt.le (div_neg_of_pos_of_neg h7 h4)
-      have h5' : 9 * x^11 ≤ 0 := by
+      have h5 : 9 * x^11 ≤ 0 := by
         suffices H : 0 ≤ (-x)^11 by linarith
         positivity
-      exact add_nonpos this h5'
+      exact add_nonpos h8 h5
+
+  have h1u : ¬ u ≤ 0 := fun hun ↦ by linarith[(h1 u hun).1]
+  have h1v : ¬ v ≤ 0 := fun hvn ↦ by linarith[(h1 v hvn).2]
 
   have h2 : ¬ 9/10 ≤ u := by
     intro hu9
@@ -101,7 +107,6 @@ problem usa1989_p5
       norm_num at h6
       dsimp only [U]
       linarith
-    have hu' : U u = 8 := hu
     linarith
 
   have h2' : ¬ 9/10 ≤ v := by
@@ -122,7 +127,24 @@ problem usa1989_p5
       norm_num at h6
       dsimp only [U]
       linarith
-    have hv' : V v = 8 := hv
     linarith
 
+  have h4 : 10 * u - 9 < 0 := by linarith
+  have h5 : 0 < u := not_le.mp h1u
+  have h5' : 0 < u^9 := pow_pos h5 9
+  have h7 : 0 < u + 1 := by linarith
+  have h6 : u^9 * (10 * u - 9) < 0 := by nlinarith
+  have h8 : u^9 * (10 * u - 9) * (u + 1) < 0 := by nlinarith
+
+  have h9 : V u - U u = 10 * u^11 + u^10 - 9 * u^9 := by
+    dsimp only [V, U]
+    nth_rw 1 [Finset.sum_range_succ]
+    nth_rw 1 [Finset.sum_range_succ]
+    ring
+
+  have h3 : V u < U u := by
+    calc _ = U u + (V u - U u) := by ring
+         _ = U u + (10 * u^11 + u^10 - 9 * u^9) := by rw [h9]
+         _ = U u + u^9 * (10 * u - 9) * (u + 1) := by ring
+         _ < _ := by linarith
   sorry
