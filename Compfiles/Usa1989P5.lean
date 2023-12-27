@@ -35,7 +35,7 @@ problem usa1989_p5
   -- https://artofproblemsolving.com/wiki/index.php/1989_USAMO_Problems/Problem_5
   simp only [ite_false]
 
-  let U (x : ℝ) : ℝ := (∑ i in Finset.range 8, x^(i + 1)) + 10 * x^ 9
+  let U (x : ℝ) : ℝ := (∑ i in Finset.range 8, x^(i + 1)) + 10 * x^9
   let V (x : ℝ) : ℝ := (∑ i in Finset.range 10, x^(i + 1)) + 10 * x^11
 
   change U u = 8 at hu
@@ -91,21 +91,9 @@ problem usa1989_p5
   have h2 : ¬ 9/10 ≤ u := by
     intro hu9
     have : 8 < U u := by
-      -- todo: should the `mono` tactic help here?
-      have h3 : (9/10)^9 ≤ u^9 := pow_le_pow_left (by norm_num) hu9 9
-      have h4 : ∀ i ∈ Finset.range 8, (9/10)^(i+1) ≤ u^(i+1) := fun i _hi ↦ by
-        exact pow_le_pow_left (by norm_num) hu9 (i + 1)
-
-      have h5 : ∑ i in Finset.range 8, ((9:ℝ)/10) ^ (i + 1) ≤
-                ∑ i in Finset.range 8, u^(i + 1) :=
-        Finset.sum_le_sum h4
-
-      have h6 : U (9 / 10) ≤ U u := by
-        dsimp only [U]; gcongr
-      have h7 : (9:ℝ)/10 ≠ 1 := by norm_num
-      rw [hU _ h7] at h6
+      have h6 : U (9 / 10) ≤ U u := by dsimp only; gcongr
       norm_num at h6
-      dsimp only [U]
+      dsimp only
       linarith
     linarith
 
@@ -135,15 +123,6 @@ problem usa1989_p5
   by_contra! H
 
   have h11 : 0 < v := not_le.mp h1v
-  have h13 : v^11 ≤ u^11 := pow_le_pow_left (le_of_lt h11) H 11
-
-  have h14 : ∀ i ∈ Finset.range 10, v^(i+1) ≤ u^(i+1) := fun i _hi ↦ by
-    exact pow_le_pow_left (le_of_lt h11) H (i + 1)
-
-  have h15 : ∑ i in Finset.range 10, v ^ (i + 1) ≤
-             ∑ i in Finset.range 10, u^(i + 1) :=
-        Finset.sum_le_sum h14
-
   have h16 : V v ≤ V u := by dsimp only; gcongr
 
   exact (not_lt.mpr h16 h10).elim
