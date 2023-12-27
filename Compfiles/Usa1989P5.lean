@@ -30,7 +30,7 @@ problem usa1989_p5
     (u v : ℝ)
     (hu : (∑ i in Finset.range 8, u^(i + 1)) + 10 * u^9 = 8)
     (hv : (∑ i in Finset.range 10, v^(i + 1)) + 10 * v^11 = 8) :
-    if u_is_larger then v < u else v < u := by
+    if u_is_larger then v < u else u < v := by
   -- solution from
   -- https://artofproblemsolving.com/wiki/index.php/1989_USAMO_Problems/Problem_5
   simp only [ite_self]
@@ -126,4 +126,3 @@ problem usa1989_p5
     linarith
 
   sorry
-
