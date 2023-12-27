@@ -85,7 +85,7 @@ problem imo2015_p5 :
         specialize H2 a ha
         rw [←or_iff_not_imp_left] at H2
         exact Finset.mem_union.mpr H2
-      have h4 : (Finset.Icc 1 2016).card ≤ (L ∪ R).card := Finset.card_le_of_subset h3
+      have h4 : (Finset.Icc 1 2016).card ≤ (L ∪ R).card := Finset.card_le_card h3
       rw [Nat.card_Icc, add_tsub_cancel_right] at h4
       rw [←hcard] at H
       exact ((h4.trans h2).trans_lt H).false
