@@ -103,5 +103,27 @@ problem usa1989_p5
       linarith
     have hu' : U u = 8 := hu
     linarith
+
+  have h2' : ¬ 9/10 ≤ v := by
+    intro hv9
+    have : 8 < V v := by
+      have h3 : (9/10)^11 ≤ v^11 := pow_le_pow_left (by norm_num) hv9 11
+      have h4 : ∀ i ∈ Finset.range 10, (9/10)^(i+1) ≤ v^(i+1) := fun i _hi ↦ by
+        exact pow_le_pow_left (by norm_num) hv9 (i + 1)
+
+      have h5 : ∑ i in Finset.range 10, ((9:ℝ)/10) ^ (i + 1) ≤
+                ∑ i in Finset.range 10, v^(i + 1) :=
+        Finset.sum_le_sum h4
+
+      have h6 : V (9 / 10) ≤ V v := by
+        dsimp only [U]; gcongr
+      have h7 : (9:ℝ)/10 ≠ 1 := by norm_num
+      rw [hV _ h7] at h6
+      norm_num at h6
+      dsimp only [U]
+      linarith
+    have hv' : V v = 8 := hv
+    linarith
+
   sorry
 
