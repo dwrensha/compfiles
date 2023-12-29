@@ -59,9 +59,7 @@ problem usa1989_p5
 
   have h1 : ∀ x : ℝ, x ≤ 0 → (U x ≤ 0 ∧ V x ≤ 0) := fun x hx ↦ by
     have h2 : 0 ≤ -x := neg_nonneg.mpr hx
-    have h4 : x - 1 < 0 := by
-      suffices H : x < 1 from sub_neg.mpr H
-      exact lt_of_le_of_lt hx zero_lt_one
+    have h4 : x - 1 < 0 := sub_neg.mpr (lt_of_le_of_lt hx zero_lt_one)
     have h6 : x ≠ 1 := by linarith
     constructor
     · have h3 : 0 ≤ x^10 - x := by change 0 ≤ x^10 + - x; positivity
