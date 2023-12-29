@@ -65,9 +65,9 @@ problem usa1989_p5
     · have h3 : 0 ≤ x^10 - x := by change 0 ≤ x^10 + - x; positivity
       rw [hU x h6]
       have h8 : (x ^ 10 - x) / (x - 1) ≤ 0 := by
-        obtain h7 | h7 : x^10 - x = 0 ∨ 0 < x^10 - x := LE.le.eq_or_gt h3
+        obtain h7 | h7 : x^10 - x = 0 ∨ 0 < x^10 - x := h3.eq_or_gt
         · rw [h7]; simp
-        · exact LT.lt.le (div_neg_of_pos_of_neg h7 h4)
+        · exact (div_neg_of_pos_of_neg h7 h4).le
       have h5 : 9 * x^9 ≤ 0 := by
         suffices H : 0 ≤ (-x)^9 by linarith
         positivity
@@ -75,9 +75,9 @@ problem usa1989_p5
     · have h3 : 0 ≤ x^12 - x := by change 0 ≤ x^12 + - x; positivity
       rw [hV x h6]
       have h8 : (x ^ 12 - x) / (x - 1) ≤ 0 := by
-        obtain h7 | h7 : x^12 - x = 0 ∨ 0 < x^12 - x := LE.le.eq_or_gt h3
+        obtain h7 | h7 : x^12 - x = 0 ∨ 0 < x^12 - x := h3.eq_or_gt
         · rw [h7]; simp
-        · exact LT.lt.le (div_neg_of_pos_of_neg h7 h4)
+        · exact (div_neg_of_pos_of_neg h7 h4).le
       have h5 : 9 * x^11 ≤ 0 := by
         suffices H : 0 ≤ (-x)^11 by linarith
         positivity
