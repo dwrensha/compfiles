@@ -70,6 +70,7 @@ import Compfiles.Russia1998P42
 import Compfiles.UpperLowerContinuous
 import Compfiles.Usa1981P5
 import Compfiles.Usa1982P4
+import Compfiles.Usa1985P1
 import Compfiles.Usa1987P1
 import Compfiles.Usa1989P5
 import Compfiles.Usa1990P2
