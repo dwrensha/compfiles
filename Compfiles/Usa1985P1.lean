@@ -38,30 +38,23 @@ lemma nicomachus (n : ℕ) :
          (2 * (∑ x in Finset.range n, x) * n +
            n ^ 2) := by ring
   rw [h1]
-  have h2 : n ^ 3 =
-      2 * (∑ x in Finset.range n, x) * n + n ^ 2 := by
+  have h2 : n ^ 3 = 2 * (∑ x in Finset.range n, x) * n + n ^ 2 := by
     have h5 : 2 * ∑ x in Finset.range n, x =
                (∑ x in Finset.range n, x) * 2 := mul_comm _ _
     rw [h5, Finset.sum_range_id_mul_two]
     cases' n with n
     · simp
-    · simp only [Nat.succ_sub_succ_eq_sub, tsub_zero]
-      rw [show n.succ = n + 1 by rfl]
+    · simp only [Nat.succ_sub_succ_eq_sub, tsub_zero, Nat.succ_eq_add_one]
       ring
   linarith
-
-lemma nicomachus1 (n : ℕ) :
-    ∑ i in Finset.range n, (i + 1)^3 =
-    (∑ i in Finset.range n, (i + 1))^2 := by
-  have h1 := nicomachus (n + 1)
-  simp only [Finset.sum_range_succ', zero_pow', add_zero] at h1
-  assumption
 
 lemma nicomachus' (n : ℕ) :
     ∑ i in Finset.range n, ((i:ℤ) + 1)^3 =
     (∑ i in Finset.range n, ((i:ℤ) + 1))^2 := by
   norm_cast
-  exact nicomachus1 n
+  have h1 := nicomachus (n + 1)
+  simp only [Finset.sum_range_succ', zero_pow', add_zero] at h1
+  exact h1
 
 snip end
 
