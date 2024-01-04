@@ -29,35 +29,39 @@ open scoped BigOperators
 snip begin
 
 lemma nicomachus (n : ℕ) :
-    ∑ i in Finset.range n, (i + 1)^3 =
-    (∑ i in Finset.range n, (i + 1))^2 := by
+    ∑ i in Finset.range n, i^3 = (∑ i in Finset.range n, i)^2 := by
   induction' n with n ih
   · simp
   rw [Finset.sum_range_succ, ih, Finset.sum_range_succ]
-  have h1 : ((∑ x in Finset.range n, (x + 1)) + (n + 1)) ^ 2 =
-      ((∑ x in Finset.range n, (x + 1)))^2 +
-         (2 * (∑ x in Finset.range n, (x + 1)) * (n + 1) +
-           (n + 1) ^ 2) := by
-    ring
+  have h1 : ((∑ x in Finset.range n, x) + n) ^ 2 =
+      ((∑ x in Finset.range n, x))^2 +
+         (2 * (∑ x in Finset.range n, x) * n +
+           n ^ 2) := by ring
   rw [h1]
-  have h2 : (n + 1) ^ 3 =
-      2 * (∑ x in Finset.range n, (x + 1)) * (n + 1) + (n + 1) ^ 2 := by
-    have h4 : ∑ x in Finset.range n, (x + 1) = ∑ x in Finset.range (n + 1), x :=
-      by rw[Finset.sum_range_succ']
-         rfl
-    rw [h4]
-    have h5 : 2 * ∑ x in Finset.range (n + 1), x =
-               (∑ x in Finset.range (n + 1), x) * 2 := mul_comm _ _
+  have h2 : n ^ 3 =
+      2 * (∑ x in Finset.range n, x) * n + n ^ 2 := by
+    have h5 : 2 * ∑ x in Finset.range n, x =
+               (∑ x in Finset.range n, x) * 2 := mul_comm _ _
     rw [h5, Finset.sum_range_id_mul_two]
-    simp only [add_tsub_cancel_right, Nat.cast_mul, Nat.cast_add, Nat.cast_one]
-    ring
+    cases' n with n
+    · simp
+    · simp only [Nat.succ_sub_succ_eq_sub, tsub_zero]
+      rw [show n.succ = n + 1 by rfl]
+      ring
   linarith
+
+lemma nicomachus1 (n : ℕ) :
+    ∑ i in Finset.range n, (i + 1)^3 =
+    (∑ i in Finset.range n, (i + 1))^2 := by
+  have h1 := nicomachus (n + 1)
+  simp only [Finset.sum_range_succ', zero_pow', add_zero] at h1
+  assumption
 
 lemma nicomachus' (n : ℕ) :
     ∑ i in Finset.range n, ((i:ℤ) + 1)^3 =
     (∑ i in Finset.range n, ((i:ℤ) + 1))^2 := by
   norm_cast
-  exact nicomachus n
+  exact nicomachus1 n
 
 snip end
 
