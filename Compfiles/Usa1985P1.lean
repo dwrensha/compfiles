@@ -26,6 +26,41 @@ namespace Usa1985P1
 
 open scoped BigOperators
 
+snip begin
+
+lemma nicomachus (n : ℕ) :
+    ∑ i in Finset.range n, (i + 1)^3 =
+    (∑ i in Finset.range n, (i + 1))^2 := by
+  induction' n with n ih
+  · simp
+  rw [Finset.sum_range_succ, ih, Finset.sum_range_succ]
+  have h1 : ((∑ x in Finset.range n, (x + 1)) + (n + 1)) ^ 2 =
+      ((∑ x in Finset.range n, (x + 1)))^2 +
+         (2 * (∑ x in Finset.range n, (x + 1)) * (n + 1) +
+           (n + 1) ^ 2) := by
+    ring
+  rw [h1]
+  have h2 : (n + 1) ^ 3 =
+      2 * (∑ x in Finset.range n, (x + 1)) * (n + 1) + (n + 1) ^ 2 := by
+    have h4 : ∑ x in Finset.range n, (x + 1) = ∑ x in Finset.range (n + 1), x :=
+      by rw[Finset.sum_range_succ']
+         rfl
+    rw [h4]
+    have h5 : 2 * ∑ x in Finset.range (n + 1), x =
+               (∑ x in Finset.range (n + 1), x) * 2 := mul_comm _ _
+    rw [h5, Finset.sum_range_id_mul_two]
+    simp only [add_tsub_cancel_right, Nat.cast_mul, Nat.cast_add, Nat.cast_one]
+    ring
+  linarith
+
+lemma nicomachus' (n : ℕ) :
+    ∑ i in Finset.range n, ((i:ℤ) + 1)^3 =
+    (∑ i in Finset.range n, ((i:ℤ) + 1))^2 := by
+  norm_cast
+  exact nicomachus n
+
+snip end
+
 determine does_exist : Bool := true
 
 abbrev is_valid (x : ℕ → ℤ) (y z : ℤ) : Prop :=
@@ -42,18 +77,78 @@ problem usa1985_p1 :
   -- solution from
   -- https://artofproblemsolving.com/wiki/index.php/1985_USAMO_Problems/Problem_1
   simp only [ite_true]
-  let j := ∑ ii in Finset.range 1985, (ii + 1)
-  let k := ∑ ii in Finset.range 1985, (ii + 1)^2
+  let j : ℤ := ∑ ii in Finset.range 1985, (ii + 1)
+  let k : ℤ := ∑ ii in Finset.range 1985, (ii + 1)^2
   let x := fun (ii : ℕ) ↦ ((ii + 1):ℤ) * k ^ 4
-  use x, k, j
-  refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩
-  · intro ii hii
-    dsimp [x]
-    positivity
-    sorry -- comment this out and you get "max recursion depth reached"
 
-  · sorry
-  · sorry
-  · sorry
-  · sorry
-  · sorry
+  have h0 : ∀ ii ∈ Finset.range 1985, 0 < (ii:ℤ) + 1 := by
+    intro ii _
+    exact Int.pos_of_sign_eq_one rfl
+
+  have h4 : ∀ ii ∈ Finset.range 1985, 0 < ((ii:ℤ) + 1)^2 := by
+    intro ii _
+    exact Int.pos_of_sign_eq_one rfl
+
+  have hne : (Finset.range 1985).Nonempty := by aesop
+  have h3 : 0 < (∑ ii in Finset.range 1985, ((ii:ℤ) + 1) ^ 2) := by
+    exact Finset.sum_pos h4 hne
+
+  use x, k^3, k^6 * j
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩
+  · intro ii _
+    dsimp [x]
+    have h1 : 0 < (ii : ℤ) + 1 := by clear h3; positivity
+    have h2 : 0 < (∑ ii in Finset.range 1985, ((ii:ℤ) + 1) ^ 2) ^ 4 := by
+      exact pow_pos h3 4
+    exact Int.mul_pos h1 h2
+  · exact pow_pos h3 3
+  · have h20 : 0 < k^6 := pow_pos h3 6
+    have h21 : 0 < j := Finset.sum_pos h0 hne
+    exact Int.mul_pos h20 h21
+  · have h5 : ∑ i in Finset.range 1985, x i ^ 2 =
+              ∑ i in Finset.range 1985, (((i : ℤ) + 1) ^ 2 * k ^ 8) := by
+      rw [Finset.sum_congr rfl]
+      intro l _
+      unfold_let x
+      have h10 : ∀ a b : ℤ, (a * b^4)^2 = a^2 * b ^8 := by intro a b; ring
+      exact h10 _ _
+    have h6 : ∑ i in Finset.range 1985, (((i : ℤ)+1) ^ 2 * k ^ 8) =
+              (∑ i in Finset.range 1985, (((i : ℤ)+1) ^ 2)) * k ^ 8 := by
+      rw [Finset.sum_mul]
+    have h7 : (∑ i in Finset.range 1985, (((i : ℤ)+1) ^ 2)) * k ^ 8 =
+              k * k^8 := rfl
+
+    have h9 : ∀ k : ℤ, k * k^8  = (k^3) ^ 3 := fun k ↦ by ring
+    have h8 : k * k^8  = (k^3) ^ 3 := h9 k
+    rw [←h8, ←h7, ←h6, ←h5]
+
+  · have h5 : ∑ i in Finset.range 1985, x i ^ 3 =
+              ∑ i in Finset.range 1985, (((i:ℤ) + 1) ^ 3 * k^12) := by
+      rw [Finset.sum_congr rfl]
+      intro l _
+      unfold_let x
+      have h10 : ∀ a b : ℤ, (a * b^4)^3 = a^3 * b^12 := by intro a b; ring
+      exact h10 _ _
+
+    have h6 : ∑ i in Finset.range 1985, (((i:ℤ) + 1) ^ 3 * k^12) =
+              (∑ i in Finset.range 1985, (((i:ℤ) + 1) ^ 3)) * k^12 := by
+      rw [Finset.sum_mul]
+    have h7 : (∑ i in Finset.range 1985, (((i:ℤ) + 1) ^ 3)) * k^12 =
+               j^2 * k^12 := by rw [nicomachus']
+
+    have h9 : ∀ j k : ℤ, j^2 * k^12 = (k^6 * j) ^ 2 := fun j k ↦ by ring
+    have h8 : j^2 * k^12  = (k^6 * j) ^ 2 := h9 _ _
+
+    rw [←h8, ←h7, ←h6, ←h5]
+  · intro ii _ jj _ hij
+    have hsm : StrictMono x := by
+      intro a b hab
+      unfold_let x
+      dsimp
+      have h5 : (a:ℤ) + 1 < (b:ℤ) + 1 := by linarith
+      have h6 : 0 < (∑ ii in Finset.range 1985, ((ii:ℤ) + 1) ^ 2) ^ 4 := by
+        exact pow_pos h3 4
+      exact Int.mul_lt_mul_of_pos_right h5 h6
+    obtain h10 | h11 : ii < jj ∨ jj < ii := Nat.lt_or_gt.mp hij
+    · exact ne_of_lt (hsm h10)
+    · exact (ne_of_lt (hsm h11)).symm
