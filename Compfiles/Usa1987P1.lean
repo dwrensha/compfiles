@@ -72,7 +72,7 @@ problem usa1987_p1 (m n : ℤ) :
     have h11 : 1 * m * m + - 8 * m + - k * k = 0 := by linarith
     have h12 := (quadratic_eq_zero_iff_discrim_eq_sq one_ne_zero m).mp h11
     rw [discrim] at h12
-    have h13 : 16 + (k * k) = (m -4) ^ 2 := by linarith
+    have h13 : 16 + (k * k) = (m -4) ^ 2 := by linarith only [h12]
     let m' := |m - 4|
     have hm' : (m - 4)^2 = m'^2 := (sq_abs _).symm
     have hm0' : 0 ≤ m' := abs_nonneg _
@@ -123,15 +123,15 @@ problem usa1987_p1 (m n : ℤ) :
       · have h26 : m = 9 := eq_add_of_sub_eq h25
         rw [h26] at h6 ⊢
         norm_num at h6
-        have h27 : (30:ℤ)^2 = (4 * n + 54) ^2 := by linarith
+        have h27 : (30:ℤ)^2 = (4 * n + 54) ^2 := by linear_combination h6
         obtain h28 | h28 := eq_or_eq_neg_of_sq_eq_sq _ _ h27
-        · obtain rfl : n = -6 := by linarith
+        · obtain rfl : n = -6 := by linarith only [h28]
           simp only [Set.mem_insert_iff, true_or, or_true]
-        · obtain rfl : n = -21 := by linarith
+        · obtain rfl : n = -21 := by linarith only [h28]
           simp only [Set.mem_insert_iff, Set.mem_singleton_iff, true_or, or_true]
       · obtain rfl : m = -1 := eq_add_of_sub_eq h25
         norm_num at h6
-        obtain rfl : n = -1 := by linarith [pow_eq_zero h6.symm]
+        obtain rfl : n = -1 := by linarith only [pow_eq_zero h6.symm]
         simp only [Set.mem_insert_iff, true_or, or_true]
     · rw [hm'] at h13
       have h21 : 5^2 < m'^2 := by rw [←h13]; norm_num
