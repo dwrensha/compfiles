@@ -109,15 +109,13 @@ problem usa1985_p1 :
       unfold_let x
       have h10 : ∀ a b : ℤ, (a * b^4)^2 = a^2 * b ^8 := by intro a b; ring
       exact h10 _ _
-    have h6 : ∑ i in Finset.range 1985, (((i : ℤ)+1) ^ 2 * k ^ 8) =
-              (∑ i in Finset.range 1985, (((i : ℤ)+1) ^ 2)) * k ^ 8 := by
-      rw [Finset.sum_mul]
-    have h7 : (∑ i in Finset.range 1985, (((i : ℤ)+1) ^ 2)) * k ^ 8 =
-              k * k^8 := rfl
 
-    have h9 : ∀ k : ℤ, k * k^8  = (k^3) ^ 3 := fun k ↦ by ring
-    have h8 : k * k^8  = (k^3) ^ 3 := h9 k
-    rw [←h8, ←h7, ←h6, ←h5]
+    have h9 : ∀ k : ℤ, k * k^8 = (k^3) ^ 3 := fun k ↦ by ring
+    calc
+      _ = ∑ i in Finset.range 1985, (((i : ℤ)+1) ^ 2 * k ^ 8) := h5
+      _ = (∑ i in Finset.range 1985, (((i : ℤ)+1) ^ 2)) * k ^ 8 := by rw [Finset.sum_mul]
+      _ = k * k^8 := by rfl
+      _ = _ := h9 k
 
   · have h5 : ∑ i in Finset.range 1985, x i ^ 3 =
               ∑ i in Finset.range 1985, (((i:ℤ) + 1) ^ 3 * k^12) := by
@@ -127,16 +125,13 @@ problem usa1985_p1 :
       have h10 : ∀ a b : ℤ, (a * b^4)^3 = a^3 * b^12 := by intro a b; ring
       exact h10 _ _
 
-    have h6 : ∑ i in Finset.range 1985, (((i:ℤ) + 1) ^ 3 * k^12) =
-              (∑ i in Finset.range 1985, (((i:ℤ) + 1) ^ 3)) * k^12 := by
-      rw [Finset.sum_mul]
-    have h7 : (∑ i in Finset.range 1985, (((i:ℤ) + 1) ^ 3)) * k^12 =
-               j^2 * k^12 := by rw [nicomachus']
-
     have h9 : ∀ j k : ℤ, j^2 * k^12 = (k^6 * j) ^ 2 := fun j k ↦ by ring
-    have h8 : j^2 * k^12  = (k^6 * j) ^ 2 := h9 _ _
+    calc
+      _ = _ := h5
+      _ = (∑ i in Finset.range 1985, (((i:ℤ) + 1) ^ 3)) * k^12 := by rw [Finset.sum_mul]
+      _ = j^2 * k^12 := by rw [nicomachus']
+      _ = _ := h9 _ _
 
-    rw [←h8, ←h7, ←h6, ←h5]
   · intro ii _ jj _ hij
     have hsm : StrictMono x := by
       intro a b hab
