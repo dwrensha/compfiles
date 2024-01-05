@@ -92,15 +92,13 @@ problem usa1987_p1 (m n : ℤ) :
       have h15 : k' + 1 ≤ m' := h14
       have h16 : (k' + 1)^2 ≤ m'^2 := by gcongr
       rw [←h13] at h16
-      have h17 : 2 * k' + 1 ≤ 16 := by linarith
+      have h17 : 2 * k' + 1 ≤ 16 := by linarith only [h16]
       have h18 : 2 * 8 + 1 ≤ 2 * k' + 1 := by gcongr
       have h19 := h18.trans h17
       norm_num at h19
     interval_cases k' <;> rw [hk'] at h13 <;> norm_num at h13
     · rw [hm'] at h13
-      have h21 : m' = 4 := by
-        clear h1 h2 h3 h4 h5 h6 hm h9 hk h11 h12 hm' hk' hk0' h20
-        nlinarith
+      have h21 : m' = 4 := by nlinarith only [h13, hm0']
       obtain h25 | h25 := eq_or_eq_neg_of_abs_eq h21
       · obtain rfl : m = 8 := eq_add_of_sub_eq h25
         norm_num at h6
@@ -120,9 +118,7 @@ problem usa1987_p1 (m n : ℤ) :
       have h24 : m' < 5 := lt_of_pow_lt_pow_left 2 (by norm_num) h22
       exact (Int.not_le.mpr h24 h23).elim
     · rw [hm'] at h13
-      have h21 : m' = 5 := by
-        clear h1 h2 h3 h4 h5 h6 hm h9 hk h11 h12 hm' hk' hk0' h20
-        nlinarith
+      have h21 : m' = 5 := by nlinarith only [hm0', h13]
       obtain h25 | h25 := eq_or_eq_neg_of_abs_eq h21
       · have h26 : m = 9 := eq_add_of_sub_eq h25
         rw [h26] at h6 ⊢
