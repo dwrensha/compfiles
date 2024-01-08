@@ -218,7 +218,7 @@ problem usa1998_p3
       intro ii hii
       rw [Finset.mem_erase] at hii
       have := sub_nonneg.mpr (le_of_lt (lemma1 (a ii) (ha ii hii.2)))
-      have := Real.rpow_nonneg_of_nonneg this (1 / ↑n)
+      have := Real.rpow_nonneg this (1 / ↑n)
       exact this -- if I try to collapse this to the previous line, i get timeouts.
     have h21 := Finset.prod_le_prod h20 h5
     have h23 : ∏ i in Finset.range (n + 1),
