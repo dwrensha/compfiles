@@ -28,12 +28,6 @@ lemma lemma1 (x : ZMod 13) :
   reduce_mod_char
   fin_cases x <;> decide
 
-lemma lemma2 (h : (0 : ZMod 13) = 4) : False := by
-  change ((_: ℕ) : ZMod 13) = ((_ : ℕ) : ZMod 13) at h
-  rw [ZMod.eq_iff_modEq_nat] at h
-  change _ % 13 = _ % 13 at h
-  norm_num at h
-
 snip end
 
 problem usa2005_p2 :
@@ -56,12 +50,11 @@ problem usa2005_p2 :
     linear_combination h1 + h2
   have h4 : (x^3 + 1) * (x^3 + y) = 147^157 := by linear_combination h1
   reduce_mod_char at h3 h4
-  have h5 := lemma1 x
   have h7 : x^3 ≠ -1 := by
     by_contra! H
     rw [H] at h4
     norm_num at h4
-    exact lemma2 h4
+    simp (config := {decide  := true}) at h4
   have h8 : x^3 + y = 4 ∨ x^3 + y = 2 ∨ x^3 + y = 5 ∨ x^3 + y = -1 := by
     obtain h5 | h5 | h5 | h5 | h5 := lemma1 x
     · rw [h5] at h4 ⊢
@@ -96,9 +89,4 @@ problem usa2005_p2 :
   rw [show (z^3)^3 = z^9 by ring] at h6
   obtain h9 | h9 | h9 | h9 := h8
       <;> obtain h6 | h6 | h6 | h6 | h6 := h6
-      <;> rw [h6, h9] at h3
-      <;> reduce_mod_char at h3
-      <;> change ((_: ℕ) : ZMod 13) = ((_ : ℕ) : ZMod 13) at h3
-      <;> rw [ZMod.eq_iff_modEq_nat] at h3
-      <;> change _ % 13 = _ % 13 at h3
-      <;> norm_num at h3
+      <;> simp (config := { decide := true }) [h6, h9] at h3
