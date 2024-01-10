@@ -25,7 +25,8 @@ snip begin
 
 lemma lemma1 (x : ZMod 13) :
     x^3 = 0 ∨ x^3 = 1 ∨ x^3 = -1 ∨ x^3 = 5 ∨ x^3 = -5 := by
-  fin_cases x <;> aesop
+  reduce_mod_char
+  fin_cases x <;> decide
 
 lemma lemma2 (h : (0 : ZMod 13) = 4) : False := by
   change ((_: ℕ) : ZMod 13) = ((_ : ℕ) : ZMod 13) at h
