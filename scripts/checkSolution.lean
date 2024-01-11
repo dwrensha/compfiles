@@ -1,8 +1,9 @@
+import Mathlib.Data.String.Defs
 import Std.Data.String.Basic
 import Std.Lean.Util.Path
 import Std.Tactic.Lint
 import Lean.Environment
-import Mathlib.Data.String.Defs
+import Lean.Elab.Print
 import Lean.Meta.Basic
 import Lean.Replay
 

@@ -64,9 +64,6 @@ problem hungary1998_p6 (x y : ℤ) (z : ℕ) (hz : 1 < z) :
 
   have h2 : ∑ i in Finset.range 99, (x^2) = 99 * x^2 := by norm_num
 
-  have h3 : ∑ i in Finset.range 99, (2 * x * ((i:ℤ) + 1)) =
-         2 * x * ∑ i in Finset.range 99, ((i:ℤ) + 1) := Finset.mul_sum.symm
-
   have h4 : ∑ i in Finset.range 99, ((i:ℤ) + 1) =
           ∑ i in Finset.range 100, (i:ℤ) := by
     rw [Finset.sum_range_succ']; rfl
@@ -91,7 +88,7 @@ problem hungary1998_p6 (x y : ℤ) (z : ℕ) (hz : 1 < z) :
           ∑ i in Finset.range 99, (2 * x * ((i:ℤ) + 1)) +
          ∑ i in Finset.range 99, (((i:ℤ) + 1)^2) := by rw [Finset.sum_add_distrib]
     _ = 99 * x^2 + 2 * x * (99 * 100 / 2) +  (99 * 100 * 199)/6
-        := by rw [h2, h3, h4, h5, h6]
+        := by rw [h2, ←Finset.mul_sum, h4, h5, h6]
     _ = 3 * (11 * (3 * x^2 + 300 * x + 50 * 199)) := by rw [hnn1,hnn2]; ring
 
   -- which implies that 3∣y.
