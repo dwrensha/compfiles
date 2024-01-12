@@ -40,23 +40,22 @@ lemma lemma1 (s : ℕ → ℤ) (hs : ∀ i, s i < s (i + 1)) (z : ℤ) (hs0 : s 
   have hmono : StrictMono s := strictMono_nat_of_lt_succ hs
   let S := { i | z ≤ s (i + 1) }
   have h3 : ∃ j, j ∈ S := by
-    have h1 : 0 < z - s 0 := Int.sub_pos_of_lt hs0
     have h5 : ∀ i, s 0 + i ≤ s i := fun i ↦ by
       induction' i with i ih
       · simp
       · have h10 : (Nat.succ i : ℤ) = (i : ℤ) + 1 := by norm_cast
         rw [h10, ←add_assoc]
         have h10 : s i + 1 ≤ s (Nat.succ i) := hs i
-        linarith
+        omega
     use Int.toNat (z - s 0)
     rw [Set.mem_setOf_eq]
     have h8 := h5 (Int.toNat (z - s 0))
-    have h6 : 0 ≤ z - s 0 := by linarith
+    have h6 : 0 ≤ z - s 0 := by omega
     have h7 : ((Int.toNat (z - s 0)) :ℤ) = z - s 0 := Int.toNat_of_nonneg h6
     rw [h7] at h8
     rw [add_sub_cancel'_right] at h8
     have h12 : s (Int.toNat (z - s 0)) < s (Int.toNat (z - s 0) + 1) := hs _
-    linarith
+    omega
   use Nat.find h3
   dsimp
   refine' ⟨⟨_, _⟩, _⟩
@@ -79,7 +78,7 @@ lemma lemma1 (s : ℕ → ℤ) (hs : ∀ i, s i < s (i + 1)) (z : ℤ) (hs0 : s 
     intro k hk
     intro hkk
     have h9 : s (k + 1) ≤ s m := (StrictMono.le_iff_le hmono).mpr hk
-    linarith
+    omega
 
 snip end
 
