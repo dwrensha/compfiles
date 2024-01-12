@@ -230,7 +230,7 @@ problem imo1989_p5 (n : ℕ) : ∃ m, ∀ j < n, ¬IsPrimePow (m + j) := by
       calc
         j < n := hj
         _ ≤ l.get ⟨j, hj2⟩ := h3
-        _ ≤ l.get ⟨j, hj2⟩ * l.get ⟨j + n, hj3⟩ := Nat.le_mul_of_pos_right (Nat.Prime.pos h4)
+        _ ≤ l.get ⟨j, hj2⟩ * l.get ⟨j + n, hj3⟩ := Nat.le_mul_of_pos_right _ (Nat.Prime.pos h4)
 
   rw [Nat.sub_add_cancel h7] at h6
   clear h1 h7
