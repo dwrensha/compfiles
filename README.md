@@ -58,9 +58,17 @@ $ lake exe extractProblems
 ```
 and then look in the `_extracted/problems` directory.
 
-Files in the `_extracted/solutions` directory retain their solution
-information, but are stripped of their dependency on
-the `ProblemExtraction` library.
+## extracting solutions
+
+Sometimes it's useful to have a version of a solution
+that does not depend on the `ProblemExtraction` library
+(but still contains all proof information).
+For example, you might want to share a fully worked solution
+on https://live.lean-lang.org/.
+
+To that end, the `extractProblems` tool described above
+additionally extracts dependency-stripped solution files into the
+`_extracted/solutions` directory.
 
 ## checking solutions
 
