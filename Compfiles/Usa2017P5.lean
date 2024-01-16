@@ -31,7 +31,9 @@ noncomputable def dist : ℤ × ℤ → ℤ × ℤ → ℝ
 problem usa2017_p5 (c : ℝ) :
     c ∈ solution_set ↔
     (0 < c ∧
-     ∃ l : ℤ × ℤ → ℤ,
+     ∃ l : ℤ × ℤ → ℕ,
        (Set.range l).Finite ∧
-       ∀ p1 p2, p1 ≠ p2 → dist (l p1) (l p2) ≤ c ^ i) := by
+       (∀ p, 0 < l p) ∧
+       ∀ {p1 p2}, p1 ≠ p2 → (l p1 = l p2) →
+            dist (l p1) (l p2) ≤ c ^ (l p1)) := by
   sorry
