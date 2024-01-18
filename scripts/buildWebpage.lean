@@ -37,11 +37,9 @@ def olean_path_to_github_url (path: String) : String :=
   "https://github.com/dwrensha/compfiles/blob/main/" ++
     ((path.stripPrefix pfx).stripSuffix sfx) ++ ".lean"
 
-def getFirstModuleDoc (env : Environment) (m : Name) : String :=
+def extractModuleDoc (env : Environment) (m : Name) : String :=
   match Lean.getModuleDoc? env m with
-  | some mda => match mda.toList with
-                | ⟨d, _⟩::_ => d
-                | _ => ""
+  | some mda => String.join (mda.toList.map ModuleDoc.doc)
   | _ => ""
 
 def HEADER : String :=
@@ -94,7 +92,7 @@ unsafe def main (_args : List String) : IO Unit := do
             | some v => do
                  if v.hasSorry then proved := false
           infos := ⟨m.toString.stripPrefix "Compfiles.",
-                    getFirstModuleDoc env m,
+                    extractModuleDoc env m,
                     solutionUrl, problemUrl, proved⟩ :: infos
 
           let h ← IO.FS.Handle.mk ("_site/" ++ problemFile) IO.FS.Mode.write
