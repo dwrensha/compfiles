@@ -11,6 +11,7 @@ open Lean Core Elab Command Std.Tactic.Lint
 
 structure ProblemInfo where
   name : String
+  informal : String
   solutionUrl : String
   problemUrl : String
   proved : Bool
@@ -70,6 +71,13 @@ unsafe def main (_args : List String) : IO Unit := do
 
       let mut infos : List ProblemInfo := []
       for ⟨m, problem_src⟩ in mst do
+          let mdoc :=
+            match Lean.getModuleDoc? env m with
+            | some mda => match mda.toList with
+                          | ⟨d, _⟩::_ => d
+                          | _ => ""
+            | _ => ""
+
           let p ← findOLean m
           let solutionUrl := olean_path_to_github_url p.toString
           IO.println s!"MODULE: {m}"
@@ -86,6 +94,7 @@ unsafe def main (_args : List String) : IO Unit := do
             | some v => do
                  if v.hasSorry then proved := false
           infos := ⟨m.toString.stripPrefix "Compfiles.",
+                    mdoc,
                     solutionUrl, problemUrl, proved⟩ :: infos
 
           let h ← IO.FS.Handle.mk ("_site/" ++ problemFile) IO.FS.Mode.write
@@ -121,7 +130,7 @@ unsafe def main (_args : List String) : IO Unit := do
       h.putStr "<ul>"
       let infos' := (infos.toArray.qsort (fun a1 a2 ↦ a1.name < a2.name)).toList
       for info in infos' do
-        h.putStr "<li>"
+        h.putStr s!"<li title=\"{htmlEscape info.informal}\">"
         h.putStr s!"<a href=\"{info.solutionUrl}\">"
         if info.proved then
           h.putStr "☑  "
