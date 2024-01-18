@@ -8,7 +8,7 @@ import Mathlib.Algebra.Ring.Basic
 import Mathlib.Data.Rat.Basic
 import Mathlib.Tactic.Ring
 
-import ProblemExtraction
+import ProblemExtraction { tags := [.Algebra] }
 
 problem_file
 

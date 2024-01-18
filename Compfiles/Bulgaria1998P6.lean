@@ -9,7 +9,7 @@ import Mathlib.Tactic
 
 import ProblemExtraction
 
-problem_file
+problem_file { tags := [.NumberTheory] }
 
 /-!
 Bulgarian Mathematical Olympiad 1998, Problem 6

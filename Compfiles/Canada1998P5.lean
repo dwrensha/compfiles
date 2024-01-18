@@ -8,7 +8,7 @@ import Mathlib.Data.Int.Basic
 
 import ProblemExtraction
 
-problem_file
+problem_file { tags := [.Algebra] }
 
 /-!
 Canadian Mathematical Olympiad 1998, Problem 5
