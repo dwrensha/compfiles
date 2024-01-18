@@ -8,7 +8,7 @@ import Mathlib.Tactic
 
 import ProblemExtraction
 
-problem_file
+problem_file { tags := [.Combinatorics] }
 
 /-!
 # International Mathematical Olympiad 2021, Problem 2
