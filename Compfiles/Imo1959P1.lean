@@ -10,7 +10,7 @@ import Mathlib.Data.Nat.Prime
 
 import ProblemExtraction
 
-problem_file
+problem_file { tags := [.NumberTheory] }
 
 /-!
 # International Mathematical Olympiad 1959, Problem 1.

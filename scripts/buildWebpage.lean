@@ -12,6 +12,7 @@ open Lean Core Elab Command Std.Tactic.Lint
 structure ProblemInfo where
   name : String
   informal : String
+  metadata : ProblemExtraction.ProblemFileMetadata
   solutionUrl : String
   problemUrl : String
   proved : Bool
@@ -73,6 +74,7 @@ unsafe def main (_args : List String) : IO Unit := do
     let state := {env}
     Prod.fst <$> (CoreM.toIO · ctx state) do
       let mst ← ProblemExtraction.extractProblems
+      let mds ← ProblemExtraction.extractMetadata
 
       let mut infos : List ProblemInfo := []
       for ⟨m, problem_src⟩ in mst do
@@ -91,8 +93,10 @@ unsafe def main (_args : List String) : IO Unit := do
             | none => pure ()
             | some v => do
                  if v.hasSorry then proved := false
+
           infos := ⟨m.toString.stripPrefix "Compfiles.",
                     extractModuleDoc env m,
+                    (mds.find? m).getD {},
                     solutionUrl, problemUrl, proved⟩ :: infos
 
           let h ← IO.FS.Handle.mk ("_site/" ++ problemFile) IO.FS.Mode.write

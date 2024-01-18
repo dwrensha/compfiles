@@ -10,7 +10,7 @@ import Mathlib.Tactic.Linarith
 
 import ProblemExtraction
 
-problem_file
+problem_file { tags := [.Combinatorics] }
 
 /-!
 # International Mathematical Olympiad 1964, Problem 4

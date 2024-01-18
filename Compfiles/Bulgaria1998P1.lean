@@ -10,7 +10,7 @@ import Mathlib.Tactic.IntervalCases
 
 import ProblemExtraction
 
-problem_file
+problem_file { tags := [.Combinatorics] }
 
 /-!
 Bulgarian Mathematical Olympiad 1998, Problem 1

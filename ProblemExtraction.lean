@@ -1,6 +1,8 @@
 import Lean.Elab.Command
+import Lean.Elab.Eval
 import Lean.Meta.Basic
 import Std.Lean.NameMapAttribute
+import Std.Util.TermUnsafe
 
 /-!
 Special commands to aid in "problem extraction".
@@ -45,7 +47,7 @@ abbrev ExtractionExtension := SimplePersistentEnvExtension Entry (Array Entry)
 
 initialize problemExtractionExtension : ExtractionExtension ←
   registerSimplePersistentEnvExtension {
-    name := `problem_extraction'
+    name := `problem_extraction
     addImportedFn := fun arrays =>
       arrays.foldl (init := ∅) fun acc as =>
         as.foldl (init := acc) fun acc' a => acc'.push a
@@ -54,7 +56,7 @@ initialize problemExtractionExtension : ExtractionExtension ←
 
 initialize solutionExtractionExtension : ExtractionExtension ←
   registerSimplePersistentEnvExtension {
-    name := `solution_extraction'
+    name := `solution_extraction
     addImportedFn := fun arrays =>
       arrays.foldl (init := ∅) fun acc as =>
         as.foldl (init := acc) fun acc' a => acc'.push a
@@ -65,7 +67,33 @@ abbrev DetermineDeclsExtension := SimplePersistentEnvExtension Name (Array Name)
 
 initialize determineDeclsExtension : DetermineDeclsExtension ←
   registerSimplePersistentEnvExtension {
-    name := `determine_decls'
+    name := `determine_decls
+    addImportedFn := fun arrays =>
+      arrays.foldl (init := ∅) fun acc as =>
+        as.foldl (init := acc) fun acc' a => acc'.push a
+    addEntryFn    := fun s n => s.push n
+  }
+
+inductive ProblemTag where
+| Geometry : ProblemTag
+| Inequality : ProblemTag
+| Combinatorics : ProblemTag
+| NumberTheory : ProblemTag
+| Algebra : ProblemTag
+
+structure ProblemFileMetadata where
+  tags : List ProblemTag := []
+
+structure ProblemMetadataEntry where
+  module : Name
+  metadata : ProblemFileMetadata
+
+abbrev ProblemMetadataExtension :=
+  SimplePersistentEnvExtension ProblemMetadataEntry (Array ProblemMetadataEntry)
+
+initialize problemMetadataExtension : ProblemMetadataExtension ←
+  registerSimplePersistentEnvExtension {
+    name := `problem_metadata
     addImportedFn := fun arrays =>
       arrays.foldl (init := ∅) fun acc as =>
         as.foldl (init := acc) fun acc' a => acc'.push a
@@ -77,8 +105,9 @@ This should be at the top of the file (after imports); content above it is ignor
 during problem extraction (except for imports). -/
 syntax (name := problemFile) "problem_file" : command
 
-elab_rules : command
-| `(command| problem_file%$tk) => do
+syntax (name := problemFileWithTerm) "problem_file " term : command
+
+def elabProblemFile (tk : Syntax) (md : Option (TSyntax `term)) : Command.CommandElabM Unit := do
   let .some startPos := tk.getTailPos? | throwError "problem_file syntax has no tail pos"
   let src := (←read).fileMap.source
   let startPos := ⟨startPos.byteIdx + 1⟩ -- HACK: add one to consume unwanted newline
@@ -88,6 +117,15 @@ elab_rules : command
     problemExtractionExtension.addEntry env ⟨mod, EntryVariant.file src startPos⟩
   modifyEnv fun env =>
     solutionExtractionExtension.addEntry env ⟨mod, EntryVariant.file src startPos⟩
+
+  if let some stx := md then Lean.Elab.Command.liftTermElabM do
+    let md ← unsafe Lean.Elab.Term.evalTerm ProblemFileMetadata (mkConst ``ProblemFileMetadata) stx
+    modifyEnv fun env => problemMetadataExtension.addEntry env ⟨mod, md⟩
+    pure ()
+
+elab_rules : command
+| `(command| problem_file%$tk) => elabProblemFile tk none
+| `(command| problem_file%$tk $md) => elabProblemFile tk md
 
 /-- Commands between `snip begin` and `snip end` will be discarded by problem extraction. -/
 syntax (name := snipBegin) "snip begin" : command
@@ -271,3 +309,21 @@ constructs a map from module name to solution source code.
 def extractSolutions {m : Type → Type} [Monad m] [MonadEnv m] [MonadError m] :
     m (NameMap String) :=
   extractFromExt solutionExtractionExtension
+
+
+/--
+Using the data in the solution extraction environment extension,
+constructs a map from module name to problem metadata
+-/
+def extractMetadata {m : Type → Type} [Monad m] [MonadEnv m] [MonadError m] :
+    m (NameMap ProblemFileMetadata) := do
+  let env ← getEnv
+  let st := problemMetadataExtension.getState env
+  let mut result := mkNameMap _
+  for ⟨module, md⟩ in st do
+    result := result.insert module md
+  return result
+
+
+
+

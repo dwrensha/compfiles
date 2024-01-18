@@ -11,7 +11,7 @@ import Mathlib.Geometry.Euclidean.Triangle
 
 import ProblemExtraction
 
-problem_file
+problem_file { tags := [.Geometry] }
 
 /-!
 Bulgarian Mathematical Olympiad 1998, Problem 2
