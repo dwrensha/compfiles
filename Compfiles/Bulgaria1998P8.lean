@@ -8,9 +8,9 @@ import Mathlib.Algebra.Ring.Basic
 import Mathlib.Data.Rat.Basic
 import Mathlib.Tactic.Ring
 
-import ProblemExtraction { tags := [.Algebra] }
+import ProblemExtraction
 
-problem_file
+problem_file { tags := [.Algebra] }
 
 /-!
 Bulgarian Mathematical Olympiad 1998, Problem 8
