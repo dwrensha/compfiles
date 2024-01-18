@@ -318,7 +318,6 @@ def extractSolutions {m : Type → Type} [Monad m] [MonadEnv m] [MonadError m] :
     m (NameMap String) :=
   extractFromExt solutionExtractionExtension
 
-
 /--
 Using the data in the solution extraction environment extension,
 constructs a map from module name to problem metadata
@@ -331,7 +330,3 @@ def extractMetadata {m : Type → Type} [Monad m] [MonadEnv m] [MonadError m] :
   for ⟨module, md⟩ in st do
     result := result.insert module md
   return result
-
-
-
-
