@@ -30,4 +30,11 @@ pre.problem {
  }
 }
 
+.problems {
+    border-collapse: collapse;
+}
 
+.problems td {
+    border: 1px solid black;
+    padding: 0;
+}
