@@ -37,6 +37,13 @@ def olean_path_to_github_url (path: String) : String :=
   "https://github.com/dwrensha/compfiles/blob/main/" ++
     ((path.stripPrefix pfx).stripSuffix sfx) ++ ".lean"
 
+def getFirstModuleDoc (env : Environment) (m : Name) : String :=
+  match Lean.getModuleDoc? env m with
+  | some mda => match mda.toList with
+                | ⟨d, _⟩::_ => d
+                | _ => ""
+  | _ => ""
+
 def HEADER : String :=
  "<!DOCTYPE html><html><head> <meta name=\"viewport\" content=\"width=device-width\">" ++
  "<title>Compfiles: Catalog of Math Problems Formalized in Lean</title>" ++
@@ -71,13 +78,6 @@ unsafe def main (_args : List String) : IO Unit := do
 
       let mut infos : List ProblemInfo := []
       for ⟨m, problem_src⟩ in mst do
-          let mdoc :=
-            match Lean.getModuleDoc? env m with
-            | some mda => match mda.toList with
-                          | ⟨d, _⟩::_ => d
-                          | _ => ""
-            | _ => ""
-
           let p ← findOLean m
           let solutionUrl := olean_path_to_github_url p.toString
           IO.println s!"MODULE: {m}"
@@ -94,7 +94,7 @@ unsafe def main (_args : List String) : IO Unit := do
             | some v => do
                  if v.hasSorry then proved := false
           infos := ⟨m.toString.stripPrefix "Compfiles.",
-                    mdoc,
+                    getFirstModuleDoc env m,
                     solutionUrl, problemUrl, proved⟩ :: infos
 
           let h ← IO.FS.Handle.mk ("_site/" ++ problemFile) IO.FS.Mode.write
