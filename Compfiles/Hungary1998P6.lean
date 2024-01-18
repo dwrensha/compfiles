@@ -13,10 +13,10 @@ import Mathlib.Tactic.Ring
 
 import ProblemExtraction
 
-problem_file
+problem_file { tags := [.Algebra] }
 
 /-!
-Hungarian Mathematical Olympiad 1998, Problem 6
+# Hungarian Mathematical Olympiad 1998, Problem 6
 
 Let x, y, z be integers with z > 1. Show that
 
