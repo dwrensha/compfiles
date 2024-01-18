@@ -81,6 +81,14 @@ inductive ProblemTag where
 | NumberTheory : ProblemTag
 | Algebra : ProblemTag
 
+instance : ToString ProblemTag where
+  toString := fun p => match p with
+    | .Geometry => "geometry"
+    | .Inequality => "inequality"
+    | .Combinatorics => "combinatorics"
+    | .NumberTheory => "number theory"
+    | .Algebra => "algebra"
+
 structure ProblemFileMetadata where
   tags : List ProblemTag := []
 
