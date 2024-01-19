@@ -137,10 +137,10 @@ unsafe def main (_args : List String) : IO Unit := do
       h.putStr "<tbody>"
       let infos' := (infos.toArray.qsort (fun a1 a2 ↦ a1.name < a2.name)).toList
       for info in infos' do
-        h.putStr s!"<tr title=\"{htmlEscape info.informal}\">"
+        h.putStr s!"<tr>"
 
         -- problem name
-        h.putStr "<td class=\"problem-page-link\">"
+        h.putStr s!"<td title=\"{htmlEscape info.informal}\" class=\"problem-page-link\">"
         h.putStr s!"<a href=\"{info.problemUrl}\">{info.name}</a>"
         h.putStr "</td>"
 
@@ -148,9 +148,9 @@ unsafe def main (_args : List String) : IO Unit := do
         h.putStr "<td class=\"solved-col\">"
         h.putStr s!"<a href=\"{info.solutionUrl}\">"
         if info.proved then
-          h.putStr "☑  "
+          h.putStr "<span title=\"solved\">✅</span>"
         else
-          h.putStr "☐  "
+          h.putStr "<span title=\"not solved yet\">❌</span>"
         h.putStr "</a>"
         h.putStr "</td>"
 
