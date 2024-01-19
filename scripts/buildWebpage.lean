@@ -20,6 +20,14 @@ structure ProblemInfo where
 def problemTagClass (tag : ProblemExtraction.ProblemTag) : String :=
   (ToString.toString tag).replace " " "-"
 
+def sortProblems (infos : List ProblemInfo) : List ProblemInfo :=
+  let ⟨imos, rest⟩ := infos.partition (·.name.startsWith "Imo")
+  let ⟨usamos, rest⟩ := rest.partition (·.name.startsWith "Usa")
+  (imos.toArray.qsort (fun a1 a2 ↦ a1.name < a2.name)).toList
+   ++
+  (usamos.toArray.qsort (fun a1 a2 ↦ a1.name < a2.name)).toList
+   ++ (rest.toArray.qsort (fun a1 a2 ↦ a1.name < a2.name)).toList
+
 def htmlEscapeAux (racc : List Char) : List Char → String
 | [] => String.mk racc.reverse
 | '&'::cs => htmlEscapeAux (("&amp;".data.reverse)++racc) cs
@@ -135,7 +143,8 @@ unsafe def main (_args : List String) : IO Unit := do
       h.putStr "<table class=\"problems\">"
       h.putStr "<thead><tr><th>problem</th><th>solved?</th><th>tags</th></tr></thead>"
       h.putStr "<tbody>"
-      let infos' := (infos.toArray.qsort (fun a1 a2 ↦ a1.name < a2.name)).toList
+      let infos' := sortProblems infos
+
       for info in infos' do
         h.putStr s!"<tr>"
 
