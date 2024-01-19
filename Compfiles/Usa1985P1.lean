@@ -8,7 +8,7 @@ import Mathlib.Tactic
 
 import ProblemExtraction
 
-problem_file
+problem_file { tags := [.Algebra] }
 
 /-!
 # USA Mathematical Olympiad 1985, Problem 1
