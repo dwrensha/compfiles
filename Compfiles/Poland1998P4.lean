@@ -6,7 +6,7 @@ import Mathlib.Tactic
 
 import ProblemExtraction
 
-problem_file
+problem_file { tags := [.NumberTheory] }
 
 /-!
 Polish Mathematical Olympiad 1998, Problem 4

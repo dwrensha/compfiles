@@ -13,7 +13,7 @@ import Mathlib.Tactic
 
 import ProblemExtraction
 
-problem_file
+problem_file { tags := [.Combinatorics] }
 
 /-!
 There are 101 positive integers arranged in a circle.

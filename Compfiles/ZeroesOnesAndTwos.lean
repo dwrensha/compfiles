@@ -11,7 +11,7 @@ import Mathlib.Data.Nat.Digits
 
 import ProblemExtraction
 
-problem_file
+problem_file { tags := [.NumberTheory] }
 
 /-!
 (From Mathematical Puzzles: A Connoisseur's Collection by Peter Winkler.)
