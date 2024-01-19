@@ -11,7 +11,7 @@ import Mathlib.Tactic
 
 import ProblemExtraction
 
-problem_file { tags := [.Algebra] }
+problem_file { tags := [.Algebra, .Inequality] }
 
 /-!
 # USA Mathematical Olympiad 1998, Problem 3

@@ -12,7 +12,7 @@ import Mathlib.Analysis.NormedSpace.PiLp
 
 import ProblemExtraction
 
-problem_file { tags := [.Algebra] }
+problem_file { tags := [.Algebra, .Inequality] }
 
 /-!
 # Iranian Mathematical Olympiad 1998, Problem 9

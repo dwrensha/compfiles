@@ -47,12 +47,14 @@ pre.problem {
 }
 
 .tags-col {
+    width: 140px;
     padding: 2px;
 }
 
 .problem-tag {
     border-radius: 2.5px;
     padding: 2px;
+    display: inline-block;
 }
 
 .algebra {
