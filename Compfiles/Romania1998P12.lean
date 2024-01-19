@@ -5,7 +5,7 @@ import Mathlib.Tactic
 
 import ProblemExtraction
 
-problem_file
+problem_file { tags := [.Algebra] }
 
 /-!
 # Romanian Mathematical Olympiad 1998, Problem 12
