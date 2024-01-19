@@ -9,7 +9,7 @@ import Mathlib.Order.Bounds.Basic
 
 import ProblemExtraction
 
-problem_file
+problem_file { tags := [.Combinatorics] }
 
 /-!
 # USA Mathematical Olympiad 1998, Problem 4

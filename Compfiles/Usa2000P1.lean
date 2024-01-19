@@ -10,7 +10,7 @@ import Mathlib.Algebra.GroupPower.Lemmas
 
 import ProblemExtraction
 
-problem_file
+problem_file { tags := [.Algebra] }
 
 /-!
 USA Mathematical Olympiad 2000, Problem 1

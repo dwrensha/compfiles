@@ -10,7 +10,7 @@ import Mathlib.Data.Finset.Card
 
 import ProblemExtraction
 
-problem_file
+problem_file { tags := [.Combinatorics] }
 
 /-!
 USA Mathematical Olympiad 1999, Problem 1

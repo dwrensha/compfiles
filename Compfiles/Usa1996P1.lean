@@ -9,7 +9,7 @@ import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 
 import ProblemExtraction
 
-problem_file
+problem_file { tags := [.Algebra] }
 
 /-!
 # USA Mathematical Olympiad 1996, Problem 1

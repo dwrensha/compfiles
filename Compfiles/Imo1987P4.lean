@@ -13,7 +13,7 @@ import Mathlib.Tactic.Ring
 
 import ProblemExtraction
 
-problem_file
+problem_file { tags := [.Algebra] }
 
 /-!
 # International Mathematical Olympiad 1987, Problem 4

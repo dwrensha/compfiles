@@ -3,10 +3,10 @@ import Mathlib.Analysis.MeanInequalities
 
 import ProblemExtraction
 
-problem_file
+problem_file { tags := [.Algebra] }
 
 /-!
-Iranian Mathematical Olympiad 1998, problem 3
+# Iranian Mathematical Olympiad 1998, problem 3
 
 Let x₁, x₂, x₃, x₄ be positive real numbers such that
 

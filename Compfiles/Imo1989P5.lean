@@ -12,7 +12,7 @@ import Std.Data.List.Lemmas
 
 import ProblemExtraction
 
-problem_file
+problem_file { tags := [.NumberTheory] }
 
 /-!
 # International Mathematical Olympiad 1989, Problem 5

@@ -11,7 +11,7 @@ import Mathlib.Tactic.Ring
 
 import ProblemExtraction
 
-problem_file
+problem_file { tags := [.Combinatorics] }
 
 /-!
 
