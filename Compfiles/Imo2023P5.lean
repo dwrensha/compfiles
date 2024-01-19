@@ -9,7 +9,7 @@ import Mathlib.Tactic
 
 import ProblemExtraction
 
-problem_file
+problem_file { tags := [.Combinatorics] }
 
 /-!
 # International Mathematical Olympiad 2023, Problem 5
