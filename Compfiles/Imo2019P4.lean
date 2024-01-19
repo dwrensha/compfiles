@@ -10,7 +10,7 @@ import Mathlib.Tactic
 
 import ProblemExtraction
 
-problem_file
+problem_file { tags := [.NumberTheory] }
 
 /-!
 # International Mathematical Olympiad 2019, Problem 4
