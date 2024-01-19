@@ -71,7 +71,7 @@ lemma lemma1 (x : ℝ) (hx : x ∈ Set.Ioo 0 (Real.pi / 2)) :
 lemma lemma2' (n : ℕ) : Finset.erase (Finset.range (n + 1)) n = Finset.range n :=
 by rw [←Nat.succ_eq_add_one, Finset.range_succ]; simp
 
-lemma lemma2 (f : ℕ → ℝ) :
+lemma lemma2 (n : ℕ) (f : ℕ → ℝ) :
     ∏ i in Finset.range (n + 1), ∏ j in Finset.erase (Finset.range (n + 1)) i, f j =
     ∏ i in Finset.range (n + 1), (f i)^(n:ℝ) := by
   induction n with

@@ -22,6 +22,6 @@ namespace Usa1996P1
 open BigOperators
 
 problem usa1996_p1 :
-    (1 / (n:ℝ)) * ∑ n in Finset.range 90, (2 * (n+1)) * Real.sin ((2 * (n+1)) * Real.pi / 180)
+    (1 / (90:ℝ)) * ∑ n in Finset.range 90, (2 * (n+1)) * Real.sin ((2 * (n+1)) * Real.pi / 180)
     = 1 / Real.tan (Real.pi / 180) := by
   sorry
