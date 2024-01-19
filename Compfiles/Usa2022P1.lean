@@ -6,7 +6,7 @@ import Mathlib.Tactic.Positivity
 
 import ProblemExtraction
 
-problem_file
+problem_file { tags := [.Combinatorics] }
 
 /-!
 # USA Mathematical Olympiad 2022, Problem 1
