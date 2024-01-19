@@ -7,7 +7,7 @@ body {
   font-size: 15px;
   margin-left: auto;
   margin-right: auto;
-  background-color: #d7f4f7;
+  background-color: #d9f6f9;
   width: 750px;
 }
 pre.problem {
@@ -47,5 +47,30 @@ pre.problem {
 }
 
 .tags-col {
+    padding: 2px;
+}
 
+.problem-tag {
+    border-radius: 2.5px;
+    padding: 2px;
+}
+
+.algebra {
+    background-color: #fcd0c7;
+}
+
+.geometry {
+    background-color: #d1f5bf;
+}
+
+.combinatorics {
+    background-color: #c7e3fc;
+}
+
+.number-theory {
+    background-color: #cccccc;
+}
+
+.inequality {
+    background-color: #f5e6c4;
 }

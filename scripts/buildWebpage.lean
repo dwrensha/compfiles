@@ -17,6 +17,9 @@ structure ProblemInfo where
   problemUrl : String
   proved : Bool
 
+def problemTagClass (tag : ProblemExtraction.ProblemTag) : String :=
+  (ToString.toString tag).replace " " "-"
+
 def htmlEscapeAux (racc : List Char) : List Char → String
 | [] => String.mk racc.reverse
 | '&'::cs => htmlEscapeAux (("&amp;".data.reverse)++racc) cs
@@ -154,7 +157,7 @@ unsafe def main (_args : List String) : IO Unit := do
         -- tags
         h.putStr "<td class=\"tags-col\">"
         for tg in info.metadata.tags do
-          h.putStr s!"<span>{tg}</span>"
+          h.putStr s!"<span class=\"problem-tag {problemTagClass tg}\">{tg}</span>"
         h.putStr "</td>"
         h.putStr "</tr>"
       h.putStr "</table>"
