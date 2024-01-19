@@ -7,7 +7,7 @@ import Mathlib.Analysis.MeanInequalities
 
 import ProblemExtraction
 
-problem_file { tags := [.Algebra] }
+problem_file { tags := [.Algebra, .Inequality] }
 
 /-!
 # International Mathematical Olympiad 2020, Problem 2
