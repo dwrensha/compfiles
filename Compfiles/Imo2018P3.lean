@@ -8,7 +8,7 @@ import Mathlib.Algebra.BigOperators.Basic
 
 import ProblemExtraction
 
-problem_file
+problem_file { tags := [.Combinatorics] }
 
 /-!
 # International Mathematical Olympiad 2018, Problem 3

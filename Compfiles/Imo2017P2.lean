@@ -8,7 +8,7 @@ import Mathlib.Tactic
 
 import ProblemExtraction
 
-problem_file
+problem_file { tags := [.Algebra] }
 
 /-!
 # International Mathematical Olympiad 2017, Problem 2

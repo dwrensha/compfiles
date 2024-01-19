@@ -9,7 +9,7 @@ import Mathlib.Tactic.Linarith
 
 import ProblemExtraction
 
-problem_file
+problem_file { tags := [.Algebra] }
 
 /-!
 # International Mathematical Olympiad 2011, Problem 3
