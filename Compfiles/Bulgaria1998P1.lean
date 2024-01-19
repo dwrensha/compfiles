@@ -13,7 +13,7 @@ import ProblemExtraction
 problem_file { tags := [.Combinatorics] }
 
 /-!
-Bulgarian Mathematical Olympiad 1998, Problem 1
+# Bulgarian Mathematical Olympiad 1998, Problem 1
 
 We will be considering colorings in 2 colors of n (distinct) points
 A₁, A₂, ..., Aₙ. Call such a coloring "good" if there exist three points

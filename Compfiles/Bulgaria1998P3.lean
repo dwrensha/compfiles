@@ -11,10 +11,10 @@ import Mathlib.Analysis.SpecificLimits.Basic
 
 import ProblemExtraction
 
-problem_file
+problem_file { tags := [.Algebra] }
 
 /-!
-Bulgarian Mathematical Olympiad 1998, Problem 3
+# Bulgarian Mathematical Olympiad 1998, Problem 3
 
 Let ℝ⁺ be the set of positive real numbers. Prove that there does not exist a function
 f: ℝ⁺ → ℝ⁺ such that

@@ -36,5 +36,16 @@ pre.problem {
 
 .problems td {
     border: 1px solid gray;
-    padding: 0;
+}
+
+.problem-page-link {
+    text-align: center;
+}
+
+.solved-col {
+    text-align: center;
+}
+
+.tags-col {
+
 }

@@ -12,7 +12,7 @@ import ProblemExtraction
 problem_file { tags := [.NumberTheory] }
 
 /-!
-Bulgarian Mathematical Olympiad 1998, Problem 6
+# Bulgarian Mathematical Olympiad 1998, Problem 6
 
 Prove that the equation
 

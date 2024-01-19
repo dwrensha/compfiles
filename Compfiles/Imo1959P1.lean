@@ -14,6 +14,7 @@ problem_file { tags := [.NumberTheory] }
 
 /-!
 # International Mathematical Olympiad 1959, Problem 1.
+
 Prove that the fraction `(21n+4)/(14n+3)` is irreducible for every
 natural number `n`.
 

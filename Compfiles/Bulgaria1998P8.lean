@@ -13,7 +13,7 @@ import ProblemExtraction
 problem_file { tags := [.Algebra] }
 
 /-!
-Bulgarian Mathematical Olympiad 1998, Problem 8
+# Bulgarian Mathematical Olympiad 1998, Problem 8
 The polynomials Pₙ(x,y) for n = 1, 2, ... are defined by P₁(x,y) = 1 and
   Pₙ₊₁(x,y) = (x + y - 1)(y + 1)Pₙ(x,y+2) + (y - y²)Pₙ(x,y)
 Prove that Pₙ(x,y) = Pₙ(y,x) for all x,y,n.

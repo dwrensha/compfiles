@@ -14,7 +14,7 @@ import ProblemExtraction
 problem_file { tags := [.Geometry] }
 
 /-!
-Bulgarian Mathematical Olympiad 1998, Problem 2
+# Bulgarian Mathematical Olympiad 1998, Problem 2
 
 A convex quadrilateral ABCD has AD = CD and ∠DAB = ∠ABC < 90°.
 The line through D and the midpoint of BC intersects line AB
