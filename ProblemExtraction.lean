@@ -116,7 +116,9 @@ syntax (name := problemFile) "problem_file" : command
 syntax (name := problemFileWithTerm) "problem_file " term : command
 
 def elabProblemFile (tk : Syntax) (md : Option (TSyntax `term)) : Command.CommandElabM Unit := do
-  let .some startPos := tk.getTailPos? | throwError "problem_file syntax has no tail pos"
+  let .some startPos := (match md with
+    | .some md => md.raw.getTailPos?
+    | .none => tk.getTailPos?) | throwError "problem_file syntax has no tail pos"
   let src := (←read).fileMap.source
   let startPos := ⟨startPos.byteIdx + 1⟩ -- HACK: add one to consume unwanted newline
 
