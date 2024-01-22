@@ -25,6 +25,9 @@ namespace Imo1969P1
 
 snip begin
 
+-- Solution copied from
+-- https://github.com/leanprover-community/mathlib4/blob/master/Archive/Imo/Imo1969Q1.lean
+
 /-- `goodNats` is the set of natural numbers satisfying the condition in the problem
 statement, namely the `a : ℕ` such that `n^4 + a` is not prime for any `n : ℕ`. -/
 def goodNats : Set ℕ :=
@@ -76,9 +79,10 @@ in the `strictMono` namespace. -/
 theorem aChoice_strictMono : StrictMono aChoice :=
   ((strictMono_id.const_add 2).nat_pow (by decide)).const_mul (by decide)
 
-snip end
-
 /- We conclude by using the fact that `aChoice` is an injective function from the natural numbers
 to the set `goodNats`. -/
+
+snip end
+
 problem imo1969_p1 : Set.Infinite {a : ℕ | ∀ n : ℕ, ¬Nat.Prime (n ^ 4 + a)} :=
   Set.infinite_of_injective_forall_mem aChoice_strictMono.injective aChoice_good
