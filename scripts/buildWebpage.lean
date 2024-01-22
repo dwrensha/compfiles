@@ -157,9 +157,9 @@ unsafe def main (_args : List String) : IO Unit := do
         h.putStr "<td class=\"solved-col\">"
         h.putStr s!"<a href=\"{info.solutionUrl}\">"
         if info.proved then
-          h.putStr "<span title=\"solved\">✅</span>"
+          h.putStr s!"<span title=\"complete solution\n{info.solutionUrl}\">✅</span>"
         else
-          h.putStr "<span title=\"not solved yet\">❌</span>"
+          h.putStr s!"<span title=\"incomplete or missing solution\n{info.solutionUrl}\">❌</span>"
         h.putStr "</a>"
         h.putStr "</td>"
 
