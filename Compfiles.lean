@@ -10,6 +10,7 @@ import Compfiles.CIIM2022P6
 import Compfiles.Hungary1998P6
 import Compfiles.Imo1959P1
 import Compfiles.Imo1961P1
+import Compfiles.Imo1962P4
 import Compfiles.Imo1964P1
 import Compfiles.Imo1964P4
 import Compfiles.Imo1968P2
