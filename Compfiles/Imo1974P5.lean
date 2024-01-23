@@ -5,6 +5,7 @@ Authors: David Renshaw
 -/
 
 import Mathlib.Tactic
+import Mathlib
 
 import ProblemExtraction
 
@@ -69,6 +70,26 @@ lemma easy_direction (s : ℝ)
   rw [h2] at h7
   exact ⟨h12, h7⟩
 
+noncomputable def S (a b c d : ℝ) : ℝ :=
+    a / (a + b + d) + b / (a + b + c) +
+    c / (b + c + d) + d / (a + c + d)
+
+noncomputable def T (t : ℝ) : ℝ := S 1 (1 - t) t (t * (1 - t))
+
+theorem T_continuous : ContinuousOn T (Set.Icc 0 1) := by
+  unfold T S
+  have h1 : ContinuousOn
+      (fun t ↦ t * (1 - t) / (1 + t + t * (1 - t)))
+      (Set.Icc 0 1) := by
+    have h2 : Continuous (fun t ↦ t * (1 - t)) := by continuity
+    sorry
+
+  sorry
+
+lemma T0 : T 0 = 1 := by norm_num [T,S]
+
+lemma T1 : T 1 = 2 := by norm_num [T,S]
+
 snip end
 
 problem imo1974_p5 (s : ℝ) :
@@ -80,5 +101,17 @@ problem imo1974_p5 (s : ℝ) :
   · intro hx
     rw [Set.mem_Ioo] at hx
     obtain ⟨hx1, hx2⟩ := hx
-    sorry
+    have h1 : (0:ℝ) ≤ 1 := zero_le_one
+    have h2 := intermediate_value_Ioo h1 T_continuous
+    rw [T0, T1] at h2
+    have h3 : s ∈ Set.Ioo 1 2 := by aesop
+    have h4 := h2 h3
+    rw [Set.mem_image] at h4
+    obtain ⟨t, ht, hts⟩ := h4
+    rw [Set.mem_Ioo] at ht
+    obtain ⟨hta, htb⟩ := ht
+
+    use 1, 1 - t, t, (t * (1 - t))
+    refine ⟨by norm_num, by linarith, by linarith, by nlinarith, ?_⟩
+    exact hts.symm
   · intro hs; exact easy_direction s hs
