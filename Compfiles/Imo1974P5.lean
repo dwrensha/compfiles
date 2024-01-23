@@ -129,19 +129,14 @@ problem imo1974_p5 (s : ℝ) :
          c / (b + c + d) + d / (a + c + d) := by
   constructor
   · intro hx
-    rw [Set.mem_Ioo] at hx
-    obtain ⟨hx1, hx2⟩ := hx
-    have h1 : (0:ℝ) ≤ 1 := zero_le_one
-    have h2 := intermediate_value_Ioo h1 T_continuous
+    have h2 := intermediate_value_Ioo zero_le_one T_continuous
     rw [T0, T1] at h2
-    have h3 : s ∈ Set.Ioo 1 2 := by aesop
-    have h4 := h2 h3
+    have h4 := h2 hx
     rw [Set.mem_image] at h4
     obtain ⟨t, ht, hts⟩ := h4
     rw [Set.mem_Ioo] at ht
     obtain ⟨hta, htb⟩ := ht
 
     use 1, 1 - t, t, (t * (1 - t))
-    refine ⟨by norm_num, by linarith, by linarith, by nlinarith, ?_⟩
-    exact hts.symm
+    exact ⟨by norm_num, by linarith, by linarith, by nlinarith, hts.symm⟩
   · intro hs; exact easy_direction s hs
