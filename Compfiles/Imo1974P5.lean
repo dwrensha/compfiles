@@ -79,12 +79,43 @@ noncomputable def T (t : ℝ) : ℝ := S 1 (1 - t) t (t * (1 - t))
 theorem T_continuous : ContinuousOn T (Set.Icc 0 1) := by
   unfold T S
   have h1 : ContinuousOn
-      (fun t ↦ t * (1 - t) / (1 + t + t * (1 - t)))
+      (fun (t:ℝ) ↦ 1 / (1 + (1 - t) + t * (1 - t)))
       (Set.Icc 0 1) := by
-    have h2 : Continuous (fun t ↦ t * (1 - t)) := by continuity
-    sorry
+    apply ContinuousOn.div continuousOn_const
+    · apply Continuous.continuousOn; continuity
+    · rintro x ⟨hx0, hx1⟩; nlinarith
 
-  sorry
+  have h2 : ContinuousOn
+      (fun (t:ℝ) ↦ (1-t) / (1 + (1 - t) + t))
+      (Set.Icc 0 1) := by
+    apply ContinuousOn.div
+    · apply Continuous.continuousOn; continuity
+    · apply Continuous.continuousOn; continuity
+    · intro x _; linarith
+
+  have h3 : ContinuousOn
+      (fun (t:ℝ) ↦ t / (1 - t + t + t * (1 - t) ))
+      (Set.Icc 0 1) := by
+    apply ContinuousOn.div
+    · apply Continuous.continuousOn; continuity
+    · apply Continuous.continuousOn; continuity
+    · rintro x ⟨hx0, hx1⟩; nlinarith
+
+  have h4 : ContinuousOn
+      (fun (t:ℝ) ↦ t * (1 - t) / (1 + t + t * (1 - t)))
+      (Set.Icc 0 1) := by
+    apply ContinuousOn.div
+    · apply Continuous.continuousOn; continuity
+    · apply Continuous.continuousOn; continuity
+    · rintro x ⟨hx0, hx1⟩; nlinarith
+
+  apply ContinuousOn.add
+  · apply ContinuousOn.add
+    · apply ContinuousOn.add
+      · exact h1
+      · exact h2
+    · exact h3
+  · exact h4
 
 lemma T0 : T 0 = 1 := by norm_num [T,S]
 
