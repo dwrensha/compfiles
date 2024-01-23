@@ -5,7 +5,6 @@ Authors: David Renshaw
 -/
 
 import Mathlib.Tactic
-import Mathlib
 
 import ProblemExtraction
 
