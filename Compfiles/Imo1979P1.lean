@@ -104,16 +104,28 @@ lemma lemma3 : ∑ i in Finset.range 1319, (-(1:ℚ))^i / (i + 1) =
     field_simp
   rw [h10, Finset.sum_filter_add_sum_filter_not]
 
-lemma lemma4 (m : ℕ) (f : ℕ → ℚ) :
-    ∑ i in Finset.range (2 * m), f i =
-    ∑ i in Finset.range m, (f i + f (2 * m - 1 - i)) := by
-  sorry
-
-lemma lemma5 (n m : ℕ) (f : ℕ → ℚ) :
+lemma lemma4 (n m : ℕ) (f : ℕ → ℚ) :
     ∑ i in Finset.Ico n (n + 2 * m), f i =
     ∑ i in Finset.range m, (f (n + i) + f (n + (2 * m - 1 - i))) := by
+  have h1 : ∑ i in Finset.Ico n (n + 2 * m), f i =
+            (∑ i in Finset.Ico n (n + m), f i) +
+            (∑ i in Finset.Ico (n + m) (n + 2 * m), f i) := by
+    have hmn : n ≤ n + m := Nat.le_add_right n m
+    have hnk : n + m ≤ n + 2 * m := by omega
+    exact (Finset.sum_Ico_consecutive (fun i ↦ f i) hmn hnk).symm
+  rw [h1]; clear h1
   simp only [Finset.sum_Ico_eq_sum_range, add_tsub_cancel_left]
-  rw [lemma4]
+  rw [Finset.sum_add_distrib, add_right_inj]
+  rw [show n + 2 * m - (n + m) = m by omega]
+
+  have h2 : ∀ i ∈ Finset.range m, f (n + (2 * m - 1 - i)) = f (n + m + (m - 1 - i)) := by
+    intro i hi
+    rw [Finset.mem_range] at hi
+    apply congr_arg
+    omega
+  rw [Finset.sum_congr rfl h2]
+  let g i := f (n + m + i)
+  rw [Finset.sum_range_reflect g]
 
 snip end
 
@@ -144,5 +156,5 @@ problem imo1979_p1 (p q : ℤ) (hp : 0 < p) (hq : 0 < q)
     omega
   rw [h3] at h; clear h3
   rw [Finset.sum_disjUnion, add_sub_cancel'] at h; clear h2
-  rw [lemma5 659 330] at h
+  rw [lemma4 659 330] at h
   sorry
