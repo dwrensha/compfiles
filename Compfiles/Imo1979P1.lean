@@ -104,6 +104,17 @@ lemma lemma3 : ∑ i in Finset.range 1319, (-(1:ℚ))^i / (i + 1) =
     field_simp
   rw [h10, Finset.sum_filter_add_sum_filter_not]
 
+lemma lemma4 (m : ℕ) (f : ℕ → ℚ) :
+    ∑ i in Finset.range (2 * m), f i =
+    ∑ i in Finset.range m, (f i + f (2 * m - 1 - i)) := by
+  sorry
+
+lemma lemma5 (n m : ℕ) (f : ℕ → ℚ) :
+    ∑ i in Finset.Ico n (n + 2 * m), f i =
+    ∑ i in Finset.range m, (f (n + i) + f (n + (2 * m - 1 - i))) := by
+  simp only [Finset.sum_Ico_eq_sum_range, add_tsub_cancel_left]
+  rw [lemma4]
+
 snip end
 
 problem imo1979_p1 (p q : ℤ) (hp : 0 < p) (hq : 0 < q)
@@ -133,4 +144,5 @@ problem imo1979_p1 (p q : ℤ) (hp : 0 < p) (hq : 0 < q)
     omega
   rw [h3] at h; clear h3
   rw [Finset.sum_disjUnion, add_sub_cancel'] at h; clear h2
+  rw [lemma5 659 330] at h
   sorry
