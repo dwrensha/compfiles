@@ -141,10 +141,6 @@ lemma lemma5 {f : ℕ → ℕ} {p n: ℕ} (hp : Nat.Prime p)
  have h3 : n ∈ Finset.range (Nat.succ n) := Finset.self_mem_range_succ n
  exact Nat.Prime.not_dvd_mul hp ih (h n h3)
 
-lemma lemma6 {i : ℕ} (hi : i < 330) : 1319 - i < 1979 := by omega
-
-lemma lemma7 {i : ℕ} (hi : i < 330) : 0 < 1319 - i := by omega
-
 lemma lemma8 (q : ℕ) (h : 0 < (q:ℤ)) : (q:ℚ) ≠ 0 := by
   norm_cast at h ⊢
   exact Nat.pos_iff_ne_zero.mp h
@@ -249,8 +245,8 @@ problem imo1979_p1 (p q : ℤ) (hp : 0 < p) (hq : 0 < q)
       intro H
       obtain ⟨v, hv⟩ | ⟨u, hu⟩ := (Nat.Prime.dvd_mul hpp).mp H
       · omega
-      · have h31 : 1319 - i < 1979 := lemma6 hi
-        have h32 : 0 < 1319 - i  := lemma7 hi
+      · have h31 : 1319 - i < 1979 := by clear H; omega
+        have h32 : 0 < 1319 - i  := by clear H; omega
         omega
     exact lemma5 hpp h30
   obtain ⟨p', rfl⟩ := Int.eq_ofNat_of_zero_le (le_of_lt hp)
