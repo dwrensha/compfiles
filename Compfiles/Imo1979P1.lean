@@ -34,7 +34,7 @@ lemma lemma3 : ∑ i in Finset.range 1319, (-(1:ℚ))^i / (i + 1) =
   rw [←h2]
   let g : ℕ ↪ ℕ :=
     ⟨fun x ↦ 2 * x + 1,
-     by intro a b hab; dsimp at hab; linarith⟩
+     by intro a b hab; dsimp at hab; omega⟩
 
   have h4 : (Finset.range 659).map g =
         (Finset.range 1319).filter (fun x ↦ ¬Even x) := by
@@ -48,14 +48,14 @@ lemma lemma3 : ∑ i in Finset.range 1319, (-(1:ℚ))^i / (i + 1) =
       rw [Finset.mem_range] at hb1
       rw [←hb2]
       constructor
-      · linarith
+      · omega
       · exact Nat.odd_iff_not_even.mp ⟨b, rfl⟩
     · rintro ⟨ha1, ha2⟩
       have h5 : Odd a := Nat.odd_iff_not_even.mpr ha2
       obtain ⟨r, hr⟩ := h5
       use r
       constructor
-      · rw [Finset.mem_range]; linarith
+      · rw [Finset.mem_range]; omega
       · exact hr.symm
   have h5 : ∑ i in Finset.range 659, 1 / (2 * ((i:ℚ) + 1))
        = ∑ i in Finset.range 659, (1 / (((g i):ℚ) + 1)) := by
