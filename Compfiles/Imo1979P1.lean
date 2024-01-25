@@ -127,6 +127,24 @@ lemma lemma4 (n m : ℕ) (f : ℕ → ℚ) :
   let g i := f (n + m + i)
   rw [Finset.sum_range_reflect g]
 
+lemma lemma5 {f : ℕ → ℕ} {p n: ℕ} (hp : Nat.Prime p)
+    (h : ∀ i ∈ Finset.range n, ¬ p ∣ f i) : ¬ p ∣ ∏ i in Finset.range n, f i := by
+ induction' n with n ih
+ · simp; exact Nat.Prime.ne_one hp
+ rw [Finset.prod_range_succ]
+ have h2 : ∀ i ∈ Finset.range n, ¬p ∣ f i := fun i hi ↦ by
+   have h1 : i ∈ Finset.range (Nat.succ n) := by
+     simp_all only [Finset.mem_range]
+     omega
+   exact h i h1
+ replace ih := ih h2
+ have h3 : n ∈ Finset.range (Nat.succ n) := Finset.self_mem_range_succ n
+ exact Nat.Prime.not_dvd_mul hp ih (h n h3)
+
+lemma lemma6 {i : ℕ} (hi : i < 330) : 1319 - i < 1979 := by omega
+
+lemma lemma7 {i : ℕ} (hi : i < 330) : 0 < 1319 - i := by omega
+
 snip end
 
 problem imo1979_p1 (p q : ℤ) (hp : 0 < p) (hq : 0 < q)
@@ -183,4 +201,36 @@ problem imo1979_p1 (p q : ℤ) (hp : 0 < p) (hq : 0 < q)
     field_simp; norm_num1
 
   rw [Finset.sum_congr rfl h4] at h; clear h4
-  sorry
+  rw [show (1979:ℚ) = 1979 * 1 by rfl] at h
+  simp_rw [mul_div_assoc] at h
+  rw [←Finset.mul_sum] at h
+  let s : ℕ := ∏ i in Finset.range 330, (660 + i) * (1319 - i)
+  have hs0 : s ≠ 0 := by
+    have : ∀ i ∈ Finset.range 330, (660 + i) * (1319 - i) ≠ 0 := fun i hi ↦ by
+      rw [Finset.mem_range] at hi
+      have : 0 < 1319 - i := by omega
+      positivity
+    exact Finset.prod_ne_zero_iff.mpr this
+  let sq := (s : ℚ)
+  have hsq0 : sq ≠ 0 := Nat.cast_ne_zero.mpr hs0
+  have hs1 : sq/sq = 1 := div_self hsq0
+  have hpp : Nat.Prime 1979 := by norm_num1
+
+  have hsqp : ¬ 1979 ∣ s := by
+    have h30 : ∀ i ∈ Finset.range 330, ¬ 1979 ∣ (660 + i) * (1319 - i) := fun i hi ↦ by
+      rw [Finset.mem_range] at hi
+      intro H
+      obtain ⟨v, hv⟩ | ⟨u, hu⟩ := (Nat.Prime.dvd_mul hpp).mp H
+      · omega
+      · have h31 : 1319 - i < 1979 := lemma6 hi
+        have h32 : 0 < 1319 - i  := lemma7 hi
+        omega
+    exact lemma5 hpp h30
+  obtain ⟨p', rfl⟩ := Int.eq_ofNat_of_zero_le (le_of_lt hp)
+  obtain ⟨q', rfl⟩ := Int.eq_ofNat_of_zero_le (le_of_lt hq)
+  simp only [Int.cast_ofNat] at h
+  suffices H : 1979 ∣ p' from Int.ofNat_dvd.mpr H
+  have h20 : 1979 ∣ p' * s := by
+    sorry
+  have : Nat.Coprime 1979 s := (Nat.Prime.coprime_iff_not_dvd hpp).mpr hsqp
+  exact (Nat.Coprime.dvd_mul_right this).mp h20
