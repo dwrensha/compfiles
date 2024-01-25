@@ -26,13 +26,6 @@ open scoped BigOperators
 
 snip begin
 
-lemma lemma1 (n : ℕ) : ¬ Even (2 * n + 1) := by
-  rintro ⟨r, H⟩
-  rw [←Nat.two_mul] at H
-  apply_fun (· % 2) at H
-  rw [Nat.add_mod, Nat.mul_mod] at H
-  norm_num at H
-
 lemma lemma2 (x y : ℚ) : x + y - 2 * y = x - y := by ring
 
 lemma lemma3 : ∑ i in Finset.range 1319, (-(1:ℚ))^i / (i + 1) =
@@ -58,7 +51,7 @@ lemma lemma3 : ∑ i in Finset.range 1319, (-(1:ℚ))^i / (i + 1) =
       rw [←hb2]
       constructor
       · linarith
-      · exact lemma1 b
+      · exact Nat.odd_iff_not_even.mp ⟨b, rfl⟩
     · rintro ⟨ha1, ha2⟩
       have h5 : Odd a := Nat.odd_iff_not_even.mpr ha2
       obtain ⟨r, hr⟩ := h5
