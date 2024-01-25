@@ -149,6 +149,37 @@ lemma lemma8 (q : ℕ) (h : 0 < (q:ℤ)) : (q:ℚ) ≠ 0 := by
   norm_cast at h ⊢
   exact Nat.pos_iff_ne_zero.mp h
 
+lemma lemma9' (i : ℕ) (hi : i ∈ Finset.range 330) :
+     (((∏ j in Finset.range 330,
+         (660 + j) * (1319 - j)):ℕ):ℚ) / ((660 + (i:ℚ)) * (1319 - (i:ℚ)))
+       =
+     ∏ j in (Finset.range 330).erase i, (660 + j) * (1319 - j) := by
+  rw [←Finset.prod_erase_mul _ _ hi]
+  rw [Finset.mem_range] at hi
+  push_cast
+  have h1 : (((1319 - i):ℕ):ℚ) = 1319 - (i:ℚ) := by
+    have : i ≤ 1319 := by omega
+    simp_all only [Nat.cast_sub, Nat.cast_ofNat]
+  rw [h1, mul_div_assoc]
+  have h2 : ((660 + (i:ℚ)) * (1319 - (i:ℚ))) /
+              ((660 + (i:ℚ)) * (1319 - (i:ℚ))) = 1 := by
+    have h3 : (660 + (i:ℚ)) * (1319 - (i:ℚ)) ≠ 0 := by
+      have h4 : 0 ≤ (i: ℚ) := by positivity
+      have h5 : (i: ℚ) < 330 := by norm_cast
+      nlinarith
+    exact div_self h3
+  rw [h2, mul_one]
+
+lemma lemma9 :
+    (∑ i in Finset.range 330, 1 / ((660 + (i:ℚ)) * (1319 - (i:ℚ)))) *
+      (((∏ j in Finset.range 330, (660 + j) * (1319 - j)):ℕ):ℚ) =
+    (∑ i in Finset.range 330, ∏ j in (Finset.range 330).erase i,
+         (660 + j) * (1319 - j)) := by
+  simp_rw [Finset.sum_mul, div_mul_eq_mul_div, one_mul]
+  rw [Finset.sum_congr rfl lemma9']
+  push_cast
+  rfl
+
 snip end
 
 problem imo1979_p1 (p q : ℤ) (hp : 0 < p) (hq : 0 < q)
@@ -161,7 +192,7 @@ problem imo1979_p1 (p q : ℤ) (hp : 0 < p) (hq : 0 < q)
   have h1 : 2 * ∑ i in Finset.range 659, 1 / (2 * ((i:ℚ) + 1)) =
               ∑ i in Finset.range 659, 1 / ((i:ℚ) + 1) := by
     rw [Finset.mul_sum, Finset.sum_congr rfl]
-    intro x hx
+    intro x _
     field_simp
   rw [h1] at h; clear h1
   have h2 : Disjoint (Finset.range 659) (Finset.Ico 659 1319) := by
@@ -209,15 +240,7 @@ problem imo1979_p1 (p q : ℤ) (hp : 0 < p) (hq : 0 < q)
   simp_rw [mul_div_assoc] at h
   rw [←Finset.mul_sum] at h
   let s : ℕ := ∏ i in Finset.range 330, (660 + i) * (1319 - i)
-  have hs0 : s ≠ 0 := by
-    have : ∀ i ∈ Finset.range 330, (660 + i) * (1319 - i) ≠ 0 := fun i hi ↦ by
-      rw [Finset.mem_range] at hi
-      have : 0 < 1319 - i := by omega
-      positivity
-    exact Finset.prod_ne_zero_iff.mpr this
   let sq := (s : ℚ)
-  have hsq0 : sq ≠ 0 := Nat.cast_ne_zero.mpr hs0
-  have hs1 : sq/sq = 1 := div_self hsq0
   have hpp : Nat.Prime 1979 := by norm_num1
 
   have hsqp : ¬ 1979 ∣ s := by
@@ -237,18 +260,13 @@ problem imo1979_p1 (p q : ℤ) (hp : 0 < p) (hq : 0 < q)
   have hqq0 : (q':ℚ) ≠ 0 := lemma8 _ hq
   rw [div_eq_iff hqq0] at h
   apply_fun (· * sq) at h
-  have h40 :
-    (∑ i in Finset.range 330, 1 / ((660 + (i:ℚ)) * (1319 - (i:ℚ)))) * sq =
-    (∑ i in Finset.range 330,
-      ∏ j in (Finset.range 330).erase i,
-       (660 + j) * (1319 - j)) := by sorry
   have h41 :
      (1979 * ∑ i in Finset.range 330, 1 / ((660 + (i:ℚ)) * (1319 - (i:ℚ)))) * (q':ℚ) * sq
      = 1979 * (q':ℚ) *
         ((∑ i in Finset.range 330, 1 / ((660 + (i:ℚ)) * (1319 - (i:ℚ)))) * sq) := by
    ac_rfl
   rw [h41] at h; clear h41
-  rw [h40] at h; clear h40
+  rw [lemma9] at h
   rw [← Nat.cast_mul, show (1979:ℚ) = ((1979:ℕ):ℚ) by rfl,
       ← Nat.cast_mul, ← Nat.cast_mul] at h
   replace h := Nat.cast_inj.mp h
