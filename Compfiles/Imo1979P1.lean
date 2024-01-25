@@ -145,6 +145,10 @@ lemma lemma6 {i : ℕ} (hi : i < 330) : 1319 - i < 1979 := by omega
 
 lemma lemma7 {i : ℕ} (hi : i < 330) : 0 < 1319 - i := by omega
 
+lemma lemma8 (q : ℕ) (h : 0 < (q:ℤ)) : (q:ℚ) ≠ 0 := by
+  norm_cast at h ⊢
+  exact Nat.pos_iff_ne_zero.mp h
+
 snip end
 
 problem imo1979_p1 (p q : ℤ) (hp : 0 < p) (hq : 0 < q)
@@ -230,7 +234,28 @@ problem imo1979_p1 (p q : ℤ) (hp : 0 < p) (hq : 0 < q)
   obtain ⟨q', rfl⟩ := Int.eq_ofNat_of_zero_le (le_of_lt hq)
   simp only [Int.cast_ofNat] at h
   suffices H : 1979 ∣ p' from Int.ofNat_dvd.mpr H
-  have h20 : 1979 ∣ p' * s := by
-    sorry
+  have hqq0 : (q':ℚ) ≠ 0 := lemma8 _ hq
+  rw [div_eq_iff hqq0] at h
+  apply_fun (· * sq) at h
+  have h40 :
+    (∑ i in Finset.range 330, 1 / ((660 + (i:ℚ)) * (1319 - (i:ℚ)))) * sq =
+    (∑ i in Finset.range 330,
+      ∏ j in (Finset.range 330).erase i,
+       (660 + j) * (1319 - j)) := by sorry
+  have h41 :
+     (1979 * ∑ i in Finset.range 330, 1 / ((660 + (i:ℚ)) * (1319 - (i:ℚ)))) * (q':ℚ) * sq
+     = 1979 * (q':ℚ) *
+        ((∑ i in Finset.range 330, 1 / ((660 + (i:ℚ)) * (1319 - (i:ℚ)))) * sq) := by
+   ac_rfl
+  rw [h41] at h; clear h41
+  rw [h40] at h; clear h40
+  rw [← Nat.cast_mul, show (1979:ℚ) = ((1979:ℕ):ℚ) by rfl,
+      ← Nat.cast_mul, ← Nat.cast_mul] at h
+  replace h := Nat.cast_inj.mp h
+  rw [Nat.mul_assoc] at h
+  have h20 : 1979 ∣ p' * s :=
+    ⟨(q' * ∑ i in Finset.range 330,
+       ∏ j in Finset.erase (Finset.range 330) i, (660 + j) * (1319 - j)),
+     h⟩
   have : Nat.Coprime 1979 s := (Nat.Prime.coprime_iff_not_dvd hpp).mpr hsqp
   exact (Nat.Coprime.dvd_mul_right this).mp h20
