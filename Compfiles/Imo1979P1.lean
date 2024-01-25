@@ -26,8 +26,6 @@ open scoped BigOperators
 
 snip begin
 
-lemma lemma2 (x y : ℚ) : x + y - 2 * y = x - y := by ring
-
 lemma lemma3 : ∑ i in Finset.range 1319, (-(1:ℚ))^i / (i + 1) =
       ∑ i in Finset.range 1319, (1:ℚ) / (i + 1) -
          2 * ∑ i in Finset.range 659, (1:ℚ) / (2 * (i + 1)) := by
@@ -72,7 +70,7 @@ lemma lemma3 : ∑ i in Finset.range 1319, (-(1:ℚ))^i / (i + 1) =
       ∑ i in Finset.range 659, 1 / (2 * ((i:ℚ) + 1)) := by
     rw [h5]
     rw [←h6, h4]
-  rw [h3, lemma2]
+  rw [h3, two_mul, add_sub_add_right_eq_sub]
   rw [←h3, ←h4, h6, ←h5, ←h3]
   have h7 :
    ∑ i in Finset.filter (fun x ↦ Even x) (Finset.range 1319), 1 / ((i:ℚ) + 1) =
