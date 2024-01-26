@@ -170,7 +170,7 @@ lemma lemma9 :
 snip end
 
 problem imo1979_p1 (p q : ℤ) (hp : 0 < p) (hq : 0 < q)
-    (h : (p : ℚ) / q = ∑ i in Finset.range 1319, (-(1:ℚ))^i / (i + 1)) :
+    (h : (p : ℚ) / q = ∑ i in Finset.range 1319, (-1 : ℚ)^i / (i + 1)) :
     1979 ∣ p := by
   -- we follow the solution from
   -- https://artofproblemsolving.com/wiki/index.php/1979_IMO_Problems/Problem_1
@@ -203,7 +203,7 @@ problem imo1979_p1 (p q : ℤ) (hp : 0 < p) (hq : 0 < q)
       1979 / ((660 + (i:ℚ)) * (1319 - (i:ℚ))) := by
     intro i hi
     rw [Finset.mem_range] at hi
-    have h5 : (((659 + i):ℕ):ℚ) + 1 = 660 + (i:ℚ) := by
+    have h5 : (((659 + i) : ℕ) : ℚ) + 1 = 660 + (i : ℚ) := by
       push_cast; linarith
     have h6 : (((659 + (2 * 330 - 1 - i)):ℕ):ℚ) + 1 = 1319 - (i:ℚ) := by
       rw [show 2 * 330 - 1 - i = 659 - i by omega]
@@ -223,7 +223,7 @@ problem imo1979_p1 (p q : ℤ) (hp : 0 < p) (hq : 0 < q)
     field_simp; norm_num1
 
   rw [Finset.sum_congr rfl h4] at h; clear h4
-  rw [show (1979:ℚ) = 1979 * 1 by rfl] at h
+  rw [show (1979 : ℚ) = 1979 * 1 by rfl] at h
   simp_rw [mul_div_assoc] at h
   rw [←Finset.mul_sum] at h
   let s : ℕ := ∏ i in Finset.range 330, (660 + i) * (1319 - i)
