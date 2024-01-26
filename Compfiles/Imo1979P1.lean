@@ -120,17 +120,8 @@ lemma lemma4 (n m : ℕ) (f : ℕ → ℚ) :
 
 lemma lemma5 {f : ℕ → ℕ} {p n: ℕ} (hp : Nat.Prime p)
     (h : ∀ i ∈ Finset.range n, ¬ p ∣ f i) : ¬ p ∣ ∏ i in Finset.range n, f i := by
- induction' n with n ih
- · simp; exact Nat.Prime.ne_one hp
- rw [Finset.prod_range_succ]
- have h2 : ∀ i ∈ Finset.range n, ¬p ∣ f i := fun i hi ↦ by
-   have h1 : i ∈ Finset.range (Nat.succ n) := by
-     simp_all only [Finset.mem_range]
-     omega
-   exact h i h1
- replace ih := ih h2
- have h3 : n ∈ Finset.range (Nat.succ n) := Finset.self_mem_range_succ n
- exact Nat.Prime.not_dvd_mul hp ih (h n h3)
+  have pp : Prime p := Nat.prime_iff.mp hp
+  exact mt (Prime.dvd_finset_prod_iff pp _).1 <| not_exists.2 fun a => not_and.2 (h a)
 
 lemma lemma8 (q : ℕ) (h : 0 < (q:ℤ)) : (q:ℚ) ≠ 0 := by
   norm_cast at h ⊢
