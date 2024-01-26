@@ -76,6 +76,8 @@ noncomputable def S (a b c d : ℝ) : ℝ :=
 noncomputable def T (t : ℝ) : ℝ := S 1 (1 - t) t (t * (1 - t))
 
 theorem T_continuous : ContinuousOn T (Set.Icc 0 1) := by
+  -- TODO use the fprop tactic once it lands
+  -- https://leanprover.zulipchat.com/#narrow/stream/287929-mathlib4/topic/porting.20.60fprop.60.20tactic/near/418177609
   unfold T S
   have h1 : ContinuousOn
       (fun (t:ℝ) ↦ 1 / (1 + (1 - t) + t * (1 - t)))
