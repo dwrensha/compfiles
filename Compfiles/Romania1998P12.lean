@@ -363,11 +363,7 @@ lemma exp_characterization
   -- Therefore all solutions of the form u(x) = e^(kx), k ∈ ℝ.
   let f := λ x ↦ Real.exp (k * x)
   have hf : ∀ q : ℚ, u q = f q := λ q ↦ hq q
-
-  have h20 : Continuous (Real.exp) := Real.continuous_exp
-  have h21 : Continuous (λ x : ℝ ↦ k * x) := continuous_mul_left k
-  have hfm := Continuous.comp h20 h21
-
+  have hfm : Continuous f := by continuity
   cases' hm with hm hm
   · have hmu : Monotone u := StrictMono.monotone hm
     exact extend_function_mono u f hmu hfm hf
