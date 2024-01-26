@@ -118,10 +118,10 @@ lemma lemma4 (n m : ℕ) (f : ℕ → ℚ) :
   let g i := f (n + m + i)
   rw [Finset.sum_range_reflect g]
 
-lemma lemma5 {f : ℕ → ℕ} {p n: ℕ} (hp : Nat.Prime p)
-    (h : ∀ i ∈ Finset.range n, ¬ p ∣ f i) : ¬ p ∣ ∏ i in Finset.range n, f i := by
-  have pp : Prime p := Nat.prime_iff.mp hp
-  exact mt (Prime.dvd_finset_prod_iff pp _).1 <| not_exists.2 fun a => not_and.2 (h a)
+theorem not_dvd_finset_prod {α M : Type*} [CommMonoidWithZero M]
+    {S : Finset α} {p : M} (pp : Prime p)
+    {g : α → M} (hS : ∀ i ∈ S, ¬ p ∣ g i) : ¬ p ∣ ∏ i in S, g i := by
+  exact mt (Prime.dvd_finset_prod_iff pp _).1 <| not_exists.2 fun a => not_and.2 (hS a)
 
 lemma lemma8 (q : ℕ) (h : 0 < (q:ℤ)) : (q:ℚ) ≠ 0 := by
   norm_cast at h ⊢
@@ -228,7 +228,7 @@ problem imo1979_p1 (p q : ℤ) (hp : 0 < p) (hq : 0 < q)
       obtain ⟨v, hv⟩ | ⟨u, hu⟩ := (Nat.Prime.dvd_mul hpp).mp H
       · omega
       · clear H; omega -- see https://github.com/leanprover/std4/issues/562
-    exact lemma5 hpp h30
+    exact not_dvd_finset_prod (Nat.prime_iff.mp hpp) h30
   obtain ⟨p', rfl⟩ := Int.eq_ofNat_of_zero_le (le_of_lt hp)
   obtain ⟨q', rfl⟩ := Int.eq_ofNat_of_zero_le (le_of_lt hq)
   simp only [Int.cast_ofNat] at h
