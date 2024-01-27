@@ -62,17 +62,6 @@ lemma f_injective
   rw [pow_left_inj (le_of_lt hp) (le_of_lt hq) two_ne_zero] at h4
   exact h4
 
-lemma f_iterated_injective
-    (f : ℕ+ → ℕ+)
-    (hf : ∀ n, f^[f n] n * f (f n) = n ^ 2)
-    (r : ℕ) :
-    (f^[r]).Injective := by
-  induction' r with r ih
-  · simp [Function.injective_id]
-  · have h1 : f.Injective := f_injective f hf
-    rw [Function.iterate_succ]
-    exact Function.Injective.comp ih h1
-
 lemma lemma_1
     (f : ℕ+ → ℕ+)
     (hf : ∀ n, f^[f n] n * f (f n) = n ^ 2)
@@ -91,7 +80,7 @@ lemma lemma_1
     _ = f^[r] a := (h1 r).symm
 
   -- which implies b=a by injectivity of f^r.
-  exact f_iterated_injective f hf r h2
+  exact Function.Injective.iterate (f_injective f hf) r h2
 
 lemma lemma_2
     (f : ℕ+ → ℕ+)
