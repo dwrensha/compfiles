@@ -41,10 +41,9 @@ problem usa2005_p2 :
   -- move into zmod 13
   apply_fun (fun x : ℤ ↦ (x : ZMod 13)) at h1 h2
   push_cast at h1 h2
-  obtain ⟨x, hx⟩ : ∃ x : ZMod 13, x = (x':ℤ) := exists_eq
-  obtain ⟨y, hy⟩ : ∃ y : ZMod 13, y = (y':ℤ) := exists_eq
-  obtain ⟨z, hz⟩ : ∃ z : ZMod 13, z = (z':ℤ) := exists_eq
-  rw [←hx, ←hy] at h1 h2; rw [←hz] at h2
+  generalize (x' : ZMod 13) = x at *
+  generalize (y' : ZMod 13) = y at *
+  generalize (z' : ZMod 13) = z at *
   clear! x' y' z'
   have h3 : (x^3 + y + 1)^2 + z^9 = 147^157 + 157^147 + 1 := by
     linear_combination h1 + h2
@@ -54,7 +53,7 @@ problem usa2005_p2 :
     by_contra! H
     rw [H] at h4
     norm_num at h4
-    simp (config := {decide  := true}) at h4
+    simp_arith at h4
   have h8 : x^3 + y = 4 ∨ x^3 + y = 2 ∨ x^3 + y = 5 ∨ x^3 + y = -1 := by
     obtain h5 | h5 | h5 | h5 | h5 := lemma1 x
     · rw [h5] at h4 ⊢
