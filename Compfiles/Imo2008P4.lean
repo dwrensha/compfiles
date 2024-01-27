@@ -9,7 +9,13 @@ import Mathlib.Tactic
 
 import ProblemExtraction
 
-problem_file { tags := [.Algebra] }
+problem_file {
+  tags := [.Algebra],
+  importedFrom := .some {
+    text := "mortarsanjaya/imo-A-and-N",
+    url  := "https://github.com/mortarsanjaya/imo-A-and-N/blob/main/src/IMO2008/A1/A1.lean"
+  },
+}
 
 /-!
 # International Mathematical Olympiad 2008, Problem 4
@@ -53,8 +59,6 @@ problem imo2008_p4 (f : PosReal → PosReal) :
     f ∈ solution_set ↔
       ∀ w x y z, w * x = y * z →
        ((f w)^2 + (f x)^2) * (y^2 + z^2) = (w^2 + x^2) * (f (y^2) + f (z^2)) := by
-  -- Solution adapted from
-  -- https://github.com/mortarsanjaya/imo-A-and-N/blob/main/src/IMO2008/A1/A1.lean
   refine ⟨fun h p q r s h0 ↦ ?_, fun h ↦ ?_⟩
   · rcases h with rfl | h'
     · rfl

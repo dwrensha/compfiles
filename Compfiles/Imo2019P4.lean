@@ -10,7 +10,13 @@ import Mathlib.Tactic
 
 import ProblemExtraction
 
-problem_file { tags := [.NumberTheory] }
+problem_file {
+  tags := [.NumberTheory],
+  importedFrom := .some {
+    text := "mathlib4/Archive/Imo",
+    url  := "https://github.com/leanprover-community/mathlib4/blob/master/Archive/Imo/Imo2019Q4.lean"
+  },
+}
 
 /-!
 # International Mathematical Olympiad 2019, Problem 4

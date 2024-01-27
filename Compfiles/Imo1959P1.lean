@@ -10,7 +10,13 @@ import Mathlib.Data.Nat.Prime
 
 import ProblemExtraction
 
-problem_file { tags := [.NumberTheory] }
+problem_file {
+  tags := [.NumberTheory],
+  importedFrom := .some {
+    text := "mathlib4/Archive/Imo",
+    url  := "https://github.com/leanprover-community/mathlib4/blob/master/Archive/Imo/Imo1959Q1.lean"
+  },
+}
 
 /-!
 # International Mathematical Olympiad 1959, Problem 1.

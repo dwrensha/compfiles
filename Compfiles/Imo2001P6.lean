@@ -1,30 +1,50 @@
 /-
-Copyright (c) 2023 David Renshaw. All rights reserved.
+Copyright (c) 2021 Sara Díaz Real. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: David Renshaw
+Authors: Sara Díaz Real
 -/
 
 import Mathlib.Tactic
 
 import ProblemExtraction
 
-problem_file { tags := [.NumberTheory] }
+problem_file {
+  tags := [.NumberTheory],
+  importedFrom := .some {
+    text := "mathlib4/Archive/Imo",
+    url  := "https://github.com/leanprover-community/mathlib4/blob/master/Archive/Imo/Imo2001Q6.lean"
+  },
+}
 
 /-!
 # International Mathematical Olympiad 2001, Problem 6
 
-Let k,l,m,n be positive integers with k > l > m > n and
+Let a, b, c, d be integers with a > b > c > d > 0. Suppose that
 
-   km + ln = (k + l - m + n)(-k + l + m + n).
+  ac + bd = (a + b - c + d) * (-a + b + c + d).
 
-Prove that kl + mn is not prime.
+Prove that ab + cd is not prime.
 -/
 
 namespace Imo2001P6
 
-problem imo2001_p6 (k l m n : ℤ)
-    (hkp : 0 < k) (hlp : 0 < l) (hmp : 0 < m) (hnp : 0 < n)
-    (hkl : l < k) (hlm : m < l) (hmn : n < m)
-    (h : k * m + l * n = (k + l - m + n) * (-k + l + m + n)) :
-    ¬Prime (k * l + m * n) := by
-  sorry
+problem imo2001_p6 {a b c d : ℤ} (hd : 0 < d) (hdc : d < c) (hcb : c < b) (hba : b < a)
+    (h : a * c + b * d = (a + b - c + d) * (-a + b + c + d)) : ¬Prime (a * b + c * d) := by
+  intro (h0 : Prime (a * b + c * d))
+  have ha : 0 < a := by linarith
+  have hb : 0 < b := by linarith
+  have hc : 0 < c := by linarith
+  -- the key step is to show that `a*c + b*d` divides the product `(a*b + c*d) * (a*d + b*c)`
+  have dvd_mul : a * c + b * d ∣ (a * b + c * d) * (a * d + b * c) := by
+    use b ^ 2 + b * d + d ^ 2
+    linear_combination b * d * h
+  -- since `a*b + c*d` is prime (by assumption), it must divide `a*c + b*d` or `a*d + b*c`
+  obtain (h1 : a * b + c * d ∣ a * c + b * d) | (h2 : a * c + b * d ∣ a * d + b * c) :=
+    h0.left_dvd_or_dvd_right_of_dvd_mul dvd_mul
+  -- in both cases, we derive a contradiction
+  · have aux : 0 < a * c + b * d := by nlinarith only [ha, hb, hc, hd]
+    have : a * b + c * d ≤ a * c + b * d := Int.le_of_dvd aux h1
+    nlinarith only [hba, hcb, hdc, h, this]
+  · have aux : 0 < a * d + b * c := by nlinarith only [ha, hb, hc, hd]
+    have : a * c + b * d ≤ a * d + b * c := Int.le_of_dvd aux h2
+    nlinarith only [hba, hdc, h, this]
