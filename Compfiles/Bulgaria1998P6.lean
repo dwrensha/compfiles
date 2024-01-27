@@ -83,7 +83,6 @@ problem bulgaria1998_p6
   rw [show (a^2 + b^2) * (a^2 - b^2) = a^4 - b^4 by ring] at h6
   obtain ⟨c, hc⟩ := h6
   rw [←sq, ←sq_abs] at hc
-  obtain ⟨c', rfl⟩ := @exists_eq _ |c|
   have ha' : 0 < a := by positivity
   have hb' : 0 < b := by positivity
   have hc' : 0 < |c| := by
