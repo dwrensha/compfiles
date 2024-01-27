@@ -1,6 +1,7 @@
 import Lean.Elab.Command
 import Lean.Elab.Eval
 import Lean.Meta.Basic
+import Std.Data.String.Basic
 import Std.Lean.NameMapAttribute
 import Std.Util.TermUnsafe
 
@@ -100,6 +101,10 @@ structure ProblemFileMetadata where
   --- then this field should contain the URL of that source.
   importedFrom : Option Link := .none
 
+  --- Names of the people who wrote the solution. By default, this
+  --- is automatically populated via the file's copyright header.
+  authors : List String := []
+
 structure ProblemMetadataEntry where
   module : Name
   metadata : ProblemFileMetadata
@@ -115,6 +120,15 @@ initialize problemMetadataExtension : ProblemMetadataExtension ←
         as.foldl (init := acc) fun acc' a => acc'.push a
     addEntryFn    := fun s n => s.push n
   }
+
+def parseAuthors (src : String) : List String := Id.run do
+  let lines := src.split (fun c => c = '\n')
+  --"Authors:"
+  for l in lines do
+    if l.startsWith "Authors: "
+    then
+      return (l.stripPrefix "Authors: ").split (fun c => c = ',')
+  return []
 
 /-- Top-level command to mark that a file should participate in problem extraction.
 This should be at the top of the file (after imports); content above it is ignored
@@ -136,10 +150,17 @@ def elabProblemFile (tk : Syntax) (md : Option (TSyntax `term)) : Command.Comman
   modifyEnv fun env =>
     solutionExtractionExtension.addEntry env ⟨mod, EntryVariant.file src startPos⟩
 
-  if let some stx := md then Lean.Elab.Command.liftTermElabM do
-    let md ← unsafe Lean.Elab.Term.evalTerm ProblemFileMetadata (mkConst ``ProblemFileMetadata) stx
-    modifyEnv fun env => problemMetadataExtension.addEntry env ⟨mod, md⟩
-    pure ()
+  let mut mdv ← match md with
+  | some stx => Lean.Elab.Command.liftTermElabM do
+    unsafe Lean.Elab.Term.evalTerm ProblemFileMetadata (mkConst ``ProblemFileMetadata) stx
+  | .none => pure {}
+
+  let mdv' :=
+    if mdv.authors.isEmpty
+    then { mdv with authors := parseAuthors src }
+    else mdv
+
+  modifyEnv fun env => problemMetadataExtension.addEntry env ⟨mod, mdv'⟩
 
 elab_rules : command
 | `(command| problem_file%$tk) => elabProblemFile tk none

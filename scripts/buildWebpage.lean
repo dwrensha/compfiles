@@ -119,8 +119,11 @@ unsafe def main (_args : List String) : IO Unit := do
           h.putStrLn "<br>"
           if proved
           then
+            let authors :=
+              if metadata.authors.isEmpty then "" else
+              s!" written by {String.intercalate " and " metadata.authors}"
             h.putStrLn
-              s!"<p>This problem <a href=\"{solutionUrl}\">has a complete solution</a>.</p>"
+              s!"<p>This problem <a href=\"{solutionUrl}\">has a complete solution</a> {authors}.</p>"
           else
             h.putStrLn
               s!"<p>This problem <a href=\"{solutionUrl}\">does not yet have a complete solution</a>.</p>"
