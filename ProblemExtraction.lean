@@ -89,8 +89,16 @@ instance : ToString ProblemTag where
     | .NumberTheory => "number theory"
     | .Algebra => "algebra"
 
+structure Link where
+  text : String
+  url : Option String
+
 structure ProblemFileMetadata where
   tags : List ProblemTag := []
+
+  --- If the formalized solution was imported from somewhere else,
+  --- then this field should contain the URL of that source.
+  importedFrom : Option Link := .none
 
 structure ProblemMetadataEntry where
   module : Name

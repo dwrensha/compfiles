@@ -7,7 +7,12 @@ import Mathlib.Analysis.SpecialFunctions.Trigonometric.Complex
 
 import ProblemExtraction
 
-problem_file { tags := [.Algebra] }
+problem_file {
+  tags := [.Algebra],
+  importedFrom := .some {
+    text := "mathlib4/Archive/Imo",
+    url  := "https://github.com/leanprover-community/mathlib4/blob/master/Archive/Imo/Imo1962Q4.lean" },
+}
 
 /-!
 # International Mathematics Olympiad 1962, Problem 4
@@ -27,9 +32,6 @@ determine solutionSet : Set ℝ :=
   {x : ℝ | ∃ k : ℤ, x = (2 * ↑k + 1) * π / 4 ∨ x = (2 * ↑k + 1) * π / 6}
 
 snip begin
-
--- This file was copied from
--- https://github.com/leanprover-community/mathlib4/blob/master/Archive/Imo/Imo1962Q4.lean
 
 noncomputable section
 

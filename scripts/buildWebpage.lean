@@ -105,13 +105,18 @@ unsafe def main (_args : List String) : IO Unit := do
             | some v => do
                  if v.hasSorry then proved := false
 
+          let metadata := (mds.find? m).getD {}
           infos := ⟨m.toString.stripPrefix "Compfiles.",
                     extractModuleDoc env m,
-                    (mds.find? m).getD {},
+                    metadata,
                     solutionUrl, problemUrl, proved⟩ :: infos
 
           let h ← IO.FS.Handle.mk ("_site/" ++ problemFile) IO.FS.Mode.write
           h.putStrLn <| ←htmlHeader m.toString
+          h.putStrLn "<pre class=\"problem\">"
+          h.putStr (htmlEscape problem_src)
+          h.putStrLn "</pre>"
+          h.putStrLn "<br>"
           if proved
           then
             h.putStrLn
@@ -119,10 +124,12 @@ unsafe def main (_args : List String) : IO Unit := do
           else
             h.putStrLn
               s!"<p>This problem <a href=\"{solutionUrl}\">does not yet have a complete solution</a>.</p>"
-          h.putStrLn "<pre class=\"problem\">"
-          h.putStr (htmlEscape problem_src)
-          h.putStrLn "</pre>"
-          h.putStrLn "<br>"
+          if let .some ⟨title, url⟩ := metadata.importedFrom
+          then
+            let source := match url with
+             | .none => title
+             | .some url => s!"<a href=\"{url}\">{title}</a>"
+            h.putStrLn s!"<p>The solution was imported from {source}.</p>"
           h.putStrLn s!"<a href=\"{homeUrl}\">full problem list</a>"
           h.putStrLn "</body></html>"
           h.flush

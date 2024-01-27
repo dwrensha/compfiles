@@ -7,7 +7,12 @@ import Mathlib.Data.PNat.Basic
 
 import ProblemExtraction
 
-problem_file { tags := [.Algebra] }
+problem_file {
+  tags := [.Algebra],
+  importedFrom := .some {
+    text := "mathlib4/Archive/Imo",
+    url  := "https://github.com/leanprover-community/mathlib4/blob/master/Archive/Imo/Imo1977Q6.lean" },
+}
 
 /-!
 # International Mathematical Olympiad 1977, Problem 6
@@ -15,7 +20,6 @@ problem_file { tags := [.Algebra] }
 Suppose `f : ℕ+ → ℕ+` satisfies `f(f(n)) < f(n + 1)` for all `n`.
 Prove that `f(n) = n` for all `n`.
 -/
-
 
 namespace Imo1977P6
 

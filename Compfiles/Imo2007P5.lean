@@ -10,7 +10,12 @@ import Mathlib.Tactic
 
 import ProblemExtraction
 
-problem_file { tags := [.NumberTheory] }
+problem_file {
+  tags := [.NumberTheory]
+  importedFrom := .some {
+    text := "mortarsanjaya/imo-A-and-N",
+    url  := "https://github.com/mortarsanjaya/imo-A-and-N/blob/main/src/IMO2007/N6/N6.lean" },
+}
 
 /-!
 # International Mathematical Olympiad 2007, Problem 5
@@ -22,9 +27,6 @@ then a = b.
 namespace Imo2007P5
 
 snip begin
-
--- Solution adapted from
--- https://github.com/mortarsanjaya/imo-A-and-N/blob/main/src/IMO2007/N6/N6.lean
 
 lemma bad_symm {n : ℤ} {a b : ℕ} (h : n * a * b - 1 ∣ (n * a ^ 2 - 1) ^ 2) :
   n * b * a - 1 ∣ (n * b ^ 2 - 1) ^ 2 := by
