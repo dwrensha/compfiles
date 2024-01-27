@@ -123,15 +123,10 @@ theorem not_dvd_finset_prod {α M : Type*} [CommMonoidWithZero M]
     {g : α → M} (hS : ∀ i ∈ S, ¬ p ∣ g i) : ¬ p ∣ ∏ i in S, g i := by
   exact mt (Prime.dvd_finset_prod_iff pp _).1 <| not_exists.2 fun a => not_and.2 (hS a)
 
-lemma lemma8 (q : ℕ) (h : 0 < (q:ℤ)) : (q:ℚ) ≠ 0 := by
-  norm_cast at h ⊢
-  exact Nat.pos_iff_ne_zero.mp h
-
 lemma lemma9' (i : ℕ) (hi : i ∈ Finset.range 330) :
      (((∏ j in Finset.range 330,
          (660 + j) * (1319 - j)):ℕ):ℚ) / ((660 + (i:ℚ)) * (1319 - (i:ℚ)))
-       =
-     ∏ j in (Finset.range 330).erase i, (660 + j) * (1319 - j) := by
+       = ∏ j in (Finset.range 330).erase i, (660 + j) * (1319 - j) := by
   rw [←Finset.prod_erase_mul _ _ hi]
   rw [Finset.mem_range] at hi
   push_cast
@@ -233,7 +228,8 @@ problem imo1979_p1 (p q : ℤ) (hp : 0 < p) (hq : 0 < q)
   obtain ⟨q', rfl⟩ := Int.eq_ofNat_of_zero_le (le_of_lt hq)
   simp only [Int.cast_ofNat] at h
   suffices H : 1979 ∣ p' from Int.ofNat_dvd.mpr H
-  have hqq0 : (q':ℚ) ≠ 0 := lemma8 _ hq
+  have hqq0 : (q':ℚ) ≠ 0 :=
+    Nat.cast_ne_zero.mpr (Nat.pos_iff_ne_zero.mp (Int.ofNat_pos.mp hq))
   rw [div_eq_iff hqq0] at h
   apply_fun (· * sq) at h
   have h41 :
