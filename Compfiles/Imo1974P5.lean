@@ -26,48 +26,41 @@ determine solution_set : Set ℝ := Set.Ioo 1 2
 
 snip begin
 
-lemma easy_direction (s : ℝ)
-    (h : ∃ a b c d : ℝ, 0 < a ∧ 0 < b ∧ 0 < c ∧ 0 < d ∧
-     s = a / (a + b + d) + b / (a + b + c) +
-         c / (b + c + d) + d / (a + c + d)) :
+lemma condition_implies_solution_set (s : ℝ)
+    (h : ∃ a b c d : ℝ,
+            0 < a ∧ 0 < b ∧ 0 < c ∧ 0 < d ∧
+            s = a / (a + b + d) + b / (a + b + c) +
+                c / (b + c + d) + d / (a + c + d)) :
     s ∈ solution_set := by
-  obtain ⟨a, b, c, d, ha, hb, hc, hd, hs⟩ := h
-  have h1 : 1 = a / (a + b + c + d) + b / (a + b + c + d) +
-                c / (a + b + c + d) + d / (a + b + c + d) := by field_simp
-  have h2 : a / (a + b) + b / (a + b) +
-              c / (c + d) + d / (c + d) = 2 := by field_simp; ring
-  have h3 : a / (a + b + d) < a / (a + b) :=
-     div_lt_div_of_lt_left ha (add_pos ha hb) (lt_add_of_pos_right _ hd)
-  have h4 : b / (a + b + c) < b / (a + b) :=
-     div_lt_div_of_lt_left hb (add_pos ha hb) (lt_add_of_pos_right _ hc)
-  have h5 : c / (b + c + d) < c / (c + d) :=
-     div_lt_div_of_lt_left hc (add_pos hc hd) (by linarith)
-  have h6 : d / (a + c + d) < d / (c + d) :=
-     div_lt_div_of_lt_left hd (add_pos hc hd) (by linarith)
-
-  have h7 : a / (a + b + d) + b / (a + b + c) +
-       c / (b + c + d) + d / (a + c + d) <
-        a / (a + b) + b / (a + b) + c / (c + d) + d / (c + d) := by gcongr
-
-  have h8 : a / (a + b + c + d) < a / (a + b + d) :=
-     div_lt_div_of_lt_left ha (by linarith) (by linarith)
-  have h9 : b / (a + b + c + d) < b / (a + b + c) :=
-     div_lt_div_of_lt_left hb (by linarith) (by linarith)
-  have h10 : c / (a + b + c + d) < c / (b + c + d) :=
-     div_lt_div_of_lt_left hc (by linarith) (by linarith)
-  have h11 : d / (a + b + c + d) < d / (a + c + d) :=
-     div_lt_div_of_lt_left hd (by linarith) (by linarith)
-
-  have h12 : a / (a + b + c + d) + b / (a + b + c + d) +
-       c / (a + b + c + d) + d / (a + b + c + d) <
-         a / (a + b + d) + b / (a + b + c) +
-           c / (b + c + d) + d / (a + c + d) := by gcongr
-
-  rw [←hs] at h7 h12
   rw [Set.mem_Ioo]
-  rw [←h1] at h12
-  rw [h2] at h7
-  exact ⟨h12, h7⟩
+  obtain ⟨a, b, c, d, ha, hb, hc, hd, rfl⟩ := h
+
+  constructor
+  · have h8 : a / (a + b + c + d) < a / (a + b + d) :=
+       div_lt_div_of_lt_left ha (by linarith) (by linarith)
+    have h9 : b / (a + b + c + d) < b / (a + b + c) :=
+       div_lt_div_of_lt_left hb (by linarith) (by linarith)
+    have h10 : c / (a + b + c + d) < c / (b + c + d) :=
+       div_lt_div_of_lt_left hc (by linarith) (by linarith)
+    have h11 : d / (a + b + c + d) < d / (a + c + d) :=
+       div_lt_div_of_lt_left hd (by linarith) (by linarith)
+
+    calc 1 = a / (a + b + c + d) + b / (a + b + c + d) +
+             c / (a + b + c + d) + d / (a + b + c + d) := by field_simp
+         _ < _ := by gcongr
+
+  · have h3 : a / (a + b + d) < a / (a + b) :=
+       div_lt_div_of_lt_left ha (add_pos ha hb) (lt_add_of_pos_right _ hd)
+    have h4 : b / (a + b + c) < b / (a + b) :=
+       div_lt_div_of_lt_left hb (add_pos ha hb) (lt_add_of_pos_right _ hc)
+    have h5 : c / (b + c + d) < c / (c + d) :=
+       div_lt_div_of_lt_left hc (add_pos hc hd) (by linarith)
+    have h6 : d / (a + c + d) < d / (c + d) :=
+       div_lt_div_of_lt_left hd (add_pos hc hd) (by linarith)
+
+    calc
+      _ < a / (a + b) + b / (a + b) + c / (c + d) + d / (c + d) := by gcongr
+      _ = 2 := by field_simp; ring
 
 noncomputable def S (a b c d : ℝ) : ℝ :=
     a / (a + b + d) + b / (a + b + c) +
@@ -118,9 +111,8 @@ theorem T_continuous : ContinuousOn T (Set.Icc 0 1) := by
     · exact h3
   · exact h4
 
-lemma T0 : T 0 = 1 := by norm_num [T,S]
-
-lemma T1 : T 1 = 2 := by norm_num [T,S]
+lemma T0 : T 0 = 1 := by norm_num [T, S]
+lemma T1 : T 1 = 2 := by norm_num [T, S]
 
 snip end
 
@@ -141,4 +133,4 @@ problem imo1974_p5 (s : ℝ) :
 
     use 1, 1 - t, t, (t * (1 - t))
     exact ⟨by norm_num, by linarith, by linarith, by nlinarith, hts.symm⟩
-  · intro hs; exact easy_direction s hs
+  · intro hs; exact condition_implies_solution_set s hs
