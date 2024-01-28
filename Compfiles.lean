@@ -29,6 +29,7 @@ import Compfiles.Imo1990P3
 import Compfiles.Imo1992P1
 import Compfiles.Imo1992P2
 import Compfiles.Imo1997P5
+import Compfiles.Imo2000P2
 import Compfiles.Imo2001P6
 import Compfiles.Imo2001P3
 import Compfiles.Imo2003P2
