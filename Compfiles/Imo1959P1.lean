@@ -21,10 +21,6 @@ problem_file {
 
 Prove that the fraction `(21n+4)/(14n+3)` is irreducible for every
 natural number `n`.
-
-Since Lean doesn't have a concept of "irreducible fractions" per se,
-we just formalize this as saying the numerator and denominator are
-relatively prime.
 -/
 
 namespace Imo1959P1
@@ -43,5 +39,10 @@ lemma calculation
 
 snip end
 
+/-
+Since Lean doesn't have a concept of "irreducible fractions" per se,
+we just formalize this as saying the numerator and denominator are
+relatively prime.
+-/
 problem imo1959_p1 : ∀ n : ℕ, Nat.Coprime (21 * n + 4) (14 * n + 3) :=
 fun n => Nat.coprime_of_dvd' <| λ k _ h1 h2 => calculation n k h1 h2
