@@ -10,7 +10,11 @@ import Mathlib.Tactic.Linarith
 
 import ProblemExtraction
 
-problem_file { tags := [.Algebra] }
+problem_file {
+  tags := [.Algebra]
+  importedFrom :=
+    "https://github.com/leanprover-community/mathlib4/blob/master/Archive/Imo/Imo2021Q1.lean"
+}
 
 /-!
 # International Mathematical Olympiad 2021, Problem 1
