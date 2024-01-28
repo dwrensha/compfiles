@@ -8,7 +8,11 @@ import Mathlib.Tactic
 
 import ProblemExtraction
 
-problem_file { tags := [.Algebra] }
+problem_file {
+  tags := [.Algebra],
+  importedFrom :=
+    "https://github.com/mortarsanjaya/imo-A-and-N/blob/main/src/IMO2010/A1/A1.lean",
+}
 
 /-!
 # International Mathematical Olympiad 2010, Problem 1
@@ -25,8 +29,6 @@ determine solution_set : Set (ℝ → ℝ) :=
 
 problem imo2010_p1 (f : ℝ → ℝ) :
     f ∈ solution_set ↔ ∀ x y, f (⌊x⌋ * y) = f x * ⌊f y⌋ :=
-  -- Solution adapted from
-  -- https://github.com/mortarsanjaya/imo-A-and-N/blob/main/src/IMO2010/A1/A1.lean
 ---- `→`
 ⟨λ h x y ↦ h.elim
   (λ h ↦ Exists.elim h $ λ C h ↦ h.2.symm ▸ h.1.symm ▸

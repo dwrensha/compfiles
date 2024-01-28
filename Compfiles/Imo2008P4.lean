@@ -11,10 +11,8 @@ import ProblemExtraction
 
 problem_file {
   tags := [.Algebra],
-  importedFrom := .some {
-    text := "mortarsanjaya/imo-A-and-N",
-    url  := "https://github.com/mortarsanjaya/imo-A-and-N/blob/main/src/IMO2008/A1/A1.lean"
-  },
+  importedFrom :=
+    "https://github.com/mortarsanjaya/imo-A-and-N/blob/main/src/IMO2008/A1/A1.lean",
 }
 
 /-!

@@ -116,23 +116,28 @@ unsafe def main (_args : List String) : IO Unit := do
           h.putStrLn "<pre class=\"problem\">"
           h.putStr (htmlEscape problem_src)
           h.putStrLn "</pre>"
-          h.putStrLn "<br>"
           if proved
           then
             let authors :=
               if metadata.authors.isEmpty then "" else
-              s!" written by {String.intercalate " and " metadata.authors}"
+              s!" written by {" and ".intercalate metadata.authors}"
             h.putStrLn
               s!"<p>This problem <a href=\"{solutionUrl}\">has a complete solution</a> {authors}.</p>"
           else
             h.putStrLn
               s!"<p>This problem <a href=\"{solutionUrl}\">does not yet have a complete solution</a>.</p>"
-          if let .some ⟨title, url⟩ := metadata.importedFrom
+          if let .some url := metadata.importedFrom
           then
-            let source := match url with
-             | .none => title
-             | .some url => s!"<a href=\"{url}\">{title}</a>"
-            h.putStrLn s!"<p>The solution was imported from {source}.</p>"
+            -- Make github urls a little nicer to look at.
+            let text :=
+              if url.startsWith "https://github.com/"
+              then let rest := url.stripPrefix "https://github.com/"
+                   match rest.splitOn "/" with
+                   | _ns :: repo :: _blob :: _branch :: rest =>
+                      "/".intercalate (repo :: rest)
+                   | _ => url
+              else url
+            h.putStrLn s!"<p>The solution was imported from <a href=\"{url}\">{text}</a>.</p>"
           h.putStrLn s!"<a href=\"{homeUrl}\">full problem list</a>"
           h.putStrLn "</body></html>"
           h.flush

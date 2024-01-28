@@ -10,10 +10,8 @@ import ProblemExtraction
 
 problem_file {
   tags := [.NumberTheory],
-  importedFrom := .some {
-    text := "mathlib4/Archive/Imo",
-    url  := "https://github.com/leanprover-community/mathlib4/blob/master/Archive/Imo/Imo2001Q6.lean"
-  },
+  importedFrom :=
+    "https://github.com/leanprover-community/mathlib4/blob/master/Archive/Imo/Imo2001Q6.lean",
 }
 
 /-!

@@ -12,9 +12,8 @@ import ProblemExtraction
 
 problem_file {
   tags := [.NumberTheory]
-  importedFrom := .some {
-    text := "mortarsanjaya/imo-A-and-N",
-    url  := "https://github.com/mortarsanjaya/imo-A-and-N/blob/main/src/IMO2007/N6/N6.lean" },
+  importedFrom :=
+    "https://github.com/mortarsanjaya/imo-A-and-N/blob/main/src/IMO2007/N6/N6.lean",
 }
 
 /-!

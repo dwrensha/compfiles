@@ -9,10 +9,8 @@ import ProblemExtraction
 
 problem_file {
   tags := [.Algebra, .Inequality],
-  importedFrom := .some {
-    text := "mathlib4/Archive/Imo",
-    url  := "https://github.com/leanprover-community/mathlib4/blob/master/Archive/Imo/Imo2020Q2.lean"
-  },
+  importedFrom :=
+    "https://github.com/leanprover-community/mathlib4/blob/master/Archive/Imo/Imo2020Q2.lean",
 }
 
 /-!

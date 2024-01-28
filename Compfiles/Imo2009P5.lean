@@ -10,7 +10,11 @@ import Mathlib.Tactic
 
 import ProblemExtraction
 
-problem_file { tags := [.Algebra] }
+problem_file {
+  tags := [.Algebra],
+  importedFrom :=
+    "https://github.com/mortarsanjaya/imo-A-and-N/blob/main/src/IMO2009/A3/A3.lean",
+}
 
 /-!
 # International Mathematical Olympiad 2009, Problem 5
@@ -26,9 +30,6 @@ form the sides of a nondegenerate triangle.
 namespace Imo2009P5
 
 snip begin
-
--- Solution adapted from
--- https://github.com/mortarsanjaya/imo-A-and-N/blob/main/src/IMO2009/A3/A3.lean
 
 section extra_lemmas
 

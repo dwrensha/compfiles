@@ -90,16 +90,12 @@ instance : ToString ProblemTag where
     | .NumberTheory => "number theory"
     | .Algebra => "algebra"
 
-structure Link where
-  text : String
-  url : Option String
-
 structure ProblemFileMetadata where
   tags : List ProblemTag := []
 
   --- If the formalized solution was imported from somewhere else,
   --- then this field should contain the URL of that source.
-  importedFrom : Option Link := .none
+  importedFrom : Option String := .none
 
   --- Names of the people who wrote the solution. By default, this
   --- is automatically populated via the file's copyright header.
@@ -122,8 +118,7 @@ initialize problemMetadataExtension : ProblemMetadataExtension ←
   }
 
 def parseAuthors (src : String) : List String := Id.run do
-  let lines := src.split (fun c => c = '\n')
-  --"Authors:"
+  let lines := src.splitOn "\n"
   for l in lines do
     if l.startsWith "Authors: "
     then
