@@ -138,7 +138,10 @@ unsafe def main (_args : List String) : IO Unit := do
                    | _ => url
               else url
             h.putStrLn s!"<p>The solution was imported from <a href=\"{url}\">{text}</a>.</p>"
-          h.putStrLn s!"<a href=\"{homeUrl}\">full problem list</a>"
+          h.putStrLn "<hr>"
+          h.putStrLn "<div class=\"footer-row\">"
+          h.putStrLn s!"<a class=\"home-link\" href=\"{homeUrl}\">Compfiles</a>"
+          h.putStrLn "</div>"
           h.putStrLn "</body></html>"
           h.flush
 
