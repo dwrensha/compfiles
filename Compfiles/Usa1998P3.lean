@@ -142,7 +142,7 @@ problem usa1998_p3
     (a : ℕ → ℝ)
     (ha : ∀ i ∈ Finset.range (n + 1), a i ∈ Set.Ioo 0 (Real.pi / 2))
     (hs : n - 1 ≤ ∑ i in Finset.range (n + 1), Real.tan (a i - (Real.pi / 4)))
-    : Real.rpow n (n + 1) ≤ ∏ i in Finset.range (n + 1), Real.tan (a i) := by
+    : n ^ (n + 1) ≤ ∏ i in Finset.range (n + 1), Real.tan (a i) := by
 
   obtain h0 | h0 := eq_or_ne n 0
   · simp_all[h0]
@@ -278,9 +278,9 @@ problem usa1998_p3
         cases' lt_or_le k 0 with hk' hk'
         · have hk2 : k ≤ -1 := Iff.mp Int.lt_add_one_iff hk'
           have : kk ≤ -1 := by rw [← hkk']; norm_cast
-          nlinarith[Real.pi_pos]
+          nlinarith only [Real.pi_pos, ha1, hk2, this, hk]
         · have : 0 ≤ kk := by rw [← hkk']; norm_cast
-          nlinarith[Real.pi_pos]
+          nlinarith only [Real.pi_pos, ha2, this, hk]
       · intro k hk
         field_simp at hk
         have hkk : ∃ kk : ℝ, ↑k = kk := ⟨↑k, rfl⟩
@@ -289,14 +289,14 @@ problem usa1998_p3
         obtain hk' | hk' | hk' := lt_trichotomy k 0
         · have hk2 : k ≤ -1 := Iff.mp Int.lt_add_one_iff hk'
           have : kk ≤ -1 := by rw [← hkk']; norm_cast
-          nlinarith[Real.pi_pos]
+          nlinarith only [Real.pi_pos, ha1, hk2, this, hk]
         · have hk0 : kk = 0 := by rw [←hkk']; norm_cast
           rw [hk0] at hk
           norm_num at hk
           exact Real.pi_ne_zero hk
         · have hk2 : 1 ≤ k := hk'
           have : 1 ≤ kk := by rw [← hkk']; norm_cast
-          nlinarith[Real.pi_pos]
+          nlinarith only [Real.pi_pos, ha1, hk2, this, hk]
     have h11 := Real.tan_add' h10
     have h12 : Real.tan (a i - Real.pi / 4) + 1 =
                  1 + Real.tan (a i - Real.pi / 4) := add_comm _ _
@@ -308,6 +308,6 @@ problem usa1998_p3
   have h8 : ∏ i in Finset.range (n + 1), Real.tan (a i) =
               ∏ j in Finset.range (n + 1), (1 + y j) / (1 - y j) :=
      Finset.prod_congr rfl (fun x hx ↦ h7 x hx)
-
-  rw [h8]
+  have h9 : (n:ℝ) ^ ((n:ℝ) + 1) = n ^ (n + 1) := by norm_cast
+  rw [h8, ←h9]
   exact h6
