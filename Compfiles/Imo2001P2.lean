@@ -40,7 +40,7 @@ $$
 -/
 
 theorem bound (ha : 0 < a) (hb : 0 < b) (hc : 0 < c) :
-    a ^ 4 / (a ^ 4 + b ^ 4 + c ^ 4) ≤ a ^ 3 / sqrt ((a ^ 3) ^ 2 + ↑8 * b ^ 3 * c ^ 3) := by
+    a ^ 4 / (a ^ 4 + b ^ 4 + c ^ 4) ≤ a ^ 3 / sqrt ((a ^ 3) ^ 2 + 8 * b ^ 3 * c ^ 3) := by
   rw [div_le_div_iff (by positivity) (by positivity)]
   calc a ^ 4 * sqrt ((a ^ 3) ^ 2 + (8:ℝ) * b ^ 3 * c ^ 3)
       = a ^ 3 * (a * sqrt ((a ^ 3) ^ 2 + (8:ℝ) * b ^ 3 * c ^ 3)) := by ring
@@ -55,7 +55,7 @@ theorem bound (ha : 0 < a) (hb : 0 < b) (hc : 0 < c) :
     _ ≥ 0 := by positivity
 
 theorem imo2001_p2' (ha : 0 < a) (hb : 0 < b) (hc : 0 < c) :
-    ↑1 ≤ a ^ 3 / sqrt ((a ^ 3) ^ 2 + 8 * b ^ 3 * c ^ 3) +
+    1 ≤ a ^ 3 / sqrt ((a ^ 3) ^ 2 + 8 * b ^ 3 * c ^ 3) +
       b ^ 3 / sqrt ((b ^ 3) ^ 2 + 8 * c ^ 3 * a ^ 3) +
         c ^ 3 / sqrt ((c ^ 3) ^ 2 + 8 * a ^ 3 * b ^ 3) :=
   have H : a ^ 4 + b ^ 4 + c ^ 4 ≠ 0 := by positivity
@@ -66,10 +66,12 @@ theorem imo2001_p2' (ha : 0 < a) (hb : 0 < b) (hc : 0 < c) :
 snip end
 
 problem imo2001_p2 (ha : 0 < a) (hb : 0 < b) (hc : 0 < c) : 1 ≤
-    a / sqrt (a ^ 2 + 8 * b * c) + b / sqrt (b ^ 2 + 8 * c * a) + c / sqrt (c ^ 2 + 8 * a * b) :=
+    a / sqrt (a ^ 2 + 8 * b * c) + b / sqrt (b ^ 2 + 8 * c * a) +
+    c / sqrt (c ^ 2 + 8 * a * b) :=
   have h3 : ∀ {x : ℝ}, 0 < x → (x ^ (3 : ℝ)⁻¹) ^ 3 = x := fun hx =>
     show ↑3 = (3 : ℝ) by norm_num ▸ rpow_inv_natCast_pow hx.le three_ne_zero
   calc
-    1 ≤ _ := imo2001_p2' (rpow_pos_of_pos ha _) (rpow_pos_of_pos hb _) (rpow_pos_of_pos hc _)
+    1 ≤ _ := imo2001_p2' (rpow_pos_of_pos ha (3 : ℝ)⁻¹)
+                         (rpow_pos_of_pos hb (3 : ℝ)⁻¹)
+                         (rpow_pos_of_pos hc (3 : ℝ)⁻¹)
     _ = _ := by rw [h3 ha, h3 hb, h3 hc]
-
