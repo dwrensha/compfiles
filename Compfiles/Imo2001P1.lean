@@ -24,10 +24,30 @@ on line BC be the foot of the altitude from A. Assume that
 
 namespace Imo2001P1
 
-open EuclideanGeometry
+open scoped EuclideanGeometry
+
+snip begin
+
+-- We need some instances in order to talk about oriented angles.
+
+local instance planeFiniteDim :
+    Fact (FiniteDimensional.finrank ℝ (EuclideanSpace ℝ (Fin 2)) = 2) :=
+  ⟨finrank_euclideanSpace_fin⟩
+
+noncomputable local instance someOrientation :
+    Module.Oriented ℝ (EuclideanSpace ℝ (Fin 2)) (Fin 2) :=
+  ⟨Basis.orientation (FiniteDimensional.finBasisOfFinrankEq _ _ planeFiniteDim.out)⟩
+
+lemma lemma1
+    (t : Affine.Triangle ℝ (EuclideanSpace ℝ (Fin 2)))
+    : ∡ t.circumcenter (t.points 2) (t.points 1) =
+      Real.pi - ∡ (t.points 1) (t.points 0) (t.points 2) := by
+  sorry
+
+snip end
 
 problem imo2001_p1
-    (A B C: EuclideanSpace ℝ (Fin 2))
+    (A B C : EuclideanSpace ℝ (Fin 2))
     (hABC : AffineIndependent ℝ ![A, B, C])
     (hAcuteA : ∠ C A B < Real.pi / 2)
     (hAcuteB : ∠ A B C < Real.pi / 2)
