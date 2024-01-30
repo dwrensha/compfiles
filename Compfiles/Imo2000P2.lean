@@ -30,27 +30,32 @@ lemma schur (a b c : ℝ) (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c) :
     linarith [h1 a c b ha hc hb h3]
   wlog Hba : b ≤ a with h2
   · have h4 : a ≤ b := le_of_not_le Hba
-    obtain hca | hac :  c ≤ a ∨ a ≤ c := le_total c a
+    obtain hca | hac : c ≤ a ∨ a ≤ c := le_total c a
     · have := h2 b a c hb ha hc hca h4
       linarith only [this]
     · have := h2 b c a hb hc ha hac Hcb
       linarith only [this]
   have h5 :=
-    calc a * (a - b) * (a - c) + b * (b-a) * (b-c)
-       = a * (a-b) * (a-c)-b * (a-b) * (b-c) := by ring
-     _ = (a - b) * (a * (a - c)- b * (b-c)) := by ring
+    calc a * (a - b) * (a - c) + b * (b - a) * (b - c)
+       = a * (a - b) * (a - c) - b * (a - b) * (b - c) := by ring
+     _ = (a - b) * (a * (a - c)- b * (b - c)) := by ring
 
-  have h6 : 0 ≤ (a - b) * (a * (a-c)-b * (b-c)) := by
+  have h6 : 0 ≤ (a - b) * (a * (a - c) - b * (b - c)) := by
     have h7 : 0 ≤ a - b := sub_nonneg.mpr Hba
-    have h8 : 0 ≤ a - c := by linarith
+    have h8 : 0 ≤ b - c := sub_nonneg.mpr Hcb
     have h10 : b - c ≤ a - c := sub_le_sub_right Hba c
     suffices h11 : 0 ≤ (a * (a-c)-b * (b-c)) from
       mul_nonneg h7 h11
-    nlinarith
+    have h12 : a * (b - c) ≤ a * (a - c) := mul_le_mul_of_nonneg_left h10 ha
+    have h13 : 0 ≤ a * (b - c) - b * (b - c) := by
+      rw [←sub_mul]; positivity
+    have h14 : a * (b - c) - b * (b - c) ≤  a * (a - c) - b * (b - c) :=
+      sub_le_sub_right h12 (b * (b - c))
+    exact le_trans h13 h14
 
   rw [← h5] at h6
-  have h12 : 0 ≤ (c - a) * (c - b) := by nlinarith
-  have h13 : 0 ≤ c * (c - a) * (c - b) := by nlinarith
+  have h12 : 0 ≤ (c - a) * (c - b) := by nlinarith only [Hba, Hcb]
+  have h13 : 0 ≤ c * (c - a) * (c - b) := by nlinarith only [hc, h12]
   linarith
 
 lemma lemma1 (x y z : ℝ) (hx : 0 < x) (hy : 0 < y) (hz : 0 < z) :
