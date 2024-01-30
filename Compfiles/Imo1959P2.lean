@@ -18,7 +18,7 @@ problem_file {
 
 For what real values of x is
 
- √(x+√(2x-1)) + √(x-√2x-1)) = A,
+ √(x+√(2x-1)) + √(x-√(2x-1)) = A,
 
 given:
   (a) A = √2
