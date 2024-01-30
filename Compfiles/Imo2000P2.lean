@@ -13,7 +13,7 @@ problem_file { tags := [.Algebra, .Inequality] }
 /-!
 # International Mathematical Olympiad 2000, Problem 2
 
-Let a, b, c be real numbers such that abc = 1. Show that
+Let a, b, c be positive real numbers such that abc = 1. Show that
 
     (a - 1 + 1/b)(b - 1 + 1/c)(c - 1 + 1/a) ≤ 1.
 -/
