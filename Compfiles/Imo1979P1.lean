@@ -75,22 +75,22 @@ lemma lemma3 : ∑ i in Finset.range 1319, (-(1:ℚ))^i / (i + 1) =
   have h7 :
    ∑ i in Finset.filter (fun x ↦ Even x) (Finset.range 1319), 1 / ((i:ℚ) + 1) =
     ∑ i in Finset.filter (fun x ↦ Even x) (Finset.range 1319),
-      (-(1:ℚ))^i / ((i:ℚ) + 1) := by
+      (-1 : ℚ)^i / ((i:ℚ) + 1) := by
     apply Finset.sum_congr rfl
     intro x hx
     rw [Finset.mem_filter] at hx
-    have h9: (-(1:ℚ))^x = 1 := by aesop
+    have h9: (-1 : ℚ)^x = 1 := Even.neg_one_pow hx.2
     rw [h9]
   rw [h7]; clear h7
   rw [Rat.sub_eq_add_neg, ←Finset.sum_neg_distrib]
   have h10 : ∑ x in Finset.filter (fun x ↦ ¬Even x) (Finset.range 1319),
                -(1 / ((x:ℚ) + 1)) =
               ∑ x in Finset.filter (fun x ↦ ¬Even x) (Finset.range 1319),
-               (-(1:ℚ))^x / ((x:ℚ) + 1) := by
+               (-1 : ℚ)^x / ((x:ℚ) + 1) := by
     apply Finset.sum_congr rfl
     intro x hx
     rw [Finset.mem_filter] at hx
-    have h9: (-(1:ℚ))^x = -1 := by aesop
+    have h9: (-1 : ℚ)^x = -1 := Odd.neg_one_pow (Nat.odd_iff_not_even.mpr hx.2)
     rw [h9]
     field_simp
   rw [h10, Finset.sum_filter_add_sum_filter_not]
