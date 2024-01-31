@@ -6,7 +6,6 @@ Authors: David Renshaw
 
 import Mathlib.Data.Real.Basic
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
-import Mathlib.Algebra.GroupPower.Lemmas
 
 import ProblemExtraction
 
