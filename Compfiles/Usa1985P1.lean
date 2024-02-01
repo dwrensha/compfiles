@@ -53,7 +53,7 @@ lemma nicomachus' (n : ℕ) :
     (∑ i in Finset.range n, ((i:ℤ) + 1))^2 := by
   norm_cast
   have h1 := nicomachus (n + 1)
-  simp only [Finset.sum_range_succ', zero_pow', add_zero] at h1
+  simp only [Finset.sum_range_succ', zero_pow, add_zero] at h1
   exact h1
 
 snip end
