@@ -38,6 +38,8 @@ problem usa2005_p2 :
   -- https://artofproblemsolving.com/wiki/index.php/2005_USAMO_Problems/Problem_2
   push_neg
   intro x' y' z' h1 h2
+  with_reducible generalize hM : ((147:ℤ) ^ 157) = M at h1
+  with_reducible generalize hN : ((157:ℤ) ^ 147) = N at h2
   -- move into zmod 13
   apply_fun (fun x : ℤ ↦ (x : ZMod 13)) at h1 h2
   push_cast at h1 h2
@@ -45,6 +47,7 @@ problem usa2005_p2 :
   generalize (y' : ZMod 13) = y at *
   generalize (z' : ZMod 13) = z at *
   clear! x' y' z'
+  rw [←hM] at h1; rw [←hN] at h2
   have h3 : (x^3 + y + 1)^2 + z^9 = 147^157 + 157^147 + 1 := by
     linear_combination h1 + h2
   have h4 : (x^3 + 1) * (x^3 + y) = 147^157 := by linear_combination h1
