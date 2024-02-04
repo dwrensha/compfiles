@@ -69,47 +69,8 @@ noncomputable def S (a b c d : ℝ) : ℝ :=
 noncomputable def T (t : ℝ) : ℝ := S 1 (1 - t) t (t * (1 - t))
 
 theorem T_continuous : ContinuousOn T (Set.Icc 0 1) := by
-  -- TODO use the fprop tactic once it lands
-  -- https://leanprover.zulipchat.com/#narrow/stream/287929-mathlib4/topic/porting.20.60fprop.60.20tactic/near/418177609
   unfold T S
-  have h1 : ContinuousOn
-      (fun (t:ℝ) ↦ 1 / (1 + (1 - t) + t * (1 - t)))
-      (Set.Icc 0 1) := by
-    apply ContinuousOn.div continuousOn_const
-    · apply Continuous.continuousOn; continuity
-    · rintro x ⟨hx0, hx1⟩; nlinarith
-
-  have h2 : ContinuousOn
-      (fun (t:ℝ) ↦ (1-t) / (1 + (1 - t) + t))
-      (Set.Icc 0 1) := by
-    apply ContinuousOn.div
-    · apply Continuous.continuousOn; continuity
-    · apply Continuous.continuousOn; continuity
-    · intro x _; linarith
-
-  have h3 : ContinuousOn
-      (fun (t:ℝ) ↦ t / (1 - t + t + t * (1 - t) ))
-      (Set.Icc 0 1) := by
-    apply ContinuousOn.div
-    · apply Continuous.continuousOn; continuity
-    · apply Continuous.continuousOn; continuity
-    · rintro x ⟨hx0, hx1⟩; nlinarith
-
-  have h4 : ContinuousOn
-      (fun (t:ℝ) ↦ t * (1 - t) / (1 + t + t * (1 - t)))
-      (Set.Icc 0 1) := by
-    apply ContinuousOn.div
-    · apply Continuous.continuousOn; continuity
-    · apply Continuous.continuousOn; continuity
-    · rintro x ⟨hx0, hx1⟩; nlinarith
-
-  apply ContinuousOn.add
-  · apply ContinuousOn.add
-    · apply ContinuousOn.add
-      · exact h1
-      · exact h2
-    · exact h3
-  · exact h4
+  fun_prop (disch := (rintro x ⟨a,b⟩; nlinarith))
 
 lemma T0 : T 0 = 1 := by norm_num [T, S]
 lemma T1 : T 1 = 2 := by norm_num [T, S]
