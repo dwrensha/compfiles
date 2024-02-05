@@ -220,9 +220,8 @@ problem imo1979_p1 (p q : ℤ) (hp : 0 < p) (hq : 0 < q)
     have h30 : ∀ i ∈ Finset.range 330, ¬ 1979 ∣ (660 + i) * (1319 - i) := fun i hi ↦ by
       rw [Finset.mem_range] at hi
       intro H
-      obtain ⟨v, hv⟩ | ⟨u, hu⟩ := (Nat.Prime.dvd_mul hpp).mp H
-      · omega
-      · clear H; omega -- see https://github.com/leanprover/std4/issues/562
+      have := (Nat.Prime.dvd_mul hpp).mp H
+      omega
     exact not_dvd_finset_prod (Nat.prime_iff.mp hpp) h30
   obtain ⟨p', rfl⟩ := Int.eq_ofNat_of_zero_le (le_of_lt hp)
   obtain ⟨q', rfl⟩ := Int.eq_ofNat_of_zero_le (le_of_lt hq)
