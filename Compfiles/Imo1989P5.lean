@@ -184,7 +184,7 @@ problem imo1989_p5 (n : ℕ) : ∃ m, ∀ j < n, ¬IsPrimePow (m + j) := by
                                ⟨p * q, p * q - x.1⟩)
 
   have lcp : ci.Pairwise (fun x y => Nat.Coprime x.modulus y.modulus) := by
-     simp only [ge_iff_le, List.pairwise_ofFn]
+     rw [List.pairwise_ofFn]
      intro i j hij
      apply lemma2
            (hl _ (List.get_mem _ _ _)).1
@@ -223,7 +223,7 @@ problem imo1989_p5 (n : ℕ) : ∃ m, ∀ j < n, ¬IsPrimePow (m + j) := by
   have h1 := hm (ci.get ⟨j, hj1⟩) (List.get_mem _ _ _)
   obtain ⟨h2, h3⟩ := hl (l.get ⟨j, hj2⟩) (List.get_mem _ _ _)
   obtain ⟨h4, _⟩ := hl (l.get ⟨j + n, hj3⟩) (List.get_mem _ _ _)
-  simp only [List.get_ofFn, ge_iff_le, Fin.cast_mk] at h1
+  simp only [List.get_ofFn, Fin.cast_mk] at h1
   have h6 := Nat.ModEq.add_right j h1
   have h7 : j ≤ l.get ⟨j, hj2⟩ * l.get ⟨j + n, hj3⟩ := by
       apply Nat.le_of_lt
