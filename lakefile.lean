@@ -30,4 +30,4 @@ lean_exe checkSolution where
   root := `scripts.checkSolution
   supportInterpreter := true
 
-require mathlib from git "https://github.com/leanprover-community/mathlib4" @ "ebb7343ed3b97f70bf7ea9bf2389c2f4e52f526d"
+require mathlib from git "https://github.com/leanprover-community/mathlib4" @ "12f566f057dd7e5252da3ed11cbb22c4b57ff16a"
