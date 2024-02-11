@@ -118,11 +118,6 @@ lemma lemma4 (n m : ℕ) (f : ℕ → ℚ) :
   let g i := f (n + m + i)
   rw [Finset.sum_range_reflect g]
 
-theorem not_dvd_finset_prod {α M : Type*} [CommMonoidWithZero M]
-    {S : Finset α} {p : M} (pp : Prime p)
-    {g : α → M} (hS : ∀ i ∈ S, ¬ p ∣ g i) : ¬ p ∣ ∏ i in S, g i := by
-  exact mt (Prime.dvd_finset_prod_iff pp _).1 <| not_exists.2 fun a => not_and.2 (hS a)
-
 lemma lemma9' (i : ℕ) (hi : i ∈ Finset.range 330) :
      (((∏ j in Finset.range 330,
          (660 + j) * (1319 - j)):ℕ):ℚ) / ((660 + (i:ℚ)) * (1319 - (i:ℚ)))
@@ -222,7 +217,7 @@ problem imo1979_p1 (p q : ℤ) (hp : 0 < p) (hq : 0 < q)
       intro H
       have := (Nat.Prime.dvd_mul hpp).mp H
       omega
-    exact not_dvd_finset_prod (Nat.prime_iff.mp hpp) h30
+    exact Prime.not_dvd_finset_prod (Nat.prime_iff.mp hpp) h30
   obtain ⟨p', rfl⟩ := Int.eq_ofNat_of_zero_le (le_of_lt hp)
   obtain ⟨q', rfl⟩ := Int.eq_ofNat_of_zero_le (le_of_lt hq)
   simp only [Int.cast_ofNat] at h
