@@ -20,9 +20,18 @@ Determine all real numbers x which satisfy
 
 namespace Imo1962P2
 
-determine solution_set : Set ℝ := sorry
+determine SolutionSet : Set ℝ := Set.Icc (-1) (1 - Real.sqrt (31 / 8))
 
 problem imo1962_p2 (x : ℝ) :
-    x ∈ solution_set ↔
+    x ∈ SolutionSet ↔
     x ≤ 3 ∧ -1 ≤ x ∧ 1/2 < Real.sqrt (3 - x) - Real.sqrt (x + 1) := by
+  -- https://prase.cz/kalva/imo/isoln/isoln622.html
+  rw [Set.mem_Icc]
+  constructor
+  · rintro ⟨hx1, hx2⟩
+    refine ⟨?_, hx1, ?_⟩
+    · linarith only [hx2, Real.sqrt_nonneg (31 / 8)]
+    · sorry
+  rintro ⟨hx1, hx2, hx3⟩
+  refine ⟨hx2, ?_⟩
   sorry

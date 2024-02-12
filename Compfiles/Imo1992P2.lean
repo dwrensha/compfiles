@@ -25,6 +25,7 @@ problem imo1992_p2 (f : ℝ → ℝ) :
     f ∈ solution_set ↔
     ∀ x y, f (x^2 + f y) = y + f x ^ 2 := by
   -- https://prase.cz/kalva/imo/isoln/isoln922.html
+  rw [Set.mem_singleton_iff]
   constructor
   · rintro rfl x y; dsimp only; ac_rfl
   intro hf
@@ -87,7 +88,6 @@ problem imo1992_p2 (f : ℝ → ℝ) :
   have h8 : ∀ x y, f (x - y) = f x - f y := fun x y ↦ by
     rw [show x - y = x + -y by ring, show f x - f y = f x + -f y by ring, ← h6]
     exact h7 x (-y)
-  rw [Set.mem_singleton_iff]
   ext x
   by_contra H
   obtain ⟨z, hz⟩ : ∃ z, 0 < z ∧ f z < 0 := by
