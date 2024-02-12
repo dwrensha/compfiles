@@ -5,7 +5,7 @@ Authors: David Renshaw
 -/
 
 import Mathlib.Algebra.Ring.Basic
-import Mathlib.Data.Rat.Basic
+import Mathlib.Data.Rat.Field
 import Mathlib.Tactic.Ring
 
 import ProblemExtraction

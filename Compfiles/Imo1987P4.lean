@@ -108,7 +108,7 @@ theorem imo1987_p4_generalized (m : ℕ) :
   rw [h3] at h2; clear h3
   have ab_disjoint' :=
     (@Set.disjoint_toFinset _ _ _ a_fintype b_fintype).mpr ab_disjoint
-  rw [Finset.card_disjoint_union ab_disjoint'] at h2
+  rw [Finset.card_union_of_disjoint ab_disjoint'] at h2
   rw [Set.toFinset_card, Set.toFinset_card] at h2
   rw [Set.card_image_of_injective A f_injective] at h2
   ring_nf at h2

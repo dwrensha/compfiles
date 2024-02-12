@@ -84,7 +84,7 @@ lemma usa1998_p5_stronger (n : ℕ) :
           replace hz2 : L + z = 0 := hz2
           have := sp_nonnegative z hz
           linarith
-        rw [Finset.card_disjoint_union hdisj, Finset.card_singleton,
+        rw [Finset.card_union_of_disjoint hdisj, Finset.card_singleton,
             Finset.card_map, sp_card]
       · intro α hα β hβ α_ne_β
         rw [Finset.mem_union, Finset.mem_map] at hα hβ
