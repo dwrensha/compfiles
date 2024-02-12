@@ -24,7 +24,7 @@ namespace Imo1999P6
 
 determine solution_set : Set (ℝ → ℝ) := sorry
 
-problem imo1999_p5 (f : ℝ → ℝ) :
+problem imo1999_p6 (f : ℝ → ℝ) :
     f ∈ solution_set ↔
     ∀ x y, f (x - f y) = f (f y) + x * f y + f x - 1 := by
   sorry
