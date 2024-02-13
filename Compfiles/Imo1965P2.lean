@@ -30,5 +30,5 @@ namespace Imo1965P2
 
 problem imo1965_p2 (x : Fin 3 → ℝ) (a : Fin 3 → Fin 3 → ℝ)
     (hab : ∀ i j, if i = j then 0 < a i j else a i j < 0)
-    (hc : ∀ i, 0 < a i 1 + a i 2 + a i 3) : ∀ i, x i = 0 := by
+    (hc : ∀ i, 0 < a i 0 + a i 1 + a i 2) : ∀ i, x i = 0 := by
   sorry
