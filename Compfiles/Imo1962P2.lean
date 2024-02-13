@@ -26,7 +26,7 @@ lemma lemma1 {a b : ℝ} (ha : 0 ≤ a) (h : a < b) : a^2 < b^2 := by nlinarith
 
 snip end
 
-determine SolutionSet : Set ℝ := Set.Icc (-1) (1 - Real.sqrt (31 / 8))
+determine SolutionSet : Set ℝ := Set.Icc (-1) (1 - Real.sqrt 31 / 8)
 
 problem imo1962_p2 (x : ℝ) :
     x ∈ SolutionSet ↔
@@ -36,8 +36,10 @@ problem imo1962_p2 (x : ℝ) :
   constructor
   · rintro ⟨hx1, hx2⟩
     refine ⟨?_, hx1, ?_⟩
-    · linarith only [hx2, Real.sqrt_nonneg (31 / 8)]
-    · sorry
+    · have h1 : 0 < Real.sqrt 31 / 8 := by positivity
+      linarith only [hx2, h1]
+    · have : x + 1 < 3 - x := by sorry
+      sorry
   rintro ⟨hx1, hx2, hx3⟩
   refine ⟨hx2, ?_⟩
   have h0 : (0:ℝ) ≤ (1:ℝ) / 2 := by norm_num
