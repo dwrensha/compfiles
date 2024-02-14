@@ -100,7 +100,21 @@ problem imo1965_p2 (x : Fin 3 → ℝ) (a : Fin 3 → Fin 3 → ℝ)
     · have := h2 0; aesop
     · have := h2 2; aesop
   wlog h2 : |x 2| ≤ |x 0| with H
-  · sorry
+  · have h2' : |x 0| ≤ |x 2| := le_of_not_le h2
+    have h3 : |x 1| ≤ |x 2| := ge_trans h2' h1
+    let p : Fin 3 → Fin 3 := ![2, 0, 1]
+    have hp : p.Bijective := by decide
+    have h4 := H (x ∘ p) (fun i j ↦ a (p i) (p j))
+                 (lemma0 x a p hp heqs)
+                 (lemma1 _ p hp hab)
+                 (lemma2 _ p hp hc)
+                 h2' h3
+    clear H
+    intro i
+    fin_cases i
+    · have := h4 1; aesop
+    · have := h4 2; aesop
+    · have := h4 0; aesop
   have h3' : 0 < a 0 1 + a 0 2 + a 0 0 := by
     have h4 : ∑ j : Fin 3, a 0 j = a 0 1 + a 0 2 + a 0 0 := by
       rw [Fin.sum_univ_three, add_rotate]
@@ -111,7 +125,28 @@ problem imo1965_p2 (x : Fin 3 → ℝ) (a : Fin 3 → Fin 3 → ℝ)
     have := hab 0 1; simp at this; exact neg_pos.mpr this
   have h6 : 0 < - a 0 2 := by
     have := hab 0 2; simp at this; exact neg_pos.mpr this
-  have h3 : |a 0 1| + |a 0 2| < |a 0 0| := by sorry
+  have h10 : 0 < a 0 0 := by have := hab 0 0; aesop
+  have h3 : |-a 0 1| + |-a 0 2| < |a 0 0| := by
+    rw [abs_of_pos h5, abs_of_pos h6, abs_of_pos h10]
+    exact h4
   have h7 := heqs 0
   rw [Fin.sum_univ_three] at h7
-  sorry
+  by_contra! H
+  obtain ⟨k, hk⟩ := H
+  have h8 : 0 < |x k| := abs_pos.mpr hk
+  have h9 : 0 < |x 0| := by
+    clear h3' h4 h5 h6 h7
+    (obtain rfl | rfl | rfl : k = 0 ∨ k = 1 ∨ k = 2 := by fin_cases k <;> aesop) <;> linarith
+  replace h7 : a 0 0 * x 0 = - a 0 1 * x 1 + - a 0 2 * x 2 := by linarith only [h7]
+
+  apply_fun (|·|) at h7
+  have h11 := calc
+     |a 0 0| * |x 0|
+       = |a 0 0 * x 0| := (abs_mul _ _).symm
+     _ = _ := h7
+     _ ≤ |-a 0 1 * x 1| + |-a 0 2 * x 2| := abs_add _ _
+     _ = |-a 0 1| * |x 1| + |-a 0 2| * |x 2| := by simp only [abs_mul]
+     _ ≤ |-a 0 1| * |x 0| + |-a 0 2| * |x 0| := by gcongr
+     _ = (|-a 0 1| + |-a 0 2|) * |x 0| := (add_mul _ _ _).symm
+  have h12 : |a 0 0| ≤ |-a 0 1| + |-a 0 2| := (mul_le_mul_right h9).mp h11
+  linarith
