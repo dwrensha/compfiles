@@ -112,4 +112,6 @@ problem imo1965_p2 (x : Fin 3 → ℝ) (a : Fin 3 → Fin 3 → ℝ)
   have h6 : 0 < - a 0 2 := by
     have := hab 0 2; simp at this; exact neg_pos.mpr this
   have h3 : |a 0 1| + |a 0 2| < |a 0 0| := by sorry
+  have h7 := heqs 0
+  rw [Fin.sum_univ_three] at h7
   sorry
