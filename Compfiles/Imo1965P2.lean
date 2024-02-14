@@ -96,9 +96,9 @@ problem imo1965_p2 (x : Fin 3 → ℝ) (a : Fin 3 → Fin 3 → ℝ)
     replace h2 := h2 h3
     intro i
     fin_cases i
-    · have := h2 1; aesop
-    · have := h2 0; aesop
-    · have := h2 2; aesop
+    · exact h2 1
+    · exact h2 0
+    · exact h2 2
   wlog h2 : |x 2| ≤ |x 0| with H
   · have h2' : |x 0| ≤ |x 2| := le_of_not_le h2
     have h3 : |x 1| ≤ |x 2| := ge_trans h2' h1
@@ -112,20 +112,18 @@ problem imo1965_p2 (x : Fin 3 → ℝ) (a : Fin 3 → Fin 3 → ℝ)
     clear H
     intro i
     fin_cases i
-    · have := h4 1; aesop
-    · have := h4 2; aesop
-    · have := h4 0; aesop
+    · exact h4 1
+    · exact h4 2
+    · exact h4 0
   have h3' : 0 < a 0 1 + a 0 2 + a 0 0 := by
     have h4 : ∑ j : Fin 3, a 0 j = a 0 1 + a 0 2 + a 0 0 := by
       rw [Fin.sum_univ_three, add_rotate]
     rw [←h4]
     exact hc 0
   have h4 : - a 0 1 + - a 0 2 < a 0 0 := by linarith only [h3']
-  have h5 : 0 < - a 0 1 := by
-    have := hab 0 1; simp at this; exact neg_pos.mpr this
-  have h6 : 0 < - a 0 2 := by
-    have := hab 0 2; simp at this; exact neg_pos.mpr this
-  have h10 : 0 < a 0 0 := by have := hab 0 0; aesop
+  have h5 : 0 < - a 0 1 := neg_pos.mpr (hab 0 1)
+  have h6 : 0 < - a 0 2 := neg_pos.mpr (hab 0 2)
+  have h10 : 0 < a 0 0 := hab 0 0
   have h3 : |-a 0 1| + |-a 0 2| < |a 0 0| := by
     rw [abs_of_pos h5, abs_of_pos h6, abs_of_pos h10]
     exact h4
@@ -135,8 +133,8 @@ problem imo1965_p2 (x : Fin 3 → ℝ) (a : Fin 3 → Fin 3 → ℝ)
   obtain ⟨k, hk⟩ := H
   have h8 : 0 < |x k| := abs_pos.mpr hk
   have h9 : 0 < |x 0| := by
-    clear h3' h4 h5 h6 h7
-    (obtain rfl | rfl | rfl : k = 0 ∨ k = 1 ∨ k = 2 := by fin_cases k <;> aesop) <;> linarith
+    (obtain rfl | rfl | rfl : k = 0 ∨ k = 1 ∨ k = 2 := by fin_cases k <;> aesop)
+     <;> linarith only [h1, h2, h8]
   replace h7 : a 0 0 * x 0 = - a 0 1 * x 1 + - a 0 2 * x 2 := by linarith only [h7]
 
   apply_fun (|·|) at h7
@@ -149,4 +147,4 @@ problem imo1965_p2 (x : Fin 3 → ℝ) (a : Fin 3 → Fin 3 → ℝ)
      _ ≤ |-a 0 1| * |x 0| + |-a 0 2| * |x 0| := by gcongr
      _ = (|-a 0 1| + |-a 0 2|) * |x 0| := (add_mul _ _ _).symm
   have h12 : |a 0 0| ≤ |-a 0 1| + |-a 0 2| := (mul_le_mul_right h9).mp h11
-  linarith
+  exact not_lt.mpr h12 h3
