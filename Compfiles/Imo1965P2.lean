@@ -68,7 +68,7 @@ problem imo1965_p2 (x : Fin 3 → ℝ) (a : Fin 3 → Fin 3 → ℝ)
     (hab : ∀ i j, if i = j then 0 < a i j else a i j < 0)
     (hc : ∀ i, 0 < ∑ j : Fin 3, a i j) : ∀ i, x i = 0 := by
   -- https://prase.cz/kalva/imo/isoln/isoln652.html
-  -- wlog, x 0 ≥ x 1 and x 0 ≥ x 2.
+  -- wlog, |x 0| ≥ |x 1| and |x 0| ≥ |x 2|.
   wlog h1 : |x 1| ≤ |x 0| with H
   · let p : Fin 3 → Fin 3 := ![1, 0, 2]
     have hp : p.Bijective := by decide
@@ -86,4 +86,5 @@ problem imo1965_p2 (x : Fin 3 → ℝ) (a : Fin 3 → Fin 3 → ℝ)
     · have := h2 2; aesop
   wlog h2 : |x 2| ≤ |x 0| with H
   · sorry
+  have h3 : |a 0 1| + |a 0 2| < |a 0 0| := by sorry
   sorry
