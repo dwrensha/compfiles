@@ -32,6 +32,14 @@ open scoped BigOperators
 
 snip begin
 
+abbrev propEqs (x : Fin 3 → ℝ) (a : Fin 3 → Fin 3 → ℝ) : Prop :=
+   ∀ i, ∑ j : Fin 3, (x i * a i j) = 0
+
+lemma lemma0 {x : Fin 3 → ℝ} {a : Fin 3 → Fin 3 → ℝ} (p : Fin 3 → Fin 3)
+    (hp : p.Bijective)
+    (he : propEqs x a) : propEqs (x ∘ p) (fun i j ↦ a (p i) (p j)) := by
+  sorry
+
 abbrev propsAB (a : Fin 3 → Fin 3 → ℝ) : Prop :=
        ∀ i j, if i = j then 0 < a i j else a i j < 0
 
@@ -65,6 +73,7 @@ lemma lemma2 (a : Fin 3 → Fin 3 → ℝ)
 snip end
 
 problem imo1965_p2 (x : Fin 3 → ℝ) (a : Fin 3 → Fin 3 → ℝ)
+    (heqs : ∀ i, ∑ j : Fin 3, (x i * a i j) = 0)
     (hab : ∀ i j, if i = j then 0 < a i j else a i j < 0)
     (hc : ∀ i, 0 < ∑ j : Fin 3, a i j) : ∀ i, x i = 0 := by
   -- https://prase.cz/kalva/imo/isoln/isoln652.html
@@ -73,6 +82,7 @@ problem imo1965_p2 (x : Fin 3 → ℝ) (a : Fin 3 → Fin 3 → ℝ)
   · let p : Fin 3 → Fin 3 := ![1, 0, 2]
     have hp : p.Bijective := by decide
     have h2 := H (x ∘ p) (fun i j ↦ a (p i) (p j))
+                 (lemma0 p hp heqs)
                  (lemma1 _ p hp hab)
                  (lemma2 _ p hp hc)
     clear H
@@ -86,5 +96,15 @@ problem imo1965_p2 (x : Fin 3 → ℝ) (a : Fin 3 → Fin 3 → ℝ)
     · have := h2 2; aesop
   wlog h2 : |x 2| ≤ |x 0| with H
   · sorry
+  have h3' : 0 < a 0 1 + a 0 2 + a 0 0 := by
+    have h4 : ∑ j : Fin 3, a 0 j = a 0 1 + a 0 2 + a 0 0 := by
+      rw [Fin.sum_univ_three, add_rotate]
+    rw [←h4]
+    exact hc 0
+  have h4 : - a 0 1 + - a 0 2 < a 0 0 := by linarith only [h3']
+  have h5 : 0 < - a 0 1 := by
+    have := hab 0 1; simp at this; exact neg_pos.mpr this
+  have h6 : 0 < - a 0 2 := by
+    have := hab 0 2; simp at this; exact neg_pos.mpr this
   have h3 : |a 0 1| + |a 0 2| < |a 0 0| := by sorry
   sorry
