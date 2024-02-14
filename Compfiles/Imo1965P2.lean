@@ -28,12 +28,15 @@ Prove that x₁ = x₂ = x₃ = 0.
 
 namespace Imo1965P2
 
+open scoped BigOperators
+
 snip begin
 
 abbrev propsAB (a : Fin 3 → Fin 3 → ℝ) : Prop :=
        ∀ i j, if i = j then 0 < a i j else a i j < 0
 
-lemma lemma1 (a : Fin 3 → Fin 3 → ℝ) (p : Fin 3 ↪ Fin 3)
+lemma lemma1 (a : Fin 3 → Fin 3 → ℝ) (p : Fin 3 → Fin 3)
+    (hp : p.Bijective)
     (hab : propsAB a) :
     propsAB (fun i j ↦ a (p i) (p j)) := by
   intro i j
@@ -43,30 +46,44 @@ lemma lemma1 (a : Fin 3 → Fin 3 → ℝ) (p : Fin 3 ↪ Fin 3)
     aesop
   · dsimp only
     have h3 := hab (p i) (p j)
+    have : p i ≠ p j := fun a ↦ h1 (hp.1 a)
     aesop
 
-abbrev propC (a : Fin 3 → Fin 3 → ℝ) : Prop :=
-       ∀ i, 0 < a i 0 + a i 1 + a i 2
+abbrev propC (a : Fin 3 → Fin 3 → ℝ) : Prop := ∀ i, 0 < ∑ j : Fin 3, a i j
 
-lemma lemma2 (a : Fin 3 → Fin 3 → ℝ) (p : Fin 3 ↪ Fin 3)
+lemma lemma2 (a : Fin 3 → Fin 3 → ℝ)
+    (p : Fin 3 → Fin 3)
+    (hp : p.Bijective)
     (hc : propC a) :
     propC (fun i j ↦ a (p i) (p j)) := by
   intro i
-  dsimp only
   have h1 := hc (p i)
-  sorry
+  have h2 : ∑ j : Fin 3, a (p i) (p j) = ∑ j : Fin 3, a (p i) j :=
+    Function.Bijective.sum_comp hp (a (p i))
+  rwa [h2]
 
 snip end
 
 problem imo1965_p2 (x : Fin 3 → ℝ) (a : Fin 3 → Fin 3 → ℝ)
     (hab : ∀ i j, if i = j then 0 < a i j else a i j < 0)
-    (hc : ∀ i, 0 < a i 0 + a i 1 + a i 2) : ∀ i, x i = 0 := by
+    (hc : ∀ i, 0 < ∑ j : Fin 3, a i j) : ∀ i, x i = 0 := by
   -- https://prase.cz/kalva/imo/isoln/isoln652.html
   -- wlog, x 0 ≥ x 1 and x 0 ≥ x 2.
   wlog h1 : |x 1| ≤ |x 0| with H
-  · have h2 := H ![x 1, x 0, x 2]
-                 ![![a 1 1, a 1 0, a 1 2],
-                   ![a 0 1, a 0 0, a 0 2],
-                   ![a 2 1, a 2 0, a 2 2]]
-    sorry
+  · let p : Fin 3 → Fin 3 := ![1, 0, 2]
+    have hp : p.Bijective := by decide
+    have h2 := H (x ∘ p) (fun i j ↦ a (p i) (p j))
+                 (lemma1 _ p hp hab)
+                 (lemma2 _ p hp hc)
+    clear H
+    dsimp at h2
+    have h3 : |x 0| ≤ |x 1| := le_of_not_le h1
+    replace h2 := h2 h3
+    intro i
+    fin_cases i
+    · have := h2 1; aesop
+    · have := h2 0; aesop
+    · have := h2 2; aesop
+  wlog h2 : |x 2| ≤ |x 0| with H
+  · sorry
   sorry
