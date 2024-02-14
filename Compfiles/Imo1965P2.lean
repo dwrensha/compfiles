@@ -33,12 +33,15 @@ open scoped BigOperators
 snip begin
 
 abbrev propEqs (x : Fin 3 → ℝ) (a : Fin 3 → Fin 3 → ℝ) : Prop :=
-   ∀ i, ∑ j : Fin 3, (x i * a i j) = 0
+   ∀ i, ∑ j : Fin 3, (a i j * x j) = 0
 
-lemma lemma0 {x : Fin 3 → ℝ} {a : Fin 3 → Fin 3 → ℝ} (p : Fin 3 → Fin 3)
+lemma lemma0 (x : Fin 3 → ℝ) (a : Fin 3 → Fin 3 → ℝ) (p : Fin 3 → Fin 3)
     (hp : p.Bijective)
     (he : propEqs x a) : propEqs (x ∘ p) (fun i j ↦ a (p i) (p j)) := by
-  sorry
+  intro i
+  dsimp
+  have hi := he (p i)
+  rwa [Function.Bijective.sum_comp hp (fun j ↦ a (p i) j * x j)]
 
 abbrev propsAB (a : Fin 3 → Fin 3 → ℝ) : Prop :=
        ∀ i j, if i = j then 0 < a i j else a i j < 0
@@ -73,16 +76,18 @@ lemma lemma2 (a : Fin 3 → Fin 3 → ℝ)
 snip end
 
 problem imo1965_p2 (x : Fin 3 → ℝ) (a : Fin 3 → Fin 3 → ℝ)
-    (heqs : ∀ i, ∑ j : Fin 3, (x i * a i j) = 0)
+    (heqs : ∀ i, ∑ j : Fin 3, (a i j * x j) = 0)
     (hab : ∀ i j, if i = j then 0 < a i j else a i j < 0)
-    (hc : ∀ i, 0 < ∑ j : Fin 3, a i j) : ∀ i, x i = 0 := by
+    (hc : ∀ i, 0 < ∑ j : Fin 3, a i j)
+    : ∀ i, x i = 0 := by
   -- https://prase.cz/kalva/imo/isoln/isoln652.html
   -- wlog, |x 0| ≥ |x 1| and |x 0| ≥ |x 2|.
   wlog h1 : |x 1| ≤ |x 0| with H
   · let p : Fin 3 → Fin 3 := ![1, 0, 2]
     have hp : p.Bijective := by decide
+
     have h2 := H (x ∘ p) (fun i j ↦ a (p i) (p j))
-                 (lemma0 p hp heqs)
+                 (lemma0 x a p hp heqs)
                  (lemma1 _ p hp hab)
                  (lemma2 _ p hp hc)
     clear H
