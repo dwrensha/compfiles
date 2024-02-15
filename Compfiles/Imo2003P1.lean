@@ -13,8 +13,8 @@ problem_file { tags := [.Combinatorics] }
 /-!
 # International Mathematical Olympiad 2003, Problem 1
 
-Let A be a 101-element subset of S = {1,2,...10⁶}. Prove
-that there exist numbers t₁, t₂, ..., t₁₀₀ such that the sets
+Let A be a 101-element subset of S = {1,2,...10⁶}. Prove that
+there exist numbers t₁, t₂, ..., t₁₀₀ in S such that the sets
 
      Aⱼ = {x + tⱼ | x ∈ A},     j = 1,2, ..., 100
 
