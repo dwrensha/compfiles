@@ -27,7 +27,7 @@ namespace Bulgaria1998P2
 open EuclideanGeometry
 
 problem bulgaria1998_p2
-    (A B C D E M: EuclideanSpace ℝ (Fin 2))
+    (A B C D E M : EuclideanSpace ℝ (Fin 2))
     (H1 : dist D A = dist D C)
     (H2 : ∠ D A B = ∠ A B C)
     (H3 : M = midpoint ℝ B C) :
@@ -35,5 +35,5 @@ problem bulgaria1998_p2
   let x := ∠ D A C
   have : ∠ D A C = ∠ D C A := EuclideanGeometry.angle_eq_angle_of_dist_eq H1
   let y := ∠ C A B
-  have : ∠ A B C = x + y := sorry
+  have : ∠ A B C = x + y := by rw [←H2]; sorry -- need to switch to oangles?
   sorry
