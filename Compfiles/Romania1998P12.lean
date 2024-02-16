@@ -285,21 +285,19 @@ lemma exp_characterization
     intro z x
     obtain ⟨n, hn⟩ := int_dichotomy z
     rcases hn with rfl | hn
-    · norm_cast
-      have := h1 n x
+    · have := h1 n x
       norm_cast at this
     · have h10 := h1 n x
-      rw[←hn]
+      rw [←hn]
       have h11: ↑(-((↑n):ℤ)) * x = - (n * x) := by norm_num
-      rw[h11, h3 _]
+      rw [h11, h3 _]
       have := hunz (↑n * x)
-      rw[h10, one_div]
-      rw [hn, inv_eq_iff_eq_inv, ← hn, zpow_neg, zpow_ofNat, ← h1, inv_inv]
+      rw [h10, one_div]
+      rw [hn, inv_eq_iff_eq_inv, ←hn, zpow_neg, zpow_ofNat, ← h1, inv_inv]
 
   -- Let eᵏ = u(1);
-  have hek : ∃ k, Real.exp k = u 1 := by
+  obtain ⟨k, hk⟩ : ∃ k, Real.exp k = u 1 := by
     use Real.log (u 1); exact Real.exp_log (hunz 1)
-  obtain ⟨k,hk⟩ := hek
 
   -- then u(n) = eᵏⁿ for all n ∈ ℕ
   have hnexp : ∀ n : ℕ, u n = Real.exp (k * n) := by
@@ -331,12 +329,12 @@ lemma exp_characterization
     have h12: ∀ n : ℕ, (u (x / p.succ))^n = u (x * n / p.succ) := by
       intro n
       induction' n with pn hpn
-      · simp[hu0.symm]
+      · simp [hu0.symm]
       · have h10: x * ↑(pn.succ) / ↑(p.succ) = x * ↑pn / ↑(p.succ) + x / ↑(p.succ) := by
           field_simp; ring
-        rw[h10]
+        rw [h10]
         have h11 := hu (x * ↑pn / ↑(p.succ)) (x / ↑(p.succ))
-        rw[h11, ← hpn]
+        rw [h11, ← hpn]
         norm_cast
         exact pow_succ' _ _
     replace h12 := h12 p.succ
@@ -351,12 +349,8 @@ lemma exp_characterization
     rw [←Real.rpow_mul h15 _]
     field_simp
 
-  have hq : ∀ q : ℚ, u q = Real.exp (k * q) := by
-    intro q
-    rw[Rat.cast_def q]
-    rw[hp q.den q.pos q.num]
-    rw[hzexp q.num]
-    rw[←Real.exp_mul]
+  have hq : ∀ q : ℚ, u q = Real.exp (k * q) := fun q ↦ by
+    rw [Rat.cast_def q, hp q.den q.pos q.num, hzexp q.num, ←Real.exp_mul]
     ring_nf
 
   use k
