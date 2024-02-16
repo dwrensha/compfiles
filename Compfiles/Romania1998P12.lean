@@ -56,9 +56,9 @@ lemma find_rational_in_ball_right (y δ : ℝ) (hδ : 0 < δ) :
   constructor
   · exact hyy'
   · apply Metric.mem_ball.mpr
-    rw[Real.dist_eq]
-    have hy4 : 0 ≤ y' - y := by linarith
-    rw[abs_eq_self.mpr hy4]
+    rw [Real.dist_eq]
+    have hy4 : 0 ≤ y' - y := le_of_lt (sub_pos.mpr hyy')
+    rw [abs_eq_self.mpr hy4]
     obtain ⟨ha, _⟩ | ⟨hb, hb'⟩ := abs_cases (y' - (y + δ / 2))
     · linarith
     · linarith
@@ -72,7 +72,7 @@ lemma find_rational_in_ball_left (y δ : ℝ) (hδ : 0 < δ) :
   use yy
   rw [hyy]; clear hyy
   have hy3 := Metric.mem_ball.mp hy1
-  rw[Real.dist_eq] at hy3
+  rw [Real.dist_eq] at hy3
   have hyy' : y' < y := by
     obtain ⟨ha, _⟩ | ⟨hb, hb'⟩ := abs_cases (y' - (y - δ / 2))
     · linarith
@@ -81,12 +81,11 @@ lemma find_rational_in_ball_left (y δ : ℝ) (hδ : 0 < δ) :
   · exact hyy'
   · apply Metric.mem_ball.mpr
     rw[Real.dist_eq]
-    have hy4 : y' - y ≤ 0 := by linarith
-    rw[abs_eq_neg_self.mpr hy4]
+    have hy4 : y' - y ≤ 0 := le_of_lt (sub_neg.mpr hyy')
+    rw [abs_eq_neg_self.mpr hy4]
     obtain ⟨ha, ha'⟩ | ⟨hb, _⟩ := abs_cases (y' - (y - δ / 2))
     · linarith
     · linarith
-
 
 lemma extend_function_mono
    (u : ℝ → ℝ)
@@ -96,7 +95,7 @@ lemma extend_function_mono
    (h : ∀ x : ℚ, u x = f x) :
    ∀ x : ℝ, u x = f x := by
   -- suppose not.
-  by_contra hn; push_neg at hn
+  by_contra! hn
 
   -- then there is y such that u y ≠ f y
   obtain ⟨y, hy⟩ := hn
@@ -168,7 +167,7 @@ lemma extend_function_anti
    (h : ∀ x : ℚ, u x = f x) :
    ∀ x : ℝ, u x = f x := by
   -- suppose not.
-  by_contra hn; push_neg at hn
+  by_contra! hn
 
   -- then there is y such that u y ≠ f y
   obtain ⟨y, hy⟩ := hn
@@ -261,13 +260,12 @@ lemma exp_characterization
   have h2 : ∀ x, (u x) * u (-x) = 1 := by
     intro x
     have := hu x (-x)
-    rw[add_right_neg] at this
-    rw[←this]
+    rw [add_right_neg] at this
+    rw [←this]
     exact hu0
 
-  have hunz : ∀ x, 0 < u x := by
-    intro x
-    by_contra H; push_neg at H
+  have hunz : ∀ x, 0 < u x := fun x ↦ by
+    by_contra! H
     obtain hlt | heq | hgt := lt_trichotomy x 0
     · have h10 := h2 x
       have hx0 : 0 < -x := neg_pos.mpr hlt
@@ -277,11 +275,10 @@ lemma exp_characterization
       have hx0 : -x < 0 := neg_lt_zero.mpr hgt
       cases' hm with hm hm <;> nlinarith [hm hx0, hm hgt]
 
-  have h3 : ∀ x, u (-x) = 1 / (u x) := by
-    intro x
+  have h3 : ∀ x, u (-x) = 1 / (u x) := fun x ↦ by
     have := (ne_of_lt (hunz x)).symm
     field_simp
-    rw[mul_comm]
+    rw [mul_comm]
     exact h2 x
 
   have h4 : ∀ z : ℤ, ∀ x : ℝ, u (z * x) = (u x) ^ z := by
@@ -308,9 +305,9 @@ lemma exp_characterization
   have hnexp : ∀ n : ℕ, u n = Real.exp (k * n) := by
     intro n
     have h10 := h4 n 1
-    rw[←hk, mul_one] at h10
+    rw [←hk, mul_one] at h10
     norm_cast at h10
-    rw[h10, mul_comm]
+    rw [h10, mul_comm]
     exact (Real.exp_nat_mul _ _).symm
 
   -- and u(p/q) = (u(p))^(1/q) = e^(k(p/q))
@@ -346,12 +343,12 @@ lemma exp_characterization
     have h13 : x * ↑(p.succ) / ↑(p.succ) = x := by
       have : (p.succ : ℝ) ≠ 0 := NeZero.ne _
       exact (div_eq_iff this).mpr rfl
-    rw[h13] at h12
-    rw[← h12]
+    rw [h13] at h12
+    rw [← h12]
     have h14: u (x / ↑(p.succ)) ^ p.succ = u (x / ↑(p.succ)) ^ (p.succ:ℝ) := by norm_cast
-    rw[h14]
+    rw [h14]
     have h15 := le_of_lt (hunz (x / ↑(p.succ)))
-    rw[←Real.rpow_mul h15 _]
+    rw [←Real.rpow_mul h15 _]
     field_simp
 
   have hq : ∀ q : ℚ, u q = Real.exp (k * q) := by
@@ -525,15 +522,14 @@ lemma romania1998_p12_mpr (u : ℝ → ℝ) :
  (∃ k : ℝ, ∀ x : ℝ, u x = Real.exp (k * x)) →
     (∃ f : ℝ → ℝ, (StrictMono f ∨ StrictAnti f)
         ∧ ∀ x y : ℝ, f (x + y) = f x * u y + f y) := by
-  intro h
-  obtain ⟨k, hk⟩ := h
-  cases' Classical.em (k = 0) with hkz hknz
+  rintro ⟨k, hk⟩
+  obtain rfl | hknz := eq_or_ne k 0
   · -- k = 0
     use id
     constructor
     · left; exact strictMono_id
     · intro x y
-      rw [hk y, hkz, zero_mul, Real.exp_zero, mul_one, id.def, id.def, id.def]
+      rw [hk y, zero_mul, Real.exp_zero, mul_one, id.def, id.def, id.def]
   · -- k ≠ 0
     let f : ℝ → ℝ := λ x ↦ Real.exp (k * x) - 1
     have hfm : (StrictMono f ∨ StrictAnti f) := by
