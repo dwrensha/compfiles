@@ -16,7 +16,7 @@ import ProblemExtraction
 problem_file { tags := [.Geometry] }
 
 /-!
-# Usa Mathematical Olympiad 2001, Problem 4
+# USA Mathematical Olympiad 2001, Problem 4
 
 Let ABC be a triangle and P be any point such that PA, PB, PC
 are the sides of an obtuse triangle, with PA the longest side.
@@ -59,15 +59,13 @@ problem imo2001_p4
   -- https://web.evanchen.cc/exams/USAMO-2001-notes.pdf
   have h15 : X ≠ Z := fun H ↦ by
     rw [show X = ![X, Y, Z] 0 by rfl, show Z = ![X, Y, Z] 2 by rfl] at H
-    have := AffineIndependent.injective hXYZ H
     have hne : (0 : Fin 3) ≠ (2 : Fin 3) := by decide
-    aesop
+    exact hne (AffineIndependent.injective hXYZ H)
   have h11 : 0 < dist X Z := dist_pos.mpr h15
   have h16 : Y ≠ Z := fun H ↦ by
     rw [show Y = ![X, Y, Z] 1 by rfl, show Z = ![X, Y, Z] 2 by rfl] at H
-    have := AffineIndependent.injective hXYZ H
     have hne : (1 : Fin 3) ≠ (2 : Fin 3) := by decide
-    aesop
+    exact hne (AffineIndependent.injective hXYZ H)
   have h12 : 0 < dist Y Z := dist_pos.mpr h16
 
   have h17 : X ≠ Y := fun H ↦ by
@@ -95,7 +93,7 @@ problem imo2001_p4
       have h14 : 0 < 2 * dist X Z * dist Y Z := by positivity
       exact mul_neg_iff.mpr (Or.inl ⟨h14, h3⟩)
 
-    calc _ < _ := by linarith
+    calc _ < _ := by linarith only [h13]
          _ = _ := h2.symm
   rw [hPA, hPB, hPC] at h1
   rw [hPA] at h18; rw [hPC] at h11; rw [hPB] at h12
@@ -113,9 +111,8 @@ problem imo2001_p4
   have h43 : 0 < dist A C := by
     have h60 : A ≠ C := fun H ↦ by
       rw [show A = ![A, B, C] 0 by rfl, show C = ![A, B, C] 2 by rfl] at H
-      have := AffineIndependent.injective hABC H
       have hne : (0 : Fin 3) ≠ (2 : Fin 3) := by decide
-      aesop
+      exact hne (AffineIndependent.injective hABC H)
     exact dist_pos.mpr h60
   have h21 : 0 < dist A C ^ 2 + dist B A ^ 2 := by positivity
   have h22 := lemma2 h20 h1 h21
