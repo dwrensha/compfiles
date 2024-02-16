@@ -43,7 +43,7 @@ lemma lemma2 {a b c : ℝ} (ha : 0 < a) (hab : a < b) (hc : 0 < c) :
     Real.sqrt (a * c) < Real.sqrt (b * c) := by
   have h1 : 0 < a * c := Real.mul_pos ha hc
   suffices H : a * c < b * c from Real.sqrt_lt_sqrt (le_of_lt h1) H
-  nlinarith
+  exact (mul_lt_mul_right hc).mpr hab
 
 snip end
 
