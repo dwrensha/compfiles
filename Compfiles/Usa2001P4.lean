@@ -37,10 +37,6 @@ lemma lemma1 (a b c d : ℝ) : a * c + b * d ≤ Real.sqrt (a^2 + b^2) * Real.sq
   simp [EuclideanSpace.norm_eq] at h1
   exact h2.trans h1
 
-lemma lemma2 {a b c : ℝ} (ha : 0 < a) (hab : a < b) (hc : 0 < c) :
-    Real.sqrt a * c < Real.sqrt b * c :=
-  (mul_lt_mul_right hc).mpr (Real.sqrt_lt_sqrt (le_of_lt ha) hab)
-
 snip end
 
 problem imo2001_p4
@@ -83,15 +79,16 @@ problem imo2001_p4
   have ptolemy := EuclideanGeometry.mul_dist_le_mul_dist_add_mul_dist P B A C
   have h2 := lemma1 (dist P B) (dist P C) (dist A C) (dist B A)
   rw [mul_comm (dist P C)] at h2
-  have h20 : 0 < dist P B ^ 2 + dist P C ^ 2 := by positivity
   have h50 : ¬Collinear ℝ {A, B, C} := affineIndependent_iff_not_collinear_set.mp hABC
   have h42 : 0 < dist A B := dist_pos.mpr (ne₁₂_of_not_collinear h50)
   rw [dist_comm] at h42
   have h43 : 0 < dist A C := dist_pos.mpr (ne₁₃_of_not_collinear h50)
-  have h23 := calc _ ≤ _ := ptolemy
-                   _ ≤ _ := h2
-                   _ < _ := lemma2 h20 h1 (by positivity)
-  rw [Real.sqrt_sq dist_nonneg] at h23
+  have h23 := calc
+    _ ≤ _ := ptolemy
+    _ ≤ _ := h2
+    _ < Real.sqrt (dist P A ^ 2) * _ :=
+          (mul_lt_mul_right (by positivity)).mpr (Real.sqrt_lt_sqrt (by positivity) h1)
+    _ = dist P A * _ := by rw [Real.sqrt_sq dist_nonneg]
   replace h23 : dist B C < Real.sqrt (dist A C ^ 2 + dist B A ^ 2) :=
     (mul_lt_mul_left h18).mp h23
   replace h23 : dist B C ^2 < (Real.sqrt (dist A C ^ 2 + dist B A ^ 2))^2 :=
