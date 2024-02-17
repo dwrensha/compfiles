@@ -79,8 +79,6 @@ problem imo2001_p4
   have h1 : (dist Y Z)^2 + (dist X Z)^2 < (dist X Y)^2 := by
     have h2 := EuclideanGeometry.law_cos X Z Y
     have h3 : Real.cos (∠ X Z Y) < 0 := by
-      suffices H : 0 < - Real.cos (∠ X Z Y) from neg_pos.mp H
-      rw [←Real.sin_sub_pi_div_two]
       have h4 : 0 < ∠ X Z Y - Real.pi / 2 := sub_pos.mpr hObtuse
       have h9 : ¬ Collinear ℝ {X, Y, Z} := affineIndependent_iff_not_collinear_set.mp hXYZ
       have h10 : ({X, Y, Z} : Set _) = {X, Z, Y} := by
@@ -88,8 +86,8 @@ problem imo2001_p4
         ext w; aesop
       have h8 : ¬ Collinear ℝ {X, Z, Y} := by rwa [←h10]
       have h7 : ∠ X Z Y < Real.pi := EuclideanGeometry.angle_lt_pi_of_not_collinear h8
-      have h5 : ∠ X Z Y - Real.pi / 2 < Real.pi := by linarith only [h4, h7]
-      exact Real.sin_pos_of_mem_Ioo ⟨h4, h5⟩
+      have h5 : ∠ X Z Y < Real.pi + Real.pi / 2 := by linarith only [h4, h7]
+      exact Real.cos_neg_of_pi_div_two_lt_of_lt hObtuse h5
     simp only [←sq] at h2
     have h13 : 2 * dist X Z * dist Y Z * Real.cos (∠ X Z Y) < 0 := by
       have h14 : 0 < 2 * dist X Z * dist Y Z := by positivity
