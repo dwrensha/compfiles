@@ -53,22 +53,10 @@ problem imo2001_p4
     (hObtuse : Real.pi / 2 < ∠ X Z Y)
     : ∠ B A C < Real.pi / 2 := by
   -- https://web.evanchen.cc/exams/USAMO-2001-notes.pdf
-  have h15 : X ≠ Z := fun H ↦ by
-    rw [show X = ![X, Y, Z] 0 by rfl, show Z = ![X, Y, Z] 2 by rfl] at H
-    have hne : (0 : Fin 3) ≠ (2 : Fin 3) := by decide
-    exact hne (AffineIndependent.injective hXYZ H)
-  have h11 : 0 < dist X Z := dist_pos.mpr h15
-  have h16 : Y ≠ Z := fun H ↦ by
-    rw [show Y = ![X, Y, Z] 1 by rfl, show Z = ![X, Y, Z] 2 by rfl] at H
-    have hne : (1 : Fin 3) ≠ (2 : Fin 3) := by decide
-    exact hne (AffineIndependent.injective hXYZ H)
-  have h12 : 0 < dist Y Z := dist_pos.mpr h16
-
-  have h17 : X ≠ Y := fun H ↦ by
-    rw [show X = ![X, Y, Z] 0 by rfl, show Y = ![X, Y, Z] 1 by rfl] at H
-    have := AffineIndependent.injective hXYZ H
-    aesop
-  have h18 : 0 < dist X Y := dist_pos.mpr h17
+  have h9 : ¬Collinear ℝ {X, Y, Z} := affineIndependent_iff_not_collinear_set.mp hXYZ
+  have h11 : 0 < dist X Z := dist_pos.mpr (ne₁₃_of_not_collinear h9)
+  have h12 : 0 < dist Y Z := dist_pos.mpr (ne₂₃_of_not_collinear h9)
+  have h18 : 0 < dist X Y := dist_pos.mpr (ne₁₂_of_not_collinear h9)
 
   rw [dist_comm Z X] at hPC
 
@@ -76,7 +64,6 @@ problem imo2001_p4
     have h2 := EuclideanGeometry.law_cos X Z Y
     have h3 : Real.cos (∠ X Z Y) < 0 := by
       have h4 : 0 < ∠ X Z Y - Real.pi / 2 := sub_pos.mpr hObtuse
-      have h9 : ¬ Collinear ℝ {X, Y, Z} := affineIndependent_iff_not_collinear_set.mp hXYZ
       have h10 : ({X, Y, Z} : Set _) = {X, Z, Y} :=
         congrArg (Set.insert _) (Set.pair_comm _ _)
       have h8 : ¬ Collinear ℝ {X, Z, Y} := by rwa [←h10]
@@ -97,18 +84,10 @@ problem imo2001_p4
   have h2 := lemma1 (dist P B) (dist P C) (dist A C) (dist B A)
   rw [mul_comm (dist P C)] at h2
   have h20 : 0 < dist P B ^ 2 + dist P C ^ 2 := by positivity
-  have h42 : 0 < dist B A := by
-    have h60 : B ≠ A := fun H ↦ by
-      rw [show B = ![A, B, C] 1 by rfl, show A = ![A, B, C] 0 by rfl] at H
-      have := AffineIndependent.injective hABC H
-      aesop
-    exact dist_pos.mpr h60
-  have h43 : 0 < dist A C := by
-    have h60 : A ≠ C := fun H ↦ by
-      rw [show A = ![A, B, C] 0 by rfl, show C = ![A, B, C] 2 by rfl] at H
-      have hne : (0 : Fin 3) ≠ (2 : Fin 3) := by decide
-      exact hne (AffineIndependent.injective hABC H)
-    exact dist_pos.mpr h60
+  have h50 : ¬Collinear ℝ {A, B, C} := affineIndependent_iff_not_collinear_set.mp hABC
+  have h42 : 0 < dist A B := dist_pos.mpr (ne₁₂_of_not_collinear h50)
+  rw [dist_comm] at h42
+  have h43 : 0 < dist A C := dist_pos.mpr (ne₁₃_of_not_collinear h50)
   have h23 := calc _ ≤ _ := ptolemy
                    _ ≤ _ := h2
                    _ < _ := lemma2 h20 h1 (by positivity)
