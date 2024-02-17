@@ -77,9 +77,8 @@ problem imo2001_p4
     have h3 : Real.cos (∠ X Z Y) < 0 := by
       have h4 : 0 < ∠ X Z Y - Real.pi / 2 := sub_pos.mpr hObtuse
       have h9 : ¬ Collinear ℝ {X, Y, Z} := affineIndependent_iff_not_collinear_set.mp hXYZ
-      have h10 : ({X, Y, Z} : Set _) = {X, Z, Y} := by
-        clear! A B C P hXYZ hObtuse h11 h12 h18 h2 h4 h9
-        ext w; aesop
+      have h10 : ({X, Y, Z} : Set _) = {X, Z, Y} :=
+        congrArg (Set.insert _) (Set.pair_comm _ _)
       have h8 : ¬ Collinear ℝ {X, Z, Y} := by rwa [←h10]
       have h7 : ∠ X Z Y < Real.pi := EuclideanGeometry.angle_lt_pi_of_not_collinear h8
       have h5 : ∠ X Z Y < Real.pi + Real.pi / 2 := by linarith only [h4, h7]
