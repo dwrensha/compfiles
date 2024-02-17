@@ -29,21 +29,17 @@ open scoped EuclideanGeometry
 
 snip begin
 
-lemma lemma1 (a b c d : ℝ) : a * c + b * d ≤ Real.sqrt ((a^2 + b^2) * (c^2 + d^2)) := by
+lemma lemma1 (a b c d : ℝ) : a * c + b * d ≤ Real.sqrt (a^2 + b^2) * Real.sqrt (c^2 + d^2) := by
   let v1 : EuclideanSpace ℝ (Fin 2) := ![a, b]
   let v2 : EuclideanSpace ℝ (Fin 2) := ![c, d]
+  have h2 : a * c + b * d ≤ |a * c + b * d| := le_abs_self _
   have h1 := abs_real_inner_le_norm v1 v2
   simp [EuclideanSpace.norm_eq] at h1
-  have hab : 0 ≤ (a ^ 2 + b ^ 2) := by positivity
-  rw [←Real.sqrt_mul hab] at h1
-  have h2 : a * c + b * d ≤ |a * c + b * d| := le_abs_self _
   exact h2.trans h1
 
 lemma lemma2 {a b c : ℝ} (ha : 0 < a) (hab : a < b) (hc : 0 < c) :
-    Real.sqrt (a * c) < Real.sqrt (b * c) := by
-  have h1 : 0 < a * c := Real.mul_pos ha hc
-  suffices H : a * c < b * c from Real.sqrt_lt_sqrt (le_of_lt h1) H
-  exact (mul_lt_mul_right hc).mpr hab
+    Real.sqrt a * c < Real.sqrt b * c :=
+  (mul_lt_mul_right hc).mpr (Real.sqrt_lt_sqrt (le_of_lt ha) hab)
 
 snip end
 
@@ -114,13 +110,9 @@ problem imo2001_p4
       have hne : (0 : Fin 3) ≠ (2 : Fin 3) := by decide
       exact hne (AffineIndependent.injective hABC H)
     exact dist_pos.mpr h60
-  have h21 : 0 < dist A C ^ 2 + dist B A ^ 2 := by positivity
-  have h22 := lemma2 h20 h1 h21
   have h23 := calc _ ≤ _ := ptolemy
                    _ ≤ _ := h2
-                   _ < _ := h22
-  have h24 : 0 ≤ dist P A ^ 2 := by positivity
-  rw [Real.sqrt_mul h24] at h23
+                   _ < _ := lemma2 h20 h1 (by positivity)
   rw [Real.sqrt_sq dist_nonneg] at h23
   replace h23 : dist B C < Real.sqrt (dist A C ^ 2 + dist B A ^ 2) :=
     (mul_lt_mul_left h18).mp h23
