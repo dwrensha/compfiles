@@ -51,8 +51,8 @@ problem imo2011_p3 (f : ℝ → ℝ) (hf : ∀ x y, f (x + y) ≤ y * f x + f (f
     let s := (x * f x - f (f x)) / (f x)
     have hm : min 0 s - 1 < s := (sub_one_lt _).trans_le (min_le_right 0 s)
     have hml : min 0 s - 1 < 0 := (sub_one_lt _).trans_le (min_le_left 0 s)
-    suffices f (min 0 s - 1) < 0 by
-      exact not_le.mpr this (h_f_nonneg_of_pos (min 0 s - 1) hml)
+    suffices f (min 0 s - 1) < 0 from
+      not_le.mpr this (h_f_nonneg_of_pos (min 0 s - 1) hml)
 
     have hp : 0 < f x := not_le.mp h_suppose_not
     calc f (min 0 s - 1)
@@ -68,7 +68,7 @@ problem imo2011_p3 (f : ℝ → ℝ) (hf : ∀ x y, f (x + y) ≤ y * f x + f (f
   intro x hx
   obtain (h_x_neg : x < 0) | (rfl : x = 0) := hx.lt_or_eq
   · exact h_fx_zero_of_neg _ h_x_neg
-  · suffices 0 ≤ f 0 by exact (h_f_nonpos 0).antisymm this
+  · suffices 0 ≤ f 0 from (h_f_nonpos 0).antisymm this
     have hno : f (-1) = 0 := h_fx_zero_of_neg (-1) neg_one_lt_zero
     have hp := hxt (-1) (-1)
     rw [hno] at hp

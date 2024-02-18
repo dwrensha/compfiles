@@ -229,7 +229,7 @@ problem imo2013_p5
     intro n hn
     have hf1 : 1 ≤ f 1 := by
       have a_pos : (0 : ℝ) < a := Rat.cast_pos.mpr (zero_lt_one.trans ha1)
-      suffices ↑a * 1 ≤ ↑a * f 1 by exact (mul_le_mul_left a_pos).mp this
+      suffices ↑a * 1 ≤ ↑a * f 1 from (mul_le_mul_left a_pos).mp this
       calc (a:ℝ) * 1 = ↑a := mul_one _
            _ = f a        := hae.symm
            _ = f (a * 1)  := by rw [mul_one]
@@ -248,7 +248,7 @@ problem imo2013_p5
       calc (x : ℝ)^n - 1 < f (x^n) := by exact_mod_cast fx_gt_xm1 (one_le_pow_of_one_le hx.le n)
                                            H1 H2 H4
                        _ ≤ (f x)^n := pow_f_le_f_pow hn hx H1 H4
-    have hx' : 1 < (x : ℝ) := by exact_mod_cast hx
+    have hx' : 1 < (x : ℝ) := mod_cast hx
     have hxp : 0 < x := zero_lt_one.trans hx
     exact le_of_all_pow_lt_succ' hx' (f_pos_of_pos hxp H1 H4) hxnm1
 
