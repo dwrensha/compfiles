@@ -85,15 +85,11 @@ problem imo1965_p2 (x : Fin 3 → ℝ) (a : Fin 3 → Fin 3 → ℝ)
   wlog h1 : |x 1| ≤ |x 0| with H
   · let p : Fin 3 → Fin 3 := ![1, 0, 2]
     have hp : p.Bijective := by decide
-
     have h2 := H (x ∘ p) (fun i j ↦ a (p i) (p j))
                  (lemma0 x a p hp heqs)
                  (lemma1 _ p hp hab)
                  (lemma2 _ p hp hc)
-    clear H
-    dsimp at h2
-    have h3 : |x 0| ≤ |x 1| := le_of_not_le h1
-    replace h2 := h2 h3
+                 (le_of_not_le h1)
     intro i
     fin_cases i
     · exact h2 1
@@ -109,7 +105,6 @@ problem imo1965_p2 (x : Fin 3 → ℝ) (a : Fin 3 → Fin 3 → ℝ)
                  (lemma1 _ p hp hab)
                  (lemma2 _ p hp hc)
                  h2' h3
-    clear H
     intro i
     fin_cases i
     · exact h4 1
