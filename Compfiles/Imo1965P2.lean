@@ -51,14 +51,14 @@ lemma lemma1 (a : Fin 3 → Fin 3 → ℝ) (p : Fin 3 → Fin 3)
     (hab : propsAB a) :
     propsAB (fun i j ↦ a (p i) (p j)) := by
   intro i j
+  have h0 := hab (p i) (p j)
   split_ifs with h1
   · subst h1
-    have h0 := hab (p i) (p i)
-    aesop
-  · dsimp only
-    have h3 := hab (p i) (p j)
-    have : p i ≠ p j := fun a ↦ h1 (hp.1 a)
-    aesop
+    simp only [reduceIte] at h0
+    exact h0
+  · have h2 : p i ≠ p j := fun a ↦ h1 (hp.1 a)
+    simp only [h2] at h0
+    exact h0
 
 lemma lemma2 (a : Fin 3 → Fin 3 → ℝ)
     (p : Fin 3 → Fin 3)
