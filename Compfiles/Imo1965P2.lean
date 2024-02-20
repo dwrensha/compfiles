@@ -60,18 +60,14 @@ lemma lemma1 (a : Fin 3 → Fin 3 → ℝ) (p : Fin 3 → Fin 3)
     have : p i ≠ p j := fun a ↦ h1 (hp.1 a)
     aesop
 
-abbrev propC (a : Fin 3 → Fin 3 → ℝ) : Prop := ∀ i, 0 < ∑ j : Fin 3, a i j
-
 lemma lemma2 (a : Fin 3 → Fin 3 → ℝ)
     (p : Fin 3 → Fin 3)
     (hp : p.Bijective)
-    (hc : propC a) :
-    propC (fun i j ↦ a (p i) (p j)) := by
+    (hc : ∀ i, 0 < ∑ j : Fin 3, a i j) :
+    ∀ i, 0 < ∑ j : Fin 3, a (p i) (p j) := by
   intro i
-  have h1 := hc (p i)
-  have h2 : ∑ j : Fin 3, a (p i) (p j) = ∑ j : Fin 3, a (p i) j :=
-    Function.Bijective.sum_comp hp (a (p i))
-  rwa [h2]
+  rw [Function.Bijective.sum_comp hp]
+  exact hc (p i)
 
 snip end
 
