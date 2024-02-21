@@ -20,12 +20,6 @@ Determine all real numbers x which satisfy
 
 namespace Imo1962P2
 
-snip begin
-
-lemma lemma1 {a b : ℝ} (ha : 0 ≤ a) (h : a < b) : a^2 < b^2 := by nlinarith
-
-snip end
-
 determine SolutionSet : Set ℝ := Set.Icc (-1) (1 - Real.sqrt 31 / 8)
 
 problem imo1962_p2 (x : ℝ) :
@@ -43,7 +37,7 @@ problem imo1962_p2 (x : ℝ) :
   rintro ⟨hx1, hx2, hx3⟩
   refine ⟨hx2, ?_⟩
   have h0 : (0:ℝ) ≤ (1:ℝ) / 2 := by norm_num
-  have h1 := lemma1 h0 hx3
+  have h1 := pow_lt_pow_left hx3 h0 two_ne_zero
   have hx4 : 0 ≤ 3 - x := by linarith
   have hx5 : 0 ≤ x + 1 := by linarith
   have h2 := calc
@@ -58,6 +52,6 @@ problem imo1962_p2 (x : ℝ) :
   rw [h2] at h1; clear h2
   have h3 : Real.sqrt ((3 - x) * (x + 1)) < 15 / 8 := by linarith only [h1]
   have h4 : 0 ≤ Real.sqrt ((3 - x) * (x + 1)) := Real.sqrt_nonneg _
-  have h5 := lemma1 h4 h3
+  have h5 := pow_lt_pow_left h3 h4 two_ne_zero
   rw [Real.sq_sqrt (by positivity)] at h5
   sorry
