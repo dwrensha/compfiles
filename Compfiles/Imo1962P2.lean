@@ -64,18 +64,8 @@ problem imo1962_p2 (x : ℝ) :
       · rw [sq, sq] at H
         have h31 : 0 ≤ Real.sqrt (3 - x) - Real.sqrt (x + 1) := by
           rw [sub_nonneg]
-          suffices H' : Real.sqrt (x + 1)^2 < Real.sqrt (3 - x)^2 by
-            rw [sq, sq] at H'
-            apply le_of_lt
-            apply lt_of_mul_self_lt_mul_self
-            · positivity
-            · rw [←sq, ←sq]
-              rw [Real.sq_sqrt (by positivity)]
-              rw [Real.sq_sqrt (by positivity)]
-              exact h3
-          rw [Real.sq_sqrt (by positivity)]
-          rw [Real.sq_sqrt (by positivity)]
-          exact h3
+          apply le_of_lt
+          exact Real.sqrt_lt_sqrt hx1' h3
         exact lt_of_mul_self_lt_mul_self h31 H
       rw [lemma2 hx4' hx1']
       suffices H : 2 * Real.sqrt ((3 - x) * (x + 1)) < 4 - (1 / 2) ^ 2 by
@@ -110,16 +100,6 @@ problem imo1962_p2 (x : ℝ) :
   · have h40 : Real.sqrt (3 - x) - Real.sqrt (x + 1) < 0 := by
       have h3 : 3 - x <  x + 1 := by linarith
       rw [sub_neg]
-      suffices H' : Real.sqrt (3 - x)^2 < Real.sqrt (x + 1)^2 by
-            rw [sq, sq] at H'
-            apply lt_of_mul_self_lt_mul_self
-            · positivity
-            · rw [←sq, ←sq]
-              rw [Real.sq_sqrt (by positivity)]
-              rw [Real.sq_sqrt (by positivity)]
-              exact h3
-      rw [Real.sq_sqrt (by positivity)]
-      rw [Real.sq_sqrt (by positivity)]
-      exact h3
+      exact Real.sqrt_lt_sqrt hx4 h3
     linarith
   · linarith
