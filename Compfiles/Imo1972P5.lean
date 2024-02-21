@@ -34,7 +34,7 @@ problem imo1972_p5 (f g : ℝ → ℝ) (hf1 : ∀ x, ∀ y, f (x + y) + f (x - y
   have k_pos : 0 < k := lt_of_lt_of_le (norm_pos_iff.mpr hx) (h x)
   have : k / ‖g y‖ < k := (div_lt_iff hgy).mpr (lt_mul_of_one_lt_right k_pos H)
   have : k ≤ k / ‖g y‖ := by
-    suffices : ∀ x, ‖f x‖ ≤ k / ‖g y‖; exact ciSup_le this
+    suffices ∀ x, ‖f x‖ ≤ k / ‖g y‖ from ciSup_le this
     intro x
     suffices 2 * (‖f x‖ * ‖g y‖) ≤ 2 * k by
       rwa [le_div_iff hgy, ← mul_le_mul_left (zero_lt_two : (0 : ℝ) < 2)]
