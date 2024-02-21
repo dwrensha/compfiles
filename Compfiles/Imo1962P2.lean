@@ -61,20 +61,18 @@ problem imo1962_p2 (x : ℝ) :
     · have h30 : 0 ≤ Real.sqrt 31 / 8 := by positivity
       have h3 : x + 1 < 3 - x := by linarith
       suffices H : (1 / 2)^2 < (Real.sqrt (3 - x) - Real.sqrt (x + 1))^2
-      · rw [sq, sq] at H
-        have h31 : 0 ≤ Real.sqrt (3 - x) - Real.sqrt (x + 1) := by
+      · have h31 : 0 ≤ Real.sqrt (3 - x) - Real.sqrt (x + 1) := by
           rw [sub_nonneg]
           apply le_of_lt
           exact Real.sqrt_lt_sqrt hx1' h3
-        exact lt_of_mul_self_lt_mul_self h31 H
+        exact lt_of_pow_lt_pow_left 2 h31 H
       rw [lemma2 hx4' hx1']
       suffices H : 2 * Real.sqrt ((3 - x) * (x + 1)) < 4 - (1 / 2) ^ 2 by
         linarith
       suffices H : Real.sqrt ((3 - x) * (x + 1)) < 15 / 8 by
         linarith only [H]
-      suffices H : (Real.sqrt ((3 - x) * (x + 1)))^2 < (15/8)^2 by
-        rw [sq, sq] at H
-        exact lt_of_mul_self_lt_mul_self (by norm_num) H
+      suffices H : (Real.sqrt ((3 - x) * (x + 1)))^2 < (15/8)^2 from
+        lt_of_pow_lt_pow_left 2 (by norm_num) H
       rw [Real.sq_sqrt (by positivity)]
       suffices H : 0 < (15 / 8) ^ 2 - (3 - x) * (x + 1) from sub_pos.mp H
       rw [lemma1 x]
