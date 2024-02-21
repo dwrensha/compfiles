@@ -28,7 +28,7 @@ namespace Imo2014P4
 
 open scoped EuclideanGeometry
 
-problem imo2001_p4
+problem imo2014_p4
     (A B C P Q M N : EuclideanSpace ℝ (Fin 2))
     (hABC : AffineIndependent ℝ ![A, B, C])
     (acuteA : ∠ C A B < Real.pi / 2)

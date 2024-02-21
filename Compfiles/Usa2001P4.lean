@@ -39,7 +39,7 @@ lemma lemma1 (a b c d : ℝ) : a * c + b * d ≤ Real.sqrt (a^2 + b^2) * Real.sq
 
 snip end
 
-problem imo2001_p4
+problem usamo2001_p4
     (A B C P X Y Z : EuclideanSpace ℝ (Fin 2))
     (hABC : AffineIndependent ℝ ![A, B, C])
     (hXYZ : AffineIndependent ℝ ![X, Y, Z])
