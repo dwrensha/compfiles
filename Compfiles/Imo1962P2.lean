@@ -20,27 +20,19 @@ Determine all real numbers x which satisfy
 
 namespace Imo1962P2
 
-determine SolutionSet : Set ℝ := Set.Icc (-1) (1 - Real.sqrt 31 / 8)
+snip begin
 
-problem imo1962_p2 (x : ℝ) :
-    x ∈ SolutionSet ↔
-    x ≤ 3 ∧ -1 ≤ x ∧ 1/2 < Real.sqrt (3 - x) - Real.sqrt (x + 1) := by
-  -- https://prase.cz/kalva/imo/isoln/isoln622.html
-  rw [Set.mem_Icc]
-  constructor
-  · rintro ⟨hx1, hx2⟩
-    refine ⟨?_, hx1, ?_⟩
-    · have h1 : 0 < Real.sqrt 31 / 8 := by positivity
-      linarith only [hx2, h1]
-    · have : x + 1 < 3 - x := by sorry
-      sorry
-  rintro ⟨hx1, hx2, hx3⟩
-  refine ⟨hx2, ?_⟩
-  have h0 : (0:ℝ) ≤ (1:ℝ) / 2 := by norm_num
-  have h1 := pow_lt_pow_left hx3 h0 two_ne_zero
-  have hx4 : 0 ≤ 3 - x := by linarith
-  have hx5 : 0 ≤ x + 1 := by linarith
-  have h2 := calc
+lemma lemma1 (x : ℝ) :
+    (15 / 8) ^ 2 - (3 - x) * (x + 1) =
+    (x - (1 + Real.sqrt 31/8)) * (x - (1 - Real.sqrt 31/8)) := by
+  have h1 : Real.sqrt 31 ^ 2 = 31 := Real.sq_sqrt (by norm_num)
+  ring_nf
+  rw [h1]
+  ring
+
+lemma lemma2 {x : ℝ} (hx4 : 0 ≤ 3 - x) (hx5 : 0 ≤ x + 1) :
+    (Real.sqrt (3 - x) - Real.sqrt (x + 1)) ^ 2 = 4 - 2 * Real.sqrt ((3 - x) * (x + 1)) :=
+  calc
       (Real.sqrt (3 - x) - Real.sqrt (x + 1)) ^ 2
      = Real.sqrt (3 - x) ^2 - 2 * Real.sqrt (3 - x) * Real.sqrt (x + 1)
        + Real.sqrt (x + 1) ^2 := by ring
@@ -49,9 +41,85 @@ problem imo1962_p2 (x : ℝ) :
    _ = 4 - 2 * (Real.sqrt (3 - x) * Real.sqrt (x + 1)) := by ring
    _ = 4 - 2 * Real.sqrt ((3 - x) * (x + 1)) := by rw[←Real.sqrt_mul hx4]
 
-  rw [h2] at h1; clear h2
+snip end
+
+determine SolutionSet : Set ℝ := Set.Ico (-1) (1 - Real.sqrt 31 / 8)
+
+problem imo1962_p2 (x : ℝ) :
+    x ∈ SolutionSet ↔
+    x ≤ 3 ∧ -1 ≤ x ∧ 1/2 < Real.sqrt (3 - x) - Real.sqrt (x + 1) := by
+  -- https://prase.cz/kalva/imo/isoln/isoln622.html
+  rw [Set.mem_Ico]
+  constructor
+  · rintro ⟨hx1, hx2⟩
+    have hx4 : x ≤ 3 := by
+      have h1 : 0 < Real.sqrt 31 / 8 := by positivity
+      linarith only [hx2, h1]
+    have hx4' : 0 ≤ 3 - x := sub_nonneg.mpr hx4
+    have hx1' : 0 ≤ x + 1 := neg_le_iff_add_nonneg.mp hx1
+    refine ⟨hx4, hx1, ?_⟩
+    · have h30 : 0 ≤ Real.sqrt 31 / 8 := by positivity
+      have h3 : x + 1 < 3 - x := by linarith
+      suffices H : (1 / 2)^2 < (Real.sqrt (3 - x) - Real.sqrt (x + 1))^2
+      · rw [sq, sq] at H
+        have h31 : 0 ≤ Real.sqrt (3 - x) - Real.sqrt (x + 1) := by
+          rw [sub_nonneg]
+          suffices H' : Real.sqrt (x + 1)^2 < Real.sqrt (3 - x)^2 by
+            rw [sq, sq] at H'
+            apply le_of_lt
+            apply lt_of_mul_self_lt_mul_self
+            · positivity
+            · rw [←sq, ←sq]
+              rw [Real.sq_sqrt (by positivity)]
+              rw [Real.sq_sqrt (by positivity)]
+              exact h3
+          rw [Real.sq_sqrt (by positivity)]
+          rw [Real.sq_sqrt (by positivity)]
+          exact h3
+        exact lt_of_mul_self_lt_mul_self h31 H
+      rw [lemma2 hx4' hx1']
+      suffices H : 2 * Real.sqrt ((3 - x) * (x + 1)) < 4 - (1 / 2) ^ 2 by
+        linarith
+      suffices H : Real.sqrt ((3 - x) * (x + 1)) < 15 / 8 by
+        linarith only [H]
+      suffices H : (Real.sqrt ((3 - x) * (x + 1)))^2 < (15/8)^2 by
+        rw [sq, sq] at H
+        exact lt_of_mul_self_lt_mul_self (by norm_num) H
+      rw [Real.sq_sqrt (by positivity)]
+      suffices H : 0 < (15 / 8) ^ 2 - (3 - x) * (x + 1) from sub_pos.mp H
+      rw [lemma1 x]
+      have h20 : x - (1 + Real.sqrt 31 / 8) < 0 := by
+        linarith
+      have h21 : x - (1 - Real.sqrt 31 / 8) < 0 := by linarith
+      nlinarith
+  rintro ⟨hx1, hx2, hx3⟩
+  refine ⟨hx2, ?_⟩
+  have h0 : (0:ℝ) ≤ (1:ℝ) / 2 := by norm_num
+  have h1 := pow_lt_pow_left hx3 h0 two_ne_zero
+  have hx4 : 0 ≤ 3 - x := by linarith
+  have hx5 : 0 ≤ x + 1 := by linarith
+
+  rw [lemma2 hx4 hx5] at h1
   have h3 : Real.sqrt ((3 - x) * (x + 1)) < 15 / 8 := by linarith only [h1]
   have h4 : 0 ≤ Real.sqrt ((3 - x) * (x + 1)) := Real.sqrt_nonneg _
   have h5 := pow_lt_pow_left h3 h4 two_ne_zero
   rw [Real.sq_sqrt (by positivity)] at h5
-  sorry
+  replace h5 : 0 < (15 / 8) ^ 2 - (3 - x) * (x + 1) := sub_pos.mpr h5
+  rw [lemma1 x] at h5
+  obtain ⟨h6a, h6b⟩ | ⟨_, h7b⟩ := mul_pos_iff.mp h5
+  · have h40 : Real.sqrt (3 - x) - Real.sqrt (x + 1) < 0 := by
+      have h3 : 3 - x <  x + 1 := by linarith
+      rw [sub_neg]
+      suffices H' : Real.sqrt (3 - x)^2 < Real.sqrt (x + 1)^2 by
+            rw [sq, sq] at H'
+            apply lt_of_mul_self_lt_mul_self
+            · positivity
+            · rw [←sq, ←sq]
+              rw [Real.sq_sqrt (by positivity)]
+              rw [Real.sq_sqrt (by positivity)]
+              exact h3
+      rw [Real.sq_sqrt (by positivity)]
+      rw [Real.sq_sqrt (by positivity)]
+      exact h3
+    linarith
+  · linarith
