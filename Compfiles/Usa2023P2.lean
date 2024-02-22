@@ -38,13 +38,11 @@ lemma lemma_1 (a b c : ℝ+) : (a + b)/c = a/c + b/c := by
   rw [division_def, add_mul, ←division_def, ←division_def]
 
 lemma lemma_3 {a b c : ℝ+} (h : a = b + c) : c < a := by
-  obtain ⟨a, ha⟩ := a
+  rw [h]
   obtain ⟨b, hb⟩ := b
   obtain ⟨c, hc⟩ := c
-  apply_fun (·.val) at h
-  simp only [Positive.coe_add] at h
-  simp only [Subtype.mk_lt_mk]
-  linarith
+  rw [←Subtype.coe_lt_coe, Positive.coe_add]
+  exact lt_add_of_pos_left c hb
 
 snip end
 
