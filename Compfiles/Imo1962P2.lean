@@ -66,9 +66,7 @@ problem imo1962_p2 (x : ℝ) :
           apply le_of_lt
           exact Real.sqrt_lt_sqrt hx1' h3
         exact lt_of_pow_lt_pow_left 2 h31 H
-      rw [lemma2 hx4' hx1']
-      suffices H : 2 * Real.sqrt ((3 - x) * (x + 1)) < 4 - (1 / 2) ^ 2 by
-        linarith
+      rw [lemma2 hx4' hx1', lt_sub_comm]
       suffices H : Real.sqrt ((3 - x) * (x + 1)) < 15 / 8 by
         linarith only [H]
       suffices H : (Real.sqrt ((3 - x) * (x + 1)))^2 < (15/8)^2 from
@@ -78,7 +76,6 @@ problem imo1962_p2 (x : ℝ) :
       rw [lemma1 x]
       have h20 : x - (1 + Real.sqrt 31 / 8) < 0 := by
         linarith
-      have h21 : x - (1 - Real.sqrt 31 / 8) < 0 := by linarith
       nlinarith
   rintro ⟨hx1, hx2, hx3⟩
   refine ⟨hx2, ?_⟩
