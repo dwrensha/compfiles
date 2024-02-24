@@ -107,7 +107,7 @@ lemma f_pos_of_pos {f : ℚ → ℝ} {q : ℚ} (hq : 0 < q)
 
   -- Now we just need to show that `f q.num` and `f q.denom` are positive.
   -- Then nlinarith will be able to close the goal.
-  have num_pos : 0 < q.num := Rat.num_pos_iff_pos.mpr hq
+  have num_pos : 0 < q.num := Rat.num_pos.mpr hq
   have hqna : (q.num.natAbs : ℤ) = q.num := Int.natAbs_of_nonneg num_pos.le
 
   have hqfn' := calc (q.num : ℝ)
@@ -279,7 +279,7 @@ problem imo2013_p5
   have := x.pos
   have hx2pos : 0 < 2 * x.den := by positivity
   have hx2cnezr : (x2denom : ℝ) ≠ (0 : ℝ) := by positivity
-  have : 0 < x.num := by rwa [Rat.num_pos_iff_pos]
+  have : 0 < x.num := by rwa [Rat.num_pos]
   have hx2num_gt_one : (1 : ℚ) < (2 * x.num : ℤ) := by norm_cast; linarith
   apply mul_left_cancel₀ hx2cnezr
   calc
