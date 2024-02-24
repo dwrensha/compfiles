@@ -30,4 +30,9 @@ lean_exe checkSolution where
   root := `scripts.checkSolution
   supportInterpreter := true
 
+@[default_target]
+lean_exe tryTactic where
+  root := `scripts.tryTactic
+  supportInterpreter := true
+
 require mathlib from git "https://github.com/leanprover-community/mathlib4" @ "5ac4fc9295e041af2849679d416f9744393386f4"
