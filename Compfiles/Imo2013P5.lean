@@ -276,10 +276,9 @@ problem imo2013_p5
   have H : x * (↑(2 * x.den) : ℚ) = (↑(2 * x.num) : ℚ) := by push_cast; linear_combination 2 * H₀
   set x2denom := 2 * x.den
   set x2num := 2 * x.num
-  have := x.pos
   have hx2pos : 0 < 2 * x.den := by positivity
   have hx2cnezr : (x2denom : ℝ) ≠ (0 : ℝ) := by positivity
-  have : 0 < x.num := by rwa [Rat.num_pos]
+  have : 0 < x.num := Rat.num_pos.mpr hx
   have hx2num_gt_one : (1 : ℚ) < (2 * x.num : ℤ) := by norm_cast; linarith
   apply mul_left_cancel₀ hx2cnezr
   calc
