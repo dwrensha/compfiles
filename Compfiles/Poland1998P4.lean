@@ -114,11 +114,7 @@ lemma can_get_a_later_one_zmod :
   intro n hn
 
   obtain (hlt : n < 2) | (hlte : 2 ≤ n) := lt_or_ge n 2
-  · use 5
-    constructor
-    · calc n < 2 := hlt
-           _ < 5 := by norm_num
-    · norm_num; decide
+  · exact ⟨5, Nat.le.step <| Nat.le.step <| Nat.le.step hlt, rfl⟩
 
   let n1 : ℕ := 2 * (n - 1) + 1
 
