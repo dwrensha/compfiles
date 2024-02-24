@@ -88,8 +88,8 @@ problem usa2023_p2 (f : ℝ+ → ℝ+) :
         simp only [Positive.coe_add, Positive.val_mul, Positive.val_pow] at hp1
         exact hp1
 
-      have hp1 := P3 1 (by norm_num)
-      have hp2 := P3 2 (by norm_num)
+      have hp1 := P3 1 zero_lt_one
+      have hp2 := P3 2 zero_lt_two
 
       have h0 : a^2 = b := by linear_combination hp2 - hp1
 
