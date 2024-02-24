@@ -52,7 +52,7 @@ problem bulgaria1998_p3
     have h1 := hf x y hx hy
     have h2 : 0 < f x + y := add_pos (hpos x hx) hy
     have h4 : f x < f x + y := lt_add_of_pos_right (f x) hy
-    have h5 : f x / (f x + y) < 1 := by rwa [div_lt_iff h2, one_mul]
+    have h5 : f x / (f x + y) < 1 := (div_lt_one h2).mpr h4
     calc f (x + y)
          = f (x + y) * 1                       := (mul_one (f (x + y))).symm
        _ = f (x + y) * ((f x + y) / (f x + y)) := by rw [div_self (Ne.symm (ne_of_lt h2))]
@@ -144,7 +144,7 @@ problem bulgaria1998_p3
     have hp : 0 < f (1 + 3 * f 1) :=
       hpos (1 + 3 * f 1) (lt_trans (x_seq_pos 0) (h1 0))
 
-    have h2N : (0:ℝ) < 2^N := pow_pos (by norm_num) N
+    have h2N : (0:ℝ) < 2^N := pow_pos two_pos N
     exact (div_lt_iff h2N).mpr ((div_lt_iff' hp).mp hN)
 
   obtain ⟨N, hN⟩ := he
