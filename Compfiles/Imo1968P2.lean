@@ -75,6 +75,6 @@ problem imo1968_p2 (x : ℕ) :
     have h0 : 0 < x := (Nat.eq_zero_or_pos x).resolve_left (fun H ↦ by norm_num [H] at hs)
     have h2 : x^2 ≤ 10 * x + 22 + x := le_add_of_le_add_left (le_of_eq hs)
       (prod_digits_le (by norm_num) h0)
-    have h3 : x < 13 := by qify at h0 h2 ⊢; nlinarith
+    have h3 : x < 13 := by nlinarith
     rw [Set.mem_singleton_iff]
     interval_cases x <;> norm_num at hs ⊢
