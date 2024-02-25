@@ -42,12 +42,12 @@ structure ProblemPredicate (m n : ℤ) : Prop where
 def specifiedSet : Set ℤ :=
   {k : ℤ | ∃ m : ℤ, ∃ n : ℤ, k = m ^ 2 + n ^ 2 ∧ ProblemPredicate N m n}
 
+snip begin
+
 /-
 The trick to this problem is that `m` and `n` have to be consecutive Fibonacci numbers,
 because you can reduce any solution to a smaller one using the Fibonacci recurrence.
 -/
-
-snip begin
 
 /-
 We want to reduce every solution to a smaller solution. Specifically,
