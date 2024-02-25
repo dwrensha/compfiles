@@ -65,6 +65,11 @@ def visitTacticInfo (ci : ContextInfo) (ti : TacticInfo) : MetaM Unit := do
       for msg in msgs.toList do
         println! "msg: {←msg.data.toString}"
       let _ := (← liftM (m := CoreM) (set { (← liftM (m := CoreM) get) with messages := {}}))
+
+      let traceState := (← liftM (m := CoreM) get).traceState
+      for t in traceState.traces.toList do
+        println! "trace: {←t.msg.toString}"
+
       pure ()
     catch e =>
       println! "caught: {←e.toMessageData.toString}"
