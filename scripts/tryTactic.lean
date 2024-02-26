@@ -132,7 +132,12 @@ unsafe def processFile (path : FilePath) : IO Unit := do
   let _ ← (traverseForest steps).toIO
             {fileName := s!"{path}", fileMap := FileMap.ofString input,
              options := options}
-            {env := env}
+            {env := env,
+             -- Avoid clashing with saved mvars in the InfoTree.
+             -- TODO: extract the NameGenerator processCommands so that we don't
+             -- need to pick an arbitrary large number here.
+             ngen := {idx := 1000000}
+            }
   pure ()
 
 def pathOfProbId (probId : String) : IO FilePath := do
