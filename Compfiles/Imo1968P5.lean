@@ -41,7 +41,7 @@ problem imo1968_p5a (f : ℝ → ℝ) (a : ℝ) (hf : P a f) :
   have h1 : ∀ x, 1 / 2 ≤ f (x + a) := fun x ↦ by
     rw [(hf2 x).2, le_add_iff_nonneg_right]
     exact Real.sqrt_nonneg (f x - f x ^ 2)
-  have h2 : ∀ x, 0 ≤ f (x + a) - 1/2 := fun x ↦ by linarith [h1 x]
+  have h2 : ∀ x, 0 ≤ f (x + a) - 1/2 := fun x ↦ sub_nonneg.mpr (h1 x)
   have h3 : ∀ x, f (x + a) * (1 - f (x + a)) = (f x - 1/2) ^2 := fun x ↦ by
     have h6 : f (x + a) * (1 - f (x + a)) =
        -((f (x + a) - 1/2)^2  - (1/2)^2) := by ring
