@@ -124,7 +124,7 @@ unsafe def processFile (path : FilePath) : IO Unit := do
   let env := env.setMainModule (← moduleNameOfFileName path none)
   let commandState := { Command.mkState env messages {} with infoState.enabled := true }
 
-  let (steps, _s) ← (processCommands.run { inputCtx := inputCtx }).run
+  let (steps, frontendState) ← (processCommands.run { inputCtx := inputCtx }).run
     { commandState := commandState, parserState := parserState, cmdPos := parserState.pos }
 
   let options := Options.empty.insert `maxHeartbeats (DataValue.ofNat 0)
@@ -134,10 +134,9 @@ unsafe def processFile (path : FilePath) : IO Unit := do
             {fileName := s!"{path}", fileMap := FileMap.ofString input,
              options := options}
             {env := env,
-             -- Avoid clashing with saved mvars in the InfoTree.
-             -- TODO: extract the NameGenerator processCommands so that we don't
-             -- need to pick an arbitrary large number here.
-             ngen := {idx := 1000000}
+             -- Pass along the name generator, to avoid clashing with
+             -- saved mvars in the InfoTree.
+             ngen := frontendState.commandState.ngen
             }
     catch e =>
       println! "caught top level: {e}"
