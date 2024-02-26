@@ -59,7 +59,7 @@ problem imo1968_p5a (f : ℝ → ℝ) (a : ℝ) (hf : P a f) :
   rw [Real.sqrt_sq_eq_abs]
   have h2' := abs_of_nonneg (h2 (x-a))
   rw [sub_add_cancel] at h2'
-  rw [add_eq_of_eq_sub' h2']
+  exact add_eq_of_eq_sub' h2'
 
 noncomputable determine solution_func : ℝ → ℝ := fun x ↦
  if Even ⌊x⌋ then 1 else 1/2
@@ -87,7 +87,7 @@ problem imo1968_p5b :
     have h3 : c = 1 := h1.symm.trans h2
     have h4 : solution_func 1 = 1/2 := by
       have h6 : ¬ Even ⌊(1:ℝ)⌋ := by simp
-      simp [h6, solution_func]
+      exact if_neg h6
     have h5 : c = 1/2 := h1'.symm.trans h4
     rw [h3] at h5
     norm_num at h5
