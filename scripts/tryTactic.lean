@@ -58,8 +58,7 @@ def visitTacticInfo (ci : ContextInfo) (ti : TacticInfo) : MetaM Unit := do
     let dotac := Term.TermElabM.run (ctx := {declName? := ci.parentDecl?})
                       <| Tactic.run g (Tactic.evalTactic (←`(tactic| exact?)))
     try
-      let ((mvars, _tstate), _mstate) := ←(dotac).run
-          {} { mctx := mctx }
+      let ((mvars, _tstate), _mstate) ← dotac.run {} { mctx := mctx }
       let msgs := (← liftM (m := CoreM) get).messages
       println! "mvars after exact: {mvars.length}"
       for msg in msgs.toList do
@@ -79,21 +78,22 @@ def visitTacticInfo (ci : ContextInfo) (ti : TacticInfo) : MetaM Unit := do
 
   println! "-------------------------"
 
-def visitInfo (ci : ContextInfo) (info : Info) (pre : MetaM Unit) : MetaM Unit := do
-  pre
+def visitInfo (env : Environment) (ci : ContextInfo) (info : Info) (acc : List (MetaM Unit))
+    : List (MetaM Unit) :=
   match info with
   | .ofTacticInfo ti =>
-    try visitTacticInfo ci ti
-    catch e =>
-            println! "caught: {←e.toMessageData.toString}"
-  | _ => pure ()
+    (do setEnv env
+        try visitTacticInfo ci ti
+        catch e =>
+            println! "caught: {←e.toMessageData.toString}") :: acc
+  | _ => acc
 
-def traverseForest (steps : List (Environment × InfoState)) : MetaM Unit := do
-  for (env, infoState) in steps do
-    setEnv env
-    for t in infoState.trees do
-      Lean.Elab.InfoTree.foldInfo visitInfo (pure ()) t
 
+def traverseForest (steps : List (Environment × InfoState)) : List (MetaM Unit) :=
+  let t := steps.map fun (env, infoState) ↦
+    (infoState.trees.toList.map fun t ↦
+      (Lean.Elab.InfoTree.foldInfo (visitInfo env) [] t).reverse)
+  t.join.join
 
 partial def processCommands : Frontend.FrontendM (List (Environment × InfoState)) := do
   let env := (←get).commandState.env
@@ -129,7 +129,8 @@ unsafe def processFile (path : FilePath) : IO Unit := do
 
   let options := Options.empty.insert `maxHeartbeats (DataValue.ofNat 0)
 
-  let _ ← (traverseForest steps).toIO
+  for t in traverseForest steps do
+    try let _ ← t.toIO
             {fileName := s!"{path}", fileMap := FileMap.ofString input,
              options := options}
             {env := env,
@@ -138,6 +139,8 @@ unsafe def processFile (path : FilePath) : IO Unit := do
              -- need to pick an arbitrary large number here.
              ngen := {idx := 1000000}
             }
+    catch e =>
+      println! "caught top level: {e}"
   pure ()
 
 def pathOfProbId (probId : String) : IO FilePath := do
