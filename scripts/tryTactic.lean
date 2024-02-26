@@ -78,18 +78,18 @@ def visitTacticInfo (ci : ContextInfo) (ti : TacticInfo) : MetaM Unit := do
 
   println! "-------------------------"
 
-def visitInfo (env : Environment) (ci : ContextInfo) (info : Info) (acc : List (MetaM Unit))
-    : List (MetaM Unit) :=
+def visitInfo (env : Environment) (ci : ContextInfo) (info : Info) (acc : List (IO Unit))
+    : List (IO Unit) :=
   match info with
   | .ofTacticInfo ti =>
-    (do setEnv env
-        try visitTacticInfo ci ti
-        catch e =>
-            println! "caught: {←e.toMessageData.toString}") :: acc
+    (ci.runMetaM default
+     (do setEnv env
+         try visitTacticInfo ci ti
+         catch e =>
+            println! "caught: {←e.toMessageData.toString}")) :: acc
   | _ => acc
 
-
-def traverseForest (steps : List (Environment × InfoState)) : List (MetaM Unit) :=
+def traverseForest (steps : List (Environment × InfoState)) : List (IO Unit) :=
   let t := steps.map fun (env, infoState) ↦
     (infoState.trees.toList.map fun t ↦
       (Lean.Elab.InfoTree.foldInfo (visitInfo env) [] t).reverse)
@@ -124,20 +124,11 @@ unsafe def processFile (path : FilePath) : IO Unit := do
   let env := env.setMainModule (← moduleNameOfFileName path none)
   let commandState := { Command.mkState env messages {} with infoState.enabled := true }
 
-  let (steps, frontendState) ← (processCommands.run { inputCtx := inputCtx }).run
+  let (steps, _frontendState) ← (processCommands.run { inputCtx := inputCtx }).run
     { commandState := commandState, parserState := parserState, cmdPos := parserState.pos }
 
-  let options := Options.empty.insert `maxHeartbeats (DataValue.ofNat 0)
-
   for t in traverseForest steps do
-    try let _ ← t.toIO
-            {fileName := s!"{path}", fileMap := FileMap.ofString input,
-             options := options}
-            {env := env,
-             -- Pass along the name generator, to avoid clashing with
-             -- saved mvars in the InfoTree.
-             ngen := frontendState.commandState.ngen
-            }
+    try t
     catch e =>
       println! "caught top level: {e}"
   pure ()
