@@ -23,7 +23,7 @@ namespace Usa1993P1
 
 determine a_is_larger : ℕ → Bool := fun _ ↦ true
 
-problem usa1993_p5 (n : ℕ) (hn : 2 ≤ n) (a b : ℝ) (ha : 0 < a) (hb : 0 < b)
+problem usa1993_p1 (n : ℕ) (hn : 2 ≤ n) (a b : ℝ) (ha : 0 < a) (hb : 0 < b)
     (han : a^n = a + 1) (hbn : b^(2 * n) = b + 3 * a) :
     if a_is_larger n then b < a else a < b := by
   -- informal proof outline taken from
