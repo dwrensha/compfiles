@@ -40,9 +40,8 @@ lemma lemma1 (x : ℝ) (hx : x ∈ Set.Ioo 0 (Real.pi / 2)) :
     Real.tan (x - Real.pi / 4) < 1 := by
   let y' x := Real.tan (x - Real.pi / 4)
   have h4 : Real.tan (Real.pi / 4) = y' (Real.pi / 2) := by
-    dsimp
-    have h5 : Real.pi / 2 - Real.pi / 4 = Real.pi / 4 := by field_simp; ring
-    rw [h5]
+    dsimp only
+    rw [Real.tan_pi_div_two_sub, Real.tan_pi_div_four, one_eq_inv]
   rw [← Real.tan_pi_div_four]
   rw [h4]
   let y1 x := x - Real.pi / 4
