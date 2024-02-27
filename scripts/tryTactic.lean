@@ -48,9 +48,11 @@ def visitTacticInfo (tryTacticStx : Syntax) (ci : ContextInfo) (ti : TacticInfo)
   | _ =>  pure ()
   let some sp := stx.getPos? | return ()
   let some ep := stx.getTailPos? | return ()
+  let startPosition := ci.fileMap.toPosition sp
   let s := Substring.mk src sp ep
-  println! "{s}"
   for g in ti.goalsBefore do
+    IO.print "."
+    (← IO.getStdout).flush
     let mctx := ti.mctxBefore
     --let doprint : MetaM _ := Meta.ppGoal g
     --let x ← doprint.run' (s := { mctx := mctx })
@@ -62,12 +64,13 @@ def visitTacticInfo (tryTacticStx : Syntax) (ci : ContextInfo) (ti : TacticInfo)
       let msgs := (← liftM (m := CoreM) get).messages
       if mvars.length == 0
       then
+        println! "\nline {startPosition.line}:\n{s}"
         for msg in msgs.toList do
-          println! "msg: {←msg.data.toString}"
+          println! "* {←msg.data.toString}"
 
       let traceState := (← liftM (m := CoreM) get).traceState
       for t in traceState.traces.toList do
-        println! "trace: {←t.msg.toString}"
+        println! "> {←t.msg.toString}"
 
       pure ()
     catch _e =>
@@ -75,8 +78,6 @@ def visitTacticInfo (tryTacticStx : Syntax) (ci : ContextInfo) (ti : TacticInfo)
       pure ()
 
     pure ()
-
-  println! "-------------------------"
 
 def visitInfo (tryTacticStx : Syntax) (env : Environment) (ci : ContextInfo)
     (info : Info) (acc : List (IO Unit))
