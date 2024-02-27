@@ -25,7 +25,11 @@ elements. Prove that $∑_{k=0}^n k p_{n,k}=n!$.
 
 namespace Imo1987P1
 
+open scoped BigOperators Nat
+open Finset (range)
+
 snip begin
+section generalization
 
 /-
 To prove this identity, we show that both sides are equal to the cardinality of the set
@@ -40,11 +44,9 @@ holds true for `n = 0` as well, so we first prove it, then deduce the original v
 
 variable (α : Type*) [Fintype α] [DecidableEq α]
 
-open scoped BigOperators Nat
-
 open Equiv Fintype Function
 
-open Finset (range sum_const)
+open Finset (sum_const)
 
 open Set (Iic)
 
@@ -106,7 +108,9 @@ theorem main_fintype : ∑ k in range (card α + 1), k * p α k = card α * (car
 theorem main₀ (n : ℕ) : ∑ k in range (n + 1), k * p (Fin n) k = n * (n - 1)! := by
   simpa using main_fintype (Fin n)
 
+end generalization
 snip end
+
 
 problem imo1987_p1 {n : ℕ} (hn : 1 ≤ n) : ∑ k in range (n + 1), k * p (Fin n) k = n ! := by
   rw [main₀, Nat.mul_factorial_pred (zero_lt_one.trans_le hn)]
