@@ -49,35 +49,29 @@ def visitTacticInfo (tryTacticStx : Syntax) (ci : ContextInfo) (ti : TacticInfo)
   let some sp := stx.getPos? | return ()
   let some ep := stx.getTailPos? | return ()
   let s := Substring.mk src sp ep
-  println! "parent decl : {ci.parentDecl?}"
-  let env ← getEnv
-  match ci.parentDecl? with
-  | some pd => if env.contains pd
-               then println! "environment already contains parent!"
-  | none => pure ()
   println! "{s}"
   for g in ti.goalsBefore do
     let mctx := ti.mctxBefore
-    let doprint : MetaM _ := Meta.ppGoal g
-    let x ← doprint.run' (s := { mctx := mctx })
-    IO.println x
+    --let doprint : MetaM _ := Meta.ppGoal g
+    --let x ← doprint.run' (s := { mctx := mctx })
+    --IO.println x
     let dotac := Term.TermElabM.run (ctx := {declName? := ci.parentDecl?})
                       <| Tactic.run g (Tactic.evalTactic tryTacticStx)
     try
       let ((mvars, _tstate), _mstate) ← dotac.run {} { mctx := mctx }
       let msgs := (← liftM (m := CoreM) get).messages
-      println! "mvars after trying tactic: {mvars.length}"
-      for msg in msgs.toList do
-        println! "msg: {←msg.data.toString}"
-      let _ := (← liftM (m := CoreM) (set { (← liftM (m := CoreM) get) with messages := {}}))
+      if mvars.length == 0
+      then
+        for msg in msgs.toList do
+          println! "msg: {←msg.data.toString}"
 
       let traceState := (← liftM (m := CoreM) get).traceState
       for t in traceState.traces.toList do
         println! "trace: {←t.msg.toString}"
 
       pure ()
-    catch e =>
-      println! "caught: {←e.toMessageData.toString}"
+    catch _e =>
+      --println! "caught: {←e.toMessageData.toString}"
       pure ()
 
     pure ()
@@ -127,7 +121,6 @@ def parseTactic (env : Environment) (str : String) : IO Syntax := do
 
 unsafe def processFile (tac : String) (path : FilePath) : IO Unit := do
   searchPathRef.set compile_time_search_path%
-  println! path
   let input ← IO.FS.readFile path
   enableInitializersExecution
   let inputCtx := Parser.mkInputContext input path.toString
