@@ -62,7 +62,7 @@ lemma lemma1 (x : ℝ) (hx : x ∈ Set.Ioo 0 (Real.pi / 2)) :
       · dsimp; linarith
 
   apply h6
-  · exact ⟨le_of_lt hx.1, le_of_lt hx.2⟩
+  · exact Set.mem_Icc_of_Ioo hx
   · constructor
     . exact le_of_lt Real.pi_div_two_pos
     . exact Eq.le rfl
@@ -238,15 +238,15 @@ problem usa1998_p3
                    ∏ i in Finset.range (n + 1), (1 + y i) * (1 / (n:ℝ)) := by
         apply Finset.prod_congr rfl
         intro x _hx
-        field_simp
+        exact div_eq_mul_one_div _ _
       rw [h41]; clear h41
       rw [Finset.prod_mul_distrib, Finset.prod_const, Finset.card_range]
       have h43 : HPow.hPow ((1:ℝ) / (n:ℝ)) (n + 1) = (1:ℝ) / (↑n ^ ((n:ℝ) + 1)) := by
         norm_cast
         rw [div_pow, one_pow]
         norm_cast
-      rw [h43]; clear h43
-      field_simp
+      rw [h43]
+      exact mul_one_div _ _
     rw [h24] at h21; clear h24
     rw [Finset.prod_div_distrib]
     have h25 : 0 < (n:ℝ) ^ ((n:ℝ) + 1) := by
@@ -302,7 +302,7 @@ problem usa1998_p3
                  1 + Real.tan (a i - Real.pi / 4) := add_comm _ _
 
     rw [Real.tan_pi_div_four, mul_one, h12] at h11
-    rw [h11]
+    exact h11
 
   -- so ∏ᵢ(1 + yᵢ)/(1-yᵢ) = ∏ᵢtan(aᵢ) ≥ nⁿ⁺¹, as desired
   have h8 : ∏ i in Finset.range (n + 1), Real.tan (a i) =
