@@ -24,7 +24,7 @@ such that:
 - $f(x) \ne 0$ for $0 \le x < 2$.
 -/
 
-open Set NNReal Classical
+open scoped NNReal
 
 namespace Imo1986P5
 
