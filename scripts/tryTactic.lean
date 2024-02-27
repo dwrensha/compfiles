@@ -2,7 +2,6 @@ import Lean
 import Lean.Server.InfoUtils
 import Std.Lean.Util.Path
 import Mathlib.Data.String.Defs
-import Mathlib.Tactic.LibrarySearch
 
 open Lean Elab System
 
@@ -126,7 +125,7 @@ def parseTactic (env : Environment) (str : String) : IO Syntax := do
   | none =>
     pure (if s.stxStack.isEmpty then .missing else s.stxStack.back)
 
-unsafe def processFile (path : FilePath) : IO Unit := do
+unsafe def processFile (tac : String) (path : FilePath) : IO Unit := do
   searchPathRef.set compile_time_search_path%
   println! path
   let input ← IO.FS.readFile path
@@ -135,7 +134,7 @@ unsafe def processFile (path : FilePath) : IO Unit := do
   let (header, parserState, messages) ← Parser.parseHeader inputCtx
   let (env, messages) ← processHeader header {} messages inputCtx
 
-  let tryTacticStx ← parseTactic env "exact?"
+  let tryTacticStx ← parseTactic env tac
 
   if messages.hasErrors then
     for msg in messages.toList do
@@ -162,6 +161,6 @@ def pathOfProbId (probId : String) : IO FilePath := do
 
 unsafe def main (args : List String) : IO Unit := do
   match args with
-  | [probId] => processFile (← pathOfProbId probId)
-  | _ => throw $ IO.userError "Invalid arguments"
+  | [tac, probId] => processFile tac (← pathOfProbId probId)
+  | _ => throw $ IO.userError "usage: tryTactic TACTIC PROBLEM"
 
