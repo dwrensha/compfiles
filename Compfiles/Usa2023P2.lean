@@ -167,10 +167,6 @@ problem usa2023_p2 (f : ℝ+ → ℝ+) :
         rw [←Subtype.coe_inj]
         simp
       rw [h21] at h20
-      obtain ⟨_, rfl⟩ : ∃ cc, cc = f 1 := exists_eq
-      obtain ⟨x, hx⟩ := x
-      simp only [Positive.coe_add] at h20
-      simp only [Positive.coe_add]
       exact h20
 
     refine' ⟨2 / c.val, c.val - 2 / c.val, div_pos two_pos c.prop, _⟩
