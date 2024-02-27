@@ -49,14 +49,8 @@ lemma lemma1 (n : ℕ) (npos : 0 < n) : 2 * (n - 1) + 1 = 2 * n - 1 := by
   · rfl
 
 lemma lemma2 (n : ℕ) : (2 * n + 1) / 2 = n := by
-  have h1 : ¬ 2 ∣ 2 * n + 1 := by
-    intro h
-    have h1 : 2 ∣ 2 * n := Dvd.intro n rfl
-    have : 2 ∣ 1 := (Nat.dvd_add_right h1).mp h
-    rw [Nat.dvd_one] at this
-    exact Nat.succ_succ_ne_one 0 this
-  rw [Nat.succ_div_of_not_dvd h1]
-  exact Nat.mul_div_right n zero_lt_two
+  rw [Nat.mul_add_div (Nat.le.step Nat.le.refl) n 1]
+  simp only [Nat.reduceDiv, add_zero]
 
 def a' : ℕ → ZMod 7
 | n => ⟨(a n) % 7, Nat.mod_lt _ (by norm_num)⟩
