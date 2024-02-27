@@ -10,6 +10,8 @@ namespace Lean.Elab.TacticInfo
 
 -- We borrow some stuff from
 -- https://github.com/semorrison/lean-training-data/blob/master/TrainingData/InfoTree/Basic.lean
+-- and
+-- https://github.com/lean-dojo/LeanDojo/blob/main/src/lean_dojo/data_extraction/ExtractData.lean
 
 /-- Find the name for the outermost `Syntax` in this `TacticInfo`. -/
 def name? (t : TacticInfo) : Option Name :=
@@ -40,6 +42,11 @@ def visitTacticInfo (ci : ContextInfo) (ti : TacticInfo) : MetaM Unit := do
   if not ti.isSubstantive then return ()
   let src := ci.fileMap.source
   let stx := ti.stx
+  match stx.getHeadInfo? with
+  | .some (.synthetic ..) =>
+     -- Not actual concrete syntax the user wrote. Ignore.
+    return ()
+  | _ =>  pure ()
   let some sp := stx.getPos? | return ()
   let some ep := stx.getTailPos? | return ()
   let s := Substring.mk src sp ep
