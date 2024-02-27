@@ -93,5 +93,5 @@ problem imo1974_p5 (s : ℝ) :
     obtain ⟨hta, htb⟩ := ht
 
     use 1, 1 - t, t, (t * (1 - t))
-    exact ⟨by norm_num, by linarith, by linarith, by nlinarith, hts.symm⟩
+    exact ⟨zero_lt_one, sub_pos.mpr htb, hta, by nlinarith, hts.symm⟩
   · intro hs; exact condition_implies_solution_set s hs
