@@ -35,6 +35,7 @@ import Compfiles.Imo1981P6
 import Compfiles.Imo1982P1
 import Compfiles.Imo1986P1
 import Compfiles.Imo1986P5
+import Compfiles.Imo1987P1
 import Compfiles.Imo1987P4
 import Compfiles.Imo1989P5
 import Compfiles.Imo1990P3
