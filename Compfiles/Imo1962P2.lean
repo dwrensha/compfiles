@@ -25,7 +25,7 @@ snip begin
 lemma lemma1 (x : ℝ) :
     (15 / 8) ^ 2 - (3 - x) * (x + 1) =
     (x - (1 + Real.sqrt 31/8)) * (x - (1 - Real.sqrt 31/8)) := by
-  have h1 : Real.sqrt 31 ^ 2 = 31 := Real.sq_sqrt (by norm_num)
+  have h1 : Real.sqrt 31 ^ 2 = 31 := Real.sq_sqrt (Nat.ofNat_nonneg _)
   ring_nf
   rw [h1]
   ring
@@ -35,7 +35,7 @@ lemma lemma2 {x : ℝ} (hx4 : 0 ≤ 3 - x) (hx5 : 0 ≤ x + 1) :
   calc
       (Real.sqrt (3 - x) - Real.sqrt (x + 1)) ^ 2
      = Real.sqrt (3 - x) ^2 - 2 * Real.sqrt (3 - x) * Real.sqrt (x + 1)
-       + Real.sqrt (x + 1) ^2 := by ring
+       + Real.sqrt (x + 1) ^2 := sub_sq _ _
    _ = (3 - x) - 2 * Real.sqrt (3 - x) * Real.sqrt (x + 1)
        + (x + 1) := by rw [Real.sq_sqrt hx4, add_left_cancel_iff, Real.sq_sqrt hx5]
    _ = 4 - 2 * (Real.sqrt (3 - x) * Real.sqrt (x + 1)) := by ring
@@ -81,8 +81,8 @@ problem imo1962_p2 (x : ℝ) :
   refine ⟨hx2, ?_⟩
   have h0 : (0:ℝ) ≤ (1:ℝ) / 2 := by norm_num
   have h1 := pow_lt_pow_left hx3 h0 two_ne_zero
-  have hx4 : 0 ≤ 3 - x := by linarith
-  have hx5 : 0 ≤ x + 1 := by linarith
+  have hx4 : 0 ≤ 3 - x := sub_nonneg.mpr hx1
+  have hx5 : 0 ≤ x + 1 := neg_le_iff_add_nonneg.mp hx2
 
   rw [lemma2 hx4 hx5] at h1
   have h3 : Real.sqrt ((3 - x) * (x + 1)) < 15 / 8 := by linarith only [h1]
@@ -97,4 +97,4 @@ problem imo1962_p2 (x : ℝ) :
       rw [sub_neg]
       exact Real.sqrt_lt_sqrt hx4 h3
     linarith
-  · linarith
+  · exact sub_neg.mp h7b
