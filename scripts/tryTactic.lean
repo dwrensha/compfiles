@@ -38,7 +38,7 @@ def isSubstantive (t : TacticInfo) : Bool :=
 
 end Lean.Elab.TacticInfo
 
-def visitTacticInfo (ci : ContextInfo) (ti : TacticInfo) : MetaM Unit := do
+def visitTacticInfo (tryTacticStx : Syntax) (ci : ContextInfo) (ti : TacticInfo) : MetaM Unit := do
   if not ti.isSubstantive then return ()
   let src := ci.fileMap.source
   let stx := ti.stx
@@ -63,11 +63,11 @@ def visitTacticInfo (ci : ContextInfo) (ti : TacticInfo) : MetaM Unit := do
     let x ← doprint.run' (s := { mctx := mctx })
     IO.println x
     let dotac := Term.TermElabM.run (ctx := {declName? := ci.parentDecl?})
-                      <| Tactic.run g (Tactic.evalTactic (←`(tactic| exact?)))
+                      <| Tactic.run g (Tactic.evalTactic tryTacticStx)
     try
       let ((mvars, _tstate), _mstate) ← dotac.run {} { mctx := mctx }
       let msgs := (← liftM (m := CoreM) get).messages
-      println! "mvars after exact: {mvars.length}"
+      println! "mvars after trying tactic: {mvars.length}"
       for msg in msgs.toList do
         println! "msg: {←msg.data.toString}"
       let _ := (← liftM (m := CoreM) (set { (← liftM (m := CoreM) get) with messages := {}}))
@@ -85,21 +85,22 @@ def visitTacticInfo (ci : ContextInfo) (ti : TacticInfo) : MetaM Unit := do
 
   println! "-------------------------"
 
-def visitInfo (env : Environment) (ci : ContextInfo) (info : Info) (acc : List (IO Unit))
+def visitInfo (tryTacticStx : Syntax) (env : Environment) (ci : ContextInfo)
+    (info : Info) (acc : List (IO Unit))
     : List (IO Unit) :=
   match info with
   | .ofTacticInfo ti =>
     (ci.runMetaM default
      (do setEnv env
-         try visitTacticInfo ci ti
+         try visitTacticInfo tryTacticStx ci ti
          catch e =>
             println! "caught: {←e.toMessageData.toString}")) :: acc
   | _ => acc
 
-def traverseForest (steps : List (Environment × InfoState)) : List (IO Unit) :=
+def traverseForest (tryTacticStx : Syntax) (steps : List (Environment × InfoState)) : List (IO Unit) :=
   let t := steps.map fun (env, infoState) ↦
     (infoState.trees.toList.map fun t ↦
-      (Lean.Elab.InfoTree.foldInfo (visitInfo env) [] t).reverse)
+      (Lean.Elab.InfoTree.foldInfo (visitInfo tryTacticStx env) [] t).reverse)
   t.join.join
 
 partial def processCommands : Frontend.FrontendM (List (Environment × InfoState)) := do
@@ -113,6 +114,18 @@ partial def processCommands : Frontend.FrontendM (List (Environment × InfoState
   else
     return (env, infoState) :: (←processCommands)
 
+def parseTactic (env : Environment) (str : String) : IO Syntax := do
+  let inputCtx := Parser.mkInputContext str "<argument>"
+  let tokens := Parser.Module.updateTokens (Parser.getTokenTable env)
+  let s := Parser.tacticParser.fn.run
+              inputCtx {env := env, options := {}} tokens (Parser.mkParserState inputCtx.input)
+  match s.errorMsg with
+  | some errorMsg =>
+    println! "parse error: {errorMsg}"
+    panic! "parse error"
+  | none =>
+    pure (if s.stxStack.isEmpty then .missing else s.stxStack.back)
+
 unsafe def processFile (path : FilePath) : IO Unit := do
   searchPathRef.set compile_time_search_path%
   println! path
@@ -121,6 +134,8 @@ unsafe def processFile (path : FilePath) : IO Unit := do
   let inputCtx := Parser.mkInputContext input path.toString
   let (header, parserState, messages) ← Parser.parseHeader inputCtx
   let (env, messages) ← processHeader header {} messages inputCtx
+
+  let tryTacticStx ← parseTactic env "exact?"
 
   if messages.hasErrors then
     for msg in messages.toList do
@@ -134,7 +149,7 @@ unsafe def processFile (path : FilePath) : IO Unit := do
   let (steps, _frontendState) ← (processCommands.run { inputCtx := inputCtx }).run
     { commandState := commandState, parserState := parserState, cmdPos := parserState.pos }
 
-  for t in traverseForest steps do
+  for t in traverseForest tryTacticStx steps do
     try t
     catch e =>
       println! "caught top level: {e}"
