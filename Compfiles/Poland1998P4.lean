@@ -140,23 +140,13 @@ lemma can_get_a_later_one_zmod :
     have h2n1' : (n1 + 1) / 2 = n := by rw [hn1, h2n1]
     rw [haa, h2n1']
 
-  have hn1' : n1 + 2 = 2 * n + 1 := by
-    have hrw : (n1 + 2) = 2 * (n - 1) + 1 + 1 + 1 := rfl
-    rw [hrw]
-    cases' n
-    · exfalso; exact lt_asymm npos npos
-    · rfl
+  have hn1' : n1 + 2 = 2 * n + 1 := Nat.succ_inj.mpr hn1
 
   have ha2 : a' (n1 + 2) = a' (n1 + 1) +  a' n := by
     have haa : a' (n1 + 2) = a' (n1 + 1) + a' (n1.succ.succ / 2) :=
       a'_recurrence (n1 + 2) le_add_self
     have h1 : (2 * n + 1) / 2 = n := lemma2 n
-    have hn1v' : 2 * n = n1 + 1 := by
-      have hrw : n1 + 1 = 2 * (n - 1) + 1 + 1 := rfl
-      rw [hrw]
-      cases' n
-      · exfalso; exact lt_asymm npos npos
-      · rfl
+    have hn1v' : 2 * n = n1 + 1 := hn1.symm
     rw [haa]
     congr
     have : n1.succ.succ = (n1 + 1 + 1) := rfl
@@ -234,7 +224,7 @@ lemma can_get_a_later_one_zmod :
       have hadd : n2 + p + 1 = n2 + p.succ := rfl
       have hi6 : p < 7 := Nat.lt.step hpi6
       have hpp := hp hi6
-      have hp1: (p.succ : ZMod 7) = (p : ZMod 7) + 1 := by norm_cast
+      have hp1: (p.succ : ZMod 7) = (p : ZMod 7) + 1 := Nat.cast_succ p
       rw [←hadd, hinc, hpp, hp1]
       ring
 
@@ -254,14 +244,13 @@ lemma can_get_a_later_one_zmod :
 lemma can_get_a_later_one : (∀ N : ℕ, 7 ∣ a N → (∃ M : ℕ, N < M ∧ 7 ∣ a M)) := by
   intro n hn
   have ha' : a' n = 0 := by
-    have : a' n = ⟨a n % 7, Nat.mod_lt _ (by norm_num)⟩ := by simp[a']
+    have : a' n = ⟨a n % 7, Nat.mod_lt _ (Nat.succ_pos _)⟩ := by simp[a']
     rw [this]
     simp only [Nat.mod_eq_zero_of_dvd hn, Fin.mk_zero]
   obtain ⟨m, hmgt, hm7⟩ := can_get_a_later_one_zmod n ha'
   use m
   use hmgt
-  have : a m % 7 = 0 := by injections
-  exact Nat.dvd_of_mod_eq_zero this
+  exact Fin.nat_cast_eq_zero.mp hm7
 
 lemma strengthen
     {P : ℕ → Prop}
@@ -284,7 +273,7 @@ lemma strengthen
       exact h (pn.succ) hmp
 
 theorem poland1998_p4' : (∀ N : ℕ, ∃ M : ℕ, N < M ∧ 7 ∣ a M) := by
-  have he: 7 ∣ a 5 := by rw [show a 5 = 7 by rfl]
+  have he : 7 ∣ a 5 := Nat.dvd_refl 7
   exact strengthen can_get_a_later_one ⟨5, he⟩
 
 snip end
