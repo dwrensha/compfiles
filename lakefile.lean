@@ -35,4 +35,4 @@ lean_exe tryTactic where
   root := `scripts.tryTactic
   supportInterpreter := true
 
-require mathlib from git "https://github.com/leanprover-community/mathlib4" @ "7aeba51a8ee90d2ac46d07ed53f0d220757e0679"
+require mathlib from git "https://github.com/leanprover-community/mathlib4" @ "5bd4e6631ac675bfb63ab821d9823f1f3a1f1a2c"
