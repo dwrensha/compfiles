@@ -45,7 +45,7 @@ problem usa1990_p2 (n : ℕ) (x : ℝ) : x ∈ solution_set n ↔ f n x = 2 * x 
     constructor
     · intro hxx
       rw [Set.mem_singleton_iff] at hxx
-      have := H 4 (by norm_num)
+      have := H 4 zero_le_four
       aesop
     · intro h
       have hx : 0 ≤ x := by
