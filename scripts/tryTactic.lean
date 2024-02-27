@@ -153,8 +153,18 @@ def pathOfProbId (probId : String) : IO FilePath := do
   let cwd ← IO.currentDir
   pure $ cwd / path
 
+/--
+Convert the path `path` to an absolute path.
+-/
+def toAbsolute (path : FilePath) : IO FilePath := do
+  if path.isAbsolute then
+    pure path
+  else
+    let cwd ← IO.currentDir
+    pure $ cwd / path
+
 unsafe def main (args : List String) : IO Unit := do
   match args with
-  | [tac, probId] => processFile tac (← pathOfProbId probId)
-  | _ => throw $ IO.userError "usage: tryTactic TACTIC PROBLEM"
+  | [tac, leanfile] => processFile tac (← toAbsolute ⟨leanfile⟩)
+  | _ => throw $ IO.userError "usage: tryTactic TACTIC LEAN_FILE"
 
