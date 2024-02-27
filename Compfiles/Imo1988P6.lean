@@ -199,7 +199,6 @@ theorem constant_descent_vieta_jumping (x y : ℕ) {claim : Prop} {H : ℕ → �
 
 snip end
 
-/-- Question 6 of IMO1988.  -/
 problem imo1988_p6 {a b : ℕ} (h : a * b + 1 ∣ a ^ 2 + b ^ 2) :
     ∃ d, d ^ 2 = (a ^ 2 + b ^ 2) / (a * b + 1) := by
   rcases h with ⟨k, hk⟩
