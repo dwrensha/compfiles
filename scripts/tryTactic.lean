@@ -64,7 +64,7 @@ def visitTacticInfo (tryTacticStx : Syntax) (ci : ContextInfo) (ti : TacticInfo)
       let msgs := (← liftM (m := CoreM) get).messages
       if mvars.length == 0
       then
-        println! "\nline {startPosition.line}:\n{s}"
+        println! "\nline {startPosition.line}, col {startPosition.column}:\n{s}"
         for msg in msgs.toList do
           println! "* {←msg.data.toString}"
 
