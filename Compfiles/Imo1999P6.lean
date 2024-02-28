@@ -22,9 +22,85 @@ for all x,y ∈ ℝ.
 
 namespace Imo1999P6
 
-determine solution_set : Set (ℝ → ℝ) := sorry
+determine SolutionSet : Set (ℝ → ℝ) := { fun x ↦ 1 - x^2 / 2 }
 
 problem imo1999_p6 (f : ℝ → ℝ) :
-    f ∈ solution_set ↔
+    f ∈ SolutionSet ↔
     ∀ x y, f (x - f y) = f (f y) + x * f y + f x - 1 := by
-  sorry
+  -- informal solution from
+  -- https://prase.cz/kalva/imo/isoln/isoln996.html
+  rw [Set.mem_singleton_iff]
+  constructor
+  · rintro rfl x y; field_simp; ring
+  intro hf
+  let c := f 0
+  let A := Set.range f
+  have h1 : ∀ a ∈ A, f a = (1 + c)/2 - a ^2 /2 := fun a ha ↦ by
+    -- putting a = f(y) and x = a,
+    obtain ⟨y, hy⟩ := ha
+    -- we get f(a - a) = f(a) + a^2 + f(a) - 1,
+    specialize hf a y
+    rw [hy] at hf
+    -- so f(a) = (1 + c)/2 - a^2/2 (*).
+    rw [sub_self] at hf
+    linarith only [hf]
+  -- given any x in R, we may find a, b in A such that x = a - b
+  have h2 : ∀ x, ∃ a b, a ∈ A ∧ b ∈ A ∧ x = a - b := fun x ↦ by
+    -- Note first that c cannot be zero, for if it were,
+    -- then putting y = 0, we get:
+    --      f(x - c) = f(c) + xc + f(x) - 1 (**)
+    -- and hence f(0) = f(c) = 1. Contradiction.
+
+    have h3 := hf x 0
+    have h4 : c ≠ 0 := fun hc ↦ by
+      unfold_let c at hc
+      rw [hc, sub_zero, mul_zero, add_zero] at h3
+      linarith
+
+    -- But (**) also shows that f(x - c) - f(x) = xc + (f(c) - 1).
+
+    have h5 : ∀ x', f (x' - c) - f x' = x' * c + (f c - 1) := by
+      intro x'
+      linarith [hf x' 0]
+    -- Here x is free to vary over R, so xc + (f(c) - 1)
+    -- can take any value in R.
+
+    -- want to choose x' such that x' * c + (f c - 1) = x
+    let x' := (x - (f c - 1)) / c
+    specialize h5 x'
+    use f (x' - c)
+    use f x'
+    refine ⟨Set.mem_range_self (x' - c), Set.mem_range_self x', ?_⟩
+    rw [h5]
+    unfold_let x'
+    field_simp
+  -- Hence f(x) = f(a - b) = f(b) + ab + f(a) - 1.
+  have h11 : ∀ x, f x = c - x^2 / 2 := fun x ↦ by
+    obtain ⟨a, b, ha, hb, hab⟩ := h2 x
+    have h3 : f x = f (a - b) := congrArg f hab
+    have h4 : f (a - b) = f b  + a * b + f a - 1 := by
+      obtain ⟨d, hd⟩ := hb
+      specialize hf a d
+      subst hd
+      exact hf
+    -- So, using (h1):   f(x) = c - b^2/2 + ab - a^2/2 = c - x^2/2.
+    have h5 := h3.trans h4
+    have h6 := h1 a ha
+    have h7 := h1 b hb
+    have h8 : f x = c - b^2/2 + a * b - a^2/2 := by
+      linarith only [h5, h6, h7]
+    have h9 : c - b^2/2 + a * b - a^2/2 = c - x^2 / 2 := by
+      rw [hab]
+      linarith
+    exact h8.trans h9
+
+  ext x
+  -- In particular, this is true for x in A.
+  -- Comparing with (h1) we deduce that c = 1.
+  -- So for all x in R we must have f(x) = 1 - x^2/2
+  have h12 := h1 c (Set.mem_range_self 0)
+  have h13 := h11 c
+  have h14 : c = 1 := by linarith only [h12, h13]
+  specialize h11 x
+  rw [h14] at h11
+  exact h11
