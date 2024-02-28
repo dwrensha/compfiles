@@ -293,7 +293,8 @@ lemma exp_characterization
       rw [h11, h3 _]
       have := hunz (↑n * x)
       rw [h10, one_div]
-      rw [hn, inv_eq_iff_eq_inv, ←hn, zpow_neg, zpow_ofNat, ← h1, inv_inv]
+      rw [hn, inv_eq_iff_eq_inv, ←hn, zpow_neg, inv_inv]
+      rfl
 
   -- Let eᵏ = u(1);
   obtain ⟨k, hk⟩ : ∃ k, Real.exp k = u 1 := by
