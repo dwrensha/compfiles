@@ -9,7 +9,7 @@ import Mathlib.Tactic.Polyrith
 import ProblemExtraction
 
 problem_file {
-  tags := [.NumberTheory],
+  tags := [.Algebra],
   importedFrom :=
     "https://github.com/leanprover-community/mathlib4/blob/master/Archive/Imo/Imo2006P3.lean",
 }
