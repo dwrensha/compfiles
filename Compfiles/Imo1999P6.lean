@@ -87,12 +87,8 @@ problem imo1999_p6 (f : ℝ → ℝ) :
     have h5 := h3.trans h4
     have h6 := h1 a ha
     have h7 := h1 b hb
-    have h8 : f x = c - b^2/2 + a * b - a^2/2 := by
-      linarith only [h5, h6, h7]
-    have h9 : c - b^2/2 + a * b - a^2/2 = c - x^2 / 2 := by
-      rw [hab]
-      linarith
-    exact h8.trans h9
+    calc _ = c - b^2/2 + a * b - a^2/2 := by linarith only [h5, h6, h7]
+         _ = _ := by rw [hab]; linarith
 
   ext x
   -- In particular, this is true for x in A.
