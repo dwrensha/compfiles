@@ -1,5 +1,4 @@
 import Lean
-import Lean.Server.InfoUtils
 import Std.Lean.Util.Path
 import Mathlib.Data.String.Defs
 
@@ -67,7 +66,8 @@ def visitTacticInfo (tryTacticStx : Syntax) (ci : ContextInfo) (ti : TacticInfo)
         println! "\nline {startPosition.line}, col {startPosition.column}:\n{s}"
         for msg in msgs.toList do
           println! "* {←msg.data.toString}"
-
+        if 0 < ti.goalsAfter.length then
+          println! "shortened proof!"
       let traceState := (← liftM (m := CoreM) get).traceState
       for t in traceState.traces.toList do
         println! "> {←t.msg.toString}"
@@ -167,4 +167,3 @@ unsafe def main (args : List String) : IO Unit := do
   match args with
   | [tac, leanfile] => processFile tac (← toAbsolute ⟨leanfile⟩)
   | _ => throw $ IO.userError "usage: tryTactic TACTIC LEAN_FILE"
-
