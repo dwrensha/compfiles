@@ -68,9 +68,7 @@ problem imo1999_p6 (f : ℝ → ℝ) :
     -- want to choose x' such that x' * c + (f c - 1) = x
     let x' := (x - (f c - 1)) / c
     specialize h5 x'
-    use f (x' - c)
-    use f x'
-    refine ⟨Set.mem_range_self (x' - c), Set.mem_range_self x', ?_⟩
+    refine ⟨f (x' - c), f x', Set.mem_range_self _, Set.mem_range_self _, ?_⟩
     rw [h5]
     unfold_let x'
     field_simp
@@ -83,8 +81,8 @@ problem imo1999_p6 (f : ℝ → ℝ) :
       specialize hf a d
       subst hd
       exact hf
-    -- So, using (h1):   f(x) = c - b^2/2 + ab - a^2/2 = c - x^2/2.
     have h5 := h3.trans h4
+    -- So, using (h1):   f(x) = c - b^2/2 + ab - a^2/2 = c - x^2/2.
     have h6 := h1 a ha
     have h7 := h1 b hb
     calc _ = c - b^2/2 + a * b - a^2/2 := by linarith only [h5, h6, h7]
