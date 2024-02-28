@@ -7,6 +7,12 @@ import Mathlib.FieldTheory.Finite.Basic
 
 import ProblemExtraction
 
+problem_file {
+  tags := [.NumberTheory],
+  importedFrom :=
+    "https://github.com/leanprover-community/mathlib4/blob/master/Archive/Imo/Imo2005P4.lean",
+}
+
 /-!
 # Intertional Mathematical Olympiad 2005, Problem 4
 
