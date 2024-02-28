@@ -5,6 +5,7 @@ Authors: David Renshaw
 -/
 
 import Mathlib.Tactic
+import Mathlib.Analysis.MeanInequalities
 
 import ProblemExtraction
 
@@ -25,4 +26,12 @@ open scoped BigOperators
 problem imo2012_p2 (n : ℕ) (hn : 3 ≤ n) (a : Finset.Icc 2 n → ℝ)
     (apos : ∀ i, 0 < a i) (aprod : ∏ i, a i = 1) :
     (n:ℝ)^n < ∏ i, (1 + a i)^i.val := by
+  -- informal solution from
+  -- https://web.evanchen.cc/exams/IMO-2012-notes.pdf
+  have h1 : ∀ i : Finset.Icc 2 n,
+      (1 + a i)^i.val ≤
+        i.val ^ i.val / (i.val - 1) ^ (i.val - 1) * a i := by
+    -- Real.geom_mean_le_arith_mean_weighted
+    -- 1 = ∑ 1 / (i.val - 1)
+    sorry
   sorry
