@@ -47,10 +47,12 @@ theorem find_specified_factor {p : ℕ} (hp : Nat.Prime p) (hp2 : p ≠ 2) (hp3 
 
 snip end
 
-determine SolutionSet : Set ℕ := { 1 }
+determine SolutionSet : Set ℕ+ := { 1 }
 
 problem imo2005_p4 {k : ℕ} (hk : 0 < k) :
-    (∀ n : ℕ, 1 ≤ n → IsCoprime (a n) k) ↔ k ∈ SolutionSet := by
+    (∀ n : ℕ, 1 ≤ n → IsCoprime (a n) k) ↔ ⟨k, hk⟩ ∈ SolutionSet := by
+  rw [Set.mem_singleton_iff,
+      show ((⟨k, hk⟩: ℕ+) = 1) ↔ k = 1 from eq_iff_eq_of_cmp_eq_cmp rfl]
   constructor; rotate_left
   · -- The property is clearly true for `k = 1`
     rintro rfl n -
