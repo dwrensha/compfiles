@@ -2,6 +2,11 @@ import Lean
 import Std.Lean.Util.Path
 import Mathlib.Data.String.Defs
 
+/-!
+Tool to try running a tactic (like `exact?` or `rw_search`) at every
+proof step in a given file.
+-/
+
 open Lean Elab System
 
 namespace Lean.Elab.TacticInfo
@@ -166,4 +171,4 @@ def toAbsolute (path : FilePath) : IO FilePath := do
 unsafe def main (args : List String) : IO Unit := do
   match args with
   | [tac, leanfile] => processFile tac (← toAbsolute ⟨leanfile⟩)
-  | _ => throw $ IO.userError "usage: tryTactic TACTIC LEAN_FILE"
+  | _ => throw $ IO.userError "usage: tryTacticAtEachStep TACTIC LEAN_FILE"
