@@ -52,7 +52,7 @@ theorem tedious (m : ℕ) (k : Fin (m + 1)) : m - (m + (m + 1 - ↑k)) % (m + 1)
   have : k + c + (k + c + 1 - k) = c + (k + c + 1) := by
     simp only [add_assoc, add_tsub_cancel_left, add_left_comm]
   rw [Fin.val_mk, this, Nat.add_mod_right, Nat.mod_eq_of_lt, Nat.add_sub_cancel]
-  linarith
+  omega
 
 snip end
 
