@@ -26,12 +26,8 @@ namespace Imo1987P4
 
 snip begin
 
-lemma subset_finite {A B : Set ℕ} (h : A ⊆ B) (hab : Finite ↑B) : Finite ↑A := by
-  rw [Set.finite_coe_iff] at hab ⊢
-  exact Set.Finite.subset hab h
-
 lemma subset_fintype {A B : Set ℕ} (h : A ⊆ B) (hab : Fintype ↑B) : Fintype ↑A := by
-  exact @Fintype.ofFinite A (subset_finite h (Finite.of_fintype ↑B))
+  exact @Fintype.ofFinite A (Finite.Set.subset B h)
 
 /--
 More general version of the problem.
