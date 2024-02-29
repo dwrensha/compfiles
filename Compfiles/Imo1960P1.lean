@@ -52,8 +52,7 @@ theorem ge_100 {n : ℕ} (h1 : ProblemPredicate n) : 100 ≤ n := by
 theorem lt_1000 {n : ℕ} (h1 : ProblemPredicate n) : n < 1000 := by
   have h2 : n < 10 ^ 3 := by
     rw [← h1.left]
-    refine' Nat.lt_base_pow_length_digits _
-    simp
+    exact lt_base_pow_length_digits'
   linarith
 
 /-
