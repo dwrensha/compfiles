@@ -275,11 +275,8 @@ lemma exp_characterization
       have hx0 : -x < 0 := neg_lt_zero.mpr hgt
       cases' hm with hm hm <;> nlinarith [hm hx0, hm hgt]
 
-  have h3 : ∀ x, u (-x) = 1 / (u x) := fun x ↦ by
-    have := (ne_of_lt (hunz x)).symm
-    field_simp
-    rw [mul_comm]
-    exact h2 x
+  have h3 : ∀ x, u (-x) = 1 / (u x) :=
+    fun x ↦ eq_one_div_of_mul_eq_one_right (h2 x)
 
   have h4 : ∀ z : ℤ, ∀ x : ℝ, u (z * x) = (u x) ^ z := by
     intro z x
