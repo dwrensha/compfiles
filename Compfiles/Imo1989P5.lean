@@ -109,11 +109,7 @@ lemma not_prime_power_of_two_factors
      (hpq : p ≠ q)
      (hpn : p ∣ n) (hqn : q ∣ n) : ¬IsPrimePow n := by
    intro hpp
-   have h0 : n ≠ 0 := by
-     have h : ¬IsPrimePow 0 := not_isPrimePow_zero
-     intro hn
-     rw [←hn] at h
-     exact h hpp
+   have h0 : n ≠ 0 := IsPrimePow.ne_zero hpp
    obtain ⟨r, k, hr, hk, hrk⟩ := hpp
    rw [← Nat.prime_iff] at hr
    rw [← hrk] at hqn hpn h0; clear hrk
