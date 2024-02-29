@@ -393,14 +393,12 @@ theorem monotone_of_upper_lower_continuous
       · have h10 : x ≤ ii0' := le_max_right _ _
         have h13 : (x * 2) / 2 ≤ (ii0' + y) / 2 := by linarith
         rwa [mul_div_cancel x two_ne_zero] at h13
-      · have h16 : (ii0' + y) / 2 < (y * 2) / 2 := by linarith
-        rwa [mul_div_cancel y two_ne_zero] at h16
+      · exact add_div_two_lt_right.mpr h14
 
     have h7 : m ∈ Set.Ioc ii0' y := by
       cases' h6 with h6l h6r
       constructor
-      · have h19 : (ii0' * 2)/2 < (ii0' + y)/2 := by linarith
-        rwa [mul_div_cancel ii0' two_ne_zero] at h19
+      · exact left_lt_add_div_two.mpr h14
       · exact le_of_lt h6r
 
     -- so we have f(m) ∈ A
