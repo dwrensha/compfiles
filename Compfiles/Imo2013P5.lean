@@ -228,9 +228,8 @@ problem imo2013_p5
   have H4 : ∀ n : ℕ, 0 < n → (n : ℝ) ≤ f n := by
     intro n hn
     have hf1 : 1 ≤ f 1 := by
-      have a_pos : (0 : ℝ) < a := Rat.cast_pos.mpr (zero_lt_one.trans ha1)
-      suffices ↑a * 1 ≤ ↑a * f 1 from (mul_le_mul_left a_pos).mp this
-      calc (a:ℝ) * 1 = ↑a := mul_one _
+      suffices ↑a * 1 ≤ ↑a * f 1 from (mul_le_mul_left (by positivity)).mp this
+      calc _ = ↑a := mul_one _
            _ = f a        := hae.symm
            _ = f (a * 1)  := by rw [mul_one]
            _ ≤ f a * f 1  := (H1 a 1) (zero_lt_one.trans ha1) zero_lt_one
