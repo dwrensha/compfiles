@@ -35,4 +35,4 @@ lean_exe tryTacticAtEachStep where
   root := `scripts.tryTacticAtEachStep
   supportInterpreter := true
 
-require mathlib from git "https://github.com/leanprover-community/mathlib4" @ "a6f770740f4c07b236c336115f4de99c28cd8910"
+require mathlib from git "https://github.com/leanprover-community/mathlib4" @ "v4.6.0"
