@@ -173,15 +173,13 @@ lemma usa2002_p1_generalized
               intro y1 hy1 hy1n; rw [hy1n] at hy1; exact h4 hy1
             rw [Finset.subtype_map_of_mem h3',
                 Finset.subtype_map_of_mem h4'] at hxy
-            rw [Subtype.mk.injEq]
-            exact hxy
+            exact SetCoe.ext hxy
           · rintro ⟨x, hx⟩
             use ⟨Finset.map (Function.Embedding.subtype _) x,
                  by simp [Finset.subtype_map_subtype, hx]⟩
             unfold_let b
             simp only [Subtype.mk.injEq]
-            congr
-            simp [Finset.subtype_map_subtype]
+            exact Finset.subtype_map_subtype x
         rw [Fintype.card_of_bijective h3]
         exact hf2'
     . -- If N > 2ᵏ, then we color all subsets containing s red, and we color
@@ -277,9 +275,7 @@ lemma usa2002_p1_generalized
           · intro x
             match x with
             | .inl ⟨y, hy⟩ =>
-              have h5 : f y = Color.red := by
-                simp only [dite_eq_ite, ite_eq_left_iff]
-                exact fun a ↦ (a hy).elim
+              have h5 : f y = Color.red := if_pos hy
               use ⟨y, h5⟩
               simp only [ne_eq, dite_eq_ite, hy, dite_true]
             | .inr ⟨y, hy⟩ =>
