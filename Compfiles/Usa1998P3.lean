@@ -105,22 +105,12 @@ lemma lemma2 (n : ℕ) (f : ℕ → ℝ) :
         · intro hy
           rw [Finset.mem_erase, Finset.mem_range] at hy
           rw [Finset.mem_insert, Finset.mem_erase, Finset.mem_range]
-          obtain ⟨hy1, hy2⟩ := hy
-          by_contra! H
-          obtain ⟨H0, H1⟩ := H
-          have HH' : n + 2 ≤ y := Nat.lt_of_le_of_ne (H1 hy1) H0.symm
-          linarith
+          omega
         · intro hy
           rw [Finset.mem_insert, Finset.mem_erase, Finset.mem_range] at hy
           rw [Finset.mem_range] at hx
           rw [Finset.mem_erase, Finset.mem_range]
-          cases' hy with hy hy
-          · rw [hy]
-            constructor
-            · exact Nat.ne_of_gt hx
-            · exact Nat.lt.base (n + 1)
-          · obtain ⟨hy1, hy2⟩ := hy
-            exact ⟨hy1, Nat.lt_add_right 1 hy2⟩
+          omega
       rw [h7, Finset.prod_insert h7']
       ring
     rw [h3]
