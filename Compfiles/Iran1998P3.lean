@@ -33,22 +33,6 @@ lemma cube_root_cube (x : ℝ) (h: 0 ≤ x): (x^(3:ℝ)) ^ ((1:ℝ)/3) = x := by
   rw [←Real.rpow_mul h, mul_div_cancel' (1 : ℝ) three_ne_zero]
   exact Real.rpow_one x
 
-/- seems like there should be something like this in mathlib... -/
-lemma prod_pow' (S : Finset ℕ) (e : ℝ) (f : ℕ → ℝ) (hf : ∀ s ∈ S, (0:ℝ) ≤ f s)  :
-    S.prod (λ (s : ℕ) ↦ f s ^ e) = S.prod (λ (s : ℕ) ↦ f s) ^ e := by
-  suffices 0 ≤ S.prod (λ (s : ℕ) ↦ f s ) ∧
-   S.prod (λ (s : ℕ) ↦ f s ^ e) = S.prod (λ (s : ℕ)↦ f s) ^ e by exact this.2
-  induction' S using Finset.induction with s S' hs ih
-  · exact ⟨zero_le_one, (Real.one_rpow e).symm⟩
-  · rw [Finset.prod_insert hs, Finset.prod_insert hs]
-    obtain ⟨hs0, hs⟩ := ih (λ s hs' ↦ hf s (Finset.mem_insert_of_mem hs'))
-    rw [hs]
-    have hsnn := hf s (Finset.mem_insert_self s S')
-    constructor
-    · rw [mul_comm]
-      exact mul_nonneg hs0 hsnn
-    · exact (Real.mul_rpow hsnn hs0).symm
-
 snip end
 
 problem iran1998_p3
@@ -71,7 +55,7 @@ problem iran1998_p3
                     (by intro j _; exact le_of_lt (x_positive j))
     have xnonneg : ∀ i ∈ Finset.range 4, 0 ≤ x i := by
       intro i _; exact le_of_lt (x_positive i)
-    rw [prod_pow' (Finset.range 4) (1/4) x xnonneg, h, Real.one_rpow] at amgm'
+    rw [Real.finset_prod_rpow (Finset.range 4) x xnonneg, h, Real.one_rpow] at amgm'
     dsimp at amgm'
     rw [←Finset.mul_sum] at amgm'
 
@@ -121,9 +105,7 @@ problem iran1998_p3
     have hm4 : 4 * C ≤ 4 * ((1/4) * ∑ i in Finset.range 4, x i ^ (3:ℝ)) :=
       mul_le_mul_of_nonneg_left htrans zero_le_four
 
-    have h4c: 4 * C = ∑ i in Finset.range 4, x i := by field_simp; ring
-
-    rw [h4c] at hm4
+    rw [hccc] at hm4
     have hro : 4 * (1 / 4 * ∑ i in Finset.range 4, x i ^ (3:ℝ)) =
                     ∑ i in Finset.range 4, x i ^ (3:ℝ) := by
       field_simp; ring
