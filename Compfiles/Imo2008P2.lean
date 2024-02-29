@@ -115,7 +115,7 @@ problem imo2008_p2b : Set.Infinite rationalSolutions := by
         · use x, y, z; constructor
           rfl
           · use t; constructor
-            · simp only [t, gt_iff_lt, lt_max_iff]; right; trivial
+            · exact lt_max_of_lt_right zero_lt_one
             exact ⟨rfl, rfl, rfl⟩
         · have hg : -z = g (x, y, z) := rfl
           rw [hg, hz_def]; ring
@@ -126,7 +126,7 @@ problem imo2008_p2b : Set.Infinite rationalSolutions := by
           _ ≤ t + t ^ 2 := by linarith [sq_nonneg t]
           _ = t * (t + 1) := by ring
       exact ⟨h₁, h₂⟩
-    have hK_inf : Set.Infinite K := by intro h; apply hK_not_bdd; exact Set.Finite.bddAbove h
+    have hK_inf : Set.Infinite K := Set.infinite_of_not_bddAbove hK_not_bdd
     exact hK_inf.of_image g
   exact hW_inf.mono hW_sub_S
 
