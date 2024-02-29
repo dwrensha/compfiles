@@ -45,8 +45,7 @@ lemma lemma1 (s : ℕ → ℤ) (hs : ∀ i, s i < s (i + 1)) (z : ℤ) (hs0 : s 
       · simp
       · have h10 : (Nat.succ i : ℤ) = (i : ℤ) + 1 := by norm_cast
         rw [h10, ←add_assoc]
-        have h10 : s i + 1 ≤ s (Nat.succ i) := hs i
-        omega
+        exact add_le_of_add_le_right (hs i) ih
     use Int.toNat (z - s 0)
     rw [Set.mem_setOf_eq]
     have h8 := h5 (Int.toNat (z - s 0))
@@ -62,10 +61,8 @@ lemma lemma1 (s : ℕ → ℤ) (hs : ∀ i, s i < s (i + 1)) (z : ℤ) (hs0 : s 
   · have h4 := Nat.find_min h3 (m := (Nat.find h3 - 1))
     cases' Nat.eq_zero_or_pos (Nat.find h3) with h5 h5
     · rwa [h5]
-    · have h6 : Nat.find h3 - 1 < Nat.find h3 := by
-        suffices H : Nat.find h3 < Nat.find h3 + 1 by
-          exact Nat.sub_lt_right_of_lt_add h5 H
-        exact Nat.lt.base (Nat.find h3)
+    · have h6 : Nat.find h3 - 1 < Nat.find h3 :=
+        Nat.sub_one_lt_of_le h5 Nat.le.refl
       have h7 := h4 h6
       rw [Set.mem_setOf_eq] at h7
       push_neg at h7
