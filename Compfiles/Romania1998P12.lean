@@ -336,9 +336,7 @@ lemma exp_characterization
         norm_cast
         exact pow_succ' _ _
     replace h12 := h12 p.succ
-    have h13 : x * ↑(p.succ) / ↑(p.succ) = x := by
-      have : (p.succ : ℝ) ≠ 0 := NeZero.ne _
-      exact (div_eq_iff this).mpr rfl
+    have h13 : x * ↑(p.succ) / ↑(p.succ) = x := mul_div_cancel_of_invertible _ _
     rw [h13] at h12
     rw [← h12]
     have h14: u (x / ↑(p.succ)) ^ p.succ = u (x / ↑(p.succ)) ^ (p.succ:ℝ) := by norm_cast
@@ -390,9 +388,7 @@ lemma romania1998_p12_mp (u : ℝ → ℝ) :
                 calc f 0 = f x - f x * u 0 := (sub_eq_of_eq_add' (hy0 x)).symm
                 _ = f x * (1 - u 0) := by ring
     rw[hy0x1]
-    have : 1 - u 0 ≠ 0 := by
-      intro hz
-      exact hu0 (by linarith)
+    have : 1 - u 0 ≠ 0 := sub_ne_zero.mpr hu0.symm
     field_simp
 
   -- which implies that f is constant, which we know is not the case
