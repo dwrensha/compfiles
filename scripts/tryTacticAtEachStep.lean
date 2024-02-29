@@ -6,7 +6,6 @@ Authors: David Renshaw
 
 import Lean
 import Std.Lean.Util.Path
-import Mathlib.Data.String.Defs
 
 /-!
 Tool to try running a tactic (like `exact?` or `rw_search`) at every
