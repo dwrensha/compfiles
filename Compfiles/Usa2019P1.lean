@@ -70,10 +70,7 @@ lemma lemma_1
     (fab1 : f^[r] b = a)
     (fab2 : f a = a) :
     b = a := by
-  have h1 : ∀ s, f^[s] a = a := fun s ↦ by
-    induction' s with s ih
-    · dsimp
-    · aesop
+  have h1 : ∀ s, f^[s] a = a := fun s ↦ Function.iterate_fixed fab2 s
 
   have h2 := calc f^[r] b
       = a := fab1
