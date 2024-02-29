@@ -64,11 +64,7 @@ theorem Int.natAbs_eq_of_chain_dvd {l : Cycle ℤ} {x y : ℤ} (hl : l.Chain (·
 theorem Int.add_eq_add_of_natAbs_eq_of_natAbs_eq {a b c d : ℤ} (hne : a ≠ b)
     (h₁ : (c - a).natAbs = (d - b).natAbs) (h₂ : (c - b).natAbs = (d - a).natAbs) :
     a + b = c + d := by
-  cases' Int.natAbs_eq_natAbs_iff.1 h₁ with h₁ h₁
-  · cases' Int.natAbs_eq_natAbs_iff.1 h₂ with h₂ h₂
-    · exact (hne <| by linarith).elim
-    · linarith
-  · linarith
+  omega
 
 /-- The main lemma in the proof: if $P^k(t)=t$, then $P(P(t))=t$. -/
 theorem Polynomial.isPeriodicPt_eval_two {P : Polynomial ℤ} {t : ℤ}
