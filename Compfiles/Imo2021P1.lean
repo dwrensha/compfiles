@@ -59,12 +59,12 @@ theorem exists_numbers_in_interval (n : ℕ) (hn : 100 ≤ n) :
     ∃ l : ℕ, n + 4 * l ≤ 2 * l ^ 2 ∧ 2 * l ^ 2 + 4 * l ≤ 2 * n := by
   have hn' : 1 ≤ Nat.sqrt (n + 1) := by
     rw [Nat.le_sqrt]
-    linarith
+    omega
   have h₁ := Nat.sqrt_le' (n + 1)
   have h₂ := Nat.succ_le_succ_sqrt' (n + 1)
   have h₃ : 10 ≤ (n + 1).sqrt := by
     rw [Nat.le_sqrt]
-    linarith only [hn]
+    omega
   rw [← Nat.sub_add_cancel hn'] at h₁ h₂ h₃
   set l := (n + 1).sqrt - 1
   refine ⟨l, ?_, ?_⟩
@@ -77,8 +77,8 @@ theorem exists_triplet_summing_to_squares (n : ℕ) (hn : 100 ≤ n) :
       (∃ k : ℕ, a + b = k ^ 2) ∧ (∃ l : ℕ, c + a = l ^ 2) ∧ ∃ m : ℕ, b + c = m ^ 2 := by
   obtain ⟨l, hl1, hl2⟩ := exists_numbers_in_interval n hn
   have p : 1 < l := by contrapose! hl1; interval_cases l <;> linarith
-  have h₁ : 4 * l ≤ 2 * l ^ 2 := by linarith
-  have h₂ : 1 ≤ 2 * l := by linarith
+  have h₁ : 4 * l ≤ 2 * l ^ 2 := by omega
+  have h₂ : 1 ≤ 2 * l := by omega
   refine' ⟨2 * l ^ 2 - 4 * l, 2 * l ^ 2 + 1, 2 * l ^ 2 + 4 * l, _, _, _,
     ⟨_, ⟨2 * l - 1, _⟩, ⟨2 * l, _⟩, 2 * l + 1, _⟩⟩
   all_goals zify [h₁, h₂]; linarith
@@ -109,7 +109,7 @@ theorem exists_finset_3_le_card_with_pairs_summing_to_squares (n : ℕ) (hn : 10
       | assumption
       | simpa only [add_comm x y]
   · simp only [Finset.mem_insert, Finset.mem_singleton]
-    rintro d (rfl | rfl | rfl) <;> constructor <;> linarith only [hna, hab, hbc, hcn]
+    omega
 
 snip end
 
