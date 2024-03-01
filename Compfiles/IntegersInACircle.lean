@@ -31,10 +31,7 @@ snip begin
 
 lemma lemma1 {a : ℤ} (h1 : a % 100 = 0) (h2 : 0 < a) (h3 : a < 300) :
     a = 200 ∨ a = 100 := by
- obtain ⟨k, rfl⟩ := exists_eq_mul_left_of_dvd (Int.modEq_zero_iff_dvd.mp h1)
- have h6 : k < 3 := by linarith
- have h7 : 0 < k := by linarith
- interval_cases k <;> norm_num
+  omega
 
 lemma lemma2 {f : ZMod 101 → ℤ} (y : ZMod 101)
     : ∑ z : ZMod 101, f z = ∑ i in Finset.range 101, f (y + i) := by
@@ -169,4 +166,4 @@ problem integers_in_a_circle
       rw [←Nat.add_assoc, add_comm x.val _, Nat.sub_add_cancel (le_of_lt hxy)]
 
     rw [Finset.sum_congr rfl h21] at h19
-    linarith
+    omega
