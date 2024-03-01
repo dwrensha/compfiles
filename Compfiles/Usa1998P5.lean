@@ -69,7 +69,7 @@ lemma usa1998_p5_stronger (n : ℕ) :
         obtain ⟨w, hw1, hw2⟩ := hx
         have := sp_nonnegative w hw1
         replace hw2 : L + w = x := hw2
-        linarith
+        omega
       | inr hx => simp_all
     · constructor
       · --cardinality is n + 1
@@ -83,7 +83,7 @@ lemma usa1998_p5_stronger (n : ℕ) :
           obtain ⟨z, hz, hz2⟩ := hxx
           replace hz2 : L + z = 0 := hz2
           have := sp_nonnegative z hz
-          linarith
+          omega
         rw [Finset.card_union_of_disjoint hdisj, Finset.card_singleton,
             Finset.card_map, sp_card]
       · intro α hα β hβ α_ne_β
@@ -99,7 +99,7 @@ lemma usa1998_p5_stronger (n : ℕ) :
             replace ha2 : L + a = α := ha2
             obtain ⟨b, hb, hb2⟩ := hβ
             replace hb2 : L + b = β := hb2
-            have a_ne_b : a ≠ b := by aesop
+            have a_ne_b : a ≠ b := by omega
             have ih := hsp a ha b hb a_ne_b
             have h5 : L = (∏ t in Sp.erase a, (a-t)^2) *
                          ∏ s in Sp.erase a, ∏ t in Sp.erase s, (s-t)^2 :=
@@ -120,7 +120,7 @@ lemma usa1998_p5_stronger (n : ℕ) :
                have h9 :  a * b % (a - b) ^ 2 = 0 := Int.emod_eq_zero_of_dvd ih
                rw [h8, h9]
                norm_num
-            have hab : a-b = α - β := by linarith
+            have hab : a - b = α - β := by omega
             rw [ha2, hb2, hab] at Lmod'
             exact Int.dvd_of_emod_eq_zero Lmod'
 
