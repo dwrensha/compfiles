@@ -108,7 +108,7 @@ problem integers_in_a_circle
       rw [Finset.ssubset_univ_iff]
       intro hn
       rw [hn] at h7
-      aesop
+      omega
     rw [Finset.ssubset_iff] at h9
     obtain ⟨z, hzn, _⟩ := h9
     exact Finset.sum_lt_sum_of_subset (Finset.subset_univ _)
