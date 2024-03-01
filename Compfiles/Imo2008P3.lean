@@ -56,7 +56,7 @@ theorem p_lemma (p : ℕ) (hpp : Nat.Prime p) (hp_mod_4_eq_1 : p ≡ 1 [MOD 4]) 
     simp only [m, Int.cast_pow, Int.cast_add, Int.cast_one, ZMod.coe_valMinAbs]
     rw [pow_two, ← hy]; exact add_left_neg 1
   have hnat₂ : n ≤ p / 2 := ZMod.natAbs_valMinAbs_le y
-  have hnat₃ : p ≥ 2 * n := by linarith [Nat.div_mul_le_self p 2]
+  have hnat₃ : p ≥ 2 * n := by omega
   set k : ℕ := p - 2 * n with hnat₄
   have hnat₅ : p ∣ k ^ 2 + 4 := by
     cases' hnat₁ with x hx
@@ -85,7 +85,7 @@ problem imo2008_p3 : ∀ N : ℕ, ∃ n : ℕ, n ≥ N ∧
     ∃ p : ℕ, Nat.Prime p ∧ p ∣ n ^ 2 + 1 ∧ (p : ℝ) > 2 * n + sqrt (2 * n) := by
   intro N
   obtain ⟨p, hpp, hineq₁, hpmod4⟩ := Nat.exists_prime_gt_modEq_one (N ^ 2 + 20) four_ne_zero
-  obtain ⟨n, hnat, hreal⟩ := p_lemma p hpp hpmod4 (by linarith [hineq₁, Nat.zero_le (N ^ 2)])
+  obtain ⟨n, hnat, hreal⟩ := p_lemma p hpp hpmod4 (by omega)
   have hineq₂ : n ^ 2 + 1 ≥ p := Nat.le_of_dvd (n ^ 2).succ_pos hnat
   have hineq₃ : n * n ≥ N * N := by linarith [hineq₁, hineq₂]
   have hn_ge_N : n ≥ N := Nat.mul_self_le_mul_self_iff.mpr hineq₃
