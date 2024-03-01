@@ -81,7 +81,7 @@ problem zeroes_and_ones
     calc 0 < 1 := zero_lt_one
          _ ≤ List.sum (List.replicate a 0 ++ 1 :: List.replicate c 1) := by
            rw [List.sum_append, List.sum_cons, List.sum_replicate, List.sum_replicate]
-           linarith
+           omega
          _ ≤ Nat.ofDigits 10 (List.replicate a 0 ++ 1 :: List.replicate c 1) :=
                           Nat.sum_le_ofDigits _ one_le_ten
 
@@ -91,7 +91,7 @@ problem zeroes_and_ones
   have h4 : ∀ (l : ℕ), l ∈ List.replicate a 0 ++ List.replicate (b - a) 1 → l < 10 := by
     intro l hl
     rw [List.mem_append, List.mem_replicate, List.mem_replicate] at hl
-    aesop
+    omega
   have h5 : ∀ (h : List.replicate a 0 ++ List.replicate (b - a) 1 ≠ []),
       List.getLast (List.replicate a 0 ++ List.replicate (b - a) 1) h ≠ 0 := by
     rw [hc] at *
@@ -103,7 +103,7 @@ problem zeroes_and_ones
   rw [Nat.digits_ofDigits _ one_lt_ten _ h4 h5]
   intro e he
   rw [List.mem_append, List.mem_replicate, List.mem_replicate] at he
-  aesop
+  omega
 
 snip begin
 
@@ -246,7 +246,7 @@ lemma ones_and_twos_aux (n : ℕ) :
       · exfalso
         have hzz := prepend_two_pos (2 ^ pn.succ * ↑pk)
         rw [Nat.mul_zero] at hk'
-        linarith
+        omega
       · exact Nat.succ_pos _
     use ⟨k', hkp'⟩
     rw [PNat.mk_coe, ←hk']
@@ -274,7 +274,7 @@ lemma ones_and_twos_aux (n : ℕ) :
       · exfalso
         have hzz := prepend_one_pos (2 ^ pn.succ * ↑pk)
         rw[Nat.mul_zero] at hk'
-        linarith
+        omega
       · exact Nat.succ_pos _
     use ⟨k', hkp'⟩
     rw [PNat.mk_coe,←hk']
