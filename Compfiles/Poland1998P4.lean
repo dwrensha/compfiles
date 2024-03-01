@@ -89,9 +89,7 @@ lemma lemma6 (n : ℕ) : (4 * (n - 1) + 1 + 3) / 2 = (2 * (n - 1) + 1 + 1) := by
   exact two_pos
 
 lemma lemma6' (n : ℕ) : (4 * (n - 1) + 1 + 4) / 2 = (2 * (n - 1) + 1 + 1) := by
-  have h1 : (4 * (n - 1) + 1 + 4) = 2 * (2 * (n - 1) + 1 + 1) + 1 := by linarith
-  rw [h1]
-  exact lemma2 (2 * (n - 1) + 1 + 1)
+  omega
 
 lemma lemma7 (n : ℕ) : (4 * (n - 1) + 1 + 5) / 2 = (2 * (n - 1) + 1 + 2) := by
   have h1 : (4 * (n - 1) + 1 + 5) = 2 * (2 * (n - 1) + 1 + 2) := by ring
@@ -133,8 +131,6 @@ lemma can_get_a_later_one_zmod :
     have h2n1 : 2 * n / 2 = n := by norm_num
     have h2n1' : (n1 + 1) / 2 = n := by rw [hn1, h2n1]
     rw [haa, h2n1']
-
-  have hn1' : n1 + 2 = 2 * n + 1 := Nat.succ_inj.mpr hn1
 
   have ha2 : a' (n1 + 2) = a' (n1 + 1) +  a' n := by
     have haa : a' (n1 + 2) = a' (n1 + 1) + a' (n1.succ.succ / 2) :=
@@ -185,7 +181,7 @@ lemma can_get_a_later_one_zmod :
 
   have hii : ∀ i, i < 6 → a' (n2 + i + 1) = a' (n2 + i) + a' n1 := by
     intro i hi
-    have hn2ge2 : 2 ≤ n2 + i + 1 := by linarith
+    have hn2ge2 : 2 ≤ n2 + i + 1 := by omega
     have hr := a'_recurrence (n2 + i + 1) hn2ge2
     interval_cases i
     · suffices (n2 + 1) / 2 = n1 by rwa [this] at hr
@@ -225,14 +221,14 @@ lemma can_get_a_later_one_zmod :
   obtain (haez : a' n1 = 0) | (hanez : ¬ a' n1 = 0) := em (a' n1 = 0)
   · use n1
     constructor
-    · linarith
+    · omega
     · exact haez
 
   · have := lemma3 n2 (a' n1) hanez hik
     obtain ⟨ii, _, hia'⟩ := this
     use (n2 + ii)
     constructor
-    · linarith
+    · omega
     · assumption
 
 lemma can_get_a_later_one : (∀ N : ℕ, 7 ∣ a N → (∃ M : ℕ, N < M ∧ 7 ∣ a M)) := by
