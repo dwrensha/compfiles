@@ -29,9 +29,6 @@ namespace Imo1969P1
 
 snip begin
 
--- Solution copied from
--- https://github.com/leanprover-community/mathlib4/blob/master/Archive/Imo/Imo1969Q1.lean
-
 /-- `goodNats` is the set of natural numbers satisfying the condition in the problem
 statement, namely the `a : ℕ` such that `n^4 + a` is not prime for any `n : ℕ`. -/
 def goodNats : Set ℕ :=
