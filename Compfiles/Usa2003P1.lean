@@ -105,7 +105,7 @@ problem usa2003_p1 (n : ℕ) :
     suffices h : ∃ j, j < 5 ∧ 5 ∣ (2^n * (2 * j + 1) + a) by
       obtain ⟨j, hj1, hj2⟩ := h
       refine' ⟨2 * j + 1, odd_two_mul_add_one j, _, hj2⟩
-      · linarith
+      · omega
     clear ha hpm1 hpm3
 
     obtain ⟨b, hb⟩ := nat_mod_inv (2^n + a)
