@@ -80,12 +80,12 @@ problem usa2022_p4 (p q : ℕ) :
   have h5 : p ∣ b + a := Or.resolve_left ((Nat.Prime.dvd_mul hpp).mp h4) h3
 
   -- Since and b + a < 2p, we have that a + b must in fact equal p.
-  have h6 : b + a < 2 * p := by linarith
+  have h6 : b + a < 2 * p := by omega
   have h7 : b + a = p := by
     obtain ⟨k, hk⟩ := h5
     rw [mul_comm, hk] at h6
     have : k < 2 := (mul_lt_mul_left hp_pos).mp h6
-    interval_cases k <;> linarith
+    interval_cases k <;> omega
 
   -- Hence q - 1 = b - a.
   have h8 : q - 1 = b - a := by
