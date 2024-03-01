@@ -46,7 +46,7 @@ lemma nicomachus (n : ℕ) :
     · simp
     · simp only [Nat.succ_sub_succ_eq_sub, tsub_zero, Nat.succ_eq_add_one]
       ring
-  linarith
+  omega
 
 lemma nicomachus' (n : ℕ) :
     ∑ i in Finset.range n, ((i:ℤ) + 1)^3 =
