@@ -83,7 +83,7 @@ problem imo1982_p1 (f : ℕ → ℕ)
     cases' hf k 1 hk one_pos with h21 h21 <;> rw [h21] <;> linarith
   have h30 : ∀ k l, 0 < k → l ≤ f k → l + l ≤ f (k + k) := by
     intro k l hk hl
-    cases' hf k k hk hk with h21 h21 <;> rw [h21] <;> linarith
+    cases' hf k k hk hk with h21 h21 <;> omega
   have h10 : ∀ k, 0 < k → 12 * k + 9 ≤ 9999 → f (3 * k + 2) = k := by
     intro k hk hk1
     cases' hf (3*k) 2 (Nat.succ_mul_pos 2 hk) two_pos with h11 h11
