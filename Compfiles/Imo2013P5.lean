@@ -272,7 +272,7 @@ problem imo2013_p5
   -- to apply fixed_point_of_gt_1.
   intro x hx
   have H₀ : x * x.den = x.num := Rat.mul_den_eq_num
-  have H : x * (↑(2 * x.den) : ℚ) = (↑(2 * x.num) : ℚ) := by push_cast; linear_combination 2 * H₀
+  have H : (↑(2 * x.den) : ℚ) * x = (↑(2 * x.num) : ℚ) := by push_cast; linear_combination 2 * H₀
   set x2denom := 2 * x.den
   set x2num := 2 * x.num
   have hx2pos : 0 < 2 * x.den := by positivity
@@ -283,8 +283,8 @@ problem imo2013_p5
   calc
     x2denom * f x = f (x2denom * x) :=
         (h_f_commutes_with_pos_nat_mul x2denom hx2pos x hx).symm
-    _ = f x2num := by congr; linear_combination H
+    _ = f x2num := by rw [H]
     _ = x2num := fixed_point_of_gt_1 hx2num_gt_one H1 H2 H4 H5 ha1 hae
     _ = ((x2num : ℚ) : ℝ) := by norm_cast
-    _ = (↑(x2denom * x) : ℝ) := by congr; linear_combination -H
+    _ = (↑(x2denom * x) : ℝ) := by rw [H]
     _ = x2denom * x := by push_cast; rfl
