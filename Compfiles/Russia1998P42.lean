@@ -41,12 +41,10 @@ by
 
   have lemma3 : ∀ a b, a ⋆ b = b ⋆ a := by
     intro a b
-    let d1 := a ⋆ b
-    let d2 := b ⋆ a
-    have h1 := calc d1 ⋆ 1 = a + b + 1 := stardef _ _ _
+    have h1 := calc a ⋆ b ⋆ 1 = a + b + 1 := stardef _ _ _
                     _ = b + a + 1 := by rw [add_comm a b]
-                    _ = d2 ⋆ 1 := (stardef _ _ _).symm
-    exact lemma2 d1 1 d2 h1
+                    _ = b ⋆ a ⋆ 1 := (stardef _ _ _).symm
+    exact lemma2 _ 1 _ h1
 
   have lemma4 : ∀ a, a ⋆ 0 = a := by
     intro a
