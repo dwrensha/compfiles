@@ -23,7 +23,7 @@ are the sides of an obtuse triangle, with PA the longest side.
 Prove that ∠BAC is acute.
 -/
 
-namespace Imo2001P4
+namespace Usa2001P4
 
 open scoped EuclideanGeometry
 
@@ -39,7 +39,7 @@ lemma lemma1 (a b c d : ℝ) : a * c + b * d ≤ Real.sqrt (a^2 + b^2) * Real.sq
 
 snip end
 
-problem usamo2001_p4
+problem usa2001_p4
     (A B C P X Y Z : EuclideanSpace ℝ (Fin 2))
     (hABC : AffineIndependent ℝ ![A, B, C])
     (hXYZ : AffineIndependent ℝ ![X, Y, Z])
