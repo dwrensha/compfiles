@@ -254,17 +254,15 @@ problem imo2013_p5
   have h_f_commutes_with_pos_nat_mul : ∀ n : ℕ, 0 < n → ∀ x : ℚ, 0 < x → f (n * x) = n * f x := by
     intro n hn x hx
     have h2 : f (n * x) ≤ n * f x := by
-      cases n with
-      | zero => exfalso; exact Nat.lt_asymm hn hn
-      | succ n => cases n with
-        | zero => simp [one_mul, Nat.cast_one]
-        | succ n =>
-          have hfneq : f (n.succ.succ) = n.succ.succ := by
-            have := fixed_point_of_gt_1
-                  (Nat.one_lt_cast.mpr (Nat.succ_lt_succ n.succ_pos)) H1 H2 H4 H5 ha1 hae
-            rwa [Rat.cast_coe_nat n.succ.succ] at this
-          rw [←hfneq]
-          exact H1 (n.succ.succ : ℚ) x (Nat.cast_pos.mpr hn) hx
+      rcases n with _ | _ | n
+      · exact (Nat.lt_asymm hn hn).elim
+      · simp
+      · have hfneq : f (n.succ.succ) = n.succ.succ := by
+          have := fixed_point_of_gt_1
+              (Nat.one_lt_cast.mpr (Nat.succ_lt_succ n.succ_pos)) H1 H2 H4 H5 ha1 hae
+          rwa [Rat.cast_coe_nat n.succ.succ] at this
+        rw [←hfneq]
+        exact H1 (n.succ.succ : ℚ) x (Nat.cast_pos.mpr hn) hx
     exact h2.antisymm (H3 x hx n hn)
 
   -- For the final calculation, we expand x as (2*x.num) / (2*x.denom), because
