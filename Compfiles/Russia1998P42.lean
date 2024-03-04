@@ -36,8 +36,7 @@ by
         = a ⋆ b ⋆ a := (stardef _ _ _).symm
       _ = d ⋆ b ⋆ a := by rw [hab]
       _ = d + b + a := stardef _ _ _
-    have : a + b = d + b := (add_left_inj a).mp this
-    have : a = d := (add_left_inj b).mp this
+    rw [add_left_inj, add_left_inj] at this
     exact this
 
   have lemma3 : ∀ a b, a ⋆ b = b ⋆ a := by
