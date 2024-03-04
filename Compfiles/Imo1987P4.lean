@@ -65,7 +65,7 @@ theorem imo1987_p4_generalized (m : ℕ) :
       cases hx <;> aesop
     · intro x hx
       obtain ⟨_hx, hx'⟩ := hx
-      cases Classical.em (x ∈ A) <;> aesop
+      by_cases (x ∈ A) <;> aesop
 
   -- ... which is {0, 1, ... , 2 * m}.
   have ab_range : A ∪ B = {n | n < 2*m + 1} := by
