@@ -44,8 +44,7 @@ lemma le_of_all_pow_lt_succ {x y : ℝ} (hx : 1 < x) (hy : 1 < y)
     x ≤ y := by
   by_contra! hxy
   have hxmy : 0 < x - y := sub_pos.mpr hxy
-  have hn : ∀ n : ℕ, 0 < n → (x - y) * (n : ℝ) ≤ x^n - y^n := by
-    intro n _
+  have hn : ∀ n : ℕ, (x - y) * (n : ℝ) ≤ x^n - y^n := fun n ↦ by
     have hterm : ∀ i : ℕ, i ∈ Finset.range n → 1 ≤ x^i * y^(n - 1 - i) := by
       intro i _
       calc 1 ≤ x^i             := one_le_pow_of_one_le hx.le i
@@ -63,10 +62,10 @@ lemma le_of_all_pow_lt_succ {x y : ℝ} (hx : 1 < x) (hy : 1 < y)
   -- Choose n larger than 1 / (x - y).
   obtain ⟨N, hN⟩ := exists_nat_gt (1 / (x - y))
   have hNp : 0 < N := by exact_mod_cast (one_div_pos.mpr hxmy).trans hN
-  have := calc 1 = (x - y) * (1 / (x - y)) := by field_simp
+  have h1 := calc 1 = (x - y) * (1 / (x - y)) := by field_simp
                _ < (x - y) * N             := (mul_lt_mul_left hxmy).mpr hN
-               _ ≤ x^N - y^N               := hn N hNp
-  linarith [h N hNp]
+               _ ≤ x^N - y^N               := hn N
+  linarith only [h1, h N hNp]
 
 /--
  Like le_of_all_pow_lt_succ, but with a weaker assumption for y.
