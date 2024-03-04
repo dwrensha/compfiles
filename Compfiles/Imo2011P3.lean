@@ -71,5 +71,5 @@ problem imo2011_p3 (f : ℝ → ℝ) (hf : ∀ x y, f (x + y) ≤ y * f x + f (f
   · suffices 0 ≤ f 0 from (h_f_nonpos 0).antisymm this
     have hno : f (-1) = 0 := h_fx_zero_of_neg (-1) neg_one_lt_zero
     have hp := hxt (-1) (-1)
-    rw [hno] at hp
-    linarith
+    rw [hno, mul_zero, sub_zero, zero_add] at hp
+    exact hp
