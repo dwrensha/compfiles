@@ -24,7 +24,7 @@ for all x and y. Prove that f(x) = 0 for all x ≤ 0.
 namespace Imo2011P3
 
 problem imo2011_p3 (f : ℝ → ℝ) (hf : ∀ x y, f (x + y) ≤ y * f x + f (f x)) :
-  ∀ x ≤ 0, f x = 0 := by
+    ∀ x ≤ 0, f x = 0 := by
   -- Direct translation of the solution found in
   -- https://www.imo-official.org/problems/IMO2011SL.pdf
 
@@ -46,7 +46,7 @@ problem imo2011_p3 (f : ℝ → ℝ) (hf : ∀ x y, f (x + y) ≤ y * f x + f (f
 
   have h_f_nonpos : ∀ x, f x ≤ 0 := by
     intro x
-    by_contra h_suppose_not
+    by_contra! hp
     -- If we choose a small enough argument for f, then we get a contradiction.
     let s := (x * f x - f (f x)) / (f x)
     have hm : min 0 s - 1 < s := (sub_one_lt _).trans_le (min_le_right 0 s)
@@ -54,7 +54,6 @@ problem imo2011_p3 (f : ℝ → ℝ) (hf : ∀ x y, f (x + y) ≤ y * f x + f (f
     suffices f (min 0 s - 1) < 0 from
       not_le.mpr this (h_f_nonneg_of_pos (min 0 s - 1) hml)
 
-    have hp : 0 < f x := not_le.mp h_suppose_not
     calc f (min 0 s - 1)
          ≤ (min 0 s - 1) * f x - x * f x + f (f x) := hxt x (min 0 s - 1)
        _ < s * f x - x * f x + f (f x) :=
