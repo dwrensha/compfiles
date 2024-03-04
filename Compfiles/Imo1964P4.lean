@@ -66,8 +66,7 @@ theorem lemma1
   -- let t3 be the other element of Topic
   obtain ⟨t3, ht3⟩ := Fintype.card_eq_one_iff.mp h4
 
-  obtain h6 | h7 := Classical.em (∃ p3 p4 : α, p3 ≠ p4 ∧
-                                    discusses p3.val p4.val = t2)
+  by_cases h6 : ∃ p3 p4 : α, p3 ≠ p4 ∧ discusses p3.val p4.val = t2
   · obtain ⟨p3, p4, hp1, hp2⟩ := h6
     use t2
     -- the set we want is {p2,p3,p4}
@@ -95,7 +94,7 @@ theorem lemma1
          have := p3.property; simp at this; exact this
       aesop
 
-  · push_neg at h7
+  · push_neg at h6
     use t3
     let α' := Finset.map ⟨λ (x :Person') => x.val, Subtype.coe_injective⟩ α
     use α'
@@ -108,7 +107,7 @@ theorem lemma1
       dsimp at p3_eq p4_eq
       rw [←p3_eq, ←p4_eq]
       have hne : p3 ≠ p4 := by rwa [p3_eq, p4_eq]
-      have h8 := h7 ⟨⟨p3, p3_ne⟩, p3_mem_α⟩ ⟨⟨p4, p4_ne⟩, p4_mem_α⟩ (by simp[hne])
+      have h8 := h6 ⟨⟨p3, p3_ne⟩, p3_mem_α⟩ ⟨⟨p4, p4_ne⟩, p4_mem_α⟩ (by simp[hne])
       let t3': Topic' := ⟨discusses p3 p4, h8⟩
       have h9 := ht3 t3'
       rw [←h9]
@@ -148,8 +147,7 @@ problem imo1964_p4
   have cardα : 5 < Fintype.card α := by rw [Fintype.card_coe]; exact ht1;
 
   -- If any pair of people p2 p3 in α discusses topic t1, then we are done.
-  obtain h6 | h7 := Classical.em (∃ p2 p3 : α, p2 ≠ p3 ∧
-                                    discusses p2.val p3.val = t1)
+  by_cases h6 : ∃ p2 p3 : α, p2 ≠ p3 ∧ discusses p2.val p3.val = t1
   · obtain ⟨p3, p4, hp1, hp2⟩ := h6
     use t1
     -- the set we want is {p1,p3,p4}
@@ -180,7 +178,7 @@ problem imo1964_p4
       aesop
 
   · -- So the people in α must all discuss only the remaining two topics.
-    push_neg at h7
+    push_neg at h6
     let Topic' := {t2 // t2 ≠ t1}
     have h3 : Fintype Topic' := Fintype.ofFinite Topic'
     have h4 : Fintype.card Topic' = 2 := by
@@ -191,7 +189,7 @@ problem imo1964_p4
       fun (p2 p3 : α) ↦
         if heq : p2 = p3 then t0
         else
-        ⟨discusses p2.val p3.val, h7 ⟨p2, p2.property⟩ ⟨p3, p3.property⟩ heq⟩
+        ⟨discusses p2.val p3.val, h6 ⟨p2, p2.property⟩ ⟨p3, p3.property⟩ heq⟩
     have discusses_sym' :
         ∀ (p1 p2 : { x // x ∈ α }), discusses' p1 p2 = discusses' p2 p1 := by
       intro p3 p4

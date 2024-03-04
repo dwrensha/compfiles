@@ -71,7 +71,7 @@ problem imo1968_p5b :
   · constructor
     · exact Real.zero_lt_one
     · intro x
-      obtain heven | hodd :=  Classical.em (Even ⌊x⌋)
+      obtain heven | hodd := Classical.em (Even ⌊x⌋)
       · have h1 : ¬ Even (⌊x⌋ + 1) :=
           Int.odd_iff_not_even.mp (Even.add_one heven)
         simp [solution_func, h1, heven]
