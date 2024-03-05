@@ -30,5 +30,5 @@ lean_exe checkSolution where
   root := `scripts.checkSolution
   supportInterpreter := true
 
-require mathlib from git "https://github.com/leanprover-community/mathlib4" @ "9254f532dec163b31586ad10868fde6969c8d151"
-require tryAtEachStep from git "https://github.com/dwrensha/tryAtEachStep" @ "main"
+require mathlib from git "https://github.com/leanprover-community/mathlib4" @ "master"
+--require tryAtEachStep from git "https://github.com/dwrensha/tryAtEachStep" @ "main"

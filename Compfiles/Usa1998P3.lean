@@ -40,7 +40,7 @@ lemma lemma1 (x : ℝ) (hx : x ∈ Set.Ioo 0 (Real.pi / 2)) :
     Real.tan (x - Real.pi / 4) < 1 := by
   let y' x := Real.tan (x - Real.pi / 4)
   have h4 : Real.tan (Real.pi / 4) = y' (Real.pi / 2) := by
-    dsimp only
+    dsimp only [y']
     rw [Real.tan_pi_div_two_sub, Real.tan_pi_div_four, one_eq_inv]
   rw [← Real.tan_pi_div_four]
   rw [h4]
@@ -57,8 +57,8 @@ lemma lemma1 (x : ℝ) (hx : x ∈ Set.Ioo 0 (Real.pi / 2)) :
     · intro a ha
       obtain ⟨ha1, ha2⟩ := ha
       constructor
-      · dsimp; linarith
-      · dsimp; linarith
+      · dsimp [y1]; linarith
+      · dsimp [y1]; linarith
 
   apply h6
   · exact Set.mem_Icc_of_Ioo hx
@@ -174,10 +174,10 @@ problem usa1998_p3
     intro i hi
     let w : ℕ → ℝ := fun i ↦ 1 / (n:ℝ)
     have hw' : ∑ _j in (Finset.range (n + 1)).erase i, w i = 1 := by
-       field_simp[Finset.card_erase_of_mem hi]
+       field_simp [w, Finset.card_erase_of_mem hi]
     have hw : ∀ j ∈ (Finset.range (n + 1)).erase i, 0 ≤ w j := by
       intro j _hj
-      simp only [one_div, inv_nonneg, Nat.cast_nonneg]
+      simp only [w, one_div, inv_nonneg, Nat.cast_nonneg]
     have hz : ∀ j ∈ (Finset.range (n + 1)).erase i, 0 ≤ 1 - y j := by
       intro j hj
       rw [Finset.mem_erase] at hj

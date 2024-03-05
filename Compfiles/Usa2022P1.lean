@@ -1,7 +1,6 @@
 import Mathlib.Data.Finset.Card
 import Mathlib.Data.Fintype.Card
 import Mathlib.Data.Fintype.Prod
-import Mathlib.Tactic.LibrarySearch
 import Mathlib.Tactic.Positivity
 
 import ProblemExtraction

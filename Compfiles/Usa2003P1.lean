@@ -32,7 +32,6 @@ lemma nat_mod_inv (a : ℕ) : ∃ b, (a + b) % 5 = 0 := by
   have h2 : a % 5 = a % 5 % 5 := (Nat.mod_mod a 5).symm
   rw[h2, ← Nat.add_mod, Nat.mod_mod]
   rw[Nat.add_sub_of_le h']
-  rfl
 
 lemma lemma2 (a b c : ℕ) (hb : 0 < b) (h : Nat.Coprime a b) : ∃ k, k < b ∧ a * k ≡ c [MOD b] := by
   let ⟨N, HN1, HN2⟩ := Nat.chineseRemainder h 0 c

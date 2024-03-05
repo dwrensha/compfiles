@@ -50,7 +50,7 @@ problem usa2001_p1 : IsLeast possible_num_colors min_colors := by
     use f
     constructor
     · intro i
-      fin_cases i <;> simp (config := {decide := true})
+      fin_cases i <;> simp (config := {decide := true}) [f]
     · intro x y i j hij hx hy
       sorry
   · sorry

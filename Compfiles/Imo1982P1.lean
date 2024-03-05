@@ -43,7 +43,7 @@ problem imo1982_p1 (f : ℕ → ℕ)
       exact Nat.eq_zero_of_add_eq_zero_right h6.symm
   have h5 : f 3 = 1 := by
     have := hf 1 2 Nat.one_pos two_pos
-    omega
+    aesop
   have h7 : ∀ m n, 0 < m → 0 < n → f m + f n ≤ f (m + n) := by
     intro m n hm hn
     cases' hf m n hm hn with h8 h8
@@ -57,7 +57,14 @@ problem imo1982_p1 (f : ℕ → ℕ)
     induction' l with l ih
     · simp
     · have h10 := h6 (k + l) (Nat.add_pos_left hk l)
-      omega
+      have h11 : 3 * (k + l) + 3 = 3 * (k + Nat.succ l) := by
+        rw [Nat.succ_eq_add_one]; ring
+      have h12 : f (3 * k) + Nat.succ l = f (3 * k) + l + 1 := by
+        rw [Nat.succ_eq_add_one]; ring
+      rw [←h11, h12]; clear h11 h12
+      have h13 : f (3 * (k + l)) + 1 ≤ f (3 * (k + l) + 3) := h10
+      calc _ ≤ f (3 * (k + l)) + 1 := Nat.add_le_add_right ih 1
+           _ ≤ _ := h13
   have h8 : ∀ k, 0 < k → k ≤ 3333 → f (3 * k) = k := by
      intro k hk0 hk1
      by_contra! H

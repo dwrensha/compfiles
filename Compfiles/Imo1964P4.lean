@@ -61,7 +61,7 @@ theorem lemma1
   -- So the people in α must all discuss only the remaining one topic t3.
   let Topic' := {t3 // t3 ≠ t2}
   have h4 : Fintype.card Topic' = 1 := by
-    simp[Fintype.card_subtype_compl, card_topic]
+    simp [Fintype.card_subtype_compl, card_topic, Topic']
 
   -- let t3 be the other element of Topic
   obtain ⟨t3, ht3⟩ := Fintype.card_eq_one_iff.mp h4
@@ -85,13 +85,14 @@ theorem lemma1
                                      exact (p3.val.property.symm hp).elim)
     use s3
     constructor
-    · simp (config := {decide := true}) only [Finset.card_cons, Finset.card_singleton]
+    · simp (config := {decide := true})
+        only [Finset.card_cons, Finset.card_singleton, s1, s2, s3]
     · intro p1' hp1' p2' hp2' hp1p2
       rw [Finset.mem_cons, Finset.mem_cons, Finset.mem_singleton] at hp1' hp2'
       have hp4d : discusses p2 ↑↑p4 = t2 := by
-         have := p4.property; simp at this; exact this
+         have := p4.property; simp [α] at this; exact this
       have hp3d : discusses p2 ↑↑p3 = t2 := by
-         have := p3.property; simp at this; exact this
+         have := p3.property; simp [α] at this; exact this
       aesop
 
   · push_neg at h6
@@ -107,7 +108,8 @@ theorem lemma1
       dsimp at p3_eq p4_eq
       rw [←p3_eq, ←p4_eq]
       have hne : p3 ≠ p4 := by rwa [p3_eq, p4_eq]
-      have h8 := h6 ⟨⟨p3, p3_ne⟩, p3_mem_α⟩ ⟨⟨p4, p4_ne⟩, p4_mem_α⟩ (by simp[hne])
+      have h8 := h6 ⟨⟨p3, p3_ne⟩, p3_mem_α⟩ ⟨⟨p4, p4_ne⟩, p4_mem_α⟩
+                    (by simp[hne, Person', Topic'])
       let t3': Topic' := ⟨discusses p3 p4, h8⟩
       have h9 := ht3 t3'
       rw [←h9]
@@ -134,7 +136,7 @@ problem imo1964_p4
   -- is at least 6.
 
   have hfcα : Fintype.card Person' = 16 := by
-      simp[Fintype.card_subtype_compl, card_person]
+      simp [Fintype.card_subtype_compl, card_person, Person']
   have h1 : Fintype.card Topic * 5 < Fintype.card Person' := by
       rw [hfcα, card_topic]; norm_num
 
@@ -168,13 +170,14 @@ problem imo1964_p4
     let s3 : Finset Person := Finset.cons p1 s2 hs2
     use s3
     constructor
-    · simp (config := {decide := true}) only [Finset.card_cons, Finset.card_singleton]
+    · simp (config := {decide := true})
+        only [Finset.card_cons, Finset.card_singleton, s3, s2, s1]
     · intro p1' hp1' p2' hp2' hp1p2
       rw [Finset.mem_cons, Finset.mem_cons, Finset.mem_singleton] at hp1' hp2'
       have hp4d : discusses p1 ↑↑p4 = t1 := by
-         have := p4.property; simp at this; exact this
+         have := p4.property; simp [α] at this; exact this
       have hp3d : discusses p1 ↑↑p3 = t1 := by
-         have := p3.property; simp at this; exact this
+         have := p3.property; simp [α] at this; exact this
       aesop
 
   · -- So the people in α must all discuss only the remaining two topics.
@@ -182,7 +185,7 @@ problem imo1964_p4
     let Topic' := {t2 // t2 ≠ t1}
     have h3 : Fintype Topic' := Fintype.ofFinite Topic'
     have h4 : Fintype.card Topic' = 2 := by
-      simp[Fintype.card_subtype_compl, card_topic]
+      simp [Fintype.card_subtype_compl, card_topic, Topic']
     have t0 : Topic' := Nonempty.some (Fintype.card_pos_iff.mp (by rw [h4]; norm_num))
 
     let discusses' : α → α → Topic' :=
@@ -193,7 +196,7 @@ problem imo1964_p4
     have discusses_sym' :
         ∀ (p1 p2 : { x // x ∈ α }), discusses' p1 p2 = discusses' p2 p1 := by
       intro p3 p4
-      simp
+      simp only [discusses']
       split_ifs with hf1 hf2 hf3
       · rfl
       · exact (hf2 hf1.symm).elim
@@ -215,6 +218,7 @@ problem imo1964_p4
       rw [←hp3eq, ←hp4eq]
       have hne : p3' ≠ p4' := by rwa[hp3eq, hp4eq]
       have h6 := hs2 ⟨⟨p3', p3_mem_person'⟩, p3_mem_α⟩ p3_mem_s
-                     ⟨⟨p4', p4_mem_person'⟩, p4_mem_α⟩ p4_mem_s (by simp[hne])
-      simp[hne] at h6
+                     ⟨⟨p4', p4_mem_person'⟩, p4_mem_α⟩ p4_mem_s
+                     (by simp[hne, Person', Topic'])
+      simp [hne, Person', discusses'] at h6
       exact (congrArg Subtype.val h6)

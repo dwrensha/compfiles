@@ -56,7 +56,7 @@ lemma lemma1 (s : ℕ → ℤ) (hs : ∀ i, s i < s (i + 1)) (z : ℤ) (hs0 : s 
     have h12 : s (Int.toNat (z - s 0)) < s (Int.toNat (z - s 0) + 1) := hs _
     omega
   use Nat.find h3
-  dsimp
+  dsimp [S]
   refine' ⟨⟨_, _⟩, _⟩
   · have h4 := Nat.find_min h3 (m := (Nat.find h3 - 1))
     cases' Nat.eq_zero_or_pos (Nat.find h3) with h5 h5
@@ -90,7 +90,7 @@ problem imo2014_p1 (a : ℕ → ℤ) (apos : ∀ i, 0 < a i) (ha : ∀ i, a i < 
   have hb : ∀ i, b i = i * a i - ∑ j in Finset.range i, a (j + 1) := by
     intro i
     simp [b]
-  have hb1 : b 1 = 0 := by norm_num
+  have hb1 : b 1 = 0 := by norm_num [b]
   have hm : ∀ i, 0 < i → b i < b (i + 1) := by
     intro i hi0
     rw [hb, hb]

@@ -89,9 +89,9 @@ problem usa1989_p5
   have h2 : ¬ 9/10 ≤ u := by
     intro hu9
     have : 8 < U u := by
-      have h6 : U (9 / 10) ≤ U u := by dsimp only; gcongr
+      have h6 : U (9 / 10) ≤ U u := by dsimp only [U]; gcongr
       norm_num at h6
-      dsimp only
+      dsimp only [U]
       linarith
     linarith
 
@@ -121,6 +121,6 @@ problem usa1989_p5
   by_contra! H
 
   have h11 : 0 < v := not_le.mp h1v
-  have h16 : V v ≤ V u := by dsimp only; gcongr
+  have h16 : V v ≤ V u := by dsimp only [V]; gcongr
 
   exact (not_lt.mpr h16 h10).elim

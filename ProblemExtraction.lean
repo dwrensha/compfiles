@@ -3,7 +3,6 @@ import Lean.Elab.Eval
 import Lean.Meta.Basic
 import Std.Data.String.Basic
 import Std.Lean.NameMapAttribute
-import Std.Util.TermUnsafe
 
 /-!
 Special commands to aid in "problem extraction".

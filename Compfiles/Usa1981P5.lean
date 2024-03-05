@@ -61,7 +61,7 @@ problem usa1981_p5 (x : ℝ) (n : ℕ) :
   clear h1 h2
   induction' n using Nat.strongInductionOn with n ih
   obtain rfl | hn := Nat.eq_zero_or_pos n
-  · simp
+  · simp [a]
 
   have : Nonempty (Finset.Icc 1 n) := by
     use 1; rw [Finset.mem_Icc]; simp only [le_refl, true_and]; exact hn

@@ -39,7 +39,7 @@ lemma lemma2 {f : ZMod 101 → ℤ} (y : ZMod 101)
   have hg: ∀ (x : ℕ),
       x ∈ Finset.range 101 → ∀ (y : ℕ), y ∈ Finset.range 101 → g x = g y → x = y := by
     intro a ha b hb hgab
-    dsimp at hgab
+    dsimp [g] at hgab
     have h5 : (a : ZMod 101) = (b : ZMod 101) := by linear_combination hgab
     have h8: a % 101 = b % 101 := Iff.mp (ZMod.nat_cast_eq_nat_cast_iff' a b 101) h5
     rw [Finset.mem_range] at ha hb
@@ -52,7 +52,7 @@ lemma lemma2 {f : ZMod 101 → ℤ} (y : ZMod 101)
      use (a - y).val
      constructor
      · exact Finset.mem_range.mpr (ZMod.val_lt (a - y))
-     · simp
+     · simp [g]
   rw[h3]
 
 snip end

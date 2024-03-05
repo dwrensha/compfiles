@@ -174,7 +174,7 @@ theorem k_bound {m n : ℤ} (h1 : ProblemPredicate N m n) : m ^ 2 + n ^ 2 ≤ M 
   obtain ⟨h4 : m.natAbs ≤ fib K, h5 : n.natAbs ≤ fib (K + 1)⟩ := m_n_bounds HK h1
   have h6 : m ^ 2 ≤ (fib K : ℤ) ^ 2 := Int.natAbs_le_iff_sq_le.mp h4
   have h7 : n ^ 2 ≤ (fib (K + 1) : ℤ) ^ 2 := Int.natAbs_le_iff_sq_le.mp h5
-  omega
+  linarith
 
 theorem solution_bound : ∀ {k : ℤ}, k ∈ specifiedSet N → k ≤ M
   | _, ⟨_, _, rfl, h⟩ => k_bound HK HM h
@@ -198,4 +198,3 @@ problem imo1981_p3 : IsGreatest (specifiedSet 1981) solution := by
   · decide
   · decide
   · norm_num [problemPredicate_iff]; decide
-

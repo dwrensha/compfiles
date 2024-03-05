@@ -61,7 +61,7 @@ lemma lemma3 : ∑ i in Finset.range 1319, (-(1:ℚ))^i / (i + 1) =
        = ∑ i in Finset.range 659, (1 / (((g i):ℚ) + 1)) := by
     apply Finset.sum_congr rfl
     intro x _
-    field_simp; ring
+    field_simp [g]; ring
   have h6 := Finset.sum_map (Finset.range 659) g (fun j ↦ 1 / ((j:ℚ) + 1))
 
   have h3 :

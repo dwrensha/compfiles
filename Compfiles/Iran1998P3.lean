@@ -80,7 +80,7 @@ problem iran1998_p3
     have habs3 : ∀ i ∈ Finset.range 4, |x i| ^ (3:ℝ) = x i ^ (3:ℝ) := by
       intro i hi; have := habs i hi; exact congr_fun (congr_arg _ this) 3
     rw [Finset.sum_congr rfl habs3] at holder
-    have hccc: (4:ℝ) * C =  ∑ i in Finset.range 4, x i := by {field_simp; ring}
+    have hccc: (4:ℝ) * C =  ∑ i in Finset.range 4, x i := by {field_simp [C]; ring}
     rw [←hccc] at holder
 
     rw [Real.mul_rpow zero_le_four hcp] at holder
@@ -116,7 +116,7 @@ problem iran1998_p3
   · let A := ∑ i in Finset.range 4, (x i)^(3:ℝ)
     let B : ℕ → ℝ := λ j ↦ (∑ i in (Finset.range 4).erase j, (x i)^(3:ℝ))
     have hab : A = (1/3) * (∑ i in Finset.range 4, B i) := by
-      simp (config := {decide := true}) [Finset.sum_range_succ]; ring
+      simp (config := {decide := true}) [Finset.sum_range_succ, A, B]; ring
     have h2 : ∀ j ∈ (Finset.range 4), ∏ i in (Finset.range 4).erase j, x i ≤ (1/3) * B j := by
       intro j hj
       have hcard1 : (Finset.range 4).card = 4 := Finset.card_range 4

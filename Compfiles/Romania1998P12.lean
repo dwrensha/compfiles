@@ -42,7 +42,7 @@ lemma find_rational_in_ball_right (y δ : ℝ) (hδ : 0 < δ) :
      ∃ (z : ℚ), (y < z) ∧ (z : ℝ) ∈ Metric.ball y δ := by
   have hd := dense_iff_inter_open.mp rationals_dense_in_reals
   let i := Metric.ball (y + δ / 2) (δ/2)
-  have ine : i.Nonempty := by use (y + δ / 2); norm_num; exact half_pos hδ
+  have ine : i.Nonempty := by use (y + δ / 2); norm_num [i]; exact half_pos hδ
   obtain ⟨y', hy1, yy, hyy⟩ := hd i Metric.isOpen_ball ine
   use yy
   rw [hyy]; clear hyy
@@ -67,7 +67,7 @@ lemma find_rational_in_ball_left (y δ : ℝ) (hδ : 0 < δ) :
      ∃ (z : ℚ), ((z:ℝ) < y) ∧ (z : ℝ) ∈ Metric.ball y δ := by
   have hd := dense_iff_inter_open.mp rationals_dense_in_reals
   let i := Metric.ball (y - δ / 2) (δ/2)
-  have ine : i.Nonempty := by use (y - δ / 2); norm_num; exact half_pos hδ
+  have ine : i.Nonempty := by use (y - δ / 2); norm_num [i]; exact half_pos hδ
   obtain ⟨y', hy1, yy, hyy⟩ := hd i Metric.isOpen_ball ine
   use yy
   rw [hyy]; clear hyy

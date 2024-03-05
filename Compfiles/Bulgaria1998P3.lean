@@ -80,7 +80,7 @@ problem bulgaria1998_p3
 
   let x_seq : ℕ → ℝ := λ n : ℕ ↦ 1 + ∑ i in Finset.range n, (f 1) / (2^i)
   have hz : x_seq 0 = 1 := by
-    simp only [add_right_eq_self, Finset.sum_empty, Finset.range_zero]
+    simp only [x_seq, add_right_eq_self, Finset.sum_empty, Finset.range_zero]
   have hf1 := hpos 1 zero_lt_one
 
   have x_seq_pos : ∀ n: ℕ, 0 < x_seq n := by
@@ -123,7 +123,7 @@ problem bulgaria1998_p3
 
   have h1: ∀ n: ℕ, x_seq n < 1 + 3 * f 1 := by
     intro n
-    norm_num
+    norm_num [x_seq]
     calc ∑ i in Finset.range n, f 1 / (2:ℝ) ^ i
          = (∑ i in Finset.range n, 1 / (2:ℝ) ^ i) * f 1 := by rw [Finset.sum_mul]; field_simp
        _ < 3 * f 1 := (mul_lt_mul_right hf1).mpr (geom_sum_bound n)
@@ -134,7 +134,7 @@ problem bulgaria1998_p3
     intro n
     calc f (1 + 3 * f 1)
         = f (x_seq n + (1 + 3 * f 1 - x_seq n)) := by
-             simp only [add_sub_add_left_eq_sub, add_add_sub_cancel]
+             simp only [x_seq, add_sub_add_left_eq_sub, add_add_sub_cancel]
       _ < f (x_seq n) := f_decr (x_seq n) _ (x_seq_pos n) (h2 n)
       _ ≤ f 1 / 2^n := f_x_seq n
 

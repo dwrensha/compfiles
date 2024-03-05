@@ -62,19 +62,19 @@ theorem imo1987_p4_generalized (m : ℕ) :
     rw [hid]
     apply Set.eq_of_subset_of_subset
     · intro x hx
-      cases hx <;> aesop
+      cases hx <;> aesop (simp_config := {zetaDelta := true})
     · intro x hx
       obtain ⟨_hx, hx'⟩ := hx
-      by_cases (x ∈ A) <;> aesop
+      by_cases (x ∈ A) <;> aesop (simp_config := {zetaDelta := true})
 
   -- ... which is {0, 1, ... , 2 * m}.
   have ab_range : A ∪ B = {n | n < 2*m + 1} := by
     apply Set.eq_of_subset_of_subset
     · rw [ab_union]
-      intro x hx
+      rintro x hx
       simp only [Set.image_univ, Set.mem_diff, Set.mem_univ, Set.mem_image,
                  Set.mem_range, exists_exists_eq_and, not_exists,
-                 true_and] at hx
+                 true_and, NN] at hx
       simp only [Set.mem_setOf_eq]
       by_contra! H
       obtain ⟨z, hz⟩ : ∃ z, x = (2 * m + 1) + z := exists_add_of_le H
@@ -84,7 +84,7 @@ theorem imo1987_p4_generalized (m : ℕ) :
       exact (hzz rfl).elim
     · rw [ab_union]
       intro x hx
-      aesop
+      aesop (simp_config := {zetaDelta := true})
 
   -- But since f is injective they have the
   -- same number of elements, which is impossible since {0, 1, ... , 2 * m}

@@ -384,7 +384,7 @@ theorem monotone_of_upper_lower_continuous
     let ii0' := max ii0 x
 
     let m := (ii0' + y) / 2
-    have h14 : ii0' < y := by aesop
+    have h14 : ii0' < y := by aesop (simp_config := {zetaDelta := true})
 
     -- But we have by assumption that f[x,y) ⊆ B, (hxyz)
     -- and m ∈ [x,y) ∩ (ii0, y]

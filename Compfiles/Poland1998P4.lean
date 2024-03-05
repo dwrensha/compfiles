@@ -50,7 +50,7 @@ lemma lemma1 (n : ℕ) (npos : 0 < n) : 2 * (n - 1) + 1 = 2 * n - 1 := by
 
 lemma lemma2 (n : ℕ) : (2 * n + 1) / 2 = n := by
   rw [Nat.mul_add_div (Nat.le.step Nat.le.refl) n 1]
-  simp only [Nat.reduceDiv, add_zero]
+  simp only [Nat.reduceSucc, Nat.reduceDiv, add_zero]
 
 def a' : ℕ → ZMod 7
 | n => ⟨(a n) % 7, Nat.mod_lt _ (by norm_num)⟩
@@ -228,7 +228,7 @@ lemma can_get_a_later_one_zmod :
     obtain ⟨ii, _, hia'⟩ := this
     use (n2 + ii)
     constructor
-    · omega
+    · linarith
     · assumption
 
 lemma can_get_a_later_one : (∀ N : ℕ, 7 ∣ a N → (∃ M : ℕ, N < M ∧ 7 ∣ a M)) := by
