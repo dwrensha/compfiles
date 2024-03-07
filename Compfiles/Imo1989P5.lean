@@ -210,7 +210,7 @@ problem imo1989_p5 (n : ℕ) : ∃ m, ∀ j < n, ¬IsPrimePow (m + j) := by
   -- power of a prime.
   use m
   intro j hj
-  have hcil : ci.length = n := by aesop (simp_config := {zetaDelta := true})
+  have hcil : ci.length = n := by unfold_let ci; aesop
   have hj1 : j < ci.length := by rwa [hcil]
   have hj2 : j < l.length := by rw [hll, Nat.two_mul]
                                 exact Nat.lt_add_right n hj
