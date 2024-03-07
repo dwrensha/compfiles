@@ -163,7 +163,7 @@ problem usa1998_p3
     intro i hi
     have hn : 0 ≤ (n : ℝ) := Nat.cast_nonneg n
     rw [div_mul_eq_mul_div, one_mul]
-    exact div_le_div_of_le hn (h2 i hi)
+    exact div_le_div_of_nonneg_right (h2 i hi) hn
 
   --
   -- Then, by AM-GM,

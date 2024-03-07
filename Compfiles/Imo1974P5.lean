@@ -37,26 +37,26 @@ lemma condition_implies_solution_set (s : ℝ)
 
   constructor
   · have h8 : a / (a + b + c + d) < a / (a + b + d) :=
-       div_lt_div_of_lt_left ha (by linarith) (by linarith)
+       div_lt_div_of_pos_left ha (by linarith) (by linarith)
     have h9 : b / (a + b + c + d) < b / (a + b + c) :=
-       div_lt_div_of_lt_left hb (by linarith) (lt_add_of_pos_right _ hd)
+       div_lt_div_of_pos_left hb (by linarith) (lt_add_of_pos_right _ hd)
     have h10 : c / (a + b + c + d) < c / (b + c + d) :=
-       div_lt_div_of_lt_left hc (by linarith) (by linarith)
+       div_lt_div_of_pos_left hc (by linarith) (by linarith)
     have h11 : d / (a + b + c + d) < d / (a + c + d) :=
-       div_lt_div_of_lt_left hd (by linarith) (by linarith)
+       div_lt_div_of_pos_left hd (by linarith) (by linarith)
 
     calc 1 = a / (a + b + c + d) + b / (a + b + c + d) +
              c / (a + b + c + d) + d / (a + b + c + d) := by field_simp
          _ < _ := by gcongr
 
   · have h3 : a / (a + b + d) < a / (a + b) :=
-       div_lt_div_of_lt_left ha (add_pos ha hb) (lt_add_of_pos_right _ hd)
+       div_lt_div_of_pos_left ha (add_pos ha hb) (lt_add_of_pos_right _ hd)
     have h4 : b / (a + b + c) < b / (a + b) :=
-       div_lt_div_of_lt_left hb (add_pos ha hb) (lt_add_of_pos_right _ hc)
+       div_lt_div_of_pos_left hb (add_pos ha hb) (lt_add_of_pos_right _ hc)
     have h5 : c / (b + c + d) < c / (c + d) :=
-       div_lt_div_of_lt_left hc (add_pos hc hd) (by linarith)
+       div_lt_div_of_pos_left hc (add_pos hc hd) (by linarith)
     have h6 : d / (a + c + d) < d / (c + d) :=
-       div_lt_div_of_lt_left hd (add_pos hc hd) (by linarith)
+       div_lt_div_of_pos_left hd (add_pos hc hd) (by linarith)
 
     calc
       _ < a / (a + b) + b / (a + b) + c / (c + d) + d / (c + d) := by gcongr

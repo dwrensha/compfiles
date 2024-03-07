@@ -69,7 +69,7 @@ problem canada1998_p3 (n : ℕ) (hn : 2 ≤ n) :
     have h2 : ∀ k' ∈ Finset.range (m + 1), (1:ℝ) / (2 * ↑(k' + 1) + 1 + 1) <
                                            (1:ℝ) / (2 * ↑(k' + 1) + 1) := by
       intro k' _
-      apply div_lt_div_of_lt_left zero_lt_one
+      apply div_lt_div_of_pos_left zero_lt_one
       · positivity
       · exact lt_add_one _
 
