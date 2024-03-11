@@ -29,7 +29,7 @@ problem imo2011_p3 (f : ℝ → ℝ) (hf : ∀ x y, f (x + y) ≤ y * f x + f (f
   -- https://www.imo-official.org/problems/IMO2011SL.pdf
 
   -- reparameterize
-  have hxt : ∀ x t, f t ≤ t * f x - x * f x + f (f x) := by
+  replace hf : ∀ x t, f t ≤ t * f x - x * f x + f (f x) := by
     intro x t
     calc f t = f (x + (t - x))             := by rw [add_eq_of_eq_sub' rfl]
            _ ≤ (t - x) * f x + f (f x)     := hf x (t - x)
@@ -37,7 +37,7 @@ problem imo2011_p3 (f : ℝ → ℝ) (hf : ∀ x y, f (x + y) ≤ y * f x + f (f
 
   have hab : ∀ a b, a * f a + b * f b ≤ 2 * f a * f b := by
     intro a b
-    linarith [hxt b (f a), hxt a (f b)]
+    linarith [hf b (f a), hf a (f b)]
 
   have f_nonneg_of_pos : ∀ a < 0, 0 ≤ f a := by
     intro a han
@@ -55,7 +55,7 @@ problem imo2011_p3 (f : ℝ → ℝ) (hf : ∀ x y, f (x + y) ≤ y * f x + f (f
       not_le.mpr this (f_nonneg_of_pos (min 0 s - 1) hml)
 
     calc f (min 0 s - 1)
-         ≤ (min 0 s - 1) * f x - x * f x + f (f x) := hxt x (min 0 s - 1)
+         ≤ (min 0 s - 1) * f x - x * f x + f (f x) := hf x (min 0 s - 1)
        _ < s * f x - x * f x + f (f x) :=
                by linarith [(mul_lt_mul_right hp).mpr hm]
        _ = 0 := by rw [(eq_div_iff hp.ne.symm).mp rfl]; linarith
@@ -69,6 +69,6 @@ problem imo2011_p3 (f : ℝ → ℝ) (hf : ∀ x y, f (x + y) ≤ y * f x + f (f
   · exact f_zero_of_neg _ h_x_neg
   · suffices 0 ≤ f 0 from (f_nonpos 0).antisymm this
     have hno : f (-1) = 0 := f_zero_of_neg (-1) neg_one_lt_zero
-    have hp := hxt (-1) (-1)
+    have hp := hf (-1) (-1)
     rw [hno, mul_zero, sub_zero, zero_add] at hp
     exact hp
