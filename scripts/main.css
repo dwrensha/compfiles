@@ -84,3 +84,29 @@ pre.problem {
 .inequality {
     background-color: #f5e6c4;
 }
+
+.imo-problems {
+    border-collapse: collapse;
+}
+
+.imo-problems td {
+    border: 1px solid gray;
+    padding: 6px;
+    font-size: 24px;
+}
+
+.imo-problems td.year {
+    font-weight: bold;
+}
+
+.imo-problems td.proved {
+    background-color: #55ff55;
+}
+
+.imo-problems td.formalized {
+    background-color: #fffc36;
+}
+
+.imo-problems td.todo {
+    background-color: #cccccc;
+}
