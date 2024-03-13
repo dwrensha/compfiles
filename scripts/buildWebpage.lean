@@ -80,11 +80,6 @@ def extractModuleDoc (env : Environment) (m : Name) : String :=
   | some mda => String.join (mda.toList.map ModuleDoc.doc)
   | _ => ""
 
-def HEADER : String :=
- "<!DOCTYPE html><html><head> <meta name=\"viewport\" content=\"width=device-width\">" ++
- "<title>Compfiles: Catalog of Math Problems Formalized in Lean</title>" ++
- "</head>"
-
 def getBaseUrl : IO String := do
   let cwd ← IO.currentDir
   pure ((← IO.getEnv "GITHUB_PAGES_BASEURL").getD s!"file://{cwd}/_site/")
