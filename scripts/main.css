@@ -8,7 +8,7 @@ body {
   margin-left: auto;
   margin-right: auto;
   background-color: #d9f6f9;
-  width: 750px;
+  width: 700px;
 }
 pre.problem {
     font-family: monospace;
@@ -20,7 +20,7 @@ pre.problem {
     padding-bottom: 10px;
 }
 
-@media (max-width: 755px) {
+@media (max-width: 705px) {
   body {
      width: 97vw;
   }
@@ -28,6 +28,26 @@ pre.problem {
   pre.problem {
     font-size: 10px;
  }
+}
+
+.navbar {
+    font-size: 17px;
+    display: flex;
+    background-color: #c9e6e9;
+    border-top: 10px solid #c9e6e9;
+}
+
+.navbar span {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.navbar span.active {
+    font-weight: bold;
+    background-color: #d9f6f9;
+}
+
+.navbar span.inactive {
 }
 
 .problems {
