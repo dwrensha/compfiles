@@ -40,9 +40,9 @@ problem imo2011_p3 (f : ℝ → ℝ) (hf : ∀ x y, f (x + y) ≤ y * f x + f (f
     linarith [hf b (f a), hf a (f b)]
 
   have f_nonneg_of_pos : ∀ a < 0, 0 ≤ f a := by
-    intro a han
-    have : a * f a ≤ 0 := add_le_iff_nonpos_left.mp (hab a (2 * f a))
-    exact nonneg_of_mul_nonpos_right this han
+    intro a ha
+    have h : a * f a ≤ 0 := add_le_iff_nonpos_left.mp (hab a (2 * f a))
+    exact nonneg_of_mul_nonpos_right h ha
 
   have f_nonpos : ∀ x, f x ≤ 0 := by
     intro x
