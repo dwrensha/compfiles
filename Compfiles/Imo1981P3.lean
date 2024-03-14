@@ -183,14 +183,15 @@ theorem solution_greatest (H : ProblemPredicate N (fib K) (fib (K + 1))) :
     IsGreatest (specifiedSet N) M :=
   ⟨⟨fib K, fib (K + 1), by simp [HM], H⟩, fun k h => solution_bound HK HM h⟩
 
-snip end
-
-determine solution : ℕ := 3524578
-
 /-
 Now we just have to demonstrate that 987 and 1597 are in fact the largest Fibonacci
 numbers in this range, and thus provide the maximum of `specifiedSet`.
 -/
+
+snip end
+
+determine solution : ℕ := 3524578
+
 problem imo1981_p3 : IsGreatest (specifiedSet 1981) solution := by
   have := fun h => @solution_greatest 1981 16 h solution
   norm_num at this
