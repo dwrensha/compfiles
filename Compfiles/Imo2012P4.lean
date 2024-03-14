@@ -38,6 +38,7 @@ problem imo2012_p4 (f : ℤ → ℤ) :
       simp at this
       nlinarith
 
+    -- `f` is an even function
     have even (t : ℤ) : f (- t) = f t := by
       have := constraint t (-t) 0
       rw [zero] at this
@@ -72,6 +73,7 @@ problem imo2012_p4 (f : ℤ → ℤ) :
 
     rcases lem with lem | lem
 
+    -- when `f 2 = 0`
     case inl =>
 
       have even_nat_zero (n : ℕ) : f (2 * n) = 0 := by
@@ -86,17 +88,39 @@ problem imo2012_p4 (f : ℤ → ℤ) :
         ring
 
       have even_zero (x : ℤ) : f (2 * x) = 0 := by
-        by_cases pos : x ≥ 0
+        -- without loss of generality, we can assume x ≥ 0.
+        wlog pos : x ≥ 0 with H
 
-        case pos =>
-          have := even_nat_zero x.toNat
-          rw [← this]
-          congr 1
-          suffices x = ↑(Int.toNat x) from by
-            nth_rw 1 [this]
-          exact (Int.toNat_of_nonneg pos).symm
+        case inr =>
+          simp at pos
+          have := even (- (2 * x)); simp at this
+          rw [this]; clear this
+          set y := -x with yh
+          rw [show - (2 * x) = 2 * y from by ring]
+          have ynng : y ≥ 0 := by linarith
+          apply H
+          aesop? says
+            intro a b c a_1
+            simp_all only [implies_true, forall_const, ge_iff_le, Left.nonneg_neg_iff]
+          any_goals assumption
 
-        sorry
+        -- when `x ≥ 0`
+        have := even_nat_zero x.toNat
+        rw [← this]
+        congr 1
+        suffices x = ↑(Int.toNat x) from by
+          nth_rw 1 [this]
+        exact (Int.toNat_of_nonneg pos).symm
+
+      have add_two_id (a : ℤ) : f (- 1 + 2 * a) = f (1 + 2 * a) := by
+        have := P (-1 + 2 * a) 2
+        simp [lem, zero] at this
+        ring_nf at this
+        replace : (f (-1 + a * 2) - f (1 + a * 2)) ^ 2 = 0 := by nlinarith
+        simp at this
+        rw [show 2 * a = a * 2 from by ring]
+        linarith
+
       sorry
     sorry
   sorry
