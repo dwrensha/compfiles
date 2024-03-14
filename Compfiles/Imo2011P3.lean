@@ -61,8 +61,8 @@ problem imo2011_p3 (f : ℝ → ℝ) (hf : ∀ x y, f (x + y) ≤ y * f x + f (f
        _ = 0 := by rw [(eq_div_iff hp.ne.symm).mp rfl]; linarith
 
   replace f_of_neg : ∀ x < 0, f x = 0 := by
-    intro x hxz
-    exact (f_nonpos x).antisymm (f_of_neg x hxz)
+    intro x hx
+    exact (f_nonpos x).antisymm (f_of_neg x hx)
 
   intro x hx
   obtain (h_x_neg : x < 0) | (rfl : x = 0) := hx.lt_or_eq
