@@ -66,6 +66,7 @@ import Compfiles.Imo2007P5
 import Compfiles.Imo2008P2
 import Compfiles.Imo2008P3
 import Compfiles.Imo2008P4
+import Compfiles.Imo2008P5
 import Compfiles.Imo2009P5
 import Compfiles.Imo2010P1
 import Compfiles.Imo2010P3
