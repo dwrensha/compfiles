@@ -39,7 +39,7 @@ problem imo2011_p3 (f : ℝ → ℝ) (hf : ∀ x y, f (x + y) ≤ y * f x + f (f
     intro a b
     linarith [hf b (f a), hf a (f b)]
 
-  have f_nonneg_of_pos : ∀ a < 0, 0 ≤ f a := by
+  have f_nonneg_of_neg : ∀ a < 0, 0 ≤ f a := by
     intro a ha
     have h : a * f a ≤ 0 := add_le_iff_nonpos_left.mp (hab a (2 * f a))
     exact nonneg_of_mul_nonpos_right h ha
@@ -52,7 +52,7 @@ problem imo2011_p3 (f : ℝ → ℝ) (hf : ∀ x y, f (x + y) ≤ y * f x + f (f
     have hm : min 0 s - 1 < s := (sub_one_lt _).trans_le (min_le_right 0 s)
     have hml : min 0 s - 1 < 0 := (sub_one_lt _).trans_le (min_le_left 0 s)
     suffices f (min 0 s - 1) < 0 from
-      not_le.mpr this (f_nonneg_of_pos (min 0 s - 1) hml)
+      not_le.mpr this (f_nonneg_of_neg (min 0 s - 1) hml)
 
     calc f (min 0 s - 1)
          ≤ (min 0 s - 1) * f x - x * f x + f (f x) := hf x (min 0 s - 1)
@@ -62,7 +62,7 @@ problem imo2011_p3 (f : ℝ → ℝ) (hf : ∀ x y, f (x + y) ≤ y * f x + f (f
 
   have f_zero_of_neg : ∀ x < 0, f x = 0 := by
     intro x hxz
-    exact (f_nonpos x).antisymm (f_nonneg_of_pos x hxz)
+    exact (f_nonpos x).antisymm (f_nonneg_of_neg x hxz)
 
   intro x hx
   obtain (h_x_neg : x < 0) | (rfl : x = 0) := hx.lt_or_eq
