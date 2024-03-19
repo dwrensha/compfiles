@@ -31,4 +31,4 @@ determine SolutionSet : Set (ℝ+ → ℝ+) := sorry
 problem imo1983_p1 (f : ℝ+ → ℝ+) :
     f ∈ SolutionSet ↔
     ((∀ x y, f (x * f y) = y * f x) ∧
-     (∀ δ, ∃ x, ∀ y, x < y → f y < δ)) := by sorry
+     (∀ ε, ∃ x, ∀ y, x < y → f y < ε)) := by sorry
