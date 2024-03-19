@@ -40,7 +40,16 @@ def MSequence (n k : ℕ) (f : Sequence n k) : Prop :=
   NSequence n k f ∧
   (∀ i : Fin (2 * n), n ≤ i → ∀ j : Fin k, f j ≠ i)
 
-determine solution (n k : ℕ) : ℚ := sorry
+snip begin
+
+lemma foo (A B : Type) (ha: Finite A) (hb : Finite B) (f : A → B)
+    (hs : f.Surjective) (n : Nat) (h1 : ∀ b, Set.ncard { a | f a = b } = n)
+    : Nat.card B * n = Nat.card A := by
+  sorry
+
+snip end
+
+determine solution (n k : ℕ) : ℚ := 2 ^ (k - n)
 
 problem imo2008_p5 (n k : ℕ) (hnk : n ≤ k) (he : Even (n - k))
     : solution n k =
