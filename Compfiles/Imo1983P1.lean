@@ -88,62 +88,51 @@ problem imo1983_p1 (f : ℝ+ → ℝ+) :
     · rw [pow_succ]
       nth_rewrite 1 [mul_comm]
       rw [hi1, ih]
-  have h9 : ∀ k, f (a^(2^k)) = a^(2^k) := by
-    intro k
-    exact hi3 (2^k)
 
-  -- a > 1, so a^2^k approaches ∞ as k → ∞
-  -- but a^2^k = f (a^2^k), so that contracts ii
+  -- a > 1, so a^m approaches ∞ as m → ∞
+  -- but a^m = f (a^m), so that contracts ii
   obtain ⟨x0, hx0⟩ := hii 1
-  have h12 : ∃ k, x0 < a^2^k := by
-    -- 1 + (a-1) * 2^k ≤ (1 + (a-1)) ^ 2 ^ k
+  have h12 : ∃ m, x0 < a^m := by
+    -- 1 + (a-1) * m ≤ (1 + (a-1)) ^ m
     -- suffices to choose k such that
-    -- x0 < 1 + (a-1) * 2^k
+    -- x0 < 1 + (a-1) * m
     -- suffices to choose k such that
-    -- x0 < (a-1) * 2^k
-    -- x0 / (a - 1) < 2 ^ k
-    -- choose k = Ceil(Real.logb 2 (x0 / (a - 1)))
+    -- x0 < (a-1) * m
+    -- x0 / (a - 1) < m
+    -- choose m = Ceil((x0 / (a - 1))
 
     obtain ⟨x, hx⟩ := x0
     obtain ⟨a, ha0⟩ := a
 
-    use Nat.ceil (Real.logb 2 (x / (a - 1)))
+    use Nat.ceil (x / (a - 1))
 
-    change x < a ^ 2 ^ ⌈ _⌉₊
+    change x < a ^ ⌈ _⌉₊
     change 1 < a at H1
-    clear f hi hii h1 hx0 ha H hi1 h4 h9 hi3 h8
+    clear f hi hii h1 hx0 ha H hi1 h4 hi3 h8
     nth_rewrite 1 [show a = 1 + (a - 1) by ring]
-    have h20 : 1 + (((2 ^ ⌈Real.logb 2 (x / (a - 1))⌉₊):ℕ):ℝ) * (a - 1) ≤
-             (1 + (a - 1)) ^ 2 ^ ⌈Real.logb 2 (x / (a - 1))⌉₊
+    have h20 : 1 + ((⌈(x / (a - 1))⌉₊:ℕ):ℝ) * (a - 1) ≤
+             (1 + (a - 1)) ^ ⌈x / (a - 1)⌉₊
            := by
       have h30 : -2 ≤ a - 1 := by linarith
-      exact one_add_mul_le_pow h30 (2 ^ ⌈Real.logb 2 (x / (a - 1))⌉₊)
+      exact one_add_mul_le_pow h30 _
 
-    suffices x < 1 + (((2 ^ ⌈Real.logb 2 (x / (a - 1))⌉₊):ℕ):ℝ) * (a - 1)
+    suffices x < 1 + (((⌈(x / (a - 1))⌉₊):ℕ):ℝ) * (a - 1)
       from gt_of_ge_of_gt h20 this
     push_cast
-    rw [←Real.rpow_nat_cast]
-    have h21 := Nat.le_ceil (Real.logb 2 (x / (a - 1)))
-    have h23 := (Real.rpow_le_rpow_left_iff one_lt_two).mpr h21
-    suffices x < 1 + 2 ^ (Real.logb 2 (x / (a - 1))) * (a - 1) by
-      clear h21 h20
+    have h21 := Nat.le_ceil (x / (a - 1))
+    suffices x < 1 + (x / (a - 1)) * (a - 1) by
+      clear h20
       have h24 : 0 < a - 1 := sub_pos.mpr H1
-      have h25 := (mul_le_mul_iff_of_pos_right h24).mpr h23
+      have h25 := (mul_le_mul_iff_of_pos_right h24).mpr h21
       exact lt_add_of_lt_add_left this h25
 
-    have h27 : 2 ^ (Real.logb 2 (x / (a - 1))) = x / (a - 1) := by
-      apply Real.rpow_logb zero_lt_two (by norm_num)
-      · have : 0 < a - 1 := sub_pos.mpr H1
-        exact (div_pos_iff_of_pos_left hx).mpr this
-    rw [h27]
     have : a - 1 ≠ 0 := by linarith
     simp [this]
 
-  obtain ⟨k0, hk1⟩ := h12
-  have h13 := hx0 (a ^ 2 ^ k0) hk1
-  rw [h9] at h13
-  have h14 : 1 ≤ a ^ 2 ^ k0 := by
-    have h15 : 2^k0 ≠ 0 := by positivity
-    exact le_of_lt (one_lt_pow' H1 h15)
+  obtain ⟨m0, hm1⟩ := h12
+  have h13 := hx0 (a ^ m0) hm1
+  rw [hi3] at h13
+  have h14 : 1 ≤ a ^ m0 :=
+    one_le_pow_of_one_le' (le_of_lt H1) m0
   rw [lt_iff_not_le] at h13
   contradiction
