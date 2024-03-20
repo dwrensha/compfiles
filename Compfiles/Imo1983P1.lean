@@ -100,8 +100,6 @@ problem imo1983_p1 (f : ℝ+ → ℝ+) :
     · simp [ha]
     · rw [pow_succ, mul_comm]
       rw [pow_mul]
-      have h9 := hi1 (a ^ 2 ^ pk)
-      --
       have h10 := hi2 (2 ^ pk) (a ^ 2 ^ pk)
       rw [←sq] at h10
       rw [h10, ih, sq]
