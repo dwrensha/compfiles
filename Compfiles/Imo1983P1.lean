@@ -81,26 +81,17 @@ problem imo1983_p1 (f : ℝ+ → ℝ+) :
     have h9 := hi1 a
     rw [ha] at h9
     rwa [←sq] at h9
-  have hi2 : ∀ m, ∀ (x : ℝ+), f (x * a^m) = a^m * f x := by
+  have hi3 : ∀ m, f (a^m) = a^m := by
     intro m
     induction' m with pm ih
-    · intro x; simp
-    · intro x
-      rw [pow_succ]
-      have h10 : x * (a * a ^ pm) = x * a^pm * a := by ac_rfl
-      rw [h10]
-      rw [hi1 (x * a^pm)]
-      rw [ih x]
-      ac_rfl
+    · simp [h1]
+    · rw [pow_succ]
+      nth_rewrite 1 [mul_comm]
+      rw [hi1, ih]
   have h9 : ∀ k, f (a^(2^k)) = a^(2^k) := by
     intro k
-    induction' k with pk ih
-    · simp [ha]
-    · rw [pow_succ, mul_comm]
-      rw [pow_mul]
-      have h10 := hi2 (2 ^ pk) (a ^ 2 ^ pk)
-      rw [←sq] at h10
-      rw [h10, ih, sq]
+    exact hi3 (2^k)
+
   -- a > 1, so a^2^k approaches ∞ as k → ∞
   -- but a^2^k = f (a^2^k), so that contracts ii
   obtain ⟨x0, hx0⟩ := hii 1
@@ -120,7 +111,7 @@ problem imo1983_p1 (f : ℝ+ → ℝ+) :
 
     change x < a ^ 2 ^ ⌈ _⌉₊
     change 1 < a at H1
-    clear f hi hii h1 hx0 ha H hi1 h4 h9 hi2 h8
+    clear f hi hii h1 hx0 ha H hi1 h4 h9 hi3 h8
     nth_rewrite 1 [show a = 1 + (a - 1) by ring]
     have h20 : 1 + (((2 ^ ⌈Real.logb 2 (x / (a - 1))⌉₊):ℕ):ℝ) * (a - 1) ≤
              (1 + (a - 1)) ^ 2 ^ ⌈Real.logb 2 (x / (a - 1))⌉₊
