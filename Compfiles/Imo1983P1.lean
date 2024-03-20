@@ -5,7 +5,6 @@ Authors: David Renshaw
 -/
 
 import Mathlib.Algebra.Order.Positive.Field
-import Mathlib.Analysis.SpecialFunctions.Log.Base
 import Mathlib.Tactic
 
 import ProblemExtraction
