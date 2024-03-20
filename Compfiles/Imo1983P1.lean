@@ -28,52 +28,13 @@ abbrev PosReal : Type := { x : ℝ // 0 < x }
 
 notation "ℝ+" => PosReal
 
-snip begin
-
--- suggested by spqcivitatum on twitch chat
-lemma lemma1 (f : ℝ+ → ℝ+)
-    (hi : ∀ x y, f (x * f y) = y * f x)
-    (hii : ∀ ε, ∃ x, ∀ y, x < y → f y < ε) :
-    f ∘ f = id ∧ ∀ x y, f (x * y) = f x * f y := by
-  have h1 : f ∘ f = id := sorry
-  refine ⟨h1, ?_⟩
-  intro x y
-  have h2 := hi x (f y)
-
-  apply_fun (fun g ↦ g y) at h1
-  change f (f y) = y at h1
-  rw [h1] at h2
-  rw [h2]
-  exact mul_comm _ _
-
--- to show that f is an automorphism, we need to show that
--- it's a bijective and its a homomorphism (i.e. f (x*y) = f x * f y)
-
--- f 1 = 1
--- f (f y) = f (1 * f y) = y * f 1 = y
--- so f ∘ f = id
--- so f is bijective
---
--- homomorophism because:
--- ∀ x y,
--- f (x * y) = ... ? = f x * f y
--- hi x (f y) --> f
-
---
--- then f (x) = x^r for some r
--- (might need continuity actually for this step?)
--- "if f is a continuous automorphism, then ∃ r ≠ 0, f (x) = x^r"
-
-
-snip end
-
 determine SolutionSet : Set (ℝ+ → ℝ+) := { fun x ↦ 1 / x }
 
 problem imo1983_p1 (f : ℝ+ → ℝ+) :
     f ∈ SolutionSet ↔
     ((∀ x y, f (x * f y) = y * f x) ∧
      (∀ ε, ∃ x, ∀ y, x < y → f y < ε)) := by
-  -- following th einformal solution at
+  -- following the informal solution at
   -- https://artofproblemsolving.com/wiki/index.php/1983_IMO_Problems/Problem_1
   constructor
   · rintro rfl
@@ -92,7 +53,6 @@ problem imo1983_p1 (f : ℝ+ → ℝ+) :
     simp only [one_mul] at h2 h3
     rw [h2, h2, self_eq_mul_right] at h3
     exact h3
-  --have hi' : ∀ x, f (x * f x) = x * f x := fun x ↦ hi x x
   suffices h3 : ∀ a, f a = a → a = 1 by
     funext x
     exact eq_one_div_of_mul_eq_one_right (h3 (x * f x) (hi x x))
@@ -149,15 +109,49 @@ problem imo1983_p1 (f : ℝ+ → ℝ+) :
   -- but a^2^k = f (a^2^k), so that contracts ii
   obtain ⟨x0, hx0⟩ := hii 1
   have h12 : ∃ k, x0 < a^2^k := by
-    -- need 2 ^ k > logₐ x0
-    -- k > log_2 logₐ x
-    -- k = 1 + log_2 logₐ x
-    --have : 1 + 2^k * ε  ≤ (1 + ε) ^ 2 ^ k
+    -- 1 + (a-1) * 2^k ≤ (1 + (a-1)) ^ 2 ^ k
+    -- suffices to choose k such that
+    -- x0 < 1 + (a-1) * 2^k
+    -- suffices to choose k such that
+    -- x0 < (a-1) * 2^k
+    -- x0 / (a - 1) < 2 ^ k
+    -- choose k = Ceil(Real.logb 2 (x0 / (a - 1)))
+
     obtain ⟨x, hx⟩ := x0
     obtain ⟨a, ha0⟩ := a
-    use Nat.ceil (1 + Real.logb 2 (Real.logb a x))
-    change x < a ^ 2 ^ ⌈1 + Real.logb 2 (Real.logb a x)⌉₊
-    sorry
+
+    use Nat.ceil (Real.logb 2 (x / (a - 1)))
+
+    change x < a ^ 2 ^ ⌈ _⌉₊
+    change 1 < a at H1
+    clear f hi hii h1 hx0 ha H hi1 h4 h9 hi2 h8
+    nth_rewrite 1 [show a = 1 + (a - 1) by ring]
+    have h20 : 1 + (((2 ^ ⌈Real.logb 2 (x / (a - 1))⌉₊):ℕ):ℝ) * (a - 1) ≤
+             (1 + (a - 1)) ^ 2 ^ ⌈Real.logb 2 (x / (a - 1))⌉₊
+           := by
+      have h30 : -2 ≤ a - 1 := by linarith
+      exact one_add_mul_le_pow h30 (2 ^ ⌈Real.logb 2 (x / (a - 1))⌉₊)
+
+    suffices x < 1 + (((2 ^ ⌈Real.logb 2 (x / (a - 1))⌉₊):ℕ):ℝ) * (a - 1)
+      from gt_of_ge_of_gt h20 this
+    push_cast
+    rw [←Real.rpow_nat_cast]
+    have h21 := Nat.le_ceil (Real.logb 2 (x / (a - 1)))
+    have h23 := (Real.rpow_le_rpow_left_iff one_lt_two).mpr h21
+    suffices x < 1 + 2 ^ (Real.logb 2 (x / (a - 1))) * (a - 1) by
+      clear h21 h20
+      have h24 : 0 < a - 1 := sub_pos.mpr H1
+      have h25 := (mul_le_mul_iff_of_pos_right h24).mpr h23
+      exact lt_add_of_lt_add_left this h25
+
+    have h27 : 2 ^ (Real.logb 2 (x / (a - 1))) = x / (a - 1) := by
+      apply Real.rpow_logb zero_lt_two (by norm_num)
+      · have : 0 < a - 1 := sub_pos.mpr H1
+        exact (div_pos_iff_of_pos_left hx).mpr this
+    rw [h27]
+    have : a - 1 ≠ 0 := by linarith
+    simp [this]
+
   obtain ⟨k0, hk1⟩ := h12
   have h13 := hx0 (a ^ 2 ^ k0) hk1
   rw [h9] at h13
