@@ -74,10 +74,8 @@ problem imo1983_p1 (f : ℝ+ → ℝ+) :
       rwa [h4] at h7
     · simp [ha]
     · have h6 : a < 1 := by
-        obtain h11 | h12 | h13 := lt_trichotomy a 1
-        · exact h11
-        · exact (H h12).elim
-        · exact (H1 h13).elim
+        push_neg at H1
+        exact lt_of_le_of_ne H1 H
       exact one_lt_div'.mpr h6
   have h8 : f (a^2) = a^2 := by
     have h9 := hi1 a
