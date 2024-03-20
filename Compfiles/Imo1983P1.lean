@@ -120,12 +120,11 @@ problem imo1983_p1 (f : ℝ+ → ℝ+) :
     push_cast
     have h21 := Nat.le_ceil (x / (a - 1))
     suffices x < 1 + (x / (a - 1)) * (a - 1) by
-      clear h20
       have h24 : 0 < a - 1 := sub_pos.mpr H1
       have h25 := (mul_le_mul_iff_of_pos_right h24).mpr h21
       exact lt_add_of_lt_add_left this h25
 
-    have : a - 1 ≠ 0 := by linarith
+    have : a - 1 ≠ 0 := (ne_of_lt (sub_pos.mpr H1)).symm
     simp [this]
 
   obtain ⟨m0, hm1⟩ := h12
