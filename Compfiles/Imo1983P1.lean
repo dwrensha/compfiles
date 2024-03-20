@@ -76,10 +76,6 @@ problem imo1983_p1 (f : ℝ+ → ℝ+) :
         push_neg at H1
         exact lt_of_le_of_ne H1 H
       exact one_lt_div'.mpr h6
-  have h8 : f (a^2) = a^2 := by
-    have h9 := hi1 a
-    rw [ha] at h9
-    rwa [←sq] at h9
   have hi3 : ∀ m, f (a^m) = a^m := by
     intro m
     induction' m with pm ih
@@ -107,7 +103,7 @@ problem imo1983_p1 (f : ℝ+ → ℝ+) :
 
     change x < a ^ ⌈ _⌉₊
     change 1 < a at H1
-    clear f hi hii h1 hx0 ha H hi1 h4 hi3 h8
+    clear f hi hii h1 hx0 ha H hi1 h4 hi3
     nth_rewrite 1 [show a = 1 + (a - 1) by ring]
     have h20 : 1 + ((⌈(x / (a - 1))⌉₊:ℕ):ℝ) * (a - 1) ≤
              (1 + (a - 1)) ^ ⌈x / (a - 1)⌉₊
