@@ -259,7 +259,7 @@ problem imo2013_p5
       · have hfneq : f (n.succ.succ) = n.succ.succ := by
           have := fixed_point_of_gt_1
               (Nat.one_lt_cast.mpr (Nat.succ_lt_succ n.succ_pos)) H1 H2 H4 H5 ha1 hae
-          rwa [Rat.cast_coe_nat n.succ.succ] at this
+          rwa [Rat.cast_natCast n.succ.succ] at this
         rw [←hfneq]
         exact H1 (n.succ.succ : ℚ) x (Nat.cast_pos.mpr hn) hx
     exact h2.antisymm (H3 x hx n hn)
