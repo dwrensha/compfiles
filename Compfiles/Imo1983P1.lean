@@ -89,9 +89,9 @@ problem imo1983_p1 (f : ℝ+ → ℝ+) :
   obtain ⟨x0, hx0⟩ := hii 1
   have h12 : ∃ m, x0 < a^m := by
     -- 1 + (a-1) * m ≤ (1 + (a-1)) ^ m
-    -- suffices to choose k such that
+    -- suffices to choose m such that
     -- x0 < 1 + (a-1) * m
-    -- suffices to choose k such that
+    -- suffices to choose m such that
     -- x0 < (a-1) * m
     -- x0 / (a - 1) < m
     -- choose m = Ceil((x0 / (a - 1))
