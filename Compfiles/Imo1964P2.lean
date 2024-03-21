@@ -24,18 +24,18 @@ namespace Imo1964P2
 snip begin
 
 -- TODO: get this into mathlib in some form
-lemma schur (a b c : ℝ) (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c) :
+lemma schur {a b c : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c) :
     0 ≤ a * (a - b) * (a - c) + b * (b - a) * (b - c) + c * (c - a) * (c - b) := by
   -- from https://artofproblemsolving.com/wiki/index.php/Schur%27s_Inequality
   wlog Hcb : c ≤ b with h1
   · have h3 : b ≤ c := le_of_not_le Hcb
-    linarith [h1 a c b ha hc hb h3]
+    linarith [h1 ha hc hb h3]
   wlog Hba : b ≤ a with h2
   · have h4 : a ≤ b := le_of_not_le Hba
     obtain hca | hac : c ≤ a ∨ a ≤ c := le_total c a
-    · have := h2 b a c hb ha hc hca h4
+    · have := h2 hb ha hc hca h4
       linarith only [this]
-    · have := h2 b c a hb hc ha hac Hcb
+    · have := h2 hb hc ha hac Hcb
       linarith only [this]
   have h5 :=
     calc a * (a - b) * (a - c) + b * (b - a) * (b - c)
@@ -91,4 +91,4 @@ problem imo1964_p2
     3 * a * b * c - (a^2 * (b + c - a) + b^2 * (c + a - b) + c^2 * (a + b - c)) from
     sub_nonneg.mp this
   rw [h1]
-  exact schur a b c ha' hb' hc'
+  exact schur ha' hb' hc'
