@@ -31,6 +31,7 @@ abbrev Bounded (x : ℕ → ℝ) : Prop := ∃ C, ∀ i, |x i| ≤ C
 determine solution (a : ℝ) (ha : 1 < a) : ℕ → ℝ := sorry
 
 problem imo1991_p6 (a : ℝ) (ha : 1 < a) :
+    Bounded (solution a ha) ∧
     ∀ i j, i ≠ j →
       1 ≤ |solution a ha i - solution a ha j| * |(i:ℝ) - j| := by
   sorry
