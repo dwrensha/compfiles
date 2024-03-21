@@ -120,8 +120,8 @@ problem imo1983_p1 (f : ℝ+ → ℝ+) :
       have h25 := (mul_le_mul_iff_of_pos_right h24).mpr h21
       exact lt_add_of_lt_add_left this h25
 
-    have : a - 1 ≠ 0 := (ne_of_lt h24).symm
-    simp [this]
+    rw [div_mul_cancel _ (ne_of_lt h24).symm]
+    exact lt_one_add x
 
   obtain ⟨m0, hm1⟩ := h12
   have h13 := hx0 (a ^ m0) hm1
