@@ -63,8 +63,7 @@ problem imo1983_p1 (f : ℝ+ → ℝ+) :
   have h4 : f (1 / a) = 1 / a := by
     have h5 := hi1 (1 / a)
     rw [one_div, mul_left_inv, h1, ← one_div] at h5
-    replace h5 := div_eq_iff_eq_mul'.mpr h5
-    exact h5.symm
+    exact eq_one_div_of_mul_eq_one_right h5.symm
   wlog H1 : 1 < a with h
   · refine h f hi hii h1 (1/a) h4 ?_ ?_ ?_ ?_
     · exact div_ne_one.mpr (Ne.symm H)
