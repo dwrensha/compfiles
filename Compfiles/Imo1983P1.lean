@@ -115,12 +115,12 @@ problem imo1983_p1 (f : ℝ+ → ℝ+) :
       from gt_of_ge_of_gt h20 this
     push_cast
     have h21 := Nat.le_ceil (x / (a - 1))
+    have h24 : 0 < a - 1 := sub_pos.mpr H1
     suffices x < 1 + (x / (a - 1)) * (a - 1) by
-      have h24 : 0 < a - 1 := sub_pos.mpr H1
       have h25 := (mul_le_mul_iff_of_pos_right h24).mpr h21
       exact lt_add_of_lt_add_left this h25
 
-    have : a - 1 ≠ 0 := (ne_of_lt (sub_pos.mpr H1)).symm
+    have : a - 1 ≠ 0 := (ne_of_lt h24).symm
     simp [this]
 
   obtain ⟨m0, hm1⟩ := h12
