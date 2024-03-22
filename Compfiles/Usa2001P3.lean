@@ -1,7 +1,7 @@
 /-
 Copyright (c) 2023 David Renshaw. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: David Renshaw, Hongyu Ouyang
+Authors: Hongyu Ouyang
 -/
 
 import Mathlib.Tactic
@@ -23,6 +23,8 @@ Show that
 -/
 
 namespace Usa2001P3
+
+snip begin
 
 @[reducible]
 def f (a b c : ℝ) : ℝ := a^2 + b^2 + c^2 + a * b * c
@@ -50,6 +52,8 @@ lemma usa2001_p3_lemma (a b c : ℝ) (ha : 0 ≤ a) (_hb : 0 ≤ b) (_hc : 0 ≤
     _ = 2 - a * ((b - 1) * (c - 1)) := by ring_nf
     _ ≤ 2 - 0 := by gcongr; positivity
     _ = 2 := by norm_num
+
+snip end
 
 problem usa2001_p3 (a b c : ℝ) (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c)
     (h : a^2 + b^2 + c^2 + a * b * c = 4) :
