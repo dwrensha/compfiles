@@ -72,10 +72,23 @@ lemma lemma1 (α : Type) (A B : Set α) (hA : A.Finite) (hB : B.Finite)
     (f : {x // A x} → {x // B x})
     (hs : f.Surjective) (n : Nat) (h1 : ∀ b, Set.ncard { a | f a = b } = n)
     : B.ncard * n = A.ncard := by
-  haveI : Fintype ↑A := Set.Finite.fintype hA
-  haveI : Fintype ↑B := Set.Finite.fintype hB
-  let A' := A.toFinset
-  let B' := B.toFinset
+  haveI hfa : Fintype ↑A := Set.Finite.fintype hA
+  haveI hfb : Fintype ↑B := Set.Finite.fintype hB
+  rw [Set.ncard_eq_toFinset_card' A, Set.ncard_eq_toFinset_card' B]
+  have hbf : ∀ b,  Fintype { a // f a = b } := by
+    intro b
+    have : Fintype { x // A x } := hfa
+    classical
+    exact setFintype fun x ↦ f x = b
+  have h2 : ∀ b, Set.ncard { a | f a = b } = Fintype.card { a // f a = b} := by
+    intro b
+    rw [Set.setOf_set, Fintype.card_eq_nat_card, ←Set.Nat.card_coe_set_eq]
+    rfl
+  have h3 : ∀ b, Fintype.card { a // f a = b} = n := by
+    intro b
+    exact (h2 b).symm.trans (h1 b)
+
+  rw [Set.toFinset_card, Set.toFinset_card]
   sorry
 
 snip end
