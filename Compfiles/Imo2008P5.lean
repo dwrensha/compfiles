@@ -72,6 +72,10 @@ lemma lemma1 (α : Type) (A B : Set α) (hA : A.Finite) (hB : B.Finite)
     (f : {x // A x} → {x // B x})
     (hs : f.Surjective) (n : Nat) (h1 : ∀ b, Set.ncard { a | f a = b } = n)
     : B.ncard * n = A.ncard := by
+  haveI : Fintype ↑A := Set.Finite.fintype hA
+  haveI : Fintype ↑B := Set.Finite.fintype hB
+  let A' := A.toFinset
+  let B' := B.toFinset
   sorry
 
 snip end
@@ -83,9 +87,8 @@ problem imo2008_p5 (n k : ℕ)
     (hnk : n ≤ k) (he : Even (n - k))
     : solution n k =
       (Set.ncard (NSequence n k) : ℚ) / Set.ncard (MSequence n k) := by
-  have hA : Finite { f // NSequence n k f } := by sorry
-  have hB : Finite { f // MSequence n k f } := by sorry
-  have := claim n k hnk he
+  have hA : Set.Finite { f | NSequence n k f } := Set.toFinite _
+  have hB : Set.Finite { f | MSequence n k f } := Set.toFinite _
   have h1 := lemma1 (Sequence n k) (NSequence n k) (MSequence n k) hA hB (ψ n k)
               (ψ_surjective n k hnk he)
               (2 ^ (k - n))
