@@ -52,11 +52,30 @@ def ψ (n k : ℕ) : { f // NSequence n k f } → { f // MSequence n k f } :=
     have mf' : MSequence n k f' := by
       refine ⟨⟨?_, ?_⟩, ?_⟩
       · intro i hi
-        have := hf1 i hi
-        unfold_let f'
+        have h6 := hf1 i hi
+        dsimp [f']
         sorry
-      · sorry
-      · sorry
+      · intro i hi1 hi2
+        have h5 := hf2 i hi1 hi2
+        have h6 : ∀ j, ↑(f' j) ≠ i := by
+          intro j
+          dsimp [f']
+          split_ifs with h10
+          · omega
+          · dsimp; omega
+        use 0
+        dsimp
+        rw [Nat.card_eq_fintype_card, Fintype.card_eq_zero_iff, isEmpty_subtype]
+        exact h6
+      · intro i hi j
+        unfold_let f'
+        dsimp
+        split_ifs with h3
+        · omega
+        · intro h4
+          apply_fun (·.val) at h4
+          dsimp only at h4
+          omega
     ⟨f', mf'⟩
 
 lemma claim (n k : ℕ) (hnk : n ≤ k) (he : Even (n - k))
