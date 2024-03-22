@@ -53,10 +53,43 @@ def ψ (n k : ℕ) : { f // NSequence n k f } → { f // MSequence n k f } :=
       refine ⟨⟨?_, ?_⟩, ?_⟩
       · intro i hi
         have h6 := hf1 i hi
-        dsimp [f']
-        sorry
-      · intro i hi1 hi2
-        have h5 := hf2 i hi1 hi2
+        have h7 : {j | ↑(f' j) = i} = {j | ↑(f j) = i} ∪ {j | ↑(f j) = n + i} := by
+           ext a
+           constructor
+           · intro ha
+             dsimp [f'] at ha
+             split_ifs at ha with h20
+             · left
+               exact ha
+             · dsimp at ha
+               right
+               dsimp
+               omega
+           · intro ha
+             dsimp [f']
+             obtain ha' | ha' := ha
+             · rw [Set.mem_setOf] at ha'
+               rw [←ha'] at hi
+               simpa [hi]
+             · rw [Set.mem_setOf] at ha'
+               have h8 : ¬ ↑(f a) < n := by omega
+               simp [h8]
+               omega
+        have h8 : Disjoint {j | ↑(f j) = i} {j | ↑(f j) = n + i} := by
+          rw [Set.disjoint_left]
+          intro a ha ha'
+          rw [Set.mem_setOf] at ha ha'
+          omega
+        have h9 : Set.ncard {j | ↑(f' j) = i} =
+                  Set.ncard {j | ↑(f j) = i} + Set.ncard {j | ↑(f j) = n + i} := by
+           rw [h7]
+           exact Set.ncard_union_eq h8
+        rw [Set.Nat.card_coe_set_eq, h9]
+        rw [Set.Nat.card_coe_set_eq] at h6
+        have h10 := hf2 (n + i) (by omega) (by omega)
+        rw [Set.Nat.card_coe_set_eq] at h10
+        exact Odd.add_even h6 h10
+      · intro i hi1 _
         have h6 : ∀ j, ↑(f' j) ≠ i := by
           intro j
           dsimp [f']
