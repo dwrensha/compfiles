@@ -186,16 +186,13 @@ determine solution (n k : ℕ) : ℚ := 2 ^ (k - n)
 problem imo2008_p5 (n k : ℕ)
     (hn : 0 < n) (hk : 0 < k)
     (hnk : n ≤ k) (he : Even (n - k))
-    : solution n k =
-      (Set.ncard (NSequence n k) : ℚ) / Set.ncard (MSequence n k) := by
+    : Set.ncard (MSequence n k) * solution n k = Set.ncard (NSequence n k) := by
+  clear hn hk -- don't need these
   have hA : Set.Finite { f | NSequence n k f } := Set.toFinite _
   have hB : Set.Finite { f | MSequence n k f } := Set.toFinite _
   have h1 := lemma1 (Sequence n k) (NSequence n k) (MSequence n k) hA hB (ψ n k)
               (2 ^ (k - n))
               (claim n k hnk he)
   rw [←h1]
-  have h2 : ((Set.ncard (MSequence n k)) : ℚ) ≠ 0 := by
-    norm_cast
-    sorry
   push_cast
-  exact (mul_div_cancel_left (2 ^ (k - n)) h2).symm
+  rfl
