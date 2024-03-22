@@ -59,10 +59,6 @@ def ψ (n k : ℕ) : { f // NSequence n k f } → { f // MSequence n k f } :=
       · sorry
     ⟨f', mf'⟩
 
-lemma ψ_surjective (n k : ℕ) (hnk : n ≤ k) (he : Even (n - k))
-    : (ψ n k).Surjective := by
-  sorry
-
 lemma claim (n k : ℕ) (hnk : n ≤ k) (he : Even (n - k))
     (f : {b : Sequence n k // MSequence n k b }) :
     Set.ncard {g | ψ n k g = f} = 2^(k - n) := by
@@ -70,26 +66,66 @@ lemma claim (n k : ℕ) (hnk : n ≤ k) (he : Even (n - k))
 
 lemma lemma1 (α : Type) (A B : Set α) (hA : A.Finite) (hB : B.Finite)
     (f : {x // A x} → {x // B x})
-    (hs : f.Surjective) (n : Nat) (h1 : ∀ b, Set.ncard { a | f a = b } = n)
+    (n : Nat) (h1 : ∀ b, Set.ncard { a | f a = b } = n)
     : B.ncard * n = A.ncard := by
+  classical
   haveI hfa : Fintype ↑A := Set.Finite.fintype hA
   haveI hfb : Fintype ↑B := Set.Finite.fintype hB
-  rw [Set.ncard_eq_toFinset_card' A, Set.ncard_eq_toFinset_card' B]
   have hbf : ∀ b,  Fintype { a // f a = b } := by
     intro b
     have : Fintype { x // A x } := hfa
-    classical
     exact setFintype fun x ↦ f x = b
   have h2 : ∀ b, Set.ncard { a | f a = b } = Fintype.card { a // f a = b} := by
     intro b
     rw [Set.setOf_set, Fintype.card_eq_nat_card, ←Set.Nat.card_coe_set_eq]
     rfl
-  have h3 : ∀ b, Fintype.card { a // f a = b} = n := by
-    intro b
-    exact (h2 b).symm.trans (h1 b)
 
-  rw [Set.toFinset_card, Set.toFinset_card]
-  sorry
+  have h3' : ∀ b ∈ Finset.univ (α := ↑B), (Finset.filter {a | f a = b } (Finset.univ (α := ↑A))).card = n := by
+    intro b _
+    rw [← @Fintype.card_subtype]
+    rw [← h1
+        b, h2,
+        Set.setOf_set, Fintype.card_eq_nat_card,
+        Mathlib.Tactic.Zify.nat_cast_eq, Fintype.card_eq_nat_card]
+
+  clear h1 h2
+  let A' := Finset.biUnion
+             (Finset.univ (α := ↑B))
+             (fun b ↦ Finset.filter { a | f a = b } (Finset.univ (α := ↑A)))
+  have h4 :
+    ∀ b1 ∈ (Finset.univ (α := ↑B)),
+      ∀ b2 ∈ (Finset.univ (α := ↑B)),
+        b1 ≠ b2 →
+          Disjoint
+            (Finset.filter { a | f a = b1 } (Finset.univ (α := ↑A)))
+            (Finset.filter { a | f a = b2 } (Finset.univ (α := ↑A))) := by
+    intro b1 _ b2 _ hb12
+    rw [Finset.disjoint_filter]
+    intro x _ hx2 hx3
+    rw [Set.setOf_app_iff] at hx2 hx3
+    rw [hx2] at hx3
+    exact hb12 hx3
+  have h5 : A'.card = Set.ncard B * n := by
+    rw [Finset.card_biUnion h4]
+    rw [Finset.sum_congr rfl h3']
+    simp only [Finset.sum_const, smul_eq_mul]
+    have : (Finset.univ (α := ↑B)).card = Set.ncard B := by
+      rw [Finset.card_univ, Fintype.card_eq_nat_card, Set.Nat.card_coe_set_eq]
+    exact congrFun (congrArg HMul.hMul this) n
+  rw [←h5]
+  have h6 : A' = Finset.univ (α := ↑A) := by
+    ext a
+    constructor
+    · intro _
+      exact @Finset.mem_univ _ hfa a
+    · intro _
+      rw [Finset.mem_biUnion]
+      use f a
+      refine ⟨Finset.mem_univ _, ?_⟩
+      · simp; rfl
+  rw[h6]
+  rw [@Finset.card_univ, ←Set.Nat.card_coe_set_eq, Fintype.card_eq_nat_card]
+  rfl
 
 snip end
 
@@ -103,7 +139,6 @@ problem imo2008_p5 (n k : ℕ)
   have hA : Set.Finite { f | NSequence n k f } := Set.toFinite _
   have hB : Set.Finite { f | MSequence n k f } := Set.toFinite _
   have h1 := lemma1 (Sequence n k) (NSequence n k) (MSequence n k) hA hB (ψ n k)
-              (ψ_surjective n k hnk he)
               (2 ^ (k - n))
               (claim n k hnk he)
   rw [←h1]
