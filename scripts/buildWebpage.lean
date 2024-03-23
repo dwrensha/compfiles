@@ -113,6 +113,13 @@ def parseUsamoProblemId (probId : String) : Option (Nat × Nat) :=
 
 def isUsamoProblemId (probId : String) : Bool := (parseUsamoProblemId probId).isSome
 
+def getWriteupLinks (probId : String) : List ExternalLink :=
+  if let .some ⟨year, num⟩ := parseImoProblemId probId
+  then allImoUrls year num
+  else if let .some ⟨year, num⟩ := parseUsamoProblemId probId
+  then allUsamoUrls year num
+  else []
+
 structure ProblemInfo where
   name : String
   informal : String
@@ -266,18 +273,12 @@ unsafe def main (_args : List String) : IO Unit := do
                    | _ => url
               else url
             h.putStrLn s!"<p>The solution was imported from <a href=\"{url}\">{text}</a>.</p>"
-          if let .some ⟨year, num⟩ := parseImoProblemId probId
-          then
-            h.putStrLn s!"<div>Informal writeups:<ul class=\"writeups\">"
-            for ⟨url, text⟩ in allImoUrls year num do
-              h.putStrLn s!"<li><a href=\"{url}\">{text}</a></li>"
-            h.putStrLn s!"</ul></div>"
-          if let .some ⟨year, num⟩ := parseUsamoProblemId probId
-          then
-            h.putStrLn s!"<div>Informal writeups:<ul class=\"writeups\">"
-            for ⟨url, text⟩ in allUsamoUrls year num do
-              h.putStrLn s!"<li><a href=\"{url}\">{text}</a></li>"
-            h.putStrLn s!"</ul></div>"
+          let writeupLinks := getWriteupLinks probId
+          if writeupLinks.length > 0
+          then h.putStrLn s!"<div>Informal writeups:<ul class=\"writeups\">"
+               for ⟨url, text⟩ in writeupLinks do
+                 h.putStrLn s!"<li><a href=\"{url}\">{text}</a></li>"
+               h.putStrLn s!"</ul></div>"
 
           h.putStrLn "<hr>"
           h.putStrLn "<div class=\"footer-row\">"
