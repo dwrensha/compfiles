@@ -127,3 +127,7 @@ pre.problem {
 .writeups {
     margin-top: 0;
 }
+
+div.footer {
+    font-size: 10px;
+}
