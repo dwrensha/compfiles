@@ -42,11 +42,11 @@ def scholesImoUrl (year : Nat) (idx : Nat) : String :=
 def chenImoUrl (year : Nat) (_idx : Nat) : String :=
   s!"https://web.evanchen.cc/exams/IMO-{year}-notes.pdf"
 
-structure ExternalLink where
+structure WriteupLink where
   url : String
   text : String
 
-def allImoUrls (year : Nat) (idx : Nat) : List ExternalLink :=
+def allImoUrls (year : Nat) (idx : Nat) : List WriteupLink :=
   Id.run
   do let mut result := [⟨aopsImoUrl year idx, "Art of Problem Solving"⟩]
      if year ≤ 2003
@@ -94,7 +94,7 @@ def scholesUsamoUrl (year : Nat) (idx : Nat) : String :=
 def chenUsamoUrl (year : Nat) (_idx : Nat) : String :=
   s!"https://web.evanchen.cc/exams/USAMO-{year}-notes.pdf"
 
-def allUsamoUrls (year : Nat) (idx : Nat) : List ExternalLink :=
+def allUsamoUrls (year : Nat) (idx : Nat) : List WriteupLink :=
   Id.run
   do let mut result := [⟨aopsUsamoUrl year idx, "Art of Problem Solving"⟩]
      if year ≤ 2003
@@ -113,7 +113,7 @@ def parseUsamoProblemId (probId : String) : Option (Nat × Nat) :=
 
 def isUsamoProblemId (probId : String) : Bool := (parseUsamoProblemId probId).isSome
 
-def getWriteupLinks (probId : String) : List ExternalLink :=
+def getWriteupLinks (probId : String) : List WriteupLink :=
   if let .some ⟨year, num⟩ := parseImoProblemId probId
   then allImoUrls year num
   else if let .some ⟨year, num⟩ := parseUsamoProblemId probId
