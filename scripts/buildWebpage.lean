@@ -277,13 +277,13 @@ unsafe def main (_args : List String) : IO Unit := do
       let h ← IO.FS.Handle.mk "_site/imo.html" IO.FS.Mode.write
       h.putStrLn <| ←htmlHeader "Compfiles: Catalog of Math Problems Formalized in Lean"
       h.putStrLn <| ← topbar "imo"
-      h.putStrLn <| s!"<p>There are {totalImoProblemCount} total IMO problems.</p>"
+      h.putStrLn <| s!"<p>Since 1959, the International Mathematical Olympiad has included  a total of <b>{totalImoProblemCount}</b> problems.</p>"
       let formalizedPercent : Float := 100.0 *
         (OfNat.ofNat imoFormalizedCount) / (OfNat.ofNat totalImoProblemCount)
-      h.putStrLn <| s!"<p>{imoFormalizedCount} problems have been formalized ({formalizedPercent}%).</p>"
+      h.putStrLn <| s!"<p><b>{imoFormalizedCount}</b> problems have been formalized ({formalizedPercent}%).</p>"
       let solvedPercent : Float := 100.0 *
         (OfNat.ofNat imoSolvedCount) / (OfNat.ofNat totalImoProblemCount)
-      h.putStrLn <| s!"<p>{imoSolvedCount} problems have complete formalized solutions ({solvedPercent}%).</p>"
+      h.putStrLn <| s!"<p><b>{imoSolvedCount}</b> problems have complete formalized solutions ({solvedPercent}%).</p>"
       h.putStr "<table class=\"full-problem-grid\">"
       for ⟨year, count⟩ in imoProblemCounts do
         h.putStr s!"<tr><td class=\"year\">{year}</td>"
@@ -309,13 +309,13 @@ unsafe def main (_args : List String) : IO Unit := do
       let h ← IO.FS.Handle.mk "_site/usamo.html" IO.FS.Mode.write
       h.putStrLn <| ←htmlHeader "Compfiles: Catalog of Math Problems Formalized in Lean"
       h.putStrLn <| ← topbar "usamo"
-      h.putStrLn <| s!"<p>There are {totalUsamoProblemCount} total USAMO problems.</p>"
+      h.putStrLn <| s!"<p>Since 1972, the USA Mathematical Olympiad has included a total of <b>{totalUsamoProblemCount}</b> problems.</p>"
       let formalizedPercent : Float := 100.0 *
         (OfNat.ofNat usamoFormalizedCount) / (OfNat.ofNat totalUsamoProblemCount)
-      h.putStrLn <| s!"<p>{usamoFormalizedCount} problems have been formalized ({formalizedPercent}%).</p>"
+      h.putStrLn <| s!"<p><b>{usamoFormalizedCount}</b> problems have been formalized ({formalizedPercent}%).</p>"
       let solvedPercent : Float := 100.0 *
         (OfNat.ofNat usamoSolvedCount) / (OfNat.ofNat totalUsamoProblemCount)
-      h.putStrLn <| s!"<p>{usamoSolvedCount} problems have complete formalized solutions ({solvedPercent}%).</p>"
+      h.putStrLn <| s!"<p><b>{usamoSolvedCount}</b> problems have complete formalized solutions ({solvedPercent}%).</p>"
       h.putStr "<table class=\"full-problem-grid\">"
       for ⟨year, count⟩ in usamoProblemCounts do
         h.putStr s!"<tr><td class=\"year\">{year}</td>"
