@@ -35,6 +35,28 @@ def totalImoProblemCount : Id Nat := do
 def aopsImoUrl (year : Nat) (idx : Nat) : String :=
   s!"https://artofproblemsolving.com/wiki/index.php/{year}_IMO_Problems/Problem_{idx}"
 
+def usamoProblemCounts :=
+  [(2023, 5), (2022, 5), (2021, 5), (2020, 5),
+   (2019, 5), (2018, 5), (2017, 5), (2016, 5), (2015, 5),
+   (2014, 5), (2013, 5), (2012, 5), (2011, 5), (2010, 5),
+   (2009, 5), (2008, 5), (2007, 5), (2006, 5), (2005, 5),
+   (2004, 5), (2003, 5), (2002, 5), (2001, 5), (2000, 5),
+   (1999, 5), (1998, 5), (1997, 5), (1996, 5), (1995, 5),
+   (1994, 5), (1993, 5), (1992, 5), (1991, 5), (1990, 5),
+   (1989, 5), (1988, 5), (1987, 5), (1986, 5), (1985, 5),
+   (1984, 5), (1983, 5), (1982, 5), (1981, 5), (1980, 5),
+   (1979, 5), (1978, 5), (1977, 5), (1976, 5), (1975, 5),
+   (1974, 5), (1973, 5), (1972, 5)]
+
+def totalUsamoProblemCount : Id Nat := do
+  let mut result := 0
+  for ⟨_, c⟩ in usamoProblemCounts do
+    result := result + c
+  return result
+
+def aopsUsamoUrl (year : Nat) (idx : Nat) : String :=
+  s!"https://artofproblemsolving.com/wiki/index.php/{year}_USAMO_Problems/Problem_{idx}"
+
 structure ProblemInfo where
   name : String
   informal : String
@@ -106,15 +128,19 @@ def topbar (currentPage : String) : IO String := do
 
   let all :=
     if currentPage == "all"
-    then "<span class=\"active\">All Problems</span>"
-    else s!"<span class=\"inactive\"><a href=\"{baseurl}index.html\">All Problems</a></span>"
+    then "<span class=\"active\">All</span>"
+    else s!"<span class=\"inactive\"><a href=\"{baseurl}index.html\">All</a></span>"
   let imo :=
     if currentPage == "imo"
-    then "<span class=\"active\">IMO Problems</span>"
-    else s!"<span class=\"inactive\"><a href=\"{baseurl}imo.html\">IMO Problems</a></span>"
+    then "<span class=\"active\">IMO</span>"
+    else s!"<span class=\"inactive\"><a href=\"{baseurl}imo.html\">IMO</a></span>"
+  let usamo :=
+    if currentPage == "usamo"
+    then "<span class=\"active\">USAMO</span>"
+    else s!"<span class=\"inactive\"><a href=\"{baseurl}usamo.html\">USAMO</a></span>"
 
   result := result ++
-    s!"<div class=\"navbar\">{all}{imo}</div>"
+    s!"<div class=\"navbar\">{all}{imo}{usamo}</div>"
   return result
 
 unsafe def main (_args : List String) : IO Unit := do
@@ -205,12 +231,21 @@ unsafe def main (_args : List String) : IO Unit := do
       let mut imoSolvedCount := 0
       let mut imoFormalizedCount := 0
 
+      let mut usamoSolvedCount := 0
+      let mut usamoFormalizedCount := 0
+
+
       for info in infos' do
         infomap := infomap.insert info.name info
         if info.name.startsWith "Imo" ∧ info.name.get ⟨3⟩ ∈ ['1', '2'] then
           imoFormalizedCount := imoFormalizedCount + 1
           if info.proved then
             imoSolvedCount := imoSolvedCount + 1
+          pure ()
+        if info.name.startsWith "Usa" ∧ info.name.get ⟨3⟩ ∈ ['1', '2'] then
+          usamoFormalizedCount := usamoFormalizedCount + 1
+          if info.proved then
+            usamoSolvedCount := usamoSolvedCount + 1
           pure ()
         h.putStr s!"<tr>"
 
@@ -249,7 +284,7 @@ unsafe def main (_args : List String) : IO Unit := do
       let solvedPercent : Float := 100.0 *
         (OfNat.ofNat imoSolvedCount) / (OfNat.ofNat totalImoProblemCount)
       h.putStrLn <| s!"<p>{imoSolvedCount} problems have complete formalized solutions ({solvedPercent}%).</p>"
-      h.putStr "<table class=\"imo-problems\">"
+      h.putStr "<table class=\"full-problem-grid\">"
       for ⟨year, count⟩ in imoProblemCounts do
         h.putStr s!"<tr><td class=\"year\">{year}</td>"
         for ii in List.range count do
@@ -262,6 +297,38 @@ unsafe def main (_args : List String) : IO Unit := do
             pure (url, cls)
           | .none =>
             pure (aopsImoUrl year idx, "todo")
+
+          h.putStr s!"<td class=\"{cls}\"><a href=\"{url}\">P{idx}</a></td>"
+          pure ()
+        h.putStrLn "</tr>"
+      h.putStr "</table>"
+
+      h.putStr "</body></html>"
+      pure ()
+
+      let h ← IO.FS.Handle.mk "_site/usamo.html" IO.FS.Mode.write
+      h.putStrLn <| ←htmlHeader "Compfiles: Catalog of Math Problems Formalized in Lean"
+      h.putStrLn <| ← topbar "usamo"
+      h.putStrLn <| s!"<p>There are {totalUsamoProblemCount} total USAMO problems.</p>"
+      let formalizedPercent : Float := 100.0 *
+        (OfNat.ofNat usamoFormalizedCount) / (OfNat.ofNat totalUsamoProblemCount)
+      h.putStrLn <| s!"<p>{usamoFormalizedCount} problems have been formalized ({formalizedPercent}%).</p>"
+      let solvedPercent : Float := 100.0 *
+        (OfNat.ofNat usamoSolvedCount) / (OfNat.ofNat totalUsamoProblemCount)
+      h.putStrLn <| s!"<p>{usamoSolvedCount} problems have complete formalized solutions ({solvedPercent}%).</p>"
+      h.putStr "<table class=\"full-problem-grid\">"
+      for ⟨year, count⟩ in usamoProblemCounts do
+        h.putStr s!"<tr><td class=\"year\">{year}</td>"
+        for ii in List.range count do
+          let idx := ii + 1
+          let name := s!"Usa{year}P{idx}"
+          let ⟨url, cls⟩ ← match infomap.find? name with
+          | .some info =>
+            let url := s!"problems/Compfiles.{name}.html"
+            let cls := if info.proved then "proved" else "formalized"
+            pure (url, cls)
+          | .none =>
+            pure (aopsUsamoUrl year idx, "todo")
 
           h.putStr s!"<td class=\"{cls}\"><a href=\"{url}\">P{idx}</a></td>"
           pure ()

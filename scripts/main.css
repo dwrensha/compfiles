@@ -106,28 +106,28 @@ pre.problem {
     background-color: #f5e6c4;
 }
 
-.imo-problems {
+.full-problem-grid {
     border-collapse: collapse;
 }
 
-.imo-problems td {
+.full-problem-grid td {
     border: 1px solid gray;
     padding: 6px;
     font-size: 24px;
 }
 
-.imo-problems td.year {
+.full-problem-grid td.year {
     font-weight: bold;
 }
 
-.imo-problems td.proved {
+.full-problem-grid td.proved {
     background-color: #55ff55;
 }
 
-.imo-problems td.formalized {
+.full-problem-grid td.formalized {
     background-color: #fffc36;
 }
 
-.imo-problems td.todo {
+.full-problem-grid td.todo {
     background-color: #cccccc;
 }
