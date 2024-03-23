@@ -26,14 +26,14 @@ abbrev P (n : ℕ) : Prop := ∃ k, 4^k = 2^(2^n) % (2^n - 1)
 
 inductive SolutionData where
 | AlwaysTrue : SolutionData
-| CounterExample : ℕ → SolutionData
+| Counterexample : ℕ → SolutionData
 
-determine solution_data : SolutionData := SolutionData.CounterExample 25
+determine solution_data : SolutionData := SolutionData.Counterexample 25
 
 problem usa2011_p4 :
     match solution_data with
     | .AlwaysTrue => ∀ n, 2 ≤ n → P n
-    | .CounterExample m => 2 ≤ m ∧ ¬ P m := by
+    | .Counterexample m => 2 ≤ m ∧ ¬ P m := by
   -- See https://web.evanchen.cc/exams/USAMO-2011-notes.pdf for an informal proof.
   dsimp
   refine' ⟨by norm_num, _⟩
