@@ -28,6 +28,7 @@ open scoped BigOperators
 
 problem imo2009_p6 (n : ℕ) (hn : 0 < n)
     (a : Fin n → ℤ)
+    (adistinct : ∀ i j, i ≠ j → a i ≠ a j)
     (apos : ∀ i, 0 < a i)
     (M : Finset ℤ)
     (Mpos : ∀ m ∈ M, 0 < m)
