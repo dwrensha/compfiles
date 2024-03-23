@@ -35,6 +35,36 @@ def totalImoProblemCount : Id Nat := do
 def aopsImoUrl (year : Nat) (idx : Nat) : String :=
   s!"https://artofproblemsolving.com/wiki/index.php/{year}_IMO_Problems/Problem_{idx}"
 
+def scholesImoUrl (year : Nat) (idx : Nat) : String :=
+  let year' := Substring.mk s!"{year}" ⟨2⟩ ⟨4⟩
+  s!"https://prase.cz/kalva/imo/isoln/isoln{year'}{idx}.html"
+
+def chenImoUrl (year : Nat) (_idx : Nat) : String :=
+  s!"https://web.evanchen.cc/exams/IMO-{year}-notes.pdf"
+
+structure ExternalLink where
+  url : String
+  text : String
+
+def allImoUrls (year : Nat) (idx : Nat) : List ExternalLink :=
+  Id.run
+  do let mut result := [⟨aopsImoUrl year idx, "Art of Problem Solving"⟩]
+     if year ≤ 2003
+     then result := result ++ [⟨scholesImoUrl year idx, "John Scholes"⟩]
+     if year ≥ 1997 ∧ year ≤ 2023
+     then result := result ++ [⟨chenImoUrl year idx, "Evan Chen"⟩]
+     return result
+
+-- If the problem is an Imo problem, return the year number and the problem number
+def parseImoProblemId (probId : String) : Option (Nat × Nat) :=
+  if probId.startsWith "Imo" ∧ probId.get ⟨3⟩ ∈ ['1', '2']
+  then let ys := Substring.mk probId ⟨3⟩ ⟨7⟩
+       let ns := Substring.mk probId ⟨8⟩ ⟨9⟩
+       .some ⟨ys.toString.toNat!, ns.toString.toNat!⟩
+  else .none
+
+def isImoProblemId (probId : String) : Bool := (parseImoProblemId probId).isSome
+
 def usamoProblemCounts :=
   [(2023, 5), (2022, 5), (2021, 5), (2020, 5),
    (2019, 5), (2018, 5), (2017, 5), (2016, 5), (2015, 5),
@@ -56,6 +86,32 @@ def totalUsamoProblemCount : Id Nat := do
 
 def aopsUsamoUrl (year : Nat) (idx : Nat) : String :=
   s!"https://artofproblemsolving.com/wiki/index.php/{year}_USAMO_Problems/Problem_{idx}"
+
+def scholesUsamoUrl (year : Nat) (idx : Nat) : String :=
+  let year' := Substring.mk s!"{year}" ⟨2⟩ ⟨4⟩
+  s!"https://prase.cz/kalva/usa/usoln/usol{year'}{idx}.html"
+
+def chenUsamoUrl (year : Nat) (_idx : Nat) : String :=
+  s!"https://web.evanchen.cc/exams/USAMO-{year}-notes.pdf"
+
+def allUsamoUrls (year : Nat) (idx : Nat) : List ExternalLink :=
+  Id.run
+  do let mut result := [⟨aopsUsamoUrl year idx, "Art of Problem Solving"⟩]
+     if year ≤ 2003
+     then result := result ++ [⟨scholesUsamoUrl year idx, "John Scholes"⟩]
+     if year ≥ 1997 ∧ year ≤ 2023
+     then result := result ++ [⟨chenUsamoUrl year idx, "Evan Chen"⟩]
+     return result
+
+-- If the problem is an Imo problem, return the year number and the problem number
+def parseUsamoProblemId (probId : String) : Option (Nat × Nat) :=
+  if probId.startsWith "Usa" ∧ probId.get ⟨3⟩ ∈ ['1', '2']
+  then let ys := Substring.mk probId ⟨3⟩ ⟨7⟩
+       let ns := Substring.mk probId ⟨8⟩ ⟨9⟩
+       .some ⟨ys.toString.toNat!, ns.toString.toNat!⟩
+  else .none
+
+def isUsamoProblemId (probId : String) : Bool := (parseUsamoProblemId probId).isSome
 
 structure ProblemInfo where
   name : String
@@ -177,7 +233,8 @@ unsafe def main (_args : List String) : IO Unit := do
                  if v.hasSorry then proved := false
 
           let metadata := (mds.find? m).getD {}
-          infos := ⟨m.toString.stripPrefix "Compfiles.",
+          let probId := m.toString.stripPrefix "Compfiles."
+          infos := ⟨probId,
                     extractModuleDoc env m,
                     metadata,
                     solutionUrl, problemUrl, proved⟩ :: infos
@@ -193,10 +250,10 @@ unsafe def main (_args : List String) : IO Unit := do
               if metadata.authors.isEmpty then "" else
               s!" written by {" and ".intercalate metadata.authors}"
             h.putStrLn
-              s!"<p>This problem <a href=\"{solutionUrl}\">has a complete solution</a>{authors}.</p>"
+              s!"<p>This problem <a href=\"{solutionUrl}\">has a complete formalized solution</a>{authors}.</p>"
           else
             h.putStrLn
-              s!"<p>This problem <a href=\"{solutionUrl}\">does not yet have a complete solution</a>.</p>"
+              s!"<p>This problem <a href=\"{solutionUrl}\">does not yet have a complete formalized solution</a>.</p>"
           if let .some url := metadata.importedFrom
           then
             -- Make github urls a little nicer to look at.
@@ -209,6 +266,19 @@ unsafe def main (_args : List String) : IO Unit := do
                    | _ => url
               else url
             h.putStrLn s!"<p>The solution was imported from <a href=\"{url}\">{text}</a>.</p>"
+          if let .some ⟨year, num⟩ := parseImoProblemId probId
+          then
+            h.putStrLn s!"<div>Informal writeups:<ul class=\"writeups\">"
+            for ⟨url, text⟩ in allImoUrls year num do
+              h.putStrLn s!"<li><a href=\"{url}\">{text}</a></li>"
+            h.putStrLn s!"</ul></div>"
+          if let .some ⟨year, num⟩ := parseUsamoProblemId probId
+          then
+            h.putStrLn s!"<div>Informal writeups:<ul class=\"writeups\">"
+            for ⟨url, text⟩ in allUsamoUrls year num do
+              h.putStrLn s!"<li><a href=\"{url}\">{text}</a></li>"
+            h.putStrLn s!"</ul></div>"
+
           h.putStrLn "<hr>"
           h.putStrLn "<div class=\"footer-row\">"
           h.putStrLn s!"<a class=\"home-link\" href=\"{homeUrl}\">Compfiles</a>"
@@ -237,12 +307,12 @@ unsafe def main (_args : List String) : IO Unit := do
 
       for info in infos' do
         infomap := infomap.insert info.name info
-        if info.name.startsWith "Imo" ∧ info.name.get ⟨3⟩ ∈ ['1', '2'] then
+        if isImoProblemId info.name then
           imoFormalizedCount := imoFormalizedCount + 1
           if info.proved then
             imoSolvedCount := imoSolvedCount + 1
           pure ()
-        if info.name.startsWith "Usa" ∧ info.name.get ⟨3⟩ ∈ ['1', '2'] then
+        if isUsamoProblemId info.name then
           usamoFormalizedCount := usamoFormalizedCount + 1
           if info.proved then
             usamoSolvedCount := usamoSolvedCount + 1

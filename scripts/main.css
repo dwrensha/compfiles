@@ -131,3 +131,7 @@ pre.problem {
 .full-problem-grid td.todo {
     background-color: #cccccc;
 }
+
+.writeups {
+    margin-top: 0;
+}
