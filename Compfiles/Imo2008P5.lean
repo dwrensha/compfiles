@@ -42,6 +42,8 @@ abbrev MSequence (n k : ℕ) (f : Sequence n k) : Prop :=
 
 snip begin
 
+open scoped BigOperators
+
 -- We follow the informal solution from
 -- https://web.evanchen.cc/exams/IMO-2008-notes.pdf
 
@@ -114,7 +116,26 @@ def ψ (n k : ℕ) : { f // NSequence n k f } → { f // MSequence n k f } :=
 lemma claim (n k : ℕ) (hnk : n ≤ k) (he : Even (k - n))
     (f : {b : Sequence n k // MSequence n k b }) :
     Set.ncard {g | ψ n k g = f} = 2^(k - n) := by
-  sorry
+  let c : Fin n → ℕ := fun i ↦ Nat.card { j | f.val j = ⟨i, by omega⟩ }
+  let S : Type := (i : Fin n) → Fin (c i - 1) → Fin 2
+  have fts : Fintype S := inferInstance
+  let p : S → {g | ψ n k g = f} :=
+    fun cs ↦
+       let gg := by sorry
+       let hgg := by sorry
+       ⟨gg, hgg⟩
+  have Scard0 : Fintype.card S = ∏ i : Fin n, ∏ j : Fin (c i - 1), ∑ k : Fin 2, 1 := by
+    unfold_let S
+    --rw [ Fintype.card_pi]
+    sorry
+  have Scard : Fintype.card S = ∏ i : Fin n, 2 ^ (c i - 1) := by sorry
+  have Scard' : Fintype.card S = 2^(k-n) := by sorry
+  have h1 : p.Bijective := sorry
+  have h2 : Fintype.card S = Fintype.card {g | ψ n k g = f} :=
+    Fintype.card_of_bijective h1
+  nth_rewrite 2 [←Nat.card_eq_fintype_card] at h2
+  rw [Set.Nat.card_coe_set_eq] at h2
+  rw [←h2, Scard']
 
 lemma lemma1 (α : Type) (A B : Set α) (hA : A.Finite) (hB : B.Finite)
     (f : {x // A x} → {x // B x})
