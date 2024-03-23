@@ -118,17 +118,18 @@ lemma claim (n k : ℕ) (hnk : n ≤ k) (he : Even (k - n))
     Set.ncard {g | ψ n k g = f} = 2^(k - n) := by
   let c : Fin n → ℕ := fun i ↦ Nat.card { j | f.val j = ⟨i, by omega⟩ }
   let S : Type := (i : Fin n) → Fin (c i - 1) → Fin 2
-  have fts : Fintype S := inferInstance
   let p : S → {g | ψ n k g = f} :=
     fun cs ↦
        let gg := by sorry
        let hgg := by sorry
        ⟨gg, hgg⟩
-  have Scard0 : Fintype.card S = ∏ i : Fin n, ∏ j : Fin (c i - 1), ∑ k : Fin 2, 1 := by
+  have Scard : Fintype.card S = ∏ i : Fin n, 2 ^ (c i - 1) := by
     unfold_let S
-    --rw [ Fintype.card_pi]
-    sorry
-  have Scard : Fintype.card S = ∏ i : Fin n, 2 ^ (c i - 1) := by sorry
+    rw [Fintype.card_pi]
+    apply Fintype.prod_congr
+    intro a
+    rw [Fintype.card_pi]
+    norm_num
   have Scard' : Fintype.card S = 2^(k-n) := by sorry
   have h1 : p.Bijective := sorry
   have h2 : Fintype.card S = Fintype.card {g | ψ n k g = f} :=
