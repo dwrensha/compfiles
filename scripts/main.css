@@ -63,14 +63,6 @@ pre.problem {
     text-align: center;
 }
 
-.footer-row {
-    display: flex;
-    justify-content: center;
-}
-.home-link {
-    text-align: center;
-}
-
 .solved-col {
     text-align: center;
 }

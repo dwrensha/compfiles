@@ -248,6 +248,9 @@ unsafe def main (_args : List String) : IO Unit := do
 
           let h ← IO.FS.Handle.mk ("_site/" ++ problemFile) IO.FS.Mode.write
           h.putStrLn <| ←htmlHeader m.toString
+          h.putStrLn <| ← topbar "none"
+          h.putStrLn s!"<h2>{probId}</h2>"
+
           h.putStrLn "<pre class=\"problem\">"
           h.putStr (htmlEscape problem_src)
           h.putStrLn "</pre>"
@@ -280,10 +283,6 @@ unsafe def main (_args : List String) : IO Unit := do
                  h.putStrLn s!"<li><a href=\"{url}\">{text}</a></li>"
                h.putStrLn s!"</ul></div>"
 
-          h.putStrLn "<hr>"
-          h.putStrLn "<div class=\"footer-row\">"
-          h.putStrLn s!"<a class=\"home-link\" href=\"{homeUrl}\">Compfiles</a>"
-          h.putStrLn "</div>"
           h.putStrLn "</body></html>"
           h.flush
 
