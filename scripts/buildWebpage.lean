@@ -210,6 +210,22 @@ def topbar (currentPage : String) : IO String := do
     s!"<div class=\"navbar\">{all}{imo}{usamo}</div>"
   return result
 
+def generateProblemStubFile (path : String) (probId : String) : IO Unit := do 
+  let h ← IO.FS.Handle.mk ("_site/" ++ path) IO.FS.Mode.write
+  h.putStrLn <| ←htmlHeader ("Compfiles." ++ probId)
+  h.putStrLn <| ← topbar "none"
+  h.putStrLn s!"<h2>{probId}</h2>"
+  h.putStrLn s!"<p>This problem has not been formalized yet!</p>"
+
+  let writeupLinks := getWriteupLinks probId
+  if writeupLinks.length > 0
+  then h.putStrLn s!"<div>Informal writeups:<ul class=\"writeups\">"
+       for ⟨url, text⟩ in writeupLinks do
+         h.putStrLn s!"<li><a href=\"{url}\">{text}</a></li>"
+       h.putStrLn s!"</ul></div>"
+
+  pure ()
+
 unsafe def main (_args : List String) : IO Unit := do
   IO.FS.createDirAll "_site"
   IO.FS.createDirAll "_site/problems"
@@ -366,15 +382,15 @@ unsafe def main (_args : List String) : IO Unit := do
         for ii in List.range count do
           let idx := ii + 1
           let name := s!"Imo{year}P{idx}"
-          let ⟨url, cls⟩ ← match infomap.find? name with
+          let path := s!"problems/Compfiles.{name}.html"
+          let cls ← match infomap.find? name with
           | .some info =>
-            let url := s!"problems/Compfiles.{name}.html"
-            let cls := if info.proved then "proved" else "formalized"
-            pure (url, cls)
+            pure (if info.proved then "proved" else "formalized")
           | .none =>
-            pure (aopsImoUrl year idx, "todo")
+            generateProblemStubFile path name
+            pure "todo"
 
-          h.putStr s!"<td class=\"{cls}\"><a href=\"{url}\">P{idx}</a></td>"
+          h.putStr s!"<td class=\"{cls}\"><a href=\"{path}\">P{idx}</a></td>"
           pure ()
         h.putStrLn "</tr>"
       h.putStr "</table>"
@@ -399,15 +415,16 @@ unsafe def main (_args : List String) : IO Unit := do
         for ii in List.range count do
           let idx := ii + 1
           let name := s!"Usa{year}P{idx}"
-          let ⟨url, cls⟩ ← match infomap.find? name with
-          | .some info =>
-            let url := s!"problems/Compfiles.{name}.html"
-            let cls := if info.proved then "proved" else "formalized"
-            pure (url, cls)
-          | .none =>
-            pure (aopsUsamoUrl year idx, "todo")
+          let path := s!"problems/Compfiles.{name}.html"
 
-          h.putStr s!"<td class=\"{cls}\"><a href=\"{url}\">P{idx}</a></td>"
+          let cls ← match infomap.find? name with
+          | .some info =>
+             pure (if info.proved then "proved" else "formalized")
+          | .none =>
+             generateProblemStubFile path name
+             pure "todo"
+
+          h.putStr s!"<td class=\"{cls}\"><a href=\"{path}\">P{idx}</a></td>"
           pure ()
         h.putStrLn "</tr>"
       h.putStr "</table>"
