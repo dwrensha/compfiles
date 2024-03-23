@@ -97,7 +97,7 @@ def chenUsamoUrl (year : Nat) (_idx : Nat) : String :=
 def allUsamoUrls (year : Nat) (idx : Nat) : List WriteupLink :=
   Id.run
   do let mut result := [⟨aopsUsamoUrl year idx, "Art of Problem Solving"⟩]
-     if year ≤ 2003
+     if year ≤ 2003 ∧ year ≠ 1989 /- 1989 is weirdly missing -/
      then result := result ++ [⟨scholesUsamoUrl year idx, "John Scholes"⟩]
      if year ≥ 1997 ∧ year ≤ 2023
      then result := result ++ [⟨chenUsamoUrl year idx, "Evan Chen"⟩]
