@@ -15,7 +15,7 @@ problem_file { tags := [.Algebra] }
 
 The equation
 
-  (x - 1)(x - 2) ... (x - 2016)  = (x - 1)(x - 2) ... (x - 2016)
+  (x - 1)(x - 2) ... (x - 2016) = (x - 1)(x - 2) ... (x - 2016)
 
 is written on the board. What is the least possible value of k
 for which it is possible to erase exactly k of these 4032 factors
