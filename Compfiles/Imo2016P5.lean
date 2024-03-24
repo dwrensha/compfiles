@@ -43,8 +43,8 @@ problem imo2015_p5 :
                   R ⊂ Finset.Icc 1 2016 ∧
                   L.card + R.card = k ∧
                   ¬∃ x : ℝ,
-                   ∏ i in Finset.Icc 1 2016, (if i ∈ L then 1 else (x - (i : ℝ))) =
-                   ∏ i in Finset.Icc 1 2016, (if i ∈ R then 1 else (x - (i : ℝ))) }
+                   ∏ i in Finset.Icc 1 2016 \ L, (x - (i : ℝ)) =
+                   ∏ i in Finset.Icc 1 2016 \ R, (x - (i : ℝ)) }
             solution_value := by
   constructor
   · rw [Set.mem_setOf_eq]
@@ -92,5 +92,9 @@ problem imo2015_p5 :
     obtain ⟨i, hic, hiL, hiR⟩ := h1
     push_neg at hLR
     specialize hLR i
-    rw [←Finset.prod_erase_mul _ _ hic, ←Finset.prod_erase_mul _ _ hic] at hLR
-    simp (config := {decide := true}) only [sub_self, ite_false, hiL, hiR, mul_zero, ne_eq] at hLR
+    have hic1 : i ∈ Finset.Icc 1 2016 \ L := by
+      rw [Finset.mem_sdiff]; exact ⟨hic, hiL⟩
+    have hic2 : i ∈ Finset.Icc 1 2016 \ R := by
+      rw [Finset.mem_sdiff]; exact ⟨hic, hiR⟩
+    rw [←Finset.prod_erase_mul _ _ hic1, ←Finset.prod_erase_mul _ _ hic2] at hLR
+    simp (config := {decide := true}) at hLR
