@@ -64,49 +64,18 @@ lemma usa1982_mod : ∀ (n a b c d : ℕ),
     simp only [Nat.zero_mod, add_zero]
     rw [mul_comm, pow_mul, Nat.pow_mod, h2, ←Nat.pow_mod, one_pow]
 
-
--- lemma usa1982_p4_lemma_2_1 : ∀ n : ℕ,  n ≡ 1 [MOD 2] → ¬ Prime (2935363331541925531 * (2 ^ n) + 1) := by
---   intro n hn
---   apply not_prime_of_dvd
---   · trans 2935363331541925531
---     apply (usa1982_p4_lemma_ge n)
---     norm_num
---   · use 3
---     constructor; norm_num
---     constructor; omega
---     apply Nat.modEq_zero_iff_dvd.mp
---     trans 1 * 2 + 1 <;> try rfl
---     gcongr
---     · rfl
---     · apply usa1982_mod n 1 2 _ _ hn
---       rfl
-
--- lemma usa1982_p4_lemma_2_2 : ∀ n : ℕ,  n ≡ 2 [MOD 4] → ¬ Prime (2935363331541925531 * (2 ^ n) + 1) := by
---   intro n hn
---   apply not_prime_of_dvd
---   · trans 2935363331541925531
---     apply (usa1982_p4_lemma_ge n)
---     norm_num
---   · use 5
---     constructor; norm_num
---     constructor; omega
---     apply Nat.modEq_zero_iff_dvd.mp
---     trans 1 * 4 + 1 <;> try rfl
---     gcongr
---     · rfl
---     · apply usa1982_mod n 2 4 _ _ hn
---       rfl
-
 def usa1982_p4_lemma (e a b)
     (he :
       (⟨e, ⟨a, b⟩⟩ : ℕ × ℕ × ℕ) = ⟨3, ⟨1, 2⟩⟩ ∨
       (⟨e, ⟨a, b⟩⟩ : ℕ × ℕ × ℕ) = ⟨5, ⟨2, 4⟩⟩ ∨
       (⟨e, ⟨a, b⟩⟩ : ℕ × ℕ × ℕ) = ⟨17, ⟨4, 8⟩⟩ ∨
       (⟨e, ⟨a, b⟩⟩ : ℕ × ℕ × ℕ) = ⟨257, ⟨8, 16⟩⟩ ∨
-      (⟨e, ⟨a, b⟩⟩ : ℕ × ℕ × ℕ) = ⟨65537, 16, 32⟩)
+      (⟨e, ⟨a, b⟩⟩ : ℕ × ℕ × ℕ) = ⟨65537, 16, 32⟩ ∨
+      (⟨e, ⟨a, b⟩⟩ : ℕ × ℕ × ℕ) = ⟨6700417, 32, 64⟩ ∨
+      (⟨e, ⟨a, b⟩⟩ : ℕ × ℕ × ℕ) = ⟨641, 0, 64⟩)
   :
   ∀ n : ℕ, n ≡ a [MOD b] → ¬ Prime (2935363331541925531 * (2 ^ n) + 1) := by
-  obtain he | he | he | he | he := he
+  obtain he | he | he | he | he | he | he := he
   all_goals {
     injections he _ ha hb
     intro n hn
@@ -118,29 +87,109 @@ def usa1982_p4_lemma (e a b)
       constructor; omega
       constructor; omega
       apply Nat.modEq_zero_iff_dvd.mp
-      trans 1 * (e - 1) + 1 <;> rw [he]
-      gcongr <;> try rfl
+      -- trans (a ? 1 : -1) * (a ? -1 : 1) + 1
+      trans  (a / a * 1 + (1 - a / a) * (e - 1)) * (a / a * (e - 1) + (1 - a / a) * 1) + 1 <;> rw [he] <;> rw [ha]
+      swap; rfl
+      gcongr
+      focus rfl
       trans 2 ^ a; swap; focus rw [ha]; rfl
       rw [←he]
       apply usa1982_mod n a b e 2 hn
-      · rw [hb, he]; rfl
-      · rfl
+      rw [hb, he]; rfl
   }
-  
+
+
+-- Goals (1)
+-- n : ℕ
+-- m : ℕ := n % 8
+-- hm : 2 = n % 8
+-- this : 2 < 8
+-- h : m = 2
+-- ⊢ n ≡ 2 [MOD 4]
+
+def usa1982_mod_lemma {n r r' q : ℕ} (hm : n % 64 = r') (p : ℕ) (hpq : p * q = 64) (hrr : r' ≡ r [MOD q]) : n ≡ r [MOD q] := by
+  trans r'
+  unfold Nat.ModEq
+  rw [←hm, ←hpq, Nat.mod_mul_left_mod]
+  exact hrr
+
 problem usa1982_p4 :
     ∃ k : ℕ, 0 < k ∧ ∀ n : ℕ, ¬ Prime (k * (2 ^ n) + 1) := by
   -- solution from
   -- https://artofproblemsolving.com/wiki/index.php/1982_USAMO_Problems/Problem_4
   refine ⟨2935363331541925531, by norm_num, ?_⟩
   intro n
-  set m := n % 4 with hm
-  have : m < 4 := by rw [hm]; apply Nat.mod_lt; omega
-  match h : m with
-  | 0 => sorry
-  | 1 => apply usa1982_p4_lemma 3 1 2 (by trivial) n;
-         unfold Nat.ModEq;
-         rw [←Nat.mod_mul_left_mod _ 2]; rw [←hm]
-  | 2 => apply usa1982_p4_lemma 5 2 4 (by trivial) n;
-         exact hm.symm
-  | 3 => sorry
-  | h + 4 => contradiction
+  set m := n % 64 with hm
+  have : m < 64 := by rw [hm]; apply Nat.mod_lt; omega
+  match m with
+  | 0 => exact usa1982_p4_lemma 641 0 64 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 64) rfl rfl)
+  ------------------------------------------------------------------------------------------------
+  | 1 => exact usa1982_p4_lemma 3 1 2 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 2) rfl rfl)
+  | 3 => exact usa1982_p4_lemma 3 1 2 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 2) rfl rfl)
+  | 5 => exact usa1982_p4_lemma 3 1 2 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 2) rfl rfl)
+  | 7 => exact usa1982_p4_lemma 3 1 2 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 2) rfl rfl)
+  | 9 => exact usa1982_p4_lemma 3 1 2 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 2) rfl rfl)
+  | 11 => exact usa1982_p4_lemma 3 1 2 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 2) rfl rfl)
+  | 13 => exact usa1982_p4_lemma 3 1 2 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 2) rfl rfl)
+  | 15 => exact usa1982_p4_lemma 3 1 2 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 2) rfl rfl)
+  | 17 => exact usa1982_p4_lemma 3 1 2 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 2) rfl rfl)
+  | 19 => exact usa1982_p4_lemma 3 1 2 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 2) rfl rfl)
+  | 21 => exact usa1982_p4_lemma 3 1 2 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 2) rfl rfl)
+  | 23 => exact usa1982_p4_lemma 3 1 2 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 2) rfl rfl)
+  | 25 => exact usa1982_p4_lemma 3 1 2 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 2) rfl rfl)
+  | 27 => exact usa1982_p4_lemma 3 1 2 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 2) rfl rfl)
+  | 29 => exact usa1982_p4_lemma 3 1 2 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 2) rfl rfl)
+  | 31 => exact usa1982_p4_lemma 3 1 2 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 2) rfl rfl)
+  | 33 => exact usa1982_p4_lemma 3 1 2 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 2) rfl rfl)
+  | 35 => exact usa1982_p4_lemma 3 1 2 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 2) rfl rfl)
+  | 37 => exact usa1982_p4_lemma 3 1 2 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 2) rfl rfl)
+  | 39 => exact usa1982_p4_lemma 3 1 2 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 2) rfl rfl)
+  | 41 => exact usa1982_p4_lemma 3 1 2 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 2) rfl rfl)
+  | 43 => exact usa1982_p4_lemma 3 1 2 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 2) rfl rfl)
+  | 45 => exact usa1982_p4_lemma 3 1 2 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 2) rfl rfl)
+  | 47 => exact usa1982_p4_lemma 3 1 2 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 2) rfl rfl)
+  | 49 => exact usa1982_p4_lemma 3 1 2 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 2) rfl rfl)
+  | 51 => exact usa1982_p4_lemma 3 1 2 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 2) rfl rfl)
+  | 53 => exact usa1982_p4_lemma 3 1 2 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 2) rfl rfl)
+  | 55 => exact usa1982_p4_lemma 3 1 2 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 2) rfl rfl)
+  | 57 => exact usa1982_p4_lemma 3 1 2 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 2) rfl rfl)
+  | 59 => exact usa1982_p4_lemma 3 1 2 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 2) rfl rfl)
+  | 61 => exact usa1982_p4_lemma 3 1 2 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 2) rfl rfl)
+  | 63 => exact usa1982_p4_lemma 3 1 2 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 2) rfl rfl)
+  ------------------------------------------------------------------------------------------------
+  |  2 => exact usa1982_p4_lemma 5 2 4 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 4) rfl rfl)
+  |  6 => exact usa1982_p4_lemma 5 2 4 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 4) rfl rfl)
+  | 10 => exact usa1982_p4_lemma 5 2 4 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 4) rfl rfl)
+  | 14 => exact usa1982_p4_lemma 5 2 4 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 4) rfl rfl)
+  | 18 => exact usa1982_p4_lemma 5 2 4 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 4) rfl rfl)
+  | 22 => exact usa1982_p4_lemma 5 2 4 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 4) rfl rfl)
+  | 26 => exact usa1982_p4_lemma 5 2 4 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 4) rfl rfl)
+  | 30 => exact usa1982_p4_lemma 5 2 4 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 4) rfl rfl)
+  | 34 => exact usa1982_p4_lemma 5 2 4 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 4) rfl rfl)
+  | 38 => exact usa1982_p4_lemma 5 2 4 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 4) rfl rfl)
+  | 42 => exact usa1982_p4_lemma 5 2 4 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 4) rfl rfl)
+  | 46 => exact usa1982_p4_lemma 5 2 4 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 4) rfl rfl)
+  | 50 => exact usa1982_p4_lemma 5 2 4 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 4) rfl rfl)
+  | 54 => exact usa1982_p4_lemma 5 2 4 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 4) rfl rfl)
+  | 58 => exact usa1982_p4_lemma 5 2 4 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 4) rfl rfl)
+  | 62 => exact usa1982_p4_lemma 5 2 4 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 4) rfl rfl)
+  ------------------------------------------------------------------------------------------------
+  | 4  => exact usa1982_p4_lemma 17 4 8 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 8) rfl rfl)
+  | 12 => exact usa1982_p4_lemma 17 4 8 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 8) rfl rfl)
+  | 20 => exact usa1982_p4_lemma 17 4 8 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 8) rfl rfl)
+  | 28 => exact usa1982_p4_lemma 17 4 8 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 8) rfl rfl)
+  | 36 => exact usa1982_p4_lemma 17 4 8 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 8) rfl rfl)
+  | 44 => exact usa1982_p4_lemma 17 4 8 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 8) rfl rfl)
+  | 52 => exact usa1982_p4_lemma 17 4 8 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 8) rfl rfl)
+  | 60 => exact usa1982_p4_lemma 17 4 8 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 8) rfl rfl)
+  ------------------------------------------------------------------------------------------------
+  | 8  => exact usa1982_p4_lemma 257 8 16 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 16) rfl rfl)
+  | 24 => exact usa1982_p4_lemma 257 8 16 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 16) rfl rfl)
+  | 40 => exact usa1982_p4_lemma 257 8 16 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 16) rfl rfl)
+  | 56 => exact usa1982_p4_lemma 257 8 16 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 16) rfl rfl)
+  ------------------------------------------------------------------------------------------------
+  | 16 => exact usa1982_p4_lemma 65537 16 32 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 32) rfl rfl)
+  | 48 => exact usa1982_p4_lemma 65537 16 32 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 32) rfl rfl)
+  ------------------------------------------------------------------------------------------------
+  | 32 => exact usa1982_p4_lemma 6700417 32 64 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 64) rfl rfl)
+  | h + 64 => linarith
