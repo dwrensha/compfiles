@@ -97,7 +97,7 @@ problem imo2008_p4 (f : PosReal → PosReal) :
       use b
       intro hbb
       apply_fun (· / b) at hbb
-      rw [mul_div_cancel'''] at hbb
+      rw [mul_div_cancel_left] at hbb
       contradiction
     have h4 := h1 b; rw [or_iff_left h3] at h4
     replace h := h a b; rw [h4] at h

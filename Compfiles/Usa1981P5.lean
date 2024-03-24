@@ -81,7 +81,7 @@ problem usa1981_p5 (x : ℝ) (n : ℕ) :
         obtain rfl : m = 0 := Nat.cast_eq_zero.mp hm5
         exact Nat.not_succ_le_zero 0 hm3
       rw [Finset.sum_const, Nat.card_Icc, add_tsub_cancel_right, nsmul_eq_mul]
-      exact (mul_div_cancel' _ h9).symm
+      exact (mul_div_cancel₀ _ h9).symm
     rw [h8]
     exact h7
 

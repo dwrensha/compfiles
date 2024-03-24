@@ -176,7 +176,7 @@ problem imo1979_p1 (p q : ℤ) (hp : 0 < p) (hq : 0 < q)
         Finset.mem_range, Finset.mem_Ico]
     omega
   rw [h3] at h; clear h3
-  rw [Finset.sum_disjUnion, add_sub_cancel'] at h; clear h2
+  rw [Finset.sum_disjUnion, add_sub_cancel_left] at h; clear h2
   rw [lemma4 659 330] at h
   have h4 :
     ∀ i ∈ Finset.range 330,

@@ -52,7 +52,7 @@ lemma lemma1 (s : ℕ → ℤ) (hs : ∀ i, s i < s (i + 1)) (z : ℤ) (hs0 : s 
     have h6 : 0 ≤ z - s 0 := by omega
     have h7 : ((Int.toNat (z - s 0)) :ℤ) = z - s 0 := Int.toNat_of_nonneg h6
     rw [h7] at h8
-    rw [add_sub_cancel'_right] at h8
+    rw [add_sub_cancel] at h8
     have h12 : s (Int.toNat (z - s 0)) < s (Int.toNat (z - s 0) + 1) := hs _
     omega
   use Nat.find h3

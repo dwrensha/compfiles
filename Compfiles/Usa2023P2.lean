@@ -116,7 +116,7 @@ problem usa2023_p2 (f : ℝ+ → ℝ+) :
       intro x
       have h8 := P x (c / x + 1)
       have h9 : x * (c / x + 1) + f x = x + f x + c := by
-        rw [mul_add, mul_div_cancel'_right, mul_one]
+        rw [mul_add, mul_div_cancel, mul_one]
         ac_rfl
       rw [h9] at h8; clear h9
       rw [h6 (x + f x), add_left_inj] at h8
@@ -127,9 +127,9 @@ problem usa2023_p2 (f : ℝ+ → ℝ+) :
       have h9 := h7 x
       rw [h5 x] at h9
       apply_fun (· / x) at h9
-      rw [mul_div_cancel'''] at h9
+      rw [mul_div_cancel_left] at h9
       rw [← h9]; clear h9
-      rw [lemma_1, mul_div_cancel''']
+      rw [lemma_1, mul_div_cancel_left]
 
     have h9 : ∀ x, f (x + 1) = c + ⟨2,two_pos⟩ * x / c := by
       intro x
@@ -183,6 +183,6 @@ problem usa2023_p2 (f : ℝ+ → ℝ+) :
     obtain ⟨cc, rfl⟩ : ∃ cc, cc = f 1 := exists_eq
     rw [mul_sub, mul_add, mul_one, sub_div, add_div] at h15
     have h18 : (f 1).val ≠ 0 := ne_of_gt (f 1).prop
-    rw [mul_div_cancel _ h18] at h15
+    rw [mul_div_cancel_right₀ 2 h18] at h15
     symm
     linear_combination h15

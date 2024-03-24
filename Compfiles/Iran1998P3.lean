@@ -30,7 +30,7 @@ open BigOperators
 snip begin
 
 lemma cube_root_cube (x : ℝ) (h: 0 ≤ x): (x^(3:ℝ)) ^ ((1:ℝ)/3) = x := by
-  rw [←Real.rpow_mul h, mul_div_cancel' (1 : ℝ) three_ne_zero]
+  rw [←Real.rpow_mul h, mul_div_cancel₀ (1 : ℝ) three_ne_zero]
   exact Real.rpow_one x
 
 snip end

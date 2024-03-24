@@ -47,7 +47,7 @@ problem imo1968_p5a (f : ℝ → ℝ) (a : ℝ) (hf : P a f) :
        -((f (x + a) - 1/2)^2  - (1/2)^2) := by ring
     rw [h6]
     obtain ⟨hf2x1, hf2x2⟩ := hf2 x
-    rw [hf2x2, add_sub_cancel']
+    rw [hf2x2, add_sub_cancel_left]
     have h7 : 0 ≤ f x - f x ^ 2 := sub_nonneg.mpr hf2x1
     rw [Real.sq_sqrt h7]
     ring

@@ -151,7 +151,7 @@ theorem case1_injective (h : (2 : D) ≠ 0)
   replace h2 : ∀ y, f y = f (-y) → y = 0 := λ y h4 ↦ by
     rwa [← h3, self_eq_add_left, ← h2, good_map_eq_zero_iff h0 h1,
       sub_eq_iff_eq_add, one_add_one_eq_two, mul_right_eq_self₀,
-      or_iff_left h, ← add_sub_cancel y 1, h2, add_left_eq_self,
+      or_iff_left h, ← add_sub_cancel_right y 1, h2, add_left_eq_self,
       good_map_add_one_eq_zero_iff h0 h1] at h4
   -- Finishing
   intros a b h4
@@ -192,8 +192,8 @@ theorem case2_injective [Field F] (h : (2 : F) = 0)
   rw [mul_inv_cancel ha, mul_inv_cancel hb, mul_one, mul_one, mul_one,
     add_comm b b⁻¹, add_add_add_comm, add_comm a⁻¹ b, ← add_assoc, ← h7] at h6
   replace h6 := congr_arg f h6
-  rw [← h0, h3 a b hb h4, h3 b a ha h4.symm, h7, add_sub_cancel,
-    h7, add_sub_cancel, ← h0 (a + b⁻¹ + 1), add_right_inj] at h6
+  rw [← h0, h3 a b hb h4, h3 b a ha h4.symm, h7, add_sub_cancel_right,
+    h7, add_sub_cancel_right, ← h0 (a + b⁻¹ + 1), add_right_inj] at h6
   replace h7 : (a + b + 1) * (b⁻¹ + a⁻¹ + 1) =
     a * b⁻¹ + a + b⁻¹ + (b * a⁻¹ + b + a⁻¹) + (a * a⁻¹ + b * b⁻¹ + 1) := by ring
   rw [mul_inv_cancel ha, mul_inv_cancel hb, one_add_one_eq_two, h, zero_add] at h7

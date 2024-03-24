@@ -109,7 +109,7 @@ problem usa2000_p1 :
       rw [h4]
       have h2ne0 : (2: ℝ) ≠ 0 := by norm_num
       have h7 : (1:ℝ) / 2 ^ (n:ℝ) = 2 / 2 ^ (n.succ:ℝ) := by
-        rw [h6, div_mul_left h2ne0]
+        rw [h6, div_mul_cancel_right₀ h2ne0, one_div]
 
       have h8' : (n.succ : ℝ) = (n:ℝ) + 1 := by norm_cast
       have h8 : A - 2 * ↑n - 2 = A - 2 * ↑n.succ := by
@@ -134,7 +134,8 @@ problem usa2000_p1 :
       rw [h4]
       have h2ne0 : (2: ℝ) ≠ 0 := by norm_num
       have h7 : (1:ℝ) / 2 ^ (n:ℝ) = 2 / 2 ^ (n.succ:ℝ) := by
-        rw[h6, div_mul_left h2ne0]
+        rw [h6, div_mul_cancel_right₀, one_div]
+        exact h2ne0
 
       have h8' : (n.succ : ℝ) = (n:ℝ) + 1 := by norm_cast
       have h8 : B - 2 * ↑n - 2 = B - 2 * ↑n.succ := by

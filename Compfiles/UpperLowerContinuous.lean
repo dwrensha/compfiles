@@ -392,7 +392,7 @@ theorem monotone_of_upper_lower_continuous
       constructor
       · have h10 : x ≤ ii0' := le_max_right _ _
         have h13 : (x * 2) / 2 ≤ (ii0' + y) / 2 := by linarith
-        rwa [mul_div_cancel x two_ne_zero] at h13
+        rwa [mul_div_cancel_right₀ x two_ne_zero] at h13
       · exact add_div_two_lt_right.mpr h14
 
     have h7 : m ∈ Set.Ioc ii0' y := by

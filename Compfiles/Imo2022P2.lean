@@ -168,7 +168,7 @@ problem imo2022_p2 (f : ℝ+ → ℝ+) :
       rw [one_div_one_div] at H
       exact H rfl
     have h17 := hf1' x (1 / f x) H'
-    rw [div_mul_cancel'] at h17
+    rw [div_mul_cancel] at h17
     have h19 := hf' (1 / f x)
     rw [one_div_one_div] at h19
     have h20 := calc ⟨2, two_pos⟩ < x * f (1 / f x) + 1 := h17
