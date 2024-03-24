@@ -34,59 +34,6 @@ f(x) = eᵏˣ for some k : ℝ.
 lemma abs_pos' {x y : ℝ} (hy : x ≠ y) : 0 < |x - y| :=
   abs_pos.mpr (sub_ne_zero.mpr hy)
 
-lemma rationals_dense_in_reals : Dense {r : ℝ | ∃ q : ℚ, (q:ℝ) = r} := by
-  intro x
-  exact Rat.denseRange_cast _
-
-lemma find_rational_in_ball_right (y δ : ℝ) (hδ : 0 < δ) :
-     ∃ (z : ℚ), (y < z) ∧ (z : ℝ) ∈ Metric.ball y δ := by
-  have hd := dense_iff_inter_open.mp rationals_dense_in_reals
-  let i := Metric.ball (y + δ / 2) (δ/2)
-  have ine : i.Nonempty := by use (y + δ / 2); norm_num [i, hδ]
-  obtain ⟨y', hy1, yy, hyy⟩ := hd i Metric.isOpen_ball ine
-  use yy
-  rw [hyy]; clear hyy
-  have hy3 := Metric.mem_ball.mp hy1
-  rw[Real.dist_eq] at hy3
-
-  have hyy' : y < y' := by
-    obtain ⟨ha, ha'⟩ | ⟨hb, _⟩ := abs_cases (y' - (y + δ / 2))
-    · linarith
-    · linarith
-  constructor
-  · exact hyy'
-  · apply Metric.mem_ball.mpr
-    rw [Real.dist_eq]
-    have hy4 : 0 ≤ y' - y := le_of_lt (sub_pos.mpr hyy')
-    rw [abs_eq_self.mpr hy4]
-    obtain ⟨ha, _⟩ | ⟨hb, hb'⟩ := abs_cases (y' - (y + δ / 2))
-    · linarith
-    · linarith
-
-lemma find_rational_in_ball_left (y δ : ℝ) (hδ : 0 < δ) :
-     ∃ (z : ℚ), ((z:ℝ) < y) ∧ (z : ℝ) ∈ Metric.ball y δ := by
-  have hd := dense_iff_inter_open.mp rationals_dense_in_reals
-  let i := Metric.ball (y - δ / 2) (δ/2)
-  have ine : i.Nonempty := by use (y - δ / 2); norm_num [i, hδ]
-  obtain ⟨y', hy1, yy, hyy⟩ := hd i Metric.isOpen_ball ine
-  use yy
-  rw [hyy]; clear hyy
-  have hy3 := Metric.mem_ball.mp hy1
-  rw [Real.dist_eq] at hy3
-  have hyy' : y' < y := by
-    obtain ⟨ha, _⟩ | ⟨hb, hb'⟩ := abs_cases (y' - (y - δ / 2))
-    · linarith
-    · linarith
-  constructor
-  · exact hyy'
-  · apply Metric.mem_ball.mpr
-    rw[Real.dist_eq]
-    have hy4 : y' - y ≤ 0 := le_of_lt (sub_neg.mpr hyy')
-    rw [abs_eq_neg_self.mpr hy4]
-    obtain ⟨ha, ha'⟩ | ⟨hb, _⟩ := abs_cases (y' - (y - δ / 2))
-    · linarith
-    · linarith
-
 lemma extend_function_mono
    (u : ℝ → ℝ)
    (f : ℝ → ℝ)
@@ -113,8 +60,11 @@ lemma extend_function_mono
   obtain h1 | h2 | h3 := lt_trichotomy (u y) (f y)
   · -- pick a rational point less than y that's in the ball s,
     have : ∃ z : ℚ, (z:ℝ) < y ∧ dist (z:ℝ) y < δ := by
-      obtain ⟨z, hz1, hz2⟩ := find_rational_in_ball_left y δ hδ0
-      exact ⟨z, hz1, Metric.mem_ball.mp hz2⟩
+      have hyδ : y - δ < y := sub_lt_self y hδ0
+      obtain ⟨z, hz1, hz2⟩ := exists_rat_btwn hyδ
+      refine ⟨z, hz2, ?_⟩
+      . rw [Real.dist_eq, abs_sub_comm, abs_of_pos (sub_pos.mpr hz2)]
+        exact sub_lt_comm.mp hz1
 
     obtain ⟨z, h_z_lt_y, hyz⟩ := this
     -- then dist (f z) (f y) < ε.
@@ -138,8 +88,11 @@ lemma extend_function_mono
 
   · -- pick a rational point z greater than y that's in the ball s,
     have : ∃ z : ℚ, y < z ∧ dist (z:ℝ) y < δ := by
-      obtain ⟨z, hz1, hz2⟩ := find_rational_in_ball_right y δ hδ0
-      exact ⟨z, hz1, Metric.mem_ball.mp hz2⟩
+      have hyδ : y < y + δ := lt_add_of_pos_right y hδ0
+      obtain ⟨z, hz1, hz2⟩ := exists_rat_btwn hyδ
+      refine ⟨z, hz1, ?_⟩
+      . rw [Real.dist_eq, abs_of_pos (sub_pos.mpr hz1)]
+        exact sub_left_lt_of_lt_add hz2
     obtain ⟨z, h_y_lt_z, hyz⟩ := this
     -- then dist (f z) (f y) < ε.
     have hzb : (↑z) ∈ Metric.ball y δ := Metric.mem_ball.mpr hyz
@@ -185,8 +138,11 @@ lemma extend_function_anti
   obtain h1 | h2 | h3 := lt_trichotomy (u y) (f y)
   · -- pick a rational point z greater than y that's in the ball s,
     have : ∃ z : ℚ, y < z ∧ dist (z:ℝ) y < δ := by
-      obtain ⟨z, hz1, hz2⟩ := find_rational_in_ball_right y δ hδ0
-      exact ⟨z, hz1, Metric.mem_ball.mp hz2⟩
+      have hyδ : y < y + δ := lt_add_of_pos_right y hδ0
+      obtain ⟨z, hz1, hz2⟩ := exists_rat_btwn hyδ
+      refine ⟨z, hz1, ?_⟩
+      . rw [Real.dist_eq, abs_of_pos (sub_pos.mpr hz1)]
+        exact sub_left_lt_of_lt_add hz2
 
     obtain ⟨z, h_y_lt_z, hyz⟩ := this
     -- then dist (f z) (f y) < ε.
@@ -208,8 +164,11 @@ lemma extend_function_anti
   · exact hy h2
   · -- pick a rational point less than y that's in the ball s,
     have : ∃ z : ℚ, (z:ℝ) < y ∧ dist (z:ℝ) y < δ := by
-      obtain ⟨z, hz1, hz2⟩ := find_rational_in_ball_left y δ hδ0
-      exact ⟨z, hz1, Metric.mem_ball.mp hz2⟩
+      have hyδ : y - δ < y := sub_lt_self y hδ0
+      obtain ⟨z, hz1, hz2⟩ := exists_rat_btwn hyδ
+      refine ⟨z, hz2, ?_⟩
+      . rw [Real.dist_eq, abs_sub_comm, abs_of_pos (sub_pos.mpr hz2)]
+        exact sub_lt_comm.mp hz1
 
     obtain ⟨z, h_z_lt_y, hyz⟩ := this
     -- then dist (f z) (f y) < ε.
