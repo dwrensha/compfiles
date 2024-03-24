@@ -31,9 +31,6 @@ snip begin
 f(x) = eᵏˣ for some k : ℝ.
 -/
 
-lemma abs_pos' {x y : ℝ} (hy : x ≠ y) : 0 < |x - y| :=
-  abs_pos.mpr (sub_ne_zero.mpr hy)
-
 lemma extend_function_mono
    (u : ℝ → ℝ)
    (f : ℝ → ℝ)
@@ -47,7 +44,7 @@ lemma extend_function_mono
   -- then there is y such that u y ≠ f y
   obtain ⟨y, hy⟩ := hn
   let ε : ℝ := |u y - f y|
-  have hε : 0 < ε := abs_pos' hy
+  have hε : 0 < ε := abs_sub_pos.mpr hy
 
   -- then find a δ such that for all z, |z-y| < δ implies that
   -- |f z - f y| < ε.
@@ -125,7 +122,7 @@ lemma extend_function_anti
   -- then there is y such that u y ≠ f y
   obtain ⟨y, hy⟩ := hn
   let ε : ℝ := |u y - f y|
-  have hε : 0 < ε := abs_pos' hy
+  have hε : 0 < ε := abs_sub_pos.mpr hy
 
   -- then find a δ such that for all z, |z-y| < δ implies that
   -- |f z - f y| < ε.
