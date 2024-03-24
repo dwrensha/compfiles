@@ -1,5 +1,5 @@
 /-
-Copyright (c) 2023 The Compfiles Contributors. All rights reserved.
+Copyright (c) 2024 The Compfiles Contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors:
 -/
@@ -25,6 +25,6 @@ namespace Imo1996P3
 
 determine SolutionSet : Set (ℕ → ℕ) := sorry
 
-problem imo1996_p3 (f : ℕ → ℕ):
+problem imo1996_p3 (f : ℕ → ℕ) :
     f ∈ SolutionSet ↔ ∀ m n, f (m + f n) = f (f m) + f n := by
   sorry
