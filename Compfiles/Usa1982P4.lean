@@ -23,7 +23,7 @@ snip begin
 
 lemma not_prime_of_dvd : ∀ n : ℕ, n ≥ 2 → (∃ m, m ≥ 2 ∧ m ≠ n ∧ m ∣ n) → ¬ Prime n := by
   intro n hn h p
-  have ngt0 : 0 < n := by linarith
+  have ngt0 : 0 < n := by omega
   have p := (Nat.prime_iff).mpr p
   obtain ⟨m, ⟨h1, ⟨h2, h3⟩⟩⟩ := h
   apply (Nat.not_prime_iff_minFac_lt hn).mpr _ p
