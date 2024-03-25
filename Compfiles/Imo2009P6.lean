@@ -96,7 +96,14 @@ theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
       intro i
       obtain hi1 | hi2 := Classical.em (i.val < n-1)
       · let z := ∑ j in Finset.filter (· ≤ i) Finset.univ, a j
-        have h9 : z ≤ x := by sorry
+        have h9 : z ≤ x := by
+          have h49 : ∀ i, 0 ≤ a i := by intro i; exact le_of_lt (apos i)
+          have h50 : Finset.filter (fun x ↦ x ≤ i) Finset.univ ⊆
+                     Finset.filter (fun x ↦ ↑x < n - 1) Finset.univ := by
+            intro x hx
+            simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hx ⊢
+            omega
+          exact Finset.sum_le_sum_of_subset_of_nonneg h50 fun i_1 a a ↦ h49 i_1
         intro h10
         change z ∈ M at h10
         have h11 : z ∈ M' := by
@@ -149,7 +156,6 @@ theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
             simp only [Finset.mem_univ, true_and]
             rw [←hy2]
             obtain ⟨y', hy'⟩ := y
-            unfold_let f
             exact hy'
           · rintro ⟨_, h41⟩
             use ⟨x.val, by omega⟩
