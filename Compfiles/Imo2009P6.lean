@@ -45,15 +45,14 @@ lemma lemma2 (n : ℕ) (a : Fin n → ℤ)
   have h3 : p i ≠ p j := fun hx ↦ h0 (hp1.1 hx)
   exact lt_of_le_of_ne h2 fun a ↦ h3 (ainj a)
 
--- The problem with an additional assumption that a is sorted.
-theorem imo2009_p6' (n : ℕ) (hn : 0 < n)
+theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
     (a : Fin n → ℤ)
     (ainj : a.Injective)
     (apos : ∀ i, 0 < a i)
     (asorted : ∀ i j, i < j → a i < a j)
     (M : Finset ℤ)
     (Mpos : ∀ m ∈ M, 0 < m)
-    (Mcard : M.card = n - 1)
+    (Mcard : M.card ≤ n - 1)
     (hM : ∑ i, a i ∉ M)
     : ∃ p : Fin n → Fin n,
         p.Bijective ∧
@@ -91,9 +90,9 @@ theorem imo2009_p6' (n : ℕ) (hn : 0 < n)
       have h5 : M''.card = M'.card + 1 := Finset.card_cons hyM'
       have h6 : M'.card + 1 ≤ M.card := by omega
       omega
+    intro hM
     obtain h7 | h7 := Nat.eq_zero_or_pos M'.card
-    · intro hM
-      refine ⟨id, Function.bijective_id, ?_⟩
+    · refine ⟨id, Function.bijective_id, ?_⟩
       intro i
       obtain hi1 | hi2 := Classical.em (i.val < n-1)
       · let z := ∑ j : Fin (↑i + 1), a (id { val := ↑j, isLt := by omega })
@@ -113,20 +112,57 @@ theorem imo2009_p6' (n : ℕ) (hn : 0 < n)
              := (Fin.sum_congr' a h9)
         rw [h10]
         exact hM
-    let a' := fun i : Fin M'.card ↦ a ⟨i, by omega⟩
+    let n' := n - 1
+    let a' := fun i : Fin n' ↦ a ⟨i, by omega⟩
     have ainj' : a'.Injective := by
       intro i j hij
       have h11 : a ⟨i, by omega⟩ = a ⟨j, by omega⟩ := by
         simp only [a'] at hij
         exact hij
-      have h12 := @ainj ⟨i, by omega⟩ ⟨j, by omega⟩ h11
-      --apply_fun (·.val) at h12
-      --dsimp at h12
-      --omega
+      have h12 := congrArg Fin.val (@ainj ⟨i, by omega⟩ ⟨j, by omega⟩ h11)
+      dsimp at h12
+      exact Fin.eq_of_val_eq h12
+    have apos' : ∀ (i : Fin n'), 0 < a' i :=
+      fun i ↦ apos ⟨i.val, by omega⟩
+    have asorted' : ∀ (i j : Fin n'), i < j → a' i < a' j := by
+      intro i j hij
+      exact asorted ⟨i, by omega⟩ ⟨j, by omega⟩ hij
+    have Mpos' : (∀ m ∈ M', 0 < m) := by
+      intro m hm
+      rw [Finset.mem_filter] at hm
+      exact Mpos m hm.1
+    have hM' : ∑ i : Fin n', a' i ∉ M' := by
+      have h14 : ∑ i : Fin n', a' i = x := by congr
+      rw [←h14] at h1
+      rw [Finset.mem_filter]
+      push_neg
+      intro h15
+      exact (h1 h15).elim
+    obtain ⟨p, hp1, hp2⟩ :=
+      ih n' (by omega) (by omega) a' ainj' apos' asorted' M' Mpos' (by omega) hM'
+    let p' : Fin n → Fin n := fun i ↦
+      if h : i < n' then ⟨p ⟨i, h⟩, by omega⟩ else i
+    refine ⟨p', ?_, ?_⟩
+    · sorry
+    · intro i
       sorry
-    have := ih M'.card (by omega) h7 a' ainj'
-    sorry
   · sorry
+
+-- The problem with an additional assumption that a is sorted.
+theorem imo2009_p6_aux2 (n : ℕ) (hn : 0 < n)
+    (a : Fin n → ℤ)
+    (ainj : a.Injective)
+    (apos : ∀ i, 0 < a i)
+    (asorted : ∀ i j, i < j → a i < a j)
+    (M : Finset ℤ)
+    (Mpos : ∀ m ∈ M, 0 < m)
+    (Mcard : M.card = n - 1)
+    (hM : ∑ i, a i ∉ M)
+    : ∃ p : Fin n → Fin n,
+        p.Bijective ∧
+        ∀ i : Fin n, ∑ j : Fin (i + 1), a (p ⟨j, by omega⟩) ∉ M := by
+  have Mcard' := Mcard.le
+  exact imo2009_p6_aux1 n hn a ainj apos asorted M Mpos Mcard' hM
 
 snip end
 
@@ -165,5 +201,5 @@ problem imo2009_p6 (n : ℕ) (hn : 0 < n)
     rw [Fintype.sum_congr _ _ h3']
     exact hM
   obtain ⟨p', hp1, hp2⟩ :=
-    imo2009_p6' n hn (a ∘ ps) ainj' apos' hps2 M Mpos Mcard hM'
+    imo2009_p6_aux2 n hn (a ∘ ps) ainj' apos' hps2 M Mpos Mcard hM'
   exact ⟨ps ∘ p', Function.Bijective.comp hps1 hp1, hp2⟩
