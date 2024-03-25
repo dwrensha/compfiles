@@ -93,17 +93,24 @@ theorem imo2009_p6' (n : ℕ) (hn : 0 < n)
     · refine ⟨id, Function.bijective_id, ?_⟩
       intro i
       obtain hi1 | hi2 := Classical.em (i.val < n-1)
-      · sorry
-      · have h8 : i.val = n - 1 := by omega
-        have h9 : i.val + 1 = n := by omega
-        -- ∑ j : Fin (↑i + 1), f j
-        -- ∑ j in Finset.univ (α := Fin (↑i + 1)), f j
-        have h10 : Fin (↑i + 1) = Fin n := by rw [h9]
---        have h11 : Finset.univ (α := Fin (↑i + 1)) =
---                   Finset.univ (α := Fin n) := by sorry
-        --rw [h9]
-        sorry
-    have := ih M'.card (by omega)
+      · let z := ∑ j : Fin (↑i + 1), a (id { val := ↑j, isLt := by omega })
+        have h9 : z ≤ x := by sorry
+        intro h10
+        change z ∈ M at h10
+        have h11 : z ∈ M' := by
+          rw [Finset.mem_filter]
+          exact ⟨h10, h9⟩
+        rw [Finset.card_eq_zero] at h7
+        have h12 := Finset.not_mem_empty z
+        rw [h7] at h11
+        exact h12 h11
+      · have h9 : i.val + 1 = n := by omega
+        have h10 : ∑ j : Fin (↑i + 1), a (id { val := ↑j, isLt := by omega })
+                = ∑ i : Fin n, a i
+             := (Fin.sum_congr' a h9)
+        rw [h10]
+        exact hM
+    have := ih M'.card (by omega) h7
     sorry
   · sorry
 
