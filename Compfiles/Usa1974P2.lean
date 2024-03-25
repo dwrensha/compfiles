@@ -27,12 +27,12 @@ snip begin
 
 /-
 if we have ⊢ a * x * y ≤ y * z * a
-cancel_mul a do the following:
-* move a to the right ⊢ x * y * a ≤ y * z * a
-* gcongr ?_ * ?_      ⊢ x * y ≤ y * z    ∧     ⊢ a ≤ a
-* swap ; rfl          ⊢ x * y ≤ y * z
-note that gcongr can produce new goals x * y > 0 and y * z > 0 and a > 0, but luckily
-in all our cases, gcongr can solve those by itself.
+`cancel_mul a` do the following:
+* move `a` to the right ⊢ x * y * a ≤ y * z * a
+* `gcongr ?_ * ?_`      ⊢ x * y ≤ y * z    ∧     ⊢ a ≤ a
+* `swap ; rfl`          ⊢ x * y ≤ y * z
+note that gcongr would also produce goals `x * y > 0`, `y * z > 0`, and `a > 0`,
+but luckily in all our cases, gcongr can solve those by itself.
 -/
 syntax "cancel_mul" rwRuleSeq : tactic
 macro_rules
