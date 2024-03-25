@@ -56,11 +56,11 @@ theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
     (hM : ∑ i, a i ∉ M)
     : ∃ p : Fin n → Fin n,
         p.Bijective ∧
-        ∀ i : Fin n, ∑ j : Fin (i + 1), a (p ⟨j, by omega⟩) ∉ M := by
+          ∀ i : Fin n, ∑ j in Finset.filter (· ≤ i) Finset.univ, a (p j) ∉ M := by
   revert a M hn
   induction' n using Nat.strongInductionOn with n ih
   intro hn a ainj apos asorted M Mpos Mcard
-  let x := ∑ i : Fin (n - 1), a ⟨i, by omega⟩
+  let x := ∑ i in Finset.filter (·.val < n-1) Finset.univ, a i
   -- four cases: split on whether x ∈ M and whether
   -- there is any y > x such that y ∈ M.
   have h1 := Classical.em (x ∈ M)
@@ -95,7 +95,7 @@ theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
     · refine ⟨id, Function.bijective_id, ?_⟩
       intro i
       obtain hi1 | hi2 := Classical.em (i.val < n-1)
-      · let z := ∑ j : Fin (↑i + 1), a (id { val := ↑j, isLt := by omega })
+      · let z := ∑ j in Finset.filter (· ≤ i) Finset.univ, a j
         have h9 : z ≤ x := by sorry
         intro h10
         change z ∈ M at h10
@@ -107,9 +107,12 @@ theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
         rw [h7] at h11
         exact h12 h11
       · have h9 : i.val + 1 = n := by omega
-        have h10 : ∑ j : Fin (↑i + 1), a (id { val := ↑j, isLt := by omega })
-                = ∑ i : Fin n, a i
-             := (Fin.sum_congr' a h9)
+        have h10 : Finset.filter (fun x ↦ x ≤ i) Finset.univ =
+                    Finset.univ (α := Fin n) := by
+          ext x
+          rw [Finset.mem_filter]
+          suffices x ≤ i from and_iff_left_of_imp fun a ↦ this
+          omega
         rw [h10]
         exact hM
     let n' := n - 1
@@ -132,39 +135,65 @@ theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
       rw [Finset.mem_filter] at hm
       exact Mpos m hm.1
     have hM' : ∑ i : Fin n', a' i ∉ M' := by
-      have h14 : ∑ i : Fin n', a' i = x := by congr
+      have h14 : ∑ i : Fin n', a' i = x := by
+        let f : Fin n' ↪ Fin n :=
+          ⟨fun x ↦ ⟨x, by omega⟩,
+           by intro x y hxy; dsimp at hxy; apply_fun (·.val) at hxy
+              exact Fin.eq_of_val_eq hxy⟩
+        have h40 : (Finset.univ (α := Fin n')).map f =
+             Finset.filter (·.val < n - 1) Finset.univ := by
+          ext x
+          rw [Finset.mem_map, Finset.mem_filter]
+          constructor
+          · rintro ⟨y, hy1, hy2⟩
+            simp only [Finset.mem_univ, true_and]
+            rw [←hy2]
+            obtain ⟨y', hy'⟩ := y
+            unfold_let f
+            exact hy'
+          · rintro ⟨_, h41⟩
+            use ⟨x.val, by omega⟩
+            simp [f]
+        unfold_let x
+        rw [←h40, Finset.sum_map]
+        congr
       rw [←h14] at h1
       rw [Finset.mem_filter]
       push_neg
       intro h15
       exact (h1 h15).elim
-    obtain ⟨p, hp1, hp2⟩ :=
+    obtain ⟨p', hp1, hp2⟩ :=
       ih n' (by omega) (by omega) a' ainj' apos' asorted' M' Mpos' (by omega) hM'
-    let p' : Fin n → Fin n := fun i ↦
-      if h : i < n' then ⟨p ⟨i, h⟩, by omega⟩ else i
-    have pb : p'.Bijective := sorry
-    refine ⟨p', pb, ?_⟩
+    clear ih
+    let p : Fin n → Fin n := fun i ↦
+      if h : i < n' then ⟨p' ⟨i, h⟩, by omega⟩ else i
+    have pb : p.Bijective := sorry
+    refine ⟨p, pb, ?_⟩
     intro i
     obtain h30 | h30 := Classical.em (i.val < n')
-    · have h31 := hp2 ⟨i.val, h30⟩
+    · let i' : Fin n' := ⟨i.val, h30⟩
+      have h31 := hp2 i'
       rw [Finset.mem_filter] at h31
-      dsimp at h31
-      have h33 : ∑ j : Fin (↑i + 1), a' (p ⟨↑j, by omega⟩) =
-                 ∑ j : Fin (↑i + 1), a (p' ⟨↑j, by omega⟩) := by
-           congr
-           ext x
-           --simp only [a', p', x.2, h30]
+      have h33 : ∑ j in Finset.filter (· ≤ i') Finset.univ, a' (p' j) =
+                 ∑ j in Finset.filter (· ≤ i) Finset.univ, a (p j) := by
            sorry
       rw [h33] at h31
-      have h34 : ∑ j : Fin (↑i + 1), a (p' ⟨↑j, by omega⟩) ≤ x := by
+      have h34 : ∑ j in Finset.filter (· ≤ i) Finset.univ, a (p j) ≤ x := by
         sorry
       intro H
       exact (h31 ⟨H, h34⟩).elim
     · have h31 : i.val = n' := by omega
-      have h32 : ∑ j : Fin (↑i + 1), a (p' ⟨↑j, by omega⟩) = ∑ i : Fin n, a i := by
+      have h32 : ∑ j in Finset.filter (fun x ↦ x ≤ i) Finset.univ, a (p j) =
+                 ∑ i : Fin n, a i := by
         rw [←Function.Bijective.sum_comp pb (fun j ↦ a j)]
         have h33 : i.val + 1 = n := by omega
-        exact Fin.sum_congr' (fun x ↦ a (p' x)) h33
+        have h10 : Finset.filter (fun x ↦ x ≤ i) Finset.univ =
+                    Finset.univ (α := Fin n) := by
+          ext x
+          rw [Finset.mem_filter]
+          suffices x ≤ i from and_iff_left_of_imp fun a ↦ this
+          omega
+        rw[h10]
       rw [h32]
       exact hM
   · sorry
@@ -181,7 +210,7 @@ theorem imo2009_p6_aux2 (n : ℕ) (hn : 0 < n)
     (hM : ∑ i, a i ∉ M)
     : ∃ p : Fin n → Fin n,
         p.Bijective ∧
-        ∀ i : Fin n, ∑ j : Fin (i + 1), a (p ⟨j, by omega⟩) ∉ M := by
+          ∀ i : Fin n, ∑ j in Finset.univ.filter (· ≤ i), a (p j) ∉ M := by
   have Mcard' := Mcard.le
   exact imo2009_p6_aux1 n hn a ainj apos asorted M Mpos Mcard' hM
 
@@ -197,7 +226,8 @@ problem imo2009_p6 (n : ℕ) (hn : 0 < n)
     (hM : ∑ i, a i ∉ M)
     : ∃ p : Fin n → Fin n,
         p.Bijective ∧
-        ∀ i : Fin n, ∑ j : Fin (i + 1), a (p ⟨j, by omega⟩) ∉ M := by
+        ∀ i : Fin n,
+          ∑ j in Finset.univ.filter (· ≤ i), a (p j) ∉ M := by
   obtain ⟨ps, hps1, hps2⟩ := lemma2 n a ainj
   have ainj' : (a ∘ ps).Injective :=
     (Function.Injective.of_comp_iff' a hps1).mpr ainj
