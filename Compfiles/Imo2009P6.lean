@@ -148,7 +148,18 @@ theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
     obtain h30 | h30 := Classical.em (i.val < n')
     · have h31 := hp2 ⟨i.val, h30⟩
       rw [Finset.mem_filter] at h31
-      sorry
+      dsimp at h31
+      have h33 : ∑ j : Fin (↑i + 1), a' (p ⟨↑j, by omega⟩) =
+                 ∑ j : Fin (↑i + 1), a (p' ⟨↑j, by omega⟩) := by
+           congr
+           ext x
+           --simp only [a', p', x.2, h30]
+           sorry
+      rw [h33] at h31
+      have h34 : ∑ j : Fin (↑i + 1), a (p' ⟨↑j, by omega⟩) ≤ x := by
+        sorry
+      intro H
+      exact (h31 ⟨H, h34⟩).elim
     · have h31 : i.val = n' := by omega
       have h32 : ∑ j : Fin (↑i + 1), a (p' ⟨↑j, by omega⟩) = ∑ i : Fin n, a i := by
         rw [←Function.Bijective.sum_comp pb (fun j ↦ a j)]
