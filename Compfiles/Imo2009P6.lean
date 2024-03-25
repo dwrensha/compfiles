@@ -58,7 +58,9 @@ theorem imo2009_p6' (n : ℕ) (hn : 0 < n)
     : ∃ p : Fin n → Fin n,
         p.Bijective ∧
         ∀ i : Fin n, ∑ j : Fin (i + 1), a (p ⟨j, by omega⟩) ∉ M := by
+  revert a M hn
   induction' n using Nat.strongInductionOn with n ih
+  intro hn a ainj apos asorted M Mpos Mcard
   let x := ∑ i : Fin (n - 1), a ⟨i, by omega⟩
   -- four cases: split on whether x ∈ M and whether
   -- there is any y > x such that y ∈ M.
@@ -90,7 +92,8 @@ theorem imo2009_p6' (n : ℕ) (hn : 0 < n)
       have h6 : M'.card + 1 ≤ M.card := by omega
       omega
     obtain h7 | h7 := Nat.eq_zero_or_pos M'.card
-    · refine ⟨id, Function.bijective_id, ?_⟩
+    · intro hM
+      refine ⟨id, Function.bijective_id, ?_⟩
       intro i
       obtain hi1 | hi2 := Classical.em (i.val < n-1)
       · let z := ∑ j : Fin (↑i + 1), a (id { val := ↑j, isLt := by omega })
