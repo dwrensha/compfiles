@@ -113,7 +113,18 @@ theorem imo2009_p6' (n : ℕ) (hn : 0 < n)
              := (Fin.sum_congr' a h9)
         rw [h10]
         exact hM
-    have := ih M'.card (by omega) h7
+    let a' := fun i : Fin M'.card ↦ a ⟨i, by omega⟩
+    have ainj' : a'.Injective := by
+      intro i j hij
+      have h11 : a ⟨i, by omega⟩ = a ⟨j, by omega⟩ := by
+        simp only [a'] at hij
+        exact hij
+      have h12 := @ainj ⟨i, by omega⟩ ⟨j, by omega⟩ h11
+      --apply_fun (·.val) at h12
+      --dsimp at h12
+      --omega
+      sorry
+    have := ih M'.card (by omega) h7 a' ainj'
     sorry
   · sorry
 
