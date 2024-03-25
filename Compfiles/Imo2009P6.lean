@@ -182,9 +182,29 @@ theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
     · let i' : Fin n' := ⟨i.val, h30⟩
       have h31 := hp2 i'
       rw [Finset.mem_filter] at h31
+      have h35 : n' ≤ n := Nat.sub_le n 1
       have h33 : ∑ j in Finset.filter (· ≤ i') Finset.univ, a' (p' j) =
                  ∑ j in Finset.filter (· ≤ i) Finset.univ, a (p j) := by
-           sorry
+        have h36 : (Finset.univ.filter (· ≤ i')).map (embedFinLE h35) =
+                     Finset.univ.filter (· ≤ i) := by
+          ext x
+          rw [Finset.mem_map, Finset.mem_filter]
+          constructor
+          · rintro ⟨y, hy1, hy2⟩
+            simp only [Finset.mem_univ, true_and]
+            simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hy1
+            simp only [embedFinLE] at hy2
+            rw [←hy2]
+            dsimp
+            exact hy1
+          · rintro ⟨hx1, hx2⟩
+            use ⟨x, by omega⟩
+            simp only [Finset.mem_filter, embedFinLE]
+            dsimp
+            simp only [eq_self, and_true, Finset.mem_univ, true_and]
+            exact hx2
+        rw [← h36]
+        simp [embedFinLE, a', p]
       rw [h33] at h31
       have h34 : ∑ j in Finset.filter (· ≤ i) Finset.univ, a (p j) ≤ x := by
         sorry
