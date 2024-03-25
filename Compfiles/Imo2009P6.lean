@@ -45,6 +45,11 @@ lemma lemma2 (n : ℕ) (a : Fin n → ℤ)
   have h3 : p i ≠ p j := fun hx ↦ h0 (hp1.1 hx)
   exact lt_of_le_of_ne h2 fun a ↦ h3 (ainj a)
 
+def embedFinLE {m n : ℕ} (hmn : m ≤ n) : Fin m ↪ Fin n :=
+  ⟨fun x ↦ ⟨x, by omega⟩,
+   by intro x y hxy; dsimp at hxy; apply_fun (·.val) at hxy
+      exact Fin.eq_of_val_eq hxy⟩
+
 theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
     (a : Fin n → ℤ)
     (ainj : a.Injective)
@@ -143,10 +148,7 @@ theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
       exact Mpos m hm.1
     have hM' : ∑ i : Fin n', a' i ∉ M' := by
       have h14 : ∑ i : Fin n', a' i = x := by
-        let f : Fin n' ↪ Fin n :=
-          ⟨fun x ↦ ⟨x, by omega⟩,
-           by intro x y hxy; dsimp at hxy; apply_fun (·.val) at hxy
-              exact Fin.eq_of_val_eq hxy⟩
+        let f : Fin n' ↪ Fin n := embedFinLE (Nat.sub_le _ _)
         have h40 : (Finset.univ (α := Fin n')).map f =
              Finset.filter (·.val < n - 1) Finset.univ := by
           ext x
@@ -159,7 +161,7 @@ theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
             exact hy'
           · rintro ⟨_, h41⟩
             use ⟨x.val, by omega⟩
-            simp [f]
+            simp [f, embedFinLE]
         unfold_let x
         rw [←h40, Finset.sum_map]
         congr
