@@ -142,10 +142,20 @@ theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
       ih n' (by omega) (by omega) a' ainj' apos' asorted' M' Mpos' (by omega) hM'
     let p' : Fin n → Fin n := fun i ↦
       if h : i < n' then ⟨p ⟨i, h⟩, by omega⟩ else i
-    refine ⟨p', ?_, ?_⟩
-    · sorry
-    · intro i
+    have pb : p'.Bijective := sorry
+    refine ⟨p', pb, ?_⟩
+    intro i
+    obtain h30 | h30 := Classical.em (i.val < n')
+    · have h31 := hp2 ⟨i.val, h30⟩
+      rw [Finset.mem_filter] at h31
       sorry
+    · have h31 : i.val = n' := by omega
+      have h32 : ∑ j : Fin (↑i + 1), a (p' ⟨↑j, by omega⟩) = ∑ i : Fin n, a i := by
+        rw [←Function.Bijective.sum_comp pb (fun j ↦ a j)]
+        have h33 : i.val + 1 = n := by omega
+        exact Fin.sum_congr' (fun x ↦ a (p' x)) h33
+      rw [h32]
+      exact hM
   · sorry
 
 -- The problem with an additional assumption that a is sorted.
