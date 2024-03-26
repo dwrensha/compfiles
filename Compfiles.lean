@@ -118,6 +118,7 @@ import Compfiles.UpperLowerContinuous
 import Compfiles.Usa1974P2
 import Compfiles.Usa1981P5
 import Compfiles.Usa1982P4
+import Compfiles.Usa1983P5
 import Compfiles.Usa1985P1
 import Compfiles.Usa1987P1
 import Compfiles.Usa1989P5
