@@ -113,11 +113,20 @@ def ψ (n k : ℕ) : { f // NSequence n k f } → { f // MSequence n k f } :=
           omega
     ⟨f', mf'⟩
 
+lemma even_subsets_card {α : Type} [Fintype α] :
+    Fintype.card {s : Finset α // Even (Finset.card s) } = 2^(Fintype.card α - 1) := by
+  sorry
+
 lemma claim (n k : ℕ) (hn : 0 < n) (hnk : n ≤ k) (he : Even (k - n))
     (f : {b : Sequence n k // MSequence n k b }) :
     Set.ncard {g | ψ n k g = f} = 2^(k - n) := by
   let c : Fin n → ℕ := fun i ↦ Nat.card { j | f.val j = ⟨i, by omega⟩ }
-  let S : Type := (i : Fin n) → Fin (c i - 1) → Fin 2
+  have hcp : ∀ i : Fin n, 0 < c i := by sorry
+  have hc : ∑ i : Fin n, c i = k := by sorry
+  let S : Type :=
+    (i : Fin n) →
+      {s : Finset { j : Fin k | f.val j = ⟨i, by omega⟩} // Even (Finset.card s) }
+
   let p : S → {g | ψ n k g = f} :=
     fun cs ↦
        let gg := by sorry
@@ -128,9 +137,25 @@ lemma claim (n k : ℕ) (hn : 0 < n) (hnk : n ≤ k) (he : Even (k - n))
     rw [Fintype.card_pi]
     apply Fintype.prod_congr
     intro a
-    rw [Fintype.card_pi]
+    rw [even_subsets_card]
     norm_num
-  have Scard' : Fintype.card S = 2^(k-n) := by sorry
+    congr
+    exact Nat.card_eq_fintype_card.symm
+  have Scard' : Fintype.card S = 2^(k-n) := by
+    rw [Scard]
+    have h1 : ∏ i : Fin n, 2 ^ (c i - 1) = 2 ^ (∑ i : Fin n, (c i - 1)) :=
+      Finset.prod_pow_eq_pow_sum _ _ _
+    rw [h1, pow_right_inj zero_lt_two (by norm_num)]
+    suffices ∑ i : Fin n, (c i - 1) + n = k - n + n by omega
+    rw [Nat.sub_add_cancel hnk]
+    have h2 : n = ∑ i : Fin n, 1 := by simp
+    simp_rw [h2]
+    rw [←Finset.sum_add_distrib]
+    have h3 : ∀ x ∈ Finset.univ (α := Fin n), c x - 1 + 1 = c x := by
+      intro x hx
+      exact Nat.sub_add_cancel (hcp x)
+    rw [Finset.sum_congr rfl h3]
+    exact hc
   have h1 : p.Bijective := sorry
   have h2 : Fintype.card S = Fintype.card {g | ψ n k g = f} :=
     Fintype.card_of_bijective h1
