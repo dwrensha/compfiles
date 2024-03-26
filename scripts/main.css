@@ -7,14 +7,14 @@ body {
   font-size: 15px;
   margin-left: auto;
   margin-right: auto;
-  background-color: #d9f6f9;
+  background-color: #def6fd;
   width: 700px;
 }
 pre.problem {
     font-family: monospace;
     text-align: left;
     font-size: 13px;
-    background-color: #fcfff2;
+    background-color: #fcfff5;
     overflow: scroll;
     padding-top: 10px;
     padding-bottom: 10px;
@@ -45,7 +45,7 @@ pre.problem {
 
 .navbar span.active {
     font-weight: bold;
-    background-color: #d9f6f9;
+    background-color: #def6fd;
 }
 
 .navbar span.inactive {
@@ -87,7 +87,7 @@ pre.problem {
 }
 
 .combinatorics {
-    background-color: #c7e3fc;
+    background-color: #c5e1fa;
 }
 
 .number-theory {
