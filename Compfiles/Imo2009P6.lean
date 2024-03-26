@@ -29,26 +29,45 @@ open scoped BigOperators
 snip begin
 
 lemma lemma1 (n : ℕ) (a : Fin n → ℤ) :
-    ∃ p : Fin n → Fin n,
-        p.Bijective ∧ ∀ i j, i ≤ j → a (p i) ≤ a (p j) := by
+    ∃ p : Fin n ↪ Fin n,
+        ∀ i j, i ≤ j → a (p i) ≤ a (p j) := by
   sorry
 
 lemma lemma2 (n : ℕ) (a : Fin n → ℤ)
     (ainj : a.Injective) :
-    ∃ p : Fin n → Fin n,
-        p.Bijective ∧ ∀ i j, i < j → (a ∘ p) i < (a ∘ p) j := by
-  obtain ⟨p, hp1, hp2⟩ := lemma1 n a
-  refine ⟨p, hp1, ?_⟩
+    ∃ p : Fin n ↪ Fin n,
+        ∀ i j, i < j → (a ∘ p) i < (a ∘ p) j := by
+  obtain ⟨p, hp⟩ := lemma1 n a
+  refine ⟨p, ?_⟩
   intro i j hij
   have h0 := ne_of_lt hij
-  have h2 := hp2 i j (le_of_lt hij)
-  have h3 : p i ≠ p j := fun hx ↦ h0 (hp1.1 hx)
+  have h2 := hp i j (le_of_lt hij)
+  have h3 : p i ≠ p j := fun hx ↦ h0 (p.inj' hx)
   exact lt_of_le_of_ne h2 fun a ↦ h3 (ainj a)
 
 def embedFinLE {m n : ℕ} (hmn : m ≤ n) : Fin m ↪ Fin n :=
   ⟨fun x ↦ ⟨x, by omega⟩,
    by intro x y hxy; dsimp at hxy; apply_fun (·.val) at hxy
       exact Fin.eq_of_val_eq hxy⟩
+
+abbrev extendEmb {m n : ℕ} (f : Fin m ↪ Fin m) (h : m ≤ n) : Fin n ↪ Fin n :=
+  let f' : Fin n → Fin n :=
+     fun (x : Fin n) ↦ if h1 : x < m then ⟨f ⟨x, h1⟩, by omega⟩ else x
+  have hf' : f'.Injective := by
+    intro x y hxy
+    simp only [f'] at hxy
+    split_ifs at hxy with h1 h2 h3
+    · simp only [Fin.mk.injEq] at hxy
+      have h1 := Fin.eq_of_val_eq hxy
+      aesop
+    · have : f' y = y := by
+        dsimp [f']; simp only [dite_eq_right_iff]
+        intro hh
+        exact (h2 hh).elim
+      aesop
+    · aesop
+    · aesop
+  ⟨f', hf'⟩
 
 theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
     (a : Fin n → ℤ)
@@ -59,8 +78,7 @@ theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
     (Mpos : ∀ m ∈ M, 0 < m)
     (Mcard : M.card ≤ n - 1)
     (hM : ∑ i, a i ∉ M)
-    : ∃ p : Fin n → Fin n,
-        p.Bijective ∧
+    : ∃ p : Fin n ↪ Fin n,
           ∀ i : Fin n, ∑ j in Finset.filter (· ≤ i) Finset.univ, a (p j) ∉ M := by
   revert a M hn
   induction' n using Nat.strongInductionOn with n ih
@@ -97,7 +115,7 @@ theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
       omega
     intro hM
     obtain h7 | h7 := Nat.eq_zero_or_pos M'.card
-    · refine ⟨id, Function.bijective_id, ?_⟩
+    · refine ⟨⟨id, Function.injective_id⟩, ?_⟩
       intro i
       obtain hi1 | hi2 := Classical.em (i.val < n-1)
       · let z := ∑ j in Finset.filter (· ≤ i) Finset.univ, a j
@@ -170,17 +188,15 @@ theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
       push_neg
       intro h15
       exact (h1 h15).elim
-    obtain ⟨p', hp1, hp2⟩ :=
+    obtain ⟨p', hp⟩ :=
       ih n' (by omega) (by omega) a' ainj' apos' asorted' M' Mpos' (by omega) hM'
     clear ih
-    let p : Fin n → Fin n := fun i ↦
-      if h : i < n' then ⟨p' ⟨i, h⟩, by omega⟩ else i
-    have pb : p.Bijective := sorry
-    refine ⟨p, pb, ?_⟩
+    let p : Fin n ↪ Fin n := extendEmb p' (Nat.sub_le n 1)
+    refine ⟨p, ?_⟩
     intro i
     obtain h30 | h30 := Classical.em (i.val < n')
     · let i' : Fin n' := ⟨i.val, h30⟩
-      have h31 := hp2 i'
+      have h31 := hp i'
       rw [Finset.mem_filter] at h31
       have h35 : n' ≤ n := Nat.sub_le n 1
       have h33 : ∑ j in Finset.filter (· ≤ i') Finset.univ, a' (p' j) =
@@ -213,6 +229,7 @@ theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
     · have h31 : i.val = n' := by omega
       have h32 : ∑ j in Finset.filter (fun x ↦ x ≤ i) Finset.univ, a (p j) =
                  ∑ i : Fin n, a i := by
+        have pb : p.toFun.Bijective := Finite.injective_iff_bijective.mp p.inj'
         rw [←Function.Bijective.sum_comp pb (fun j ↦ a j)]
         have h33 : i.val + 1 = n := by omega
         have h10 : Finset.filter (fun x ↦ x ≤ i) Finset.univ =
@@ -221,7 +238,8 @@ theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
           rw [Finset.mem_filter]
           suffices x ≤ i from and_iff_left_of_imp fun a ↦ this
           omega
-        rw[h10]
+        rw [h10]
+        dsimp
       rw [h32]
       exact hM
   · sorry
@@ -236,8 +254,7 @@ theorem imo2009_p6_aux2 (n : ℕ) (hn : 0 < n)
     (Mpos : ∀ m ∈ M, 0 < m)
     (Mcard : M.card = n - 1)
     (hM : ∑ i, a i ∉ M)
-    : ∃ p : Fin n → Fin n,
-        p.Bijective ∧
+    : ∃ p : Fin n ↪ Fin n,
           ∀ i : Fin n, ∑ j in Finset.univ.filter (· ≤ i), a (p j) ∉ M := by
   have Mcard' := Mcard.le
   exact imo2009_p6_aux1 n hn a ainj apos asorted M Mpos Mcard' hM
@@ -252,33 +269,34 @@ problem imo2009_p6 (n : ℕ) (hn : 0 < n)
     (Mpos : ∀ m ∈ M, 0 < m)
     (Mcard : M.card = n - 1)
     (hM : ∑ i, a i ∉ M)
-    : ∃ p : Fin n → Fin n,
-        p.Bijective ∧
+    : ∃ p : Fin n ↪ Fin n,
         ∀ i : Fin n,
           ∑ j in Finset.univ.filter (· ≤ i), a (p j) ∉ M := by
-  obtain ⟨ps, hps1, hps2⟩ := lemma2 n a ainj
+  obtain ⟨ps, hps⟩ := lemma2 n a ainj
   have ainj' : (a ∘ ps).Injective :=
-    (Function.Injective.of_comp_iff' a hps1).mpr ainj
+    (Function.Injective.of_comp_iff ainj _).mpr ps.inj'
   have apos' : ∀ (i : Fin n), 0 < (a ∘ ps) i := by
     intro i
     exact apos (ps i)
   have hM' : ∑ i : Fin n, (a ∘ ps) i ∉ M := by
     have : Nonempty (Fin n) := Fin.pos_iff_nonempty.mp hn
+    have hps1 : ps.toFun.Bijective := (Finite.injective_iff_bijective.mp ps.inj')
     let ps' := Fintype.bijInv hps1
     have h0 : ps'.Bijective := Fintype.bijective_bijInv hps1
     have h3 : ∀ x, ps (ps' x) = x := by
       have h5 := Fintype.rightInverse_bijInv hps1
       intro x
       exact ainj (congrArg a (ainj (congrArg a (h5 x))))
-    have h3' : ∀ x, a (ps (ps' x)) = a x := by
+    have h3' : ∀ x, a (ps.toFun (ps' x)) = a x := by
       intro x
       exact congrArg a (ainj (congrArg a (h3 x)))
     have h1 : Finset.map ⟨ps', h0.1⟩ Finset.univ = Finset.univ := by simp
     rw [←h1]
     rw [Finset.sum_map, Function.Embedding.coeFn_mk]
     simp_rw [Function.comp_apply]
+    dsimp at h3' ⊢
     rw [Fintype.sum_congr _ _ h3']
     exact hM
-  obtain ⟨p', hp1, hp2⟩ :=
-    imo2009_p6_aux2 n hn (a ∘ ps) ainj' apos' hps2 M Mpos Mcard hM'
-  exact ⟨ps ∘ p', Function.Bijective.comp hps1 hp1, hp2⟩
+  obtain ⟨p', hp⟩ :=
+    imo2009_p6_aux2 n hn (a ∘ ps) ainj' apos' hps M Mpos Mcard hM'
+  exact ⟨p'.trans ps, hp⟩
