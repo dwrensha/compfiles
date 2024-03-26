@@ -129,9 +129,11 @@ lemma claim (n k : ℕ) (hn : 0 < n) (hnk : n ≤ k) (he : Even (k - n))
 
   let p : S → {g | ψ n k g = f} :=
     fun cs ↦
-       let gg := by sorry
+       let g1 :=
+         fun i ↦ by sorry
+       let hg1 := by sorry
        let hgg := by sorry
-       ⟨gg, hgg⟩
+       ⟨⟨g1, hg1⟩, hgg⟩
   have Scard : Fintype.card S = ∏ i : Fin n, 2 ^ (c i - 1) := by
     unfold_let S
     rw [Fintype.card_pi]
