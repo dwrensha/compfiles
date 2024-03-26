@@ -113,7 +113,7 @@ def ψ (n k : ℕ) : { f // NSequence n k f } → { f // MSequence n k f } :=
           omega
     ⟨f', mf'⟩
 
-lemma claim (n k : ℕ) (hnk : n ≤ k) (he : Even (k - n))
+lemma claim (n k : ℕ) (hn : 0 < n) (hnk : n ≤ k) (he : Even (k - n))
     (f : {b : Sequence n k // MSequence n k b }) :
     Set.ncard {g | ψ n k g = f} = 2^(k - n) := by
   let c : Fin n → ℕ := fun i ↦ Nat.card { j | f.val j = ⟨i, by omega⟩ }
@@ -205,16 +205,14 @@ snip end
 
 determine solution (n k : ℕ) : ℚ := 2 ^ (k - n)
 
-problem imo2008_p5 (n k : ℕ)
-    (hn : 0 < n) (hk : 0 < k)
+problem imo2008_p5 (n k : ℕ) (hn : 0 < n)
     (hnk : n ≤ k) (he : Even (k - n))
     : Set.ncard (MSequence n k) * solution n k = Set.ncard (NSequence n k) := by
-  clear hn hk -- don't need these
   have hA : Set.Finite { f | NSequence n k f } := Set.toFinite _
   have hB : Set.Finite { f | MSequence n k f } := Set.toFinite _
   have h1 := lemma1 (Sequence n k) (NSequence n k) (MSequence n k) hA hB (ψ n k)
               (2 ^ (k - n))
-              (claim n k hnk he)
+              (claim n k hn hnk he)
   rw [←h1]
   push_cast
   rfl
