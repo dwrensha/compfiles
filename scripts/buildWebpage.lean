@@ -313,7 +313,8 @@ unsafe def main (_args : List String) : IO Unit := do
       let h ← IO.FS.Handle.mk "_site/index.html" IO.FS.Mode.write
       h.putStrLn <| ←htmlHeader "Compfiles: Catalog of Math Problems Formalized in Lean"
       h.putStrLn <| ← topbar "all"
-      h.putStr s!"<p>{num_proved} / {infos.length} formalized problems have been solved.<p>"
+      h.putStrLn <| s!"<p><b>{infos.length}</b> problems have been formalized.</p>"
+      h.putStrLn <| s!"<p><b>{num_proved}</b> problems have complete formalized solutions.</p>"
       h.putStr "<table class=\"problems\">"
       h.putStr "<thead><tr><th>problem</th><th>solved?</th><th>tags</th></tr></thead>"
       h.putStr "<tbody>"
