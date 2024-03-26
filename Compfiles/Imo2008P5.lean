@@ -130,7 +130,11 @@ lemma claim (n k : ℕ) (hn : 0 < n) (hnk : n ≤ k) (he : Even (k - n))
   let p : S → {g | ψ n k g = f} :=
     fun cs ↦
        let g1 :=
-         fun i ↦ by sorry
+         fun (i : Fin k) ↦
+           let y : Fin (2 * n) := f.val ⟨i, by omega⟩
+           let y' : Fin n := ⟨y.val, by sorry⟩
+           let ys : { s : Finset _ // Even s.card } := cs y'
+           if ⟨i, by sorry⟩ ∈ ys.val then ⟨y.val + n, by sorry⟩ else y
        let hg1 := by sorry
        let hgg := by sorry
        ⟨⟨g1, hg1⟩, hgg⟩
@@ -158,7 +162,13 @@ lemma claim (n k : ℕ) (hn : 0 < n) (hnk : n ≤ k) (he : Even (k - n))
       exact Nat.sub_add_cancel (hcp x)
     rw [Finset.sum_congr rfl h3]
     exact hc
-  have h1 : p.Bijective := sorry
+  have h1 : p.Bijective := by
+    constructor
+    · intro x y hxy
+      --dsimp [p] at hxy
+      sorry
+    · rintro ⟨g, hg⟩
+      sorry
   have h2 : Fintype.card S = Fintype.card {g | ψ n k g = f} :=
     Fintype.card_of_bijective h1
   nth_rewrite 2 [←Nat.card_eq_fintype_card] at h2
