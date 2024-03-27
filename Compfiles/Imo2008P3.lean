@@ -88,5 +88,5 @@ problem imo2008_p3 : ∀ N : ℕ, ∃ n : ℕ, n ≥ N ∧
   obtain ⟨n, hnat, hreal⟩ := p_lemma p hpp hpmod4 (by omega)
   have hineq₂ : n ^ 2 + 1 ≥ p := Nat.le_of_dvd (n ^ 2).succ_pos hnat
   have hineq₃ : n * n ≥ N * N := by linarith [hineq₁, hineq₂]
-  have hn_ge_N : n ≥ N := Nat.mul_self_le_mul_self_iff.mpr hineq₃
+  have hn_ge_N : n ≥ N := Nat.mul_self_le_mul_self_iff.mp hineq₃
   exact ⟨n, hn_ge_N, p, hpp, hnat, hreal⟩
