@@ -5,6 +5,7 @@ Authors: David Renshaw
 -/
 
 import Mathlib.Tactic
+import Mathlib.Data.Fin.Tuple.Sort
 
 import ProblemExtraction
 
@@ -30,8 +31,8 @@ snip begin
 
 lemma lemma1 (n : ℕ) (a : Fin n → ℤ) :
     ∃ p : Fin n ↪ Fin n,
-        ∀ i j, i ≤ j → a (p i) ≤ a (p j) := by
-  sorry
+        ∀ i j, i ≤ j → a (p i) ≤ a (p j) :=
+  ⟨Tuple.sort a, fun _ _ hij ↦ Tuple.monotone_sort a hij⟩
 
 lemma lemma2 (n : ℕ) (a : Fin n → ℤ)
     (ainj : a.Injective) :
