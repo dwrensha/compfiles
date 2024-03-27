@@ -30,20 +30,21 @@ open scoped BigOperators
 snip begin
 
 lemma lemma1 (n : ℕ) (a : Fin n → ℤ) :
-    ∃ p : Fin n ↪ Fin n,
+    ∃ p : Equiv.Perm (Fin n),
         ∀ i j, i ≤ j → a (p i) ≤ a (p j) :=
   ⟨Tuple.sort a, fun _ _ hij ↦ Tuple.monotone_sort a hij⟩
 
 lemma lemma2 (n : ℕ) (a : Fin n → ℤ)
     (ainj : a.Injective) :
-    ∃ p : Fin n ↪ Fin n,
+    ∃ p : Equiv.Perm (Fin n),
         ∀ i j, i < j → (a ∘ p) i < (a ∘ p) j := by
   obtain ⟨p, hp⟩ := lemma1 n a
   refine ⟨p, ?_⟩
   intro i j hij
   have h0 := ne_of_lt hij
   have h2 := hp i j (le_of_lt hij)
-  have h3 : p i ≠ p j := fun hx ↦ h0 (p.inj' hx)
+  have h3 : p i ≠ p j := by
+    intro hh; rw [EmbeddingLike.apply_eq_iff_eq] at hh; exact h0 hh
   exact lt_of_le_of_ne h2 fun a ↦ h3 (ainj a)
 
 def embedFinLE {m n : ℕ} (hmn : m ≤ n) : Fin m ↪ Fin n :=
@@ -51,7 +52,8 @@ def embedFinLE {m n : ℕ} (hmn : m ≤ n) : Fin m ↪ Fin n :=
    by intro x y hxy; dsimp at hxy; apply_fun (·.val) at hxy
       exact Fin.eq_of_val_eq hxy⟩
 
-abbrev extendEmb {m n : ℕ} (f : Fin m ↪ Fin m) (h : m ≤ n) : Fin n ↪ Fin n :=
+
+abbrev extendPerm {m n : ℕ} (f : Equiv.Perm (Fin m)) (h : m ≤ n) : Equiv.Perm (Fin n) :=
   let f' : Fin n → Fin n :=
      fun (x : Fin n) ↦ if h1 : x < m then ⟨f ⟨x, h1⟩, by omega⟩ else x
   have hf' : f'.Injective := by
@@ -68,7 +70,7 @@ abbrev extendEmb {m n : ℕ} (f : Fin m ↪ Fin m) (h : m ≤ n) : Fin n ↪ Fin
       aesop
     · aesop
     · aesop
-  ⟨f', hf'⟩
+  sorry --⟨f', hf'⟩
 
 theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
     (a : Fin n → ℤ)
@@ -79,7 +81,7 @@ theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
     (Mpos : ∀ m ∈ M, 0 < m)
     (Mcard : M.card ≤ n - 1)
     (hM : ∑ i, a i ∉ M)
-    : ∃ p : Fin n ↪ Fin n,
+    : ∃ p : Equiv.Perm (Fin n),
           ∀ i : Fin n, ∑ j in Finset.filter (· ≤ i) Finset.univ, a (p j) ∉ M := by
   revert a M hn
   induction' n using Nat.strongInductionOn with n ih
@@ -116,7 +118,7 @@ theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
       omega
     intro hM
     obtain h7 | h7 := Nat.eq_zero_or_pos M'.card
-    · refine ⟨⟨id, Function.injective_id⟩, ?_⟩
+    · refine ⟨Equiv.refl _, ?_⟩
       intro i
       obtain hi1 | hi2 := Classical.em (i.val < n-1)
       · let z := ∑ j in Finset.filter (· ≤ i) Finset.univ, a j
@@ -192,7 +194,7 @@ theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
     obtain ⟨p', hp⟩ :=
       ih n' (by omega) (by omega) a' ainj' apos' asorted' M' Mpos' (by omega) hM'
     clear ih
-    let p : Fin n ↪ Fin n := extendEmb p' (Nat.sub_le n 1)
+    let p : Equiv.Perm (Fin n) := extendPerm p' (Nat.sub_le n 1)
     refine ⟨p, ?_⟩
     intro i
     obtain h30 | h30 := Classical.em (i.val < n')
@@ -202,6 +204,8 @@ theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
       have h35 : n' ≤ n := Nat.sub_le n 1
       have h33 : ∑ j in Finset.filter (· ≤ i') Finset.univ, a' (p' j) =
                  ∑ j in Finset.filter (· ≤ i) Finset.univ, a (p j) := by
+        sorry
+        /-
         have h36 : (Finset.univ.filter (· ≤ i')).map (embedFinLE h35) =
                      Finset.univ.filter (· ≤ i) := by
           ext x
@@ -221,7 +225,7 @@ theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
             simp only [eq_self, and_true, Finset.mem_univ, true_and]
             exact hx2
         rw [← h36]
-        simp [embedFinLE, a', p]
+        simp [embedFinLE, a', p] -/
       rw [h33] at h31
       have h34 : ∑ j in Finset.filter (· ≤ i) Finset.univ, a (p j) ≤ x := by
         sorry
@@ -230,7 +234,7 @@ theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
     · have h31 : i.val = n' := by omega
       have h32 : ∑ j in Finset.filter (fun x ↦ x ≤ i) Finset.univ, a (p j) =
                  ∑ i : Fin n, a i := by
-        have pb : p.toFun.Bijective := Finite.injective_iff_bijective.mp p.inj'
+        have pb : p.toFun.Bijective := sorry
         rw [←Function.Bijective.sum_comp pb (fun j ↦ a j)]
         have h33 : i.val + 1 = n := by omega
         have h10 : Finset.filter (fun x ↦ x ≤ i) Finset.univ =
@@ -255,7 +259,7 @@ theorem imo2009_p6_aux2 (n : ℕ) (hn : 0 < n)
     (Mpos : ∀ m ∈ M, 0 < m)
     (Mcard : M.card = n - 1)
     (hM : ∑ i, a i ∉ M)
-    : ∃ p : Fin n ↪ Fin n,
+    : ∃ p : Equiv.Perm (Fin n),
           ∀ i : Fin n, ∑ j in Finset.univ.filter (· ≤ i), a (p j) ∉ M := by
   have Mcard' := Mcard.le
   exact imo2009_p6_aux1 n hn a ainj apos asorted M Mpos Mcard' hM
@@ -270,18 +274,17 @@ problem imo2009_p6 (n : ℕ) (hn : 0 < n)
     (Mpos : ∀ m ∈ M, 0 < m)
     (Mcard : M.card = n - 1)
     (hM : ∑ i, a i ∉ M)
-    : ∃ p : Fin n ↪ Fin n,
+    : ∃ p : Equiv.Perm (Fin n),
         ∀ i : Fin n,
           ∑ j in Finset.univ.filter (· ≤ i), a (p j) ∉ M := by
   obtain ⟨ps, hps⟩ := lemma2 n a ainj
-  have ainj' : (a ∘ ps).Injective :=
-    (Function.Injective.of_comp_iff ainj _).mpr ps.inj'
+  have ainj' : (a ∘ ps).Injective := (Equiv.injective_comp ps a).mpr ainj
   have apos' : ∀ (i : Fin n), 0 < (a ∘ ps) i := by
     intro i
     exact apos (ps i)
   have hM' : ∑ i : Fin n, (a ∘ ps) i ∉ M := by
     have : Nonempty (Fin n) := Fin.pos_iff_nonempty.mp hn
-    have hps1 : ps.toFun.Bijective := (Finite.injective_iff_bijective.mp ps.inj')
+    have hps1 : ps.toFun.Bijective := EquivLike.bijective ps
     let ps' := Fintype.bijInv hps1
     have h0 : ps'.Bijective := Fintype.bijective_bijInv hps1
     have h3 : ∀ x, ps (ps' x) = x := by
