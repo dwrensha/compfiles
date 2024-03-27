@@ -283,14 +283,9 @@ problem imo2009_p6 (n : ℕ) (hn : 0 < n)
     intro i
     exact apos (ps i)
   have hM' : ∑ i : Fin n, (a ∘ ps) i ∉ M := by
-    have : Nonempty (Fin n) := Fin.pos_iff_nonempty.mp hn
-    have hps1 : ps.toFun.Bijective := EquivLike.bijective ps
-    let ps' := Fintype.bijInv hps1
-    have h0 : ps'.Bijective := Fintype.bijective_bijInv hps1
-    have h3 : ∀ x, ps (ps' x) = x := by
-      have h5 := Fintype.rightInverse_bijInv hps1
-      intro x
-      exact ainj (congrArg a (ainj (congrArg a (h5 x))))
+    let ps' := ps.invFun
+    have h0 : ps'.Bijective := by aesop
+    have h3 : ∀ x, ps (ps' x) = x := Equiv.right_inv _
     have h3' : ∀ x, a (ps.toFun (ps' x)) = a x := by
       intro x
       exact congrArg a (ainj (congrArg a (h3 x)))
