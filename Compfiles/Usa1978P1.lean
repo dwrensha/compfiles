@@ -23,7 +23,7 @@ determine the maximum value of e.
 
 namespace Usa1978P1
 
-determine max_e : ℝ := sorry
+noncomputable determine max_e : ℝ := sorry
 
 abbrev IsGood (a b c d e : ℝ) : Prop :=
   a + b + c + d + e = 8 ∧ a^2 + b^2 + c^2 + d^2 + e^2 = 16
