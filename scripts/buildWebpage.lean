@@ -388,7 +388,7 @@ unsafe def main (_args : List String) : IO Unit := do
       h.putStrLn s!"Welcome to Compfiles, a collaborative repository of olympiad-style math problems that have been formalized in the <a href=\"https://leanprover-community.github.io/\">Lean</a> theorem prover."
       h.putStrLn "</p>"
       h.putStrLn "<p>"
-      h.putStrLn <| s!"So far, <b>{infos.length}</b> problems are formalized, with <b>{num_proved}</b> complete formalized solutions."
+      h.putStrLn <| s!"So far, <b>{infos.length}</b> problems have been formalized, with <b>{num_proved}</b> complete formalized solutions."
       h.putStrLn "</p>"
       h.putStr "<div><table class=\"toplevel-olympiad-stats\">"
       h.putStr "<thead><tr><th></th><th title=\"This total includes problems not added to Compfiles.\">Total</th><th>Formalized</th><th>Solved</th></tr></thead>"
