@@ -234,7 +234,7 @@ theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
     · have h31 : i.val = n' := by omega
       have h32 : ∑ j in Finset.filter (fun x ↦ x ≤ i) Finset.univ, a (p j) =
                  ∑ i : Fin n, a i := by
-        have pb : p.toFun.Bijective := sorry
+        have pb : p.toFun.Bijective := EquivLike.bijective p
         rw [←Function.Bijective.sum_comp pb (fun j ↦ a j)]
         have h33 : i.val + 1 = n := by omega
         have h10 : Finset.filter (fun x ↦ x ≤ i) Finset.univ =
