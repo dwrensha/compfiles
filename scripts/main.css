@@ -126,7 +126,10 @@ pre.problem {
 
 .toplevel-olympiad-stats {
     margin-top: 20px;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
+    margin-left: 15px;
+    margin-right: 15px;
+
     border-collapse: collapse;
 }
 
@@ -144,7 +147,9 @@ pre.problem {
 
 .toplevel-tag-stats {
     margin-top: 20px;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
+    margin-left: 15px;
+    margin-right: 15px;
     border-collapse: collapse;
 }
 
@@ -170,4 +175,11 @@ pre.problem {
 
 div.footer {
     font-size: 10px;
+}
+
+div.toplevel-tables {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+    align-items: center;
 }
