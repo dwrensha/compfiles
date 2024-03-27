@@ -391,7 +391,7 @@ unsafe def main (_args : List String) : IO Unit := do
       h.putStrLn <| s!"So far, <b>{infos.length}</b> problems are formalized, with <b>{num_proved}</b> complete formalized solutions."
       h.putStrLn "</p>"
       h.putStr "<div><table class=\"toplevel-olympiad-stats\">"
-      h.putStr "<thead><tr><th></th><th>Total</th><th>Formalized</th><th>Solved</th></tr></thead>"
+      h.putStr "<thead><tr><th></th><th title=\"This total includes problems not added to Compfiles.\">Total</th><th>Formalized</th><th>Solved</th></tr></thead>"
       h.putStr "<tbody>"
       h.putStr s!"<tr><th><a href=\"imo.html\">IMO problems</a></th><td>{totalImoProblemCount}</td><td>{imoFormalizedCount}</td><td>{imoSolvedCount}</td></tr>"
       h.putStr s!"<tr><th><a href=\"usamo.html\">USAMO problems</a></th><td>{totalUsamoProblemCount}</td><td>{usamoFormalizedCount}</td><td>{usamoSolvedCount}</td></tr>"
