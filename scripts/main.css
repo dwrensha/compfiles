@@ -131,6 +131,7 @@ pre.problem {
 }
 
 .toplevel-olympiad-stats tbody th {
+    font-size: 18px;
     text-align: right;
 }
 
