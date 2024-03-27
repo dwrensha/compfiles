@@ -125,30 +125,42 @@ pre.problem {
 }
 
 .toplevel-olympiad-stats {
-    margin-top: 5px;
-    margin-bottom: 5px;
+    margin-top: 20px;
+    margin-bottom: 15px;
     border-collapse: collapse;
+}
+
+.toplevel-olympiad-stats tbody th {
+    text-align: right;
 }
 
 .toplevel-olympiad-stats td {
     border: 1px solid gray;
     font-size: 16px;
+    text-align: center;
+    width: 85px;
 }
 
 .toplevel-tag-stats {
-    margin-top: 5px;
-    margin-bottom: 5px;
+    margin-top: 20px;
+    margin-bottom: 15px;
     border-collapse: collapse;
 }
 
 .toplevel-tag-stats th {
-    font-size: 12px;
+    font-size: 16px;
     margin : 3px;
+}
+
+.toplevel-tag-stats tbody th {
+    text-align: right;
 }
 
 .toplevel-tag-stats td {
     border: 1px solid gray;
-    font-size: 12px;
+    font-size: 16px;
+    width: 90px;
+    text-align: center;
 }
 
 .writeups {
