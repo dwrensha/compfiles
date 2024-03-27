@@ -75,11 +75,19 @@ initialize determineDeclsExtension : DetermineDeclsExtension ←
   }
 
 inductive ProblemTag where
+| Algebra : ProblemTag
+| NumberTheory : ProblemTag
+| Combinatorics : ProblemTag
 | Geometry : ProblemTag
 | Inequality : ProblemTag
-| Combinatorics : ProblemTag
-| NumberTheory : ProblemTag
-| Algebra : ProblemTag
+deriving Ord
+
+def ProblemTag.toNat (t : ProblemTag) : Nat := match t with
+| .Algebra => 0
+| .NumberTheory => 1
+| .Combinatorics => 2
+| .Geometry => 3
+| .Inequality => 4
 
 instance : ToString ProblemTag where
   toString := fun p => match p with

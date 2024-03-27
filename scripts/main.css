@@ -124,6 +124,33 @@ pre.problem {
     background-color: #cccccc;
 }
 
+.toplevel-olympiad-stats {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    border-collapse: collapse;
+}
+
+.toplevel-olympiad-stats td {
+    border: 1px solid gray;
+    font-size: 16px;
+}
+
+.toplevel-tag-stats {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    border-collapse: collapse;
+}
+
+.toplevel-tag-stats th {
+    font-size: 12px;
+    margin : 3px;
+}
+
+.toplevel-tag-stats td {
+    border: 1px solid gray;
+    font-size: 12px;
+}
+
 .writeups {
     margin-top: 0;
 }

@@ -193,10 +193,10 @@ def topbar (currentPage : String) : IO String := do
     "<a href=\"https://github.com/dwrensha/compfiles\">" ++
     "Compfiles</a>: Catalog Of Math Problems Formalized In Lean.</h2>"
 
-  let all :=
-    if currentPage == "all"
-    then "<span class=\"active\">All</span>"
-    else s!"<span class=\"inactive\"><a href=\"{baseurl}index.html\">All</a></span>"
+  let about :=
+    if currentPage == "about"
+    then "<span class=\"active\">About</span>"
+    else s!"<span class=\"inactive\"><a href=\"{baseurl}index.html\">About</a></span>"
   let imo :=
     if currentPage == "imo"
     then "<span class=\"active\">IMO</span>"
@@ -205,12 +205,17 @@ def topbar (currentPage : String) : IO String := do
     if currentPage == "usamo"
     then "<span class=\"active\">USAMO</span>"
     else s!"<span class=\"inactive\"><a href=\"{baseurl}usamo.html\">USAMO</a></span>"
+  let all :=
+    if currentPage == "all"
+    then "<span class=\"active\">All</span>"
+    else s!"<span class=\"inactive\"><a href=\"{baseurl}all.html\">All</a></span>"
+
 
   result := result ++
-    s!"<div class=\"navbar\">{all}{imo}{usamo}</div>"
+    s!"<div class=\"navbar\">{about}{imo}{usamo}{all}</div>"
   return result
 
-def generateProblemStubFile (path : String) (probId : String) : IO Unit := do 
+def generateProblemStubFile (path : String) (probId : String) : IO Unit := do
   let h ← IO.FS.Handle.mk ("_site/" ++ path) IO.FS.Mode.write
   h.putStrLn <| ←htmlHeader ("Compfiles." ++ probId)
   h.putStrLn <| ← topbar "none"
@@ -307,10 +312,13 @@ unsafe def main (_args : List String) : IO Unit := do
           h.putStrLn "</body></html>"
           h.flush
 
-      -- now write the main index.html
+      let mut tag_formalized_counts : Array Nat := Array.mk [0,0,0,0,0]
+      let mut tag_solved_counts : Array Nat := Array.mk [0,0,0,0,0]
+
+      -- now write all.html
       let num_proved := (infos.filter (·.proved)).length
 
-      let h ← IO.FS.Handle.mk "_site/index.html" IO.FS.Mode.write
+      let h ← IO.FS.Handle.mk "_site/all.html" IO.FS.Mode.write
       h.putStrLn <| ←htmlHeader "Compfiles: Catalog of Math Problems Formalized in Lean"
       h.putStrLn <| ← topbar "all"
       h.putStrLn <| s!"<p><b>{infos.length}</b> problems have been formalized.</p>"
@@ -326,8 +334,13 @@ unsafe def main (_args : List String) : IO Unit := do
       let mut usamoSolvedCount := 0
       let mut usamoFormalizedCount := 0
 
-
       for info in infos' do
+        for tag in info.metadata.tags do
+           tag_formalized_counts :=
+            tag_formalized_counts.set! tag.toNat ((tag_formalized_counts.get! tag.toNat) + 1)
+           if info.proved then
+            tag_solved_counts :=
+             tag_solved_counts.set! tag.toNat ((tag_solved_counts.get! tag.toNat) + 1)
         infomap := infomap.insert info.name info
         if isImoProblemId info.name then
           imoFormalizedCount := imoFormalizedCount + 1
@@ -364,6 +377,46 @@ unsafe def main (_args : List String) : IO Unit := do
         h.putStr "</tr>"
       h.putStr "</tbody>"
       h.putStr "</table>"
+      h.putStrLn (←footer)
+      h.putStr "</body></html>"
+
+      -- now write index.html
+      let h ← IO.FS.Handle.mk "_site/index.html" IO.FS.Mode.write
+      h.putStrLn <| ←htmlHeader "Compfiles: Catalog of Math Problems Formalized in Lean"
+      h.putStrLn <| ← topbar "about"
+      h.putStrLn "<p>"
+      h.putStrLn s!"Welcome to Compfiles, a collaborative repository of olympiad-style math problems that have been formalized in the <a href=\"https://leanprover-community.github.io/\">Lean</a> theorem prover."
+      h.putStrLn "</p>"
+      h.putStrLn "<p>"
+      h.putStrLn <| s!"So far, we have <b>{infos.length}</b> problems, of which <b>{num_proved}</b> have complete formalized solutions."
+      h.putStrLn "</p>"
+      h.putStr "<div><table class=\"toplevel-olympiad-stats\">"
+      h.putStr "<thead><tr><th></th><th><a href=\"imo.html\">IMO problems</a></th><th><a href=\"usamo.html\">USAMO problems</a></th></tr></thead>"
+      h.putStr "<tbody>"
+      h.putStr s!"<tr><td>total</td><td>{totalImoProblemCount}</td><td>{totalUsamoProblemCount}</td></tr>"
+      h.putStr s!"<tr><td>formalized</td><td>{imoFormalizedCount}</td><td>{usamoFormalizedCount}</td></tr>"
+      h.putStr s!"<tr><td>solved</td><td>{imoSolvedCount}</td><td>{usamoSolvedCount}</td></tr>"
+      h.putStr "</tbody>"
+      h.putStr "</table></div>"
+
+      h.putStr "<div><table class=\"toplevel-tag-stats\">"
+      h.putStr "<thead><tr><th></th><th>Algebra</th><th>Number Theory</th><th>Combinatorics</th><th>Geometry</th></tr></thead>"
+      h.putStr "<tbody>"
+      h.putStr "<tr><td>formalized</td>"
+      h.putStr s!"<td>{tag_formalized_counts.get! ProblemExtraction.ProblemTag.Algebra.toNat}</td>"
+      h.putStr s!"<td>{tag_formalized_counts.get! ProblemExtraction.ProblemTag.NumberTheory.toNat}</td>"
+      h.putStr s!"<td>{tag_formalized_counts.get! ProblemExtraction.ProblemTag.Combinatorics.toNat}</td>"
+      h.putStr s!"<td>{tag_formalized_counts.get! ProblemExtraction.ProblemTag.Geometry.toNat}</td>"
+      h.putStr "</tr>"
+      h.putStr "<tr><td>solved</td>"
+      h.putStr s!"<td>{tag_solved_counts.get! ProblemExtraction.ProblemTag.Algebra.toNat}</td>"
+      h.putStr s!"<td>{tag_solved_counts.get! ProblemExtraction.ProblemTag.NumberTheory.toNat}</td>"
+      h.putStr s!"<td>{tag_solved_counts.get! ProblemExtraction.ProblemTag.Combinatorics.toNat}</td>"
+      h.putStr s!"<td>{tag_solved_counts.get! ProblemExtraction.ProblemTag.Geometry.toNat}</td>"
+      h.putStr "</tr>"
+      h.putStr "</tbody>"
+      h.putStr "</table></div>"
+
       h.putStrLn (←footer)
       h.putStr "</body></html>"
 
