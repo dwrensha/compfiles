@@ -221,6 +221,9 @@ def generateProblemStubFile (path : String) (probId : String) : IO Unit := do
   h.putStrLn <| ← topbar "none"
   h.putStrLn s!"<h2>{probId}</h2>"
   h.putStrLn s!"<p>This problem has not been formalized yet!</p>"
+  h.putStrLn "<p>To add a formalization of it, submit a pull request to the"
+  h.putStrLn "<a href=\"https://github.com/dwrensha/compfiles\">Compfiles Github repository</a>."
+  h.putStrLn "</p>"
 
   let writeupLinks := getWriteupLinks probId
   if writeupLinks.length > 0
