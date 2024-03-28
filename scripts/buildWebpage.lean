@@ -191,7 +191,7 @@ def topbar (currentPage : String) : IO String := do
   let mut result :=
     "<h2>" ++
     "<a href=\"https://github.com/dwrensha/compfiles\">" ++
-    "Compfiles</a>: Catalog Of Math Problems Formalized In Lean.</h2>"
+    "Compfiles</a>: Catalog Of Math Problems Formalized In Lean</h2>"
 
   let about :=
     if currentPage == "about"
