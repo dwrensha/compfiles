@@ -105,7 +105,7 @@ problem hungary1998_p6 (x y : ℤ) (z : ℕ) (hz : 1 < z) :
   -- Since z ≥ 2, 3²∣yᶻ, but 3² does not divide
   -- 33(3x² + 300x + 50 ⬝ 199), contradiction.
 
-  have h10 : 3 * k * (3 * k * (3 * k) ^ z) = 3 * (k * (3 * k * (3 * k) ^ z))
+  have h10 : (3 * k) ^ z * (3 * k) * (3 * k) = 3 * (k * (3 * k * (3 * k) ^ z))
        := by ring
   rw [h10] at h7
   have h11 : (3:ℤ) ≠ 0 := by norm_num

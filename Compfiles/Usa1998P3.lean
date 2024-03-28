@@ -84,7 +84,6 @@ lemma lemma2 (n : ℕ) (f : ℕ → ℝ) :
               ∏ i in Finset.range (n + 1), (f i ^ (n:ℝ) * f i) := by
        congr; funext x
        norm_cast
-       exact pow_succ' (f x) _
     rw [h2]; clear h2
     rw [Finset.prod_mul_distrib]
 

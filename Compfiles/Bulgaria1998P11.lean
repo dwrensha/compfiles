@@ -26,11 +26,11 @@ snip begin
 lemma mod_plus_pow (m n : ℕ) : (m + 3)^n % 3 = m^n % 3 := by
   induction' n with pn hpn
   · simp only [Nat.zero_eq, pow_zero, Nat.one_mod]
-  · rw[pow_succ]
+  · rw [Nat.pow_succ']
     have h1 : (m + 3) * (m + 3) ^ pn = m * (m + 3) ^ pn + 3 * (m + 3) ^ pn := by ring
     rw [h1]
     have h2 : 3 * (m + 3) ^ pn % 3 = 0 := Nat.mul_mod_right 3 _
-    rw[Nat.add_mod, h2, add_zero, Nat.mod_mod, pow_succ]
+    rw[Nat.add_mod, h2, add_zero, Nat.mod_mod, Nat.pow_succ']
     exact Nat.ModEq.mul rfl hpn
 
 lemma foo1 (m n : ℕ) (ho : Odd m) : (m + 3) ^ n.succ % 2 = 0 := by

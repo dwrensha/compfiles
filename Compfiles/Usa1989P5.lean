@@ -45,7 +45,7 @@ problem usa1989_p5
     convert_to U x = x * ((x^9 - 1) / (x - 1)) + 9 * x^9
     · ring
     rw [←geom_sum_eq hx 9, Finset.mul_sum]
-    have h1 : ∀ i, i ∈ Finset.range 9 → x * x^i = x ^(i + 1) := fun i _ ↦ rfl
+    have h1 : ∀ i, i ∈ Finset.range 9 → x * x^i = x ^(i + 1) := fun i _ ↦ (pow_succ' x i).symm
     rw [Finset.sum_congr rfl h1, Finset.sum_range_succ]
     ring
 
@@ -53,7 +53,7 @@ problem usa1989_p5
     convert_to V x = x * ((x^11 - 1) / (x - 1)) + 9 * x^11
     · ring
     rw [←geom_sum_eq hx 11, Finset.mul_sum]
-    have h1 : ∀ i, i ∈ Finset.range 11 → x * x^i = x ^(i + 1) := fun i _ ↦ rfl
+    have h1 : ∀ i, i ∈ Finset.range 11 → x * x^i = x ^(i + 1) := fun i _ ↦ (pow_succ' x i).symm
     rw [Finset.sum_congr rfl h1, Finset.sum_range_succ]
     ring
 

@@ -212,6 +212,7 @@ lemma exp_characterization
         rw[this, Nat.cast_succ]
       rw[hp1, hu (↑pn * x) x, hpn x, mul_comm]
       norm_cast
+      exact (pow_succ' (u x) pn).symm
 
   have h2 : ∀ x, (u x) * u (-x) = 1 := by
     intro x
@@ -290,7 +291,6 @@ lemma exp_characterization
         have h11 := hu (x * ↑pn / ↑(p.succ)) (x / ↑(p.succ))
         rw [h11, ← hpn]
         norm_cast
-        exact pow_succ' _ _
     replace h12 := h12 p.succ
     have h13 : x * ↑(p.succ) / ↑(p.succ) = x := mul_div_cancel_of_invertible _ _
     rw [h13] at h12

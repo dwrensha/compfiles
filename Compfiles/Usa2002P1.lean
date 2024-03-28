@@ -189,7 +189,7 @@ lemma usa2002_p1_generalized
       -- Then S is properly colored, using similar reasoning as before.
       -- Thus the induction is complete.
       have hl : N - 2^k ≤ 2^k := by
-        rw [pow_succ, two_mul] at hN
+        rw [pow_succ', two_mul] at hN
         exact Nat.sub_le_of_le_add hN
       obtain ⟨f', hf1', hf2'⟩ := ih hs' (N - 2^k) hl
       let f (x : Finset S) : Color :=

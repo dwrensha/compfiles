@@ -79,7 +79,7 @@ problem imo1983_p1 (f : ℝ+ → ℝ+) :
     intro m
     induction' m with pm ih
     · simp [h1]
-    · rw [pow_succ]
+    · rw [pow_succ']
       nth_rewrite 1 [mul_comm]
       rw [hi1, ih]
 
