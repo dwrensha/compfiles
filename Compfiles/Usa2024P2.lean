@@ -29,7 +29,7 @@ determine solution : ℕ := sorry
 
 structure Good (S : Fin 100 → Set ℤ) : Prop where
   finite : ∀ i, (S i).Finite
-  nonempty_inter : ⋂ i ∈ Finset.univ (α := Fin 100), S i ≠ ∅
+  nonempty_inter : ⋂ i, S i ≠ ∅
   card : ∀ T : Finset (Fin 100), T.Nonempty →
                  ∃ k : ℕ, (⋂ i ∈ T, S i).ncard * k = T.card
 
