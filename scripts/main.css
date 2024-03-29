@@ -16,8 +16,6 @@ pre.problem {
     font-size: 13px;
     background-color: #fcfff5;
     overflow: scroll;
-    padding-top: 10px;
-    padding-bottom: 10px;
 }
 
 @media (max-width: 705px) {

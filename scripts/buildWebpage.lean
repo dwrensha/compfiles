@@ -169,13 +169,20 @@ def getBaseUrl : IO String := do
   let cwd ← IO.currentDir
   pure ((← IO.getEnv "GITHUB_PAGES_BASEURL").getD s!"file://{cwd}/_site/")
 
-def htmlHeader (title : String) : IO String := do
+def htmlHeader (title : String) (includeHljs : Bool := false) : IO String := do
   let baseurl ← getBaseUrl
   pure <|
     "<!DOCTYPE html><html><head>" ++
     "<meta name=\"viewport\" content=\"width=device-width\">" ++
     s!"<link rel=\"stylesheet\" type=\"text/css\" href=\"{baseurl}main.css\" >" ++
     s!"<title>{title}</title>" ++
+    (if includeHljs
+     then
+       "<link rel=\"stylesheet\" type=\"text/css\" href=\"https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/docco.min.css\">" ++
+       "<script src=\"https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js\"></script>" ++
+      s!"<script src=\"{baseurl}lean.js\"></script>" ++
+      "<script>hljs.highlightAll();</script>"
+     else "") ++
     "</head>\n<body>"
 
 def footer : IO String := do
@@ -238,6 +245,7 @@ unsafe def main (_args : List String) : IO Unit := do
   IO.FS.createDirAll "_site"
   IO.FS.createDirAll "_site/problems"
   IO.FS.writeFile "_site/main.css" (←IO.FS.readFile "scripts/main.css")
+  IO.FS.writeFile "_site/lean.js" (←IO.FS.readFile "scripts/lean.js")
 
   let module := `Compfiles
   searchPathRef.set compile_time_search_path%
@@ -275,13 +283,13 @@ unsafe def main (_args : List String) : IO Unit := do
                     solutionUrl, problemUrl, proved⟩ :: infos
 
           let h ← IO.FS.Handle.mk ("_site/" ++ problemFile) IO.FS.Mode.write
-          h.putStrLn <| ←htmlHeader m.toString
+          h.putStrLn <| ←htmlHeader m.toString (includeHljs := true)
           h.putStrLn <| ← topbar "none"
           h.putStrLn s!"<h2>{probId}</h2>"
 
-          h.putStrLn "<pre class=\"problem\">"
+          h.putStrLn "<pre class=\"problem\"><code class=\"language-lean\">"
           h.putStr (htmlEscape problem_src)
-          h.putStrLn "</pre>"
+          h.putStrLn "</code></pre>"
           if proved
           then
             let authors :=
