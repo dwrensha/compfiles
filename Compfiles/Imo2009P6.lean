@@ -53,7 +53,7 @@ def embedFinLE {m n : ℕ} (hmn : m ≤ n) : Fin m ↪ Fin n :=
       exact Fin.eq_of_val_eq hxy⟩
 
 
-abbrev extendPerm {m n : ℕ} (f : Equiv.Perm (Fin m)) (h : m ≤ n) : Equiv.Perm (Fin n) :=
+noncomputable abbrev extendPerm {m n : ℕ} (f : Equiv.Perm (Fin m)) (h : m ≤ n) : Equiv.Perm (Fin n) :=
   let f' : Fin n → Fin n :=
      fun (x : Fin n) ↦ if h1 : x < m then ⟨f ⟨x, h1⟩, by omega⟩ else x
   have hf' : f'.Injective := by
@@ -70,7 +70,7 @@ abbrev extendPerm {m n : ℕ} (f : Equiv.Perm (Fin m)) (h : m ≤ n) : Equiv.Per
       aesop
     · aesop
     · aesop
-  sorry --⟨f', hf'⟩
+  Equiv.ofBijective f' (Finite.injective_iff_bijective.mp hf')
 
 theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
     (a : Fin n → ℤ)
