@@ -26,8 +26,9 @@ namespace Imo1987P4
 
 snip begin
 
-lemma subset_fintype {A B : Set ℕ} (h : A ⊆ B) (hab : Fintype ↑B) : Fintype ↑A := by
-  exact @Fintype.ofFinite A (Finite.Set.subset B h)
+noncomputable def subset_fintype {A B : Set ℕ} (h : A ⊆ B) (_hab : Fintype ↑B)
+    : Fintype ↑A :=
+  @Fintype.ofFinite A (Finite.Set.subset B h)
 
 /--
 More general version of the problem.
