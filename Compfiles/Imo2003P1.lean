@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2024 David Renshaw. All rights reserved.
+Copyright (c) 2024 The Compfiles Contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: David Renshaw
+Authors:
 -/
 
 import Mathlib.Tactic
@@ -27,5 +27,5 @@ abbrev S : Finset ℕ := Finset.Icc 1 (10^6)
 
 problem imo2003_p1 (A : Finset ℕ) (hA : A ⊆ S) :
     ∃ t : Fin 100 → S,
-      ∀ i j, i ≠ j → {x + t i | x ∈ A} ≠ {x + t j | x ∈ A} := by
+      ∀ i j, i ≠ j → Disjoint {x + t i | x ∈ A} {x + t j | x ∈ A} := by
   sorry
