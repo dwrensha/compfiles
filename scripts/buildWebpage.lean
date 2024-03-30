@@ -234,7 +234,7 @@ def generateProblemStubFile (path : String) (probId : String) : IO Unit := do
 
   let writeupLinks := getWriteupLinks probId
   if writeupLinks.length > 0
-  then h.putStrLn s!"<div>Informal writeups:<ul class=\"writeups\">"
+  then h.putStrLn s!"<div>External resources:<ul class=\"writeups\">"
        for ⟨url, text⟩ in writeupLinks do
          h.putStrLn s!"<li><a href=\"{url}\">{text}</a></li>"
        h.putStrLn s!"</ul></div>"
@@ -315,7 +315,7 @@ unsafe def main (_args : List String) : IO Unit := do
             h.putStrLn s!"<p>The solution was imported from <a href=\"{url}\">{text}</a>.</p>"
           let writeupLinks := getWriteupLinks probId
           if writeupLinks.length > 0
-          then h.putStrLn s!"<div>Informal writeups:<ul class=\"writeups\">"
+          then h.putStrLn s!"<div>External resources:<ul class=\"writeups\">"
                for ⟨url, text⟩ in writeupLinks do
                  h.putStrLn s!"<li><a href=\"{url}\">{text}</a></li>"
                h.putStrLn s!"</ul></div>"
