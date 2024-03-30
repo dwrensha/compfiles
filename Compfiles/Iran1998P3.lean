@@ -85,7 +85,6 @@ problem iran1998_p3
 
     rw [Real.mul_rpow zero_le_four hcp] at holder
 
-    have h43nn : (0:ℝ) ≤ 4 ^ (3:ℝ) := by norm_cast
     rw [Finset.card_range 4] at holder
 
     have hss: C ^ (3:ℝ) ≤ ((1:ℝ) / 4) * ∑ i in Finset.range 4, x i ^ (3:ℝ) := by
