@@ -178,7 +178,7 @@ def htmlHeader (title : String) (includeHljs : Bool := false) : IO String := do
     s!"<title>{title}</title>" ++
     (if includeHljs
      then
-       "<link rel=\"stylesheet\" type=\"text/css\" href=\"https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/docco.min.css\">" ++
+       s!"<link rel=\"stylesheet\" type=\"text/css\" href=\"{baseurl}docco.css\">" ++
        "<script src=\"https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js\"></script>" ++
       s!"<script src=\"{baseurl}lean.js\"></script>" ++
       "<script>hljs.highlightAll();</script>"
@@ -244,8 +244,9 @@ def generateProblemStubFile (path : String) (probId : String) : IO Unit := do
 unsafe def main (_args : List String) : IO Unit := do
   IO.FS.createDirAll "_site"
   IO.FS.createDirAll "_site/problems"
-  IO.FS.writeFile "_site/main.css" (←IO.FS.readFile "scripts/main.css")
-  IO.FS.writeFile "_site/lean.js" (←IO.FS.readFile "scripts/lean.js")
+  IO.FS.writeFile "_site/main.css" (←IO.FS.readFile "assets/main.css")
+  IO.FS.writeFile "_site/docco.css" (←IO.FS.readFile "assets/docco.css")
+  IO.FS.writeFile "_site/lean.js" (←IO.FS.readFile "assets/lean.js")
 
   let module := `Compfiles
   searchPathRef.set compile_time_search_path%
