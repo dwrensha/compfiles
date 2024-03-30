@@ -32,6 +32,9 @@ def totalImoProblemCount : Id Nat := do
     result := result + c
   return result
 
+def officialImoUrl (year : Nat) (_idx : Nat) : String :=
+  s!"https://www.imo-official.org/problems/{year}/eng.pdf"
+
 def aopsImoUrl (year : Nat) (idx : Nat) : String :=
   s!"https://artofproblemsolving.com/wiki/index.php/{year}_IMO_Problems/Problem_{idx}"
 
@@ -48,7 +51,9 @@ structure WriteupLink where
 
 def allImoUrls (year : Nat) (idx : Nat) : List WriteupLink :=
   Id.run
-  do let mut result := [⟨aopsImoUrl year idx, "Art of Problem Solving"⟩]
+  do let mut result := [
+         ⟨officialImoUrl year idx, "www.imo-official.org/problems"⟩,
+         ⟨aopsImoUrl year idx, "Art of Problem Solving"⟩]
      if year ≤ 2003
      then result := result ++ [⟨scholesImoUrl year idx, "John Scholes"⟩]
      if year ≥ 1997 ∧ year ≤ 2023
