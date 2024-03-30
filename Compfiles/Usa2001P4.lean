@@ -103,7 +103,6 @@ problem usa2001_p4
   have h45 : 0 < Real.cos (∠ B A C) := (mul_pos_iff_of_pos_left h44).mp h31
   by_contra! H
   have h48 : ∠ B A C ≤ Real.pi + Real.pi / 2 := by
-    have : ∠ B A C ≤ Real.pi := EuclideanGeometry.angle_le_pi B A C
     linarith [EuclideanGeometry.angle_le_pi B A C]
   have h49 : Real.cos (∠ B A C) ≤ 0 := Real.cos_nonpos_of_pi_div_two_le_of_le H h48
   exact not_lt.mpr h49 h45
