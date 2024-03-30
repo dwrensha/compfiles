@@ -153,13 +153,6 @@ lemma can_get_a_later_one_zmod :
 
   clear ha1 ha2
 
-  have : ∀ i, i ≤ 2 → a' (n1 + i) = a' n1 := by
-    intro i hi
-    interval_cases i
-    · rfl
-    · exact ha1'
-    · exact ha2'
-
   -- then the seven elements beginning with a (4 * n - 3) will all have different
   -- residues mod 7.
 
