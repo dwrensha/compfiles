@@ -1,5 +1,5 @@
 /-
-Copyright (c) 2023 David Renshaw. All rights reserved.
+Copyright (c) 2023 The Compfiles Contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: David Renshaw
 -/
@@ -70,23 +70,7 @@ problem usa1981_p5 (x : ℝ) (n : ℕ) :
 
   rw [Finset.mem_Icc] at hm1
   obtain ⟨hm3, hm4⟩ := hm1
-  obtain rfl | hlt := (Nat.lt_or_eq_of_le hm4).symm
-  · have h6 : ∀ ii ∈ Finset.Icc 1 m, a m / m ≤ a ii / ii :=
-      fun ii hii ↦ hm2 ⟨ii, hii⟩
-    have h7 : ∑ _i in Finset.Icc 1 m, a m / ↑m ≤
-              ∑ ii in Finset.Icc 1 m, a ii / ↑ii := Finset.sum_le_sum h6
-    have h8 : a m = ∑ _i in Finset.Icc 1 m, a m / ↑m := by
-      have h9 : (m:ℝ) ≠ 0 := by
-        intro hm5
-        obtain rfl : m = 0 := Nat.cast_eq_zero.mp hm5
-        exact Nat.not_succ_le_zero 0 hm3
-      rw [Finset.sum_const, Nat.card_Icc, add_tsub_cancel_right, nsmul_eq_mul]
-      exact (mul_div_cancel₀ _ h9).symm
-    rw [h8]
-    exact h7
-
   have h9 := ih (n - m) (Nat.sub_lt hn hm3)
-  have h10 := ih m hlt
 
   have h11 := h4 (n - m) m
   rw [Nat.sub_add_cancel hm4] at h11
