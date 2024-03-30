@@ -245,7 +245,6 @@ lemma exp_characterization
       rw [←hn]
       have h11: ↑(-((↑n):ℤ)) * x = - (n * x) := by norm_num
       rw [h11, h3 _]
-      have := hunz (↑n * x)
       rw [h10, one_div]
       rw [hn, inv_eq_iff_eq_inv, ←hn, zpow_neg, inv_inv]
       rfl
