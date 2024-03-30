@@ -179,9 +179,9 @@ def htmlHeader (title : String) (includeHljs : Bool := false) : IO String := do
     (if includeHljs
      then
        s!"<link rel=\"stylesheet\" type=\"text/css\" href=\"{baseurl}docco.css\">" ++
-       "<script src=\"https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js\"></script>" ++
-      s!"<script src=\"{baseurl}lean.js\"></script>" ++
-      "<script>hljs.highlightAll();</script>"
+       s!"<script src=\"{baseurl}highlight.min.js\"></script>" ++
+       s!"<script src=\"{baseurl}lean.js\"></script>" ++
+       "<script>hljs.highlightAll();</script>"
      else "") ++
     "</head>\n<body>"
 
@@ -245,6 +245,7 @@ unsafe def main (_args : List String) : IO Unit := do
   IO.FS.createDirAll "_site"
   IO.FS.createDirAll "_site/problems"
   IO.FS.writeFile "_site/main.css" (←IO.FS.readFile "assets/main.css")
+  IO.FS.writeFile "_site/highlight.min.js" (←IO.FS.readFile "assets/highlight.min.js")
   IO.FS.writeFile "_site/docco.css" (←IO.FS.readFile "assets/docco.css")
   IO.FS.writeFile "_site/lean.js" (←IO.FS.readFile "assets/lean.js")
 
