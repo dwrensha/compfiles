@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2023 David Renshaw. All rights reserved.
+Copyright (c) 2023 The Compfiles Contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: David Renshaw
+Authors:
 -/
 
 import Mathlib.Tactic
@@ -25,17 +25,12 @@ and let d = max {dᵢ : 1 ≤ i ≤ n}.
 
 namespace Imo2007P1
 
-theorem pos_fin_nonempty {n : ℕ} (hn : 0 < n) : (@Finset.univ (Fin n) _).Nonempty := by
-  rwa [Finset.univ_nonempty_iff, ←Fin.pos_iff_nonempty]
-
 problem imo2007_p1a {n : ℕ} (hn : 0 < n) {a x : Fin n → ℝ} (h : Monotone x) :
     ∀ {k m : Fin n}, k ≤ m → m ≤ n →
-      (a k - a m) / 2 ≤ (@Finset.univ (Fin n) _).sup' (pos_fin_nonempty hn)
-                           (fun i ↦ |x i - a i|) := by
+      (a k - a m) / 2 ≤ ⨆ i, |x i - a i| := by
   sorry
 
 problem imo2007_p1b {n : ℕ} (hn : 0 < n) {a : Fin n → ℝ} :
     ∃ x : Fin n → ℝ, Monotone x ∧ ∃ k m : Fin n, k ≤ m ∧ m ≤ n ∧
-            (a k - a m) / 2 = (@Finset.univ (Fin n) _).sup' (pos_fin_nonempty hn)
-                           (fun i ↦ |x i - a i|) := by
+            (a k - a m) / 2 = ⨆ i, |x i - a i| := by
   sorry
