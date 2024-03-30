@@ -25,12 +25,14 @@ and let d = max {dᵢ : 1 ≤ i ≤ n}.
 
 namespace Imo2007P1
 
+noncomputable abbrev d {n : ℕ} (a : Fin n → ℝ) (i : Fin n) :=
+  (⨆ j : {j // j ≤ i}, a j - ⨅ j : {j // i ≤ j}, a j)
+
 problem imo2007_p1a {n : ℕ} (hn : 0 < n) {a x : Fin n → ℝ} (h : Monotone x) :
-    ∀ {k m : Fin n}, k ≤ m → m ≤ n →
-      (a k - a m) / 2 ≤ ⨆ i, |x i - a i| := by
+    (⨆ i, d a i) / 2 ≤ ⨆ i, |x i - a i| := by
   sorry
 
 problem imo2007_p1b {n : ℕ} (hn : 0 < n) {a : Fin n → ℝ} :
-    ∃ x : Fin n → ℝ, Monotone x ∧ ∃ k m : Fin n, k ≤ m ∧ m ≤ n ∧
-            (a k - a m) / 2 = ⨆ i, |x i - a i| := by
+    ∃ x : Fin n → ℝ, Monotone x ∧
+      (⨆ i, d a i) / 2 = ⨆ i, |x i - a i| := by
   sorry
