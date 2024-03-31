@@ -120,11 +120,7 @@ lemma extend_function_anti
 
   -- then find a δ such that for all z, |z-y| < δ implies that
   -- |f z - f y| < ε.
-  have h_cont' := Metric.continuous_iff'.mp f_cont y ε hε
-  have h_cont2 := Filter.eventually_iff.mp h_cont'
-  obtain ⟨s, hs, hs', hs''⟩ := mem_nhds_iff.mp h_cont2
-  obtain ⟨δ, hδ0, hδ⟩ := Metric.isOpen_iff.mp hs' y hs''
-  have hb := hδ.trans hs
+  obtain ⟨δ, hδ0, hδ⟩ := Metric.continuous_iff.mp f_cont y ε hε
 
   obtain h1 | h2 | h3 := lt_trichotomy (u y) (f y)
   · -- pick a rational point z greater than y that's in the ball s,
@@ -137,9 +133,8 @@ lemma extend_function_anti
 
     obtain ⟨z, h_y_lt_z, hyz⟩ := this
     -- then dist (f z) (f y) < ε.
-    have hzb : (↑z) ∈ Metric.ball y δ := Metric.mem_ball.mpr hyz
-    have hbzb := hb hzb
-    rw[Set.mem_setOf_eq, ← h z] at hbzb
+    have hbzb := hδ z hyz
+    rw [← h z] at hbzb
     have huzuy : u y < u z := by
       have hufp : u y - f y < 0 := by linarith
       have hua : ε = -(u y - f y) := abs_of_neg hufp
@@ -164,8 +159,8 @@ lemma extend_function_anti
     obtain ⟨z, h_z_lt_y, hyz⟩ := this
     -- then dist (f z) (f y) < ε.
     have hzb : (↑z) ∈ Metric.ball y δ := Metric.mem_ball.mpr hyz
-    have hbzb := hb hzb
-    rw[Set.mem_setOf_eq, ← h z] at hbzb
+    have hbzb := hδ z hzb
+    rw[← h z] at hbzb
     have huzuy : u z < u y := by
       have hufp : 0 < u y - f y := by linarith
       have hua : ε = u y - f y := abs_of_pos hufp
