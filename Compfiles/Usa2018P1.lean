@@ -27,8 +27,6 @@ snip begin
 
 lemma am_gm (a b : ℝ) : a > 0 → b > 0 → 2 * (a * b) ^ ((1 : ℝ) / 2) ≤ a + b := by
   intro ha hb
-  have gsa := Real.sqrt_pos.mpr ha
-  have gsb := Real.sqrt_pos.mpr hb
   set sa := Real.sqrt a with hsa
   set sb := Real.sqrt b with hsb
   have : a = sa * sa := by rw [hsa]; field_simp
