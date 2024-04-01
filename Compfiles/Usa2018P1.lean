@@ -98,23 +98,18 @@ problem usa2018_p1 (a b c : ℝ) : a > 0 → b > 0 → c > 0 → a + b + c = 4 *
         suffices eq1 : (4 : ℝ) * ((2 : ℝ) * (a * ((4 : ℝ) * (a * b * c) ^ (1 / 3 : ℝ)) * (b * c)) ^ (1 / 2 : ℝ)) = ((4 : ℝ) * (a * b * c) ^ (1 / 3 : ℝ)) ^ (2 : ℕ)
         rw [←eq1]; exact amgm
         ring_nf
-        rw [←Real.rpow_two, ←Real.rpow_mul]
+        rw [←Real.rpow_two, ←Real.rpow_mul (by positivity)]
         norm_num
         nth_rw 1 [(by simp : a * b * c = (a * b * c) ^ (1 : ℕ))]
-        rw [mul_comm ((a * b * c) ^ (1 : ℕ)), ←Real.rpow_add_nat]
+        rw [mul_comm ((a * b * c) ^ (1 : ℕ)), ←Real.rpow_add_nat (by positivity)]
         norm_num
-        rw [Real.mul_rpow]
-        rw [←Real.rpow_mul]
+        rw [Real.mul_rpow (by positivity) (by positivity)]
+        rw [←Real.rpow_mul (by positivity)]
         norm_num
         rw [mul_assoc]
         suffices manual3 : ((4 : ℝ) ^ (1 / 2 : ℝ) * (8 : ℝ)) = (16 : ℝ)
         rw [manual3]
         rotate_left
-        positivity
-        positivity
-        positivity
-        positivity
-        positivity
         rw [←Real.sqrt_eq_rpow]
         rw [(by norm_num : (4 : ℝ) = (2 : ℝ) * (2 : ℝ))]
         rw [Real.sqrt_mul_self]
