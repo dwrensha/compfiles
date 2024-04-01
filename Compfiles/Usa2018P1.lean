@@ -37,11 +37,10 @@ lemma am_gm (a b : ℝ) : a > 0 → b > 0 → 2 * (a * b) ^ ((1 : ℝ) / 2) ≤ 
   rw [this]
   have : (sa * sa * (sb * sb)) ^ ((1 : ℝ) / 2) = sa * sb := by
     simp only [one_div]
-    rw [Real.mul_rpow, ←pow_two, ←pow_two, ←Real.rpow_two, ←Real.rpow_two]
-    rw [Real.rpow_rpow_inv (by positivity), Real.rpow_rpow_inv (by positivity)]
-    linarith
-    linarith
-    positivity
+    rw [Real.mul_rpow (mul_self_nonneg _), ←pow_two, ←pow_two,
+        ←Real.rpow_two, ←Real.rpow_two]
+    rw [Real.rpow_rpow_inv (by positivity) two_ne_zero,
+        Real.rpow_rpow_inv (by positivity) two_ne_zero]
     positivity
   rw [this]
   rw [←pow_two, ←pow_two]
@@ -51,13 +50,15 @@ lemma am_gm (a b : ℝ) : a > 0 → b > 0 → 2 * (a * b) ^ ((1 : ℝ) / 2) ≤ 
 snip end
 
 
-problem usa2018_p1 (a b c : ℝ) : a > 0 → b > 0 → c > 0 → a + b + c = 4 * (a * b * c) ^ ((1 : ℝ) / 3) →
-  2 * (a * b + b * c + c * a) + 4 * (min (min (a * a) (b * b)) (c * c)) ≥ a^2 + b^2 + c^2 := by
+problem usa2018_p1 (a b c : ℝ) :
+    a > 0 → b > 0 → c > 0 → a + b + c = 4 * (a * b * c) ^ ((1 : ℝ) / 3) →
+    2 * (a * b + b * c + c * a) +
+     4 * (min (min (a * a) (b * b)) (c * c)) ≥ a^2 + b^2 + c^2 := by
   -- solution 1 from
   -- https://artofproblemsolving.com/wiki/index.php/2018_USAMO_Problems/Problem_1
   intro ha hb hc heq
   wlog h1 : a ≤ b with H1
-  · have swap1 : (a * b + b * c + c * a) = (b * a + a * c + c * b) := by ring 
+  · have swap1 : (a * b + b * c + c * a) = (b * a + a * c + c * b) := by ring
     have swap2 : (min (min (a * a) (b * b)) (c * c)) = (min (min (b * b) (a * a)) (c * c)) := by
       simp only [min_comm, min_assoc]
     have swap3 : a^2 + b^2 + c^2 = b^2 + a^2 + c^2 := by ring
@@ -66,7 +67,7 @@ problem usa2018_p1 (a b c : ℝ) : a > 0 → b > 0 → c > 0 → a + b + c = 4 *
     linear_combination (norm := (field_simp; ring_nf)) 1 * heq
     linarith
   · wlog h2 : a ≤ c with H2
-    · have swap1 : (a * b + b * c + c * a) = (c * b + b * a + a * c) := by ring 
+    · have swap1 : (a * b + b * c + c * a) = (c * b + b * a + a * c) := by ring
       have swap2 : (min (min (a * a) (b * b)) (c * c)) = (min (min (c * c) (b * b)) (a * a)) := by
         rw [min_comm, min_assoc, min_comm (a*a)]
       have swap3 : a^2 + b^2 + c^2 = c^2 + b^2 + a^2 := by ring
@@ -76,7 +77,7 @@ problem usa2018_p1 (a b c : ℝ) : a > 0 → b > 0 → c > 0 → a + b + c = 4 *
       linarith
       linarith
     · wlog h3 : b ≤ c with H3
-      · have swap1 : (a * b + b * c + c * a) = (a * c + c * b + b * a) := by ring 
+      · have swap1 : (a * b + b * c + c * a) = (a * c + c * b + b * a) := by ring
         have swap2 : (min (min (a * a) (b * b)) (c * c)) = (min (min (a * a) (c * c)) (b * b)) := by
           rw [min_assoc, min_comm (b*b), ←min_assoc]
         have swap3 : a^2 + b^2 + c^2 = a^2 + c^2 + b^2 := by ring
