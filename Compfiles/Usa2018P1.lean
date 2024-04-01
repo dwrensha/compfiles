@@ -58,59 +58,49 @@ problem usa2018_p1 (a b c : ℝ) :
   -- https://artofproblemsolving.com/wiki/index.php/2018_USAMO_Problems/Problem_1
   intro ha hb hc heq
   wlog h1 : a ≤ b with H1
-  · have swap1 : (a * b + b * c + c * a) = (b * a + a * c + c * b) := by ring
-    have swap2 : (min (min (a * a) (b * b)) (c * c)) = (min (min (b * b) (a * a)) (c * c)) := by
-      simp only [min_comm, min_assoc]
-    have swap3 : a^2 + b^2 + c^2 = b^2 + a^2 + c^2 := by ring
-    rw [swap1, swap2, swap3]
-    refine H1 b a c hb ha hc ?_ ?_
-    linear_combination (norm := (field_simp; ring_nf)) 1 * heq
-    linarith
+  · move_add [←(b^2)]
+    convert (H1 b a c hb ha hc ?_ ?_) using 3
+    ring_nf
+    rw [min_comm (a*a)]
+    linear_combination (norm := (ring_nf)) 1 * heq
+    exact le_of_lt (not_le.mp h1)
   · wlog h2 : a ≤ c with H2
-    · have swap1 : (a * b + b * c + c * a) = (c * b + b * a + a * c) := by ring
-      have swap2 : (min (min (a * a) (b * b)) (c * c)) = (min (min (c * c) (b * b)) (a * a)) := by
-        rw [min_comm, min_assoc, min_comm (a*a)]
-      have swap3 : a^2 + b^2 + c^2 = c^2 + b^2 + a^2 := by ring
-      rw [swap1, swap2, swap3]
-      refine H2 c b a hc hb ha ?_ ?_ ?_
-      linear_combination (norm := (field_simp; ring_nf)) 1 * heq
+    · move_add [←(c^2)]; move_add [(a^2)]
+      convert (H2 c b a hc hb ha ?_ ?_ ?_) using 3
+      ring_nf
+      rw [min_comm, min_assoc, min_comm (a*a)]
+      linear_combination (norm := (ring_nf)) 1 * heq
       linarith
       linarith
     · wlog h3 : b ≤ c with H3
-      · have swap1 : (a * b + b * c + c * a) = (a * c + c * b + b * a) := by ring
-        have swap2 : (min (min (a * a) (b * b)) (c * c)) = (min (min (a * a) (c * c)) (b * b)) := by
-          rw [min_assoc, min_comm (b*b), ←min_assoc]
-        have swap3 : a^2 + b^2 + c^2 = a^2 + c^2 + b^2 := by ring
-        rw [swap1, swap2, swap3]
-        refine H3 a c b ha hc hb ?_ h2 h1 ?_
+      · move_add [(b^2)]
+        convert (H3 a c b ha hc hb ?_ h2 h1 ?_) using 3
+        linarith
+        rw [min_comm, ←min_assoc, min_comm (a*a)]
         linear_combination (norm := (field_simp; ring_nf)) 1 * heq
         linarith
       · have aabb : a * a ≤ b * b := by apply mul_self_le_mul_self; linarith; assumption
         have aacc : a * a ≤ c * c := by apply mul_self_le_mul_self; linarith; assumption
         simp only [aabb, aacc, min_eq_left]
         apply le_of_add_le_add_right (a := 2 * (a * b + b * c + c * a))
-        have manual1 : (a + b + c) ^ 2 = a ^ 2 + b ^ 2 + c ^ 2 + (2 : ℝ) * (a * b + b * c + c * a) := by ring
-        rw [←manual1, heq]
-        have manual2 : (2 : ℝ) * (a * b + b * c + c * a) + (4 : ℝ) * (a * a) + (2 : ℝ) * (a * b + b * c + c * a)
-          = 4 * (a * (a + b + c) + b * c) := by ring_nf
-        rw [manual2, heq]
+        convert_to (a + b + c) ^ 2 ≤ 4 * (a * (a + b + c) + b * c)
+        ring_nf
+        ring_nf
+        rw [heq]
         have amgm := am_gm (a * ((4 : ℝ) * (a * b * c) ^ ((1 : ℝ) / 3))) (b * c) (by positivity) (by positivity)
         rw [←(mul_le_mul_left (by norm_num : 0 < (4 : ℝ)))] at amgm
-        suffices eq1 : (4 : ℝ) * ((2 : ℝ) * (a * ((4 : ℝ) * (a * b * c) ^ (1 / 3 : ℝ)) * (b * c)) ^ (1 / 2 : ℝ)) = ((4 : ℝ) * (a * b * c) ^ (1 / 3 : ℝ)) ^ (2 : ℕ)
-        rw [←eq1]; exact amgm
+        convert amgm
         ring_nf
+        nth_rw 2 [(by simp : a * b * c = (a * b * c) ^ (1 : ℕ))]
         rw [←Real.rpow_two, ←Real.rpow_mul (by positivity)]
-        norm_num
-        nth_rw 1 [(by simp : a * b * c = (a * b * c) ^ (1 : ℕ))]
         rw [mul_comm ((a * b * c) ^ (1 : ℕ)), ←Real.rpow_add_nat (by positivity)]
         norm_num
-        rw [Real.mul_rpow (by positivity) (by positivity)]
+        nth_rw 2 [Real.mul_rpow (by positivity) (by positivity)]
         rw [←Real.rpow_mul (by positivity)]
         norm_num
-        rw [mul_assoc]
-        suffices manual3 : ((4 : ℝ) ^ (1 / 2 : ℝ) * (8 : ℝ)) = (16 : ℝ)
-        rw [manual3]
-        rotate_left
+        rw [(mul_assoc _ _ 8)]
+        simp only [mul_eq_mul_left_iff]
+        left
         rw [←Real.sqrt_eq_rpow]
         rw [(by norm_num : (4 : ℝ) = (2 : ℝ) * (2 : ℝ))]
         rw [Real.sqrt_mul_self zero_le_two]
