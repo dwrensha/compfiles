@@ -60,32 +60,32 @@ problem usa2018_p1 (a b c : ℝ) :
   wlog h1 : a ≤ b with H1
   · move_add [←(b^2)]
     convert (H1 b a c hb ha hc ?_ ?_) using 3
-    ring_nf
-    rw [min_comm (a*a)]
-    linear_combination (norm := (ring_nf)) 1 * heq
-    exact le_of_lt (not_le.mp h1)
+    · ring_nf
+    · rw [min_comm (a*a)]
+    · linear_combination (norm := (ring_nf)) 1 * heq
+    · exact le_of_lt (not_le.mp h1)
   · wlog h2 : a ≤ c with H2
     · move_add [←(c^2)]; move_add [(a^2)]
       convert (H2 c b a hc hb ha ?_ ?_ ?_) using 3
-      ring_nf
-      rw [min_comm, min_assoc, min_comm (a*a)]
-      linear_combination (norm := (ring_nf)) 1 * heq
-      linarith
-      linarith
+      · ring_nf
+      · rw [min_comm, min_assoc, min_comm (a*a)]
+      · linear_combination (norm := (ring_nf)) 1 * heq
+      · linarith
+      · linarith
     · wlog h3 : b ≤ c with H3
       · move_add [(b^2)]
         convert (H3 a c b ha hc hb ?_ h2 h1 ?_) using 3
-        linarith
-        rw [min_comm, ←min_assoc, min_comm (a*a)]
-        linear_combination (norm := (field_simp; ring_nf)) 1 * heq
-        linarith
+        · linarith
+        · rw [min_comm, ←min_assoc, min_comm (a*a)]
+        · linear_combination (norm := (field_simp; ring_nf)) 1 * heq
+        · linarith
       · have aabb : a * a ≤ b * b := by apply mul_self_le_mul_self; linarith; assumption
         have aacc : a * a ≤ c * c := by apply mul_self_le_mul_self; linarith; assumption
         simp only [aabb, aacc, min_eq_left]
         apply le_of_add_le_add_right (a := 2 * (a * b + b * c + c * a))
         convert_to (a + b + c) ^ 2 ≤ 4 * (a * (a + b + c) + b * c)
-        ring_nf
-        ring_nf
+        · ring_nf
+        · ring_nf
         rw [heq]
         have amgm := am_gm (a * ((4 : ℝ) * (a * b * c) ^ ((1 : ℝ) / 3))) (b * c) (by positivity) (by positivity)
         rw [←(mul_le_mul_left (by norm_num : 0 < (4 : ℝ)))] at amgm
