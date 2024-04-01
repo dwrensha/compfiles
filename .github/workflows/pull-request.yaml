@@ -31,6 +31,15 @@ jobs:
           result_run1=$?
           echo "Complete at $(date +'%T'); return value $result_run1"
 
+      - name: check that Compfiles.lean is up to date
+        id: check-Compfiles-lean
+        run: |
+          echo "Running mk_toplevel_file.bash..."
+          bash ./scripts/mk_toplevel_file.bash
+          echo "Checking that Compfiles.lean is unchanged..."
+          echo "(If this fails, you should run ./scripts/mk_toplevel_file.bash locally.)"
+          bash ./scripts/assert_working_directory_clean.bash
+
       - name: run extractProblems
         id: run-extractProblems
         run: |

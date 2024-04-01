@@ -11,4 +11,4 @@
 # prepend `import `
 find Compfiles/ -name \*.lean \
   | sed 's,^\./,,;s,/,.,g;s,\.lean$,,;s,^,import ,' \
-  | sort > Compfiles.lean
+  | sort -V > Compfiles.lean
