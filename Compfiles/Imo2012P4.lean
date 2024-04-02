@@ -20,7 +20,17 @@ the following equality holds:
 
 namespace Imo2012P4
 
-determine solution_set : Set (ℤ → ℤ) := sorry
+-- def odd_const (c : ℤ) : ℤ → ℤ := λ x =>
+--   match x with
+--   | 0 => 0
+--   | 1 => c
+--   |
+
+def odd_const : Set (ℤ → ℤ) := fun f =>
+  ∃ c : ℤ, ∀ x : ℤ,
+    (Odd x → f x = c) ∧ (Even x → f x = 0)
+
+determine solution_set : Set (ℤ → ℤ) := odd_const
 
 problem imo2012_p4 (f : ℤ → ℤ) :
     f ∈ solution_set ↔
@@ -121,6 +131,36 @@ problem imo2012_p4 (f : ℤ → ℤ) :
         rw [show 2 * a = a * 2 from by ring]
         linarith
 
-      sorry
+      have h_odd_const (x : ℤ) : Odd x → f x = f 1 := by
+        intro odd
+        wlog pos : x ≥ 0 with H
+        simp at pos
+        have := even (- x); simp at this
+        set y := -x with yh
+        rw [this]; clear this
+        have ynng : y ≥ 0 := by linarith
+        have y_odd : Odd y := by
+          have ⟨ k, hk ⟩ := odd
+          use -k-1
+          linarith
+
+        exact H f constraint (by assumption)
+         (by assumption) (by assumption)
+         (by assumption) (by assumption)
+         (by assumption) (by assumption) y y_odd ynng
+
+        -- when `x ≥ 0`
+        
+
+      have f_in_odd_const : f ∈ odd_const := by
+        use f 1
+        intro x
+        constructor
+        · intro odd
+          exact h_odd_const x odd
+        sorry
+
     sorry
   sorry
+
+end Imo2012P4
