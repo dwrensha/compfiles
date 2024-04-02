@@ -2,12 +2,17 @@
   box-sizing: border-box;
 }
 
+:root {
+    --bg-color: #def6fd;
+    --darker-bg-color: #c9e6e9;
+}
+
 body {
   font-family: Helvetica, Sans, Arial;
   font-size: 15px;
   margin-left: auto;
   margin-right: auto;
-  background-color: #def6fd;
+  background-color: var(--bg-color);
   width: 700px;
 }
 pre.problem code {
@@ -30,8 +35,8 @@ pre.problem code {
 .navbar {
     font-size: 17px;
     display: flex;
-    background-color: #c9e6e9;
-    border-top: 10px solid #c9e6e9;
+    background-color: var(--darker-bg-color);
+    border-top: 10px solid var(--darker-bg-color);
 }
 
 .navbar span {
@@ -42,7 +47,7 @@ pre.problem code {
 
 .navbar span.active {
     font-weight: bold;
-    background-color: #def6fd;
+    background-color: var(--bg-color);
 }
 
 .navbar span.inactive {
