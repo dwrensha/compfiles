@@ -10,8 +10,8 @@ body {
   background-color: #def6fd;
   width: 700px;
 }
-pre.problem {
-    font-family: monospace;
+pre.problem code {
+    font-family: "SF Mono", Monaco, "DevaVu Sans Mono", monospace;
     text-align: left;
     font-size: 13px;
     background-color: #fcfff5;
