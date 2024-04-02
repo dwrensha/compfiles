@@ -15,8 +15,9 @@ Docco style used in http://jashkenas.github.com/docco/ converted by Simon Madine
 }
 .hljs-comment,
 .hljs-quote {
-  color: #408080;
-  font-style: italic
+    color: #408080;
+    /* disable italics -- they break subscript rendering in MacOS
+     font-style: italic */
 }
 .hljs-keyword,
 .hljs-selector-tag,
