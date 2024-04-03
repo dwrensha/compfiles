@@ -26,18 +26,14 @@ namespace Imo2023P4
 
 open BigOperators
 
-/-- Cast `i` from `Finset.Icc k n` into the larger interval `Finset.Icc k m`. -/
-def iccCastLE {k m : ℕ} (n : Finset.Icc k m) (i : Finset.Icc k n) : Finset.Icc k m :=
-  ⟨i.val, Finset.Icc_subset_Icc_right (by aesop) i.prop⟩
-
 noncomputable def a (x : Finset.Icc 1 2023 → ℝ) (n : Finset.Icc 1 2023) : ℝ :=
-  Real.sqrt ((∑ i : Finset.Icc 1 ↑n, x (iccCastLE n i)) *
-             (∑ i : Finset.Icc 1 ↑n, (1 / x (iccCastLE n i))))
+  Real.sqrt ((∑ i in Finset.univ.filter (· ≤ n), x i) *
+             (∑ i in Finset.univ.filter (· ≤ n), (1 / x i)))
 
 problem imo2023_p4
     (x : Finset.Icc 1 2023 → ℝ)
     (hxp : ∀ i, 0 < x i)
     (hxi : x.Injective)
     (hxa : ∀ i : Finset.Icc 1 2023, ∃ k : ℤ, a x i = k)
-    : 3034 ≤ a x ⟨2023, by norm_num⟩ := by
+    : 3034 ≤ a x ⟨2023, by simp⟩ := by
   sorry
