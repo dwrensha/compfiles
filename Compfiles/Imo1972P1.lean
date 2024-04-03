@@ -65,7 +65,7 @@ problem imo1972_p1 (S : Finset ℕ)
   have h7 : t.card = 991 := Finset.card_range _
   have hf : ∀ s ∈ S.powerset, f s ∈ t := by
     intro s hs
-    rw [ Finset.mem_range]
+    rw [Finset.mem_range]
     simp only [f]
     exact Nat.lt_succ_of_le (h3 s hs)
   have h8 : t.card < S.powerset.card := by omega
@@ -78,12 +78,14 @@ problem imo1972_p1 (S : Finset ℕ)
   · have h10 : A' ⊆ A := Finset.sdiff_subset _ _
     have h11 : A ⊆ S := by
       intro a ha
-      aesop
+      rw [Finset.mem_powerset] at hA
+      exact hA ha
     exact h10.trans h11
   · have h10 : B' ⊆ B := Finset.sdiff_subset _ _
     have h11 : B ⊆ S := by
       intro b hb
-      aesop
+      rw [Finset.mem_powerset] at hB
+      exact hB hb
     exact h10.trans h11
   · rw[Finset.disjoint_iff_ne]
     intro a ha b hb
