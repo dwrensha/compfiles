@@ -102,7 +102,7 @@ problem imo2012_p4 (f : ℤ → ℤ) :
           set y := -x with yh
           rw [show - (2 * x) = 2 * y from by ring]
           have ynng : y ≥ 0 := by linarith
-          apply H <;> solve_by_elim
+          apply H <;> assumption
 
         -- when `x ≥ 0`
         have := even_nat_zero x.toNat
@@ -136,7 +136,7 @@ problem imo2012_p4 (f : ℤ → ℤ) :
             use - k - 1
             linarith
 
-          apply H <;> solve_by_elim
+          apply H <;> assumption
 
         -- when `x ≥ 0`
         cases x
@@ -155,6 +155,8 @@ problem imo2012_p4 (f : ℤ → ℤ) :
 
         case right =>
           sorry
+
+      sorry
     sorry
   sorry
 
