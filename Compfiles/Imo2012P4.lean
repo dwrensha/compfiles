@@ -102,11 +102,7 @@ problem imo2012_p4 (f : ℤ → ℤ) :
           set y := -x with yh
           rw [show - (2 * x) = 2 * y from by ring]
           have ynng : y ≥ 0 := by linarith
-          apply H
-          aesop? says
-            intro a b c a_1
-            simp_all only [implies_true, forall_const, ge_iff_le, Left.nonneg_neg_iff]
-          any_goals assumption
+          apply H <;> solve_by_elim
 
         -- when `x ≥ 0`
         have := even_nat_zero x.toNat
@@ -140,10 +136,7 @@ problem imo2012_p4 (f : ℤ → ℤ) :
             use - k - 1
             linarith
 
-          exact H f constraint
-            (by assumption) (by assumption) (by assumption)
-            (by assumption) (by assumption) (by assumption)
-            (by assumption) y y_odd ynng
+          apply H <;> solve_by_elim
 
         -- when `x ≥ 0`
         cases x
