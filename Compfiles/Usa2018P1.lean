@@ -5,7 +5,7 @@ Authors: Hongyu Ouyang
 -/
 
 import Mathlib.Tactic
-import Mathlib.Analysis.SpecialFunctions.Pow.Real
+import Mathlib.Analysis.MeanInequalities
 
 import ProblemExtraction
 
@@ -25,25 +25,12 @@ namespace Usa2018P1
 
 snip begin
 
-lemma am_gm (a b : ℝ) : a > 0 → b > 0 → 2 * (a * b) ^ ((1 : ℝ) / 2) ≤ a + b := by
-  intro ha hb
-  set sa := Real.sqrt a with hsa
-  set sb := Real.sqrt b with hsb
-  have : a = sa * sa := by rw [hsa]; field_simp
-  rw [this]
-  have : b = sb * sb := by rw [hsb]; field_simp
-  rw [this]
-  have : (sa * sa * (sb * sb)) ^ ((1 : ℝ) / 2) = sa * sb := by
-    simp only [one_div]
-    rw [Real.mul_rpow (mul_self_nonneg _), ←pow_two, ←pow_two,
-        ←Real.rpow_two, ←Real.rpow_two]
-    rw [Real.rpow_rpow_inv (by positivity) two_ne_zero,
-        Real.rpow_rpow_inv (by positivity) two_ne_zero]
-    positivity
-  rw [this]
-  rw [←pow_two, ←pow_two]
-  rw [←mul_assoc]
-  refine two_mul_le_add_sq sa sb
+lemma am_gm (a b : ℝ) (ha : 0 ≤ a) (hb : 0 ≤ b) :
+    2 * (a * b) ^ ((1 : ℝ) / 2) ≤ a + b := by
+  have hw : (0 : ℝ) ≤ 1/2 := by norm_num
+  rw [Real.mul_rpow ha hb]
+  have := Real.geom_mean_le_arith_mean2_weighted hw hw ha hb (by norm_num)
+  linarith
 
 snip end
 
