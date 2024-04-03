@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2023 David Renshaw. All rights reserved.
+Copyright (c) 2023 The Compfiles Contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: David Renshaw
+Authors:
 -/
 
 import Mathlib.Tactic
@@ -29,11 +29,13 @@ namespace Imo2023P3
 
 open BigOperators
 
-determine solution_set {k : ℕ} (hk : 2 ≤ k) : Set (ℕ+ → ℕ+) := sorry
+determine SolutionSet {k : ℕ} (hk : 2 ≤ k) : Set (ℕ+ → ℕ+) := sorry
 
 problem imo2023_p3 {k : ℕ} (hk : 2 ≤ k) (a : ℕ+ → ℕ+) :
-    a ∈ solution_set hk ↔
-    (∃ c : Fin (k+1) → ℕ+, c k = 1 ∧ ∀ n, (hn : 0 < n) →
-      ∏ j : Fin k, a ⟨n + j.val + 1, Nat.succ_pos _⟩ =
-      ∑ j : Fin (k + 1), ((a ⟨n, hn⟩).val)^j.val * c j) := by
+    a ∈ SolutionSet hk ↔
+    (∃ P : Polynomial ℤ, P.Monic ∧ P.degree = k ∧
+     (∀ n, n ≤ k → 0 ≤ P.coeff n) ∧
+      ∀ n : ℕ+,
+        P.eval ((a n) : ℤ) =
+        ∏ i in Finset.range k, a ⟨n + i + 1, Nat.succ_pos _⟩) := by
   sorry
