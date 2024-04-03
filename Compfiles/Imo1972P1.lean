@@ -44,7 +44,7 @@ problem imo1972_p1 (S : Finset ℕ)
     exact ⟨h6, h3⟩
   have h2 := Finset.card_powerset S
   rw [Scard] at h2
-  have h3 : ∀ s ∈ Finset.powerset S, ∑ n in s, n ≤ 990 := by
+  have h3 : ∀ s ∈ Finset.powerset S, ∑ n in s, n ∈ Finset.range 991 := by
     intro s hs
     have h4 : ∀ n ∈ s, n ≤ 99 := by
       intro n hn
@@ -59,17 +59,12 @@ problem imo1972_p1 (S : Finset ℕ)
     have h6 : s.card ≤ S.card := by
       rw [Finset.mem_powerset] at hs
       exact Finset.card_le_card hs
+    rw [Finset.mem_range]
     omega
-  let f : Finset ℕ → ℕ := fun s : Finset ℕ ↦ ∑ n in s, n
   let t : Finset ℕ := Finset.range 991
   have h7 : t.card = 991 := Finset.card_range _
-  have hf : ∀ s ∈ S.powerset, f s ∈ t := by
-    intro s hs
-    rw [Finset.mem_range]
-    simp only [f]
-    exact Nat.lt_succ_of_le (h3 s hs)
   have h8 : t.card < S.powerset.card := by omega
-  have h9 := Finset.exists_ne_map_eq_of_card_lt_of_maps_to h8 hf
+  have h9 := Finset.exists_ne_map_eq_of_card_lt_of_maps_to h8 h3
   obtain ⟨A, hA, B, hB, hAB1, hAB2⟩ := h9
   let C := A ∩ B
   let A' := A \ C
@@ -96,5 +91,4 @@ problem imo1972_p1 (S : Finset ℕ)
     have h15 := Finset.sum_sdiff (f := id) h13
     unfold_let A' B'
     dsimp at h14 h15
-    dsimp only [f] at hAB2
     omega
