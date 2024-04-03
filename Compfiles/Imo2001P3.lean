@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: David Renshaw
 -/
 
+import Mathlib.Data.Set.Card
 import Mathlib.Tactic
 
 import ProblemExtraction
@@ -28,9 +29,9 @@ problem imo2001_p3 {Girl Boy Problem : Type}
     (boy_card : Nat.card Boy = 21)
     (girl_solved : Girl → Problem → Prop)
     (boy_solved : Boy → Problem → Prop)
-    (hG : ∀ g : Girl, Nat.card {p | girl_solved g p} ≤ 6)
-    (hB : ∀ b : Boy, Nat.card {p | boy_solved b p} ≤ 6)
-    (hp : ∀ g : Girl, ∀ b : Boy, Nat.card {p | girl_solved g p ∧ boy_solved b p} ≤ 1)
-    : ∃ p : Problem, 3 ≤ Nat.card {g | girl_solved g p} ∧
-                     3 ≤ Nat.card {g | boy_solved g p} := by
+    (hG : ∀ g : Girl, Set.ncard {p | girl_solved g p} ≤ 6)
+    (hB : ∀ b : Boy, Set.ncard {p | boy_solved b p} ≤ 6)
+    (hp : ∀ g : Girl, ∀ b : Boy, Set.ncard {p | girl_solved g p ∧ boy_solved b p} ≤ 1)
+    : ∃ p : Problem, 3 ≤ Set.ncard {g | girl_solved g p} ∧
+                     3 ≤ Set.ncard {g | boy_solved g p} := by
   sorry
