@@ -25,5 +25,5 @@ namespace Imo1972P3
 open scoped Nat
 
 problem imo1972_p3 (m n : ℕ) :
-    ∃ k, (2 * m)! * (2 * n)! = k * m ! * n ! * (m + n)! := by
+    m ! * n ! * (m + n)! ∣ (2 * m)! * (2 * n)! := by
   sorry
