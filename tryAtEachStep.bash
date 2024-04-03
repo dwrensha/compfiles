@@ -12,5 +12,5 @@ for f in `find Compfiles -name "*.lean" | shuf`
 do
     echo >> $OUTFILE
     echo "FILE : " $f >> $OUTFILE
-    lake exe tryAtEachStep $TACTIC $f >> $OUTFILE
+    lake exe tryAtEachStep "$TACTIC" $f >> $OUTFILE
 done
