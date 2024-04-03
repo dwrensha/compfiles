@@ -19,7 +19,7 @@ pre.problem code {
     text-align: left;
     font-size: 13px;
     background-color: #fcfff5;
-    overflow: scroll;
+    overflow-x: scroll;
 }
 
 @media (max-width: 705px) {
