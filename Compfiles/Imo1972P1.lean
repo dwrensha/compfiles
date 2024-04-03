@@ -28,20 +28,20 @@ problem imo1972_p1 (S : Finset ℕ)
     ∃ S1 S2 : Finset ℕ,S1 ⊆ S ∧ S2 ⊆ S ∧
        Disjoint S1 S2 ∧ ∑ n in S1, n = ∑ n in S2, n := by
   -- https://prase.cz/kalva/imo/isoln/isoln721.html
-  have one_lt_ten : 1 < 10 := by norm_num
   replace Sdigits : S ⊆ Finset.Ico 10 100 := by
-     intro n hn
-     have h2 := Sdigits n hn
-     have h3 : n < 10 ^ ((Nat.digits 10 n).length) :=
-       Nat.lt_base_pow_length_digits one_lt_ten
+    have one_lt_ten : 1 < 10 := by norm_num
+    intro n hn
+    have h2 := Sdigits n hn
+    have h3 : n < 10 ^ ((Nat.digits 10 n).length) :=
+      Nat.lt_base_pow_length_digits one_lt_ten
 
-     have h4 : n ≠ 0 := by rintro rfl; norm_num at h2
-     have h5 := Nat.base_pow_length_digits_le _ n one_lt_ten h4
-     rw [h2] at h3 h5
-     rw [sq] at h5
-     have h6 : 10 ≤ n := by omega
-     rw [Finset.mem_Ico]
-     exact ⟨h6, h3⟩
+    have h4 : n ≠ 0 := by rintro rfl; norm_num at h2
+    have h5 := Nat.base_pow_length_digits_le _ n one_lt_ten h4
+    rw [h2] at h3 h5
+    rw [sq] at h5
+    have h6 : 10 ≤ n := by omega
+    rw [Finset.mem_Ico]
+    exact ⟨h6, h3⟩
   have h2 := Finset.card_powerset S
   rw [Scard] at h2
   have h3 : ∀ s ∈ Finset.powerset S, ∑ n in s, n ≤ 990 := by
