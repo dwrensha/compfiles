@@ -22,7 +22,7 @@ f(m) ≤ f(n), the number f(n) is divisible by f(m).
 
 namespace Imo2011P5
 
-problem imo1972_p3 (f : ℤ → ℤ)
+problem imo2011_p5 (f : ℤ → ℤ)
     (fpos : ∀ n, 0 < f n)
     (fpos : ∀ m n, f (m - n) ∣ f m - f n)
     : ∀ m n, f m ≤ f n → f m ∣ f n := by
