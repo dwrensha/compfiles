@@ -2,7 +2,7 @@
 
 OUTPUT=$(git status --porcelain)
 
-if [ -z $OUTPUT ]; then
+if [[ -z $OUTPUT ]]; then
     echo "Working directory is clean."
 else
     echo "Working directory is not clean."
