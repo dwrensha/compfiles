@@ -5,7 +5,6 @@ Authors: David Renshaw
 -/
 
 import Aesop
-import Mathlib.Data.Nat.Basic
 import Mathlib.Data.Nat.Interval
 import Mathlib.Data.Set.Basic
 import Mathlib.Data.Fintype.Card

@@ -220,7 +220,7 @@ problem imo1979_p1 (p q : ℤ) (hp : 0 < p) (hq : 0 < q)
     exact Prime.not_dvd_finset_prod (Nat.prime_iff.mp hpp) h30
   obtain ⟨p', rfl⟩ := Int.eq_ofNat_of_zero_le (le_of_lt hp)
   obtain ⟨q', rfl⟩ := Int.eq_ofNat_of_zero_le (le_of_lt hq)
-  simp only [Int.cast_ofNat] at h
+  simp only [Int.cast_natCast] at h
   suffices H : 1979 ∣ p' from Int.ofNat_dvd.mpr H
   have hqq0 : (q':ℚ) ≠ 0 :=
     Nat.cast_ne_zero.mpr (Nat.pos_iff_ne_zero.mp (Int.ofNat_pos.mp hq))

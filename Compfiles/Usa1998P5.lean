@@ -6,7 +6,6 @@ Authors: David Renshaw
 
 import Mathlib.Algebra.BigOperators.Basic
 import Mathlib.Algebra.Order.BigOperators.Ring.Finset
-import Mathlib.Data.Int.Basic
 import Mathlib.Data.Finset.Card
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Positivity
