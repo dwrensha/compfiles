@@ -66,7 +66,7 @@ problem imo1963_p1 : ∀ (p x : ℝ), (x ^ 2 - p) ≥ 0 → (x ^ 2 - 1) ≥ 0 �
   · intro h; rw [ge_iff_le]; apply (div_le_div_right (by norm_num : (0 : ℝ) < (4 : ℝ))).mp
     norm_num; rw [←h]; positivity
   · split_ifs with h;
-    · have tmp : 0 < (4 - 2 * p) := by linarith
+    · have tmp : 0 < (4 - 2 * p) := by linarith only [h]
       intro h; rw [h]; rw [div_pow, mul_pow, Real.sq_sqrt (le_of_lt tmp)]; norm_num
       rw [←(mul_le_mul_right tmp), mul_assoc, div_mul]
       field_simp
@@ -97,7 +97,7 @@ problem imo1963_p1 : ∀ (p x : ℝ), (x ^ 2 - p) ≥ 0 → (x ^ 2 - 1) ≥ 0 �
   · constructor
     · intro h; rw [←h]; field_simp [mul_assoc]
     · intro h; rw [h]; field_simp [mul_assoc]
-  rw [(by nlinarith : (p - (4 : ℝ)) ^ (2 : ℕ) = ((4 : ℝ) - p) ^ (2 : ℕ))]
+  rw [(by ring : (p - (4 : ℝ)) ^ (2 : ℕ) = ((4 : ℝ) - p) ^ (2 : ℕ))]
   have tmp2 :
     ((4 : ℝ) - p) ^ (2 : ℕ) / ((4 : ℝ) * ((4 : ℝ) - (2 : ℝ) * p)) =
     (((4 : ℝ) - p) / ((2 : ℝ) * Real.sqrt ((4 : ℝ) - (2 : ℝ) * p))) ^ 2 := by
@@ -112,11 +112,8 @@ problem imo1963_p1 : ∀ (p x : ℝ), (x ^ 2 - p) ≥ 0 → (x ^ 2 - 1) ≥ 0 �
     field_simp at xp
     revert xp; ring_nf; intro xp
     rw [pow_two] at xp
-    clear tmp tmp2
-    by_cases hp1 : 0 ≤ p
-    · refine ⟨hp1, ?_⟩
-      by_cases hp2 : p ≤ (4 / 3 : ℝ)
-      · exact hp2
-      · nlinarith
-    · nlinarith
+    by_cases hp2 : p ≤ (4 / 3 : ℝ)
+    · refine ⟨?_, hp2⟩
+      nlinarith only [xp, hp2]
+    · nlinarith only [xp, hp2]
   · intro ⟨_, hx⟩; exact hx
