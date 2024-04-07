@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2023 The Compfiles Contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: David Renshaw
+-/
+
 import Mathlib.Data.Nat.ModEq
 import Mathlib.Data.Nat.Parity
 import Mathlib.Algebra.GroupPower.Basic
