@@ -31,7 +31,7 @@ lemma iff_comm {a b c : Prop} : (a → c) → (b → c) → (c → (a ↔ b)) �
 snip end
 
 determine f (p : ℝ) : Set ℝ :=
-  if h : p ≥ 0 ∧ p ≤ (4 : ℝ) / 3
+  if p ≥ 0 ∧ p ≤ (4 : ℝ) / 3
   then { (4 - p) / (2 * Real.sqrt (4 - 2 * p)) }
   else ∅
 
@@ -39,7 +39,7 @@ problem imo1963_p1 : ∀ (p x : ℝ), (x ^ 2 - p) ≥ 0 → (x ^ 2 - 1) ≥ 0 �
   (Real.sqrt (x ^ 2 - p) + 2 * Real.sqrt (x ^ 2 - 1) = x ↔ (x ∈ f p)) := by
   intro p x h1 h2
   unfold f
-  rw [apply_dite (Membership.mem x)]
+  rw [apply_ite (Membership.mem x)]
   simp only [Set.mem_singleton_iff, ge_iff_le]
   apply @iff_comm (c := x ≥ 0)
   · intro h; rw [←h]; positivity
