@@ -26,10 +26,7 @@ namespace Imo1963P1
 snip begin
 
 lemma iff_comm {a b c : Prop} : (a → c) → (b → c) → (c → (a ↔ b)) → (a ↔ b) := by
-  intro ac bc cab
-  constructor
-  · intro x; apply (cab ?_).mp;  exact x; exact ac x
-  · intro y; apply (cab ?_).mpr; exact y; exact bc y
+  tauto
 
 snip end
 
