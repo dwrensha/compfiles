@@ -113,9 +113,11 @@ problem imo1963_p1 : ∀ (p x : ℝ), (x ^ 2 - p) ≥ 0 → (x ^ 2 - 1) ≥ 0 �
     field_simp at xp
     revert xp; ring_nf; intro xp
     rw [pow_two] at xp
+    clear tmp tmp2
     by_cases hp1 : 0 ≤ p
-    · by_cases hp2 : p ≤ (4 / 3 : ℝ)
-      · trivial
+    · refine ⟨hp1, ?_⟩
+      by_cases hp2 : p ≤ (4 / 3 : ℝ)
+      · exact hp2
       · nlinarith
     · nlinarith
   · intro ⟨_, hx⟩; exact hx
