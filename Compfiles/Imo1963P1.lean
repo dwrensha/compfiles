@@ -30,11 +30,10 @@ lemma iff_comm {a b c : Prop} : (a → c) → (b → c) → (c → (a ↔ b)) �
 
 snip end
 
-determine f : ℝ → Set ℝ := by
-  intro p
-  by_cases h : p ≥ 0 ∧ p ≤ (4 : ℝ) / 3
-  · exact { (4 - p) / (2 * Real.sqrt (4 - 2 * p)) }
-  · exact {}
+determine f (p : ℝ) : Set ℝ :=
+  if h : p ≥ 0 ∧ p ≤ (4 : ℝ) / 3
+  then { (4 - p) / (2 * Real.sqrt (4 - 2 * p)) }
+  else ∅
 
 problem imo1963_p1 : ∀ (p x : ℝ), (x ^ 2 - p) ≥ 0 → (x ^ 2 - 1) ≥ 0 →
   (Real.sqrt (x ^ 2 - p) + 2 * Real.sqrt (x ^ 2 - 1) = x ↔ (x ∈ f p)) := by
