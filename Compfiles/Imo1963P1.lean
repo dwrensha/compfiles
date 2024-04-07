@@ -9,7 +9,7 @@ import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 import ProblemExtraction
 
-problem_file { tags := [.Algebra, .Inequality] }
+problem_file { tags := [.Algebra] }
 
 /-!
 # International Mathematical Olympiad 1963, Problem 1
