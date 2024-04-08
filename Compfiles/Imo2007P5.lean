@@ -55,13 +55,13 @@ lemma bad_exists_descent {n : ℤ} (hn : 1 < n) {a : ℕ}
   ---- It suffices to show that `0 < c` and `c < (a : ℤ)`
   suffices h2 : c < a ∧ 0 < c from by
     lift c to ℕ using le_of_lt h2.2
-    rw [Int.coe_nat_pos, Int.ofNat_lt] at h2
+    rw [Int.natCast_pos, Int.ofNat_lt] at h2
     refine ⟨c, h2.2, h2.1, bad_symm ⟨t * b - 1, ?_⟩⟩
     rw [sq (a : ℤ), ← mul_assoc, ht, h1, mul_comm]
 
   ---- We do not need `n`; we just use `t` instead.
   replace ht : 1 < t := by
-    rw [← Int.coe_nat_pos] at h
+    rw [← Int.natCast_pos] at h
     have h2 := le_trans Int.one_nonneg (le_of_lt hn)
     rw [Int.lt_iff_add_one_le] at hn h ⊢
     rw [← ht]
@@ -81,7 +81,7 @@ lemma bad_exists_descent {n : ℤ} (hn : 1 < n) {a : ℕ}
     exact Int.eq_one_of_mul_eq_one_right (le_of_lt h2) h4
 
   ---- Rearranging and final step
-  rw [← Int.coe_nat_pos, h2] at h
+  rw [← Int.natCast_pos, h2] at h
   rw [← Int.ofNat_lt, h3] at h0
   rw [h2, h3 c]
   constructor

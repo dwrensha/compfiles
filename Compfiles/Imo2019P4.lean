@@ -44,7 +44,7 @@ theorem upper_bound {k n : ℕ} (hk : k > 0)
   have h2 : ∑ i in Finset.range n, i < k := by
     suffices multiplicity 2 (k ! : ℤ) = ↑(∑ i in Finset.range n, i : ℕ) by
       rw [← PartENat.coe_lt_coe, ← this]; change multiplicity ((2 : ℕ) : ℤ) _ < _
-      simp_rw [multiplicity.Int.coe_nat_multiplicity,
+      simp_rw [multiplicity.Int.natCast_multiplicity,
                Nat.multiplicity_two_factorial_lt hk.lt.ne.symm]
     rw [h, multiplicity.Finset.prod Int.prime_two, Nat.cast_sum]
     apply Finset.sum_congr rfl; intro i hi
