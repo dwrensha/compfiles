@@ -32,13 +32,6 @@ lemma abc { a b c : ℤ } (hb : b ≠ 0) : a ^ 2 = b ^ 2 * c → ∃ d, c = d ^ 
   use d
   exact h.symm
 
-lemma helper {a b : Prop} : (a ∧ (a → b)) ↔ (a ∧ b) := by
-  constructor
-  · intro ⟨ea, ab⟩
-    exact ⟨ea, ab ea⟩
-  · intro ⟨ea, eb⟩
-    exact ⟨ea, fun _ ↦ eb⟩
-
 snip end
 
 determine SolutionSet : Set (ℤ × ℤ) :=
@@ -111,11 +104,11 @@ problem usa2015_p1 (x y : ℤ) :
       rw [sq_eq_sq_iff_eq_or_eq_neg] at ht7
       simp only [Set.mem_union, Set.mem_setOf_eq]
       cases' ht7 with h h
-      · left; use n; rw [←helper]; constructor
+      · left; use n; refine ⟨?x1, let hx := ?x1; ?_⟩
         · rw [←Int.mul_eq_mul_left_iff (by positivity : ((2 : ℤ) ≠ 0))]
           linear_combination 1 * h
-        · intro hx; rw [hx, htn] at ht; linear_combination 1 * ht
-      · right; use n; rw [And.comm]; rw [←helper]; constructor
+        · rw [hx, htn] at ht; linear_combination 1 * ht
+      · right; use n; rw [And.comm]; refine ⟨?x2, let hx := ?x2; ?_⟩
         · rw [←Int.mul_eq_mul_left_iff (by positivity : ((2 : ℤ) ≠ 0))]
           linear_combination 1 * h
-        · intro hx; rw [hx, htn] at ht; linear_combination 1 * ht
+        · rw [hx, htn] at ht; linear_combination 1 * ht
