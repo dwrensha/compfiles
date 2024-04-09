@@ -72,7 +72,7 @@ problem usa2015_p1 (x y : ℤ) :
   intro ht
   obtain ⟨t, ht⟩ := ht
   have ht2 : t = (x + y) / 3 := by rw [ht]; simp
-  rw [show ↑x + ↑y = (((x + y) : ℤ) : ℚ) by norm_cast, ht]
+  rw [← Rat.intCast_add, ht]
   rw [(by cancel_denoms : ((3 * t) : ℤ) / (3 : ℚ) = t)]
   norm_cast
   rw [(by rw [←ht]; linarith only : (x ^ 2 + x * y + y ^ 2) = (3 * t) ^ 2 + x * (x - 3 * t))]
