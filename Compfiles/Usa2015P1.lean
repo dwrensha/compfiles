@@ -27,16 +27,11 @@ lemma abc { a b c : ℤ } (hb : b ≠ 0) : a ^ 2 = b ^ 2 * c → ∃ d, c = d ^ 
   intro h
   have h1 : b ^ 2 ∣ a ^ 2 := by simp_all only [ne_eq, dvd_mul_right]
   have h2 : b ∣ a := by apply (Int.pow_dvd_pow_iff (by positivity)).mp h1
-  change ∃ d, a = b * d at h2
-  obtain ⟨d, hd⟩ := h2
+  obtain ⟨d, rfl⟩ := h2
+  rw [mul_pow, mul_right_inj' (by positivity)] at h
   use d
-  have : b ^ 2 ≠ 0 := by simp [hb]
-  have hc : c = a ^ 2 / b ^ 2 := by exact Int.eq_ediv_of_mul_eq_right this (id h.symm)
-  rw [hd] at hc
-  rw [hc]
-  rw [mul_pow]
-  exact Int.mul_ediv_cancel_left (d ^ 2) this
-  
+  exact h.symm
+
 lemma helper {a b : Prop} : (a ∧ (a → b)) ↔ (a ∧ b) := by
   constructor
   · intro ⟨ea, ab⟩
@@ -46,7 +41,7 @@ lemma helper {a b : Prop} : (a ∧ (a → b)) ↔ (a ∧ b) := by
 
 snip end
 
-determine SolutionSet : Set (ℤ × ℤ) := 
+determine SolutionSet : Set (ℤ × ℤ) :=
   {⟨x, y⟩ | ∃ n, x = n ^ 3 + 3 * n ^ 2 - 1 ∧ y = -n ^ 3 + 3 * n + 1} ∪
   {⟨x, y⟩ | ∃ n, y = n ^ 3 + 3 * n ^ 2 - 1 ∧ x = -n ^ 3 + 3 * n + 1}
 
