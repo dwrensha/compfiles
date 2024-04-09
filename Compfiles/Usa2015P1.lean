@@ -47,7 +47,7 @@ determine SolutionSet : Set (ℤ × ℤ) :=
 
 problem usa2015_p1 (x y : ℤ) :
     ⟨x, y⟩ ∈ SolutionSet ↔
-    x^2 + x * y + y^2 = (((x + y) : ℤ) / (3 : ℚ) + 1)^3 := by
+    x^2 + x * y + y^2 = ((x + y) / (3 : ℚ) + 1)^3 := by
   unfold SolutionSet
   apply iff_comm (c := ∃ t, x + y = 3 * t)
   · simp; intro h; cases' h with h h;
@@ -72,7 +72,7 @@ problem usa2015_p1 (x y : ℤ) :
   intro ht
   obtain ⟨t, ht⟩ := ht
   have ht2 : t = (x + y) / 3 := by rw [ht]; simp
-  rw [ht]
+  rw [show ↑x + ↑y = (((x + y) : ℤ) : ℚ) by norm_cast, ht]
   rw [(by cancel_denoms : ((3 * t) : ℤ) / (3 : ℚ) = t)]
   norm_cast
   rw [(by rw [←ht]; linarith only : (x ^ 2 + x * y + y ^ 2) = (3 * t) ^ 2 + x * (x - 3 * t))]
