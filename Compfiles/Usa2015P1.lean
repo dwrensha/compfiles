@@ -57,11 +57,8 @@ problem usa2015_p1 (x y : ℤ) :
     rw [h3] at h1
     clear h3
     simp only [Int.add_mul_emod_self_left, Int.add_mul_emod_self] at h1
-    rw [pow_succ, pow_succ, pow_one, Int.mul_emod, Int.mul_emod (x + y)] at h1
-    mod_cases H: (x + y) % 3
-    · exact H
-    · change (x + y) % 3 = 1 at H; rw [H] at h1; omega
-    · change (x + y) % 3 = 2 at H; rw [H] at h1; omega
+    exact Int.emod_eq_zero_of_dvd <|
+      Prime.dvd_of_dvd_pow Int.prime_three (Int.dvd_of_emod_eq_zero h1.symm)
   intro ht
   obtain ⟨t, ht⟩ := ht
   have ht2 : t = (x + y) / 3 := by rw [ht]; simp
