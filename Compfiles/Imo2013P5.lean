@@ -77,12 +77,7 @@ lemma le_of_all_pow_lt_succ' {x y : ℝ} (hx : 1 < x) (hy : 0 < y)
   by_contra! hy''
 
   -- Then there exists y' such that 0 < y ≤ 1 < y' < x.
-  let y' := (x + 1) / 2
-  have h_y'_lt_x : y' < x := by
-    unfold_let y'; linarith only [hx]
-
-  have h1_lt_y' : 1 < y' := by
-    unfold_let y'; linarith only [hx]
+  obtain ⟨y', h1_lt_y', h_y'_lt_x⟩ := exists_between hx
 
   have h_y_lt_y' : y < y' := hy''.trans_lt h1_lt_y'
   have hh : ∀ n, 0 < n → x^n - 1 < y'^n := by
