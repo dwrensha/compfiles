@@ -86,8 +86,7 @@ lemma usa2002_p1_generalized
     rw [Nat.pow_zero] at hN
     interval_cases N
     · use λ _ ↦ Color.blue
-      simp only [Nat.zero_eq, zero_le, forall_true_left, forall_const,
-                 Fintype.card_eq_zero, and_self]
+      simp only [forall_true_left, forall_const, Fintype.card_eq_zero, and_self]
     · use λ _ ↦ Color.red
       simp [Fintype.card_subtype, Finset.card_univ, hs]
   · -- Suppose that our claim holds for n = k. Let s ∈ S, |S| = k + 1,
