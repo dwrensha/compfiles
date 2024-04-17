@@ -43,17 +43,9 @@ lemma schur {a b c : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c) :
      _ = (a - b) * (a * (a - c)- b * (b - c)) := by ring
 
   have h6 : 0 ≤ (a - b) * (a * (a - c) - b * (b - c)) := by
-    have h7 : 0 ≤ a - b := sub_nonneg.mpr Hba
-    have h8 : 0 ≤ b - c := sub_nonneg.mpr Hcb
-    have h10 : b - c ≤ a - c := sub_le_sub_right Hba c
-    suffices h11 : 0 ≤ (a * (a-c)-b * (b-c)) from
-      mul_nonneg h7 h11
-    have h12 : a * (b - c) ≤ a * (a - c) := mul_le_mul_of_nonneg_left h10 ha
-    have h13 : 0 ≤ a * (b - c) - b * (b - c) := by
-      rw [←sub_mul]; positivity
-    have h14 : a * (b - c) - b * (b - c) ≤  a * (a - c) - b * (b - c) :=
-      sub_le_sub_right h12 (b * (b - c))
-    exact le_trans h13 h14
+    apply mul_nonneg
+    · exact sub_nonneg_of_le Hba
+    · rw [sub_nonneg]; nlinarith
 
   rw [← h5] at h6
   have h12 : 0 ≤ (c - a) * (c - b) := by nlinarith only [Hba, Hcb]
