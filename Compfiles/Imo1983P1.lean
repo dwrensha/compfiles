@@ -64,8 +64,8 @@ problem imo1983_p1 (f : ℝ+ → ℝ+) :
     have h5 := hi1 (1 / a)
     rw [one_div, mul_left_inv, h1, ← one_div] at h5
     exact eq_one_div_of_mul_eq_one_right h5.symm
-  wlog H1 : 1 < a with h
-  · refine h f hi hii h1 (1/a) h4 ?_ ?_ ?_ ?_
+  wlog H1 : 1 < a generalizing a with h
+  · refine h (1/a) h4 ?_ ?_ ?_ ?_
     · exact div_ne_one.mpr (Ne.symm H)
     · intro x
       have h7 := hi x (1/a)
@@ -84,7 +84,7 @@ problem imo1983_p1 (f : ℝ+ → ℝ+) :
       rw [hi1, ih]
 
   -- a > 1, so a^m approaches ∞ as m → ∞
-  -- but a^m = f (a^m), so that contracts ii
+  -- but a^m = f (a^m), so that contradicts hii
   obtain ⟨x0, hx0⟩ := hii 1
   have h12 : ∃ m, x0 < a^m := by
     -- 1 + (a-1) * m ≤ (1 + (a-1)) ^ m
