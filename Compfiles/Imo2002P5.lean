@@ -114,4 +114,10 @@ problem imo2002_p5 (f : ℝ → ℝ) :
       nlinarith
     rw [h8, sq, ←h4, ←sq, Real.sq_sqrt (by positivity)] at h11
     exact h11
+  ext x
+  wlog h7 : 0 ≤ x generalizing x with H
+  · have h8 := H (-x) (by linarith)
+    rw [←h1] at h8
+    rw [h8]
+    exact neg_pow_two x
   sorry
