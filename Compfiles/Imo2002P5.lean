@@ -25,13 +25,8 @@ namespace Imo2002P5
 snip begin
 
 lemma lemma1 {a b : ℝ} (hab : a * b = a) (hb : b ≠ 1) : a = 0 := by
-  rw [ mul_comm] at hab
-  have h1 : b * a / a = a / a :=
-   (div_eq_div_iff_comm a (b * a) a).mp (congrArg (HDiv.hDiv a) hab)
   by_contra! H
-  rw [mul_div_cancel_right₀ b H] at h1
-  have h2 : a/ a = 1 := (div_eq_one_iff_eq H).mpr rfl
-  rw [h2] at h1
+  rw [mul_eq_left₀ H] at hab
   contradiction
 
 snip end
