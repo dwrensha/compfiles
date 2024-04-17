@@ -22,15 +22,6 @@ for all real numbers x,y,z,t.
 
 namespace Imo2002P5
 
-snip begin
-
-lemma lemma1 {a b : ℝ} (hab : a * b = a) (hb : b ≠ 1) : a = 0 := by
-  by_contra! H
-  rw [mul_eq_left₀ H] at hab
-  contradiction
-
-snip end
-
 determine SolutionSet : Set (ℝ → ℝ) :=
   { fun x ↦ 0, fun x ↦ 1/2, fun x ↦ x^2 }
 
@@ -84,8 +75,12 @@ problem imo2002_p5 (f : ℝ → ℝ) :
       field_simp at H
       have H' : f y1 = 1 /2 := by linarith
       contradiction
+    contrapose! h5
+    replace h5 : f 0 + f 0 ≠ 0 := by
+      contrapose! h5; linarith only [h5]
     have h6 := h4 y1 y1
-    linarith [lemma1 h6 h5]
+    rw [mul_eq_left₀ h5] at h6
+    exact h6
   have h4 : ∀ x y, f (x * y) = f x * f y := fun x y ↦ by
     have h5 := hf x y 0 0
     simp only [mul_zero, sub_zero, add_zero, h3] at h5
