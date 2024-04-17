@@ -98,7 +98,7 @@ problem bulgaria1998_p6
       obtain ⟨r, hr⟩ := h4
       rw [←two_mul, ←sq] at hr
       have h10 : b^2 ∣ r^2 := Dvd.intro_left _ hr
-      rw [Int.pow_dvd_pow_iff two_pos] at h10
+      rw [Int.pow_dvd_pow_iff two_ne_zero] at h10
       obtain ⟨e, rfl⟩ := h10
       rw [show (b * e)^2 = e^2 * b^2 by ring] at hr
       have h11 : b^2 ≠ 0 := by positivity

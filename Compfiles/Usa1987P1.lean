@@ -32,7 +32,7 @@ lemma lemma2 {a b c : ℤ} (h : a * b^2 = c^2) : IsSquare a ∨ b = 0 := by
   -- from Eric Wieser on Zulip
   -- https://leanprover.zulipchat.com/#narrow/stream/217875-Is-there-code-for-X.3F/topic/a.20*.20b.5E2.20.3D.20c.5E2.20implies.20IsSquare.20a/near/406203283
   have h1 : b^2 ∣ c^2 := Dvd.intro_left a h
-  rw [Int.pow_dvd_pow_iff two_pos] at h1
+  rw [Int.pow_dvd_pow_iff two_ne_zero] at h1
   obtain ⟨k, rfl⟩ := h1
   rw [mul_pow, mul_comm, mul_right_inj' (pow_ne_zero _ hb)] at h
   rw [h]
