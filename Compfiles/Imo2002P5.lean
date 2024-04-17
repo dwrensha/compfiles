@@ -30,9 +30,9 @@ problem imo2002_p5 (f : ℝ → ℝ) :
     ∀ x y z t, (f x + f z) * (f y + f t) =
                f (x * y - z * t) + f (x * t + y * z) := by
   -- solution from https://web.evanchen.cc/exams/IMO-2002-notes.pdf
+  simp only [Set.mem_insert_iff, one_div, Set.mem_singleton_iff]
   constructor
   · intro hf x y z t
-    simp only [Set.mem_insert_iff, one_div, Set.mem_singleton_iff] at hf
     obtain rfl | rfl | rfl := hf
     · simp
     · norm_num1
@@ -45,7 +45,6 @@ problem imo2002_p5 (f : ℝ → ℝ) :
     have h3 := hf 0 0 1 x
     ring_nf at h2 h3
     linarith
-  simp only [Set.mem_insert_iff, one_div, Set.mem_singleton_iff]
   by_cases h2 : ∃ y, ∀ x, f x = y
   · -- f is constant
     obtain ⟨y, hy⟩ := h2
