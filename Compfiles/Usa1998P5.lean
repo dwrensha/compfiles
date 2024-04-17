@@ -1,5 +1,5 @@
 /-
-Copyright (c) 2023 David Renshaw. All rights reserved.
+Copyright (c) 2023 The Compfiles Contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: David Renshaw
 -/
@@ -7,7 +7,6 @@ Authors: David Renshaw
 import Mathlib.Algebra.BigOperators.Basic
 import Mathlib.Algebra.Order.BigOperators.Ring.Finset
 import Mathlib.Data.Finset.Card
-import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Positivity
 import Mathlib.Tactic.Ring
 
@@ -33,7 +32,7 @@ lemma usa1998_p5_stronger (n : ℕ) :
        (∀ x ∈ S, 0 ≤ x) ∧
        S.card = n ∧
        ∀ a ∈ S, ∀ b ∈ S, a ≠ b → (a - b)^2 ∣ a * b := by
-  -- (Adapation of informal proof from Andreescu & Feng.)
+  -- (Adaptation of informal proof from Andreescu & Feng.)
   induction n with
   | zero => use ∅; simp
   | succ n ih =>
