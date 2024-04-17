@@ -36,7 +36,7 @@ lemma schur (a b c : ℝ) (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c) :
     · have := h2 b c a hb hc ha hac Hcb
       linarith only [this]
   have h5 : a * (a - b) * (a - c) + b * (b - a) * (b - c) =
-            (a - b) * (a * (a - c)- b * (b - c)) := by ring
+            (a - b) * (a * (a - c) - b * (b - c)) := by ring
 
   have h6 : 0 ≤ (a - b) * (a * (a - c) - b * (b - c)) := by
     apply mul_nonneg
