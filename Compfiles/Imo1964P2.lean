@@ -45,7 +45,7 @@ lemma schur {a b c : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c) :
   have h6 : 0 ≤ (a - b) * (a * (a - c) - b * (b - c)) := by
     apply mul_nonneg
     · exact sub_nonneg_of_le Hba
-    · rw [sub_nonneg]; nlinarith
+    · nlinarith
 
   rw [← h5] at h6
   have h12 : 0 ≤ (c - a) * (c - b) := by nlinarith only [Hba, Hcb]
