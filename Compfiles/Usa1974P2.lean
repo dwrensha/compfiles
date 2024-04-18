@@ -103,7 +103,7 @@ lemma usa1974_p2_wlog :
     all_goals try positivity
     ring
   apply le_of_pow_le_pow_left (by decide : 3 ≠ 0) (by positivity)
-  rw [←Real.rpow_nat_cast]
+  rw [←Real.rpow_natCast]
   rw [←(Real.rpow_mul (le_of_lt habc))]
   norm_num
   rw [←h]

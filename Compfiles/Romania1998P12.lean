@@ -263,7 +263,7 @@ lemma exp_characterization
       rw[mul_one] at this
       rw[this, ←hk]
       rw [Real.exp_mul]
-      exact (Real.rpow_int_cast _ _).symm
+      exact (Real.rpow_intCast _ _).symm
 
   have hp : ∀ p : ℕ, 0 < p → ∀ x : ℝ, u (x / p) = (u x) ^ (1 / (p:ℝ)) := by
     intro p hp x

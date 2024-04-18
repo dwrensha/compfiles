@@ -44,14 +44,14 @@ problem india1998_p1b (n a b : ℤ) (hn : a^2 + 3 * b^2 = 7 * n) :
     have h13 : 7 ∣ (2 * a + 3 * b) := by
       have h50 : (((2 * a + 3 * b):ℤ) : ZMod 7) = 0 := by
         dsimp [az,bz] at h11; norm_cast at h11
-      exact (ZMod.int_cast_zmod_eq_zero_iff_dvd _ 7).mp h50
+      exact (ZMod.intCast_zmod_eq_zero_iff_dvd _ 7).mp h50
 
     obtain ⟨m1, hm1⟩ := exists_eq_mul_right_of_dvd h13
     have h15 : (az + (- 2) * bz) = 0 := by rw [hep]; ring_nf
     have h16 : 7 ∣ (a + (-2) * b) := by
       have h50 : (((a + (-2) * b):ℤ) : ZMod 7) = 0 := by
         dsimp [az, bz] at h15; norm_cast at h15
-      exact (ZMod.int_cast_zmod_eq_zero_iff_dvd _ 7).mp h50
+      exact (ZMod.intCast_zmod_eq_zero_iff_dvd _ 7).mp h50
     obtain ⟨m2, hm2⟩ := exists_eq_mul_right_of_dvd h16
     use m1; use m2
     have h20 : (7 * m1) ^ 2 + 3 * (7 * m2) ^ 2 = 7 * 7 * n := by
@@ -63,14 +63,14 @@ problem india1998_p1b (n a b : ℤ) (hn : a^2 + 3 * b^2 = 7 * n) :
     have h13 : 7 ∣ (2 * a + (-3) * b) := by
       have h50 : (((2 * a + (-3) * b):ℤ) : ZMod 7) = 0 := by
         dsimp [az, bz] at h11; norm_cast at h11
-      exact (ZMod.int_cast_zmod_eq_zero_iff_dvd _ 7).mp h50
+      exact (ZMod.intCast_zmod_eq_zero_iff_dvd _ 7).mp h50
 
     obtain ⟨m1, hm1⟩ := exists_eq_mul_right_of_dvd h13
     have h15 : az + 2 * bz = 0 := by rw [hen]; ring_nf
     have h16 : 7 ∣ (a + 2 * b) := by
       have h50 : (((a + 2 * b):ℤ) : ZMod 7) = 0 := by
         dsimp [az, bz] at h15; norm_cast at h15
-      exact (ZMod.int_cast_zmod_eq_zero_iff_dvd _ 7).mp h50
+      exact (ZMod.intCast_zmod_eq_zero_iff_dvd _ 7).mp h50
 
     obtain ⟨m2, hm2⟩ := exists_eq_mul_right_of_dvd h16
     use m1; use m2

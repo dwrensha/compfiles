@@ -55,7 +55,7 @@ def a' : ℕ → ZMod 7
 
 lemma zmod_ext (a b : ZMod 7) (hz : ZMod.val a = ZMod.val b) : a = b := by
   have : ((ZMod.val a) : ZMod 7)  = ((ZMod.val b) : ZMod 7) := congrArg Nat.cast hz
-  simp only [ZMod.nat_cast_val, ZMod.cast_id', id_eq] at this
+  simp only [ZMod.natCast_val, ZMod.cast_id', id_eq] at this
   exact this
 
 lemma a'_recurrence (n : ℕ) (hn : 2 ≤ n) : a' n = a' (n - 1) + a' (n / 2) := by
@@ -78,7 +78,7 @@ lemma lemma3
   constructor
   · exact ZMod.val_lt ii
   · have := hN ii.val (ZMod.val_lt ii)
-    rw [this, ZMod.nat_cast_val, ZMod.cast_id', id.def, mul_div_cancel₀ _ hk]
+    rw [this, ZMod.natCast_val, ZMod.cast_id', id.def, mul_div_cancel₀ _ hk]
     exact add_neg_self (a' N0)
 
 lemma lemma6 (n : ℕ) : (4 * (n - 1) + 1 + 3) / 2 = (2 * (n - 1) + 1 + 1) := by
@@ -231,7 +231,7 @@ lemma can_get_a_later_one : (∀ N : ℕ, 7 ∣ a N → (∃ M : ℕ, N < M ∧ 
   obtain ⟨m, hmgt, hm7⟩ := can_get_a_later_one_zmod n ha'
   use m
   use hmgt
-  exact Fin.nat_cast_eq_zero.mp hm7
+  exact Fin.natCast_eq_zero.mp hm7
 
 lemma strengthen
     {P : ℕ → Prop}

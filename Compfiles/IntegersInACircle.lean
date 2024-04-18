@@ -40,7 +40,7 @@ lemma lemma2 {f : ZMod 101 → ℤ} (y : ZMod 101)
     intro a ha b hb hgab
     dsimp [g] at hgab
     have h5 : (a : ZMod 101) = (b : ZMod 101) := by linear_combination hgab
-    have h8: a % 101 = b % 101 := Iff.mp (ZMod.nat_cast_eq_nat_cast_iff' a b 101) h5
+    have h8: a % 101 = b % 101 := Iff.mp (ZMod.natCast_eq_natCast_iff' a b 101) h5
     rw [Finset.mem_range] at ha hb
     rwa [Nat.mod_eq_of_lt ha, Nat.mod_eq_of_lt hb] at h8
   rw[← Finset.sum_image hg]
@@ -72,7 +72,7 @@ problem integers_in_a_circle
             (Nat.lt.base (Fintype.card (ZMod 100)))
 
   dsimp only [Function.comp_apply] at hfxy
-  rw[ZMod.int_cast_eq_int_cast_iff] at hfxy
+  rw[ZMod.intCast_eq_intCast_iff] at hfxy
 
   wlog hxy : x.val < y.val with H
   · obtain he | hle := Iff.mp le_iff_eq_or_lt (Nat.not_lt.mp hxy)
@@ -98,7 +98,7 @@ problem integers_in_a_circle
     have h10 : ∀ a ∈ Finset.Ico x.val y.val,
                ∀ b ∈ Finset.Ico x.val y.val, (a : ZMod 101) = b → a = b := by
       intro a ha b hb hab
-      have h13 : a % 101 = b % 101 := (ZMod.nat_cast_eq_nat_cast_iff' a b 101).mp hab
+      have h13 : a % 101 = b % 101 := (ZMod.natCast_eq_natCast_iff' a b 101).mp hab
       rw [Finset.mem_Ico] at ha hb
       rwa [Nat.mod_eq_of_lt (ha.2.trans y.prop),
            Nat.mod_eq_of_lt (hb.2.trans y.prop)] at h13
@@ -157,7 +157,7 @@ problem integers_in_a_circle
       intro i _
       apply congr_arg
       have h22 : x + ↑(y.val - x.val + i) = ↑(x.val + (y.val - x.val + i)) :=
-        by have : x = (x.val : ZMod 101) := Eq.symm (ZMod.nat_cast_zmod_val x)
+        by have : x = (x.val : ZMod 101) := Eq.symm (ZMod.natCast_zmod_val x)
            nth_rewrite 1 [this]
            norm_cast
       rw [h22]

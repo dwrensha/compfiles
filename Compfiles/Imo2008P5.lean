@@ -197,7 +197,7 @@ lemma lemma1 (α : Type) (A B : Set α) (hA : A.Finite) (hB : B.Finite)
     rw [← h1
         b, h2,
         Set.setOf_set, Fintype.card_eq_nat_card,
-        Mathlib.Tactic.Zify.nat_cast_eq, Fintype.card_eq_nat_card]
+        Mathlib.Tactic.Zify.natCast_eq, Fintype.card_eq_nat_card]
 
   clear h1 h2
   let A' := Finset.biUnion
