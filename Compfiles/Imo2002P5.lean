@@ -198,6 +198,8 @@ problem imo2002_p5 (f : ℝ → ℝ) :
     rw [←h1] at h8
     rw [h8]
     exact neg_pow_two x
+  -- For the rest of the proof we follow John Scholes
+  -- https://prase.cz/kalva/imo/isoln/isoln025.html
   have h8 : f 1 = 1 := by
     have h9 := hf 0 1 1 1
     simp [h3, ←h1] at h9
