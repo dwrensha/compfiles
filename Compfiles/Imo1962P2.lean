@@ -74,8 +74,6 @@ problem imo1962_p2 (x : ℝ) :
       rw [Real.sq_sqrt (by positivity)]
       suffices H : 0 < (15 / 8) ^ 2 - (3 - x) * (x + 1) from sub_pos.mp H
       rw [lemma1 x]
-      have h20 : x - (1 + Real.sqrt 31 / 8) < 0 := by
-        linarith
       nlinarith
   rintro ⟨hx1, hx2, hx3⟩
   refine ⟨hx2, ?_⟩
