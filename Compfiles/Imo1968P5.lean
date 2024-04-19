@@ -29,7 +29,7 @@ namespace Imo1968P5
 
 abbrev P (a : ℝ) (f : ℝ → ℝ) : Prop :=
   0 < a ∧
-  ∀ x, (f x)^2 ≤ f x ∧ f (x + a) = 1/2 + Real.sqrt (f x - (f x)^2)
+  ∀ x, (f x)^2 ≤ f x ∧ f (x + a) = 1/2 + √(f x - (f x)^2)
 
 problem imo1968_p5a (f : ℝ → ℝ) (a : ℝ) (hf : P a f) :
     ∃ b, 0 < b ∧ f.Periodic b := by
@@ -75,7 +75,7 @@ problem imo1968_p5b :
       · have h1 : ¬ Even (⌊x⌋ + 1) :=
           Int.odd_iff_not_even.mp (Even.add_one heven)
         simp [solution_func, h1, heven]
-      · have h2 : Real.sqrt 4 = 2 := by
+      · have h2 : √4 = 2 := by
           rw [show (4 : ℝ) = 2^2 by norm_num, Real.sqrt_sq_eq_abs, abs_two]
         norm_num [solution_func, Int.even_add_one.mpr hodd, h2, hodd]
   · rintro ⟨c, hc⟩
