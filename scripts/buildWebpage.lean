@@ -264,7 +264,7 @@ def faq (h : IO.FS.Handle) : IO Unit := do
   h.putStrLn "<h4>Why is Compfiles separate from <a href=\"https://github.com/leanprover-community/mathlib4/tree/master/Archive/Imo\">Mathlib/Archive/Imo</a>?</h4>"
   h.putStr "We don't want to overwhelm the already overworked mathlib reviewers. "
   h.putStr "Please note, however, that the two projects use the same license &mdash; "
-  h.putStr "Apache2.0, so it's easy to "
+  h.putStr "Apache-2.0, so it's easy to "
   h.putStr "move code back and forth between them."
 
   h.putStrLn "<h3>I noticed an error on this website. How do I report it?</h3>"
