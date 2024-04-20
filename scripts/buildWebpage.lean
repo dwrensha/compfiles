@@ -258,7 +258,7 @@ def faq (h : IO.FS.Handle) : IO Unit := do
   h.putStr "<a class=\"external\" href=\"https://leanprover.zulipchat.com/#narrow/stream/217875-Is-there-code-for-X.3F/topic/Euclidean.20Geometry/near/321396912\">"
   h.putStr "Euclidean geometry TODO list"
   h.putStr "</a>.</li>"
-  h.putStr "<li>It drives progress towards the <a class=\"external\" href=\"https://imo-grand-challenge.github.io/\">"
+  h.putStr "<li>It's a useful first step toward solving the <a class=\"external\" href=\"https://imo-grand-challenge.github.io/\">"
   h.putStr "IMO Grand Challenge</a>."
   h.putStr "</li></ul>"
   h.putStrLn "<h4>Why is Compfiles separate from <a class=\"external\" href=\"https://github.com/leanprover-community/mathlib4/tree/master/Archive/Imo\">Mathlib/Archive/Imo</a>?</h4>"
