@@ -51,7 +51,7 @@ structure antipascal_triangle (n : ℕ) where
 
 def exists_desired_triangle : Prop :=
    ∃ t : antipascal_triangle 2018,
-     ∀ n, (n ≤ ∑ i in Finset.range 2018, (i + 1)) →
+     ∀ n, 1 ≤ n → n ≤ ∑ i in Finset.range 2018, (i + 1) →
          ∃ r, r ≤ 2018 ∧ ∃ c, c < r ∧ t.f ⟨r,c⟩ = n
 
 snip begin
@@ -65,5 +65,6 @@ determine does_exist : Bool := false
 
 problem imo2018_p3 :
     if does_exist then exists_desired_triangle else ¬ exists_desired_triangle := by
-  simp only [ite_false]
+  simp only [ite_false, exists_desired_triangle]
+  rintro ⟨t, ht⟩
   sorry
