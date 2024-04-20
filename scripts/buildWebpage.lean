@@ -248,6 +248,29 @@ def generateProblemStubFile (path : String) (probId : String) : IO Unit := do
 
   pure ()
 
+def faq (h : IO.FS.Handle) : IO Unit := do
+  h.putStrLn "<h3>Frequently Asked Questions</h3>"
+  h.putStrLn "<h4>Why are you doing this?</h4>"
+  h.putStr "<ul><li>It's a fun way to learn about math and mechanized reasoning.</li>"
+  h.putStr "<li>It uncovers missing pieces of theory that ought to be in "
+  h.putStr "<a href=\"https://github.com/leanprover-community/mathlib4\">Mathlib</a>. "
+  h.putStr "See for example Joseph Myer's "
+  h.putStr "<a href=\"https://leanprover.zulipchat.com/#narrow/stream/217875-Is-there-code-for-X.3F/topic/Euclidean.20Geometry/near/321396912\">"
+  h.putStr "Euclidean geometry TODO list"
+  h.putStr "</a>.</li>"
+  h.putStr "<li>It drives progress towards the <a href=\"https://imo-grand-challenge.github.io/\">"
+  h.putStr "IMO Grand Challenge</a>."
+  h.putStr "</li></ul>"
+  h.putStrLn "<h4>Why is Compfiles separate from <a href=\"https://github.com/leanprover-community/mathlib4/tree/master/Archive/Imo\">Mathlib/Archive/Imo</a>?</h4>"
+  h.putStr "We don't want to overwhelm the already overworked mathlib reviewers. "
+  h.putStr "Please note, however, that the two projects use the same license &mdash; "
+  h.putStr "Apache2.0, so it's easy to "
+  h.putStr "move code back and forth between them."
+
+  h.putStrLn "<h3>I noticed an error on this website. How do I report it?</h3>"
+  h.putStr "Please open an issue <a href=\"https://github.com/dwrensha/compfiles/issues\">on Github</a>."
+
+
 unsafe def main (_args : List String) : IO Unit := do
   IO.FS.createDirAll "_site"
   IO.FS.createDirAll "_site/problems"
@@ -442,6 +465,8 @@ unsafe def main (_args : List String) : IO Unit := do
       h.putStr "</tr>"
       h.putStr "</tbody>"
       h.putStr "</table></div>"
+
+      faq h
 
       h.putStrLn (←footer)
       h.putStr "</body></html>"
