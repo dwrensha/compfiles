@@ -251,7 +251,9 @@ unsafe def main (_args : List String) : IO Unit := do
   IO.FS.createDirAll "_site"
   IO.FS.createDirAll "_site/problems"
   IO.FS.writeFile "_site/main.css" (←IO.FS.readFile "assets/main.css")
-  IO.FS.writeBinFile "_site/favicon.png" (←IO.FS.readBinFile "assets/favicon.png")
+  let favicon ←IO.FS.readBinFile "assets/favicon.png"
+  IO.FS.writeBinFile "_site/favicon.png" favicon
+  IO.FS.writeBinFile "_site/apple-touch-icon.png" favicon
   IO.FS.writeFile "_site/highlight.min.js" (←IO.FS.readFile "assets/highlight.min.js")
   IO.FS.writeFile "_site/docco.css" (←IO.FS.readFile "assets/docco.css")
   IO.FS.writeFile "_site/lean.js" (←IO.FS.readFile "assets/lean.js")
