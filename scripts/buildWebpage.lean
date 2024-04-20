@@ -267,7 +267,7 @@ def faq (h : IO.FS.Handle) : IO Unit := do
   h.putStr "Apache-2.0, so it's easy to "
   h.putStr "move code back and forth between them."
 
-  h.putStrLn "<h3>I noticed an error on this website. How do I report it?</h3>"
+  h.putStrLn "<h4>I noticed an error on this website. How do I report it?</h4>"
   h.putStr "Please open an issue <a href=\"https://github.com/dwrensha/compfiles/issues\">on Github</a>."
 
 
