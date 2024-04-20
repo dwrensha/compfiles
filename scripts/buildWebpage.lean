@@ -263,14 +263,15 @@ def faq (h : IO.FS.Handle) : IO Unit := do
   h.putStr "</li></ul>"
   h.putStrLn "<h4>Why is Compfiles separate from <a href=\"https://github.com/leanprover-community/mathlib4/tree/master/Archive/Imo\">Mathlib/Archive/Imo</a>?</h4>"
   h.putStr "We don't want to overwhelm the already overworked mathlib reviewers. "
-  h.putStr "Please note, however, that the two projects use the same license &mdash; "
-  h.putStr "Apache-2.0, so it's easy to "
+  h.putStr "Please note, however, that both project are open source under the "
+  h.putStr "Apache-2.0 license, so it's easy to "
   h.putStr "move code back and forth between them."
 
   h.putStrLn "<h4>I noticed an error on this website. How do I report it?</h4>"
   h.putStr "Please open an issue <a href=\"https://github.com/dwrensha/compfiles/issues\">on Github</a>."
 
 
+set_option maxRecDepth 2000 in
 unsafe def main (_args : List String) : IO Unit := do
   IO.FS.createDirAll "_site"
   IO.FS.createDirAll "_site/problems"
@@ -434,7 +435,7 @@ unsafe def main (_args : List String) : IO Unit := do
       h.putStrLn s!"Welcome to Compfiles, a collaborative repository of olympiad-style math problems that have been formalized in the <a href=\"https://leanprover-community.github.io/\">Lean</a> theorem prover."
       h.putStrLn "</p>"
       h.putStrLn "<p>"
-      h.putStrLn <| s!"So far, <b>{infos.length}</b> problems and <b>{num_proved}</b> solutions have been formalized."
+      h.putStrLn <| s!"So far, <a href=\"{←getBaseUrl}all.html\"><b>{infos.length}</b> problems and <b>{num_proved}</b> solutions</a> have been formalized."
       h.putStrLn "</p>"
       h.putStr "<div class=\"toplevel-tables\"><table class=\"toplevel-olympiad-stats\">"
       h.putStr "<thead><tr><th></th><th title=\"This total includes problems not added to Compfiles.\">Total</th><th>Formalized</th><th>Solved</th></tr></thead>"
