@@ -180,6 +180,7 @@ def htmlHeader (title : String) (includeHljs : Bool := false) : IO String := do
     "<!DOCTYPE html><html><head>" ++
     "<meta name=\"viewport\" content=\"width=device-width\">" ++
     s!"<link rel=\"stylesheet\" type=\"text/css\" href=\"{baseurl}main.css\" >" ++
+    s!"<link rel=\"icon\" type=\"image/png\" href=\"{baseurl}favicon.png\">" ++
     s!"<title>{title}</title>" ++
     (if includeHljs
      then
@@ -250,6 +251,7 @@ unsafe def main (_args : List String) : IO Unit := do
   IO.FS.createDirAll "_site"
   IO.FS.createDirAll "_site/problems"
   IO.FS.writeFile "_site/main.css" (←IO.FS.readFile "assets/main.css")
+  IO.FS.writeBinFile "_site/favicon.png" (←IO.FS.readBinFile "assets/favicon.png")
   IO.FS.writeFile "_site/highlight.min.js" (←IO.FS.readFile "assets/highlight.min.js")
   IO.FS.writeFile "_site/docco.css" (←IO.FS.readFile "assets/docco.css")
   IO.FS.writeFile "_site/lean.js" (←IO.FS.readFile "assets/lean.js")
