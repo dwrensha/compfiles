@@ -182,6 +182,7 @@ def htmlHeader (title : String) (includeHljs : Bool := false) : IO String := do
     s!"<link rel=\"stylesheet\" type=\"text/css\" href=\"{baseurl}main.css\" >" ++
     s!"<link rel=\"icon\" type=\"image/ico\" href=\"{baseurl}favicon.ico\">" ++
     s!"<link rel=\"apple-touch-icon\" href=\"{baseurl}apple-touch-icon.png\">" ++
+    s!"<meta property=\"og:image\" content=\"{baseurl}og-preview.png\">" ++
     s!"<title>{title}</title>" ++
     (if includeHljs
      then
@@ -278,6 +279,8 @@ unsafe def main (_args : List String) : IO Unit := do
   IO.FS.writeBinFile "_site/favicon.ico" (←IO.FS.readBinFile "assets/favicon.ico")
   IO.FS.writeBinFile "_site/apple-touch-icon.png"
     (←IO.FS.readBinFile "assets/apple-touch-icon.png")
+  IO.FS.writeBinFile "_site/og-preview.png"
+    (←IO.FS.readBinFile "assets/og-preview.png")
   IO.FS.writeFile "_site/highlight.min.js" (←IO.FS.readFile "assets/highlight.min.js")
   IO.FS.writeFile "_site/docco.css" (←IO.FS.readFile "assets/docco.css")
   IO.FS.writeFile "_site/lean.js" (←IO.FS.readFile "assets/lean.js")
