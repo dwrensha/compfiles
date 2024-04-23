@@ -293,6 +293,7 @@ unsafe def main (_args : List String) : IO Unit := do
     let state := {env}
     Prod.fst <$> (CoreM.toIO · ctx state) do
       let mst ← ProblemExtraction.extractProblems
+      let sols ← ProblemExtraction.extractSolutions
       let mds ← ProblemExtraction.extractMetadata
 
       let mut infos : List ProblemInfo := []
@@ -301,8 +302,14 @@ unsafe def main (_args : List String) : IO Unit := do
           let solutionUrl := olean_path_to_github_url p.toString
           IO.println s!"MODULE: {m}"
           let problemFile := s!"problems/{m}.html"
+          let rawProblemFile := s!"problems/{m}.lean"
           let problemUrl := s!"{←getBaseUrl}{problemFile}"
-          -- let homeUrl := s!"{←getBaseUrl}index.html"
+          let rawProblemUrl := s!"{←getBaseUrl}{rawProblemFile}"
+
+          let hraw ← IO.FS.Handle.mk ("_site/" ++ rawProblemFile) IO.FS.Mode.write
+          hraw.putStr s!"/- extracted from {solutionUrl} -/\n{problem_src}"
+
+          let rawProblemLiveUrl := s!"https://live.lean-lang.org/#url={System.Uri.escapeUri rawProblemUrl}"
 
           let mut proved := true
           let decls ← getDeclsInPackage m
@@ -350,6 +357,20 @@ unsafe def main (_args : List String) : IO Unit := do
                    | _ => url
               else url
             h.putStrLn s!"<p>The solution was imported from <a class=\"external\" href=\"{url}\">{text}</a>.</p>"
+
+
+          h.putStrLn s!"<div>Open in the live editor at live.lean-lang.org:"
+          h.putStr s!"<ul class=\"live-links\"><li><a href=\"{rawProblemLiveUrl}\">problem statement only</a></li>"
+          let soldesc := if proved then "complete solution" else "in-progress solution"
+          if let some sol_src := sols.find? m then
+            let rawSolFile := s!"problems/{m}.sol.lean"
+            let rawSolUrl := s!"{←getBaseUrl}{rawSolFile}"
+            let hraw ← IO.FS.Handle.mk ("_site/" ++ rawSolFile) IO.FS.Mode.write
+            hraw.putStr s!"/- extracted from {solutionUrl} -/\n{sol_src}"
+            let rawSolLiveUrl := s!"https://live.lean-lang.org/#url={System.Uri.escapeUri rawSolUrl}"
+            h.putStr s!"<li><a href=\"{rawSolLiveUrl}\">{soldesc}</a></li>"
+          h.putStrLn "</ul></div>"
+
           let writeupLinks := getWriteupLinks probId
           if writeupLinks.length > 0
           then h.putStrLn s!"<div>External resources:<ul class=\"writeups\">"
