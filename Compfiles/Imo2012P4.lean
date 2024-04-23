@@ -146,15 +146,12 @@ problem imo2012_p4 (f : ℤ → ℤ) :
         cases x
         case negSucc k => simp_all
         case ofNat x =>
-          induction x using Nat.strong_induction_on
-          rename_i x ih
-          cases x
-          · contradiction
-          · rename_i x
-            cases x
-            · rfl
-            · rename_i x
-              rw [show .succ (.succ x) = x + 2 from by rfl] at *
+          induction x using Nat.strong_induction_on with
+          | h x ih =>
+            match x with
+            | 0 => contradiction
+            | 1 => rfl
+            | x + 2 =>
               have ⟨k, hk⟩ := odd
               have x_eq : x = -1 + 2 * k := by
                 rw [show Int.ofNat (x + 2) = (x : Int) + 2 from by rfl] at hk
