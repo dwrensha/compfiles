@@ -43,9 +43,9 @@ problem usa1996_p1 :
   · congr! 2 with n _
     rw [Real.cos_sub_cos]
     rw [show (((2 * (↑n + 1) - 1) * Real.pi / 180 + (2 * (↑n + 1) + 1) * Real.pi / 180) / 2) =
-             (2 * (n + 1) * Real.pi / 180) from by ring]
+             (2 * (n + 1) * Real.pi / 180) by ring]
     rw [show (((2 * (↑n + 1) - 1) * Real.pi / 180 - (2 * (↑n + 1) + 1) * Real.pi / 180) / 2) =
-             (-(Real.pi / 180)) from by ring]
+             (-(Real.pi / 180)) by ring]
     rw [Real.sin_neg]
     linarith only
   · field_simp [mul_comm]

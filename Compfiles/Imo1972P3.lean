@@ -34,7 +34,7 @@ problem imo1972_p3 (m n : ℕ) :
     simp only [Nat.zero_eq, Nat.factorial_zero, mul_one, add_zero, mul_zero]
     use Nat.choose (2*m) m
     rw [← Nat.choose_mul_factorial_mul_factorial (n := 2 * m) (k := m)]
-    rw [show 2*m-m = m from by omega]
+    rw [show 2*m-m = m by omega]
     ring_nf
     omega
   · intro m
@@ -43,10 +43,10 @@ problem imo1972_p3 (m n : ℕ) :
     rify
     unfold_let f; dsimp only
     rw [Nat.cast_div, Nat.cast_div]
-    · rw [show 2 * Nat.succ n = Nat.succ (Nat.succ (2 * n)) from by omega]
-      rw [show m + Nat.succ n = Nat.succ (m + n) from by omega]
-      rw [show 2 * (m + 1) = Nat.succ (Nat.succ (2 * m)) from by omega]
-      rw [show (m + 1 + n) = Nat.succ (m + n) from by omega]
+    · rw [show 2 * Nat.succ n = Nat.succ (Nat.succ (2 * n)) by omega]
+      rw [show m + Nat.succ n = Nat.succ (m + n) by omega]
+      rw [show 2 * (m + 1) = Nat.succ (Nat.succ (2 * m)) by omega]
+      rw [show (m + 1 + n) = Nat.succ (m + n) by omega]
       simp only [Nat.factorial_succ]
       push_cast
       field_simp

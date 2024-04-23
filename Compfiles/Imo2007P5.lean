@@ -53,7 +53,7 @@ lemma bad_exists_descent {n : ℤ} (hn : 1 < n) {a : ℕ}
     exact ⟨c, eq_sub_of_add_eq h1⟩
 
   ---- It suffices to show that `0 < c` and `c < (a : ℤ)`
-  suffices h2 : c < a ∧ 0 < c from by
+  suffices h2 : c < a ∧ 0 < c by
     lift c to ℕ using le_of_lt h2.2
     rw [Int.natCast_pos, Int.ofNat_lt] at h2
     refine ⟨c, h2.2, h2.1, bad_symm ⟨t * b - 1, ?_⟩⟩
