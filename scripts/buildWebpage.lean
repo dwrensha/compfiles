@@ -306,11 +306,6 @@ unsafe def main (_args : List String) : IO Unit := do
           let problemUrl := s!"{←getBaseUrl}{problemFile}"
           let rawProblemUrl := s!"{←getBaseUrl}{rawProblemFile}"
 
-          let hraw ← IO.FS.Handle.mk ("_site/" ++ rawProblemFile) IO.FS.Mode.write
-          hraw.putStr s!"/- extracted from {solutionUrl} -/\n{problem_src}"
-
-          let rawProblemLiveUrl := s!"https://live.lean-lang.org/#url={System.Uri.escapeUri rawProblemUrl}"
-
           let mut proved := true
           let decls ← getDeclsInPackage m
           for d in decls do
@@ -359,6 +354,12 @@ unsafe def main (_args : List String) : IO Unit := do
             h.putStrLn s!"<p>The solution was imported from <a class=\"external\" href=\"{url}\">{text}</a>.</p>"
 
 
+          let copyrightHeader := ProblemExtraction.recreateCopyrightHeader metadata
+          let hraw ← IO.FS.Handle.mk ("_site/" ++ rawProblemFile) IO.FS.Mode.write
+          hraw.putStr s!"{copyrightHeader}{problem_src}"
+
+          let rawProblemLiveUrl := s!"https://live.lean-lang.org/#url={System.Uri.escapeUri rawProblemUrl}"
+
           h.putStrLn s!"<div>Open with the in-brower editor at live.lean-lang.org:"
           h.putStr s!"<ul class=\"live-links\"><li><a href=\"{rawProblemLiveUrl}\">problem statement only</a></li>"
           let soldesc := if proved then "complete solution" else "in-progress solution"
@@ -366,7 +367,6 @@ unsafe def main (_args : List String) : IO Unit := do
             let rawSolFile := s!"problems/{m}.sol.lean"
             let rawSolUrl := s!"{←getBaseUrl}{rawSolFile}"
             let hraw ← IO.FS.Handle.mk ("_site/" ++ rawSolFile) IO.FS.Mode.write
-            let copyrightHeader := ProblemExtraction.recreateCopyrightHeader metadata
             hraw.putStr s!"{copyrightHeader}{sol_src}"
             let rawSolLiveUrl := s!"https://live.lean-lang.org/#url={System.Uri.escapeUri rawSolUrl}"
             h.putStr s!"<li><a href=\"{rawSolLiveUrl}\">{soldesc}</a></li>"
