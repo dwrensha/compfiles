@@ -31,7 +31,7 @@ problem imo1972_p3 (m n : ℕ) :
   revert m
   induction' n with n ih
   · intro m
-    simp
+    simp only [Nat.zero_eq, Nat.factorial_zero, mul_one, add_zero, mul_zero]
     use Nat.choose (2*m) m
     rw [← Nat.choose_mul_factorial_mul_factorial (n := 2 * m) (k := m)]
     rw [show 2*m-m = m from by omega]
@@ -49,20 +49,7 @@ problem imo1972_p3 (m n : ℕ) :
       rw [show (m + 1 + n) = Nat.succ (m + n) from by omega]
       simp only [Nat.factorial_succ]
       push_cast
-      have : m ! ≠ 0 := by positivity
-      have : n ! ≠ 0 := by positivity
-      have : m + 1 ≠ 0 := by positivity
-      have : m + 1 + n ≠ 0 := by positivity
       field_simp
-      trans (↑m + ↑n + 1) * ↑(m + n)! * (↑m + 1) * (2 * ↑n + 1 + 1) * (2 * ↑n + 1) *
-      ↑m ! * ↑n ! * ↑(m + n)! * ↑m ! * ↑n ! * ↑(2 * m)! * ↑(2 * n)!; ring_nf
-      trans (↑n + 1) * (↑m + ↑n + 1) *
-        (4 * (↑m + 1) * (↑m + ↑n + 1) * ↑(m + n)! - ↑(m + n)! * (2 * ↑m + 1 + 1) * (2 * ↑m + 1)) *
-         ↑m ! * ↑n ! * ↑(m + n)! * ↑m ! * ↑n ! * ↑(2 * m)! * ↑(2 * n)!; rotate_left; ring_nf
-      congr 7
-      trans (↑m + ↑n + 1) * (↑m + 1) * (2 * ↑n + 1 + 1) * (2 * ↑n + 1) * ↑(m + n)!; ring_nf
-      trans (↑n + 1) * (↑m + ↑n + 1) * (4 * (↑m + 1) * (↑m + ↑n + 1) - (2 * ↑m + 1 + 1) * (2 * ↑m + 1)) * ↑(m + n)!; rotate_left; ring_nf
-      congr 1
       ring
     · apply ih
     · positivity
