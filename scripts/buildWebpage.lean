@@ -359,7 +359,7 @@ unsafe def main (_args : List String) : IO Unit := do
             h.putStrLn s!"<p>The solution was imported from <a class=\"external\" href=\"{url}\">{text}</a>.</p>"
 
 
-          h.putStrLn s!"<div>Open in the live editor at live.lean-lang.org:"
+          h.putStrLn s!"<div>Open with the in-brower editor at live.lean-lang.org:"
           h.putStr s!"<ul class=\"live-links\"><li><a href=\"{rawProblemLiveUrl}\">problem statement only</a></li>"
           let soldesc := if proved then "complete solution" else "in-progress solution"
           if let some sol_src := sols.find? m then
