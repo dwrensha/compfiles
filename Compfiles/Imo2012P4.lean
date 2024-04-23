@@ -94,6 +94,8 @@ problem imo2012_p4 (f : ℤ → ℤ) :
       have even_zero (x : ℤ) : f (2 * x) = 0 := by
         -- without loss of generality, we can assume x ≥ 0.
         wlog pos : x ≥ 0 with H
+        replace H : ∀ x ≥ 0, f (2 * x) = 0 := by
+          apply H <;> assumption
 
         case inr =>
           simp at pos
@@ -102,7 +104,7 @@ problem imo2012_p4 (f : ℤ → ℤ) :
           set y := -x with yh
           rw [show - (2 * x) = 2 * y from by ring]
           have ynng : y ≥ 0 := by linarith
-          apply H <;> assumption
+          apply H; assumption
 
         -- when `x ≥ 0`
         have := even_nat_zero x.toNat
@@ -124,6 +126,8 @@ problem imo2012_p4 (f : ℤ → ℤ) :
       have h_odd_const (x : ℤ) : Odd x → f x = f 1 := by
         intro odd
         wlog pos : x ≥ 0 with H
+        replace H : ∀ (x : ℤ), Odd x → x ≥ 0 → f x = f 1 := by
+          apply H <;> assumption
 
         case inr =>
           simp at pos
