@@ -185,8 +185,11 @@ problem imo2012_p4 (f : ℤ → ℤ) :
       done
 
     -- when `f 2 = 4 * f 1`
+    case inr =>
+      sorry
 
+  -- for all `f` in solution set, `f` satisfies the constraint
+  case mp =>
     sorry
-  sorry
 
 end Imo2012P4
