@@ -27,10 +27,9 @@ problem usa1996_p1 :
     = 1 / Real.tan (Real.pi / 180) := by
   have sin1 : Real.sin (Real.pi / 180) ≠ 0 := by
     apply ne_of_gt; apply Real.sin_pos_of_pos_of_lt_pi; positivity; trans 3
-    trans 3.15 / 180
-    apply div_lt_div_of_pos_right Real.pi_lt_315
-    norm_num
-    norm_num
+    · trans 3.15 / 180
+      · exact div_lt_div_of_pos_right Real.pi_lt_315 (by norm_num)
+      · norm_num
     exact Real.pi_gt_three
   have cos_add : ∀ (x y : ℝ), x + y = Real.pi → Real.cos x + Real.cos y = 0 := by
     intro x y h; rw [(by linarith only [h] : y = Real.pi - x)]; rw [Real.cos_pi_sub, add_right_neg]
@@ -102,8 +101,7 @@ problem usa1996_p1 :
           have h15 : 45 = 89 + 1 - 45 := by norm_num
           have h16 : 90 = 89 + 1 - 0 := by norm_num
           nth_rewrite 1 [h15, h16]
-          have h17 : 45 ≤ 89 + 1 := by norm_num
-          rw [←Finset.sum_Ico_reflect _ 0 h17]
+          rw [←Finset.sum_Ico_reflect _ 0 h7]
           apply Finset.sum_congr rfl
           intro x hx
           apply congrArg
