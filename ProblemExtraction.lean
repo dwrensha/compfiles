@@ -108,6 +108,11 @@ structure ProblemFileMetadata where
   --- is automatically populated via the file's copyright header.
   authors : List String := []
 
+  --- Names of the people who wrote the solution. This field
+  --- is automatically populated via the file's copyright header,
+  --- which is assumed to be everything before the first 'import'.
+  copyrightHeader : String := ""
+
 structure ProblemMetadataEntry where
   module : Name
   metadata : ProblemFileMetadata
@@ -132,17 +137,14 @@ def parseAuthors (src : String) : List String := Id.run do
       return (l.stripPrefix "Authors: ").split (fun c => c = ',')
   return []
 
-def recreateCopyrightHeader (pmd : ProblemFileMetadata) : String := Id.run do
-  let mut result :=
-    "/-\nCopyright (c) 2024 The Compfiles Contributors. All rights reserved.\n" ++
-    "Released under Apache 2.0 license as described in the file LICENSE.\n" ++
-    "Authors: "
-  let mut ii := 0
-  for a in pmd.authors do
-    if ii > 0 then result := result ++ ", "
-    result := result ++ a
-    ii := ii + 1
-  result := result ++ "\n-/\n"
+def parseCopyrightHeader (src : String) : String := Id.run do
+  let lines := src.splitOn "\n"
+  let mut result := ""
+  for l in lines do
+    if l.startsWith "import"
+    then break
+    else
+      result := result ++ l ++ "\n"
   return result
 
 /-- Top-level command to mark that a file should participate in problem extraction.
@@ -174,6 +176,8 @@ def elabProblemFile (tk : Syntax) (md : Option (TSyntax `term)) : Command.Comman
     if mdv.authors.isEmpty
     then { mdv with authors := parseAuthors src }
     else mdv
+
+  let mdv' := { mdv' with copyrightHeader := parseCopyrightHeader src }
 
   modifyEnv fun env => problemMetadataExtension.addEntry env ⟨mod, mdv'⟩
 

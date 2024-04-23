@@ -353,10 +353,8 @@ unsafe def main (_args : List String) : IO Unit := do
               else url
             h.putStrLn s!"<p>The solution was imported from <a class=\"external\" href=\"{url}\">{text}</a>.</p>"
 
-
-          let copyrightHeader := ProblemExtraction.recreateCopyrightHeader metadata
           let hraw ← IO.FS.Handle.mk ("_site/" ++ rawProblemFile) IO.FS.Mode.write
-          hraw.putStr s!"{copyrightHeader}{problem_src}"
+          hraw.putStr s!"{metadata.copyrightHeader}{problem_src}"
 
           let rawProblemLiveUrl := s!"https://live.lean-lang.org/#url={System.Uri.escapeUri rawProblemUrl}"
 
@@ -367,7 +365,7 @@ unsafe def main (_args : List String) : IO Unit := do
             let rawSolFile := s!"problems/{m}.sol.lean"
             let rawSolUrl := s!"{←getBaseUrl}{rawSolFile}"
             let hraw ← IO.FS.Handle.mk ("_site/" ++ rawSolFile) IO.FS.Mode.write
-            hraw.putStr s!"{copyrightHeader}{sol_src}"
+            hraw.putStr s!"{metadata.copyrightHeader}{sol_src}"
             let rawSolLiveUrl := s!"https://live.lean-lang.org/#url={System.Uri.escapeUri rawSolUrl}"
             h.putStr s!"<li><a href=\"{rawSolLiveUrl}\">{soldesc}</a></li>"
           h.putStrLn "</ul></div>"
