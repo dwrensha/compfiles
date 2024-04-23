@@ -153,15 +153,14 @@ problem imo2012_p4 (f : ℤ → ℤ) :
             | 1 => rfl
             | x + 2 =>
               have ⟨k, hk⟩ := odd
-              have x_eq : x = -1 + 2 * k := by
-                rw [show Int.ofNat (x + 2) = (x : Int) + 2 from by rfl] at hk
-                linarith
-              have : f x = f (Int.ofNat (x + 2)) := by
+              rw [show Int.ofNat (x + 2) = (x : ℤ) + 2 from by rfl] at *
+              have x_eq : x = -1 + 2 * k := by omega
+              have : f (x : ℤ) = f (x + 2 : ℤ) := by
                 specialize add_two_id k
-                rw [add_comm _ 1] at hk
-                rw [← x_eq] at add_two_id
-                rw [add_two_id, hk]
-              have odd_x : Odd (Int.ofNat x) := by
+                rw [x_eq, add_two_id]
+                congr 1
+                ring
+              have odd_x : Odd (x : ℤ) := by
                 use k - 1
                 omega
               rw [← this]
