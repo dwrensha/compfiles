@@ -40,14 +40,14 @@ problem imo2012_p4 (f : ℤ → ℤ) :
     have «f0=0» : f 0 = 0 := by
       have := constraint 0 0 0
       simp at this
-      nlinarith
+      nlinarith; save
 
     -- `f` is an even function
     have even (t : ℤ) : f (- t) = f t := by
       have := constraint t (-t) 0
       rw [«f0=0»] at this
       simp at this
-      replace : (f t - f (- t)) ^ 2 = 0 := by nlinarith
+      replace : (f t - f (- t)) ^ 2 = 0 := by nlinarith; save
       replace : f t - f (- t) = 0 := by exact sq_eq_zero_iff.mp this
       linarith
 
@@ -116,7 +116,7 @@ problem imo2012_p4 (f : ℤ → ℤ) :
         have := P (-1 + 2 * a) 2
         simp [lem, «f0=0»] at this
         ring_nf at this
-        replace : (f (-1 + a * 2) - f (1 + a * 2)) ^ 2 = 0 := by nlinarith
+        replace : (f (-1 + a * 2) - f (1 + a * 2)) ^ 2 = 0 := by nlinarith; save
         simp at this
         rw [show 2 * a = a * 2 from by ring]
         linarith
@@ -165,7 +165,6 @@ problem imo2012_p4 (f : ℤ → ℤ) :
             omega
           rw [← this]
           exact ih x (by simp) odd_x (by simp)
-
 
       have f_in_odd_const : f ∈ odd_const := by
         use f 1
