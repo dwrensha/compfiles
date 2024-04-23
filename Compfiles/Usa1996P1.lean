@@ -22,7 +22,6 @@ for n ∈ {2,4,6,…,180} is 1/tan(π/180).
 namespace Usa1996P1
 open BigOperators
 
-set_option maxHeartbeats 800000
 problem usa1996_p1 :
     (1 / (90:ℝ)) * ∑ n in Finset.range 90, (2 * (n+1)) * Real.sin ((2 * (n+1)) * Real.pi / 180)
     = 1 / Real.tan (Real.pi / 180) := by
@@ -54,12 +53,60 @@ problem usa1996_p1 :
     convert_to (∑ n in Finset.range 45, (Real.cos (((89 - n) * 2 + 1) * Real.pi / 180) +
                                          Real.cos ((n * 2 + 1) * Real.pi / 180)))
         - 90 * Real.cos (181 * Real.pi / 180) = _
-    · unfold Finset.range Multiset.range List.range
-      dsimp [List.range.loop]
-      dsimp [List.range.loop, Multiset.sum]
-      simp only [one_div, Finset.sum_mk, Multiset.map_coe, Multiset.sum_coe]
-      norm_num
-      ring_nf
+    · have h1 : ∀ n ∈ Finset.range 90,
+        (↑n + 1) * (Real.cos ((2 * (↑n + 1) - 1) * Real.pi / 180)
+             - Real.cos ((2 * (↑n + 1) + 1) * Real.pi / 180)) =
+        ((↑n + 1) * (Real.cos ((2 * (↑n + 1) - 1) * Real.pi / 180))
+                      - (↑n + 1) * Real.cos ((2 * (↑n + 1) + 1) * Real.pi / 180)) := by
+        intro n _
+        ring_nf
+      rw [Finset.sum_congr rfl h1]; clear h1
+      rw [Finset.sum_sub_distrib]
+      nth_rewrite 2 [Finset.sum_range_succ]
+      have h1 : ∑ x in Finset.range 89, (↑x + 1) * Real.cos ((2 * (↑x + 1) + 1) * Real.pi / 180) =
+             ∑ x in Finset.range 90, (↑x) * Real.cos ((2 * (↑x + 1) - 1) * Real.pi / 180) := by
+        nth_rewrite 2 [Finset.sum_range_succ']
+        simp only [Nat.cast_add, Nat.cast_one, CharP.cast_eq_zero,
+                   zero_add, mul_one, zero_mul, add_zero]
+        apply Finset.sum_congr rfl
+        intro x _
+        have h3 : 2 * ((x:ℝ) + 1) + 1 = 2 * (↑x + 1 + 1) - 1 := by ring
+        rw [h3]
+      rw [h1]; clear h1
+      rw [sub_add_eq_sub_sub, ←Finset.sum_sub_distrib]
+      have h4 : ∀ x ∈ Finset.range 90,
+         ((↑x + 1) * Real.cos ((2 * (↑x + 1) - 1) * Real.pi / 180) -
+           ↑x * Real.cos ((2 * (↑x + 1) - 1) * Real.pi / 180)) =
+          Real.cos ((2 * (↑x + 1) - 1) * Real.pi / 180) := by
+        intro x _; ring
+      rw [Finset.sum_congr rfl h4]; clear h4
+      have h5 : ∑ x in Finset.range 90, Real.cos ((2 * (↑x + 1) - 1) * Real.pi / 180)
+          = ∑ n in Finset.range 45, (Real.cos (((89 - ↑n) * 2 + 1) * Real.pi / 180) +
+                                     Real.cos ((↑n * 2 + 1) * Real.pi / 180)) := by
+        rw [Finset.sum_add_distrib]
+        simp only [Finset.range_eq_Ico]
+        have h6 : 0 ≤ 45 := by norm_num
+        have h7 : 45 ≤ 90 := by norm_num
+        rw [←Finset.sum_Ico_consecutive
+             (f := (fun x ↦ Real.cos ((2 * (↑x + 1) - 1) * Real.pi / 180))) h6 h7]
+        have h8 : ∀ i ∈ Finset.Ico (0:ℕ) 45,
+             Real.cos ((2 * (↑i + 1) - 1) * Real.pi / 180) =
+                        Real.cos ((↑i * 2 + 1) * Real.pi / 180) := by
+          intro i _
+          have h10 : 2 * ((i:ℝ) + 1) - 1 = ↑i * 2 + 1 := by ring
+          rw [h10]
+        rw [Finset.sum_congr rfl h8]; clear h8
+        have h9 :
+            ∑ i in Finset.Ico (45:ℕ) 90, Real.cos ((2 * (↑i + 1) - 1) * Real.pi / 180) =
+            ∑ x in Finset.Ico (0:ℕ) 45, Real.cos (((89 - ↑x) * 2 + 1) * Real.pi / 180) := by
+          -- TODO: prove this without expanding everything out
+          norm_num [Finset.sum_Ico_succ_top, Finset.sum_range_succ]
+          ring
+        rw [h9]; clear h9
+        exact add_comm _ _
+      rw [←h5]
+      norm_num1
+      ring
     · rw [mul_comm]
       rw [Finset.sum_eq_zero]
       simp only [zero_sub]
