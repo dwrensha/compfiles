@@ -99,8 +99,19 @@ problem usa1996_p1 :
         have h9 :
             ∑ i in Finset.Ico (45:ℕ) 90, Real.cos ((2 * (↑i + 1) - 1) * Real.pi / 180) =
             ∑ x in Finset.Ico (0:ℕ) 45, Real.cos (((89 - ↑x) * 2 + 1) * Real.pi / 180) := by
-          -- TODO: prove this without expanding everything out
-          norm_num [Finset.sum_Ico_succ_top, Finset.sum_range_succ]
+          have h15 : 45 = 89 + 1 - 45 := by norm_num
+          have h16 : 90 = 89 + 1 - 0 := by norm_num
+          nth_rewrite 1 [h15, h16]
+          have h17 : 45 ≤ 89 + 1 := by norm_num
+          rw [←Finset.sum_Ico_reflect _ 0 h17]
+          apply Finset.sum_congr rfl
+          intro x hx
+          apply congrArg
+          have h18 : (((89 - x) : ℕ) : ℝ) = 89 - x := by
+            apply Nat.cast_sub
+            rw [Finset.mem_Ico] at hx
+            omega
+          rw [h18]
           ring
         rw [h9]; clear h9
         exact add_comm _ _
