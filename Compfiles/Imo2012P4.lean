@@ -75,7 +75,7 @@ problem imo2012_p4 (f : ℤ → ℤ) :
       · right
         linarith
 
-    rcases lem with lem | lem
+    rcases lem with «f2=0» | «f2=4*f1»
 
     -- when `f 2 = 0`
     case inl =>
@@ -86,7 +86,7 @@ problem imo2012_p4 (f : ℤ → ℤ) :
 
         simp
         have := P 2 (2 * n)
-        simp [ih, lem] at this
+        simp [ih, «f2=0»] at this
         rw [← this]
         congr 1
         ring
@@ -114,7 +114,7 @@ problem imo2012_p4 (f : ℤ → ℤ) :
 
       have add_two_id (a : ℤ) : f (- 1 + 2 * a) = f (1 + 2 * a) := by
         have := P (-1 + 2 * a) 2
-        simp [lem, «f0=0»] at this
+        simp [«f2=0», «f0=0»] at this
         ring_nf at this
         replace : (f (-1 + a * 2) - f (1 + a * 2)) ^ 2 = 0 := by nlinarith; save
         simp at this
