@@ -115,8 +115,6 @@ problem imo2002_p5 (f : ℝ → ℝ) :
     · simp
     · norm_num1
     · ring
-  let P x y z t : Prop :=
-    (f x + f z) * (f y + f t) = f (x * y - z * t) + f (x * t + y * z)
   intro hf
   have h1 : ∀ x, f x = f (-x) := fun x ↦ by
     have h2 := hf x 1 0 0
@@ -143,9 +141,8 @@ problem imo2002_p5 (f : ℝ → ℝ) :
   push_neg at h2
   have h3 : f 0 = 0 := by
     obtain ⟨y1, hy1⟩ := h2 (1/2)
-    have h4 : ∀ y t, P 0 y 0 t := fun y t ↦ hf 0 y 0 t
-    unfold_let P at h4
-    simp at h4
+    have h4 := fun y t ↦ hf 0 y 0 t
+    simp only [zero_mul, sub_self, mul_zero, add_zero] at h4
     have h5 : f y1 + f y1 ≠ 1 := by
       intro H
       apply_fun (·/2) at H
