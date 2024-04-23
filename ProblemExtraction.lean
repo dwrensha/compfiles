@@ -132,6 +132,19 @@ def parseAuthors (src : String) : List String := Id.run do
       return (l.stripPrefix "Authors: ").split (fun c => c = ',')
   return []
 
+def recreateCopyrightHeader (pmd : ProblemFileMetadata) : String := Id.run do
+  let mut result :=
+    "/-\nCopyright (c) 2024 The Compfiles Contributors. All rights reserved.\n" ++
+    "Released under Apache 2.0 license as described in the file LICENSE.\n" ++
+    "Authors: "
+  let mut ii := 0
+  for a in pmd.authors do
+    if ii > 0 then result := result ++ ", "
+    result := result ++ a
+    ii := ii + 1
+  result := result ++ "\n-/\n"
+  return result
+
 /-- Top-level command to mark that a file should participate in problem extraction.
 This should be at the top of the file (after imports); content above it is ignored
 during problem extraction (except for imports). -/

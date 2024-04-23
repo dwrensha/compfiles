@@ -366,7 +366,8 @@ unsafe def main (_args : List String) : IO Unit := do
             let rawSolFile := s!"problems/{m}.sol.lean"
             let rawSolUrl := s!"{←getBaseUrl}{rawSolFile}"
             let hraw ← IO.FS.Handle.mk ("_site/" ++ rawSolFile) IO.FS.Mode.write
-            hraw.putStr s!"/- extracted from {solutionUrl} -/\n{sol_src}"
+            let copyrightHeader := ProblemExtraction.recreateCopyrightHeader metadata
+            hraw.putStr s!"{copyrightHeader}{sol_src}"
             let rawSolLiveUrl := s!"https://live.lean-lang.org/#url={System.Uri.escapeUri rawSolUrl}"
             h.putStr s!"<li><a href=\"{rawSolLiveUrl}\">{soldesc}</a></li>"
           h.putStrLn "</ul></div>"
