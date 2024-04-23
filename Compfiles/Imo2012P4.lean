@@ -49,7 +49,7 @@ problem imo2012_p4 (f : ℤ → ℤ) :
       simp at this
       replace : (f t - f (- t)) ^ 2 = 0 := by nlinarith; save
       replace : f t - f (- t) = 0 := by exact sq_eq_zero_iff.mp this
-      linarith
+      linarith; save
 
     have P (a b : ℤ) : (f a) ^ 2 + (f b) ^ 2 + f (a + b) ^ 2 = 2 * f a * f b + 2 * f (a + b) * (f a + f b) := by
       have := constraint a b (- a - b)
@@ -66,14 +66,14 @@ problem imo2012_p4 (f : ℤ → ℤ) :
       simp at this
       rw [show f 1 ^ 2 + f 1 ^ 2 = 2 * f 1 * f 1 from by ring] at this
       simp at this
-      replace : f 2 * (f 2 - 4 * f 1) = 0 := by linarith
+      replace : f 2 * (f 2 - 4 * f 1) = 0 := by linarith; save
       rw [@Int.mul_eq_zero] at this
 
       rcases this with this | this
       · left
         assumption
       · right
-        linarith
+        linarith; save
 
     rcases lem with «f2=0» | «f2=4*f1»
 
@@ -103,7 +103,7 @@ problem imo2012_p4 (f : ℤ → ℤ) :
           rw [this]; clear this
           set y := -x with yh
           rw [show - (2 * x) = 2 * y from by ring]
-          have ynng : y ≥ 0 := by linarith
+          have ynng : y ≥ 0 := by linarith; save
           apply H; assumption
 
         -- when `x ≥ 0`
@@ -121,7 +121,7 @@ problem imo2012_p4 (f : ℤ → ℤ) :
         replace : (f (-1 + a * 2) - f (1 + a * 2)) ^ 2 = 0 := by nlinarith; save
         simp at this
         rw [show 2 * a = a * 2 from by ring]
-        linarith
+        linarith; save
 
       have h_odd_const (x : ℤ) : Odd x → f x = f 1 := by
         intro odd
@@ -134,11 +134,11 @@ problem imo2012_p4 (f : ℤ → ℤ) :
           have := even (- x); simp at this
           set y := -x with yh
           rw [this]; clear this
-          have ynng : y ≥ 0 := by linarith
+          have ynng : y ≥ 0 := by linarith; save
           have y_odd : Odd y := by
             have ⟨ k, hk ⟩ := odd
             use - k - 1
-            linarith
+            linarith; save
 
           apply H <;> assumption
 
@@ -183,6 +183,7 @@ problem imo2012_p4 (f : ℤ → ℤ) :
           exact even_zero k
       simpa [solution_set]
       done
+
     -- when `f 2 = 4 * f 1`
 
     sorry
