@@ -37,7 +37,7 @@ problem imo2012_p4 (f : ℤ → ℤ) :
   case mpr =>
     intro constraint
 
-    have zero : f 0 = 0 := by
+    have «f0=0» : f 0 = 0 := by
       have := constraint 0 0 0
       simp at this
       nlinarith
@@ -45,7 +45,7 @@ problem imo2012_p4 (f : ℤ → ℤ) :
     -- `f` is an even function
     have even (t : ℤ) : f (- t) = f t := by
       have := constraint t (-t) 0
-      rw [zero] at this
+      rw [«f0=0»] at this
       simp at this
       replace : (f t - f (- t)) ^ 2 = 0 := by nlinarith
       replace : f t - f (- t) = 0 := by exact sq_eq_zero_iff.mp this
@@ -114,7 +114,7 @@ problem imo2012_p4 (f : ℤ → ℤ) :
 
       have add_two_id (a : ℤ) : f (- 1 + 2 * a) = f (1 + 2 * a) := by
         have := P (-1 + 2 * a) 2
-        simp [lem, zero] at this
+        simp [lem, «f0=0»] at this
         ring_nf at this
         replace : (f (-1 + a * 2) - f (1 + a * 2)) ^ 2 = 0 := by nlinarith
         simp at this
@@ -185,7 +185,7 @@ problem imo2012_p4 (f : ℤ → ℤ) :
       simpa [solution_set]
       done
     -- when `f 2 = 4 * f 1`
-    
+
     sorry
   sorry
 
