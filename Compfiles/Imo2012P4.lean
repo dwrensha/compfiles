@@ -149,26 +149,26 @@ problem imo2012_p4 (f : ℤ → ℤ) :
           induction x using Nat.strong_induction_on
           rename_i x ih
           cases x
-          contradiction
-          rename_i x
-          cases x
-          rfl
-          rename_i x
-          rw [show .succ (.succ x) = x + 2 from by rfl] at *
-          have ⟨k, hk⟩ := odd
-          have x_eq : x = -1 + 2 * k := by
-            rw [show Int.ofNat (x + 2) = (x : Int) + 2 from by rfl] at hk
-            linarith
-          have : f x = f (Int.ofNat (x + 2)) := by
-            have add_two := add_two_id k
-            rw [add_comm _ 1] at hk
-            rw [← x_eq] at add_two
-            rw [add_two, hk]
-          have odd_x : Odd (Int.ofNat x) := by
-            use k - 1
-            omega
-          rw [← this]
-          exact ih x (by simp) odd_x (by simp)
+          · contradiction
+          · rename_i x
+            cases x
+            · rfl
+            · rename_i x
+              rw [show .succ (.succ x) = x + 2 from by rfl] at *
+              have ⟨k, hk⟩ := odd
+              have x_eq : x = -1 + 2 * k := by
+                rw [show Int.ofNat (x + 2) = (x : Int) + 2 from by rfl] at hk
+                linarith
+              have : f x = f (Int.ofNat (x + 2)) := by
+                specialize add_two_id k
+                rw [add_comm _ 1] at hk
+                rw [← x_eq] at add_two_id
+                rw [add_two_id, hk]
+              have odd_x : Odd (Int.ofNat x) := by
+                use k - 1
+                omega
+              rw [← this]
+              exact ih x (by simp) odd_x (by simp)
 
       have f_in_odd_const : f ∈ odd_const := by
         use f 1
@@ -181,7 +181,7 @@ problem imo2012_p4 (f : ℤ → ℤ) :
 
         case right =>
           intro even
-          have ⟨ k, hk ⟩ := even
+          have ⟨k, hk⟩ := even
           rw [hk]
           rw [show k + k = 2 * k from by ring]
           exact even_zero k
