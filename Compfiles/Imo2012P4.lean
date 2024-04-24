@@ -26,6 +26,9 @@ def odd_const : Set (ℤ → ℤ) := fun f =>
 
 determine solution_set : Set (ℤ → ℤ) := odd_const
 
+theorem sub_sq'' {x y : Int} : x ^ 2 + y ^ 2 = (2 * x * y) ↔ x = y := by
+  rw [← sub_eq_zero, ← sub_sq', sq_eq_zero_iff, sub_eq_zero]
+
 problem imo2012_p4 (f : ℤ → ℤ) :
     f ∈ solution_set ↔
     ∀ a b c : ℤ, a + b + c = 0 →
