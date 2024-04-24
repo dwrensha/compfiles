@@ -105,57 +105,16 @@ problem imo2012_p4 (f : ℤ → ℤ) :
           nth_rw 1 [this]
         exact (Int.toNat_of_nonneg pos).symm
 
-      have add_two_id (a : ℤ) : f (- 1 + 2 * a) = f (1 + 2 * a) := by
-        have := P (-1 + 2 * a) 2
-        simp [«f2=0», «f0=0»] at this
-        ring_nf at this
-        replace : (f (-1 + a * 2) - f (1 + a * 2)) ^ 2 = 0 := by nlinarith; save
-        simp at this
-        rw [show 2 * a = a * 2 from by ring]
-        linarith; save
+      have sub_even {x : ℤ} (a : ℤ) : f x = f (x - 2 * a) := by
+        have := P (x - (2 * a)) (2 * a)
+        simp [«f2=0», «f0=0», even_zero] at this
+        rwa [add_comm, sub_sq''] at this
 
       have h_odd_const (x : ℤ) : Odd x → f x = f 1 := by
         intro odd
-        wlog pos : x ≥ 0 with H
-        replace H : ∀ (x : ℤ), Odd x → x ≥ 0 → f x = f 1 := by
-          apply H <;> assumption
-
-        case inr =>
-          simp at pos
-          have := even (- x); simp at this
-          set y := -x with yh
-          rw [this]; clear this
-          have ynng : y ≥ 0 := by linarith; save
-          have y_odd : Odd y := by
-            have ⟨ k, hk ⟩ := odd
-            use - k - 1
-            linarith; save
-
-          apply H <;> assumption
-
-        -- when `x ≥ 0`
-        cases x
-        case negSucc k => simp_all
-        case ofNat x =>
-          induction x using Nat.strong_induction_on with
-          | h x ih =>
-            match x with
-            | 0 => contradiction
-            | 1 => rfl
-            | x + 2 =>
-              have ⟨k, hk⟩ := odd
-              rw [show Int.ofNat (x + 2) = (x : ℤ) + 2 from by rfl] at *
-              have x_eq : x = -1 + 2 * k := by omega
-              have : f (x : ℤ) = f (x + 2 : ℤ) := by
-                specialize add_two_id k
-                rw [x_eq, add_two_id]
-                congr 1
-                ring
-              have odd_x : Odd (x : ℤ) := by
-                use k - 1
-                omega
-              rw [← this]
-              exact ih x (by simp) odd_x (by simp)
+        have ⟨k, hk⟩ := odd
+        rw [sub_even k, hk]
+        simp
 
       have f_in_odd_const : f ∈ odd_const := by
         use f 1
