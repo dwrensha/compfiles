@@ -64,13 +64,7 @@ problem imo2012_p4 (f : ℤ → ℤ) :
       rw [show f 1 ^ 2 + f 1 ^ 2 = 2 * f 1 * f 1 from by ring] at this
       simp at this
       replace : f 2 * (f 2 - 4 * f 1) = 0 := by linarith; save
-      rw [@Int.mul_eq_zero] at this
-
-      rcases this with this | this
-      · left
-        assumption
-      · right
-        linarith; save
+      rwa [Int.mul_eq_zero, sub_eq_zero] at this
 
     rcases lem with «f2=0» | «f2=4*f1»
 
