@@ -268,6 +268,9 @@ def faq (h : IO.FS.Handle) : IO Unit := do
   h.putStr "Apache-2.0 license, it should be straightforward to "
   h.putStr "move code back and forth between them, if desired."
 
+  h.putStrLn "<h4>How does Compfiles compare to <a class=\"external\" href=\"https://github.com/openai/miniF2F\">MiniF2F</a>?</h4>"
+  h.putStr "MiniF2F is a static benchmark for AI-assisted theorem proving, with 488 math problems formalized in multiple languages (Lean, Metamath, Isabelle, and HOL Light) including a relatively small number of formalized solutions. "
+  h.putStr "Compfiles is a continually-growing archive of math problems formalized in Lean, with emphasis placed on complete formalized solutions."
   h.putStrLn "<h4>I noticed an error on this website. How do I report it?</h4>"
   h.putStr "Please open an issue <a class=\"external\" href=\"https://github.com/dwrensha/compfiles/issues\">on Github</a>."
 
