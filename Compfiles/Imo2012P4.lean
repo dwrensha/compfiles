@@ -48,11 +48,9 @@ problem imo2012_p4 (f : ℤ → ℤ) :
     -- `f` is an even function
     have even (t : ℤ) : f (- t) = f t := by
       have := constraint t (-t) 0
-      rw [«f0=0»] at this
-      simp at this
-      replace : (f t - f (- t)) ^ 2 = 0 := by nlinarith; save
-      replace : f t - f (- t) = 0 := by exact sq_eq_zero_iff.mp this
-      linarith; save
+      simp [«f0=0»] at this
+      rw [sub_sq''] at this
+      symm; exact this
 
     have P (a b : ℤ) : (f a) ^ 2 + (f b) ^ 2 + f (a + b) ^ 2 = 2 * f a * f b + 2 * f (a + b) * (f a + f b) := by
       have := constraint a b (- a - b)
