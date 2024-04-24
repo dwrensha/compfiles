@@ -20,7 +20,7 @@ Determine all functions f : ℝ → ℝ that satisfy
 for all x,y.
 -/
 
-namespace Imo2012P5
+namespace Imo2015P5
 
 determine SolutionSet : Set (ℝ → ℝ) := { fun x ↦ x, fun x ↦ 2 - x }
 
