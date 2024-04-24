@@ -53,12 +53,8 @@ problem imo2012_p4 (f : ℤ → ℤ) :
       symm; exact this
 
     have P (a b : ℤ) : (f a) ^ 2 + (f b) ^ 2 + f (a + b) ^ 2 = 2 * f a * f b + 2 * f (a + b) * (f a + f b) := by
-      have := constraint a b (- a - b)
-      simp at this
-
-      have lem := even (a + b)
-      rw [show - (a + b) = -a - b from by ring] at lem
-      rw [lem] at this
+      have := constraint a b (- (a + b)) (by omega)
+      rw [even (a + b)] at this
       rw [this]
       ring
 
