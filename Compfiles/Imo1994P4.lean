@@ -26,5 +26,5 @@ determine SolutionSet : Set (ℤ × ℤ) := sorry
 
 problem imo1994_p4 (m n : ℤ) :
     (m, n) ∈ SolutionSet ↔
-    0 < m ∧ 0 < n ∧ (m * n - 1) ∣ (n^3 + 1):= by
+    0 < m ∧ 0 < n ∧ (m * n - 1) ∣ (n^3 + 1) := by
   sorry
