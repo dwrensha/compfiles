@@ -6,7 +6,6 @@ Authors: David Renshaw, Jason Reed
 
 import Mathlib.Algebra.Ring.Equiv
 import Mathlib.Data.Real.Basic
-import Mathlib.Data.Set.Intervals.Basic
 import Mathlib.Topology.Order
 import Mathlib.Topology.MetricSpace.Basic
 import Mathlib.Topology.Algebra.Ring.Basic
