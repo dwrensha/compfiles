@@ -271,6 +271,12 @@ def faq (h : IO.FS.Handle) : IO Unit := do
   h.putStrLn "<h4>How does Compfiles compare to <a class=\"external\" href=\"https://github.com/openai/miniF2F\">MiniF2F</a>?</h4>"
   h.putStr "MiniF2F is a static benchmark for machine learning, with 488 math problems formalized in multiple languages (Lean, Metamath, Isabelle, and HOL Light) including a relatively small number of formalized solutions. "
   h.putStr "Compfiles is a continually-growing archive of math problems formalized in Lean, with emphasis placed on complete formalized solutions."
+
+  h.putStrLn "<h4>How does Compfiles encode problems that ask for data values to be determined?</h4>"
+  h.putStr "We have special <code>determine</code> command to mark such data. "
+  h.putStr s!"You can see it in action for Imo2015P5 <a href=\"https://github.com/dwrensha/compfiles/blob/16ce9a86e9e1c147482b264a6bbdbd4cd605a93e/Compfiles/Imo2015P5.lean#L25\">in the source code</a> and <a href=\"{←getBaseUrl}problems/Compfiles.Imo2015P5.html\">on the rendered webpage</a>, "
+  h.putStr "and you can see its definition <a href=\"https://github.com/dwrensha/compfiles/blob/16ce9a86e9e1c147482b264a6bbdbd4cd605a93e/ProblemExtraction.lean#L245-L252\">here</a>."
+
   h.putStrLn "<h4>I noticed an error on this website. How do I report it?</h4>"
   h.putStr "Please open an issue <a class=\"external\" href=\"https://github.com/dwrensha/compfiles/issues\">on Github</a>."
 
