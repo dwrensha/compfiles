@@ -71,39 +71,21 @@ problem imo2012_p4 (f : ℤ → ℤ) :
     -- when `f 2 = 0`
     case inl =>
 
-      have even_nat_zero (n : ℕ) : f (2 * n) = 0 := by
-        induction' n with n ih
-        · simpa
-
-        simp
-        have := P 2 (2 * n)
-        simp [ih, «f2=0»] at this
-        rw [← this]
-        congr 1
-        ring
-
       have even_zero (x : ℤ) : f (2 * x) = 0 := by
-        -- without loss of generality, we can assume x ≥ 0.
-        wlog pos : x ≥ 0 with H
-        replace H : ∀ x ≥ 0, f (2 * x) = 0 := by
-          apply H <;> assumption
+        rcases x with x | x
+        rotate_left; rw [← even, Int.neg_mul_eq_mul_neg, Int.neg_negSucc]
+        all_goals
+          induction' x with x ih
+          . simpa
 
-        case inr =>
-          simp at pos
-          have := even (- (2 * x)); simp at this
-          rw [this]; clear this
-          set y := -x with yh
-          rw [show - (2 * x) = 2 * y from by ring]
-          have ynng : y ≥ 0 := by linarith; save
-          apply H; assumption
+        have := P 2 (2 * (Nat.succ x))
+        rotate_left; have := P 2 (2 * x)
 
-        -- when `x ≥ 0`
-        have := even_nat_zero x.toNat
-        rw [← this]
-        congr 1
-        suffices x = ↑(Int.toNat x) from by
-          nth_rw 1 [this]
-        exact (Int.toNat_of_nonneg pos).symm
+        all_goals
+          simp at ih; simp [ih, «f2=0»] at this
+          rw [← this]
+          congr 1
+          simp; omega
 
       have sub_even {x : ℤ} (a : ℤ) : f x = f (x - 2 * a) := by
         have := P (x - (2 * a)) (2 * a)
