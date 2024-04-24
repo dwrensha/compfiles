@@ -122,15 +122,12 @@ problem imo2012_p4 (f : ℤ → ℤ) :
         constructor
 
         case left =>
-          intro odd
-          exact h_odd_const x odd
+          apply h_odd_const
 
         case right =>
-          intro even
-          have ⟨k, hk⟩ := even
-          rw [hk]
-          rw [show k + k = 2 * k from by ring]
-          exact even_zero k
+          rintro ⟨k, hk⟩
+          convert even_zero k using 2
+          omega
       simpa [solution_set]
       done
 
