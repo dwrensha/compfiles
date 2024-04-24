@@ -26,6 +26,9 @@ def odd_const : Set (ℤ → ℤ) := fun f =>
 
 determine solution_set : Set (ℤ → ℤ) := odd_const
 
+theorem sub_sq'' {x y : Int} : x ^ 2 + y ^ 2 = (2 * x * y) ↔ x = y := by
+  rw [← sub_eq_zero, ← sub_sq', sq_eq_zero_iff, sub_eq_zero]
+
 problem imo2012_p4 (f : ℤ → ℤ) :
     f ∈ solution_set ↔
     ∀ a b c : ℤ, a + b + c = 0 →
@@ -45,19 +48,13 @@ problem imo2012_p4 (f : ℤ → ℤ) :
     -- `f` is an even function
     have even (t : ℤ) : f (- t) = f t := by
       have := constraint t (-t) 0
-      rw [«f0=0»] at this
-      simp at this
-      replace : (f t - f (- t)) ^ 2 = 0 := by nlinarith; save
-      replace : f t - f (- t) = 0 := by exact sq_eq_zero_iff.mp this
-      linarith; save
+      simp [«f0=0»] at this
+      rw [sub_sq''] at this
+      symm; exact this
 
     have P (a b : ℤ) : (f a) ^ 2 + (f b) ^ 2 + f (a + b) ^ 2 = 2 * f a * f b + 2 * f (a + b) * (f a + f b) := by
-      have := constraint a b (- a - b)
-      simp at this
-
-      have lem := even (a + b)
-      rw [show - (a + b) = -a - b from by ring] at lem
-      rw [lem] at this
+      have := constraint a b (- (a + b)) (by omega)
+      rw [even (a + b)] at this
       rw [this]
       ring
 
@@ -67,104 +64,39 @@ problem imo2012_p4 (f : ℤ → ℤ) :
       rw [show f 1 ^ 2 + f 1 ^ 2 = 2 * f 1 * f 1 from by ring] at this
       simp at this
       replace : f 2 * (f 2 - 4 * f 1) = 0 := by linarith; save
-      rw [@Int.mul_eq_zero] at this
-
-      rcases this with this | this
-      · left
-        assumption
-      · right
-        linarith; save
+      rwa [Int.mul_eq_zero, sub_eq_zero] at this
 
     rcases lem with «f2=0» | «f2=4*f1»
 
     -- when `f 2 = 0`
     case inl =>
 
-      have even_nat_zero (n : ℕ) : f (2 * n) = 0 := by
-        induction' n with n ih
-        · simpa
-
-        simp
-        have := P 2 (2 * n)
-        simp [ih, «f2=0»] at this
-        rw [← this]
-        congr 1
-        ring
-
       have even_zero (x : ℤ) : f (2 * x) = 0 := by
-        -- without loss of generality, we can assume x ≥ 0.
-        wlog pos : x ≥ 0 with H
-        replace H : ∀ x ≥ 0, f (2 * x) = 0 := by
-          apply H <;> assumption
+        rcases x with x | x
+        rotate_left; rw [← even, Int.neg_mul_eq_mul_neg, Int.neg_negSucc]
+        all_goals
+          induction' x with x ih
+          . simpa
 
-        case inr =>
-          simp at pos
-          have := even (- (2 * x)); simp at this
-          rw [this]; clear this
-          set y := -x with yh
-          rw [show - (2 * x) = 2 * y from by ring]
-          have ynng : y ≥ 0 := by linarith; save
-          apply H; assumption
+        have := P 2 (2 * (Nat.succ x))
+        rotate_left; have := P 2 (2 * x)
 
-        -- when `x ≥ 0`
-        have := even_nat_zero x.toNat
-        rw [← this]
-        congr 1
-        suffices x = ↑(Int.toNat x) from by
-          nth_rw 1 [this]
-        exact (Int.toNat_of_nonneg pos).symm
+        all_goals
+          simp at ih; simp [ih, «f2=0»] at this
+          rw [← this]
+          congr 1
+          simp; omega
 
-      have add_two_id (a : ℤ) : f (- 1 + 2 * a) = f (1 + 2 * a) := by
-        have := P (-1 + 2 * a) 2
-        simp [«f2=0», «f0=0»] at this
-        ring_nf at this
-        replace : (f (-1 + a * 2) - f (1 + a * 2)) ^ 2 = 0 := by nlinarith; save
-        simp at this
-        rw [show 2 * a = a * 2 from by ring]
-        linarith; save
+      have sub_even {x : ℤ} (a : ℤ) : f x = f (x - 2 * a) := by
+        have := P (x - (2 * a)) (2 * a)
+        simp [«f2=0», «f0=0», even_zero] at this
+        rwa [add_comm, sub_sq''] at this
 
       have h_odd_const (x : ℤ) : Odd x → f x = f 1 := by
         intro odd
-        wlog pos : x ≥ 0 with H
-        replace H : ∀ (x : ℤ), Odd x → x ≥ 0 → f x = f 1 := by
-          apply H <;> assumption
-
-        case inr =>
-          simp at pos
-          have := even (- x); simp at this
-          set y := -x with yh
-          rw [this]; clear this
-          have ynng : y ≥ 0 := by linarith; save
-          have y_odd : Odd y := by
-            have ⟨ k, hk ⟩ := odd
-            use - k - 1
-            linarith; save
-
-          apply H <;> assumption
-
-        -- when `x ≥ 0`
-        cases x
-        case negSucc k => simp_all
-        case ofNat x =>
-          induction x using Nat.strong_induction_on with
-          | h x ih =>
-            match x with
-            | 0 => contradiction
-            | 1 => rfl
-            | x + 2 =>
-              have ⟨k, hk⟩ := odd
-              rw [show Int.ofNat (x + 2) = (x : ℤ) + 2 from by rfl] at *
-              have x_eq : x = -1 + 2 * k := by omega
-              have : f (x : ℤ) = f (x + 2 : ℤ) := by
-                specialize add_two_id k
-                rw [x_eq, add_two_id]
-                congr 1
-                ring
-              have odd_x : Odd (x : ℤ) := by
-                use k - 1
-                omega
-              rw [← this]
-              exact ih x (by simp) odd_x (by simp)
+        have ⟨k, hk⟩ := odd
+        rw [sub_even k, hk]
+        simp
 
       have f_in_odd_const : f ∈ odd_const := by
         use f 1
@@ -172,15 +104,12 @@ problem imo2012_p4 (f : ℤ → ℤ) :
         constructor
 
         case left =>
-          intro odd
-          exact h_odd_const x odd
+          apply h_odd_const
 
         case right =>
-          intro even
-          have ⟨k, hk⟩ := even
-          rw [hk]
-          rw [show k + k = 2 * k from by ring]
-          exact even_zero k
+          rintro ⟨k, hk⟩
+          convert even_zero k using 2
+          omega
       simpa [solution_set]
       done
 
