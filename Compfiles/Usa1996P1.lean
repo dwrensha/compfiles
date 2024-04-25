@@ -42,7 +42,7 @@ problem usa1996_p1 :
     rw [show (((2 * (↑n + 1) - 1) * Real.pi / 180 - (2 * (↑n + 1) + 1) * Real.pi / 180) / 2) =
              (-(Real.pi / 180)) by ring]
     rw [Real.sin_neg]
-    linarith only
+    ring
   · field_simp [mul_comm]
   · field_simp
     convert_to (∑ n in Finset.range 45, (Real.cos (((89 - n) * 2 + 1) * Real.pi / 180) +
