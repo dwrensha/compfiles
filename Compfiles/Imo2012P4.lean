@@ -65,26 +65,29 @@ problem imo2012_p4 (f : ℤ → ℤ) :
       rw [← sub_eq_zero] at this; rw [← this]
       ring_nf
 
+    have ext_eq_zero {{a : ℤ}} (h : f a = 0) : ∀ x, f (a * x) = 0 := by
+      rintro (x | x)
+      rotate_left; rw [← even, Int.neg_mul_eq_mul_neg, Int.neg_negSucc]
+      all_goals
+        induction' x with x ih
+        . simpa
+
+      have := P a (a * (Nat.succ x))
+      rotate_left; have := P a (a * x)
+
+      all_goals
+        simp at ih; simp [ih, h] at this
+        rw [← this]
+        congr 1
+        simp; ring
+      done
+
     cases «P(a,a)» 1
 
     case inl «f2=0» =>
       simp at «f2=0»
 
-      have even_zero (x : ℤ) : f (2 * x) = 0 := by
-        rcases x with x | x
-        rotate_left; rw [← even, Int.neg_mul_eq_mul_neg, Int.neg_negSucc]
-        all_goals
-          induction' x with x ih
-          . simpa
-
-        have := P 2 (2 * (Nat.succ x))
-        rotate_left; have := P 2 (2 * x)
-
-        all_goals
-          simp at ih; simp [ih, «f2=0»] at this
-          rw [← this]
-          congr 1
-          simp; omega
+      have even_zero : ∀ x, f (2 * x) = 0 := ext_eq_zero «f2=0»
 
       have sub_even {x : ℤ} (a : ℤ) : f x = f (x - 2 * a) := by
         have := P (x - (2 * a)) (2 * a)
