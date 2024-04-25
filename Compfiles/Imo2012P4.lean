@@ -66,10 +66,9 @@ problem imo2012_p4 (f : ℤ → ℤ) :
       replace : f 2 * (f 2 - 4 * f 1) = 0 := by linarith; save
       rwa [Int.mul_eq_zero, sub_eq_zero] at this
 
-    rcases lem with «f2=0» | «f2=4*f1»
+    cases lem
 
-    -- when `f 2 = 0`
-    case inl =>
+    case inl «f2=0» =>
 
       have even_zero (x : ℤ) : f (2 * x) = 0 := by
         rcases x with x | x
@@ -113,8 +112,7 @@ problem imo2012_p4 (f : ℤ → ℤ) :
       simpa [solution_set]
       done
 
-    -- when `f 2 = 4 * f 1`
-    case inr =>
+    case inr «f2=4*f1» =>
       sorry
 
   -- for all `f` in solution set, `f` satisfies the constraint
