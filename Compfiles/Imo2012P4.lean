@@ -58,17 +58,17 @@ problem imo2012_p4 (f : ℤ → ℤ) :
       rw [this]
       ring
 
-    have lem : f 2 = 0 ∨ f 2 = 4 * f 1 := by
-      have := P 1 1
-      simp at this
-      rw [show f 1 ^ 2 + f 1 ^ 2 = 2 * f 1 * f 1 from by ring] at this
-      simp at this
-      replace : f 2 * (f 2 - 4 * f 1) = 0 := by linarith; save
-      rwa [Int.mul_eq_zero, sub_eq_zero] at this
+    have «P(a,a)» (a : ℤ) : f (2 * a) = 0 ∨ f (2 * a) = 4 * f a := by
+      conv => rhs; rw [← sub_eq_zero]
+      rw [← Int.mul_eq_zero]
+      have := P a a; simp at this
+      rw [← sub_eq_zero] at this; rw [← this]
+      ring_nf
 
-    cases lem
+    cases «P(a,a)» 1
 
     case inl «f2=0» =>
+      simp at «f2=0»
 
       have even_zero (x : ℤ) : f (2 * x) = 0 := by
         rcases x with x | x
@@ -113,6 +113,7 @@ problem imo2012_p4 (f : ℤ → ℤ) :
       done
 
     case inr «f2=4*f1» =>
+      simp at «f2=4*f1»
       sorry
 
   -- for all `f` in solution set, `f` satisfies the constraint
