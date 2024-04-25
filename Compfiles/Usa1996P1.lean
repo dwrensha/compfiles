@@ -26,9 +26,7 @@ problem usa1996_p1 :
     (1 / (90:ℝ)) * ∑ n in Finset.range 90, (2 * (n+1)) * Real.sin ((2 * (n+1)) * Real.pi / 180)
     = 1 / Real.tan (Real.pi / 180) := by
   have sin1 : Real.sin (Real.pi / 180) ≠ 0 := by
-    have h1 : -Real.pi < Real.pi / 180 := by linarith [Real.pi_pos]
-    apply (Real.sin_eq_zero_iff_of_lt_of_lt h1 (by linarith)).not.mpr
-    positivity
+    refine (Real.sin_eq_zero_iff_of_lt_of_lt ?_ ?_).not.mpr ?_ <;> linarith [Real.pi_pos]
   have cos_add : ∀ (x y : ℝ), x + y = Real.pi → Real.cos x + Real.cos y = 0 := by
     intro x y h; rw [(by linarith only [h] : y = Real.pi - x)]; rw [Real.cos_pi_sub, add_right_neg]
   apply mul_left_cancel₀ sin1
