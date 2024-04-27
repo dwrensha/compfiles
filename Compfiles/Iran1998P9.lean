@@ -42,7 +42,7 @@ problem iran1998_p9
     (hy : 1 < y)
     (hz : 1 < z)
     (h : 1/x + 1/y + 1/z = 2) :
-    Real.sqrt (x - 1) + Real.sqrt (y - 1) + Real.sqrt (z - 1) ≤ Real.sqrt (x + y + z) := by
+    √(x - 1) + √(y - 1) + √(z - 1) ≤ √(x + y + z) := by
   -- Follows the proof in _Mathematical Olympiads 1998-1999_
   -- by Titu Andreescu and Zuming Feng
 
