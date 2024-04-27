@@ -124,9 +124,9 @@ problem iran1998_p9
             Real.sqrt y * Real.sqrt ((y - 1) / y) +
             Real.sqrt z * Real.sqrt ((z - 1) / z) := rfl
 
-  have hxxx : x * ((x - 1) / x) = x - 1 := by field_simp; ring
-  have hyyy : y * ((y - 1) / y) = y - 1 := by field_simp; ring
-  have hzzz : z * ((z - 1) / z) = z - 1 := by field_simp; ring
+  have hxxx : x * ((x - 1) / x) = x - 1 := by field_simp
+  have hyyy : y * ((y - 1) / y) = y - 1 := by field_simp
+  have hzzz : z * ((z - 1) / z) = z - 1 := by field_simp
 
   rw [←Real.sqrt_mul hx0 ((x - 1) / x),
       ←Real.sqrt_mul hy0 ((y - 1) / y),
