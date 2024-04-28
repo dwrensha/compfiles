@@ -55,7 +55,6 @@ problem imo2015_p5 (f : ℝ → ℝ) :
       simp only [S, Set.mem_setOf_eq] at ht
       have h6 := hf 0 t
       simp only [zero_add, zero_mul, ht, h4] at h6
-      rw [add_left_cancel_iff] at h6
       linarith only [h6]
     have h8 : ∀ x, x + f (x + 1) = 1 := fun x ↦ by
       have h9 := h3 x
