@@ -29,6 +29,65 @@ determine solution_set : Set (ℤ → ℤ) := odd_const
 theorem sub_sq'' {x y : Int} : x ^ 2 + y ^ 2 = (2 * x * y) ↔ x = y := by
   rw [← sub_eq_zero, ← sub_sq', sq_eq_zero_iff, sub_eq_zero]
 
+def mod4 (x : Int) : Fin 4 := by
+  refine ⟨(x % 4).natAbs, ?_⟩
+  have pos : 0 ≤ x % 4 := by omega
+  have lt : x % 4 < 4 := by omega
+  revert pos lt; cases (x % 4) <;> intro pos lt
+  . simp [Int.natAbs] at lt ⊢; assumption
+  . simp at pos
+
+theorem mod4_eq (x : Int) : (mod4 x : Int) = x % 4 := by
+  simp [mod4]; apply Int.emod_nonneg; simp
+
+theorem mod4_add_eq (x : Int) : mod4 (x + 4) = mod4 x := by simp [mod4]
+
+theorem Int.lt_of_ns_lt_ns {x x' : ℕ} (h : Int.negSucc x < Int.negSucc x') : x' < x := by
+  have := Int.neg_lt_neg h
+  rw [Int.neg_negSucc, Int.neg_negSucc, Int.ofNat_lt] at this
+  apply Nat.lt_of_succ_lt_succ this
+
+def myInduction.{u}
+  {motive : ℤ -> Sort u}
+  (P0 : motive 0) (P1 : motive 1) (P2 : motive 2) (P3 : motive 3)
+  (add4 : ∀ x, motive (x + 4) = motive x)
+  : ∀ x, motive x := by
+    rintro (x | x)
+    case ofNat =>
+      match x with
+      | 0 => exact P0
+      | 1 => exact P1
+      | 2 => exact P2
+      | 3 => exact P3
+      | x' + 4 =>
+        rw [show Int.ofNat (x' + 4) = (Int.ofNat x') + 4 by rfl, add4]
+        have : sizeOf (x' : Int) < sizeOf ((x' + 4 : Nat) : Int) := by
+          rw [← Int.ofNat_eq_coe, ← Int.ofNat_eq_coe]
+          simp [sizeOf, Int._sizeOf_1]
+        apply myInduction <;> assumption
+      done
+    case negSucc =>
+      rw [← add4]
+      cases h : Int.negSucc x + 4
+      case ofNat x' =>
+        match x' with
+        | 0 => exact P0
+        | 1 => exact P1
+        | 2 => exact P2
+        | 3 => exact P3
+        | x' + 4 => simp at h; done
+      case negSucc x' =>
+        have : x' < x := by
+          have := Int.sub_lt_self (Int.negSucc x + 4) (b := 4) (h := by simp)
+          conv at this => rhs; rw [h]
+          simp at this
+          apply Int.lt_of_ns_lt_ns this
+        apply myInduction <;> assumption
+        done
+      done
+    done
+
+
 problem imo2012_p4 (f : ℤ → ℤ) :
     f ∈ solution_set ↔
     ∀ a b c : ℤ, a + b + c = 0 →
@@ -117,8 +176,55 @@ problem imo2012_p4 (f : ℤ → ℤ) :
 
     case inr «f2=4*f1» =>
       simp at «f2=4*f1»
-      sorry
 
+      have when_f4_is_0 («f4=0» : f 4 = 0) : ∀ x, f x = [0, f 1, 4 * f 1, f 1][mod4 x] := by
+        have «f(x+4)=fx» (x : ℤ) : f (x + 4) = f x := by
+          have «P(4,x)» := P 4 x
+          simp [«f4=0»] at «P(4,x)»
+          rw [show 2 * f (4 + x) * f x = 2 * f x * f (4 + x) by ac_rfl, sub_sq''] at «P(4,x)»
+          rw [«P(4,x)»]; ac_rfl
+
+        intro x; induction x using myInduction
+        case P0 => simp [«f0=0», mod4]
+        case P1 => simp [mod4]
+        case P2 => simp [«f2=4*f1», mod4]
+        case P3 => rw [show 3 = -1 + 4 by rfl, «f(x+4)=fx», even]; simp [mod4]
+        case add4 x => rw [«f(x+4)=fx», mod4_add_eq]
+
+      have «P(1,2)» : f 3 = 9 * f 1 ∨ f 3 = f 1 := by
+        have := P 1 2
+        rw [«f2=4*f1», ← sub_eq_zero] at this
+        rw [← sub_eq_zero, ← sub_eq_zero (a := f 3), ← Int.mul_eq_zero, ← this]
+        ring_nf
+
+      have «P(2,2)» : f 4 = 0 ∨ f 4 = 16 * f 1 := by convert «P(a,a)» 2 using 2; omega
+
+      cases «P(1,2)»
+
+      case inr «f3=f1» =>
+
+        have «f4=0» : f 4 = 0 := by
+          cases «P(2,2)»; case inl «f4=0» => assumption
+          case inr «f4=4*f2» =>
+            have «P(1,3)» := P 1 3
+            simp [«f3=f1», «f4=4*f2», «f2=4*f1»] at «P(1,3)» ⊢
+            rw [← sub_eq_zero] at «P(1,3)»; ring_nf at «P(1,3)»
+            simp [mul_eq_zero, pow_eq_zero_iff'] at «P(1,3)»
+            assumption
+
+        have := when_f4_is_0 «f4=0»
+        sorry
+
+      case inl «f3=9*f1» =>
+
+        cases «P(2,2)»
+
+        case inl «f4=0» =>
+          have := when_f4_is_0 «f4=0»
+          sorry
+
+        case inr «f4=16*f1» =>
+          sorry
   -- for all `f` in solution set, `f` satisfies the constraint
   case mp =>
     sorry
