@@ -224,7 +224,57 @@ problem imo2012_p4 (f : ℤ → ℤ) :
           sorry
 
         case inr «f4=16*f1» =>
+          have «fx=x²f1» (x : ℤ) : f x = x ^ 2 * f 1 := by
+            wlog pos : x ≥ 0 with H
+
+            case inr =>
+              rcases x with x | x; case ofNat => simp at pos
+              rw [Int.negSucc_eq, even, neg_pow_two]
+              apply H <;> try assumption
+              . omega
+
+            rcases x with x | x; case negSucc => simp at pos
+            induction x using Nat.strongInductionOn with
+            | ind x ih =>
+              rcases x with _ | x; case zero => simp [«f0=0»]
+
+              have «fx=x²f1» : f x = x ^ 2 * f 1 := by apply ih <;> simp
+              have := P x 1
+              rw [«fx=x²f1», ← sub_eq_zero] at this
+              replace this : (f (x + 1) - (x - 1) ^ 2 * f 1) * (f (x + 1) - (x + 1) ^ 2 * f 1) = 0 := by
+                rw [← this]; ring
+              rw [mul_eq_zero, sub_eq_zero, sub_eq_zero] at this
+
+              rcases this with «f(x+1)=(x-1)²*f1» | goal; case inr => exact goal
+
+              have := P (x + 1) (-2)
+              rw [show (x : ℤ) + 1 + (-2) = x - 1 by omega, even] at this
+              have «f(x-1)=(x-1)²*f1» : f ((x : ℤ) - 1) = ((x : ℤ) - 1) ^ 2 * f 1 := by
+                rcases Decidable.em ((x : ℤ) - 1 ≥ 0) with h | h
+                rcases x with _ | x; case zero => simp [even]
+                simp; apply ih; omega; simp
+
+                simp at h; simp [h, even]
+                done
+              rw [«f2=4*f1», «f(x-1)=(x-1)²*f1», ← sub_eq_zero] at this
+              replace this : (f (x + 1) - (x + 1) ^ 2 * f 1) * (f (x + 1) - ((x : ℤ) - 3) ^ 2 * f 1) = 0 := by
+                rw [← this]; ring_nf
+              rw [mul_eq_zero, sub_eq_zero, sub_eq_zero] at this
+
+              rcases this with goal | «f(x+1)=(x-3)²*f1»; case inl => exact goal
+              have := «f(x+1)=(x-3)²*f1»
+              rw [«f(x+1)=(x-1)²*f1», mul_eq_mul_right_iff, pow_eq_pow_iff_cases] at this
+              cases this
+              case inr «f1=0» =>
+                rw [← one_mul (Int.ofNat x.succ), ext_eq_zero «f1=0», «f1=0»]; simp
+              case inl this =>
+                simp at this
+                have : x = 2 := by omega
+                simpa [this]
+            done
+
           sorry
+
   -- for all `f` in solution set, `f` satisfies the constraint
   case mp =>
     sorry
