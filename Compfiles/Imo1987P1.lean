@@ -99,19 +99,19 @@ def fixedPointsEquiv' :
   right_inv := fun ⟨⟨x, σ⟩, h⟩ => rfl
 
 /-- Main statement for any `(α : Type*) [Fintype α]`. -/
-theorem main_fintype : ∑ k in range (card α + 1), k * p α k = card α * (card α - 1)! := by
+theorem main_fintype : ∑ k ∈ range (card α + 1), k * p α k = card α * (card α - 1)! := by
   have A : ∀ (k) (σ : fiber α k), card (fixedPoints (↑σ : Perm α)) = k := fun k σ => σ.2
   simpa [A, ← Fin.sum_univ_eq_sum_range, -card_ofFinset, Finset.card_univ, card_fixed_points,
     mul_comm] using card_congr (fixedPointsEquiv' α)
 
 /-- Main statement for permutations of `Fin n`, a version that works for `n = 0`. -/
-theorem main₀ (n : ℕ) : ∑ k in range (n + 1), k * p (Fin n) k = n * (n - 1)! := by
+theorem main₀ (n : ℕ) : ∑ k ∈ range (n + 1), k * p (Fin n) k = n * (n - 1)! := by
   simpa using main_fintype (Fin n)
 
 end generalization
 snip end
 
 
-problem imo1987_p1 {n : ℕ} (hn : 1 ≤ n) : ∑ k in range (n + 1), k * p (Fin n) k = n ! := by
+problem imo1987_p1 {n : ℕ} (hn : 1 ≤ n) : ∑ k ∈ range (n + 1), k * p (Fin n) k = n ! := by
   rw [main₀, Nat.mul_factorial_pred (zero_lt_one.trans_le hn)]
 

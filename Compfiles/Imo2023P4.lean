@@ -27,8 +27,8 @@ namespace Imo2023P4
 open BigOperators
 
 noncomputable def a (x : Finset.Icc 1 2023 → ℝ) (n : Finset.Icc 1 2023) : ℝ :=
-  √((∑ i in Finset.univ.filter (· ≤ n), x i) *
-    (∑ i in Finset.univ.filter (· ≤ n), (1 / x i)))
+  √((∑ i ∈ Finset.univ.filter (· ≤ n), x i) *
+    (∑ i ∈ Finset.univ.filter (· ≤ n), (1 / x i)))
 
 problem imo2023_p4
     (x : Finset.Icc 1 2023 → ℝ)

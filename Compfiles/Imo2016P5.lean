@@ -43,8 +43,8 @@ problem imo2015_p5 :
                   R ⊂ Finset.Icc 1 2016 ∧
                   L.card + R.card = k ∧
                   ¬∃ x : ℝ,
-                   ∏ i in Finset.Icc 1 2016 \ L, (x - (i : ℝ)) =
-                   ∏ i in Finset.Icc 1 2016 \ R, (x - (i : ℝ)) }
+                   ∏ i ∈ Finset.Icc 1 2016 \ L, (x - (i : ℝ)) =
+                   ∏ i ∈ Finset.Icc 1 2016 \ R, (x - (i : ℝ)) }
             solution_value := by
   constructor
   · rw [Set.mem_setOf_eq]

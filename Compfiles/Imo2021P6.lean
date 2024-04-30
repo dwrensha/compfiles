@@ -25,7 +25,7 @@ open scoped BigOperators
 
 problem imo2021_p6 (m : ℕ) (hm : 2 ≤ m) (A : Finset ℤ)
     (B : Fin m → Finset ℤ) (hB : ∀ k, B k ⊆ A)
-    (hs : ∀ k, ∑ b in (B k), b = (m : ℤ) ^ (k.val + 1))
+    (hs : ∀ k, ∑ b ∈ B k, b = (m : ℤ) ^ (k.val + 1))
     : m ≤ 2 * A.card := by
   sorry
 

@@ -82,11 +82,11 @@ theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
     (Mcard : M.card ≤ n - 1)
     (hM : ∑ i, a i ∉ M)
     : ∃ p : Equiv.Perm (Fin n),
-          ∀ i : Fin n, ∑ j in Finset.filter (· ≤ i) Finset.univ, a (p j) ∉ M := by
+          ∀ i : Fin n, ∑ j ∈ Finset.filter (· ≤ i) Finset.univ, a (p j) ∉ M := by
   revert a M hn
   induction' n using Nat.strongInductionOn with n ih
   intro hn a ainj apos asorted M Mpos Mcard
-  let x := ∑ i in Finset.filter (·.val < n-1) Finset.univ, a i
+  let x := ∑ i ∈ Finset.filter (·.val < n-1) Finset.univ, a i
   -- four cases: split on whether x ∈ M and whether
   -- there is any y > x such that y ∈ M.
   have h1 := Classical.em (x ∈ M)
@@ -121,7 +121,7 @@ theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
     · refine ⟨Equiv.refl _, ?_⟩
       intro i
       obtain hi1 | hi2 := Classical.em (i.val < n-1)
-      · let z := ∑ j in Finset.filter (· ≤ i) Finset.univ, a j
+      · let z := ∑ j ∈ Finset.filter (· ≤ i) Finset.univ, a j
         have h9 : z ≤ x := by
           have h49 : ∀ i, 0 ≤ a i := by intro i; exact le_of_lt (apos i)
           have h50 : Finset.filter (fun x ↦ x ≤ i) Finset.univ ⊆
@@ -202,8 +202,8 @@ theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
       have h31 := hp i'
       rw [Finset.mem_filter] at h31
       have h35 : n' ≤ n := Nat.sub_le n 1
-      have h33 : ∑ j in Finset.filter (· ≤ i') Finset.univ, a' (p' j) =
-                 ∑ j in Finset.filter (· ≤ i) Finset.univ, a (p j) := by
+      have h33 : ∑ j ∈ Finset.filter (· ≤ i') Finset.univ, a' (p' j) =
+                 ∑ j ∈ Finset.filter (· ≤ i) Finset.univ, a (p j) := by
         sorry
         /-
         have h36 : (Finset.univ.filter (· ≤ i')).map (embedFinLE h35) =
@@ -227,12 +227,12 @@ theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
         rw [← h36]
         simp [embedFinLE, a', p] -/
       rw [h33] at h31
-      have h34 : ∑ j in Finset.filter (· ≤ i) Finset.univ, a (p j) ≤ x := by
+      have h34 : ∑ j ∈ Finset.filter (· ≤ i) Finset.univ, a (p j) ≤ x := by
         sorry
       intro H
       exact (h31 ⟨H, h34⟩).elim
     · have h31 : i.val = n' := by omega
-      have h32 : ∑ j in Finset.filter (fun x ↦ x ≤ i) Finset.univ, a (p j) =
+      have h32 : ∑ j ∈ Finset.filter (fun x ↦ x ≤ i) Finset.univ, a (p j) =
                  ∑ i : Fin n, a i := by
         have pb : p.toFun.Bijective := EquivLike.bijective p
         rw [←Function.Bijective.sum_comp pb (fun j ↦ a j)]
@@ -260,7 +260,7 @@ theorem imo2009_p6_aux2 (n : ℕ) (hn : 0 < n)
     (Mcard : M.card = n - 1)
     (hM : ∑ i, a i ∉ M)
     : ∃ p : Equiv.Perm (Fin n),
-          ∀ i : Fin n, ∑ j in Finset.univ.filter (· ≤ i), a (p j) ∉ M := by
+          ∀ i : Fin n, ∑ j ∈ Finset.univ.filter (· ≤ i), a (p j) ∉ M := by
   have Mcard' := Mcard.le
   exact imo2009_p6_aux1 n hn a ainj apos asorted M Mpos Mcard' hM
 
@@ -276,7 +276,7 @@ problem imo2009_p6 (n : ℕ) (hn : 0 < n)
     (hM : ∑ i, a i ∉ M)
     : ∃ p : Equiv.Perm (Fin n),
         ∀ i : Fin n,
-          ∑ j in Finset.univ.filter (· ≤ i), a (p j) ∉ M := by
+          ∑ j ∈ Finset.univ.filter (· ≤ i), a (p j) ∉ M := by
   obtain ⟨ps, hps⟩ := lemma2 n a ainj
   have ainj' : (a ∘ ps).Injective := (Equiv.injective_comp ps a).mpr ainj
   have apos' : ∀ (i : Fin n), 0 < (a ∘ ps) i := by

@@ -38,9 +38,9 @@ snip end
 problem iran1998_p3
     (x : ℕ → ℝ)
     (x_positive : ∀ i, 0 < x i)
-    (h : ∏ i in Finset.range 4, x i = 1)
-    : max (∑ i in Finset.range 4, x i) (∑ i in Finset.range 4, 1 / x i)
-     ≤ ∑ i in Finset.range 4, (x i)^(3 : ℝ) := by
+    (h : ∏ i ∈ Finset.range 4, x i = 1)
+    : max (∑ i ∈ Finset.range 4, x i) (∑ i ∈ Finset.range 4, 1 / x i)
+     ≤ ∑ i ∈ Finset.range 4, (x i)^(3 : ℝ) := by
   -- Follows the proof in _Mathematical Olympiads 1998-1999_
   -- by Titu Andreescu and Zuming Feng
 
@@ -59,8 +59,8 @@ problem iran1998_p3
     dsimp at amgm'
     rw [←Finset.mul_sum] at amgm'
 
-    let C := 1/4 * ∑ i in Finset.range 4, x i
-    have hcp' : 0 ≤ ∑ i in Finset.range 4, x i := Finset.sum_nonneg xnonneg
+    let C := 1/4 * ∑ i ∈ Finset.range 4, x i
+    have hcp' : 0 ≤ ∑ i ∈ Finset.range 4, x i := Finset.sum_nonneg xnonneg
     have hcp : 0 ≤ C := mul_nonneg (by norm_num) hcp'
     have hccp : 0 ≤ C * C := mul_nonneg hcp hcp
 
@@ -80,14 +80,14 @@ problem iran1998_p3
     have habs3 : ∀ i ∈ Finset.range 4, |x i| ^ (3:ℝ) = x i ^ (3:ℝ) := by
       intro i hi; have := habs i hi; exact congr_fun (congr_arg _ this) 3
     rw [Finset.sum_congr rfl habs3] at holder
-    have hccc: (4:ℝ) * C =  ∑ i in Finset.range 4, x i := by field_simp [C]
+    have hccc: (4:ℝ) * C =  ∑ i ∈ Finset.range 4, x i := by field_simp [C]
     rw [←hccc] at holder
 
     rw [Real.mul_rpow zero_le_four hcp] at holder
 
     rw [Finset.card_range 4] at holder
 
-    have hss: C ^ (3:ℝ) ≤ ((1:ℝ) / 4) * ∑ i in Finset.range 4, x i ^ (3:ℝ) := by
+    have hss: C ^ (3:ℝ) ≤ ((1:ℝ) / 4) * ∑ i ∈ Finset.range 4, x i ^ (3:ℝ) := by
       have h32 : (3:ℝ) - 1 = 2 := by norm_num
       rw [h32] at holder
       -- clear_except holder
@@ -101,22 +101,22 @@ problem iran1998_p3
       exact hh
 
     have htrans := le_trans hC hss
-    have hm4 : 4 * C ≤ 4 * ((1/4) * ∑ i in Finset.range 4, x i ^ (3:ℝ)) :=
+    have hm4 : 4 * C ≤ 4 * ((1/4) * ∑ i ∈ Finset.range 4, x i ^ (3:ℝ)) :=
       mul_le_mul_of_nonneg_left htrans zero_le_four
 
     rw [hccc] at hm4
-    have hro : 4 * (1 / 4 * ∑ i in Finset.range 4, x i ^ (3:ℝ)) =
-                    ∑ i in Finset.range 4, x i ^ (3:ℝ) := by
+    have hro : 4 * (1 / 4 * ∑ i ∈ Finset.range 4, x i ^ (3:ℝ)) =
+                    ∑ i ∈ Finset.range 4, x i ^ (3:ℝ) := by
       field_simp
 
     rw [hro] at hm4
     exact hm4
 
-  · let A := ∑ i in Finset.range 4, (x i)^(3:ℝ)
-    let B : ℕ → ℝ := λ j ↦ (∑ i in (Finset.range 4).erase j, (x i)^(3:ℝ))
-    have hab : A = (1/3) * (∑ i in Finset.range 4, B i) := by
+  · let A := ∑ i ∈ Finset.range 4, (x i)^(3:ℝ)
+    let B : ℕ → ℝ := λ j ↦ (∑ i ∈ (Finset.range 4).erase j, (x i)^(3:ℝ))
+    have hab : A = (1/3) * (∑ i ∈ Finset.range 4, B i) := by
       simp (config := {decide := true}) [Finset.sum_range_succ, A, B]; ring
-    have h2 : ∀ j ∈ (Finset.range 4), ∏ i in (Finset.range 4).erase j, x i ≤ (1/3) * B j := by
+    have h2 : ∀ j ∈ (Finset.range 4), ∏ i ∈ (Finset.range 4).erase j, x i ≤ (1/3) * B j := by
       intro j hj
       have hcard1 : (Finset.range 4).card = 4 := Finset.card_range 4
       have hcard : ((Finset.range 4).erase j).card = (Finset.range 4).card - 1 :=
@@ -140,7 +140,7 @@ problem iran1998_p3
          ((1:ℝ)/3) * x i ^ (3:ℝ) := by simp
       rw [Finset.sum_congr rfl hs, ←Finset.mul_sum] at amgm
       exact amgm
-    have h3 : ∀ j ∈ (Finset.range 4), ∏ i in (Finset.range 4).erase j, x i = 1 / x j := by
+    have h3 : ∀ j ∈ (Finset.range 4), ∏ i ∈ (Finset.range 4).erase j, x i = 1 / x j := by
       intro j hj
       rw [←h, ←Finset.prod_erase_mul _ _ hj]
       have : x j ≠ 0 := ne_of_gt (x_positive j)
@@ -150,8 +150,8 @@ problem iran1998_p3
       have h2j := h2 j hj
       rw [h3 j hj] at h2j
       exact h2j
-    have h5 : ∑ i in Finset.range 4, 1 / x i ≤ A := by
-      have h5': ∑ i in Finset.range 4, 1 / x i ≤ ∑ i in Finset.range 4, (1 / 3) * B i :=
+    have h5 : ∑ i ∈ Finset.range 4, 1 / x i ≤ A := by
+      have h5': ∑ i ∈ Finset.range 4, 1 / x i ≤ ∑ i ∈ Finset.range 4, (1 / 3) * B i :=
         Finset.sum_le_sum h4
       rw [←Finset.mul_sum] at h5'
       rw [hab]

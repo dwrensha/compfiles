@@ -29,7 +29,7 @@ open scoped BigOperators
 determine SolutionSet : Set ℕ := sorry
 
 noncomputable def geometric_mean {α : Type} (f : α → ℕ+) (s : Finset α) : ℝ :=
-  (∏ i in s, (f i : ℝ))^((1:ℝ)/s.card)
+  (∏ i ∈ s, (f i : ℝ))^((1:ℝ)/s.card)
 
 problem imo2020_p5 (n : ℕ) :
     n ∈ SolutionSet ↔

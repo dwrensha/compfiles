@@ -30,5 +30,5 @@ problem imo1970_p4 (n : ℕ+) :
       ∃ s1 s2 : Finset ℕ,
         s1 ∪ s2 = Finset.Icc n.val (n.val + 5) ∧
         s1 ∩ s2 = ∅ ∧
-        ∏ m in s1, m = ∏ m in s2, m := by
+        ∏ m ∈ s1, m = ∏ m ∈ s2, m := by
   sorry

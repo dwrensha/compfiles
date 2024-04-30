@@ -25,6 +25,6 @@ determine solution : ℕ := sorry
 
 problem imo1976_p4 :
     IsGreatest
-      { n | ∃ s : Finset ℕ, ∑ i in s, i = 1976 ∧ ∏ i in s, i = n }
+      { n | ∃ s : Finset ℕ, ∑ i ∈ s, i = 1976 ∧ ∏ i ∈ s, i = n }
       solution := by
   sorry

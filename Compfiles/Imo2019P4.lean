@@ -40,9 +40,9 @@ individually.
 -/
 
 theorem upper_bound {k n : ℕ} (hk : k > 0)
-    (h : (k ! : ℤ) = ∏ i in Finset.range n, ((2:ℤ) ^ n - (2:ℤ) ^ i)) : n < 6 := by
-  have h2 : ∑ i in Finset.range n, i < k := by
-    suffices multiplicity 2 (k ! : ℤ) = ↑(∑ i in Finset.range n, i : ℕ) by
+    (h : (k ! : ℤ) = ∏ i ∈ Finset.range n, ((2:ℤ) ^ n - (2:ℤ) ^ i)) : n < 6 := by
+  have h2 : ∑ i ∈ Finset.range n, i < k := by
+    suffices multiplicity 2 (k ! : ℤ) = ↑(∑ i ∈ Finset.range n, i : ℕ) by
       rw [← PartENat.coe_lt_coe, ← this]; change multiplicity ((2 : ℕ) : ℤ) _ < _
       simp_rw [multiplicity.Int.natCast_multiplicity,
                Nat.multiplicity_two_factorial_lt hk.lt.ne.symm]
@@ -55,7 +55,7 @@ theorem upper_bound {k n : ℕ} (hk : k > 0)
       PartENat.coe_lt_coe, ← Finset.mem_range]
   rw [← not_le]; intro hn
   apply _root_.ne_of_gt _ h
-  calc ∏ i in Finset.range n, ((2:ℤ) ^ n - (2:ℤ) ^ i) ≤ ∏ __ in Finset.range n, (2:ℤ) ^ n := ?_
+  calc ∏ i ∈ Finset.range n, ((2:ℤ) ^ n - (2:ℤ) ^ i) ≤ ∏ __ ∈ Finset.range n, (2:ℤ) ^ n := ?_
     _ < ↑ k ! := ?_
   · gcongr
     · intro i hi
@@ -65,15 +65,15 @@ theorem upper_bound {k n : ℕ} (hk : k > 0)
     · apply sub_le_self
       positivity
   norm_cast
-  calc ∏ __ in Finset.range n, 2 ^ n = 2 ^ (n * n) := by
+  calc ∏ __ ∈ Finset.range n, 2 ^ n = 2 ^ (n * n) := by
          rw [Finset.prod_const, Finset.card_range, ← pow_mul]
-    _ < (∑ i in Finset.range n, i)! := ?_
+    _ < (∑ i ∈ Finset.range n, i)! := ?_
     _ ≤ k ! := by gcongr
   clear h h2
   induction' n, hn using Nat.le_induction with n' hn' IH
   · decide
-  let A := ∑ i in Finset.range n', i
-  have le_sum : ∑ i in Finset.range 6, i ≤ A := by
+  let A := ∑ i ∈ Finset.range n', i
+  have le_sum : ∑ i ∈ Finset.range 6, i ≤ A := by
     apply Finset.sum_le_sum_of_subset
     simpa using hn'
   calc 2 ^ ((n' + 1) * (n' + 1))
@@ -83,7 +83,7 @@ theorem upper_bound {k n : ℕ} (hk : k > 0)
     _ = A ! * (15 + 1) ^ n' := rfl
     _ ≤ A ! * (A + 1) ^ n' := by gcongr; exact le_sum
     _ ≤ (A + n')! := Nat.factorial_mul_pow_le_factorial
-    _ = (∑ i in Finset.range (n' + 1), i)! := by rw [Finset.sum_range_succ]
+    _ = (∑ i ∈ Finset.range (n' + 1), i)! := by rw [Finset.sum_range_succ]
 
 snip end
 
@@ -92,7 +92,7 @@ determine solution_set : Set (ℕ × ℕ) := { (1,1), (2,3) }
 problem imo2018_p2 (n k : ℕ) :
     (n, k) ∈ solution_set ↔
     0 < n ∧ 0 < k ∧
-    (k ! : ℤ) = ∏ i in Finset.range n, ((2:ℤ)^n - (2:ℤ)^i) := by
+    (k ! : ℤ) = ∏ i ∈ Finset.range n, ((2:ℤ)^n - (2:ℤ)^i) := by
   constructor
   · intro nk
     simp only [Set.mem_insert_iff, Set.mem_singleton_iff, Prod.mk.injEq] at nk

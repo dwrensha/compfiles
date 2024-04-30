@@ -28,7 +28,7 @@ open BigOperators
 snip begin
 
 lemma sum_range_square_mul_six (n : ℕ) :
-    (∑i in Finset.range n, (i + 1)^2) * 6 = n * (n + 1) * (2 * n + 1) := by
+    (∑i ∈ Finset.range n, (i + 1)^2) * 6 = n * (n + 1) * (2 * n + 1) := by
   induction n with
   | zero => rfl
   | succ n ih =>
@@ -36,18 +36,18 @@ lemma sum_range_square_mul_six (n : ℕ) :
     ring
 
 lemma sum_range_square (n : ℕ) :
-    ∑i in Finset.range n, (i + 1)^2 = n * (n + 1) * (2 * n + 1)/6 :=
+    ∑i ∈ Finset.range n, (i + 1)^2 = n * (n + 1) * (2 * n + 1)/6 :=
   by rw [← sum_range_square_mul_six n, Nat.mul_div_cancel]
      norm_num
 
 lemma cast_sum_square (n : ℕ) :
-  ∑i in Finset.range n, ((i:ℤ)+1)^2 =
-   (((∑i in Finset.range n, (i+1)^2) : ℕ) : ℤ) := by norm_cast
+  ∑i ∈ Finset.range n, ((i:ℤ)+1)^2 =
+   (((∑i ∈ Finset.range n, (i+1)^2) : ℕ) : ℤ) := by norm_cast
 
 snip end
 
 problem hungary1998_p6 (x y : ℤ) (z : ℕ) (hz : 1 < z) :
-    ∑ i in Finset.range 99, (x + i + 1)^2 ≠ y^z := by
+    ∑ i ∈ Finset.range 99, (x + i + 1)^2 ≠ y^z := by
   -- Follows the proof in _Mathematical Olympiads 1998-1999_
   -- by Titu Andreescu and Zuming Feng.
 
@@ -61,31 +61,31 @@ problem hungary1998_p6 (x y : ℤ) (z : ℕ) (hz : 1 < z) :
   --     = 99x² + 2[(99 ⬝ 100)/2]x + (99 ⬝ 100 ⬝ 199)/6
   --     = 33(3x² + 300x + 50 ⬝ 199).
 
-  have h2 : ∑ i in Finset.range 99, (x^2) = 99 * x^2 := by norm_num
+  have h2 : ∑ i ∈ Finset.range 99, (x^2) = 99 * x^2 := by norm_num
 
-  have h4 : ∑ i in Finset.range 99, ((i:ℤ) + 1) =
-          ∑ i in Finset.range 100, (i:ℤ) := by
+  have h4 : ∑ i ∈ Finset.range 99, ((i:ℤ) + 1) =
+          ∑ i ∈ Finset.range 100, (i:ℤ) := by
     rw [Finset.sum_range_succ']; rfl
 
-  have h5 : ∑ i in Finset.range 100, (i:ℤ) = 99 * 100 / 2 := by
+  have h5 : ∑ i ∈ Finset.range 100, (i:ℤ) = 99 * 100 / 2 := by
     rw [←Nat.cast_sum, Finset.sum_range_id]; decide
 
-  have h6 : ∑ i in Finset.range 99, ((i:ℤ) + 1)^2 = (99 * 100 * 199)/6 := by
+  have h6 : ∑ i ∈ Finset.range 99, ((i:ℤ) + 1)^2 = (99 * 100 * 199)/6 := by
     rw [cast_sum_square, sum_range_square]; decide
 
   have hnn1 : (99:ℤ) * 100 / 2 = 99 * 50 := by decide
   have hnn2 : ((99:ℤ) * 100 * 199)/6 = 33 * 50 * 199 := by decide
 
   have h7 := calc y^z
-      = ∑ i in Finset.range 99, ((x + i) + 1)^2 := he.symm
-    _ = ∑ i in Finset.range 99,
+      = ∑ i ∈ Finset.range 99, ((x + i) + 1)^2 := he.symm
+    _ = ∑ i ∈ Finset.range 99,
           (x^2 + 2 * x * ((i:ℤ) + 1) + ((i:ℤ) + 1)^2) :=
                by with_reducible congr; funext; ring
-    _ = ∑ i in Finset.range 99, (x^2 + 2 * x * ((i:ℤ) + 1)) +
-         ∑ i in Finset.range 99, (((i:ℤ) + 1)^2) := Finset.sum_add_distrib
-    _ = ∑ i in Finset.range 99, x^2 +
-          ∑ i in Finset.range 99, (2 * x * ((i:ℤ) + 1)) +
-         ∑ i in Finset.range 99, (((i:ℤ) + 1)^2) := by rw [Finset.sum_add_distrib]
+    _ = ∑ i ∈ Finset.range 99, (x^2 + 2 * x * ((i:ℤ) + 1)) +
+         ∑ i ∈ Finset.range 99, (((i:ℤ) + 1)^2) := Finset.sum_add_distrib
+    _ = ∑ i ∈ Finset.range 99, x^2 +
+          ∑ i ∈ Finset.range 99, (2 * x * ((i:ℤ) + 1)) +
+         ∑ i ∈ Finset.range 99, (((i:ℤ) + 1)^2) := by rw [Finset.sum_add_distrib]
     _ = 99 * x^2 + 2 * x * (99 * 100 / 2) +  (99 * 100 * 199)/6
         := by rw [h2, ←Finset.mul_sum, h4, h5, h6]
     _ = 3 * (11 * (3 * x^2 + 300 * x + 50 * 199)) := by rw [hnn1,hnn2]; ring

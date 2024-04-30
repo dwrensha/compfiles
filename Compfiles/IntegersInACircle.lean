@@ -33,7 +33,7 @@ lemma lemma1 {a : ℤ} (h1 : a % 100 = 0) (h2 : 0 < a) (h3 : a < 300) :
   omega
 
 lemma lemma2 {f : ZMod 101 → ℤ} (y : ZMod 101)
-    : ∑ z : ZMod 101, f z = ∑ i in Finset.range 101, f (y + i) := by
+    : ∑ z : ZMod 101, f z = ∑ i ∈ Finset.range 101, f (y + i) := by
   let g := λ (i:ℕ) ↦ y + (i:ZMod 101)
   have hg: ∀ (x : ℕ),
       x ∈ Finset.range 101 → ∀ (y : ℕ), y ∈ Finset.range 101 → g x = g y → x = y := by
@@ -60,12 +60,12 @@ problem integers_in_a_circle
     (a : ZMod 101 → ℤ)
     (ha : ∀ i, 1 ≤ a i)
     (ha_sum : ∑ i : ZMod 101, a i = 300)
-    : ∃ j : ZMod 101, ∃ n : ℕ, ∑ i in Finset.range n, a (j + i) = 200 := by
+    : ∃ j : ZMod 101, ∃ n : ℕ, ∑ i ∈ Finset.range n, a (j + i) = 200 := by
   -- informal solution (from the math.stackexchange link above)
   -- Start at any position and form sums of subsequences of length 0, 1, ... 100
   -- starting at that position.
 
-  let f : ZMod 101 → ℤ := λ x ↦ ∑ i in Finset.range x.val, a i
+  let f : ZMod 101 → ℤ := λ x ↦ ∑ i ∈ Finset.range x.val, a i
 
   -- By the pigeonhole principle, two of these sums are equivalent mod 100.
   obtain ⟨x,y,hxy',hfxy⟩ := Fintype.exists_ne_map_eq_of_card_lt (Int.cast ∘ f)
@@ -79,7 +79,7 @@ problem integers_in_a_circle
     · exact (hxy'.symm (Fin.ext he)).elim
     · exact H a ha ha_sum y x hxy'.symm hfxy.symm hle
 
-  have h1 : 0 < ∑ i in Finset.Ico x.val y.val, a ↑i := by
+  have h1 : 0 < ∑ i ∈ Finset.Ico x.val y.val, a ↑i := by
     refine' Finset.sum_pos _ (Finset.nonempty_Ico.mpr hxy)
     aesop
 
@@ -94,7 +94,7 @@ problem integers_in_a_circle
     calc _ ≤ (Finset.Ico x.val y.val).card := Finset.card_image_le
          _ < 101 := h8
 
-  have h4 : ∑ i in Finset.Ico x.val y.val, a ↑i < 300 := by
+  have h4 : ∑ i ∈ Finset.Ico x.val y.val, a ↑i < 300 := by
     have h10 : ∀ a ∈ Finset.Ico x.val y.val,
                ∀ b ∈ Finset.Ico x.val y.val, (a : ZMod 101) = b → a = b := by
       intro a ha b hb hab
@@ -115,7 +115,7 @@ problem integers_in_a_circle
 
   -- The difference between those sums is either 100 or 200.
 
-  have h3 : (∑ i in Finset.Ico x.val y.val, a ↑i) ≡ 0 [ZMOD 100] := by
+  have h3 : (∑ i ∈ Finset.Ico x.val y.val, a ↑i) ≡ 0 [ZMOD 100] := by
      have h4 : x.val ≤ y.val := by norm_cast; exact LT.lt.le hxy
      rw [Finset.sum_Ico_eq_sub _ h4, Int.modEq_zero_iff_dvd]
      exact Int.ModEq.dvd hfxy

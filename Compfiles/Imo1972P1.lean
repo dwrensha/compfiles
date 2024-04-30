@@ -26,7 +26,7 @@ problem imo1972_p1 (S : Finset ℕ)
     (Scard : S.card = 10)
     (Sdigits : ∀ n ∈ S, (Nat.digits 10 n).length = 2) :
     ∃ S1 S2 : Finset ℕ, S1 ⊆ S ∧ S2 ⊆ S ∧
-       Disjoint S1 S2 ∧ ∑ n in S1, n = ∑ n in S2, n := by
+       Disjoint S1 S2 ∧ ∑ n ∈ S1, n = ∑ n ∈ S2, n := by
   -- https://prase.cz/kalva/imo/isoln/isoln721.html
   replace Sdigits : S ⊆ Finset.Ico 10 100 := by
     have one_lt_ten : 1 < 10 := by norm_num
@@ -44,7 +44,7 @@ problem imo1972_p1 (S : Finset ℕ)
     exact ⟨h6, h3⟩
   have h2 := Finset.card_powerset S
   rw [Scard] at h2
-  have h3 : ∀ s ∈ Finset.powerset S, ∑ n in s, n ∈ Finset.range 991 := by
+  have h3 : ∀ s ∈ Finset.powerset S, ∑ n ∈ s, n ∈ Finset.range 991 := by
     intro s hs
     have h4 : ∀ n ∈ s, n ≤ 99 := by
       intro n hn
@@ -54,7 +54,7 @@ problem imo1972_p1 (S : Finset ℕ)
       rw [Finset.mem_Ico] at h5
       omega
 
-    have h5 : ∑ n in s, n ≤ ∑ n in s, 99 := Finset.sum_le_sum h4
+    have h5 : ∑ n ∈ s, n ≤ ∑ n ∈ s, 99 := Finset.sum_le_sum h4
     simp only [Finset.sum_const, smul_eq_mul, Scard] at h5
     have h6 : s.card ≤ S.card := by
       rw [Finset.mem_powerset] at hs

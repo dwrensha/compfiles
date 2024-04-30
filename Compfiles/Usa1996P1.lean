@@ -23,7 +23,7 @@ namespace Usa1996P1
 open BigOperators
 
 problem usa1996_p1 :
-    (1 / (90:ℝ)) * ∑ n in Finset.range 90, (2 * (n+1)) * Real.sin ((2 * (n+1)) * Real.pi / 180)
+    (1 / (90:ℝ)) * ∑ n ∈ Finset.range 90, (2 * (n+1)) * Real.sin ((2 * (n+1)) * Real.pi / 180)
     = 1 / Real.tan (Real.pi / 180) := by
   have sin1 : Real.sin (Real.pi / 180) ≠ 0 := by
     refine (Real.sin_eq_zero_iff_of_lt_of_lt ?_ ?_).not.mpr ?_ <;> linarith [Real.pi_pos]
@@ -32,7 +32,7 @@ problem usa1996_p1 :
   apply mul_left_cancel₀ sin1
   rw [mul_comm, mul_assoc, Finset.sum_mul]
   rw [Real.tan_eq_sin_div_cos]
-  convert_to 1 / (90:ℝ) * ∑ n in Finset.range 90, (↑n + 1) *
+  convert_to 1 / (90:ℝ) * ∑ n ∈ Finset.range 90, (↑n + 1) *
       (Real.cos ((2 * (↑n + 1) - 1) * Real.pi / 180) -
        Real.cos ((2 * (↑n + 1) + 1) * Real.pi / 180)) = Real.cos (Real.pi / 180)
   · congr! 2 with n _
@@ -45,7 +45,7 @@ problem usa1996_p1 :
     ring
   · field_simp [mul_comm]
   · field_simp
-    convert_to (∑ n in Finset.range 45, (Real.cos (((89 - n) * 2 + 1) * Real.pi / 180) +
+    convert_to (∑ n ∈ Finset.range 45, (Real.cos (((89 - n) * 2 + 1) * Real.pi / 180) +
                                          Real.cos ((n * 2 + 1) * Real.pi / 180)))
         - 90 * Real.cos (181 * Real.pi / 180) = _
     · have h1 : ∀ n ∈ Finset.range 90,
@@ -58,8 +58,8 @@ problem usa1996_p1 :
       rw [Finset.sum_congr rfl h1]; clear h1
       rw [Finset.sum_sub_distrib]
       nth_rewrite 2 [Finset.sum_range_succ]
-      have h1 : ∑ x in Finset.range 89, (↑x + 1) * Real.cos ((2 * (↑x + 1) + 1) * Real.pi / 180) =
-             ∑ x in Finset.range 90, (↑x) * Real.cos ((2 * (↑x + 1) - 1) * Real.pi / 180) := by
+      have h1 : ∑ x ∈ Finset.range 89, (↑x + 1) * Real.cos ((2 * (↑x + 1) + 1) * Real.pi / 180) =
+             ∑ x ∈ Finset.range 90, (↑x) * Real.cos ((2 * (↑x + 1) - 1) * Real.pi / 180) := by
         nth_rewrite 2 [Finset.sum_range_succ']
         simp only [Nat.cast_add, Nat.cast_one, CharP.cast_eq_zero,
                    zero_add, mul_one, zero_mul, add_zero]
@@ -75,8 +75,8 @@ problem usa1996_p1 :
           Real.cos ((2 * (↑x + 1) - 1) * Real.pi / 180) := by
         intro x _; ring
       rw [Finset.sum_congr rfl h4]; clear h4
-      have h5 : ∑ x in Finset.range 90, Real.cos ((2 * (↑x + 1) - 1) * Real.pi / 180)
-          = ∑ n in Finset.range 45, (Real.cos (((89 - ↑n) * 2 + 1) * Real.pi / 180) +
+      have h5 : ∑ x ∈ Finset.range 90, Real.cos ((2 * (↑x + 1) - 1) * Real.pi / 180)
+          = ∑ n ∈ Finset.range 45, (Real.cos (((89 - ↑n) * 2 + 1) * Real.pi / 180) +
                                      Real.cos ((↑n * 2 + 1) * Real.pi / 180)) := by
         rw [Finset.sum_add_distrib]
         simp only [Finset.range_eq_Ico]
@@ -92,8 +92,8 @@ problem usa1996_p1 :
           rw [h10]
         rw [Finset.sum_congr rfl h8]; clear h8
         have h9 :
-            ∑ i in Finset.Ico (45:ℕ) 90, Real.cos ((2 * (↑i + 1) - 1) * Real.pi / 180) =
-            ∑ x in Finset.Ico (0:ℕ) 45, Real.cos (((89 - ↑x) * 2 + 1) * Real.pi / 180) := by
+            ∑ i ∈ Finset.Ico (45:ℕ) 90, Real.cos ((2 * (↑i + 1) - 1) * Real.pi / 180) =
+            ∑ x ∈ Finset.Ico (0:ℕ) 45, Real.cos (((89 - ↑x) * 2 + 1) * Real.pi / 180) := by
           have h15 : 45 = 89 + 1 - 45 := by norm_num
           have h16 : 90 = 89 + 1 - 0 := by norm_num
           nth_rewrite 1 [h15, h16]

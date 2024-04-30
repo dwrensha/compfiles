@@ -37,5 +37,5 @@ problem imo2023_p3 {k : ℕ} (hk : 2 ≤ k) (a : ℕ+ → ℕ+) :
      (∀ n, n ≤ k → 0 ≤ P.coeff n) ∧
       ∀ n : ℕ+,
         P.eval ((a n) : ℤ) =
-        ∏ i in Finset.range k, a ⟨n + i + 1, Nat.succ_pos _⟩) := by
+        ∏ i ∈ Finset.range k, a ⟨n + i + 1, Nat.succ_pos _⟩) := by
   sorry

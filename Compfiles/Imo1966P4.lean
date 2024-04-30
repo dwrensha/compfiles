@@ -27,6 +27,6 @@ open BigOperators
 
 problem imo1966_p4 (n : ℕ) (x : ℝ)
     (hx : ∀ t : ℕ, ∀ k : ℤ, x ≠ k * Real.pi / 2^t) :
-    ∑ i in Finset.range n, 1 / Real.sin (2^(i + 1) * x) =
+    ∑ i ∈ Finset.range n, 1 / Real.sin (2^(i + 1) * x) =
     1 / Real.tan x - 1 / Real.tan (2^n * x) := by
   sorry

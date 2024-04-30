@@ -25,7 +25,7 @@ namespace Usa1981P5
 open BigOperators
 
 problem usa1981_p5 (x : ℝ) (n : ℕ) :
-    ∑ k in Finset.Icc 1 n, ((⌊k * x⌋:ℝ)/k) ≤ ⌊n * x⌋ := by
+    ∑ k ∈ Finset.Icc 1 n, ((⌊k * x⌋:ℝ)/k) ≤ ⌊n * x⌋ := by
   -- We follow the solution from
   -- https://artofproblemsolving.com/wiki/index.php/1981_USAMO_Problems/Problem_5
 
@@ -39,11 +39,11 @@ problem usa1981_p5 (x : ℝ) (n : ℕ) :
       exact Nat.not_succ_le_zero 0 hx
     rw [div_self h3, one_mul]
   rw [Finset.sum_congr rfl h1]
-  have h2 : ∑ _x in Finset.Icc 1 n, x = n * x := by
+  have h2 : ∑ _x ∈ Finset.Icc 1 n, x = n * x := by
     rw [Finset.sum_const, Nat.card_Icc, add_tsub_cancel_right, nsmul_eq_mul]
   rw [h2]
   suffices H : Int.fract (↑n * x) ≤
-               ∑ x_1 in Finset.Icc 1 n, Int.fract (↑x_1 * x) / ↑x_1 from
+               ∑ x_1 ∈ Finset.Icc 1 n, Int.fract (↑x_1 * x) / ↑x_1 from
     sub_le_sub_left H (↑n * x)
 
   let a : ℕ → ℝ := fun k ↦ Int.fract (k * x)
@@ -56,7 +56,7 @@ problem usa1981_p5 (x : ℝ) (n : ℕ) :
     rw [h5]
     exact Int.fract_add_le (↑k * x) (↑m * x)
 
-  change a n ≤ ∑ ii in Finset.Icc 1 n, a ii / ii
+  change a n ≤ ∑ ii ∈ Finset.Icc 1 n, a ii / ii
 
   clear h1 h2
   induction' n using Nat.strongInductionOn with n ih
@@ -81,7 +81,7 @@ problem usa1981_p5 (x : ℝ) (n : ℕ) :
   rw [show Finset.Icc 1 n = Finset.Ico 1 (n + 1) by rfl]
   rw [show Finset.Icc 1 (n - m) = Finset.Ico 1 (n - m + 1) by rfl] at h9
   rw [←Finset.sum_Ico_consecutive _ h12 h13]
-  have h14 : a m ≤ ∑ i in Finset.Ico (n - m + 1) (n + 1), a i / ↑i := by
+  have h14 : a m ≤ ∑ i ∈ Finset.Ico (n - m + 1) (n + 1), a i / ↑i := by
     have h15 : m ≠ 0 := Nat.pos_iff_ne_zero.mp hm3
     have h16 : (m:ℝ) ≠ 0 := Nat.cast_ne_zero.mpr h15
     have h17 : a m = m * a m / m := CancelDenoms.cancel_factors_eq_div rfl h16
@@ -95,8 +95,8 @@ problem usa1981_p5 (x : ℝ) (n : ℕ) :
         · exact Nat.one_le_of_lt hii1
         · exact Nat.lt_succ.mp hii2
       exact hm2 ⟨ii, h22⟩
-    have h19 : ∑ _i in Finset.Ico (n - m + 1) (n + 1), a m / ↑m ≤
-               ∑ i in Finset.Ico (n - m + 1) (n + 1), a i / ↑i := Finset.sum_le_sum h18
+    have h19 : ∑ _i ∈ Finset.Ico (n - m + 1) (n + 1), a m / ↑m ≤
+               ∑ i ∈ Finset.Ico (n - m + 1) (n + 1), a i / ↑i := Finset.sum_le_sum h18
     rw [Finset.sum_const, Nat.card_Ico, nsmul_eq_mul] at h19
     have h20 : n + 1 - (n - m + 1) = m := by
       rw [Nat.add_sub_add_right]

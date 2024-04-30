@@ -51,7 +51,7 @@ structure antipascal_triangle (n : ℕ) where
 
 def exists_desired_triangle : Prop :=
    ∃ t : antipascal_triangle 2018,
-     ∀ n, 1 ≤ n → n ≤ ∑ i in Finset.range 2018, (i + 1) →
+     ∀ n, 1 ≤ n → n ≤ ∑ i ∈ Finset.range 2018, (i + 1) →
          ∃ r, r ≤ 2018 ∧ ∃ c, c < r ∧ t.f ⟨r,c⟩ = n
 
 snip begin

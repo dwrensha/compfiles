@@ -31,9 +31,9 @@ snip begin
 
 open scoped BigOperators
 
-lemma geom_sum_bound (n : ℕ) : ∑ i in Finset.range n, (1:ℝ) / (2^i) < 3 :=
-  calc ∑ i in Finset.range n, (1:ℝ) / ((2:ℝ)^i)
-          = ∑ i in Finset.range n, ((1:ℝ) / 2)^i := by {congr; simp [div_eq_mul_inv]}
+lemma geom_sum_bound (n : ℕ) : ∑ i ∈ Finset.range n, (1:ℝ) / (2^i) < 3 :=
+  calc ∑ i ∈ Finset.range n, (1:ℝ) / ((2:ℝ)^i)
+          = ∑ i ∈ Finset.range n, ((1:ℝ) / 2)^i := by {congr; simp [div_eq_mul_inv]}
         _ ≤ 2 := sum_geometric_two_le n
         _ < 3 := by norm_num
 
@@ -78,15 +78,15 @@ problem bulgaria1998_p3
        _ = (f x) * (f x / (2 * f x))             := by rw [two_mul]
        _ = f x / 2                               := by field_simp [h7]
 
-  let x_seq : ℕ → ℝ := λ n : ℕ ↦ 1 + ∑ i in Finset.range n, (f 1) / (2^i)
+  let x_seq : ℕ → ℝ := λ n : ℕ ↦ 1 + ∑ i ∈ Finset.range n, (f 1) / (2^i)
   have hz : x_seq 0 = 1 := by
     simp only [x_seq, add_right_eq_self, Finset.sum_empty, Finset.range_zero]
   have hf1 := hpos 1 zero_lt_one
 
   have x_seq_pos : ∀ n: ℕ, 0 < x_seq n := by
     intro n
-    rw [show x_seq n = 1 + ∑ i in Finset.range n, (f 1) / (2^i) by rfl]
-    have sum_nonneg : 0 ≤ ∑ i in Finset.range n, f 1 / 2 ^ i := by
+    rw [show x_seq n = 1 + ∑ i ∈ Finset.range n, (f 1) / (2^i) by rfl]
+    have sum_nonneg : 0 ≤ ∑ i ∈ Finset.range n, f 1 / 2 ^ i := by
       apply Finset.sum_nonneg
       intro i _
       have h2 : (0:ℝ) < 2 ^ i := pow_pos (by norm_num) i
@@ -98,9 +98,9 @@ problem bulgaria1998_p3
     induction' n with pn hpn
     · rw [hz]; simp only [Nat.zero_eq, pow_zero, div_one, le_refl]
     have hpp : x_seq pn.succ = x_seq pn + f 1 / 2^pn := by
-      rw [show x_seq _ = 1 + ∑ i in Finset.range _, (f 1) / (2^i) by rfl]
+      rw [show x_seq _ = 1 + ∑ i ∈ Finset.range _, (f 1) / (2^i) by rfl]
       have : ∑ i in Finset.range pn.succ, f 1 / 2 ^ i =
-              f 1 / 2 ^ pn + ∑ i in Finset.range pn, f 1 / 2 ^ i :=
+              f 1 / 2 ^ pn + ∑ i ∈ Finset.range pn, f 1 / 2 ^ i :=
         Finset.sum_range_succ_comm (λ (x : ℕ) ↦ f 1 / 2 ^ x) pn
       rw [this]
       ring
@@ -124,8 +124,8 @@ problem bulgaria1998_p3
   have h1: ∀ n: ℕ, x_seq n < 1 + 3 * f 1 := by
     intro n
     norm_num [x_seq]
-    calc ∑ i in Finset.range n, f 1 / (2:ℝ) ^ i
-         = (∑ i in Finset.range n, 1 / (2:ℝ) ^ i) * f 1 := by rw [Finset.sum_mul]; field_simp
+    calc ∑ i ∈ Finset.range n, f 1 / (2:ℝ) ^ i
+         = (∑ i ∈ Finset.range n, 1 / (2:ℝ) ^ i) * f 1 := by rw [Finset.sum_mul]; field_simp
        _ < 3 * f 1 := (mul_lt_mul_right hf1).mpr (geom_sum_bound n)
 
   have h2 : ∀ n : ℕ, 0 < 1 + 3 * f 1 - x_seq n := by intro n; linarith [h1 n]
