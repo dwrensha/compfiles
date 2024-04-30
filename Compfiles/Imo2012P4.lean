@@ -325,5 +325,6 @@ problem imo2012_p4 (f : ℤ → ℤ) :
             linarith
           sorry
       sorry
+    all_goals sorry
 
 end Imo2012P4
