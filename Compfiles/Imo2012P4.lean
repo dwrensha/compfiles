@@ -315,6 +315,11 @@ problem imo2012_p4 (f : ℤ → ℤ) :
       . have evenc : Even c := by rw [c_eq, even_neg]; exact Even.add evena evenb
         simp [(h c).right evenc]
 
-    all_goals sorry
+    . rcases sol with ⟨d, h⟩
+      sorry
+
+    . rcases sol with ⟨d, h⟩
+      rw [c_eq, h, h, h]
+      ring_nf
 
 end Imo2012P4
