@@ -298,33 +298,23 @@ problem imo2012_p4 (f : ℤ → ℤ) :
     rintro ((sol | sol) | sol)
     all_goals
       intro a b c H
-      have c_eq : c = - a - b := by omega
-    . unfold odd_const at sol
-      replace sol : ∃ c, ∀ (x : ℤ), (Odd x → f x = c) ∧ (Even x → f x = 0) := by
-        aesop
-      rcases sol with ⟨d, h⟩
-      by_cases odda : Odd a
-      have fa_d : f a = d := (h a).left odda
-      . rcases odda with ⟨k, hk⟩
-        by_cases oddb : Odd b
-        have fb_d : f b = d := (h b).left oddb
-        . rcases oddb with ⟨l, hl⟩
-          have evenc : Even c := by
-            rw [c_eq]
-            use -k - l - 1
-            linarith
-          have fc_0 : f c = 0 := (h c).right evenc
-          rw [fa_d, fb_d, fc_0]
-          ring
-        . have evenb : Even b := by exact Int.even_iff_not_odd.mpr oddb
-          have fb_0 : f b = 0 := (h b).right evenb
-          rcases evenb with ⟨l, hl⟩
-          have oddc : Odd c := by
-            rw [c_eq]
-            use -k - l - 1
-            linarith
-          sorry
-      sorry
+      have c_eq : c = - (a + b) := by omega
+
+    . rcases sol with ⟨d, h⟩
+      rcases Int.even_or_odd a with evena | odda
+      simp [(h a).right evena]; rotate_left; simp [(h a).left odda]
+      all_goals
+        rcases Int.even_or_odd b with evenb | oddb
+        simp [(h b).right evenb]; rotate_left; simp [(h b).left oddb]
+      . have evenc : Even c := by rw [c_eq, even_neg]; exact Odd.add_odd odda oddb
+        simp [(h c).right evenc]; ring
+      . have oddc : Odd c := by rw [c_eq, odd_neg]; exact Odd.add_even odda evenb
+        simp [(h c).left oddc]; ring
+      . have oddc : Odd c := by rw [c_eq, odd_neg, add_comm]; exact Odd.add_even oddb evena
+        simp [(h c).left oddc]; ring
+      . have evenc : Even c := by rw [c_eq, even_neg]; exact Even.add evena evenb
+        simp [(h c).right evenc]
+
     all_goals sorry
 
 end Imo2012P4
