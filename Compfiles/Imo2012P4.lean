@@ -24,11 +24,6 @@ def odd_const : Set (ℤ → ℤ) := fun f =>
   ∃ c : ℤ, ∀ x : ℤ,
     (Odd x → f x = c) ∧ (Even x → f x = 0)
 
-determine solution_set : Set (ℤ → ℤ) := odd_const
-
-theorem sub_sq'' {x y : Int} : x ^ 2 + y ^ 2 = (2 * x * y) ↔ x = y := by
-  rw [← sub_eq_zero, ← sub_sq', sq_eq_zero_iff, sub_eq_zero]
-
 def mod4 (x : Int) : Fin 4 := by
   refine ⟨(x % 4).natAbs, ?_⟩
   have pos : 0 ≤ x % 4 := by omega
@@ -36,6 +31,19 @@ def mod4 (x : Int) : Fin 4 := by
   revert pos lt; cases (x % 4) <;> intro pos lt
   . simp [Int.natAbs] at lt ⊢; assumption
   . simp at pos
+
+def mod4_cycle : Set (ℤ → ℤ) := fun f =>
+  ∃ c : ℤ, ∀ x : ℤ,
+    f x = [0, c, 4 * c, c][mod4 x]
+
+def square_set : Set (ℤ → ℤ) := fun f =>
+  ∃ c : ℤ, ∀ x : ℤ, f x = x ^ 2 * c
+
+determine solution_set : Set (ℤ → ℤ) := odd_const ∪ mod4_cycle ∪ square_set
+
+theorem sub_sq'' {x y : Int} : x ^ 2 + y ^ 2 = (2 * x * y) ↔ x = y := by
+  rw [← sub_eq_zero, ← sub_sq', sq_eq_zero_iff, sub_eq_zero]
+
 
 theorem mod4_eq (x : Int) : (mod4 x : Int) = x % 4 := by
   simp [mod4]; apply Int.emod_nonneg; simp
@@ -171,7 +179,9 @@ problem imo2012_p4 (f : ℤ → ℤ) :
           rintro ⟨k, hk⟩
           convert even_zero k using 2
           omega
-      simpa [solution_set]
+      left
+      left
+      assumption
       done
 
     case inr «f2=4*f1» =>
@@ -213,7 +223,10 @@ problem imo2012_p4 (f : ℤ → ℤ) :
             assumption
 
         have := when_f4_is_0 «f4=0»
-        sorry
+        left
+        right
+        use f 1
+        done
 
       case inl «f3=9*f1» =>
 
@@ -221,7 +234,10 @@ problem imo2012_p4 (f : ℤ → ℤ) :
 
         case inl «f4=0» =>
           have := when_f4_is_0 «f4=0»
-          sorry
+          left
+          right
+          use f 1
+          done
 
         case inr «f4=16*f1» =>
           have «fx=x²f1» (x : ℤ) : f x = x ^ 2 * f 1 := by
@@ -273,10 +289,41 @@ problem imo2012_p4 (f : ℤ → ℤ) :
                 simpa [this]
             done
 
-          sorry
+          right
+          use f 1
+          done
 
   -- for all `f` in solution set, `f` satisfies the constraint
   case mp =>
-    sorry
+    rintro ((sol | sol) | sol)
+    all_goals
+      intro a b c H
+      have c_eq : c = - a - b := by omega
+    . unfold odd_const at sol
+      replace sol : ∃ c, ∀ (x : ℤ), (Odd x → f x = c) ∧ (Even x → f x = 0) := by
+        aesop
+      rcases sol with ⟨d, h⟩
+      by_cases odda : Odd a
+      have fa_d : f a = d := (h a).left odda
+      . rcases odda with ⟨k, hk⟩
+        by_cases oddb : Odd b
+        have fb_d : f b = d := (h b).left oddb
+        . rcases oddb with ⟨l, hl⟩
+          have evenc : Even c := by
+            rw [c_eq]
+            use -k - l - 1
+            linarith
+          have fc_0 : f c = 0 := (h c).right evenc
+          rw [fa_d, fb_d, fc_0]
+          ring
+        . have evenb : Even b := by exact Int.even_iff_not_odd.mpr oddb
+          have fb_0 : f b = 0 := (h b).right evenb
+          rcases evenb with ⟨l, hl⟩
+          have oddc : Odd c := by
+            rw [c_eq]
+            use -k - l - 1
+            linarith
+          sorry
+      sorry
 
 end Imo2012P4
