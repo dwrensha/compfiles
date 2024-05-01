@@ -8,7 +8,7 @@ import Mathlib.Algebra.BigOperators.Intervals
 import Mathlib.Algebra.BigOperators.Ring
 import Mathlib.Data.Nat.Prime
 import Mathlib.Algebra.Associated
-import Mathlib.Tactic.Ring
+import Mathlib.Tactic
 
 import ProblemExtraction
 
@@ -110,12 +110,8 @@ problem hungary1998_p6 (x y : ℤ) (z : ℕ) (hz : 1 < z) :
   have h11 : (3:ℤ) ≠ 0 := by norm_num
   have h12 : k * (3 * k * (3 * k) ^ z) = (11 * (3 * x ^ 2 + 300 * x + 50 * 199)) :=
     (mul_right_inj' h11).mp h7
-  have h14 : (k * (3 * k * (3 * k) ^ z)) = (3 * (k * k * (3 * k) ^ z)) :=
-    by ring
-  have h16 : 11 * (3 * x ^ 2 + 300 * x + 50 * 199) =
-    3 * (11 * (x ^ 2 + 100 * x + 3316) + 7) + 1 := by ring
-  rw [h14,h16] at h12
-
+  replace h12 : 3 * (k * k * (3 * k) ^ z) = 3 * (11 * (x ^ 2 + 100 * x + 3316) + 7) + 1 := by
+    linear_combination h12
   apply_fun (· % 3) at h12
 
   have h19 : (3 * (11 * (x ^ 2 + 100 * x + 3316) + 7) + 1) % 3 =
