@@ -106,12 +106,9 @@ problem hungary1998_p6 (x y : ℤ) (z : ℕ) (hz : 1 < z) :
 
   have h10 : (3 * k) ^ z * (3 * k) * (3 * k) = 3 * (k * (3 * k * (3 * k) ^ z))
        := by ring
-  rw [h10] at h7
-  have h11 : (3:ℤ) ≠ 0 := by norm_num
-  have h12 : k * (3 * k * (3 * k) ^ z) = (11 * (3 * x ^ 2 + 300 * x + 50 * 199)) :=
-    (mul_right_inj' h11).mp h7
+  rw [h10, mul_right_inj' three_ne_zero] at h7
   replace h12 : 3 * (k * k * (3 * k) ^ z) = 3 * (11 * (x ^ 2 + 100 * x + 3316) + 7) + 1 := by
-    linear_combination h12
+    linear_combination h7
   apply_fun (· % 3) at h12
 
   have h19 : (3 * (11 * (x ^ 2 + 100 * x + 3316) + 7) + 1) % 3 =
