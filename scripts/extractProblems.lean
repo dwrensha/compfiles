@@ -11,13 +11,12 @@ open Lean Core Elab
 
 def olean_path_to_extracted_path (dst_dir : System.FilePath)
     (olean_path : System.FilePath) : System.FilePath :=
-  let olean_path := olean_path.toString
-  let pfx := "././.lake/build/lib/Compfiles/"
-  let sfx := ".olean"
-  assert!(pfx.isPrefixOf olean_path)
-  assert!(sfx.data.isSuffixOf olean_path.data)
-  dst_dir.join
-    (((olean_path.stripPrefix pfx).stripSuffix sfx) ++ ".lean")
+  let olean_path_components := olean_path.components.dropWhile (· = ".")
+  assert!(olean_path_components.take 4 = [".lake", "build", "lib", "Compfiles"])
+  let sfx : String := ".olean"
+  let olean_path' := (System.mkFilePath (olean_path_components.drop 4)).toString
+  assert!(sfx.data.isSuffixOf olean_path'.data)
+  dst_dir.join ((olean_path'.stripSuffix sfx) ++ ".lean")
 
 unsafe def main (_args : List String) : IO Unit := do
   let problem_dir := "_extracted/problems/"
