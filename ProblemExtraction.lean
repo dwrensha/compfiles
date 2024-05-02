@@ -150,9 +150,7 @@ def parseCopyrightHeader (src : String) : String := Id.run do
 /-- Top-level command to mark that a file should participate in problem extraction.
 This should be at the top of the file (after imports); content above it is ignored
 during problem extraction (except for imports). -/
-syntax (name := problemFile) "problem_file" : command
-
-syntax (name := problemFileWithTerm) "problem_file " term : command
+syntax (name := problemFile) "problem_file " (term)? : command
 
 def elabProblemFile (tk : Syntax) (md : Option (TSyntax `term)) : Command.CommandElabM Unit := do
   let .some startPos := (match md with
