@@ -12,7 +12,7 @@ open Lean Core Elab
 def olean_path_to_extracted_path (dst_dir : System.FilePath)
     (olean_path : System.FilePath) : System.FilePath :=
   let olean_path := olean_path.toString
-  let pfx := "./.lake/build/lib/Compfiles/"
+  let pfx := "././.lake/build/lib/Compfiles/"
   let sfx := ".olean"
   assert!(pfx.isPrefixOf olean_path)
   assert!(sfx.data.isSuffixOf olean_path.data)
