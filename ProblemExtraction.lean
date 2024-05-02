@@ -184,8 +184,10 @@ elab_rules : command
 | `(command| problem_file%$tk) => elabProblemFile tk none
 | `(command| problem_file%$tk $md) => elabProblemFile tk md
 
-/-- Commands between `snip begin` and `snip end` will be discarded by problem extraction. -/
+/-- Starts a group of commands that will be discarded by problem extraction. -/
 syntax (name := snipBegin) "snip begin" : command
+
+/-- Ends a group of commands that will be discarded by problem extraction. -/
 syntax (name := snipEnd) "snip end" : command
 
 elab_rules : command
