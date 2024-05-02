@@ -61,7 +61,7 @@ problem hungary1998_p6 (x y : ℤ) (z : ℕ) (hz : 1 < z) :
   --     = 99x² + 2[(99 ⬝ 100)/2]x + (99 ⬝ 100 ⬝ 199)/6
   --     = 33(3x² + 300x + 50 ⬝ 199).
 
-  have h2 : ∑ i ∈ Finset.range 99, (x^2) = 99 * x^2 := by norm_num
+  have h2 : ∑ i ∈ Finset.range 99, x^2 = 99 * x^2 := by norm_num
 
   have h4 : ∑ i ∈ Finset.range 99, ((i:ℤ) + 1) =
           ∑ i ∈ Finset.range 100, (i:ℤ) := by
@@ -82,19 +82,19 @@ problem hungary1998_p6 (x y : ℤ) (z : ℕ) (hz : 1 < z) :
           (x^2 + 2 * x * ((i:ℤ) + 1) + ((i:ℤ) + 1)^2) :=
                by with_reducible congr; funext; ring
     _ = ∑ i ∈ Finset.range 99, (x^2 + 2 * x * ((i:ℤ) + 1)) +
-         ∑ i ∈ Finset.range 99, (((i:ℤ) + 1)^2) := Finset.sum_add_distrib
+         ∑ i ∈ Finset.range 99, ((i:ℤ) + 1)^2 := Finset.sum_add_distrib
     _ = ∑ i ∈ Finset.range 99, x^2 +
           ∑ i ∈ Finset.range 99, (2 * x * ((i:ℤ) + 1)) +
          ∑ i ∈ Finset.range 99, (((i:ℤ) + 1)^2) := by rw [Finset.sum_add_distrib]
-    _ = 99 * x^2 + 2 * x * (99 * 100 / 2) +  (99 * 100 * 199)/6
+    _ = 99 * x^2 + 2 * x * (99 * 100 / 2) + (99 * 100 * 199)/6
         := by rw [h2, ←Finset.mul_sum, h4, h5, h6]
-    _ = 3 * (11 * (3 * x^2 + 300 * x + 50 * 199)) := by rw [hnn1,hnn2]; ring
+    _ = 3 * (11 * (3 * x^2 + 300 * x + 50 * 199)) := by rw [hnn1, hnn2]; ring
 
   -- which implies that 3∣y.
   have h8 : 3 ∣ y^z := Dvd.intro _ (Eq.symm h7)
   have h9 : 3 ∣ y := Prime.dvd_of_dvd_pow Int.prime_three h8
 
-  obtain ⟨k,hk⟩ := h9
+  obtain ⟨k, hk⟩ := h9
   rw [hk] at h7
 
   cases z with | zero => exact Nat.not_lt_zero 1 hz | succ z =>
