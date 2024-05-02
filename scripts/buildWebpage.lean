@@ -157,13 +157,14 @@ def htmlEscapeAux (racc : List Char) : List Char → String
 def htmlEscape (s : String) : String :=
   htmlEscapeAux [] s.data
 
-def olean_path_to_github_url (path: String) : String :=
-  let pfx := "././.lake/build/lib/"
+def olean_path_to_github_url (path: System.FilePath) : String :=
+  let path_components := path.components.dropWhile (· = ".")
+  assert!(path_components.take 3 = [".lake", "build", "lib"])
   let sfx := ".olean"
-  assert!(pfx.isPrefixOf path)
-  assert!(sfx.data.isSuffixOf path.data)
+  let path' := (System.mkFilePath (path_components.drop 3)).toString
+  assert!(sfx.data.isSuffixOf path'.data)
   "https://github.com/dwrensha/compfiles/blob/main/" ++
-    ((path.stripPrefix pfx).stripSuffix sfx) ++ ".lean"
+    (path'.stripSuffix sfx) ++ ".lean"
 
 def extractModuleDoc (env : Environment) (m : Name) : String :=
   match Lean.getModuleDoc? env m with
@@ -308,7 +309,7 @@ unsafe def main (_args : List String) : IO Unit := do
       let mut infos : List ProblemInfo := []
       for ⟨m, problem_src⟩ in mst do
           let p ← findOLean m
-          let solutionUrl := olean_path_to_github_url p.normalize.toString
+          let solutionUrl := olean_path_to_github_url p.normalize
           IO.println s!"MODULE: {m}"
           let problemFile := s!"problems/{m}.html"
           let rawProblemFile := s!"problems/{m}.lean"
