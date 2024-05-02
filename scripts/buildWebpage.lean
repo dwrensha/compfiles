@@ -158,7 +158,7 @@ def htmlEscape (s : String) : String :=
   htmlEscapeAux [] s.data
 
 def olean_path_to_github_url (path: String) : String :=
-  let pfx := "./.lake/build/lib/"
+  let pfx := "././.lake/build/lib/"
   let sfx := ".olean"
   assert!(pfx.isPrefixOf path)
   assert!(sfx.data.isSuffixOf path.data)
@@ -308,7 +308,7 @@ unsafe def main (_args : List String) : IO Unit := do
       let mut infos : List ProblemInfo := []
       for ⟨m, problem_src⟩ in mst do
           let p ← findOLean m
-          let solutionUrl := olean_path_to_github_url p.toString
+          let solutionUrl := olean_path_to_github_url p.normalize.toString
           IO.println s!"MODULE: {m}"
           let problemFile := s!"problems/{m}.html"
           let rawProblemFile := s!"problems/{m}.lean"

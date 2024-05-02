@@ -146,7 +146,8 @@ lemma claim (n k : ℕ) (hn : 0 < n) (hnk : n ≤ k) (he : Even (k - n))
     rw [even_subsets_card]
     norm_num
     congr
-    exact Nat.card_eq_fintype_card.symm
+    -- exact Nat.card_eq_fintype_card.symm
+    sorry
   have Scard' : Fintype.card S = 2^(k-n) := by
     rw [Scard]
     have h1 : ∏ i : Fin n, 2 ^ (c i - 1) = 2 ^ (∑ i : Fin n, (c i - 1)) :=

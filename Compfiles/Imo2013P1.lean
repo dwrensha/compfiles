@@ -87,7 +87,7 @@ problem imo2013_p1 (n : ℕ+) (k : ℕ) :
     have hmpk : (m pk : ℚ) = 2 * t + 1 := by
       have : m pk = ⟨2 * t + 1, _⟩ := if_neg (irrefl pk)
       simp [this]
-    have denom_ne_zero : 2 * (t : ℚ) + 1 ≠ 0 := by norm_cast; apply (2 * t).succ_ne_zero
+    have denom_ne_zero : 2 * (t : ℚ) + 1 ≠ 0 := by positivity
     calc
       ((1 : ℚ) + (2 ^ pk.succ - 1) / ↑n : ℚ) = 1 + (2 * 2 ^ pk - 1) / (2 * t + 1 : ℕ) := by
         rw [ht, pow_succ']

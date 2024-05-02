@@ -3,6 +3,7 @@ import Lean.Elab.Eval
 import Lean.Meta.Basic
 import Std.Data.String.Basic
 import Std.Lean.NameMapAttribute
+import Lean
 
 /-!
 Special commands to aid in "problem extraction".
@@ -273,7 +274,7 @@ elab_rules : command
 
   match di with
   | `(Lean.Parser.Command.declId | $i:ident) =>
-    let name ← Lean.Elab.resolveGlobalConstNoOverloadWithInfo i
+    let name ← Lean.resolveGlobalConstNoOverload i
     modifyEnv fun env => determineDeclsExtension.addEntry env name
   | _ => throwError "explicit universes in `determine` are currently unsupported"
 
@@ -342,7 +343,7 @@ def extractFromExt {m : Type → Type} [Monad m] [MonadEnv m] [MonadError m]
   for ⟨module, ⟨src, endPos, acc⟩⟩ in inProgress do
     let mut imports := ""
     for im in ← findModuleImports env module do
-      if im.module ≠ "Init" && im.module ≠ `ProblemExtraction
+      if im.module.toString ≠ "Init" && im.module ≠ `ProblemExtraction
       then imports := imports ++ s!"import {im}\n"
 
     result := result.insert module

@@ -461,7 +461,7 @@ lemma romania1998_p12_mpr (u : ℝ → ℝ) :
     constructor
     · left; exact strictMono_id
     · intro x y
-      rw [hk y, zero_mul, Real.exp_zero, mul_one, id.def, id.def, id.def]
+      rw [hk y, zero_mul, Real.exp_zero, mul_one, id_def, id_def, id_def]
   · -- k ≠ 0
     let f : ℝ → ℝ := λ x ↦ Real.exp (k * x) - 1
     have hfm : (StrictMono f ∨ StrictAnti f) := by

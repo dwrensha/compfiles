@@ -76,8 +76,7 @@ problem usa2003_p1 (n : ℕ) :
       constructor
       · rw[←ha]; simp[hpm1]
       · constructor
-        · rw[Nat.succ_eq_add_one]
-          exact hk2
+        · exact hk2
         · rw[List.all_eq_true]
           rw[List.all_eq_true, ha] at hpm3
           intro x hx

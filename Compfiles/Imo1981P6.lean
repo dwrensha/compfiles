@@ -54,7 +54,7 @@ problem imo1981_p6 (f : ℕ → ℕ → ℕ)
     intro y;
     induction' y with y ih
     · simp [h1, h2, h3]
-    · rw [h3, ih, h3, h3, h3, h4, h1, h1, h1, Nat.succ_eq_add_one]
+    · rw [h3, ih, h3, h3, h3, h4, h1, h1, h1]
       ring
   have h21 : ∀ y, f 3 y + 3 = 2^(y + 3) := by
     intro y
