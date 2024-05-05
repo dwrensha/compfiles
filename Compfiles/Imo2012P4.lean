@@ -24,17 +24,10 @@ def odd_const : Set (ℤ → ℤ) := fun f =>
   ∃ c : ℤ, ∀ x : ℤ,
     (Odd x → f x = c) ∧ (Even x → f x = 0)
 
-def mod4 (x : Int) : Fin 4 := by
-  refine ⟨(x % 4).natAbs, ?_⟩
-  have pos : 0 ≤ x % 4 := by omega
-  have lt : x % 4 < 4 := by omega
-  revert pos lt; cases (x % 4) <;> intro pos lt
-  . simp [Int.natAbs] at lt ⊢; assumption
-  . simp at pos
-
 def mod4_cycle : Set (ℤ → ℤ) := fun f =>
   ∃ c : ℤ, ∀ x : ℤ,
-    f x = [0, c, 4 * c, c][mod4 x]
+    let r := x % 4
+    (r = 0 → f x = 0) ∧ (r = 2 → f x = 4 * c) ∧ ((r = 1 ∨ r = 3) → f x = c)
 
 def square_set : Set (ℤ → ℤ) := fun f =>
   ∃ c : ℤ, ∀ x : ℤ, f x = x ^ 2 * c
@@ -43,12 +36,6 @@ determine solution_set : Set (ℤ → ℤ) := odd_const ∪ mod4_cycle ∪ squar
 
 theorem sub_sq'' {x y : Int} : x ^ 2 + y ^ 2 = (2 * x * y) ↔ x = y := by
   rw [← sub_eq_zero, ← sub_sq', sq_eq_zero_iff, sub_eq_zero]
-
-
-theorem mod4_eq (x : Int) : (mod4 x : Int) = x % 4 := by
-  simp [mod4]; apply Int.emod_nonneg; simp
-
-theorem mod4_add_eq (x : Int) : mod4 (x + 4) = mod4 x := by simp [mod4]
 
 theorem Int.lt_of_ns_lt_ns {x x' : ℕ} (h : Int.negSucc x < Int.negSucc x') : x' < x := by
   have := Int.neg_lt_neg h
@@ -187,7 +174,8 @@ problem imo2012_p4 (f : ℤ → ℤ) :
     case inr «f2=4*f1» =>
       simp at «f2=4*f1»
 
-      have when_f4_is_0 («f4=0» : f 4 = 0) : ∀ x, f x = [0, f 1, 4 * f 1, f 1][mod4 x] := by
+      have when_f4_is_0 («f4=0» : f 4 = 0) : mod4_cycle f := by
+        exists f 1
         have «f(x+4)=fx» (x : ℤ) : f (x + 4) = f x := by
           have «P(4,x)» := P 4 x
           simp [«f4=0»] at «P(4,x)»
@@ -195,11 +183,11 @@ problem imo2012_p4 (f : ℤ → ℤ) :
           rw [«P(4,x)»]; ac_rfl
 
         intro x; induction x using myInduction
-        case P0 => simp [«f0=0», mod4]
-        case P1 => simp [mod4]
-        case P2 => simp [«f2=4*f1», mod4]
-        case P3 => rw [show 3 = -1 + 4 by rfl, «f(x+4)=fx», even]; simp [mod4]
-        case add4 x => rw [«f(x+4)=fx», mod4_add_eq]
+        case P0 => simp [«f0=0»]
+        case P1 => simp
+        case P2 => simp [«f2=4*f1»]
+        case P3 => rw [show 3 = -1 + 4 by rfl, «f(x+4)=fx», even]; simp
+        case add4 x => simp; rw [«f(x+4)=fx»]
 
       have «P(1,2)» : f 3 = 9 * f 1 ∨ f 3 = f 1 := by
         have := P 1 2
@@ -225,7 +213,7 @@ problem imo2012_p4 (f : ℤ → ℤ) :
         have := when_f4_is_0 «f4=0»
         left
         right
-        use f 1
+        assumption
         done
 
       case inl «f3=9*f1» =>
@@ -236,7 +224,7 @@ problem imo2012_p4 (f : ℤ → ℤ) :
           have := when_f4_is_0 «f4=0»
           left
           right
-          use f 1
+          assumption
           done
 
         case inr «f4=16*f1» =>
