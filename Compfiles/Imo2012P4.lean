@@ -303,7 +303,36 @@ problem imo2012_p4 (f : ℤ → ℤ) :
       . have evenc : Even c := by rw [c_eq, even_neg]; exact Even.add evena evenb
         simp [(h c).right evenc]
 
-    . sorry
+    . have mod4_cases (x : ℤ) : let r := x % 4; r = 0 ∨ r = 1 ∨ r = 2 ∨ r = 3 := by
+        induction x using myInduction <;> simp
+      rcases mod4_cases a with «a%4=?» | «a%4=?» | «a%4=?» | «a%4=?»
+      all_goals
+        have «fa=?» := h a; simp [«a%4=?»] at «fa=?»
+        rcases mod4_cases b with «b%4=?» | «b%4=?» | «b%4=?» | «b%4=?»
+        all_goals
+          have «fb=?» := h b; simp [«b%4=?»] at «fb=?»
+
+      have «c%4=?» : c % 4 = 0 := by omega
+      rotate_left; have «c%4=?» : c % 4 = 3 := by omega
+      rotate_left; have «c%4=?» : c % 4 = 2 := by omega
+      rotate_left; have «c%4=?» : c % 4 = 1 := by omega
+      rotate_left; have «c%4=?» : c % 4 = 3 := by omega
+      rotate_left; have «c%4=?» : c % 4 = 2 := by omega
+      rotate_left; have «c%4=?» : c % 4 = 1 := by omega
+      rotate_left; have «c%4=?» : c % 4 = 0 := by omega
+      rotate_left; have «c%4=?» : c % 4 = 2 := by omega
+      rotate_left; have «c%4=?» : c % 4 = 1 := by omega
+      rotate_left; have «c%4=?» : c % 4 = 0 := by omega
+      rotate_left; have «c%4=?» : c % 4 = 3 := by omega
+      rotate_left; have «c%4=?» : c % 4 = 1 := by omega
+      rotate_left; have «c%4=?» : c % 4 = 0 := by omega
+      rotate_left; have «c%4=?» : c % 4 = 3 := by omega
+      rotate_left; have «c%4=?» : c % 4 = 2 := by omega
+
+      all_goals
+        have «fc=?» := h c; simp [«c%4=?»] at «fc=?»
+        rw [«fa=?», «fb=?», «fc=?»]
+        ring
 
     . rw [c_eq, h, h, h]
       ring_nf
