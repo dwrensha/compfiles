@@ -299,9 +299,9 @@ problem imo2012_p4 (f : ℤ → ℤ) :
     all_goals
       intro a b c H
       have c_eq : c = - (a + b) := by omega
+      rcases sol with ⟨d, h⟩
 
-    . rcases sol with ⟨d, h⟩
-      rcases Int.even_or_odd a with evena | odda
+    . rcases Int.even_or_odd a with evena | odda
       simp [(h a).right evena]; rotate_left; simp [(h a).left odda]
       all_goals
         rcases Int.even_or_odd b with evenb | oddb
@@ -315,11 +315,9 @@ problem imo2012_p4 (f : ℤ → ℤ) :
       . have evenc : Even c := by rw [c_eq, even_neg]; exact Even.add evena evenb
         simp [(h c).right evenc]
 
-    . rcases sol with ⟨d, h⟩
-      sorry
+    . sorry
 
-    . rcases sol with ⟨d, h⟩
-      rw [c_eq, h, h, h]
+    . rw [c_eq, h, h, h]
       ring_nf
 
 end Imo2012P4
