@@ -157,6 +157,16 @@ def htmlEscapeAux (racc : List Char) : List Char → String
 def htmlEscape (s : String) : String :=
   htmlEscapeAux [] s.data
 
+def stringifyPercent (p : Float) : String :=
+  let s1 := s!"{p * 100}"
+  let pos := s1.find (fun c ↦ c = '.')
+  if pos = s1.endPos then
+    s1 ++ "%"
+  else
+    let p1 := pos + ⟨3⟩
+    let s2 := Substring.mk s1 0 p1
+    s2.toString ++ "%"
+
 def olean_path_to_github_url (path: System.FilePath) : String :=
   let path_components := path.components.dropWhile (· = ".")
   assert!(path_components.take 3 = [".lake", "build", "lib"])
@@ -508,12 +518,12 @@ unsafe def main (_args : List String) : IO Unit := do
       h.putStrLn <| ←htmlHeader "Compfiles: Catalog of Math Problems Formalized in Lean"
       h.putStrLn <| ← topbar "imo"
       h.putStrLn <| s!"<p>Since 1959, the International Mathematical Olympiad has included  a total of <b>{totalImoProblemCount}</b> problems.</p>"
-      let formalizedPercent : Float := 100.0 *
+      let formalizedPercent := stringifyPercent <|
         (OfNat.ofNat imoFormalizedCount) / (OfNat.ofNat totalImoProblemCount)
-      h.putStrLn <| s!"<p><b>{imoFormalizedCount}</b> problems have been formalized ({formalizedPercent}%).</p>"
-      let solvedPercent : Float := 100.0 *
+      h.putStrLn <| s!"<p><b>{imoFormalizedCount}</b> problems have been formalized ({formalizedPercent}).</p>"
+      let solvedPercent := stringifyPercent <|
         (OfNat.ofNat imoSolvedCount) / (OfNat.ofNat totalImoProblemCount)
-      h.putStrLn <| s!"<p><b>{imoSolvedCount}</b> problems have complete formalized solutions ({solvedPercent}%).</p>"
+      h.putStrLn <| s!"<p><b>{imoSolvedCount}</b> problems have complete formalized solutions ({solvedPercent}).</p>"
       h.putStr "<table class=\"full-problem-grid\">"
       for ⟨year, count⟩ in imoProblemCounts do
         h.putStr s!"<tr><td class=\"year\">{year}</td>"
@@ -541,12 +551,12 @@ unsafe def main (_args : List String) : IO Unit := do
       h.putStrLn <| ←htmlHeader "Compfiles: Catalog of Math Problems Formalized in Lean"
       h.putStrLn <| ← topbar "usamo"
       h.putStrLn <| s!"<p>Since 1972, the USA Mathematical Olympiad has included a total of <b>{totalUsamoProblemCount}</b> problems.</p>"
-      let formalizedPercent : Float := 100.0 *
+      let formalizedPercent := stringifyPercent <|
         (OfNat.ofNat usamoFormalizedCount) / (OfNat.ofNat totalUsamoProblemCount)
-      h.putStrLn <| s!"<p><b>{usamoFormalizedCount}</b> problems have been formalized ({formalizedPercent}%).</p>"
-      let solvedPercent : Float := 100.0 *
+      h.putStrLn <| s!"<p><b>{usamoFormalizedCount}</b> problems have been formalized ({formalizedPercent}).</p>"
+      let solvedPercent := stringifyPercent <|
         (OfNat.ofNat usamoSolvedCount) / (OfNat.ofNat totalUsamoProblemCount)
-      h.putStrLn <| s!"<p><b>{usamoSolvedCount}</b> problems have complete formalized solutions ({solvedPercent}%).</p>"
+      h.putStrLn <| s!"<p><b>{usamoSolvedCount}</b> problems have complete formalized solutions ({solvedPercent}).</p>"
       h.putStr "<table class=\"full-problem-grid\">"
       for ⟨year, count⟩ in usamoProblemCounts do
         h.putStr s!"<tr><td class=\"year\">{year}</td>"
