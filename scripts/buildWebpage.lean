@@ -1,7 +1,7 @@
-import Std.Data.RBMap.Basic
-import Std.Data.String.Basic
-import Std.Lean.Util.Path
-import Std.Tactic.Lint
+import Batteries.Data.RBMap.Basic
+import Batteries.Data.String.Basic
+import Batteries.Lean.Util.Path
+import Batteries.Tactic.Lint
 import Lean.Environment
 import Mathlib.Data.String.Defs
 import Lean.Meta.Basic
@@ -406,7 +406,7 @@ unsafe def main (_args : List String) : IO Unit := do
       h.putStr "<thead><tr><th>problem</th><th>solved?</th><th>tags</th></tr></thead>"
       h.putStr "<tbody>"
       let infos' := sortProblems infos
-      let mut infomap := Std.mkRBMap String ProblemInfo Ord.compare
+      let mut infomap := Batteries.mkRBMap String ProblemInfo Ord.compare
       let mut imoSolvedCount := 0
       let mut imoFormalizedCount := 0
 

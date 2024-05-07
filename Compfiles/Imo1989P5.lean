@@ -8,7 +8,6 @@ import Mathlib.Algebra.IsPrimePow
 import Mathlib.Data.Nat.ModEq
 import Mathlib.Data.Nat.Prime
 import Mathlib.Tactic.Common
-import Std.Data.List.Lemmas
 
 import ProblemExtraction
 

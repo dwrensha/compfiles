@@ -1,8 +1,8 @@
 import Lean.Elab.Command
 import Lean.Elab.Eval
 import Lean.Meta.Basic
-import Std.Data.String.Basic
-import Std.Lean.NameMapAttribute
+import Batteries.Data.String.Basic
+import Batteries.Lean.NameMapAttribute
 import Lean
 
 /-!

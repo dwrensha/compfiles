@@ -1,7 +1,7 @@
 import Mathlib.Data.String.Defs
-import Std.Data.String.Basic
-import Std.Lean.Util.Path
-import Std.Tactic.Lint
+import Batteries.Data.String.Basic
+import Batteries.Lean.Util.Path
+import Batteries.Tactic.Lint
 import Lean.Environment
 import Lean.Elab.Print
 import Lean.Meta.Basic
