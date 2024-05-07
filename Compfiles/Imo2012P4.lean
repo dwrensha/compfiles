@@ -62,7 +62,6 @@ def myInduction.{u}
           rw [← Int.ofNat_eq_coe, ← Int.ofNat_eq_coe]
           simp [sizeOf, Int._sizeOf_1]
         apply myInduction <;> assumption
-      done
     case negSucc =>
       rw [← add4]
       cases h : Int.negSucc x + 4
@@ -72,7 +71,7 @@ def myInduction.{u}
         | 1 => exact P1
         | 2 => exact P2
         | 3 => exact P3
-        | x' + 4 => simp at h; done
+        | x' + 4 => simp at h
       case negSucc x' =>
         have : x' < x := by
           have := Int.sub_lt_self (Int.negSucc x + 4) (b := 4) (h := by simp)
@@ -80,10 +79,6 @@ def myInduction.{u}
           simp at this
           apply Int.lt_of_ns_lt_ns this
         apply myInduction <;> assumption
-        done
-      done
-    done
-
 
 problem imo2012_p4 (f : ℤ → ℤ) :
     f ∈ solution_set ↔
@@ -136,7 +131,6 @@ problem imo2012_p4 (f : ℤ → ℤ) :
         rw [← this]
         congr 1
         simp; ring
-      done
 
     cases «P(a,a)» 1
 
@@ -171,7 +165,6 @@ problem imo2012_p4 (f : ℤ → ℤ) :
       left
       left
       assumption
-      done
 
     case inr «f2=4*f1» =>
       simp at «f2=4*f1»
@@ -216,7 +209,6 @@ problem imo2012_p4 (f : ℤ → ℤ) :
         left
         right
         assumption
-        done
 
       case inl «f3=9*f1» =>
 
@@ -227,7 +219,6 @@ problem imo2012_p4 (f : ℤ → ℤ) :
           left
           right
           assumption
-          done
 
         case inr «f4=16*f1» =>
           have «fx=x²f1» (x : ℤ) : f x = x ^ 2 * f 1 := by
@@ -261,7 +252,7 @@ problem imo2012_p4 (f : ℤ → ℤ) :
                 simp; apply ih; omega; simp
 
                 simp at h; simp [h, even]
-                done
+
               rw [«f2=4*f1», «f(x-1)=(x-1)²*f1», ← sub_eq_zero] at this
               replace this : (f (x + 1) - (x + 1) ^ 2 * f 1) * (f (x + 1) - ((x : ℤ) - 3) ^ 2 * f 1) = 0 := by
                 rw [← this]; ring_nf
@@ -277,11 +268,9 @@ problem imo2012_p4 (f : ℤ → ℤ) :
                 simp at this
                 have : x = 2 := by omega
                 simpa [this]
-            done
 
           right
           use f 1
-          done
 
   -- for all `f` in solution set, `f` satisfies the constraint
   case mp =>
