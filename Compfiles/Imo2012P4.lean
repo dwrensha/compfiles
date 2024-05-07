@@ -20,6 +20,8 @@ the following equality holds:
 
 namespace Imo2012P4
 
+snip begin
+
 def odd_const : Set (ℤ → ℤ) := fun f =>
   ∃ c : ℤ, ∀ x : ℤ,
     (Odd x → f x = c) ∧ (Even x → f x = 0)
@@ -79,6 +81,8 @@ def myInduction.{u}
           simp at this
           apply Int.lt_of_ns_lt_ns this
         apply myInduction <;> assumption
+
+snip end
 
 problem imo2012_p4 (f : ℤ → ℤ) :
     f ∈ solution_set ↔
