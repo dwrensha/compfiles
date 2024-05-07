@@ -25,9 +25,11 @@ def odd_const : Set (ℤ → ℤ) := fun f =>
     (Odd x → f x = c) ∧ (Even x → f x = 0)
 
 def mod4_cycle : Set (ℤ → ℤ) := fun f =>
-  ∃ c : ℤ, ∀ x : ℤ,
-    let r := x % 4
-    (r = 0 → f x = 0) ∧ (r = 2 → f x = 4 * c) ∧ ((r = 1 ∨ r = 3) → f x = c)
+  ∃ c : ℤ, ∀ x : ℤ, f x =
+  match x % 4 with
+    | 0 => 0
+    | 2 => 4 * c
+    | _ => c
 
 def square_set : Set (ℤ → ℤ) := fun f =>
   ∃ c : ℤ, ∀ x : ℤ, f x = x ^ 2 * c
@@ -305,6 +307,7 @@ problem imo2012_p4 (f : ℤ → ℤ) :
 
     . have mod4_cases (x : ℤ) : let r := x % 4; r = 0 ∨ r = 1 ∨ r = 2 ∨ r = 3 := by
         induction x using myInduction <;> simp
+      have «c%4=?» : c % 4 = (8 - (a % 4) - (b % 4)) % 4 := by omega
       rcases mod4_cases a with «a%4=?» | «a%4=?» | «a%4=?» | «a%4=?»
       all_goals
         have «fa=?» := h a; simp [«a%4=?»] at «fa=?»
@@ -312,24 +315,8 @@ problem imo2012_p4 (f : ℤ → ℤ) :
         all_goals
           have «fb=?» := h b; simp [«b%4=?»] at «fb=?»
 
-      have «c%4=?» : c % 4 = 0 := by omega
-      rotate_left; have «c%4=?» : c % 4 = 3 := by omega
-      rotate_left; have «c%4=?» : c % 4 = 2 := by omega
-      rotate_left; have «c%4=?» : c % 4 = 1 := by omega
-      rotate_left; have «c%4=?» : c % 4 = 3 := by omega
-      rotate_left; have «c%4=?» : c % 4 = 2 := by omega
-      rotate_left; have «c%4=?» : c % 4 = 1 := by omega
-      rotate_left; have «c%4=?» : c % 4 = 0 := by omega
-      rotate_left; have «c%4=?» : c % 4 = 2 := by omega
-      rotate_left; have «c%4=?» : c % 4 = 1 := by omega
-      rotate_left; have «c%4=?» : c % 4 = 0 := by omega
-      rotate_left; have «c%4=?» : c % 4 = 3 := by omega
-      rotate_left; have «c%4=?» : c % 4 = 1 := by omega
-      rotate_left; have «c%4=?» : c % 4 = 0 := by omega
-      rotate_left; have «c%4=?» : c % 4 = 3 := by omega
-      rotate_left; have «c%4=?» : c % 4 = 2 := by omega
-
       all_goals
+        rw [«a%4=?», «b%4=?»] at «c%4=?»
         have «fc=?» := h c; simp [«c%4=?»] at «fc=?»
         rw [«fa=?», «fb=?», «fc=?»]
         ring
