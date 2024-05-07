@@ -36,8 +36,6 @@ def mod4_cycle : Set (ℤ → ℤ) := fun f =>
 def square_set : Set (ℤ → ℤ) := fun f =>
   ∃ c : ℤ, ∀ x : ℤ, f x = x ^ 2 * c
 
-determine solution_set : Set (ℤ → ℤ) := odd_const ∪ mod4_cycle ∪ square_set
-
 theorem sub_sq'' {x y : Int} : x ^ 2 + y ^ 2 = (2 * x * y) ↔ x = y := by
   rw [← sub_eq_zero, ← sub_sq', sq_eq_zero_iff, sub_eq_zero]
 
@@ -83,6 +81,8 @@ def myInduction.{u}
         apply myInduction <;> assumption
 
 snip end
+
+determine solution_set : Set (ℤ → ℤ) := odd_const ∪ mod4_cycle ∪ square_set
 
 problem imo2012_p4 (f : ℤ → ℤ) :
     f ∈ solution_set ↔
