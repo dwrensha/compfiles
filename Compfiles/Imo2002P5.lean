@@ -228,7 +228,7 @@ problem imo2002_p5 (f : ℝ → ℝ) :
   have h11 : ∀ q : ℚ, f q = q^2 := fun q ↦ by
     have h12 := h4 q q.den
     rw [h9] at h12
-    have h13 : q * q.den = q.num := Rat.mul_den_eq_num
+    have h13 : q * q.den = q.num := Rat.mul_den_eq_num q
     have h14 : (((q * (q.den : ℚ)):ℚ):ℝ) = (q:ℝ) * (q.den:ℝ) := by norm_cast
     rw [←h14, h13, Rat.cast_intCast] at h12
     rw [h10] at h12

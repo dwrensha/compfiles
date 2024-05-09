@@ -258,7 +258,7 @@ problem imo2013_p5
   -- we need the top of the fraction to be strictly greater than 1 in order
   -- to apply fixed_point_of_gt_1.
   intro x hx
-  have H₀ : x * x.den = x.num := Rat.mul_den_eq_num
+  have H₀ : x * x.den = x.num := Rat.mul_den_eq_num x
   have H : (↑(2 * x.den) : ℚ) * x = (↑(2 * x.num) : ℚ) := by push_cast; linear_combination 2 * H₀
   set x2denom := 2 * x.den
   set x2num := 2 * x.num
