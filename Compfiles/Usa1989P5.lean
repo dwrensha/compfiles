@@ -95,10 +95,8 @@ problem usa1989_p5
       linarith
     linarith
 
-  have h4 : 10 * u - 9 < 0 := by linarith
   have h5 : 0 < u := not_le.mp h1u
   have h5' : 0 < u^9 := pow_pos h5 9
-  have h7 : 0 < u + 1 := by linarith
   have h6 : u^9 * (10 * u - 9) < 0 := by nlinarith
   have h8 : u^9 * (10 * u - 9) * (u + 1) < 0 := by nlinarith
 

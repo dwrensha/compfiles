@@ -142,9 +142,6 @@ problem usa1998_p3
   --
   -- Let yᵢ = tan(aᵢ - π/4), where 0 ≤ i ≤ n.
   let y : ℕ → ℝ := λ i ↦ Real.tan (a i - Real.pi / 4)
-  -- Then we have
-  --  y₀ + y₁ + ... + yₙ ≥ n - 1
-  have h1 : n - 1 ≤ ∑ i ∈ Finset.range (n + 1), y i := hs
 
   --  1 + yᵢ ≥ ∑_{j ≠ i} (1 - yⱼ)
   have h2 : ∀ i ∈ Finset.range (n + 1),
