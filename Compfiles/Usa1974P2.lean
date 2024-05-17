@@ -62,11 +62,11 @@ lemma le_aabb_abba : ∀ {a b : ℝ}, a > 0 → b > 0 → a ≥ b → a ^ b * b 
 
 lemma le_cabb_cbba : ∀ {a b c : ℝ}, a > 0 → b > 0 → c > 0 → a ≥ b → b ≥ c → c ^ a * b ^ b ≤ c ^ b * b ^ a := by
   intro a b c _ha hb hc hab hbc
-  have da : a = a - b + b := by ring
-  rw [da]
-  rw [Real.rpow_add hc]
-  rw [Real.rpow_add hb]
-  cancel_mul [b ^ b, c ^ b]
+  suffices H : c ^ (a - b) ≤ b ^ (a - b) by
+    replace H : c ^ (a - b) * b^b * c^b ≤ b ^ (a - b) * b^b * c^b := by gcongr
+    rw [←Real.rpow_add hb, sub_add_cancel] at H
+    rw [mul_right_comm, ←Real.rpow_add hc, sub_add_cancel] at H
+    linarith
   apply Real.rpow_le_rpow
   · exact le_of_lt hc
   · assumption
@@ -89,7 +89,7 @@ lemma usa1974_p2_wlog :
     ∀ (a b c : ℝ), a > 0 → b > 0 → c > 0 → a ≥ b → b ≥ c → a^a * b^b * c^c ≥ (a*b*c)^((a+b+c)/3) := by
   intros a b c ha hb hc hab hbc
   have habc : a * b * c > 0 := Real.mul_pos (Real.mul_pos ha hb) hc
-  have h : (a ^ a * b ^ b * c ^ c) * (a ^ b * b ^ c * c ^ a) * (a ^ c * b ^ a * c ^ b) = 
+  have h : (a ^ a * b ^ b * c ^ c) * (a ^ b * b ^ c * c ^ a) * (a ^ c * b ^ a * c ^ b) =
             (a * b * c) ^ (a + b + c) := by
     rw [Real.rpow_add]
     rw [Real.rpow_add]
