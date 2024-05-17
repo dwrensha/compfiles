@@ -10,8 +10,6 @@ import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 import ProblemExtraction
 
-open Lean.Parser.Tactic
-
 problem_file { tags := [.Algebra, .Inequality] }
 
 /-!
@@ -24,6 +22,8 @@ a^a * b^b * c^c ≥ (abc)^((a+b+c)/3)
 namespace Usa1974P2
 
 snip begin
+
+open Lean.Parser.Tactic
 
 /-
 if we have ⊢ a * x * y ≤ y * z * a
