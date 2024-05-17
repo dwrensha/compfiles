@@ -50,12 +50,11 @@ lemma le_abcd : ∀ {a b c d : ℝ}, a > 0 → b > 0 → c > 0 → d > 0 → a *
 
 lemma le_aabb_abba : ∀ {a b : ℝ}, a > 0 → b > 0 → a ≥ b → a ^ b * b ^ a ≤ a ^ a * b ^ b := by
   intro a b ha hb hab
-  have da : a = a - b + b := by ring
-  rw [(da ▸ rfl : a ^ a = a ^ (a - b + b))]
-  rw [(da ▸ rfl : b ^ a = b ^ (a - b + b))]
-  rw [Real.rpow_add ha]
-  rw [Real.rpow_add hb]
-  cancel_mul [b ^ b, a ^ b]
+  suffices H : b ^ (a - b) ≤ a ^ (a - b) by
+    replace H : b ^ (a - b) * b^b * a^b ≤ a ^ (a - b) * b^b * a^b := by gcongr
+    rw [←Real.rpow_add hb, sub_add_cancel] at H
+    rw [mul_right_comm, ←Real.rpow_add ha, sub_add_cancel] at H
+    linarith
   apply Real.rpow_le_rpow
   · exact le_of_lt hb
   · assumption
