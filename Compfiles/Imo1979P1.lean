@@ -132,7 +132,6 @@ lemma lemma9' (i : ℕ) (hi : i ∈ Finset.range 330) :
   have h2 : ((660 + (i:ℚ)) * (1319 - (i:ℚ))) /
               ((660 + (i:ℚ)) * (1319 - (i:ℚ))) = 1 := by
     have h3 : (660 + (i:ℚ)) * (1319 - (i:ℚ)) ≠ 0 := by
-      have h4 : 0 ≤ (i: ℚ) := by positivity
       have h5 : (i: ℚ) < 330 := by norm_cast
       nlinarith
     exact div_self h3
