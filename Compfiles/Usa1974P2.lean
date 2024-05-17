@@ -4,7 +4,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Hongyu Ouyang
 -/
 
-import Lean.Parser.Tactic
 import Mathlib.Tactic
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
@@ -24,66 +23,6 @@ namespace Usa1974P2
 snip begin
 
 open Lean.Parser.Tactic
-
-/-
-if we have ⊢ a * x * y ≤ y * z * a
-`cancel_mul a` do the following:
-* move `a` to the right ⊢ x * y * a ≤ y * z * a
-* `gcongr ?_ * ?_`      ⊢ x * y ≤ y * z    ∧     ⊢ a ≤ a
-* `swap ; rfl`          ⊢ x * y ≤ y * z
-note that gcongr would also produce goals `x * y > 0`, `y * z > 0`, and `a > 0`,
-but luckily in all our cases, gcongr can solve those by itself.
--/
-syntax "cancel_mul" rwRuleSeq : tactic
-macro_rules
-  | `(tactic| cancel_mul [$rules,*]) => do
-     let tacs ← rules.getElems.mapM fun rule =>
-       `(tactic| (move_mul [$rule] ; gcongr ?_ * ?_ ; swap ; rfl))
-     `(tactic| ($[$tacs]*))
-
-lemma le_abcd : ∀ {a b c d : ℝ}, a > 0 → b > 0 → c > 0 → d > 0 → a * c ≤ b * d → d ≤ c → a ≤ b := by
-  intro a b c d _ha hb hc _hd hacbd hcd
-  apply le_of_mul_le_mul_of_pos_right _ hc
-  trans b * d
-  · assumption
-  · simp only [mul_le_mul_left, hb, hcd]
-
-lemma le_aabb_abba : ∀ {a b : ℝ}, a > 0 → b > 0 → a ≥ b → a ^ b * b ^ a ≤ a ^ a * b ^ b := by
-  intro a b ha hb hab
-  suffices H : b ^ (a - b) ≤ a ^ (a - b) by
-    replace H : b ^ (a - b) * b^b * a^b ≤ a ^ (a - b) * b^b * a^b := by gcongr
-    rw [←Real.rpow_add hb, sub_add_cancel] at H
-    rw [mul_right_comm, ←Real.rpow_add ha, sub_add_cancel] at H
-    linarith
-  apply Real.rpow_le_rpow
-  · exact le_of_lt hb
-  · assumption
-  · apply sub_nonneg_of_le hab
-
-lemma le_cabb_cbba : ∀ {a b c : ℝ}, a > 0 → b > 0 → c > 0 → a ≥ b → b ≥ c → c ^ a * b ^ b ≤ c ^ b * b ^ a := by
-  intro a b c _ha hb hc hab hbc
-  suffices H : c ^ (a - b) ≤ b ^ (a - b) by
-    replace H : c ^ (a - b) * b^b * c^b ≤ b ^ (a - b) * b^b * c^b := by gcongr
-    rw [←Real.rpow_add hb, sub_add_cancel] at H
-    rw [mul_right_comm, ←Real.rpow_add hc, sub_add_cancel] at H
-    linarith
-  apply Real.rpow_le_rpow
-  · exact le_of_lt hc
-  · assumption
-  · apply sub_nonneg_of_le hab
-
-lemma le_acbb_bcab : ∀ {a b c : ℝ}, a > 0 → b > 0 → c > 0 → a ≥ b → b ≥ c → a ^ c * b ^ b ≤ b ^ c * a ^ b := by
-  intro a b c ha hb _hc hab hbc
-  have db : b = b - c + c := by ring
-  rw [(db ▸ rfl : a ^ b = a ^ (b - c + c))]
-  rw [(db ▸ rfl : b ^ b = b ^ (b - c + c))]
-  rw [Real.rpow_add hb]
-  rw [Real.rpow_add ha]
-  cancel_mul [a ^ c, b ^ c]
-  apply Real.rpow_le_rpow
-  · exact le_of_lt hb
-  · assumption
-  · exact sub_nonneg_of_le hbc
 
 lemma usa1974_p2_wlog :
     ∀ (a b c : ℝ), a > 0 → b > 0 → c > 0 → a ≥ b → b ≥ c → a^a * b^b * c^c ≥ (a*b*c)^((a+b+c)/3) := by
@@ -107,18 +46,26 @@ lemma usa1974_p2_wlog :
   norm_num
   rw [←h]
   rw [pow_three']
+  have hab' := Real.log_le_log hb hab
+  have hbc' := Real.log_le_log hc hbc
   -- ⊢ a ^ a * b ^ b * c ^ c * (a ^ b * b ^ c * c ^ a) * (a ^ c * b ^ a * c ^ b) ≤
   --   a ^ a * b ^ b * c ^ c * (a ^ a * b ^ b * c ^ c) * (a ^ a * b ^ b * c ^ c)
   gcongr ?_ * ?_ * ?_
   · rfl
-  · apply le_abcd _ _ _ _ _ (le_aabb_abba hb hc hbc) <;> try positivity
-    apply le_abcd _ _ _ _ _ (le_aabb_abba ha hb hab) <;> try positivity
-    cancel_mul [b ^ b, c ^ c, a ^ a, a ^ b, b ^ c]
-    exact le_cabb_cbba ha hb hc hab hbc
-  · apply le_abcd _ _ _ _ _ (le_aabb_abba hb hc hbc) <;> try positivity
-    apply le_abcd _ _ _ _ _ (le_aabb_abba ha hb hab) <;> try positivity
-    cancel_mul [b ^ b, c ^ c, a ^ a, b ^ a, c ^ b]
-    exact le_acbb_bcab ha hb hc hab hbc
+  · rw [←(Real.log_le_log_iff (by positivity) (by positivity))]
+    rw [Real.log_mul (by positivity) (by positivity)]
+    rw [Real.log_mul (by positivity) (by positivity)]
+    rw [Real.log_mul (by positivity) (by positivity)]
+    rw [Real.log_mul (by positivity) (by positivity)]
+    simp only [Real.log_rpow ha, Real.log_rpow hb, Real.log_rpow hc]
+    nlinarith only [hab', hbc', hab, hbc]
+  · rw [←(Real.log_le_log_iff (by positivity) (by positivity))]
+    rw [Real.log_mul (by positivity) (by positivity)]
+    rw [Real.log_mul (by positivity) (by positivity)]
+    rw [Real.log_mul (by positivity) (by positivity)]
+    rw [Real.log_mul (by positivity) (by positivity)]
+    simp only [Real.log_rpow ha, Real.log_rpow hb, Real.log_rpow hc]
+    nlinarith only [hab', hbc', hab, hbc]
 
 snip end
 
