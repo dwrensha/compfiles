@@ -22,8 +22,6 @@ namespace Usa1974P2
 
 snip begin
 
-open Lean.Parser.Tactic
-
 lemma usa1974_p2_wlog :
     ∀ (a b c : ℝ), a > 0 → b > 0 → c > 0 → a ≥ b → b ≥ c → a^a * b^b * c^c ≥ (a*b*c)^((a+b+c)/3) := by
   intros a b c ha hb hc hab hbc
