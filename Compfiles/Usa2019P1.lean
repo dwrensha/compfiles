@@ -5,7 +5,6 @@ Authors: David Renshaw
 -/
 
 import Mathlib.Data.PNat.Basic
-import Mathlib.Data.Nat.Parity
 
 import Mathlib.Tactic
 
