@@ -34,8 +34,8 @@ problem imo1972_p3 (m n : ℕ) :
     simp only [Nat.zero_eq, Nat.factorial_zero, mul_one, add_zero, mul_zero]
     use Nat.choose (2*m) m
     rw [← Nat.choose_mul_factorial_mul_factorial (n := 2 * m) (k := m)]
-    rw [show 2*m-m = m by omega]
-    ring_nf
+    · rw [show 2*m-m = m by omega]
+      ring_nf
     omega
   · intro m
     zify
