@@ -28,15 +28,7 @@ lemma usa1974_p2_wlog :
   have habc : a * b * c > 0 := Real.mul_pos (Real.mul_pos ha hb) hc
   have h : (a ^ a * b ^ b * c ^ c) * (a ^ b * b ^ c * c ^ a) * (a ^ c * b ^ a * c ^ b) =
             (a * b * c) ^ (a + b + c) := by
-    rw [Real.rpow_add]
-    rw [Real.rpow_add]
-    rw [Real.mul_rpow]
-    rw [Real.mul_rpow]
-    rw [Real.mul_rpow]
-    rw [Real.mul_rpow]
-    rw [Real.mul_rpow]
-    rw [Real.mul_rpow]
-    all_goals try positivity
+    simp (discharger := positivity) only [Real.rpow_add, Real.mul_rpow]
     ring
   apply le_of_pow_le_pow_left (by decide : 3 ≠ 0) (by positivity)
   rw [←Real.rpow_natCast]
@@ -51,18 +43,10 @@ lemma usa1974_p2_wlog :
   gcongr ?_ * ?_ * ?_
   · rfl
   · rw [←(Real.log_le_log_iff (by positivity) (by positivity))]
-    rw [Real.log_mul (by positivity) (by positivity)]
-    rw [Real.log_mul (by positivity) (by positivity)]
-    rw [Real.log_mul (by positivity) (by positivity)]
-    rw [Real.log_mul (by positivity) (by positivity)]
-    simp only [Real.log_rpow ha, Real.log_rpow hb, Real.log_rpow hc]
+    simp (discharger := positivity) only [Real.log_mul, Real.log_rpow]
     nlinarith only [hab', hbc', hab, hbc]
   · rw [←(Real.log_le_log_iff (by positivity) (by positivity))]
-    rw [Real.log_mul (by positivity) (by positivity)]
-    rw [Real.log_mul (by positivity) (by positivity)]
-    rw [Real.log_mul (by positivity) (by positivity)]
-    rw [Real.log_mul (by positivity) (by positivity)]
-    simp only [Real.log_rpow ha, Real.log_rpow hb, Real.log_rpow hc]
+    simp (discharger := positivity) only [Real.log_mul, Real.log_rpow]
     nlinarith only [hab', hbc', hab, hbc]
 
 snip end
