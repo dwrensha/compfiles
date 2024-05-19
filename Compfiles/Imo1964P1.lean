@@ -5,7 +5,6 @@ Authors: David Renshaw, Anand Rao
 -/
 
 import Mathlib.Data.Nat.ModEq
-import Mathlib.Algebra.GroupPower.Basic
 import Mathlib.Tactic
 
 import ProblemExtraction

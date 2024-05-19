@@ -5,7 +5,6 @@ Authors: David Renshaw
 -/
 
 import Mathlib.Data.Nat.ModEq
-import Mathlib.Algebra.GroupPower.Basic
 import Mathlib.Algebra.Parity
 import Mathlib.Tactic
 
