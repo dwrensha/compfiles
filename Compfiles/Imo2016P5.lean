@@ -55,7 +55,7 @@ problem imo2015_p5 :
     have hp : ∀ n, (n % 4 = 2 ∨ n % 4 = 3) =  ¬ (n % 4 = 0 ∨ n % 4 = 1) := fun n ↦ by
       have : n % 4 < 4 := Nat.mod_lt _ (by norm_num)
       interval_cases n % 4 <;> norm_num
-    refine' ⟨_,_,_,_⟩
+    refine ⟨?_, ?_, ?_, ?_⟩
     · refine ⟨Finset.filter_subset _ _, ?_⟩
       intro h
       have h1 : 1 ∈ Finset.Icc 1 2016 := by

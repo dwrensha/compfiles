@@ -122,8 +122,8 @@ lemma real_induction
 
 lemma lower_basis :
     @TopologicalSpace.IsTopologicalBasis ℝ tₗ lower_intervals := by
-  refine'
-   @TopologicalSpace.IsTopologicalBasis.mk ℝ tₗ lower_intervals _ _ rfl
+  refine
+   @TopologicalSpace.IsTopologicalBasis.mk ℝ tₗ lower_intervals ?_ ?_ rfl
   · intro I1 hI1 I2 hI2 x hx;
     obtain ⟨a, b, hab⟩ := hI1
     obtain ⟨c, d, hcd⟩ := hI2
@@ -144,8 +144,8 @@ lemma lower_basis :
 
 lemma upper_basis :
     @TopologicalSpace.IsTopologicalBasis ℝ tᵤ upper_intervals := by
-  refine'
-   @TopologicalSpace.IsTopologicalBasis.mk ℝ tᵤ upper_intervals _ _ rfl
+  refine
+   @TopologicalSpace.IsTopologicalBasis.mk ℝ tᵤ upper_intervals ?_ ?_ rfl
   · intro I1 hI1 I2 hI2 x hx;
     obtain ⟨a, b, hab⟩ := hI1
     obtain ⟨c, d, hcd⟩ := hI2
@@ -166,8 +166,8 @@ lemma upper_basis :
 
 lemma open_basis :
     @TopologicalSpace.IsTopologicalBasis ℝ tₛ open_intervals := by
- refine'
-   @TopologicalSpace.IsTopologicalBasis.mk ℝ tₛ open_intervals _ _ rfl
+ refine
+   @TopologicalSpace.IsTopologicalBasis.mk ℝ tₛ open_intervals ?_ ?_ rfl
  · intro I1 hI1 I2 hI2 x hx
    obtain ⟨a, b, hab⟩ := hI1
    obtain ⟨c, d, hcd⟩ := hI2

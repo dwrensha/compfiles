@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2023 David Renshaw. All rights reserved.
+Copyright (c) 2023 The Compfiles Contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: David Renshaw
+Authors:
 -/
 
 import Mathlib.Tactic
@@ -31,6 +31,6 @@ problem imo2018_p2 (n : ℕ) :
       ∃ a : ZMod n → ℝ, ∀ i, a i * a (i + 1) = a (i + 2) := by
   constructor
   · rintro ⟨hn1, hn2⟩
-    refine' ⟨hn1, _⟩
+    refine ⟨hn1, ?_⟩
     sorry
   · sorry

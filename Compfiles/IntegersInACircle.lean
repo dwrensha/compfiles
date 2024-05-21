@@ -80,7 +80,7 @@ problem integers_in_a_circle
     · exact H a ha ha_sum y x hxy'.symm hfxy.symm hle
 
   have h1 : 0 < ∑ i ∈ Finset.Ico x.val y.val, a ↑i := by
-    refine' Finset.sum_pos _ (Finset.nonempty_Ico.mpr hxy)
+    refine Finset.sum_pos ?_ (Finset.nonempty_Ico.mpr hxy)
     aesop
 
   have h8 : (Finset.Ico x.val y.val).card < 101 := by

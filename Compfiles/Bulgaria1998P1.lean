@@ -48,11 +48,11 @@ lemma lemma1 {m n : ℕ} (hmn : m ≤ n) (hm : all_colorings_are_good m) :
     simp only [Subtype.mk_lt_mk, Nat.lt_one_iff, Set.mem_Icc,
                tsub_le_iff_right, exists_and_left]
     simp only [Subtype.mk_lt_mk] at hij1
-    refine' ⟨hij1, _⟩
+    refine ⟨hij1, ?_⟩
     simp only [Nat.lt_one_iff, Set.mem_Icc, tsub_le_iff_right] at hij2
     unfold_let c' at hc1
     simp only at hc1
-    refine' ⟨hc1, _⟩
+    refine ⟨hc1, ?_⟩
     have hij2' : 1 ≤ 2 * j - i ∧ 2 * j ≤ n + i :=
        ⟨hij2.1, le_add_of_le_add_right hij2.2 hmn⟩
     use hij2'
@@ -83,7 +83,7 @@ determine solution_value : ℕ := 9
 problem bulgaria1998_p1 : IsLeast { m | all_colorings_are_good m } solution_value := by
   constructor
   · rw [Set.mem_setOf_eq]
-    refine' ⟨by norm_num, _⟩
+    refine ⟨by norm_num, ?_⟩
     intro color
     sorry
   · rw [mem_lowerBounds]

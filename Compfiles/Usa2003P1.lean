@@ -90,9 +90,8 @@ problem usa2003_p1 (n : ℕ) :
     -- k·2ⁿ + a is divisible by 5...
     suffices h : ∃ k, Odd k ∧ k < 10 ∧ 5 ∣ (2^n * k + a) by
       obtain ⟨k, hk1, hk2, kk, hkk⟩ := h
-      refine' ⟨k, hk1, hk2, _⟩
-      use kk
-      rw[Nat.pow_succ, Nat.mul_assoc, ←hkk, Nat.mul_pow 5 2 n]
+      refine ⟨k, hk1, hk2, kk, ?_⟩
+      rw [Nat.pow_succ, Nat.mul_assoc, ←hkk, Nat.mul_pow 5 2 n]
       ring
 
     -- ...which is true when k ≡ -3ⁿ⬝a MOD 5.
@@ -101,7 +100,7 @@ problem usa2003_p1 (n : ℕ) :
 
     suffices h : ∃ j, j < 5 ∧ 5 ∣ (2^n * (2 * j + 1) + a) by
       obtain ⟨j, hj1, hj2⟩ := h
-      refine' ⟨2 * j + 1, odd_two_mul_add_one j, _, hj2⟩
+      refine ⟨2 * j + 1, odd_two_mul_add_one j, ?_, hj2⟩
       · omega
     clear ha hpm1 hpm3
 

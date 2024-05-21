@@ -169,7 +169,7 @@ problem usa2023_p2 (f : ℝ+ → ℝ+) :
       rw [h21] at h20
       exact h20
 
-    refine' ⟨2 / c.val, c.val - 2 / c.val, div_pos two_pos c.prop, _⟩
+    refine ⟨2 / c.val, c.val - 2 / c.val, div_pos two_pos c.prop, ?_⟩
     intro x
 
     have h15 := h12 x

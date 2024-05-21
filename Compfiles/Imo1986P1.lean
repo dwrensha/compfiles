@@ -58,12 +58,12 @@ theorem imo1986_p1' (d : ℤ):
   have hdodd : Odd d := by use k + k ^ 2
   have hd_sub_one : Even (d - 1) := by use (k + k ^ 2); rw [hdp]; ring
   have hqeven : Even q := by
-    refine' (Int.even_pow' two_ne_zero).mp _
+    refine (Int.even_pow' two_ne_zero).mp ?_
     have heq : 5 * d - 1 = 5 * (d - 1) + 4 := by ring_nf
     rw [← hq, heq]
-    refine'  Even.add (Even.mul_left hd_sub_one 5) (by use 2; rfl)
+    exact Even.add (Even.mul_left hd_sub_one 5) (by use 2; rfl)
   have hreven : Even (r : ℤ) := by
-    refine' (Int.even_pow' two_ne_zero).mp _
+    refine (Int.even_pow' two_ne_zero).mp ?_
     have heq : d * 13 - 1 = 13*(d - 1) + 12 := by
       rw [mul_comm]
       ring_nf
@@ -79,7 +79,7 @@ theorem imo1986_p1' (d : ℤ):
   have h4d : 4 * (2 * d) = 4 * (m^2 - n^2) := by ring_nf; rw [h8d]; ring_nf
   have hnm' : 2*d = (m + n)*(m - n):= by
     rw [← pow_two_sub_pow_two]
-    refine' ((mul_right_inj' _).mp h4d)
+    refine (mul_right_inj' ?_).mp h4d
     decide
   have h2d : Even ((m + n) * (m - n)) := by use d; rw [← two_mul, hnm']
   have hnm_parity : (Even m ↔ Even n) := by
@@ -113,7 +113,7 @@ problem imo1986_p1 (d : ℤ) (_hdpos : 1 ≤ d) (h2 : d ≠ 2) (h5 : d ≠ 5) (h
   have := h.2.2.2.2.2 h13
   cases' this with r hr
   have : (IsSquare (2 * d - 1)) ∧ (IsSquare (5 * d - 1)) ∧ (IsSquare (d * 13 - 1)) := by
-    refine' ⟨_, _, _⟩
+    refine ⟨?_, ?_, ?_⟩
     · use p; rw [← pow_two]; exact hp.symm
     · use q; rw [← pow_two]; exact hq.symm
     · use r; rw [← pow_two]; exact hr.symm

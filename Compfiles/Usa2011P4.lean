@@ -36,7 +36,7 @@ problem usa2011_p4 :
     | .Counterexample m => 2 ≤ m ∧ ¬ P m := by
   -- See https://web.evanchen.cc/exams/USAMO-2011-notes.pdf for an informal proof.
   dsimp
-  refine' ⟨by norm_num, _⟩
+  refine ⟨by norm_num, ?_⟩
   rw [not_exists]
   intro x hx
   rw [show 4 = 2^2 by rfl, ←Nat.pow_mul] at hx

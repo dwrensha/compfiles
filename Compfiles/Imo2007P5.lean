@@ -1,5 +1,5 @@
 /-
-Copyright (c) 2023 David Renshaw. All rights reserved.
+Copyright (c) 2023 The Compfiles Contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Gian Sanjaya
 -/
@@ -33,7 +33,7 @@ lemma bad_symm {n : ℤ} {a b : ℕ} (h : n * a * b - 1 ∣ (n * a ^ 2 - 1) ^ 2)
   rw [← mul_pow, sub_one_mul, mul_mul_mul_comm, ← sq, ← mul_pow, ← mul_pow, ← mul_assoc] at h
   rw [← Int.modEq_zero_iff_dvd] at h ⊢
   revert h
-  refine' ((Int.ModEq.sub_right _ _).pow _).trans
+  refine ((Int.ModEq.sub_right _ ?_).pow _).trans
   nth_rewrite 1 [← one_pow 2]
   exact ((n * a * b).modEq_sub 1).symm.pow 2
 

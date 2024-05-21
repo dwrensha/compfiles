@@ -78,8 +78,8 @@ theorem exists_triplet_summing_to_squares (n : ℕ) (hn : 100 ≤ n) :
   have p : 1 < l := by contrapose! hl1; interval_cases l <;> linarith
   have h₁ : 4 * l ≤ 2 * l ^ 2 := by omega
   have h₂ : 1 ≤ 2 * l := by omega
-  refine' ⟨2 * l ^ 2 - 4 * l, 2 * l ^ 2 + 1, 2 * l ^ 2 + 4 * l, _, _, _,
-    ⟨_, ⟨2 * l - 1, _⟩, ⟨2 * l, _⟩, 2 * l + 1, _⟩⟩
+  refine ⟨2 * l ^ 2 - 4 * l, 2 * l ^ 2 + 1, 2 * l ^ 2 + 4 * l, ?_, ?_, ?_,
+    ⟨?_, ⟨2 * l - 1, ?_⟩, ⟨2 * l, ?_⟩, 2 * l + 1, ?_⟩⟩
   all_goals zify [h₁, h₂]; linarith
 
 -- Since it will be more convenient to work with sets later on, we will translate the above claim
@@ -91,7 +91,7 @@ theorem exists_finset_3_le_card_with_pairs_summing_to_squares (n : ℕ) (hn : 10
       (∀ (a) (_ : a ∈ B) (b) (_ : b ∈ B), a ≠ b → ∃ k, a + b = k ^ 2) ∧
       ∀ c ∈ B, n ≤ c ∧ c ≤ 2 * n := by
   obtain ⟨a, b, c, hna, hab, hbc, hcn, h₁, h₂, h₃⟩ := exists_triplet_summing_to_squares n hn
-  refine' ⟨{a, b, c}, _, _, _⟩
+  refine ⟨{a, b, c}, ?_, ?_, ?_⟩
   · suffices ({a, b, c} : Finset ℕ).card = 3 by rw [this]
     suffices a ∉ {b, c} ∧ b ∉ {c} by
       rw [Finset.card_insert_of_not_mem this.1, Finset.card_insert_of_not_mem this.2,
