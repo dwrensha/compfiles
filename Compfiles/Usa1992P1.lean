@@ -26,10 +26,9 @@ open BigOperators
 
 snip begin
 
-lemma geom_sum (m : ℕ) : 1 + ∑ i ∈ Finset.range m, 2 ^ i = 2 ^ m := by
-  induction' m with m ih
-  · simp
-  · rw [Finset.sum_range_succ, ←add_assoc, ih]; ring
+lemma geom_sum (m : ℕ) : ∑ i ∈ Finset.range m, 2 ^ i + 1 = (1 + 1) ^ m := by
+  rw [←geom_sum_mul_add 1 m]
+  norm_num
 
 lemma digits_sum (m x y : ℕ)
     (h1 : y < 10^m)
@@ -106,7 +105,7 @@ problem usa1992_p1 (n : ℕ) :
     have h5 : b n < 10 ^ 2 ^ (n + 1) := by
       calc _ < 10 ^ ∑ i ∈ Finset.range (n + 1), 2 ^ i := h2 _
            _ = 10 ^ (2 ^ (n + 1) - 1) := by
-               rw [←geom_sum (n + 1)]; simp only [add_tsub_cancel_left]
+               rw [←geom_sum (n + 1)]; simp only [add_tsub_cancel_right]
            _ < 10 ^ 2 ^ (n + 1) := by
              refine (Nat.pow_lt_pow_iff_right (by norm_num)).mpr ?_
              have h6 : 0 < 2 ^ (n + 1) := by positivity
