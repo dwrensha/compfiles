@@ -26,10 +26,6 @@ open BigOperators
 
 snip begin
 
-lemma geom_sum (m : ℕ) : ∑ i ∈ Finset.range m, 2 ^ i + 1 = (1 + 1) ^ m := by
-  rw [←geom_sum_mul_add 1 m]
-  norm_num
-
 lemma digits_sum (m x y : ℕ)
     (h1 : y < 10^m)
     (h2 : 0 < x) :
@@ -104,12 +100,9 @@ problem usa1992_p1 (n : ℕ) :
     -- But b_{n-1} < 10^N,
     have h5 : b n < 10 ^ 2 ^ (n + 1) := by
       calc _ < 10 ^ ∑ i ∈ Finset.range (n + 1), 2 ^ i := h2 _
-           _ = 10 ^ (2 ^ (n + 1) - 1) := by
-               rw [←geom_sum (n + 1)]; simp only [add_tsub_cancel_right]
            _ < 10 ^ 2 ^ (n + 1) := by
              refine (Nat.pow_lt_pow_iff_right (by norm_num)).mpr ?_
-             have h6 : 0 < 2 ^ (n + 1) := by positivity
-             omega
+             exact Nat.geomSum_lt (le_refl _) fun _ hk ↦ Finset.mem_range.mp hk
 
     -- so b_n = (b_{n-1} - 1)10^N + (10^N - b_{n-1})
     have h6 : b (n + 1) = (b n - 1) * 10 ^(2^(n+1)) + (10 ^(2^(n+1)) - b n) := by
