@@ -91,8 +91,8 @@ problem usa1992_p1 (n : ℕ) :
 
     -- ... < 10 to the power of 2^n.
     have h3 : ∀ m, 10^(∑ i ∈ Finset.range m, 2^i) < 10^(2^m) := fun m ↦ by
-      have h4' : 1 + ∑ i ∈ Finset.range m, 2 ^ i = 2 ^ m := geom_sum m
-      have h4 : ∑ i ∈ Finset.range m, 2 ^ i < 2 ^ m := by omega
+      have h4 : ∑ i ∈ Finset.range m, 2 ^ i < 2 ^ m :=
+        Nat.geomSum_lt (le_refl _) fun _ hk ↦ Finset.mem_range.mp hk
       exact (Nat.pow_lt_pow_iff_right (by norm_num)).mpr h4
 
     -- Now b_n = b_{n-1}10^N - b_{n-1}, where N = 2^n.
