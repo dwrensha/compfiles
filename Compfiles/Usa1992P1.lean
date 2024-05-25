@@ -54,18 +54,50 @@ theorem digits_append_zeroes_append_digits {b k m n : ℕ} (hm : 0 < m) (hb : 1 
 
 end digits
 
+lemma digits_pow (m : ℕ) : (Nat.digits 10 (10^m)).length = m + 1 := by
+  induction' m with m ih
+  · simp
+  rw [pow_succ]
+  rw [Nat.digits_def' (by norm_num) (by positivity)]
+  rw [mul_div_cancel_right₀ _ (by norm_num), List.length_cons]
+  rw [ih]
+
+lemma lemma2 {m y: ℕ} (hy : y < 10^m) :
+    (Nat.digits 10 y).length < m + 1:= by
+  revert y
+  induction' m with m ih
+  · intro y hy
+    obtain rfl: y = 0 := by omega
+    simp
+  intro y hy
+  obtain rfl | hyp := Nat.eq_zero_or_pos y
+  · simp
+  rw [Nat.digits_def' (by norm_num) hyp]
+  rw [List.length_cons]
+  rw [Nat.succ_eq_add_one, add_lt_add_iff_right]
+  have h2 : y / 10 < 10 ^ m := by omega
+  exact ih h2
+
 lemma digits_sum (m x y : ℕ)
     (h1 : y < 10^m)
     (h2 : 0 < x) :
     (Nat.digits 10 (x * 10^m + y)).sum =
     (Nat.digits 10 (x * 10^m)).sum + (Nat.digits 10 y).sum := by
-  -- choose k such that (digits 10 (y * 10^k).length = m
-  --   rw [(Nat.digits 10 y).sum = (Nat.digits 10 (y * 10^k)).sum]
-  -- (Nat.digits 10 x).sum + (Nat.digits 10 (y * 10^k)).sum
-  -- (Nat.digits 10 (y * 10^k)).sum + (Nat.digits 10 x).sum
-  -- (Nat.digits 10 (y * 10^k) ++ Nat.digits 10 x).sum
-  --   rw [Nat.digits_append_digits]
-  -- Nat.digits 10 ((y * 10^k) + 10^m * x).sum
+  -- choose k such that (digits 10 y).length + k = m
+  have h3 : (Nat.digits 10 y).length ≤ m := by
+    have h4 := lemma2 h1
+    exact Nat.le_of_lt_succ h4
+  have ⟨k, hk⟩ : ∃ k, k + (Nat.digits 10 y).length = m := by
+    obtain ⟨k, hk⟩ := Nat.le.dest h3
+    rw [add_comm] at hk
+    exact ⟨k, hk⟩
+  nth_rewrite 1 [add_comm, mul_comm]
+  nth_rewrite 1 [←hk]
+  have one_lt_ten : 1 < 10 := by norm_num
+  have h5 := @digits_append_zeroes_append_digits 10 k _ y h2 one_lt_ten
+  rw [←h5]
+  simp only [List.sum_append]
+  simp only [List.sum_replicate, smul_eq_mul, mul_zero, add_zero]
   sorry
 
 snip end
@@ -152,7 +184,10 @@ problem usa1992_p1 (n : ℕ) :
               (Nat.digits 10 ((b n - 1) * 10 ^ 2 ^ (n+1))).sum +
               (Nat.digits 10 (10^2^(n+1) - b n)).sum := by
       sorry
-    have := digits_sum (2^(n+1)) (b n - 1) (10^2^(n+1) - b n) -- ..
+    have h8 : 0 < b n := by sorry
+    have := digits_sum (2^(n+1)) (b n - 1) (10^2^(n+1) - b n)
+             (Nat.sub_lt_self h8 h5.le) -- ..
+
 /-
     Now bn-1 is odd and so its last digit is non-zero, so the digit sum of bn-1 - 1 is one less than the digit sum of bn-1, and hence is 9·2n-1 - 1. Multiplying by 10N does not change the digit sum. (10N - 1) - bn-1 has 2n digits, each 9 minus the corresponding digit of bn-1, so its digit sum is 9·2n - 9·2n-1. bn-1 is odd, so its last digit is not 0 and hence the last digit of (10N - 1) - bn-1 is not 9. So the digit sum of 10N - bn-1 is 9·2n - 9·2n-1 + 1. Hence bn has digit sum (9·2n-1 - 1) + (9·2n - 9·2n-1 + 1) = 9·2n.
     -/
