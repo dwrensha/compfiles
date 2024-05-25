@@ -78,6 +78,20 @@ lemma lemma2 {m y: ℕ} (hy : y < 10^m) :
   have h2 : y / 10 < 10 ^ m := by omega
   exact ih h2
 
+lemma digits_sum_mul_pow {m x : ℕ} :
+    (Nat.digits 10 (x * 10 ^ m)).sum = (Nat.digits 10 x).sum := by
+  cases' x with x
+  · simp
+  induction' m with m ih
+  · simp
+  rw [pow_succ]
+  rw [Nat.digits_def' (by norm_num) (by positivity)]
+  rw [←mul_assoc, Nat.mul_mod, Nat.mod_self, mul_zero, Nat.zero_mod]
+  rw [List.sum_cons, zero_add]
+  have h10 : 10 ≠ 0 := by norm_num
+  rw [mul_div_cancel_right₀ _ h10]
+  exact ih
+
 lemma digits_sum (m x y : ℕ)
     (h1 : y < 10^m)
     (h2 : 0 < x) :
@@ -98,7 +112,8 @@ lemma digits_sum (m x y : ℕ)
   rw [←h5]
   simp only [List.sum_append]
   simp only [List.sum_replicate, smul_eq_mul, mul_zero, add_zero]
-  sorry
+  rw [digits_sum_mul_pow]
+  ring
 
 snip end
 
