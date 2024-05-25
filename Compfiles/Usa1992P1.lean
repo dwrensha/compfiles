@@ -26,6 +26,34 @@ open BigOperators
 
 snip begin
 
+section digits
+
+open Nat
+
+theorem digits_append_zeroes_append_digits {b k m n : ℕ} (hm : 0 < m) (hb : 1 < b) :
+    digits b n ++ List.replicate k 0 ++ digits b m =
+    digits b (n + b ^ (k + (digits b n).length) * m) := by
+  revert m
+  induction' k with k ih
+  · simp [digits_append_digits (zero_lt_of_lt hb)]
+  intro m hm
+  rw [List.replicate_succ']
+  rw [List.append_assoc, List.append_assoc, List.singleton_append]
+  have hmb : 0 < m * b := lt_mul_of_lt_of_one_lt' hm hb
+  let h1 := digits_def' hb hmb
+  have h2 : m * b / b = m := by
+    have : b ≠ 0 := not_eq_zero_of_lt hb
+    exact Eq.symm (Nat.eq_div_of_mul_eq_left this rfl)
+  simp only [mul_mod_left, h2] at h1
+  rw [←h1]
+  have h3 := @ih (m * b)
+  rw [List.append_assoc] at h3
+  rw [h3 hmb]
+  congr 2
+  ring
+
+end digits
+
 lemma digits_sum (m x y : ℕ)
     (h1 : y < 10^m)
     (h2 : 0 < x) :
