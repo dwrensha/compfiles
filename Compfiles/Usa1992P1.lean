@@ -93,10 +93,11 @@ lemma digits_sum_mul_pow {m x : ℕ} :
   exact ih
 
 lemma digits_sum (m x y : ℕ)
-    (h1 : y < 10^m)
-    (h2 : 0 < x) :
+    (h1 : y < 10^m) :
     (Nat.digits 10 (x * 10^m + y)).sum =
     (Nat.digits 10 (x * 10^m)).sum + (Nat.digits 10 y).sum := by
+  cases' x with x
+  · simp
   -- choose k such that (digits 10 y).length + k = m
   have h3 : (Nat.digits 10 y).length ≤ m := by
     have h4 := lemma2 h1
@@ -108,7 +109,7 @@ lemma digits_sum (m x y : ℕ)
   nth_rewrite 1 [add_comm, mul_comm]
   nth_rewrite 1 [←hk]
   have one_lt_ten : 1 < 10 := by norm_num
-  have h5 := @digits_append_zeroes_append_digits 10 k _ y h2 one_lt_ten
+  have h5 := @digits_append_zeroes_append_digits 10 k _ y (Nat.zero_lt_succ x) one_lt_ten
   rw [←h5]
   simp only [List.sum_append]
   simp only [List.sum_replicate, smul_eq_mul, mul_zero, add_zero]
@@ -179,13 +180,14 @@ problem usa1992_p1 (n : ℕ) :
              refine (Nat.pow_lt_pow_iff_right (by norm_num)).mpr ?_
              exact Nat.geomSum_lt (le_refl _) fun _ hk ↦ Finset.mem_range.mp hk
 
+    have h7 : 1 ≤ b n := by
+      dsimp [b]
+      exact Finset.one_le_prod' fun i a ↦ ha1 i
+
     -- so b_n = (b_{n-1} - 1)10^N + (10^N - b_{n-1})
     have h6 : b (n + 1) = (b n - 1) * 10 ^(2^(n+1)) + (10 ^(2^(n+1)) - b n) := by
       rw [h4]
       -- TODO: simpler version via zify
-      have h7 : 1 ≤ b n := by
-        dsimp [b]
-        exact Finset.one_le_prod' fun i a ↦ ha1 i
       have h5' := h5.le
       have h8 : 10 ^ 2 ^ (n + 1) ≤ b n * 10 ^ 2 ^ (n + 1) :=
         Nat.le_mul_of_pos_left (10 ^ 2 ^ (n + 1)) h7
@@ -195,13 +197,14 @@ problem usa1992_p1 (n : ℕ) :
 
     -- and the digit sum of b_n is just
     -- the digit sum of (b_{n-1} - 1)10^N plus the digit sum of (10^N - b_{n-1}).
-    have h7 : (Nat.digits 10 (b (n + 1))).sum =
+    have h8 : (Nat.digits 10 (b (n + 1))).sum =
               (Nat.digits 10 ((b n - 1) * 10 ^ 2 ^ (n+1))).sum +
               (Nat.digits 10 (10^2^(n+1) - b n)).sum := by
-      sorry
-    have h8 : 0 < b n := by sorry
-    have := digits_sum (2^(n+1)) (b n - 1) (10^2^(n+1) - b n)
-             (Nat.sub_lt_self h8 h5.le) -- ..
+     have h9 : 0 < b n := h7
+     have h10 := digits_sum (2^(n+1)) (b n - 1) (10^2^(n+1) - b n)
+               (Nat.sub_lt_self h9 h5.le) -- ..
+     rw [←h10]
+     sorry
 
 /-
     Now bn-1 is odd and so its last digit is non-zero, so the digit sum of bn-1 - 1 is one less than the digit sum of bn-1, and hence is 9·2n-1 - 1. Multiplying by 10N does not change the digit sum. (10N - 1) - bn-1 has 2n digits, each 9 minus the corresponding digit of bn-1, so its digit sum is 9·2n - 9·2n-1. bn-1 is odd, so its last digit is not 0 and hence the last digit of (10N - 1) - bn-1 is not 9. So the digit sum of 10N - bn-1 is 9·2n - 9·2n-1 + 1. Hence bn has digit sum (9·2n-1 - 1) + (9·2n - 9·2n-1 + 1) = 9·2n.
