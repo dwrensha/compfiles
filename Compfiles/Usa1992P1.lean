@@ -249,7 +249,8 @@ problem usa1992_p1 (n : ℕ) :
    omega
 
   -- Now b_{n-1} is odd
-  have h9 : Odd (b n) := by
+  have h9 : ∀ n, Odd (b n) := by
+    intro n
     dsimp [b]
     suffices H : ∀ i ∈ Finset.range (n + 1), Odd (a i) from
       Finset.range_prod_odd H
@@ -283,7 +284,7 @@ problem usa1992_p1 (n : ℕ) :
     have h12 : 10 ∣ b n := Nat.dvd_of_mod_eq_zero h11
     rw [show 10 = 2 * 5 by norm_num] at h12
     have h13 : 2 ∣ b n := by omega
-    have h14 : ¬ 2 ∣ b n := Odd.not_two_dvd_nat h9
+    have h14 : ¬ 2 ∣ b n := Odd.not_two_dvd_nat (h9 _)
     contradiction
 
   -- consider Nat.digits 10 (b n)
@@ -306,7 +307,7 @@ problem usa1992_p1 (n : ℕ) :
       have h12 : 10 ∣ b n := Nat.dvd_of_mod_eq_zero h11
       rw [show 10 = 2 * 5 by norm_num] at h12
       have h13 : 2 ∣ b n := by omega
-      have h14 : ¬ 2 ∣ b n := Odd.not_two_dvd_nat h9
+      have h14 : ¬ 2 ∣ b n := Odd.not_two_dvd_nat (h9 _)
       contradiction
 
     have h12 : (b n - 1) / 10 = b n / 10 := by omega
