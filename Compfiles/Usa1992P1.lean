@@ -203,8 +203,9 @@ problem usa1992_p1 (n : ℕ) :
      have h9 : 0 < b n := h7
      have h10 := digits_sum (2^(n+1)) (b n - 1) (10^2^(n+1) - b n)
                (Nat.sub_lt_self h9 h5.le) -- ..
-     rw [←h10]
-     sorry
+     rw [←h10, h4]
+     congr 2
+     omega
 
 /-
     Now bn-1 is odd and so its last digit is non-zero, so the digit sum of bn-1 - 1 is one less than the digit sum of bn-1, and hence is 9·2n-1 - 1. Multiplying by 10N does not change the digit sum. (10N - 1) - bn-1 has 2n digits, each 9 minus the corresponding digit of bn-1, so its digit sum is 9·2n - 9·2n-1. bn-1 is odd, so its last digit is not 0 and hence the last digit of (10N - 1) - bn-1 is not 9. So the digit sum of 10N - bn-1 is 9·2n - 9·2n-1 + 1. Hence bn has digit sum (9·2n-1 - 1) + (9·2n - 9·2n-1 + 1) = 9·2n.
