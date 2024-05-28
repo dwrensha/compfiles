@@ -5,9 +5,9 @@ Authors: David Renshaw
 -/
 
 import Aesop
-import Mathlib.Data.Nat.Interval
 import Mathlib.Data.Set.Basic
 import Mathlib.Data.Fintype.Card
+import Mathlib.Order.Interval.Finset.Nat
 import Mathlib.Tactic.Ring
 
 import ProblemExtraction

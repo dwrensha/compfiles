@@ -6,7 +6,7 @@ Authors: Antoine Labelle
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
 import Mathlib.Data.Fintype.BigOperators
 import Mathlib.Data.Finset.Sort
-import Mathlib.Data.Fin.Interval
+import Mathlib.Order.Interval.Finset.Fin
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.ByContra
 

@@ -4,9 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mantas Bakšys
 -/
 import Mathlib.Data.Real.Basic
-import Mathlib.Data.Nat.Interval
 import Mathlib.Algebra.Order.Rearrangement
 import Mathlib.Algebra.BigOperators.Ring
+import Mathlib.Order.Interval.Finset.Nat
 
 import ProblemExtraction
 
