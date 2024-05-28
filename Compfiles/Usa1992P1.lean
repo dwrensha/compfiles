@@ -298,7 +298,7 @@ problem usa1992_p1 (n : ℕ) :
   have one_lt_ten : 1 < 10 := by norm_num
 
   -- so the digit sum of b_{n-1} - 1 is one less than the digit sum of b_{n-1},
-  have h11 : (Nat.digits 10 (b n - 1)).sum + 1 = (Nat.digits 10 (b n)).sum := by
+  have h11 : (Nat.digits 10 (b n - 1)).sum = (Nat.digits 10 (b n)).sum - 1 := by
     rw [Nat.digits_def' one_lt_ten (by omega)]
     nth_rewrite 2 [Nat.digits_def' one_lt_ten (by omega)]
     rw [List.sum_cons, List.sum_cons]
@@ -318,7 +318,11 @@ problem usa1992_p1 (n : ℕ) :
   -- and hence is 9·2_{n-1} - 1
   rw [ih, solution] at h11
 
+  -- Multiplying by 10N does not change the digit sum.
+  rw [digits_sum_mul_pow, h11] at h8
+  clear h11
+
 /-
-    Multiplying by 10N does not change the digit sum. (10N - 1) - bn-1 has 2n digits, each 9 minus the corresponding digit of bn-1, so its digit sum is 9·2n - 9·2n-1. bn-1 is odd, so its last digit is not 0 and hence the last digit of (10N - 1) - bn-1 is not 9. So the digit sum of 10N - bn-1 is 9·2n - 9·2n-1 + 1. Hence bn has digit sum (9·2n-1 - 1) + (9·2n - 9·2n-1 + 1) = 9·2n.
+   (10^N - 1) - b_{n-1} has 2^n digits, each 9 minus the corresponding digit of b_{n-1}, so its digit sum is 9·2n - 9·2n-1. bn-1 is odd, so its last digit is not 0 and hence the last digit of (10N - 1) - bn-1 is not 9. So the digit sum of 10N - bn-1 is 9·2n - 9·2n-1 + 1. Hence bn has digit sum (9·2n-1 - 1) + (9·2n - 9·2n-1 + 1) = 9·2n.
     -/
   sorry
