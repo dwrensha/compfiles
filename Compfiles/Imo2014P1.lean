@@ -28,7 +28,7 @@ snip begin
 lemma lemma0 {p : ℕ → Prop} (h : ∃! n, p (n + 1)) : (∃! n, 0 < n ∧ p n) := by
   obtain ⟨n, hn1, hn2⟩ := h
   use n + 1
-  refine' ⟨⟨Nat.succ_pos n, hn1⟩, _⟩
+  refine ⟨⟨Nat.succ_pos n, hn1⟩, ?_⟩
   rintro m ⟨hm1, hm2⟩
   have hm3 := hn2 (m - 1)
   dsimp only at hm3
@@ -57,7 +57,7 @@ lemma lemma1 (s : ℕ → ℤ) (hs : ∀ i, s i < s (i + 1)) (z : ℤ) (hs0 : s 
     omega
   use Nat.find h3
   dsimp [S]
-  refine' ⟨⟨_, _⟩, _⟩
+  refine ⟨⟨?_, ?_⟩, ?_⟩
   · have h4 := Nat.find_min h3 (m := (Nat.find h3 - 1))
     cases' Nat.eq_zero_or_pos (Nat.find h3) with h5 h5
     · rwa [h5]
@@ -71,7 +71,7 @@ lemma lemma1 (s : ℕ → ℤ) (hs : ∀ i, s i < s (i + 1)) (z : ℤ) (hs0 : s 
   · rintro m ⟨hm1, hm2⟩
     symm
     rw [Nat.find_eq_iff]
-    refine' ⟨hm2, _⟩
+    refine ⟨hm2, ?_⟩
     intro k hk
     intro hkk
     have h9 : s (k + 1) ≤ s m := (StrictMono.le_iff_le hmono).mpr hk
@@ -106,7 +106,7 @@ problem imo2014_p1 (a : ℕ → ℤ) (apos : ∀ i, 0 < a i) (ha : ∀ i, a i < 
     rw [hb, hb]
     constructor
     · rintro ⟨hj0, hj1, hj2⟩
-      refine' ⟨hj0, _, _⟩
+      refine ⟨hj0, ?_, ?_⟩
       · suffices H : ↑j * a j < ∑ i in Finset.range j, a (i + 1) + a 0 by
           exact Int.sub_left_lt_of_lt_add H
         rwa [Finset.sum_range_succ'] at hj1
@@ -115,7 +115,7 @@ problem imo2014_p1 (a : ℕ → ℤ) (apos : ∀ i, 0 < a i) (ha : ∀ i, a i < 
         push_cast
         linarith
     · rintro ⟨hj0, hj1, hj2⟩
-      refine' ⟨hj0, _, _⟩
+      refine ⟨hj0, ?_, ?_⟩
       · have H := Int.lt_add_of_sub_left_lt hj1
         rwa [Finset.sum_range_succ']
       · rw [Finset.sum_range_succ']

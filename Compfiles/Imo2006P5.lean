@@ -192,7 +192,7 @@ snip end
 
 problem imo2006_p5 {P : Polynomial ℤ} (hP : 1 < P.natDegree) {k : ℕ} (hk : 0 < k) :
     (P.comp^[k] X - X).roots.toFinset.card ≤ P.natDegree := by
-  refine' (Finset.card_le_card fun t ht => _).trans (imo2006_p5' hP)
+  refine (Finset.card_le_card fun t ht => ?_).trans (imo2006_p5' hP)
   have hP' : P.comp P - X ≠ 0 := by
     simpa [Nat.iterate] using Polynomial.iterate_comp_sub_X_ne hP zero_lt_two
   replace ht := isRoot_of_mem_roots (Multiset.mem_toFinset.1 ht)

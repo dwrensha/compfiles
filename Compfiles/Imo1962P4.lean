@@ -75,7 +75,7 @@ theorem solve_cos2_half {x : ℝ} : cos x ^ 2 = 1 / 2 ↔ ∃ k : ℤ, x = (2 * 
 
 theorem solve_cos3x_0 {x : ℝ} : cos (3 * x) = 0 ↔ ∃ k : ℤ, x = (2 * ↑k + 1) * π / 6 := by
   rw [cos_eq_zero_iff]
-  refine' exists_congr fun k => _
+  refine exists_congr fun k => ?_
   constructor <;> intro <;> linarith
 
 end
