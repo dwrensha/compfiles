@@ -45,7 +45,7 @@ theorem not_zero {n : ℕ} (h1 : ProblemPredicate n) : n ≠ 0 :=
 theorem ge_100 {n : ℕ} (h1 : ProblemPredicate n) : 100 ≤ n := by
   have h2 : 10 ^ 3 ≤ 10 * n := by
     rw [← h1.left]
-    refine' Nat.base_pow_length_digits_le 10 n _ (not_zero h1)
+    refine Nat.base_pow_length_digits_le 10 n ?_ (not_zero h1)
     simp
   linarith
 
@@ -68,12 +68,12 @@ theorem searchUpTo_step {c n} (H : SearchUpTo c n) {c' n'} (ec : c + 1 = c') (en
     (el : Nat.digits 10 n = l) (H' : c = sumOfSquares l → c = 50 ∨ c = 73) : SearchUpTo c' n' := by
   subst ec; subst en; subst el
   obtain ⟨rfl, H⟩ := H
-  refine' ⟨by ring, fun m l p => _⟩
+  refine ⟨by ring, fun m l p => ?_⟩
   obtain ⟨h₁, ⟨m, rfl⟩, h₂⟩ := id p
   by_cases h : 11 * m < c * 11; · exact H _ h p
   obtain rfl : m = c := by omega
   rw [Nat.mul_div_cancel_left _ (by norm_num : 11 > 0), mul_comm] at h₂
-  refine' (H' h₂).imp _ _ <;> · rintro rfl; norm_num
+  refine (H' h₂).imp ?_ ?_ <;> · rintro rfl; norm_num
 
 theorem searchUpTo_end {c} (H : SearchUpTo c 1001) {n : ℕ} (ppn : ProblemPredicate n) :
     SolutionPredicate n :=
@@ -91,7 +91,7 @@ theorem right_direction {n : ℕ} : ProblemPredicate n → SolutionPredicate n :
 Now we just need to prove the equivalence, for the precise problem statement.
 -/
 theorem left_direction (n : ℕ) (spn : SolutionPredicate n) : ProblemPredicate n := by
-  rcases spn with (rfl | rfl) <;> refine' ⟨by norm_num, by decide, by norm_num; rfl⟩
+  rcases spn with (rfl | rfl) <;> exact ⟨by norm_num, by decide, by norm_num; rfl⟩
 
 snip end
 
