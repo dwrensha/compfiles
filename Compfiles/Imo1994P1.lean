@@ -3,8 +3,8 @@ Copyright (c) 2021 Antoine Labelle. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Antoine Labelle
 -/
+import Mathlib.Algebra.Group.Fin
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
-import Mathlib.Data.Fintype.BigOperators
 import Mathlib.Data.Finset.Sort
 import Mathlib.Order.Interval.Finset.Fin
 import Mathlib.Tactic.Linarith
@@ -27,8 +27,6 @@ such that for any two indices `i` and `j` with `1 ≤ i ≤ j ≤ m` and `aᵢ +
 there exists an index `k` such that `aᵢ + aⱼ = aₖ`.
 Show that `(a₁+a₂+...+aₘ)/m ≥ (n+1)/2`
 -/
-
-open scoped BigOperators
 
 open Finset
 
