@@ -77,10 +77,9 @@ lemma general_chinese_remainder (xs : List ChinesePair)
       exact Nat.ModEq.trans h4 h2
 
 lemma list_upper_bound (l : List ℕ) : ∃ m : ℕ, ∀ x ∈ l, x ≤ m := by
-  match h : l.maximum with
-  | none => use 0; intro x a; rw [List.maximum_eq_none] at h
-            rw [h] at a; exact (List.not_mem_nil _ a).elim
-  | some mx => use mx; intro x hx; exact List.le_maximum_of_mem hx h
+  use List.foldr max ⊥ l
+  intro a ha
+  exact List.le_max_of_le ha (le_refl _)
 
 theorem get_primes (n m : ℕ) :
     ∃ lst : List ℕ, lst.length = n ∧ lst.Nodup ∧
