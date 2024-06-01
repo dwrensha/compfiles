@@ -37,17 +37,13 @@ lemma usa1998_p5_stronger (n : ℕ) :
     obtain ⟨Sp, sp_nonnegative, sp_card, hsp⟩ := ih
     let L : ℤ := ∏ s in Sp, ∏ t in Sp.erase s, (s-t)^2
 
-    have all_terms_pos :
-      ∀ s ∈ Sp, ∀ t ∈ Sp.erase s, 0 < (s-t)^2 := by
-          intro s _hs t ht
-          obtain ⟨t_ne_s, _⟩ := Finset.mem_erase.mp ht
-          have : s - t ≠ 0 := sub_ne_zero_of_ne t_ne_s.symm
-          positivity
-
     have inner_prod_pos :
-      ∀ s ∈ Sp, 0 < ∏ t in Sp.erase s, (s-t)^2 := by
-        intro s hs
-        exact Finset.prod_pos (all_terms_pos s hs)
+      ∀ s ∈ Sp, 0 < ∏ t in Sp.erase s, (s-t)^2 := fun s _ ↦ by
+        apply Finset.prod_pos
+        intro t ht
+        obtain ⟨t_ne_s, _⟩ := Finset.mem_erase.mp ht
+        have : s - t ≠ 0 := sub_ne_zero_of_ne t_ne_s.symm
+        positivity
 
     have L_pos : 0 < L := Finset.prod_pos inner_prod_pos
 
