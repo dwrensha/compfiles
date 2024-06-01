@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: David Renshaw
 -/
 
-import Mathlib.Algebra.BigOperators.Basic
+import Mathlib.Algebra.BigOperators.Group.Finset
 import Mathlib.Data.Stream.Defs
 import Mathlib.Data.Stream.Init
 import Mathlib.Tactic.Ring
@@ -55,8 +55,6 @@ lemma break_into_words_cons
     (break_into_words (first_length::lengths) a).tail =
            break_into_words lengths (a.drop first_length) := by
   simp [break_into_words, Stream'.corec, Stream'.tail_map, Stream'.tail_iterate]
-
-open scoped BigOperators
 
 lemma break_into_words_closed_form
     (lengths : Stream' ℕ)

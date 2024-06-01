@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: David Renshaw
 -/
 
-import Mathlib.Algebra.BigOperators.Basic
+import Mathlib.Algebra.BigOperators.Group.Finset
 import Mathlib.Algebra.BigOperators.Intervals
 import Mathlib.Data.Int.ModEq
 import Mathlib.Data.Finset.Interval
@@ -29,7 +29,6 @@ ends in the digit 9.
 -/
 
 namespace Usa1998P1
-open BigOperators
 
 snip begin
 

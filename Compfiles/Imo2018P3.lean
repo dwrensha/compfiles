@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: David Renshaw
 -/
 
-import Mathlib.Algebra.BigOperators.Basic
+import Mathlib.Algebra.BigOperators.Group.Finset
 
 import ProblemExtraction
 
@@ -29,7 +29,6 @@ integer from 1 to 1 + 2 + ... + 2018?
 -/
 
 namespace Imo2018P3
-open BigOperators
 
 structure Coords where
 (row : ℕ) (col : ℕ)

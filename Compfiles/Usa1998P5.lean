@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: David Renshaw
 -/
 
-import Mathlib.Algebra.BigOperators.Basic
+import Mathlib.Algebra.BigOperators.Group.Finset
 import Mathlib.Algebra.Order.BigOperators.Ring.Finset
 import Mathlib.Data.Finset.Card
 import Mathlib.Tactic.Positivity
@@ -24,8 +24,6 @@ Prove that for each n ≥ 2, there is a set S of n integers such that
 namespace Usa1998P5
 
 snip begin
-
-open BigOperators
 
 lemma usa1998_p5_stronger (n : ℕ) :
     ∃ S : Finset ℤ,

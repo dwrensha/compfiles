@@ -6,7 +6,7 @@ Authors: David Renshaw
 
 import Mathlib.Algebra.Order.Archimedean
 import Mathlib.Data.Real.Basic
-import Mathlib.Algebra.BigOperators.Basic
+import Mathlib.Algebra.BigOperators.Group.Finset
 import Mathlib.Analysis.SpecificLimits.Basic
 
 import ProblemExtraction
@@ -28,8 +28,6 @@ for every x,y ∈ ℝ⁺.
 namespace Bulgaria1998P3
 
 snip begin
-
-open scoped BigOperators
 
 lemma geom_sum_bound (n : ℕ) : ∑ i ∈ Finset.range n, (1:ℝ) / (2^i) < 3 :=
   calc ∑ i ∈ Finset.range n, (1:ℝ) / ((2:ℝ)^i)
