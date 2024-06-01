@@ -23,14 +23,17 @@ Prove that for each n ≥ 2, there is a set S of n integers such that
 
 namespace Usa1998P5
 
-snip begin
-
-lemma usa1998_p5_stronger (n : ℕ) :
+problem usa1998_p5 (n : ℕ) (_hn : 2 ≤ n) :
     ∃ S : Finset ℤ,
-       (∀ x ∈ S, 0 ≤ x) ∧
        S.card = n ∧
        ∀ a ∈ S, ∀ b ∈ S, a ≠ b → (a - b)^2 ∣ a * b := by
   -- (Adaptation of informal proof from Andreescu & Feng.)
+  suffices H : ∃ S : Finset ℤ,(∀ x ∈ S, 0 ≤ x) ∧
+       S.card = n ∧
+       ∀ a ∈ S, ∀ b ∈ S, a ≠ b → (a - b)^2 ∣ a * b by
+    obtain ⟨S, _, hS2⟩ := H
+    exact ⟨S, hS2⟩
+  clear _hn
   induction n with
   | zero => use ∅; simp
   | succ n ih =>
@@ -112,12 +115,3 @@ lemma usa1998_p5_stronger (n : ℕ) :
             have hab : a - b = α - β := by omega
             rw [ha2, hb2, hab] at Lmod'
             exact Int.dvd_of_emod_eq_zero Lmod'
-
-snip end
-
-problem usa1998_p5 (n : ℕ) (_hn : 2 ≤ n) :
-    ∃ S : Finset ℤ,
-       S.card = n ∧
-       ∀ a ∈ S, ∀ b ∈ S, a ≠ b → (a - b)^2 ∣ a * b := by
-  obtain ⟨S, _, hS⟩ := usa1998_p5_stronger n
-  exact ⟨S, hS⟩
