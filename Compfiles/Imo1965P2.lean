@@ -28,8 +28,6 @@ Prove that x₁ = x₂ = x₃ = 0.
 
 namespace Imo1965P2
 
-open scoped BigOperators
-
 snip begin
 
 abbrev propEqs (x : Fin 3 → ℝ) (a : Fin 3 → Fin 3 → ℝ) : Prop :=

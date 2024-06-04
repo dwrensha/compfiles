@@ -25,8 +25,6 @@ grasshopper never lands on any point in M.
 
 namespace Imo2009P6
 
-open scoped BigOperators
-
 snip begin
 
 lemma lemma1 (n : ℕ) (a : Fin n → ℤ) :

@@ -25,8 +25,6 @@ Prove that
 
 namespace Iran1998P3
 
-open BigOperators
-
 snip begin
 
 lemma cube_root_cube (x : ℝ) (h: 0 ≤ x): (x^(3:ℝ)) ^ ((1:ℝ)/3) = x := by

@@ -20,8 +20,6 @@ Let n be a natural number such that n ≥ 2. Show that
 
 namespace Canada1998P3
 
-open BigOperators
-
 problem canada1998_p3 (n : ℕ) (hn : 2 ≤ n) :
     (1/(n:ℝ)) * ∑ i ∈ Finset.range n, (1/(2 * (i:ℝ) + 2)) <
     (1/((n:ℝ) + 1)) * ∑ i ∈ Finset.range n, (1/(2 * (i:ℝ) + 1)) := by

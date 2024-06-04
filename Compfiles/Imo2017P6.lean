@@ -26,8 +26,6 @@ for each (x,y) ∈ S.
 
 namespace Imo2017P6
 
-open scoped BigOperators
-
 problem imo2017_p6 (S : Finset (ℤ × ℤ)) (hS : ∀ s ∈ S, gcd s.1 s.2 = 1) :
     ∃ n : ℕ, 0 < n ∧ ∃ a : ℕ → ℤ,
       ∀ s ∈ S, ∑ i ∈ Finset.range n, a i * s.1 ^ i * s.2 ^ (n - i) = 1 := by

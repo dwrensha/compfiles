@@ -30,8 +30,6 @@ namespace Imo2013P5
 
 snip begin
 
-open BigOperators
-
 /-
 # Solution
 

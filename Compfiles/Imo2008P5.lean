@@ -42,8 +42,6 @@ abbrev MSequence (n k : ℕ) (f : Sequence n k) : Prop :=
 
 snip begin
 
-open scoped BigOperators
-
 -- We follow the informal solution from
 -- https://web.evanchen.cc/exams/IMO-2008-notes.pdf
 

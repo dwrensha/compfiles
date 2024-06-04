@@ -22,7 +22,6 @@ where each factor has twice as many digits as the last one.
 -/
 
 namespace Usa1992P1
-open BigOperators
 
 snip begin
 

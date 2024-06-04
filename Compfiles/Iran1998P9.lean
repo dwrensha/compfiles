@@ -27,8 +27,6 @@ namespace Iran1998P9
 
 snip begin
 
-open BigOperators
-
 lemma compute_norm (v : EuclideanSpace ℝ (Fin 3)) : ‖v‖ = Real.sqrt (∑i : Fin 3, (v i)^2) := by
   rw[EuclideanSpace.norm_eq v]
   congr; ext

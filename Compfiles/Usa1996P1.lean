@@ -20,7 +20,6 @@ for n ∈ {2,4,6,…,180} is 1/tan(π/180).
 -/
 
 namespace Usa1996P1
-open BigOperators
 
 problem usa1996_p1 :
     (1 / (90:ℝ)) * ∑ n ∈ Finset.range 90, (2 * (n+1)) * Real.sin ((2 * (n+1)) * Real.pi / 180)

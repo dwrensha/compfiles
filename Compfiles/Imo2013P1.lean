@@ -21,7 +21,6 @@ m₁, m₂, ..., mₖ (not necessarily different) such that
 
 -/
 
-open scoped BigOperators
 namespace Imo2013P1
 
 snip begin

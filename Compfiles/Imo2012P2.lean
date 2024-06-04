@@ -21,8 +21,6 @@ Show that
 
 namespace Imo2012P2
 
-open scoped BigOperators
-
 problem imo2012_p2 (n : ℕ) (hn : 3 ≤ n) (a : Finset.Icc 2 n → ℝ)
     (apos : ∀ i, 0 < a i) (aprod : ∏ i, a i = 1) :
     (n:ℝ)^n < ∏ i, (1 + a i)^i.val := by

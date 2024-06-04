@@ -22,8 +22,6 @@ Determine, with proof, which of the two numbers, u or v, is larger.
 
 namespace Usa1989P5
 
-open scoped BigOperators
-
 determine u_is_larger : Bool := false
 
 problem usa1989_p5

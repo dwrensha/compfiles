@@ -25,8 +25,6 @@ aₘ = aₘ₊₁ for all m ≥ M.
 
 namespace Imo2018P5
 
-open scoped BigOperators
-
 problem imo2018_p5
     (a : ℕ → ℤ)
     (apos : ∀ n, 0 < a n)

@@ -21,8 +21,6 @@ equals the product of the nubmers in the other set.
 
 namespace Imo1970P4
 
-open scoped BigOperators
-
 determine SolutionSet : Finset ℕ+ := sorry
 
 problem imo1970_p4 (n : ℕ+) :

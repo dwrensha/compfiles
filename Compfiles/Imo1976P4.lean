@@ -19,8 +19,6 @@ of positive integers whose sum is 1976.
 
 namespace Imo1976P4
 
-open scoped BigOperators
-
 determine solution : ℕ := sorry
 
 problem imo1976_p4 :

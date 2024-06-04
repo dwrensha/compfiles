@@ -22,8 +22,6 @@ Show that
 
 namespace Imo2021P2
 
-open scoped BigOperators
-
 problem imo2021_p2 (n : ℕ) (x : Fin n → ℝ) :
     ∑ i, ∑ j, √|x i - x j| ≤ ∑ i, ∑ j, √|x i + x j| := by
   sorry

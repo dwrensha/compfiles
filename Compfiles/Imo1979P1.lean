@@ -22,8 +22,6 @@ Prove that p is divisible by 1979.
 
 namespace Imo1979P1
 
-open scoped BigOperators
-
 snip begin
 
 lemma lemma3 : ∑ i ∈ Finset.range 1319, (-(1:ℚ))^i / (i + 1) =

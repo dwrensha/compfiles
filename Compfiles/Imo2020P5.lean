@@ -24,8 +24,6 @@ For which n does it follow that the numbers on the cards are all equal?
 
 namespace Imo2020P5
 
-open scoped BigOperators
-
 determine SolutionSet : Set ℕ := sorry
 
 noncomputable def geometric_mean {α : Type} (f : α → ℕ+) (s : Finset α) : ℝ :=

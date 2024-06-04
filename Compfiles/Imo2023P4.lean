@@ -24,8 +24,6 @@ Prove that 3034 ≤ a₂₀₂₃.
 
 namespace Imo2023P4
 
-open BigOperators
-
 noncomputable def a (x : Finset.Icc 1 2023 → ℝ) (n : Finset.Icc 1 2023) : ℝ :=
   √((∑ i ∈ Finset.univ.filter (· ≤ n), x i) *
     (∑ i ∈ Finset.univ.filter (· ≤ n), (1 / x i)))

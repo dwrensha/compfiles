@@ -23,7 +23,6 @@ Let x, y, z be integers with z > 1. Show that
 -/
 
 namespace Hungary1998P6
-open BigOperators
 
 snip begin
 

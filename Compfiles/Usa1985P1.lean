@@ -24,8 +24,6 @@ with distinct integers x₁, x₂, ⋯, x₁₉₈₅.
 
 namespace Usa1985P1
 
-open scoped BigOperators
-
 snip begin
 
 lemma nicomachus (n : ℕ) :

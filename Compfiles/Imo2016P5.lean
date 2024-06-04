@@ -25,8 +25,6 @@ equation has no real solutions?
 
 namespace Imo2016P5
 
-open scoped BigOperators
-
 snip begin
 
 lemma lemma1 {α : Type*} [DecidableEq α] (s : Finset α) (p : α → Prop) [DecidablePred p] :

@@ -25,7 +25,7 @@ elements. Prove that $∑_{k=0}^n k p_{n,k}=n!$.
 
 namespace Imo1987P1
 
-open scoped BigOperators Nat
+open scoped Nat
 open Finset (range)
 
 snip begin

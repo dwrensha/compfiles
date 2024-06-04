@@ -27,8 +27,6 @@ for every integer n ≥ 1.
 
 namespace Imo2023P3
 
-open BigOperators
-
 determine SolutionSet {k : ℕ} (hk : 2 ≤ k) : Set (ℕ+ → ℕ+) := sorry
 
 problem imo2023_p3 {k : ℕ} (hk : 2 ≤ k) (a : ℕ+ → ℕ+) :

@@ -21,8 +21,6 @@ Prove that there exists a unique integer n ≥ 1 such that
 
 namespace Imo2014P1
 
-open scoped BigOperators
-
 snip begin
 
 lemma lemma0 {p : ℕ → Prop} (h : ∃! n, p (n + 1)) : (∃! n, 0 < n ∧ p n) := by

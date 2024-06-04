@@ -20,8 +20,6 @@ members have the same sum.
 
 namespace Imo1972P1
 
-open scoped BigOperators
-
 problem imo1972_p1 (S : Finset ℕ)
     (Scard : S.card = 10)
     (Sdigits : ∀ n ∈ S, (Nat.digits 10 n).length = 2) :

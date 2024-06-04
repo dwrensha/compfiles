@@ -27,7 +27,6 @@ Prove that
 -/
 
 namespace Usa1998P3
-open BigOperators
 
 snip begin
 

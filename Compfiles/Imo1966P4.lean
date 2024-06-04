@@ -23,8 +23,6 @@ integer and k any integer,
 
 namespace Imo1966P4
 
-open BigOperators
-
 problem imo1966_p4 (n : ℕ) (x : ℝ)
     (hx : ∀ t : ℕ, ∀ k : ℤ, x ≠ k * Real.pi / 2^t) :
     ∑ i ∈ Finset.range n, 1 / Real.sin (2^(i + 1) * x) =

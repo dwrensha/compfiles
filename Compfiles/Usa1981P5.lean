@@ -22,7 +22,6 @@ where the sum goes from k = 1 to k = n, inclusive.
 -/
 
 namespace Usa1981P5
-open BigOperators
 
 problem usa1981_p5 (x : ℝ) (n : ℕ) :
     ∑ k ∈ Finset.Icc 1 n, ((⌊k * x⌋:ℝ)/k) ≤ ⌊n * x⌋ := by

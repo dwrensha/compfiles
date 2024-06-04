@@ -21,8 +21,6 @@ A contains at least m/2 elements.
 
 namespace Imo2021P6
 
-open scoped BigOperators
-
 problem imo2021_p6 (m : ℕ) (hm : 2 ≤ m) (A : Finset ℤ)
     (B : Fin m → Finset ℤ) (hB : ∀ k, B k ⊆ A)
     (hs : ∀ k, ∑ b ∈ B k, b = (m : ℤ) ^ (k.val + 1))
