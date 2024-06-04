@@ -38,14 +38,12 @@ theorem digits_append_zeroes_append_digits {b k m n : ℕ} (hm : 0 < m)
   induction' k with k ih
   · simp [digits_append_digits (zero_lt_of_lt hb)]
   intro m hm
-  rw [List.replicate_succ']
-  rw [List.append_assoc, List.append_assoc, List.singleton_append]
+  rw [List.replicate_succ', List.append_assoc, List.append_assoc, List.singleton_append]
   have hmb : 0 < m * b := lt_mul_of_lt_of_one_lt' hm hb
   let h1 := digits_def' hb hmb
-  have h2 : m * b / b = m := by
-    have : b ≠ 0 := not_eq_zero_of_lt hb
-    exact Eq.symm (Nat.eq_div_of_mul_eq_left this rfl)
-  simp only [mul_mod_left, h2] at h1
+  have h2 : m = m * b / b := by
+    exact Nat.eq_div_of_mul_eq_left (not_eq_zero_of_lt hb) rfl
+  simp only [mul_mod_left, ←h2] at h1
   rw [←h1, ←List.append_assoc, ih hmb]
   ring_nf
 
