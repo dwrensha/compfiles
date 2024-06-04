@@ -47,9 +47,9 @@ theorem digits_append_zeroes_append_digits {b k m n : ℕ} (hm : 0 < m)
     exact Eq.symm (Nat.eq_div_of_mul_eq_left this rfl)
   simp only [mul_mod_left, h2] at h1
   rw [←h1]
-  have h3 := @ih (m * b)
+  have h3 := ih hmb
   rw [List.append_assoc] at h3
-  rw [h3 hmb]
+  rw [h3]
   congr 2
   ring
 
