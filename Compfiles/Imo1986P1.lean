@@ -4,7 +4,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Moritz Firsching
 -/
 import Mathlib.Data.Fintype.Card
-import Mathlib.Data.Int.Parity
 import Mathlib.Data.Nat.ModEq
 import Mathlib.Data.ZMod.Basic
 import Mathlib.Tactic
