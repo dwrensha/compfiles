@@ -13,7 +13,7 @@ problem_file { tags := [.Algebra] }
 /-!
 # International Mathematical Olympiad 1977, Problem 4
 
-Define f(x) = 1 - a cos x - b sin x - A cos 2x - B sin 2x, where a, b, A, B are real constants. Suppose that f(x) ≥ 0 for all real x. Prove that a2 + b2 ≤ 2 and A2 + B2 ≤ 1.
+Define f(x) = 1 - a cos x - b sin x - A cos 2x - B sin 2x, where a, b, A, B are real constants. Suppose that f(x) ≥ 0 for all real x. Prove that a^2 + b^2 ≤ 2 and A^2 + B^2 ≤ 1.
 -/
 
 namespace Imo1977P4

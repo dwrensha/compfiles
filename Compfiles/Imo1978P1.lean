@@ -18,4 +18,4 @@ m and n are positive integers with m < n. The last three decimal digits of 1978m
 
 namespace Imo1978P1
 
-problem imo1978_p1 (m n : ℕ) (hmn: m < n) (hmn2:m = 3 ∧ n=103) : (1978^m) % 1000 = (1978^n) % 1000) ∧ (∀ m' n' : ℕ, m' < n' ∧ (1978^m') % 1000 = (1978^n') % 1000 → m + n ≤ m' + n') := by sorry
+problem imo1978_p1 (m n : ℕ) (hmn: m < n) (hmn2:m = 3 ∧ n = 103) : (1978^m) % 1000 = (1978^n) % 1000 ∧ (∀ m' n' : ℕ, m' < n' ∧ (1978^m') % 1000 = (1978^n') % 1000 → m + n ≤ m' + n') := by sorry

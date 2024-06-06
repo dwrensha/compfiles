@@ -13,7 +13,7 @@ problem_file { tags := [.NumberTheory] }
 /-!
 # International Mathematical Olympiad 1971, Problem 3
 
-Prove that we can find an infinite set of positive integers of the form 2n - 3 (where n is a positive integer) every pair of which are relatively prime.
+Prove that we can find an infinite set of positive integers of the form 2^n - 3 (where n is a positive integer) every pair of which are relatively prime.
 -/
 
 namespace Imo1971P3

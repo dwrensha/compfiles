@@ -13,7 +13,7 @@ problem_file { tags := [.Algebra] }
 /-!
 # International Mathematical Olympiad 1998, Problem 6
 
-Consider all functions f from the set of all positive integers into itself satisfying f(t2f(s)) = s f(t)2 for all s and t. Determine the least possible value of f(1998).
+Consider all functions f from the set of all positive integers into itself satisfying f(t^2f(s)) = sf(t)^2 for all s and t. Determine the least possible value of f(1998).
 -/
 
 namespace Imo1998P6

@@ -15,9 +15,9 @@ problem_file { tags := [.Algebra] }
 
 Find all real numbers a for which there exist non-negative real numbers x1, x2, x3, x4, x5 satisfying:
 
-x1 + 2x2 + 3x3 + 4x4 + 5x5 = a,  
-  x1 + 23x2 + 33x3 + 43x4 + 53x5 = a2,  
-  x1 + 25x2 + 35x3 + 45x4 + 55x5 = a3.
+x1 + 2x_2 + 3x_3 + 4x_4 + 5x_5 = a,
+x1 + 2^3x_2 + 3^3x_3 + 4^3x_4 + 5^3x_5 = a^2,
+x1 + 2^5x_2 + 3^5x_3 + 4^5x_4 + 5^5x_5 = a^3.
 -/
 
 namespace Imo1979P5

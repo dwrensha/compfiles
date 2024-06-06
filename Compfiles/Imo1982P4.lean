@@ -15,7 +15,7 @@ problem_file { tags := [.NumberTheory] }
 
 Prove that if n is a positive integer such that the equation
 
-x3 - 3xy2 + y3 = n
+x3 - 3xy^2 + y^3 = n
 
 has a solution in integers x, y, then it has at least three such solutions. Show that the equation has no solutions in integers for n = 2891.
 -/

@@ -13,7 +13,7 @@ problem_file { tags := [.Algebra] }
 /-!
 # International Mathematical Olympiad 1975, Problem 2
 
-Let a1 < a2 < a3 < ... be positive integers. Prove that for every i >= 1, there are infinitely many an that can be written in the form an = rai + saj, with r, s positive integers and j > i.
+Let a1 < a2 < a3 < ... be positive integers. Prove that for every i >= 1, there are infinitely many a_n that can be written in the form a_n = ra_i + sa_j, with r, s positive integers and j > i.
 -/
 
 namespace Imo1975P2
