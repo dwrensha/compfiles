@@ -18,4 +18,6 @@ For any positive integer $n$, let $d(n)$ denote the number of positive divisors 
 
 namespace Imo1998P3
 
-problem imo1998_p3 (k : ℕ) : (∃ n : ℕ, (Finset.card (Nat.divisors (n^2)))/(Finset.card (Nat.divisors n)) = k) ↔ k % 2=1 := by sorry
+determine solution_set : Set ℕ := {x | ∃ k : ℕ , (x = 2 * k + 1)}
+
+problem imo1998_p3 (k : ℕ) : (∃ n : ℕ, (Finset.card (Nat.divisors (n^2)))/(Finset.card (Nat.divisors n)) = k) ↔ k ∈ solution_set := by sorry
