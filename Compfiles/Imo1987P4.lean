@@ -99,8 +99,8 @@ theorem imo1987_p4_generalized (m : ℕ) :
                   {x | x < 2 * m + 1} _ _ (by rw [ab_range])
     simp only [hc, Fintype.card_ofFinset, Finset.card_range]
 
-  have a_fintype := subset_fintype (Set.subset_union_left A B) ab_fintype
-  have b_fintype := subset_fintype (Set.subset_union_right A B) ab_fintype
+  have a_fintype := subset_fintype Set.subset_union_left ab_fintype
+  have b_fintype := subset_fintype Set.subset_union_right ab_fintype
   have h3 := @Set.toFinset_union ℕ A B _ a_fintype b_fintype ab_fintype
   rw [← @Set.toFinset_card _ (A ∪ B) ab_fintype] at h2
   rw [h3] at h2; clear h3

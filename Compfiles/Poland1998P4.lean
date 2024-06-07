@@ -104,7 +104,7 @@ lemma can_get_a_later_one_zmod :
   intro n hn
 
   obtain (hlt : n < 2) | (hlte : 2 ≤ n) := lt_or_ge n 2
-  · exact ⟨5, Nat.le.step <| Nat.le.step <| Nat.le.step hlt, rfl⟩
+  · exact ⟨5, Nat.le.step <| Nat.le.step <| Nat.le.step hlt, by simp [a', a]⟩
 
   let n1 : ℕ := 2 * (n - 1) + 1
 
@@ -254,7 +254,7 @@ lemma strengthen
       exact h (pn.succ) hmp
 
 theorem poland1998_p4' : (∀ N : ℕ, ∃ M : ℕ, N < M ∧ 7 ∣ a M) := by
-  have he : 7 ∣ a 5 := Nat.dvd_refl 7
+  have he : 7 ∣ a 5 := by simp [a', a]
   exact strengthen can_get_a_later_one ⟨5, he⟩
 
 snip end

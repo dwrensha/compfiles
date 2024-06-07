@@ -68,13 +68,13 @@ problem imo1972_p1 (S : Finset ℕ)
   let A' := A \ C
   let B' := B \ C
   refine ⟨A', B', ?_, ?_, ?_, ?_⟩
-  · have h10 : A' ⊆ A := Finset.sdiff_subset _ _
+  · have h10 : A' ⊆ A := Finset.sdiff_subset
     have h11 : A ⊆ S := by
       intro a ha
       rw [Finset.mem_powerset] at hA
       exact hA ha
     exact h10.trans h11
-  · have h10 : B' ⊆ B := Finset.sdiff_subset _ _
+  · have h10 : B' ⊆ B := Finset.sdiff_subset
     have h11 : B ⊆ S := by
       intro b hb
       rw [Finset.mem_powerset] at hB
@@ -83,8 +83,8 @@ problem imo1972_p1 (S : Finset ℕ)
   · rw[Finset.disjoint_iff_ne]
     intro a ha b hb
     aesop
-  · have h12 : C ⊆ A := Finset.inter_subset_left _ _
-    have h13 : C ⊆ B := Finset.inter_subset_right _ _
+  · have h12 : C ⊆ A := Finset.inter_subset_left
+    have h13 : C ⊆ B := Finset.inter_subset_right
     have h14 := Finset.sum_sdiff (f := id) h12
     have h15 := Finset.sum_sdiff (f := id) h13
     unfold_let A' B'

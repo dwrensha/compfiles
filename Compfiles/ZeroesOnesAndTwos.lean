@@ -111,7 +111,7 @@ def prepend_one (n : ℕ) := 10 ^ (List.length (Nat.digits 10 n)) + n
 
 lemma prepend_one_pos (n: ℕ) : 0 < prepend_one n := by
   cases' n
-  · decide
+  · simp [prepend_one]
   · rw [prepend_one]; norm_num
 
 lemma digits_len' (n : ℕ) (hn : 0 < n) :
