@@ -1,7 +1,7 @@
 /-
 Copyright (c) 2024 The Compfiles Contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: InternLM-MATH LEAN Formalizer v0.1. This is auto-formalized by InternLM-MATH LEAN Formalizer v0.1, modified and verified by InternLM-MATH team members.
+Authors: InternLM-MATH LEAN Formalizer v0.1
 -/
 
 import Mathlib.Tactic

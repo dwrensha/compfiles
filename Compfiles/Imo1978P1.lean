@@ -1,7 +1,7 @@
 /-
 Copyright (c) 2024 The Compfiles Contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: InternLM-MATH LEAN Formalizer v0.1. This is auto-formalized by InternLM-MATH LEAN Formalizer v0.1, modified and verified by InternLM-MATH team members.
+Authors: InternLM-MATH LEAN Formalizer v0.1
 -/
 
 import Mathlib.Tactic
@@ -18,4 +18,6 @@ m and n are positive integers with m < n. The last three decimal digits of 1978m
 
 namespace Imo1978P1
 
-problem imo1978_p1 (m n : ℕ) (hmn: m < n) (hmn2:m = 3 ∧ n = 103) : (1978^m) % 1000 = (1978^n) % 1000 ∧ (∀ m' n' : ℕ, m' < n' ∧ (1978^m') % 1000 = (1978^n') % 1000 → m + n ≤ m' + n') := by sorry
+determine solution_set : Set (ℕ × ℕ) := {(3, 103)}
+
+problem imo1978_p1 (m n : ℕ) (hmn: m < n) (hmn2: (m, n) ∈ solution_set) : (1978^m) % 1000 = (1978^n) % 1000 ∧ (∀ m' n' : ℕ, m' < n' ∧ (1978^m') % 1000 = (1978^n') % 1000 → m + n ≤ m' + n') := by sorry

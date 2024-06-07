@@ -1,7 +1,7 @@
 /-
 Copyright (c) 2024 The Compfiles Contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: InternLM-MATH LEAN Formalizer v0.1. This is auto-formalized by InternLM-MATH LEAN Formalizer v0.1, modified and verified by InternLM-MATH team members.
+Authors: InternLM-MATH LEAN Formalizer v0.1
 -/
 
 import Mathlib.Tactic
@@ -18,4 +18,4 @@ Prove that we can find an infinite set of positive integers of the form 2^n - 3 
 
 namespace Imo1971P3
 
-problem imo1971_p3 : ∀ M : ℕ, ∃ n m : ℕ, n > m ∧ m > M ∧ Nat.Coprime (2 ^ n - 3) (2 ^ m - 3) := by sorry
+problem imo1971_p3 : Set.Infinite {(n, m) : ℕ × ℕ | Nat.Coprime (2 ^ n - 3) (2 ^ m - 3)} := by sorry

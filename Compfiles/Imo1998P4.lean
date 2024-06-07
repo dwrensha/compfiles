@@ -1,7 +1,7 @@
 /-
 Copyright (c) 2024 The Compfiles Contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: InternLM-MATH LEAN Formalizer v0.1. This is auto-formalized by InternLM-MATH LEAN Formalizer v0.1, modified and verified by InternLM-MATH team members.
+Authors: InternLM-MATH LEAN Formalizer v0.1
 -/
 
 import Mathlib.Tactic
@@ -17,5 +17,7 @@ Determine all pairs (a, b) of positive integers such that ab^2 + b + 7 divides a
 -/
 
 namespace Imo1998P4
+
+determine solution : ℝ := 2^997
 
 problem imo1998_p4 (a b : ℕ) : a * b^2 + b + 7 ∣ a^2 * b + a + b ↔ a = 11 ∧ b =1 ∨ a = 49 ∧ b = 1 ∨ (∃ k : ℕ , k > 0 ∧ a = 7 * k ^ 2 ∧ b = 7 * k) := by sorry

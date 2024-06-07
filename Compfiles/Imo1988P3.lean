@@ -1,7 +1,7 @@
 /-
 Copyright (c) 2024 The Compfiles Contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: InternLM-MATH LEAN Formalizer v0.1. This is auto-formalized by InternLM-MATH LEAN Formalizer v0.1, modified and verified by InternLM-MATH team members.
+Authors: InternLM-MATH LEAN Formalizer v0.1
 -/
 
 import Mathlib.Tactic
@@ -20,4 +20,6 @@ for all positive integers $n.$ Determine with proof the number of positive integ
 
 namespace Imo1988P3
 
-problem imo1988_p3 (f : ℕ → ℕ) (h₀ : f 1 = 1) (h₁ : f 3 = 3) (h₂ : ∀ n, f (2 * n) = f n) (h₃ : ∀ n, f (4 * n + 1) = 2 * f (2 * n + 1) - f n) (h₄ : ∀ n, f (4 * n + 3) = 3 * f (2 * n + 1) - 2 * f n) (A: Finset {n | 0 < n ∧ n ≤ 1988 ∧ f n = n}) : A.card = 92 := by sorry
+determine solution : ℕ := 92
+
+problem imo1988_p3 (f : ℕ → ℕ) (h₀ : f 1 = 1) (h₁ : f 3 = 3) (h₂ : ∀ n, f (2 * n) = f n) (h₃ : ∀ n, f (4 * n + 1) = 2 * f (2 * n + 1) - f n) (h₄ : ∀ n, f (4 * n + 3) = 3 * f (2 * n + 1) - 2 * f n) (A: Finset {n | 0 < n ∧ n ≤ 1988 ∧ f n = n}) : A.card = solution := by sorry
