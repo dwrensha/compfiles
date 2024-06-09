@@ -192,6 +192,11 @@ div.toplevel-tables {
     align-items: center;
 }
 
+p.authors {
+    font-style: italic;
+    font-size: 14px;
+}
+
 a.external::after {
 /* TODO */
 }

@@ -350,13 +350,12 @@ unsafe def main (_args : List String) : IO Unit := do
           h.putStrLn "<pre class=\"problem\"><code class=\"language-lean\">"
           h.putStr (htmlEscape problem_src)
           h.putStrLn "</code></pre>"
+          if !metadata.authors.isEmpty then
+            h.putStrLn s!"<p class='authors'>File author(s): {", ".intercalate metadata.authors}</p>"
           if proved
           then
-            let authors :=
-              if metadata.authors.isEmpty then "" else
-              s!" written by {" and ".intercalate metadata.authors}"
             h.putStrLn
-              s!"<p>This problem <a class=\"external\" href=\"{solutionUrl}\">has a complete formalized solution</a>{authors}.</p>"
+              s!"<p>This problem <a class=\"external\" href=\"{solutionUrl}\">has a complete formalized solution</a>.</p>"
           else
             h.putStrLn
               s!"<p>This problem <a class=\"external\" href=\"{solutionUrl}\">does not yet have a complete formalized solution</a>.</p>"
