@@ -20,9 +20,10 @@ Determine the least possible value of f(1998).
 
 namespace Imo1998P6
 
-determine solution : ℕ := 120
+determine solution : ℕ+ := 120
 
 problem imo1998_p6
-  (f : ℕ → ℕ)
-  (h : ∀ s t, f (t^2 * f s) = s * (f t)^2) :
-    IsLeast {n : ℕ | n = f 1998} solution := by sorry
+    (f : ℕ+ → ℕ+)
+    (h : ∀ s t, f (t^2 * f s) = s * (f t)^2) :
+    IsLeast {n : ℕ | n = f 1998} solution := by
+  sorry
