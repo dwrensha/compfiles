@@ -23,7 +23,9 @@ Prove that there exists a real number $k$ such that $f(k) = k$ for all $f$ in $G
 namespace Imo1973P5
 
 problem imo1973_p5 {G : Set (ℝ → ℝ)}
-  (hf: ∀ f : ℝ → ℝ, f ∈ G → (∃ a b : ℝ, a ≠ 0 ∧ ∀ x : ℝ, f x = a * x + b))
-  (hG : ∀ f g : ℝ → ℝ, f ∈ G ∧ g ∈ G → g ∘ f ∈ G)
-  (hinv : ∀ f : ℝ → ℝ, f ∈ G → (∀ x, f x ≠ 0) → f⁻¹ ∈ G)
-  (hfix : ∀ f : ℝ → ℝ, f ∈ G → ∃ x, f x = x) : ∃ k : ℝ, ∀ f : ℝ → ℝ, f ∈ G → f k = k := by sorry
+    (hf: ∀ f ∈ G, ∃ a b : ℝ, a ≠ 0 ∧ ∀ x : ℝ, f x = a * x + b)
+    (hG : ∀ f ∈ G, ∀ g ∈ G, g ∘ f ∈ G)
+    (hinv : ∀ f ∈ G, (∀ x, f x ≠ 0) → f⁻¹ ∈ G)
+    (hfix : ∀ f ∈ G, ∃ x, f x = x) :
+    ∃ k : ℝ, ∀ f ∈ G, f k = k := by
+  sorry
