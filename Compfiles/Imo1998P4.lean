@@ -18,6 +18,8 @@ Determine all pairs (a, b) of positive integers such that ab^2 + b + 7 divides a
 
 namespace Imo1998P4
 
-determine solution_set : Set (ℕ × ℕ) := {(11, 1), (49, 1)} ∪ {(x,y) | ∃ k : ℕ , (x = 7 * k^2 ∧ y = 7 * k)}
+determine solution_set : Set (ℕ × ℕ) := {(11, 1), (49, 1)} ∪
+  {(x,y) | ∃ k : ℕ , (x = 7 * k^2 ∧ y = 7 * k)}
 
-problem imo1998_p4 (a b : ℕ) : a * b^2 + b + 7 ∣ a^2 * b + a + b ↔ (a, b) ∈ solution_set := by sorry
+problem imo1998_p4 (a b : ℕ) :
+  a * b^2 + b + 7 ∣ a^2 * b + a + b ↔ (a, b) ∈ solution_set := by sorry
