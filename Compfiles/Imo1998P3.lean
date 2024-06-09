@@ -20,8 +20,10 @@ Determine all positive integers $k$ such that $d(n^2)/d(n) = k$ for some $n$.
 
 namespace Imo1998P3
 
-determine solution_set : Set ℕ := {x | ∃ k : ℕ , (x = 2 * k + 1)}
+determine solution_set : Set ℕ := {x | ∃ k : ℕ , x = 2 * k + 1}
 
 problem imo1998_p3 (k : ℕ) :
-  (∃ n : ℕ, (Finset.card (Nat.divisors (n ^ 2))) / (Finset.card (Nat.divisors n)) = k) ↔
-    k ∈ solution_set := by sorry
+    k ∈ solution_set ↔
+    ∃ n : ℕ,
+     (Finset.card (Nat.divisors (n ^ 2))) = k * Finset.card (Nat.divisors n) := by
+  sorry
