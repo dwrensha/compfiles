@@ -46,13 +46,11 @@ theorem halve_even (x : ℕ+) (he : Even x.val) : 0 < x.val / 2 := by
 def valid_moves (a : ℕ+) (n : ℕ) : State n → List (State n)
 | ⟨b, .Alice⟩ =>
       (List.finRange n).map
-        (fun i ↦ ⟨fun j ↦ if i = j then b j + a else b j, .Bob⟩)
+        (fun i ↦ ⟨Function.update b i (b i + a), .Bob⟩)
 | ⟨b, .Bob⟩ =>
       (List.finRange n).filterMap
         (fun i ↦ if he : Even (b i).val
-                 then some ⟨fun j ↦ if hji : j = i
-                                    then ⟨b j / 2, by rw [hji]; exact halve_even _ he⟩
-                                    else b j,
+                 then some ⟨Function.update b i ⟨b i / 2, halve_even _ he⟩,
                             .Alice⟩
                  else none)
 
