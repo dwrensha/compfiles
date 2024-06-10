@@ -1,5 +1,5 @@
 /-
-Copyright (c) 2023 The Compfiles Contributors. All rights reserved.
+Copyright (c) 2024 The Compfiles Contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Adam Kurkiewicz
 -/
@@ -51,36 +51,41 @@ lemma div_4_mul_of_both_even {a b : ℤ } (H : Even a ∧ Even b) : 4 ∣ a * b 
 
 snip end
 
-def is_square (n : ℤ) : Prop :=
-  ∃ k : ℤ, k^2 = n
-
-problem poland2016_s1_p8 (a b c : ℤ) : ∃ n : ℤ, ¬ (n > 0 → is_square (n^3 + a * n^2 + b * n + c)) := by
+problem poland2016_s1_p8 (a b c : ℤ) : ∃ n : ℤ, n > 0 ∧ ¬ IsSquare (n^3 + a * n^2 + b * n + c) := by
   apply not_forall_not.mp
   intro H
   apply H 1
-  intro H1
   have : (1 : ℤ) > 0 := by positivity
-  obtain ⟨k, H1⟩ := H1 this
+  constructor
+  exact this
+  intro H1
+  obtain ⟨k, H1⟩ := H1
   apply H 2
-  intro H2
   have : (2 : ℤ) > 0 := by positivity
-  obtain ⟨l, H2⟩ := H2 this
+  constructor
+  exact this
+  intro H2
+  obtain ⟨l, H2⟩ := H2
   apply H 3
-  intro H3
   have : (3 : ℤ) > 0 := by positivity
-  obtain ⟨m, H3⟩ := H3 this
+  constructor
+  exact this
+  intro H3
+  obtain ⟨m, H3⟩ := H3
   apply H 4
-  intro H4
   have : (4 : ℤ) > 0 := by positivity
-  obtain ⟨n, H4⟩ := H4 this
-  have m_square_minus_k_square : m^2 - k^2 = 2 * (13 + 4 * a + b) := by
-    rw [H3, H1]
+  constructor
+  exact this
+  intro H4
+  obtain ⟨n, H4⟩ := H4
+  have m_square_minus_k_square : m * m - k * k = 2 * (13 + 4 * a + b) := by
+    rw [←H3, ←H1]
     ring
-  have n_square_minus_l_square : n^2 - l^2 = 2 * (28 + 6 * a + b) := by
-    rw [H4, H2]
+  have n_square_minus_l_square : n * n - l * l = 2 * (28 + 6 * a + b) := by
+    rw [←H4, ←H2]
     ring
-  have difference_m_square_k_square_as_product : m^2 - k^2 = (m + k) * (m - k) := by ring
-  have difference_n_square_l_square_as_product : n^2 - l^2 = (n + l) * (n - l) := by ring
+  have difference_m_square_k_square_as_product : m * m - k * k = (m + k) * (m - k) := by ring
+  have difference_n_square_l_square_as_product : n * n - l * l = (n + l) * (n - l) := by ring
   have even_m_square_minus_k_square : Even ((m + k) * (m - k)) := by
     use 13 + 4 * a + b
     rw [← difference_m_square_k_square_as_product, m_square_minus_k_square]
