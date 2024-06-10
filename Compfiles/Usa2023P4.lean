@@ -28,48 +28,51 @@ either player's moves.
 
 namespace Usa2023P4
 
-abbrev Blackboard (n : ℕ) : Type := Fin n → ℕ+
+inductive Player where
+| Alice : Player
+| Bob : Player
 
-structure AliceMoveResult {n : ℕ} (a : ℕ+) (b0 : Blackboard n) where
-  b : Blackboard n
-  i : Fin n
-  h1 : b0 i + a = b i
-  h2 : ∀ j, j ≠ i → b0 j = b j
+abbrev Blackboard (n : ℕ) := Fin n → ℕ+
 
-abbrev AliceStrategy (n : ℕ) (a : ℕ+) := (b0 : Blackboard n) → AliceMoveResult a b0
+structure State (n : ℕ) where
+  board : Blackboard n
+  turn : Player
 
-abbrev NoValidMoves {n : ℕ} (b : Blackboard n) : Prop := ∀ i, Odd (b i).val
+theorem halve_even (x : ℕ+) (he : Even x.val) : 0 < x.val / 2 := by
+   obtain ⟨x, hx⟩ := x
+   obtain ⟨t, ht⟩ := he
+   dsimp at *; omega
 
-inductive BobMoveResult {n : ℕ} (b0 : Blackboard n) where
-| halve :
-  (b : Blackboard n) → (i : Fin n) → (b0 i = b i * 2) → (∀ j, j ≠ i → b0 j = b j) →
-     BobMoveResult b0
-| no_moves : NoValidMoves b0 → BobMoveResult b0
+def valid_moves (a : ℕ+) (n : ℕ) : State n → List (State n)
+| ⟨b, .Alice⟩ =>
+      (List.finRange n).map
+        (fun i ↦ ⟨fun j ↦ if i = j then b j + a else b j, .Bob⟩)
+| ⟨b, .Bob⟩ =>
+      (List.finRange n).filterMap
+        (fun i ↦ if he : Even (b i).val
+                 then some ⟨fun j ↦ if hji : j = i
+                                    then ⟨b j / 2, by rw [hji]; exact halve_even _ he⟩
+                                    else b j,
+                            .Alice⟩
+                 else none)
 
-abbrev BobStrategy (n : ℕ) := (b0 : Blackboard n) → BobMoveResult b0
+inductive BobCanForceEnd (a : ℕ+) (n : ℕ) : State n → Prop where
+| BaseCase (b : Blackboard n) :
+    valid_moves a n ⟨b, .Bob⟩ = [] → BobCanForceEnd a n ⟨b, .Bob⟩
+| BobTurn (b : Blackboard n) (m : State n) :
+          (m ∈ valid_moves a n ⟨b, .Bob⟩) → BobCanForceEnd a n m →
+          BobCanForceEnd a n ⟨b, .Bob⟩
+| AliceTurn (b : Blackboard n) :
+            (∀ m ∈ valid_moves a n ⟨b, .Alice⟩, BobCanForceEnd a n m) →
+            BobCanForceEnd a n ⟨b, .Alice⟩
 
-inductive Gamestate' (n : ℕ) where
-| active : Blackboard n → Gamestate' n
-| done : Gamestate' n
-
-/-- Alice and Bob each make a single move, in sequence. -/
-def takeTurn {n : ℕ} (a : ℕ+) (as : AliceStrategy n a) (bs : BobStrategy n)
-    : Gamestate' n → Gamestate' n
-| .done => .done
-| .active b =>
-  match bs (as b).b with
-  | .halve b .. => .active b
-  | .no_moves _ => .done
-
-def is_done {n : ℕ} : Gamestate' n → Prop
-| .done => True
-| _ => False
+inductive EndIsInevitable (a : ℕ+) (n : ℕ) : State n → Prop where
+| BaseCase (s : State n) : valid_moves a n s = [] → EndIsInevitable a n s
+| Step (s : State n)
+       (h : ∀ m ∈ valid_moves a n s, EndIsInevitable a n m) :
+       EndIsInevitable a n s
 
 problem usa2023_p4 (a : ℕ+) (N : ℕ) (hN : 0 < N) (b0 : Blackboard N)
-    (h1 : ∃ bs : BobStrategy N,
-           ∀ as : AliceStrategy N a,
-             ∃ k, is_done ((takeTurn a as bs)^[k] (.active b0)))
-    : ∀ bs : BobStrategy N,
-        ∀ as : AliceStrategy N a,
-         ∃ k, is_done ((takeTurn a as bs)^[k] (.active b0)) := by
+    (he : BobCanForceEnd a N ⟨b0, .Alice⟩) :
+    EndIsInevitable a N ⟨b0, .Alice⟩ := by
   sorry
