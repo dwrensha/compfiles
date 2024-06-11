@@ -145,6 +145,7 @@ import Compfiles.Iran1998P3
 import Compfiles.Iran1998P9
 import Compfiles.KolmogorovStreams
 import Compfiles.Poland1998P4
+import Compfiles.Poland2016S1P8
 import Compfiles.Romania1998P12
 import Compfiles.Russia1998P42
 import Compfiles.UpperLowerContinuous
