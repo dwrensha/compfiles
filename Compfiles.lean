@@ -189,4 +189,3 @@ import Compfiles.Usa2023P4
 import Compfiles.Usa2023P5
 import Compfiles.Usa2024P2
 import Compfiles.ZeroesOnesAndTwos
-import Compfiles.Poland2016S1P8
