@@ -55,29 +55,17 @@ problem poland2016_s1_p8 (a b c : ℤ) : ∃ n : ℤ, n > 0 ∧ ¬ IsSquare (n^3
   apply not_forall_not.mp
   intro H
   apply H 1
-  have : (1 : ℤ) > 0 := by positivity
-  constructor
-  exact this
-  intro H1
-  obtain ⟨k, H1⟩ := H1
+  refine ⟨by positivity, ?_⟩
+  rintro ⟨k, H1⟩
   apply H 2
-  have : (2 : ℤ) > 0 := by positivity
-  constructor
-  exact this
-  intro H2
-  obtain ⟨l, H2⟩ := H2
+  refine ⟨by positivity, ?_⟩
+  rintro ⟨l, H2⟩
   apply H 3
-  have : (3 : ℤ) > 0 := by positivity
-  constructor
-  exact this
-  intro H3
-  obtain ⟨m, H3⟩ := H3
+  refine ⟨by positivity, ?_⟩
+  rintro ⟨m, H3⟩
   apply H 4
-  have : (4 : ℤ) > 0 := by positivity
-  constructor
-  exact this
-  intro H4
-  obtain ⟨n, H4⟩ := H4
+  refine ⟨by positivity, ?_⟩
+  rintro ⟨n, H4⟩
   have m_square_minus_k_square : m * m - k * k = 2 * (13 + 4 * a + b) := by
     rw [←H3, ←H1]
     ring
