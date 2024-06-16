@@ -36,9 +36,9 @@ lemma mod_plus_pow (m n : ℕ) : (m + 3)^n % 3 = m^n % 3 := by
     exact Nat.ModEq.mul rfl hpn
 
 lemma foo1 (m n : ℕ) (ho : Odd m) : (m + 3) ^ n.succ % 2 = 0 := by
-  cases' ho with w hw
-  rw[hw, Nat.pow_succ, show 2 * w + 1 + 3 = 2 * (w + 2) by ring, Nat.mul_mod,
-     Nat.mul_mod_right, mul_zero, Nat.zero_mod]
+  obtain ⟨w, hw⟩ := ho
+  rw [hw, Nat.pow_succ, show 2 * w + 1 + 3 = 2 * (w + 2) by ring,
+      Nat.mul_mod, Nat.mul_mod_right, mul_zero, Nat.zero_mod]
 
 snip end
 
