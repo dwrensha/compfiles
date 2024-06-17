@@ -9,6 +9,6 @@
 # replace all `/` with `.`
 # remove the `.lean` suffix
 # prepend `import `
-find Compfiles/ -name \*.lean \
+find Compfiles -name \*.lean \
   | sed 's,^\./,,;s,/,.,g;s,\.lean$,,;s,^,import ,' \
-  | sort -V > Compfiles.lean
+  | sort -V -t . -k 2 > Compfiles.lean
