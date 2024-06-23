@@ -26,7 +26,7 @@ open Real
 
 problem usa1992_p2 :
   ∑ i ∈ Finset.range 89, 1 / cos (i * π / 180) / cos ((i + 1) * π / 180) =
-  cos (π / 180) / sin (π / 180) / sin (π / 180) := by
+  cos (π / 180) / sin (π / 180) ^ 2 := by
 
   have cosi : ∀ {i : ℕ}, i < 90 → (↑i * π / 180).cos ≠ 0 := by
     intro i hi
@@ -44,7 +44,8 @@ problem usa1992_p2 :
     exact cosi (show 89 < 90 by norm_num)
 
   norm_cast
-  rw [← (mul_right_inj' ha), mul_div_assoc', mul_div_right_comm, div_self ha, one_mul, Finset.mul_sum]
+  rw [sq, div_mul_eq_div_div, ← (mul_right_inj' ha), mul_div_assoc',
+      mul_div_right_comm, div_self ha, one_mul, Finset.mul_sum]
   conv => lhs; arg 2; intro i; rw [div_div, mul_div_assoc', mul_one]
   suffices new_goal : (∑ i ∈ Finset.range 89, (π / 180).sin / ((↑i * π / 180).cos * (↑(i + 1) * π / 180).cos)) =
                       (∑ i ∈ Finset.range 89, (((↑(i + 1)) * π / 180).sin / ((↑(i + 1)) * π / 180).cos - (↑i * π / 180).sin / (↑i * π / 180).cos))
