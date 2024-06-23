@@ -25,7 +25,8 @@ namespace Usa1992P2
 open Real
 
 problem usa1992_p2 :
-  (∑ i ∈ Finset.range 89, 1 / cos (i * π / 180) / cos ((i + 1) * π / 180)) = cos (π / 180) / sin (π / 180) / sin (π / 180) := by
+  ∑ i ∈ Finset.range 89, 1 / cos (i * π / 180) / cos ((i + 1) * π / 180) =
+  cos (π / 180) / sin (π / 180) / sin (π / 180) := by
 
   have cosi : ∀ {i : ℕ}, i < 90 → (↑i * π / 180).cos ≠ 0 := by
     intro i hi
