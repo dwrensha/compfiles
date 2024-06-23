@@ -5,7 +5,6 @@ Authors: Hongyu Ouyang
 -/
 
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
-import Mathlib.Data.Nat.Digits
 import Mathlib.Data.Real.Pi.Bounds
 import Mathlib.Tactic
 
@@ -40,7 +39,7 @@ problem usa1992_p2 :
 
   have ha : sin (π / 180) ≠ 0 := by
     rw [← Real.cos_pi_div_two_sub]
-    rw [show (π / 2 - π / 180) = (89 * π / 180) by linarith only]
+    rw [show (π / 2 - π / 180) = (89 * π / 180) by ring]
     exact cosi (show 89 < 90 by norm_num)
 
   norm_cast
@@ -52,13 +51,13 @@ problem usa1992_p2 :
   rw [Finset.sum_range_sub (fun i ↦ (↑i * π / 180).sin / (↑i * π / 180).cos) 89]
   simp only [Nat.cast_ofNat, CharP.cast_eq_zero, zero_mul, zero_div, sin_zero, cos_zero, div_one, sub_zero]
   rw [← Real.cos_pi_div_two_sub, ← Real.cos_pi_div_two_sub]
-  rw [show (π / 2 - 89 * π / 180) = π / 180 by linarith only]
-  rw [show (π / 2 - π / 180) = 89 * π / 180 by linarith only]
+  rw [show (π / 2 - 89 * π / 180) = π / 180 by ring]
+  rw [show (π / 2 - π / 180) = 89 * π / 180 by ring]
 
   apply Finset.sum_congr rfl
   simp only [Finset.mem_range]
   intro i hi
-  rw [show (π / 180) = ((i + 1) : ℝ) * π / 180 - (i : ℝ) * π / 180 by linarith only]
+  rw [show (π / 180) = ((i + 1) : ℝ) * π / 180 - (i : ℝ) * π / 180 by ring]
   rw [Real.sin_sub, sub_div]
   norm_cast
   ring_nf
