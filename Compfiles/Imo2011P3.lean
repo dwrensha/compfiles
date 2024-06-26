@@ -35,11 +35,10 @@ problem imo2011_p3 (f : ℝ → ℝ) (hf : ∀ x y, f (x + y) ≤ y * f x + f (f
            _ ≤ (t - x) * f x + f (f x)     := hf x (t - x)
            _ = t * f x - x * f x + f (f x) := by rw [sub_mul]
 
-  have hab : ∀ a b, a * f a + b * f b ≤ 2 * f a * f b := by
-    intro a b
-    linarith [hf b (f a), hf a (f b)]
-
   have f_of_neg : ∀ x < 0, 0 ≤ f x := by
+    have hab : ∀ a b, a * f a + b * f b ≤ 2 * f a * f b := fun a b ↦ by
+      linarith [hf b (f a), hf a (f b)]
+
     intro x hx
     have h : x * f x ≤ 0 := add_le_iff_nonpos_left.mp (hab x (2 * f x))
     exact nonneg_of_mul_nonpos_right h hx
