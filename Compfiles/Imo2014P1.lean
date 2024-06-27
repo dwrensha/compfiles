@@ -124,4 +124,4 @@ problem imo2014_p1 (a : ℕ → ℤ) (apos : ∀ i, 0 < a i) (ha : ∀ i, a i < 
   have h3 : ∃! n, b (n + 1) < a 0 ∧ a 0 ≤ b (n + 2) :=
     lemma1 (fun i ↦ b (i + 1)) hm' (a 0) (hb1.trans_lt (apos 0))
   replace h3 := lemma0 (p := fun n ↦ b n < a 0 ∧ a 0 ≤ b (n + 1)) h3
-  exact (exists_unique_congr h1).mpr h3
+  exact (existsUnique_congr h1).mpr h3
