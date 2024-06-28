@@ -8,6 +8,7 @@ import Mathlib.Data.Set.Finite
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Abel
 import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.Ring
 
 import ProblemExtraction
 
