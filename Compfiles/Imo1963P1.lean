@@ -71,7 +71,6 @@ problem imo1963_p1 : ∀ (p x : ℝ), (x ^ 2 - p) ≥ 0 → (x ^ 2 - 1) ≥ 0 �
       rw [←(mul_le_mul_right tmp), mul_assoc, div_mul]
       field_simp
       ring_nf
-      norm_num
       nlinarith
     · simp
   intro xp
