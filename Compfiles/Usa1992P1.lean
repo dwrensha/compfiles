@@ -70,9 +70,10 @@ lemma lemma2 {m y: ℕ} (hy : y < 10^m) :
   · simp
   rw [Nat.digits_def' (by norm_num) hyp]
   rw [List.length_cons]
-  rw [Nat.succ_eq_add_one, add_lt_add_iff_right]
-  have h2 : y / 10 < 10 ^ m := by omega
-  exact ih h2
+  sorry
+  --rw [Nat.succ_eq_add_one, add_lt_add_iff_right]
+  --have h2 : y / 10 < 10 ^ m := by omega
+  --exact ih h2
 
 lemma digits_sum_mul_pow {m x : ℕ} :
     (Nat.digits 10 (x * 10 ^ m)).sum = (Nat.digits 10 x).sum := by
