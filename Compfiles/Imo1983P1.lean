@@ -112,7 +112,6 @@ problem imo1983_p1 (f : ℝ+ → ℝ+) :
 
     suffices x < 1 + (((⌈(x / (a - 1))⌉₊):ℕ):ℝ) * (a - 1)
       from gt_of_ge_of_gt h20 this
-    push_cast
     have h21 := Nat.le_ceil (x / (a - 1))
     have h24 : 0 < a - 1 := sub_pos.mpr H1
     suffices x < 1 + (x / (a - 1)) * (a - 1) by

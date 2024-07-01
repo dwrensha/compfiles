@@ -115,7 +115,7 @@ problem integers_in_a_circle
   -- The difference between those sums is either 100 or 200.
 
   have h3 : (∑ i ∈ Finset.Ico x.val y.val, a ↑i) ≡ 0 [ZMOD 100] := by
-     have h4 : x.val ≤ y.val := by norm_cast; exact LT.lt.le hxy
+     have h4 : x.val ≤ y.val := LT.lt.le hxy
      rw [Finset.sum_Ico_eq_sub _ h4, Int.modEq_zero_iff_dvd]
      exact Int.ModEq.dvd hfxy
 

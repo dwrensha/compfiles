@@ -98,7 +98,7 @@ problem imo2012_p4 (f : ℤ → ℤ) :
     have «f0=0» : f 0 = 0 := by
       have := constraint 0 0 0
       simp at this
-      nlinarith; save
+      nlinarith
 
     -- `f` is an even function
     have even (t : ℤ) : f (- t) = f t := by

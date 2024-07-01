@@ -144,7 +144,7 @@ problem usa1992_p1 (n : ℕ) :
 
   -- Induction on n.
   induction' n with n ih
-  · simp; done
+  · simp
 
   -- Assume it is true for n-1.
   -- Obviously a_n < 10 to the power of 2^n

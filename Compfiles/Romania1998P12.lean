@@ -200,7 +200,6 @@ lemma exp_characterization
         have : ↑pn * x + x = (↑pn + 1) * x := by ring
         rw[this, Nat.cast_succ]
       rw[hp1, hu (↑pn * x) x, hpn x, mul_comm]
-      norm_cast
       exact (pow_succ' (u x) pn).symm
 
   have h2 : ∀ x, (u x) * u (-x) = 1 := by
