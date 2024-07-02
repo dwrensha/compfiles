@@ -25,14 +25,10 @@ namespace Bulgaria1998P11
 snip begin
 
 lemma even_of_add {a b : ℕ} : Even a → Even (b + a) → Even (b) := by
-  rintro even_a even_b_add_a
-  by_contra odd_b
-  have odd_b := (@Nat.odd_iff_not_even b).mpr odd_b
-  have odd_b_add_a := Even.add_odd even_a odd_b
-  apply (@Nat.odd_iff_not_even (a + b)).mp
-  exact odd_b_add_a
-  rw [show a + b = b + a by ring]
-  exact even_b_add_a
+  intro even_a even_b_add_a
+  contrapose! even_b_add_a
+  rw [←Nat.odd_iff_not_even] at *
+  exact Even.odd_add even_a even_b_add_a
 
 lemma mod_3_add_3_under_exponent (m n : ℕ) : ((m + 3) ^ n) ≡ (m ^ n) [MOD 3] := by
   change (m + 3)^n % 3 = m ^ n % 3
