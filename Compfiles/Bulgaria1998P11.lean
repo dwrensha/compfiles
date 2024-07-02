@@ -312,17 +312,13 @@ lemma m_add_3_pow_n_mod_m (n m : ℕ) : (m + 3)^n ≡ 3^n [MOD m] := by
     simp
     rfl
 
-lemma exists_add_of_le (l : ℕ) (h : 3 ≤ l) : ∃ b, l = b + 3 := by
-  use l - 3
-  rw[@Nat.sub_add_cancel l 3 h]
-
 lemma too_good_to_be_true (n l : ℕ)
                           (three_le_l : 3 ≤ l)
                           (two_pow_l_divides_expresion : 2^l ∣ (3^n + 1))
                           (expression_eq_4_mod_8 : 3^n + 1 ≡ 4 [MOD 8]) : False := by
   have : 8 ∣ 3 ^ n + 1 := by
     obtain ⟨a, Ha⟩ := two_pow_l_divides_expresion
-    obtain ⟨b, Hb⟩ := exists_add_of_le l three_le_l
+    obtain ⟨b, Hb⟩ := Nat.exists_eq_add_of_le' three_le_l
     rw[Hb] at Ha
     dsimp [Dvd.dvd]
     use 2 ^ b * a
