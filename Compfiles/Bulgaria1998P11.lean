@@ -280,21 +280,7 @@ lemma square_mod_4 {x : ℤ} : x ^ 2 ≡ 1 [ZMOD 4] ∨ x ^ 2 ≡ 0 [ZMOD 4] := 
           _ ≡ 1 [ZMOD 4]:= by rfl
 
 lemma square_mod_4_zmod (x : ZMod 4) : x ^ 2 = 1 ∨ x ^ 2 = 0 := by
-  match x with
-  | 0 =>
-  right
-  ring
-  | 1 =>
-  left
-  ring
-  | 2 =>
-  right
-  ring_nf
-  rfl
-  | 3 =>
-  left
-  ring_nf
-  rfl
+  fin_cases x <;> simp_arith
 
 lemma square_mod_3_zmod_0 : ∀ {x : ZMod 3} (_ : x ^ 2 = 0), x = 0 := by
   decide
