@@ -170,13 +170,7 @@ theorem n_odd_and_m_eq_2_mod_3 (m n A : ℕ) (h : 3 * m * A = (m + 3)^n + 1) : O
         · apply (@Nat.odd_iff_not_even n).mpr
           exact n_even
         · exact mod_case
-  · have n_eq_zero : n = 0 := by
-      obtain n_lt_zero | n_eq_zero := lt_or_eq_of_le (show n ≥ 0 by positivity)
-      exfalso
-      apply n_gt_zero
-      exact n_lt_zero
-      exact n_eq_zero.symm
-    rw[n_eq_zero] at h
+  · rw [Nat.eq_zero_of_not_pos n_gt_zero] at h
     simp at h
     have towards_contradiction : 3 ∣ 2 := by
       use m * A
