@@ -184,18 +184,8 @@ theorem n_odd_and_m_eq_2_mod_3 (m n A : ℕ) (h : 3 * m * A = (m + 3)^n + 1) : O
       ring
     contradiction
 
-lemma mul_right {a b : ℕ} (c : ℕ) (H : a = b ) : (a * c = b * c) := by
+lemma mul_right {a b : ℕ} (c : ℕ) (H : a = b) : (a * c = b * c) := by
   rw[H]
-
-theorem Nat.add_sub_self_one_right (a : Nat) (H: 1 ≤ a) : a - 1 + 1 = a := by
-  match a with
-  | 0 =>
-    contradiction
-  | 1 =>
-    rfl
-  | k + 1 =>
-  calc ((k + 1) - 1) + 1 = (k + (1 - 1)) + 1 := by rw[Nat.add_sub_assoc (Nat.le_refl 1) k]
-  _ = k + 1 := by ring
 
 lemma not_one_le_k {k : ℕ} (h : ¬1 ≤ k) : k = 0 := by
   simp_all only [not_le, Nat.lt_one_iff]
@@ -854,13 +844,7 @@ problem bulgaria1998_p11
     rw[show x ^ 2 * 3 + y' ^ 2 * 9 = 3 * (x ^ 2 + 3 * y' ^ 2) by ring] at Hs
     rw[show 15 + c * 18 = 3 * (5 + 6 * c) by ring] at Hs
     have reduced_expression : (x ^ 2 + 3 * y' ^ 2) = (5 + 6 * c) := by
-      aesop? says rename_i even_A_1 _ _ right_1 _
-      subst left Hk m_eq_4_m₁ Ha Hy' l_eq_2
-      simp_all only [Nat.odd_iff_not_even, not_true_eq_false, not_false_eq_true, Nat.reducePow, gt_iff_lt, Nat.ofNat_pos,
-        mul_pos_iff_of_pos_left, Nat.cast_ofNat, add_sub_cancel_right, mul_eq_mul_left_iff, OfNat.ofNat_ne_zero, or_false,
-        mul_le_mul_right, Int.reduceLE, mul_zero, Nat.one_lt_ofNat, Int.reduceLT, add_pos_iff, zero_lt_one, or_true,
-        Nat.cast_pow, Int.reduceNeg, neg_mul, ne_eq, zero_pow, Int.cast_mul, Int.cast_ofNat, mul_eq_zero, Nat.one_le_ofNat,
-        OfNat.ofNat_ne_one, le_refl]
+      omega
 
     rw[show 5 + 6 * c = 6 * c + 5 by ring] at reduced_expression
     rw[← expr_m₁_mod_6] at reduced_expression
