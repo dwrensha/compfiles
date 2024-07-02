@@ -191,16 +191,9 @@ lemma not_one_le_k {k : ℕ} (h : ¬1 ≤ k) : k = 0 := by
   simp_all only [not_le, Nat.lt_one_iff]
 
 lemma two_le_pow_two (l : ℕ) : 2 ≤ 2 ^ (l + 1) := by
-  match l with
-    | 0 =>
-      simp
-    | 1 =>
-      simp
-    | l + 1 =>
-      have IH := two_le_pow_two l
-      ring_nf at IH
-      rw[show 2 ^ (l + 1 + 1) = (2 ^ l * 2) * 2 by ring_nf]
-      linarith
+  rw [pow_succ]
+  suffices 1 ≤ 2 ^ l from Nat.le_mul_of_pos_left 2 this
+  exact Nat.one_le_two_pow
 
 lemma two_n_and_rest_factorisation (m : ℕ) (even_m : Even m) (h: 0 < m) : ∃ (l : ℕ) (m₁ : ℕ), 1 ≤ l ∧ Odd m₁ ∧ m = 2 ^ l * m₁ := by
   match m with
@@ -223,7 +216,7 @@ lemma two_n_and_rest_factorisation (m : ℕ) (even_m : Even m) (h: 0 < m) : ∃ 
       rw[m_m'_relationship]
       rw[← Nat.mul_sub_left_distrib 2 m' 1]
       field_simp
-    have zero_lt_m': 0 < m' := by linarith
+    have zero_lt_m': 0 < m' := by omega
     by_cases m'_even : Even m'
     · have IH := two_n_and_rest_factorisation m' m'_even zero_lt_m'
       obtain ⟨l, k, lower_level⟩ := IH
