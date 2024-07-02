@@ -34,20 +34,9 @@ lemma even_of_add {a b : ℕ} : Even a → Even (b + a) → Even (b) := by
   rw [show a + b = b + a by ring]
   exact even_b_add_a
 
-lemma mod_3_add_3_under_exponent (m n : ℕ ): ((m + 3) ^ n) ≡ (m ^ n) [MOD 3] := by
-  cases n with
-  | zero =>
-    simp
-    rfl
-  | succ n =>
-    have IH := @mod_3_add_3_under_exponent m n
-    have first_step : (m + 3) ^ (n + 1) = (m + 3) ^ n * (m + 3) := by ring
-    have third_step : (m + 3) ≡ m [MOD 3] := Nat.add_modEq_right
-    have fourth_step : (m ^ n * m) = m ^ (n + 1) := by ring
-    calc (m + 3) ^ (n + 1) ≡ (m + 3) ^ n * (m + 3) [MOD 3] := by rw[first_step]
-    _ ≡  (m ^ n * (m + 3)) [MOD 3] := Nat.ModEq.mul IH rfl
-    _ ≡  (m ^ n * m ) [MOD 3] := Nat.ModEq.mul rfl third_step
-    _ ≡  m ^ (n + 1) [MOD 3] := by rw[fourth_step]
+lemma mod_3_add_3_under_exponent (m n : ℕ) : ((m + 3) ^ n) ≡ (m ^ n) [MOD 3] := by
+  change (m + 3)^n % 3 = m ^ n % 3
+  simp [Nat.pow_mod, Nat.add_mod]
 
 lemma zero_pow_mod_3 {m n : ℕ} (h1 : n > 0) (h2 : m ≡ 0 [MOD 3]) : m ^ n ≡ 0 [MOD 3]:= by
   match n with
