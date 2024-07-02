@@ -204,30 +204,7 @@ lemma m_mod_2_contradiction (m n A : ℕ)
   contradiction
 
 lemma m_add_3_pow_n_mod_m (n m : ℕ) : (m + 3)^n ≡ 3^n [MOD m] := by
-  dsimp[Nat.ModEq]
-  match n with
-  | 0 =>
-    rfl
-  | 1 =>
-    ring_nf
-    rw[show 3 = 3 + 0 by rfl]
-    rw[show 3 + 0 + m = 3 + m by rfl]
-    apply Nat.ModEq.add
-    rfl
-    dsimp[Nat.ModEq]
-    simp
-  | k + 1 =>
-    have IH := m_add_3_pow_n_mod_m k m
-    rw [show (m + 3) ^ (k + 1) = (m + 3) ^ k * (m + 3) by ring]
-    rw [show 3 ^ (k + 1) = 3 ^ k * 3 by ring]
-    apply Nat.ModEq.mul
-    exact IH
-    rw[show 3 = 0 + 3 by rfl]
-    rw[show m + (3 + 0) = m + 3 by ring]
-    apply Nat.ModEq.add
-    dsimp[Nat.ModEq]
-    simp
-    rfl
+  simp [Nat.ModEq, Nat.pow_mod, Nat.add_mod]
 
 lemma too_good_to_be_true (n l : ℕ)
                           (three_le_l : 3 ≤ l)
