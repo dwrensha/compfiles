@@ -253,32 +253,6 @@ lemma square_contra_mod_3 {y : ℤ} (h: y ^ 2 ≡ 2 [ZMOD 3]) : False := by
     have := Int.ModEq.trans h.symm this
     contradiction
 
-lemma square_mod_4 {x : ℤ} : x ^ 2 ≡ 1 [ZMOD 4] ∨ x ^ 2 ≡ 0 [ZMOD 4] := by
-  rw[show x ^ 2 = x * x by ring]
-  mod_cases x_mod_4 : x % 4
-  · right
-    rw[show (0 : ℤ) = 0 * 0 by rfl]
-    apply Int.ModEq.mul
-    exact x_mod_4
-    exact x_mod_4
-  · left
-    rw[show (1 : ℤ) = 1 * 1 by rfl]
-    apply Int.ModEq.mul
-    exact x_mod_4
-    exact x_mod_4
-  · right
-    calc  x * x ≡ 2 * 2 [ZMOD 4] := by
-                  apply Int.ModEq.mul
-                  exact x_mod_4
-                  exact x_mod_4
-          _ ≡ 0 [ZMOD 4]:= by rfl
-  · left
-    calc  x * x ≡ 3 * 3 [ZMOD 4] := by
-                  apply Int.ModEq.mul
-                  exact x_mod_4
-                  exact x_mod_4
-          _ ≡ 1 [ZMOD 4]:= by rfl
-
 lemma square_mod_4_zmod (x : ZMod 4) : x ^ 2 = 1 ∨ x ^ 2 = 0 := by
   fin_cases x <;> simp_arith
 
