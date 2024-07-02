@@ -6,8 +6,7 @@ Authors: Kevin Lacker
 
 import Mathlib.Algebra.Divisibility.Basic
 import Mathlib.Tactic.Ring
-import Mathlib.Data.Nat.Prime
-
+import Mathlib.Data.Nat.Prime.Basic
 import ProblemExtraction
 
 problem_file {
