@@ -49,67 +49,21 @@ lemma zero_pow_mod_2 {m n : ℕ} (h1 : n > 0) (h2 : m ≡ 0 [MOD 2]) : m ^ n ≡
   exact Dvd.dvd.pow h2 (Nat.not_eq_zero_of_lt h1)
 
 lemma one_pow_mod_3 {m n : ℕ} (h2 : m ≡ 1 [MOD 3]) : m ^ n ≡ 1 [MOD 3]:= by
-  match n with
-  | 0 =>
-    rw[show m ^ 0 = 1 by ring]
-  | 1 =>
-    rw[show m ^ 1 = m by ring]
-    exact h2
-  | k + 2 =>
-    have IH := @one_pow_mod_3 m (k+1) h2
-    rw[show m ^ (k + 2) = m ^ (k + 1) * m by ring]
-    rw[show 1 = 1 * 1 by ring]
-    apply Nat.ModEq.mul
-    exact IH
-    exact h2
+  change _ % _ = 1 at h2 ⊢
+  simp [Nat.pow_mod, h2]
 
 lemma one_pow_mod_4 {m n : ℕ} (h2 : m ≡ 1 [MOD 4]) : m ^ n ≡ 1 [MOD 4]:= by
-  match n with
-  | 0 =>
-    rw[show m ^ 0 = 1 by ring]
-  | 1 =>
-    rw[show m ^ 1 = m by ring]
-    exact h2
-  | k + 2 =>
-    have IH := @one_pow_mod_4 m (k+1) h2
-    rw[show m ^ (k + 2) = m ^ (k + 1) * m by ring]
-    rw[show 1 = 1 * 1 by ring]
-    apply Nat.ModEq.mul
-    exact IH
-    exact h2
+  change _ % _ = 1 at h2 ⊢
+  simp [Nat.pow_mod, h2]
 
 lemma one_pow_mod_8 {m n : ℕ} (h2 : m ≡ 1 [MOD 8]) : m ^ n ≡ 1 [MOD 8]:= by
-  match n with
-  | 0 =>
-    rw[show m ^ 0 = 1 by ring]
-  | 1 =>
-    rw[show m ^ 1 = m by ring]
-    exact h2
-  | k + 2 =>
-    have IH := @one_pow_mod_8 m (k+1) h2
-    rw[show m ^ (k + 2) = m ^ (k + 1) * m by ring]
-    rw[show 1 = 1 * 1 by ring]
-    apply Nat.ModEq.mul
-    exact IH
-    exact h2
+  change _ % _ = 1 at h2 ⊢
+  simp [Nat.pow_mod, h2]
 
 lemma two_even_pow_mod_3 {m n : ℕ} (h1 : Even n) (h2 : m ≡ 2 [MOD 3]) : m ^ n ≡ 1 [MOD 3] := by
-  match n with
-  | 0 =>
-    rw [show m^0 = 1 by ring]
-  | 1 =>
-    contradiction
-  | k + 2 =>
-    have k_even := even_of_add even_two h1
-    have IH := two_even_pow_mod_3 k_even h2
-    have inductive_step : m * m ≡ 1 [MOD 3] := by
-      calc m * m ≡ 2 * 2 [MOD 3]:= Nat.ModEq.mul h2 h2
-      _ ≡ 1 [MOD 3] := rfl
-    rw [show m ^ (k + 2) = m ^ k * (m * m) by ring]
-    rw [show 1 = 1 * 1 by ring]
-    apply Nat.ModEq.mul
-    exact IH
-    exact inductive_step
+  change _ % _ = _ at h2 ⊢
+  obtain ⟨k, hk⟩ := h1
+  simp_arith [Nat.pow_mod, h2, hk, pow_mul]
 
 theorem n_odd_and_m_eq_2_mod_3 (m n A : ℕ) (h : 3 * m * A = (m + 3)^n + 1) : Odd n ∧ m ≡ 2 [MOD 3] := by
   by_cases n_gt_zero : n > 0
