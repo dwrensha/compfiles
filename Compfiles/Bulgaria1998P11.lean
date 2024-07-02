@@ -39,34 +39,14 @@ lemma mod_3_add_3_under_exponent (m n : ℕ) : ((m + 3) ^ n) ≡ (m ^ n) [MOD 3]
   simp [Nat.pow_mod, Nat.add_mod]
 
 lemma zero_pow_mod_3 {m n : ℕ} (h1 : n > 0) (h2 : m ≡ 0 [MOD 3]) : m ^ n ≡ 0 [MOD 3]:= by
-  match n with
-  | 0 =>
-    contradiction
-  | 1 =>
-    rw[show m ^ 1 = m by ring]
-    exact h2
-  | k + 2 =>
-    have IH := zero_pow_mod_3 (show k + 1 > 0 by positivity) h2
-    rw[show m ^ (k + 2) = m ^ (k + 1) * m by ring]
-    rw[show 0 = 0 * 0 by ring]
-    apply Nat.ModEq.mul
-    exact IH
-    exact h2
+  change _ % 3 = 0 at h2 ⊢
+  rw [←Nat.dvd_iff_mod_eq_zero] at h2 ⊢
+  exact Dvd.dvd.pow h2 (Nat.not_eq_zero_of_lt h1)
 
 lemma zero_pow_mod_2 {m n : ℕ} (h1 : n > 0) (h2 : m ≡ 0 [MOD 2]) : m ^ n ≡ 0 [MOD 2]:= by
-  match n with
-  | 0 =>
-    contradiction
-  | 1 =>
-    rw[show m ^ 1 = m by ring]
-    exact h2
-  | k + 2 =>
-    have IH := zero_pow_mod_2 (show k + 1 > 0 by positivity) h2
-    rw[show m ^ (k + 2) = m ^ (k + 1) * m by ring]
-    rw[show 0 = 0 * 0 by ring]
-    apply Nat.ModEq.mul
-    exact IH
-    exact h2
+  change _ % 2 = 0 at h2 ⊢
+  rw [←Nat.dvd_iff_mod_eq_zero] at h2 ⊢
+  exact Dvd.dvd.pow h2 (Nat.not_eq_zero_of_lt h1)
 
 lemma one_pow_mod_3 {m n : ℕ} (h2 : m ≡ 1 [MOD 3]) : m ^ n ≡ 1 [MOD 3]:= by
   match n with
