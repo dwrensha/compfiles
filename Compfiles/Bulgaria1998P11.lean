@@ -109,62 +109,28 @@ lemma two_le_pow_two (l : ℕ) : 2 ≤ 2 ^ (l + 1) := by
   exact Nat.one_le_two_pow
 
 lemma two_n_and_rest_factorisation (m : ℕ) (even_m : Even m) (h: 0 < m) : ∃ (l : ℕ) (m₁ : ℕ), 1 ≤ l ∧ Odd m₁ ∧ m = 2 ^ l * m₁ := by
-  match m with
-  | 0 =>
-    contradiction
-  | 1 =>
-    contradiction
-  | m + 2 =>
-    have even_m2 := even_m
-    obtain ⟨m', m'H⟩ := even_m
-    have m_m'_relationship : m = 2 * m' - 2 := by
-      rw[show 2 * m' = m' + m' by ring]
-      rw[← m'H]
-      rw[Nat.add_sub_self_right m 2]
-    have one_le_m' : 1 ≤ m' := by
-      subst m_m'_relationship
-      simp_all only [pos_add_self_iff, even_add_self]
-      exact h
-    have m'_m_relationship : m' = m /2 + 1 := by
-      rw[m_m'_relationship]
-      rw[← Nat.mul_sub_left_distrib 2 m' 1]
-      field_simp
-    have zero_lt_m': 0 < m' := by omega
-    by_cases m'_even : Even m'
-    · have IH := two_n_and_rest_factorisation m' m'_even zero_lt_m'
-      obtain ⟨l, k, lower_level⟩ := IH
-      rw[m'_m_relationship] at lower_level
-      use (l + 1)
-      use k
-      constructor
-      · exact le_add_left (Nat.le_refl 1)
-      · constructor
-        · exact lower_level.right.left
-        · obtain ⟨_, ⟨k_odd: Odd k, lower_level_statement : m / 2 + 1 = 2 ^ l * k ⟩⟩ := lower_level
-          have two_le_k : 2 ≤ 2 ^ (l + 1) * k := by
-            have one_le_k : 1 ≤ k := by
-              by_contra k_zero
-              have k_zero : k = 0 := not_one_le_k k_zero
-              have even_k : Even 0 := even_zero
-              rw[← k_zero] at even_k
-              exact (Nat.even_iff_not_odd.mp even_k) k_odd
-            have two_le_expr : 2 ≤ 2 ^ (l + 1) := two_le_pow_two l
-            exact Nat.mul_le_mul two_le_expr one_le_k
-          have lower_level_statement_2 : (m / 2 + 1) * 2 = (2 ^ l * k) * 2 := mul_right 2 lower_level_statement
-          calc  m + 2 = (2 * m' - 2) + 2 := by rw[m_m'_relationship]
-                _ = (m' * 2 - 2) + 2 := by ring_nf
-                _ = ((m / 2 + 1) * 2 - 2) + 2 := by rw[m'_m_relationship]
-                _ = ((2 ^ l * k) * 2 - 2) + 2 := by rw[lower_level_statement_2]
-                _ = (2 ^ (l + 1) * k - 2) + 2 := by ring_nf
-                _ = 2 ^ (l + 1) * k := @Nat.sub_add_cancel (2 ^ (l + 1) * k) 2 two_le_k
-    · use 1
-      use m'
-      constructor
-      · exact Nat.le.refl
-      · constructor
-        · exact Nat.odd_iff_not_even.mpr m'_even
-        · rw[m'H]
-          ring
+  use Nat.maxPowDiv 2 m
+  have ⟨a, ha⟩ := Nat.maxPowDiv.pow_dvd 2 m
+  use a
+  have h2 : 2 ∣ m := even_iff_two_dvd.mp even_m
+  obtain ⟨k, hk⟩ := h2
+  have hk0 : 0 < k := by omega
+  refine ⟨?_, ?_, ?_⟩
+  · rw [hk]
+    rw [show 2 * k = 2^1 * k from rfl]
+    rw [Nat.maxPowDiv.base_pow_mul one_lt_two hk0]
+    exact Nat.le_add_left 1 (Nat.maxPowDiv 2 k)
+  · by_contra! Ha
+    rw [←Nat.even_iff_not_odd] at Ha
+    obtain ⟨b, hb⟩ := Ha
+    have h3 : 2 ^ (Nat.maxPowDiv 2 m  + 1) ∣ m := by
+      use b
+      rw [hb] at ha
+      rw [pow_succ]
+      linarith
+    have h4 := Nat.maxPowDiv.le_of_dvd one_lt_two h h3
+    linarith only [h4]
+  · exact ha
 
 lemma m_mod_2_contradiction (m n A : ℕ)
                             (even_m : Even m)
