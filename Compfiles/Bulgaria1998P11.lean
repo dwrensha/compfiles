@@ -109,13 +109,11 @@ lemma two_le_pow_two (l : ℕ) : 2 ≤ 2 ^ (l + 1) := by
   exact Nat.one_le_two_pow
 
 lemma two_n_and_rest_factorisation (m : ℕ) (even_m : Even m) (h: 0 < m) : ∃ (l : ℕ) (m₁ : ℕ), 1 ≤ l ∧ Odd m₁ ∧ m = 2 ^ l * m₁ := by
-  use Nat.maxPowDiv 2 m
   have ⟨a, ha⟩ := Nat.maxPowDiv.pow_dvd 2 m
-  use a
-  have h2 : 2 ∣ m := even_iff_two_dvd.mp even_m
-  obtain ⟨k, hk⟩ := h2
+  refine ⟨Nat.maxPowDiv 2 m, a, ?_⟩
+  obtain ⟨k, hk⟩ := even_iff_two_dvd.mp even_m
   have hk0 : 0 < k := by omega
-  refine ⟨?_, ?_, ?_⟩
+  refine ⟨?_, ?_, ha⟩
   · rw [hk]
     rw [show 2 * k = 2^1 * k from rfl]
     rw [Nat.maxPowDiv.base_pow_mul one_lt_two hk0]
@@ -127,10 +125,9 @@ lemma two_n_and_rest_factorisation (m : ℕ) (even_m : Even m) (h: 0 < m) : ∃ 
       use b
       rw [hb] at ha
       rw [pow_succ]
-      linarith
+      linarith only [ha]
     have h4 := Nat.maxPowDiv.le_of_dvd one_lt_two h h3
-    linarith only [h4]
-  · exact ha
+    exact (lt_self_iff_false _).mp (Nat.succ_le_iff.mp h4)
 
 lemma m_mod_2_contradiction (m n A : ℕ)
                             (even_m : Even m)
