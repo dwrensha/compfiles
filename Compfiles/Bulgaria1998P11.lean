@@ -173,7 +173,7 @@ lemma too_good_to_be_true (n l : ℕ)
   dsimp[Nat.ModEq] at expression_eq_4_mod_8
   simp at expression_eq_4_mod_8
 
-lemma Thue's_lemma (a m : ℤ) : ∃ (x y : ℤ),  a * x + y ≡ 0 [ZMOD m] ∧ 0 < x ^ 2 ∧ x ^ 2 < m ∧ y ^ 2 ≤ m :=
+lemma Thue's_lemma (a m : ℤ) : ∃ (x y : ℤ), a * x + y ≡ 0 [ZMOD m] ∧ 0 < x ^ 2 ∧ x ^ 2 ≤ m ∧ y ^ 2 ≤ m :=
   sorry
 
 lemma mod_z_of_mod_n {a b m : ℕ} (h : a ≡ b [MOD m]) : a ≡ b [ZMOD m] := by
@@ -524,4 +524,15 @@ problem bulgaria1998_p11
       exact leaf_contradiction reduced_expression m₁_sub_5_mod_6
 
     · -- s = 4
+      have : y^2 < m₁ := by
+        by_contra! H
+        have h1 : y^2 = m₁ := (Int.le_antisymm H y_higher).symm
+        rw [←sq_abs, Int.abs_eq_natAbs] at h1
+        norm_cast at h1
+        obtain ⟨yy, hyy⟩ : ∃ yy, yy = y.natAbs := exists_eq
+        rw [←hyy] at h1
+        rw [←h1] at m₁_eq_2_mod_3
+        mod_cases Hyy : yy % 3 <;>
+           change _ % _ = _ % _ at Hyy m₁_eq_2_mod_3 <;>
+           simp [Nat.pow_mod, Hyy] at m₁_eq_2_mod_3
       omega
