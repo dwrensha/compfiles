@@ -191,30 +191,12 @@ lemma mod_z_of_mod_n {a b m : ℕ} (h : a ≡ b [MOD m]) : a ≡ b [ZMOD m] := b
   rw[h]
   norm_num
 
-
 lemma square_contra_mod_3 {y : ℤ} (h: y ^ 2 ≡ 2 [ZMOD 3]) : False := by
-  rw [show y ^ 2 = y * y by ring] at h
-  mod_cases y_mod_3 : y % 3
-  · have : y * y ≡ 0 * 0 [ZMOD 3]:= by
-      apply Int.ModEq.mul
-      exact y_mod_3
-      exact y_mod_3
-    rw[show (0 : ℤ) * 0 = 0 by norm_num] at this
-    have := Int.ModEq.trans h.symm this
-    contradiction
-  · have : y * y ≡ 1 * 1 [ZMOD 3]:= by
-      apply Int.ModEq.mul
-      exact y_mod_3
-      exact y_mod_3
-    rw[show (1 : ℤ) * 1 = 1 by norm_num] at this
-    have := Int.ModEq.trans h.symm this
-    contradiction
-  · have : y * y ≡ 2 * 2 [ZMOD 3]:= by
-      apply Int.ModEq.mul
-      exact y_mod_3
-      exact y_mod_3
-    have := Int.ModEq.trans h.symm this
-    contradiction
+  rw [show 3 = ((3:ℕ):ℤ) by rfl] at h
+  rw [← ZMod.intCast_eq_intCast_iff] at h
+  rw [show (((y^2):ℤ): ZMod 3) = (y : ZMod 3)^2 by norm_cast] at h
+  obtain ⟨z, hz⟩ : ∃ z : ZMod 3, z = y := exists_eq
+  fin_cases z <;> rw [← hz] at h <;> simp_arith at h
 
 lemma square_mod_4_zmod (x : ZMod 4) : x ^ 2 = 1 ∨ x ^ 2 = 0 := by
   fin_cases x <;> simp_arith
