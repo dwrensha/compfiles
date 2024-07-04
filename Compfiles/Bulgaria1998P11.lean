@@ -464,17 +464,11 @@ problem bulgaria1998_p11
       rw [show (0 : ℤ) = (5 : ℤ) - 5 by ring]
       exact Int.ModEq.sub (mod_z_of_mod_n m₁_eq_5_mod_6) rfl
 
-    have m₁_sub_2_mod_3 : ↑m₁ - 2 ≡ 0 [ZMOD 3] := by
-      rw [show (0 : ℤ) = (2 : ℤ) - 2 by ring]
-      exact Int.ModEq.sub (mod_z_of_mod_n m₁_eq_2_mod_3) rfl
-
-    obtain (left : ((1 : ℤ) = s)) | (right : 1 < s) := LE.le.eq_or_lt (Order.succ_le_of_lt lower_bound_s)
-    · rw[left.symm] at Hs
+    interval_cases s
+    · -- s = 0
       rw[show (m₁ : ℤ) * 1 = m₁ by ring] at Hs
       exact leaf_contradiction Hs m₁_sub_5_mod_6
-
-    obtain (left : ((2 : ℤ) = s)) | (right : 2 < s) := LE.le.eq_or_lt (Order.succ_le_of_lt right)
-    · rw[left.symm] at Hs
+    · -- s = 1
       have := Int.modEq_zero_iff_dvd.mp m₁_sub_5_mod_6
       dsimp[Dvd.dvd] at this
       obtain ⟨c, this⟩ := this
@@ -502,8 +496,7 @@ problem bulgaria1998_p11
         · rw[right_y] at expression_mod_4
           ring_nf at expression_mod_4
           contradiction
-    obtain (left : ((3 : ℤ) = s)) | (right : 3 < s) := LE.le.eq_or_lt (Order.succ_le_of_lt right)
-    · rw[left.symm] at Hs
+    · -- s = 2
       have := Int.modEq_zero_iff_dvd.mp m₁_sub_5_mod_6
       dsimp[Dvd.dvd] at this
       obtain ⟨c, this⟩ := this
@@ -530,6 +523,5 @@ problem bulgaria1998_p11
       rw[show x ^ 2 + 3 * y' ^ 2 = 3 * y' ^ 2 + x ^ 2 by ring] at reduced_expression
       exact leaf_contradiction reduced_expression m₁_sub_5_mod_6
 
-    obtain (left : ((4 : ℤ) = s)) | (right : 4 < s) := LE.le.eq_or_lt (Order.succ_le_of_lt right)
-    · rw[left.symm] at Hs; omega
-    · omega
+    · -- s = 4
+      omega
