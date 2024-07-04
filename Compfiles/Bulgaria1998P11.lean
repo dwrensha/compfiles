@@ -465,10 +465,10 @@ problem bulgaria1998_p11
       exact Int.ModEq.sub (mod_z_of_mod_n m₁_eq_5_mod_6) rfl
 
     interval_cases s
-    · -- s = 0
+    · -- s = 1
       rw[show (m₁ : ℤ) * 1 = m₁ by ring] at Hs
       exact leaf_contradiction Hs m₁_sub_5_mod_6
-    · -- s = 1
+    · -- s = 2
       have := Int.modEq_zero_iff_dvd.mp m₁_sub_5_mod_6
       dsimp[Dvd.dvd] at this
       obtain ⟨c, this⟩ := this
@@ -496,7 +496,7 @@ problem bulgaria1998_p11
         · rw[right_y] at expression_mod_4
           ring_nf at expression_mod_4
           contradiction
-    · -- s = 2
+    · -- s = 3
       have := Int.modEq_zero_iff_dvd.mp m₁_sub_5_mod_6
       dsimp[Dvd.dvd] at this
       obtain ⟨c, this⟩ := this
