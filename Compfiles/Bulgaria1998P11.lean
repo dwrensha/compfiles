@@ -266,6 +266,11 @@ lemma thue
     have hr1 : r^2 ≤ n := Nat.sqrt_le' n
     nlinarith
 
+/--
+In this version of Thue's lemma, we get an `x` that is nonzero and
+a `y` that might be zero. If we wanted to guarantee that `y` is nonzero,
+we would need an extra hypothesis `Nat.Coprime a n`.
+-/
 lemma Thue's_lemma
     (a n : ℕ)
     (hn : 1 < n) :
@@ -330,6 +335,9 @@ snip end
 problem bulgaria1998_p11
     (m n A : ℕ)
     (h : 3 * m * A = (m + 3)^n + 1) : Odd A := by
+  -- Follows the second solution in _Mathematical Olympiads 1998-1999_
+  -- (edited by Titu Andreescu and Zuming Feng)
+
   have ⟨⟨k, Hk⟩, m_eq_2_mod_3⟩ : Odd n ∧ m ≡ 2 [MOD 3] := n_odd_and_m_eq_2_mod_3 m n A h
   by_contra even_A
   rw [←Nat.even_iff_not_odd] at even_A
@@ -341,13 +349,7 @@ problem bulgaria1998_p11
     have : 1 + 3 ^ n > 0 := by positivity
     rw [← h] at this
     contradiction
-  have zero_lt_n : 0 < n := by
-    by_contra zero_eq_n
-    replace zero_eq_n := not_one_le_k zero_eq_n
-    rw [zero_eq_n] at h
-    ring_nf at h
-    apply_fun (· % 3) at h
-    simp only [Nat.mul_mod_left, Nat.mod_succ, OfNat.zero_ne_ofNat] at h
+  have zero_lt_n : 0 < n := by omega
   have even_m : Even m := by
     by_contra odd_m
     have odd_m := Nat.odd_iff_not_even.mpr odd_m
@@ -437,8 +439,6 @@ problem bulgaria1998_p11
 
     have m_eq_4_m₁ : m = 4 * m₁ := by
       rw[l_eq_2] at m_factorisation
-      ring_nf at m_factorisation
-      ring_nf
       exact m_factorisation
 
     have m₁_divides_expresion : m₁ ∣ (3^n + 1) := by
@@ -587,7 +587,7 @@ problem bulgaria1998_p11
       have := Int.modEq_zero_iff_dvd.mp m₁_sub_5_mod_6
       dsimp[Dvd.dvd] at this
       obtain ⟨c, this⟩ := this
-      have expr_m₁_mod_6 : ↑m₁ = 6 * c + 5 := by linarith
+      have expr_m₁_mod_6 : ↑m₁ = 6 * c + 5 := sub_eq_iff_eq_add.mp this
       rw[expr_m₁_mod_6] at Hs
       ring_nf at Hs
       have expression_mod_4 : ((x : (ZMod 4)) ^ 2 * 3 + y ^ 2) = ((10 + c * 12) : (ZMod 4)) := by
