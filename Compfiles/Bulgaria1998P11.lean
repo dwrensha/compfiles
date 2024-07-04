@@ -208,7 +208,7 @@ lemma leaf_contradiction {x y m₁ : ℤ} (h: 3 * x ^ 2 + y ^ 2 = m₁) (h2 : m�
   have := Int.modEq_zero_iff_dvd.mp h2
   dsimp[Dvd.dvd] at this
   obtain ⟨c, this⟩ := this
-  have expr_m₁_mod_6 : ↑m₁ = 6 * c + 5 := by linarith
+  have expr_m₁_mod_6 : ↑m₁ = 6 * c + 5 := by omega
   rw[expr_m₁_mod_6] at h
   ring_nf at h
   have := calc y ^ 2 ≡ x ^ 2 * 3 + y ^ 2 [ZMOD 3] := by
@@ -234,7 +234,7 @@ snip end
 problem bulgaria1998_p11
     (m n A : ℕ)
     (h : 3 * m * A = (m + 3)^n + 1) : Odd A := by
-  have ⟨odd_n, m_eq_2_mod_3⟩ : Odd n ∧ m ≡ 2 [MOD 3] := n_odd_and_m_eq_2_mod_3 m n A h
+  have ⟨⟨k, Hk⟩, m_eq_2_mod_3⟩ : Odd n ∧ m ≡ 2 [MOD 3] := n_odd_and_m_eq_2_mod_3 m n A h
   by_contra even_A
   have even_A := (@Nat.even_iff_not_odd A).mpr even_A
   have zero_lt_m : 0 < m := by
@@ -282,19 +282,13 @@ problem bulgaria1998_p11
   · rw [l_eq_one] at m_factorisation
     ring_nf at m_factorisation
     have : m₁ ≡ 1 [MOD 4] ∨ m₁ ≡ 3 [MOD 4] := by
-      obtain ⟨a, aH⟩ := odd_m₁
-      obtain even_a | odd_a := Nat.even_or_odd a
-      · obtain ⟨b, bH⟩ := even_a
-        left
-        rw[aH]
-        rw[bH]
+      obtain ⟨a, rfl⟩ := odd_m₁
+      obtain ⟨b, rfl⟩ | ⟨b, rfl⟩ := Nat.even_or_odd a
+      · left
         dsimp [Nat.ModEq]
         ring_nf
         simp
-      · obtain ⟨b, bH⟩ := odd_a
-        right
-        rw[aH]
-        rw[bH]
+      · right
         dsimp [Nat.ModEq]
         ring_nf
         simp
@@ -310,12 +304,7 @@ problem bulgaria1998_p11
         calc m₁ * 2 ≡ 3 * 2 [MOD 4] := Nat.ModEq.mul right rfl
           _ ≡ 2 [MOD 4] := rfl
     exact m_mod_2_contradiction m n A even_m even_A m_eq_2_mod_4 h
-  · have two_le_l : 2 ≤ l := by
-      obtain left | right := LE.le.lt_or_eq one_le_l
-      exact left
-      exfalso
-      apply l_eq_one
-      exact right.symm
+  · have two_le_l : 2 ≤ l := by omega
     have eq_2 : 0 ≡ 3^n + 1 [MOD m] := by
       calc  0 ≡ m * (3 * A) [MOD m] := by
                 rw[show 0 = 0 * (3 * A) by ring]
@@ -341,7 +330,6 @@ problem bulgaria1998_p11
           rw[← m_factorisation]
           exact Ha
         have expression_eq_4_mod_8 : 3^n + 1 ≡ 4 [MOD 8] := by
-          obtain ⟨k, Hk⟩ := odd_n
           rw[Hk]
           rw[show 3 ^ (2 * k + 1) = 3^(2 * k) * 3 by ring]
           rw[show 3 ^ (2 * k) = (3 ^ 2) ^ k by exact pow_mul 3 2 k]
@@ -454,7 +442,6 @@ problem bulgaria1998_p11
         contradiction
       · exact m_mod_six
 
-    obtain ⟨k, Hk⟩ := odd_n
     have exists_a : ∃ (a : ℕ ), a = 3 ^ (k + 1) := by
       use 3 ^ (k + 1)
     obtain ⟨a, Ha⟩ := exists_a
@@ -516,22 +503,20 @@ problem bulgaria1998_p11
     have := Int.modEq_zero_iff_dvd.mp expression
     obtain ⟨s, Hs⟩ := this
 
-    have upper_bound_expression: 3 * x ^ 2 + y ^ 2 ≤ 4 * m₁ := by
-      linarith
+    have upper_bound_expression: 3 * x ^ 2 + y ^ 2 ≤ 4 * m₁ := by omega
     rw[Hs] at upper_bound_expression
     rw[show m₁ * s = s * m₁ by ring] at upper_bound_expression
     have zero_le_m₁ : 0 ≤ (m₁ : ℤ) := by positivity
     rw[m_eq_4_m₁] at zero_lt_m
-    have zero_lt_m₁ : 0 < @Nat.cast ℤ _ m₁ := by linarith
+    have zero_lt_m₁ : 0 < @Nat.cast ℤ _ m₁ := by omega
 
     have upper_bound_s : s ≤ 4 := by
       exact le_of_mul_le_mul_right upper_bound_expression zero_lt_m₁
 
     have lower_bound_expression : 0 < 3 * x ^ 2 + y ^ 2 := by
-      have : 0 < 3 * x ^ 2 := by
-        linarith
+      have : 0 < 3 * x ^ 2 := by omega
       have : 0 ≤ y ^ 2 := by positivity
-      linarith
+      omega
     rw[Hs] at lower_bound_expression
 
     rw[show (0 : ℤ) = m₁ * 0 by ring] at lower_bound_expression
@@ -615,6 +600,5 @@ problem bulgaria1998_p11
     exact leaf_contradiction reduced_expression m₁_sub_5_mod_6
 
     obtain (left : ((4 : ℤ) = s)) | (right : 4 < s) := LE.le.eq_or_lt (Order.succ_le_of_lt right)
-    rw[left.symm] at Hs
-    linarith
-    linarith
+    · rw[left.symm] at Hs; omega
+    · omega
