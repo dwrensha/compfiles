@@ -283,30 +283,23 @@ problem bulgaria1998_p11
         ring_nf
         simp
     have m_eq_2_mod_4 : m ≡ 2 [MOD 4] := by
+      rw [m_factorisation]
       obtain left | right := this
-      · rw[m_factorisation]
-        rw[show 2 = 1 * 2 by rfl]
-        apply Nat.ModEq.mul
-        exact left
-        ring_nf
-        rfl
-      · rw[m_factorisation]
-        calc m₁ * 2 ≡ 3 * 2 [MOD 4] := Nat.ModEq.mul right rfl
+      · nth_rw 2 [show 2 = 1 * 2 by rfl]
+        exact Nat.ModEq.mul_right _ left
+      · calc m₁ * 2 ≡ 3 * 2 [MOD 4] := Nat.ModEq.mul right rfl
           _ ≡ 2 [MOD 4] := rfl
     exact m_mod_2_contradiction m n A even_m even_A m_eq_2_mod_4 h
   · have eq_2 : 0 ≡ 3^n + 1 [MOD m] := by
       calc  0 ≡ m * (3 * A) [MOD m] := by
                 rw[show 0 = 0 * (3 * A) by ring]
-                apply Nat.ModEq.mul
-                dsimp [Nat.ModEq]
-                simp
-                rfl
+                refine Nat.ModEq.mul_right _ ?_
+                simp [Nat.ModEq]
             _ ≡ 3 * m * A [MOD m] := by rw[show m * (3 * A) = 3 * m * A by ring]
             _ ≡ (m + 3)^n + 1 [MOD m] := by rw[h]
             _ ≡ 3^n + 1 [MOD m] := by
-                apply Nat.ModEq.add
+                refine Nat.ModEq.add_right _ ?_
                 exact m_add_3_pow_n_mod_m n m
-                rfl
     have l_eq_2 : l = 2 := by
       have two_le_l : 2 ≤ l := by omega
       obtain left | right := lt_or_eq_of_le two_le_l
@@ -329,13 +322,10 @@ problem bulgaria1998_p11
               dsimp[Nat.ModEq]
             exact one_pow_mod_8 this
           rw[show 4 = 3 + 1 by rfl]
-          apply Nat.ModEq.add
+          refine Nat.ModEq.add_right _ ?_
           rw[show 3 = 1 * 3 by rfl]
           rw[show 9 ^ k * (1 * 3) = 9 ^ k * 3 by rfl]
-          apply Nat.ModEq.mul
-          exact this
-          rfl
-          rfl
+          exact Nat.ModEq.mul_right _ this
         exfalso
         exact too_good_to_be_true n l (show 3 ≤ l by exact left) two_pow_l_divides_expresion expression_eq_4_mod_8
       · exact right.symm
@@ -362,9 +352,7 @@ problem bulgaria1998_p11
         exact m_eq_2_mod_3
       have step_2 : 4 * m₁ ≡ m₁ [MOD 3] := by
         nth_rw 2 [show m₁ = 1 * m₁ by ring]
-        apply Nat.ModEq.mul
-        rfl
-        rfl
+        exact Nat.ModEq.mul rfl rfl
       calc  m₁ ≡ 4 * m₁ [MOD 3] := step_2.symm
             _ ≡ 2 [MOD 3] := step_1
     have m₁_eq_5_mod_6 : m₁ ≡ 5 [MOD 6] := by
@@ -434,9 +422,6 @@ problem bulgaria1998_p11
     have lifted_m₁_result := mod_z_of_mod_n (Nat.modEq_zero_iff_dvd.mpr m₁_divides_for_thues_lemma)
     norm_num at lifted_m₁_result
 
-    have step_1 : a ^ 2 ≡ -3 [ZMOD m₁] :=
-      Int.ModEq.add_right_cancel' 3 lifted_m₁_result
-
     have step_2 : a * x ≡ -y [ZMOD m₁] := by
       rw[show -y = 0 - y by ring]
       rw[show a * x = a * x + y - y by ring]
@@ -445,34 +430,30 @@ problem bulgaria1998_p11
       rfl
 
     have step_3 : a ^ 2 * x ^ 2 ≡ y ^ 2 [ZMOD m₁] := by
-      rw[show a ^ 2 * x ^ 2 = (a * x) * (a * x) by ring]
-      rw[show y ^ 2 = (-y) * (-y) by ring]
-      apply Int.ModEq.mul
-      exact step_2
-      exact step_2
+      rw [show a ^ 2 * x ^ 2 = (a * x) * (a * x) by ring]
+      rw [show y ^ 2 = (-y) * (-y) by ring]
+      exact Int.ModEq.mul step_2 step_2
 
     have step_4: (-3) * x ^ 2 ≡ y ^ 2 [ZMOD m₁] := by
+      have step_1 : a ^ 2 ≡ -3 [ZMOD m₁] :=
+        Int.ModEq.add_right_cancel' 3 lifted_m₁_result
       trans a ^ 2 * x ^ 2
       · exact Int.ModEq.mul (step_1.symm) rfl
       · exact step_3
 
     have expression : 3 * x ^ 2 + y ^ 2 ≡ 0 [ZMOD m₁] := by
-      have : ((-3) * x ^ 2) + (3 * x ^ 2)  ≡ (y ^ 2) + (3 * x ^ 2) [ZMOD m₁] := by
-        apply Int.ModEq.add
-        exact step_4
-        rfl
+      have : ((-3) * x ^ 2) + (3 * x ^ 2)  ≡ (y ^ 2) + (3 * x ^ 2) [ZMOD m₁] :=
+        Int.ModEq.add_right _ step_4
       rw[show (-3) * x ^ 2 + (3 * x ^ 2) = 0 by ring] at this
       rw[show y ^ 2 + 3 * x ^ 2 = 3 * x ^ 2 + y ^ 2 by ring] at this
       exact this.symm
 
-    have := Int.modEq_zero_iff_dvd.mp expression
-    obtain ⟨s, Hs⟩ := this
+    obtain ⟨s, Hs⟩ := Int.modEq_zero_iff_dvd.mp expression
 
     have upper_bound_expression: 3 * x ^ 2 + y ^ 2 ≤ 4 * m₁ := by omega
-    rw[Hs] at upper_bound_expression
-    rw[show m₁ * s = s * m₁ by ring] at upper_bound_expression
-    have zero_le_m₁ : 0 ≤ (m₁ : ℤ) := by positivity
-    rw[m_eq_4_m₁] at zero_lt_m
+    rw [Hs] at upper_bound_expression
+    rw [show m₁ * s = s * m₁ by ring] at upper_bound_expression
+    rw [m_eq_4_m₁] at zero_lt_m
     have zero_lt_m₁ : 0 < @Nat.cast ℤ _ m₁ := by omega
 
     have upper_bound_s : s ≤ 4 := by
@@ -486,7 +467,7 @@ problem bulgaria1998_p11
 
     rw[show (0 : ℤ) = m₁ * 0 by ring] at lower_bound_expression
     have lower_bound_s : 0 < s := by
-      exact lt_of_mul_lt_mul_of_nonneg_left lower_bound_expression zero_le_m₁
+      exact lt_of_mul_lt_mul_of_nonneg_left lower_bound_expression zero_lt_m₁.le
 
     have m₁_sub_5_mod_6 : ↑m₁ - 5 ≡ 0 [ZMOD 6] := by
       rw [show (0 : ℤ) = (5 : ℤ) - 5 by ring]
