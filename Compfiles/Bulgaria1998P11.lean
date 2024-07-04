@@ -236,7 +236,7 @@ problem bulgaria1998_p11
     (h : 3 * m * A = (m + 3)^n + 1) : Odd A := by
   have ⟨⟨k, Hk⟩, m_eq_2_mod_3⟩ : Odd n ∧ m ≡ 2 [MOD 3] := n_odd_and_m_eq_2_mod_3 m n A h
   by_contra even_A
-  have even_A := (@Nat.even_iff_not_odd A).mpr even_A
+  rw [←Nat.even_iff_not_odd] at even_A
   have zero_lt_m : 0 < m := by
     by_contra m_eq_0
     have m_eq_0 : m = 0 := by
@@ -304,8 +304,7 @@ problem bulgaria1998_p11
         calc m₁ * 2 ≡ 3 * 2 [MOD 4] := Nat.ModEq.mul right rfl
           _ ≡ 2 [MOD 4] := rfl
     exact m_mod_2_contradiction m n A even_m even_A m_eq_2_mod_4 h
-  · have two_le_l : 2 ≤ l := by omega
-    have eq_2 : 0 ≡ 3^n + 1 [MOD m] := by
+  · have eq_2 : 0 ≡ 3^n + 1 [MOD m] := by
       calc  0 ≡ m * (3 * A) [MOD m] := by
                 rw[show 0 = 0 * (3 * A) by ring]
                 apply Nat.ModEq.mul
@@ -319,6 +318,7 @@ problem bulgaria1998_p11
                 exact m_add_3_pow_n_mod_m n m
                 rfl
     have l_eq_2 : l = 2 := by
+      have two_le_l : 2 ≤ l := by omega
       obtain left | right := lt_or_eq_of_le two_le_l
       · have two_pow_l_divides_expresion : 2 ^ l ∣ (3^n + 1) := by
           have m_divides_expression : m ∣ (3 ^ n) + 1 := by
@@ -523,19 +523,13 @@ problem bulgaria1998_p11
     have lower_bound_s : 0 < s := by
       exact lt_of_mul_lt_mul_of_nonneg_left lower_bound_expression zero_le_m₁
 
-    have := mod_z_of_mod_n m₁_eq_5_mod_6
     have m₁_sub_5_mod_6 : ↑m₁ - 5 ≡ 0 [ZMOD 6] := by
-      rw[show (0 : ℤ) = (5 : ℤ) - 5 by ring]
-      apply Int.ModEq.sub
-      exact this
-      rfl
+      rw [show (0 : ℤ) = (5 : ℤ) - 5 by ring]
+      exact Int.ModEq.sub (mod_z_of_mod_n m₁_eq_5_mod_6) rfl
 
-    have := mod_z_of_mod_n m₁_eq_2_mod_3
     have m₁_sub_2_mod_3 : ↑m₁ - 2 ≡ 0 [ZMOD 3] := by
-      rw[show (0 : ℤ) = (2 : ℤ) - 2 by ring]
-      apply Int.ModEq.sub
-      exact this
-      rfl
+      rw [show (0 : ℤ) = (2 : ℤ) - 2 by ring]
+      exact Int.ModEq.sub (mod_z_of_mod_n m₁_eq_2_mod_3) rfl
 
     obtain (left : ((1 : ℤ) = s)) | (right : 1 < s) := LE.le.eq_or_lt (Order.succ_le_of_lt lower_bound_s)
     rw[left.symm] at Hs
