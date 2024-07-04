@@ -565,32 +565,32 @@ problem bulgaria1998_p11
           ring_nf at expression_mod_4
           contradiction
     obtain (left : ((3 : ℤ) = s)) | (right : 3 < s) := LE.le.eq_or_lt (Order.succ_le_of_lt right)
-    rw[left.symm] at Hs
-    have := Int.modEq_zero_iff_dvd.mp m₁_sub_5_mod_6
-    dsimp[Dvd.dvd] at this
-    obtain ⟨c, this⟩ := this
-    have expr_m₁_mod_6 : ↑m₁ = 6 * c + 5 := by linarith
-    rw[expr_m₁_mod_6] at Hs
-    ring_nf at Hs
-    have expression_mod_3 : ((x : (ZMod 3)) ^ 2 * 3 + y ^ 2) = ((15 + c * 18) : (ZMod 3)) := by
-      norm_cast
-      rw[Hs]
-    reduce_mod_char at expression_mod_3
-    have : (y : ZMod 3) = 0 := square_mod_3_zmod_0 expression_mod_3
-    have := (ZMod.intCast_zmod_eq_zero_iff_dvd y 3).mp this
-    dsimp[Dvd.dvd] at this
-    obtain⟨y', Hy'⟩ := this
-    rw[Hy'] at Hs
-    ring_nf at Hs
-    rw[show x ^ 2 * 3 + y' ^ 2 * 9 = 3 * (x ^ 2 + 3 * y' ^ 2) by ring] at Hs
-    rw[show 15 + c * 18 = 3 * (5 + 6 * c) by ring] at Hs
-    have reduced_expression : (x ^ 2 + 3 * y' ^ 2) = (5 + 6 * c) := by
-      omega
+    · rw[left.symm] at Hs
+      have := Int.modEq_zero_iff_dvd.mp m₁_sub_5_mod_6
+      dsimp[Dvd.dvd] at this
+      obtain ⟨c, this⟩ := this
+      have expr_m₁_mod_6 : ↑m₁ = 6 * c + 5 := by linarith
+      rw[expr_m₁_mod_6] at Hs
+      ring_nf at Hs
+      have expression_mod_3 : ((x : (ZMod 3)) ^ 2 * 3 + y ^ 2) = ((15 + c * 18) : (ZMod 3)) := by
+        norm_cast
+        rw[Hs]
+      reduce_mod_char at expression_mod_3
+      have : (y : ZMod 3) = 0 := square_mod_3_zmod_0 expression_mod_3
+      have := (ZMod.intCast_zmod_eq_zero_iff_dvd y 3).mp this
+      dsimp[Dvd.dvd] at this
+      obtain⟨y', Hy'⟩ := this
+      rw[Hy'] at Hs
+      ring_nf at Hs
+      rw[show x ^ 2 * 3 + y' ^ 2 * 9 = 3 * (x ^ 2 + 3 * y' ^ 2) by ring] at Hs
+      rw[show 15 + c * 18 = 3 * (5 + 6 * c) by ring] at Hs
+      have reduced_expression : (x ^ 2 + 3 * y' ^ 2) = (5 + 6 * c) := by
+        omega
 
-    rw[show 5 + 6 * c = 6 * c + 5 by ring] at reduced_expression
-    rw[← expr_m₁_mod_6] at reduced_expression
-    rw[show x ^ 2 + 3 * y' ^ 2 = 3 * y' ^ 2 + x ^ 2 by ring] at reduced_expression
-    exact leaf_contradiction reduced_expression m₁_sub_5_mod_6
+      rw[show 5 + 6 * c = 6 * c + 5 by ring] at reduced_expression
+      rw[← expr_m₁_mod_6] at reduced_expression
+      rw[show x ^ 2 + 3 * y' ^ 2 = 3 * y' ^ 2 + x ^ 2 by ring] at reduced_expression
+      exact leaf_contradiction reduced_expression m₁_sub_5_mod_6
 
     obtain (left : ((4 : ℤ) = s)) | (right : 4 < s) := LE.le.eq_or_lt (Order.succ_le_of_lt right)
     · rw[left.symm] at Hs; omega
