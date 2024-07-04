@@ -257,38 +257,24 @@ problem bulgaria1998_p11
     by_contra odd_m
     have odd_m := Nat.odd_iff_not_even.mpr odd_m
     obtain ⟨a, Ha⟩ := odd_m
-    have : m ≡ 1 [MOD 2] := by
-      rw[Ha]
-      nth_rw 2 [show 1 = 0 * a + 1 by ring]
-      apply Nat.ModEq.add
-      apply Nat.ModEq.mul
-      rfl
-      rfl
-      rfl
+    have : m % 2 = 1 % 2 := by
+      simp only [Ha, Nat.add_mod, Nat.mul_mod_right, Nat.mod_succ, zero_add]
+
     have towards_contradiction : 0 ≡ 1 [MOD 2] := by
       calc  0 ≡ 3 * m * A [MOD 2] := by
+                change _ % _ = _ % _
                 obtain ⟨a, Ha⟩ := even_A
-                rw[Ha]
-                rw[show a + a = 2 * a by ring]
-                rw[show 3 * m * (2 * a) = 2 * (3 * m * a) by ring]
-                rw[show 0 = 0 * (3 * m * a) by ring]
-                apply Nat.ModEq.mul
-                rfl
-                rfl
+                rw [Ha, ←Nat.two_mul]
+                simp [Nat.mul_mod]
             _ ≡ (m + 3)^n + 1 [MOD 2] := by rw[h]
             _ ≡ 1 [MOD 2] := by
                 nth_rw 2 [show 1 = 0 + 1 by rfl]
-                apply Nat.ModEq.add
+                refine Nat.ModEq.add ?_ rfl
                 have : m + 3 ≡ 0 [MOD 2] := by
                   calc  m + 3 ≡ 1 + 1 [MOD 2] := by
-                                apply Nat.ModEq.add
-                                exact this
-                                rfl
-                        _ ≡ 0 [MOD 2] := by
-                                ring_nf
-                                rfl
+                                exact Nat.ModEq.add this rfl
+                        _ ≡ 0 [MOD 2] := by rfl
                 exact zero_pow_mod_2 zero_lt_n this
-                rfl
     contradiction
 
   obtain ⟨l, m₁, ⟨one_le_l, odd_m₁, m_factorisation⟩⟩ := two_n_and_rest_factorisation m even_m zero_lt_m
