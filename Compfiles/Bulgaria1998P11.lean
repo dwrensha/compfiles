@@ -196,27 +196,23 @@ lemma square_mod_3_zmod_0 : ∀ {x : ZMod 3} (_ : x ^ 2 = 0), x = 0 := by
   decide
 
 lemma leaf_contradiction {x y m₁ : ℤ} (h: 3 * x ^ 2 + y ^ 2 = m₁) (h2 : m₁ - 5 ≡ 0 [ZMOD 6]) : False := by
-  have := Int.modEq_zero_iff_dvd.mp h2
-  dsimp[Dvd.dvd] at this
-  obtain ⟨c, this⟩ := this
+  obtain ⟨c, hc⟩ := Int.modEq_zero_iff_dvd.mp h2
   have expr_m₁_mod_6 : ↑m₁ = 6 * c + 5 := by omega
-  rw[expr_m₁_mod_6] at h
+  rw [expr_m₁_mod_6] at h
   ring_nf at h
   have := calc y ^ 2 ≡ x ^ 2 * 3 + y ^ 2 [ZMOD 3] := by
                       nth_rw 1 [show y ^ 2 = 0 + y ^ 2 by ring]
-                      apply Int.ModEq.add
-                      dsimp[Int.ModEq]
-                      simp
-                      rfl
+                      refine Int.ModEq.add_right _ ?_
+                      simp [Int.ModEq]
         _ ≡ (5 + c * 6) [ZMOD 3] := by rw[h]
         _ ≡ 2 [ZMOD 3] := by
           have zmod : 5 + (c : ZMod 3) * 6 = 2 := by
             reduce_mod_char
           have : (3 : ℤ) = (3 : ℕ) := by rw [Nat.cast_ofNat]
-          rw[this]
-          rw[← ZMod.intCast_eq_intCast_iff]
-          rw[Int.cast_ofNat]
-          rw[← zmod]
+          rw [this]
+          rw [← ZMod.intCast_eq_intCast_iff]
+          rw [Int.cast_ofNat]
+          rw [← zmod]
           norm_cast
   exact square_contra_mod_3 this
 
@@ -375,10 +371,8 @@ problem bulgaria1998_p11
           obtain ⟨a, Ha⟩ := odd_m₁
           rw[show 1 = 0 + 1 by norm_num]
           rw[Ha]
-          apply Nat.ModEq.add
-          dsimp[Nat.ModEq]
-          simp
-          rfl
+          refine Nat.ModEq.add_right _ ?_
+          simp[Nat.ModEq]
         have step_1: m₁ * 2 ≡ 2 * 2 [MOD 3 * 2] := Nat.ModEq.mul_right' 2 m₁_eq_2_mod_3
         have step_2: m₁ * 3 ≡ 1 * 3 [MOD 2 * 3] := Nat.ModEq.mul_right' 3 this
         change m₁ * 2 + m₁ ≡ 2 * 2 + 5 [MOD 2 * 3] at step_2
@@ -423,11 +417,9 @@ problem bulgaria1998_p11
     norm_num at lifted_m₁_result
 
     have step_2 : a * x ≡ -y [ZMOD m₁] := by
-      rw[show -y = 0 - y by ring]
-      rw[show a * x = a * x + y - y by ring]
-      apply Int.ModEq.sub
-      exact mod_expression
-      rfl
+      rw [show -y = 0 - y by ring]
+      rw [show a * x = a * x + y - y by ring]
+      exact Int.ModEq.sub_right _ mod_expression
 
     have step_3 : a ^ 2 * x ^ 2 ≡ y ^ 2 [ZMOD m₁] := by
       rw [show a ^ 2 * x ^ 2 = (a * x) * (a * x) by ring]
@@ -444,19 +436,18 @@ problem bulgaria1998_p11
     have expression : 3 * x ^ 2 + y ^ 2 ≡ 0 [ZMOD m₁] := by
       have : ((-3) * x ^ 2) + (3 * x ^ 2)  ≡ (y ^ 2) + (3 * x ^ 2) [ZMOD m₁] :=
         Int.ModEq.add_right _ step_4
-      rw[show (-3) * x ^ 2 + (3 * x ^ 2) = 0 by ring] at this
-      rw[show y ^ 2 + 3 * x ^ 2 = 3 * x ^ 2 + y ^ 2 by ring] at this
+      rw [show (-3) * x ^ 2 + (3 * x ^ 2) = 0 by ring] at this
+      rw [show y ^ 2 + 3 * x ^ 2 = 3 * x ^ 2 + y ^ 2 by ring] at this
       exact this.symm
 
     obtain ⟨s, Hs⟩ := Int.modEq_zero_iff_dvd.mp expression
-
-    have upper_bound_expression: 3 * x ^ 2 + y ^ 2 ≤ 4 * m₁ := by omega
-    rw [Hs] at upper_bound_expression
-    rw [show m₁ * s = s * m₁ by ring] at upper_bound_expression
     rw [m_eq_4_m₁] at zero_lt_m
     have zero_lt_m₁ : 0 < @Nat.cast ℤ _ m₁ := by omega
 
     have upper_bound_s : s ≤ 4 := by
+      have upper_bound_expression: 3 * x ^ 2 + y ^ 2 ≤ 4 * m₁ := by omega
+      rw [Hs] at upper_bound_expression
+      rw [show m₁ * s = s * m₁ by ring] at upper_bound_expression
       exact le_of_mul_le_mul_right upper_bound_expression zero_lt_m₁
 
     have lower_bound_expression : 0 < 3 * x ^ 2 + y ^ 2 := by
