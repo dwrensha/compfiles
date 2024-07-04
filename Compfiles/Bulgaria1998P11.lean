@@ -402,29 +402,8 @@ problem bulgaria1998_p11
           rfl
         have step_1: m₁ * 2 ≡ 2 * 2 [MOD 3 * 2] := Nat.ModEq.mul_right' 2 m₁_eq_2_mod_3
         have step_2: m₁ * 3 ≡ 1 * 3 [MOD 2 * 3] := Nat.ModEq.mul_right' 3 this
-        simp at step_1
-        simp at step_2
-        have step_3 : m₁ * 3 + 2 * (m₁ * 2) ≡ 3 + 2 * 4 [MOD 6]:= by
-          apply Nat.ModEq.add
-          nth_rw 2 [show 3 = 1 * 3 by norm_num]
-          exact step_2
-          apply Nat.ModEq.mul
-          rfl
-          exact step_1
-        ring_nf at step_3
-        have : 11 ≡ 5 * 7 [MOD 6] := rfl
-        have step_4 : m₁ * 7 ≡ 5 * 7 [MOD 6] := Nat.ModEq.trans step_3 this
-        calc  m₁ ≡ m₁ * 7 [MOD 6] := by
-                  nth_rw 1 [show m₁ = m₁ * 1 by ring]
-                  apply Nat.ModEq.mul
-                  rfl
-                  rfl
-              _ ≡ 5 * 7 [MOD 6] := step_4
-              _ ≡ 5 [MOD 6] := by
-                  nth_rw 2 [show 5 = 5 * 1 by ring]
-                  apply Nat.ModEq.mul
-                  rfl
-                  rfl
+        change m₁ * 2 + m₁ ≡ 2 * 2 + 5 [MOD 2 * 3] at step_2
+        exact Nat.ModEq.add_left_cancel step_1 step_2
       · have step_1: m₁ * 2 ≡ 3 * 2 [MOD 6]:= Nat.ModEq.mul_right 2 m_mod_six
         have step_2: m₁ * 2 ≡ 2 * 2 [MOD 3 * 2] := Nat.ModEq.mul_right' 2 m₁_eq_2_mod_3
         simp at step_1
@@ -464,12 +443,8 @@ problem bulgaria1998_p11
     have lifted_m₁_result := mod_z_of_mod_n (Nat.modEq_zero_iff_dvd.mpr m₁_divides_for_thues_lemma)
     norm_num at lifted_m₁_result
 
-    have step_1 : a ^ 2 ≡ -3 [ZMOD m₁] := by
-      rw[show -3 = 0 - 3 by ring]
-      rw[show (@Nat.cast ℤ _ a) ^ 2 = ↑a ^ 2 + 3 - 3 by ring]
-      apply Int.ModEq.sub
-      exact lifted_m₁_result
-      rfl
+    have step_1 : a ^ 2 ≡ -3 [ZMOD m₁] :=
+      Int.ModEq.add_right_cancel' 3 lifted_m₁_result
 
     have step_2 : a * x ≡ -y [ZMOD m₁] := by
       rw[show -y = 0 - y by ring]
@@ -487,8 +462,8 @@ problem bulgaria1998_p11
 
     have step_4: (-3) * x ^ 2 ≡ y ^ 2 [ZMOD m₁] := by
       trans a ^ 2 * x ^ 2
-      · exact? says exact Int.ModEq.mul (id (Int.ModEq.symm step_1)) rfl
-      · exact? says exact step_3
+      · exact Int.ModEq.mul (step_1.symm) rfl
+      · exact step_3
 
     have expression : 3 * x ^ 2 + y ^ 2 ≡ 0 [ZMOD m₁] := by
       have : ((-3) * x ^ 2) + (3 * x ^ 2)  ≡ (y ^ 2) + (3 * x ^ 2) [ZMOD m₁] := by
