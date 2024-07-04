@@ -173,8 +173,117 @@ lemma too_good_to_be_true (n l : ℕ)
   dsimp[Nat.ModEq] at expression_eq_4_mod_8
   simp at expression_eq_4_mod_8
 
-lemma Thue's_lemma (a m : ℤ) : ∃ (x y : ℤ), a * x + y ≡ 0 [ZMOD m] ∧ 0 < x ^ 2 ∧ x ^ 2 ≤ m ∧ y ^ 2 ≤ m :=
-  sorry
+lemma thue
+    (a n : ℕ) (hn : 1 < n) :
+    ∃ (x y : ℤ), (a : ZMod n) * x + y = 0 ∧ 0 < |x| ∧ x ^ 2 ≤ n ∧ y ^ 2 ≤ n := by
+  -- https://services.artofproblemsolving.com/download.php?id=YXR0YWNobWVudHMvMy8yL2QzYjEzOGM0ODE3YzYwZGU4NGFmOTEwZDc0ZGNhODRjOGMyMzZlLnBkZg==&rn=dGh1ZS12NC5wZGY=
+
+  -- let r = ⌊√n⌋, i.e. r is the unique integer for which
+  -- r² ≤ n < (r + 1)².
+  let r := Nat.sqrt n
+
+  -- The number of pairs (x,y) so that 0 ≤ x,y ≤ r is (r + 1)² which
+  -- is greater than n.
+
+  --
+  -- Therefore there must be two different pairs (x₁, y₁) and (x₂, y₂)
+  -- such that
+  --     ax₁ + y₁ = ax₂ + ay₂ (mod n)
+  --     i.e.
+  --     a(x₁ - x₂) = y₂ - y₁ (mod n)
+  --
+
+  let D := Fin (r + 1) × Fin (r + 1)
+  let f : D → ZMod n := fun ⟨x,y⟩ ↦ a * (x.val : ZMod n) + (y.val : ZMod n)
+  have cardD : Fintype.card D = (r + 1)^2 := by
+    unfold_let D
+    rw [sq, Fintype.card_prod, Fintype.card_fin]
+
+  have : NeZero n := NeZero.of_gt hn
+  have cardZ : Fintype.card (ZMod n) = n := ZMod.card n
+
+  have hDZ : Fintype.card (ZMod n) < Fintype.card D := by
+    rw [cardD, cardZ]
+    exact Nat.lt_succ_sqrt' n
+
+  obtain ⟨⟨x₁, y₁⟩, ⟨x₂, y₂⟩, hxyn, hxy⟩ :=
+    Fintype.exists_ne_map_eq_of_card_lt f hDZ
+  dsimp [f] at hxy
+  replace hxy : (a : ZMod n) * (↑↑x₁ - ↑↑x₂) + (↑↑y₁ - ↑↑y₂) = 0 :=
+    by linear_combination hxy
+  use (x₁ : ℤ) - (x₂ : ℤ)
+  use (y₁ : ℤ) - (y₂ : ℤ)
+
+  have hx1 : ((x₁ : ℕ): ZMod n) = (((x₁ : ℕ): ℤ) : ZMod n)  := by
+      norm_cast
+  have hx2 : ((x₂ : ℕ): ZMod n) = (((x₂ : ℕ): ℤ) : ZMod n)  := by
+      norm_cast
+
+  have hx3 : (((x₁ : ℕ): ℤ) : ZMod n) - (((x₂ : ℕ): ℤ) : ZMod n) =
+            (((((x₁ : ℕ): ℤ) -((x₂ : ℕ): ℤ)) : ℤ) : ZMod n) := by
+    norm_cast
+
+  have hy1 : ((y₁ : ℕ): ZMod n) = (((y₁ : ℕ): ℤ) : ZMod n)  := by
+      norm_cast
+  have hy2 : ((y₂ : ℕ): ZMod n) = (((y₂ : ℕ): ℤ) : ZMod n)  := by
+      norm_cast
+  have hy3 : (((y₁ : ℕ): ℤ) : ZMod n) - (((y₂ : ℕ): ℤ) : ZMod n) =
+            (((((y₁ : ℕ): ℤ) -((y₂ : ℕ): ℤ)) : ℤ) : ZMod n) := by
+    norm_cast
+
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · rw [hx1, hx2, hx3, hy1, hy2, hy3] at hxy
+    rw [hxy]
+
+  · by_contra! H
+    replace H : |((x₁:ℕ):ℤ) - ↑↑x₂| = 0 := by
+      have : (0 : ℤ) ≤ |((x₁:ℕ):ℤ) - ↑↑x₂| := abs_nonneg (↑↑x₁ - ↑↑x₂)
+      exact (Int.le_antisymm this H).symm
+    rw [abs_eq_zero] at H
+    replace H : ((x₁:ℕ):ℤ) = ↑↑x₂ := Int.eq_of_sub_eq_zero H
+    replace H : x₁.val = x₂.val := Int.ofNat_inj.mp H
+    replace H : x₁ = x₂ := Fin.eq_of_val_eq H
+    rw [H, sub_self, mul_zero, zero_add] at hxy
+    have h4 : ((y₁:ℕ): ZMod n) = ↑↑y₂ := by linear_combination hxy
+    rw [ZMod.natCast_eq_natCast_iff'] at h4
+    have p1 := y₁.prop
+    have p2 := y₂.prop
+    have : r + 1 ≤ n := by
+      have h31 := Nat.sqrt_lt_self hn
+      omega
+    have h10 : y₁.val < n := by omega
+    have h11 : y₂.val < n := by omega
+    rw [Nat.mod_eq_of_lt h10, Nat.mod_eq_of_lt h11] at h4
+    have h12 : y₁ = y₂ := Fin.eq_of_val_eq h4
+    rw [H,h12] at hxyn
+    simp at hxyn
+  · have hx₁ : x₁.val < r + 1 := x₁.prop
+    have hx₂ : x₂.val < r + 1 := x₂.prop
+    have hr1 : r^2 ≤ n := Nat.sqrt_le' n
+    nlinarith
+  · have hy₁ : y₁.val < r + 1 := y₁.prop
+    have hy₂ : y₂.val < r + 1 := y₂.prop
+    have hr1 : r^2 ≤ n := Nat.sqrt_le' n
+    nlinarith
+
+lemma Thue's_lemma
+    (a n : ℕ)
+    (hn : 1 < n) :
+    ∃ (x y : ℤ),
+      a * x + y ≡ 0 [ZMOD n] ∧
+      0 < |x| ∧
+      x ^ 2 ≤ n ∧
+      y ^ 2 ≤ n := by
+  obtain ⟨x, y, hxay, hx, hx1, hy1⟩ := thue a n hn
+  refine ⟨x, y, ?_, hx, hx1, hy1⟩
+  have h1 : (a : ZMod n) * (x : ZMod n) + (y : ZMod n) =
+            ((((a : ℤ) * x + y):ℤ) : ZMod n) := by norm_cast
+  have h2 : ((0:ℤ):ZMod n) = 0 := by norm_cast
+  rw [h1, ←h2] at hxay
+  exact (ZMod.intCast_eq_intCast_iff (a * x + y) 0 n).mp hxay
+
+example (a b n : ℕ) (ha : a < n + 1) (hb : b < n + 1) : ((a : ℤ) - (b : ℤ))^2 ≤ n^2 := by
+  nlinarith
 
 lemma mod_z_of_mod_n {a b m : ℕ} (h : a ≡ b [MOD m]) : a ≡ b [ZMOD m] := by
   dsimp [Int.ModEq]
@@ -410,7 +519,13 @@ problem bulgaria1998_p11
       ring_nf
       exact step_2
 
-    obtain ⟨x, y, x_y_props⟩ := Thue's_lemma a m₁
+    have hn1 : 1 < m₁ := by
+      change _ % _ = _ % _ at m₁_eq_2_mod_3
+      have h40 := Nat.div_add_mod m₁ 3
+      rw [m₁_eq_2_mod_3] at h40
+      omega
+    obtain ⟨x, y, x_y_props⟩ := Thue's_lemma a m₁ hn1
+    clear hn1
     obtain ⟨mod_expression, x_lower, x_higher, y_higher⟩ := x_y_props
 
     have lifted_m₁_result := mod_z_of_mod_n (Nat.modEq_zero_iff_dvd.mpr m₁_divides_for_thues_lemma)
@@ -451,7 +566,7 @@ problem bulgaria1998_p11
       exact le_of_mul_le_mul_right upper_bound_expression zero_lt_m₁
 
     have lower_bound_expression : 0 < 3 * x ^ 2 + y ^ 2 := by
-      have : 0 < 3 * x ^ 2 := by omega
+      have : 0 < 3 * x ^ 2 := by rw [←sq_abs]; positivity
       have : 0 ≤ y ^ 2 := by positivity
       omega
     rw[Hs] at lower_bound_expression
