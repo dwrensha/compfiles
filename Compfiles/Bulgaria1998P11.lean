@@ -138,28 +138,19 @@ lemma m_mod_2_contradiction (m n A : ℕ)
   obtain ⟨m', Hm'⟩ := even_m
   have towards_contradiction : 0 ≡ 2 [MOD 4] :=
     calc  0 ≡ 3 * m * A [MOD 4] := by
-              rw[Ha]
-              rw[show a + a = 2 * a by ring]
-              rw[Hm']
-              rw[show m' + m' = 2 * m' by ring]
-              rw[show 3 * (2 * m') * (2 * a) = 4 * (3 * m' * a) by ring]
-              rw[show 0 = 0 * (3 * m' * a) by ring]
-              apply Nat.ModEq.mul
-              rfl
-              rfl
+              rw [Ha, Hm', ←Nat.two_mul, ←Nat.two_mul]
+              rw [show 3 * (2 * m') * (2 * a) = 4 * (3 * m' * a) by ring]
+              change 0 = _ % _
+              exact (Nat.mul_mod_right 4 (3 * m' * a)).symm
           _ ≡ (m + 3)^n + 1 [MOD 4] := by rw[h]
           _ ≡ 2 [MOD 4] := by
               have : m + 3 ≡ 1 [MOD 4] := by
-                calc  m + 3 ≡ 2 + 3 [MOD 4] := by
-                        apply Nat.ModEq.add
-                        exact m_eq_2_mod_4
-                        rfl
+                calc  m + 3 ≡ 2 + 3 [MOD 4] :=
+                                 Nat.ModEq.add_right 3 m_eq_2_mod_4
                       _ ≡ 1 [MOD 4] := by rfl
               have : (m + 3)^n ≡ 1 [MOD 4] := one_pow_mod_4 this
               rw [show 2 = 1 + 1 by rfl]
-              apply Nat.ModEq.add
-              exact this
-              rfl
+              exact Nat.ModEq.add_right 1 this
   contradiction
 
 lemma m_add_3_pow_n_mod_m (n m : ℕ) : (m + 3)^n ≡ 3^n [MOD m] := by
