@@ -239,17 +239,16 @@ problem bulgaria1998_p11
   rw [←Nat.even_iff_not_odd] at even_A
   have zero_lt_m : 0 < m := by
     by_contra m_eq_0
-    have m_eq_0 : m = 0 := by
-      simp_all only [not_lt, nonpos_iff_eq_zero]
-    rw[m_eq_0] at h
+    replace m_eq_0 := not_one_le_k m_eq_0
+    rw [m_eq_0] at h
     ring_nf at h
     have : 1 + 3 ^ n > 0 := by positivity
-    rw[← h] at this
+    rw [← h] at this
     contradiction
   have zero_lt_n : 0 < n := by
     by_contra zero_eq_n
-    have zero_eq_n : 0 = n := by simp_all only [Nat.odd_iff_not_even, not_lt, nonpos_iff_eq_zero]
-    rw[← zero_eq_n] at h
+    replace zero_eq_n := not_one_le_k zero_eq_n
+    rw [zero_eq_n] at h
     ring_nf at h
     apply_fun (· % 3) at h
     simp only [Nat.mul_mod_left, Nat.mod_succ, OfNat.zero_ne_ofNat] at h
@@ -532,39 +531,39 @@ problem bulgaria1998_p11
       exact Int.ModEq.sub (mod_z_of_mod_n m₁_eq_2_mod_3) rfl
 
     obtain (left : ((1 : ℤ) = s)) | (right : 1 < s) := LE.le.eq_or_lt (Order.succ_le_of_lt lower_bound_s)
-    rw[left.symm] at Hs
-    rw[show (m₁ : ℤ) * 1 = m₁ by ring] at Hs
-    exact leaf_contradiction Hs m₁_sub_5_mod_6
+    · rw[left.symm] at Hs
+      rw[show (m₁ : ℤ) * 1 = m₁ by ring] at Hs
+      exact leaf_contradiction Hs m₁_sub_5_mod_6
 
     obtain (left : ((2 : ℤ) = s)) | (right : 2 < s) := LE.le.eq_or_lt (Order.succ_le_of_lt right)
-    rw[left.symm] at Hs
-    have := Int.modEq_zero_iff_dvd.mp m₁_sub_5_mod_6
-    dsimp[Dvd.dvd] at this
-    obtain ⟨c, this⟩ := this
-    have expr_m₁_mod_6 : ↑m₁ = 6 * c + 5 := by linarith
-    rw[expr_m₁_mod_6] at Hs
-    ring_nf at Hs
-    have expression_mod_4 : ((x : (ZMod 4)) ^ 2 * 3 + y ^ 2) = ((10 + c * 12) : (ZMod 4)) := by
-      norm_cast
-      rw[Hs]
-    reduce_mod_char at expression_mod_4
-    obtain left_x | right_x := square_mod_4_zmod x
-    rw[left_x] at expression_mod_4
-    obtain left_y | right_y := square_mod_4_zmod y
-    rw[left_y] at expression_mod_4
-    ring_nf at expression_mod_4
-    contradiction
-    rw[right_y] at expression_mod_4
-    ring_nf at expression_mod_4
-    contradiction
-    rw[right_x] at expression_mod_4
-    obtain left_y | right_y := square_mod_4_zmod y
-    rw[left_y] at expression_mod_4
-    ring_nf at expression_mod_4
-    contradiction
-    rw[right_y] at expression_mod_4
-    ring_nf at expression_mod_4
-    contradiction
+    · rw[left.symm] at Hs
+      have := Int.modEq_zero_iff_dvd.mp m₁_sub_5_mod_6
+      dsimp[Dvd.dvd] at this
+      obtain ⟨c, this⟩ := this
+      have expr_m₁_mod_6 : ↑m₁ = 6 * c + 5 := by linarith
+      rw[expr_m₁_mod_6] at Hs
+      ring_nf at Hs
+      have expression_mod_4 : ((x : (ZMod 4)) ^ 2 * 3 + y ^ 2) = ((10 + c * 12) : (ZMod 4)) := by
+        norm_cast
+        rw[Hs]
+      reduce_mod_char at expression_mod_4
+      obtain left_x | right_x := square_mod_4_zmod x
+      · rw[left_x] at expression_mod_4
+        obtain left_y | right_y := square_mod_4_zmod y
+        · rw[left_y] at expression_mod_4
+          ring_nf at expression_mod_4
+          contradiction
+        · rw[right_y] at expression_mod_4
+          ring_nf at expression_mod_4
+          contradiction
+      · rw[right_x] at expression_mod_4
+        obtain left_y | right_y := square_mod_4_zmod y
+        · rw[left_y] at expression_mod_4
+          ring_nf at expression_mod_4
+          contradiction
+        · rw[right_y] at expression_mod_4
+          ring_nf at expression_mod_4
+          contradiction
     obtain (left : ((3 : ℤ) = s)) | (right : 3 < s) := LE.le.eq_or_lt (Order.succ_le_of_lt right)
     rw[left.symm] at Hs
     have := Int.modEq_zero_iff_dvd.mp m₁_sub_5_mod_6
