@@ -251,15 +251,8 @@ problem bulgaria1998_p11
     have zero_eq_n : 0 = n := by simp_all only [Nat.odd_iff_not_even, not_lt, nonpos_iff_eq_zero]
     rw[← zero_eq_n] at h
     ring_nf at h
-    have : 0 ≡ 2 [MOD 3] := by
-      calc 0 ≡ m * A * 3 [MOD 3] := by
-                rw[show 0 = 0 * (m * A) by ring]
-                rw[show m * A * 3 = 3 * (m * A) by ring]
-                apply Nat.ModEq.mul
-                rfl
-                rfl
-            _ ≡ 2 [MOD 3] := by rw[h]
-    contradiction
+    apply_fun (· % 3) at h
+    simp only [Nat.mul_mod_left, Nat.mod_succ, OfNat.zero_ne_ofNat] at h
   have even_m : Even m := by
     by_contra odd_m
     have odd_m := Nat.odd_iff_not_even.mpr odd_m
