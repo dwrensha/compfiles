@@ -288,10 +288,8 @@ example (a b n : ℕ) (ha : a < n + 1) (hb : b < n + 1) : ((a : ℤ) - (b : ℤ)
   nlinarith
 
 lemma mod_z_of_mod_n {a b m : ℕ} (h : a ≡ b [MOD m]) : a ≡ b [ZMOD m] := by
-  dsimp [Int.ModEq]
-  rw[show a % m = @Nat.cast ℤ _ (a % m) by norm_num]
-  rw[h]
-  norm_num
+  change _ % _ = _ % _ at *
+  norm_cast
 
 lemma square_contra_mod_3 {y : ℤ} (h: y ^ 2 ≡ 2 [ZMOD 3]) : False := by
   rw [show 3 = ((3:ℕ):ℤ) by rfl] at h
