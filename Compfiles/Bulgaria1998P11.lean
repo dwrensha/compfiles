@@ -407,6 +407,7 @@ problem bulgaria1998_p11
             _ ≡ 3^n + 1 [MOD m] := by
                 refine Nat.ModEq.add_right _ ?_
                 exact m_add_3_pow_n_mod_m n m
+
     have l_eq_2 : l = 2 := by
       have two_le_l : 2 ≤ l := by omega
       obtain left | right := lt_or_eq_of_le two_le_l
@@ -436,7 +437,6 @@ problem bulgaria1998_p11
         exfalso
         exact too_good_to_be_true n l (show 3 ≤ l by exact left) two_pow_l_divides_expresion expression_eq_4_mod_8
       · exact right.symm
-
     have m_eq_4_m₁ : m = 4 * m₁ := by
       rw[l_eq_2] at m_factorisation
       exact m_factorisation
@@ -566,9 +566,8 @@ problem bulgaria1998_p11
       exact le_of_mul_le_mul_right upper_bound_expression zero_lt_m₁
 
     have lower_bound_expression : 0 < 3 * x ^ 2 + y ^ 2 := by
-      have : 0 < 3 * x ^ 2 := by rw [←sq_abs]; positivity
-      have : 0 ≤ y ^ 2 := by positivity
-      omega
+      have h1 : 0 < 3 * x ^ 2 := by rw [←sq_abs]; positivity
+      exact Int.add_pos_of_pos_of_nonneg h1 (sq_nonneg y)
     rw[Hs] at lower_bound_expression
 
     rw[show (0 : ℤ) = m₁ * 0 by ring] at lower_bound_expression
@@ -576,13 +575,13 @@ problem bulgaria1998_p11
       exact lt_of_mul_lt_mul_of_nonneg_left lower_bound_expression zero_lt_m₁.le
 
     have m₁_sub_5_mod_6 : ↑m₁ - 5 ≡ 0 [ZMOD 6] := by
-      rw [show (0 : ℤ) = (5 : ℤ) - 5 by ring]
       exact Int.ModEq.sub (mod_z_of_mod_n m₁_eq_5_mod_6) rfl
 
     interval_cases s
     · -- s = 1
       rw[show (m₁ : ℤ) * 1 = m₁ by ring] at Hs
       exact leaf_contradiction Hs m₁_sub_5_mod_6
+
     · -- s = 2
       have := Int.modEq_zero_iff_dvd.mp m₁_sub_5_mod_6
       dsimp[Dvd.dvd] at this
@@ -598,19 +597,15 @@ problem bulgaria1998_p11
       · rw[left_x] at expression_mod_4
         obtain left_y | right_y := square_mod_4_zmod y
         · rw[left_y] at expression_mod_4
-          ring_nf at expression_mod_4
-          contradiction
+          simp_arith[left_y] at expression_mod_4
         · rw[right_y] at expression_mod_4
-          ring_nf at expression_mod_4
-          contradiction
+          simp_arith at expression_mod_4
       · rw[right_x] at expression_mod_4
         obtain left_y | right_y := square_mod_4_zmod y
         · rw[left_y] at expression_mod_4
-          ring_nf at expression_mod_4
-          contradiction
+          simp_arith at expression_mod_4
         · rw[right_y] at expression_mod_4
-          ring_nf at expression_mod_4
-          contradiction
+          simp_arith at expression_mod_4
     · -- s = 3
       have := Int.modEq_zero_iff_dvd.mp m₁_sub_5_mod_6
       dsimp[Dvd.dvd] at this
@@ -618,7 +613,8 @@ problem bulgaria1998_p11
       have expr_m₁_mod_6 : ↑m₁ = 6 * c + 5 := by linarith
       rw[expr_m₁_mod_6] at Hs
       ring_nf at Hs
-      have expression_mod_3 : ((x : (ZMod 3)) ^ 2 * 3 + y ^ 2) = ((15 + c * 18) : (ZMod 3)) := by
+      have expression_mod_3 :
+          ((x : (ZMod 3)) ^ 2 * 3 + y ^ 2) = ((15 + c * 18) : (ZMod 3)) := by
         norm_cast
         rw[Hs]
       reduce_mod_char at expression_mod_3
