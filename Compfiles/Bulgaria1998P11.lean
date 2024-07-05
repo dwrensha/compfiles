@@ -97,9 +97,6 @@ theorem n_odd_and_m_eq_2_mod_3 (m n A : ℕ) (h : 3 * m * A = (m + 3)^n + 1) : O
       ring
     contradiction
 
-lemma mul_right {a b : ℕ} (c : ℕ) (H : a = b) : (a * c = b * c) := by
-  rw[H]
-
 lemma not_one_le_k {k : ℕ} (h : ¬1 ≤ k) : k = 0 := by
   simp_all only [not_le, Nat.lt_one_iff]
 
