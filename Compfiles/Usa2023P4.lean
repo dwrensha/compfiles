@@ -43,20 +43,18 @@ theorem halve_even (x : ℕ+) (he : Even x.val) : 0 < x.val / 2 := by
    obtain ⟨t, ht⟩ := he
    dsimp at *; omega
 
-def valid_moves (a : ℕ+) (n : ℕ) : State n → List (State n)
+def valid_moves (a : ℕ+) (n : ℕ) : State n → Set (State n)
 | ⟨b, .Alice⟩ =>
-      (List.finRange n).map
-        (fun i ↦ ⟨Function.update b i (b i + a), .Bob⟩)
+      {s | ∃ i : Fin n, s = ⟨Function.update b i (b i + a), .Bob⟩}
 | ⟨b, .Bob⟩ =>
-      (List.finRange n).filterMap
-        (fun i ↦ if he : Even (b i).val
-                 then some ⟨Function.update b i ⟨b i / 2, halve_even _ he⟩,
-                            .Alice⟩
-                 else none)
+      {s | ∃ i : Fin n,
+           ∃ he : Even (b i).val,
+           s = ⟨Function.update b i ⟨b i / 2, halve_even _ he⟩,
+                .Alice⟩}
 
 inductive BobCanForceEnd (a : ℕ+) (n : ℕ) : State n → Prop where
 | BaseCase (b : Blackboard n) :
-    valid_moves a n ⟨b, .Bob⟩ = [] → BobCanForceEnd a n ⟨b, .Bob⟩
+    valid_moves a n ⟨b, .Bob⟩ = ∅ → BobCanForceEnd a n ⟨b, .Bob⟩
 | BobTurn (b : Blackboard n) (m : State n) :
           (m ∈ valid_moves a n ⟨b, .Bob⟩) → BobCanForceEnd a n m →
           BobCanForceEnd a n ⟨b, .Bob⟩
@@ -65,7 +63,7 @@ inductive BobCanForceEnd (a : ℕ+) (n : ℕ) : State n → Prop where
             BobCanForceEnd a n ⟨b, .Alice⟩
 
 inductive EndIsInevitable (a : ℕ+) (n : ℕ) : State n → Prop where
-| BaseCase (s : State n) : valid_moves a n s = [] → EndIsInevitable a n s
+| BaseCase (s : State n) : valid_moves a n s = ∅ → EndIsInevitable a n s
 | Step (s : State n)
        (h : ∀ m ∈ valid_moves a n s, EndIsInevitable a n m) :
        EndIsInevitable a n s
