@@ -1,5 +1,5 @@
 /-
-Copyright (c) 2023 David Renshaw. All rights reserved.
+Copyright (c) 2023 The Compfiles Contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: David Renshaw, Zhiyi Luo
 -/
@@ -19,8 +19,6 @@ by q.
 -/
 
 namespace Imo2003P6
-
-open Finset
 
 snip begin
 
@@ -42,9 +40,11 @@ lemma exists_prime_mod_m_ne_1_and_dvd
 
 snip end
 
--- Direct translation of https://artofproblemsolving.com/community/c6h98p279
 problem imo2003_p6 (p : ℕ) (hp : p.Prime) :
     ∃ q : ℕ, q.Prime ∧ ∀ n, ¬((q : ℤ) ∣ (n : ℤ)^p - (p : ℤ)) := by
+  -- Direct translation of https://artofproblemsolving.com/community/c6h98p279
+
+  open Finset in
 
   rcases Nat.Prime.eq_two_or_odd hp with rfl | p_odd
 
