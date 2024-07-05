@@ -531,24 +531,24 @@ problem bulgaria1998_p11
     have lifted_m₁_result := mod_z_of_mod_n (Nat.modEq_zero_iff_dvd.mpr m₁_divides_for_thues_lemma)
     norm_num at lifted_m₁_result
 
-    have step_2 : a * x ≡ -y [ZMOD m₁] := by
-      rw [show -y = 0 - y by ring]
-      rw [show a * x = a * x + y - y by ring]
-      exact Int.ModEq.sub_right _ mod_expression
-
-    have step_3 : a ^ 2 * x ^ 2 ≡ y ^ 2 [ZMOD m₁] := by
-      rw [show a ^ 2 * x ^ 2 = (a * x) * (a * x) by ring]
-      rw [show y ^ 2 = (-y) * (-y) by ring]
-      exact Int.ModEq.mul step_2 step_2
-
-    have step_4: (-3) * x ^ 2 ≡ y ^ 2 [ZMOD m₁] := by
-      have step_1 : a ^ 2 ≡ -3 [ZMOD m₁] :=
-        Int.ModEq.add_right_cancel' 3 lifted_m₁_result
-      trans a ^ 2 * x ^ 2
-      · exact Int.ModEq.mul (step_1.symm) rfl
-      · exact step_3
-
     have expression : 3 * x ^ 2 + y ^ 2 ≡ 0 [ZMOD m₁] := by
+      have step_2 : a * x ≡ -y [ZMOD m₁] := by
+        rw [show -y = 0 - y by ring]
+        rw [show a * x = a * x + y - y by ring]
+        exact Int.ModEq.sub_right _ mod_expression
+
+      have step_3 : a ^ 2 * x ^ 2 ≡ y ^ 2 [ZMOD m₁] := by
+        rw [show a ^ 2 * x ^ 2 = (a * x) * (a * x) by ring]
+        rw [show y ^ 2 = (-y) * (-y) by ring]
+        exact Int.ModEq.mul step_2 step_2
+
+      have step_4: (-3) * x ^ 2 ≡ y ^ 2 [ZMOD m₁] := by
+        have step_1 : a ^ 2 ≡ -3 [ZMOD m₁] :=
+          Int.ModEq.add_right_cancel' 3 lifted_m₁_result
+        trans a ^ 2 * x ^ 2
+        · exact Int.ModEq.mul (step_1.symm) rfl
+        · exact step_3
+
       have : ((-3) * x ^ 2) + (3 * x ^ 2)  ≡ (y ^ 2) + (3 * x ^ 2) [ZMOD m₁] :=
         Int.ModEq.add_right _ step_4
       rw [show (-3) * x ^ 2 + (3 * x ^ 2) = 0 by ring] at this
