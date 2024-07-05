@@ -260,11 +260,11 @@ lemma thue
   · have hx₁ : x₁.val < r + 1 := x₁.prop
     have hx₂ : x₂.val < r + 1 := x₂.prop
     have hr1 : r^2 ≤ n := Nat.sqrt_le' n
-    nlinarith
+    nlinarith only [hx₁, hx₂, hr1]
   · have hy₁ : y₁.val < r + 1 := y₁.prop
     have hy₂ : y₂.val < r + 1 := y₂.prop
     have hr1 : r^2 ≤ n := Nat.sqrt_le' n
-    nlinarith
+    nlinarith only [hy₁, hy₂, hr1]
 
 /--
 In this version of Thue's lemma, we get an `x` that is nonzero and
