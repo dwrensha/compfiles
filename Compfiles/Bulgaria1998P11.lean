@@ -560,13 +560,12 @@ problem bulgaria1998_p11
       rw [show m₁ * s = s * m₁ by ring] at upper_bound_expression
       exact le_of_mul_le_mul_right upper_bound_expression zero_lt_m₁
 
-    have lower_bound_expression : 0 < 3 * x ^ 2 + y ^ 2 := by
-      have h1 : 0 < 3 * x ^ 2 := by rw [←sq_abs]; positivity
-      exact Int.add_pos_of_pos_of_nonneg h1 (sq_nonneg y)
-    rw[Hs] at lower_bound_expression
-
-    rw[show (0 : ℤ) = m₁ * 0 by ring] at lower_bound_expression
     have lower_bound_s : 0 < s := by
+      have lower_bound_expression : 0 < 3 * x ^ 2 + y ^ 2 := by
+        have h1 : 0 < 3 * x ^ 2 := by rw [←sq_abs]; positivity
+        exact Int.add_pos_of_pos_of_nonneg h1 (sq_nonneg y)
+      rw[Hs] at lower_bound_expression
+      rw[show (0 : ℤ) = m₁ * 0 by ring] at lower_bound_expression
       exact lt_of_mul_lt_mul_of_nonneg_left lower_bound_expression zero_lt_m₁.le
 
     have m₁_sub_5_mod_6 : ↑m₁ - 5 ≡ 0 [ZMOD 6] := by
