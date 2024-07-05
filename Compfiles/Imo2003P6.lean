@@ -196,17 +196,12 @@ problem imo2003_p6 (p : ℕ) (hp : p.Prime) :
   -- k = 2
   rcases eq_zero_or_neZero (n : ZMod q) with hn0 | hn0
   · -- n = 0 (mod q)
-    have : (p : ZMod q) = 0 :=
+    have q_dvd_p : (p : ZMod q) = 0 :=
       calc (p : ZMod q)
         _ = (n : ZMod q) ^ p := by rw [np_congr_p]
         _ = 0 := by
           rw [hn0, zero_pow (Nat.Prime.ne_zero hp)]
-    have q_dvd_p : q ∣ p := by
-      apply Nat.dvd_of_mod_eq_zero
-      rw [← Nat.zero_mod p]
-      change p ≡ 0 [MOD q]
-      apply (ZMod.natCast_eq_natCast_iff _ _ _).mp
-      rw [this, ← AddMonoidWithOne.natCast_zero]
+    rw [ZMod.natCast_zmod_eq_zero_iff_dvd] at q_dvd_p
 
     have : N % p = 1 := calc N % p
       _ = (∑ i in range p, (p^i) % p) % p := Finset.sum_nat_mod _ _ _
