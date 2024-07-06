@@ -404,8 +404,7 @@ problem bulgaria1998_p11
           exact Ha
         have expression_eq_4_mod_8 : 3^n + 1 ≡ 4 [MOD 8] := by
           rw[Hk]
-          rw[show 3 ^ (2 * k + 1) = 3^(2 * k) * 3 by ring]
-          rw[show 3 ^ (2 * k) = (3 ^ 2) ^ k by exact pow_mul 3 2 k]
+          rw [pow_succ, pow_mul]
           rw[show (3 ^ 2) = 9 by ring]
           have : 9 ^ k ≡ 1 [MOD 8] := by
             have : 9 ≡ 1 [MOD 8] := by
@@ -560,7 +559,7 @@ problem bulgaria1998_p11
 
     interval_cases s
     · -- s = 1
-      rw[show (m₁ : ℤ) * 1 = m₁ by ring] at Hs
+      rw [mul_one] at Hs
       exact leaf_contradiction Hs m₁_sub_5_mod_6
 
     · -- s = 2
