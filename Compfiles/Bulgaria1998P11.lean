@@ -39,11 +39,6 @@ lemma zero_pow_mod_3 {m n : ℕ} (h1 : n > 0) (h2 : m ≡ 0 [MOD 3]) : m ^ n ≡
   rw [←Nat.dvd_iff_mod_eq_zero] at h2 ⊢
   exact Dvd.dvd.pow h2 (Nat.not_eq_zero_of_lt h1)
 
-lemma zero_pow_mod_2 {m n : ℕ} (h1 : n > 0) (h2 : m ≡ 0 [MOD 2]) : m ^ n ≡ 0 [MOD 2]:= by
-  change _ % 2 = 0 at h2 ⊢
-  rw [←Nat.dvd_iff_mod_eq_zero] at h2 ⊢
-  exact Dvd.dvd.pow h2 (Nat.not_eq_zero_of_lt h1)
-
 lemma one_pow_mod_3 {m n : ℕ} (h2 : m ≡ 1 [MOD 3]) : m ^ n ≡ 1 [MOD 3]:= by
   change _ % _ = 1 at h2 ⊢
   simp [Nat.pow_mod, h2]
@@ -315,30 +310,25 @@ problem bulgaria1998_p11
     have : 1 + 3 ^ n > 0 := by positivity
     rw [← h] at this
     contradiction
-  have zero_lt_n : 0 < n := by omega
   have even_m : Even m := by
-    by_contra odd_m
-    have odd_m := Nat.odd_iff_not_even.mpr odd_m
-    obtain ⟨a, Ha⟩ := odd_m
-    have : m % 2 = 1 % 2 := by
-      simp only [Ha, Nat.add_mod, Nat.mul_mod_right, Nat.mod_succ, zero_add]
-
-    have towards_contradiction : 0 ≡ 1 [MOD 2] := by
-      calc  0 ≡ 3 * m * A [MOD 2] := by
-                change _ % _ = _ % _
-                obtain ⟨a, Ha⟩ := even_A
-                rw [Ha, ←Nat.two_mul]
-                simp [Nat.mul_mod]
-            _ ≡ (m + 3)^n + 1 [MOD 2] := by rw[h]
-            _ ≡ 1 [MOD 2] := by
-                nth_rw 2 [show 1 = 0 + 1 by rfl]
-                refine Nat.ModEq.add ?_ rfl
-                have : m + 3 ≡ 0 [MOD 2] := by
-                  calc  m + 3 ≡ 1 + 1 [MOD 2] := by
-                                exact Nat.ModEq.add this rfl
-                        _ ≡ 0 [MOD 2] := by rfl
-                exact zero_pow_mod_2 zero_lt_n this
-    contradiction
+    have n_ne_zero : n ≠ 0 := by omega
+    replace evenA : (A : ZMod 2) = (0:ℕ) := by
+      rw [Nat.even_iff] at even_A
+      exact (ZMod.natCast_eq_natCast_iff' A 0 2).mpr even_A
+    suffices H : (m : ZMod 2) = (0:ℕ)
+    · rw [ZMod.natCast_eq_natCast_iff] at H
+      exact Nat.even_iff.mpr H
+    apply_fun (fun x ↦ (x : ZMod 2)) at h
+    push_cast at h
+    rw [evenA] at h
+    simp only [Nat.cast_zero, mul_zero] at h
+    obtain ⟨m', hm'⟩ : ∃ m' : ZMod 2, m' = m := exists_eq
+    rw [←hm'] at h ⊢
+    fin_cases m'
+    · rfl
+    · simp_arith at h; reduce_mod_char at h
+      rw [zero_pow n_ne_zero, zero_add] at h;
+      exact (zero_ne_one h).elim
 
   obtain ⟨l, m₁, ⟨one_le_l, odd_m₁, m_factorisation⟩⟩ := two_n_and_rest_factorisation m even_m zero_lt_m
   by_cases l_eq_one : (l = 1)
