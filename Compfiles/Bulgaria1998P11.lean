@@ -43,10 +43,6 @@ lemma one_pow_mod_3 {m n : ℕ} (h2 : m ≡ 1 [MOD 3]) : m ^ n ≡ 1 [MOD 3]:= b
   change _ % _ = 1 at h2 ⊢
   simp [Nat.pow_mod, h2]
 
-lemma one_pow_mod_8 {m n : ℕ} (h2 : m ≡ 1 [MOD 8]) : m ^ n ≡ 1 [MOD 8]:= by
-  change _ % _ = 1 at h2 ⊢
-  simp [Nat.pow_mod, h2]
-
 lemma two_even_pow_mod_3 {m n : ℕ} (h1 : Even n) (h2 : m ≡ 2 [MOD 3]) : m ^ n ≡ 1 [MOD 3] := by
   change _ % _ = _ at h2 ⊢
   obtain ⟨k, hk⟩ := h1
@@ -377,18 +373,13 @@ problem bulgaria1998_p11
           rw[← m_factorisation]
           exact Ha
         have expression_eq_4_mod_8 : 3^n + 1 ≡ 4 [MOD 8] := by
-          rw[Hk]
+          rw [←ZMod.natCast_eq_natCast_iff, Hk]
           rw [pow_succ, pow_mul]
-          rw[show (3 ^ 2) = 9 by ring]
-          have : 9 ^ k ≡ 1 [MOD 8] := by
-            have : 9 ≡ 1 [MOD 8] := by
-              dsimp[Nat.ModEq]
-            exact one_pow_mod_8 this
-          rw[show 4 = 3 + 1 by rfl]
-          refine Nat.ModEq.add_right _ ?_
-          rw[show 3 = 1 * 3 by rfl]
-          rw[show 9 ^ k * (1 * 3) = 9 ^ k * 3 by rfl]
-          exact Nat.ModEq.mul_right _ this
+          rw[show (3 ^ 2) = 9 by rfl]
+          push_cast
+          reduce_mod_char
+          rw [one_pow]
+          simp_arith
         exfalso
         exact too_good_to_be_true n l (show 3 ≤ l by exact left) two_pow_l_divides_expresion expression_eq_4_mod_8
       · exact right.symm
@@ -457,7 +448,7 @@ problem bulgaria1998_p11
         contradiction
       · exact m_mod_six
 
-    have exists_a : ∃ (a : ℕ ), a = 3 ^ (k + 1) := by
+    have exists_a : ∃ a : ℕ, a = 3 ^ (k + 1) := by
       use 3 ^ (k + 1)
     obtain ⟨a, Ha⟩ := exists_a
     have m₁_divides_for_thues_lemma : m₁ ∣ a^2 + 3 := by
