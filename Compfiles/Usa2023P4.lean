@@ -68,7 +68,28 @@ inductive EndIsInevitable (a : ℕ+) (n : ℕ) : State n → Prop where
        (h : ∀ m ∈ valid_moves a n s, EndIsInevitable a n m) :
        EndIsInevitable a n s
 
+snip begin
+
+lemma lemma1 (a : ℕ+) (s : State 1) (he : BobCanForceEnd a 1 s) :
+    EndIsInevitable a 1 s := by
+  induction he with
+  | BaseCase bb no_moves => exact .BaseCase _ no_moves
+  | BobTurn bb m moves bob_force ih =>
+    apply EndIsInevitable.Step
+    intro m' hm'
+    have hmm : m = m' := by sorry
+    rw [hmm] at ih
+    exact ih
+  | AliceTurn bb bob_force ih =>
+    apply EndIsInevitable.Step
+    intro m' hm'
+    exact ih m' hm'
+
+snip end
+
 problem usa2023_p4 (a : ℕ+) (N : ℕ) (hN : 0 < N) (b0 : Blackboard N)
     (he : BobCanForceEnd a N ⟨b0, .Alice⟩) :
     EndIsInevitable a N ⟨b0, .Alice⟩ := by
+  obtain rfl | hN : N = 1 ∨ 1 < N := LE.le.eq_or_gt hN
+  · exact lemma1 a ⟨b0, .Alice⟩ he
   sorry
