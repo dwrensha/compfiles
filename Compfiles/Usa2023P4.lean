@@ -70,6 +70,7 @@ inductive EndIsInevitable (a : ℕ+) (n : ℕ) : State n → Prop where
 
 snip begin
 
+/-- The N=1 case is degenerate. -/
 lemma lemma1 (a : ℕ+) (s : State 1) (he : BobCanForceEnd a 1 s) :
     EndIsInevitable a 1 s := by
   induction he with
@@ -90,11 +91,95 @@ lemma lemma1 (a : ℕ+) (s : State 1) (he : BobCanForceEnd a 1 s) :
     intro m' hm'
     exact ih m' hm'
 
+/-- end is inevitable in M moves -/
+inductive EndInevitableIn (a : ℕ+) (n : ℕ) : ℕ → State n → Prop where
+| BaseCase (s : State n) : valid_moves a n s = ∅ → EndInevitableIn a n 0 s
+| BobTurn (b : Blackboard n) (s : State n) (m : ℕ) :
+          (∀ s ∈ valid_moves a n ⟨b, .Bob⟩, EndInevitableIn a n m s) →
+          EndInevitableIn a n (m + 1) ⟨b, .Bob⟩
+| AliceTurn (b : Blackboard n) (s : State n) (m : ℕ) :
+          (∀ s ∈ valid_moves a n ⟨b, .Alice⟩, EndInevitableIn a n m s) →
+          EndInevitableIn a n m ⟨b, .Alice⟩
+
+lemma lemma3 (N : ℕ) (b : Blackboard N)
+    (hd : ∑ i : Fin N, Nat.maxPowDiv 2 (b i) = 0) :
+    ∀ i : Fin N, ¬ Even (b i).val := by
+  intro i hei
+  have h1 : 0 < Nat.maxPowDiv 2 (b i).val := by
+     have h2 : 2 ∣ (b i : ℕ) := even_iff_two_dvd.mp hei
+     replace h2 : 2^1 ∣ (b i : ℕ) := h2
+     exact Nat.maxPowDiv.le_of_dvd one_lt_two (b i).prop h2
+  rw [Finset.sum_eq_zero_iff] at hd
+  have h2 := hd i (Finset.mem_univ i)
+  omega
+
+lemma lemma5 {a x : ℕ} (ha : 0 < a) (hx : 0 < x)
+    (hax : Nat.maxPowDiv 2 x < Nat.maxPowDiv 2 a) :
+    Nat.maxPowDiv 2 (x + a) < Nat.maxPowDiv 2 a := by
+  have h1 : Nat.maxPowDiv 2 (x + a) = Nat.maxPowDiv 2 x := by
+    sorry
+  rwa [h1]
+
+lemma alice_move_preserves_nu
+     (a : ℕ+) (N : ℕ) (b0 : Blackboard N)
+     (hd : ∀ i : Fin N, Nat.maxPowDiv 2 (b0 i) < Nat.maxPowDiv 2 a)
+     (s1 : State N) (hs1 : s1 ∈ valid_moves a N ⟨b0, .Alice⟩) :
+     ∀ i : Fin N, Nat.maxPowDiv 2 (s1.board i) < Nat.maxPowDiv 2 a := by
+  intro i
+  dsimp [valid_moves] at hs1
+  obtain ⟨j, rfl⟩ := hs1
+  dsimp
+  by_cases hji : j = i
+  · rw [hji]
+    have h2 : Function.update b0 i (b0 i + a) i = b0 i + a :=
+      Function.update_same i (b0 i + a) b0
+    rw [h2]
+    have h3 := hd i
+    push_cast
+    exact lemma5 a.pos (b0 i).pos h3
+  · have h2 : Function.update b0 j (b0 j + a) i = b0 i := by
+      apply Function.update_noteq
+      symm
+      exact hji
+    rw [h2]
+    exact hd i
+
+-- When N ≥ 2, if ν2(x) < ν2(a) for all x ∈ S, the game must terminate
+-- in ∑_{x∈S} ν2(x) moves, no matter what either player does.
+lemma lemma2' (a : ℕ+) (N : ℕ) (hN : 1 < N) (s0 : State N)
+    (hd : ∀ i : Fin N, Nat.maxPowDiv 2 (s0.board i) < Nat.maxPowDiv 2 a) :
+    EndInevitableIn a N (∑ i : Fin N, Nat.maxPowDiv 2 (s0.board i)) s0 := by
+  generalize hms : ∑ i : Fin N, Nat.maxPowDiv 2 (s0.board i) = ms
+  induction' ms
+  · have h1 := lemma3 N s0.board hms
+    sorry
+  sorry
+
+-- When N ≥ 2, if ν2(x) < ν2(a) for all x ∈ S, the game must terminate no
+-- matter what either player does.
+lemma lemma2 (a : ℕ+) (N : ℕ) (hN : 1 < N) (s0 : State N)
+    (hd : ∀ i : Fin N, Nat.maxPowDiv 2 (s0.board i) < Nat.maxPowDiv 2 a) :
+    EndIsInevitable a N s0 := by
+  /-
+   The ν2 of a number is unchanged by Alice’s move and decreases by one on Bob’s
+   move. The game ends when every ν2 is zero.
+   Hence, in fact the game will always terminate in exactly ∑_{x∈S} ν2(x)
+   moves in this case, regardless of what either player does.
+  -/
+  sorry
+
 snip end
+
+
+-- which of these should I use?
+#check Nat.maxPowDiv
+#check multiplicity
 
 problem usa2023_p4 (a : ℕ+) (N : ℕ) (hN : 0 < N) (b0 : Blackboard N)
     (he : BobCanForceEnd a N ⟨b0, .Alice⟩) :
     EndIsInevitable a N ⟨b0, .Alice⟩ := by
+  -- we follow the proof from
+  -- https://web.evanchen.cc/exams/USAMO-2023-notes.pdf
   obtain rfl | hN : N = 1 ∨ 1 < N := LE.le.eq_or_gt hN
   · exact lemma1 a ⟨b0, .Alice⟩ he
   sorry
