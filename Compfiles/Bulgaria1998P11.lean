@@ -128,10 +128,10 @@ lemma m_mod_2_contradiction (m n A : ℕ)
                             (h : 3 * m * A = (m + 3)^n + 1) : False := by
   rw [← ZMod.natCast_eq_natCast_iff] at m_eq_2_mod_4
   apply_fun (fun x ↦ (x : ZMod 4)) at h
-  push_cast at h;
+  push_cast at h
   rw [m_eq_2_mod_4] at h
   obtain ⟨a, rfl⟩ := even_A
-  push_cast at h;
+  push_cast at h
   rw [←two_mul] at h
   ring_nf at h; reduce_mod_char at h
   rw [one_pow] at h
@@ -278,13 +278,6 @@ lemma mod_z_of_mod_n {a b m : ℕ} (h : a ≡ b [MOD m]) : a ≡ b [ZMOD m] := b
   change _ % _ = _ % _ at *
   norm_cast
 
-lemma square_contra_mod_3 {y : ℤ} (h: y ^ 2 ≡ 2 [ZMOD 3]) : False := by
-  rw [show 3 = ((3:ℕ):ℤ) by rfl] at h
-  rw [← ZMod.intCast_eq_intCast_iff] at h
-  rw [show (((y^2):ℤ): ZMod 3) = (y : ZMod 3)^2 by norm_cast] at h
-  obtain ⟨z, hz⟩ : ∃ z : ZMod 3, z = y := exists_eq
-  fin_cases z <;> rw [← hz] at h <;> simp_arith at h
-
 lemma square_mod_4_zmod (x : ZMod 4) : x ^ 2 = 1 ∨ x ^ 2 = 0 := by
   fin_cases x <;> simp_arith
 
@@ -292,25 +285,16 @@ lemma square_mod_3_zmod_0 : ∀ {x : ZMod 3} (_ : x ^ 2 = 0), x = 0 := by
   decide
 
 lemma leaf_contradiction {x y m₁ : ℤ} (h: 3 * x ^ 2 + y ^ 2 = m₁) (h2 : m₁ - 5 ≡ 0 [ZMOD 6]) : False := by
-  obtain ⟨c, hc⟩ := Int.modEq_zero_iff_dvd.mp h2
-  have expr_m₁_mod_6 : ↑m₁ = 6 * c + 5 := by omega
-  rw [expr_m₁_mod_6] at h
-  ring_nf at h
-  have := calc y ^ 2 ≡ x ^ 2 * 3 + y ^ 2 [ZMOD 3] := by
-                      nth_rw 1 [show y ^ 2 = 0 + y ^ 2 by ring]
-                      refine Int.ModEq.add_right _ ?_
-                      simp [Int.ModEq]
-        _ ≡ (5 + c * 6) [ZMOD 3] := by rw[h]
-        _ ≡ 2 [ZMOD 3] := by
-          have zmod : 5 + (c : ZMod 3) * 6 = 2 := by
-            reduce_mod_char
-          have : (3 : ℤ) = (3 : ℕ) := by rw [Nat.cast_ofNat]
-          rw [this]
-          rw [← ZMod.intCast_eq_intCast_iff]
-          rw [Int.cast_ofNat]
-          rw [← zmod]
-          norm_cast
-  exact square_contra_mod_3 this
+  replace h2 : m₁ - 5 ≡ 0 [ZMOD 3] := Int.ModEq.of_mul_left 2 h2
+  rw [show 3 = ((3:ℕ):ℤ) by rfl] at h2
+  rw [← ZMod.intCast_eq_intCast_iff] at h2
+  apply_fun (fun x ↦ (x : ZMod 3)) at h
+  push_cast at h h2
+  replace h2 : (m₁:ZMod 3) = 5 := by linear_combination h2
+  rw [h2] at h
+  reduce_mod_char at h
+  obtain ⟨z, hz⟩ : ∃ z : ZMod 3, z = y := exists_eq
+  fin_cases z <;> rw [← hz] at h <;> simp_arith at h
 
 snip end
 
