@@ -74,13 +74,18 @@ lemma lemma1 (a : ℕ+) (s : State 1) (he : BobCanForceEnd a 1 s) :
     EndIsInevitable a 1 s := by
   induction he with
   | BaseCase bb no_moves => exact .BaseCase _ no_moves
-  | BobTurn bb m moves bob_force ih =>
+  | BobTurn bb m moves _ ih =>
     apply EndIsInevitable.Step
     intro m' hm'
-    have hmm : m = m' := by sorry
+    have hmm : m = m' := by
+      simp only [valid_moves, Set.mem_setOf_eq] at moves hm'
+      obtain ⟨i, hie, hi⟩ := moves
+      obtain ⟨j, hje, hj⟩ := hm'
+      simp_rw [Fin.fin_one_eq_zero] at hi hj
+      rw [hi, hj]
     rw [hmm] at ih
     exact ih
-  | AliceTurn bb bob_force ih =>
+  | AliceTurn bb _ ih =>
     apply EndIsInevitable.Step
     intro m' hm'
     exact ih m' hm'
