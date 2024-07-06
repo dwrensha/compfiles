@@ -278,8 +278,8 @@ lemma leaf_contradiction {x y m₁ : ℤ} (h: 3 * x ^ 2 + y ^ 2 = m₁) (h2 : m�
   replace h2 : (m₁:ZMod 3) = 5 := by linear_combination h2
   rw [h2] at h
   reduce_mod_char at h
-  obtain ⟨z, hz⟩ : ∃ z : ZMod 3, z = y := exists_eq
-  fin_cases z <;> rw [← hz] at h <;> simp_arith at h
+  generalize hz : (y : ZMod 3) = z
+  fin_cases z <;> rw [hz] at h <;> simp_arith at h
 
 snip end
 
@@ -312,12 +312,12 @@ problem bulgaria1998_p11
     push_cast at h
     rw [evenA] at h
     simp only [Nat.cast_zero, mul_zero] at h
-    obtain ⟨m', hm'⟩ : ∃ m' : ZMod 2, m' = m := exists_eq
-    rw [←hm'] at h ⊢
+    generalize hm' : (m : ZMod 2) = m'
+    rw [hm'] at h
     fin_cases m'
     · rfl
     · simp_arith at h; reduce_mod_char at h
-      rw [zero_pow n_ne_zero, zero_add] at h;
+      rw [zero_pow n_ne_zero, zero_add] at h
       exact (zero_ne_one h).elim
 
   obtain ⟨l, m₁, ⟨one_le_l, odd_m₁, m_factorisation⟩⟩ := two_n_and_rest_factorisation m even_m zero_lt_m
@@ -579,8 +579,8 @@ problem bulgaria1998_p11
         have h1 : y^2 = m₁ := (Int.le_antisymm H y_higher).symm
         rw [←sq_abs, Int.abs_eq_natAbs] at h1
         norm_cast at h1
-        obtain ⟨yy, hyy⟩ : ∃ yy, yy = y.natAbs := exists_eq
-        rw [←hyy] at h1
+        generalize hyy : y.natAbs = yy
+        rw [hyy] at h1
         rw [←h1] at m₁_eq_2_mod_3
         mod_cases Hyy : yy % 3 <;>
            change _ % _ = _ % _ at Hyy m₁_eq_2_mod_3 <;>
