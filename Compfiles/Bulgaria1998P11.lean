@@ -48,10 +48,6 @@ lemma one_pow_mod_3 {m n : ℕ} (h2 : m ≡ 1 [MOD 3]) : m ^ n ≡ 1 [MOD 3]:= b
   change _ % _ = 1 at h2 ⊢
   simp [Nat.pow_mod, h2]
 
-lemma one_pow_mod_4 {m n : ℕ} (h2 : m ≡ 1 [MOD 4]) : m ^ n ≡ 1 [MOD 4]:= by
-  change _ % _ = 1 at h2 ⊢
-  simp [Nat.pow_mod, h2]
-
 lemma one_pow_mod_8 {m n : ℕ} (h2 : m ≡ 1 [MOD 8]) : m ^ n ≡ 1 [MOD 8]:= by
   change _ % _ = 1 at h2 ⊢
   simp [Nat.pow_mod, h2]
@@ -127,28 +123,19 @@ lemma two_n_and_rest_factorisation (m : ℕ) (even_m : Even m) (h: 0 < m) : ∃ 
     exact (lt_self_iff_false _).mp (Nat.succ_le_iff.mp h4)
 
 lemma m_mod_2_contradiction (m n A : ℕ)
-                            (even_m : Even m)
                             (even_A : Even A)
                             (m_eq_2_mod_4 : m ≡ 2 [MOD 4])
                             (h : 3 * m * A = (m + 3)^n + 1) : False := by
-  obtain ⟨a, Ha⟩ := even_A
-  obtain ⟨m', Hm'⟩ := even_m
-  have towards_contradiction : 0 ≡ 2 [MOD 4] :=
-    calc  0 ≡ 3 * m * A [MOD 4] := by
-              rw [Ha, Hm', ←Nat.two_mul, ←Nat.two_mul]
-              rw [show 3 * (2 * m') * (2 * a) = 4 * (3 * m' * a) by ring]
-              change 0 = _ % _
-              exact (Nat.mul_mod_right 4 (3 * m' * a)).symm
-          _ ≡ (m + 3)^n + 1 [MOD 4] := by rw[h]
-          _ ≡ 2 [MOD 4] := by
-              have : m + 3 ≡ 1 [MOD 4] := by
-                calc  m + 3 ≡ 2 + 3 [MOD 4] :=
-                                 Nat.ModEq.add_right 3 m_eq_2_mod_4
-                      _ ≡ 1 [MOD 4] := by rfl
-              have : (m + 3)^n ≡ 1 [MOD 4] := one_pow_mod_4 this
-              rw [show 2 = 1 + 1 by rfl]
-              exact Nat.ModEq.add_right 1 this
-  contradiction
+  rw [← ZMod.natCast_eq_natCast_iff] at m_eq_2_mod_4
+  apply_fun (fun x ↦ (x : ZMod 4)) at h
+  push_cast at h;
+  rw [m_eq_2_mod_4] at h
+  obtain ⟨a, rfl⟩ := even_A
+  push_cast at h;
+  rw [←two_mul] at h
+  ring_nf at h; reduce_mod_char at h
+  rw [one_pow] at h
+  simp_arith at h
 
 lemma m_add_3_pow_n_mod_m (n m : ℕ) : (m + 3)^n ≡ 3^n [MOD m] := by
   simp [Nat.ModEq, Nat.pow_mod, Nat.add_mod]
@@ -391,7 +378,7 @@ problem bulgaria1998_p11
         exact Nat.ModEq.mul_right _ left
       · calc m₁ * 2 ≡ 3 * 2 [MOD 4] := Nat.ModEq.mul right rfl
           _ ≡ 2 [MOD 4] := rfl
-    exact m_mod_2_contradiction m n A even_m even_A m_eq_2_mod_4 h
+    exact m_mod_2_contradiction m n A even_A m_eq_2_mod_4 h
   · have eq_2 : 0 ≡ 3^n + 1 [MOD m] := by
       calc  0 ≡ m * (3 * A) [MOD m] := by
                 rw[show 0 = 0 * (3 * A) by ring]
