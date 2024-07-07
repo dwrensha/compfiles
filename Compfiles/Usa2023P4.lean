@@ -113,12 +113,17 @@ lemma lemma3 (N : ℕ) (b : Blackboard N)
   have h2 := hd i (Finset.mem_univ i)
   omega
 
-lemma lemma5 {a x : ℕ} (ha : 0 < a) (hx : 0 < x)
+lemma lemma5 {a x : ℕ} (hx : 0 < x)
     (hax : Nat.maxPowDiv 2 x < Nat.maxPowDiv 2 a) :
     Nat.maxPowDiv 2 (x + a) < Nat.maxPowDiv 2 a := by
-  have h1 : Nat.maxPowDiv 2 (x + a) = Nat.maxPowDiv 2 x := by
-    sorry
-  rwa [h1]
+  by_contra! H
+  have h1 : 2 ^ (Nat.maxPowDiv 2 (x + a)) ∣ x + a := Nat.maxPowDiv.pow_dvd 2 (x + a)
+  have h2 : 2 ^ (Nat.maxPowDiv 2 a) ∣ a := Nat.maxPowDiv.pow_dvd 2 a
+  have h4 : 2 ^ (Nat.maxPowDiv 2 a) ∣ x + a :=
+    Nat.pow_dvd_of_le_of_pow_dvd H h1
+  have h5 : 2 ^ (Nat.maxPowDiv 2 a) ∣ x := (Nat.dvd_add_iff_left h2).mpr h4
+  have h6 := Nat.maxPowDiv.le_of_dvd one_lt_two hx h5
+  omega
 
 lemma alice_move_preserves_nu
      (a : ℕ+) (N : ℕ) (b0 : Blackboard N)
@@ -136,7 +141,7 @@ lemma alice_move_preserves_nu
     rw [h2]
     have h3 := hd i
     push_cast
-    exact lemma5 a.pos (b0 i).pos h3
+    exact lemma5 (b0 i).pos h3
   · have h2 : Function.update b0 j (b0 j + a) i = b0 i := by
       apply Function.update_noteq
       symm
@@ -169,11 +174,6 @@ lemma lemma2 (a : ℕ+) (N : ℕ) (hN : 1 < N) (s0 : State N)
   sorry
 
 snip end
-
-
--- which of these should I use?
-#check Nat.maxPowDiv
-#check multiplicity
 
 problem usa2023_p4 (a : ℕ+) (N : ℕ) (hN : 0 < N) (b0 : Blackboard N)
     (he : BobCanForceEnd a N ⟨b0, .Alice⟩) :
