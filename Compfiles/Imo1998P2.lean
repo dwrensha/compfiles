@@ -128,26 +128,23 @@ theorem A_fibre_over_contestant_card (c : C) :
       ((A r).filter fun a : AgreedTriple C J => a.contestant = c).card := by
   rw [A_fibre_over_contestant r]
   apply Finset.card_image_of_injOn
-  -- Porting note (#10936): used to be `tidy`. TODO: remove `ext` after `extCore` to `aesop`.
-  unfold Set.InjOn; intros; ext; all_goals aesop
+  unfold Set.InjOn AgreedTriple.contestant
+  aesop
 
 theorem A_fibre_over_judgePair {p : JudgePair J} (h : p.Distinct) :
     agreedContestants r p = ((A r).filter fun a : AgreedTriple C J => a.judgePair = p).image
     AgreedTriple.contestant := by
   dsimp only [A, agreedContestants]; ext c; constructor <;> intro h
   · rw [Finset.mem_image]; refine ⟨⟨c, p⟩, ?_⟩; aesop
-  -- porting note: this used to be `finish`
-  · simp only [Finset.mem_filter, Finset.mem_image, Prod.exists] at h
-    rcases h with ⟨_, ⟨_, ⟨_, ⟨h, _⟩⟩⟩⟩
-    cases h; aesop
+  · aesop
 
 theorem A_fibre_over_judgePair_card {p : JudgePair J} (h : p.Distinct) :
     (agreedContestants r p).card =
       ((A r).filter fun a : AgreedTriple C J => a.judgePair = p).card := by
   rw [A_fibre_over_judgePair r h]
   apply Finset.card_image_of_injOn
-  -- Porting note (#10936): used to be `tidy`
-  unfold Set.InjOn; intros; ext; all_goals aesop
+  unfold Set.InjOn AgreedTriple.judgePair
+  aesop
 
 theorem A_card_upper_bound {k : ℕ}
     (hk : ∀ p : JudgePair J, p.Distinct → (agreedContestants r p).card ≤ k) :
