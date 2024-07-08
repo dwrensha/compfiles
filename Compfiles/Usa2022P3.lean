@@ -16,7 +16,10 @@ problem_file { tags := [.Algebra] }
 /-!
 # USA Mathematical Olympiad 2022, Problem 3
 
-Let ℝ+ be the set of all positive real numbers. Find all functions ℝ+ → ℝ+ such that for all x, y ∈ ℝ+ we have f(x) = f(f(f(x)) + y) + f(xf(y))f(x+y).
+Let ℝ+ be the set of all positive real numbers. Find all
+functions ℝ+ → ℝ+ such that for all x, y ∈ ℝ+ we have
+
+   f(x) = f(f(f(x)) + y) + f(xf(y))f(x+y).
 -/
 
 namespace Usa2022P3
