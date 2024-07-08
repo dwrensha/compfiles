@@ -157,7 +157,21 @@ lemma lemma2' (a : ℕ+) (N : ℕ) (hN : 1 < N) (s0 : State N)
   generalize hms : ∑ i : Fin N, Nat.maxPowDiv 2 (s0.board i) = ms
   induction' ms
   · have h1 := lemma3 N s0.board hms
-    sorry
+    obtain ⟨b0, t0⟩ := s0
+    match t0 with
+    | .Bob =>
+      apply EndInevitableIn.BaseCase
+      dsimp [valid_moves]
+      rw [Set.eq_empty_iff_forall_not_mem]
+      intro x hx
+      rw [Set.mem_setOf_eq] at hx
+      obtain ⟨i, hie, _⟩ := hx
+      exact h1 i hie
+    | .Alice =>
+      apply EndInevitableIn.AliceTurn _ ⟨b0, .Alice⟩
+      intro s hs
+      have : Even a := by sorry
+      sorry
   sorry
 
 -- When N ≥ 2, if ν2(x) < ν2(a) for all x ∈ S, the game must terminate no
@@ -172,6 +186,9 @@ lemma lemma2 (a : ℕ+) (N : ℕ) (hN : 1 < N) (s0 : State N)
    moves in this case, regardless of what either player does.
   -/
   sorry
+
+-- Claim — When N ≥ 2, if there exists a number x on the board such that ν2(x) ≥
+-- ν2(a), then Alice can cause the game to go on forever.
 
 snip end
 
