@@ -11,7 +11,7 @@ import Mathlib.Tactic
 
 import ProblemExtraction
 
-problem_file { tags := [.NumberTheory] }
+problem_file { tags := [.Algebra] }
 
 /-!
 # USA Mathematical Olympiad 2022, Problem 3
