@@ -149,6 +149,14 @@ lemma alice_move_preserves_nu
     rw [h2]
     exact hd i
 
+lemma bob_moves_after_alice {a : ℕ+} {N : Nat} (b0 : Blackboard N)
+    (s1 : State N)
+    (hs : s1 ∈ valid_moves a N ⟨b0, .Alice⟩) :
+    ∃ b1, s1 = ⟨b1, .Bob⟩ := by
+  dsimp [valid_moves] at hs
+  obtain ⟨i, rfl⟩ := hs
+  simp
+
 -- When N ≥ 2, if ν2(x) < ν2(a) for all x ∈ S, the game must terminate
 -- in ∑_{x∈S} ν2(x) moves, no matter what either player does.
 lemma lemma2' (a : ℕ+) (N : ℕ) (hN : 1 < N) (s0 : State N)
@@ -170,8 +178,37 @@ lemma lemma2' (a : ℕ+) (N : ℕ) (hN : 1 < N) (s0 : State N)
     | .Alice =>
       apply EndInevitableIn.AliceTurn _ ⟨b0, .Alice⟩
       intro s hs
-      have : Even a := by sorry
-      sorry
+      have h2 : Even (a:ℕ) := by
+        have ha : 0 < Nat.maxPowDiv 2 ↑a := by
+          have := hd ⟨0, by omega⟩
+          omega
+        have ha1 := Nat.maxPowDiv.pow_dvd 2 a
+        rw [even_iff_two_dvd]
+        exact Nat.dvd_of_pow_dvd ha ha1
+      apply EndInevitableIn.BaseCase
+      obtain ⟨b1, rfl⟩ := bob_moves_after_alice b0 s hs
+      dsimp [valid_moves] at hs ⊢
+      rw [Set.eq_empty_iff_forall_not_mem]
+      intro s1' hs1'
+      rw [Set.mem_setOf_eq] at hs1'
+      obtain ⟨i, hie, _⟩ := hs1'
+      obtain ⟨j, hje⟩ := hs
+      simp only [State.mk.injEq, and_true] at hje
+      subst hje
+      by_cases hij : i = j
+      · subst hij
+        rw [Function.update_same] at hie
+        have h3 := h1 i
+        dsimp at h3
+        push_cast at hie
+        rw [← Nat.odd_iff_not_even] at h3
+        have h4 := Even.odd_add h2 h3
+        rw [Nat.odd_iff_not_even] at h4
+        exact h4 hie
+      · rw [Function.update_noteq hij] at hie
+        have h3 := h1 i
+        exact h3 hie
+
   sorry
 
 -- When N ≥ 2, if ν2(x) < ν2(a) for all x ∈ S, the game must terminate no
