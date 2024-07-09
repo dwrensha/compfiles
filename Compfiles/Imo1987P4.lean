@@ -100,13 +100,10 @@ theorem imo1987_p4_generalized (m : ℕ) :
     simp only [hc, Fintype.card_ofFinset, Finset.card_range]
 
   have a_fintype := subset_fintype Set.subset_union_left ab_fintype
-  have b_fintype := subset_fintype Set.subset_union_right ab_fintype
-  have h3 := @Set.toFinset_union ℕ A B _ a_fintype b_fintype ab_fintype
   rw [← @Set.toFinset_card _ (A ∪ B) ab_fintype] at h2
-  rw [h3] at h2; clear h3
-  have ab_disjoint' :=
-    (@Set.disjoint_toFinset _ _ _ a_fintype b_fintype).mpr ab_disjoint
-  rw [Finset.card_union_of_disjoint ab_disjoint'] at h2
+  rw [Set.toFinset_union] at h2
+  rw [←Set.disjoint_toFinset] at ab_disjoint
+  rw [Finset.card_union_of_disjoint ab_disjoint] at h2
   rw [Set.toFinset_card, Set.toFinset_card] at h2
   rw [Set.card_image_of_injective A f_injective] at h2
   ring_nf at h2
