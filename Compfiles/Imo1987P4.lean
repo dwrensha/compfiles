@@ -6,7 +6,7 @@ Authors: David Renshaw
 
 import Aesop
 import Mathlib.Data.Set.Basic
-import Mathlib.Data.Fintype.Card
+import Mathlib.Data.Set.Card
 import Mathlib.Order.Interval.Finset.Nat
 import Mathlib.Tactic.Ring
 
@@ -22,14 +22,6 @@ for every n.
 -/
 
 namespace Imo1987P4
-
-snip begin
-
-noncomputable def subset_fintype {A B : Set ℕ} (h : A ⊆ B) (_hab : Fintype ↑B)
-    : Fintype ↑A :=
-  @Fintype.ofFinite A (Finite.Set.subset B h)
-
-snip end
 
 problem imo1987_p4 : ¬∃ f : ℕ → ℕ, ∀ n, f (f n) = n + 1987 := by
   -- Informal solution by Sawa Pavlov, listed at
@@ -83,22 +75,18 @@ problem imo1987_p4 : ¬∃ f : ℕ → ℕ, ∀ n, f (f n) = n + 1987 := by
     intro _C hca hcb c hc
     exact Set.not_mem_of_mem_diff (hca hc) (Set.image_subset f sdiff_le (hcb hc))
 
-  -- But since f is injective they have the
+  -- But since f is injective, A and B have the
   -- same number of elements, which is impossible since {0, 1, ... , 2 * m}
   -- has an odd number of elements.
 
-  have ab_fintype : Fintype ↑(A ∪ B) := by rw [ab_range]; exact inferInstance
+  have ab_card : Set.ncard (A ∪ B) = 2 * m + 1 := by
+    rw [ab_range, Set.Iio_def, ←Finset.coe_range, Set.ncard_coe_Finset]
+    exact Finset.card_range (2 * m + 1)
 
-  have h2 : Fintype.card ↑(A ∪ B) = 2 * m + 1 := by
-    simp_rw [ab_range]
-    rw [Fintype.card_ofFinset, Finset.card_range]
+  have ab_finite : (A ∪ B).Finite := by
+    rw [ab_range]; exact Set.finite_lt_nat _
+  obtain ⟨a_finite, b_finite⟩ := Set.finite_union.mp ab_finite
 
-  have a_fintype := subset_fintype Set.subset_union_left ab_fintype
-  rw [← @Set.toFinset_card _ (A ∪ B) ab_fintype] at h2
-  rw [Set.toFinset_union] at h2
-
-  rw [←Set.disjoint_toFinset] at ab_disjoint
-  rw [Finset.card_union_of_disjoint ab_disjoint] at h2
-  rw [Set.toFinset_card, Set.toFinset_card] at h2
-  rw [Set.card_image_of_injective A f_injective] at h2
+  rw [Set.ncard_union_eq ab_disjoint a_finite b_finite] at ab_card
+  rw [Set.ncard_image_of_injective _ f_injective] at ab_card
   omega
