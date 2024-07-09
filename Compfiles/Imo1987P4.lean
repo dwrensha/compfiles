@@ -29,16 +29,18 @@ noncomputable def subset_fintype {A B : Set ℕ} (h : A ⊆ B) (_hab : Fintype �
     : Fintype ↑A :=
   @Fintype.ofFinite A (Finite.Set.subset B h)
 
-/--
-More general version of the problem.
--/
-theorem imo1987_p4_generalized (m : ℕ) :
-    (¬∃ f : ℕ → ℕ, ∀ n, f (f n) = n + (2 * m + 1)) := by
+snip end
+
+problem imo1987_p4 : ¬∃ f : ℕ → ℕ, ∀ n, f (f n) = n + 1987 := by
   -- Informal solution by Sawa Pavlov, listed at
   -- https://artofproblemsolving.com/wiki/index.php/1987_IMO_Problems/Problem_4
 
-  intro hf
-  obtain ⟨f, hf⟩ := hf
+  -- We will prove a more general statement.
+  rw [show 1987 = (2 * 993 + 1) by norm_num]
+  suffices generalized : ∀ m : ℕ, ¬∃ f : ℕ → ℕ, ∀ n, f (f n) = n + (2 * m + 1) from
+    generalized 993
+
+  rintro m ⟨f, hf⟩
 
   -- Note that f is injective, because if f(n) = f(m),
   -- then f(f(n)) = f(f(m)), so m = n.
@@ -109,9 +111,3 @@ theorem imo1987_p4_generalized (m : ℕ) :
   ring_nf at h2
   apply_fun (· % 2) at h2
   norm_num at h2
-
-snip end
-
-problem imo1987_p4 : ¬∃ f : ℕ → ℕ, ∀ n, f (f n) = n + 1987 := by
-  rw [show 1987 = (2 * 993 + 1) by norm_num]
-  exact imo1987_p4_generalized 993
