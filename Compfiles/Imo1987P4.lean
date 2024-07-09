@@ -56,9 +56,9 @@ problem imo1987_p4 : ¬∃ f : ℕ → ℕ, ∀ n, f (f n) = n + 1987 := by
 
   -- ... which is {0, 1, ... , 2 * m}.
   have ab_range : A ∪ B = {n | n < 2*m + 1} := by
+    rw [ab_union]
     apply Set.eq_of_subset_of_subset
-    · rw [ab_union]
-      rintro x hx
+    · rintro x hx
       replace hx : ∀ (y : ℕ), ¬f (f y) = x := by aesop
       rw [Set.mem_setOf_eq]
       by_contra! H
@@ -66,8 +66,7 @@ problem imo1987_p4 : ¬∃ f : ℕ → ℕ, ∀ n, f (f n) = n + 1987 := by
       have hzz := hx z
       rw [hz, hf z, add_comm] at hzz
       exact (hzz rfl).elim
-    · rw [ab_union]
-      intro x hx
+    · intro x hx
       aesop
 
   -- A and B are disjoint.
