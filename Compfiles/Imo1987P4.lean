@@ -36,7 +36,6 @@ problem imo1987_p4 : ¬∃ f : ℕ → ℕ, ∀ n, f (f n) = n + 1987 := by
   -- https://artofproblemsolving.com/wiki/index.php/1987_IMO_Problems/Problem_4
 
   -- We will prove a more general statement.
-  rw [show 1987 = (2 * 993 + 1) by norm_num]
   suffices generalized : ∀ m : ℕ, ¬∃ f : ℕ → ℕ, ∀ n, f (f n) = n + (2 * m + 1) from
     generalized 993
 
