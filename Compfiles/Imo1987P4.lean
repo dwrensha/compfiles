@@ -54,16 +54,12 @@ problem imo1987_p4 : ¬∃ f : ℕ → ℕ, ∀ n, f (f n) = n + 1987 := by
   let A : Set ℕ := Set.univ \ (f '' Set.univ)
   let B : Set ℕ := f '' A
 
-  have hid := Set.image_diff f_injective Set.univ (f '' Set.univ)
-  rw [show f '' (Set.univ \ f '' Set.univ) = B by rfl] at hid
-
-  -- A and B are disjoint and have union ℕ - f(f(ℕ)).
-  have ab_disjoint : Disjoint A B := by
-    intro _C hca hcb c hc
-    exact Set.not_mem_of_mem_diff (hca hc) (Set.image_subset f sdiff_le (hcb hc))
-
+  -- A and B have union ℕ - f(f(ℕ)).
   have ab_union : A ∪ B = Set.univ \ (f '' (f '' Set.univ)) := by
-    rw [hid]
+    -- Note that B = f(ℕ) - f(f(ℕ)).
+    have hB : B = f '' Set.univ \ f '' (f '' Set.univ) := by
+      exact Set.image_diff f_injective Set.univ (f '' Set.univ)
+    rw [hB]
     apply Set.eq_of_subset_of_subset
     · intro x hx
       unfold_let A at *
@@ -83,9 +79,8 @@ problem imo1987_p4 : ¬∃ f : ℕ → ℕ, ∀ n, f (f n) = n + 1987 := by
       simp only [Set.mem_setOf_eq]
       by_contra! H
       obtain ⟨z, hz⟩ : ∃ z, x = (2 * m + 1) + z := exists_add_of_le H
-      rw [hz] at hx
       have hzz := hx z
-      rw [hf z, add_comm] at hzz
+      rw [hz, hf z, add_comm] at hzz
       exact (hzz rfl).elim
     · rw [ab_union]
       intro x hx
@@ -106,6 +101,12 @@ problem imo1987_p4 : ¬∃ f : ℕ → ℕ, ∀ n, f (f n) = n + 1987 := by
   have a_fintype := subset_fintype Set.subset_union_left ab_fintype
   rw [← @Set.toFinset_card _ (A ∪ B) ab_fintype] at h2
   rw [Set.toFinset_union] at h2
+
+  -- A and B are disjoint.
+  have ab_disjoint : Disjoint A B := by
+    intro _C hca hcb c hc
+    exact Set.not_mem_of_mem_diff (hca hc) (Set.image_subset f sdiff_le (hcb hc))
+
   rw [←Set.disjoint_toFinset] at ab_disjoint
   rw [Finset.card_union_of_disjoint ab_disjoint] at h2
   rw [Set.toFinset_card, Set.toFinset_card] at h2
