@@ -93,9 +93,8 @@ problem imo1987_p4 : ¬∃ f : ℕ → ℕ, ∀ n, f (f n) = n + 1987 := by
   have ab_fintype : Fintype ↑(A ∪ B) := by rw [ab_range]; exact inferInstance
 
   have h2 : Fintype.card ↑(A ∪ B) = 2 * m + 1 := by
-    have hc := @Fintype.card_congr' ↑(A ∪ B)
-                  {x | x < 2 * m + 1} _ _ (by rw [ab_range])
-    simp only [hc, Fintype.card_ofFinset, Finset.card_range]
+    simp_rw [ab_range]
+    rw [Fintype.card_ofFinset, Finset.card_range]
 
   have a_fintype := subset_fintype Set.subset_union_left ab_fintype
   rw [← @Set.toFinset_card _ (A ∪ B) ab_fintype] at h2
