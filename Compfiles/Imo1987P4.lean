@@ -1,5 +1,5 @@
 /-
-Copyright (c) 2023 David Renshaw. All rights reserved.
+Copyright (c) 2023 The Compfiles Contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: David Renshaw
 -/
@@ -42,33 +42,35 @@ problem imo1987_p4 : ¬∃ f : ℕ → ℕ, ∀ n, f (f n) = n + 1987 := by
 
   rintro m ⟨f, hf⟩
 
-  -- Note that f is injective, because if f(n) = f(m),
-  -- then f(f(n)) = f(f(m)), so m = n.
+  -- Note that f is injective, because if f(x) = f(y),
+  -- then f(f(x)) = f(f(y)), so x = y.
   have f_injective : f.Injective := by
-    intro n m hnm; have hfn := hf n; simp_all only [add_left_inj]
+    intro x y hxy;
+    have hfx := hf x;
+    rw [hxy, hf y] at hfx
+    exact Nat.add_right_cancel hfx.symm
 
   -- Let A := ℕ - f(ℕ) and B := f(A).
-  let NN : Set ℕ := Set.univ
-  let A : Set ℕ := NN \ (f '' NN)
+  let A : Set ℕ := Set.univ \ (f '' Set.univ)
   let B : Set ℕ := f '' A
 
-  have hid := Set.image_diff f_injective NN (f '' NN)
-  rw [show f '' (NN \ f '' NN) = B by rfl] at hid
+  have hid := Set.image_diff f_injective Set.univ (f '' Set.univ)
+  rw [show f '' (Set.univ \ f '' Set.univ) = B by rfl] at hid
 
   -- A and B are disjoint and have union ℕ - f(f(ℕ)).
   have ab_disjoint : Disjoint A B := by
     intro _C hca hcb c hc
     exact Set.not_mem_of_mem_diff (hca hc) (Set.image_subset f sdiff_le (hcb hc))
 
-  have ab_union : A ∪ B = NN \ (f '' (f '' NN)) := by
+  have ab_union : A ∪ B = Set.univ \ (f '' (f '' Set.univ)) := by
     rw [hid]
     apply Set.eq_of_subset_of_subset
     · intro x hx
-      unfold_let NN A at *
+      unfold_let A at *
       cases hx <;> aesop
     · intro x hx
       obtain ⟨_hx, hx'⟩ := hx
-      by_cases (x ∈ A) <;> unfold_let NN A at * <;> aesop
+      by_cases (x ∈ A) <;> unfold_let A at * <;> aesop
 
   -- ... which is {0, 1, ... , 2 * m}.
   have ab_range : A ∪ B = {n | n < 2*m + 1} := by
@@ -77,7 +79,7 @@ problem imo1987_p4 : ¬∃ f : ℕ → ℕ, ∀ n, f (f n) = n + 1987 := by
       rintro x hx
       simp only [Set.image_univ, Set.mem_diff, Set.mem_univ, Set.mem_image,
                  Set.mem_range, exists_exists_eq_and, not_exists,
-                 true_and, NN] at hx
+                 true_and] at hx
       simp only [Set.mem_setOf_eq]
       by_contra! H
       obtain ⟨z, hz⟩ : ∃ z, x = (2 * m + 1) + z := exists_add_of_le H
@@ -87,7 +89,7 @@ problem imo1987_p4 : ¬∃ f : ℕ → ℕ, ∀ n, f (f n) = n + 1987 := by
       exact (hzz rfl).elim
     · rw [ab_union]
       intro x hx
-      unfold_let NN A at *
+      unfold_let A at *
       aesop
 
   -- But since f is injective they have the
