@@ -109,6 +109,4 @@ problem imo1987_p4 : ¬∃ f : ℕ → ℕ, ∀ n, f (f n) = n + 1987 := by
   rw [Finset.card_union_of_disjoint ab_disjoint] at h2
   rw [Set.toFinset_card, Set.toFinset_card] at h2
   rw [Set.card_image_of_injective A f_injective] at h2
-  ring_nf at h2
-  apply_fun (· % 2) at h2
-  norm_num at h2
+  omega
