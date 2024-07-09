@@ -60,22 +60,17 @@ problem imo1987_p4 : ¬∃ f : ℕ → ℕ, ∀ n, f (f n) = n + 1987 := by
       exact Set.image_diff f_injective Set.univ (f '' Set.univ)
     rw [hB]
     apply Set.eq_of_subset_of_subset
-    · intro x hx
-      unfold_let A at *
-      cases hx <;> aesop
-    · intro x hx
-      obtain ⟨_hx, hx'⟩ := hx
-      by_cases (x ∈ A) <;> unfold_let A at * <;> aesop
+    · rintro x (hx1 | hx2) <;> aesop
+    · rintro x ⟨_hx, hx'⟩
+      by_cases (x ∈ A) <;> aesop
 
   -- ... which is {0, 1, ... , 2 * m}.
   have ab_range : A ∪ B = {n | n < 2*m + 1} := by
     apply Set.eq_of_subset_of_subset
     · rw [ab_union]
       rintro x hx
-      simp only [Set.image_univ, Set.mem_diff, Set.mem_univ, Set.mem_image,
-                 Set.mem_range, exists_exists_eq_and, not_exists,
-                 true_and] at hx
-      simp only [Set.mem_setOf_eq]
+      replace hx : ∀ (y : ℕ), ¬f (f y) = x := by aesop
+      rw [Set.mem_setOf_eq]
       by_contra! H
       obtain ⟨z, hz⟩ : ∃ z, x = (2 * m + 1) + z := exists_add_of_le H
       have hzz := hx z
@@ -83,7 +78,6 @@ problem imo1987_p4 : ¬∃ f : ℕ → ℕ, ∀ n, f (f n) = n + 1987 := by
       exact (hzz rfl).elim
     · rw [ab_union]
       intro x hx
-      unfold_let A at *
       aesop
 
   -- A and B are disjoint.
