@@ -86,6 +86,11 @@ problem imo1987_p4 : ¬∃ f : ℕ → ℕ, ∀ n, f (f n) = n + 1987 := by
       unfold_let A at *
       aesop
 
+  -- A and B are disjoint.
+  have ab_disjoint : Disjoint A B := by
+    intro _C hca hcb c hc
+    exact Set.not_mem_of_mem_diff (hca hc) (Set.image_subset f sdiff_le (hcb hc))
+
   -- But since f is injective they have the
   -- same number of elements, which is impossible since {0, 1, ... , 2 * m}
   -- has an odd number of elements.
@@ -99,11 +104,6 @@ problem imo1987_p4 : ¬∃ f : ℕ → ℕ, ∀ n, f (f n) = n + 1987 := by
   have a_fintype := subset_fintype Set.subset_union_left ab_fintype
   rw [← @Set.toFinset_card _ (A ∪ B) ab_fintype] at h2
   rw [Set.toFinset_union] at h2
-
-  -- A and B are disjoint.
-  have ab_disjoint : Disjoint A B := by
-    intro _C hca hcb c hc
-    exact Set.not_mem_of_mem_diff (hca hc) (Set.image_subset f sdiff_le (hcb hc))
 
   rw [←Set.disjoint_toFinset] at ab_disjoint
   rw [Finset.card_union_of_disjoint ab_disjoint] at h2
