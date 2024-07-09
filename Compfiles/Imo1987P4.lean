@@ -56,9 +56,7 @@ problem imo1987_p4 : ¬∃ f : ℕ → ℕ, ∀ n, f (f n) = n + 1987 := by
   -- A and B have union ℕ - f(f(ℕ)).
   have ab_union : A ∪ B = Set.univ \ (f '' (f '' Set.univ)) := by
     -- Note that B = f(ℕ) - f(f(ℕ)).
-    have hB : B = f '' Set.univ \ f '' (f '' Set.univ) := by
-      exact Set.image_diff f_injective Set.univ (f '' Set.univ)
-    rw [hB]
+    simp only [B, Set.image_diff f_injective]
     apply Set.eq_of_subset_of_subset
     · rintro x (hx1 | hx2) <;> aesop
     · rintro x ⟨_hx, hx'⟩
