@@ -69,11 +69,9 @@ lemma lemma2 {m y: ℕ} (hy : y < 10^m) :
   obtain rfl | hyp := Nat.eq_zero_or_pos y
   · simp
   rw [Nat.digits_def' (by norm_num) hyp]
-  rw [List.length_cons]
-  sorry
-  --rw [Nat.succ_eq_add_one, add_lt_add_iff_right]
-  --have h2 : y / 10 < 10 ^ m := by omega
-  --exact ih h2
+  rw [List.length_cons, add_lt_add_iff_right]
+  have h2 : y / 10 < 10 ^ m := by omega
+  exact ih h2
 
 lemma digits_sum_mul_pow {m x : ℕ} :
     (Nat.digits 10 (x * 10 ^ m)).sum = (Nat.digits 10 x).sum := by
@@ -316,7 +314,16 @@ problem usa1992_p1 (n : ℕ) :
   rw [digits_sum_mul_pow, h11] at h8
   clear h11
 
-/-
-   (10^N - 1) - b_{n-1} has 2^n digits, each 9 minus the corresponding digit of b_{n-1}, so its digit sum is 9·2n - 9·2n-1. bn-1 is odd, so its last digit is not 0 and hence the last digit of (10N - 1) - bn-1 is not 9. So the digit sum of 10N - bn-1 is 9·2n - 9·2n-1 + 1. Hence bn has digit sum (9·2n-1 - 1) + (9·2n - 9·2n-1 + 1) = 9·2n.
-    -/
+  -- (10^N - 1) - b_{n-1} has 2^n digits,
+  -- each 9 minus the corresponding digit of b_{n-1},
+
+  -- so its digit sum is 9·2^n - 9·2^{n-1}.
+
+  -- b_{n-1} is odd, so its last digit is not 0
+  -- and hence the last digit of (10^N - 1) - b_{n-1} is not 9.
+
+  -- So the digit sum of 10^N - b_{n-1} is 9·2^n - 9·2^{n-1} + 1.
+
+  -- Hence b_n has digit sum (9·2^{n-1} - 1) + (9·2n - 9·2^{n-1} + 1) = 9·2^n.
+
   sorry

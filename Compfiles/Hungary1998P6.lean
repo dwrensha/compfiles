@@ -6,7 +6,6 @@ Authors: David Renshaw
 
 import Mathlib.Algebra.BigOperators.Intervals
 import Mathlib.Algebra.BigOperators.Ring
-import Mathlib.Data.Nat.Prime
 import Mathlib.Algebra.Associated
 import Mathlib.Tactic
 
