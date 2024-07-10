@@ -71,7 +71,7 @@ problem imo1987_p4 : ¬∃ f : ℕ → ℕ, ∀ n, f (f n) = n + 1987 := by
 
   -- A and B are disjoint.
   have ab_disjoint : Disjoint A B := by
-    intro _C hca hcb c hc
+    intro C hca hcb c hc
     exact Set.not_mem_of_mem_diff (hca hc) (Set.image_subset f sdiff_le (hcb hc))
 
   -- But since f is injective, A and B have the
