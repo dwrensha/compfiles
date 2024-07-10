@@ -461,8 +461,6 @@ problem bulgaria1998_p11
 
     have hn1 : 1 < m₁ := by
       change _ % _ = _ % _ at m₁_eq_2_mod_3
-      have h40 := Nat.div_add_mod m₁ 3
-      rw [m₁_eq_2_mod_3] at h40
       omega
     obtain ⟨x, y, x_y_props⟩ := Thue's_lemma a m₁ hn1
     clear hn1
