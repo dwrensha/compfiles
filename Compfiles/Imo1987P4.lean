@@ -53,19 +53,14 @@ problem imo1987_p4 : ¬∃ f : ℕ → ℕ, ∀ n, f (f n) = n + 1987 := by
       (Set.subset_univ _) (Set.image_mono (Set.subset_univ _))
 
   -- ... which is {0, 1, ... , 2 * m}.
-  have ab_range : A ∪ B = {n | n < 2*m + 1} := by
+  have ab_range : A ∪ B = {n | n < 2 * m + 1} := by
     rw [ab_union]
-    apply Set.eq_of_subset_of_subset
-    · rintro x hx
-      replace hx : ∀ (y : ℕ), ¬f (f y) = x := by aesop
-      rw [Set.mem_setOf_eq]
-      by_contra! H
-      obtain ⟨z, hz⟩ : ∃ z, x = (2 * m + 1) + z := exists_add_of_le H
-      have hzz := hx z
-      rw [hz, hf z, add_comm] at hzz
-      exact (hzz rfl).elim
-    · intro x hx
-      aesop
+    ext x
+    rw [Set.mem_setOf_eq, ←not_iff_not, ←Set.compl_eq_univ_diff]
+    rw [Set.not_mem_compl_iff, not_lt]
+    simp only [Set.mem_image, Set.mem_univ, true_and, exists_exists_eq_and, hf]
+    rw [le_iff_exists_add']
+    simp_rw [eq_comm]
 
   -- A and B are disjoint.
   have ab_disjoint : Disjoint A B := by
