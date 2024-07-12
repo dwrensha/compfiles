@@ -27,314 +27,219 @@ that might be typed.
 namespace UK2024R1P1
 
 snip begin
-  def S (k : ℕ) := {f : Equiv.Perm (Fin k) | ∀ k, (f k : ℕ) ≤ k + 1}
+  variable {k : ℕ} {m : Fin (k + 2)}
 
-  lemma S_succ_k_card_eq_two_mul_S_k_card {k : ℕ} (hk : k ≥ 1) :
-    (S (k + 1)).ncard = 2 * (S k).ncard := by
-    let S₁ := {f | f ∈ S (k + 1) ∧ f 0 = 0}
-    let S₂ := {f | f ∈ S (k + 1) ∧ f 0 = 1}
-    have h1 : (1 : Fin (k + 1)).val = 1 := by {
-        simp
-        linarith
-    }
-    have h2 {n : Fin (k + 1)} (hn : n ≠ 0) : 1 ≤ n := by {
-      rw [←Fin.pos_iff_ne_zero] at hn
-      omega
-    }
-    have h3 : S₁.ncard = (S k).ncard := by {
-      have h3_1 (g : Equiv.Perm (Fin (k + 1))) (hg : g ∈ S₁) (n : Fin k) : 1 ≤ g n.succ := by {
-        rw [←Fin.zero_add 1]
-        apply Fin.add_one_le_of_lt
-        rw [Fin.pos_iff_ne_zero]
-        simp
-        rw [←hg.2, Equiv.apply_eq_iff_eq]
-        exact Fin.succ_ne_zero n
-      }
-      have h3_2 (g : Equiv.Perm (Fin (k + 1))) (hg : g ∈ S₁) (n : Fin k) : 1 ≤ (Equiv.symm g) n.succ := by {
-        rw [←Fin.zero_add 1]
-        apply Fin.add_one_le_of_lt
-        rw [Fin.pos_iff_ne_zero]
-        simp
-        rw [←Equiv.apply_eq_iff_eq g, Equiv.apply_symm_apply, hg.2]
-        exact Fin.succ_ne_zero n
-      }
+  def S (k : ℕ) := {f : Equiv.Perm (Fin k) | ∀ n, (f n).castSucc ≤ n.succ}
+  def S' (k : ℕ) (m : Fin (k + 2)) := {f | f ∈ S (k + 2) ∧ f 0 = m}
 
-      let toFun (g : Equiv.Perm (Fin (k + 1))) (hg : g ∈ S₁) (n : Fin k) : Fin k :=
-        Fin.castLT (g (n + 1) - 1) (by {
-          simp
-          rw [Fin.coe_sub_iff_le.2 (h3_1 g hg n), Nat.sub_lt_iff_lt_add (Fin.val_fin_le.2 (h3_1 g hg n)), h1, Nat.add_comm 1 k]
-          exact (g n.succ).isLt
-        })
+  lemma g_nonzero_ne_m {g : Equiv.Perm (Fin (k + 2))} (hg : g ∈ (S' k m)) (n : Fin (k + 2)) (hn : n ≠ 0) : g n ≠ m := by
+    contrapose! hn
+    rwa [←Equiv.apply_eq_iff_eq g, hg.2]
 
-      let invFun (g : Equiv.Perm (Fin (k + 1))) (hg : g ∈ S₁) (n : Fin k) : Fin k :=
-        Fin.castLT (g.invFun (n + 1) - 1) (by {
-          simp
-          rw [Fin.coe_sub_iff_le.2 (h3_2 g hg n), Nat.sub_lt_iff_lt_add (Fin.val_fin_le.2 (h3_2 g hg n)), h1, Nat.add_comm 1 k]
-          exact ((Equiv.symm g) n.succ).isLt
-        })
+  def f_toFun (g : Equiv.Perm (Fin (k + 2))) (hg : g ∈ (S' k m)) (n : Fin (k + 1)) : Fin (k + 1) :=
+    if hg' : g n.succ ≤ m then
+      (g n.succ).castPred (by
+        replace hg' := lt_iff_le_and_ne.2 ⟨hg', g_nonzero_ne_m hg n.succ (Fin.succ_ne_zero n)⟩
+        exact Fin.ne_last_of_lt hg'
+      )
+    else
+      (g n.succ).pred (by
+        push_neg at hg'
+        exact Fin.ne_zero_of_lt hg'
+      )
 
-      have h3_3 (g : Equiv.Perm (Fin (k + 1))) (hg : g ∈ S₁) : Function.LeftInverse (invFun g hg) (toFun g hg) := by {
-        intro n
-        simp [invFun, toFun, Fin.castLT]
-        conv in ↑(g n.succ - 1) + 1 =>
-          rw [Fin.coe_sub_iff_le.2 (h3_1 g hg n), ←(Nat.sub_add_comm (Fin.val_fin_le.2 (h3_1 g hg n))), h1, Nat.add_sub_cancel_right]
-        simp
-        conv =>
-          left
-          left
-          rw [Fin.coe_sub, h1]
-        simp [Nat.add_comm _ 1, ←Nat.add_assoc]
-        congr
-        apply Nat.mod_eq_of_lt
-        apply lt_trans n.isLt
-        linarith
-      }
+  def f_invFun (g : Equiv.Perm (Fin (k + 2))) (hg : g ∈ (S' k m)) (n : Fin (k + 1)) : Fin (k + 1) :=
+    if hg' : n.castSucc < m then
+      (g.symm n.castSucc).pred (by
+        contrapose! hg'
+        rw [le_iff_lt_or_eq]
+        right
+        rw [←hg.2, ←hg', Equiv.apply_symm_apply]
+      )
+    else
+      (g.symm n.succ).pred (by
+        contrapose! hg'
+        rw [Equiv.symm_apply_eq, hg.2] at hg'
+        simp only [←hg', Fin.castSucc_lt_succ_iff, le_refl]
+      )
 
-      have h3_4 (g : Equiv.Perm (Fin (k + 1))) (hg : g ∈ S₁) : Function.RightInverse (invFun g hg) (toFun g hg) := by {
-        intro n
-        simp [invFun, toFun, Fin.castLT]
-        conv in ↑((Equiv.symm g) n.succ - 1) + 1 =>
-          rw [Fin.coe_sub_iff_le.2 (h3_2 g hg n), ←(Nat.sub_add_comm (Fin.val_fin_le.2 (h3_2 g hg n))), h1, Nat.add_sub_cancel_right]
-        simp
-        conv =>
-          left
-          left
-          rw [Fin.coe_sub, h1]
-        simp [Nat.add_comm _ 1, ←Nat.add_assoc]
-        congr
-        apply Nat.mod_eq_of_lt
-        apply lt_trans n.isLt
-        linarith
-      }
+  lemma f_left_inv (g : Equiv.Perm (Fin (k + 2))) (hg : g ∈ (S' k m)) : Function.LeftInverse (f_invFun g hg) (f_toFun g hg) := by
+    intro n
+    simp [f_invFun, f_toFun]
+    obtain hg' | hg' := em (g n.succ ≤ m)
+    · simp only [hg']
+      replace hg' := lt_iff_le_and_ne.2 ⟨hg', g_nonzero_ne_m hg n.succ (Fin.succ_ne_zero n)⟩
+      simp [hg']
+    · simp only [hg', reduceDIte, Fin.succ_pred, Equiv.symm_apply_apply, Fin.pred_succ]
+      apply dif_neg
+      intro hg''
+      apply hg'
+      push_neg at hg'
+      rwa [←Fin.lt_castPred_iff (Fin.ne_last_of_lt hg'), Fin.pred_lt_castPred_iff] at hg''
 
-      let f (g : Equiv.Perm (Fin (k + 1))) (hg : g ∈ S₁) := Equiv.mk (toFun g hg) (invFun g hg) (h3_3 g hg) (h3_4 g hg)
-      apply Set.ncard_congr f
-      {
-        intro a ha
-        simp [S, f, toFun]
-        intro n
-        rw [Fin.coe_sub_iff_le.2 (h3_1 a ha n), Nat.sub_le_iff_le_add]
-        convert ha.1 n.succ
-      }
-      {
-        intro a b ha hb hab
-        rw [Equiv.ext_iff] at hab
-        rw [Equiv.ext_iff]
-        intro x
-        rcases Fin.eq_or_lt_of_le (Fin.zero_le x) with hx | hx
-        rw [←hx, ha.2, hb.2]
-        {
-          have hx' : 1 ≤ x := by omega
-          have hab' := hab (Fin.castLT (x - 1) (by {
-            rw [Fin.coe_sub_iff_le.2 hx', Nat.sub_lt_iff_lt_add hx', h1, Nat.add_comm 1 k]
-            exact x.isLt
-          }))
-          simp [f, toFun, Fin.castLT] at hab'
-          conv at hab' =>
-            pattern (occs := *) ↑(x - 1) + 1
-            rw [Fin.coe_sub_iff_le.2 hx', h1, Nat.sub_add_cancel (by omega)]
-          simp [Fin.val_inj] at hab'
-          exact hab'
-        }
-      }
-      {
-        intro b hb
+  lemma f_right_inv (g : Equiv.Perm (Fin (k + 2))) (hg : g ∈ (S' k m)) : Function.RightInverse (f_invFun g hg) (f_toFun g hg) := by
+    intro n
+    simp [f_invFun, f_toFun]
+    obtain hg' | hg' := em (n.castSucc < m)
+    · simp only [hg']
+      replace hg' := le_of_lt hg'
+      simp [hg']
+    · simp only [hg', reduceDIte, Fin.succ_pred, Equiv.apply_symm_apply, Fin.pred_succ]
+      apply dif_neg
+      intro hg''
+      apply hg'
+      exact hg''
 
-        let a_toFun (n : Fin (k + 1)) : Fin (k + 1) :=
-        if hn : n = 0 then 0 else (b (Fin.castLT (n - 1) (by {
-          have hn' : 1 ≤ n := h2 hn
-          rw [Fin.coe_sub_iff_le.2 hn', Nat.sub_lt_iff_lt_add hn', h1, Nat.add_comm 1 k]
-          exact n.isLt
-        })) + 1)
+  def f (g : Equiv.Perm (Fin (k + 2))) (hg : g ∈ (S' k m)) := Equiv.mk (f_toFun g hg) (f_invFun g hg) (f_left_inv g hg) (f_right_inv g hg)
 
-        let a_invFun (n : Fin (k + 1)) : Fin (k + 1) :=
-        if hn : n = 0 then 0 else (b.invFun (Fin.castLT (n - 1) (by {
-          have hn' : 1 ≤ n := h2 hn
-          rw [Fin.coe_sub_iff_le.2 hn', Nat.sub_lt_iff_lt_add hn', h1, Nat.add_comm 1 k]
-          exact n.isLt
-        })) + 1)
+  def f'_toFun (g : Equiv.Perm (Fin (k + 1))) (m : Fin (k + 2)) (n : Fin (k + 2)) : Fin (k + 2) :=
+    if hn : n = 0 then
+      m
+    else
+      if (g (n.pred hn)).castSucc < m then
+        (g (n.pred hn)).castSucc
+      else
+        (g (n.pred hn)).succ
 
-        have h3_5 : Function.LeftInverse a_invFun a_toFun := by {
-          intro n
-          simp [a_invFun, a_toFun, Fin.castLT]
-          rcases eq_or_ne n 0 with hn | hn
-          simp [hn]
-          simp [hn, Fin.succ_ne_zero]
-          simp [←Fin.coeSucc_eq_succ]
-        }
-        have h3_6 : Function.RightInverse a_invFun a_toFun := by {
-          intro n
-          simp [a_invFun, a_toFun, Fin.castLT]
-          rcases eq_or_ne n 0 with hn | hn
-          simp [hn]
-          simp [hn, Fin.succ_ne_zero]
-          simp [←Fin.coeSucc_eq_succ]
-        }
+  def f'_invFun (g : Equiv.Perm (Fin (k + 1))) (m : Fin (k + 2)) (n : Fin (k + 2)) : Fin (k + 2) :=
+    if hn : n = m then
+      0
+    else
+      if hn' : n < m then
+        (g.symm (n.castPred (Fin.ne_last_of_lt hn'))).succ
+      else
+        (g.symm (n.pred (Fin.ne_zero_of_lt (lt_iff_le_and_ne.2 ⟨le_of_not_lt hn', Ne.symm hn⟩)))).succ
 
-        let a := Equiv.mk a_toFun a_invFun h3_5 h3_6
-        have ha : a ∈ S₁ := by {
-          constructor
-          {
-            intro n
-            simp [a, a_toFun]
-            rcases eq_or_ne n 0 with hn | hn
-            simp [hn]
-            simp [hn]
-            apply Nat.le_trans (hb _)
-            have hn' : 1 ≤ n := h2 hn
-            simp [Fin.castLT]
-            rw [Fin.coe_sub_iff_le.2 hn', h1, Nat.sub_add_cancel (by omega)]
-          }
-          {
-            simp [a, a_toFun]
-          }
-        }
-        use a, ha
-        rw [Equiv.ext_iff]
-        intro n
-        simp [f, a, toFun, a_toFun, Fin.succ_ne_zero]
-        simp [←Fin.coeSucc_eq_succ]
-      }
-    }
-    have h4 : S₂.ncard = (S k).ncard := by {
-      let toFun (g : Equiv.Perm (Fin (k + 1))) (hg : g ∈ S₂) (n : Fin k) : Fin k :=
-        if hg' : g (n + 1) = 0 then
-        Fin.castLT (g (n + 1)) (by {
-          rw [hg', Fin.val_zero]
-          linarith
-        })
-        else Fin.castLT (g (n + 1) - 1) (by {
-          have hg'' := h2 hg'
-          rw [Fin.coe_sub_iff_le.2 hg'', Nat.sub_lt_iff_lt_add hg'', h1, Nat.add_comm 1]
-          apply Fin.isLt
-        })
+  lemma f'_left_inv (g : Equiv.Perm (Fin (k + 1))) : Function.LeftInverse (f'_invFun g m) (f'_toFun g m) := by
+    intro n
+    simp only [f'_invFun, f'_toFun]
+    obtain hn | hn := em (n = 0) <;> simp [hn]
+    obtain hg | hg := em ((g (n.pred hn)).castSucc < m)
+    · simp only [hg, reduceIte, ne_of_lt, reduceDIte, Fin.castPred_castSucc, Equiv.symm_apply_apply, Fin.succ_pred]
+    · simp [hg]
+      push_neg at hg
+      simp only [hg, Fin.le_castSucc_iff.mp, ne_of_gt, reduceIte, not_lt_of_gt, reduceDIte]
 
-      let invFun (g : Equiv.Perm (Fin (k + 1))) (hg : g ∈ S₂) (n : Fin k) : Fin k :=
-        if hg' : n = (0 : Fin (k + 1)) then
-        Fin.castLT ((g.invFun n) - 1) (by {
-          have hg'' : 1 ≤ g.invFun n := by {
-            apply h2
-            contrapose! hg'
-            rw [Equiv.invFun_as_coe, Equiv.symm_apply_eq, hg.2] at hg'
-            rw [hg']
-            simp
-            linarith
-          }
-          rw [Fin.coe_sub_iff_le.2 hg'', Nat.sub_lt_iff_lt_add hg'', h1, Nat.add_comm 1]
-          apply Fin.isLt
-        })
-        else Fin.castLT (g.invFun (n + 1) - 1) (by {
-          have hg'' : 1 ≤ g.invFun (n + 1) := by {
-            apply h2
-            contrapose! hg'
-            rw [Equiv.invFun_as_coe, Equiv.symm_apply_eq, hg.2] at hg'
-            exact self_eq_add_left.1 (id (Eq.symm hg'))
-          }
-          rw [Fin.coe_sub_iff_le.2 hg'', Nat.sub_lt_iff_lt_add hg'', h1, Nat.add_comm 1]
-          apply Fin.isLt
-        })
+  lemma f'_right_inv (g : Equiv.Perm (Fin (k + 1))) : Function.RightInverse (f'_invFun g m) (f'_toFun g m) := by
+    intro n
+    simp only [f'_invFun, f'_toFun]
+    obtain hn | hn := em (n = m) <;> simp [hn]
+    obtain hg | hg := em (n < m)
+    · simp only [hg, reduceDIte, Fin.pred_succ, Equiv.apply_symm_apply, Fin.castSucc_castPred, Fin.succ_ne_zero, reduceIte]
+    · simp_rw [hg, reduceDIte, Fin.succ_ne_zero, reduceDIte, Fin.pred_succ, Equiv.apply_symm_apply, Fin.succ_pred]
+      apply dif_neg
+      push_neg at *
+      rw [Fin.le_castSucc_pred_iff]
+      exact lt_iff_le_and_ne.2 ⟨hg, Ne.symm hn⟩
 
-      have h4_1 (g : Equiv.Perm (Fin (k + 1))) (hg : g ∈ S₂) : Function.LeftInverse (invFun g hg) (toFun g hg) := by {
-        intro n
-        simp [invFun, toFun]
-        rcases eq_or_ne (g n.succ) 0 with hg' | hg'
-        {
-          simp [hg']
-          rw [←Equiv.eq_symm_apply] at hg'
-          simp [←hg', ←Fin.coeSucc_eq_succ]
-        }
-        {
-          have hg'' : g n.succ - 1 ≠ 0 := by {
-            have hn := Fin.succ_ne_zero n
-            contrapose! hn
-            rw [sub_eq_zero, ←hg.2, Equiv.apply_eq_iff_eq] at hn
-            exact hn
-          }
-          simp [hg', hg'', Fin.castLT]
-          conv in ↑(g n.succ - 1) + 1 =>
-            rw [Fin.coe_sub_iff_le.2 (h2 hg'), ←(Nat.sub_add_comm (Fin.val_fin_le.2 (h2 hg'))), h1, Nat.add_sub_cancel_right]
-          simp [←Fin.coeSucc_eq_succ]
-        }
-      }
+  def f' (m : Fin (k + 2)) (g : Equiv.Perm (Fin (k + 1))) := Equiv.mk (f'_toFun g m) (f'_invFun g m) (f'_left_inv g) (f'_right_inv g)
 
-      have h4_2 (g : Equiv.Perm (Fin (k + 1))) (hg : g ∈ S₂) : Function.RightInverse (invFun g hg) (toFun g hg) := by {
-        intro n
-        simp only [toFun, invFun, Fin.castLT]
-        rcases eq_or_ne n.castSucc 0 with hn | hn
-        {
-          simp [hn]
-          rw [←Fin.castSucc_inj]
-          simp [hn]
-        }
-        {
-          simp [hn, Fin.succ_ne_zero]
-          simp [←Fin.coeSucc_eq_succ]
-        }
-      }
+  lemma f'_in_S'_k (hm : m ≤ 1) {g : Equiv.Perm (Fin (k + 1))} (hg : g ∈ S (k + 1)) : f' m g ∈ S' k m := by
+    constructor
+    · intro n
+      simp [f', f'_toFun]
+      obtain hn | hn := em (n = 0) <;> simp [hn]
+      · exact hm
+      · obtain hn' | hn' := em ((g (n.pred hn)).castSucc < m) <;> simp [hn']
+        · apply le_trans (Fin.castSucc_le_castSucc_iff.2 (hg (n.pred hn)))
+          rw [Fin.succ_pred]
+          exact le_of_lt (Fin.castSucc_lt_succ n)
+        · rw [←Fin.succ_castSucc]
+          apply le_trans (Fin.succ_le_succ_iff.2 (hg (n.pred hn)))
+          rw [Fin.succ_pred]
+    · simp [f', f'_toFun]
 
-      let f (g : Equiv.Perm (Fin (k + 1))) (hg : g ∈ S₂) := Equiv.mk (toFun g hg) (invFun g hg) (h4_1 g hg) (h4_2 g hg)
-      apply Set.ncard_congr f
-      {
-        intro a ha
-        simp [S, f]
-        intro n
-        simp only [toFun]
-        rcases eq_or_ne (a n.succ) 0 with hn | hn
-        simp [hn]
-        {
-          simp [hn]
-          rw [Fin.coe_sub_iff_le.2 (h2 hn), Nat.sub_le_iff_le_add, h1]
-          apply le_trans (ha.1 n.succ)
-          apply le_of_eq
-          simp
-        }
-      }
-      {
-        intro a b ha hb hab
+  lemma f_f'_left_inv {g : Equiv.Perm (Fin (k + 2))} (hg : g ∈ S' k m) : f' m (f g hg) = g := by
+    apply Equiv.ext
+    intro x
+    simp [f', f'_toFun, f, f_toFun]
+    obtain hx | hx := em (x = 0) <;> simp [hx, hg.2]
+    obtain hx' | hx' := em (g x ≤ m)
+    · simp only [hx', reduceDIte, Fin.castSucc_castPred]
+      exact dif_pos (lt_iff_le_and_ne.2 ⟨hx', g_nonzero_ne_m hg x hx⟩)
+    · simp only [hx', reduceDIte, Fin.succ_pred]
+      apply dif_neg
+      push_neg at *
+      rwa [Fin.le_castSucc_pred_iff]
 
-        sorry
-      }
-      {
-        sorry
-      }
-    }
-    have h5 : Disjoint S₁ S₂ := by {
+  lemma f_f'_right_inv (hm : m ≤ 1) {g : Equiv.Perm (Fin (k + 1))} (hg : g ∈ S (k + 1)) : f (f' m g) (f'_in_S'_k hm hg) = g := by
+    apply Equiv.ext
+    intro x
+    simp [f, f_toFun, f', f'_toFun, Fin.succ_ne_zero]
+    obtain hx | hx := em ((g x).castSucc < m)
+    · simp only [hx, reduceIte, Fin.castPred_castSucc]
+      exact dif_pos (le_of_lt hx)
+    · simp_rw [hx, reduceIte, Fin.pred_succ]
+      apply dif_neg
+      contrapose! hx
+      rwa [Fin.castSucc_lt_iff_succ_le]
+
+  lemma S'_k_card_eq_S_succ_k_card (hm : m ≤ 1) : (S' k m).ncard = (S (k + 1)).ncard := by
+    apply Set.ncard_congr f
+    · intro a ha
+      simp [S, f, f_toFun]
+      intro n
+      obtain h | h := em (a n.succ ≤ m)
+      · simp only [h, reduceDIte, Fin.castSucc_castPred]
+        exact le_trans (le_trans h hm) (Fin.succ_pos n)
+      · simp [h]
+        replace ha := ha.1 n.succ
+        rw [Fin.castSucc_pred_eq_pred_castSucc]
+        apply le_trans (Fin.pred_le_pred_iff.2 ha)
+        rw [Fin.pred_succ]
+        exact n.succ.succ_ne_zero
+    · intro a b ha hb hab
+      rw [←f_f'_left_inv ha, ←f_f'_left_inv hb, hab]
+    · intro b hb
+      exact ⟨f' m b, ⟨f'_in_S'_k hm hb, f_f'_right_inv hm hb⟩⟩
+
+  lemma S_succ_succ_k_card_eq_two_mul_S_succ_k_card : (S (k + 2)).ncard = (S (k + 1)).ncard * 2 := by
+    let S₁ := S' k 0
+    let S₂ := S' k 1
+    have h1 : S₁.ncard = (S (k + 1)).ncard := by exact S'_k_card_eq_S_succ_k_card (by norm_num)
+    have h2 : S₂.ncard = (S (k + 1)).ncard := by exact S'_k_card_eq_S_succ_k_card (by norm_num)
+    have h3 : Disjoint S₁ S₂ := by {
       rw [Set.disjoint_left]
-      rintro f ⟨hf, hf'⟩
-      rw [Set.mem_setOf]
-      push_neg
+      rintro f ⟨_, hf⟩
+      simp [S₂, S', Set.mem_setOf]
       intro
-      rw [hf', ←Fin.val_ne_iff, Fin.val_zero]
-      rw [h1]
-      norm_num
+      rw [hf]
+      aesop
     }
-    have h6 : S (k + 1) = S₁ ∪ S₂ := by sorry
-    rw [h6, Set.ncard_union_eq h5, h3, h4, two_mul]
+    have h4 : S (k + 2) = S₁ ∪ S₂ := by
+      apply Set.ext
+      intro x
+      constructor <;> intro hx
+      · have hx' : (x 0) ≤ 1 := by
+          rw [←Fin.val_fin_le, Fin.val_one]
+          exact hx 0
+        obtain hx' | hx' := le_iff_lt_or_eq.mp hx'
+        · left
+          replace hx' : x 0 = 0 := by
+            rw [←Fin.val_eq_val, Fin.val_zero, ←Nat.lt_one_iff]
+            rwa [Fin.lt_iff_val_lt_val, Fin.val_one] at hx'
+          exact ⟨hx, hx'⟩
+        · right
+          exact ⟨hx, hx'⟩
+      · obtain hx | hx := hx <;> exact hx.1
+    rw [h4, Set.ncard_union_eq h3, h1, h2, mul_two]
 
-  lemma S_card_eq_two_pow_k_sub_one {k : ℕ} (hk : k ≥ 1) :
-    (S k).ncard = 2 ^ (k - 1) := by
-    induction k, hk using Nat.le_induction with
-    | base => {
+  lemma S_succ_k_card_eq_two_pow_k {k : ℕ} :
+    (S (k + 1)).ncard = 2 ^ k := by
+    induction k with
+    | zero =>
       simp
       let f : Equiv.Perm (Fin 1) := Equiv.mk id id (by decide) (by decide)
       use f
       apply Set.ext
       intro g
-      constructor
-      {
-        unfold S
-        simp
-        rw [Equiv.ext_iff]
+      constructor <;> simp [S]
+      · rw [Equiv.ext_iff]
         omega
-      }
-      {
-        unfold S
-        simp
-      }
-    }
-    | succ n hn hn'=> {
-      simp [S_succ_k_card_eq_two_mul_S_k_card hn, hn', ←Nat.pow_add_one', Nat.sub_add_cancel hn]
-    }
+      · intro h n
+        simp [h, f, Fin.eq_zero]
+    | succ n hn =>
+      rw [Nat.pow_succ, ←hn, S_succ_succ_k_card_eq_two_mul_S_succ_k_card]
 snip end
 
 determine solution_value : ℕ := 256
@@ -346,5 +251,5 @@ subset of the permutations of 9 elements.
 problem uk2024_r1_p1 :
   {f : Equiv.Perm (Fin 9) | ∀ k, (f k : ℕ) ≤ k + 1}.ncard = solution_value := by
     have h1 : {f : Equiv.Perm (Fin 9) | ∀ k, (f k : ℕ) ≤ k + 1} = S 9 := rfl
-    rw [h1, S_card_eq_two_pow_k_sub_one (by norm_num)]
+    rw [h1, S_succ_k_card_eq_two_pow_k]
     norm_num
