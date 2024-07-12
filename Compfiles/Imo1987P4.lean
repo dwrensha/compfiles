@@ -49,10 +49,8 @@ problem imo1987_p4 : ¬∃ f : ℕ → ℕ, ∀ n, f (f n) = n + 1987 := by
   have ab_union : A ∪ B = Set.univ \ (f '' (f '' Set.univ)) := by
     -- Note that B = f(ℕ) - f(f(ℕ)).
     simp only [B, Set.image_diff f_injective]
-    apply Set.eq_of_subset_of_subset
-    · rintro x (hx1 | hx2) <;> aesop
-    · rintro x ⟨_hx, hx'⟩
-      by_cases (x ∈ A) <;> aesop
+    exact Set.diff_union_diff_cancel
+      (Set.subset_univ _) (Set.image_mono (Set.subset_univ _))
 
   -- ... which is {0, 1, ... , 2 * m}.
   have ab_range : A ∪ B = {n | n < 2*m + 1} := by
