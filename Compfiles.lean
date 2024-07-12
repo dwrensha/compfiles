@@ -150,6 +150,7 @@ import Compfiles.Poland2016S1P8
 import Compfiles.Romania1998P12
 import Compfiles.Russia1998P42
 import Compfiles.UK2024R1P1
+import Compfiles.UK2024R1P2
 import Compfiles.UpperLowerContinuous
 import Compfiles.Usa1974P2
 import Compfiles.Usa1978P1
