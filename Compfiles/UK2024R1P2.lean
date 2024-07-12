@@ -21,7 +21,7 @@ and a₁ are consecutive.
 
 namespace UK2024R1P2
 
-problem uk2024_r1_p1
+problem uk2024_r1_p2
 (a : ℕ → ℤ) (ha : ∀ i ≥ 2, a i = 2 * a (i - 1) - a (i - 2) ∨ a i = 2 * a (i - 2) - a (i - 1))
 (ha' : |a 2023 - a 2024| = 1) : |a 0 - a 1| = 1 := by
   let P (i : ℕ) : Prop := |a i - a (i + 1)| = 1
