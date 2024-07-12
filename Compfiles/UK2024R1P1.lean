@@ -27,6 +27,23 @@ that might be typed.
 namespace UK2024R1P1
 
 snip begin
+/-
+The basic idea of this proof is that the first letter can only go in the first
+or second position. In both cases the spellings of the other letters is
+equivalent to a valid spelling of an eight letter word. So the number of valid
+spellings for nine letters is two times that for eight letters. Similar logic
+gets the same relation for eight and seven letter words. This recurses down
+until we reach one letter, which only has one spelling. Thus, OLYMPIADS has
+2*2*2*2*2*2*2*2*1 = 2^8 = 256 valid spellings.
+
+Most of this proof is defining the mapping between spellings of k + 2 letters
+where the first letter goes to position m and spellings of k + 1 letters. This
+is done by removing that first letter and shifting the letters after it over
+to fill in the gap. Then we show that if m is one of the first two positions,
+the spellings the mapping creates are valid and the mapping itself is
+bijective. Thus the two sets of spellings have the same size.
+-/
+
   variable {k : ℕ} {m : Fin (k + 2)}
 
   def S (k : ℕ) := {f : Equiv.Perm (Fin k) | ∀ n, (f n).castSucc ≤ n.succ}
