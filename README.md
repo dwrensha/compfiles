@@ -99,5 +99,6 @@ to the "authors" field in the copyright header.
 
 |  |  |
 | ----- | ---- |
+| [IMO 1987 Problem 4](/Compfiles/Imo1987P4.lean) | [<img src="http://img.youtube.com/vi/gi8ZTjRO-xI/maxresdefault.jpg" height="120px">](https://youtu.be/gi8ZTjRO-xI)|
 | [IMO 1964 Problem 4](/Compfiles/Imo1964P4.lean) | [<img src="http://img.youtube.com/vi/TOzS4aC_K1g/maxresdefault.jpg" height="120px">](http://youtu.be/TOzS4aC_K1g)|
 | [IMO 1964 Problem 1b](/Compfiles/Imo1964P1.lean) | [<img src="http://img.youtube.com/vi/9d2nicgd68Q/maxresdefault.jpg" height="120px">](http://youtu.be/9d2nicgd68Q)|
