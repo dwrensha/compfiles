@@ -109,3 +109,6 @@ problem hungary1998_p6 (x y : ℤ) (z : ℕ) (hz : 1 < z) :
     linear_combination h7
   apply_fun (· % 3) at h7
   norm_num [Int.add_emod] at h7
+
+
+end Hungary1998P6

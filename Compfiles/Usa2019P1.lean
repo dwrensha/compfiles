@@ -245,3 +245,6 @@ problem usa2019_p1 (m : ℕ+) :
     rw [hf2] at h2
     rw [hf2, f_injective f hf1 h2] at h1
     simp (config := {decide := true}) only at h1
+
+
+end Usa2019P1

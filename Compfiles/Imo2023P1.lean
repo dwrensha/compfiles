@@ -33,3 +33,6 @@ problem imo2023_p1 : solution_set = { n | 1 < n ∧ ¬n.Prime ∧ P n } := by
   constructor
   · sorry
   · sorry
+
+
+end Imo2023P1

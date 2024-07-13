@@ -222,3 +222,6 @@ problem imo1964_p4
                      (by simp[hne, Person', Topic'])
       simp [hne, Person', discusses'] at h6
       exact (congrArg Subtype.val h6)
+
+
+end Imo1964P4

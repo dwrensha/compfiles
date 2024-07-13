@@ -584,3 +584,6 @@ problem imo2019_p2 (A B C A₁ B₁ P Q P₁ Q₁ : Pt)
         wbtw_B_Q_B₁, PQ_parallel_AB, P_ne_Q, sbtw_P_B₁_P₁, angle_PP₁C_eq_angle_BAC, C_ne_P₁,
         sbtw_Q_A₁_Q₁, angle_CQ₁Q_eq_angle_CBA, C_ne_Q₁⟩ :
       Imo2019q2Cfg V Pt).result
+
+
+end Imo2019P2

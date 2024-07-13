@@ -25,3 +25,6 @@ problem imo1999_p4 (x p : ℕ) :
     ⟨x,p⟩ ∈ SolutionSet ↔
     0 < x ∧ p.Prime ∧ x^(p - 1) ∣ (p - 1)^x + 1 := by
   sorry
+
+
+end Imo1999P4

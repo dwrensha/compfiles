@@ -24,3 +24,6 @@ problem imo1985_p4 (M : Finset ℕ) (Mpos : ∀ m ∈ M, 0 < m)
     (Mdivisors : ∀ m ∈ M, ∀ n, m.Prime ∧ n ∣ m → m ≤ 23)
     : ∃ M' : Finset ℕ, M' ⊆ M ∧ ∃ k, M'.prod id = k^4 := by
   sorry
+
+
+end Imo1985P4

@@ -92,3 +92,6 @@ problem usa2005_p2 :
   obtain h9 | h9 | h9 | h9 := h8
       <;> obtain h6 | h6 | h6 | h6 | h6 := h6
       <;> simp (config := { decide := true }) [h6, h9] at h3
+
+
+end Usa2005P2

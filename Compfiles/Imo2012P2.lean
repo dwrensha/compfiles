@@ -33,3 +33,6 @@ problem imo2012_p2 (n : ℕ) (hn : 3 ≤ n) (a : Finset.Icc 2 n → ℝ)
     -- 1 = ∑ 1 / (i.val - 1)
     sorry
   sorry
+
+
+end Imo2012P2

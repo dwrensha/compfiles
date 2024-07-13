@@ -98,3 +98,6 @@ snip end
 problem imo1960_p1 (n : ℕ) : ProblemPredicate n ↔ SolutionPredicate n :=
   ⟨right_direction, left_direction n⟩
 
+
+
+end Imo1960P1

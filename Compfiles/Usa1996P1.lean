@@ -119,3 +119,6 @@ problem usa1996_p1 :
       intro n _
       rw [cos_add]
       ring
+
+
+end Usa1996P1

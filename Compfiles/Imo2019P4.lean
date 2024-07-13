@@ -115,3 +115,6 @@ problem imo2018_p2 (n k : ℕ) :
   · refine Nat.monotone_factorial.ne_of_lt_of_lt_nat 7 ?_ ?_ _ h <;> decide
   -- n = 5
   · refine Nat.monotone_factorial.ne_of_lt_of_lt_nat 10 ?_ ?_ _ h <;> decide
+
+
+end Imo2019P4

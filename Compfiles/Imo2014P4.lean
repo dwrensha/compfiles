@@ -46,3 +46,6 @@ problem imo2014_p4
       let D := (line[ℝ, B, M] : Set _) ∩ (line[ℝ, C, N] : Set (EuclideanSpace ℝ (Fin 2)))
       Set.Nonempty D ∧ D ⊆ Affine.Simplex.circumsphere ABC := by
   sorry
+
+
+end Imo2014P4

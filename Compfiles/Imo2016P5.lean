@@ -96,3 +96,6 @@ problem imo2015_p5 :
       rw [Finset.mem_sdiff]; exact ⟨hic, hiR⟩
     rw [←Finset.prod_erase_mul _ _ hic1, ←Finset.prod_erase_mul _ _ hic2] at hLR
     simp (config := {decide := true}) at hLR
+
+
+end Imo2016P5

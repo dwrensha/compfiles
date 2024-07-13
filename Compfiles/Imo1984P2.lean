@@ -29,3 +29,6 @@ problem imo1984_p2 :
     (¬ 7 ∣ a * b * (a + b)) ∧
     7^7 ∣ (a + b)^7 - a^7 - b^7 := by
   decide
+
+
+end Imo1984P2

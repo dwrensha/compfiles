@@ -36,3 +36,6 @@ problem imo2007_p1b {n : ℕ} (hn : 0 < n) {a : Fin n → ℝ} :
     ∃ x : Fin n → ℝ, Monotone x ∧
       (⨆ i, d a i) / 2 = ⨆ i, |x i - a i| := by
   sorry
+
+
+end Imo2007P1

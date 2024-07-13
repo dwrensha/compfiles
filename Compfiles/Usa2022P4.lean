@@ -148,3 +148,6 @@ problem usa2022_p4 (p q : ℕ) :
     exact h23
 
   simp (config := {decide := true}) only [h9, h11]
+
+
+end Usa2022P4

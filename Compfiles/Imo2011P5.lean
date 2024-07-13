@@ -27,3 +27,6 @@ problem imo2011_p5 (f : ℤ → ℤ)
     (fpos : ∀ m n, f (m - n) ∣ f m - f n)
     : ∀ m n, f m ≤ f n → f m ∣ f n := by
   sorry
+
+
+end Imo2011P5

@@ -27,3 +27,6 @@ problem usa1980_p5 (x y z : ℝ)
     x / (y + z + 1) + y / (z + x + 1) + z / (x + y + 1) ≤
     1 + (1 - x) * (1 - y) * (1 - z) := by
   sorry
+
+
+end Usa1980P5

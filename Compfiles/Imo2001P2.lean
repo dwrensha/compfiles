@@ -75,3 +75,6 @@ problem imo2001_p2 (ha : 0 < a) (hb : 0 < b) (hc : 0 < c) : 1 ≤
                          (rpow_pos_of_pos hb (3 : ℝ)⁻¹)
                          (rpow_pos_of_pos hc (3 : ℝ)⁻¹)
     _ = _ := by rw [h3 ha, h3 hb, h3 hc]
+
+
+end Imo2001P2

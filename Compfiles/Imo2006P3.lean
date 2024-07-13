@@ -139,3 +139,6 @@ problem imo2006_p3 :
     intro x a
     exact proof₂ x a
 
+
+
+end Imo2006P3

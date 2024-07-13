@@ -118,3 +118,6 @@ problem bulgaria1998_p6
       interval_cases e <;> linarith
     · exact (Int.not_lt.mpr (abs_nonneg c) hc3).elim
   exact lemma_1 ha' hb' hc' hc
+
+
+end Bulgaria1998P6

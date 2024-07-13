@@ -241,3 +241,6 @@ problem imo1998_p2 [Fintype J] [Fintype C] (a b k : ℕ) (hC : Fintype.card C = 
   cases' z with z
   · simp
   · exact le_of_mul_le_mul_right h z.succ_pos
+
+
+end Imo1998P2

@@ -26,3 +26,6 @@ problem imo1978_p6 (n : ℕ) (hn : n = 1978) (C : Fin n → Fin 6) :
     C i = C j ∧
     C j = C k ∧
     (i:ℕ) + 1 + (k:ℕ) + 1 = (j:ℕ) + 1 := by sorry
+
+
+end Imo1978P6

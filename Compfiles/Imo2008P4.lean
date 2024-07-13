@@ -118,3 +118,6 @@ problem imo2008_p4 (f : PosReal → PosReal) :
         mul_right_eq_self, ← sq, eq_comm, ← one_pow 2, positive_pow_eq_pow two_pos] at h
 
     apply h3; subst h; rw [one_mul, h0]
+
+
+end Imo2008P4

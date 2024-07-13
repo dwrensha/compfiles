@@ -40,3 +40,6 @@ problem usa2024_p2 (n : ℕ) :
       { k | ∃ S, Good S ∧
              k = {z : ℤ | InAtLeastKSubsets S k z }.ncard } solution :=
   by sorry
+
+
+end Usa2024P2

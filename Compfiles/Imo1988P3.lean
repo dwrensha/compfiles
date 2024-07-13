@@ -35,3 +35,6 @@ problem imo1988_p3 (f : ℕ → ℕ)
   (h₄ : ∀ n, f (4 * n + 3) + 2 * f n = 3 * f (2 * n + 1))
   (A: Finset {n | 0 < n ∧ n ≤ 1988 ∧ f n = n}) :
     A.card = solution := by sorry
+
+
+end Imo1988P3

@@ -89,3 +89,6 @@ snip end
 problem imo1962_p4 {x : ℝ} : ProblemEquation x ↔ x ∈ solutionSet := by
   rw [alt_equiv, finding_zeros, solve_cos3x_0, solve_cos2_half]
   exact exists_or.symm
+
+
+end Imo1962P4

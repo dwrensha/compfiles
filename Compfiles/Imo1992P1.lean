@@ -25,3 +25,6 @@ problem imo1992_p1 (a b c : ℤ) (ha : 1 < a) (hb : a < b) (hc : b < c) :
     ⟨a, b, c⟩ ∈ solution_set ↔
     (a - 1) * (b - 1) * (c - 1) ∣ a * b * c - 1 := by
   sorry
+
+
+end Imo1992P1

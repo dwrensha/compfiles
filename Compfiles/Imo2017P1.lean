@@ -36,3 +36,6 @@ problem imo2017_p1 (a0 : ℕ) :
     a0 ∈ solution_set ↔ ∃ A, { n | a a0 n = A }.Infinite := by
   sorry
 
+
+
+end Imo2017P1

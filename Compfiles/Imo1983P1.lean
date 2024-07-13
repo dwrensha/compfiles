@@ -128,3 +128,6 @@ problem imo1983_p1 (f : ℝ+ → ℝ+) :
     one_le_pow_of_one_le' (le_of_lt H1) m0
   rw [lt_iff_not_le] at h13
   contradiction
+
+
+end Imo1983P1

@@ -584,3 +584,6 @@ problem bulgaria1998_p11
            change _ % _ = _ % _ at Hyy m₁_eq_2_mod_3 <;>
            simp [Nat.pow_mod, Hyy] at m₁_eq_2_mod_3
       omega
+
+
+end Bulgaria1998P11

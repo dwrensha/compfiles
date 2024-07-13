@@ -238,3 +238,6 @@ problem imo1989_p5 (n : ℕ) : ∃ m, ∀ j < n, ¬IsPrimePow (m + j) := by
     simp only [Fin.mk.injEq, self_eq_add_right] at h13
     simp only [h13, not_lt_zero'] at hj
   exact not_prime_power_of_two_factors h2 h4 h11 h9 h10
+
+
+end Imo1989P5

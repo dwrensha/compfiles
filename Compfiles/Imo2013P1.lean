@@ -96,3 +96,6 @@ problem imo2013_p1 (n : ℕ+) (k : ℕ) :
       _ = (∏ i ∈ Finset.range pk, (1 + 1 / (m i : ℚ))) * (1 + 1 / ↑(m pk)) := by
         rw [prod_lemma, hpm, ← hmpk, mul_comm]
       _ = ∏ i ∈ Finset.range pk.succ, (1 + 1 / (m i : ℚ)) := by rw [← Finset.prod_range_succ _ pk]
+
+
+end Imo2013P1

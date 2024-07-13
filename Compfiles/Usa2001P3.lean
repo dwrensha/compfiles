@@ -95,3 +95,6 @@ problem usa2001_p3 (a b c : ℝ) (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c)
       have : (1 - a ≥ 0) := by linarith
       have : (1 - b ≥ 0) := by linarith
       positivity
+
+
+end Usa2001P3

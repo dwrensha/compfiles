@@ -142,3 +142,6 @@ problem usa1985_p1 :
     obtain h10 | h11 : ii < jj ∨ jj < ii := Nat.lt_or_gt.mp hij
     · exact ne_of_lt (hsm h10)
     · exact (ne_of_lt (hsm h11)).symm
+
+
+end Usa1985P1

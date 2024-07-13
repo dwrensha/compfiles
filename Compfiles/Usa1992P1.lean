@@ -327,3 +327,6 @@ problem usa1992_p1 (n : ℕ) :
   -- Hence b_n has digit sum (9·2^{n-1} - 1) + (9·2n - 9·2^{n-1} + 1) = 9·2^n.
 
   sorry
+
+
+end Usa1992P1

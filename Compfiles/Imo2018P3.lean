@@ -67,3 +67,6 @@ problem imo2018_p3 :
   simp only [ite_false, exists_desired_triangle]
   rintro ⟨t, ht⟩
   sorry
+
+
+end Imo2018P3

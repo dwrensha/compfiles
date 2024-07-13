@@ -34,3 +34,6 @@ problem imo2018_p2 (n : ℕ) :
     refine ⟨hn1, ?_⟩
     sorry
   · sorry
+
+
+end Imo2018P2

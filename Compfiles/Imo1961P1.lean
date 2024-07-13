@@ -48,3 +48,6 @@ problem imo1961_p1b (a b : ℝ) :
       (∀ x y z, IsSolution a b x y z → 0 < x ∧ 0 < y ∧ 0 < z ∧ [x,y,z].Nodup) := by
   sorry
 
+
+
+end Imo1961P1

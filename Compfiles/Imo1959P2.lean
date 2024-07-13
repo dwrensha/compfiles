@@ -133,3 +133,6 @@ problem imo1959_p2c : IsGood x 2 ↔ x ∈ solution_set_two := by
   rw [mem_singleton_iff]
   exact
     (isGood_iff_of_sqrt_two_lt <| (sqrt_lt' two_pos).2 (by norm_num)).trans <| by norm_num
+
+
+end Imo1959P2

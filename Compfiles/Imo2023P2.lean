@@ -93,3 +93,6 @@ problem imo2023_p1
     X ∈ (tang_P_ω : Set Pt) ∩ affineSpan ℝ {B, S}
     ∧ ∠ B A X = ∠ X A C
     ∧ ∠ B A X < π / 2 := by sorry
+
+
+end Imo2023P2

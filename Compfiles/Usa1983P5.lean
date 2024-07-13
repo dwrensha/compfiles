@@ -25,3 +25,6 @@ problem usa1983_p5 (x : ℝ) (n : ℕ) (hn : 0 < n) :
     let fracs := { q : ℚ | q.den ≤ n ∧ ↑q ∈ Set.Ioo x (x + 1 / n)}
     fracs.Finite ∧ fracs.ncard ≤ (n + 1) / 2 := by
   sorry
+
+
+end Usa1983P5

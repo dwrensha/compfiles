@@ -157,3 +157,6 @@ problem imo2009_p5 (f : ℕ+ → ℕ+) :
     · intro a b; exact (h a b).1
     · intro a b; exact (h a b).2.1
     · intro a b; exact (h a b).2.2
+
+
+end Imo2009P5

@@ -35,3 +35,6 @@ problem imo2018_p5
         z = ∑ i in Finset.range n, (a i : ℚ) / a ((i + 1) % n))
     : ∃ M, ∀ m, M ≤ m → a m = a (m + 1) := by
   sorry
+
+
+end Imo2018P5

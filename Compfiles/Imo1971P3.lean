@@ -21,3 +21,6 @@ namespace Imo1971P3
 
 problem imo1971_p3 : Set.Infinite
   {(n, m) : ℕ × ℕ | Nat.Coprime (2 ^ n - 3) (2 ^ m - 3)} := by sorry
+
+
+end Imo1971P3

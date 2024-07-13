@@ -78,3 +78,6 @@ problem imo1968_p2 (x : ℕ) :
     have h3 : x < 13 := by nlinarith
     rw [Set.mem_singleton_iff]
     interval_cases x <;> norm_num at hs ⊢
+
+
+end Imo1968P2

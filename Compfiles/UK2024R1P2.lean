@@ -21,9 +21,10 @@ and a₁ are consecutive.
 
 namespace UK2024R1P2
 
-problem uk2024_r1_p2
-(a : ℕ → ℤ) (ha : ∀ i ≥ 2, a i = 2 * a (i - 1) - a (i - 2) ∨ a i = 2 * a (i - 2) - a (i - 1))
-(ha' : |a 2023 - a 2024| = 1) : |a 0 - a 1| = 1 := by
+problem uk2024_r1_p2 (a : ℕ → ℤ)
+    (ha : ∀ i ≥ 2, a i = 2 * a (i - 1) - a (i - 2) ∨ a i = 2 * a (i - 2) - a (i - 1))
+    (ha' : |a 2023 - a 2024| = 1) :
+    |a 0 - a 1| = 1 :=  by
   let P (i : ℕ) : Prop := |a i - a (i + 1)| = 1
   have h (i : ℕ) (hP : P (i + 1)) : P i := by
     specialize ha (i + 1 + 1) (by norm_num)
@@ -32,9 +33,11 @@ problem uk2024_r1_p2
     · rwa [two_mul, ←sub_add, sub_add_cancel_right, neg_add_eq_sub] at hP
     -- This branch is invalid because the difference between the terms we know are consecutive is both 1 and a multiple of 2, which is a contradiction
     · rw [←sub_add, sub_add_eq_add_sub, ←two_mul, ←mul_sub_left_distrib, abs_mul, Int.mul_eq_one_iff_eq_one_or_neg_one] at hP
-      obtain hP | hP := hP <;> replace hP := hP.1 <;> contrapose! hP <;> norm_num
+      obtain hP | hP := hP <;> replace hP := hP.1 <;> norm_num at hP
   have h' : 0 ≤ 2023 := by norm_num
   have hP : P 2023 := ha'
   have hP' : (|a 0 - a 1| = 1) = P 0 := rfl
   rw [hP']
-  exact Nat.decreasingInduction h h' hP
+  exact Nat.decreasingInduction (fun _ _ => h _) hP h'
+
+end UK2024R1P2

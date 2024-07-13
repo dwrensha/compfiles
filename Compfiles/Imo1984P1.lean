@@ -76,3 +76,6 @@ problem imo1984_p1  (x y z : ℝ)
           · apply le_trans (geom_mean_le_arith_mean_3 h1 h2 h3)
             rw [show (x + y + z - 2 * x + (x + y + z - 2 * y) + (x + y + z - 2 * z)) = 1 from by rw [←h₁]; ring_nf]
             norm_num
+
+
+end Imo1984P1

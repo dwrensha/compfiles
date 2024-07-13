@@ -45,3 +45,6 @@ relatively prime.
 -/
 problem imo1959_p1 : ∀ n : ℕ, Nat.Coprime (21 * n + 4) (14 * n + 3) :=
 fun n => Nat.coprime_of_dvd' <| λ k _ h1 h2 => calculation n k h1 h2
+
+
+end Imo1959P1

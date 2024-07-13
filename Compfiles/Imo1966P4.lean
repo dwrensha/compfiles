@@ -28,3 +28,6 @@ problem imo1966_p4 (n : ℕ) (x : ℝ)
     ∑ i ∈ Finset.range n, 1 / Real.sin (2^(i + 1) * x) =
     1 / Real.tan x - 1 / Real.tan (2^n * x) := by
   sorry
+
+
+end Imo1966P4

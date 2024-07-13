@@ -82,3 +82,6 @@ problem imo1964_p2
     sub_nonneg.mp this
   rw [h1]
   exact schur ha' hb' hc'
+
+
+end Imo1964P2

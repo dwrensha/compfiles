@@ -87,3 +87,6 @@ snip end
 
 problem imo1969_p1 : Set.Infinite {a : ℕ | ∀ n : ℕ, ¬Nat.Prime (n ^ 4 + a)} :=
   Set.infinite_of_injective_forall_mem aChoice_strictMono.injective aChoice_good
+
+
+end Imo1969P1

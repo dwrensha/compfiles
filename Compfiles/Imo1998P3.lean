@@ -27,3 +27,6 @@ problem imo1998_p3 (k : ℕ) :
     ∃ n : ℕ,
      (Finset.card (Nat.divisors (n ^ 2))) = k * Finset.card (Nat.divisors n) := by
   sorry
+
+
+end Imo1998P3

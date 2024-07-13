@@ -29,3 +29,6 @@ problem imo2003_p2 (a b : ℤ) :
     0 < a ∧ a < b ∧
     ∃ c, 0 < c ∧ c * (2 * a * b^2 - b^3 + 1) = a^2 := by
   sorry
+
+
+end Imo2003P2

@@ -252,3 +252,6 @@ problem imo2008_p5 (n k : ℕ) (hn : 0 < n)
   rw [←h1]
   push_cast
   rfl
+
+
+end Imo2008P5

@@ -270,3 +270,6 @@ problem uk2024_r1_p1 :
     have h1 : {f : Equiv.Perm (Fin 9) | ∀ k, (f k : ℕ) ≤ k + 1} = S 9 := rfl
     rw [h1, S_succ_k_card_eq_two_pow_k]
     norm_num
+
+
+end UK2024R1P1

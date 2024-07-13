@@ -28,3 +28,6 @@ problem imo1994_p5 (f : ℝ → ℝ)
   (h₀ : ∀ x, -1 < x → f x > -1)
   (h₁ : ∀ x y, -1 < x → -1 < y → f (x + f y + x * f y) = y + f x + y * f x) :
     f ∈ solution_set := by sorry
+
+
+end Imo1994P5

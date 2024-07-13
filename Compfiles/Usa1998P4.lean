@@ -70,3 +70,6 @@ problem usa1998_p4 : IsLeast possible_num_clicks min_clicks := by
     obtain ⟨rs, hrs, hrsl⟩ := hn
     sorry
 
+
+
+end Usa1998P4

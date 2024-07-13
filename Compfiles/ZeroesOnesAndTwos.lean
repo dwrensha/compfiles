@@ -289,3 +289,6 @@ problem ones_and_twos
   · use 1; norm_num
   · obtain ⟨k, _, hk2⟩ := ones_and_twos_aux n
     exact ⟨k, hk2⟩
+
+
+end ZerosOnesAndTwos

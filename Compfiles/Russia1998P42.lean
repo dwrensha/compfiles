@@ -73,3 +73,6 @@ by
                    _ = a ⋆ b ⋆ 0 := (stardef _ _ _).symm
                    _ = a ⋆ b := lemma4 _
   exact this.symm
+
+
+end Russia1998P42

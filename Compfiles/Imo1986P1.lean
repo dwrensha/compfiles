@@ -117,3 +117,6 @@ problem imo1986_p1 (d : ℤ) (_hdpos : 1 ≤ d) (h2 : d ≠ 2) (h5 : d ≠ 5) (h
     · use q; rw [← pow_two]; exact hq.symm
     · use r; rw [← pow_two]; exact hr.symm
   exact imo1986_p1' d this
+
+
+end Imo1986P1

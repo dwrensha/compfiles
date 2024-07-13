@@ -69,3 +69,6 @@ problem usa1993_p1 (n : ℕ) (hn : 2 ≤ n) (a b : ℝ) (ha : 0 < a) (hb : 0 < b
     linarith only [h7, h17]
   · linarith only [h7]
   · exact h14
+
+
+end Usa1993P1

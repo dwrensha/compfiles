@@ -137,3 +137,6 @@ problem poland2016_s1_p8 (a b c : ℤ) : ∃ n : ℤ, n > 0 ∧ ¬ IsSquare (n^3
   have difference_simplification_2 : 4 * (a + 7) + 2 - 4 * (a + 7) = 2 := by ring
   rw[difference_simplification_2] at towards_contradiction
   contradiction
+
+
+end Poland2016S1P8

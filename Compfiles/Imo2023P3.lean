@@ -37,3 +37,6 @@ problem imo2023_p3 {k : ℕ} (hk : 2 ≤ k) (a : ℕ+ → ℕ+) :
         P.eval ((a n) : ℤ) =
         ∏ i ∈ Finset.range k, a ⟨n + i + 1, Nat.succ_pos _⟩) := by
   sorry
+
+
+end Imo2023P3

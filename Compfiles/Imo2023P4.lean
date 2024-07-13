@@ -35,3 +35,6 @@ problem imo2023_p4
     (hxa : ∀ i : Finset.Icc 1 2023, ∃ k : ℤ, a x i = k)
     : 3034 ≤ a x ⟨2023, by simp⟩ := by
   sorry
+
+
+end Imo2023P4

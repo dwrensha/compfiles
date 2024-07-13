@@ -38,3 +38,6 @@ determine min_c : ℝ := sorry
 problem usa1993_p5 :
     IsLeast {c | ∀ f, valid f ∧ ∀ x, f x ≤ c * x } min_c := by
   sorry
+
+
+end Usa1993P3

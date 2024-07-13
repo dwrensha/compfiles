@@ -157,3 +157,6 @@ problem canada1998_p3 (n : ℕ) (hn : 2 ≤ n) :
                  := by rw [←Finset.sum_range_succ]
     norm_cast at this
     norm_cast
+
+
+end Canada1998P3

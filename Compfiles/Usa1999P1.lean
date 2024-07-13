@@ -44,3 +44,6 @@ problem usa1999_p1 (n : ℕ) (c : Finset (checkerboard n))
         List.getLast? p = y) :
     n^2 ≤ c.card * 3 + 2 := by
   sorry
+
+
+end Usa1999P1

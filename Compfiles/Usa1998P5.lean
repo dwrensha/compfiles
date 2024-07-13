@@ -115,3 +115,6 @@ problem usa1998_p5 (n : ℕ) (_hn : 2 ≤ n) :
             have hab : a - b = α - β := by omega
             rw [ha2, hb2, hab] at Lmod'
             exact Int.dvd_of_emod_eq_zero Lmod'
+
+
+end Usa1998P5

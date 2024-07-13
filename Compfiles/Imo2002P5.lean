@@ -244,3 +244,6 @@ problem imo2002_p5 (f : ℝ → ℝ) :
   have h12 := extend_function_mono (f := fun x ↦ x^2) h6 (continuous_pow 2) h11 x h7'
   simp [h12]
 
+
+
+end Imo2002P5

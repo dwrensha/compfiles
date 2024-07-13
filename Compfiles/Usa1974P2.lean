@@ -69,3 +69,6 @@ problem usa1974_p2 :
         have hcb : c ≥ b := le_of_lt $ not_le.mp hbc
         apply Hbc a c b <;> try assumption
       · exact usa1974_p2_wlog a b c ha hb hc hab hbc
+
+
+end Usa1974P2

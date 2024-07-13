@@ -38,3 +38,6 @@ problem imo2020_p5 (n : ℕ) :
               geometric_mean f s = (((f a):ℝ) + f b) / 2)
            → ∃ y, ∀ a, f a = y )) := by
   sorry
+
+
+end Imo2020P5

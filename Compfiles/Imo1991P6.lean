@@ -35,3 +35,6 @@ problem imo1991_p6 (a : ℝ) (ha : 1 < a) :
     ∀ i j, i ≠ j →
       1 ≤ |solution a ha i - solution a ha j| * |(i:ℝ) - j| := by
   sorry
+
+
+end Imo1991P6

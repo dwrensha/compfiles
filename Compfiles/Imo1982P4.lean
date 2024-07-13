@@ -33,3 +33,6 @@ problem imo1982_p4 (n : ℕ)
       (x1 ≠ x2 ∨ y1 ≠ y2) ∧
       (x1 ≠ x3 ∨ y1 ≠ y3) ∧
       (x2 ≠ x3 ∨ y2 ≠ y3)) := by sorry
+
+
+end Imo1982P4

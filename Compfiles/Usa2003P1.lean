@@ -122,3 +122,6 @@ problem usa2003_p1 (n : ℕ) :
       have h13 : (2 ^ n + a + 2 ^ (n + 1) * aa) = 2 ^ n * (2 * aa + 1) + a := by ring
       rw[h13] at h12
       exact Nat.modEq_zero_iff_dvd.mp h12
+
+
+end Usa2003P1

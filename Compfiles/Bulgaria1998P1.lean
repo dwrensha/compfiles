@@ -94,3 +94,6 @@ problem bulgaria1998_p1 : IsLeast { m | all_colorings_are_good m } solution_valu
     have ⟨h2, h3⟩ := lemma1 h1 hn
     obtain ⟨f, hf⟩ := lemma2
     exact (hf (h3 f)).elim
+
+
+end Bulgaria1998P1

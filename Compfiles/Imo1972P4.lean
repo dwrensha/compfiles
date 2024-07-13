@@ -35,3 +35,6 @@ problem imo1972_p4 (a b c d e : ℝ)
     (d^2 - a * c) * (e^2 - a * c) ≤ 0 ∧
     (e^2 - b * d) * (a^2 - b * d) ≤ 0 ↔
       (a, b, c, d, e) ∈ solution_set := by sorry
+
+
+end Imo1972P4

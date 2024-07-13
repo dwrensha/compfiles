@@ -231,3 +231,6 @@ problem imo2017_p2 (f : ℝ → ℝ) :
   · intro hf
     have h2 := h1.mp hf
     aesop
+
+
+end Imo2017P2

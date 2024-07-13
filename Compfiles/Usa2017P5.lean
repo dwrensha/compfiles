@@ -37,3 +37,6 @@ problem usa2017_p5 (c : ℝ) :
        ∀ {p1 p2}, p1 ≠ p2 → (l p1 = l p2) →
             dist (l p1) (l p2) ≤ c ^ (l p1)) := by
   sorry
+
+
+end Usa2017P5

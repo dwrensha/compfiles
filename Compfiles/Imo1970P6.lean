@@ -40,3 +40,6 @@ problem imo1970_p6
                                             AcuteTriangle t }
     (cardAcute : ℚ) / cardAll ≤ 7 / 10 := by
   sorry
+
+
+end Imo1970P6

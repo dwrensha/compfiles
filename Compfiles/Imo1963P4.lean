@@ -36,3 +36,6 @@ problem imo1963_p4 (x₁ x₂ x₃ x₄ x₅ y : ℝ) :
      x₃ + x₅ = y * x₄ ∧
      x₄ + x₁ = y * x₅) := by
   sorry
+
+
+end Imo1963P4

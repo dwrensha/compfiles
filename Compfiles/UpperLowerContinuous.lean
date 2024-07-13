@@ -420,3 +420,6 @@ problem properties_of_upper_lower_continuous
   constructor
   · exact continuous_of_upper_lower_continuous f huc hlc
   · exact monotone_of_upper_lower_continuous f huc hlc
+
+
+end UpperLowerContinuous

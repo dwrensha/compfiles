@@ -27,3 +27,6 @@ problem imo1998_p6
     (h : ∀ s t, f (t^2 * f s) = s * (f t)^2) :
     IsLeast {n : ℕ | n = f 1998} solution := by
   sorry
+
+
+end Imo1998P6

@@ -103,3 +103,6 @@ problem imo2015_p5 (f : ℝ → ℝ) :
   have h12 := hf (-x) x
   simp only [add_left_neg, h4, add_zero, neg_mul, h5] at h12
   linarith
+
+
+end Imo2015P5

@@ -295,3 +295,6 @@ problem usa1998_p3
   have h9 : (n:ℝ) ^ ((n:ℝ) + 1) = n ^ (n + 1) := by norm_cast
   rw [h8, ←h9]
   exact h6
+
+
+end Usa1998P3

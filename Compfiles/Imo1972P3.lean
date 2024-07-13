@@ -55,3 +55,6 @@ problem imo1972_p3 (m n : ℕ) :
     · positivity
     · apply ih
     · positivity
+
+
+end Imo1972P3

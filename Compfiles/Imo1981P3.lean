@@ -199,3 +199,6 @@ problem imo1981_p3 : IsGreatest (specifiedSet 1981) solution := by
   · decide
   · decide
   · norm_num [problemPredicate_iff]; decide
+
+
+end Imo1981P3

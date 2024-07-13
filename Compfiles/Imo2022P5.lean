@@ -32,3 +32,6 @@ problem imo2022_p5 (a b p : ℕ) (ha : 0 < a) (hb : 0 < b) (hp : p.Prime) :
     simp only [Set.mem_singleton_iff, Set.mem_insert_iff] at h
     aesop
   · sorry
+
+
+end Imo2022P5

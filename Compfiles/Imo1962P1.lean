@@ -147,3 +147,6 @@ determine solution : ℕ := 153846
 problem imo1962_p1 : IsLeast {n | ProblemPredicate n} solution :=
   ⟨satisfied_by_153846, no_smaller_solutions⟩
 
+
+
+end Imo1962P1

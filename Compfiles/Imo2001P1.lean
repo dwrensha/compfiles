@@ -58,3 +58,6 @@ problem imo2001_p1
       ∠ C A B + ∠ C ABC.circumcenter P < Real.pi / 2 := by
   intro ABC P
   sorry
+
+
+end Imo2001P1

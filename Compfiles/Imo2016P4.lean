@@ -40,3 +40,6 @@ problem imo2016_p4 :
       {b : ℕ+ | ∃ a : ℕ, Fragrant {p | ∃ i < b, p = P (a + 1 + i)}}
       Solution := by
   sorry
+
+
+end Imo2016P4

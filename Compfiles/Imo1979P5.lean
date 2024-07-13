@@ -31,3 +31,6 @@ problem imo1979_p5 (a : ℝ) :
     x1 + 2*x2 + 3*x3 + 4*x4 + 5*x5 = a ∧
     x1 + 2^3*x2 + 3^3*x3 + 4^3*x4 + 5^3*x5 = a^2 ∧
     x1 + 2^5*x2 + 3^5*x3 + 4^5*x4 + 5^5*x5 = a^3 ) ↔ a ∈ solution_set := by sorry
+
+
+end Imo1979P5

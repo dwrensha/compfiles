@@ -35,3 +35,6 @@ problem imo1983_p6
     ∧ (0 = a^2 * b * (a - b) + b^2 * c * (b - c) + c^2 * a * (c - a) ↔
        EqualityCondition a b c) := by
   sorry
+
+
+end Imo1983P6

@@ -266,3 +266,6 @@ problem poland1998_p4 : Set.Infinite { n | 7 ∣ a n } := by
   obtain ⟨x, hx⟩ := h
   obtain ⟨y, hy1, hy2⟩ := poland1998_p4' x
   exact Nat.lt_le_asymm hy1 (hx y hy2)
+
+
+end Poland1998P4

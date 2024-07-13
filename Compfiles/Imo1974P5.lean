@@ -95,3 +95,6 @@ problem imo1974_p5 (s : ℝ) :
     use 1, 1 - t, t, (t * (1 - t))
     exact ⟨zero_lt_one, sub_pos.mpr htb, hta, by nlinarith, hts.symm⟩
   · intro hs; exact condition_implies_solution_set s hs
+
+
+end Imo1974P5

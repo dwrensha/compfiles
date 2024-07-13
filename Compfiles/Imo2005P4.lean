@@ -87,3 +87,6 @@ problem imo2005_p4 {k : ℕ} (hk : 0 < k) :
   calc
     1 = 3 - 2 := by norm_num
     _ ≤ p - 2 := tsub_le_tsub_right (Nat.succ_le_of_lt <| hp.two_le.lt_of_ne' hp2) _
+
+
+end Imo2005P4

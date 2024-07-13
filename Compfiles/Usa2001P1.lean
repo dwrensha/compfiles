@@ -54,3 +54,6 @@ problem usa2001_p1 : IsLeast possible_num_colors min_colors := by
     · intro x y i j hij hx hy
       sorry
   · sorry
+
+
+end Usa2001P1

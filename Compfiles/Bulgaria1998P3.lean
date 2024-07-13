@@ -147,3 +147,6 @@ problem bulgaria1998_p3
 
   obtain ⟨N, hN⟩ := he
   exact lt_irrefl _ (lt_trans (h3 N) hN)
+
+
+end Bulgaria1998P3

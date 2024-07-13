@@ -199,3 +199,6 @@ problem imo2006_p5 {P : Polynomial ℤ} (hP : 1 < P.natDegree) {k : ℕ} (hk : 0
   rw [IsRoot.def, eval_sub, iterate_comp_eval, eval_X, sub_eq_zero] at ht
   rw [Multiset.mem_toFinset, mem_roots hP', IsRoot.def, eval_sub, eval_comp, eval_X, sub_eq_zero]
   exact Polynomial.isPeriodicPt_eval_two ⟨k, hk, ht⟩
+
+
+end Imo2006P5

@@ -96,3 +96,6 @@ problem imo1962_p2 (x : ℝ) :
       exact Real.sqrt_lt_sqrt hx4 h3
     linarith
   · exact sub_neg.mp h7b
+
+
+end Imo1962P2

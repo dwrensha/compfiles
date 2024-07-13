@@ -75,3 +75,6 @@ theorem imo_1964_p1b' : ∀ (n : ℕ), (2 ^ n + 1) % 7 ≠ 0
       simp [imo_1964_p1b' n]
 
 snip end
+
+
+end Imo1964P1

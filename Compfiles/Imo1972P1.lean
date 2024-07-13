@@ -90,3 +90,6 @@ problem imo1972_p1 (S : Finset ℕ)
     unfold_let A' B'
     dsimp at h14 h15
     omega
+
+
+end Imo1972P1

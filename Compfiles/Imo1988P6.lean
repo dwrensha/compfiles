@@ -310,3 +310,6 @@ example {a b : ℕ} (h : a * b ∣ a ^ 2 + b ^ 2 + 1) : 3 * a * b = a ^ 2 + b ^ 
       obtain rfl | rfl := (Nat.dvd_prime Nat.prime_two).mp y_dvd <;> apply mul_left_cancel₀
       exacts [one_ne_zero, h.symm, two_ne_zero, h.symm]
 snip end
+
+
+end Imo1988P6

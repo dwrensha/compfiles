@@ -297,3 +297,6 @@ problem imo2009_p6 (n : ℕ) (hn : 0 < n)
   obtain ⟨p', hp⟩ :=
     imo2009_p6_aux2 n hn (a ∘ ps) ainj' apos' hps M Mpos Mcard hM'
   exact ⟨p'.trans ps, hp⟩
+
+
+end Imo2009P6

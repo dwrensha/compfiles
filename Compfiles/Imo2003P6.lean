@@ -240,3 +240,6 @@ problem imo2003_p6 (p : ℕ) (hp : p.Prime) :
       simp [Nat.add_mod, this]
       exact Nat.one_mod_of_ne_one p_sq_ne_1
     contradiction
+
+
+end Imo2003P6

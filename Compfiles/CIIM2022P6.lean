@@ -27,3 +27,6 @@ def d : ℕ → ℕ
 problem ciim2022_p6 (n : ℕ) (hn : 0 < n) :
     d (Nat.factorial (n + 1)) ≤ 2 * d (Nat.factorial n) := by
   sorry
+
+
+end CIIM2022P6

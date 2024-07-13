@@ -31,3 +31,6 @@ problem imo1995_p4
   (∃ x : ℕ → ℝ, x 0 = solution ∧
     x 0 = x 1995 ∧
     ∀ i : ℕ, 0 < i ∧ i ≤ 1995 → x (i - 1) + (2 / x (i - 1)) = 2 * x i + (1 / x i)) := by sorry
+
+
+end Imo1995P4

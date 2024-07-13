@@ -116,3 +116,6 @@ problem imo1963_p1 : ∀ (p x : ℝ), (x ^ 2 - p) ≥ 0 → (x ^ 2 - 1) ≥ 0 �
       nlinarith only [xp, hp2]
     · nlinarith only [xp, hp2]
   · intro ⟨_, hx⟩; exact hx
+
+
+end Imo1963P1

@@ -29,3 +29,6 @@ abbrev Alternating (n : Nat) : Prop :=
 problem imo2004_p6 (n : ℕ) :
     n ∈ SolutionSet ↔ 0 < n ∧ ∃ k, Alternating (n * k) := by
   sorry
+
+
+end Imo2004P6

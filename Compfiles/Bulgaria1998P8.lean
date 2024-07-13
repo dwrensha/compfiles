@@ -113,3 +113,6 @@ problem bulgaria1998_p8 (n : ℕ) (x y : R) : P n x y = P n y x := by
     _ = S n y x + T n y x + U n x y := by rw [h_t_symm n h9 x y]
     _ = S n y x + T n y x + U n y x := by rw [h_u_symm n h9 x y]
     _ = P n.succ.succ y x := (h7 y x).symm
+
+
+end Bulgaria1998P8

@@ -29,3 +29,6 @@ problem imo2003_p1 (A : Finset ℕ) (hA : A ⊆ S) :
     ∃ t : Fin 100 → S,
       ∀ i j, i ≠ j → Disjoint {x + t i | x ∈ A} {x + t j | x ∈ A} := by
   sorry
+
+
+end Imo2003P1

@@ -70,3 +70,6 @@ problem usa1992_p2 :
     rw [calc (π * (1 + ↑i) / 180) = (↑(i + 1) * π / 180) := by norm_cast; ring_nf];
     exact cosi (show (i+1) < 90 by omega)
   field_simp [mul_comm]
+
+
+end Usa1992P2

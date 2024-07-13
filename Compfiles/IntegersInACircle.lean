@@ -165,3 +165,6 @@ problem integers_in_a_circle
 
     rw [Finset.sum_congr rfl h21] at h19
     omega
+
+
+end IntegersInACircle

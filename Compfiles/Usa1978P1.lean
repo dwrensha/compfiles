@@ -61,3 +61,6 @@ problem usa1978_p1 :
     apply mul_neg_of_neg_of_pos
     linarith
     positivity
+
+
+end Usa1978P1

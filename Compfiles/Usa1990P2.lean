@@ -118,3 +118,6 @@ problem usa1990_p2 (n : ℕ) (x : ℝ) : x ∈ solution_set n ↔ f n x = 2 * x 
           positivity
         exact (Real.sqrt_lt_sqrt_iff_of_pos h4).mpr hc
       rwa [h5] at hc'
+
+
+end Usa1990P2

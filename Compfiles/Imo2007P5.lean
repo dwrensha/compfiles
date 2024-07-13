@@ -117,3 +117,6 @@ problem imo2007_p5 (a b : ℤ) (ha : 0 < a) (hb : 0 < b)
   have hb' : 0 < b := Int.ofNat_pos.mp hb
   have hg := generalized_imo2007_p5 (n := 4) (by norm_num) a b ha' hb' hab
   exact congrArg Nat.cast hg
+
+
+end Imo2007P5

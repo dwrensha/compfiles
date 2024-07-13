@@ -48,3 +48,6 @@ problem usa2011_p4 :
   have h3 := Nat.pow_right_injective h2 hx
   apply_fun (· % 2) at h3
   norm_num at h3
+
+
+end Usa2011P4

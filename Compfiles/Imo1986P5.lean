@@ -93,3 +93,6 @@ problem imo1986_p5 {f : ℝ≥0 → ℝ≥0} : IsGood f ↔ f ∈ SolutionSet :=
     | inr hy =>
       have : 2 ≤ x + y := le_add_left hy
       simp [tsub_eq_zero_of_le, *]
+
+
+end Imo1986P5

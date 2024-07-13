@@ -137,3 +137,6 @@ problem imo1965_p2 (x : Fin 3 → ℝ) (a : Fin 3 → Fin 3 → ℝ)
      _ = (|-a 0 1| + |-a 0 2|) * |x 0| := (add_mul _ _ _).symm
   have h12 : |a 0 0| ≤ |-a 0 1| + |-a 0 2| := (mul_le_mul_right h9).mp h11
   exact not_lt.mpr h12 h3
+
+
+end Imo1965P2

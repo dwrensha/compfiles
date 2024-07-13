@@ -496,3 +496,6 @@ problem romania1998_p12 (u : ℝ → ℝ) :
           ∧ ∀ x y : ℝ, f (x + y) = f x * u y + f y) ↔
     u ∈ solution_set :=
 ⟨romania1998_p12_mp u, romania1998_p12_mpr u⟩
+
+
+end Romania1998P12

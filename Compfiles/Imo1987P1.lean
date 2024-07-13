@@ -115,3 +115,6 @@ snip end
 problem imo1987_p1 {n : ℕ} (hn : 1 ≤ n) : ∑ k ∈ range (n + 1), k * p (Fin n) k = n ! := by
   rw [main₀, Nat.mul_factorial_pred (zero_lt_one.trans_le hn)]
 
+
+
+end Imo1987P1

@@ -113,3 +113,6 @@ problem imo1982_p1 (f : ℕ → ℕ)
       rw [h15] at h14
       exact Nat.lt_le_asymm h13 h14
   exact h10 660 (Nat.succ_pos _) (by norm_num)
+
+
+end Imo1982P1

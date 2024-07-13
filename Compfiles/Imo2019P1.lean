@@ -86,3 +86,6 @@ problem imo2019_p1 (f : ℤ → ℤ) :
       rw [← ne_eq] at hf₀
       have := Int.eq_of_mul_eq_mul_right hf₀ this
       convert hz
+
+
+end Imo2019P1

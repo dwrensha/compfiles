@@ -91,3 +91,6 @@ problem imo1968_p5b :
     have h5 : c = 1/2 := h1'.symm.trans h4
     rw [h3] at h5
     norm_num at h5
+
+
+end Imo1968P5

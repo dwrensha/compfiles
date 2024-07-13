@@ -29,3 +29,6 @@ abbrev Good (f : ℕ+ → ℕ+) : Prop := f 1 = 2 ∧ ∀ n, f (f n) = f n + n �
 problem imo1993_p5 :
     if DoesExist then ∃ f, Good f else ¬∃ f, Good f := by
   sorry
+
+
+end Imo1993P5

@@ -32,3 +32,6 @@ problem usa2022_p1
       (∀ y ∈ B, color y = 1) ∧
       ∀ x ∈ A ∪ B, ∀ y ∈ A ∪ B, x ≠ y → x.fst ≠ y.fst ∧ x.snd ≠ y.snd := by
   sorry
+
+
+end Usa2022P1

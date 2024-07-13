@@ -186,3 +186,6 @@ problem usa2023_p2 (f : ℝ+ → ℝ+) :
     rw [mul_div_cancel_right₀ 2 h18] at h15
     symm
     linear_combination h15
+
+
+end Usa2023P2

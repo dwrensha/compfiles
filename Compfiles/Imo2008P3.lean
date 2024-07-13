@@ -90,3 +90,6 @@ problem imo2008_p3 : ∀ N : ℕ, ∃ n : ℕ, n ≥ N ∧
   have hineq₃ : n * n ≥ N * N := by linarith [hineq₁, hineq₂]
   have hn_ge_N : n ≥ N := Nat.mul_self_le_mul_self_iff.mp hineq₃
   exact ⟨n, hn_ge_N, p, hpp, hnat, hreal⟩
+
+
+end Imo2008P3

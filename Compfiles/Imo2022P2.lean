@@ -177,3 +177,6 @@ problem imo2022_p2 (f : ℝ+ → ℝ+) :
                  _ = 1 + 1 := by rw [add_right_cancel_iff, mul_one_div, div_eq_one]
                  _ = ⟨2, two_pos⟩ := by apply Subtype.val_injective; norm_num
     exact LT.lt.false h20
+
+
+end Imo2022P2

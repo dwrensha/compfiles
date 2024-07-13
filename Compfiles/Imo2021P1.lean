@@ -140,3 +140,6 @@ problem imo2021_p1 :
   -- Now we split into the two cases C ⊆ [n, 2n] \ A and C ⊆ A, which can be dealt with identically.
   cases' hCA with hCA hCA <;> [right; left] <;>
     exact ⟨a, (hCA ha).2, b, (hCA hb).2, hab, h₁ a (hCA ha).1 b (hCA hb).1 hab⟩
+
+
+end Imo2021P1

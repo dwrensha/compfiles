@@ -130,3 +130,6 @@ problem imo2008_p2b : Set.Infinite rationalSolutions := by
     exact hK_inf.of_image g
   exact hW_inf.mono hW_sub_S
 
+
+
+end Imo2008P2

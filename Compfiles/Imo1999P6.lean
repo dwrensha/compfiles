@@ -98,3 +98,6 @@ problem imo1999_p6 (f : ℝ → ℝ) :
   specialize h11 x
   rw [h14] at h11
   exact h11
+
+
+end Imo1999P6

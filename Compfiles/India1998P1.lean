@@ -78,3 +78,6 @@ problem india1998_p1b (n a b : ℤ) (hn : a^2 + 3 * b^2 = 7 * n) :
       rw [←hm1, ←hm2]; linear_combination 7 * hn
 
     exact (mul_right_inj' h22).mp (by linear_combination h20)
+
+
+end India1998P1

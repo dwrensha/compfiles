@@ -30,3 +30,6 @@ problem imo1971_p5 (m : ℕ) :
     ∃ S : Set Pt, S.Finite ∧ ∀ s ∈ S, Nat.card {t | dist s t = 1} = m := by
   -- https://prase.cz/kalva/imo/isoln/isoln715.html
   sorry
+
+
+end Imo1971P5

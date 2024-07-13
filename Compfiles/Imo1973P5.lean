@@ -29,3 +29,6 @@ problem imo1973_p5 {G : Set (ℝ → ℝ)}
     (hfix : ∀ f ∈ G, ∃ x, f x = x) :
     ∃ k : ℝ, ∀ f ∈ G, f k = k := by
   sorry
+
+
+end Imo1973P5

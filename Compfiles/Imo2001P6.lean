@@ -46,3 +46,6 @@ problem imo2001_p6 {a b c d : ℤ} (hd : 0 < d) (hdc : d < c) (hcb : c < b) (hba
   · have aux : 0 < a * d + b * c := by nlinarith only [ha, hb, hc, hd]
     have : a * c + b * d ≤ a * d + b * c := Int.le_of_dvd aux h2
     nlinarith only [hba, hdc, h, this]
+
+
+end Imo2001P6

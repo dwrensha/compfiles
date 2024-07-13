@@ -30,3 +30,6 @@ problem imo2015_p2 (a b c : ℤ) :
       is_power_of_two (b * c - a) ∧
       is_power_of_two (c * a - b) := by
   sorry
+
+
+end Imo2012P2

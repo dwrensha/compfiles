@@ -133,3 +133,6 @@ problem iran1998_p9
 
   rw [hinner] at cauchy_schwarz
   exact le_of_abs_le cauchy_schwarz
+
+
+end Iran1998P9

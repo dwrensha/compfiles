@@ -40,3 +40,6 @@ problem imo2000_p5
     (hA : ∀ i : ℕ, i < 7 → (A i ∈ ω i ∧ A (i + 1) ∈ ω i))
     : ω 0 = ω 6 := by
   sorry
+
+
+end Imo2000P5

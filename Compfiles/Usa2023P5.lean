@@ -59,3 +59,6 @@ problem usa2023_p5 (n : ℕ) (hn : 2 < n) :
   constructor
   · sorry
   · sorry
+
+
+end Usa2023P5

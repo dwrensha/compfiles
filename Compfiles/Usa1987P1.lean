@@ -157,3 +157,6 @@ problem usa1987_p1 (m n : ℤ) :
       have h22 : m'^2 < 9^2 := by rw [←h13]; norm_num
       have h24 : m' < 9 := lt_of_pow_lt_pow_left 2 (by norm_num) h22
       exact (Int.not_le.mpr h24 h23).elim
+
+
+end Usa1987P1

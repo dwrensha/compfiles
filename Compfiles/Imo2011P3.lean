@@ -71,3 +71,6 @@ problem imo2011_p3 (f : ℝ → ℝ) (hf : ∀ x y, f (x + y) ≤ y * f x + f (f
     have hp := hf (-1) (-1)
     rw [hno, mul_zero, sub_zero, zero_add] at hp
     exact hp
+
+
+end Imo2011P3

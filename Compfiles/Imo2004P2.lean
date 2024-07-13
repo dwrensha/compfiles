@@ -29,3 +29,6 @@ problem imo2004_p2 (P : Polynomial ℝ) :
       P.eval (a - b) + P.eval (b - c) + P.eval (c - a) =
       2 * P.eval (a + b + c) := by
   sorry
+
+
+end Imo2004P2

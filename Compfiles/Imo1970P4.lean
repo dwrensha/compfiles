@@ -30,3 +30,6 @@ problem imo1970_p4 (n : ℕ+) :
         s1 ∩ s2 = ∅ ∧
         ∏ m ∈ s1, m = ∏ m ∈ s2, m := by
   sorry
+
+
+end Imo1970P4

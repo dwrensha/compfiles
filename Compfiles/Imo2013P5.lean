@@ -273,3 +273,6 @@ problem imo2013_p5
     _ = ((x2num : ℚ) : ℝ) := by norm_cast
     _ = (↑(x2denom * x) : ℝ) := by rw [H]
     _ = x2denom * x := by push_cast; rfl
+
+
+end Imo2013P5

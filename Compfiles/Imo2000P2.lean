@@ -79,3 +79,6 @@ problem imo2000_p2 (a b c : ℝ) (ha : 0 < a) (hb : 0 < b) (hc : 0 < c)
     field_simp
     exact (div_le_one h2).mpr H
   linarith
+
+
+end Imo2000P2

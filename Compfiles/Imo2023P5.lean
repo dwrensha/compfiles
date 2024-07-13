@@ -50,3 +50,6 @@ problem imo2023_p5 (n : ℕ) :
                       k ≤ Fintype.card {i // j.red i = p.steps i}}
                (solution_value n) := by
   sorry
+
+
+end Imo2023P5

@@ -32,3 +32,6 @@ problem imo1975_p2 (a : ℕ → ℤ)
         i < j ∧
         0 < r ∧
         0 < s ):= by sorry
+
+
+end Imo1975P2

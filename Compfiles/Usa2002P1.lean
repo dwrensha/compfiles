@@ -323,3 +323,6 @@ problem usa2002_p1
        (Fintype.card
            { a : Finset α // f a = Color.red } = N)) := by
   exact usa2002_p1_generalized 2002 hs N hN
+
+
+end Usa2002P1

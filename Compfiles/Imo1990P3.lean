@@ -28,3 +28,6 @@ problem imo1990_p3 (n : ℕ) (hn : 1 < n) : n ∈ solution_set ↔ n^2 ∣ 2^n +
     norm_num
   · intro hnd
     sorry
+
+
+end Imo1990P3

@@ -118,3 +118,6 @@ problem usa1982_p4 :
   all_goals try exact usa1982_p4_lemma     257  8 16 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 16) rfl rfl)
   all_goals try exact usa1982_p4_lemma   65537 16 32 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 32) rfl rfl)
   all_goals try exact usa1982_p4_lemma 6700417 32 64 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 64) rfl rfl)
+
+
+end Usa1982P4

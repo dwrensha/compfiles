@@ -27,3 +27,6 @@ problem imo1978_p1 (m n : ℕ)
   (hmn2: (m, n) = solution) :
     (1978^m) % 1000 = (1978^n) % 1000 ∧
     (∀ m' n' : ℕ, m' < n' ∧ (1978^m') % 1000 = (1978^n') % 1000 → m + n ≤ m' + n') := by sorry
+
+
+end Imo1978P1

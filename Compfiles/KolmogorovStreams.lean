@@ -271,3 +271,6 @@ problem kolmogorov_streams
     · left
       rw [break_into_words_cons]
       exact check_decent_words is_decent a' hinit hnot'
+
+
+end KolmogorovStreams

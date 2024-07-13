@@ -34,3 +34,6 @@ problem canada1998_p5 (m : ℕ) (hm : 0 < m) (a b : ℕ) (hab : a ≤ b) :
      ∃ n : ℕ, (a:ℤ) = A m hm n ∧ (b:ℤ) = A m hm (n + 1) := by
   sorry
 
+
+
+end Canada1998P5

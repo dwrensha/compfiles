@@ -28,3 +28,6 @@ determine SolutionSet : Set (ℕ → ℕ) := sorry
 problem imo1996_p3 (f : ℕ → ℕ) :
     f ∈ SolutionSet ↔ ∀ m n, f (m + f n) = f (f m) + f n := by
   sorry
+
+
+end Imo1996P3

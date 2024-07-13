@@ -109,3 +109,6 @@ problem usa2015_p1 (x y : ℤ) :
         · rw [←Int.mul_eq_mul_left_iff (by positivity : ((2 : ℤ) ≠ 0))]
           linear_combination 1 * h
         · rw [hx, htn] at ht; linear_combination 1 * ht
+
+
+end Usa2015P1

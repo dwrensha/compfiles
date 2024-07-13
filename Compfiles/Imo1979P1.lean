@@ -240,3 +240,6 @@ problem imo1979_p1 (p q : ℤ) (hp : 0 < p) (hq : 0 < q)
      h⟩
   have : Nat.Coprime 1979 s := (Nat.Prime.coprime_iff_not_dvd hpp).mpr hsqp
   exact (Nat.Coprime.dvd_mul_right this).mp h20
+
+
+end Imo1979P1

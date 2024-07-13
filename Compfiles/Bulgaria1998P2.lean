@@ -37,3 +37,6 @@ problem bulgaria1998_p2
   let y := ∠ C A B
   have : ∠ A B C = x + y := by rw [←H2]; sorry -- need to switch to oangles?
   sorry
+
+
+end Bulgaria1998P2

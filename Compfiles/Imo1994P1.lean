@@ -99,3 +99,6 @@ problem imo1994_p1 (n : ℕ) (m : ℕ) (A : Finset ℕ) (hm : A.card = m + 1)
   -- A set of size `k+1` embed in one of size `k`, which yields a contradiction
   simpa [Fin.coe_sub, tedious, rev] using card_le_card hf
 
+
+
+end Imo1994P1

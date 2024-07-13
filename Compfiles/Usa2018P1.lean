@@ -90,3 +90,6 @@ problem usa2018_p1 (a b c : ℝ) :
         rw [(by norm_num : (4 : ℝ) = (2 : ℝ) * (2 : ℝ))]
         rw [Real.sqrt_mul_self zero_le_two]
         norm_num
+
+
+end Usa2018P1

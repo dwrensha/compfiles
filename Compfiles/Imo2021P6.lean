@@ -27,3 +27,6 @@ problem imo2021_p6 (m : ℕ) (hm : 2 ≤ m) (A : Finset ℤ)
     : m ≤ 2 * A.card := by
   sorry
 
+
+
+end Imo2021P6

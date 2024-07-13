@@ -103,3 +103,6 @@ problem imo1992_p2 (f : ℝ → ℝ) :
      _ = f (Real.sqrt z)^2 := h3 (Real.sqrt z)
      _ ≥ 0 := sq_nonneg _
   linarith only [h10, hz]
+
+
+end Imo1992P2

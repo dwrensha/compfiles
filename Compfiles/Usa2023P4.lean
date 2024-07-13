@@ -237,3 +237,6 @@ problem usa2023_p4 (a : ℕ+) (N : ℕ) (hN : 0 < N) (b0 : Blackboard N)
   obtain rfl | hN : N = 1 ∨ 1 < N := LE.le.eq_or_gt hN
   · exact lemma1 a ⟨b0, .Alice⟩ he
   sorry
+
+
+end Usa2023P4

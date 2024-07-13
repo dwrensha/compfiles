@@ -25,3 +25,6 @@ problem imo1998_p4 (a b : ℕ) :
     (0 < a ∧ 0 < b ∧ a * b^2 + b + 7 ∣ a^2 * b + a + b) ↔
     (a, b) ∈ solution_set := by
   sorry
+
+
+end Imo1998P4

@@ -104,3 +104,6 @@ problem usa1981_p5 (x : ℝ) (n : ℕ) :
     exact h19
   calc _ ≤ a (n - m) + a m := h11
        _ ≤ _ := add_le_add h9 h14
+
+
+end Usa1981P5

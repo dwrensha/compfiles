@@ -54,3 +54,6 @@ problem imo1977_p6 (f : ℕ+ → ℕ+) (h : ∀ n, f (f n) < f (n + 1)) : ∀ n,
     · simp
     · simpa using h _
   simpa
+
+
+end Imo1977P6

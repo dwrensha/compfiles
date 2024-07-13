@@ -120,3 +120,6 @@ problem usa1989_p5
   have h16 : V v ≤ V u := by dsimp only [V]; gcongr
 
   exact (not_lt.mpr h16 h10).elim
+
+
+end Usa1989P5

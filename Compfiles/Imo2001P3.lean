@@ -35,3 +35,6 @@ problem imo2001_p3 {Girl Boy Problem : Type}
     : ∃ p : Problem, 3 ≤ Set.ncard {g | girl_solved g p} ∧
                      3 ≤ Set.ncard {g | boy_solved g p} := by
   sorry
+
+
+end Imo2001P3

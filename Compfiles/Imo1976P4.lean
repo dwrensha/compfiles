@@ -26,3 +26,6 @@ problem imo1976_p4 :
       { n | ∃ s : Finset ℕ, ∑ i ∈ s, i = 1976 ∧ ∏ i ∈ s, i = n }
       solution := by
   sorry
+
+
+end Imo1976P4

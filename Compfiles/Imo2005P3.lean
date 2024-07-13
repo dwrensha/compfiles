@@ -64,3 +64,6 @@ problem imo2005_p3 (x y z : ℝ) (hx : x > 0) (hy : y > 0) (hz : z > 0) (h : x *
       gcongr ?_ + ?_ + ?_ <;> apply key_insight <;> linarith
     _ = 1 / 2 * ((x - y) ^ 2 + (y - z) ^ 2 + (z - x) ^ 2) / (x ^ 2 + y ^ 2 + z ^ 2) := by ring
     _ ≥ 0 := by positivity
+
+
+end Imo2005P3

@@ -82,3 +82,6 @@ problem imo1981_p6 (f : ℕ → ℕ → ℕ)
   have h8 := h7 1981
   rw [show 1981 + 3 = 1984 by rfl] at h8
   exact h8
+
+
+end Imo1981P6

@@ -35,3 +35,6 @@ problem imo2010_p3 (g : ℤ>0 → ℤ>0) :
     · use m + n; rw [id, id]; ac_rfl
     · use m + n + c; rw [hc m, hc n]; ac_rfl
   · sorry
+
+
+end Imo2010P3

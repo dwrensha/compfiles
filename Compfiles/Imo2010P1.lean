@@ -55,3 +55,6 @@ problem imo2010_p1 (f : ℝ → ℝ) :
     (mul_eq_zero.mp $ (h 2⁻¹ 2⁻¹).symm.trans $ (congr_arg f $ mul_eq_zero_of_left
         (by norm_num) _).trans h0).elim
       (λ h1 ↦ h1.symm ▸ Int.floor_zero) Int.cast_eq_zero.mp)⟩
+
+
+end Imo2010P1
