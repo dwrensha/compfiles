@@ -10,7 +10,7 @@ import ProblemExtraction
 problem_file { tags := [.Algebra] }
 
 /-
-# British Mathematical Olympiad 2024, Round 1, Problem 1
+# British Mathematical Olympiad 2024, Round 1, Problem 2
 
 The sequence of integers a₀, a₁, ⋯ has the property that for each
 i ≥ 2, aᵢ is either 2 * aᵢ₋₁ - aᵢ₋₂, or 2 * aᵢ₋₂ - aᵢ₋₁.
@@ -31,7 +31,7 @@ problem uk2024_r1_p2 (a : ℕ → ℤ)
   | self => exact ha'
   | of_succ i _ hP =>
     specialize ha (i + 1 + 1) (by norm_num)
-    simp at *
+    simp only [add_tsub_cancel_right, Nat.reduceSubDiff] at ha
     obtain ha | ha := ha <;> rw [ha] at hP
     · rwa [two_mul, ←sub_add, sub_add_cancel_right, neg_add_eq_sub] at hP
     -- This branch is invalid because the difference between the terms we know are consecutive is both 1 and a multiple of 2, which is a contradiction
