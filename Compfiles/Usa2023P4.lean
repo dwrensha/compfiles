@@ -62,21 +62,21 @@ inductive BobCanForceEnd (a : ℕ+) (n : ℕ) : State n → Prop where
             (∀ m ∈ valid_moves a n ⟨b, .Alice⟩, BobCanForceEnd a n m) →
             BobCanForceEnd a n ⟨b, .Alice⟩
 
-inductive EndIsInevitable (a : ℕ+) (n : ℕ) : State n → Prop where
-| BaseCase (s : State n) : valid_moves a n s = ∅ → EndIsInevitable a n s
+inductive EndInevitable (a : ℕ+) (n : ℕ) : State n → Prop where
+| BaseCase (s : State n) : valid_moves a n s = ∅ → EndInevitable a n s
 | Step (s : State n)
-       (h : ∀ m ∈ valid_moves a n s, EndIsInevitable a n m) :
-       EndIsInevitable a n s
+       (h : ∀ m ∈ valid_moves a n s, EndInevitable a n m) :
+       EndInevitable a n s
 
 snip begin
 
 /-- The N=1 case is degenerate. -/
 lemma lemma1 (a : ℕ+) (s : State 1) (he : BobCanForceEnd a 1 s) :
-    EndIsInevitable a 1 s := by
+    EndInevitable a 1 s := by
   induction he with
   | BaseCase bb no_moves => exact .BaseCase _ no_moves
   | BobTurn bb m moves _ ih =>
-    apply EndIsInevitable.Step
+    apply EndInevitable.Step
     intro m' hm'
     have hmm : m = m' := by
       simp only [valid_moves, Set.mem_setOf_eq] at moves hm'
@@ -87,7 +87,7 @@ lemma lemma1 (a : ℕ+) (s : State 1) (he : BobCanForceEnd a 1 s) :
     rw [hmm] at ih
     exact ih
   | AliceTurn bb _ ih =>
-    apply EndIsInevitable.Step
+    apply EndInevitable.Step
     intro m' hm'
     exact ih m' hm'
 
@@ -100,6 +100,13 @@ inductive EndInevitableIn (a : ℕ+) (n : ℕ) : ℕ → State n → Prop where
 | AliceTurn (b : Blackboard n) (s : State n) (m : ℕ) :
           (∀ s ∈ valid_moves a n ⟨b, .Alice⟩, EndInevitableIn a n m s) →
           EndInevitableIn a n m ⟨b, .Alice⟩
+
+lemma end_inevitable_n {a : ℕ+} {n : ℕ} {m : ℕ} {s : State n}
+    (h : EndInevitableIn a n m s) : EndInevitable a n s := by
+  induction h with
+  | BaseCase s he => exact .BaseCase s he
+  | BobTurn b _ _ _ ih => exact .Step _ ih
+  | AliceTurn _ _ _ _ ih => exact .Step _ ih
 
 lemma lemma3 (N : ℕ) (b : Blackboard N)
     (hd : ∑ i : Fin N, Nat.maxPowDiv 2 (b i) = 0) :
@@ -215,14 +222,8 @@ lemma lemma2' (a : ℕ+) (N : ℕ) (hN : 1 < N) (s0 : State N)
 -- matter what either player does.
 lemma lemma2 (a : ℕ+) (N : ℕ) (hN : 1 < N) (s0 : State N)
     (hd : ∀ i : Fin N, Nat.maxPowDiv 2 (s0.board i) < Nat.maxPowDiv 2 a) :
-    EndIsInevitable a N s0 := by
-  /-
-   The ν2 of a number is unchanged by Alice’s move and decreases by one on Bob’s
-   move. The game ends when every ν2 is zero.
-   Hence, in fact the game will always terminate in exactly ∑_{x∈S} ν2(x)
-   moves in this case, regardless of what either player does.
-  -/
-  sorry
+    EndInevitable a N s0 := by
+  exact end_inevitable_n (lemma2' a N hN s0 hd)
 
 -- Claim — When N ≥ 2, if there exists a number x on the board such that ν2(x) ≥
 -- ν2(a), then Alice can cause the game to go on forever.
@@ -231,7 +232,7 @@ snip end
 
 problem usa2023_p4 (a : ℕ+) (N : ℕ) (hN : 0 < N) (b0 : Blackboard N)
     (he : BobCanForceEnd a N ⟨b0, .Alice⟩) :
-    EndIsInevitable a N ⟨b0, .Alice⟩ := by
+    EndInevitable a N ⟨b0, .Alice⟩ := by
   -- we follow the proof from
   -- https://web.evanchen.cc/exams/USAMO-2023-notes.pdf
   obtain rfl | hN : N = 1 ∨ 1 < N := LE.le.eq_or_gt hN
