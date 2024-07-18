@@ -111,11 +111,11 @@ lemma not_prime_power_of_two_factors
    obtain ⟨r, k, hr, hk, hrk⟩ := hpp
    rw [← Nat.prime_iff] at hr
    rw [← hrk] at hqn hpn h0; clear hrk
-   have h1 := (Nat.mem_factors h0).mpr ⟨hp, hpn⟩
-   rw [Nat.Prime.factors_pow hr] at h1
+   have h1 := (Nat.mem_primeFactorsList h0).mpr ⟨hp, hpn⟩
+   rw [Nat.Prime.primeFactorsList_pow hr] at h1
    have h3 := (List.mem_replicate.mp h1).2
-   have h2 := (Nat.mem_factors h0).mpr ⟨hq, hqn⟩
-   rw [Nat.Prime.factors_pow hr] at h2
+   have h2 := (Nat.mem_primeFactorsList h0).mpr ⟨hq, hqn⟩
+   rw [Nat.Prime.primeFactorsList_pow hr] at h2
    have h4 := (List.mem_replicate.mp h2).2
    rw [h3, h4] at hpq
    exact hpq rfl

@@ -20,7 +20,7 @@ then dᵢ divides dᵢ₊₁ + dᵢ₊₂ for every 1 ≤ i ≤ k-2.
 
 namespace Imo2023P1
 
-determine solution_set : Set ℕ := { n | n.factors.length = 2 ∧ n.factors.Nodup }
+determine solution_set : Set ℕ := { n | n.primeFactorsList.length = 2 ∧ n.primeFactorsList.Nodup }
 
 abbrev P (n : ℕ) : Prop :=
   let divs := n.divisors.sort LE.le

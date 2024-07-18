@@ -26,12 +26,12 @@ lemma exists_prime_mod_m_ne_1_and_dvd
     {n m : Nat} (npos : n ≠ 0) (hn : n % m ≠ 1) (hm : m ≠ 1)
     : ∃ p : Nat, p.Prime ∧ p ∣ n ∧ p % m ≠ 1 := by
   by_contra! h
-  let l := n.factors
+  let l := n.primeFactorsList
   have : ∀ p ∈ l, p % m = 1 := by
     intro p pl
-    exact h _ (Nat.prime_of_mem_factors pl) (Nat.dvd_of_mem_factors pl)
+    exact h _ (Nat.prime_of_mem_primeFactorsList pl) (Nat.dvd_of_mem_primeFactorsList pl)
   have : n % m = 1 := calc n % m
-    _ = l.prod % m := by rw [Nat.prod_factors npos]
+    _ = l.prod % m := by rw [Nat.prod_primeFactorsList npos]
     _ = (l.map (fun p ↦ p % m)).prod % m := List.prod_nat_mod l m
     _ = (l.map (fun p ↦ 1)).prod % m := by rw [List.map_inj_left.mpr this]
     _ = 1 % m := by rw [List.prod_eq_one (by simp)]
