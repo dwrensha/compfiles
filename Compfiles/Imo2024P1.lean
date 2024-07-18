@@ -27,7 +27,7 @@ determine SolutionSet : Set ℝ := sorry
 
 problem imo2024_p1 (α : ℝ) :
     α ∈ SolutionSet ↔
-    ∀ n : ℕ, n ∣ ∑ i ∈ Finset.range n, ⌊i * α⌋₊ := by
+    ∀ n : ℕ, (n : ℤ) ∣ ∑ i ∈ Finset.range n, ⌊i * α⌋ := by
   sorry
 
 end Imo2024P1
