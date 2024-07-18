@@ -11,7 +11,7 @@ import ProblemExtraction
 open Lean Core Elab Command Std.Tactic.Lint
 
 def imoProblemCounts :=
-  [(2023, 6), (2022, 6), (2021, 6), (2020, 6),
+  [(2024, 6), (2023, 6), (2022, 6), (2021, 6), (2020, 6),
    (2019, 6), (2018, 6), (2017, 6), (2016, 6), (2015, 6),
    (2014, 6), (2013, 6), (2012, 6), (2011, 6), (2010, 6),
    (2009, 6), (2008, 6), (2007, 6), (2006, 6), (2005, 6),
@@ -56,7 +56,7 @@ def allImoUrls (year : Nat) (idx : Nat) : List WriteupLink :=
          ⟨aopsImoUrl year idx, "Art of Problem Solving"⟩]
      if year ≤ 2003
      then result := result ++ [⟨scholesImoUrl year idx, "John Scholes"⟩]
-     if year ≥ 1997 ∧ year ≤ 2023
+     if year ≥ 1997 ∧ year ≤ 2024
      then result := result ++ [⟨chenImoUrl year idx, "Evan Chen"⟩]
      return result
 
