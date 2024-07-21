@@ -29,7 +29,8 @@ some rational number `r`, and find the smallest possible value of `c`.
 
 namespace Imo2024P6
 
-def Aquaesulian (f : ℚ → ℚ) : Prop := ∀ x y, f (x + f y) = f x + y ∨ f (f x + y) = x + f y
+def Aquaesulian (f : ℚ → ℚ) : Prop :=
+  ∀ x y, f (x + f y) = f x + y ∨ f (f x + y) = x + f y
 
 open scoped Cardinal
 
