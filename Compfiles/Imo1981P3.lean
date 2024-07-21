@@ -112,7 +112,6 @@ theorem n_pos {m n : ℕ} (h1 : NatPredicate N m n) : 0 < n := mod_cast h1.n_ran
 theorem m_pos {m n : ℕ} (h1 : NatPredicate N m n) : 0 < m := mod_cast h1.m_range.left
 
 theorem n_le_N {m n : ℕ} (h1 : NatPredicate N m n) : n ≤ N := mod_cast h1.n_range.right
-set_option linter.uppercaseLean3 false in
 
 /-
 Now we can use induction to show that solutions must be Fibonacci numbers.

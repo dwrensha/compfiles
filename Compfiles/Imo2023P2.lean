@@ -27,8 +27,6 @@ open Affine Affine.Simplex EuclideanGeometry FiniteDimensional
 
 open scoped Affine EuclideanGeometry Real InnerProductSpace
 
-set_option linter.uppercaseLean3 false
-
 attribute [local instance] FiniteDimensional.of_fact_finrank_eq_two
 
 variable (V : Type*) (Pt : Type*)
