@@ -27,6 +27,13 @@ there are at most `c` different rational numbers of the form `f(r)+f(-r)` for
 some rational number `r`, and find the smallest possible value of `c`.
 -/
 
+namespace Imo2024P6
+
+/-- The condition on functions in the problem (for `ℚ` and in the original form). -/
+def Aquaesulian (f : ℚ → ℚ) : Prop := ∀ x y, f (x + f y) = f x + y ∨ f (f x + y) = x + f y
+
+snip begin
+
 /-
 We follow Solution 1 from the
 [official solutions](https://www.imo2024.uk/s/IMO-2024-Paper-1-Solutions.pdf). A key observation
@@ -37,12 +44,6 @@ so there are at most two values of `f(x)+f(-x)`. All this works over any `AddCom
 -/
 
 
-namespace Imo2024P6
-
-/-- The condition on functions in the problem (for `ℚ` and in the original form). -/
-def Aquaesulian (f : ℚ → ℚ) : Prop := ∀ x y, f (x + f y) = f x + y ∨ f (f x + y) = x + f y
-
-snip begin
 open scoped Cardinal
 
 namespace General
