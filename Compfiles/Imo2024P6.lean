@@ -32,6 +32,8 @@ namespace Imo2024P6
 /-- The condition on functions in the problem (for `ℚ` and in the original form). -/
 def Aquaesulian (f : ℚ → ℚ) : Prop := ∀ x y, f (x + f y) = f x + y ∨ f (f x + y) = x + f y
 
+open scoped Cardinal
+
 snip begin
 
 /-
@@ -42,9 +44,6 @@ and a series of manipulations together with the previous observation result in a
 so there are at most two values of `f(x)+f(-x)`. All this works over any `AddCommGroup`; over
 `ℚ`, we then show that `⌊x⌋ - Int.fract x` achieves two different values of `f(x)+f(-x)`.
 -/
-
-
-open scoped Cardinal
 
 namespace General
 
