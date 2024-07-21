@@ -265,7 +265,6 @@ snip end
 
 determine c_max : ℕ := 2
 
-/-- The answer 2 is to be determined by the solver of the original problem. -/
 problem imo2024_p6 : (∀ f, Aquaesulian f → #(Set.range (fun x ↦ f x + f (-x))) ≤ c_max) ∧
     ∀ c : ℕ, (∀ f, Aquaesulian f → #(Set.range (fun x ↦ f x + f (-x))) ≤ c) → 2 ≤ c := by
   refine ⟨fun _ ↦ Aquaesulian.card_le_two, fun c h ↦ ?_⟩
