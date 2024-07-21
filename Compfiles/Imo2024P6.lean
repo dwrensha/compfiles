@@ -262,10 +262,13 @@ lemma card_range_fExample : #(Set.range (fun x ↦ fExample x + fExample (-x))) 
   simp
 snip end
 
-determine c_max : ℕ := 2
+determine solution : ℕ := 2
 
-problem imo2024_p6 : (∀ f, Aquaesulian f → #(Set.range (fun x ↦ f x + f (-x))) ≤ c_max) ∧
-    ∀ c : ℕ, (∀ f, Aquaesulian f → #(Set.range (fun x ↦ f x + f (-x))) ≤ c) → 2 ≤ c := by
+problem imo2024_p6 :
+    (∀ f, Aquaesulian f → #(Set.range (fun x ↦ f x + f (-x))) ≤ solution) ∧
+    ∀ c : ℕ,
+      (∀ f, Aquaesulian f → #(Set.range (fun x ↦ f x + f (-x))) ≤ c) →
+        solution ≤ c := by
   refine ⟨fun _ ↦ Aquaesulian.card_le_two, fun c h ↦ ?_⟩
   replace h := h fExample aquaesulian_fExample
   rw [card_range_fExample] at h
