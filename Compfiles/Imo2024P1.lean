@@ -172,7 +172,7 @@ snip end
 
 determine solutionSet : Set ℝ := {α : ℝ | ∃ m : ℤ, α = 2 * m}
 
-theorem result (α : ℝ) : Condition α ↔ α ∈ solutionSet := by
+problem imo2024_p1 (α : ℝ) : Condition α ↔ α ∈ solutionSet := by
   refine ⟨fun h ↦ ?_, ?_⟩
   · rw [← condition_toIcoMod_iff, condition_iff_of_mem_Ico (toIcoMod_mem_Ico' _ _),
         ← AddCommGroup.modEq_iff_toIcoMod_eq_left, AddCommGroup.ModEq] at h
