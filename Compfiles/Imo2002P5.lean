@@ -79,8 +79,8 @@ lemma extend_function_mono
       have hxδ : x < x + δ := lt_add_of_pos_right x hδ0
       obtain ⟨z, hz1, hz2⟩ := exists_rat_btwn hxδ
       refine ⟨z, hz1, ?_⟩
-      . rw [Real.dist_eq, abs_of_pos (sub_pos.mpr hz1)]
-        exact sub_left_lt_of_lt_add hz2
+      rw [Real.dist_eq, abs_of_pos (sub_pos.mpr hz1)]
+      exact sub_left_lt_of_lt_add hz2
     obtain ⟨z, h_x_lt_z, hxz⟩ := this
     -- then dist (f z) (f y) < ε.
     have hbzb := hδ z hxz

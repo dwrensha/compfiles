@@ -183,7 +183,7 @@ lemma usa2002_p1_generalized
             exact Finset.subtype_map_subtype x
         rw [Fintype.card_of_bijective h3]
         exact hf2'
-    . -- If N > 2ᵏ, then we color all subsets containing s red, and we color
+    · -- If N > 2ᵏ, then we color all subsets containing s red, and we color
       -- N - 2ᵏ elements of S' red in such a way that S' is colored properly.
       -- Then S is properly colored, using similar reasoning as before.
       -- Thus the induction is complete.

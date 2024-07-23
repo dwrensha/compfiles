@@ -125,7 +125,7 @@ problem imo2012_p4 (f : ℤ → ℤ) :
       rotate_left; rw [← even, Int.neg_mul_eq_mul_neg, Int.neg_negSucc]
       all_goals
         induction' x with x ih
-        . simpa
+        · simpa
 
       have := P a (a * (Nat.succ x))
       rotate_left; have := P a (a * x)
@@ -232,7 +232,7 @@ problem imo2012_p4 (f : ℤ → ℤ) :
               rcases x with x | x; case ofNat => simp at pos
               rw [Int.negSucc_eq, even, neg_pow_two]
               apply H <;> try assumption
-              . omega
+              · omega
 
             rcases x with x | x; case negSucc => simp at pos
             induction x using Nat.strongInductionOn with
@@ -284,21 +284,21 @@ problem imo2012_p4 (f : ℤ → ℤ) :
       have c_eq : c = - (a + b) := by omega
       rcases sol with ⟨d, h⟩
 
-    . rcases Int.even_or_odd a with evena | odda
+    · rcases Int.even_or_odd a with evena | odda
       simp [(h a).right evena]; rotate_left; simp [(h a).left odda]
       all_goals
         rcases Int.even_or_odd b with evenb | oddb
         simp [(h b).right evenb]; rotate_left; simp [(h b).left oddb]
-      . have evenc : Even c := by rw [c_eq, even_neg]; exact Odd.add_odd odda oddb
+      · have evenc : Even c := by rw [c_eq, even_neg]; exact Odd.add_odd odda oddb
         simp [(h c).right evenc]; ring
-      . have oddc : Odd c := by rw [c_eq, odd_neg]; exact Odd.add_even odda evenb
+      · have oddc : Odd c := by rw [c_eq, odd_neg]; exact Odd.add_even odda evenb
         simp [(h c).left oddc]; ring
-      . have oddc : Odd c := by rw [c_eq, odd_neg, add_comm]; exact Odd.add_even oddb evena
+      · have oddc : Odd c := by rw [c_eq, odd_neg, add_comm]; exact Odd.add_even oddb evena
         simp [(h c).left oddc]; ring
-      . have evenc : Even c := by rw [c_eq, even_neg]; exact Even.add evena evenb
+      · have evenc : Even c := by rw [c_eq, even_neg]; exact Even.add evena evenb
         simp [(h c).right evenc]
 
-    . have mod4_cases (x : ℤ) : let r := x % 4; r = 0 ∨ r = 1 ∨ r = 2 ∨ r = 3 := by
+    · have mod4_cases (x : ℤ) : let r := x % 4; r = 0 ∨ r = 1 ∨ r = 2 ∨ r = 3 := by
         induction x using myInduction <;> simp
       have «c%4=?» : c % 4 = (8 - (a % 4) - (b % 4)) % 4 := by omega
       rcases mod4_cases a with «a%4=?» | «a%4=?» | «a%4=?» | «a%4=?»
@@ -314,7 +314,7 @@ problem imo2012_p4 (f : ℤ → ℤ) :
         rw [«fa=?», «fb=?», «fc=?»]
         ring
 
-    . rw [c_eq, h, h, h]
+    · rw [c_eq, h, h, h]
       ring_nf
 
 end Imo2012P4

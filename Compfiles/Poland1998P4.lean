@@ -246,7 +246,7 @@ lemma strengthen
     · have heq : N0 = 0 := eq_bot_iff.mpr hlte
       rw [heq] at hn0
       exact h 0 hn0
-  . obtain ⟨m, hm, hmp⟩ := hpn
+  · obtain ⟨m, hm, hmp⟩ := hpn
     obtain (hlt : pn + 1 < m) |  (hlte : m ≤ pn + 1) := lt_or_ge (pn + 1) m
     · exact ⟨m, hlt, hmp⟩
     · have heq : m = pn + 1 := le_antisymm hlte hm

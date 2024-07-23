@@ -62,8 +62,8 @@ lemma lemma1 (x : ℝ) (hx : x ∈ Set.Ioo 0 (Real.pi / 2)) :
   apply h6
   · exact Set.mem_Icc_of_Ioo hx
   · constructor
-    . exact le_of_lt Real.pi_div_two_pos
-    . exact Eq.le rfl
+    · exact le_of_lt Real.pi_div_two_pos
+    · exact Eq.le rfl
   · exact hx.2
 
 lemma lemma2' (n : ℕ) : Finset.erase (Finset.range (n + 1)) n = Finset.range n :=

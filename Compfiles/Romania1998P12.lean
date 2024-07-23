@@ -56,8 +56,8 @@ lemma extend_function_mono
       have hyδ : y - δ < y := sub_lt_self y hδ0
       obtain ⟨z, hz1, hz2⟩ := exists_rat_btwn hyδ
       refine ⟨z, hz2, ?_⟩
-      . rw [Real.dist_eq, abs_sub_comm, abs_of_pos (sub_pos.mpr hz2)]
-        exact sub_lt_comm.mp hz1
+      rw [Real.dist_eq, abs_sub_comm, abs_of_pos (sub_pos.mpr hz2)]
+      exact sub_lt_comm.mp hz1
 
     obtain ⟨z, h_z_lt_y, hyz⟩ := this
     -- then dist (f z) (f y) < ε.
@@ -83,8 +83,8 @@ lemma extend_function_mono
       have hyδ : y < y + δ := lt_add_of_pos_right y hδ0
       obtain ⟨z, hz1, hz2⟩ := exists_rat_btwn hyδ
       refine ⟨z, hz1, ?_⟩
-      . rw [Real.dist_eq, abs_of_pos (sub_pos.mpr hz1)]
-        exact sub_left_lt_of_lt_add hz2
+      rw [Real.dist_eq, abs_of_pos (sub_pos.mpr hz1)]
+      exact sub_left_lt_of_lt_add hz2
     obtain ⟨z, h_y_lt_z, hyz⟩ := this
     -- then dist (f z) (f y) < ε.
     have hbzb := hδ z hyz
@@ -128,8 +128,8 @@ lemma extend_function_anti
       have hyδ : y < y + δ := lt_add_of_pos_right y hδ0
       obtain ⟨z, hz1, hz2⟩ := exists_rat_btwn hyδ
       refine ⟨z, hz1, ?_⟩
-      . rw [Real.dist_eq, abs_of_pos (sub_pos.mpr hz1)]
-        exact sub_left_lt_of_lt_add hz2
+      rw [Real.dist_eq, abs_of_pos (sub_pos.mpr hz1)]
+      exact sub_left_lt_of_lt_add hz2
 
     obtain ⟨z, h_y_lt_z, hyz⟩ := this
     -- then dist (f z) (f y) < ε.
@@ -153,8 +153,8 @@ lemma extend_function_anti
       have hyδ : y - δ < y := sub_lt_self y hδ0
       obtain ⟨z, hz1, hz2⟩ := exists_rat_btwn hyδ
       refine ⟨z, hz2, ?_⟩
-      . rw [Real.dist_eq, abs_sub_comm, abs_of_pos (sub_pos.mpr hz2)]
-        exact sub_lt_comm.mp hz1
+      rw [Real.dist_eq, abs_sub_comm, abs_of_pos (sub_pos.mpr hz2)]
+      exact sub_lt_comm.mp hz1
 
     obtain ⟨z, h_z_lt_y, hyz⟩ := this
     -- then dist (f z) (f y) < ε.
