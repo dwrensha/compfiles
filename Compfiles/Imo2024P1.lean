@@ -26,9 +26,9 @@ is a multiple of n.
 
 namespace Imo2024P1
 
-def Condition (α : ℝ) : Prop := (∀ n : ℕ, 0 < n → (n : ℤ) ∣ ∑ i ∈ Finset.Icc 1 n, ⌊i * α⌋)
-
 snip begin
+
+def Condition (α : ℝ) : Prop := ∀ n : ℕ, 0 < n → (n : ℤ) ∣ ∑ i ∈ Finset.Icc 1 n, ⌊i * α⌋
 
 lemma condition_two_mul_int (m : ℤ) : Condition (2 * m) := by
   rintro n -
@@ -172,15 +172,18 @@ snip end
 
 determine solutionSet : Set ℝ := {α : ℝ | ∃ m : ℤ, α = 2 * m}
 
-problem imo2024_p1 (α : ℝ) : Condition α ↔ α ∈ solutionSet := by
-  refine ⟨fun h ↦ ?_, ?_⟩
-  · rw [← condition_toIcoMod_iff, condition_iff_of_mem_Ico (toIcoMod_mem_Ico' _ _),
+problem imo2024_p1 (α : ℝ) :
+  α ∈ solutionSet ↔
+  ∀ n : ℕ, 0 < n → (n : ℤ) ∣ ∑ i ∈ Finset.Icc 1 n, ⌊i * α⌋ := by
+  refine ⟨?_, fun h ↦ ?_⟩
+  · rintro ⟨m, rfl⟩
+    exact condition_two_mul_int m
+  · change Condition α at h
+    rw [← condition_toIcoMod_iff, condition_iff_of_mem_Ico (toIcoMod_mem_Ico' _ _),
         ← AddCommGroup.modEq_iff_toIcoMod_eq_left, AddCommGroup.ModEq] at h
     simp_rw [sub_zero] at h
     rcases h with ⟨m, rfl⟩
     rw [zsmul_eq_mul, mul_comm]
     simp [solutionSet]
-  · rintro ⟨m, rfl⟩
-    exact condition_two_mul_int m
 
 end Imo2024P1
