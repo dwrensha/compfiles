@@ -66,7 +66,7 @@ problem imo1961_p3 {n : ℕ} {x : ℝ} (npos : 0 < n) :
       · right; right
         rw [hcosx, zero_pow h₀, zero_sub, ← neg_inj, neg_neg, pow_eq_neg_one_iff,
           sin_eq_neg_one_iff] at h
-        simpa only [eq_comm] using h
+        exact h
       · have hcos1 : |cos x| < 1 := by
           rw [abs_cos_eq_sqrt_one_sub_sin_sq, sqrt_lt' one_pos]
           simp [sq_pos_of_ne_zero hsinx]
