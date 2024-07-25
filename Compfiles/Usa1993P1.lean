@@ -62,7 +62,7 @@ problem usa1993_p1 (n : ℕ) (hn : 2 ≤ n) (a b : ℝ) (ha : 0 < a) (hb : 0 < b
       suffices H : 1 < a ^ (2 * n + 1) from sub_pos.mpr H
       exact one_lt_pow h8 (Nat.succ_ne_zero (2 * n))
     have h17 : a * (a^(2*n + 1) - 1) < b * (b^(2* n + 1) - 1) :=
-      mul_lt_mul_of_lt_of_lt' h12 h15 hb h16
+      mul_lt_mul_of_pos' h12 h15 h16 hb
     have h18 : a * (a ^ (2 * n + 1) - 1) = a^(2*(n + 1)) - a := by ring
     have h19 : b * (b ^ (2 * n + 1) - 1) = b^(2*(n + 1)) - b := by ring
     rw [h18, h19] at h17
