@@ -74,7 +74,8 @@ problem imo1963_p1 : ∀ (p x : ℝ), (x ^ 2 - p) ≥ 0 → (x ^ 2 - 1) ≥ 0 �
       nlinarith
     · simp
   intro xp
-  trans (Real.sqrt (x ^ 2 - p) * Real.sqrt (x ^ 2 - (1 : ℝ))) ^ 2 = ((p + (4 : ℝ) - (4 : ℝ) * x ^ 2) / (4 : ℝ)) ^ 2
+  trans (Real.sqrt (x ^ 2 - p) * Real.sqrt (x ^ 2 - (1 : ℝ))) ^ 2 =
+        ((p + (4 : ℝ) - (4 : ℝ) * x ^ 2) / (4 : ℝ)) ^ 2
   · symm; apply sq_eq_sq <;> positivity
   rw [mul_pow, Real.sq_sqrt h1, Real.sq_sqrt h2]
   rw [div_pow]
@@ -101,7 +102,12 @@ problem imo1963_p1 : ∀ (p x : ℝ), (x ^ 2 - p) ≥ 0 → (x ^ 2 - 1) ≥ 0 �
     ((4 : ℝ) - p) ^ (2 : ℕ) / ((4 : ℝ) * ((4 : ℝ) - (2 : ℝ) * p)) =
     (((4 : ℝ) - p) / ((2 : ℝ) * Real.sqrt ((4 : ℝ) - (2 : ℝ) * p))) ^ 2 := by
     rw [div_pow, mul_pow, Real.sq_sqrt]; norm_num; exact le_of_lt tmp
-  rw [tmp2, sq_eq_sq xge0 (le_of_lt (by apply div_pos; linarith; simp only [gt_iff_lt, Nat.ofNat_pos, mul_pos_iff_of_pos_left, Real.sqrt_pos, sub_pos]; linarith))]
+  rw [tmp2,
+     sq_eq_sq xge0 (le_of_lt
+       (by apply div_pos
+           · linarith
+           simp only [gt_iff_lt, Nat.ofNat_pos, mul_pos_iff_of_pos_left, Real.sqrt_pos, sub_pos]
+           linarith))]
   constructor
   · intro hx
     refine ⟨?_, hx⟩

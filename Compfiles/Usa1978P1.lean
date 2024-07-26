@@ -50,7 +50,8 @@ problem usa1978_p1 :
       rw [(by rw [←h1]; simp only [add_sub_cancel_right] : a + b + c + d = 8 - e)]
     have h12 :  a ^ 2 + b ^ 2 + c ^ 2 + d ^ 2 = 16 - e ^ 2 := by
       rw [←h2]; simp only [add_sub_cancel_right]
-    have h3 : (a - b)^2 + (a - c)^2 + (a - d)^2 + (b - c)^2 + (b - d)^2 + (c - d)^2 = 4 * (16 - e^2) - (8 - e)^2 := by
+    have h3 : (a - b)^2 + (a - c)^2 + (a - d)^2 +
+              (b - c)^2 + (b - d)^2 + (c - d)^2 = 4 * (16 - e^2) - (8 - e)^2 := by
       linear_combination 4 * h12 - h11
     have h4 : 4 * (16 - e ^ 2) - (8 - e) ^ 2 ≥ 0 := by rw [←h3]; positivity
     revert h4
@@ -59,8 +60,8 @@ problem usa1978_p1 :
     intro _
     rw [mul_comm]
     apply mul_neg_of_neg_of_pos
-    linarith
-    positivity
+    · linarith
+    · positivity
 
 
 end Usa1978P1

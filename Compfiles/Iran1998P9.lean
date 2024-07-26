@@ -8,7 +8,7 @@ import Mathlib.Data.Real.Basic
 import Mathlib.Data.Real.Sqrt
 
 import Mathlib.Analysis.InnerProductSpace.PiL2
-import Mathlib.Analysis.NormedSpace.PiLp
+import Mathlib.Analysis.Normed.Lp.PiLp
 
 import ProblemExtraction
 
@@ -105,7 +105,8 @@ problem iran1998_p9
     have hzz' : Real.sqrt (((z - 1) / z)) ^2 = (z - 1) / z := Real.sq_sqrt hzz
 
     rw[hxx', hyy', hzz'] at hn
-    have hfs: (x - 1) / x + (y - 1) / y + (z - 1) / z = 3 - (1/x + 1/y + 1/z) := by {field_simp; ring}
+    have hfs: (x - 1) / x + (y - 1) / y + (z - 1) / z = 3 - (1/x + 1/y + 1/z) := by
+      field_simp; ring
     rw[hfs, h] at hn
     have ha: (3: ℝ) - 2 = 1 := by norm_num
     rw[hn, ha]

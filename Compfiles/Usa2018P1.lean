@@ -72,7 +72,8 @@ problem usa2018_p1 (a b c : ℝ) :
         · ring_nf
         · ring_nf
         rw [heq]
-        have amgm := am_gm (a * ((4 : ℝ) * (a * b * c) ^ ((1 : ℝ) / 3))) (b * c) (by positivity) (by positivity)
+        have amgm := am_gm (a * ((4 : ℝ) * (a * b * c) ^ ((1 : ℝ) / 3))) (b * c)
+                           (by positivity) (by positivity)
         rw [←(mul_le_mul_left (by norm_num : 0 < (4 : ℝ)))] at amgm
         convert amgm
         ring_nf

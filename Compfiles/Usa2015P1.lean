@@ -48,12 +48,14 @@ problem usa2015_p1 (x y : ℤ) :
   · intro h; apply_fun (· * 3 ^ 3) at h; rw [←mul_pow, (add_mul _ 1)] at h; simp at h
     norm_num at h; norm_cast at h
     suffices : (x + y) % 3 = 0; rw [←dvd_def]; exact Int.dvd_of_emod_eq_zero this
-    have h1 : (x ^ (2 : ℕ) + x * y + y ^ (2 : ℕ)) * (27 : ℤ) % 3 = (x + y + (3 : ℤ)) ^ (3 : ℕ) % 3 := by rw [h]
+    have h1 : (x ^ (2 : ℕ) + x * y + y ^ (2 : ℕ)) * (27 : ℤ) % 3 =
+              (x + y + (3 : ℤ)) ^ (3 : ℕ) % 3 := by rw [h]
     clear h
     have h2 : (x ^ (2 : ℕ) + x * y + y ^ (2 : ℕ)) * (27 : ℤ) % 3 = 0 := by omega
     rw [h2] at h1
     clear h2
-    have h3 : (x + y + (3 : ℤ)) ^ (3 : ℕ) = (x + y) ^ 3 + 3 * (x + y) * 3 * 3 + 3 * (x + y)^2 * 3 + 3 * 3 * 3 := by ring
+    have h3 : (x + y + (3 : ℤ)) ^ (3 : ℕ) =
+              (x + y) ^ 3 + 3 * (x + y) * 3 * 3 + 3 * (x + y)^2 * 3 + 3 * 3 * 3 := by ring
     rw [h3] at h1
     clear h3
     simp only [Int.add_mul_emod_self_left, Int.add_mul_emod_self] at h1
@@ -85,7 +87,8 @@ problem usa2015_p1 (x y : ℤ) :
     · have : t - 2 ≠ 0 := by intro; apply ht4; linarith
       have hn := abc (by positivity) ht3
       obtain ⟨d, hd⟩ := hn
-      have Odd_dd : Odd (d ^ 2) := by rw [←hd]; apply Even.add_one; apply Even.mul_right; exact Int.even_iff.mpr rfl
+      have Odd_dd : Odd (d ^ 2) := by
+        rw [←hd]; apply Even.add_one; apply Even.mul_right; exact Int.even_iff.mpr rfl
       have Odd_d  : Odd d := (Int.odd_pow' (by positivity)).mp Odd_dd
       set n := d / 2 with hn
       have nd : d = 2 * n + 1 := by rw [hn]; symm; exact Int.two_mul_ediv_two_add_one_of_odd Odd_d

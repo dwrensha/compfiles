@@ -67,7 +67,8 @@ problem imo_1964_p1b (n : ℕ) : ¬ 7 ∣ (2^n + 1) := by
 
 snip begin
 
-/- An alternative proof, heavily golfed. The statement here is slightly modified from the original one. -/
+/- An alternative proof, heavily golfed. The statement here is slightly modified from
+   the original one. -/
 theorem imo_1964_p1b' : ∀ (n : ℕ), (2 ^ n + 1) % 7 ≠ 0
     | 0 | 1 | 2 => by decide
     | n + 3 => by

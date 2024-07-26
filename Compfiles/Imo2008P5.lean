@@ -190,7 +190,8 @@ lemma lemma1 (α : Type) (A B : Set α) (hA : A.Finite) (hB : B.Finite)
     rw [Set.setOf_set, Fintype.card_eq_nat_card, ←Set.Nat.card_coe_set_eq]
     rfl
 
-  have h3' : ∀ b ∈ Finset.univ (α := ↑B), (Finset.filter {a | f a = b } (Finset.univ (α := ↑A))).card = n := by
+  have h3' : ∀ b ∈ Finset.univ (α := ↑B),
+                 (Finset.filter {a | f a = b } (Finset.univ (α := ↑A))).card = n := by
     intro b _
     rw [← @Fintype.card_subtype]
     rw [← h1

@@ -82,7 +82,8 @@ problem poland2016_s1_p8 (a b c : ℤ) : ∃ n : ℤ, n > 0 ∧ ¬ IsSquare (n^3
     ring
   have four_divides_m_square_minus_k_square : 4 ∣ (m + k) * (m - k) := by
     have both_factors_even_m_k : Even (m + k) ∧ Even (m - k) := by
-      have either_even : (Even (m + k) ∨ Even (m - k)) := by exact Int.even_mul.mp even_m_square_minus_k_square
+      have either_even : (Even (m + k) ∨ Even (m - k)) :=
+        Int.even_mul.mp even_m_square_minus_k_square
       obtain m_plus_k_even | m_minus_k_even := either_even
       · have : Even ((m + k) + (m - k)) := by
           use m
@@ -101,7 +102,8 @@ problem poland2016_s1_p8 (a b c : ℤ) : ∃ n : ℤ, n > 0 ∧ ¬ IsSquare (n^3
     exact div_4_mul_of_both_even both_factors_even_m_k
   have four_divides_n_square_minus_l_square : 4 ∣ (n + l) * (n - l) := by
     have both_factors_even_n_l : Even (n + l) ∧ Even (n - l) := by
-      have either_even : (Even (n + l) ∨ (Even (n - l))) := by exact Int.even_mul.mp even_n_square_minus_l_square
+      have either_even : (Even (n + l) ∨ (Even (n - l))) :=
+        Int.even_mul.mp even_n_square_minus_l_square
       obtain n_plus_l_even | n_minus_l_even := either_even
       · have : Even ((n + l) + (n - l)) := by
           use n
@@ -128,7 +130,8 @@ problem poland2016_s1_p8 (a b c : ℤ) : ∃ n : ℤ, n > 0 ∧ ¬ IsSquare (n^3
       rw[m_square_minus_k_square] at div_4_difference
       rw[n_square_minus_l_square] at div_4_difference
       exact div_4_difference
-  have difference_simplification : 2 * (28 + 6 * a + b) - 2 * (13 + 4 * a + b) = 4 * (a + 7) + 2 := by ring
+  have difference_simplification : 2 * (28 + 6 * a + b) - 2 * (13 + 4 * a + b) = 4 * (a + 7) + 2 :=
+    by ring
   rw[difference_simplification] at div4_difference_abc
   have towards_contradiction : 4 ∣ 4 * (a + 7) + 2 - 4 * (a + 7) := by
     · have four_divides_term : 4 ∣ 4 * (a + 7) := by

@@ -77,7 +77,8 @@ def usa1982_p4_lemma (e a b)
       constructor; omega
       apply Nat.modEq_zero_iff_dvd.mp
       -- trans (a ? 1 : -1) * (a ? -1 : 1) + 1
-      trans  (a / a * 1 + (1 - a / a) * (e - 1)) * (a / a * (e - 1) + (1 - a / a) * 1) + 1 <;> rw [he] <;> rw [ha]
+      trans (a / a * 1 + (1 - a / a) * (e - 1)) * (a / a * (e - 1) + (1 - a / a) * 1) + 1 <;>
+            rw [he] <;> rw [ha]
       swap; rfl
       gcongr
       focus rfl
@@ -88,7 +89,8 @@ def usa1982_p4_lemma (e a b)
   }
 
 
-def usa1982_mod_lemma {n r r' q : ℕ} (hm : n % 64 = r') (p : ℕ) (hpq : p * q = 64) (hrr : r' ≡ r [MOD q]) : n ≡ r [MOD q] := by
+def usa1982_mod_lemma {n r r' q : ℕ}
+    (hm : n % 64 = r') (p : ℕ) (hpq : p * q = 64) (hrr : r' ≡ r [MOD q]) : n ≡ r [MOD q] := by
   trans r'; swap; exact hrr
   rw [Nat.ModEq, ←hm, ←hpq, Nat.mod_mul_left_mod]
 
@@ -111,13 +113,21 @@ problem usa1982_p4 :
   | 40 => _| 41 => _| 42 => _| 43 => _| 44 => _| 45 => _| 46 => _| 47 => _| 48 => _| 49 => _
   | 50 => _| 51 => _| 52 => _| 53 => _| 54 => _| 55 => _| 56 => _| 57 => _| 58 => _| 59 => _
   | 60 => _| 61 => _| 62 => _| 63 => _
-  all_goals try exact usa1982_p4_lemma     641  0 64 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 64) rfl rfl)
-  all_goals try exact usa1982_p4_lemma       3  1  2 (by trivial) n (usa1982_mod_lemma hm.symm (64 /  2) rfl rfl)
-  all_goals try exact usa1982_p4_lemma       5  2  4 (by trivial) n (usa1982_mod_lemma hm.symm (64 /  4) rfl rfl)
-  all_goals try exact usa1982_p4_lemma      17  4  8 (by trivial) n (usa1982_mod_lemma hm.symm (64 /  8) rfl rfl)
-  all_goals try exact usa1982_p4_lemma     257  8 16 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 16) rfl rfl)
-  all_goals try exact usa1982_p4_lemma   65537 16 32 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 32) rfl rfl)
-  all_goals try exact usa1982_p4_lemma 6700417 32 64 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 64) rfl rfl)
+  all_goals try
+    exact usa1982_p4_lemma 641  0 64 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 64) rfl rfl)
+  all_goals try
+    exact usa1982_p4_lemma 3  1  2 (by trivial) n (usa1982_mod_lemma hm.symm (64 /  2) rfl rfl)
+  all_goals try
+    exact usa1982_p4_lemma 5  2  4 (by trivial) n (usa1982_mod_lemma hm.symm (64 /  4) rfl rfl)
+  all_goals try
+    exact usa1982_p4_lemma 17  4  8 (by trivial) n (usa1982_mod_lemma hm.symm (64 /  8) rfl rfl)
+  all_goals try
+    exact usa1982_p4_lemma 257  8 16 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 16) rfl rfl)
+  all_goals try
+    exact usa1982_p4_lemma 65537 16 32 (by trivial) n (usa1982_mod_lemma hm.symm (64 / 32) rfl rfl)
+  all_goals try
+    exact usa1982_p4_lemma 6700417 32 64 (by trivial) n
+      (usa1982_mod_lemma hm.symm (64 / 64) rfl rfl)
 
 
 end Usa1982P4

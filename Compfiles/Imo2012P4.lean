@@ -107,7 +107,8 @@ problem imo2012_p4 (f : ℤ → ℤ) :
       rw [sub_sq''] at this
       symm; exact this
 
-    have P (a b : ℤ) : (f a) ^ 2 + (f b) ^ 2 + f (a + b) ^ 2 = 2 * f a * f b + 2 * f (a + b) * (f a + f b) := by
+    have P (a b : ℤ) : (f a) ^ 2 + (f b) ^ 2 + f (a + b) ^ 2 =
+                       2 * f a * f b + 2 * f (a + b) * (f a + f b) := by
       have := constraint a b (- (a + b)) (by omega)
       rw [even (a + b)] at this
       rw [this]
@@ -242,7 +243,8 @@ problem imo2012_p4 (f : ℤ → ℤ) :
               have «fx=x²f1» : f x = x ^ 2 * f 1 := by apply ih <;> simp
               have := P x 1
               rw [«fx=x²f1», ← sub_eq_zero] at this
-              replace this : (f (x + 1) - (x - 1) ^ 2 * f 1) * (f (x + 1) - (x + 1) ^ 2 * f 1) = 0 := by
+              replace this : (f (x + 1) - (x - 1) ^ 2 * f 1) *
+                             (f (x + 1) - (x + 1) ^ 2 * f 1) = 0 := by
                 rw [← this]; ring
               rw [mul_eq_zero, sub_eq_zero, sub_eq_zero] at this
 
@@ -258,7 +260,8 @@ problem imo2012_p4 (f : ℤ → ℤ) :
                 simp at h; simp [h, even]
 
               rw [«f2=4*f1», «f(x-1)=(x-1)²*f1», ← sub_eq_zero] at this
-              replace this : (f (x + 1) - (x + 1) ^ 2 * f 1) * (f (x + 1) - ((x : ℤ) - 3) ^ 2 * f 1) = 0 := by
+              replace this : (f (x + 1) - (x + 1) ^ 2 * f 1) *
+                             (f (x + 1) - ((x : ℤ) - 3) ^ 2 * f 1) = 0 := by
                 rw [← this]; ring_nf
               rw [mul_eq_zero, sub_eq_zero, sub_eq_zero] at this
 

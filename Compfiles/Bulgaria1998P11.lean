@@ -42,7 +42,8 @@ lemma two_even_pow_mod_3 {m n : ℕ} (h1 : Even n) (h2 : m ≡ 2 [MOD 3]) : m ^ 
   obtain ⟨k, hk⟩ := h1
   simp_arith [Nat.pow_mod, h2, hk, pow_mul]
 
-theorem n_odd_and_m_eq_2_mod_3 (m n A : ℕ) (h : 3 * m * A = (m + 3)^n + 1) : Odd n ∧ m ≡ 2 [MOD 3] := by
+theorem n_odd_and_m_eq_2_mod_3 (m n A : ℕ) (h : 3 * m * A = (m + 3)^n + 1) :
+    Odd n ∧ m ≡ 2 [MOD 3] := by
   by_cases n_gt_zero : n > 0
   · have h_mod_3 : 0 ≡ (m ^ n + 1) [MOD 3] := by
       calc 0 ≡ 3 * (m * A) [MOD 3] := (Nat.mul_mod_right 3 (m * A)).symm
@@ -86,7 +87,8 @@ lemma two_le_pow_two (l : ℕ) : 2 ≤ 2 ^ (l + 1) := by
   suffices 1 ≤ 2 ^ l from Nat.le_mul_of_pos_left 2 this
   exact Nat.one_le_two_pow
 
-lemma two_n_and_rest_factorisation (m : ℕ) (even_m : Even m) (h: 0 < m) : ∃ (l : ℕ) (m₁ : ℕ), 1 ≤ l ∧ Odd m₁ ∧ m = 2 ^ l * m₁ := by
+lemma two_n_and_rest_factorisation (m : ℕ) (even_m : Even m) (h: 0 < m) :
+    ∃ (l : ℕ) (m₁ : ℕ), 1 ≤ l ∧ Odd m₁ ∧ m = 2 ^ l * m₁ := by
   have ⟨a, ha⟩ := Nat.maxPowDiv.pow_dvd 2 m
   refine ⟨Nat.maxPowDiv 2 m, a, ?_⟩
   obtain ⟨k, hk⟩ := even_iff_two_dvd.mp even_m
@@ -269,7 +271,8 @@ lemma square_mod_4_zmod (x : ZMod 4) : x ^ 2 = 1 ∨ x ^ 2 = 0 := by
 lemma square_mod_3_zmod_0 : ∀ {x : ZMod 3} (_ : x ^ 2 = 0), x = 0 := by
   decide
 
-lemma leaf_contradiction {x y m₁ : ℤ} (h: 3 * x ^ 2 + y ^ 2 = m₁) (h2 : m₁ - 5 ≡ 0 [ZMOD 6]) : False := by
+lemma leaf_contradiction {x y m₁ : ℤ} (h: 3 * x ^ 2 + y ^ 2 = m₁) (h2 : m₁ - 5 ≡ 0 [ZMOD 6]) :
+    False := by
   replace h2 : m₁ - 5 ≡ 0 [ZMOD 3] := Int.ModEq.of_mul_left 2 h2
   rw [show 3 = ((3:ℕ):ℤ) by rfl] at h2
   rw [← ZMod.intCast_eq_intCast_iff] at h2
@@ -320,7 +323,8 @@ problem bulgaria1998_p11
       rw [zero_pow n_ne_zero, zero_add] at h
       exact (zero_ne_one h).elim
 
-  obtain ⟨l, m₁, ⟨one_le_l, odd_m₁, m_factorisation⟩⟩ := two_n_and_rest_factorisation m even_m zero_lt_m
+  obtain ⟨l, m₁, ⟨one_le_l, odd_m₁, m_factorisation⟩⟩ :=
+    two_n_and_rest_factorisation m even_m zero_lt_m
   by_cases l_eq_one : (l = 1)
   · rw [l_eq_one] at m_factorisation
     ring_nf at m_factorisation
@@ -375,7 +379,8 @@ problem bulgaria1998_p11
           rw [one_pow]
           simp_arith
         exfalso
-        exact too_good_to_be_true n l (show 3 ≤ l by exact left) two_pow_l_divides_expresion expression_eq_4_mod_8
+        exact too_good_to_be_true
+                n l (show 3 ≤ l by exact left) two_pow_l_divides_expresion expression_eq_4_mod_8
       · exact right.symm
     have m_eq_4_m₁ : m = 4 * m₁ := by
       rw[l_eq_2] at m_factorisation

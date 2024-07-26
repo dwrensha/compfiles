@@ -326,7 +326,8 @@ theorem monotone_of_upper_lower_continuous
 -/
   intro z b hz
 
-  have L1 : ∀ (x : ℝ), x ∈ f ⁻¹' Set.Ici (f z) → ∃ y, x < y ∧ Set.Ico x y ⊆ f ⁻¹' Set.Ici (f z) := by
+  have L1 : ∀ (x : ℝ), x ∈ f ⁻¹' Set.Ici (f z) →
+             ∃ y, x < y ∧ Set.Ico x y ⊆ f ⁻¹' Set.Ici (f z) := by
     --  Follows because f is tₗ continuous.
     intro x hx
     have inverse_image_open := continuous_def.mp hlc _ (infinite_interval_lower_open (f z))
