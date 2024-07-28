@@ -13,18 +13,18 @@ problem_file { tags := [.Algebra, .Inequality] }
 /-!
 # USA Mathematical Olympiad 1979, Problem 1
 
-Determine all non-negative integral solutions (n₁, n₂, ..., n₁₄) if any,
-apart from permutations, of the Diophantine Equation $n₁⁴ + n₂⁴ + ... + n₁₄⁴ = 1599.
+Determine all non-negative integral solutions $(n_1,n_2,\dots , n_{14})$ if any,
+apart from permutations, of the Diophantine Equation $n_1^4+n_2^4+\cdots +n_{14}^4=1599$.
 -/
 
 namespace Usa1979P1
 
-structure Perm14 where
+structure MultisetNatOfLen14 where
   s : Multiset ℕ
   p : Multiset.card s = 14
 
 set_option diagnostics true in
-determine SolutionSet : Set Perm14 := ∅
+determine SolutionSet : Set MultisetNatOfLen14 := ∅
 
 problem usa1979_p1 : ∀ e, e ∈ SolutionSet ↔ (e.s.map (fun x ↦ x ^ 4)).sum = 1599 := by
   -- solution from
