@@ -19,27 +19,35 @@ apart from permutations, of the Diophantine Equation $n_1^4+n_2^4+\cdots +n_{14}
 
 namespace Usa1979P1
 
-determine SolutionSet : Set (Fin 14 → ℕ) := ∅
+/--
+A type representing assignments to the variables $n_1$, $n_2$, ..., $n_{14}$,
+quotiented by permutations of indices.
+-/
+structure MultisetNatOfLen14 where
+  s : Multiset ℕ
+  p : Multiset.card s = 14
 
-problem usa1979_p1 : ∀ e, e ∈ SolutionSet ↔
-    ∃ p : Equiv.Perm (Fin 14), ∑ x : Fin 14, e (p x) ^ 4 = 1599 := by
+determine SolutionSet : Set MultisetNatOfLen14 := ∅
+
+problem usa1979_p1 : ∀ e, e ∈ SolutionSet ↔ (e.s.map (fun x ↦ x ^ 4)).sum = 1599 := by
   -- solution from
   -- https://artofproblemsolving.com/wiki/index.php/1979_USAMO_Problems/Problem_1
   unfold SolutionSet
   intro e
   constructor
   · simp only [Set.mem_empty_iff_false, false_implies]
-  · rintro ⟨p, hp⟩
-    rw [Function.Bijective.sum_comp (Equiv.bijective p) (fun x ↦ e x ^ 4)] at hp
-    clear p
-    apply_fun (· % 16) at hp
-    rw [Finset.sum_nat_mod] at hp
-    suffices : ∑ i : Fin 14, e i ^ 4 % 16 ≤ 14; omega
-    have h1 : ∀ x ∈ Finset.univ, e x ^ 4 % 16 ≤ 1 := fun x _ ↦ by
-      rw [Nat.pow_mod]
-      mod_cases H : e x % 16 <;> change _ % _ = _ % _ at H <;> rw[H] <;> norm_num
-    have h2 := Finset.sum_le_card_nsmul (Finset.univ (α := Fin 14)) (fun i ↦ e i ^4 % 16) 1 h1
-    simp only [Finset.card_univ, Fintype.card_fin, smul_eq_mul, mul_one] at h2
-    exact h2
+  · intro contra
+    apply_fun (· % 16) at contra
+    rw [Multiset.sum_nat_mod, Multiset.map_map] at contra
+    simp only [Function.comp_apply, Nat.reduceMod] at contra
+    suffices : (Multiset.map (fun x ↦ x ^ 4 % 16) e.s).sum ≤ 14; omega
+    rw [show 14 = Multiset.card (e.s.map (fun x ↦ x ^ 4 % 16)) * 1 by rw [Multiset.card_map, e.p]]
+    apply Multiset.sum_le_card_nsmul
+    intro x
+    rw [Multiset.mem_map]
+    intro ⟨i, ⟨_, h⟩⟩
+    rw [← h, Nat.pow_mod]
+    mod_cases i % 16
+    all_goals rw [H]; try norm_num
 
 end Usa1979P1
