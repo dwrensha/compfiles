@@ -27,14 +27,15 @@ a₂, a₄, a₆, ... is eventually periodic.
 
 namespace Imo2024P3
 
-abbrev EventuallyPeriodic (b : ℕ+ → ℕ+) : Prop :=
+abbrev EventuallyPeriodic (b : ℕ → ℕ) : Prop :=
   ∃ p M, ∀ m ≥ M, b (m + p) = b m
 
 problem imo2024_p3
-    (a : ℕ+ → ℕ+)
-    (N : ℕ+)
-    (h : ∀ n > N, a (n+1) = Set.ncard {i : ℕ+ | i ≤ n ∧ a i = a n })
-    : EventuallyPeriodic (fun i ↦ ⟨1 + 2 * (i.val - 1), by omega⟩) ∨
+    (a : ℕ → ℕ)
+    (apos : ∀ i, 0 < a i)
+    (N : ℕ)
+    (h : ∀ n ≥ N, a (n+1) = Set.ncard {i : ℕ | i ≤ n ∧ a i = a n})
+    : EventuallyPeriodic (fun i ↦ a (1 + 2 * i)) ∨
       EventuallyPeriodic (fun i ↦ a (2 * i)) := by
   sorry
 
