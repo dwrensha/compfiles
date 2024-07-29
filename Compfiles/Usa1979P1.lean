@@ -23,7 +23,6 @@ structure MultisetNatOfLen14 where
   s : Multiset ℕ
   p : Multiset.card s = 14
 
-set_option diagnostics true in
 determine SolutionSet : Set MultisetNatOfLen14 := ∅
 
 problem usa1979_p1 : ∀ e, e ∈ SolutionSet ↔ (e.s.map (fun x ↦ x ^ 4)).sum = 1599 := by
