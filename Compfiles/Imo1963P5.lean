@@ -34,8 +34,7 @@ problem imo1963_p5 :
     simp only [Nat.ofNat_pos, div_pos_iff_of_pos_right, Real.pi_pos]
     trans 1
     · rw [div_lt_one (by linarith only)]
-      apply lt_of_le_of_lt Real.pi_le_four
-      linarith only
+      linarith only [Real.pi_le_four]
     · linarith only [Real.pi_gt_three]
   apply (mul_right_inj' h).mp
   rw [left_distrib, left_distrib]
