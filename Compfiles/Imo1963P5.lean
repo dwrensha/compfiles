@@ -36,13 +36,11 @@ problem imo1963_p5 :
     · rw [div_lt_one (by linarith only)]
       apply lt_of_le_of_lt Real.pi_le_four
       linarith only
-    · trans 3
-      linarith only
-      exact Real.pi_gt_three
+    · linarith only [Real.pi_gt_three]
   apply (mul_right_inj' h).mp
   rw [left_distrib, left_distrib]
   have prod_sum : ∀ (x y : ℝ),
-    2 * Real.sin x * Real.cos y = Real.sin (x + y) - Real.sin (y - x) := by
+      2 * Real.sin x * Real.cos y = Real.sin (x + y) - Real.sin (y - x) := by
     intro x y
     rw [Real.sin_add, Real.sin_sub]
     linarith only
