@@ -26,7 +26,7 @@ lemma lemma0 {α β : Type} {f : ℕ → α → β} (l : List α) (h2 : l ≠ []
     List.getLast (List.mapIdx f l) (List.mapIdx_eq_nil.not.mpr h2) =
     f (l.dropLast).length (List.getLast l h2) := by
   simp_rw [List.mapIdx_eq_enum_map]
-  rw [List.getLast_eq_get, List.get_eq_getElem, List.getElem_map, List.getElem_enum]
+  rw [List.getLast_eq_getElem, List.getElem_map, List.getElem_enum]
   simp only [List.length_map, List.enum_length, Function.uncurry_apply_pair, List.length_dropLast]
   congr
   exact List.get_length_sub_one _

@@ -1,5 +1,4 @@
 import Batteries.Data.String.Basic
-import Batteries.Lean.Util.Path
 import Batteries.Tactic.Lint
 import Lean.Environment
 import Mathlib.Data.String.Defs

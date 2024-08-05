@@ -1,6 +1,5 @@
 import Mathlib.Data.String.Defs
 import Batteries.Data.String.Basic
-import Batteries.Lean.Util.Path
 import Batteries.Tactic.Lint
 import Lean.Environment
 import Lean.Elab.Print
@@ -95,7 +94,7 @@ unsafe def verifyTypesAndAxioms (problem_mod : Name) (solution_mod : Name)
                 let ge ← Lean.PrettyPrinter.ppExpr sol_const.type
                 throwError s!"{d} not defEq. Expected\n{te},\nbut got\n{ge}."
 
-            let (_, s) := ((Lean.Elab.Command.CollectAxioms.collect d).run (←getEnv)).run {}
+            let (_, s) := ((Lean.CollectAxioms.collect d).run (←getEnv)).run {}
             for a in s.axioms do
                if not (a ∈ [``propext, ``Classical.choice, ``Quot.sound]) then
                  throwError s!"prohibited axiom: {a}"
