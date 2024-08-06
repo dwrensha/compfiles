@@ -93,8 +93,9 @@ problem bulgaria1998_p3
 
   have f_x_seq: ∀ n : ℕ, f (x_seq n) ≤ f 1 / 2^n := by
     intro n
-    induction' n with pn hpn
-    · rw [hz]; simp only [Nat.zero_eq, pow_zero, div_one, le_refl]
+    induction n with
+    | zero => rw [hz]; simp only [Nat.zero_eq, pow_zero, div_one, le_refl]
+    | succ pn hpn =>
     have hpp : x_seq pn.succ = x_seq pn + f 1 / 2^pn := by
       rw [show x_seq _ = 1 + ∑ i ∈ Finset.range _, (f 1) / (2^i) by rfl]
       have : ∑ i in Finset.range pn.succ, f 1 / 2 ^ i =
