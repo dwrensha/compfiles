@@ -69,15 +69,17 @@ lemma break_into_words_closed_form
   rw [Stream'.corec_def,Stream'.map]
   congr
   · revert a lengths
-    induction' n with pn hpn
-    · intro a b; rfl
-    · intro a b
+    induction n with
+    | zero => intro a b; rfl
+    | succ pn hpn =>
+      intro a b
       rw [Stream'.get_succ, Stream'.iterate_eq, Stream'.tail_cons, hpn]
       rfl
   · revert a lengths
-    induction' n with pn hpn
-    · intro a b; rfl
-    · intro a b
+    induction n with
+    | zero => intro a b; rfl
+    | succ pn hpn =>
+      intro a b
       rw [Stream'.get_succ, Stream'.iterate_eq, Stream'.tail_cons, hpn,
           Stream'.drop_drop, Finset.sum_range_succ']
       congr
@@ -133,9 +135,9 @@ lemma chosen_decent_closed_form
               ∑ j in Finset.range n, ((choose_decent_words is_decent a hinit hnot).get j).length)
             := by
   intro n
-  induction' n with n pn
-  · rfl
-  · rw [Finset.sum_range_succ, ← pn]; rfl
+  induction n with
+  | zero => rfl
+  | succ n pn => rw [Finset.sum_range_succ, ← pn]; rfl
 
 lemma check_decent_words
     (is_decent : List α → Prop)
@@ -192,9 +194,10 @@ lemma chosen_indecent_closed_form
                 ∑ j in Finset.range n, ((choose_indecent_words is_decent a h).get j).length)
              := by
   intro n
-  induction' n with n pn
-  · rfl
-  · rw [Finset.sum_range_succ, ← pn]
+  induction n with
+  | zero => rfl
+  | succ n pn =>
+    rw [Finset.sum_range_succ, ← pn]
     rfl
 
 lemma check_indecent_words

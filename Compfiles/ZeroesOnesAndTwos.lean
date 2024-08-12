@@ -29,9 +29,9 @@ def ones (b : ℕ) : ℕ → ℕ
 | k => Nat.ofDigits b (List.replicate k 1)
 
 lemma of_digits_zeros_eq_zero (b m : ℕ) : Nat.ofDigits b (List.replicate m 0) = 0 := by
-  induction' m with m ih
-  · dsimp only; rfl
-  · simp only [Nat.ofDigits, Nat.cast_zero, ih, mul_zero, add_zero]
+  induction m with
+  | zero => dsimp only; rfl
+  | succ m ih => simp only [Nat.ofDigits, Nat.cast_zero, ih, mul_zero, add_zero]
 
 lemma ones_add (b m n : ℕ) :
     ones b (m + n) = ones b m + Nat.ofDigits b ((List.replicate m 0) ++ (List.replicate n 1)) := by
@@ -136,7 +136,7 @@ lemma prepend_one_mod (n : ℕ) (hn : 0 < n) : prepend_one n % 10 = n % 10 := by
 
 lemma prepend_one_eq_append (n : ℕ) :
     Nat.digits 10 (prepend_one n) = (Nat.digits 10 n) ++ [1] := by
-  induction' n using Nat.strong_induction_on with n' ih
+  induction n using Nat.strong_induction_on with | h n' ih =>
   cases' n' with n'
   · simp_arith [prepend_one]
   · rw [Nat.digits_def' two_le_ten (prepend_one_pos _)]
@@ -182,7 +182,7 @@ lemma prepend_two_mod (n : ℕ) (hn : 0 < n) : prepend_two n % 10 = n % 10 := by
 
 lemma prepend_two_eq_append (n : ℕ) :
     Nat.digits 10 (prepend_two n) = (Nat.digits 10 n) ++ [2] := by
-  induction' n using Nat.strong_induction_on with n' ih
+  induction n using Nat.strong_induction_on with | h n' ih =>
   cases' n' with n'
   · norm_num [prepend_two]
   · rw [Nat.digits_def' two_le_ten (prepend_two_pos _)]
@@ -204,9 +204,9 @@ lemma prepend_two_all_one_or_two (n : ℕ) (hn : all_one_or_two (Nat.digits 10 n
     right; exact he
 
 lemma factor_ten_pow (k : ℕ) : 10 ^ k = (2^k) * (5^k) := by
-  induction' k with k' ih
-  · simp only [pow_zero, mul_one]
-  · rw [pow_succ, pow_succ, pow_succ, ih]; ring
+  induction k with
+  | zero => simp only [pow_zero, mul_one]
+  | succ k' ih => rw [pow_succ, pow_succ, pow_succ, ih]; ring
 
 lemma even_5_pow_plus_one (n : ℕ) : 2 ∣ 5 ^ n + 1 := by
   apply Nat.dvd_of_mod_eq_zero
@@ -216,9 +216,11 @@ lemma even_5_pow_plus_one (n : ℕ) : 2 ∣ 5 ^ n + 1 := by
 lemma ones_and_twos_aux (n : ℕ) :
   ∃ k : ℕ+, (List.length (Nat.digits 10 (2^n.succ * k)) = n.succ) ∧
              all_one_or_two (Nat.digits 10 (2^n.succ * k)) := by
-  induction' n with pn hpn
-  · use 1
+  induction n with
+  | zero =>
+    use 1
     norm_num [all_one_or_two]
+  | succ pn hpn =>
   obtain ⟨pk, hpk1, hpk2⟩ := hpn
 
   /-
