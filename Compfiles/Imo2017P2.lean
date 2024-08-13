@@ -89,16 +89,13 @@ variable {D : Type*} [DivisionRing D] {f : D → D} (h : good f)
 include h in
 theorem good_map_eq_zero (h0 : f ≠ 0) {c : D} (h1 : f c = 0) : c = 1 :=
   h0.imp_symm λ h2 ↦ by
-    sorry
-/-
     ---- Get `f(0) = 0`
-    have h3 := good_special_equality h (mul_inv_cancel <| sub_ne_zero_of_ne h2)
+    have h3 := good_special_equality h (mul_inv_cancel₀ <| sub_ne_zero_of_ne h2)
     rw [sub_add_cancel, h1, zero_mul] at h3
     ---- Finish
     ext x
     rw [Pi.zero_apply, ← h3, ← mul_zero x, ← h,
       h3, mul_zero, h3, zero_add, add_zero]
--/
 
 include h in
 theorem good_map_zero_sq (h0 : f ≠ 0) : f 0 ^ 2 = 1 :=
@@ -183,13 +180,11 @@ variable {F : Type*}
 /-- Injectivity for `char(F) = 2` -/
 theorem case2_injective [Field F] (h : (2 : F) = 0)
     {f : F → F} (h0 : good f) (h1 : f 0 = 1) : Injective f := by
-  sorry
-/-
   have h2 := good_shift h0 h1
   have h3 : ∀ c d : F, d ≠ 0 → f (c + 1) = f (d + 1) →
       f ((c + 1) * (d⁻¹ + 1) - 1) = f (c + d⁻¹ + 1) := λ c d h3 h4 ↦ by
     rw [good_shift2 h0 h1, ← h0, h4, add_assoc, ← add_assoc (c + 1), h2,
-      good_special_equality h0 (mul_inv_cancel h3), zero_add, add_right_comm]
+      good_special_equality h0 (mul_inv_cancel₀ h3), zero_add, add_right_comm]
 
   intros a b h4
   rw [← h2 a, ← h2 b, add_left_inj] at h4
@@ -204,14 +199,14 @@ theorem case2_injective [Field F] (h : (2 : F) = 0)
       + a * a⁻¹ * (b * b⁻¹) := by ring
   have h7 : ∀ c d : F, (c + 1) * (d + 1) = c * d + c + d + 1 := λ c d ↦ by
     rw [add_one_mul (α := F), mul_add_one (α := F), ← add_assoc]
-  rw [mul_inv_cancel ha, mul_inv_cancel hb, mul_one, mul_one, mul_one,
+  rw [mul_inv_cancel₀ ha, mul_inv_cancel₀ hb, mul_one, mul_one, mul_one,
     add_comm b b⁻¹, add_add_add_comm, add_comm a⁻¹ b, ← add_assoc, ← h7] at h6
   replace h6 := congr_arg f h6
   rw [← h0, h3 a b hb h4, h3 b a ha h4.symm, h7, add_sub_cancel_right,
     h7, add_sub_cancel_right, ← h0 (a + b⁻¹ + 1), add_right_inj] at h6
   replace h7 : (a + b + 1) * (b⁻¹ + a⁻¹ + 1) =
     a * b⁻¹ + a + b⁻¹ + (b * a⁻¹ + b + a⁻¹) + (a * a⁻¹ + b * b⁻¹ + 1) := by ring
-  rw [mul_inv_cancel ha, mul_inv_cancel hb, one_add_one_eq_two, h, zero_add] at h7
+  rw [mul_inv_cancel₀ ha, mul_inv_cancel₀ hb, one_add_one_eq_two, h, zero_add] at h7
   rw [← h2, ← h7, add_add_add_comm, add_add_add_comm a, ← add_add_add_comm,
     ← h0, add_right_comm, add_left_eq_self, ← h2, add_assoc,
     one_add_one_eq_two, h, add_zero, h5, mul_eq_zero, h5, h5] at h6
@@ -220,7 +215,6 @@ theorem case2_injective [Field F] (h : (2 : F) = 0)
   rcases h6 with h6 | h6
   · rwa [add_eq_zero_iff_eq_neg, h3] at h6
   · rwa [add_eq_zero_iff_eq_neg, h3, inv_inj, eq_comm] at h6
--/
 
 /-- Injectivity -/
 theorem map_zero_eq_one_imp_injective [Field F] :
