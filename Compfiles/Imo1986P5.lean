@@ -46,6 +46,7 @@ with minor modifications.
 -/
 
 variable {f : ℝ≥0 → ℝ≥0} (hf : IsGood f) {x y : ℝ≥0}
+include hf
 
 theorem map_add (x y : ℝ≥0) : f (x + y) = f (x * f y) * f y :=
   (hf.map_add_rev x y).symm

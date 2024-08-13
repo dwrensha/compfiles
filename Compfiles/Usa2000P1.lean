@@ -170,7 +170,7 @@ problem usa2000_p1 :
   have h20 := hc (2 ^(-(N:ℝ))) (-2 ^(-(N:ℝ)))
 
   -- This is a contradiction.
-  rw [add_neg_self, zero_div, hf0, zero_add, sub_neg_eq_add, ←two_mul] at h20
+  rw [add_neg_cancel, zero_div, hf0, zero_add, sub_neg_eq_add, ←two_mul] at h20
   nth_rewrite 1 [show (2:ℝ) = (2:ℝ) ^ (1:ℝ) by norm_num] at h20
   rw [←Real.rpow_add (by norm_num)] at h20
   have h21 := calc _ ≤ _ := le_abs_self ((2 : ℝ) ^ (1 + -(N : ℝ)))

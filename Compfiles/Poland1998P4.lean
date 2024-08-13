@@ -79,7 +79,7 @@ lemma lemma3
   · exact ZMod.val_lt ii
   · have := hN ii.val (ZMod.val_lt ii)
     rw [this, ZMod.natCast_val, ZMod.cast_id', id_def, mul_div_cancel₀ _ hk]
-    exact add_neg_self (a' N0)
+    exact add_neg_cancel (a' N0)
 
 lemma lemma6 (n : ℕ) : (4 * (n - 1) + 1 + 3) / 2 = (2 * (n - 1) + 1 + 1) := by
   have : (4 * (n - 1) + 1 + 3) = 2 * (2 * (n - 1) + 1 + 1) := by ring

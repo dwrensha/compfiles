@@ -62,7 +62,7 @@ problem imo1983_p1 (f : ℝ+ → ℝ+) :
     rwa [ha] at this
   have h4 : f (1 / a) = 1 / a := by
     have h5 := hi1 (1 / a)
-    rw [one_div, mul_left_inv, h1, ← one_div] at h5
+    rw [one_div, inv_mul_cancel, h1, ← one_div] at h5
     exact eq_one_div_of_mul_eq_one_right h5.symm
   wlog H1 : 1 < a generalizing a with h
   · refine h (1/a) h4 ?_ ?_ ?_ ?_

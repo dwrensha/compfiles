@@ -67,9 +67,9 @@ problem imo2015_p5 (f : ℝ → ℝ) :
   have h5 : ∀ x, f (-x) = - f x := fun x ↦ by
     have h6 := hf 1 (-1)
     have h7 := hf (-1) 1
-    simp only [add_right_neg, mul_neg, mul_one, neg_mul,
+    simp only [add_neg_cancel, mul_neg, mul_one, neg_mul,
                one_mul, h4, add_zero] at h6
-    simp only [add_left_neg, mul_one, one_mul, add_left_inj, h4, add_zero] at h7
+    simp only [neg_add_cancel, mul_one, one_mul, add_left_inj, h4, add_zero] at h7
     rw [h7] at h6
     replace h6 : f 1 = 1 := by linarith only [h6]
     have h8 : ∀ x, x + f x ∈ S := fun x ↦ by
@@ -99,9 +99,9 @@ problem imo2015_p5 (f : ℝ → ℝ) :
     exact h11
   ext x
   have h11 := hf x (-x)
-  simp only [add_right_neg, h4, add_zero, mul_neg, neg_mul, h5] at h11
+  simp only [add_neg_cancel, h4, add_zero, mul_neg, neg_mul, h5] at h11
   have h12 := hf (-x) x
-  simp only [add_left_neg, h4, add_zero, neg_mul, h5] at h12
+  simp only [neg_add_cancel, h4, add_zero, neg_mul, h5] at h12
   linarith
 
 

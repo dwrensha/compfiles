@@ -27,7 +27,7 @@ problem usa1996_p1 :
   have sin1 : Real.sin (Real.pi / 180) ≠ 0 := by
     refine (Real.sin_eq_zero_iff_of_lt_of_lt ?_ ?_).not.mpr ?_ <;> linarith [Real.pi_pos]
   have cos_add : ∀ (x y : ℝ), x + y = Real.pi → Real.cos x + Real.cos y = 0 := by
-    intro x y h; rw [(by linarith only [h] : y = Real.pi - x)]; rw [Real.cos_pi_sub, add_right_neg]
+    intro x y h; rw [(by linarith only [h] : y = Real.pi - x)]; rw [Real.cos_pi_sub, add_neg_cancel]
   apply mul_left_cancel₀ sin1
   rw [mul_comm, mul_assoc, Finset.sum_mul]
   rw [Real.tan_eq_sin_div_cos]

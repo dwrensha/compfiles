@@ -28,13 +28,11 @@ namespace Imo1975P1
 
 /- Let `n` be a natural number, `x` and `y` be as in the problem statement and `σ` be the
 permutation of natural numbers such that `z = y ∘ σ` -/
-variable (n : ℕ) (σ : Equiv.Perm ℕ) (hσ : {x | σ x ≠ x} ⊆ Finset.Icc 1 n) (x y : ℕ → ℝ)
+variable (n : ℕ) (σ : Equiv.Perm ℕ) (x y : ℕ → ℝ)
 
-variable (hx : AntitoneOn x (Finset.Icc 1 n))
-
-variable (hy : AntitoneOn y (Finset.Icc 1 n))
-
-problem imo1975_p1 :
+problem imo1975_p1
+    (hx : AntitoneOn x (Finset.Icc 1 n)) (hy : AntitoneOn y (Finset.Icc 1 n))
+    (hσ : {x | σ x ≠ x} ⊆ Finset.Icc 1 n) :
     ∑ i ∈ Finset.Icc 1 n, (x i - y i) ^ 2 ≤ ∑ i ∈ Finset.Icc 1 n, (x i - y (σ i)) ^ 2 := by
   /-
   Firstly, we expand the squares within both sums and distribute into separate finite sums. Then,

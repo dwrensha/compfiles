@@ -205,7 +205,7 @@ lemma exp_characterization
   have h2 : ∀ x, (u x) * u (-x) = 1 := by
     intro x
     have := hu x (-x)
-    rw [add_right_neg] at this
+    rw [add_neg_cancel] at this
     rw [←this]
     exact hu0
 

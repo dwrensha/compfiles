@@ -81,7 +81,7 @@ problem imo2022_p2 (f : ℝ+ → ℝ+) :
     use x
     constructor
     · suffices h : (1:ℝ+) + 1 = ⟨2, two_pos⟩ by
-        simp only [one_div, mul_right_inv]
+        simp only [one_div, mul_inv_cancel]
         exact Eq.le h
       norm_num [Subtype.ext_iff]
     · intro y hxy

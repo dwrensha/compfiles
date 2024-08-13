@@ -139,6 +139,7 @@ satisfying `NatPredicate m n N` are `fib K` and `fib (K+1)`, respectively.
 -/
 variable {K : ℕ} (HK : N < fib K + fib (K + 1)) {N}
 
+include HK in
 theorem m_n_bounds {m n : ℕ} (h1 : NatPredicate N m n) : m ≤ fib K ∧ n ≤ fib (K + 1) := by
   obtain ⟨k : ℕ, hm : m = fib k, hn : n = fib (k + 1)⟩ := h1.imp_fib m
   by_cases h2 : k < K + 1
@@ -166,6 +167,7 @@ We spell out the consequences of this result for `specifiedSet N` here.
 -/
 variable {M : ℕ} (HM : M = fib K ^ 2 + fib (K + 1) ^ 2)
 
+include HM HK in
 theorem k_bound {m n : ℤ} (h1 : ProblemPredicate N m n) : m ^ 2 + n ^ 2 ≤ M := by
   have h2 : 0 ≤ m := h1.m_range.left.le
   have h3 : 0 ≤ n := h1.n_range.left.le
@@ -175,9 +177,11 @@ theorem k_bound {m n : ℤ} (h1 : ProblemPredicate N m n) : m ^ 2 + n ^ 2 ≤ M 
   have h7 : n ^ 2 ≤ (fib (K + 1) : ℤ) ^ 2 := Int.natAbs_le_iff_sq_le.mp h5
   linarith
 
+include HM HK in
 theorem solution_bound : ∀ {k : ℤ}, k ∈ specifiedSet N → k ≤ M
   | _, ⟨_, _, rfl, h⟩ => k_bound HK HM h
 
+include HM HK in
 theorem solution_greatest (H : ProblemPredicate N (fib K) (fib (K + 1))) :
     IsGreatest (specifiedSet N) M :=
   ⟨⟨fib K, fib (K + 1), by simp [HM], H⟩, fun k h => solution_bound HK HM h⟩

@@ -69,11 +69,11 @@ problem imo1992_p2 (f : ℝ → ℝ) :
   have h6 : ∀ x, f (-x) = - f x := fun x ↦ by
     obtain hx | hx := le_total 0 x
     · have h6' := h5 x hx (-x)
-      rw [add_right_neg, h1] at h6'
+      rw [add_neg_cancel, h1] at h6'
       exact eq_neg_of_add_eq_zero_right h6'.symm
     · have hx' : 0 ≤ -x := by linarith
       have h6' := h5 (-x) hx' x
-      rw [add_left_neg, h1] at h6'
+      rw [neg_add_cancel, h1] at h6'
       exact add_eq_zero_iff_eq_neg.mp h6'.symm
   have h7 : ∀ x y, f (x + y) = f x + f y := fun x y ↦ by
     obtain hx | hx := le_total 0 x
