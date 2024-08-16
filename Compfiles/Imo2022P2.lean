@@ -55,7 +55,7 @@ lemma amgm (a b : ℝ+) : ⟨2, two_pos⟩ ≤ a / b + b / a := by
   obtain ⟨b, hb⟩ := b
   dsimp only
   field_simp
-  have h1 : 0 < b * a := Real.mul_pos hb ha
+  have h1 : 0 < b * a := mul_pos hb ha
   suffices H : 2 * (b * a) ≤ a * a + b * b by exact (le_div_iff h1).mpr H
   suffices H : 0 ≤ (a - b)^2 by linarith
   exact sq_nonneg (a - b)
@@ -90,7 +90,7 @@ problem imo2022_p2 (f : ℝ+ → ℝ+) :
       obtain ⟨y, hy⟩ := y
       simp only [Positive.coe_add, Positive.val_mul, one_div, Positive.coe_inv] at hxy
       rw [Subtype.mk_eq_mk]
-      have hxyp : 0 < y * x := Real.mul_pos hy hx
+      have hxyp : 0 < y * x := mul_pos hy hx
       field_simp at hxy
       have h1 : (x * x + y * y) ≤ 2 * (y * x) := (div_le_iff hxyp).mp hxy
       nlinarith
