@@ -59,15 +59,15 @@ problem usa1974_p2 :
   intros a b c ha hb hc
   wlog hab : a ≥ b with Hab
   · move_add [←b]; move_mul [←b^b, ←b]
-    refine Hab b a c hb ha hc (le_of_lt $ not_le.mp hab)
+    refine Hab b a c hb ha hc (le_of_lt <| not_le.mp hab)
   · wlog hac : a ≥ c with Hac
     · move_add [←c]; move_mul [←c^c, ←c]
-      have hca : c ≥ a := le_of_lt $ not_le.mp hac
+      have hca : c ≥ a := le_of_lt <| not_le.mp hac
       apply Hac c a b <;> try assumption
       trans a <;> assumption
     · wlog hbc : b ≥ c with Hbc
       · move_add [b]; move_mul [b^b, b]
-        have hcb : c ≥ b := le_of_lt $ not_le.mp hbc
+        have hcb : c ≥ b := le_of_lt <| not_le.mp hbc
         apply Hbc a c b <;> try assumption
       · exact usa1974_p2_wlog a b c ha hb hc hab hbc
 

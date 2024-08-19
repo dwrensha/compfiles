@@ -91,7 +91,7 @@ lemma bad_exists_descent {n : ℤ} (hn : 1 < n) {a : ℕ}
 
 lemma nat_pred_descent {P : ℕ → Prop} [DecidablePred P]
   (h : ∀ k : ℕ, P k → ∃ m : ℕ, m < k ∧ P m) : ∀ k : ℕ, ¬P k :=
-  forall_not_of_not_exists $ λ h0 ↦ Exists.elim (h (Nat.find h0) (Nat.find_spec h0)) $
+  forall_not_of_not_exists λ h0 ↦ Exists.elim (h (Nat.find h0) (Nat.find_spec h0))
     λ _ h1 ↦ Nat.find_min h0 h1.1 h1.2
 
 theorem generalized_imo2007_p5 {n : ℤ} (hn : 1 < n) :

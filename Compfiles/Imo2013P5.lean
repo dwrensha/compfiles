@@ -121,7 +121,7 @@ lemma fx_gt_xm1 {f : ℚ → ℝ} {x : ℚ} (hx : 1 ≤ x)
           < ⌊x⌋₊   := by exact_mod_cast Nat.sub_one_lt_floor x
         _ ≤ f ⌊x⌋₊ := H4 _ (Nat.floor_pos.2 hx)
 
-  obtain h_eq | h_lt := (Nat.floor_le $ zero_le_one.trans hx).eq_or_lt
+  obtain h_eq | h_lt := (Nat.floor_le <| zero_le_one.trans hx).eq_or_lt
   · rwa [h_eq] at hx0
   calc (x - 1 : ℝ) < f ⌊x⌋₊ := hx0
     _ < f (x - ⌊x⌋₊) + f ⌊x⌋₊ := lt_add_of_pos_left _ (f_pos_of_pos (sub_pos.mpr h_lt) H1 H4)
