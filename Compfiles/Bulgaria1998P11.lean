@@ -68,7 +68,7 @@ theorem n_odd_and_m_eq_2_mod_3 (m n A : ℕ) (h : 3 * m * A = (m + 3)^n + 1) :
           _ ≡ 2 [MOD 3] := by rfl
         contradiction
       · constructor
-        · apply (@Nat.odd_iff_not_even n).mpr
+        · apply (@Nat.not_even_iff_odd n).mp
           exact n_even
         · exact mod_case
   · rw [Nat.eq_zero_of_not_pos n_gt_zero] at h
@@ -99,7 +99,7 @@ lemma two_n_and_rest_factorisation (m : ℕ) (even_m : Even m) (h: 0 < m) :
     rw [Nat.maxPowDiv.base_pow_mul one_lt_two hk0]
     exact Nat.le_add_left 1 (Nat.maxPowDiv 2 k)
   · by_contra! Ha
-    rw [←Nat.even_iff_not_odd] at Ha
+    rw [Nat.not_odd_iff_even] at Ha
     obtain ⟨b, hb⟩ := Ha
     have h3 : 2 ^ (Nat.maxPowDiv 2 m  + 1) ∣ m := by
       use b

@@ -47,9 +47,9 @@ lemma lemma3 : ∑ i ∈ Finset.range 1319, (-(1:ℚ))^i / (i + 1) =
       rw [←hb2]
       constructor
       · omega
-      · exact Nat.odd_iff_not_even.mp ⟨b, rfl⟩
+      · exact Nat.not_even_iff_odd.mpr ⟨b, rfl⟩
     · rintro ⟨ha1, ha2⟩
-      have h5 : Odd a := Nat.odd_iff_not_even.mpr ha2
+      have h5 : Odd a := Nat.not_even_iff_odd.mp ha2
       obtain ⟨r, hr⟩ := h5
       use r
       constructor
@@ -88,7 +88,7 @@ lemma lemma3 : ∑ i ∈ Finset.range 1319, (-(1:ℚ))^i / (i + 1) =
     apply Finset.sum_congr rfl
     intro x hx
     rw [Finset.mem_filter] at hx
-    have h9: (-1 : ℚ)^x = -1 := Odd.neg_one_pow (Nat.odd_iff_not_even.mpr hx.2)
+    have h9: (-1 : ℚ)^x = -1 := Odd.neg_one_pow (Nat.not_even_iff_odd.mp hx.2)
     rw [h9]
     field_simp
   rw [h10, Finset.sum_filter_add_sum_filter_not]

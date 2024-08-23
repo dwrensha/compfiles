@@ -94,7 +94,7 @@ theorem imo1986_p1' (d : ℤ):
     simp only [hnm_sub, hnm_add, ← two_mul] at hnm'
     rw [mul_assoc,  mul_right_inj' two_ne_zero, ← mul_assoc, mul_comm w, mul_assoc, two_mul] at hnm'
     exact ⟨w * v, hnm'⟩
-  exact Int.even_iff_not_odd.mp hdeven hdodd
+  exact Int.not_odd_iff_even.mpr hdeven hdodd
 
 snip end
 

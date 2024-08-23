@@ -304,9 +304,9 @@ lemma lemma2' (a : ℕ+) (N : ℕ) (hN : 1 < N) (s0 : State N)
         have h3 := h1 i
         dsimp at h3
         push_cast at hie
-        rw [← Nat.odd_iff_not_even] at h3
+        rw [Nat.not_even_iff_odd] at h3
         have h4 := Even.odd_add h2 h3
-        rw [Nat.odd_iff_not_even] at h4
+        rw [←Nat.not_even_iff_odd] at h4
         exact h4 hie
       · rw [Function.update_noteq hij] at hie
         have h3 := h1 i
