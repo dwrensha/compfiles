@@ -294,7 +294,7 @@ problem bulgaria1998_p11
 
   have ⟨⟨k, Hk⟩, m_eq_2_mod_3⟩ : Odd n ∧ m ≡ 2 [MOD 3] := n_odd_and_m_eq_2_mod_3 m n A h
   by_contra even_A
-  rw [←Nat.even_iff_not_odd] at even_A
+  rw [Nat.not_odd_iff_even] at even_A
   have zero_lt_m : 0 < m := by
     by_contra m_eq_0
     replace m_eq_0 := not_one_le_k m_eq_0

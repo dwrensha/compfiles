@@ -73,7 +73,7 @@ problem imo1968_p5b :
     · intro x
       obtain heven | hodd := Classical.em (Even ⌊x⌋)
       · have h1 : ¬ Even (⌊x⌋ + 1) :=
-          Int.odd_iff_not_even.mp (Even.add_one heven)
+          Int.not_even_iff_odd.mpr (Even.add_one heven)
         simp [solution_func, h1, heven]
       · have h2 : √4 = 2 := by
           rw [show (4 : ℝ) = 2^2 by norm_num, Real.sqrt_sq_eq_abs, abs_two]
