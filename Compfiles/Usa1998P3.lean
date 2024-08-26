@@ -240,7 +240,7 @@ problem usa1998_p3
       apply Finset.prod_pos
       intro x hx
       exact sub_pos.mpr (lemma1 (a x) (ha x hx))
-    rw [le_div_iff h26, ←le_div_iff' h25]
+    rw [le_div_iff₀ h26, ←le_div_iff₀' h25]
     exact h21
 
   -- by the addition formula for tangents,

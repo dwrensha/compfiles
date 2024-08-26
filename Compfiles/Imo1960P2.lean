@@ -59,7 +59,7 @@ problem imo1960_p2 {x} : IsGood x ↔ x ∈ SolutionSet := by
     -- Now, if `x ≥ -1/2`, `x ≠ 0`, then the expression is well-defined.
     have hx2' : 0 ≤ 2 * x + 1 := by linarith
     have H : 1 - sqrt (2 * x + 1) ≠ 0 := by
-      rw [sub_ne_zero, ne_comm, ne_eq, sqrt_eq_iff_sq_eq hx2' zero_le_one]
+      rw [sub_ne_zero, ne_comm, ne_eq, sqrt_eq_iff_eq_sq hx2' zero_le_one]
       simpa
     calc
       -- Note that the fraction in the LHS is equal to `(1 + sqrt (2 * x + 1)) ^ 2`

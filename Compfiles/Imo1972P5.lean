@@ -37,7 +37,7 @@ problem imo1972_p5 (f g : ℝ → ℝ) (hf1 : ∀ x, ∀ y, f (x + y) + f (x - y
     suffices ∀ x, ‖f x‖ ≤ k / ‖g y‖ from ciSup_le this
     intro x
     suffices 2 * (‖f x‖ * ‖g y‖) ≤ 2 * k by
-      rwa [le_div_iff hgy, ← mul_le_mul_left (zero_lt_two : (0 : ℝ) < 2)]
+      rwa [le_div_iff₀ hgy, ← mul_le_mul_left (zero_lt_two : (0 : ℝ) < 2)]
     calc
       2 * (‖f x‖ * ‖g y‖) = ‖2 * f x * g y‖ := by simp [abs_mul, mul_assoc]
       _ = ‖f (x + y) + f (x - y)‖ := by rw [hf1]

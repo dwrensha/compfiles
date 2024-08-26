@@ -139,7 +139,7 @@ lemma mem_Ico_n_of_mem_Ioo (h : α ∈ Set.Ioo 0 2)
     · push_cast
       ring
     · rw [Int.floor_eq_iff] at hk'
-      rw [div_le_iff (by norm_cast; omega), mul_comm α]
+      rw [div_le_iff₀ (by norm_cast; omega), mul_comm α]
       convert hk'.1
       push_cast
       ring
