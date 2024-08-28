@@ -79,7 +79,7 @@ problem usa2018_p1 (a b c : ℝ) :
         ring_nf
         nth_rw 2 [(by simp : a * b * c = (a * b * c) ^ (1 : ℕ))]
         rw [←Real.rpow_two, ←Real.rpow_mul (by positivity)]
-        rw [mul_comm ((a * b * c) ^ (1 : ℕ)), ←Real.rpow_add_nat (by positivity)]
+        rw [mul_comm ((a * b * c) ^ (1 : ℕ)), ←Real.rpow_add_natCast (by positivity)]
         norm_num
         nth_rw 2 [Real.mul_rpow (by positivity) (by positivity)]
         rw [←Real.rpow_mul (by positivity)]
