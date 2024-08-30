@@ -35,7 +35,7 @@ lemma exists_prime_mod_m_ne_1_and_dvd
     _ = (l.map (fun p ↦ p % m)).prod % m := List.prod_nat_mod l m
     _ = (l.map (fun p ↦ 1)).prod % m := by rw [List.map_inj_left.mpr this]
     _ = 1 % m := by rw [List.prod_eq_one (by simp)]
-    _ = 1 := Nat.one_mod_of_ne_one hm
+    _ = 1 := Nat.one_mod_eq_one.mpr hm
   contradiction
 
 snip end
@@ -216,7 +216,7 @@ problem imo2003_p6 (p : ℕ) (hp : p.Prime) :
         exact Dvd.intro_left (p.pow i) rfl
       _ = 1 := by
         simp
-        rw [Nat.one_mod_of_ne_one (Nat.Prime.ne_one hp)]
+        rw [Nat.one_mod_eq_one.mpr (Nat.Prime.ne_one hp)]
     have : Nat.gcd N p = 1 :=
       calc Nat.gcd N p
         _ = Nat.gcd (N % p) p := (Nat.mod_modEq _ _).symm.gcd_eq
@@ -238,7 +238,7 @@ problem imo2003_p6 (p : ℕ) (hp : p.Prime) :
     have : q % (p ^ 2) = 1 := by
       rw [← Nat.succ_pred_prime hq]
       simp [Nat.add_mod, this]
-      exact Nat.one_mod_of_ne_one p_sq_ne_1
+      exact Nat.one_mod_eq_one.mpr p_sq_ne_1
     contradiction
 
 
