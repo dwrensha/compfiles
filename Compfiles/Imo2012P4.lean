@@ -236,7 +236,7 @@ problem imo2012_p4 (f : ℤ → ℤ) :
               · omega
 
             rcases x with x | x; case negSucc => simp at pos
-            induction x using Nat.strongInductionOn with
+            induction x using Nat.strongRecOn with
             | ind x ih =>
               rcases x with _ | x; case zero => simp [«f0=0»]
 

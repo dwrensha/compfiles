@@ -209,7 +209,7 @@ problem imo2002_p5 (f : ℝ → ℝ) :
       exact hy0.symm h12
     exact (mul_eq_right₀ h10).mp h9
   have h9 : ∀ n : ℕ, f n = n^2 := fun n ↦ by
-    induction' n using Nat.strongInductionOn with n ih
+    induction' n using Nat.strongRecOn with n ih
     cases' n with n
     · simp [h3]
     cases' n with n

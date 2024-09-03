@@ -83,7 +83,7 @@ theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
     : ∃ p : Equiv.Perm (Fin n),
           ∀ i : Fin n, ∑ j ∈ Finset.filter (· ≤ i) Finset.univ, a (p j) ∉ M := by
   revert a M hn
-  induction' n using Nat.strongInductionOn with n ih
+  induction' n using Nat.strongRecOn with n ih
   intro hn a ainj apos asorted M Mpos Mcard
   let x := ∑ i ∈ Finset.filter (·.val < n-1) Finset.univ, a i
   -- four cases: split on whether x ∈ M and whether

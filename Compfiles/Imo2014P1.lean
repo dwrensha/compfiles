@@ -73,6 +73,7 @@ lemma lemma1 (s : ℕ → ℤ) (hs : ∀ i, s i < s (i + 1)) (z : ℤ) (hs0 : s 
     intro k hk
     intro hkk
     have h9 : s (k + 1) ≤ s m := (StrictMono.le_iff_le hmono).mpr hk
+    simp only [Set.mem_setOf_eq] at hkk
     omega
 
 snip end

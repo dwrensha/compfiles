@@ -38,19 +38,17 @@ determine f (p : ℝ) : Set ℝ :=
 problem imo1963_p1 : ∀ (p x : ℝ), (x ^ 2 - p) ≥ 0 → (x ^ 2 - 1) ≥ 0 →
   (Real.sqrt (x ^ 2 - p) + 2 * Real.sqrt (x ^ 2 - 1) = x ↔ (x ∈ f p)) := by
   intro p x h1 h2
-  unfold f
-  rw [apply_ite (Membership.mem x)]
-  simp only [Set.mem_singleton_iff, ge_iff_le]
+  simp only [f, ge_iff_le, Set.mem_ite_empty_right, Set.mem_singleton_iff]
   apply @iff_comm (c := x ≥ 0)
   · intro h; rw [←h]; positivity
-  · split_ifs with h;
-    · intro hx; rw [hx]; apply le_of_lt; apply div_pos_iff.mpr
-      left
-      constructor
+  · rintro ⟨⟨-, hx12⟩, rfl⟩
+    apply le_of_lt
+    apply div_pos_iff.mpr
+    left
+    constructor
+    · linarith
+    · simp only [Nat.ofNat_pos, mul_pos_iff_of_pos_left, Real.sqrt_pos]
       linarith
-      simp only [Nat.ofNat_pos, mul_pos_iff_of_pos_left, Real.sqrt_pos]
-      linarith
-    · simp only [Set.mem_empty_iff_false, ge_iff_le, IsEmpty.forall_iff]
   intro xge0
   trans (Real.sqrt (x ^ 2 - p) + 2 * Real.sqrt (x ^ 2 - 1)) ^ 2 = x ^ 2
   · refine Iff.symm (sq_eq_sq ?ha ?hb) <;> positivity
@@ -65,14 +63,13 @@ problem imo1963_p1 : ∀ (p x : ℝ), (x ^ 2 - p) ≥ 0 → (x ^ 2 - 1) ≥ 0 �
   apply @iff_comm (c := p + 4 - 4 * x ^ 2 ≥ 0)
   · intro h; rw [ge_iff_le]; apply (div_le_div_right (by norm_num : (0 : ℝ) < (4 : ℝ))).mp
     norm_num; rw [←h]; positivity
-  · split_ifs with h;
-    · have tmp : 0 < (4 - 2 * p) := by linarith only [h]
-      intro h; rw [h]; rw [div_pow, mul_pow, Real.sq_sqrt (le_of_lt tmp)]; norm_num
-      rw [←(mul_le_mul_right tmp), mul_assoc, div_mul]
-      field_simp
-      ring_nf
-      nlinarith
-    · simp
+  · rintro ⟨hx, rfl⟩
+    have tmp : 0 < (4 - 2 * p) := by linarith only [hx]
+    rw [div_pow, mul_pow, Real.sq_sqrt (le_of_lt tmp)]; norm_num
+    rw [←(mul_le_mul_right tmp), mul_assoc, div_mul]
+    field_simp
+    ring_nf
+    nlinarith
   intro xp
   trans (Real.sqrt (x ^ 2 - p) * Real.sqrt (x ^ 2 - (1 : ℝ))) ^ 2 =
         ((p + (4 : ℝ) - (4 : ℝ) * x ^ 2) / (4 : ℝ)) ^ 2

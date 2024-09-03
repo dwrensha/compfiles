@@ -45,7 +45,7 @@ problem imo1981_p6 (f : ℕ → ℕ → ℕ)
     f 4 1981 = solution_value := by
   have h4 : ∀ y, f 1 y = y + 2 := by
     intro y
-    induction' y using Nat.strongInductionOn with y ih
+    induction' y using Nat.strongRecOn with y ih
     cases' y with y
     · simp [h1, h2]
     · rw [h3 0 y, ih y (Nat.lt.base y)]

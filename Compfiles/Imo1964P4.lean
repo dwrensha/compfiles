@@ -90,9 +90,13 @@ theorem lemma1
     · intro p1' hp1' p2' hp2' hp1p2
       rw [Finset.mem_cons, Finset.mem_cons, Finset.mem_singleton] at hp1' hp2'
       have hp4d : discusses p2 ↑↑p4 = t2 := by
-         have := p4.property; simp [α] at this; exact this
+         have := p4.property
+         simp only [ne_eq, Finset.mem_filter, Finset.mem_univ, true_and, α] at this
+         exact this
       have hp3d : discusses p2 ↑↑p3 = t2 := by
-         have := p3.property; simp [α] at this; exact this
+         have := p3.property
+         simp only [ne_eq, Finset.mem_filter, Finset.mem_univ, true_and, α] at this
+         exact this
       aesop
 
   · push_neg at h6
@@ -175,9 +179,13 @@ problem imo1964_p4
     · intro p1' hp1' p2' hp2' hp1p2
       rw [Finset.mem_cons, Finset.mem_cons, Finset.mem_singleton] at hp1' hp2'
       have hp4d : discusses p1 ↑↑p4 = t1 := by
-         have := p4.property; simp [α] at this; exact this
+         have := p4.property
+         simp only [ne_eq, Finset.mem_filter, Finset.mem_univ, true_and, α] at this
+         exact this
       have hp3d : discusses p1 ↑↑p3 = t1 := by
-         have := p3.property; simp [α] at this; exact this
+         have := p3.property
+         simp only [ne_eq, Finset.mem_filter, Finset.mem_univ, true_and, α] at this
+         exact this
       aesop
 
   · -- So the people in α must all discuss only the remaining two topics.

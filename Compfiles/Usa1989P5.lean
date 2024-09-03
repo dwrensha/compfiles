@@ -31,7 +31,7 @@ problem usa1989_p5
     if u_is_larger then v < u else u < v := by
   -- solution from
   -- https://artofproblemsolving.com/wiki/index.php/1989_USAMO_Problems/Problem_5
-  simp only [ite_false]
+  simp only [u_is_larger, ite_false]
 
   let U (x : ℝ) : ℝ := (∑ i in Finset.range 8, x^(i + 1)) + 10 * x^9
   let V (x : ℝ) : ℝ := (∑ i in Finset.range 10, x^(i + 1)) + 10 * x^11
@@ -115,6 +115,8 @@ problem usa1989_p5
          _ = _ := hv.symm
 
   by_contra! H
+  dsimp at H
+  rw [not_lt] at H
 
   have h11 : 0 < v := not_le.mp h1v
   have h16 : V v ≤ V u := by dsimp only [V]; gcongr
