@@ -57,7 +57,7 @@ problem usa2022_p4 (p q : ℕ) :
   have h1 : (b + a) * (b - a) = p * (q - 1) := by
     rw [←Nat.sq_sub_sq, Nat.mul_sub_left_distrib, mul_one]
     have h2 : (b^2 + q) - (a^2 + q) = p * q - p :=
-      Mathlib.Tactic.LinearCombination.sub_pf hb ha
+      Mathlib.Tactic.LinearCombination'.sub_pf hb ha
     rw [Nat.add_sub_add_right] at h2
     exact h2
 
