@@ -32,7 +32,7 @@ lemma lemma_1'
     (hb : 0 < b)
     (hc : 0 < c)
     (h : a^4 = b^4 + c^2) : False := by
-  induction' a using Nat.strongInductionOn with a ih
+  induction' a using Nat.strongRecOn with a ih
   have hab : Nat.gcd a b = 1 := sorry
   obtain c_even | c_odd := Nat.even_or_odd c
   · have a_odd : Odd a := sorry
