@@ -85,9 +85,7 @@ problem usa2022_p4 (p q : ℕ) :
     obtain ⟨k, hk⟩ := h5
     rw [mul_comm, hk] at h6
     have : k < 2 := (mul_lt_mul_left hp_pos).mp h6
-    interval_cases k
-    · omega
-    · linarith
+    interval_cases k <;> omega
 
   -- Hence q - 1 = b - a.
   have h8 : q - 1 = b - a := by
