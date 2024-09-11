@@ -82,6 +82,7 @@ problem imo1972_p1 (S : Finset ℕ)
     exact h10.trans h11
   · rw[Finset.disjoint_iff_ne]
     intro a ha b hb
+    clear h2 h3 h7 h8 Sdigits Scard hA hB
     aesop
   · have h12 : C ⊆ A := Finset.inter_subset_left
     have h13 : C ⊆ B := Finset.inter_subset_right
