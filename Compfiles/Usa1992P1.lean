@@ -307,7 +307,7 @@ problem usa1992_p1 (n : ℕ) :
     suffices H : (b n - 1) % 10 + 1 = b n % 10 by omega
     omega
 
-  -- and hence is 9·2_{n-1} - 1
+  -- and hence is 9·2^{n-1} - 1
   rw [ih, solution] at h11
 
   -- Multiplying by 10N does not change the digit sum.
