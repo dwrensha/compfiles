@@ -43,9 +43,9 @@ problem imo1995_p2 (a b c : ℝ) (ha : 0 < a) (hb : 0 < b) (hc : 0 < c)
 
     have cauchy := sum_mul_sq_le_sq_mul_sq {0, 1, 2} f g
     have lhs0 : 1 / (a^3 * (b + c)) + 1 / (b^3 * (c + a)) + 1 / (c^3 * (a + b)) = ∑ i ∈ {0, 1, 2}, f i ^ 2 := by
-      have hbca' : (b + c)⁻¹ * (a ^ 3)⁻¹ ≥ 0 := by field_simp; refine' one_div_nonneg.mpr _; positivity
-      have hcab' : (c + a)⁻¹ * (b ^ 3)⁻¹ ≥ 0 := by field_simp; refine' one_div_nonneg.mpr _; positivity
-      have habc' : (a + b)⁻¹ * (c ^ 3)⁻¹ ≥ 0 := by field_simp; refine' one_div_nonneg.mpr _; positivity
+      have hbca' : (b + c)⁻¹ * (a ^ 3)⁻¹ ≥ 0 := by positivity
+      have hcab' : (c + a)⁻¹ * (b ^ 3)⁻¹ ≥ 0 := by positivity
+      have habc' : (a + b)⁻¹ * (c ^ 3)⁻¹ ≥ 0 := by positivity
       simp [sq, f, Real.mul_self_sqrt, hbca', hcab', habc', add_assoc]
 
     have lhs1 : a * (b + c) + b * (c + a) + c * (a + b) = ∑ i ∈ {0, 1, 2}, g i ^ 2 := by
