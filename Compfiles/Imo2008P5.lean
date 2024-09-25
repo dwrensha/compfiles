@@ -222,7 +222,7 @@ lemma lemma1 (α : Type) (A B : Set α) (hA : A.Finite) (hB : B.Finite)
     simp only [Finset.sum_const, smul_eq_mul]
     have : (Finset.univ (α := ↑B)).card = Set.ncard B := by
       rw [Finset.card_univ, Fintype.card_eq_nat_card, Set.Nat.card_coe_set_eq]
-    exact congrFun (congrArg HMul.hMul this) n
+    exact congr($this * n)
   rw [←h5]
   have h6 : A' = Finset.univ (α := ↑A) := by
     ext a
