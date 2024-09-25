@@ -7,7 +7,7 @@ import Lean.Meta.Basic
 
 import ProblemExtraction
 
-open Lean Core Elab Command Std.Tactic.Lint
+open Lean Core Elab Command Batteries.Tactic.Lint
 
 def imoProblemCounts :=
   [(2024, 6), (2023, 6), (2022, 6), (2021, 6), (2020, 6),

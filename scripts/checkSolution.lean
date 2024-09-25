@@ -72,7 +72,7 @@ unsafe def verifyTypesAndAxioms (problem_mod : Name) (solution_mod : Name)
       let prob_state := {env := prob_env}
       let prob_infos ← Prod.fst <$> (CoreM.toIO · prob_ctx prob_state) do
         let mut infos : RBMap Name ConstantInfo Name.quickCmp := {}
-        let decls ← Std.Tactic.Lint.getDeclsInPackage problem_mod
+        let decls ← Batteries.Tactic.Lint.getDeclsInPackage problem_mod
         for d in decls do
           if not d.isInternal then
             infos := infos.insert d (← getConstInfo d)
@@ -81,7 +81,7 @@ unsafe def verifyTypesAndAxioms (problem_mod : Name) (solution_mod : Name)
       let sol_ctx := {fileName := "", fileMap := default}
       let sol_state := {env := sol_env}
       Prod.fst <$> (CoreM.toIO · sol_ctx sol_state) do
-        let decls ← Std.Tactic.Lint.getDeclsInPackage solution_mod
+        let decls ← Batteries.Tactic.Lint.getDeclsInPackage solution_mod
         let mut prob_infos := prob_infos
         for d in decls do
           if not d.isInternal then
@@ -128,7 +128,7 @@ unsafe def printDetermineVals (determineDecls : List Name) (solution_mod : Name)
     let sol_ctx := {fileName := "", fileMap := default}
     let sol_state := {env := sol_env}
     Prod.fst <$> (CoreM.toIO · sol_ctx sol_state) do
-      let decls ← Std.Tactic.Lint.getDeclsInPackage solution_mod
+      let decls ← Batteries.Tactic.Lint.getDeclsInPackage solution_mod
       for d in decls do
         if determineDecls.contains d then
           let sol_const ← getConstInfo d
