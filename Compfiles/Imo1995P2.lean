@@ -24,7 +24,7 @@ namespace Imo1995P2
 
 open Finset
 
-theorem imo1995_p2 (a b c : ℝ) (ha : 0 < a) (hb : 0 < b) (hc : 0 < c)
+problem imo1995_p2 (a b c : ℝ) (ha : 0 < a) (hb : 0 < b) (hc : 0 < c)
     (habc : a * b * c = 1) :
     3 / 2 ≤ 1 / (a^3 * (b + c)) + 1 / (b^3 * (c + a)) + 1 / (c^3 * (a + b)) := by
   -- We follow the third solution from AoPS (https://artofproblemsolving.com/wiki/index.php/1995_IMO_Problems/Problem_2)
