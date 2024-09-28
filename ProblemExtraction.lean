@@ -118,10 +118,8 @@ abbrev ProblemMetadataExtension :=
 initialize problemMetadataExtension : ProblemMetadataExtension ←
   registerSimplePersistentEnvExtension {
     name := `problem_metadata
-    addImportedFn := fun arrays =>
-      arrays.foldl (init := ∅) fun acc as =>
-        as.foldl (init := acc) fun acc' a => acc'.push a
-    addEntryFn    := fun s n => s.push n
+    addImportedFn := Array.concatMap id
+    addEntryFn    := Array.push
   }
 
 def parseAuthors (src : String) : List String := Id.run do
