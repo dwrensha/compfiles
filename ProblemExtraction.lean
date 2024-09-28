@@ -49,19 +49,15 @@ abbrev ExtractionExtension := SimplePersistentEnvExtension Entry (Array Entry)
 initialize problemExtractionExtension : ExtractionExtension ←
   registerSimplePersistentEnvExtension {
     name := `problem_extraction
-    addImportedFn := fun arrays =>
-      arrays.foldl (init := ∅) fun acc as =>
-        as.foldl (init := acc) fun acc' a => acc'.push a
-    addEntryFn    := fun s n => s.push n
+    addImportedFn := Array.concatMap id
+    addEntryFn    := Array.push
   }
 
 initialize solutionExtractionExtension : ExtractionExtension ←
   registerSimplePersistentEnvExtension {
     name := `solution_extraction
-    addImportedFn := fun arrays =>
-      arrays.foldl (init := ∅) fun acc as =>
-        as.foldl (init := acc) fun acc' a => acc'.push a
-    addEntryFn    := fun s n => s.push n
+    addImportedFn := Array.concatMap id
+    addEntryFn    := Array.push
   }
 
 abbrev DetermineDeclsExtension := SimplePersistentEnvExtension Name (Array Name)
@@ -69,10 +65,8 @@ abbrev DetermineDeclsExtension := SimplePersistentEnvExtension Name (Array Name)
 initialize determineDeclsExtension : DetermineDeclsExtension ←
   registerSimplePersistentEnvExtension {
     name := `determine_decls
-    addImportedFn := fun arrays =>
-      arrays.foldl (init := ∅) fun acc as =>
-        as.foldl (init := acc) fun acc' a => acc'.push a
-    addEntryFn    := fun s n => s.push n
+    addImportedFn := Array.concatMap id
+    addEntryFn    := Array.push
   }
 
 inductive ProblemTag where
