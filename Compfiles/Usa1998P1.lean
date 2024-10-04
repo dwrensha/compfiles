@@ -117,6 +117,4 @@ problem usa1998_p1
   rw [←Int.modEq_and_modEq_iff_modEq_mul hmn, zmod_eq, zmod_eq, h3, h2]
   decide
 
-#check Finset.attach
-
 end Usa1998P1
