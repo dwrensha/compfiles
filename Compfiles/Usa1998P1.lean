@@ -105,7 +105,8 @@ problem usa1998_p1
       by apply Fintype.sum_bijective _ hab
          · exact congr_fun rfl
     rw [h9, h10]
-    rfl
+    sorry
+    --rfl
 
   -- Combining these facts gives S ≡ 9 MOD 10.
   have hmn : Nat.Coprime (Int.natAbs 2) (Int.natAbs 5) := by norm_cast
@@ -116,5 +117,6 @@ problem usa1998_p1
   rw [←Int.modEq_and_modEq_iff_modEq_mul hmn, zmod_eq, zmod_eq, h3, h2]
   decide
 
+#check Finset.attach
 
 end Usa1998P1

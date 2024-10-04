@@ -26,7 +26,7 @@ between `Q` and `Q₁`, and `∠CQ₁Q = ∠CBA`.
 Prove that points `P`, `Q`, `P₁`, and `Q₁` are concyclic.
 -/
 
-open Affine Affine.Simplex EuclideanGeometry FiniteDimensional
+open Affine Affine.Simplex EuclideanGeometry FiniteDimensional Module
 
 open scoped Affine EuclideanGeometry Real
 

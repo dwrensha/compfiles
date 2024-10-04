@@ -23,7 +23,7 @@ Let ω meet Ω again at P ≠ B.
 Prove that the line tangent to ω at P meets line BS on the internal angle bisector of ∠BAC.
 -/
 
-open Affine Affine.Simplex EuclideanGeometry FiniteDimensional
+open Affine Affine.Simplex EuclideanGeometry FiniteDimensional Module
 
 open scoped Affine EuclideanGeometry Real InnerProductSpace
 

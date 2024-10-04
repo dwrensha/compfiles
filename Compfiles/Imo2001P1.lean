@@ -31,12 +31,12 @@ snip begin
 -- We need some instances in order to talk about oriented angles.
 
 local instance planeFiniteDim :
-    Fact (FiniteDimensional.finrank ℝ (EuclideanSpace ℝ (Fin 2)) = 2) :=
+    Fact (Module.finrank ℝ (EuclideanSpace ℝ (Fin 2)) = 2) :=
   ⟨finrank_euclideanSpace_fin⟩
 
 noncomputable local instance someOrientation :
     Module.Oriented ℝ (EuclideanSpace ℝ (Fin 2)) (Fin 2) :=
-  ⟨Basis.orientation (FiniteDimensional.finBasisOfFinrankEq _ _ planeFiniteDim.out)⟩
+  ⟨Basis.orientation (Module.finBasisOfFinrankEq _ _ planeFiniteDim.out)⟩
 
 lemma lemma1
     (t : Affine.Triangle ℝ (EuclideanSpace ℝ (Fin 2)))

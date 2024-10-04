@@ -62,7 +62,8 @@ problem hungary1998_p6 (x y : ℤ) (z : ℕ) (hz : 1 < z) :
 
   have h4 : ∑ i ∈ Finset.range 99, ((i:ℤ) + 1) =
           ∑ i ∈ Finset.range 100, (i:ℤ) := by
-    rw [Finset.sum_range_succ']; rfl
+    rw [Finset.sum_range_succ']
+    simp [Finset.sum_range_succ]
 
   have h5 : ∑ i ∈ Finset.range 100, (i:ℤ) = 99 * 100 / 2 := by
     rw [←Nat.cast_sum, Finset.sum_range_id]; decide

@@ -201,7 +201,7 @@ problem imo1979_p1 (p q : ℤ) (hp : 0 < p) (hq : 0 < q)
     field_simp; norm_num1
 
   rw [Finset.sum_congr rfl h4] at h; clear h4
-  rw [show (1979 : ℚ) = 1979 * 1 by rfl] at h
+  rw [show (1979 : ℚ) = 1979 * 1 by simp_arith] at h
   simp_rw [mul_div_assoc] at h
   rw [←Finset.mul_sum] at h
   let s : ℕ := ∏ i ∈ Finset.range 330, (660 + i) * (1319 - i)
