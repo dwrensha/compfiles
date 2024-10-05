@@ -105,7 +105,7 @@ problem imo2003_p6 (p : ℕ) (hp : p.Prime) :
 
   have p_sq_ne_1 : p ^ 2 ≠ 1 := by
     refine Ne.symm (Nat.ne_of_lt ?_)
-    apply one_lt_pow (Nat.Prime.one_lt hp) (by norm_num)
+    apply one_lt_pow₀ (Nat.Prime.one_lt hp) (by norm_num)
 
   rcases exists_prime_mod_m_ne_1_and_dvd
     N_nz N_mod_p_ne_1 p_sq_ne_1 with ⟨q, ⟨hq, hqN, h3⟩⟩
