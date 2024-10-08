@@ -72,8 +72,8 @@ problem imo1984_p1  (x y z : ℝ)
         · suffices habs : abs ((1 - 2 * x) * (1 - 2 * y) * (1 - 2 * z)) ≤ 1
           have ⟨i, _⟩ := abs_le.mp habs; linarith only [i]
           rw [abs_mul, abs_mul]
-          apply mul_le_one
-          apply mul_le_one
+          apply mul_le_one₀
+          apply mul_le_one₀
           all_goals try positivity
           all_goals rw [abs_le]; constructor <;> linarith
         · suffices habs : ((1 - 2 * x) * (1 - 2 * y) * (1 - 2 * z)) ≤ (1 : ℝ) / 27; linarith [habs]
