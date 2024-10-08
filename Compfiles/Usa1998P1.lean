@@ -42,6 +42,26 @@ lemma mod2_abs (a : ℤ) : |a| % 2 = a % 2 := by
 lemma mod2_diff (a b : ℤ) : |a - b| % 2 = (a + b) % 2 := by
   rw [mod2_abs, Int.sub_eq_add_neg, Int.add_emod, Int.neg_emod_two, ←Int.add_emod]
 
+lemma lemma0 (n : ℕ) : (∑ x ∈ Finset.Icc 1 (4 * n + 2), (x:ℤ) % 2) % 2 = 1 := by
+  norm_cast
+  induction n with
+  | zero => simp_arith
+  | succ n ih =>
+    rw [show 4 * (n + 1) + 2 = (4 * n + 2) + 4 by omega]
+    rw [Finset.sum_Icc_succ_top (by norm_num)]
+    rw [Finset.sum_Icc_succ_top (by norm_num)]
+    rw [Finset.sum_Icc_succ_top (by norm_num)]
+    rw [Finset.sum_Icc_succ_top (by norm_num)]
+    rw [Nat.add_mod _]
+    rw [Nat.add_mod _ ((4 * n + 4 + 1) % 2)]
+    rw [Nat.add_mod _ ((4 * n + 3 + 1) % 2)]
+    rw [Nat.add_mod _ ((4 * n + 2 + 1) % 2)]
+    rw [ih]
+    simp only [dvd_refl, Nat.mod_mod_of_dvd, Nat.add_mod_mod, Nat.mod_add_mod]
+    rw [←Nat.odd_iff]
+    use 8 * n + 9
+    omega
+
 snip end
 
 /--
@@ -105,8 +125,9 @@ problem usa1998_p1
       by apply Fintype.sum_bijective _ hab
          · exact congr_fun rfl
     rw [h9, h10]
-    sorry
-    --rfl
+    simp only [Finset.univ_eq_attach, Int.one_emod_two,
+               Finset.sum_attach (Finset.Icc 1 1998) (fun (x:ℕ) => (x : ℤ) % 2)]
+    rw [lemma0 499]
 
   -- Combining these facts gives S ≡ 9 MOD 10.
   have hmn : Nat.Coprime (Int.natAbs 2) (Int.natAbs 5) := by norm_cast
