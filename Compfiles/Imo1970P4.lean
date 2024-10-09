@@ -26,45 +26,6 @@ equals the product of the nubmers in the other set.
 
 namespace Imo1970P4
 
-determine SolutionSet : Finset ℕ+ := {}
-
-problem imo1970_p4 (n : ℕ+):
-  n ∈ SolutionSet ↔
-    ∃ s1 s2 : Finset ℕ,
-      s1 ∪ s2 = Finset.Icc n.val (n.val + 5) ∧
-      s1 ∩ s2 = ∅ ∧
-      ∏ m ∈ s1, m = ∏ m ∈ s2, m :=
-  sorry
-
-theorem no_partitions : ¬ ∃ (n : ℕ) (s1 s2 : Finset ℕ),
-        s1 ∪ s2 = Finset.Icc n (n + 5) ∧
-        s1 ∩ s2 = ∅ ∧
-        ∏ m ∈ s1, m = ∏ m ∈ s2, m := by
-  apply not_exists_of_forall_not
-  intro n
-  apply not_exists_of_forall_not
-  intro s1
-  apply not_exists_of_forall_not
-  intro s2
-  rintro ⟨H1, H2, H3⟩
-  sorry
-
-lemma card_split (s1 s2 s3 : Finset ℕ) (H1 : s1 ∪ s2 = s3) (H2 : s1 ∩ s2 = ∅) (p : ℕ → Prop) [DecidablePred p] :
-  (s1.filter p).card + (s2.filter p).card = (s3.filter p).card := by
-  rw[← H1]
-  rw[Finset.card_filter p s1]
-  rw[Finset.card_filter p s2]
-  rw[Finset.card_filter p (s1 ∪ s2)]
-  have s1_s2_disjoint : Disjoint s1 s2 := by
-    dsimp[Disjoint]
-    rw[← H2]
-    intro sx
-    intro r1
-    intro r2
-    apply Finset.subset_inter
-    exact r1
-    exact r2
-  rw [Finset.sum_union s1_s2_disjoint]
 
 lemma card_opposite (s s' s'' : Finset ℕ) (predicate: ℕ → Prop) [DecidablePred predicate] (filter : s' = (s.filter (λ x => predicate x)))
                     (opposite_filter: s'' = (s.filter (λ x => ¬ predicate x))) : s'.card + s''.card = s.card := by
@@ -72,28 +33,6 @@ lemma card_opposite (s s' s'' : Finset ℕ) (predicate: ℕ → Prop) [Decidable
   rw[opposite_filter]
   have := @Finset.filter_card_add_filter_neg_card_eq_card ℕ s predicate
   apply this
-
-lemma elements_close_by (n : ℕ) (s : Finset ℕ) (interval : s = Finset.Icc n (n + 5)) (x : ℕ) (y : ℕ) (x_in_s : x ∈ s) (y_in_s : y ∈ s) (x_le_y : x ≤ y): ∃ k, k ≤ 5 ∧ x + k = y := by
-  rw [interval] at x_in_s
-  rw [interval] at y_in_s
-  simp_all
-  obtain ⟨left_x, right_x⟩ := x_in_s
-  obtain ⟨left_y, right_y⟩ := y_in_s
-  use y - x
-  constructor
-  · omega
-  · omega
-
-lemma elements_close_by_parition (n : ℕ) (s1 s2 : Finset ℕ) (partition : s1 ∪ s2 = Finset.Icc n (n + 5)) (x : ℕ) (y : ℕ) (x_in_s1 : x ∈ s1) (y_in_s2 : y ∈ s2) (x_le_y : x ≤ y): ∃ k, k ≤ 5 ∧ x + k = y := by
-  have x_in_interval : x ∈ s1 ∪ s2 := by
-    simp
-    left
-    exact x_in_s1
-  have y_in_interval : y ∈ s1 ∪ s2 := by
-    simp
-    right
-    exact y_in_s2
-  exact elements_close_by n (s1 ∪ s2) partition x y x_in_interval y_in_interval x_le_y
 
 lemma dvd_prod_of_dvd_elem (p : ℕ) (s : Finset ℕ) (x : ℕ) (H : p ∣ x) : (x ∈ s) → p ∣ (∏ m ∈ s, m) := by
   intro element
@@ -475,7 +414,7 @@ lemma subsets_must_overlap_pigeonhole (s s1 s2 : Finset ℕ) (predicate_s1: ℕ 
     exact s1_s2_subset
   omega
 
-theorem contains_one (n : ℕ) (s1 s2 odd_s : Finset ℕ) (partition : s1 ∪ s2 = Finset.Icc n (n + 5)) (no_dups: s1 ∩ s2 = ∅)
+lemma contains_one (n : ℕ) (s1 s2 : Finset ℕ) (partition : s1 ∪ s2 = Finset.Icc n (n + 5)) (no_dups: s1 ∩ s2 = ∅)
                       (equal_products : ∏ m ∈ s1, m = ∏ m ∈ s2, m) : ∃ x ∈ (s1 ∪ s2), x = 1 := by
   let odd_s := (s1 ∪ s2).filter (λ x => Odd x)
   let odd_div_by_5 := odd_s.filter (λ x => 5 ∣ x)
@@ -537,5 +476,57 @@ theorem contains_one (n : ℕ) (s1 s2 odd_s : Finset ℕ) (partition : s1 ∪ s2
   constructor
   · exact x_in_s1_u_s2
   · exact no_prime_divisors x no_prime
+
+lemma n_eq_1_of_contains_one
+  (n : ℕ) (n_not_zero : n ≠ 0) (contains_one : 1 ∈ Finset.Icc n (n + 5)) : n = 1 := by
+  sorry
+
+lemma contradiction_of_finset_icc_1_6 (s1 s2 : Finset ℕ) (parition : s1 ∪ s2 = Finset.Icc 1 6)
+  (disjoint : s1 ∩ s2 = ∅) (eq_prod: ∏ m ∈ s1, m = ∏ m ∈ s2, m) : False := by
+  sorry
+
+lemma no_partitions (n : ℕ) (s1 s2 : Finset ℕ)
+        (partition : s1 ∪ s2 = Finset.Icc n (n + 5))
+        (no_dups : s1 ∩ s2 = ∅)
+        (eq_prod : ∏ m ∈ s1, m = ∏ m ∈ s2, m)
+        (n_not_zero : n ≠ 0) : False := by
+  obtain ⟨x, ⟨x_in_partition, x_eq_1⟩⟩ := contains_one n s1 s2 partition no_dups eq_prod
+  rw[partition] at x_in_partition
+  rw[x_eq_1] at x_in_partition
+  have n_eq_1 := n_eq_1_of_contains_one n n_not_zero x_in_partition
+  rw[n_eq_1] at partition
+  simp_all
+  exact contradiction_of_finset_icc_1_6 s1 s2 partition no_dups eq_prod
+
+determine SolutionSet : Finset ℕ+ := {}
+
+lemma False_of_in_empty (x : ℕ+) (s : Finset ℕ+) (s_empty: s = ∅) (x_in_s : x ∈ s) : False := by
+  subst s_empty
+  simp_all only [Finset.not_mem_empty]
+
+problem imo1970_p4 (n : ℕ+):
+  n ∈ SolutionSet ↔
+    ∃ s1 s2 : Finset ℕ,
+      s1 ∪ s2 = Finset.Icc n.val (n.val + 5) ∧
+      s1 ∩ s2 = ∅ ∧
+      ∏ m ∈ s1, m = ∏ m ∈ s2, m := by
+  apply Iff.intro
+  · intro n_in_solution_set
+    have no_solutions : SolutionSet = ∅ := by
+      simp_all only [Finset.not_mem_empty]
+    exfalso
+    exact False_of_in_empty n SolutionSet no_solutions n_in_solution_set
+  · intro H
+    obtain ⟨s1, s2, ⟨partition, no_dups, eq_prod⟩⟩ := H
+
+    have k : ℕ := sorry
+    have n_eq_k : n = k := sorry
+    have k_not_zero : k ≠ 0 := sorry
+    rw [n_eq_k] at partition
+
+    exfalso
+    exact no_partitions k s1 s2 partition no_dups eq_prod k_not_zero
+
+
 
 end Imo1970P4
