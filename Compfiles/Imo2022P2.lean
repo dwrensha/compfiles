@@ -36,34 +36,23 @@ lemma lemma0 {α : Type} {p : α → α → Prop}
     ∀ x, Classical.choose (h1 (Classical.choose (h1 x).exists)).exists = x := by
   intro x
   obtain ⟨y, h1e, h1u⟩ := h1 x
-  have h2' : Classical.choose (h1 x).exists = y :=
-    h1u _ (Classical.choose_spec (h1 x).exists)
-  rw [h2']
-
+  rw [h1u _ (Classical.choose_spec _)]
   obtain ⟨w, h1e', h1u'⟩ := h1 y
-  have h4 := Classical.choose_spec (h1 y).exists
-  have hxw : x = w := by
-    apply h1u'
-    rw [h2]
-    exact h1e
-  rw [hxw]
-  exact h1u' _ h4
+  rw [h1u' _ ((h2 _ _).mpr h1e)]
+  exact h1u' _ (Classical.choose_spec _)
 
 lemma amgm (a b : ℝ+) : ⟨2, two_pos⟩ ≤ a / b + b / a := by
-  change 2 ≤ a.val/b.val + b.val/a.val
+  change 2 ≤ a.val / b.val + b.val / a.val
   obtain ⟨a, ha⟩ := a
   obtain ⟨b, hb⟩ := b
   dsimp only
   field_simp
-  have h1 : 0 < b * a := mul_pos hb ha
-  suffices H : 2 * (b * a) ≤ a * a + b * b by exact (le_div_iff₀ h1).mpr H
-  suffices H : 0 ≤ (a - b)^2 by linarith
-  exact sq_nonneg (a - b)
+  suffices H : 2 * (b * a) ≤ a * a + b * b by exact (le_div_iff₀ (mul_pos hb ha)).mpr H
+  linarith [sq_nonneg (a - b)]
 
 lemma lemma1 (a : ℝ+) : a + a = ⟨2, two_pos⟩ * a := by
   obtain ⟨a, ha⟩ := a
   apply Subtype.val_injective
-  dsimp
   exact (two_mul a).symm
 
 snip end

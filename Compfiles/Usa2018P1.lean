@@ -26,11 +26,10 @@ namespace Usa2018P1
 snip begin
 
 lemma am_gm (a b : ℝ) (ha : 0 ≤ a) (hb : 0 ≤ b) :
-    2 * (a * b) ^ ((1 : ℝ) / 2) ≤ a + b := by
+    2 * (a * b) ^ ((1 : ℝ) / 2) ≤ a + b   := by
   have hw : (0 : ℝ) ≤ 1/2 := by norm_num
   rw [Real.mul_rpow ha hb]
-  have := Real.geom_mean_le_arith_mean2_weighted hw hw ha hb (by norm_num)
-  linarith
+  linarith [Real.geom_mean_le_arith_mean2_weighted hw hw ha hb (by norm_num)]
 
 snip end
 
