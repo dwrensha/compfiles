@@ -73,7 +73,6 @@ lemma card_opposite (s s' s'' : Finset ℕ) (predicate: ℕ → Prop) [Decidable
   have := @Finset.filter_card_add_filter_neg_card_eq_card ℕ s predicate
   apply this
 
-
 lemma elements_close_by (n : ℕ) (s : Finset ℕ) (interval : s = Finset.Icc n (n + 5)) (x : ℕ) (y : ℕ) (x_in_s : x ∈ s) (y_in_s : y ∈ s) (x_le_y : x ≤ y): ∃ k, k ≤ 5 ∧ x + k = y := by
   rw [interval] at x_in_s
   rw [interval] at y_in_s
@@ -109,11 +108,6 @@ lemma dvd_prod_of_dvd_elem (p : ℕ) (s : Finset ℕ) (x : ℕ) (H : p ∣ x) : 
 lemma prime_dvd_elem_of (p : ℕ) (pp : Nat.Prime p) (s : Finset ℕ) : p ∣ (∏ m ∈ s, m) → ∃ x ∈ s, p ∣ x := by
   exact Prime.exists_mem_finset_dvd pp.prime
 
-lemma no_other_7_divisors_nearby (x : ℕ) (y : ℕ) (not_equal : x ≠ y) (close_by: ∃ k, k ≤ 5 ∧ x + k = y) (x_div_7 : 7 ∣ x) : ¬ (7 ∣ y) := by
-  obtain ⟨k, ⟨bound, sum⟩⟩ := close_by
-  intro H
-  omega
-
 lemma no_other_p_divisors_nearby (x : ℕ) (y : ℕ) (p : ℕ) (p_gt_5 : p > 5) (x_lt_y : x < y) (close_by: ∃ k, k ≤ 5 ∧ x + k = y) (x_div_p : p ∣ x) : ¬ (p ∣ y) := by
   obtain ⟨k, ⟨bound, sum⟩⟩ := close_by
   intro H
@@ -138,10 +132,14 @@ lemma no_other_p_divisors_nearby (x : ℕ) (y : ℕ) (p : ℕ) (p_gt_5 : p > 5) 
     omega
   omega
 
--- There are exactly 3 odd numbers in s
--- p > 5 is not a divisor of any of those numbers
--- p = 5 is a divisor of at most one of those numbers
--- p = 3 is a divisor of exactly one of those numbers
+-- The next few functions apply the following logic from the Art of Problem Solving Solution 1
+
+-- There are exactly three odd numbers in s
+-- p > 5 is not a divisor of any of those three odd numbers
+-- p = 5 is a divisor of at most one of those three odd numbers
+-- p = 3 is a divisor of exactly one of those three odd numbers
+-- because these numbers are odd, p = 2 is not a divisor of any of those odd numbers
+-- p = 2, p = 3, p = 5 and p > 5 are all the prime numbers out there.
 -- by pigeonhole principle, one odd number must not have any prime divisors
 -- this number must be 1.
 -- The only two intervals that contain 1 are {1, 2, 3, 4, 5, 6} and {0, 1, 2, 3, 4, 5}
@@ -262,8 +260,6 @@ lemma exactly_three_even_numbers (n : ℕ) (s even_s : Finset ℕ) (interval : s
     rw [fifth_component]
     rw [sixth_component]
 
-
-
 lemma exactly_three_odd_numbers (n : ℕ) (s odd_s : Finset ℕ) (interval : s = Finset.Icc n (n + 5))
                                 (odd_s_eq: odd_s = s.filter (λ x => Odd x)): (odd_s).card = 3 := by
   let even_s := s.filter (λ x => ¬ Odd x)
@@ -279,12 +275,112 @@ lemma exactly_three_odd_numbers (n : ℕ) (s odd_s : Finset ℕ) (interval : s =
     omega
   omega
 
-
+lemma elems_in_interval_nearby (x y n : ℕ ) (s : Finset ℕ) (interval : s = Finset.Icc n (n + 5))
+  (x_in_s : x ∈ s) (y_in_s : y ∈ s) (x_lt_y : x < y) : ∃ k ≤ 5, x + k = y := by
+  simp_all
+  use y - x
+  constructor
+  · omega
+  · omega
 
 lemma p_gt_five_not_divides (n : ℕ) (s1 s2 : Finset ℕ) (partition : s1 ∪ s2 = Finset.Icc n (n + 5)) (no_dups: s1 ∩ s2 = ∅)
                             (equal_products : ∏ m ∈ s1, m = ∏ m ∈ s2, m) (x : ℕ) (x_in_interval : x ∈ s1 ∪ s2)
-                            (p : ℕ) (pp : Nat.Prime p) (p_gt_5 : p > 5) : ¬ (p ∣ x) :=
-  sorry
+                            (p : ℕ) (pp : Nat.Prime p) (p_gt_5 : p > 5) : ¬ (p ∣ x) := by
+
+  intro p_dvd_x
+
+
+  have x_in_s1_or_x_in_s2 : x ∈ s1 ∨ x ∈ s2 := Finset.mem_union.mp x_in_interval
+
+  cases x_in_s1_or_x_in_s2
+  case inl x_in_s1 =>
+    have p_dvd_prod_x : p ∣ ∏ m ∈ s1, m := dvd_prod_of_dvd_elem p s1 x p_dvd_x x_in_s1
+
+    have p_dvd_prod_y : p ∣ ∏ m ∈ s2, m := by
+      rw[equal_products] at p_dvd_prod_x
+      exact p_dvd_prod_x
+
+    have p_not_dvd_prod_y : ¬ p ∣ ∏ m ∈ s2, m := by
+      intro h
+      obtain ⟨y, ⟨y_in_s2, p_dvd_y⟩⟩ := prime_dvd_elem_of p pp s2 h
+
+      have s1_s2_disjoint : Disjoint s1 s2 := Finset.disjoint_iff_inter_eq_empty.mpr no_dups
+
+      have x_not_y : x ≠ y := (Finset.disjoint_iff_ne.mp s1_s2_disjoint) x x_in_s1 y y_in_s2
+
+      have x_lt_y_or_y_lt_x := Ne.lt_or_lt x_not_y
+
+      have y_in_interval : y ∈ s1 ∪ s2 := by
+        simp
+        right
+        exact y_in_s2
+
+      cases x_lt_y_or_y_lt_x
+      case inl x_lt_y =>
+        have := elems_in_interval_nearby x y n (s1 ∪ s2) partition x_in_interval y_in_interval x_lt_y
+        have nearby : ∃ k ≤ 5, x + k = y := this
+        have p_not_dvd_y := no_other_p_divisors_nearby x y p p_gt_5 x_lt_y nearby p_dvd_x
+        apply p_not_dvd_y
+        exact p_dvd_y
+      case inr y_lt_x =>
+        have := elems_in_interval_nearby y x n (s1 ∪ s2) partition y_in_interval x_in_interval y_lt_x
+        have nearby : ∃ k ≤ 5, y + k = x := this
+        have p_not_dvd_x := no_other_p_divisors_nearby y x p p_gt_5 y_lt_x nearby p_dvd_y
+        apply p_not_dvd_x
+        exact p_dvd_x
+
+    apply p_not_dvd_prod_y
+    exact p_dvd_prod_y
+
+  case inr x_in_s2 =>
+    have p_dvd_prod_x : p ∣ ∏ m ∈ s2, m := dvd_prod_of_dvd_elem p s2 x p_dvd_x x_in_s2
+
+    have p_dvd_prod_y : p ∣ ∏ m ∈ s1, m := by
+      rw[← equal_products] at p_dvd_prod_x
+      exact p_dvd_prod_x
+
+    have p_not_dvd_prod_y : ¬ p ∣ ∏ m ∈ s1, m := by
+      intro h
+      obtain ⟨y, ⟨y_in_s1, p_dvd_y⟩⟩ := prime_dvd_elem_of p pp s1 h
+
+      have : s2 ∩ s1 = ∅ := by
+        rw[← no_dups]
+        ext x
+        simp
+        simp_all only [Finset.mem_Icc, gt_iff_lt]
+        apply Iff.intro
+        · intro a
+          simp_all only [and_self]
+        · intro a
+          simp_all only [and_self]
+
+      have s2_s1_disjoint : Disjoint s2 s1 := Finset.disjoint_iff_inter_eq_empty.mpr this
+
+      have x_not_y : x ≠ y := (Finset.disjoint_iff_ne.mp s2_s1_disjoint) x x_in_s2 y y_in_s1
+
+      have x_lt_y_or_y_lt_x := Ne.lt_or_lt x_not_y
+
+      have y_in_interval : y ∈ s1 ∪ s2 := by
+        simp
+        left
+        exact y_in_s1
+
+      cases x_lt_y_or_y_lt_x
+      case inl x_lt_y =>
+        have := elems_in_interval_nearby x y n (s1 ∪ s2) partition x_in_interval y_in_interval x_lt_y
+        have nearby : ∃ k ≤ 5, x + k = y := this
+        have p_not_dvd_y := no_other_p_divisors_nearby x y p p_gt_5 x_lt_y nearby p_dvd_x
+        apply p_not_dvd_y
+        exact p_dvd_y
+      case inr y_lt_x =>
+        have := elems_in_interval_nearby y x n (s1 ∪ s2) partition y_in_interval x_in_interval y_lt_x
+        have nearby : ∃ k ≤ 5, y + k = x := this
+        have p_not_dvd_x := no_other_p_divisors_nearby y x p p_gt_5 y_lt_x nearby p_dvd_y
+        apply p_not_dvd_x
+        exact p_dvd_x
+
+    apply p_not_dvd_prod_y
+    exact p_dvd_prod_y
 
 lemma five_divides_odd_at_most_once (n : ℕ) (s odd_s : Finset ℕ) (partition : s = Finset.Icc n (n + 5))
                                     (odd_s_eq: odd_s = s.filter (λ x => Odd x)) : (odd_s.filter (λ x => 5 ∣ x)).card ≤ 1 := by
@@ -297,15 +393,13 @@ lemma three_divides_odd_exactly_once (n : ℕ) (s odd_s : Finset ℕ) (partition
 lemma no_prime_divisors (x : ℕ) (no_prime : ¬ ∃ (p : ℕ), Nat.Prime p ∧ p ∣ x) : x = 1 := by
   sorry
 
-lemma three_five_and_more_is_enough (x : ℕ) (two_does_not_divide : ¬ 2 ∣ x) (three_does_not_divide : ¬ 3 ∣ x) (five_does_not_divide : ¬ 5 ∣ x)
+lemma two_three_five_and_more_is_enough (x : ℕ) (two_does_not_divide : ¬ 2 ∣ x) (three_does_not_divide : ¬ 3 ∣ x) (five_does_not_divide : ¬ 5 ∣ x)
   (p_gt_5_not_dvd : ∀ (p : ℕ), Nat.Prime p → p > 5 → ¬p ∣ x):
   ¬ ∃ (p : ℕ), (Nat.Prime p ∧ p ∣ x) := by
   rintro ⟨p, ⟨pp, div⟩⟩
+  -- if p < 5, then p = 2 or p = 3 or p = 5
+  --
   sorry
-
-
--- theorem Finset.exists_ne_map_eq_of_card_lt_of_maps_to {α : Type u_1} {β : Type u_2} {s : Finset α} {t : Finset β} (hc : Finset.card t < Finset.card s) {f : α → β} (hf : ∀ a ∈ s, f a ∈ t) :
--- ∃ x ∈ s, ∃ y ∈ s, x ≠ y ∧ f x = f y
 
 lemma subsets_must_overlap_pigeonhole (s s1 s2 : Finset ℕ) (predicate_s1: ℕ → Prop) (predicate_s2 : ℕ → Prop)
                                       [DecidablePred predicate_s1] [DecidablePred predicate_s2]
@@ -434,7 +528,7 @@ theorem contains_one (n : ℕ) (s1 s2 odd_s : Finset ℕ) (partition : s1 ∪ s2
     · intro h
       obtain ⟨p, ⟨pp, p_div⟩⟩ := h
       have p_gt_5_not_dvd := p_gt_five_not_divides n s1 s2 partition no_dups equal_products x x_in_s1_s2
-      have to_apply := three_five_and_more_is_enough x sorry non_div_3 non_div_5 p_gt_5_not_dvd
+      have to_apply := two_three_five_and_more_is_enough x sorry non_div_3 non_div_5 p_gt_5_not_dvd
       apply to_apply
       use p
 
