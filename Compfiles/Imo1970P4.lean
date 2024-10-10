@@ -479,11 +479,169 @@ lemma contains_one (n : ℕ) (s1 s2 : Finset ℕ) (partition : s1 ∪ s2 = Finse
 
 lemma n_eq_1_of_contains_one
   (n : ℕ) (n_not_zero : n ≠ 0) (contains_one : 1 ∈ Finset.Icc n (n + 5)) : n = 1 := by
-  sorry
+  simp_all
+  omega
 
-lemma contradiction_of_finset_icc_1_6 (s1 s2 : Finset ℕ) (parition : s1 ∪ s2 = Finset.Icc 1 6)
+lemma diffs_of_disjoint (t s w : Finset ℕ) (t_subst_s : t ⊆ s) (disjoint: Disjoint t w) : t ⊆ s \ w := by
+  simp [Finset.subset_sdiff, *]
+
+lemma not_empty_subst_of_nonempty (t : Finset ℕ) (t_nonempty : t.Nonempty) : ¬ t ⊆ ∅ := by
+  rw [Finset.subset_empty]
+  exact t_nonempty.ne_empty
+
+lemma subset_of_union_right (t s : Finset ℕ) : t ⊆ s ∪ t := by
+  have := @Finset.subset_union_right ℕ _ s t
+  exact this
+
+lemma subset_of_union_right' (t s : Finset ℕ) : t ⊆ s ∪ t := Finset.subset_union_right
+
+lemma mem_of_subst (k : ℕ) (t s : Finset ℕ) (k_in_t : k ∈ t) (t_subst_s : t ⊆ s) : k ∈ s := by
+  apply t_subst_s
+  simp_all only
+
+lemma contradiction_of_finset_icc_1_6 (s1 s2 : Finset ℕ) (partition : s1 ∪ s2 = Finset.Icc 1 6)
   (disjoint : s1 ∩ s2 = ∅) (eq_prod: ∏ m ∈ s1, m = ∏ m ∈ s2, m) : False := by
-  sorry
+  have : 5 ∈ s1 ∪ s2 := by
+    rw[partition]
+    simp
+  simp at this
+  cases this
+  · case inl five_in_s1 =>
+    have s2_in_s1_s2: s2 ⊆ s1 ∪ s2 := subset_of_union_right' s2 s1
+    have explicit_s2 : s2 ⊆ {1, 2, 3, 4, 6} := by
+      have five_not_in_s2 : Disjoint s2 {5} := by
+        have s1_s2_disjoint : Disjoint s1 s2 := Finset.disjoint_iff_inter_eq_empty.mpr disjoint
+        simp_all only [Finset.disjoint_singleton_right]
+        intro five_in_s2
+        dsimp[Disjoint] at s1_s2_disjoint
+        have five_set_in_s1 : {5} ⊆ s1 := by
+          simp_all only [Finset.singleton_subset_iff]
+        have five_set_in_s2 : {5} ⊆ s2 := by
+          simp_all only [Finset.singleton_subset_iff]
+        have set_five_in_empty := s1_s2_disjoint five_set_in_s1 five_set_in_s2
+        have : Nonempty ({5} : Finset ℕ)  := by
+          simp_all only [Finset.singleton_subset_iff, Finset.mem_singleton, nonempty_subtype, exists_eq]
+        have : ({5} : Finset ℕ).Nonempty := by
+          simp_all
+        apply not_empty_subst_of_nonempty {5} this
+        exact set_five_in_empty
+      have s2_in_interval : s2 ⊆ Finset.Icc 1 6 := by
+        rw[partition] at s2_in_s1_s2
+        exact s2_in_s1_s2
+      have explicit_interval: Finset.Icc 1 6 = {1, 2, 3, 4, 5, 6} := by
+        rfl
+      rw [explicit_interval] at s2_in_interval
+      have := diffs_of_disjoint s2 (s1 ∪ s2) {5} s2_in_s1_s2 five_not_in_s2
+      rw [partition] at this
+      rw[explicit_interval] at this
+      simp_all only [Finset.disjoint_singleton_right]
+      exact this
+    have others : ∀ k ∈ s2, ¬ 5 ∣ k := by
+      intro k
+      intro k_in_s2
+      have k_in_explicit_s2 : k ∈ ({1, 2, 3, 4, 6} : Finset ℕ) := by
+        exact mem_of_subst k s2 {1, 2, 3, 4, 6} k_in_s2 explicit_s2
+      intro five_div_k
+      simp_all only [Finset.mem_insert, Finset.mem_singleton]
+      cases k_in_explicit_s2 with
+      | inl h =>
+        subst h
+        contradiction
+      | inr h_1 =>
+        cases h_1 with
+        | inl h =>
+          subst h
+          contradiction
+        | inr h_2 =>
+          cases h_2 with
+          | inl h =>
+            subst h
+            contradiction
+          | inr h_1 =>
+            cases h_1 with
+            | inl h =>
+              subst h
+              contradiction
+            | inr h_2 =>
+              subst h_2
+              contradiction
+    have five_div_prod_s1 := dvd_prod_of_dvd_elem 5 s1 5 (by simp) five_in_s1
+    have five_div_prod_s2 : 5 ∣ ∏ m ∈ s2, m := by
+      rw[eq_prod] at five_div_prod_s1
+      exact five_div_prod_s1
+    obtain ⟨l, ⟨l_in_s2, five_div_l⟩⟩ := prime_dvd_elem_of 5 (by decide) s2 five_div_prod_s2
+    exact others l l_in_s2 five_div_l
+  · case inr five_in_s2 =>
+    have s1_in_s2_s1: s1 ⊆ s2 ∪ s1 := subset_of_union_right s1 s2
+    have explicit_s1 : s1 ⊆ {1, 2, 3, 4, 6} := by
+      have five_not_in_s1 : Disjoint s1 {5} := by
+        have : s2 ∩ s1 = ∅ := by
+          rw[Finset.inter_comm] at disjoint
+          exact disjoint
+        have s2_s1_disjoint : Disjoint s2 s1 := Finset.disjoint_iff_inter_eq_empty.mpr this
+        simp_all only [Finset.disjoint_singleton_right]
+        intro five_in_s
+        dsimp[Disjoint] at s2_s1_disjoint
+        have five_set_in_s1 : {5} ⊆ s1 := by
+          simp_all only [Finset.singleton_subset_iff]
+        have five_set_in_s2 : {5} ⊆ s2 := by
+          simp_all only [Finset.singleton_subset_iff]
+        have set_five_in_empty := s2_s1_disjoint five_set_in_s2 five_set_in_s1
+        have : Nonempty ({5} : Finset ℕ) := by
+          simp_all only [Finset.singleton_subset_iff, Finset.mem_singleton, nonempty_subtype, exists_eq]
+        have : ({5} : Finset ℕ).Nonempty := by
+          simp_all
+        apply not_empty_subst_of_nonempty {5} this
+        exact set_five_in_empty
+      have s2_in_interval : s1 ⊆ Finset.Icc 1 6 := by
+        rw[Finset.union_comm] at partition
+        rw[partition] at s1_in_s2_s1
+        exact s1_in_s2_s1
+      have explicit_interval: Finset.Icc 1 6 = {1, 2, 3, 4, 5, 6} := by
+        rfl
+      rw [explicit_interval] at s2_in_interval
+      have := diffs_of_disjoint s1 (s2 ∪ s1) {5} s1_in_s2_s1 five_not_in_s1
+      rw[Finset.union_comm] at this
+      rw [partition] at this
+      rw[explicit_interval] at this
+      simp_all only [Finset.disjoint_singleton_right]
+      exact this
+    have others : ∀ k ∈ s1, ¬ 5 ∣ k := by
+      intro k
+      intro k_in_s1
+      have k_in_explicit_s1 : k ∈ ({1, 2, 3, 4, 6} : Finset ℕ) := by
+        exact mem_of_subst k s1 {1, 2, 3, 4, 6} k_in_s1 explicit_s1
+      intro five_div_k
+      simp_all only [Finset.mem_insert, Finset.mem_singleton]
+      cases k_in_explicit_s1 with
+      | inl h =>
+        subst h
+        contradiction
+      | inr h_1 =>
+        cases h_1 with
+        | inl h =>
+          subst h
+          contradiction
+        | inr h_2 =>
+          cases h_2 with
+          | inl h =>
+            subst h
+            contradiction
+          | inr h_1 =>
+            cases h_1 with
+            | inl h =>
+              subst h
+              contradiction
+            | inr h_2 =>
+              subst h_2
+              contradiction
+    have five_div_prod_s2 := dvd_prod_of_dvd_elem 5 s2 5 (by simp) five_in_s2
+    have five_div_prod_s1 : 5 ∣ ∏ m ∈ s1, m := by
+      rw[← eq_prod] at five_div_prod_s2
+      exact five_div_prod_s2
+    obtain ⟨l, ⟨l_in_s1, five_div_l⟩⟩ := prime_dvd_elem_of 5 (by decide) s1 five_div_prod_s1
+    exact others l l_in_s1 five_div_l
+
 
 lemma no_partitions (n : ℕ) (s1 s2 : Finset ℕ)
         (partition : s1 ∪ s2 = Finset.Icc n (n + 5))
