@@ -5,6 +5,7 @@ Authors: David Renshaw, Adam Kurkiewicz
 -/
 
 import Mathlib.Tactic
+import Mathlib.Data.Num.Lemmas
 
 import ProblemExtraction
 import Aesop
@@ -25,7 +26,6 @@ equals the product of the nubmers in the other set.
 -/
 
 namespace Imo1970P4
-
 
 lemma card_opposite (s s' s'' : Finset ℕ) (predicate: ℕ → Prop) [DecidablePred predicate] (filter : s' = (s.filter (λ x => predicate x)))
                     (opposite_filter: s'' = (s.filter (λ x => ¬ predicate x))) : s'.card + s''.card = s.card := by
@@ -321,24 +321,166 @@ lemma p_gt_five_not_divides (n : ℕ) (s1 s2 : Finset ℕ) (partition : s1 ∪ s
     apply p_not_dvd_prod_y
     exact p_dvd_prod_y
 
+lemma odd_props (n : ℕ) (odd_s : Finset ℕ) (s_odd_eq : odd_s = (Finset.Icc n (n + 5)).filter (λ x => Odd x)) :
+  ∃ (a b c : ℕ), {a, b, c} = odd_s ∧ b = a + 2 ∧ c = b + 2 := by
+  have := exactly_three_odd_numbers n (Finset.Icc n (n + 5)) odd_s rfl s_odd_eq
+
+  sorry
+
 lemma five_divides_odd_at_most_once (n : ℕ) (s odd_s : Finset ℕ) (partition : s = Finset.Icc n (n + 5))
                                     (odd_s_eq: odd_s = s.filter (λ x => Odd x)) : (odd_s.filter (λ x => 5 ∣ x)).card ≤ 1 := by
   sorry
 
+lemma unique_divisor (n : ZMod 3) (a b c : ℕ) (n_eq_a : n = a) (s : Finset ℕ) (s_eq : s = ({a, b, c} : Finset ℕ)) (b_eq: b = a + 2) (c_eq : c = b + 2) : ∃! a', a' ∈ s ∧ 3 ∣ a' := by
+  fin_cases n
+  · use a
+    have three_div_a : 3 ∣ a := by
+      apply (ZMod.natCast_zmod_eq_zero_iff_dvd a 3).mp
+      simp_all
+    constructor
+    · simp
+      constructor
+      · aesop
+      · simp_all
+    · intro o
+      rintro ⟨o_in_s, three_div_o⟩
+      rw[s_eq] at o_in_s
+      simp_all
+      omega
+  · use b
+    have three_div_b : 3 ∣ b := by
+      simp_all
+      apply (ZMod.natCast_zmod_eq_zero_iff_dvd (a + 2) 3).mp
+      simp_all
+      rw[← n_eq_a]
+      reduce_mod_char
+    constructor
+    · simp_all
+    · intro o
+      rintro ⟨o_in_s, three_div_o⟩
+      rw[s_eq] at o_in_s
+      simp_all
+      omega
+  · use c
+    have three_div_c : 3 ∣ c := by
+      simp_all
+      apply (ZMod.natCast_zmod_eq_zero_iff_dvd (a + 1) 3).mp
+      simp_all
+      rw[← n_eq_a]
+      reduce_mod_char
+    constructor
+    · simp_all
+    · intro o
+      rintro ⟨o_in_s, three_div_o⟩
+      rw[s_eq] at o_in_s
+      simp_all
+      omega
+
+lemma card_1_of_exists_unique (s : Finset ℕ)
+  (predicate: ℕ → Prop)
+  [DecidablePred predicate]
+  (exists_unique : ∃! n ∈ s, predicate n) :
+  (Finset.filter (fun x ↦ predicate x) s).card = 1 := by
+  have := (@Finset.card_eq_one ℕ (Finset.filter (fun x ↦ predicate x) s)).mpr
+  apply this
+  obtain ⟨a', H⟩ := exists_unique
+  use a'
+  simp_all only [forall_exists_index, Finset.card_singleton, implies_true, and_imp]
+  obtain ⟨left, right⟩ := H
+  obtain ⟨left, right_1⟩ := left
+  ext a : 1
+  simp_all only [Finset.mem_filter, Finset.mem_singleton]
+  apply Iff.intro
+  · intro a_1
+    simp_all only
+  · intro a_1
+    subst a_1
+    simp_all only [and_self]
+
 lemma three_divides_odd_exactly_once (n : ℕ) (s odd_s : Finset ℕ) (partition : s = Finset.Icc n (n + 5))
                                      (odd_s_eq: odd_s = s.filter (λ x => Odd x)) : (odd_s.filter (λ x => 3 ∣ x)).card = 1 := by
-  sorry
+  rw[partition] at odd_s_eq
+  obtain ⟨a, b, c, ⟨explicit_finset, b_comp, c_comp⟩⟩ := odd_props n odd_s odd_s_eq
+  rw[← partition] at odd_s_eq
+  rw[← explicit_finset]
+  have : (∃! a' ∈ ({a, b, c} : Finset ℕ), 3 ∣ a') → (Finset.filter (fun x ↦ 3 ∣ x) {a, b, c}).card = 1 := by
+    apply card_1_of_exists_unique
+  apply this
+  have := unique_divisor a a b c rfl odd_s (by aesop) b_comp c_comp
+  rw[← explicit_finset] at this
+  exact this
 
-lemma no_prime_divisors (x : ℕ) (no_prime : ¬ ∃ (p : ℕ), Nat.Prime p ∧ p ∣ x) : x = 1 := by
-  sorry
+lemma empty_of_empty_subset (s : Finset ℕ) : s = {x_1 | x_1 ∈ (∅ : Finset ℕ) } → s = ∅ := by
+  simp
+
+lemma no_prime_divisors (x : ℕ) (x_not_zero : x ≠ 0) (no_prime : ¬ ∃ (p : ℕ), p.Prime ∧ p ∣ x) : x = 1 := by
+
+  have empty_prime_factors: x.primeFactors = ∅ → x = 1 := by
+    intro a
+    simp_all only [Nat.primeFactors_eq_empty, false_or]
+
+  have mem_primeFactors : x.primeFactors = {p | Nat.Prime p ∧ p ∣ x ∧ x ≠ 0} := by
+    ext x
+    simp [Nat.mem_primeFactors]
+
+  have lift_subtypes: x.primeFactors = {x_1 | x_1 ∈ (∅ : Finset ℕ) } → x.primeFactors = ∅ := by
+    intro H
+    exact empty_of_empty_subset x.primeFactors H
+
+  apply empty_prime_factors
+  apply lift_subtypes
+  rw[mem_primeFactors]
+
+  have no_prime_for_simp : ∀ p : ℕ, ¬ (Nat.Prime p ∧ p ∣ x ∧ x ≠ 0) := by
+    intro p
+    intro H
+    apply no_prime
+    use p
+    obtain ⟨a, b, _⟩ := H
+    constructor
+    · exact a
+    · exact b
+
+  have goal: { p | Nat.Prime p ∧ p ∣ x ∧ x ≠ 0 } = {x_1 | (x_1 : ℕ) ∈ ({} : Finset ℕ) } := by
+    simp_all only [Finset.not_mem_empty]
+
+  exact goal
+
+lemma enumerate_primes_le_5 (p : ℕ) (pp : p.Prime) (p_le_5 : p ≤ 5) : p ∈ ({2, 3, 5} : Finset ℕ) := by
+  by_contra H
+  simp at H
+  obtain ⟨a, b, c⟩ := H
+  have := Nat.Prime.five_le_of_ne_two_of_ne_three pp
+  omega
 
 lemma two_three_five_and_more_is_enough (x : ℕ) (two_does_not_divide : ¬ 2 ∣ x) (three_does_not_divide : ¬ 3 ∣ x) (five_does_not_divide : ¬ 5 ∣ x)
-  (p_gt_5_not_dvd : ∀ (p : ℕ), Nat.Prime p → p > 5 → ¬p ∣ x):
-  ¬ ∃ (p : ℕ), (Nat.Prime p ∧ p ∣ x) := by
+  (p_gt_5_not_dvd : ∀ (p : ℕ), p.Prime → p > 5 → ¬p ∣ x):
+  ¬ ∃ (p : ℕ), (p.Prime ∧ p ∣ x) := by
+  have p_le_5_not_dvd : ∀ (p : ℕ), p.Prime → p ≤ 5 → ¬ p ∣ x := by
+    intro p
+    intro pp
+    intro p_le_5
+    intro p_div_x
+
+    have p_subset : p ∈ ({2, 3, 5} : Finset ℕ) := enumerate_primes_le_5 p pp p_le_5
+
+    have : p = 2 ∨ p = 3 ∨ p = 5 := by
+      simp_all
+
+    cases this
+    case inl h =>
+      simp_all
+      omega
+    case inr h =>
+      cases h
+      case inl h =>
+        simp_all
+      case inr h =>
+        simp_all
   rintro ⟨p, ⟨pp, div⟩⟩
-  -- if p < 5, then p = 2 or p = 3 or p = 5
-  --
-  sorry
+  have p_gt_5_implies := p_gt_5_not_dvd p pp
+  have p_le_5_implies := p_le_5_not_dvd p pp
+  omega
 
 lemma subsets_must_overlap_pigeonhole (s s1 s2 : Finset ℕ) (predicate_s1: ℕ → Prop) (predicate_s2 : ℕ → Prop)
                                       [DecidablePred predicate_s1] [DecidablePred predicate_s2]
@@ -414,8 +556,8 @@ lemma subsets_must_overlap_pigeonhole (s s1 s2 : Finset ℕ) (predicate_s1: ℕ 
     exact s1_s2_subset
   omega
 
-lemma contains_one (n : ℕ) (s1 s2 : Finset ℕ) (partition : s1 ∪ s2 = Finset.Icc n (n + 5)) (no_dups: s1 ∩ s2 = ∅)
-                      (equal_products : ∏ m ∈ s1, m = ∏ m ∈ s2, m) : ∃ x ∈ (s1 ∪ s2), x = 1 := by
+lemma contains_one_or_zero (n : ℕ) (s1 s2 : Finset ℕ) (partition : s1 ∪ s2 = Finset.Icc n (n + 5)) (no_dups: s1 ∩ s2 = ∅)
+                      (equal_products : ∏ m ∈ s1, m = ∏ m ∈ s2, m) : ∃ x ∈ (s1 ∪ s2), x = 1 ∨ x = 0 := by
   let odd_s := (s1 ∪ s2).filter (λ x => Odd x)
   let odd_div_by_5 := odd_s.filter (λ x => 5 ∣ x)
   let odd_div_by_3 := odd_s.filter (λ x => 3 ∣ x)
@@ -447,7 +589,7 @@ lemma contains_one (n : ℕ) (s1 s2 : Finset ℕ) (partition : s1 ∪ s2 = Finse
   have size_calculation : 2 + b > 3 := by
     omega
 
-  have exists_x_non_div_by_3_5 : ∃ x ∈ s1 ∪ s2, ¬ 3 ∣ x ∧ ¬ 5 ∣ x := by
+  have exists_odd_x_non_div_by_3_5 : ∃ x ∈ s1 ∪ s2, ¬ 3 ∣ x ∧ ¬ 5 ∣ x ∧ ¬ 2 ∣ x := by
     obtain ⟨x, ⟨x_in_odd_s, non_div_3, non_div_5⟩⟩ := subsets_must_overlap_pigeonhole
       odd_s odd_non_div_by_3 odd_non_div_by_5 (λ x => ¬ 3 ∣ x) (λ x => ¬ 5 ∣ x)
       rfl rfl 2 b 3 size_calculation
@@ -457,17 +599,26 @@ lemma contains_one (n : ℕ) (s1 s2 : Finset ℕ) (partition : s1 ∪ s2 = Finse
     · simp_all only [Finset.mem_filter, odd_s]
     · constructor
       · exact non_div_3
+      constructor
       · exact non_div_5
+      · dsimp[odd_s] at x_in_odd_s
+        intro two_div_x
+        have : ¬ Odd x := by
+          intro odd_x
+          dsimp[Odd] at odd_x
+          omega
+        simp_all only [gt_iff_lt, Finset.mem_filter]
 
   have exists_x_no_prime_divisors : ∃ x ∈ (s1 ∪ s2), ¬ ∃ (p : ℕ), Nat.Prime p ∧ p ∣ x := by
-    obtain ⟨x, x_in_s1_s2, non_div_3, non_div_5⟩ := exists_x_non_div_by_3_5
+    obtain ⟨x, x_in_s1_s2, non_div_3, non_div_5, non_div_2⟩ := exists_odd_x_non_div_by_3_5
     use x
     constructor
     · exact x_in_s1_s2
     · intro h
       obtain ⟨p, ⟨pp, p_div⟩⟩ := h
       have p_gt_5_not_dvd := p_gt_five_not_divides n s1 s2 partition no_dups equal_products x x_in_s1_s2
-      have to_apply := two_three_five_and_more_is_enough x sorry non_div_3 non_div_5 p_gt_5_not_dvd
+
+      have to_apply := two_three_five_and_more_is_enough x non_div_2 non_div_3 non_div_5 p_gt_5_not_dvd
       apply to_apply
       use p
 
@@ -475,7 +626,14 @@ lemma contains_one (n : ℕ) (s1 s2 : Finset ℕ) (partition : s1 ∪ s2 = Finse
   use x
   constructor
   · exact x_in_s1_u_s2
-  · exact no_prime_divisors x no_prime
+  · have := Decidable.em (x = 0)
+    cases this
+    case inl h =>
+      right
+      exact h
+    case inr h =>
+      left
+      exact no_prime_divisors x h no_prime
 
 lemma n_eq_1_of_contains_one
   (n : ℕ) (n_not_zero : n ≠ 0) (contains_one : 1 ∈ Finset.Icc n (n + 5)) : n = 1 := by
@@ -493,8 +651,6 @@ lemma subset_of_union_right (t s : Finset ℕ) : t ⊆ s ∪ t := by
   have := @Finset.subset_union_right ℕ _ s t
   exact this
 
-lemma subset_of_union_right' (t s : Finset ℕ) : t ⊆ s ∪ t := Finset.subset_union_right
-
 lemma mem_of_subst (k : ℕ) (t s : Finset ℕ) (k_in_t : k ∈ t) (t_subst_s : t ⊆ s) : k ∈ s := by
   apply t_subst_s
   simp_all only
@@ -507,7 +663,7 @@ lemma contradiction_of_finset_icc_1_6 (s1 s2 : Finset ℕ) (partition : s1 ∪ s
   simp at this
   cases this
   · case inl five_in_s1 =>
-    have s2_in_s1_s2: s2 ⊆ s1 ∪ s2 := subset_of_union_right' s2 s1
+    have s2_in_s1_s2: s2 ⊆ s1 ∪ s2 := subset_of_union_right s2 s1
     have explicit_s2 : s2 ⊆ {1, 2, 3, 4, 6} := by
       have five_not_in_s2 : Disjoint s2 {5} := by
         have s1_s2_disjoint : Disjoint s1 s2 := Finset.disjoint_iff_inter_eq_empty.mpr disjoint
@@ -642,25 +798,31 @@ lemma contradiction_of_finset_icc_1_6 (s1 s2 : Finset ℕ) (partition : s1 ∪ s
     obtain ⟨l, ⟨l_in_s1, five_div_l⟩⟩ := prime_dvd_elem_of 5 (by decide) s1 five_div_prod_s1
     exact others l l_in_s1 five_div_l
 
-
 lemma no_partitions (n : ℕ) (s1 s2 : Finset ℕ)
         (partition : s1 ∪ s2 = Finset.Icc n (n + 5))
         (no_dups : s1 ∩ s2 = ∅)
         (eq_prod : ∏ m ∈ s1, m = ∏ m ∈ s2, m)
         (n_not_zero : n ≠ 0) : False := by
-  obtain ⟨x, ⟨x_in_partition, x_eq_1⟩⟩ := contains_one n s1 s2 partition no_dups eq_prod
+  obtain ⟨x, ⟨x_in_partition, x_eq_1⟩⟩ := contains_one_or_zero n s1 s2 partition no_dups eq_prod
   rw[partition] at x_in_partition
-  rw[x_eq_1] at x_in_partition
-  have n_eq_1 := n_eq_1_of_contains_one n n_not_zero x_in_partition
-  rw[n_eq_1] at partition
-  simp_all
-  exact contradiction_of_finset_icc_1_6 s1 s2 partition no_dups eq_prod
+  cases x_eq_1
+  case inl h =>
+    rw[h] at x_in_partition
+    have n_eq_1 := n_eq_1_of_contains_one n n_not_zero x_in_partition
+    rw[n_eq_1] at partition
+    simp_all
+    exact contradiction_of_finset_icc_1_6 s1 s2 partition no_dups eq_prod
+  case inr h =>
+    simp_all
 
 determine SolutionSet : Finset ℕ+ := {}
 
-lemma False_of_in_empty (x : ℕ+) (s : Finset ℕ+) (s_empty: s = ∅) (x_in_s : x ∈ s) : False := by
+lemma contradiction_of_in_empty (x : ℕ+) (s : Finset ℕ+) (s_empty: s = ∅) (x_in_s : x ∈ s) : False := by
   subst s_empty
   simp_all only [Finset.not_mem_empty]
+
+lemma n_plus_not_zero (n : ℕ+) : ∃(k : ℕ), n = k ∧ k ≠ 0 := by
+  simp_all
 
 problem imo1970_p4 (n : ℕ+):
   n ∈ SolutionSet ↔
@@ -673,18 +835,14 @@ problem imo1970_p4 (n : ℕ+):
     have no_solutions : SolutionSet = ∅ := by
       simp_all only [Finset.not_mem_empty]
     exfalso
-    exact False_of_in_empty n SolutionSet no_solutions n_in_solution_set
+    exact contradiction_of_in_empty n SolutionSet no_solutions n_in_solution_set
   · intro H
     obtain ⟨s1, s2, ⟨partition, no_dups, eq_prod⟩⟩ := H
 
-    have k : ℕ := sorry
-    have n_eq_k : n = k := sorry
-    have k_not_zero : k ≠ 0 := sorry
+    obtain ⟨k, ⟨n_eq_k, k_not_zero⟩⟩ := n_plus_not_zero n
     rw [n_eq_k] at partition
 
     exfalso
     exact no_partitions k s1 s2 partition no_dups eq_prod k_not_zero
-
-
 
 end Imo1970P4
