@@ -5,14 +5,7 @@ Authors: David Renshaw, Adam Kurkiewicz
 -/
 
 import Mathlib.Tactic
-import Mathlib.Data.Num.Lemmas
-
 import ProblemExtraction
-import Aesop
-
---import Mathlib.Algebra.BigOperators.Associated
-
---open BigOperators
 
 problem_file { tags := [.NumberTheory] }
 
@@ -26,6 +19,8 @@ equals the product of the nubmers in the other set.
 -/
 
 namespace Imo1970P4
+
+snip begin
 
 lemma card_opposite (s s' s'' : Finset ℕ) (predicate: ℕ → Prop) [DecidablePred predicate] (filter : s' = (s.filter (λ x => predicate x)))
                     (opposite_filter: s'' = (s.filter (λ x => ¬ predicate x))) : s'.card + s''.card = s.card := by
@@ -69,6 +64,9 @@ lemma no_other_p_divisors_nearby (x : ℕ) (y : ℕ) (p : ℕ) (p_gt_5 : p > 5) 
          _ ≥ 5 * 1 := by rel[a_lt_b_2]
   have : k > 5 := by
     omega
+  omega
+
+lemma no_other_5_divisors_nearby (x : ℕ) (y : ℕ) (x_lt_y : x < y) (close_by: ∃ k, k ≤ 4 ∧ x + k = y) (x_div_p : 5 ∣ x) : ¬ (5 ∣ y) := by
   omega
 
 -- The next few functions apply the following logic from the Art of Problem Solving Solution 1
@@ -216,7 +214,7 @@ lemma exactly_three_odd_numbers (n : ℕ) (s odd_s : Finset ℕ) (interval : s =
 
 lemma elems_in_interval_nearby (x y n : ℕ ) (s : Finset ℕ) (interval : s = Finset.Icc n (n + 5))
   (x_in_s : x ∈ s) (y_in_s : y ∈ s) (x_lt_y : x < y) : ∃ k ≤ 5, x + k = y := by
-  simp_all
+  simp_all only [Finset.mem_Icc]
   use y - x
   constructor
   · omega
@@ -323,39 +321,146 @@ lemma p_gt_five_not_divides (n : ℕ) (s1 s2 : Finset ℕ) (partition : s1 ∪ s
 
 lemma odd_props (n : ℕ) (odd_s : Finset ℕ) (s_odd_eq : odd_s = (Finset.Icc n (n + 5)).filter (λ x => Odd x)) :
   ∃ (a b c : ℕ), {a, b, c} = odd_s ∧ b = a + 2 ∧ c = b + 2 := by
-  have := exactly_three_odd_numbers n (Finset.Icc n (n + 5)) odd_s rfl s_odd_eq
+  cases Decidable.em (Odd n)
+  case inl h =>
+    have h2 := Odd.not_two_dvd_nat h
+    use n
+    use n + 2
+    use n + 4
+    simp_all
+    ext x
+    simp_all
+    apply Iff.intro
+    intro H
+    constructor
+    · omega
+    · cases H
+      case inl h3 =>
+        simp_all
+      case inr h4 =>
+        cases h4
+        case inl h5 =>
+          simp_all
+          dsimp[Odd]
+          dsimp[Odd] at h
+          obtain ⟨k, h6⟩ := h
+          use k + 1
+          rw[h6]
+          ring_nf
+        case inr h6 =>
+          simp_all
+          dsimp[Odd]
+          dsimp[Odd] at h
+          obtain ⟨k, h6⟩ := h
+          use k + 2
+          rw[h6]
+          ring_nf
+    intro H
+    obtain ⟨a, Hh⟩ := H
+    have h3 := Odd.not_two_dvd_nat Hh
+    by_contra Hhh
+    simp_all
+    omega
+  case inr h =>
+    use n + 1
+    use n + 3
+    use n + 5
+    simp_all
+    have := Even.two_dvd h
+    ext x
+    simp_all
+    apply Iff.intro
+    intro H
+    constructor
+    · omega
+    · cases H
+      case inl h3 =>
+        simp_all
+      case inr h4 =>
+        cases h4
+        case inl h5 =>
+          have : Odd 3 := by decide
+          have := Even.add_odd h this
+          rw[h5]
+          exact this
+        case inr h6 =>
+          have : Odd 5 := by decide
+          have := Even.add_odd h this
+          rw[h6]
+          exact this
+    intro H
+    obtain ⟨a, Hh⟩ := H
+    have h3 := Odd.not_two_dvd_nat Hh
+    by_contra Hhh
+    simp_all
+    omega
 
-  sorry
+lemma at_most_one (n : ℕ) (x y : ℕ)
+  (x_in_interval : x ∈ Finset.Icc n (n + 5)) (y_in_interval : y ∈ Finset.Icc n (n + 5))
+  (x_div_5 : 5 ∣ x )
+  (x_non_div_2 : ¬ 2 ∣ x)
+  (y_div_5 : 5 ∣ y )
+  (y_non_div_2 : ¬ 2 ∣ y) :
+  x = y := by
+  simp_all only [Finset.mem_Icc, Nat.two_dvd_ne_zero]
+  omega
+
+lemma card_of_equal (s : Finset ℕ) : (∀ x ∈ s, ∀ y ∈ s,  x = y) → s.card ≤ 1 := by
+  exact (@Finset.card_le_one ℕ s).mpr
 
 lemma five_divides_odd_at_most_once (n : ℕ) (s odd_s : Finset ℕ) (partition : s = Finset.Icc n (n + 5))
                                     (odd_s_eq: odd_s = s.filter (λ x => Odd x)) : (odd_s.filter (λ x => 5 ∣ x)).card ≤ 1 := by
-  sorry
+  have : (∀ x ∈ (odd_s.filter (λ x => 5 ∣ x)), ∀ y ∈ (odd_s.filter (λ y => 5 ∣ y)), x = y) → (odd_s.filter (λ x => 5 ∣ x)).card ≤ 1 := by
+    exact (card_of_equal) (odd_s.filter (λ x => 5 ∣ x))
+
+  apply this
+
+  rw[odd_s_eq]
+
+  intro x x_in
+  intro y y_in
+
+  simp at x_in
+  obtain ⟨⟨X1, X2⟩, X3⟩ := x_in
+
+  simp at y_in
+  obtain ⟨⟨Y1, Y2⟩, Y3⟩ := y_in
+
+  apply at_most_one n
+  rw[partition] at X1
+  exact X1
+  rw[partition] at Y1
+  exact Y1
+  exact X3
+  exact Odd.not_two_dvd_nat X2
+  exact Y3
+  exact Odd.not_two_dvd_nat Y2
 
 lemma unique_divisor (n : ZMod 3) (a b c : ℕ) (n_eq_a : n = a) (s : Finset ℕ) (s_eq : s = ({a, b, c} : Finset ℕ)) (b_eq: b = a + 2) (c_eq : c = b + 2) : ∃! a', a' ∈ s ∧ 3 ∣ a' := by
   fin_cases n
   · use a
     have three_div_a : 3 ∣ a := by
       apply (ZMod.natCast_zmod_eq_zero_iff_dvd a 3).mp
-      simp_all
+      simp_all only [Fin.zero_eta]
     constructor
     · simp
       constructor
       · aesop
-      · simp_all
+      · simp_all only [Fin.zero_eta]
     · intro o
       rintro ⟨o_in_s, three_div_o⟩
       rw[s_eq] at o_in_s
-      simp_all
+      simp_all only [Fin.zero_eta, Finset.mem_insert, Finset.mem_singleton]
       omega
   · use b
     have three_div_b : 3 ∣ b := by
-      simp_all
+      simp_all only [Fin.mk_one]
       apply (ZMod.natCast_zmod_eq_zero_iff_dvd (a + 2) 3).mp
-      simp_all
+      simp_all only [Nat.cast_add, Nat.cast_ofNat]
       rw[← n_eq_a]
       reduce_mod_char
     constructor
-    · simp_all
+    · simp_all only [Fin.mk_one, Finset.mem_insert, add_right_eq_self, OfNat.ofNat_ne_zero, Finset.mem_singleton, self_eq_add_right, or_false, or_true, and_self]
     · intro o
       rintro ⟨o_in_s, three_div_o⟩
       rw[s_eq] at o_in_s
@@ -363,17 +468,17 @@ lemma unique_divisor (n : ZMod 3) (a b c : ℕ) (n_eq_a : n = a) (s : Finset ℕ
       omega
   · use c
     have three_div_c : 3 ∣ c := by
-      simp_all
+      simp_all only [Nat.dvd_add_self_right]
       apply (ZMod.natCast_zmod_eq_zero_iff_dvd (a + 1) 3).mp
       simp_all
       rw[← n_eq_a]
       reduce_mod_char
     constructor
-    · simp_all
+    · simp_all only [Nat.dvd_add_self_right, Finset.mem_insert, add_right_eq_self, OfNat.ofNat_ne_zero, Finset.mem_singleton, or_true, and_self]
     · intro o
       rintro ⟨o_in_s, three_div_o⟩
       rw[s_eq] at o_in_s
-      simp_all
+      simp_all only [Nat.dvd_add_self_right, Finset.mem_insert, Finset.mem_singleton]
       omega
 
 lemma card_1_of_exists_unique (s : Finset ℕ)
@@ -465,18 +570,18 @@ lemma two_three_five_and_more_is_enough (x : ℕ) (two_does_not_divide : ¬ 2 �
     have p_subset : p ∈ ({2, 3, 5} : Finset ℕ) := enumerate_primes_le_5 p pp p_le_5
 
     have : p = 2 ∨ p = 3 ∨ p = 5 := by
-      simp_all
+      simp_all only [Nat.two_dvd_ne_zero, gt_iff_lt, Finset.mem_insert, Finset.mem_singleton]
 
     cases this
     case inl h =>
-      simp_all
+      simp_all only [Nat.two_dvd_ne_zero, gt_iff_lt, Finset.mem_insert, Finset.mem_singleton, true_or]
       omega
     case inr h =>
       cases h
       case inl h =>
-        simp_all
+        simp_all only [Nat.two_dvd_ne_zero, gt_iff_lt]
       case inr h =>
-        simp_all
+        simp_all only [Nat.two_dvd_ne_zero, gt_iff_lt, Finset.mem_insert, Finset.mem_singleton]
   rintro ⟨p, ⟨pp, div⟩⟩
   have p_gt_5_implies := p_gt_5_not_dvd p pp
   have p_le_5_implies := p_le_5_not_dvd p pp
@@ -637,7 +742,7 @@ lemma contains_one_or_zero (n : ℕ) (s1 s2 : Finset ℕ) (partition : s1 ∪ s2
 
 lemma n_eq_1_of_contains_one
   (n : ℕ) (n_not_zero : n ≠ 0) (contains_one : 1 ∈ Finset.Icc n (n + 5)) : n = 1 := by
-  simp_all
+  simp_all only [ne_eq, Finset.mem_Icc, le_add_iff_nonneg_left, zero_le, and_true]
   omega
 
 lemma diffs_of_disjoint (t s w : Finset ℕ) (t_subst_s : t ⊆ s) (disjoint: Disjoint t w) : t ⊆ s \ w := by
@@ -678,7 +783,7 @@ lemma contradiction_of_finset_icc_1_6 (s1 s2 : Finset ℕ) (partition : s1 ∪ s
         have : Nonempty ({5} : Finset ℕ)  := by
           simp_all only [Finset.singleton_subset_iff, Finset.mem_singleton, nonempty_subtype, exists_eq]
         have : ({5} : Finset ℕ).Nonempty := by
-          simp_all
+          simp_all only [Finset.singleton_subset_iff, Finset.mem_singleton, nonempty_subtype, exists_eq, Finset.singleton_nonempty]
         apply not_empty_subst_of_nonempty {5} this
         exact set_five_in_empty
       have s2_in_interval : s2 ⊆ Finset.Icc 1 6 := by
@@ -746,7 +851,7 @@ lemma contradiction_of_finset_icc_1_6 (s1 s2 : Finset ℕ) (partition : s1 ∪ s
         have : Nonempty ({5} : Finset ℕ) := by
           simp_all only [Finset.singleton_subset_iff, Finset.mem_singleton, nonempty_subtype, exists_eq]
         have : ({5} : Finset ℕ).Nonempty := by
-          simp_all
+          simp_all only [Finset.singleton_subset_iff, Finset.mem_singleton, nonempty_subtype, exists_eq, Finset.singleton_nonempty]
         apply not_empty_subst_of_nonempty {5} this
         exact set_five_in_empty
       have s2_in_interval : s1 ⊆ Finset.Icc 1 6 := by
@@ -810,19 +915,22 @@ lemma no_partitions (n : ℕ) (s1 s2 : Finset ℕ)
     rw[h] at x_in_partition
     have n_eq_1 := n_eq_1_of_contains_one n n_not_zero x_in_partition
     rw[n_eq_1] at partition
-    simp_all
+    simp_all only [ne_eq, one_ne_zero, not_false_eq_true, Finset.mem_Icc, le_refl, le_add_iff_nonneg_right,
+  zero_le, and_self]
     exact contradiction_of_finset_icc_1_6 s1 s2 partition no_dups eq_prod
   case inr h =>
-    simp_all
-
-determine SolutionSet : Finset ℕ+ := {}
+    simp_all only [ne_eq, Finset.mem_Icc, nonpos_iff_eq_zero, le_add_iff_nonneg_left, zero_le, and_true]
 
 lemma contradiction_of_in_empty (x : ℕ+) (s : Finset ℕ+) (s_empty: s = ∅) (x_in_s : x ∈ s) : False := by
   subst s_empty
   simp_all only [Finset.not_mem_empty]
 
 lemma n_plus_not_zero (n : ℕ+) : ∃(k : ℕ), n = k ∧ k ≠ 0 := by
-  simp_all
+  simp_all only [ne_eq, exists_eq_left', PNat.ne_zero, not_false_eq_true]
+
+snip end
+
+determine SolutionSet : Finset ℕ+ := {}
 
 problem imo1970_p4 (n : ℕ+):
   n ∈ SolutionSet ↔
