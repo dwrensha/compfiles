@@ -32,7 +32,7 @@ problem imo1972_p5 (f g : ℝ → ℝ) (hf1 : ∀ x, ∀ y, f (x + y) + f (x - y
   have h : ∀ x, ‖f x‖ ≤ k := le_ciSup hf2
   have hgy : 0 < ‖g y‖ := by linarith
   have k_pos : 0 < k := lt_of_lt_of_le (norm_pos_iff.mpr hx) (h x)
-  have : k / ‖g y‖ < k := (div_lt_iff hgy).mpr (lt_mul_of_one_lt_right k_pos H)
+  have : k / ‖g y‖ < k := (div_lt_iff₀ hgy).mpr (lt_mul_of_one_lt_right k_pos H)
   have : k ≤ k / ‖g y‖ := by
     suffices ∀ x, ‖f x‖ ≤ k / ‖g y‖ from ciSup_le this
     intro x

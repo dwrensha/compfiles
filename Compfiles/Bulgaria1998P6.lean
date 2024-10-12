@@ -68,7 +68,7 @@ problem bulgaria1998_p6
   -- Follows the informal solution in _Mathematical Olympiads 1998-1999_
   -- (edited by Titu Andreescu and Zuming Feng)
 
-  have h1 : 1 * (z^2) * (z^2) + (- (x^2 + y^2)) * z^2 + - (x^2 * y^2) = 0 := by
+  have h1 : 1 * (z^2 * z^2) + (- (x^2 + y^2)) * z^2 + -(x^2 * y^2) = 0 := by
     rw[h]; ring
   have : NeZero (2 : ℤ) := CharZero.NeZero.two
   have h2 := (quadratic_eq_zero_iff_discrim_eq_sq one_ne_zero (z^2)).mp h1

@@ -45,9 +45,9 @@ lemma le_of_all_pow_lt_succ {x y : ℝ} (hx : 1 < x) (hy : 1 < y)
   have hn : ∀ n : ℕ, (x - y) * (n : ℝ) ≤ x^n - y^n := fun n ↦ by
     have hterm : ∀ i : ℕ, i ∈ Finset.range n → 1 ≤ x^i * y^(n - 1 - i) := by
       intro i _
-      calc 1 ≤ x^i             := one_le_pow_of_one_le hx.le i
+      calc 1 ≤ x^i             := one_le_pow₀ hx.le
            _ = x^i * 1         := (mul_one _).symm
-           _ ≤ x^i * y^(n-1-i) := by gcongr; apply one_le_pow_of_one_le hy.le
+           _ ≤ x^i * y^(n-1-i) := by gcongr; apply one_le_pow₀ hy.le
     calc (x - y) * (n : ℝ)
         = (n : ℝ) * (x - y) := mul_comm _ _
       _ = (∑ _i in Finset.range n, (1 : ℝ)) * (x - y) :=
@@ -153,7 +153,7 @@ lemma fixed_point_of_pos_nat_pow {f : ℚ → ℝ} {n : ℕ} (hn : 0 < n)
     {a : ℚ} (ha1 : 1 < a) (hae : f a = a) :
     f (a^n) = a^n := by
   have hh0 : (a : ℝ) ^ n ≤ f (a ^ n) := by
-    exact_mod_cast H5 (a ^ n) (one_lt_pow ha1 hn.ne')
+    exact_mod_cast H5 (a ^ n) (one_lt_pow₀ ha1 hn.ne')
 
   have hh1 := calc f (a^n) ≤ (f a)^n := pow_f_le_f_pow hn ha1 H1 H4
                    _ = (a : ℝ)^n     := by rw [←hae]
@@ -231,7 +231,7 @@ problem imo2013_p5
     intro x hx
     have hxnm1 : ∀ n : ℕ, 0 < n → (x : ℝ)^n - 1 < (f x)^n := by
       intro n hn
-      calc (x : ℝ)^n - 1 < f (x^n) := by exact_mod_cast fx_gt_xm1 (one_le_pow_of_one_le hx.le n)
+      calc (x : ℝ)^n - 1 < f (x^n) := by exact_mod_cast fx_gt_xm1 (one_le_pow₀ hx.le)
                                            H1 H2 H4
                        _ ≤ (f x)^n := pow_f_le_f_pow hn hx H1 H4
     have hx' : 1 < (x : ℝ) := mod_cast hx

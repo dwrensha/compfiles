@@ -55,7 +55,7 @@ problem usa1987_p1 (m n : ℤ) :
               n * (- 3* m^2 + 3 * m * n - n^2) := by linear_combination h3
     replace h4 : (m  + m^2 * n + n^2) =
               (- 3 * m^2 + 3 * m * n - n^2) := (Int.mul_eq_mul_left_iff h2).mp h4
-    have h5 : 2 * n * n  + (m^2 - 3 * m) * n + (3 * m^2 + m) = 0 := by
+    have h5 : 2 * (n * n)  + (m^2 - 3 * m) * n + (3 * m^2 + m) = 0 := by
       linarith
     have h6 := (quadratic_eq_zero_iff_discrim_eq_sq two_ne_zero n).mp h5
     have h7 : discrim 2 (m ^ 2 - 3 * m) (3 * m ^ 2 + m) =
@@ -69,7 +69,7 @@ problem usa1987_p1 (m n : ℤ) :
     have h9 : m + 1 ≠ 0 := fun hm1 ↦ hm (Int.sub_eq_zero.mp hm1)
     replace h8 := Or.resolve_right h8 h9
     obtain ⟨k, hk⟩ := h8
-    have h11 : 1 * m * m + - 8 * m + - k * k = 0 := by linarith
+    have h11 : 1 * (m * m) + - 8 * m + - k * k = 0 := by linarith
     have h12 := (quadratic_eq_zero_iff_discrim_eq_sq one_ne_zero m).mp h11
     rw [discrim] at h12
     have h13 : 16 + (k * k) = (m -4) ^ 2 := by linarith only [h12]

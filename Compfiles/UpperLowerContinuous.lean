@@ -87,7 +87,7 @@ lemma real_induction
   have h9 : ∀ w ∈ W, z ≤ w := fun w h ↦ h.1
   have h10 : z ≤ w₀ := le_csInf hwne h9
 
-  have h13 := Real.is_glb_sInf W hwne hwbb
+  have h13 := Real.isGLB_sInf hwne hwbb
 
   have h11 : z ≠ w₀ := by
     by_contra H

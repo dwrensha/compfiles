@@ -143,7 +143,7 @@ problem bulgaria1998_p3
       hpos (1 + 3 * f 1) (lt_trans (x_seq_pos 0) (h1 0))
 
     have h2N : (0:ℝ) < 2^N := pow_pos two_pos N
-    exact (div_lt_iff h2N).mpr ((div_lt_iff' hp).mp hN)
+    exact (div_lt_iff₀ h2N).mpr ((div_lt_iff₀' hp).mp hN)
 
   obtain ⟨N, hN⟩ := he
   exact lt_irrefl _ (lt_trans (h3 N) hN)
