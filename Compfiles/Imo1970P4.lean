@@ -29,16 +29,6 @@ lemma card_opposite (s s' s'' : Finset ℕ) (predicate: ℕ → Prop) [Decidable
   have := @Finset.filter_card_add_filter_neg_card_eq_card ℕ s predicate
   apply this
 
-lemma dvd_prod_of_dvd_elem (p : ℕ) (s : Finset ℕ) (x : ℕ) (H : p ∣ x) : (x ∈ s) → p ∣ (∏ m ∈ s, m) := by
-  intro element
-  obtain ⟨a, ha⟩ := H
-  have dvd_prod_of_mem := Finset.dvd_prod_of_mem (λ n : ℕ => n) element
-  obtain ⟨b, hb⟩ := dvd_prod_of_mem
-  rw[ha] at hb
-  rw[hb]
-  use a * b
-  ring
-
 lemma prime_dvd_elem_of (p : ℕ) (pp : Nat.Prime p) (s : Finset ℕ) : p ∣ (∏ m ∈ s, m) → ∃ x ∈ s, p ∣ x := by
   exact Prime.exists_mem_finset_dvd pp.prime
 
@@ -81,136 +71,7 @@ lemma no_other_5_divisors_nearby (x : ℕ) (y : ℕ) (x_lt_y : x < y) (close_by:
 -- this number must be 1.
 -- The only two intervals that contain 1 are {1, 2, 3, 4, 5, 6} and {0, 1, 2, 3, 4, 5}
 
-lemma exactly_three_even_numbers (n : ℕ) (s even_s : Finset ℕ) (interval : s = Finset.Icc n (n + 5))
-                                (odd_s_eq: even_s = s.filter (λ x => Even x)): even_s.card = 3 := by
-  have explicit_finset : s = {n, n + 1, n + 2, n + 3, n + 4, n + 5} := by
-    ext a
-    rw[interval]
-    simp
-    omega
-  have explicit_sum : (∑ a ∈ {n, n + 1, n + 2, n + 3, n + 4, n + 5}, if Even a then 1 else 0) =
-    (if Even n then 1 else 0) +
-    (if Even (n + 1) then 1 else 0) +
-    (if Even (n + 2) then 1 else 0) +
-    (if Even (n + 3) then 1 else 0) +
-    (if Even (n + 4) then 1 else 0) +
-    (if Even (n + 5) then 1 else 0)
-    := by
-    repeat (rw [Finset.sum_insert (by simp)])
-    rw [Finset.sum_singleton]
-    ring
-  cases Nat.even_or_odd n
-  case inl h =>
-    have first_component : (if Even n then 1 else 0) = 1 := by
-      split_ifs
-      rfl
 
-    have second_component : (if Even (n + 1) then 1 else 0) = 0 := by
-      split_ifs with h_2
-      have h_3 := Even.add_one h
-      exact (Nat.not_even_iff_odd.mpr h_3) h_2
-      rfl
-
-    have third_component : (if Even (n + 2) then 1 else 0) = 1 := by
-      split_ifs with h_2
-      rfl
-      exact h_2 (Even.add h (show Even 2 by decide))
-
-    have fourth_component : (if Even (n + 3) then 1 else 0) = 0 := by
-      split_ifs with h_2
-      have h_3 := (Even.add_odd h (show Odd 3 by decide))
-      exact (Nat.not_even_iff_odd.mpr h_3) h_2
-      rfl
-
-    have fifth_component : (if Even (n + 4) then 1 else 0) = 1 := by
-      split_ifs with h_2
-      rfl
-      exact h_2 (Even.add h (show Even 4 by decide))
-
-    have sixth_component : (if Even (n + 5) then 1 else 0) = 0 := by
-      split_ifs with h_2
-      have h_3 := (Even.add_odd h (show Odd 5 by decide))
-      exact (Nat.not_even_iff_odd.mpr h_3) h_2
-      rfl
-
-    rw[odd_s_eq]
-    rw [s.card_filter (λ x => Even x)]
-    rw [explicit_finset]
-    rw [explicit_sum]
-    rw [first_component]
-    rw [second_component]
-    rw [third_component]
-    rw [fourth_component]
-    rw [fifth_component]
-    rw [sixth_component]
-
-  case inr h =>
-    have first_component : (if Even n then 1 else 0) = 0 := by
-      split_ifs with h_2
-      exact (Nat.not_even_iff_odd.mpr h) h_2
-      rfl
-
-    have second_component : (if Even (n + 1) then 1 else 0) = 1 := by
-      split_ifs with h_2
-      rfl
-      apply h_2
-      apply Odd.add_odd
-      exact h
-      simp
-
-    have third_component : (if Even (n + 2) then 1 else 0) = 0 := by
-      split_ifs with h_2
-      have := (Odd.add_even h (show Even 2  by decide))
-      exact (Nat.not_even_iff_odd.mpr this) h_2
-      rfl
-
-    have fourth_component : (if Even (n + 3) then 1 else 0) = 1 := by
-      split_ifs with h_2
-      rfl
-      apply h_2
-      apply Odd.add_odd
-      exact h
-      decide
-
-    have fifth_component : (if Even (n + 4) then 1 else 0) = 0 := by
-      split_ifs with h_2
-      have := (Odd.add_even h (show Even 4  by decide))
-      exact (Nat.not_even_iff_odd.mpr this) h_2
-      rfl
-
-    have sixth_component : (if Even (n + 5) then 1 else 0) = 1 := by
-      split_ifs with h_2
-      rfl
-      apply h_2
-      apply Odd.add_odd
-      exact h
-      decide
-
-    rw[odd_s_eq]
-    rw [s.card_filter (λ x => Even x)]
-    rw [explicit_finset]
-    rw [explicit_sum]
-    rw [first_component]
-    rw [second_component]
-    rw [third_component]
-    rw [fourth_component]
-    rw [fifth_component]
-    rw [sixth_component]
-
-lemma exactly_three_odd_numbers (n : ℕ) (s odd_s : Finset ℕ) (interval : s = Finset.Icc n (n + 5))
-                                (odd_s_eq: odd_s = s.filter (λ x => Odd x)): (odd_s).card = 3 := by
-  let even_s := s.filter (λ x => ¬ Odd x)
-  have even_s_eq : even_s = s.filter (λ x => Even x) := by
-    dsimp[even_s]
-    ext x
-    simp
-  have card_eq := card_opposite s odd_s even_s (λ x => Odd x) odd_s_eq rfl
-  have even_s_card := exactly_three_even_numbers n s even_s interval even_s_eq
-  have : s.card = 6 := by
-    rw[interval]
-    simp
-    omega
-  omega
 
 lemma elems_in_interval_nearby (x y n : ℕ ) (s : Finset ℕ) (interval : s = Finset.Icc n (n + 5))
   (x_in_s : x ∈ s) (y_in_s : y ∈ s) (x_lt_y : x < y) : ∃ k ≤ 5, x + k = y := by
@@ -231,7 +92,9 @@ lemma p_gt_five_not_divides (n : ℕ) (s1 s2 : Finset ℕ) (partition : s1 ∪ s
 
   cases x_in_s1_or_x_in_s2
   case inl x_in_s1 =>
-    have p_dvd_prod_x : p ∣ ∏ m ∈ s1, m := dvd_prod_of_dvd_elem p s1 x p_dvd_x x_in_s1
+    have p_dvd_prod_x : p ∣ ∏ m ∈ s1, m := by
+      have := Finset.dvd_prod_of_mem (λ n : ℕ => n) x_in_s1
+      exact Dvd.dvd.trans p_dvd_x this
 
     have p_dvd_prod_y : p ∣ ∏ m ∈ s2, m := by
       rw[equal_products] at p_dvd_prod_x
@@ -270,7 +133,9 @@ lemma p_gt_five_not_divides (n : ℕ) (s1 s2 : Finset ℕ) (partition : s1 ∪ s
     exact p_dvd_prod_y
 
   case inr x_in_s2 =>
-    have p_dvd_prod_x : p ∣ ∏ m ∈ s2, m := dvd_prod_of_dvd_elem p s2 x p_dvd_x x_in_s2
+    have := Finset.dvd_prod_of_mem (λ n : ℕ => n) x_in_s2
+    simp at this
+    have p_dvd_prod_x : p ∣ ∏ m ∈ s2, m := (Dvd.dvd.trans p_dvd_x this)
 
     have p_dvd_prod_y : p ∣ ∏ m ∈ s1, m := by
       rw[← equal_products] at p_dvd_prod_x
@@ -328,39 +193,39 @@ lemma odd_props (n : ℕ) (odd_s : Finset ℕ) (s_odd_eq : odd_s = (Finset.Icc n
     use n + 2
     use n + 4
     simp_all
-    ext x
-    simp_all
-    apply Iff.intro
-    intro H
-    constructor
-    · omega
-    · cases H
-      case inl h3 =>
-        simp_all
-      case inr h4 =>
-        cases h4
-        case inl h5 =>
-          simp_all
-          dsimp[Odd]
-          dsimp[Odd] at h
-          obtain ⟨k, h6⟩ := h
-          use k + 1
-          rw[h6]
-          ring_nf
-        case inr h6 =>
-          simp_all
-          dsimp[Odd]
-          dsimp[Odd] at h
-          obtain ⟨k, h6⟩ := h
-          use k + 2
-          rw[h6]
-          ring_nf
-    intro H
-    obtain ⟨a, Hh⟩ := H
-    have h3 := Odd.not_two_dvd_nat Hh
-    by_contra Hhh
-    simp_all
-    omega
+    · ext x
+      simp_all
+      apply Iff.intro
+      intro H
+      constructor
+      · omega
+      · cases H
+        case inl h3 =>
+          simp_all only
+        case inr h4 =>
+          cases h4
+          case inl h5 =>
+            simp_all
+            dsimp[Odd]
+            dsimp[Odd] at h
+            obtain ⟨k, h6⟩ := h
+            use k + 1
+            rw[h6]
+            ring_nf
+          case inr h6 =>
+            simp_all only
+            dsimp[Odd]
+            dsimp[Odd] at h
+            obtain ⟨k, h6⟩ := h
+            use k + 2
+            rw[h6]
+            ring_nf
+      intro H
+      obtain ⟨a, Hh⟩ := H
+      have h3 := Odd.not_two_dvd_nat Hh
+      by_contra Hhh
+      simp_all only [Nat.two_dvd_ne_zero, not_or]
+      omega
   case inr h =>
     use n + 1
     use n + 3
@@ -375,7 +240,7 @@ lemma odd_props (n : ℕ) (odd_s : Finset ℕ) (s_odd_eq : odd_s = (Finset.Icc n
     · omega
     · cases H
       case inl h3 =>
-        simp_all
+        simp_all only [Even.add_one]
       case inr h4 =>
         cases h4
         case inl h5 =>
@@ -392,8 +257,30 @@ lemma odd_props (n : ℕ) (odd_s : Finset ℕ) (s_odd_eq : odd_s = (Finset.Icc n
     obtain ⟨a, Hh⟩ := H
     have h3 := Odd.not_two_dvd_nat Hh
     by_contra Hhh
-    simp_all
+    simp_all only [Nat.two_dvd_ne_zero, not_or]
     omega
+
+lemma exactly_three_odd_numbers (n : ℕ) (odd_s : Finset ℕ)
+                                (odd_s_eq: odd_s = (Finset.Icc n (n + 5)).filter (λ x => Odd x)): (odd_s).card = 3 := by
+  -- ∃ (a b c : ℕ), {a, b, c} = odd_s ∧ odd_s.card = 3
+  obtain ⟨x, y, z, ⟨left, ⟨y_eq, z_eq⟩⟩⟩ := odd_props n odd_s odd_s_eq
+  have := (@Finset.card_eq_three ℕ odd_s).mpr
+  apply this
+  use x
+  use x + 2
+  use x + 2 + 2
+  constructor
+  · omega
+  · constructor
+    · omega
+    · constructor
+      · omega
+      · simp_all only
+
+
+
+
+
 
 lemma at_most_one (n : ℕ) (x y : ℕ)
   (x_in_interval : x ∈ Finset.Icc n (n + 5)) (y_in_interval : y ∈ Finset.Icc n (n + 5))
@@ -669,7 +556,12 @@ lemma contains_one_or_zero (n : ℕ) (s1 s2 : Finset ℕ) (partition : s1 ∪ s2
 
   let odd_non_div_by_5 := odd_s.filter (λ x => ¬ 5 ∣ x)
   let odd_non_div_by_3 := odd_s.filter (λ x => ¬ 3 ∣ x)
-  have three_odd_numbers := exactly_three_odd_numbers n (s1 ∪ s2) (odd_s) (partition) rfl
+
+  have : odd_s = Finset.filter (fun x ↦ Odd x) (Finset.Icc n (n + 5)) := by
+    dsimp[odd_s]
+    rw[partition]
+
+  have three_odd_numbers := exactly_three_odd_numbers n odd_s this
 
   have odd_div_by_3_card := three_divides_odd_exactly_once n (s1 ∪ s2) (odd_s) partition rfl
 
@@ -826,7 +718,9 @@ lemma contradiction_of_finset_icc_1_6 (s1 s2 : Finset ℕ) (partition : s1 ∪ s
             | inr h_2 =>
               subst h_2
               contradiction
-    have five_div_prod_s1 := dvd_prod_of_dvd_elem 5 s1 5 (by simp) five_in_s1
+
+    have five_div_prod_s1 := Finset.dvd_prod_of_mem (λ n : ℕ => n) five_in_s1
+
     have five_div_prod_s2 : 5 ∣ ∏ m ∈ s2, m := by
       rw[eq_prod] at five_div_prod_s1
       exact five_div_prod_s1
@@ -896,7 +790,7 @@ lemma contradiction_of_finset_icc_1_6 (s1 s2 : Finset ℕ) (partition : s1 ∪ s
             | inr h_2 =>
               subst h_2
               contradiction
-    have five_div_prod_s2 := dvd_prod_of_dvd_elem 5 s2 5 (by simp) five_in_s2
+    have five_div_prod_s2 := Finset.dvd_prod_of_mem (λ n : ℕ => n) five_in_s2
     have five_div_prod_s1 : 5 ∣ ∏ m ∈ s1, m := by
       rw[← eq_prod] at five_div_prod_s2
       exact five_div_prod_s2
