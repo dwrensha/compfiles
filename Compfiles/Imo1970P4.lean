@@ -52,8 +52,6 @@ lemma no_other_p_divisors_nearby (x : ℕ) (y : ℕ) (p : ℕ) (p_gt_5 : p > 5) 
   have : p * (b - a) > 5 := by
     calc p * (b - a) > 5 * (b - a) := by rel[p_gt_5]
          _ ≥ 5 * 1 := by rel[a_lt_b_2]
-  have : k > 5 := by
-    omega
   omega
 
 lemma no_other_5_divisors_nearby (x : ℕ) (y : ℕ) (x_lt_y : x < y) (close_by: ∃ k, k ≤ 4 ∧ x + k = y) (x_div_p : 5 ∣ x) : ¬ (5 ∣ y) := by
@@ -77,16 +75,13 @@ lemma elems_in_interval_nearby (x y n : ℕ ) (s : Finset ℕ) (interval : s = F
   (x_in_s : x ∈ s) (y_in_s : y ∈ s) (x_lt_y : x < y) : ∃ k ≤ 5, x + k = y := by
   simp_all only [Finset.mem_Icc]
   use y - x
-  constructor
-  · omega
-  · omega
+  omega
 
 lemma p_gt_five_not_divides (n : ℕ) (s1 s2 : Finset ℕ) (partition : s1 ∪ s2 = Finset.Icc n (n + 5)) (no_dups: s1 ∩ s2 = ∅)
                             (equal_products : ∏ m ∈ s1, m = ∏ m ∈ s2, m) (x : ℕ) (x_in_interval : x ∈ s1 ∪ s2)
                             (p : ℕ) (pp : Nat.Prime p) (p_gt_5 : p > 5) : ¬ (p ∣ x) := by
 
   intro p_dvd_x
-
 
   have x_in_s1_or_x_in_s2 : x ∈ s1 ∨ x ∈ s2 := Finset.mem_union.mp x_in_interval
 
@@ -134,7 +129,7 @@ lemma p_gt_five_not_divides (n : ℕ) (s1 s2 : Finset ℕ) (partition : s1 ∪ s
 
   case inr x_in_s2 =>
     have := Finset.dvd_prod_of_mem (λ n : ℕ => n) x_in_s2
-    simp at this
+    simp only at this
     have p_dvd_prod_x : p ∣ ∏ m ∈ s2, m := (Dvd.dvd.trans p_dvd_x this)
 
     have p_dvd_prod_y : p ∣ ∏ m ∈ s1, m := by
@@ -307,10 +302,10 @@ lemma five_divides_odd_at_most_once (n : ℕ) (s odd_s : Finset ℕ) (partition 
   intro x x_in
   intro y y_in
 
-  simp at x_in
+  simp only [Finset.mem_filter] at x_in
   obtain ⟨⟨X1, X2⟩, X3⟩ := x_in
 
-  simp at y_in
+  simp only [Finset.mem_filter] at y_in
   obtain ⟨⟨Y1, Y2⟩, Y3⟩ := y_in
 
   apply at_most_one n
@@ -413,7 +408,7 @@ lemma no_prime_divisors (x : ℕ) (x_not_zero : x ≠ 0) (no_prime : ¬ ∃ (p :
 
   have mem_primeFactors : x.primeFactors = {p | Nat.Prime p ∧ p ∣ x ∧ x ≠ 0} := by
     ext x
-    simp [Nat.mem_primeFactors]
+    simp only [Finset.mem_coe, Nat.mem_primeFactors, ne_eq, Set.mem_setOf_eq]
 
   have lift_subtypes: x.primeFactors = {x_1 | x_1 ∈ (∅ : Finset ℕ) } → x.primeFactors = ∅ := by
     intro H
@@ -440,7 +435,7 @@ lemma no_prime_divisors (x : ℕ) (x_not_zero : x ≠ 0) (no_prime : ¬ ∃ (p :
 
 lemma enumerate_primes_le_5 (p : ℕ) (pp : p.Prime) (p_le_5 : p ≤ 5) : p ∈ ({2, 3, 5} : Finset ℕ) := by
   by_contra H
-  simp at H
+  simp only [Finset.mem_insert, Finset.mem_singleton, not_or] at H
   obtain ⟨a, b, c⟩ := H
   have := Nat.Prime.five_le_of_ne_two_of_ne_three pp
   omega
@@ -499,7 +494,7 @@ lemma subsets_must_overlap_pigeonhole (s s1 s2 : Finset ℕ) (predicate_s1: ℕ 
     simp_all only [Finset.mem_filter, true_and]
   apply not_forall_not.mp
   intro h
-  simp at h
+  simp only [not_and] at h
   have step_1 : (∀ x ∈ s, predicate_s1 x → ¬predicate_s2 x) → (∀ x ∈ s, x ∈ s1 → ¬ x ∈ s2) := by
     intro left
     intro x x_in_s
@@ -512,12 +507,8 @@ lemma subsets_must_overlap_pigeonhole (s s1 s2 : Finset ℕ) (predicate_s1: ℕ 
     intro left
     dsimp[Disjoint]
     dsimp[Finset.instHasSubset]
-    simp
-    intro s3
-    intro rel1
-    intro rel2
-    intro a
-    intro a_in_s3
+    simp only [Finset.not_mem_empty, imp_false]
+    intro s3 rel1 rel2 a a_in_s3
     have a_in_s1 := rel1 a_in_s3
     have a_in_s2 := rel2 a_in_s3
     have a_in_s : a ∈ s := by
@@ -535,7 +526,7 @@ lemma subsets_must_overlap_pigeonhole (s s1 s2 : Finset ℕ) (predicate_s1: ℕ 
   rw[← card_s] at total_size_exceeds
   have s1_s2_subset : (s1 ∪ s2) ⊆ s := by
     dsimp[Finset.instHasSubset]
-    simp
+    simp only [Finset.mem_union]
     intro a
     intro s1_or_s2
     cases s1_or_s2
@@ -638,7 +629,7 @@ lemma n_eq_1_of_contains_one
   omega
 
 lemma diffs_of_disjoint (t s w : Finset ℕ) (t_subst_s : t ⊆ s) (disjoint: Disjoint t w) : t ⊆ s \ w := by
-  simp [Finset.subset_sdiff, *]
+  simp only [Finset.subset_sdiff, and_self, t_subst_s, disjoint]
 
 lemma not_empty_subst_of_nonempty (t : Finset ℕ) (t_nonempty : t.Nonempty) : ¬ t ⊆ ∅ := by
   rw [Finset.subset_empty]
@@ -656,8 +647,8 @@ lemma contradiction_of_finset_icc_1_6 (s1 s2 : Finset ℕ) (partition : s1 ∪ s
   (disjoint : s1 ∩ s2 = ∅) (eq_prod: ∏ m ∈ s1, m = ∏ m ∈ s2, m) : False := by
   have : 5 ∈ s1 ∪ s2 := by
     rw[partition]
-    simp
-  simp at this
+    simp only [Finset.mem_Icc, Nat.one_le_ofNat, Nat.reduceLeDiff, and_self]
+  simp only [Finset.mem_union] at this
   cases this
   · case inl five_in_s1 =>
     have s2_in_s1_s2: s2 ⊆ s1 ∪ s2 := subset_of_union_right s2 s1
@@ -696,28 +687,7 @@ lemma contradiction_of_finset_icc_1_6 (s1 s2 : Finset ℕ) (partition : s1 ∪ s
         exact mem_of_subst k s2 {1, 2, 3, 4, 6} k_in_s2 explicit_s2
       intro five_div_k
       simp_all only [Finset.mem_insert, Finset.mem_singleton]
-      cases k_in_explicit_s2 with
-      | inl h =>
-        subst h
-        contradiction
-      | inr h_1 =>
-        cases h_1 with
-        | inl h =>
-          subst h
-          contradiction
-        | inr h_2 =>
-          cases h_2 with
-          | inl h =>
-            subst h
-            contradiction
-          | inr h_1 =>
-            cases h_1 with
-            | inl h =>
-              subst h
-              contradiction
-            | inr h_2 =>
-              subst h_2
-              contradiction
+      obtain rfl | rfl | rfl | rfl | rfl | rfl := k_in_explicit_s2 <;> contradiction
 
     have five_div_prod_s1 := Finset.dvd_prod_of_mem (λ n : ℕ => n) five_in_s1
 
@@ -768,28 +738,8 @@ lemma contradiction_of_finset_icc_1_6 (s1 s2 : Finset ℕ) (partition : s1 ∪ s
         exact mem_of_subst k s1 {1, 2, 3, 4, 6} k_in_s1 explicit_s1
       intro five_div_k
       simp_all only [Finset.mem_insert, Finset.mem_singleton]
-      cases k_in_explicit_s1 with
-      | inl h =>
-        subst h
-        contradiction
-      | inr h_1 =>
-        cases h_1 with
-        | inl h =>
-          subst h
-          contradiction
-        | inr h_2 =>
-          cases h_2 with
-          | inl h =>
-            subst h
-            contradiction
-          | inr h_1 =>
-            cases h_1 with
-            | inl h =>
-              subst h
-              contradiction
-            | inr h_2 =>
-              subst h_2
-              contradiction
+      obtain rfl | rfl | rfl | rfl | rfl | rfl := k_in_explicit_s1 <;> contradiction
+
     have five_div_prod_s2 := Finset.dvd_prod_of_mem (λ n : ℕ => n) five_in_s2
     have five_div_prod_s1 : 5 ∣ ∏ m ∈ s1, m := by
       rw[← eq_prod] at five_div_prod_s2
