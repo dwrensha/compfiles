@@ -69,8 +69,6 @@ lemma no_other_5_divisors_nearby (x : ℕ) (y : ℕ) (x_lt_y : x < y) (close_by:
 -- this number must be 1.
 -- The only two intervals that contain 1 are {1, 2, 3, 4, 5, 6} and {0, 1, 2, 3, 4, 5}
 
-
-
 lemma elems_in_interval_nearby (x y n : ℕ ) (s : Finset ℕ) (interval : s = Finset.Icc n (n + 5))
   (x_in_s : x ∈ s) (y_in_s : y ∈ s) (x_lt_y : x < y) : ∃ k ≤ 5, x + k = y := by
   simp_all only [Finset.mem_Icc]
@@ -106,7 +104,7 @@ lemma p_gt_five_not_divides (n : ℕ) (s1 s2 : Finset ℕ) (partition : s1 ∪ s
       have x_lt_y_or_y_lt_x := Ne.lt_or_lt x_not_y
 
       have y_in_interval : y ∈ s1 ∪ s2 := by
-        simp
+        simp only [Finset.mem_union]
         right
         exact y_in_s2
 
@@ -143,7 +141,7 @@ lemma p_gt_five_not_divides (n : ℕ) (s1 s2 : Finset ℕ) (partition : s1 ∪ s
       have : s2 ∩ s1 = ∅ := by
         rw[← no_dups]
         ext x
-        simp
+        simp only [Finset.mem_inter]
         simp_all only [Finset.mem_Icc, gt_iff_lt]
         apply Iff.intro
         · intro a
@@ -158,7 +156,7 @@ lemma p_gt_five_not_divides (n : ℕ) (s1 s2 : Finset ℕ) (partition : s1 ∪ s
       have x_lt_y_or_y_lt_x := Ne.lt_or_lt x_not_y
 
       have y_in_interval : y ∈ s1 ∪ s2 := by
-        simp
+        simp only [Finset.mem_union]
         left
         exact y_in_s1
 
@@ -184,51 +182,47 @@ lemma odd_props (n : ℕ) (odd_s : Finset ℕ) (s_odd_eq : odd_s = (Finset.Icc n
   cases Decidable.em (Odd n)
   case inl h =>
     have h2 := Odd.not_two_dvd_nat h
-    use n
-    use n + 2
-    use n + 4
-    simp_all
-    · ext x
-      simp_all
-      apply Iff.intro
-      intro H
-      constructor
-      · omega
-      · cases H
-        case inl h3 =>
+    use n, n + 2, n + 4
+    simp_all only [Nat.two_dvd_ne_zero, and_self, and_true]
+    ext x
+    simp_all only [Finset.mem_insert, Finset.mem_singleton, Finset.mem_filter, Finset.mem_Icc]
+    apply Iff.intro
+    intro H
+    constructor
+    · omega
+    · cases H
+      case inl h3 =>
+        simp_all only
+      case inr h4 =>
+        cases h4
+        case inl h5 =>
           simp_all only
-        case inr h4 =>
-          cases h4
-          case inl h5 =>
-            simp_all
-            dsimp[Odd]
-            dsimp[Odd] at h
-            obtain ⟨k, h6⟩ := h
-            use k + 1
-            rw[h6]
-            ring_nf
-          case inr h6 =>
-            simp_all only
-            dsimp[Odd]
-            dsimp[Odd] at h
-            obtain ⟨k, h6⟩ := h
-            use k + 2
-            rw[h6]
-            ring_nf
-      intro H
-      obtain ⟨a, Hh⟩ := H
-      have h3 := Odd.not_two_dvd_nat Hh
-      by_contra Hhh
-      simp_all only [Nat.two_dvd_ne_zero, not_or]
-      omega
+          dsimp[Odd]
+          dsimp[Odd] at h
+          obtain ⟨k, h6⟩ := h
+          use k + 1
+          rw[h6]
+          ring_nf
+        case inr h6 =>
+          simp_all only
+          dsimp[Odd]
+          dsimp[Odd] at h
+          obtain ⟨k, h6⟩ := h
+          use k + 2
+          rw[h6]
+          ring_nf
+    intro H
+    obtain ⟨a, Hh⟩ := H
+    have h3 := Odd.not_two_dvd_nat Hh
+    by_contra Hhh
+    simp_all only [Nat.two_dvd_ne_zero, not_or]
+    omega
   case inr h =>
-    use n + 1
-    use n + 3
-    use n + 5
-    simp_all
+    use n + 1, n + 3, n + 5
+    simp_all only [Nat.not_odd_iff_even, and_self, and_true]
     have := Even.two_dvd h
     ext x
-    simp_all
+    simp_all only [Finset.mem_insert, Finset.mem_singleton, Finset.mem_filter, Finset.mem_Icc]
     apply Iff.intro
     intro H
     constructor
@@ -261,9 +255,7 @@ lemma exactly_three_odd_numbers (n : ℕ) (odd_s : Finset ℕ)
   obtain ⟨x, y, z, ⟨left, ⟨y_eq, z_eq⟩⟩⟩ := odd_props n odd_s odd_s_eq
   have := (@Finset.card_eq_three ℕ odd_s).mpr
   apply this
-  use x
-  use x + 2
-  use x + 2 + 2
+  use x, x + 2, x + 2 + 2
   constructor
   · omega
   · constructor
@@ -271,11 +263,6 @@ lemma exactly_three_odd_numbers (n : ℕ) (odd_s : Finset ℕ)
     · constructor
       · omega
       · simp_all only
-
-
-
-
-
 
 lemma at_most_one (n : ℕ) (x y : ℕ)
   (x_in_interval : x ∈ Finset.Icc n (n + 5)) (y_in_interval : y ∈ Finset.Icc n (n + 5))
@@ -309,14 +296,14 @@ lemma five_divides_odd_at_most_once (n : ℕ) (s odd_s : Finset ℕ) (partition 
   obtain ⟨⟨Y1, Y2⟩, Y3⟩ := y_in
 
   apply at_most_one n
-  rw[partition] at X1
-  exact X1
-  rw[partition] at Y1
-  exact Y1
-  exact X3
-  exact Odd.not_two_dvd_nat X2
-  exact Y3
-  exact Odd.not_two_dvd_nat Y2
+  · rw[partition] at X1
+    exact X1
+  · rw[partition] at Y1
+    exact Y1
+  · exact X3
+  · exact Odd.not_two_dvd_nat X2
+  · exact Y3
+  · exact Odd.not_two_dvd_nat Y2
 
 lemma unique_divisor (n : ZMod 3) (a b c : ℕ) (n_eq_a : n = a) (s : Finset ℕ) (s_eq : s = ({a, b, c} : Finset ℕ)) (b_eq: b = a + 2) (c_eq : c = b + 2) : ∃! a', a' ∈ s ∧ 3 ∣ a' := by
   fin_cases n
@@ -325,7 +312,7 @@ lemma unique_divisor (n : ZMod 3) (a b c : ℕ) (n_eq_a : n = a) (s : Finset ℕ
       apply (ZMod.natCast_zmod_eq_zero_iff_dvd a 3).mp
       simp_all only [Fin.zero_eta]
     constructor
-    · simp
+    · simp only
       constructor
       · aesop
       · simp_all only [Fin.zero_eta]
@@ -346,14 +333,15 @@ lemma unique_divisor (n : ZMod 3) (a b c : ℕ) (n_eq_a : n = a) (s : Finset ℕ
     · intro o
       rintro ⟨o_in_s, three_div_o⟩
       rw[s_eq] at o_in_s
-      simp_all
+      simp_all only [Fin.mk_one, Finset.mem_insert, Finset.mem_singleton]
       omega
   · use c
     have three_div_c : 3 ∣ c := by
       simp_all only [Nat.dvd_add_self_right]
       apply (ZMod.natCast_zmod_eq_zero_iff_dvd (a + 1) 3).mp
-      simp_all
+      simp_all only [Nat.cast_add, Nat.cast_one]
       rw[← n_eq_a]
+      simp only [Nat.reduceAdd, Fin.reduceFinMk, Fin.isValue]
       reduce_mod_char
     constructor
     · simp_all only [Nat.dvd_add_self_right, Finset.mem_insert, add_right_eq_self, OfNat.ofNat_ne_zero, Finset.mem_singleton, or_true, and_self]
@@ -398,7 +386,7 @@ lemma three_divides_odd_exactly_once (n : ℕ) (s odd_s : Finset ℕ) (partition
   exact this
 
 lemma empty_of_empty_subset (s : Finset ℕ) : s = {x_1 | x_1 ∈ (∅ : Finset ℕ) } → s = ∅ := by
-  simp
+  simp only [Finset.not_mem_empty, Set.setOf_false, Finset.coe_eq_empty, imp_self]
 
 lemma no_prime_divisors (x : ℕ) (x_not_zero : x ≠ 0) (no_prime : ¬ ∃ (p : ℕ), p.Prime ∧ p ∣ x) : x = 1 := by
 
@@ -424,9 +412,7 @@ lemma no_prime_divisors (x : ℕ) (x_not_zero : x ≠ 0) (no_prime : ¬ ∃ (p :
     apply no_prime
     use p
     obtain ⟨a, b, _⟩ := H
-    constructor
-    · exact a
-    · exact b
+    exact ⟨a, b⟩
 
   have goal: { p | Nat.Prime p ∧ p ∣ x ∧ x ≠ 0 } = {x_1 | (x_1 : ℕ) ∈ ({} : Finset ℕ) } := by
     simp_all only [Finset.not_mem_empty]
