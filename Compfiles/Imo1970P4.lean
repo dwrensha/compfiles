@@ -15,7 +15,7 @@ problem_file { tags := [.NumberTheory] }
 Determine the set of all positive integers n with the property that
 the set {n, n + 1, n + 2, n + 3, n + 4, n + 5} can be partitioned
 into two sets such that the product of the numbers in one set
-equals the product of the nubmers in the other set.
+equals the product of the numbers in the other set.
 -/
 
 namespace Imo1970P4
