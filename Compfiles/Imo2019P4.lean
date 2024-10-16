@@ -26,7 +26,7 @@ Determine all positive integers n,k that satisfy the equation
 
 namespace Imo2019P4
 
-open scoped Nat BigOperators
+open scoped Nat
 
 snip begin
 
@@ -42,17 +42,14 @@ individually.
 theorem upper_bound {k n : ℕ} (hk : k > 0)
     (h : (k ! : ℤ) = ∏ i ∈ Finset.range n, ((2:ℤ) ^ n - (2:ℤ) ^ i)) : n < 6 := by
   have h2 : ∑ i ∈ Finset.range n, i < k := by
-    suffices multiplicity 2 (k ! : ℤ) = ↑(∑ i ∈ Finset.range n, i : ℕ) by
-      rw [← PartENat.coe_lt_coe, ← this]; change multiplicity ((2 : ℕ) : ℤ) _ < _
-      simp_rw [multiplicity.Int.natCast_multiplicity,
-               Nat.multiplicity_two_factorial_lt hk.lt.ne.symm]
-    rw [h, multiplicity.Finset.prod Int.prime_two, Nat.cast_sum]
+    suffices emultiplicity 2 (k ! : ℤ) = ↑(∑ i ∈ Finset.range n, i : ℕ) by
+      rw [← Nat.cast_lt (α := ℕ∞), ← this]; change emultiplicity ((2 : ℕ) : ℤ) _ < _
+      simp_rw [Int.natCast_emultiplicity, Nat.emultiplicity_two_factorial_lt hk.lt.ne.symm]
+    rw [h, Finset.emultiplicity_prod Int.prime_two, Nat.cast_sum]
     apply Finset.sum_congr rfl; intro i hi
-    rw [multiplicity.multiplicity_sub_of_gt,
-        multiplicity.multiplicity_pow_self_of_prime Int.prime_two]
-    rwa [multiplicity.multiplicity_pow_self_of_prime Int.prime_two,
-         multiplicity.multiplicity_pow_self_of_prime Int.prime_two,
-      PartENat.coe_lt_coe, ← Finset.mem_range]
+    rw [emultiplicity_sub_of_gt, emultiplicity_pow_self_of_prime Int.prime_two]
+    rwa [emultiplicity_pow_self_of_prime Int.prime_two,
+      emultiplicity_pow_self_of_prime Int.prime_two, Nat.cast_lt, ← Finset.mem_range]
   rw [← not_le]; intro hn
   apply _root_.ne_of_gt _ h
   calc ∏ i ∈ Finset.range n, ((2:ℤ) ^ n - (2:ℤ) ^ i) ≤ ∏ __ ∈ Finset.range n, (2:ℤ) ^ n := ?_
@@ -61,12 +58,11 @@ theorem upper_bound {k n : ℕ} (hk : k > 0)
     · intro i hi
       simp only [Finset.mem_range] at hi
       have : (2:ℤ) ^ i ≤ (2:ℤ) ^ n := by gcongr; norm_num
-      omega
+      linarith
     · apply sub_le_self
       positivity
   norm_cast
-  calc ∏ __ ∈ Finset.range n, 2 ^ n = 2 ^ (n * n) := by
-         rw [Finset.prod_const, Finset.card_range, ← pow_mul]
+  calc ∏ __ ∈ Finset.range n, 2 ^ n = 2 ^ (n * n) := by rw [Finset.prod_const, Finset.card_range, ← pow_mul]
     _ < (∑ i ∈ Finset.range n, i)! := ?_
     _ ≤ k ! := by gcongr
   clear h h2
