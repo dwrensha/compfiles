@@ -142,12 +142,7 @@ lemma p_gt_five_not_divides (n : ℕ) (s1 s2 : Finset ℕ) (partition : s1 ∪ s
         rw[← no_dups]
         ext x
         simp only [Finset.mem_inter]
-        simp_all only [Finset.mem_Icc, gt_iff_lt]
-        apply Iff.intro
-        · intro a
-          simp_all only [and_self]
-        · intro a
-          simp_all only [and_self]
+        exact And.comm
 
       have s2_s1_disjoint : Disjoint s2 s1 := Finset.disjoint_iff_inter_eq_empty.mpr this
 
