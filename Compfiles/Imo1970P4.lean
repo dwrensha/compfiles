@@ -103,10 +103,7 @@ lemma p_gt_five_not_divides (n : ℕ) (s1 s2 : Finset ℕ) (partition : s1 ∪ s
 
       have x_lt_y_or_y_lt_x := Ne.lt_or_lt x_not_y
 
-      have y_in_interval : y ∈ s1 ∪ s2 := by
-        simp only [Finset.mem_union]
-        right
-        exact y_in_s2
+      have y_in_interval : y ∈ s1 ∪ s2 := Finset.mem_union_right s1 y_in_s2
 
       cases x_lt_y_or_y_lt_x
       case inl x_lt_y =>
@@ -139,10 +136,8 @@ lemma p_gt_five_not_divides (n : ℕ) (s1 s2 : Finset ℕ) (partition : s1 ∪ s
       obtain ⟨y, ⟨y_in_s1, p_dvd_y⟩⟩ := prime_dvd_elem_of p pp s1 h
 
       have : s2 ∩ s1 = ∅ := by
-        rw[← no_dups]
-        ext x
-        simp only [Finset.mem_inter]
-        exact And.comm
+        rw [← no_dups]
+        exact Finset.inter_comm s2 s1
 
       have s2_s1_disjoint : Disjoint s2 s1 := Finset.disjoint_iff_inter_eq_empty.mpr this
 
@@ -150,10 +145,7 @@ lemma p_gt_five_not_divides (n : ℕ) (s1 s2 : Finset ℕ) (partition : s1 ∪ s
 
       have x_lt_y_or_y_lt_x := Ne.lt_or_lt x_not_y
 
-      have y_in_interval : y ∈ s1 ∪ s2 := by
-        simp only [Finset.mem_union]
-        left
-        exact y_in_s1
+      have y_in_interval : y ∈ s1 ∪ s2 := Finset.mem_union_left s2 y_in_s1
 
       cases x_lt_y_or_y_lt_x
       case inl x_lt_y =>
@@ -492,9 +484,7 @@ lemma subsets_must_overlap_pigeonhole (s s1 s2 : Finset ℕ) (predicate_s1: ℕ 
     intro s3 rel1 rel2 a a_in_s3
     have a_in_s1 := rel1 a_in_s3
     have a_in_s2 := rel2 a_in_s3
-    have a_in_s : a ∈ s := by
-      subst card_s card_s1 s1_filter card_s2 s2_filter
-      simp_all only [Finset.filter_subset, Finset.mem_filter, true_and, implies_true, and_self]
+    have a_in_s : a ∈ s := s1_is_subset (rel1 a_in_s3)
     exact left a a_in_s a_in_s1 a_in_s2
   have s1_s2_disjoint : Disjoint s1 s2 := by
     apply step_2
