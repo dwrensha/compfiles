@@ -6,6 +6,7 @@ Authors: Oliver Nash
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
 import Mathlib.Algebra.Order.Field.Basic
 import Mathlib.Data.Fintype.Prod
+import Mathlib.Algebra.Order.Field.Rat
 import Mathlib.GroupTheory.GroupAction.Ring
 import Mathlib.Tactic.NoncommRing
 import Mathlib.Tactic.Ring
@@ -215,7 +216,7 @@ end
 theorem clear_denominators {a b k : ℕ} (ha : 0 < a) (hb : 0 < b) :
     (b - 1 : ℚ) / (2 * b) ≤ k / a ↔ ((b : ℕ) - 1) * a ≤ k * (2 * b) := by
   rw [div_le_div_iff]
-  -- porting note: proof used to finish with `<;> norm_cast <;> simp [ha, hb]`
+  -- Porting note: proof used to finish with `<;> norm_cast <;> simp [ha, hb]`
   · convert Nat.cast_le (α := ℚ)
     · aesop
     · norm_cast
