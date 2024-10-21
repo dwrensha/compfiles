@@ -131,8 +131,8 @@ theorem final_solution_pnat (f : ℕ+ → ℕ+) :
   obtain ⟨g, rfl⟩ : ∃ g : ℕ → ℕ, f = λ x ↦ (g x.natPred).succPNat :=
     ⟨λ x ↦ (f x.succPNat).natPred,
       funext (λ x ↦ by rw [PNat.succPNat_natPred, PNat.succPNat_natPred])⟩
-  simp_rw [pnat_to_nat_prop2, Function.funext_iff, pnat_to_nat_prop, Nat.natPred_succPNat,
-           Nat.succPNat_inj, ← Function.funext_iff, succ_pnat_add_succ_pnat, pnat_add_sub_cancel,
+  simp_rw [pnat_to_nat_prop2, funext_iff, pnat_to_nat_prop, Nat.natPred_succPNat,
+           Nat.succPNat_inj, ← funext_iff, succ_pnat_add_succ_pnat, pnat_add_sub_cancel,
            Nat.natPred_succPNat, PNat.lt_add_one_iff, Nat.succPNat_le_succPNat]
   exact final_solution_nat g
 

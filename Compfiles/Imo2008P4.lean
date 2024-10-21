@@ -88,7 +88,7 @@ problem imo2008_p4 (f : PosReal → PosReal) :
            ← one_pow 2, eq_comm, positive_pow_eq_pow two_pos] at h
 
     ---- Finishing
-    rw [Set.mem_setOf_eq, Function.funext_iff]
+    rw [Set.mem_setOf_eq, funext_iff]
     by_contra! h2
     rcases h2 with ⟨⟨a, h2⟩, bh3⟩
     have ⟨b, h3⟩ : ∃ b, b * f b ≠ 1 := by
