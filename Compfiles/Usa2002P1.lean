@@ -7,7 +7,6 @@ Authors: David Renshaw
 import Mathlib.Data.Fintype.Card
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Finset.Card
-import Mathlib.Data.Finite.Basic
 
 import Mathlib.Tactic
 
