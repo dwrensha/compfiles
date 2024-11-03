@@ -138,6 +138,14 @@ lemma lemma3 {m : ℕ} (hm : (m % 10) + 1 < 10) :
   --Nat.digits_eq_cons_digits_div
   sorry
 
+lemma lemma4 {m n : ℕ} (hm : m < 10^n) :
+    (Nat.digits 10 (10^n - 1 - m)).sum = 9 * n - (Nat.digits 10 m).sum := by
+  revert m
+  induction' n with n ih
+  · simp
+  intro m hm
+  sorry
+
 snip end
 
 determine solution : ℕ → ℕ := fun n ↦ 9 * 2 ^ n
@@ -330,7 +338,7 @@ problem usa1992_p1 (n : ℕ) :
 
   have h12 : (Nat.digits 10 (10 ^ 2 ^ (n + 1) - 1 - b n)).sum = 9 * 2^(n + 1) - 9 * 2^n := by
     change (Nat.digits 10 (b n)).sum = 9 * 2^n at ih
-    sorry
+    rw [lemma4 h5, ih]
 
   -- b_{n-1} is odd, so its last digit is not 0
   -- and hence the last digit of (10^N - 1) - b_{n-1} is not 9.
