@@ -165,6 +165,8 @@ problem usa1992_p1 (n : ℕ) :
       _ ≤ 10^(2^i) - 1 := Nat.sub_le_sub_right h4 _
 
   let b : ℕ → ℕ := fun m ↦ ∏ i ∈ Finset.range (m + 1), a i
+  change (Nat.digits 10 (b (n +1))).sum = solution (n + 1)
+
   -- So b_{n-1} < 10 to the power of (1 + 2 + 2^2 + ... + 2^{n-1}).
   have h2 : ∀ m, b m < 10^(∑ i ∈ Finset.range (m + 1), 2^i) := fun m ↦ by
     dsimp [b]
