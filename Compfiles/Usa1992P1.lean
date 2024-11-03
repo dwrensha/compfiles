@@ -133,6 +133,9 @@ lemma Finset.range_prod_odd
 
 lemma lemma3 {m : ℕ} (hm : (m % 10) + 1 < 10) :
     (Nat.digits 10 (m + 1)).sum = (Nat.digits 10 m).sum + 1 := by
+  have h1 : 10 ≠ 1 := by norm_num
+  have h2 : 1 < 10 := by norm_num
+  --Nat.digits_eq_cons_digits_div
   sorry
 
 snip end
@@ -326,6 +329,7 @@ problem usa1992_p1 (n : ℕ) :
   -- so its digit sum is 9·2^n - 9·2^{n-1}.
 
   have h12 : (Nat.digits 10 (10 ^ 2 ^ (n + 1) - 1 - b n)).sum = 9 * 2^(n + 1) - 9 * 2^n := by
+    change (Nat.digits 10 (b n)).sum = 9 * 2^n at ih
     sorry
 
   -- b_{n-1} is odd, so its last digit is not 0
