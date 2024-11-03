@@ -310,7 +310,7 @@ problem usa1992_p1 (n : ℕ) :
   -- and hence is 9·2^{n-1} - 1
   rw [ih, solution] at h11
 
-  -- Multiplying by 10N does not change the digit sum.
+  -- Multiplying by 10^N does not change the digit sum.
   rw [digits_sum_mul_pow, h11] at h8
   clear h11
 
