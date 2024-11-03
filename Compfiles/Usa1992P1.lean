@@ -131,6 +131,10 @@ lemma Finset.range_prod_odd
       rw [Finset.mem_range]
       exact lt_add_one n
 
+lemma lemma3 {m : ℕ} (hm : (m % 10) + 1 < 10) :
+    (Nat.digits 10 (m + 1)).sum = (Nat.digits 10 m).sum + 1 := by
+  sorry
+
 snip end
 
 determine solution : ℕ → ℕ := fun n ↦ 9 * 2 ^ n
@@ -321,15 +325,24 @@ problem usa1992_p1 (n : ℕ) :
 
   -- so its digit sum is 9·2^n - 9·2^{n-1}.
 
+  have h12 : (Nat.digits 10 (10 ^ 2 ^ (n + 1) - 1 - b n)).sum = 9 * 2^(n + 1) - 9 * 2^n := by
+    sorry
+
   -- b_{n-1} is odd, so its last digit is not 0
   -- and hence the last digit of (10^N - 1) - b_{n-1} is not 9.
 
   -- So the digit sum of 10^N - b_{n-1} is 9·2^n - 9·2^{n-1} + 1.
 
-  have h12 : (Nat.digits 10 (10 ^ 2 ^ (n + 1) - b n)).sum = 9 * 2^(n + 1) - 9 * 2^n + 1 := by
-    sorry
+  have h13 : (Nat.digits 10 (10 ^ 2 ^ (n + 1) - b n)).sum = 9 * 2^(n + 1) - 9 * 2^n + 1 := by
+    have h15 : ((10 ^ 2 ^ (n + 1) - 1 - b n) % 10) + 1 < 10 := by
+      sorry
+    apply_fun (· + 1) at h12
+    rw [←lemma3 h15] at h12
+    have h17 : 10 ^ 2 ^ (n + 1) - 1 - b n + 1 = 10 ^ 2 ^ (n + 1) - b n := by omega
+    rw [←h17]
+    exact h12
 
-  rw [h12] at h8
+  rw [h13] at h8
   rw [h8, solution]
 
   -- Hence b_n has digit sum (9·2^{n-1} - 1) + (9·2n - 9·2^{n-1} + 1) = 9·2^n.
