@@ -326,9 +326,15 @@ problem usa1992_p1 (n : ℕ) :
 
   -- So the digit sum of 10^N - b_{n-1} is 9·2^n - 9·2^{n-1} + 1.
 
-  -- Hence b_n has digit sum (9·2^{n-1} - 1) + (9·2n - 9·2^{n-1} + 1) = 9·2^n.
+  have h12 : (Nat.digits 10 (10 ^ 2 ^ (n + 1) - b n)).sum = 9 * 2^(n + 1) - 9 * 2^n + 1 := by
+    sorry
 
-  sorry
+  rw [h12] at h8
+  rw [h8, solution]
+
+  -- Hence b_n has digit sum (9·2^{n-1} - 1) + (9·2n - 9·2^{n-1} + 1) = 9·2^n.
+  have h14 : 1 ≤ 2 ^ n := Nat.one_le_two_pow
+  omega
 
 
 end Usa1992P1
