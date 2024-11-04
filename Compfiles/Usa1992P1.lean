@@ -138,6 +138,62 @@ lemma lemma3 {m : ℕ} (hm : (m % 10) + 1 < 10) :
   --Nat.digits_eq_cons_digits_div
   sorry
 
+theorem lemma6 {b : ℕ} {l1 l2 : List ℕ} (hg : List.Forall₂ (· ≥ ·) l1 l2) :
+    Nat.ofDigits b l1 ≥ Nat.ofDigits b l2 := by
+  induction l1 generalizing l2 with
+  | nil => simp_all [eq_comm, List.length_eq_zero, Nat.ofDigits]
+  | cons hd₁ tl₁ ih₁ =>
+    induction l2 generalizing tl₁ with
+    | nil => simp_all
+    | cons hd₂ tl₂ _ =>
+      simp only [Nat.ofDigits_cons]
+      have htl : List.Forall₂ (fun x1 x2 ↦ x1 ≥ x2) tl₁ tl₂ := by
+        simp_all only [ge_iff_le, List.forall₂_cons]
+      specialize ih₁ htl
+      have h1 : hd₁ ≥ hd₂ := by simp_all only [ge_iff_le, List.forall₂_cons, and_true]
+      gcongr
+
+/-- The subtraction of ofDigits of two lists is equal to ofDigits of digit-wise subtraction of them -/
+theorem ofDigits_sub_ofDigits_eq_ofDigits_zipWith_of_length_eq {b : ℕ} {l1 l2 : List ℕ}
+    (h : l1.length = l2.length) (hg : List.Forall₂ (· ≥ ·) l1 l2) :
+    Nat.ofDigits b l1 - Nat.ofDigits b l2 =
+    Nat.ofDigits b (l1.zipWith (· - ·) l2) := by
+  induction l1 generalizing l2 with
+  | nil => simp_all [eq_comm, List.length_eq_zero, Nat.ofDigits]
+  | cons hd₁ tl₁ ih₁ =>
+    induction l2 generalizing tl₁ with
+    | nil => simp_all
+    | cons hd₂ tl₂ ih₂ =>
+      simp_all only [List.length_cons, Nat.succ_eq_add_one, Nat.ofDigits_cons, add_left_inj,
+        eq_comm, List.zipWith_cons_cons, Nat.add_eq]
+      have htl : List.Forall₂ (fun x1 x2 ↦ x1 ≥ x2) tl₁ tl₂ := by
+        simp_all only [ge_iff_le, List.forall₂_cons]
+      specialize ih₁ h.symm htl
+      rw [← ih₁, Nat.mul_sub]
+      have h1 : hd₁ ≥ hd₂ := by simp_all only [ge_iff_le, List.forall₂_cons, and_true]
+      have h2 : b * Nat.ofDigits b tl₁ ≥ b * Nat.ofDigits b tl₂ := by
+        have : Nat.ofDigits b tl₁ ≥ Nat.ofDigits b tl₂ := lemma6 htl
+        gcongr
+      omega
+
+lemma lemma5 {m n : ℕ} (hm : m < 10^n) :
+    Nat.digits 10 (10^n - 1 - m) =
+    (Nat.digits 10 m ++ List.replicate (n - (Nat.digits 10 m).length) 0).map (fun d ↦ 9 - d) := by
+  let m_digits := Nat.digits 10 m
+  let padding := List.replicate (n - m_digits.length) 0
+  let m_digits_padded := m_digits ++ padding
+  let complement_digits := m_digits_padded.map (λ d ↦ 9 - d)
+  have h_length : m_digits_padded.length = n := by
+    rw [List.length_append, List.length_replicate]
+    have : m_digits.length ≤ n := sorry
+    omega
+
+  have h_sub : 10^n - 1 - m = Nat.ofDigits 10 complement_digits := by
+    sorry
+  rw [h_sub]
+  --rw [Nat.digits_ofDigits]
+  sorry
+
 lemma lemma4 {m n : ℕ} (hm : m < 10^n) :
     (Nat.digits 10 (10^n - 1 - m)).sum = 9 * n - (Nat.digits 10 m).sum := by
   revert m
