@@ -49,14 +49,14 @@ abbrev ExtractionExtension := SimplePersistentEnvExtension Entry (Array Entry)
 initialize problemExtractionExtension : ExtractionExtension ←
   registerSimplePersistentEnvExtension {
     name := `problem_extraction
-    addImportedFn := Array.concatMap id
+    addImportedFn := Array.flatMap id
     addEntryFn    := Array.push
   }
 
 initialize solutionExtractionExtension : ExtractionExtension ←
   registerSimplePersistentEnvExtension {
     name := `solution_extraction
-    addImportedFn := Array.concatMap id
+    addImportedFn := Array.flatMap id
     addEntryFn    := Array.push
   }
 
@@ -65,7 +65,7 @@ abbrev DetermineDeclsExtension := SimplePersistentEnvExtension Name (Array Name)
 initialize determineDeclsExtension : DetermineDeclsExtension ←
   registerSimplePersistentEnvExtension {
     name := `determine_decls
-    addImportedFn := Array.concatMap id
+    addImportedFn := Array.flatMap id
     addEntryFn    := Array.push
   }
 
@@ -118,7 +118,7 @@ abbrev ProblemMetadataExtension :=
 initialize problemMetadataExtension : ProblemMetadataExtension ←
   registerSimplePersistentEnvExtension {
     name := `problem_metadata
-    addImportedFn := Array.concatMap id
+    addImportedFn := Array.flatMap id
     addEntryFn    := Array.push
   }
 

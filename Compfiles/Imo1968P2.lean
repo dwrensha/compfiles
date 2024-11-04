@@ -23,7 +23,7 @@ namespace Imo1968P2
 snip begin
 
 lemma lemma0 {α β : Type} {f : ℕ → α → β} (l : List α) (h2 : l ≠ []) :
-    List.getLast (List.mapIdx f l) (List.mapIdx_eq_nil.not.mpr h2) =
+    List.getLast (List.mapIdx f l) (List.mapIdx_ne_nil_iff.mpr h2) =
     f (l.dropLast).length (List.getLast l h2) := by
   simp_rw [List.mapIdx_eq_enum_map]
   rw [List.getLast_eq_getElem, List.getElem_map, List.getElem_enum]
@@ -40,9 +40,9 @@ lemma prod_digits_le {x b : ℕ} (hb : 2 ≤ b) (xpos : 0 < x) :
   have h3 := Nat.ofDigits_digits b x
   rw [Nat.ofDigits_eq_sum_mapIdx] at h3
   have h4 : List.mapIdx (fun i a => a * b ^ i) (Nat.digits b x) ≠ [] :=
-    List.mapIdx_eq_nil.not.mpr h1
+    List.mapIdx_ne_nil_iff.mpr h1
 
-  rw [←List.dropLast_append_getLast (List.mapIdx_eq_nil.not.mpr h1),
+  rw [←List.dropLast_append_getLast (List.mapIdx_ne_nil_iff.mpr h1),
       List.sum_append, List.sum_singleton] at h3
   have h6 : List.getLast (List.mapIdx (fun i a => a * b ^ i) (Nat.digits b x)) h4 ≤ x :=
      by nth_rewrite 2 [←h3]; exact Nat.le_add_left _ _

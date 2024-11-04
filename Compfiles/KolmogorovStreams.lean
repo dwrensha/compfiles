@@ -98,13 +98,13 @@ lemma take_prefix
   · have ht := ha n
     rwa [Stream'.get_inits] at ht
 
-structure decent_word (a : Stream' α) (is_decent: List α → Prop) : Type :=
+structure decent_word (a : Stream' α) (is_decent: List α → Prop) : Type where
   (start : ℕ)
   (length : ℕ)
   (nonempty : 0 < length)
   (h : is_decent ((a.drop start).take length))
 
-structure decent_accumulator (a: Stream' α) (is_decent : List α → Prop) : Type :=
+structure decent_accumulator (a: Stream' α) (is_decent : List α → Prop) : Type where
   (start : ℕ)
   (prefix_decent : all_prefixes is_decent (a.drop start))
 
@@ -154,7 +154,7 @@ lemma check_decent_words
   intro j
   exact ((choose_decent_words is_decent a hinit hnot).get j).h
 
-structure indecent_word (a : Stream' α) (is_decent : List α → Prop) : Type :=
+structure indecent_word (a : Stream' α) (is_decent : List α → Prop) : Type where
   (start : ℕ)
   (length : ℕ)
   (nonempty : 0 < length)
