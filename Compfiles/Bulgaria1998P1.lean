@@ -50,8 +50,7 @@ lemma lemma1 {m n : ℕ} (hmn : m ≤ n) (hm : all_colorings_are_good m) :
     simp only [Subtype.mk_lt_mk] at hij1
     refine ⟨hij1, ?_⟩
     simp only [Nat.lt_one_iff, Set.mem_Icc, tsub_le_iff_right] at hij2
-    unfold_let c' at hc1
-    simp only at hc1
+    simp only [c'] at hc1
     refine ⟨hc1, ?_⟩
     have hij2' : 1 ≤ 2 * j - i ∧ 2 * j ≤ n + i :=
        ⟨hij2.1, le_add_of_le_add_right hij2.2 hmn⟩

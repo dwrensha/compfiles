@@ -167,7 +167,7 @@ lemma thue
   let D := Fin (r + 1) × Fin (r + 1)
   let f : D → ZMod n := fun ⟨x,y⟩ ↦ a * (x.val : ZMod n) + (y.val : ZMod n)
   have cardD : Fintype.card D = (r + 1)^2 := by
-    unfold_let D
+    unfold D
     rw [sq, Fintype.card_prod, Fintype.card_fin]
 
   have : NeZero n := NeZero.of_gt hn

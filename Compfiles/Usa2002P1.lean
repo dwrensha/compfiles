@@ -133,7 +133,7 @@ lemma usa2002_p1_generalized
           rw [h7'] at h8
           exact h8
         · obtain hss | hss := Classical.em (s ∈ s1 ∪ s2)
-          · unfold_let f
+          · unfold f
             simp only [Finset.mem_union] at hss
             simp only [Finset.mem_union, hss, dite_eq_ite, ite_true]
             cases' hss with hss hss
@@ -163,7 +163,7 @@ lemma usa2002_p1_generalized
         have h3 : Function.Bijective b := by
           constructor
           · rintro ⟨x, hx⟩ ⟨y,hy⟩ hxy
-            unfold_let b at hxy
+            unfold b at hxy
             simp at hxy
             obtain ⟨h3, _⟩ := (h2 x).mp hx
             obtain ⟨h4, _⟩ := (h2 y).mp hy
@@ -178,8 +178,7 @@ lemma usa2002_p1_generalized
           · rintro ⟨x, hx⟩
             use ⟨Finset.map (Function.Embedding.subtype _) x,
                  by simp [Finset.subtype_map_subtype, hx, f]⟩
-            unfold_let b
-            simp only [Subtype.mk.injEq]
+            simp only [b, Subtype.mk.injEq]
             exact Finset.subtype_map_subtype x
         rw [Fintype.card_of_bijective h3]
         exact hf2'
@@ -220,7 +219,7 @@ lemma usa2002_p1_generalized
           rw [h7'] at h8
           exact h8
         · obtain hss | hss := Classical.em (s ∈ s1 ∪ s2)
-          · unfold_let f
+          · unfold f
             simp only [Finset.mem_union] at hss
             simp only [Finset.mem_union, hss, dite_eq_ite, ite_true]
             cases' hss with hss hss

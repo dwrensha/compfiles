@@ -53,7 +53,7 @@ problem imo1999_p6 (f : ℝ → ℝ) :
 
     have h3 := hf x 0
     have h4 : c ≠ 0 := fun hc ↦ by
-      unfold_let c at hc
+      unfold c at hc
       rw [hc, sub_zero, mul_zero, add_zero] at h3
       linarith
 
@@ -70,7 +70,7 @@ problem imo1999_p6 (f : ℝ → ℝ) :
     specialize h5 x'
     refine ⟨f (x' - c), f x', Set.mem_range_self _, Set.mem_range_self _, ?_⟩
     rw [h5]
-    unfold_let x'
+    unfold x'
     field_simp
   -- Hence f(x) = f(a - b) = f(b) + ab + f(a) - 1.
   have h11 : ∀ x, f x = c - x^2 / 2 := fun x ↦ by

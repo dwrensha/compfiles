@@ -104,7 +104,7 @@ problem usa1985_p1 :
               ∑ i ∈ Finset.range 1985, (((i : ℤ) + 1) ^ 2 * k ^ 8) := by
       rw [Finset.sum_congr rfl]
       intro l _
-      unfold_let x
+      unfold x
       have h10 : ∀ a b : ℤ, (a * b^4)^2 = a^2 * b ^8 := by intro a b; ring
       exact h10 _ _
 
@@ -119,7 +119,7 @@ problem usa1985_p1 :
               ∑ i ∈ Finset.range 1985, (((i:ℤ) + 1) ^ 3 * k^12) := by
       rw [Finset.sum_congr rfl]
       intro l _
-      unfold_let x
+      unfold x
       have h10 : ∀ a b : ℤ, (a * b^4)^3 = a^3 * b^12 := by intro a b; ring
       exact h10 _ _
 
@@ -133,8 +133,7 @@ problem usa1985_p1 :
   · intro ii _ jj _ hij
     have hsm : StrictMono x := by
       intro a b hab
-      unfold_let x
-      dsimp
+      dsimp only [x]
       have h5 : (a:ℤ) + 1 < (b:ℤ) + 1 := by linarith
       have h6 : 0 < (∑ ii ∈ Finset.range 1985, ((ii:ℤ) + 1) ^ 2) ^ 4 := by
         exact pow_pos h3 4

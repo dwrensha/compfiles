@@ -88,7 +88,7 @@ problem imo1972_p1 (S : Finset ℕ)
     have h13 : C ⊆ B := Finset.inter_subset_right
     have h14 := Finset.sum_sdiff (f := id) h12
     have h15 := Finset.sum_sdiff (f := id) h13
-    unfold_let A' B'
+    unfold A' B'
     dsimp at h14 h15
     omega
 

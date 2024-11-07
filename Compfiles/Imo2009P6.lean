@@ -182,7 +182,7 @@ theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
           · rintro ⟨_, h41⟩
             use ⟨x.val, by omega⟩
             simp [f, embedFinLE]
-        unfold_let x
+        unfold x
         rw [←h40, Finset.sum_map]
         congr
       rw [←h14] at h1

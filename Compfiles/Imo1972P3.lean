@@ -41,7 +41,7 @@ problem imo1972_p3 (m n : ℕ) :
     zify
     use (4 * f m n - f (m + 1) n)
     rify
-    unfold_let f; dsimp only
+    dsimp only [f]
     rw [Nat.cast_div, Nat.cast_div]
     · rw [show 2 * Nat.succ n = Nat.succ (Nat.succ (2 * n)) by omega]
       rw [show m + Nat.succ n = Nat.succ (m + n) by omega]

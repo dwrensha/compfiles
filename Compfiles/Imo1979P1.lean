@@ -37,7 +37,7 @@ lemma lemma3 : ∑ i ∈ Finset.range 1319, (-(1:ℚ))^i / (i + 1) =
   have h4 : (Finset.range 659).map g =
         (Finset.range 1319).filter (fun x ↦ ¬Even x) := by
     ext a
-    unfold_let g
+    unfold g
     rw [Finset.mem_map, Function.Embedding.coeFn_mk,
         Finset.mem_filter, Finset.mem_range]
     constructor

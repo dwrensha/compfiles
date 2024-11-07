@@ -78,7 +78,7 @@ problem imo1965_p2 (x : Fin 3 → ℝ) (a : Fin 3 → Fin 3 → ℝ)
   -- wlog, |x 0| ≥ |x 1| and |x 0| ≥ |x 2|.
   wlog h1 : |x 1| ≤ |x 0| with H
   · let p : Fin 3 → Fin 3 := ![1, 0, 2]
-    have hp : p.Bijective := by unfold_let p; decide
+    have hp : p.Bijective := by decide
     have h2 := H (x ∘ p) (fun i j ↦ a (p i) (p j))
                  (lemma0 x a p hp heqs)
                  (lemma1 _ p hp hab)
@@ -93,7 +93,7 @@ problem imo1965_p2 (x : Fin 3 → ℝ) (a : Fin 3 → Fin 3 → ℝ)
   · have h2' : |x 0| ≤ |x 2| := le_of_not_le h2
     have h3 : |x 1| ≤ |x 2| := ge_trans h2' h1
     let p : Fin 3 → Fin 3 := ![2, 0, 1]
-    have hp : p.Bijective := by unfold_let p; decide
+    have hp : p.Bijective := by decide
     have h4 := H (x ∘ p) (fun i j ↦ a (p i) (p j))
                  (lemma0 x a p hp heqs)
                  (lemma1 _ p hp hab)

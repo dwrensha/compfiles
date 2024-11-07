@@ -48,8 +48,7 @@ problem usa1981_p5 (x : ℝ) (n : ℕ) :
   let a : ℕ → ℝ := fun k ↦ Int.fract (k * x)
 
   have h4 : ∀ k m, a (k + m) ≤ a k + a m := fun k m ↦ by
-    unfold_let a
-    dsimp
+    dsimp only [a]
     have h5 : ↑(k + m) * x = ↑ k * x + ↑m * x := by
       push_cast; exact add_mul (↑k) (↑m) x
     rw [h5]

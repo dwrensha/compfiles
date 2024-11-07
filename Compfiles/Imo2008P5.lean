@@ -101,8 +101,7 @@ def ψ (n k : ℕ) : { f // NSequence n k f } → { f // MSequence n k f } :=
         rw [Nat.card_eq_fintype_card, Fintype.card_eq_zero_iff, isEmpty_subtype]
         exact h6
       · intro i hi j
-        unfold_let f'
-        dsimp
+        dsimp only [f']
         split_ifs with h3
         · omega
         · intro h4
@@ -137,7 +136,7 @@ lemma claim (n k : ℕ) (hn : 0 < n) (hnk : n ≤ k) (he : Even (k - n))
        let hgg := by sorry
        ⟨⟨g1, hg1⟩, hgg⟩
   have Scard : Fintype.card S = ∏ i : Fin n, 2 ^ (c i - 1) := by
-    unfold_let S
+    unfold S
     rw [Fintype.card_pi]
     apply Fintype.prod_congr
     intro a

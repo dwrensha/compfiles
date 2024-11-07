@@ -90,7 +90,7 @@ lemma lemma_2
   let k := f m
   -- Since f^2(m)=m, f(k)=m.
   have h1 : f k = m := by
-    unfold_let k; dsimp at hm1 hm2; rw[hm1, hm2]
+    unfold k; dsimp at hm1 hm2; rw[hm1, hm2]
 
   -- So, f^2(k)=k.
   have h2 : f^[2] k = k := by dsimp; rw[h1]

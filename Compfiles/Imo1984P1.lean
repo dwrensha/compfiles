@@ -32,7 +32,7 @@ lemma geom_mean_le_arith_mean_3 {a b c : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b) (hc 
   · apply Real.rpow_nonneg abc_pos
   · let w := (1 : ℝ) / 3
     change (a * b * c) ^ w ≤ (a + b + c) / 3
-    trans w * a + w * b + w * c; rotate_left; unfold_let w; field_simp
+    trans w * a + w * b + w * c; rotate_left; unfold w; field_simp
     rw [Real.mul_rpow (by positivity) hc]
     rw [Real.mul_rpow ha hb]
     apply Real.geom_mean_le_arith_mean3_weighted; all_goals try norm_num; try positivity
