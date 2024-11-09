@@ -127,9 +127,9 @@ lemma lower_basis :
   · intro I1 hI1 I2 hI2 x hx;
     obtain ⟨a, b, hab⟩ := hI1
     obtain ⟨c, d, hcd⟩ := hI2
-    use Set.Ico (Sup.sup a c) (Inf.inf b d)
+    use Set.Ico (max a c) (min b d)
     constructor
-    · exact ⟨Sup.sup a c, Inf.inf b d, rfl ⟩
+    · exact ⟨max a c, min b d, rfl ⟩
     · constructor
       · aesop
       · intro y hy
@@ -149,9 +149,9 @@ lemma upper_basis :
   · intro I1 hI1 I2 hI2 x hx;
     obtain ⟨a, b, hab⟩ := hI1
     obtain ⟨c, d, hcd⟩ := hI2
-    use Set.Ioc (Sup.sup a c) (Inf.inf b d)
+    use Set.Ioc (max a c) (min b d)
     constructor
-    · exact ⟨Sup.sup a c, Inf.inf b d, rfl⟩
+    · exact ⟨max a c, min b d, rfl⟩
     · constructor
       · aesop
       · intro y hy
@@ -171,9 +171,9 @@ lemma open_basis :
  · intro I1 hI1 I2 hI2 x hx
    obtain ⟨a, b, hab⟩ := hI1
    obtain ⟨c, d, hcd⟩ := hI2
-   use Set.Ioo (Sup.sup a c) (Inf.inf b d)
+   use Set.Ioo (max a c) (min b d)
    constructor
-   · exact ⟨Sup.sup a c, Inf.inf b d, rfl⟩
+   · exact ⟨max a c, min b d, rfl⟩
    · constructor
      · aesop
      · intro y hy; aesop
