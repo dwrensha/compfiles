@@ -90,7 +90,7 @@ problem usa2001_p4
   replace h23 : dist B C < Real.sqrt (dist A C ^ 2 + dist B A ^ 2) :=
     (mul_lt_mul_left h18).mp h23
   replace h23 : dist B C ^2 < (Real.sqrt (dist A C ^ 2 + dist B A ^ 2))^2 :=
-    pow_lt_pow_left h23 dist_nonneg (by norm_num)
+    pow_lt_pow_left₀ h23 dist_nonneg (by norm_num)
   rw [Real.sq_sqrt (by positivity)] at h23
   have h30 := EuclideanGeometry.law_cos B A C
   simp only [←sq] at h30

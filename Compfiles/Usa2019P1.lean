@@ -58,7 +58,7 @@ lemma f_injective
   congr
   apply_fun (fun x ↦ x.val) at h4
   rw [PNat.pow_coe, PNat.pow_coe, PNat.mk_coe, PNat.mk_coe] at h4
-  rw [pow_left_inj (le_of_lt hp) (le_of_lt hq) two_ne_zero] at h4
+  rw [pow_left_inj₀ (le_of_lt hp) (le_of_lt hq) two_ne_zero] at h4
   exact h4
 
 lemma lemma_1

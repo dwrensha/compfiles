@@ -51,7 +51,7 @@ problem imo1963_p1 : ∀ (p x : ℝ), (x ^ 2 - p) ≥ 0 → (x ^ 2 - 1) ≥ 0 �
       linarith
   intro xge0
   trans (Real.sqrt (x ^ 2 - p) + 2 * Real.sqrt (x ^ 2 - 1)) ^ 2 = x ^ 2
-  · refine Iff.symm (sq_eq_sq ?ha ?hb) <;> positivity
+  · refine Iff.symm (sq_eq_sq₀ ?ha ?hb) <;> positivity
   rw [add_sq]
   rw [Real.sq_sqrt h1]
   rw [mul_pow]
@@ -73,7 +73,7 @@ problem imo1963_p1 : ∀ (p x : ℝ), (x ^ 2 - p) ≥ 0 → (x ^ 2 - 1) ≥ 0 �
   intro xp
   trans (Real.sqrt (x ^ 2 - p) * Real.sqrt (x ^ 2 - (1 : ℝ))) ^ 2 =
         ((p + (4 : ℝ) - (4 : ℝ) * x ^ 2) / (4 : ℝ)) ^ 2
-  · symm; apply sq_eq_sq <;> positivity
+  · symm; apply sq_eq_sq₀ <;> positivity
   rw [mul_pow, Real.sq_sqrt h1, Real.sq_sqrt h2]
   rw [div_pow]
   norm_num
@@ -100,7 +100,7 @@ problem imo1963_p1 : ∀ (p x : ℝ), (x ^ 2 - p) ≥ 0 → (x ^ 2 - 1) ≥ 0 �
     (((4 : ℝ) - p) / ((2 : ℝ) * Real.sqrt ((4 : ℝ) - (2 : ℝ) * p))) ^ 2 := by
     rw [div_pow, mul_pow, Real.sq_sqrt]; norm_num; exact le_of_lt tmp
   rw [tmp2,
-     sq_eq_sq xge0 (le_of_lt
+     sq_eq_sq₀ xge0 (le_of_lt
        (by apply div_pos
            · linarith
            simp only [gt_iff_lt, Nat.ofNat_pos, mul_pos_iff_of_pos_left, Real.sqrt_pos, sub_pos]

@@ -149,7 +149,7 @@ lemma claim (n k : ℕ) (hn : 0 < n) (hnk : n ≤ k) (he : Even (k - n))
     rw [Scard]
     have h1 : ∏ i : Fin n, 2 ^ (c i - 1) = 2 ^ (∑ i : Fin n, (c i - 1)) :=
       Finset.prod_pow_eq_pow_sum _ _ _
-    rw [h1, pow_right_inj zero_lt_two (by norm_num)]
+    rw [h1, pow_right_inj₀ zero_lt_two (by norm_num)]
     suffices ∑ i : Fin n, (c i - 1) + n = k - n + n by omega
     rw [Nat.sub_add_cancel hnk]
     have h2 : n = ∑ i : Fin n, 1 := by simp

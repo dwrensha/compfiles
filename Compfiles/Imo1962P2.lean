@@ -65,12 +65,12 @@ problem imo1962_p2 (x : ℝ) :
           rw [sub_nonneg]
           apply le_of_lt
           exact Real.sqrt_lt_sqrt hx1' h3
-        exact lt_of_pow_lt_pow_left 2 h31 H
+        exact lt_of_pow_lt_pow_left₀ 2 h31 H
       rw [lemma2 hx4' hx1', lt_sub_comm]
       suffices H : Real.sqrt ((3 - x) * (x + 1)) < 15 / 8 by
         linarith only [H]
       suffices H : (Real.sqrt ((3 - x) * (x + 1)))^2 < (15/8)^2 from
-        lt_of_pow_lt_pow_left 2 (by norm_num) H
+        lt_of_pow_lt_pow_left₀ 2 (by norm_num) H
       rw [Real.sq_sqrt (by positivity)]
       suffices H : 0 < (15 / 8) ^ 2 - (3 - x) * (x + 1) from sub_pos.mp H
       rw [lemma1 x]
@@ -78,14 +78,14 @@ problem imo1962_p2 (x : ℝ) :
   rintro ⟨hx1, hx2, hx3⟩
   refine ⟨hx2, ?_⟩
   have h0 : (0:ℝ) ≤ (1:ℝ) / 2 := by norm_num
-  have h1 := pow_lt_pow_left hx3 h0 two_ne_zero
+  have h1 := pow_lt_pow_left₀ hx3 h0 two_ne_zero
   have hx4 : 0 ≤ 3 - x := sub_nonneg.mpr hx1
   have hx5 : 0 ≤ x + 1 := neg_le_iff_add_nonneg.mp hx2
 
   rw [lemma2 hx4 hx5] at h1
   have h3 : Real.sqrt ((3 - x) * (x + 1)) < 15 / 8 := by linarith only [h1]
   have h4 : 0 ≤ Real.sqrt ((3 - x) * (x + 1)) := Real.sqrt_nonneg _
-  have h5 := pow_lt_pow_left h3 h4 two_ne_zero
+  have h5 := pow_lt_pow_left₀ h3 h4 two_ne_zero
   rw [Real.sq_sqrt (by positivity)] at h5
   replace h5 : 0 < (15 / 8) ^ 2 - (3 - x) * (x + 1) := sub_pos.mpr h5
   rw [lemma1 x] at h5

@@ -93,7 +93,7 @@ problem bulgaria1998_p6
         have hc3 : (a^2)^2 = (b^2)^2 := by linear_combination hc
         have hap : 0 ≤ a^2 := by positivity
         have hbp : 0 ≤ b^2 := by positivity
-        exact (pow_left_inj hap hbp two_ne_zero).mp hc3
+        exact (pow_left_inj₀ hap hbp two_ne_zero).mp hc3
       rw [hab] at h4
       obtain ⟨r, hr⟩ := h4
       rw [←two_mul, ←sq] at hr

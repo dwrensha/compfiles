@@ -51,12 +51,12 @@ problem usa1993_p1 (n : ℕ) (hn : 2 ≤ n) (a b : ℝ) (ha : 0 < a) (hb : 0 < b
     have h9 : a < a * a^n := by linarith only [han, ha]
     have h10 : 1 < a^n := (lt_mul_iff_one_lt_right ha).mp h9
     rw [←one_pow n] at h10
-    exact lt_of_pow_lt_pow_left n h11 h10
+    exact lt_of_pow_lt_pow_left₀ n h11 h10
   obtain h12 | rfl | h14 := lt_trichotomy a b
   · exfalso
     have h15 : a^(2*n + 1) - 1 < b^(2* n + 1) - 1 := by
       have h15' : a^(2*n + 1) < b^(2* n + 1) :=
-        pow_lt_pow_left h12 h11 (Nat.succ_ne_zero (2 * n))
+        pow_lt_pow_left₀ h12 h11 (Nat.succ_ne_zero (2 * n))
       exact sub_lt_sub_right h15' 1
     have h16 : 0 < a ^(2 * n + 1) - 1 := by
       suffices H : 1 < a ^ (2 * n + 1) from sub_pos.mpr H

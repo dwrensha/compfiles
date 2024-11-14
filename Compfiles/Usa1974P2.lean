@@ -31,7 +31,7 @@ lemma usa1974_p2_wlog :
             (a * b * c) ^ (a + b + c) := by
     simp (discharger := positivity) only [Real.rpow_add, Real.mul_rpow]
     ring
-  apply le_of_pow_le_pow_left (by decide : 3 ≠ 0) (by positivity)
+  apply le_of_pow_le_pow_left₀ (by decide : 3 ≠ 0) (by positivity)
   rw [←Real.rpow_natCast]
   rw [←(Real.rpow_mul (le_of_lt habc))]
   norm_num
