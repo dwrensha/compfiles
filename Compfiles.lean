@@ -144,6 +144,7 @@ import Compfiles.Imo2023P5
 import Compfiles.Imo2024P1
 import Compfiles.Imo2024P2
 import Compfiles.Imo2024P3
+import Compfiles.Imo2024P5
 import Compfiles.Imo2024P6
 import Compfiles.India1998P1
 import Compfiles.IntegersInACircle
