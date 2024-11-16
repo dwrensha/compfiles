@@ -6,7 +6,7 @@ Authors: Kevin Lacker
 import Mathlib.Algebra.Ring.Identities
 import Mathlib.Data.Int.NatPrime
 import Mathlib.Tactic.Linarith
-import Mathlib.Data.Set.Finite
+import Mathlib.Data.Set.Finite.Basic
 
 import ProblemExtraction
 
