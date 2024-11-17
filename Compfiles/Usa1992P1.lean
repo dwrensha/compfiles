@@ -417,22 +417,6 @@ lemma List.sum_map_sub (l1 l2 : List ℕ) (h2 : List.Forall₂ (· ≥ ·) l1 l2
     (List.zipWith (fun x1 x2 ↦ x1 - x2) l1 l2).sum = l1.sum - l2.sum :=
   (List.sum_map_sub_aux l1 l2 h2).1
 
-lemma List.Forall₂_of_all_all {α : Type} {R : α → α → Prop} (l1 l2 : List α)
-    (h : ∀ x1 ∈ l1, ∀ x2 ∈ l2, R x1 x2)
-    (hl : l1.length = l2.length) :
-    List.Forall₂ R l1 l2 := by
-  match l1, l2 with
-  | [], [] => simp
-  | x::xs, [] => simp at hl
-  | [], y::ys => simp at hl
-  | x::xs, y::ys =>
-    simp only [List.length_cons, add_left_inj] at hl
-    simp only [List.mem_cons, forall_eq_or_imp] at h
-    have h' : ∀ x1 ∈ xs, ∀ x2 ∈ ys, R x1 x2 := by aesop
-    have ih := List.Forall₂_of_all_all xs ys h' hl
-    simp only [List.forall₂_cons]
-    exact ⟨h.1.1, ih⟩
-
 lemma lemma4 {m n : ℕ} (hm : m < 10^n) :
     (Nat.digits 10 (10^n - 1 - m)).sum = 9 * n - (Nat.digits 10 m).sum := by
   have h1 : (Nat.digits 10 m).sum =
@@ -445,12 +429,12 @@ lemma lemma4 {m n : ℕ} (hm : m < 10^n) :
             (digitsPadded 10 m n).length := List.length_replicate _ 9
   have h5 : List.Forall₂ (· ≥ ·)
               (List.replicate (digitsPadded 10 m n).length 9) (digitsPadded 10 m n) := by
-     apply List.Forall₂_of_all_all
-     · intro x1 hx1 x2 hx2
-       have := digitsPadded_lt_base (show 1 < 10 by norm_num) hx2
-       simp only [List.mem_replicate, ne_eq, List.length_eq_zero] at hx1
-       omega
-     · exact h3
+     rw [List.forall₂_iff_get]
+     refine ⟨h3, ?_⟩
+     intro x1 hx1 hx2
+     simp only [List.get_eq_getElem, List.getElem_replicate, ge_iff_le]
+     have h7 := digitsPadded_lt_base (show 1 < 10 by norm_num) (List.getElem_mem hx2)
+     omega
   have h4 := List.sum_map_sub _ _ h5
   simp only [List.sum_replicate, smul_eq_mul] at h4
   rw [mul_comm]
