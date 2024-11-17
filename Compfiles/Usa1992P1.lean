@@ -163,8 +163,8 @@ theorem lemma6 {b : ℕ} {l1 l2 : List ℕ} (hg : List.Forall₂ (· ≥ ·) l1 
       gcongr
 
 /-- The subtraction of ofDigits of two lists is equal to ofDigits of digit-wise subtraction of them -/
-theorem ofDigits_sub_ofDigits_eq_ofDigits_zipWith_of_length_eq {b : ℕ} {l1 l2 : List ℕ}
-    (h : l1.length = l2.length) (hg : List.Forall₂ (· ≥ ·) l1 l2) :
+theorem ofDigits_sub_ofDigits_eq_ofDigits_zipWith {b : ℕ} {l1 l2 : List ℕ}
+    (hg : List.Forall₂ (· ≥ ·) l1 l2) :
     Nat.ofDigits b l1 - Nat.ofDigits b l2 =
     Nat.ofDigits b (l1.zipWith (· - ·) l2) := by
   induction l1 generalizing l2 with
@@ -177,7 +177,7 @@ theorem ofDigits_sub_ofDigits_eq_ofDigits_zipWith_of_length_eq {b : ℕ} {l1 l2 
         eq_comm, List.zipWith_cons_cons, Nat.add_eq]
       have htl : List.Forall₂ (fun x1 x2 ↦ x1 ≥ x2) tl₁ tl₂ := by
         simp_all only [ge_iff_le, List.forall₂_cons]
-      specialize ih₁ h.symm htl
+      specialize ih₁ htl
       rw [← ih₁, Nat.mul_sub]
       have h1 : hd₁ ≥ hd₂ := by simp_all only [ge_iff_le, List.forall₂_cons, and_true]
       have h2 : b * Nat.ofDigits b tl₁ ≥ b * Nat.ofDigits b tl₂ := by
@@ -360,8 +360,7 @@ lemma lemma5 {m n : ℕ} (hm : m < 10^n) :
       simp
 
   have h_sub : 10^n - 1 - m = Nat.ofDigits 10 complement_digits := by
-    have h1 := ofDigits_sub_ofDigits_eq_ofDigits_zipWith_of_length_eq (b := 10)
-              h_length2 ha
+    have h1 := ofDigits_sub_ofDigits_eq_ofDigits_zipWith (b := 10) ha
     have h2 : List.zipWith (fun x1 x2 ↦ x1 - x2) (List.replicate n 9) m_digits_padded =
            List.map (fun d ↦ 9 - d) m_digits_padded := by
       have h5 := List.map_eq_zip 9 m_digits_padded (fun x y ↦ x - y)
