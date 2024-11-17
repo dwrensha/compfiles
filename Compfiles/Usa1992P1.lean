@@ -34,18 +34,17 @@ theorem digits_append_zeroes_append_digits {b k m n : ℕ} (hm : 0 < m)
     (hb : 1 < b) :
     digits b n ++ List.replicate k 0 ++ digits b m =
     digits b (n + b ^ (k + (digits b n).length) * m) := by
-  revert m
-  induction' k with k ih
-  · simp [digits_append_digits (zero_lt_of_lt hb)]
-  intro m hm
-  rw [List.replicate_succ', List.append_assoc, List.append_assoc, List.singleton_append]
-  have hmb : 0 < m * b := lt_mul_of_lt_of_one_lt' hm hb
-  let h1 := digits_def' hb hmb
-  have h2 : m = m * b / b := by
-    exact Nat.eq_div_of_mul_eq_left (not_eq_zero_of_lt hb) rfl
-  simp only [mul_mod_left, ←h2] at h1
-  rw [←h1, ←List.append_assoc, ih hmb]
-  ring_nf
+  induction k generalizing m with
+  | zero => simp [digits_append_digits (zero_lt_of_lt hb)]
+  | succ k ih =>
+    rw [List.replicate_succ', List.append_assoc, List.append_assoc, List.singleton_append]
+    have hmb : 0 < m * b := lt_mul_of_lt_of_one_lt' hm hb
+    let h1 := digits_def' hb hmb
+    have h2 : m = m * b / b := by
+      exact Nat.eq_div_of_mul_eq_left (not_eq_zero_of_lt hb) rfl
+    simp only [mul_mod_left, ←h2] at h1
+    rw [←h1, ←List.append_assoc, ih hmb]
+    ring_nf
 
 end digits
 
@@ -59,19 +58,18 @@ lemma digits_pow (m : ℕ) : (Nat.digits 10 (10^m)).length = m + 1 := by
   rw [ih]
 
 lemma lemma2 {m y: ℕ} (hy : y < 10^m) :
-    (Nat.digits 10 y).length < m + 1:= by
-  revert y
-  induction' m with m ih
-  · intro y hy
+    (Nat.digits 10 y).length < m + 1 := by
+  induction m generalizing y with
+  | zero =>
     obtain rfl: y = 0 := by omega
     simp
-  intro y hy
-  obtain rfl | hyp := Nat.eq_zero_or_pos y
-  · simp
-  rw [Nat.digits_def' (by norm_num) hyp]
-  rw [List.length_cons, add_lt_add_iff_right]
-  have h2 : y / 10 < 10 ^ m := by omega
-  exact ih h2
+  | succ m ih =>
+    obtain rfl | hyp := Nat.eq_zero_or_pos y
+    · simp
+    rw [Nat.digits_def' (by norm_num) hyp]
+    rw [List.length_cons, add_lt_add_iff_right]
+    have h2 : y / 10 < 10 ^ m := by omega
+    exact ih h2
 
 lemma digits_sum_mul_pow {m x : ℕ} :
     (Nat.digits 10 (x * 10 ^ m)).sum = (Nat.digits 10 x).sum := by
