@@ -4,7 +4,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: David Renshaw
 -/
 
-import Aesop
 import Mathlib.Data.Set.Basic
 import Mathlib.Data.Set.Card
 import Mathlib.Order.Interval.Finset.Nat
