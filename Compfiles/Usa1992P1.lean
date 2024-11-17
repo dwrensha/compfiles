@@ -126,8 +126,7 @@ lemma Finset.range_prod_odd
         exact Nat.lt_add_right 1 hi
       exact hs i this
     · apply hs
-      rw [Finset.mem_range]
-      exact lt_add_one n
+      exact Finset.self_mem_range_succ n
 
 lemma lemma3 {m : ℕ} (hm : (m % 10) + 1 < 10) :
     (Nat.digits 10 (m + 1)).sum = (Nat.digits 10 m).sum + 1 := by
@@ -519,15 +518,6 @@ problem usa1992_p1 (n : ℕ) :
     case zero => simp
     case succ n ih2 =>
       rw [Finset.prod_range_succ]
-      have h10 : 1 ≤ (10 ^ 2 ^ (n + 1) - 1) := by
-        have h11 : 2 ≤ 2 ^ (n + 1) := by
-          rw [pow_add, pow_one]
-          have h12 : 1 ≤ 2 ^ n := Nat.one_le_two_pow
-          exact Nat.le_mul_of_pos_left 2 h12
-        have one_le_ten : 1 ≤ 10 := by norm_num
-        have h13 : 10 ^ 2 ≤ 10 ^ 2 ^ (n + 1) :=
-          Nat.pow_le_pow_of_le_right one_le_ten h11
-        omega
       exact le_mul_of_le_of_one_le ih2 (ha1 (n + 1))
 
   -- Now b_n = b_{n-1}10^N - b_{n-1}, where N = 2^n.
