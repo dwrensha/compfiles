@@ -36,18 +36,7 @@ game is over.
 
 Determine the minimum value of $n$ for which Turbo has a strategy that guarantees reaching
 the last row on the $n$th attempt or earlier, regardless of the locations of the monsters.
-
-We follow the solution from the
-[official solutions](https://www.imo2024.uk/s/IMO2024-solutions-updated.pdf). To show that $n$
-is at least $3$, it is possible that the first cell Turbo encounters in the second row on his
-first attempt contains a monster, and also possible that the first cell Turbo encounters in the
-third row on his second attempt contains a monster. To show that $3$ attempts suffice, the first
-attempt can be used to locate the monster in the second row; if this is not at either side of
-the board, two more attempts suffice to pass behind that monster and from there go along its
-column to the last row, while if it is at one side of the board, the second attempt follows a
-zigzag path such that if it encounters a monster the third attempt can avoid all monsters.
 -/
-
 
 namespace Imo2024P5
 
@@ -106,6 +95,18 @@ def Strategy.ForcesWinIn (s : Strategy N) (k : ℕ) : Prop :=
   ∀ m, s.WinsIn m k
 
 snip begin
+
+/-
+We follow the solution from the
+[official solutions](https://www.imo2024.uk/s/IMO2024-solutions-updated.pdf). To show that $n$
+is at least $3$, it is possible that the first cell Turbo encounters in the second row on his
+first attempt contains a monster, and also possible that the first cell Turbo encounters in the
+third row on his second attempt contains a monster. To show that $3$ attempts suffice, the first
+attempt can be used to locate the monster in the second row; if this is not at either side of
+the board, two more attempts suffice to pass behind that monster and from there go along its
+column to the last row, while if it is at one side of the board, the second attempt follows a
+zigzag path such that if it encounters a monster the third attempt can avoid all monsters.
+-/
 
 /-! ### API definitions and lemmas about `Cell` -/
 
