@@ -401,27 +401,24 @@ lemma lemma5 {m n : ℕ} (hm : m < 10^n) :
   simp [digitsPadded, padList, List.map_append, List.map_replicate, tsub_zero, complement_digits,
         m_digits_padded, padding, m_digits, h16]
 
-lemma List.sum_map_sub_aux (l1 l2 : List ℕ) (hl: l1.length = l2.length)
-    (h2 : List.Forall₂ (· ≥ ·) l1 l2) :
+lemma List.sum_map_sub_aux (l1 l2 : List ℕ) (h2 : List.Forall₂ (· ≥ ·) l1 l2) :
     (List.zipWith (fun x1 x2 ↦ x1 - x2) l1 l2).sum = l1.sum - l2.sum ∧ l1.sum ≥ l2.sum := by
 match l1, l2 with
 | [], [] => simp
-| [], h :: tl => simp at hl
-| h :: tl, [] => simp at hl
+| [], h :: tl => simp_all
+| h :: tl, [] => simp_all
 | hd1 :: tl1, hd2 :: tl2 =>
-  simp only [List.length_cons, add_left_inj] at hl
   have hp : List.Forall₂ (fun x1 x2 ↦ x1 ≥ x2) tl1 tl2 := by simp_all only [List.forall₂_cons]
-  have ih := List.sum_map_sub_aux tl1 tl2 hl hp
+  have ih := List.sum_map_sub_aux tl1 tl2 hp
   simp only [List.zipWith_cons_cons, List.sum_cons]
   rw [ih.1]
   have h3 : hd1 ≥ hd2 := by aesop
   have h4 : tl1.sum ≥ tl2.sum := ih.2
   omega
 
-lemma List.sum_map_sub (l1 l2 : List ℕ) (hl : l1.length = l2.length)
-    (h2 : List.Forall₂ (· ≥ ·) l1 l2) :
+lemma List.sum_map_sub (l1 l2 : List ℕ) (h2 : List.Forall₂ (· ≥ ·) l1 l2) :
     (List.zipWith (fun x1 x2 ↦ x1 - x2) l1 l2).sum = l1.sum - l2.sum :=
-  (List.sum_map_sub_aux l1 l2 hl h2).1
+  (List.sum_map_sub_aux l1 l2 h2).1
 
 lemma List.Forall₂_of_all_all {α : Type} {R : α → α → Prop} (l1 l2 : List α)
     (h : ∀ x1 ∈ l1, ∀ x2 ∈ l2, R x1 x2)
@@ -457,7 +454,7 @@ lemma lemma4 {m n : ℕ} (hm : m < 10^n) :
        simp only [List.mem_replicate, ne_eq, List.length_eq_zero] at hx1
        omega
      · exact h3
-  have h4 := List.sum_map_sub _ _ h3 h5
+  have h4 := List.sum_map_sub _ _ h5
   simp only [List.sum_replicate, smul_eq_mul] at h4
   rw [mul_comm]
   have h6 := digitsPaddedLength _ _ _ (lemma9 hm)
