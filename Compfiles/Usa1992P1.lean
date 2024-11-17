@@ -556,9 +556,7 @@ problem usa1992_p1 (n : ℕ) :
   -- But b_{n-1} < 10^N,
   have h5 : b n < 10 ^ 2 ^ (n + 1) := by
     calc _ < 10 ^ ∑ i ∈ Finset.range (n + 1), 2 ^ i := h2 _
-         _ < 10 ^ 2 ^ (n + 1) := by
-             refine (Nat.pow_lt_pow_iff_right (by norm_num)).mpr ?_
-             exact Nat.geomSum_lt (le_refl _) fun _ hk ↦ Finset.mem_range.mp hk
+         _ < 10 ^ 2 ^ (n + 1) := h3 (n + 1)
 
   have h7 : 1 ≤ b n := by
     dsimp [b]
@@ -677,20 +675,6 @@ problem usa1992_p1 (n : ℕ) :
 
   have h13 : (Nat.digits 10 (10 ^ 2 ^ (n + 1) - b n)).sum = 9 * 2^(n + 1) - 9 * 2^n + 1 := by
     have h15 : ((10 ^ 2 ^ (n + 1) - 1 - b n) % 10) + 1 < 10 := by
-      have h30 : b n % 2 = 1 := by
-        unfold b a
-        have h31 : ∀ x ∈ Finset.range (n + 1), (10^ 2 ^ x - 1) % 2 = 1 := by
-          intro x hx
-          have h32 : (10 ^ 2 ^ x) % 2 = 0 := by
-            rw [show 10 = 5 * 2 by rfl]
-            rw [mul_pow, Nat.mul_mod, Nat.pow_mod]
-            simp
-          rw [←Nat.even_iff] at h32
-          rw [←Nat.odd_iff]
-          have h33 : Odd 1 := Nat.odd_iff.mpr rfl
-          have h34 : 1 ≤ 10 ^ 2 ^ x := Nat.one_le_pow' (2 ^ x) 9
-          exact Nat.Even.sub_odd h34 h32 h33
-        rw [lemma10 h31]
       by_contra! H
       replace H : 9 % 10 = (10 ^ 2 ^ (n + 1) - 1 - b n) % 10 := by omega
       change _ ≡ _ [MOD 10] at H
@@ -711,7 +695,7 @@ problem usa1992_p1 (n : ℕ) :
       have h44 : 1 ≤ 10 ^ 2 ^ (n+1) := Nat.one_le_pow' _ _
       have h45 : Odd (10 ^ 2 ^ (n + 1) - 1) := Nat.Even.sub_odd h44 h42 h43
       have h46 : b n ≤ 10 ^ 2 ^ (n + 1) - 1 := (Nat.le_sub_one_iff_lt h44).mpr h5
-      rw [←Nat.odd_iff] at h30
+      have h30 := h9 n
       have h47 : Even (10 ^ 2 ^ (n + 1) - 1 - b n) := Nat.Odd.sub_odd h45 (h9 n)
       rw [Nat.even_iff] at h47
       rw [Nat.odd_iff] at H1
