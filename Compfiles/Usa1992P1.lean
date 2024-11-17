@@ -588,29 +588,20 @@ problem usa1992_p1 (n : ℕ) :
   -- Now b_{n-1} is odd
   have h9 : ∀ n, Odd (b n) := by
     intro n
-    dsimp [b]
+    unfold b a
     suffices H : ∀ i ∈ Finset.range (n + 1), Odd (a i) from
       Finset.range_prod_odd H
     intro i hi
-    dsimp [a]
     rw [Nat.odd_iff]
-    zify
-    have h10 : (((10 ^ 2 ^ i - 1):ℕ):ℤ) = ((10^2^i) : ℤ) - (1:ℤ) := by
-      rw[Int.ofNat_sub (Nat.one_le_pow' (2 ^ i) 9)]
-      norm_cast
-    rw [h10]
-    rw [Int.sub_emod, Int.one_emod_two]
-    have h11 : (10:ℤ) ^ 2 ^ i % 2 = 0 := by
-      have h12 : (10:ℤ) = 2 * 5 := by norm_num
-      rw [h12, mul_pow]
-      have h13 : 0 < 2^i := by positivity
-      obtain ⟨k, hk⟩ := Nat.exists_eq_add_of_le h13
-      rw [hk, pow_add]
-      simp only [Nat.succ_eq_add_one, zero_add, pow_one]
-      rw [mul_assoc]
-      exact Int.mul_emod_right _ _
-    rw [h11]
-    norm_num
+    have h32 : (10 ^ 2 ^ i) % 2 = 0 := by
+      rw [show 10 = 5 * 2 by rfl]
+      rw [mul_pow, Nat.mul_mod, Nat.pow_mod]
+      simp
+    rw [←Nat.even_iff] at h32
+    rw [←Nat.odd_iff]
+    have h33 : Odd 1 := Nat.odd_iff.mpr rfl
+    have h34 : 1 ≤ 10 ^ 2 ^ i := Nat.one_le_pow' (2 ^ i) 9
+    exact Nat.Even.sub_odd h34 h32 h33
 
   -- and so its last digit is non-zero
 
