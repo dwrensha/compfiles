@@ -460,22 +460,6 @@ lemma lemma4 {m n : ℕ} (hm : m < 10^n) :
   rw [digitsPadded_sum] at h4
   exact h4
 
-lemma lemma10 {n : ℕ} {f : ℕ → ℕ} (h : ∀ x ∈ Finset.range n, f x % 2 = 1) :
-     (∏ x ∈ Finset.range n, f x) % 2 = 1 := by
-  induction n with
-  | zero => simp
-  | succ n ih =>
-    rw [Finset.prod_range_succ, Nat.mul_mod]
-    have hn := h n (Finset.self_mem_range_succ n)
-    rw [hn]
-    have hr : ∀ x ∈ Finset.range n, f x % 2 = 1 := by
-      intro x hx
-      have hx' : x ∈ Finset.range (n + 1) := by
-        simp only [Finset.mem_range] at hx ⊢
-        omega
-      exact h x hx'
-    simp [ih hr]
-
 snip end
 
 determine solution : ℕ → ℕ := fun n ↦ 9 * 2 ^ n
