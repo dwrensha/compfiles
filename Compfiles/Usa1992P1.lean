@@ -619,7 +619,6 @@ problem usa1992_p1 (n : ℕ) :
       have h44 : 1 ≤ 10 ^ 2 ^ (n+1) := Nat.one_le_pow' _ _
       have h45 : Odd (10 ^ 2 ^ (n + 1) - 1) := Nat.Even.sub_odd h44 h42 h43
       have h46 : b n ≤ 10 ^ 2 ^ (n + 1) - 1 := (Nat.le_sub_one_iff_lt h44).mpr h5
-      have h30 := h9 n
       have h47 : Even (10 ^ 2 ^ (n + 1) - 1 - b n) := Nat.Odd.sub_odd h45 (h9 n)
       rw [Nat.even_iff] at h47
       rw [Nat.odd_iff] at H1
