@@ -442,16 +442,15 @@ determine solution : ℕ → ℕ := fun n ↦ 9 * 2 ^ n
 problem usa1992_p1 (n : ℕ) :
     (Nat.digits 10
      (∏ i ∈ Finset.range (n + 1), (10^(2^i) - 1))).sum = solution n := by
-  -- we follow the informal proof from
+  -- We follow the informal proof from
   -- https://prase.cz/kalva/usa/usoln/usol921.html
 
-  -- Induction on n.
   induction' n with n ih
   · simp
 
-  -- Assume it is true for n-1.
-  -- Obviously a_n < 10 to the power of 2^n
   let a i := 10^(2^i) - 1
+
+  -- Obviously, for all i, a i < 10^(2^i).
   have h1 : ∀ i, a i < 10 ^ (2 ^ i) := fun i ↦ by
     dsimp [a]
     have h2 : 0 < 10 ^ 2 ^ i := by positivity
@@ -471,7 +470,7 @@ problem usa1992_p1 (n : ℕ) :
   let b : ℕ → ℕ := fun m ↦ ∏ i ∈ Finset.range (m + 1), a i
   change (Nat.digits 10 (b (n +1))).sum = solution (n + 1)
 
-  -- So b_{n-1} < 10 to the power of (1 + 2 + 2^2 + ... + 2^{n-1}).
+  -- So, for all m, `b m < 10^(1 + 2 + 2^2 + ... + 2^m)`.
   have h2 : ∀ m, b m < 10^(∑ i ∈ Finset.range (m + 1), 2^i) := fun m ↦ by
     dsimp [b]
     rw [←Finset.prod_pow_eq_pow_sum]
@@ -481,7 +480,7 @@ problem usa1992_p1 (n : ℕ) :
     · intro i hi
       exact h1 i
 
-  -- ... < 10 to the power of 2^n.
+  -- ... < 10^(2^m).
   have h3 : ∀ m, 10^(∑ i ∈ Finset.range m, 2^i) < 10^(2^m) := fun m ↦ by
     have h4 : ∑ i ∈ Finset.range m, 2 ^ i < 2 ^ m :=
       Nat.geomSum_lt (le_refl _) fun _ hk ↦ Finset.mem_range.mp hk
@@ -496,14 +495,14 @@ problem usa1992_p1 (n : ℕ) :
       rw [Finset.prod_range_succ]
       exact le_mul_of_le_of_one_le ih2 (ha1 (n + 1))
 
-  -- Now b_n = b_{n-1}10^N - b_{n-1}, where N = 2^n.
+  -- Now b (n + 1) = (b n) * 10^N - b n, where N = 2^(n + 1).
   have h4 : b (n + 1) = b n * 10^(2^(n+1)) - b n := by
     nth_rewrite 2 [←mul_one (b n)]
     rw [←Nat.mul_sub_left_distrib]
     dsimp [b]
     rw [Finset.prod_range_succ]
 
-  -- But b_{n-1} < 10^N,
+  -- But b n < 10^N,
   have h5 : b n < 10 ^ 2 ^ (n + 1) := by
     calc _ < 10 ^ ∑ i ∈ Finset.range (n + 1), 2 ^ i := h2 _
          _ < 10 ^ 2 ^ (n + 1) := h3 (n + 1)
@@ -512,7 +511,7 @@ problem usa1992_p1 (n : ℕ) :
     dsimp [b]
     exact Finset.one_le_prod' fun i a ↦ ha1 i
 
-  -- so b_n = (b_{n-1} - 1)10^N + (10^N - b_{n-1})
+  -- ... so b (n + 1) = (b n - 1)10^N + (10^N - b n)
   have h6 : b (n + 1) = (b n - 1) * 10 ^(2^(n+1)) + (10 ^(2^(n+1)) - b n) := by
     rw [h4]
     -- TODO: simpler version via zify
@@ -523,8 +522,8 @@ problem usa1992_p1 (n : ℕ) :
     nth_rewrite 2 [add_comm]
     rw [Nat.mul_sub_right_distrib, one_mul, Nat.add_sub_of_le h8]
 
-  -- and the digit sum of b_n is just
-  -- the digit sum of (b_{n-1} - 1)10^N plus the digit sum of (10^N - b_{n-1}).
+  -- ... and the digit sum of b (n + 1) is just
+  -- the digit sum of (b n - 1)·10^N plus the digit sum of (10^N - b n).
   have h8 : (Nat.digits 10 (b (n + 1))).sum =
             (Nat.digits 10 ((b n - 1) * 10 ^ 2 ^ (n+1))).sum +
             (Nat.digits 10 (10^2^(n+1) - b n)).sum := by
@@ -535,7 +534,7 @@ problem usa1992_p1 (n : ℕ) :
    congr 2
    omega
 
-  -- Now b_{n-1} is odd
+  -- b n is odd
   have h9 : ∀ n, Odd (b n) := by
     intro n
     unfold b a
@@ -553,11 +552,9 @@ problem usa1992_p1 (n : ℕ) :
     have h34 : 1 ≤ 10 ^ 2 ^ i := Nat.one_le_pow' (2 ^ i) 9
     exact Nat.Even.sub_odd h34 h32 h33
 
-  -- and so its last digit is non-zero
-
-  have ten_ne_one : 10 ≠ 1 := by norm_num
+  -- ... so its last digit is non-zero,
   have h10 : (Nat.digits 10 (b n)).head! ≠ 0 := by
-    rw [Nat.head!_digits ten_ne_one]
+    rw [Nat.head!_digits (by norm_num)]
     intro h11
     have h12 : 10 ∣ b n := Nat.dvd_of_mod_eq_zero h11
     rw [show 10 = 2 * 5 by norm_num] at h12
@@ -565,17 +562,9 @@ problem usa1992_p1 (n : ℕ) :
     have h14 : ¬ 2 ∣ b n := Odd.not_two_dvd_nat (h9 _)
     contradiction
 
-  -- consider Nat.digits 10 (b n)
-  -- it's `d :: ds`, where d ≠ 0.
-  -- the sum is d + ds.sum
-  -- on the other hand, Nat.digits 10 (b n - 1) is (d - 1) :: ds.
-  -- so its sum is (d - 1) + ds.sum
-
-  -- Nat.digits 10 (b n) =
-  -- List.head! (Nat.digits 10 (b n)) ::
   have one_lt_ten : 1 < 10 := by norm_num
 
-  -- so the digit sum of b_{n-1} - 1 is one less than the digit sum of b_{n-1},
+  -- ... so the digit sum of `b n - 1` is one less than the digit sum of `b n`,
   have h11 : (Nat.digits 10 (b n - 1)).sum = (Nat.digits 10 (b n)).sum - 1 := by
     rw [Nat.digits_def' one_lt_ten (by omega)]
     nth_rewrite 2 [Nat.digits_def' one_lt_ten (by omega)]
@@ -593,27 +582,23 @@ problem usa1992_p1 (n : ℕ) :
     suffices H : (b n - 1) % 10 + 1 = b n % 10 by omega
     omega
 
-  -- and hence is 9·2^{n-1} - 1
+  -- ... and hence is 9·2^n - 1.
   rw [ih, solution] at h11
 
   -- Multiplying by 10^N does not change the digit sum.
   rw [digits_sum_mul_pow, h11] at h8
   clear h11
 
-  -- (10^N - 1) - b_{n-1} has 2^n digits,
-  -- each 9 minus the corresponding digit of b_{n-1},
-
-  -- so its digit sum is 9·2^n - 9·2^{n-1}.
-
+  -- (10^N - 1) - b n has 2^(n+1) digits,
+  -- each 9 minus the corresponding digit of b n,
+  -- so its digit sum is 9·2^(n+1) - 9·2^n.
   have h12 : (Nat.digits 10 (10 ^ 2 ^ (n + 1) - 1 - b n)).sum = 9 * 2^(n + 1) - 9 * 2^n := by
     change (Nat.digits 10 (b n)).sum = 9 * 2^n at ih
     rw [lemma4 h5, ih]
 
-  -- b_{n-1} is odd, so its last digit is not 0
-  -- and hence the last digit of (10^N - 1) - b_{n-1} is not 9.
-
-  -- So the digit sum of 10^N - b_{n-1} is 9·2^n - 9·2^{n-1} + 1.
-
+  -- b n is odd, so its last digit is not 0,
+  -- and hence the last digit of (10^N - 1) - b n is not 9.
+  -- So the digit sum of 10^N - b n is 9·2^(n + 1) - 9·2^n + 1.
   have h13 : (Nat.digits 10 (10 ^ 2 ^ (n + 1) - b n)).sum = 9 * 2^(n + 1) - 9 * 2^n + 1 := by
     have h15 : ((10 ^ 2 ^ (n + 1) - 1 - b n) % 10) + 1 < 10 := by
       by_contra! H
@@ -652,7 +637,7 @@ problem usa1992_p1 (n : ℕ) :
   rw [h13] at h8
   rw [h8, solution]
 
-  -- Hence b_n has digit sum (9·2^{n-1} - 1) + (9·2n - 9·2^{n-1} + 1) = 9·2^n.
+  -- Hence b n has digit sum (9·2^n - 1) + (9·2^(n+1) - 9·2^n + 1) = 9·2^(n+1).
   have h14 : 1 ≤ 2 ^ n := Nat.one_le_two_pow
   omega
 
