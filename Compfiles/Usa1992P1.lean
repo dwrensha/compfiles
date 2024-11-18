@@ -30,21 +30,26 @@ section digits
 open Nat
 
 -- TODO add this to mathlib
-theorem digits_append_zeroes_append_digits {b k m n : ℕ} (hm : 0 < m)
-    (hb : 1 < b) :
-    digits b n ++ List.replicate k 0 ++ digits b m =
-    digits b (n + b ^ (k + (digits b n).length) * m) := by
+theorem digits_base_pow_mul {b k m : ℕ} (hm : 0 < m) (hb : 1 < b) :
+    digits b (b ^ k * m) = List.replicate k 0 ++ digits b m := by
   induction k generalizing m with
-  | zero => simp [digits_append_digits (zero_lt_of_lt hb)]
+  | zero => simp
   | succ k ih =>
-    rw [List.replicate_succ', List.append_assoc, List.append_assoc, List.singleton_append]
     have hmb : 0 < m * b := lt_mul_of_lt_of_one_lt' hm hb
     let h1 := digits_def' hb hmb
-    have h2 : m = m * b / b := by
-      exact Nat.eq_div_of_mul_eq_left (not_eq_zero_of_lt hb) rfl
+    have h2 : m = m * b / b :=
+      Nat.eq_div_of_mul_eq_left (not_eq_zero_of_lt hb) rfl
     simp only [mul_mod_left, ←h2] at h1
-    rw [←h1, ←List.append_assoc, ih hmb]
+    rw [List.replicate_succ', List.append_assoc, List.singleton_append, ←h1, ←ih hmb]
     ring_nf
+
+-- TODO add this to mathlib
+theorem digits_append_zeroes_append_digits {b k m n : ℕ} (hm : 0 < m) (hb : 1 < b) :
+    digits b n ++ List.replicate k 0 ++ digits b m =
+    digits b (n + b ^ (k + (digits b n).length) * m) := by
+  rw [List.append_assoc, ←digits_base_pow_mul hm hb]
+  simp only [digits_append_digits (zero_lt_of_lt hb), digits_inj_iff, add_right_inj]
+  ring
 
 end digits
 
@@ -52,17 +57,13 @@ end digits
 lemma digits_pow (m : ℕ) : (Nat.digits 10 (10^m)).length = m + 1 := by
   induction' m with m ih
   · simp
-  rw [pow_succ]
-  rw [Nat.digits_def' (by norm_num) (by positivity)]
+  rw [pow_succ, Nat.digits_def' (by norm_num) (by positivity)]
   rw [mul_div_cancel_right₀ _ (by norm_num), List.length_cons]
   rw [ih]
 
-lemma lemma2 {m y: ℕ} (hy : y < 10^m) :
-    (Nat.digits 10 y).length < m + 1 := by
+lemma lemma2 {m y: ℕ} (hy : y < 10^m) : (Nat.digits 10 y).length < m + 1 := by
   induction m generalizing y with
-  | zero =>
-    obtain rfl: y = 0 := by omega
-    simp
+  | zero => simp [show y = 0 by omega]
   | succ m ih =>
     obtain rfl | hyp := Nat.eq_zero_or_pos y
     · simp
@@ -75,15 +76,8 @@ lemma digits_sum_mul_pow {m x : ℕ} :
     (Nat.digits 10 (x * 10 ^ m)).sum = (Nat.digits 10 x).sum := by
   cases' x with x
   · simp
-  induction' m with m ih
-  · simp
-  rw [pow_succ]
-  rw [Nat.digits_def' (by norm_num) (by positivity)]
-  rw [←mul_assoc, Nat.mul_mod, Nat.mod_self, mul_zero, Nat.zero_mod]
-  rw [List.sum_cons, zero_add]
-  have h10 : 10 ≠ 0 := by norm_num
-  rw [mul_div_cancel_right₀ _ h10]
-  exact ih
+  rw [mul_comm, digits_base_pow_mul (by omega) (by omega)]
+  simp
 
 lemma digits_sum (m x y : ℕ)
     (h1 : y < 10^m) :
@@ -102,10 +96,8 @@ lemma digits_sum (m x y : ℕ)
   nth_rewrite 1 [add_comm, mul_comm]
   nth_rewrite 1 [←hk]
   have one_lt_ten : 1 < 10 := by norm_num
-  have h5 := @digits_append_zeroes_append_digits 10 k _ y (Nat.zero_lt_succ x) one_lt_ten
-  rw [←h5]
-  simp only [List.sum_append]
-  simp only [List.sum_replicate, smul_eq_mul, mul_zero, add_zero]
+  rw [←digits_append_zeroes_append_digits (Nat.zero_lt_succ x) one_lt_ten]
+  simp only [List.sum_append, List.sum_replicate, smul_eq_mul, mul_zero, add_zero]
   rw [digits_sum_mul_pow]
   ring
 
