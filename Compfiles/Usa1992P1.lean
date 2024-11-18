@@ -30,7 +30,7 @@ section digits
 open Nat
 
 -- TODO add this to mathlib
-theorem digits_base_pow_mul {b k m : ℕ} (hm : 0 < m) (hb : 1 < b) :
+theorem digits_base_pow_mul {b k m : ℕ} (hb : 1 < b) (hm : 0 < m) :
     digits b (b ^ k * m) = List.replicate k 0 ++ digits b m := by
   induction k generalizing m with
   | zero => simp
@@ -44,10 +44,10 @@ theorem digits_base_pow_mul {b k m : ℕ} (hm : 0 < m) (hb : 1 < b) :
     ring_nf
 
 -- TODO add this to mathlib
-theorem digits_append_zeroes_append_digits {b k m n : ℕ} (hm : 0 < m) (hb : 1 < b) :
+theorem digits_append_zeroes_append_digits {b k m n : ℕ} (hb : 1 < b) (hm : 0 < m) :
     digits b n ++ List.replicate k 0 ++ digits b m =
-    digits b (n + b ^ (k + (digits b n).length) * m) := by
-  rw [List.append_assoc, ←digits_base_pow_mul hm hb]
+    digits b (n + b ^ ((digits b n).length + k) * m) := by
+  rw [List.append_assoc, ←digits_base_pow_mul hb hm]
   simp only [digits_append_digits (zero_lt_of_lt hb), digits_inj_iff, add_right_inj]
   ring
 
@@ -89,14 +89,13 @@ lemma digits_sum (m x y : ℕ)
   have h3 : (Nat.digits 10 y).length ≤ m := by
     have h4 := lemma2 h1
     exact Nat.le_of_lt_succ h4
-  have ⟨k, hk⟩ : ∃ k, k + (Nat.digits 10 y).length = m := by
+  have ⟨k, hk⟩ : ∃ k, (Nat.digits 10 y).length + k = m := by
     obtain ⟨k, hk⟩ := Nat.le.dest h3
-    rw [add_comm] at hk
     exact ⟨k, hk⟩
   nth_rewrite 1 [add_comm, mul_comm]
   nth_rewrite 1 [←hk]
   have one_lt_ten : 1 < 10 := by norm_num
-  rw [←digits_append_zeroes_append_digits (Nat.zero_lt_succ x) one_lt_ten]
+  rw [←digits_append_zeroes_append_digits one_lt_ten (Nat.zero_lt_succ x)]
   simp only [List.sum_append, List.sum_replicate, smul_eq_mul, mul_zero, add_zero]
   rw [digits_sum_mul_pow]
   ring
