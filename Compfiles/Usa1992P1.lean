@@ -100,24 +100,17 @@ lemma digits_sum (m x y : ℕ)
   rw [digits_sum_mul_pow]
   ring
 
-lemma Finset.range_prod_odd
-    {n : ℕ} {f : ℕ → ℕ} (hs : ∀ i ∈ Finset.range n, Odd (f i)) :
-    Odd (∏ i ∈ Finset.range n, f i) := by
+lemma Finset.prod_odd {α : Type} [DecidableEq α] {f : α → ℕ} {s : Finset α}
+    (hs : ∀ i ∈ s, Odd (f i)) : Odd (∏ i ∈ s, f i) := by
   revert hs
-  induction n
-  case zero => simp
-  case succ n ih =>
-    intro hs
-    rw [Finset.prod_range_succ, Nat.odd_mul]
-    constructor
-    · apply ih
-      intro i hi
-      have : i ∈ Finset.range (n + 1) := by
-        rw [Finset.mem_range] at *
-        exact Nat.lt_add_right 1 hi
-      exact hs i this
-    · apply hs
-      exact Finset.self_mem_range_succ n
+  induction s using Finset.induction
+  case empty => simp
+  case insert a s' ha ih =>
+    intro hs'
+    rw [Finset.prod_insert ha, Nat.odd_mul]
+    simp only [Finset.mem_insert, forall_eq_or_imp] at hs'
+    specialize ih hs'.2
+    exact ⟨hs'.1, ih⟩
 
 lemma lemma3 {m : ℕ} (hm : (m % 10) + 1 < 10) :
     (Nat.digits 10 (m + 1)).sum = (Nat.digits 10 m).sum + 1 := by
@@ -528,8 +521,7 @@ problem usa1992_p1 (n : ℕ) :
   have h9 : ∀ n, Odd (b n) := by
     intro n
     unfold b a
-    suffices H : ∀ i ∈ Finset.range (n + 1), Odd (a i) from
-      Finset.range_prod_odd H
+    suffices H : ∀ i ∈ Finset.range (n + 1), Odd (a i) from Finset.prod_odd H
     intro i hi
     rw [Nat.odd_iff]
     have h32 : (10 ^ 2 ^ i) % 2 = 0 := by
