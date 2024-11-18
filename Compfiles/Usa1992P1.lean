@@ -264,10 +264,8 @@ theorem exists_prefix (L : List ℕ) :
     · specialize hl20 hnil
       subst hm
       use hd :: l2
-      have h5 : ∀ (hl1 : hd :: l2 ≠ []), (hd :: l2).getLast hl1 ≠ 0 := by
-        aesop
-      refine ⟨h5, ?_⟩
-      use m
+      have h5 : ∀ (hl1 : hd :: l2 ≠ []), (hd :: l2).getLast hl1 ≠ 0 := by simp_all
+      refine ⟨h5, m, ?_⟩
       simp
     · simp only [ne_eq, Decidable.not_not] at hnil
       subst hnil
@@ -278,10 +276,10 @@ theorem exists_prefix (L : List ℕ) :
         constructor
         · simp
         · use m + 1
-          aesop
+          rw [List.replicate_succ, List.nil_append]
       · use [hd + 1]
         constructor
-        · aesop
+        · simp
         · use m
           simp
 
@@ -292,10 +290,12 @@ theorem digitsPadded_ofDigits (b n : ℕ) (h : 1 < b) (L : List ℕ) (w₁ : ∀
   subst hm
   rw [ofDigits_zeros b m]
   unfold digitsPadded
-  have hl : ∀ l ∈ l1, l < b := by aesop
-  have hl3 : ∀ (h : l1 ≠ []), l1.getLast h ≠ 0 := by aesop
+  have hl : ∀ l ∈ l1, l < b := by simp_all
+  have hl3 : ∀ (h : l1 ≠ []), l1.getLast h ≠ 0 := by simp_all
   rw [Nat.digits_ofDigits b h _ hl hl3]
-  simp [padList]
+  simp only [padList, List.length_append, List.length_replicate, List.append_assoc,
+             List.append_replicate_replicate, List.append_cancel_left_eq, List.replicate_inj,
+             or_true, and_true]
   simp only [List.length_append, List.length_replicate] at hn
   omega
 
@@ -308,8 +308,7 @@ lemma List.map_eq_zip (x : ℕ) (l : List ℕ) (f : ℕ → ℕ → ℕ)
   induction l with
   | nil => simp
   | cons hd tl ih =>
-    simp only [List.map_cons, List.length_cons]
-    rw [ih]
+    simp only [List.map_cons, List.length_cons, ih]
     rfl
 
 lemma lemma5 {m n : ℕ} (hm : m < 10^n) :
@@ -400,7 +399,7 @@ match l1, l2 with
   have ih := List.sum_map_sub_aux tl1 tl2 hp
   simp only [List.zipWith_cons_cons, List.sum_cons]
   rw [ih.1]
-  have h3 : hd1 ≥ hd2 := by aesop
+  have h3 : hd1 ≥ hd2 := (List.forall₂_cons.mp h2).1
   have h4 : tl1.sum ≥ tl2.sum := ih.2
   omega
 
