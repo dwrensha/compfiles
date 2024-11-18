@@ -232,17 +232,17 @@ theorem digitsPaddedLength (b m n : ℕ) (hm : (Nat.digits b m).length ≤ n) :
   simp only [List.length_append, List.length_replicate]
   exact Nat.add_sub_of_le hm
 
-theorem ofDigits_zeroes (b m : ℕ) (L : List ℕ) :
+theorem ofDigits_append_zeroes (b m : ℕ) (L : List ℕ) :
     Nat.ofDigits b (L ++ List.replicate m 0) = Nat.ofDigits b L := by
   match m, L with
   | 0, _ => simp
   | m + 1, [] =>
-    have h := ofDigits_zeroes b m [0]
+    have h := ofDigits_append_zeroes b m [0]
     simp only [List.replicate_succ, List.nil_append, Nat.ofDigits_nil]
     simp_all
   | m + 1, hd::tl =>
     simp only [List.cons_append, Nat.ofDigits_cons]
-    have h := ofDigits_zeroes b (m + 1) tl
+    have h := ofDigits_append_zeroes b (m + 1) tl
     rw[h]
 
 theorem exists_prefix (L : List ℕ) :
@@ -280,7 +280,7 @@ theorem digitsPadded_ofDigits (b n : ℕ) (h : 1 < b) (L : List ℕ) (w₁ : ∀
     digitsPadded b (Nat.ofDigits b L) n = padList L n := by
   have ⟨l1, hl1, m, hm⟩ := exists_prefix L
   subst hm
-  rw [ofDigits_zeroes b m]
+  rw [ofDigits_append_zeroes b m]
   unfold digitsPadded
   have hl : ∀ l ∈ l1, l < b := by simp_all
   have hl3 : ∀ (h : l1 ≠ []), l1.getLast h ≠ 0 := by simp_all
