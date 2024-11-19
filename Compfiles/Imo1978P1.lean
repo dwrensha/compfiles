@@ -14,7 +14,8 @@ problem_file { tags := [.NumberTheory] }
 # International Mathematical Olympiad 1978, Problem 1
 
 m and n are positive integers with m < n.
-The last three decimal digits of 1978m are the same as the last three decimal digits of 1978n.
+The last three decimal digits of 1978ᵐ are the same as the
+last three decimal digits of 1978ⁿ.
 Find m and n such that m + n has the least possible value.
 -/
 
@@ -22,11 +23,13 @@ namespace Imo1978P1
 
 determine solution : ℕ × ℕ := (3, 103)
 
-problem imo1978_p1 (m n : ℕ)
-  (hmn: m < n)
-  (hmn2: (m, n) = solution) :
-    (1978^m) % 1000 = (1978^n) % 1000 ∧
-    (∀ m' n' : ℕ, m' < n' ∧ (1978^m') % 1000 = (1978^n') % 1000 → m + n ≤ m' + n') := by sorry
+abbrev ValidPair : ℕ × ℕ → Prop
+| (m, n) => 1 ≤ m ∧ m < n ∧ (1978^m) % 1000 = (1978^n) % 1000
 
+problem imo1978_p1 (m n : ℕ)
+    (hmn : (m, n) = solution) :
+    ValidPair (m, n) ∧
+    (∀ m' n' : ℕ, ValidPair (m', n') → m + n ≤ m' + n') := by
+  sorry
 
 end Imo1978P1
