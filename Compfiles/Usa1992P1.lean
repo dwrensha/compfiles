@@ -114,8 +114,6 @@ lemma Finset.prod_odd {α : Type} [DecidableEq α] {f : α → ℕ} {s : Finset 
 
 lemma lemma3 {m : ℕ} (hm : (m % 10) + 1 < 10) :
     (Nat.digits 10 (m + 1)).sum = (Nat.digits 10 m).sum + 1 := by
-  have h1 : 10 ≠ 1 := by norm_num
-  have h2 : 1 < 10 := by norm_num
   rw [Nat.digits_eq_cons_digits_div (by norm_num) (by omega)]
   by_cases h : m = 0
   · simp [h]
@@ -342,11 +340,6 @@ lemma lemma5 {m n : ℕ} (hm : m < 10^n) :
     unfold complement_digits
     rw [←h1, ←lemma8, h_sub2]
   rw [h_sub]
-  have h11 : ∀ l ∈ complement_digits, l < 10 := by
-    intro l hl
-    unfold complement_digits at hl
-    simp only [List.mem_map] at hl
-    omega
   have h12 : ∀ l ∈ complement_digits, l < 10 := by
     intro x hx
     simp only [List.map_append, List.mem_append, List.mem_map, complement_digits, m_digits_padded,
@@ -362,12 +355,6 @@ lemma lemma5 {m n : ℕ} (hm : m < 10^n) :
     simp_all
   have h13 := digitsPadded_ofDigits 10 n (by norm_num) complement_digits h12 h14
   rw [h13]
-  have h15 : n -
-            (List.map (fun d ↦ 9 - d) (Nat.digits 10 m) ++
-             List.replicate (n - (Nat.digits 10 m).length) 9).length = 0 := by
-    simp only [Nat.reduceLeDiff, List.length_append, List.length_map, List.length_replicate]
-    have : (Nat.digits 10 m).length ≤ n := lemma9 hm
-    simp_all
 
   have h16 : (Nat.digits 10 m).length ≤ n := lemma9 hm
   simp [digitsPadded, padList, List.map_append, List.map_replicate, tsub_zero, complement_digits,
@@ -385,7 +372,6 @@ match l1, l2 with
   simp only [List.zipWith_cons_cons, List.sum_cons]
   rw [ih.1]
   have h3 : hd1 ≥ hd2 := (List.forall₂_cons.mp h2).1
-  have h4 : tl1.sum ≥ tl2.sum := ih.2
   omega
 
 lemma List.sum_map_sub (l1 l2 : List ℕ) (h2 : List.Forall₂ (· ≥ ·) l1 l2) :
@@ -394,9 +380,6 @@ lemma List.sum_map_sub (l1 l2 : List ℕ) (h2 : List.Forall₂ (· ≥ ·) l1 l2
 
 lemma lemma4 {m n : ℕ} (hm : m < 10^n) :
     (Nat.digits 10 (10^n - 1 - m)).sum = 9 * n - (Nat.digits 10 m).sum := by
-  have h1 : (Nat.digits 10 m).sum =
-            (Nat.digits 10 m ++ List.replicate (n - (Nat.digits 10 m).length) 0).sum := by
-    simp
   rw [←digitsPadded_sum, lemma5 hm]
   have h2 := List.map_eq_zip 9 (digitsPadded 10 m n) (fun x y ↦ x - y)
   rw [h2]
@@ -538,8 +521,6 @@ problem usa1992_p1 (n : ℕ) :
   have h10 : (Nat.digits 10 (b n)).head! ≠ 0 := by
     rw [Nat.head!_digits (by norm_num)]
     intro h11
-    have h12 : 10 ∣ b n := Nat.dvd_of_mod_eq_zero h11
-    rw [show 10 = 2 * 5 by norm_num] at h12
     have h13 : 2 ∣ b n := by omega
     have h14 : ¬ 2 ∣ b n := Odd.not_two_dvd_nat (h9 _)
     contradiction
@@ -553,8 +534,6 @@ problem usa1992_p1 (n : ℕ) :
     rw [List.sum_cons, List.sum_cons]
     have h13 : b n % 10 ≠ 0 := by
       intro h11
-      have h12 : 10 ∣ b n := Nat.dvd_of_mod_eq_zero h11
-      rw [show 10 = 2 * 5 by norm_num] at h12
       have h13 : 2 ∣ b n := by omega
       have h14 : ¬ 2 ∣ b n := Odd.not_two_dvd_nat (h9 _)
       contradiction
@@ -602,7 +581,6 @@ problem usa1992_p1 (n : ℕ) :
       have h43 : Odd 1 := Nat.odd_iff.mpr rfl
       have h44 : 1 ≤ 10 ^ 2 ^ (n+1) := Nat.one_le_pow' _ _
       have h45 : Odd (10 ^ 2 ^ (n + 1) - 1) := Nat.Even.sub_odd h44 h42 h43
-      have h46 : b n ≤ 10 ^ 2 ^ (n + 1) - 1 := (Nat.le_sub_one_iff_lt h44).mpr h5
       have h47 : Even (10 ^ 2 ^ (n + 1) - 1 - b n) := Nat.Odd.sub_odd h45 (h9 n)
       rw [Nat.even_iff] at h47
       rw [Nat.odd_iff] at H1

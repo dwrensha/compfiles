@@ -452,9 +452,6 @@ lemma subsets_must_overlap_pigeonhole (s s1 s2 : Finset ℕ) (predicate_s1: ℕ 
   have s1_is_subset: s1 ⊆ s := by
     rw[s1_filter]
     apply Finset.filter_subset
-  have s2_is_subset: s2 ⊆ s := by
-    rw[s2_filter]
-    apply Finset.filter_subset
   have lift_x_in_s1 : ∀ x ∈ s, x ∈ s1 ↔ predicate_s1 x := by
     rw[s1_filter]
     intro x _
@@ -634,18 +631,12 @@ lemma contradiction_of_finset_icc_1_6 (s1 s2 : Finset ℕ) (partition : s1 ∪ s
         have five_set_in_s2 : {5} ⊆ s2 := by
           simp_all only [Finset.singleton_subset_iff]
         have set_five_in_empty := s1_s2_disjoint five_set_in_s1 five_set_in_s2
-        have : Nonempty ({5} : Finset ℕ)  := by
-          simp_all only [Finset.singleton_subset_iff, Finset.mem_singleton, nonempty_subtype, exists_eq]
         have : ({5} : Finset ℕ).Nonempty := by
           simp_all only [Finset.singleton_subset_iff, Finset.mem_singleton, nonempty_subtype, exists_eq, Finset.singleton_nonempty]
         apply not_empty_subst_of_nonempty {5} this
         exact set_five_in_empty
-      have s2_in_interval : s2 ⊆ Finset.Icc 1 6 := by
-        rw[partition] at s2_in_s1_s2
-        exact s2_in_s1_s2
       have explicit_interval: Finset.Icc 1 6 = {1, 2, 3, 4, 5, 6} := by
         rfl
-      rw [explicit_interval] at s2_in_interval
       have := diffs_of_disjoint s2 (s1 ∪ s2) {5} s2_in_s1_s2 five_not_in_s2
       rw [partition] at this
       rw[explicit_interval] at this
@@ -683,8 +674,6 @@ lemma contradiction_of_finset_icc_1_6 (s1 s2 : Finset ℕ) (partition : s1 ∪ s
         have five_set_in_s2 : {5} ⊆ s2 := by
           simp_all only [Finset.singleton_subset_iff]
         have set_five_in_empty := s2_s1_disjoint five_set_in_s2 five_set_in_s1
-        have : Nonempty ({5} : Finset ℕ) := by
-          simp_all only [Finset.singleton_subset_iff, Finset.mem_singleton, nonempty_subtype, exists_eq]
         have : ({5} : Finset ℕ).Nonempty := by
           simp_all only [Finset.singleton_subset_iff, Finset.mem_singleton, nonempty_subtype, exists_eq, Finset.singleton_nonempty]
         apply not_empty_subst_of_nonempty {5} this
