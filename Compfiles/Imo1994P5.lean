@@ -20,14 +20,27 @@ and f(x)/x is strictly increasing on each of the intervals -1 < x < 0 and 0 < x.
 
 namespace Imo1994P5
 
-determine solution_set : Set (ℝ → ℝ) := {f| ∀ (x : ℝ), x > -1 → f x = -x / (1 + x)}
+def S := { x : ℝ // -1 < x }
 
-problem imo1994_p5 (f : ℝ → ℝ)
-  (hM : ∀ x y: ℝ, -1 < x ∧ x < 0 ∧ -1 < y ∧ y < 0 ∧ x < y → f x < f y)
-  (hM2 : ∀ x y: ℝ, 0 < x ∧ 0 < y ∧ x < y → f x < f y)
-  (h₀ : ∀ x, -1 < x → f x > -1)
-  (h₁ : ∀ x y, -1 < x → -1 < y → f (x + f y + x * f y) = y + f x + y * f x) :
-    f ∈ solution_set := by sorry
+abbrev op (f : S → S) (a b : S) : S :=
+  ⟨a.val + (f b).val + a.val * (f b).val, by nlinarith [a.property, (f b).property]⟩
 
+snip begin
+
+lemma sol_prop {a : ℝ} (ha : -1 < a) : -1 < -a / (1 + a) :=
+   (lt_div_iff₀ (show 0 < 1 + a by linarith)).mpr (by linarith)
+
+snip end
+
+determine solution_set : Set (S → S) := { fun x ↦ ⟨-x.val / (1 + x.val), sol_prop x.property⟩ }
+
+problem imo1994_p5 (f : S → S) :
+    f ∈ solution_set ↔
+    (∀ x y : S, f (op f x y) = op f y x ∧
+     (∀ x y : S, x.val ∈ Set.Ioo (-1) 0 → y.val ∈ Set.Ioo (-1) 0 →
+        x.val < y.val → (f x).val < (f y).val) ∧
+     (∀ x y : S, 0 < x.val → 0 < y.val →
+        x.val < y.val → (f x).val < (f y).val)) := by
+  sorry
 
 end Imo1994P5
