@@ -61,7 +61,8 @@ problem imo1963_p1 : ∀ (p x : ℝ), (x ^ 2 - p) ≥ 0 → (x ^ 2 - 1) ≥ 0 �
     · intro h; linear_combination (norm := (field_simp; ring_nf)) (1 / (4 : ℝ)) * h
     · intro h; linear_combination (norm := (field_simp; ring_nf)) (4 : ℝ) * h
   apply @iff_comm (c := p + 4 - 4 * x ^ 2 ≥ 0)
-  · intro h; rw [ge_iff_le]; apply (div_le_div_right (by norm_num : (0 : ℝ) < (4 : ℝ))).mp
+  · intro h; rw [ge_iff_le]
+    apply (div_le_div_iff_of_pos_right (by norm_num : (0 : ℝ) < (4 : ℝ))).mp
     norm_num; rw [←h]; positivity
   · rintro ⟨hx, rfl⟩
     have tmp : 0 < (4 - 2 * p) := by linarith only [hx]

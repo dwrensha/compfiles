@@ -39,7 +39,7 @@ problem canada1998_p3 (n : ℕ) (hn : 2 ≤ n) :
    ((n.succ.succ:ℝ) + 1) * ∑ i ∈ Finset.range n.succ.succ, (1/(2 * (i:ℝ) + 2)) <
    (n.succ.succ:ℝ) * ∑ i ∈ Finset.range n.succ.succ, (1/(2 * (i:ℝ) + 1))
       by rw [div_mul_eq_mul_div₀, one_mul, div_mul_eq_mul_div₀, one_mul]
-         apply (div_lt_div_iff (by positivity) (by positivity)).mpr
+         apply (div_lt_div_iff₀ (by positivity) (by positivity)).mpr
          linarith
 
   induction n with
@@ -89,9 +89,9 @@ problem canada1998_p3 (n : ℕ) (hn : 2 ≤ n) :
         (2:ℝ) * (k:ℝ) ≥ (2:ℝ) * 2 := mul_le_mul_of_nonneg_left hh2 (by linarith)
         _ = 4 := by norm_num
 
-    have h7 : 1 / (2 * (k:ℝ) + 2) < 1 / 2 := by apply div_lt_div' <;> linarith
+    have h7 : 1 / (2 * (k:ℝ) + 2) < 1 / 2 := by apply div_lt_div₀' <;> linarith
     have h8 : ((k:ℝ)+1)/(2 * (k:ℝ) + 2) < ((k:ℝ)+1)/(2 * (k:ℝ) + 1) :=
-      by apply div_lt_div' <;> linarith
+      by apply div_lt_div₀' <;> linarith
 
     have h9 :=
            --  (1 + 1/3 + ... + 1/(2k-1)) + (k+1)/(2k+1)
