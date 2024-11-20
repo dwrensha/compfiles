@@ -54,7 +54,7 @@ problem bulgaria1998_p3
          = f (x + y) * 1                       := (mul_one (f (x + y))).symm
        _ = f (x + y) * ((f x + y) / (f x + y)) := by rw [div_self (Ne.symm (ne_of_lt h2))]
        _ = (f (x + y) * (f x + y)) / (f x + y) := mul_div_assoc' _ _ _
-       _ ≤ (f x)^2 / (f x + y)                 := (div_le_div_right h2).mpr h1
+       _ ≤ (f x)^2 / (f x + y)                 := (div_le_div_iff_of_pos_right h2).mpr h1
        _ = (f x) * (f x / (f x + y))           := by field_simp [pow_two]
        _ < f x                                 := (mul_lt_iff_lt_one_right (hpos x hx)).mpr h5
 
@@ -70,7 +70,7 @@ problem bulgaria1998_p3
          = f (x + f x) * 1                   := (mul_one _).symm
        _ = f (x + f x) * ((f x + f x) / (f x + f x)) := by rw [div_self (Ne.symm h3)]
        _ = (f (x + f x) * (f x + f x)) / (f x + f x) := mul_div_assoc' _ _ _
-       _ ≤ (f x)^2 / (f x + f x)                 := (div_le_div_right h2).mpr h1
+       _ ≤ (f x)^2 / (f x + f x)                 := (div_le_div_iff_of_pos_right h2).mpr h1
        _ = (f x) * (f x / (f x + f x))           := by field_simp [pow_two]
        _ = (f x) * (f x / (2 * f x))             := by rw [two_mul]
        _ = f x / 2                               := by field_simp [h7]
@@ -116,7 +116,7 @@ problem bulgaria1998_p3
     calc f (x_seq pn.succ)
          ≤ f (x_seq pn + f (x_seq pn)) := h1
        _ ≤ f (x_seq pn) / 2 := f_half (x_seq pn) (x_seq_pos pn)
-       _ ≤ (f 1 / 2 ^ pn) / 2 := (div_le_div_right two_pos).mpr hpn
+       _ ≤ (f 1 / 2 ^ pn) / 2 := (div_le_div_iff_of_pos_right two_pos).mpr hpn
        _ = f 1 / 2 ^ pn.succ := by field_simp [ne_of_gt hf1]; exact pow_succ 2 pn
 
   have h1: ∀ n: ℕ, x_seq n < 1 + 3 * f 1 := by
