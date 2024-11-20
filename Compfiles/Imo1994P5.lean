@@ -145,7 +145,23 @@ problem imo1994_p5 (f : S → S) :
       linarith
 
   -- But putting x = y in the relation given we get f(k) = k for k = x + f(x) + xf(x).
-  -- Hence for any x we have x + f(x) + xf(x) = 0 and hence f(x) = -x/(x+1).
-  sorry
+  -- Hence for any x we have x + f(x) + xf(x) = 0.
+  have h5 : ∀ x, op f x x = ⟨0, neg_one_lt_zero⟩ := by
+    intro x
+    exact h4 (op f x x) (h1 x x)
+
+  ext x
+  have h6 := h5 x
+  unfold op at h6
+  obtain ⟨x, hx⟩ := x
+  rw [Subtype.mk_eq_mk] at h6
+  dsimp only at h6
+  have h7 : (f ⟨x, hx⟩).val = -x / (1 + x) := by
+    have h8 : 0 < 1 + x := by linarith
+    field_simp
+    linarith
+  rw [←Subtype.val_inj]
+  dsimp only
+  exact h7
 
 end Imo1994P5
