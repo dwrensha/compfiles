@@ -36,11 +36,19 @@ determine solution_set : Set (S → S) := { fun x ↦ ⟨-x.val / (1 + x.val), s
 
 problem imo1994_p5 (f : S → S) :
     f ∈ solution_set ↔
-    (∀ x y : S, f (op f x y) = op f y x ∧
+    ((∀ x y : S, f (op f x y) = op f y x) ∧
      (∀ x y : S, x.val ∈ Set.Ioo (-1) 0 → y.val ∈ Set.Ioo (-1) 0 →
         x.val < y.val → (f x).val < (f y).val) ∧
      (∀ x y : S, 0 < x.val → 0 < y.val →
         x.val < y.val → (f x).val < (f y).val)) := by
+  constructor
+  · intro hf
+    simp only [Set.mem_singleton_iff] at hf
+    rw [hf]
+    refine ⟨?_, ?_, ?_⟩ <;> intro x y
+    · sorry
+    · sorry
+    · sorry
   sorry
 
 end Imo1994P5
