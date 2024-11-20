@@ -584,9 +584,7 @@ problem usa1992_p1 (n : ℕ) :
       have h47 : Even (10 ^ 2 ^ (n + 1) - 1 - b n) := Nat.Odd.sub_odd h45 (h9 n)
       rw [Nat.even_iff] at h47
       rw [Nat.odd_iff] at H1
-      rw [←Nat.not_odd_iff] at h47
-      rw [Nat.odd_iff] at h47
-      contradiction
+      simp [H1] at h47
     apply_fun (· + 1) at h12
     rw [←lemma3 h15] at h12
     have h17 : 10 ^ 2 ^ (n + 1) - 1 - b n + 1 = 10 ^ 2 ^ (n + 1) - b n := by omega
