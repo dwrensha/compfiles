@@ -42,6 +42,7 @@ problem imo1994_p5 (f : S → S) :
         x.val < y.val → (f x).val / x.val < (f y).val / y.val) ∧
      (∀ x y : S, 0 < x.val → 0 < y.val →
         x.val < y.val → (f x).val / x.val < (f y).val / y.val)) := by
+  -- We follow https://prase.cz/kalva/imo/isoln/isoln945.html
   constructor
   · intro hf
     simp only [Set.mem_singleton_iff] at hf
@@ -80,6 +81,71 @@ problem imo1994_p5 (f : S → S) :
       rw [div_self h6]
       rw [div_lt_div_iff₀ h2 h1]
       linarith
+  rintro ⟨h1, h2, h3⟩
+  simp only [Set.mem_singleton_iff]
+  have h4 : ∀ a, f a = a → a = ⟨0, neg_one_lt_zero⟩ := by
+    -- Suppose f(a) = a.
+    intro a ha
+    -- Then putting x = y = a in the relation given, we get f(b) = b, where b = 2a + a².
+    have h1a := h1 a a
+    dsimp only [op] at h1a
+    simp_rw [ha] at h1a
+    let b := a.val + a.val + a.val * a.val
+    have hb : -1 < b := by unfold b; nlinarith [a.property]
+
+    obtain haz | haz | haz := lt_trichotomy a.val 0
+    · -- If -1 < a < 0, then -1 < b < a.
+      have hai : a.val ∈ Set.Ioo (-1) 0 := ⟨a.property, haz⟩
+      have hba : b < a.val := by
+        unfold b
+        nlinarith [a.property]
+      have hbi : b ∈ Set.Ioo (-1) 0 := by
+        refine ⟨hb, gt_trans haz hba⟩
+
+      -- But f(a)/a = f(b)/b.
+      have habf : (f a).val / a.val = (f ⟨b, hb⟩).val / b := by
+        rw [ha]
+        unfold b
+        simp_rw [h1a]
+        have haz : a.val ≠ 0 := by linarith
+        have hbz : a.val + a.val + a.val * a.val ≠ 0 := by nlinarith [a.property]
+        simp only [div_self haz]
+        simp only [div_self hbz]
+      -- Contradiction.
+      specialize h2 ⟨b, hb⟩ a hbi hai hba
+      dsimp only at h2
+      simp_rw [←habf] at h2
+      linarith
+    · obtain ⟨a, haa⟩ := a
+      dsimp only at haz
+      simp_rw [haz]
+    · -- Similarly, if a > 0, then b > a, but f(a)/a = f(b)/b. Contradiction.
+      have hai : a.val ∈ Set.Ioi 0 := haz
+      have hba : a.val < b := by
+        unfold b
+        nlinarith
+
+      have hbi : b ∈ Set.Ioi 0 := by
+        simp only [Set.mem_Ioi]
+        exact gt_trans hba haz
+
+      -- But f(a)/a = f(b)/b.
+      have habf : (f a).val / a.val = (f ⟨b, hb⟩).val / b := by
+        rw [ha]
+        unfold b
+        simp_rw [h1a]
+        have haz : a.val ≠ 0 := by linarith
+        have hbz : a.val + a.val + a.val * a.val ≠ 0 := by nlinarith [a.property]
+        simp only [div_self haz]
+        simp only [div_self hbz]
+
+      specialize h3 a ⟨b, hb⟩ hai hbi hba
+      dsimp only at h3
+      simp_rw [←habf] at h3
+      linarith
+
+  -- But putting x = y in the relation given we get f(k) = k for k = x + f(x) + xf(x).
+  -- Hence for any x we have x + f(x) + xf(x) = 0 and hence f(x) = -x/(x+1).
   sorry
 
 end Imo1994P5
