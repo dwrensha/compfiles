@@ -51,8 +51,8 @@ import Compfiles.Imo1979P5
 import Compfiles.Imo1981P3
 import Compfiles.Imo1981P6
 import Compfiles.Imo1982P1
+import Compfiles.Imo1982P3
 import Compfiles.Imo1982P4
-import Compfiles.Imo1982Q3
 import Compfiles.Imo1983P1
 import Compfiles.Imo1983P5
 import Compfiles.Imo1983P6
