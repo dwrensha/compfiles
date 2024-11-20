@@ -83,9 +83,28 @@ problem imo1978_p1 (m n : ℕ)
     rw [show (1978 : ℤ) = 2 * 989 by norm_num] at h4
     rw [show (8 : ℤ) = 2 ^ 3 by norm_num] at h4
     rw [mul_pow] at h4
-    have h6 : IsCoprime ((2:ℤ)^3) (989 ^ m') := sorry
+    have h6 : IsCoprime ((2:ℤ)^3) (989 ^ m') := by
+      suffices H : IsCoprime (2:ℤ) (989 ^ m') from IsCoprime.pow_left H
+      rw [Prime.coprime_iff_not_dvd Int.prime_two]
+      rw [Int.two_dvd_ne_zero]
+      rw [←Int.odd_iff]
+      rw [Int.odd_pow]
+      apply Or.inl
+      use 494
+      norm_num
     replace h4 := IsCoprime.dvd_of_dvd_mul_right h6 h4
-    sorry
+    obtain ⟨c, hc⟩ := h4
+    have hc' := hc
+    apply_fun (fun x => multiplicity 2 x) at hc
+    have hf : multiplicity.Finite 2 (2 ^ 3 * c) := by
+      apply multiplicity.finite_prime_left Int.prime_two
+      simp only [Int.reducePow, ne_eq, mul_eq_zero, OfNat.ofNat_ne_zero, false_or]
+      rintro rfl
+      simp at hc'
+    rw [multiplicity_mul Int.prime_two hf] at hc
+    rw [multiplicity_pow_self (by norm_num) (by decide)] at hc
+    rw [multiplicity_pow_self (by norm_num) (by decide)] at hc
+    omega
 
   -- and 125 divides 1978^(n'-m') - 1.
   sorry
