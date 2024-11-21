@@ -27,7 +27,7 @@ determine the_answer : Set ℝ := Icc (π/4) (7*π/4)
 
 problem imo1965_p1 :
     {x ∈ Icc 0 (2*π) |
-       |√(1 + sin (2*x)) - √(1 - sin (2*x))| ∈ Icc (2 * cos x) (√2)}
+       |√(1 + sin (2*x)) - √(1 - sin (2*x))| ∈ Icc (2 * cos x) √2}
      = the_answer := by
   -- We follow https://artofproblemsolving.com/wiki/index.php/1965_IMO_Problems/Problem_1.
   have h0 : ∀ x, (√(1 + sin (2*x)) - √(1 - sin (2*x)))^2 = 2 - 2*|cos (2*x)| := by
