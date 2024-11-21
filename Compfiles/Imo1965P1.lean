@@ -23,27 +23,28 @@ namespace Imo1965P1
 
 open Real Set
 
-noncomputable abbrev aux (x : ℝ) := √(1 + sin (2*x)) - √(1 - sin (2*x))
-
 determine the_answer : Set ℝ := Icc (π/4) (7*π/4)
 
 problem imo1965_p1 :
-    {x ∈ Icc 0 (2*π) | 2 * cos x ≤ |aux x| ∧ |aux x| ≤ √2} = the_answer := by
+    {x ∈ Icc 0 (2*π) |
+       |√(1 + sin (2*x)) - √(1 - sin (2*x))| ∈ Icc (2 * cos x) (√2)}
+     = the_answer := by
   -- We follow https://artofproblemsolving.com/wiki/index.php/1965_IMO_Problems/Problem_1.
-  have h0 : ∀ x, (aux x)^2 = 2 - 2*|cos (2*x)| := by
+  have h0 : ∀ x, (√(1 + sin (2*x)) - √(1 - sin (2*x)))^2 = 2 - 2*|cos (2*x)| := by
     intro x
-    rw [←sqrt_sq_eq_abs (cos (2 * x)), cos_sq', aux, sub_sq, sq_sqrt, sq_sqrt, mul_assoc,
+    rw [←sqrt_sq_eq_abs (cos (2 * x)), cos_sq', sub_sq, sq_sqrt, sq_sqrt, mul_assoc,
       ←sqrt_mul]; ring_nf
     repeat { linarith [sin_le_one (2 * x), neg_one_le_sin (2 * x)] }
-  have : ∀ x, |aux x| ≤ √2 := by
+  have : ∀ x, |√(1 + sin (2*x)) - √(1 - sin (2*x))| ≤ √2 := by
     intro x
     apply nonneg_le_nonneg_of_sq_le_sq (by norm_num)
-    simp [aux, ←pow_two, h0]
+    simp [←pow_two, h0]
+  simp only [Set.mem_Icc]
   simp_rw [this, and_true]
   symm; ext x; constructor; dsimp
   . rw [the_answer]; rintro ⟨h1, h2⟩
     constructor
-    . simp; constructor <;> linarith
+    . constructor <;> linarith
     have : x ∈ Ico (π/4) (π / 2) ∪ Icc (π/2) (3*π/2) ∪ Ioc (3*π/2) (7*π/4) := by
       simp only [the_answer, mem_Icc, mem_union, mem_Ico, mem_Ioc]
       rcases lt_or_ge x (π/2) with h3 | h3 <;>
