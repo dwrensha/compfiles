@@ -85,7 +85,6 @@ problem imo1965_p1 :
   have cosx2_nonneg : 0 ≤ 2 * cos x := by linarith
   rw [←abs_of_nonneg cosx2_nonneg, ←sq_le_sq, h0, abs_of_nonneg cos2x_nonneg, cos_two_mul] at h3
   ring_nf at h3
-  have : (cos x)^2 ≤ 1/2 := by linarith
   suffices (cos (π/4))^2 < (cos x)^2 by
     rw [cos_pi_div_four, div_pow] at this; norm_num at this
     linarith
