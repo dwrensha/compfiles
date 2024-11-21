@@ -25,7 +25,7 @@ open Real Set
 
 noncomputable abbrev aux (x : ℝ) := √(1 + sin (2*x)) - √(1 - sin (2*x))
 
-determine the_answer := Icc (π/4) (7*π/4)
+determine the_answer : Set ℝ := Icc (π/4) (7*π/4)
 
 problem imo1965_p1 :
     {x ∈ Icc 0 (2*π) | 2 * cos x ≤ |aux x| ∧ |aux x| ≤ √2} = the_answer := by
