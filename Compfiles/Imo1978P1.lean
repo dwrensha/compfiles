@@ -85,13 +85,9 @@ problem imo1978_p1 (m n : ℕ)
     rw [mul_pow] at h4
     have h6 : IsCoprime ((2:ℤ)^3) (989 ^ m') := by
       suffices H : IsCoprime (2:ℤ) (989 ^ m') from IsCoprime.pow_left H
-      rw [Prime.coprime_iff_not_dvd Int.prime_two]
-      rw [Int.two_dvd_ne_zero]
-      rw [←Int.odd_iff]
-      rw [Int.odd_pow]
-      apply Or.inl
-      use 494
-      norm_num
+      rw [Prime.coprime_iff_not_dvd Int.prime_two, Int.two_dvd_ne_zero]
+      rw [←Int.odd_iff, Int.odd_pow]
+      exact Or.inl ⟨494, rfl⟩
     replace h4 := IsCoprime.dvd_of_dvd_mul_right h6 h4
     obtain ⟨c, hc⟩ := h4
     have hc' := hc
