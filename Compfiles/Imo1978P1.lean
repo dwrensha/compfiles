@@ -96,17 +96,24 @@ problem imo1978_p1 (m n : ℕ)
     omega
 
   -- and 125 divides 1978^(n'-m') - 1.
-  have h6 : 125 ∣ 1978^(n'-m') - 1 := by
+  have h6 : (125 : ℤ) ∣ 1978^(n'-m') - 1 := by
     obtain ⟨k, hk⟩ : ∃ k, k + 3 = m' := ⟨m' - 3, by omega⟩
     rw [←hk] at h4
     nth_rw 1 [←hk] at h3
     have h7 : (1978:ℤ) ^ (k + 3) * (1978 ^ (n' - m') - 1) =
-        8 * 1978 ^ k * 989 ^ 3 * (1978 ^ (n' - m') - 1) := by
-      ring
+        8 * (1978 ^ k * 989 ^ 3 * (1978 ^ (n' - m') - 1)) := by ring
     rw [h7] at h3
-    have : (125:ℤ) ∣ 1978 ^ k * 989 ^ 3 * (1978 ^ (n' - m') - 1) := by
-      sorry
-    sorry
+    rw [dvd_cancel_left_mem_nonZeroDivisors (mem_nonZeroDivisors_of_ne_zero (by norm_num))] at h3
+    have h8 : IsCoprime (125 : ℤ) (1978 ^ k) := by
+      refine IsCoprime.pow_right ?H
+      norm_num
+    have h9 : IsCoprime (125 : ℤ) (989 ^ 3) := by norm_num
+    rw [mul_assoc] at h3
+    replace h3 := IsCoprime.dvd_of_dvd_mul_left h8 h3
+    exact IsCoprime.dvd_of_dvd_mul_left h9 h3
+
+  -- By Euler's theorem, 1978^φ(125) = 1 (mod 125).
+
   sorry
 
 end Imo1978P1
