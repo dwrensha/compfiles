@@ -41,29 +41,24 @@ problem imo_1964_p1a (n : ℕ) : n ∈ solution_set ↔ 2^n ≡ 1 [MOD 7] := by
 
 problem imo_1964_p1b (n : ℕ) : ¬ 7 ∣ (2^n + 1) := by
   /-
-  Informal proof (credit to twitch.tv viewer int_fast64_t):
-    let 2^n = 2^{3k + j},j < 3
-    (i.e. write n as 3k + j)
-    =>
-      2^n mod 7 = (2^3 mod 7)^k * 2^j mod 7 = 1 mod 7 * 2^j mod 7,
-    but 2^j < 5
+  Following https://prase.cz/kalva/imo/isoln/isoln641.html:
+  Let n = 3m + k; k = 0, 1, or 2.
+  2^3 = 1 (mod 7).
+  Hence
+  2^3m + 1 = 2 (mod 7),
+  2^(3m+1) + 1 = 3 (mod 7), and
+  2^(3m + 2) + 1 = 5 (mod 7).
   -/
   intro h
-  replace h := Nat.mod_eq_zero_of_dvd h
-  rw [←Nat.div_add_mod n 3] at h
-
-  have h := calc
-     0 = (2 ^ (3 * (n / 3) + n % 3) + 1) % 7       := h.symm
-     _ = ((2 ^ 3) ^ (n / 3) * 2 ^ (n % 3) + 1) % 7 := by rw [pow_add, pow_mul]
-     _ = ((2 ^ 3 % 7) ^ (n / 3) % 7 * (2 ^ (n % 3) % 7) % 7 + 1 % 7) % 7 :=
-                   by rw [Nat.add_mod, Nat.mul_mod, Nat.pow_mod]
-     _ = (1 ^ (n / 3) % 7 * (2 ^ (n % 3) % 7) % 7 + 1 % 7) % 7 :=
-                   by rw [show (2 ^ 3) % 7 = 1 by rfl]
-     _ = (1 % 7 * (2 ^ (n % 3) % 7) % 7 + 1 % 7) % 7 := by rw[one_pow]
-     _ = (2 ^ (n % 3) % 7 + 1) % 7 :=
-                   by rw [show 1 % 7 = 1 by rfl, one_mul, Nat.mod_mod]
-
-  mod_cases H : n % 3 <;> rw [H] at h <;> norm_num at h
+  apply Nat.mod_eq_zero_of_dvd at h
+  have h1: 2 ^ 3 % 7 = 1 := by rfl
+  mod_cases h2 : n % 3 <;> rw [←Nat.div_add_mod n 3, h2] at h
+  · rw [Nat.zero_mod, add_zero, Nat.add_mod, Nat.pow_mod, pow_mul, Nat.pow_mod, h1, one_pow] at h
+    contradiction
+  · rw [Nat.add_mod, pow_add, pow_mul, Nat.mul_mod, Nat.pow_mod, h1, one_pow] at h
+    contradiction
+  · rw [Nat.add_mod, pow_add, pow_mul, Nat.mul_mod, Nat.pow_mod, h1, one_pow] at h
+    contradiction
 
 snip begin
 
@@ -75,30 +70,6 @@ theorem imo_1964_p1b' : ∀ (n : ℕ), (2 ^ n + 1) % 7 ≠ 0
       rw [pow_add, Nat.add_mod, Nat.mul_mod, show 2 ^ 3 % 7 = 1 by rfl]
       simp [imo_1964_p1b' n]
 
-open Nat
-theorem imo_1964_p1b'' (n : ℕ) : ¬ 7 ∣ (2^n + 1) := by
-  /-
-  Another alternative proof, along the lines of this informal proof:
-  - https://prase.cz/kalva/imo/isoln/isoln641.html
-  Let n = 3m + k; k = 0, 1, or 2.
-  2^3 = 1 (mod 7).
-  Hence
-  2^3m + 1 = 2 (mod 7),
-  2^(3m+1) + 1 = 3 (mod 7), and
-  2^(3m + 2) + 1 = 5 (mod 7).
-  -/
-  intro h
-  apply mod_eq_zero_of_dvd at h
-  have h1: 2 ^ 3 % 7 = 1 := by rfl
-  mod_cases h2 : n % 3 <;> rw [←div_add_mod n 3, h2] at h
-  · rw [zero_mod, add_zero, add_mod, pow_mod, pow_mul, pow_mod, h1, one_pow] at h
-    contradiction
-  · rw [add_mod, pow_add, pow_mul, mul_mod, pow_mod, h1, one_pow] at h
-    contradiction
-  · rw [add_mod, pow_add, pow_mul, mul_mod, pow_mod, h1, one_pow] at h
-    contradiction
-
 snip end
-
 
 end Imo1964P1
