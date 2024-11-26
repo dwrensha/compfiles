@@ -104,15 +104,20 @@ problem imo1978_p1 (m n : ℕ)
         8 * (1978 ^ k * 989 ^ 3 * (1978 ^ (n' - m') - 1)) := by ring
     rw [h7] at h3
     rw [dvd_cancel_left_mem_nonZeroDivisors (mem_nonZeroDivisors_of_ne_zero (by norm_num))] at h3
-    have h8 : IsCoprime (125 : ℤ) (1978 ^ k) := by
-      refine IsCoprime.pow_right ?H
-      norm_num
+    have h8 : IsCoprime (125 : ℤ) (1978 ^ k) := IsCoprime.pow_right (by norm_num)
     have h9 : IsCoprime (125 : ℤ) (989 ^ 3) := by norm_num
     rw [mul_assoc] at h3
     replace h3 := IsCoprime.dvd_of_dvd_mul_left h8 h3
     exact IsCoprime.dvd_of_dvd_mul_left h9 h3
 
   -- By Euler's theorem, 1978^φ(125) = 1 (mod 125).
+  -- φ(125) = 125 - 25 = 100, so, 1978^100 = 1 (mod 125).
+  have h8 : Nat.Coprime 1978 125 := by norm_num
+  have h9 := Nat.ModEq.pow_totient h8
+  rw [show Nat.totient 125 = 100 from rfl] at h9
+
+  -- Hence the smallest r such that 1978^r = 1 (mod 125) must be a divisor of 100
+  -- (because if it was not, then the remainder on dividing it into 100 would give a smaller r).
 
   sorry
 
