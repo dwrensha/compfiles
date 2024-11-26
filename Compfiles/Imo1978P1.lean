@@ -58,7 +58,6 @@ problem imo1978_p1 (m n : ℕ)
       suffices H : ¬ (2:ℤ) ∣ (1978 ^ (n' - m') - 1) from
         (Prime.coprime_iff_not_dvd Int.prime_two).mpr H
       rw [Int.two_dvd_ne_zero]
-      have h6 : 1 ≤ (1978 ^ (n' - m')) := Nat.one_le_pow' (n' - m') 1977
       rw [show (1978 : ℤ) = 2 * 989 by norm_num]
       have h7 : (((2:ℤ) * 989) ^ (n' - m')) % 2 = 0 := by
         rw [mul_pow]
@@ -137,7 +136,27 @@ problem imo1978_p1 (m n : ℕ)
       exact Nat.mod_lt 100 hr0
     have h14 : (125:ℤ) ∣ 1978 ^ r' - 1 := by
       unfold r'
-      sorry
+      clear ih
+      have h19 : 1978 ^ r % 125 = 1 := by
+        rw [← Int.modEq_iff_dvd] at hr
+        change _ % _ = _ % _ at hr
+        dsimp at hr
+        zify
+        exact hr.symm
+      have h20 : (100 % r) + r * (100 / r) = 100 := Nat.mod_add_div _ _
+      apply_fun (1978 ^ ·) at h20
+      apply_fun (· % 125) at h20
+      rw [pow_add] at h20
+      simp only [Nat.reducePow, Nat.reduceMod] at h20
+      rw [pow_mul] at h20
+      rw [Nat.mul_mod] at h20
+      nth_rw 2 [Nat.pow_mod] at h20
+      rw [h19] at h20
+      simp only [one_pow, Nat.one_mod, mul_one, dvd_refl, Nat.mod_mod_of_dvd] at h20
+      rw [show 1 = 1 % 125 by rfl] at h20
+      zify at h20
+      change _ ≡ _ [ZMOD _] at h20
+      exact Int.ModEq.dvd h20.symm
     have h15 : 0 < r' := Nat.emod_pos_of_not_dvd h10
     have h13 := ih r' h12 h15 h14
     omega
