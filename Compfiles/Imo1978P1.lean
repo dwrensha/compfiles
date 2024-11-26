@@ -112,6 +112,14 @@ problem imo1978_p1 (m n : ℕ)
 
   rw [Prod.mk.injEq] at hmn
   obtain ⟨rfl, rfl⟩ := hmn
+  suffices H : 100 ≤ n' - m' by omega
+
+  suffices H : ∀ r, 0 < r → 125 ∣ (1978 : ℤ) ^ r - 1 → 100 ≤ r from H (n' - m') (by omega) h6
+  clear m' n' h1 h2 h3 h4 h5 h6
+
+  intro r
+  induction r using Nat.strong_induction_on with | h r ih =>
+  intro hr0 hr
 
   -- By Euler's theorem, 1978^φ(125) = 1 (mod 125).
   -- φ(125) = 125 - 25 = 100, so, 1978^100 = 1 (mod 125).
@@ -121,27 +129,35 @@ problem imo1978_p1 (m n : ℕ)
 
   -- Hence the smallest r such that 1978^r = 1 (mod 125) must be a divisor of 100
   -- (because if it was not, then the remainder on dividing it into 100 would give a smaller r).
-  let r := n' - m'
-  have h10 : r ∣ 100 := by
-    sorry
+  by_cases h10 : r ∣ 100
+  swap
+  · let r' := 100 % r
+    have h12 : r' < r := by
+      unfold r'
+      exact Nat.mod_lt 100 hr0
+    have h14 : (125:ℤ) ∣ 1978 ^ r' - 1 := by
+      unfold r'
+      sorry
+    have h15 : 0 < r' := Nat.emod_pos_of_not_dvd h10
+    have h13 := ih r' h12 h15 h14
+    omega
 
   have h11 : r ∈ Nat.divisors 100 := by
     rw [Nat.mem_divisors]
     exact ⟨h10, by norm_num⟩
-
   have h12 : Nat.divisors 100 = {1,2,4,5,10,20,25,50,100} := by decide
   rw [h12] at h11; clear h12
+
   simp only [Finset.mem_insert, Finset.mem_singleton] at h11
-  change 125 ∣ 1978 ^ r - 1 at h6
   obtain hr1 | hr2 | hr4 | hr5 | hr10 | hr20 | hr25 | hr50 | hr100 := h11
-  · rw [hr1] at h6; norm_num at h6
-  · rw [hr2] at h6; norm_num at h6
-  · rw [hr4] at h6; norm_num at h6
-  · rw [hr5] at h6; norm_num at h6
-  · rw [hr10] at h6; norm_num at h6
-  · rw [hr20] at h6; norm_num at h6
-  · rw [hr25] at h6; norm_num at h6
-  · rw [hr50] at h6; norm_num at h6
+  · norm_num [hr1] at hr
+  · norm_num [hr2] at hr
+  · norm_num [hr4] at hr
+  · norm_num [hr5] at hr
+  · norm_num [hr10] at hr
+  · norm_num [hr20] at hr
+  · norm_num [hr25] at hr
+  · norm_num [hr50] at hr
   · omega
 
 end Imo1978P1
