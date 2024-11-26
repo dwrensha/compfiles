@@ -97,6 +97,15 @@ problem imo1978_p1 (m n : ℕ)
 
   -- and 125 divides 1978^(n'-m') - 1.
   have h6 : 125 ∣ 1978^(n'-m') - 1 := by
+    obtain ⟨k, hk⟩ : ∃ k, k + 3 = m' := ⟨m' - 3, by omega⟩
+    rw [←hk] at h4
+    nth_rw 1 [←hk] at h3
+    have h7 : (1978:ℤ) ^ (k + 3) * (1978 ^ (n' - m') - 1) =
+        8 * 1978 ^ k * 989 ^ 3 * (1978 ^ (n' - m') - 1) := by
+      ring
+    rw [h7] at h3
+    have : (125:ℤ) ∣ 1978 ^ k * 989 ^ 3 * (1978 ^ (n' - m') - 1) := by
+      sorry
     sorry
   sorry
 
