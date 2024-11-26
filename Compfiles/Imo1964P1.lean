@@ -1,7 +1,7 @@
 /-
 Copyright (c) 2023 David Renshaw. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: David Renshaw, Anand Rao
+Authors: David Renshaw, Anand Rao, Harald Carlens
 -/
 
 import Mathlib.Data.Nat.ModEq
@@ -74,6 +74,29 @@ theorem imo_1964_p1b' : ∀ (n : ℕ), (2 ^ n + 1) % 7 ≠ 0
     | n + 3 => by
       rw [pow_add, Nat.add_mod, Nat.mul_mod, show 2 ^ 3 % 7 = 1 by rfl]
       simp [imo_1964_p1b' n]
+
+open Nat
+theorem imo_1964_p1b'' (n : ℕ) : ¬ 7 ∣ (2^n + 1) := by
+  /-
+  Another alternative proof, along the lines of this informal proof:
+  - https://prase.cz/kalva/imo/isoln/isoln641.html
+  Let n = 3m + k; k = 0, 1, or 2.
+  2^3 = 1 (mod 7).
+  Hence
+  2^3m + 1 = 2 (mod 7),
+  2^(3m+1) + 1 = 3 (mod 7), and
+  2^(3m + 2) + 1 = 5 (mod 7).
+  -/
+  intro h
+  apply mod_eq_zero_of_dvd at h
+  have h1: 2 ^ 3 % 7 = 1 := by rfl
+  mod_cases h2 : n % 3 <;> rw [←div_add_mod n 3, h2] at h
+  · rw [zero_mod, add_zero, add_mod, pow_mod, pow_mul, pow_mod, h1, one_pow] at h
+    contradiction
+  · rw [add_mod, pow_add, pow_mul, mul_mod, pow_mod, h1, one_pow] at h
+    contradiction
+  · rw [add_mod, pow_add, pow_mul, mul_mod, pow_mod, h1, one_pow] at h
+    contradiction
 
 snip end
 
