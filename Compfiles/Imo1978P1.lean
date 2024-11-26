@@ -110,6 +110,9 @@ problem imo1978_p1 (m n : ℕ)
     replace h3 := IsCoprime.dvd_of_dvd_mul_left h8 h3
     exact IsCoprime.dvd_of_dvd_mul_left h9 h3
 
+  rw [Prod.mk.injEq] at hmn
+  obtain ⟨rfl, rfl⟩ := hmn
+
   -- By Euler's theorem, 1978^φ(125) = 1 (mod 125).
   -- φ(125) = 125 - 25 = 100, so, 1978^100 = 1 (mod 125).
   have h8 : Nat.Coprime 1978 125 := by norm_num
@@ -118,7 +121,27 @@ problem imo1978_p1 (m n : ℕ)
 
   -- Hence the smallest r such that 1978^r = 1 (mod 125) must be a divisor of 100
   -- (because if it was not, then the remainder on dividing it into 100 would give a smaller r).
+  let r := n' - m'
+  have h10 : r ∣ 100 := by
+    sorry
 
-  sorry
+  have h11 : r ∈ Nat.divisors 100 := by
+    rw [Nat.mem_divisors]
+    exact ⟨h10, by norm_num⟩
+
+  have h12 : Nat.divisors 100 = {1,2,4,5,10,20,25,50,100} := by decide
+  rw [h12] at h11; clear h12
+  simp only [Finset.mem_insert, Finset.mem_singleton] at h11
+  change 125 ∣ 1978 ^ r - 1 at h6
+  obtain hr1 | hr2 | hr4 | hr5 | hr10 | hr20 | hr25 | hr50 | hr100 := h11
+  · rw [hr1] at h6; norm_num at h6
+  · rw [hr2] at h6; norm_num at h6
+  · rw [hr4] at h6; norm_num at h6
+  · rw [hr5] at h6; norm_num at h6
+  · rw [hr10] at h6; norm_num at h6
+  · rw [hr20] at h6; norm_num at h6
+  · rw [hr25] at h6; norm_num at h6
+  · rw [hr50] at h6; norm_num at h6
+  · omega
 
 end Imo1978P1
