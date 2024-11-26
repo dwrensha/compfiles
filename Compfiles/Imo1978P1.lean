@@ -57,16 +57,12 @@ problem imo1978_p1 (m n : ℕ)
         IsCoprime.pow_left H
       suffices H : ¬ (2:ℤ) ∣ (1978 ^ (n' - m') - 1) from
         (Prime.coprime_iff_not_dvd Int.prime_two).mpr H
-      rw [Int.two_dvd_ne_zero]
       rw [show (1978 : ℤ) = 2 * 989 by norm_num]
-      have h7 : (((2:ℤ) * 989) ^ (n' - m')) % 2 = 0 := by
-        rw [mul_pow]
-        obtain ⟨c, hc⟩ : ∃ c, c = (n' - m') := exists_eq
-        cases' c with c
-        · omega
-        · rw [←hc, pow_succ', mul_assoc]
-          exact Int.mul_emod_right _ _
-      rw [Int.sub_emod, h7]
+      have h6 : (2:ℤ) ∣ (2 * 989) ^ (n' - m') := by
+         rw [mul_pow]
+         exact Dvd.dvd.mul_right (dvd_pow_self 2 (Nat.sub_ne_zero_iff_lt.mpr h2)) _
+      rw [Int.dvd_iff_emod_eq_zero] at h6
+      rw [Int.two_dvd_ne_zero, Int.sub_emod, h6]
       norm_num
     exact IsCoprime.dvd_of_dvd_mul_right h5 h3
 
