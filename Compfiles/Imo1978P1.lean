@@ -77,18 +77,8 @@ problem imo1978_p1 (m n : ℕ)
       rw [←Int.odd_iff, Int.odd_pow]
       exact Or.inl ⟨494, rfl⟩
     replace h4 := IsCoprime.dvd_of_dvd_mul_right h6 h4
-    obtain ⟨c, hc⟩ := h4
-    have hc' := hc
-    apply_fun (fun x => multiplicity 2 x) at hc
-    have hf : multiplicity.Finite 2 (2 ^ 3 * c) := by
-      apply multiplicity.finite_prime_left Int.prime_two
-      simp only [Int.reducePow, ne_eq, mul_eq_zero, OfNat.ofNat_ne_zero, false_or]
-      rintro rfl
-      simp at hc'
-    rw [multiplicity_mul Int.prime_two hf] at hc
-    rw [multiplicity_pow_self (by norm_num) (by decide)] at hc
-    rw [multiplicity_pow_self (by norm_num) (by decide)] at hc
-    omega
+    rw [pow_dvd_pow_iff (by norm_num) Int.prime_two.2.1] at h4
+    exact h4
 
   -- and 125 divides 1978^(n'-m') - 1.
   have h6 : (125 : ℤ) ∣ 1978^(n'-m') - 1 := by
