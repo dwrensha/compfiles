@@ -53,10 +53,8 @@ problem imo1978_p1 (m n : ℕ)
       dvd_of_mul_right_dvd h3
     have h5 : IsCoprime (8 : ℤ) (1978 ^ (n' - m') - 1) := by
       rw [show (8 : ℤ) = 2 ^ 3 by norm_num]
-      suffices H : IsCoprime (2 : ℤ) (1978 ^ (n' - m')- 1) from
-        IsCoprime.pow_left H
-      suffices H : ¬ (2:ℤ) ∣ (1978 ^ (n' - m') - 1) from
-        (Prime.coprime_iff_not_dvd Int.prime_two).mpr H
+      refine IsCoprime.pow_left ?_
+      rw [Prime.coprime_iff_not_dvd Int.prime_two]
       rw [show (1978 : ℤ) = 2 * 989 by norm_num]
       have h6 : (2:ℤ) ∣ (2 * 989) ^ (n' - m') := by
          rw [mul_pow]
@@ -72,7 +70,7 @@ problem imo1978_p1 (m n : ℕ)
     rw [show (8 : ℤ) = 2 ^ 3 by norm_num] at h4
     rw [mul_pow] at h4
     have h6 : IsCoprime ((2:ℤ)^3) (989 ^ m') := by
-      suffices H : IsCoprime (2:ℤ) (989 ^ m') from IsCoprime.pow_left H
+      refine IsCoprime.pow_left ?_
       rw [Prime.coprime_iff_not_dvd Int.prime_two, Int.two_dvd_ne_zero]
       rw [←Int.odd_iff, Int.odd_pow]
       exact Or.inl ⟨494, rfl⟩
