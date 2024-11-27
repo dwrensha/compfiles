@@ -118,10 +118,6 @@ problem imo1978_p1 (m n : ℕ)
 
   -- By Euler's theorem, 1978^φ(125) = 1 (mod 125).
   -- φ(125) = 125 - 25 = 100, so, 1978^100 = 1 (mod 125).
-  have h8 : Nat.Coprime 1978 125 := by norm_num
-  have h9 := Nat.ModEq.pow_totient h8
-  rw [show Nat.totient 125 = 100 from rfl] at h9
-
   -- Hence the smallest r such that 1978^r = 1 (mod 125) must be a divisor of 100
   -- (because if it was not, then the remainder on dividing it into 100 would give a smaller r).
   by_cases h10 : r ∣ 100
