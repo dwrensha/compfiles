@@ -26,6 +26,7 @@ unsafe def main (_args : List String) : IO Unit := do
   let module := `Compfiles
   searchPathRef.set compile_time_search_path%
 
+  Lean.enableInitializersExecution
   withImportModules #[{module}] {} (trustLevel := 1024) fun env =>
     let ctx := {fileName := "", fileMap := default}
     let state := {env}

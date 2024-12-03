@@ -43,6 +43,7 @@ unsafe def compileProblem (problem_id : String) (act : CompileProblemResult → 
   let olean_file := workDir.join (problem_id ++ ".olean")
 
   let module := `Compfiles
+  Lean.enableInitializersExecution
   withImportModules #[{module}] {} (trustLevel := 1024) fun env => do
     let ctx := {fileName := "", fileMap := default}
     let state := {env}
