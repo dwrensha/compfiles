@@ -208,7 +208,7 @@ lemma thue
 
   · by_contra! H
     replace H : |((x₁:ℕ):ℤ) - ↑↑x₂| = 0 := by
-      have : (0 : ℤ) ≤ |((x₁:ℕ):ℤ) - ↑↑x₂| := abs_nonneg (↑↑x₁ - ↑↑x₂)
+      have : (0 : ℤ) ≤ |((x₁:ℕ):ℤ) - ↑↑x₂| := abs_nonneg _
       exact (Int.le_antisymm this H).symm
     rw [abs_eq_zero] at H
     replace H : ((x₁:ℕ):ℤ) = ↑↑x₂ := Int.eq_of_sub_eq_zero H
