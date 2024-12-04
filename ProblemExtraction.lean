@@ -177,14 +177,14 @@ elab_rules : command
 | `(command| problem_file%$tk $md) => elabProblemFile tk md
 
 /-- Starts a group of commands that will be discarded by problem extraction. -/
-syntax (name := snipBegin) "snip" "begin" : command
+syntax (name := snipBegin) "snip " "begin" : command
 
 /-- Ends a group of commands that will be discarded by problem extraction. -/
-syntax (name := snipEnd) "snip" "end" : command
+syntax (name := snipEnd) "snip " "end" : command
 
 elab_rules : command
-| `(command| snip begin%$tk1) => do
-  let .some startPos := tk1.getPos? | throwError "snip syntax has no start pos"
+| `(command| snip%$tk0 begin%$tk1) => do
+  let .some startPos := tk0.getPos? | throwError "snip syntax has no start pos"
   let .some endPos := tk1.getTailPos? | throwError "snip syntax has no tail pos"
   let startPos := ⟨startPos.byteIdx - 1⟩ -- HACK: subtract one to consume unwanted newline
 
@@ -195,8 +195,8 @@ elab_rules : command
   modifyEnv fun env => solutionExtractionExtension.addEntry env
     ⟨mod, EntryVariant.replace ⟨startPos, endPos, ""⟩⟩
 
-| `(command| snip end%$tk2) => do
-  let .some startPos := tk2.getPos? | throwError "snip syntax has no start pos"
+| `(command| snip%$tk1 end%$tk2) => do
+  let .some startPos := tk1.getPos? | throwError "snip syntax has no start pos"
   let .some endPos := tk2.getTailPos? | throwError "snip syntax has no end pos"
   let endPos := ⟨endPos.byteIdx + 1⟩ -- HACK: add one to consume unwanted newline
 

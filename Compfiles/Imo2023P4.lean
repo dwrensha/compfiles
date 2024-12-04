@@ -35,7 +35,7 @@ noncomputable def aa (m : ℕ)
   √((∑ i ∈ Finset.univ.filter (· ≤ n), x i) *
     (∑ i ∈ Finset.univ.filter (· ≤ n), (1 / x i)))
 
-problem imo2023_p4_generalized
+theorem imo2023_p4_generalized
     (m : ℕ)
     (x : Finset.Icc 1 (2 * m + 1) → ℝ)
     (hxp : ∀ i, 0 < x i)
