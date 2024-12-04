@@ -40,7 +40,38 @@ lemma cauchy_schwarz {x1 x2 x3 y1 y2 y3 : ℝ}
     (hy1 : 0 ≤ y1) (hy2 : 0 ≤ y2) (hy3 : 0 ≤ y3) :
     (√(x1 * y1) + √(x2 * y2) + √(x3 * y3))^2 ≤
       (x1 + x2 + x3) * (y1 + y2 + y3) := by
-  sorry
+  let f : Fin 3 → ℝ
+      | 0 => √x1
+      | 1 => √x2
+      | 2 => √x3
+
+  let g : Fin 3 → ℝ
+      | 0 => √y1
+      | 1 => √y2
+      | 2 => √y3
+
+  have h1 := Real.sum_mul_le_sqrt_mul_sqrt Finset.univ f g
+  simp [f, g] at h1
+  simp only [Fin.sum_univ_succ, Fin.sum_univ_zero] at h1
+  simp only [Fin.isValue, Fin.succ_zero_eq_one, Fin.succ_one_eq_two, add_zero] at h1
+  rw [←add_assoc, ←add_assoc, ←add_assoc] at h1
+  have h2 : 0 ≤ √(x1 *y1) + √(x2 * y2) + √(x3 * y3) := by positivity
+  rw [Real.sq_sqrt hx1] at h1
+  rw [Real.sq_sqrt hx2] at h1
+  rw [Real.sq_sqrt hx3] at h1
+  rw [Real.sq_sqrt hy1] at h1
+  rw [Real.sq_sqrt hy2] at h1
+  rw [Real.sq_sqrt hy3] at h1
+  rw [←Real.sqrt_mul (show 0 ≤ x1 + x2 + x3 by positivity)] at h1
+  rw [←Real.sqrt_mul hx1] at h1
+  rw [←Real.sqrt_mul hx2] at h1
+  rw [←Real.sqrt_mul hx3] at h1
+  have h3 : 0 ≤ √((x1 + x2 + x3) * (y1 + y2 + y3)) := by positivity
+  have h4 : (√((x1 + x2 + x3) * (y1 + y2 + y3)))^2 = (x1 + x2 + x3) * (y1 + y2 + y3) := by
+    refine Real.sq_sqrt ?_
+    positivity
+  rw [←h4]
+  exact pow_le_pow_left₀ h2 h1 2
 
 lemma lemma1 (u : ℝ) (hu : u ≠ 1) (hp : 0 < u) : 2 < u + 1/u := by
   suffices H : 2 * u < (u + 1 / u) * u from
