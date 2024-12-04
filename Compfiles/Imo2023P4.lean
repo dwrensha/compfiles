@@ -66,7 +66,6 @@ lemma cauchy_schwarz {x1 x2 x3 y1 y2 y3 : ℝ}
   rw [←Real.sqrt_mul hx1] at h1
   rw [←Real.sqrt_mul hx2] at h1
   rw [←Real.sqrt_mul hx3] at h1
-  have h3 : 0 ≤ √((x1 + x2 + x3) * (y1 + y2 + y3)) := by positivity
   have h4 : (√((x1 + x2 + x3) * (y1 + y2 + y3)))^2 = (x1 + x2 + x3) * (y1 + y2 + y3) := by
     refine Real.sq_sqrt ?_
     positivity
@@ -102,8 +101,7 @@ theorem imo2023_p4_generalized
       obtain ⟨x, hx1⟩ := x
       rw [Finset.mem_Icc] at hx1
       obtain ⟨hx2, hx3⟩ := hx1
-      simp only [Nat.mul_zero, Nat.reduceAdd, Subtype.mk_le_mk]
-      exact hx3
+      exact Subtype.mk_le_mk.mpr hx3
     rw [h1]
     have h2 : Finset.univ (α := { x // x ∈ Finset.Icc 1 1 }) = { ⟨1, by simp⟩ } := by decide
     simp only [h2, Finset.sum_singleton, ge_iff_le]
@@ -234,7 +232,7 @@ theorem imo2023_p4_generalized
 
     simp only [h8] at h1
     clear h6 h8
-    simp only [Finset.univ_eq_attach, Finset.cons_eq_insert, Finset.mem_filter,
+    simp only [Finset.cons_eq_insert, Finset.mem_filter,
                Finset.mem_attach, Subtype.mk_le_mk, add_le_iff_nonpos_right,
                nonpos_iff_eq_zero, one_ne_zero, and_false, not_false_eq_true,
                Finset.sum_insert] at h1
@@ -244,14 +242,13 @@ theorem imo2023_p4_generalized
     have hx2 : 0 ≤ x ⟨n + 2, hn2⟩ := le_of_lt (hxp ⟨n + 2, hn2⟩)
     have hx3 : 0 ≤ ∑ x_1 ∈ Finset.filter
                     (fun x ↦ x ≤ ⟨n, by simp[n]⟩)
-                    (Finset.Icc 1 (2 * (m + 1) + 1)).attach, x x_1 := by
+                    Finset.univ, x x_1 := by
       refine Finset.sum_nonneg ?_
-      rintro y hy
-      simp only [Finset.mem_filter, Finset.mem_attach, true_and] at hy
+      rintro y -
       exact le_of_lt (hxp y)
     have hy1 : 0 ≤ (x ⟨n + 2, hn2⟩)⁻¹ := inv_nonneg_of_nonneg hx2
     have hy2 : 0 ≤ (x ⟨n + 1, hn1⟩)⁻¹ := inv_nonneg_of_nonneg hx1
-    have hy3 : 0 ≤ ∑ x_1 ∈ Finset.filter (fun x ↦ x ≤ ⟨n, by simp[n]⟩) (Finset.Icc 1 (2 * (m + 1) + 1)).attach, (x x_1)⁻¹ := by
+    have hy3 : 0 ≤ ∑ x_1 ∈ Finset.filter (fun x ↦ x ≤ ⟨n, by simp[n]⟩) Finset.univ, (x x_1)⁻¹ := by
       refine Finset.sum_nonneg ?_
       rintro y hy
       simp only [Finset.mem_filter, Finset.mem_attach, true_and] at hy
@@ -263,10 +260,56 @@ theorem imo2023_p4_generalized
     rw [←h1] at h9; clear h1
     let x' : { a // a ∈ Finset.Icc 1 (2 * m + 1) } → ℝ :=
       fun ⟨z, hz⟩ ↦ x ⟨z, by simp only [Finset.mem_Icc] at hz ⊢; omega⟩
+    let e : { x // x ∈ Finset.Icc 1 (2 * m + 1) } →
+            { x // x ∈ Finset.Icc 1 (2 * (m + 1) + 1) }
+      | ⟨y, hy⟩ => ⟨y, by simp only [Finset.mem_Icc] at hy ⊢; omega⟩
+    have hei : Function.Injective e := by
+      intro a b hab
+      simp only [e, Subtype.mk.injEq] at hab
+      exact Subtype.eq hab
     have h10 : √((∑ x_1 ∈ Finset.filter
-                  (fun x ↦ x ≤ ⟨n, by simp [n]⟩) (Finset.Icc 1 (2 * (m + 1) + 1)).attach, x x_1) *
-            ∑ x_1 ∈ Finset.filter (fun x ↦ x ≤ ⟨n, by simp[n]⟩) (Finset.Icc 1 (2 * (m + 1) + 1)).attach, (x x_1)⁻¹) = aa m x' ⟨n, by simp[n]⟩ := by
-      sorry
+                  (fun x ↦ x ≤ ⟨n, by simp [n]⟩) Finset.univ, x x_1) *
+            ∑ x_1 ∈ Finset.filter (fun x ↦ x ≤ ⟨n, by simp[n]⟩) Finset.univ, (x x_1)⁻¹) = aa m x' ⟨n, by simp[n]⟩ := by
+      clear h9 h5 h7
+      unfold aa
+      have h20 : Finset.map ⟨e, hei⟩
+                   (Finset.filter (fun x ↦ x ≤ ⟨n, by simp[n]⟩) Finset.univ) =
+                 Finset.filter (fun x ↦ x ≤ ⟨n, by simp[n]⟩) Finset.univ := by
+        ext a
+        constructor
+        · intro ha
+          simp only [Finset.univ_eq_attach, Finset.mem_map, Finset.mem_filter,
+                     Finset.mem_attach, true_and, Function.Embedding.coeFn_mk,
+                     Subtype.exists, Subtype.mk_le_mk, Finset.mem_Icc,
+                     exists_and_left] at ha
+          simp only [Finset.univ_eq_attach, Finset.mem_filter, Finset.mem_attach,
+                     true_and]
+          obtain ⟨aa, haa, haa2, haa3⟩ := ha
+          simp only [e] at haa3
+          rw [← haa3]
+          simp only [Subtype.mk_le_mk]
+          omega
+        · intro ha
+          simp only [Finset.univ_eq_attach, Finset.mem_filter, Finset.mem_attach,
+                     true_and] at ha
+          simp only [Finset.univ_eq_attach, Finset.mem_map, Finset.mem_filter,
+                     Finset.mem_attach, true_and, Function.Embedding.coeFn_mk,
+                     Subtype.exists, Subtype.mk_le_mk, Finset.mem_Icc,
+                     exists_and_left]
+          use a
+          obtain ⟨a, haa⟩ := a
+          simp only [Finset.mem_Icc] at haa hn1
+          simp only [Subtype.mk_le_mk] at ha
+          simp only [exists_prop, and_true]
+          omega
+
+      congr 2
+      · rw [←h20, Finset.sum_map]
+        rfl
+      · rw [←h20, Finset.sum_map]
+        apply Finset.sum_congr rfl
+        intro ii hii
+        simp
     rw [h10] at h9; clear h10
     have hxp' : ∀ (i : { x // x ∈ Finset.Icc 1 (2 * m + 1) }), 0 < x' i := by
       rintro ⟨y, hy⟩
@@ -291,8 +334,42 @@ theorem imo2023_p4_generalized
       obtain ⟨k, hk⟩ := hxa
       use k
       rw [←hk]
-      simp only [x']
-      sorry
+      clear h5 h7 h9
+      have h20 : Finset.map ⟨e, hei⟩ (Finset.filter (fun x ↦ x ≤ ⟨y, hy⟩) Finset.univ) =
+                 Finset.filter (fun x ↦ x ≤ ⟨y, hy'⟩) Finset.univ := by
+        ext a
+        constructor
+        · intro ha
+          simp only [Finset.univ_eq_attach, Finset.mem_map, Finset.mem_filter,
+                     Finset.mem_attach, true_and, Function.Embedding.coeFn_mk,
+                     Subtype.exists, Subtype.mk_le_mk, Finset.mem_Icc,
+                     exists_and_left] at ha
+          simp only [Finset.univ_eq_attach, Finset.mem_filter, Finset.mem_attach,
+                     true_and]
+          obtain ⟨aa, haa, haa2, haa3⟩ := ha
+          simp only [e] at haa3
+          rw [← haa3]
+          simp only [Subtype.mk_le_mk]
+          exact haa
+        · intro ha
+          simp only [Finset.univ_eq_attach, Finset.mem_filter, Finset.mem_attach,
+                     true_and] at ha
+          simp only [Finset.univ_eq_attach, Finset.mem_map, Finset.mem_filter,
+                     Finset.mem_attach, true_and, Function.Embedding.coeFn_mk,
+                     Subtype.exists, Subtype.mk_le_mk, Finset.mem_Icc,
+                     exists_and_left]
+          use a
+          obtain ⟨a, haa⟩ := a
+          simp only [Finset.mem_Icc] at haa hy
+          simp only [Subtype.mk_le_mk] at ha
+          simp only [exists_prop, and_true]
+          omega
+      unfold aa
+      congr 2
+      · rw [←h20, Finset.sum_map]
+        rfl
+      · rw [←h20, Finset.sum_map]
+        rfl
     specialize ih x' hxp' hxi' hxa'
     have hup : 0 < u := by
       unfold u
@@ -316,7 +393,7 @@ theorem imo2023_p4_generalized
         have h12 : 0 ≤ aa (m + 1) x ⟨n + 2, hn2⟩ := by
           unfold aa
           exact Real.sqrt_nonneg _
-        nlinarith only [h9, h12]
+        exact le_of_sq_le_sq h9 h12
       linarith
     simp_rw [show 2 * m + 1 = n from rfl] at ih
     replace h9 : 3 * ↑m + 3 < aa (m + 1) x ⟨n+ 2, hn2⟩ := by linarith
