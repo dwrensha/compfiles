@@ -245,10 +245,18 @@ theorem imo2023_p4_generalized
     have hx3 : 0 ≤ ∑ x_1 ∈ Finset.filter
                     (fun x ↦ x ≤ ⟨n, by simp[n]⟩)
                     (Finset.Icc 1 (2 * (m + 1) + 1)).attach, x x_1 := by
-      sorry
+      refine Finset.sum_nonneg ?_
+      rintro y hy
+      simp only [Finset.mem_filter, Finset.mem_attach, true_and] at hy
+      exact le_of_lt (hxp y)
     have hy1 : 0 ≤ (x ⟨n + 2, hn2⟩)⁻¹ := inv_nonneg_of_nonneg hx2
     have hy2 : 0 ≤ (x ⟨n + 1, hn1⟩)⁻¹ := inv_nonneg_of_nonneg hx1
-    have hy3 : 0 ≤ ∑ x_1 ∈ Finset.filter (fun x ↦ x ≤ ⟨n, by simp[n]⟩) (Finset.Icc 1 (2 * (m + 1) + 1)).attach, (x x_1)⁻¹ := by sorry
+    have hy3 : 0 ≤ ∑ x_1 ∈ Finset.filter (fun x ↦ x ≤ ⟨n, by simp[n]⟩) (Finset.Icc 1 (2 * (m + 1) + 1)).attach, (x x_1)⁻¹ := by
+      refine Finset.sum_nonneg ?_
+      rintro y hy
+      simp only [Finset.mem_filter, Finset.mem_attach, true_and] at hy
+      specialize hxp y
+      positivity
 
     have h9 := cauchy_schwarz hx1 hx2 hx3 hy1 hy2 hy3
     clear hx1 hx2 hx3 hy1 hy2 hy3
@@ -261,17 +269,29 @@ theorem imo2023_p4_generalized
       sorry
     rw [h10] at h9; clear h10
     have hxp' : ∀ (i : { x // x ∈ Finset.Icc 1 (2 * m + 1) }), 0 < x' i := by
-      sorry
+      rintro ⟨y, hy⟩
+      simp only [x']
+      have hy' : y ∈ Finset.Icc 1 (2 * (m + 1) + 1) := by
+        simp only [Finset.mem_Icc] at hy ⊢
+        omega
+      exact hxp ⟨y, hy'⟩
     have hxi' : Function.Injective x' := by
       intro a b hab
-      sorry
+      simp only [x'] at hab
+      specialize hxi hab
+      simp only [Subtype.mk.injEq] at hxi
+      exact Subtype.eq hxi
     have hxa' : ∀ (i : { x // x ∈ Finset.Icc 1 (2 * m + 1) }),
                     ∃ k : ℤ, aa m x' i = ↑k := by
       rintro ⟨y, hy⟩
-      specialize hxa ⟨y, by sorry⟩
+      have hy' : y ∈ Finset.Icc 1 (2 * (m + 1) + 1) := by
+        simp only [Finset.mem_Icc] at hy ⊢
+        omega
+      specialize hxa ⟨y, hy'⟩
       obtain ⟨k, hk⟩ := hxa
       use k
       rw [←hk]
+      simp only [x']
       sorry
     specialize ih x' hxp' hxi' hxa'
     have hup : 0 < u := by
@@ -282,13 +302,21 @@ theorem imo2023_p4_generalized
     have h11 : √(x ⟨n + 1, hn1⟩ * (x ⟨n + 2, hn2⟩)⁻¹) +
                √(x ⟨n + 2, hn2⟩ * (x ⟨n + 1, hn1⟩)⁻¹) = u + 1 / u := by
       congr 1
+      suffices H: √(x ⟨n + 2, hn2⟩ * (x ⟨n + 1, hn1⟩)⁻¹)  * u = 1 from
+        eq_one_div_of_mul_eq_one_left H
       unfold u
-      sorry
+      have hp1 : 0 < x ⟨n + 1, hn1⟩ := hxp ⟨n + 1, hn1⟩
+      have hp2 : 0 < x ⟨n + 2, hn2⟩ := hxp ⟨n + 2, hn2⟩
+      rw [←Real.sqrt_mul (by positivity)]
+      field_simp
     rw [h11] at h9; clear h11
     replace h9 : aa m x' ⟨n, by simp[n]⟩ + 2 < aa (m + 1) x ⟨n + 2, hn2⟩ := by
-      have h9' : u + 1/u + aa m x' ⟨n, by simp[n]⟩ <
+      have h9' : u + 1/u + aa m x' ⟨n, by simp[n]⟩ ≤
           aa (m + 1) x ⟨n + 2, hn2⟩ := by
-        sorry
+        have h12 : 0 ≤ aa (m + 1) x ⟨n + 2, hn2⟩ := by
+          unfold aa
+          exact Real.sqrt_nonneg _
+        nlinarith only [h9, h12]
       linarith
     simp_rw [show 2 * m + 1 = n from rfl] at ih
     replace h9 : 3 * ↑m + 3 < aa (m + 1) x ⟨n+ 2, hn2⟩ := by linarith
