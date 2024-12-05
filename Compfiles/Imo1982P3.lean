@@ -41,14 +41,6 @@ website.
 lemma sum_Fin_eq_sum_Ico {x : ℕ → ℝ} {N : ℕ} : ∑ n : Fin N, x n = ∑ n ∈ Finset.Ico 0 N, x n := by
   rw [Fin.sum_univ_eq_sum_range, Nat.Ico_zero_eq_range]
 
-/-
-Specialization of Cauchy-Schwarz inequality with the sequences x n / √(y n) and √(y n)
--/
-theorem Sedrakyan's_lemma {ι : Type*} {s : Finset ι} {x y : ι → ℝ}
-    (yi_pos : ∀ i ∈ s, 0 < y i) :
-    (∑ n ∈ s, x n) ^ 2 / (∑ n ∈ s, y n) ≤ ∑ n ∈ s, (x n) ^ 2 / y n := by
-  exact Finset.sq_sum_div_le_sum_sq_div s x yi_pos
-
 lemma ineq₁ {x : ℕ → ℝ} {N : ℕ} (hN : 1 < N) (hx : ∀ i , x (i + 1) ≤ x i) :
     x N ≤ (∑ n : Fin (N - 1), x (n + 1)) / (N - 1) := by
   have h : ∀ m n : ℕ, n ≤ m → x m ≤ x n := by
@@ -207,10 +199,6 @@ problem iom1982_p3a {x : ℕ → ℝ} (x_pos : ∀ i, x i > (0 : ℝ))
       apply x_pos _
     rw [← Finset.card_pos, Finset.card_fin, Nat.lt_sub_iff_add_lt, zero_add]
     apply hN
-  have sedrakayan's_lemma :
-    ∀ N > 0,
-    ((∑ n : Fin N, (x n))^2 / (∑ n : Fin N, x (n + 1))) ≤ (∑ n : Fin N, (x n)^2 / x (n + 1)) :=
-    fun N hN => Sedrakyan's_lemma (fun i _ => x_pos (i + 1))
   have :
     ∃ (N : ℕ), 0 < N ∧ 1 < N ∧ 2 < N ∧  (3.999 : ℝ) ≤ 4 * ((N - 1) / N) :=  by use 4000; norm_num
   obtain ⟨N, zero_lt_N, one_lt_N, two_lt_N, ineq₀⟩ := this
@@ -251,9 +239,8 @@ problem iom1982_p3a {x : ℕ → ℝ} (x_pos : ∀ i, x i > (0 : ℝ))
     rw [← mul_div _ 1, mul_assoc, mul_le_mul_left]
     apply ineq₂ one_lt_N hx x_pos
     apply sq_pos_of_pos (sum_xi_pos _ zero_lt_N)
-  _ ≤ ∑ n : Fin N, (x ↑n) ^ 2 / x (↑n + 1) := by
-    apply sedrakayan's_lemma
-    apply zero_lt_N
+  _ ≤ ∑ n : Fin N, (x ↑n) ^ 2 / x (↑n + 1) :=
+      Finset.sq_sum_div_le_sum_sq_div _ _ (fun i hi => x_pos (i + 1))
 
 noncomputable determine sol : ℕ → ℝ := fun n => (1/2)^n
 
