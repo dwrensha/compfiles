@@ -92,7 +92,7 @@ lemma usa2002_p1_generalized
   · -- Suppose that our claim holds for n = k. Let s ∈ S, |S| = k + 1,
     -- and let S' denote the set of all elements of S other than s.
     intros S hde hft hs N hN
-    have s : S := Nonempty.some (Fintype.card_pos_iff.mp (by rw [hs]; exact Nat.succ_pos k))
+    have s : S := Nonempty.some (Fintype.card_pos_iff.mp (Nat.lt_of_sub_eq_succ hs))
     let S' := { a : S // a ≠ s }
     have hs' : Fintype.card S' = k := by simp [Fintype.card_subtype_compl, hs, S']
 

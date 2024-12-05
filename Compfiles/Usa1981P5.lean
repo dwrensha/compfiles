@@ -61,8 +61,8 @@ problem usa1981_p5 (x : ℝ) (n : ℕ) :
   obtain rfl | hn := Nat.eq_zero_or_pos n
   · simp [a]
 
-  have : Nonempty (Finset.Icc 1 n) := by
-    use 1; rw [Finset.mem_Icc]; simp only [le_refl, true_and]; exact hn
+  have : Nonempty (Finset.Icc 1 n) :=
+    ⟨1, Finset.left_mem_Icc.mpr (Nat.succ_le_of_lt hn)⟩
   obtain ⟨⟨m, hm1⟩, hm2⟩ :=
     Finite.exists_min (fun (m : Finset.Icc 1 n) ↦ a m / m)
 
