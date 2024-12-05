@@ -27,13 +27,9 @@ namespace Poland2016S1P8
 
 snip begin
 
-lemma even_of_add {a : ℤ} {b : ℤ} : Even a → Even (a + b) → Even (b) := by
-  intro A
-  obtain ⟨k, H⟩ := A
-  intro A_B
-  obtain ⟨k2, H2⟩ := A_B
-  use (k2 - k)
-  omega
+lemma even_of_add {a b : ℤ} (ha : Even a) (hb : Even (a + b)) : Even b := by
+  rw [show b = a + b - a by ring]
+  exact Even.sub hb ha
 
 lemma div_4_mul_of_both_even {a b : ℤ } (H : Even a ∧ Even b) : 4 ∣ a * b := by
   obtain ⟨k, Hk⟩ := H.left
