@@ -129,9 +129,7 @@ lemma coe_coe_row1 (hN : 2 ≤ N) : (((row1 hN) : Fin (N + 2)) : ℕ) = 1 :=
 def row2 (hN : 2 ≤ N) : InteriorRow N :=
   ⟨⟨2, by omega⟩, ⟨by
     simp only [Fin.le_def, Fin.val_one]
-    omega, by
-    simp only [Fin.le_def]
-    omega⟩⟩
+    omega, Fin.mk_le_mk.mpr hN⟩⟩
 
 /-- Reflecting monster data. -/
 def MonsterData.reflect (m : MonsterData N) : MonsterData N where
