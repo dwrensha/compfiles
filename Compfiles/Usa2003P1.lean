@@ -23,14 +23,7 @@ namespace Usa2003P1
 
 snip begin
 
-lemma nat_mod_inv (a : ℕ) : ∃ b, (a + b) % 5 = 0 := by
-  use 5 - (a % 5)
-  have h : a % 5 < 5 := Nat.mod_lt _ (by norm_num)
-  have h' : a % 5 ≤ 5 := Nat.le_of_lt h
-  rw[Nat.add_mod]
-  have h2 : a % 5 = a % 5 % 5 := (Nat.mod_mod a 5).symm
-  rw[h2, ← Nat.add_mod, Nat.mod_mod]
-  rw[Nat.add_sub_of_le h']
+lemma nat_mod_inv (a : ℕ) : ∃ b, (a + b) % 5 = 0 := ⟨5 - (a % 5), by omega⟩
 
 lemma lemma2 (a b c : ℕ) (hb : 0 < b) (h : Nat.Coprime a b) : ∃ k, k < b ∧ a * k ≡ c [MOD b] := by
   let ⟨N, HN1, HN2⟩ := Nat.chineseRemainder h 0 c
@@ -102,7 +95,7 @@ problem usa2003_p1 (n : ℕ) :
       · omega
     clear ha hpm1 hpm3
 
-    obtain ⟨b, hb⟩ := nat_mod_inv (2^n + a)
+    obtain ⟨b, hb⟩ : ∃ b, ((2^n + a) + b) % 5 = 0 := nat_mod_inv (2^n + a)
     have h11 : ¬ 2^(n + 1) ≡ 0 [MOD 5] := by
       have h14 : Nat.Coprime 5 2 := by norm_num
       have h15 : Nat.Coprime 5 (2^(n+1)) := Nat.Coprime.pow_right (n + 1) h14
