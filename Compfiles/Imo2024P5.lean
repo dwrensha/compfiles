@@ -523,8 +523,7 @@ lemma Strategy.play_two (s : Strategy N) (m : MonsterData N) {k : ℕ} (hk : 2 <
       Matrix.head_cons]
     simp only [h, Fin.snoc_last]
     convert rfl
-    simp_rw [Fin.fin_one_eq_zero]
-    rfl
+    exact Matrix.cons_val_fin_one _ _ _
 
 lemma Strategy.WinsIn.mono (s : Strategy N) (m : MonsterData N) {k₁ k₂ : ℕ} (h : s.WinsIn m k₁)
     (hk : k₁ ≤ k₂) : s.WinsIn m k₂ := by
