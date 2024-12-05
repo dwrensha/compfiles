@@ -33,11 +33,7 @@ lemma even_of_add {a : ℤ} {b : ℤ} : Even a → Even (a + b) → Even (b) := 
   intro A_B
   obtain ⟨k2, H2⟩ := A_B
   use (k2 - k)
-  rw [H] at H2
-  apply symm
-  calc k2 - k + (k2 - k) = k2 + k2 - k - k := by ring
-    _ = k + k + b - k -k := by rw[H2]
-    _ = b := by ring
+  omega
 
 lemma div_4_mul_of_both_even {a b : ℤ } (H : Even a ∧ Even b) : 4 ∣ a * b := by
   obtain ⟨k, Hk⟩ := H.left
@@ -64,12 +60,8 @@ problem poland2016_s1_p8 (a b c : ℤ) : ∃ n : ℤ, n > 0 ∧ ¬ IsSquare (n^3
   apply H 4
   refine ⟨by positivity, ?_⟩
   rintro ⟨n, H4⟩
-  have m_square_minus_k_square : m * m - k * k = 2 * (13 + 4 * a + b) := by
-    rw [←H3, ←H1]
-    ring
-  have n_square_minus_l_square : n * n - l * l = 2 * (28 + 6 * a + b) := by
-    rw [←H4, ←H2]
-    ring
+  have m_square_minus_k_square : m * m - k * k = 2 * (13 + 4 * a + b) := by omega
+  have n_square_minus_l_square : n * n - l * l = 2 * (28 + 6 * a + b) := by omega
   have difference_m_square_k_square_as_product : m * m - k * k = (m + k) * (m - k) := by ring
   have difference_n_square_l_square_as_product : n * n - l * l = (n + l) * (n - l) := by ring
   have even_m_square_minus_k_square : Even ((m + k) * (m - k)) := by
@@ -120,26 +112,6 @@ problem poland2016_s1_p8 (a b c : ℤ) : ∃ n : ℤ, n > 0 ∧ ¬ IsSquare (n^3
         · exact n_plus_l_even
         · exact n_minus_l_even
     exact div_4_mul_of_both_even both_factors_even_n_l
-  have div_4_difference : 4 ∣ (n + l) * (n - l) - (m + k) * (m - k) := by
-    · apply dvd_sub
-      · exact four_divides_n_square_minus_l_square
-      · exact four_divides_m_square_minus_k_square
-  have div4_difference_abc : 4 ∣ 2 * (28 + 6 * a + b) - 2 * (13 + 4 * a + b) := by
-    · rw[← difference_m_square_k_square_as_product] at div_4_difference
-      rw[← difference_n_square_l_square_as_product] at div_4_difference
-      rw[m_square_minus_k_square] at div_4_difference
-      rw[n_square_minus_l_square] at div_4_difference
-      exact div_4_difference
-  have difference_simplification : 2 * (28 + 6 * a + b) - 2 * (13 + 4 * a + b) = 4 * (a + 7) + 2 :=
-    by ring
-  rw[difference_simplification] at div4_difference_abc
-  have towards_contradiction : 4 ∣ 4 * (a + 7) + 2 - 4 * (a + 7) := by
-    · have four_divides_term : 4 ∣ 4 * (a + 7) := by
-        · use (a + 7)
-      exact dvd_sub div4_difference_abc four_divides_term
-  have difference_simplification_2 : 4 * (a + 7) + 2 - 4 * (a + 7) = 2 := by ring
-  rw[difference_simplification_2] at towards_contradiction
-  contradiction
-
+  omega
 
 end Poland2016S1P8

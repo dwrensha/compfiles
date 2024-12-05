@@ -52,14 +52,6 @@ lemma lemma0 (n : ℕ) : (∑ x ∈ Finset.Icc 1 (4 * n + 2), (x:ℤ) % 2) % 2 =
     rw [Finset.sum_Icc_succ_top (by norm_num)]
     rw [Finset.sum_Icc_succ_top (by norm_num)]
     rw [Finset.sum_Icc_succ_top (by norm_num)]
-    rw [Nat.add_mod _]
-    rw [Nat.add_mod _ ((4 * n + 4 + 1) % 2)]
-    rw [Nat.add_mod _ ((4 * n + 3 + 1) % 2)]
-    rw [Nat.add_mod _ ((4 * n + 2 + 1) % 2)]
-    rw [ih]
-    simp only [dvd_refl, Nat.mod_mod_of_dvd, Nat.add_mod_mod, Nat.mod_add_mod]
-    rw [←Nat.odd_iff]
-    use 8 * n + 9
     omega
 
 snip end

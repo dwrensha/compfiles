@@ -37,10 +37,7 @@ problem imo1982_p1 (f : ℕ → ℕ)
   have h4 : f 1 = 0 := by
     have h5 := hf 1 1 Nat.one_pos Nat.one_pos
     rw [h2] at h5
-    cases' h5 with h6 h6
-    · exact Nat.eq_zero_of_add_eq_zero_left h6.symm
-    · rw [add_assoc] at h6
-      exact Nat.eq_zero_of_add_eq_zero_right h6.symm
+    omega
   have h5 : f 3 = 1 := by
     have := hf 1 2 Nat.one_pos two_pos
     aesop
@@ -57,14 +54,10 @@ problem imo1982_p1 (f : ℕ → ℕ)
     induction' l with l ih
     · simp
     · have h10 := h6 (k + l) (Nat.add_pos_left hk l)
-      have h11 : 3 * (k + l) + 3 = 3 * (k + Nat.succ l) := by
-        rw [Nat.succ_eq_add_one]; ring
-      have h12 : f (3 * k) + Nat.succ l = f (3 * k) + l + 1 := by
-        rw [Nat.succ_eq_add_one]; ring
-      rw [←h11, h12]; clear h11 h12
-      have h13 : f (3 * (k + l)) + 1 ≤ f (3 * (k + l) + 3) := h10
-      calc _ ≤ f (3 * (k + l)) + 1 := Nat.add_le_add_right ih 1
-           _ ≤ _ := h13
+      have h11 : 3 * (k + l) + 3 = 3 * (k + Nat.succ l) := by omega
+      have h12 : f (3 * k) + Nat.succ l = f (3 * k) + l + 1 := by omega
+      rw [←h11, h12]
+      omega
   have h8 : ∀ k, 0 < k → k ≤ 3333 → f (3 * k) = k := by
      intro k hk0 hk1
      by_contra! H
@@ -75,9 +68,7 @@ problem imo1982_p1 (f : ℕ → ℕ)
      have h14 := h9 k (3333 - k) hk0
      have h15 : k + (3333 - k) = 3333 := Nat.add_sub_of_le hk1
      rw [h15, h9999] at h14
-     have h16 : k + (3333 - k) < f (3 * k) + (3333 - k) := Nat.add_lt_add_right h13 _
-     rw [h15] at h16
-     exact LT.lt.false (h16.trans_le h14)
+     omega
   have h20 : ∀ k, 0 < k → f k ≤ f (k + 1) := by
     intro k hk
     cases' hf k 1 hk one_pos with h21 h21 <;> omega
