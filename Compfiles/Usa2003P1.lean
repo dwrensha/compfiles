@@ -42,8 +42,6 @@ lemma lemma2 (a b c : ℕ) (hb : 0 < b) (h : Nat.Coprime a b) : ∃ k, k < b ∧
     change (a * (x % b)) % b = c % b
     rw [← HN2, hx, Nat.mul_mod, Nat.mod_mod, ←Nat.mul_mod]
 
-lemma prime_five : Nat.Prime 5 := by norm_num
-
 snip end
 
 problem usa2003_p1 (n : ℕ) :
@@ -108,12 +106,13 @@ problem usa2003_p1 (n : ℕ) :
     have h11 : ¬ 2^(n + 1) ≡ 0 [MOD 5] := by
       have h14 : Nat.Coprime 5 2 := by norm_num
       have h15 : Nat.Coprime 5 (2^(n+1)) := Nat.Coprime.pow_right (n + 1) h14
-      have h16 := (Nat.Prime.coprime_iff_not_dvd prime_five).mp h15
+      have h16 := (Nat.Prime.coprime_iff_not_dvd Nat.prime_five).mp h15
       intro h17
       have h18 : 5 ∣ 2 ^ (n + 1) := Iff.mp Nat.modEq_zero_iff_dvd h17
       exact (h16 h18).elim
     obtain ⟨aa, haa1, haa2⟩ := lemma2 (2^(n + 1)) 5 b (Nat.succ_pos 4)
-      ((Nat.Prime.coprime_iff_not_dvd prime_five).mpr (Nat.modEq_zero_iff_dvd.not.mp h11)).symm
+      ((Nat.Prime.coprime_iff_not_dvd Nat.prime_five).mpr
+        (Nat.modEq_zero_iff_dvd.not.mp h11)).symm
     use aa
     constructor
     · exact haa1
@@ -121,7 +120,6 @@ problem usa2003_p1 (n : ℕ) :
       rw[hb] at h12
       have h13 : (2 ^ n + a + 2 ^ (n + 1) * aa) = 2 ^ n * (2 * aa + 1) + a := by ring
       rw[h13] at h12
-      exact Nat.modEq_zero_iff_dvd.mp h12
-
+      exact Nat.dvd_of_mod_eq_zero h12
 
 end Usa2003P1
