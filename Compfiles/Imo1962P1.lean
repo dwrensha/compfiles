@@ -137,8 +137,7 @@ theorem no_smaller_solutions (n : ℕ) (h1 : ProblemPredicate n) : n ≥ 153846 
     · exfalso; exact case_4_digit h h2
     · have h4 : c = 15384 := case_5_digit h h2
       have h5 : n = 10 * 15384 + 6 := h4 ▸ h2.left
-      norm_num at h5
-      exact h5.ge
+      exact Nat.le_of_eq h5.symm
 
 snip end
 

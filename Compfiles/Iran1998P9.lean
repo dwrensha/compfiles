@@ -68,12 +68,7 @@ problem iran1998_p9
 
   have hv₁ : ‖v₁‖ = Real.sqrt (x + y + z) := by
     have hn := compute_norm v₁
-    have h1: ((∑ i : Fin 3, ((v₁ i) ^ 2)) : ℝ) = (v₁ 0)^2 + (v₁ 1)^2 + (v₁ 2)^2 := by
-      rw[Fin.sum_univ_succ, Fin.sum_univ_succ, Fin.sum_univ_one]
-      ring_nf
-      norm_cast
-
-    rw [h1] at hn
+    rw [Fin.sum_univ_three] at hn
     have hv1 : v₁ 0 = Real.sqrt x := rfl
     have hv2 : v₁ 1 = Real.sqrt y := rfl
     have hv3 : v₁ 2 = Real.sqrt z := rfl
@@ -86,11 +81,7 @@ problem iran1998_p9
 
   have hv₂ : ‖v₂‖ = 1 := by
     have hn := compute_norm v₂
-    have h2: ((∑ i : Fin 3, ((v₂ i) ^ 2)) : ℝ) = (v₂ 0)^2 + (v₂ 1)^2 + (v₂ 2)^2 := by
-      rw[Fin.sum_univ_succ, Fin.sum_univ_succ, Fin.sum_univ_one]
-      ring_nf
-      norm_cast
-    rw [h2] at hn
+    rw [Fin.sum_univ_three] at hn
     have hv1 : v₂ 0 = Real.sqrt ((x-1)/x) := rfl
     have hv2 : v₂ 1 = Real.sqrt ((y-1)/y) := rfl
     have hv3 : v₂ 2 = Real.sqrt ((z-1)/z) := rfl
@@ -117,8 +108,7 @@ problem iran1998_p9
   have hinner :=
     calc ((inner v₁ v₂): ℝ)
           = ∑ i : Fin 3, v₁ i * v₂ i := rfl
-        _ = v₁ 0 * v₂ 0 + v₁ 1 * v₂ 1 + v₁ 2 * v₂ 2 :=
-               by rw[Fin.sum_univ_succ, Fin.sum_univ_succ, Fin.sum_univ_one]; ring_nf; simp
+        _ = v₁ 0 * v₂ 0 + v₁ 1 * v₂ 1 + v₁ 2 * v₂ 2 := Fin.sum_univ_three _
         _ = Real.sqrt x * Real.sqrt ((x - 1) / x) +
             Real.sqrt y * Real.sqrt ((y - 1) / y) +
             Real.sqrt z * Real.sqrt ((z - 1) / z) := rfl

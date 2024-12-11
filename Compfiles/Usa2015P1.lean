@@ -84,9 +84,7 @@ problem usa2015_p1 (x y : ℤ) :
       rw [this, ht4] at ht
       have : y = 3 := by linarith only [ht]
       simp [*]; use 1; simp
-    · have : t - 2 ≠ 0 := by intro; apply ht4; linarith
-      have hn := abc (by positivity) ht3
-      obtain ⟨d, hd⟩ := hn
+    · obtain ⟨d, hd⟩ := abc (sub_ne_zero_of_ne ht4) ht3
       have Odd_dd : Odd (d ^ 2) := by
         rw [←hd]; apply Even.add_one; apply Even.mul_right; exact Int.even_iff.mpr rfl
       have Odd_d  : Odd d := (Int.odd_pow' (by positivity)).mp Odd_dd
