@@ -236,8 +236,7 @@ lemma ones_and_twos_aux (n : ℕ) :
       have hr : 2 * (2 ^ pn.succ * 5 ^ pn.succ) + 2 ^ pn.succ * (2 * t) =
                    2 ^ pn.succ.succ * (5 ^ pn.succ + t) := by
         repeat rw [pow_succ]; ring_nf
-      rw [hr]
-      exact Dvd.intro (5 ^ Nat.succ pn + t) rfl
+      exact Dvd.intro (5 ^ pn.succ + t) hr.symm
     obtain ⟨k', hk'⟩ := hd
     have hkp': 0 < k' := by
       cases' k'
