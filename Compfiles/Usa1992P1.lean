@@ -316,10 +316,7 @@ lemma lemma5 {m n : ℕ} (hm : m < 10^n) :
     intro x hx
     simp only [List.map_append, List.mem_append, List.mem_map, complement_digits, m_digits_padded,
                padding, m_digits] at hx
-    obtain ⟨a, ha1, ha2⟩ | ⟨a, ha1, ha2⟩ := hx
-    · omega
-    · simp only [Nat.reduceLeDiff, List.mem_replicate, ne_eq] at ha1
-      omega
+    omega
   have h14 : complement_digits.length ≤ n := by
     simp only [List.map_append, List.length_append, List.length_map, complement_digits,
                m_digits_padded, padding, List.length_replicate, m_digits]
