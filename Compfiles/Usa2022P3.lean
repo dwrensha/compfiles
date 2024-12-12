@@ -146,8 +146,7 @@ problem usa2022_p3 (f : ℝ+ → ℝ+) :
       have eq2 : ⟨x, xpos⟩ + ⟨c, cpos⟩ = x' + b := by
         simp only [c, x']
         apply Subtype.mk_eq_mk.mpr
-        simp
-        linarith
+        exact (add_comm_sub x ↑a ↑b).symm
       nth_rw 1 [eq1, eq2]
       exact this x'
 
