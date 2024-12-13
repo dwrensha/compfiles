@@ -169,9 +169,7 @@ lemma extend_function_anti
       · have : 0 ≤ u z - f y := by linarith
         rw[abs_eq_self.mpr this] at hbzb
         linarith
-      · have : u z - f y ≤ 0 := by linarith
-        rw[abs_eq_neg_self.mpr this] at hbzb
-        linarith
+      · linarith only [h3, h6]
     have h_z_le_y := le_of_lt h_z_lt_y
     have := u_anti h_z_le_y
     linarith
