@@ -125,10 +125,7 @@ theorem imo2023_p4_generalized
       unfold u n
       intro hu
       rw [Real.sqrt_eq_one] at hu
-      have hd : x ⟨2 * m + 1 + 2, hn2⟩ ≠ 0 := by
-        specialize hxp ⟨2 * m + 1 + 2, hn2⟩
-        exact (ne_of_lt hxp).symm
-      field_simp at hu
+      rw [(div_eq_one_iff_eq (ne_of_lt (hxp _)).symm)] at hu
       replace hu := hxi hu
       simp at hu
     have h1 : (aa (m + 1) x ⟨n + 2, hn2⟩)^2 =
