@@ -51,10 +51,7 @@ lemma cauchy_schwarz {x1 x2 x3 y1 y2 y3 : ℝ}
       | 2 => √y3
 
   have h1 := Real.sum_mul_le_sqrt_mul_sqrt Finset.univ f g
-  simp [f, g] at h1
-  simp only [Fin.sum_univ_succ, Fin.sum_univ_zero] at h1
-  simp only [Fin.isValue, Fin.succ_zero_eq_one, Fin.succ_one_eq_two, add_zero] at h1
-  rw [←add_assoc, ←add_assoc, ←add_assoc] at h1
+  simp only [f, g, Fin.sum_univ_three] at h1
   have h2 : 0 ≤ √(x1 *y1) + √(x2 * y2) + √(x3 * y3) := by positivity
   rw [Real.sq_sqrt hx1] at h1
   rw [Real.sq_sqrt hx2] at h1
