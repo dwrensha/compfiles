@@ -48,7 +48,7 @@ lemma schur {a b c : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c) :
   rw [← h5] at h6
   have h12 : 0 ≤ (c - a) * (c - b) := by nlinarith only [Hba, Hcb]
   have h13 : 0 ≤ c * (c - a) * (c - b) := by nlinarith only [hc, h12]
-  linarith
+  positivity
 
 snip end
 

@@ -104,14 +104,13 @@ problem imo1963_p1 : ∀ (p x : ℝ), (x ^ 2 - p) ≥ 0 → (x ^ 2 - 1) ≥ 0 �
      sq_eq_sq₀ xge0 (le_of_lt
        (by apply div_pos
            · linarith
-           simp only [gt_iff_lt, Nat.ofNat_pos, mul_pos_iff_of_pos_left, Real.sqrt_pos, sub_pos]
-           linarith))]
+           positivity))]
   constructor
   · intro hx
     refine ⟨?_, hx⟩
     rw [hx, ←tmp2] at xp
     simp only [ge_iff_le, sub_nonneg] at xp
-    rw [←(mul_le_mul_right (by linarith : (0 < ((4 : ℝ) * ((4 : ℝ) - (2 : ℝ) * p)))))] at xp
+    rw [←(mul_le_mul_right (by positivity : (0 < ((4 : ℝ) * ((4 : ℝ) - (2 : ℝ) * p)))))] at xp
     field_simp at xp
     revert xp; ring_nf; intro xp
     rw [pow_two] at xp

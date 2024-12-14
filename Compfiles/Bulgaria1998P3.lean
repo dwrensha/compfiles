@@ -82,13 +82,7 @@ problem bulgaria1998_p3
 
   have x_seq_pos : ∀ n: ℕ, 0 < x_seq n := by
     intro n
-    rw [show x_seq n = 1 + ∑ i ∈ Finset.range n, (f 1) / (2^i) by rfl]
-    have sum_nonneg : 0 ≤ ∑ i ∈ Finset.range n, f 1 / 2 ^ i := by
-      apply Finset.sum_nonneg
-      intro i _
-      have h2 : (0:ℝ) < 2 ^ i := pow_pos (by norm_num) i
-      exact le_of_lt (div_pos_iff.mpr (Or.inl ⟨hf1, h2⟩))
-    linarith
+    positivity
 
   have f_x_seq: ∀ n : ℕ, f (x_seq n) ≤ f 1 / 2^n := by
     intro n

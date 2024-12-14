@@ -85,7 +85,7 @@ problem usa1990_p2 (n : ℕ) (x : ℝ) : x ∈ solution_set n ↔ f n x = 2 * x 
              _ < x ^ 2 + 3 * (x * x) := by gcongr
              _ = 4 * x^2 := by ring
       have hc' : Real.sqrt (x ^ 2 + 6 * f n x) < Real.sqrt (4 * x ^ 2) := by
-        have h4 : 0 < 4 * x ^ 2 := by nlinarith
+        have h4 : 0 < 4 * x ^ 2 := by positivity
         exact (Real.sqrt_lt_sqrt_iff_of_pos h4).mpr hc
       rwa [h5] at hc'
     · intro hx1

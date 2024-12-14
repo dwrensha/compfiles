@@ -70,8 +70,8 @@ problem imo1994_p5 (f : S → S) :
       linarith
     · simp only [Set.mem_Ioo, and_imp]
       intro hx1 hy1 hxy
-      have h1 : 0 < 1 + y := by linarith
-      have h2 : 0 < 1 + x := by linarith
+      have h1 : 0 < 1 + y := by positivity
+      have h2 : 0 < 1 + x := by positivity
       have h5 : x ≠ 0 := by linarith
       have h6 : y ≠ 0 := by linarith
       simp only [div_div]
@@ -134,8 +134,8 @@ problem imo1994_p5 (f : S → S) :
         rw [ha]
         unfold b
         simp_rw [h1a]
-        have haz : a.val ≠ 0 := by linarith
-        have hbz : a.val + a.val + a.val * a.val ≠ 0 := by nlinarith [a.property]
+        have haz : a.val ≠ 0 := by positivity
+        have hbz : a.val + a.val + a.val * a.val ≠ 0 := by positivity
         simp only [div_self haz]
         simp only [div_self hbz]
 

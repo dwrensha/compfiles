@@ -40,10 +40,10 @@ problem imo2001_p6 {a b c d : ℤ} (hd : 0 < d) (hdc : d < c) (hcb : c < b) (hba
   obtain (h1 : a * b + c * d ∣ a * c + b * d) | (h2 : a * c + b * d ∣ a * d + b * c) :=
     h0.left_dvd_or_dvd_right_of_dvd_mul dvd_mul
   -- in both cases, we derive a contradiction
-  · have aux : 0 < a * c + b * d := by nlinarith only [ha, hb, hc, hd]
+  · have aux : 0 < a * c + b * d := by positivity
     have : a * b + c * d ≤ a * c + b * d := Int.le_of_dvd aux h1
     nlinarith only [hba, hcb, hdc, h, this]
-  · have aux : 0 < a * d + b * c := by nlinarith only [ha, hb, hc, hd]
+  · have aux : 0 < a * d + b * c := by positivity
     have : a * c + b * d ≤ a * d + b * c := Int.le_of_dvd aux h2
     nlinarith only [hba, hdc, h, this]
 
