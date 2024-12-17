@@ -34,7 +34,7 @@ def g (a b c : ℝ) : ℝ := a * b + b * c + c * a - a * b * c
 theorem feq (a b c : ℝ) : f a b c = a^2 + b^2 + c^2 + a * b * c := rfl
 theorem geq (a b c : ℝ) : g a b c = a * b + b * c + c * a - a * b * c := rfl
 
-lemma usa2001_p3_lemma (a b c : ℝ) (ha : 0 ≤ a) (_hb : 0 ≤ b) (_hc : 0 ≤ c)
+lemma usa2001_p3_lemma (a b c : ℝ) (ha : 0 ≤ a)
     (h : a^2 + b^2 + c^2 + a * b * c = 4)
     (hbc : (b - 1) * (c - 1) ≥ 0) :
     a * b + b * c + c * a - a * b * c ≤ 2 := by
@@ -84,13 +84,13 @@ problem usa2001_p3 (a b c : ℝ) (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c)
     · by_cases hc1 : c ≤ 1
       · rw [(by ring_nf : g a b c = g a c b)]
         exact Hb c b hc hb (by rw [←h]; unfold f; ring_nf) hc1
-      · apply usa2001_p3_lemma a b c ha hb hc h
+      · apply usa2001_p3_lemma a b c ha h
         have : (b - 1 > 0) := by linarith
         have : (c - 1 > 0) := by linarith
         rw [not_le] at hb1 hc1
         positivity
     · rw [(by ring_nf : g a b c = g c a b)]
-      apply usa2001_p3_lemma c a b hc ha hb (by rw [←h]; unfold f; ring_nf)
+      apply usa2001_p3_lemma c a b hc (by rw [←h]; unfold f; ring_nf)
       rw [(by ring_nf : (a - 1) * (b - 1) = (1 - a) * (1 - b))]
       have : (1 - a ≥ 0) := by linarith
       have : (1 - b ≥ 0) := by linarith
