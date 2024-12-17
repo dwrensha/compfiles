@@ -90,9 +90,9 @@ problem usa1985_p1 :
 
   use x, k^3, k^6 * j
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩
-  · intro ii _
+  · intro ii hii
     dsimp [x]
-    have h1 : 0 < (ii : ℤ) + 1 := by clear h3; positivity
+    have h1 : 0 < (ii : ℤ) + 1 := h0 ii hii
     have h2 : 0 < (∑ ii ∈ Finset.range 1985, ((ii:ℤ) + 1) ^ 2) ^ 4 := by
       exact pow_pos h3 4
     exact Int.mul_pos h1 h2
