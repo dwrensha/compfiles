@@ -52,7 +52,7 @@ lemma some_useful_mod_lemma : ∀ (n a b c d : ℕ),
     simp only [Nat.zero_mod, add_zero]
     rw [mul_comm, pow_mul, Nat.pow_mod, h2, ←Nat.pow_mod, one_pow]
 
-def usa1982_p4_lemma (e a b)
+lemma usa1982_p4_lemma (e a b)
     (he :
       (⟨e, ⟨a, b⟩⟩ : ℕ × ℕ × ℕ) = ⟨3, ⟨1, 2⟩⟩ ∨
       (⟨e, ⟨a, b⟩⟩ : ℕ × ℕ × ℕ) = ⟨5, ⟨2, 4⟩⟩ ∨
@@ -89,7 +89,7 @@ def usa1982_p4_lemma (e a b)
   }
 
 
-def usa1982_mod_lemma {n r r' q : ℕ}
+lemma usa1982_mod_lemma {n r r' q : ℕ}
     (hm : n % 64 = r') (p : ℕ) (hpq : p * q = 64) (hrr : r' ≡ r [MOD q]) : n ≡ r [MOD q] := by
   trans r'; swap; exact hrr
   rw [Nat.ModEq, ←hm, ←hpq, Nat.mod_mul_left_mod]
