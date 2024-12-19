@@ -9,8 +9,8 @@ abbrev leanOptions : Array LeanOption := #[
   ]
 
 package compfiles where
-  leanOptions := leanOptions -- ++ #[⟨`weak.linter.style.multiGoal, true⟩]
-  moreServerOptions := leanOptions -- ++ #[⟨`linter.style.multiGoal, true⟩]
+  leanOptions := leanOptions ++ #[⟨`weak.linter.style.multiGoal, true⟩]
+  moreServerOptions := leanOptions ++ #[⟨`linter.style.multiGoal, true⟩]
 
 @[default_target]
 lean_lib ProblemExtraction

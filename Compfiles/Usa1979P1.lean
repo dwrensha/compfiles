@@ -40,7 +40,7 @@ problem usa1979_p1 : ∀ e, e ∈ SolutionSet ↔ (e.s.map (fun x ↦ x ^ 4)).su
     apply_fun (· % 16) at contra
     rw [Multiset.sum_nat_mod, Multiset.map_map] at contra
     simp only [Function.comp_apply, Nat.reduceMod] at contra
-    suffices : (Multiset.map (fun x ↦ x ^ 4 % 16) e.s).sum ≤ 14; omega
+    suffices (Multiset.map (fun x ↦ x ^ 4 % 16) e.s).sum ≤ 14 by omega
     rw [show 14 = Multiset.card (e.s.map (fun x ↦ x ^ 4 % 16)) * 1 by rw [Multiset.card_map, e.p]]
     apply Multiset.sum_le_card_nsmul
     intro x

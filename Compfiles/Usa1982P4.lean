@@ -44,7 +44,7 @@ lemma some_useful_mod_lemma : ∀ (n a b c d : ℕ),
     rw [ann] at h1
     apply Nat.ModEq.add_right_cancel' at h1
     rw [ann, pow_add]
-    apply Nat.ModEq.mul; swap; rfl
+    refine Nat.ModEq.mul ?_ rfl
     unfold Nat.ModEq
     unfold Nat.ModEq at h2
     rw [←(Nat.div_add_mod' (a - n) b)]
@@ -91,7 +91,8 @@ lemma usa1982_p4_lemma (e a b)
 
 lemma usa1982_mod_lemma {n r r' q : ℕ}
     (hm : n % 64 = r') (p : ℕ) (hpq : p * q = 64) (hrr : r' ≡ r [MOD q]) : n ≡ r [MOD q] := by
-  trans r'; swap; exact hrr
+  trans r'; swap
+  · exact hrr
   rw [Nat.ModEq, ←hm, ←hpq, Nat.mod_mul_left_mod]
 
 snip end

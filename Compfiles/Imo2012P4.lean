@@ -287,19 +287,30 @@ problem imo2012_p4 (f : ℤ → ℤ) :
       have c_eq : c = - (a + b) := by omega
       rcases sol with ⟨d, h⟩
 
-    · rcases Int.even_or_odd a with evena | odda
-      simp only [(h a).right evena]; rotate_left; simp only [(h a).left odda]
-      all_goals
-        rcases Int.even_or_odd b with evenb | oddb
-        simp [(h b).right evenb]; rotate_left; simp [(h b).left oddb]
-      · have evenc : Even c := by rw [c_eq, even_neg]; exact Odd.add_odd odda oddb
-        simp [(h c).right evenc]; ring
-      · have oddc : Odd c := by rw [c_eq, odd_neg]; exact Odd.add_even odda evenb
-        simp [(h c).left oddc]; ring
-      · have oddc : Odd c := by rw [c_eq, odd_neg, add_comm]; exact Odd.add_even oddb evena
-        simp [(h c).left oddc]; ring
-      · have evenc : Even c := by rw [c_eq, even_neg]; exact Even.add evena evenb
-        simp [(h c).right evenc]
+    · have ⟨hal, har⟩ := h a
+      have ⟨hbl, hbr⟩ := h b
+      have ⟨hcl, hcr⟩ := h c
+      rcases Int.even_or_odd a with evena | odda <;>
+      rcases Int.even_or_odd b with evenb | oddb
+      · have hc : Even c := by
+          rw [← even_neg, c_eq, neg_neg]
+          exact Even.add evena evenb
+        simp_all
+      · have hc : Odd c := by
+          rw [← odd_neg, c_eq, neg_neg]
+          exact Even.add_odd evena oddb
+        simp_all
+        ring
+      · have hc : Odd c := by
+          rw [← odd_neg, c_eq, neg_neg]
+          exact Even.odd_add evenb odda
+        simp_all
+        ring
+      · have hc : Even c := by
+          rw [← even_neg, c_eq, neg_neg]
+          exact Odd.add_odd odda oddb
+        simp_all
+        ring
 
     · have mod4_cases (x : ℤ) : let r := x % 4; r = 0 ∨ r = 1 ∨ r = 2 ∨ r = 3 := by
         induction x using myInduction <;> simp
