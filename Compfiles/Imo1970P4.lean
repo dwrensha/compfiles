@@ -209,24 +209,24 @@ lemma odd_props (n : ℕ) (odd_s : Finset ℕ) (s_odd_eq : odd_s = (Finset.Icc n
     ext x
     simp_all only [Finset.mem_insert, Finset.mem_singleton, Finset.mem_filter, Finset.mem_Icc]
     apply Iff.intro
-    intro H
-    constructor
-    · omega
-    · cases H
-      case inl h3 =>
-        simp_all only [Even.add_one]
-      case inr h4 =>
-        cases h4
-        case inl h5 =>
-          have : Odd 3 := by decide
-          have := Even.add_odd h this
-          rw[h5]
-          exact this
-        case inr h6 =>
-          have : Odd 5 := by decide
-          have := Even.add_odd h this
-          rw[h6]
-          exact this
+    · intro H
+      constructor
+      · omega
+      · cases H
+        case inl h3 =>
+          simp_all only [Even.add_one]
+        case inr h4 =>
+          cases h4
+          case inl h5 =>
+            have : Odd 3 := by decide
+            have := Even.add_odd h this
+            rw[h5]
+            exact this
+          case inr h6 =>
+            have : Odd 5 := by decide
+            have := Even.add_odd h this
+            rw[h6]
+            exact this
     intro H
     obtain ⟨a, Hh⟩ := H
     have h3 := Odd.not_two_dvd_nat Hh

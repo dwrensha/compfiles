@@ -288,7 +288,7 @@ problem imo2012_p4 (f : ℤ → ℤ) :
       rcases sol with ⟨d, h⟩
 
     · rcases Int.even_or_odd a with evena | odda
-      simp [(h a).right evena]; rotate_left; simp [(h a).left odda]
+      simp only [(h a).right evena]; rotate_left; simp only [(h a).left odda]
       all_goals
         rcases Int.even_or_odd b with evenb | oddb
         simp [(h b).right evenb]; rotate_left; simp [(h b).left oddb]

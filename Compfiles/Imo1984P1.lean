@@ -32,7 +32,8 @@ lemma geom_mean_le_arith_mean_3 {a b c : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b) (hc 
   · apply Real.rpow_nonneg abc_pos
   · let w := (1 : ℝ) / 3
     change (a * b * c) ^ w ≤ (a + b + c) / 3
-    trans w * a + w * b + w * c; rotate_left; unfold w; field_simp
+    trans w * a + w * b + w * c; rotate_left
+    · unfold w; field_simp
     rw [Real.mul_rpow (by positivity) hc]
     rw [Real.mul_rpow ha hb]
     apply Real.geom_mean_le_arith_mean3_weighted; all_goals try norm_num; try positivity
@@ -69,20 +70,23 @@ problem imo1984_p1  (x y z : ℝ)
             by linarith]
         exact this x z y ⟨hx0, hz0, hy0⟩ (by rw [←h₁]; linarith) hx0 hz0 hy0 hxz hxy (by linarith)
       · constructor
-        · suffices habs : abs ((1 - 2 * x) * (1 - 2 * y) * (1 - 2 * z)) ≤ 1
-          have ⟨i, _⟩ := abs_le.mp habs; linarith only [i]
+        · suffices habs : abs ((1 - 2 * x) * (1 - 2 * y) * (1 - 2 * z)) ≤ 1 by
+            have ⟨i, _⟩ := abs_le.mp habs; linarith only [i]
           rw [abs_mul, abs_mul]
-          apply mul_le_one₀
-          apply mul_le_one₀
-          all_goals try positivity
-          all_goals rw [abs_le]; constructor <;> linarith
-        · suffices habs : ((1 - 2 * x) * (1 - 2 * y) * (1 - 2 * z)) ≤ (1 : ℝ) / 27; linarith [habs]
+          refine mul_le_one₀ (mul_le_one₀ ?_ (by positivity) ?_) (by positivity) ?_ <;>
+          (rw [abs_le]; constructor) <;> linarith
+        · suffices habs : ((1 - 2 * x) * (1 - 2 * y) * (1 - 2 * z)) ≤ (1 : ℝ) / 27 by linarith [habs]
           conv => lhs; rw [← h₁]
           have h1 : 0 ≤ (x + y + z - 2 * x) := by linarith
           have h2 : 0 ≤ (x + y + z - 2 * y) := by linarith
           by_cases h3 : 0 ≤ (x + y + z - 2 * z); rotate_left
-          · trans 0; rotate_left; norm_num; apply nonpos_of_neg_nonneg
-            rw [←mul_neg]; apply mul_nonneg; positivity; linarith
+          · trans 0; rotate_left
+            · norm_num
+            apply nonpos_of_neg_nonneg
+            rw [←mul_neg]
+            apply mul_nonneg
+            · positivity
+            · linarith
           · apply le_trans (geom_mean_le_arith_mean_3 h1 h2 h3)
             rw [show (x + y + z - 2 * x + (x + y + z - 2 * y) + (x + y + z - 2 * z)) = 1
                 by rw [←h₁]; ring_nf]
