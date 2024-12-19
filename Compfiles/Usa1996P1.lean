@@ -113,9 +113,9 @@ problem usa1996_p1 :
       ring
     · rw [mul_comm]
       rw [Finset.sum_eq_zero]
-      simp only [zero_sub]
-      rw [←neg_mul, ←Real.cos_sub_pi]
-      congr; ring
+      · simp only [zero_sub]
+        rw [←neg_mul, ←Real.cos_sub_pi]
+        congr; ring
       intro n _
       rw [cos_add]
       ring

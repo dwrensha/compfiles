@@ -47,7 +47,7 @@ problem usa2015_p1 (x y : ℤ) :
     all_goals obtain ⟨h, hx, hy⟩ := h; rw [hx, hy]; ring_nf; use (h + h ^ 2); ring_nf
   · intro h; apply_fun (· * 3 ^ 3) at h; rw [←mul_pow, (add_mul _ 1)] at h; simp at h
     norm_num at h; norm_cast at h
-    suffices : (x + y) % 3 = 0; rw [←dvd_def]; exact Int.dvd_of_emod_eq_zero this
+    suffices (x + y) % 3 = 0 by rw [←dvd_def]; exact Int.dvd_of_emod_eq_zero this
     have h1 : (x ^ (2 : ℕ) + x * y + y ^ (2 : ℕ)) * (27 : ℤ) % 3 =
               (x + y + (3 : ℤ)) ^ (3 : ℕ) % 3 := by rw [h]
     clear h

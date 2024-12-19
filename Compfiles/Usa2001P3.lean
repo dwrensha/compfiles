@@ -63,11 +63,11 @@ problem usa2001_p3 (a b c : ℝ) (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c)
   rw [←geq]
   wlog ha1 : a≤1 generalizing a b c with Ha
   · by_cases hb1 : b ≤ 1
-    rw [(by ring_nf : g a b c = g b a c)]
-    exact Ha b a c hb ha hc (by rw [←h]; unfold f; ring_nf) hb1
+    · rw [(by ring_nf : g a b c = g b a c)]
+      exact Ha b a c hb ha hc (by rw [←h]; unfold f; ring_nf) hb1
     by_cases hc1 : c ≤ 1
-    rw [(by ring_nf : g a b c = g c b a)]
-    exact Ha c b a hc hb ha (by rw [←h]; unfold f; ring_nf) hc1
+    · rw [(by ring_nf : g a b c = g c b a)]
+      exact Ha c b a hc hb ha (by rw [←h]; unfold f; ring_nf) hc1
     apply False.elim (ne_of_not_le _ h)
     unfold f
     rw [not_le]

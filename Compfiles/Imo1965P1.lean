@@ -41,8 +41,9 @@ problem imo1965_p1 :
     simp [←pow_two, h0]
   simp only [Set.mem_Icc]
   simp_rw [this, and_true]
-  symm; ext x; constructor; dsimp
-  . rw [the_answer]; rintro ⟨h1, h2⟩
+  symm; ext x; constructor
+  · dsimp
+    rw [the_answer]; rintro ⟨h1, h2⟩
     constructor
     . constructor <;> linarith
     have : x ∈ Ico (π/4) (π / 2) ∪ Icc (π/2) (3*π/2) ∪ Ioc (3*π/2) (7*π/4) := by
@@ -57,7 +58,8 @@ problem imo1965_p1 :
       have cosx2_nonneg : 0 ≤ 2 * cos x := by linarith
       rw [←abs_of_nonneg cosx2_nonneg, ←sq_le_sq, h0, abs_of_nonpos cos2x_nonpos, cos_two_mul]
       linarith
-    . trans 0; swap; simp
+    . trans 0; swap;
+      · simp
       suffices cos x ≤ 0 by linarith
       apply cos_nonpos_of_pi_div_two_le_of_le h3
       linarith
@@ -90,7 +92,8 @@ problem imo1965_p1 :
     rw [cos_pi_div_four, div_pow] at this; norm_num at this
     linarith
   rw [sq_lt_sq, abs_of_nonneg cosx_nonneg, abs_of_nonneg]
-  swap; simp [cos_pi_div_four]; positivity
+  swap
+  · simp [cos_pi_div_four]; positivity
   rcases h4 with h5 | h5
   . apply cos_lt_cos_of_nonneg_of_le_pi_div_two h1 (by linarith) h5
   rw [←cos_neg x, ←cos_add_two_pi (-x)]

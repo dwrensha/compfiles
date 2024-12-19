@@ -174,30 +174,28 @@ lemma odd_props (n : ℕ) (odd_s : Finset ℕ) (s_odd_eq : odd_s = (Finset.Icc n
     ext x
     simp_all only [Finset.mem_insert, Finset.mem_singleton, Finset.mem_filter, Finset.mem_Icc]
     apply Iff.intro
-    intro H
-    constructor
-    · omega
-    · cases H
-      case inl h3 =>
-        simp_all only
-      case inr h4 =>
-        cases h4
-        case inl h5 =>
+    · intro H
+      constructor
+      · omega
+      · cases H
+        case inl h3 =>
           simp_all only
-          dsimp[Odd]
-          dsimp[Odd] at h
-          obtain ⟨k, h6⟩ := h
-          use k + 1
-          rw[h6]
-          ring_nf
-        case inr h6 =>
-          simp_all only
-          dsimp[Odd]
-          dsimp[Odd] at h
-          obtain ⟨k, h6⟩ := h
-          use k + 2
-          rw[h6]
-          ring_nf
+        case inr h4 =>
+          cases h4
+          case inl h5 =>
+            simp_all only
+            dsimp[Odd] at h ⊢
+            obtain ⟨k, h6⟩ := h
+            use k + 1
+            rw[h6]
+            ring_nf
+          case inr h6 =>
+            simp_all only
+            dsimp[Odd] at h ⊢
+            obtain ⟨k, h6⟩ := h
+            use k + 2
+            rw[h6]
+            ring_nf
     intro H
     obtain ⟨a, Hh⟩ := H
     have h3 := Odd.not_two_dvd_nat Hh

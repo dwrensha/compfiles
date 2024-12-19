@@ -2,12 +2,16 @@ import Lake
 
 open Lake DSL
 
-package compfiles where
-  leanOptions := #[
+abbrev leanOptions : Array LeanOption := #[
     ⟨`pp.unicode.fun, true⟩, -- pretty-prints `fun a ↦ b`
     ⟨`autoImplicit, false⟩,
     ⟨`relaxedAutoImplicit, false⟩
+--    ⟨`weak.linter.style.multiGoal, true⟩
   ]
+
+package compfiles where
+  leanOptions := leanOptions
+  moreServerOptions := leanOptions
 
 @[default_target]
 lean_lib ProblemExtraction
