@@ -47,14 +47,7 @@ problem usa1996_p1 :
     convert_to (∑ n ∈ Finset.range 45, (Real.cos (((89 - n) * 2 + 1) * Real.pi / 180) +
                                          Real.cos ((n * 2 + 1) * Real.pi / 180)))
         - 90 * Real.cos (181 * Real.pi / 180) = _
-    · have h1 : ∀ n ∈ Finset.range 90,
-        (↑n + 1) * (Real.cos ((2 * (↑n + 1) - 1) * Real.pi / 180)
-             - Real.cos ((2 * (↑n + 1) + 1) * Real.pi / 180)) =
-        ((↑n + 1) * (Real.cos ((2 * (↑n + 1) - 1) * Real.pi / 180))
-                      - (↑n + 1) * Real.cos ((2 * (↑n + 1) + 1) * Real.pi / 180)) := by
-        intro n _
-        ring_nf
-      rw [Finset.sum_congr rfl h1]; clear h1
+    · rw [Finset.sum_congr rfl (fun n a ↦ mul_sub_left_distrib _ _ _)]
       rw [Finset.sum_sub_distrib]
       nth_rewrite 2 [Finset.sum_range_succ]
       have h1 : ∑ x ∈ Finset.range 89, (↑x + 1) * Real.cos ((2 * (↑x + 1) + 1) * Real.pi / 180) =
