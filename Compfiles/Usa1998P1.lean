@@ -99,13 +99,9 @@ problem usa1998_p1
 
     have h9 : ∑ x : Fin 999, ((ab 0 x : ℤ) % 2) + ∑ x : Fin 999, ((ab 1 x : ℤ) % 2) =
          ∑ x : Fin 2 × Fin 999, (↑↑(ab.uncurry x) % 2) := by
-
-      have h11 : ∑ x : Fin 999, ((ab 0 x : ℤ) % 2) + ∑ x : Fin 999, ((ab 1 x : ℤ) % 2) =
-          ∑ x : Fin 2, ∑ y : Fin 999, ((ab x y : ℤ) % 2) := by
-        rw [Fin.sum_univ_two]
-
-      rw [h11, ←Finset.sum_product']
-      congr
+      rw [← Fin.sum_univ_two (f := fun i ↦ ∑ x : Fin 999, ((ab i x : ℤ) % 2)),
+          ← Finset.univ_product_univ, ← Finset.sum_product']
+      rfl
 
     have h10 : ∑ x : Fin 2 × Fin 999, ((ab.uncurry x : ℤ) % 2) =
               ∑ x : Finset.Icc 1 1998, (x : ℤ) % 2 :=
