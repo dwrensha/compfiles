@@ -55,7 +55,7 @@ problem imo2019_p1 (f : ℤ → ℤ) :
     have hx0 := hf x 0
     have h0x := hf 0 x
     simp at hx hx0 h0x
-    linarith
+    omega
   have : ∃ d, ∀ z, g z = d * z := additive_to_int_linear g this
   cases' this with d h
   have hz : ∀ z, f z = d * z + f 0 := by

@@ -58,7 +58,7 @@ theorem upper_bound {k n : ℕ} (hk : k > 0)
     · intro i hi
       simp only [Finset.mem_range] at hi
       have : (2:ℤ) ^ i ≤ (2:ℤ) ^ n := by gcongr; norm_num
-      linarith
+      omega
     · apply sub_le_self
       positivity
   norm_cast
