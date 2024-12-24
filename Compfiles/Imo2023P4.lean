@@ -277,8 +277,7 @@ theorem imo2023_p4_generalized
                    true_and]
         obtain ⟨aa, haa, haa2, haa3⟩ := ha
         simp only [e] at haa3
-        rw [← haa3]
-        simp only [Subtype.mk_le_mk]
+        rw [← haa3, Subtype.mk_le_mk]
         exact haa
       · intro ha
         simp only [Finset.univ_eq_attach, Finset.mem_filter, Finset.mem_attach,
