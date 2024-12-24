@@ -100,14 +100,9 @@ problem usa1998_p1
     have h9 : ∑ x : Fin 999, ((ab 0 x : ℤ) % 2) + ∑ x : Fin 999, ((ab 1 x : ℤ) % 2) =
          ∑ x : Fin 2 × Fin 999, (↑↑(ab.uncurry x) % 2) := by
 
-      have h12 : (Finset.univ : Finset (Fin 2)) =
-                  Finset.cons 0
-                    (Finset.cons 1
-                      {} (Finset.not_mem_empty _)) (by decide) := by decide
       have h11 : ∑ x : Fin 999, ((ab 0 x : ℤ) % 2) + ∑ x : Fin 999, ((ab 1 x : ℤ) % 2) =
           ∑ x : Fin 2, ∑ y : Fin 999, ((ab x y : ℤ) % 2) := by
-        rw [h12, Finset.sum_cons, Finset.sum_cons, Finset.sum_empty]
-        ring
+        rw [Fin.sum_univ_two]
 
       rw [h11, ←Finset.sum_product']
       congr
