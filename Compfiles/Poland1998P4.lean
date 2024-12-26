@@ -219,7 +219,7 @@ lemma can_get_a_later_one_zmod :
     obtain ⟨ii, _, hia'⟩ := this
     use (n2 + ii)
     constructor
-    · linarith
+    · omega
     · assumption
 
 lemma can_get_a_later_one : (∀ N : ℕ, 7 ∣ a N → (∃ M : ℕ, N < M ∧ 7 ∣ a M)) := by
