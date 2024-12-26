@@ -75,7 +75,7 @@ theorem exists_triplet_summing_to_squares (n : ℕ) (hn : 100 ≤ n) :
     ∃ a b c : ℕ, n ≤ a ∧ a < b ∧ b < c ∧ c ≤ 2 * n ∧
       (∃ k : ℕ, a + b = k ^ 2) ∧ (∃ l : ℕ, c + a = l ^ 2) ∧ ∃ m : ℕ, b + c = m ^ 2 := by
   obtain ⟨l, hl1, hl2⟩ := exists_numbers_in_interval n hn
-  have p : 1 < l := by contrapose! hl1; interval_cases l <;> linarith
+  have p : 1 < l := by contrapose! hl1; interval_cases l <;> omega
   have h₁ : 4 * l ≤ 2 * l ^ 2 := by omega
   have h₂ : 1 ≤ 2 * l := by omega
   refine ⟨2 * l ^ 2 - 4 * l, 2 * l ^ 2 + 1, 2 * l ^ 2 + 4 * l, ?_, ?_, ?_,
