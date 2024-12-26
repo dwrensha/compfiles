@@ -108,7 +108,7 @@ problem usa1989_p5
     calc _ = U u + (V u - U u) := by ring
          _ = U u + (10 * u^11 + u^10 - 9 * u^9) := by rw [h9]
          _ = U u + u^9 * (10 * u - 9) * (u + 1) := by ring
-         _ < _ := by linarith
+         _ < _ := by linarith only [hu, h8]
   have h10 : V u < V v := by
     calc _ < _ := h3
          _ = 8 := hu
