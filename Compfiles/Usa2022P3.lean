@@ -43,11 +43,6 @@ theorem PosReal.coe_add (a b : ℝ+) : (a + b).val = a.val + b.val := rfl
 @[simp]
 theorem PosReal.coe_div (a b : ℝ+) : (a / b).val = a.val / b.val := rfl
 
--- noncomputable instance PosReal.instSub : Sub ℝ+ where
---   sub := sorry
-
--- lemma PosReal.add_sub_cancel {a b : ℝ+} (h : a < b): a + (b - a) = b := sorry
-
 snip end
 
 determine solution_set : Set (ℝ+ → ℝ+) :=
@@ -77,9 +72,6 @@ problem usa2022_p3 (f : ℝ+ → ℝ+) :
 
   have h2 : ∀ c x : ℝ+, c > f^[2] x → f c < f x := by
     intro c x hcx
-
-    -- have := h1 x (c - f^[2] x)
-    -- rw [PosReal.add_sub_cancel h] at this
 
     let x' : ℝ+ := ⟨c - f^[2] x, sub_pos_of_lt hcx⟩
     have hx' : f^[2] x + x' = c := by
@@ -184,9 +176,7 @@ problem usa2022_p3 (f : ℝ+ → ℝ+) :
       linarith
 
     rcases this with ⟨b, ⟨hb1, hb2⟩⟩
-    have : f (a + a + b) < f (a + a + b) := by
-      nth_rw 2 [← hb1]
-      exact h2 (a + a + b) (a + a) hb2
+    have : f (a + a + b) < f (a + a + b) := lt_of_lt_of_eq (h2 (a + a + b) (a + a) hb2) hb1
     apply Subtype.mk_lt_mk.mp at this
     linarith
 
@@ -204,11 +194,6 @@ problem usa2022_p3 (f : ℝ+ → ℝ+) :
 
   have h9 : ∀ x > 1, f x = c / x := by
     intro x hx
-
-    -- have := h8 1 (x - 1)
-    -- simp [PosReal.add_sub_cancel hx] at this
-    -- change c = f x * (1 + f^[2] (x - 1)) at this
-    -- simp [PosReal.add_sub_cancel hx, h7] at this
 
     let x' : ℝ+ := ⟨x.val - 1, sub_pos_of_lt hx⟩
     have hx' : 1 + x' = x := by
