@@ -241,9 +241,7 @@ problem usa2022_p3 (f : ℝ+ → ℝ+) :
       simp
       change x ≤ 1 at hx
       calc x * (c / 2)
-        _ ≤ c / 2 := by
-          apply (mul_le_iff_le_one_left (by linarith [cpos])).mpr
-          exact hx
+        _ ≤ c / 2 := (mul_le_iff_le_one_left (half_pos cpos)).mpr hx
         _ < c := by linarith
     rw [h10 (x * (c / two)) this]
 

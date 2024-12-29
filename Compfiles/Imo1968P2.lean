@@ -57,8 +57,7 @@ lemma prod_digits_le {x b : ℕ} (hb : 2 ≤ b) (xpos : 0 < x) :
       Nat.le_of_lt (Nat.digits_lt_base hb (List.mem_of_mem_dropLast hd))
     exact List.prod_le_pow_card (List.dropLast (Nat.digits b x)) b h10
 
-  calc _ ≤ _ := Nat.mul_le_mul_right _ h8
-       _ ≤ _ := h6
+  exact mul_le_of_mul_le_right h6 h8
 
 snip end
 

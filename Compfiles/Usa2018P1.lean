@@ -63,8 +63,8 @@ problem usa2018_p1 (a b c : ℝ) :
         · rw [min_comm, ←min_assoc, min_comm (a*a)]
         · linear_combination (norm := (field_simp; ring_nf)) 1 * heq
         · linarith
-      · have aabb : a * a ≤ b * b := by apply mul_self_le_mul_self; linarith; assumption
-        have aacc : a * a ≤ c * c := by apply mul_self_le_mul_self; linarith; assumption
+      · have aabb : a * a ≤ b * b := mul_self_le_mul_self (le_of_lt ha) h1
+        have aacc : a * a ≤ c * c := mul_self_le_mul_self (le_of_lt ha) h2
         simp only [aabb, aacc, min_eq_left]
         apply le_of_add_le_add_right (a := 2 * (a * b + b * c + c * a))
         convert_to (a + b + c) ^ 2 ≤ 4 * (a * (a + b + c) + b * c)
