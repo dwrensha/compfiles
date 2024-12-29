@@ -552,7 +552,7 @@ problem bulgaria1998_p11
       have := Int.modEq_zero_iff_dvd.mp m₁_sub_5_mod_6
       dsimp[Dvd.dvd] at this
       obtain ⟨c, this⟩ := this
-      have expr_m₁_mod_6 : ↑m₁ = 6 * c + 5 := by linarith
+      have expr_m₁_mod_6 : ↑m₁ = 6 * c + 5 := by omega
       rw[expr_m₁_mod_6] at Hs
       ring_nf at Hs
       have expression_mod_3 :
