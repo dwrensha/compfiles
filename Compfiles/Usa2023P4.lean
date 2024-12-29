@@ -211,13 +211,13 @@ lemma alice_move_preserves_nu
   by_cases hji : j = i
   · rw [hji]
     have h2 : Function.update b0 i (b0 i + a) i = b0 i + a :=
-      Function.update_same i (b0 i + a) b0
+      Function.update_self i (b0 i + a) b0
     rw [h2]
     have h3 := hd i
     push_cast
     exact lemma5 (b0 i).pos h3
   · have h2 : Function.update b0 j (b0 j + a) i = b0 i := by
-      apply Function.update_noteq
+      apply Function.update_of_ne
       symm
       exact hji
     rw [h2]
@@ -235,13 +235,13 @@ lemma alice_move_preserves_nu'
   by_cases hji : j = i
   · rw [hji]
     have h2 : Function.update b0 i (b0 i + a) i = b0 i + a :=
-      Function.update_same i (b0 i + a) b0
+      Function.update_self i (b0 i + a) b0
     rw [h2]
     have h3 := hd i
     push_cast
     exact lemma5' (b0 i).pos h3
   · have h2 : Function.update b0 j (b0 j + a) i = b0 i := by
-      apply Function.update_noteq
+      apply Function.update_of_ne
       symm
       exact hji
     rw [h2]
@@ -300,7 +300,7 @@ lemma lemma2' (a : ℕ+) (N : ℕ) (hN : 1 < N) (s0 : State N)
       subst hje
       by_cases hij : i = j
       · subst hij
-        rw [Function.update_same] at hie
+        rw [Function.update_self] at hie
         have h3 := h1 i
         dsimp at h3
         push_cast at hie
@@ -308,7 +308,7 @@ lemma lemma2' (a : ℕ+) (N : ℕ) (hN : 1 < N) (s0 : State N)
         have h4 := Even.odd_add h2 h3
         rw [←Nat.not_even_iff_odd] at h4
         exact h4 hie
-      · rw [Function.update_noteq hij] at hie
+      · rw [Function.update_of_ne hij] at hie
         have h3 := h1 i
         exact h3 hie
 
