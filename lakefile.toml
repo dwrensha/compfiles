@@ -1,0 +1,45 @@
+name = "compfiles"
+defaultTargets = ["ProblemExtraction", "Compfiles", "buildWebpage", "extractProblems", "checkSolution"]
+
+[leanOptions]
+pp.unicode.fun = true
+autoImplicit = false
+relaxedAutoImplicit = false
+weak.linter.style.multiGoal = true
+
+[moreServerOptions]
+pp.unicode.fun = true
+autoImplicit = false
+relaxedAutoImplicit = false
+linter.style.multiGoal = true
+
+[[require]]
+name = "mathlib"
+git = "https://github.com/leanprover-community/mathlib4"
+rev = "master"
+
+[[require]]
+name = "tryAtEachStep"
+git = "https://github.com/dwrensha/tryAtEachStep"
+rev = "main"
+
+[[lean_lib]]
+name = "ProblemExtraction"
+
+[[lean_lib]]
+name = "Compfiles"
+
+[[lean_exe]]
+name = "buildWebpage"
+root = "scripts.buildWebpage"
+supportInterpreter = true
+
+[[lean_exe]]
+name = "extractProblems"
+root = "scripts.extractProblems"
+supportInterpreter = true
+
+[[lean_exe]]
+name = "checkSolution"
+root = "scripts.checkSolution"
+supportInterpreter = true
