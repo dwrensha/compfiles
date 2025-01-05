@@ -1,6 +1,8 @@
 name = "compfiles"
 defaultTargets = ["ProblemExtraction", "Compfiles", "buildWebpage", "extractProblems", "checkSolution"]
 
+moreLinkArgs = ["-L./.lake/packages/LeanCopilot/.lake/build/lib", "-lctranslate2"]
+
 [leanOptions]
 pp.unicode.fun = true
 autoImplicit = false
@@ -13,6 +15,8 @@ autoImplicit = false
 relaxedAutoImplicit = false
 linter.style.multiGoal = true
 
+
+
 [[require]]
 name = "mathlib"
 git = "https://github.com/leanprover-community/mathlib4"
@@ -22,6 +26,11 @@ rev = "master"
 name = "tryAtEachStep"
 git = "https://github.com/dwrensha/tryAtEachStep"
 rev = "main"
+
+[[require]]
+name = "LeanCopilot"
+git = "https://github.com/lean-dojo/LeanCopilot.git"
+rev = "v4.15.0"
 
 [[lean_lib]]
 name = "ProblemExtraction"
