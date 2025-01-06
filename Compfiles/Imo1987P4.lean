@@ -35,8 +35,8 @@ problem imo1987_p4 : ¬∃ f : ℕ → ℕ, ∀ n, f (f n) = n + 1987 := by
   -- Note that f is injective, because if f(x) = f(y),
   -- then f(f(x)) = f(f(y)), so x = y.
   have f_injective : f.Injective := by
-    intro x y hxy;
-    have hfx := hf x;
+    intro x y hxy
+    have hfx := hf x
     rw [hxy, hf y] at hfx
     exact Nat.add_right_cancel hfx.symm
 
