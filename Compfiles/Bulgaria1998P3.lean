@@ -5,7 +5,7 @@ Authors: David Renshaw
 -/
 
 import Mathlib.Data.Real.Basic
-import Mathlib.Algebra.BigOperators.Group.Finset
+import Mathlib.Tactic.Positivity.Finset
 import Mathlib.Analysis.SpecificLimits.Basic
 
 import ProblemExtraction

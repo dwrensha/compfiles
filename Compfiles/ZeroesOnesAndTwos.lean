@@ -6,6 +6,7 @@ Authors: David Renshaw
 
 import Mathlib.Data.Nat.ModEq
 import Mathlib.Data.Nat.Digits
+import Mathlib.Tactic
 
 import ProblemExtraction
 
@@ -31,7 +32,8 @@ def ones (b : ℕ) : ℕ → ℕ
 lemma of_digits_zeros_eq_zero (b m : ℕ) : Nat.ofDigits b (List.replicate m 0) = 0 := by
   induction m with
   | zero => dsimp only; rfl
-  | succ m ih => simp only [Nat.ofDigits, Nat.cast_zero, ih, mul_zero, add_zero]
+  | succ m ih =>
+    simp [List.replicate_add, Nat.ofDigits_append, ih]
 
 lemma ones_add (b m n : ℕ) :
     ones b (m + n) = ones b m + Nat.ofDigits b ((List.replicate m 0) ++ (List.replicate n 1)) := by

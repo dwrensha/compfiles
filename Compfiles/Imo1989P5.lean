@@ -7,7 +7,7 @@ Authors: David Renshaw
 import Mathlib.Algebra.IsPrimePow
 import Mathlib.Data.Nat.ModEq
 import Mathlib.Data.Nat.Prime.Basic
-import Mathlib.Tactic.Common
+import Mathlib.Tactic
 
 import ProblemExtraction
 

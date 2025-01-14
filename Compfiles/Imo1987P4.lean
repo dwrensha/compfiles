@@ -47,7 +47,7 @@ problem imo1987_p4 : ¬∃ f : ℕ → ℕ, ∀ n, f (f n) = n + 1987 := by
   -- A and B have union ℕ - f(f(ℕ)).
   have ab_union : A ∪ B = Set.univ \ (f '' (f '' Set.univ)) := by
     -- Note that B = f(ℕ) - f(f(ℕ)).
-    simp only [B, Set.image_diff f_injective]
+    simp only [A, B, Set.image_diff f_injective]
     exact Set.diff_union_diff_cancel
       (Set.subset_univ _) (Set.image_mono (Set.subset_univ _))
 

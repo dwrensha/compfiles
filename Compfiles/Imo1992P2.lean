@@ -35,9 +35,9 @@ problem imo1992_p2 (f : ℝ → ℝ) :
     let t := f 0
     have ht1 : f t = t^2 := h0
     have ht2 : ∀ x, f (x^2 + t) = (f x)^2 := fun x ↦ by
-      simp only [hf, zero_add]
+      simp only [hf, zero_add, t]
     have ht3 : ∀ x, f (f x) = x + t^2 := fun x ↦ by
-      simp only [←hf, zero_pow two_ne_zero, zero_add]
+      simp only [←hf, zero_pow two_ne_zero, zero_add, t]
     have ht4 :=
       calc 1 + t + 2 * t^2 + t^4
          = t + (1 + t^2)^2 := by ring

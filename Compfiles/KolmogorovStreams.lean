@@ -4,10 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: David Renshaw
 -/
 
-import Mathlib.Algebra.BigOperators.Group.Finset
 import Mathlib.Data.Stream.Defs
 import Mathlib.Data.Stream.Init
-import Mathlib.Tactic.Ring
+import Mathlib.Tactic
 
 import ProblemExtraction
 
@@ -82,6 +81,7 @@ lemma break_into_words_closed_form
       intro a b
       rw [Stream'.get_succ, Stream'.iterate_eq, Stream'.tail_cons, hpn,
           Stream'.drop_drop, Finset.sum_range_succ']
+      rw [Nat.add_comm]
       congr
 
 
@@ -237,7 +237,7 @@ problem kolmogorov_streams
     have hn' : ∀ (k : ℕ), ¬all_prefixes is_decent (a'.drop k) := by
       intro k
       have hnk := hn (k + 1) (Nat.succ_pos _)
-      rwa [Stream'.drop_drop, Nat.add_left_comm]
+      rwa [Stream'.drop_drop, Nat.add_right_comm]
     let d := choose_indecent_words is_decent a' hn'
     use n.succ::(λ i ↦ (d.get i).length)
     constructor

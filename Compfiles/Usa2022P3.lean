@@ -198,7 +198,8 @@ problem usa2022_p3 (f : ℝ+ → ℝ+) :
     let x' : ℝ+ := ⟨x.val - 1, sub_pos_of_lt hx⟩
     have hx' : 1 + x' = x := by
       apply Subtype.mk_eq_mk.mpr
-      simp
+      simp [x']
+
     have h := h8 1 x'
     simp [hx'] at h
     change c = f x * (1 + f^[2] x') at h
@@ -230,7 +231,7 @@ problem usa2022_p3 (f : ℝ+ → ℝ+) :
     have : x + two > 1 := by
       apply Subtype.coe_lt_coe.mp
       obtain ⟨x, xpos⟩ := x
-      simp
+      simp [two]
       linarith
     rw [h9 (x + two) this]
 

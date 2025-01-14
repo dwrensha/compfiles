@@ -131,7 +131,7 @@ lemma usa2002_p1_generalized
           simp [hs12, h6, h6', f]
           rw [Finset.subtype_union, Finset.union_comm]
           rw [h7'] at h8
-          exact h8
+          convert h8
         · obtain hss | hss := Classical.em (s ∈ s1 ∪ s2)
           · unfold f
             simp only [Finset.mem_union] at hss
@@ -217,7 +217,7 @@ lemma usa2002_p1_generalized
           rw [Finset.subtype_union, Finset.union_comm]
           simp (config := { decide := true }) only [↓reduceIte, ne_eq]
           rw [h7'] at h8
-          exact h8
+          convert h8
         · obtain hss | hss := Classical.em (s ∈ s1 ∪ s2)
           · unfold f
             simp only [Finset.mem_union] at hss

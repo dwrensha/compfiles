@@ -291,6 +291,7 @@ theorem imo2023_p4_generalized
         simp only [Finset.mem_Icc] at haa hy
         simp only [Subtype.mk_le_mk] at ha
         simp only [exists_prop, and_true]
+        simp only [exists_prop, and_true, e]
         omega
 
     have h10 : √((∑ x_1 ∈ Finset.filter
@@ -307,7 +308,7 @@ theorem imo2023_p4_generalized
       · rw [←h20 hn, Finset.sum_map]
         apply Finset.sum_congr rfl
         intro ii hii
-        simp
+        simp [x', e]
     rw [h10] at h9; clear h10
     have hxp' : ∀ (i : { x // x ∈ Finset.Icc 1 (2 * m + 1) }), 0 < x' i := by
       rintro ⟨y, hy⟩
