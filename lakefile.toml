@@ -25,7 +25,7 @@ rev = "master"
 [[require]]
 name = "tryAtEachStep"
 git = "https://github.com/dwrensha/tryAtEachStep"
-rev = "main"
+rev = "3271d1e090dbbfa03801fd645dd1e2be683c97fa"
 
 [[require]]
 name = "LeanCopilot"
