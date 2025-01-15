@@ -24,17 +24,6 @@ namespace Imo1989P5
 
 snip begin
 
-lemma coprime_of_product (n : ℕ) (lst : List ℕ) (h : ∀ y ∈ lst, n.Coprime y) :
-    n.Coprime lst.prod := by
-  induction lst with
-  | nil => simp only [List.prod_nil, Nat.coprime_one_right_eq_true]
-  | cons x xs ih =>
-    have hy : ∀ (y : ℕ), y ∈ xs → Nat.Coprime n y :=
-      fun y hy ↦ h y (List.mem_cons.mpr (Or.inr hy))
-    have h1 := h x (by simp)
-    rw [List.prod_cons]
-    exact Nat.Coprime.mul_right h1 (ih hy)
-
 lemma modulus_of_product {a b : ℕ} {xs : List ℕ}
     (h : a ≡ b [MOD xs.prod])
     (x : ℕ)
@@ -64,8 +53,9 @@ lemma general_chinese_remainder (xs : List ChinesePair)
     -- then we use Nat.chineseRemainder on x and ⟨List.prod(xs.map modulus), b⟩
     rw [List.pairwise_cons] at x_coprime
     -- need that `Nat.Coprime x.modulus y`
-    have h1 := coprime_of_product x.modulus (xs.map (·.modulus))
-      (by intro z hz; aesop)
+    have h1 := (Nat.coprime_list_prod_right_iff
+                   (k := x.modulus) (l := xs.map (·.modulus))).mpr
+                   (by intro z hz; aesop)
     obtain ⟨k, hk1, hk2⟩ := Nat.chineseRemainder h1 x.remainder b
     use k
     intro z hz

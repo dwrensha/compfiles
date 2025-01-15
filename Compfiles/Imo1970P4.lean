@@ -717,8 +717,6 @@ lemma no_partitions (n : ℕ) (s1 s2 : Finset ℕ)
     rw[h] at x_in_partition
     have n_eq_1 := n_eq_1_of_contains_one n n_not_zero x_in_partition
     rw[n_eq_1] at partition
-    simp_all only [ne_eq, one_ne_zero, not_false_eq_true, Finset.mem_Icc, le_refl, le_add_iff_nonneg_right,
-  zero_le, and_self]
     exact contradiction_of_finset_icc_1_6 s1 s2 partition no_dups eq_prod
   case inr h =>
     simp_all only [ne_eq, Finset.mem_Icc, nonpos_iff_eq_zero, le_add_iff_nonneg_left, zero_le, and_true]
