@@ -36,12 +36,8 @@ problem usa1996_p1 :
        Real.cos ((2 * (↑n + 1) + 1) * Real.pi / 180)) = Real.cos (Real.pi / 180)
   · congr! 2 with n _
     rw [Real.cos_sub_cos]
-    rw [show (((2 * (↑n + 1) - 1) * Real.pi / 180 + (2 * (↑n + 1) + 1) * Real.pi / 180) / 2) =
-             (2 * (n + 1) * Real.pi / 180) by ring]
-    rw [show (((2 * (↑n + 1) - 1) * Real.pi / 180 - (2 * (↑n + 1) + 1) * Real.pi / 180) / 2) =
-             (-(Real.pi / 180)) by ring]
-    rw [Real.sin_neg]
-    ring
+    ring_nf
+    simp [neg_div]
   · field_simp [mul_comm]
   · field_simp
     convert_to (∑ n ∈ Finset.range 45, (Real.cos (((89 - n) * 2 + 1) * Real.pi / 180) +
