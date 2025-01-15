@@ -83,8 +83,7 @@ problem imo1992_p2 (f : ℝ → ℝ) :
       rw [show -x + -y = - (x + y) by ring, h6, h6, h6] at h8
       linarith only [h8]
   have h8 : ∀ x y, f (x - y) = f x - f y := fun x y ↦ by
-    rw [show x - y = x + -y by ring, show f x - f y = f x + -f y by ring, ← h6]
-    exact h7 x (-y)
+    simp [sub_eq_add_neg, hf, h6, h7]
   ext x
   by_contra H
   obtain ⟨z, hz⟩ : ∃ z, 0 < z ∧ f z < 0 := by
