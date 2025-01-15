@@ -244,11 +244,8 @@ lemma strengthen
   · obtain ⟨M, left, right⟩ := h N0 hn0
     exact ⟨M, pos_of_gt left, right⟩
   · obtain ⟨m, hm, hmp⟩ := hpn
-    obtain (hlt : pn + 1 < m) |  (hlte : m ≤ pn + 1) := lt_or_ge (pn + 1) m
-    · exact ⟨m, hlt, hmp⟩
-    · have heq : m = pn + 1 := le_antisymm hlte hm
-      rw [heq] at hmp
-      exact h (pn.succ) hmp
+    obtain ⟨M, left, right⟩ := h m hmp
+    exact ⟨M, by omega, right⟩
 
 theorem poland1998_p4' : (∀ N : ℕ, ∃ M : ℕ, N < M ∧ 7 ∣ a M) := by
   have he : 7 ∣ a 5 := by simp [a', a]
