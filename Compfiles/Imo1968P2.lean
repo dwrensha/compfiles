@@ -25,11 +25,7 @@ snip begin
 lemma lemma0 {α β : Type} {f : ℕ → α → β} (l : List α) (h2 : l ≠ []) :
     List.getLast (List.mapIdx f l) (List.mapIdx_ne_nil_iff.mpr h2) =
     f (l.dropLast).length (List.getLast l h2) := by
-  simp_rw [List.mapIdx_eq_enum_map]
-  rw [List.getLast_eq_getElem, List.getElem_map, List.getElem_enum]
-  simp only [List.length_map, List.enum_length, Function.uncurry_apply_pair, List.length_dropLast]
-  congr
-  exact List.get_length_sub_one _
+  rw [List.getLast_mapIdx, List.length_dropLast]
 
 lemma prod_digits_le {x b : ℕ} (hb : 2 ≤ b) (xpos : 0 < x) :
     List.prod (Nat.digits b x) ≤ x := by
