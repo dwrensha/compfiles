@@ -67,10 +67,8 @@ theorem n_odd_and_m_eq_2_mod_3 (m n A : ℕ) (h : 3 * m * A = (m + 3)^n + 1) :
           _ ≡ 1 + 1 [MOD 3] := Nat.ModEq.add (two_even_pow_mod_3 n_even mod_case) rfl
           _ ≡ 2 [MOD 3] := by rfl
         contradiction
-      · constructor
-        · apply (@Nat.not_even_iff_odd n).mp
-          exact n_even
-        · exact mod_case
+      · rw [Nat.not_even_iff_odd] at n_even
+        exact ⟨n_even, mod_case⟩
   · rw [Nat.eq_zero_of_not_pos n_gt_zero] at h
     simp at h
     have towards_contradiction : 3 ∣ 2 := by
