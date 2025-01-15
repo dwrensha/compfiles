@@ -90,14 +90,10 @@ lemma lemma6' (n : ℕ) : (4 * (n - 1) + 1 + 4) / 2 = (2 * (n - 1) + 1 + 1) := b
   omega
 
 lemma lemma7 (n : ℕ) : (4 * (n - 1) + 1 + 5) / 2 = (2 * (n - 1) + 1 + 2) := by
-  have h1 : (4 * (n - 1) + 1 + 5) = 2 * (2 * (n - 1) + 1 + 2) := by ring
-  apply_fun (· / 2) at h1
-  rwa[Nat.mul_div_right _ (show 0 < 2 by norm_num)] at h1
+  omega
 
 lemma lemma7' (n : ℕ) : (4 * (n - 1) + 1 + 6) / 2 = (2 * (n - 1) + 1 + 2) := by
-  have h1 : (4 * (n - 1) + 1 + 6) = 2 * (2 * (n - 1) + 1 + 2) + 1 := by ring
-  rw [h1]
-  exact lemma2 (2 * (n - 1) + 1 + 2)
+  omega
 
 lemma can_get_a_later_one_zmod :
     (∀ N : ℕ, a' N = 0 → (∃ M : ℕ, N < M ∧ a' M = 0)) := by
