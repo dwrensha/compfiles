@@ -241,11 +241,8 @@ lemma strengthen
   obtain ⟨N0, hn0⟩ := he
   intro N
   induction' N with pn hpn
-  · obtain (hlt : 0 < N0) | (hlte : N0 ≤ 0) := lt_or_ge 0 N0
-    · exact ⟨N0, hlt, hn0⟩
-    · have heq : N0 = 0 := eq_bot_iff.mpr hlte
-      rw [heq] at hn0
-      exact h 0 hn0
+  · obtain ⟨M, left, right⟩ := h N0 hn0
+    exact ⟨M, pos_of_gt left, right⟩
   · obtain ⟨m, hm, hmp⟩ := hpn
     obtain (hlt : pn + 1 < m) |  (hlte : m ≤ pn + 1) := lt_or_ge (pn + 1) m
     · exact ⟨m, hlt, hmp⟩
