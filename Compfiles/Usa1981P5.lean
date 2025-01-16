@@ -31,12 +31,9 @@ problem usa1981_p5 (x : ℝ) (n : ℕ) :
   simp_rw [←Int.self_sub_fract, sub_div, mul_div_right_comm]
   rw [Finset.sum_sub_distrib]
   have h1 : ∀ x1 ∈ Finset.Icc 1 n, (x1 : ℝ) / (x1 : ℝ) * x = x := fun x1 hx ↦ by
-    have h3 : (x1:ℝ) ≠ 0 := by
-      rw [Finset.mem_Icc] at hx; replace hx := hx.1;
-      intro hx1
-      obtain rfl : x1 = 0 := Nat.cast_eq_zero.mp hx1
-      exact Nat.not_succ_le_zero 0 hx
-    rw [div_self h3, one_mul]
+    rw [Finset.mem_Icc] at hx
+    replace hx := hx.1;
+    field_simp
   rw [Finset.sum_congr rfl h1]
   have h2 : ∑ _x ∈ Finset.Icc 1 n, x = n * x := by
     rw [Finset.sum_const, Nat.card_Icc, add_tsub_cancel_right, nsmul_eq_mul]
