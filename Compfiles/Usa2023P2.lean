@@ -114,7 +114,7 @@ problem usa2023_p2 (f : ℝ+ → ℝ+) :
       have h8 := P x (c / x + 1)
       have h9 : x * (c / x + 1) + f x = x + f x + c := by
         rw [mul_add, mul_div_cancel, mul_one]
-        ac_rfl
+        exact add_rotate c x (f x)
       rw [h9] at h8; clear h9
       rw [h6 (x + f x), add_left_inj] at h8
       rw [h8]

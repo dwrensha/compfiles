@@ -32,8 +32,8 @@ problem imo2010_p3 (g : ℤ>0 → ℤ>0) :
     g ∈ SolutionSet ↔ ∀ m n, IsSquare ((g m + n) * (g n + m)) := by
   constructor
   · rintro (rfl | ⟨c, hc⟩) m n
-    · use m + n; rw [id, id]; ac_rfl
-    · use m + n + c; rw [hc m, hc n]; ac_rfl
+    · use m + n; rw [id, id, add_comm m n]
+    · use m + n + c; rw [hc m, hc n]; sorry
   · sorry
 
 
