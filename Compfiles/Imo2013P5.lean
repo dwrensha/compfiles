@@ -50,10 +50,10 @@ lemma le_of_all_pow_lt_succ {x y : ℝ} (hx : 1 < x) (hy : 1 < y)
            _ ≤ x^i * y^(n-1-i) := by gcongr; apply one_le_pow₀ hy.le
     calc (x - y) * (n : ℝ)
         = (n : ℝ) * (x - y) := mul_comm _ _
-      _ = (∑ _i in Finset.range n, (1 : ℝ)) * (x - y) :=
+      _ = (∑ _i ∈ Finset.range n, (1 : ℝ)) * (x - y) :=
                                  by simp only [mul_one, Finset.sum_const, nsmul_eq_mul,
                                     Finset.card_range]
-      _ ≤ (∑ i in Finset.range n, x ^ i * y ^ (n - 1 - i)) * (x-y) :=
+      _ ≤ (∑ i ∈ Finset.range n, x ^ i * y ^ (n - 1 - i)) * (x-y) :=
                                   (mul_le_mul_right hxmy).mpr (Finset.sum_le_sum hterm)
       _ = x^n - y^n         := geom_sum₂_mul x y n
 

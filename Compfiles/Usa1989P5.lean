@@ -26,15 +26,15 @@ determine u_is_larger : Bool := false
 
 problem usa1989_p5
     (u v : ℝ)
-    (hu : (∑ i in Finset.range 8, u^(i + 1)) + 10 * u^9 = 8)
-    (hv : (∑ i in Finset.range 10, v^(i + 1)) + 10 * v^11 = 8) :
+    (hu : (∑ i ∈ Finset.range 8, u^(i + 1)) + 10 * u^9 = 8)
+    (hv : (∑ i ∈ Finset.range 10, v^(i + 1)) + 10 * v^11 = 8) :
     if u_is_larger then v < u else u < v := by
   -- solution from
   -- https://artofproblemsolving.com/wiki/index.php/1989_USAMO_Problems/Problem_5
   simp only [u_is_larger, ite_false]
 
-  let U (x : ℝ) : ℝ := (∑ i in Finset.range 8, x^(i + 1)) + 10 * x^9
-  let V (x : ℝ) : ℝ := (∑ i in Finset.range 10, x^(i + 1)) + 10 * x^11
+  let U (x : ℝ) : ℝ := (∑ i ∈ Finset.range 8, x^(i + 1)) + 10 * x^9
+  let V (x : ℝ) : ℝ := (∑ i ∈ Finset.range 10, x^(i + 1)) + 10 * x^11
 
   change U u = 8 at hu
   change V v = 8 at hv

@@ -68,7 +68,7 @@ problem imo2003_p6 (p : ℕ) (hp : p.Prime) :
     interval_cases m <;> norm_num at this
 
   -- p > 2
-  let N := ∑ i in range p, p^i
+  let N := ∑ i ∈ range p, p^i
   have N_nz : N ≠ 0 := by
     apply Nat.ne_zero_iff_zero_lt.mpr
     apply sum_pos
@@ -90,7 +90,7 @@ problem imo2003_p6 (p : ℕ) (hp : p.Prime) :
             exact ⟨Nat.Prime.pos hp, by simp [hp.one_lt], Or.inl hp.one_lt⟩
           _ = p ^ 2 - p := by simp [Nat.pow_two, Nat.mul_sub]
       exact Nat.mod_eq_of_lt this
-    have : ∀ m ≥ 2, (∑ i in range m, p^i) % (p ^ 2) = p + 1 := by
+    have : ∀ m ≥ 2, (∑ i ∈ range m, p^i) % (p ^ 2) = p + 1 := by
       intro m hm
       cases' m with m; norm_num at hm
       cases' m with m; norm_num at hm
@@ -174,8 +174,8 @@ problem imo2003_p6 (p : ℕ) (hp : p.Prime) :
         simp [this, one_mod_p_1]
       · exact Nat.sub_le _ _
     have : N % (p - 1) = 1 := calc N % (p - 1)
-      _ = (∑ i in range p, (p^i) % (p - 1)) % (p - 1) := Finset.sum_nat_mod _ _ _
-      _ = (∑ i in range p, 1) % (p - 1) := by
+      _ = (∑ i ∈ range p, (p^i) % (p - 1)) % (p - 1) := Finset.sum_nat_mod _ _ _
+      _ = (∑ i ∈ range p, 1) % (p - 1) := by
         congr; funext i
         simp [Nat.pow_mod, one_mod_p_1, p_mod_p_1]
       _ = 1 := by simp [p_mod_p_1]
@@ -204,13 +204,13 @@ problem imo2003_p6 (p : ℕ) (hp : p.Prime) :
     rw [ZMod.natCast_zmod_eq_zero_iff_dvd] at q_dvd_p
 
     have : N % p = 1 := calc N % p
-      _ = (∑ i in range p, (p^i) % p) % p := Finset.sum_nat_mod _ _ _
-      _ = (∑ i in range (p - 1 + 1), (p^i) % p) % p := by
+      _ = (∑ i ∈ range p, (p^i) % p) % p := Finset.sum_nat_mod _ _ _
+      _ = (∑ i ∈ range (p - 1 + 1), (p^i) % p) % p := by
         nth_rw 1 [← Nat.succ_pred_prime hp]
         simp
-      _ = (∑ i in range (p - 1), p^(i+1) % p + 1) % p := by
+      _ = (∑ i ∈ range (p - 1), p^(i+1) % p + 1) % p := by
         simp [Finset.sum_range_succ']
-      _ = (∑ i in range (p - 1), 0 + 1) % p := by
+      _ = (∑ i ∈ range (p - 1), 0 + 1) % p := by
         congr; funext i
         apply Nat.mod_eq_zero_of_dvd
         exact Dvd.intro_left (p.pow i) rfl

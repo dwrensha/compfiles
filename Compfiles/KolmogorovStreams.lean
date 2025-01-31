@@ -59,12 +59,12 @@ lemma break_into_words_closed_form
     (lengths : Stream' ℕ)
     (a : Stream' α)
    : break_into_words lengths a =
-      (λ i ↦ Stream'.take (lengths i) (Stream'.drop (∑ j in Finset.range i, lengths j) a)) := by
+      (λ i ↦ Stream'.take (lengths i) (Stream'.drop (∑ j ∈ Finset.range i, lengths j) a)) := by
   funext n
   convert_to ((Stream'.corec (λ x ↦ Stream'.take (x.fst.head) x.snd)
                  (λ x ↦ ⟨x.fst.tail, Stream'.drop (x.fst.head) x.snd⟩)) :
                   Stream' ℕ × Stream' α → Stream' (List α)) ⟨lengths, a⟩ n =
-             Stream'.take (lengths n) (Stream'.drop (∑ j in Finset.range n, lengths j) a)
+             Stream'.take (lengths n) (Stream'.drop (∑ j ∈ Finset.range n, lengths j) a)
   rw [Stream'.corec_def,Stream'.map]
   congr
   · revert a lengths
@@ -132,7 +132,7 @@ lemma chosen_decent_closed_form
     (hnot: ∀ (n : ℕ), ∃ (k : ℕ), 0 < k ∧
             all_prefixes is_decent (a.drop (n + k)))
     : ∀ n : ℕ, (((choose_decent_words is_decent a hinit hnot).get n).start =
-              ∑ j in Finset.range n, ((choose_decent_words is_decent a hinit hnot).get j).length)
+              ∑ j ∈ Finset.range n, ((choose_decent_words is_decent a hinit hnot).get j).length)
             := by
   intro n
   induction n with
@@ -191,7 +191,7 @@ lemma chosen_indecent_closed_form
     (a : Stream' α)
     (h: ∀ (k : ℕ), ¬all_prefixes is_decent (a.drop k))
     : ∀ n : ℕ, (((choose_indecent_words is_decent a h).get n).start =
-                ∑ j in Finset.range n, ((choose_indecent_words is_decent a h).get j).length)
+                ∑ j ∈ Finset.range n, ((choose_indecent_words is_decent a h).get j).length)
              := by
   intro n
   induction n with

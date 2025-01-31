@@ -80,13 +80,13 @@ snip end
 
 problem imo2014_p1 (a : ℕ → ℤ) (apos : ∀ i, 0 < a i) (ha : ∀ i, a i < a (i + 1)) :
     ∃! n : ℕ, 0 < n ∧
-              n * a n < (∑ i in Finset.range (n + 1), a i) ∧
-              (∑ i in Finset.range (n + 1), a i) ≤ n * a (n + 1) := by
+              n * a n < (∑ i ∈ Finset.range (n + 1), a i) ∧
+              (∑ i ∈ Finset.range (n + 1), a i) ≤ n * a (n + 1) := by
   -- Informal solution by Fedor Petrov, via Evan Chen:
   -- https://web.evanchen.cc/exams/IMO-2014-notes.pdf
 
-  let b : ℕ → ℤ := fun i ↦ ∑ j in Finset.range i, (a i - a (j + 1))
-  have hb : ∀ i, b i = i * a i - ∑ j in Finset.range i, a (j + 1) := by
+  let b : ℕ → ℤ := fun i ↦ ∑ j ∈ Finset.range i, (a i - a (j + 1))
+  have hb : ∀ i, b i = i * a i - ∑ j ∈ Finset.range i, a (j + 1) := by
     intro i
     simp [b]
   have hb1 : b 1 = 0 := by norm_num [b]
@@ -99,14 +99,14 @@ problem imo2014_p1 (a : ℕ → ℤ) (apos : ∀ i, 0 < a i) (ha : ∀ i, a i < 
     nlinarith
 
   have h1 : ∀ j,
-    (0 < j ∧ j * a j < (∑ i in Finset.range (j + 1), a i) ∧
-                       (∑ i in Finset.range (j + 1), a i) ≤ j * a (j + 1)) ↔
+    (0 < j ∧ j * a j < (∑ i ∈ Finset.range (j + 1), a i) ∧
+                       (∑ i ∈ Finset.range (j + 1), a i) ≤ j * a (j + 1)) ↔
     (0 < j ∧ b j < a 0 ∧ a 0 ≤ b (j + 1)) := fun j ↦ by
     rw [hb, hb]
     constructor
     · rintro ⟨hj0, hj1, hj2⟩
       refine ⟨hj0, ?_, ?_⟩
-      · suffices H : ↑j * a j < ∑ i in Finset.range j, a (i + 1) + a 0 by
+      · suffices H : ↑j * a j < ∑ i ∈ Finset.range j, a (i + 1) + a 0 by
           exact Int.sub_left_lt_of_lt_add H
         rwa [Finset.sum_range_succ'] at hj1
       · rw [Finset.sum_range_succ'] at hj2

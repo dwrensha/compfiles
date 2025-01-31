@@ -91,7 +91,7 @@ problem bulgaria1998_p3
     | succ pn hpn =>
     have hpp : x_seq pn.succ = x_seq pn + f 1 / 2^pn := by
       rw [show x_seq _ = 1 + ∑ i ∈ Finset.range _, (f 1) / (2^i) by rfl]
-      have : ∑ i in Finset.range pn.succ, f 1 / 2 ^ i =
+      have : ∑ i ∈ Finset.range pn.succ, f 1 / 2 ^ i =
               f 1 / 2 ^ pn + ∑ i ∈ Finset.range pn, f 1 / 2 ^ i :=
         Finset.sum_range_succ_comm (λ (x : ℕ) ↦ f 1 / 2 ^ x) pn
       rw [this]

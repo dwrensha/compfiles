@@ -37,7 +37,7 @@ problem usa1998_p5 (n : ℕ) (_hn : 2 ≤ n) :
   | zero => use ∅; simp
   | succ n ih =>
     obtain ⟨Sp, sp_nonnegative, sp_card, hsp⟩ := ih
-    let L : ℤ := ∏ s in Sp, ∏ t in Sp.erase s, (s-t)^2
+    let L : ℤ := ∏ s ∈ Sp, ∏ t ∈ Sp.erase s, (s-t)^2
 
     have L_pos : 0 < L := by
       refine Finset.prod_pos fun s _ ↦ Finset.prod_pos ?_
@@ -92,12 +92,12 @@ problem usa1998_p5 (n : ℕ) (_hn : 2 ≤ n) :
             replace hb2 : L + b = β := hb2
             have a_ne_b : a ≠ b := by omega
             have ih := hsp a ha b hb a_ne_b
-            have h5 : L = (∏ t in Sp.erase a, (a-t)^2) *
-                         ∏ s in Sp.erase a, ∏ t in Sp.erase s, (s-t)^2 :=
+            have h5 : L = (∏ t ∈ Sp.erase a, (a-t)^2) *
+                         ∏ s ∈ Sp.erase a, ∏ t ∈ Sp.erase s, (s-t)^2 :=
               (Finset.mul_prod_erase Sp _ ha).symm
             have hbb := Finset.mem_erase.mpr ⟨a_ne_b.symm, hb⟩
-            have h6 : (a-b)^2 * ∏ t in (Sp.erase a).erase b, (a-t)^2 =
-                      ∏ t in Sp.erase a, (a-t)^2 :=
+            have h6 : (a-b)^2 * ∏ t ∈ (Sp.erase a).erase b, (a-t)^2 =
+                      ∏ t ∈ Sp.erase a, (a-t)^2 :=
                Finset.mul_prod_erase (Sp.erase a) (fun x ↦ (a-x)^2) hbb
             have Lmod : L % (a - b)^2 = 0 := by
                  rw [h5, ←h6, mul_assoc, Int.mul_emod, Int.emod_self]
