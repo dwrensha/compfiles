@@ -249,7 +249,7 @@ theorem digitsPadded_ofDigits (b n : ℕ) (h : 1 < b) (L : List ℕ) (w₁ : ∀
   have hl3 : ∀ (h : l1 ≠ []), l1.getLast h ≠ 0 := by simp_all
   rw [Nat.digits_ofDigits b h _ hl hl3]
   simp only [padList, List.length_append, List.length_replicate, List.append_assoc,
-             List.append_replicate_replicate, List.append_cancel_left_eq, List.replicate_inj,
+             List.replicate_append_replicate, List.append_cancel_left_eq, List.replicate_inj,
              or_true, and_true]
   simp only [List.length_append, List.length_replicate] at hn
   omega
