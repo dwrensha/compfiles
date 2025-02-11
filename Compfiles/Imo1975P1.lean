@@ -5,7 +5,7 @@ Authors: Mantas Bakšys
 -/
 import Mathlib.Data.Real.Basic
 import Mathlib.Algebra.Order.Rearrangement
-import Mathlib.Algebra.BigOperators.Ring
+import Mathlib.Algebra.BigOperators.Ring.Finset
 import Mathlib.Order.Interval.Finset.Nat
 
 import ProblemExtraction

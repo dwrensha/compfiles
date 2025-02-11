@@ -97,7 +97,7 @@ problem zeroes_and_ones
     rw [hc] at *
     intro h6
     have h7 : List.replicate (c+1) 1 ≠ [] := List.getLast?_isSome.mp rfl
-    have := List.getLast_append' (List.replicate a 0) _ h7
+    have := List.getLast_append_of_right_ne_nil (List.replicate a 0) _ h7
     rw [this, List.getLast_replicate_succ]
     exact Nat.one_ne_zero
   rw [Nat.digits_ofDigits _ one_lt_ten _ h4 h5]
