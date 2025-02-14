@@ -4,10 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: David Renshaw
 -/
 
-import Mathlib.Algebra.Order.BigOperators.Ring.Finset
-import Mathlib.Data.Finset.Card
-import Mathlib.Tactic.Positivity
-import Mathlib.Tactic.Ring
+import Mathlib.Tactic
 
 import ProblemExtraction
 
