@@ -213,7 +213,7 @@ problem usa2022_p3 (f : ℝ+ → ℝ+) :
     have : c / x > 1 := one_lt_div'.mpr hx
     have : f (c / x) = x := by
       rw [h9 (c / x) this]
-      field_simp
+      exact div_div_cancel c x
     calc f x
       _ = f (f (c / x)) := by rw [this]
       _ = c / x := h7 _

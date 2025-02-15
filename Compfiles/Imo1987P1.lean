@@ -5,7 +5,6 @@ Authors: Yury Kudryashov
 -/
 import Mathlib.Data.Fintype.BigOperators
 import Mathlib.Data.Fintype.Perm
-import Mathlib.Data.Fintype.Prod
 import Mathlib.Dynamics.FixedPoints.Basic
 
 import ProblemExtraction
@@ -121,8 +120,7 @@ snip end
 
 
 problem imo1987_p1 {n : ℕ} (hn : 1 ≤ n) : ∑ k ∈ range (n + 1), k * p (Fin n) k = n ! := by
-  rw [main₀, Nat.mul_factorial_pred (zero_lt_one.trans_le hn)]
-
+  rw [main₀, Nat.mul_factorial_pred hn]
 
 
 end Imo1987P1
