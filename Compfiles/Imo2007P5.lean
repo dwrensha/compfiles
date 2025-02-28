@@ -65,7 +65,7 @@ lemma bad_exists_descent {n : ℤ} (hn : 1 < n) {a : ℕ}
     have h2 := le_trans Int.one_nonneg (le_of_lt hn)
     rw [Int.lt_iff_add_one_le] at hn h ⊢
     rw [← ht]
-    exact le_mul_of_le_of_one_le_of_nonneg hn h h2
+    exact hn.trans (le_mul_of_one_le_right h2 h)
 
   clear hn n
 
