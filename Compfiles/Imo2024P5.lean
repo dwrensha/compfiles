@@ -618,9 +618,9 @@ def fn0 (N : ℕ) : Fin (2 * N + 2) → Cell N :=
     (⟨i - N, by omega⟩, ⟨N, by omega⟩)
 
 lemma injective_fn0 (N : ℕ) : Function.Injective (fn0 N) := by
-  intro a₁ a₂
+  intro ⟨a₁,_⟩ ⟨a₂, _⟩
   simp_rw [fn0]
-  split_ifs <;> simp [Prod.ext_iff, Fin.ext_iff] at * <;> omega
+  split_ifs <;> simp [Prod.ext_iff] at * <;> omega
 
 /-- The first attempt in a winning strategy, as a `Path`. -/
 def path0 (hN : 2 ≤ N) : Path N := Path.ofFn (fn0 N) (by omega) (by simp [fn0])
@@ -749,14 +749,14 @@ lemma path0_firstMonster_eq_apply_row1 (hN : 2 ≤ N) (m : MonsterData N) :
   simp_rw [path0, Path.firstMonster, Path.ofFn]
   have h : (1, m (row1 hN)) = fn0 N ⟨(m (row1 hN) : ℕ) + 1, by omega⟩ := by
     simp_rw [fn0]
-    split_ifs <;> simp [Prod.ext_iff, Fin.ext_iff] at *; omega
+    split_ifs <;> simp [Prod.ext_iff] at *; omega
   rw [h, List.find?_ofFn_eq_some_of_injective (injective_fn0 N)]
   refine ⟨?_, fun j hj ↦ ?_⟩
   · rw [fn0]
     split_ifs
-    · simp [Prod.ext_iff, Fin.ext_iff] at *
+    · simp [Prod.ext_iff] at *
     · have hm1 : (1, m (row1 hN)) ∈ m.monsterCells := Set.mem_range_self (row1 hN)
-      simpa [Prod.ext_iff, Fin.ext_iff] using hm1
+      simpa [Prod.ext_iff] using hm1
   · rw [fn0]
     split_ifs with h₁
     · simp [h₁, MonsterData.monsterCells]
