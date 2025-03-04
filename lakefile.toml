@@ -16,12 +16,12 @@ linter.style.multiGoal = true
 [[require]]
 name = "mathlib"
 git = "https://github.com/leanprover-community/mathlib4"
-rev = "master"
+rev = "v4.17.0"
 
 [[require]]
 name = "tryAtEachStep"
 git = "https://github.com/dwrensha/tryAtEachStep"
-rev = "main"
+rev = "lean-v4.17.0"
 
 [[lean_lib]]
 name = "ProblemExtraction"
