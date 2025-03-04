@@ -45,7 +45,7 @@ problem imo1961_p3 {n : ℕ} {x : ℝ} (npos : 0 < n) :
     (cos x) ^ n - (sin x) ^ n = 1 := by
   -- This solution is based on
   -- https://artofproblemsolving.com/wiki/index.php/1961_IMO_Problems/Problem_3
-  have h₀ : n ≠ 0 := Nat.not_eq_zero_of_lt npos
+  have h₀ : n ≠ 0 := Nat.ne_zero_of_lt npos
   constructor
   · rintro (⟨⟨k, rfl⟩, hn⟩ | ⟨⟨k, rfl⟩, -⟩ | ⟨⟨k, rfl⟩, hn⟩)
     · dsimp at hn

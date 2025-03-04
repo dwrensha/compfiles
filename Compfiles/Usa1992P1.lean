@@ -101,7 +101,7 @@ lemma lemma3 {m : ℕ} (hm : (m % 10) + 1 < 10) :
 theorem lemma6 {b : ℕ} {l1 l2 : List ℕ} (hg : List.Forall₂ (· ≥ ·) l1 l2) :
     Nat.ofDigits b l1 ≥ Nat.ofDigits b l2 := by
   induction l1 generalizing l2 with
-  | nil => simp_all [eq_comm, List.length_eq_zero, Nat.ofDigits]
+  | nil => simp_all [eq_comm, List.length_eq_zero_iff, Nat.ofDigits]
   | cons hd₁ tl₁ ih₁ =>
     induction l2 generalizing tl₁ with
     | nil => simp_all
@@ -119,7 +119,7 @@ theorem ofDigits_sub_ofDigits_eq_ofDigits_zipWith {b : ℕ} {l1 l2 : List ℕ}
     Nat.ofDigits b l1 - Nat.ofDigits b l2 =
     Nat.ofDigits b (l1.zipWith (· - ·) l2) := by
   induction l1 generalizing l2 with
-  | nil => simp_all [eq_comm, List.length_eq_zero, Nat.ofDigits]
+  | nil => simp_all [eq_comm, List.length_eq_zero_iff, Nat.ofDigits]
   | cons hd₁ tl₁ ih₁ =>
     induction l2 generalizing tl₁ with
     | nil => simp_all
@@ -395,7 +395,7 @@ problem usa1992_p1 (n : ℕ) :
     dsimp [a]
     have h3 : 1 ≤ 2 ^ i := Nat.one_le_two_pow
     have h4 : 10 ^ 1 ≤ 10 ^ (2 ^ i) :=
-      Nat.pow_le_pow_of_le_right (by norm_num) h3
+      Nat.pow_le_pow_right (by norm_num) h3
     dsimp at h4
     calc
       _ < 10 - 1 := by norm_num
