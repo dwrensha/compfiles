@@ -305,7 +305,7 @@ unsafe def main (_args : List String) : IO Unit := do
   IO.FS.writeFile "_site/lean.js" (←IO.FS.readFile "assets/lean.js")
 
   let module := `Compfiles
-  searchPathRef.set compile_time_search_path%
+  initSearchPath (← findSysroot)
 
   Lean.enableInitializersExecution
   withImportModules #[{module}] {} (trustLevel := 1024) fun env =>
@@ -425,10 +425,10 @@ unsafe def main (_args : List String) : IO Unit := do
       for info in infos' do
         for tag in info.metadata.tags do
            tag_formalized_counts :=
-            tag_formalized_counts.set! tag.toNat ((tag_formalized_counts.get! tag.toNat) + 1)
+            tag_formalized_counts.set! tag.toNat ((tag_formalized_counts[tag.toNat]!) + 1)
            if info.proved then
             tag_solved_counts :=
-             tag_solved_counts.set! tag.toNat ((tag_solved_counts.get! tag.toNat) + 1)
+             tag_solved_counts.set! tag.toNat ((tag_solved_counts[tag.toNat]!) + 1)
         infomap := infomap.insert info.name info
         if isImoProblemId info.name then
           imoFormalizedCount := imoFormalizedCount + 1
@@ -490,20 +490,20 @@ unsafe def main (_args : List String) : IO Unit := do
       h.putStr "<thead><tr><th></th><th>Formalized</th><th>Solved</th></tr></thead>"
       h.putStr "<tbody>"
       h.putStr "<tr><th>Algebra</th>"
-      h.putStr s!"<td>{tag_formalized_counts.get! ProblemExtraction.ProblemTag.Algebra.toNat}</td>"
-      h.putStr s!"<td>{tag_solved_counts.get! ProblemExtraction.ProblemTag.Algebra.toNat}</td>"
+      h.putStr s!"<td>{tag_formalized_counts[ProblemExtraction.ProblemTag.Algebra.toNat]!}</td>"
+      h.putStr s!"<td>{tag_solved_counts[ProblemExtraction.ProblemTag.Algebra.toNat]!}</td>"
       h.putStr "</tr>"
       h.putStr "<tr><th>Number Theory</th>"
-      h.putStr s!"<td>{tag_formalized_counts.get! ProblemExtraction.ProblemTag.NumberTheory.toNat}</td>"
-      h.putStr s!"<td>{tag_solved_counts.get! ProblemExtraction.ProblemTag.NumberTheory.toNat}</td>"
+      h.putStr s!"<td>{tag_formalized_counts[ProblemExtraction.ProblemTag.NumberTheory.toNat]!}</td>"
+      h.putStr s!"<td>{tag_solved_counts[ProblemExtraction.ProblemTag.NumberTheory.toNat]!}</td>"
       h.putStr "</tr>"
       h.putStr "<tr><th>Combinatorics</th>"
-      h.putStr s!"<td>{tag_formalized_counts.get! ProblemExtraction.ProblemTag.Combinatorics.toNat}</td>"
-      h.putStr s!"<td>{tag_solved_counts.get! ProblemExtraction.ProblemTag.Combinatorics.toNat}</td>"
+      h.putStr s!"<td>{tag_formalized_counts[ProblemExtraction.ProblemTag.Combinatorics.toNat]!}</td>"
+      h.putStr s!"<td>{tag_solved_counts[ProblemExtraction.ProblemTag.Combinatorics.toNat]!}</td>"
       h.putStr "</tr>"
       h.putStr "<tr><th>Geometry</th>"
-      h.putStr s!"<td>{tag_formalized_counts.get! ProblemExtraction.ProblemTag.Geometry.toNat}</td>"
-      h.putStr s!"<td>{tag_solved_counts.get! ProblemExtraction.ProblemTag.Geometry.toNat}</td>"
+      h.putStr s!"<td>{tag_formalized_counts[ProblemExtraction.ProblemTag.Geometry.toNat]!}</td>"
+      h.putStr s!"<td>{tag_solved_counts[ProblemExtraction.ProblemTag.Geometry.toNat]!}</td>"
       h.putStr "</tr>"
       h.putStr "</tbody>"
       h.putStr "</table></div>"

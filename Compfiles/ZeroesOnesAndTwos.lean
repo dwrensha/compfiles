@@ -139,7 +139,7 @@ lemma prepend_one_eq_append (n : ℕ) :
     Nat.digits 10 (prepend_one n) = (Nat.digits 10 n) ++ [1] := by
   induction n using Nat.strong_induction_on with | h n' ih =>
   cases' n' with n'
-  · simp_arith [prepend_one]
+  · simp +arith +decide [prepend_one]
   · rw [Nat.digits_def' two_le_ten (prepend_one_pos _)]
     rw [prepend_one_div _ (Nat.succ_pos n')]
     have hns : n'.succ / 10 < n'.succ := Nat.div_lt_self' n' 8

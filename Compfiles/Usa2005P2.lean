@@ -56,7 +56,7 @@ problem usa2005_p2 :
     by_contra! H
     rw [H] at h4
     norm_num at h4
-    simp_arith at h4
+    simp +arith +decide at h4
   have h8 : x^3 + y = 4 ∨ x^3 + y = 2 ∨ x^3 + y = 5 ∨ x^3 + y = -1 := by
     obtain h5 | h5 | h5 | h5 | h5 := lemma1 x
     · rw [h5] at h4 ⊢

@@ -301,7 +301,7 @@ private def findModuleImports
   let mut idx := 0
   for m1 in moduleNames do
     if m1 = md
-    then return (env.header.moduleData.get! idx).imports
+    then return (env.header.moduleData[idx]!).imports
     else idx := 1 + idx
   throwError s!"module {md} not found"
 

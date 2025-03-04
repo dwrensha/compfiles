@@ -24,7 +24,7 @@ unsafe def main (_args : List String) : IO Unit := do
   IO.FS.createDirAll solution_dir
 
   let module := `Compfiles
-  searchPathRef.set compile_time_search_path%
+  initSearchPath (← findSysroot)
 
   Lean.enableInitializersExecution
   withImportModules #[{module}] {} (trustLevel := 1024) fun env =>

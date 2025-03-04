@@ -37,7 +37,7 @@ structure CompileProblemResult where
 -- refer to names from the module. Otherwise, we get segfaults.
 unsafe def compileProblem (problem_id : String) (act : CompileProblemResult → IO Unit)
     : IO Unit := do
-  searchPathRef.set compile_time_search_path%
+  initSearchPath (← findSysroot)
 
   let lean_file := workDir.join (problem_id ++ ".lean")
   let olean_file := workDir.join (problem_id ++ ".olean")
@@ -147,7 +147,7 @@ unsafe def main (args : List String) : IO Unit := do
     IO.println "usage: checkSolution PROBLEM_ID SOLUTION_FILE"
     IO.Process.exit 1
 
-  let problem_id := args.get! 0
+  let problem_id := args[0]!
   let problem_mod := Name.mkSimple problem_id
 
   let solution_id := problem_id ++ "_solution"
@@ -167,7 +167,7 @@ unsafe def main (args : List String) : IO Unit := do
   IO.println "* compiling solution into olean ..."
   let solution_lean_file := workDir.join (solution_id ++ ".lean")
   let solution_olean_file := workDir.join (solution_id ++ ".olean")
-  copyFile (args.get! 1) solution_lean_file
+  copyFile (args[1]!) solution_lean_file
   compileFile solution_lean_file solution_olean_file
 
   -- 4. For each decl in problem olean, verify that it

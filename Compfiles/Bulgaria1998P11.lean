@@ -31,7 +31,7 @@ lemma mod_3_add_3_under_exponent (m n : ℕ) : ((m + 3) ^ n) ≡ (m ^ n) [MOD 3]
 lemma zero_pow_mod_3 {m n : ℕ} (h1 : n > 0) (h2 : m ≡ 0 [MOD 3]) : m ^ n ≡ 0 [MOD 3]:= by
   change _ % 3 = 0 at h2 ⊢
   rw [←Nat.dvd_iff_mod_eq_zero] at h2 ⊢
-  exact Dvd.dvd.pow h2 (Nat.not_eq_zero_of_lt h1)
+  exact Dvd.dvd.pow h2 (Nat.ne_zero_of_lt h1)
 
 lemma one_pow_mod_3 {m n : ℕ} (h2 : m ≡ 1 [MOD 3]) : m ^ n ≡ 1 [MOD 3]:= by
   change _ % _ = 1 at h2 ⊢
@@ -40,7 +40,7 @@ lemma one_pow_mod_3 {m n : ℕ} (h2 : m ≡ 1 [MOD 3]) : m ^ n ≡ 1 [MOD 3]:= b
 lemma two_even_pow_mod_3 {m n : ℕ} (h1 : Even n) (h2 : m ≡ 2 [MOD 3]) : m ^ n ≡ 1 [MOD 3] := by
   change _ % _ = _ at h2 ⊢
   obtain ⟨k, hk⟩ := h1
-  simp_arith [Nat.pow_mod, h2, hk, pow_mul]
+  simp +arith +decide [Nat.pow_mod, h2, hk, pow_mul]
 
 theorem n_odd_and_m_eq_2_mod_3 (m n A : ℕ) (h : 3 * m * A = (m + 3)^n + 1) :
     Odd n ∧ m ≡ 2 [MOD 3] := by
@@ -120,7 +120,7 @@ lemma m_mod_2_contradiction (m n A : ℕ)
   rw [←two_mul] at h
   ring_nf at h; reduce_mod_char at h
   rw [one_pow] at h
-  simp_arith at h
+  simp +arith +decide at h
 
 lemma m_add_3_pow_n_mod_m (n m : ℕ) : (m + 3)^n ≡ 3^n [MOD m] := by
   simp [Nat.ModEq, Nat.pow_mod, Nat.add_mod]
@@ -264,7 +264,7 @@ lemma mod_z_of_mod_n {a b m : ℕ} (h : a ≡ b [MOD m]) : a ≡ b [ZMOD m] := b
   norm_cast
 
 lemma square_mod_4_zmod (x : ZMod 4) : x ^ 2 = 1 ∨ x ^ 2 = 0 := by
-  fin_cases x <;> simp_arith
+  fin_cases x <;> simp +arith +decide
 
 lemma square_mod_3_zmod_0 : ∀ {x : ZMod 3} (_ : x ^ 2 = 0), x = 0 := by
   decide
@@ -280,7 +280,7 @@ lemma leaf_contradiction {x y m₁ : ℤ} (h: 3 * x ^ 2 + y ^ 2 = m₁) (h2 : m�
   rw [h2] at h
   reduce_mod_char at h
   generalize hz : (y : ZMod 3) = z
-  fin_cases z <;> rw [hz] at h <;> simp_arith at h
+  fin_cases z <;> rw [hz] at h <;> simp +arith +decide at h
 
 snip end
 
@@ -317,7 +317,7 @@ problem bulgaria1998_p11
     rw [hm'] at h
     fin_cases m'
     · rfl
-    · simp_arith at h; reduce_mod_char at h
+    · simp +arith +decide at h; reduce_mod_char at h
       rw [zero_pow n_ne_zero, zero_add] at h
       exact (zero_ne_one h).elim
 
@@ -375,7 +375,7 @@ problem bulgaria1998_p11
           push_cast
           reduce_mod_char
           rw [one_pow]
-          simp_arith
+          simp +arith +decide
         exfalso
         exact too_good_to_be_true
                 n l (show 3 ≤ l by exact left) two_pow_l_divides_expresion expression_eq_4_mod_8
@@ -537,15 +537,15 @@ problem bulgaria1998_p11
       · rw[left_x] at expression_mod_4
         obtain left_y | right_y := square_mod_4_zmod y
         · rw[left_y] at expression_mod_4
-          simp_arith[left_y] at expression_mod_4
+          simp +arith +decide [left_y] at expression_mod_4
         · rw[right_y] at expression_mod_4
-          simp_arith at expression_mod_4
+          simp +arith +decide at expression_mod_4
       · rw[right_x] at expression_mod_4
         obtain left_y | right_y := square_mod_4_zmod y
         · rw[left_y] at expression_mod_4
-          simp_arith at expression_mod_4
+          simp +arith +decide at expression_mod_4
         · rw[right_y] at expression_mod_4
-          simp_arith at expression_mod_4
+          simp +arith +decide at expression_mod_4
     · -- s = 3
       have := Int.modEq_zero_iff_dvd.mp m₁_sub_5_mod_6
       dsimp[Dvd.dvd] at this

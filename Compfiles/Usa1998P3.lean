@@ -235,7 +235,7 @@ problem usa1998_p3
     rw [Finset.prod_div_distrib]
     have h25 : 0 < (n:ℝ) ^ ((n:ℝ) + 1) := by
       norm_cast
-      exact Nat.pos_pow_of_pos (n + 1) (Nat.pos_of_ne_zero h0)
+      exact Nat.pow_pos (Nat.zero_lt_of_ne_zero h0)
     have h26 : 0 < ∏ x ∈ Finset.range (n + 1), (1 - y x) := by
       apply Finset.prod_pos
       intro x hx

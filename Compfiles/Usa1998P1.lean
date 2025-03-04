@@ -44,7 +44,7 @@ lemma mod2_diff (a b : ℤ) : |a - b| % 2 = (a + b) % 2 := by
 lemma lemma0 (n : ℕ) : (∑ x ∈ Finset.Icc 1 (4 * n + 2), (x:ℤ) % 2) % 2 = 1 := by
   norm_cast
   induction n with
-  | zero => simp_arith
+  | zero => simp +arith +decide
   | succ n ih =>
     rw [show 4 * (n + 1) + 2 = (4 * n + 2) + 4 by omega]
     rw [Finset.sum_Icc_succ_top (by norm_num)]
