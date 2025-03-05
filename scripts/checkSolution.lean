@@ -10,7 +10,7 @@ import ProblemExtraction
 
 open Lean Core Elab
 
-def LEAN_PATH : String := "./.lake/packages/batteries/.lake/build/lib:./.lake/packages/Qq/.lake/build/lib:./.lake/packages/aesop/.lake/build/lib:./.lake/packages/proofwidgets/.lake/build/lib:./.lake/packages/importGraph/.lake/build/lib:./.lake/packages/mathlib/.lake/build/lib"
+def LEAN_PATH : String := "./.lake/packages/batteries/.lake/build/lib/lean:./.lake/packages/Qq/.lake/build/lib/lean:./.lake/packages/aesop/.lake/build/lib/lean:./.lake/packages/proofwidgets/.lake/build/lib/lean:./.lake/packages/importGraph/.lake/build/lib/lean:./.lake/packages/mathlib/.lake/build/lib/lean:./.lake/packages/plausible/.lake/build/lib/lean:./.lake/packages/LeanSearchClient/.lake/build/lib/lean:"
 
 def workDir : System.FilePath := "_check"
 
