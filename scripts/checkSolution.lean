@@ -65,7 +65,7 @@ unsafe def compileProblem (problem_id : String) (act : CompileProblemResult → 
 
 unsafe def verifyTypesAndAxioms (problem_mod : Name) (solution_mod : Name)
     : IO Unit := do
-  searchPathRef.set (workDir :: compile_time_search_path%)
+  initSearchPath (← findSysroot) [workDir]
 
   withImportModules #[{module := problem_mod}] {} (trustLevel := 1024) fun prob_env =>
     withImportModules #[{module := solution_mod}] {} (trustLevel := 1024) fun sol_env => do
@@ -105,7 +105,7 @@ unsafe def verifyTypesAndAxioms (problem_mod : Name) (solution_mod : Name)
 
 -- copied from lean4checker (https://github.com/leanprover/lean4checker/)
 unsafe def replayFromImports (module : Name) : IO Unit := do
-  searchPathRef.set (workDir :: compile_time_search_path%)
+  initSearchPath (← findSysroot) [workDir]
   let mFile ← findOLean module
   unless (← mFile.pathExists) do
     throw <| IO.userError s!"object file '{mFile}' of module {module} does not exist"
@@ -122,7 +122,7 @@ unsafe def replayFromImports (module : Name) : IO Unit := do
 
 unsafe def printDetermineVals (determineDecls : List Name) (solution_mod : Name)
     : IO Unit := do
-  searchPathRef.set (workDir :: compile_time_search_path%)
+  initSearchPath (← findSysroot) [workDir]
 
   withImportModules #[{module := solution_mod}] {} (trustLevel := 1024) fun sol_env => do
     let sol_ctx := {fileName := "", fileMap := default}
