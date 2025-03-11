@@ -1,6 +1,35 @@
-import Mathlib
+/-
+Copyright (c) 2025 Roozbeh Yousefzadeh. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Roozbeh Yousefzadeh
+-/
 
-set_option linter.unusedVariables.analyzeTactics true
+import Mathlib
+import Mathlib.Tactic
+
+import ProblemExtraction
+
+problem_file { tags := [.Algebra] }
+
+/-!
+# International Mathematical Olympiad 1985, Problem 6
+
+For every real number x_1, construct the sequence {x_1,x_2, ...}
+by setting x_{n+1} = x_n * (x_n + 1 / n) for each n >= 1.
+
+
+Prove that there exists exactly one value of x_1 for which
+0 < x_n , x_n < x_{n+1}, and x_{n+1} < 1 for every n.
+
+
+-/
+
+
+
+namespace Imo1985P6
+
+snip begin
+
 
 lemma aux_1
   (f : ℕ → NNReal → ℝ)
@@ -1105,9 +1134,13 @@ lemma aux_unique
         exact Nat.le_add_left 1 (↑N + 2)
 
 
+snip end
 
 
-theorem imo_1985_p6
+
+
+
+problem imo_1985_p6
   (f : ℕ → NNReal → ℝ)
   (h₀ : ∀ x, f 1 x = x)
   (h₁ : ∀ n x, 0 < n → f (n + 1) x = f n x * (f n x + 1 / n)) :

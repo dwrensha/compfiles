@@ -1,8 +1,33 @@
+/-
+Copyright (c) 2025 Roozbeh Yousefzadeh. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Roozbeh Yousefzadeh
+-/
+
 import Mathlib
-set_option linter.unusedVariables.analyzeTactics true
+import Mathlib.Tactic
+
+import ProblemExtraction
+
+problem_file { tags := [.Algebra] }
+
+/-!
+# International Mathematical Olympiad 1978, Problem 5
+
+Let f be an injective function from {1,2,3, ...} in itself.
+
+Prove that for any n we have:
+
+sum_{k=1}^{n} f(k)k^{-2} >= sum_{k=1}^{n} k^{-1}.
+-/
 
 open Finset
 
+
+
+namespace Imo1978P5
+
+snip begin
 
 lemma aux_1
   (n : ℕ)
@@ -597,9 +622,10 @@ lemma aux_1
   rw [h₃, h₄]
   refine le_trans h₇ h₆
 
+snip end
 
 
-theorem imo_1978_p5
+problem imo_1978_p5
   (n : ℕ)
   (f : ℕ → ℕ)
   (h₀ : ∀ (m : ℕ), 0 < f m)
