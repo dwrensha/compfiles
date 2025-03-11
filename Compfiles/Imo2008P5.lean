@@ -192,11 +192,14 @@ lemma lemma1 (α : Type) (A B : Set α) (hA : A.Finite) (hB : B.Finite)
   have h3' : ∀ b ∈ Finset.univ (α := ↑B),
                  (Finset.filter {a | f a = b } (Finset.univ (α := ↑A))).card = n := by
     intro b _
+    have h2' : Fintype { a // {a | f a = b} a} := hbf b
     rw [← @Fintype.card_subtype]
     rw [← h1
         b, h2,
-        Set.setOf_set, Fintype.card_eq_nat_card,
-        Mathlib.Tactic.Zify.natCast_eq, Fintype.card_eq_nat_card]
+        Fintype.card_eq_nat_card,
+        Mathlib.Tactic.Zify.natCast_eq,
+        Fintype.card_eq_nat_card]
+    rfl
 
   clear h1 h2
   let A' := Finset.biUnion
