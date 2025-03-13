@@ -9,7 +9,13 @@ import Mathlib.Tactic
 
 import ProblemExtraction
 
-problem_file { tags := [.Algebra] }
+problem_file {
+  tags := [.Algebra]
+  importedFrom :=
+    "https://github.com/roozbeh-yz/IMO-Steps/blob/main/imo_proofs/imo_1985_p6.lean",
+}
+
+
 
 /-!
 # International Mathematical Olympiad 1985, Problem 6
@@ -1134,13 +1140,12 @@ lemma aux_unique
         exact Nat.le_add_left 1 (↑N + 2)
 
 
-snip end
 
 
 
 
 
-problem imo_1985_p6
+problem imo_1985_p6_nnreal
   (f : ℕ → NNReal → ℝ)
   (h₀ : ∀ x, f 1 x = x)
   (h₁ : ∀ n x, 0 < n → f (n + 1) x = f n x * (f n x + 1 / n)) :
@@ -1349,3 +1354,45 @@ problem imo_1985_p6
   . exact aux_exists f h₂ hmo₀ f₀ hf₁ sn (by rfl) fb fc hfb₁ hfc₁ hfb₃ hfc₃ sb sc hsb₀ hsc₀ fr (by rfl) sbr scr (by rfl) (by rfl) br cr h₈ hbr₁ hu₅ hbr₃ hcr₃
   . intros x y hx₀ hy₀
     exact aux_unique f h₁ hmo₀ h₇ x y hx₀ hy₀
+
+
+snip end
+
+
+
+
+problem imo_1985_p6
+  (f : ℕ → ℝ → ℝ)
+  (h₀ : ∀ x, f 1 x = x)
+  (h₁ : ∀ n x, 0 < n → f (n + 1) x = f n x * (f n x + 1 / n)) :
+  ∃! a, ∀ n, 0 < n → 0 < f n a ∧ f n a < f (n + 1) a ∧ f (n + 1) a < 1 := by
+  let fn : ℕ → NNReal → ℝ := fun n x => f n x
+  have hfn₁: ∀ n x, 0 < n → 0 ≤ x → fn n x = f n x := by
+    exact fun n x a a ↦ rfl
+  have h₂: ∃! a, ∀ (n : ℕ), 0 < n → 0 < fn n a ∧ fn n a < fn (n + 1) a ∧ fn (n + 1) a < 1 := by
+    exact imo_1985_p6_nnreal fn (fun x ↦ h₀ ↑x) fun n x ↦ h₁ n ↑x
+  obtain ⟨a, ha₀, ha₁⟩ := h₂
+  use a
+  constructor
+  . intro n hn₀
+    exact ha₀ n hn₀
+  . intro y hy₀
+    have hy₁: 0 ≤ y.toNNReal := by exact zero_le y.toNNReal
+    by_cases hy₂: 0 ≤ y
+    . refine (Real.toNNReal_eq_toNNReal_iff hy₂ ?_).mp ?_
+      . exact NNReal.zero_le_coe
+      . rw [@Real.toNNReal_coe]
+        refine ha₁ (y.toNNReal) ?_
+        intro n hn₀
+        rw [hfn₁ n _ hn₀ hy₁, hfn₁ (n + 1) _ (by linarith) hy₁]
+        rw [Real.coe_toNNReal y hy₂]
+        exact hy₀ n hn₀
+    . exfalso
+      push_neg at hy₂
+      have hy₃: f 1 y < 0 := by
+        rw [h₀]
+        exact hy₂
+      have hy₄: 0 < f 1 y := by
+        exact (hy₀ 1 (by decide)).1
+      have hy₅: (0:ℝ) < 0 := by exact lt_trans hy₄ hy₃
+      exact (lt_self_iff_false 0).mp hy₅

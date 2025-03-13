@@ -9,16 +9,21 @@ import Mathlib.Tactic
 
 import ProblemExtraction
 
-problem_file { tags := [.Algebra] }
+problem_file {
+  tags := [.Algebra]
+  importedFrom :=
+    "https://github.com/roozbeh-yz/IMO-Steps/blob/main/imo_proofs/imo_1978_p5.lean",
+}
+
 
 /-!
 # International Mathematical Olympiad 1978, Problem 5
 
-Let f be an injective function from {1,2,3, ...} in itself.
+Let a_k be a sequence of distinct positive integers for k = 1,2,3, ...
 
-Prove that for any n we have:
+Prove that for all natral numbers n, we have:
 
-sum_{k=1}^{n} f(k)k^{-2} >= sum_{k=1}^{n} k^{-1}.
+sum_{k=1}^{n} a(k)/(k^2) >= sum_{k=1}^{n} (1/k).
 -/
 
 open Finset
@@ -32,8 +37,8 @@ snip begin
 lemma aux_1
   (n : ℕ)
   (f : ℕ → ℕ)
-  (h₀ : ∀ (m : ℕ), 0 < f m)
-  (h₁ : ∀ (p q : ℕ), p ≠ q → f p ≠ f q)
+  (h₀ : ∀ (m : ℕ), 0 < m → 0 < f m)
+  (h₁ : ∀ (p q : ℕ), 0 < p → 0 < q → p ≠ q → f p ≠ f q)
   (h₂ : 0 < n) :
   ∑ k ∈ Finset.Icc 1 n, ((k):ℝ) / (k) ^ 2 ≤ ∑ k ∈ Finset.Icc 1 n, ((f k):ℝ) / (k) ^ 2 := by
   let s := Finset.Icc 1 n
@@ -65,19 +70,31 @@ lemma aux_1
   have hf₄: sf_sorted.length = n ∧ (sort (fun x₁ x₂ => x₁ ≤ x₂) (image f s)).length = n := by
     have hl₂: sf.card = n := by
       rw [← hl₁]
-      refine Finset.card_image_of_injective s ?_
-      intros p q hpq
+      refine Finset.card_image_of_injOn ?_
+      intros p hp₀ q hq₀ hpq
+      have hf₅: f₂ = fun k => ((f k):ℝ) := by rfl
       contrapose! hpq
-      have hf₀: f₂ = fun k => ((f k):ℝ) := by rfl
-      rw [hf₀]
+      rw [hf₅]
       simp
-      exact h₁ p q hpq
+      refine h₁ p q ?_ ?_ hpq
+      . norm_cast at hp₀
+        apply Finset.mem_Icc.mp at hp₀
+        exact hp₀.1
+      . norm_cast at hq₀
+        apply Finset.mem_Icc.mp at hq₀
+        exact hq₀.1
     have hl₃: (image f s).card = n := by
       rw [← hl₁]
-      refine Finset.card_image_of_injective s ?_
-      intros p q hpq
+      refine Finset.card_image_of_injOn ?_
+      intros p hp₀ q hq₀ hpq
       contrapose! hpq
-      exact h₁ p q hpq
+      refine h₁ p q ?_ ?_ hpq
+      . norm_cast at hp₀
+        apply Finset.mem_Icc.mp at hp₀
+        exact hp₀.1
+      . norm_cast at hq₀
+        apply Finset.mem_Icc.mp at hq₀
+        exact hq₀.1
     constructor
     . rw [← hl₂]
       exact length_sort fun x₁ x₂ => x₁ ≤ x₂
@@ -93,8 +110,9 @@ lemma aux_1
     have hs₂: ∀ k ∈ sf_sorted, 1 ≤ k := by
       rw [hf₁, hf₂, hf₃]
       simp
-      intros k _
-      exact h₀ k
+      intros k hk₀
+      apply Finset.mem_Icc.mp at hk₀
+      exact h₀ k hk₀.1
     have hs₃: ∀ k ∈ s, f₃ k ∈ sf_sorted := by
       intros k hk₀
       rw [hf₀]
@@ -227,10 +245,16 @@ lemma aux_1
     have gg₉: lo_sorted.length = n := by
       have g₀: so.card = n := by
         rw [← hl₁]
-        refine Finset.card_image_of_injective s ?_
-        intros p q hpq
+        refine Finset.card_image_of_injOn ?_
+        intros p hp₀ q hq₀ hpq
         contrapose! hpq
-        exact h₁ p q hpq
+        refine h₁ p q ?_ ?_ hpq
+        . norm_cast at hp₀
+          apply Finset.mem_Icc.mp at hp₀
+          exact hp₀.1
+        . norm_cast at hq₀
+          apply Finset.mem_Icc.mp at hq₀
+          exact hq₀.1
       rw [← g₀]
       exact length_sort fun x₁ x₂ => x₁ ≤ x₂
     have gg₁₀: ∀ k ∈ s, f₅ k ∈ s := by
@@ -440,9 +464,18 @@ lemma aux_1
           rw [← List.getD_eq_getElem lo 0 hj₁, gg₁₆]
           rw [List.getD_eq_getElem (List.map f sl) 0 hj₂]
           simp
-          refine h₁ sl[j] y ?_
-          rw [List.getElem_range' j hj₃]
-          omega
+          refine h₁ sl[j] y ?_ ?_ ?_
+          . have ht: ∀ t ∈ sl, 1 ≤ t := by
+              intro t ht₀
+              apply List.mem_range'.mp at ht₀
+              contrapose! ht₀
+              intros i _
+              linarith
+            refine ht sl[j] ?_
+            exact List.getElem_mem hj₄
+          . linarith
+          . rw [List.getElem_range' j hj₃]
+            omega
       . intro hx₁
         have hx₃: f (f₈ x) = f₄ x := by
           rw [hx₁]
@@ -628,8 +661,8 @@ snip end
 problem imo_1978_p5
   (n : ℕ)
   (f : ℕ → ℕ)
-  (h₀ : ∀ (m : ℕ), 0 < f m)
-  (h₁ : ∀ (p q : ℕ), p ≠ q → f p ≠ f q)
+  (h₀ : ∀ (m : ℕ), 0 < m → 0 < f m)
+  (h₁ : ∀ (p q : ℕ), 0 < p → 0 < q → p ≠ q → f p ≠ f q)
   (h₂ : 0 < n) :
   (∑ k ∈ Finset.Icc 1 n, (1 : ℝ) / k) ≤ ∑ k ∈ Finset.Icc 1 n, ((f k):ℝ) / k ^ 2 := by
   have h₃: ∑ k ∈ Icc 1 n, ((k):ℝ) / (k) ^ 2 ≤ ∑ k ∈ Icc 1 n, ((f k):ℝ) / (k) ^ 2 := by
