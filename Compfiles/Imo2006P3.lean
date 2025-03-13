@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Tian Chen
 -/
 import Mathlib.Analysis.SpecialFunctions.Sqrt
-import Mathlib.Tactic.Polyrith
+import Mathlib.Tactic
 
 import ProblemExtraction
 
@@ -118,7 +118,9 @@ theorem proof₂ (M : ℝ)
   calc 18 ^ 2 * 2 * α
       = 18 ^ 2 * α ^ 2 * α := by linear_combination -324 * α * hα
     _ = abs (-(18 ^ 2 * α ^ 2 * α)) := by rw [abs_neg, abs_of_nonneg]; positivity
-    _ = |a * 2 * (a ^ 2 - 2 ^ 2) + 2 * c * (2 ^ 2 - c ^ 2) + c * a * (c ^ 2 - a ^ 2)| := by ring_nf
+    _ = |a * 2 * (a ^ 2 - 2 ^ 2) +
+         2 * c * (2 ^ 2 - c ^ 2) + c * a * (c ^ 2 - a ^ 2)| := by
+           rw [abs_eq_iff_mul_self_eq]; ring
     _ ≤ M * (a ^ 2 + 2 ^ 2 + c ^ 2) ^ 2 := by apply h
     _ = M * 48 ^ 2 := by linear_combination (324 * α ^ 2 + 1080) * M * hα
 
@@ -138,7 +140,6 @@ problem imo2006_p3 :
   · rw [mem_lowerBounds]
     intro x a
     exact proof₂ x a
-
 
 
 end Imo2006P3
