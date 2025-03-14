@@ -28,8 +28,6 @@ sum_{k=1}^{n} a(k)/(k^2) >= sum_{k=1}^{n} (1/k).
 
 open Finset
 
-
-
 namespace Imo1978P5
 
 snip begin
@@ -102,8 +100,7 @@ lemma aux_1
     intros a ha₀
     rw [hf₄.1]
     apply Finset.mem_Icc.mp at ha₀
-    cases' ha₀ with ha₀ ha₁
-    exact Nat.sub_one_lt_of_le ha₀ ha₁
+    omega
   have hf₆: ∀ k ∈ s, 1 ≤ f₃ k := by
     have hs₂: ∀ k ∈ sf_sorted, 1 ≤ k := by
       rw [hf₁, hf₂, hf₃]
@@ -181,8 +178,7 @@ lemma aux_1
         rw [hf₄.2, ← hf₄.1]
         exact hf₅ k hk₀
       rw [hk₅, List.getD_eq_getElem _ 0 hk₁, List.getD_eq_getElem _ 0 hk₂]
-      simp
-      exact rfl
+      exact List.getElem_map f₁
     rw [hso₂ a ha₀, hso₂ b hb₀]
     norm_cast
     refine Nat.succ_le_of_lt ?_
@@ -372,11 +368,7 @@ lemma aux_1
       exact congrFun (congrArg HAdd.hAdd hj₉) 1
     have hh₀: ∀ k ∈ s, f₄ (f₆ k) = f k := by
       intros k hk₀
-      have g₀: f₆ k = f₅ k := by
-        rw [gg₂]
-        simp
-        intro hk₁
-        exact False.elim (hk₁ hk₀)
+      have g₀: f₆ k = f₅ k := gg₅ k hk₀
       rw [g₀, gg₁]
       simp
       let j := List.findIdx (fun x => decide (x = f k)) lo_sorted
@@ -405,9 +397,6 @@ lemma aux_1
         rw [gg₁₁]
         apply Finset.mem_Icc.mp at hy₀
         exact Nat.sub_one_lt_of_le hy₀.1 hy₀.2
-      have hy₂: y - 1 < (List.map f sl).length := by
-        rw [List.length_map sl f, hs₀, List.length_range', ← gg₁₁]
-        exact hy₁
       have hy₃: y - 1 < (List.range' 1 n 1).length := by
         rw [List.length_range', ← gg₁₁]
         exact hy₁
@@ -442,7 +431,7 @@ lemma aux_1
           apply Finset.mem_Icc.mpr at hy₀
           rw [← gg₅ y hy₀, hh₀ y hy₀]
           rw [← List.getD_eq_getElem lo 0 hy₁, gg₁₆]
-          rw [List.getD_eq_getElem (List.map f sl) 0 hy₂]
+          rw [List.getD_eq_getElem (List.map f sl) 0 hy₁]
           simp
           refine congr rfl ?_
           have g₀: sl = List.range' 1 n 1 := by rfl
@@ -456,7 +445,7 @@ lemma aux_1
           apply Finset.mem_Icc.mpr at hy₀
           rw [← gg₅ y hy₀, hh₀ y hy₀]
           have hj₁: j < lo.length := by exact Nat.lt_trans hj₀ hy₁
-          have hj₂: j < (List.map f sl).length := by exact Nat.lt_trans hj₀ hy₂
+          have hj₂: j < (List.map f sl).length := by exact Nat.lt_trans hj₀ hy₁
           have hj₃: j < sl.length := by exact Nat.lt_trans hj₀ hy₃
           have hj₄: j < (List.range' 1 n 1).length := by exact Nat.lt_trans hj₀ hy₃
           rw [← List.getD_eq_getElem lo 0 hj₁, gg₁₆]
@@ -466,12 +455,10 @@ lemma aux_1
           . have ht: ∀ t ∈ sl, 1 ≤ t := by
               intro t ht₀
               apply List.mem_range'.mp at ht₀
-              contrapose! ht₀
-              intros i _
-              linarith
+              omega
             refine ht sl[j] ?_
             exact List.getElem_mem hj₄
-          . linarith
+          . omega
           . rw [List.getElem_range' j hj₃]
             omega
       . intro hx₁
@@ -485,7 +472,7 @@ lemma aux_1
           simp at hy₅ hy₆
           rw [← hy₅]
           have hy₇: lo[y - 1] = (List.map f sl)[y - 1] := by
-            rw [← List.getD_eq_getElem (List.map f sl) 0 hy₂, ← gg₁₆]
+            rw [← List.getD_eq_getElem (List.map f sl) 0 hy₁, ← gg₁₆]
           rw [hy₇]
           apply Finset.mem_Icc.mp at hy₀
           simp
@@ -555,10 +542,7 @@ lemma aux_1
         have ha₃: f₄ (ρ a) = lo_sorted.getD (ρ a - 1) 0 := by rfl
         have ha₄: ρ a ∈ s := by exact hh₅ a ha₀
         have ha₅: ρ a - 1 < sf_sorted.length := by
-          refine Nat.lt_of_succ_le ?_
-          apply Finset.mem_Icc.mp at ha₄
-          rw [hf₄.1, Nat.succ_eq_add_one, Nat.sub_add_cancel ha₄.1]
-          exact ha₄.2
+          exact hf₅ (ρ a) (hh₅ a ha₀)
         have ha₆: ρ a - 1 < lo_sorted.length := by
           refine Nat.lt_of_succ_le ?_
           apply Finset.mem_Icc.mp at ha₄
@@ -633,9 +617,9 @@ lemma aux_1
         refine hf₆ 1 ?_
         exact left_mem_Icc.mpr h₂
       . intros y hy₀ hy₁ hy₂
-        have hy₃: y ≤ n := by linarith
+        have hy₃: y ≤ n := by omega
         have hy₄: f₃ y + 1 ≤ f₃ (y + 1) := by
-          refine hf₇ y ?_ (y + 1) ?_ (by linarith)
+          refine hf₇ y ?_ (y + 1) ?_ (by omega)
           . refine Finset.mem_Icc.mpr ?_
             exact ⟨hy₀, hy₃⟩
           . refine Finset.mem_Icc.mpr ?_
@@ -653,7 +637,6 @@ lemma aux_1
 
 snip end
 
-
 problem imo_1978_p5
   (n : ℕ)
   (f : ℕ → ℕ)
@@ -669,4 +652,4 @@ problem imo_1978_p5
   rw [pow_two, ← div_div, div_self]
   apply Finset.mem_Icc.mp at hx₀
   norm_cast
-  linarith
+  omega
