@@ -549,11 +549,6 @@ lemma aux_1
           rw [gg₉, Nat.succ_eq_add_one, Nat.sub_add_cancel ha₄.1]
           exact ha₄.2
         rw [ha₂, ha₃]
-        have gf₀: lo_sorted = sort (fun x₁ x₂ => x₁ ≤ x₂) so := by rfl
-        have gf₁: so = image f (Icc 1 n) := by rfl
-        have gf₂: sf_sorted = sort (fun x₁ x₂ => x₁ ≤ x₂) sf := by rfl
-        have gf₃: sf = image f₂ (Icc 1 n) := by rfl
-        have gf₄: f₂ = fun k => ↑(f k) := by rfl
         rw [gg₁₃]
         rw [gg₁₃] at ha₅
         rw [List.getD_eq_getElem _ 0 ha₅, List.getD_eq_getElem _ 0 ha₆]
