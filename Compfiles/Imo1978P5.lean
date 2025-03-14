@@ -48,13 +48,11 @@ lemma aux_1
   have h₃: ∑ k ∈ Icc 1 n, ((k):ℝ) / (k) ^ 2 = ∑ k ∈ Icc 1 n, f₁ k • f₀ k := by
     refine Finset.sum_congr rfl ?_
     intros x _
-    ring_nf
-    rfl
+    rw [div_eq_mul_one_div, smul_eq_mul]
   have h₄: ∑ k ∈ Icc 1 n, ((f k):ℝ) / (k) ^ 2 = ∑ k ∈ Icc 1 n, f₂ k • f₀ k := by
     refine Finset.sum_congr rfl ?_
     intros x _
-    ring_nf
-    rfl
+    rw [div_eq_mul_one_div, smul_eq_mul]
   let sf : Finset ℝ := Finset.image f₂ (Finset.Icc 1 n)
   set sf_sorted : List ℝ := Finset.sort (fun (x₁ x₂) => x₁ ≤ x₂) sf with hf₁
   let f₃: ℕ → ℝ := fun k => sf_sorted.getD (k - 1) 0
@@ -600,17 +598,16 @@ lemma aux_1
         exact lt_add_one (f₃ a)
       . refine antitoneOn_iff_forall_lt.mpr ?hfg.hg.a
         norm_cast
-        intros a ha₀ b _ ha₁
-        ring_nf
-        refine sq_le_sq.mpr ?_
-        rw [abs_inv, abs_inv]
-        simp
-        refine inv_anti₀ ?_ ?_
+        intros a ha₀ b hb₀ ha₁
+        refine (one_div_le_one_div ?_ ?_).mpr ?_
+        . apply Finset.mem_Icc.mp at hb₀
+          norm_cast
+          exact Nat.pow_pos hb₀.1
         . apply Finset.mem_Icc.mp at ha₀
           norm_cast
-          exact ha₀.1
+          exact Nat.pow_pos ha₀.1
         . norm_cast
-          exact Nat.le_of_succ_le ha₁
+          exact Nat.pow_le_pow_left (le_of_lt ha₁) 2
     . intros x hx₀
       contrapose! hx₀
       exact fun a => a (hρ₁ x hx₀)
@@ -622,10 +619,9 @@ lemma aux_1
       exact hx₀.1
     have hx₂: 0 < f₀ x := by
       ring_nf
-      refine sq_pos_iff.mpr ?_
-      refine inv_ne_zero ?_
+      refine div_pos (by linarith) ?_
       norm_cast
-      linarith
+      exact Nat.pow_pos hx₁
     refine (smul_le_smul_iff_of_pos_right hx₂).mpr ?_
     have hh₀: f₁ = fun (k:ℕ) => (↑k:ℝ) := by rfl
     rw [hh₀]
