@@ -46,6 +46,7 @@ import Compfiles.Imo1976P6
 import Compfiles.Imo1977P4
 import Compfiles.Imo1977P6
 import Compfiles.Imo1978P1
+import Compfiles.Imo1978P5
 import Compfiles.Imo1978P6
 import Compfiles.Imo1979P1
 import Compfiles.Imo1979P5
@@ -60,6 +61,7 @@ import Compfiles.Imo1983P6
 import Compfiles.Imo1984P1
 import Compfiles.Imo1984P2
 import Compfiles.Imo1985P4
+import Compfiles.Imo1985P6
 import Compfiles.Imo1986P1
 import Compfiles.Imo1986P5
 import Compfiles.Imo1987P1
