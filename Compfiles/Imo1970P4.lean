@@ -314,7 +314,7 @@ lemma unique_divisor (n : ZMod 3) (a b c : ℕ) (n_eq_a : n = a) (s : Finset ℕ
       rw[← n_eq_a]
       reduce_mod_char
     constructor
-    · simp_all only [Fin.mk_one, Finset.mem_insert, add_right_eq_self, OfNat.ofNat_ne_zero, Finset.mem_singleton, self_eq_add_right, or_false, or_true, and_self]
+    · simp_all only [Fin.mk_one, Finset.mem_insert, add_eq_left, OfNat.ofNat_ne_zero, Finset.mem_singleton, left_eq_add, or_false, or_true, and_self]
     · intro o
       rintro ⟨o_in_s, three_div_o⟩
       rw[s_eq] at o_in_s
@@ -329,7 +329,7 @@ lemma unique_divisor (n : ZMod 3) (a b c : ℕ) (n_eq_a : n = a) (s : Finset ℕ
       simp only [Nat.reduceAdd, Fin.reduceFinMk, Fin.isValue]
       reduce_mod_char
     constructor
-    · simp_all only [Nat.dvd_add_self_right, Finset.mem_insert, add_right_eq_self, OfNat.ofNat_ne_zero, Finset.mem_singleton, or_true, and_self]
+    · simp_all only [Nat.dvd_add_self_right, Finset.mem_insert, add_eq_left, OfNat.ofNat_ne_zero, Finset.mem_singleton, or_true, and_self]
     · intro o
       rintro ⟨o_in_s, three_div_o⟩
       rw[s_eq] at o_in_s

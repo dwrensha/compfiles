@@ -50,7 +50,7 @@ problem imo1983_p1 (f : ℝ+ → ℝ+) :
     have h2 := hi 1 1
     have h3 := hi 1 (f 1)
     simp only [one_mul] at h2 h3
-    rw [h2, h2, self_eq_mul_right] at h3
+    rw [h2, h2, left_eq_mul] at h3
     exact h3
   suffices h3 : ∀ a, f a = a → a = 1 by
     funext x

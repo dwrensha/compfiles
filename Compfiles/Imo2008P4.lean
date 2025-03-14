@@ -74,7 +74,7 @@ problem imo2008_p4 (f : PosReal → PosReal) :
     replace h := λ x y ↦ h (x ^ 2) (y ^ 2) (x * y) (x * y) (by rw [← sq, mul_pow])
     simp_rw [h0, ← PosReal.mul_two, ← mul_assoc, mul_left_inj, ← pow_mul, two_mul] at h
     replace h0 := h0 1
-    rw [one_pow, sq, self_eq_mul_left] at h0
+    rw [one_pow, sq, right_eq_mul] at h0
     have h1 : ∀ x, f x = x ∨ x * f x = 1 := by
       intro x; replace h := h x 1
       rw [mul_one, h0, one_pow, mul_comm, mul_add_one, add_one_mul, pow_add,
@@ -115,7 +115,7 @@ problem imo2008_p4 (f : PosReal → PosReal) :
         mul_pow, mul_add, mul_right_comm, ← mul_pow, h1, one_pow, one_mul, add_comm,
         add_left_inj, ← mul_pow, ← mul_pow, show 2 + 2 = 4 by rfl,
         positive_pow_eq_pow four_pos, mul_assoc,
-        mul_right_eq_self, ← sq, eq_comm, ← one_pow 2, positive_pow_eq_pow two_pos] at h
+        mul_eq_left, ← sq, eq_comm, ← one_pow 2, positive_pow_eq_pow two_pos] at h
 
     apply h3; subst h; rw [one_mul, h0]
 

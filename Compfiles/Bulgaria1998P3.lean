@@ -77,7 +77,7 @@ problem bulgaria1998_p3
 
   let x_seq : ℕ → ℝ := λ n : ℕ ↦ 1 + ∑ i ∈ Finset.range n, (f 1) / (2^i)
   have hz : x_seq 0 = 1 := by
-    simp only [x_seq, add_right_eq_self, Finset.sum_empty, Finset.range_zero]
+    simp only [x_seq, add_eq_left, Finset.sum_empty, Finset.range_zero]
   have hf1 := hpos 1 zero_lt_one
 
   have x_seq_pos : ∀ n: ℕ, 0 < x_seq n := by

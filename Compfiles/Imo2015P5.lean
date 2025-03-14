@@ -35,7 +35,7 @@ problem imo2015_p5 (f : ℝ → ℝ) :
   let S : Set ℝ := {t | f t = t}
   have h1 : f (f 0) = 0 := by
     have := hf 0 0
-    simp only [add_zero, zero_add, mul_zero, zero_mul, add_left_eq_self] at this
+    simp only [add_zero, zero_add, mul_zero, zero_mul, add_eq_right] at this
     exact this
   have h2 : f 0 = 2 ∨ f 0 = 0 := by
     have h3 := hf 0 (f 0)

@@ -65,7 +65,7 @@ theorem good_neg : good (-f) := λ x y ↦ by
 /-- (1) -/
 theorem good_special_equality {x y : R} (h0 : x * y = 1) :
     f (f (x + 1) * f (y + 1)) = 0 := by
-  rw [← add_left_eq_self, h, add_one_mul x, mul_add_one x, h0, add_comm 1 x]
+  rw [← add_eq_right, h, add_one_mul x, mul_add_one x, h0, add_comm 1 x]
 
 theorem good_map_map_zero_sq : f (f 0 ^ 2) = 0 := by
   have h1 : (-1 : R) * (-1) = 1 := by rw [neg_mul_neg, mul_one]
@@ -129,7 +129,7 @@ theorem good_shift2 (h0 : f 0 = 1) (x : D) : f (x - 1) = f x + 1 := by
 include h in
 theorem good_map_add_one_eq_zero_iff (h0 : f 0 = 1) (x : D) :
     f (x + 1) = 0 ↔ x = 0 := by
-  rw [good_map_eq_zero_iff h h0, add_left_eq_self]
+  rw [good_map_eq_zero_iff h h0, add_eq_right]
 
 /-- The general framework; reducing to injectivity. -/
 theorem solution_of_map_zero_eq_one_imp_injective
@@ -159,9 +159,9 @@ theorem case1_injective (h : (2 : D) ≠ 0)
     · rw [add_comm, ← h2, neg_add_eq_sub]
   -- `f(y) = f(-y)` implies `y = 0`
   replace h2 : ∀ y, f y = f (-y) → y = 0 := λ y h4 ↦ by
-    rwa [← h3, self_eq_add_left, ← h2, good_map_eq_zero_iff h0 h1,
+    rwa [← h3, right_eq_add, ← h2, good_map_eq_zero_iff h0 h1,
       sub_eq_iff_eq_add, one_add_one_eq_two, mul_right_eq_self₀,
-      or_iff_left h, ← add_sub_cancel_right y 1, h2, add_left_eq_self,
+      or_iff_left h, ← add_sub_cancel_right y 1, h2, add_eq_right,
       good_map_add_one_eq_zero_iff h0 h1] at h4
   -- Finishing
   intros a b h4
@@ -208,7 +208,7 @@ theorem case2_injective [Field F] (h : (2 : F) = 0)
     a * b⁻¹ + a + b⁻¹ + (b * a⁻¹ + b + a⁻¹) + (a * a⁻¹ + b * b⁻¹ + 1) := by ring
   rw [mul_inv_cancel₀ ha, mul_inv_cancel₀ hb, one_add_one_eq_two, h, zero_add] at h7
   rw [← h2, ← h7, add_add_add_comm, add_add_add_comm a, ← add_add_add_comm,
-    ← h0, add_right_comm, add_left_eq_self, ← h2, add_assoc,
+    ← h0, add_right_comm, add_eq_right, ← h2, add_assoc,
     one_add_one_eq_two, h, add_zero, h5, mul_eq_zero, h5, h5] at h6
   replace h3 : ∀ c : F, -c = c := λ c ↦ by
     rw [neg_eq_iff_add_eq_zero, ← two_mul, h, zero_mul]

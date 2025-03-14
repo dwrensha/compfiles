@@ -107,7 +107,8 @@ problem iran1998_p9
 
   have hinner :=
     calc ((inner v₁ v₂): ℝ)
-          = ∑ i : Fin 3, v₁ i * v₂ i := rfl
+          = ((inner v₂ v₁): ℝ) := real_inner_comm _ _
+        _ = ∑ i : Fin 3, v₁ i * v₂ i := rfl
         _ = v₁ 0 * v₂ 0 + v₁ 1 * v₂ 1 + v₁ 2 * v₂ 2 := Fin.sum_univ_three _
         _ = Real.sqrt x * Real.sqrt ((x - 1) / x) +
             Real.sqrt y * Real.sqrt ((y - 1) / y) +
