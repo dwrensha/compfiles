@@ -90,7 +90,7 @@ lemma aux_2
       . refine _root_.add_le_add ?_ (by norm_num)
         exact le_of_lt hm₁
       . refine add_pos_of_nonneg_of_pos ?_ ?_
-        . exact h₃ m x (by linarith)
+        . exact h₃ m x (by omega)
         . refine one_div_pos.mpr ?_
           norm_cast
           exact Nat.zero_lt_of_lt hm₀
@@ -238,9 +238,9 @@ lemma aux_7
               constructor
               . exact hd₄
               . exact le_add_self
-            . refine div_pos (by linarith) ?_
+            . refine div_pos zero_lt_one ?_
               exact Nat.cast_pos'.mpr hd₀
-          . have hd₅: d = 1 := by linarith
+          . have hd₅: d = 1 := by omega
             rw [hd₅, h₀]
             simp
             norm_cast
@@ -249,7 +249,7 @@ lemma aux_7
             . exact zero_lt_one' NNReal
         refine NNReal.le_toNNReal_of_coe_le ?_
         nth_rw 1 [← mul_one (↑b:ℝ)]
-        refine mul_le_mul hd₂ (le_of_lt hd₃) (by linarith) ?_
+        refine mul_le_mul hd₂ (le_of_lt hd₃) zero_le_one ?_
         exact h₃ d (b + 1) hd₀
   . refine Filter.tendsto_atBot_atBot.mpr ?_
     intro b
@@ -324,7 +324,7 @@ lemma aux_8
       simp
   rw [hz₃] at hc₁
   have hz₄: 0 < 1 / (n:ℝ) := by
-    refine div_pos (by linarith) ?_
+    refine div_pos zero_lt_one ?_
     exact Nat.cast_pos'.mpr hn₀
   linarith
 
@@ -364,13 +364,13 @@ lemma aux_9
     have hx₀: x = fi 2 2⁻¹ := by rfl
     have hx₁: f₀ 2 x = 2⁻¹ := by
       rw [hx₀]
-      have g₃: Function.RightInverse (fi 2) (f₀ 2) := by exact hmo₇ 2 (by linarith)
+      have g₃: Function.RightInverse (fi 2) (f₀ 2) := by exact hmo₇ 2 (by omega)
       exact g₃ 2⁻¹
     rw [← hx₀]
     contrapose! hx₁
     have hc₁: x = 0 := by exact nonpos_iff_eq_zero.mp hx₁
     have hc₃: f₀ 2 x = 0 := by
-      rw [hc₁, hf₂ 2 0 (by linarith), h₁ 1 0 (by linarith), h₀ 0]
+      rw [hc₁, hf₂ 2 0 (by omega), h₁ 1 0 (by omega), h₀ 0]
       norm_cast
       rw [zero_mul]
       exact Real.toNNReal_zero
