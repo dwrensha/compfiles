@@ -109,8 +109,7 @@ theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
         rw [Finset.mem_cons] at ha
         obtain rfl | ha := ha
         · exact hy2
-        · rw [Finset.mem_filter] at ha
-          exact ha.1
+        · exact Finset.mem_of_mem_filter a ha
       have h4' : M''.card ≤ M.card := Finset.card_le_card h4
       have h5 : M''.card = M'.card + 1 := Finset.card_cons hyM'
       have h6 : M'.card + 1 ≤ M.card := by omega
