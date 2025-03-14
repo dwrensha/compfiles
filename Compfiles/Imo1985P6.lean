@@ -732,8 +732,6 @@ lemma aux_exists
       exact lt_of_lt_of_le hn₅ hc₂
 
 
-
-
 lemma aux_unique_top_ind
   (f : ℕ → NNReal → ℝ)
   (sd : Set ℕ)
@@ -793,7 +791,6 @@ lemma aux_unique_top_ind
       . ring_nf
         exact Nat.ofNat_le_cast.mpr hn₀
     . exact le_of_lt (hd₁ nn a b ha₀)
-
 
 
 lemma aux_unique_top
@@ -910,7 +907,6 @@ lemma aux_unique_top
         . exact Nat.le_of_succ_le hk₂
 
 
-
 lemma aux_unique_nhds
   (f : ℕ → NNReal → ℝ)
   (sd : Set ℕ)
@@ -980,8 +976,6 @@ lemma aux_unique_nhds
         refine sub_lt_iff_lt_add.mp ?_
         rw [sub_self 1]
         exact mul_pos hl₂ (two_pos)
-
-
 
 
 lemma aux_unique
