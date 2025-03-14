@@ -366,9 +366,7 @@ lemma three_divides_odd_exactly_once (n : ℕ) (s odd_s : Finset ℕ) (partition
   have : (∃! a' ∈ ({a, b, c} : Finset ℕ), 3 ∣ a') → (Finset.filter (fun x ↦ 3 ∣ x) {a, b, c}).card = 1 := by
     apply card_1_of_exists_unique
   apply this
-  have := unique_divisor a a b c rfl odd_s (by aesop) b_comp c_comp
-  rw[← explicit_finset] at this
-  exact this
+  exact unique_divisor (↑a) a b c rfl {a, b, c} rfl b_comp c_comp
 
 lemma empty_of_empty_subset (s : Finset ℕ) : s = {x_1 | x_1 ∈ (∅ : Finset ℕ) } → s = ∅ := by
   simp only [Finset.not_mem_empty, Set.setOf_false, Finset.coe_eq_empty, imp_self]
