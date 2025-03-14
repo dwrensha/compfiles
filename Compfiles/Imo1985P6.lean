@@ -1140,12 +1140,7 @@ lemma aux_unique
         exact Nat.le_add_left 1 (↑N + 2)
 
 
-
-
-
-
-
-problem imo_1985_p6_nnreal
+lemma imo_1985_p6_nnreal
   (f : ℕ → NNReal → ℝ)
   (h₀ : ∀ x, f 1 x = x)
   (h₁ : ∀ n x, 0 < n → f (n + 1) x = f n x * (f n x + 1 / n)) :
@@ -1357,7 +1352,6 @@ problem imo_1985_p6_nnreal
 
 
 snip end
-
 
 
 
