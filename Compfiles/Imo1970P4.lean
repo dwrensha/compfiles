@@ -599,10 +599,6 @@ lemma not_empty_subst_of_nonempty (t : Finset ℕ) (t_nonempty : t.Nonempty) : �
   rw [Finset.subset_empty]
   exact t_nonempty.ne_empty
 
-lemma subset_of_union_right (t s : Finset ℕ) : t ⊆ s ∪ t := by
-  have := @Finset.subset_union_right ℕ _ s t
-  exact this
-
 lemma mem_of_subst (k : ℕ) (t s : Finset ℕ) (k_in_t : k ∈ t) (t_subst_s : t ⊆ s) : k ∈ s := by
   apply t_subst_s
   simp_all only
@@ -615,7 +611,7 @@ lemma contradiction_of_finset_icc_1_6 (s1 s2 : Finset ℕ) (partition : s1 ∪ s
   simp only [Finset.mem_union] at this
   cases this
   · case inl five_in_s1 =>
-    have s2_in_s1_s2: s2 ⊆ s1 ∪ s2 := subset_of_union_right s2 s1
+    have s2_in_s1_s2: s2 ⊆ s1 ∪ s2 := Finset.subset_union_right
     have explicit_s2 : s2 ⊆ {1, 2, 3, 4, 6} := by
       have five_not_in_s2 : Disjoint s2 {5} := by
         have s1_s2_disjoint : Disjoint s1 s2 := Finset.disjoint_iff_inter_eq_empty.mpr disjoint
@@ -655,7 +651,7 @@ lemma contradiction_of_finset_icc_1_6 (s1 s2 : Finset ℕ) (partition : s1 ∪ s
     obtain ⟨l, ⟨l_in_s2, five_div_l⟩⟩ := prime_dvd_elem_of 5 (by decide) s2 five_div_prod_s2
     exact others l l_in_s2 five_div_l
   · case inr five_in_s2 =>
-    have s1_in_s2_s1: s1 ⊆ s2 ∪ s1 := subset_of_union_right s1 s2
+    have s1_in_s2_s1: s1 ⊆ s2 ∪ s1 := Finset.subset_union_right
     have explicit_s1 : s1 ⊆ {1, 2, 3, 4, 6} := by
       have five_not_in_s1 : Disjoint s1 {5} := by
         have : s2 ∩ s1 = ∅ := by
