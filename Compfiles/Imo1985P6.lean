@@ -753,7 +753,6 @@ lemma aux_unique_top_ind
       rw [hsd]
       exact hn₀
     let nn : ↑sd := ⟨n, hn₃⟩
-    have hnn: nn.1 = n := by exact rfl
     have hn₄: nn.1 + 1 ∈ sd := hd₃ nn
     have hn₅: fd a b nn * (2 - 1 / ↑n) ≤ fd a b ⟨nn.1 + 1, hn₄⟩ := by exact hd₂ nn
     rw [hfd₁ a b ⟨nn.1 + 1, hn₄⟩] at hn₅
@@ -1165,8 +1164,6 @@ lemma imo_1985_p6_nnreal
     constructor
     . intro hn₁
       rw [← hn₁, hf₀]
-      have hn₂: (Function.invFun (f n)) ∘ (f n) = id := by exact Function.invFun_comp (hmo₁ n hn₀)
-      rw [Function.comp_def (Function.invFun (f n)) (f n)] at hn₂
       exact aux_5 f hmo₁ f₀ hmo₂ fi rfl n x ((fun n x => (f n x).toNNReal) n x) hn₀ (hf₂ n x hn₀)
     . intro hn₁
       rw [← hn₁]
