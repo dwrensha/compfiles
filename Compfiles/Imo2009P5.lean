@@ -55,9 +55,6 @@ private lemma succ_pnat_add_succ_pnat (m n : ℕ) :
          Nat.succPNat_coe, Nat.add_succ, Nat.succ_add]
      rfl
 
-private lemma pnat_add_sub_cancel (m n : ℕ+) : m + n - n = m :=
-  by rw [← add_right_inj n, PNat.add_sub_of_lt (n.lt_add_left m), add_comm]
-
 end extra_lemmas
 
 /-- Final solution, `nat` version -/
@@ -132,7 +129,7 @@ theorem final_solution_pnat (f : ℕ+ → ℕ+) :
     ⟨λ x ↦ (f x.succPNat).natPred,
       funext (λ x ↦ by rw [PNat.succPNat_natPred, PNat.succPNat_natPred])⟩
   simp_rw [pnat_to_nat_prop2, funext_iff, pnat_to_nat_prop, Nat.natPred_succPNat,
-           Nat.succPNat_inj, ← funext_iff, succ_pnat_add_succ_pnat, pnat_add_sub_cancel,
+           Nat.succPNat_inj, ← funext_iff, succ_pnat_add_succ_pnat, PNat.add_sub,
            Nat.natPred_succPNat, PNat.lt_add_one_iff, Nat.succPNat_le_succPNat]
   exact final_solution_nat g
 
