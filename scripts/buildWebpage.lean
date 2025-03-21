@@ -168,9 +168,9 @@ def stringifyPercent (p : Float) : String :=
 
 def olean_path_to_github_url (path: System.FilePath) : String :=
   let path_components := path.components.dropWhile (· = ".")
-  assert!(path_components.take 3 = [".lake", "build", "lib"])
+  assert!(path_components.take 4 = [".lake", "build", "lib", "lean"])
   let sfx := ".olean"
-  let path' := (System.mkFilePath (path_components.drop 3)).toString
+  let path' := (System.mkFilePath (path_components.drop 4)).toString
   assert!(sfx.data.isSuffixOf path'.data)
   "https://github.com/dwrensha/compfiles/blob/main/" ++
     (path'.stripSuffix sfx) ++ ".lean"
