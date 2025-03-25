@@ -70,7 +70,8 @@ def parseImoProblemId (probId : String) : Option (Nat × Nat) :=
 def isImoProblemId (probId : String) : Bool := (parseImoProblemId probId).isSome
 
 def usamoProblemCounts :=
-  [(2024, 6), (2023, 6), (2022, 6), (2021, 6), (2020, 6),
+  [(2025, 6),
+   (2024, 6), (2023, 6), (2022, 6), (2021, 6), (2020, 6),
    (2019, 6), (2018, 6), (2017, 6), (2016, 6), (2015, 6),
    (2014, 6), (2013, 6), (2012, 6), (2011, 6), (2010, 6),
    (2009, 6), (2008, 6), (2007, 6), (2006, 6), (2005, 6),
@@ -103,7 +104,7 @@ def allUsamoUrls (year : Nat) (idx : Nat) : List WriteupLink :=
   do let mut result := [⟨aopsUsamoUrl year idx, "Art of Problem Solving"⟩]
      if year ≤ 2003 ∧ year ≠ 1989 /- 1989 is weirdly missing -/
      then result := result ++ [⟨scholesUsamoUrl year idx, "John Scholes"⟩]
-     if year ≥ 1996 ∧ year ≤ 2024
+     if year ≥ 1996 ∧ year ≤ 2025
      then result := result ++ [⟨chenUsamoUrl year idx, "Evan Chen"⟩]
      return result
 
