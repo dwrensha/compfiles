@@ -46,49 +46,26 @@ lemma aux_1
 
 lemma aux_2
   (f : ℕ → NNReal → ℝ)
-  (h₀ : ∀ (x : NNReal), f 1 x = ↑x)
-  (h₁ : ∀ (n : ℕ) (x : NNReal), 0 < n → f (n + 1) x = f n x * (f n x + 1 / ↑n))
-  (h₂ : ∀ (n : ℕ) (x : NNReal), 0 < n ∧ 0 < x → 0 < f n x)
-  (h₃ : ∀ (n : ℕ) (x : NNReal), 0 < n → 0 ≤ f n x) :
-  ∀ (n : ℕ) (x y : NNReal), 0 < n → x < y → f n x < f n y := by
+  (h₀ : ∀ x, f 1 x = x)
+  (h₁ : ∀ n x, 0 < n → f (n + 1) x = f n x * (f n x + 1 / n))
+  (h₃ : ∀ n x, 0 < n → 0 ≤ f n x) :
+  ∀ n x y, 0 < n → x < y → f n x < f n y := by
   intros n x y hn hxy
-  by_cases hn₁: 1 < n
-  . refine Nat.le_induction ?_ ?_ n hn₁
-    . rw [h₁ 1 x (by norm_num)]
-      rw [h₁ 1 y (by norm_num)]
-      norm_num
-      refine mul_lt_mul ?_ ?_ ?_ ?_
-      . rw [h₀ x, h₀ y]
-        exact hxy
-      . refine _root_.add_le_add ?_ (by norm_num)
-        rw [h₀ x, h₀ y]
-        exact le_of_lt hxy
-      . refine add_pos_of_nonneg_of_pos ?_ zero_lt_one
-        rw [h₀ x]
-        exact NNReal.zero_le_coe
-      . refine le_of_lt ?_
-        refine h₂ 1 y ?_
-        norm_num
-        exact pos_of_gt hxy
-    . intros m hm₀ hm₁
-      rw [h₁ m x (by omega)]
-      rw [h₁ m y (by omega)]
-      refine mul_lt_mul hm₁ ?_ ?_ ?_
-      . refine _root_.add_le_add ?_ (by norm_num)
-        exact le_of_lt hm₁
-      . refine add_pos_of_nonneg_of_pos ?_ ?_
-        . exact h₃ m x (by omega)
-        . refine one_div_pos.mpr ?_
-          norm_cast
-          exact Nat.zero_lt_of_lt hm₀
-      . refine le_of_lt ?_
-        refine h₂ m y ?_
-        constructor
-        . exact Nat.zero_lt_of_lt hm₀
-        . exact pos_of_gt hxy
-  . interval_cases n
-    rw [h₀ x, h₀ y]
-    exact hxy
+  induction n using Nat.strong_induction_on with
+  | h n ih =>
+    cases n with
+    | zero => exact absurd hn (Nat.lt_irrefl _)
+    | succ n =>
+      cases n with
+      | zero => simpa [h₀] using hxy
+      | succ n =>
+        have pos_n : 0 < n.succ := Nat.succ_pos _
+        have IH := ih n.succ (Nat.lt_succ_self _) pos_n
+        rw [h₁ n.succ x pos_n, h₁ n.succ y pos_n]
+        refine mul_lt_mul IH ?_ ?_ ?_
+        · apply add_le_add (le_of_lt IH) le_rfl
+        · exact add_pos_of_nonneg_of_pos (h₃ _ _ pos_n) (by positivity)
+        · exact h₃ _ _ pos_n
 
 lemma aux_3
   (f : ℕ → NNReal → ℝ)
@@ -1111,16 +1088,16 @@ lemma imo_1985_p6_nnreal
     . refine monotone_iff_forall_lt.mpr ?h₁.a
       intros a b hab
       refine le_of_lt ?_
-      exact aux_2 f h₀ h₁ h₂ h₃ n a b hn₀ hab
+      exact aux_2 f h₀ h₁ h₃ n a b hn₀ hab
     . intros p q hpq
       contrapose! hpq
       apply lt_or_gt_of_ne at hpq
       cases' hpq with hpq hpq
       . refine ne_of_lt ?_
-        exact aux_2 f h₀ h₁ h₂ h₃ n p q hn₀ hpq
+        exact aux_2 f h₀ h₁ h₃ n p q hn₀ hpq
       . symm
         refine ne_of_lt ?_
-        exact aux_2 f h₀ h₁ h₂ h₃ n q p hn₀ hpq
+        exact aux_2 f h₀ h₁ h₃ n q p hn₀ hpq
   have hmo₁: ∀ n, 0 < n → Function.Injective (f n) := by exact fun n a => StrictMono.injective (hmo₀ n a)
   let f₀: ℕ → NNReal → NNReal := fun n x => (f n x).toNNReal
   have hf₀: f₀ = fun n x => (f n x).toNNReal := by rfl
@@ -1141,7 +1118,7 @@ lemma imo_1985_p6_nnreal
     intros n hn₀
     refine Function.rightInverse_invFun ?_
     have h₄: ∀ n x y, 0 < n → x < y → f n x < f n y := by
-      exact fun n x y a a_1 => aux_2 f h₀ h₁ h₂ h₃ n x y a a_1
+      exact fun n x y a a_1 => aux_2 f h₀ h₁ h₃ n x y a a_1
     refine aux_7 f h₀ h₁ h₃ ?_ f₀ hf₂ hmo₂ ?_ n hn₀
     . exact fun n x a => aux_3 f h₀ h₁ h₄ n x a
     . intros m hm₀
