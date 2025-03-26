@@ -96,31 +96,18 @@ lemma aux_3
 
 
 lemma aux_4
-  (f : ℕ → NNReal → ℝ)
-  (h₃ : ∀ (n : ℕ) (x : NNReal), 0 < n → 0 ≤ f n x)
-  (h₄ : ∀ (n : ℕ) (x y : NNReal), 0 < n → x < y → f n x < f n y)
-  (f₀ : ℕ → NNReal → NNReal)
-  (hf₀ : f₀ = fun n x => (f n x).toNNReal) :
-  ∀ (n : ℕ), 0 < n → StrictMono (f₀ n) := by
-  intros n hn₀
-  refine Monotone.strictMono_of_injective ?_ ?_
-  . refine monotone_iff_forall_lt.mpr ?_
-    intros a b hab
-    refine le_of_lt ?_
-    rw [hf₀]
-    exact (Real.toNNReal_lt_toNNReal_iff_of_nonneg (h₃ n a hn₀)).mpr (h₄ n a b hn₀ hab)
-  . intros p q hpq
-    contrapose! hpq
-    apply lt_or_gt_of_ne at hpq
-    cases' hpq with hpq hpq
-    . refine ne_of_lt ?_
-      rw [hf₀]
-      exact (Real.toNNReal_lt_toNNReal_iff_of_nonneg (h₃ n p hn₀)).mpr (h₄ n p q hn₀ hpq)
-    . symm
-      refine ne_of_lt ?_
-      rw [hf₀]
-      exact (Real.toNNReal_lt_toNNReal_iff_of_nonneg (h₃ n q hn₀)).mpr (h₄ n q p hn₀ hpq)
-
+    (f : ℕ → NNReal → ℝ)
+    (h₃ : ∀ (n : ℕ) (x : NNReal), 0 < n → 0 ≤ f n x)
+    (h₄ : ∀ (n : ℕ) (x y : NNReal), 0 < n → x < y → f n x < f n y)
+    (f₀ : ℕ → NNReal → NNReal)
+    (hf₀ : f₀ = fun n x => (f n x).toNNReal) :
+    ∀ (n : ℕ), 0 < n → StrictMono (f₀ n) := by
+  intros n hn x y hxy
+  rw [hf₀]
+  simp only [Real.toNNReal_lt_toNNReal_iff']
+  constructor
+  · exact h₄ n x y hn hxy
+  · exact gt_of_gt_of_ge (h₄ n x y hn hxy) (h₃ n x hn)
 
 lemma aux_5
   (f : ℕ → NNReal → ℝ)
