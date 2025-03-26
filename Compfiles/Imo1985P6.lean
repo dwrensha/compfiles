@@ -76,13 +76,9 @@ lemma aux_3
   intros n x hx₀
   cases' hx₀ with hn₀ hx₁
   have g₂₀: f n 1 ≤ f n x := by
-    by_cases hx₂: 1 < x
-    . refine le_of_lt ?_
-      refine h₄ n 1 x ?_ hx₂
-      exact Nat.zero_lt_of_lt hn₀
-    . push_neg at hx₂
-      have hx₃: x = 1 := by exact le_antisymm hx₂ hx₁
-      rw [hx₃]
+    cases' lt_or_eq_of_le hx₁ with hx_gt hx_eq
+    · exact le_of_lt (h₄ n 1 x (Nat.zero_lt_of_lt hn₀) hx_gt)
+    · rw [hx_eq]
   have g₂₁: f 1 1 < f n 1 := by
     rw [h₀]
     refine Nat.le_induction ?_ ?_ n hn₀
