@@ -122,6 +122,7 @@ import Compfiles.Imo2014P1
 import Compfiles.Imo2014P4
 import Compfiles.Imo2015P2
 import Compfiles.Imo2015P5
+import Compfiles.Imo2015P6
 import Compfiles.Imo2016P4
 import Compfiles.Imo2016P5
 import Compfiles.Imo2017P1
