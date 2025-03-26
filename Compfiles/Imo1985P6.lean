@@ -32,30 +32,17 @@ snip begin
 
 lemma aux_1
   (f : ℕ → NNReal → ℝ)
-  (h₀ : ∀ (x : NNReal), f 1 x = ↑x)
-  (h₁ : ∀ (n : ℕ) (x : NNReal), 0 < n → f (n + 1) x = f n x * (f n x + 1 / ↑n)) :
-  ∀ (n : ℕ) (x : NNReal), 0 < n ∧ 0 < x → 0 < f n x := by
-  intros n x hp
-  have hz₇: n ≤ 7 ∨ 7 < n := by
-    exact le_or_lt n 7
-  cases' hp with hn₀ hx₀
-  by_cases hn₁: 1 < n
-  . refine Nat.le_induction ?_ ?_ n hn₁
-    . rw [h₁ 1 x (by norm_num)]
-      rw [h₀ x]
-      refine mul_pos hx₀ ?_
-      refine add_pos hx₀ (by norm_num)
-    . intros m hm₀ hm₁
-      rw [h₁ m x (by omega)]
-      refine mul_pos hm₁ ?_
-      refine add_pos hm₁ ?_
-      refine one_div_pos.mpr ?_
-      norm_cast
-      exact Nat.zero_lt_of_lt hm₀
-  . interval_cases n
-    rw [h₀ x]
-    exact hx₀
-
+  (h₀ : ∀ x, f 1 x = x)
+  (h₁ : ∀ n x, 0 < n → f (n + 1) x = f n x * (f n x + 1 / n)) :
+  ∀ n x, 0 < n ∧ 0 < x → 0 < f n x := by
+  rintro n x ⟨hn, hx⟩
+  induction n, hn using Nat.le_induction with
+  | base =>
+      rw [h₀]
+      exact hx
+  | succ m hm ih =>
+      rw [h₁ m x (Nat.zero_lt_of_lt hm)]
+      exact mul_pos ih (add_pos ih (by positivity))
 
 lemma aux_2
   (f : ℕ → NNReal → ℝ)
