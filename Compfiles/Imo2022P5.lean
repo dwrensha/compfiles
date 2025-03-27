@@ -190,7 +190,7 @@ lemma mylemma_41
     rw [add_comm]
     nth_rewrite 2 [mul_comm]
     refine mylemma_42 p ((p ^ 2) ^ (p - 1) * p) gp ?_
-    refine lt_mul_left (by linarith) ?_
+    refine lt_mul_left (by omega) ?_
     rw [← pow_mul]
     refine Nat.one_lt_pow ?_ (Nat.lt_of_succ_le gp)
     refine Nat.mul_ne_zero (by norm_num) ?_
@@ -218,13 +218,13 @@ lemma mylemma_4
       by_contra! hc0
       interval_cases c
       simp at *
-      linarith
+      omega
     by_cases hc: c < p
-    . have g₁: c ∣ c^p := by exact dvd_pow_self c (by linarith)
+    . have g₁: c ∣ c^p := dvd_pow_self c (by omega)
       have h₄: c ∣ a^p := by
         rw [h₂, mul_pow]
         exact dvd_mul_of_dvd_right g₁ (p ^ p)
-      have h₅: c ∣ b.factorial := by exact Nat.dvd_factorial gc (by linarith)
+      have h₅: c ∣ b.factorial := Nat.dvd_factorial gc (by omega)
       have g₂: p = a ^ p - b.factorial := by
         symm
         rw [add_comm] at h₁
@@ -366,14 +366,9 @@ lemma mylemma_52
     exact h₄
   have h₆: p - 1 ≤ 0 := by
     refine Nat.ModEq.le_of_lt_add h₅ ?_
-    simp
-    rw [← Nat.succ_eq_add_one]
-    refine Nat.sub_lt_succ p 1
-  have h₇: 0 < p - 1 := by
-    simp
-    linarith
-  linarith [h₆,h₇]
-
+    rw [zero_add]
+    exact Nat.sub_lt_succ p 1
+  omega
 
 lemma mylemma_51
   (p: ℕ)
@@ -524,9 +519,7 @@ problem imo2022_p5 (a b p : ℕ) (ha : 0 < a) (hb : 0 < b) (hp : p.Prime) :
       simp at h₁
       have h₅: 2 ≤ p := by exact Nat.Prime.two_le hp
       have g₆: 0 < b.factorial := by exact Nat.factorial_pos b
-      have h₇: 1+2 ≤ b.factorial + p := by exact Nat.add_le_add g₆ h₅
-      rw [← h₁] at h₇
-      linarith
+      omega
     . push_neg at hab
       have h₂: (b+1)^p ≤ a^p := by
         refine (Nat.pow_le_pow_iff_left ?_).mpr hab
