@@ -44,10 +44,7 @@ lemma mylemma_sub_sq
   rw [Nat.sub_right_comm]
   repeat rw [Nat.mul_sub_right_distrib a b b]
   ring_nf
-  have h₃: a ^ 2 - (a * b - b ^ 2) = a ^ 2 - a * b + b ^ 2 := by
-    refine tsub_tsub_assoc ?h₁ h₁
-    exact h₂
-  rw [h₃]
+  rw [tsub_tsub_assoc h₂ h₁]
   rw [← Nat.sub_add_comm h₂]
   . rw [← Nat.sub_add_eq, ← mul_two]
 
@@ -295,7 +292,6 @@ lemma mylemma_h8
 
 snip end
 
-set_option trace.profiler true in
 problem imo_1984_p6
     (a b c d k m : ℕ)
     (h₀ : 0 < a ∧ 0 < b ∧ 0 < c ∧ 0 < d)
