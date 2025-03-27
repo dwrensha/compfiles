@@ -7,7 +7,6 @@ import Mathlib.Data.Nat.Prime.Basic
 import Mathlib.Algebra.Order.Floor
 import Mathlib.Data.Real.Sqrt
 import Mathlib.Tactic.Ring
-import Mathlib.Tactic.Linarith.Frontend
 
 import ProblemExtraction
 
@@ -91,8 +90,7 @@ lemma key_lemma  {m b: ℕ }
    · exact h k hk0 hk2
    · push_neg at hk0
      obtain ⟨i, hi1, hi2⟩  :=  dyadic (le_of_lt hk1) hk0
-     have hc := h (2^i *k) hi1 hi2
-     exact Nat.coprime_mul_iff_right.1 hc |>.2
+     exact Coprime.coprime_mul_left_right (h (2 ^ i * k) hi1 hi2)
 
 lemma key_lemma'  {m b: ℕ } (h1 : 1 < m)
   (h: ∀ k,  b < k → k ≤ 2*b → Coprime m k) (h2 : m < (2*b+1)^2):
@@ -227,7 +225,7 @@ problem imo1987_p6
         ring_nf
       rw [hfss,Nat.coprime_add_mul_right_left] at hj3
       have hss2 : f ss ∣  j:= Nat.Prime.dvd_iff_not_coprime hss1 |>.2 hj3
-      have hfss1: p ≤ f ss := by unfold f; linarith [sq_nonneg ss]
+      have hfss1: p ≤ f ss := Nat.le_add_left p (ss ^ 2 + ss)
       have hp1 : p-2 < p := sub_le_lemma hp (by omega)
       have hfss2: j < 2*p := by omega
       have hj : j≠ 0 := by omega
