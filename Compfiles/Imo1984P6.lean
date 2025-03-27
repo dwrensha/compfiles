@@ -295,6 +295,7 @@ lemma mylemma_h8
 
 snip end
 
+set_option trace.profiler true in
 problem imo_1984_p6
     (a b c d k m : ℕ)
     (h₀ : 0 < a ∧ 0 < b ∧ 0 < c ∧ 0 < d)
@@ -325,12 +326,12 @@ problem imo_1984_p6
           . refine Nat.eq_add_of_sub_eq ?_ h₃
             rw [pow_two]
             refine le_of_lt ?_
-            refine mul_lt_mul' (by linarith) ?_ (le_of_lt h₀.2.1) h₀.2.1
-            linarith
+            refine mul_lt_mul' (by omega) ?_ (le_of_lt h₀.2.1) h₀.2.1
+            omega
           . rw [pow_two]
             refine le_of_lt ?_
-            refine mul_lt_mul' (by linarith) ?_ (le_of_lt h₀.1) h₀.1
-            linarith
+            refine mul_lt_mul' (by omega) ?_ (le_of_lt h₀.1) h₀.1
+            omega
         . refine le_of_lt ?_
           rw [pow_two, pow_two]
           exact mul_lt_mul h₂.1 (le_of_lt h₂.1) h₀.1 (le_of_lt h₀.2.1)
@@ -351,7 +352,7 @@ problem imo_1984_p6
       have gb: 3 ≤ b := by
         by_contra! hc
         interval_cases b
-        . linarith
+        . omega
         . linarith [ga, h₂.1]
         . have g₀: ¬ Odd 2 := by decide
           exact g₀ h₁.2.1
@@ -359,7 +360,7 @@ problem imo_1984_p6
         have gm₀: 2 ^ 2 ≤ 2 ^ (m - 1) := by
           norm_num
           rw [← h₈]
-          linarith
+          omega
         have gm₁: 2 ≤ m - 1 := by
           exact (Nat.pow_le_pow_iff_right (by norm_num)).mp gm₀
         omega
@@ -370,7 +371,7 @@ problem imo_1984_p6
           rw [← Nat.succ_sub ?_]
           . rw [Nat.succ_eq_add_one]
             omega
-          . linarith
+          . omega
         rw [g₀₁, Nat.pow_succ 2 _] at g₀₀
         exact Nat.lt_of_mul_lt_mul_right g₀₀
       have h₉₀: b = 2 ^ (m - 1) - a := by
@@ -379,8 +380,7 @@ problem imo_1984_p6
       rw [h₈, h₉₀] at h₆
       repeat rw [Nat.mul_sub_right_distrib] at h₆
       repeat rw [← Nat.pow_add] at h₆
-      have hm1: 1 ≤ m := by
-        linarith
+      have hm1: 1 ≤ m := by omega
       repeat rw [← Nat.sub_add_comm hm1] at h₆
       repeat rw [← Nat.add_sub_assoc hm1] at h₆
       ring_nf at h₆
@@ -401,7 +401,7 @@ problem imo_1984_p6
         rw [g₁] at h₆
         have g₂: 2 ^ (m * 2 - 2) ≤ a * 2 ^ m := by exact Nat.le_of_sub_eq_zero h₆.symm
         have g₃: 2 ^ (m - 2) ≤ a := by
-          rw [mul_two, Nat.add_sub_assoc (by linarith) m] at g₂
+          rw [mul_two, Nat.add_sub_assoc (by omega) m] at g₂
           rw [Nat.pow_add, mul_comm] at g₂
           refine Nat.le_of_mul_le_mul_right g₂ ?_
           exact Nat.two_pow_pos m
@@ -419,8 +419,8 @@ problem imo_1984_p6
           . linarith [hm1]
         . refine le_of_lt ?_
           rw [mul_two, Nat.add_sub_assoc, Nat.pow_add, mul_comm (2 ^ m) _]
-          refine (Nat.mul_lt_mul_right (by linarith)).mpr g₀
-          linarith
+          refine (Nat.mul_lt_mul_right (by omega)).mpr g₀
+          omega
       nth_rewrite 2 [← Nat.one_mul (2 ^ (2 * m - 2))] at h₉₂
       rw [← Nat.mul_sub_right_distrib 2 1 (2 ^ (2 * m - 2))] at h₉₂
       norm_num at h₉₂
@@ -432,7 +432,7 @@ problem imo_1984_p6
       by_contra! hc
       cases' (lt_or_gt_of_ne hc) with hc₀ hc₁
       . interval_cases a
-        linarith
+        omega
       . have hc₂: ¬ Odd a := by
           refine (Nat.not_odd_iff_even).mpr ?_
           have hc₃: 1 ≤ 2 * m - k - 2 := by
