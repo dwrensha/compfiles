@@ -211,12 +211,8 @@ lemma mylemma_castdvd
     refine nsmul_le_nsmul_left ?_ hxy
     norm_num
   rw [← h₂] at h₃
-  have h₄: 2 • x • y.factorization = x • (2 • y.factorization) := by
-    rw [← smul_assoc, ← smul_assoc]
-    have g₄: 2 • x = x • 2 := by
-      simp
-      exact mul_comm 2 x
-    rw [g₄]
+  have h₄: 2 • x • y.factorization = x • (2 • y.factorization) :=
+    nsmul_left_comm y.factorization x 2
   rw [h₄] at h₃
   rw [← Nat.factorization_pow] at h₃
   rw [← Nat.factorization_pow] at h₃
@@ -253,10 +249,7 @@ lemma mylemma_xsuby_eq_2xy2_help
     symm
     have g₂: y^2 ∣ x := by
       exact mylemma_castdvd x y h₀ h₁ hxy
-    have h₃: (↑(y^(2:ℕ)):ℝ) ≠ 0 := by
-      norm_cast
-      exact pow_ne_zero 2 (by omega)
-    exact Nat.cast_div g₂ h₃
+    exact Nat.cast_div_charZero g₂
   have h₄ : (↑(y ^ (x / y ^ (2:ℕ))):ℝ) = (↑y:ℝ)^((↑x:ℝ) / ((↑y:ℝ)^2)) := by
     rw [Nat.cast_pow, h₃]
     norm_cast
@@ -292,9 +285,7 @@ theorem mylemma_xsuby_eq_2xy2
       push_neg
       refine pow_ne_zero 2 ?_
       exact Nat.ne_of_gt h₀.2
-  have h₆: x = y ^ (x / y ^ 2) := by
-    exact mylemma_xsuby_eq_2xy2_help x y h₀ h₁ h₅ hxy
-  exact h₆
+  exact mylemma_xsuby_eq_2xy2_help x y h₀ h₁ h₅ hxy
 
 snip end
 
@@ -355,13 +346,11 @@ problem imo1997_p5 (a b : ℕ) (ha : 1 ≤ a) (hb : 1 ≤ b) :
               norm_num
               exact h₅
             have h₇: 0 ≤ b := by omega
-            exact (sq_eq_sq₀ h₇ (by linarith)).mp (h₆)
+            exact (sq_eq_sq₀ h₇ (by omega)).mp (h₆)
       push_neg at hk5
       by_cases hy: 2 ≤ b
       . have h₅₁: k < b^(k-2) := by
-          have h₆: 2^(k-2) ≤ b^(k-2) := by
-            have hk1: 3 ≤ k - 2 := Nat.sub_le_sub_right hk5 2
-            exact (Nat.pow_le_pow_iff_left (by linarith)).mpr hy
+          have h₆: 2^(k-2) ≤ b^(k-2) := Nat.pow_le_pow_left hy (k - 2)
           have h₇: 4*k < 2^k := by
             exact four_times_k_less_than_two_pow_k k hk5
           have h₇: k < 2^(k-2) := by
