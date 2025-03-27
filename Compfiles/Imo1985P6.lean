@@ -146,7 +146,7 @@ lemma aux_6
   | succ d hd_pos hd_cont =>
       have : f (d + 1) = fun x => f d x * (f d x + 1 / d) := funext (h₁ d · hd_pos)
       rw [this]
-      exact Continuous.mul hd_cont (Continuous.add hd_cont continuous_const)
+      fun_prop
 
 lemma aux_7
   (f : ℕ → NNReal → ℝ)
