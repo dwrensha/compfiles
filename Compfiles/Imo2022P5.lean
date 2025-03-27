@@ -518,7 +518,6 @@ problem imo2022_p5 (a b p : ℕ) (ha : 0 < a) (hb : 0 < b) (hp : p.Prime) :
       rw [h₄] at h₁
       simp at h₁
       have h₅: 2 ≤ p := by exact Nat.Prime.two_le hp
-      have g₆: 0 < b.factorial := by exact Nat.factorial_pos b
       omega
     . push_neg at hab
       have h₂: (b+1)^p ≤ a^p := by
