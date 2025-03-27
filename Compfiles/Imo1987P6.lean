@@ -1,5 +1,5 @@
 /-
-Copyright (c) 2023 The Compfiles Contributors. All rights reserved.
+Copyright (c) 2025 The Compfiles Contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Jia-Jun Ma
 -/
@@ -22,6 +22,7 @@ namespace Imo1987P6
 open Nat
 
 snip begin
+
 lemma minFac_le_sq {n: ℕ} (hnezero : n≠ 0) (hn : minFac n ≠ n)
 : (minFac n)^2 ≤  n := by
   match n with
@@ -154,7 +155,7 @@ lemma pos_sub_of_lt {a b : ℕ} : a < b → 0 < b-a := by
 
 snip end
 
-problem imo_1987_p6
+problem imo1987_p6
   (p : ℕ)
   (f : ℕ → ℕ)
   (h₀ : ∀ x, f x = x^2 + x + p)
