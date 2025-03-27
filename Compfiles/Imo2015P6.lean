@@ -23,7 +23,11 @@ $$\left|\sum_{j=m+1}^n (a_j-b)\right| ≤ 1007^2$$
 for all integers $m,n$ such that $N ≤ m < n$.
 -/
 
-def Condition (a : ℕ → ℤ) : Prop := (∀ i, a i ∈ Finset.Icc 1 2015) ∧ Function.Injective fun i ↦ i + a i
+/-- The conditions on `a` in the problem. We reindex `a` to start from 0 rather than 1;
+`N` then only has to be nonnegative rather than positive, and the sum in the problem statement
+is over `Ico m n` rather than `Ioc m n`. -/
+def Condition (a : ℕ → ℤ) : Prop :=
+  (∀ i, a i ∈ Finset.Icc 1 2015) ∧ Function.Injective fun i ↦ i + a i
 
 snip begin
 /-
