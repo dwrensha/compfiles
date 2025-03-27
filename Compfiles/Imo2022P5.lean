@@ -57,27 +57,6 @@ lemma mylemma_1
       exact Nat.le_add_right (1 + b + b * b ^ n + b * n) (b ^ 2 * n + b ^ n)
     exact le_trans h₄ h₃
 
-
-lemma mylemma_2
-  (b: ℕ) :
-  (b.factorial ≤ b ^ b) := by
-  -- exact factorial_le_pow b
-  -- lean 4 has the lemma factorial_le_pow
-  induction' b with n hi
-  . norm_num
-  . by_cases hnp: 0 < n
-    . rw [ Nat.factorial_succ, pow_add, pow_one, mul_comm ]
-      refine Nat.mul_le_mul_right (n + 1) ?_
-      have h₂: n^ n ≤ (n + 1)^n := by
-        refine (Nat.pow_le_pow_iff_left ?_).mpr ?_
-        . linarith
-        . linarith
-      exact le_trans hi h₂
-    . push_neg at hnp
-      interval_cases n
-      simp
-
-
 lemma mylemma_3
   (a b p: ℕ)
   (hp: Nat.Prime p)
