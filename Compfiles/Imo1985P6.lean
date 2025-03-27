@@ -128,7 +128,6 @@ lemma aux_5
   have hn₃: (fun x => Function.invFun (f₀ n) (f₀ n x)) x = id x := by exact Eq.symm (NNReal.eq (congrArg NNReal.toReal (congrFun (id (Eq.symm hn₂)) x)))
   exact hmo₁ n hn₀ (congrArg (f n) hn₃)
 
-
 lemma aux_6
   (f : ℕ → NNReal → ℝ)
   (h₀ : ∀ (x : NNReal), f 1 x = ↑x)
@@ -138,20 +137,16 @@ lemma aux_6
   ∀ (n : ℕ), 0 < n → Continuous (f₀ n) := by
   intros n hn₀
   rw [hf₀]
-  refine Continuous.comp' ?_ ?_
-  . exact continuous_real_toNNReal
-  . refine Nat.le_induction ?_ ?_ n hn₀
-    . have hn₁: f 1 = fun (x:NNReal) => (x:ℝ) := by exact (Set.eqOn_univ (f 1) fun x => ↑x).mp fun ⦃x⦄ _ => h₀ x
-      rw [hn₁]
+  apply Continuous.comp continuous_real_toNNReal
+  induction n, hn₀ using Nat.le_induction with
+  | base =>
+      have : f 1 = fun x => ↑x := funext h₀
+      rw [this]
       exact NNReal.continuous_coe
-    . intros d hd₀ hd₁
-      have hd₂: f (d + 1) = fun x => f d x * (f d x + 1 / ↑d) := by
-        exact (Set.eqOn_univ (f (d + 1)) fun x => f d x * (f d x + 1 / ↑d)).mp fun ⦃x⦄ _ => h₁ d x hd₀
-      rw [hd₂]
-      refine Continuous.mul hd₁ ?_
-      refine Continuous.add hd₁ ?_
-      exact continuous_const
-
+  | succ d hd_pos hd_cont =>
+      have : f (d + 1) = fun x => f d x * (f d x + 1 / d) := funext (h₁ d · hd_pos)
+      rw [this]
+      exact Continuous.mul hd_cont (Continuous.add hd_cont continuous_const)
 
 lemma aux_7
   (f : ℕ → NNReal → ℝ)
