@@ -7,7 +7,7 @@ import Mathlib.Data.Nat.Prime.Basic
 import Mathlib.Algebra.Order.Floor
 import Mathlib.Data.Real.Sqrt
 import Mathlib.Tactic.Ring
-import Mathlib.Tactic.linarith
+import Mathlib.Tactic.Linarith.Frontend
 
 import ProblemExtraction
 
@@ -21,6 +21,7 @@ Let $n$ be an integer greater than or equal to 2. Prove that if $k^2 + k + n$ is
 namespace Imo1987P6
 open Nat
 
+snip begin
 lemma minFac_le_sq {n: ℕ} (hnezero : n≠ 0) (hn : minFac n ≠ n)
 : (minFac n)^2 ≤  n := by
   match n with
@@ -58,7 +59,6 @@ lemma dyadic {k b : ℕ} (h1 : 1 ≤ k) (h2 : k ≤ b) : ∃ i, b < 2^i * k ∧ 
     apply (Nat.div_ne_zero_iff (a:=b) (b:=k)).2
     omega
   use Nat.log2 (b/k) + 1
-  --have hb : 1 ≤  b := le_trans h1 h2
   constructor
   · have h2bk: (b/k).log2 < (b/k).log2 + 1 := Nat.lt_succ_self _
     replace h2bk := (Nat.log2_lt hbk).1 h2bk
@@ -76,8 +76,6 @@ lemma dyadic {k b : ℕ} (h1 : 1 ≤ k) (h2 : k ≤ b) : ∃ i, b < 2^i * k ∧ 
     calc
     _ ≤  (b/k) * k := Nat.mul_le_mul_right k h3
     _ ≤ b := by rw [mul_comm]; apply mul_div_le
-
-
 
 
 lemma key_lemma  {m b: ℕ }
@@ -153,6 +151,8 @@ lemma Real.coe_lt_coe {a b :ℕ } : (a :ℝ ) < (b: ℝ) ↔ a < b := by
 lemma pos_sub_of_lt {a b : ℕ} : a < b → 0 < b-a := by
   intro h
   exact Nat.pos_iff_ne_zero.2 <| Nat.sub_ne_zero_of_lt h
+
+snip end
 
 problem imo_1987_p6
   (p : ℕ)
