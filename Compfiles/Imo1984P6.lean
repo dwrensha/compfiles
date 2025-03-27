@@ -92,65 +92,6 @@ lemma mylemma_k_le_m_alt
   refine false_of_ne h₉
 
 
-
-
-lemma mylemma_k_le_m
-  (a b c d k m : ℕ)
-  (h₂ : a < b ∧ b < c ∧ c < d)
-  (h₃ : a * d = b * c)
-  (h₄ : a + d = 2 ^ k)
-  (h₅ : b + c = 2 ^ m) :
-  (m < k) := by
-  have h₆: (c - b) ^ 2 < (d - a) ^ 2 := by
-    refine Nat.pow_lt_pow_left ?_ (by norm_num)
-    have h₈₀: c - a < d - a := by
-      have g₀: c - a + a < d - a + a := by
-        rw [Nat.sub_add_cancel ?_]
-        rw [Nat.sub_add_cancel ?_]
-        . exact h₂.2.2
-        . linarith
-        . linarith
-      exact Nat.lt_of_add_lt_add_right g₀
-    refine lt_trans ?_ h₈₀
-    refine Nat.sub_lt_sub_left ?_ h₂.1
-    exact lt_trans h₂.1 h₂.2.1
-  have h₇: (b + c) ^ 2 < (a + d) ^ 2 := by
-    rw [add_sq b c, add_sq a d]
-    have hda: a < d := by
-      refine lt_trans h₂.1 ?_
-      exact lt_trans h₂.2.1 h₂.2.2
-    rw [mylemma_sub_sq d a hda] at h₆
-    rw [mylemma_sub_sq c b h₂.2.1] at h₆
-    rw [mul_assoc 2 b c, ← h₃, ← mul_assoc]
-    rw [mul_assoc 2 c b, mul_comm c b, ← h₃, ← mul_assoc] at h₆
-    rw [add_assoc, add_comm _ (c ^ 2), ← add_assoc]
-    rw [add_assoc (a ^ 2), add_comm _ (d ^ 2), ← add_assoc]
-    rw [mul_assoc 2 d a, mul_comm d a, ← mul_assoc] at h₆
-    rw [add_comm (d ^ 2) (a ^ 2)] at h₆
-    rw [add_comm (c ^ 2) (b ^ 2)] at h₆
-    have g₀: 2 * a * d ≤ 4 * a * d := by
-      ring_nf
-      exact Nat.mul_le_mul_left (a * d) (by norm_num)
-    have g₁: 2 * a * d = 4 * a * d - 2 * a * d := by
-      ring_nf
-      rw [← Nat.mul_sub_left_distrib]
-      norm_num
-    have g₂: 2 * a * d ≤ b ^ 2 + c ^ 2 := by
-      rw [mul_assoc, h₃, ← mul_assoc]
-      exact two_mul_le_add_sq b c
-    have g₃: 2 * a * d ≤ a ^ 2 + d ^ 2 := by
-      exact two_mul_le_add_sq a d
-    rw [g₁, ← Nat.add_sub_assoc (g₀) (b ^ 2 + c ^ 2)]
-    rw [← Nat.add_sub_assoc (g₀) (a ^ 2 + d ^ 2)]
-    rw [Nat.sub_add_comm g₂, Nat.sub_add_comm g₃]
-    exact (Nat.add_lt_add_iff_right).mpr h₆
-  have h2 : 1 < 2 := by norm_num
-  refine (Nat.pow_lt_pow_iff_right h2).mp ?_
-  rw [← h₄, ← h₅]
-  exact (Nat.pow_lt_pow_iff_left (by norm_num) ).mp h₇
-
-
-
 lemma mylemma_h8
   (a b c d k m : ℕ)
   (h₀ : 0 < a ∧ 0 < b ∧ 0 < c ∧ 0 < d)
@@ -181,8 +122,7 @@ lemma mylemma_h8
       rw [← Nat.pow_sub_mul_pow 2 hm1]
       simp
     rw [← g₁]
-    refine lt_trans ?_ g₀
-    exact Nat.sub_lt h₀.2.1 h₀.1
+    exact tsub_lt_of_lt g₀
   have hp: p = 2 := by
     have hp₀: 2 * b < 2 ^ m := by
       rw [← h₅, two_mul]
@@ -233,9 +173,7 @@ lemma mylemma_h8
         exact Nat.sub_pos_of_lt h₂.1
       linarith [hi₁, hi₂]
     have hi₀: ∃ i ≤ m, p = 2 ^ i := by
-      have g₀: p ∣ 2 ^ m := by
-        rw [← hpq]
-        exact Nat.dvd_mul_right p q
+      have g₀: p ∣ 2 ^ m := Dvd.intro q hpq
       exact (Nat.dvd_prime_pow h2prime).mp g₀
     let ⟨i, hp⟩ := hi₀
     cases' hp with him hp
@@ -303,11 +241,7 @@ problem imo_1984_p6
     a = 1 := by
   by_cases hkm: k ≤ m
   . exfalso
-    apply Nat.not_lt_of_le at hkm
-    rw [← not_true_eq_false]
-    refine (not_congr ?_).mp hkm
-    refine iff_true_intro ?_
-    exact mylemma_k_le_m a b c d k m h₂ h₃ h₄ h₅
+    exact mylemma_k_le_m_alt a b c d k m h₂ h₃ h₄ h₅ hkm
   . push_neg at hkm
     have h₆: b * 2 ^ m - a * 2 ^ k = (b - a) * (b + a) := by
       have h₆₀: c = 2 ^ m - b := by exact (tsub_eq_of_eq_add_rev (id h₅.symm)).symm
