@@ -332,13 +332,7 @@ lemma q_r_divisor_of_prime
       exact h₄₁
   . right
     right
-    have h₂: abs q = q.natAbs := Int.abs_eq_natAbs q
-    rw [h₂] at hq_abs
-    norm_cast at hq_abs
-    refine or_comm.mp ?_
-    refine (Int.natAbs_eq_natAbs_iff).mp ?_
-    norm_cast
-
+    exact Or.symm (eq_or_eq_neg_of_abs_eq hq_abs)
 
 lemma mylemma_qr_11
   (q r: ℤ)
