@@ -294,14 +294,14 @@ lemma aux_9
   rw [hfb₀]
   refine Nat.le_induction ?_ ?_ m hm₀
   . have g₁: fi 1 0 = 0 := by exact hf₅ 0
-    have g₂: (2:NNReal).IsConjExponent (2:NNReal) := by
-      refine (NNReal.isConjExponent_iff_eq_conjExponent ?_).mpr ?_
+    have g₂: (2:NNReal).HolderConjugate (2:NNReal) := by
+      refine (NNReal.holderConjugate_iff_eq_conjExponent ?_).mpr ?_
       . exact one_lt_two
       . norm_cast
         simp
     simp
     norm_cast
-    rw [g₁, NNReal.IsConjExponent.one_sub_inv g₂]
+    rw [g₁, NNReal.HolderConjugate.one_sub_inv g₂]
     let x := fi 2 2⁻¹
     have hx₀: x = fi 2 2⁻¹ := by rfl
     have hx₁: f₀ 2 x = 2⁻¹ := by
@@ -317,7 +317,7 @@ lemma aux_9
       rw [zero_mul]
       exact Real.toNNReal_zero
     rw [hc₃]
-    exact Ne.symm (NNReal.IsConjExponent.inv_ne_zero g₂)
+    exact Ne.symm (NNReal.HolderTriple.inv_ne_zero g₂)
   . simp
     intros n hn₀ _
     let i := fi n (1 - (↑n)⁻¹)
@@ -375,8 +375,8 @@ lemma aux_10
     decide
   let nb : ↑sn := ⟨2, hnb₀⟩
   have g₀: 0 < fb nb := by
-    have g₁: (2:NNReal).IsConjExponent (2:NNReal) := by
-      refine (NNReal.isConjExponent_iff_eq_conjExponent ?_).mpr ?_
+    have g₁: (2:NNReal).HolderConjugate (2:NNReal) := by
+      refine (NNReal.holderConjugate_iff_eq_conjExponent ?_).mpr ?_
       . exact one_lt_two
       . norm_cast
         simp
@@ -385,7 +385,7 @@ lemma aux_10
     have hnb₁: nb.val = 2 := by exact rfl
     rw [hnb₁]
     norm_cast
-    rw [NNReal.IsConjExponent.one_sub_inv g₁]
+    rw [NNReal.HolderConjugate.one_sub_inv g₁]
     let x := fi 2 2⁻¹
     have hx₀: x = fi 2 2⁻¹ := by rfl
     have hx₁: f₀ 2 x = 2⁻¹ := by
@@ -401,7 +401,7 @@ lemma aux_10
       rw [zero_mul]
       exact Real.toNNReal_zero
     rw [hc₃]
-    exact Ne.symm (NNReal.IsConjExponent.inv_ne_zero g₁)
+    exact Ne.symm (NNReal.HolderTriple.inv_ne_zero g₁)
   have g₁: ∃ x, 0 < x ∧ x ∈ sbr := by
     use (fb nb).toReal
     constructor
