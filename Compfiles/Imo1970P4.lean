@@ -670,13 +670,8 @@ lemma contradiction_of_finset_icc_1_6 (s1 s2 : Finset ℕ) (partition : s1 ∪ s
           simp_all only [Finset.singleton_subset_iff, Finset.mem_singleton, nonempty_subtype, exists_eq, Finset.singleton_nonempty]
         apply not_empty_subst_of_nonempty {5} this
         exact set_five_in_empty
-      have s2_in_interval : s1 ⊆ Finset.Icc 1 6 := by
-        rw[Finset.union_comm] at partition
-        rw[partition] at s1_in_s2_s1
-        exact s1_in_s2_s1
       have explicit_interval: Finset.Icc 1 6 = {1, 2, 3, 4, 5, 6} := by
         rfl
-      rw [explicit_interval] at s2_in_interval
       have := diffs_of_disjoint s1 (s2 ∪ s1) {5} s1_in_s2_s1 five_not_in_s1
       rw[Finset.union_comm] at this
       rw [partition] at this
