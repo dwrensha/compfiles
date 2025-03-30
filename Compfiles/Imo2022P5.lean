@@ -121,12 +121,7 @@ lemma mylemma_41
            * (Finset.Ico ((p - 1) + 1) (2 * p - 1)).prod f := by
       symm
       refine Finset.prod_range_mul_prod_Ico f ?_
-      rw [gp1]
-      have gg₀: p + 2 - 1 ≤ 2 * p - 1 := by
-        refine Nat.sub_le_sub_right ?_ 1
-        rw [add_comm]
-        exact add_le_mul (by norm_num) gp
-      exact le_of_lt gg₀
+      omega
     have g₁: (Finset.range ((p - 1) + 1)).prod (fun (x : ℕ) => x + 1) =
        (Finset.range (p - 1)).prod (fun (x : ℕ) => x + 1) * ((p - 1) + 1) := by
       exact Finset.prod_range_succ _ (p - 1)
