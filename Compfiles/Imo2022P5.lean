@@ -30,32 +30,19 @@ namespace Imo2022P5
 snip begin
 
 lemma mylemma_1
-  (b p: ℕ)
-  (h₀: 0 < b)
-  (hbp: b < p) :
-  (1 + (b * p + b ^ p) ≤ (1 + b) ^ p) := by
-  refine Nat.le_induction ?_ ?_ p hbp
-  . rw [add_pow 1 b b.succ]
-    rw [Finset.sum_range_succ _ b.succ]
-    simp
-    rw [Finset.sum_range_succ _ b]
-    simp
-    rw [add_comm _ (b * (b + 1))]
-    have gb: b = b - 1 + 1 := by exact (Nat.sub_eq_iff_eq_add h₀).mp rfl
-    nth_rewrite 7 [gb]
-    rw [Finset.sum_range_succ' _ (b-1)]
-    simp
-    omega
-  . intros n _ h₂
-    nth_rewrite 2 [pow_add]
-    rw [pow_one]
-    have h₃: (1 + (b * n + b ^ n)) * (1 + b) ≤ ((1 + b) ^ n) * (1 + b) := by
-      exact mul_le_mul_right' h₂ (1 + b)
-    have h₄: 1 + (b * (n + 1) + b ^ (n + 1)) ≤ (1 + (b * n + b ^ n)) * (1 + b) := by
-      ring_nf
-      rw [Nat.add_assoc _ (b ^ 2 * n) (b ^ n)]
-      exact Nat.le_add_right (1 + b + b * b ^ n + b * n) (b ^ 2 * n + b ^ n)
-    exact le_trans h₄ h₃
+    (b p: ℕ)
+    (h₀: 0 < b)
+    (hbp: b < p) :
+    (1 + (b * p + b ^ p) ≤ (1 + b) ^ p) := by
+  replace hbp : 2 ≤ p := by omega
+  induction p, hbp using Nat.le_induction with
+  | base => ring_nf; omega
+  | succ n _ h₂ =>
+    simp only [Nat.pow_succ, Nat.mul_add, mul_one]
+    calc
+      _ ≤ 1 + (b * n + b ^ n) + (1 + b ^ n) * b := by ring_nf; omega
+      _ ≤ (1 + b) ^ n + (1 + b ^ n) * b := Nat.add_le_add_right h₂ _
+      _ ≤ _ := Nat.add_le_add_left (Nat.mul_le_mul_right b (by omega)) _
 
 lemma mylemma_3
   (a b p: ℕ)
