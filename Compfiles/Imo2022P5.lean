@@ -341,7 +341,7 @@ lemma mylemma_52
       exact Nat.sq_sub_sq p 1
     simp at g₀
     rw [g₀] at h₄
-    have g₁: p + 1 ≠ 0 := by linarith
+    have g₁: p + 1 ≠ 0 := by omega
     refine Nat.ModEq.mul_right_cancel' g₁ ?_
     rw [zero_mul]
     exact h₄
@@ -360,18 +360,14 @@ lemma mylemma_51
   . exact Nat.lt_of_sub_eq_succ rfl
   . intros n hn h₁
     have h₂: n + 1 + (n + 1).factorial = (n.factorial + 1) * (n + 1) := by
-      rw[add_mul, one_mul, Nat.factorial_succ]
+      rw [add_mul, one_mul, Nat.factorial_succ]
       rw [add_comm (n + 1)]
       rw [mul_comm (n + 1)]
     rw [h₂, pow_add, pow_one ]
-    refine Nat.mul_lt_mul_of_pos_right ?_ (by linarith)
-    have h₅: n ^ n < (n + 1) ^ n := by
-      refine Nat.pow_lt_pow_left ?_ ?_
-      . exact lt_add_one n
-      . refine Nat.ne_of_gt ?_
-        linarith
-    linarith
-
+    refine Nat.mul_lt_mul_of_pos_right ?_ (by omega)
+    have h₅: n ^ n < (n + 1) ^ n :=
+      Nat.pow_lt_pow_left (lt_add_one n) (by omega)
+    omega
 
 lemma mylemma_5
   (b p: ℕ)
