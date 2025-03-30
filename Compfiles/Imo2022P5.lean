@@ -102,7 +102,6 @@ lemma mylemma_44
 
 lemma mylemma_41
   (b p: ℕ)
-  -- (h₀: 0 < b)
   (hp: Nat.Prime p)
   (hb2p: b < 2 * p) :
   b.factorial + p < p ^ (2 * p) := by
