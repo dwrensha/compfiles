@@ -177,25 +177,20 @@ lemma odd_props (n : ℕ) (odd_s : Finset ℕ) (s_odd_eq : odd_s = (Finset.Icc n
     · intro H
       constructor
       · omega
-      · cases H
-        case inl h3 =>
-          simp_all only
-        case inr h4 =>
-          cases h4
-          case inl h5 =>
-            simp_all only
-            dsimp[Odd] at h ⊢
-            obtain ⟨k, h6⟩ := h
-            use k + 1
-            rw[h6]
-            ring_nf
-          case inr h6 =>
-            simp_all only
-            dsimp[Odd] at h ⊢
-            obtain ⟨k, h6⟩ := h
-            use k + 2
-            rw[h6]
-            ring_nf
+      · obtain h3 | h5 | h6 := H
+        · simp_all only
+        · simp_all only
+          dsimp[Odd] at h ⊢
+          obtain ⟨k, h6⟩ := h
+          use k + 1
+          rw [h6]
+          ring_nf
+        · simp_all only
+          dsimp [Odd] at h ⊢
+          obtain ⟨k, h6⟩ := h
+          use k + 2
+          rw [h6]
+          ring_nf
     intro H
     obtain ⟨a, Hh⟩ := H
     have h3 := Odd.not_two_dvd_nat Hh
@@ -212,21 +207,16 @@ lemma odd_props (n : ℕ) (odd_s : Finset ℕ) (s_odd_eq : odd_s = (Finset.Icc n
     · intro H
       constructor
       · omega
-      · cases H
-        case inl h3 =>
-          simp_all only [Even.add_one]
-        case inr h4 =>
-          cases h4
-          case inl h5 =>
-            have : Odd 3 := by decide
-            have := Even.add_odd h this
-            rw[h5]
-            exact this
-          case inr h6 =>
-            have : Odd 5 := by decide
-            have := Even.add_odd h this
-            rw[h6]
-            exact this
+      · obtain h3 | h5 | h6 := H
+        · simp_all only [Even.add_one]
+        · have : Odd 3 := by decide
+          have := Even.add_odd h this
+          rw[h5]
+          exact this
+        · have : Odd 5 := by decide
+          have := Even.add_odd h this
+          rw[h6]
+          exact this
     intro H
     obtain ⟨a, Hh⟩ := H
     have h3 := Odd.not_two_dvd_nat Hh
