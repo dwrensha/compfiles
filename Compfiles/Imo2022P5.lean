@@ -81,30 +81,24 @@ lemma mylemma_43
 
 
 lemma mylemma_44
-  (p: ℕ)
-  (hp: 2 ≤ p) :
-  (Finset.range (p - 1)).prod (fun (x : ℕ) => x + 1)
-      = (Finset.range (p - 1)).prod (fun (x : ℕ) => p - (x + 1)) := by
+    (p: ℕ)
+    (hp: 2 ≤ p) :
+    ∏ x ∈ Finset.range (p - 1), (x + 1)
+      = ∏ x ∈ Finset.range (p - 1), (p - (x + 1)) := by
   refine Nat.le_induction ?_ ?_ p hp
   . norm_num
   . intros n hn2 h₀
-    simp at *
+    rw [Finset.prod_range_add_one_eq_factorial] at h₀ ⊢
+    simp only [add_tsub_cancel_right, Nat.reduceSubDiff] at *
     have hn: n ≠ 0 := Nat.ne_zero_of_lt hn2
     have hn1: 1 ≤ n := Nat.one_le_of_lt hn2
     rw [← Nat.mul_factorial_pred hn, h₀]
-    let f: (ℕ → ℕ) := fun (x : ℕ) => n - x
-    have h₁: (Finset.range n).prod f =
-        (Finset.range 1).prod f * (Finset.Ico 1 n).prod f := by
-      exact (Finset.prod_range_mul_prod_Ico (fun k => n - k) hn1).symm
-    rw [h₁]
-    have h₂: (Finset.range 1).prod f = n := by
-      exact Finset.prod_range_one fun k => n - k
-    rw [h₂]
-    simp
+    rw [←Finset.prod_range_mul_prod_Ico _ hn1]
+    rw [Finset.prod_range_one]
+    simp only [tsub_zero, mul_eq_mul_left_iff]
     left
-    rw [Finset.prod_Ico_eq_prod_range f 1 n]
+    rw [Finset.prod_Ico_eq_prod_range]
     ring_nf
-    exact rfl
 
 lemma mylemma_41
   (b p: ℕ)
