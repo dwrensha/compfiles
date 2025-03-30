@@ -269,10 +269,9 @@ lemma five_divides_odd_at_most_once (n : ℕ) (s odd_s : Finset ℕ) (partition 
 
   apply this
 
-  rw[odd_s_eq]
+  rw [odd_s_eq]
 
-  intro x x_in
-  intro y y_in
+  intro x x_in y y_in
 
   simp only [Finset.mem_filter] at x_in
   obtain ⟨⟨X1, X2⟩, X3⟩ := x_in
@@ -301,8 +300,7 @@ lemma unique_divisor (n : ZMod 3) (a b c : ℕ) (n_eq_a : n = a) (s : Finset ℕ
       constructor
       · aesop
       · simp_all only [Fin.zero_eta]
-    · intro o
-      rintro ⟨o_in_s, three_div_o⟩
+    · rintro o ⟨o_in_s, three_div_o⟩
       rw[s_eq] at o_in_s
       simp_all only [Fin.zero_eta, Finset.mem_insert, Finset.mem_singleton]
       omega
@@ -315,8 +313,7 @@ lemma unique_divisor (n : ZMod 3) (a b c : ℕ) (n_eq_a : n = a) (s : Finset ℕ
       reduce_mod_char
     constructor
     · simp_all only [Fin.mk_one, Finset.mem_insert, add_eq_left, OfNat.ofNat_ne_zero, Finset.mem_singleton, left_eq_add, or_false, or_true, and_self]
-    · intro o
-      rintro ⟨o_in_s, three_div_o⟩
+    · rintro o ⟨o_in_s, three_div_o⟩
       rw[s_eq] at o_in_s
       simp_all only [Fin.mk_one, Finset.mem_insert, Finset.mem_singleton]
       omega
@@ -330,8 +327,7 @@ lemma unique_divisor (n : ZMod 3) (a b c : ℕ) (n_eq_a : n = a) (s : Finset ℕ
       reduce_mod_char
     constructor
     · simp_all only [Nat.dvd_add_self_right, Finset.mem_insert, add_eq_left, OfNat.ofNat_ne_zero, Finset.mem_singleton, or_true, and_self]
-    · intro o
-      rintro ⟨o_in_s, three_div_o⟩
+    · rintro o ⟨o_in_s, three_div_o⟩
       rw[s_eq] at o_in_s
       simp_all only [Nat.dvd_add_self_right, Finset.mem_insert, Finset.mem_singleton]
       omega
@@ -390,8 +386,7 @@ lemma no_prime_divisors (x : ℕ) (x_not_zero : x ≠ 0) (no_prime : ¬ ∃ (p :
   rw[mem_primeFactors]
 
   have no_prime_for_simp : ∀ p : ℕ, ¬ (Nat.Prime p ∧ p ∣ x ∧ x ≠ 0) := by
-    intro p
-    intro H
+    intro p H
     apply no_prime
     use p
     obtain ⟨a, b, _⟩ := H
@@ -413,13 +408,8 @@ lemma two_three_five_and_more_is_enough (x : ℕ) (two_does_not_divide : ¬ 2 �
   (p_gt_5_not_dvd : ∀ (p : ℕ), p.Prime → p > 5 → ¬p ∣ x):
   ¬ ∃ (p : ℕ), (p.Prime ∧ p ∣ x) := by
   have p_le_5_not_dvd : ∀ (p : ℕ), p.Prime → p ≤ 5 → ¬ p ∣ x := by
-    intro p
-    intro pp
-    intro p_le_5
-    intro p_div_x
-
+    intro p pp p_le_5 p_div_x
     have p_subset : p ∈ ({2, 3, 5} : Finset ℕ) := enumerate_primes_le_5 p pp p_le_5
-
     have : p = 2 ∨ p = 3 ∨ p = 5 := by
       simp_all only [Nat.two_dvd_ne_zero, gt_iff_lt, Finset.mem_insert, Finset.mem_singleton]
 
@@ -471,8 +461,8 @@ lemma subsets_must_overlap_pigeonhole (s s1 s2 : Finset ℕ) (predicate_s1: ℕ 
     exact left x x_in_s part_1 part_2
   have step_2 : (∀ x ∈ s, x ∈ s1 → x ∉ s2) → Disjoint s1 s2 := by
     intro left
-    dsimp[Disjoint]
-    dsimp[Finset.instHasSubset]
+    dsimp [Disjoint]
+    dsimp [Finset.instHasSubset]
     simp only [Finset.not_mem_empty, imp_false]
     intro s3 rel1 rel2 a a_in_s3
     have a_in_s1 := rel1 a_in_s3
