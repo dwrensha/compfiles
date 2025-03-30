@@ -409,7 +409,7 @@ lemma mylemma_5
         rw [mul_comm] at gg₂
         have gg₃: 6/2 ≤ (p + 1)/2 := by
           refine Nat.div_le_div_right ?_
-          linarith
+          omega
         norm_num at gg₃
         have gg₄: 2 + (p+1)/2 ≤ p := by -- strong induction
           refine Nat.le_induction ?_ ?_ p (hp5)
@@ -420,7 +420,7 @@ lemma mylemma_5
               rw [← Nat.succ_eq_add_one]
               refine Nat.succ_le_succ ?_
               refine Nat.div_le_div_right ?_
-              linarith
+              omega
             simp
             nth_rewrite 1 [← mul_one 2]
             rw [Nat.two_mul 1, add_assoc]
@@ -439,7 +439,7 @@ lemma mylemma_5
           refine dvd_trans ?_ gg₆
           simp
           refine mul_dvd_mul_left 2 ?_
-          refine Nat.dvd_factorial (by linarith[gg₃]) (by linarith)
+          refine Nat.dvd_factorial (by linarith[gg₃]) (by omega)
         have gg₈: 2 * ((p+1)/2) * (p + 1) ∣ p.factorial * (p + 1) := by
           refine mul_dvd_mul_right ?_ (p + 1)
           exact gg₇
@@ -467,7 +467,7 @@ lemma mylemma_6
   have g₄: p.factorial * p.factorial ∣ (p+p).factorial :=
     Nat.factorial_mul_factorial_dvd_factorial_add p p
   rw [← pow_two, ← two_mul] at g₄
-  have g₅: p ∣ p.factorial := by exact Nat.dvd_factorial (by linarith) (by linarith)
+  have g₅: p ∣ p.factorial := by exact Nat.dvd_factorial (by omega) (by omega)
   have h₄: p ^ 2 ∣ p.factorial ^ 2 := by exact pow_dvd_pow_of_dvd g₅ 2
   have g₆: p ^ 2 ∣ (2 * p).factorial := by exact dvd_trans h₄ g₄
   have h₅: p^2 ∣ b.factorial := by exact dvd_trans g₆ g₃
@@ -522,7 +522,7 @@ problem imo2022_p5 (a b p : ℕ) (ha : 0 < a) (hb : 0 < b) (hp : p.Prime) :
       have g₅: b^b ≤ b^p := by
         refine Nat.pow_le_pow_right hb ?_
         exact le_of_lt hbp
-      linarith
+      omega
   . push_neg at hbp
     have h₂: p ∣ a := by exact mylemma_3 a b p hp h₁ hbp
     by_cases hb2p: b < 2*p
@@ -533,22 +533,22 @@ problem imo2022_p5 (a b p : ℕ) (ha : 0 < a) (hb : 0 < b) (hp : p.Prime) :
         interval_cases p
         . left
           norm_num at h₁
-          have h₄: b.factorial = 2 := by linarith
+          have h₄: b.factorial = 2 := by omega
           have g₅: (2:ℕ).factorial = 2 := by norm_num
           rw [← g₅] at h₄
           have h₅: b = 2 := by
             refine (Nat.factorial_inj ?_).mp h₄
-            linarith
+            omega
           rw [h₃,h₅]
         . right
           norm_num at h₁
           rw [h₃]
-          have h₄: b.factorial = 24 := by linarith
+          have h₄: b.factorial = 24 := by omega
           have g₅: (4:ℕ).factorial = 24 := by exact rfl
           rw [← g₅] at h₄
           have h₅: b = 4 := by
             refine (Nat.factorial_inj ?_).mp h₄
-            linarith
+            omega
           rw [h₅]
         . exfalso
           contradiction
