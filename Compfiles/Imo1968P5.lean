@@ -74,9 +74,7 @@ problem imo1968_p5b :
       · have h1 : ¬ Even (⌊x⌋ + 1) :=
           Int.not_even_iff_odd.mpr (Even.add_one heven)
         simp [solution_func, h1, heven]
-      · have h2 : √4 = 2 := by
-          rw [show (4 : ℝ) = 2^2 by norm_num, Real.sqrt_sq_eq_abs, abs_two]
-        norm_num [solution_func, Int.even_add_one.mpr hodd, h2, hodd]
+      · norm_num [solution_func, Int.even_add_one.mpr hodd, hodd]
   · rintro ⟨c, hc⟩
     have h1 : Function.const ℝ c 0 = c := rfl
     rw [←hc] at h1
