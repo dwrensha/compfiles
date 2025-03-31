@@ -59,26 +59,23 @@ lemma mylemma_3
 
 
 lemma mylemma_42
-  (a b : ℕ)
-  (h₀: 2 ≤ a)
-  (h₁: a < b) :
-  (a + b < a * b ) := by
+    (a b : ℕ)
+    (h₀: 2 ≤ a)
+    (h₁: a < b) :
+    (a + b < a * b) := by
   have h₂: a + b < b + b := by exact add_lt_add_right h₁ b
   have h₃: b + b ≤ a * b := by
     rw [← two_mul]
     exact mul_le_mul_right' h₀ b
   exact gt_of_ge_of_gt h₃ h₂
 
-
-lemma mylemma_43
-  (p: ℕ) :
-  (Finset.Ico p (2 * p - 1)).prod (fun x => x + 1)
-    = (Finset.range (p - 1)).prod (fun x => p + (x + 1)) := by
+lemma mylemma_43 (p: ℕ) :
+    ∏ x ∈ Finset.Ico p (2 * p - 1), ( x + 1)
+      = ∏ x ∈ Finset.range (p - 1), (p + (x + 1)) := by
   rw [Finset.prod_Ico_eq_prod_range _ (p) (2 * p - 1)]
   have h₀: 2 * p - 1 - p = p - 1 := by omega
   rw [h₀]
   exact rfl
-
 
 lemma mylemma_44
     (p: ℕ)
@@ -92,7 +89,7 @@ lemma mylemma_44
     simp only [add_tsub_cancel_right, Nat.reduceSubDiff] at *
     have hn: n ≠ 0 := Nat.ne_zero_of_lt hn2
     have hn1: 1 ≤ n := Nat.one_le_of_lt hn2
-    rw [← Nat.mul_factorial_pred hn, h₀]
+    rw [←Nat.mul_factorial_pred hn, h₀]
     rw [←Finset.prod_range_mul_prod_Ico _ hn1]
     rw [Finset.prod_range_one]
     simp only [tsub_zero, mul_eq_mul_left_iff]
