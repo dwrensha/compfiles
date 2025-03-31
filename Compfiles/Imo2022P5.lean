@@ -186,11 +186,8 @@ lemma mylemma_4
   cases' lt_or_eq_of_le gp with h₃ h₃
   . exfalso
     cases' h₂ with c h₂
-    have gc: 0 < c := by
-      by_contra! hc0
-      interval_cases c
-      simp at *
-      omega
+    have gc: 0 < c :=
+      Nat.pos_of_mul_pos_left (Nat.lt_of_lt_of_eq (Nat.zero_lt_of_lt h₃) h₂)
     by_cases hc: c < p
     . have g₁: c ∣ c^p := dvd_pow_self c (by omega)
       have h₄: c ∣ a^p := by
