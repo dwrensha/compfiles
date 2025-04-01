@@ -34,10 +34,9 @@ problem imo2020_p5 (n : ℕ) :
     (1 < n ∧
      (∀ α : Type, [Fintype α] → Fintype.card α = n →
          ∀ f : α → ℕ+,
-           (∀ a b, ∃ s : Finset α,
-              geometric_mean f s = (((f a):ℝ) + f b) / 2)
+           (Pairwise fun a b ↦ ∃ s : Finset α,
+              s.Nonempty ∧ geometric_mean f s = (((f a):ℝ) + f b) / 2)
            → ∃ y, ∀ a, f a = y )) := by
   sorry
-
 
 end Imo2020P5
