@@ -61,14 +61,13 @@ problem imo1969_p2
     have h₅₂: ∑ i ∈ Finset.range n, Real.cos (a i) * Real.cos x * (2⁻¹) ^ i
             = ∑ i ∈ Finset.range n, (Real.cos (a i) * (2⁻¹) ^ i) * Real.cos x := by
       refine Finset.sum_congr (by rfl) ?_
-      simp
       intro i _
-      linarith
+      ring
     have h₅₃: ∑ x_1 ∈ Finset.range n, Real.sin (a x_1) * Real.sin x * (2⁻¹) ^ x_1
             = ∑ x_1 ∈ Finset.range n, ((Real.sin (a x_1) * (2⁻¹) ^ x_1) * Real.sin x) := by
       refine Finset.sum_congr (by rfl) ?_
       intro i _
-      linarith
+      ring
     rw [h₅₂, ← Finset.sum_mul _ _ (Real.cos x)]
     rw [h₅₃, ← Finset.sum_mul _ _ (Real.sin x)]
     ring_nf at hCcos
