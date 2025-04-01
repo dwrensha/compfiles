@@ -53,7 +53,6 @@ problem imo1969_p2
     have h₅₀: ∑ i ∈ Finset.range n, (Real.cos (a i + x) / 2 ^ i)
               = ∑ i ∈ Finset.range n, (((Real.cos (a i) * Real.cos (x) - Real.sin (a i) * Real.sin (x)) / (2^i))) := by
       refine Finset.sum_congr (by rfl) ?_
-      simp
       intros i _
       refine (div_eq_div_iff ?_ ?_).mpr ?_
       . exact Ne.symm (NeZero.ne' (2 ^ i))
@@ -73,7 +72,6 @@ problem imo1969_p2
     have h₅₃: ∑ x_1 ∈ Finset.range n, Real.sin (a x_1) * Real.sin x * (2⁻¹) ^ x_1
             = ∑ x_1 ∈ Finset.range n, ((Real.sin (a x_1) * (2⁻¹) ^ x_1) * Real.sin x) := by
       refine Finset.sum_congr (by rfl) ?_
-      simp
       intro i _
       linarith
     rw [h₅₂, ← Finset.sum_mul _ _ (Real.cos x)]
