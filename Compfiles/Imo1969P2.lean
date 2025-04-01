@@ -54,12 +54,7 @@ problem imo1969_p2
               = ∑ i ∈ Finset.range n, (((Real.cos (a i) * Real.cos (x) - Real.sin (a i) * Real.sin (x)) / (2^i))) := by
       refine Finset.sum_congr (by rfl) ?_
       intros i _
-      refine (div_eq_div_iff ?_ ?_).mpr ?_
-      . exact Ne.symm (NeZero.ne' (2 ^ i))
-      . exact Ne.symm (NeZero.ne' (2 ^ i))
-      . refine mul_eq_mul_right_iff.mpr ?_
-        simp
-        exact Real.cos_add (a i) x
+      rw [Real.cos_add]
     rw [h₅₀]
     ring_nf
     rw [Finset.sum_sub_distrib]
