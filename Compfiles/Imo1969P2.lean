@@ -64,14 +64,14 @@ problem imo1969_p2
     rw [h₅₀]
     ring_nf
     rw [Finset.sum_sub_distrib]
-    have h₅₂: ∑ i ∈ Finset.range n, Real.cos (a i) * Real.cos x * (1 / 2) ^ i
-            = ∑ i ∈ Finset.range n, (Real.cos (a i) * (1 / 2) ^ i) * Real.cos x := by
+    have h₅₂: ∑ i ∈ Finset.range n, Real.cos (a i) * Real.cos x * (2⁻¹) ^ i
+            = ∑ i ∈ Finset.range n, (Real.cos (a i) * (2⁻¹) ^ i) * Real.cos x := by
       refine Finset.sum_congr (by rfl) ?_
       simp
       intro i _
       linarith
-    have h₅₃: ∑ x_1 ∈ Finset.range n, Real.sin (a x_1) * Real.sin x * (1 / 2) ^ x_1
-            = ∑ x_1 ∈ Finset.range n, ((Real.sin (a x_1) * (1 / 2) ^ x_1) * Real.sin x) := by
+    have h₅₃: ∑ x_1 ∈ Finset.range n, Real.sin (a x_1) * Real.sin x * (2⁻¹) ^ x_1
+            = ∑ x_1 ∈ Finset.range n, ((Real.sin (a x_1) * (2⁻¹) ^ x_1) * Real.sin x) := by
       refine Finset.sum_congr (by rfl) ?_
       simp
       intro i _
