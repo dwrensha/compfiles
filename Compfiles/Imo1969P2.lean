@@ -41,12 +41,10 @@ problem imo1969_p2
     (h₃ : f x₁ = 0)
     (h₄: ∑ i ∈ Finset.range n, (Real.cos (a i) / (2 ^ i)) ≠ 0) :
     ∃ m : ℤ, x₂ - x₁ = m * π := by
-  let Ccos := Finset.sum (Finset.range n) (fun i => (((Real.cos (a i)) / (2 ^ i))))
-  let Csin := Finset.sum (Finset.range n) (fun i => (((Real.sin (a i)) / (2 ^ i))))
-  have hCcos: Ccos = Finset.sum (Finset.range n) (fun i => (((Real.cos (a i)) / (2 ^ i)))) := by
-    exact rfl
-  have hCsin: Csin = Finset.sum (Finset.range n) (fun i => (((Real.sin (a i)) / (2 ^ i)))) := by
-    exact rfl
+  let Ccos := ∑ i ∈ Finset.range n, (Real.cos (a i) / (2 ^ i))
+  let Csin := ∑ i ∈ Finset.range n, (Real.sin (a i) / (2 ^ i))
+  have hCcos: Ccos = ∑ i ∈ Finset.range n, (Real.cos (a i) / (2 ^ i)) := rfl
+  have hCsin: Csin = ∑ i ∈ Finset.range n, (Real.sin (a i) / (2 ^ i)) := rfl
   have h₅: ∀ x, f x = Ccos * Real.cos x - Csin * Real.sin x := by
     intro x
     rw [h₁ x]
@@ -76,7 +74,7 @@ problem imo1969_p2
   have h₆: (∃ x, (f x = 0 ∧ Real.cos x = 0)) → ∀ y, f y = Ccos * Real.cos y := by
     intro g₀
     obtain ⟨x, hx₀, hx₁⟩ := g₀
-    have g₁: Finset.sum (Finset.range n) (fun i => (((Real.sin (a i)) / (2 ^ i)))) = 0 := by
+    have g₁: ∑ i ∈ Finset.range n, (Real.sin (a i) / (2 ^ i)) = 0 := by
       rw [h₅ x, hx₁] at hx₀
       simp at hx₀
       cases' hx₀ with hx₂ hx₃
@@ -88,8 +86,7 @@ problem imo1969_p2
         . linarith
     intro y
     rw [h₅ y]
-    have g₂: Csin = 0 := by
-      linarith
+    have g₂: Csin = 0 := by linarith
     rw [g₂, zero_mul]
     exact sub_zero (Ccos * Real.cos y)
   by_cases hmn: (Real.cos x₂ = 0) ∨ (Real.cos x₁ = 0)
