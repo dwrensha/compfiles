@@ -156,14 +156,9 @@ problem imo1969_p2
       have h₈₂: Real.sin (x₂ - x₁) / (Real.cos x₂ * Real.cos x₁) = 0 := by
         rw [Real.sin_sub]
         exact h₈₁
-      apply div_eq_zero_iff.mp at h₈₂
-      cases' h₈₂ with h₈₂ h₈₃
-      . exact h₈₂
-      . exfalso
-        simp at h₈₃
-        cases' h₈₃ with h₈₄ h₈₅
-        . exact hmn.1 h₈₄
-        . exact hmn.2 h₈₅
+      have h_nonzero : Real.cos x₂ * Real.cos x₁ ≠ 0 := mul_ne_zero hmn.1 hmn.2
+      rw [div_eq_zero_iff, or_iff_left h_nonzero] at h₈₂
+      exact h₈₂
     apply Real.sin_eq_zero_iff.mp at h₈
     let ⟨t, ht⟩ := h₈
     use t
