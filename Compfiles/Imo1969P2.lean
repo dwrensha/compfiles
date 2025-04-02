@@ -133,11 +133,9 @@ problem imo1969_p2
             rw [← hx₂]
             exact hx₁
           exact left_ne_zero_of_mul hx₃
-        . simp
-          symm
-          refine eq_of_sub_eq_zero ?_
-          rw [h₅ x] at hx₀
-          linarith
+        . rw [h₅ x, sub_eq_zero] at hx₀
+          simp only [div_inv_eq_mul, mul_comm (Real.sin x) _]
+          exact hx₀.1
       have h₇₁: Real.tan x₂ = Ccos / Csin := by
         refine h₇₀ x₂ ?_
         constructor
