@@ -319,87 +319,87 @@ unsafe def main (_args : List String) : IO Unit := do
 
     let mut infos : List ProblemInfo := []
     for ⟨m, problem_src⟩ in mst do
-        let p ← findOLean m
-        let solutionUrl := olean_path_to_github_url p.normalize
-        IO.println s!"MODULE: {m}"
-        let problemFile := s!"problems/{m}.html"
-        let rawProblemFile := s!"problems/{m}.lean"
-        let problemUrl := s!"{←getBaseUrl}{problemFile}"
-        let rawProblemUrl := s!"{←getBaseUrl}{rawProblemFile}"
+      let p ← findOLean m
+      let solutionUrl := olean_path_to_github_url p.normalize
+      IO.println s!"MODULE: {m}"
+      let problemFile := s!"problems/{m}.html"
+      let rawProblemFile := s!"problems/{m}.lean"
+      let problemUrl := s!"{←getBaseUrl}{problemFile}"
+      let rawProblemUrl := s!"{←getBaseUrl}{rawProblemFile}"
 
-        let mut proved := true
-        let decls ← getDeclsInPackage m
-        for d in decls do
-          let c ← getConstInfo d
-          match c.value? with
-          | none => pure ()
-          | some v => do
-               if v.hasSorry then proved := false
+      let mut proved := true
+      let decls ← getDeclsInPackage m
+      for d in decls do
+        let c ← getConstInfo d
+        match c.value? with
+        | none => pure ()
+        | some v => do
+           if v.hasSorry then proved := false
 
-        let metadata := (mds.find? m).getD {}
-        let probId := m.toString.stripPrefix "Compfiles."
-        infos := ⟨probId,
-                  extractModuleDoc env m,
-                  metadata,
-                  solutionUrl, problemUrl, proved⟩ :: infos
+      let metadata := (mds.find? m).getD {}
+      let probId := m.toString.stripPrefix "Compfiles."
+      infos := ⟨probId,
+                extractModuleDoc env m,
+                metadata,
+                solutionUrl, problemUrl, proved⟩ :: infos
 
-        let h ← IO.FS.Handle.mk ("_site/" ++ problemFile) IO.FS.Mode.write
-        h.putStrLn <| ←htmlHeader m.toString (includeHljs := true)
-        h.putStrLn <| ← topbar "none"
-        h.putStrLn s!"<h2>{probId}</h2>"
+      let h ← IO.FS.Handle.mk ("_site/" ++ problemFile) IO.FS.Mode.write
+      h.putStrLn <| ←htmlHeader m.toString (includeHljs := true)
+      h.putStrLn <| ← topbar "none"
+      h.putStrLn s!"<h2>{probId}</h2>"
 
-        h.putStrLn "<pre class=\"problem\"><code class=\"language-lean\">"
-        h.putStr (htmlEscape problem_src)
-        h.putStrLn "</code></pre>"
-        if !metadata.authors.isEmpty then
-          h.putStrLn s!"<p class='authors'>File author(s): {", ".intercalate metadata.authors}</p>"
-        if proved
-        then
-          h.putStrLn
-            s!"<p>This problem <a class=\"external\" href=\"{solutionUrl}\">has a complete formalized solution</a>.</p>"
-        else
-          h.putStrLn
-            s!"<p>This problem <a class=\"external\" href=\"{solutionUrl}\">does not yet have a complete formalized solution</a>.</p>"
-        if let .some url := metadata.importedFrom
-        then
-          -- Make github urls a little nicer to look at.
-          let text :=
-            if url.startsWith "https://github.com/"
-            then let rest := url.stripPrefix "https://github.com/"
-                 match rest.splitOn "/" with
-                 | _ns :: repo :: _blob :: _branch :: rest =>
-                    "/".intercalate (repo :: rest)
-                 | _ => url
-            else url
-          h.putStrLn s!"<p>The solution was imported from <a class=\"external\" href=\"{url}\">{text}</a>.</p>"
+      h.putStrLn "<pre class=\"problem\"><code class=\"language-lean\">"
+      h.putStr (htmlEscape problem_src)
+      h.putStrLn "</code></pre>"
+      if !metadata.authors.isEmpty then
+        h.putStrLn s!"<p class='authors'>File author(s): {", ".intercalate metadata.authors}</p>"
+      if proved
+      then
+        h.putStrLn
+          s!"<p>This problem <a class=\"external\" href=\"{solutionUrl}\">has a complete formalized solution</a>.</p>"
+      else
+        h.putStrLn
+          s!"<p>This problem <a class=\"external\" href=\"{solutionUrl}\">does not yet have a complete formalized solution</a>.</p>"
+      if let .some url := metadata.importedFrom
+      then
+        -- Make github urls a little nicer to look at.
+        let text :=
+          if url.startsWith "https://github.com/"
+          then let rest := url.stripPrefix "https://github.com/"
+               match rest.splitOn "/" with
+               | _ns :: repo :: _blob :: _branch :: rest =>
+                  "/".intercalate (repo :: rest)
+               | _ => url
+          else url
+        h.putStrLn s!"<p>The solution was imported from <a class=\"external\" href=\"{url}\">{text}</a>.</p>"
 
-        let hraw ← IO.FS.Handle.mk ("_site/" ++ rawProblemFile) IO.FS.Mode.write
-        hraw.putStr s!"{metadata.copyrightHeader}{problem_src}"
+      let hraw ← IO.FS.Handle.mk ("_site/" ++ rawProblemFile) IO.FS.Mode.write
+      hraw.putStr s!"{metadata.copyrightHeader}{problem_src}"
 
-        let rawProblemLiveUrl := s!"https://live.lean-lang.org/#url={System.Uri.escapeUri rawProblemUrl}"
+      let rawProblemLiveUrl := s!"https://live.lean-lang.org/#url={System.Uri.escapeUri rawProblemUrl}"
 
-        h.putStrLn s!"<div>Open with the in-brower editor at live.lean-lang.org:"
-        h.putStr s!"<ul class=\"live-links\"><li><a href=\"{rawProblemLiveUrl}\">problem statement only</a></li>"
-        let soldesc := if proved then "complete solution" else "in-progress solution"
-        if let some sol_src := sols.find? m then
-          let rawSolFile := s!"problems/{m}.sol.lean"
-          let rawSolUrl := s!"{←getBaseUrl}{rawSolFile}"
-          let hraw ← IO.FS.Handle.mk ("_site/" ++ rawSolFile) IO.FS.Mode.write
-          hraw.putStr s!"{metadata.copyrightHeader}{sol_src}"
-          let rawSolLiveUrl := s!"https://live.lean-lang.org/#url={System.Uri.escapeUri rawSolUrl}"
-          h.putStr s!"<li><a href=\"{rawSolLiveUrl}\">{soldesc}</a></li>"
-        h.putStrLn "</ul></div>"
+      h.putStrLn s!"<div>Open with the in-brower editor at live.lean-lang.org:"
+      h.putStr s!"<ul class=\"live-links\"><li><a href=\"{rawProblemLiveUrl}\">problem statement only</a></li>"
+      let soldesc := if proved then "complete solution" else "in-progress solution"
+      if let some sol_src := sols.find? m then
+        let rawSolFile := s!"problems/{m}.sol.lean"
+        let rawSolUrl := s!"{←getBaseUrl}{rawSolFile}"
+        let hraw ← IO.FS.Handle.mk ("_site/" ++ rawSolFile) IO.FS.Mode.write
+        hraw.putStr s!"{metadata.copyrightHeader}{sol_src}"
+        let rawSolLiveUrl := s!"https://live.lean-lang.org/#url={System.Uri.escapeUri rawSolUrl}"
+        h.putStr s!"<li><a href=\"{rawSolLiveUrl}\">{soldesc}</a></li>"
+      h.putStrLn "</ul></div>"
 
-        let writeupLinks := getWriteupLinks probId
-        if writeupLinks.length > 0
-        then h.putStrLn s!"<div>External resources:<ul class=\"writeups\">"
-             for ⟨url, text⟩ in writeupLinks do
-               h.putStrLn s!"<li><a class=\"external\" href=\"{url}\">{text}</a></li>"
-             h.putStrLn s!"</ul></div>"
+      let writeupLinks := getWriteupLinks probId
+      if writeupLinks.length > 0
+      then h.putStrLn s!"<div>External resources:<ul class=\"writeups\">"
+           for ⟨url, text⟩ in writeupLinks do
+             h.putStrLn s!"<li><a class=\"external\" href=\"{url}\">{text}</a></li>"
+           h.putStrLn s!"</ul></div>"
 
-        h.putStrLn (←footer)
-        h.putStrLn "</body></html>"
-        h.flush
+      h.putStrLn (←footer)
+      h.putStrLn "</body></html>"
+      h.flush
 
     let mut tag_formalized_counts : Array Nat := Array.mk [0,0,0,0,0]
     let mut tag_solved_counts : Array Nat := Array.mk [0,0,0,0,0]
