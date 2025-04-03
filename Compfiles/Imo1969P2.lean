@@ -148,14 +148,11 @@ problem imo1969_p2
         · exact hmn.2
       rw [h₇₁, h₇₂]
     have h₈: Real.sin (x₂ - x₁) = 0 := by
-      have h₈₀: Real.tan x₂  - Real.tan x₁ = 0 := by exact sub_eq_zero_of_eq h₇
-      have h₈₁: (Real.sin x₂ * Real.cos x₁ - Real.cos x₂ * Real.sin x₁) / (Real.cos x₂ * Real.cos x₁) = 0 := by
-        rw [← div_sub_div (Real.sin x₂) (Real.sin x₁) hmn.1 hmn.2]
-        simp only [← Real.tan_eq_sin_div_cos]
-        exact h₈₀
       have h₈₂: Real.sin (x₂ - x₁) / (Real.cos x₂ * Real.cos x₁) = 0 := by
         rw [Real.sin_sub]
-        exact h₈₁
+        rw [← div_sub_div (Real.sin x₂) (Real.sin x₁) hmn.1 hmn.2]
+        simp only [← Real.tan_eq_sin_div_cos]
+        exact sub_eq_zero_of_eq h₇
       have h_nonzero : Real.cos x₂ * Real.cos x₁ ≠ 0 := mul_ne_zero hmn.1 hmn.2
       rw [div_eq_zero_iff, or_iff_left h_nonzero] at h₈₂
       exact h₈₂
