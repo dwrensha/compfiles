@@ -135,7 +135,6 @@ problem imo1978_p1 (m n : ℕ)
       simp only [one_pow, Nat.one_mod, mul_one, dvd_refl, Nat.mod_mod_of_dvd] at h20
       rw [show 1 = 1 % 125 by rfl] at h20
       zify at h20
-      change _ ≡ _ [ZMOD _] at h20
       exact Int.ModEq.dvd h20.symm
     have h15 : 0 < r' := Nat.emod_pos_of_not_dvd h10
     have h13 := ih r' h12 h15 h14

@@ -112,7 +112,7 @@ unsafe def replayFromImports (module : Name) : IO Unit := do
   let (mod, region) ← readModuleData mFile
   let (_, s) ← importModulesCore mod.imports
     |>.run (s := { moduleNameSet := ({} : NameHashSet).insert module })
-  let env ← finalizeImport s #[{module}] {} 0
+  let env ← finalizeImport s #[{module}] {} 0 True True
   let mut newConstants := {}
   for name in mod.constNames, ci in mod.constants do
     newConstants := newConstants.insert name ci

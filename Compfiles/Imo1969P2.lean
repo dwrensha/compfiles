@@ -71,6 +71,7 @@ problem imo1969_p2
     ring_nf at hCcos
     ring_nf at hCsin
     rw [hCcos, hCsin]
+    ring
   have h₆: (∃ x, (f x = 0 ∧ Real.cos x = 0)) → ∀ y, f y = Ccos * Real.cos y := by
     intro g₀
     obtain ⟨x, hx₀, hx₁⟩ := g₀

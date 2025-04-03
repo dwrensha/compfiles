@@ -197,7 +197,7 @@ lemma mylemma_4
       have g₂: p = a ^ p - b.factorial := by omega
       have h₆: c ∣ p := by
         rw [g₂]
-        exact Nat.dvd_sub' h₄ h₅
+        exact Nat.dvd_sub h₄ h₅
       have h₇: c = 1 ∨ c = p := by exact (Nat.dvd_prime hp).mp h₆
       cases' h₇ with h₇₀ h₇₁
       . rw [h₇₀, mul_one] at h₂
@@ -416,7 +416,7 @@ lemma mylemma_6
   have h₄: p ^ 2 ∣ p.factorial ^ 2 := by exact pow_dvd_pow_of_dvd g₅ 2
   have g₆: p ^ 2 ∣ (2 * p).factorial := by exact dvd_trans h₄ g₄
   have h₅: p^2 ∣ b.factorial := by exact dvd_trans g₆ g₃
-  exact Nat.dvd_sub' h₃ h₅
+  exact Nat.dvd_sub h₃ h₅
 
 snip end
 

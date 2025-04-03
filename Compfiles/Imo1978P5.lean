@@ -437,7 +437,7 @@ lemma aux_1
           have g₀: sl = List.range' 1 n 1 := by rfl
           rw [← List.getD_eq_getElem sl 0 hy₄, g₀]
           rw [List.getD_eq_getElem (List.range' 1 n 1) 0 hy₃]
-          rw [List.getElem_range' (y - 1) hy₃]
+          rw [List.getElem_range' hy₃]
           apply Finset.mem_Icc.mp at hy₀
           rw [one_mul, add_comm 1, Nat.sub_add_cancel hy₀.1]
         . intros j hj₀
@@ -459,7 +459,7 @@ lemma aux_1
             refine ht sl[j] ?_
             exact List.getElem_mem hj₄
           . omega
-          . rw [List.getElem_range' j hj₃]
+          . rw [List.getElem_range' hj₃]
             omega
       . intro hx₁
         have hx₃: f (f₈ x) = f₄ x := by
@@ -480,7 +480,7 @@ lemma aux_1
           have g₀: sl = List.range' 1 n 1 := by rfl
           rw [← List.getD_eq_getElem sl 0 hy₄, g₀]
           rw [List.getD_eq_getElem (List.range' 1 n 1) 0 hy₃]
-          rw [List.getElem_range' (y - 1) hy₃]
+          rw [List.getElem_range' hy₃]
           rw [one_mul, add_comm 1, Nat.sub_add_cancel hy₀.1]
         rw [← hx₃]
         exact congrArg f hx₁

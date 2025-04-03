@@ -63,7 +63,7 @@ lemma general_chinese_remainder (xs : List ChinesePair)
     | head => exact hk1
     | tail w hw =>
       have h2 := hb z hw
-      have h4 := modulus_of_product hk2 _ (List.mem_map_of_mem ChinesePair.modulus hw)
+      have h4 := modulus_of_product hk2 _ (List.mem_map_of_mem hw)
       exact Nat.ModEq.trans h4 h2
 
 lemma list_upper_bound (l : List ℕ) : ∃ m : ℕ, ∀ x ∈ l, x ≤ m := by

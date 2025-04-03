@@ -5,13 +5,11 @@ defaultTargets = ["ProblemExtraction", "Compfiles", "buildWebpage", "extractProb
 pp.unicode.fun = true
 autoImplicit = false
 relaxedAutoImplicit = false
-weak.linter.style.multiGoal = true
 
 [moreServerOptions]
 pp.unicode.fun = true
 autoImplicit = false
 relaxedAutoImplicit = false
-linter.style.multiGoal = true
 
 [[require]]
 name = "mathlib"

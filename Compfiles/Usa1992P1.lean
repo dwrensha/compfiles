@@ -284,7 +284,7 @@ lemma lemma5 {m n : ℕ} (hm : m < 10^n) :
 
   have h_length2 : (List.replicate n 9).length = m_digits_padded.length := by
     rw [h_length]
-    exact List.length_replicate n 9
+    exact List.length_replicate
 
   have ha : List.Forall₂ (fun x1 x2 ↦ x1 ≥ x2) (List.replicate n 9) m_digits_padded := by
     unfold m_digits_padded padding
@@ -352,12 +352,10 @@ lemma lemma4 {m n : ℕ} (hm : m < 10^n) :
   rw [←digitsPadded_sum, lemma5 hm]
   have h2 := List.map_eq_zip 9 (digitsPadded 10 m n) (fun x y ↦ x - y)
   rw [h2]
-  have h3 : (List.replicate (digitsPadded 10 m n).length 9).length =
-            (digitsPadded 10 m n).length := List.length_replicate _ 9
   have h5 : List.Forall₂ (· ≥ ·)
               (List.replicate (digitsPadded 10 m n).length 9) (digitsPadded 10 m n) := by
      rw [List.forall₂_iff_get]
-     refine ⟨h3, ?_⟩
+     refine ⟨List.length_replicate, ?_⟩
      intro x1 hx1 hx2
      simp only [List.get_eq_getElem, List.getElem_replicate, ge_iff_le]
      have h7 := digitsPadded_lt_base (show 1 < 10 by norm_num) (List.getElem_mem hx2)

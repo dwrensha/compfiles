@@ -27,30 +27,29 @@ unsafe def main (_args : List String) : IO Unit := do
   initSearchPath (← findSysroot)
 
   Lean.enableInitializersExecution
-  withImportModules #[{module}] {} (trustLevel := 1024) fun env =>
-    let ctx := {fileName := "", fileMap := default}
-    let state := {env}
-    Prod.fst <$> (CoreM.toIO · ctx state) do
+  let env ← importModules #[{module}] {} (trustLevel := 1024) #[] True True
+  let ctx := {fileName := "", fileMap := default}
+  let state := {env}
+  Prod.fst <$> (CoreM.toIO · ctx state) do
+    let mst ← ProblemExtraction.extractProblems
+    for ⟨m, problem_src⟩ in mst do
+      let p ← findOLean m
+      IO.println s!"MODULE: {m}"
+      let extracted_path := olean_path_to_extracted_path problem_dir p
 
-      let mst ← ProblemExtraction.extractProblems
-      for ⟨m, problem_src⟩ in mst do
-        let p ← findOLean m
-        IO.println s!"MODULE: {m}"
-        let extracted_path := olean_path_to_extracted_path problem_dir p
+      -- TODO mkdir if necessary?
+      let h ← IO.FS.Handle.mk extracted_path IO.FS.Mode.write
+      h.putStr problem_src
+      h.flush
 
-        -- TODO mkdir if necessary?
-        let h ← IO.FS.Handle.mk extracted_path IO.FS.Mode.write
-        h.putStr problem_src
-        h.flush
+    let mst ← ProblemExtraction.extractSolutions
+    for ⟨m, src⟩ in mst do
+      let p ← findOLean m
+      let extracted_path := olean_path_to_extracted_path solution_dir p
 
-      let mst ← ProblemExtraction.extractSolutions
-      for ⟨m, src⟩ in mst do
-        let p ← findOLean m
-        let extracted_path := olean_path_to_extracted_path solution_dir p
+      -- TODO mkdir if necessary?
+      let h ← IO.FS.Handle.mk extracted_path IO.FS.Mode.write
+      h.putStr src
+      h.flush
 
-        -- TODO mkdir if necessary?
-        let h ← IO.FS.Handle.mk extracted_path IO.FS.Mode.write
-        h.putStr src
-        h.flush
-
-      pure ()
+    pure ()

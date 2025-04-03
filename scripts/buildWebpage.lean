@@ -309,274 +309,274 @@ unsafe def main (_args : List String) : IO Unit := do
   initSearchPath (← findSysroot)
 
   Lean.enableInitializersExecution
-  withImportModules #[{module}] {} (trustLevel := 1024) fun env =>
-    let ctx := {fileName := "", fileMap := default}
-    let state := {env}
-    Prod.fst <$> (CoreM.toIO · ctx state) do
-      let mst ← ProblemExtraction.extractProblems
-      let sols ← ProblemExtraction.extractSolutions
-      let mds ← ProblemExtraction.extractMetadata
+  let env ← importModules #[{module}] {} (trustLevel := 1024) #[] True True
+  let ctx := {fileName := "", fileMap := default}
+  let state := {env}
+  Prod.fst <$> (CoreM.toIO · ctx state) do
+    let mst ← ProblemExtraction.extractProblems
+    let sols ← ProblemExtraction.extractSolutions
+    let mds ← ProblemExtraction.extractMetadata
 
-      let mut infos : List ProblemInfo := []
-      for ⟨m, problem_src⟩ in mst do
-          let p ← findOLean m
-          let solutionUrl := olean_path_to_github_url p.normalize
-          IO.println s!"MODULE: {m}"
-          let problemFile := s!"problems/{m}.html"
-          let rawProblemFile := s!"problems/{m}.lean"
-          let problemUrl := s!"{←getBaseUrl}{problemFile}"
-          let rawProblemUrl := s!"{←getBaseUrl}{rawProblemFile}"
+    let mut infos : List ProblemInfo := []
+    for ⟨m, problem_src⟩ in mst do
+        let p ← findOLean m
+        let solutionUrl := olean_path_to_github_url p.normalize
+        IO.println s!"MODULE: {m}"
+        let problemFile := s!"problems/{m}.html"
+        let rawProblemFile := s!"problems/{m}.lean"
+        let problemUrl := s!"{←getBaseUrl}{problemFile}"
+        let rawProblemUrl := s!"{←getBaseUrl}{rawProblemFile}"
 
-          let mut proved := true
-          let decls ← getDeclsInPackage m
-          for d in decls do
-            let c ← getConstInfo d
-            match c.value? with
-            | none => pure ()
-            | some v => do
-                 if v.hasSorry then proved := false
+        let mut proved := true
+        let decls ← getDeclsInPackage m
+        for d in decls do
+          let c ← getConstInfo d
+          match c.value? with
+          | none => pure ()
+          | some v => do
+               if v.hasSorry then proved := false
 
-          let metadata := (mds.find? m).getD {}
-          let probId := m.toString.stripPrefix "Compfiles."
-          infos := ⟨probId,
-                    extractModuleDoc env m,
-                    metadata,
-                    solutionUrl, problemUrl, proved⟩ :: infos
+        let metadata := (mds.find? m).getD {}
+        let probId := m.toString.stripPrefix "Compfiles."
+        infos := ⟨probId,
+                  extractModuleDoc env m,
+                  metadata,
+                  solutionUrl, problemUrl, proved⟩ :: infos
 
-          let h ← IO.FS.Handle.mk ("_site/" ++ problemFile) IO.FS.Mode.write
-          h.putStrLn <| ←htmlHeader m.toString (includeHljs := true)
-          h.putStrLn <| ← topbar "none"
-          h.putStrLn s!"<h2>{probId}</h2>"
+        let h ← IO.FS.Handle.mk ("_site/" ++ problemFile) IO.FS.Mode.write
+        h.putStrLn <| ←htmlHeader m.toString (includeHljs := true)
+        h.putStrLn <| ← topbar "none"
+        h.putStrLn s!"<h2>{probId}</h2>"
 
-          h.putStrLn "<pre class=\"problem\"><code class=\"language-lean\">"
-          h.putStr (htmlEscape problem_src)
-          h.putStrLn "</code></pre>"
-          if !metadata.authors.isEmpty then
-            h.putStrLn s!"<p class='authors'>File author(s): {", ".intercalate metadata.authors}</p>"
-          if proved
-          then
-            h.putStrLn
-              s!"<p>This problem <a class=\"external\" href=\"{solutionUrl}\">has a complete formalized solution</a>.</p>"
-          else
-            h.putStrLn
-              s!"<p>This problem <a class=\"external\" href=\"{solutionUrl}\">does not yet have a complete formalized solution</a>.</p>"
-          if let .some url := metadata.importedFrom
-          then
-            -- Make github urls a little nicer to look at.
-            let text :=
-              if url.startsWith "https://github.com/"
-              then let rest := url.stripPrefix "https://github.com/"
-                   match rest.splitOn "/" with
-                   | _ns :: repo :: _blob :: _branch :: rest =>
-                      "/".intercalate (repo :: rest)
-                   | _ => url
-              else url
-            h.putStrLn s!"<p>The solution was imported from <a class=\"external\" href=\"{url}\">{text}</a>.</p>"
-
-          let hraw ← IO.FS.Handle.mk ("_site/" ++ rawProblemFile) IO.FS.Mode.write
-          hraw.putStr s!"{metadata.copyrightHeader}{problem_src}"
-
-          let rawProblemLiveUrl := s!"https://live.lean-lang.org/#url={System.Uri.escapeUri rawProblemUrl}"
-
-          h.putStrLn s!"<div>Open with the in-brower editor at live.lean-lang.org:"
-          h.putStr s!"<ul class=\"live-links\"><li><a href=\"{rawProblemLiveUrl}\">problem statement only</a></li>"
-          let soldesc := if proved then "complete solution" else "in-progress solution"
-          if let some sol_src := sols.find? m then
-            let rawSolFile := s!"problems/{m}.sol.lean"
-            let rawSolUrl := s!"{←getBaseUrl}{rawSolFile}"
-            let hraw ← IO.FS.Handle.mk ("_site/" ++ rawSolFile) IO.FS.Mode.write
-            hraw.putStr s!"{metadata.copyrightHeader}{sol_src}"
-            let rawSolLiveUrl := s!"https://live.lean-lang.org/#url={System.Uri.escapeUri rawSolUrl}"
-            h.putStr s!"<li><a href=\"{rawSolLiveUrl}\">{soldesc}</a></li>"
-          h.putStrLn "</ul></div>"
-
-          let writeupLinks := getWriteupLinks probId
-          if writeupLinks.length > 0
-          then h.putStrLn s!"<div>External resources:<ul class=\"writeups\">"
-               for ⟨url, text⟩ in writeupLinks do
-                 h.putStrLn s!"<li><a class=\"external\" href=\"{url}\">{text}</a></li>"
-               h.putStrLn s!"</ul></div>"
-
-          h.putStrLn (←footer)
-          h.putStrLn "</body></html>"
-          h.flush
-
-      let mut tag_formalized_counts : Array Nat := Array.mk [0,0,0,0,0]
-      let mut tag_solved_counts : Array Nat := Array.mk [0,0,0,0,0]
-
-      -- now write all.html
-      let num_proved := (infos.filter (·.proved)).length
-
-      let h ← IO.FS.Handle.mk "_site/all.html" IO.FS.Mode.write
-      h.putStrLn <| ←htmlHeader "Compfiles: Catalog of Math Problems Formalized in Lean"
-      h.putStrLn <| ← topbar "all"
-      h.putStrLn <| s!"<p><b>{infos.length}</b> problems have been formalized.</p>"
-      h.putStrLn <| s!"<p><b>{num_proved}</b> problems have complete formalized solutions.</p>"
-      h.putStr "<table class=\"problems\">"
-      h.putStr "<thead><tr><th>problem</th><th>solved?</th><th>tags</th></tr></thead>"
-      h.putStr "<tbody>"
-      let infos' := sortProblems infos
-      let mut infomap := Batteries.mkRBMap String ProblemInfo Ord.compare
-      let mut imoSolvedCount := 0
-      let mut imoFormalizedCount := 0
-
-      let mut usamoSolvedCount := 0
-      let mut usamoFormalizedCount := 0
-
-      for info in infos' do
-        for tag in info.metadata.tags do
-           tag_formalized_counts :=
-            tag_formalized_counts.set! tag.toNat ((tag_formalized_counts[tag.toNat]!) + 1)
-           if info.proved then
-            tag_solved_counts :=
-             tag_solved_counts.set! tag.toNat ((tag_solved_counts[tag.toNat]!) + 1)
-        infomap := infomap.insert info.name info
-        if isImoProblemId info.name then
-          imoFormalizedCount := imoFormalizedCount + 1
-          if info.proved then
-            imoSolvedCount := imoSolvedCount + 1
-          pure ()
-        if isUsamoProblemId info.name then
-          usamoFormalizedCount := usamoFormalizedCount + 1
-          if info.proved then
-            usamoSolvedCount := usamoSolvedCount + 1
-          pure ()
-        h.putStr s!"<tr>"
-
-        -- problem name
-        h.putStr s!"<td title=\"{htmlEscape info.informal}\" class=\"problem-page-link\">"
-        h.putStr s!"<a href=\"{info.problemUrl}\">{info.name}</a>"
-        h.putStr "</td>"
-
-        -- solved or not?
-        h.putStr "<td class=\"solved-col\">"
-        h.putStr s!"<a href=\"{info.solutionUrl}\">"
-        if info.proved then
-          h.putStr s!"<span title=\"complete solution\">✅</span>"
+        h.putStrLn "<pre class=\"problem\"><code class=\"language-lean\">"
+        h.putStr (htmlEscape problem_src)
+        h.putStrLn "</code></pre>"
+        if !metadata.authors.isEmpty then
+          h.putStrLn s!"<p class='authors'>File author(s): {", ".intercalate metadata.authors}</p>"
+        if proved
+        then
+          h.putStrLn
+            s!"<p>This problem <a class=\"external\" href=\"{solutionUrl}\">has a complete formalized solution</a>.</p>"
         else
-          h.putStr s!"<span title=\"incomplete or missing solution\">❌</span>"
-        h.putStr "</a>"
-        h.putStr "</td>"
+          h.putStrLn
+            s!"<p>This problem <a class=\"external\" href=\"{solutionUrl}\">does not yet have a complete formalized solution</a>.</p>"
+        if let .some url := metadata.importedFrom
+        then
+          -- Make github urls a little nicer to look at.
+          let text :=
+            if url.startsWith "https://github.com/"
+            then let rest := url.stripPrefix "https://github.com/"
+                 match rest.splitOn "/" with
+                 | _ns :: repo :: _blob :: _branch :: rest =>
+                    "/".intercalate (repo :: rest)
+                 | _ => url
+            else url
+          h.putStrLn s!"<p>The solution was imported from <a class=\"external\" href=\"{url}\">{text}</a>.</p>"
 
-        -- tags
-        h.putStr "<td class=\"tags-col\">"
-        for tg in info.metadata.tags do
-          h.putStr s!"<span class=\"problem-tag {problemTagClass tg}\">{tg}</span>"
-        h.putStr "</td>"
-        h.putStr "</tr>"
-      h.putStr "</tbody>"
-      h.putStr "</table>"
-      h.putStrLn (←footer)
-      h.putStr "</body></html>"
+        let hraw ← IO.FS.Handle.mk ("_site/" ++ rawProblemFile) IO.FS.Mode.write
+        hraw.putStr s!"{metadata.copyrightHeader}{problem_src}"
 
-      -- now write index.html
-      let h ← IO.FS.Handle.mk "_site/index.html" IO.FS.Mode.write
-      h.putStrLn <| ←htmlHeader "Compfiles: Catalog of Math Problems Formalized in Lean"
-      h.putStrLn <| ← topbar "about"
-      h.putStrLn "<p>"
-      h.putStrLn s!"Welcome to Compfiles, a collaborative repository of olympiad-style math problems that have been formalized in the <a class=\"external\" href=\"https://leanprover-community.github.io/\">Lean</a> theorem prover."
-      h.putStrLn "</p>"
-      h.putStrLn "<p>"
-      h.putStrLn <| s!"So far, <a href=\"{←getBaseUrl}all.html\"><b>{infos.length}</b> problems and <b>{num_proved}</b> solutions</a> have been formalized."
-      h.putStrLn "</p>"
-      h.putStr "<div class=\"toplevel-tables\"><table class=\"toplevel-olympiad-stats\">"
-      h.putStr "<thead><tr><th></th><th title=\"This total includes problems not added to Compfiles.\">Total</th><th>Formalized</th><th>Solved</th></tr></thead>"
-      h.putStr "<tbody>"
-      h.putStr s!"<tr><th><a href=\"imo.html\">IMO</a></th><td>{totalImoProblemCount}</td><td>{imoFormalizedCount}</td><td>{imoSolvedCount}</td></tr>"
-      h.putStr s!"<tr><th><a href=\"usamo.html\">USAMO</a></th><td>{totalUsamoProblemCount}</td><td>{usamoFormalizedCount}</td><td>{usamoSolvedCount}</td></tr>"
-      h.putStr "</tbody>"
-      h.putStr "</table>"
+        let rawProblemLiveUrl := s!"https://live.lean-lang.org/#url={System.Uri.escapeUri rawProblemUrl}"
 
-      h.putStr "<table class=\"toplevel-tag-stats\">"
-      h.putStr "<thead><tr><th></th><th>Formalized</th><th>Solved</th></tr></thead>"
-      h.putStr "<tbody>"
-      h.putStr "<tr><th>Algebra</th>"
-      h.putStr s!"<td>{tag_formalized_counts[ProblemExtraction.ProblemTag.Algebra.toNat]!}</td>"
-      h.putStr s!"<td>{tag_solved_counts[ProblemExtraction.ProblemTag.Algebra.toNat]!}</td>"
+        h.putStrLn s!"<div>Open with the in-brower editor at live.lean-lang.org:"
+        h.putStr s!"<ul class=\"live-links\"><li><a href=\"{rawProblemLiveUrl}\">problem statement only</a></li>"
+        let soldesc := if proved then "complete solution" else "in-progress solution"
+        if let some sol_src := sols.find? m then
+          let rawSolFile := s!"problems/{m}.sol.lean"
+          let rawSolUrl := s!"{←getBaseUrl}{rawSolFile}"
+          let hraw ← IO.FS.Handle.mk ("_site/" ++ rawSolFile) IO.FS.Mode.write
+          hraw.putStr s!"{metadata.copyrightHeader}{sol_src}"
+          let rawSolLiveUrl := s!"https://live.lean-lang.org/#url={System.Uri.escapeUri rawSolUrl}"
+          h.putStr s!"<li><a href=\"{rawSolLiveUrl}\">{soldesc}</a></li>"
+        h.putStrLn "</ul></div>"
+
+        let writeupLinks := getWriteupLinks probId
+        if writeupLinks.length > 0
+        then h.putStrLn s!"<div>External resources:<ul class=\"writeups\">"
+             for ⟨url, text⟩ in writeupLinks do
+               h.putStrLn s!"<li><a class=\"external\" href=\"{url}\">{text}</a></li>"
+             h.putStrLn s!"</ul></div>"
+
+        h.putStrLn (←footer)
+        h.putStrLn "</body></html>"
+        h.flush
+
+    let mut tag_formalized_counts : Array Nat := Array.mk [0,0,0,0,0]
+    let mut tag_solved_counts : Array Nat := Array.mk [0,0,0,0,0]
+
+    -- now write all.html
+    let num_proved := (infos.filter (·.proved)).length
+
+    let h ← IO.FS.Handle.mk "_site/all.html" IO.FS.Mode.write
+    h.putStrLn <| ←htmlHeader "Compfiles: Catalog of Math Problems Formalized in Lean"
+    h.putStrLn <| ← topbar "all"
+    h.putStrLn <| s!"<p><b>{infos.length}</b> problems have been formalized.</p>"
+    h.putStrLn <| s!"<p><b>{num_proved}</b> problems have complete formalized solutions.</p>"
+    h.putStr "<table class=\"problems\">"
+    h.putStr "<thead><tr><th>problem</th><th>solved?</th><th>tags</th></tr></thead>"
+    h.putStr "<tbody>"
+    let infos' := sortProblems infos
+    let mut infomap := Batteries.mkRBMap String ProblemInfo Ord.compare
+    let mut imoSolvedCount := 0
+    let mut imoFormalizedCount := 0
+
+    let mut usamoSolvedCount := 0
+    let mut usamoFormalizedCount := 0
+
+    for info in infos' do
+      for tag in info.metadata.tags do
+         tag_formalized_counts :=
+          tag_formalized_counts.set! tag.toNat ((tag_formalized_counts[tag.toNat]!) + 1)
+         if info.proved then
+          tag_solved_counts :=
+           tag_solved_counts.set! tag.toNat ((tag_solved_counts[tag.toNat]!) + 1)
+      infomap := infomap.insert info.name info
+      if isImoProblemId info.name then
+        imoFormalizedCount := imoFormalizedCount + 1
+        if info.proved then
+          imoSolvedCount := imoSolvedCount + 1
+        pure ()
+      if isUsamoProblemId info.name then
+        usamoFormalizedCount := usamoFormalizedCount + 1
+        if info.proved then
+          usamoSolvedCount := usamoSolvedCount + 1
+        pure ()
+      h.putStr s!"<tr>"
+
+      -- problem name
+      h.putStr s!"<td title=\"{htmlEscape info.informal}\" class=\"problem-page-link\">"
+      h.putStr s!"<a href=\"{info.problemUrl}\">{info.name}</a>"
+      h.putStr "</td>"
+
+      -- solved or not?
+      h.putStr "<td class=\"solved-col\">"
+      h.putStr s!"<a href=\"{info.solutionUrl}\">"
+      if info.proved then
+        h.putStr s!"<span title=\"complete solution\">✅</span>"
+      else
+        h.putStr s!"<span title=\"incomplete or missing solution\">❌</span>"
+      h.putStr "</a>"
+      h.putStr "</td>"
+
+      -- tags
+      h.putStr "<td class=\"tags-col\">"
+      for tg in info.metadata.tags do
+        h.putStr s!"<span class=\"problem-tag {problemTagClass tg}\">{tg}</span>"
+      h.putStr "</td>"
       h.putStr "</tr>"
-      h.putStr "<tr><th>Number Theory</th>"
-      h.putStr s!"<td>{tag_formalized_counts[ProblemExtraction.ProblemTag.NumberTheory.toNat]!}</td>"
-      h.putStr s!"<td>{tag_solved_counts[ProblemExtraction.ProblemTag.NumberTheory.toNat]!}</td>"
-      h.putStr "</tr>"
-      h.putStr "<tr><th>Combinatorics</th>"
-      h.putStr s!"<td>{tag_formalized_counts[ProblemExtraction.ProblemTag.Combinatorics.toNat]!}</td>"
-      h.putStr s!"<td>{tag_solved_counts[ProblemExtraction.ProblemTag.Combinatorics.toNat]!}</td>"
-      h.putStr "</tr>"
-      h.putStr "<tr><th>Geometry</th>"
-      h.putStr s!"<td>{tag_formalized_counts[ProblemExtraction.ProblemTag.Geometry.toNat]!}</td>"
-      h.putStr s!"<td>{tag_solved_counts[ProblemExtraction.ProblemTag.Geometry.toNat]!}</td>"
-      h.putStr "</tr>"
-      h.putStr "</tbody>"
-      h.putStr "</table></div>"
+    h.putStr "</tbody>"
+    h.putStr "</table>"
+    h.putStrLn (←footer)
+    h.putStr "</body></html>"
 
-      faq h
+    -- now write index.html
+    let h ← IO.FS.Handle.mk "_site/index.html" IO.FS.Mode.write
+    h.putStrLn <| ←htmlHeader "Compfiles: Catalog of Math Problems Formalized in Lean"
+    h.putStrLn <| ← topbar "about"
+    h.putStrLn "<p>"
+    h.putStrLn s!"Welcome to Compfiles, a collaborative repository of olympiad-style math problems that have been formalized in the <a class=\"external\" href=\"https://leanprover-community.github.io/\">Lean</a> theorem prover."
+    h.putStrLn "</p>"
+    h.putStrLn "<p>"
+    h.putStrLn <| s!"So far, <a href=\"{←getBaseUrl}all.html\"><b>{infos.length}</b> problems and <b>{num_proved}</b> solutions</a> have been formalized."
+    h.putStrLn "</p>"
+    h.putStr "<div class=\"toplevel-tables\"><table class=\"toplevel-olympiad-stats\">"
+    h.putStr "<thead><tr><th></th><th title=\"This total includes problems not added to Compfiles.\">Total</th><th>Formalized</th><th>Solved</th></tr></thead>"
+    h.putStr "<tbody>"
+    h.putStr s!"<tr><th><a href=\"imo.html\">IMO</a></th><td>{totalImoProblemCount}</td><td>{imoFormalizedCount}</td><td>{imoSolvedCount}</td></tr>"
+    h.putStr s!"<tr><th><a href=\"usamo.html\">USAMO</a></th><td>{totalUsamoProblemCount}</td><td>{usamoFormalizedCount}</td><td>{usamoSolvedCount}</td></tr>"
+    h.putStr "</tbody>"
+    h.putStr "</table>"
 
-      h.putStrLn (←footer)
-      h.putStr "</body></html>"
+    h.putStr "<table class=\"toplevel-tag-stats\">"
+    h.putStr "<thead><tr><th></th><th>Formalized</th><th>Solved</th></tr></thead>"
+    h.putStr "<tbody>"
+    h.putStr "<tr><th>Algebra</th>"
+    h.putStr s!"<td>{tag_formalized_counts[ProblemExtraction.ProblemTag.Algebra.toNat]!}</td>"
+    h.putStr s!"<td>{tag_solved_counts[ProblemExtraction.ProblemTag.Algebra.toNat]!}</td>"
+    h.putStr "</tr>"
+    h.putStr "<tr><th>Number Theory</th>"
+    h.putStr s!"<td>{tag_formalized_counts[ProblemExtraction.ProblemTag.NumberTheory.toNat]!}</td>"
+    h.putStr s!"<td>{tag_solved_counts[ProblemExtraction.ProblemTag.NumberTheory.toNat]!}</td>"
+    h.putStr "</tr>"
+    h.putStr "<tr><th>Combinatorics</th>"
+    h.putStr s!"<td>{tag_formalized_counts[ProblemExtraction.ProblemTag.Combinatorics.toNat]!}</td>"
+    h.putStr s!"<td>{tag_solved_counts[ProblemExtraction.ProblemTag.Combinatorics.toNat]!}</td>"
+    h.putStr "</tr>"
+    h.putStr "<tr><th>Geometry</th>"
+    h.putStr s!"<td>{tag_formalized_counts[ProblemExtraction.ProblemTag.Geometry.toNat]!}</td>"
+    h.putStr s!"<td>{tag_solved_counts[ProblemExtraction.ProblemTag.Geometry.toNat]!}</td>"
+    h.putStr "</tr>"
+    h.putStr "</tbody>"
+    h.putStr "</table></div>"
 
-      let h ← IO.FS.Handle.mk "_site/imo.html" IO.FS.Mode.write
-      h.putStrLn <| ←htmlHeader "Compfiles: Catalog of Math Problems Formalized in Lean"
-      h.putStrLn <| ← topbar "imo"
-      h.putStrLn <| s!"<p>Since 1959, the International Mathematical Olympiad has included  a total of <b>{totalImoProblemCount}</b> problems.</p>"
-      let formalizedPercent := stringifyPercent <|
-        (OfNat.ofNat imoFormalizedCount) / (OfNat.ofNat totalImoProblemCount)
-      h.putStrLn <| s!"<p><b>{imoFormalizedCount}</b> problems have been formalized ({formalizedPercent}).</p>"
-      let solvedPercent := stringifyPercent <|
-        (OfNat.ofNat imoSolvedCount) / (OfNat.ofNat totalImoProblemCount)
-      h.putStrLn <| s!"<p><b>{imoSolvedCount}</b> problems have complete formalized solutions ({solvedPercent}).</p>"
-      h.putStr "<table class=\"full-problem-grid\">"
-      for ⟨year, count⟩ in imoProblemCounts do
-        h.putStr s!"<tr><td class=\"year\">{year}</td>"
-        for ii in List.range count do
-          let idx := ii + 1
-          let name := s!"Imo{year}P{idx}"
-          let path := s!"problems/Compfiles.{name}.html"
-          let cls ← match infomap.find? name with
-          | .some info =>
-            pure (if info.proved then "proved" else "formalized")
-          | .none =>
-            generateProblemStubFile path name
-            pure "todo"
+    faq h
 
-          h.putStr s!"<td class=\"{cls}\"><a href=\"{path}\">P{idx}</a></td>"
-          pure ()
-        h.putStrLn "</tr>"
-      h.putStr "</table>"
+    h.putStrLn (←footer)
+    h.putStr "</body></html>"
 
-      h.putStrLn (←footer)
-      h.putStr "</body></html>"
-      pure ()
+    let h ← IO.FS.Handle.mk "_site/imo.html" IO.FS.Mode.write
+    h.putStrLn <| ←htmlHeader "Compfiles: Catalog of Math Problems Formalized in Lean"
+    h.putStrLn <| ← topbar "imo"
+    h.putStrLn <| s!"<p>Since 1959, the International Mathematical Olympiad has included  a total of <b>{totalImoProblemCount}</b> problems.</p>"
+    let formalizedPercent := stringifyPercent <|
+      (OfNat.ofNat imoFormalizedCount) / (OfNat.ofNat totalImoProblemCount)
+    h.putStrLn <| s!"<p><b>{imoFormalizedCount}</b> problems have been formalized ({formalizedPercent}).</p>"
+    let solvedPercent := stringifyPercent <|
+      (OfNat.ofNat imoSolvedCount) / (OfNat.ofNat totalImoProblemCount)
+    h.putStrLn <| s!"<p><b>{imoSolvedCount}</b> problems have complete formalized solutions ({solvedPercent}).</p>"
+    h.putStr "<table class=\"full-problem-grid\">"
+    for ⟨year, count⟩ in imoProblemCounts do
+      h.putStr s!"<tr><td class=\"year\">{year}</td>"
+      for ii in List.range count do
+        let idx := ii + 1
+        let name := s!"Imo{year}P{idx}"
+        let path := s!"problems/Compfiles.{name}.html"
+        let cls ← match infomap.find? name with
+        | .some info =>
+          pure (if info.proved then "proved" else "formalized")
+        | .none =>
+          generateProblemStubFile path name
+          pure "todo"
 
-      let h ← IO.FS.Handle.mk "_site/usamo.html" IO.FS.Mode.write
-      h.putStrLn <| ←htmlHeader "Compfiles: Catalog of Math Problems Formalized in Lean"
-      h.putStrLn <| ← topbar "usamo"
-      h.putStrLn <| s!"<p>Since 1972, the USA Mathematical Olympiad has included a total of <b>{totalUsamoProblemCount}</b> problems.</p>"
-      let formalizedPercent := stringifyPercent <|
-        (OfNat.ofNat usamoFormalizedCount) / (OfNat.ofNat totalUsamoProblemCount)
-      h.putStrLn <| s!"<p><b>{usamoFormalizedCount}</b> problems have been formalized ({formalizedPercent}).</p>"
-      let solvedPercent := stringifyPercent <|
-        (OfNat.ofNat usamoSolvedCount) / (OfNat.ofNat totalUsamoProblemCount)
-      h.putStrLn <| s!"<p><b>{usamoSolvedCount}</b> problems have complete formalized solutions ({solvedPercent}).</p>"
-      h.putStr "<table class=\"full-problem-grid\">"
-      for ⟨year, count⟩ in usamoProblemCounts do
-        h.putStr s!"<tr><td class=\"year\">{year}</td>"
-        for ii in List.range count do
-          let idx := ii + 1
-          let name := s!"Usa{year}P{idx}"
-          let path := s!"problems/Compfiles.{name}.html"
+        h.putStr s!"<td class=\"{cls}\"><a href=\"{path}\">P{idx}</a></td>"
+        pure ()
+      h.putStrLn "</tr>"
+    h.putStr "</table>"
 
-          let cls ← match infomap.find? name with
-          | .some info =>
-             pure (if info.proved then "proved" else "formalized")
-          | .none =>
-             generateProblemStubFile path name
-             pure "todo"
+    h.putStrLn (←footer)
+    h.putStr "</body></html>"
+    pure ()
 
-          h.putStr s!"<td class=\"{cls}\"><a href=\"{path}\">P{idx}</a></td>"
-          pure ()
-        h.putStrLn "</tr>"
-      h.putStr "</table>"
+    let h ← IO.FS.Handle.mk "_site/usamo.html" IO.FS.Mode.write
+    h.putStrLn <| ←htmlHeader "Compfiles: Catalog of Math Problems Formalized in Lean"
+    h.putStrLn <| ← topbar "usamo"
+    h.putStrLn <| s!"<p>Since 1972, the USA Mathematical Olympiad has included a total of <b>{totalUsamoProblemCount}</b> problems.</p>"
+    let formalizedPercent := stringifyPercent <|
+      (OfNat.ofNat usamoFormalizedCount) / (OfNat.ofNat totalUsamoProblemCount)
+    h.putStrLn <| s!"<p><b>{usamoFormalizedCount}</b> problems have been formalized ({formalizedPercent}).</p>"
+    let solvedPercent := stringifyPercent <|
+      (OfNat.ofNat usamoSolvedCount) / (OfNat.ofNat totalUsamoProblemCount)
+    h.putStrLn <| s!"<p><b>{usamoSolvedCount}</b> problems have complete formalized solutions ({solvedPercent}).</p>"
+    h.putStr "<table class=\"full-problem-grid\">"
+    for ⟨year, count⟩ in usamoProblemCounts do
+      h.putStr s!"<tr><td class=\"year\">{year}</td>"
+      for ii in List.range count do
+        let idx := ii + 1
+        let name := s!"Usa{year}P{idx}"
+        let path := s!"problems/Compfiles.{name}.html"
 
-      h.putStrLn (←footer)
-      h.putStr "</body></html>"
-      pure ()
+        let cls ← match infomap.find? name with
+        | .some info =>
+           pure (if info.proved then "proved" else "formalized")
+        | .none =>
+           generateProblemStubFile path name
+           pure "todo"
+
+        h.putStr s!"<td class=\"{cls}\"><a href=\"{path}\">P{idx}</a></td>"
+        pure ()
+      h.putStrLn "</tr>"
+    h.putStr "</table>"
+
+    h.putStrLn (←footer)
+    h.putStr "</body></html>"
+    pure ()
