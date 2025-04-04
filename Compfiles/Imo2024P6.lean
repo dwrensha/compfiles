@@ -197,7 +197,7 @@ lemma add_fExample (x y : ℚ) : x + fExample y = ⌊x⌋ + ⌊y⌋ + (Int.fract
   abel
 
 lemma fExample_int_add (x : ℤ) (y : ℚ) : fExample (x + y) = x + fExample y := by
-  simp_rw [fExample, Int.floor_int_add, Int.fract_int_add, ← add_sub_assoc]
+  simp_rw [fExample, Int.floor_intCast_add, Int.fract_intCast_add, ← add_sub_assoc]
   exact_mod_cast rfl
 
 lemma fExample_of_mem_Ico {x : ℚ} (h : x ∈ Set.Ico 0 1) : fExample x = -x := by
@@ -232,7 +232,7 @@ lemma floor_fExample (x : ℚ) :
   · simp only [h, if_true, fExample, sub_zero, Int.floor_intCast]
     rw [Int.fract, sub_eq_zero] at h
     exact h.symm
-  · simp only [h, if_false, fExample, sub_eq_add_neg, Int.floor_int_add, Int.cast_add,
+  · simp only [h, if_false, fExample, sub_eq_add_neg, Int.floor_intCast_add, Int.cast_add,
                add_right_inj]
     suffices ⌊-Int.fract x⌋ = -1 from mod_cast this
     rw [Int.floor_eq_iff]
