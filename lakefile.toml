@@ -6,11 +6,6 @@ pp.unicode.fun = true
 autoImplicit = false
 relaxedAutoImplicit = false
 
-[moreServerOptions]
-pp.unicode.fun = true
-autoImplicit = false
-relaxedAutoImplicit = false
-
 [[require]]
 name = "mathlib"
 git = "https://github.com/leanprover-community/mathlib4"
