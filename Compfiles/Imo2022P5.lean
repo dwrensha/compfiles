@@ -217,9 +217,9 @@ lemma mylemma_4
 
 
 lemma mylemma_53
-  (p: ℕ)
-  (hp5: 5 ≤ p) :
-  ((↑p:ℤ) ^ p ≡ ↑p * (↑p + 1) * (-1) ^ (p - 1) + (-1) ^ p [ZMOD (↑p + 1) ^ 2]) := by
+    (p: ℕ)
+    (hp5: 5 ≤ p) :
+    (↑p:ℤ) ^ p ≡ ↑p * (↑p + 1) * (-1) ^ (p - 1) + (-1) ^ p [ZMOD (↑p + 1) ^ 2] := by
   -- have h₁: ↑p ^ p = Finset.range -- binomial expansion
   -- take the first two elements out
   -- show that all the other elements are individually divisible by (p+1)^2
@@ -327,9 +327,9 @@ lemma mylemma_52
   omega
 
 lemma mylemma_51
-  (p: ℕ)
-  (hpl: 5 ≤ p) :
-  (p + p.factorial < p ^ p) := by
+    (p : ℕ)
+    (hpl : 5 ≤ p) :
+    p + p.factorial < p ^ p := by
   -- we use induction
   refine Nat.le_induction ?_ ?_ p (hpl)
   . exact Nat.lt_of_sub_eq_succ rfl
@@ -345,12 +345,12 @@ lemma mylemma_51
     omega
 
 lemma mylemma_5
-  (b p: ℕ)
-  (hp: Nat.Prime p)
-  (hbp: p ≤ b)
-  (h₁: p ^ p = b.factorial + p)
-  (hp5: 5 ≤ p) :
-  (False) := by
+    (b p : ℕ)
+    (hp : Nat.Prime p)
+    (hbp : p ≤ b)
+    (h₁ : p ^ p = b.factorial + p)
+    (hp5 : 5 ≤ p) :
+    False := by
   -- first prove that b = p cannot be
   by_cases h₄: b = p
   . have h₅: p + p.factorial < p^p := by exact mylemma_51 p hp5
