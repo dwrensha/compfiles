@@ -466,8 +466,8 @@ problem imo2022_p5 (a b p : ℕ) (ha : 0 < a) (hb : 0 < b) (hp : p.Prime) :
   . push_neg at hbp
     have h₂: p ∣ a := by exact mylemma_3 a b p hp h₁ hbp
     by_cases hb2p: b < 2*p
-    . have h₃: a = p := by exact mylemma_4 a b p ⟨ha, hb⟩ hp h₁ hbp h₂ hb2p
-      rw [h₃] at h₁
+    . have h₃ : a = p := by exact mylemma_4 a b p ⟨ha, hb⟩ hp h₁ hbp h₂ hb2p
+      rw [h₃] at h₁ ⊢
       by_cases hp5: p < 5
       . have h₄: 2 ≤ p := by exact Nat.Prime.two_le hp
         interval_cases p
@@ -479,10 +479,9 @@ problem imo2022_p5 (a b p : ℕ) (ha : 0 < a) (hb : 0 < b) (hp : p.Prime) :
           have h₅: b = 2 := by
             refine (Nat.factorial_inj ?_).mp h₄
             omega
-          rw [h₃,h₅]
+          rw [h₅]
         . right
           norm_num at h₁
-          rw [h₃]
           have h₄: b.factorial = 24 := by omega
           have g₅: (4:ℕ).factorial = 24 := by exact rfl
           rw [← g₅] at h₄
