@@ -215,7 +215,6 @@ lemma mylemma_4
       omega
   exact h₃.symm
 
-
 lemma mylemma_53
     (p: ℕ)
     (hp5: 5 ≤ p) :
@@ -234,7 +233,7 @@ lemma mylemma_53
     rw [sub_eq_add_neg]
     rw [add_pow ((↑p:ℤ) + 1) (-1:ℤ)]
     have g₀: 2 ≤ p + 1 := by omega
-    have g₁: (1:ℕ) ≤ 2 := one_le_two
+    have g₁: 1 ≤ 2 := one_le_two
     rw [← Finset.sum_range_add_sum_Ico _ g₀]
     rw [← Finset.sum_range_add_sum_Ico _ g₁]
     simp only [Finset.range_one, Finset.sum_singleton, Nat.Ico_succ_singleton]
