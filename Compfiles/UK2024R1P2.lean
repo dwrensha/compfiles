@@ -9,7 +9,7 @@ import ProblemExtraction
 
 problem_file { tags := [.Algebra] }
 
-/-
+/-!
 # British Mathematical Olympiad 2024, Round 1, Problem 2
 
 The sequence of integers a₀, a₁, ⋯ has the property that for each
