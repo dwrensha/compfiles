@@ -76,10 +76,7 @@ lemma dyadic {k b : ℕ} (h1 : 1 ≤ k) (h2 : k ≤ b) : ∃ i, b < 2^i * k ∧ 
     have h3 : 2^((b/k).log2) ≤ b/k := Nat.log2_self_le hbk
     rw [mul_assoc]
     apply Nat.mul_le_mul_left 2
-    calc
-    _ ≤  (b/k) * k := Nat.mul_le_mul_right k h3
-    _ ≤ b := by rw [mul_comm]; apply mul_div_le
-
+    exact (Nat.le_div_iff_mul_le h1).mp h3
 
 lemma key_lemma  {m b: ℕ }
   (h: ∀ k, b < k → k ≤ 2*b → Coprime m k) :
