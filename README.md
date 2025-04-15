@@ -94,6 +94,7 @@ Some problems were imported from external sources:
 * Gian Sanjaya's [Lean 3](https://github.com/mortarsanjaya/imo-A-and-N) and
   [Lean 4](https://github.com/mortarsanjaya/IMOSLLean4) formalizations of
   IMO shortlist problems.
+* Joseph Myers's [IMOLean](https://github.com/jsm28/IMOLean/tree/main) repository.
 
 ## videos
 
