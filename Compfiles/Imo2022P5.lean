@@ -70,9 +70,9 @@ lemma mylemma_42
   exact gt_of_ge_of_gt h₃ h₂
 
 lemma mylemma_43 (p: ℕ) :
-    ∏ x ∈ Finset.Ico p (2 * p - 1), ( x + 1)
+    ∏ x ∈ Finset.Ico p (2 * p - 1), (x + 1)
       = ∏ x ∈ Finset.range (p - 1), (p + (x + 1)) := by
-  rw [Finset.prod_Ico_eq_prod_range _ (p) (2 * p - 1)]
+  rw [Finset.prod_Ico_eq_prod_range _ p (2 * p - 1)]
   have h₀: 2 * p - 1 - p = p - 1 := by omega
   rw [h₀]
   exact rfl
