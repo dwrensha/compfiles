@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Roozbeh Yousefzadeh, David Renshaw
 -/
 
+import Mathlib.Analysis.Convex.StrictConvexBetween
 import Mathlib.Geometry.Euclidean.Triangle
 import Mathlib.Tactic
 
@@ -164,7 +165,7 @@ problem imo1983_p6
     (T : Affine.Triangle ℝ (EuclideanSpace ℝ (Fin 2)))
     (a b c : ℝ)
     (ha : a = dist (T.points 1) (T.points 2))
-    (hb : b = dist (T.points 2) (T.points 0))
+    (hb : b = dist (T.points 0) (T.points 2))
     (hc : c = dist (T.points 0) (T.points 1)) :
     0 ≤ a^2 * b * (a - b) + b^2 * c * (b - c) + c^2 * a * (c - a)
     ∧ (0 = a^2 * b * (a - b) + b^2 * c * (b - c) + c^2 * a * (c - a) ↔
@@ -178,11 +179,11 @@ problem imo1983_p6
     rwa [ha]
 
   have hb' : 0 < b := by
-    have ht1 : T.points 2 ≠ T.points 0 := by
+    have ht1 : T.points 0 ≠ T.points 2 := by
       intro H
       have := AffineIndependent.injective T.independent H
       simp_all only [Fin.isValue, Nat.reduceAdd, Fin.reduceEq]
-    have : 0 < dist (T.points 2) (T.points 0) := dist_pos.mpr ht1
+    have : 0 < dist (T.points 0) (T.points 2) := dist_pos.mpr ht1
     rwa [hb]
 
   have hc' : 0 < c := by
@@ -193,7 +194,19 @@ problem imo1983_p6
     have : 0 < dist (T.points 0) (T.points 1) := dist_pos.mpr ht1
     rwa [hc]
 
-  have h₁ : c < a + b := by sorry
+  have h₁ : c < a + b := by
+    have h10 : c ≤ a + b := by
+      have := dist_triangle (T.points 0) (T.points 2) (T.points 1)
+      rw [dist_comm (T.points 2)] at this
+      linarith
+    suffices H : c ≠ a + b from lt_of_le_of_ne h10 H
+    intro H
+    symm at H
+    subst ha hb hc
+    rw [dist_comm (T.points 0), dist_comm (T.points 0)] at H
+    rw [dist_add_dist_eq_iff] at H
+    rw [←mem_segment_iff_wbtw] at H
+    sorry
   have h₂ : b < a + c := by sorry
   have h₃ : a < b + c := by sorry
 
