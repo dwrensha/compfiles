@@ -18,14 +18,24 @@ problem_file {
 /-!
 # International Mathematical Olympiad 1987, Problem 1
 
-Let $p_{n, k}$ be the number of permutations of a set of cardinality `n ≥ 1` that fix exactly `k`
-elements. Prove that $∑_{k=0}^n k p_{n,k}=n!$.
+Let $p_{n, k}$ be the number of permutations of a set of cardinality `n ≥ 1`
+that fix exactly `k` elements. Prove that $∑_{k=0}^n k p_{n,k}=n!$.
 -/
 
 namespace Imo1987P1
 
+/-- Given `α : Type*` and `k : ℕ`, `fiber α k` is the set of permutations of
+    `α` with exactly `k` fixed points. -/
+def fiber (α : Type*) [Fintype α] [DecidableEq α] (k : ℕ) : Set (Equiv.Perm α) :=
+  {σ : Equiv.Perm α | Fintype.card (Function.fixedPoints σ) = k}
+
+instance {k : ℕ} (α : Type*) [Fintype α] [DecidableEq α] :
+  Fintype (fiber α k) := by unfold fiber; infer_instance
+
+/-- `p α k` is the number of permutations of `α` with exactly `k` fixed points. -/
+def p (α : Type*) [Fintype α] [DecidableEq α] (k : ℕ) : ℕ := Fintype.card (fiber α k)
+
 open scoped Nat
-open Finset (range)
 
 snip begin
 section generalization
@@ -66,20 +76,9 @@ theorem card_fixed_points :
     ext; simp
   simp [this]
 
-/-- Given `α : Type*` and `k : ℕ`, `fiber α k` is the set of permutations of `α` with exactly `k`
-fixed points. -/
-def fiber (k : ℕ) : Set (Perm α) :=
-  {σ : Perm α | card (fixedPoints σ) = k}
-
-instance {k : ℕ} : Fintype (fiber α k) := by unfold fiber; infer_instance
-
 @[simp]
 theorem mem_fiber {σ : Perm α} {k : ℕ} : σ ∈ fiber α k ↔ card (fixedPoints σ) = k :=
   Iff.rfl
-
-/-- `p α k` is the number of permutations of `α` with exactly `k` fixed points. -/
-def p (k : ℕ) : ℕ :=
-  card (fiber α k)
 
 /-- The set of triples `(k ≤ card α, σ ∈ fiber α k, x ∈ fixedPoints σ)` is equivalent
 to the set of pairs `(x : α, σ : Perm α)` such that `σ x = x`. The equivalence sends
@@ -100,21 +99,21 @@ def fixedPointsEquiv' :
   right_inv := fun ⟨⟨x, σ⟩, h⟩ => rfl
 
 /-- Main statement for any `(α : Type*) [Fintype α]`. -/
-theorem main_fintype : ∑ k ∈ range (card α + 1), k * p α k = card α * (card α - 1)! := by
+theorem main_fintype :
+    ∑ k ∈ Finset.range (card α + 1), k * p α k = card α * (card α - 1)! := by
   have A : ∀ (k) (σ : fiber α k), card (fixedPoints (↑σ : Perm α)) = k := fun k σ => σ.2
   simpa [A, ← Fin.sum_univ_eq_sum_range, -card_ofFinset, Finset.card_univ, card_fixed_points,
     mul_comm] using card_congr (fixedPointsEquiv' α)
 
 /-- Main statement for permutations of `Fin n`, a version that works for `n = 0`. -/
-theorem main₀ (n : ℕ) : ∑ k ∈ range (n + 1), k * p (Fin n) k = n * (n - 1)! := by
+theorem main₀ (n : ℕ) : ∑ k ∈ Finset.range (n + 1), k * p (Fin n) k = n * (n - 1)! := by
   simpa using main_fintype (Fin n)
 
 end generalization
 snip end
 
-
-problem imo1987_p1 {n : ℕ} (hn : 1 ≤ n) : ∑ k ∈ range (n + 1), k * p (Fin n) k = n ! := by
+problem imo1987_p1 {n : ℕ} (hn : 1 ≤ n) :
+    ∑ k ∈ Finset.range (n + 1), k * p (Fin n) k = n ! := by
   rw [main₀, Nat.mul_factorial_pred (Nat.one_le_iff_ne_zero.mp hn)]
-
 
 end Imo1987P1
