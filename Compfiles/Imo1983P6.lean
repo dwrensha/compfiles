@@ -206,7 +206,29 @@ problem imo1983_p6
     rw [dist_comm (T.points 0), dist_comm (T.points 0)] at H
     rw [dist_add_dist_eq_iff] at H
     rw [←mem_segment_iff_wbtw] at H
-    sorry
+    simp only [segment, Fin.isValue, exists_and_left, Set.mem_setOf_eq] at H
+    obtain ⟨a, ha1, t, ht, ha3, ha4⟩ := H
+    let w : Fin 3 -> ℝ
+      | 0 => t
+      | 1 => a
+      | 2 => -1
+    have hw0 : ∑ i : Fin 3, w i = 0 := by
+      rw [Fin.sum_univ_three]
+      simp only [w]
+      linarith
+    have hw1 : ∑ i, w i • T.points i = 0 := by
+      rw [Fin.sum_univ_three]
+      simp only [w, neg_smul, one_smul]
+      rw [add_comm] at ha4
+      exact add_neg_eq_zero.mpr ha4
+    have h2 := AffineIndependent.eq_zero_of_sum_eq_zero T.independent hw0 hw1
+    by_cases ht0 : t = 0
+    · specialize h2 1 (by decide)
+      simp only [w] at h2
+      linarith
+    · specialize h2 0 (by decide)
+      simp only [w] at h2
+      contradiction
   have h₂ : b < a + c := by sorry
   have h₃ : a < b + c := by sorry
 
