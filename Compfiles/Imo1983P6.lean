@@ -174,60 +174,30 @@ snip end
 
 determine EqualityCondition (a b c : ℝ) : Prop := a = b ∧ a = c
 
-problem imo1983_p6
-    (T : Affine.Triangle ℝ (EuclideanSpace ℝ (Fin 2)))
-    (a b c : ℝ)
-    (ha : a = dist (T.points 1) (T.points 2))
-    (hb : b = dist (T.points 0) (T.points 2))
-    (hc : c = dist (T.points 0) (T.points 1)) :
-    0 ≤ a^2 * b * (a - b) + b^2 * c * (b - c) + c^2 * a * (c - a)
-    ∧ (0 = a^2 * b * (a - b) + b^2 * c * (b - c) + c^2 * a * (c - a) ↔
-       EqualityCondition a b c) := by
-  have ha' : 0 < a := by
-    have ht1 : T.points 1 ≠ T.points 2 := by
-      intro H
-      have := AffineIndependent.injective T.independent H
-      simp_all only [Fin.isValue, Nat.reduceAdd, Fin.reduceEq]
-    have : 0 < dist (T.points 1) (T.points 2) := dist_pos.mpr ht1
-    rwa [ha]
-
-  have hb' : 0 < b := by
-    have ht1 : T.points 0 ≠ T.points 2 := by
-      intro H
-      have := AffineIndependent.injective T.independent H
-      simp_all only [Fin.isValue, Nat.reduceAdd, Fin.reduceEq]
-    have : 0 < dist (T.points 0) (T.points 2) := dist_pos.mpr ht1
-    rwa [hb]
-
-  have hc' : 0 < c := by
-    have ht1 : T.points 0 ≠ T.points 1 := by
-      intro H
-      have := AffineIndependent.injective T.independent H
-      simp_all only [Fin.isValue, Nat.reduceAdd, Fin.reduceEq]
-    have : 0 < dist (T.points 0) (T.points 1) := dist_pos.mpr ht1
-    rwa [hc]
-
+problem imo1983_p6 (T : Affine.Triangle ℝ (EuclideanSpace ℝ (Fin 2))) :
+    let a := dist (T.points 1) (T.points 2)
+    let b := dist (T.points 0) (T.points 2)
+    let c := dist (T.points 0) (T.points 1)
+    0 ≤ a^2 * b * (a - b) + b^2 * c * (b - c) + c^2 * a * (c - a) ∧
+    (0 = a^2 * b * (a - b) + b^2 * c * (b - c) + c^2 * a * (c - a) ↔
+     EqualityCondition a b c) := by
+  intro a b c
   have h₁ : c < a + b := by
     have := AffineIndependent.dist_strict_triangle
              (0 : Fin 3) 2 1 (by decide) T.points T.independent
-    subst ha hb hc
     rw [dist_comm (T.points 2)] at this
     linarith
 
   have h₂ : b < a + c := by
     have := AffineIndependent.dist_strict_triangle
              (0 : Fin 3) 1 2 (by decide) T.points T.independent
-    subst ha hb hc
     linarith
 
   have h₃ : a < b + c := by
     have := AffineIndependent.dist_strict_triangle
              (1 : Fin 3) 0 2 (by decide) T.points T.independent
-    subst ha hb hc
     rw [dist_comm (T.points 1) (T.points 0)] at this
     linarith
-
-  clear T ha hb hc
 
   -- https://prase.cz/kalva/imo/isoln/isoln836.html
   set x := (-a + b + c) / 2
@@ -275,7 +245,7 @@ problem imo1983_p6
       · linarith
       · linarith
     exact lemma1 hx hy hz hxyz
-  · rintro ⟨rfl, rfl⟩
-    simp
+  · rintro ⟨h1, h2⟩
+    simp [←h1, ←h2]
 
 end Imo1983P6
