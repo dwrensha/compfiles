@@ -86,19 +86,20 @@ theorem lemma1 {x y z : ℝ} (hx : 0 < x) (hy : 0 < y) (hz : 0 < z)
     have h0 : x * y^3 ≠ 0 := by positivity
     have h1 : y * z^3 ≠ 0 := by positivity
     have h2 : z * x^3 ≠ 0 := by positivity
-    have hr0' : r^2 = z / (x * y^3) := (div_eq_of_eq_mul h0 hr0.symm).symm
-    have hr1' : r^2 = x / (y * z^3) := (div_eq_of_eq_mul h1 hr1.symm).symm
-    have hr2' : r^2 = y / (z * x^3) := (div_eq_of_eq_mul h2 hr2.symm).symm
+    replace hr0 : r^2 = z / (x * y^3) := (div_eq_of_eq_mul h0 hr0.symm).symm
+    replace hr1 : r^2 = x / (y * z^3) := (div_eq_of_eq_mul h1 hr1.symm).symm
+    replace hr2 : r^2 = y / (z * x^3) := (div_eq_of_eq_mul h2 hr2.symm).symm
+    clear hxyz f g
     constructor
-    · rw [hr0'] at hr1' hr2'
+    · rw [hr0] at hr1 hr2
       have h3 : z^4 = x^2 * y^2 := by
-        field_simp at hr1' ⊢
+        field_simp at hr1 ⊢
         nlinarith
       have h3' : z^2 = x * y := by
         rw [show z ^ 4 = (z^2)^2 by ring, show x ^ 2 * y ^ 2 = (x * y)^2 by ring] at h3
         exact (pow_left_inj₀ (by positivity) (by positivity) (by positivity)).mp h3
       have h4 : z^2 = y^4 / x^2 := by
-        field_simp at hr2' ⊢
+        field_simp at hr2 ⊢
         nlinarith
       rw [h3'] at h4
       have h5 : x^3 = y ^ 3 := by
@@ -107,15 +108,15 @@ theorem lemma1 {x y z : ℝ} (hx : 0 < x) (hy : 0 < y) (hz : 0 < z)
         rw [show y^4 = y ^3 * y from rfl] at h4
         nlinarith
       exact (pow_left_inj₀ (by positivity) (by positivity) (by positivity)).mp h5
-    · rw [hr2'] at hr0' hr1'
+    · rw [hr2] at hr0 hr1
       have h3 : y^4 = x^2 * z^2 := by
-        field_simp at hr0' ⊢
+        field_simp at hr0 ⊢
         nlinarith
       have h3' : y^2 = x * z := by
         rw [show y ^ 4 = (y^2)^2 by ring, show x ^ 2 * z ^ 2 = (x * z)^2 by ring] at h3
         exact (pow_left_inj₀ (by positivity) (by positivity) (by positivity)).mp h3
       have h4 : y^2 = x^4 / z^2 := by
-        field_simp at hr1' ⊢
+        field_simp at hr1 ⊢
         nlinarith
       rw [h3'] at h4
       have h5 : z^3 = x ^ 3 := by
