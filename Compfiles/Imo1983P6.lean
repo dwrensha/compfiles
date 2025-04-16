@@ -157,12 +157,17 @@ lemma mylemma_cba_tight
     . exact { left := g₂, right := g₃ }
   linarith
 
+section triangle_inequality
+
+variable {V P : Type*} [NormedAddCommGroup V] [NormedSpace ℝ V]
+         [StrictConvexSpace ℝ V] [MetricSpace P] [NormedAddTorsor V P]
+
 /-
 These two theorems are from Eric Wieser on zulip:
 https://leanprover.zulipchat.com/#narrow/channel/217875-Is-there-code-for-X.3F/topic/strict.20triangle.20inequality.20in.20Euclidean.20space/near/512427539
 -/
 theorem AffineIndependent.dist_strict_triangle
-    {Ti Tj Tk : EuclideanSpace ℝ (Fin 2)} (hT : AffineIndependent ℝ ![Ti, Tj, Tk]) :
+    {Ti Tj Tk : P} (hT : AffineIndependent ℝ ![Ti, Tj, Tk]) :
     dist (Ti) (Tk) < dist (Ti) (Tj) + dist (Tj) (Tk) := by
   refine lt_of_le_of_ne' (dist_triangle _ _ _) ?_
   intro H
@@ -173,13 +178,14 @@ theorem AffineIndependent.dist_strict_triangle
   simp [Set.image_insert_eq]
 
 theorem AffineIndependent.dist_strict_triangle' {ι} (i j k : ι)
-    (h : Function.Injective ![i, j, k])
-    (T : ι → EuclideanSpace ℝ (Fin 2))
+    (h : Function.Injective ![i, j, k]) (T : ι → P)
     (hT : AffineIndependent ℝ T) :
     dist (T i) (T k) < dist (T i) (T j) + dist (T j) (T k) := by
   refine AffineIndependent.dist_strict_triangle ?_
   convert hT.comp_embedding ⟨_, h⟩ using 1
   exact FinVec.map_eq _ ![i, j, k]
+
+end triangle_inequality
 
 snip end
 
