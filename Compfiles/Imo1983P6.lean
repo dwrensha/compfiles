@@ -142,8 +142,19 @@ problem imo1983_p6
   constructor
   · intro h
     have hxyz : x * y * z * (z + x + y) = x * y ^3 + y * z^3 + z * x ^3 := by
-      sorry
-    sorry
+      unfold x y z
+      linarith
+    clear h h₁ h₂ h₃
+    unfold EqualityCondition
+    suffices H : x = y ∧ x = z by
+      unfold x y z at H
+      obtain ⟨H1, H2⟩ := H
+      constructor
+      · linarith
+      · linarith
+    constructor
+    · sorry
+    · sorry
   · rintro ⟨rfl, rfl⟩
     simp
 
