@@ -94,13 +94,15 @@ theorem lemma1 {x y z : ℝ} (hx : 0 < x) (hy : 0 < y) (hz : 0 < z)
     · rw [hr0] at hr1 hr2
       have h3 : z^4 = x^2 * y^2 := by
         field_simp at hr1 ⊢
-        nlinarith
+        replace hr1 : z^4 * y = x^2 * y^2 * y := by linarith
+        exact mul_right_cancel₀ (ne_of_gt hy) hr1
       have h3' : z^2 = x * y := by
         rw [show z ^ 4 = (z^2)^2 by ring, show x ^ 2 * y ^ 2 = (x * y)^2 by ring] at h3
         exact (pow_left_inj₀ (by positivity) (by positivity) (by positivity)).mp h3
       have h4 : z^2 = y^4 / x^2 := by
         field_simp at hr2 ⊢
-        nlinarith
+        replace hr2 : z^2 * x ^2 * x = y^4 * x := by linarith
+        exact mul_right_cancel₀ (ne_of_gt hx) hr2
       rw [h3'] at h4
       have h5 : x^3 = y ^ 3 := by
         field_simp at h4
