@@ -242,13 +242,12 @@ lemma mylemma_53
   have h₃: 0 ≡ (Finset.Ico 2 (p + 1)).sum (fun (k : ℕ) => (↑p + 1) ^ k * (-1) ^ (p - k) * ↑(p.choose k))
                 [ZMOD (↑p + 1) ^ 2] := by
     refine Int.modEq_of_dvd ?_
-    simp
+    rw [sub_zero]
     refine Finset.dvd_sum ?_
     intros x g₀
-    have gx: 2 ≤ x := by exact (Finset.mem_Ico.mp g₀).left
+    have gx: 2 ≤ x := (Finset.mem_Ico.mp g₀).left
     rw [mul_assoc]
-    refine dvd_mul_of_dvd_left ?_ ((-1:ℤ) ^ (p - x) * ↑(p.choose x))
-    refine pow_dvd_pow ((↑p:ℤ) + 1) gx
+    exact dvd_mul_of_dvd_left (pow_dvd_pow ((↑p:ℤ) + 1) gx) ((-1:ℤ) ^ (p - x) * ↑(p.choose x))
   rw [h₂] at h₁
   rw [← add_zero ((↑p:ℤ) ^ p)] at h₁
   exact Int.ModEq.add_right_cancel h₃ h₁
