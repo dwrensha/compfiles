@@ -195,40 +195,24 @@ problem imo1983_p6
     rwa [hc]
 
   have h₁ : c < a + b := by
+    /- Thank you Eric Wieser:
+      https://leanprover.zulipchat.com/#narrow/channel/217875-Is-there-code-for-X.3F/topic/strict.20triangle.20inequality.20in.20Euclidean.20space/near/512426957 -/
     have h10 : c ≤ a + b := by
       have := dist_triangle (T.points 0) (T.points 2) (T.points 1)
       rw [dist_comm (T.points 2)] at this
       linarith
-    suffices H : c ≠ a + b from lt_of_le_of_ne h10 H
+    refine lt_of_le_of_ne h10 ?_
     intro H
     symm at H
     subst ha hb hc
     rw [dist_comm (T.points 0), dist_comm (T.points 0)] at H
     rw [dist_add_dist_eq_iff] at H
-    rw [←mem_segment_iff_wbtw] at H
-    simp only [segment, Fin.isValue, exists_and_left, Set.mem_setOf_eq] at H
-    obtain ⟨a, ha1, t, ht, ha3, ha4⟩ := H
-    let w : Fin 3 -> ℝ
-      | 0 => t
-      | 1 => a
-      | 2 => -1
-    have hw0 : ∑ i : Fin 3, w i = 0 := by
-      rw [Fin.sum_univ_three]
-      simp only [w]
-      linarith
-    have hw1 : ∑ i, w i • T.points i = 0 := by
-      rw [Fin.sum_univ_three]
-      simp only [w, neg_smul, one_smul]
-      rw [add_comm] at ha4
-      exact add_neg_eq_zero.mpr ha4
-    have h2 := AffineIndependent.eq_zero_of_sum_eq_zero T.independent hw0 hw1
-    by_cases ht0 : t = 0
-    · specialize h2 1 (by decide)
-      simp only [w] at h2
-      linarith
-    · specialize h2 0 (by decide)
-      simp only [w] at h2
-      contradiction
+    have hT := T.independent.comp_embedding ⟨![1,2,0], (by decide)⟩
+    rw [affineIndependent_iff_not_collinear, Set.range_comp] at hT
+    apply hT; clear hT
+    convert H.symm.collinear using 1
+    simp [Set.image_insert_eq]
+
   have h₂ : b < a + c := by sorry
   have h₃ : a < b + c := by sorry
 
