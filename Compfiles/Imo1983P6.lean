@@ -26,15 +26,22 @@ namespace Imo1983P6
 
 snip begin
 
+/-- Equality in Cauchy-Schwarz implies linear dependence. -/
+lemma cauchy_schwarz_equals {R ι: Type*} [CommSemiring R] [LinearOrder R] [IsStrictOrderedRing R]
+    [ExistsAddOfLE R] (s : Finset ι)
+    (f g : ι → R) : (∑ i ∈ s, f i * g i) ^ 2 = (∑ i ∈ s, f i ^ 2) * ∑ i ∈ s, g i ^ 2 →
+    ∃ r, ∀ i ∈ s, r * f i = g i := by
+  sorry
+
 theorem lemma1 {x y z : ℝ} (hx : 0 < x) (hy : 0 < y) (hz : 0 < z)
     (hxyz : x * y * z * (z + x + y) = x * y ^ 3 + y * z ^ 3 + z * x ^ 3) :
     x = y ∧ x = z := by
   let f : Fin 3 → ℝ := ![√x * √(y^3), √y * √(z^3), √z * √(x^3)]
   let g : Fin 3 → ℝ := ![√z, √x, √y]
-  suffices H : ∃ r : ℝ, (λ x ↦ r * f x) = g by
+  suffices H : ∃ r : ℝ, ∀ i ∈ Finset.univ, r * f i = g i by
     obtain ⟨r, hr⟩ := H
     dsimp [f, g] at hr
-    rw [funext_iff] at hr
+    simp only [Finset.mem_univ, forall_const, f, g] at hr
     have hr0 := hr 0
     have hr1 := hr 1
     have hr2 := hr 2
@@ -88,7 +95,22 @@ theorem lemma1 {x y z : ℝ} (hx : 0 < x) (hy : 0 < y) (hz : 0 < z)
         nlinarith
       symm
       exact (pow_left_inj₀ (by positivity) (by positivity) (by positivity)).mp h5
-  sorry
+  apply cauchy_schwarz_equals
+  simp only [Fin.sum_univ_three, f, g]
+  dsimp
+  rw [show x^3 = x^2 * x from rfl, show y^3 = y^2 * y from rfl,
+      show z^3 = z^2 * z from rfl]
+  rw [Real.sqrt_mul (by positivity), Real.sqrt_mul (by positivity),
+      Real.sqrt_mul (by positivity)]
+  rw [Real.sqrt_sq hx.le, Real.sqrt_sq hy.le, Real.sqrt_sq hz.le]
+  have h1 : √x * (y * √y) * √z + √y * (z * √z) * √x + √z * (x * √x) * √y =
+            (√x * √y * √z) * (z + x + y) := by ring
+  rw [h1]; clear h1
+  simp only [mul_pow]
+  simp only [Real.sq_sqrt hx.le, Real.sq_sqrt hy.le, Real.sq_sqrt hz.le]
+  rw [pow_two (z + x + y), ←mul_assoc]
+  apply_fun (· * (z + x + y)) at hxyz
+  linarith
 
 section triangle_inequality
 
