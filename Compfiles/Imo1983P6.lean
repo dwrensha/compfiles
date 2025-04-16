@@ -135,7 +135,7 @@ problem imo1983_p6
     simp only [mul_pow] at hsum
     simp only [Real.sq_sqrt hx.le, Real.sq_sqrt hy.le, Real.sq_sqrt hz.le] at hsum
     rw [pow_two (z + x + y), ←mul_assoc] at hsum
-    have h2 : 0 < (z + x + y) := by positivity
+    have h2 : 0 < z + x + y := by positivity
     rw [show x^2 * x = x^3 from rfl, show y^2 * y = y^3 from rfl,
         show z^2 * z = z^3 from rfl] at hsum
     exact le_of_mul_le_mul_right hsum h2
