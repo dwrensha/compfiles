@@ -26,6 +26,70 @@ namespace Imo1983P6
 
 snip begin
 
+theorem lemma1 {x y z : ℝ} (hx : 0 < x) (hy : 0 < y) (hz : 0 < z)
+    (hxyz : x * y * z * (z + x + y) = x * y ^ 3 + y * z ^ 3 + z * x ^ 3) :
+    x = y ∧ x = z := by
+  let f : Fin 3 → ℝ := ![√x * √(y^3), √y * √(z^3), √z * √(x^3)]
+  let g : Fin 3 → ℝ := ![√z, √x, √y]
+  suffices H : ∃ r : ℝ, (λ x ↦ r * f x) = g by
+    obtain ⟨r, hr⟩ := H
+    dsimp [f, g] at hr
+    rw [funext_iff] at hr
+    have hr0 := hr 0
+    have hr1 := hr 1
+    have hr2 := hr 2
+    clear hr
+    apply_fun (·)^2 at hr0 hr1 hr2
+    dsimp at hr0 hr1 hr2
+    simp only [mul_pow] at hr0 hr1 hr2
+    rw [Real.sq_sqrt hx.le, Real.sq_sqrt hy.le] at hr1
+    rw [Real.sq_sqrt hz.le, Real.sq_sqrt hx.le] at hr0
+    rw [Real.sq_sqrt hy.le, Real.sq_sqrt hz.le] at hr2
+    rw [Real.sq_sqrt (by positivity)] at hr0 hr1 hr2
+    have h0 : x * y^3 ≠ 0 := by positivity
+    have h1 : y * z^3 ≠ 0 := by positivity
+    have h2 : z * x^3 ≠ 0 := by positivity
+    have hr0' : r^2 = z / (x * y^3) := (div_eq_of_eq_mul h0 hr0.symm).symm
+    have hr1' : r^2 = x / (y * z^3) := (div_eq_of_eq_mul h1 hr1.symm).symm
+    have hr2' : r^2 = y / (z * x^3) := (div_eq_of_eq_mul h2 hr2.symm).symm
+    constructor
+    · rw [hr0'] at hr1' hr2'
+      have h3 : z^4 = x^2 * y^2 := by
+        field_simp at hr1' ⊢
+        nlinarith
+      have h3' : z^2 = x * y := by
+        rw [show z ^ 4 = (z^2)^2 by ring, show x ^ 2 * y ^ 2 = (x * y)^2 by ring] at h3
+        exact (pow_left_inj₀ (by positivity) (by positivity) (by positivity)).mp h3
+      have h4 : z^2 = y^4 / x^2 := by
+        field_simp at hr2' ⊢
+        nlinarith
+      rw [h3'] at h4
+      have h5 : x^3 = y ^ 3 := by
+        field_simp at h4
+        ring_nf at h4 ⊢
+        rw [show y^4 = y ^3 * y from rfl] at h4
+        nlinarith
+      exact (pow_left_inj₀ (by positivity) (by positivity) (by positivity)).mp h5
+    · rw [hr2'] at hr0' hr1'
+      have h3 : y^4 = x^2 * z^2 := by
+        field_simp at hr0' ⊢
+        nlinarith
+      have h3' : y^2 = x * z := by
+        rw [show y ^ 4 = (y^2)^2 by ring, show x ^ 2 * z ^ 2 = (x * z)^2 by ring] at h3
+        exact (pow_left_inj₀ (by positivity) (by positivity) (by positivity)).mp h3
+      have h4 : y^2 = x^4 / z^2 := by
+        field_simp at hr1' ⊢
+        nlinarith
+      rw [h3'] at h4
+      have h5 : z^3 = x ^ 3 := by
+        field_simp at h4
+        ring_nf at h4 ⊢
+        rw [show x^4 = x^3 * x from rfl] at h4
+        nlinarith
+      symm
+      exact (pow_left_inj₀ (by positivity) (by positivity) (by positivity)).mp h5
+  sorry
+
 section triangle_inequality
 
 variable {V P : Type*} [NormedAddCommGroup V] [NormedSpace ℝ V]
@@ -152,9 +216,7 @@ problem imo1983_p6
       constructor
       · linarith
       · linarith
-    constructor
-    · sorry
-    · sorry
+    exact lemma1 hx hy hz hxyz
   · rintro ⟨rfl, rfl⟩
     simp
 
