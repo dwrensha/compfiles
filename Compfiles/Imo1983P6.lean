@@ -27,12 +27,41 @@ namespace Imo1983P6
 snip begin
 
 /-- Equality in Cauchy-Schwarz implies linear dependence. -/
-lemma cauchy_schwarz_equals {R ι: Type*} [CommSemiring R] [LinearOrder R] [IsStrictOrderedRing R]
-    [ExistsAddOfLE R] (s : Finset ι)
-    (f g : ι → R) (hf : f ≠ 0) :
+lemma cauchy_schwarz_equals {ι: Type*} (s : Finset ι)
+    (f g : ι → ℝ) (hf : ∃ i ∈ s, f i ≠ 0) :
     (∑ i ∈ s, f i * g i) ^ 2 = (∑ i ∈ s, f i ^ 2) * ∑ i ∈ s, g i ^ 2 →
     ∃ r, ∀ i ∈ s, r * f i = g i := by
-  sorry
+  intro h0
+  let q t := ∑ i ∈ s, (t * f i - g i) * (t * f i - g i)
+  have h1 : ∀ t, q t =
+      (∑ i ∈ s, f i^2) * (t * t) + ((- 2) * ∑ i ∈ s, f i * g i) * t + ∑ i ∈ s, g i^2 := by
+    intro t
+    unfold q
+    simp only [Finset.mul_sum, Finset.sum_mul, ←Finset.sum_add_distrib]
+    apply Finset.sum_congr rfl
+    intro i hi
+    ring
+  have h2 : discrim (∑ i ∈ s, f i^2) ((- 2) * ∑ i ∈ s, f i * g i) (∑ i ∈ s, g i^2) = 0 := by
+    unfold discrim
+    linarith
+  have h3 : ∑ i ∈ s, f i^2 ≠ 0 := by
+    obtain ⟨ii, hii, hiif⟩ := hf
+    have h6 : ∀ i ∈ s, f i ^ 2 = f i * f i := by
+      intro h hi
+      exact pow_two (f h)
+    rw [Finset.sum_congr rfl h6]
+    intro H
+    rw [Finset.sum_mul_self_eq_zero_iff] at H
+    specialize H ii hii
+    contradiction
+  obtain ⟨t0, ht0, -⟩ := (discrim_eq_zero_iff h3).mp h2
+  rw [←h1] at ht0
+  unfold q at ht0
+  use t0
+  rw [Finset.sum_mul_self_eq_zero_iff] at ht0
+  intro i hi
+  specialize ht0 i hi
+  linarith
 
 theorem lemma1 {x y z : ℝ} (hx : 0 < x) (hy : 0 < y) (hz : 0 < z)
     (hxyz : x * y * z * (z + x + y) = x * y ^ 3 + y * z ^ 3 + z * x ^ 3) :
@@ -97,8 +126,12 @@ theorem lemma1 {x y z : ℝ} (hx : 0 < x) (hy : 0 < y) (hz : 0 < z)
       symm
       exact (pow_left_inj₀ (by positivity) (by positivity) (by positivity)).mp h5
   refine cauchy_schwarz_equals _ f g ?_ ?_
-  · simp only [f, Matrix.cons_nonzero_iff]
-    left; positivity
+  · use 0
+    simp [f]
+    change _ ≠ 0 ∧ _ ≠ 0
+    constructor
+    · positivity
+    · positivity
   simp only [Fin.sum_univ_three, f, g]
   dsimp
   rw [show x^3 = x^2 * x from rfl, show y^3 = y^2 * y from rfl,
