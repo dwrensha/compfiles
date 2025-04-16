@@ -157,6 +157,30 @@ lemma mylemma_cba_tight
     . exact { left := g₂, right := g₃ }
   linarith
 
+/-
+These two theorems are from Eric Wieser on zulip:
+https://leanprover.zulipchat.com/#narrow/channel/217875-Is-there-code-for-X.3F/topic/strict.20triangle.20inequality.20in.20Euclidean.20space/near/512427539
+-/
+theorem AffineIndependent.dist_strict_triangle
+    {Ti Tj Tk : EuclideanSpace ℝ (Fin 2)} (hT : AffineIndependent ℝ ![Ti, Tj, Tk]) :
+    dist (Ti) (Tk) < dist (Ti) (Tj) + dist (Tj) (Tk) := by
+  refine lt_of_le_of_ne' (dist_triangle _ _ _) ?_
+  intro H
+  rw [dist_add_dist_eq_iff] at H
+  rw [affineIndependent_iff_not_collinear] at hT
+  apply hT; clear hT
+  convert H.symm.collinear using 1
+  simp [Set.image_insert_eq]
+
+theorem AffineIndependent.dist_strict_triangle' {ι} (i j k : ι)
+    (h : Function.Injective ![i, j, k])
+    (T : ι → EuclideanSpace ℝ (Fin 2))
+    (hT : AffineIndependent ℝ T) :
+    dist (T i) (T k) < dist (T i) (T j) + dist (T j) (T k) := by
+  refine AffineIndependent.dist_strict_triangle ?_
+  convert hT.comp_embedding ⟨_, h⟩ using 1
+  exact FinVec.map_eq _ ![i, j, k]
+
 snip end
 
 determine EqualityCondition (a b c : ℝ) : Prop := a = b ∧ a = c
@@ -195,26 +219,24 @@ problem imo1983_p6
     rwa [hc]
 
   have h₁ : c < a + b := by
-    /- Thank you Eric Wieser:
-      https://leanprover.zulipchat.com/#narrow/channel/217875-Is-there-code-for-X.3F/topic/strict.20triangle.20inequality.20in.20Euclidean.20space/near/512426957 -/
-    have h10 : c ≤ a + b := by
-      have := dist_triangle (T.points 0) (T.points 2) (T.points 1)
-      rw [dist_comm (T.points 2)] at this
-      linarith
-    refine lt_of_le_of_ne h10 ?_
-    intro H
-    symm at H
+    have := AffineIndependent.dist_strict_triangle'
+             (0 : Fin 3) 2 1 (by decide) T.points T.independent
     subst ha hb hc
-    rw [dist_comm (T.points 0), dist_comm (T.points 0)] at H
-    rw [dist_add_dist_eq_iff] at H
-    have hT := T.independent.comp_embedding ⟨![1,2,0], (by decide)⟩
-    rw [affineIndependent_iff_not_collinear, Set.range_comp] at hT
-    apply hT; clear hT
-    convert H.symm.collinear using 1
-    simp [Set.image_insert_eq]
+    rw [dist_comm (T.points 2)] at this
+    linarith
 
-  have h₂ : b < a + c := by sorry
-  have h₃ : a < b + c := by sorry
+  have h₂ : b < a + c := by
+    have := AffineIndependent.dist_strict_triangle'
+             (0 : Fin 3) 1 2 (by decide) T.points T.independent
+    subst ha hb hc
+    linarith
+
+  have h₃ : a < b + c := by
+    have := AffineIndependent.dist_strict_triangle'
+             (1 : Fin 3) 0 2 (by decide) T.points T.independent
+    subst ha hb hc
+    rw [dist_comm (T.points 1) (T.points 0)] at this
+    linarith
 
   clear T ha hb hc
   constructor
