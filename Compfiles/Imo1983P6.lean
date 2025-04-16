@@ -29,7 +29,8 @@ snip begin
 /-- Equality in Cauchy-Schwarz implies linear dependence. -/
 lemma cauchy_schwarz_equals {R ι: Type*} [CommSemiring R] [LinearOrder R] [IsStrictOrderedRing R]
     [ExistsAddOfLE R] (s : Finset ι)
-    (f g : ι → R) : (∑ i ∈ s, f i * g i) ^ 2 = (∑ i ∈ s, f i ^ 2) * ∑ i ∈ s, g i ^ 2 →
+    (f g : ι → R) (hf : f ≠ 0) :
+    (∑ i ∈ s, f i * g i) ^ 2 = (∑ i ∈ s, f i ^ 2) * ∑ i ∈ s, g i ^ 2 →
     ∃ r, ∀ i ∈ s, r * f i = g i := by
   sorry
 
@@ -95,7 +96,9 @@ theorem lemma1 {x y z : ℝ} (hx : 0 < x) (hy : 0 < y) (hz : 0 < z)
         nlinarith
       symm
       exact (pow_left_inj₀ (by positivity) (by positivity) (by positivity)).mp h5
-  apply cauchy_schwarz_equals
+  refine cauchy_schwarz_equals _ f g ?_ ?_
+  · simp only [f, Matrix.cons_nonzero_iff]
+    left; positivity
   simp only [Fin.sum_univ_three, f, g]
   dsimp
   rw [show x^3 = x^2 * x from rfl, show y^3 = y^2 * y from rfl,
