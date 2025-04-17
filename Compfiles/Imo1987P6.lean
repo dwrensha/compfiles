@@ -222,11 +222,10 @@ problem imo1987_p6
       rw [hfss,Nat.coprime_add_mul_right_left] at hj3
       have hss2 : f ss ∣  j:= Nat.Prime.dvd_iff_not_coprime hss1 |>.2 hj3
       have hfss1: p ≤ f ss := Nat.le_add_left p (ss ^ 2 + ss)
-      have hp1 : p-2 < p := sub_le_lemma hp (by omega)
+      have hp1 : p - 2 < p := sub_le_lemma hp (by omega)
       have hfss2: j < 2*p := by omega
-      have hj : j≠ 0 := by omega
-      have hfss3:  f ss = j := by
-        refine dvd_lemma _ _ _ hj hfss1 hss2  hfss2
+      have hj : j ≠ 0 := by omega
+      have hfss3:  f ss = j := dvd_lemma _ _ _ hj hfss1 hss2  hfss2
       unfold f at hfss3
       rw [hss0,add_comm _ ss,add_assoc] at hfss3
       replace hfss3 := add_left_cancel hfss3
