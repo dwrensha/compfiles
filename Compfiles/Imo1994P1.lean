@@ -63,7 +63,7 @@ problem imo1994_p1 (n : ℕ) (m : ℕ) (A : Finset ℕ) (hm : A.card = m + 1)
   -- `i ↦ m-i`
   -- We reindex the sum by fin (m+1)
   have : ∑ x ∈ A, x = ∑ i : Fin (m + 1), a i := by
-    convert sum_image (α := ℕ) (β := ℕ) fun x _ y _ => (OrderEmbedding.eq_iff_eq a).1
+    convert sum_image fun x _ y _ => a.eq_iff_eq.1
     rw [← coe_inj]; simp [a]
   rw [this]; clear this
   -- The main proof is a simple calculation by rearranging one of the two sums
