@@ -152,28 +152,6 @@ theorem lemma1 {x y z : ℝ} (hx : 0 < x) (hy : 0 < y) (hz : 0 < z)
   apply_fun (· * (z + x + y)) at hxyz
   linarith only [hxyz]
 
-section triangle_inequality
-
-variable {V P : Type*} [NormedAddCommGroup V] [NormedSpace ℝ V]
-         [StrictConvexSpace ℝ V] [MetricSpace P] [NormedAddTorsor V P]
-
-/-
-This theorem is from Eric Wieser on zulip:
-https://leanprover.zulipchat.com/#narrow/channel/217875-Is-there-code-for-X.3F/topic/strict.20triangle.20inequality.20in.20Euclidean.20space/near/512427539
--/
-theorem AffineIndependent.dist_strict_triangle {ι} (i j k : ι) (h : Function.Injective ![i, j, k]) (T : ι → P) (hT : AffineIndependent ℝ T) :
-    dist (T i) (T k) < dist (T i) (T j) + dist (T j) (T k) := by
-  refine lt_of_le_of_ne' (dist_triangle _ _ _) ?_
-  intro H
-  rw [dist_add_dist_eq_iff] at H
-  replace hT := hT.comp_embedding ⟨_, h⟩
-  rw [affineIndependent_iff_not_collinear, Set.range_comp] at hT
-  apply hT; clear hT
-  convert H.symm.collinear using 1
-  simp [Set.image_insert_eq]
-
-end triangle_inequality
-
 snip end
 
 determine EqualityCondition (a b c : ℝ) : Prop := a = b ∧ a = c
@@ -187,20 +165,18 @@ problem imo1983_p6 (T : Affine.Triangle ℝ (EuclideanSpace ℝ (Fin 2))) :
      EqualityCondition a b c) := by
   intro a b c
   have h₁ : c < a + b := by
-    have := AffineIndependent.dist_strict_triangle
-             (0 : Fin 3) 2 1 (by decide) T.points T.independent
-    rw [dist_comm (T.points 2)] at this
+    have := AffineIndependent.not_wbtw_of_injective (0 : Fin 3) 2 1 (by decide) T.independent
+    rw [←dist_lt_dist_add_dist_iff, dist_comm (T.points 2)] at this
     linarith
 
   have h₂ : b < a + c := by
-    have := AffineIndependent.dist_strict_triangle
-             (0 : Fin 3) 1 2 (by decide) T.points T.independent
+    have := AffineIndependent.not_wbtw_of_injective (0 : Fin 3) 1 2 (by decide) T.independent
+    rw [←dist_lt_dist_add_dist_iff] at this
     linarith
 
   have h₃ : a < b + c := by
-    have := AffineIndependent.dist_strict_triangle
-             (1 : Fin 3) 0 2 (by decide) T.points T.independent
-    rw [dist_comm (T.points 1) (T.points 0)] at this
+    have := AffineIndependent.not_wbtw_of_injective (1 : Fin 3) 0 2 (by decide) T.independent
+    rw [←dist_lt_dist_add_dist_iff, dist_comm (T.points 1) (T.points 0)] at this
     linarith
 
   -- https://prase.cz/kalva/imo/isoln/isoln836.html
