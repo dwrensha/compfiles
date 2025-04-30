@@ -373,7 +373,6 @@ lemma mylemma_case_k_2
     linarith [hql,hrl]
   . right
     norm_num at *
-    -- have g₁: q*r - 4*q - 4*r + 5 = 0 := by linarith
     have g₂: (4-q)*(4-r) = 11 := by linarith
     have g₃: (4-q) = -1 ∨ (4-q) = 1 ∨ (4-q) = -11 ∨ (4-q) = 11 := by
       exact mylemma_qr_11 q r g₂
@@ -406,7 +405,6 @@ lemma mylemma_case_k_3
   interval_cases p
   -- p = 2
   . norm_num at *
-    -- have g₁: q*r - 3*q - 3*r + 4 = 0 := by linarith
     have g₂: (q-3)*(r-3) = 5 := by linarith
     have g₃: (q-3) = -1 ∨ (q-3) = 1 ∨ (q-3) = -5 ∨ (q-3) = 5 := by
       exact mylemma_qr_5 q r g₂
@@ -428,7 +426,6 @@ lemma mylemma_case_k_3
   -- p = 3
   . right
     norm_num at *
-    -- have g₁: 3 * q * r - 6 * q - 6 * r + 7 = 0 := by linarith
     have g₂: (6 - 3*q) * (2 - r) = 5 := by linarith
     have g₃: (6 - 3*q) = -1 ∨ (6 - 3*q) = 1 ∨ (6 - 3*q) = -5 ∨ (6 - 3*q) = 5 := by
       exact mylemma_63qr_5 q r g₂
