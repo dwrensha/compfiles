@@ -33,10 +33,7 @@ structure CompileProblemResult where
   olean_file : System.FilePath
   determineDecls : List Name
 
--- We need to use silly continuation-passing style so that we can continue to
--- refer to names from the module. Otherwise, we get segfaults.
-unsafe def compileProblem (problem_id : String) (act : CompileProblemResult → IO Unit)
-    : IO Unit := do
+unsafe def compileProblem (problem_id : String) : IO CompileProblemResult := do
   initSearchPath (← findSysroot)
 
   let lean_file := workDir.join (problem_id ++ ".lean")
@@ -61,7 +58,7 @@ unsafe def compileProblem (problem_id : String) (act : CompileProblemResult → 
 
   let s := ProblemExtraction.determineDeclsExtension.getState env
   compileFile lean_file olean_file
-  act ⟨lean_file, olean_file, s.toList⟩
+  return ⟨lean_file, olean_file, s.toList⟩
 
 unsafe def verifyTypesAndAxioms (problem_mod : Name) (solution_mod : Name)
     : IO Unit := do
@@ -158,7 +155,7 @@ unsafe def main (args : List String) : IO Unit := do
   -- 2. compile problem to olean
 
   IO.println "* compiling problem into olean ..."
-  compileProblem problem_id fun r => do
+  let r ← compileProblem problem_id
 
   -- 3. compile solution to olean
   --    (need to copy it to ./_check/solution.lean first)
