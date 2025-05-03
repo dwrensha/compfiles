@@ -97,8 +97,6 @@ unsafe def verifyTypesAndAxioms (problem_mod : Name) (solution_mod : Name)
                  throwError s!"prohibited axiom: {a}"
         for ⟨k, _⟩ in prob_infos do
           throwError s!"no decl found for {k}"
-      pure ()
-  pure ()
 
 -- copied from lean4checker (https://github.com/leanprover/lean4checker/)
 unsafe def replayFromImports (module : Name) : IO Unit := do
