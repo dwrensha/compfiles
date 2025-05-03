@@ -106,8 +106,8 @@ problem iran1998_p9
   rw [hv₁, hv₂, mul_one] at cauchy_schwarz
 
   have hinner :=
-    calc ((inner v₁ v₂): ℝ)
-          = ((inner v₂ v₁): ℝ) := real_inner_comm _ _
+    calc ((inner _ v₁ v₂): ℝ)
+          = ((inner _ v₂ v₁): ℝ) := real_inner_comm _ _
         _ = ∑ i : Fin 3, v₁ i * v₂ i := rfl
         _ = v₁ 0 * v₂ 0 + v₁ 1 * v₂ 1 + v₁ 2 * v₂ 2 := Fin.sum_univ_three _
         _ = Real.sqrt x * Real.sqrt ((x - 1) / x) +
