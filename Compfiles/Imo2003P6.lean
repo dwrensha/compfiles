@@ -63,7 +63,7 @@ problem imo2003_p6 (p : ℕ) (hp : p.Prime) :
     have : 2 ≡ m ^ 2 [ZMOD 5] := calc
       2 ≡ n ^ 2 [ZMOD 5] := Int.modEq_iff_dvd.mpr hdvd
       _ ≡ m ^ 2 [ZMOD 5] := Int.ModEq.pow 2 (Int.mod_modEq n 5).symm
-    have : 5 ∣ m ^ 2 - 2 := Int.dvd_sub_of_emod_eq (id (Int.ModEq.symm this))
+    have : 5 ∣ m ^ 2 - 2 := Int.dvd_self_sub_of_emod_eq (id (Int.ModEq.symm this))
 
     interval_cases m <;> norm_num at this
 

@@ -58,7 +58,7 @@ problem usa2015_p1 (x y : ℤ) :
               (x + y) ^ 3 + 3 * (x + y) * 3 * 3 + 3 * (x + y)^2 * 3 + 3 * 3 * 3 := by ring
     rw [h3] at h1
     clear h3
-    simp only [Int.add_mul_emod_self_left, Int.add_mul_emod_self] at h1
+    simp only [Int.add_mul_emod_self_left, Int.add_mul_emod_self_right] at h1
     exact Int.emod_eq_zero_of_dvd <|
       Prime.dvd_of_dvd_pow Int.prime_three (Int.dvd_of_emod_eq_zero h1.symm)
   intro ht

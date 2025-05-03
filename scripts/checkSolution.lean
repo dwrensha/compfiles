@@ -110,8 +110,7 @@ unsafe def replayFromImports (module : Name) : IO Unit := do
   unless (← mFile.pathExists) do
     throw <| IO.userError s!"object file '{mFile}' of module {module} does not exist"
   let (mod, region) ← readModuleData mFile
-  let (_, s) ← importModulesCore mod.imports
-    |>.run (s := { moduleNameSet := ({} : NameHashSet).insert module })
+  let (_, s) ← importModulesCore mod.imports |>.run
   let env ← finalizeImport s #[{module}] {} 0 True True
   let mut newConstants := {}
   for name in mod.constNames, ci in mod.constants do

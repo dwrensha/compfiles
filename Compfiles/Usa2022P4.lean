@@ -137,7 +137,7 @@ problem usa2022_p4 (p q : ℕ) :
     have h23 : p = 2 * a + 1 := by
       rw [h21, add_assoc, ←Nat.two_mul, add_comm] at h7
       exact h7.symm
-    rw [h23, h9, Nat.succ_inj'] at ha
+    rw [h23, h9, Nat.succ_inj] at ha
     have h30 : a = 1 := by
       zify at ha
       have h26 : ((a:ℤ) - 1)^2 = 0 := by linear_combination ha

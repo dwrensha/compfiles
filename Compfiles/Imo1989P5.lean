@@ -82,7 +82,7 @@ theorem get_primes (n m : ℕ) :
     obtain ⟨p, hpm, hp⟩ := Nat.exists_infinite_primes (max m (mx + 1))
     use p :: l'
     constructor
-    · exact Iff.mpr Nat.succ_inj' hl'
+    · exact Iff.mpr Nat.succ_inj hl'
     · constructor
       · rw [List.nodup_cons]
         constructor
