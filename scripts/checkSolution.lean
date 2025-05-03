@@ -44,24 +44,24 @@ unsafe def compileProblem (problem_id : String) (act : CompileProblemResult → 
 
   let module := `Compfiles
   Lean.enableInitializersExecution
-  withImportModules #[{module}] {} (trustLevel := 1024) fun env => do
-    let ctx := {fileName := "", fileMap := default}
-    let state := {env}
-    Prod.fst <$> (CoreM.toIO · ctx state) do
-      let mst ← ProblemExtraction.extractProblems
-      let mut found_it : Bool := false
-      for ⟨m, problem_src⟩ in mst do
-        if m.toString = ("Compfiles." ++ problem_id) then do
-          let h ← IO.FS.Handle.mk lean_file IO.FS.Mode.write
-          h.putStr problem_src
-          h.flush
-          found_it := true
-      if !found_it
-      then panic! s!"no such problem {problem_id}"
+  let env ← importModules #[{module}] {} (trustLevel := 1024) #[] true true
+  let ctx := {fileName := "", fileMap := default}
+  let state := {env}
+  Prod.fst <$> (CoreM.toIO · ctx state) do
+    let mst ← ProblemExtraction.extractProblems
+    let mut found_it : Bool := false
+    for ⟨m, problem_src⟩ in mst do
+      if m.toString = ("Compfiles." ++ problem_id) then do
+        let h ← IO.FS.Handle.mk lean_file IO.FS.Mode.write
+        h.putStr problem_src
+        h.flush
+        found_it := true
+    if !found_it
+    then panic! s!"no such problem {problem_id}"
 
-    let s := ProblemExtraction.determineDeclsExtension.getState env
-    compileFile lean_file olean_file
-    act ⟨lean_file, olean_file, s.toList⟩
+  let s := ProblemExtraction.determineDeclsExtension.getState env
+  compileFile lean_file olean_file
+  act ⟨lean_file, olean_file, s.toList⟩
 
 unsafe def verifyTypesAndAxioms (problem_mod : Name) (solution_mod : Name)
     : IO Unit := do
