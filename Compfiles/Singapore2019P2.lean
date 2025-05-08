@@ -18,7 +18,9 @@ open Real
 
 namespace Singapore2019R1P2
 
-problem singapore2019_r1_p2 : (sqrt 10 - sqrt 2)^(1 / 3 : ℝ) * (sqrt 10 + sqrt 2)^(7 / 3 : ℝ) = 24 + 8 * sqrt 5 := by
+noncomputable determine solution : ℝ := 24 + 8 * sqrt 5
+
+problem singapore2019_r1_p2 : (sqrt 10 - sqrt 2)^(1 / 3 : ℝ) * (sqrt 10 + sqrt 2)^(7 / 3 : ℝ) = solution := by
   have h1 : (sqrt 10 - sqrt 2)^(1 / 3 : ℝ) * (sqrt 10 + sqrt 2)^(7 / 3 : ℝ) =
       ((sqrt 10 - sqrt 2) * (sqrt 10 + sqrt 2))^(1 / 3 : ℝ) * (sqrt 10 + sqrt 2)^(2 : ℝ) := by
     have h2 : (sqrt 10 - sqrt 2)^(1 / 3 : ℝ) * (sqrt 10 + sqrt 2)^(7 / 3 : ℝ) =
