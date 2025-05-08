@@ -8,7 +8,7 @@ import ProblemExtraction
 problem_file { tags := [.Algebra] }
 
 /-!
-# Singapore 2019, Round 1, Problem 2
+# Singapore Math Olympiad (Senior) 2019 (Round 1), Problem 2
 
 http://www.realsutra.com/limjeck/SMO_Senior_2019.pdf
 
