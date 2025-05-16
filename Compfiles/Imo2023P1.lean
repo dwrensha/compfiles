@@ -166,13 +166,7 @@ theorem ordCompl_of_non_prime_pow {n p : ℕ} (hn : 1 < n) (hp : ¬IsPrimePow n)
       rw [← Nat.div_one n, ← Nat.pow_zero p, ← Nat.factorization_eq_zero_of_not_dvd h]
     exact (this ▸ hn).ne c_eq_1.symm
 
-  have n_fact_p_ne_0 : n.factorization p ≠ 0 := by
-    by_contra eq_0
-    apply n_ne_0
-    have := (Nat.factorization_eq_zero_iff n p).mp eq_0
-    refine (this.resolve_left ?_).resolve_left ?_
-    . exact not_not_intro p_prime
-    . exact not_not_intro p_dvd_n
+  have n_fact_p_ne_0 : n.factorization p ≠ 0 := dvd_n_fact_ne_zero n_ne_0 p_prime p_dvd_n
 
   -- Since `c = 1`, `n.factorization q` for `q ≠ p` is `= 0`.
   have (q : ℕ): n.factorization q = Finsupp.single p (n.factorization p) q := by
