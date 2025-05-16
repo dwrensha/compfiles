@@ -22,8 +22,6 @@ if d₁,d₂,...,dₖ are all the positive divisors of n with
 
 namespace Imo2023P1
 
-determine solution_set : Set ℕ := { n | IsPrimePow n }
-
 abbrev ConsecutiveFactors (n a b : ℕ) :=
   a ∣ n ∧ b ∣ n ∧ a < b ∧ ¬∃ c, (c ∣ n ∧ a < c ∧ c < b)
 
@@ -31,6 +29,8 @@ abbrev Dividable (n : ℕ) :=
   ∀ {a b c : ℕ},
     ConsecutiveFactors n a b ∧ ConsecutiveFactors n b c
     → a ∣ b + c
+
+snip begin
 
 /-- Powers of distinct primes are never equal. -/
 lemma PrimePow_ne {a b p q : ℕ} (p_prime : p.Prime) (q_prime : q.Prime) (p_ne_q : p ≠ q)
@@ -447,6 +447,10 @@ lemma dividable_is_PrimePow {n : ℕ} (h : 1 < n ∧ Dividable n)
   refine this ▸ (Nat.factorization_le_iff_dvd ?_ ?_).mpr h p
   . exact (pow_ne_zero (e + 1) p_prime.ne_zero)
   . exact (Nat.mul_ne_zero q_prime.ne_zero p.succ_ne_zero)
+
+snip end
+
+determine solution_set : Set ℕ := { n | IsPrimePow n }
 
 problem imo2023_p1 : solution_set = { n | 1 < n ∧ Dividable n } := by
   ext _
