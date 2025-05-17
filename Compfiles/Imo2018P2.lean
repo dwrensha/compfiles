@@ -28,15 +28,11 @@ determine solution_set : Set ℕ := { n | 3 ≤ n ∧ 3 ∣ n }
 problem imo2018_p2 (n : ℕ) :
     n ∈ solution_set ↔
       3 ≤ n ∧
-      ∃ a : ZMod n → ℝ,
-        a 0 = a n ∧
-        a 1 = a (n + 1) ∧
-        ∀ i, a i * a (i + 1) + 1 = a (i + 2) := by
+      ∃ a : ZMod n → ℝ, ∀ i, a i * a (i + 1) + 1 = a (i + 2) := by
   constructor
   · rintro ⟨hn1, hn2⟩
     refine ⟨hn1, ?_⟩
     sorry
   · sorry
-
 
 end Imo2018P2
