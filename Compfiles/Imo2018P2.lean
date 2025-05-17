@@ -25,14 +25,25 @@ namespace Imo2018P2
 
 determine solution_set : Set ℕ := { n | 3 ≤ n ∧ 3 ∣ n }
 
+abbrev P {n : ℕ} (a : ZMod n → ℝ) :=
+  ∀ (i : ZMod n), a i * a (i + 1) + 1 = a (i + 2)
+
+snip begin
+
+lemma mod_3_satisfies {n : ℕ} (hn : 3 ∣ n) :
+    ∃ a : ZMod n → ℝ, P a := sorry
+
+lemma satisfies_is_mod_3 {n : ℕ} (h : ∃ a : ZMod n → ℝ, P a) :
+    3 ∣ n := sorry
+
+snip end
+
 problem imo2018_p2 (n : ℕ) :
-    n ∈ solution_set ↔
-      3 ≤ n ∧
-      ∃ a : ZMod n → ℝ, ∀ i, a i * a (i + 1) + 1 = a (i + 2) := by
+    n ∈ solution_set ↔ 3 ≤ n ∧ ∃ a : ZMod n → ℝ, P a := by
   constructor
   · rintro ⟨hn1, hn2⟩
-    refine ⟨hn1, ?_⟩
-    sorry
-  · sorry
+    exact ⟨hn1, mod_3_satisfies hn2⟩
+  · rintro ⟨hn1, hn2⟩
+    exact ⟨hn1, satisfies_is_mod_3 hn2⟩
 
 end Imo2018P2
