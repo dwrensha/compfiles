@@ -30,8 +30,41 @@ abbrev P {n : ℕ} (a : ZMod n → ℝ) :=
 
 snip begin
 
+theorem mod_dvd_not_dvd_succ {n : ℕ} (hn1 : 3 ≤ n) (hn : 3 ∣ n) :
+    ∀ i : ZMod n, 3 ∣ i.val → ¬ (3 ∣ (i + 1).val) := by
+  have : NeZero n := ⟨Nat.ne_zero_of_lt hn1⟩
+  have : Fact (1 < n) := ⟨Nat.lt_of_add_left_lt hn1⟩
+
+  intro i hi
+  rw [ZMod.val_add, ZMod.val_one]
+  by_contra h
+  obtain ⟨x, y⟩ := h
+  let y := congrArg (· % 3) y
+  dsimp at y
+  rw [Nat.mod_mod_of_dvd _ hn, Nat.mul_mod_right,
+      Nat.add_mod, Nat.mod_eq_zero_of_dvd hi] at y
+  linarith
+
 lemma mod_3_satisfies {n : ℕ} (hn : 3 ∣ n) :
-    ∃ a : ZMod n → ℝ, P a := sorry
+    ∃ a : ZMod n → ℝ, P a := by
+  let fn : ZMod n → ℝ := fun i => if 3 ∣ i.val then 2 else -1
+  exists fn
+  intro i
+
+  have : (3 ∣ i.val ∧ ¬3 ∣ (i + 1).val ∧ ¬3 ∣ (i + 2).val) ∨
+         (¬3 ∣ i.val ∧ 3 ∣ (i + 1).val ∧ ¬3 ∣ (i + 2).val) ∨
+         (¬3 ∣ i.val ∧ ¬3 ∣ (i + 1).val ∧ 3 ∣ (i + 2).val) :=
+    if 3 ∣ i.val then
+      -- have : ¬3 ∣ (i + 1).val := sorry
+      sorry
+    else
+      sorry
+
+  refine this.by_cases ?_ (Or.by_cases · ?_ ?_)
+  <;> intro ⟨h1, h2, h3⟩
+  <;> dsimp [fn]
+  <;> simp [h1, h2, h3]
+  <;> linarith
 
 lemma satisfies_is_mod_3 {n : ℕ} (h : ∃ a : ZMod n → ℝ, P a) :
     3 ∣ n := sorry
