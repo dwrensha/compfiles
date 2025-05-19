@@ -30,23 +30,49 @@ abbrev P {n : ℕ} (a : ZMod n → ℝ) :=
 
 snip begin
 
-theorem mod_dvd_not_dvd_succ {n : ℕ} (hn1 : 3 ≤ n) (hn : 3 ∣ n) :
-    ∀ i : ZMod n, 3 ∣ i.val → ¬ (3 ∣ (i + 1).val) := by
-  have : NeZero n := ⟨Nat.ne_zero_of_lt hn1⟩
-  have : Fact (1 < n) := ⟨Nat.lt_of_add_left_lt hn1⟩
+theorem mod_dvd_not_dvd_add' {n d : ℕ} {a : ZMod n} (hn : n ≠ 0)
+    (hd : d ∣ n) (ha : ¬d ∣ a.val) :
+    ∀ i : ZMod n, d ∣ i.val → ¬d ∣ (i + a).val := by
+  have : NeZero n := ⟨hn⟩
+  have d_ne_0 : d ≠ 0 :=
+    ne_zero_of_dvd_ne_zero hn hd
 
   intro i hi
-  rw [ZMod.val_add, ZMod.val_one]
   by_contra h
   obtain ⟨x, y⟩ := h
-  let y := congrArg (· % 3) y
+  let y := congrArg (· % d) y
   dsimp at y
-  rw [Nat.mod_mod_of_dvd _ hn, Nat.mul_mod_right,
-      Nat.add_mod, Nat.mod_eq_zero_of_dvd hi] at y
-  linarith
+  rw [ZMod.val_add, Nat.mod_mod_of_dvd _ hd,
+      Nat.mul_mod_right, Nat.add_mod,
+      Nat.mod_eq_zero_of_dvd hi, Nat.zero_add,
+      Nat.mod_mod] at y
+  apply ha
+  exact Nat.dvd_of_mod_eq_zero y
 
-lemma mod_3_satisfies {n : ℕ} (hn : 3 ∣ n) :
+theorem mod_dvd_not_dvd_add {n d a : ℕ} (hn : n ≠ 0)
+    (hd : d ∣ n) (ha : 0 < a ∧ a < d) :
+    ∀ i : ZMod n, d ∣ i.val → ¬ (d ∣ (i + a).val) := by
+  have : NeZero n := ⟨hn⟩
+  have d_le_n : d ≤ n :=
+    Nat.le_of_dvd (Nat.zero_lt_of_ne_zero hn) hd
+
+  intro i hi
+  by_contra h
+  obtain ⟨x, y⟩ := h
+  let y := congrArg (· % d) y
+  dsimp at y
+  rw [ZMod.val_add, Nat.mod_mod_of_dvd _ hd,
+      Nat.mul_mod_right, Nat.add_mod,
+      Nat.mod_eq_zero_of_dvd hi, Nat.zero_add,
+      Nat.mod_mod, ZMod.val_natCast,
+      Nat.mod_eq_of_lt (Nat.lt_of_lt_of_le ha.2 d_le_n),
+      Nat.mod_eq_of_lt ha.2] at y
+  exact ha.1.ne.symm y
+
+lemma mod_3_satisfies {n : ℕ} (hn : 1 < n) (h : 3 ∣ n) :
     ∃ a : ZMod n → ℝ, P a := by
+  have n_ne_0 : n ≠ 0 := Nat.ne_zero_of_lt hn
+  have : Fact (1 < n) := ⟨hn⟩
   let fn : ZMod n → ℝ := fun i => if 3 ∣ i.val then 2 else -1
   exists fn
   intro i
@@ -54,8 +80,13 @@ lemma mod_3_satisfies {n : ℕ} (hn : 3 ∣ n) :
   have : (3 ∣ i.val ∧ ¬3 ∣ (i + 1).val ∧ ¬3 ∣ (i + 2).val) ∨
          (¬3 ∣ i.val ∧ 3 ∣ (i + 1).val ∧ ¬3 ∣ (i + 2).val) ∨
          (¬3 ∣ i.val ∧ ¬3 ∣ (i + 1).val ∧ 3 ∣ (i + 2).val) :=
-    if 3 ∣ i.val then
-      -- have : ¬3 ∣ (i + 1).val := sorry
+    if hi : 3 ∣ i.val then
+      have : ¬3 ∣ (i + 1).val := by
+        have : ¬3 ∣ (1 : ZMod n).val := by
+          rw [ZMod.val_one]
+          norm_num
+        apply mod_dvd_not_dvd_add' n_ne_0 h this
+        exact hi
       sorry
     else
       sorry
