@@ -106,7 +106,8 @@ problem imo2018_p2 (n : ℕ) :
     n ∈ solution_set ↔ 3 ≤ n ∧ ∃ a : ZMod n → ℝ, P a := by
   constructor
   · rintro ⟨hn1, hn2⟩
-    exact ⟨hn1, mod_3_satisfies hn2⟩
+    have : 1 < n := Nat.lt_of_add_left_lt hn1
+    exact ⟨hn1, mod_3_satisfies this hn2⟩
   · rintro ⟨hn1, hn2⟩
     exact ⟨hn1, satisfies_is_mod_3 hn2⟩
 
