@@ -82,11 +82,16 @@ lemma mod_3_satisfies {n : ℕ} (hn : 1 < n) (h : 3 ∣ n) :
          (¬3 ∣ i.val ∧ ¬3 ∣ (i + 1).val ∧ 3 ∣ (i + 2).val) :=
     if hi : 3 ∣ i.val then
       have : ¬3 ∣ (i + 1).val := by
-        have : ¬3 ∣ (1 : ZMod n).val := by
-          rw [ZMod.val_one]
-          norm_num
-        apply mod_dvd_not_dvd_add' n_ne_0 h this
-        exact hi
+        refine mod_dvd_not_dvd_add' n_ne_0 h ?_ i hi
+        rw [ZMod.val_one]
+        norm_num
+      have : ¬3 ∣ (i + 2).val := by
+        refine mod_dvd_not_dvd_add' n_ne_0 h ?_ i hi
+        have : ZMod.val (2 : ZMod n) = 2 := by
+          rw [ZMod.val_natCast]
+          sorry
+        rw [ZMod.val_one]
+        norm_num
       sorry
     else
       sorry
