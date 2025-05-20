@@ -443,10 +443,13 @@ lemma dividable_is_PrimePow {n : ℕ} (h : 1 < n ∧ Dividable n)
 
 snip end
 
-determine solution_set : Set ℕ := { n | IsPrimePow n }
+determine solution_set : Set ℕ := { n | ¬n.Prime ∧ IsPrimePow n }
 
-problem imo2023_p1 : solution_set = { n | 1 < n ∧ Dividable n } := by
-  ext _
-  exact ⟨PrimePow_is_dividable, dividable_is_PrimePow⟩
+problem imo2023_p1 : solution_set = { n | 1 < n ∧ ¬n.Prime ∧ Dividable n } := by
+  ext x
+  refine ⟨fun ⟨hx₁, hx₂⟩ ↦ ?_, fun ⟨hx₁, hx₂, hx₃⟩ ↦ ?_⟩
+  · have ⟨hx₃, hx₄⟩ := PrimePow_is_dividable hx₂
+    refine ⟨hx₃, hx₁, hx₄⟩
+  · exact ⟨hx₂, dividable_is_PrimePow ⟨hx₁, hx₃⟩⟩
 
 end Imo2023P1
