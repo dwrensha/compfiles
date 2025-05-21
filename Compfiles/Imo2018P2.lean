@@ -137,8 +137,8 @@ lemma satisfies_is_mod_3 {n : ℕ} (hn : 3 ≤ n) (h : ∃ a : ZMod n → ℝ, P
       exact ih
 
   by_contra h
-  let x := ha 0
-  rw [← one_add_one_eq_two, ← add_assoc] at x
+  let ha_0 := ha 0
+  rw [← one_add_one_eq_two, ← add_assoc] at ha_0
 
   have {i : ZMod n} : a i = a (i + 1) := by
     mod_cases h_dvd : n % 3
@@ -149,10 +149,10 @@ lemma satisfies_is_mod_3 {n : ℕ} (hn : 3 ≤ n) (h : ∃ a : ZMod n → ℝ, P
       dsimp at y
       rw [← y, add_comm, ← three_periodic']
     }
-  repeat rw [← this] at x
-  apply_fun (· - a 0) at x
-  rw [add_sub_right_comm] at x
-  field_simp at x
+  repeat rw [← this] at ha_0
+  apply_fun (· - a 0) at ha_0
+  rw [add_sub_right_comm] at ha_0
+  field_simp at ha_0
 
   have : ¬∃ x : ℝ, x * x - x + 1 = 0 := by
     intro ⟨x, hx⟩
