@@ -4,7 +4,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Clayton Knittel
 -/
 
-import Mathlib.Algebra.ModEq
 import Mathlib.Tactic
 
 import ProblemExtraction
@@ -170,9 +169,9 @@ determine solution_set : Set ℕ := { n | 3 ≤ n ∧ 3 ∣ n }
 problem imo2018_p2 (n : ℕ) :
     n ∈ solution_set ↔ 3 ≤ n ∧ ∃ a : ZMod n → ℝ, P a := by
   constructor
-  · rintro ⟨hn1, hn2⟩
-    exact ⟨hn1, mod_3_satisfies hn1 hn2⟩
-  · rintro ⟨hn1, hn2⟩
-    exact ⟨hn1, satisfies_is_mod_3 hn1 hn2⟩
+  · rintro ⟨h₁, h₂⟩
+    exact ⟨h₁, mod_3_satisfies h₁ h₂⟩
+  · rintro ⟨h₁, h₂⟩
+    exact ⟨h₁, satisfies_is_mod_3 h₁ h₂⟩
 
 end Imo2018P2
