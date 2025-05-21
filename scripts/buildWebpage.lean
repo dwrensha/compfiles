@@ -167,14 +167,16 @@ def stringifyPercent (p : Float) : String :=
     let s2 := Substring.mk s1 0 p1
     s2.toString ++ "%"
 
-def olean_path_to_github_url (path: System.FilePath) : String :=
+def olean_path_to_github_url (path: System.FilePath) : IO String := do
   let path_components := path.components.dropWhile (· = ".")
-  assert!(path_components.take 4 = [".lake", "build", "lib", "lean"])
+  let cwd ← IO.currentDir
+  let relative_olean_path_components := path_components.drop (cwd.components.length)
+  assert!(relative_olean_path_components.take 4 = [".lake", "build", "lib", "lean"])
   let sfx := ".olean"
-  let path' := (System.mkFilePath (path_components.drop 4)).toString
+  let path' := (System.mkFilePath (relative_olean_path_components.drop 4)).toString
   assert!(sfx.data.isSuffixOf path'.data)
-  "https://github.com/dwrensha/compfiles/blob/main/" ++
-    (path'.stripSuffix sfx) ++ ".lean"
+  return "https://github.com/dwrensha/compfiles/blob/main/" ++
+            (path'.stripSuffix sfx) ++ ".lean"
 
 def extractModuleDoc (env : Environment) (m : Name) : String :=
   match Lean.getModuleDoc? env m with
@@ -320,7 +322,7 @@ unsafe def main (_args : List String) : IO Unit := do
     let mut infos : List ProblemInfo := []
     for ⟨m, problem_src⟩ in mst do
       let p ← findOLean m
-      let solutionUrl := olean_path_to_github_url p.normalize
+      let solutionUrl := ← olean_path_to_github_url p.normalize
       IO.println s!"MODULE: {m}"
       let problemFile := s!"problems/{m}.html"
       let rawProblemFile := s!"problems/{m}.lean"
