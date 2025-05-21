@@ -1,7 +1,7 @@
 /-
 Copyright (c) 2023 The Compfiles Contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors:
+Authors: Clayton Knittel
 -/
 
 import Mathlib.Algebra.ModEq
@@ -10,20 +10,6 @@ import Mathlib.Tactic
 import ProblemExtraction
 
 problem_file { tags := [.Algebra] }
-
-lemma three_periodic {n : ℕ} (i c : ZMod n) (a : ZMod n → ℝ)
-    [NeZero n] (test : ∀ i : ZMod n, a i = a (i + 3)) :
-    a i = a (i + 3 * c) := by
-  let k := c.val
-  have h_cast : c = ↑k := Eq.symm (ZMod.natCast_zmod_val c)
-  rw [h_cast] -- , ← Nat.cast_mul]
-  induction k with
-  | zero =>
-      simp
-  | succ d ih =>
-      rw [Nat.cast_add, mul_add, Nat.cast_one, ← add_assoc, mul_one]
-      rw [← test _]
-      exact ih
 
 /-!
 # International Mathematical Olympiad 2018, Problem 2
@@ -37,8 +23,6 @@ where the indices are taken mod n.
 -/
 
 namespace Imo2018P2
-
-determine solution_set : Set ℕ := { n | 3 ≤ n ∧ 3 ∣ n }
 
 abbrev P {n : ℕ} (a : ZMod n → ℝ) :=
   ∀ (i : ZMod n), a i * a (i + 1) + 1 = a (i + 2)
@@ -70,32 +54,21 @@ lemma mod_3_satisfies {n : ℕ} (hn : 3 ≤ n) (hd : 3 ∣ n) :
   all_goals {
     intro h
     simp [fn, h]
-    linarith
+    norm_num
   }
 
 lemma three_periodic {n : ℕ} [NeZero n] {i : ZMod n} {a : ZMod n → ℝ} (ha : P a)
     : a i = a (i + 3) := by
-  unfold P at ha
-  ring_nf at ha
-
   have (i : ZMod n) : a (i + 2) ^ 2 - a (i + 2) = a i * a (i + 3) - a i := by
     calc
-      _ = a i * (a (i + 3) - 1) := by
-        ring_nf
-        let x := ha (i + 1)
-        ring_nf at x
-        rw [← x]
-        ring_nf
-        have : a i * a (1 + i) = a (2 + i) - 1 := by rw [← ha i]; ring_nf
-        rw [mul_assoc, this]
-        ring_nf
+      _ = a i * a (i + 1) * a (i + 2) := by rw [← ha i]; ring_nf
+      _ = a i * (a (i + 1 + 2) - 1) := by rw [← ha (i + 1)]; ring_nf
       _ = a i * a (i + 3) - a i := by ring_nf
 
   have : ∑ i, a i ^ 2 = ∑ i, a i * a (i + 3) := by
-    let x := ∑ i : ZMod n, (a (i + 2) ^ 2 - a (i + 2))
-    let y := ∑ i : ZMod n, (a i * a (i + 3) - a i)
-    have h : x = y := Finset.sum_congr rfl (fun i _ => this i)
-    dsimp [x, y] at h
+    have h : ∑ i : ZMod n, (a (i + 2) ^ 2 - a (i + 2)) =
+             ∑ i : ZMod n, (a i * a (i + 3) - a i) :=
+      Finset.sum_congr rfl (fun i _ => this i)
     repeat rw [Finset.sum_sub_distrib] at h
 
     have := Equiv.sum_comp (Equiv.addRight 2) a
@@ -112,7 +85,7 @@ lemma three_periodic {n : ℕ} [NeZero n] {i : ZMod n} {a : ZMod n → ℝ} (ha 
 
   have : 2 * (∑ i, a i ^ 2 - ∑ i, a i * a (i + 3)) = 0 := by
     rw [sub_eq_zero.mpr this]
-    simp
+    norm_num
 
   have : 0 = ∑ i, (a i - a (i + 3)) ^ 2 := by
     calc
@@ -135,7 +108,7 @@ lemma three_periodic {n : ℕ} [NeZero n] {i : ZMod n} {a : ZMod n → ℝ} (ha 
   apply_fun (· - a (i + 3)) using add_left_injective _
   dsimp
   rw [pow_eq_zero this]
-  simp
+  norm_num
 
 lemma not_dvd_prime_exists_mod_inverse {n p : ℕ} [NeZero n]
     (pp : p.Prime) (hn : 1 < n) (h : ¬p ∣ n) :
@@ -159,10 +132,8 @@ lemma satisfies_is_mod_3 {n : ℕ} (hn : 3 ≤ n) (h : ∃ a : ZMod n → ℝ, P
     induction c.val with
     | zero => simp
     | succ d ih =>
-      have : 3 * ↑(d + 1) + i = 3 * ↑d + i + 3 := by
-        rw [Nat.cast_add]
-        ring_nf
-      rw [this, ← three_periodic ha]
+      rw [Nat.cast_add, mul_add, Nat.cast_one, mul_one,
+          add_right_comm, ← three_periodic ha]
       exact ih
 
   by_contra h
@@ -193,6 +164,8 @@ lemma satisfies_is_mod_3 {n : ℕ} (hn : 3 ≤ n) (h : ∃ a : ZMod n → ℝ, P
   exists a 0
 
 snip end
+
+determine solution_set : Set ℕ := { n | 3 ≤ n ∧ 3 ∣ n }
 
 problem imo2018_p2 (n : ℕ) :
     n ∈ solution_set ↔ 3 ≤ n ∧ ∃ a : ZMod n → ℝ, P a := by
