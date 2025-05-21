@@ -73,6 +73,70 @@ lemma mod_3_satisfies {n : ℕ} (hn : 3 ≤ n) (hd : 3 ∣ n) :
     linarith
   }
 
+lemma three_periodic {n : ℕ} [NeZero n] {i : ZMod n} {a : ZMod n → ℝ} (ha : P a)
+    : a i = a (i + 3) := by
+  unfold P at ha
+  ring_nf at ha
+
+  have (i : ZMod n) : a (i + 2) ^ 2 - a (i + 2) = a i * a (i + 3) - a i := by
+    calc
+      _ = a i * (a (i + 3) - 1) := by
+        ring_nf
+        let x := ha (i + 1)
+        ring_nf at x
+        rw [← x]
+        ring_nf
+        have : a i * a (1 + i) = a (2 + i) - 1 := by rw [← ha i]; ring_nf
+        rw [mul_assoc, this]
+        ring_nf
+      _ = a i * a (i + 3) - a i := by ring_nf
+
+  have : ∑ i, a i ^ 2 = ∑ i, a i * a (i + 3) := by
+    let x := ∑ i : ZMod n, (a (i + 2) ^ 2 - a (i + 2))
+    let y := ∑ i : ZMod n, (a i * a (i + 3) - a i)
+    have h : x = y := Finset.sum_congr rfl (fun i _ => this i)
+    dsimp [x, y] at h
+    repeat rw [Finset.sum_sub_distrib] at h
+
+    have := Equiv.sum_comp (Equiv.addRight 2) a
+    dsimp at this
+    rw [this] at h
+
+    have : ∑ i, a (i + 2) ^ 2 = ∑ i, a i ^ 2:=
+      Equiv.sum_comp (Equiv.addRight 2) ((a ·) ^ 2)
+    rw [this] at h
+
+    apply_fun (· + ∑ i, a i) at h
+    simp at h
+    exact h
+
+  have : 2 * (∑ i, a i ^ 2 - ∑ i, a i * a (i + 3)) = 0 := by
+    rw [sub_eq_zero.mpr this]
+    simp
+
+  have : 0 = ∑ i, (a i - a (i + 3)) ^ 2 := by
+    calc
+      0 = 2 * (∑ i, a i ^ 2 - ∑ i, a i * a (i + 3)) := this.symm
+      _ = ∑ i, a i ^ 2 + ∑ i, a i ^ 2 - 2 * ∑ i, a i * a (i + 3) := by ring_nf
+      _ = ∑ i, a i ^ 2 + ∑ i, a (i + 3) ^ 2 - 2 * ∑ i, a i * a (i + 3) := by
+        have := Equiv.sum_comp (Equiv.addRight 3) ((a ·) ^ 2)
+        dsimp at this
+        rw [this]
+      _ = ∑ i, (a i ^ 2 + a (i + 3) ^ 2 - 2 * a i * a (i + 3)) := by
+        rw [Finset.sum_sub_distrib, Finset.sum_add_distrib, Finset.mul_sum]
+        simp only [mul_assoc]
+      _ = ∑ i, (a i - a (i + 3)) ^ 2 := by ring_nf
+
+  have {i : ZMod n} : (a i - a (i + 3)) ^ 2 = 0 := by
+    refine (Finset.sum_eq_zero_iff_of_nonneg ?_).mp this.symm i ?_
+    . exact fun _ _ => sq_nonneg _
+    . exact Finset.mem_univ _
+
+  apply_fun (· - a (i + 3)) using add_left_injective _
+  dsimp
+  rw [pow_eq_zero this]
+  simp
+
 lemma not_dvd_prime_exists_mod_inverse {n p : ℕ} [NeZero n]
     (pp : p.Prime) (hn : 1 < n) (h : ¬p ∣ n) :
     ∃ c : ZMod n, p * c = 1 := by
@@ -88,77 +152,8 @@ lemma satisfies_is_mod_3 {n : ℕ} (hn : 3 ≤ n) (h : ∃ a : ZMod n → ℝ, P
     3 ∣ n := by
   have n_gt_1 : 1 < n := Nat.lt_of_add_left_lt hn
   have : Fact (1 < n) := ⟨n_gt_1⟩
-
   obtain ⟨a, ha⟩ := h
-  have three_periodic {i : ZMod n} : a i = a (i + 3) := by
-    unfold P at ha
-    ring_nf at ha
-    -- have : a (i + 1) * a (i + 2) + 1 = a (i + 3) := by
-    --   ring_nf
-    --   let x := ha (i + 1)
-    --   ring_nf at x
-    --   exact x
-    -- rw [← this]
 
-    -- have : a i * a (i + 1) * a (i + 2) = a i * a (i + 3) - a i := by
-    have (i : ZMod n) : a (i + 2) ^ 2 - a (i + 2) = a i * a (i + 3) - a i := by
-      calc
-        -- _ = a (i + 2) ^ 2 - a (i + 2) := by rw [← ha i]; ring_nf
-        _ = a i * (a (i + 3) - 1) := by
-          ring_nf
-          let x := ha (i + 1)
-          ring_nf at x
-          rw [← x]
-          ring_nf
-          have : a i * a (1 + i) = a (2 + i) - 1 := by rw [← ha i]; ring_nf
-          rw [mul_assoc, this]
-          ring_nf
-        _ = a i * a (i + 3) - a i := by ring_nf
-    -- generalize i = i
-
-    have : ∑ i, a i ^ 2 = ∑ i, a i * a (i + 3) := by
-      let x := ∑ i : ZMod n, (a (i + 2) ^ 2 - a (i + 2))
-      let y := ∑ i : ZMod n, (a i * a (i + 3) - a i)
-      have h : x = y := Finset.sum_congr rfl (fun i _ => this i)
-      dsimp [x, y] at h
-      repeat rw [Finset.sum_sub_distrib] at h
-
-      have := Equiv.sum_comp (Equiv.addRight 2) a
-      dsimp at this
-      rw [this] at h
-
-      have : ∑ i, a (i + 2) ^ 2 = ∑ i, a i ^ 2:=
-        Equiv.sum_comp (Equiv.addRight 2) ((a ·) ^ 2)
-      rw [this] at h
-
-      apply_fun (· + ∑ i, a i) at h
-      simp at h
-      exact h
-
-    have : 2 * (∑ i, a i ^ 2 - ∑ i, a i * a (i + 3)) = 0 := by
-      rw [sub_eq_zero.mpr this]
-      simp
-
-    have : 0 = ∑ i, (a i - a (i + 3)) ^ 2 := by
-      calc
-        0 = 2 * (∑ i, a i ^ 2 - ∑ i, a i * a (i + 3)) := this.symm
-        _ = ∑ i, a i ^ 2 + ∑ i, a i ^ 2 - 2 * ∑ i, a i * a (i + 3) := by ring_nf
-        _ = ∑ i, a i ^ 2 + ∑ i, a (i + 3) ^ 2 - 2 * ∑ i, a i * a (i + 3) := by
-          have := Equiv.sum_comp (Equiv.addRight 3) ((a ·) ^ 2)
-          dsimp at this
-          rw [this]
-        _ = ∑ i, (a i ^ 2 + a (i + 3) ^ 2 - 2 * a i * a (i + 3)) := by
-          rw [Finset.sum_sub_distrib, Finset.sum_add_distrib, Finset.mul_sum]
-          simp only [mul_assoc]
-        _ = ∑ i, (a i - a (i + 3)) ^ 2 := by ring_nf
-
-    have sq_pos {i : ZMod n} : 0 ≤ (a i - a (i + 3)) ^ 2 := sq_nonneg _
-    have x := this.ge
-    have : ∀ i, (a i - a (i + 3)) ^ 2 = 0 := by
-      intro i
-      refine (Finset.sum_eq_zero_iff_of_nonneg ?_).mp this.symm i _
-      . exact fun _ _ => sq_pos
-    sorry
   have three_periodic' {i c : ZMod n} : a i = a (3 * c + i) := by
     rw [← ZMod.natCast_zmod_val c]
     induction c.val with
@@ -167,7 +162,7 @@ lemma satisfies_is_mod_3 {n : ℕ} (hn : 3 ≤ n) (h : ∃ a : ZMod n → ℝ, P
       have : 3 * ↑(d + 1) + i = 3 * ↑d + i + 3 := by
         rw [Nat.cast_add]
         ring_nf
-      rw [this, ← three_periodic]
+      rw [this, ← three_periodic ha]
       exact ih
 
   by_contra h
