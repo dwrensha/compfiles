@@ -75,7 +75,7 @@ lemma mod_3_satisfies {n : ℕ} (hn : 3 ≤ n) (hd : 3 ∣ n) :
 
 lemma not_dvd_prime_exists_mod_inverse {n p : ℕ} [NeZero n]
     (pp : p.Prime) (hn : 1 < n) (h : ¬p ∣ n) :
-    ∃ c : ZMod n, ↑p * c = 1 := by
+    ∃ c : ZMod n, p * c = 1 := by
   let ⟨c, hc⟩ := Nat.exists_mul_emod_eq_one_of_coprime
     ((pp.coprime_iff_not_dvd).mpr h) hn
   exists c
@@ -90,18 +90,17 @@ lemma satisfies_is_mod_3 {n : ℕ} (hn : 3 ≤ n) (h : ∃ a : ZMod n → ℝ, P
   have : Fact (1 < n) := ⟨n_gt_1⟩
 
   obtain ⟨a, ha⟩ := h
-  have {i : ZMod n} : a i = a (i + (Nat.cast 3)) := by sorry
-  have three_periodic {i c : ZMod n} : a i = a ((Nat.cast 3) * c + i) := by
-    let k := c.val
-    have h_cast : c = ↑k := Eq.symm (ZMod.natCast_zmod_val c)
-    rw [h_cast]
-    induction k with
-    | zero =>
-        simp
+  have three_periodic {i : ZMod n} : a i = a (i + 3) := by sorry
+  have three_periodic' {i c : ZMod n} : a i = a (3 * c + i) := by
+    rw [← ZMod.natCast_zmod_val c]
+    induction c.val with
+    | zero => simp
     | succ d ih =>
-        rw [Nat.cast_add, mul_add, Nat.cast_one, add_right_comm, mul_one]
-        rw [← this]
-        exact ih
+      have : 3 * ↑(d + 1) + i = 3 * ↑d + i + 3 := by
+        rw [Nat.cast_add]
+        ring_nf
+      rw [this, ← three_periodic]
+      exact ih
 
   by_contra h
   let x := ha 0
@@ -113,7 +112,8 @@ lemma satisfies_is_mod_3 {n : ℕ} (hn : 3 ≤ n) (h : ∃ a : ZMod n → ℝ, P
       exact Nat.dvd_of_mod_eq_zero h_dvd
     all_goals {
       let ⟨x, y⟩ := not_dvd_prime_exists_mod_inverse Nat.prime_three n_gt_1 h
-      rw [← y, add_comm, ← three_periodic]
+      dsimp at y
+      rw [← y, add_comm, ← three_periodic']
     }
   repeat rw [← this] at x
   apply_fun (· - a 0) at x
