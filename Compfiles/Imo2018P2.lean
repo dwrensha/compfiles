@@ -28,6 +28,17 @@ abbrev P {n : ℕ} (a : ZMod n → ℝ) :=
 
 snip begin
 
+lemma not_dvd_prime_exists_mod_inverse {n p : ℕ} [NeZero n]
+    (pp : p.Prime) (hn : 1 < n) (h : ¬p ∣ n) :
+    ∃ c : ZMod n, p * c = 1 := by
+  let ⟨c, hc⟩ := Nat.exists_mul_emod_eq_one_of_coprime
+    ((pp.coprime_iff_not_dvd).mpr h) hn
+  exists c
+  rw [← Nat.cast_one, ← Nat.cast_mul, ZMod.eq_iff_modEq_nat n]
+  change _ % n = _ % n
+  rw [Nat.mod_eq_of_lt hn]
+  exact hc
+
 lemma mod_3_satisfies {n : ℕ} (hn : 3 ≤ n) (hd : 3 ∣ n) :
     ∃ a : ZMod n → ℝ, P a := by
   have : Fact (1 < n) := ⟨Nat.lt_of_add_left_lt hn⟩
@@ -108,17 +119,6 @@ lemma three_periodic {n : ℕ} [NeZero n] {i : ZMod n} {a : ZMod n → ℝ} (ha 
   dsimp
   rw [pow_eq_zero this]
   norm_num
-
-lemma not_dvd_prime_exists_mod_inverse {n p : ℕ} [NeZero n]
-    (pp : p.Prime) (hn : 1 < n) (h : ¬p ∣ n) :
-    ∃ c : ZMod n, p * c = 1 := by
-  let ⟨c, hc⟩ := Nat.exists_mul_emod_eq_one_of_coprime
-    ((pp.coprime_iff_not_dvd).mpr h) hn
-  exists c
-  rw [← Nat.cast_one, ← Nat.cast_mul, ZMod.eq_iff_modEq_nat n]
-  change _ % n = _ % n
-  rw [Nat.mod_eq_of_lt hn]
-  exact hc
 
 lemma satisfies_is_mod_3 {n : ℕ} (hn : 3 ≤ n) (h : ∃ a : ZMod n → ℝ, P a) :
     3 ∣ n := by
