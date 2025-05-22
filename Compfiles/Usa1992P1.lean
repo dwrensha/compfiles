@@ -61,9 +61,7 @@ lemma digits_sum (m x y : ℕ)
   have h3 : (Nat.digits 10 y).length ≤ m := by
     have h4 := lemma2 h1
     exact Nat.le_of_lt_succ h4
-  have ⟨k, hk⟩ : ∃ k, (Nat.digits 10 y).length + k = m := by
-    obtain ⟨k, hk⟩ := Nat.le.dest h3
-    exact ⟨k, hk⟩
+  have ⟨k, hk⟩ : ∃ k, (Nat.digits 10 y).length + k = m := Nat.le.dest h3
   nth_rewrite 1 [add_comm, mul_comm]
   nth_rewrite 1 [←hk]
   have one_lt_ten : 1 < 10 := by norm_num
