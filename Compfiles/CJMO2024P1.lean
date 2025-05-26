@@ -59,6 +59,8 @@ def Distinguishes {Q : ℕ} (D : Fin Q → Detector) : Prop :=
 noncomputable def minQ : ℕ :=
   sInf {Q : ℕ | ∃ D : Fin Q → Detector, Distinguishes D}
 
+snip begin
+
 def D (i : Fin 3): Detector :=
   match i with
   | 0 => Detector.ofBounds 0 0 0 3 -- first detector covers first row
@@ -84,6 +86,8 @@ lemma D_distinguishes : Distinguishes D := by
   intro c₁ c₂ h
   fin_cases c₁ <;> fin_cases c₂ <;>
   first | decide | exfalso; simp at h
+
+snip end
 
 noncomputable determine solution : ℕ := 3
 
