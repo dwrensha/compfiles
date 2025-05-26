@@ -971,7 +971,7 @@ lemma aux_unique
       constructor
       . refine Subtype.mk_le_mk.mpr ?_
         exact Nat.le_add_right ↑N ↑i
-      . refine Set.not_mem_Ioo_of_ge ?_
+      . refine Set.notMem_Ioo_of_ge ?_
         have hi₂: ↑↑N + 3 ≤ fd x y a := by
           refine hi₀ a ?_
           refine Subtype.mk_le_mk.mpr ?_
@@ -1033,7 +1033,7 @@ lemma aux_unique
       constructor
       . refine Subtype.mk_le_mk.mpr ?_
         exact Nat.le_add_right ↑N ↑i
-      . refine Set.not_mem_Ioo_of_ge ?_
+      . refine Set.notMem_Ioo_of_ge ?_
         have hi₂: ↑↑N + 3 ≤ fd y x a := by
           refine hi₀ a ?_
           refine Subtype.mk_le_mk.mpr ?_

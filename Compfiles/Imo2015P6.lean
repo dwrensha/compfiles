@@ -65,7 +65,7 @@ section Pool
 
 lemma exists_add_eq_of_mem_pool {z : ℤ} (hz : z ∈ pool a t) : ∃ u < t, u + a u = t + z := by
   induction t generalizing z with
-  | zero => simp only [pool, Finset.not_mem_empty] at hz
+  | zero => simp only [pool, Finset.notMem_empty] at hz
   | succ t ih =>
     simp_rw [pool, Finset.mem_map, Equiv.coe_toEmbedding, Equiv.subRight_apply] at hz
     obtain ⟨y, my, ey⟩ := hz
@@ -100,7 +100,7 @@ otherwise. -/
 lemma card_pool : Finset.card (pool a (t + 1)) = Finset.card (pool a t) + if 0 ∈ pool a t then 0 else 1 := by
   have nms : a t ∉ (pool a t).erase 0 := by
     rw [Finset.mem_erase, not_and_or]; exact .inr (not_mem_pool_self ha)
-  rw [pool, Finset.card_map, Finset.card_insert_of_not_mem nms, Finset.card_erase_eq_ite]
+  rw [pool, Finset.card_map, Finset.card_insert_of_notMem nms, Finset.card_erase_eq_ite]
   split_ifs with h
   · have := Finset.card_pos.mpr ⟨0, h⟩; omega
   · rfl
@@ -131,7 +131,7 @@ lemma b_pos : 0 < b := by
       rwa [hbN _ le_rfl, nonpos_iff_eq_zero] at this
     · exact hbN _ h.le
   have cp1 : Finset.card (pool a 1) = 1 := by
-    simp_rw [card_pool ha, pool, Finset.card_empty, Finset.not_mem_empty, ite_false]
+    simp_rw [card_pool ha, pool, Finset.card_empty, Finset.notMem_empty, ite_false]
   apply absurd (hbN 1); omega
 
 include ht in
@@ -168,7 +168,7 @@ lemma le_sum_pool : ∑ i ∈ Finset.range b, (i : ℤ) ≤ ∑ x ∈ pool a t, 
 include ht in
 lemma sum_pool_le : ∑ x ∈ pool a t, x ≤ ∑ i ∈ Finset.range (b - 1), (2014 - i : ℤ) := by
   have zmp := zero_mem_pool ha hbN ht
-  rw [← Finset.insert_erase zmp, Finset.sum_insert (Finset.not_mem_erase _ _), zero_add]
+  rw [← Finset.insert_erase zmp, Finset.sum_insert (Finset.notMem_erase _ _), zero_add]
   convert Finset.sum_le_sum_range fun x mx ↦ ?_
   · rw [Finset.card_erase_of_mem zmp, hbN _ ht]
   · exact (Finset.mem_Icc.mp ((pool_subset_Icc ha) (Finset.mem_erase.mp mx).2)).2

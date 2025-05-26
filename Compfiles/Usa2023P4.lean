@@ -273,7 +273,7 @@ lemma lemma2' (a : ℕ+) (N : ℕ) (hN : 1 < N) (s0 : State N)
     | .Bob =>
       apply EndInevitableIn.BaseCase
       dsimp [valid_moves]
-      rw [Set.eq_empty_iff_forall_not_mem]
+      rw [Set.eq_empty_iff_forall_notMem]
       intro x hx
       rw [Set.mem_setOf_eq] at hx
       obtain ⟨i, hie, _⟩ := hx
@@ -291,7 +291,7 @@ lemma lemma2' (a : ℕ+) (N : ℕ) (hN : 1 < N) (s0 : State N)
       apply EndInevitableIn.BaseCase
       obtain ⟨b1, rfl⟩ := bob_moves_after_alice b0 s hs
       dsimp [valid_moves] at hs ⊢
-      rw [Set.eq_empty_iff_forall_not_mem]
+      rw [Set.eq_empty_iff_forall_notMem]
       intro s1' hs1'
       rw [Set.mem_setOf_eq] at hs1'
       obtain ⟨i, hie, _⟩ := hs1'

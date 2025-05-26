@@ -94,7 +94,7 @@ theorem exists_finset_3_le_card_with_pairs_summing_to_squares (n : ℕ) (hn : 10
   refine ⟨{a, b, c}, ?_, ?_, ?_⟩
   · suffices ({a, b, c} : Finset ℕ).card = 3 by rw [this]
     suffices a ∉ {b, c} ∧ b ∉ {c} by
-      rw [Finset.card_insert_of_not_mem this.1, Finset.card_insert_of_not_mem this.2,
+      rw [Finset.card_insert_of_notMem this.1, Finset.card_insert_of_notMem this.2,
         Finset.card_singleton]
     · rw [Finset.mem_insert, Finset.mem_singleton, Finset.mem_singleton]
       push_neg

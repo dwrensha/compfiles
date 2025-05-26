@@ -355,7 +355,7 @@ lemma three_divides_odd_exactly_once (n : ℕ) (s odd_s : Finset ℕ) (partition
   exact unique_divisor (↑a) a b c rfl {a, b, c} rfl b_comp c_comp
 
 lemma empty_of_empty_subset (s : Finset ℕ) : s = {x_1 | x_1 ∈ (∅ : Finset ℕ) } → s = ∅ := by
-  simp only [Finset.not_mem_empty, Set.setOf_false, Finset.coe_eq_empty, imp_self]
+  simp only [Finset.notMem_empty, Set.setOf_false, Finset.coe_eq_empty, imp_self]
 
 lemma no_prime_divisors (x : ℕ) (x_not_zero : x ≠ 0) (no_prime : ¬ ∃ (p : ℕ), p.Prime ∧ p ∣ x) : x = 1 := by
 
@@ -383,7 +383,7 @@ lemma no_prime_divisors (x : ℕ) (x_not_zero : x ≠ 0) (no_prime : ¬ ∃ (p :
     exact ⟨a, b⟩
 
   have goal: { p | Nat.Prime p ∧ p ∣ x ∧ x ≠ 0 } = {x_1 | (x_1 : ℕ) ∈ ({} : Finset ℕ) } := by
-    simp_all only [Finset.not_mem_empty]
+    simp_all only [Finset.notMem_empty]
 
   exact goal
 
@@ -453,7 +453,7 @@ lemma subsets_must_overlap_pigeonhole (s s1 s2 : Finset ℕ) (predicate_s1: ℕ 
     intro left
     dsimp [Disjoint]
     dsimp [Finset.instHasSubset]
-    simp only [Finset.not_mem_empty, imp_false]
+    simp only [Finset.notMem_empty, imp_false]
     intro s3 rel1 rel2 a a_in_s3
     have a_in_s1 := rel1 a_in_s3
     have a_in_s2 := rel2 a_in_s3
@@ -692,7 +692,7 @@ lemma no_partitions (n : ℕ) (s1 s2 : Finset ℕ)
 
 lemma contradiction_of_in_empty (x : ℕ+) (s : Finset ℕ+) (s_empty: s = ∅) (x_in_s : x ∈ s) : False := by
   subst s_empty
-  simp_all only [Finset.not_mem_empty]
+  simp_all only [Finset.notMem_empty]
 
 lemma n_plus_not_zero (n : ℕ+) : ∃(k : ℕ), n = k ∧ k ≠ 0 := by
   simp_all only [ne_eq, exists_eq_left', PNat.ne_zero, not_false_eq_true]
@@ -710,7 +710,7 @@ problem imo1970_p4 (n : ℕ+):
   apply Iff.intro
   · intro n_in_solution_set
     have no_solutions : SolutionSet = ∅ := by
-      simp_all only [Finset.not_mem_empty]
+      simp_all only [Finset.notMem_empty]
     exfalso
     exact contradiction_of_in_empty n SolutionSet no_solutions n_in_solution_set
   · intro H

@@ -134,7 +134,7 @@ theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
           rw [Finset.mem_filter]
           exact ⟨h10, h9⟩
         rw [Finset.card_eq_zero] at h7
-        have h12 := Finset.not_mem_empty z
+        have h12 := Finset.notMem_empty z
         rw [h7] at h11
         exact h12 h11
       · have h9 : i.val + 1 = n := by omega

@@ -250,7 +250,7 @@ theorem Q_ne_B : cfg.Q ≠ cfg.B := by
   exact h' (right_mem_affineSpan_pair _ _ _)
 
 theorem sOppSide_CB_Q_Q₁ : line[ℝ, cfg.C, cfg.B].SOppSide cfg.Q cfg.Q₁ :=
-  cfg.sbtw_Q_A₁_Q₁.sOppSide_of_not_mem_of_mem cfg.Q_not_mem_CB cfg.wbtw_B_A₁_C.symm.mem_affineSpan
+  cfg.sbtw_Q_A₁_Q₁.sOppSide_of_notMem_of_mem cfg.Q_not_mem_CB cfg.wbtw_B_A₁_C.symm.mem_affineSpan
 
 /- ### Relate the orientations of different angles in the configuration -/
 

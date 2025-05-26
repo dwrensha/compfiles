@@ -59,10 +59,10 @@ lemma lemma1 {α : Type} [Fintype α] [DecidableEq α] (s : α) :
       simp only [Subtype.mk.injEq, b] at hxy
       rw [Subtype.mk.injEq]
       apply_fun (Finset.erase · s) at hxy
-      simp [Finset.erase_eq_of_not_mem hx, Finset.erase_eq_of_not_mem hy] at hxy
+      simp [Finset.erase_eq_of_notMem hx, Finset.erase_eq_of_notMem hy] at hxy
       exact hxy
     · rintro ⟨x, hx⟩
-      use ⟨x.erase s, Finset.not_mem_erase s x⟩
+      use ⟨x.erase s, Finset.notMem_erase s x⟩
       simp [Finset.insert_erase hx, b]
   rw [Fintype.card_of_bijective hb]
 
