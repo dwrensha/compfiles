@@ -17,11 +17,11 @@ If $\log_{21} 3 = x$, express $\log_7 9$ in terms of $x$.
 
 open Real
 
-namespace Singapore2019R1P7
+namespace Singapore2019R1P4
 
 noncomputable determine solution (x : ℝ) : ℝ := 2*x / (1-x)
 
-theorem my_favorite_theorem (x : ℝ) (hx : Real.logb 21 3 = x) :
+problem singapore2019_r1_p4 (x : ℝ) (hx : Real.logb 21 3 = x) :
     Real.logb 7 9 = solution x := by
   have h1 : Real.logb 7 9 = Real.logb 21 9 / Real.logb 21 7 := by
     field_simp [Real.logb]
