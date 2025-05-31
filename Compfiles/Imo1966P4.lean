@@ -46,9 +46,8 @@ problem imo1966_p4 (n : ℕ) (x : ℝ)
         rw [pow_succ, mul_comm (2^n) 2, mul_assoc, ← hθ] at h₀
         rw [sin_two_mul] at h₀
         constructor 
-        · intro hs 
-          rw [hs, mul_comm 2 0, mul_assoc, zero_mul] at h₀
-          exact h₀ rfl
+        · rw [mul_comm 2, mul_assoc] at h₀
+          apply left_ne_zero_of_mul h₀
         · exact right_ne_zero_of_mul h₀
       have h : 1 / sin (2 * θ) = 1 / tan θ - 1 / tan (2 * θ) := by
         rw [tan_eq_sin_div_cos, tan_eq_sin_div_cos] 
