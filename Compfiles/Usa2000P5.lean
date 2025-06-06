@@ -37,9 +37,8 @@ problem imo2000_p5
     (hABC : AffineIndependent ℝ ![A 0, A 1, A 2])
     (ω : Fin 7 → Circle)
     (hTangent : ∀ i, i < 6 → ExternallyTangent (ω i) (ω (i + 1)))
-    (hA : ∀ i : ℕ, i < 7 → (A i ∈ ω i ∧ A (i + 1) ∈ ω i))
+    (hA : ∀ i : Fin 7, (A i ∈ ω i ∧ A (i + 1) ∈ ω i))
     : ω 0 = ω 6 := by
   sorry
-
 
 end Imo2000P5
