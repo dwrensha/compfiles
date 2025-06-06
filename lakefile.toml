@@ -15,7 +15,7 @@ rev = "v4.20.0"
 [[require]]
 name = "tryAtEachStep"
 git = "https://github.com/dwrensha/tryAtEachStep"
-rev = "main"
+rev = "lean-v4.20.0"
 
 [[lean_lib]]
 name = "ProblemExtraction"
