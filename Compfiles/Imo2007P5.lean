@@ -113,8 +113,8 @@ problem imo2007_p5 (a b : ℤ) (ha : 0 < a) (hb : 0 < b)
     (hab : 4 * a * b - 1 ∣ (4 * a^2 - 1)^2) : a = b := by
   lift a to ℕ using le_of_lt ha
   lift b to ℕ using le_of_lt hb
-  have ha' : 0 < a := Int.ofNat_pos.mp ha
-  have hb' : 0 < b := Int.ofNat_pos.mp hb
+  have ha' : 0 < a := Int.natCast_pos.mp ha
+  have hb' : 0 < b := Int.natCast_pos.mp hb
   have hg := generalized_imo2007_p5 (n := 4) (by norm_num) a b ha' hb' hab
   exact congrArg Nat.cast hg
 

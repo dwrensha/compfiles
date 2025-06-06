@@ -312,19 +312,18 @@ problem imo2012_p4 (f : ℤ → ℤ) :
         simp_all
         ring
 
-    · have mod4_cases (x : ℤ) : let r := x % 4; r = 0 ∨ r = 1 ∨ r = 2 ∨ r = 3 := by
-        induction x using myInduction <;> simp
-      have «c%4=?» : c % 4 = (8 - (a % 4) - (b % 4)) % 4 := by omega
-      rcases mod4_cases a with «a%4=?» | «a%4=?» | «a%4=?» | «a%4=?»
+    · have «c%4=?» : c % 4 = (8 - (a % 4) - (b % 4)) % 4 := by omega
+      mod_cases «a%4=?» : a % 4 <;> change a % 4 = _ at «a%4=?» <;> norm_num1 at «a%4=?»
       all_goals
-        have «fa=?» := h a; simp [«a%4=?»] at «fa=?»
-        rcases mod4_cases b with «b%4=?» | «b%4=?» | «b%4=?» | «b%4=?»
+        have «fa=?» := h a; simp only [«a%4=?»] at «fa=?»
+        mod_cases «b%4=?» : b % 4 <;> change b % 4 = _ at «b%4=?» <;> norm_num1 at «b%4=?»
         all_goals
-          have «fb=?» := h b; simp [«b%4=?»] at «fb=?»
+          have «fb=?» := h b; simp only [«b%4=?»] at «fb=?»
 
       all_goals
         rw [«a%4=?», «b%4=?»] at «c%4=?»
-        have «fc=?» := h c; simp [«c%4=?»] at «fc=?»
+        have «fc=?» := h c
+        simp only [«c%4=?», sub_zero, Int.reduceMod, Int.reduceSub, EuclideanDomain.mod_self] at «fc=?»
         rw [«fa=?», «fb=?», «fc=?»]
         ring
 

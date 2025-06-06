@@ -220,7 +220,7 @@ problem imo1979_p1 (p q : ℤ) (hp : 0 < p) (hq : 0 < q)
   simp only [Int.cast_natCast] at h
   suffices H : 1979 ∣ p' from Int.ofNat_dvd.mpr H
   have hqq0 : (q':ℚ) ≠ 0 :=
-    Nat.cast_ne_zero.mpr (Nat.pos_iff_ne_zero.mp (Int.ofNat_pos.mp hq))
+    Nat.cast_ne_zero.mpr (Nat.pos_iff_ne_zero.mp (Int.natCast_pos.mp hq))
   rw [div_eq_iff hqq0] at h
   apply_fun (· * sq) at h
   have h41 :

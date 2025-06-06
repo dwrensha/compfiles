@@ -50,9 +50,9 @@ lemma lemma_1
   lift s to ℕ using Int.le_of_lt hs
   lift t to ℕ using Int.le_of_lt ht
   lift u to ℕ using Int.le_of_lt hu
-  replace hs : 0 < s := Int.ofNat_pos.mp hs
-  replace ht : 0 < t := Int.ofNat_pos.mp ht
-  replace hy : 0 < u := Int.ofNat_pos.mp hu
+  replace hs : 0 < s := Int.natCast_pos.mp hs
+  replace ht : 0 < t := Int.natCast_pos.mp ht
+  replace hy : 0 < u := Int.natCast_pos.mp hu
   have h' : s ^ 4 = t ^ 4 + u ^ 2 := by exact Int.ofNat_inj.mp h
   exact lemma_1' s t u hs ht hy h'
 

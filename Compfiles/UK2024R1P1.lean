@@ -168,7 +168,8 @@ lemma f'_in_S'_k (hm : m ≤ 1) {g : Equiv.Perm (Fin (k + 1))} (hg : g ∈ S (k 
     simp [f', f'_toFun]
     obtain hn | hn := em (n = 0) <;> simp [hn]
     · exact hm
-    · obtain hn' | hn' := em ((g (n.pred hn)).castSucc < m) <;> simp [hn']
+    · obtain hn' | hn' := em ((g (n.pred hn)).castSucc < m) <;>
+        simp only [hn', ↓reduceIte ]
       · apply le_trans (Fin.castSucc_le_castSucc_iff.2 (hg (n.pred hn)))
         rw [Fin.succ_pred]
         exact le_of_lt (Fin.castSucc_lt_succ n)
