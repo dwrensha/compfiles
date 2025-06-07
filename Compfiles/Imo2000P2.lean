@@ -26,10 +26,10 @@ lemma schur (a b c : ℝ) (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c) :
     a^2 * b + a^2 * c + b^2 * a + b^2 * c + c^2 * a + c^2 * b ≤
     a^3 + b^3 + c^3 + 3 * a * b * c := by
   wlog Hcb : c ≤ b with h1
-  · have h3 : b ≤ c := le_of_not_le Hcb
+  · have h3 : b ≤ c := le_of_not_ge Hcb
     linarith [h1 a c b ha hc hb h3]
   wlog Hba : b ≤ a with h2
-  · have h4 : a ≤ b := le_of_not_le Hba
+  · have h4 : a ≤ b := le_of_not_ge Hba
     obtain hca | hac : c ≤ a ∨ a ≤ c := le_total c a
     · have := h2 b a c hb ha hc hca h4
       linarith only [this]

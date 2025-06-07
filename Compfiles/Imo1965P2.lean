@@ -83,14 +83,14 @@ problem imo1965_p2 (x : Fin 3 → ℝ) (a : Fin 3 → Fin 3 → ℝ)
                  (lemma0 x a p hp heqs)
                  (lemma1 _ p hp hab)
                  (lemma2 _ p hp hc)
-                 (le_of_not_le h1)
+                 (le_of_not_ge h1)
     intro i
     fin_cases i
     · exact h2 1
     · exact h2 0
     · exact h2 2
   wlog h2 : |x 2| ≤ |x 0| with H
-  · have h2' : |x 0| ≤ |x 2| := le_of_not_le h2
+  · have h2' : |x 0| ≤ |x 2| := le_of_not_ge h2
     have h3 : |x 1| ≤ |x 2| := ge_trans h2' h1
     let p : Fin 3 → Fin 3 := ![2, 0, 1]
     have hp : p.Bijective := by decide

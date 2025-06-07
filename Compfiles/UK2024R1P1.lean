@@ -129,7 +129,7 @@ def f'_invFun (g : Equiv.Perm (Fin (k + 1))) (m : Fin (k + 2)) (n : Fin (k + 2))
     if hn' : n < m then
       (g.symm (n.castPred (Fin.ne_last_of_lt hn'))).succ
     else
-      (g.symm (n.pred (Fin.ne_zero_of_lt (lt_iff_le_and_ne.2 ⟨le_of_not_lt hn', Ne.symm hn⟩)))).succ
+      (g.symm (n.pred (Fin.ne_zero_of_lt (lt_iff_le_and_ne.2 ⟨le_of_not_gt hn', Ne.symm hn⟩)))).succ
 
 lemma f'_left_inv (g : Equiv.Perm (Fin (k + 1))) :
     Function.LeftInverse (f'_invFun g m) (f'_toFun g m) := by

@@ -259,7 +259,7 @@ problem usa1998_p3
         have hkk : ∃ kk : ℝ, ↑k = kk := ⟨↑k, rfl⟩
         have ⟨kk, hkk'⟩ := hkk
         rw [hkk'] at hk
-        cases' lt_or_le k 0 with hk' hk'
+        cases' lt_or_ge k 0 with hk' hk'
         · have hk2 : k ≤ -1 := Iff.mp Int.lt_add_one_iff hk'
           have : kk ≤ -1 := by rw [← hkk']; norm_cast
           nlinarith only [Real.pi_pos, ha1, hk2, this, hk]

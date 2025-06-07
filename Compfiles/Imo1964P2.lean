@@ -28,10 +28,10 @@ lemma schur {a b c : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c) :
     0 ≤ a * (a - b) * (a - c) + b * (b - a) * (b - c) + c * (c - a) * (c - b) := by
   -- from https://artofproblemsolving.com/wiki/index.php/Schur%27s_Inequality
   wlog Hcb : c ≤ b with h1
-  · have h3 : b ≤ c := le_of_not_le Hcb
+  · have h3 : b ≤ c := le_of_not_ge Hcb
     linarith [h1 ha hc hb h3]
   wlog Hba : b ≤ a with h2
-  · have h4 : a ≤ b := le_of_not_le Hba
+  · have h4 : a ≤ b := le_of_not_ge Hba
     obtain hca | hac : c ≤ a ∨ a ≤ c := le_total c a
     · have := h2 hb ha hc hca h4
       linarith only [this]

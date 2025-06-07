@@ -256,7 +256,7 @@ problem usa2022_p3 (f : ℝ+ → ℝ+) :
   use c
   funext x
 
-  rcases le_or_lt x 1 with hx | hx
+  rcases le_or_gt x 1 with hx | hx
   · exact h11 x hx
   · exact h9 x hx
 

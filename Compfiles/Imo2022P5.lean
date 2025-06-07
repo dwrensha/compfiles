@@ -67,7 +67,7 @@ lemma mylemma_42
   have h₃: b + b ≤ a * b := by
     rw [← two_mul]
     exact mul_le_mul_right' h₀ b
-  exact gt_of_ge_of_gt h₃ h₂
+  exact lt_of_le_of_lt' h₃ h₂
 
 lemma mylemma_43 (p: ℕ) :
     ∏ x ∈ Finset.Ico p (2 * p - 1), (x + 1)

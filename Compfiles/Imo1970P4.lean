@@ -101,7 +101,7 @@ lemma p_gt_five_not_divides (n : ℕ) (s1 s2 : Finset ℕ) (partition : s1 ∪ s
 
       have x_not_y : x ≠ y := (Finset.disjoint_iff_ne.mp s1_s2_disjoint) x x_in_s1 y y_in_s2
 
-      have x_lt_y_or_y_lt_x := Ne.lt_or_lt x_not_y
+      have x_lt_y_or_y_lt_x := Ne.lt_or_gt x_not_y
 
       have y_in_interval : y ∈ s1 ∪ s2 := Finset.mem_union_right s1 y_in_s2
 
@@ -143,7 +143,7 @@ lemma p_gt_five_not_divides (n : ℕ) (s1 s2 : Finset ℕ) (partition : s1 ∪ s
 
       have x_not_y : x ≠ y := (Finset.disjoint_iff_ne.mp s2_s1_disjoint) x x_in_s2 y y_in_s1
 
-      have x_lt_y_or_y_lt_x := Ne.lt_or_lt x_not_y
+      have x_lt_y_or_y_lt_x := Ne.lt_or_gt x_not_y
 
       have y_in_interval : y ∈ s1 ∪ s2 := Finset.mem_union_left s2 y_in_s1
 

@@ -107,7 +107,7 @@ lemma aux_4
   simp only [Real.toNNReal_lt_toNNReal_iff']
   constructor
   · exact h₄ n x y hn hxy
-  · exact gt_of_gt_of_ge (h₄ n x y hn hxy) (h₃ n x hn)
+  · exact lt_of_lt_of_le' (h₄ n x y hn hxy) (h₃ n x hn)
 
 lemma aux_5
   (f : ℕ → NNReal → ℝ)
@@ -417,7 +417,7 @@ lemma aux_10
   have hx₂: br ∈ upperBounds sbr := by
     refine (isLUB_le_iff hbr₀).mp ?_
     exact Preorder.le_refl br
-  exact gt_of_ge_of_gt (hx₂ hx₁) hx₀
+  exact lt_of_le_of_lt' (hx₂ hx₁) hx₀
 
 
 lemma aux_11
@@ -440,7 +440,7 @@ lemma aux_11
   br ≤ cr := by
   have hfc₄: ∀ nb nc, fb nb < fc nc := by
     intros nb nc
-    cases' (lt_or_le nb nc) with hn₀ hn₀
+    cases' (lt_or_ge nb nc) with hn₀ hn₀
     . refine lt_trans ?_ (hfc₂ nc)
       exact hfb₃ hn₀
     cases' lt_or_eq_of_le hn₀ with hn₁ hn₁
@@ -622,7 +622,7 @@ lemma aux_exists
         rw [hsn₀]
         exact Set.mem_Ici.mpr (by omega)
       let nn : ↑sn := ⟨n + 1, hn₂⟩
-      have hcr₁: 0 < cr := by exact gt_of_ge_of_gt hu₅ hbr₁
+      have hcr₁: 0 < cr := lt_of_le_of_lt' hu₅ hbr₁
       have hn₃: f (n + 1) (fc (nn)) = 1 := by
         rw [hf₁ (n + 1) _ (by omega), hfc₁ nn]
         exact rfl
@@ -1225,7 +1225,7 @@ lemma imo_1985_p6_nnreal
       refine mul_lt_mul' ?_ g₀ ?_ ?_
       . exact Preorder.le_refl (f n x)
       . exact zero_le_one' ℝ
-      . exact gt_of_gt_of_ge (hmo₀ n hn₀ hx₀) (h₃ n 0 hn₀)
+      . exact lt_of_lt_of_le' (hmo₀ n hn₀ hx₀) (h₃ n 0 hn₀)
     . exact lt_add_of_tsub_lt_right hn₁
   have hbr₁: 0 < br := by
     exact aux_10 f h₀ h₁ f₀ hf₂ fi hmo₇ sn sb fb (by rfl) hfb₀ hsb₀ fr (by rfl) sbr (by rfl) br hbr₀

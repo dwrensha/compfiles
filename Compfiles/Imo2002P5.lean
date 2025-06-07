@@ -42,7 +42,7 @@ lemma extend_function_mono
   · -- pick a rational point less than x that's in the ball s,
     -- and greater than zero
     have : ∃ z : ℚ, (z:ℝ) < x ∧ dist (z:ℝ) x < δ ∧ 0 < (z:ℝ) := by
-      obtain h3 | h4 := le_or_lt x δ
+      obtain h3 | h4 := le_or_gt x δ
       · obtain ⟨z, hz1, hz2⟩ := exists_rat_btwn xpos
         refine ⟨z, hz2, ?_⟩
         rw [Real.dist_eq, abs_sub_comm, abs_of_pos (sub_pos.mpr hz2)]

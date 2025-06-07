@@ -87,7 +87,7 @@ problem imo1992_p2 (f : ℝ → ℝ) :
   ext x
   by_contra H
   obtain ⟨z, hz⟩ : ∃ z, 0 < z ∧ f z < 0 := by
-    obtain h9 | h9 := Ne.lt_or_lt H
+    obtain h9 | h9 := Ne.lt_or_gt H
     · use x - f x
       constructor
       · linarith

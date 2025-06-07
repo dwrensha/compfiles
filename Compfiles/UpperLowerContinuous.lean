@@ -114,7 +114,7 @@ lemma real_induction
     intro a ha;
     by_contra H'; push_neg at H'
     apply ha.2
-    obtain hlt | hle := lt_or_le a w₀
+    obtain hlt | hle := lt_or_ge a w₀
     · exact h7 ⟨ha.1, hlt⟩
     · exact hy ⟨hle, H'⟩
 

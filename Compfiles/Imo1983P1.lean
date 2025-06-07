@@ -111,7 +111,7 @@ problem imo1983_p1 (f : ℝ+ → ℝ+) :
       exact one_add_mul_le_pow h30 _
 
     suffices x < 1 + (((⌈(x / (a - 1))⌉₊):ℕ):ℝ) * (a - 1)
-      from gt_of_ge_of_gt h20 this
+      from lt_of_le_of_lt' h20 this
     have h21 := Nat.le_ceil (x / (a - 1))
     have h24 : 0 < a - 1 := sub_pos.mpr H1
     suffices x < 1 + (x / (a - 1)) * (a - 1) by
@@ -126,7 +126,7 @@ problem imo1983_p1 (f : ℝ+ → ℝ+) :
   rw [hi3] at h13
   have h14 : 1 ≤ a ^ m0 :=
     one_le_pow_of_one_le' (le_of_lt H1) m0
-  rw [lt_iff_not_le] at h13
+  rw [lt_iff_not_ge] at h13
   contradiction
 
 

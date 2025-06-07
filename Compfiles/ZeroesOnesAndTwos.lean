@@ -47,7 +47,7 @@ def map_mod (n : ℕ) (hn: 0 < n) (f : ℕ → ℕ) : ℕ → Fin n
 lemma pigeonhole (n : ℕ) (f : ℕ → Fin n) :
   ∃ a b : ℕ, a < b ∧ f a = f b :=
 let ⟨a, b, hne, hfe⟩ := Finite.exists_ne_map_eq_of_infinite f
-hne.lt_or_lt.elim (λ h ↦ ⟨a, b, h, hfe⟩) (λ h ↦ ⟨b, a, h, hfe.symm⟩)
+hne.lt_or_gt.elim (λ h ↦ ⟨a, b, h, hfe⟩) (λ h ↦ ⟨b, a, h, hfe.symm⟩)
 
 lemma lemma_3 {a n : ℕ} (ha : 0 < a) (hm : a % n = 0) : (∃ k : ℕ+, a = n * k) := by
   obtain ⟨k', hk'⟩ := exists_eq_mul_right_of_dvd (Nat.dvd_of_mod_eq_zero hm)

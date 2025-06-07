@@ -64,7 +64,7 @@ problem imo1984_p1  (x y z : ℝ)
     · rw [show (1 - 2 * x) * (1 - 2 * y) * (1 - 2 * z) = (1 - 2 * z) * (1 - 2 * x) * (1 - 2 * y)
           by linarith]
       exact this z x y ⟨hz0, hx0, hy0⟩
-            (by rw [←h₁]; linarith) hz0 hx0 hy0 (by linarith) ((le_of_not_le hxz).trans hxy)
+            (by rw [←h₁]; linarith) hz0 hx0 hy0 (by linarith) ((le_of_not_ge hxz).trans hxy)
     · wlog hyz : y ≤ z generalizing x y z
       · rw [show (1 - 2 * x) * (1 - 2 * y) * (1 - 2 * z) = (1 - 2 * x) * (1 - 2 * z) * (1 - 2 * y)
             by linarith]
