@@ -24,7 +24,7 @@ problem usa1998_p5 (n : ℕ) (_hn : 2 ≤ n) :
        S.card = n ∧
        ∀ a ∈ S, ∀ b ∈ S, a ≠ b → (a - b)^2 ∣ a * b := by
   -- (Adaptation of informal proof from Andreescu & Feng.)
-  suffices H : ∃ S : Finset ℤ,(∀ x ∈ S, 0 ≤ x) ∧
+  suffices H : ∃ S : Finset ℤ, (∀ x ∈ S, 0 ≤ x) ∧
        S.card = n ∧
        ∀ a ∈ S, ∀ b ∈ S, a ≠ b → (a - b)^2 ∣ a * b by
     obtain ⟨S, _, hS2⟩ := H
