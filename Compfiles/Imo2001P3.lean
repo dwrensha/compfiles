@@ -31,12 +31,9 @@ namespace Imo2001P3
 
 open Finset
 
-variable {Boy Girl : Type}
-
-/-- A problem is easy for a cohort (boys or girls) if at least three of its members solved it. -/
+/-- A problem is easy for a cohort (boys or girls) if at least three
+    of its members solved it. -/
 def Easy {α : Type} [Fintype α] (F : α → Finset ℕ) (p : ℕ) : Prop := 3 ≤ #{i | p ∈ F i}
-
-variable {G : Girl → Finset ℕ} {B : Boy → Finset ℕ}
 
 snip begin
 
@@ -53,10 +50,11 @@ are $21^2$ girl-boy pairs in all and $21^2 > 210 + 210$, so some girl-boy pairs 
 in common that were not hard for girls or boys. By condition 2 the result follows.
 -/
 
-
 open Classical in
 /-- Every contestant solved at most five problems that were not easy for the other cohort. -/
-lemma card_not_easy_le_five [Fintype Boy] (hcard : 21 = Fintype.card Boy)
+lemma card_not_easy_le_five {Boy Girl : Type} [Fintype Boy]
+    {G : Girl → Finset ℕ} {B : Boy → Finset ℕ}
+    (hcard : 21 = Fintype.card Boy)
     {i : Girl} (hG : #(G i) ≤ 6) (hB : ∀ j, ¬Disjoint (G i) (B j)) :
     #{p ∈ G i | ¬Easy B p} ≤ 5 := by
   by_contra! h
@@ -73,34 +71,36 @@ lemma card_not_easy_le_five [Fintype Boy] (hcard : 21 = Fintype.card Boy)
 open Classical in
 /-- There are at most 210 girl-boy pairs who solved some problem in common that was not easy for
 a fixed cohort. -/
-lemma card_not_easy_le_210
-    [Fintype Boy] [Fintype Girl]
-    (hcard_boy : 21 = Fintype.card Boy)
-    (hcard_girl : 21 = Fintype.card Girl)
-    (hG : ∀ i, #(G i) ≤ 6) (hB : ∀ i j, ¬Disjoint (G i) (B j)) :
-    #{ij : Girl × Boy | ∃ p, ¬Easy B p ∧ p ∈ G ij.1 ∩ B ij.2} ≤ 210 :=
+lemma card_not_easy_le_210 {α β : Type} [Fintype α] [Fintype β]
+    (hcard_α : 21 = Fintype.card α)
+    (hcard_β : 21 = Fintype.card β)
+    {α_solved : α → Finset ℕ} {β_solved : β → Finset ℕ}
+    (hA : ∀ i, #(β_solved i) ≤ 6) (hB : ∀ i j, ¬Disjoint (β_solved i) (α_solved j)) :
+    #{ij : β × α | ∃ p, ¬Easy α_solved p ∧ p ∈ β_solved ij.1 ∩ α_solved ij.2} ≤ 210 :=
   calc
-    _ = ∑ i, #{j | ∃ p, ¬Easy B p ∧ p ∈ G i ∩ B j} := by
+    _ = ∑ i, #{j | ∃ p, ¬Easy α_solved p ∧ p ∈ β_solved i ∩ α_solved j} := by
       simp_rw [card_filter, ← univ_product_univ, sum_product]
-    _ = ∑ i, #({p ∈ G i | ¬Easy B p}.biUnion fun p ↦ {j | p ∈ B j}) := by
+    _ = ∑ i, #({p ∈ β_solved i | ¬Easy α_solved p}.biUnion fun p ↦ {j | p ∈ α_solved j}) := by
       congr!; ext
       simp_rw [mem_biUnion, mem_inter, mem_filter, mem_univ, true_and]
       congr! 2; tauto
-    _ ≤ ∑ i, ∑ p ∈ G i with ¬Easy B p, #{j | p ∈ B j} := sum_le_sum fun _ _ ↦ card_biUnion_le
-    _ ≤ ∑ i, ∑ p ∈ G i with ¬Easy B p, 2 := by
+    _ ≤ ∑ i, ∑ p ∈ β_solved i with ¬Easy α_solved p, #{j | p ∈ α_solved j} := sum_le_sum fun _ _ ↦ card_biUnion_le
+    _ ≤ ∑ i, ∑ p ∈  β_solved i with ¬Easy α_solved p, 2 := by
       gcongr with i _ p mp
       rw [mem_filter, Easy, not_le] at mp
       exact Nat.le_of_lt_succ mp.2
-    _ ≤ ∑ i : Girl, 5 * 2 := by
+    _ ≤ ∑ i : β, 5 * 2 := by
       gcongr with i
       rw [sum_const, smul_eq_mul]
-      exact mul_le_mul_right' (card_not_easy_le_five hcard_boy (hG _) (hB _)) _
-    _ = _ := by simp [←hcard_girl]
+      exact mul_le_mul_right' (card_not_easy_le_five hcard_α (hA _) (hB _)) _
+    _ = _ := by simp [←hcard_β]
 
 snip end
 
 problem imo2001_p3
+    {Boy Girl : Type}
     [Fintype Boy] [Fintype Girl] [DecidableEq Boy] [DecidableEq Girl]
+    {B : Boy → Finset ℕ} {G : Girl → Finset ℕ} -- solved problems
     (hcard_boy : 21 = Fintype.card Boy)
     (hcard_girl : 21 = Fintype.card Girl)
     (G_le_6 : ∀ i, #(G i) ≤ 6) -- Every boy solved at most six problems.
