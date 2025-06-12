@@ -207,9 +207,7 @@ lemma imo_1990_p3_forward
       use n / 3 ^ k
       have hp₆₀: (3 : ℕ) ^ k ∣ n := by exact pow_multiplicity_dvd (3 : ℕ) n
       constructor
-      . rw [Nat.div_mul_self_eq_mod_sub_self]
-        rw [Nat.mod_eq_zero_of_dvd hp₆₀]
-        exact rfl
+      . exact (Nat.div_mul_cancel hp₆₀).symm
       . by_contra! hh₀
         have hh₁: (3 : ℕ) * (3 : ℕ) ^ k ∣ n := by
           rw [mul_comm]
@@ -271,17 +269,15 @@ lemma imo_1990_p3_forward
         rw [hn₁, zero_mul] at hn₀
         bound [hn₀]
       . let sq : Finset ℕ := d.primeFactors
-        have hsq₁: sq.Nonempty := by
-          refine Nat.nonempty_primeFactors.mpr ?_
-          exact hd₂
+        have hsq₁: sq.Nonempty := Nat.nonempty_primeFactors.mpr hd₂
         let q : ℕ := Finset.min' sq hsq₁
         have hq₀: q ∈ sq := by exact Finset.min'_mem sq hsq₁
         have hq₁: Nat.Prime q := Nat.prime_of_mem_primeFactors hq₀
         have hq₂: q ∣ d := Nat.dvd_of_mem_primeFactors hq₀
         have hq₃: q ∣ n := by
           refine dvd_trans hq₂ ?_
-          exact Dvd.intro (p ^ k) (id (Eq.symm hn₁))
-        have hq₄: Odd q := by exact Odd.of_dvd_nat h₂ hq₃
+          exact Dvd.intro (p ^ k) hn₁.symm
+        have hq₄: Odd q := Odd.of_dvd_nat h₂ hq₃
         have hq₅: 5 ≤ q := by
           by_contra! hh₀
           have hh₁: 2 ≤ q := Nat.Prime.two_le hq₁
@@ -315,9 +311,7 @@ lemma imo_1990_p3_forward
                 exact hh₀₁ hh₀₃₂
               . exact hh₀₃₂
             have hh₀₄: Nat.Coprime d (p ^ k) := by
-              refine (Nat.coprime_pow_right_iff ?_ _ _).mpr ?_
-              . rw [hk₁]
-                exact Nat.one_pos
+              refine (Nat.coprime_pow_right_iff hk₀ _ _).mpr ?_
               . refine Nat.Coprime.symm ?_
                 refine (Nat.Prime.coprime_iff_not_dvd hp₁).mpr ?_
                 rw [hp₃]
