@@ -79,8 +79,7 @@ lemma imo_1990_p3_forward
       exact h₂₂ h₂₀
     have h₃: (2 : ℕ) ^ n + (1 : ℕ) ∣ (2 : ℕ) ^ ((2 : ℕ) * n) - (1 : ℕ) := by
       have h₃₀: (2 : ℕ) ^ ((2 : ℕ) * n) - (1 : ℕ) = ((2 : ℕ) ^ (n)) ^ (2 : ℕ) - ((1 : ℕ) ^ (n)) ^ (2 : ℕ) := by
-        simp
-        rw [Nat.pow_mul']
+        simp [Nat.pow_mul']
       rw [Nat.sq_sub_sq] at h₃₀
       rw [h₃₀, one_pow]
       exact Nat.dvd_mul_right ((2 : ℕ) ^ n + (1 : ℕ)) ((2 : ℕ) ^ n - (1 : ℕ))
