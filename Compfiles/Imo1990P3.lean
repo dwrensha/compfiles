@@ -33,7 +33,6 @@ lemma aux_1
   have h₀: r < 3 := by
     refine Nat.mod_lt n ?_
     exact Nat.zero_lt_succ (2 : ℕ)
-  have h₁: n % 3 = r := by rfl
   have h₂: n = d * 3 + r := by omega
   rw [h₂]
   interval_cases r
