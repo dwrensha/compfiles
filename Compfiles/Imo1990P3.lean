@@ -28,11 +28,10 @@ lemma aux_1
     (2 : ℕ) ^ n ≡ (1 : ℕ) [MOD (7 : ℕ)] ∨
     (2 : ℕ) ^ n ≡ (2 : ℕ) [MOD (7 : ℕ)] ∨
     (2 : ℕ) ^ n ≡ (4 : ℕ) [MOD (7 : ℕ)] := by
-  let r : ℕ := n % 3
-  let d : ℕ := n / 3
-  have h₀: r < 3 := Nat.mod_lt n (Nat.zero_lt_succ 2)
-  have h₂: 3 * d + r = n := Nat.div_add_mod n 3
-  rw [←h₂]
+  have h₀ : n % 3 < 3 := Nat.mod_lt n (Nat.zero_lt_succ 2)
+  rw [←Nat.div_add_mod n 3]
+  generalize n % 3 = r at h₀ ⊢
+  generalize n / 3 = d
   interval_cases r
   . left
     induction' d with t ht₀
