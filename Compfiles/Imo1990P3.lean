@@ -36,14 +36,12 @@ lemma aux_1
   . left
     induction' d with t ht₀
     . rw [pow_zero]
-    . simp_all
-      rw [mul_add, mul_one, pow_add]
+    . simp only [mul_add, mul_one, pow_add, pow_zero]
       exact Nat.ModEq.mul ht₀ rfl
   . right; left
     induction' d with t ht₀
     . rw [pow_one]
-    . simp_all
-      rw [mul_add, mul_one, add_assoc, add_comm 3 1, ← add_assoc, pow_add]
+    . rw [mul_add, mul_one, add_assoc, add_comm 3 1, ← add_assoc, pow_add]
       exact Nat.ModEq.mul ht₀ rfl
   . right; right
     induction' d with t ht₀
