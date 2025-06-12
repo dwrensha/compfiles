@@ -103,8 +103,8 @@ problem imo2001_p3
     {B : Boy → Finset ℕ} {G : Girl → Finset ℕ} -- solved problems
     (hcard_boy : 21 = Fintype.card Boy)
     (hcard_girl : 21 = Fintype.card Girl)
-    (G_le_6 : ∀ i, #(G i) ≤ 6) -- Every boy solved at most six problems.
-    (B_le_6 : ∀ j, #(B j) ≤ 6) -- Every girl solved at most six problems.
+    (B_le_6 : ∀ j, #(B j) ≤ 6) -- Every boy solved at most six problems.
+    (G_le_6 : ∀ i, #(G i) ≤ 6) -- Every girl solved at most six problems.
     (G_inter_B : ∀ i j, ¬Disjoint (G i) (B j)) :
     ∃ p, Easy G p ∧ Easy B p := by
   have B_inter_G : ∀ i j, ¬Disjoint (B i) (G j) := fun i j ↦ by
