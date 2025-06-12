@@ -30,29 +30,27 @@ lemma aux_1
     (2 : ℕ) ^ n ≡ (4 : ℕ) [MOD (7 : ℕ)] := by
   let r : ℕ := n % 3
   let d : ℕ := n / 3
-  have h₀: r < 3 := by
-    refine Nat.mod_lt n ?_
-    exact Nat.zero_lt_succ (2 : ℕ)
-  have h₂: n = d * 3 + r := by omega
-  rw [h₂]
+  have h₀: r < 3 := Nat.mod_lt n (Nat.zero_lt_succ 2)
+  have h₂: 3 * d + r = n := Nat.div_add_mod n 3
+  rw [←h₂]
   interval_cases r
   . left
     induction' d with t ht₀
     . rw [pow_zero]
     . simp_all
-      rw [add_mul, one_mul, pow_add]
+      rw [mul_add, mul_one, pow_add]
       exact Nat.ModEq.mul ht₀ rfl
   . right; left
     induction' d with t ht₀
     . rw [pow_one]
     . simp_all
-      rw [add_mul, one_mul, add_assoc, add_comm 3 1, ← add_assoc, pow_add]
+      rw [mul_add, mul_one, add_assoc, add_comm 3 1, ← add_assoc, pow_add]
       exact Nat.ModEq.mul ht₀ rfl
   . right; right
     induction' d with t ht₀
     . norm_num
       exact rfl
-    . rw [add_mul, one_mul, add_assoc, add_comm 3 2, ← add_assoc, pow_add]
+    . rw [mul_add, mul_one, add_assoc, add_comm 3 2, ← add_assoc, pow_add]
       exact Nat.ModEq.mul ht₀ rfl
 
 
@@ -71,10 +69,10 @@ lemma imo_1990_p3_forward
       apply Nat.not_odd_iff_even.mp at hc
       have h₂₀: Odd (2 ^ n + 1) := by
          refine Even.add_one ?_
-         refine Even.pow_of_ne_zero ?_ (by linarith)
+         refine Even.pow_of_ne_zero ?_ (by omega)
          decide
       have h₂₁: Even (n ^ 2) := by
-        exact (Nat.even_pow' (by linarith)).mpr hc
+        exact (Nat.even_pow' (by omega)).mpr hc
       have h₂₂: Even (2 ^ n + 1) := by
         exact Dvd.dvd.even h₁ h₂₁
       apply Nat.not_odd_iff_even.mpr at h₂₂
@@ -340,7 +338,7 @@ lemma imo_1990_p3_forward
             refine dvd_trans ?_ h₃
             refine dvd_trans ?_ h₁
             refine dvd_trans hq₃ ?_
-            exact Dvd.intro_left (n.pow (nat_lit 1)) rfl
+            exact Dvd.intro_left (n ^ 1) rfl
           have hh₂: q ∣ 2 ^ (q - 1) - 1 := by
             refine h₄ q hq₁ ?_
             exact le_of_add_le_right hq₅
@@ -378,7 +376,7 @@ lemma imo_1990_p3_forward
             refine Nat.not_dvd_of_pos_of_lt ?_ ?_
             . exact Nat.zero_lt_succ (2 : ℕ)
             . exact Nat.lt_of_add_left_lt hq₅
-          have hh₇: q ≤ 7 := by exact Nat.le_of_dvd (by linarith) hh₆
+          have hh₇: q ≤ 7 := by exact Nat.le_of_dvd (by omega) hh₆
           interval_cases q
           . exfalso
             omega
@@ -392,26 +390,22 @@ lemma imo_1990_p3_forward
             have hh₁: (7 : ℕ) ≤ (2 : ℕ) ^ n + (1 : ℕ) := by
               have hh₂: 2 ^ 3 ≤ 2 ^ n := by
                 exact Nat.pow_le_pow_right (by norm_num) hn₀
-              linarith
+              omega
             refine (Nat.modEq_iff_dvd' hh₁).mpr ?_
             refine Nat.dvd_sub ?_ ?_
             . rw [← hq₉]
               refine dvd_trans hq₃ ?_
               refine dvd_trans ?_ h₁
-              exact Dvd.intro_left (n.pow (nat_lit 1)) rfl
+              exact Dvd.intro_left (n ^ 1) rfl
             . exact Nat.dvd_of_mod_eq_zero rfl
           exact Nat.ModEq.add_right_cancel' (1 : ℕ) hh₀
         have hq₁₁: ¬ 2 ^ n ≡ 6 [MOD 7] := by
           clear hq₁₀
-          have hq₁₂: (2 : ℕ) ^ n ≡ (1 : ℕ) [MOD (7 : ℕ)] ∨ (2 : ℕ) ^ n ≡ (2 : ℕ) [MOD (7 : ℕ)]
-              ∨ (2 : ℕ) ^ n ≡ (4 : ℕ) [MOD (7 : ℕ)] := by
-            exact aux_1 n
-          cases' hq₁₂ with hq₁₂ hq₁₂
+          obtain hq₁₂ | hq₁₂ | hq₁₂ := aux_1 n
           . by_contra! hh₀
             have hh₁: 1 ≡ (6 : ℕ) [MOD (7 : ℕ)] := Nat.ModEq.trans hq₁₂.symm hh₀
             have hh₂: ¬ 1 ≡ (6 : ℕ) [MOD (7 : ℕ)] := by decide
             exact hh₂ hh₁
-          cases' hq₁₂ with hq₁₂ hq₁₂
           . by_contra! hh₀
             have hh₁: 2 ≡ (6 : ℕ) [MOD (7 : ℕ)] := Nat.ModEq.trans hq₁₂.symm hh₀
             have hh₂: ¬ 2 ≡ (6 : ℕ) [MOD (7 : ℕ)] := by decide
