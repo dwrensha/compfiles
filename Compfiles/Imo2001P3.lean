@@ -52,20 +52,21 @@ in common that were not hard for girls or boys. By condition 2 the result follow
 
 open Classical in
 /-- Every contestant solved at most five problems that were not easy for the other cohort. -/
-lemma card_not_easy_le_five {Boy Girl : Type} [Fintype Boy]
-    {G : Girl → Finset ℕ} {B : Boy → Finset ℕ}
-    (hcard : 21 = Fintype.card Boy)
-    {i : Girl} (hG : #(G i) ≤ 6) (hB : ∀ j, ¬Disjoint (G i) (B j)) :
-    #{p ∈ G i | ¬Easy B p} ≤ 5 := by
+lemma card_not_easy_le_five {α β : Type} [Fintype α]
+    {β_solved : β → Finset ℕ} {α_solved : α → Finset ℕ}
+    (hcard : 21 = Fintype.card α)
+    {i : β} (hG : #(β_solved i) ≤ 6) (hB : ∀ j, ¬Disjoint (β_solved i) (α_solved j)) :
+    #{p ∈ β_solved i | ¬Easy α_solved p} ≤ 5 := by
   by_contra! h
   replace h := le_antisymm (card_filter_le ..) (hG.trans h)
   simp_rw [card_filter_eq_iff, Easy, not_le] at h
   suffices 21 ≤ 12 by norm_num at this
   calc
-    _ = #{j | ¬Disjoint (G i) (B j)}           := by simp [filter_true_of_mem fun j _ ↦ hB j]; exact hcard
-    _ = #((G i).biUnion fun p ↦ {j | p ∈ B j}) := by congr 1; ext j; simp [not_disjoint_iff]
-    _ ≤ ∑ p ∈ G i, #{j | p ∈ B j}              := card_biUnion_le
-    _ ≤ ∑ p ∈ G i, 2                           := sum_le_sum fun p mp ↦ Nat.le_of_lt_succ (h p mp)
+    _ = #{j | ¬Disjoint (β_solved i) (α_solved j)} := by simp [filter_true_of_mem fun j _ ↦ hB j]
+                                                         exact hcard
+    _ = #((β_solved i).biUnion fun p ↦ {j | p ∈ α_solved j}) := by congr 1; ext j; simp [not_disjoint_iff]
+    _ ≤ ∑ p ∈ β_solved i, #{j | p ∈ α_solved j}              := card_biUnion_le
+    _ ≤ ∑ p ∈ β_solved i, 2                           := sum_le_sum fun p mp ↦ Nat.le_of_lt_succ (h p mp)
     _ ≤ _                                      := by rw [sum_const, smul_eq_mul]; omega
 
 open Classical in
