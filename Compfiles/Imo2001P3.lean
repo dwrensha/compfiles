@@ -99,13 +99,13 @@ lemma card_not_easy_le_210 {α β : Type} [Fintype α] [Fintype β]
 snip end
 
 problem imo2001_p3
-    {Boy Girl : Type}
-    [Fintype Boy] [Fintype Girl] [DecidableEq Boy] [DecidableEq Girl]
-    {B : Boy → Finset ℕ} {G : Girl → Finset ℕ} -- solved problems
-    (hcard_boy : 21 = Fintype.card Boy)
+    {Girl Boy : Type}
+    [Fintype Girl] [Fintype Boy] [DecidableEq Girl] [DecidableEq Boy]
+    {G : Girl → Finset ℕ} {B : Boy → Finset ℕ} -- solved problems
     (hcard_girl : 21 = Fintype.card Girl)
-    (B_le_6 : ∀ j, #(B j) ≤ 6) -- Every boy solved at most six problems.
+    (hcard_boy : 21 = Fintype.card Boy)
     (G_le_6 : ∀ i, #(G i) ≤ 6) -- Every girl solved at most six problems.
+    (B_le_6 : ∀ j, #(B j) ≤ 6) -- Every boy solved at most six problems.
     (G_inter_B : ∀ i j, ¬Disjoint (G i) (B j)) :
     ∃ p, Easy G p ∧ Easy B p := by
   have B_inter_G : ∀ i j, ¬Disjoint (B i) (G j) := fun i j ↦ by
