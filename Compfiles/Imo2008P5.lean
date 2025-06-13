@@ -186,36 +186,33 @@ lemma lemma1 (α : Type) (A B : Set α) (hA : A.Finite) (hB : B.Finite)
     exact setFintype fun x ↦ f x = b
   have h2 : ∀ b, Set.ncard { a | f a = b } = Fintype.card { a // f a = b} := by
     intro b
-    rw [Set.setOf_set, Fintype.card_eq_nat_card, ←Set.Nat.card_coe_set_eq]
+    rw [Fintype.card_eq_nat_card, ←Set.Nat.card_coe_set_eq]
     rfl
 
   have h3' : ∀ b ∈ Finset.univ (α := ↑B),
-                 (Finset.filter {a | f a = b } (Finset.univ (α := ↑A))).card = n := by
+                 (Finset.filter (fun a ↦ f a = b) (Finset.univ (α := ↑A))).card = n := by
     intro b _
     have h2' : Fintype { a // {a | f a = b} a} := hbf b
     rw [← @Fintype.card_subtype]
     rw [← h1
         b, h2,
         Fintype.card_eq_nat_card,
-        Mathlib.Tactic.Zify.natCast_eq,
-        Fintype.card_eq_nat_card]
-    rfl
+        Mathlib.Tactic.Zify.natCast_eq]
 
   clear h1 h2
   let A' := Finset.biUnion
              (Finset.univ (α := ↑B))
-             (fun b ↦ Finset.filter { a | f a = b } (Finset.univ (α := ↑A)))
+             (fun b ↦ Finset.filter (fun a ↦ f a = b) (Finset.univ (α := ↑A)))
   have h4 :
     ∀ b1 ∈ (Finset.univ (α := ↑B)),
       ∀ b2 ∈ (Finset.univ (α := ↑B)),
         b1 ≠ b2 →
           Disjoint
-            (Finset.filter { a | f a = b1 } (Finset.univ (α := ↑A)))
-            (Finset.filter { a | f a = b2 } (Finset.univ (α := ↑A))) := by
+            (Finset.filter (fun a ↦ f a = b1) (Finset.univ (α := ↑A)))
+            (Finset.filter (fun a ↦ f a = b2) (Finset.univ (α := ↑A))) := by
     intro b1 _ b2 _ hb12
     rw [Finset.disjoint_filter]
     intro x _ hx2 hx3
-    rw [Set.setOf_app_iff] at hx2 hx3
     rw [hx2] at hx3
     exact hb12 hx3
   have h5 : A'.card = Set.ncard B * n := by
@@ -235,8 +232,8 @@ lemma lemma1 (α : Type) (A B : Set α) (hA : A.Finite) (hB : B.Finite)
       rw [Finset.mem_biUnion]
       use f a
       refine ⟨Finset.mem_univ _, ?_⟩
-      · simp; rfl
-  rw[h6]
+      · simp
+  rw [h6]
   rw [@Finset.card_univ, ←Set.Nat.card_coe_set_eq, Fintype.card_eq_nat_card]
   rfl
 
