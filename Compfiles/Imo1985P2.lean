@@ -34,7 +34,8 @@ namespace Imo1985P2
 /-- The conditions on the problem's coloring `C`.
 Although its domain is all of `ℕ`, we only care about its values in `Set.Ico 1 n`. -/
 def Condition (n j : ℕ) (C : ℕ → Bool) : Prop :=
-  (∀ i ∈ Set.Ico 1 n, C i = C (n - i)) ∧ (∀ i ∈ Set.Ico 1 n, i ≠ j → C i = C (j - i : ℤ).natAbs)
+  (∀ i ∈ Set.Ico 1 n, C i = C (n - i)) ∧
+  ∀ i ∈ Set.Ico 1 n, i ≠ j → C i = C (j - i : ℤ).natAbs
 
 snip begin
 /-
