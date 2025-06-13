@@ -1,0 +1,110 @@
+/-
+Copyright (c) 2025 Jeremy Tan. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Jeremy Tan
+-/
+import Mathlib.Algebra.Order.Ring.Canonical
+import Mathlib.Algebra.Order.Ring.Star
+import Mathlib.Data.Nat.ModEq
+
+import ProblemExtraction
+
+problem_file {
+  tags := [.Combinatorics]
+  importedFrom := "https://github.com/leanprover-community/mathlib4/pull/25783"
+}
+
+/-!
+# International Mathematical Olympiad 1985, Problem 5
+Each of the numbers in the set $N=\{1, 2, 3, \dots, n-1\}$,
+where $n ≥ 3$, is colored with one of two colors, say red or black,
+so that:
+
+  1. $i$ and $n-i$ always receive the same color, and
+  2. for some $j ∈ N$ relatively prime to $n$, $i$ and $|j-i|$ receive
+     the same color
+
+for all $i ∈ N, i ≠ j$.
+
+Prove that all numbers in $N$ must receive the same color.
+-/
+
+namespace Imo1985P2
+
+/-- The conditions on the problem's coloring `C`.
+Although its domain is all of `ℕ`, we only care about its values in `Set.Ico 1 n`. -/
+def Condition (n j : ℕ) (C : ℕ → Bool) : Prop :=
+  (∀ i ∈ Set.Ico 1 n, C i = C (n - i)) ∧ (∀ i ∈ Set.Ico 1 n, i ≠ j → C i = C (j - i : ℤ).natAbs)
+
+snip begin
+/-
+# Solution
+Let $a \sim b$ denote that $a$ and $b$ have the same color.
+Because $j$ is coprime to $n$, every number in $N$ is of the form $kj\bmod n$ for a unique
+$1 ≤ k < n$, so it suffices to show that $kj\bmod n \sim (k-1)j\bmod n$ for $1 < k < n$.
+In this range of $k$, $kj\bmod n ≠ j$, so
+* if $kj\bmod n > j$, $kj\bmod n \sim kj\bmod n - j = (k-1)j\bmod n$ using rule 2;
+* if $kj\bmod n < j$, $kj\bmod n \sim j - kj\bmod n \sim n - j + kj\bmod n = (k-1)j\bmod n$
+using rule 2 then rule 1.
+-/
+
+lemma Int.natAbs_sub_nat_of_lt {a b : ℕ} (h : b ≤ a) : (a - b : ℤ).natAbs = a - b := by
+  omega
+
+lemma Int.natAbs_sub_nat_of_gt {a b : ℕ} (h : a ≤ b) : (a - b : ℤ).natAbs = b - a := by
+  omega
+
+lemma Nat.mod_sub_comm {a b n : ℕ} (h : b ≤ a % n) : a % n - b = (a - b) % n := by
+  rcases n.eq_zero_or_pos with rfl | hn; · simp only [Nat.mod_zero]
+  nth_rw 2 [← Nat.div_add_mod a n]; rw [Nat.add_sub_assoc h, Nat.mul_add_mod]
+  exact (Nat.mod_eq_of_lt <| (Nat.sub_le ..).trans_lt (Nat.mod_lt a hn)).symm
+
+/-- For `1 ≤ k < n`, `k * j % n` has the same color as `j`. -/
+lemma C_mul_mod {n j : ℕ} (hn : 3 ≤ n) (hj : j ∈ Set.Ico 1 n) (cpj : Nat.Coprime n j)
+    {C : ℕ → Bool} (hC : Condition n j C) {k : ℕ} (hk : k ∈ Set.Ico 1 n) :
+    C (k * j % n) = C j := by
+  rcases hk.1.eq_or_lt with rfl | (hk₁ : 1 + 1 ≤ k)
+  · rw [one_mul, Nat.mod_eq_of_lt hj.2]
+  · have nej : k * j % n ≠ j := by
+      by_contra! h; nth_rw 2 [← Nat.mod_eq_of_lt hj.2, ← one_mul j] at h
+      replace h : k % n = 1 % n := Nat.ModEq.cancel_right_of_coprime cpj h
+      rw [Nat.mod_eq_of_lt hk.2, Nat.mod_eq_of_lt (by omega)] at h
+      omega
+    have b₁ : k * j % n ∈ Set.Ico 1 n := by
+      refine ⟨?_, Nat.mod_lt _ (by omega)⟩
+      by_contra! h; rw [Nat.lt_one_iff, ← Nat.dvd_iff_mod_eq_zero] at h
+      have ek := Nat.eq_zero_of_dvd_of_lt (cpj.dvd_of_dvd_mul_right h) hk.2
+      omega
+    have hk₂ : k - 1 ∈ Set.Ico 1 n := ⟨Nat.le_sub_of_add_le hk₁, (Nat.sub_le ..).trans_lt hk.2⟩
+    rw [← C_mul_mod hn hj cpj hC hk₂, hC.2 _ b₁ nej]
+    rcases nej.lt_or_gt with h | h
+    · rw [Int.natAbs_sub_nat_of_lt h.le]
+      have b₂ : j - k * j % n ∈ Set.Ico 1 n := by
+        refine ⟨(?_ : 0 < _), (Nat.sub_le ..).trans_lt hj.2⟩
+        rwa [Nat.sub_pos_iff_lt]
+      have q : n - (j - k * j % n) = k * j % n + (n - j) % n := by
+        rw [tsub_tsub_eq_add_tsub_of_le h.le, add_comm, Nat.add_sub_assoc hj.2.le,
+          Nat.mod_eq_of_lt (show n - j < n by omega)]
+      rw [hC.1 _ b₂, q, ← Nat.add_mod_of_add_mod_lt (by omega), ← Nat.add_sub_assoc hj.2.le, add_comm,
+        Nat.add_sub_assoc (Nat.le_mul_of_pos_left _ hk.1), ← tsub_one_mul, Nat.add_mod_left]
+    · rw [Int.natAbs_sub_nat_of_gt h.le, Nat.mod_sub_comm h.le, tsub_one_mul]
+
+snip end
+
+problem imo2001_p3 {n j : ℕ} (hn : 3 ≤ n) (hj : j ∈ Set.Ico 1 n)
+    (cpj : Nat.Coprime n j) {C : ℕ → Bool} (hC : Condition n j C)
+    {i : ℕ} (hi : i ∈ Set.Ico 1 n) :
+    C i = C j := by
+  obtain ⟨v, hv⟩ := Nat.exists_mul_emod_eq_one_of_coprime cpj.symm (by omega)
+  have hvi : i = (v * i % n) * j % n := by
+    rw [Nat.mod_mul_mod, ← mul_rotate, ← Nat.mod_mul_mod, hv, one_mul, Nat.mod_eq_of_lt hi.2]
+  have vib : v * i % n ∈ Set.Ico 1 n := by
+    refine ⟨(?_ : 0 < _), Nat.mod_lt _ (by omega)⟩
+    by_contra! h; rw [Nat.le_zero, ← Nat.dvd_iff_mod_eq_zero] at h
+    rw [mul_comm, ← Nat.mod_eq_of_lt (show 1 < n by omega)] at hv
+    have i0 := Nat.eq_zero_of_dvd_of_lt
+      ((Nat.coprime_of_mul_modEq_one _ hv).symm.dvd_of_dvd_mul_left h) hi.2
+    subst i; simp at hi
+  rw [hvi, C_mul_mod hn hj cpj hC vib]
+
+end Imo1985P2
