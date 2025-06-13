@@ -37,7 +37,7 @@ problem usa2001_p1 : IsLeast possible_num_colors min_colors := by
   -- Informal solution from
   -- https://artofproblemsolving.com/wiki/index.php/2001_USAMO_Problems/Problem_1
   constructor
-  · rw [Set.mem_def, possible_num_colors, Set.setOf_app_iff]
+  · rw [possible_num_colors]
     let f : Fin 8 → Finset (Fin 23)
         | 0 => {1, 2, 3, 4, 5, 6}
         | 1 => {1, 7, 8, 9, 10, 11}
