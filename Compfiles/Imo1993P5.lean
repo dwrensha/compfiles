@@ -60,18 +60,18 @@ lemma imo_1993_p5_N:
       . refine le_of_lt ?_
         exact gold_pos
       . exact Nat.cast_nonneg' n
-    exact add_nonneg g₀ (by linarith)
+    exact add_nonneg g₀ (by positivity)
   have hf₂: ∀ n:ℕ, f n = fz n := by
     intro n
     rw [hf₀, hf₁]
     simp
     exact h₁ n
   have hg₀: 2 < √5 := by
-    have g₀: 0 ≤ (2:ℝ) := by linarith
+    have g₀: 0 ≤ (2:ℝ) := zero_le_two
     have g₁: 0 ≤ √5 := by exact Real.sqrt_nonneg 5
     rw [← abs_of_nonneg g₀, ← abs_of_nonneg g₁]
     refine sq_lt_sq.mp ?_
-    rw [Real.sq_sqrt (by linarith)]
+    rw [Real.sq_sqrt (by positivity)]
     linarith
   have hg₁: 0 < G - 1 := by
     rw [hG]
@@ -79,11 +79,11 @@ lemma imo_1993_p5_N:
     norm_num
     linarith
   have hg₂: √5 < 3 := by
-    have g₀: 0 ≤ (3:ℝ) := by linarith
-    have g₁: 0 ≤ √5 := by exact Real.sqrt_nonneg 5
+    have g₀: 0 ≤ (3:ℝ) := by positivity
+    have g₁: 0 ≤ √5 := Real.sqrt_nonneg 5
     rw [← abs_of_nonneg g₀, ← abs_of_nonneg g₁]
     refine sq_lt_sq.mp ?_
-    rw [Real.sq_sqrt (by linarith)]
+    rw [Real.sq_sqrt (by positivity)]
     linarith
   use f
   constructor
