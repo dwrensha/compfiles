@@ -33,7 +33,7 @@ namespace Imo1985P2
 
 /-- The conditions on the problem's coloring `C`.
 Although its domain is all of `ℕ`, we only care about its values in `Set.Ico 1 n`. -/
-def Condition (n j : ℕ) (C : ℕ → Bool) : Prop :=
+def Condition (n j : ℕ) (C : ℕ → Fin 2) : Prop :=
   (∀ i ∈ Set.Ico 1 n, C i = C (n - i)) ∧
   ∀ i ∈ Set.Ico 1 n, i ≠ j → C i = C (j - i : ℤ).natAbs
 
@@ -62,7 +62,7 @@ lemma Nat.mod_sub_comm {a b n : ℕ} (h : b ≤ a % n) : a % n - b = (a - b) % n
 
 /-- For `1 ≤ k < n`, `k * j % n` has the same color as `j`. -/
 lemma C_mul_mod {n j : ℕ} (hn : 3 ≤ n) (hj : j ∈ Set.Ico 1 n) (cpj : Nat.Coprime n j)
-    {C : ℕ → Bool} (hC : Condition n j C) {k : ℕ} (hk : k ∈ Set.Ico 1 n) :
+    {C : ℕ → Fin 2} (hC : Condition n j C) {k : ℕ} (hk : k ∈ Set.Ico 1 n) :
     C (k * j % n) = C j := by
   rcases hk.1.eq_or_lt with rfl | (hk₁ : 1 + 1 ≤ k)
   · rw [one_mul, Nat.mod_eq_of_lt hj.2]
@@ -93,7 +93,7 @@ lemma C_mul_mod {n j : ℕ} (hn : 3 ≤ n) (hj : j ∈ Set.Ico 1 n) (cpj : Nat.C
 snip end
 
 problem imo2001_p3 {n j : ℕ} (hn : 3 ≤ n) (hj : j ∈ Set.Ico 1 n)
-    (cpj : Nat.Coprime n j) {C : ℕ → Bool} (hC : Condition n j C)
+    (cpj : Nat.Coprime n j) {C : ℕ → Fin 2} (hC : Condition n j C)
     {i : ℕ} (hi : i ∈ Set.Ico 1 n) :
     C i = C j := by
   obtain ⟨v, hv⟩ := Nat.exists_mul_emod_eq_one_of_coprime cpj.symm (by omega)
