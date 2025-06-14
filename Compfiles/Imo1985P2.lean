@@ -64,31 +64,33 @@ lemma Nat.mod_sub_comm {a b n : ℕ} (h : b ≤ a % n) : a % n - b = (a - b) % n
 lemma C_mul_mod {n j : ℕ} (hn : 3 ≤ n) (hj : j ∈ Set.Ico 1 n) (cpj : Nat.Coprime n j)
     {C : ℕ → Fin 2} (hC : Condition n j C) {k : ℕ} (hk : k ∈ Set.Ico 1 n) :
     C (k * j % n) = C j := by
-  rcases hk.1.eq_or_lt with rfl | (hk₁ : 1 + 1 ≤ k)
-  · rw [one_mul, Nat.mod_eq_of_lt hj.2]
-  · have nej : k * j % n ≠ j := by
+  induction k, hk.1 using Nat.le_induction with
+  | base => rw [one_mul, Nat.mod_eq_of_lt hj.2]
+  | succ k hk₁ ih =>
+    have nej : (k + 1) * j % n ≠ j := by
       by_contra! h; nth_rw 2 [← Nat.mod_eq_of_lt hj.2, ← one_mul j] at h
-      replace h : k % n = 1 % n := Nat.ModEq.cancel_right_of_coprime cpj h
+      replace h : (k + 1) % n = 1 % n := Nat.ModEq.cancel_right_of_coprime cpj h
       rw [Nat.mod_eq_of_lt hk.2, Nat.mod_eq_of_lt (by omega)] at h
       omega
-    have b₁ : k * j % n ∈ Set.Ico 1 n := by
+    have b₁ : (k + 1) * j % n ∈ Set.Ico 1 n := by
       refine ⟨?_, Nat.mod_lt _ (by omega)⟩
       by_contra! h; rw [Nat.lt_one_iff, ← Nat.dvd_iff_mod_eq_zero] at h
       have ek := Nat.eq_zero_of_dvd_of_lt (cpj.dvd_of_dvd_mul_right h) hk.2
       omega
-    have hk₂ : k - 1 ∈ Set.Ico 1 n := ⟨Nat.le_sub_of_add_le hk₁, (Nat.sub_le ..).trans_lt hk.2⟩
-    rw [← C_mul_mod hn hj cpj hC hk₂, hC.2 _ b₁ nej]
+    rw [← ih ⟨hk₁, Nat.lt_of_succ_lt hk.2⟩, hC.2 _ b₁ nej]
     rcases nej.lt_or_gt with h | h
     · rw [Int.natAbs_sub_nat_of_lt h.le]
-      have b₂ : j - k * j % n ∈ Set.Ico 1 n := by
+      have b₂ : j - (k + 1) * j % n ∈ Set.Ico 1 n := by
         refine ⟨(?_ : 0 < _), (Nat.sub_le ..).trans_lt hj.2⟩
         rwa [Nat.sub_pos_iff_lt]
-      have q : n - (j - k * j % n) = k * j % n + (n - j) % n := by
+      have q : n - (j - (k + 1) * j % n) = (k + 1) * j % n + (n - j) % n := by
         rw [tsub_tsub_eq_add_tsub_of_le h.le, add_comm, Nat.add_sub_assoc hj.2.le,
           Nat.mod_eq_of_lt (show n - j < n by omega)]
       rw [hC.1 _ b₂, q, ← Nat.add_mod_of_add_mod_lt (by omega), ← Nat.add_sub_assoc hj.2.le, add_comm,
-        Nat.add_sub_assoc (Nat.le_mul_of_pos_left _ hk.1), ← tsub_one_mul, Nat.add_mod_left]
-    · rw [Int.natAbs_sub_nat_of_gt h.le, Nat.mod_sub_comm h.le, tsub_one_mul]
+        Nat.add_sub_assoc (Nat.le_mul_of_pos_left _ hk.1), ← tsub_one_mul,
+        Nat.add_mod_left, add_tsub_cancel_right]
+    · rw [Int.natAbs_sub_nat_of_gt h.le, Nat.mod_sub_comm h.le]
+      rw [add_mul, one_mul, add_tsub_cancel_right]
 
 snip end
 
