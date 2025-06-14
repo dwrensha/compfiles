@@ -80,9 +80,8 @@ lemma C_mul_mod {n j : ℕ} (hn : 3 ≤ n) (hj : j ∈ Set.Ico 1 n) (cpj : Nat.C
     rw [← ih ⟨hk₁, Nat.lt_of_succ_lt hk.2⟩, hC.2 _ b₁ nej]
     rcases nej.lt_or_gt with h | h
     · rw [Int.natAbs_sub_nat_of_lt h.le]
-      have b₂ : j - (k + 1) * j % n ∈ Set.Ico 1 n := by
-        refine ⟨(?_ : 0 < _), (Nat.sub_le ..).trans_lt hj.2⟩
-        rwa [Nat.sub_pos_iff_lt]
+      have b₂ : j - (k + 1) * j % n ∈ Set.Ico 1 n :=
+        ⟨Nat.sub_pos_iff_lt.mpr h, (Nat.sub_le ..).trans_lt hj.2⟩
       have q : n - (j - (k + 1) * j % n) = (k + 1) * j % n + (n - j) % n := by
         rw [tsub_tsub_eq_add_tsub_of_le h.le, add_comm, Nat.add_sub_assoc hj.2.le,
           Nat.mod_eq_of_lt (show n - j < n by omega)]
