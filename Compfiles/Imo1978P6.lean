@@ -21,8 +21,8 @@ the sum of the numbers of two (not necessarily distinct) members from his own co
 
 namespace Imo1978P6
 
-problem imo1978_p6 (n : ℕ) (hn : n = 1978) (C : Fin n → Fin 6) :
-  ∃ j : Fin n, ∃ i : Fin n, ∃ k : Fin n,
+problem imo1978_p6 (C : Fin 1978 → Fin 6) :
+  ∃ j : Fin 1978, ∃ i : Fin 1978, ∃ k : Fin 1978,
     C i = C j ∧
     C j = C k ∧
     (i:ℕ) + 1 + (k:ℕ) + 1 = (j:ℕ) + 1 := by sorry
