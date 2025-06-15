@@ -95,6 +95,7 @@ Some problems were imported from external sources:
   [Lean 4](https://github.com/mortarsanjaya/IMOSLLean4) formalizations of
   IMO shortlist problems.
 * Joseph Myers's [IMOLean](https://github.com/jsm28/IMOLean/tree/main) repository.
+* Roozbeh Yousefzadeh's [Imo-Steps](https://github.com/roozbeh-yz/IMO-Steps) repository.
 
 ## videos
 
