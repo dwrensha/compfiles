@@ -93,7 +93,7 @@ lemma C_mul_mod {n j : ℕ} (hn : 3 ≤ n) (hj : j ∈ Set.Ico 1 n) (cpj : Nat.C
 
 snip end
 
-problem imo2001_p3 {n j : ℕ} (hn : 3 ≤ n) (hj : j ∈ Set.Ico 1 n)
+problem imo1985_p2 {n j : ℕ} (hn : 3 ≤ n) (hj : j ∈ Set.Ico 1 n)
     (cpj : Nat.Coprime n j) {C : ℕ → Fin 2} (hC : Condition n j C)
     {i : ℕ} (hi : i ∈ Set.Ico 1 n) :
     C i = C j := by
