@@ -357,10 +357,7 @@ problem imo1997_p5 (a b : ℕ) (ha : 1 ≤ a) (hb : 1 ≤ b) :
             have h₈ : k < 2 ^ k / 4 := by
               have h81: 4 ∣ 2^k := by
                 have h82: 2^k = 4*2^(k-2) := by
-                  have h83: k = 2 + (k -2) := by
-                    ring_nf
-                    exact (Nat.add_sub_of_le hk).symm
-                  nth_rewrite 1 [h83]
+                  nth_rewrite 1 [←Nat.add_sub_of_le hk]
                   rw [pow_add]
                   norm_num
                 rw [h82]
