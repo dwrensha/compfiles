@@ -232,10 +232,8 @@ problem imo2002_p5 (f : ℝ → ℝ) :
     have h14 : (((q * (q.den : ℚ)):ℚ):ℝ) = (q:ℝ) * (q.den:ℝ) := by norm_cast
     rw [←h14, h13, Rat.cast_intCast] at h12
     rw [h10] at h12
-    have h15 : (q:ℚ) = (q.num : ℝ) / (q.den : ℝ) := by
-      norm_cast; exact (Rat.divInt_self q).symm
     have h16 : (q.num:ℝ)^2 / (q.den : ℝ)^2 = q^2 := by
-      rw[h15]; field_simp
+      rw [Rat.cast_def q]; field_simp
     rw [←h16]
     have h17 : (q.den : ℝ)^2 ≠ 0 := by positivity
     exact eq_div_of_mul_eq h17 h12.symm
@@ -243,7 +241,6 @@ problem imo2002_p5 (f : ℝ → ℝ) :
   · simp [h3]
   have h12 := extend_function_mono (f := fun x ↦ x^2) h6 (continuous_pow 2) h11 x h7'
   simp [h12]
-
 
 
 end Imo2002P5
