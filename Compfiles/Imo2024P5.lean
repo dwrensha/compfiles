@@ -542,8 +542,7 @@ desired places. -/
 def baseMonsterData (N : ℕ) : MonsterData N where
   toFun := fun ⟨r, _, hrN⟩ ↦ ⟨↑r, by
     rw [Fin.le_def] at hrN
-    rw [Nat.lt_add_one_iff]
-    exact hrN⟩
+    exact Nat.lt_add_one_of_le hrN⟩
   inj' := fun ⟨⟨x, hx⟩, hx1, hxN⟩ ⟨⟨y, hy⟩, hy1, hyN⟩ h ↦ by
     simp only [Fin.mk.injEq] at h
     simpa using h
