@@ -1257,27 +1257,23 @@ problem imo_1985_p6
   have h₂: ∃! a, ∀ (n : ℕ), 0 < n → 0 < fn n a ∧ fn n a < fn (n + 1) a ∧ fn (n + 1) a < 1 := by
     exact imo_1985_p6_nnreal fn (fun x ↦ h₀ ↑x) fun n x ↦ h₁ n ↑x
   obtain ⟨a, ha₀, ha₁⟩ := h₂
-  use a
-  constructor
-  . intro n hn₀
-    exact ha₀ n hn₀
-  . intro y hy₀
-    have hy₁: 0 ≤ y.toNNReal := by exact zero_le y.toNNReal
-    by_cases hy₂: 0 ≤ y
-    . refine (Real.toNNReal_eq_toNNReal_iff hy₂ ?_).mp ?_
-      . exact NNReal.zero_le_coe
-      . rw [@Real.toNNReal_coe]
-        refine ha₁ (y.toNNReal) ?_
-        intro n hn₀
-        rw [hfn₁ n _ hn₀ hy₁, hfn₁ (n + 1) _ (by omega) hy₁]
-        rw [Real.coe_toNNReal y hy₂]
-        exact hy₀ n hn₀
-    . exfalso
-      push_neg at hy₂
-      have hy₃: f 1 y < 0 := by
-        rw [h₀]
-        exact hy₂
-      have hy₄: 0 < f 1 y := by
-        exact (hy₀ 1 (by decide)).1
-      have hy₅: (0:ℝ) < 0 := by exact lt_trans hy₄ hy₃
-      exact (lt_self_iff_false 0).mp hy₅
+  refine ⟨a, ha₀, fun y hy₀ ↦ ?_⟩
+  have hy₁: 0 ≤ y.toNNReal := by exact zero_le y.toNNReal
+  by_cases hy₂: 0 ≤ y
+  . refine (Real.toNNReal_eq_toNNReal_iff hy₂ ?_).mp ?_
+    . exact NNReal.zero_le_coe
+    . rw [Real.toNNReal_coe]
+      refine ha₁ y.toNNReal ?_
+      intro n hn₀
+      rw [hfn₁ n _ hn₀ hy₁, hfn₁ (n + 1) _ (by omega) hy₁]
+      rw [Real.coe_toNNReal y hy₂]
+      exact hy₀ n hn₀
+  . exfalso
+    push_neg at hy₂
+    have hy₃: f 1 y < 0 := by
+      rw [h₀]
+      exact hy₂
+    have hy₄: 0 < f 1 y := by
+      exact (hy₀ 1 (by decide)).1
+    have hy₅: (0:ℝ) < 0 := by exact lt_trans hy₄ hy₃
+    exact (lt_self_iff_false 0).mp hy₅
