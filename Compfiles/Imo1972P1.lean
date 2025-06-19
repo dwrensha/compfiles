@@ -69,16 +69,10 @@ problem imo1972_p1 (S : Finset ℕ)
   let B' := B \ C
   refine ⟨A', B', ?_, ?_, ?_, ?_⟩
   · have h10 : A' ⊆ A := Finset.sdiff_subset
-    have h11 : A ⊆ S := by
-      intro a ha
-      rw [Finset.mem_powerset] at hA
-      exact hA ha
+    have h11 : A ⊆ S := Finset.mem_powerset.mp hA
     exact h10.trans h11
   · have h10 : B' ⊆ B := Finset.sdiff_subset
-    have h11 : B ⊆ S := by
-      intro b hb
-      rw [Finset.mem_powerset] at hB
-      exact hB hb
+    have h11 : B ⊆ S := Finset.mem_powerset.mp hB
     exact h10.trans h11
   · rw[Finset.disjoint_iff_ne]
     intro a ha b hb
