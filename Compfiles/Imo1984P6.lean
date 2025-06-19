@@ -368,9 +368,8 @@ problem imo_1984_p6
           have hc₃: 1 ≤ 2 * m - k - 2 := by
             by_contra! hc₄
             interval_cases (2 * m - k - 2)
-            simp at h₉
-            rw [h₉] at hc₁
-            contradiction
+            rw [pow_zero] at h₉
+            exact hc h₉
           have hc₄: 2 * m - k - 2 = Nat.succ (2 * m - k - 3) := by
             rw [Nat.succ_eq_add_one]
             exact Nat.eq_add_of_sub_eq hc₃ rfl
