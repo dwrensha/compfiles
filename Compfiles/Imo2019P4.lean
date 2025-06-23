@@ -85,7 +85,7 @@ snip end
 
 determine solution_set : Set (ℕ × ℕ) := { (1,1), (2,3) }
 
-problem imo2018_p2 (n k : ℕ) :
+problem imo2019_p4 (n k : ℕ) :
     (n, k) ∈ solution_set ↔
     0 < n ∧ 0 < k ∧
     (k ! : ℤ) = ∏ i ∈ Finset.range n, ((2:ℤ)^n - (2:ℤ)^i) := by
