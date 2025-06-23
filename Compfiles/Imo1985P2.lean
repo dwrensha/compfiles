@@ -5,26 +5,25 @@ Authors: Jeremy Tan
 -/
 import Mathlib.Algebra.Order.Ring.Canonical
 import Mathlib.Algebra.Order.Ring.Star
+import Mathlib.Data.Int.NatAbs
 import Mathlib.Data.Nat.ModEq
 
 import ProblemExtraction
 
 problem_file {
   tags := [.Combinatorics]
-  importedFrom := "https://github.com/leanprover-community/mathlib4/pull/25783"
+  importedFrom := "https://github.com/leanprover-community/mathlib4/blob/master/Archive/Imo/Imo1985Q2.lean"
 }
 
 /-!
 # International Mathematical Olympiad 1985, Problem 5
-Each of the numbers in the set $N=\{1, 2, 3, \dots, n-1\}$,
-where $n ≥ 3$, is colored with one of two colors, say red or black,
-so that:
 
-  1. $i$ and $n-i$ always receive the same color, and
-  2. for some $j ∈ N$ relatively prime to $n$, $i$ and $|j-i|$ receive
-     the same color
+Fix a natural number $n ≥ 3$ and define $N=\{1, 2, 3, \dots, n-1\}$.
+Fix another natural number $j ∈ N$ coprime to $n$. Each number in
+$N$ is now colored with one of two colors, say red or black, so that:
 
-for all $i ∈ N, i ≠ j$.
+1. $i$ and $n-i$ always receive the same color, and
+2. $i$ and $|j-i|$ receive the same color for all $i ∈ N, i ≠ j$.
 
 Prove that all numbers in $N$ must receive the same color.
 -/
@@ -49,17 +48,6 @@ In this range of $k$, $kj\bmod n ≠ j$, so
 using rule 2 then rule 1.
 -/
 
-lemma Int.natAbs_sub_nat_of_lt {a b : ℕ} (h : b ≤ a) : (a - b : ℤ).natAbs = a - b := by
-  omega
-
-lemma Int.natAbs_sub_nat_of_gt {a b : ℕ} (h : a ≤ b) : (a - b : ℤ).natAbs = b - a := by
-  omega
-
-lemma Nat.mod_sub_comm {a b n : ℕ} (h : b ≤ a % n) : a % n - b = (a - b) % n := by
-  rcases n.eq_zero_or_pos with rfl | hn; · simp only [Nat.mod_zero]
-  nth_rw 2 [← Nat.div_add_mod a n]; rw [Nat.add_sub_assoc h, Nat.mul_add_mod]
-  exact (Nat.mod_eq_of_lt <| (Nat.sub_le ..).trans_lt (Nat.mod_lt a hn)).symm
-
 /-- For `1 ≤ k < n`, `k * j % n` has the same color as `j`. -/
 lemma C_mul_mod {n j : ℕ} (hn : 3 ≤ n) (hj : j ∈ Set.Ico 1 n) (cpj : Nat.Coprime n j)
     {C : ℕ → Fin 2} (hC : Condition n j C) {k : ℕ} (hk : k ∈ Set.Ico 1 n) :
@@ -79,7 +67,7 @@ lemma C_mul_mod {n j : ℕ} (hn : 3 ≤ n) (hj : j ∈ Set.Ico 1 n) (cpj : Nat.C
       omega
     rw [← ih ⟨hk₁, Nat.lt_of_succ_lt hk.2⟩, hC.2 _ b₁ nej]
     rcases nej.lt_or_gt with h | h
-    · rw [Int.natAbs_sub_nat_of_lt h.le]
+    · rw [Int.natAbs_natCast_sub_natCast_of_ge h.le]
       have b₂ : j - (k + 1) * j % n ∈ Set.Ico 1 n :=
         ⟨Nat.sub_pos_iff_lt.mpr h, (Nat.sub_le ..).trans_lt hj.2⟩
       have q : n - (j - (k + 1) * j % n) = (k + 1) * j % n + (n - j) % n := by
@@ -88,7 +76,7 @@ lemma C_mul_mod {n j : ℕ} (hn : 3 ≤ n) (hj : j ∈ Set.Ico 1 n) (cpj : Nat.C
       rw [hC.1 _ b₂, q, ← Nat.add_mod_of_add_mod_lt (by omega), ← Nat.add_sub_assoc hj.2.le, add_comm,
         Nat.add_sub_assoc (Nat.le_mul_of_pos_left _ hk.1), ← tsub_one_mul,
         Nat.add_mod_left, add_tsub_cancel_right]
-    · rw [Int.natAbs_sub_nat_of_gt h.le, Nat.mod_sub_comm h.le]
+    · rw [Int.natAbs_natCast_sub_natCast_of_le h.le, Nat.mod_sub_of_le h.le]
       rw [add_mul, one_mul, add_tsub_cancel_right]
 
 snip end
