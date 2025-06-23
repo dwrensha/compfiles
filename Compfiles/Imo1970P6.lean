@@ -33,7 +33,7 @@ def AcuteTriangle (T : Affine.Triangle ℝ Pt) : Prop :=
 problem imo1970_p6
     (P : Fin 100 → Pt)
     (hP : ∀ a b c : Fin 100,
-             List.Nodup [a, b, c] → ¬ Collinear ℝ {P c, P b, P c}) :
+             List.Nodup [a, b, c] → ¬ Collinear ℝ {P a, P b, P c}) :
     let cardAll := Nat.card { t : Affine.Triangle ℝ Pt |
                               ∃ a b c : Fin 100, ![P a, P b, P c] = t.points }
     let cardAcute :=
