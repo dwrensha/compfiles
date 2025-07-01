@@ -139,10 +139,6 @@ lemma sub_le_lemma {a b:ℕ} : b ≤ a → b≠0 → a-b < a := by
   obtain ⟨c,hc⟩ := le_iff_exists_add.1 h1
   rw [hc,add_comm]; simp [Nat.zero_lt_of_ne_zero h2]
 
-
-lemma Real.coe_lt_coe {a b :ℕ } : (a :ℝ ) < (b: ℝ) ↔ a < b := by
-  simp [WithZero.coe_lt_coe]
-
 lemma pos_sub_of_lt {a b : ℕ} : a < b → 0 < b-a := by
   intro h
   exact Nat.pos_iff_ne_zero.2 <| Nat.sub_ne_zero_of_lt h
@@ -175,7 +171,7 @@ problem imo1987_p6
     have ieq4 : p ≤ 3*r^2 + 6*r + 2 := by
       have ieq5: √ (p/3) < r+1 := Nat.lt_floor_add_one _
       replace ieq5 := Real.lt_sq_of_sqrt_lt ieq5 |> (div_lt_iff₀ (by norm_num)).1
-      replace ieq5: (p) < (3*r^2 + 6*r +3) := Real.coe_lt_coe.1 <| by
+      replace ieq5: (p) < (3*r^2 + 6*r +3) := cast_lt.1 <| by
         have casteq: ((r:ℝ)+1)^2 * 3 = ((3*r^2+6*r+3:ℕ):ℝ) := by simp;ring_nf
         rw [←casteq]
         exact ieq5

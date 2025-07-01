@@ -101,10 +101,10 @@ snip end
 problem imo1986_p1 (d : ℤ) (_hdpos : 1 ≤ d) (h2 : d ≠ 2) (h5 : d ≠ 5) (h13 : d ≠ 13) :
     ∃ a b :({2, 5, 13, d} : Finset ℤ), (a ≠ b) ∧ ¬ ∃ z, z^2 = (a * (b : ℤ) - 1) := by
   by_contra h
-  simp only [ne_eq, Subtype.exists, Finset.mem_singleton, Finset.mem_insert, false_or,
+  simp only [ne_eq, Subtype.exists, Finset.mem_singleton, Finset.mem_insert,
   exists_and_right, Subtype.mk.injEq, exists_prop, exists_eq_or_imp, exists_eq_left, not_or,
   not_exists, not_and, not_forall, not_not, and_imp, forall_eq_or_imp, IsEmpty.forall_iff,
-  forall_true_left, forall_eq, true_and, not_true, and_true] at h
+  forall_eq, true_and, not_true, and_true] at h
   have := h.1.2.2 h2.symm
   cases' this with p hp
   have := h.2.1.2.2 h5.symm

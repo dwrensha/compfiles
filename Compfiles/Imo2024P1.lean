@@ -100,7 +100,7 @@ lemma mem_Ico_n_of_mem_Ioo (h : α ∈ Set.Ioo 0 2)
   suffices ∑ i ∈ Finset.Icc 1 n, ⌊i * α⌋ = n ^ 2 ∧ α ∈ Set.Ico ((2 * n - 1) / n : ℝ) 2 from this.2
   induction' n, hn using Nat.le_induction with k kpos hk
   · obtain ⟨h1, h2⟩ := hc.mem_Ico_one_of_mem_Ioo h
-    simp only [zero_add, Finset.Icc_self, Finset.sum_singleton, Nat.cast_one, one_mul, one_pow,
+    simp only [Finset.Icc_self, Finset.sum_singleton, Nat.cast_one, one_mul, one_pow,
                Int.floor_eq_iff, Int.cast_one, mul_one, div_one, Set.mem_Ico, tsub_le_iff_right]
     exact ⟨⟨h1, by linarith⟩, by linarith, h2⟩
   · rcases hk with ⟨hks, hkl, hk2⟩

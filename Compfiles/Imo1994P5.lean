@@ -68,7 +68,7 @@ problem imo1994_p5 (f : S → S) :
       rw [div_self h6]
       rw [div_lt_div_iff₀ h2 h1]
       linarith
-    · simp only [Set.mem_Ioo, and_imp]
+    · simp only
       intro hx1 hy1 hxy
       have h1 : 0 < 1 + y := by positivity
       have h2 : 0 < 1 + x := by positivity

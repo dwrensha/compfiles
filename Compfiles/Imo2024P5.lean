@@ -190,7 +190,7 @@ lemma Path.exists_mem_fst_eq (p : Path N) (r : Fin (N + 2)) : ∃ c ∈ p.cells,
   have hi : i < p.cells.length := by
     refine List.findIdx_lt_length_of_exists ⟨p.cells.getLast p.nonempty, ?_⟩
     simp only [List.getLast_mem, p.last_last_row, decide_eq_true_eq, true_and]
-    simp only [List.getLast_mem, p.last_last_row, decide_eq_true_eq, true_and, Fin.last]
+    simp only [Fin.last]
     rw [Fin.le_def]
     have h := r.isLt
     rw [Nat.lt_succ_iff] at h
@@ -280,7 +280,7 @@ lemma Path.one_lt_length_cells (p : Path N): 1 < p.cells.length := by
     have h1 := p.head_first_row
     simp_rw [hc, List.head_cons] at h1
     have h2 := p.last_last_row
-    simp [hc, List.getLast_singleton, h1, Fin.add_def, Fin.ext_iff] at h2
+    simp [hc, List.getLast_singleton, h1, Fin.ext_iff] at h2
 
 /-- Remove the first cell from a path, if the second cell is also on the first row. -/
 def Path.tail (p : Path N) : Path N where
@@ -339,8 +339,7 @@ lemma Path.tail_firstMonster (p : Path N) (m : MonsterData N) :
     rcases cells with ⟨⟩ | ⟨head, tail⟩
     · simp at nonempty
     · simp only [List.head_cons] at head_first_row
-      simp only [List.find?_cons, head_first_row,
-        m.not_mem_monsterCells_of_fst_eq_zero head_first_row, decide_false]
+      simp only [List.find?_cons, m.not_mem_monsterCells_of_fst_eq_zero head_first_row, decide_false]
       rfl
   · simp_rw [Path.tail, if_neg h]
 
@@ -430,7 +429,7 @@ def Path.ofFn {m : ℕ} (f : Fin m → Cell N) (hm : m ≠ 0)
   head_first_row := by
     rw [List.head_ofFn, hf]
   last_last_row := by
-    simp [List.getLast_ofFn, hl, Fin.ext_iff, Fin.add_def]
+    simp [List.getLast_ofFn, hl, Fin.ext_iff]
   valid_move_seq := by
     rwa [List.chain'_ofFn]
 
@@ -501,7 +500,7 @@ lemma Strategy.play_one (s : Strategy N) (m : MonsterData N) {k : ℕ} (hk : 1 <
     s.play m k ⟨1, hk⟩ = (s ![(s Fin.elim0).firstMonster m]).firstMonster m := by
   have hk' : 2 ≤ k := by omega
   rw [s.play_apply_of_le m one_lt_two hk']
-  simp only [play, Fin.snoc, lt_self_iff_false, ↓reduceDIte, Nat.reduceAdd, Nat.zero_eq,
+  simp only [play, Fin.snoc, lt_self_iff_false, ↓reduceDIte, Nat.reduceAdd,
     Fin.mk_one, Fin.isValue, cast_eq, Nat.succ_eq_add_one]
   congr
   refine funext fun i ↦ ?_
@@ -513,14 +512,14 @@ lemma Strategy.play_two (s : Strategy N) (m : MonsterData N) {k : ℕ} (hk : 2 <
       (s ![(s Fin.elim0).firstMonster m]).firstMonster m]).firstMonster m := by
   have hk' : 3 ≤ k := by omega
   rw [s.play_apply_of_le m (by norm_num : 2 < 3) hk']
-  simp only [play, Fin.snoc, lt_self_iff_false, ↓reduceDIte, Nat.reduceAdd, Nat.zero_eq,
-    Fin.mk_one, Fin.isValue, cast_eq, Nat.succ_eq_add_one]
+  simp only [play, Fin.snoc, lt_self_iff_false, ↓reduceDIte, Nat.reduceAdd,
+    cast_eq, Nat.succ_eq_add_one]
   congr
   refine funext fun i ↦ ?_
   fin_cases i
   · rfl
   · have h : (1 : Fin 2) = Fin.last 1 := rfl
-    simp only [Fin.snoc_zero, Nat.reduceAdd, Fin.mk_one, Fin.isValue, id_eq, Matrix.cons_val]
+    simp only [Fin.snoc_zero, Nat.reduceAdd, Fin.mk_one, Fin.isValue, Matrix.cons_val]
     simp only [h, Fin.snoc_last]
     convert rfl
     simp_rw [Fin.fin_one_eq_zero, Matrix.cons_val]
@@ -659,7 +658,7 @@ def path2OfNotEdge {c₁ : Fin (N + 1)} (hc₁ : (c₁ : ℕ) ≠ N) : Path N :=
     (by
       simp only [fn2OfNotEdge]
       intro i hi
-      split_ifs <;> simp [Adjacent, Nat.dist, Fin.ext_iff] at * <;> omega)
+      split_ifs <;> simp [Adjacent, Nat.dist] at * <;> omega)
 
 /-- The second attempt in a winning strategy, as a function, if the monster in the second row
 is at the left edge: zigzag across the board so that, if we encounter a monster, we have a third
@@ -676,7 +675,7 @@ def path1OfEdge0 (hN : 2 ≤ N) : Path N := Path.ofFn (fn1OfEdge0 N) (by omega)
     (by
       simp only [fn1OfEdge0]
       intro i hi
-      split_ifs <;> simp [Adjacent, Nat.dist, Fin.ext_iff] at * <;> omega)
+      split_ifs <;> simp [Adjacent, Nat.dist] at * <;> omega)
 
 /-- The second attempt in a winning strategy, as a `Path`, if the monster in the second row
 is at the right edge. -/
@@ -706,7 +705,7 @@ def path2OfEdge0 (hN : 2 ≤ N) {r : Fin (N + 2)} (hr2 : 2 ≤ (r : ℕ)) (hrN :
     (by
       simp only [fn2OfEdge0]
       intro i hi
-      split_ifs <;> simp [Adjacent, Nat.dist, Fin.ext_iff] at * <;> omega)
+      split_ifs <;> simp [Adjacent, Nat.dist] at * <;> omega)
 
 /-- The third attempt in a winning strategy, as a `Path`, if the monster in the second row
 is at the left edge and the second (zigzag) attempt encountered a monster, version that works

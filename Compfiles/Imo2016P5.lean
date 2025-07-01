@@ -56,14 +56,12 @@ problem imo2015_p5 :
     refine ⟨?_, ?_, ?_, ?_⟩
     · refine ⟨Finset.filter_subset _ _, ?_⟩
       intro h
-      have h1 : 1 ∈ Finset.Icc 1 2016 := by
-        simp (config := {decide := true}) only [Finset.mem_Icc]
+      have h1 : 1 ∈ Finset.Icc 1 2016 := by decide
       have h2 := h h1
       simp [Finset.mem_Icc, Finset.mem_filter] at h2
     · refine ⟨Finset.filter_subset _ _, ?_⟩
       intro h
-      have h1 : 2 ∈ Finset.Icc 1 2016 := by
-        simp (config := {decide := true}) only [Finset.mem_Icc]
+      have h1 : 2 ∈ Finset.Icc 1 2016 := by decide
       have h2 := h h1
       simp only [Finset.mem_Icc, Finset.mem_filter] at h2
       norm_num at h2

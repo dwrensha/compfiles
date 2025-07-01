@@ -146,7 +146,7 @@ problem imo2012_p4 (f : ℤ → ℤ) :
 
       have sub_even {x : ℤ} (a : ℤ) : f x = f (x - 2 * a) := by
         have := P (x - (2 * a)) (2 * a)
-        simp [«f2=0», «f0=0», even_zero] at this
+        simp [even_zero] at this
         rwa [add_comm, sub_sq''] at this
 
       have h_odd_const (x : ℤ) : Odd x → f x = f 1 := by
@@ -205,9 +205,9 @@ problem imo2012_p4 (f : ℤ → ℤ) :
           cases «P(2,2)»; case inl «f4=0» => assumption
           case inr «f4=4*f2» =>
             have «P(1,3)» := P 1 3
-            simp [«f3=f1», «f4=4*f2», «f2=4*f1»] at «P(1,3)» ⊢
+            simp [«f3=f1», «f4=4*f2»] at «P(1,3)» ⊢
             rw [← sub_eq_zero] at «P(1,3)»; ring_nf at «P(1,3)»
-            simp [mul_eq_zero, pow_eq_zero_iff'] at «P(1,3)»
+            simp [mul_eq_zero] at «P(1,3)»
             assumption
 
         have := when_f4_is_0 «f4=0»

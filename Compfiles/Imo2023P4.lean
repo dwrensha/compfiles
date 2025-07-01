@@ -114,7 +114,7 @@ theorem imo2023_p4_generalized
       omega
     have hn2 : n + 2 ∈ Finset.Icc 1 (2 * (m + 1) + 1) := by
       simp only [Finset.mem_Icc, le_add_iff_nonneg_left, zero_le,
-                 add_le_add_iff_right, true_and, n]
+                 true_and, n]
       omega
 
     let u := √(x ⟨n + 1, hn1⟩ / x ⟨n + 2, hn2⟩)
@@ -183,7 +183,7 @@ theorem imo2023_p4_generalized
         omega
     simp only [h6] at h1
     simp only [Finset.cons_eq_insert, Finset.mem_filter,
-               Finset.mem_attach, Subtype.mk_le_mk, add_le_add_iff_left,
+               Subtype.mk_le_mk, add_le_add_iff_left,
                Nat.not_ofNat_le_one, and_false, not_false_eq_true,
                Finset.sum_insert, one_div] at h1
 
@@ -227,7 +227,7 @@ theorem imo2023_p4_generalized
     simp only [h8] at h1
     clear h6 h8
     simp only [Finset.cons_eq_insert, Finset.mem_filter,
-               Finset.mem_attach, Subtype.mk_le_mk, add_le_iff_nonpos_right,
+               Subtype.mk_le_mk, add_le_iff_nonpos_right,
                nonpos_iff_eq_zero, one_ne_zero, and_false, not_false_eq_true,
                Finset.sum_insert] at h1
     rw [←add_assoc, add_comm (x ⟨n + 2, hn2⟩)] at h1
@@ -245,7 +245,7 @@ theorem imo2023_p4_generalized
     have hy3 : 0 ≤ ∑ x_1 ∈ Finset.filter (fun x ↦ x ≤ ⟨n, by simp[n]⟩) Finset.univ, (x x_1)⁻¹ := by
       refine Finset.sum_nonneg ?_
       rintro y hy
-      simp only [Finset.mem_filter, Finset.mem_attach, true_and] at hy
+      simp only [Finset.mem_filter] at hy
       specialize hxp y
       positivity
 
@@ -290,7 +290,6 @@ theorem imo2023_p4_generalized
         obtain ⟨a, haa⟩ := a
         simp only [Finset.mem_Icc] at haa hy
         simp only [Subtype.mk_le_mk] at ha
-        simp only [exists_prop, and_true]
         simp only [exists_prop, and_true, e]
         omega
 

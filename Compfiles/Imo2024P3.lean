@@ -170,7 +170,7 @@ lemma exists_infinite_setOf_apply_eq : ∃ m, {i | a i = m}.Infinite := by
   simp only [not_exists, Set.not_infinite] at hi
   have hinj : Set.InjOn (fun i ↦ Nat.nth (a · = i) 0 + 1) (Set.range a \ Set.Ico 0 (M a N)) := by
     rintro _ ⟨⟨_, rfl⟩, hi⟩ _ ⟨⟨_, rfl⟩, hj⟩ h
-    simp only [Set.mem_diff, Set.mem_range, Set.mem_Ico, zero_le, true_and, not_lt] at hi hj
+    simp only [Set.mem_Ico, zero_le, true_and, not_lt] at hi hj
     simp only [add_left_inj] at h
     convert congr(a $h) using 1 <;> simp [apply_nth_zero]
   refine Set.not_infinite.2 (hi 1) (Set.infinite_of_injOn_mapsTo hinj (fun i hi ↦ ?_)
@@ -671,7 +671,7 @@ lemma apply_eq_card_small_le_card_eq_of_small {i : ℕ} (hi : N' a N + 1 < i)
   convert Iff.rfl using 2
   congr 1
   ext t
-  simp only [Finset.mem_filter, Finset.mem_range, and_congr_right_iff]
+  simp only [Finset.mem_filter, Finset.mem_range]
   refine ⟨fun ⟨hti, rfl⟩ ↦ ⟨?_, rfl⟩, fun ⟨_, rfl⟩ ↦ ⟨by omega, rfl⟩⟩
   by_contra hti1
   have htieq : t = i - 1 := by omega
@@ -874,7 +874,7 @@ lemma p_le_two_mul_k {n : ℕ} (hn : N' a N + 2 < n) (hs : Small a (a n)) : p a 
     convert Finset.exists_ne_map_eq_of_card_lt_of_maps_to (t := Finset.Icc 1 (k a)) ?_ ?_
     · simp
     · rintro i -
-      simp [Finset.mem_Icc, Nat.lt_add_one_iff]
+      simp [Finset.mem_Icc]
       rw [← Small, hc.small_apply_add_two_mul_iff_small i (by omega)]
       simp [hs, hc.one_le_apply]
   have hs' : Small a (a (n + 2 * x)) := by rwa [hc.small_apply_add_two_mul_iff_small x (by omega)]

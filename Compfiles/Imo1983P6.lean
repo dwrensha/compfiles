@@ -71,7 +71,7 @@ theorem lemma1 {x y z : ℝ} (hx : 0 < x) (hy : 0 < y) (hz : 0 < z)
   suffices H : ∃ r : ℝ, ∀ i ∈ Finset.univ, r * f i = g i by
     obtain ⟨r, hr⟩ := H
     dsimp [f, g] at hr
-    simp only [Finset.mem_univ, forall_const, f, g] at hr
+    simp only [Finset.mem_univ, forall_const] at hr
     have hr0 := hr 0
     have hr1 := hr 1
     have hr2 := hr 2

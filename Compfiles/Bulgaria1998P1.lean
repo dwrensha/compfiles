@@ -45,11 +45,10 @@ lemma lemma1 {m n : ℕ} (hmn : m ≤ n) (hm : all_colorings_are_good m) :
     obtain ⟨⟨i, hi1, hi2⟩, ⟨j, hj1, hj2⟩, hij1, hij2, hc1, hc2⟩ := hm.2 c'
     use ⟨i, hi1, hi2.trans hmn⟩
     use ⟨j, hj1, hj2.trans hmn⟩
-    simp only [Subtype.mk_lt_mk, Nat.lt_one_iff, Set.mem_Icc,
-               tsub_le_iff_right, exists_and_left]
+    simp only [Subtype.mk_lt_mk, Set.mem_Icc, tsub_le_iff_right, exists_and_left]
     simp only [Subtype.mk_lt_mk] at hij1
     refine ⟨hij1, ?_⟩
-    simp only [Nat.lt_one_iff, Set.mem_Icc, tsub_le_iff_right] at hij2
+    simp only [Set.mem_Icc, tsub_le_iff_right] at hij2
     simp only [c'] at hc1
     refine ⟨hc1, ?_⟩
     have hij2' : 1 ≤ 2 * j - i ∧ 2 * j ≤ n + i :=

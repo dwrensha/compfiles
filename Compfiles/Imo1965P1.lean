@@ -47,7 +47,7 @@ problem imo1965_p1 :
     constructor
     . constructor <;> linarith
     have : x ∈ Ico (π/4) (π / 2) ∪ Icc (π/2) (3*π/2) ∪ Ioc (3*π/2) (7*π/4) := by
-      simp only [the_answer, mem_Icc, mem_union, mem_Ico, mem_Ioc]
+      simp only [mem_Icc, mem_union, mem_Ico, mem_Ioc]
       rcases lt_or_ge x (π/2) with h3 | h3 <;>
         rcases le_or_gt x (3*π/2) with h4 | h4 <;> simp [*]
     rcases this with (⟨_, h4⟩ | ⟨h3, h4⟩) | ⟨h3, _⟩

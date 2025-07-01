@@ -26,7 +26,7 @@ snip begin
 
 lemma mod_3_add_3_under_exponent (m n : ℕ) : ((m + 3) ^ n) ≡ (m ^ n) [MOD 3] := by
   change (m + 3)^n % 3 = m ^ n % 3
-  simp [Nat.pow_mod, Nat.add_mod]
+  simp [Nat.pow_mod]
 
 lemma zero_pow_mod_3 {m n : ℕ} (h1 : n > 0) (h2 : m ≡ 0 [MOD 3]) : m ^ n ≡ 0 [MOD 3]:= by
   change _ % 3 = 0 at h2 ⊢
@@ -123,7 +123,7 @@ lemma m_mod_2_contradiction (m n A : ℕ)
   simp +arith +decide at h
 
 lemma m_add_3_pow_n_mod_m (n m : ℕ) : (m + 3)^n ≡ 3^n [MOD m] := by
-  simp [Nat.ModEq, Nat.pow_mod, Nat.add_mod]
+  simp [Nat.ModEq, Nat.pow_mod]
 
 lemma too_good_to_be_true (n l : ℕ)
                           (three_le_l : 3 ≤ l)
@@ -537,7 +537,7 @@ problem bulgaria1998_p11
       · rw[left_x] at expression_mod_4
         obtain left_y | right_y := square_mod_4_zmod y
         · rw[left_y] at expression_mod_4
-          simp +arith +decide [left_y] at expression_mod_4
+          simp +arith +decide at expression_mod_4
         · rw[right_y] at expression_mod_4
           simp +arith +decide at expression_mod_4
       · rw[right_x] at expression_mod_4

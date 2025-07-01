@@ -59,7 +59,7 @@ problem imo1981_p6 (f : ℕ → ℕ → ℕ)
   have h21 : ∀ y, f 3 y + 3 = 2^(y + 3) := by
     intro y
     induction' y with y ih
-    · simp (config := {decide := true}) [h1, h2, h3, h4, h20]
+    · simp (config := {decide := true}) [h1, h2, h3]
     · rw [h3, h20]
       rw [show 2 * f (2 + 1) y + 3 + 3 = 2 * (f 3 y + 3) by ring]
       rw [ih, ←Nat.pow_succ']
@@ -71,7 +71,7 @@ problem imo1981_p6 (f : ℕ → ℕ → ℕ)
   have h7' : ∀ y, f 4 y + 3 = (2^·)^[y + 3] 1 := by
     intro y
     induction' y with y ih
-    · simp (config := {decide := true}) [h1, h2, h3, h4]
+    · simp (config := {decide := true}) [h1, h2, h3]
     · rw [show Nat.succ y + 3 = Nat.succ (y + 3) by rfl]
       rw [Function.iterate_succ']
       rw [h6 y, ih]

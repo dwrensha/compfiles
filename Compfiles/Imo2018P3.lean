@@ -64,7 +64,7 @@ determine does_exist : Bool := false
 
 problem imo2018_p3 :
     if does_exist then exists_desired_triangle else ¬ exists_desired_triangle := by
-  simp only [ite_false, exists_desired_triangle]
+  simp only [exists_desired_triangle]
   rintro ⟨t, ht⟩
   sorry
 

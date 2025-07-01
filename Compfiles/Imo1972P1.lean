@@ -53,7 +53,7 @@ problem imo1972_p1 (S : Finset ℕ)
       omega
 
     have h5 : ∑ n ∈ s, n ≤ ∑ n ∈ s, 99 := Finset.sum_le_sum h4
-    simp only [Finset.sum_const, smul_eq_mul, Scard] at h5
+    simp only [Finset.sum_const, smul_eq_mul] at h5
     have h6 : s.card ≤ S.card := by
       rw [Finset.mem_powerset] at hs
       exact Finset.card_le_card hs

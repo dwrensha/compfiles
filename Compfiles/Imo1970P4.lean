@@ -412,7 +412,7 @@ lemma two_three_five_and_more_is_enough (x : ℕ) (two_does_not_divide : ¬ 2 �
       case inl h =>
         simp_all only [Nat.two_dvd_ne_zero, gt_iff_lt]
       case inr h =>
-        simp_all only [Nat.two_dvd_ne_zero, gt_iff_lt, Finset.mem_insert, Finset.mem_singleton]
+        simp_all only [Nat.two_dvd_ne_zero, gt_iff_lt]
   rintro ⟨p, ⟨pp, div⟩⟩
   have p_gt_5_implies := p_gt_5_not_dvd p pp
   have p_le_5_implies := p_le_5_not_dvd p pp
@@ -604,7 +604,7 @@ lemma contradiction_of_finset_icc_1_6 (s1 s2 : Finset ℕ) (partition : s1 ∪ s
           simp_all only [Finset.singleton_subset_iff]
         have set_five_in_empty := s1_s2_disjoint five_set_in_s1 five_set_in_s2
         have : ({5} : Finset ℕ).Nonempty := by
-          simp_all only [Finset.singleton_subset_iff, Finset.mem_singleton, nonempty_subtype, exists_eq, Finset.singleton_nonempty]
+          simp_all only [Finset.singleton_subset_iff, Finset.singleton_nonempty]
         apply not_empty_subst_of_nonempty {5} this
         exact set_five_in_empty
       have explicit_interval: Finset.Icc 1 6 = {1, 2, 3, 4, 5, 6} := by
@@ -647,7 +647,7 @@ lemma contradiction_of_finset_icc_1_6 (s1 s2 : Finset ℕ) (partition : s1 ∪ s
           simp_all only [Finset.singleton_subset_iff]
         have set_five_in_empty := s2_s1_disjoint five_set_in_s2 five_set_in_s1
         have : ({5} : Finset ℕ).Nonempty := by
-          simp_all only [Finset.singleton_subset_iff, Finset.mem_singleton, nonempty_subtype, exists_eq, Finset.singleton_nonempty]
+          simp_all only [Finset.singleton_subset_iff, Finset.singleton_nonempty]
         apply not_empty_subst_of_nonempty {5} this
         exact set_five_in_empty
       have explicit_interval: Finset.Icc 1 6 = {1, 2, 3, 4, 5, 6} := by

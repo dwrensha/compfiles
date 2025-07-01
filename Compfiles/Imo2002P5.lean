@@ -205,7 +205,7 @@ problem imo2002_p5 (f : ℝ → ℝ) :
       have h11 : f 1 = 0 := by linarith only [H]
       obtain ⟨y0, hy0⟩ := h2 0
       have h12 := hf 1 1 y0 0
-      simp only [h11, zero_add, h3, zero_mul, mul_zero, one_mul, sub_zero] at h12
+      simp only [h11, zero_add, h3, mul_zero, one_mul, sub_zero] at h12
       exact hy0.symm h12
     exact (mul_eq_right₀ h10).mp h9
   have h9 : ∀ n : ℕ, f n = n^2 := fun n ↦ by
@@ -218,7 +218,7 @@ problem imo2002_p5 (f : ℝ → ℝ) :
     have h12 := ih n.succ (Nat.lt.base _)
     have h11 := ih n (by omega)
     rw[h12] at h10
-    simp [ih, h8, h11] at h10
+    simp [h8, h11] at h10
     push_cast at h10 ⊢
     linarith only [h10]
   have h10 : ∀ z : ℤ, f z = z^2 := fun z ↦ by

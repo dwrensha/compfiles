@@ -137,7 +137,7 @@ lemma pow_f_le_f_pow {f : ℚ → ℝ} {n : ℕ} (hn : 0 < n) {x : ℚ} (hx : 1 
   | zero => exfalso; exact Nat.lt_asymm hn hn
   | succ pn hpn =>
     cases pn with
-    | zero => simp [show Nat.succ 0 = 1 by rfl, pow_one]
+    | zero => simp [pow_one]
     | succ pn =>
       have hpn' := hpn pn.succ_pos
       rw [pow_succ x (pn + 1), pow_succ (f x) (pn + 1)]
