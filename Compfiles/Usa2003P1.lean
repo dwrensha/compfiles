@@ -62,20 +62,7 @@ problem usa2003_p1 (n : ℕ) :
       have hkn : k ≠ 0 := Nat.ne_of_odd_add hk0
       have h1 := Nat.digits_append_digits (m := k) (n := pm) (Nat.succ_pos 9)
       rw[hpm1, ha, Nat.digits_of_lt 10 k hkn hk1] at h1
-      rw[←h1]
-      constructor
-      · rw[←ha]; simp[hpm1]
-      · constructor
-        · exact hk2
-        · rw[List.all_eq_true]
-          rw[List.all_eq_true, ha] at hpm3
-          intro x hx
-          rw[List.mem_append] at hx
-          cases' hx with hx hx
-          · exact hpm3 x hx
-          · rw[List.mem_singleton] at hx
-            rw[hx]
-            exact decide_eq_true hk0
+      grind
 
     -- This is equivalent to proving that there exists an odd digit k such that
     -- k·2ⁿ + a is divisible by 5...
