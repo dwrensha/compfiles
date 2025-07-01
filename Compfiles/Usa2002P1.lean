@@ -85,7 +85,7 @@ lemma usa2002_p1_generalized
     rw [Nat.pow_zero] at hN
     interval_cases N
     · use λ _ ↦ Color.blue
-      simp only [reduceCtorEq, forall_true_left, forall_const, Fintype.card_eq_zero,
+      simp only [reduceCtorEq, forall_const, Fintype.card_eq_zero,
                  and_self]
     · use λ _ ↦ Color.red
       simp [Fintype.card_subtype, Finset.card_univ, hs]
@@ -135,19 +135,19 @@ lemma usa2002_p1_generalized
         · obtain hss | hss := Classical.em (s ∈ s1 ∪ s2)
           · unfold f
             simp only [Finset.mem_union] at hss
-            simp only [Finset.mem_union, hss, dite_eq_ite, ite_true]
+            simp only [Finset.mem_union, hss, ite_true]
             cases' hss with hss hss
             · simp [hss]
             · split_ifs with h
               · rfl
-              · simp only [h, dite_eq_ite, f] at hfs1
+              · simp only [h, f] at hfs1
                 match h20 : (f' (Finset.subtype (fun a => ¬a = s) s1)) with
                 | Color.red => exact (hfs1 h20).elim
                 | Color.blue => rfl
           · -- s1 ∪ s2 is in S'
             simp only [hss, f]
             rw [Finset.mem_union, not_or] at hss
-            simp only [hss.1, dite_false]
+            simp only [hss.1]
             rw [Finset.subtype_union]
             apply hf1'
             · simp [hss.1, hss.2, f] at hs12
@@ -221,7 +221,7 @@ lemma usa2002_p1_generalized
         · obtain hss | hss := Classical.em (s ∈ s1 ∪ s2)
           · unfold f
             simp only [Finset.mem_union] at hss
-            simp only [Finset.mem_union, hss, dite_eq_ite, ite_true]
+            simp only [Finset.mem_union, hss, ite_true]
             cases' hss with hss hss
             · simp [hss]
             · split_ifs with h
@@ -231,17 +231,17 @@ lemma usa2002_p1_generalized
                 | Color.blue => exact (hfs1 h20).elim
                 | Color.red => rfl
           · -- s1 ∪ s2 is in S'
-            simp only [hss, dite_false, f, S']
+            simp only [hss, f]
             rw [Finset.mem_union, not_or] at hss
             simp only [hss.1, Finset.subtype_union, ite_false]
             apply hf1'
-            · simp only [hss.1, hss.2, f, S'] at hs12
+            · simp only [hss.1, hss.2, f] at hs12
               exact hs12
       · have h2' : ∀ (a : Finset S),
             f a = Color.red ↔ s ∈ a ∨
                  f' (Finset.subtype (fun a => a ≠ s) a) = Color.red := by
           intro a
-          simp only [ne_eq, dite_eq_ite, ite_eq_left_iff, f, S']
+          simp only [ne_eq, ite_eq_left_iff, f]
           tauto
         let b : { a // f a = Color.red } →
                { a : Finset S // s ∈ a } ⊕ { a' // f' a' = Color.red } :=
@@ -256,7 +256,7 @@ lemma usa2002_p1_generalized
         have h3 : Function.Bijective b := by
           constructor
           · rintro ⟨x, hx⟩ ⟨y, hy⟩ hxy
-            simp only [dite_eq_ite, S', b] at hxy
+            simp only [S', b] at hxy
             split_ifs at hxy with h4 h5 h6
             · simp at hxy; exact SetCoe.ext hxy
             · simp only [Sum.inr.injEq, Subtype.mk.injEq] at hxy
@@ -280,10 +280,10 @@ lemma usa2002_p1_generalized
             | .inl ⟨y, hy⟩ =>
               have h5 : f y = Color.red := if_pos hy
               use ⟨y, h5⟩
-              simp only [ne_eq, dite_eq_ite, hy, dite_true, b]
+              simp only [ne_eq, hy, dite_true, b]
             | .inr ⟨y, hy⟩ =>
               use ⟨Finset.map (Function.Embedding.subtype _) y,
-                  by simp [Finset.subtype_map_subtype, hy, b, f]⟩
+                  by simp [Finset.subtype_map_subtype, hy, f]⟩
               simp [Finset.subtype_map_subtype, b, f]
         rw [Fintype.card_of_bijective h3]
         have h4 : Fintype.card { a : Finset S // s ∈ a } = 2^k := by

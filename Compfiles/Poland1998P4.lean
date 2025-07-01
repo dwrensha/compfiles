@@ -244,7 +244,7 @@ lemma strengthen
     exact ⟨M, by omega, right⟩
 
 theorem poland1998_p4' : (∀ N : ℕ, ∃ M : ℕ, N < M ∧ 7 ∣ a M) := by
-  have he : 7 ∣ a 5 := by simp [a', a]
+  have he : 7 ∣ a 5 := by simp [a]
   exact strengthen can_get_a_later_one ⟨5, he⟩
 
 snip end

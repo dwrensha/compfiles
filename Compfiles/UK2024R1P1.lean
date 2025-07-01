@@ -231,7 +231,7 @@ lemma S_succ_succ_k_card_eq_two_mul_S_succ_k_card : (S (k + 2)).ncard = (S (k + 
     have h3 : Disjoint S₁ S₂ := by {
       rw [Set.disjoint_left]
       rintro f ⟨_, hf⟩
-      simp [S₂, S', Set.mem_setOf]
+      simp only [S', Set.mem_setOf_eq, not_and, S₂]
       intro
       rw [hf]
       aesop

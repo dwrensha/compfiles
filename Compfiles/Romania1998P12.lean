@@ -191,7 +191,7 @@ lemma exp_characterization
     intro n
     induction' n with pn hpn
     · intro x
-      simp only [Nat.zero_eq, CharP.cast_eq_zero, zero_mul, Real.rpow_zero]
+      simp only [CharP.cast_eq_zero, zero_mul]
       exact hu0
     · intro x
       have hp1: ↑(pn.succ) * x = ↑pn * x + x := by

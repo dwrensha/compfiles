@@ -306,7 +306,7 @@ lemma infinite_interval_upper_open (x : ℝ) : IsOpen[tᵤ] (Set.Iio x) := by
   · exact ⟨a - 1, a, rfl⟩
   · constructor
     · constructor
-      · simp only [Set.mem_Iio, sub_lt_self_iff, zero_lt_one]
+      · simp only [sub_lt_self_iff, zero_lt_one]
       · exact Eq.le rfl
     · intro y hy
       exact hy.2.trans_lt ha

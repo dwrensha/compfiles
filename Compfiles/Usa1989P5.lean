@@ -31,7 +31,7 @@ problem usa1989_p5
     if u_is_larger then v < u else u < v := by
   -- solution from
   -- https://artofproblemsolving.com/wiki/index.php/1989_USAMO_Problems/Problem_5
-  simp only [u_is_larger, ite_false]
+  simp only [u_is_larger]
 
   let U (x : ℝ) : ℝ := (∑ i ∈ Finset.range 8, x^(i + 1)) + 10 * x^9
   let V (x : ℝ) : ℝ := (∑ i ∈ Finset.range 10, x^(i + 1)) + 10 * x^11

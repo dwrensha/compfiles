@@ -82,7 +82,6 @@ problem usa2023_p2 (f : ℝ+ → ℝ+) :
       have P3 : ∀ x : ℝ, 0 < x → a^2 * x + a * b + b = b * x + 2 := by
         intro x hx
         have hp1 := P1 ⟨x, hx⟩
-        simp only [Positive.coe_add, Positive.val_mul, Positive.val_pow] at hp1
         exact hp1
 
       have hp1 := P3 1 zero_lt_one

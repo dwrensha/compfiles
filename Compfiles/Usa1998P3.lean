@@ -132,7 +132,7 @@ problem usa1998_p3
     : n ^ (n + 1) ≤ ∏ i ∈ Finset.range (n + 1), Real.tan (a i) := by
 
   obtain h0 | h0 := eq_or_ne n 0
-  · simp_all[h0]
+  · simp_all
     exact Real.tan_nonneg_of_nonneg_of_le_pi_div_two
             (le_of_lt ha.1)
             (le_of_lt ha.2)

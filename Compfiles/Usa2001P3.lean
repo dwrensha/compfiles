@@ -27,7 +27,7 @@ namespace Usa2001P3
 snip begin
 
 @[reducible]
-def f (a b c : ℝ) : ℝ := a^2 + b^2 + c^2 + a * b * c
+noncomputable def f (a b c : ℝ) : ℝ := a^2 + b^2 + c^2 + a * b * c
 @[reducible]
 def g (a b c : ℝ) : ℝ := a * b + b * c + c * a - a * b * c
 

@@ -42,7 +42,7 @@ lemma nicomachus (n : ℕ) :
     rw [h5, Finset.sum_range_id_mul_two]
     cases' n with n
     · simp
-    · simp only [Nat.succ_sub_succ_eq_sub, tsub_zero, Nat.succ_eq_add_one]
+    · simp only [Nat.succ_sub_succ_eq_sub, tsub_zero]
       ring
   omega
 
@@ -51,7 +51,7 @@ lemma nicomachus' (n : ℕ) :
     (∑ i ∈ Finset.range n, ((i:ℤ) + 1))^2 := by
   norm_cast
   have h1 := nicomachus (n + 1)
-  simp only [Finset.sum_range_succ', zero_pow, add_zero] at h1
+  simp only [Finset.sum_range_succ', add_zero] at h1
   exact h1
 
 snip end

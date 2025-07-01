@@ -128,7 +128,7 @@ problem usa1987_p1 (m n : ℤ) :
         · obtain rfl : n = -6 := by linarith only [h28]
           simp only [Set.mem_insert_iff, true_or, or_true]
         · obtain rfl : n = -21 := by linarith only [h28]
-          simp only [Set.mem_insert_iff, Set.mem_singleton_iff, true_or, or_true]
+          simp only [Set.mem_insert_iff, Set.mem_singleton_iff, or_true]
       · omega
     · rw [hm'] at h13
       have h21 : 5^2 < m'^2 := by rw [←h13]; norm_num

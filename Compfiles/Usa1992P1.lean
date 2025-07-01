@@ -88,7 +88,7 @@ lemma lemma3 {m : ℕ} (hm : (m % 10) + 1 < 10) :
   by_cases h : m = 0
   · simp [h]
   nth_rw 2 [Nat.digits_eq_cons_digits_div (by norm_num) (by omega)]
-  simp only [Nat.reduceLeDiff, List.sum_cons]
+  simp only [List.sum_cons]
   have h3 : (m + 1) % 10 = (m % 10) + 1 := by
     rw [Nat.add_mod, show 1 % 10 = 1 by rfl]
     exact Nat.mod_eq_of_lt hm
@@ -99,7 +99,7 @@ lemma lemma3 {m : ℕ} (hm : (m % 10) + 1 < 10) :
 theorem lemma6 {b : ℕ} {l1 l2 : List ℕ} (hg : List.Forall₂ (· ≥ ·) l1 l2) :
     Nat.ofDigits b l1 ≥ Nat.ofDigits b l2 := by
   induction l1 generalizing l2 with
-  | nil => simp_all [eq_comm, List.length_eq_zero_iff, Nat.ofDigits]
+  | nil => simp_all [Nat.ofDigits]
   | cons hd₁ tl₁ ih₁ =>
     induction l2 generalizing tl₁ with
     | nil => simp_all
@@ -117,13 +117,12 @@ theorem ofDigits_sub_ofDigits_eq_ofDigits_zipWith {b : ℕ} {l1 l2 : List ℕ}
     Nat.ofDigits b l1 - Nat.ofDigits b l2 =
     Nat.ofDigits b (l1.zipWith (· - ·) l2) := by
   induction l1 generalizing l2 with
-  | nil => simp_all [eq_comm, List.length_eq_zero_iff, Nat.ofDigits]
+  | nil => simp_all [Nat.ofDigits]
   | cons hd₁ tl₁ ih₁ =>
     induction l2 generalizing tl₁ with
     | nil => simp_all
     | cons hd₂ tl₂ ih₂ =>
-      simp_all only [List.length_cons, Nat.succ_eq_add_one, Nat.ofDigits_cons, add_left_inj,
-        eq_comm, List.zipWith_cons_cons, Nat.add_eq]
+      simp_all only [Nat.ofDigits_cons, List.zipWith_cons_cons]
       have htl : List.Forall₂ (fun x1 x2 ↦ x1 ≥ x2) tl₁ tl₂ := by
         simp_all only [ge_iff_le, List.forall₂_cons]
       specialize ih₁ htl
