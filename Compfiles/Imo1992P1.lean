@@ -41,7 +41,7 @@ lemma mylemma_main_lt2
       linarith [hpl]
     have g₂: ↑p * ↑(3:ℚ) ≤ ↑(4:ℚ) * (↑(p - 1):ℚ) := by
       norm_cast
-      linarith
+      omega
     refine (div_le_iff₀ g₁).mpr ?_
     rw [div_mul_eq_mul_div]
     refine (le_div_iff₀ ?_).mpr g₂
@@ -376,23 +376,7 @@ lemma mylemma_case_k_2
     have g₂: (4-q)*(4-r) = 11 := by linarith
     have g₃: (4-q) = -1 ∨ (4-q) = 1 ∨ (4-q) = -11 ∨ (4-q) = 11 := by
       exact mylemma_qr_11 q r g₂
-    cases' g₃ with g₃₁ g₃₂
-    . have hq: q = 5 := by linarith
-      constructor
-      . exact hq
-      . rw [hq] at g₂
-        linarith[g₂]
-    . exfalso
-      cases' g₃₂ with g₃₂ g₃₃
-      . have hq: q = 3 := by linarith[g₃₂]
-        rw [hq] at g₂
-        linarith [hrl]
-      . cases' g₃₃ with g₃₃ g₃₄
-        . have hq: q = 15 := by linarith[g₃₃]
-          rw [hq] at g₂
-          linarith [hq, h₀.2]
-        . linarith [hql]
-
+    grind
 
 lemma mylemma_case_k_3
   (p q r: ℤ)

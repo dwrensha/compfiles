@@ -40,9 +40,7 @@ theorem sub_sq'' {x y : Int} : x ^ 2 + y ^ 2 = (2 * x * y) ↔ x = y := by
   rw [← sub_eq_zero, ← sub_sq', sq_eq_zero_iff, sub_eq_zero]
 
 theorem Int.lt_of_ns_lt_ns {x x' : ℕ} (h : Int.negSucc x < Int.negSucc x') : x' < x := by
-  have := Int.neg_lt_neg h
-  rw [Int.neg_negSucc, Int.neg_negSucc, Int.ofNat_lt] at this
-  apply Nat.lt_of_succ_lt_succ this
+  grind
 
 def myInduction.{u}
   {motive : ℤ -> Sort u}
@@ -312,21 +310,7 @@ problem imo2012_p4 (f : ℤ → ℤ) :
         simp_all
         ring
 
-    · have «c%4=?» : c % 4 = (8 - (a % 4) - (b % 4)) % 4 := by omega
-      mod_cases «a%4=?» : a % 4 <;> change a % 4 = _ at «a%4=?» <;> norm_num1 at «a%4=?»
-      all_goals
-        have «fa=?» := h a; simp only [«a%4=?»] at «fa=?»
-        mod_cases «b%4=?» : b % 4 <;> change b % 4 = _ at «b%4=?» <;> norm_num1 at «b%4=?»
-        all_goals
-          have «fb=?» := h b; simp only [«b%4=?»] at «fb=?»
-
-      all_goals
-        rw [«a%4=?», «b%4=?»] at «c%4=?»
-        have «fc=?» := h c
-        simp only [«c%4=?», sub_zero, Int.reduceMod, Int.reduceSub, EuclideanDomain.mod_self] at «fc=?»
-        rw [«fa=?», «fb=?», «fc=?»]
-        ring
-
+    · grind
     · rw [c_eq, h, h, h]
       ring_nf
 
