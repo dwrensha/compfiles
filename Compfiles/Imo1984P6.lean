@@ -86,11 +86,7 @@ lemma mylemma_k_le_m_alt
     refine lt_trans ?_ h₈₀
     refine Nat.sub_lt_sub_left ?_ h₂.1
     exact lt_trans h₂.1 h₂.2.1
-  have h₉: (d - a) ^ 2 ≠ (d - a) ^ 2 := by
-    refine Nat.ne_of_lt ?_
-    exact lt_of_le_of_lt h₇ h₈
-  refine false_of_ne h₉
-
+  omega
 
 lemma mylemma_h8
   (a b c d k m : ℕ)
@@ -110,7 +106,7 @@ lemma mylemma_h8
   have hm1: 1 ≤ m := by
     by_contra! hc
     interval_cases m
-    linarith
+    omega
   have h₈₀: b - a < 2 ^ (m - 1) := by
     have g₀: b < (b + c) / 2 := by
       refine (Nat.lt_div_iff_mul_lt' ?_ b).mpr ?_

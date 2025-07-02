@@ -59,29 +59,22 @@ Now we can eliminate possibilities for `(digits 10 c).length` until we get to th
 theorem case_0_digit {c n : ℕ} (h1 : (digits 10 c).length = 0) : ¬ProblemPredicate' c n := by
   intro h2
   have h3 : 6 * 10 ^ 0 + c = 6 * 10 ^ (digits 10 c).length + c := by rw [h1]
-  have h4 : 6 * 10 ^ 0 + c = 4 * (10 * c + 6) := by rw [h3, h2.right, h2.left]
-  linarith
+  omega
 
 theorem case_1_digit {c n : ℕ} (h1 : (digits 10 c).length = 1) : ¬ProblemPredicate' c n := by
   intro h2
   have h3 : 6 * 10 ^ 1 + c = 6 * 10 ^ (digits 10 c).length + c := by rw [h1]
-  have h4 : 6 * 10 ^ 1 + c = 4 * (10 * c + 6) := by rw [h3, h2.right, h2.left]
-  have h6 : c > 0 := by linarith
-  linarith
+  omega
 
 theorem case_2_digit {c n : ℕ} (h1 : (digits 10 c).length = 2) : ¬ProblemPredicate' c n := by
   intro h2
   have h3 : 6 * 10 ^ 2 + c = 6 * 10 ^ (digits 10 c).length + c := by rw [h1]
-  have h4 : 6 * 10 ^ 2 + c = 4 * (10 * c + 6) := by rw [h3, h2.right, h2.left]
-  have h5 : c > 14 := by linarith
-  linarith
+  omega
 
 theorem case_3_digit {c n : ℕ} (h1 : (digits 10 c).length = 3) : ¬ProblemPredicate' c n := by
   intro h2
   have h3 : 6 * 10 ^ 3 + c = 6 * 10 ^ (digits 10 c).length + c := by rw [h1]
-  have h4 : 6 * 10 ^ 3 + c = 4 * (10 * c + 6) := by rw [h3, h2.right, h2.left]
-  have h5 : c > 153 := by linarith
-  linarith
+  omega
 
 theorem case_4_digit {c n : ℕ} (h1 : (digits 10 c).length = 4) : ¬ProblemPredicate' c n := by
   intro h2
