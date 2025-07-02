@@ -271,12 +271,12 @@ problem imo_1984_p6
     have h₈: b + a = 2 ^ (m - 1) := by
       exact mylemma_h8 a b c d k m h₀ h₁ h₂ h₅ hkm h₆ h₇
     have h₉: a = 2 ^ (2 * m - 2) / 2 ^ k := by
-      have ga: 1 ≤ a := by exact Nat.succ_le_of_lt h₀.1
+      have ga: 1 ≤ a := Nat.succ_le_of_lt h₀.1
       have gb: 3 ≤ b := by
         by_contra! hc
         interval_cases b
         . omega
-        . linarith [ga, h₂.1]
+        . omega
         . have g₀: ¬ Odd 2 := by decide
           exact g₀ h₁.2.1
       have gm: 3 ≤ m := by
@@ -376,6 +376,6 @@ problem imo_1984_p6
         refine (Nat.div_eq_zero_iff).mpr ?_
         right
         exact Nat.pow_lt_pow_right (by norm_num) hk2m
-      linarith [ha, h₀.1]
+      omega
 
 end Imo1984P6

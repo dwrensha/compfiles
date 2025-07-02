@@ -253,9 +253,9 @@ lemma mylemma_k_gt_1
   interval_cases k
   simp at hk
   exfalso
-  have g₂: p < p*q := by exact lt_mul_right (by linarith) (by linarith)
-  have g₃: q < q*r := by exact lt_mul_right (by linarith) (by linarith)
-  have g₄: r < r*p := by exact lt_mul_right (by linarith) (by linarith)
+  have g₂: p < p*q := by exact lt_mul_right (by omega) (by omega)
+  have g₃: q < q*r := by exact lt_mul_right (by omega) (by omega)
+  have g₄: r < r*p := by exact lt_mul_right (by omega) (by omega)
   linarith
 
 lemma mylemma_p_lt_4
@@ -270,12 +270,11 @@ lemma mylemma_p_lt_4
   (p < 4) := by
   by_contra hcp
   push_neg at hcp
-  have hcq: 5 ≤ q := by linarith
-  have hcr: 6 ≤ r := by linarith
+  have hcq: 5 ≤ q := by omega
+  have hcr: 6 ≤ r := by omega
   have h₃: k < 2 := by exact mylemma_k_lt_2 p q r k hk hcp hcq hcr hden
   have h₄: 1 < k := by exact mylemma_k_gt_1 p q r k hk h₁ hpl hql hrl hden
-  linarith
-
+  omega
 
 lemma q_r_divisor_of_prime
   (q r : ℤ)
@@ -389,11 +388,11 @@ lemma mylemma_case_k_3
     . cases' g₃₂ with g₃₂ g₃₃
       . have hq: q = 4 := by omega
         rw [hq] at g₂
-        have hr: r = 8 := by linarith[g₂]
+        have hr: r = 8 := by omega
         exact { left := hq, right := hr }
       . exfalso
         cases' g₃₃ with g₃₃ g₃₄
-        . linarith[hql,g₃₃]
+        . omega
         . have hq: q = 8 := by omega
           rw [hq] at g₂
           norm_num at g₂
