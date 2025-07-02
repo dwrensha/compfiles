@@ -41,10 +41,6 @@ lemma a_recurrence (n : ℕ) (hn : 2 ≤ n) : a n = a (n - 1) + a (n / 2) := by
     · exact (Nat.not_succ_le_self _ hn).elim
     · simp only [a, Nat.succ_sub_succ_eq_sub, tsub_zero]
 
-lemma lemma1 (n : ℕ) (npos : 0 < n) : 2 * (n - 1) + 1 = 2 * n - 1 := by omega
-
-lemma lemma2 (n : ℕ) : (2 * n + 1) / 2 = n := by omega
-
 def a' : ℕ → ZMod 7
 | n => ⟨(a n) % 7, Nat.mod_lt _ (by norm_num)⟩
 
@@ -71,18 +67,6 @@ lemma lemma3
     rw [this, ZMod.natCast_val, ZMod.cast_id', id_def, mul_div_cancel₀ _ hk]
     exact add_neg_cancel (a' N0)
 
-lemma lemma6 (n : ℕ) : (4 * (n - 1) + 1 + 3) / 2 = (2 * (n - 1) + 1 + 1) := by
-  omega
-
-lemma lemma6' (n : ℕ) : (4 * (n - 1) + 1 + 4) / 2 = (2 * (n - 1) + 1 + 1) := by
-  omega
-
-lemma lemma7 (n : ℕ) : (4 * (n - 1) + 1 + 5) / 2 = (2 * (n - 1) + 1 + 2) := by
-  omega
-
-lemma lemma7' (n : ℕ) : (4 * (n - 1) + 1 + 6) / 2 = (2 * (n - 1) + 1 + 2) := by
-  omega
-
 lemma can_get_a_later_one_zmod :
     (∀ N : ℕ, a' N = 0 → (∃ M : ℕ, N < M ∧ a' M = 0)) := by
   intro n hn
@@ -96,7 +80,7 @@ lemma can_get_a_later_one_zmod :
 
   have npos := calc 0 < 2 := by norm_num
                     _ ≤ n := hlte
-  have hn1v : n1 = 2 * n - 1 := lemma1 n npos
+  have hn1v : n1 = 2 * n - 1 := by omega
   have hn2 : 2 ≤ n1 + 1 := Nat.succ_le_succ le_add_self
 
   let an1 := a' n1
@@ -117,7 +101,7 @@ lemma can_get_a_later_one_zmod :
   have ha2 : a' (n1 + 2) = a' (n1 + 1) +  a' n := by
     have haa : a' (n1 + 2) = a' (n1 + 1) + a' (n1.succ.succ / 2) :=
       a'_recurrence (n1 + 2) le_add_self
-    have h1 : (2 * n + 1) / 2 = n := lemma2 n
+    have h1 : (2 * n + 1) / 2 = n := by omega
     have hn1v' : 2 * n = n1 + 1 := hn1.symm
     rw [haa]
     congr
@@ -163,16 +147,16 @@ lemma can_get_a_later_one_zmod :
       omega
     · suffices hn1 : (n2 + 2) / 2 = n1 by rwa [hn1] at hr
       omega
-    · have hn1 : (n2 + 3) / 2 = n1 + 1 := lemma6 n
+    · have hn1 : (n2 + 3) / 2 = n1 + 1 := by omega
       rw [hn1, ha1'] at hr
       exact hr
-    · have hn1 : (n2 + 4) / 2 = n1 + 1 := lemma6' n
+    · have hn1 : (n2 + 4) / 2 = n1 + 1 := by omega
       rw [hn1, ha1'] at hr
       exact hr
-    · have hn1 : (n2 + 5) / 2 = n1 + 2 := lemma7 n
+    · have hn1 : (n2 + 5) / 2 = n1 + 2 := by omega
       rw [hn1, ha2'] at hr
       exact hr
-    · have hn1 : (n2 + 6) / 2 = n1 + 2 := lemma7' n
+    · have hn1 : (n2 + 6) / 2 = n1 + 2 := by omega
       rw [hn1, ha2'] at hr
       exact hr
 
