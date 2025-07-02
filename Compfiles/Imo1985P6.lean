@@ -42,7 +42,7 @@ lemma aux_1
       exact hx
   | succ m hm ih =>
       rw [h₁ m x (Nat.zero_lt_of_lt hm)]
-      exact mul_pos ih (add_pos ih (by positivity))
+      positivity
 
 lemma aux_2
   (f : ℕ → NNReal → ℝ)
@@ -180,15 +180,11 @@ lemma aux_7
               constructor
               . exact hd₄
               . exact le_add_self
-            . refine div_pos zero_lt_one ?_
-              exact Nat.cast_pos'.mpr hd₀
+            . positivity
           . have hd₅: d = 1 := by omega
             rw [hd₅, h₀]
             simp
-            norm_cast
-            refine add_pos_of_nonneg_of_pos ?_ ?_
-            . exact _root_.zero_le b
-            . exact zero_lt_one' NNReal
+            positivity
         refine NNReal.le_toNNReal_of_coe_le ?_
         nth_rw 1 [← mul_one (↑b:ℝ)]
         refine mul_le_mul hd₂ (le_of_lt hd₃) zero_le_one ?_
@@ -341,8 +337,7 @@ lemma aux_9
         rw [NNReal.coe_sub g₀, NNReal.coe_inv]
         simp
         refine inv_strictAnti₀ ?_ ?_
-        . norm_cast
-          exact Nat.zero_lt_of_lt hn₀
+        . positivity
         . norm_cast
           exact lt_add_one n
     refine (StrictMono.lt_iff_lt ?_).mp hn₂
@@ -710,8 +705,7 @@ lemma aux_unique_top_ind
       refine le_sub_iff_add_le.mpr ?_
       refine le_sub_iff_add_le'.mp ?_
       refine (div_le_iff₀ ?_).mpr ?_
-      . refine Nat.cast_pos.mpr ?_
-        exact lt_of_lt_of_le (two_pos) hn₀
+      . positivity
       . ring_nf
         exact Nat.ofNat_le_cast.mpr hn₀
     . exact le_of_lt (hd₁ nn a b ha₀)
@@ -796,8 +790,7 @@ lemma aux_unique_top
       refine lt_add_of_pos_right 2 ?_
       refine div_pos ?_ ?_
       . exact hz₂
-      . refine Real.log_pos ?_
-        linarith
+      . positivity
     have hj₁: j ∈ sd := by
       rw [hsd]
       exact Set.mem_Ici_of_Ioi hj₀
@@ -868,8 +861,7 @@ lemma aux_unique_nhds
         exact sub_lt_iff_lt_add'.mp ha₂
       have hn₂: (1:ℝ) / n ≤ 1 / nd := by
         refine one_div_le_one_div_of_le ?_ ?_
-        . refine Nat.cast_pos.mpr ?_
-          exact Nat.pos_of_neZero nd
+        . positivity
         . exact Nat.cast_le.mpr hn₀
       refine lt_of_lt_of_le hn₁ ?_
       refine le_trans hn₂ ?_
@@ -1057,9 +1049,7 @@ lemma imo_1985_p6_nnreal
       exact NNReal.zero_le_coe
     . intros d hd₀ hd₁
       rw [h₁ d x hd₀]
-      refine mul_nonneg hd₁ ?_
-      refine add_nonneg hd₁ ?_
-      exact Nat.one_div_cast_nonneg d
+      positivity
   have hmo₀: ∀ n, 0 < n → StrictMono (f n) := by
     intros n hn₀
     refine Monotone.strictMono_of_injective ?h₁ ?h₂

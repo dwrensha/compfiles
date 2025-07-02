@@ -87,7 +87,6 @@ problem usa2001_p3 (a b c : ℝ) (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c)
       · apply usa2001_p3_lemma a b c ha h
         have : (b - 1 > 0) := by linarith
         have : (c - 1 > 0) := by linarith
-        rw [not_le] at hb1 hc1
         positivity
     · rw [(by ring_nf : g a b c = g c a b)]
       apply usa2001_p3_lemma c a b hc (by rw [←h]; unfold f; ring_nf)

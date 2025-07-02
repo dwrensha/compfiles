@@ -100,12 +100,7 @@ lemma mylemma_y2_lt_x
     rw [← h₁] at h₂
     exact (Nat.pow_lt_pow_iff_right hx).mp h₂
   . push_neg at hy
-    interval_cases y
-    . simp
-      exact h₀.1
-    . simp at *
-      assumption
-
+    interval_cases y <;> exact hxy
 
 lemma mylemma_5
   (x y: ℕ)
