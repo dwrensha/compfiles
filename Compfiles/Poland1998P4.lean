@@ -78,19 +78,12 @@ lemma can_get_a_later_one_zmod :
 
   -- a' (2 * n - 1), a' (2 * n), and a' (2 * n + 1) are all equal
 
-  have npos := calc 0 < 2 := by norm_num
-                    _ ≤ n := hlte
   have hn1v : n1 = 2 * n - 1 := by omega
   have hn2 : 2 ≤ n1 + 1 := Nat.succ_le_succ le_add_self
 
   let an1 := a' n1
 
-  have hn1 : (n1 + 1) = 2 * n := by
-    have hrw : (n1 + 1) = 2 * (n - 1) + 1 + 1 := rfl
-    rw [hrw]
-    cases' n
-    · exfalso; exact lt_asymm npos npos
-    · rfl
+  have hn1 : (n1 + 1) = 2 * n := by omega
 
   have ha1 : a' (n1 + 1) = an1 + a' n := by
     have haa : a' (n1 + 1) = a' n1 + a' (n1.succ / 2) := a'_recurrence (n1 + 1) hn2
@@ -108,14 +101,8 @@ lemma can_get_a_later_one_zmod :
     have : n1.succ.succ = (n1 + 1 + 1) := rfl
     rw [this, ←hn1v', h1]
 
-  have ha1' : a' (n1 + 1) = a' n1 := by
-    simp only [hn, add_zero] at ha1
-    exact ha1
-
-  have ha2' : a' (n1 + 2) = a' n1 := by
-    rw [hn, ha1'] at ha2
-    simp at ha2
-    exact ha2
+  have ha1' : a' (n1 + 1) = a' n1 := by grind
+  have ha2' : a' (n1 + 2) = a' n1 := by grind
 
   clear ha1 ha2
 
@@ -142,23 +129,7 @@ lemma can_get_a_later_one_zmod :
     intro i hi
     have hn2ge2 : 2 ≤ n2 + i + 1 := by omega
     have hr := a'_recurrence (n2 + i + 1) hn2ge2
-    interval_cases i
-    · suffices (n2 + 1) / 2 = n1 by rwa [this] at hr
-      omega
-    · suffices hn1 : (n2 + 2) / 2 = n1 by rwa [hn1] at hr
-      omega
-    · have hn1 : (n2 + 3) / 2 = n1 + 1 := by omega
-      rw [hn1, ha1'] at hr
-      exact hr
-    · have hn1 : (n2 + 4) / 2 = n1 + 1 := by omega
-      rw [hn1, ha1'] at hr
-      exact hr
-    · have hn1 : (n2 + 5) / 2 = n1 + 2 := by omega
-      rw [hn1, ha2'] at hr
-      exact hr
-    · have hn1 : (n2 + 6) / 2 = n1 + 2 := by omega
-      rw [hn1, ha2'] at hr
-      exact hr
+    grind
 
   have hik : ∀ i, i < 7 → a' (n2 + i) = a' n2 + a' n1 * i := by
     intro i
