@@ -665,7 +665,7 @@ lemma contradiction_of_finset_icc_1_6 (s1 s2 : Finset ℕ) (partition : s1 ∪ s
         exact mem_of_subst k s1 {1, 2, 3, 4, 6} k_in_s1 explicit_s1
       intro five_div_k
       simp_all only [Finset.mem_insert, Finset.mem_singleton]
-      obtain rfl | rfl | rfl | rfl | rfl | rfl := k_in_explicit_s1 <;> contradiction
+      omega
 
     have five_div_prod_s2 := Finset.dvd_prod_of_mem (λ n : ℕ => n) five_in_s2
     have five_div_prod_s1 : 5 ∣ ∏ m ∈ s1, m := by

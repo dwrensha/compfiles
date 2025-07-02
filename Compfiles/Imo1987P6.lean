@@ -209,9 +209,7 @@ problem imo1987_p6
         _ ≤ _ := hc1
         _ = (k+1) + 1 := by ring_nf
         _ ≤ (p-2)+1 := by omega
-        _ = p-1 := by
-          obtain ⟨cc,hcc⟩ := le_iff_exists_add.1 hp
-          rw [hcc,add_comm 2 cc];norm_num
+        _ = p - 1 := by omega
       have : p = 0 := zero_of_le_sub_pos (by simp) hc2
       omega
     have hfk : 1 < f kk := by

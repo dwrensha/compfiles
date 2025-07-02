@@ -438,8 +438,7 @@ lemma aux_1
           rw [← List.getD_eq_getElem sl 0 hy₄, g₀]
           rw [List.getD_eq_getElem (List.range' 1 n 1) 0 hy₃]
           rw [List.getElem_range' hy₃]
-          apply Finset.mem_Icc.mp at hy₀
-          rw [one_mul, add_comm 1, Nat.sub_add_cancel hy₀.1]
+          omega
         . intros j hj₀
           rw [Nat.sub_add_cancel hy₀.1]
           apply Finset.mem_Icc.mpr at hy₀
