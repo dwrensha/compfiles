@@ -141,9 +141,7 @@ lemma imo_1990_p3_forward
         refine Nat.one_lt_pow ?_ ?_
         . refine Nat.ne_of_gt ?_
           refine Nat.gcd_pos_of_pos_left _ ?_
-          refine mul_pos ?_ ?_
-          . exact Nat.zero_lt_two
-          . exact Nat.zero_lt_of_lt h₀
+          positivity
         . exact Nat.one_lt_two
       have hp₁₀: p ≤ 3 := by
         refine le_trans hp₉ ?_

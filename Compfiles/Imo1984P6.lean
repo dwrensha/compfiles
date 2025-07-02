@@ -44,10 +44,7 @@ lemma mylemma_sub_sq
   rw [Nat.sub_right_comm]
   repeat rw [Nat.mul_sub_right_distrib a b b]
   ring_nf
-  rw [tsub_tsub_assoc h₂ h₁]
-  rw [← Nat.sub_add_comm h₂]
-  . rw [← Nat.sub_add_eq, ← mul_two]
-
+  omega
 
 lemma mylemma_k_le_m_alt
   (a b c d k m : ℕ)

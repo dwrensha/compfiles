@@ -96,14 +96,11 @@ lemma key_lemma'  {m b: ℕ } (h1 : 1 < m)
   · simp [hk0]
   push_neg at hk0
   refine h k ?_ ?_
-  · match k with
-    | 0 => exfalso; exact hk2 rfl
-    | 1 => exfalso; exact hk0 rfl
-    | n+2 => linarith
+  · omega
   · replace h2 := lt_of_le_of_lt hk1 h2
     rw [pow_two,pow_two] at h2
     replace h2 := Nat.mul_self_lt_mul_self_iff.1 h2
-    linarith
+    omega
 
 lemma dvd_lemma (a b c : ℕ ) (h : c ≠ 0) : a ≤ b → b ∣ c → c < 2*a → b = c := by
   intro h1 h2 h3
@@ -112,13 +109,13 @@ lemma dvd_lemma (a b c : ℕ ) (h : c ≠ 0) : a ≤ b → b ∣ c → c < 2*a �
   | 0 => simp at hk; exfalso; exact h hk
   | 1 => simp [hk]
   | k+2 =>
-    have hh : 2 * a ≤  c  := by
+    have hh : 2 * a ≤ c := by
       calc
-      2 * a ≤ 2 * b := by linarith
+      2 * a ≤ 2 * b := by omega
       _ ≤ 2*b + k * b := by simp
       _ = b *(k+2) := by ring_nf
       _ = c := hk.symm
-    linarith
+    omega
 
 lemma zero_of_le_sub_pos {a b : ℕ} : b ≠ 0 → a ≤ a - b → a = 0 := by omega
 

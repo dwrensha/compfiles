@@ -41,14 +41,9 @@ lemma a_recurrence (n : ℕ) (hn : 2 ≤ n) : a n = a (n - 1) + a (n / 2) := by
     · exact (Nat.not_succ_le_self _ hn).elim
     · simp only [a, Nat.succ_sub_succ_eq_sub, tsub_zero]
 
-lemma lemma1 (n : ℕ) (npos : 0 < n) : 2 * (n - 1) + 1 = 2 * n - 1 := by
-  cases' n with n
-  · exact (lt_asymm npos npos).elim
-  · rfl
+lemma lemma1 (n : ℕ) (npos : 0 < n) : 2 * (n - 1) + 1 = 2 * n - 1 := by omega
 
-lemma lemma2 (n : ℕ) : (2 * n + 1) / 2 = n := by
-  rw [Nat.mul_add_div (Nat.le.step Nat.le.refl) n 1]
-  simp only [Nat.reduceSucc, Nat.reduceDiv, add_zero]
+lemma lemma2 (n : ℕ) : (2 * n + 1) / 2 = n := by omega
 
 def a' : ℕ → ZMod 7
 | n => ⟨(a n) % 7, Nat.mod_lt _ (by norm_num)⟩
