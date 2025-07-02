@@ -48,18 +48,13 @@ lemma lemma2 (n : ℕ) : (2 * n + 1) / 2 = n := by omega
 def a' : ℕ → ZMod 7
 | n => ⟨(a n) % 7, Nat.mod_lt _ (by norm_num)⟩
 
-lemma zmod_ext (a b : ZMod 7) (hz : ZMod.val a = ZMod.val b) : a = b := by
-  have : ((ZMod.val a) : ZMod 7)  = ((ZMod.val b) : ZMod 7) := congrArg Nat.cast hz
-  simp only [ZMod.natCast_val, ZMod.cast_id', id_eq] at this
-  exact this
-
 lemma a'_recurrence (n : ℕ) (hn : 2 ≤ n) : a' n = a' (n - 1) + a' (n / 2) := by
   have : (a' n).val = (a' (n - 1) + a' (n / 2)).val := by
     rw [ZMod.val_add]
     simp_rw [a', a_recurrence n hn]
     rw [ZMod.val]
     simp
-  exact zmod_ext _ _ this
+  exact ZMod.val_injective 7 this
 
 lemma lemma3
     (N0 : ℕ)
