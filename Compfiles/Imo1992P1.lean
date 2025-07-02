@@ -401,17 +401,10 @@ lemma mylemma_case_k_3
   -- p = 3
   . right
     norm_num at *
-    have g₂: (6 - 3*q) * (2 - r) = 5 := by linarith
+    have g₂: (6 - 3 * q) * (2 - r) = 5 := by linarith
     have g₃: (6 - 3*q) = -1 ∨ (6 - 3*q) = 1 ∨ (6 - 3*q) = -5 ∨ (6 - 3*q) = 5 := by
       exact mylemma_63qr_5 q r g₂
-    exfalso
-    cases' g₃ with g₃₁ g₃₂
-    . linarith[g₃₁,q]
-    . cases' g₃₂ with g₃₂ g₃₃
-      . linarith[g₃₂,q]
-      . cases' g₃₃ with g₃₃ g₃₄
-        . linarith[g₃₃,q]
-        . linarith[g₃₄,q]
+    omega
 
 snip end
 

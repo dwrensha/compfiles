@@ -391,11 +391,7 @@ problem usa1992_p1 (n : ℕ) :
     have h3 : 1 ≤ 2 ^ i := Nat.one_le_two_pow
     have h4 : 10 ^ 1 ≤ 10 ^ (2 ^ i) :=
       Nat.pow_le_pow_right (by norm_num) h3
-    dsimp at h4
-    calc
-      _ < 10 - 1 := by norm_num
-      _ = 10^1 - 1 := by omega
-      _ ≤ 10^(2^i) - 1 := Nat.sub_le_sub_right h4 _
+    omega
 
   let b : ℕ → ℕ := fun m ↦ ∏ i ∈ Finset.range (m + 1), a i
   change (Nat.digits 10 (b (n +1))).sum = solution (n + 1)

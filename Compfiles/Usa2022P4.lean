@@ -110,12 +110,7 @@ problem usa2022_p4 (p q : ℕ) :
         cases' Nat.Prime.eq_one_or_self_of_dvd hpp _ h15 with h16 h16
         · norm_num at h16
         · exact h16.symm
-      rw [h14] at hqlep
-      interval_cases q
-      · norm_num at h8
-        rw [h8] at hba'
-        norm_num at hba'
-      · rfl
+      omega
     · cases' p' with p''
       · norm_num at h
         rw [h] at h10

@@ -172,8 +172,7 @@ lemma can_get_a_later_one_zmod :
     have hr := a'_recurrence (n2 + i + 1) hn2ge2
     interval_cases i
     · suffices (n2 + 1) / 2 = n1 by rwa [this] at hr
-      have : (4 * (n - 1) + 1 + 1) = 2 * (2 * (n - 1) + 1) := by ring
-      simp only [n2, n1, this, Nat.succ_pos', Nat.mul_div_right]
+      omega
     · suffices hn1 : (n2 + 2) / 2 = n1 by rwa [hn1] at hr
       have h1 : (4 * (n - 1) + 1 + 2) = 2 * (2 * (n - 1) + 1) + 1 := by ring
       rw [h1]

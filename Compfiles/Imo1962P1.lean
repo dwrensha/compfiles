@@ -86,9 +86,7 @@ theorem case_3_digit {c n : ℕ} (h1 : (digits 10 c).length = 3) : ¬ProblemPred
 theorem case_4_digit {c n : ℕ} (h1 : (digits 10 c).length = 4) : ¬ProblemPredicate' c n := by
   intro h2
   have h3 : 6 * 10 ^ 4 + c = 6 * 10 ^ (digits 10 c).length + c := by rw [h1]
-  have h4 : 6 * 10 ^ 4 + c = 4 * (10 * c + 6) := by rw [h3, h2.right, h2.left]
-  have h5 : c > 1537 := by linarith
-  linarith
+  omega
 
 /-- Putting this inline causes a deep recursion error, so we separate it out. -/
 theorem helper_5_digit {c : ℤ} (h : 6 * 10 ^ 5 + c = 4 * (10 * c + 6)) : c = 15384 := by linarith
