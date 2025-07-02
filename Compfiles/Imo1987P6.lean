@@ -120,16 +120,9 @@ lemma dvd_lemma (a b c : ℕ ) (h : c ≠ 0) : a ≤ b → b ∣ c → c < 2*a �
       _ = c := hk.symm
     linarith
 
-lemma zero_of_le_sub_pos {a b : ℕ} : b ≠ 0 → a ≤ a-b → a = 0 := by omega
+lemma zero_of_le_sub_pos {a b : ℕ} : b ≠ 0 → a ≤ a - b → a = 0 := by omega
 
-lemma sub_le_lemma {a b:ℕ} : b ≤ a → b≠0 → a-b < a := by
-  intro h1 h2
-  obtain ⟨c,hc⟩ := le_iff_exists_add.1 h1
-  rw [hc,add_comm]; simp [Nat.zero_lt_of_ne_zero h2]
-
-lemma pos_sub_of_lt {a b : ℕ} : a < b → 0 < b-a := by
-  intro h
-  exact Nat.pos_iff_ne_zero.2 <| Nat.sub_ne_zero_of_lt h
+lemma sub_le_lemma {a b : ℕ} : b ≤ a → b ≠ 0 → a - b < a := by omega
 
 snip end
 
@@ -153,8 +146,8 @@ problem imo1987_p6
 
     /- Show that N < ... -/
     have hs : 1 ≤ s := by
-      simp_rw [s,kk]
-      exact pos_sub_of_lt h
+      simp_rw [s, kk]
+      exact Nat.le_sub_of_add_le' h
     have ieq3 : 3*r ≤ 6*r*s  := by nlinarith only [hs]
     have ieq4 : p ≤ 3*r^2 + 6*r + 2 := by
       have ieq5: √ (p/3) < r+1 := Nat.lt_floor_add_one _

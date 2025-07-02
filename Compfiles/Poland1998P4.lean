@@ -82,9 +82,7 @@ lemma lemma3
     exact add_neg_cancel (a' N0)
 
 lemma lemma6 (n : ℕ) : (4 * (n - 1) + 1 + 3) / 2 = (2 * (n - 1) + 1 + 1) := by
-  have : (4 * (n - 1) + 1 + 3) = 2 * (2 * (n - 1) + 1 + 1) := by ring
-  rw [this, Nat.mul_div_right]
-  exact two_pos
+  omega
 
 lemma lemma6' (n : ℕ) : (4 * (n - 1) + 1 + 4) / 2 = (2 * (n - 1) + 1 + 1) := by
   omega
@@ -174,9 +172,7 @@ lemma can_get_a_later_one_zmod :
     · suffices (n2 + 1) / 2 = n1 by rwa [this] at hr
       omega
     · suffices hn1 : (n2 + 2) / 2 = n1 by rwa [hn1] at hr
-      have h1 : (4 * (n - 1) + 1 + 2) = 2 * (2 * (n - 1) + 1) + 1 := by ring
-      rw [h1]
-      exact lemma2 (2 * (n - 1) + 1)
+      omega
     · have hn1 : (n2 + 3) / 2 = n1 + 1 := lemma6 n
       rw [hn1, ha1'] at hr
       exact hr

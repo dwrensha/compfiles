@@ -87,9 +87,7 @@ theorem helper_5_digit {c : ℤ} (h : 6 * 10 ^ 5 + c = 4 * (10 * c + 6)) : c = 1
 theorem case_5_digit {c n : ℕ} (h1 : (digits 10 c).length = 5) (h2 : ProblemPredicate' c n) :
     c = 15384 := by
   have h3 : 6 * 10 ^ 5 + c = 6 * 10 ^ (digits 10 c).length + c := by rw [h1]
-  have h4 : 6 * 10 ^ 5 + c = 4 * (10 * c + 6) := by rw [h3, h2.right, h2.left]
-  zify at *
-  exact helper_5_digit h4
+  omega
 
 /-- `linarith` fails on numbers this large, so this lemma spells out some of the arithmetic
 that normally would be automated.
