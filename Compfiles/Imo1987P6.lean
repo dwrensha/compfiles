@@ -120,19 +120,7 @@ lemma dvd_lemma (a b c : ℕ ) (h : c ≠ 0) : a ≤ b → b ∣ c → c < 2*a �
       _ = c := hk.symm
     linarith
 
-lemma zero_of_le_sub_pos {a b:ℕ}  : b≠ 0 → a ≤ a-b → a = 0 := by
-  intro h1 h2
-  match a with
-  | 0 => rfl
-  | a +1 =>
-    have : a+1-b < a+1 := by
-      calc
-      _ =  a - (b-1) := by
-        rw [<-Nat.succ_pred h1,Nat.succ_eq_add_one,add_comm b.pred,Nat.sub_add_eq]
-        norm_num
-      _ ≤ a := by simp
-      _ < _  := by linarith
-    linarith
+lemma zero_of_le_sub_pos {a b : ℕ} : b ≠ 0 → a ≤ a-b → a = 0 := by omega
 
 lemma sub_le_lemma {a b:ℕ} : b ≤ a → b≠0 → a-b < a := by
   intro h1 h2

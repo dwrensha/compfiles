@@ -320,16 +320,7 @@ lemma q_r_divisor_of_prime
         norm_cast
   cases' h_abs with hq_abs hq_abs
   . norm_cast at *
-    have h₄: q = ↑(q.natAbs) ∨ q = -↑(q.natAbs) := by
-      exact Int.natAbs_eq q
-    rw [hq_abs] at h₄
-    norm_cast at h₄
-    cases' h₄ with h₄₀ h₄₁
-    . right
-      left
-      exact h₄₀
-    . left
-      exact h₄₁
+    omega
   . right
     right
     exact Or.symm (eq_or_eq_neg_of_abs_eq hq_abs)

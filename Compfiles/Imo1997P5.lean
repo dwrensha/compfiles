@@ -54,13 +54,7 @@ lemma four_times_k_less_than_two_pow_k
     norm_num
   . push_neg at h₀
     have ih₁ : 4 * n < 2 ^ n := ih n (le_refl n) h₀
-    rw [mul_add, pow_add, mul_one, pow_one, mul_two]
-    refine Nat.add_lt_add ih₁ ?_
-    refine lt_trans ?_ ih₁
-    refine (Nat.lt_mul_iff_one_lt_right (by norm_num)).mpr ?_
-    refine Nat.lt_of_lt_of_le ?_ h₀
-    norm_num
-
+    omega
 
 lemma mylemma_case_xley
   (x y : ℕ)

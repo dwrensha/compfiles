@@ -126,10 +126,7 @@ problem usa2022_p4 (p q : ℕ) :
         cases' Nat.Prime.eq_one_or_self_of_dvd hpq _ h15 with h16 h16
         · norm_num at h16
         · exact h16.symm
-      · have h14 := Nat.mod_lt p zero_lt_two
-        rw [h] at h14
-        exact (not_lt_zero' (Nat.succ_lt_succ_iff.mp (Nat.succ_lt_succ_iff.mp h14))).elim
-
+      · omega
   have h11 : p = 3 := by
     have h20 : b - a = 1 := by rw [h9] at h8; exact h8.symm
     have h22 : a ≤ b := Nat.le_of_lt hba
