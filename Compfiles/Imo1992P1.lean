@@ -358,15 +358,10 @@ lemma mylemma_case_k_2
   (hk: p * q * r - 1 = (p - 1) * (q - 1) * (r - 1) * 2) :
   (p, q, r) = (2, 4, 8) ∨ (p, q, r) = (3, 5, 15) := by
   interval_cases p
-  . exfalso
-    norm_num at *
-    linarith [hql,hrl]
+  . grind
   . right
-    norm_num at *
     have g₂: (4-q)*(4-r) = 11 := by linarith
-    have g₃: (4-q) = -1 ∨ (4-q) = 1 ∨ (4-q) = -11 ∨ (4-q) = 11 := by
-      exact mylemma_qr_11 q r g₂
-    grind
+    grind [mylemma_qr_11]
 
 lemma mylemma_case_k_3
   (p q r: ℤ)
@@ -378,32 +373,10 @@ lemma mylemma_case_k_3
   (p, q, r) = (2, 4, 8) ∨ (p, q, r) = (3, 5, 15) := by
   interval_cases p
   -- p = 2
-  . norm_num at *
-    have g₂: (q-3)*(r-3) = 5 := by linarith
-    have g₃: (q-3) = -1 ∨ (q-3) = 1 ∨ (q-3) = -5 ∨ (q-3) = 5 := by
-      exact mylemma_qr_5 q r g₂
-    cases' g₃ with g₃₁ g₃₂
-    . exfalso
-      linarith [hql,g₃₁]
-    . cases' g₃₂ with g₃₂ g₃₃
-      . have hq: q = 4 := by omega
-        rw [hq] at g₂
-        have hr: r = 8 := by omega
-        exact { left := hq, right := hr }
-      . exfalso
-        cases' g₃₃ with g₃₃ g₃₄
-        . omega
-        . have hq: q = 8 := by omega
-          rw [hq] at g₂
-          norm_num at g₂
-          omega
+  . have g₂: (q-3)*(r-3) = 5 := by linarith
+    grind [mylemma_qr_5]
   -- p = 3
-  . right
-    norm_num at *
-    have g₂: (6 - 3 * q) * (2 - r) = 5 := by linarith
-    have g₃: (6 - 3*q) = -1 ∨ (6 - 3*q) = 1 ∨ (6 - 3*q) = -5 ∨ (6 - 3*q) = 5 := by
-      exact mylemma_63qr_5 q r g₂
-    omega
+  . grind
 
 snip end
 
