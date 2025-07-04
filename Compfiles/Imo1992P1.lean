@@ -393,11 +393,7 @@ problem imo1992_p1 (a b c : ℤ) (ha : 1 < a) (hb : a < b) (hc : b < c) :
   have hpl: 2 ≤ a := by omega
   have hql: 3 ≤ b := by omega
   have hrl: 4 ≤ c := by omega
-  have hden: 0 < (((a - 1) * (b - 1)) * (c - 1)) := by
-    have gp: 0 < (a - 1) := by omega
-    have gq: 0 < (b - 1) := by omega
-    have gr: 0 < (c - 1) := by omega
-    exact mul_pos (mul_pos gp gq) gr
+  have hden: 0 < (a - 1) * (b - 1) * (c - 1) := by bound
   have h₁: ↑k = (↑(a * b * c - 1):ℚ) / (↑((a - 1) * (b - 1) * (c - 1)):ℚ) := by
     have g₁: ↑(a * b * c - 1) = ↑k * (↑((a - 1) * (b - 1) * (c - 1)):ℚ) := by
       norm_cast
