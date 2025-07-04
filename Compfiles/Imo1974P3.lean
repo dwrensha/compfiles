@@ -47,9 +47,7 @@ lemma aux_3
   (n : ℕ) :
   7 ^ (2 * n + 1) ≡ 2 [MOD 5] ∨ 7 ^ (2 * n + 1) ≡ 3 [MOD 5] := by
   induction' n with d hd
-  . simp
-    left
-    decide
+  . left; decide
   . let b:ℕ := (7 ^ (2 * d + 1)) % 5
     have hb: b = (7 ^ (2 * d + 1)) % 5 := by rfl
     have hb₀: b < 5 := by
@@ -303,8 +301,8 @@ lemma aux_5
       . intros a _
         exact (2 * a)
       . intros a ha₀
-        have ha₁: a < n + 1 := by exact List.mem_range.mp ha₀
-        have ha₂: 2 * a < 2 * n + 2 := by linarith
+        have ha₁: a < n + 1 := List.mem_range.mp ha₀
+        have ha₂: 2 * a < 2 * n + 2 := by omega
         refine Finset.mem_filter.mpr ?_
         constructor
         . exact Finset.mem_range.mpr ha₂
@@ -317,7 +315,7 @@ lemma aux_5
         have hb₁: b ∈ fs₂ ∧ Even b := Finset.mem_filter.mp hb₀
         constructor
         . have hb₂: b < 2 * n + 2 := by exact List.mem_range.mp hb₁.1
-          have hb₃: (b / 2) < n + 1 := by exact Nat.div_lt_of_lt_mul hb₂
+          have hb₃: b / 2 < n + 1 := by exact Nat.div_lt_of_lt_mul hb₂
           exact Finset.mem_range.mpr hb₃
         . exact Nat.two_mul_div_two_of_even hb₁.2
       . intros b hb₀
@@ -456,10 +454,7 @@ problem imo1974_p3
       exact Nat.ModEq.add_right (a ^ 2) h₄₁
     rw [Nat.sub_add_cancel (le_of_lt h₅)] at hc₂
     apply Nat.ModEq.trans hc₂.symm at hc₁
-    have hc₃: a ^ 2 ≡ 2 [MOD 5] := by
-      refine Nat.ModEq.add_left_cancel'  3 ?_
-      exact hc₁
-    have hc₄: ¬ a ^ 2 ≡ 2 [MOD 5] := by exact aux_1 a
-    exact hc₄ hc₃
+    have hc₃: a ^ 2 ≡ 2 [MOD 5] := Nat.ModEq.add_left_cancel' 3 hc₁
+    exact aux_1 a hc₃
 
 end Imo1974P3
