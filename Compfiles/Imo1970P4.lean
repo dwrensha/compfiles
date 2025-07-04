@@ -407,12 +407,7 @@ lemma two_three_five_and_more_is_enough (x : ℕ) (two_does_not_divide : ¬ 2 �
     case inl h =>
       simp_all only [Nat.two_dvd_ne_zero, gt_iff_lt, Finset.mem_insert, Finset.mem_singleton, true_or]
       omega
-    case inr h =>
-      cases h
-      case inl h =>
-        simp_all only [Nat.two_dvd_ne_zero, gt_iff_lt]
-      case inr h =>
-        simp_all only [Nat.two_dvd_ne_zero, gt_iff_lt]
+    case inr h => grind
   rintro ⟨p, ⟨pp, div⟩⟩
   have p_gt_5_implies := p_gt_5_not_dvd p pp
   have p_le_5_implies := p_le_5_not_dvd p pp

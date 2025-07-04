@@ -26,7 +26,7 @@ namespace Imo1963P1
 snip begin
 
 lemma iff_comm {a b c : Prop} : (a → c) → (b → c) → (c → (a ↔ b)) → (a ↔ b) := by
-  tauto
+  grind
 
 snip end
 
