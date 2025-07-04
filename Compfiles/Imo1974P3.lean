@@ -43,79 +43,23 @@ lemma aux_2
   mod_cases H : a % 5 <;>
     change _ % _ = _ % 5 at H <;> rw [H] at ha <;> norm_num at ha
 
-lemma aux_3
-  (n : ℕ) :
-  7 ^ (2 * n + 1) ≡ 2 [MOD 5] ∨ 7 ^ (2 * n + 1) ≡ 3 [MOD 5] := by
-  induction' n with d hd
-  . left; decide
-  . let b:ℕ := (7 ^ (2 * d + 1)) % 5
-    have hb: b = (7 ^ (2 * d + 1)) % 5 := by rfl
-    have hb₀: b < 5 := by
-      rw [hb]
-      omega
-    have hb₁: (7 ^ (2 * d + 1)) ≡ b [MOD 5] := by
-      exact Nat.ModEq.symm (Nat.mod_modEq (7 ^ (2 * d + 1)) 5)
-    ring_nf at *
-    have hb₂: 7 ^ (d * 2) * 7 * 49 ≡ b * 49 [MOD 5] := by
-      exact Nat.ModEq.mul hb₁ rfl
-    have hb₃: 7 ^ (d * 2) * 7 * 49 ≡ 2 * 49 [MOD 5] ∨ 7 ^ (d * 2) * 7 * 49 ≡ 3 * 49 [MOD 5] := by
-      cases' hd with hd₀ hd₁
-      . left
-        exact Nat.ModEq.mul hd₀ rfl
-      . right
-        exact Nat.ModEq.mul hd₁ rfl
-    ring_nf at hb₂
-    ring_nf at *
-    cases' hb₃ with hb₄ hb₅
-    . interval_cases b
-      . ring_nf at hb₂
-        have g₀: 0 ≡ 98 [MOD 5] := by
-          refine Nat.ModEq.trans hb₂.symm hb₄
-        have g₁: ¬ 0 ≡ 98 [MOD 5] := by decide
-        exact (g₁ g₀).elim
-      . ring_nf at hb₂
-        have g₀: 49 ≡ 98 [MOD 5] := by
-          refine Nat.ModEq.trans hb₂.symm hb₄
-        have g₁: ¬ 49 ≡ 98 [MOD 5] := by decide
-        exact (g₁ g₀).elim
-      . ring_nf at hb₂
-        have g₀: 98 ≡ 3 [MOD 5] := by decide
-        right
-        refine Nat.ModEq.trans hb₂ g₀
-      . ring_nf at hb₂
-        have g₀: 147 ≡ 98 [MOD 5] := by
-          refine Nat.ModEq.trans hb₂.symm hb₄
-        have g₁: ¬ 147 ≡ 98 [MOD 5] := by decide
-        exact (g₁ g₀).elim
-      . ring_nf at hb₂
-        have g₀: 196 ≡ 98 [MOD 5] := by
-          refine Nat.ModEq.trans hb₂.symm hb₄
-        have g₁: ¬ 196 ≡ 98 [MOD 5] := by decide
-        exact (g₁ g₀).elim
-    . interval_cases b
-      . ring_nf at hb₂
-        have g₀: 0 ≡ 147 [MOD 5] := by
-          refine Nat.ModEq.trans hb₂.symm hb₅
-        have g₁: ¬ 0 ≡ 147 [MOD 5] := by decide
-        exact (g₁ g₀).elim
-      . ring_nf at hb₂
-        have g₀: 49 ≡ 147 [MOD 5] := by
-          refine Nat.ModEq.trans hb₂.symm hb₅
-        have g₁: ¬ 49 ≡ 147 [MOD 5] := by decide
-        exact (g₁ g₀).elim
-      . ring_nf at hb₂
-        have g₀: 98 ≡ 147 [MOD 5] := by
-          refine Nat.ModEq.trans hb₂.symm hb₅
-        have g₁: ¬ 98 ≡ 147 [MOD 5] := by decide
-        exact (g₁ g₀).elim
-      . ring_nf at hb₂
-        exact Or.intro_left (7 ^ (d * 2) * 343 ≡ 3 [MOD 5]) hb₅
-      . ring_nf at hb₂
-        have g₀: 196 ≡ 147 [MOD 5] := by
-          refine Nat.ModEq.trans hb₂.symm hb₅
-        have g₁: ¬ 196 ≡ 147 [MOD 5] := by decide
-        exact (g₁ g₀).elim
-
+lemma aux_3 (n : ℕ) :
+    7 ^ (2 * n + 1) ≡ 2 [MOD 5] ∨ 7 ^ (2 * n + 1) ≡ 3 [MOD 5] := by
+  change _ = _ ∨ _ = _
+  rw [Nat.pow_mod, Nat.pow_succ, Nat.pow_mul]
+  norm_num1
+  rw [Nat.mul_mod]
+  obtain he | ho := Nat.even_or_odd n
+  · rw [even_iff_exists_two_mul] at he
+    obtain ⟨b, hb⟩ := he
+    left
+    rw [hb, Nat.pow_mul, Nat.pow_mod]
+    norm_num
+  · right
+    rw [odd_iff_exists_bit1] at ho
+    obtain ⟨b, hb⟩ := ho
+    rw [hb, Nat.pow_add, Nat.mul_mod (4^(2 * b)), Nat.pow_mul, Nat.pow_mod]
+    norm_num
 
 lemma aux_4
   (n b a : ℕ)
