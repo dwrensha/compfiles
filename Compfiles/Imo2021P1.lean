@@ -101,12 +101,7 @@ theorem exists_finset_3_le_card_with_pairs_summing_to_squares (n : ℕ) (hn : 10
       exact ⟨⟨hab.ne, (hab.trans hbc).ne⟩, hbc.ne⟩
   · intro x hx y hy hxy
     simp only [Finset.mem_insert, Finset.mem_singleton] at hx hy
-    rcases hx with (rfl | rfl | rfl) <;> rcases hy with (rfl | rfl | rfl)
-    all_goals
-      first
-      | contradiction
-      | assumption
-      | simpa only [add_comm x y]
+    grind
   · simp only [Finset.mem_insert, Finset.mem_singleton]
     omega
 
@@ -137,9 +132,6 @@ problem imo2021_p1 :
   rw [Finset.one_lt_card] at hC
   rcases hC with ⟨a, ha, b, hb, hab⟩
   simp only [Finset.subset_iff, Finset.mem_inter] at hCA
-  -- Now we split into the two cases C ⊆ [n, 2n] \ A and C ⊆ A, which can be dealt with identically.
-  cases' hCA with hCA hCA <;> [right; left] <;>
-    exact ⟨a, (hCA ha).2, b, (hCA hb).2, hab, h₁ a (hCA ha).1 b (hCA hb).1 hab⟩
-
+  grind
 
 end Imo2021P1
