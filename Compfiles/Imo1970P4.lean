@@ -354,10 +354,6 @@ lemma three_divides_odd_exactly_once (n : ℕ) (s odd_s : Finset ℕ) (partition
 lemma empty_of_empty_subset (s : Finset ℕ) : s = {x_1 | x_1 ∈ (∅ : Finset ℕ) } → s = ∅ := by
   simp only [Finset.notMem_empty, Set.setOf_false, Finset.coe_eq_empty, imp_self]
 
-lemma no_prime_divisors (x : ℕ) (no_prime : ¬ ∃ (p : ℕ), p.Prime ∧ p ∣ x) : x = 1 := by
-  contrapose! no_prime
-  exact Nat.exists_prime_and_dvd no_prime
-
 lemma enumerate_primes_le_5 (p : ℕ) (pp : p.Prime) (p_le_5 : p ≤ 5) : p ∈ ({2, 3, 5} : Finset ℕ) := by
   by_contra H
   simp only [Finset.mem_insert, Finset.mem_singleton, not_or] at H
@@ -525,7 +521,7 @@ lemma contains_one_or_zero (n : ℕ) (s1 s2 : Finset ℕ) (partition : s1 ∪ s2
   constructor
   · exact x_in_s1_u_s2
   · left
-    exact no_prime_divisors x no_prime
+    exact (Not.imp_symm Nat.exists_prime_and_dvd) no_prime
 
 lemma n_eq_1_of_contains_one
   (n : ℕ) (n_not_zero : n ≠ 0) (contains_one : 1 ∈ Finset.Icc n (n + 5)) : n = 1 := by
