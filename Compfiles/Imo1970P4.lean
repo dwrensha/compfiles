@@ -357,35 +357,9 @@ lemma three_divides_odd_exactly_once (n : ℕ) (s odd_s : Finset ℕ) (partition
 lemma empty_of_empty_subset (s : Finset ℕ) : s = {x_1 | x_1 ∈ (∅ : Finset ℕ) } → s = ∅ := by
   simp only [Finset.notMem_empty, Set.setOf_false, Finset.coe_eq_empty, imp_self]
 
-lemma no_prime_divisors (x : ℕ) (x_not_zero : x ≠ 0) (no_prime : ¬ ∃ (p : ℕ), p.Prime ∧ p ∣ x) : x = 1 := by
-
-  have empty_prime_factors: x.primeFactors = ∅ → x = 1 := by
-    intro a
-    simp_all only [Nat.primeFactors_eq_empty, false_or]
-
-  have mem_primeFactors : x.primeFactors = {p | Nat.Prime p ∧ p ∣ x ∧ x ≠ 0} := by
-    ext x
-    simp only [Finset.mem_coe, Nat.mem_primeFactors, ne_eq, Set.mem_setOf_eq]
-
-  have lift_subtypes: x.primeFactors = {x_1 | x_1 ∈ (∅ : Finset ℕ) } → x.primeFactors = ∅ := by
-    intro H
-    exact empty_of_empty_subset x.primeFactors H
-
-  apply empty_prime_factors
-  apply lift_subtypes
-  rw[mem_primeFactors]
-
-  have no_prime_for_simp : ∀ p : ℕ, ¬ (Nat.Prime p ∧ p ∣ x ∧ x ≠ 0) := by
-    intro p H
-    apply no_prime
-    use p
-    obtain ⟨a, b, _⟩ := H
-    exact ⟨a, b⟩
-
-  have goal: { p | Nat.Prime p ∧ p ∣ x ∧ x ≠ 0 } = {x_1 | (x_1 : ℕ) ∈ ({} : Finset ℕ) } := by
-    simp_all only [Finset.notMem_empty]
-
-  exact goal
+lemma no_prime_divisors (x : ℕ) (no_prime : ¬ ∃ (p : ℕ), p.Prime ∧ p ∣ x) : x = 1 := by
+  contrapose! no_prime
+  exact Nat.exists_prime_and_dvd no_prime
 
 lemma enumerate_primes_le_5 (p : ℕ) (pp : p.Prime) (p_le_5 : p ≤ 5) : p ∈ ({2, 3, 5} : Finset ℕ) := by
   by_contra H
@@ -553,14 +527,8 @@ lemma contains_one_or_zero (n : ℕ) (s1 s2 : Finset ℕ) (partition : s1 ∪ s2
   use x
   constructor
   · exact x_in_s1_u_s2
-  · have := Decidable.em (x = 0)
-    cases this
-    case inl h =>
-      right
-      exact h
-    case inr h =>
-      left
-      exact no_prime_divisors x h no_prime
+  · left
+    exact no_prime_divisors x no_prime
 
 lemma n_eq_1_of_contains_one
   (n : ℕ) (n_not_zero : n ≠ 0) (contains_one : 1 ∈ Finset.Icc n (n + 5)) : n = 1 := by
