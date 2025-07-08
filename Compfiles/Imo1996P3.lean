@@ -23,13 +23,9 @@ for all m,n in S.
 
 namespace Imo1996P3
 
--- either the zero function or of the form
--- f(qk + r) = qk + (n r) k for 0 ≤ r < k
-
 determine SolutionSet : Set (ℕ → ℕ) :=
---   {fun _ ↦ 0} ∪
-   {f | ∃ k : ℕ, ∃ n : ℕ → ℕ, n 0 = 0 ∧
-         f = fun x ↦ (x / k) * k + (n (x % k)) * k }
+   { f | ∃ k : ℕ, ∃ n : ℕ → ℕ, n 0 = 0 ∧
+          f = fun x ↦ (x / k) * k + (n (x % k)) * k }
 
 problem imo1996_p3 (f : ℕ → ℕ) :
     f ∈ SolutionSet ↔ ∀ m n, f (m + f n) = f (f m) + f n := by
@@ -111,8 +107,9 @@ problem imo1996_p3 (f : ℕ → ℕ) :
 
   -- So for all n, f(n) is a fixed point.
 
-/-
- Let k be the smallest non-zero fixed point. If k does not exist, then f(n) is zero for all n, which is a possible solution.-/
+  -- Let k be the smallest non-zero fixed point.
+  -- If k does not exist, then f(n) is zero for all n,
+  -- which is a possible solution.
 
   obtain hfp | hfp := Classical.em (∃ x, 0 < x ∧ f x = x)
   swap
@@ -156,14 +153,12 @@ problem imo1996_p3 (f : ℕ → ℕ) :
       have hr : r < k := Nat.mod_lt n hk0
       have h8 := Nat.find_min hfp hr
       rw [not_and'] at h8
-      have h9 := h8 h6
-      omega
+      exact Nat.eq_zero_of_not_pos (h8 h6)
 
     exact Nat.dvd_of_mod_eq_zero h7
 
   -- so f(n) is a multiple of k for any n.
-  have h10 : ∀ n, k ∣ f n := fun n ↦ by
-    apply h4; apply hm
+  have h10 : ∀ n, k ∣ f n := fun n ↦ h4 (f n) (hm n)
 
   use k
   use fun x ↦ f x / k
@@ -173,12 +168,9 @@ problem imo1996_p3 (f : ℕ → ℕ) :
   nth_rw 1 [←Nat.div_add_mod x k]
   have h11 := h3 (x / k)
   nth_rw 2 [mul_comm] at h11
-  rw [←h11, add_comm _ (x % k)]
-  rw [hf]
-  rw [h3]
-  have h12 : f (x % k) / k * k = f (x % k) := by
-    exact Nat.div_mul_cancel (h4 (f (x % k)) (hm (x % k)))
-  rw [ h12]
+  rw [←h11, add_comm _ (x % k), hf, h3]
+  have h12 : f (x % k) / k * k = f (x % k) := Nat.div_mul_cancel (h10 (x % k))
+  rw [h12]
   ring
 
 end Imo1996P3
