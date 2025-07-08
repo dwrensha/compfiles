@@ -201,7 +201,7 @@ problem imo2003_p6 (p : ℕ) (hp : p.Prime) :
         _ = (n : ZMod q) ^ p := by rw [np_congr_p]
         _ = 0 := by
           rw [hn0, zero_pow (Nat.Prime.ne_zero hp)]
-    rw [ZMod.natCast_zmod_eq_zero_iff_dvd] at q_dvd_p
+    rw [ZMod.natCast_eq_zero_iff] at q_dvd_p
 
     have : N % p = 1 := calc N % p
       _ = (∑ i ∈ range p, (p^i) % p) % p := Finset.sum_nat_mod _ _ _

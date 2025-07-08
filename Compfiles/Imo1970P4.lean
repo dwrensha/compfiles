@@ -283,7 +283,7 @@ lemma unique_divisor (n : ZMod 3) (a b c : ℕ) (n_eq_a : n = a) (s : Finset ℕ
   fin_cases n
   · use a
     have three_div_a : 3 ∣ a := by
-      apply (ZMod.natCast_zmod_eq_zero_iff_dvd a 3).mp
+      apply (ZMod.natCast_eq_zero_iff a 3).mp
       simp_all only [Fin.zero_eta]
     constructor
     · simp only
@@ -297,7 +297,7 @@ lemma unique_divisor (n : ZMod 3) (a b c : ℕ) (n_eq_a : n = a) (s : Finset ℕ
   · use b
     have three_div_b : 3 ∣ b := by
       simp_all only [Fin.mk_one]
-      apply (ZMod.natCast_zmod_eq_zero_iff_dvd (a + 2) 3).mp
+      apply (ZMod.natCast_eq_zero_iff (a + 2) 3).mp
       simp_all only [Nat.cast_add, Nat.cast_ofNat]
       rw[← n_eq_a]
       reduce_mod_char
@@ -310,7 +310,7 @@ lemma unique_divisor (n : ZMod 3) (a b c : ℕ) (n_eq_a : n = a) (s : Finset ℕ
   · use c
     have three_div_c : 3 ∣ c := by
       simp_all only [Nat.dvd_add_self_right]
-      apply (ZMod.natCast_zmod_eq_zero_iff_dvd (a + 1) 3).mp
+      apply (ZMod.natCast_eq_zero_iff (a + 1) 3).mp
       simp_all only [Nat.cast_add, Nat.cast_one]
       rw[← n_eq_a]
       simp only [Nat.reduceAdd, Fin.reduceFinMk, Fin.isValue]
