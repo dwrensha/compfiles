@@ -92,7 +92,93 @@ problem imo1996_p3 (f : ℕ → ℕ) :
     grind
   intro hf
   simp only [Set.mem_setOf_eq]
-  sorry
 
+  /- Setting m = n = 0, the given relation becomes:
+     f(f(0)) = f(f(0)) + f(0).
+     Hence f(0) = 0. Hence also f(f(0)) = 0.
+     Setting m = 0, now gives f(f(n)) = f(n),
+    so we may write the original relation as f(m + f(n)) = f(m) + f(n).
+  -/
+  have h0 := hf 0 0
+  rw [zero_add] at h0
+  have hf0 : f 0 = 0 := by omega
+  have hf00 : f (f 0) = 0 := by grind
+  have hm := hf 0
+  rw [hf00] at hm
+  simp only [zero_add] at hm
+
+  replace hf : ∀ m n, f (m + f n) = f m + f n := by grind
+
+  -- So for all n, f(n) is a fixed point.
+
+/-
+ Let k be the smallest non-zero fixed point. If k does not exist, then f(n) is zero for all n, which is a possible solution.-/
+
+  obtain hfp | hfp := Classical.em (∃ x, 0 < x ∧ f x = x)
+  swap
+  · have h2 : ∀ y, f y = 0 := by grind
+    use 0, 0
+    aesop
+
+  let k := Nat.find hfp
+  obtain ⟨hk0, hfk⟩ : 0 < k ∧ f k = k := Nat.find_spec hfp
+
+  -- If k does exist, then an easy induction shows that f(qk) = qk
+  --  for all non-negative integers q.
+  have h3 : ∀ q, f (q * k) = q * k := fun q ↦ by
+    induction q with
+    | zero => simp only [hf0, zero_mul]
+    | succ q ih =>
+      rw [Nat.add_mul, one_mul]
+      nth_rw 2 [←hfk]
+      rw [hf, ih, hfk]
+
+  have h4 : ∀ n, f n = n → k ∣ n := fun n hn ↦ by
+    -- Now if n is another fixed point, write n = kq + r, with 0 ≤ r < k.
+    let q := n / k
+    let r := n % k
+    have hnd : n = k * q + r := (Nat.div_add_mod n k).symm
+
+    have h5 := calc
+      f n = f (r + f (k * q)) := by
+              rw [mul_comm, h3, add_comm, mul_comm]
+              exact congrArg f hnd
+        _ = f r + f (k * q) := by grind
+        _ = k * q + f r :=  by rw [mul_comm, h3]; ring
+
+    -- Hence f(r) = r
+    have h6 : f r = r := by
+      rw [hn, hnd] at h5
+      exact Nat.add_left_cancel h5.symm
+
+    -- so r must be zero.
+    have h7 : r = 0 := by
+      have hr : r < k := Nat.mod_lt n hk0
+      have h8 := Nat.find_min hfp hr
+      rw [not_and'] at h8
+      have h9 := h8 h6
+      omega
+
+    exact Nat.dvd_of_mod_eq_zero h7
+
+  -- so f(n) is a multiple of k for any n.
+  have h10 : ∀ n, k ∣ f n := fun n ↦ by
+    apply h4; apply hm
+
+  use k
+  use fun x ↦ f x / k
+  constructor
+  · simp[hf0]
+  ext x
+  nth_rw 1 [←Nat.div_add_mod x k]
+  have h11 := h3 (x / k)
+  nth_rw 2 [mul_comm] at h11
+  rw [←h11, add_comm _ (x % k)]
+  rw [hf]
+  rw [h3]
+  have h12 : f (x % k) / k * k = f (x % k) := by
+    exact Nat.div_mul_cancel (h4 (f (x % k)) (hm (x % k)))
+  rw [ h12]
+  ring
 
 end Imo1996P3
