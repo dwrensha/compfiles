@@ -29,9 +29,6 @@ lemma card_opposite (s s' s'' : Finset ℕ) (predicate: ℕ → Prop) [Decidable
   have := @Finset.filter_card_add_filter_neg_card_eq_card ℕ s predicate
   apply this
 
-lemma prime_dvd_elem_of (p : ℕ) (pp : Nat.Prime p) (s : Finset ℕ) : p ∣ (∏ m ∈ s, m) → ∃ x ∈ s, p ∣ x := by
-  exact Prime.exists_mem_finset_dvd pp.prime
-
 lemma no_other_p_divisors_nearby (x : ℕ) (y : ℕ) (p : ℕ) (p_gt_5 : p > 5) (x_lt_y : x < y) (close_by: ∃ k, k ≤ 5 ∧ x + k = y) (x_div_p : p ∣ x) : ¬ (p ∣ y) := by
   obtain ⟨k, ⟨bound, sum⟩⟩ := close_by
   intro H
@@ -95,7 +92,7 @@ lemma p_gt_five_not_divides (n : ℕ) (s1 s2 : Finset ℕ) (partition : s1 ∪ s
 
     have p_not_dvd_prod_y : ¬ p ∣ ∏ m ∈ s2, m := by
       intro h
-      obtain ⟨y, ⟨y_in_s2, p_dvd_y⟩⟩ := prime_dvd_elem_of p pp s2 h
+      obtain ⟨y, ⟨y_in_s2, p_dvd_y⟩⟩ := Prime.exists_mem_finset_dvd pp.prime h
 
       have s1_s2_disjoint : Disjoint s1 s2 := Finset.disjoint_iff_inter_eq_empty.mpr no_dups
 
@@ -133,7 +130,7 @@ lemma p_gt_five_not_divides (n : ℕ) (s1 s2 : Finset ℕ) (partition : s1 ∪ s
 
     have p_not_dvd_prod_y : ¬ p ∣ ∏ m ∈ s1, m := by
       intro h
-      obtain ⟨y, ⟨y_in_s1, p_dvd_y⟩⟩ := prime_dvd_elem_of p pp s1 h
+      obtain ⟨y, ⟨y_in_s1, p_dvd_y⟩⟩ := Prime.exists_mem_finset_dvd pp.prime h
 
       have : s2 ∩ s1 = ∅ := by
         rw [← no_dups]
@@ -591,7 +588,8 @@ lemma contradiction_of_finset_icc_1_6 (s1 s2 : Finset ℕ) (partition : s1 ∪ s
     have five_div_prod_s2 : 5 ∣ ∏ m ∈ s2, m := by
       rw[eq_prod] at five_div_prod_s1
       exact five_div_prod_s1
-    obtain ⟨l, ⟨l_in_s2, five_div_l⟩⟩ := prime_dvd_elem_of 5 (by decide) s2 five_div_prod_s2
+    obtain ⟨l, ⟨l_in_s2, five_div_l⟩⟩ :=
+      Prime.exists_mem_finset_dvd (show Nat.Prime 5 by decide).prime five_div_prod_s2
     exact others l l_in_s2 five_div_l
   · case inr five_in_s2 =>
     have s1_in_s2_s1: s1 ⊆ s2 ∪ s1 := Finset.subset_union_right
@@ -634,7 +632,8 @@ lemma contradiction_of_finset_icc_1_6 (s1 s2 : Finset ℕ) (partition : s1 ∪ s
     have five_div_prod_s1 : 5 ∣ ∏ m ∈ s1, m := by
       rw[← eq_prod] at five_div_prod_s2
       exact five_div_prod_s2
-    obtain ⟨l, ⟨l_in_s1, five_div_l⟩⟩ := prime_dvd_elem_of 5 (by decide) s1 five_div_prod_s1
+    obtain ⟨l, ⟨l_in_s1, five_div_l⟩⟩ :=
+      Prime.exists_mem_finset_dvd (show Nat.Prime 5 by decide).prime five_div_prod_s1
     exact others l l_in_s1 five_div_l
 
 lemma no_partitions (n : ℕ) (s1 s2 : Finset ℕ)
