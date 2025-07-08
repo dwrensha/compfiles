@@ -585,7 +585,7 @@ lemma contradiction_of_finset_icc_1_6 (s1 s2 : Finset ℕ) (partition : s1 ∪ s
       rw[eq_prod] at five_div_prod_s1
       exact five_div_prod_s1
     obtain ⟨l, ⟨l_in_s2, five_div_l⟩⟩ :=
-      Prime.exists_mem_finset_dvd (show Nat.Prime 5 by decide).prime five_div_prod_s2
+      Prime.exists_mem_finset_dvd Nat.prime_five.prime five_div_prod_s2
     exact others l l_in_s2 five_div_l
   · case inr five_in_s2 =>
     have s1_in_s2_s1: s1 ⊆ s2 ∪ s1 := Finset.subset_union_right
@@ -629,7 +629,7 @@ lemma contradiction_of_finset_icc_1_6 (s1 s2 : Finset ℕ) (partition : s1 ∪ s
       rw[← eq_prod] at five_div_prod_s2
       exact five_div_prod_s2
     obtain ⟨l, ⟨l_in_s1, five_div_l⟩⟩ :=
-      Prime.exists_mem_finset_dvd (show Nat.Prime 5 by decide).prime five_div_prod_s1
+      Prime.exists_mem_finset_dvd Nat.prime_five.prime five_div_prod_s1
     exact others l l_in_s1 five_div_l
 
 lemma no_partitions (n : ℕ) (s1 s2 : Finset ℕ)
