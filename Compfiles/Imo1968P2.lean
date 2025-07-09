@@ -15,7 +15,7 @@ problem_file { tags := [.NumberTheory] }
 # International Mathematical Olympiad 1968, Problem 2
 
 Determine the set of natural numbers x such that
-the sum of the decimal digits of x is equal to x² - 10x - 22.
+the product of the decimal digits of x is equal to x² - 10x - 22.
 -/
 
 namespace Imo1968P2
