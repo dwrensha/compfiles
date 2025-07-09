@@ -36,7 +36,7 @@ def valid (f : Set.Icc 0 1 → ℝ) : Prop :=
 determine min_c : ℝ := sorry
 
 problem usa1993_p5 :
-    IsLeast {c | ∀ f, valid f ∧ ∀ x, f x ≤ c * x } min_c := by
+    IsLeast {c | ∀ f, valid f → ∀ x, f x ≤ c * x } min_c := by
   sorry
 
 
