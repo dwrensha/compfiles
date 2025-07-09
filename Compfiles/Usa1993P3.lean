@@ -46,9 +46,25 @@ problem usa1993_p5 :
     intro c1 hc1
     simp only [Set.mem_setOf_eq] at hc1
     let f : Set.Icc (0 : ℝ) 1 → ℝ := fun x ↦ if x.val ≤ 1/2 then 0 else 1
-    have hf : valid f := by sorry
+    have hf : valid f := by
+      refine ⟨?_, ?_, ?_⟩
+      · intro x
+        unfold f
+        split <;> norm_num
+      · unfold f; norm_num
+      · intro x y hx
+        obtain ⟨x, hxx⟩ := x
+        obtain ⟨y, hyy⟩ := y
+        simp only [Set.mem_Icc] at hx hxx hyy
+        obtain ⟨hx1, hx2⟩ := hx
+        unfold f
+        split_ifs with h1 h2 h3 h4 h5 h6 <;> linarith
     specialize hc1 f hf
     by_contra! H
+    --let a1 := 1/2 + (2 - c1)
+    --have ha1 : 0 ≤ a1 ∧ a1 ≤ 1 := by sorry
+    --specialize hc1 a1 ha1
+    --unfold f at hc1
     sorry
 
 
