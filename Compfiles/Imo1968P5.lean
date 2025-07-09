@@ -16,7 +16,7 @@ problem_file { tags := [.Algebra] }
 Let f be a real-valued function defined for all real numbers x such that,
 for some positive constant a, the equation
 
-  f(x + a) = a/2 + √(f(x) - (f(x))²)
+  f(x + a) = 1/2 + √(f(x) - (f(x))²)
 
 holds for all x.
 
