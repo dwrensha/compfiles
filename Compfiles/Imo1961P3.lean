@@ -11,7 +11,7 @@ import ProblemExtraction
 
 problem_file {
   tags := [.Algebra]
-  importedFrom := "https://github.com/leanprover-community/mathlib4/pull/9883"
+  importedFrom := "https://github.com/leanprover-community/mathlib4/blob/master/Archive/Imo/Imo1961Q3.lean"
 }
 
 /-!
@@ -27,14 +27,6 @@ where n is a given positive integer.
 namespace Imo1961P3
 
 open Real
-
-snip begin
-
-@[simp]
-theorem abs_cos_int_mul_pi (k : ℤ) : |cos (k * π)| = 1 := by
-  simp [abs_cos_eq_sqrt_one_sub_sin_sq]
-
-snip end
 
 determine solutionSet (n : ℕ+) : Set ℝ :=
  { x | (∃ k : ℤ, k * π = x) ∧ Even n.val ∨ (∃ k : ℤ, k * (2 * π) = x) ∧ Odd n.val ∨
