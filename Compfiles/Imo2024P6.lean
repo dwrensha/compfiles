@@ -75,7 +75,6 @@ lemma Aquaesulian.apply_zero : f 0 = 0 := by
   refine h.injective ?_
   convert h.apply_apply_add 0 using 1 <;> simp
 
-@[simp]
 lemma Aquaesulian.apply_neg_apply_add (x : G) : f (-(f x)) + x = 0 := by
   rcases h x (-(f x)) with hc | hc
   · rw [add_neg_cancel, ← h.apply_zero] at hc
