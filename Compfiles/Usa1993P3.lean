@@ -28,16 +28,28 @@ for every function satisfying (i) - (iii) and every x ∈ [0,1].
 
 namespace Usa1993P3
 
-def valid (f : Set.Icc 0 1 → ℝ) : Prop :=
+def valid (f : Set.Icc (0 : ℝ) 1 → ℝ) : Prop :=
   (∀ x, 0 ≤ f x) ∧
   f 1 = 1 ∧
   ∀ x y, (h : x.val + y.val ∈ Set.Icc 0 1) → f x + f y ≤ f ⟨x.val + y.val, h⟩
 
-determine min_c : ℝ := sorry
+determine min_c : ℝ := 2
 
 problem usa1993_p5 :
     IsLeast {c | ∀ f, valid f → ∀ x, f x ≤ c * x } min_c := by
-  sorry
+  simp only [Subtype.forall, Set.mem_Icc]
+  constructor
+  · simp only [Set.mem_setOf_eq]
+    intro f hf x hx
+    sorry
+  · rw [mem_lowerBounds]
+    intro c1 hc1
+    simp only [Set.mem_setOf_eq] at hc1
+    let f : Set.Icc (0 : ℝ) 1 → ℝ := fun x ↦ if x.val ≤ 1/2 then 0 else 1
+    have hf : valid f := by sorry
+    specialize hc1 f hf
+    by_contra! H
+    sorry
 
 
 end Usa1993P3
