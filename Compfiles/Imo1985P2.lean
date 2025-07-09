@@ -16,7 +16,7 @@ problem_file {
 }
 
 /-!
-# International Mathematical Olympiad 1985, Problem 5
+# International Mathematical Olympiad 1985, Problem 2
 
 Fix a natural number $n ≥ 3$ and define $N=\{1, 2, 3, \dots, n-1\}$.
 Fix another natural number $j ∈ N$ coprime to $n$. Each number in
