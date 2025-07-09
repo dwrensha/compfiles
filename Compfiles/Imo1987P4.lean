@@ -71,7 +71,7 @@ problem imo1987_p4 : ¬∃ f : ℕ → ℕ, ∀ n, f (f n) = n + 1987 := by
   -- has an odd number of elements.
 
   have ab_card : Set.ncard (A ∪ B) = 2 * m + 1 := by
-    rw [ab_range, Set.Iio_def, ←Finset.coe_range, Set.ncard_coe_Finset]
+    rw [ab_range, Set.Iio_def, ←Finset.coe_range, Set.ncard_coe_finset]
     exact Finset.card_range (2 * m + 1)
 
   have ab_finite : (A ∪ B).Finite := by

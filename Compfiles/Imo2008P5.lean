@@ -84,10 +84,10 @@ def ψ (n k : ℕ) : { f // NSequence n k f } → { f // MSequence n k f } :=
                   Set.ncard {j | ↑(f j) = i} + Set.ncard {j | ↑(f j) = n + i} := by
            rw [h7]
            exact Set.ncard_union_eq h8
-        rw [Set.Nat.card_coe_set_eq, h9]
-        rw [Set.Nat.card_coe_set_eq] at h6
+        rw [Nat.card_coe_set_eq, h9]
+        rw [Nat.card_coe_set_eq] at h6
         have h10 := hf2 (n + i) (by omega) (by omega)
-        rw [Set.Nat.card_coe_set_eq] at h10
+        rw [Nat.card_coe_set_eq] at h10
         exact Odd.add_even h6 h10
       · intro i hi1 _
         have h6 : ∀ j, ↑(f' j) ≠ i := by
@@ -170,7 +170,7 @@ lemma claim (n k : ℕ) (hn : 0 < n) (hnk : n ≤ k) (he : Even (k - n))
   have h2 : Fintype.card S = Fintype.card {g | ψ n k g = f} :=
     Fintype.card_of_bijective h1
   nth_rewrite 2 [←Nat.card_eq_fintype_card] at h2
-  rw [Set.Nat.card_coe_set_eq] at h2
+  rw [Nat.card_coe_set_eq] at h2
   rw [←h2, Scard']
 
 lemma lemma1 (α : Type) (A B : Set α) (hA : A.Finite) (hB : B.Finite)
@@ -186,7 +186,7 @@ lemma lemma1 (α : Type) (A B : Set α) (hA : A.Finite) (hB : B.Finite)
     exact setFintype fun x ↦ f x = b
   have h2 : ∀ b, Set.ncard { a | f a = b } = Fintype.card { a // f a = b} := by
     intro b
-    rw [Fintype.card_eq_nat_card, ←Set.Nat.card_coe_set_eq]
+    rw [Fintype.card_eq_nat_card, ←Nat.card_coe_set_eq]
     rfl
 
   have h3' : ∀ b ∈ Finset.univ (α := ↑B),
@@ -220,7 +220,7 @@ lemma lemma1 (α : Type) (A B : Set α) (hA : A.Finite) (hB : B.Finite)
     rw [Finset.sum_congr rfl h3']
     simp only [Finset.sum_const, smul_eq_mul]
     have : (Finset.univ (α := ↑B)).card = Set.ncard B := by
-      rw [Finset.card_univ, Fintype.card_eq_nat_card, Set.Nat.card_coe_set_eq]
+      rw [Finset.card_univ, Fintype.card_eq_nat_card, Nat.card_coe_set_eq]
     exact congr($this * n)
   rw [←h5]
   have h6 : A' = Finset.univ (α := ↑A) := by
@@ -234,7 +234,7 @@ lemma lemma1 (α : Type) (A B : Set α) (hA : A.Finite) (hB : B.Finite)
       refine ⟨Finset.mem_univ _, ?_⟩
       · simp
   rw [h6]
-  rw [@Finset.card_univ, ←Set.Nat.card_coe_set_eq, Fintype.card_eq_nat_card]
+  rw [@Finset.card_univ, ←Nat.card_coe_set_eq, Fintype.card_eq_nat_card]
   rfl
 
 snip end
