@@ -361,7 +361,7 @@ problem usa2023_p4 (a : ℕ+) (N : ℕ) (hN : 0 < N) (b0 : Blackboard N)
     EndInevitable a N ⟨b0, .Alice⟩ := by
   -- we follow the proof from
   -- https://web.evanchen.cc/exams/USAMO-2023-notes.pdf
-  obtain rfl | hN : N = 1 ∨ 1 < N := LE.le.eq_or_gt hN
+  obtain rfl | hN : 1 = N ∨ 1 < N := LE.le.eq_or_lt hN
   · exact lemma1 a ⟨b0, .Alice⟩ he
   sorry
 

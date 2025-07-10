@@ -204,7 +204,7 @@ lemma aux_7
         have hd₃: f d 0 = 0 := by
           rw [hf₂ d 0 (by omega)] at hd₁
           apply Real.toNNReal_eq_zero.mp at hd₁
-          exact eq_of_le_of_le hd₁ hd₂
+          exact eq_of_le_of_ge hd₁ hd₂
         rw [hd₃, zero_mul]
         exact Real.toNNReal_zero
     rw [ha₁, ha₂]
@@ -574,7 +574,7 @@ lemma aux_exists
         have hn₂: fb nn < br := by
           by_contra! hc₀
           have hbr₅: (fb nn) = br := by
-            refine eq_of_le_of_le ?_ hc₀
+            refine eq_of_le_of_ge ?_ hc₀
             refine hbr₃ _ ?_
             rw [hsbr]
             refine (Set.mem_image fr sb _).mpr ?_
@@ -626,7 +626,7 @@ lemma aux_exists
       refine (Real.toNNReal_lt_iff_lt_coe (le_of_lt hcr₁)).mpr ?_
       by_contra! hc₀
       have hc₁: fc nn = cr := by
-        refine eq_of_le_of_le hc₀ ?_
+        refine eq_of_le_of_ge hc₀ ?_
         refine hcr₃ _ ?_
         rw [hscr]
         refine (Set.mem_image fr sc _).mpr ?_

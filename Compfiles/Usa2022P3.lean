@@ -99,7 +99,7 @@ problem usa2022_p3 (f : ℝ+ → ℝ+) :
       f^[5] x ≥ f^[3] x := h3 _
       _ ≥ f x := h3 _
     have : f^[4] x ≤ f^[2] x := h4 _ _ this
-    exact eq_of_le_of_le (h3 _) this
+    exact eq_of_le_of_ge (h3 _) this
 
   have h6 : f.Injective := by
     intro a b h

@@ -237,7 +237,7 @@ problem imo2002_p5 (f : ℝ → ℝ) :
     rw [←h16]
     have h17 : (q.den : ℝ)^2 ≠ 0 := by positivity
     exact eq_div_of_mul_eq h17 h12.symm
-  obtain rfl | h7' :=  h7.eq_or_gt
+  obtain rfl | h7' :=  h7.eq_or_lt
   · simp [h3]
   have h12 := extend_function_mono (f := fun x ↦ x^2) h6 (continuous_pow 2) h11 x h7'
   simp [h12]

@@ -103,7 +103,7 @@ problem usa1990_p2 (n : ℕ) (x : ℝ) : x ∈ solution_set n ↔ f n x = 2 * x 
 
     · intro hx1
       have h2 : 2 * x < f n x := (ih x hx5).2.2 hx1
-      obtain rfl | hx6 := LE.le.eq_or_gt hx5
+      obtain rfl | hx6 := LE.le.eq_or_lt hx5
       · simp [hfnp]
 
       have hc :=
