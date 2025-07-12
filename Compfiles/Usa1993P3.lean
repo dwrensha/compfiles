@@ -39,7 +39,6 @@ theorem lemma1 (c1 : ℝ) :
   intro f h1 h2 h3 h4
   by_contra h
   push_neg at h
-  have h7 : c1 < (2 : ℝ) := by linarith
   have hc1 : c1 ≥ 0 := by
     have h1' := h1 (1 / 2 : ℝ) (by norm_num)
     have h5 : f ⟨(1 / 2 : ℝ), by norm_num⟩ = (0 : ℝ) := by
@@ -49,25 +48,24 @@ theorem lemma1 (c1 : ℝ) :
         simpa using h1'
       rw [h5] at h7
       linarith
-    nlinarith
+    linarith
   have h9 : ∃ a : ℝ, a > (1 / 2 : ℝ) ∧ a ≤ (1 : ℝ) ∧ 1 > c1 * a := by
     use (1 + (2 - c1) / 4) / 2
     constructor
     · -- Show a > 1/2
-      nlinarith
+      linarith
     constructor
     · -- Show a ≤ 1
-      nlinarith
+      linarith
     · -- Show 1 > c1 * a
-      nlinarith [sq_nonneg (c1 - 1), sq_nonneg ((1 + (2 - c1) / 4) / 2 - 1 / 2), h7, hc1]
+      linarith [sq_nonneg (c1 - 1), sq_nonneg ((1 + (2 - c1) / 4) / 2 - 1 / 2), hc1]
   rcases h9 with ⟨a, ha1, ha2, h10⟩
-  have h1' := h1 a ⟨by linarith, by linarith⟩
-  have h5 : f ⟨a, ⟨by linarith, by linarith⟩⟩ = 1 := by
-    simp [f]
-    all_goals
-      try { linarith }
+  have h1' := h1 a ⟨by linarith, ha2⟩
+  have h5 : f ⟨a, ⟨by linarith, ha2⟩⟩ = 1 := by
+    simp only [one_div, ite_eq_right_iff, zero_ne_one, imp_false, not_le, f]
+    linarith
   have h6 : (1 : ℝ) ≤ c1 * a := by
-    have h7 : f ⟨a, ⟨by linarith, by linarith⟩⟩ ≤ c1 * a := by
+    have h7 : f ⟨a, ⟨by linarith, ha2⟩⟩ ≤ c1 * a := by
       simpa using h1'
     rw [h5] at h7
     linarith
@@ -89,6 +87,33 @@ problem usa1993_p5 :
   constructor
   · simp only [Set.mem_setOf_eq]
     intro f hf x hx
+    obtain ⟨h1, h2, h3⟩ := hf
+    unfold min_c
+    have h4 : ∀ x : Set.Icc (0:ℝ) 1, (1 - (x:ℝ)) ∈ Set.Icc (0:ℝ) 1 := by
+       rintro ⟨x, hx⟩; clear h3; simp at hx ⊢; grind
+    have h5 : ∀ x, f x + f ⟨1 - x, h4 x⟩ ≤ 1 := by
+      intro x
+      specialize h3 x ⟨1 - x, h4 x⟩
+      simp only [add_sub_cancel, Set.mem_Icc, zero_le_one, le_refl, and_self, Set.Icc.mk_one,
+        forall_const] at h3
+      grw [h3, h2]
+    have h6 : ∀ x, f x ≤ 1 := fun x ↦ by
+      specialize h5 x
+      specialize h1 ⟨1 - x, h4 x⟩
+      linarith
+    have h8 : ∀ n : ℕ, ∀ x : Set.Icc (0:ℝ) (1/2^n), 2^n * (x : ℝ) ∈ Set.Icc (0:ℝ) 1 := by
+      rintro n ⟨x, hx1, hx2⟩; clear h3; simp at hx ⊢
+      constructor
+      · grind
+      · grw [hx2]; simp
+    have h9 : ∀ n : ℕ, ∀ x : Set.Icc (0:ℝ) (1/2^n),
+          2^n * f ⟨x, by sorry⟩ ≤ f ⟨2^n * x, h8 n x⟩ := by
+      intro n
+      induction n with
+      | zero => intro x; simp
+      | succ n ih =>
+        intro x
+        sorry
     sorry
   · rw [mem_lowerBounds]
     intro c1 hc1
