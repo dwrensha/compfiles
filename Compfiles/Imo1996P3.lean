@@ -58,7 +58,7 @@ problem imo1996_p3 (f : ℕ → ℕ) :
       exact Nat.dvd_mul_left _ _
 
     -- Then f(f(m)) = f(m)
-    have h1 : ∀ x, f (f x) = f x := fun x ↦ by grind
+    have h1 : ∀ x, f (f x) = f x := by grind
 
     -- f(m) = ak + (n r) k
     have h4 : f m = a * k + (n1 r) * k := by subst f; rfl
