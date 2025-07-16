@@ -116,9 +116,8 @@ lemma aux_2_2
     by_cases hlp: i < l
     . have hl₃: a x l = a x i + (l - i) * 3 := by
         exact aux_2_1 a ha₁ x i j l hx₀ hl₀ hl₁ hl₂
-      have hj₁: (t - c) = j * 3 := by
-        rw [hj₀]
-        exact Eq.symm (Nat.div_mul_cancel hc₂)
+      have hj₁: (t - c) = j * 3 :=
+        Nat.eq_mul_of_div_eq_left hc₂ hj₀.symm
       refine hh₄ (a x l) ?_ ?_
       . rw [hl₃]
         linarith
@@ -701,8 +700,7 @@ problem imo2017_p1
           have hj₆: c ∈ lowerBounds S := by exact Set.mem_of_mem_inter_right hc₀
           rw [hj₃] at hj₄
           exact hj₆ hj₄
-        refine le_trans hj₅ ?_
-        linarith
+        exact Nat.le_succ_of_le hj₅
       . obtain ⟨j, hj₀⟩ := hh₀
         have hj₁: IsSquare (a x j) := by rw [hj₀]; exact IsSquare.sq (c.sqrt + (3 : ℕ))
         have hj₂ := ha₁ x j hx₀
