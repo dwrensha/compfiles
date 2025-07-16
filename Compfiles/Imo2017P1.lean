@@ -593,7 +593,6 @@ theorem aux_5
 
 snip end
 
-
 problem imo2017_p1
   (a : ℕ → ℕ → ℕ)
   (ha₀: ∀ x, a x 0 = x)
@@ -652,7 +651,7 @@ problem imo2017_p1
     have hh₅: c ≤ c.sqrt := by
       have hh₆: c ∈ lowerBounds S := by exact Set.mem_of_mem_inter_right hc₀
       exact hh₆ hh₄
-    linarith
+    omega
   by_cases hhc: c % 3 = 2
   . constructor
     . intro h₀
@@ -763,7 +762,7 @@ problem imo2017_p1
                   contrapose! hd₄
                   obtain ⟨r, hr₀⟩ := hd₅
                   rw [hr₀, ← pow_two]
-                  refine dvd_pow ?_ (by bound)
+                  refine dvd_pow ?_ (by norm_num)
                   have hr₁: (a x (d - (1 : ℕ))).sqrt = r := by
                     rw [hr₀]
                     exact Nat.sqrt_eq r
@@ -835,7 +834,7 @@ problem imo2017_p1
       use i + (j + 1) * 3
       constructor
       . exact h₄ (j + 1)
-      . linarith
+      . omega
 
 
 end Imo2017P1
