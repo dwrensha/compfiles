@@ -36,28 +36,11 @@ snip begin
 
 lemma aux_1 :
   ∀ y, y ≡ 2 [MOD 3] → ¬ IsSquare y := by
-  intros y hy₀
-  contrapose! hy₀
-  obtain ⟨r, hr₀⟩ := hy₀
-  rw [hr₀, ← pow_two]
-  have hr₁: r % 3 = 0 ∨ r % 3 = 1 ∨ r % 3 = 2 := by omega
-  cases' hr₁ with hr₁ hr₁
-  . have hr₃: r ^ 2 ≡ 0 ^ 2 [MOD 3] := by exact Nat.ModEq.pow (2 : ℕ) hr₁
-    rw [zero_pow (by finiteness)] at hr₃
-    have hr₄: ¬(0 : ℕ) ≡ (2 : ℕ) [MOD (3 : ℕ)] := by exact of_decide_eq_false rfl
-    contrapose! hr₄
-    exact Nat.ModEq.trans hr₃.symm hr₄
-  cases' hr₁ with hr₁ hr₁
-  . have hr₃: r ^ 2 ≡ 1 ^ 2 [MOD 3] := by exact Nat.ModEq.pow (2 : ℕ) hr₁
-    rw [one_pow] at hr₃
-    have hr₄: ¬(1 : ℕ) ≡ (2 : ℕ) [MOD (3 : ℕ)] := by exact of_decide_eq_false rfl
-    contrapose! hr₄
-    exact Nat.ModEq.trans hr₃.symm hr₄
-  . have hr₃: r ^ 2 ≡ 2 ^ 2 [MOD 3] := by exact Nat.ModEq.pow (2 : ℕ) hr₁
-    norm_num at hr₃
-    have hr₄: ¬(4 : ℕ) ≡ (2 : ℕ) [MOD (3 : ℕ)] := by exact of_decide_eq_false rfl
-    contrapose! hr₄
-    exact Nat.ModEq.trans hr₃.symm hr₄
+  rintro y hy₀ ⟨y, rfl⟩
+  change _ = _ at hy₀
+  rw [Nat.mul_mod] at hy₀
+  mod_cases H : y % 3 <;>
+    change _ % _ = _ % 3 at H <;> rw [H] at hy₀ <;> norm_num at hy₀
 
 lemma aux_2_1
   (a : ℕ → ℕ → ℕ)
