@@ -22,7 +22,7 @@ problem_file { tags := [.NumberTheory] }
 namespace Imo1970P3
 
 
-open BigOperators Real
+open Real
 
 /-- A sequence of real numbers satisfying the given conditions -/
 structure IncreasingSequenceFromOne where
