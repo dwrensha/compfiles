@@ -1,5 +1,5 @@
 /-
-Copyright (c) 2025 The Compfile Contributors. All rights reserved.
+Copyright (c) 2025 The Compfiles Contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Tomas Ortega
 -/
@@ -43,7 +43,7 @@ snip begin
 noncomputable def c_seq (seq : IncreasingSequenceFromOne) (k : ℕ) : ℝ := Real.sqrt (seq.a k)
 
 /-- All elements of the sequence are positive -/
-theorem seq_pos (seq: IncreasingSequenceFromOne) : ∀ n, 0 < seq.a n := by
+lemma seq_pos (seq: IncreasingSequenceFromOne) : ∀ n, 0 < seq.a n := by
   intro n
   induction n with
   | zero =>
