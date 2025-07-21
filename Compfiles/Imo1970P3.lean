@@ -260,7 +260,7 @@ problem imo1970_p3 :
           exact d_bound
       _ ≤ d * (1 + d) * (1 - d ^ (n:ℝ)) := by
         norm_cast
-        apply mul_le_mul_of_nonneg_left _ (by nlinarith)
+        apply mul_le_mul_of_nonneg_left _ (le_of_lt daux)
         apply tsub_le_tsub (le_refl 1)
         exact pow_le_pow_of_le_one d_nonneg d_leq_one hn
       _ = ∑ x ∈ Finset.range n, (1 - d^2) * d^(x + 1) := by
