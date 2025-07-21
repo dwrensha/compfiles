@@ -22,7 +22,7 @@ problem_file { tags := [.NumberTheory] }
 namespace Imo1970P3
 
 
-open Real
+open scoped Real
 
 /-- A sequence of real numbers satisfying the given conditions -/
 structure IncreasingSequenceFromOne where
@@ -32,7 +32,7 @@ structure IncreasingSequenceFromOne where
 
 /-- The b_n sequence defined in terms of the a sequence -/
 noncomputable def b_seq (seq : IncreasingSequenceFromOne) (n : ℕ) : ℝ :=
-  ∑ k ∈ Finset.range n, (1 - seq.a k / seq.a (k + 1)) / Real.sqrt (seq.a (k + 1))
+  ∑ k ∈ Finset.range n, (1 - seq.a k / seq.a (k + 1)) / √ (seq.a (k + 1))
 
 def ValidBounds : Set ℝ :=
   { b | 0 ≤ b ∧ b < 2 }
@@ -61,13 +61,13 @@ lemma term_bound (seq : IncreasingSequenceFromOne) (k : ℕ) :
   have ck_pos : ∀ j, 0 < c_seq seq j := fun j => Real.sqrt_pos.mpr (seq_pos seq j)
   have ck_is_ak_squared: ∀ j, seq.a j = (c_seq seq j)^2 := by
     intro j
-    simp [c_seq, sq_sqrt (le_of_lt (seq_pos seq j))]
+    simp [c_seq, Real.sq_sqrt (le_of_lt (seq_pos seq j))]
 
-  have hcseq : c_seq seq (k - 1) ≤ c_seq seq k := sqrt_le_sqrt (seq.a_mono (Nat.sub_le k 1))
+  have hcseq : c_seq seq (k - 1) ≤ c_seq seq k := Real.sqrt_le_sqrt (seq.a_mono (Nat.sub_le k 1))
 
   -- The term equals c_{k-1}²/c_k · (1/a_{k-1} - 1/a_k)
   have h1 : (1 - seq.a (k - 1) / seq.a k) / Real.sqrt (seq.a k) = (c_seq seq (k - 1))^2 / c_seq seq k * (1 / seq.a (k - 1) - 1 / seq.a k) := by
-    simp [c_seq, sq_sqrt (le_of_lt (seq_pos seq _))]
+    simp [c_seq, Real.sq_sqrt (le_of_lt (seq_pos seq _))]
     have haUnit : IsUnit (seq.a (k - 1)) := by
       rw [isUnit_iff_ne_zero]
       let j := k - 1
@@ -166,13 +166,13 @@ problem imo1970_p3 :
               rw [telescoping]
             _ = 2 * (1 / c_seq seq 0 - 1 / c_seq seq (n + 1)) := by ring
             _ = 2 * (1 - 1 / c_seq seq (n + 1)) := by
-              rw [c_seq, seq.a_zero, sqrt_one]
+              rw [c_seq, seq.a_zero, Real.sqrt_one]
               simp only [ne_eq, one_ne_zero, not_false_eq_true, div_self, one_div]
 
         -- Since c_seq seq (n + 1) > 0, we have 1 / c_seq seq (n + 1) > 0
         have pos : 0 < 1 / c_seq seq (n + 1) := by
           apply div_pos one_pos
-          exact sqrt_pos.mpr (seq_pos seq (n + 1))
+          exact Real.sqrt_pos.mpr (seq_pos seq (n + 1))
 
         exact lt_of_le_of_lt bound (by linarith)
 
@@ -194,21 +194,21 @@ problem imo1970_p3 :
           · exact one_half_lt_one
           · linarith
       -- If c > 0, we can find a d such that d(1 + d) > c
-      · use sqrt (c / 2)
+      · use √ (c / 2)
         have hc : 0 < c := lt_of_le_of_ne hc_nonneg fun a ↦ h a.symm
-        have hd : 0 < sqrt (c / 2) := sqrt_pos.mpr (half_pos hc)
+        have hd : 0 < √ (c / 2) := Real.sqrt_pos.mpr (half_pos hc)
         constructor
         · exact hd
         · constructor
           · -- square both sides
-            rw [sqrt_lt (by linarith) zero_le_one]
+            rw [Real.sqrt_lt (by linarith) zero_le_one]
             linarith
           · field_simp
             rw [lt_div_iff₀' two_pos, mul_add]
-            nth_rw 1 [<-mul_self_sqrt hc_nonneg]
+            nth_rw 1 [←Real.mul_self_sqrt hc_nonneg]
             rw [<-sub_lt_iff_lt_add]
             ring_nf
-            have sqrtc_pos : 0 < √c := sqrt_pos_of_pos hc
+            have sqrtc_pos : 0 < √c := Real.sqrt_pos_of_pos hc
             rw [<-div_lt_div_iff_of_pos_right sqrtc_pos]
             field_simp
             exact hc_lt_two
@@ -233,7 +233,7 @@ problem imo1970_p3 :
 
     use a_seq
 
-    let N := Nat.ceil (1 + log (1 - c / (d * (1 + d))) / log d)
+    let N := Nat.ceil (1 + Real.log (1 - c / (d * (1 + d))) / Real.log d)
 
     use N
     intro n hn
@@ -244,16 +244,16 @@ problem imo1970_p3 :
     calc
       c < d * (1 + d) * (1 - d ^ N) := by
         -- divide both sides by d * (1 + d)
-        rw [<-inv_mul_lt_iff₀ daux]
+        rw [←inv_mul_lt_iff₀ daux]
         suffices d ^ N < 1 - (d * (1 + d))⁻¹ * c by linarith
-        rw [<-log_lt_log_iff]
-        · rw [log_pow d N]
-          suffices log (1 - (d * (1 + d))⁻¹ * c) / log d < ↑N by
-            rw [<-div_lt_iff_of_neg (log_neg dpos d_lt_one)]
+        rw [←Real.log_lt_log_iff]
+        · rw [Real.log_pow d N]
+          suffices Real.log (1 - (d * (1 + d))⁻¹ * c) / Real.log d < ↑N by
+            rw [<-div_lt_iff_of_neg (Real.log_neg dpos d_lt_one)]
             exact this
           calc
-            _ < 1 + log (1 - (d * (1 + d))⁻¹ * c) / log d := lt_one_add _
-            _ = 1 + log (1 - c / (d * (1 + d))) / log d := by field_simp
+            _ < 1 + Real.log (1 - (d * (1 + d))⁻¹ * c) / Real.log d := lt_one_add _
+            _ = 1 + Real.log (1 - c / (d * (1 + d))) / Real.log d := by field_simp
             _ ≤ _ := by apply Nat.le_ceil
         · exact pow_pos dpos N
         · field_simp
@@ -281,7 +281,7 @@ problem imo1970_p3 :
         congr
         ext x
         have : √(d ^ ((-1 + -(x:ℝ)) * 2)) = d ^ ((-1 + -(x:ℝ))) := by
-          rw [sqrt_eq_rpow, <-rpow_mul d_nonneg]
+          rw [Real.sqrt_eq_rpow, ←Real.rpow_mul d_nonneg]
           ring_nf
         rw [this]
         field_simp
@@ -293,7 +293,7 @@ problem imo1970_p3 :
               field_simp
               left
               ring_nf
-            rw [rpow_neg d_nonneg]
+            rw [Real.rpow_neg d_nonneg]
             norm_cast
             field_simp
             rw [add_comm]
@@ -305,7 +305,7 @@ problem imo1970_p3 :
               rfl
             calc
               _ = d ^ (2 + (-2 - (x:ℝ) * 2)) := by
-                rw [rpow_add dpos, rpow_ofNat]
+                rw [Real.rpow_add dpos, Real.rpow_ofNat]
               _ = _ := by ring_nf
 
 end Imo1970P3
