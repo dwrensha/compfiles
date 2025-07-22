@@ -92,8 +92,7 @@ lemma aux_2 :
     have ht₁: 0 < s.factorial := by exact Nat.factorial_pos s
     rw [← Nat.mul_div_assoc _ hk₂, mul_comm]
     rw [Nat.mul_div_mul_right _ _ ht₁]
-  rw [h₆₁]
-  exact Nat.dvd_mul_right s.factorial ((t + s).choose t)
+  exact Dvd.intro ((t + s).choose t) h₆₁.symm
 
 lemma aux_3
   (k m n : ℕ)
@@ -166,9 +165,7 @@ theorem aux_4 (x y : ℕ)
       have h14 : k * (y * (y - 1).factorial) / (y - 1).factorial = k * y := by
         have h15 : (y * (y - 1).factorial) / (y - 1).factorial = y := by
           have h16 : (y - 1).factorial > 0 := h13
-          have h17 : y * (y - 1).factorial = y * ((y - 1).factorial) := by ring
-          rw [h17]
-          field_simp [h16]
+          exact Nat.mul_div_left y h13
         calc
           k * (y * (y - 1).factorial) / (y - 1).factorial
               = k * ((y * (y - 1).factorial) / (y - 1).factorial) := by
@@ -328,8 +325,7 @@ problem imo_1967_p3
             symm
             refine Nat.mul_div_mul_left _ _ ?_
             exact Nat.factorial_pos n
-          rw [h₇₃]
-          exact Nat.dvd_mul_right n.factorial ((k - (m + 1)).choose n)
+          exact Dvd.intro _ h₇₃.symm
         . have h₇₀: ∏ i ∈ Finset.Icc 1 n, (k + (m + i) + 1) = ∏ i ∈ Finset.Icc 1 n, (m + i + k + 1) := by group
           rw [h₇₀]
           exact aux_3 k m n h₀ h₂ h₃
