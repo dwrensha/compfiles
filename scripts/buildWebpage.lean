@@ -56,7 +56,7 @@ def allImoUrls (year : Nat) (idx : Nat) : List WriteupLink :=
          ⟨aopsImoUrl year idx, "Art of Problem Solving"⟩]
      if year ≤ 2003
      then result := result ++ [⟨scholesImoUrl year idx, "John Scholes"⟩]
-     if year ≥ 1997 ∧ year ≤ 2024
+     if year ≥ 1997 ∧ year ≤ 2025
      then result := result ++ [⟨chenImoUrl year idx, "Evan Chen"⟩]
      return result
 
