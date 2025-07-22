@@ -1,3 +1,28 @@
+/-
+Copyright (c) 2025 Roozbeh Yousefzadeh. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Author: Roozbeh Yousefzadeh
+-/
+
+import Mathlib.Data.Nat.Prime.Factorial
+import Mathlib.Tactic
+
+import ProblemExtraction
+
+
+problem_file {
+  tags := [.NumberTheory]
+  importedFrom := "https://github.com/roozbeh-yz/IMO-Steps/blob/main/Lean_v20/imo_proofs/imo_1967_p3.lean"
+}
+
+/-!
+# International Mathematical Olympiad 1967, Problem 3
+
+Let $k, m, n$ be natural numbers such that m + k + 1 is a prime greater than n + 1. Let c(s) = s * (s+1).
+Prove that the product (c(m+1) - c(k)) * (c(m+2) - c(k)) * ... * (c(m+n) - c(k)) is divisible by the product c(1) * c(2) * ... * c(n).
+-/
+
+namespace Imo1967P3
 
 
 snip begin
@@ -196,7 +221,10 @@ problem imo_1967_p3
         rw [← Nat.cast_mul, ← Nat.cast_mul]
         refine Nat.cast_dvd_cast ?_
         refine Nat.mul_dvd_mul ?_ ?_
-        . sorry
+        . have h₇₂: ∏ i ∈ Finset.Icc 1 n, (k - (m + i)) = n.factorial * (k - (m + 1)).factorial := by
+            sorry
+          rw [h₇₂]
+          exact Nat.dvd_mul_right n.factorial (k - (m + 1)).factorial
         . have h₇₀: ∏ i ∈ Finset.Icc 1 n, (k + (m + i) + 1) = ∏ i ∈ Finset.Icc 1 n, (m + i + k + 1) := by group
           rw [h₇₀]
           exact aux_3 k m n h₀ h₂ h₃
