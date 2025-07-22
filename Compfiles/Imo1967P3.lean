@@ -18,8 +18,10 @@ problem_file {
 /-!
 # International Mathematical Olympiad 1967, Problem 3
 
-Let $k, m, n$ be natural numbers such that m + k + 1 is a prime greater than n + 1. Let c(s) = s * (s+1).
-Prove that the product (c(m+1) - c(k)) * (c(m+2) - c(k)) * ... * (c(m+n) - c(k)) is divisible by the product c(1) * c(2) * ... * c(n).
+Let $k, m, n$ be natural numbers such that m + k + 1 is a prime greater
+than n + 1. Let c(s) = s * (s+1). Prove that the product
+(c(m+1) - c(k)) * (c(m+2) - c(k)) * ... * (c(m+n) - c(k)) is divisible
+by the product c(1) * c(2) * ... * c(n).
 -/
 
 namespace Imo1967P3
