@@ -221,10 +221,18 @@ problem imo_1967_p3
         rw [← Nat.cast_mul, ← Nat.cast_mul]
         refine Nat.cast_dvd_cast ?_
         refine Nat.mul_dvd_mul ?_ ?_
-        . have h₇₂: ∏ i ∈ Finset.Icc 1 n, (k - (m + i)) = n.factorial * (k - (m + 1)).factorial := by
+        . have h₇₀: n ≤ k - (m + 1) := by omega
+          have h₇₁: ∏ i ∈ Finset.Icc 1 n, (k - (m + i)) = (k - (m + 1)).factorial / (k - (m + 1) - n).factorial := by
             sorry
-          rw [h₇₂]
-          exact Nat.dvd_mul_right n.factorial (k - (m + 1)).factorial
+          have h₇₂: n.factorial * (k - (m + 1) - n).factorial ∣ (k - (m + 1)).factorial := by exact Nat.factorial_mul_factorial_dvd_factorial h₇₀
+          have h₇₃: ∏ i ∈ Finset.Icc 1 n, (k - (m + i)) = n.factorial * Nat.choose (k - (m + 1)) n := by
+            rw [Nat.choose_eq_factorial_div_factorial h₇₀, h₇₁]
+            rw [← Nat.mul_div_assoc _ h₇₂]
+            symm
+            refine Nat.mul_div_mul_left _ _ ?_
+            exact Nat.factorial_pos n
+          rw [h₇₃]
+          exact Nat.dvd_mul_right n.factorial ((k - (m + 1)).choose n)
         . have h₇₀: ∏ i ∈ Finset.Icc 1 n, (k + (m + i) + 1) = ∏ i ∈ Finset.Icc 1 n, (m + i + k + 1) := by group
           rw [h₇₀]
           exact aux_3 k m n h₀ h₂ h₃
