@@ -60,8 +60,12 @@ problem imo_1967_p3
         rw [Nat.mul_sub, Nat.mul_sub]
         ring_nf
         by_cases ha₀: b ≤ a
-        . have ha₁: b ^ 2 ≤ a * b := by nlinarith
-          have ha₂: a * b ≤ a ^ 2 := by nlinarith
+        . have ha₁: b ^ 2 ≤ a * b := by
+            rw [pow_two]
+            exact Nat.mul_le_mul_right b ha₀
+          have ha₂: a * b ≤ a ^ 2 := by
+            rw [pow_two]
+            exact Nat.mul_le_mul_left a ha₀
           rw [← Nat.add_sub_assoc ha₁, Nat.sub_add_cancel ha₂]
           omega
         . push_neg at ha₀
@@ -170,4 +174,5 @@ problem imo_1967_p3
           rw [@Int.sub_eq_zero]
       rw [h₆]
       exact Int.dvd_zero ((↑n.factorial : ℤ) * (↑(n + (1 : ℕ)).factorial : ℤ))
-    . sorry
+    . push_neg at hk₁
+      sorry
