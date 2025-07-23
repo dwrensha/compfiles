@@ -1,7 +1,7 @@
 /-
 Copyright (c) 2025 Roozbeh Yousefzadeh. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Author: Roozbeh Yousefzadeh
+Authors: Roozbeh Yousefzadeh
 -/
 
 import Mathlib.Data.Nat.Prime.Factorial
@@ -127,98 +127,37 @@ lemma aux_3
   . rw [Nat.Prime.minFac_eq h₁]
     exact h₂
 
-/- this lemma was automatically proved by Kimina-Prover 72B -/
-theorem aux_4 (x y : ℕ)
-    (hy : 0 < y)
-    (hxy : y < x) :
-  x.factorial / y.factorial * y = x.factorial / (y - 1).factorial := by
-  have h1 : y ≥ 1 := by omega
-  have h2 : y.factorial = y * (y - 1).factorial := by
-    cases y with
-    | zero => linarith -- contradiction with h1
-    | succ n =>
-      simp [Nat.factorial]
-  rw [show y.factorial = y * (y - 1).factorial by exact h2]
-  have h6 : (y * (y - 1).factorial : ℕ) ∣ x.factorial := by
-    have h7 : y.factorial ∣ x.factorial := by
-      apply Nat.factorial_dvd_factorial
+lemma aux_4
+  (k m n : ℕ)
+  (h₀ : 0 < k ∧ 0 < m ∧ 0 < n)
+  (hk₀ : m < k)
+  (hk₁ : m + n < k)
+  (h₇₀ : n ≤ k - (m + 1)) :
+  ∏ i ∈ Finset.Icc 1 n, (k - (m + i)) = (k - (m + 1)).factorial / (k - (m + 1) - n).factorial := by
+  revert h₇₀
+  refine Nat.le_induction ?_ ?_ n h₀.2.2
+  . simp
+    have hk₂: k - (m + 1) = k - (m + 1) - 1 + 1 := by omega
+    rw [hk₂, Nat.factorial_succ]
+    field_simp
+  . intros d hd₀ hd₁ hd₂
+    have hd₃: ∏ i ∈ Finset.Icc 1 d, (k - (m + i)) = (k - (m + 1)).factorial / (k - (m + 1) - d).factorial := by
+      refine hd₁ ?_
+      refine le_trans ?_ hd₂
+      exact Nat.le_add_right d 1
+    rw [Finset.prod_Icc_succ_top (by linarith), hd₃]
+    have hd₄: k - (m + 1) - d = k - (m + 1) - (d + 1) + 1 := by
+      rw [Nat.sub_add_eq _ d 1, Nat.sub_add_cancel ?_]
       omega
-    have h8 : y.factorial = y * (y - 1).factorial := by
-      exact h2
-    rw [h8] at h7
-    exact h7
-  have h7 : x.factorial / (y * (y - 1).factorial) * y = x.factorial / (y - 1).factorial := by
-    have h8 : y * (y - 1).factorial ∣ x.factorial := h6
-    rcases h8 with ⟨k, hk⟩
-    have eq1 : x.factorial / (y * (y - 1).factorial) = k := by
-      rw [show x.factorial = k * (y * (y - 1).factorial) by linarith [hk]]
-      field_simp [show y * (y - 1).factorial > 0 by
-        have hy1 : y > 0 := by omega
-        have hy2 : (y - 1).factorial > 0 := by
-          apply Nat.factorial_pos
-        positivity
-      ]
-    have eq2 : x.factorial / (y - 1).factorial = k * y := by
-      rw [show x.factorial = k * (y * (y - 1).factorial) by linarith [hk]]
-      have h13 : (y - 1).factorial > 0 := by
-        apply Nat.factorial_pos
-      have h14 : k * (y * (y - 1).factorial) / (y - 1).factorial = k * y := by
-        have h15 : (y * (y - 1).factorial) / (y - 1).factorial = y := by
-          have h16 : (y - 1).factorial > 0 := h13
-          exact Nat.mul_div_left y h13
-        calc
-          k * (y * (y - 1).factorial) / (y - 1).factorial
-              = k * ((y * (y - 1).factorial) / (y - 1).factorial) := by
-                rw [Nat.mul_div_assoc]
-                all_goals
-                  have h13 : (y - 1).factorial ∣ y * (y - 1).factorial := by
-                    use y
-                    all_goals ring_nf
-                  exact h13
-          _ = k * y := by rw [h15]
-      exact h14
-    calc
-      x.factorial / (y * (y - 1).factorial) * y = (x.factorial / (y * (y - 1).factorial)) * y := by rfl
-      _ = k * y := by
-        rw [eq1]
-      _ = x.factorial / (y - 1).factorial := by
-        rw [eq2]
-  exact h7
-
-theorem aux_5 (k m n : ℕ)
-    (h₀ : 0 < k ∧ 0 < m ∧ 0 < n)
-    (h₇₀ : n ≤ k - (m + 1)) :
-    ∏ i ∈ Finset.Icc 1 n,
-      (k - (m + i)) = (k - (m + 1)).factorial / (k - (m + 1) - n).factorial := by
-  obtain ⟨h01, h02, h03⟩ := h₀
-  induction n with
-  | zero => field_simp
-  | succ n ih =>
-  rw [Finset.prod_Icc_succ_top h03]
-  cases n with
-  | zero =>
-    simp only [Nat.succ_eq_add_one, zero_add, zero_lt_one, Finset.Icc_eq_empty_of_lt,
-      Finset.prod_empty, one_mul]
-    have : k - (m + 1) = k - (m + 1) - 1 + 1 := by omega
-    rw [this]
-    set x := k - (m + 1) - 1
-    simp
-    have := Nat.factorial_succ x
-    have hp : 0 < x.factorial := by positivity
-    exact (Nat.div_eq_of_eq_mul_left hp this).symm
-  | succ n =>
-  specialize ih (by omega) (by omega)
-  rw [ih]
-  have hh : k - (m + (n + 1 + 1)) = k - (m + 1) - (n + 1) := by omega
-  have hhh : k - (m + 1) - (n + 1 + 1) = k - (m + 1) - (n + 1) - 1 := by omega
-  rw [hh]
-  rw [hhh]
-  set x := k - (m + 1)
-  set y := x - (n + 1)
-  have hx : x > 1 := by omega
-  have hy : 0 < y := by omega
-  have hxy : x > y := by omega
-  exact aux_4 x y hy hxy
+    have hd₅: (k - (m + 1) - d).factorial ∣ (k - (m + 1)).factorial := by
+      refine Nat.factorial_dvd_factorial ?_
+      field_simp
+    rw [Nat.div_mul_right_comm hd₅]
+    rw [hd₄, Nat.factorial_succ, ← hd₄]
+    rw [← Nat.sub_add_eq, add_assoc m 1 d, Nat.add_comm 1 d]
+    rw [mul_comm _ (k - (m + (d + 1)))]
+    refine Nat.mul_div_mul_left _ _ ?_
+    omega
 
 
 snip end
@@ -317,7 +256,7 @@ problem imo_1967_p3
         refine Nat.cast_dvd_cast ?_
         refine Nat.mul_dvd_mul ?_ ?_
         . have h₇₀: n ≤ k - (m + 1) := by omega
-          have h₇₁: ∏ i ∈ Finset.Icc 1 n, (k - (m + i)) = (k - (m + 1)).factorial / (k - (m + 1) - n).factorial := aux_5 k m n h₀ h₇₀
+          have h₇₁: ∏ i ∈ Finset.Icc 1 n, (k - (m + i)) = (k - (m + 1)).factorial / (k - (m + 1) - n).factorial := aux_4 k m n h₀ hk₀ hk₁ h₇₀
           have h₇₂: n.factorial * (k - (m + 1) - n).factorial ∣ (k - (m + 1)).factorial := by exact Nat.factorial_mul_factorial_dvd_factorial h₇₀
           have h₇₃: ∏ i ∈ Finset.Icc 1 n, (k - (m + i)) = n.factorial * Nat.choose (k - (m + 1)) n := by
             rw [Nat.choose_eq_factorial_div_factorial h₇₀, h₇₁]
