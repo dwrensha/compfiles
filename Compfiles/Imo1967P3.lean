@@ -163,7 +163,7 @@ lemma aux_4
 snip end
 
 
-problem imo1967_p3
+problem imo_1967_p3
   (k m n : ℕ)
   (c : ℕ → ℕ)
   (h₀ : 0 < k ∧ 0 < m ∧ 0 < n)
