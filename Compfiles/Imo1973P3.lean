@@ -66,7 +66,7 @@ lemma aux_1
       refine sq_lt_sq.mpr ?_
       refine lt_of_lt_of_le hc₀ ?_
       rw [abs_of_nonneg]
-      linarith
+      norm_num
     apply sub_neg_of_lt at hc₁
     have hc₂: ∀ (s : ℝ), discrim 1 (-t) 1 ≠ s ^ 2 := by
       intro s
@@ -104,14 +104,14 @@ lemma aux_1
     linarith
   rw [mul_one, one_pow] at h₃
   have h₄: (a * t + b) ^ 2 = (t ^ 2 - 2) ^ 2 := by
-    refine (pow_eq_pow_iff_of_ne_zero (by linarith)).mpr ?_
+    refine (pow_eq_pow_iff_of_ne_zero two_ne_zero).mpr ?_
     right
     constructor
     . linarith
     . decide
   have h₅: 4 / 5 ≤ (t ^ 2 - 2) ^ 2 / (t ^ 2 + 1) := by
-    refine (div_le_div_iff₀ (by linarith) ?_).mpr ?_
-    . exact add_pos ht₂ (by linarith)
+    refine (div_le_div_iff₀ (by norm_num) ?_).mpr ?_
+    . positivity
     . rw [mul_add, mul_one, sub_sq, add_mul, sub_mul, ← pow_mul]
       norm_num
       have h₅₀: 0 ≤ 5 * t ^ 4 + 16 - 24 * t ^ 2 := by
@@ -120,7 +120,7 @@ lemma aux_1
           refine sq_le_sq.mpr ?_
           refine le_trans ?_ ht₁
           rw [abs_of_nonneg]
-          linarith
+          positivity
         have h₅₃: 0 ≤ t ^ 2 - 4 := by linarith
         have h₅₄: 0 ≤ 5 * t ^ 2 - 4 := by linarith
         rw [h₅₁]
@@ -129,7 +129,7 @@ lemma aux_1
   refine le_trans h₅ ?_
   rw [h₄] at h₃
   refine (div_le_iff₀ ?_).mpr h₃
-  exact add_pos ht₂ (by linarith)
+  positivity
 
 snip end
 
@@ -142,8 +142,7 @@ problem imo1973_p3
     use 4/5
     use -2/5
     constructor
-    . rw [hS]
-      simp
+    . simp only [hS, Set.mem_setOf_eq]
       use -1
       group
     . group
