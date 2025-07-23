@@ -136,9 +136,9 @@ snip end
 problem imo1973_p3
   (S : Set (ℝ × ℝ))
   (hS : S = {(a, b) | ∃ x : ℝ, x ^ 4 + a * x ^ 3 + b * x ^ 2 + a * x + 1 = 0}) :
-  IsLeast {z | ∃ a b : ℝ, (a, b) ∈ S ∧ z = a ^ 2 + b ^ 2} solution := by
+  IsLeast { x.1 ^ 2 + x.2 ^ 2 | x ∈ S } solution := by
   constructor
-  . simp
+  . simp only [Prod.exists, Set.mem_setOf_eq]
     use 4/5
     use -2/5
     constructor
@@ -148,8 +148,8 @@ problem imo1973_p3
       group
     . group
   . refine mem_lowerBounds.mpr ?_
-    simp
-    intros x a b h₀ h₁
-    rw [h₁]
+    simp only [Prod.exists, Set.mem_setOf_eq, forall_exists_index, and_imp]
+    intro x a b h₀ h₁
+    rw [←h₁]
     refine aux_1 a b ?_
     bound
