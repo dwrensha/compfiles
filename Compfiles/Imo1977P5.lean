@@ -39,7 +39,7 @@ lemma aux_1
   have h₈₁: IsSquare (((b:ℤ) - 22) ^ 2) := by exact IsSquare.sq ((b:ℤ) - 22)
   have h₈₂: IsSquare s := by
     rw [hs, ← h₁]
-    exact IsSquare.sq ((b:ℤ) - 22)
+    exact h₈₁
   have ha₁: ∀ k n:ℤ, n^2 < k ∧ k < (n + 1) ^ 2 → ¬ IsSquare k := by
     intros k n hk₀
     cases' hk₀ with hk₀ hk₁
@@ -69,10 +69,7 @@ lemma aux_1
   have ha₁₀: ∀ k:ℤ, 23^2 < k ∧ k < 24 ^ 2 → ¬ IsSquare k := by exact fun k a => ha₁ k 23 a
   have ha₁₁: abs ((↑a : ℤ) - (22 : ℤ)) ≤ 31 := by
     refine abs_le.mpr ?_
-    simp
-    constructor
-    . bound
-    . exact ha₀
+    omega
   rw [← sq_abs ((↑a : ℤ) - (22 : ℤ))] at h₁ hs h₈₀
   have ha₁₂: 0 ≤ abs ((↑a : ℤ) - (22 : ℤ)) := by exact abs_nonneg ((↑a : ℤ) - (22 : ℤ))
   by_cases ha₁₃: abs ((↑a : ℤ) - (22 : ℤ)) < 15
@@ -134,11 +131,7 @@ lemma aux_1
         . right; right
           have ha₁₇: a = 50 := by
             apply (abs_eq (by norm_num)).mp at ha₁₆
-            cases' ha₁₆ with ha₁₆ ha₁₆
-            . apply eq_add_of_sub_eq at ha₁₆
-              linarith
-            . exfalso
-              bound
+            omega
           rw [ha₁₇]
           rw [ha₁₇] at h₁
           simp at h₁
@@ -149,13 +142,10 @@ lemma aux_1
           cases' h₁ with h₁ h₁
           . simp
             right
-            apply eq_add_of_sub_eq at h₁
-            norm_cast at h₁
+            omega
           . simp
             left
-            apply eq_add_of_sub_eq at h₁
-            norm_num at h₁
-            norm_cast at h₁
+            omega
         . exfalso
           interval_cases abs ((↑a : ℤ) - (22 : ℤ))
           . exact (ha₁ s 14 (by omega)) h₈₂
@@ -184,7 +174,7 @@ lemma aux_2
   have h₅₄: 43 < q := by
     have g₀: (a + b) ^ 2 ≤ 2 * (a ^ 2 + b ^ 2) := by exact add_sq_le
     have g₁: 2 * (a ^ 2 + b ^ 2) < 2 * (45 * (a + b)) := by
-      refine (Nat.mul_lt_mul_left (by linarith)).mpr ?_
+      refine (Nat.mul_lt_mul_left zero_lt_two).mpr ?_
       have g₁₀: 45 = 44 + 1 := by linarith
       rw [h₅₂, g₁₀, add_mul, one_mul]
       refine add_lt_add_of_le_of_lt ?_ ?_
@@ -204,9 +194,8 @@ lemma aux_2
     by_contra hc₀
     push_neg at hc₀
     have hc₁: q ^ 2 ≤ 43 ^ 2 := by exact Nat.pow_le_pow_left hc₀ 2
-    apply Nat.succ_le_iff.mp at g₃
-    linarith
-  have hq₀: q = 44 := by bound
+    omega
+  have hq₀: q = 44 := by omega
   rw [hq₀] at hr₀
   norm_num at hr₀
   rw [hq₀, hr₀] at h₅₂
@@ -220,9 +209,9 @@ lemma aux_2
     apply Nat.succ_le_iff.mpr at ha₀
     simp at ha₀
     have ha₁: 32 ^ 2 ≤ ((a:ℤ) - 22) ^ 2 := by
-      refine pow_le_pow_left₀ (by linarith) (by linarith) 2
-    have hb₁: 0 ≤ ((b:ℤ) - 22) ^ 2 := by exact sq_nonneg ((b:ℤ) - 22)
-    linarith
+      refine pow_le_pow_left₀ (by omega) (by omega) 2
+    have hb₁: 0 ≤ ((b:ℤ) - 22) ^ 2 := by positivity
+    omega
   . push_neg at ha₀
     exact aux_1 a b h₇ h₆ ha₀
 
