@@ -104,9 +104,7 @@ lemma aux_1
       rw [haq, hbq]
       ring_nf
     have g₁: aq = 1 := by rfl
-    have g₂: y ^ 2 + bq * y = - cq := by
-      rw [← one_mul (y ^ 2), ← g₁]
-      linarith
+    have g₂: y ^ 2 + bq * y = - cq := (neg_eq_of_add_eq_zero_left h₁₁).symm
     rw [g₀, g₂]
     linarith
   let s : ℝ := ((3 * a ^ 2 - b ^ 2) * (3 * b ^ 2 - a ^ 2)) / (4 * a ^ 2)
@@ -118,7 +116,7 @@ lemma aux_1
     rw [haq, hbq, hcq, hs]
     ring_nf
   rw [← one_mul (y ^ 2), pow_two] at h₁₁
-  apply (quadratic_eq_zero_iff_discrim_eq_sq (by linarith) y).mp at h₁₁
+  apply (quadratic_eq_zero_iff_discrim_eq_sq one_ne_zero y).mp at h₁₁
   constructor
   . exact h₁₀
   . by_contra! hc
@@ -136,8 +134,7 @@ lemma aux_1
       right
       constructor
       . exact hc₂
-      . refine mul_nonneg (by linarith) ?_
-        exact sq_nonneg a
+      . positivity
     rw [← h₁₄] at hc₃
     have h₁₅: aq ≠ 0 := by exact Ne.symm (zero_ne_one' ℝ)
     by_cases hc₄: s < 0
@@ -253,11 +250,7 @@ problem imo1961_p1b (a b x y z : ℝ) (h₀: IsSolution a b x y z) :
         have h₈₁: z ^ 2 < (x + y) ^ 2 := by
           refine lt_of_sub_pos ?_
           rw [h₈₀, ← h₁]
-          refine add_pos ?_ ?_
-          . refine add_pos_of_nonneg_of_pos ?_ ?_
-            . exact sq_nonneg x
-            . exact sq_pos_of_neg hy₀
-          . exact sq_pos_of_pos hz₀
+          positivity
         have h₈₂: x + y + z < 0 := by
           refine add_lt_of_lt_sub_left ?_
           apply sq_lt_sq.mp at h₈₁
