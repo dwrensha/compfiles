@@ -29,8 +29,8 @@ Solve the system of equations
 namespace Imo1966P5
 
 noncomputable abbrev solution_fun : (ℝ×ℝ×ℝ×ℝ) → (ℝ×ℝ×ℝ×ℝ) :=
-  fun (a1, a2, a3, a4) ↦
-  let s : List ℝ := [a1, a2, a3, a4]
+  fun (a0, a1, a2, a3) ↦
+  let s : List ℝ := [a0, a1, a2, a3]
   let ai : ℝ := Option.get (List.min? s) rfl
   let al : ℝ := Option.get (List.max? s) rfl
   let i : ℕ := s.findIdx (. = ai)
@@ -40,16 +40,11 @@ noncomputable abbrev solution_fun : (ℝ×ℝ×ℝ×ℝ) → (ℝ×ℝ×ℝ×ℝ
 
 
 problem imo1966_p5
-  (x a : ℕ → ℝ)
-  (h₀ : a 1 ≠ a 2)
-  (h₁ : a 1 ≠ a 3)
-  (h₂ : a 1 ≠ a 4)
-  (h₃ : a 2 ≠ a 3)
-  (h₄ : a 2 ≠ a 4)
-  (h₅ : a 3 ≠ a 4)
-  (h₆ : abs (a 1 - a 2) * x 2 + abs (a 1 - a 3) * x 3 + abs (a 1 - a 4) * x 4 = 1)
-  (h₇ : abs (a 2 - a 1) * x 1 + abs (a 2 - a 3) * x 3 + abs (a 2 - a 4) * x 4 = 1)
-  (h₈ : abs (a 3 - a 1) * x 1 + abs (a 3 - a 2) * x 2 + abs (a 3 - a 4) * x 4 = 1)
-  (h₉ : abs (a 4 - a 1) * x 1 + abs (a 4 - a 2) * x 2 + abs (a 4 - a 3) * x 3 = 1) :
-  (x 1, x 2, x 3, x 4) = solution_fun (a 1, a 2, a 3, a 4) := by
+  (x a : Fin 4 → ℝ)
+  (h₀ : Function.Injective a)
+  (h₆ : abs (a 0 - a 1) * x 1 + abs (a 0 - a 2) * x 2 + abs (a 0 - a 3) * x 3 = 1)
+  (h₇ : abs (a 1 - a 0) * x 0 + abs (a 1 - a 2) * x 2 + abs (a 1 - a 3) * x 3 = 1)
+  (h₈ : abs (a 2 - a 0) * x 0 + abs (a 2 - a 1) * x 1 + abs (a 2 - a 3) * x 3 = 1)
+  (h₉ : abs (a 3 - a 0) * x 0 + abs (a 3 - a 1) * x 1 + abs (a 3 - a 2) * x 2 = 1) :
+  (x 0, x 1, x 2, x 3) = solution_fun (a 0, a 1, a 2, a 3) := by
   sorry
