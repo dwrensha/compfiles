@@ -36,7 +36,7 @@ local instance planeFiniteDim :
 
 noncomputable local instance someOrientation :
     Module.Oriented ℝ (EuclideanSpace ℝ (Fin 2)) (Fin 2) :=
-  ⟨Basis.orientation (Module.finBasisOfFinrankEq _ _ planeFiniteDim.out)⟩
+  ⟨Module.Basis.orientation (Module.finBasisOfFinrankEq _ _ planeFiniteDim.out)⟩
 
 lemma lemma1
     (t : Affine.Triangle ℝ (EuclideanSpace ℝ (Fin 2)))
