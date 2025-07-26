@@ -21,7 +21,7 @@ namespace Usa2015P1
 snip begin
 
 lemma iff_comm {a b c : Prop} : (a → c) → (b → c) → (c → (a ↔ b)) → (a ↔ b) := by
-  tauto
+  grind
 
 lemma abc { a b c : ℤ } (hb : b ≠ 0) : a ^ 2 = b ^ 2 * c → ∃ d, c = d ^ 2 := by
   intro h
