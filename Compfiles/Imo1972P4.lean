@@ -79,6 +79,9 @@ problem imo1972_p4 (a b c d e : ℝ)
     have cd : c = d := by rwa [<- bc]
     have de : d = e := by rwa [cd] at ce
     exact ⟨ab, bc, cd, de⟩
-  · sorry
+  · intro h
+    obtain ⟨ab, bc, cd, de⟩ := h
+    rw [ab, bc, cd, de]
+    ring_nf; trivial
 
 end Imo1972P4
