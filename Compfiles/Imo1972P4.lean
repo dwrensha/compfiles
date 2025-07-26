@@ -80,8 +80,7 @@ problem imo1972_p4 (a b c d e : ℝ)
     have de : d = e := by rwa [cd] at ce
     exact ⟨ab, bc, cd, de⟩
   · intro h
-    obtain ⟨ab, bc, cd, de⟩ := h
-    rw [ab, bc, cd, de]
+    obtain ⟨rfl, rfl, rfl, rfl⟩ := h
     ring_nf; trivial
 
 end Imo1972P4
