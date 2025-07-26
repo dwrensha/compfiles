@@ -154,17 +154,13 @@ lemma usa2002_p1_generalized
               exact hs12
 
       · let b : { a : Finset S // f a = Color.red } → { a : Finset S' // f' a = Color.red } :=
-            fun ⟨a, ha⟩ ↦ ⟨Finset.subtype _ a, by
-               simp only [f] at ha
-               split_ifs at ha
-               exact ha
-              ⟩
+            fun ⟨a, ha⟩ ↦ ⟨Finset.subtype _ a, by grind⟩
 
         have h3 : Function.Bijective b := by
           constructor
           · rintro ⟨x, hx⟩ ⟨y,hy⟩ hxy
             unfold b at hxy
-            simp at hxy
+            simp only [ne_eq, Subtype.mk.injEq] at hxy
             obtain ⟨h3, _⟩ := (h2 x).mp hx
             obtain ⟨h4, _⟩ := (h2 y).mp hy
             apply_fun (Finset.map (Function.Embedding.subtype _) ·) at hxy
@@ -195,14 +191,7 @@ lemma usa2002_p1_generalized
       use f
       have h2 : ∀ a : Finset S,
           (f a = Color.blue ↔ s ∉ a ∧ f' (Finset.subtype _ a) = Color.blue) := by
-        intro a
-        constructor
-        · intro ha
-          have haa : s ∉ a := fun hns ↦ by simp [hns, f] at ha
-          simp only [haa, f] at ha
-          exact ⟨haa, ha⟩
-        · intro hsa
-          simp [hsa, f]
+        grind
       constructor
       · intro s1 s2 hs12
         obtain ⟨h4, _⟩ := h2 s1
@@ -222,14 +211,7 @@ lemma usa2002_p1_generalized
           · unfold f
             simp only [Finset.mem_union] at hss
             simp only [Finset.mem_union, hss, ite_true]
-            cases' hss with hss hss
-            · simp [hss]
-            · split_ifs with h
-              · rfl
-              · simp only [h, f] at hfs1
-                match h20 : (f' (Finset.subtype (fun a => ¬a = s) s1)) with
-                | Color.blue => exact (hfs1 h20).elim
-                | Color.red => rfl
+            grind
           · -- s1 ∪ s2 is in S'
             simp only [hss, f]
             rw [Finset.mem_union, not_or] at hss
@@ -240,19 +222,13 @@ lemma usa2002_p1_generalized
       · have h2' : ∀ (a : Finset S),
             f a = Color.red ↔ s ∈ a ∨
                  f' (Finset.subtype (fun a => a ≠ s) a) = Color.red := by
-          intro a
-          simp only [ne_eq, ite_eq_left_iff, f]
-          tauto
+          grind
         let b : { a // f a = Color.red } →
                { a : Finset S // s ∈ a } ⊕ { a' // f' a' = Color.red } :=
           fun ⟨a, ha⟩ ↦
             if h : s ∈ a
             then Sum.inl ⟨a, h⟩
-            else Sum.inr ⟨Finset.subtype _ a, by
-              match (h2' a).mp ha with
-              | .inl h' => contradiction
-              | .inr hh => exact hh ⟩
-
+            else Sum.inr ⟨Finset.subtype _ a, by grind⟩
         have h3 : Function.Bijective b := by
           constructor
           · rintro ⟨x, hx⟩ ⟨y, hy⟩ hxy
@@ -268,13 +244,7 @@ lemma usa2002_p1_generalized
                 · simp only [Finset.mem_subtype, Subtype.forall] at hxy
                   rw [Subtype.mk.injEq]
                   ext a
-                  constructor
-                  · intro ha
-                    have h6 : ¬ a = s := by intro has; rw [has] at ha; contradiction
-                    rwa [←hxy a h6]
-                  · intro ha
-                    have h6 : ¬ a = s := by intro has; rw [has] at ha; contradiction
-                    rwa [hxy a h6]
+                  grind
           · intro x
             match x with
             | .inl ⟨y, hy⟩ =>
