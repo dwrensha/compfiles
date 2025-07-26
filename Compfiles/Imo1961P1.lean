@@ -146,20 +146,7 @@ lemma aux_1
       exfalso
       exact hc₅ ((2 : ℝ) * (1 : ℝ) * y + -(a ^ (2 : ℕ) + b ^ (2 : ℕ)) / ((2 : ℝ) * a)) h₁₁
     . have hc₅: s = 0 := by linarith
-      rw [← h₁₄] at hc₅
-      have h₁₆: y = -bq / (2 * aq) := by
-        exact (quadratic_eq_zero_iff_of_discrim_eq_zero h₁₅ hc₅ y).mp h₁₂
-      have h₁₇: y = (a ^ 2 + b ^ 2) / (2 * a) / 2 := by
-        rw [h₁₆, haq, hbq]
-        ring_nf
-      have h₁₈: x = (a ^ 2 + b ^ 2) / (2 * a) - y := by
-        rw [mul_comm, ← div_div, add_div, pow_two a, mul_self_div_self]
-        linarith
-      have h₁₉: x = y := by linarith
-      exfalso
-      rw [h₁₉] at h₁
-      contrapose! h₁
-      field_simp
+      grind
 
 snip end
 
@@ -168,29 +155,7 @@ problem imo1961_p1a (a b x y z : ℝ) :
   ⟨x,y,z⟩ ∈ xyz_of_ab a b ↔ IsSolution a b x y z := by
   simp
   constructor
-  . intro h₀
-    cases' h₀ with h₀ h₀
-    . cases' h₀ with h₀ h₁
-      cases' h₁ with h₁ h₂
-      have h₃ := h₂ 0
-      simp at h₃
-      have h₄: (x + y) = (a ^ 2 + b ^ 2) / (2 * a) := by
-        have h₃₀ := h₂ (x + y)
-        rw [mul_comm (x + y - x), ← h₂] at h₃₀
-        simp at h₃₀
-        grind
-      constructor
-      . rw [h₁, h₄]
-        grind
-      constructor
-      . have h₅ := h₂ x
-        have h₆ := h₂ y
-        have h₇: x ^ 2 + y ^ 2 = (a ^ 2 + b ^ 2) / (2 * a) * (x + y) - 2 * (x * y) := by linarith
-        rw [h₁, h₇, h₃, h₄, ← pow_two]
-        ring_nf
-        field_simp
-      . rw [h₁, h₃]
-    . bound
+  . grind
   . intro h₀
     cases' h₀ with h₀ h₁
     cases' h₁ with h₁ h₂
