@@ -1,7 +1,7 @@
 /-
 Copyright (c) 2024 The Compfiles Contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: InternLM-MATH LEAN Formalizer v0.1 , Shahar Blumentzvaig
+Authors: InternLM-MATH LEAN Formalizer v0.1, Shahar Blumentzvaig
 -/
 
 
@@ -25,20 +25,20 @@ with r, s positive integers and j > i.
 
 namespace Imo1975P2
 
---snip begin
+snip begin
 
 lemma monotone (a : ℕ → ℤ) (ha : ∀ i : ℕ, a i < a (i + 1)) : (∀ m k : ℕ , (m>k) → (a m>a k)) := by
   intro m
   intro k
   intro h
   induction m with
-  | zero => 
+  | zero =>
     exfalso
     exact Nat.not_lt_zero k h
   | succ d hd =>
     by_cases h2 : d=k
-    rw [h2]
-    exact ha k
+    · rw [h2]
+      exact ha k
     have h3 : d>k := by
       have g1 : d+1>=k +1 := Nat.lt_iff_add_one_le.mp h
       have g2 : d>=k := Nat.le_of_add_le_add_right g1
@@ -48,7 +48,7 @@ lemma monotone (a : ℕ → ℤ) (ha : ∀ i : ℕ, a i < a (i + 1)) : (∀ m k 
     have h5 := hd h3
     exact lt_trans h5 h4
 
---snip end
+snip end
 
 problem imo1975_p2 (a : ℕ → ℤ)
   (apos : ∀ i : ℕ, 0 < a i)
@@ -66,7 +66,7 @@ problem imo1975_p2 (a : ℕ → ℤ)
   have hn0 : ∀j:ℕ , a j ≠ (0 : ℤ) := by
     intro j
     have hn0' := apos j
-    exact Ne.symm (Int.ne_of_lt hn0') 
+    exact Ne.symm (Int.ne_of_lt hn0')
   intro n0
   have h1 : ∃t:ℕ , ∀ n1:ℕ , ∃ n:ℕ , n>n1 ∧ a i ∣ (a n-t) := by
     by_contra h2
@@ -151,7 +151,7 @@ problem imo1975_p2 (a : ℕ → ℤ)
         have s2 : i<k := by
           have s2' : n0+i≥i := by exact Nat.le_add_left i n0
           exact lt_of_le_of_lt s2' hk.left
-        
+
         have s4 : (0 : ℕ)<(1 : ℕ) := Nat.zero_lt_one
         have s3' : (y-x)≠0 := by
           symm
