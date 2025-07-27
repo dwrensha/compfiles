@@ -28,7 +28,7 @@ b) Find such a sequence such that for all n:
 $\frac{x_0^2}{x_1} + \ldots + \frac{x_{n-1}^2}{x_n} < 4$
 -/
 
-namespace Imo1982Q3
+namespace Imo1982P3
 
 snip begin
 
@@ -79,15 +79,15 @@ lemma ineq {x : ℕ → ℝ} {n : ℕ} (hn : n ≠ 0) (hx : Antitone x)
 
 snip end
 
-problem imo1982_q3a {x : ℕ → ℝ} (hx : Antitone x) (h0 : x 0 = 1) (hp : ∀ k, 0 < x k) :
+problem imo1982_p3a {x : ℕ → ℝ} (hx : Antitone x) (h0 : x 0 = 1) (hp : ∀ k, 0 < x k) :
     ∃ n : ℕ, 3.999 ≤ ∑ k ∈ Finset.range n, (x k) ^ 2 / x (k + 1) := by
   use 4000
-  convert Imo1982Q3.ineq (Nat.succ_ne_zero 3998) hx h0 hp
+  convert Imo1982P3.ineq (Nat.succ_ne_zero 3998) hx h0 hp
   norm_num
 
 noncomputable determine sol : ℕ → ℝ := fun k ↦ 2⁻¹ ^ k
 
-problem imo1982_q3b : Antitone sol ∧ sol 0 = 1 ∧ (∀ k, 0 < sol k)
+problem imo1982_p3b : Antitone sol ∧ sol 0 = 1 ∧ (∀ k, 0 < sol k)
     ∧ ∀ n, ∑ k ∈ Finset.range n, sol k ^ 2 / sol (k + 1) < 4 := by
   refine ⟨?_, pow_zero _, ?_, fun n ↦ ?_⟩
   · apply (pow_right_strictAnti₀ _ _).antitone <;> norm_num

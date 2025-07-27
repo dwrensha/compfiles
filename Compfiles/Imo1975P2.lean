@@ -26,32 +26,29 @@ with r, s positive integers and j > i.
 namespace Imo1975P2
 
 problem imo1975_p2 (a : ℕ → ℤ)
-  (apos : ∀ i : ℕ, 0 < a i)
-  (ha : ∀ i : ℕ, a i < a (i + 1)) :
-    ( ∀ i n0 : ℕ ,
+    (apos : ∀ i : ℕ, 0 < a i)
+    (ha : ∀ i : ℕ, a i < a (i + 1))
+    : ∀ i n0 : ℕ,
       ∃ n, n0 ≤ n ∧
       ∃ r s : ℕ,
       ∃ j : ℕ,
         a n = r * a i + s * a j ∧
         i < j ∧
         0 < r ∧
-        0 < s ):= by
+        0 < s := by
   let b : ℕ → ℕ := fun n => (a n).natAbs
   intro i
   have hn0 : ∀ j, a j ≠ (0 : ℤ) := fun j ↦ (Int.ne_of_lt (apos j)).symm
   intro n0
-  have h1 : ∃t:ℕ , ∀ n1:ℕ , ∃ n:ℕ , n>n1 ∧ a i ∣ (a n-t) := by
+  have h1 : ∃t:ℕ , ∀ n1:ℕ , ∃ n:ℕ , n > n1 ∧ a i ∣ (a n-t) := by
     by_contra h2
     push_neg at h2
 
     choose f hf using h2
     let m := Nat.succ (Finset.sup ((List.range (b i)).toFinset) f)
     have h3 : ∀ n>m , ∀ t:ℕ , t < b i → ¬ (a i ∣ a n - t) := by
-      intro n1
-      intro g
-      intro t1
-      intro r
-      have h4 :m > f t1 := by
+      intro n1 g t1 r
+      have h4 : m > f t1 := by
         have h4' : (Finset.sup (List.range (b i)).toFinset f) >= f t1 := by
           apply Finset.le_sup
           rw[List.mem_toFinset]
@@ -107,9 +104,7 @@ problem imo1975_p2 (a : ℕ → ℤ)
         exact sub_pos.mpr t3
       have s : a m = (y-x) * a i + 1 * a k ∧ i < k ∧ 0 < (y - x).natAbs ∧ (0 : ℕ)<(1 : ℕ) := by
         omega
-      use (y-x).natAbs
-      use 1
-      use k
+      use (y-x).natAbs, 1, k
       have abs_eq : ↑((y - x).natAbs) = y - x := by
         rw [Int.natAbs_of_nonneg (Int.le_of_lt s3)]
       rw [abs_eq]
