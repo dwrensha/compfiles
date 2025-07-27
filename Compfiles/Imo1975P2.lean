@@ -25,14 +25,6 @@ with r, s positive integers and j > i.
 
 namespace Imo1975P2
 
-snip begin
-
-lemma monotone (a : ℕ → ℤ) (ha : ∀ i : ℕ, a i < a (i + 1)) : ∀ m k : ℕ , m > k → a k < a m := by
-  intro m k h
-  induction m <;> grind
-
-snip end
-
 problem imo1975_p2 (a : ℕ → ℤ)
   (apos : ∀ i : ℕ, 0 < a i)
   (ha : ∀ i : ℕ, a i < a (i + 1)) :
@@ -107,7 +99,7 @@ problem imo1975_p2 (a : ℕ → ℤ)
     have r1 : m ≥ n0 := by omega
     have r2 : ∃ r s j : ℕ, a m = r * a i + s * a j ∧ i < j ∧ 0 < r ∧ 0 < s := by
       have s3 : 0<y-x := by
-        have t1 : a m > a k := monotone a ha m k hm.left
+        have t1 : a k < a m := strictMono_nat_of_lt_succ ha hm.left
         have t2 : a m - t > a k - t :=  add_lt_add_right t1 (-t)
         rw [hy] at t2
         rw [hx] at t2
