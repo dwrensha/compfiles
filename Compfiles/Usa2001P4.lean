@@ -32,7 +32,7 @@ lemma lemma1 (a b c d : ℝ) : a * c + b * d ≤ Real.sqrt (a^2 + b^2) * Real.sq
   let v2 : EuclideanSpace ℝ (Fin 2) := ![c, d]
   have h2 : a * c + b * d ≤ |a * c + b * d| := le_abs_self _
   have h1 := abs_real_inner_le_norm v1 v2
-  simp [EuclideanSpace.norm_eq, v1, v2] at h1
+  simp [EuclideanSpace.norm_eq, v1, v2, inner] at h1
   rw [mul_comm c a, mul_comm d b] at h1
   exact h2.trans h1
 
