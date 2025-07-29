@@ -59,6 +59,14 @@ problem imo1963_p4 (x₁ x₂ x₃ x₄ x₅ y : ℝ) :
     ring_nf
     refine ⟨trivial, trivial, ?_, ?_, ?_⟩ <;> rw [h'] <;> ring
 
-  sorry
+  intro h
+  obtain ⟨h₁, h₂, h₃, h₄, h₅⟩ := h
+  by_cases hy : y ≠ 2
+  · sorry
+  simp at hy
+  rw [hy] at h₁ h₂ h₃ h₄ h₅
+  have h₆ : x₅ + x₂ = x₃ + x₄ := by linarith
+  have h₇ : x₃ + x₄ + (x₅ + x₂) + x₁ = 5 * x₁ := by rw [<- h₆, h₁]; ring
+  right; left; refine ⟨?_, ?_, ?_, ?_, hy⟩ <;> linarith
 
 end Imo1963P4
