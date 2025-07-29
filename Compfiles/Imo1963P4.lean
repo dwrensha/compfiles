@@ -44,7 +44,21 @@ problem imo1963_p4 (x₁ x₂ x₃ x₄ x₅ y : ℝ) :
      x₂ + x₄ = y * x₃ ∧
      x₃ + x₅ = y * x₄ ∧
      x₄ + x₁ = y * x₅) := by
-  sorry
+  constructor
+  · intro h
+    rcases h with h₀ | h₁
+    · obtain ⟨rfl, rfl, rfl, rfl, rfl⟩ := h₀
+      ring_nf; trivial
+    rcases h₁ with heq | h₂
+    · obtain ⟨rfl, rfl, rfl, rfl, rfl⟩ := heq
+      ring_nf; trivial
+    rcases h₂ with ⟨hy, hst⟩
+    rcases hst with ⟨s, ⟨t, h⟩⟩
+    obtain ⟨rfl, rfl, rfl, rfl, rfl⟩ := h
+    have h' : y^2 = 1 - y := by linarith
+    ring_nf
+    refine ⟨trivial, trivial, ?_, ?_, ?_⟩ <;> rw [h'] <;> ring
 
+  sorry
 
 end Imo1963P4
