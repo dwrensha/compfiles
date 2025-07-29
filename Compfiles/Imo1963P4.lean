@@ -62,7 +62,29 @@ problem imo1963_p4 (x₁ x₂ x₃ x₄ x₅ y : ℝ) :
   intro h
   obtain ⟨h₁, h₂, h₃, h₄, h₅⟩ := h
   by_cases hy : y ≠ 2
-  · sorry
+  · have hx₃ : x₃ = y * x₂ - x₁ := by linarith
+    have hx₄ : x₄ = y * x₃ - x₂ := by linarith
+    have hx₅ : x₅ = y * x₁ - x₂ := by linarith
+    have hxy₁ : (y^2 + y - 1) * (x₂ - x₁) = 0 := by
+      rw [hx₃] at hx₄
+      rw [hx₄, hx₅] at h₅
+      linarith
+    have hx₄' : x₄ = (y^2 - 1) * x₂ - y * x₁ := by
+      have h' : y * (y * x₂ - x₁) - x₂ = (y^2 - 1) * x₂ - y * x₁ := by ring
+      rwa [hx₃, h'] at hx₄
+    have hxy₂ : (y^2 + y - 1) * ((y-1) * x₂ - x₁) = 0 := by
+      have : (y * x₂ - x₁) + (y * x₁ - x₂) = y * ((y^2 - 1) * x₂ - y * x₁) := by
+        rwa [<- hx₃, <- hx₅, <- hx₄']
+      linarith
+
+    by_cases hy' : y^2 + y - 1 ≠ 0
+    · sorry
+    simp at hy'
+    have h' : y^2 = 1 - y := by linarith
+    simp [h'] at hx₄'
+    right; right
+    exact ⟨by assumption, by use x₁, x₂⟩
+
   simp at hy
   rw [hy] at h₁ h₂ h₃ h₄ h₅
   have h₆ : x₅ + x₂ = x₃ + x₄ := by linarith
