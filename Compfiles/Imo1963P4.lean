@@ -78,7 +78,19 @@ problem imo1963_p4 (x₁ x₂ x₃ x₄ x₅ y : ℝ) :
       linarith
 
     by_cases hy' : y^2 + y - 1 ≠ 0
-    · sorry
+    · have h0₁ : (x₂ - x₁ = 0) ∧ ((y - 1) * x₂ - x₁ = 0) := by
+        exact ⟨mul_eq_zero.mp hxy₁ |>.resolve_left hy',
+        mul_eq_zero.mp hxy₂ |>.resolve_left hy'⟩
+      have h0₂ : 0 = (y + -2) * x₂ := by linarith
+      rw [zero_eq_mul] at h0₂
+      rcases h0₂ with hy | hx₂
+      · rw [add_neg_eq_zero] at hy; contradiction
+      have hx₁ : x₁ = 0 := by linarith
+      simp [hx₁, hx₂] at hx₃
+      simp [hx₃, hx₂] at hx₄
+      simp [hx₁, hx₂] at hx₅
+      left; exact ⟨hx₁, hx₂, hx₃, hx₄, hx₅⟩
+
     simp at hy'
     have h' : y^2 = 1 - y := by linarith
     simp [h'] at hx₄'
