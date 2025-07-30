@@ -116,7 +116,7 @@ lemma lemma3 (N : ℕ) (b : Blackboard N)
   have h1 : 0 < Nat.maxPowDiv 2 (b i).val := by
      have h2 : 2 ∣ (b i : ℕ) := even_iff_two_dvd.mp hei
      replace h2 : 2^1 ∣ (b i : ℕ) := h2
-     exact Nat.maxPowDiv.le_of_dvd one_lt_two (b i).prop h2
+     exact Nat.maxPowDiv.le_of_dvd one_lt_two (PNat.ne_zero (b i)) h2
   rw [Finset.sum_eq_zero_iff] at hd
   have h2 := hd i (Finset.mem_univ i)
   omega
@@ -130,7 +130,7 @@ lemma lemma5 {a x : ℕ} (hx : 0 < x)
   have h4 : 2 ^ (Nat.maxPowDiv 2 a) ∣ x + a :=
     Nat.pow_dvd_of_le_of_pow_dvd H h1
   have h5 : 2 ^ (Nat.maxPowDiv 2 a) ∣ x := (Nat.dvd_add_iff_left h2).mpr h4
-  have h6 := Nat.maxPowDiv.le_of_dvd one_lt_two hx h5
+  have h6 := Nat.maxPowDiv.le_of_dvd one_lt_two (Nat.ne_zero_of_lt hx) h5
   omega
 
 lemma lemma5' {a x : ℕ} (hx : 0 < x)
@@ -154,7 +154,7 @@ lemma lemma5' {a x : ℕ} (hx : 0 < x)
     rw [mul_assoc, ←mul_add]
 
   have h12 : 2 ^ Nat.maxPowDiv 2 x ∣ x + a := Dvd.intro _ h10.symm
-  replace h12 := Nat.maxPowDiv.le_of_dvd one_lt_two (Nat.add_pos_left hx a) h12
+  replace h12 := Nat.maxPowDiv.le_of_dvd one_lt_two (by omega) h12
   suffices H : Nat.maxPowDiv 2 (x + a) ≤ Nat.maxPowDiv 2 x from Nat.le_antisymm H h12
   by_contra! H
 
@@ -164,7 +164,7 @@ lemma lemma5' {a x : ℕ} (hx : 0 < x)
     rintro ⟨z, rfl⟩
     rw [←mul_assoc, ←pow_succ] at hxx
     have h17 : 2 ^ (Nat.maxPowDiv 2 x + 1) ∣ x := Dvd.intro z hxx.symm
-    replace h17 := Nat.maxPowDiv.le_of_dvd one_lt_two hx h17
+    replace h17 := Nat.maxPowDiv.le_of_dvd one_lt_two (Nat.ne_zero_of_lt hx) h17
     omega
 
   have h15' : ¬ 2 ∣ xx + 2 ^ (1 + c) * aa := by

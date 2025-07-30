@@ -104,7 +104,7 @@ lemma two_n_and_rest_factorisation (m : ℕ) (even_m : Even m) (h: 0 < m) :
       rw [hb] at ha
       rw [pow_succ]
       linarith only [ha]
-    have h4 := Nat.maxPowDiv.le_of_dvd one_lt_two h h3
+    have h4 := Nat.maxPowDiv.le_of_dvd one_lt_two (Nat.ne_zero_of_lt h) h3
     exact (lt_self_iff_false _).mp (Nat.succ_le_iff.mp h4)
 
 lemma m_mod_2_contradiction (m n A : ℕ)
