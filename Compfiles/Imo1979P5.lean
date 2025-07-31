@@ -1,7 +1,7 @@
 /-
 Copyright (c) 2024 The Compfiles Contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: InternLM-MATH LEAN Formalizer v0.1
+Authors: InternLM-MATH LEAN Formalizer v0.1, Maximiliano Onofre-Martínez
 -/
 
 import Mathlib.Tactic
@@ -78,6 +78,5 @@ problem imo1979_p5 (a : ℝ) :
   · use 0, 0, 3, 0, 0; norm_num
   · use 0, 0, 0, 4, 0; norm_num
   · use 0, 0, 0, 0, 5; norm_num
-
 
 end Imo1979P5
