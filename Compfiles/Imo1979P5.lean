@@ -30,7 +30,17 @@ problem imo1979_p5 (a : ℝ) :
     x1 ≥ 0 ∧ x2 ≥ 0 ∧ x3 ≥ 0 ∧ x4 ≥ 0 ∧ x5 ≥ 0 ∧
     x1 + 2*x2 + 3*x3 + 4*x4 + 5*x5 = a ∧
     x1 + 2^3*x2 + 3^3*x3 + 4^3*x4 + 5^3*x5 = a^2 ∧
-    x1 + 2^5*x2 + 3^5*x3 + 4^5*x4 + 5^5*x5 = a^3 ) ↔ a ∈ solution_set := by sorry
+    x1 + 2^5*x2 + 3^5*x3 + 4^5*x4 + 5^5*x5 = a^3 ) ↔ a ∈ solution_set := by
+  constructor
+  · sorry
+  intro h
+  rcases h with rfl | rfl | rfl | rfl | rfl | rfl
+  · use 0, 0, 0, 0, 0; norm_num
+  · use 1, 0, 0, 0, 0; norm_num
+  · use 0, 2, 0, 0, 0; norm_num
+  · use 0, 0, 3, 0, 0; norm_num
+  · use 0, 0, 0, 4, 0; norm_num
+  · use 0, 0, 0, 0, 5; norm_num
 
 
 end Imo1979P5
