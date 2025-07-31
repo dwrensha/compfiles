@@ -38,6 +38,18 @@ problem imo1979_p5 (a : ℝ) :
       3*(a - 9)^2 * x3 + 4*(a - 16)^2 * x4 +
       5*(a - 25)^2 * x5 = 0 := by
         linear_combination a^2 * h₁ + h₃ - 2 * a * h₂
+
+    have t1 : 0 ≤ (a - 1)^2 * x1 := by positivity
+    have t2 : 0 ≤ 2 * (a - 4)^2 * x2 := by positivity
+    have t3 : 0 ≤ 3 * (a - 9)^2 * x3 := by positivity
+    have t4 : 0 ≤ 4 * (a - 16)^2 * x4 := by positivity
+    have t5 : 0 ≤ 5 * (a - 25)^2 * x5 := by positivity
+
+    have h1 : (a + -1)^2 * x1 = 0 := by linarith
+    have h2 : (a + -4)^2 * x2 = 0 := by linarith
+    have h3 : (a + -9)^2 * x3 = 0 := by linarith
+    have h4 : (a + -16)^2 * x4 = 0 := by linarith
+    have h5 : (a + -25)^2 * x5 = 0 := by linarith
     sorry
 
   intro h
