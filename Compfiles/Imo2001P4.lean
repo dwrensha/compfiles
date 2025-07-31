@@ -96,8 +96,7 @@ def rotateDomain (i : Fin n) : Perm (Perm (Fin n)) := Equiv.mulRight (finCycle i
 `(n - 1)! * (n * (n + 1) / 2)`. -/
 lemma sum_perm_add_one {i : Fin n} (hn : 1 ≤ n) :
     ∑ a : Perm (Fin n), ((a i).1 + 1) = (n - 1)! * (n * (n + 1) / 2) := by
-  rw [← (rotateDomain (-i)).sum_comp]; swap
-  · simp_rw [coe_univ, Set.subset_univ]
+  rw [← Equiv.sum_comp (rotateDomain (-i))]
   rw [le_iff_exists_add'] at hn; obtain ⟨n, rfl⟩ := hn
   simp_rw [rotateDomain, coe_mulRight, Perm.coe_mul, Function.comp_apply, finCycle_apply,
     add_neg_cancel, univ_perm_fin_succ, sum_map, coe_toEmbedding, Fintype.sum_prod_type,
