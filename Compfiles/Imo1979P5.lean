@@ -50,7 +50,25 @@ problem imo1979_p5 (a : ℝ) :
     have h3 : (a + -9)^2 * x3 = 0 := by linarith
     have h4 : (a + -16)^2 * x4 = 0 := by linarith
     have h5 : (a + -25)^2 * x5 = 0 := by linarith
-    sorry
+    rw [mul_eq_zero] at h1 h2 h3 h4 h5
+
+    rcases h1 with h1 | h1
+    · simp at h1; rw [add_neg_eq_zero] at h1
+      exact Or.inr (Or.inl h1)
+    rcases h2 with h2 | h2
+    · simp at h2; rw [add_neg_eq_zero] at h2
+      exact Or.inr (Or.inr (Or.inl h2))
+    rcases h3 with h3 | h3
+    · simp at h3; rw [add_neg_eq_zero] at h3
+      exact Or.inr (Or.inr (Or.inr (Or.inl h3)))
+    rcases h4 with h4 | h4
+    · simp at h4; rw [add_neg_eq_zero] at h4
+      exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h4))))
+    rcases h5 with h5 | h5
+    · simp at h5; rw [add_neg_eq_zero] at h5
+      exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr h5))))
+    simp [h1, h2, h3, h4, h5] at h₁
+    exact Or.inl (h₁.symm)
 
   intro h
   rcases h with rfl | rfl | rfl | rfl | rfl | rfl
