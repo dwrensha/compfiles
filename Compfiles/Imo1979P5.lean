@@ -32,7 +32,14 @@ problem imo1979_p5 (a : ℝ) :
     x1 + 2^3*x2 + 3^3*x3 + 4^3*x4 + 5^3*x5 = a^2 ∧
     x1 + 2^5*x2 + 3^5*x3 + 4^5*x4 + 5^5*x5 = a^3 ) ↔ a ∈ solution_set := by
   constructor
-  · sorry
+  · rintro ⟨x1, x2, x3, x4, x5, hx1, hx2, hx3, hx4, hx5, h₁, h₂, h₃⟩
+    have h₀ :
+      (a - 1)^2 * x1 + 2*(a - 4)^2 * x2 +
+      3*(a - 9)^2 * x3 + 4*(a - 16)^2 * x4 +
+      5*(a - 25)^2 * x5 = 0 := by
+        linear_combination a^2 * h₁ + h₃ - 2 * a * h₂
+    sorry
+
   intro h
   rcases h with rfl | rfl | rfl | rfl | rfl | rfl
   · use 0, 0, 0, 0, 0; norm_num
