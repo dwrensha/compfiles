@@ -99,7 +99,7 @@ lemma sign_eq_of_contra
   | one => rfl
   | mul_right p s sform ih =>
     suffices |S x p - S x (p * s)| ≤ (n + 1 : ℕ) + 1 by
-      rw [ih]; exact sign_eq_of_abs_sub_le (h _) (h _) (by norm_cast; omega) this
+      rw [ih]; exact sign_eq_of_abs_sub_le (h _) (h _) (by positivity) this
     rw [Set.mem_range] at sform; obtain ⟨i, hi⟩ := sform
     iterate 2 rw [S, ← sum_add_sum_compl {i.castSucc, i.succ}]
     have cg : ∑ j ∈ {i.castSucc, i.succ}ᶜ, (j + 1) * x ((p * s) j) =
@@ -125,7 +125,7 @@ lemma S_one_add_S_revPerm
   simp_rw [revPerm_apply, val_rev, rev_rev, S, Perm.one_apply, ← sum_add_distrib, ← add_mul]
   have cg : ∑ i : Fin n, (i + 1 + ((n - (i + 1) : ℕ) + 1)) * x i = ∑ i, (n + 1) * x i := by
     congr! 2 with i; norm_cast; omega
-  rw [cg, ← mul_sum, abs_mul, hx₁, mul_one]; exact abs_of_nonneg (by norm_cast; omega)
+  rw [cg, ← mul_sum, abs_mul, hx₁, mul_one]; exact abs_of_nonneg (by positivity)
 
 snip end
 
@@ -136,7 +136,7 @@ problem imo1997_p3 {x : Fin n → ℝ} (hx₁ : |∑ i, x i| = 1)
   | 0 => simp [S]
   | n + 1 =>
     by_contra! h
-    exact (lt_abs_add_of_sign_eq (h _) (h _) (by norm_cast; omega)
+    exact (lt_abs_add_of_sign_eq (h _) (h _) (by positivity)
       (sign_eq_of_contra hx₂ h _)).ne' (S_one_add_S_revPerm hx₁)
 
 end Imo1997P3
