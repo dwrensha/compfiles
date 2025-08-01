@@ -33,10 +33,6 @@ open Equiv Fin Finset
 
 snip begin
 
-/-- The sum $x_1 + 2x_2 + \cdots + nx_n$ mentioned in the problem. -/
-def S {n : ℕ} (x : Fin n → ℝ) (p : Perm (Fin n)) : ℝ :=
-  ∑ i, (i + 1) * x (p i)
-
 /-
 # Solution
 For a permutation $π$ let $S(π) = \sum_{i=1}^n i x_{π(i)}$. We wish to show that there exists $π$
@@ -53,6 +49,9 @@ Since $S(1)$ and $S(R)$ have the same sign yet are strictly larger than $\frac{n
 absolute value, $|S(1) + S(R)| > n + 1$, which yields a contradiction. Therefore the initial
 assumption that all permutations satisfy $\frac{n+1}2 < |S(π)|$ must be false; the result follows.
 -/
+
+def S {n : ℕ} (x : Fin n → ℝ) (p : Perm (Fin n)) : ℝ :=
+  ∑ i, (i + 1) * x (p i)
 
 lemma sign_eq_of_abs_sub_le {a b c : ℝ} (ha : c / 2 < |a|) (hb : c / 2 < |b|) (hc : 0 < c)
     (hs : |a - b| ≤ c) : a.sign = b.sign := by
