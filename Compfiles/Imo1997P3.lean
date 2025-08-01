@@ -29,8 +29,6 @@ that $|y_1 + 2y_2 + \cdots + ny_n| ≤ \frac{n+1}2$.
 
 namespace Imo1997P3
 
-open Equiv Fin Finset
-
 snip begin
 
 /-
@@ -50,7 +48,7 @@ absolute value, $|S(1) + S(R)| > n + 1$, which yields a contradiction. Therefore
 assumption that all permutations satisfy $\frac{n+1}2 < |S(π)|$ must be false; the result follows.
 -/
 
-def S {n : ℕ} (x : Fin n → ℝ) (p : Perm (Fin n)) : ℝ :=
+def S {n : ℕ} (x : Fin n → ℝ) (p : Equiv.Perm (Fin n)) : ℝ :=
   ∑ i, (i + 1) * x (p i)
 
 lemma sign_eq_of_abs_sub_le {a b c : ℝ} (ha : c / 2 < |a|) (hb : c / 2 < |b|) (hc : 0 < c)
@@ -89,26 +87,26 @@ lemma lt_abs_add_of_sign_eq {a b c : ℝ} (ha : c / 2 < |a|) (hb : c / 2 < |b|) 
 the signs of `S x p` are all the same. -/
 lemma sign_eq_of_contra {n : ℕ}
     {x : Fin (n + 1) → ℝ} (hx₂ : ∀ i, |x i| ≤ ((n + 1 : ℕ) + 1) / 2)
-    (h : ∀ (p : Perm (Fin (n + 1))), ((n + 1 : ℕ) + 1) / 2 < |S x p|) :
+    (h : ∀ (p : Equiv.Perm (Fin (n + 1))), ((n + 1 : ℕ) + 1) / 2 < |S x p|) :
     ∀ p, (S x 1).sign = (S x p).sign := fun p ↦ by
   induction p using Submonoid.induction_of_closure_eq_top_right
-    (Perm.mclosure_swap_castSucc_succ n) with
+    (Equiv.Perm.mclosure_swap_castSucc_succ n) with
   | one => rfl
   | mul_right p s sform ih =>
     suffices |S x p - S x (p * s)| ≤ (n + 1 : ℕ) + 1 by
       rw [ih]; exact sign_eq_of_abs_sub_le (h _) (h _) (by positivity) this
     rw [Set.mem_range] at sform; obtain ⟨i, hi⟩ := sform
-    iterate 2 rw [S, ← sum_add_sum_compl {i.castSucc, i.succ}]
+    iterate 2 rw [S, ← Finset.sum_add_sum_compl {i.castSucc, i.succ}]
     have cg : ∑ j ∈ {i.castSucc, i.succ}ᶜ, (j + 1) * x ((p * s) j) =
         ∑ j ∈ {i.castSucc, i.succ}ᶜ, (j + 1) * x (p j) := by
-      congr! 3 with j mj; rw [Perm.mul_apply, ← hi]; congr
-      rw [mem_compl, mem_insert, mem_singleton, not_or] at mj
-      exact swap_apply_of_ne_of_ne mj.1 mj.2
+      congr! 3 with j mj; rw [Equiv.Perm.mul_apply, ← hi]; congr
+      rw [Finset.mem_compl, Finset.mem_insert, Finset.mem_singleton, not_or] at mj
+      exact Equiv.swap_apply_of_ne_of_ne mj.1 mj.2
     rw [cg, add_sub_add_right_eq_sub,
-      sum_pair (castSucc_lt_succ _).ne, sum_pair (castSucc_lt_succ _).ne,
-      Perm.mul_apply, Perm.mul_apply, ← hi, swap_apply_left, swap_apply_right,
-      add_comm, add_sub_add_comm, ← sub_mul, ← sub_mul,
-      val_succ, coe_castSucc, Nat.cast_add, Nat.cast_one, add_sub_cancel_left, sub_add_cancel_left,
+      Finset.sum_pair (Fin.castSucc_lt_succ _).ne, Finset.sum_pair (Fin.castSucc_lt_succ _).ne,
+      Equiv.Perm.mul_apply, Equiv.Perm.mul_apply, ← hi, Equiv.swap_apply_left,
+      Equiv.swap_apply_right, add_comm, add_sub_add_comm, ← sub_mul, ← sub_mul, Fin.val_succ,
+      Fin.coe_castSucc, Nat.cast_add, Nat.cast_one, add_sub_cancel_left, sub_add_cancel_left,
       one_mul, neg_one_mul]
     calc
       _ ≤ |x (p i.succ)| + |-x (p i.castSucc)| := abs_add_le ..
@@ -117,18 +115,19 @@ lemma sign_eq_of_contra {n : ℕ}
       _ = _ := add_halves _
 
 lemma S_one_add_S_revPerm {n : ℕ}
-    {x : Fin n → ℝ} (hx₁ : |∑ i, x i| = 1) : |S x 1 + S x revPerm| = n + 1 := by
-  nth_rw 2 [S]; rw [← revPerm.sum_comp _ _ (by simp)]
-  simp_rw [revPerm_apply, val_rev, rev_rev, S, Perm.one_apply, ← sum_add_distrib, ← add_mul]
+    {x : Fin n → ℝ} (hx₁ : |∑ i, x i| = 1) : |S x 1 + S x Fin.revPerm| = n + 1 := by
+  nth_rw 2 [S]; rw [← Fin.revPerm.sum_comp _ _ (by simp)]
+  simp_rw [Fin.revPerm_apply, Fin.val_rev, Fin.rev_rev, S, Equiv.Perm.one_apply,
+           ← Finset.sum_add_distrib, ← add_mul]
   have cg : ∑ i : Fin n, (i + 1 + ((n - (i + 1) : ℕ) + 1)) * x i = ∑ i, (n + 1) * x i := by
     congr! 2 with i; norm_cast; omega
-  rw [cg, ← mul_sum, abs_mul, hx₁, mul_one]; exact abs_of_nonneg (by positivity)
+  rw [cg, ← Finset.mul_sum, abs_mul, hx₁, mul_one]; exact abs_of_nonneg (by positivity)
 
 snip end
 
 problem imo1997_p3 {n : ℕ} {x : Fin n → ℝ} (hx₁ : |∑ i, x i| = 1)
     (hx₂ : ∀ i, |x i| ≤ (n + 1) / 2) :
-    ∃ p : Perm (Fin n), |∑ i, (i + 1) * x (p i)| ≤ (n + 1) / 2 := by
+    ∃ p : Equiv.Perm (Fin n), |∑ i, (i + 1) * x (p i)| ≤ (n + 1) / 2 := by
   match n with
   | 0 => simp
   | n + 1 =>
