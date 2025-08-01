@@ -200,26 +200,7 @@ lemma odd_props (n : ℕ) (odd_s : Finset ℕ) (s_odd_eq : odd_s = (Finset.Icc n
     have := Even.two_dvd h
     ext x
     simp_all only [Finset.mem_insert, Finset.mem_singleton, Finset.mem_filter, Finset.mem_Icc]
-    apply Iff.intro
-    · intro H
-      constructor
-      · omega
-      · obtain h3 | h5 | h6 := H
-        · simp_all only [Even.add_one]
-        · have : Odd 3 := by decide
-          have := Even.add_odd h this
-          rw[h5]
-          exact this
-        · have : Odd 5 := by decide
-          have := Even.add_odd h this
-          rw[h6]
-          exact this
-    intro H
-    obtain ⟨a, Hh⟩ := H
-    have h3 := Odd.not_two_dvd_nat Hh
-    by_contra Hhh
-    simp_all only [Nat.two_dvd_ne_zero, not_or]
-    omega
+    grind
 
 lemma exactly_three_odd_numbers (n : ℕ) (odd_s : Finset ℕ)
                                 (odd_s_eq: odd_s = (Finset.Icc n (n + 5)).filter (λ x => Odd x)): (odd_s).card = 3 := by
