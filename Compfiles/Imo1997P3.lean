@@ -31,13 +31,11 @@ namespace Imo1997P3
 
 open Equiv Fin Finset
 
-variable {n : ℕ}
+snip begin
 
 /-- The sum $x_1 + 2x_2 + \cdots + nx_n$ mentioned in the problem. -/
-def S (x : Fin n → ℝ) (p : Perm (Fin n)) : ℝ :=
+def S {n : ℕ} (x : Fin n → ℝ) (p : Perm (Fin n)) : ℝ :=
   ∑ i, (i + 1) * x (p i)
-
-snip begin
 
 /-
 # Solution
@@ -90,7 +88,7 @@ lemma lt_abs_add_of_sign_eq {a b c : ℝ} (ha : c / 2 < |a|) (hb : c / 2 < |b|) 
 
 /-- For fixed nonempty `x`, assuming the opposite of what is to be proven,
 the signs of `S x p` are all the same. -/
-lemma sign_eq_of_contra
+lemma sign_eq_of_contra {n : ℕ}
     {x : Fin (n + 1) → ℝ} (hx₂ : ∀ i, |x i| ≤ ((n + 1 : ℕ) + 1) / 2)
     (h : ∀ (p : Perm (Fin (n + 1))), ((n + 1 : ℕ) + 1) / 2 < |S x p|) :
     ∀ p, (S x 1).sign = (S x p).sign := fun p ↦ by
@@ -119,7 +117,7 @@ lemma sign_eq_of_contra
         rw [abs_neg]; exact add_le_add (hx₂ _) (hx₂ _)
       _ = _ := add_halves _
 
-lemma S_one_add_S_revPerm
+lemma S_one_add_S_revPerm {n : ℕ}
     {x : Fin n → ℝ} (hx₁ : |∑ i, x i| = 1) : |S x 1 + S x revPerm| = n + 1 := by
   nth_rw 2 [S]; rw [← revPerm.sum_comp _ _ (by simp)]
   simp_rw [revPerm_apply, val_rev, rev_rev, S, Perm.one_apply, ← sum_add_distrib, ← add_mul]
@@ -129,11 +127,11 @@ lemma S_one_add_S_revPerm
 
 snip end
 
-problem imo1997_p3 {x : Fin n → ℝ} (hx₁ : |∑ i, x i| = 1)
+problem imo1997_p3 {n : ℕ} {x : Fin n → ℝ} (hx₁ : |∑ i, x i| = 1)
     (hx₂ : ∀ i, |x i| ≤ (n + 1) / 2) :
-    ∃ p, |S x p| ≤ (n + 1) / 2 := by
+    ∃ p : Perm (Fin n), |∑ i, (i + 1) * x (p i)| ≤ (n + 1) / 2 := by
   match n with
-  | 0 => simp [S]
+  | 0 => simp
   | n + 1 =>
     by_contra! h
     exact (lt_abs_add_of_sign_eq (h _) (h _) (by positivity)
