@@ -122,18 +122,7 @@ problem imo1969_p2
         refine (div_eq_div_iff ?_ ?_).mp ?_
         . simp
           exact hx₀.2
-        . simp
-          have hx₁: Ccos * Real.cos x ≠ 0 := by
-            refine mul_ne_zero ?_ hx₀.2
-            exact h₄
-          have hx₂: Ccos * Real.cos x = Csin * Real.sin x := by
-            rw [h₅ x] at hx₀
-            refine eq_of_sub_eq_zero ?_
-            exact hx₀.1
-          have hx₃: Csin * Real.sin x ≠ 0 := by
-            rw [← hx₂]
-            exact hx₁
-          exact left_ne_zero_of_mul hx₃
+        . grind
         . rw [h₅ x, sub_eq_zero] at hx₀
           simp only [div_inv_eq_mul, mul_comm (Real.sin x) _]
           exact hx₀.1
