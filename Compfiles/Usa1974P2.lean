@@ -42,7 +42,6 @@ lemma usa1974_p2_wlog :
   -- ⊢ a ^ a * b ^ b * c ^ c * (a ^ b * b ^ c * c ^ a) * (a ^ c * b ^ a * c ^ b) ≤
   --   a ^ a * b ^ b * c ^ c * (a ^ a * b ^ b * c ^ c) * (a ^ a * b ^ b * c ^ c)
   gcongr ?_ * ?_ * ?_
-  · rfl
   · rw [←(Real.log_le_log_iff (by positivity) (by positivity))]
     simp (discharger := positivity) only [Real.log_mul, Real.log_rpow]
     nlinarith only [hab', hbc', hab, hbc]
