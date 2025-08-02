@@ -14,7 +14,8 @@ import ProblemExtraction
 
 problem_file {
   tags := [.Algebra]
-  importedFrom := "https://github.com/leanprover-community/mathlib4/pull/25786"
+  importedFrom :=
+    "https://github.com/leanprover-community/mathlib4/blob/master/Archive/Imo/Imo2001Q4.lean"
 }
 
 /-!
