@@ -31,11 +31,6 @@ problem imo1973_p5 {G : Set (ℝ → ℝ)}
     ∃ k : ℝ, ∀ f ∈ G, f k = k := by
   by_cases hnep : Set.Nonempty G
   · 
-    
-    --let a_of (f : ℝ → ℝ) (h : f ∈ G) : ℝ := (Classical.choose (hf f h))
-    --have t (f : ℝ → ℝ) (h : f ∈ G) := Classical.choose_spec (hf f h)
-    --let b_of (f : ℝ → ℝ) (h : f ∈ G) :ℝ := Classical.choose (t f h)
-    
     by_cases non_id : ∃f∈G , f≠id
     · 
       obtain ⟨f,hf1⟩ := non_id
