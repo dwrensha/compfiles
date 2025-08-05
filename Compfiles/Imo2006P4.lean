@@ -60,9 +60,7 @@ problem imo2006_p4 :
                 · exact hx
               · apply zpow_lt_one_of_neg₀
                 · norm_num
-                · calc
-                    2 * x + 1 ≤ 2 * (-1) + 1 := by rel [show (x ≤ -1) by apply Int.le_sub_one_of_lt hx]
-                    _ < 0 := by norm_num
+                · omega
             _ < 2 ^ 2 := by norm_num
       have hk2 : k > 1 := by
         suffices h : ((y.natAbs ^ 2 : ℤ) : ℝ) > (1 : ℝ) ^ 2
