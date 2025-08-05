@@ -10,7 +10,7 @@ import ProblemExtraction
 problem_file {
   tags := [.NumberTheory],
   importedFrom :=
-    "https://github.com/leanprover-community/mathlib4/blob/master/Archive/Imo/Imo2006P4.lean",
+    "https://huggingface.co/datasets/AI-MO/NuminaMath-LEAN",
 }
 
 /-!
