@@ -162,9 +162,7 @@ problem imo2006_p4 :
             have : 2 ^ (n₁ + 1) ∣ y - 1 := by use r; simp [ht]; ring
             apply Nat.Prime.pow_dvd_iff_le_factorization (by norm_num) hysub |>.mp at this
             simp only [n₁, add_le_iff_nonpos_right, nonpos_iff_eq_zero, one_ne_zero] at this
-          have ht'' : t ≠ 0 := by
-            intro h
-            simp [h] at ht'
+          have ht'' : t ≠ 0 := Nat.ne_of_odd_add ht'
           have h1 : (2 ^ (x + 1) + 1).factorization 2 = 0 := by
             apply Nat.factorization_eq_zero_of_not_dvd
             apply Odd.not_two_dvd_nat
@@ -266,9 +264,7 @@ problem imo2006_p4 :
             · trans (2 ^ (x - 1) * ↑m + ε) ^ 2 - 1
               · ring
               · ring_nf
-                have : ε ^ 2 = 1 := by
-                  rcases hε with hε | hε
-                  all_goals simp [hε]
+                have : ε ^ 2 = 1 := sq_eq_one_iff.mpr hε
                 simp [this]
                 ring_nf
                 congr 1
@@ -276,8 +272,7 @@ problem imo2006_p4 :
                   rw [pow_add]
                   ring
                 · congr
-                  rw [Nat.sub_mul]
-                  simp
+                  exact Nat.sub_one_mul _ _
             · exact hypos
         -- or, equivalently $$ 1+2^{x+1}=2^{x-2} m^{2}+m \epsilon.
         have h : 1 + 2 ^ (x + 1) = 2 ^ (x - 2) * m ^ 2 + m * ε := by
