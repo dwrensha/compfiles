@@ -3,7 +3,6 @@ Copyright (c) 2025 Project Numina. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Project Numina Contributors
 -/
-import Mathlib.Analysis.SpecialFunctions.Sqrt
 import Mathlib.Tactic
 
 import ProblemExtraction
@@ -19,8 +18,6 @@ problem_file {
 
 Determine all pairs $(x, y)$ of integers satisfying the equation  $$ 1+2^{x}+2^{2 x+1}=y^{2} . $$
 -/
-
-open Real
 
 namespace Imo2006P4
 
