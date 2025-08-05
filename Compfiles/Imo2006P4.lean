@@ -68,9 +68,8 @@ problem imo2006_p4 :
           apply sq_lt_sq.mp at h
           norm_cast at h
         · rw [Int.natAbs_sq, Int.cast_pow, ←h, add_assoc]
-          simp
-          apply add_pos
-          all_goals apply zpow_pos (by norm_num)
+          simp only [one_pow, gt_iff_lt, lt_add_iff_pos_right]
+          positivity
       interval_cases k
     lift x to ℕ using hxnonneg
     norm_cast at h
@@ -183,7 +182,7 @@ problem imo2006_p4 :
               rw [Nat.pow_add_one]
               ring_nf
             apply congrArg (fun i => Nat.factorization i 2) at h'
-            rw [Nat.factorization_mul (by apply pow_ne_zero; simp), Nat.factorization_mul (by apply pow_ne_zero; simp)] at h'
+            rw [Nat.factorization_mul (by positivity), Nat.factorization_mul (by positivity)] at h'
             · norm_num at h'
               have h2 : (t * (2 ^ (n₁ - 1) * t + 1)).factorization 2 = 0 := by
                 apply Nat.factorization_eq_zero_of_not_dvd
@@ -277,8 +276,7 @@ problem imo2006_p4 :
           calc
             _ = (2 : ℤ) ^ x * (1 + 2 ^ (x + 1)) / 2 ^ x := by
               rw [mul_div_cancel_left₀]
-              apply pow_ne_zero
-              simp
+              positivity
             _ = (2 ^ x * 2 ^ (x - 2) * m ^ 2 + 2 ^ x * m * ε) / 2 ^ x := by rw [h]; congr; rw [←pow_add]; rw [←Nat.add_sub_assoc]; simp; ring_nf; exact Nat.le_of_succ_le hxge3
             _ = 2 ^ x * (2 ^ (x - 2) * m ^ 2 + m * ε) / 2 ^ x := by rw [mul_add, ←mul_assoc, ←mul_assoc]
             _ = _ := by simp
@@ -335,11 +333,11 @@ problem imo2006_p4 :
             · simp
             · apply nonneg_of_mul_nonneg_right (a := 2 ^ (x - 2))
               · rw [←this]; exact Int.le.intro_sub (1 + m + 0) rfl
-              · apply pow_pos; simp
-            · apply pow_nonneg; simp
+              · positivity
+            · positivity
           -- $$ implying $2 m^{2}-m-17 \leq 0$. Hence $m \leq 3$;
           have : 2 * m ^ 2 - m - 17 ≤ (0 : ℤ) := by linarith only [hle]
-          have : m ≤ 3 := by nlinarith
+          have : m ≤ 3 := by nlinarith only [h, hle]
           have : m = 1 ∨ m = 3 := by
             interval_cases m
             · simp at hm
