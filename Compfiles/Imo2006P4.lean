@@ -128,7 +128,7 @@ problem imo2006_p4 :
             simp [hs]
             ring
           · simp at h
-            have ⟨t, ht⟩ : Even (s + 1) := by apply Odd.add_odd h; simp
+            have ⟨t, ht⟩ : Even (s + 1) := Odd.add_one h
             use s * t
             simp [ht]
             ring
@@ -288,7 +288,7 @@ problem imo2006_p4 :
           apply eq_sub_of_add_eq
           rw [add_comm (m * ε), ←h, show (8 : ℤ) = 2 ^ 3 by simp, ←pow_add]
           congr 2
-          simp
+          simp only [Nat.reduceEqDiff]
           rw [Nat.sub_add_cancel]
           exact Nat.le_of_succ_le hxge3
         have hmne1 : ¬ m = 1 := by
