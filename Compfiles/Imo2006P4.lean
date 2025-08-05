@@ -113,7 +113,7 @@ problem imo2006_p4 :
           rcases this with h | h
           · exact h
           · rw [show y - 1 = y + 1 - 2 by simp]
-            refine Nat.dvd_sub' h ?inr.h₂
+            refine Nat.dvd_sub h ?inr.h₂
             simp
         have h8div : 2 ^ 3 ∣ (y - 1) * (y + 1) := by
           obtain ⟨s, hs⟩ := h2dvd
@@ -188,22 +188,22 @@ problem imo2006_p4 :
               ring_nf
             apply congrArg (fun i => Nat.factorization i 2) at h'
             rw [Nat.factorization_mul (by apply pow_ne_zero; simp), Nat.factorization_mul (by apply pow_ne_zero; simp)] at h'
-            norm_num at h'
-            have h2 : (t * (2 ^ (n₁ - 1) * t + 1)).factorization 2 = 0 := by
-              apply Nat.factorization_eq_zero_of_not_dvd
-              apply Odd.not_two_dvd_nat
-              apply Odd.mul ht'
-              rw [add_comm]
-              apply Odd.add_even
-              · simp
-              · use 2 ^ (n₁ - 2) * t
-                rw [show n₁ - 1 = n₁ - 2 + 1 by simp; rw [Nat.sub_add_cancel]; exact h₁, Nat.pow_add_one']
-                ring
-            apply Nat.eq_add_of_sub_eq at ht
-            simp [h1, h2] at h'
-            use t, ht', 1
-            simp [ht, h']
-            · exact hypos
+            · norm_num at h'
+              have h2 : (t * (2 ^ (n₁ - 1) * t + 1)).factorization 2 = 0 := by
+                apply Nat.factorization_eq_zero_of_not_dvd
+                apply Odd.not_two_dvd_nat
+                apply Odd.mul ht'
+                rw [add_comm]
+                apply Odd.add_even
+                · simp
+                · use 2 ^ (n₁ - 2) * t
+                  rw [show n₁ - 1 = n₁ - 2 + 1 by simp; rw [Nat.sub_add_cancel]; exact h₁, Nat.pow_add_one']
+                  ring
+              apply Nat.eq_add_of_sub_eq at ht
+              · simp [h1, h2] at h'
+                use t, ht', 1
+                simp [ht, h']
+              · exact hypos
             · intro h'
               simp at h'
               simp [h'] at ht''
@@ -237,20 +237,20 @@ problem imo2006_p4 :
                 ring_nf
               apply congrArg (fun i => Nat.factorization i 2) at h'
               rw [Nat.factorization_mul (by apply pow_ne_zero; simp), Nat.factorization_mul (by apply pow_ne_zero; simp)] at h'
-              norm_num at h'
-              have hmul : Odd (t * s) := by
-                exact Odd.mul ht' hs'
-              have h2 : (t * s).factorization 2 = 0 := by
-                apply Nat.factorization_eq_zero_iff _ _ |>.mpr
-                right; left
-                exact Odd.not_two_dvd_nat hmul
-              simp [h1, h2] at h'
-              apply Nat.eq_add_of_sub_eq at ht
-              use s, hs', -1
-              simp [ht, h', pow_add]
-              rw [mul_comm _ 2, mul_assoc, show 2 ^ n₂ * (s : ℤ) = t + 1 by norm_cast; simp [hs]]
-              · ring
-              · exact hypos
+              · norm_num at h'
+                have hmul : Odd (t * s) := by
+                  exact Odd.mul ht' hs'
+                have h2 : (t * s).factorization 2 = 0 := by
+                  apply Nat.factorization_eq_zero_iff _ _ |>.mpr
+                  right; left
+                  exact Odd.not_two_dvd_nat hmul
+                simp [h1, h2] at h'
+                apply Nat.eq_add_of_sub_eq at ht
+                · use s, hs', -1
+                  simp [ht, h', pow_add]
+                  rw [mul_comm _ 2, mul_assoc, show 2 ^ n₂ * (s : ℤ) = t + 1 by norm_cast; simp [hs]]
+                  · ring
+                · exact hypos
               · intro h'
                 simp [ht''] at h'
                 simp [h'] at hs'
@@ -364,7 +364,7 @@ problem imo2006_p4 :
             have : (1 : ℤ) + 8 * t = t * 9 + (-3) := by
               simp [t]
               rw [←h]
-              simp [t]
+              simp
               rw [show (8 : ℤ) = 2 ^ 3 by simp, ←pow_add]
               rw [←Nat.add_sub_assoc]
               · rw [show 3 = 1 + 2 by simp, Nat.add_comm, ←Nat.add_assoc]
