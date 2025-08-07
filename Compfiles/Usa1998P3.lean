@@ -277,7 +277,6 @@ problem usa1998_p3
         · have hk0 : kk = 0 := by rw [←hkk']; norm_cast
           rw [hk0] at hk
           norm_num at hk
-          exact Real.pi_ne_zero hk
         · have hk2 : 1 ≤ k := hk'
           have : 1 ≤ kk := by rw [← hkk']; norm_cast
           nlinarith only [Real.pi_pos, ha1, hk2, this, hk]
