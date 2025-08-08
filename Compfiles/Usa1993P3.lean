@@ -71,8 +71,156 @@ theorem lemma1 (c1 : ℝ) :
     linarith
   linarith
 
-snip end
+/-
+This lemma was proved by GPT5, with some help from dwrensha to fix
+up some errors.
+-/
+theorem lemma2 (f : ↑(Set.Icc 0 1) → ℝ) (x : ℝ) (hx : 0 ≤ x ∧ x ≤ 1)
+    (h1 : ∀ (x : ↑(Set.Icc 0 1)), 0 ≤ f x) (h2 : f 1 = 1)
+    (h3 : ∀ (x y : ↑(Set.Icc 0 1)) (h : x.val + y.val ∈ Set.Icc 0 1),
+               f x + f y ≤ f ⟨x.val + y.val, h⟩)
+    (h4 : ∀ (x : ↑(Set.Icc (0:ℝ) 1)), 1 - x.val ∈ Set.Icc 0 1)
+    (h5 : ∀ (x : ↑(Set.Icc (0:ℝ) 1)), f x + f ⟨1 - x.val, by grind⟩ ≤ 1)
+    (h6 : ∀ (x : ↑(Set.Icc (0:ℝ) 1)), f x ≤ 1) : f ⟨x, hx⟩ ≤ 2 * x := by
+  classical
+  -- First, show f(0) = 0 using h2, h5, and nonnegativity.
+  have f0 : f ⟨0, by simp [Set.mem_Icc]⟩ = 0 := by
+    have := h5 (1 : ↑(Set.Icc (0 : ℝ) 1))
+    -- f 1 + f ⟨1-1, _⟩ ≤ 1  ⇒  1 + f 0 ≤ 1
+    have : 1 + f ⟨0, by simp [Set.mem_Icc]⟩ ≤ 1 := by simpa [h2, sub_self] using this
+    have h0le : f ⟨0, by simp [Set.mem_Icc]⟩ ≤ 0 := by linarith
+    have h0ge : 0 ≤ f ⟨0, by simp [Set.mem_Icc]⟩ := h1 ⟨0, by simp [Set.mem_Icc]⟩
+    exact le_antisymm h0le (by simpa using h0ge)
 
+  -- Trivial case x = 0.
+  by_cases hx0 : x = 0
+  · subst hx0
+    grind
+
+  have hxpos : 0 < x := lt_of_le_of_ne' hx.1 hx0
+
+  -- If x ≥ 1/2 the claim is immediate from h6.
+  by_cases hxhalf : x ≤ (1 : ℝ) / 2
+  · -- Small-x case: x ≤ 1/2. Set n = ⌊1/x⌋.
+    let n : ℕ := Nat.floor (1 / x)
+
+    -- n ≥ 1 because x ≤ 1 and x > 0 ⇒ 1 ≤ 1/x.
+    have hn1 : 1 ≤ n := by
+      have : (1 : ℝ) ≤ 1 / x := by
+        -- for x > 0, 1 ≤ 1/x ↔ x ≤ 1
+        bound
+      exact (Nat.one_le_floor_iff (1 / x)).mpr this
+
+    -- (n : ℝ) * x ≤ 1 (since n ≤ 1/x).
+    have hnx_le1 : (n : ℝ) * x ≤ 1 := by
+      have hnle : (n : ℝ) ≤ 1 / x := by
+        have := Nat.floor_le (a := (1 / x)) (by positivity)
+        grind
+      have := mul_le_mul_of_nonneg_right hnle (le_of_lt hxpos)
+      exact (le_div_iff₀ hxpos).mp hnle
+
+    -- (n : ℝ) * x ∈ [0,1].
+    have hmem_nx : (n : ℝ) * x ∈ Set.Icc (0 : ℝ) 1 := by
+      refine ⟨?_, hnx_le1⟩
+      exact mul_nonneg (by exact_mod_cast (Nat.zero_le n)) hx.1
+
+    -- 1 - (n : ℝ) * x ∈ [0,1].
+    have hmem_one_minus : 1 - (n : ℝ) * x ∈ Set.Icc (0 : ℝ) 1 := by
+      simp only [Set.mem_Icc, sub_nonneg, tsub_le_iff_right,
+                 le_add_iff_nonneg_right] at hmem_nx ⊢
+      grind
+
+    -- Superadditivity iterated:  (n : ℝ) * f x ≤ f (n*x).
+    have super_n : (n : ℝ) * f ⟨x, hx⟩ ≤ f ⟨(n : ℝ) * x, hmem_nx⟩ := by
+      -- Prove by induction on n.
+      revert hmem_nx
+      refine Nat.rec ?base ?step n
+      · intro _
+        simp  -- n = 0
+        grind
+      · intro k ih hmem_k1
+        -- split off the last x:  k*x ∈ [0,1] and (k+1)*x ∈ [0,1]
+        have hmem_k : (k : ℝ) * x ∈ Set.Icc (0 : ℝ) 1 := by
+          -- from (k+1)*x ≤ 1 we get k*x ≤ 1
+          have hkp1_le1 : ((k : ℝ) + 1) * x ≤ 1 := by
+            simpa [Nat.cast_add, Nat.cast_one, Nat.cast_ofNat, add_comm, add_left_comm, add_assoc,
+                   mul_add, add_mul, one_mul]
+              using hmem_k1.2
+          have hk_le_hkp1 : (k : ℝ) * x ≤ ((k : ℝ) + 1) * x :=
+            mul_le_mul_of_nonneg_right (by linarith : (k : ℝ) ≤ (k : ℝ) + 1) (le_of_lt hxpos)
+          refine ⟨?_, hk_le_hkp1.trans hkp1_le1⟩
+          exact mul_nonneg (by exact_mod_cast (Nat.zero_le k)) hx.1
+        have sum_mem :
+            (k : ℝ) * x + x ∈ Set.Icc (0 : ℝ) 1 := by
+          -- this is exactly (k+1)*x ∈ [0,1]
+          simpa [Nat.cast_add, Nat.cast_one, Nat.cast_ofNat, add_comm, add_left_comm, add_assoc,
+                 mul_add, add_mul, one_mul]
+            using hmem_k1
+        have step1 :
+            f ⟨(k : ℝ) * x, hmem_k⟩ + f ⟨x, hx⟩ ≤
+            f ⟨(k : ℝ) * x + x, sum_mem⟩ :=
+          h3 ⟨(k : ℝ) * x, hmem_k⟩ ⟨x, hx⟩ sum_mem
+        have := ih (by grind)
+        simp only [Nat.succ_eq_add_one, Nat.cast_add, Nat.cast_one, add_mul]
+        grind
+
+    -- From h5 at n*x and nonnegativity, we get n*f(x) ≤ 1.
+    have nfx_le_one : (n : ℝ) * f ⟨x, hx⟩ ≤ 1 := by
+      have hsum : f ⟨(n : ℝ) * x, hmem_nx⟩ + f ⟨1 - (n : ℝ) * x, hmem_one_minus⟩ ≤ 1 :=
+        h5 ⟨(n : ℝ) * x, hmem_nx⟩
+      have fnonneg : 0 ≤ f ⟨1 - (n : ℝ) * x, hmem_one_minus⟩ := h1 _
+      -- (n)*f(x) ≤ f(n*x) ≤ 1 - f(1 - n x) ≤ 1
+      grind
+
+    -- Divide by n > 0:  f(x) ≤ 1/n.
+    have hfx_le_one_over_n : f ⟨x, hx⟩ ≤ 1 / (n : ℝ) := by
+      have hnpos : 0 < (n : ℝ) := by exact_mod_cast lt_of_lt_of_le (by decide : (0 : ℕ) < 1) hn1
+      -- a ≤ b/c  ↔  a*c ≤ b  (for c>0)
+      exact (le_div_iff₀' hnpos).mpr nfx_le_one
+
+    -- From 1/x < n + 1 (floor lemma), deduce 1/(n+1) < x, hence 2/(n+1) < 2x.
+    have one_over_np1_lt_x : 1 / ((n : ℝ) + 1) < x := by
+      have : 1 / x < (n : ℝ) + 1 := by
+        simpa [n, Nat.cast_add, Nat.cast_one] using (Nat.lt_floor_add_one (1 / x))
+      -- invert: 0 < 1/x and (1/x) < (n+1) ⇒ 1/(n+1) < x
+      have hxinvpos : 0 < 1 / x := by simpa using inv_pos.mpr hxpos
+      have hpp : 0 < ↑n + (1:ℝ)  := by positivity
+      exact (one_div_lt hxpos hpp).mp this
+
+    -- 1/n ≤ 2/(n+1)  (since n ≥ 1), and 2/(n+1) < 2x.
+    have one_over_n_le_two_over_np1 : 1 / (n : ℝ) ≤ 2 / ((n : ℝ) + 1) := by
+      -- Equivalent to: (n+1) ≤ 2n, which follows from 1 ≤ n.
+      have : (1 : ℝ) ≤ (n : ℝ) := by exact_mod_cast hn1
+      -- multiply both sides by 1/((n:ℝ)*((n:ℝ)+1)) > 0 to avoid case splits
+      -- simpler: nlinarith does it directly
+      have h' : (n : ℝ) + 1 ≤ 2 * (n : ℝ) := by nlinarith
+      -- a/c ≤ b/d  with c,d>0  ↔  a*d ≤ b*c
+      have hnpos : 0 < (n : ℝ) := by exact_mod_cast lt_of_lt_of_le (by decide : (0 : ℕ) < 1) hn1
+      have hdenpos : 0 < (n : ℝ) + 1 := by nlinarith
+      rw [div_le_div_iff₀ hnpos hdenpos]
+      linarith
+    have two_over_np1_le_twox : 2 / ((n : ℝ) + 1) ≤ 2 * x :=
+      (le_of_lt (by
+        have := one_over_np1_lt_x
+        have hpos : 0 < (2 : ℝ) := by norm_num
+        -- multiply the strict inequality by 2>0
+        nth_rewrite 1 [show (2:ℝ) = 2 * 1 by norm_num]
+        rw [mul_div_assoc]
+        gcongr))
+
+    -- Chain the estimates.
+    exact
+      (hfx_le_one_over_n.trans
+        (one_over_n_le_two_over_np1.trans two_over_np1_le_twox))
+
+  · -- Large-x case: x > 1/2, so 1 ≤ 2x and f x ≤ 1.
+    have : (1 : ℝ) ≤ 2 * x := by
+      have : (1 : ℝ) / 2 < x := lt_of_le_of_ne (le_of_not_ge hxhalf) (by grind)
+      nlinarith
+    have fx_le_one : f ⟨x, hx⟩ ≤ 1 := h6 ⟨x, hx⟩
+    exact fx_le_one.trans this
+
+snip end
 
 def valid (f : Set.Icc (0 : ℝ) 1 → ℝ) : Prop :=
   (∀ x, 0 ≤ f x) ∧
@@ -106,15 +254,7 @@ problem usa1993_p5 :
       constructor
       · grind
       · grw [hx2]; simp
-    have h9 : ∀ n : ℕ, ∀ x : Set.Icc (0:ℝ) (1/2^n),
-          2^n * f ⟨x, by sorry⟩ ≤ f ⟨2^n * x, h8 n x⟩ := by
-      intro n
-      induction n with
-      | zero => intro x; simp
-      | succ n ih =>
-        intro x
-        sorry
-    sorry
+    exact lemma2 f x hx h1 h2 h3 h4 h5 h6
   · rw [mem_lowerBounds]
     intro c1 hc1
     simp only [Set.mem_setOf_eq] at hc1
