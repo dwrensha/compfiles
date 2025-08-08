@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Violeta Hernández Palacios, Alex Brodbelt
 -/
 import Mathlib.Tactic
+import Mathlib.Algebra.Order.Field.GeomSum
 
 import ProblemExtraction
 
