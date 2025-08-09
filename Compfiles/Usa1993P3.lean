@@ -47,7 +47,7 @@ theorem lemma1 (c1 : ℝ) :
       have h7 : f ⟨(1 / 2 : ℝ), by norm_num⟩ ≤ c1 * (1 / 2 : ℝ) := by
         simpa using h1'
       rw [h5] at h7
-      linarith
+      exact h7
     linarith
   have h9 : ∃ a : ℝ, a > (1 / 2 : ℝ) ∧ a ≤ (1 : ℝ) ∧ 1 > c1 * a := by
     use (1 + (2 - c1) / 4) / 2
@@ -68,7 +68,7 @@ theorem lemma1 (c1 : ℝ) :
     have h7 : f ⟨a, ⟨by linarith, ha2⟩⟩ ≤ c1 * a := by
       simpa using h1'
     rw [h5] at h7
-    linarith
+    exact h7
   linarith
 
 /-
@@ -80,7 +80,7 @@ theorem lemma2 (f : ↑(Set.Icc 0 1) → ℝ) (x : ℝ) (hx : 0 ≤ x ∧ x ≤ 
     (h3 : ∀ (x y : ↑(Set.Icc 0 1)) (h : x.val + y.val ∈ Set.Icc 0 1),
                f x + f y ≤ f ⟨x.val + y.val, h⟩)
     (h4 : ∀ (x : ↑(Set.Icc (0:ℝ) 1)), 1 - x.val ∈ Set.Icc 0 1)
-    (h5 : ∀ (x : ↑(Set.Icc (0:ℝ) 1)), f x + f ⟨1 - x.val, by grind⟩ ≤ 1)
+    (h5 : ∀ (x : ↑(Set.Icc (0:ℝ) 1)), f x + f ⟨1 - x.val, h4 x⟩ ≤ 1)
     (h6 : ∀ (x : ↑(Set.Icc (0:ℝ) 1)), f x ≤ 1) : f ⟨x, hx⟩ ≤ 2 * x := by
   classical
   -- First, show f(0) = 0 using h2, h5, and nonnegativity.
@@ -116,7 +116,6 @@ theorem lemma2 (f : ↑(Set.Icc 0 1) → ℝ) (x : ℝ) (hx : 0 ≤ x ∧ x ≤ 
       have hnle : (n : ℝ) ≤ 1 / x := by
         have := Nat.floor_le (a := (1 / x)) (by positivity)
         grind
-      have := mul_le_mul_of_nonneg_right hnle (le_of_lt hxpos)
       exact (le_div_iff₀ hxpos).mp hnle
 
     -- (n : ℝ) * x ∈ [0,1].
@@ -196,7 +195,7 @@ theorem lemma2 (f : ↑(Set.Icc 0 1) → ℝ) (x : ℝ) (hx : 0 ≤ x ∧ x ≤ 
       have h' : (n : ℝ) + 1 ≤ 2 * (n : ℝ) := by nlinarith
       -- a/c ≤ b/d  with c,d>0  ↔  a*d ≤ b*c
       have hnpos : 0 < (n : ℝ) := by exact_mod_cast lt_of_lt_of_le (by decide : (0 : ℕ) < 1) hn1
-      have hdenpos : 0 < (n : ℝ) + 1 := by nlinarith
+      have hdenpos : 0 < (n : ℝ) + 1 := Nat.cast_add_one_pos n
       rw [div_le_div_iff₀ hnpos hdenpos]
       linarith
     have two_over_np1_le_twox : 2 / ((n : ℝ) + 1) ≤ 2 * x :=
@@ -238,7 +237,7 @@ problem usa1993_p5 :
     obtain ⟨h1, h2, h3⟩ := hf
     unfold min_c
     have h4 : ∀ x : Set.Icc (0:ℝ) 1, (1 - (x:ℝ)) ∈ Set.Icc (0:ℝ) 1 := by
-       rintro ⟨x, hx⟩; clear h3; simp at hx ⊢; grind
+       rintro ⟨x, hx⟩; exact unitInterval.mem_iff_one_sub_mem.mp hx
     have h5 : ∀ x, f x + f ⟨1 - x, h4 x⟩ ≤ 1 := by
       intro x
       specialize h3 x ⟨1 - x, h4 x⟩
@@ -251,9 +250,8 @@ problem usa1993_p5 :
       linarith
     have h8 : ∀ n : ℕ, ∀ x : Set.Icc (0:ℝ) (1/2^n), 2^n * (x : ℝ) ∈ Set.Icc (0:ℝ) 1 := by
       rintro n ⟨x, hx1, hx2⟩; clear h3; simp at hx ⊢
-      constructor
-      · grind
-      · grw [hx2]; simp
+      refine ⟨hx1, ?_⟩
+      grw [hx2]; simp
     exact lemma2 f x hx h1 h2 h3 h4 h5 h6
   · rw [mem_lowerBounds]
     intro c1 hc1
