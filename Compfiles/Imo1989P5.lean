@@ -119,7 +119,7 @@ lemma lemma1 {p1 p2 q : ℕ}
     Nat.Coprime (p1 * p2) q := by
   have h1 : Nat.Coprime p1 q := Iff.mpr (Nat.coprime_primes hp1 hq) hp1q
   have h2 : Nat.Coprime p2 q := Iff.mpr (Nat.coprime_primes hp2 hq) hp2q
-  exact Nat.Coprime.mul h1 h2
+  exact Nat.Coprime.mul_left h1 h2
 
 lemma lemma2 {p1 q1 p2 q2 : ℕ}
     (hp1 : Nat.Prime p1)
