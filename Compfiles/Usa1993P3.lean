@@ -71,6 +71,18 @@ theorem lemma1 (c1 : ℝ) :
     exact h7
   linarith
 
+private lemma dyadicBracket
+    (x : ℝ) (hx0 : 0 < x) (hxhalf : x ≤ (1 : ℝ)/2) :
+    ∃ m : ℕ, (1 : ℝ) / (2 : ℝ)^(m+1) < x ∧ x ≤ 1 / (2 : ℝ)^m := by
+  obtain ⟨m, hm1, hm2⟩ :=
+    exists_nat_pow_near_of_lt_one hx0 (by grind) (show 0 < (1:ℝ)/2 by norm_num) (by norm_num)
+  use m
+  refine ⟨?_, ?_⟩
+  · field_simp at hm1
+    exact hm1
+  · field_simp at hm2
+    exact hm2
+
 /-
 This lemma was proved by GPT5, with some help from dwrensha to fix
 up some errors.
@@ -81,143 +93,99 @@ theorem lemma2 (f : ↑(Set.Icc 0 1) → ℝ) (x : ℝ) (hx : 0 ≤ x ∧ x ≤ 
                f x + f y ≤ f ⟨x.val + y.val, h⟩)
     (h4 : ∀ (x : ↑(Set.Icc (0:ℝ) 1)), 1 - x.val ∈ Set.Icc 0 1)
     (h5 : ∀ (x : ↑(Set.Icc (0:ℝ) 1)), f x + f ⟨1 - x.val, h4 x⟩ ≤ 1)
-    (h6 : ∀ (x : ↑(Set.Icc (0:ℝ) 1)), f x ≤ 1) : f ⟨x, hx⟩ ≤ 2 * x := by
+    (h6 : ∀ (x : ↑(Set.Icc (0:ℝ) 1)), f x ≤ 1)
+    (h8 : ∀ n : ℕ, ∀ x : Set.Icc (0:ℝ) (1/2^n), 2^n * (x : ℝ) ∈ Set.Icc (0:ℝ) 1)
+    : f ⟨x, hx⟩ ≤ 2 * x := by
   classical
-  -- First, show f(0) = 0 using h2, h5, and nonnegativity.
+  -- f(0) = 0
   have f0 : f ⟨0, by simp [Set.mem_Icc]⟩ = 0 := by
     have := h5 (1 : ↑(Set.Icc (0 : ℝ) 1))
-    -- f 1 + f ⟨1-1, _⟩ ≤ 1  ⇒  1 + f 0 ≤ 1
     have : 1 + f ⟨0, by simp [Set.mem_Icc]⟩ ≤ 1 := by simpa [h2, sub_self] using this
     have h0le : f ⟨0, by simp [Set.mem_Icc]⟩ ≤ 0 := by linarith
     have h0ge : 0 ≤ f ⟨0, by simp [Set.mem_Icc]⟩ := h1 ⟨0, by simp [Set.mem_Icc]⟩
     exact le_antisymm h0le (by simpa using h0ge)
 
-  -- Trivial case x = 0.
   by_cases hx0 : x = 0
-  · subst hx0
-    grind
+  · subst hx0; simp [mul_zero]; exact le_of_eq f0
 
   have hxpos : 0 < x := lt_of_le_of_ne' hx.1 hx0
 
-  -- If x ≥ 1/2 the claim is immediate from h6.
-  by_cases hxhalf : x ≤ (1 : ℝ) / 2
-  · -- Small-x case: x ≤ 1/2. Set n = ⌊1/x⌋.
-    let n : ℕ := Nat.floor (1 / x)
+  -- Large x: x ≥ 1/2 ⇒ f(x) ≤ 1 ≤ 2x
+  by_cases hxhalf : x ≤ (1 : ℝ)/2
+  · -- Small x: use dyadic doubling throughout (this is the part simplified by h8).
+    -- Pick m with 2^{-(m+1)} < x ≤ 2^{-m}.
+    obtain ⟨m, hx_lower, hx_upper⟩ := dyadicBracket x hxpos hxhalf
 
-    -- n ≥ 1 because x ≤ 1 and x > 0 ⇒ 1 ≤ 1/x.
-    have hn1 : 1 ≤ n := by
-      have : (1 : ℝ) ≤ 1 / x := by
-        -- for x > 0, 1 ≤ 1/x ↔ x ≤ 1
-        bound
-      exact (Nat.one_le_floor_iff (1 / x)).mpr this
+    -- For k ≤ m we have x ≤ 1 / 2^k.
+    have hx_le_k : ∀ {k}, k ≤ m → x ≤ 1 / (2 : ℝ)^k := by
+      intro k hk
+      -- since k ≤ m, 2^k ≤ 2^m and thus 1/2^m ≤ 1/2^k
+      have : (1 : ℝ) / (2 : ℝ)^m ≤ 1 / (2 : ℝ)^k := by
+        -- monotone of (n ↦ (2^n)) with base ≥ 1
+        have hk' : (2 : ℝ)^k ≤ (2 : ℝ)^m := by
+          have : (1 : ℝ) ≤ (2 : ℝ) := by norm_num
+          exact pow_le_pow_right₀ this hk
+        have hpos : 0 < (2 : ℝ)^k := by simp
+        exact one_div_le_one_div_of_le hpos hk'
+      exact hx_upper.trans this
 
-    -- (n : ℝ) * x ≤ 1 (since n ≤ 1/x).
-    have hnx_le1 : (n : ℝ) * x ≤ 1 := by
-      have hnle : (n : ℝ) ≤ 1 / x := by
-        have := Nat.floor_le (a := (1 / x)) (by positivity)
-        grind
-      exact (le_div_iff₀ hxpos).mp hnle
+    -- Every 2^k x is in [0,1], by h8.
+    have mem_pow (k : ℕ) (hk : k ≤ m) :
+        (2 : ℝ)^k * x ∈ Set.Icc (0 : ℝ) 1 := by
+      have : x ∈ Set.Icc (0 : ℝ) (1 / (2 : ℝ)^k) := ⟨hx.1, hx_le_k hk⟩
+      simpa using h8 k ⟨x, this⟩
 
-    -- (n : ℝ) * x ∈ [0,1].
-    have hmem_nx : (n : ℝ) * x ∈ Set.Icc (0 : ℝ) 1 := by
-      refine ⟨?_, hnx_le1⟩
-      exact mul_nonneg (by exact_mod_cast (Nat.zero_le n)) hx.1
-
-    -- 1 - (n : ℝ) * x ∈ [0,1].
-    have hmem_one_minus : 1 - (n : ℝ) * x ∈ Set.Icc (0 : ℝ) 1 := by
-      simp only [Set.mem_Icc, sub_nonneg, tsub_le_iff_right,
-                 le_add_iff_nonneg_right] at hmem_nx ⊢
-      grind
-
-    -- Superadditivity iterated:  (n : ℝ) * f x ≤ f (n*x).
-    have super_n : (n : ℝ) * f ⟨x, hx⟩ ≤ f ⟨(n : ℝ) * x, hmem_nx⟩ := by
-      -- Prove by induction on n.
-      revert hmem_nx
-      refine Nat.rec ?base ?step n
-      · intro _
-        simp  -- n = 0
-        grind
-      · intro k ih hmem_k1
-        -- split off the last x:  k*x ∈ [0,1] and (k+1)*x ∈ [0,1]
-        have hmem_k : (k : ℝ) * x ∈ Set.Icc (0 : ℝ) 1 := by
-          -- from (k+1)*x ≤ 1 we get k*x ≤ 1
-          have hkp1_le1 : ((k : ℝ) + 1) * x ≤ 1 := by
-            simpa [Nat.cast_add, Nat.cast_one, Nat.cast_ofNat, add_comm, add_left_comm, add_assoc,
-                   mul_add, add_mul, one_mul]
-              using hmem_k1.2
-          have hk_le_hkp1 : (k : ℝ) * x ≤ ((k : ℝ) + 1) * x :=
-            mul_le_mul_of_nonneg_right (by linarith : (k : ℝ) ≤ (k : ℝ) + 1) (le_of_lt hxpos)
-          refine ⟨?_, hk_le_hkp1.trans hkp1_le1⟩
-          exact mul_nonneg (by exact_mod_cast (Nat.zero_le k)) hx.1
-        have sum_mem :
-            (k : ℝ) * x + x ∈ Set.Icc (0 : ℝ) 1 := by
-          -- this is exactly (k+1)*x ∈ [0,1]
-          simpa [Nat.cast_add, Nat.cast_one, Nat.cast_ofNat, add_comm, add_left_comm, add_assoc,
-                 mul_add, add_mul, one_mul]
-            using hmem_k1
+    -- Key dyadic superadditivity:  (2^k) f(x) ≤ f(2^k x)  for k ≤ m.
+    have super_pow :
+        ∀ k, (hk : k ≤ m) → (2 : ℝ)^k * f ⟨x, hx⟩ ≤ f ⟨(2 : ℝ)^k * x, mem_pow k hk⟩ := by
+      intro k hk
+      induction' k with k ih
+      · simp
+      · have hk' : k ≤ m := Nat.le_of_succ_le hk
+        have memk  := mem_pow k hk'
+        have memkp := mem_pow (k+1) hk
+        -- multiply IH by 2, then apply h3 at the same point (self + self)
         have step1 :
-            f ⟨(k : ℝ) * x, hmem_k⟩ + f ⟨x, hx⟩ ≤
-            f ⟨(k : ℝ) * x + x, sum_mem⟩ :=
-          h3 ⟨(k : ℝ) * x, hmem_k⟩ ⟨x, hx⟩ sum_mem
-        have := ih (by grind)
-        simp only [Nat.succ_eq_add_one, Nat.cast_add, Nat.cast_one, add_mul]
-        grind
+          (2 : ℝ) * ((2 : ℝ)^k * f ⟨x, hx⟩) ≤
+          (2 : ℝ) * f ⟨(2 : ℝ)^k * x, memk⟩ :=
+          by
+            have : 0 ≤ (2 : ℝ) := by norm_num
+            exact mul_le_mul_of_nonneg_left (ih hk') this
+        have step2 :
+          (2 : ℝ) * f ⟨(2 : ℝ)^k * x, memk⟩ ≤
+          f ⟨(2 : ℝ)^(k+1) * x, memkp⟩ := by
+          -- h3 applied to the same point adds values
+          grind
 
-    -- From h5 at n*x and nonnegativity, we get n*f(x) ≤ 1.
-    have nfx_le_one : (n : ℝ) * f ⟨x, hx⟩ ≤ 1 := by
-      have hsum : f ⟨(n : ℝ) * x, hmem_nx⟩ + f ⟨1 - (n : ℝ) * x, hmem_one_minus⟩ ≤ 1 :=
-        h5 ⟨(n : ℝ) * x, hmem_nx⟩
-      have fnonneg : 0 ≤ f ⟨1 - (n : ℝ) * x, hmem_one_minus⟩ := h1 _
-      -- (n)*f(x) ≤ f(n*x) ≤ 1 - f(1 - n x) ≤ 1
-      grind
+        -- rewrite 2^(k+1) and combine
+        simpa [pow_succ, mul_comm, mul_left_comm, mul_assoc] using step1.trans step2
 
-    -- Divide by n > 0:  f(x) ≤ 1/n.
-    have hfx_le_one_over_n : f ⟨x, hx⟩ ≤ 1 / (n : ℝ) := by
-      have hnpos : 0 < (n : ℝ) := by exact_mod_cast lt_of_lt_of_le (by decide : (0 : ℕ) < 1) hn1
-      -- a ≤ b/c  ↔  a*c ≤ b  (for c>0)
-      exact (le_div_iff₀' hnpos).mpr nfx_le_one
+    -- At k = m we get (2^m) f(x) ≤ f(2^m x) ≤ 1.
+    have two_pow_f_le_one :
+        (2 : ℝ)^m * f ⟨x, hx⟩ ≤ 1 := by
+      have := super_pow m le_rfl
+      exact this.trans (h6 ⟨(2 : ℝ)^m * x, mem_pow m le_rfl⟩)
 
-    -- From 1/x < n + 1 (floor lemma), deduce 1/(n+1) < x, hence 2/(n+1) < 2x.
-    have one_over_np1_lt_x : 1 / ((n : ℝ) + 1) < x := by
-      have : 1 / x < (n : ℝ) + 1 := by
-        simpa [n, Nat.cast_add, Nat.cast_one] using (Nat.lt_floor_add_one (1 / x))
-      -- invert: 0 < 1/x and (1/x) < (n+1) ⇒ 1/(n+1) < x
-      have hxinvpos : 0 < 1 / x := by simpa using inv_pos.mpr hxpos
-      have hpp : 0 < ↑n + (1:ℝ)  := by positivity
-      exact (one_div_lt hxpos hpp).mp this
+    -- Divide by 2^m > 0:
+    have fx_le : f ⟨x, hx⟩ ≤ 1 / (2 : ℝ)^m := by
+      have hpos : 0 < (2 : ℝ)^m := by simp
+      exact (le_div_iff₀' hpos).mpr two_pow_f_le_one
 
-    -- 1/n ≤ 2/(n+1)  (since n ≥ 1), and 2/(n+1) < 2x.
-    have one_over_n_le_two_over_np1 : 1 / (n : ℝ) ≤ 2 / ((n : ℝ) + 1) := by
-      -- Equivalent to: (n+1) ≤ 2n, which follows from 1 ≤ n.
-      have : (1 : ℝ) ≤ (n : ℝ) := by exact_mod_cast hn1
-      -- multiply both sides by 1/((n:ℝ)*((n:ℝ)+1)) > 0 to avoid case splits
-      -- simpler: nlinarith does it directly
-      have h' : (n : ℝ) + 1 ≤ 2 * (n : ℝ) := by nlinarith
-      -- a/c ≤ b/d  with c,d>0  ↔  a*d ≤ b*c
-      have hnpos : 0 < (n : ℝ) := by exact_mod_cast lt_of_lt_of_le (by decide : (0 : ℕ) < 1) hn1
-      have hdenpos : 0 < (n : ℝ) + 1 := Nat.cast_add_one_pos n
-      rw [div_le_div_iff₀ hnpos hdenpos]
-      linarith
-    have two_over_np1_le_twox : 2 / ((n : ℝ) + 1) ≤ 2 * x :=
-      (le_of_lt (by
-        have := one_over_np1_lt_x
-        have hpos : 0 < (2 : ℝ) := by norm_num
-        -- multiply the strict inequality by 2>0
-        nth_rewrite 1 [show (2:ℝ) = 2 * 1 by norm_num]
-        rw [mul_div_assoc]
-        gcongr))
+    -- And 1 / 2^m ≤ 2x because 1 / 2^(m+1) < x  ⇒  (1 / 2^m) = 2 * (1 / 2^(m+1)) < 2x.
+    have one_over_le_twox : 1 / (2 : ℝ)^m ≤ 2 * x := by
+      have : 1 / (2 : ℝ)^m < 2 * x := by
+        have : (2 : ℝ) * (1 / (2 : ℝ)^(m+1)) < (2 : ℝ) * x :=
+          mul_lt_mul_of_pos_left hx_lower (by norm_num)
+        simpa [pow_succ, one_div, mul_comm, mul_left_comm, mul_assoc] using this
+      exact this.le
 
-    -- Chain the estimates.
-    exact
-      (hfx_le_one_over_n.trans
-        (one_over_n_le_two_over_np1.trans two_over_np1_le_twox))
+    exact fx_le.trans one_over_le_twox
 
-  · -- Large-x case: x > 1/2, so 1 ≤ 2x and f x ≤ 1.
+  · -- large x
     have : (1 : ℝ) ≤ 2 * x := by
-      have : (1 : ℝ) / 2 < x := lt_of_le_of_ne (le_of_not_ge hxhalf) (by grind)
+      have : (1 : ℝ)/2 < x := lt_of_le_of_ne (le_of_not_ge hxhalf) (by grind)
       nlinarith
-    have fx_le_one : f ⟨x, hx⟩ ≤ 1 := h6 ⟨x, hx⟩
-    exact fx_le_one.trans this
+    exact (h6 ⟨x, hx⟩).trans this
 
 snip end
 
@@ -252,7 +220,7 @@ problem usa1993_p5 :
       rintro n ⟨x, hx1, hx2⟩; clear h3; simp at hx ⊢
       refine ⟨hx1, ?_⟩
       grw [hx2]; simp
-    exact lemma2 f x hx h1 h2 h3 h4 h5 h6
+    exact lemma2 f x hx h1 h2 h3 h4 h5 h6 h8
   · rw [mem_lowerBounds]
     intro c1 hc1
     simp only [Set.mem_setOf_eq] at hc1
