@@ -34,7 +34,7 @@ lemma not_dvd_prime_exists_mod_inverse {n p : ℕ} [NeZero n]
   let ⟨c, hc⟩ := Nat.exists_mul_emod_eq_one_of_coprime
     ((pp.coprime_iff_not_dvd).mpr h) hn
   exists c
-  rw [← Nat.cast_one, ← Nat.cast_mul, ZMod.eq_iff_modEq_nat n]
+  rw [← Nat.cast_one, ← Nat.cast_mul, ZMod.natCast_eq_natCast_iff]
   change _ % n = _ % n
   rw [Nat.mod_eq_of_lt hn]
   exact hc
