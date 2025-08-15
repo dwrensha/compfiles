@@ -198,7 +198,17 @@ problem imo1967_p3
         intros x hx₀
         symm
         refine Nat.cast_sub ?_
-        grind
+
+        -- grind used to work here
+        have hk_le_mx : k ≤ m + x := hk₀.trans (Nat.le_add_right _ _)
+        have hprod_le : k * (k + 1) ≤ (m + x) * (m + x + 1) := by
+          have h1 : k * (k + 1) ≤ (m + x) * (k + 1) :=
+            Nat.mul_le_mul_right _ hk_le_mx
+          have h2 : (m + x) * (k + 1) ≤ (m + x) * (m + x + 1) :=
+            Nat.mul_le_mul_left _ (Nat.succ_le_succ hk_le_mx)
+          exact h1.trans h2
+
+        simpa [h₁] using hprod_le
       rw [h₅₁, ← Nat.cast_mul]
       norm_cast
       simp_rw [h₅₀]
@@ -244,7 +254,21 @@ problem imo1967_p3
           intros x hx₀ hx₁
           symm
           refine Nat.cast_sub ?_
-          grind
+            -- from x ≤ n and m + n < k, we get m + x ≤ k
+          have hmx_le_k : m + x ≤ k := by
+            have hx' : m + x ≤ m + n := Nat.add_le_add_left hx₁ m
+            exact le_of_lt (lt_of_le_of_lt hx' hk₁)
+
+          -- multiply the two sides by (m + x + 1) and then by k to compare products
+          have hprod_le : (m + x) * (m + x + 1) ≤ k * (k + 1) := by
+           have h1 : (m + x) * (m + x + 1) ≤ k * (m + x + 1) :=
+            Nat.mul_le_mul_right _ hmx_le_k
+           have h2 : k * (m + x + 1) ≤ k * (k + 1) :=
+             Nat.mul_le_mul_left _ (Nat.succ_le_succ hmx_le_k)
+           exact h1.trans h2
+
+          -- rewrite c s = s * (s + 1)
+          simpa [h₁] using hprod_le
         rw [h₅₁, ← Nat.cast_mul]
         norm_cast
         simp_rw [h₅₀]
