@@ -177,10 +177,10 @@ elab_rules : command
 | `(command| problem_file%$tk $md) => elabProblemFile tk md
 
 /-- Starts a group of commands that will be discarded by problem extraction. -/
-syntax (name := snipBegin) "snip " "begin" : command
+syntax (name := snipBegin) "snip " &"begin" : command
 
 /-- Ends a group of commands that will be discarded by problem extraction. -/
-syntax (name := snipEnd) "snip " "end" : command
+syntax (name := snipEnd) "snip " &"end" : command
 
 elab_rules : command
 | `(command| snip%$tk0 begin%$tk1) => do
