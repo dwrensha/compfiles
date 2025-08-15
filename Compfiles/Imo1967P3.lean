@@ -233,11 +233,7 @@ problem imo1967_p3
         constructor
         . refine Finset.mem_Icc.mpr ?_
           omega
-        . have hk₂: m + (k - m) = k := by
-            refine Nat.add_sub_cancel' ?_
-            exact Nat.le_of_succ_le hk₀
-          rw [hk₂]
-          rw [@Int.sub_eq_zero]
+        . grind
       rw [h₆]
       exact Int.dvd_zero ((↑n.factorial : ℤ) * (↑(n + (1 : ℕ)).factorial : ℤ))
     . push_neg at hk₁
