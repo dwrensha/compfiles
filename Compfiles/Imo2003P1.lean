@@ -28,7 +28,8 @@ abbrev S := Finset.Icc 1 1000000
 snip begin
 
 /- Proof by induction on the number of tᵢ's -/
-theorem induction_lemma (A : Finset ℕ) (AS : A ⊆ S) (Acard : A.card = 101) {k : ℕ} (hk : k ≤ 100) :
+theorem induction_lemma (A : Finset ℕ) (_AS : A ⊆ S) (Acard : A.card = 101)
+    {k : ℕ} (hk : k ≤ 100) :
     ∃ t ⊆ S, t.card = k ∧ ∀ x ∈ t, ∀ y ∈ t, x ≠ y → Disjoint {x + a | a ∈ A} {y + a | a ∈ A} := by
   classical
   induction' k with k h
