@@ -39,7 +39,7 @@ theorem induction_lemma (A : Finset ℕ) (_AS : A ⊆ S) (Acard : A.card = 101)
     /- For a shift of A by x, consider the shifts by y ∈ S intersecting it -/
     let f (x : ℕ) := {y ∈ S | ¬ Disjoint {x + a | a ∈ A} {y + a | a ∈ A}}
 
-    obtain ⟨a, aA⟩ : A.Nonempty := Finset.card_pos.mp (by linarith)
+    obtain ⟨a, aA⟩ : A.Nonempty := Finset.card_pos.mp (by omega)
 
     let B := insert (a, a) A.offDiag
 
@@ -75,7 +75,7 @@ theorem induction_lemma (A : Finset ℕ) (_AS : A ⊆ S) (Acard : A.card = 101)
       refine le_trans Finset.card_biUnion_le ?_
       refine le_trans (Finset.sum_le_sum fcard) ?_
       simp [tcard]
-      linarith
+      omega
 
     /- By counting, there must be a shift by x ∈ S intersecting neither of the shifts by tᵢ -/
     have : ∃ x ∈ S, x ∉ t.biUnion f := by
@@ -91,11 +91,7 @@ theorem induction_lemma (A : Finset ℕ) (_AS : A ⊆ S) (Acard : A.card = 101)
       use x + a
       simp [aA]
 
-    have wt : w ∉ t := by
-      have := xf w wS
-      contrapose! wUf with wt
-      rw [Finset.mem_biUnion]
-      use w
+    have wt : w ∉ t := by grind
 
     have tw (x : ℕ) (xt : x ∈ t) : Disjoint {x + a | a ∈ A} {w + a | a ∈ A} := by
       contrapose! wUf
@@ -105,13 +101,7 @@ theorem induction_lemma (A : Finset ℕ) (_AS : A ⊆ S) (Acard : A.card = 101)
 
     let r := insert w t
 
-    have rS : r ⊆ S := by
-      intro x xr
-      rw [Finset.mem_insert] at xr
-      rcases xr with xz | xt
-      · rw [xz]
-        exact wS
-      · exact tS xt
+    have rS : r ⊆ S := Finset.insert_subset wS tS
 
     have rcard : r.card = k + 1 := by
       rw [Finset.card_insert_of_notMem wt]
@@ -122,8 +112,7 @@ theorem induction_lemma (A : Finset ℕ) (_AS : A ⊆ S) (Acard : A.card = 101)
       rw [Finset.mem_insert] at xr yr
       rcases xr with xz | xt
       · rcases yr with yz | yt
-        · rw [xz, yz] at xy
-          contradiction
+        · omega
         · rw [xz]
           exact Disjoint.symm (tw y yt)
       · rcases yr with yz | yt
