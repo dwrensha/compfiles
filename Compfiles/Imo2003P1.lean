@@ -25,6 +25,8 @@ namespace Imo2003P1
 
 abbrev S := Finset.Icc 1 1000000
 
+snip begin
+
 /- Proof by induction on the number of tᵢ's -/
 theorem induction_lemma (A : Finset ℕ) (AS : A ⊆ S) (Acard : A.card = 101) {k : ℕ} (hk : k ≤ 100) :
     ∃ t ⊆ S, t.card = k ∧ ∀ x ∈ t, ∀ y ∈ t, x ≠ y → Disjoint {x + a | a ∈ A} {y + a | a ∈ A} := by
@@ -130,7 +132,9 @@ theorem induction_lemma (A : Finset ℕ) (AS : A ⊆ S) (Acard : A.card = 101) {
 
     use r
 
-theorem imo2003_p1 (A : Finset ℕ) (AS : A ⊆ S) (Acard : A.card = 101) :
+snip end
+
+problem imo2003_p1 (A : Finset ℕ) (AS : A ⊆ S) (Acard : A.card = 101) :
     ∃ t ⊆ S, t.card = 100 ∧ ∀ x ∈ t, ∀ y ∈ t, x ≠ y → Disjoint {x + a | a ∈ A} {y + a | a ∈ A} :=
   induction_lemma A AS Acard (Nat.le_refl _)
 
