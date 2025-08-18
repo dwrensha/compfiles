@@ -43,7 +43,7 @@ problem imo1972_p5 (f g : ℝ → ℝ) (hf1 : ∀ x, ∀ y, f (x + y) + f (x - y
       _ = ‖f (x + y) + f (x - y)‖ := by rw [hf1]
       _ ≤ ‖f (x + y)‖ + ‖f (x - y)‖ := (abs_add _ _)
       _ ≤ 2 * k := by linarith [h (x + y), h (x - y)]
-  linarith
+  order
 
 
 end Imo1972P5

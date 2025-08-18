@@ -36,8 +36,7 @@ lemma mylemma_xy_le_y
   have h₃: y^y < (x^y)^y := by
     refine Nat.pow_lt_pow_left hc ?_
     refine Nat.pos_iff_ne_zero.mp h₀.2
-  rw [h₁] at h₃
-  linarith [h₂, h₃]
+  order
 
 lemma four_times_k_less_than_two_pow_k
   (k : ℕ)
@@ -177,7 +176,7 @@ lemma mylemma_2y2_lt_x
         have g₁: (↑y:ℝ) ^ ((↑x:ℝ) - 2*(↑y:ℝ)^2) < (↑y:ℝ) ^ (↑0:ℝ) := by
           exact Real.rpow_lt_rpow_of_exponent_lt gy glt
         simp at g₁
-        linarith[ h₄,g₁]
+        order
       . rw [heq] at h₄
         simp at h₄
     simp at h₆
