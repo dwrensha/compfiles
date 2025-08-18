@@ -64,12 +64,7 @@ theorem lemma1 (c1 : ℝ) :
   have h5 : f ⟨a, ⟨by linarith, ha2⟩⟩ = 1 := by
     simp only [one_div, ite_eq_right_iff, zero_ne_one, imp_false, not_le, f]
     linarith
-  have h6 : (1 : ℝ) ≤ c1 * a := by
-    have h7 : f ⟨a, ⟨by linarith, ha2⟩⟩ ≤ c1 * a := by
-      simpa using h1'
-    rw [h5] at h7
-    exact h7
-  linarith
+  order
 
 private lemma dyadicBracket
     (x : ℝ) (hx0 : 0 < x) (hxhalf : x ≤ (1 : ℝ)/2) :

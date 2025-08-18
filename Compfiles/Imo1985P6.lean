@@ -1265,5 +1265,4 @@ problem imo_1985_p6
       exact hy₂
     have hy₄: 0 < f 1 y := by
       exact (hy₀ 1 (by decide)).1
-    have hy₅: (0:ℝ) < 0 := by exact lt_trans hy₄ hy₃
-    exact (lt_self_iff_false 0).mp hy₅
+    order

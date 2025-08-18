@@ -65,8 +65,7 @@ problem usa1993_p1 (n : ℕ) (hn : 2 ≤ n) (a b : ℝ) (ha : 0 < a) (hb : 0 < b
       mul_lt_mul_of_pos' h12 h15 h16 hb
     have h18 : a * (a ^ (2 * n + 1) - 1) = a^(2*(n + 1)) - a := by ring
     have h19 : b * (b ^ (2 * n + 1) - 1) = b^(2*(n + 1)) - b := by ring
-    rw [h18, h19] at h17
-    linarith only [h7, h17]
+    order
   · linarith only [h7]
   · exact h14
 

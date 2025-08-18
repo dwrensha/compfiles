@@ -223,11 +223,7 @@ problem imo1961_p1b (a b x y z : ℝ) (h₀: IsSolution a b x y z) :
           have hx₂ : x + y < 0 := by exact Right.add_neg_of_nonpos_of_neg hx₁ hy₀
           rw [abs_of_pos hz₀, abs_of_neg hx₂] at h₈₁
           exact h₈₁
-        have h₈₃: (0:ℝ) < 0 := by
-          refine lt_trans h₃ ?_
-          rw [← h₀]
-          exact h₈₂
-        exact (lt_self_iff_false 0).mp h₈₃
+        order
     refine ⟨h₈.1, h₈.2, ?_⟩
     refine ⟨hz₀, ?_⟩
     constructor

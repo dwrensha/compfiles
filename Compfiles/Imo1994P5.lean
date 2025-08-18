@@ -113,9 +113,7 @@ problem imo1994_p5 (f : S → S) :
         simp only [div_self hbz]
       -- Contradiction.
       specialize h2 ⟨b, hb⟩ a hbi hai hba
-      dsimp only at h2
-      simp_rw [←habf] at h2
-      linarith
+      order
     · obtain ⟨a, haa⟩ := a
       dsimp only at haz
       simp_rw [haz]
@@ -140,9 +138,7 @@ problem imo1994_p5 (f : S → S) :
         simp only [div_self hbz]
 
       specialize h3 a ⟨b, hb⟩ hai hbi hba
-      dsimp only at h3
-      simp_rw [←habf] at h3
-      linarith
+      order
 
   -- But putting x = y in the relation given we get f(k) = k for k = x + f(x) + xf(x).
   -- Hence for any x we have x + f(x) + xf(x) = 0.

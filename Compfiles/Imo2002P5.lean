@@ -48,7 +48,7 @@ lemma extend_function_mono
         rw [Real.dist_eq, abs_sub_comm, abs_of_pos (sub_pos.mpr hz2)]
         constructor
         · linarith
-        · linarith
+        · order
       have hxδ : x - δ < x := sub_lt_self x hδ0
       obtain ⟨z, hz1, hz2⟩ := exists_rat_btwn hxδ
       refine ⟨z, hz2, ?_⟩
