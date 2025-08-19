@@ -33,7 +33,7 @@ lemma aux_1
   (c : ℕ → ℕ)
   (h₁ : ∀ (s : ℕ), c s = s * (s + 1)) :
   ∀ (a b : ℕ), c a - c b = (a - b) * (a + b + 1) := by
-  intros a b
+  intro a b
   rw [h₁, h₁]
   ring_nf
   rw [Nat.mul_sub, Nat.mul_sub]
@@ -69,7 +69,7 @@ lemma aux_1
 
 lemma aux_2 :
   ∀ (n m : ℕ), 0 < n → n.factorial ∣ ∏ i ∈ Finset.Icc 1 n, (m + i) := by
-  intros s t hs₀
+  intro s t hs₀
   have h₆₀ : ∏ i ∈ Finset.Icc (1 : ℕ) s, (t + i) = (t + s).factorial / t.factorial := by
     refine Nat.eq_div_of_mul_eq_right ?_ ?_
     . positivity
@@ -77,9 +77,9 @@ lemma aux_2 :
       . simp
         rw [Nat.mul_comm]
         exact rfl
-      . simp
-        intros d hd₀ hd₁
-        rw [Finset.prod_Icc_succ_top (by linarith), ← mul_assoc, hd₁]
+      . simp only [Nat.succ_eq_add_one, zero_add]
+        intro d hd₀ hd₁
+        rw [Finset.prod_Icc_succ_top (by omega), ← mul_assoc, hd₁]
         rw [← add_assoc]
         rw [Nat.factorial_succ]
         exact Nat.mul_comm (t + d).factorial (t + d + (1 : ℕ))
@@ -136,11 +136,11 @@ lemma aux_4
   ∏ i ∈ Finset.Icc 1 n, (k - (m + i)) = (k - (m + 1)).factorial / (k - (m + 1) - n).factorial := by
   revert h₇₀
   refine Nat.le_induction ?_ ?_ n h₀.2.2
-  . simp
+  . simp only [Nat.succ_eq_add_one, zero_add, Finset.Icc_self, Finset.prod_singleton]
     have hk₂: k - (m + 1) = k - (m + 1) - 1 + 1 := by omega
     rw [hk₂, Nat.factorial_succ]
     field_simp
-  . intros d hd₀ hd₁ hd₂
+  . intro d hd₀ hd₁ hd₂
     have hd₃: ∏ i ∈ Finset.Icc 1 d, (k - (m + i)) = (k - (m + 1)).factorial / (k - (m + 1) - d).factorial := by
       refine hd₁ ?_
       refine le_trans ?_ hd₂
@@ -180,9 +180,9 @@ problem imo1967_p3
     simp_rw [h₄₀]
     refine Nat.le_induction ?_ ?_ n h₀.2.2
     . simp
-    . simp
-      intros d hd₀ hd₁
-      rw [Finset.prod_Icc_succ_top (by linarith), hd₁]
+    . simp only [Nat.succ_eq_add_one, zero_add]
+      intro d hd₀ hd₁
+      rw [Finset.prod_Icc_succ_top (by omega), hd₁]
       rw [Nat.factorial_succ (d + (1 : ℕ))]
       rw [← mul_assoc, mul_comm _ (d + (1 : ℕ)), ← mul_assoc]
       rw [← Nat.factorial_succ]
@@ -195,7 +195,7 @@ problem imo1967_p3
       have h₅₁: ∏ i ∈ Finset.Icc 1 n, (((c (m + i)):ℤ) - ((c k):ℤ)) = (↑(∏ i ∈ Finset.Icc 1 n, ((c (m + i)) - (c k))):ℤ) := by
         rw [@Nat.cast_prod]
         refine Finset.prod_congr rfl ?_
-        intros x hx₀
+        intro x hx₀
         symm
         refine Nat.cast_sub ?_
 
@@ -246,8 +246,8 @@ problem imo1967_p3
         have h₅₁: ∏ i ∈ Finset.Icc 1 n, (((c k):ℤ) - ((c (m + i)):ℤ)) = (↑(∏ i ∈ Finset.Icc 1 n, (c k - c (m + i))):ℤ) := by
           rw [@Nat.cast_prod]
           refine Finset.prod_congr rfl ?_
-          simp
-          intros x hx₀ hx₁
+          simp only [Finset.mem_Icc, and_imp]
+          intro x hx₀ hx₁
           symm
           refine Nat.cast_sub ?_
             -- from x ≤ n and m + n < k, we get m + x ≤ k

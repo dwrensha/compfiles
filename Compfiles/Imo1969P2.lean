@@ -51,7 +51,7 @@ problem imo1969_p2
     have h₅₀: ∑ i ∈ Finset.range n, (Real.cos (a i + x) / 2 ^ i)
               = ∑ i ∈ Finset.range n, (((Real.cos (a i) * Real.cos (x) - Real.sin (a i) * Real.sin (x)) / (2^i))) := by
       refine Finset.sum_congr (by rfl) ?_
-      intros i _
+      intro i _
       rw [Real.cos_add]
     rw [h₅₀]
     ring_nf
@@ -97,7 +97,7 @@ problem imo1969_p2
       . use x₂
       . use x₁
     have h₈: ∀ x, f x = 0 → Real.cos x = 0 := by
-      intros x hx₀
+      intro x hx₀
       rw [h₇ x] at hx₀
       refine eq_zero_of_ne_zero_of_mul_left_eq_zero ?_ hx₀
       exact h₄

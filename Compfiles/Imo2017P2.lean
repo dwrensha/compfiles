@@ -137,7 +137,7 @@ theorem solution_of_map_zero_eq_one_imp_injective
     good f ↔ f = 0 ∨ f = (1 - ·) ∨ f = -(1 - ·) := by
   constructor
   · rw [or_iff_not_imp_left]
-    intros h0 h1
+    intro h0 h1
     apply (good_map_zero h0 h1).imp <;> intro h1
     · exact good_eq_of_inj h0 h1 (h f h0 h1)
     · rw [← neg_eq_iff_eq_neg] at h1 ⊢
@@ -164,7 +164,7 @@ theorem case1_injective (h : (2 : D) ≠ 0)
       or_iff_left h, ← add_sub_cancel_right y 1, h2, add_eq_right,
       good_map_add_one_eq_zero_iff h0 h1] at h4
   -- Finishing
-  intros a b h4
+  intro a b h4
   refine eq_of_sub_eq_zero (h2 _ ?_)
   have h5 : ∀ y z, f y = f z → f (-y) = f (-z) :=
     λ y z h5 ↦ by rw [← h3, h5, h3]
@@ -186,7 +186,7 @@ theorem case2_injective [Field F] (h : (2 : F) = 0)
     rw [good_shift2 h0 h1, ← h0, h4, add_assoc, ← add_assoc (c + 1), h2,
       good_special_equality h0 (mul_inv_cancel₀ h3), zero_add, add_right_comm]
 
-  intros a b h4
+  intro a b h4
   rw [← h2 a, ← h2 b, add_left_inj] at h4
   have h5 := good_map_add_one_eq_zero_iff h0 h1
   rcases eq_or_ne a 0 with rfl | ha

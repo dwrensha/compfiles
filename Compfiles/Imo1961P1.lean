@@ -183,7 +183,7 @@ problem imo1961_p1a (a b x y z : ℝ) :
       have h₄: (x + y) ^ 2 - z ^ 2 = (x + y + z) * (x + y - z) := by exact sq_sub_sq (x + y) z
       have h₅: z = (a ^ 2 - b ^ 2) / (2 * a) := by grind
       refine ⟨h₅, ?_⟩
-      intros m
+      intro m
       rw [← h₅, ← h₂]
       grind
 
@@ -195,7 +195,7 @@ problem imo1961_p1b (a b x y z : ℝ) (h₀: IsSolution a b x y z) :
   . simp
     cases' h₀ with h₀ h₁
     cases' h₁ with h₁ h₂
-    intros h₃ h₄ h₅
+    intro h₃ h₄ h₅
     rw [← h₀, ← h₁, add_sq, add_sq] at h₄ h₅
     have h₆: 0 < x * y + (x + y) * z := by linarith
     have h₇: x * y + (x + y) * z < (x ^ 2 + y ^ 2 + z ^ 2) := by linarith

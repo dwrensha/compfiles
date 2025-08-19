@@ -25,7 +25,7 @@ snip begin
 lemma usa1974_p2_wlog :
     ∀ (a b c : ℝ), a > 0 → b > 0 → c > 0 →
       a ≥ b → b ≥ c → a^a * b^b * c^c ≥ (a*b*c)^((a+b+c)/3) := by
-  intros a b c ha hb hc hab hbc
+  intro a b c ha hb hc hab hbc
   have habc : a * b * c > 0 := mul_pos (mul_pos ha hb) hc
   have h : (a ^ a * b ^ b * c ^ c) * (a ^ b * b ^ c * c ^ a) * (a ^ c * b ^ a * c ^ b) =
             (a * b * c) ^ (a + b + c) := by
@@ -55,7 +55,7 @@ problem usa1974_p2 :
     ∀ (a b c : ℝ), a > 0 → b > 0 → c > 0 → a^a * b^b * c^c ≥ (a*b*c)^((a+b+c)/3) := by
   -- solution from
   -- https://artofproblemsolving.com/wiki/index.php/1974_USAMO_Problems/Problem_2
-  intros a b c ha hb hc
+  intro a b c ha hb hc
   wlog hab : a ≥ b with Hab
   · move_add [←b]; move_mul [←b^b, ←b]
     refine Hab b a c hb ha hc (le_of_lt <| not_le.mp hab)

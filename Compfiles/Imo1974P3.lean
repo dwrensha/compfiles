@@ -83,18 +83,18 @@ lemma aux_4
     ∑ x ∈ fs₀, ↑((2 * n + 1).choose (x)) * k ^ (x) := by
     have h₀₁: ∑ x ∈ fs₃, f (2 * x + 1) = ∑ x ∈ (fs₀), f x := by
       refine Finset.sum_bij ?i ?_ ?i_inj ?i_surj ?h
-      . intros a _
+      . intro a _
         exact (2 * a + 1)
-      . intros a ha₀
+      . intro a ha₀
         have ha₁: a ≤ n := Finset.mem_range_succ_iff.mp ha₀
         have ha₂: 2 * a + 1 ≤ 2 * n + 1 := by omega
         have ha₃: (2 * a + 1) ∈ fs₂ := Finset.mem_range_succ_iff.mpr ha₂
         have ha₄: Odd (2 * a + 1) := odd_two_mul_add_one a
         refine Finset.mem_filter.mpr ?_
         exact And.symm ⟨ha₄, ha₃⟩
-      . intros a _ b _ h₃
+      . intro a _ b _ h₃
         omega
-      . intros b hb₀
+      . intro b hb₀
         use ((b - 1) / 2)
         refine exists_prop.mpr ?_
         have hb₁: b ∈ fs₂ ∧ Odd b := Finset.mem_filter.mp hb₀
@@ -120,18 +120,18 @@ lemma aux_4
     ∑ x ∈ fs₁, ↑((2 * n + 1).choose (x)) * k ^ (x) := by
     have h₁₁: ∑ x ∈ fs₃, f (2 * x) = ∑ x ∈ (fs₁), f x := by
       refine Finset.sum_bij ?_ ?_ ?_ ?_ ?_
-      . intros a _
+      . intro a _
         exact (2 * a)
-      . intros a ha₀
+      . intro a ha₀
         have ha₁: a < n + 1 := List.mem_range.mp ha₀
         have ha₂: 2 * a < 2 * n + 2 := by omega
         refine Finset.mem_filter.mpr ?_
         constructor
         . exact Finset.mem_range.mpr ha₂
         . exact even_two_mul a
-      . intros a _ b _ h₃
+      . intro a _ b _ h₃
         exact Nat.eq_of_mul_eq_mul_left (by norm_num) h₃
-      . intros b hb₀
+      . intro b hb₀
         use (b/2)
         refine exists_prop.mpr ?_
         have hb₁: b ∈ fs₂ ∧ Even b := Finset.mem_filter.mp hb₀
@@ -145,7 +145,7 @@ lemma aux_4
   have h₂: ∑ x ∈ Finset.range (2 * n + 1 + 1), k ^ x * ↑((2 * n + 1).choose x) =
     ∑ x ∈ fs₂, ↑((2 * n + 1).choose x) * k ^ x := by
     refine Finset.sum_congr (rfl) ?_
-    intros x _
+    intro x _
     rw [mul_comm]
   rw [h₀, h₁, h₂]
   have h₃: fs₂ = fs₀ ∪ fs₁ := by
@@ -169,7 +169,7 @@ lemma aux_4
       . exact Finset.mem_of_mem_filter a ha₂
   have h₄: Disjoint fs₀ fs₁ := by
     refine Finset.disjoint_filter.mpr ?_
-    intros x _ hx₁
+    intro x _ hx₁
     exact Nat.not_even_iff_odd.mpr hx₁
   nth_rw 2 [add_comm]
   rw [h₃, Finset.sum_union h₄]
@@ -198,18 +198,18 @@ lemma aux_5
     rw [neg_eq_neg_one_mul, Finset.mul_sum]
     have h₀₁: ∑ x ∈ fs₃, f₀ (2 * x + 1) = ∑ x ∈ (fs₀), -1 * f₁ x := by
       refine Finset.sum_bij ?i ?_ ?i_inj ?i_surj ?h
-      . intros a _
+      . intro a _
         exact (2 * a + 1)
-      . intros a ha₀
+      . intro a ha₀
         have ha₁: a ≤ n := Finset.mem_range_succ_iff.mp ha₀
         have ha₂: 2 * a + 1 ≤ 2 * n + 1 := by omega
         have ha₃: (2 * a + 1) ∈ fs₂ := Finset.mem_range_succ_iff.mpr ha₂
         have ha₄: Odd (2 * a + 1) := odd_two_mul_add_one a
         refine Finset.mem_filter.mpr ?_
         exact And.symm ⟨ha₄, ha₃⟩
-      . intros a _ b _ h₃
+      . intro a _ b _ h₃
         omega
-      . intros b hb₀
+      . intro b hb₀
         use ((b - 1) / 2)
         refine exists_prop.mpr ?_
         have hb₁: b ∈ fs₂ ∧ Odd b := Finset.mem_filter.mp hb₀
@@ -229,7 +229,7 @@ lemma aux_5
         . have hb₆: 2 * ((b - 1) / 2) = b - 1 := Nat.two_mul_div_two_of_even hb₃
           rw [hb₆]
           exact Nat.sub_add_cancel hb₂
-      . intros b hb₀
+      . intro b hb₀
         have hb₁: (-1:ℝ) ^ (b * 2) = 1 := by
           refine (neg_one_pow_eq_one_iff_even (by norm_num)).mpr ?_
           rw [mul_comm]
@@ -242,18 +242,18 @@ lemma aux_5
     ∑ x ∈ fs₁, ↑((2 * n + 1).choose (x)) * (-k) ^ (x) := by
     have h₁₁: ∑ x ∈ fs₃, f₀ (2 * x) = ∑ x ∈ (fs₁), f₁ x := by
       refine Finset.sum_bij ?_ ?_ ?_ ?_ ?_
-      . intros a _
+      . intro a _
         exact (2 * a)
-      . intros a ha₀
+      . intro a ha₀
         have ha₁: a < n + 1 := List.mem_range.mp ha₀
         have ha₂: 2 * a < 2 * n + 2 := by omega
         refine Finset.mem_filter.mpr ?_
         constructor
         . exact Finset.mem_range.mpr ha₂
         . exact even_two_mul a
-      . intros a _ b _ h₃
+      . intro a _ b _ h₃
         exact Nat.eq_of_mul_eq_mul_left (by norm_num) h₃
-      . intros b hb₀
+      . intro b hb₀
         use (b/2)
         refine exists_prop.mpr ?_
         have hb₁: b ∈ fs₂ ∧ Even b := Finset.mem_filter.mp hb₀
@@ -262,7 +262,7 @@ lemma aux_5
           have hb₃: b / 2 < n + 1 := by exact Nat.div_lt_of_lt_mul hb₂
           exact Finset.mem_range.mpr hb₃
         . exact Nat.two_mul_div_two_of_even hb₁.2
-      . intros b hb₀
+      . intro b hb₀
         have hb₁: (-1:ℝ) ^ (b * 2) = 1 := by
           refine (neg_one_pow_eq_one_iff_even (by norm_num)).mpr ?_
           rw [mul_comm]
@@ -274,7 +274,7 @@ lemma aux_5
   have h₂: ∑ x ∈ Finset.range (2 * n + 1 + 1), (-k) ^ x * ↑((2 * n + 1).choose x) =
     ∑ x ∈ fs₂, ↑((2 * n + 1).choose x) * (-k) ^ x := by
     refine Finset.sum_congr (rfl) ?_
-    intros x _
+    intro x _
     rw [mul_comm]
   rw [h₀, h₁, h₂, sub_neg_eq_add]
   have h₃: fs₂ = fs₀ ∪ fs₁ := by
@@ -298,7 +298,7 @@ lemma aux_5
       . exact Finset.mem_of_mem_filter a ha₂
   have h₄: Disjoint fs₀ fs₁ := by
     refine Finset.disjoint_filter.mpr ?_
-    intros x _ hx₁
+    intro x _ hx₁
     exact Nat.not_even_iff_odd.mpr hx₁
   nth_rw 2 [add_comm]
   rw [h₃, Finset.sum_union h₄]
@@ -322,7 +322,7 @@ problem imo1974_p3
     simp
     rw [Finset.mul_sum]
     refine Finset.sum_congr (rfl) ?_
-    intros x _
+    intro x _
     rw [mul_comm ((√8)⁻¹), mul_assoc]
     refine mul_eq_mul_left_iff.mpr ?_
     left
@@ -332,7 +332,7 @@ problem imo1974_p3
     rw [ha, hk]
     simp
     refine Finset.sum_congr (rfl) ?_
-    intros x _
+    intro x _
     refine mul_eq_mul_left_iff.mpr ?_
     left
     rw [pow_mul, pow_mul, Real.sq_sqrt (by norm_num)]

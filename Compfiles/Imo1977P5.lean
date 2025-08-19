@@ -41,7 +41,7 @@ lemma aux_1
     rw [hs, ← h₁]
     exact h₈₁
   have ha₁: ∀ k n:ℤ, n^2 < k ∧ k < (n + 1) ^ 2 → ¬ IsSquare k := by
-    intros k n hk₀
+    intro k n hk₀
     cases' hk₀ with hk₀ hk₁
     by_contra hc₂
     apply (isSquare_iff_exists_sq k).mp at hc₂

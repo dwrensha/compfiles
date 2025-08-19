@@ -66,7 +66,7 @@ problem usa1998_p4 : IsLeast possible_num_clicks min_clicks := by
       sorry
     · simp only [List.length_append, List.length_map, List.length_range]
   · rw[mem_lowerBounds]
-    intros n hn
+    intro n hn
     obtain ⟨rs, hrs, hrsl⟩ := hn
     sorry
 

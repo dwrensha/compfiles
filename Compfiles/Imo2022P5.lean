@@ -84,7 +84,7 @@ lemma mylemma_44
       = ∏ x ∈ Finset.range (p - 1), (p - (x + 1)) := by
   refine Nat.le_induction ?_ ?_ p hp
   . norm_num
-  . intros n hn2 h₀
+  . intro n hn2 h₀
     rw [Finset.prod_range_add_one_eq_factorial] at h₀ ⊢
     simp only [add_tsub_cancel_right, Nat.reduceSubDiff] at *
     have hn: n ≠ 0 := Nat.ne_zero_of_lt hn2
@@ -148,7 +148,7 @@ lemma mylemma_41
       ≤ (p^2)^(Finset.range (p - 1)).card * p := by
     refine Nat.mul_le_mul_right ?_ ?_
     refine Finset.prod_le_pow_card (Finset.range (p - 1)) ?_ (p^2) ?_
-    intros x _
+    intro x _
     exact (p ^ 2).sub_le ((x + 1) ^ 2)
   simp at *
   have h₄: b.factorial + p ≤ (p ^ 2) ^ (p - 1) * p + p := by
@@ -244,7 +244,7 @@ lemma mylemma_53
     refine Int.modEq_of_dvd ?_
     rw [sub_zero]
     refine Finset.dvd_sum ?_
-    intros x g₀
+    intro x g₀
     have gx: 2 ≤ x := (Finset.mem_Ico.mp g₀).left
     rw [mul_assoc]
     exact dvd_mul_of_dvd_left (pow_dvd_pow ((↑p:ℤ) + 1) gx) ((-1:ℤ) ^ (p - x) * ↑(p.choose x))
@@ -329,7 +329,7 @@ lemma mylemma_51
   -- we use induction
   refine Nat.le_induction ?_ ?_ p (hpl)
   . exact Nat.lt_of_sub_eq_succ rfl
-  . intros n hn h₁
+  . intro n hn h₁
     have h₂: n + 1 + (n + 1).factorial = (n.factorial + 1) * (n + 1) := by
       rw [add_mul, one_mul, Nat.factorial_succ]
       rw [add_comm (n + 1)]

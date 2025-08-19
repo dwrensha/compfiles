@@ -81,7 +81,7 @@ lemma imo_1990_p3_forward
       rw [h₃₀, one_pow]
       exact Nat.dvd_mul_right ((2 : ℕ) ^ n + (1 : ℕ)) ((2 : ℕ) ^ n - (1 : ℕ))
     have h₄: ∀ p, Nat.Prime p → 3 ≤ p → p ∣ 2 ^ (p - 1) - 1 := by
-      intros p hp₀ hp₁
+      intro p hp₀ hp₁
       have hp₃: Odd p := by
         refine Nat.Prime.odd_of_ne_two hp₀ ?_
         exact Ne.symm (Nat.ne_of_lt hp₁)
@@ -161,14 +161,14 @@ lemma imo_1990_p3_forward
               rw [Nat.primeFactors_gcd g₀ g₁]
               refine Finset.disjoint_iff_inter_eq_empty.mp ?_
               have g₂: ∀ x ∈ n.primeFactors, p ≤ x := by
-                intros x hx₀
+                intro x hx₀
                 exact Finset.min'_le sp x hx₀
               have g₃: ∀ x ∈ (p - (1 : ℕ)).primeFactors, x < p := by
-                intros x hx₀
+                intro x hx₀
                 refine Nat.lt_of_le_pred hp₁.pos ?_
                 . exact Nat.le_of_mem_primeFactors hx₀
               refine Finset.disjoint_left.mpr ?_
-              intros x hx₀
+              intro x hx₀
               have hx₁: p ≤ x := by exact g₂ x hx₀
               contrapose! hx₁
               exact g₃ x hx₁
@@ -277,10 +277,10 @@ lemma imo_1990_p3_forward
         have hq₉: q = 7 := by
           have hh₀: Nat.gcd n (q - 1) = 1 ∨ Nat.gcd n (q - 1) = 3 := by
             have hh₀₁: ∀ x ∈ (q - 1).primeFactors, x ≤ q - 1 := by
-              intros x hx₀
+              intro x hx₀
               . exact Nat.le_of_mem_primeFactors hx₀
             have hh₀₂: ∀ x ∈ d.primeFactors, q ≤ x := by
-              intros x hx₀
+              intro x hx₀
               exact Finset.min'_le sq x hx₀
             have hh₀₃: Nat.gcd (q - 1) d = 1 := by
               have hh₀₃₀: q - (1 : ℕ) ≠ (0 : ℕ) := by omega
@@ -289,7 +289,7 @@ lemma imo_1990_p3_forward
                 rw [Nat.primeFactors_gcd hh₀₃₀ hh₀₃₁]
                 refine Finset.disjoint_iff_inter_eq_empty.mp ?_
                 refine Finset.disjoint_left.mpr ?_
-                intros x hx₀
+                intro x hx₀
                 have hx₁: x ≤ q - (1 : ℕ) := by exact hh₀₁ x hx₀
                 contrapose! hx₁
                 refine Nat.lt_of_succ_le ?_

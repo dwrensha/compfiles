@@ -54,7 +54,7 @@ lemma aux_2_1
   a x l = a x i + (l - i) * (3 : ℕ) := by
   revert hl₁ hl₂ hl₀
   refine Nat.strong_induction_on l ?_
-  intros d hd₀ hd₁ hd₂ hd₃
+  intro d hd₀ hd₁ hd₂ hd₃
   by_cases hd₄: i < d
   . have hd₅: d - 1 + 1 = d := by omega
     have hd₆ := ha₁ x (d - 1) hx₀
@@ -68,7 +68,7 @@ lemma aux_2_1
     have hd₉: a x (d - 1) = a x i + (d - 1 - i) * (3 : ℕ) := by
       refine hd₀ (d - 1) ?_ ?_ ?_ ?_
       . exact Nat.sub_one_lt_of_lt hd₄
-      . intros m hm₀ hm₁ hm₂
+      . intro m hm₀ hm₁ hm₂
         refine hd₁ m ?_ hm₁ hm₂
         exact Nat.lt_of_lt_pred hm₀
       . linarith
@@ -95,7 +95,7 @@ lemma aux_2_2
   have hj₁: ∀ k ≥ i, k < i + j → ¬ IsSquare (a x k) := by
     intro k
     refine Nat.strong_induction_on k ?_
-    intros l hl₀ hl₁ hl₂
+    intro l hl₀ hl₁ hl₂
     by_cases hlp: i < l
     . have hl₃: a x l = a x i + (l - i) * 3 := by
         exact aux_2_1 a ha₁ x i j l hx₀ hl₀ hl₁ hl₂
@@ -118,7 +118,7 @@ lemma aux_2_2
       clear hj₀
       induction' j with d hd₀ hd₁
       . simp
-      . intros hj₁
+      . intro hj₁
         rw [← add_assoc]
         have hd₁: ¬IsSquare (a x (i + d)) := by
           refine hj₁ (i + d) ?_ ?_
@@ -128,7 +128,7 @@ lemma aux_2_2
         have hd₃: a x (i + d + (1 : ℕ)) = a x (i + d) + 3 := by simp_all only [↓reduceIte]
         have hd₄: a x (i + d) = a x i + d * (3 : ℕ) := by
           refine hd₀ ?_
-          intros k hk₀ hk₁
+          intro k hk₀ hk₁
           refine hj₁ k hk₀ ?_
           refine lt_trans hk₁ ?_
           exact Nat.lt_add_one (i + d)
@@ -150,11 +150,11 @@ lemma aux_2_3
   (hj₀ : j = (t - c) / (3 : ℕ)) :
   a x (i + j) = t := by
   have h₀: ∀ (k : ℕ), i ≤ k → k ≤ i + j → a x k = c + (k - i) * 3 := by
-    intros k
+    intro k
     revert hh₄
     clear hj₀
     refine Nat.strong_induction_on k ?_
-    intros d hd₀ hd₁ hd₂ hd₃
+    intro d hd₀ hd₁ hd₂ hd₃
     by_cases hd₄: i < d
     . have hd₅: d - 1 + 1 = d := by omega
       have hd₆ := ha₁ x (d - 1) hx₀
@@ -167,7 +167,7 @@ lemma aux_2_3
       have hd₉: a x (d - 1) = c + (d - 1 - i) * (3 : ℕ) := by
         refine hd₀ (d - 1) ?_ ?_ ?_ ?_
         . exact Nat.sub_one_lt_of_lt hd₄
-        . intros m hm₀ hm₁
+        . intro m hm₀ hm₁
           exact hd₁ m hm₀ hm₁
         . linarith
         . linarith
@@ -197,9 +197,9 @@ lemma aux_2_4
   (hh₄ : ∀ (y : ℕ), c ≤ y → y < (c.sqrt + (1 : ℕ)) ^ (2 : ℕ) → ¬IsSquare y)
   (hh₁ : c % (3 : ℕ) ≠ ((c.sqrt + (1 : ℕ)) ^ (2 : ℕ)) % 3) :
   ∀ (k : ℕ), i ≤ k → k < i + j → ¬IsSquare (a x k) := by
-  intros k
+  intro k
   have h₀: ∀ y, (c.sqrt + (1 : ℕ)) ^ (2 : ℕ) < y → y < (c.sqrt + (2 : ℕ)) ^ (2 : ℕ) → ¬ IsSquare y := by
-    intros y hy₀ hy₁
+    intro y hy₀ hy₁
     contrapose! hy₀
     obtain ⟨r, hr₀⟩ := hy₀
     rw [hr₀, ← pow_two] at hy₁
@@ -208,7 +208,7 @@ lemma aux_2_4
     refine Nat.pow_le_pow_left ?_ 2
     exact Nat.le_of_lt_succ hr₁
   refine Nat.strong_induction_on k ?_
-  intros l hl₀ hl₁ hl₂
+  intro l hl₀ hl₁ hl₂
   by_cases hlp: i < l
   . have hl₃: a x l = a x i + (l - i) * 3 := by
       exact aux_2_1 a ha₁ x i j l hx₀ hl₀ hl₁ hl₂
@@ -252,9 +252,9 @@ lemma aux_2_5
   (hh₂ : c.sqrt % (3 : ℕ) = (0 : ℕ))
   (hj₀ : j = ((c.sqrt + (3 : ℕ)) ^ (2 : ℕ) - c) / (3 : ℕ)) :
   ∀ (k : ℕ), i ≤ k → k < i + ((c.sqrt + (3 : ℕ)) ^ (2 : ℕ) - c) / (3 : ℕ) → ¬IsSquare (a x k) := by
-  intros k
+  intro k
   have h₀: ∀ y t, (c.sqrt + (t : ℕ)) ^ (2 : ℕ) < y → y < (c.sqrt + t + (1 : ℕ)) ^ (2 : ℕ) → ¬ IsSquare y := by
-    intros y t hy₀ hy₁
+    intro y t hy₀ hy₁
     contrapose! hy₀
     obtain ⟨r, hr₀⟩ := hy₀
     rw [hr₀, ← pow_two] at hy₁
@@ -263,7 +263,7 @@ lemma aux_2_5
     refine Nat.pow_le_pow_left ?_ 2
     exact Nat.le_of_lt_succ hr₁
   refine Nat.strong_induction_on k ?_
-  intros l hl₀ hl₁ hl₂
+  intro l hl₀ hl₁ hl₂
   by_cases hlp: i < l
   . have hl₃: a x l = a x i + (l - i) * 3 := by
       exact aux_2_1 a ha₁ x i (((c.sqrt + (3 : ℕ)) ^ (2 : ℕ) - c) / (3 : ℕ)) l hx₀ hl₀ hl₁ hl₂
@@ -333,7 +333,7 @@ lemma aux_3
     . exact Ne.symm (Nat.zero_ne_add_one (1 : ℕ))
     . field_simp
   have hh₄: ∀ y ≥ c, y < (c.sqrt + (1 : ℕ)) ^ (2 : ℕ) → ¬ IsSquare y := by
-    intros y hy₀ hy₁
+    intro y hy₀ hy₁
     have hy₂: (c.sqrt) ^ (2 : ℕ) < y := by
       refine lt_of_lt_of_le ?_ hy₀
       contrapose! hc₂
@@ -375,7 +375,7 @@ lemma aux_3
       simp_all
       use (i + j)
       refine aux_2_3 a ha₁ x c i j ((c.sqrt + (2 : ℕ)) ^ (2 : ℕ)) hx₀ hi₀ hh₅ ?_ ?_ hj₀
-      . intros k hk₀ hk₁
+      . intro k hk₀ hk₁
         refine aux_2_4 a ha₁ x c i j hj₀ hx₀ hi₀ hh₃ hh₄ ?_ k hk₀ hk₁
         have hc₂: (c.sqrt + (1 : ℕ)) % (3 : ℕ) = 2 := by omega
         rw [hh₁, Nat.pow_mod, hc₂]
@@ -432,7 +432,7 @@ lemma aux_3
       have hj₀: a x (i + j) = (c.sqrt + (2 : ℕ)) ^ (2 : ℕ) := by
         refine aux_2_3 a ha₁ x c i j ((c.sqrt + (2 : ℕ)) ^ (2 : ℕ)) hx₀ hi₀ hh₅ ?_ ?_ rfl
         . simp_all
-          intros k hk₀ hk₁
+          intro k hk₀ hk₁
           refine aux_2_4 a ha₁ x c i j rfl hx₀ hi₀ hh₃ hh₄ ?_ k hk₀ hk₁
           have hc₂: (c.sqrt + (1 : ℕ)) % (3 : ℕ) = 0 := by omega
           rw [hh₁, Nat.pow_mod, hc₂]
@@ -453,19 +453,19 @@ theorem aux_4
                        then a x (i + 1) = Nat.sqrt (a x i)
                        else a x (i + 1) = a x i + 3) :
   ∀ x > 1, (∃ j, a x j ≡ 2 [MOD 3]) → (∀ A, {n | a x n = A}.Finite) := by
-  intros x hx₀ hx₁ A
+  intro x hx₀ hx₁ A
   obtain ⟨i, hi₀⟩ := hx₁
   rw [@Set.finite_iff_bddBelow_bddAbove]
   constructor
   . field_simp
   . let c : ℕ := a x i
     have h₁: StrictMonoOn (a x) (Set.Ici i) := by
-      intros j hj₀ k hk₀ hj₁
+      intro j hj₀ k hk₀ hj₁
       have hc₈: c ≡ 2 [MOD 3] := by exact hi₀
       have h₂: ∀ l ≥ i, a x l = c + (l - i) * 3 := by
-        intros l
+        intro l
         refine Nat.strong_induction_on l ?_
-        intros d hd₀ hd₁
+        intro d hd₀ hd₁
         by_cases hd₃: i < d
         . have hd₄: a x (d - 1) = c + (d - 1 - i) * (3 : ℕ) := by
             refine hd₀ (d - 1) ?_ ?_
@@ -473,9 +473,9 @@ theorem aux_4
             . exact Nat.le_sub_one_of_lt hd₃
           have hd₅: ¬IsSquare (a x (d - 1)) := by
             have hh₀: ∀ m ≥ i, a x m ≡ 2 [MOD 3] := by
-              intros m hm₀
+              intro m hm₀
               refine Nat.le_induction hc₈ ?_ m hm₀
-              intros t _ ht₁
+              intro t _ ht₁
               have ht₂: ¬ IsSquare (a x t) := by exact aux_1 (a x t) ht₁
               have ht₃ := ha₁ x t hx₀
               have ht₄: a x (t + (1 : ℕ)) = a x t + (3 : ℕ) := by simp_all only [↓reduceIte]
@@ -508,7 +508,7 @@ theorem aux_4
     by_cases h₃: ∃ j, a x j = A ∧ i ≤ j
     . obtain ⟨j, hj₀⟩ := h₃
       use j
-      intros k hk₀
+      intro k hk₀
       simp_all
       cases' hk₀ with hk₀ hk₀
       . contrapose! hk₀
@@ -530,11 +530,11 @@ theorem aux_4
       have h₄: {n : ℕ | a x n = A ∧ i ≤ n} = ∅ := by
         refine Set.sep_eq_empty_iff_mem_false.mpr ?_
         simp
-        intros j hj₀
+        intro j hj₀
         exact h₃ j hj₀
       rw [h₂, h₄, Set.empty_union]
       use i
-      intros j hj₀
+      intro j hj₀
       simp_all
       exact le_of_lt hj₀.2
 
@@ -545,9 +545,9 @@ theorem aux_5
                        then a x (i + 1) = Nat.sqrt (a x i)
                        else a x (i + 1) = a x i + 3) :
   ∀ x > 1, 3 ∣ x → ∀ i, 3 ∣ a x i := by
-  intros x hx₀ hx₁ i
+  intro x hx₀ hx₁ i
   refine Nat.strong_induction_on i ?_
-  intros d hd₀
+  intro d hd₀
   by_cases hd₁: 0 < d
   . have hd₃: (3 : ℕ) ∣ a x (d - 1) := by
       refine hd₀ (d - 1) ?_
@@ -597,7 +597,7 @@ problem imo2017_p1
     have h₀: ∀ j, 1 < a x j := by
       intro j
       refine Nat.strong_induction_on j ?_
-      intros d hd₀
+      intro d hd₀
       by_cases hd₁: 0 < d
       . have hd₂ := ha₁ x (d - 1) hx₀
         have hd₃: d - 1 + 1 = d := by exact Nat.sub_add_cancel hd₁
@@ -731,7 +731,7 @@ problem imo2017_p1
             have hh₀: ∀ j, ¬ 3 ∣ a x j := by
               intro j
               refine Nat.strong_induction_on j ?_
-              intros d hd₀
+              intro d hd₀
               by_cases hd₁: 0 < d
               . have hd₂: d - 1 + 1 = d := by exact Nat.sub_add_cancel hd₁
                 have hd₃ := ha₁ x (d - 1) hx₀

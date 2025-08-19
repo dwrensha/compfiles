@@ -33,7 +33,7 @@ lemma not_prime_of_dvd : ∀ n : ℕ, n ≥ 2 → (∃ m, m ≥ 2 ∧ m ≠ n �
 
 lemma some_useful_mod_lemma : ∀ (n a b c d : ℕ),
   n ≡ a [MOD b] → d ^ b ≡ 1 [MOD c] → d ^ n ≡ d ^ a [MOD c] := by
-  intros n a b c d h1 h2
+  intro n a b c d h1 h2
   wlog h : n ≤ a with H
   · have han : a ≤ n := (Nat.le_total n a).resolve_left h
     symm

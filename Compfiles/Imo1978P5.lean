@@ -45,11 +45,11 @@ lemma aux_1
   let f₂ : ℕ → ℝ := fun k => ((f k):ℝ)
   have h₃: ∑ k ∈ Icc 1 n, ((k):ℝ) / (k) ^ 2 = ∑ k ∈ Icc 1 n, f₁ k • f₀ k := by
     refine Finset.sum_congr rfl ?_
-    intros x _
+    intro x _
     rw [div_eq_mul_one_div, smul_eq_mul]
   have h₄: ∑ k ∈ Icc 1 n, ((f k):ℝ) / (k) ^ 2 = ∑ k ∈ Icc 1 n, f₂ k • f₀ k := by
     refine Finset.sum_congr rfl ?_
-    intros x _
+    intro x _
     rw [div_eq_mul_one_div, smul_eq_mul]
   let sf : Finset ℝ := Finset.image f₂ (Finset.Icc 1 n)
   set sf_sorted : List ℝ := Finset.sort (fun (x₁ x₂) => x₁ ≤ x₂) sf with hf₁
@@ -67,7 +67,7 @@ lemma aux_1
     have hl₂: sf.card = n := by
       rw [← hl₁]
       refine Finset.card_image_of_injOn ?_
-      intros p hp₀ q hq₀ hpq
+      intro p hp₀ q hq₀ hpq
       have hf₅: f₂ = fun k => ((f k):ℝ) := by rfl
       contrapose! hpq
       rw [hf₅]
@@ -82,7 +82,7 @@ lemma aux_1
     have hl₃: (image f s).card = n := by
       rw [← hl₁]
       refine Finset.card_image_of_injOn ?_
-      intros p hp₀ q hq₀ hpq
+      intro p hp₀ q hq₀ hpq
       contrapose! hpq
       refine h₁ p q ?_ ?_ hpq
       . norm_cast at hp₀
@@ -97,27 +97,28 @@ lemma aux_1
     . rw [← hl₃]
       exact length_sort fun x₁ x₂ => x₁ ≤ x₂
   have hf₅: ∀ a ∈ s, a - 1 < sf_sorted.length := by
-    intros a ha₀
+    intro a ha₀
     rw [hf₄.1]
     apply Finset.mem_Icc.mp at ha₀
     omega
   have hf₆: ∀ k ∈ s, 1 ≤ f₃ k := by
     have hs₂: ∀ k ∈ sf_sorted, 1 ≤ k := by
       rw [hf₁, hf₂, hf₃]
-      simp
-      intros k hk₀
+      simp only [mem_sort, mem_image, forall_exists_index, and_imp,
+                 forall_apply_eq_imp_iff₂, Nat.one_le_cast]
+      intro k hk₀
       apply Finset.mem_Icc.mp at hk₀
       exact h₀ k hk₀.1
     have hs₃: ∀ k ∈ s, f₃ k ∈ sf_sorted := by
-      intros k hk₀
+      intro k hk₀
       rw [hf₀]
       have hk₁: k - 1 < sf_sorted.length := by exact hf₅ k hk₀
       rw [List.getD_eq_getElem sf_sorted 0 hk₁]
       exact List.getElem_mem hk₁
-    intros k hk₀
+    intro k hk₀
     exact hs₂ (f₃ k) (hs₃ k hk₀)
   have hf₇: ∀ a : ℕ, a ∈ Icc 1 n → ∀ b : ℕ, b ∈ Icc 1 n → a < b → f₃ a + 1 ≤ f₃ b := by
-    intros a ha₀ b hb₀ hab
+    intro a ha₀ b hb₀ hab
     rw [hf₀, hf₀]
     have ha₁: a - 1 < sf_sorted.length := by exact hf₅ a ha₀
     have hb₁: b - 1 < sf_sorted.length := by exact hf₅ b hb₀
@@ -125,7 +126,7 @@ lemma aux_1
     let sfo : Finset ℕ := image f s
     have hso₂: ∀ k ∈ s, (sort (fun x₁ x₂ => x₁ ≤ x₂) (image f₂ s)).getD (k - 1) 0
       = (sort (fun x₁ x₂ => x₁ ≤ x₂) (image f s)).getD (k - 1) 0 := by
-      intros k hk₀
+      intro k hk₀
       have hk₃: Function.Injective f₁ := by exact CharZero.cast_injective
       let fe : ℕ ↪ ℝ := {toFun := f₁ , inj' := hk₃}
       have hk₅: (sort (fun x₁ x₂ => x₁ ≤ x₂) (image f₂ s)) =
@@ -135,13 +136,13 @@ lemma aux_1
           rw [hf₃, hh₀]
           refine Finset.induction_on_min s ?_ ?_
           . simp
-          . intros z sz _ hz₁
+          . intro z sz _ hz₁
             simp
             exact congrArg (insert ↑(f z)) hz₁
         rw [hh₁]
         refine Finset.induction_on_min (image f s) ?_ ?_
         . simp
-        . intros z sz hz₀ hz₁
+        . intro z sz hz₀ hz₁
           have hz₂: z ∉ sz := by
             contrapose! hz₀
             use z
@@ -152,7 +153,7 @@ lemma aux_1
             simp
             exact fun b a => Nat.le_of_succ_le (hz₀ b a)
           have hz₅: ∀ b ∈ map fe sz, (fun x₁ x₂ => x₁ ≤ x₂) (↑z:ℝ) b := by
-            intros y hy₀
+            intro y hy₀
             have hy₁: ∃ d:ℕ, d ∈ sz ∧ (d:ℝ) = y := by exact Multiset.mem_map.mp hy₀
             obtain ⟨d, hd₀, hd₁⟩ := hy₁
             refine le_of_lt ?_
@@ -160,7 +161,7 @@ lemma aux_1
             exact Nat.cast_lt.mpr (hz₀ d hd₀)
           have hz₆: (↑z:ℝ) ∉ map fe sz := by
             simp
-            intros x hx₀
+            intro x hx₀
             rw [hh₀]
             simp
             have hx₁: ∀ x:ℕ, f₁ x = (x:ℝ) := by exact fun x => rfl
@@ -240,7 +241,7 @@ lemma aux_1
       have g₀: so.card = n := by
         rw [← hl₁]
         refine Finset.card_image_of_injOn ?_
-        intros p hp₀ q hq₀ hpq
+        intro p hp₀ q hq₀ hpq
         contrapose! hpq
         refine h₁ p q ?_ ?_ hpq
         . norm_cast at hp₀
@@ -252,7 +253,7 @@ lemma aux_1
       rw [← g₀]
       exact length_sort fun x₁ x₂ => x₁ ≤ x₂
     have gg₁₀: ∀ k ∈ s, f₅ k ∈ s := by
-      intros k hk₀
+      intro k hk₀
       refine Finset.mem_Icc.mpr ?_
       constructor
       . exact Nat.le_add_left 1 (List.findIdx (fun y => decide (y = f k)) lo_sorted)
@@ -271,7 +272,7 @@ lemma aux_1
       rw [g₀, hs₀]
       simp
     have gg₁₂: ∀ k ∈ s, f₈ k ∈ s := by
-      intros k hk₀
+      intro k hk₀
       refine Finset.mem_Icc.mpr ?_
       constructor
       . exact Nat.le_add_left 1 (List.findIdx (fun x => decide (x = f₄ k)) lo)
@@ -308,7 +309,7 @@ lemma aux_1
         rw [hf₃, hh₀]
         refine Finset.induction_on_min s ?_ ?_
         . simp
-        . intros z sz _ hz₁
+        . intro z sz _ hz₁
           simp
           exact congrArg (insert ↑(f z)) hz₁
       have g₁: lo_sorted = sort (fun x₁ x₂ => x₁ ≤ x₂) so := by rfl
@@ -316,7 +317,7 @@ lemma aux_1
       rw [hf₁, hf₂, g₁, g₂, hh₁]
       refine Finset.induction_on_min (image f s) ?_ ?_
       . simp
-      . intros z sz hz₀ hz₁
+      . intro z sz hz₀ hz₁
         have hz₂: z ∉ sz := by
           contrapose! hz₀
           use z
@@ -327,7 +328,7 @@ lemma aux_1
           simp
           exact fun b a => Nat.le_of_succ_le (hz₀ b a)
         have hz₅: ∀ b ∈ map fe sz, (fun x₁ x₂ => x₁ ≤ x₂) (↑z:ℝ) b := by
-          intros y hy₀
+          intro y hy₀
           have hy₁: ∃ d:ℕ, d ∈ sz ∧ (d:ℝ) = y := by exact Multiset.mem_map.mp hy₀
           obtain ⟨d, hd₀, hd₁⟩ := hy₁
           refine le_of_lt ?_
@@ -335,7 +336,7 @@ lemma aux_1
           exact Nat.cast_lt.mpr (hz₀ d hd₀)
         have hz₆: (↑z:ℝ) ∉ map fe sz := by
           simp
-          intros x hx₀
+          intro x hx₀
           rw [hh₀]
           simp
           have hx₁: ∀ x:ℕ, f₁ x = (x:ℝ) := by exact fun x => rfl
@@ -347,7 +348,7 @@ lemma aux_1
         simp
         exact List.cons_eq_cons.mp (congrArg (List.cons ↑z) hz₁)
     have gg₁₄: ∀ x y, x ∈ s → y ∈ s → f₄ x = f₄ y → x = y := by
-      intros x y hx₀ hy₀ hx₁
+      intro x y hx₀ hy₀ hx₁
       have hx₂: List.Nodup lo_sorted := by exact sort_nodup (fun x₁ x₂ => x₁ ≤ x₂) so
       rw [gg₀] at hx₁
       ring_nf at hx₁
@@ -367,7 +368,7 @@ lemma aux_1
       rw [← Nat.sub_add_cancel hy₀.1, ← Nat.sub_add_cancel hx₀.1]
       exact congrFun (congrArg HAdd.hAdd hj₉) 1
     have hh₀: ∀ k ∈ s, f₄ (f₆ k) = f k := by
-      intros k hk₀
+      intro k hk₀
       have g₀: f₆ k = f₅ k := gg₅ k hk₀
       rw [g₀, gg₁]
       simp
@@ -392,7 +393,7 @@ lemma aux_1
         refine decide_eq_true_iff.mp g₁
       rw [← hj₀, hj₂]
     have gg₁₅: ∀ x y, x ∈ s → y ∈ s → (f₄ x = f y ↔ f₈ x = y) := by
-      intros x y hx₀ hy₀
+      intro x y hx₀ hy₀
       have hy₁: y - 1 < lo.length := by
         rw [gg₁₁]
         apply Finset.mem_Icc.mp at hy₀
@@ -439,7 +440,7 @@ lemma aux_1
           rw [List.getD_eq_getElem (List.range' 1 n 1) 0 hy₃]
           rw [List.getElem_range' hy₃]
           omega
-        . intros j hj₀
+        . intro j hj₀
           rw [Nat.sub_add_cancel hy₀.1]
           apply Finset.mem_Icc.mpr at hy₀
           rw [← gg₅ y hy₀, hh₀ y hy₀]
@@ -527,14 +528,14 @@ lemma aux_1
       exact Function.RightInverse.id hh₄
     set ρ : Equiv.Perm ℕ := { toFun := f₆, invFun := f₉, left_inv := hh₂, right_inv := hh₃ }
     have hh₅: ∀ k ∈ s, ρ k ∈ s := by
-      intros k hk₀
+      intro k hk₀
       have hk₁: f₆ k ∈ s := by
         rw [gg₅ k hk₀]
         exact gg₁₀ k hk₀
       exact hk₁
     use ρ
     constructor
-    . intros a ha₀
+    . intro a ha₀
       have ha₁: f₂ a = ((f a):ℝ) := by rfl
       have ha₂: f₃ (ρ a) = ((f₄ (ρ a)):ℝ) := by
         have ha₂: f₃ (ρ a) = sf_sorted.getD (ρ a - 1) 0 := by rfl
@@ -556,27 +557,27 @@ lemma aux_1
       norm_cast
       rw [← hh₀ a ha₀]
       exact rfl
-    . intros a ha₀
+    . intro a ha₀
       exact gg₇ a ha₀
   obtain ⟨ρ, hρ₀, hρ₁⟩ := hρ
   have h₆: ∑ k ∈ Icc 1 n, f₃ k • f₀ k ≤ ∑ k ∈ Icc 1 n, f₂ k • f₀ k := by
     have h₆₀: ∑ k ∈ Icc 1 n, f₂ k • f₀ k = ∑ k ∈ Icc 1 n, f₃ (ρ k) • f₀ k := by
       refine Finset.sum_congr rfl ?_
-      intros x hx₀
+      intro x hx₀
       rw [hρ₀ x hx₀]
     rw [h₆₀]
     refine AntivaryOn.sum_smul_le_sum_comp_perm_smul ?hfg ?hσ
     . refine MonotoneOn.antivaryOn ?hfg.hf ?hfg.hg
       . refine monotoneOn_iff_forall_lt.mpr ?hfg.hf.a
         norm_cast
-        intros a ha₀ b hb₀ ha₁
+        intro a ha₀ b hb₀ ha₁
         have ha₂: f₃ a + 1 ≤ f₃ b := by exact hf₇ a ha₀ b hb₀ ha₁
         refine le_trans ?_ ha₂
         refine le_of_lt ?_
         exact lt_add_one (f₃ a)
       . refine antitoneOn_iff_forall_lt.mpr ?hfg.hg.a
         norm_cast
-        intros a ha₀ b hb₀ ha₁
+        intro a ha₀ b hb₀ ha₁
         refine (one_div_le_one_div ?_ ?_).mpr ?_
         . apply Finset.mem_Icc.mp at hb₀
           norm_cast
@@ -586,12 +587,12 @@ lemma aux_1
           exact Nat.pow_pos ha₀.1
         . norm_cast
           exact Nat.pow_le_pow_left (le_of_lt ha₁) 2
-    . intros x hx₀
+    . intro x hx₀
       contrapose! hx₀
       exact fun a => a (hρ₁ x hx₀)
   have h₇: ∑ k ∈ Icc 1 n, f₁ k • f₀ k ≤ ∑ k ∈ Icc 1 n, f₃ k • f₀ k := by
     refine Finset.sum_le_sum ?_
-    intros x hx₀
+    intro x hx₀
     have hx₁: 1 ≤ x := by
       apply Finset.mem_Icc.mp at hx₀
       exact hx₀.1
@@ -610,7 +611,7 @@ lemma aux_1
         norm_cast
         refine hf₆ 1 ?_
         exact left_mem_Icc.mpr h₂
-      . intros y hy₀ hy₁ hy₂
+      . intro y hy₀ hy₁ hy₂
         have hy₃: y ≤ n := by omega
         have hy₄: f₃ y + 1 ≤ f₃ (y + 1) := by
           refine hf₇ y ?_ (y + 1) ?_ (by omega)
@@ -642,7 +643,7 @@ problem imo_1978_p5
     exact aux_1 n f h₀ h₁ h₂
   refine le_trans ?_ h₃
   refine Finset.sum_le_sum ?_
-  intros x hx₀
+  intro x hx₀
   rw [pow_two, ← div_div, div_self]
   apply Finset.mem_Icc.mp at hx₀
   norm_cast
