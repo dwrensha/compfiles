@@ -72,7 +72,6 @@ problem imo1968_p2 (x : ℕ) :
       (prod_digits_le (by norm_num) h0)
     have h3 : x < 13 := by nlinarith
     rw [Set.mem_singleton_iff]
-    interval_cases x <;> norm_num at hs ⊢
-
+    interval_cases x <;> simp at hs ⊢
 
 end Imo1968P2
