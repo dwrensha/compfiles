@@ -200,7 +200,7 @@ problem usa1993_p5 :
     obtain ⟨h1, h2, h3⟩ := hf
     unfold min_c
     have h4 : ∀ x : Set.Icc (0:ℝ) 1, (1 - (x:ℝ)) ∈ Set.Icc (0:ℝ) 1 := by
-       rintro ⟨x, hx⟩; exact unitInterval.mem_iff_one_sub_mem.mp hx
+       rintro ⟨x, hx⟩; exact Set.Icc.mem_iff_one_sub_mem.mp hx
     have h5 : ∀ x, f x + f ⟨1 - x, h4 x⟩ ≤ 1 := by
       intro x
       specialize h3 x ⟨1 - x, h4 x⟩
