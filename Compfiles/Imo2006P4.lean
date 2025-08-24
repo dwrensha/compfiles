@@ -199,9 +199,7 @@ problem imo2006_p4 :
                 use t, ht', 1
                 simp [ht, h']
               · exact hypos
-            · intro h'
-              simp at h'
-              simp [h'] at ht''
+            · positivity
             · simp
           · simp at h₁
             interval_cases n₁
@@ -231,7 +229,7 @@ problem imo2006_p4 :
                 rw [Nat.pow_add_one]
                 ring_nf
               apply congrArg (fun i => Nat.factorization i 2) at h'
-              rw [Nat.factorization_mul (by apply pow_ne_zero; simp), Nat.factorization_mul (by apply pow_ne_zero; simp)] at h'
+              rw [Nat.factorization_mul (by positivity), Nat.factorization_mul (by positivity)] at h'
               · norm_num at h'
                 have hmul : Odd (t * s) := by
                   exact Odd.mul ht' hs'

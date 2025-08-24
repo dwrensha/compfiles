@@ -804,8 +804,7 @@ lemma aux_unique_top
     . exact hz₁
     . refine Real.le_pow_of_log_le (by linarith) ?_
       refine (div_le_iff₀ ?_).mp ?_
-      . refine Real.log_pos ?_
-        linarith
+      . positivity
       . rw [Nat.cast_sub ?_]
         . rw [Nat.cast_two]
           refine le_sub_iff_add_le'.mpr ?_

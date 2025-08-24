@@ -126,7 +126,7 @@ problem iran1998_p3
                     ((Finset.range 4).erase j)
                     (λ ii ↦ (1:ℝ)/3)
                     (λ ii ↦ x ii ^ (3:ℝ))
-                    (by intro i _; simp only [one_div, inv_nonneg]; exact zero_le_three)
+                    (by intro i _; positivity)
                     (by simp [hcard])
                     (by intro i _; exact Real.rpow_nonneg (le_of_lt (x_positive i)) 3)
       have hr : ∀ i ∈ ((Finset.range 4).erase j),

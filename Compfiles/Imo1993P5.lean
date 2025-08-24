@@ -42,8 +42,7 @@ lemma imo_1993_p5_N:
     norm_cast
     by_cases hn: 0 < n
     . refine (mul_left_inj' ?_).mpr ?_
-      . norm_cast
-        exact Nat.ne_zero_of_lt hn
+      . positivity
       . exact gold_sq
     . interval_cases n
       simp

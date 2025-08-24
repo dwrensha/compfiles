@@ -223,8 +223,7 @@ problem usa1993_p5 :
     have hf : valid f := by
       refine ⟨?_, ?_, ?_⟩
       · intro x
-        unfold f
-        split <;> norm_num
+        positivity
       · unfold f; norm_num
       · intro x y hx
         obtain ⟨x, hxx⟩ := x

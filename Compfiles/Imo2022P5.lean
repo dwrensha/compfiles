@@ -380,7 +380,7 @@ lemma mylemma_5
           refine dvd_trans ?_ gg₆
           simp
           refine mul_dvd_mul_left 2 ?_
-          refine Nat.dvd_factorial (by linarith[gg₃]) (by omega)
+          refine Nat.dvd_factorial (by positivity) (by omega)
         have gg₈: 2 * ((p+1)/2) * (p + 1) ∣ p.factorial * (p + 1) := by
           refine mul_dvd_mul_right ?_ (p + 1)
           exact gg₇

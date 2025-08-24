@@ -83,7 +83,7 @@ lemma aux_1
     rw [add_div, div_div] at g₀
     have g₁: x = a / 2 + b ^ 2 / (a * 2) - y := by linarith
     rw [g₁, h₉, sub_mul, add_mul, ← pow_two y] at h₄
-    rw [neg_add', sub_div, neg_div, pow_two a, mul_div_mul_right a 2 (by linarith), sub_mul, neg_mul]
+    rw [neg_add', sub_div, neg_div, pow_two a, mul_div_mul_right a 2 (by positivity), sub_mul, neg_mul]
     rw [add_sub_assoc', ← sub_eq_add_neg, add_comm]
     refine add_eq_of_eq_sub ?_
     rw [zero_sub, ← pow_two a, ← h₄]

@@ -139,9 +139,7 @@ lemma imo_1990_p3_forward
         refine Nat.le_of_dvd ?_ hp₈
         refine Nat.sub_pos_of_lt ?_
         refine Nat.one_lt_pow ?_ ?_
-        . refine Nat.ne_of_gt ?_
-          refine Nat.gcd_pos_of_pos_left _ ?_
-          positivity
+        . positivity
         . exact Nat.one_lt_two
       have hp₁₀: p ≤ 3 := by
         refine le_trans hp₉ ?_
