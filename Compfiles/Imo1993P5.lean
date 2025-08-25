@@ -33,8 +33,8 @@ snip begin
 
 lemma imo_1993_p5_N:
   ∃ f : ℕ → ℕ, f 1 = 2 ∧ (∀ n, f (f n) = f n + n) ∧ (∀ n, f n < f (n + 1)) := by
-  let G : ℝ := goldenRatio
-  have hG : G = goldenRatio := by rfl
+  let G : ℝ := Real.goldenRatio
+  have hG : G = Real.goldenRatio := by rfl
   have h₀: ∀ n : ℕ, G ^ 2 * n = G * n + n := by
     intro n
     nth_rw 3 [← one_mul n]
@@ -43,7 +43,7 @@ lemma imo_1993_p5_N:
     by_cases hn: 0 < n
     . refine (mul_left_inj' ?_).mpr ?_
       . positivity
-      . exact gold_sq
+      . exact Real.goldenRatio_sq
     . interval_cases n
       simp
   let f: ℕ → ℕ := fun x => (Int.natAbs (round (G * x)))
@@ -53,13 +53,7 @@ lemma imo_1993_p5_N:
   have h₁: ∀ n:ℕ, 0 ≤ round (G * (↑n:ℝ)) := by
     intro n
     rw [round_eq]
-    refine Int.floor_nonneg.mpr ?h.right.right.w₁.a
-    have g₀: 0 ≤ G * (↑n:ℝ) := by
-      refine mul_nonneg ?_ ?_
-      . refine le_of_lt ?_
-        exact gold_pos
-      . exact Nat.cast_nonneg' n
-    exact add_nonneg g₀ (by positivity)
+    positivity
   have hf₂: ∀ n:ℕ, f n = fz n := by
     intro n
     rw [hf₀, hf₁]
@@ -150,9 +144,9 @@ lemma imo_1993_p5_N:
       have g₀: round (G * ↑m + 1) ≤ round (G * ↑m + G) := by
         rw [round_eq, round_eq]
         refine Int.floor_le_floor ?_
-        simp
+        simp only [one_div, add_le_add_iff_right, add_le_add_iff_left]
         refine le_of_lt ?_
-        exact one_lt_gold
+        exact Real.one_lt_goldenRatio
       refine lt_of_lt_of_le ?_ g₀
       rw [round_add_one]
       exact Int.lt_succ (round (G * (↑m:ℝ)))
