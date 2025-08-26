@@ -45,7 +45,6 @@ problem canada1998_p3 (n : ℕ) (hn : 2 ≤ n) :
   induction n with
   | zero =>
      -- Base case: when n = 2, we have 8/3 > 9/4.
-     field_simp[Finset.sum_range_succ]
      norm_num
   | succ m ih =>
     let k := m.succ.succ

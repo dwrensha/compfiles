@@ -89,12 +89,12 @@ problem iran1998_p3
       have h32 : (3:ℝ) - 1 = 2 := by norm_num
       rw [h32] at holder
       -- clear_except holder
-      have hknn : (0:ℝ) ≤ (4:ℝ) ^ (-3 : ℝ) := by norm_cast; norm_num
+      have hknn : (0:ℝ) ≤ (4:ℝ) ^ (-3 : ℝ) := by norm_num1
       have hh := mul_le_mul_of_nonneg_left holder hknn
       rw [←mul_assoc] at hh
-      have h4mm: (4:ℝ) ^ (-3: ℝ) * (4:ℝ) ^ (3:ℝ) = 1 := by norm_cast; norm_num
+      have h4mm: (4:ℝ) ^ (-3: ℝ) * (4:ℝ) ^ (3:ℝ) = 1 := by norm_num1
       rw [h4mm, one_mul, ←mul_assoc] at hh
-      have h4mm': (4:ℝ) ^ (-3: ℝ) * ((4:ℕ):ℝ) ^ (2:ℝ) = 1/4 := by norm_cast; norm_num
+      have h4mm': (4:ℝ) ^ (-3: ℝ) * ((4:ℕ):ℝ) ^ (2:ℝ) = 1/4 := by norm_num1
       rw [h4mm'] at hh
       exact hh
 
