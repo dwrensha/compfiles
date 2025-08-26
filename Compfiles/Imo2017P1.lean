@@ -616,8 +616,7 @@ problem imo2017_p1
           have hd₈: 2 ≤ (a x (d - (1 : ℕ))).sqrt := by exact Nat.le_sqrt'.mpr hd₇
           exact hd₈
         . have hd₆: a x d = a x (d - (1 : ℕ)) + 3 := by simp_all only [↓reduceIte]
-          rw [hd₆]
-          field_simp
+          omega
       . have hd₂: d = 0 := by exact Nat.eq_zero_of_not_pos hd₁
         rw [hd₂, ha₀]
         exact hx₀
