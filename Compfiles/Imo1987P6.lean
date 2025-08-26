@@ -201,7 +201,7 @@ problem imo1987_p6
       replace hfss3 := add_left_cancel hfss3
       have hc1 : p ≤ k + 2 := by
         calc
-          p ≤ ss^2 + p := by linarith [pow_two_nonneg ss]
+          p ≤ ss^2 + p := Nat.le_add_left _ _
           _ = _ := hfss3
           _ = _ := by rw [<-hksr]
       have hc2: p ≤ p-1 := by

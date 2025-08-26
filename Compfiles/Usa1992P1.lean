@@ -144,24 +144,8 @@ lemma lemma8 {n : ℕ} : 10 ^ n - 1 = Nat.ofDigits 10 (List.replicate n 9) := by
     rw [pow_succ, ih]
     omega
 
-lemma lemma9 {m n : ℕ} (hm : m < 10^n) :
-    (Nat.digits 10 m).length ≤ n := by
-  have h10 : 1 < 10 := by norm_num
-  revert m
-  induction n with
-  | zero =>
-    intro m hm
-    simp [show m = 0 by omega]
-  | succ n ih =>
-    intro m hm
-    cases' m with m
-    · simp
-    have hm1 : 0 < m + 1 := Nat.zero_lt_succ m
-    rw [ Nat.digits_def' h10 hm1]
-    rw [List.length_cons]
-    have h2 : (m + 1) / 10 < 10 ^ n := by omega
-    specialize ih h2
-    gcongr
+lemma lemma9 {m n : ℕ} (hm : m < 10^n) : (Nat.digits 10 m).length ≤ n := by
+  exact (Nat.digits_length_le_iff (by norm_num) m).mpr hm
 
 def padList (l : List ℕ) (n : ℕ) : List ℕ := l ++ List.replicate (n - l.length) 0
 
@@ -184,19 +168,6 @@ theorem digitsPaddedLength (b m n : ℕ) (hm : (Nat.digits b m).length ≤ n) :
   unfold digitsPadded padList
   simp only [List.length_append, List.length_replicate]
   exact Nat.add_sub_of_le hm
-
-theorem ofDigits_append_zeroes (b m : ℕ) (L : List ℕ) :
-    Nat.ofDigits b (L ++ List.replicate m 0) = Nat.ofDigits b L := by
-  match m, L with
-  | 0, _ => simp
-  | m + 1, [] =>
-    have h := ofDigits_append_zeroes b m [0]
-    simp only [List.replicate_succ, List.nil_append, Nat.ofDigits_nil]
-    simp_all
-  | m + 1, hd::tl =>
-    simp only [List.cons_append, Nat.ofDigits_cons]
-    have h := ofDigits_append_zeroes b (m + 1) tl
-    rw[h]
 
 theorem exists_prefix (L : List ℕ) :
     ∃ l1 : List ℕ, (∀ hl1 : l1 ≠ [], l1.getLast hl1 ≠ 0) ∧
@@ -233,7 +204,7 @@ theorem digitsPadded_ofDigits (b n : ℕ) (h : 1 < b) (L : List ℕ) (w₁ : ∀
     digitsPadded b (Nat.ofDigits b L) n = padList L n := by
   have ⟨l1, hl1, m, hm⟩ := exists_prefix L
   subst hm
-  rw [ofDigits_append_zeroes b m]
+  rw [Nat.ofDigits_append_replicate_zero]
   unfold digitsPadded
   have hl : ∀ l ∈ l1, l < b := by simp_all
   have hl3 : ∀ (h : l1 ≠ []), l1.getLast h ≠ 0 := by simp_all

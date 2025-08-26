@@ -191,7 +191,7 @@ def valid (f : Set.Icc (0 : ℝ) 1 → ℝ) : Prop :=
 
 determine min_c : ℝ := 2
 
-problem usa1993_p5 :
+problem usa1993_p3 :
     IsLeast {c | ∀ f, valid f → ∀ x, f x ≤ c * x } min_c := by
   simp only [Subtype.forall, Set.mem_Icc]
   constructor
@@ -207,10 +207,8 @@ problem usa1993_p5 :
       simp only [add_sub_cancel, Set.mem_Icc, zero_le_one, le_refl, and_self, Set.Icc.mk_one,
         forall_const] at h3
       grw [h3, h2]
-    have h6 : ∀ x, f x ≤ 1 := fun x ↦ by
-      specialize h5 x
-      specialize h1 ⟨1 - x, h4 x⟩
-      linarith
+    have h6 : ∀ x, f x ≤ 1 :=
+      fun x ↦ le_of_add_le_of_nonneg_left (h5 x) (h1 ⟨1 - x, h4 x⟩)
     have h8 : ∀ n : ℕ, ∀ x : Set.Icc (0:ℝ) (1/2^n), 2^n * (x : ℝ) ∈ Set.Icc (0:ℝ) 1 := by
       rintro n ⟨x, hx1, hx2⟩; clear h3; simp at hx ⊢
       refine ⟨hx1, ?_⟩

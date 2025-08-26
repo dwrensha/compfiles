@@ -288,12 +288,4 @@ problem imo1967_p3
         . have h₇₀: ∏ i ∈ Finset.Icc 1 n, (k + (m + i) + 1) = ∏ i ∈ Finset.Icc 1 n, (m + i + k + 1) := by group
           rw [h₇₀]
           exact aux_3 k m n h₀ h₂ h₃
-      have h₈: ∏ x ∈ Finset.Icc 1 n, (-1:ℤ) = 1 ∨ ∏ x ∈ Finset.Icc 1 n, (-1:ℤ) = -1 := by
-        rw [Finset.prod_neg]
-        simp
-        exact neg_one_pow_eq_or ℤ n
-      cases' h₈ with h₈ h₈
-      . rw [h₈, mul_one]
-        exact h₇
-      . rw [h₈, mul_neg_one]
-        exact Int.dvd_neg.mpr h₇
+      exact Dvd.dvd.mul_right h₇ (∏ x ∈ Finset.Icc 1 n, -1)

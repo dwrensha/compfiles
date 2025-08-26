@@ -27,7 +27,7 @@ lemma additive_to_int_linear (f : ℤ → ℤ) (h: ∀ (x y : ℤ), f (x + y) = 
   let g := AddMonoidHom.toIntLinearMap <| AddMonoidHom.mk' f h
   refine ⟨f 1, fun a => ?_⟩
   change g a = g 1 * a
-  rw [mul_comm, ← smul_eq_mul, ← LinearMap.map_smul, smul_eq_mul, mul_one]
+  exact (Dual.apply_one_mul_eq g a).symm
 
 snip end
 

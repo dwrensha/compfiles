@@ -467,7 +467,7 @@ lemma N_add_one_lt_card_filter_eq_of_small_of_N'_le {i j : ℕ} (hj0 : 0 < j) (h
     (hN' : N' a N < i) : N + 1 < #{m ∈ Finset.range i | a m = j} := by
   refine hc.N_add_one_lt_card_filter_eq_of_small_of_N'aux_le hj0 h ?_
   rw [N'] at hN'
-  split_ifs at hN' <;> omega
+  exact Nat.lt_of_add_right_lt hN'
 
 lemma apply_add_one_big_of_apply_small_of_N'aux_le {i : ℕ} (h : Small a (a i))
     (hN'aux : N'aux a N ≤ i) : Big a (a (i + 1)) := by
