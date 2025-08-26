@@ -133,13 +133,6 @@ theorem ofDigits_sub_ofDigits_eq_ofDigits_zipWith {b : ℕ} {l1 l2 : List ℕ}
         gcongr
       omega
 
-lemma lemma7 {b n : ℕ} : Nat.ofDigits b (List.replicate n 0) = 0 := by
-  induction n with
-  | zero => simp
-  | succ n ih =>
-    rw [List.replicate_succ, Nat.ofDigits_cons, ih]
-    simp
-
 lemma lemma8 {n : ℕ} : 10 ^ n - 1 = Nat.ofDigits 10 (List.replicate n 9) := by
   induction n with
   | zero => simp
@@ -277,7 +270,8 @@ lemma lemma5 {m n : ℕ} (hm : m < 10^n) :
 
   have h_sub2 : m = Nat.ofDigits 10 m_digits_padded := by
     unfold m_digits_padded padding m_digits
-    rw [Nat.ofDigits_append, Nat.ofDigits_digits, lemma7, mul_zero, add_zero]
+    rw [Nat.ofDigits_append, Nat.ofDigits_digits, Nat.ofDigits_replicate_zero,
+        mul_zero, add_zero]
 
   have h_length2 : (List.replicate n 9).length = m_digits_padded.length := by
     rw [h_length]

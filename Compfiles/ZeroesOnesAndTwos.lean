@@ -28,17 +28,11 @@ snip begin
 def ones (b : ℕ) : ℕ → ℕ
 | k => Nat.ofDigits b (List.replicate k 1)
 
-lemma of_digits_zeros_eq_zero (b m : ℕ) : Nat.ofDigits b (List.replicate m 0) = 0 := by
-  induction m with
-  | zero => dsimp only; rfl
-  | succ m ih =>
-    simp [List.replicate_add, Nat.ofDigits_append, ih]
-
 lemma ones_add (b m n : ℕ) :
     ones b (m + n) = ones b m + Nat.ofDigits b ((List.replicate m 0) ++ (List.replicate n 1)) := by
   unfold ones; dsimp only
   rw [List.replicate_add, Nat.ofDigits_append, Nat.ofDigits_append]
-  rw [List.length_replicate, List.length_replicate, of_digits_zeros_eq_zero, zero_add]
+  rw [List.length_replicate, List.length_replicate, Nat.ofDigits_replicate_zero, zero_add]
 
 def map_mod (n : ℕ) (hn: 0 < n) (f : ℕ → ℕ) : ℕ → Fin n
 | m => ⟨f m % n, Nat.mod_lt (f m) hn⟩
@@ -78,9 +72,7 @@ problem zeroes_and_ones
   have h8 : 0 < Nat.ofDigits 10 (List.replicate a 0 ++ List.replicate (b - a) 1) := by
     rw [hc, List.replicate_succ]
     calc 0 < 1 := zero_lt_one
-         _ ≤ List.sum (List.replicate a 0 ++ 1 :: List.replicate c 1) := by
-           rw [List.sum_append, List.sum_cons, List.sum_replicate, List.sum_replicate]
-           omega
+         _ ≤ List.sum (List.replicate a 0 ++ 1 :: List.replicate c 1) := by simp
          _ ≤ Nat.ofDigits 10 (List.replicate a 0 ++ 1 :: List.replicate c 1) :=
                           Nat.sum_le_ofDigits _ one_le_ten
 
