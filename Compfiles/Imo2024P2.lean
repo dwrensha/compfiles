@@ -53,8 +53,7 @@ lemma dvd_pow_iff_of_dvd_sub {a b d n : ℕ} {z : ℤ} (ha : a.Coprime d)
     convert this
   rw [sub_eq_iff_eq_add] at hk
   rw [hk, zpow_add, zpow_mul]
-  norm_cast
-  rw [ZMod.pow_totient, one_zpow, one_mul]
+  simp
 
 namespace Condition
 

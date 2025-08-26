@@ -232,8 +232,7 @@ lemma exp_characterization
       have h11: ↑(-((↑n):ℤ)) * x = - (n * x) := by norm_num
       rw [h11, h3 _]
       rw [h10, one_div]
-      rw [hn, inv_eq_iff_eq_inv, ←hn, zpow_neg, inv_inv]
-      rfl
+      simp
 
   -- Let eᵏ = u(1);
   obtain ⟨k, hk⟩ : ∃ k, Real.exp k = u 1 := by
