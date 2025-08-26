@@ -95,7 +95,7 @@ lemma aux_1
         have hh₀: a = 37 := by bound
         rw [hh₀] at h₁
         simp at h₁
-        have hh₁: (784:ℤ) = 28 ^ 2 := by bound
+        have hh₁: (784:ℤ) = 28 ^ 2 := by norm_num1
         rw [hh₁] at h₁
         apply pow_eq_pow_iff_cases.mp at h₁
         simp at h₁
@@ -104,7 +104,7 @@ lemma aux_1
         have hh₀: a = 7 := by bound
         rw [hh₀] at h₁
         simp at h₁
-        have hh₁: (784:ℤ) = 28 ^ 2 := by bound
+        have hh₁: (784:ℤ) = 28 ^ 2 := by norm_num1
         rw [hh₁] at h₁
         apply pow_eq_pow_iff_cases.mp at h₁
         simp at h₁
