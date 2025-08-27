@@ -6,7 +6,7 @@ Authors: Hongyu Ouyang
 
 import Mathlib.Tactic
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
-import Mathlib.Data.Real.Pi.Bounds
+import Mathlib.Analysis.Real.Pi.Bounds
 
 import ProblemExtraction
 
