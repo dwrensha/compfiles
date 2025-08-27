@@ -85,7 +85,7 @@ problem canada1998_p3 (n : ℕ) (hn : 2 ≤ n) :
       have hh2' : k ≥ 2 := Nat.succ_le_succ (Nat.succ_le_succ (Nat.zero_le m))
       have hh2 : (k:ℝ) ≥ 2 := by exact_mod_cast hh2'
       calc
-        (2:ℝ) * (k:ℝ) ≥ (2:ℝ) * 2 := mul_le_mul_of_nonneg_left hh2 (by linarith)
+        (2:ℝ) * (k:ℝ) ≥ (2:ℝ) * 2 := mul_le_mul_of_nonneg_left hh2 zero_le_two
         _ = 4 := by norm_num
 
     have h7 : 1 / (2 * (k:ℝ) + 2) < 1 / 2 := by apply div_lt_div₀' <;> linarith

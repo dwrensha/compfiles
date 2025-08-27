@@ -598,13 +598,13 @@ lemma aux_1
       exact hx₀.1
     have hx₂: 0 < f₀ x := by
       ring_nf
-      refine div_pos (by linarith) ?_
+      refine div_pos zero_lt_one ?_
       norm_cast
       exact Nat.pow_pos hx₁
     refine (smul_le_smul_iff_of_pos_right hx₂).mpr ?_
     have hh₀: f₁ = fun (k:ℕ) => (↑k:ℝ) := by rfl
     rw [hh₀]
-    simp
+    dsimp only
     have hi: x ≤ n → (↑x:ℝ) ≤ f₃ x := by
       refine Nat.le_induction ?_ ?_ x hx₁
       . intro _
