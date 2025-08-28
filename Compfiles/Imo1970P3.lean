@@ -196,26 +196,19 @@ problem imo1970_p3 :
       -- If c > 0, we can find a d such that d(1 + d) > c
       · use √ (c / 2)
         have hc : 0 < c := lt_of_le_of_ne hc_nonneg fun a ↦ h a.symm
-        have hd : 0 < √ (c / 2) := Real.sqrt_pos.mpr (half_pos hc)
+        have hc' : 0 < c / 2 := half_pos hc
+        have : c / 2 < 1 := by linarith
+        have hd : 0 < √ (c / 2) := Real.sqrt_pos.mpr hc'
         constructor
         · exact hd
         · constructor
           · -- square both sides
-            rw [Real.sqrt_lt (by linarith) zero_le_one]
-            linarith
-          · rw [mul_add, mul_one]
-            rw [Real.mul_self_sqrt (by positivity)]
-            nth_rw 3 [show c = c / 2 + c / 2 by ring]
-            suffices √(c / 2) > c / 2 from (add_lt_add_iff_right (c / 2)).mpr this
-            have h1 : c / 2 < 1 := by linarith
-            have h2 : √ (c / 2) < 1 := by
-              have : 0 < c / 2 := by linarith
-              suffices H : (√ (c / 2))^2 < 1 ^2 by
-                nlinarith
-              rw [Real.sq_sqrt (by positivity)]
-              simp [h1]
-            nth_rw 2 [show c / 2 = (√ (c / 2))^2 by rw [Real.sq_sqrt (by positivity)]]
-            nlinarith
+            rwa [Real.sqrt_lt (le_of_lt hc') zero_le_one, one_pow]
+          · rw [mul_add, mul_one, Real.mul_self_sqrt (le_of_lt hc')]
+            suffices c / 2 < √(c / 2) by linarith
+            nth_rw 1 [show c / 2 = √(c / 2) ^ 2 by rw [Real.sq_sqrt (le_of_lt hc')]]
+            apply pow_lt_self_of_lt_one₀ hd _ one_lt_two
+            rwa [Real.sqrt_lt' zero_lt_one, one_pow]
 
     obtain ⟨d, dpos, d_lt_one, d_bound⟩ := existsD
     have d_nonneg : 0 ≤ d := le_of_lt dpos
@@ -242,10 +235,7 @@ problem imo1970_p3 :
     intro n hn
 
     dsimp [b_seq, a_seq]
-    field_simp
-    sorry
-/-
-
+    simp only [neg_mul, Nat.cast_add, Nat.cast_one, neg_add_rev, gt_iff_lt]
     calc
       c < d * (1 + d) * (1 - d ^ N) := by
         -- divide both sides by d * (1 + d)
@@ -254,16 +244,14 @@ problem imo1970_p3 :
         rw [←Real.log_lt_log_iff]
         · rw [Real.log_pow d N]
           suffices Real.log (1 - (d * (1 + d))⁻¹ * c) / Real.log d < ↑N by
-            rw [<-div_lt_iff_of_neg (Real.log_neg dpos d_lt_one)]
-            exact this
+            rwa [<-div_lt_iff_of_neg (Real.log_neg dpos d_lt_one)]
           calc
             _ < 1 + Real.log (1 - (d * (1 + d))⁻¹ * c) / Real.log d := lt_one_add _
             _ = 1 + Real.log (1 - c / (d * (1 + d))) / Real.log d := by field_simp
             _ ≤ _ := by apply Nat.le_ceil
         · exact pow_pos dpos N
         · suffices (d * (1 + d))⁻¹ * c < 1 by linarith
-          rw [inv_mul_lt_one₀ daux]
-          exact d_bound
+          rwa [inv_mul_lt_one₀ daux]
       _ ≤ d * (1 + d) * (1 - d ^ (n:ℝ)) := by
         norm_cast
         apply mul_le_mul_of_nonneg_left _ (le_of_lt daux)
@@ -292,17 +280,13 @@ problem imo1970_p3 :
         rw [this]
         field_simp
         calc
-          _ = (1 - d ^ 2) * (d ^ (x + 1) * d ^ (-(1 + (x:ℝ)))) * d ^ (-(1 + (x:ℝ)) * 2) := by ring_nf -- (1 - d ^ 2) * d ^ ((-1 + -↑x) * 2
+          _ = (1 - d ^ 2) * (d ^ (x + 1) * d ^ (-(1 + (x:ℝ)))) * d ^ (-(1 + (x:ℝ)) * 2) := by ring_nf
           _ = (1 - d ^ 2) * (d ^ ((-1 + -(x:ℝ)) * 2)) := by
             suffices d ^ (x + 1) * d ^ (-(1 + (x:ℝ))) = 1 by
-              rw [this]
-              field_simp
-              left
-              ring_nf
-            rw [Real.rpow_neg d_nonneg]
+              rw [this, mul_one, neg_add_rev, add_comm]
+            rw [Real.rpow_neg d_nonneg, add_comm]
             norm_cast
             field_simp
-            rw [add_comm]
           _ = _ := by
             ring_nf
             rw [add_comm]
@@ -313,6 +297,5 @@ problem imo1970_p3 :
               _ = d ^ (2 + (-2 - (x:ℝ) * 2)) := by
                 rw [Real.rpow_add dpos, Real.rpow_ofNat]
               _ = _ := by ring_nf
--/
 
 end Imo1970P3
