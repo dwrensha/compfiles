@@ -195,7 +195,7 @@ problem imo2015_p6 (ha : Condition a) :
         rw [Finset.mem_range] at mx; omega
       rw [Finset.sum_congr rfl sc, Finset.sum_const, Finset.card_range, nsmul_eq_mul, Nat.cast_pred bp]
     _ ≤ _ := by
-      rw [← mul_le_mul_left zero_lt_four, ← mul_assoc,
+      rw [← mul_le_mul_iff_right₀ zero_lt_four, ← mul_assoc,
         show 4 * 1007 ^ 2 = ((b - 1 : ℤ) + (2015 - b)) ^ 2 by simp]
       exact four_mul_le_sq_add ..
 

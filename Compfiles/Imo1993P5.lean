@@ -110,8 +110,7 @@ lemma imo_1993_p5_N:
         have g₀: |↑(fz (fz ↑n)) - G * ↑(fz ↑n)| ≤ 1 / 2 := by exact h₂₀ (fz ↑n)
         have g₁: |(G - 1)| * |(↑(fz ↑n) - G * ↑n)| ≤ (G - 1) * (1 / 2) := by
           rw [abs_of_nonneg ?_]
-          . refine (_root_.mul_le_mul_left ?_).mpr ?_
-            . exact hg₁
+          . refine (mul_le_mul_iff_right₀ hg₁).mpr ?_
             . exact h₂₀ ↑n
           . exact le_of_lt hg₁
         have g₂: 1 / 2 * G = 1 / 2 + (G - 1) * (1 / 2) := by linarith

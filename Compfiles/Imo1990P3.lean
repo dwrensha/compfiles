@@ -46,7 +46,6 @@ lemma aux_1
   . right; right
     induction' d with t ht₀
     . norm_num
-      exact rfl
     . rw [mul_add, mul_one, add_assoc, add_comm 3 2, ← add_assoc, pow_add]
       exact Nat.ModEq.mul ht₀ rfl
 

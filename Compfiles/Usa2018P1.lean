@@ -26,7 +26,7 @@ namespace Usa2018P1
 snip begin
 
 lemma am_gm (a b : ℝ) (ha : 0 ≤ a) (hb : 0 ≤ b) :
-    2 * (a * b) ^ ((1 : ℝ) / 2) ≤ a + b   := by
+    2 * (a * b) ^ ((1 : ℝ) / 2) ≤ a + b := by
   have hw : (0 : ℝ) ≤ 1/2 := by norm_num
   rw [Real.mul_rpow ha hb]
   linarith [Real.geom_mean_le_arith_mean2_weighted hw hw ha hb (by norm_num)]
@@ -73,7 +73,7 @@ problem usa2018_p1 (a b c : ℝ) :
         rw [heq]
         have amgm := am_gm (a * ((4 : ℝ) * (a * b * c) ^ ((1 : ℝ) / 3))) (b * c)
                            (by positivity) (by positivity)
-        rw [←(mul_le_mul_left (by norm_num : 0 < (4 : ℝ)))] at amgm
+        rw [←mul_le_mul_iff_right₀ zero_lt_four] at amgm
         convert amgm
         ring_nf
         nth_rw 2 [(by simp : a * b * c = (a * b * c) ^ (1 : ℕ))]

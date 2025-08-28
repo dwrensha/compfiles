@@ -748,7 +748,7 @@ lemma aux_unique_top
       (f (↑nd) b - f (↑nd) a) * (f (↑nd) b + f (↑nd) a + 1 / nd.1) := by
       ring_nf
     rw [hnd₁]
-    refine (mul_le_mul_left ?_).mpr ?_
+    refine (mul_le_mul_iff_right₀ ?_).mpr ?_
     . rw [← hfd₁]
       exact hd₁ nd a b ha₀
     . refine le_sub_iff_add_le.mp ?_
@@ -868,7 +868,7 @@ lemma aux_unique_nhds
       . exact Nat.cast_nonneg' nd
       . exact le_of_lt hl₂
       . have hl₃: u * (2 + 1 / u) ≤ u * ↑((2:ℕ) + ⌈(1:ℝ) / u⌉₊) := by
-          refine (mul_le_mul_left hl₂).mpr ?_
+          refine (mul_le_mul_iff_right₀ hl₂).mpr ?_
           rw [Nat.cast_add 2 _, Nat.cast_two]
           refine add_le_add_left ?_ 2
           exact Nat.le_ceil (1 / u)

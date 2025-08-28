@@ -45,7 +45,7 @@ lemma usa2001_p3_lemma (a b c : ℝ) (ha : 0 ≤ a)
     _ ≥ 2 * b * c + a * b * c := by rel [two_mul_le_add_sq b c]
     _ = (2 + a) * (b * c) := by ring_nf
   have a2gt0 : 2 + a > 0 := by linarith
-  have bc := (mul_le_mul_left a2gt0).mp eq1
+  have bc := (mul_le_mul_iff_right₀ a2gt0).mp eq1
   calc
     a * b + b * c + c * a - a * b * c = a * b + b * c + a * c * (1 - b) := by ring_nf
     _ ≤ a * b + (2 - a) + a * c * (1 - b) := by gcongr

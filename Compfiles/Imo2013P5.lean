@@ -54,7 +54,7 @@ lemma le_of_all_pow_lt_succ {x y : ℝ} (hx : 1 < x) (hy : 1 < y)
                                  by simp only [mul_one, Finset.sum_const, nsmul_eq_mul,
                                     Finset.card_range]
       _ ≤ (∑ i ∈ Finset.range n, x ^ i * y ^ (n - 1 - i)) * (x-y) :=
-                                  (mul_le_mul_right hxmy).mpr (Finset.sum_le_sum hterm)
+                                  (mul_le_mul_iff_left₀ hxmy).mpr (Finset.sum_le_sum hterm)
       _ = x^n - y^n         := geom_sum₂_mul x y n
 
   -- Choose n larger than 1 / (x - y).
@@ -144,7 +144,7 @@ lemma pow_f_le_f_pow {f : ℚ → ℝ} {n : ℕ} (hn : 0 < n) {x : ℚ} (hx : 1 
       have hxp : 0 < x := zero_lt_one.trans hx
       calc f ((x ^ (pn+1)) * x)
           ≤ f (x ^ (pn+1)) * f x := H1 (x ^ (pn+1)) x (pow_pos hxp (pn+1)) hxp
-        _ ≤ (f x) ^ (pn+1) * f x := (mul_le_mul_right (f_pos_of_pos hxp H1 H4)).mpr hpn'
+        _ ≤ (f x) ^ (pn+1) * f x := (mul_le_mul_iff_left₀ (f_pos_of_pos hxp H1 H4)).mpr hpn'
 
 lemma fixed_point_of_pos_nat_pow {f : ℚ → ℝ} {n : ℕ} (hn : 0 < n)
     (H1 : ∀ x y, 0 < x → 0 < y → f (x * y) ≤ f x * f y)
@@ -215,7 +215,7 @@ problem imo2013_p5
   have H4 : ∀ n : ℕ, 0 < n → (n : ℝ) ≤ f n := by
     intro n hn
     have hf1 : 1 ≤ f 1 := by
-      suffices ↑a * 1 ≤ ↑a * f 1 from (mul_le_mul_left (by positivity)).mp this
+      suffices ↑a * 1 ≤ ↑a * f 1 from (mul_le_mul_iff_right₀ (by positivity)).mp this
       calc _ = ↑a := mul_one _
            _ = f a        := hae.symm
            _ = f (a * 1)  := by rw [mul_one]

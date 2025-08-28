@@ -30,18 +30,18 @@ problem imo1972_p5 (f g : ℝ → ℝ) (hf1 : ∀ x, ∀ y, f (x + y) + f (x - y
   obtain ⟨x, hx⟩ := hf3
   set k := ⨆ x, ‖f x‖
   have h : ∀ x, ‖f x‖ ≤ k := le_ciSup hf2
-  have hgy : 0 < ‖g y‖ := by linarith
+  have hgy : 0 < ‖g y‖ := by linarith only [H]
   have k_pos : 0 < k := lt_of_lt_of_le (norm_pos_iff.mpr hx) (h x)
   have : k / ‖g y‖ < k := (div_lt_iff₀ hgy).mpr (lt_mul_of_one_lt_right k_pos H)
   have : k ≤ k / ‖g y‖ := by
     suffices ∀ x, ‖f x‖ ≤ k / ‖g y‖ from ciSup_le this
     intro x
     suffices 2 * (‖f x‖ * ‖g y‖) ≤ 2 * k by
-      rwa [le_div_iff₀ hgy, ← mul_le_mul_left (zero_lt_two : (0 : ℝ) < 2)]
+      rwa [le_div_iff₀ hgy, ← mul_le_mul_iff_right₀ zero_lt_two]
     calc
       2 * (‖f x‖ * ‖g y‖) = ‖2 * f x * g y‖ := by simp [mul_assoc]
       _ = ‖f (x + y) + f (x - y)‖ := by rw [hf1]
-      _ ≤ ‖f (x + y)‖ + ‖f (x - y)‖ := (abs_add _ _)
+      _ ≤ ‖f (x + y)‖ + ‖f (x - y)‖ := abs_add _ _
       _ ≤ 2 * k := by linarith [h (x + y), h (x - y)]
   order
 

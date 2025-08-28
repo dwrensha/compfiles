@@ -67,7 +67,7 @@ problem imo1963_p1 : ∀ (p x : ℝ), (x ^ 2 - p) ≥ 0 → (x ^ 2 - 1) ≥ 0 �
   · rintro ⟨hx, rfl⟩
     have tmp : 0 < (4 - 2 * p) := by linarith only [hx]
     rw [div_pow, mul_pow, Real.sq_sqrt (le_of_lt tmp)]; norm_num
-    rw [←(mul_le_mul_right tmp), mul_assoc, div_mul]
+    rw [←mul_le_mul_iff_left₀ tmp, mul_assoc, div_mul]
     have := tmp.ne.symm
     rw [mul_div_cancel_right₀ _ tmp.ne.symm]
     nlinarith
@@ -112,7 +112,7 @@ problem imo1963_p1 : ∀ (p x : ℝ), (x ^ 2 - p) ≥ 0 → (x ^ 2 - 1) ≥ 0 �
     refine ⟨?_, hx⟩
     rw [hx, ←tmp2] at xp
     simp only [ge_iff_le, sub_nonneg] at xp
-    rw [←(mul_le_mul_right (by positivity : (0 < ((4 : ℝ) * ((4 : ℝ) - (2 : ℝ) * p)))))] at xp
+    rw [←mul_le_mul_iff_left₀ (by positivity : (0 < ((4 : ℝ) * ((4 : ℝ) - (2 : ℝ) * p))))] at xp
     rw [mul_div] at xp
     rw [div_mul_cancel₀ _ (by positivity)] at xp
     ring_nf at xp
