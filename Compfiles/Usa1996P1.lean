@@ -39,7 +39,7 @@ problem usa1996_p1 :
     ring_nf
     simp [neg_div]
   · field_simp [mul_comm]
-  · field_simp
+  · simp [field]
     convert_to (∑ n ∈ Finset.range 45, (Real.cos (((89 - n) * 2 + 1) * Real.pi / 180) +
                                          Real.cos ((n * 2 + 1) * Real.pi / 180)))
         - 90 * Real.cos (181 * Real.pi / 180) = _
@@ -104,7 +104,7 @@ problem usa1996_p1 :
       rw [Finset.sum_eq_zero]
       · simp only [zero_sub]
         rw [←neg_mul, ←Real.cos_sub_pi]
-        congr; ring
+        ring_nf
       intro n _
       rw [cos_add]
       ring

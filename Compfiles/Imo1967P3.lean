@@ -139,7 +139,9 @@ lemma aux_4
   . simp only [Nat.succ_eq_add_one, zero_add, Finset.Icc_self, Finset.prod_singleton]
     have hk₂: k - (m + 1) = k - (m + 1) - 1 + 1 := by omega
     rw [hk₂, Nat.factorial_succ]
-    field_simp
+    intro hk₃
+    simp only [add_tsub_cancel_right]
+    rw [←Nat.eq_div_of_mul_eq_left (by positivity) rfl]
   . intro d hd₀ hd₁ hd₂
     have hd₃: ∏ i ∈ Finset.Icc 1 d, (k - (m + i)) = (k - (m + 1)).factorial / (k - (m + 1) - d).factorial := by
       refine hd₁ ?_
@@ -149,9 +151,8 @@ lemma aux_4
     have hd₄: k - (m + 1) - d = k - (m + 1) - (d + 1) + 1 := by
       rw [Nat.sub_add_eq _ d 1, Nat.sub_add_cancel ?_]
       omega
-    have hd₅: (k - (m + 1) - d).factorial ∣ (k - (m + 1)).factorial := by
-      refine Nat.factorial_dvd_factorial ?_
-      field_simp
+    have hd₅: (k - (m + 1) - d).factorial ∣ (k - (m + 1)).factorial :=
+      Nat.factorial_dvd_factorial (Nat.sub_le _ _)
     rw [Nat.div_mul_right_comm hd₅]
     rw [hd₄, Nat.factorial_succ, ← hd₄]
     rw [← Nat.sub_add_eq, add_assoc m 1 d, Nat.add_comm 1 d]

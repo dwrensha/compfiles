@@ -74,8 +74,10 @@ private lemma dyadicBracket
   use m
   refine ⟨?_, ?_⟩
   · field_simp at hm1
+    simp only [one_div, inv_pow] at hm1 ⊢
     exact hm1
   · field_simp at hm2
+    simp only [one_div, inv_pow] at hm2 ⊢
     exact hm2
 
 /-

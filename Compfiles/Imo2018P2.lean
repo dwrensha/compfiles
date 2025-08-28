@@ -161,6 +161,7 @@ lemma satisfies_is_mod_3 {n : ℕ} (hn : 3 ≤ n) (h : ∃ a : ZMod n → ℝ, P
     linarith
   apply this
   exists a 0
+  linarith
 
 snip end
 

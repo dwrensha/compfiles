@@ -59,7 +59,10 @@ lemma lemma3 : ∑ i ∈ Finset.range 1319, (-(1:ℚ))^i / (i + 1) =
        = ∑ i ∈ Finset.range 659, (1 / (((g i):ℚ) + 1)) := by
     apply Finset.sum_congr rfl
     intro x _
-    field_simp [g]; ring
+    field_simp
+    simp only [Function.Embedding.coeFn_mk, Nat.cast_add, Nat.cast_mul, Nat.cast_ofNat,
+      Nat.cast_one, g]
+    linarith
   have h6 := Finset.sum_map (Finset.range 659) g (fun j ↦ 1 / ((j:ℚ) + 1))
 
   have h3 :
@@ -198,7 +201,7 @@ problem imo1979_p1 (p q : ℤ) (hp : 0 < p) (hq : 0 < q)
       intro H
       have h9 : 1319 = (i : ℚ) := by linarith
       norm_cast at h9
-    field_simp; norm_num1
+    field_simp; norm_num
 
   rw [Finset.sum_congr rfl h4] at h; clear h4
   rw [show (1979 : ℚ) = 1979 * 1 by simp +arith] at h

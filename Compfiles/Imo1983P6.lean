@@ -94,39 +94,32 @@ theorem lemma1 {x y z : ℝ} (hx : 0 < x) (hy : 0 < y) (hz : 0 < z)
     · rw [hr0] at hr1 hr2
       have h3 : z^4 = x^2 * y^2 := by
         field_simp at hr1 ⊢
-        replace hr1 : z^4 * y = x^2 * y^2 * y := by linarith only [hr1]
-        exact mul_right_cancel₀ (ne_of_gt hy) hr1
+        exact hr1
       have h3' : z^2 = x * y := by
         rw [show z ^ 4 = (z^2)^2 by ring, show x ^ 2 * y ^ 2 = (x * y)^2 by ring] at h3
         exact (pow_left_inj₀ (by positivity) (by positivity) (by positivity)).mp h3
       have h4 : z^2 = y^4 / x^2 := by
         field_simp at hr2 ⊢
-        replace hr2 : z^2 * x^2 * x = y^4 * x := by linarith only [hr2]
-        exact mul_right_cancel₀ (ne_of_gt hx) hr2
+        exact hr2
       rw [h3'] at h4
       have h5 : x^3 = y ^ 3 := by
         field_simp at h4
-        replace h4 : x^3 * y = y^3 * y := by linarith only [h4]
-        exact mul_right_cancel₀ (ne_of_gt hy) h4
+        exact h4
       exact (pow_left_inj₀ (by positivity) (by positivity) (by positivity)).mp h5
     · rw [hr2] at hr0 hr1
       have h3 : y^4 = x^2 * z^2 := by
         field_simp at hr0 ⊢
-        replace hr0 : y ^ 4 * x = x ^ 2 * z ^ 2 * x := by linarith only [hr0]
-        exact mul_right_cancel₀ (ne_of_gt hx) hr0
+        exact hr0
       have h3' : y^2 = x * z := by
         rw [show y ^ 4 = (y^2)^2 by ring, show x ^ 2 * z ^ 2 = (x * z)^2 by ring] at h3
         exact (pow_left_inj₀ (by positivity) (by positivity) (by positivity)).mp h3
       have h4 : y^2 = x^4 / z^2 := by
         field_simp at hr1 ⊢
-        replace hr1 : y ^ 2 * z^2 * z = x ^ 4 * z := by linarith only [hr1]
-        exact mul_right_cancel₀ (ne_of_gt hz) hr1
+        exact hr1
       rw [h3'] at h4
       have h5 : z^3 = x ^ 3 := by
         field_simp at h4
-        ring_nf at h4 ⊢
-        replace h4 : z^3 * x = x^3 * x := by linarith only [h4]
-        exact mul_right_cancel₀ (ne_of_gt hx) h4
+        exact h4
       symm
       exact (pow_left_inj₀ (by positivity) (by positivity) (by positivity)).mp h5
   refine cauchy_schwarz_equals _ f g ?_ ?_

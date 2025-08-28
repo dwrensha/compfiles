@@ -270,7 +270,7 @@ lemma exp_characterization
       induction' n with pn hpn
       · simp [hu0.symm]
       · have h10: x * ↑(pn.succ) / ↑(p.succ) = x * ↑pn / ↑(p.succ) + x / ↑(p.succ) := by
-          field_simp; ring
+          simp [field]
         rw [h10]
         have h11 := hu (x * ↑pn / ↑(p.succ)) (x / ↑(p.succ))
         rw [h11, ← hpn]
@@ -284,6 +284,7 @@ lemma exp_characterization
     have h15 := le_of_lt (hunz (x / ↑(p.succ)))
     rw [←Real.rpow_mul h15 _]
     field_simp
+    simp
 
   have hq : ∀ q : ℚ, u q = Real.exp (k * q) := fun q ↦ by
     rw [Rat.cast_def q, hp q.den q.pos q.num, hzexp q.num, ←Real.exp_mul]

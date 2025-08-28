@@ -75,7 +75,7 @@ problem usa2015_p1 (x y : ℤ) :
     simp at h
     cases' h with h h
     all_goals obtain ⟨n, h1, h2⟩ := h
-    all_goals have ht : t = n ^ 2 + n := by rw [ht2, h1, h2]; ring_nf; field_simp [←add_mul]
+    all_goals have ht : t = n ^ 2 + n := by rw [ht2, h1, h2]; ring_nf; rw [←add_mul]; simp
     all_goals rw [ht]; (first | rw [h1] | rw [h2]); ring_nf
   · intro ht3
     by_cases ht4 : (t = 2)

@@ -123,7 +123,7 @@ lemma aux_2_2
         have hd₁: ¬IsSquare (a x (i + d)) := by
           refine hj₁ (i + d) ?_ ?_
           . exact Nat.le_add_right i d
-          . field_simp
+          . simp
         have hd₂ := ha₁ x (i + d) hx₀
         have hd₃: a x (i + d + (1 : ℕ)) = a x (i + d) + 3 := by simp_all only [↓reduceIte]
         have hd₄: a x (i + d) = a x i + d * (3 : ℕ) := by
@@ -216,7 +216,7 @@ lemma aux_2_4
     . cases' lt_or_eq_of_le hl₄ with hl₅ hl₅
       . refine hh₄ (a x l) ?_ hl₅
         rw [hl₃, hi₀]
-        field_simp
+        simp
       . exfalso
         have hl₆: (a x l) % 3 = 0 := by
           rw [hl₅, Nat.pow_mod]
@@ -271,7 +271,7 @@ lemma aux_2_5
     . cases' lt_or_eq_of_le hl₄ with hl₅ hl₅
       . refine hh₄ (a x l) ?_ hl₅
         rw [hl₃, hi₀]
-        field_simp
+        simp
       . exfalso
         have hl₆: (a x l) % 3 = 1 := by
           rw [hl₅, Nat.pow_mod]
@@ -331,7 +331,7 @@ lemma aux_3
     refine lt_trans hh₃ ?_
     refine (Nat.pow_lt_pow_iff_left ?_).mpr ?_
     . exact Ne.symm (Nat.zero_ne_add_one (1 : ℕ))
-    . field_simp
+    . simp
   have hh₄: ∀ y ≥ c, y < (c.sqrt + (1 : ℕ)) ^ (2 : ℕ) → ¬ IsSquare y := by
     intro y hy₀ hy₁
     have hy₂: (c.sqrt) ^ (2 : ℕ) < y := by
@@ -457,7 +457,7 @@ theorem aux_4
   obtain ⟨i, hi₀⟩ := hx₁
   rw [@Set.finite_iff_bddBelow_bddAbove]
   constructor
-  . field_simp
+  . simp
   . let c : ℕ := a x i
     have h₁: StrictMonoOn (a x) (Set.Ici i) := by
       intro j hj₀ k hk₀ hj₁
@@ -667,7 +667,7 @@ problem imo2017_p1
           rw [hj₃] at hj₄
           exact hj₆ hj₄
         refine le_trans hj₅ ?_
-        field_simp
+        simp
       cases' hh₀ with hh₀ hh₀
       . obtain ⟨j, hj₀⟩ := hh₀
         have hj₁: IsSquare (a x j) := by rw [hj₀]; exact IsSquare.sq (c.sqrt + (2 : ℕ))

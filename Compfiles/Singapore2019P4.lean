@@ -24,7 +24,7 @@ noncomputable determine solution (x : ℝ) : ℝ := 2*x / (1-x)
 problem singapore2019_r1_p4 (x : ℝ) (hx : Real.logb 21 3 = x) :
     Real.logb 7 9 = solution x := by
   have h1 : Real.logb 7 9 = Real.logb 21 9 / Real.logb 21 7 := by
-    field_simp [Real.logb]
+    simp only [logb]; field_simp
   have h2 : Real.logb 21 9 = 2 * Real.logb 21 3 := by
     simp [show (9 : ℝ) = 3 ^ 2 by norm_num, Real.logb_pow]
   have h3 : Real.logb 21 7 = 1 - Real.logb 21 3 := by

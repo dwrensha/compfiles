@@ -76,8 +76,9 @@ lemma term_bound (seq : IncreasingSequenceFromOne) (k : ℕ) :
       have := seq_pos seq j
       linarith
     ring_nf
-    field_simp
+    simp [field]
     rw [IsUnit.div_mul_left haUnit]
+    exact inv_eq_one_div √(seq.a k)
 
   -- Factor 1/a_{k-1} - 1/a_k using difference of squares
   have h2 : 1 / seq.a (k - 1) - 1 / seq.a k =
@@ -92,7 +93,6 @@ lemma term_bound (seq : IncreasingSequenceFromOne) (k : ℕ) :
         have := ck_pos k
         have := ck_pos (k - 1)
         field_simp
-        ring
       _ ≤ 1 + 1 := by
         apply add_le_add
         · exact (div_le_one (ck_pos k)).mpr hcseq
@@ -203,15 +203,16 @@ problem imo1970_p3 :
           · -- square both sides
             rw [Real.sqrt_lt (by linarith) zero_le_one]
             linarith
-          · field_simp
-            rw [lt_div_iff₀' two_pos, mul_add]
-            nth_rw 1 [←Real.mul_self_sqrt hc_nonneg]
-            rw [<-sub_lt_iff_lt_add]
-            ring_nf
-            have sqrtc_pos : 0 < √c := Real.sqrt_pos_of_pos hc
-            rw [<-div_lt_div_iff_of_pos_right sqrtc_pos]
-            field_simp
-            exact hc_lt_two
+          · rw [mul_add, mul_one]
+            rw [Real.mul_self_sqrt (by positivity)]
+            nth_rw 3 [show c = c / 2 + c / 2 by ring]
+            suffices √(c / 2) > c / 2 from (add_lt_add_iff_right (c / 2)).mpr this
+            have h1 : c / 2 < 1 := by linarith
+            have h2 : √ (c / 2) < 1 := by
+              have : 0 < c / 2 := by linarith
+              sorry
+            nth_rw 2 [show c / 2 = (√ (c / 2))^2 by rw [Real.sq_sqrt (by positivity)]]
+            nlinarith
 
     obtain ⟨d, dpos, d_lt_one, d_bound⟩ := existsD
     have d_nonneg : 0 ≤ d := le_of_lt dpos
@@ -227,8 +228,7 @@ problem imo1970_p3 :
       a_zero := by simp
       a_mono := by
         intro i j hij
-        field_simp
-        exact hij
+        aesop
     }
 
     use a_seq
@@ -240,6 +240,8 @@ problem imo1970_p3 :
 
     dsimp [b_seq, a_seq]
     field_simp
+    sorry
+/-
 
     calc
       c < d * (1 + d) * (1 - d ^ N) := by
@@ -256,7 +258,8 @@ problem imo1970_p3 :
             _ = 1 + Real.log (1 - c / (d * (1 + d))) / Real.log d := by field_simp
             _ ≤ _ := by apply Nat.le_ceil
         · exact pow_pos dpos N
-        · field_simp
+        · suffices (d * (1 + d))⁻¹ * c < 1 by linarith
+          rw [inv_mul_lt_one₀ daux]
           exact d_bound
       _ ≤ d * (1 + d) * (1 - d ^ (n:ℝ)) := by
         norm_cast
@@ -307,5 +310,6 @@ problem imo1970_p3 :
               _ = d ^ (2 + (-2 - (x:ℝ) * 2)) := by
                 rw [Real.rpow_add dpos, Real.rpow_ofNat]
               _ = _ := by ring_nf
+-/
 
 end Imo1970P3

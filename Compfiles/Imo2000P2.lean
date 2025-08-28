@@ -77,7 +77,9 @@ problem imo2000_p2 (a b c : ℝ) (ha : 0 < a) (hb : 0 < b) (hc : 0 < c)
   suffices H :
       (x - y + z) * (y - z + x) * (z - x + y) ≤ (y * z * x) by
     field_simp
-    exact (div_le_one h2).mpr H
+    apply div_le_one_of_le₀
+    · nlinarith
+    · nlinarith
   linarith
 
 

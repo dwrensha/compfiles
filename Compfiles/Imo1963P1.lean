@@ -68,8 +68,8 @@ problem imo1963_p1 : ∀ (p x : ℝ), (x ^ 2 - p) ≥ 0 → (x ^ 2 - 1) ≥ 0 �
     have tmp : 0 < (4 - 2 * p) := by linarith only [hx]
     rw [div_pow, mul_pow, Real.sq_sqrt (le_of_lt tmp)]; norm_num
     rw [←(mul_le_mul_right tmp), mul_assoc, div_mul]
-    field_simp
-    ring_nf
+    have := tmp.ne.symm
+    rw [mul_div_cancel_right₀ _ tmp.ne.symm]
     nlinarith
   intro xp
   trans (Real.sqrt (x ^ 2 - p) * Real.sqrt (x ^ 2 - (1 : ℝ))) ^ 2 =
@@ -94,7 +94,9 @@ problem imo1963_p1 : ∀ (p x : ℝ), (x ^ 2 - p) ≥ 0 → (x ^ 2 - 1) ≥ 0 �
   trans x ^ 2 = (p - 4) ^ 2 / (4 * (4 - 2 * p))
   · constructor
     · intro h; rw [←h]; field_simp [mul_assoc]
-    · intro h; rw [h]; field_simp [mul_assoc]
+    · intro h; rw [h]
+      field_simp [mul_assoc]
+      rw [mul_div_cancel_right₀ _ (by linarith)]
   rw [(by ring : (p - (4 : ℝ)) ^ (2 : ℕ) = ((4 : ℝ) - p) ^ (2 : ℕ))]
   have tmp2 :
     ((4 : ℝ) - p) ^ (2 : ℕ) / ((4 : ℝ) * ((4 : ℝ) - (2 : ℝ) * p)) =
@@ -111,8 +113,9 @@ problem imo1963_p1 : ∀ (p x : ℝ), (x ^ 2 - p) ≥ 0 → (x ^ 2 - 1) ≥ 0 �
     rw [hx, ←tmp2] at xp
     simp only [ge_iff_le, sub_nonneg] at xp
     rw [←(mul_le_mul_right (by positivity : (0 < ((4 : ℝ) * ((4 : ℝ) - (2 : ℝ) * p)))))] at xp
-    field_simp at xp
-    revert xp; ring_nf; intro xp
+    rw [mul_div] at xp
+    rw [div_mul_cancel₀ _ (by positivity)] at xp
+    ring_nf at xp
     rw [pow_two] at xp
     by_cases hp2 : p ≤ (4 / 3 : ℝ)
     · refine ⟨?_, hp2⟩

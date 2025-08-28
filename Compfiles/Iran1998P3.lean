@@ -78,7 +78,7 @@ problem iran1998_p3
     have habs3 : ∀ i ∈ Finset.range 4, |x i| ^ (3:ℝ) = x i ^ (3:ℝ) := by
       intro i hi; have := habs i hi; exact congr_fun (congr_arg _ this) 3
     rw [Finset.sum_congr rfl habs3] at holder
-    have hccc: (4:ℝ) * C =  ∑ i ∈ Finset.range 4, x i := by field_simp [C]
+    have hccc: (4:ℝ) * C =  ∑ i ∈ Finset.range 4, x i := by simp [C]
     rw [←hccc] at holder
 
     rw [Real.mul_rpow zero_le_four hcp] at holder

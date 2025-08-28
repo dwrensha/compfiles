@@ -67,26 +67,30 @@ problem imo1995_p2 (a b c : ℝ) (ha : 0 < a) (hb : 0 < b) (hc : 0 < c)
         have naive : x * x = x ^ 2 := (pow_two x).symm
         have naive' : x ^ 2 * x = x * (x * x) := by ring
         calc x * √x
-          _ = (√x * √x) * √x := by field_simp [mul_assoc, mul_comm, mul_left_comm]
+          _ = (√x * √x) * √x := by rw [Real.mul_self_sqrt hx']
           _ = (√(x ^ 2)) * √x := by rw [← Real.sqrt_mul' x hx', naive]
           _ = √(x ^ 2) * √x := by ring_nf
           _ = √(x ^ 2 * x) := (Real.sqrt_mul' (x ^ 2) hx').symm
           _ = √(x * (x * x)) := by rw [naive']
 
       have ha' : √((b + c)⁻¹ * (a ^ 3)⁻¹) * √(a * (b + c)) = 1 / a := by
-        rw [mul_comm]; field_simp [ha.ne', hb.ne', hc.ne', habc]
-        have ha'' := by exact helper a ha
-        rw [← ha''] at *; ring
+        rw [mul_comm, ←mul_inv, Real.sqrt_inv]
+        field_simp
+        rw [Real.sqrt_mul (by positivity), Real.sqrt_mul (by positivity),
+            ←mul_assoc, helper a ha]
 
       have hb' : √((c + a)⁻¹ * (b ^ 3)⁻¹) * √(b * (c + a)) = 1 / b := by
-        rw [mul_comm]; field_simp [ha.ne', hb.ne', hc.ne', habc]
-        have hb'' := helper b hb
-        rw [← hb''] at *; ring
+        rw [mul_comm, ←mul_inv, Real.sqrt_inv]
+        field_simp
+        rw [Real.sqrt_mul (by positivity), Real.sqrt_mul (by positivity),
+            ←mul_assoc, helper b hb]
 
       have hc' : √((a + b)⁻¹ * (c ^ 3)⁻¹) * √(c * (a + b)) = 1 / c := by
-        rw [mul_comm]; field_simp [ha.ne', hb.ne', hc.ne', habc]
-        have hc'' := helper c hc
-        rw [← hc''] at *; ring
+        rw [mul_comm, ←mul_inv, Real.sqrt_inv]
+        field_simp
+        rw [Real.sqrt_mul (by positivity), Real.sqrt_mul (by positivity),
+            ←mul_assoc, helper c hc]
+
       rw [ha', hb', hc']
       ring
 
@@ -104,9 +108,9 @@ problem imo1995_p2 (a b c : ℝ) (ha : 0 < a) (hb : 0 < b) (hc : 0 < c)
 
   have h2 : (1 / a + 1 / b + 1 / c) ^ 2 = (a * b + b * c + c * a) ^ 2 := by
     have ha' : 1 / a = b * c := by
-      rw [← habc]; field_simp; ring
+      rw [← habc]; field_simp
     have hb' : 1 / b = a * c := by
-      rw [← habc]; field_simp; ring
+      rw [← habc]; field_simp
     have hc' : 1 / c = a * b := (eq_one_div_of_mul_eq_one_left habc).symm
     rw [ha', hb', hc']
     ring
@@ -135,7 +139,7 @@ problem imo1995_p2 (a b c : ℝ) (ha : 0 < a) (hb : 0 < b) (hc : 0 < c)
     _ ≥ (1 / a + 1 / b + 1 / c) ^ 2 / (a * (b + c) + b * (c + a) + c * (a + b)) := h1_div
     _ = (a * b + b * c + c * a) ^ 2 / (a * (b + c) + b * (c + a) + c * (a + b)) := by rw [h2]
     _ = (a * b + b * c + c * a) ^ 2 / (2 * (a * b + b * c + c * a)) := by field_simp; ring
-    _ = 1 / 2 * (a * b + b * c + c * a) := by field_simp; ring
+    _ = 1 / 2 * (a * b + b * c + c * a) := by field_simp
     _ ≥ 3 / 2 := by nlinarith only [h3]
 
 end Imo1995P2

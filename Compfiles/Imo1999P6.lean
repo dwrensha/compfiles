@@ -72,6 +72,7 @@ problem imo1999_p6 (f : ℝ → ℝ) :
     rw [h5]
     unfold x'
     field_simp
+    simp
   -- Hence f(x) = f(a - b) = f(b) + ab + f(a) - 1.
   have h11 : ∀ x, f x = c - x^2 / 2 := fun x ↦ by
     obtain ⟨a, b, ha, hb, hab⟩ := h2 x

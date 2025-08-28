@@ -38,7 +38,7 @@ problem imo1983_p1 (f : ℝ+ → ℝ+) :
   constructor
   · rintro rfl
     constructor
-    · intro x y; field_simp
+    · intro x y; simp
     · intro x
       use 1/x
       intro y hy

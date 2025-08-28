@@ -61,7 +61,6 @@ problem usa2022_p3 (f : ℝ+ → ℝ+) :
     apply Subtype.mk_eq_mk.mpr
     simp
     field_simp
-    ring
 
   intro hf
   change ∀ x y : ℝ+, f x = f (f^[2] x + y) + f (x * f y) * f (x + y) at hf
@@ -251,7 +250,8 @@ problem usa2022_p3 (f : ℝ+ → ℝ+) :
     obtain ⟨c, cpos⟩ := c
     simp
     field_simp
-    ring
+    apply div_self
+    linarith
 
   use c
   funext x

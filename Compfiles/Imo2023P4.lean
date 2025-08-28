@@ -106,6 +106,7 @@ theorem imo2023_p4_generalized
                Finset.mem_singleton] at hxp
     specialize hxp 1 (by simp)
     field_simp
+    norm_num
   | succ m ih =>
     let n := 2 * m + 1
     have hn1 : n + 1 ∈ Finset.Icc 1 (2 * (m + 1) + 1) := by
@@ -355,6 +356,7 @@ theorem imo2023_p4_generalized
       have hp2 : 0 < x ⟨n + 2, hn2⟩ := hxp ⟨n + 2, hn2⟩
       rw [←Real.sqrt_mul (by positivity)]
       field_simp
+      norm_num
     rw [h11] at h9; clear h11
     replace h9 : aa m x' ⟨n, by simp[n]⟩ + 2 < aa (m + 1) x ⟨n + 2, hn2⟩ := by
       have h9' : u + 1/u + aa m x' ⟨n, by simp[n]⟩ ≤

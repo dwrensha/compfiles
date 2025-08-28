@@ -32,9 +32,7 @@ problem usa1992_p2 :
     intro i hi
     rw [Real.cos_ne_zero_iff]
     intro k
-    field_simp
-    move_mul [π]
-    rw [mul_right_cancel_iff_of_pos Real.pi_pos]
+    cancel_denoms
     norm_cast
     omega
 
@@ -65,14 +63,11 @@ problem usa1992_p2 :
   rw [show (π / 180) = ((i + 1) : ℝ) * π / 180 - (i : ℝ) * π / 180 by ring]
   rw [Real.sin_sub, sub_div]
   norm_cast
-  ring_nf
-  have cosi1 : (π * ↑i / 180).cos ≠ 0 := by
-    rw [calc (π * ↑i / 180) = (↑i * π / 180) := by ring_nf];
-    exact cosi (show i < 90 by omega)
-  have cosi2 : (π * (1 + ↑i) / 180).cos ≠ 0 := by
-    rw [calc (π * (1 + ↑i) / 180) = (↑(i + 1) * π / 180) := by norm_cast; ring_nf];
-    exact cosi (show (i+1) < 90 by omega)
-  field_simp [mul_comm]
-
+  rw [div_mul_eq_div_div]
+  rw [mul_div_cancel_right₀ _ (cosi (show i < 90 by omega))]
+  rw [mul_comm (cos (↑(i + 1) * π / 180)) (sin (↑i * π / 180))]
+  rw [mul_comm (cos (↑i * π / 180)) (cos (↑(i + 1) * π / 180))]
+  rw [div_mul_eq_div_div]
+  rw [mul_div_cancel_right₀ _ (cosi (show (i+1) < 90 by omega))]
 
 end Usa1992P2

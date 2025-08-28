@@ -169,7 +169,8 @@ problem usa1998_p3
     intro i hi
     let w : ℕ → ℝ := fun i ↦ 1 / (n:ℝ)
     have hw' : ∑ _j ∈ (Finset.range (n + 1)).erase i, w i = 1 := by
-       field_simp [w, Finset.card_erase_of_mem hi]
+       simp [w, Finset.card_erase_of_mem hi]
+       field_simp
     have hw : ∀ j ∈ (Finset.range (n + 1)).erase i, 0 ≤ w j := by
       intro j _hj
       simp only [w, one_div, inv_nonneg, Nat.cast_nonneg]

@@ -106,7 +106,7 @@ problem canada1998_p3 (n : ℕ) (hn : 2 ≤ n) :
               + (1 + (k+1)/(2 * k + 1)) := by norm_cast; linarith
 
        _ = (∑i ∈ Finset.range (m+1), 1 / (2 * ((i + 1):ℝ) + 1 + 1))
-              + (1/2 + 1/2 + (k+1)/(2 * k + 1)) := by field_simp
+              + (1/2 + 1/2 + (k+1)/(2 * k + 1)) := by ring
        _ = (∑i ∈ Finset.range (m+1), 1 / (2 * ((i + 1):ℝ) + 1 + 1))
               + 1/2 + (1/2 + (k+1)/(2 * k + 1)) := by ring
        _ = (∑i ∈ Finset.range (m+1), 1 / (2 * ((i + 1):ℝ) + 1 + 1))

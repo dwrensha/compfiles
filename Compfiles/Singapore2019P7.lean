@@ -33,8 +33,8 @@ problem singapore2019_r1_p7 (x : ℝ) (hx : tan x = 5) :
   rw [tan_eq_sin_div_cos] at hx
 
   have h2 : sin x = 5 * cos x := by
-    field_simp at hx
-    exact hx
+    rw [div_eq_iff_mul_eq h1] at hx
+    exact hx.symm
 
   have h4 : sin x ^ 2 = 25 * cos x ^ 2 := by
     rw [h2]
@@ -51,6 +51,5 @@ problem singapore2019_r1_p7 (x : ℝ) (hx : tan x = 5) :
     rw [cos_two_mul]
     nlinarith
 
-  field_simp [hcos2x_val]
-  unfold solution
-  linarith
+  rw [hcos2x_val, solution, hsin2x_val]
+  norm_num
