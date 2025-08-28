@@ -210,7 +210,10 @@ problem imo1970_p3 :
             have h1 : c / 2 < 1 := by linarith
             have h2 : √ (c / 2) < 1 := by
               have : 0 < c / 2 := by linarith
-              sorry
+              suffices H : (√ (c / 2))^2 < 1 ^2 by
+                nlinarith
+              rw [Real.sq_sqrt (by positivity)]
+              simp [h1]
             nth_rw 2 [show c / 2 = (√ (c / 2))^2 by rw [Real.sq_sqrt (by positivity)]]
             nlinarith
 
