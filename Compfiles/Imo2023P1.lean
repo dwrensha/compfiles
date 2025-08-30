@@ -43,7 +43,7 @@ lemma PrimePow_ne {a b p q : ℕ} (p_prime : p.Prime) (q_prime : q.Prime) (p_ne_
   rw [Nat.Prime.factorization_pow p_prime,
       Nat.Prime.factorization_pow q_prime,
       Finsupp.single_eq_same,
-      Finsupp.single_eq_of_ne p_ne_q.symm] at h
+      Finsupp.single_eq_of_ne p_ne_q] at h
   exact k_ne_0.ne.symm h
 
 /-- If a number divides some non-zero number, it is also nonzero. -/
@@ -82,7 +82,7 @@ theorem not_pow_cons_factors_other_prime {p e c : ℕ} (hp : p.Prime)
     ext q
     by_cases hq : q = p
     . rw [hq, Finsupp.single_eq_same]
-    . rw [Finsupp.single_eq_of_ne (Ne.symm hq)]
+    . rw [Finsupp.single_eq_of_ne hq]
       have {q : ℕ} (q_ne_p : q ≠ p) : c.factorization q = 0 := by
         refine (em q.Prime).elim (fun q_prime => ?_) (Nat.factorization_eq_zero_of_non_prime c)
         by_contra h₂
@@ -176,7 +176,7 @@ theorem ordCompl_of_non_prime_pow {n p : ℕ} (hn : 1 < n) (hp : ¬IsPrimePow n)
       let c_fact_q := congrArg (· q) (Nat.factorization_ordCompl n p)
       dsimp at c_fact_q
       rw [Finsupp.erase_ne h] at c_fact_q
-      rw [← c_fact_q, Finsupp.single_eq_of_ne (Ne.symm h)]
+      rw [← c_fact_q, Finsupp.single_eq_of_ne h]
       exact c_fact_eq_0 q
   -- So `n` is a prime power.
   have n_eq_p_pow :=
@@ -301,7 +301,7 @@ theorem minFac_cons_factor {n : ℕ} (hn : 1 < n) (h : ¬IsPrimePow n)
     if hr : r = p then
       rw [hr, Finsupp.single_eq_same]
     else
-      rw [Finsupp.single_eq_of_ne (Ne.symm hr)]
+      rw [Finsupp.single_eq_of_ne hr]
       exact if r_ge_q : r ≥ q then
         Nat.factorization_eq_zero_of_lt (Nat.lt_of_lt_of_le d_lt_q r_ge_q)
       else
@@ -435,7 +435,7 @@ lemma dividable_is_PrimePow {n : ℕ} (h : 1 < n ∧ Dividable n)
   have : (q * (p + 1)).factorization p = 0 := by
     rw [Nat.factorization_mul q_prime.ne_zero p.succ_ne_zero]
     dsimp
-    rw [q_prime.factorization, Finsupp.single_eq_of_ne q_ne_p,
+    rw [q_prime.factorization, Finsupp.single_eq_of_ne q_ne_p.symm,
         p_succ_fact_zero p_prime]
   refine this ▸ (Nat.factorization_le_iff_dvd ?_ ?_).mpr h p
   . exact (pow_ne_zero (e + 1) p_prime.ne_zero)
