@@ -611,8 +611,8 @@ problem imo2017_p1
           have hd₇: 2 ^ 2 ≤ (a x (d - (1 : ℕ))) := by
             contrapose! hd₅
             interval_cases (a x (d - (1 : ℕ)))
-            . decide
-            . decide
+            . exact fun x ↦ match x with | ⟨_ + 3, hn⟩ => nomatch hn
+            . exact fun x ↦ match x with | ⟨_ + 4, hn⟩ => nomatch hn
           have hd₈: 2 ≤ (a x (d - (1 : ℕ))).sqrt := by exact Nat.le_sqrt'.mpr hd₇
           exact hd₈
         . have hd₆: a x d = a x (d - (1 : ℕ)) + 3 := by simp_all only [↓reduceIte]
@@ -713,7 +713,7 @@ problem imo2017_p1
     have hc₅: c ≠ 4 := by
       contrapose! hc₂
       rw [hc₂]
-      decide
+      use 2
     constructor
     . intro hx₁
       obtain ⟨A, hA₀⟩ := hx₁
@@ -791,24 +791,28 @@ problem imo2017_p1
         . rw [add_mul, one_mul, ← add_assoc]
           have hd₁: a x (i + d * (3 : ℕ) + 1) = 6 := by
             have hh₀ := ha₁ x (i + d * (3 : ℕ)) hx₀
-            have hh₁: ¬ IsSquare (3 : ℕ) := by decide
+            have hh₁: ¬ IsSquare (3 : ℕ) :=
+              fun x ↦ match x with | ⟨_ + 4, hn⟩ => nomatch hn
             have hh₂: a x (i + d * (3 : ℕ) + (1 : ℕ)) = a x (i + d * (3 : ℕ)) + (3 : ℕ) := by
               rw [hd₀] at hh₀
-              simp at hh₀
+              simp [hh₁] at hh₀
               rw [hd₀]
               exact hh₀
             rw [hh₂, hd₀]
           have hd₂: a x (i + d * (3 : ℕ) + 2) = 9 := by
             have hh₀ := ha₁ x (i + d * (3 : ℕ) + 1) hx₀
-            have hh₁: ¬ IsSquare (6 : ℕ) := by decide
+            have hh₁: ¬ IsSquare (6 : ℕ) :=
+              fun x ↦ match x with | ⟨_ + 7, hn⟩ => nomatch hn
             have hh₂: a x (i + d * (3 : ℕ) + (2 : ℕ)) = a x (i + d * (3 : ℕ) + 1) + (3 : ℕ) := by
               rw [hd₁] at hh₀
-              simp at hh₀
+              simp [hh₁] at hh₀
               rw [hd₁]
               exact hh₀
             rw [hh₂, hd₁]
           have hd₃ := ha₁ x (i + d * (3 : ℕ) + (2 : ℕ)) hx₀
           rw [hd₂] at hd₃
+          have hh₁: IsSquare (9 : ℕ) := ⟨3, rfl⟩
+          norm_num [hh₁] at hd₃
           exact hd₃
       refine Set.infinite_iff_exists_gt.mpr ?_
       simp
