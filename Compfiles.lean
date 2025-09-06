@@ -216,6 +216,7 @@ import Compfiles.Usa2008P1
 import Compfiles.Usa2011P4
 import Compfiles.Usa2015P1
 import Compfiles.Usa2017P5
+import Compfiles.Usa2017P6
 import Compfiles.Usa2018P1
 import Compfiles.Usa2019P1
 import Compfiles.Usa2022P1
