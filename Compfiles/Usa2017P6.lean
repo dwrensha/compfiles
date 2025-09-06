@@ -57,8 +57,7 @@ lemma other_direction {x} (hx : Conditions x) : 2 / 3 ≤ f x := by
     _ ≥ ∑ i, (x i / 4 - x i * x (i + 1) / 12) := by
       rw [f]; gcongr with i
       rw [mul_div_assoc, div_eq_mul_one_div, ← mul_sub, div_eq_mul_one_div (x i)]
-      gcongr; · simpa using h₁ i
-      exact aux₁ (by simpa using h₁ (i + 1))
+      exact mul_le_mul_of_nonneg_left (aux₁ (h₁ (i + 1))) (h₁ i)
     _ = 1 - (∑ i, x i * x (i + 1)) / 12 := by
       rw [Finset.sum_sub_distrib, ← Finset.sum_div, h₂, ← Finset.sum_div, div_self four_ne_zero]
     _ ≥ _ := by linarith
