@@ -299,8 +299,8 @@ lemma line_para_two_points (a b c : ℝ) (h : a ≠ 0 ∨ b ≠ 0) (L : AffSubOf
       rw [AffineSubspace.mem_direction_iff_eq_vsub _]
       · use !₂[x2, y2]; simp only [h2, vsub_eq_sub, true_and]
         use !₂[x1, y1]; simp only [h1, true_and]
-        dsimp only [w]; rw [vec_sub, vec_eq]; simp
-      · simp only [Set.Nonempty, SetLike.mem_coe]; use !₂[x1, y1]
+        dsimp only [w]; exact (vec_sub x2 y2 x1 y1).symm
+      · exact Set.nonempty_of_mem h1
     rw [← hp, line_direction] at this
     · dsimp only [w] at this
       obtain ⟨k, hk⟩ := this
@@ -355,11 +355,8 @@ lemma line_contains (L L' : AffSubOfPlane) (hL : finrank ℝ L.direction = 1) (a
   intro x hx
   rw [finrank_eq_one_iff'] at hL
   obtain ⟨v, hv0, hv⟩ := hL
-  have L_nonempty : (SetLike.coe L).Nonempty := by simp only [Set.Nonempty, SetLike.mem_coe]; use a
-  obtain ⟨k, hk⟩ :=
-    hv ⟨a -ᵥ b, by rw [AffineSubspace.mem_direction_iff_eq_vsub L_nonempty]; use a; simp [ha, hb]⟩
-  obtain ⟨q, hq⟩ :=
-    hv ⟨x -ᵥ a, by rw [AffineSubspace.mem_direction_iff_eq_vsub L_nonempty]; use x; simp [hx, ha]⟩
+  obtain ⟨k, hk⟩ := hv ⟨a -ᵥ b, AffineSubspace.vsub_mem_direction ha hb⟩
+  obtain ⟨q, hq⟩ := hv ⟨x -ᵥ a, AffineSubspace.vsub_mem_direction hx ha⟩
   apply_fun (·.val) at hk; simp only [SetLike.val_smul, vsub_eq_sub] at hk
   apply_fun (·.val) at hq; simp only [SetLike.val_smul, vsub_eq_sub] at hq
   have hk0 : k ≠ 0 := by
@@ -471,8 +468,8 @@ lemma grid_shift (n : ℕ) (d : Fin 3) :
         rw [ha, ← Nat.cast_pred ha0]
       · use b
         constructor <;> (try (first | assumption | omega))
-    · have : b ≠ 1 := by intro hC; rw [hC] at hb; simp only [Fin.isValue, Nat.cast_one,
-      add_eq_left] at hb; rw [hb] at h2; simp at h2
+    · have : b ≠ 1 := by intro hC; rw [hC] at hb
+                         simp only [Fin.isValue, Nat.cast_one, add_eq_left] at hb; exact h2 hb
       use a
       constructor
       · exact ha
@@ -584,8 +581,7 @@ lemma shift_sunny (v : Plane) (L : AffSubOfPlane) : Sunny L → Sunny (shiftLine
     · intro h
       apply AffineSubspace.Parallel.trans _ h
       apply shift_para
-  rw [← this, ← this, ← this]
-  tauto
+  grind
 
 /-- Shift a `coverConfig` by the vector `v`. -/
 def coverConfig.shift (C : coverConfig) (v : Plane) : coverConfig where
@@ -793,7 +789,7 @@ lemma coverGridConfig.find_same_line (C : coverGridConfig) (x y : Plane)
   suffices L = line a b c by rwa [← this]
   apply get_line_eq (a := x) (b := y) <;> (try assumption)
   · exact C.lines_rank L hL
-  · apply line_rank; assumption
+  · exact line_rank a b c hab
   · dsimp only [L]; simp [find_line_correct]
   · dsimp only [L]; rw [hEq]; simp [find_line_correct]
 
@@ -911,8 +907,7 @@ lemma coverGridNoEdgeConfig.corner_point_on_edge (C : coverGridNoEdgeConfig)
   dsimp only [cornerPoint, edgeEndpointCornerId, coverGridNoEdgeConfig.edgeEndpointIndex,
     coverGridConfig.edgePoint]
   have := n_minus_plus C.n C.hn
-  have : 1 = (C.n : ℝ) - (C.n - 1 : ℕ) := by
-    rw [← n_minus_plus C.n C.hn]; ring
+  have : 1 = (C.n : ℝ) - (C.n - 1 : ℕ) := eq_sub_of_add_eq' this
   fin_cases d <;> fin_cases r <;> (simp only; repeat rw [vec_eq]; simpa)
 
 /-- `coverGridNoEdgeConfig.findLineCorner C c` chooses a line in `lines` that goes through
@@ -1363,14 +1358,13 @@ noncomputable def strongCoverGridConfig.extend (C : strongCoverGridConfig) :
         ring_nf
         rw [show (1 + C.n : ℕ) = 1 + (C.n : ℝ) by norm_cast]
         ring
-    · have : L ∈ C.lines := by apply Finset.mem_of_mem_cons_of_ne hL; exact hE
+    · have : L ∈ C.lines := Finset.mem_of_mem_cons_of_ne hL hE
       obtain ⟨x, hx1, hx2⟩ := C.lines_used L this
       use x; simp only [hx2, and_true]
       have := grid_remove_diag C.n
       rw [← C.g_is_grid] at this
       rw [← this] at hx1
-      rw [Set.mem_diff] at hx1
-      tauto
+      exact Set.mem_of_mem_inter_left hx1
   where hNew : edgeLine (C.n + 1) 2 ∉ C.lines := by {
     intro hC
     obtain ⟨x, hx1, hx2⟩ := C.lines_used (edgeLine (C.n + 1) 2) hC
@@ -1433,7 +1427,7 @@ problem imo2025_p1 (n : Set.Ici 3) :
         simp only [grid, Fin.isValue, exists_and_left, Set.mem_setOf_eq] at hx
         obtain ⟨a, ha, b, hb, ha0, hb0, hab⟩ := hx
         specialize h3 a b ha0 hb0 hab
-        rw [← ha, ← hb, show !₂[x 0, x 1] = x by ext i; fin_cases i <;> simp] at h3
+        rw [← ha, ← hb, ← vec_repr x] at h3
         exact h3
       sunny_count := h4
       g_is_grid := by rfl
