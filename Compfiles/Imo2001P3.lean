@@ -84,7 +84,7 @@ lemma card_not_easy_le_210 {α β : Type} [Fintype α] [Fintype β]
     _ = ∑ i, #({p ∈ β_solved i | ¬Easy α_solved p}.biUnion fun p ↦ {j | p ∈ α_solved j}) := by
       congr!; ext
       simp_rw [mem_biUnion, mem_inter, mem_filter, mem_univ, true_and]
-      congr! 2; tauto
+      grind
     _ ≤ ∑ i, ∑ p ∈ β_solved i with ¬Easy α_solved p, #{j | p ∈ α_solved j} := sum_le_sum fun _ _ ↦ card_biUnion_le
     _ ≤ ∑ i, ∑ p ∈  β_solved i with ¬Easy α_solved p, 2 := by
       gcongr with i _ p mp

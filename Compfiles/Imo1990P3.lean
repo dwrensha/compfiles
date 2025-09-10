@@ -269,8 +269,7 @@ lemma imo_1990_p3_forward
         have hq₅: 5 ≤ q := by
           by_contra! hh₀
           have hh₁: 2 ≤ q := Nat.Prime.two_le hq₁
-          interval_cases q
-          all_goals try tauto
+          interval_cases q <;> grind
         have hq₉: q = 7 := by
           have hh₀: Nat.gcd n (q - 1) = 1 ∨ Nat.gcd n (q - 1) = 3 := by
             have hh₀₁: ∀ x ∈ (q - 1).primeFactors, x ≤ q - 1 := by
