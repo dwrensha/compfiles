@@ -194,7 +194,7 @@ lemma line_rank (a b c : ℝ) (h : a ≠ 0 ∨ b ≠ 0) : finrank ℝ (line a b 
   rw [finrank_eq_one_iff']
   use ⟨!₂[-b, a], hv_mem⟩
   constructor
-  · simp; tauto
+  · simp; grind
   · simp only [SetLike.mk_smul_mk, Subtype.forall, Subtype.mk.injEq]
     intro w; exact (line_direction a b c h w).mp
 
@@ -266,7 +266,7 @@ lemma line_para (a b c a' b' c' : ℝ) (h : a ≠ 0 ∨ b ≠ 0) (h' : a' ≠ 0 
     obtain ⟨k, hk⟩ := this
     rw [vec_mul, vec_eq] at hk
     obtain ⟨hk1, hk2⟩ := hk
-    replace hk1 : k * b' = b := by linarith
+    replace hk1 : k * b' = b := by grind
     rw [← hk1, ← hk2]; ring
   · intro hab
     constructor
@@ -282,7 +282,7 @@ lemma line_para (a b c a' b' c' : ℝ) (h : a ≠ 0 ∨ b ≠ 0) (h' : a' ≠ 0 
       have : SetLike.coe (line a' b' c') ≠ ∅ := by
         rw [← Set.nonempty_iff_ne_empty]
         exact line_nonempty a' b' c' h'
-      tauto
+      grind
 
 /-- If the line `a * x + b * y + c` is parallel to `L`,
 and both lines go through `(x1, y1)`, `(x2, y2)`,
@@ -301,12 +301,11 @@ lemma line_para_two_points (a b c : ℝ) (h : a ≠ 0 ∨ b ≠ 0) (L : AffSubOf
         use !₂[x1, y1]; simp only [h1, true_and]
         dsimp only [w]; exact (vec_sub x2 y2 x1 y1).symm
       · exact Set.nonempty_of_mem h1
-    rw [← hp, line_direction] at this
-    · dsimp only [w] at this
-      obtain ⟨k, hk⟩ := this
-      rw [vec_mul, vec_eq] at hk
-      rw [← hk.left, ← hk.right]; ring
-    · tauto
+    rw [← hp, line_direction _ _ _ h] at this
+    dsimp only [w] at this
+    obtain ⟨k, hk⟩ := this
+    rw [vec_mul, vec_eq] at hk
+    rw [← hk.left, ← hk.right]; ring
 
 /-- If the linex `a * x + b * y + c = 0` and `a' * x + b' * y + c = 0` are equal,
 then `a * b' = a' * b ∧ a * c' = a' * c ∧ b * c' = b' * c`. -/
@@ -318,8 +317,8 @@ lemma line_eq_check (a b c a' b' c' : ℝ) (h : a ≠ 0 ∨ b ≠ 0) (h' : a' �
   constructor
   · exact hab
   · by_cases ha : a = 0
-    · have hb : b ≠ 0 := by tauto
-      have ha' : a' = 0 := by rw [ha] at hab; simp only [zero_mul, zero_eq_mul] at hab; tauto
+    · have hb : b ≠ 0 := by grind
+      have ha' : a' = 0 := by rw [ha] at hab; simp only [zero_mul, zero_eq_mul] at hab; grind
       simp only [ha, zero_mul, ha', true_and]
       specialize heq !₂[0, -c / b]
       rw [AffineSubspace.mem_coe, AffineSubspace.mem_coe, point_on_line, point_on_line] at heq
@@ -337,7 +336,7 @@ lemma line_eq_check (a b c a' b' c' : ℝ) (h : a ≠ 0 ∨ b ≠ 0) (h' : a' �
         _ = a * (-(a' * (-c / a))) := by congr 1; linarith
         _ = a' * c := by field_simp
       · by_cases hb : b = 0
-        · have hb' : b' = 0 := by rw [hb] at hab; simp only [mul_zero, mul_eq_zero] at hab; tauto
+        · have hb' : b' = 0 := by rw [hb] at hab; simp only [mul_zero, mul_eq_zero] at hab; grind
           simp [hb, hb']
         · specialize heq !₂[0, -c / b]
           rw [AffineSubspace.mem_coe, AffineSubspace.mem_coe, point_on_line, point_on_line] at heq
@@ -390,9 +389,7 @@ lemma sunny_slope (a b c : ℝ) (h : a ≠ 0 ∨ b ≠ 0) :
   dsimp only [Sunny]
   rw [← x_ax_line, ← y_ax_line, ← xy0_line]
   rw [line_para, line_para, line_para]
-  · simp only [mul_one, zero_mul, mul_zero, one_mul, ne_eq, and_congr_right_iff,
-      and_congr_left_iff]
-    tauto
+  · grind
   all_goals (first | assumption | simp)
 
 /-- The integer grid consisting of (a, b), where a, b are positive integers and a + b ≤ n + 1. -/
@@ -639,15 +636,15 @@ noncomputable def coverConfig.removeLine (C : coverConfig) (L : AffSubOfPlane) (
   lines_count := by simp [C.lines_count, hL]
   lines_rank := by
     intro L' hL'
-    exact C.lines_rank L' (by simp only [Finset.mem_erase, ne_eq] at hL'; tauto)
+    exact C.lines_rank L' (by simp only [Finset.mem_erase, ne_eq] at hL'; exact hL'.right)
   lines_cover := by
     intro x hx
     simp only [Set.mem_diff, SetLike.mem_coe] at hx
-    obtain ⟨L', hL'⟩ := C.lines_cover x (by tauto)
+    obtain ⟨L', hL'⟩ := C.lines_cover x hx.left
     use L'; simp only [Finset.mem_erase, ne_eq, hL', and_true]
     intro hC
     rw [hC] at hL'
-    tauto
+    grind
   sunny_count := by
     rw [← C.sunny_count]
     congr 1
