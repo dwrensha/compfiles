@@ -365,7 +365,7 @@ problem usa1992_p1 (n : ℕ) :
   have h2 : ∀ m, b m < 10^(∑ i ∈ Finset.range (m + 1), 2^i) := fun m ↦ by
     dsimp [b]
     rw [←Finset.prod_pow_eq_pow_sum]
-    refine Finset.prod_lt_prod_of_nonempty ?_ ?_ Finset.nonempty_range_succ
+    refine Finset.prod_lt_prod_of_nonempty ?_ ?_ Finset.nonempty_range_add_one
     · intro i hi
       exact ha1 i
     · intro i hi

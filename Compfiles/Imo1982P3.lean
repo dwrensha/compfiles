@@ -71,7 +71,7 @@ lemma ineq {x : ℕ → ℝ} {n : ℕ} (hn : n ≠ 0) (hx : Antitone x)
     _ ≤ (∑ k ∈ Finset.range (n + 1), x k) ^ 2 /
          ∑ k ∈ Finset.range (n + 1), x (k + 1) := by
       gcongr
-      · exact Finset.sum_pos (fun k _ ↦ hp _) Finset.nonempty_range_succ
+      · exact Finset.sum_pos (fun k _ ↦ hp _) Finset.nonempty_range_add_one
       · exact add_nonneg (Finset.sum_nonneg fun k _ ↦ (hp _).le) zero_le_one
       · rw [Finset.sum_range_succ', h0]
       · exact le_avg hn (hx.comp_monotone @Nat.succ_le_succ)

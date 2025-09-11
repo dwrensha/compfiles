@@ -67,7 +67,7 @@ lemma lemma1 (x : ℝ) (hx : x ∈ Set.Ioo 0 (Real.pi / 2)) :
   · exact hx.2
 
 lemma lemma2' (n : ℕ) : Finset.erase (Finset.range (n + 1)) n = Finset.range n :=
-by rw [←Nat.succ_eq_add_one, Finset.range_succ]; simp
+by rw [←Nat.succ_eq_add_one, Finset.range_add_one]; simp
 
 lemma lemma2 (n : ℕ) (f : ℕ → ℝ) :
     ∏ i ∈ Finset.range (n + 1), ∏ j ∈ Finset.erase (Finset.range (n + 1)) i, f j =
