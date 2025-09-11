@@ -140,10 +140,10 @@ lemma line_nonempty (a b c : ℝ) (h : a ≠ 0 ∨ b ≠ 0) :
   obtain ha | hb := h
   · use !₂[-c / a, 0]
     rw [point_on_line]
-    field_simp; ring
+    grind
   · use !₂[0, -c / b]
     rw [point_on_line]
-    field_simp; ring
+    grind
 
 /-- `(-b, a)` is the direction of the line `a * x + b * y + c = 0`
 when `a` and `b` are not both zero -/
@@ -162,16 +162,12 @@ lemma line_direction (a b c : ℝ) (h : a ≠ 0 ∨ b ≠ 0) (w : Plane) :
       · rw [hw12]
         nth_rw 2 [vec_repr w1, vec_repr w2]
         rw [vec_mul, vec_sub, vec_eq]
-        constructor
-        · field_simp; linarith
-        · field_simp
+        grind
     · use (w2 0 - w1 0) / b
       · rw [hw12]
         nth_rw 2 [vec_repr w1, vec_repr w2]
         rw [vec_mul, vec_sub, vec_eq]
-        constructor
-        · field_simp; linarith
-        · field_simp; linarith
+        grind
   · intro ⟨k, hkw⟩
     rw [AffineSubspace.mem_direction_iff_eq_vsub hv_nonempty]
     simp only [Set.Nonempty, SetLike.mem_coe] at hv_nonempty
@@ -239,14 +235,10 @@ lemma line_para' (a b a' b' : ℝ) (h' : a' ≠ 0 ∨ b' ≠ 0)
   obtain ha | hb := h'
   · use k * a / a'
     rw [vec_mul, vec_repr w, vec_eq]
-    constructor <;> field_simp
-    · rw [←hk1, mul_assoc, hab]; ring
-    · rw [←hk2, ]
+    grind
   · use k * b / b'
     rw [vec_mul, vec_repr w, vec_eq]
-    constructor <;> field_simp
-    · rw [←hk1]; ring
-    · rw [←hk2, mul_assoc _ b _, mul_comm b a', ←hab]; ring
+    grind
 
 /-- Two non-degenerate lines `a * x + b * y + c = 0` and `a' * x + b' * y + c = 0`
 are parallel iff `a * b' = a' * b`. -/
