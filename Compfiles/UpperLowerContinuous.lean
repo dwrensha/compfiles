@@ -249,7 +249,7 @@ lemma continuous_of_upper_lower_continuous
     constructor
     · intro x hx
       have h7 : x ∈ Set.Ico c' b' := by
-          cases' hx with hxl hxr
+          obtain ⟨hxl, hxr⟩ := hx
           constructor
           · exact htc.1.trans hxl
           · exact hxr
@@ -396,7 +396,7 @@ theorem monotone_of_upper_lower_continuous
       · exact add_div_two_lt_right.mpr h14
 
     have h7 : m ∈ Set.Ioc ii0' y := by
-      cases' h6 with h6l h6r
+      obtain ⟨h6l, h6r⟩ := h6
       constructor
       · exact left_lt_add_div_two.mpr h14
       · exact le_of_lt h6r

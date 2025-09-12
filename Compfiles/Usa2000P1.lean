@@ -99,9 +99,10 @@ problem usa2000_p1 :
   -- for all nonnegative integers n.
   have h2 : ∀ n : ℕ, f (2 ^ (- (n : ℝ))) ≤ (A - 2 * (n:ℝ)) / 2^(n:ℝ) := by
     intro n
-    induction' n with n hpn
-    · aesop
-    · have h6 : (2:ℝ) ^ (n.succ : ℝ) = 2 ^ (n : ℝ) * 2 := by norm_cast
+    induction n with
+    | zero => aesop
+    | succ n hpn =>
+      have h6 : (2:ℝ) ^ (n.succ : ℝ) = 2 ^ (n : ℝ) * 2 := by norm_cast
       replace hpn : f (2 ^ (-(n:ℝ)))/2 ≤ (A - 2 * (n:ℝ)) / 2 ^ (n.succ:ℝ) := by
          rw [h6, div_mul_eq_div_div]; linarith
       have h4 : f (2 ^ (-((Nat.succ n):ℝ)))
@@ -124,9 +125,10 @@ problem usa2000_p1 :
 
   have h3 : ∀ n : ℕ, f (- 2 ^ (- (n : ℝ))) ≤ (B - 2 * (n:ℝ)) / 2^(n:ℝ) := by
     intro n
-    induction' n with n hpn
-    · aesop
-    · have h6 : (2:ℝ) ^ (n.succ : ℝ) = 2 ^ (n : ℝ) * 2 := by norm_cast
+    induction n with
+    | zero => aesop
+    | succ n hpn =>
+      have h6 : (2:ℝ) ^ (n.succ : ℝ) = 2 ^ (n : ℝ) * 2 := by norm_cast
       replace hpn : f (-2 ^ (-(n:ℝ)))/2 ≤ (B - 2 * ↑n) / 2 ^ (n.succ:ℝ) := by
          rw [h6, div_mul_eq_div_div]; linarith
       have h4 : f (-2 ^ (-((Nat.succ n):ℝ)))

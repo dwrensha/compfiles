@@ -235,9 +235,9 @@ problem imo1998_p2 [Fintype J] [Fintype C] (a b k : ℕ) (hC : Fintype.card C = 
     simp only [mul_comm, add_mul, one_mul, add_tsub_cancel_right]; ring
   have hr : 2 * z * z * a = 2 * z * a * z := by ring
   rw [hl, hr] at h
-  cases' z with z
-  · simp
-  · exact le_of_mul_le_mul_right h z.succ_pos
+  cases z with
+  | zero => simp
+  | succ z => exact le_of_mul_le_mul_right h z.succ_pos
 
 
 end Imo1998P2
