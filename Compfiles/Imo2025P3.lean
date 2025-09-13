@@ -4,6 +4,13 @@ Authors: Reuven Peleg (Problem statement)
 -/
 import Mathlib.Data.Nat.Basic
 import Mathlib.Data.Real.Basic
+import Mathlib.Order.Bounds.Basic
+
+import ProblemExtraction
+
+problem_file {
+  tags := [.NumberTheory]
+}
 
 /-!
 # International Mathematical Olympiad 2025, Problem 3
@@ -16,20 +23,15 @@ Determine the smallest real constant c such that f(n) ⩽ cn for all bonza funct
 -/
 open Int
 
-/-- A function f : ℕ → ℕ is `bonza` when for all positive a,b we have
-    f(a) divides b^a - f(b)^{f(a)} (as integers). -/
-def is_bonza (f : ℕ → ℕ) : Prop :=
-  ∀ (a b : ℕ), a ≠ 0 → b ≠ 0 →
-    (f a : Int) ∣ ((b : Int) ^ a - (f b : Int) ^ (f a))
+def Bonza (f : ℕ+ → ℕ+) : Prop :=
+  ∀ a b : ℕ+,
+    (f a : Int) ∣ ((b : Int) ^ (a: ℕ) - (f b : Int) ^ ((f a): ℕ))
 
 def is_valid_c (c : ℝ) : Prop :=
-  ∀ (f : ℕ → ℕ), is_bonza f → ∀ n, n ≠ 0 → (f n : ℝ) ≤ c * (n : ℝ)
+  ∀ (f : ℕ+ → ℕ+), Bonza f → ∀ n, (f n : ℝ) ≤ c * (n : ℝ)
 
-def is_smallest_c (c : ℝ) : Prop :=
-  is_valid_c c ∧
-  ∀ c', is_valid_c c' → c' ≥ c
+determine answer : ℝ := 4
 
-/-!
-The answer is 4
--/
-theorem smallest_c_is_4 : is_smallest_c 4 := by sorry
+problem imo2025_p3 :
+  IsLeast {c: ℝ | is_valid_c c} answer := by
+  sorry
