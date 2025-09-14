@@ -28,14 +28,14 @@ the numbers in each row.
 
 namespace Usa2023P5
 
-def PermutedArithSeq {n : ℕ} (hn : 0 < n) (a : Fin n ↪ Fin (n^2)) : Prop :=
+def PermutedArithSeq {n : ℕ} (hn : 0 < n) (a : Fin n ↪ Fin (n ^ 2)) : Prop :=
     ∃ p : Fin n → Fin n, p.Bijective ∧
       ∃ k : ℕ, ∀ m : Fin n, (a (p m)).val = a (p ⟨0, hn⟩) + m.val * k
 
-def row_valid {n : ℕ} (hn : 0 < n) (a : Fin n → Fin n → Fin (n^2)) (ha : a.Injective2) : Prop :=
+def row_valid {n : ℕ} (hn : 0 < n) (a : Fin n → Fin n → Fin (n ^ 2)) (ha : a.Injective2) : Prop :=
     ∀ r : Fin n, PermutedArithSeq hn ⟨(a r ·), Function.Injective2.right ha r⟩
 
-def col_valid {n : ℕ} (hn : 0 < n) (a : Fin n → Fin n → Fin (n^2)) (ha : a.Injective2) : Prop :=
+def col_valid {n : ℕ} (hn : 0 < n) (a : Fin n → Fin n → Fin (n ^ 2)) (ha : a.Injective2) : Prop :=
     ∀ c : Fin n, PermutedArithSeq hn ⟨(a · c), Function.Injective2.left ha c⟩
 
 theorem injective_of_permuted_rows {α β γ : Type}

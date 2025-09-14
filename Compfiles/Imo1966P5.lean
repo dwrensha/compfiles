@@ -33,14 +33,16 @@ noncomputable abbrev solution_fun : (ℝ×ℝ×ℝ×ℝ) → (ℝ×ℝ×ℝ×ℝ
   let s : List ℝ := [a0, a1, a2, a3]
   let ai : ℝ := Option.get (List.min? s) rfl
   let al : ℝ := Option.get (List.max? s) rfl
-  let i : ℕ := s.findIdx (. = ai)
-  let l : ℕ := s.findIdx (. = al)
+  let i : ℕ := s.findIdx (· = ai)
+  let l : ℕ := s.findIdx (· = al)
   let f : ℕ → ℝ := fun n ↦ if n = i ∨ n = l then (1 / (al - ai)) else 0
   (f 0, f 1, f 2, f 3)
 
 problem imo1966_p5
-  (x a : Fin 4 → ℝ)
-  (h₀ : Function.Injective a)
-  (h₁: ∀ i : Fin 4, ∑ j : Fin 4, abs (a i - a j) * x j = 1) :
-  (x 0, x 1, x 2, x 3) = solution_fun (a 0, a 1, a 2, a 3) := by
+    (x a : Fin 4 → ℝ)
+    (h₀ : Function.Injective a)
+    (h₁: ∀ i : Fin 4, ∑ j : Fin 4, abs (a i - a j) * x j = 1) :
+    (x 0, x 1, x 2, x 3) = solution_fun (a 0, a 1, a 2, a 3) := by
   sorry
+
+end Imo1966P5

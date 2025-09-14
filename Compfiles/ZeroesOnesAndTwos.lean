@@ -34,13 +34,13 @@ lemma ones_add (b m n : ℕ) :
   rw [List.replicate_add, Nat.ofDigits_append, Nat.ofDigits_append]
   rw [List.length_replicate, List.length_replicate, Nat.ofDigits_replicate_zero, zero_add]
 
-def map_mod (n : ℕ) (hn: 0 < n) (f : ℕ → ℕ) : ℕ → Fin n
+def map_mod (n : ℕ) (hn : 0 < n) (f : ℕ → ℕ) : ℕ → Fin n
 | m => ⟨f m % n, Nat.mod_lt (f m) hn⟩
 
 lemma pigeonhole (n : ℕ) (f : ℕ → Fin n) :
   ∃ a b : ℕ, a < b ∧ f a = f b :=
 let ⟨a, b, hne, hfe⟩ := Finite.exists_ne_map_eq_of_infinite f
-hne.lt_or_gt.elim (λ h ↦ ⟨a, b, h, hfe⟩) (λ h ↦ ⟨b, a, h, hfe.symm⟩)
+hne.lt_or_gt.elim (fun h ↦ ⟨a, b, h, hfe⟩) (fun h ↦ ⟨b, a, h, hfe.symm⟩)
 
 lemma lemma_3 {a n : ℕ} (ha : 0 < a) (hm : a % n = 0) : (∃ k : ℕ+, a = n * k) := by
   obtain ⟨k', hk'⟩ := exists_eq_mul_right_of_dvd (Nat.dvd_of_mod_eq_zero hm)
@@ -57,7 +57,7 @@ problem zeroes_and_ones
     (n : ℕ) : ∃ k : ℕ+, ∀ e ∈ Nat.digits 10 (n * k), e = 0 ∨ e = 1 := by
   obtain (hn0 : n = 0 ) | (hn : n > 0) := Nat.eq_zero_or_pos n
   · use 1; rw [hn0]; simp
-  obtain ⟨a, b, hlt, hab⟩ := pigeonhole n (λm ↦ map_mod n hn (ones 10) m)
+  obtain ⟨a, b, hlt, hab⟩ := pigeonhole n (fun m ↦ map_mod n hn (ones 10) m)
   dsimp [map_mod] at hab
   replace hab : ones 10 b % n = ones 10 a % n := (Fin.mk_eq_mk.mp hab).symm
   change ones 10 b ≡ ones 10 a [MOD n] at hab
@@ -102,8 +102,8 @@ abbrev all_one_or_two (l : List ℕ) : Prop := ∀ e ∈ l, e = 1 ∨ e = 2
 
 def prepend_one (n : ℕ) := 10 ^ (List.length (Nat.digits 10 n)) + n
 
-lemma prepend_one_pos (n: ℕ) : 0 < prepend_one n := by
-  cases' n
+lemma prepend_one_pos (n : ℕ) : 0 < prepend_one n := by
+  cases n
   · simp [prepend_one]
   · rw [prepend_one]; norm_num
 
@@ -114,9 +114,10 @@ lemma digits_len' (n : ℕ) (hn : 0 < n) :
 
 lemma prepend_one_div (n : ℕ) (hn : 0 < n) : prepend_one n / 10 = prepend_one (n / 10) := by
   rw [prepend_one, prepend_one]
-  cases' n with n
-  · exact (Nat.lt_asymm hn hn).elim
-  · rw [digits_len' n.succ (Nat.succ_pos n)]
+  cases n with
+  | zero => exact (Nat.lt_asymm hn hn).elim
+  | succ n =>
+    rw [digits_len' n.succ (Nat.succ_pos n)]
     rw [pow_add, pow_one, add_comm]
     rw [Nat.add_mul_div_left _ _ (Nat.succ_pos 9)]
     exact add_comm _ _
@@ -129,9 +130,10 @@ lemma prepend_one_mod (n : ℕ) (hn : 0 < n) : prepend_one n % 10 = n % 10 := by
 lemma prepend_one_eq_append (n : ℕ) :
     Nat.digits 10 (prepend_one n) = (Nat.digits 10 n) ++ [1] := by
   induction n using Nat.strong_induction_on with | h n' ih =>
-  cases' n' with n'
-  · simp +arith +decide [prepend_one]
-  · rw [Nat.digits_def' two_le_ten (prepend_one_pos _)]
+  cases n' with
+  | zero => simp +arith +decide [prepend_one]
+  | succ n' =>
+    rw [Nat.digits_def' two_le_ten (prepend_one_pos _)]
     rw [prepend_one_div _ (Nat.succ_pos n')]
     have hns : n'.succ / 10 < n'.succ := Nat.div_lt_self' n' 8
     rw [ih _ hns]
@@ -144,23 +146,24 @@ lemma prepend_one_all_one_or_two (n : ℕ) (hn : all_one_or_two (Nat.digits 10 n
  rw [all_one_or_two] at hn
  intro e he
  rw [List.mem_append] at he
- cases' he with he he
+ obtain he | he := he
  · exact hn e he
  · rw [List.mem_singleton] at he
    simp only [he, OfNat.one_ne_ofNat, or_false]
 
 def prepend_two (n : ℕ) := 2 * (10 ^ (List.length (Nat.digits 10 n))) + n
 
-lemma prepend_two_pos (n: ℕ) : 0 < prepend_two n := by
+lemma prepend_two_pos (n : ℕ) : 0 < prepend_two n := by
   cases n
   · norm_num [prepend_two]
   · rw [prepend_two]; norm_num
 
 lemma prepend_two_div (n : ℕ) (hn : 0 < n) : prepend_two n / 10 = prepend_two (n / 10) := by
   rw [prepend_two, prepend_two]
-  cases' n with n
-  · cases Nat.lt_asymm hn hn
-  · rw [digits_len' n.succ (Nat.succ_pos n)]
+  cases n with
+  | zero => cases Nat.lt_asymm hn hn
+  | succ n =>
+    rw [digits_len' n.succ (Nat.succ_pos n)]
     rw [pow_add, pow_one, add_comm]
     rw [←mul_left_comm]
     rw [Nat.add_mul_div_left _ _ (Nat.succ_pos 9)]
@@ -174,9 +177,10 @@ lemma prepend_two_mod (n : ℕ) (hn : 0 < n) : prepend_two n % 10 = n % 10 := by
 lemma prepend_two_eq_append (n : ℕ) :
     Nat.digits 10 (prepend_two n) = (Nat.digits 10 n) ++ [2] := by
   induction n using Nat.strong_induction_on with | h n' ih =>
-  cases' n' with n'
-  · norm_num [prepend_two]
-  · rw [Nat.digits_def' two_le_ten (prepend_two_pos _)]
+  cases n' with
+  | zero => norm_num [prepend_two]
+  | succ n' =>
+    rw [Nat.digits_def' two_le_ten (prepend_two_pos _)]
     rw [prepend_two_div _ (Nat.succ_pos n')]
     have hns : n'.succ / 10 < n'.succ := Nat.div_lt_self' n' 8
     rw [ih _ hns]
@@ -189,7 +193,7 @@ lemma prepend_two_all_one_or_two (n : ℕ) (hn : all_one_or_two (Nat.digits 10 n
   rw [all_one_or_two] at hn
   intro e he
   rw [List.mem_append] at he
-  cases' he with he he
+  obtain he | he := he
   · exact hn e he
   · rw [List.mem_singleton] at he
     right; exact he
@@ -232,7 +236,7 @@ lemma ones_and_twos_aux (n : ℕ) :
       exact Dvd.intro (5 ^ pn.succ + t) hr.symm
     obtain ⟨k', hk'⟩ := hd
     have hkp': 0 < k' := by
-      cases' k'
+      cases k'
       · have hzz := prepend_two_pos (2 ^ pn.succ * ↑pk)
         omega
       · exact Nat.succ_pos _
@@ -273,9 +277,10 @@ snip end
 
 problem ones_and_twos
     (n : ℕ) : ∃ k : ℕ+, ∀ e ∈ Nat.digits 10 (2^n * k), e = 1 ∨ e = 2 := by
-  cases' n with n
-  · use 1; norm_num
-  · obtain ⟨k, _, hk2⟩ := ones_and_twos_aux n
+  cases n with
+  | zero => use 1; norm_num
+  | succ n =>
+    obtain ⟨k, _, hk2⟩ := ones_and_twos_aux n
     exact ⟨k, hk2⟩
 
 

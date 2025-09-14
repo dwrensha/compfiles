@@ -53,3 +53,5 @@ problem singapore2019_r1_p7 (x : ℝ) (hx : tan x = 5) :
 
   rw [hcos2x_val, solution, hsin2x_val]
   norm_num
+
+end Singapore2019R1P7

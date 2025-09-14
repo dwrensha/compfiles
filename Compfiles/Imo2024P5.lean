@@ -269,7 +269,7 @@ lemma Path.firstMonster_eq_none {p : Path N} {m : MonsterData N} :
   convert List.find?_eq_none
   simp
 
-lemma Path.one_lt_length_cells (p : Path N): 1 < p.cells.length := by
+lemma Path.one_lt_length_cells (p : Path N) : 1 < p.cells.length := by
   by_contra hl
   have h : p.cells.length = 0 ∨ p.cells.length = 1 := by omega
   rcases h with h | h
@@ -339,7 +339,8 @@ lemma Path.tail_firstMonster (p : Path N) (m : MonsterData N) :
     rcases cells with ⟨⟩ | ⟨head, tail⟩
     · simp at nonempty
     · simp only [List.head_cons] at head_first_row
-      simp only [List.find?_cons, m.not_mem_monsterCells_of_fst_eq_zero head_first_row, decide_false]
+      simp only [List.find?_cons, m.not_mem_monsterCells_of_fst_eq_zero head_first_row,
+                 decide_false]
       rfl
   · simp_rw [Path.tail, if_neg h]
 
