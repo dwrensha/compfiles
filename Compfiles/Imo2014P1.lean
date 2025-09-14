@@ -25,13 +25,9 @@ snip begin
 
 lemma lemma0 {p : ℕ → Prop} (h : ∃! n, p (n + 1)) : (∃! n, 0 < n ∧ p n) := by
   obtain ⟨n, hn1, hn2⟩ := h
-  use n + 1
-  refine ⟨⟨Nat.succ_pos n, hn1⟩, ?_⟩
-  rintro m ⟨hm1, hm2⟩
-  have hm3 := hn2 (m - 1)
-  dsimp only at hm3
-  rw [Nat.sub_add_cancel hm1] at hm3
-  exact Nat.eq_add_of_sub_eq hm1 (hm3 hm2)
+  refine ⟨n + 1, ⟨Nat.succ_pos n, hn1⟩, fun m ⟨hm1, hm2⟩ ↦ ?_⟩
+  specialize hn2 (m - 1)
+  grind
 
 lemma lemma1 (s : ℕ → ℤ) (hs : ∀ i, s i < s (i + 1)) (z : ℤ) (hs0 : s 0 < z) :
     ∃! i, s i < z ∧ z ≤ s (i + 1) := by
