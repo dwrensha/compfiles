@@ -49,7 +49,8 @@ problem imo1969_p2
     intro x
     rw [h₁ x]
     have h₅₀: ∑ i ∈ Finset.range n, (Real.cos (a i + x) / 2 ^ i)
-              = ∑ i ∈ Finset.range n, (((Real.cos (a i) * Real.cos (x) - Real.sin (a i) * Real.sin (x)) / (2^i))) := by
+              = ∑ i ∈ Finset.range n,
+                (((Real.cos (a i) * Real.cos (x) - Real.sin (a i) * Real.sin (x)) / (2^i))) := by
       refine Finset.sum_congr (by rfl) ?_
       intro i _
       rw [Real.cos_add]
@@ -78,24 +79,24 @@ problem imo1969_p2
     have g₁: ∑ i ∈ Finset.range n, (Real.sin (a i) / (2 ^ i)) = 0 := by
       rw [h₅ x, hx₁] at hx₀
       simp at hx₀
-      cases' hx₀ with hx₂ hx₃
-      . exact hx₂
-      . exfalso
+      obtain hx₂ | hx₃ := hx₀
+      · exact hx₂
+      · exfalso
         apply Real.sin_eq_zero_iff_cos_eq.mp at hx₃
-        cases' hx₃ with hx₃ hx₄
-        . linarith
-        . linarith
+        obtain hx₃ | hx₄ := hx₃
+        · linarith
+        · linarith
     intro y
     rw [h₅ y]
     have g₂: Csin = 0 := by linarith
     rw [g₂, zero_mul]
     exact sub_zero (Ccos * Real.cos y)
   by_cases hmn: (Real.cos x₂ = 0) ∨ (Real.cos x₁ = 0)
-  . have h₇: ∀ (x : ℝ), f x = Ccos * Real.cos x := by
+  · have h₇: ∀ (x : ℝ), f x = Ccos * Real.cos x := by
       refine h₆ ?_
-      cases' hmn with hm hn
-      . use x₂
-      . use x₁
+      obtain hm | hn := hmn
+      · use x₂
+      · use x₁
     have h₈: ∀ x, f x = 0 → Real.cos x = 0 := by
       intro x hx₀
       rw [h₇ x] at hx₀
@@ -113,29 +114,21 @@ problem imo1969_p2
     use (tm - tn)
     rw [Int.cast_sub]
     ring_nf
-  . push_neg at hmn
+  · push_neg at hmn
     have h₇: Real.tan x₂ = Real.tan x₁ := by
       have h₇₀: ∀ (x:ℝ), (f x = 0 ∧ Real.cos x ≠ 0) → Real.tan x = Ccos / Csin := by
         intro x hx₀
         rw [Real.tan_eq_sin_div_cos]
         symm
         refine (div_eq_div_iff ?_ ?_).mp ?_
-        . simp
+        · simp
           exact hx₀.2
-        . grind
-        . rw [h₅ x, sub_eq_zero] at hx₀
+        · grind
+        · rw [h₅ x, sub_eq_zero] at hx₀
           simp only [div_inv_eq_mul, mul_comm (Real.sin x) _]
           exact hx₀.1
-      have h₇₁: Real.tan x₂ = Ccos / Csin := by
-        refine h₇₀ x₂ ?_
-        constructor
-        . exact h₂
-        . exact hmn.1
-      have h₇₂: Real.tan x₁ = Ccos / Csin := by
-        refine h₇₀ x₁ ?_
-        constructor
-        . exact h₃
-        · exact hmn.2
+      have h₇₁: Real.tan x₂ = Ccos / Csin := h₇₀ x₂ ⟨h₂, hmn.1⟩
+      have h₇₂: Real.tan x₁ = Ccos / Csin := h₇₀ x₁ ⟨h₃, hmn.2⟩
       rw [h₇₁, h₇₂]
     have h₈: Real.sin (x₂ - x₁) = 0 := by
       have h₈₂: Real.sin (x₂ - x₁) / (Real.cos x₂ * Real.cos x₁) = 0 := by
