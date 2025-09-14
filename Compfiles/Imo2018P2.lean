@@ -112,8 +112,8 @@ lemma three_periodic {n : ℕ} [NeZero n] {i : ZMod n} {a : ZMod n → ℝ} (ha 
 
   have {i : ZMod n} : (a i - a (i + 3)) ^ 2 = 0 := by
     refine (Finset.sum_eq_zero_iff_of_nonneg ?_).mp this.symm i ?_
-    . exact fun _ _ => sq_nonneg _
-    . exact Finset.mem_univ _
+    · exact fun _ _ => sq_nonneg _
+    · exact Finset.mem_univ _
 
   apply_fun (· - a (i + 3)) using add_left_injective _
   dsimp
@@ -141,7 +141,7 @@ lemma satisfies_is_mod_3 {n : ℕ} (hn : 3 ≤ n) (h : ∃ a : ZMod n → ℝ, P
 
   have {i : ZMod n} : a i = a (i + 1) := by
     mod_cases h_dvd : n % 3
-    . absurd h
+    · absurd h
       exact Nat.dvd_of_mod_eq_zero h_dvd
     all_goals {
       let ⟨x, y⟩ := not_dvd_prime_exists_mod_inverse Nat.prime_three n_gt_1 h

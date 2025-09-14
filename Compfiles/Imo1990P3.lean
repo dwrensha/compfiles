@@ -33,33 +33,33 @@ lemma aux_1
   generalize n % 3 = r at h₀ ⊢
   generalize n / 3 = d
   interval_cases r
-  . left
+  · left
     induction' d with t ht₀
-    . rw [pow_zero]
-    . simp only [mul_add, mul_one, pow_add, pow_zero]
+    · rw [pow_zero]
+    · simp only [mul_add, mul_one, pow_add, pow_zero]
       exact Nat.ModEq.mul ht₀ rfl
-  . right; left
+  · right; left
     induction' d with t ht₀
-    . rw [pow_one]
-    . rw [mul_add, mul_one, add_assoc, add_comm 3 1, ← add_assoc, pow_add]
+    · rw [pow_one]
+    · rw [mul_add, mul_one, add_assoc, add_comm 3 1, ← add_assoc, pow_add]
       exact Nat.ModEq.mul ht₀ rfl
-  . right; right
+  · right; right
     induction' d with t ht₀
-    . norm_num
-    . rw [mul_add, mul_one, add_assoc, add_comm 3 2, ← add_assoc, pow_add]
+    · norm_num
+    · rw [mul_add, mul_one, add_assoc, add_comm 3 2, ← add_assoc, pow_add]
       exact Nat.ModEq.mul ht₀ rfl
 
 
 lemma imo_1990_p3_forward
   (n : ℕ)
   (h₀ : 2 ≤ n)
-  (h₁ : n^2 ∣ 2^n + 1) :
+  (h₁ : n ^ 2 ∣ 2 ^ n + 1) :
   n = 3 := by
   by_cases hn₀: n < 3
-  . exfalso
+  · exfalso
     interval_cases n
     simp at h₁
-  . push_neg at hn₀
+  · push_neg at hn₀
     have h₂: Odd n := by
       by_contra hc
       apply Nat.not_odd_iff_even.mp at hc
@@ -74,7 +74,8 @@ lemma imo_1990_p3_forward
       apply Nat.not_odd_iff_even.mpr at h₂₂
       exact h₂₂ h₂₀
     have h₃: (2 : ℕ) ^ n + (1 : ℕ) ∣ (2 : ℕ) ^ ((2 : ℕ) * n) - (1 : ℕ) := by
-      have h₃₀: (2 : ℕ) ^ ((2 : ℕ) * n) - (1 : ℕ) = ((2 : ℕ) ^ (n)) ^ (2 : ℕ) - ((1 : ℕ) ^ (n)) ^ (2 : ℕ) := by
+      have h₃₀: (2 : ℕ) ^ ((2 : ℕ) * n) - (1 : ℕ) =
+                ((2 : ℕ) ^ (n)) ^ (2 : ℕ) - ((1 : ℕ) ^ (n)) ^ (2 : ℕ) := by
         simp [Nat.pow_mul']
       rw [Nat.sq_sub_sq] at h₃₀
       rw [h₃₀, one_pow]
@@ -123,8 +124,8 @@ lemma imo_1990_p3_forward
           refine Odd.of_dvd_nat ?_ hp₄
           refine Even.add_one ?_
           refine (Nat.even_pow' ?_).mpr ?_
-          . exact Nat.ne_zero_of_lt h₀
-          . exact Nat.even_iff.mpr rfl
+          · exact Nat.ne_zero_of_lt h₀
+          · exact Nat.even_iff.mpr rfl
         have hp₆₁: 2 ≤ p := Nat.Prime.two_le hp₁
         by_contra! hh₀
         interval_cases p
@@ -138,8 +139,8 @@ lemma imo_1990_p3_forward
         refine Nat.le_of_dvd ?_ hp₈
         refine Nat.sub_pos_of_lt ?_
         refine Nat.one_lt_pow ?_ ?_
-        . positivity
-        . exact Nat.one_lt_two
+        · positivity
+        · exact Nat.one_lt_two
       have hp₁₀: p ≤ 3 := by
         refine le_trans hp₉ ?_
         refine Nat.sub_le_of_le_add ?_
@@ -147,8 +148,8 @@ lemma imo_1990_p3_forward
         rw [hh₀]
         clear hh₀
         refine Nat.pow_le_pow_right ?_ ?_
-        . exact Nat.zero_lt_two
-        . refine le_of_eq ?_
+        · exact Nat.zero_lt_two
+        · refine le_of_eq ?_
           have hh₀: Nat.gcd n (p - 1) = 1 := by
             have g₀: n ≠ (0 : ℕ) := by exact Nat.ne_zero_of_lt h₀
             have g₁: p - (1 : ℕ) ≠ (0 : ℕ) := by
@@ -163,18 +164,18 @@ lemma imo_1990_p3_forward
               have g₃: ∀ x ∈ (p - (1 : ℕ)).primeFactors, x < p := by
                 intro x hx₀
                 refine Nat.lt_of_le_pred hp₁.pos ?_
-                . exact Nat.le_of_mem_primeFactors hx₀
+                · exact Nat.le_of_mem_primeFactors hx₀
               refine Finset.disjoint_left.mpr ?_
               intro x hx₀
               have hx₁: p ≤ x := by exact g₂ x hx₀
               contrapose! hx₁
               exact g₃ x hx₁
             apply Nat.primeFactors_eq_empty.mp at hh₀₀
-            cases' hh₀₀ with hh₀₀ hh₀₀
-            . exfalso
+            obtain hh₀₀ | hh₀₀ := hh₀₀
+            · exfalso
               have hh₀₁: n.gcd (p - (1 : ℕ)) ≠ (0 : ℕ) := by exact Nat.gcd_ne_zero_left g₀
               exact hh₀₁ hh₀₀
-            . exact hh₀₀
+            · exact hh₀₀
           rw [Nat.gcd_comm]
           have hh₁ : Nat.Coprime (2 : ℕ) n := by
             exact Nat.coprime_two_left.mpr h₂
@@ -187,26 +188,26 @@ lemma imo_1990_p3_forward
           exact Nat.dvd_of_mem_primeFactors hp₀
       have hp₁₁: 2 ≤ p := Nat.Prime.two_le hp₁
       interval_cases p
-      . omega
-      . exact rfl
+      · omega
+      · exact rfl
     let k : ℕ := multiplicity 3 n
     have hp₆: ∃ d:ℕ, n = d * p ^ k ∧ ¬ 3 ∣ d := by
       rw [hp₃]
       use n / 3 ^ k
       have hp₆₀: (3 : ℕ) ^ k ∣ n := by exact pow_multiplicity_dvd (3 : ℕ) n
       constructor
-      . exact (Nat.div_mul_cancel hp₆₀).symm
-      . by_contra! hh₀
+      · exact (Nat.div_mul_cancel hp₆₀).symm
+      · by_contra! hh₀
         have hh₁: (3 : ℕ) * (3 : ℕ) ^ k ∣ n := by
           rw [mul_comm]
           exact (Nat.dvd_div_iff_mul_dvd hp₆₀).mp hh₀
         rw [← Nat.pow_succ'] at hh₁
         have hh₂: ¬ (3 : ℕ) ^ k.succ ∣ n := by
           refine (FiniteMultiplicity.multiplicity_lt_iff_not_dvd ?_).mp ?_
-          . refine Nat.finiteMultiplicity_iff.mpr ?_
+          · refine Nat.finiteMultiplicity_iff.mpr ?_
             simp
             exact Nat.zero_lt_of_lt h₀
-          . exact Nat.lt_add_one (multiplicity (3 : ℕ) n)
+          · exact Nat.lt_add_one (multiplicity (3 : ℕ) n)
         exact hh₂ hh₁
     obtain ⟨d, hn₁, hd₀⟩ := hp₆
     have hk₀ : 0 < k := by
@@ -227,11 +228,12 @@ lemma imo_1990_p3_forward
       have hk₂: multiplicity 3 (2 ^ n + 1 ^ n) = k + 1 := by
         have hk₂₀: k = multiplicity (3 : ℕ) n := by rfl
         rw [hk₂₀]
-        have hk₂₁: emultiplicity 3 (2 ^ n + 1 ^ n) = emultiplicity 3 (2 + 1) + emultiplicity 3 n := by
+        have hk₂₁: emultiplicity 3 (2 ^ n + 1 ^ n) =
+                   emultiplicity 3 (2 + 1) + emultiplicity 3 n := by
           refine Nat.emultiplicity_pow_add_pow hp₁ ?_ ?_ ?_ h₂
-          . exact Nat.odd_iff.mpr rfl
-          . exact Nat.dvd_of_mod_eq_zero rfl
-          . exact (Nat.Prime.coprime_iff_not_dvd hp₁).mp rfl
+          · exact Nat.odd_iff.mpr rfl
+          · exact Nat.dvd_of_mod_eq_zero rfl
+          · exact (Nat.Prime.coprime_iff_not_dvd hp₁).mp rfl
         rw [Nat.Prime.emultiplicity_self hp₁] at hk₂₁
         rw [FiniteMultiplicity.emultiplicity_eq_multiplicity hn₂] at hk₂₁
         rw [FiniteMultiplicity.emultiplicity_eq_multiplicity hn₃] at hk₂₁
@@ -240,10 +242,10 @@ lemma imo_1990_p3_forward
         exact Nat.add_comm (1 : ℕ) (multiplicity (3 : ℕ) n)
       have hk₃: multiplicity 3 (n ^ 2) ≤ multiplicity 3 (2 ^ n + 1) := by
         refine (FiniteMultiplicity.multiplicity_le_multiplicity_iff ?_ ?_).mpr ?_
-        . exact FiniteMultiplicity.pow hp₄ hn₂
-        . refine FiniteMultiplicity.of_prime_left hp₄ ?_
+        · exact FiniteMultiplicity.pow hp₄ hn₂
+        · refine FiniteMultiplicity.of_prime_left hp₄ ?_
           exact Ne.symm (Nat.zero_ne_add_one ((2 : ℕ) ^ n))
-        . exact fun (n_2 : ℕ) (a : (3 : ℕ) ^ n_2 ∣ n ^ (2 : ℕ)) ↦ Nat.dvd_trans a h₁
+        · exact fun (n_2 : ℕ) (a : (3 : ℕ) ^ n_2 ∣ n ^ (2 : ℕ)) ↦ Nat.dvd_trans a h₁
       have hk₄: multiplicity 3 (n ^ 2) = 2 * k := by
         exact FiniteMultiplicity.multiplicity_pow hp₄ hn₂
       rw [one_pow] at hk₂
@@ -252,11 +254,11 @@ lemma imo_1990_p3_forward
       exact (Nat.le_antisymm hk₅ hk₀)
     have hd : d = 1 := by
       by_contra! hd₁
-      cases' lt_or_gt_of_ne hd₁ with hd₂ hd₂
-      . interval_cases d
+      obtain hd₂ | hd₂ := lt_or_gt_of_ne hd₁
+      · interval_cases d
         rw [hn₁, zero_mul] at hn₀
         bound [hn₀]
-      . let sq : Finset ℕ := d.primeFactors
+      · let sq : Finset ℕ := d.primeFactors
         have hsq₁: sq.Nonempty := Nat.nonempty_primeFactors.mpr hd₂
         let q : ℕ := Finset.min' sq hsq₁
         have hq₀: q ∈ sq := by exact Finset.min'_mem sq hsq₁
@@ -274,7 +276,7 @@ lemma imo_1990_p3_forward
           have hh₀: Nat.gcd n (q - 1) = 1 ∨ Nat.gcd n (q - 1) = 3 := by
             have hh₀₁: ∀ x ∈ (q - 1).primeFactors, x ≤ q - 1 := by
               intro x hx₀
-              . exact Nat.le_of_mem_primeFactors hx₀
+              · exact Nat.le_of_mem_primeFactors hx₀
             have hh₀₂: ∀ x ∈ d.primeFactors, q ≤ x := by
               intro x hx₀
               exact Finset.min'_le sq x hx₀
@@ -292,14 +294,14 @@ lemma imo_1990_p3_forward
                 rw [Nat.succ_eq_add_one, Nat.sub_add_cancel (by bound)]
                 exact hh₀₂ x hx₁
               apply Nat.primeFactors_eq_empty.mp at hh₀₃₂
-              cases' hh₀₃₂ with hh₀₃₂ hh₀₃₂
-              . exfalso
+              obtain hh₀₃₂ | hh₀₃₂ := hh₀₃₂
+              · exfalso
                 have hh₀₁: (q - 1).gcd d ≠ (0 : ℕ) := by exact Nat.gcd_ne_zero_left hh₀₃₀
                 exact hh₀₁ hh₀₃₂
-              . exact hh₀₃₂
+              · exact hh₀₃₂
             have hh₀₄: Nat.Coprime d (p ^ k) := by
               refine (Nat.coprime_pow_right_iff hk₀ _ _).mpr ?_
-              . refine Nat.Coprime.symm ?_
+              · refine Nat.Coprime.symm ?_
                 refine (Nat.Prime.coprime_iff_not_dvd hp₁).mpr ?_
                 rw [hp₃]
                 exact hd₀
@@ -316,13 +318,13 @@ lemma imo_1990_p3_forward
             have hm₂: m = (q - (1 : ℕ)).gcd (3 : ℕ) := by rfl
             rw [← hm₂]
             interval_cases m
-            . left
+            · left
               rfl
-            . exfalso
+            · exfalso
               symm at hm₂
               apply Nat.gcd_eq_iff.mp at hm₂
               omega
-            . right
+            · right
               rfl
           have hh₁: q ∣ 2 ^ (2 * n) - 1 := by
             refine dvd_trans ?_ h₃
@@ -350,13 +352,13 @@ lemma imo_1990_p3_forward
             rw [hh₄₁]
             exact hh₄₀
           have hh₅: q ∣ 3 ^ 2 * 7 := by
-            cases' hh₀ with hh₀ hh₀
-            . exfalso
+            obtain hh₀ | hh₀ := hh₀
+            · exfalso
               rw [hh₀] at hh₄
               norm_num at hh₄
               have hh₅₀: q ≤ 3 := Nat.le_of_dvd (by norm_num) hh₄
               bound
-            . rw [hh₀] at hh₄
+            · rw [hh₀] at hh₄
               norm_num at hh₄
               exact hh₄
           have hh₆: q ∣ 7 := by
@@ -364,15 +366,15 @@ lemma imo_1990_p3_forward
             refine (Nat.coprime_pow_right_iff (by norm_num) _ _).mpr ?_
             refine (Nat.Prime.coprime_iff_not_dvd hq₁).mpr ?_
             refine Nat.not_dvd_of_pos_of_lt ?_ ?_
-            . exact Nat.zero_lt_succ (2 : ℕ)
-            . exact Nat.lt_of_add_left_lt hq₅
+            · exact Nat.zero_lt_succ (2 : ℕ)
+            · exact Nat.lt_of_add_left_lt hq₅
           have hh₇: q ≤ 7 := by exact Nat.le_of_dvd (by omega) hh₆
           interval_cases q
-          . exfalso
+          · exfalso
             omega
-          . exfalso
+          · exfalso
             omega
-          . rfl
+          · rfl
         have hq₁₀: 2 ^ n ≡ 6 [MOD 7] := by
           have hh₀: (2 : ℕ) ^ n + 1 ≡ (6 : ℕ) + 1 [MOD (7 : ℕ)] := by
             norm_num
@@ -383,24 +385,24 @@ lemma imo_1990_p3_forward
               omega
             refine (Nat.modEq_iff_dvd' hh₁).mpr ?_
             refine Nat.dvd_sub ?_ ?_
-            . rw [← hq₉]
+            · rw [← hq₉]
               refine dvd_trans hq₃ ?_
               refine dvd_trans ?_ h₁
               exact Dvd.intro_left (n ^ 1) rfl
-            . exact Nat.dvd_of_mod_eq_zero rfl
+            · exact Nat.dvd_of_mod_eq_zero rfl
           exact Nat.ModEq.add_right_cancel' (1 : ℕ) hh₀
         have hq₁₁: ¬ 2 ^ n ≡ 6 [MOD 7] := by
           clear hq₁₀
           obtain hq₁₂ | hq₁₂ | hq₁₂ := aux_1 n
-          . by_contra! hh₀
+          · by_contra! hh₀
             have hh₁: 1 ≡ (6 : ℕ) [MOD (7 : ℕ)] := Nat.ModEq.trans hq₁₂.symm hh₀
             have hh₂: ¬ 1 ≡ (6 : ℕ) [MOD (7 : ℕ)] := by decide
             exact hh₂ hh₁
-          . by_contra! hh₀
+          · by_contra! hh₀
             have hh₁: 2 ≡ (6 : ℕ) [MOD (7 : ℕ)] := Nat.ModEq.trans hq₁₂.symm hh₀
             have hh₂: ¬ 2 ≡ (6 : ℕ) [MOD (7 : ℕ)] := by decide
             exact hh₂ hh₁
-          . by_contra! hh₀
+          · by_contra! hh₀
             have hh₁: 4 ≡ (6 : ℕ) [MOD (7 : ℕ)] := Nat.ModEq.trans hq₁₂.symm hh₀
             have hh₂: ¬ 4 ≡ (6 : ℕ) [MOD (7 : ℕ)] := by decide
             exact hh₂ hh₁

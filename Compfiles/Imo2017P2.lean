@@ -45,10 +45,10 @@ def good [Ring R] (f : R → R) :=
 /-! ## Answer checking -/
 
 theorem good_zero [Ring R] : good (0 : R → R) :=
-  λ _ _ ↦ add_zero 0
+  fun _ _ ↦ add_zero 0
 
 theorem good_one_sub [Ring R] : good ((1 : R) - ·) :=
-  λ x y ↦ by noncomm_ring
+  fun x y ↦ by noncomm_ring
 
 /-! ## The solution -/
 
@@ -58,7 +58,7 @@ variable [Ring R] {f : R → R} (h : good f)
 
 include h
 
-theorem good_neg : good (-f) := λ x y ↦ by
+theorem good_neg : good (-f) := fun x y ↦ by
   repeat rw [Pi.neg_apply]
   rw [neg_mul_neg, ← neg_add, h]
 
@@ -73,9 +73,9 @@ theorem good_map_map_zero_sq : f (f 0 ^ 2) = 0 := by
   rwa [neg_add_cancel, ← sq] at h2
 
 theorem good_eq_of_inj (h0 : f 0 = 1) (h1 : Injective f) : f = (1 - ·) :=
-  have h2 : ∀ x : R, f (f x) + f x = 1 := λ x ↦ by
+  have h2 : ∀ x : R, f (f x) + f x = 1 := fun x ↦ by
     rw [← h0, ← mul_zero x, ← h, add_zero, h0, mul_one]
-  funext λ x ↦ by
+  funext fun x ↦ by
     rw [eq_sub_iff_add_eq', ← h2 x, add_left_inj]
     apply h1
     rw [← add_left_inj (f (f x)), h2, add_comm, h2]
@@ -88,7 +88,7 @@ variable {D : Type*} [DivisionRing D] {f : D → D} (h : good f)
 
 include h in
 theorem good_map_eq_zero (h0 : f ≠ 0) {c : D} (h1 : f c = 0) : c = 1 :=
-  h0.imp_symm λ h2 ↦ by
+  h0.imp_symm fun h2 ↦ by
     ---- Get `f(0) = 0`
     have h3 := good_special_equality h (mul_inv_cancel₀ <| sub_ne_zero_of_ne h2)
     rw [sub_add_cancel, h1, zero_mul] at h3
@@ -107,14 +107,14 @@ theorem good_map_zero (h0 : f ≠ 0) : f 0 = 1 ∨ f 0 = -1 :=
 
 include h in
 theorem good_map_one : f 1 = 0 :=
-  (eq_or_ne f 0).elim (λ h0 ↦ congr_fun h0 1)
-    (λ h0 ↦ good_map_zero_sq h h0 ▸ good_map_map_zero_sq h)
+  (eq_or_ne f 0).elim (fun h0 ↦ congr_fun h0 1)
+    (fun h0 ↦ good_map_zero_sq h h0 ▸ good_map_map_zero_sq h)
 
 include h in
 /-- (2) -/
 theorem good_map_eq_zero_iff (h0 : f 0 = 1) (c : D) : f c = 0 ↔ c = 1 :=
-  ⟨good_map_eq_zero h λ h1 ↦ zero_ne_one (α := D) (by rwa [h1] at h0),
-  λ h1 ↦ good_map_one h ▸ congr_arg f h1⟩
+  ⟨good_map_eq_zero h fun h1 ↦ zero_ne_one (α := D) (by rwa [h1] at h0),
+  fun h1 ↦ good_map_one h ▸ congr_arg f h1⟩
 
 include h in
 /-- (3) -/
@@ -152,13 +152,13 @@ theorem case1_injective (h : (2 : D) ≠ 0)
     {f : D → D} (h0 : good f) (h1 : f 0 = 1) : Injective f := by
   have h2 := good_shift2 h0 h1
   -- `f(2 f(y)) + f(y) + 1 = f(-y)`
-  have h3 : ∀ y, f (2 * f y) + 1 + f y = f (-y) := λ y ↦ by
+  have h3 : ∀ y, f (2 * f y) + 1 + f y = f (-y) := fun y ↦ by
     rw [add_assoc, ← neg_one_mul, ← h0 (-1)]
     refine congr_arg₂ _ ?_ ?_
     · rw [← zero_sub, h2, h1, one_add_one_eq_two]
     · rw [add_comm, ← h2, neg_add_eq_sub]
   -- `f(y) = f(-y)` implies `y = 0`
-  replace h2 : ∀ y, f y = f (-y) → y = 0 := λ y h4 ↦ by
+  replace h2 : ∀ y, f y = f (-y) → y = 0 := fun y h4 ↦ by
     rwa [← h3, right_eq_add, ← h2, good_map_eq_zero_iff h0 h1,
       sub_eq_iff_eq_add, one_add_one_eq_two, mul_right_eq_self₀,
       or_iff_left h, ← add_sub_cancel_right y 1, h2, add_eq_right,
@@ -167,7 +167,7 @@ theorem case1_injective (h : (2 : D) ≠ 0)
   intro a b h4
   refine eq_of_sub_eq_zero (h2 _ ?_)
   have h5 : ∀ y z, f y = f z → f (-y) = f (-z) :=
-    λ y z h5 ↦ by rw [← h3, h5, h3]
+    fun y z h5 ↦ by rw [← h3, h5, h3]
   have h6 : f (a * b) = f (b * a) := by rw [← h0, ← h0 b, h4, add_comm a]
   have h8 := h0 a (-b)
   rwa [mul_neg, h5 _ _ h6, ← mul_neg, ← h0 b, h4, h5 a b h4,
@@ -182,7 +182,7 @@ theorem case2_injective [Field F] (h : (2 : F) = 0)
     {f : F → F} (h0 : good f) (h1 : f 0 = 1) : Injective f := by
   have h2 := good_shift h0 h1
   have h3 : ∀ c d : F, d ≠ 0 → f (c + 1) = f (d + 1) →
-      f ((c + 1) * (d⁻¹ + 1) - 1) = f (c + d⁻¹ + 1) := λ c d h3 h4 ↦ by
+      f ((c + 1) * (d⁻¹ + 1) - 1) = f (c + d⁻¹ + 1) := fun c d h3 h4 ↦ by
     rw [good_shift2 h0 h1, ← h0, h4, add_assoc, ← add_assoc (c + 1), h2,
       good_special_equality h0 (mul_inv_cancel₀ h3), zero_add, add_right_comm]
 
@@ -197,7 +197,7 @@ theorem case2_injective [Field F] (h : (2 : F) = 0)
   have h6 : ((a + 1) * (b⁻¹ + 1) - 1) * ((b + 1) * (a⁻¹ + 1) - 1) =
     (a + b⁻¹) * (b + a⁻¹) + ((a + a⁻¹) * (b * b⁻¹) + (b + b⁻¹) * (a * a⁻¹))
       + a * a⁻¹ * (b * b⁻¹) := by ring
-  have h7 : ∀ c d : F, (c + 1) * (d + 1) = c * d + c + d + 1 := λ c d ↦ by
+  have h7 : ∀ c d : F, (c + 1) * (d + 1) = c * d + c + d + 1 := fun c d ↦ by
     rw [add_one_mul (α := F), mul_add_one (α := F), ← add_assoc]
   rw [mul_inv_cancel₀ ha, mul_inv_cancel₀ hb, mul_one, mul_one, mul_one,
     add_comm b b⁻¹, add_add_add_comm, add_comm a⁻¹ b, ← add_assoc, ← h7] at h6
@@ -210,7 +210,7 @@ theorem case2_injective [Field F] (h : (2 : F) = 0)
   rw [← h2, ← h7, add_add_add_comm, add_add_add_comm a, ← add_add_add_comm,
     ← h0, add_right_comm, add_eq_right, ← h2, add_assoc,
     one_add_one_eq_two, h, add_zero, h5, mul_eq_zero, h5, h5] at h6
-  replace h3 : ∀ c : F, -c = c := λ c ↦ by
+  replace h3 : ∀ c : F, -c = c := fun c ↦ by
     rw [neg_eq_iff_add_eq_zero, ← two_mul, h, zero_mul]
   rcases h6 with h6 | h6
   · rwa [add_eq_zero_iff_eq_neg, h3] at h6
@@ -223,7 +223,7 @@ theorem map_zero_eq_one_imp_injective [Field F] :
 
 /-- Final solution -/
 theorem final_solution [Field F] {f : F → F} :
-    good f ↔ f = 0 ∨ f = Sub.sub 1 ∨ f = λ x ↦ -(1 - x) :=
+    good f ↔ f = 0 ∨ f = Sub.sub 1 ∨ f = fun x ↦ -(1 - x) :=
   solution_of_map_zero_eq_one_imp_injective map_zero_eq_one_imp_injective
 
 snip end

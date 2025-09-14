@@ -6,6 +6,7 @@ pp.unicode.fun = true
 autoImplicit = false
 relaxedAutoImplicit = false
 weak.linter.style.multiGoal = true
+weak.linter.style.cdot = true
 
 [[require]]
 name = "mathlib"

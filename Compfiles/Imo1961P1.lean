@@ -60,8 +60,8 @@ lemma aux_1
   have h₈: (x + y - z) = b ^ 2 / a := by
     rw [h₂] at h₇
     refine (eq_div_iff ?_).mpr ?_
-    . exact Ne.symm (ne_of_lt ha)
-    . rw [mul_comm] at h₇
+    · exact Ne.symm (ne_of_lt ha)
+    · rw [mul_comm] at h₇
       exact h₇
   have h₉: z = (a ^ 2 - b ^ 2) / (2 * a) := by
     have g₀: x + y = (a + b ^ 2 / a) / 2 := by linarith
@@ -75,8 +75,8 @@ lemma aux_1
     apply div_pos_iff.mp at hz
     refine lt_of_sub_pos ?_
     cases' hz with hzc hzf
-    . exact hzc.1
-    . exfalso
+    · exact hzc.1
+    · exfalso
       linarith
   have h₁₁: y ^ 2 + (-(a ^ 2 + b ^ 2) / (2 * a)) * y + ((a ^ 2 - b ^ 2) / (2 * a)) ^ 2 = 0 := by
     have g₀: x + y = (a + b ^ 2 / a) / 2 := by linarith
@@ -118,8 +118,8 @@ lemma aux_1
   rw [← one_mul (y ^ 2), pow_two] at h₁₁
   apply (quadratic_eq_zero_iff_discrim_eq_sq one_ne_zero y).mp at h₁₁
   constructor
-  . exact h₁₀
-  . by_contra! hc
+  · exact h₁₀
+  · by_contra! hc
     have hc₀: (3 * b ^ 2 - a ^ 2) ≤ 0 := by linarith
     have hc₁: 0 < (3 * a ^ 2 - b ^ 2) := by
       refine sub_pos_of_lt ?_
@@ -133,19 +133,19 @@ lemma aux_1
       refine div_nonpos_iff.mpr ?_
       right
       constructor
-      . exact hc₂
-      . positivity
+      · exact hc₂
+      · positivity
     rw [← h₁₄] at hc₃
     have h₁₅: aq ≠ 0 := by exact Ne.symm (zero_ne_one' ℝ)
     by_cases hc₄: s < 0
-    . have hc₅: ∀ d:ℝ , discrim aq bq cq ≠ d ^ 2 := by
+    · have hc₅: ∀ d:ℝ , discrim aq bq cq ≠ d ^ 2 := by
         intro d
         rw [h₁₄]
         have hc₆: 0 ≤ d ^ 2 := by exact sq_nonneg d
         linarith
       exfalso
       exact hc₅ ((2 : ℝ) * (1 : ℝ) * y + -(a ^ (2 : ℕ) + b ^ (2 : ℕ)) / ((2 : ℝ) * a)) h₁₁
-    . have hc₅: s = 0 := by linarith
+    · have hc₅: s = 0 := by linarith
       grind
 
 snip end
@@ -155,15 +155,15 @@ problem imo1961_p1a (a b x y z : ℝ) :
   ⟨x,y,z⟩ ∈ xyz_of_ab a b ↔ IsSolution a b x y z := by
   simp
   constructor
-  . grind
-  . intro h₀
+  · grind
+  · intro h₀
     cases' h₀ with h₀ h₁
     cases' h₁ with h₁ h₂
     have h₃: (x + y) ^ 2 - z ^ 2 = b ^ 2 := by
       rw [add_sq, mul_assoc 2, h₂, ← h₁]
       group
     by_cases ha₀: a = 0
-    . right
+    · right
       have hb₀ : b = 0 := by grind
       rw [hb₀, zero_pow two_ne_zero, ← h₂, add_sq] at h₃
       ring_nf at h₃
@@ -178,7 +178,7 @@ problem imo1961_p1a (a b x y z : ℝ) :
         refine eq_zero_of_ne_zero_of_mul_right_eq_zero ?_ h₃
         exact three_ne_zero
       bound
-    . left
+    · left
       refine ⟨ha₀, ?_⟩
       have h₄: (x + y) ^ 2 - z ^ 2 = (x + y + z) * (x + y - z) := by exact sq_sub_sq (x + y) z
       have h₅: z = (a ^ 2 - b ^ 2) / (2 * a) := by grind
@@ -192,7 +192,7 @@ problem imo1961_p1b (a b x y z : ℝ) (h₀: IsSolution a b x y z) :
     ⟨a,b⟩ ∈ ab_that_make_xyz_positive_distinct ↔
       (0 < x ∧ 0 < y ∧ 0 < z ∧ [x,y,z].Nodup) := by
   constructor
-  . simp
+  · simp
     cases' h₀ with h₀ h₁
     cases' h₁ with h₁ h₂
     intro h₃ h₄ h₅
@@ -204,9 +204,9 @@ problem imo1961_p1b (a b x y z : ℝ) (h₀: IsSolution a b x y z) :
     have h₈: 0 < x ∧ 0 < y := by
       have hx₀: 0 < x * y := by rw [h₂]; exact sq_pos_of_pos hz₀
       by_cases hx₁: 0 < x
-      . refine ⟨hx₁, ?_⟩
+      · refine ⟨hx₁, ?_⟩
         exact (pos_iff_pos_of_mul_pos hx₀).mp hx₁
-      . push_neg at hx₁
+      · push_neg at hx₁
         exfalso
         have h₈₀: (x + y) ^ 2 - z ^ 2 = b ^ 2 := by
           rw [add_sq, mul_assoc 2, h₂, ← h₁]
@@ -227,17 +227,17 @@ problem imo1961_p1b (a b x y z : ℝ) (h₀: IsSolution a b x y z) :
     refine ⟨h₈.1, h₈.2, ?_⟩
     refine ⟨hz₀, ?_⟩
     constructor
-    . constructor
-      . by_contra! hh₀
+    · constructor
+      · by_contra! hh₀
         have hh₁: z = y := by
           rw [hh₀, ← pow_two] at h₂
           symm
           refine (pow_left_inj₀ ?_ ?_ two_ne_zero).mp h₂
-          . exact le_of_lt h₈.2
-          . exact le_of_lt hz₀
+          · exact le_of_lt h₈.2
+          · exact le_of_lt hz₀
         rw [hh₀, hh₁] at h₇
         linarith
-      . by_contra! hh₀
+      · by_contra! hh₀
         have hh₁: y = z := by
           rw [hh₀, pow_two] at h₂
           symm
@@ -245,14 +245,14 @@ problem imo1961_p1b (a b x y z : ℝ) (h₀: IsSolution a b x y z) :
           bound
         rw [hh₀, hh₁] at h₇
         linarith
-    . by_contra! hh₀
+    · by_contra! hh₀
       have hh₁: x = z := by
         rw [hh₀, pow_two] at h₂
         apply mul_eq_mul_right_iff.mp at h₂
         bound
       rw [hh₀, hh₁] at h₇
       linarith
-  . cases' h₀ with h₀ h₁
+  · cases' h₀ with h₀ h₁
     cases' h₁ with h₁ h₂
     intro h₃
     simp

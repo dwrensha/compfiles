@@ -46,12 +46,12 @@ lemma four_times_k_less_than_two_pow_k
   induction' k using Nat.case_strong_induction_on with n ih
   -- Base case: k = 0 is not possible since 5 ≤ k
   -- so we start directly with k = 5 as the base case
-  . norm_num
+  · norm_num
   by_cases h₀ : n < 5
-  . have hn: n = 4 := by omega
+  · have hn: n = 4 := by omega
     rw [hn]
     norm_num
-  . push_neg at h₀
+  · push_neg at h₀
     have ih₁ : 4 * n < 2 ^ n := ih n (le_refl n) h₀
     omega
 
@@ -92,13 +92,13 @@ lemma mylemma_y2_lt_x
   (hxy : y < x) :
   y ^ 2 < x := by
   by_cases hy: 1 < y
-  . have hx: 2 ≤ x := by omega
+  · have hx: 2 ≤ x := by omega
     have h₂: y ^ x < x ^ x := by
       refine Nat.pow_lt_pow_left hxy ?_
       exact Nat.ne_of_lt' h₀.1
     rw [← h₁] at h₂
     exact (Nat.pow_lt_pow_iff_right hx).mp h₂
-  . push_neg at hy
+  · push_neg at hy
     interval_cases y <;> exact hxy
 
 lemma mylemma_5
@@ -139,16 +139,16 @@ lemma mylemma_2y2_lt_x
   (hxy : y < x) :
   2 * y ^ 2 < x := by
   by_cases hy1: y = 1
-  . rw [hy1]
+  · rw [hy1]
     norm_num
     by_contra hc
     push_neg at hc
     interval_cases x
-    . omega
-    . omega
-    . rw [hy1] at h₁
+    · omega
+    · omega
+    · rw [hy1] at h₁
       simp at h₁
-  . have hy: 1 < y := by omega
+  · have hy: 1 < y := by omega
     clear hy1
     have h₂: (↑y:ℝ) ^ 2 < ↑x := by
       norm_cast
@@ -169,7 +169,7 @@ lemma mylemma_2y2_lt_x
       by_contra hc
       push_neg at hc
       cases' lt_or_eq_of_le hc with hlt heq
-      . have gy: 1 < (↑y:ℝ) := by
+      · have gy: 1 < (↑y:ℝ) := by
           norm_cast
         have glt: (↑x:ℝ) - 2*(↑y:ℝ)^2 < (↑0:ℝ) := by
           norm_cast at *
@@ -177,7 +177,7 @@ lemma mylemma_2y2_lt_x
           exact Real.rpow_lt_rpow_of_exponent_lt gy glt
         simp at g₁
         order
-      . rw [heq] at h₄
+      · rw [heq] at h₄
         simp at h₄
     simp at h₆
     norm_cast at h₆
@@ -267,9 +267,9 @@ theorem mylemma_xsuby_eq_2xy2
     rw [mul_comm (Real.log ↑y) (↑x)] at hc
     rw [← h₄, mul_comm, ← mul_div] at hc
     rw [div_self, mul_one] at hc
-    . apply hc
+    · apply hc
       norm_cast
-    . norm_cast
+    · norm_cast
       push_neg
       refine pow_ne_zero 2 ?_
       exact Nat.ne_of_gt h₀.2
@@ -289,39 +289,39 @@ problem imo1997_p5 (a b : ℕ) (ha : 1 ≤ a) (hb : 1 ≤ b) :
     rw [Nat.pow_two]
     exact Nat.pow_mul a b b
   by_cases hxy: a ≤ b
-  . exact mylemma_case_xley a b ⟨ha, hb⟩ h₁ g₁ hxy
-  . push_neg at hxy
+  · exact mylemma_case_xley a b ⟨ha, hb⟩ h₁ g₁ hxy
+  · push_neg at hxy
     right
     have h₃: a = b ^ (a / b ^ 2) := mylemma_xsuby_eq_2xy2 a b ⟨ha, hb⟩ h₁ hxy
     let k:ℕ  := a / b^2
     have hk_def: k = a / b^2 := rfl
     by_cases hk: k < 2
-    . rw [← hk_def] at h₃
+    · rw [← hk_def] at h₃
       interval_cases k
-      . exfalso
+      · exfalso
         simp at h₃
         omega
-      . exfalso
+      · exfalso
         simp at *
         omega
-    . push_neg at hk
+    · push_neg at hk
       rw [← hk_def] at h₃
       have h₅: k = b^(k-2) := by
         rw [h₃] at hk_def
         nth_rewrite 1 [hk_def]
         exact Nat.pow_div hk hb
       by_cases hk5: k < 5
-      . interval_cases k
-        . exfalso
+      · interval_cases k
+        · exfalso
           simp at h₅
-        . right
+        · right
           norm_num
           simp at h₅
           symm at h₅
           rw [h₅] at h₃
           norm_num at h₃
           exact { left := h₃, right := h₅ }
-        . simp at h₅
+        · simp at h₅
           symm at h₅
           have g₂: b^4 = b^2 * b^2 := by ring_nf
           rw [g₂, h₅] at h₃
@@ -329,15 +329,15 @@ problem imo1997_p5 (a b : ℕ) (ha : 1 ≤ a) (hb : 1 ≤ b) :
           left
           norm_num
           constructor
-          . exact h₃
-          . have h₆ : b ^ 2 = 2 ^ 2 := by
+          · exact h₃
+          · have h₆ : b ^ 2 = 2 ^ 2 := by
               norm_num
               exact h₅
             have h₇: 0 ≤ b := by omega
             exact (sq_eq_sq₀ h₇ (by omega)).mp (h₆)
       push_neg at hk5
       by_cases hy: 2 ≤ b
-      . have h₅₁: k < b^(k-2) := by
+      · have h₅₁: k < b^(k-2) := by
           have h₆: 2^(k-2) ≤ b^(k-2) := Nat.pow_le_pow_left hy (k - 2)
           have h₇: 4*k < 2^k := by
             exact four_times_k_less_than_two_pow_k k hk5
@@ -364,7 +364,7 @@ problem imo1997_p5 (a b : ℕ) (ha : 1 ≤ a) (hb : 1 ≤ b) :
           omega
         exfalso
         omega
-      . push_neg at hy
+      · push_neg at hy
         have hb : b = 1 := by omega
         simp only [hb, one_pow, pow_one] at h₁
         omega

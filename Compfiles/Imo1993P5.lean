@@ -41,10 +41,10 @@ lemma imo_1993_p5_N:
     rw [Nat.cast_mul, ← add_mul]
     norm_cast
     by_cases hn: 0 < n
-    . refine (mul_left_inj' ?_).mpr ?_
-      . positivity
-      . exact Real.goldenRatio_sq
-    . interval_cases n
+    · refine (mul_left_inj' ?_).mpr ?_
+      · positivity
+      · exact Real.goldenRatio_sq
+    · interval_cases n
       simp
   let f: ℕ → ℕ := fun x => (Int.natAbs (round (G * x)))
   let fz: ℤ → ℤ := fun x => round (G * x)
@@ -80,7 +80,7 @@ lemma imo_1993_p5_N:
     linarith
   use f
   constructor
-  . rw [hf₀]
+  · rw [hf₀]
     simp
     have g₀: round G = 2 := by
       rw [round_eq]
@@ -88,15 +88,15 @@ lemma imo_1993_p5_N:
       norm_cast
       rw [hG]
       constructor
-      . ring_nf
+      · ring_nf
         apply le_of_lt at hg₀
         linarith
-      . ring_nf
+      · ring_nf
         linarith
     rw [g₀]
     exact rfl
   constructor
-  . intro n
+  · intro n
     have h₂: fz (fz n) = fz n + n := by
       have h₂₀: ∀ m, abs ((↑(fz m):ℝ) - G * (↑m:ℝ)) ≤ 1 / 2 := by
         intro m
@@ -110,9 +110,9 @@ lemma imo_1993_p5_N:
         have g₀: |↑(fz (fz ↑n)) - G * ↑(fz ↑n)| ≤ 1 / 2 := by exact h₂₀ (fz ↑n)
         have g₁: |(G - 1)| * |(↑(fz ↑n) - G * ↑n)| ≤ (G - 1) * (1 / 2) := by
           rw [abs_of_nonneg ?_]
-          . refine (mul_le_mul_iff_right₀ hg₁).mpr ?_
-            . exact h₂₀ ↑n
-          . exact le_of_lt hg₁
+          · refine (mul_le_mul_iff_right₀ hg₁).mpr ?_
+            · exact h₂₀ ↑n
+          · exact le_of_lt hg₁
         have g₂: 1 / 2 * G = 1 / 2 + (G - 1) * (1 / 2) := by linarith
         have g₃: 1 / 2 * G < 1 := by
           rw [hG]
@@ -134,12 +134,12 @@ lemma imo_1993_p5_N:
       linarith
     rw [← hf₂ n, ← hf₂] at h₂
     norm_cast at h₂
-  . intro m
+  · intro m
     rw [hf₀]
     simp
     refine Int.natAbs_lt_natAbs_of_nonneg_of_lt ?h.right.right.w₁ ?h.right.right.w₂
-    . exact h₁ m
-    . rw [mul_add, mul_one]
+    · exact h₁ m
+    · rw [mul_add, mul_one]
       have g₀: round (G * ↑m + 1) ≤ round (G * ↑m + G) := by
         rw [round_eq, round_eq]
         refine Int.floor_le_floor ?_
@@ -159,8 +159,8 @@ problem imo1993_p5 :
   obtain ⟨f₀, hf₀, hf₁, hf₂⟩ := h₀
   use f₀
   constructor
-  . exact hf₀
-  . exact fun n ↦ ⟨hf₁ n, hf₂⟩
+  · exact hf₀
+  · exact fun n ↦ ⟨hf₁ n, hf₂⟩
 
 
 end Imo1993P5

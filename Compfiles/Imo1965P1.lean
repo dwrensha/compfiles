@@ -45,25 +45,25 @@ problem imo1965_p1 :
   · dsimp
     rw [the_answer]; rintro ⟨h1, h2⟩
     constructor
-    . constructor <;> linarith
+    · constructor <;> linarith
     have : x ∈ Ico (π/4) (π / 2) ∪ Icc (π/2) (3*π/2) ∪ Ioc (3*π/2) (7*π/4) := by
       simp only [mem_Icc, mem_union, mem_Ico, mem_Ioc]
       rcases lt_or_ge x (π/2) with h3 | h3 <;>
         rcases le_or_gt x (3*π/2) with h4 | h4 <;> simp [*]
     rcases this with (⟨_, h4⟩ | ⟨h3, h4⟩) | ⟨h3, _⟩
-    . have cos2x_nonpos : cos (2*x) ≤ 0 := by
+    · have cos2x_nonpos : cos (2*x) ≤ 0 := by
         apply cos_nonpos_of_pi_div_two_le_of_le <;> linarith
       have cosx_nonneg : 0 ≤ cos x := by
         apply cos_nonneg_of_neg_pi_div_two_le_of_le <;> linarith
       have cosx2_nonneg : 0 ≤ 2 * cos x := by linarith
       rw [←abs_of_nonneg cosx2_nonneg, ←sq_le_sq, h0, abs_of_nonpos cos2x_nonpos, cos_two_mul]
       linarith
-    . trans 0; swap;
+    · trans 0; swap;
       · simp
       suffices cos x ≤ 0 by linarith
       apply cos_nonpos_of_pi_div_two_le_of_le h3
       linarith
-    . have cos2x_nonpos : cos (2*x) ≤ 0 := by
+    · have cos2x_nonpos : cos (2*x) ≤ 0 := by
         rw [←cos_neg, ←cos_add_two_pi, ←cos_add_two_pi]
         apply cos_nonpos_of_pi_div_two_le_of_le <;> linarith
       have cosx_nonneg : 0 ≤ cos x := by
@@ -77,13 +77,13 @@ problem imo1965_p1 :
   rw [the_answer, mem_Icc, not_and_or] at h4; push_neg at h4
   have cos2x_nonneg : 0 ≤ cos (2*x) := by
     rcases h4 with h4 | h4
-    . apply cos_nonneg_of_neg_pi_div_two_le_of_le <;> linarith
-    . rw [←cos_sub_two_pi, ←cos_sub_two_pi]
+    · apply cos_nonneg_of_neg_pi_div_two_le_of_le <;> linarith
+    · rw [←cos_sub_two_pi, ←cos_sub_two_pi]
       apply cos_nonneg_of_neg_pi_div_two_le_of_le <;> linarith
   have cosx_nonneg : 0 ≤ cos x := by
     rcases h4 with h4 | h4
-    . apply cos_nonneg_of_neg_pi_div_two_le_of_le <;> linarith
-    . rw [←cos_neg, ←cos_add_two_pi]
+    · apply cos_nonneg_of_neg_pi_div_two_le_of_le <;> linarith
+    · rw [←cos_neg, ←cos_add_two_pi]
       apply cos_nonneg_of_neg_pi_div_two_le_of_le <;> linarith
   have cosx2_nonneg : 0 ≤ 2 * cos x := by linarith
   rw [←abs_of_nonneg cosx2_nonneg, ←sq_le_sq, h0, abs_of_nonneg cos2x_nonneg, cos_two_mul] at h3
@@ -95,6 +95,6 @@ problem imo1965_p1 :
   swap
   · simp [cos_pi_div_four]; positivity
   rcases h4 with h5 | h5
-  . apply cos_lt_cos_of_nonneg_of_le_pi_div_two h1 (by linarith) h5
+  · apply cos_lt_cos_of_nonneg_of_le_pi_div_two h1 (by linarith) h5
   rw [←cos_neg x, ←cos_add_two_pi (-x)]
   apply cos_lt_cos_of_nonneg_of_le_pi_div_two <;> linarith

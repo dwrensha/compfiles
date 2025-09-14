@@ -55,10 +55,9 @@ lemma dvd_n_fact_ne_zero {n p : ℕ} (n_ne_0 : n ≠ 0) (p_prime : p.Prime) (p_d
     : n.factorization p ≠ 0 := by
   by_contra h
   have := (Nat.factorization_eq_zero_iff n p).mp h
-  apply not_or_intro ?_ (not_or_intro ?_ ?_) this
-  . exact not_not_intro p_prime
-  . exact not_not_intro p_dvd_n
-  . exact n_ne_0
+  apply not_or_intro ?_ (not_or_intro ?_ n_ne_0) this
+  · exact not_not_intro p_prime
+  · exact not_not_intro p_dvd_n
 
 /-- Complementary factors are inversely ordered. -/
 lemma mul_cmp_compl {a b x y : ℕ} (hab : a < b) (hy : 0 < y)
@@ -81,8 +80,8 @@ theorem not_pow_cons_factors_other_prime {p e c : ℕ} (hp : p.Prime)
     exists c.factorization p
     ext q
     by_cases hq : q = p
-    . rw [hq, Finsupp.single_eq_same]
-    . rw [Finsupp.single_eq_of_ne hq]
+    · rw [hq, Finsupp.single_eq_same]
+    · rw [Finsupp.single_eq_of_ne hq]
       have {q : ℕ} (q_ne_p : q ≠ p) : c.factorization q = 0 := by
         refine (em q.Prime).elim (fun q_prime => ?_) (Nat.factorization_eq_zero_of_non_prime c)
         by_contra h₂
@@ -132,8 +131,8 @@ theorem inv_cons_factors {n a b x y : ℕ} (hn : 0 < n) (ha : n = a * x)
 /-- If `n.factorization p ≠ 0`, then `p` is prime. -/
 theorem factorization_prime {n p : ℕ} (h : n.factorization p ≠ 0) : p.Prime := by
   by_cases hp : p.Prime
-  . exact hp
-  . exact False.elim (h (Nat.factorization_eq_zero_of_non_prime n hp))
+  · exact hp
+  · exact False.elim (h (Nat.factorization_eq_zero_of_non_prime n hp))
 
 /-- If `n` is not a prime power, then its `ordCompl[p]` with respect to any `p`
  is `> 1`. -/
@@ -219,8 +218,8 @@ theorem minFac_cons_factor {n : ℕ} (hn : 1 < n) (h : ¬IsPrimePow n)
     rw [← c_fact_r]
     by_contra h
     refine Nat.le_lt_asymm (Nat.minFac_le_of_dvd ?_ ?_) r_lt_q
-    . exact (factorization_prime h).one_lt
-    . exact Nat.dvd_of_factorization_pos h
+    · exact (factorization_prime h).one_lt
+    · exact Nat.dvd_of_factorization_pos h
 
   have p_lt_q : p < q := by
     have q_dvd_c : q ∣ c := Nat.minFac_dvd c
@@ -229,8 +228,8 @@ theorem minFac_cons_factor {n : ℕ} (hn : 1 < n) (h : ¬IsPrimePow n)
       dvd_n_fact_ne_zero (Nat.ne_zero_of_lt c_gt_one) q_prime q_dvd_c
 
     refine Nat.lt_of_le_of_ne ?_ ?_
-    . exact Nat.minFac_le_of_dvd q_prime.one_lt q_dvd_n
-    . by_contra h
+    · exact Nat.minFac_le_of_dvd q_prime.one_lt q_dvd_n
+    · by_contra h
       apply c_fact_q_ne_0
       rw [c_fact_def, h, Finsupp.erase_same]
 
@@ -239,8 +238,8 @@ theorem minFac_cons_factor {n : ℕ} (hn : 1 < n) (h : ¬IsPrimePow n)
   let e_succ := min (n.factorization p) (p.log q)
   have e_succ_ne_0 : 0 < e_succ := by
     refine lt_min ?_ ?_
-    . exact p_prime.factorization_pos_of_dvd n_ne_0 (Nat.minFac_dvd n)
-    . simp [p_lt_q.le, p_prime.one_lt]
+    · exact p_prime.factorization_pos_of_dvd n_ne_0 (Nat.minFac_dvd n)
+    · simp [p_lt_q.le, p_prime.one_lt]
   -- Label its predecessor `e`.
   let ⟨e, he⟩ := Nat.exists_add_one_eq.mpr e_succ_ne_0
 
@@ -260,8 +259,8 @@ theorem minFac_cons_factor {n : ℕ} (hn : 1 < n) (h : ¬IsPrimePow n)
   have p_e_succ_lt_q : p ^ (e + 1) < q := by
     rw [he]
     refine Nat.lt_of_le_of_ne ?_ ?_
-    . exact Nat.pow_le_of_le_log q_prime.ne_zero (min_le_right _ _)
-    . exact PrimePow_ne p_prime q_prime p_lt_q.ne
+    · exact Nat.pow_le_of_le_log q_prime.ne_zero (min_le_right _ _)
+    · exact PrimePow_ne p_prime q_prime p_lt_q.ne
         ⟨e_succ, e_succ_ne_0, rfl⟩
         ⟨1, Nat.zero_lt_one, q.pow_one⟩
 
@@ -323,13 +322,13 @@ theorem minFac_cons_factor {n : ℕ} (hn : 1 < n) (h : ¬IsPrimePow n)
   -- Show that in both cases, `d` is too large, either having too high a
   -- multiplicity of `p`, or being larger than `q`.
   by_cases he_min : n.factorization p < p.log q
-  . -- Show d_e > n.factorization p
+  · -- Show d_e > n.factorization p
     refine Nat.le_lt_asymm (?_ : d_e ≤ n.factorization p) ?_
-    . rw [← (Finsupp.single_eq_same : _ = d_e), ← hd_e]
+    · rw [← (Finsupp.single_eq_same : _ = d_e), ← hd_e]
       exact d_fact_lt_n p
-    . rw [← min_eq_left he_min.le]
+    · rw [← min_eq_left he_min.le]
       exact d_e_gt_e_succ
-  . -- Show d = p ^ d_e > q
+  · -- Show d = p ^ d_e > q
     have : q ≤ p ^ (Nat.log p q + 1) :=
       (Nat.lt_pow_succ_log_self p_prime.one_lt q).le
     apply Nat.lt_le_asymm d_lt_q ∘ this.trans
@@ -438,8 +437,8 @@ lemma dividable_is_PrimePow {n : ℕ} (h : 1 < n ∧ Dividable n)
     rw [q_prime.factorization, Finsupp.single_eq_of_ne q_ne_p.symm,
         p_succ_fact_zero p_prime]
   refine this ▸ (Nat.factorization_le_iff_dvd ?_ ?_).mpr h p
-  . exact (pow_ne_zero (e + 1) p_prime.ne_zero)
-  . exact (Nat.mul_ne_zero q_prime.ne_zero p.succ_ne_zero)
+  · exact (pow_ne_zero (e + 1) p_prime.ne_zero)
+  · exact (Nat.mul_ne_zero q_prime.ne_zero p.succ_ne_zero)
 
 snip end
 

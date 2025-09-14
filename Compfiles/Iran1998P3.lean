@@ -27,7 +27,7 @@ namespace Iran1998P3
 
 snip begin
 
-lemma cube_root_cube (x : ℝ) (h: 0 ≤ x): (x^(3:ℝ)) ^ ((1:ℝ)/3) = x := by
+lemma cube_root_cube (x : ℝ) (h : 0 ≤ x) : (x^(3:ℝ)) ^ ((1:ℝ)/3) = x := by
   rw [←Real.rpow_mul h, mul_div_cancel₀ (1 : ℝ) three_ne_zero]
   exact Real.rpow_one x
 
@@ -46,8 +46,8 @@ problem iran1998_p3
   constructor
   · have amgm' := Real.geom_mean_le_arith_mean_weighted
                     (Finset.range 4)
-                    (λ ii ↦ (1:ℝ)/4)
-                    (λ ii ↦ x ii)
+                    (fun ii ↦ (1:ℝ)/4)
+                    x
                     (by intro i _; norm_num)
                     (by simp)
                     (by intro j _; exact le_of_lt (x_positive j))
@@ -111,7 +111,7 @@ problem iran1998_p3
     exact hm4
 
   · let A := ∑ i ∈ Finset.range 4, (x i)^(3:ℝ)
-    let B : ℕ → ℝ := λ j ↦ (∑ i ∈ (Finset.range 4).erase j, (x i)^(3:ℝ))
+    let B : ℕ → ℝ := fun j ↦ (∑ i ∈ (Finset.range 4).erase j, (x i)^(3:ℝ))
     have hab : A = (1/3) * (∑ i ∈ Finset.range 4, B i) := by
       simp (config := {decide := true}) [Finset.sum_range_succ, A, B]; ring
     have h2 : ∀ j ∈ (Finset.range 4), ∏ i ∈ (Finset.range 4).erase j, x i ≤ (1/3) * B j := by
@@ -124,17 +124,17 @@ problem iran1998_p3
 
       have amgm := Real.geom_mean_le_arith_mean_weighted
                     ((Finset.range 4).erase j)
-                    (λ ii ↦ (1:ℝ)/3)
-                    (λ ii ↦ x ii ^ (3:ℝ))
+                    (fun ii ↦ (1:ℝ)/3)
+                    (fun ii ↦ x ii ^ (3:ℝ))
                     (by intro i _; positivity)
                     (by simp [hcard])
                     (by intro i _; exact Real.rpow_nonneg (le_of_lt (x_positive i)) 3)
       have hr : ∀ i ∈ ((Finset.range 4).erase j),
-                   (λ (ii : ℕ) ↦ x ii ^ (3:ℝ)) i ^ (λ (ii : ℕ) ↦ (1:ℝ) / 3) i = x i := by
+                   (fun (ii : ℕ) ↦ x ii ^ (3:ℝ)) i ^ (fun (ii : ℕ) ↦ (1:ℝ) / 3) i = x i := by
         intro i _; exact cube_root_cube _ (le_of_lt (x_positive i))
       rw [Finset.prod_congr rfl hr] at amgm
       have hs : ∀ i ∈ ((Finset.range 4).erase j),
-        (λ (ii : ℕ) ↦ (1:ℝ) / 3) i * (λ (ii : ℕ) ↦ x ii ^ (3:ℝ)) i =
+        (fun (ii : ℕ) ↦ (1:ℝ) / 3) i * (fun (ii : ℕ) ↦ x ii ^ (3:ℝ)) i =
          ((1:ℝ)/3) * x i ^ (3:ℝ) := by simp
       rw [Finset.sum_congr rfl hs, ←Finset.mul_sum] at amgm
       exact amgm

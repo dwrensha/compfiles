@@ -76,9 +76,9 @@ lemma mylemma_k_le_m_alt
       have g₀: c - a + a < d - a + a := by
         rw [Nat.sub_add_cancel ?_]
         rw [Nat.sub_add_cancel ?_]
-        . exact h₂.2.2
-        . linarith
-        . linarith
+        · exact h₂.2.2
+        · linarith
+        · linarith
       exact Nat.lt_of_add_lt_add_right g₀
     refine lt_trans ?_ h₈₀
     refine Nat.sub_lt_sub_left ?_ h₂.1
@@ -107,9 +107,9 @@ lemma mylemma_h8
   have h₈₀: b - a < 2 ^ (m - 1) := by
     have g₀: b < (b + c) / 2 := by
       refine (Nat.lt_div_iff_mul_lt' ?_ b).mpr ?_
-      . refine even_iff_two_dvd.mp ?_
+      · refine even_iff_two_dvd.mp ?_
         exact Odd.add_odd h₁.2.1 h₁.2.2.1
-      . linarith
+      · linarith
     have g₁: (b + c) / 2 = 2 ^ (m-1) := by
       rw [h₅]
       rw [← Nat.pow_sub_mul_pow 2 hm1]
@@ -214,10 +214,10 @@ lemma mylemma_h8
     have hf₁: f < 2 := by
       exact Nat.lt_of_mul_lt_mul_right hf₀
     interval_cases f
-    . simp at hf
+    · simp at hf
       exfalso
       linarith [hf]
-    . linarith
+    · linarith
   rw [hfeq1, one_mul] at hf
   exact hf
 
@@ -233,9 +233,9 @@ problem imo_1984_p6
     (h₅ : b + c = 2^m) :
     a = 1 := by
   by_cases hkm: k ≤ m
-  . exfalso
+  · exfalso
     exact mylemma_k_le_m_alt a b c d k m h₂ h₃ h₄ h₅ hkm
-  . push_neg at hkm
+  · push_neg at hkm
     have h₆: b * 2 ^ m - a * 2 ^ k = (b - a) * (b + a) := by
       have h₆₀: c = 2 ^ m - b := by exact (tsub_eq_of_eq_add_rev (id h₅.symm)).symm
       have h₆₁: d = 2 ^ k - a := by exact (tsub_eq_of_eq_add_rev (id h₄.symm)).symm
@@ -245,17 +245,17 @@ problem imo_1984_p6
         symm at h₃
         refine Nat.sub_eq_of_eq_add ?_
         rw [add_comm, ← Nat.add_sub_assoc]
-        . rw [Nat.sub_add_comm]
-          . refine Nat.eq_add_of_sub_eq ?_ h₃
+        · rw [Nat.sub_add_comm]
+          · refine Nat.eq_add_of_sub_eq ?_ h₃
             rw [pow_two]
             refine le_of_lt ?_
             refine mul_lt_mul' (by omega) ?_ (le_of_lt h₀.2.1) h₀.2.1
             omega
-          . rw [pow_two]
+          · rw [pow_two]
             refine le_of_lt ?_
             refine mul_lt_mul' (by omega) ?_ (le_of_lt h₀.1) h₀.1
             omega
-        . refine le_of_lt ?_
+        · refine le_of_lt ?_
           rw [pow_two, pow_two]
           exact mul_lt_mul h₂.1 (le_of_lt h₂.1) h₀.1 (le_of_lt h₀.2.1)
       rw [Nat.sq_sub_sq b a] at h₆₂
@@ -275,9 +275,9 @@ problem imo_1984_p6
       have gb: 3 ≤ b := by
         by_contra! hc
         interval_cases b
-        . omega
-        . omega
-        . have g₀: ¬ Odd 2 := by decide
+        · omega
+        · omega
+        · have g₀: ¬ Odd 2 := by decide
           exact g₀ h₁.2.1
       have gm: 3 ≤ m := by
         have gm₀: 2 ^ 2 ≤ 2 ^ (m - 1) := by
@@ -292,9 +292,9 @@ problem imo_1984_p6
         rw [h₈, ← mul_two a] at g₀₀
         have g₀₁: m - 1 = Nat.succ (m - 2) := by
           rw [← Nat.succ_sub ?_]
-          . rw [Nat.succ_eq_add_one]
+          · rw [Nat.succ_eq_add_one]
             omega
-          . omega
+          · omega
         rw [g₀₁, Nat.pow_succ 2 _] at g₀₀
         exact Nat.lt_of_mul_lt_mul_right g₀₀
       have h₉₀: b = 2 ^ (m - 1) - a := by
@@ -332,15 +332,15 @@ problem imo_1984_p6
       rw [← Nat.add_assoc] at h₉₁
       have h₉₂: a * 2 ^ k = 2 * 2 ^ (2 * m - 2) - 2 ^ (2 * m - 2) := by
         rw [Nat.sub_add_cancel ?_] at h₉₁
-        . rw [add_comm] at h₉₁
+        · rw [add_comm] at h₉₁
           symm
           rw [← Nat.pow_succ', Nat.succ_eq_add_one]
           rw [← Nat.sub_add_comm ?_]
-          . refine Nat.sub_eq_of_eq_add ?_
+          · refine Nat.sub_eq_of_eq_add ?_
             rw [mul_comm 2 m, ← h₉₁]
             exact rfl
-          . linarith [hm1]
-        . refine le_of_lt ?_
+          · linarith [hm1]
+        · refine le_of_lt ?_
           rw [mul_two, Nat.add_sub_assoc, Nat.pow_add, mul_comm (2 ^ m) _]
           refine (Nat.mul_lt_mul_right (by omega)).mpr g₀
           omega
@@ -350,13 +350,13 @@ problem imo_1984_p6
       refine Nat.eq_div_of_mul_eq_left ?_ h₉₂
       exact Ne.symm (NeZero.ne' (2 ^ k))
     by_cases hk2m: k ≤ 2 * m - 2
-    . rw [Nat.pow_div hk2m (by norm_num)] at h₉
+    · rw [Nat.pow_div hk2m (by norm_num)] at h₉
       rw [Nat.sub_right_comm (2*m) 2 k] at h₉
       by_contra! hc
       cases' (lt_or_gt_of_ne hc) with hc₀ hc₁
-      . interval_cases a
+      · interval_cases a
         omega
-      . have hc₂: ¬ Odd a := by
+      · have hc₂: ¬ Odd a := by
           refine (Nat.not_odd_iff_even).mpr ?_
           have hc₃: 1 ≤ 2 * m - k - 2 := by
             by_contra! hc₄
@@ -369,7 +369,7 @@ problem imo_1984_p6
           rw [h₉, hc₄, Nat.pow_succ']
           exact even_two_mul (2 ^ (2 * m - k - 3))
         exact hc₂ h₁.1
-    . push_neg at hk2m
+    · push_neg at hk2m
       exfalso
       have ha: a = 0 := by
         rw [h₉]

@@ -290,20 +290,20 @@ lemma q_r_divisor_of_prime
     exact Int.natAbs_mul_natAbs_eq h₀
   have h_abs: abs (↑(q.natAbs):ℤ) = 1 ∨ abs q = p := by
     cases' Int.natAbs_eq q with h_1 h_2
-    . rw [h_1] at hqr
+    · rw [h_1] at hqr
       have h₂: abs (↑(q.natAbs):ℤ) ∣ p := by exact Dvd.intro (abs r) hqr
       have h₃: (↑(q.natAbs):ℕ) ∣ p := by
         norm_cast at *
       have h₄: (↑(q.natAbs):ℕ) = 1 ∨ (↑(q.natAbs):ℕ) = p := by
         exact Nat.Prime.eq_one_or_self_of_dvd h₁ (↑(q.natAbs):ℕ) h₃
       cases' h₄ with h₄₀ h₄₁
-      . left
+      · left
         norm_cast at *
       have h₅: abs q = q.natAbs := Int.abs_eq_natAbs q
       right
       rw [h₅]
       norm_cast at *
-    . rw [h_2] at hqr
+    · rw [h_2] at hqr
       rw [abs_neg _] at hqr
       have h₂: abs (↑(q.natAbs):ℤ) ∣ p := by exact Dvd.intro (abs r) hqr
       have h₃: (↑(q.natAbs):ℕ) ∣ p := by
@@ -311,16 +311,16 @@ lemma q_r_divisor_of_prime
       have h₄: (↑(q.natAbs):ℕ) = 1 ∨ (↑(q.natAbs):ℕ) = p := by
         exact Nat.Prime.eq_one_or_self_of_dvd h₁ (↑(q.natAbs):ℕ) h₃
       cases' h₄ with h₄₀ h₄₁
-      . left
+      · left
         norm_cast at *
-      . have h₅: abs q = q.natAbs := Int.abs_eq_natAbs q
+      · have h₅: abs q = q.natAbs := Int.abs_eq_natAbs q
         right
         rw [h₅]
         norm_cast
   cases' h_abs with hq_abs hq_abs
-  . norm_cast at *
+  · norm_cast at *
     omega
-  . right
+  · right
     right
     exact Or.symm (eq_or_eq_neg_of_abs_eq hq_abs)
 
@@ -358,8 +358,8 @@ lemma mylemma_case_k_2
   (hk: p * q * r - 1 = (p - 1) * (q - 1) * (r - 1) * 2) :
   (p, q, r) = (2, 4, 8) ∨ (p, q, r) = (3, 5, 15) := by
   interval_cases p
-  . grind
-  . right
+  · grind
+  · right
     have g₂: (4-q)*(4-r) = 11 := by linarith
     grind [mylemma_qr_11]
 
@@ -373,10 +373,10 @@ lemma mylemma_case_k_3
   (p, q, r) = (2, 4, 8) ∨ (p, q, r) = (3, 5, 15) := by
   interval_cases p
   -- p = 2
-  . have g₂: (q-3)*(r-3) = 5 := by linarith
+  · have g₂: (q-3)*(r-3) = 5 := by linarith
     grind [mylemma_qr_5]
   -- p = 3
-  . grind
+  · grind
 
 snip end
 
@@ -407,8 +407,8 @@ problem imo1992_p1 (a b c : ℤ) (ha : 1 < a) (hb : a < b) (hc : b < c) :
   have hk1: 1 < k := mylemma_k_gt_1 a b c k hk h₁ hpl hql hrl hden
   have hpu: a < 4 := mylemma_p_lt_4 a b c k ⟨ha, hb, hc⟩ hk h₁ hpl hql hrl hden
   interval_cases k
-  . exact mylemma_case_k_2 a b c ⟨ha, hb, hc⟩ hpl hql hrl hpu hk
-  . exact mylemma_case_k_3 a b c ⟨ha, hb, hc⟩ hpl hql hpu hk
+  · exact mylemma_case_k_2 a b c ⟨ha, hb, hc⟩ hpl hql hrl hpu hk
+  · exact mylemma_case_k_3 a b c ⟨ha, hb, hc⟩ hpl hql hpu hk
 
 
 end Imo1992P1

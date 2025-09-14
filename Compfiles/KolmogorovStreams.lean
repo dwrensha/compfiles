@@ -37,15 +37,15 @@ def break_into_words :
    (Stream' (List α)) -- sequence of words
  := Function.curry
      (Stream'.corec
-       (λ ⟨lengths, a'⟩ ↦ a'.take lengths.head)
-       (λ ⟨lengths, a'⟩ ↦ ⟨lengths.tail, a'.drop lengths.head⟩))
+       (fun ⟨lengths, a'⟩ ↦ a'.take lengths.head)
+       (fun ⟨lengths, a'⟩ ↦ ⟨lengths.tail, a'.drop lengths.head⟩))
 
 snip begin
 
 --#eval ((break_into_words id id).take 10 )
 
 /--
-  Dropping the first word is equivalent to dropping `first_length` symbols of the original stream.
+Dropping the first word is equivalent to dropping `first_length` symbols of the original stream.
 -/
 lemma break_into_words_cons
     (lengths : Stream' ℕ)
@@ -59,10 +59,10 @@ lemma break_into_words_closed_form
     (lengths : Stream' ℕ)
     (a : Stream' α)
    : break_into_words lengths a =
-      (λ i ↦ Stream'.take (lengths i) (Stream'.drop (∑ j ∈ Finset.range i, lengths j) a)) := by
+      (fun i ↦ Stream'.take (lengths i) (Stream'.drop (∑ j ∈ Finset.range i, lengths j) a)) := by
   funext n
-  convert_to ((Stream'.corec (λ x ↦ Stream'.take (x.fst.head) x.snd)
-                 (λ x ↦ ⟨x.fst.tail, Stream'.drop (x.fst.head) x.snd⟩)) :
+  convert_to ((Stream'.corec (fun x ↦ Stream'.take (x.fst.head) x.snd)
+                 (fun x ↦ ⟨x.fst.tail, Stream'.drop (x.fst.head) x.snd⟩)) :
                   Stream' ℕ × Stream' α → Stream' (List α)) ⟨lengths, a⟩ n =
              Stream'.take (lengths n) (Stream'.drop (∑ j ∈ Finset.range n, lengths j) a)
   rw [Stream'.corec_def,Stream'.map]
@@ -93,43 +93,44 @@ lemma take_prefix
     (ha : all_prefixes is_decent a)
     (n : ℕ)
     (hn : 0 < n) : is_decent (a.take n) := by
-  cases' n with n
-  · exfalso; exact Nat.lt_asymm hn hn
-  · have ht := ha n
+  cases n with
+  | zero => exfalso; exact Nat.lt_asymm hn hn
+  | succ n =>
+    have ht := ha n
     rwa [Stream'.get_inits] at ht
 
-structure decent_word (a : Stream' α) (is_decent: List α → Prop) : Type where
+structure decent_word (a : Stream' α) (is_decent : List α → Prop) : Type where
   (start : ℕ)
   (length : ℕ)
   (nonempty : 0 < length)
   (h : is_decent ((a.drop start).take length))
 
-structure decent_accumulator (a: Stream' α) (is_decent : List α → Prop) : Type where
+structure decent_accumulator (a : Stream' α) (is_decent : List α → Prop) : Type where
   (start : ℕ)
   (prefix_decent : all_prefixes is_decent (a.drop start))
 
 noncomputable def choose_decent_words
     (is_decent : List α → Prop)
     (a : Stream' α)
-    (hinit: all_prefixes is_decent a)
-    (hnot: ∀ (n : ℕ), ∃ (k : ℕ), 0 < k ∧
+    (hinit : all_prefixes is_decent a)
+    (hnot : ∀ (n : ℕ), ∃ (k : ℕ), 0 < k ∧
             all_prefixes is_decent (a.drop (n + k)))
      : Stream' (decent_word a is_decent) :=
-Stream'.corec (λ (acc: decent_accumulator a is_decent) ↦
+  Stream'.corec (fun (acc: decent_accumulator a is_decent) ↦
                   let new_word_length := Classical.choose (hnot acc.start)
                   let new_word_nonempty := (Classical.choose_spec (hnot acc.start)).1
                   ⟨acc.start, new_word_length, new_word_nonempty,
                    take_prefix
                     is_decent _ acc.prefix_decent new_word_length new_word_nonempty⟩)
-             (λ acc ↦ ⟨acc.start + Classical.choose (hnot acc.start),
-                      (Classical.choose_spec (hnot acc.start)).2⟩)
+             (fun acc ↦ ⟨acc.start + Classical.choose (hnot acc.start),
+                         (Classical.choose_spec (hnot acc.start)).2⟩)
              ⟨0, hinit⟩
 
 lemma chosen_decent_closed_form
     (is_decent : List α → Prop)
     (a : Stream' α)
-    (hinit: all_prefixes is_decent a)
-    (hnot: ∀ (n : ℕ), ∃ (k : ℕ), 0 < k ∧
+    (hinit : all_prefixes is_decent a)
+    (hnot : ∀ (n : ℕ), ∃ (k : ℕ), 0 < k ∧
             all_prefixes is_decent (a.drop (n + k)))
     : ∀ n : ℕ, (((choose_decent_words is_decent a hinit hnot).get n).start =
               ∑ j ∈ Finset.range n, ((choose_decent_words is_decent a hinit hnot).get j).length)
@@ -142,13 +143,13 @@ lemma chosen_decent_closed_form
 lemma check_decent_words
     (is_decent : List α → Prop)
     (a : Stream' α)
-    (hinit: all_prefixes is_decent a)
-    (hnot: ∀ (n : ℕ), ∃ (k : ℕ), 0 < k ∧
-            all_prefixes is_decent (a.drop (n + k)))
+    (hinit : all_prefixes is_decent a)
+    (hnot : ∀ (n : ℕ), ∃ (k : ℕ), 0 < k ∧
+             all_prefixes is_decent (a.drop (n + k)))
     : Stream'.All
       is_decent
       (break_into_words
-          (λ i ↦ ((choose_decent_words is_decent a hinit hnot).get i).length) a) := by
+          (fun i ↦ ((choose_decent_words is_decent a hinit hnot).get i).length) a) := by
   rw [break_into_words_closed_form]
   simp_rw [←chosen_decent_closed_form]
   intro j
@@ -174,22 +175,22 @@ lemma not_all_prefixes
 noncomputable def choose_indecent_words
     (is_decent : List α → Prop)
     (a : Stream' α)
-    (h: ∀ (k : ℕ), ¬all_prefixes is_decent (a.drop k))
+    (h : ∀ (k : ℕ), ¬all_prefixes is_decent (a.drop k))
      : Stream' (indecent_word a is_decent) :=
-Stream'.corec (λ n ↦ let hd := not_all_prefixes is_decent (a.drop n) (h n)
-                     let new_word_length := Nat.succ (Classical.choose hd)
-                     let hh := (Classical.choose_spec hd)
-                     ⟨n, new_word_length, Nat.succ_pos _, hh⟩
+Stream'.corec (fun n ↦ let hd := not_all_prefixes is_decent (a.drop n) (h n)
+                       let new_word_length := Nat.succ (Classical.choose hd)
+                       let hh := (Classical.choose_spec hd)
+                       ⟨n, new_word_length, Nat.succ_pos _, hh⟩
               )
-              (λ n ↦ let hd := not_all_prefixes is_decent (a.drop n) (h n)
-                     let new_word_length := Nat.succ (Classical.choose hd)
-                     n + new_word_length)
+              (fun n ↦ let hd := not_all_prefixes is_decent (a.drop n) (h n)
+                       let new_word_length := Nat.succ (Classical.choose hd)
+                       n + new_word_length)
               0
 
 lemma chosen_indecent_closed_form
     (is_decent : List α → Prop)
     (a : Stream' α)
-    (h: ∀ (k : ℕ), ¬all_prefixes is_decent (a.drop k))
+    (h : ∀ (k : ℕ), ¬all_prefixes is_decent (a.drop k))
     : ∀ n : ℕ, (((choose_indecent_words is_decent a h).get n).start =
                 ∑ j ∈ Finset.range n, ((choose_indecent_words is_decent a h).get j).length)
              := by
@@ -203,11 +204,11 @@ lemma chosen_indecent_closed_form
 lemma check_indecent_words
     (is_decent : List α → Prop)
     (a : Stream' α)
-    (h: ∀ (k : ℕ), ¬all_prefixes is_decent (a.drop k))
+    (h : ∀ (k : ℕ), ¬all_prefixes is_decent (a.drop k))
     : Stream'.All
-      (λ x ↦ ¬ is_decent x)
+      (fun x ↦ ¬ is_decent x)
       (break_into_words
-          (λ i ↦ ((choose_indecent_words is_decent a h).get i).length)
+          (fun i ↦ ((choose_indecent_words is_decent a h).get i).length)
           a) := by
   rw [break_into_words_closed_form]
   simp_rw [←chosen_indecent_closed_form]
@@ -220,7 +221,7 @@ def all_same_class
     (is_decent : List α → Prop)
     (b : Stream' (List α))
     : Prop :=
-  b.All is_decent ∨ b.All (λ w ↦ ¬is_decent w)
+  b.All is_decent ∨ b.All (fun w ↦ ¬is_decent w)
 
 problem kolmogorov_streams
     (is_decent : List α → Prop)
@@ -239,12 +240,12 @@ problem kolmogorov_streams
       have hnk := hn (k + 1) (Nat.succ_pos _)
       rwa [Stream'.drop_drop, Nat.add_right_comm]
     let d := choose_indecent_words is_decent a' hn'
-    use n.succ::(λ i ↦ (d.get i).length)
+    use n.succ::(fun i ↦ (d.get i).length)
     constructor
     · intro i
-      cases' i with i
-      · exact Nat.succ_pos n
-      · exact (d.get i).nonempty
+      cases i with
+      | zero => exact Nat.succ_pos n
+      | succ i => exact (d.get i).nonempty
     · right
       rw [break_into_words_cons]
       exact check_indecent_words is_decent a' hn'
@@ -265,12 +266,12 @@ problem kolmogorov_streams
           ring_nf
         rwa [←hd]
     let d := choose_decent_words is_decent a' hinit hnot'
-    use k::(λ i ↦ (d.get i).length)
+    use k::(fun i ↦ (d.get i).length)
     constructor
     · intro i
-      cases' i with i
-      · exact hkp
-      · exact (d.get i).nonempty
+      cases i with
+      | zero => exact hkp
+      | succ i => exact (d.get i).nonempty
     · left
       rw [break_into_words_cons]
       exact check_decent_words is_decent a' hinit hnot'

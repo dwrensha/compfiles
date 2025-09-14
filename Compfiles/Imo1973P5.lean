@@ -30,10 +30,8 @@ problem imo1973_p5 {G : Set (ℝ → ℝ)}
     (hfix : ∀ f ∈ G, ∃ x, f x = x) :
     ∃ k : ℝ, ∀ f ∈ G, f k = k := by
   by_cases hnep : Set.Nonempty G
-  · 
-    by_cases non_id : ∃f∈G , f≠id
-    · 
-      obtain ⟨f,hf1⟩ := non_id
+  · by_cases non_id : ∃f∈G , f≠id
+    · obtain ⟨f,hf1⟩ := non_id
       obtain ⟨hf2,hf3⟩ := hf1
 
       have h1 := hfix f hf2
@@ -84,7 +82,7 @@ problem imo1973_p5 {G : Set (ℝ → ℝ)}
           ring
         nth_rw 1 [← t]
         rw [Function.leftInverse_invFun inj]
-      
+
       have r4 := hG (Function.invFun (g∘f)) r3 (f∘g) r2
       have s4 : ∀x:ℝ , ((f ∘ g) ∘ Function.invFun (g ∘ f)) x = x + (a*d+b) - (c*b+d) := by
         intro x
@@ -96,9 +94,8 @@ problem imo1973_p5 {G : Set (ℝ → ℝ)}
       rw [s4] at hy
       have h1 : (a * d + b) = (c * b + d) := by
         grind
-      by_cases ha1 : a-1=0
-      · 
-        replace ha1 : a=1 := by
+      by_cases ha1 : a - 1 = 0
+      · replace ha1 : a = 1 := by
           calc
             a = (a-1)+1 := by ring
             _ = 0+1 := by rw[ha1]
@@ -112,8 +109,7 @@ problem imo1973_p5 {G : Set (ℝ → ℝ)}
           exact Function.forall_isFixedPt_iff.mp hb2
         exact hf3 r
       · by_cases hc1 : c-1=0
-        · 
-          replace hc1 : c=1 := by
+        · replace hc1 : c=1 := by
             calc
               c = (c-1)+1 := by ring
               _ = 0+1 := by rw[hc1]
@@ -123,8 +119,7 @@ problem imo1973_p5 {G : Set (ℝ → ℝ)}
           simp at hz
           rw [hd2,hc1,hz]
           ring
-        · 
-          have h2 : -b/(a-1) = -d/(c-1) := by
+        · have h2 : -b/(a-1) = -d/(c-1) := by
             rw [div_eq_div_iff ha1 hc1]
             grind
           rw [hb2] at hx
@@ -133,20 +128,16 @@ problem imo1973_p5 {G : Set (ℝ → ℝ)}
           rw [hx', hd2, h2]
           field_simp
           ring
-    · 
-      push_neg at non_id
+    · push_neg at non_id
       use 0
       intro f hf2
       rw [non_id f hf2]
       rfl
-  · 
-    push_neg at hnep
+  · push_neg at hnep
     use 0
     intro f hf2
     exfalso
     rw [hnep] at hf2
     exact hf2
-
-    
 
 end Imo1973P5

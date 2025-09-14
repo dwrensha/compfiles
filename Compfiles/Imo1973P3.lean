@@ -16,7 +16,9 @@ problem_file {
 /-!
 # International Mathematical Olympiad 1973, Problem 3
 
-Let $a$ and $b$ be real numbers for which the equation $x^4 + ax^3 + bx^2 + ax + 1 = 0$ has at least one real solution. For all such pairs $(a, b)$, find the minimum value of $a^2 + b^2$.
+Let $a$ and $b$ be real numbers for which the equation
+$x^4 + ax^3 + bx^2 + ax + 1 = 0$ has at least one real solution.
+For all such pairs $(a, b)$, find the minimum value of $a^2 + b^2$.
 
 -/
 
@@ -28,7 +30,7 @@ snip begin
 
 lemma aux_1
   (a b : ℝ)
-  (h₀ : ∃ (x:ℝ), x^4 + a * x^3 + b * x^2 + a * x + 1 = 0) :
+  (h₀ : ∃ (x : ℝ), x ^ 4 + a * x ^ 3 + b * x ^ 2 + a * x + 1 = 0) :
   4 / 5 ≤ a^2 + b^2 := by
   obtain ⟨x, h₁⟩ := h₀
   let t :=  x + 1 / x
@@ -47,7 +49,8 @@ lemma aux_1
     ring_nf at h₂₀
     have hx₁: x ^ 2 ≠ 0 := by exact pow_ne_zero 2 hx
     rw [mul_comm (x ^ 2), mul_assoc b, inv_pow, mul_inv_cancel₀ hx₁, mul_one] at h₂₀
-    rw [mul_comm x a, mul_assoc a, pow_two, mul_inv, ← mul_assoc x, mul_inv_cancel₀ hx, one_mul] at h₂₀
+    rw [mul_comm x a, mul_assoc a, pow_two, mul_inv,
+        ← mul_assoc x, mul_inv_cancel₀ hx, one_mul] at h₂₀
     rw [mul_comm _ a, mul_assoc a, ← pow_two, inv_pow, ← pow_sub₀, ← pow_sub₀] at h₂₀
     simp at h₂₀
     all_goals try assumption
@@ -107,12 +110,12 @@ lemma aux_1
     refine (pow_eq_pow_iff_of_ne_zero two_ne_zero).mpr ?_
     right
     constructor
-    . linarith
-    . decide
+    · linarith
+    · decide
   have h₅: 4 / 5 ≤ (t ^ 2 - 2) ^ 2 / (t ^ 2 + 1) := by
     refine (div_le_div_iff₀ (by norm_num) ?_).mpr ?_
-    . positivity
-    . rw [mul_add, mul_one, sub_sq, add_mul, sub_mul, ← pow_mul]
+    · positivity
+    · rw [mul_add, mul_one, sub_sq, add_mul, sub_mul, ← pow_mul]
       norm_num
       have h₅₀: 0 ≤ 5 * t ^ 4 + 16 - 24 * t ^ 2 := by
         have h₅₁: 5 * t ^ 4 + 16 - 24 * t ^ 2 = (5 * t ^ 2 - 4) * (t ^ 2 - 4) := by ring_nf
@@ -138,17 +141,19 @@ problem imo1973_p3
   (hS : S = {(a, b) | ∃ x : ℝ, x ^ 4 + a * x ^ 3 + b * x ^ 2 + a * x + 1 = 0}) :
   IsLeast { x.1 ^ 2 + x.2 ^ 2 | x ∈ S } solution := by
   constructor
-  . simp only [Prod.exists, Set.mem_setOf_eq]
+  · simp only [Prod.exists, Set.mem_setOf_eq]
     use 4/5
     use -2/5
     constructor
-    . simp only [hS, Set.mem_setOf_eq]
+    · simp only [hS, Set.mem_setOf_eq]
       use -1
       group
-    . group
-  . refine mem_lowerBounds.mpr ?_
+    · group
+  · refine mem_lowerBounds.mpr ?_
     simp only [Prod.exists, Set.mem_setOf_eq, forall_exists_index, and_imp]
     intro x a b h₀ h₁
     rw [←h₁]
     refine aux_1 a b ?_
     bound
+
+end Imo1973P3

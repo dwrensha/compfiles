@@ -104,24 +104,27 @@ problem usa2022_p4 (p q : ℕ) :
       rw [h11, Nat.add_mod]
       simp only [Nat.mul_mod_right, add_zero, Nat.mod_mod]
     rw [h7, ←h8] at h10
-    cases' h : p % 2 with p'
-    · have h14 : p = 2 := by
+    cases h : p % 2 with
+    | zero =>
+      have h14 : p = 2 := by
         have h15 : 2 ∣ p := Nat.modEq_zero_iff_dvd.mp h
-        cases' Nat.Prime.eq_one_or_self_of_dvd hpp _ h15 with h16 h16
+        obtain h16 | h16 := Nat.Prime.eq_one_or_self_of_dvd hpp _ h15
         · norm_num at h16
         · exact h16.symm
       omega
-    · cases' p' with p''
-      · norm_num at h
+    | succ p' =>
+      cases p' with
+      | zero =>
+        norm_num at h
         rw [h] at h10
         apply_fun (fun x ↦ (x + (1%2))%2) at h10
         rw [←Nat.add_mod, Nat.sub_add_cancel hq_pos] at h10
         norm_num at h10
         have h15 : 2 ∣ q := Nat.modEq_zero_iff_dvd.mp h10.symm
-        cases' Nat.Prime.eq_one_or_self_of_dvd hpq _ h15 with h16 h16
+        obtain h16 | h16 := Nat.Prime.eq_one_or_self_of_dvd hpq _ h15
         · norm_num at h16
         · exact h16.symm
-      · omega
+      | succ _ => omega
   have h11 : p = 3 := by
     have h20 : b - a = 1 := by rw [h9] at h8; exact h8.symm
     have h22 : a ≤ b := Nat.le_of_lt hba

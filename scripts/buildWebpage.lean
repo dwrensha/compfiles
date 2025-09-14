@@ -7,6 +7,8 @@ import Lean.Meta.Basic
 
 import ProblemExtraction
 
+set_option linter.style.longLine false
+
 open Lean Core Elab Command Batteries.Tactic.Lint
 
 def imoProblemCounts :=
