@@ -37,9 +37,7 @@ lemma lemma1 (s : ℕ → ℤ) (hs : ∀ i, s i < s (i + 1)) (z : ℤ) (hs0 : s 
     have h5 : ∀ i, s 0 + i ≤ s i := fun i ↦ by
       induction' i with i ih
       · simp
-      · have h10 : (Nat.succ i : ℤ) = (i : ℤ) + 1 := by norm_cast
-        rw [h10, ←add_assoc]
-        exact add_le_of_add_le_right (hs i) ih
+      · grind
     use Int.toNat (z - s 0)
     rw [Set.mem_setOf_eq]
     have h8 := h5 (Int.toNat (z - s 0))
