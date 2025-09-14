@@ -170,30 +170,7 @@ lemma odd_props (n : ℕ) (odd_s : Finset ℕ) (s_odd_eq : odd_s = (Finset.Icc n
     simp_all only [Nat.two_dvd_ne_zero, and_self, and_true]
     ext x
     simp_all only [Finset.mem_insert, Finset.mem_singleton, Finset.mem_filter, Finset.mem_Icc]
-    apply Iff.intro
-    · intro H
-      constructor
-      · omega
-      · obtain h3 | h5 | h6 := H
-        · simp_all only
-        · simp_all only
-          dsimp[Odd] at h ⊢
-          obtain ⟨k, h6⟩ := h
-          use k + 1
-          rw [h6]
-          ring_nf
-        · simp_all only
-          dsimp [Odd] at h ⊢
-          obtain ⟨k, h6⟩ := h
-          use k + 2
-          rw [h6]
-          ring_nf
-    intro H
-    obtain ⟨a, Hh⟩ := H
-    have h3 := Odd.not_two_dvd_nat Hh
-    by_contra Hhh
-    simp_all only [Nat.two_dvd_ne_zero, not_or]
-    omega
+    apply Iff.intro <;> grind
   case inr h =>
     use n + 1, n + 3, n + 5
     simp_all only [Nat.not_odd_iff_even, and_self, and_true]
@@ -309,17 +286,7 @@ lemma card_1_of_exists_unique (s : Finset ℕ)
   apply this
   obtain ⟨a', H⟩ := exists_unique
   use a'
-  simp_all only [forall_exists_index, Finset.card_singleton, implies_true, and_imp]
-  obtain ⟨left, right⟩ := H
-  obtain ⟨left, right_1⟩ := left
-  ext a : 1
-  simp_all only [Finset.mem_filter, Finset.mem_singleton]
-  apply Iff.intro
-  · intro a_1
-    simp_all only
-  · intro a_1
-    subst a_1
-    simp_all only [and_self]
+  grind
 
 lemma three_divides_odd_exactly_once (n : ℕ) (s odd_s : Finset ℕ) (partition : s = Finset.Icc n (n + 5))
                                      (odd_s_eq: odd_s = s.filter (λ x => Odd x)) : (odd_s.filter (λ x => 3 ∣ x)).card = 1 := by
