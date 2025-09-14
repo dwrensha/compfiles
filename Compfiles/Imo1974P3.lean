@@ -64,7 +64,8 @@ lemma aux_3 (n : ℕ) :
 lemma aux_4
   (n b a : ℕ)
   (k : ℝ)
-  (hb₁ : ↑b = 1 / k * ∑ x ∈ Finset.range (n + 1), ↑((2 * n + 1).choose (2 * x + 1)) * k ^ (2 * x + 1))
+  (hb₁ : ↑b = 1 / k * ∑ x ∈ Finset.range (n + 1),
+                        ↑((2 * n + 1).choose (2 * x + 1)) * k ^ (2 * x + 1))
   (ha₁ : ↑a = ∑ x ∈ Finset.range (n + 1), ↑((2 * n + 1).choose (2 * x)) * k ^ (2 * x))
   (hk₀ : k * k⁻¹ = 1) :
   (1 + k) ^ (2 * n + 1) = ↑a + ↑b * k := by
@@ -83,18 +84,18 @@ lemma aux_4
     ∑ x ∈ fs₀, ↑((2 * n + 1).choose (x)) * k ^ (x) := by
     have h₀₁: ∑ x ∈ fs₃, f (2 * x + 1) = ∑ x ∈ (fs₀), f x := by
       refine Finset.sum_bij ?i ?_ ?i_inj ?i_surj ?h
-      . intro a _
+      · intro a _
         exact (2 * a + 1)
-      . intro a ha₀
+      · intro a ha₀
         have ha₁: a ≤ n := Finset.mem_range_succ_iff.mp ha₀
         have ha₂: 2 * a + 1 ≤ 2 * n + 1 := by omega
         have ha₃: (2 * a + 1) ∈ fs₂ := Finset.mem_range_succ_iff.mpr ha₂
         have ha₄: Odd (2 * a + 1) := odd_two_mul_add_one a
         refine Finset.mem_filter.mpr ?_
         exact And.symm ⟨ha₄, ha₃⟩
-      . intro a _ b _ h₃
+      · intro a _ b _ h₃
         omega
-      . intro b hb₀
+      · intro b hb₀
         use ((b - 1) / 2)
         refine exists_prop.mpr ?_
         have hb₁: b ∈ fs₂ ∧ Odd b := Finset.mem_filter.mp hb₀
@@ -108,39 +109,39 @@ lemma aux_4
           simp only [Nat.not_even_one, iff_false, Nat.not_even_iff_odd]
           exact hb₁.2
         constructor
-        . have hb₄: b < 2 * n + 2 := by exact List.mem_range.mp hb₁.1
+        · have hb₄: b < 2 * n + 2 := by exact List.mem_range.mp hb₁.1
           have hb₅: (b - 1) / 2 < n + 1 := by omega
           exact Finset.mem_range.mpr hb₅
-        . have hb₆: 2 * ((b - 1) / 2) = b - 1 := Nat.two_mul_div_two_of_even hb₃
+        · have hb₆: 2 * ((b - 1) / 2) = b - 1 := Nat.two_mul_div_two_of_even hb₃
           rw [hb₆]
           exact Nat.sub_add_cancel hb₂
-      . exact fun a _ => rfl
+      · exact fun a _ => rfl
     exact h₀₁
   have h₁: ∑ x ∈ Finset.range (n + 1), ↑((2 * n + 1).choose (2 * x)) * k ^ (2 * x) =
     ∑ x ∈ fs₁, ↑((2 * n + 1).choose (x)) * k ^ (x) := by
     have h₁₁: ∑ x ∈ fs₃, f (2 * x) = ∑ x ∈ (fs₁), f x := by
       refine Finset.sum_bij ?_ ?_ ?_ ?_ ?_
-      . intro a _
+      · intro a _
         exact (2 * a)
-      . intro a ha₀
+      · intro a ha₀
         have ha₁: a < n + 1 := List.mem_range.mp ha₀
         have ha₂: 2 * a < 2 * n + 2 := by omega
         refine Finset.mem_filter.mpr ?_
         constructor
-        . exact Finset.mem_range.mpr ha₂
-        . exact even_two_mul a
-      . intro a _ b _ h₃
+        · exact Finset.mem_range.mpr ha₂
+        · exact even_two_mul a
+      · intro a _ b _ h₃
         exact Nat.eq_of_mul_eq_mul_left (by norm_num) h₃
-      . intro b hb₀
+      · intro b hb₀
         use (b/2)
         refine exists_prop.mpr ?_
         have hb₁: b ∈ fs₂ ∧ Even b := Finset.mem_filter.mp hb₀
         constructor
-        . have hb₂: b < 2 * n + 2 := by exact List.mem_range.mp hb₁.1
+        · have hb₂: b < 2 * n + 2 := by exact List.mem_range.mp hb₁.1
           have hb₃: (b / 2) < n + 1 := by exact Nat.div_lt_of_lt_mul hb₂
           exact Finset.mem_range.mpr hb₃
-        . exact Nat.two_mul_div_two_of_even hb₁.2
-      . exact fun a _ => rfl
+        · exact Nat.two_mul_div_two_of_even hb₁.2
+      · exact fun a _ => rfl
     exact h₁₁
   have h₂: ∑ x ∈ Finset.range (2 * n + 1 + 1), k ^ x * ↑((2 * n + 1).choose x) =
     ∑ x ∈ fs₂, ↑((2 * n + 1).choose x) * k ^ x := by
@@ -152,21 +153,19 @@ lemma aux_4
     refine Finset.ext_iff.mpr ?_
     intro a
     constructor
-    . intro ha₀
+    · intro ha₀
       refine Finset.mem_union.mpr ?mp.a
       have ha₁: Odd a ∨ Even a := Or.symm (Nat.even_or_odd a)
-      cases' ha₁ with ha₂ ha₃
-      . left
-        refine Finset.mem_filter.mpr ?mp.a.inl.h.a
-        exact And.symm ⟨ha₂, ha₀⟩
-      . right
-        refine Finset.mem_filter.mpr ?mp.a.inl.h.b
-        exact And.symm ⟨ha₃, ha₀⟩
-    . intro ha₀
+      obtain ha₂ | ha₃ := ha₁
+      · left
+        exact Finset.mem_filter.mpr ⟨ha₀, ha₂⟩
+      · right
+        exact Finset.mem_filter.mpr ⟨ha₀, ha₃⟩
+    · intro ha₀
       apply Finset.mem_union.mp at ha₀
-      cases' ha₀ with ha₁ ha₂
-      . exact Finset.mem_of_mem_filter a ha₁
-      . exact Finset.mem_of_mem_filter a ha₂
+      obtain ha₁ | ha₂ := ha₀
+      · exact Finset.mem_of_mem_filter a ha₁
+      · exact Finset.mem_of_mem_filter a ha₂
   have h₄: Disjoint fs₀ fs₁ := by
     refine Finset.disjoint_filter.mpr ?_
     intro x _ hx₁
@@ -178,7 +177,8 @@ lemma aux_4
 lemma aux_5
   (n b a : ℕ)
   (k : ℝ)
-  (hb₁ : ↑b = 1 / k * ∑ x ∈ Finset.range (n + 1), ↑((2 * n + 1).choose (2 * x + 1)) * k ^ (2 * x + 1))
+  (hb₁ : ↑b = 1 / k * ∑ x ∈ Finset.range (n + 1),
+                        ↑((2 * n + 1).choose (2 * x + 1)) * k ^ (2 * x + 1))
   (ha₁ : ↑a = ∑ x ∈ Finset.range (n + 1), ↑((2 * n + 1).choose (2 * x)) * k ^ (2 * x))
   (hk₀ : k * k⁻¹ = 1) :
   (1 - k) ^ (2 * n + 1) = ↑a - ↑b * k := by
@@ -198,18 +198,17 @@ lemma aux_5
     rw [neg_eq_neg_one_mul, Finset.mul_sum]
     have h₀₁: ∑ x ∈ fs₃, f₀ (2 * x + 1) = ∑ x ∈ (fs₀), -1 * f₁ x := by
       refine Finset.sum_bij ?i ?_ ?i_inj ?i_surj ?h
-      . intro a _
+      · intro a _
         exact (2 * a + 1)
-      . intro a ha₀
+      · intro a ha₀
         have ha₁: a ≤ n := Finset.mem_range_succ_iff.mp ha₀
         have ha₂: 2 * a + 1 ≤ 2 * n + 1 := by omega
         have ha₃: (2 * a + 1) ∈ fs₂ := Finset.mem_range_succ_iff.mpr ha₂
         have ha₄: Odd (2 * a + 1) := odd_two_mul_add_one a
-        refine Finset.mem_filter.mpr ?_
-        exact And.symm ⟨ha₄, ha₃⟩
-      . intro a _ b _ h₃
+        exact Finset.mem_filter.mpr ⟨ha₃, ha₄⟩
+      · intro a _ b _ h₃
         omega
-      . intro b hb₀
+      · intro b hb₀
         use ((b - 1) / 2)
         refine exists_prop.mpr ?_
         have hb₁: b ∈ fs₂ ∧ Odd b := Finset.mem_filter.mp hb₀
@@ -223,13 +222,13 @@ lemma aux_5
           simp only [Nat.not_even_one, iff_false, Nat.not_even_iff_odd]
           exact hb₁.2
         constructor
-        . have hb₄: b < 2 * n + 2 := by exact List.mem_range.mp hb₁.1
+        · have hb₄: b < 2 * n + 2 := by exact List.mem_range.mp hb₁.1
           have hb₅: (b - 1) / 2 < n + 1 := by omega
           exact Finset.mem_range.mpr hb₅
-        . have hb₆: 2 * ((b - 1) / 2) = b - 1 := Nat.two_mul_div_two_of_even hb₃
+        · have hb₆: 2 * ((b - 1) / 2) = b - 1 := Nat.two_mul_div_two_of_even hb₃
           rw [hb₆]
           exact Nat.sub_add_cancel hb₂
-      . intro b hb₀
+      · intro b hb₀
         have hb₁: (-1:ℝ) ^ (b * 2) = 1 := by
           refine (neg_one_pow_eq_one_iff_even (by norm_num)).mpr ?_
           rw [mul_comm]
@@ -242,27 +241,27 @@ lemma aux_5
     ∑ x ∈ fs₁, ↑((2 * n + 1).choose (x)) * (-k) ^ (x) := by
     have h₁₁: ∑ x ∈ fs₃, f₀ (2 * x) = ∑ x ∈ (fs₁), f₁ x := by
       refine Finset.sum_bij ?_ ?_ ?_ ?_ ?_
-      . intro a _
+      · intro a _
         exact (2 * a)
-      . intro a ha₀
+      · intro a ha₀
         have ha₁: a < n + 1 := List.mem_range.mp ha₀
         have ha₂: 2 * a < 2 * n + 2 := by omega
         refine Finset.mem_filter.mpr ?_
         constructor
-        . exact Finset.mem_range.mpr ha₂
-        . exact even_two_mul a
-      . intro a _ b _ h₃
+        · exact Finset.mem_range.mpr ha₂
+        · exact even_two_mul a
+      · intro a _ b _ h₃
         exact Nat.eq_of_mul_eq_mul_left (by norm_num) h₃
-      . intro b hb₀
+      · intro b hb₀
         use (b/2)
         refine exists_prop.mpr ?_
         have hb₁: b ∈ fs₂ ∧ Even b := Finset.mem_filter.mp hb₀
         constructor
-        . have hb₂: b < 2 * n + 2 := by exact List.mem_range.mp hb₁.1
-          have hb₃: b / 2 < n + 1 := by exact Nat.div_lt_of_lt_mul hb₂
+        · have hb₂: b < 2 * n + 2 := List.mem_range.mp hb₁.1
+          have hb₃: b / 2 < n + 1 := Nat.div_lt_of_lt_mul hb₂
           exact Finset.mem_range.mpr hb₃
-        . exact Nat.two_mul_div_two_of_even hb₁.2
-      . intro b hb₀
+        · exact Nat.two_mul_div_two_of_even hb₁.2
+      · intro b hb₀
         have hb₁: (-1:ℝ) ^ (b * 2) = 1 := by
           refine (neg_one_pow_eq_one_iff_even (by norm_num)).mpr ?_
           rw [mul_comm]
@@ -281,21 +280,19 @@ lemma aux_5
     refine Finset.ext_iff.mpr ?_
     intro a
     constructor
-    . intro ha₀
+    · intro ha₀
       refine Finset.mem_union.mpr ?mp.a
       have ha₁: Odd a ∨ Even a := by exact Or.symm (Nat.even_or_odd a)
-      cases' ha₁ with ha₂ ha₃
-      . left
-        refine Finset.mem_filter.mpr ?mp.a.inl.h.a
-        exact And.symm ⟨ha₂, ha₀⟩
-      . right
-        refine Finset.mem_filter.mpr ?mp.a.inl.h.b
-        exact And.symm ⟨ha₃, ha₀⟩
-    . intro ha₀
+      obtain ha₂ | ha₃ := ha₁
+      · left
+        exact Finset.mem_filter.mpr ⟨ha₀, ha₂⟩
+      · right
+        exact Finset.mem_filter.mpr ⟨ha₀, ha₃⟩
+    · intro ha₀
       apply Finset.mem_union.mp at ha₀
-      cases' ha₀ with ha₁ ha₂
-      . exact Finset.mem_of_mem_filter a ha₁
-      . exact Finset.mem_of_mem_filter a ha₂
+      obtain ha₁ | ha₂ := ha₀
+      · exact Finset.mem_of_mem_filter a ha₁
+      · exact Finset.mem_of_mem_filter a ha₂
   have h₄: Disjoint fs₀ fs₁ := by
     refine Finset.disjoint_filter.mpr ?_
     intro x _ hx₁
@@ -312,10 +309,12 @@ problem imo1974_p3
   let k:ℝ := Real.sqrt (8:ℝ)
   have hk: k = Real.sqrt (8:ℝ) := by rfl
   let b:ℕ := ∑ k ∈ Finset.range (n + 1), (Nat.choose (2 * n + 1) (2 * k + 1)) * (2^(3 * k))
-  have hb: b = ∑ k ∈ Finset.range (n + 1), (Nat.choose (2 * n + 1) (2 * k + 1)) * (2^(3 * k)) := by rfl
+  have hb : b = ∑ k ∈ Finset.range (n + 1),
+                  (Nat.choose (2 * n + 1) (2 * k + 1)) * (2^(3 * k)) := by rfl
   rw [← hb]
-  let a:ℕ := ∑ k ∈ Finset.range (n + 1), (Nat.choose (2 * n + 1) (2 * k) * (2 ^ (3 * k)))
-  have ha: a = ∑ k ∈ Finset.range (n + 1), (Nat.choose (2 * n + 1) (2 * k) * (2 ^ (3 * k))) := by rfl
+  let a := ∑ k ∈ Finset.range (n + 1), (Nat.choose (2 * n + 1) (2 * k) * (2 ^ (3 * k)))
+  have ha : a = ∑ k ∈ Finset.range (n + 1),
+                  (Nat.choose (2 * n + 1) (2 * k) * (2 ^ (3 * k))) := by rfl
   have hb₁: b = (1 / k) *
     ∑ x ∈ Finset.range (n + 1), (Nat.choose (2 * n + 1) (2 * x + 1)) * (k ^ (2 * x + 1)) := by
     rw [hb, hk]
@@ -378,8 +377,8 @@ problem imo1974_p3
       exact Nat.pow_pos (by norm_num)
     rw [h₃] at h₅₀
     exact Nat.lt_of_sub_pos h₅₀
-  cases' h₄ with h₄₀ h₄₁
-  . rw [h₃] at h₄₀
+  obtain h₄₀ | h₄₁ := h₄
+  · rw [h₃] at h₄₀
     have hc₂: b ^ 2 * 8 - a ^ 2 + a ^ 2 ≡ 2 + a ^ 2 [MOD 5] := by
       exact Nat.ModEq.add_right (a ^ 2) h₄₀
     rw [Nat.sub_add_cancel (le_of_lt h₅)] at hc₂
@@ -393,7 +392,7 @@ problem imo1974_p3
       exact Nat.ModEq.add_left_cancel hc₄ hc₃
     have hc₅: ¬ a ^ 2 ≡ 3 [MOD 5] := by exact aux_2 a
     exact hc₅ hc₄
-  . rw [h₃] at h₄₁
+  · rw [h₃] at h₄₁
     have hc₂: b ^ 2 * 8 - a ^ 2 + a ^ 2 ≡ 3 + a ^ 2 [MOD 5] := by
       exact Nat.ModEq.add_right (a ^ 2) h₄₁
     rw [Nat.sub_add_cancel (le_of_lt h₅)] at hc₂
