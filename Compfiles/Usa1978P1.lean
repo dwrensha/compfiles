@@ -43,9 +43,8 @@ problem usa1978_p1 :
   · simp only [Set.mem_setOf_eq]
     intro e
     contrapose!
-    intro he a b c d
-    intro h1 h2
-    apply (not_le_of_gt he)
+    intro he a b c d h1 h2
+    apply not_le_of_gt he
     have h11 : (a + b + c + d) ^ 2 = (8 - e) ^ 2 := by
       rw [(by rw [←h1]; simp only [add_sub_cancel_right] : a + b + c + d = 8 - e)]
     have h12 :  a ^ 2 + b ^ 2 + c ^ 2 + d ^ 2 = 16 - e ^ 2 := by
