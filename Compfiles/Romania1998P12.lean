@@ -176,9 +176,9 @@ lemma extend_function_anti
   -- in either case, we end up contradicting u_anti.
 
 lemma int_dichotomy (z : ℤ) : ∃ n : ℕ, (n:ℤ) = z ∨ -(n:ℤ) = z := by
-  cases' z with z z
-  · use z; left; simp only [Int.ofNat_eq_coe]
-  · use z + 1; right; rfl
+  cases z with
+  | ofNat z => use z; left; simp only [Int.ofNat_eq_coe]
+  | negSucc z =>  use z + 1; right; rfl
 
 lemma exp_characterization
     (u : ℝ → ℝ)
@@ -212,11 +212,11 @@ lemma exp_characterization
     obtain hlt | heq | hgt := lt_trichotomy x 0
     · have h10 := h2 x
       have hx0 : 0 < -x := neg_pos.mpr hlt
-      cases' hm with hm hm <;> nlinarith[hm hx0, hm hlt]
+      obtain hm | hm := hm <;> nlinarith[hm hx0, hm hlt]
     · rw [heq, hu0] at H; linarith
     · have h10 := h2 x
       have hx0 : -x < 0 := neg_lt_zero.mpr hgt
-      cases' hm with hm hm <;> nlinarith [hm hx0, hm hgt]
+      obtain hm | hm := hm <;> nlinarith [hm hx0, hm hgt]
 
   have h3 : ∀ x, u (-x) = 1 / (u x) :=
     fun x ↦ eq_one_div_of_mul_eq_one_right (h2 x)
@@ -263,8 +263,9 @@ lemma exp_characterization
 
   have hp : ∀ p : ℕ, 0 < p → ∀ x : ℝ, u (x / p) = (u x) ^ (1 / (p:ℝ)) := by
     intro p hp x
-    cases' p with p p
-    · exfalso; exact Nat.lt_asymm hp hp
+    cases p with
+    | zero => exfalso; exact Nat.lt_asymm hp hp
+    | succ p =>
     have h12: ∀ n : ℕ, (u (x / p.succ))^n = u (x * n / p.succ) := by
       intro n
       induction' n with pn hpn
@@ -294,21 +295,21 @@ lemma exp_characterization
 
   -- Since u in monotonic and the rationals are dense in ℝ, we have u(x) = e^(kx) for all x ∈ ℝ.
   -- Therefore all solutions of the form u(x) = e^(kx), k ∈ ℝ.
-  let f := λ x ↦ Real.exp (k * x)
-  have hf : ∀ q : ℚ, u q = f q := λ q ↦ hq q
+  let f := fun x ↦ Real.exp (k * x)
+  have hf : ∀ q : ℚ, u q = f q := fun q ↦ hq q
   have hfm : Continuous f := by continuity
-  cases' hm with hm hm
+  obtain hm | hm := hm
   · have hmu : Monotone u := StrictMono.monotone hm
     exact extend_function_mono u f hmu hfm hf
   · have hau : Antitone u := StrictAnti.antitone hm
     exact extend_function_anti u f hau hfm hf
 
 
-lemma exp_strict_mono' (k x y : ℝ) (hkp: 0 < k) (h : x < y) :
+lemma exp_strict_mono' (k x y : ℝ) (hkp : 0 < k) (h : x < y) :
     Real.exp (k * x) < Real.exp (k * y) :=
   Real.exp_lt_exp.mpr ((mul_lt_mul_left hkp).mpr h)
 
-lemma exp_strict_anti' (k x y : ℝ) (hkp: k < 0) (h : x < y) :
+lemma exp_strict_anti' (k x y : ℝ) (hkp : k < 0) (h : x < y) :
     Real.exp (k * y) < Real.exp (k * x) :=
   Real.exp_lt_exp.mpr (mul_lt_mul_of_neg_left h hkp)
 
@@ -336,7 +337,7 @@ lemma romania1998_p12_mp (u : ℝ → ℝ) :
   have h0' : (u 0 ≠ 1) → False := by
     intro hu0
     have hu0' := h0 hu0
-    cases' hm with hm hm <;>
+    obtain hm | hm := hm <;>
     · have hu00 := hu0' 0
       have hu01 := hu0' 1
       have hm0 := @hm 0 1 (by norm_num)
@@ -353,7 +354,7 @@ lemma romania1998_p12_mp (u : ℝ → ℝ) :
   -- Then f(x) ≠ 0 for all x ≠ 0.
   have hfx0 : ∀ x, x ≠ 0 → f x ≠ 0 := by
     intro x hx
-    cases' hm with hm1 hm2
+    obtain hm1 | hm2 := hm
     · obtain h1 | h2 | h3 := lt_trichotomy x 0
       · rw [←hf0];
         exact ne_of_lt (hm1 h1)
@@ -412,7 +413,7 @@ lemma romania1998_p12_mp (u : ℝ → ℝ) :
     · exact h5 x hnz
 
   -- If C = 0, then u(x) = 1 for all x and we are done.
-  cases' em (C = 0) with hCz hCnz
+  obtain hCz | hCnz := em (C = 0)
   · use 0
     intro x
     rw [zero_mul, Real.exp_zero]
@@ -435,7 +436,7 @@ lemma romania1998_p12_mp (u : ℝ → ℝ) :
          _         = u x * u y := mul_comm (u y) (u x)
 
   have hum : (StrictMono u ∨ StrictAnti u) := by
-    cases' hm with hm hm
+    obtain hm | hm := hm
     · obtain h1 | h2 | h3 := lt_trichotomy C 0
       · right; intro x y hxy; nlinarith [hm hxy, h6 x, h6 y]
       · rw [h2] at hCnz; exfalso; apply hCnz; rfl
@@ -460,9 +461,9 @@ lemma romania1998_p12_mpr (u : ℝ → ℝ) :
     · intro x y
       rw [hk y, zero_mul, Real.exp_zero, mul_one, id_def, id_def, id_def]
   · -- k ≠ 0
-    let f : ℝ → ℝ := λ x ↦ Real.exp (k * x) - 1
+    let f : ℝ → ℝ := fun x ↦ Real.exp (k * x) - 1
     have hfm : (StrictMono f ∨ StrictAnti f) := by
-      cases' Classical.em (0 < k) with hkp hkn
+      by_cases hkp : 0 < k
       · left
         intro x y hxy
         have := exp_strict_mono' k x y hkp hxy
@@ -471,7 +472,7 @@ lemma romania1998_p12_mpr (u : ℝ → ℝ) :
         intro x y hxy
         have hkn' : k < 0 := by
           simp only [not_lt] at *
-          exact Ne.lt_of_le hknz hkn
+          exact Ne.lt_of_le hknz hkp
         have := exp_strict_anti' k x y hkn' hxy
         exact sub_lt_sub_right this 1
     use f

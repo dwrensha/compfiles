@@ -30,9 +30,9 @@ namespace Imo2022P5
 snip begin
 
 lemma mylemma_1
-    (b p: ℕ)
-    (h₀: 0 < b)
-    (hbp: b < p) :
+    (b p : ℕ)
+    (h₀ : 0 < b)
+    (hbp : b < p) :
     (1 + (b * p + b ^ p) ≤ (1 + b) ^ p) := by
   replace hbp : 2 ≤ p := by omega
   induction p, hbp using Nat.le_induction with
@@ -45,10 +45,10 @@ lemma mylemma_1
       _ ≤ _ := Nat.add_le_add_left (Nat.mul_le_mul_right b (by omega)) _
 
 lemma mylemma_3
-  (a b p: ℕ)
-  (hp: Nat.Prime p)
-  (h₁: a ^ p = b.factorial + p)
-  (hbp: p ≤ b) :
+  (a b p : ℕ)
+  (hp : Nat.Prime p)
+  (h₁ : a ^ p = b.factorial + p)
+  (hbp : p ≤ b) :
   (p ∣ a) := by
   have h₂: p ∣ b.factorial := by exact Nat.dvd_factorial (Nat.Prime.pos hp) hbp
   have h₃: p ∣ b.factorial + p := by exact Nat.dvd_add_self_right.mpr h₂
@@ -60,16 +60,16 @@ lemma mylemma_3
 
 lemma mylemma_42
     (a b : ℕ)
-    (h₀: 2 ≤ a)
-    (h₁: a < b) :
+    (h₀ : 2 ≤ a)
+    (h₁ : a < b) :
     (a + b < a * b) := by
-  have h₂: a + b < b + b := by exact add_lt_add_right h₁ b
+  have h₂: a + b < b + b := add_lt_add_right h₁ b
   have h₃: b + b ≤ a * b := by
     rw [← two_mul]
     exact mul_le_mul_right' h₀ b
   exact lt_of_le_of_lt' h₃ h₂
 
-lemma mylemma_43 (p: ℕ) :
+lemma mylemma_43 (p : ℕ) :
     ∏ x ∈ Finset.Ico p (2 * p - 1), (x + 1)
       = ∏ x ∈ Finset.range (p - 1), (p + (x + 1)) := by
   rw [Finset.prod_Ico_eq_prod_range _ p (2 * p - 1)]
@@ -78,13 +78,13 @@ lemma mylemma_43 (p: ℕ) :
   exact rfl
 
 lemma mylemma_44
-    (p: ℕ)
-    (hp: 2 ≤ p) :
+    (p : ℕ)
+    (hp : 2 ≤ p) :
     ∏ x ∈ Finset.range (p - 1), (x + 1)
       = ∏ x ∈ Finset.range (p - 1), (p - (x + 1)) := by
   refine Nat.le_induction ?_ ?_ p hp
-  . norm_num
-  . intro n hn2 h₀
+  · norm_num
+  · intro n hn2 h₀
     rw [Finset.prod_range_add_one_eq_factorial] at h₀ ⊢
     simp only [add_tsub_cancel_right, Nat.reduceSubDiff] at *
     have hn: n ≠ 0 := Nat.ne_zero_of_lt hn2
@@ -98,17 +98,15 @@ lemma mylemma_44
     ring_nf
 
 lemma mylemma_41
-  (b p: ℕ)
-  (hp: Nat.Prime p)
-  (hb2p: b < 2 * p) :
+  (b p : ℕ)
+  (hp : Nat.Prime p)
+  (hb2p : b < 2 * p) :
   b.factorial + p < p ^ (2 * p) := by
   have h₁: b.factorial ≤ (2*p - 1).factorial := by
     refine Nat.factorial_le ?_
     exact Nat.le_pred_of_lt hb2p
   have gp: 2 ≤ p := by exact Nat.Prime.two_le hp
-  have gp1: (p - 1) + 1 = p := by
-    refine Nat.sub_add_cancel ?_
-    exact Nat.one_le_of_lt gp
+  have gp1: (p - 1) + 1 = p := Nat.sub_add_cancel (Nat.one_le_of_lt gp)
   let f: (ℕ → ℕ) := (fun (x : ℕ) => x + 1)
   have h₂: (Finset.range (2 * p - 1)).prod f =
       (Finset.range (p - 1)).prod (fun (x : ℕ) => p^2 - (x+1)^2) * p := by
@@ -174,22 +172,22 @@ lemma mylemma_41
 
 
 lemma mylemma_4
-  (a b p: ℕ)
-  (h₀: 0 < a ∧ 0 < b)
-  (hp: Nat.Prime p)
-  (h₁: a ^ p = b.factorial + p)
-  (hbp: p ≤ b)
-  (h₂: p ∣ a)
-  (hb2p: b < 2 * p) :
-  (a = p) := by
+    (a b p : ℕ)
+    (h₀ : 0 < a ∧ 0 < b)
+    (hp : Nat.Prime p)
+    (h₁ : a ^ p = b.factorial + p)
+    (hbp : p ≤ b)
+    (h₂ : p ∣ a)
+    (hb2p : b < 2 * p) :
+    (a = p) := by
   have gp: p ≤ a := by exact Nat.le_of_dvd h₀.1 h₂
-  cases' lt_or_eq_of_le gp with h₃ h₃
-  . exfalso
-    cases' h₂ with c h₂
+  obtain h₃ | h₃ := lt_or_eq_of_le gp
+  · exfalso
+    obtain ⟨c, h₂⟩ := h₂
     have gc: 0 < c :=
       Nat.pos_of_mul_pos_left (Nat.lt_of_lt_of_eq (Nat.zero_lt_of_lt h₃) h₂)
     by_cases hc: c < p
-    . have g₁: c ∣ c^p := dvd_pow_self c (by omega)
+    · have g₁: c ∣ c^p := dvd_pow_self c (by omega)
       have h₄: c ∣ a^p := by
         rw [h₂, mul_pow]
         exact dvd_mul_of_dvd_right g₁ (p ^ p)
@@ -199,12 +197,12 @@ lemma mylemma_4
         rw [g₂]
         exact Nat.dvd_sub h₄ h₅
       have h₇: c = 1 ∨ c = p := by exact (Nat.dvd_prime hp).mp h₆
-      cases' h₇ with h₇₀ h₇₁
-      . rw [h₇₀, mul_one] at h₂
+      obtain h₇₀ | h₇₁ := h₇
+      · rw [h₇₀, mul_one] at h₂
         omega
-      . rw [h₇₁] at hc
+      · rw [h₇₁] at hc
         simp at hc
-    . push_neg at hc
+    · push_neg at hc
       have g₃: p^2 ≤ a := by
         rw [h₂, pow_two]
         exact mul_le_mul_left' hc p
@@ -216,8 +214,8 @@ lemma mylemma_4
   exact h₃.symm
 
 lemma mylemma_53
-    (p: ℕ)
-    (hp5: 5 ≤ p) :
+    (p : ℕ)
+    (hp5 : 5 ≤ p) :
     (↑p:ℤ) ^ p ≡ ↑p * (↑p + 1) * (-1) ^ (p - 1) + (-1) ^ p [ZMOD (↑p + 1) ^ 2] := by
   -- have h₁: ↑p ^ p = Finset.range -- binomial expansion
   -- take the first two elements out
@@ -239,7 +237,8 @@ lemma mylemma_53
     simp only [Finset.range_one, Finset.sum_singleton, Nat.Ico_succ_singleton]
     simp only [Nat.choose_zero_right, Nat.choose_one_right, tsub_zero]
     ring
-  have h₃: 0 ≡ (Finset.Ico 2 (p + 1)).sum (fun (k : ℕ) => (↑p + 1) ^ k * (-1) ^ (p - k) * ↑(p.choose k))
+  have h₃: 0 ≡ (Finset.Ico 2 (p + 1)).sum
+                 (fun (k : ℕ) => (↑p + 1) ^ k * (-1) ^ (p - k) * ↑(p.choose k))
                 [ZMOD (↑p + 1) ^ 2] := by
     refine Int.modEq_of_dvd ?_
     rw [sub_zero]
@@ -254,10 +253,10 @@ lemma mylemma_53
 
 
 lemma mylemma_52
-  (p: ℕ)
-  (hp: Nat.Prime p)
-  (hp5: 5 ≤ p)
-  (h₀: (p + 1) ^ 2 ∣ p ^ p - p) :
+  (p : ℕ)
+  (hp : Nat.Prime p)
+  (hp5 : 5 ≤ p)
+  (h₀ : (p + 1) ^ 2 ∣ p ^ p - p) :
   False := by
   have h₁: ((↑p^p - ↑p):ℤ) ≡ (↑(p.choose 1) * ↑(p + 1) * (-1:ℤ)^(p-1) + (-1:ℤ)^p) - ↑p
       [ZMOD ↑(p+1)^2] := by
@@ -270,8 +269,8 @@ lemma mylemma_52
   have gpe: Even (p - 1) := by
     refine hp.even_sub_one ?_
     linarith [hp5]
-  have g₁: (-1:ℤ) ^ (p - 1) = 1 := by exact Even.neg_one_pow gpe
-  have g₂: (-1:ℤ) ^ (p) = -1 := by exact Odd.neg_one_pow gpo
+  have g₁: (-1:ℤ) ^ (p - 1) = 1 := Even.neg_one_pow gpe
+  have g₂: (-1:ℤ) ^ (p) = -1 := Odd.neg_one_pow gpo
   rw [g₁,g₂] at h₁
   simp at h₁
   have h₂: (p ^ p - p) ≡ (p * (p + 1)) - 1 - p [MOD ((p + 1) ^ 2)] := by
@@ -283,8 +282,8 @@ lemma mylemma_52
       rw [mul_add]
       simp
       rw [add_comm, Nat.add_sub_assoc]
-      . simp
-      . rw [← pow_two]
+      · simp
+      · rw [← pow_two]
         refine Nat.one_le_pow 2 p (by omega)
     rw [Nat.cast_sub g₄]
     have g₅: 1 ≤ p * (p + 1) := by omega
@@ -328,8 +327,8 @@ lemma mylemma_51
     p + p.factorial < p ^ p := by
   -- we use induction
   refine Nat.le_induction ?_ ?_ p (hpl)
-  . exact Nat.lt_of_sub_eq_succ rfl
-  . intro n hn h₁
+  · exact Nat.lt_of_sub_eq_succ rfl
+  · intro n hn h₁
     have h₂: n + 1 + (n + 1).factorial = (n.factorial + 1) * (n + 1) := by
       rw [add_mul, one_mul, Nat.factorial_succ]
       rw [add_comm (n + 1)]
@@ -349,10 +348,10 @@ lemma mylemma_5
     False := by
   -- first prove that b = p cannot be
   by_cases h₄: b = p
-  . have h₅: p + p.factorial < p^p := by exact mylemma_51 p hp5
+  · have h₅: p + p.factorial < p^p := by exact mylemma_51 p hp5
     rw [h₄] at h₁
     linarith
-  . have hpb: p < b := by exact lt_of_le_of_ne' hbp h₄
+  · have hpb: p < b := by exact lt_of_le_of_ne' hbp h₄
     clear hbp h₄
     have h₂: (p + 1) ^ 2 ∣ b.factorial := by
       have g₁: p + 1 ≤ b := Nat.succ_le_iff.mpr hpb
@@ -396,11 +395,11 @@ lemma mylemma_5
     exact mylemma_52 p hp hp5 h₂
 
 lemma mylemma_6
-  (a b p: ℕ)
-  (hp: Nat.Prime p)
-  (h₂: p ∣ a)
-  (hb2p: 2 * p ≤ b) :
-  (p ^ 2 ∣ a ^ p - b.factorial) := by
+    (a b p : ℕ)
+    (hp : Nat.Prime p)
+    (h₂ : p ∣ a)
+    (hb2p : 2 * p ≤ b) :
+    (p ^ 2 ∣ a ^ p - b.factorial) := by
   have g₁: p^p ∣ a^p := by exact pow_dvd_pow_of_dvd h₂ p
   have g₂: 2 ≤ p := Nat.Prime.two_le hp
   have h₃: p^2 ∣ a^p := Nat.pow_dvd_of_le_of_pow_dvd g₂ g₁
@@ -427,9 +426,9 @@ problem imo2022_p5 (a b p : ℕ) (ha : 0 < a) (hb : 0 < b) (hp : p.Prime) :
   intro h₁
   simp only [solution_set, Set.mem_insert_iff, Set.mem_singleton_iff]
   by_cases hbp: b < p -- no solution
-  . exfalso
+  · exfalso
     by_cases hab: a ≤ b
-    . have h₂: a ∣ b.factorial := by exact Nat.dvd_factorial ha hab
+    · have h₂: a ∣ b.factorial := by exact Nat.dvd_factorial ha hab
       have g₃: a ∣ b.factorial + p := by
         rw [← h₁]
         refine dvd_pow_self a ?_
@@ -442,7 +441,7 @@ problem imo2022_p5 (a b p : ℕ) (ha : 0 < a) (hb : 0 < b) (hp : p.Prime) :
       rw [h₄] at h₁
       simp at h₁
       omega
-    . push_neg at hab
+    · push_neg at hab
       have h₂: (b+1)^p ≤ a^p := by
         refine (Nat.pow_le_pow_iff_left ?_).mpr hab
         exact Nat.Prime.ne_zero hp
@@ -452,22 +451,22 @@ problem imo2022_p5 (a b p : ℕ) (ha : 0 < a) (hb : 0 < b) (hp : p.Prime) :
         exact mylemma_1 b p hb hbp
       have g₄: p * 1 ≤ p * b := by
         refine mul_le_mul rfl.ge hb ?_ ?_
-        . norm_num
-        . exact Nat.zero_le p
+        · norm_num
+        · exact Nat.zero_le p
       have g₄: b.factorial ≤ b^b := by exact Nat.factorial_le_pow b
       have g₅: b^b ≤ b^p := by
         refine Nat.pow_le_pow_right hb ?_
         exact le_of_lt hbp
       omega
-  . push_neg at hbp
+  · push_neg at hbp
     have h₂: p ∣ a := by exact mylemma_3 a b p hp h₁ hbp
     by_cases hb2p: b < 2*p
-    . have h₃ : a = p := by exact mylemma_4 a b p ⟨ha, hb⟩ hp h₁ hbp h₂ hb2p
+    · have h₃ : a = p := by exact mylemma_4 a b p ⟨ha, hb⟩ hp h₁ hbp h₂ hb2p
       rw [h₃] at h₁ ⊢
       by_cases hp5: p < 5
-      . have h₄: 2 ≤ p := by exact Nat.Prime.two_le hp
+      · have h₄: 2 ≤ p := by exact Nat.Prime.two_le hp
         interval_cases p
-        . left
+        · left
           norm_num at h₁
           have h₄: b.factorial = 2 := by omega
           have g₅: (2:ℕ).factorial = 2 := by norm_num
@@ -476,7 +475,7 @@ problem imo2022_p5 (a b p : ℕ) (ha : 0 < a) (hb : 0 < b) (hp : p.Prime) :
             refine (Nat.factorial_inj ?_).mp h₄
             omega
           rw [h₅]
-        . right
+        · right
           norm_num at h₁
           have h₄: b.factorial = 24 := by omega
           have g₅: (4:ℕ).factorial = 24 := by exact rfl
@@ -485,12 +484,12 @@ problem imo2022_p5 (a b p : ℕ) (ha : 0 < a) (hb : 0 < b) (hp : p.Prime) :
             refine (Nat.factorial_inj ?_).mp h₄
             omega
           rw [h₅]
-        . exfalso
+        · exfalso
           contradiction
-      . push_neg at hp5
+      · push_neg at hp5
         exfalso -- lifting the exponent
         exact mylemma_5 b p hp hbp h₁ hp5
-    . push_neg at hb2p
+    · push_neg at hb2p
       exfalso
       have h₃: p^2 ∣ a^p - b.factorial := by exact mylemma_6 a b p hp h₂ hb2p
       have g₄: a^p - b.factorial = p := by omega

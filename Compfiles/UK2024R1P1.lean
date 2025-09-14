@@ -178,18 +178,18 @@ lemma f'_in_S'_k (hm : m ≤ 1) {g : Equiv.Perm (Fin (k + 1))} (hg : g ∈ S (k 
         rw [Fin.succ_pred]
   · simp [f', f'_toFun]
 
-  lemma f_f'_left_inv {g : Equiv.Perm (Fin (k + 2))} (hg : g ∈ S' k m) : f' m (f g hg) = g := by
-    apply Equiv.ext
-    intro x
-    simp [f', f'_toFun, f, f_toFun]
-    obtain hx | hx := em (x = 0) <;> simp [hx, hg.2]
-    obtain hx' | hx' := em (g x ≤ m)
-    · simp only [hx', reduceDIte, Fin.castSucc_castPred]
-      exact dif_pos (lt_iff_le_and_ne.2 ⟨hx', g_nonzero_ne_m hg x hx⟩)
-    · simp only [hx', reduceDIte, Fin.succ_pred]
-      apply dif_neg
-      push_neg at *
-      rwa [Fin.le_castSucc_pred_iff]
+lemma f_f'_left_inv {g : Equiv.Perm (Fin (k + 2))} (hg : g ∈ S' k m) : f' m (f g hg) = g := by
+  apply Equiv.ext
+  intro x
+  simp [f', f'_toFun, f, f_toFun]
+  obtain hx | hx := em (x = 0) <;> simp [hx, hg.2]
+  obtain hx' | hx' := em (g x ≤ m)
+  · simp only [hx', reduceDIte, Fin.castSucc_castPred]
+    exact dif_pos (lt_iff_le_and_ne.2 ⟨hx', g_nonzero_ne_m hg x hx⟩)
+  · simp only [hx', reduceDIte, Fin.succ_pred]
+    apply dif_neg
+    push_neg at *
+    rwa [Fin.le_castSucc_pred_iff]
 
 lemma f_f'_right_inv (hm : m ≤ 1) {g : Equiv.Perm (Fin (k + 1))} (hg : g ∈ S (k + 1)) :
     f (f' m g) (f'_in_S'_k hm hg) = g := by

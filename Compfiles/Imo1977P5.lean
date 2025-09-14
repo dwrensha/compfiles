@@ -16,7 +16,9 @@ problem_file {
 /-!
 # International Mathematical Olympiad 1977, Problem 5
 
-Let $a,b$ be two natural numbers. When we divide $a^2+b^2$ by $a+b$, we get the remainder $r$ and the quotient $q$. Determine all pairs $(a, b)$ for which $q^2 + r = 1977$.
+Let $a,b$ be two natural numbers. When we divide $a^2+b^2$ by $a+b$,
+we get the remainder $r$ and the quotient $q$. Determine all pairs $(a, b)$
+for which $q^2 + r = 1977$.
 
 -/
 
@@ -29,7 +31,6 @@ snip begin
 
 lemma aux_1
   (a b : ℕ)
-  (h₀ : Prime (1009:ℤ))
   (h₁ : ((↑b : ℤ) - 22) ^ 2 = 1009 - ((↑a : ℤ) - 22) ^ 2)
   (ha₀ : a ≤ 53) :
   (a, b) ∈ solution_set := by
@@ -42,7 +43,7 @@ lemma aux_1
     exact h₈₁
   have ha₁: ∀ k n:ℤ, n^2 < k ∧ k < (n + 1) ^ 2 → ¬ IsSquare k := by
     intro k n hk₀
-    cases' hk₀ with hk₀ hk₁
+    obtain ⟨hk₀, hk₁⟩ := hk₀
     by_contra hc₂
     apply (isSquare_iff_exists_sq k).mp at hc₂
     let ⟨d, hd₀⟩ := hc₂
@@ -50,10 +51,10 @@ lemma aux_1
     apply sq_lt_sq.mp at hk₀
     apply sq_lt_sq.mp at hk₁
     by_cases hn: 0 ≤ n
-    . rw [abs_of_nonneg hn] at hk₀
+    · rw [abs_of_nonneg hn] at hk₀
       nth_rw 2 [abs_of_nonneg (by linarith)] at hk₁
       linarith
-    . push_neg at hn
+    · push_neg at hn
       have hn₁: n + 1 ≤ 0 := by linarith
       rw [abs_of_neg hn] at hk₀
       rw [abs_of_nonpos hn₁] at hk₁
@@ -73,25 +74,25 @@ lemma aux_1
   rw [← sq_abs ((↑a : ℤ) - (22 : ℤ))] at h₁ hs h₈₀
   have ha₁₂: 0 ≤ abs ((↑a : ℤ) - (22 : ℤ)) := by exact abs_nonneg ((↑a : ℤ) - (22 : ℤ))
   by_cases ha₁₃: abs ((↑a : ℤ) - (22 : ℤ)) < 15
-  . exfalso
+  · exfalso
     interval_cases abs ((↑a : ℤ) - (22 : ℤ))
-    . have hh₀: IsSquare (1009:ℤ) := by
+    · have hh₀: IsSquare (1009:ℤ) := by
         rw [zero_pow (by norm_num), sub_zero] at h₁
         rw [← h₁]
         exact h₈₁
-      have hh₁: ¬ IsSquare (1009:ℤ) := by exact Prime.not_isSquare h₀
+      have hh₁: ¬ IsSquare (1009:ℤ) := Prime.not_isSquare (by norm_num)
       exact hh₁ hh₀
     all_goals try exact (ha₂ s (by omega)) h₈₂
     all_goals try exact (ha₃ s (by omega)) h₈₂
-    . exact (ha₄ s (by omega)) h₈₂
-    . exact (ha₄ s (by omega)) h₈₂
-    . exact (ha₅ s (by omega)) h₈₂
-    . exact (ha₅ s (by omega)) h₈₂
-  . push_neg at ha₁₃
+    · exact (ha₄ s (by omega)) h₈₂
+    · exact (ha₄ s (by omega)) h₈₂
+    · exact (ha₅ s (by omega)) h₈₂
+    · exact (ha₅ s (by omega)) h₈₂
+  · push_neg at ha₁₃
     by_cases ha₁₄: abs ((↑a : ℤ) - (22 : ℤ)) = 15
-    . apply (abs_eq (by norm_num)).mp at ha₁₄
-      cases' ha₁₄ with ha₁₄ ha₁₄
-      . right; left
+    · apply (abs_eq (by norm_num)).mp at ha₁₄
+      obtain ha₁₄ | ha₁₄ := ha₁₄
+      · right; left
         have hh₀: a = 37 := by bound
         rw [hh₀] at h₁
         simp at h₁
@@ -100,7 +101,7 @@ lemma aux_1
         apply pow_eq_pow_iff_cases.mp at h₁
         simp at h₁
         bound
-      . left
+      · left
         have hh₀: a = 7 := by bound
         rw [hh₀] at h₁
         simp at h₁
@@ -111,24 +112,24 @@ lemma aux_1
         rw [hh₀]
         rw [@Prod.mk_right_inj]
         omega
-    . by_cases ha₁₅: abs ((↑a : ℤ) - (22 : ℤ)) < 28
-      . exfalso
+    · by_cases ha₁₅: abs ((↑a : ℤ) - (22 : ℤ)) < 28
+      · exfalso
         interval_cases abs ((↑a : ℤ) - (22 : ℤ))
-        . exact (ha₅ s (by omega)) h₈₂
-        . exact (ha₆ s (by omega)) h₈₂
-        . exact (ha₇ s (by omega)) h₈₂
-        . exact (ha₇ s (by omega)) h₈₂
-        . exact (ha₈ s (by omega)) h₈₂
-        . exact (ha₉ s (by omega)) h₈₂
-        . exact (ha₁₀ s (by omega)) h₈₂
-        . exact (ha₁ s 22 (by omega)) h₈₂
-        . exact (ha₁ s 21 (by omega)) h₈₂
-        . exact (ha₁ s 20 (by omega)) h₈₂
-        . exact (ha₁ s 19 (by omega)) h₈₂
-        . exact (ha₁ s 18 (by omega)) h₈₂
-        . exact (ha₁ s 16 (by omega)) h₈₂
-      . by_cases ha₁₆: abs ((↑a : ℤ) - (22 : ℤ)) = 28
-        . right; right
+        · exact (ha₅ s (by omega)) h₈₂
+        · exact (ha₆ s (by omega)) h₈₂
+        · exact (ha₇ s (by omega)) h₈₂
+        · exact (ha₇ s (by omega)) h₈₂
+        · exact (ha₈ s (by omega)) h₈₂
+        · exact (ha₉ s (by omega)) h₈₂
+        · exact (ha₁₀ s (by omega)) h₈₂
+        · exact (ha₁ s 22 (by omega)) h₈₂
+        · exact (ha₁ s 21 (by omega)) h₈₂
+        · exact (ha₁ s 20 (by omega)) h₈₂
+        · exact (ha₁ s 19 (by omega)) h₈₂
+        · exact (ha₁ s 18 (by omega)) h₈₂
+        · exact (ha₁ s 16 (by omega)) h₈₂
+      · by_cases ha₁₆: abs ((↑a : ℤ) - (22 : ℤ)) = 28
+        · right; right
           have ha₁₇: a = 50 := by
             apply (abs_eq (by norm_num)).mp at ha₁₆
             omega
@@ -139,23 +140,23 @@ lemma aux_1
           rw [hh₀] at h₁
           apply pow_eq_pow_iff_cases.mp at h₁
           simp at h₁
-          cases' h₁ with h₁ h₁
-          . simp
+          obtain h₁ | h₁ := h₁
+          · simp
             right
             omega
-          . simp
+          · simp
             left
             omega
-        . exfalso
+        · exfalso
           interval_cases abs ((↑a : ℤ) - (22 : ℤ))
-          . exact (ha₁ s 14 (by omega)) h₈₂
-          . exact (ha₁ s 12 (by omega)) h₈₂
-          . exact (ha₁ s 10 (by omega)) h₈₂
-          . exact (ha₁ s 6 (by omega)) h₈₂
+          · exact (ha₁ s 14 (by omega)) h₈₂
+          · exact (ha₁ s 12 (by omega)) h₈₂
+          · exact (ha₁ s 10 (by omega)) h₈₂
+          · exact (ha₁ s 6 (by omega)) h₈₂
 
 lemma aux_2
   (a b q r : ℕ)
-  (hp: 0 < a ∧ 0 < b)
+  (hp : 0 < a ∧ 0 < b)
   (h₀ : r = (a ^ 2 + b ^ 2) % (a + b))
   (h₁ : q = (a ^ 2 + b ^ 2) / (a + b)) :
   q ^ 2 + r = 1977 → (a, b) ∈ solution_set := by
@@ -178,8 +179,8 @@ lemma aux_2
       have g₁₀: 45 = 44 + 1 := by linarith
       rw [h₅₂, g₁₀, add_mul, one_mul]
       refine add_lt_add_of_le_of_lt ?_ ?_
-      . exact Nat.mul_le_mul_right (a + b) h₅₃
-      . rw [h₀]
+      · exact Nat.mul_le_mul_right (a + b) h₅₃
+      · rw [h₀]
         exact Nat.mod_lt (a ^ 2 + b ^ 2) h₅₁
     have g₂: a + b < 90 := by
       apply lt_of_le_of_lt g₀ at g₁
@@ -202,29 +203,30 @@ lemma aux_2
   have h₆: ((a:ℤ) - 22) ^ 2 + ((b:ℤ) - 22) ^ 2 = 1009 := by
     ring_nf
     linarith
-  have h₇: Prime (1009:ℤ) := by bound
   apply eq_sub_of_add_eq' at h₆
   by_cases ha₀: 53 < a
-  . exfalso
+  · exfalso
     apply Nat.succ_le_iff.mpr at ha₀
     simp at ha₀
     have ha₁: 32 ^ 2 ≤ ((a:ℤ) - 22) ^ 2 := by
       refine pow_le_pow_left₀ (by omega) (by omega) 2
     have hb₁: 0 ≤ ((b:ℤ) - 22) ^ 2 := by positivity
     omega
-  . push_neg at ha₀
-    exact aux_1 a b h₇ h₆ ha₀
+  · push_neg at ha₀
+    exact aux_1 a b h₆ ha₀
 
 snip end
 
 problem imo1977_p5
-  (a b q r : ℕ)
-  (hp: 0 < a ∧ 0 < b)
-  (h₀ : r = (a ^ 2 + b ^ 2) % (a + b))
-  (h₁ : q = (a ^ 2 + b ^ 2) / (a + b)) :
-  q ^ 2 + r = 1977 ↔ (a, b) ∈ solution_set := by
+    (a b q r : ℕ)
+    (hp: 0 < a ∧ 0 < b)
+    (h₀ : r = (a ^ 2 + b ^ 2) % (a + b))
+    (h₁ : q = (a ^ 2 + b ^ 2) / (a + b)) :
+    q ^ 2 + r = 1977 ↔ (a, b) ∈ solution_set := by
   constructor
-  . exact fun (a_1 : q ^ 2 + r = 1977) ↦ aux_2 a b q r hp h₀ h₁ a_1
-  . simp
+  · exact fun (a_1 : q ^ 2 + r = 1977) ↦ aux_2 a b q r hp h₀ h₁ a_1
+  · simp
     intro h₂
     bound
+
+end Imo1977P5

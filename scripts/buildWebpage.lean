@@ -168,7 +168,7 @@ def stringifyPercent (p : Float) : String :=
     let s2 := Substring.mk s1 0 p1
     s2.toString ++ "%"
 
-def olean_path_to_github_url (path: System.FilePath) : IO String := do
+def olean_path_to_github_url (path : System.FilePath) : IO String := do
   let path_components := path.components.dropWhile (· = ".")
   let cwd ← IO.currentDir
   let relative_olean_path_components := path_components.drop (cwd.components.length)
@@ -277,7 +277,8 @@ def faq (h : IO.FS.Handle) : IO Unit := do
   h.putStr "IMO Grand Challenge</a>."
   h.putStr "</li></ul>"
   h.putStrLn "<h4>Why is Compfiles a separate project when <a class=\"external\" href=\"https://github.com/leanprover-community/mathlib4/tree/master/Archive/Imo\">Mathlib/Archive/Imo</a> already exists?</h4>"
-  h.putStr "<p>We want to minimize the burden that we place on Mathlib's maintainers and infrastructure. Mathlib is a large enough monolith already. "
+  h.putStr "<p>We want to minimize the burden that we place on Mathlib's maintainers and infrastructure. "
+  h.putStr "Mathlib is a large enough monolith already. "
   h.putStr "Since Mathlib and Compfiles are both open source under the "
   h.putStr "Apache-2.0 license, it should be straightforward to "
   h.putStr "move code back and forth between them, if desired.</p>"
@@ -520,7 +521,8 @@ unsafe def main (_args : List String) : IO Unit := do
     let h ← IO.FS.Handle.mk "_site/imo.html" IO.FS.Mode.write
     h.putStrLn <| ←htmlHeader "Compfiles: Catalog of Math Problems Formalized in Lean"
     h.putStrLn <| ← topbar "imo"
-    h.putStrLn <| s!"<p>Since 1959, the International Mathematical Olympiad has included  a total of <b>{totalImoProblemCount}</b> problems.</p>"
+    h.putStrLn <|
+      s!"<p>Since 1959, the International Mathematical Olympiad has included a total of <b>{totalImoProblemCount}</b> problems.</p>"
     let formalizedPercent := stringifyPercent <|
       (OfNat.ofNat imoFormalizedCount) / (OfNat.ofNat totalImoProblemCount)
     h.putStrLn <| s!"<p><b>{imoFormalizedCount}</b> problems have been formalized ({formalizedPercent}).</p>"
@@ -553,13 +555,17 @@ unsafe def main (_args : List String) : IO Unit := do
     let h ← IO.FS.Handle.mk "_site/usamo.html" IO.FS.Mode.write
     h.putStrLn <| ←htmlHeader "Compfiles: Catalog of Math Problems Formalized in Lean"
     h.putStrLn <| ← topbar "usamo"
-    h.putStrLn <| s!"<p>Since 1972, the USA Mathematical Olympiad has included a total of <b>{totalUsamoProblemCount}</b> problems.</p>"
+    h.putStrLn <|
+      "<p>Since 1972, the USA Mathematical Olympiad has included a total of " ++
+      s!"<b>{totalUsamoProblemCount}</b> problems.</p>"
     let formalizedPercent := stringifyPercent <|
       (OfNat.ofNat usamoFormalizedCount) / (OfNat.ofNat totalUsamoProblemCount)
-    h.putStrLn <| s!"<p><b>{usamoFormalizedCount}</b> problems have been formalized ({formalizedPercent}).</p>"
+    h.putStrLn <|
+      s!"<p><b>{usamoFormalizedCount}</b> problems have been formalized ({formalizedPercent}).</p>"
     let solvedPercent := stringifyPercent <|
       (OfNat.ofNat usamoSolvedCount) / (OfNat.ofNat totalUsamoProblemCount)
-    h.putStrLn <| s!"<p><b>{usamoSolvedCount}</b> problems have complete formalized solutions ({solvedPercent}).</p>"
+    h.putStrLn <|
+      s!"<p><b>{usamoSolvedCount}</b> problems have complete formalized solutions ({solvedPercent}).</p>"
     h.putStr "<table class=\"full-problem-grid\">"
     for ⟨year, count⟩ in usamoProblemCounts do
       h.putStr s!"<tr><td class=\"year\">{year}</td>"

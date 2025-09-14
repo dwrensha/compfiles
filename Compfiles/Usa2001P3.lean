@@ -35,7 +35,7 @@ theorem feq (a b c : ℝ) : f a b c = a^2 + b^2 + c^2 + a * b * c := rfl
 theorem geq (a b c : ℝ) : g a b c = a * b + b * c + c * a - a * b * c := rfl
 
 lemma usa2001_p3_lemma (a b c : ℝ) (ha : 0 ≤ a)
-    (h : a^2 + b^2 + c^2 + a * b * c = 4)
+    (h : a ^ 2 + b ^ 2 + c ^ 2 + a * b * c = 4)
     (hbc : (b - 1) * (c - 1) ≥ 0) :
     a * b + b * c + c * a - a * b * c ≤ 2 := by
   have eq1 := calc

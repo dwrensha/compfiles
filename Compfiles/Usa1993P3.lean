@@ -35,7 +35,9 @@ theorem lemma1 (c1 : ℝ) :
   let f := fun x : (Set.Icc (0:ℝ) 1) ↦ if (x:ℝ) ≤ 1 / 2 then 0 else 1;
   (∀ (a : ℝ) (ha : 0 ≤ a ∧ a ≤ 1), f ⟨a, ha⟩ ≤ c1 * a) →
     (∀ (x : ↑(Set.Icc 0 1)), 0 ≤ f x) →
-      f 1 = 1 → (∀ (x y : ↑(Set.Icc 0 1)) (h : (x:ℝ) + (y:ℝ) ∈ Set.Icc 0 1), f x + f y ≤ f ⟨↑x + ↑y, h⟩) → 2 ≤ c1 := by
+      f 1 = 1 →
+        (∀ (x y : ↑(Set.Icc 0 1)) (h : (x:ℝ) + (y:ℝ) ∈ Set.Icc 0 1), f x + f y ≤ f ⟨↑x + ↑y, h⟩) →
+           2 ≤ c1 := by
   intro f h1 h2 h3 h4
   by_contra h
   push_neg at h
@@ -67,7 +69,7 @@ theorem lemma1 (c1 : ℝ) :
   order
 
 private lemma dyadicBracket
-    (x : ℝ) (hx0 : 0 < x) (hxhalf : x ≤ (1 : ℝ)/2) :
+    (x : ℝ) (hx0 : 0 < x) (hxhalf : x ≤ (1 : ℝ) / 2) :
     ∃ m : ℕ, (1 : ℝ) / (2 : ℝ)^(m+1) < x ∧ x ≤ 1 / (2 : ℝ)^m := by
   obtain ⟨m, hm1, hm2⟩ :=
     exists_nat_pow_near_of_lt_one hx0 (by grind) (show 0 < (1:ℝ)/2 by norm_num) (by norm_num)
@@ -88,10 +90,10 @@ theorem lemma2 (f : ↑(Set.Icc 0 1) → ℝ) (x : ℝ) (hx : 0 ≤ x ∧ x ≤ 
     (h1 : ∀ (x : ↑(Set.Icc 0 1)), 0 ≤ f x) (h2 : f 1 = 1)
     (h3 : ∀ (x y : ↑(Set.Icc 0 1)) (h : x.val + y.val ∈ Set.Icc 0 1),
                f x + f y ≤ f ⟨x.val + y.val, h⟩)
-    (h4 : ∀ (x : ↑(Set.Icc (0:ℝ) 1)), 1 - x.val ∈ Set.Icc 0 1)
-    (h5 : ∀ (x : ↑(Set.Icc (0:ℝ) 1)), f x + f ⟨1 - x.val, h4 x⟩ ≤ 1)
-    (h6 : ∀ (x : ↑(Set.Icc (0:ℝ) 1)), f x ≤ 1)
-    (h8 : ∀ n : ℕ, ∀ x : Set.Icc (0:ℝ) (1/2^n), 2^n * (x : ℝ) ∈ Set.Icc (0:ℝ) 1)
+    (h4 : ∀ (x : ↑(Set.Icc (0 : ℝ) 1)), 1 - x.val ∈ Set.Icc 0 1)
+    (h5 : ∀ (x : ↑(Set.Icc (0 : ℝ) 1)), f x + f ⟨1 - x.val, h4 x⟩ ≤ 1)
+    (h6 : ∀ (x : ↑(Set.Icc (0 : ℝ) 1)), f x ≤ 1)
+    (h8 : ∀ n : ℕ, ∀ x : Set.Icc (0 : ℝ) (1/2^n), 2^n * (x : ℝ) ∈ Set.Icc (0:ℝ) 1)
     : f ⟨x, hx⟩ ≤ 2 * x := by
   classical
   -- f(0) = 0
