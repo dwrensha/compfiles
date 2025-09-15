@@ -19,8 +19,11 @@ Prove that we can find an infinite set of positive integers of the form 2^n - 3
 
 namespace Imo1971P3
 
-problem imo1971_p3 : Set.Infinite
-  {(n, m) : ℕ × ℕ | Nat.Coprime (2 ^ n - 3) (2 ^ m - 3)} := by sorry
+problem imo1971_p3 :
+   ∃ s : Set ℕ+,
+     s.Infinite ∧
+     s.Pairwise fun m n ↦ Nat.Coprime (2 ^ n.val - 3) (2 ^ m.val - 3) := by
+  sorry
 
 
 end Imo1971P3
