@@ -132,11 +132,7 @@ problem imo2002_p5 (f : ℝ → ℝ) :
         exact hy x
       · right; left; ext x
         simp only [hy x, one_div]
-    have h5 : y * (2 * y - 1) = 0 := by linarith only [h3]
-    rw [mul_eq_zero] at h5
-    cases' h5 with h6 h6
-    · left; exact h6
-    · right; linarith
+    grind
   right; right
   push_neg at h2
   have h3 : f 0 = 0 := by
@@ -210,10 +206,8 @@ problem imo2002_p5 (f : ℝ → ℝ) :
     exact (mul_eq_right₀ h10).mp h9
   have h9 : ∀ n : ℕ, f n = n^2 := fun n ↦ by
     induction' n using Nat.strongRecOn with n ih
-    cases' n with n
-    · simp [h3]
-    cases' n with n
-    · simp [h8]
+    cases n with | zero => simp [h3] | succ n =>
+    cases n with | zero => simp [h8] | succ n =>
     have h10 := hf n.succ 1 1 1
     have h12 := ih n.succ (Nat.lt.base _)
     have h11 := ih n (by omega)

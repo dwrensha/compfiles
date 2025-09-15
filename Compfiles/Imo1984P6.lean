@@ -27,16 +27,16 @@ namespace Imo1984P6
 snip begin
 
 lemma mylemma_sub_sq
-  (a b : ℕ)
-  (h₀: b < a) :
-  ((a - b) ^ 2 = a ^ 2 + b ^ 2 - 2 * a * b) := by
+    (a b : ℕ)
+    (h₀: b < a) :
+    ((a - b) ^ 2 = a ^ 2 + b ^ 2 - 2 * a * b) := by
   have h₁: b^2 ≤ a * b := by
     rw [pow_two]
-    refine Nat.mul_le_mul_right ?_ ?_
+    refine Nat.mul_le_mul_right _ ?_
     exact Nat.le_of_lt h₀
   have h₂: a * b ≤ a ^ 2 := by
     rw [pow_two]
-    refine Nat.mul_le_mul_left ?_ ?_
+    refine Nat.mul_le_mul_left _ ?_
     exact Nat.le_of_lt h₀
   repeat rw [pow_two]
   repeat rw [Nat.mul_sub_left_distrib]
@@ -47,13 +47,13 @@ lemma mylemma_sub_sq
   omega
 
 lemma mylemma_k_le_m_alt
-  (a b c d k m : ℕ)
-  (h₂ : a < b ∧ b < c ∧ c < d)
-  (h₃ : a * d = b * c)
-  (h₄ : a + d = 2 ^ k)
-  (h₅ : b + c = 2 ^ m)
-  (hkm : k ≤ m) :
-  False := by
+    (a b c d k m : ℕ)
+    (h₂ : a < b ∧ b < c ∧ c < d)
+    (h₃ : a * d = b * c)
+    (h₄ : a + d = 2 ^ k)
+    (h₅ : b + c = 2 ^ m)
+    (hkm : k ≤ m) :
+    False := by
   have h₆: (a + d) ^ 2 ≤ (b + c) ^ 2 := by
     refine Nat.pow_le_pow_left ?_ 2
     rw [h₄,h₅]
@@ -97,9 +97,7 @@ lemma mylemma_h8
   (b + a = 2 ^ (m - 1)) := by
   have h₇₁: ∃ y z, y ∣ b - a ∧ z ∣ b + a ∧ y * z = 2 ^ m := by
     exact Nat.dvd_mul.mp h₇
-  let ⟨p, q, hpd⟩ := h₇₁
-  cases' hpd with hpd hqd
-  cases' hqd with hqd hpq
+  let ⟨p, q, hpd, hqd, hpq⟩ := h₇₁
   have hm1: 1 ≤ m := by
     by_contra! hc
     interval_cases m
@@ -168,8 +166,7 @@ lemma mylemma_h8
     have hi₀: ∃ i ≤ m, p = 2 ^ i := by
       have g₀: p ∣ 2 ^ m := Dvd.intro q hpq
       exact (Nat.dvd_prime_pow h2prime).mp g₀
-    let ⟨i, hp⟩ := hi₀
-    cases' hp with him hp
+    let ⟨i, him, hp⟩ := hi₀
     let j:ℕ := m - i
     have hj₀: j = m - i := by linarith
     have hj₁: i + j = m := by
@@ -353,7 +350,7 @@ problem imo_1984_p6
     · rw [Nat.pow_div hk2m (by norm_num)] at h₉
       rw [Nat.sub_right_comm (2*m) 2 k] at h₉
       by_contra! hc
-      cases' (lt_or_gt_of_ne hc) with hc₀ hc₁
+      obtain hc₀ | hc₁ := lt_or_gt_of_ne hc
       · interval_cases a
         omega
       · have hc₂: ¬ Odd a := by

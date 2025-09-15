@@ -183,8 +183,7 @@ lemma lemma5' {a x : ℕ} (hx : 0 < x)
     have h18 := Nat.maxPowDiv.pow_dvd 2 ee
     generalize hee' : Nat.maxPowDiv 2 ee = ee'
     rw [hee'] at h18 HH
-    cases' ee' with ee'
-    · omega
+    cases ee' with | zero => omega | succ ee' =>
     rw [pow_succ] at h18
     have : 2 ∣ ee := Nat.dvd_of_pow_dvd HH h18
     contradiction

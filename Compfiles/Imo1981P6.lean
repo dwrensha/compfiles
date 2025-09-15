@@ -46,9 +46,10 @@ problem imo1981_p6 (f : ℕ → ℕ → ℕ)
   have h4 : ∀ y, f 1 y = y + 2 := by
     intro y
     induction' y using Nat.strongRecOn with y ih
-    cases' y with y
-    · simp [h1, h2]
-    · rw [h3 0 y, ih y (Nat.lt.base y)]
+    cases y with
+    | zero => simp [h1, h2]
+    | succ y =>
+      rw [h3 0 y, ih y (Nat.lt.base y)]
       rw [h1 (y + 2)]
   have h20 : ∀ y, f 2 y = 2 * y + 3 := by
     intro y;

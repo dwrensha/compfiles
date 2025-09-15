@@ -43,7 +43,7 @@ problem imo1982_p1 (f : ℕ → ℕ)
     aesop
   have h7 : ∀ m n, 0 < m → 0 < n → f m + f n ≤ f (m + n) := by
     intro m n hm hn
-    cases' hf m n hm hn with h8 h8
+    obtain h8 | h8 := hf m n hm hn
     · exact Nat.le_of_eq h8.symm
     · exact Nat.le.intro h8.symm
   have h6 : ∀ k, 0 < k → f (3 * k) < f (3 * k + 3) := fun k hk ↦ by
@@ -69,15 +69,11 @@ problem imo1982_p1 (f : ℕ → ℕ)
      have h15 : k + (3333 - k) = 3333 := Nat.add_sub_of_le hk1
      rw [h15, h9999] at h14
      omega
-  have h20 : ∀ k, 0 < k → f k ≤ f (k + 1) := by
-    intro k hk
-    cases' hf k 1 hk one_pos with h21 h21 <;> omega
-  have h30 : ∀ k l, 0 < k → l ≤ f k → l + l ≤ f (k + k) := by
-    intro k l hk hl
-    cases' hf k k hk hk with h21 h21 <;> omega
+  have h20 : ∀ k, 0 < k → f k ≤ f (k + 1) := by grind
+  have h30 : ∀ k l, 0 < k → l ≤ f k → l + l ≤ f (k + k) := by grind
   have h10 : ∀ k, 0 < k → 12 * k + 9 ≤ 9999 → f (3 * k + 2) = k := by
     intro k hk hk1
-    cases' hf (3*k) 2 (Nat.succ_mul_pos 2 hk) two_pos with h11 h11
+    obtain h11 | h11 :=  hf (3*k) 2 (Nat.succ_mul_pos 2 hk) two_pos
     · rw [h11, h2, add_zero]
       exact h8 k hk (by omega)
     · rw [h2, add_zero, h8 k hk (by omega)] at h11

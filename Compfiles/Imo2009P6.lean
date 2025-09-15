@@ -88,9 +88,7 @@ theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
   let x := ∑ i ∈ Finset.filter (·.val < n-1) Finset.univ, a i
   -- four cases: split on whether x ∈ M and whether
   -- there is any y > x such that y ∈ M.
-  have h1 := Classical.em (x ∈ M)
-  have h2 := Classical.em (∃ y, x < y ∧ y ∈ M)
-  cases' h1 with h1 h1 <;> cases' h2 with h2 h2
+  by_cases h1 : x ∈ M <;> by_cases h2 : ∃ y, x < y ∧ y ∈ M
   · sorry
   · sorry
   · -- x has no mine, and there is a mine past x.

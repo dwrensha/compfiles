@@ -41,7 +41,7 @@ lemma f_injective
   have h2 : ∀ n : ℕ+, f^[n] p = f^[n] q := by
     intro n
     obtain ⟨n, hn⟩ := n
-    cases' n with n <;> aesop
+    cases n <;> aesop
 
   have h3 : f^[f p] p = f^[f q] q := by rw[hpq]; exact h2 (f q)
 

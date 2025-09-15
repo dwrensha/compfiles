@@ -40,7 +40,7 @@ problem imo2019_p1 (f : ℤ → ℤ) :
 
   constructor; swap
   · intro hf a b
-    cases' hf with hf1 hf2
+    obtain hf1 | hf2 := hf
     · simp [hf1]
     · obtain ⟨c, hc⟩ := hf2
       simp [hc]; ring
@@ -56,12 +56,11 @@ problem imo2019_p1 (f : ℤ → ℤ) :
     have h0x := hf 0 x
     simp at hx hx0 h0x
     omega
-  have : ∃ d, ∀ z, g z = d * z := additive_to_int_linear g this
-  cases' this with d h
+  have ⟨d, h⟩ : ∃ d, ∀ z, g z = d * z := additive_to_int_linear g this
   have hz : ∀ z, f z = d * z + f 0 := by
     intro z
     rw [← h z, hg, sub_add_cancel]
-  cases' em (d = 0) with hd hd
+  by_cases hd : d = 0
   · left
     have : f 0 = 0 := by
       have := hf 0 0
@@ -74,7 +73,7 @@ problem imo2019_p1 (f : ℤ → ℤ) :
     rw [hd, this, zero_mul, add_zero]
   · right
     use f 0
-    cases' em (f 0 = 0) with hf₀ hf₀
+    by_cases hf₀ : f 0 = 0
     · have := hf 1 0
       simp at this
       rw [hz (f 1), hz 2, hz 1, hf₀] at this

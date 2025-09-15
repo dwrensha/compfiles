@@ -41,7 +41,6 @@ determine ab_that_make_xyz_positive_distinct : Set (ℝ × ℝ) :=
   { q | let ⟨a,b⟩ := q
         0 < a ∧ b^2 < a^2 ∧ a^2 < 3 * b ^ 2 }
 
-
 snip begin
 
 lemma aux_1
@@ -70,11 +69,11 @@ lemma aux_1
     linarith
   have h₁₀: b ^ 2 < a ^ 2 := by
     apply and_assoc.mpr at h₀
-    cases' h₀ with h₀ hz
+    obtain ⟨-, hz⟩ := h₀
     rw [h₉] at hz
     apply div_pos_iff.mp at hz
     refine lt_of_sub_pos ?_
-    cases' hz with hzc hzf
+    obtain hzc | hzf := hz
     · exact hzc.1
     · exfalso
       linarith
@@ -150,15 +149,13 @@ lemma aux_1
 
 snip end
 
-
 problem imo1961_p1a (a b x y z : ℝ) :
   ⟨x,y,z⟩ ∈ xyz_of_ab a b ↔ IsSolution a b x y z := by
   simp
   constructor
   · grind
   · intro h₀
-    cases' h₀ with h₀ h₁
-    cases' h₁ with h₁ h₂
+    obtain ⟨h₀, h₁, h₂⟩ := h₀
     have h₃: (x + y) ^ 2 - z ^ 2 = b ^ 2 := by
       rw [add_sq, mul_assoc 2, h₂, ← h₁]
       group
@@ -188,13 +185,12 @@ problem imo1961_p1a (a b x y z : ℝ) :
       grind
 
 
-problem imo1961_p1b (a b x y z : ℝ) (h₀: IsSolution a b x y z) :
+problem imo1961_p1b (a b x y z : ℝ) (h₀ : IsSolution a b x y z) :
     ⟨a,b⟩ ∈ ab_that_make_xyz_positive_distinct ↔
       (0 < x ∧ 0 < y ∧ 0 < z ∧ [x,y,z].Nodup) := by
+  obtain ⟨h₀, h₁, h₂⟩ := h₀
   constructor
   · simp
-    cases' h₀ with h₀ h₁
-    cases' h₁ with h₁ h₂
     intro h₃ h₄ h₅
     rw [← h₀, ← h₁, add_sq, add_sq] at h₄ h₅
     have h₆: 0 < x * y + (x + y) * z := by linarith
@@ -252,9 +248,7 @@ problem imo1961_p1b (a b x y z : ℝ) (h₀: IsSolution a b x y z) :
         bound
       rw [hh₀, hh₁] at h₇
       linarith
-  · cases' h₀ with h₀ h₁
-    cases' h₁ with h₁ h₂
-    intro h₃
+  · intro h₃
     simp
     refine aux_1 x y z a b ?_ h₃.2.2.2 h₀ h₁ h₂
     bound

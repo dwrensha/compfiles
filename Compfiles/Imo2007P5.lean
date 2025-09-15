@@ -49,7 +49,7 @@ lemma bad_exists_descent {n : ℤ} (hn : 1 < n) {a : ℕ}
       symm; rw [Int.modEq_iff_dvd, sub_neg_eq_add, sub_add_cancel]; exact ⟨m, rfl⟩
     replace h1 := ((X a).pow 2).symm.trans (h1.trans ((X b).mul_right _))
     rw [Int.modEq_iff_dvd, sq, ← mul_sub, sub_neg_eq_add, neg_one_mul, dvd_neg] at h1
-    cases' h1 with c h1
+    obtain ⟨c, h1⟩ := h1
     exact ⟨c, eq_sub_of_add_eq h1⟩
 
   ---- It suffices to show that `0 < c` and `c < (a : ℤ)`

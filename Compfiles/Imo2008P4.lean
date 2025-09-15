@@ -102,7 +102,7 @@ problem imo2008_p4 (f : PosReal → PosReal) :
     have h4 := h1 b; rw [or_iff_left h3] at h4
     replace h := h a b; rw [h4] at h
     replace h4 := h1 (a * b)
-    cases' h4 with h4 h4
+    obtain h4 | h4 := h4
     · rw [h4, mul_left_inj, add_left_inj, show 2 + 2 = 4 by rfl] at h
       rw [positive_pow_eq_pow four_pos] at h
       exact h2 h

@@ -43,7 +43,7 @@ theorem imo1986_p1' (d : ℤ):
   rintro ⟨⟨p, hp⟩, ⟨q, hq⟩, ⟨r, hr⟩⟩
   rw [← pow_two] at hp hq hr
   have hpodd : Odd p := (Int.odd_pow' two_ne_zero).mp (by use d - 1; rw [← hp]; ring)
-  cases' hpodd with k hk
+  obtain ⟨k, hk⟩ := hpodd
   have hp := hp.symm
   have hdp : d  = 2*(k + k^2) + 1 := by
     rw [hk, ←(add_left_inj 1), sub_add_cancel _] at hp
@@ -68,8 +68,8 @@ theorem imo1986_p1' (d : ℤ):
       ring_nf
     rw [← hr, heq]
     exact Even.add (Even.mul_left hd_sub_one 13) (by use 6; rfl)
-  cases' hqeven with n hqeven'
-  cases' hreven with m hreven'
+  obtain ⟨n, hqeven'⟩ := hqeven
+  obtain ⟨m, hreven'⟩ := hreven
   have h8d : d * 8 = 4*m^2 - 4*n^2 := by
     calc d * 8 = (d * 13 - 1) - (5 * d - 1) := by ring
           _ = r^2 - q^2 := by rw [hr, hq]
@@ -81,16 +81,13 @@ theorem imo1986_p1' (d : ℤ):
     refine (mul_right_inj' ?_).mp h4d
     decide
   have h2d : Even ((m + n) * (m - n)) := by use d; rw [← two_mul, hnm']
-  have hnm_parity : (Even m ↔ Even n) := by
-    cases' Int.even_mul.mp h2d with hmneven hmneven
-    · exact Int.even_add.mp hmneven
-    · exact Int.even_sub.mp hmneven
+  have hnm_parity : (Even m ↔ Even n) := by grind
   have hnm_sub : Even (m - n) := Int.even_sub.mpr hnm_parity
   have hnm_add : Even (m + n) := Int.even_add.mpr hnm_parity
 
   have hdeven : Even d := by
-    cases' hnm_sub with v hnm_sub
-    cases' hnm_add with w hnm_add
+    obtain ⟨v, hnm_sub⟩ := hnm_sub
+    obtain ⟨w, hnm_add⟩ := hnm_add
     simp only [hnm_sub, hnm_add, ← two_mul] at hnm'
     rw [mul_assoc,  mul_right_inj' two_ne_zero, ← mul_assoc, mul_comm w, mul_assoc, two_mul] at hnm'
     exact ⟨w * v, hnm'⟩
@@ -105,13 +102,10 @@ problem imo1986_p1 (d : ℤ) (_hdpos : 1 ≤ d) (h2 : d ≠ 2) (h5 : d ≠ 5) (h
   exists_and_right, Subtype.mk.injEq, exists_prop, exists_eq_or_imp, exists_eq_left, not_or,
   not_exists, not_and, not_forall, not_not, and_imp, forall_eq_or_imp, IsEmpty.forall_iff,
   forall_eq, true_and, not_true, and_true] at h
-  have := h.1.2.2 h2.symm
-  cases' this with p hp
-  have := h.2.1.2.2 h5.symm
-  cases' this with q hq
-  have := h.2.2.2.2.2 h13
-  cases' this with r hr
-  have : (IsSquare (2 * d - 1)) ∧ (IsSquare (5 * d - 1)) ∧ (IsSquare (d * 13 - 1)) := by
+  have ⟨p, hp⟩ := h.1.2.2 h2.symm
+  have ⟨q, hq⟩ := h.2.1.2.2 h5.symm
+  have ⟨r, hr⟩ := h.2.2.2.2.2 h13
+  have : IsSquare (2 * d - 1) ∧ IsSquare (5 * d - 1) ∧ IsSquare (d * 13 - 1) := by
     refine ⟨?_, ?_, ?_⟩
     · use p; rw [← pow_two]; exact hp.symm
     · use q; rw [← pow_two]; exact hq.symm

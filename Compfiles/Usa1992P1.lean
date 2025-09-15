@@ -46,17 +46,17 @@ lemma lemma2 {m y: ℕ} (hy : y < 10^m) : (Nat.digits 10 y).length < m + 1 := by
 
 lemma digits_sum_mul_pow {m x : ℕ} :
     (Nat.digits 10 (x * 10 ^ m)).sum = (Nat.digits 10 x).sum := by
-  cases' x with x
-  · simp
-  rw [mul_comm, Nat.digits_base_pow_mul (by omega) (by omega)]
-  simp
+  cases x with
+  | zero => simp
+  | succ x =>
+    rw [mul_comm, Nat.digits_base_pow_mul (by omega) (by omega)]
+    simp
 
 lemma digits_sum (m x y : ℕ)
     (h1 : y < 10^m) :
     (Nat.digits 10 (x * 10^m + y)).sum =
     (Nat.digits 10 (x * 10^m)).sum + (Nat.digits 10 y).sum := by
-  cases' x with x
-  · simp
+  cases x with | zero => simp | succ x =>
   -- choose k such that (digits 10 y).length + k = m
   have h3 : (Nat.digits 10 y).length ≤ m := by
     have h4 := lemma2 h1
@@ -159,7 +159,7 @@ theorem digitsPadded_lt_base {b m n d : ℕ} (hb : 1 < b)
     d < b := by
   unfold digitsPadded padList at hd
   simp only [List.mem_append, List.mem_replicate, ne_eq] at hd
-  cases' hd with hd hd
+  obtain hd | hd := hd
   · exact Nat.digits_lt_base hb hd
   · omega
 
@@ -187,13 +187,15 @@ theorem exists_prefix (L : List ℕ) :
       subst hnil
       simp only [List.nil_append] at hm
       subst hm
-      cases' hd with hd
-      · use []
+      cases hd with
+      | zero =>
+        use []
         constructor
         · simp
         · use m + 1
           rw [List.replicate_succ, List.nil_append]
-      · use [hd + 1]
+      | succ hd =>
+        use [hd + 1]
         constructor
         · simp
         · use m

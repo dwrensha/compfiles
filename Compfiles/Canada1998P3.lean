@@ -26,8 +26,8 @@ problem canada1998_p3 (n : ℕ) (hn : 2 ≤ n) :
   -- Follows the proof in _Mathematical Olympiads 1998-1999_
   -- by Titu Andreescu and Zuming Feng
 
-  cases' n with n; · norm_num at hn
-  cases' n with n; · norm_num at hn
+  cases n with | zero => norm_num at hn | succ n =>
+  cases n with | zero => norm_num at hn | succ n =>
 
   revert hn
   intro h2; clear h2

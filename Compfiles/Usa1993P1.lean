@@ -41,8 +41,7 @@ problem usa1993_p1 (n : ℕ) (hn : 2 ≤ n) (a b : ℝ) (ha : 0 < a) (hb : 0 < b
   have h5 : 0 < (a - 1)^2 := by positivity
   have h6 : 3 * a < a^2 + a + 1 := by linarith only [h5]
   have h7 : b ^ (2 * n) - b < a^(2 * n) - a := by linarith only [h1, h3, h6]
-  cases' n with n
-  · norm_num at hn
+  cases n with | zero => norm_num at hn | succ n =>
   have h11 : 0 ≤ a := LT.lt.le ha
   have h20 : 0 ≤ b := LT.lt.le hb
 

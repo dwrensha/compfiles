@@ -97,9 +97,10 @@ theorem final_solution_nat (f : ℕ → ℕ) :
 
     intro n
     induction' n using Nat.strong_induction_on with n n_ih
-    cases' n with n
-    · simp[h1]
-    · replace h := h (n * f 1)
+    cases n with
+    | zero => simp[h1]
+    | succ n =>
+      replace h := h (n * f 1)
       rw [n_ih n n.lt_succ_self, ← add_one_mul, le_iff_eq_or_lt, Nat.lt_succ_iff] at h
       revert h; refine (or_iff_left_of_imp (λ h ↦ ?_)).mp
       replace n_ih := congr_arg f (n_ih _ (lt_of_le_of_lt h n.lt_succ_self))
@@ -111,8 +112,9 @@ theorem final_solution_nat (f : ℕ → ℕ) :
   ---- Finish
   funext x
   induction' x using Nat.strong_induction_on with x x_ih
-  cases' x with x
-  · exact h1
+  cases x with
+  | zero => exact h1
+  | succ x =>
   replace h := h x
   rw [h2, x_ih x x.lt_succ_self, le_iff_eq_or_lt, Nat.lt_succ_iff] at h
   revert h; refine (or_iff_left_of_imp (λ h ↦ ?_)).mp

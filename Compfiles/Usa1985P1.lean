@@ -40,9 +40,10 @@ lemma nicomachus (n : ℕ) :
     have h5 : 2 * ∑ x ∈ Finset.range n, x =
                (∑ x ∈ Finset.range n, x) * 2 := mul_comm _ _
     rw [h5, Finset.sum_range_id_mul_two]
-    cases' n with n
-    · simp
-    · simp only [Nat.succ_sub_succ_eq_sub, tsub_zero]
+    cases n with
+    | zero => simp
+    | succ n =>
+      simp only [Nat.succ_sub_succ_eq_sub, tsub_zero]
       ring
   omega
 

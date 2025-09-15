@@ -96,8 +96,8 @@ problem imo2003_p6 (p : ℕ) (hp : p.Prime) :
       exact Nat.mod_eq_of_lt this
     have : ∀ m ≥ 2, (∑ i ∈ range m, p^i) % (p ^ 2) = p + 1 := by
       intro m hm
-      cases' m with m; norm_num at hm
-      cases' m with m; norm_num at hm
+      cases m with | zero => norm_num at hm | succ m =>
+      cases m with | zero => norm_num at hm | succ m =>
       induction' m with m ih
       · simpa
       simp at *

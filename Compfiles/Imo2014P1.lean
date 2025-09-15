@@ -51,7 +51,7 @@ lemma lemma1 (s : ℕ → ℤ) (hs : ∀ i, s i < s (i + 1)) (z : ℤ) (hs0 : s 
   dsimp [S]
   refine ⟨⟨?_, ?_⟩, ?_⟩
   · have h4 := Nat.find_min h3 (m := (Nat.find h3 - 1))
-    cases' Nat.eq_zero_or_pos (Nat.find h3) with h5 h5
+    obtain h5 | h5 := Nat.eq_zero_or_pos (Nat.find h3)
     · rwa [h5]
     · have h6 : Nat.find h3 - 1 < Nat.find h3 :=
         Nat.sub_one_lt_of_le h5 Nat.le.refl

@@ -168,7 +168,7 @@ lemma mylemma_2y2_lt_x
     have h₆: 0 < (↑x:ℝ) - 2 * (↑y:ℝ) ^ 2 := by
       by_contra hc
       push_neg at hc
-      cases' lt_or_eq_of_le hc with hlt heq
+      obtain hlt | heq := lt_or_eq_of_le hc
       · have gy: 1 < (↑y:ℝ) := by
           norm_cast
         have glt: (↑x:ℝ) - 2*(↑y:ℝ)^2 < (↑0:ℝ) := by

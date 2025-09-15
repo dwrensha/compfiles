@@ -43,7 +43,7 @@ problem usa2015_p1 (x y : ℤ) :
     x^2 + x * y + y^2 = ((x + y) / (3 : ℚ) + 1)^3 := by
   unfold SolutionSet
   apply iff_comm (c := ∃ t, x + y = 3 * t)
-  · simp; intro h; cases' h with h h;
+  · simp; intro h; obtain h | h := h
     all_goals obtain ⟨h, hx, hy⟩ := h; rw [hx, hy]; ring_nf; use (h + h ^ 2); ring_nf
   · intro h; apply_fun (· * 3 ^ 3) at h; rw [←mul_pow, (add_mul _ 1)] at h; simp at h
     norm_num at h; norm_cast at h
@@ -73,8 +73,7 @@ problem usa2015_p1 (x y : ℤ) :
   constructor
   · intro h
     simp at h
-    cases' h with h h
-    all_goals obtain ⟨n, h1, h2⟩ := h
+    obtain ⟨n, h1, h2⟩ | ⟨n, h1, h2⟩ := h
     all_goals have ht : t = n ^ 2 + n := by rw [ht2, h1, h2]; ring_nf; rw [←add_mul]; simp
     all_goals rw [ht]; (first | rw [h1] | rw [h2]); ring_nf
   · intro ht3
@@ -101,7 +100,7 @@ problem usa2015_p1 (x y : ℤ) :
       clear ht3
       rw [sq_eq_sq_iff_eq_or_eq_neg] at ht7
       simp only [Set.mem_union, Set.mem_setOf_eq]
-      cases' ht7 with h h
+      obtain h | h := ht7
       · left; use n; refine ⟨?x1, let hx := ?x1; ?_⟩
         · rw [←Int.mul_eq_mul_left_iff (by positivity : ((2 : ℤ) ≠ 0))]
           linear_combination 1 * h

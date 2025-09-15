@@ -26,10 +26,10 @@ namespace Imo1992P1
 snip begin
 
 lemma mylemma_main_lt2
-  (p q r: ℤ)
-  (hpl: 4 ≤ p)
-  (hql: 5 ≤ q)
-  (hrl: 6 ≤ r) :
+    (p q r : ℤ)
+    (hpl : 4 ≤ p)
+    (hql : 5 ≤ q)
+    (hrl : 6 ≤ r) :
   (↑(p * q * r) / ↑((p - 1) * (q - 1) * (r - 1)):ℚ) ≤ ↑2 := by
   have h₁: (↑(p * q * r) / ↑((p - 1) * (q - 1) * (r - 1)):ℚ)
     = (↑p/↑(p-1)) * (↑q/↑(q-1)) * (↑r/↑(r-1)) := by
@@ -289,14 +289,14 @@ lemma q_r_divisor_of_prime
     norm_cast
     exact Int.natAbs_mul_natAbs_eq h₀
   have h_abs: abs (↑(q.natAbs):ℤ) = 1 ∨ abs q = p := by
-    cases' Int.natAbs_eq q with h_1 h_2
+    obtain h_1 | h_2 := Int.natAbs_eq q
     · rw [h_1] at hqr
       have h₂: abs (↑(q.natAbs):ℤ) ∣ p := by exact Dvd.intro (abs r) hqr
       have h₃: (↑(q.natAbs):ℕ) ∣ p := by
         norm_cast at *
       have h₄: (↑(q.natAbs):ℕ) = 1 ∨ (↑(q.natAbs):ℕ) = p := by
         exact Nat.Prime.eq_one_or_self_of_dvd h₁ (↑(q.natAbs):ℕ) h₃
-      cases' h₄ with h₄₀ h₄₁
+      obtain h₄₀ | h₄₁ := h₄
       · left
         norm_cast at *
       have h₅: abs q = q.natAbs := Int.abs_eq_natAbs q
@@ -310,14 +310,14 @@ lemma q_r_divisor_of_prime
         norm_cast at *
       have h₄: (↑(q.natAbs):ℕ) = 1 ∨ (↑(q.natAbs):ℕ) = p := by
         exact Nat.Prime.eq_one_or_self_of_dvd h₁ (↑(q.natAbs):ℕ) h₃
-      cases' h₄ with h₄₀ h₄₁
+      obtain h₄₀ | h₄₁ := h₄
       · left
         norm_cast at *
       · have h₅: abs q = q.natAbs := Int.abs_eq_natAbs q
         right
         rw [h₅]
         norm_cast
-  cases' h_abs with hq_abs hq_abs
+  obtain hq_abs | hq_abs := h_abs
   · norm_cast at *
     omega
   · right
@@ -330,7 +330,6 @@ lemma mylemma_qr_11
   (4 - q = -1 ∨ 4 - q = 1 ∨ 4 - q = -11 ∨ 4 - q = 11) := by
   have h₁: Nat.Prime (11) := by decide
   exact q_r_divisor_of_prime (4-q) (4-r) 11 h₀ h₁
-
 
 lemma mylemma_qr_5
   (q r: ℤ)
@@ -387,9 +386,8 @@ problem imo1992_p1 (a b c : ℤ) (ha : 1 < a) (hb : a < b) (hc : b < c) :
     (a - 1) * (b - 1) * (c - 1) ∣ a * b * c - 1 := by
   constructor
   · aesop
-  intro h₁
+  intro ⟨k, hk⟩
   simp only [solution_set, Set.mem_insert_iff, Set.mem_singleton_iff]
-  cases' h₁ with k hk
   have hpl: 2 ≤ a := by omega
   have hql: 3 ≤ b := by omega
   have hrl: 4 ≤ c := by omega

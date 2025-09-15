@@ -35,9 +35,10 @@ def a : ℕ → ℕ
 snip begin
 
 lemma a_recurrence (n : ℕ) (hn : 2 ≤ n) : a n = a (n - 1) + a (n / 2) := by
-  cases' n with n
-  · exact (Nat.not_succ_le_zero _ hn).elim
-  · cases' n
+  cases n with
+  | zero => exact (Nat.not_succ_le_zero _ hn).elim
+  | succ n =>
+    cases n
     · exact (Nat.not_succ_le_self _ hn).elim
     · simp only [a, Nat.succ_sub_succ_eq_sub, tsub_zero]
 

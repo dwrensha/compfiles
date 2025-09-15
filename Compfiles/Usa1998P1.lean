@@ -34,7 +34,7 @@ snip begin
 lemma zmod_eq (a b c : ℤ) : a ≡ b [ZMOD c] ↔ a % c = b % c := by rfl
 
 lemma mod2_abs (a : ℤ) : |a| % 2 = a % 2 := by
-  cases' abs_cases a with h h <;> rw [h.1]
+  obtain h | h := abs_cases a <;> rw [h.1]
   rw [Int.neg_emod_two]
 
 -- For integers M,N we have |M-N| ≡ M-N ≡ M+N MOD 2.
@@ -69,7 +69,7 @@ problem usa1998_p1
   -- https://artofproblemsolving.com/wiki/index.php/1998_USAMO_Problems/Problem_1
   -- Notice that |aᵢ-bᵢ| ≡ 1 MOD 5,
   have h1 : ∀ i : Fin 999, |(ab 0 i : ℤ) - ab 1 i| % 5 = 1 % 5 := fun i ↦ by
-    cases' habd i with habd habd
+    obtain habd | habd := habd i
     · rw [habd]
     · rw [habd]; rfl
 
