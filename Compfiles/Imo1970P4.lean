@@ -22,12 +22,13 @@ namespace Imo1970P4
 
 snip begin
 
-lemma card_opposite (s s' s'' : Finset ℕ) (predicate: ℕ → Prop) [DecidablePred predicate] (filter : s' = (s.filter (λ x => predicate x)))
-                    (opposite_filter: s'' = (s.filter (λ x => ¬ predicate x))) : s'.card + s''.card = s.card := by
-  rw[filter]
-  rw[opposite_filter]
-  have := @Finset.filter_card_add_filter_neg_card_eq_card ℕ s predicate
-  apply this
+lemma card_opposite (s s' s'' : Finset ℕ) (predicate: ℕ → Prop)
+    [DecidablePred predicate] (filter : s' = (s.filter (λ x => predicate x)))
+    (opposite_filter: s'' = (s.filter (λ x => ¬ predicate x))) :
+    s'.card + s''.card = s.card := by
+  rw [filter]
+  rw [opposite_filter]
+  exact Finset.filter_card_add_filter_neg_card_eq_card predicate
 
 lemma no_other_p_divisors_nearby (x : ℕ) (y : ℕ) (p : ℕ) (p_gt_5 : p > 5) (x_lt_y : x < y) (close_by: ∃ k, k ≤ 5 ∧ x + k = y) (x_div_p : p ∣ x) : ¬ (p ∣ y) := by
   obtain ⟨k, ⟨bound, sum⟩⟩ := close_by
