@@ -33,7 +33,7 @@ lemma mylemma_main_lt2
   (↑(p * q * r) / ↑((p - 1) * (q - 1) * (r - 1)):ℚ) ≤ ↑2 := by
   have h₁: (↑(p * q * r) / ↑((p - 1) * (q - 1) * (r - 1)):ℚ)
     = (↑p/↑(p-1)) * (↑q/↑(q-1)) * (↑r/↑(r-1)) := by
-    norm_cast
+    field_simp
     simp
   have hp: (↑p/↑(p-1):ℚ) ≤ ((4/3):ℚ) := by
     have g₁: 0 < (↑(p - 1):ℚ) := by
@@ -134,7 +134,7 @@ lemma mylemma_main_lt4
   (↑(p * q * r) / ↑((p - 1) * (q - 1) * (r - 1)):ℚ) ≤ ↑4 := by
   have h₁: (↑(p * q * r) / ↑((p - 1) * (q - 1) * (r - 1)):ℚ)
       = (↑p/↑(p-1)) * (↑q/↑(q-1)) * (↑r/↑(r-1)) := by
-    norm_cast
+    field_simp
     simp
   have hp: (↑p/↑(p-1):ℚ) ≤ ↑(2:ℚ) := by
     have g₁: 0 < (↑(p - 1):ℚ) := by
