@@ -34,28 +34,31 @@ lemma aux_1
   generalize n / 3 = d
   interval_cases r
   · left
-    induction' d with t ht₀
-    · rw [pow_zero]
-    · simp only [mul_add, mul_one, pow_add, pow_zero]
+    induction d with
+    | zero => rw [pow_zero]
+    | succ t ht₀ =>
+      simp only [mul_add, mul_one, pow_add, pow_zero]
       exact Nat.ModEq.mul ht₀ rfl
   · right; left
-    induction' d with t ht₀
-    · rw [pow_one]
-    · rw [mul_add, mul_one, add_assoc, add_comm 3 1, ← add_assoc, pow_add]
+    induction d with
+    | zero => rw [pow_one]
+    | succ t ht₀ =>
+      rw [mul_add, mul_one, add_assoc, add_comm 3 1, ← add_assoc, pow_add]
       exact Nat.ModEq.mul ht₀ rfl
   · right; right
-    induction' d with t ht₀
-    · norm_num
-    · rw [mul_add, mul_one, add_assoc, add_comm 3 2, ← add_assoc, pow_add]
+    induction d with
+    | zero => norm_num
+    | succ t ht₀ =>
+      rw [mul_add, mul_one, add_assoc, add_comm 3 2, ← add_assoc, pow_add]
       exact Nat.ModEq.mul ht₀ rfl
 
 
 lemma imo_1990_p3_forward
-  (n : ℕ)
-  (h₀ : 2 ≤ n)
-  (h₁ : n ^ 2 ∣ 2 ^ n + 1) :
-  n = 3 := by
-  by_cases hn₀: n < 3
+    (n : ℕ)
+    (h₀ : 2 ≤ n)
+    (h₁ : n ^ 2 ∣ 2 ^ n + 1) :
+    n = 3 := by
+  by_cases hn₀ : n < 3
   · exfalso
     interval_cases n
     simp at h₁

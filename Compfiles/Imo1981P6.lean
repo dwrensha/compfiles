@@ -45,7 +45,7 @@ problem imo1981_p6 (f : ℕ → ℕ → ℕ)
     f 4 1981 = solution_value := by
   have h4 : ∀ y, f 1 y = y + 2 := by
     intro y
-    induction' y using Nat.strongRecOn with y ih
+    induction y using Nat.strongRecOn with | ind y ih =>
     cases y with
     | zero => simp [h1, h2]
     | succ y =>
@@ -53,27 +53,30 @@ problem imo1981_p6 (f : ℕ → ℕ → ℕ)
       rw [h1 (y + 2)]
   have h20 : ∀ y, f 2 y = 2 * y + 3 := by
     intro y;
-    induction' y with y ih
-    · simp [h1, h2, h3]
-    · rw [h3, ih, h3, h3, h3, h4, h1, h1, h1]
+    induction y with
+    | zero => simp [h1, h2, h3]
+    | succ y ih =>
+      rw [h3, ih, h3, h3, h3, h4, h1, h1, h1]
       ring
   have h21 : ∀ y, f 3 y + 3 = 2^(y + 3) := by
     intro y
-    induction' y with y ih
-    · simp (config := {decide := true}) [h1, h2, h3]
-    · rw [h3, h20]
+    induction y with
+    | zero => simp (config := {decide := true}) [h1, h2, h3]
+    | succ y ih =>
+      rw [h3, h20]
       rw [show 2 * f (2 + 1) y + 3 + 3 = 2 * (f 3 y + 3) by ring]
       rw [ih, ←Nat.pow_succ']
   have h6 : ∀ y, f 4 (y + 1) + 3 = 2^(f 4 y + 3) := by
     intro y
-    induction' y with y ih
-    · rw [h3 3 0, h2 3, h21]
-    · rw [h3, ih, h21, ih]
+    induction y with
+    | zero => rw [h3 3 0, h2 3, h21]
+    | succ y ih => rw [h3, ih, h21, ih]
   have h7' : ∀ y, f 4 y + 3 = (2^·)^[y + 3] 1 := by
     intro y
-    induction' y with y ih
-    · simp (config := {decide := true}) [h1, h2, h3]
-    · rw [show Nat.succ y + 3 = Nat.succ (y + 3) by rfl]
+    induction y with
+    | zero => simp (config := {decide := true}) [h1, h2, h3]
+    | succ y ih =>
+      rw [show Nat.succ y + 3 = Nat.succ (y + 3) by rfl]
       rw [Function.iterate_succ']
       rw [h6 y, ih]
       rfl
