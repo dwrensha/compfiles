@@ -47,6 +47,13 @@ def scholesImoUrl (year : Nat) (idx : Nat) : String :=
 def chenImoUrl (year : Nat) (_idx : Nat) : String :=
   s!"https://web.evanchen.cc/exams/IMO-{year}-notes.pdf"
 
+def scannedPaperUrl (year : Nat) (idx : Nat) : Option String :=
+  if year = 1971
+  then if idx < 4
+       then some "https://www.imo-register.org.uk/papers/1971-English-day1.jpeg"
+       else some "https://www.imo-register.org.uk/papers/1971-English-day2.jpeg"
+  else none
+
 structure WriteupLink where
   url : String
   text : String
@@ -60,6 +67,9 @@ def allImoUrls (year : Nat) (idx : Nat) : List WriteupLink :=
      then result := result ++ [⟨scholesImoUrl year idx, "John Scholes"⟩]
      if year ≥ 1997 ∧ year ≤ 2025
      then result := result ++ [⟨chenImoUrl year idx, "Evan Chen"⟩]
+     if let some url := scannedPaperUrl year idx
+     then result := result ++ [⟨url, "scan of original paper"⟩]
+
      return result
 
 -- If the problem is an Imo problem, return the year number and the problem number
