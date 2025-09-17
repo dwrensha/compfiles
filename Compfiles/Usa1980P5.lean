@@ -26,19 +26,15 @@ problem usa1980_p5 (x y z : ℝ)
     (hz : z ∈ Set.Icc 0 1) :
     x / (y + z + 1) + y / (z + x + 1) + z / (x + y + 1) ≤
     1 + (1 - x) * (1 - y) * (1 - z) := by
+  obtain ⟨hx₀, hx₁⟩ := hx
+  obtain ⟨hy₀, hy₁⟩ := hy
+  obtain ⟨hz₀, hz₁⟩ := hz
   have h_nonneg : (1 - x) * (1 - y) * (1 - z) ≥ 0 := by
-    have hx' : 0 ≤ x ∧ x ≤ 1 := hx
-    have hy' : 0 ≤ y ∧ y ≤ 1 := hy
-    have hz' : 0 ≤ z ∧ z ≤ 1 := hz
     have h₁ : 0 ≤ 1 - x := by linarith
     have h₂ : 0 ≤ 1 - y := by linarith
     have h₃ : 0 ≤ 1 - z := by linarith
-    have h₄ : 0 ≤ (1 - x) * (1 - y) := by positivity
-    exact Left.mul_nonneg h₄ h₃
+    positivity
   have h_sum_le_one : x / (y + z + 1) + y / (z + x + 1) + z / (x + y + 1) ≤ 1 := by
-    have hx' : 0 ≤ x ∧ x ≤ 1 := hx
-    have hy' : 0 ≤ y ∧ y ≤ 1 := hy
-    have hz' : 0 ≤ z ∧ z ≤ 1 := hz
     have h₁ : 0 ≤ x := by linarith
     have h₂ : 0 ≤ y := by linarith
     have h₃ : 0 ≤ z := by linarith
@@ -57,21 +53,19 @@ problem usa1980_p5 (x y z : ℝ)
         have h₇ : 0 ≤ x := by linarith
         have h₈ : 0 < y + z + 1 := by linarith
         have h₉ : 0 < x + y + z := by linarith
-        have h₁₀ : x + y + z ≤ y + z + 1 := by
-          nlinarith [hx'.2, hy'.2, hz'.2]
+        have h₁₀ : x + y + z ≤ y + z + 1 := by linarith only [hx₁, hy₁, hz₁]
         gcongr
       have h₇ : y / (z + x + 1) ≤ y / (x + y + z) := by
         have h₈ : 0 ≤ y := by linarith
         have h₉ : 0 < z + x + 1 := by linarith
         have h₁₀ : 0 < x + y + z := by linarith
-        have h₁₁ : x + y + z ≤ z + x + 1 := by
-          nlinarith [hx'.2, hy'.2, hz'.2]
+        have h₁₁ : x + y + z ≤ z + x + 1 := by linarith only [hx₁, hy₁, hz₁]
         gcongr
       have h₈ : z / (x + y + 1) ≤ z / (x + y + z) := by
         have h₉ : 0 ≤ z := by linarith
         have h₁₀ : 0 < x + y + 1 := by linarith
         have h₁₁ : 0 < x + y + z := by linarith
-        have h₁₂ : x + y + z ≤ x + y + 1 := by linarith [hx'.2, hy'.2, hz'.2]
+        have h₁₂ : x + y + z ≤ x + y + 1 := by linarith only [hx₁, hy₁, hz₁]
         gcongr
       have h₉ : x / (y + z + 1) + y / (z + x + 1) + z / (x + y + 1) ≤ x / (x + y + z) + y / (x + y + z) + z / (x + y + z) := by
         linarith
