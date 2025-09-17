@@ -23,7 +23,7 @@ namespace Imo1985P4
 /-
 Solved by Goedel-Prover-V2: https://arxiv.org/abs/2508.03613
 -/
-theorem imo1985_p4 (M : Finset ℕ) (Mpos : ∀ m ∈ M, 0 < m)
+problem imo1985_p4 (M : Finset ℕ) (Mpos : ∀ m ∈ M, 0 < m)
     (Mdivisors : ∀ m ∈ M, ∀ n, m.Prime ∧ n ∣ m → m ≤ 23)
     : ∃ M' : Finset ℕ, M' ⊆ M ∧ ∃ k, M'.prod id = k^4 := by 
   have h_main : ∃ (M' : Finset ℕ), M' ⊆ M ∧ ∃ (k : ℕ), M'.prod id = k^4 := by

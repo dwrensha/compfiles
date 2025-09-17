@@ -30,7 +30,7 @@ determine solution : ℕ := 92
 /-
 Solved by Goedel-Prover-V2: https://arxiv.org/abs/2508.03613
 -/
-theorem imo1988_p3 (f : ℕ → ℕ)
+problem imo1988_p3 (f : ℕ → ℕ)
   (h₀ : f 1 = 1)
   (h₁ : f 3 = 3)
   (h₂ : ∀ n, f (2 * n) = f n)

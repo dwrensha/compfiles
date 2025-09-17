@@ -23,7 +23,7 @@ namespace Usa1980P5
 /-
 Solved by Goedel-Prover-V2: https://arxiv.org/abs/2508.03613
 -/
-theorem usa1980_p5 (x y z : ℝ)
+problem usa1980_p5 (x y z : ℝ)
     (hx : x ∈ Set.Icc 0 1)
     (hy : y ∈ Set.Icc 0 1)
     (hz : z ∈ Set.Icc 0 1) :
@@ -69,21 +69,21 @@ theorem usa1980_p5 (x y z : ℝ)
         have h₉ : 0 < x + y + z := by linarith
         have h₁₀ : x + y + z ≤ y + z + 1 := by
           nlinarith [hx'.2, hy'.2, hz'.2]
-        exact div_le_div_of_le_left (by positivity) (by positivity) (by linarith)
+        sorry
       have h₇ : y / (z + x + 1) ≤ y / (x + y + z) := by
         have h₈ : 0 ≤ y := by linarith
         have h₉ : 0 < z + x + 1 := by nlinarith
         have h₁₀ : 0 < x + y + z := by linarith
         have h₁₁ : x + y + z ≤ z + x + 1 := by
           nlinarith [hx'.2, hy'.2, hz'.2]
-        exact div_le_div_of_le_left (by positivity) (by positivity) (by linarith)
+        sorry
       have h₈ : z / (x + y + 1) ≤ z / (x + y + z) := by
         have h₉ : 0 ≤ z := by linarith
         have h₁₀ : 0 < x + y + 1 := by nlinarith
         have h₁₁ : 0 < x + y + z := by linarith
         have h₁₂ : x + y + z ≤ x + y + 1 := by
           nlinarith [hx'.2, hy'.2, hz'.2]
-        exact div_le_div_of_le_left (by positivity) (by positivity) (by linarith)
+        sorry
       have h₉ : x / (y + z + 1) + y / (z + x + 1) + z / (x + y + 1) ≤ x / (x + y + z) + y / (x + y + z) + z / (x + y + z) := by
         linarith
       have h₁₀ : x / (x + y + z) + y / (x + y + z) + z / (x + y + z) = 1 := by

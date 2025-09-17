@@ -22,7 +22,7 @@ namespace Imo1971P3
 /-
 Solved by Goedel-Prover-V2: https://arxiv.org/abs/2508.03613
 -/
-theorem imo1971_p3 : Set.Infinite
+problem imo1971_p3 : Set.Infinite
   {(n, m) : ℕ × ℕ | Nat.Coprime (2 ^ n - 3) (2 ^ m - 3)} := by 
   have h_main : ∀ m : ℕ, (2, m) ∈ {(n, m) : ℕ × ℕ | Nat.Coprime (2 ^ n - 3) (2 ^ m - 3)} := by
     intro m

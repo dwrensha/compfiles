@@ -34,7 +34,7 @@ def AcuteTriangle (T : Affine.Triangle ℝ Pt) : Prop :=
 /-
 Solved by Goedel-Prover-V2: https://arxiv.org/abs/2508.03613
 -/
-theorem imo1970_p6
+problem imo1970_p6
     (P : Fin 100 → Pt)
     (hP : ∀ a b c : Fin 100,
              List.Nodup [a, b, c] → ¬ Collinear ℝ {P c, P b, P c}) :
