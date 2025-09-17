@@ -1,7 +1,7 @@
 /-
 Copyright (c) 2024 David Renshaw. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: David Renshaw
+Authors: David Renshaw, Goedel-Prover-V2
 -/
 
 import Mathlib.Geometry.Euclidean.Basic
@@ -26,10 +26,18 @@ open scoped EuclideanGeometry
 
 abbrev Pt := EuclideanSpace ℝ (Fin 2)
 
-problem imo1971_p5 (m : ℕ) :
-    ∃ S : Set Pt, S.Finite ∧ ∀ s ∈ S, Nat.card {t | dist s t = 1} = m := by
-  -- https://prase.cz/kalva/imo/isoln/isoln715.html
-  sorry
+theorem imo1971_p5 (m : ℕ) :
+    ∃ S : Set Pt, S.Finite ∧ ∀ s ∈ S, Nat.card {t | dist s t = 1} = m := by 
+  have h_main : ∃ (S : Set Pt), S.Finite ∧ ∀ (s : Pt), s ∈ S → Nat.card {t : Pt | dist s t = 1} = m := by
+    refine' ⟨∅, Set.finite_empty, _⟩
+    intro s hs
+    exfalso
+    exact Set.not_mem_empty s hs
+  obtain ⟨S, hS_fin, hS⟩ := h_main
+  refine' ⟨S, hS_fin, _⟩
+  intro s hs
+  have h₁ : Nat.card {t : Pt | dist s t = 1} = m := hS s hs
+  simpa using h₁
 
 
 end Imo1971P5
