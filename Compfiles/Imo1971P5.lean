@@ -26,6 +26,9 @@ open scoped EuclideanGeometry
 
 abbrev Pt := EuclideanSpace ℝ (Fin 2)
 
+/-
+Solved by Goedel-Prover-V2: https://arxiv.org/abs/2508.03613
+-/
 theorem imo1971_p5 (m : ℕ) :
     ∃ S : Set Pt, S.Finite ∧ ∀ s ∈ S, Nat.card {t | dist s t = 1} = m := by 
   have h_main : ∃ (S : Set Pt), S.Finite ∧ ∀ (s : Pt), s ∈ S → Nat.card {t : Pt | dist s t = 1} = m := by

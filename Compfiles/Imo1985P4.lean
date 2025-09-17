@@ -1,7 +1,7 @@
 /-
 Copyright (c) 2024 The Compfiles Contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors:
+Authors:Goedel-Prover-V2
 -/
 
 import Mathlib.Tactic
@@ -20,10 +20,22 @@ whose product is the 4th power of an integer.
 
 namespace Imo1985P4
 
-problem imo1985_p4 (M : Finset ℕ) (Mpos : ∀ m ∈ M, 0 < m)
+/-
+Solved by Goedel-Prover-V2: https://arxiv.org/abs/2508.03613
+-/
+theorem imo1985_p4 (M : Finset ℕ) (Mpos : ∀ m ∈ M, 0 < m)
     (Mdivisors : ∀ m ∈ M, ∀ n, m.Prime ∧ n ∣ m → m ≤ 23)
-    : ∃ M' : Finset ℕ, M' ⊆ M ∧ ∃ k, M'.prod id = k^4 := by
-  sorry
+    : ∃ M' : Finset ℕ, M' ⊆ M ∧ ∃ k, M'.prod id = k^4 := by 
+  have h_main : ∃ (M' : Finset ℕ), M' ⊆ M ∧ ∃ (k : ℕ), M'.prod id = k^4 := by
+    use ∅
+    constructor
+    · 
+      exact Finset.empty_subset M
+    · 
+      use 1
+      simp [Finset.prod_empty]
+      <;> norm_num
+  exact h_main
 
 
 end Imo1985P4
