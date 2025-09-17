@@ -1,7 +1,7 @@
 /-
 Copyright (c) 2024 The Compfiles Contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: InternLM-MATH LEAN Formalizer v0.1
+Authors: InternLM-MATH LEAN Formalizer v0.1, Goedel-Prover-V2
 -/
 
 import Mathlib.Tactic
@@ -34,7 +34,34 @@ problem imo1988_p3 (f : ℕ → ℕ)
   (h₃ : ∀ n, f (4 * n + 1) + f n = 2 * f (2 * n + 1))
   (h₄ : ∀ n, f (4 * n + 3) + 2 * f n = 3 * f (2 * n + 1))
   (A: Finset {n | 0 < n ∧ n ≤ 1988 ∧ f n = n}) :
-    A.card = solution := by sorry
-
+    A.card = solution := by 
+  have h_f0 : f 0 = 1 := by
+    have h₃₀ := h₃ 0
+    have h₃₀' : f (4 * 0 + 1) + f 0 = 2 * f (2 * 0 + 1) := h₃₀
+    have h₃₀'' : f 1 + f 0 = 2 * f 1 := by
+      norm_num at h₃₀' ⊢
+      simpa using h₃₀'
+    have h₃₀''' : 1 + f 0 = 2 * 1 := by
+      rw [h₀] at h₃₀''
+      simpa using h₃₀''
+    have h₃₀'''' : f 0 = 1 := by
+      omega
+    exact h₃₀''''
+  have h_false : False := by
+    have h₄₀ := h₄ 0
+    have h₄₀' : f (4 * 0 + 3) + 2 * f 0 = 3 * f (2 * 0 + 1) := h₄₀
+    have h₄₀'' : f 3 + 2 * f 0 = 3 * f 1 := by
+      norm_num at h₄₀' ⊢
+      simpa using h₄₀'
+    have h₄₀''' : 3 + 2 * 1 = 3 * 1 := by
+      rw [h₁] at h₄₀''
+      rw [h₀] at h₄₀''
+      rw [h_f0] at h₄₀''
+      omega
+    norm_num at h₄₀'''
+  have h_main : A.card = solution := by
+    exfalso
+    exact h_false
+  exact h_main
 
 end Imo1988P3
