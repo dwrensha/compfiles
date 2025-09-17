@@ -23,6 +23,8 @@ Show that the equation has no solutions in integers for n = 2891.
 
 namespace Imo1982P4
 
+set_option maxHeartbeats 0
+
 problem imo1982_p4 (n : ℕ)
   (hn : 0 < n)
   (hxy : ∃ x y : ℤ, x^3 - 3 * x * y^2 + y^3 = n) :
