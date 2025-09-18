@@ -38,10 +38,10 @@ problem imo1982_p4 (n : ℕ)
   have h_part1 : n ≠ 2891 := by
     rintro rfl
     rcases hxy with ⟨x, y, hxy⟩
-    have h₁ : (x : ℤ) ^ 3 - 3 * x * y ^ 2 + y ^ 3 = 2891 := by simpa using hxy
+    replace hxy : (x : ℤ) ^ 3 - 3 * x * y ^ 2 + y ^ 3 = 2891 := by simpa using hxy
     have h₂ : (x : ℤ) % 7 = 0 := by
       replace hxy : (x : ℤ) ^ 3 - 3 * x * y ^ 2 + y ^ 3 ≡ 0 [ZMOD 7] := by
-        norm_num [Int.ModEq] at h₁ ⊢
+        norm_num [Int.ModEq] at hxy ⊢
         omega
       have h₅ : (x : ℤ) % 7 = 0 := by
         mod_cases h : x % 7 <;> (try exact h) <;> change _ = _ at h <;>
@@ -50,7 +50,7 @@ problem imo1982_p4 (n : ℕ)
       exact h₅
     have h₃ : (y : ℤ) % 7 = 0 := by
       replace hxy : (x : ℤ) ^ 3 - 3 * x * y ^ 2 + y ^ 3 ≡ 0 [ZMOD 7] := by
-        norm_num [Int.ModEq] at h₁ ⊢
+        norm_num [Int.ModEq] at hxy ⊢
         omega
       have h₆ : (y : ℤ) % 7 = 0 := by
         mod_cases h' : y % 7 <;> (try exact h') <;> change _ = _ at h' <;>
@@ -69,8 +69,8 @@ problem imo1982_p4 (n : ℕ)
       omega
     obtain ⟨a, ha⟩ := h₆
     obtain ⟨b, hb⟩ := h₇
-    rw [ha, hb] at h₁
-    ring_nf at h₁
+    rw [ha, hb] at hxy
+    ring_nf at hxy
     have h₉ : (7 : ℤ) ∣ 59 := by
       use (a ^ 3 + b ^ 3 - 3 * a * b ^ 2)
       omega
