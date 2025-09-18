@@ -40,24 +40,22 @@ problem imo1982_p4 (n : ℕ)
     rcases hxy with ⟨x, y, hxy⟩
     have h₁ : (x : ℤ) ^ 3 - 3 * x * y ^ 2 + y ^ 3 = 2891 := by simpa using hxy
     have h₂ : (x : ℤ) % 7 = 0 := by
-      have h₃ := h₁
-      have h₄ : (x : ℤ) ^ 3 - 3 * x * y ^ 2 + y ^ 3 ≡ 0 [ZMOD 7] := by
-        norm_num [Int.ModEq] at h₃ ⊢
+      replace hxy : (x : ℤ) ^ 3 - 3 * x * y ^ 2 + y ^ 3 ≡ 0 [ZMOD 7] := by
+        norm_num [Int.ModEq] at h₁ ⊢
         omega
       have h₅ : (x : ℤ) % 7 = 0 := by
-        mod_cases h : x % 7 <;> change _ = _ at h <;>
+        mod_cases h : x % 7 <;> (try exact h) <;> change _ = _ at h <;>
         mod_cases h' : y % 7 <;> change _ = _ at h' <;>
-        simp [h, h', pow_three, pow_two, Int.ModEq, Int.mul_emod, Int.add_emod, Int.sub_emod] at h₄ ⊢
+        simp [h, h', pow_three, pow_two, Int.ModEq, Int.mul_emod, Int.add_emod, Int.sub_emod] at hxy
       exact h₅
     have h₃ : (y : ℤ) % 7 = 0 := by
-      have h₄ := h₁
-      have h₅ : (x : ℤ) ^ 3 - 3 * x * y ^ 2 + y ^ 3 ≡ 0 [ZMOD 7] := by
-        norm_num [Int.ModEq] at h₄ ⊢
-        (try omega)
+      replace hxy : (x : ℤ) ^ 3 - 3 * x * y ^ 2 + y ^ 3 ≡ 0 [ZMOD 7] := by
+        norm_num [Int.ModEq] at h₁ ⊢
+        omega
       have h₆ : (y : ℤ) % 7 = 0 := by
+        mod_cases h' : y % 7 <;> (try exact h') <;> change _ = _ at h' <;>
         mod_cases h : x % 7 <;> change _ = _ at h <;>
-        mod_cases h' : y % 7 <;> change _ = _ at h' <;>
-        simp [h, h', pow_three, pow_two, Int.ModEq, Int.mul_emod, Int.add_emod, Int.sub_emod] at h₅ ⊢
+        simp [h, h', pow_three, pow_two, Int.ModEq, Int.mul_emod, Int.add_emod, Int.sub_emod] at hxy
       exact h₆
     have h₄ : (x : ℤ) % 7 = 0 := h₂
     have h₅ : (y : ℤ) % 7 = 0 := h₃
