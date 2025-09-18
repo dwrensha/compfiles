@@ -63,12 +63,10 @@ problem imo1982_p4 (n : ℕ)
     have h₅ : (y : ℤ) % 7 = 0 := h₃
     have h₆ : ∃ (a : ℤ), x = 7 * a := by
       use x / 7
-      have h₇ : (x : ℤ) % 7 = 0 := h₄
-      omega
+      exact (Int.mul_ediv_cancel_of_emod_eq_zero h₂).symm
     have h₇ : ∃ (b : ℤ), y = 7 * b := by
       use y / 7
-      have h₈ : (y : ℤ) % 7 = 0 := h₅
-      omega
+      exact (Int.mul_ediv_cancel_of_emod_eq_zero h₃).symm
     obtain ⟨a, ha⟩ := h₆
     obtain ⟨b, hb⟩ := h₇
     rw [ha, hb] at hxy
