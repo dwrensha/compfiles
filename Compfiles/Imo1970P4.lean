@@ -184,16 +184,7 @@ lemma exactly_three_odd_numbers (n : ℕ) (odd_s : Finset ℕ)
                                 (odd_s_eq: odd_s = (Finset.Icc n (n + 5)).filter (λ x => Odd x)): (odd_s).card = 3 := by
   -- ∃ (a b c : ℕ), {a, b, c} = odd_s ∧ odd_s.card = 3
   obtain ⟨x, y, z, ⟨left, ⟨y_eq, z_eq⟩⟩⟩ := odd_props n odd_s odd_s_eq
-  have := (@Finset.card_eq_three ℕ odd_s).mpr
-  apply this
-  use x, x + 2, x + 2 + 2
-  constructor
-  · omega
-  · constructor
-    · omega
-    · constructor
-      · omega
-      · simp_all only
+  grind
 
 lemma at_most_one (n : ℕ) (x y : ℕ)
   (x_in_interval : x ∈ Finset.Icc n (n + 5)) (y_in_interval : y ∈ Finset.Icc n (n + 5))
@@ -241,15 +232,7 @@ lemma unique_divisor (n : ZMod 3) (a b c : ℕ) (n_eq_a : n = a) (s : Finset ℕ
     have three_div_a : 3 ∣ a := by
       apply (ZMod.natCast_eq_zero_iff a 3).mp
       simp_all only [Fin.zero_eta]
-    constructor
-    · simp only
-      constructor
-      · aesop
-      · simp_all only [Fin.zero_eta]
-    · rintro o ⟨o_in_s, three_div_o⟩
-      rw[s_eq] at o_in_s
-      simp_all only [Fin.zero_eta, Finset.mem_insert, Finset.mem_singleton]
-      omega
+    grind
   · use b
     have three_div_b : 3 ∣ b := by
       simp_all only [Fin.mk_one]
@@ -324,10 +307,7 @@ lemma two_three_five_and_more_is_enough (x : ℕ) (two_does_not_divide : ¬ 2 �
       simp_all only [Nat.two_dvd_ne_zero, gt_iff_lt, Finset.mem_insert, Finset.mem_singleton, true_or]
       omega
     case inr h => grind
-  rintro ⟨p, ⟨pp, div⟩⟩
-  have p_gt_5_implies := p_gt_5_not_dvd p pp
-  have p_le_5_implies := p_le_5_not_dvd p pp
-  omega
+  grind
 
 lemma subsets_must_overlap_pigeonhole (s s1 s2 : Finset ℕ) (predicate_s1: ℕ → Prop) (predicate_s2 : ℕ → Prop)
                                       [DecidablePred predicate_s1] [DecidablePred predicate_s2]
@@ -442,15 +422,7 @@ lemma contains_one_or_zero (n : ℕ) (s1 s2 : Finset ℕ) (partition : s1 ∪ s2
     · simp_all only [Finset.mem_filter, odd_s]
     · constructor
       · exact non_div_3
-      constructor
-      · exact non_div_5
-      · dsimp[odd_s] at x_in_odd_s
-        intro two_div_x
-        have : ¬ Odd x := by
-          intro odd_x
-          dsimp[Odd] at odd_x
-          omega
-        simp_all only [gt_iff_lt, Finset.mem_filter]
+      grind
 
   have exists_x_no_prime_divisors : ∃ x ∈ (s1 ∪ s2), ¬ ∃ (p : ℕ), Nat.Prime p ∧ p ∣ x := by
     obtain ⟨x, x_in_s1_s2, non_div_3, non_div_5, non_div_2⟩ := exists_odd_x_non_div_by_3_5

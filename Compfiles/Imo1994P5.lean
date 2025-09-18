@@ -48,13 +48,7 @@ problem imo1994_p5 (f : S → S) :
     simp only [Set.mem_singleton_iff] at hf
     rw [hf]
     refine ⟨?_, ?_, ?_⟩ <;> rintro ⟨x, hx⟩ ⟨y, hy⟩
-    · simp only [neg_add_rev, op]
-      rw [Subtype.mk_eq_mk]
-      have h1 : 0 < 1 + y := by linarith
-      have h2 : 0 < 1 + x := by linarith
-      have h3 : 0 < 1 + y + (x * (1 + y) + -y + -(x * y)) := by linarith
-      field_simp
-      nlinarith
+    · grind
     · simp only [Set.mem_Ioo, and_imp]
       intro hx1 hx2 hy1 hy2 hxy
       have h1 : 0 < 1 + y := by linarith
