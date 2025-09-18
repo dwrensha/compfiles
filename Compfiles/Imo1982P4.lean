@@ -23,7 +23,13 @@ Show that the equation has no solutions in integers for n = 2891.
 
 namespace Imo1982P4
 
-set_option maxHeartbeats 300000
+snip begin
+
+lemma lemma1 {x' y' : ZMod 7}
+    (hxy : x' ^ 3 - 3 * x' * y' ^ 2 + y' ^ 3 = 0) : x' = 0 ∧ y' = 0 := by
+  fin_cases x' <;> fin_cases y' <;> simp +decide at hxy ⊢
+
+snip end
 
 problem imo1982_p4 (n : ℕ)
   (hn : 0 < n)
@@ -39,24 +45,20 @@ problem imo1982_p4 (n : ℕ)
     rintro rfl
     rcases hxy with ⟨x, y, hxy⟩
     replace hxy : (x : ℤ) ^ 3 - 3 * x * y ^ 2 + y ^ 3 = 2891 := by simpa using hxy
-    have h₂ : (x : ℤ) % 7 = 0 := by
-      replace hxy : (x : ℤ) ^ 3 - 3 * x * y ^ 2 + y ^ 3 ≡ 0 [ZMOD 7] := by
+    have ⟨h₂, h₃⟩ : (x : ℤ) % 7 = 0 ∧ (y : ℤ) % 7 = 0 := by
+      replace hxy : (x : ℤ) ^ 3 - 3 * x * y ^ 2 + y ^ 3 ≡ 0 [ZMOD (7:ℕ)] := by
         norm_num [Int.ModEq] at hxy ⊢
         omega
-      have h₅ : (x : ℤ) % 7 = 0 := by
-        mod_cases h : x % 7 <;> (try exact h) <;> change _ = _ at h <;>
-        mod_cases h' : y % 7 <;> change _ = _ at h' <;>
-        simp [h, h', pow_three, pow_two, Int.ModEq, Int.mul_emod, Int.add_emod, Int.sub_emod] at hxy
-      exact h₅
-    have h₃ : (y : ℤ) % 7 = 0 := by
-      replace hxy : (x : ℤ) ^ 3 - 3 * x * y ^ 2 + y ^ 3 ≡ 0 [ZMOD 7] := by
-        norm_num [Int.ModEq] at hxy ⊢
-        omega
-      have h₆ : (y : ℤ) % 7 = 0 := by
-        mod_cases h' : y % 7 <;> (try exact h') <;> change _ = _ at h' <;>
-        mod_cases h : x % 7 <;> change _ = _ at h <;>
-        simp [h, h', pow_three, pow_two, Int.ModEq, Int.mul_emod, Int.add_emod, Int.sub_emod] at hxy
-      exact h₆
+      replace hxy : (x : ZMod 7) ^ 3 - 3 * (x : ZMod 7) * (y : ZMod 7) ^ 2 +
+                      (y : ZMod 7) ^ 3 = 0 := by
+        rw [←ZMod.intCast_eq_intCast_iff] at hxy
+        norm_cast
+      have ⟨h1, h2⟩ := lemma1 hxy
+      constructor
+      · rw [ZMod.intCast_zmod_eq_zero_iff_dvd, ←Int.modEq_zero_iff_dvd] at h1
+        exact h1
+      · rw [ZMod.intCast_zmod_eq_zero_iff_dvd, ←Int.modEq_zero_iff_dvd] at h2
+        exact h2
     have h₄ : (x : ℤ) % 7 = 0 := h₂
     have h₅ : (y : ℤ) % 7 = 0 := h₃
     have h₆ : ∃ (a : ℤ), x = 7 * a := by
@@ -75,11 +77,16 @@ problem imo1982_p4 (n : ℕ)
       use (a ^ 3 + b ^ 3 - 3 * a * b ^ 2)
       omega
     norm_num at h₉
-  have h_part2 : ∃ x1 x2 x3 y1 y2 y3 : ℤ, (x1^3 - 3 * x1 * y1^2 + y1^3 = n ∧ x2^3 - 3 * x2 * y2^2 + y2^3 = n ∧ x3^3 - 3 * x3 * y3^2 + y3^3 = n ∧ (x1 ≠ x2 ∨ y1 ≠ y2) ∧ (x1 ≠ x3 ∨ y1 ≠ y3) ∧ (x2 ≠ x3 ∨ y2 ≠ y3)) := by
+  have h_part2 : ∃ x1 x2 x3 y1 y2 y3 : ℤ,
+      (x1^3 - 3 * x1 * y1^2 + y1^3 = n ∧ x2^3 - 3 * x2 * y2^2 + y2^3 = n ∧
+       x3^3 - 3 * x3 * y3^2 + y3^3 = n ∧ (x1 ≠ x2 ∨ y1 ≠ y2) ∧
+       (x1 ≠ x3 ∨ y1 ≠ y3) ∧ (x2 ≠ x3 ∨ y2 ≠ y3)) := by
     obtain ⟨x, y, hxy⟩ := hxy
-    have h1 : (y - x)^3 - 3 * (y - x) * (-x)^2 + (-x)^3 = (x : ℤ)^3 - 3 * x * (y : ℤ)^2 + (y : ℤ)^3 := by
+    have h1 : (y - x)^3 - 3 * (y - x) * (-x)^2 + (-x)^3 =
+              (x : ℤ)^3 - 3 * x * (y : ℤ)^2 + (y : ℤ)^3 := by
       ring_nf
-    have h2 : (-y)^3 - 3 * (-y) * (x - y)^2 + (x - y)^3 = (x : ℤ)^3 - 3 * x * (y : ℤ)^2 + (y : ℤ)^3 := by
+    have h2 : (-y)^3 - 3 * (-y) * (x - y)^2 + (x - y)^3 =
+              (x : ℤ)^3 - 3 * x * (y : ℤ)^2 + (y : ℤ)^3 := by
       ring_nf
     refine' ⟨x, y - x, -y, y, -x, x - y, _, _, _, _, _, _⟩ <;>
     (try simp_all [pow_three]) <;>
@@ -93,6 +100,5 @@ problem imo1982_p4 (n : ℕ)
       omega
     })
   exact ⟨h_part1, h_part2⟩
-
 
 end Imo1982P4
