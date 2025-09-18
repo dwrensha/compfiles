@@ -1,7 +1,7 @@
 /-
 Copyright (c) 2024 The Compfiles Contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: InternLM-MATH LEAN Formalizer v0.1
+Authors: InternLM-MATH LEAN Formalizer v0.1, Goedel-Prover-V2
 -/
 
 import Mathlib.Tactic
@@ -36,6 +36,5 @@ problem imo1988_p3 (f : ℕ+ → ℕ+)
     (A : Finset {n | n ≤ 1988 ∧ f n = n}) :
     A.card = solution := by
   sorry
-
 
 end Imo1988P3
