@@ -147,10 +147,15 @@ problem imo1974_p1
   have hg01 : game 0 1 = 0 := by sorry
 
   -- So (game 0) 2 ≠ 0 (bijective).
-  have hg020 : game 0 2 ≠ 0 := by intro h; rw [←h] at hg01; sorry
+  have hg020 : game 0 2 ≠ 0 := by
+    intro h; rw [←h] at hg01
+    have := Equiv.injective (game 0) hg01
+    simp only [Fin.isValue, Fin.reduceEq] at this
 
   -- But (game 0) 2 = 2 would make the sum in hC too big.
-  have hg022 : game 0 2 ≠ 2 := by intro h; rw [h] at hC; simp at hC; grind
+  have hg022 : game 0 2 ≠ 2 := by
+    intro h; rw [h] at hC
+    simp only [Fin.isValue, Matrix.cons_val, Nat.reduceEqDiff] at hC; grind
 
   -- So there is only one option left: (game 0) 2 = 1.
   unfold solution; omega
