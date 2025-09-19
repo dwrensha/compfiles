@@ -9,7 +9,7 @@ import Mathlib.NumberTheory.Divisors
 import Mathlib.Tactic.FinCases
 import ProblemExtraction
 
-problem_file { tags := [.NumberTheory] }
+problem_file { tags := [.Combinatorics] }
 
 /-!
 
