@@ -24,6 +24,16 @@ $B$ has 10 and $C$ has 9. At the last round $B$ received $r$ counters.
 Who received $q$ counters on the first round?
 -/
 
+/-
+Translation of [this proof](https://artofproblemsolving.com/wiki/index.php/1974_IMO_Problems/Problem_1).
+
+We'll model the `game` as a function ℕ → (Fin 3 ≃ Fin 3), mapping round
+numbers to bijections between player-indices and card-indices.
+
+Then, for example, `![p,q,r] (game k 2)` is the number of counters won by
+player `2` in round `k`.
+-/
+
 namespace Imo1974P1
 
 abbrev Player := Fin 3
