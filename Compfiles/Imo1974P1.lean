@@ -30,6 +30,8 @@ $B$ has 10 and $C$ has 9. At the last round $B$ received $r$ counters.
 Who received $q$ counters on the first round?
 -/
 
+snip begin
+
 /-
 Translation of [this proof](https://artofproblemsolving.com/wiki/index.php/1974_IMO_Problems/Problem_1).
 
@@ -39,6 +41,8 @@ numbers to bijections between player-indices and card-indices.
 Then, for example, `![p,q,r] (game k 2)` is the number of counters won by
 player `2` in round `k`.
 -/
+
+snip end
 
 namespace Imo1974P1
 
@@ -124,8 +128,8 @@ problem imo1974_p1
 
   -- Proof idea:
   -- hB claims: r + (p|q|r) + (p|q|r) = 10.
-  -- But they can't be r, because r + r > 10.
-  -- And they can't be (p,q) or (q,p) because we know p+q+r ≠ 10.
+  -- But neither can be r, because r+r+... > 10.
+  -- And they can't be (p,q) or (q,p) because we know 13 = r+p+q ≠ 10.
   -- So the only options are r+p+p and r+q+q.
   have h9 : r+p+p = 10 ∨ r+q+q = 10 := by sorry
 
@@ -144,7 +148,10 @@ problem imo1974_p1
   -- Looking at hB : 8 + G 1 1 + G 0 1 = 10
   -- we can deduce that this must be 8 + 1 + 1 = 10
   -- and so (game 1) 1 = 0 and (game 0) 1 = 0.
-  have hg01 : game 0 1 = 0 := by sorry
+  have hg01 : game 0 1 = 0 := by
+    generalize hg01 : game 0 1 = g01 at hB
+    generalize hg11 : game 1 1 = g11 at hB
+    fin_cases g01 <;> fin_cases g11 <;> simp at hB ⊢
 
   -- So (game 0) 2 ≠ 0 (bijective).
   have hg020 : game 0 2 ≠ 0 := by
