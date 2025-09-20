@@ -94,8 +94,7 @@ problem imo1974_p1
     _ = 20 + 10 + 9                   := by rw [hA, hB, hC]
 
   -- Thus n ∈ {1,3,13,39}.
-  have h2 : n ∣ 39 := by
-    rw [←h1]; apply Nat.dvd_mul_right
+  have h2 : n ∣ 39 := Dvd.intro (p + q + r) h1
   have h3 : n ∈ Nat.divisors 39 := by
     apply Nat.mem_divisors.mpr; exact ⟨h2, by decide⟩
 
@@ -124,7 +123,7 @@ problem imo1974_p1
 
   -- Show 20 ≤ r+r+r, and thus r > 6:
   have h7 : 20 ≤ r+r+r := calc
-    20 = C 2 0 + C 1 0 + C 0 0 := by unfold C; omega
+    20 = C 2 0 + C 1 0 + C 0 0 := hA.symm
     _  ≤ r+r+r                 := by gcongr <;> apply le_r
 
   have h8 : r > 6 := by omega
