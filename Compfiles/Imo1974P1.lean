@@ -4,9 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Lynn Van Hauwe
 -/
 
-import Mathlib.Data.Fin.VecNotation
-import Mathlib.NumberTheory.Divisors
-import Mathlib.Tactic.FinCases
+import Mathlib
+
 import ProblemExtraction
 
 problem_file { tags := [.Combinatorics] }
@@ -79,7 +78,11 @@ problem imo1974_p1
   have hs : 6 ≤ p+q+r := by omega
 
   -- Each round, the players win p+q+r counters in total.
-  have h_total i : C i 0 + C i 1 + C i 2 = p + q + r := by sorry
+  have h_total i : C i 0 + C i 1 + C i 2 = p + q + r := by
+    rw [←Fin.sum_univ_three]
+    unfold C
+    rw [←Fintype.sum_equiv (game i)⁻¹ _ _ (fun _ ↦ rfl)]
+    simp [Fin.sum_univ_three]
 
   -- The total score, 39, equals n(p+q+r).
   have h1 : n*(p+q+r) = 39 := calc
