@@ -134,7 +134,7 @@ problem imo1974_p1
   -- But neither can be r, because r+r+... > 10.
   -- And they can't be (p,q) or (q,p) because we know 13 = r+p+q ≠ 10.
   -- So the only options are r+p+p and r+q+q.
-  have h9 : r+p+p = 10 ∨ r+q+q = 10 := by sorry
+  have h9 : r + p + p = 10 ∨ r + q + q = 10 := by grind
 
   -- r = 7 leads to a contradiction. Thus r = 8:
   have hr : r = 8 := by omega
