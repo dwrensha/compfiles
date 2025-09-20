@@ -131,7 +131,7 @@ problem imo1965_p2 (x : Fin 3 → ℝ) (a : Fin 3 → Fin 3 → ℝ)
      |a 0 0| * |x 0|
        = |a 0 0 * x 0| := (abs_mul _ _).symm
      _ = _ := h7
-     _ ≤ |-a 0 1 * x 1| + |-a 0 2 * x 2| := abs_add _ _
+     _ ≤ |-a 0 1 * x 1| + |-a 0 2 * x 2| := abs_add_le _ _
      _ = |-a 0 1| * |x 1| + |-a 0 2| * |x 2| := by simp only [abs_mul]
      _ ≤ |-a 0 1| * |x 0| + |-a 0 2| * |x 0| := by gcongr
      _ = (|-a 0 1| + |-a 0 2|) * |x 0| := (add_mul _ _ _).symm
