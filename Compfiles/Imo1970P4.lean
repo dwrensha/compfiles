@@ -40,7 +40,7 @@ lemma no_other_p_divisors_nearby (x : ℕ) (y : ℕ) (p : ℕ) (p_gt_5 : p > 5) 
   rw[Ha] at x_lt_y
   rw[Hb] at x_lt_y
   have a_lt_b : a < b := by
-    exact (mul_lt_mul_left (show 0 < p by omega)).mp x_lt_y
+    exact (Nat.mul_lt_mul_left (show 0 < p by omega)).mp x_lt_y
   have a_lt_b_2 : 1 ≤ (b - a) := by
     omega
   have k_eq : p * (b - a) = k := by

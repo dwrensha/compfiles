@@ -61,7 +61,7 @@ lemma le_of_all_pow_lt_succ {x y : ℝ} (hx : 1 < x) (hy : 1 < y)
   obtain ⟨N, hN⟩ := exists_nat_gt (1 / (x - y))
   have hNp : 0 < N := by exact_mod_cast (one_div_pos.mpr hxmy).trans hN
   have h1 := calc 1 = (x - y) * (1 / (x - y)) := by field_simp
-               _ < (x - y) * N             := (mul_lt_mul_left hxmy).mpr hN
+               _ < (x - y) * N             := (mul_lt_mul_iff_right₀ hxmy).mpr hN
                _ ≤ x^N - y^N               := hn N
   linarith only [h1, h N hNp]
 

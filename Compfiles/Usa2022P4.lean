@@ -50,7 +50,7 @@ problem usa2022_p4 (p q : ℕ) :
            _ < p^2 + q := Nat.lt_add_of_pos_right hq_pos
            _ ≤ _ := Nat.add_le_add_right h2 q
            _ = p * q := hb
-    have h7 : p < q := (mul_lt_mul_left hp_pos).mp h6
+    have h7 : p < q := (Nat.mul_lt_mul_left hp_pos).mp h6
     exact Nat.le_lt_asymm hqlep h7
 
   -- Subtracting our equations gives (b - a)(b + a) = b² - a² = p(q - 1),
@@ -84,7 +84,7 @@ problem usa2022_p4 (p q : ℕ) :
   have h7 : b + a = p := by
     obtain ⟨k, hk⟩ := h5
     rw [mul_comm, hk] at h6
-    have : k < 2 := (mul_lt_mul_left hp_pos).mp h6
+    have : k < 2 := (Nat.mul_lt_mul_left hp_pos).mp h6
     interval_cases k <;> omega
 
   -- Hence q - 1 = b - a.

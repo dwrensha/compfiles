@@ -307,7 +307,7 @@ lemma exp_characterization
 
 lemma exp_strict_mono' (k x y : ℝ) (hkp : 0 < k) (h : x < y) :
     Real.exp (k * x) < Real.exp (k * y) :=
-  Real.exp_lt_exp.mpr ((mul_lt_mul_left hkp).mpr h)
+  Real.exp_lt_exp.mpr ((mul_lt_mul_iff_right₀ hkp).mpr h)
 
 lemma exp_strict_anti' (k x y : ℝ) (hkp : k < 0) (h : x < y) :
     Real.exp (k * y) < Real.exp (k * x) :=

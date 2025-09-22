@@ -86,10 +86,11 @@ problem usa2001_p4
     _ ≤ _ := ptolemy
     _ ≤ _ := h2
     _ < Real.sqrt (dist P A ^ 2) * _ :=
-          (mul_lt_mul_right (by positivity)).mpr (Real.sqrt_lt_sqrt (by positivity) h1)
+          (mul_lt_mul_iff_left₀ (by positivity)).mpr
+            (Real.sqrt_lt_sqrt (by positivity) h1)
     _ = dist P A * _ := by rw [Real.sqrt_sq dist_nonneg]
   replace h23 : dist B C < Real.sqrt (dist A C ^ 2 + dist B A ^ 2) :=
-    (mul_lt_mul_left h18).mp h23
+    (mul_lt_mul_iff_right₀ h18).mp h23
   replace h23 : dist B C ^2 < (Real.sqrt (dist A C ^ 2 + dist B A ^ 2))^2 :=
     pow_lt_pow_left₀ h23 dist_nonneg (by norm_num)
   rw [Real.sq_sqrt (by positivity)] at h23

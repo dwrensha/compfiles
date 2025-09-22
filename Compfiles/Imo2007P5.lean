@@ -72,7 +72,7 @@ lemma bad_exists_descent {n : ℤ} (hn : 1 < n) {a : ℕ}
   ---- Some ordering results
   have h2 := lt_trans one_pos ht
   have h3 : ∀ x y : ℤ, x < y ↔ t * x - 1 < t * y - 1 :=
-    λ x y ↦ by rw [sub_lt_sub_iff_right, ← mul_lt_mul_left h2]
+    fun x y ↦ by rw [sub_lt_sub_iff_right, ← mul_lt_mul_iff_right₀ h2]
   replace h2 : ∀ x : ℤ, 0 < x ↔ 0 < t * x - 1 := by
     intro x
     rw [h3, mul_zero, Int.lt_iff_add_one_le, sub_add_cancel, le_iff_eq_or_lt]
@@ -85,8 +85,8 @@ lemma bad_exists_descent {n : ℤ} (hn : 1 < n) {a : ℕ}
   rw [← Int.ofNat_lt, h3] at h0
   rw [h2, h3 c]
   constructor
-  · rwa [← mul_lt_mul_left (lt_trans h h0), ← h1, sq, mul_lt_mul_right h]
-  · rw [← mul_lt_mul_left (lt_trans h h0), mul_zero, ← h1]
+  · rwa [← mul_lt_mul_iff_right₀ (lt_trans h h0), ← h1, sq, mul_lt_mul_iff_left₀ h]
+  · rw [← mul_lt_mul_iff_right₀ (lt_trans h h0), mul_zero, ← h1]
     exact pow_pos h 2
 
 lemma nat_pred_descent {P : ℕ → Prop} [DecidablePred P]

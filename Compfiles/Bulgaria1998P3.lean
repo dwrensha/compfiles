@@ -118,7 +118,7 @@ problem bulgaria1998_p3
     norm_num [x_seq]
     calc ∑ i ∈ Finset.range n, f 1 / (2:ℝ) ^ i
          = (∑ i ∈ Finset.range n, 1 / (2:ℝ) ^ i) * f 1 := by rw [Finset.sum_mul]; field_simp
-       _ < 3 * f 1 := (mul_lt_mul_right hf1).mpr (geom_sum_bound n)
+       _ < 3 * f 1 := (mul_lt_mul_iff_left₀ hf1).mpr (geom_sum_bound n)
 
   have h2 : ∀ n : ℕ, 0 < 1 + 3 * f 1 - x_seq n := by intro n; linarith [h1 n]
 
