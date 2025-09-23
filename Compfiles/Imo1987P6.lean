@@ -189,8 +189,9 @@ problem imo1987_p6
         rw [Int.natCast_sub hj2,hss0,<-hksr]
         push_cast
         ring_nf
-      rw [hfss,Nat.coprime_add_mul_right_left] at hj3
-      have hss2 : f ss ∣  j:= Nat.Prime.dvd_iff_not_coprime hss1 |>.2 hj3
+      change ¬N.gcd j = 1 at hj3
+      rw [hfss, ←Nat.coprime_iff_gcd_eq_one, Nat.coprime_add_mul_right_left] at hj3
+      have hss2 : f ss ∣ j := Nat.Prime.dvd_iff_not_coprime hss1 |>.2 hj3
       have hfss1: p ≤ f ss := Nat.le_add_left p (ss ^ 2 + ss)
       have hp1 : p - 2 < p := sub_le_lemma hp (by omega)
       have hfss2: j < 2*p := by omega
