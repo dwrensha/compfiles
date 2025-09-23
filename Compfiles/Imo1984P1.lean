@@ -35,7 +35,7 @@ lemma geom_mean_le_arith_mean_3 {a b c : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b) (hc 
     trans w * a + w * b + w * c; rotate_left
     · unfold w
       field_simp
-      exact Preorder.le_refl ((a + b + c) / 3)
+      exact Std.IsPreorder.le_refl (a + b + c)
     rw [Real.mul_rpow (by positivity) hc]
     rw [Real.mul_rpow ha hb]
     apply Real.geom_mean_le_arith_mean3_weighted; all_goals try norm_num; try positivity

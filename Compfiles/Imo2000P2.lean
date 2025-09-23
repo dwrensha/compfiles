@@ -74,12 +74,9 @@ problem imo2000_p2 (a b c : ℝ) (ha : 0 < a) (hb : 0 < b) (hc : 0 < c)
   obtain ⟨x,y,z, hx, hy, hz, rfl, rfl, rfl⟩ := lemma2 a b c ha hb habc
   have h1 := lemma1 x y z hx hy hz
   have h2 : 0 < y * z * x := by positivity
-  suffices H :
-      (x - y + z) * (y - z + x) * (z - x + y) ≤ (y * z * x) by
+  suffices H : (x - y + z) * (y - z + x) * (z - x + y) ≤ (y * z * x) by
     field_simp
-    apply div_le_one_of_le₀
-    · nlinarith
-    · nlinarith
+    grind
   linarith
 
 
