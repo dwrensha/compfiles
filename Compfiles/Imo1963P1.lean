@@ -92,11 +92,7 @@ problem imo1963_p1 : ∀ (p x : ℝ), (x ^ 2 - p) ≥ 0 → (x ^ 2 - 1) ≥ 0 �
   intro hp
   have tmp : (4 - 2 * p) > 0 := by linarith
   trans x ^ 2 = (p - 4) ^ 2 / (4 * (4 - 2 * p))
-  · constructor
-    · intro h; rw [←h]; field_simp [mul_assoc]
-    · intro h; rw [h]
-      field_simp [mul_assoc]
-      rw [mul_div_cancel_right₀ _ (by linarith)]
+  · field_simp
   rw [(by ring : (p - (4 : ℝ)) ^ (2 : ℕ) = ((4 : ℝ) - p) ^ (2 : ℕ))]
   have tmp2 :
     ((4 : ℝ) - p) ^ (2 : ℕ) / ((4 : ℝ) * ((4 : ℝ) - (2 : ℝ) * p)) =
