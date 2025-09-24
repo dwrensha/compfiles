@@ -176,7 +176,7 @@ lemma aux_2_3
         · intro m hm₀ hm₁
           exact hd₁ m hm₀ hm₁
         · linarith
-        · linarith
+        · cutsat
       rw [hd₈, hd₉]
       omega
     · push_neg at hd₄
@@ -496,10 +496,7 @@ theorem aux_4
             exact Nat.le_sub_one_of_lt hd₃
           have hd₆ := ha₁ x (d - 1) hx₀
           cutsat
-        · push_neg at hd₃
-          have hd₄: d - i = 0 := by exact Nat.sub_eq_zero_of_le hd₃
-          have hd₅: d = i := by exact Nat.le_antisymm hd₃ hd₁
-          rw [hd₄, zero_mul, add_zero, hd₅]
+        · cutsat
       rw [h₂ j hj₀, h₂ k hk₀]
       simp
       exact Nat.sub_lt_sub_right hj₀ hj₁

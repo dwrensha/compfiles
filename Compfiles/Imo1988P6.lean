@@ -262,11 +262,7 @@ example {a b : ℕ} (h : a * b ∣ a ^ 2 + b ^ 2 + 1) : 3 * a * b = a ^ 2 + b ^ 
   apply constant_descent_vieta_jumping a b (H := fun a b => a * a + b * b + 1 = a * b * k)
       hk (fun x => k * x) (fun x => x * x + 1) fun x _ => x ≤ 1 <;>
     clear hk a b
-  · -- We will now show that the fibers of the solution set are described by a quadratic equation.
-    intro x y
-    rw [← Int.natCast_inj, ← sub_eq_zero]
-    apply eq_iff_eq_cancel_right.2
-    simp; ring
+  · cutsat
   · -- Show that the solution set is symmetric in a and b.
     intro x y; ring_nf -- Porting note: Originally, `cc` solved the entire goal
   · -- Show that the claim is true if b = 0.
