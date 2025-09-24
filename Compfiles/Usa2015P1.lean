@@ -105,10 +105,7 @@ problem usa2015_p1 (x y : ℤ) :
         · rw [←Int.mul_eq_mul_left_iff (by positivity : ((2 : ℤ) ≠ 0))]
           linear_combination 1 * h
         · rw [hx, htn] at ht; linear_combination 1 * ht
-      · right; use n; rw [And.comm]; refine ⟨?x2, let hx := ?x2; ?_⟩
-        · rw [←Int.mul_eq_mul_left_iff (by positivity : ((2 : ℤ) ≠ 0))]
-          linear_combination 1 * h
-        · rw [hx, htn] at ht; linear_combination 1 * ht
+      · right; use n; cutsat
 
 
 end Usa2015P1

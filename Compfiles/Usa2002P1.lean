@@ -136,14 +136,7 @@ lemma usa2002_p1_generalized
           · unfold f
             simp only [Finset.mem_union] at hss
             simp only [Finset.mem_union, hss, ite_true]
-            obtain hss | hss := hss
-            · simp [hss]
-            · split_ifs with h
-              · rfl
-              · simp only [h, f] at hfs1
-                match h20 : (f' (Finset.subtype (fun a => ¬a = s) s1)) with
-                | Color.red => exact (hfs1 h20).elim
-                | Color.blue => rfl
+            cutsat
           · -- s1 ∪ s2 is in S'
             simp only [hss, f]
             rw [Finset.mem_union, not_or] at hss

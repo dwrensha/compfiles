@@ -312,13 +312,7 @@ problem imo2006_p4 :
             have : m ^ 2 < 3 ^ 2 := by apply lt_of_le_of_lt hm'; simp
             apply Nat.pow_lt_pow_iff_left ?_ |>.mp this
             simp
-          have : m = 1 := by
-            interval_cases m
-            · simp at hm
-            · simp
-            · have : ¬ Odd 2 := by exact Nat.not_odd_iff.mpr rfl
-              exact this.elim hm
-          exact hmne1.elim this
+          cutsat
         · -- For $\epsilon=-1$ equation (2) gives us $$ 1+m=2^{x-2}\left(m^{2}-8\right) \geq 2\left(m^{2}-8\right),
           simp [hε] at this
           have hle : 1 + (m : ℤ) ≥ 2 * (m ^ 2 - 8) := by

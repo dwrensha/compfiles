@@ -226,14 +226,7 @@ lemma aux_2_4
       · refine hh₄ (a x l) ?_ hl₅
         rw [hl₃, hi₀]
         simp
-      · exfalso
-        have hl₆: (a x l) % 3 = 0 := by
-          rw [hl₅, Nat.pow_mod]
-          have hl₇: (c.sqrt + (1 : ℕ)) % (3 : ℕ) = 0 := by omega
-          rw [hl₇]
-        have hl₇: a x l % 3 = 1 := by omega
-        rw [hl₆] at hl₇
-        norm_num at hl₇
+      · cutsat
     · push_neg at hl₄
       have h₃: a x l < (c.sqrt + (2 : ℕ)) ^ (2 : ℕ) := by
         rw [hl₃]
@@ -243,7 +236,7 @@ lemma aux_2_4
         omega
       exact h₀ (a x l) hl₄ h₃
   · push_neg at hlp
-    have hl₃: l = i := by exact Nat.le_antisymm hlp hl₁
+    have hl₃: l = i := Nat.le_antisymm hlp hl₁
     rw [hl₃, hi₀]
     refine hh₄ c ?_ hh₃
     exact Nat.le_refl c
@@ -502,13 +495,7 @@ theorem aux_4
             refine hh₀ (d - 1) ?_
             exact Nat.le_sub_one_of_lt hd₃
           have hd₆ := ha₁ x (d - 1) hx₀
-          have hd₇: d - 1 + 1 = d := by
-            refine Nat.sub_add_cancel ?_
-            exact Nat.one_le_of_lt hd₃
-          rw [hd₇] at hd₆
-          have hd₈: a x d = a x (d - (1 : ℕ)) + (3 : ℕ) := by simp_all only [↓reduceIte]
-          rw [hd₈, hd₄]
-          omega
+          cutsat
         · push_neg at hd₃
           have hd₄: d - i = 0 := by exact Nat.sub_eq_zero_of_le hd₃
           have hd₅: d = i := by exact Nat.le_antisymm hd₃ hd₁
@@ -569,9 +556,7 @@ theorem aux_5
       exact Nat.sub_one_lt_of_lt hd₁
     have hd₅₀ := ha₁ x (d - 1) hx₀
     by_cases hd₄: IsSquare (a x (d - 1))
-    · have hd₅: a x d = (a x (d - 1)).sqrt := by
-        have hd₅₁: d - 1 + 1 = d := by exact Nat.sub_add_cancel hd₁
-        simp_all only [↓reduceIte]
+    · have hd₅: a x d = (a x (d - 1)).sqrt := by cutsat
       obtain ⟨t, ht₀⟩ := hd₄
       have ht₁: (t ^ (2 : ℕ)).sqrt = t := by exact Nat.sqrt_eq' t
       rw [hd₅, ht₀, ← pow_two, ht₁]

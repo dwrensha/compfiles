@@ -238,8 +238,8 @@ lemma mylemma_k_gt_1
   have hk0: 0 < (↑k:ℚ) := by
     have g₁: 2*3*4 ≤ p * q * r := by
       have g₂: 2*3 ≤ p * q := by
-        exact mul_le_mul hpl hql (by norm_num) (by linarith[hpl])
-      exact mul_le_mul g₂ hrl (by norm_num) (by linarith[g₂])
+        exact mul_le_mul hpl hql (by norm_num) (by positivity)
+      exact mul_le_mul g₂ hrl (by norm_num) (by positivity)
     have g₂: 0 < (↑(p * q * r - 1):ℚ) := by
       norm_cast
       linarith[g₁]

@@ -190,13 +190,7 @@ theorem constant_descent_vieta_jumping (x y : ℕ) {claim : Prop} {H : ℕ → �
     rw [H_symm, H_quad]
     simpa using h_root
   · -- For the second condition, we note that it suffices to check that c ≠ m_x.
-    suffices hc : c ≠ mx from lt_of_le_of_ne (mod_cast c_lt) hc
-    -- However, recall that B(m_x) ≠ m_x + m_y.
-    -- If c = m_x, we can prove B(m_x) = m_x + m_y.
-    contrapose! hm_B₂
-    subst c
-    simp [hV₁]
-    -- Hence p' = (c, m_x) lies on the upper branch, and we are done.
+    cutsat
 
 snip end
 

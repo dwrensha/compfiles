@@ -147,15 +147,6 @@ problem imo1978_p1 (m n : ℕ)
   rw [h12] at h11; clear h12
 
   simp only [Finset.mem_insert, Finset.mem_singleton] at h11
-  obtain hr1 | hr2 | hr4 | hr5 | hr10 | hr20 | hr25 | hr50 | hr100 := h11
-  · norm_num [hr1] at hr
-  · norm_num [hr2] at hr
-  · norm_num [hr4] at hr
-  · norm_num [hr5] at hr
-  · norm_num [hr10] at hr
-  · norm_num [hr20] at hr
-  · norm_num [hr25] at hr
-  · norm_num [hr50] at hr
-  · omega
+  cutsat
 
 end Imo1978P1

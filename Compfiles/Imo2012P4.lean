@@ -266,13 +266,7 @@ problem imo2012_p4 (f : ℤ → ℤ) :
               rcases this with goal | «f(x+1)=(x-3)²*f1»; case inl => exact goal
               have := «f(x+1)=(x-3)²*f1»
               rw [«f(x+1)=(x-1)²*f1», mul_eq_mul_right_iff, pow_eq_pow_iff_cases] at this
-              cases this
-              case inr «f1=0» =>
-                rw [← one_mul (Int.ofNat x.succ), ext_eq_zero «f1=0», «f1=0»]; simp
-              case inl this =>
-                simp at this
-                have : x = 2 := by omega
-                simpa [this]
+              cutsat
 
           right
           use f 1
