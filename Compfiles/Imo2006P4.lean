@@ -241,8 +241,7 @@ problem imo2006_p4 :
                 apply Nat.eq_add_of_sub_eq at ht
                 · use s, hs', -1
                   simp [ht, h', pow_add]
-                  rw [mul_comm _ 2, mul_assoc, show 2 ^ n₂ * (s : ℤ) = t + 1 by norm_cast; simp [hs]]
-                  · ring
+                  cutsat
                 · exact hypos
               · intro h'
                 simp [ht''] at h'
