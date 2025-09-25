@@ -3,7 +3,7 @@ Copyright (c) 2021 The Compfiles Contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors:
 -/
-import Mathlib.Tactic
+import Mathlib
 
 import ProblemExtraction
 
@@ -24,7 +24,7 @@ namespace Imo2004P6
 determine SolutionSet : Set ℕ := sorry
 
 abbrev Alternating (n : Nat) : Prop :=
-  (n.digits 10).Chain' (fun k l ↦ ¬ k ≡ l [MOD 2])
+  (n.digits 10).IsChain (fun k l ↦ ¬ k ≡ l [MOD 2])
 
 problem imo2004_p6 (n : ℕ) :
     n ∈ SolutionSet ↔ 0 < n ∧ ∃ k, Alternating (n * k) := by

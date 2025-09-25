@@ -39,7 +39,7 @@ problem usa1999_p1 (n : ℕ) (c : Finset (checkerboard n))
     (ha : ∀ x : checkerboard n, x ∈ c ∨ (∃ y ∈ c, adjacent x y))
     (hb : ∀ x ∈ c, ∀ y ∈ c,
       ∃ p : List (checkerboard n),
-        List.Chain' adjacent p ∧
+        List.IsChain adjacent p ∧
         List.head? p = x ∧
         List.getLast? p = y) :
     n^2 ≤ c.card * 3 + 2 := by
