@@ -109,7 +109,7 @@ problem imo1977_p4 (f : ℝ → ℝ) (a b A B : ℝ)
       have h₁₄ : f (θ / 2) + f (θ / 2 + Real.pi) ≥ 0 := by
         have h₁₅ : f (θ / 2) ≥ 0 := h₁ (θ / 2)
         have h₁₆ : f (θ / 2 + Real.pi) ≥ 0 := h₁ (θ / 2 + Real.pi)
-        linarith
+        positivity
       have h₁₅ : f (θ / 2) + f (θ / 2 + Real.pi) = 2 - 2 * (A * Real.cos (2 * (θ / 2)) + B * Real.sin (2 * (θ / 2))) := by
         have h₁₆ : f (θ / 2) = 1 - a * Real.cos (θ / 2) - b * Real.sin (θ / 2) - A * Real.cos (2 * (θ / 2)) - B * Real.sin (2 * (θ / 2)) := by
           rw [h₀]
