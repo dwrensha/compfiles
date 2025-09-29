@@ -27,16 +27,16 @@ problem imo1977_p4 (f : ℝ → ℝ) (a b A B : ℝ)
   (h₀ : ∀ x, f x =
              1 - a * Real.cos x - b * Real.sin x - A * Real.cos (2 * x) - B * Real.sin (2 * x))
   (h₁ : ∀ x, f x ≥ 0) :
-    a ^ 2 + b ^ 2 ≤ 2 ∧ A ^ 2 + B ^ 2 ≤ 1 := by 
+    a ^ 2 + b ^ 2 ≤ 2 ∧ A ^ 2 + B ^ 2 ≤ 1 := by
   have h₂ : A ^ 2 + B ^ 2 ≤ 1 := by
     by_contra! h
     have h₄ : A ^ 2 + B ^ 2 > 1 := by linarith
     have h₅ : 0 < A ^ 2 + B ^ 2 := by linarith
-    
+
     set R : ℝ := Real.sqrt (A ^ 2 + B ^ 2) with hR_def
     have hR_pos : 0 < R := Real.sqrt_pos.mpr h₅
     have hR_sq : R ^ 2 = A ^ 2 + B ^ 2 := Real.sq_sqrt (by positivity)
-    
+
     set p : ℝ := A / R with hp_def
     set q : ℝ := B / R with hq_def
     have hpq_sq : p ^ 2 + q ^ 2 = 1 := by
@@ -47,14 +47,13 @@ problem imo1977_p4 (f : ℝ → ℝ) (a b A B : ℝ)
         _ = 1 := by
           rw [hR_sq]
           field_simp [hR_pos.ne']
-    
+
     have hθ : ∃ (θ : ℝ), Real.cos θ = p ∧ Real.sin θ = q := by
-      
+
       have h₆ : p ^ 2 + q ^ 2 = 1 := hpq_sq
-      
+
       by_cases hq_nonneg : q ≥ 0
-      · 
-        use Real.arccos p
+      · use Real.arccos p
         have h₇ : Real.cos (Real.arccos p) = p := by
           rw [Real.cos_arccos] <;>
             (try { nlinarith [Real.cos_le_one p, Real.neg_one_le_cos p] })
@@ -68,8 +67,7 @@ problem imo1977_p4 (f : ℝ → ℝ) (a b A B : ℝ)
             rw [Real.sqrt_eq_iff_eq_sq] <;> nlinarith [Real.sqrt_nonneg (1 - p ^ 2)]
           exact h₁₂
         exact ⟨h₇, by linarith⟩
-      · 
-        use -Real.arccos p
+      · use -Real.arccos p
         have h₇ : Real.cos (-Real.arccos p) = p := by
           rw [Real.cos_neg, Real.cos_arccos] <;>
             (try { nlinarith [Real.cos_le_one p, Real.neg_one_le_cos p] })
@@ -84,7 +82,7 @@ problem imo1977_p4 (f : ℝ → ℝ) (a b A B : ℝ)
           linarith
         exact ⟨h₇, by linarith⟩
     obtain ⟨θ, hθ_cos, hθ_sin⟩ := hθ
-    
+
     have h₁₀ : A * Real.cos θ + B * Real.sin θ = R := by
       calc
         A * Real.cos θ + B * Real.sin θ = R * p * Real.cos θ + R * q * Real.sin θ := by
@@ -99,14 +97,14 @@ problem imo1977_p4 (f : ℝ → ℝ) (a b A B : ℝ)
             nlinarith
           rw [h₁₂]
         _ = R := by ring
-    
+
     have h₁₁ : A * Real.cos θ + B * Real.sin θ > 1 := by
       have h₁₂ : R > 1 := by
         have h₁₃ : R ^ 2 = A ^ 2 + B ^ 2 := hR_sq
         have h₁₄ : A ^ 2 + B ^ 2 > 1 := h₄
         nlinarith [Real.sqrt_nonneg (A ^ 2 + B ^ 2)]
       linarith
-    
+
     have h₁₂ : A * Real.cos (2 * (θ / 2)) + B * Real.sin (2 * (θ / 2)) > 1 := by
       have h₁₃ : Real.cos (2 * (θ / 2)) = Real.cos θ := by ring_nf
       have h₁₄ : Real.sin (2 * (θ / 2)) = Real.sin θ := by ring_nf
@@ -148,11 +146,11 @@ problem imo1977_p4 (f : ℝ → ℝ) (a b A B : ℝ)
       rw [h₁₅] at h₁₄
       linarith
     linarith
-  
+
   have h₃ : a ^ 2 + b ^ 2 ≤ 2 := by
     by_contra! h
     have h₄ : a ^ 2 + b ^ 2 > 2 := by linarith
-    
+
     set C : ℝ := a + b with hC_def
     set D : ℝ := a - b with hD_def
     have hC_sq_add_D_sq : C ^ 2 + D ^ 2 = 2 * (a ^ 2 + b ^ 2) := by
@@ -162,11 +160,11 @@ problem imo1977_p4 (f : ℝ → ℝ) (a b A B : ℝ)
     have hC_sq_add_D_sq_gt_4 : C ^ 2 + D ^ 2 > 4 := by
       have h₅ : 2 * (a ^ 2 + b ^ 2) > 4 := by linarith
       linarith
-    
+
     set R : ℝ := Real.sqrt (C ^ 2 + D ^ 2) with hR_def
     have hR_pos : 0 < R := Real.sqrt_pos.mpr (by nlinarith)
     have hR_sq : R ^ 2 = C ^ 2 + D ^ 2 := Real.sq_sqrt (by nlinarith)
-    
+
     set p : ℝ := C / R with hp_def
     set q : ℝ := D / R with hq_def
     have hpq_sq : p ^ 2 + q ^ 2 = 1 := by
@@ -177,11 +175,10 @@ problem imo1977_p4 (f : ℝ → ℝ) (a b A B : ℝ)
         _ = 1 := by
           rw [hR_sq]
           field_simp [hR_pos.ne']
-    
+
     have hθ : ∃ (θ : ℝ), Real.cos θ = p ∧ Real.sin θ = -q := by
       by_cases hq_nonneg : q ≥ 0
-      · 
-        use -Real.arccos p
+      · use -Real.arccos p
         have h₅ : Real.cos (-Real.arccos p) = p := by
           rw [Real.cos_neg, Real.cos_arccos] <;>
             (try { nlinarith [Real.cos_le_one p, Real.neg_one_le_cos p] })
@@ -195,8 +192,7 @@ problem imo1977_p4 (f : ℝ → ℝ) (a b A B : ℝ)
             rw [Real.sqrt_eq_iff_eq_sq] <;> nlinarith [Real.sqrt_nonneg (1 - p ^ 2)]
           linarith
         exact ⟨h₅, by linarith⟩
-      · 
-        use Real.arccos p
+      · use Real.arccos p
         have h₅ : Real.cos (Real.arccos p) = p := by
           rw [Real.cos_arccos] <;>
             (try { nlinarith [Real.cos_le_one p, Real.neg_one_le_cos p] })
@@ -211,7 +207,7 @@ problem imo1977_p4 (f : ℝ → ℝ) (a b A B : ℝ)
           linarith
         exact ⟨h₅, by linarith⟩
     obtain ⟨θ, hθ_cos, hθ_sin⟩ := hθ
-    
+
     have h₅ : C * Real.cos θ - D * Real.sin θ = R := by
       calc
         C * Real.cos θ - D * Real.sin θ = R * p * Real.cos θ - R * q * Real.sin θ := by
@@ -228,14 +224,14 @@ problem imo1977_p4 (f : ℝ → ℝ) (a b A B : ℝ)
             nlinarith
           rw [h₇]
         _ = R := by ring
-    
+
     have h₆ : C * Real.cos θ - D * Real.sin θ > 2 := by
       have h₇ : R > 2 := by
         have h₈ : R ^ 2 = C ^ 2 + D ^ 2 := hR_sq
         have h₉ : C ^ 2 + D ^ 2 > 4 := hC_sq_add_D_sq_gt_4
         nlinarith [Real.sqrt_nonneg (C ^ 2 + D ^ 2)]
       linarith
-    
+
     have h₇ : C * Real.cos θ - D * Real.sin θ ≤ 2 := by
       have h₈ : f θ + f (θ + Real.pi / 2) ≥ 0 := by
         have h₉ : f θ ≥ 0 := h₁ θ
@@ -275,7 +271,7 @@ problem imo1977_p4 (f : ℝ → ℝ) (a b A B : ℝ)
       rw [h₉] at h₈
       linarith
     linarith
-  
+
   exact ⟨h₃, h₂⟩
 
 
