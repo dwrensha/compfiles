@@ -21,8 +21,6 @@ Prove that a^2 + b^2 ≤ 2 and A^2 + B^2 ≤ 1.
 
 namespace Imo1977P4
 
-set_option maxHeartbeats 0
-
 problem imo1977_p4 (f : ℝ → ℝ) (a b A B : ℝ)
   (h₀ : ∀ x, f x =
              1 - a * Real.cos x - b * Real.sin x - A * Real.cos (2 * x) - B * Real.sin (2 * x))
@@ -48,34 +46,29 @@ problem imo1977_p4 (f : ℝ → ℝ) (a b A B : ℝ)
           field_simp [hR_pos.ne']
 
     have hθ : ∃ (θ : ℝ), Real.cos θ = p ∧ Real.sin θ = q := by
-
-      have h₆ : p ^ 2 + q ^ 2 = 1 := hpq_sq
-
       by_cases hq_nonneg : q ≥ 0
       · use Real.arccos p
         have h₇ : Real.cos (Real.arccos p) = p := by
-          rw [Real.cos_arccos] <;>
-            (try { nlinarith [Real.cos_le_one p, Real.neg_one_le_cos p] })
+          rw [Real.cos_arccos] <;> nlinarith only [hpq_sq]
         have h₈ : Real.sin (Real.arccos p) = Real.sqrt (1 - p ^ 2) := by
           rw [Real.sin_arccos]
         have h₉ : Real.sqrt (1 - p ^ 2) = q := by
           have h₁₀ : q ≥ 0 := hq_nonneg
           have h₁₁ : q ^ 2 = 1 - p ^ 2 := (sub_eq_of_eq_add' hpq_sq.symm).symm
           have h₁₂ : Real.sqrt (1 - p ^ 2) = q := by
-            rw [Real.sqrt_eq_iff_eq_sq] <;> nlinarith [Real.sqrt_nonneg (1 - p ^ 2)]
+            rw [Real.sqrt_eq_iff_eq_sq] <;> nlinarith only [h₁₀, h₁₁]
           exact h₁₂
         exact ⟨h₇, by linarith⟩
       · use -Real.arccos p
         have h₇ : Real.cos (-Real.arccos p) = p := by
-          rw [Real.cos_neg, Real.cos_arccos] <;>
-            (try { nlinarith [Real.cos_le_one p, Real.neg_one_le_cos p] })
+          rw [Real.cos_neg, Real.cos_arccos] <;> nlinarith only [hpq_sq]
         have h₈ : Real.sin (-Real.arccos p) = -Real.sqrt (1 - p ^ 2) := by
           rw [Real.sin_neg, Real.sin_arccos]
         have h₉ : -Real.sqrt (1 - p ^ 2) = q := by
-          have h₁₀ : q < 0 := by linarith
+          have h₁₀ : q < 0 := lt_of_not_ge hq_nonneg
           have h₁₁ : q ^ 2 = 1 - p ^ 2 := (sub_eq_of_eq_add' hpq_sq.symm).symm
           have h₁₂ : Real.sqrt (1 - p ^ 2) = -q := by
-            rw [Real.sqrt_eq_iff_eq_sq] <;> nlinarith [Real.sqrt_nonneg (1 - p ^ 2)]
+            rw [Real.sqrt_eq_iff_eq_sq] <;> nlinarith [h₁₀, h₁₁]
           linarith
         exact ⟨h₇, by linarith⟩
     obtain ⟨θ, hθ_cos, hθ_sin⟩ := hθ
@@ -90,8 +83,7 @@ problem imo1977_p4 (f : ℝ → ℝ) (a b A B : ℝ)
           rw [hθ_cos, hθ_sin]
         _ = R * 1 := by
           have h₁₁ : p ^ 2 + q ^ 2 = 1 := hpq_sq
-          have h₁₂ : p * p + q * q = 1 := by
-            nlinarith
+          have h₁₂ : p * p + q * q = 1 := by simp only [←sq, h₁₁]
           rw [h₁₂]
         _ = R := by ring
 
@@ -99,7 +91,7 @@ problem imo1977_p4 (f : ℝ → ℝ) (a b A B : ℝ)
       have h₁₂ : R > 1 := by
         have h₁₃ : R ^ 2 = A ^ 2 + B ^ 2 := hR_sq
         nlinarith [Real.sqrt_nonneg (A ^ 2 + B ^ 2)]
-      linarith
+      linarith only [h₁₀, h₁₂]
 
     have h₁₂ : A * Real.cos (2 * (θ / 2)) + B * Real.sin (2 * (θ / 2)) > 1 := by
       have h₁₃ : Real.cos (2 * (θ / 2)) = Real.cos θ := by ring_nf
@@ -168,30 +160,28 @@ problem imo1977_p4 (f : ℝ → ℝ) (a b A B : ℝ)
       by_cases hq_nonneg : q ≥ 0
       · use -Real.arccos p
         have h₅ : Real.cos (-Real.arccos p) = p := by
-          rw [Real.cos_neg, Real.cos_arccos] <;>
-            (try { nlinarith [Real.cos_le_one p, Real.neg_one_le_cos p] })
+          rw [Real.cos_neg, Real.cos_arccos] <;> nlinarith only [hpq_sq]
         have h₆ : Real.sin (-Real.arccos p) = -Real.sqrt (1 - p ^ 2) := by
           rw [Real.sin_neg, Real.sin_arccos]
         have h₇ : -Real.sqrt (1 - p ^ 2) = -q := by
           have h₈ : q ≥ 0 := hq_nonneg
           have h₉ : q ^ 2 = 1 - p ^ 2 := (sub_eq_of_eq_add' hpq_sq.symm).symm
           have h₁₀ : Real.sqrt (1 - p ^ 2) = q := by
-            rw [Real.sqrt_eq_iff_eq_sq] <;> nlinarith [Real.sqrt_nonneg (1 - p ^ 2)]
+            rw [Real.sqrt_eq_iff_eq_sq] <;> nlinarith only [h₈, h₉]
           linarith
         exact ⟨h₅, by linarith⟩
       · use Real.arccos p
         have h₅ : Real.cos (Real.arccos p) = p := by
-          rw [Real.cos_arccos] <;>
-            (try { nlinarith [Real.cos_le_one p, Real.neg_one_le_cos p] })
+          rw [Real.cos_arccos] <;> nlinarith only [hpq_sq]
         have h₆ : Real.sin (Real.arccos p) = Real.sqrt (1 - p ^ 2) := by
           rw [Real.sin_arccos]
         have h₇ : Real.sqrt (1 - p ^ 2) = -q := by
-          have h₈ : q < 0 := by linarith
+          have h₈ : q < 0 := lt_of_not_ge hq_nonneg
           have h₉ : q ^ 2 = 1 - p ^ 2 := (sub_eq_of_eq_add' hpq_sq.symm).symm
           have h₁₀ : Real.sqrt (1 - p ^ 2) = -q := by
-            rw [Real.sqrt_eq_iff_eq_sq] <;> nlinarith [Real.sqrt_nonneg (1 - p ^ 2)]
+            rw [Real.sqrt_eq_iff_eq_sq] <;> nlinarith only [h₈, h₉]
           linarith
-        exact ⟨h₅, by linarith⟩
+        exact ⟨h₅, by rw [h₆, h₇]⟩
     obtain ⟨θ, hθ_cos, hθ_sin⟩ := hθ
 
     have h₅ : C * Real.cos θ - D * Real.sin θ = R := by
@@ -206,8 +196,7 @@ problem imo1977_p4 (f : ℝ → ℝ) (a b A B : ℝ)
           ring_nf
         _ = R * 1 := by
           have h₆ : p ^ 2 + q ^ 2 = 1 := hpq_sq
-          have h₇ : p * p + q * q = 1 := by
-            nlinarith
+          have h₇ : p * p + q * q = 1 := by simp only [←sq, h₆]
           rw [h₇]
         _ = R := by ring
 
