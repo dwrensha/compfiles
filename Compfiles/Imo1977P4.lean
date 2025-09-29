@@ -30,8 +30,7 @@ problem imo1977_p4 (f : ℝ → ℝ) (a b A B : ℝ)
     a ^ 2 + b ^ 2 ≤ 2 ∧ A ^ 2 + B ^ 2 ≤ 1 := by
   have h₂ : A ^ 2 + B ^ 2 ≤ 1 := by
     by_contra! h
-    have h₄ : A ^ 2 + B ^ 2 > 1 := by linarith
-    have h₅ : 0 < A ^ 2 + B ^ 2 := by linarith
+    have h₅ : 0 < A ^ 2 + B ^ 2 := by positivity
 
     set R : ℝ := Real.sqrt (A ^ 2 + B ^ 2) with hR_def
     have hR_pos : 0 < R := Real.sqrt_pos.mpr h₅
@@ -61,8 +60,7 @@ problem imo1977_p4 (f : ℝ → ℝ) (a b A B : ℝ)
           rw [Real.sin_arccos]
         have h₉ : Real.sqrt (1 - p ^ 2) = q := by
           have h₁₀ : q ≥ 0 := hq_nonneg
-          have h₁₁ : q ^ 2 = 1 - p ^ 2 := by
-            nlinarith [hpq_sq]
+          have h₁₁ : q ^ 2 = 1 - p ^ 2 := (sub_eq_of_eq_add' hpq_sq.symm).symm
           have h₁₂ : Real.sqrt (1 - p ^ 2) = q := by
             rw [Real.sqrt_eq_iff_eq_sq] <;> nlinarith [Real.sqrt_nonneg (1 - p ^ 2)]
           exact h₁₂
@@ -75,8 +73,7 @@ problem imo1977_p4 (f : ℝ → ℝ) (a b A B : ℝ)
           rw [Real.sin_neg, Real.sin_arccos]
         have h₉ : -Real.sqrt (1 - p ^ 2) = q := by
           have h₁₀ : q < 0 := by linarith
-          have h₁₁ : q ^ 2 = 1 - p ^ 2 := by
-            nlinarith [hpq_sq]
+          have h₁₁ : q ^ 2 = 1 - p ^ 2 := (sub_eq_of_eq_add' hpq_sq.symm).symm
           have h₁₂ : Real.sqrt (1 - p ^ 2) = -q := by
             rw [Real.sqrt_eq_iff_eq_sq] <;> nlinarith [Real.sqrt_nonneg (1 - p ^ 2)]
           linarith
@@ -101,15 +98,13 @@ problem imo1977_p4 (f : ℝ → ℝ) (a b A B : ℝ)
     have h₁₁ : A * Real.cos θ + B * Real.sin θ > 1 := by
       have h₁₂ : R > 1 := by
         have h₁₃ : R ^ 2 = A ^ 2 + B ^ 2 := hR_sq
-        have h₁₄ : A ^ 2 + B ^ 2 > 1 := h₄
         nlinarith [Real.sqrt_nonneg (A ^ 2 + B ^ 2)]
       linarith
 
     have h₁₂ : A * Real.cos (2 * (θ / 2)) + B * Real.sin (2 * (θ / 2)) > 1 := by
       have h₁₃ : Real.cos (2 * (θ / 2)) = Real.cos θ := by ring_nf
       have h₁₄ : Real.sin (2 * (θ / 2)) = Real.sin θ := by ring_nf
-      rw [h₁₃, h₁₄]
-      linarith
+      cutsat
     have h₁₃ : A * Real.cos (2 * (θ / 2)) + B * Real.sin (2 * (θ / 2)) ≤ 1 := by
       have h₁₄ : f (θ / 2) + f (θ / 2 + Real.pi) ≥ 0 := by
         have h₁₅ : f (θ / 2) ≥ 0 := h₁ (θ / 2)
@@ -130,17 +125,11 @@ problem imo1977_p4 (f : ℝ → ℝ) (a b A B : ℝ)
         have h₂₀ : Real.cos (2 * (θ / 2 + Real.pi)) = Real.cos (2 * (θ / 2)) := by
           have h₂₁ : 2 * (θ / 2 + Real.pi) = 2 * (θ / 2) + 2 * Real.pi := by ring_nf
           rw [h₂₁]
-          have h₂₂ : Real.cos (2 * (θ / 2) + 2 * Real.pi) = Real.cos (2 * (θ / 2)) := by
-            rw [show 2 * (θ / 2) + 2 * Real.pi = 2 * (θ / 2) + Real.pi + Real.pi by ring]
-            simp [Real.cos_add, Real.sin_add]
-          rw [h₂₂]
+          exact Real.cos_add_two_pi (2 * (θ / 2))
         have h₂₁ : Real.sin (2 * (θ / 2 + Real.pi)) = Real.sin (2 * (θ / 2)) := by
           have h₂₂ : 2 * (θ / 2 + Real.pi) = 2 * (θ / 2) + 2 * Real.pi := by ring_nf
           rw [h₂₂]
-          have h₂₃ : Real.sin (2 * (θ / 2) + 2 * Real.pi) = Real.sin (2 * (θ / 2)) := by
-            rw [show 2 * (θ / 2) + 2 * Real.pi = 2 * (θ / 2) + Real.pi + Real.pi by ring]
-            simp [Real.cos_add, Real.sin_add]
-          rw [h₂₃]
+          exact Real.sin_add_two_pi (2 * (θ / 2))
         rw [h₁₈, h₁₉, h₂₀, h₂₁]
         ring_nf
       rw [h₁₅] at h₁₄
@@ -149,7 +138,6 @@ problem imo1977_p4 (f : ℝ → ℝ) (a b A B : ℝ)
 
   have h₃ : a ^ 2 + b ^ 2 ≤ 2 := by
     by_contra! h
-    have h₄ : a ^ 2 + b ^ 2 > 2 := by linarith
 
     set C : ℝ := a + b with hC_def
     set D : ℝ := a - b with hD_def
@@ -162,8 +150,8 @@ problem imo1977_p4 (f : ℝ → ℝ) (a b A B : ℝ)
       linarith
 
     set R : ℝ := Real.sqrt (C ^ 2 + D ^ 2) with hR_def
-    have hR_pos : 0 < R := Real.sqrt_pos.mpr (by nlinarith)
-    have hR_sq : R ^ 2 = C ^ 2 + D ^ 2 := Real.sq_sqrt (by nlinarith)
+    have hR_pos : 0 < R := by positivity
+    have hR_sq : R ^ 2 = C ^ 2 + D ^ 2 := Real.sq_sqrt (by positivity)
 
     set p : ℝ := C / R with hp_def
     set q : ℝ := D / R with hq_def
@@ -186,8 +174,7 @@ problem imo1977_p4 (f : ℝ → ℝ) (a b A B : ℝ)
           rw [Real.sin_neg, Real.sin_arccos]
         have h₇ : -Real.sqrt (1 - p ^ 2) = -q := by
           have h₈ : q ≥ 0 := hq_nonneg
-          have h₉ : q ^ 2 = 1 - p ^ 2 := by
-            nlinarith [hpq_sq]
+          have h₉ : q ^ 2 = 1 - p ^ 2 := (sub_eq_of_eq_add' hpq_sq.symm).symm
           have h₁₀ : Real.sqrt (1 - p ^ 2) = q := by
             rw [Real.sqrt_eq_iff_eq_sq] <;> nlinarith [Real.sqrt_nonneg (1 - p ^ 2)]
           linarith
@@ -200,8 +187,7 @@ problem imo1977_p4 (f : ℝ → ℝ) (a b A B : ℝ)
           rw [Real.sin_arccos]
         have h₇ : Real.sqrt (1 - p ^ 2) = -q := by
           have h₈ : q < 0 := by linarith
-          have h₉ : q ^ 2 = 1 - p ^ 2 := by
-            nlinarith [hpq_sq]
+          have h₉ : q ^ 2 = 1 - p ^ 2 := (sub_eq_of_eq_add' hpq_sq.symm).symm
           have h₁₀ : Real.sqrt (1 - p ^ 2) = -q := by
             rw [Real.sqrt_eq_iff_eq_sq] <;> nlinarith [Real.sqrt_nonneg (1 - p ^ 2)]
           linarith
@@ -230,13 +216,11 @@ problem imo1977_p4 (f : ℝ → ℝ) (a b A B : ℝ)
         have h₈ : R ^ 2 = C ^ 2 + D ^ 2 := hR_sq
         have h₉ : C ^ 2 + D ^ 2 > 4 := hC_sq_add_D_sq_gt_4
         nlinarith [Real.sqrt_nonneg (C ^ 2 + D ^ 2)]
-      linarith
+      cutsat
 
     have h₇ : C * Real.cos θ - D * Real.sin θ ≤ 2 := by
       have h₈ : f θ + f (θ + Real.pi / 2) ≥ 0 := by
-        have h₉ : f θ ≥ 0 := h₁ θ
-        have h₁₀ : f (θ + Real.pi / 2) ≥ 0 := h₁ (θ + Real.pi / 2)
-        linarith
+        exact Left.add_nonneg (h₁ θ) (h₁ (θ + Real.pi / 2))
       have h₉ : f θ + f (θ + Real.pi / 2) = 2 - (C * Real.cos θ - D * Real.sin θ) := by
         have h₁₀ : f θ = 1 - a * Real.cos θ - b * Real.sin θ - A * Real.cos (2 * θ) - B * Real.sin (2 * θ) := by
           rw [h₀]
@@ -252,17 +236,11 @@ problem imo1977_p4 (f : ℝ → ℝ) (a b A B : ℝ)
         have h₁₄ : Real.cos (2 * (θ + Real.pi / 2)) = -Real.cos (2 * θ) := by
           have h₁₅ : 2 * (θ + Real.pi / 2) = 2 * θ + Real.pi := by ring_nf
           rw [h₁₅]
-          have h₁₆ : Real.cos (2 * θ + Real.pi) = -Real.cos (2 * θ) := by
-            rw [Real.cos_add]
-            simp [Real.cos_pi, Real.sin_pi]
-          rw [h₁₆]
+          exact Real.cos_add_pi _
         have h₁₅ : Real.sin (2 * (θ + Real.pi / 2)) = -Real.sin (2 * θ) := by
           have h₁₆ : 2 * (θ + Real.pi / 2) = 2 * θ + Real.pi := by ring_nf
           rw [h₁₆]
-          have h₁₇ : Real.sin (2 * θ + Real.pi) = -Real.sin (2 * θ) := by
-            rw [Real.sin_add]
-            simp [Real.cos_pi, Real.sin_pi]
-          rw [h₁₇]
+          exact Real.sin_add_pi _
         rw [h₁₂, h₁₃, h₁₄, h₁₅]
         have h₁₆ : C = a + b := by rw [hC_def]
         have h₁₇ : D = a - b := by rw [hD_def]
