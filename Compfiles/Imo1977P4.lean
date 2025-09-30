@@ -89,8 +89,9 @@ problem imo1977_p4 (f : ℝ → ℝ) (a b A B : ℝ)
 
     have h₁₁ : A * Real.cos θ + B * Real.sin θ > 1 := by
       have h₁₂ : R > 1 := by
-        have h₁₃ : R ^ 2 = A ^ 2 + B ^ 2 := hR_sq
-        nlinarith [Real.sqrt_nonneg (A ^ 2 + B ^ 2)]
+        rw [hR_def, gt_iff_lt, ←one_lt_sq_iff₀ (a := √(A^2 + B^2)) (by positivity)]
+        rw [Real.sq_sqrt (by positivity)]
+        exact h
       linarith only [h₁₀, h₁₂]
 
     have h₁₂ : A * Real.cos (2 * (θ / 2)) + B * Real.sin (2 * (θ / 2)) > 1 := by
@@ -126,7 +127,7 @@ problem imo1977_p4 (f : ℝ → ℝ) (a b A B : ℝ)
         ring_nf
       rw [h₁₅] at h₁₄
       linarith
-    linarith
+    exact not_lt_of_ge h₁₃ h₁₂
 
   have h₃ : a ^ 2 + b ^ 2 ≤ 2 := by
     by_contra! h
@@ -202,9 +203,9 @@ problem imo1977_p4 (f : ℝ → ℝ) (a b A B : ℝ)
 
     have h₆ : C * Real.cos θ - D * Real.sin θ > 2 := by
       have h₇ : R > 2 := by
-        have h₈ : R ^ 2 = C ^ 2 + D ^ 2 := hR_sq
         have h₉ : C ^ 2 + D ^ 2 > 4 := hC_sq_add_D_sq_gt_4
-        nlinarith [Real.sqrt_nonneg (C ^ 2 + D ^ 2)]
+        rw [←hR_sq, show 4 = (2:ℝ)^2 by norm_num] at h₉
+        exact (sq_lt_sq₀ (by positivity) (by positivity)).mp h₉
       cutsat
 
     have h₇ : C * Real.cos θ - D * Real.sin θ ≤ 2 := by
@@ -237,7 +238,7 @@ problem imo1977_p4 (f : ℝ → ℝ) (a b A B : ℝ)
         ring_nf at *
       rw [h₉] at h₈
       linarith
-    linarith
+    exact not_lt_of_ge h₇ h₆
 
   exact ⟨h₃, h₂⟩
 
