@@ -57,7 +57,7 @@ problem imo1977_p4 (f : ℝ → ℝ) (a b A B : ℝ)
           have h₁₂ : Real.sqrt (1 - p ^ 2) = q := by
             rw [Real.sqrt_eq_iff_eq_sq _ hq_nonneg] <;> nlinarith only [h₁₁]
           exact h₁₂
-        exact ⟨Real.cos_arccos hpn1 hp1, by linarith⟩
+        exact ⟨Real.cos_arccos hpn1 hp1, by linarith only [h₈, h₉]⟩
       · use -Real.arccos p
         have h₇ : Real.cos (-Real.arccos p) = p := by
           rw [Real.cos_neg, Real.cos_arccos hpn1 hp1]
@@ -68,7 +68,7 @@ problem imo1977_p4 (f : ℝ → ℝ) (a b A B : ℝ)
           have h₁₁ : q ^ 2 = 1 - p ^ 2 := (sub_eq_of_eq_add' hpq_sq.symm).symm
           have h₁₂ : Real.sqrt (1 - p ^ 2) = -q := by
             rw [Real.sqrt_eq_iff_eq_sq] <;> nlinarith only [h₁₀, h₁₁]
-          linarith
+          exact neg_eq_iff_eq_neg.mpr h₁₂
         exact ⟨h₇, by linarith only [h₈, h₉]⟩
     obtain ⟨θ, hθ_cos, hθ_sin⟩ := hθ
 
@@ -124,7 +124,7 @@ problem imo1977_p4 (f : ℝ → ℝ) (a b A B : ℝ)
         rw [h₁₈, h₁₉, h₂₀, h₂₁]
         ring_nf
       rw [h₁₅] at h₁₄
-      linarith
+      linarith only [h₁₄]
     exact not_lt_of_ge h₁₃ h₁₂
 
   have h₃ : a ^ 2 + b ^ 2 ≤ 2 := by
@@ -137,8 +137,7 @@ problem imo1977_p4 (f : ℝ → ℝ) (a b A B : ℝ)
         C ^ 2 + D ^ 2 = (a + b) ^ 2 + (a - b) ^ 2 := by rw [hC_def, hD_def]
         _ = 2 * (a ^ 2 + b ^ 2) := by ring
     have hC_sq_add_D_sq_gt_4 : C ^ 2 + D ^ 2 > 4 := by
-      have h₅ : 2 * (a ^ 2 + b ^ 2) > 4 := by linarith
-      linarith
+      linarith only [h, hC_sq_add_D_sq]
 
     set R : ℝ := Real.sqrt (C ^ 2 + D ^ 2) with hR_def
     have hR_pos : 0 < R := by positivity
@@ -167,10 +166,9 @@ problem imo1977_p4 (f : ℝ → ℝ) (a b A B : ℝ)
         have h₇ : -Real.sqrt (1 - p ^ 2) = -q := by
           have h₈ : q ≥ 0 := hq_nonneg
           have h₉ : q ^ 2 = 1 - p ^ 2 := (sub_eq_of_eq_add' hpq_sq.symm).symm
-          have h₁₀ : Real.sqrt (1 - p ^ 2) = q := by
-            rw [Real.sqrt_eq_iff_eq_sq] <;> nlinarith only [h₈, h₉]
-          linarith
-        exact ⟨h₅, by linarith⟩
+          congr 1
+          rw [Real.sqrt_eq_iff_eq_sq] <;> nlinarith only [h₈, h₉]
+        exact ⟨h₅, h₆.trans h₇⟩
       · use Real.arccos p
         have h₆ : Real.sin (Real.arccos p) = Real.sqrt (1 - p ^ 2) := by
           rw [Real.sin_arccos]
@@ -233,7 +231,7 @@ problem imo1977_p4 (f : ℝ → ℝ) (a b A B : ℝ)
         simp only [h₁₆, h₁₇] at *
         ring_nf at *
       rw [h₉] at h₈
-      linarith
+      linarith only [h₈]
     exact not_lt_of_ge h₇ h₆
 
   exact ⟨h₃, h₂⟩
