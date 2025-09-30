@@ -45,32 +45,31 @@ problem imo1977_p4 (f : ℝ → ℝ) (a b A B : ℝ)
           rw [hR_sq]
           field_simp [hR_pos.ne']
 
+    have hpn1 : -1 ≤ p := by nlinarith only [hpq_sq]
+    have hp1 : p ≤ 1 := by nlinarith only [hpq_sq]
     have hθ : ∃ (θ : ℝ), Real.cos θ = p ∧ Real.sin θ = q := by
       by_cases hq_nonneg : q ≥ 0
       · use Real.arccos p
-        have h₇ : Real.cos (Real.arccos p) = p := by
-          rw [Real.cos_arccos] <;> nlinarith only [hpq_sq]
         have h₈ : Real.sin (Real.arccos p) = Real.sqrt (1 - p ^ 2) := by
           rw [Real.sin_arccos]
         have h₉ : Real.sqrt (1 - p ^ 2) = q := by
-          have h₁₀ : q ≥ 0 := hq_nonneg
           have h₁₁ : q ^ 2 = 1 - p ^ 2 := (sub_eq_of_eq_add' hpq_sq.symm).symm
           have h₁₂ : Real.sqrt (1 - p ^ 2) = q := by
-            rw [Real.sqrt_eq_iff_eq_sq] <;> nlinarith only [h₁₀, h₁₁]
+            rw [Real.sqrt_eq_iff_eq_sq _ hq_nonneg] <;> nlinarith only [h₁₁]
           exact h₁₂
-        exact ⟨h₇, by linarith⟩
+        exact ⟨Real.cos_arccos hpn1 hp1, by linarith⟩
       · use -Real.arccos p
         have h₇ : Real.cos (-Real.arccos p) = p := by
-          rw [Real.cos_neg, Real.cos_arccos] <;> nlinarith only [hpq_sq]
+          rw [Real.cos_neg, Real.cos_arccos hpn1 hp1]
         have h₈ : Real.sin (-Real.arccos p) = -Real.sqrt (1 - p ^ 2) := by
           rw [Real.sin_neg, Real.sin_arccos]
         have h₉ : -Real.sqrt (1 - p ^ 2) = q := by
           have h₁₀ : q < 0 := lt_of_not_ge hq_nonneg
           have h₁₁ : q ^ 2 = 1 - p ^ 2 := (sub_eq_of_eq_add' hpq_sq.symm).symm
           have h₁₂ : Real.sqrt (1 - p ^ 2) = -q := by
-            rw [Real.sqrt_eq_iff_eq_sq] <;> nlinarith [h₁₀, h₁₁]
+            rw [Real.sqrt_eq_iff_eq_sq] <;> nlinarith only [h₁₀, h₁₁]
           linarith
-        exact ⟨h₇, by linarith⟩
+        exact ⟨h₇, by linarith only [h₈, h₉]⟩
     obtain ⟨θ, hθ_cos, hθ_sin⟩ := hθ
 
     have h₁₀ : A * Real.cos θ + B * Real.sin θ = R := by
@@ -82,8 +81,7 @@ problem imo1977_p4 (f : ℝ → ℝ) (a b A B : ℝ)
         _ = R * (p * p + q * q) := by
           rw [hθ_cos, hθ_sin]
         _ = R * 1 := by
-          have h₁₁ : p ^ 2 + q ^ 2 = 1 := hpq_sq
-          have h₁₂ : p * p + q * q = 1 := by simp only [←sq, h₁₁]
+          have h₁₂ : p * p + q * q = 1 := by simp only [←sq, hpq_sq]
           rw [h₁₂]
         _ = R := by ring
 
@@ -157,11 +155,13 @@ problem imo1977_p4 (f : ℝ → ℝ) (a b A B : ℝ)
           rw [hR_sq]
           field_simp [hR_pos.ne']
 
+    have hpn1 : -1 ≤ p := by nlinarith only [hpq_sq]
+    have hp1 : p ≤ 1 := by nlinarith only [hpq_sq]
     have hθ : ∃ (θ : ℝ), Real.cos θ = p ∧ Real.sin θ = -q := by
       by_cases hq_nonneg : q ≥ 0
       · use -Real.arccos p
         have h₅ : Real.cos (-Real.arccos p) = p := by
-          rw [Real.cos_neg, Real.cos_arccos] <;> nlinarith only [hpq_sq]
+          rw [Real.cos_neg, Real.cos_arccos hpn1 hp1]
         have h₆ : Real.sin (-Real.arccos p) = -Real.sqrt (1 - p ^ 2) := by
           rw [Real.sin_neg, Real.sin_arccos]
         have h₇ : -Real.sqrt (1 - p ^ 2) = -q := by
@@ -172,17 +172,13 @@ problem imo1977_p4 (f : ℝ → ℝ) (a b A B : ℝ)
           linarith
         exact ⟨h₅, by linarith⟩
       · use Real.arccos p
-        have h₅ : Real.cos (Real.arccos p) = p := by
-          rw [Real.cos_arccos] <;> nlinarith only [hpq_sq]
         have h₆ : Real.sin (Real.arccos p) = Real.sqrt (1 - p ^ 2) := by
           rw [Real.sin_arccos]
         have h₇ : Real.sqrt (1 - p ^ 2) = -q := by
           have h₈ : q < 0 := lt_of_not_ge hq_nonneg
           have h₉ : q ^ 2 = 1 - p ^ 2 := (sub_eq_of_eq_add' hpq_sq.symm).symm
-          have h₁₀ : Real.sqrt (1 - p ^ 2) = -q := by
-            rw [Real.sqrt_eq_iff_eq_sq] <;> nlinarith only [h₈, h₉]
-          linarith
-        exact ⟨h₅, by rw [h₆, h₇]⟩
+          rw [Real.sqrt_eq_iff_eq_sq] <;> nlinarith only [h₈, h₉]
+        exact ⟨Real.cos_arccos hpn1 hp1, by rw [h₆, h₇]⟩
     obtain ⟨θ, hθ_cos, hθ_sin⟩ := hθ
 
     have h₅ : C * Real.cos θ - D * Real.sin θ = R := by
