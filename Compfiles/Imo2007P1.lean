@@ -40,7 +40,7 @@ problem imo2007_p1a {n : ℕ} (hn : 0 < n) (a x : Fin n → ℝ) (h : Monotone x
       rw [nonempty_subtype]
       use i
     apply exists_eq_ciSup_of_finite
-  have h₃ : ∃ k : {k // i ≤ k}, a k = ⨅ k : {k // i ≤ k}, a k:= by
+  have h₃ : ∃ k : {k // i ≤ k}, a k = ⨅ k : {k // i ≤ k}, a k := by
     apply exists_eq_ciInf_of_finite
   rcases h₂ with ⟨j, hj⟩
   rcases h₃ with ⟨k, hk⟩
@@ -63,7 +63,7 @@ problem imo2007_p1a {n : ℕ} (hn : 0 < n) (a x : Fin n → ℝ) (h : Monotone x
       _ ≤ |a ↑j - x ↑j| + |x ↑k - a ↑k| := add_le_add (le_abs_self _) (le_abs_self _)
       _ = |x ↑j - a ↑j| + |x ↑k - a ↑k| := by rw [abs_sub_comm]
       _ < (a ↑j - a ↑k) / 2 + (a ↑j - a ↑k) / 2 := add_lt_add (h₄ j) (h₄ k)
-      _ = a ↑j - a ↑k := by rw [← mul_two, div_mul_cancel₀]; norm_num
+      _ = a ↑j - a ↑k := add_halves _
   exact (lt_self_iff_false _).mp h₅
 
 problem imo2007_p1b {n : ℕ} (hn : 0 < n) {a : Fin n → ℝ} :
@@ -96,9 +96,8 @@ problem imo2007_p1b {n : ℕ} (hn : 0 < n) {a : Fin n → ℝ} :
             ≤ (⨆ j : {j // j ≤ i}, a j) - (⨅ j : {j // i ≤ j}, a j) := by
               apply sub_le_sub_left
               exact Finite.ciInf_le (fun (j : { j // i ≤ j }) ↦ a j) ⟨i, le_rfl⟩
-          _ ≤ ⨆ i, d a i := by
-              exact Finite.le_ciSup (fun i ↦ d a i) i
-          _ = d' * 2 := by rw [div_mul_cancel₀]; norm_num
+          _ ≤ ⨆ i, d a i := Finite.le_ciSup (fun i ↦ d a i) i
+          _ = d' * 2 := (div_mul_cancel_of_invertible _ _).symm
       · calc -(x i - a i)
             = d' + (a i - (⨆ j : {j // j ≤ i}, a j)) := by module
           _ ≤ d' := by
