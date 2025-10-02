@@ -27,7 +27,7 @@ Determine the smallest real constant c such that f(n) ⩽ cn for all bonza funct
 -/
 open Int
 
---sinp begin
+--snip begin
 
 lemma fermat_little_theorem: ∀p:ℕ+, (Nat.Prime (p:ℕ)) → (∀a:ℕ, (a^(p:ℕ)≡a [MOD p])) := by
   intro p hp a
@@ -80,7 +80,7 @@ lemma int_dvd_to_nat_dvd : ∀a:ℕ+, ∀ b:ℕ , (a:ℤ)∣(b:ℤ) → (a:ℕ)�
   rw [Nat.cast_inj] at hx
   exact hx
 
---sinp end
+--snip end
 
 def Bonza (f : ℕ+ → ℕ+) : Prop :=
   ∀ a b : ℕ+,
