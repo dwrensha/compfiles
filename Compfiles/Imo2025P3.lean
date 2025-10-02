@@ -40,10 +40,7 @@ lemma fermat_little_theorem: ∀p:ℕ+, (Nat.Prime (p:ℕ)) → (∀a:ℕ, (a^(p
     simp at h2
     apply Nat.ModEq.symm at h1
     exact Nat.ModEq.trans h2 h1
-  · have h2 : (p:ℕ).Coprime a := by
-      by_contra g
-      rw [←Nat.Prime.dvd_iff_not_coprime hp] at g
-      exact h1 g
+  · have h2 : (p:ℕ).Coprime a := (Nat.Prime.coprime_iff_not_dvd hp).mpr h1
     apply Nat.Coprime.symm at h2
     have h3 := Nat.ModEq.pow_totient h2
     rw [Nat.totient_prime hp] at h3
@@ -67,19 +64,7 @@ lemma fermat_little_theorem2: ∀p:ℕ+, (Nat.Prime (p:ℕ)) → (∀a:ℕ, ∀k
 
 lemma int_dvd_to_nat_dvd : ∀a:ℕ+, ∀ b:ℕ , (a:ℤ)∣(b:ℤ) → (a:ℕ)∣b := by
   intro a b h1
-  obtain ⟨x,hx⟩ := h1
-  use x.toNat
-  have g : x = (x.toNat : ℤ) := by
-    simp
-    have g2 : ↑a * x ≥ 0 := by
-      rw [←hx]
-      simp
-    simp at g2
-    exact g2
-  rw [g] at hx
-  rw [←Nat.cast_mul] at hx
-  rw [Nat.cast_inj] at hx
-  exact hx
+  exact ofNat_dvd.mp h1
 
 snip end
 
@@ -140,7 +125,7 @@ problem imo2025_p3 :
           specialize h3 p hp
           obtain ⟨i,hi⟩ := h3
           induction i with
-          | zero => 
+          | zero =>
             simp at hi
             exact Or.inl hi
           | succ d hd =>
@@ -187,12 +172,7 @@ problem imo2025_p3 :
             rw [Nat.ModEq.comm] at r7
             have r8 := Nat.ModEq.trans r7 r6
             rw [Nat.modEq_iff_dvd] at r8
-            have r9 : (p:ℤ) ∣ (f b : ℤ) - (b:ℤ) := by
-              obtain ⟨x,hx⟩ := r8
-              use -x
-              simp
-              rw [←hx]
-              simp
+            have r9 : (p:ℤ) ∣ (f b : ℤ) - (b:ℤ) := dvd_sub_comm.mp r8
             have g1 : (f b : ℤ) - (b:ℤ)≥0 := by
               simp
               exact Nat.le_of_lt hb
@@ -208,8 +188,7 @@ problem imo2025_p3 :
               rw [g2'] at hp1
               exact hp1
             have g3 := Int.eq_zero_of_dvd_of_nonneg_of_lt g1 g2 r9
-            have g4 : (f b : ℤ) = (b : ℤ) := by
-              linarith
+            have g4 : (f b : ℤ) = (b : ℤ) := by cutsat
             simp at g4
             rw [g4] at hb
             simp at hb
@@ -266,9 +245,7 @@ problem imo2025_p3 :
           · exfalso
             have r6 : (p:ℤ) ∣ (f p : ℤ) := by
               apply Nat.cast_dvd_cast
-              obtain ⟨x,hx⟩ := h4
-              rw [hx]
-              simp
+              exact PNat.dvd_iff.mp h4
             have r7 := Int.dvd_trans r6 hf
             rw [←Nat.cast_pow,←Nat.cast_pow] at r7
             rw [←Nat.modEq_iff_dvd] at r7
@@ -297,8 +274,7 @@ problem imo2025_p3 :
           simp at hf
           have r2 : (p:ℤ) ∣ (f a :ℤ) := by
             apply Nat.cast_dvd_cast
-            rw [PNat.dvd_iff] at hp2
-            exact hp2
+            exact PNat.dvd_iff.mp hp2
           have r3 := Int.dvd_trans r2 hf
           have r4 : (p:ℤ) ∣ (p:ℤ) ^ (a:ℕ) := by
             simp
@@ -335,9 +311,7 @@ problem imo2025_p3 :
           have r2 : (f a : ℕ).factorization.support ⊆ {2} := by
             intro q hq
             simp at hq
-            specialize r1 q hq
-            simp
-            exact r1
+            exact Finset.mem_singleton.mpr (r1 q hq)
           have r3 := Nat.factorization_prod_pow_eq_self (Nat.ne_zero_iff_zero_lt.2 (f a).2)
           symm at r3
           have r4 := Finsupp.prod_of_support_subset ((f a :ℕ).factorization) r2 (fun x1 x2 => x1 ^ x2)
@@ -402,9 +376,8 @@ problem imo2025_p3 :
               have y1 : FiniteMultiplicity 2 (3 ^ (a:ℕ) - 1) := by
                 apply Nat.finiteMultiplicity_iff.mpr
                 simp
-              have y2 : FiniteMultiplicity 2 (a:ℕ) := by
-                apply Nat.finiteMultiplicity_iff.mpr
-                simp
+              have y2 : FiniteMultiplicity 2 (a:ℕ) :=
+                finiteMultiplicity_of_emultiplicity_eq_natCast r2
               rw [FiniteMultiplicity.emultiplicity_eq_multiplicity y1,FiniteMultiplicity.emultiplicity_eq_multiplicity y2] at g2
               rw [FiniteMultiplicity.emultiplicity_eq_multiplicity y1,FiniteMultiplicity.emultiplicity_eq_multiplicity y2]
               have y3 : 1 = ((1:ℕ):ENat) := by
@@ -418,8 +391,7 @@ problem imo2025_p3 :
               rw [←ENat.coe_add]
               rw [ENat.coe_inj]
               grind
-            rw [g5] at g1
-            exact g1
+            exact le_of_le_of_eq g1 g5
           rw [r1,r2] at r3
           exact ENat.coe_le_coe.mp r3
 
@@ -436,19 +408,12 @@ problem imo2025_p3 :
           simp
           have r1 : 2^k ≤ 2^((a:ℕ).factorization 2 + 2) := by
             have g1 : 2>0 := by decide
-            apply Nat.pow_le_pow_right g1 at h10
-            exact h10
+            exact Nat.pow_le_pow_right g1 h10
           have r2 : 2 ^ (Nat.factorization (a:ℕ) 2) ∣ (a:ℕ) := Nat.ordProj_dvd (a:ℕ) 2
           have g2 : (a:ℕ)>0 := by
             simp
           have r3 := Nat.le_of_dvd g2 r2
-          rw [Nat.pow_add] at r1
-          simp at r1
-          have r4 : (2 ^ (a:ℕ).factorization 2)*4 ≤ (a:ℕ)*4 := by
-            simp
-            exact r3
-          have r5 := Nat.le_trans r1 r4
-          grind
+          cutsat
 
         have h12 : ∀ (a : ℕ+), Odd (a:ℕ) → f a = 1 := by
           intro a ha
@@ -497,14 +462,11 @@ problem imo2025_p3 :
 
         by_cases r : Even (n:ℕ)
         · specialize h11 n r
-          have g1 : ((f n : ℤ):ℝ)≤((4*n:ℤ):ℝ) := by
-            rw [Int.cast_le]
-            exact h11
+          have g1 : ((f n : ℤ):ℝ)≤((4*n:ℤ):ℝ) := cast_le.mpr h11
           simp at g1
           exact g1
         · rw [Nat.not_even_iff_odd] at r
-          specialize h13 n r
-          exact h13
+          exact h13 n r
 
     · unfold lowerBounds
       simp
@@ -519,23 +481,20 @@ problem imo2025_p3 :
         unfold Bonza
         intro a b
         by_cases r1: a = 4
-        · have g1 : f a = 16 := by grind
+        · have g1 : f a = 16 := if_pos r1
           by_cases t1: b = 4
-          · have g2 : f b = 16 := by grind
+          · have g2 : f b = 16 := if_pos t1
             rw [g1,g2,r1,t1]
             decide
           · by_cases t2: Odd (b:ℕ)
             · have g2 : f b = 1 := by grind
               rw [g1,g2,r1]
               simp
-              have y1 : Odd (b:ℤ) := by
-                simp
-                exact t2
+              have y1 : Odd (b:ℤ) := (odd_coe_nat ↑b).mpr t2
               have y2 := Int.eight_dvd_sq_sub_one_of_odd y1
               have y3 : Even ((b:ℕ)^2+1) := by
                 apply Odd.add_one
-                apply Odd.pow
-                exact t2
+                exact Odd.pow t2
               obtain ⟨x,hx⟩ := y2
               obtain ⟨y,hy⟩ := y3
               use x*y
@@ -560,8 +519,7 @@ problem imo2025_p3 :
               simp
               have y2 : (2*(x:ℤ))^4 = 2^4*(x:ℤ)^4 := by
                 grind
-              rw [y2]
-              grind
+              cutsat
         · by_cases r2: Odd (a:ℕ)
           · have g1 : f a = 1 := by grind
             rw [g1]
@@ -579,22 +537,18 @@ problem imo2025_p3 :
                 decide
               exact Int.dvd_sub y1 y2
             · by_cases t2: Odd (b:ℕ)
-              · have g2 : f b = 1 := by grind
+              · have g2 : f b = 1 := by cutsat
                 rw [g1,g2]
                 simp
-                have y1 : Odd (b:ℤ) := by
-                  simp
-                  exact t2
-                have y2 : Odd ((b:ℤ)^(a:ℕ)) := by
-                  exact Odd.pow y1
+                have y1 : Odd (b:ℤ) := (odd_coe_nat _).mpr t2
+                have y2 : Odd ((b:ℤ)^(a:ℕ)) := Odd.pow y1
                 have y4 : Even ((b:ℤ)^(a:ℕ)-1) := by
                   apply even_sub_one.mpr
                   rw [not_even_iff_odd]
                   exact y2
-                rw [even_iff_two_dvd] at y4
-                exact y4
+                exact even_iff_two_dvd.mp y4
 
-              · have g2 : f b = 2 := by grind
+              · have g2 : f b = 2 := by cutsat
                 rw [g1,g2]
                 simp
                 rw [Nat.not_odd_iff_even] at t2
