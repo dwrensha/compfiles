@@ -21,9 +21,11 @@ problem_file {
 
 Let N denote the set of positive integers.
 
-A function f : N → N is said to be bonza if f(a) divides b ^ a − f(b) ^ f(a) for all positive integers a and b.
+A function f : N → N is said to be bonza if f(a) divides b ^ a − f(b) ^ f(a) for
+all positive integers a and b.
 
-Determine the smallest real constant c such that f(n) ⩽ cn for all bonza functions f and all positive integers n.
+Determine the smallest real constant c such that f(n) ⩽ cn for all bonza functions f
+and all positive integers n.
 -/
 open Int
 
@@ -38,8 +40,7 @@ lemma fermat_little_theorem: ∀p:ℕ+, (Nat.Prime (p:ℕ)) → (∀a:ℕ, (a^(p
     simp at h2
     apply Nat.ModEq.symm at h1
     exact Nat.ModEq.trans h2 h1
-  · 
-    have h2 : (p:ℕ).Coprime a := by
+  · have h2 : (p:ℕ).Coprime a := by
       by_contra g
       rw [←Nat.Prime.dvd_iff_not_coprime hp] at g
       exact h1 g
@@ -119,8 +120,7 @@ problem imo2025_p3 :
         have g3 : (n : ℝ) ≤ 4*(n : ℝ) := by
           simp
         exact le_trans g2 g3
-      · 
-        have h3 : ∀p:ℕ+, (Nat.Prime (p:ℕ)) → (∃ k ≤ ↑p, (f p) = p ^ (k:ℕ)) := by
+      · have h3 : ∀p:ℕ+, (Nat.Prime (p:ℕ)) → (∃ k ≤ ↑p, (f p) = p ^ (k:ℕ)) := by
           intro p hp
           specialize h1 p
           have g1 : (f p : ℕ) ∣ (p : ℕ)^(p:ℕ) := by
@@ -160,13 +160,12 @@ problem imo2025_p3 :
           specialize h4 p hp2
           rcases h4 with r1|r1
           · exact hnp r1
-          · 
-            have r2 : (p:ℤ) ∣ (f p : ℤ) := by
+          · have r2 : (p:ℤ) ∣ (f p : ℤ) := by
               obtain ⟨x,hx⟩ := r1
               use x
               rw [hx]
               simp
-            
+
             have r3 := dvd_trans r2 hf
 
             have r4 := r3
@@ -230,7 +229,7 @@ problem imo2025_p3 :
               rw [PNat.coe_inj] at y1
               exact hp2 y1
             exact Nat.Prime.odd_of_ne_two hp1 hp3
-          
+
           have r2 := Nat.setOf_prime_and_eq_mod_infinite (a := (2 : ZMod p)) r1
           obtain ⟨x,hx⟩ := h5
           have r3 := Set.Infinite.exists_gt r2 x
@@ -259,7 +258,7 @@ problem imo2025_p3 :
           have r5 : (q > x ∧ Nat.Prime (q:ℕ)) := by
             exact And.intro hq2 hq1
           apply hx at r5
-          
+
           specialize hf p q
           specialize h4 p hp1
           rcases h4 with h4|h4
@@ -341,7 +340,7 @@ problem imo2025_p3 :
             exact r1
           have r3 := Nat.factorization_prod_pow_eq_self (Nat.ne_zero_iff_zero_lt.2 (f a).2)
           symm at r3
-          have r4 := Finsupp.prod_of_support_subset ((f a :ℕ).factorization) r2 (fun x1 x2 => x1 ^ x2) 
+          have r4 := Finsupp.prod_of_support_subset ((f a :ℕ).factorization) r2 (fun x1 x2 => x1 ^ x2)
           simp at r4
           exact r4
 
@@ -349,8 +348,7 @@ problem imo2025_p3 :
           specialize h4 3 (by decide)
           rcases h4 with h4|h4
           · exact h4
-          · 
-            specialize h7 3 3 (And.intro (by decide) h4)
+          · specialize h7 3 3 (And.intro (by decide) h4)
             exfalso
             simp at h7
 
@@ -382,11 +380,11 @@ problem imo2025_p3 :
                   exact hf
                 exact int_dvd_to_nat_dvd (f a) (3 ^ (a:ℕ) - 1) t
               exact emultiplicity_le_emultiplicity_of_dvd_right y1
-            
+
             have y1 : 2∣3-1 := by decide
             have y2 : ¬2∣3 := by decide
             have g2 := Nat.two_pow_sub_pow y1 y2 ha
-            
+
             simp at g2
             clear y1 y2
 
@@ -424,7 +422,6 @@ problem imo2025_p3 :
             exact g1
           rw [r1,r2] at r3
           exact ENat.coe_le_coe.mp r3
-          
 
         have h11 : ∀ (a : ℕ+), Even (a:ℕ) → (f a:ℤ) ≤ 4*(a:ℤ) := by
           intro a ha
@@ -499,20 +496,17 @@ problem imo2025_p3 :
           exact le_trans r3 r2
 
         by_cases r : Even (n:ℕ)
-        · 
-          specialize h11 n r
+        · specialize h11 n r
           have g1 : ((f n : ℤ):ℝ)≤((4*n:ℤ):ℝ) := by
             rw [Int.cast_le]
             exact h11
           simp at g1
           exact g1
-        · 
-          rw [Nat.not_even_iff_odd] at r
+        · rw [Nat.not_even_iff_odd] at r
           specialize h13 n r
           exact h13
 
-    · 
-      unfold lowerBounds
+    · unfold lowerBounds
       simp
       intro c hc
       unfold is_valid_c at hc
@@ -525,19 +519,13 @@ problem imo2025_p3 :
         unfold Bonza
         intro a b
         by_cases r1: a = 4
-        · 
-          have g1 : f a = 16 := by
-            grind
+        · have g1 : f a = 16 := by grind
           by_cases t1: b = 4
-          · 
-            have g2 : f b = 16 := by
-              grind
+          · have g2 : f b = 16 := by grind
             rw [g1,g2,r1,t1]
             decide
           · by_cases t2: Odd (b:ℕ)
-            · 
-              have g2 : f b = 1 := by
-                grind
+            · have g2 : f b = 1 := by grind
               rw [g1,g2,r1]
               simp
               have y1 : Odd (b:ℤ) := by
@@ -560,9 +548,7 @@ problem imo2025_p3 :
                   rw [←hy]
                   simp
                 _ = ((b:ℤ)^4-1) := by ring
-            · 
-              have g2 : f b = 2 := by
-                grind
+            · have g2 : f b = 2 := by grind
               rw [g1,g2,r1]
               simp
               rw [Nat.not_odd_iff_even] at t2
@@ -577,18 +563,12 @@ problem imo2025_p3 :
               rw [y2]
               grind
         · by_cases r2: Odd (a:ℕ)
-          · 
-            have g1 : f a = 1 := by
-              grind
+          · have g1 : f a = 1 := by grind
             rw [g1]
             simp
-          · 
-            have g1 : f a = 2 := by
-              grind
+          · have g1 : f a = 2 := by grind
             by_cases t1: b = 4
-            · 
-              have g2 : f b = 16 := by
-                grind
+            · have g2 : f b = 16 := by grind
               rw [g1,g2,t1]
               simp
               have y1 : (2:ℤ) ∣ 4^(a:ℕ) := by
@@ -599,9 +579,7 @@ problem imo2025_p3 :
                 decide
               exact Int.dvd_sub y1 y2
             · by_cases t2: Odd (b:ℕ)
-              · 
-                have g2 : f b = 1 := by
-                  grind
+              · have g2 : f b = 1 := by grind
                 rw [g1,g2]
                 simp
                 have y1 : Odd (b:ℤ) := by
@@ -616,13 +594,11 @@ problem imo2025_p3 :
                 rw [even_iff_two_dvd] at y4
                 exact y4
 
-              · 
-                have g2 : f b = 2 := by
-                  grind
+              · have g2 : f b = 2 := by grind
                 rw [g1,g2]
                 simp
                 rw [Nat.not_odd_iff_even] at t2
-                
+
                 obtain ⟨x,hx⟩ := t2
                 have y1 : x+x=2*x := by
                   exact Eq.symm (Nat.two_mul x)
@@ -640,8 +616,7 @@ problem imo2025_p3 :
       specialize h 4
       unfold f at h
       simp at h
-      have y : (16:ℝ)=4*4 := by
-        grind
+      have y : (16:ℝ)=4*4 := by norm_num
       rw [y] at h
       simp at h
       exact h
