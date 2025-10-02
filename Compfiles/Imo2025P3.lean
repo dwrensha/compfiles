@@ -91,7 +91,7 @@ def is_valid_c (c : ℝ) : Prop :=
 
 determine answer : ℝ := 4
 
-theorem imo2025_p3 :
+problem imo2025_p3 :
   IsLeast {c: ℝ | is_valid_c c} answer := by
     unfold answer
     unfold IsLeast
