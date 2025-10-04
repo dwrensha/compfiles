@@ -693,7 +693,7 @@ lemma aux_unique_top_ind
     rw [hn₆] at hn₅
     refine le_trans ?_ hn₅
     rw [hn₂, pow_succ (3/2) (n - 2), ← mul_assoc (fd a b i)]
-    refine mul_le_mul ?_ ?_ (by linarith) ?_
+    refine mul_le_mul ?_ ?_ (by norm_num1) ?_
     · refine le_of_le_of_eq hn₁ ?_
       rw [hfd₁]
     · refine (div_le_iff₀ (two_pos)).mpr ?_
@@ -797,7 +797,7 @@ lemma aux_unique_top
     refine le_trans ?_ hk₁
     refine (div_le_iff₀' ?_).mp ?_
     · exact hz₁
-    · refine Real.le_pow_of_log_le (by linarith) ?_
+    · refine Real.le_pow_of_log_le (by norm_num1) ?_
       refine (div_le_iff₀ ?_).mp ?_
       · positivity
       · rw [Nat.cast_sub ?_]

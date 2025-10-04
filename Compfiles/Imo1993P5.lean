@@ -65,7 +65,7 @@ lemma imo_1993_p5_N:
     rw [← abs_of_nonneg g₀, ← abs_of_nonneg g₁]
     refine sq_lt_sq.mp ?_
     rw [Real.sq_sqrt (by positivity)]
-    linarith
+    norm_num1
   have hg₁: 0 < G - 1 := by
     rw [hG]
     ring_nf
