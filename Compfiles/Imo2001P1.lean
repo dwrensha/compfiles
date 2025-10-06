@@ -4,14 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: David Renshaw, Benpigchu
 -/
 
-import Mathlib.Tactic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
-import Mathlib.Analysis.InnerProductSpace.PiL2
-import Mathlib.Geometry.Euclidean.Basic
-import Mathlib.Geometry.Euclidean.Circumcenter
-import Mathlib.Geometry.Euclidean.Triangle
-import Mathlib.Geometry.Euclidean.Angle.Sphere
-import Mathlib.Geometry.Euclidean.Altitude
+import Mathlib
 
 import ProblemExtraction
 
