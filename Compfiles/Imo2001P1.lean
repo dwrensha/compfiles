@@ -509,7 +509,7 @@ lemma four_sin_B_cos_A_le_one : 4 * Real.sin (∠ cfg.A cfg.B cfg.C) * Real.cos 
     _ = 2 * (2 * Real.sin (∠ cfg.A cfg.B cfg.C) * Real.cos (∠ cfg.A cfg.B cfg.C + Real.pi / 6)) := by ring
     _ = 2 * (Real.sin (∠ cfg.A cfg.B cfg.C - (∠ cfg.A cfg.B cfg.C + Real.pi / 6)) + Real.sin (∠ cfg.A cfg.B cfg.C + (∠ cfg.A cfg.B cfg.C + Real.pi / 6))) := by
         rw [Real.two_mul_sin_mul_cos]
-    _ = 2 * (Real.sin (- Real.pi / 6) + Real.sin (2 * ∠ cfg.A cfg.B cfg.C + Real.pi / 6)) := by ring
+    _ = 2 * (Real.sin (- Real.pi / 6) + Real.sin (2 * ∠ cfg.A cfg.B cfg.C + Real.pi / 6)) := by ring_nf
     _ = 2 * (- 1 / 2 + Real.sin (2 * ∠ cfg.A cfg.B cfg.C + Real.pi / 6)) := by
         rw [neg_div, Real.sin_neg, Real.sin_pi_div_six, neg_div]
     _ ≤ 2 * (- 1 / 2 + 1) := by
