@@ -198,12 +198,9 @@ lemma aux₆ {a b c : Real.Angle} (h : a + b = c)
     rw [Real.Angle.angle_eq_iff_two_pi_dvd_sub] at h
     calc |c'|
         ≤ |a' + b'| := by
-          apply aux₅ h
-          · apply mul_pos
-            · norm_num
-            · exact Real.pi_pos
-          · rw [mul_div_cancel_left₀ Real.pi (by norm_num:(2 : ℝ) ≠ 0)]
-            exact Real.Angle.abs_toReal_le_pi c
+          apply aux₅ h Real.two_pi_pos
+          rw [mul_div_cancel_left₀ Real.pi (by norm_num:(2 : ℝ) ≠ 0)]
+          exact Real.Angle.abs_toReal_le_pi c
       _ ≤ |a'| + |b'| := by apply abs_add_le
 
 lemma aux₇ {a : Real.Angle} : Real.sin |a.toReal| = |a.sin| := by
