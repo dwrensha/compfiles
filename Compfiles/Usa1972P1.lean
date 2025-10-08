@@ -4,10 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Shalev Wengrowsky
 -/
 
-import Mathlib.Tactic.Ring
-import Mathlib.Data.Nat.Basic
 import Mathlib.Data.Nat.Factorization.Basic
-import Mathlib.RingTheory.UniqueFactorizationDomain.Basic
 
 import ProblemExtraction
 
