@@ -8,6 +8,7 @@ import Compfiles.CIIM2022P6
 import Compfiles.Canada1998P3
 import Compfiles.Canada1998P5
 import Compfiles.Hungary1998P6
+import Compfiles.IMO1966P1
 import Compfiles.Imo1959P1
 import Compfiles.Imo1959P2
 import Compfiles.Imo1960P1
@@ -25,7 +26,6 @@ import Compfiles.Imo1964P2
 import Compfiles.Imo1964P4
 import Compfiles.Imo1965P1
 import Compfiles.Imo1965P2
-import Compfiles.Imo1966P1
 import Compfiles.Imo1966P4
 import Compfiles.Imo1966P5
 import Compfiles.Imo1967P3
@@ -188,6 +188,7 @@ import Compfiles.UK2024R1P1
 import Compfiles.UK2024R1P2
 import Compfiles.UpperLowerContinuous
 import Compfiles.Usa1972P1
+import Compfiles.Usa1972P3
 import Compfiles.Usa1974P2
 import Compfiles.Usa1978P1
 import Compfiles.Usa1979P1
