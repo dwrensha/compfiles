@@ -24,6 +24,7 @@ namespace Usa1972P1
 
 open Nat
 
+snip begin
 /-
   implementation of the proof from https://prase.cz/kalva/usa/usoln/usol721.html
 
@@ -34,6 +35,7 @@ open Nat
     2 * min(r, s, t) + max(r, s) + max(s, t) + max(t, r) = 2 * max(r, s, t) + min(r, s) + min(s, t) + min(t, r)
   for non-negative integers r, s, t. Assume r ≤ s ≤ t. Then each side is 2r + s + 2t.
 -/
+snip end
 
 problem usa1972_p1 (a b c : ℕ) :
   (gcd a (gcd b c)) ^ 2 * lcm a b * lcm b c * lcm c a =
