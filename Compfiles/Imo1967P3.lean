@@ -99,9 +99,6 @@ lemma aux_3
 
 lemma aux_4
     (k m n : ℕ)
-    (h₀ : 0 < k ∧ 0 < m ∧ 0 < n)
-    (hk₀ : m < k)
-    (hk₁ : m + n < k)
     (h₇₀ : n ≤ k - (m + 1)) :
     ∏ i ∈ Finset.Icc 1 n, (k - (m + i)) = (k - (m + 1)).factorial / (k - (m + 1) - n).factorial := by
   have h_prod : ∏ i ∈ Finset.Icc 1 n, (k - (m + i)) = Nat.descFactorial (k - (m + 1)) n := by
@@ -229,7 +226,7 @@ problem imo1967_p3
         refine Nat.cast_dvd_cast ?_
         refine Nat.mul_dvd_mul ?_ ?_
         · have h₇₀: n ≤ k - (m + 1) := by omega
-          have h₇₁: ∏ i ∈ Finset.Icc 1 n, (k - (m + i)) = (k - (m + 1)).factorial / (k - (m + 1) - n).factorial := aux_4 k m n h₀ hk₀ hk₁ h₇₀
+          have h₇₁: ∏ i ∈ Finset.Icc 1 n, (k - (m + i)) = (k - (m + 1)).factorial / (k - (m + 1) - n).factorial := aux_4 k m n h₇₀
           have h₇₂: n.factorial * (k - (m + 1) - n).factorial ∣ (k - (m + 1)).factorial := by exact Nat.factorial_mul_factorial_dvd_factorial h₇₀
           have h₇₃: ∏ i ∈ Finset.Icc 1 n, (k - (m + i)) = n.factorial * Nat.choose (k - (m + 1)) n := by
             rw [Nat.choose_eq_factorial_div_factorial h₇₀, h₇₁]
