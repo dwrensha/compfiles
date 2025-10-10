@@ -4,8 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Roozbeh Yousefzadeh
 -/
 
-import Mathlib.Data.Nat.Prime.Factorial
-import Mathlib.Tactic
+import Mathlib
 
 import ProblemExtraction
 
@@ -99,38 +98,20 @@ lemma aux_3
     exact h₂
 
 lemma aux_4
-  (k m n : ℕ)
-  (h₀ : 0 < k ∧ 0 < m ∧ 0 < n)
-  (hk₀ : m < k)
-  (hk₁ : m + n < k)
-  (h₇₀ : n ≤ k - (m + 1)) :
-  ∏ i ∈ Finset.Icc 1 n, (k - (m + i)) = (k - (m + 1)).factorial / (k - (m + 1) - n).factorial := by
-  revert h₇₀
-  refine Nat.le_induction ?_ ?_ n h₀.2.2
-  · simp only [Nat.succ_eq_add_one, zero_add, Finset.Icc_self, Finset.prod_singleton]
-    have hk₂: k - (m + 1) = k - (m + 1) - 1 + 1 := by omega
-    rw [hk₂, Nat.factorial_succ]
-    intro hk₃
-    simp only [add_tsub_cancel_right]
-    rw [←Nat.eq_div_of_mul_eq_left (by positivity) rfl]
-  · intro d hd₀ hd₁ hd₂
-    have hd₃: ∏ i ∈ Finset.Icc 1 d, (k - (m + i)) = (k - (m + 1)).factorial / (k - (m + 1) - d).factorial := by
-      refine hd₁ ?_
-      refine le_trans ?_ hd₂
-      exact Nat.le_add_right d 1
-    rw [Finset.prod_Icc_succ_top (by linarith), hd₃]
-    have hd₄: k - (m + 1) - d = k - (m + 1) - (d + 1) + 1 := by
-      rw [Nat.sub_add_eq _ d 1, Nat.sub_add_cancel ?_]
-      omega
-    have hd₅: (k - (m + 1) - d).factorial ∣ (k - (m + 1)).factorial :=
-      Nat.factorial_dvd_factorial (Nat.sub_le _ _)
-    rw [Nat.div_mul_right_comm hd₅]
-    rw [hd₄, Nat.factorial_succ, ← hd₄]
-    rw [← Nat.sub_add_eq, add_assoc m 1 d, Nat.add_comm 1 d]
-    rw [mul_comm _ (k - (m + (d + 1)))]
-    refine Nat.mul_div_mul_left _ _ ?_
-    omega
-
+    (k m n : ℕ)
+    (h₀ : 0 < k ∧ 0 < m ∧ 0 < n)
+    (hk₀ : m < k)
+    (hk₁ : m + n < k)
+    (h₇₀ : n ≤ k - (m + 1)) :
+    ∏ i ∈ Finset.Icc 1 n, (k - (m + i)) = (k - (m + 1)).factorial / (k - (m + 1) - n).factorial := by
+  have h_prod : ∏ i ∈ Finset.Icc 1 n, (k - (m + i)) = Nat.descFactorial (k - (m + 1)) n := by
+    rw [Nat.descFactorial_eq_prod_range, ←Finset.Ico_succ_right_eq_Icc,
+        Finset.prod_Ico_eq_prod_range]
+    simp [add_comm, add_left_comm, tsub_tsub]
+  rw [h_prod, Nat.descFactorial_eq_factorial_mul_choose]
+  refine (Nat.div_eq_of_eq_mul_left (Nat.factorial_pos _) ?_).symm
+  have := Nat.choose_mul_factorial_mul_factorial h₇₀
+  grind
 
 snip end
 
