@@ -30,42 +30,13 @@ namespace Imo1967P3
 snip begin
 
 lemma aux_1
-  (c : ℕ → ℕ)
-  (h₁ : ∀ (s : ℕ), c s = s * (s + 1)) :
-  ∀ (a b : ℕ), c a - c b = (a - b) * (a + b + 1) := by
+    (c : ℕ → ℕ)
+    (h₁ : ∀ (s : ℕ), c s = s * (s + 1)) :
+    ∀ (a b : ℕ), c a - c b = (a - b) * (a + b + 1) := by
   intro a b
   rw [h₁, h₁]
-  ring_nf
-  rw [Nat.mul_sub, Nat.mul_sub]
-  ring_nf
-  by_cases ha₀: b ≤ a
-  · have ha₁: b ^ 2 ≤ a * b := by
-      rw [pow_two]
-      exact Nat.mul_le_mul_right b ha₀
-    have ha₂: a * b ≤ a ^ 2 := by
-      rw [pow_two]
-      exact Nat.mul_le_mul_left a ha₀
-    rw [← Nat.add_sub_assoc ha₁, Nat.sub_add_cancel ha₂]
-    omega
-  · push_neg at ha₀
-    have ha₁ : a + a ^ (2 : ℕ) ≤ (b + b ^ (2 : ℕ)) := by
-      refine Nat.add_le_add ?_ ?_
-      · exact Nat.le_of_succ_le ha₀
-      · refine Nat.pow_le_pow_left ?_ (2 : ℕ)
-        exact Nat.le_of_succ_le ha₀
-    have ha₂ : a ^ (2 : ℕ) ≤ a * b := by
-      rw [pow_two]
-      refine Nat.mul_le_mul ?_ ?_
-      · exact Nat.le_refl a
-      · exact Nat.le_of_succ_le ha₀
-    have ha₃ : a * b ≤ b ^ (2 : ℕ) := by
-      rw [pow_two]
-      refine Nat.mul_le_mul ?_ ?_
-      · exact Nat.le_of_succ_le ha₀
-      · exact Nat.le_refl b
-    rw [Nat.sub_eq_zero_of_le ha₁, Nat.sub_eq_zero_of_le ha₂]
-    rw [Nat.sub_eq_zero_of_le (le_of_lt ha₀)]
-    rw [Nat.sub_eq_zero_of_le ha₃]
+  have h_factor : a + a^2 - (b + b^2) = (a - b) * (a + b + 1) := by rw [tsub_mul]; grind
+  grind
 
 lemma aux_2 :
   ∀ (n m : ℕ), 0 < n → n.factorial ∣ ∏ i ∈ Finset.Icc 1 n, (m + i) := by
