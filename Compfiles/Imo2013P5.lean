@@ -37,33 +37,17 @@ We provide a direct translation of the solution found in
 https://www.imo-official.org/problems/IMO2013SL.pdf
 -/
 
-lemma le_of_all_pow_lt_succ {x y : ℝ} (hx : 1 < x) (hy : 1 < y)
+lemma le_of_all_pow_lt_succ {x y : ℝ} (hy : 1 < y)
     (h : ∀ n : ℕ, 0 < n → x^n - 1 < y^n) :
     x ≤ y := by
   by_contra! hxy
-  have hxmy : 0 < x - y := sub_pos.mpr hxy
-  have hn : ∀ n : ℕ, (x - y) * (n : ℝ) ≤ x^n - y^n := fun n ↦ by
-    have hterm : ∀ i : ℕ, i ∈ Finset.range n → 1 ≤ x^i * y^(n - 1 - i) := by
-      intro i _
-      calc 1 ≤ x^i             := one_le_pow₀ hx.le
-           _ = x^i * 1         := (mul_one _).symm
-           _ ≤ x^i * y^(n-1-i) := by gcongr; apply one_le_pow₀ hy.le
-    calc (x - y) * (n : ℝ)
-        = (n : ℝ) * (x - y) := mul_comm _ _
-      _ = (∑ _i ∈ Finset.range n, (1 : ℝ)) * (x - y) :=
-                                 by simp only [mul_one, Finset.sum_const, nsmul_eq_mul,
-                                    Finset.card_range]
-      _ ≤ (∑ i ∈ Finset.range n, x ^ i * y ^ (n - 1 - i)) * (x-y) :=
-                                  (mul_le_mul_iff_left₀ hxmy).mpr (Finset.sum_le_sum hterm)
-      _ = x^n - y^n         := geom_sum₂_mul x y n
-
-  -- Choose n larger than 1 / (x - y).
-  obtain ⟨N, hN⟩ := exists_nat_gt (1 / (x - y))
-  have hNp : 0 < N := by exact_mod_cast (one_div_pos.mpr hxmy).trans hN
-  have h1 := calc 1 = (x - y) * (1 / (x - y)) := by field_simp
-               _ < (x - y) * N             := (mul_lt_mul_iff_right₀ hxmy).mpr hN
-               _ ≤ x^N - y^N               := hn N
-  linarith only [h1, h N hNp]
+  obtain ⟨n, hn⟩ : ∃ n : ℕ, (x / y) ^ n > 2 := by
+    have h_base : 1 < x / y := by rwa [one_lt_div (by positivity)]
+    exact pow_unbounded_of_one_lt _ h_base;
+  have h_mul : x^n > 2 * y^n := by
+    rwa [div_pow, gt_iff_lt, lt_div_iff₀ (by positivity)] at hn;
+  linarith only [h_mul, pow_le_pow_right₀ hy.le n.zero_le,
+                 h n (Nat.pos_of_ne_zero (by rintro rfl; norm_num at hn))]
 
 /--
  Like le_of_all_pow_lt_succ, but with a weaker assumption for y.
@@ -71,7 +55,7 @@ lemma le_of_all_pow_lt_succ {x y : ℝ} (hx : 1 < x) (hy : 1 < y)
 lemma le_of_all_pow_lt_succ' {x y : ℝ} (hx : 1 < x) (hy : 0 < y)
     (h : ∀ n : ℕ, 0 < n → x^n - 1 < y^n) :
     x ≤ y := by
-  refine le_of_all_pow_lt_succ hx ?_ h
+  refine le_of_all_pow_lt_succ ?_ h
   by_contra! hy''
 
   -- Then there exists y' such that 0 < y ≤ 1 < y' < x.
@@ -83,7 +67,7 @@ lemma le_of_all_pow_lt_succ' {x y : ℝ} (hx : 1 < x) (hy : 0 < y)
     calc x^n - 1 < y^n  := h n hn
          _  ≤ y'^n := pow_le_pow_left₀ hy.le h_y_lt_y'.le n
 
-  exact h_y'_lt_x.not_ge (le_of_all_pow_lt_succ hx h1_lt_y' hh)
+  exact h_y'_lt_x.not_ge (le_of_all_pow_lt_succ h1_lt_y' hh)
 
 lemma f_pos_of_pos {f : ℚ → ℝ} {q : ℚ} (hq : 0 < q)
     (H1 : ∀ x y, 0 < x → 0 < y → f (x * y) ≤ f x * f y)
