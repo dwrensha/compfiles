@@ -79,19 +79,19 @@ lemma aux_2_2
   rw [ha_step j le_rfl, hj₀, Nat.mul_div_cancel' hc₂, add_tsub_cancel_of_le hh₃.le]
 
 lemma aux_2_3
-  (a : ℕ → ℕ → ℕ)
-  (ha₁ : ∀ (x i : ℕ),
-    (1 : ℕ) < x → if IsSquare (a x i)
-                  then a x (i + (1 : ℕ)) = (a x i).sqrt
-                  else a x (i + (1 : ℕ)) = a x i + (3 : ℕ))
-  (x c i j t : ℕ)
-  (hx₀ : (1 : ℕ) < x)
-  (hi₀ : a x i = c)
-  (hh₃ : c < t)
-  (hh₄ : ∀ (k : ℕ), i ≤ k → k < i + j → ¬IsSquare (a x k))
-  (hh₅ : 3 ∣ t - c)
-  (hj₀ : j = (t - c) / (3 : ℕ)) :
-  a x (i + j) = t := by
+    (a : ℕ → ℕ → ℕ)
+    (ha₁ : ∀ (x i : ℕ),
+      (1 : ℕ) < x → if IsSquare (a x i)
+                    then a x (i + (1 : ℕ)) = (a x i).sqrt
+                    else a x (i + (1 : ℕ)) = a x i + (3 : ℕ))
+    (x c i j t : ℕ)
+    (hx₀ : (1 : ℕ) < x)
+    (hi₀ : a x i = c)
+    (hh₃ : c < t)
+    (hh₄ : ∀ (k : ℕ), i ≤ k → k < i + j → ¬IsSquare (a x k))
+    (hh₅ : 3 ∣ t - c)
+    (hj₀ : j = (t - c) / (3 : ℕ)) :
+    a x (i + j) = t := by
   have h₀: ∀ (k : ℕ), i ≤ k → k ≤ i + j → a x k = c + (k - i) * 3 := by
     intro k
     revert hh₄
@@ -129,19 +129,19 @@ lemma aux_2_3
   omega
 
 lemma aux_2_4
-  (a : ℕ → ℕ → ℕ)
-  (ha₁ : ∀ (x i : ℕ),
-    (1 : ℕ) < x → if IsSquare (a x i)
-                  then a x (i + (1 : ℕ)) = (a x i).sqrt
-                  else a x (i + (1 : ℕ)) = a x i + (3 : ℕ))
-  (x c i j : ℕ)
-  (hj₀ : j = ((c.sqrt + (2 : ℕ)) ^ (2 : ℕ) - c) / (3 : ℕ))
-  (hx₀ : (1 : ℕ) < x)
-  (hi₀ : a x i = c)
-  (hh₃ : c < (c.sqrt + (1 : ℕ)) ^ (2 : ℕ))
-  (hh₄ : ∀ (y : ℕ), c ≤ y → y < (c.sqrt + (1 : ℕ)) ^ (2 : ℕ) → ¬IsSquare y)
-  (hh₁ : c % (3 : ℕ) ≠ ((c.sqrt + (1 : ℕ)) ^ (2 : ℕ)) % 3) :
-  ∀ (k : ℕ), i ≤ k → k < i + j → ¬IsSquare (a x k) := by
+    (a : ℕ → ℕ → ℕ)
+    (ha₁ : ∀ (x i : ℕ),
+      (1 : ℕ) < x → if IsSquare (a x i)
+                    then a x (i + (1 : ℕ)) = (a x i).sqrt
+                    else a x (i + (1 : ℕ)) = a x i + (3 : ℕ))
+    (x c i j : ℕ)
+    (hj₀ : j = ((c.sqrt + (2 : ℕ)) ^ (2 : ℕ) - c) / (3 : ℕ))
+    (hx₀ : (1 : ℕ) < x)
+    (hi₀ : a x i = c)
+    (hh₃ : c < (c.sqrt + (1 : ℕ)) ^ (2 : ℕ))
+    (hh₄ : ∀ (y : ℕ), c ≤ y → y < (c.sqrt + (1 : ℕ)) ^ (2 : ℕ) → ¬IsSquare y)
+     (hh₁ : c % (3 : ℕ) ≠ ((c.sqrt + (1 : ℕ)) ^ (2 : ℕ)) % 3) :
+    ∀ (k : ℕ), i ≤ k → k < i + j → ¬IsSquare (a x k) := by
   intro k
   have h₀: ∀ y, (c.sqrt + (1 : ℕ)) ^ (2 : ℕ) < y →
                         y < (c.sqrt + (2 : ℕ)) ^ (2 : ℕ) → ¬ IsSquare y := by
@@ -179,20 +179,20 @@ lemma aux_2_4
     exact Nat.le_refl c
 
 lemma aux_2_5
-  (a : ℕ → ℕ → ℕ)
-  (ha₁ : ∀ (x i : ℕ),
-    (1 : ℕ) < x → if IsSquare (a x i)
-                  then a x (i + (1 : ℕ)) = (a x i).sqrt
-                  else a x (i + (1 : ℕ)) = a x i + (3 : ℕ))
-  (x c i j : ℕ)
-  (hx₀ : (1 : ℕ) < x)
-  (hi₀ : a x i = c)
-  (hh₃ : c < (c.sqrt + (1 : ℕ)) ^ (2 : ℕ))
-  (hh₄ : ∀ (y : ℕ), c ≤ y → y < (c.sqrt + (1 : ℕ)) ^ (2 : ℕ) → ¬IsSquare y)
-  (hh₁ : c % (3 : ℕ) = (0 : ℕ))
-  (hh₂ : c.sqrt % (3 : ℕ) = (0 : ℕ))
-  (hj₀ : j = ((c.sqrt + (3 : ℕ)) ^ (2 : ℕ) - c) / (3 : ℕ)) :
-  ∀ (k : ℕ), i ≤ k → k < i + ((c.sqrt + (3 : ℕ)) ^ (2 : ℕ) - c) / (3 : ℕ) → ¬IsSquare (a x k) := by
+    (a : ℕ → ℕ → ℕ)
+    (ha₁ : ∀ (x i : ℕ),
+      (1 : ℕ) < x → if IsSquare (a x i)
+                    then a x (i + (1 : ℕ)) = (a x i).sqrt
+                    else a x (i + (1 : ℕ)) = a x i + (3 : ℕ))
+    (x c i j : ℕ)
+    (hx₀ : (1 : ℕ) < x)
+    (hi₀ : a x i = c)
+    (hh₃ : c < (c.sqrt + (1 : ℕ)) ^ (2 : ℕ))
+    (hh₄ : ∀ (y : ℕ), c ≤ y → y < (c.sqrt + (1 : ℕ)) ^ (2 : ℕ) → ¬IsSquare y)
+    (hh₁ : c % (3 : ℕ) = (0 : ℕ))
+    (hh₂ : c.sqrt % (3 : ℕ) = (0 : ℕ))
+     (hj₀ : j = ((c.sqrt + (3 : ℕ)) ^ (2 : ℕ) - c) / (3 : ℕ)) :
+    ∀ (k : ℕ), i ≤ k → k < i + ((c.sqrt + (3 : ℕ)) ^ (2 : ℕ) - c) / (3 : ℕ) → ¬IsSquare (a x k) := by
   intro k
   have h₀: ∀ y t, (c.sqrt + (t : ℕ)) ^ (2 : ℕ) < y →
                     y < (c.sqrt + t + (1 : ℕ)) ^ (2 : ℕ) → ¬ IsSquare y := by
@@ -394,11 +394,11 @@ lemma aux_3
       exact Set.mem_range_self (i + j)
 
 theorem aux_4
-  (a : ℕ → ℕ → ℕ)
-  (ha₁ : ∀ x i, 1 < x → if IsSquare (a x i)
-                        then a x (i + 1) = Nat.sqrt (a x i)
-                        else a x (i + 1) = a x i + 3) :
-  ∀ x > 1, (∃ j, a x j ≡ 2 [MOD 3]) → (∀ A, {n | a x n = A}.Finite) := by
+    (a : ℕ → ℕ → ℕ)
+    (ha₁ : ∀ x i, 1 < x → if IsSquare (a x i)
+                          then a x (i + 1) = Nat.sqrt (a x i)
+                          else a x (i + 1) = a x i + 3) :
+    ∀ x > 1, (∃ j, a x j ≡ 2 [MOD 3]) → (∀ A, {n | a x n = A}.Finite) := by
   intro x hx₀ hx₁ A
   obtain ⟨i, hi₀⟩ := hx₁
   rw [Set.finite_iff_bddBelow_bddAbove]
