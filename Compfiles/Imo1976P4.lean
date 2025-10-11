@@ -62,8 +62,7 @@ lemma exists_mem_of_sum_lt_zero (s : Multiset ℕ) (hs: 0 < s.sum) :
   have hs' : s ≠ 0 := by
     contrapose! hs
     rw [hs, Multiset.sum_zero]
-  rcases Multiset.exists_mem_of_ne_zero hs' with ⟨m, hm⟩
-  use m
+  exact Multiset.exists_mem_of_ne_zero hs'
 
 lemma prod_with_given_sum_bddAbove (n₀ : ℕ) :
   BddAbove {n | ∃ s : Multiset ℕ, s.sum = n₀ ∧ s.prod = n} := by
