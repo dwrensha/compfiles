@@ -92,41 +92,12 @@ lemma aux_2_3
     (hh₅ : 3 ∣ t - c)
     (hj₀ : j = (t - c) / (3 : ℕ)) :
     a x (i + j) = t := by
-  have h₀: ∀ (k : ℕ), i ≤ k → k ≤ i + j → a x k = c + (k - i) * 3 := by
-    intro k
-    revert hh₄
-    clear hj₀
-    refine Nat.strong_induction_on k ?_
-    intro d hd₀ hd₁ hd₂ hd₃
-    by_cases hd₄: i < d
-    · have hd₅: d - 1 + 1 = d := by omega
-      have hd₆ := ha₁ x (d - 1) hx₀
-      rw [hd₅] at hd₆
-      have hd₇: ¬ IsSquare (a x (d - 1)) := by
-        refine hd₁ (d - 1) ?_ ?_
-        · exact Nat.le_sub_one_of_lt hd₄
-        · linarith
-      have hd₈: a x d = a x (d - 1) + 3 := by simp_all only [↓reduceIte]
-      have hd₉: a x (d - 1) = c + (d - 1 - i) * (3 : ℕ) := by
-        refine hd₀ (d - 1) ?_ ?_ ?_ ?_
-        · exact Nat.sub_one_lt_of_lt hd₄
-        · intro m hm₀ hm₁
-          exact hd₁ m hm₀ hm₁
-        · linarith
-        · cutsat
-      rw [hd₈, hd₉]
-      omega
-    · push_neg at hd₄
-      have hd₅: d = i := by exact Nat.le_antisymm hd₄ hd₂
-      rw [hd₅]
-      bound
-  have h₁: a x (i + j) = c + (j) * 3 := by
-    have h₁₀: i ≤ i + j := by omega
-    have h₁₁: i + j ≤ i + j := by exact Nat.le_refl (i + j)
-    rw [h₀ (i + j) h₁₀ h₁₁]
-    omega
-  rw [h₁, hj₀]
-  omega
+  have h_a_form : ∀ k ≤ j, a x (i + k) = c + 3 * k := by
+    intro k hk₀
+    induction k with
+    | zero => simp [hi₀]
+    | succ k IH => grind
+  grind
 
 lemma aux_2_4
     (a : ℕ → ℕ → ℕ)
