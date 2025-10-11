@@ -54,33 +54,9 @@ lemma aux_2_1
   (hl₁ : i ≤ l)
   (hl₂ : l < i + j) :
   a x l = a x i + (l - i) * (3 : ℕ) := by
-  revert hl₁ hl₂ hl₀
-  refine Nat.strong_induction_on l ?_
-  intro d hd₀ hd₁ hd₂ hd₃
-  by_cases hd₄: i < d
-  · have hd₅: d - 1 + 1 = d := by omega
-    have hd₆ := ha₁ x (d - 1) hx₀
-    rw [hd₅] at hd₆
-    have hd₇: ¬ IsSquare (a x (d - 1)) := by
-      refine hd₁ (d - 1) ?_ ?_ ?_
-      · exact Nat.sub_one_lt_of_lt hd₄
-      · exact Nat.le_sub_one_of_lt hd₄
-      · omega
-    have hd₈: a x d = a x (d - 1) + 3 := by simp_all only [↓reduceIte]
-    have hd₉: a x (d - 1) = a x i + (d - 1 - i) * (3 : ℕ) := by
-      refine hd₀ (d - 1) ?_ ?_ ?_ ?_
-      · exact Nat.sub_one_lt_of_lt hd₄
-      · intro m hm₀ hm₁ hm₂
-        refine hd₁ m ?_ hm₁ hm₂
-        exact Nat.lt_of_lt_pred hm₀
-      · linarith
-      · linarith
-    rw [hd₈, hd₉]
-    omega
-  · push_neg at hd₄
-    have hd₅: d = i := by exact Nat.le_antisymm hd₄ hd₂
-    rw [hd₅]
-    group
+  induction hl₁ with
+  | refl => simp
+  | step ih => grind
 
 lemma aux_2_2
   (a : ℕ → ℕ → ℕ)
