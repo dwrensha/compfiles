@@ -71,50 +71,12 @@ lemma aux_2_2
     (hh₄ : ∀ (y : ℕ), c ≤ y → y < t → ¬IsSquare y)
     (hc₂ : (3 : ℕ) ∣ t - c) :
     a x (i + j) = t := by
-  have hj₁: ∀ k ≥ i, k < i + j → ¬ IsSquare (a x k) := by
-    intro k
-    refine Nat.strong_induction_on k ?_
-    intro l hl₀ hl₁ hl₂
-    by_cases hlp: i < l
-    · have hl₃: a x l = a x i + (l - i) * 3 := by
-        exact aux_2_1 a ha₁ x i j l hx₀ hl₀ hl₁ hl₂
-      have hj₁: (t - c) = j * 3 :=
-        Nat.eq_mul_of_div_eq_left hc₂ hj₀.symm
-      refine hh₄ (a x l) ?_ ?_
-      · rw [hl₃]
-        linarith
-      · rw [hl₃, hi₀]
-        refine Nat.add_lt_of_lt_sub' ?_
-        rw [hj₁]
-        simp
-        exact Nat.sub_lt_left_of_lt_add hl₁ hl₂
-    · push_neg at hlp
-      have hl₃: l = i := by exact Nat.le_antisymm hlp hl₁
-      bound
-  have hj₂: a x (i + j) = t := by
-    have hj₂: a x (i + j) = a x i + j * 3 := by
-      revert hj₁
-      clear hj₀
-      induction' j with d hd₀ hd₁
-      · simp
-      · intro hj₁
-        rw [← add_assoc]
-        have hd₁: ¬IsSquare (a x (i + d)) := by
-          refine hj₁ (i + d) ?_ ?_
-          · exact Nat.le_add_right i d
-          · simp
-        have hd₂ := ha₁ x (i + d) hx₀
-        have hd₃: a x (i + d + (1 : ℕ)) = a x (i + d) + 3 := by simp_all only [↓reduceIte]
-        have hd₄: a x (i + d) = a x i + d * (3 : ℕ) := by
-          refine hd₀ ?_
-          intro k hk₀ hk₁
-          refine hj₁ k hk₀ ?_
-          refine lt_trans hk₁ ?_
-          exact Nat.lt_add_one (i + d)
-        rw [hd₃, hd₄, add_mul, add_assoc]
-    rw [hj₂, hi₀, hj₀]
-    omega
-  rw [← hj₂]
+  have ha_step : ∀ k ≤ j, a x (i + k) = c + 3 * k := by
+    intro k hk
+    induction k with
+    | zero => exact hi₀
+    | succ k ih => grind
+  rw [ha_step j le_rfl, hj₀, Nat.mul_div_cancel' hc₂, add_tsub_cancel_of_le hh₃.le]
 
 lemma aux_2_3
   (a : ℕ → ℕ → ℕ)
