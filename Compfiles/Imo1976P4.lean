@@ -35,13 +35,6 @@ def result : ℕ → ℕ
   | 4 => 4
   | n + 3 => 3 * (result n)
 
-lemma single_le_sum {s : Multiset ℕ} {n : ℕ}
-  (hn : n ∈ s) : n ≤ s.sum := by
-  apply Multiset.single_le_sum
-  · intro x hx
-    exact Nat.zero_le x
-  · exact hn
-
 lemma prod_le_sum_pow_sum (s : Multiset ℕ) : s.prod ≤ s.sum ^ s.sum := by
   induction' s using Multiset.induction with i s' hs'
   · rw [Multiset.sum_zero, Multiset.prod_zero]
@@ -298,7 +291,7 @@ lemma max_prod_zero : IsMaxProd 0 1 := by
     by_cases hs : s = 0
     · rw [← s_prod, hs, Multiset.prod_zero]
     · rcases Multiset.exists_mem_of_ne_zero hs with ⟨m, hm⟩
-      have hm' := single_le_sum hm
+      have hm' := Multiset.le_sum_of_mem hm
       rw [s_sum] at hm'
       rw [Nat.eq_zero_of_le_zero hm'] at hm
       rw [← s_prod, Multiset.prod_eq_zero hm]
@@ -313,7 +306,7 @@ lemma max_prod_one : IsMaxProd 1 1 := by
     rcases exists_mem_of_sum_lt_zero s (by omega:_) with ⟨m, hm⟩
     have hm' : m ≤ 1 := by
       rw [← s_sum]
-      exact single_le_sum hm
+      exact Multiset.le_sum_of_mem hm
     rcases Multiset.exists_cons_of_mem hm with ⟨t, ht⟩
     have ht' : t.sum = 1 - m := by
       rw [← s_sum, ht, Multiset.sum_cons, add_comm, Nat.add_sub_cancel_right]
@@ -333,7 +326,7 @@ lemma max_prod_two : IsMaxProd 2 2 := by
     rcases exists_mem_of_sum_lt_zero s (by omega:_) with ⟨m, hm⟩
     have hm' : m ≤ 2 := by
       rw [← s_sum]
-      exact single_le_sum hm
+      exact Multiset.le_sum_of_mem hm
     rcases Multiset.exists_cons_of_mem hm with ⟨t, ht⟩
     have ht' : t.sum = 2 - m := by
       rw [← s_sum, ht, Multiset.sum_cons, add_comm, Nat.add_sub_cancel_right]
@@ -355,7 +348,7 @@ lemma max_prod_three : IsMaxProd 3 3 := by
     rcases exists_mem_of_sum_lt_zero s (by omega:_) with ⟨m, hm⟩
     have hm' : m ≤ 3 := by
       rw [← s_sum]
-      exact single_le_sum hm
+      exact Multiset.le_sum_of_mem hm
     rcases Multiset.exists_cons_of_mem hm with ⟨t, ht⟩
     have ht' : t.sum = 3 - m := by
       rw [← s_sum, ht, Multiset.sum_cons, add_comm, Nat.add_sub_cancel_right]
@@ -379,7 +372,7 @@ lemma max_prod_four : IsMaxProd 4 4 := by
     rcases exists_mem_of_sum_lt_zero s (by omega:_) with ⟨m, hm⟩
     have hm' : m ≤ 4 := by
       rw [← s_sum]
-      exact single_le_sum hm
+      exact Multiset.le_sum_of_mem hm
     rcases Multiset.exists_cons_of_mem hm with ⟨t, ht⟩
     have ht' : t.sum = 4 - m := by
       rw [← s_sum, ht, Multiset.sum_cons, add_comm, Nat.add_sub_cancel_right]
