@@ -42,8 +42,8 @@ lemma le_of_all_pow_lt_succ {x y : ℝ} (hy : 1 < y)
     x ≤ y := by
   by_contra! hxy
   obtain ⟨n, hn⟩ : ∃ n : ℕ, (x / y) ^ n > 2 := by
-    have h_base : 1 < x / y := by rwa [one_lt_div (by positivity)]
-    exact pow_unbounded_of_one_lt _ h_base;
+    refine pow_unbounded_of_one_lt _ ?_
+    rwa [one_lt_div (by positivity)]
   have h_mul : x^n > 2 * y^n := by
     rwa [div_pow, gt_iff_lt, lt_div_iff₀ (by positivity)] at hn;
   specialize h n (Nat.pos_of_ne_zero (by rintro rfl; norm_num at hn))
