@@ -34,8 +34,7 @@ determine solution_set : Set ℕ := {x | 0 < x ∧ 3 ∣ x}
 
 snip begin
 
-lemma aux_1 :
-  ∀ y, y ≡ 2 [MOD 3] → ¬ IsSquare y := by
+lemma aux_1 : ∀ y, y ≡ 2 [MOD 3] → ¬ IsSquare y := by
   rintro y hy₀ ⟨y, rfl⟩
   change _ = _ at hy₀
   rw [Nat.mul_mod] at hy₀
@@ -43,35 +42,35 @@ lemma aux_1 :
     change _ % _ = _ % 3 at H <;> rw [H] at hy₀ <;> norm_num at hy₀
 
 lemma aux_2_1
-  (a : ℕ → ℕ → ℕ)
-  (ha₁ : ∀ (x i : ℕ),
-    (1 : ℕ) < x → if IsSquare (a x i)
-                  then a x (i + (1 : ℕ)) = (a x i).sqrt
-                  else a x (i + (1 : ℕ)) = a x i + (3 : ℕ))
-  (x i j l : ℕ)
-  (hx₀ : (1 : ℕ) < x)
-  (hl₀ : ∀ m < l, i ≤ m → m < i + j → ¬IsSquare (a x m))
-  (hl₁ : i ≤ l)
-  (hl₂ : l < i + j) :
-  a x l = a x i + (l - i) * (3 : ℕ) := by
+    (a : ℕ → ℕ → ℕ)
+    (ha₁ : ∀ (x i : ℕ),
+      (1 : ℕ) < x → if IsSquare (a x i)
+                    then a x (i + (1 : ℕ)) = (a x i).sqrt
+                    else a x (i + (1 : ℕ)) = a x i + (3 : ℕ))
+    (x i j l : ℕ)
+    (hx₀ : (1 : ℕ) < x)
+    (hl₀ : ∀ m < l, i ≤ m → m < i + j → ¬IsSquare (a x m))
+    (hl₁ : i ≤ l)
+    (hl₂ : l < i + j) :
+    a x l = a x i + (l - i) * (3 : ℕ) := by
   induction hl₁ with
   | refl => simp
   | step ih => grind
 
 lemma aux_2_2
-  (a : ℕ → ℕ → ℕ)
-  (ha₁ : ∀ (x i : ℕ),
-    (1 : ℕ) < x → if IsSquare (a x i)
-                  then a x (i + (1 : ℕ)) = (a x i).sqrt
-                  else a x (i + (1 : ℕ)) = a x i + (3 : ℕ))
-  (x c i j t : ℕ)
-  (hj₀ : j = (t - c) / (3 : ℕ))
-  (hx₀ : (1 : ℕ) < x)
-  (hi₀ : a x i = c)
-  (hh₃ : c < t)
-  (hh₄ : ∀ (y : ℕ), c ≤ y → y < t → ¬IsSquare y)
-  (hc₂ : (3 : ℕ) ∣ t - c) :
-  a x (i + j) = t := by
+    (a : ℕ → ℕ → ℕ)
+    (ha₁ : ∀ (x i : ℕ),
+      (1 : ℕ) < x → if IsSquare (a x i)
+                    then a x (i + (1 : ℕ)) = (a x i).sqrt
+                    else a x (i + (1 : ℕ)) = a x i + (3 : ℕ))
+    (x c i j t : ℕ)
+    (hj₀ : j = (t - c) / (3 : ℕ))
+    (hx₀ : (1 : ℕ) < x)
+    (hi₀ : a x i = c)
+    (hh₃ : c < t)
+    (hh₄ : ∀ (y : ℕ), c ≤ y → y < t → ¬IsSquare y)
+    (hc₂ : (3 : ℕ) ∣ t - c) :
+    a x (i + j) = t := by
   have hj₁: ∀ k ≥ i, k < i + j → ¬ IsSquare (a x k) := by
     intro k
     refine Nat.strong_induction_on k ?_
@@ -549,12 +548,12 @@ theorem aux_5
 snip end
 
 problem imo2017_p1
-  (a : ℕ → ℕ → ℕ)
-  (ha₀: ∀ x, a x 0 = x)
-  (ha₁: ∀ x i, 1 < x → if IsSquare (a x i)
-                       then a x (i + 1) = Nat.sqrt (a x i)
-                       else a x (i + 1) = a x i + 3) :
-  ∀ x > 1, (∃ A, {n | a x n = A}.Infinite) ↔ x ∈ solution_set := by
+    (a : ℕ → ℕ → ℕ)
+    (ha₀: ∀ x, a x 0 = x)
+    (ha₁: ∀ x i, 1 < x → if IsSquare (a x i)
+                         then a x (i + 1) = Nat.sqrt (a x i)
+                         else a x (i + 1) = a x i + 3) :
+    ∀ x > 1, (∃ A, {n | a x n = A}.Infinite) ↔ x ∈ solution_set := by
   intro x hx₀
   simp
   let S : Set ℕ := Set.range (a x)
