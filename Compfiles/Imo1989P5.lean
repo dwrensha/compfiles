@@ -28,15 +28,8 @@ lemma modulus_of_product {a b : ℕ} {xs : List ℕ}
     (h : a ≡ b [MOD xs.prod])
     (x : ℕ)
     (hx : x ∈ xs)
-    : a ≡ b [MOD x] := by
-  induction xs with
-  | nil => aesop
-  | cons y ys ih =>
-    rw [List.prod_cons] at h
-    cases hx with
-    | head => exact Nat.ModEq.of_mul_right _ h
-    | tail w hw =>
-      exact ih (Nat.ModEq.of_mul_left _ h) hw
+    : a ≡ b [MOD x] :=
+  Nat.ModEq.of_dvd (List.dvd_prod hx) h
 
 structure ChinesePair where
   modulus : ℕ
