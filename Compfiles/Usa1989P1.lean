@@ -35,60 +35,42 @@ snip begin
 -- based on solution from
 -- https://artofproblemsolving.com/wiki/index.php/1989_USAMO_Problems/Problem_1
 
-abbrev extract_one {n : ℕ} {f : ℕ → ℚ} :
-    (Finset.Icc 1 (n + 1)).sum f = f (n + 1) + (Finset.Icc 1 n).sum f := by {
+def extract_one {n : ℕ} {f : ℕ → ℚ} :
+    (Finset.Icc 1 (n + 1)).sum f = f (n + 1) + (Finset.Icc 1 n).sum f := by
   rw [← Finset.insert_Icc_right_eq_Icc_add_one (by simp)]
   rw [Finset.sum_insert (by simp)]
-}
+
 
 
 lemma l1 (n : ℕ) : t (n - 1) = n * s n - n := by
   induction n with
   | zero => simp [t]
-  | succ n h' =>
-    unfold t
+  | succ n ih =>
     by_cases h : n = 0
-    · simp [h, s]
+    · simp [t, s, h]
     · rw [Nat.sub_add_comm (Nat.one_le_iff_ne_zero.mpr h)]
-      rw [extract_one]
+      rw [t, extract_one, ← t]
       have h1 : ↑(n + 1) * s (n + 1) = s n + n * s n + 1 := by
-        unfold s
-        rw [← Finset.insert_Icc_right_eq_Icc_add_one (by simp)]
-        rw [Finset.sum_insert (by simp), mul_add]
-        rw [mul_one_div_cancel (by apply NeZero.ne)]
+        rw [s, extract_one, ← s]
+        rw [mul_add, mul_one_div_cancel (by apply NeZero.ne)]
         grind
       grind [t]
 
-
-
-lemma l2 (n : ℕ) : u (n - 1) = (n + 1) * s n - 2 * n  := by
+lemma l2 (n : ℕ) : u (n - 1) = (n + 1) * s n - 2 * n := by
   induction n with
   | zero => simp [u, t, s]
-  | succ n h' =>
-    unfold u
+  | succ n ih =>
     by_cases h : n = 0
-    · simp [h, s]
-      ring
-    · rw [Nat.sub_add_comm (Nat.one_le_iff_ne_zero.mpr h)]
-      rw [extract_one]
-      unfold u at h'
-      rw [h', ← Nat.sub_add_comm (Nat.one_le_iff_ne_zero.mpr h)]
-      rw [l1]
-      rw [sub_div]
-      have h1 : (n + 1 - 1) = n := rfl
-      rw [h1]
-      have h2 : ↑(n + 1) * s (n + 1) / (↑n + 1) = s (n + 1) := by {
-        rw [mul_comm, Nat.cast_add_one]
-        exact Rat.mul_div_cancel (Nat.cast_add_one_ne_zero n)
-      }
-      rw [h2]
-      nth_rewrite 2 [add_mul]
-      rw [← Nat.cast_add_one]
-      rw [div_self (by apply NeZero.ne)]
+    · simp [u, s, h]; ring
+    · rw [Nat.sub_add_comm (Nat.one_le_iff_ne_zero.mpr h), u, extract_one, ← u]
+      rw [ih]
+      rw [← Nat.sub_add_comm (Nat.one_le_iff_ne_zero.mpr h), l1]
+      rw [(by rfl : n + 1 - 1 = n), ← Nat.cast_add_one]
+      nth_rewrite 2 [← mul_one ((@Nat.cast ℚ Rat.instNatCast) (n + 1))]
+      rw [← mul_sub, mul_comm, Rat.mul_div_cancel (by apply NeZero.ne)]
+      rw [add_mul]
       nth_rewrite 3 [s]
-      rw [extract_one]
-      rw [← s, mul_add]
-      rw [mul_one_div, div_self (by apply NeZero.ne)]
+      rw [extract_one, ← s, mul_add, mul_one_div_cancel (by apply NeZero.ne)]
       grind
 
 snip end
@@ -108,7 +90,7 @@ problem usa1989_p1 :
     rw [l2 1989]
     simp
     left
-    grind
+    ring
 
 
 end Usa1989P1
