@@ -27,7 +27,11 @@ two points in S croses l.)
 
 namespace Imo2020P6
 
-open Finset
+open Finset Module
+open scoped RealInnerProductSpace
+
+variable {V P : Type*} [NormedAddCommGroup V] [InnerProductSpace ℝ V] [MetricSpace P]
+variable [NormedAddTorsor V P] (dim : Nat) [Fact (finrank ℝ V = dim + 1)]
 
 snip begin
 
@@ -105,14 +109,6 @@ theorem exists_between_and_separated {ι : Type*} (S : Finset ι) (f : ι → �
     grw [← le_abs_self, ← h]
     rw [AffineMap.lineMap_apply_ring', AffineMap.lineMap_apply_ring']
     ring_nf; rfl
-
-
-
-open Module
-open scoped RealInnerProductSpace
-
-variable {V P : Type*} [NormedAddCommGroup V] [InnerProductSpace ℝ V] [MetricSpace P]
-variable [NormedAddTorsor V P] (dim : Nat) [Fact (finrank ℝ V = dim + 1)]
 
 /-- Computes "how far along" the segment from `a` to `b` the point `p` lies. -/
 noncomputable def project (a b p : P) : ℝ := innerSL ℝ (a -ᵥ b) (a -ᵥ p) / ‖a -ᵥ b‖
