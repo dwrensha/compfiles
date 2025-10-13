@@ -147,18 +147,17 @@ lemma p_gt_five_not_divides (n : ℕ) (s1 s2 : Finset ℕ) (partition : s1 ∪ s
     apply p_not_dvd_prod_y
     exact p_dvd_prod_y
 
-lemma odd_props (n : ℕ) (odd_s : Finset ℕ) (s_odd_eq : odd_s = (Finset.Icc n (n + 5)).filter (λ x => Odd x)) :
-  ∃ (a b c : ℕ), {a, b, c} = odd_s ∧ b = a + 2 ∧ c = b + 2 := by
-  cases Decidable.em (Odd n)
-  case inl h =>
-    have h2 := Odd.not_two_dvd_nat h
+lemma odd_props (n : ℕ) (odd_s : Finset ℕ)
+    (s_odd_eq : odd_s = (Finset.Icc n (n + 5)).filter (λ x => Odd x)) :
+    ∃ (a b c : ℕ), {a, b, c} = odd_s ∧ b = a + 2 ∧ c = b + 2 := by
+  by_cases h : Odd n
+  · have h2 := Odd.not_two_dvd_nat h
     use n, n + 2, n + 4
     simp_all only [Nat.two_dvd_ne_zero, and_self, and_true]
     ext x
     simp_all only [Finset.mem_insert, Finset.mem_singleton, Finset.mem_filter, Finset.mem_Icc]
     apply Iff.intro <;> grind
-  case inr h =>
-    use n + 1, n + 3, n + 5
+  · use n + 1, n + 3, n + 5
     simp_all only [Nat.not_odd_iff_even, and_self, and_true]
     have := Even.two_dvd h
     ext x
