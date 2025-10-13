@@ -248,7 +248,7 @@ snip end
 
 variable [Fact (Module.finrank ℝ V = 2)]
 
-theorem imo2020_p6 : ∃ c : ℝ, 0 < c ∧ ∀ {n : ℕ}, 1 < n → ∀ {S : Finset P}, #S = n →
+problem imo2020_p6 : ∃ c : ℝ, 0 < c ∧ ∀ {n : ℕ}, 1 < n → ∀ {S : Finset P}, #S = n →
     ((S : Set P).Pairwise fun x y ↦ 1 ≤ dist x y) →
     ∃ l : AffineSubspace ℝ P, finrank ℝ l.direction = 1 ∧
       (∃ p₁ p₂, p₁ ∈ S ∧ p₂ ∈ S ∧ l.SOppSide p₁ p₂) ∧
