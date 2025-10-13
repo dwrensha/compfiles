@@ -14,9 +14,9 @@ problem_file { tags := [.Algebra] }
 # International Mathematical Olympiad 1976, Problem 6
 
 The sequence u_0, u_1, u_2, ... is defined by:
-u_0 = 2, u1 = 5/2, u_{n+1} = un(u_{n-1}^2 - 2) - u_1 for n = 1, 2, ... .
-Prove that \[un\] = 2^(2^n - (-1)^n)/3, where \[x\] denotes the greatest integer
-less than or equal to x.
+u_0 = 2, u_1 = 5/2, u_{n+1} = u_n(u_{n-1}^2 - 2) - u_1 for n = 1, 2, ... .
+Prove that ⌊u_n⌋ = 2^(2^n - (-1)^n)/3 for all positive n,
+where ⌊x⌋ denotes the greatest integer less than or equal to x.
 -/
 
 namespace Imo1976P6
@@ -65,7 +65,7 @@ problem imo1976_p6 (u : ℕ → ℝ)
         simp_all only [lt_add_iff_pos_left, add_pos_iff, Nat.ofNat_pos, mul_pos_iff_of_pos_left,
                        zero_lt_one, or_true, Int.reduceNeg]
         norm_num [ Int.negSucc_eq ] at h
-        linarith [ pow_pos ( by decide : 0 < ( 2 : ℕ ) ) ( 2 * w + 1 ) ];
+        linarith [ pow_pos Nat.zero_lt_two ( 2 * w + 1 ) ];
   simp_all only [pow_zero, sub_self, zero_div, Real.rpow_zero, neg_add_cancel,
                  pow_one, sub_neg_eq_add, gt_iff_lt]
   obtain ⟨w, h⟩ := h_int
