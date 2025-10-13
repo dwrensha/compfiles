@@ -25,11 +25,11 @@ namespace Imo1997P5
 snip begin
 
 lemma mylemma_xy_le_y
-  (x y : ℕ)
-  (h₀ : 0 < x ∧ 0 < y)
-  (hxy : x ≤ y)
-  (h₁ : (x ^ y) ^ y = y ^ x) :
-  x ^ y ≤ y := by
+    (x y : ℕ)
+    (h₀ : 0 < x ∧ 0 < y)
+    (hxy : x ≤ y)
+    (h₁ : (x ^ y) ^ y = y ^ x) :
+    x ^ y ≤ y := by
   by_contra hc
   push_neg at hc
   have h₂: y^x ≤ y^y := Nat.pow_le_pow_right h₀.2 hxy
@@ -39,9 +39,9 @@ lemma mylemma_xy_le_y
   order
 
 lemma four_times_k_less_than_two_pow_k
-  (k : ℕ)
-  (hk : 5 ≤ k) :
-  4 * k < 2 ^ k := by
+    (k : ℕ)
+    (hk : 5 ≤ k) :
+    4 * k < 2 ^ k := by
   -- Proceed by induction on k
   induction' k using Nat.case_strong_induction_on with n ih
   -- Base case: k = 0 is not possible since 5 ≤ k
@@ -56,12 +56,12 @@ lemma four_times_k_less_than_two_pow_k
     omega
 
 lemma mylemma_case_xley
-  (x y : ℕ)
-  (h₀ : 0 < x ∧ 0 < y)
-  (h₁ : x^(y^2) = y^x)
-  (g₁ : x^(y^2) = (x^y)^y)
-  (hxy : x ≤ y) :
-  (x, y) = (1, 1) ∨ (x, y) = (16, 2) ∨ (x, y) = (27, 3) := by
+    (x y : ℕ)
+    (h₀ : 0 < x ∧ 0 < y)
+    (h₁ : x^(y^2) = y^x)
+    (g₁ : x^(y^2) = (x^y)^y)
+    (hxy : x ≤ y) :
+    (x, y) = (1, 1) ∨ (x, y) = (16, 2) ∨ (x, y) = (27, 3) := by
   rw [g₁] at h₁
   have g2: x^y ≤ y := by
     exact mylemma_xy_le_y x y h₀ hxy h₁
@@ -78,19 +78,19 @@ lemma mylemma_case_xley
   exact { left := g3, right := id h₁.symm }
 
 lemma mylemma_exp_log
-  (x: ℕ)
-  (h₀: 0 < x):
-  (↑x = Real.exp (Real.log ↑x)):= by
+    (x: ℕ)
+    (h₀: 0 < x):
+    (↑x = Real.exp (Real.log ↑x)):= by
   have hx_pos : 0 < (↑x : ℝ) := by exact Nat.cast_pos.mpr h₀
   symm
   exact Real.exp_log hx_pos
 
 lemma mylemma_y2_lt_x
-  (x y : ℕ)
-  (h₀ : 0 < x ∧ 0 < y)
-  (h₁ : x ^ y ^ 2 = y ^ x)
-  (hxy : y < x) :
-  y ^ 2 < x := by
+    (x y : ℕ)
+    (h₀ : 0 < x ∧ 0 < y)
+    (h₁ : x ^ y ^ 2 = y ^ x)
+    (hxy : y < x) :
+    y ^ 2 < x := by
   by_cases hy: 1 < y
   · have hx: 2 ≤ x := by omega
     have h₂: y ^ x < x ^ x := by
@@ -102,10 +102,10 @@ lemma mylemma_y2_lt_x
     interval_cases y <;> exact hxy
 
 lemma mylemma_5
-  (x y: ℕ)
-  (h₀: 0 < x ∧ 0 < y)
-  (h₁: x ^ y ^ 2 = y ^ x) :
-  (↑x / ↑y^2) ^ y ^ 2 = (↑y:ℝ)^ ((↑x:ℝ) - 2 * ↑y ^ 2) := by
+    (x y: ℕ)
+    (h₀: 0 < x ∧ 0 < y)
+    (h₁: x ^ y ^ 2 = y ^ x) :
+    (↑x / ↑y^2) ^ y ^ 2 = (↑y:ℝ)^ ((↑x:ℝ) - 2 * ↑y ^ 2) := by
   have g₁: (↑x:ℝ) ^ (↑y:ℝ) ^ 2 = (↑y:ℝ) ^ (↑x:ℝ) := by
     norm_cast
   have g₃: ((↑x:ℝ) ^ (↑y:ℝ) ^ 2) / ((↑y:ℝ) ^ (2 * (↑y:ℝ) ^ 2))
@@ -133,11 +133,11 @@ lemma mylemma_5
   norm_cast at *
 
 lemma mylemma_2y2_lt_x
-  (x y : ℕ)
-  (h₀ : 0 < x ∧ 0 < y)
-  (h₁ : x ^ y ^ 2 = y ^ x)
-  (hxy : y < x) :
-  2 * y ^ 2 < x := by
+    (x y : ℕ)
+    (h₀ : 0 < x ∧ 0 < y)
+    (h₁ : x ^ y ^ 2 = y ^ x)
+    (hxy : y < x) :
+    2 * y ^ 2 < x := by
   by_cases hy1: y = 1
   · cutsat
   · have hy: 1 < y := by omega
@@ -175,11 +175,11 @@ lemma mylemma_2y2_lt_x
     norm_cast at h₆
 
 lemma mylemma_castdvd
-  (x y: ℕ)
-  (h₀: 0 < x ∧ 0 < y)
-  (h₁ : x ^ y ^ 2 = y ^ x)
-  (hyx: y < x) :
-  (y^2 ∣ x) := by
+    (x y: ℕ)
+    (h₀: 0 < x ∧ 0 < y)
+    (h₁ : x ^ y ^ 2 = y ^ x)
+    (hyx: y < x) :
+    (y^2 ∣ x) := by
   have h₂: (x ^ y ^ 2).factorization = (y^x).factorization := by
     exact congr_arg Nat.factorization h₁
   simp at h₂
@@ -210,12 +210,12 @@ lemma mylemma_castdvd
   exact Nat.ne_of_gt h₀.1
 
 lemma mylemma_xsuby_eq_2xy2_help
-  (x y : ℕ)
-  (h₀ : 0 < x ∧ 0 < y)
-  (h₁ : x ^ y ^ 2 = y ^ x)
-  (h₂ : Real.log (↑x:ℝ)  = Real.log ↑y * ↑x / (↑(y ^ 2:ℕ ):ℝ) )
-  (hxy : y < x) :
-  x = y ^ (x / y ^ 2) := by
+    (x y : ℕ)
+    (h₀ : 0 < x ∧ 0 < y)
+    (h₁ : x ^ y ^ 2 = y ^ x)
+    (h₂ : Real.log (↑x:ℝ)  = Real.log ↑y * ↑x / (↑(y ^ 2:ℕ ):ℝ) )
+    (hxy : y < x) :
+    x = y ^ (x / y ^ 2) := by
   have h_exp : Real.exp (Real.log ↑x)
             = Real.exp (Real.log ↑y * (↑x:ℝ)  / ((↑y:ℝ)) ^ 2) := by
     rw [h₂]
@@ -237,11 +237,11 @@ lemma mylemma_xsuby_eq_2xy2_help
   exact Nat.cast_inj.mp h_exp
 
 theorem mylemma_xsuby_eq_2xy2
-  (x y : ℕ)
-  (h₀ : 0 < x ∧ 0 < y)
-  (h₁ : x ^ y ^ 2 = y ^ x)
-  (hxy : y < x) :
-  x = y ^ (x / y ^ 2) := by
+    (x y : ℕ)
+    (h₀ : 0 < x ∧ 0 < y)
+    (h₁ : x ^ y ^ 2 = y ^ x)
+    (hxy : y < x) :
+    x = y ^ (x / y ^ 2) := by
   -- sketch: y^2 * log x = x * log y
   have h₃: Real.log (x^(y^2)) = Real.log (y^x) := by
     norm_cast

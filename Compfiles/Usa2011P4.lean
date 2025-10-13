@@ -42,6 +42,7 @@ problem usa2011_p4 :
   rw [show 4 = 2^2 by rfl, ←Nat.pow_mul] at hx
 
   -- 2^(2^25) is small enough that we can just normalize it.
+  set_option exponentiation.threshold 100000000 in
   rw [show 2 ^ 2 ^ 25 % (2 ^ 25 - 1) = 2 ^ 7 by norm_num] at hx
 
   have h2 : 2 ≤ 2 := by norm_num

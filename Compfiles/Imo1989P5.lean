@@ -24,20 +24,6 @@ namespace Imo1989P5
 
 snip begin
 
-lemma modulus_of_product {a b : ℕ} {xs : List ℕ}
-    (h : a ≡ b [MOD xs.prod])
-    (x : ℕ)
-    (hx : x ∈ xs)
-    : a ≡ b [MOD x] := by
-  induction xs with
-  | nil => aesop
-  | cons y ys ih =>
-    rw [List.prod_cons] at h
-    cases hx with
-    | head => exact Nat.ModEq.of_mul_right _ h
-    | tail w hw =>
-      exact ih (Nat.ModEq.of_mul_left _ h) hw
-
 structure ChinesePair where
   modulus : ℕ
   remainder : ℕ
@@ -63,8 +49,8 @@ lemma general_chinese_remainder (xs : List ChinesePair)
     | head => exact hk1
     | tail w hw =>
       have h2 := hb z hw
-      have h4 := modulus_of_product hk2 _ (List.mem_map_of_mem hw)
-      exact Nat.ModEq.trans h4 h2
+      have h4 := Nat.ModEq.of_dvd (List.dvd_prod (List.mem_map_of_mem hw)) hk2
+      exact h4.trans h2
 
 lemma list_upper_bound (l : List ℕ) : ∃ m : ℕ, ∀ x ∈ l, x ≤ m := by
   use List.foldr max ⊥ l

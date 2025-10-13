@@ -17,7 +17,7 @@ Let (a, b, ... , k) denote the greatest common divisor of the integers a, b, ...
 and [a, b, ... , k] denote their least common multiple.
 
 Show that for any positive integers a, b, c we have
-(a, b, c)2 [a, b] [b, c] [c, a] = [a, b, c]2 (a, b) (b, c) (c, a).
+(a, b, c)² [a, b] [b, c] [c, a] = [a, b, c]² (a, b) (b, c) (c, a).
 -/
 
 namespace Usa1972P1
@@ -39,7 +39,7 @@ snip end
 
 problem usa1972_p1 (a b c : ℕ) :
   (gcd a (gcd b c)) ^ 2 * lcm a b * lcm b c * lcm c a =
-  (lcm a (lcm b c)) ^ 2 * gcd a b * gcd b c * gcd c a := by {
+  (lcm a (lcm b c)) ^ 2 * gcd a b * gcd b c * gcd c a := by
   -- if any of a, b, c are 0 the problem becomes trivial
   by_cases a_pos : a = 0
   · simp [a_pos]
@@ -57,14 +57,6 @@ problem usa1972_p1 (a b c : ℕ) :
   repeat rw [factorization_lcm (by simp; tauto) (by simp; tauto)]
   repeat rw [factorization_gcd (by simp; tauto) (by simp; tauto)]
   simp
-  by_cases h_rs : r ≤ s
-  · by_cases h_st : s ≤ t
-    · omega
-    · by_cases h_rt : r ≤ t
-      repeat omega
-  · by_cases h_rt : r ≤ t
-    · repeat omega
-    · omega
-}
+  grind
 
 end Usa1972P1

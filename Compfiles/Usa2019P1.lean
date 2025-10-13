@@ -153,13 +153,13 @@ lemma lemma_3
 
   have h1 := hf m2
   rw [sq] at h1
-  obtain h2 | h2 := Classical.em (f^[2] m2 < m2)
+  by_cases h2 : f^[2] m2 < m2
   · let k := f^[2] m2
     have hkodd : Odd k.val := (pnat_odd_mul h1 hm3).2
     have h3 : f k = k := ih k h2 hkodd
     rw[lemma_1 f hf k m2 2 rfl h3]
     exact h3
-  · obtain h4 | h4 := Classical.em (f^[f m2] m2 < m2)
+  · by_cases h4 : f^[f m2] m2 < m2
     · let k := f^[f m2] m2
       have hkodd : Odd k.val := (pnat_odd_mul h1 hm3).1
       have h3 : f k = k := ih k h4 hkodd

@@ -251,9 +251,10 @@ problem imo2012_p4 (f : ℤ → ℤ) :
               have := P (x + 1) (-2)
               rw [show (x : ℤ) + 1 + (-2) = x - 1 by omega, even] at this
               have «f(x-1)=(x-1)²*f1» : f ((x : ℤ) - 1) = ((x : ℤ) - 1) ^ 2 * f 1 := by
-                rcases Decidable.em ((x : ℤ) - 1 ≥ 0) with h | h
-                rcases x with _ | x; case zero => simp [even]
-                simp; apply ih; omega; simp
+                by_cases h : (x : ℤ) - 1 ≥ 0
+                · rcases x with _ | x
+                  case pos.zero => simp [even]
+                  simp; apply ih; omega; simp
 
                 simp at h; simp [h, even]
 

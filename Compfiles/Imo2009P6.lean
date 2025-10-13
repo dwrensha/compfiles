@@ -193,7 +193,7 @@ theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
     let p : Equiv.Perm (Fin n) := extendPerm p' (Nat.sub_le n 1)
     refine ⟨p, ?_⟩
     intro i
-    obtain h30 | h30 := Classical.em (i.val < n')
+    by_cases h30 : i.val < n'
     · let i' : Fin n' := ⟨i.val, h30⟩
       have h31 := hp i'
       rw [Finset.mem_filter] at h31
