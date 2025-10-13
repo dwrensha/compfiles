@@ -74,7 +74,7 @@ theorem exists_between_and_separated {ι : Type*} (S : Finset ι) (f : ι → �
   have ineq₁: (i / n : ℝ) ≤ 1 - 1 / n := by grw [Fin.is_le]; field_simp [n]; simp [n]
   have : b - a > 0 := sub_pos.mpr hab
   -- check that the point is in between `a` and `b`
-  constructor; constructor
+  refine ⟨⟨?_, ?_⟩, ?_⟩
   · simp [AffineMap.lineMap_apply_ring']
     positivity
   · rw [AffineMap.lineMap_apply_ring']
