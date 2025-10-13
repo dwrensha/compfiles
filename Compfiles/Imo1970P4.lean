@@ -33,7 +33,7 @@ lemma card_opposite (s s' s'' : Finset ℕ) (predicate: ℕ → Prop)
 lemma no_other_p_divisors_nearby (x : ℕ) (y : ℕ) (p : ℕ) (p_gt_5 : p > 5) (x_lt_y : x < y)
     (close_by: ∃ k, k ≤ 5 ∧ x + k = y) (x_div_p : p ∣ x) : ¬ p ∣ y := by
   obtain ⟨k, hk_le, rfl⟩ := close_by
-  have h_not_div_k : ¬(p ∣ k) :=
+  have h_not_div_k : ¬ p ∣ k :=
     Nat.not_dvd_of_pos_of_lt (Nat.lt_add_right_iff_pos.mp x_lt_y) (Nat.lt_of_le_of_lt hk_le p_gt_5)
   simp_all [Nat.dvd_add_right]
 
