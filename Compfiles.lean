@@ -189,6 +189,8 @@ import Compfiles.UK2024R1P2
 import Compfiles.UpperLowerContinuous
 import Compfiles.Usa1972P1
 import Compfiles.Usa1972P3
+import Compfiles.Usa1973P2
+import Compfiles.Usa1973P4
 import Compfiles.Usa1974P2
 import Compfiles.Usa1978P1
 import Compfiles.Usa1979P1
@@ -198,6 +200,7 @@ import Compfiles.Usa1982P4
 import Compfiles.Usa1983P5
 import Compfiles.Usa1985P1
 import Compfiles.Usa1987P1
+import Compfiles.Usa1989P1
 import Compfiles.Usa1989P5
 import Compfiles.Usa1990P2
 import Compfiles.Usa1992P1
