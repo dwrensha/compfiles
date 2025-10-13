@@ -111,7 +111,7 @@ problem imo1996_p3 (f : ℕ → ℕ) :
   -- If k does not exist, then f(n) is zero for all n,
   -- which is a possible solution.
 
-  obtain hfp | hfp := Classical.em (∃ x, 0 < x ∧ f x = x)
+  by_cases hfp : ∃ x, 0 < x ∧ f x = x
   swap
   · have h2 : ∀ y, f y = 0 := by grind
     use 0, 0

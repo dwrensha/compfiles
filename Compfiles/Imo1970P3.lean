@@ -187,7 +187,7 @@ problem imo1970_p3 :
     obtain ⟨hc_nonneg, hc_lt_two⟩ := hc
 
     have existsD : ∃ d : ℝ, 0 < d ∧ d < 1 ∧ d*(1 + d) > c := by
-      obtain h | h := Classical.em (c = 0)
+      by_cases h : c = 0
       · use 1 / 2
         constructor
         · exact one_half_pos
