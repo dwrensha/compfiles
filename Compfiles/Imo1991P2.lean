@@ -29,9 +29,10 @@ namespace Imo1991P2
 
 problem imo1991_p2 (n : ℕ) (hn : 6 < n)
     (k : ℕ) (a : Fin k → ℕ)
-    (ha : ∀ i, Nat.Coprime (a i) n)
+    (ha1 : ∀ i, Nat.Coprime (a i) n ∧ a i < n)
+    (ha2 : ∀ m, Nat.Coprime m n ∧ m < n → (∃ i, a i = m))
     (d : ℕ) (hd : 0 < d)
-    (ha : ∀ i : Fin k, (h : i + 1 < k) → a i + d = a ⟨i + 1, by cutsat⟩) :
+    (ha3 : ∀ i : Fin k, (h : i + 1 < k) → a i + d = a ⟨i + 1, by cutsat⟩) :
     n.Prime ∨ n.isPowerOfTwo := by
   sorry
 
