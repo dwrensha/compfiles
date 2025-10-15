@@ -308,8 +308,11 @@ theorem generalized (M : Finset ℕ) (k : ℕ)
 snip end
 
 problem imo1985_p4 (M : Finset ℕ) (Mcard : M.card = 1985) (Mpos : ∀ m ∈ M, 0 < m)
-    (Mdivisors : ∀ m ∈ M, ∀ n, n.Prime ∧ n ∣ m → n ≤ 23)
+    (Mdivisors : ∀ m ∈ M, ∀ n, n ∈ m.primeFactors → n ≤ 23)
     : ∃ M' : Finset ℕ, M' ⊆ M ∧ M'.card = 4 ∧ ∃ k, M'.prod id = k^4 := by
+  replace Mdivisors : ∀ m ∈ M, ∀ n, n.Prime ∧ n ∣ m → n ≤ 23 := fun m hm n ↦ by
+    rw [←Nat.mem_primeFactors_of_ne_zero (Mpos m hm).ne.symm]
+    grind
   let k := 8
   have h₁ : Nat.nth Nat.Prime k = 23 := by
     have h' : Nat.count Nat.Prime 23 = k := by decide
