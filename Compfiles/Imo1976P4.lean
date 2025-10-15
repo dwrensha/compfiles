@@ -17,6 +17,8 @@ Determine, with proof, the largest number which is the product
 of positive integers whose sum is 1976.
 -/
 
+namespace Imo1976P4
+
 snip begin
 
 def IsMaxProd (n₀ : ℕ) :=
@@ -426,8 +428,6 @@ theorem generalized (n : ℕ) :
     exact hs
 
 snip end
-
-namespace Imo1976P4
 
 determine solution : ℕ := result 1976
 
