@@ -152,8 +152,8 @@ lemma imo_1993_p5_N:
 
 snip end
 
-problem imo1993_p5 :
-    if DoesExist then ∃ f, Good f else ¬∃ f, Good f := by
+problem imo1993_p5 : DoesExist ↔ ∃ f, Good f  := by
+  simp only [decide_true, true_iff]
   have h₀: ∃ f : ℕ → ℕ, f 1 = 2 ∧ (∀ n, f (f n) = f n + n) ∧ (∀ n, f n < f (n + 1)) := by
     exact imo_1993_p5_N
   obtain ⟨f₀, hf₀, hf₁, hf₂⟩ := h₀
