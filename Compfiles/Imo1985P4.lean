@@ -54,13 +54,12 @@ lemma extended_pigeonhole {α : Type u} {β : Type v} [DecidableEq α] [Decidabl
         _ = s.card - 2 * n' := by
           rw [Finset.sum_const]
           simp
-          rw [htn'₁]
-          omega
+          cutsat
     have hf' : Set.MapsTo f s'' s' := by
       intro x hxs''
       rw [Finset.mem_coe] at *
       exact hf x (Finset.mem_sdiff.mp hxs'').left
-    have h's'' : s'.card < s''.card := by omega
+    have h's'' : s'.card < s''.card := by cutsat
     rcases Finset.exists_ne_map_eq_of_card_lt_of_maps_to h's'' hf' with ⟨p, hp, q, hq, hpq₁, hpq₂⟩
     use (insert {p, q} tn')
     have hpqs'' : {p, q} ⊆ s'' := Finset.insert_subset hp (Finset.singleton_subset_iff.mpr hq)
@@ -109,9 +108,7 @@ lemma extended_pigeonhole {α : Type u} {β : Type v} [DecidableEq α] [Decidabl
       · use (f p)
         intro m hm
         rw [ht'pq, Finset.mem_insert, Finset.mem_singleton] at hm
-        rcases hm with (hmp|hmq)
-        · rw [hmp]
-        · rw [hmq,hpq₂]
+        cutsat
       · exact htn'₅ t' ht'tn'
 
 lemma double_pigeonhole {α : Type u} {β : Type v} {γ : Type w} [DecidableEq α] [DecidableEq β] [DecidableEq γ]
@@ -278,14 +275,13 @@ theorem generalized (M : Finset ℕ) (k : ℕ)
     apply pow_of_first_k_prime_mod_two_mem_two_pow_k_finset
   have hs : 2 * (two_pow_k_finset (k + 1)).card + (two_pow_k_finset (k + 1)).card + 1 ≤ M.card := by
     rw [two_pow_k_finset, Finset.card_pi, Finset.card_range, Finset.prod_const, Finset.card_range]
-    omega
+    cutsat
   rcases double_pigeonhole hf₁ hf₂ hs with ⟨p, q, hp₁, hq₁, hp₂, hq₂, hpq₁, hp₃, hq₃, hpq₂⟩
   use p ∪ q
   constructorm* _ ∧ _
   · exact Finset.union_subset hp₂ hq₂
   · rw [← Finset.card_union_eq_card_add_card] at hpq₁
-    rw [hpq₁]
-    omega
+    cutsat
   · rw [Finset.prod_union hpq₁]
     rcases prod_square_of_pow_of_first_k_prime_mod_two_eq Mdivisors Mpos hp₁ hp₂ hp₃ with ⟨k₁, hk₁⟩
     rcases prod_square_of_pow_of_first_k_prime_mod_two_eq Mdivisors Mpos hq₁ hq₂ hq₃ with ⟨k₂, hk₂⟩
@@ -320,9 +316,7 @@ problem imo1985_p4 (M : Finset ℕ) (Mcard : M.card = 1985) (Mpos : ∀ m ∈ M,
     apply Nat.nth_count
     decide
   rw [← h₁] at Mdivisors
-  have h₂ : 3 * 2 ^ (k + 1) + 1 ≤ M.card := by
-    rw [Mcard]
-    decide
+  have h₂ : 3 * 2 ^ (k + 1) + 1 ≤ M.card := by norm_num [Mcard]
   exact generalized M k h₂ Mpos Mdivisors
 
 
