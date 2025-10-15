@@ -165,10 +165,7 @@ lemma square_of_pow_of_pow_of_kth_prime_mod_two_eq {m n : ℕ}
   ∃ k, m * n = k ^ 2 := by
   let k := ∏ p ∈ Finset.range (m * n + 1) with Nat.Prime p, p ^ ((padicValNat p m + padicValNat p n) / 2)
   use k
-  have hmn₀ : m * n ≠ 0 := by
-    intro hmn'
-    rw [mul_eq_zero] at hmn'
-    tauto
+  have hmn₀ : m * n ≠ 0 := Nat.mul_ne_zero hm₀ hn₀
   rw [← Nat.prod_pow_prime_padicValNat (m * n) hmn₀ (m * n + 1) (by omega:_)]
   rw [← Finset.prod_pow]
   apply Finset.prod_congr rfl
