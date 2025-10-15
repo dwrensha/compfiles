@@ -110,6 +110,7 @@ import Compfiles.Imo2001P3
 import Compfiles.Imo2001P4
 import Compfiles.Imo2001P5
 import Compfiles.Imo2001P6
+import Compfiles.Imo2002P3
 import Compfiles.Imo2002P5
 import Compfiles.Imo2003P1
 import Compfiles.Imo2003P2
