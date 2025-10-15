@@ -62,9 +62,8 @@ snip end
 
 determine does_exist : Bool := false
 
-problem imo2018_p3 :
-    if does_exist then exists_desired_triangle else ¬ exists_desired_triangle := by
-  simp only [exists_desired_triangle]
+problem imo2018_p3 : does_exist ↔ exists_desired_triangle := by
+  simp only [exists_desired_triangle, Bool.false_eq_true, false_iff]
   rintro ⟨t, ht⟩
   sorry
 
