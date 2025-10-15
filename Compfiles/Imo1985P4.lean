@@ -18,6 +18,8 @@ divisor greater than 23, prove that M contains a subset of 4 elements
 whose product is the 4th power of an integer.
 -/
 
+namespace Imo1985P4
+
 snip begin
 
 universe u v w
@@ -307,8 +309,6 @@ theorem generalized (M : Finset ℕ) (k : ℕ)
     rw [← mul_pow, hk, ← pow_mul]
 
 snip end
-
-namespace Imo1985P4
 
 problem imo1985_p4 (M : Finset ℕ) (Mcard : M.card = 1985) (Mpos : ∀ m ∈ M, 0 < m)
     (Mdivisors : ∀ m ∈ M, ∀ n, n.Prime ∧ n ∣ m → n ≤ 23)
