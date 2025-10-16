@@ -64,7 +64,7 @@ problem usa1987_p1 (m n : ℤ) :
     have h8 : IsSquare (m * (m - 8)) ∨ m + 1 = 0 := lemma2 h6
     obtain rfl | hm := eq_or_ne m (-1)
     · norm_num at h6
-      obtain rfl : n = -1 := by linarith [pow_eq_zero h6.symm]
+      obtain rfl : n = -1 := by linarith [eq_zero_of_pow_eq_zero h6.symm]
       simp only [Set.mem_insert_iff, true_or]
     have h9 : m + 1 ≠ 0 := fun hm1 ↦ hm (Int.sub_eq_zero.mp hm1)
     replace h8 := Or.resolve_right h8 h9
@@ -102,7 +102,7 @@ problem usa1987_p1 (m n : ℤ) :
       obtain h25 | h25 := eq_or_eq_neg_of_abs_eq h21
       · obtain rfl : m = 8 := eq_add_of_sub_eq h25
         norm_num at h6
-        obtain rfl : n = -10 := by linarith [pow_eq_zero h6.symm]
+        obtain rfl : n = -10 := by linarith [eq_zero_of_pow_eq_zero h6.symm]
         simp only [Set.mem_insert_iff, true_or, or_true]
       · exact (h1 (sub_eq_neg_self.mp h25)).elim
     · rw [hm'] at h13

@@ -136,7 +136,7 @@ problem usa2022_p4 (p q : ℕ) :
     have h30 : a = 1 := by
       zify at ha
       have h26 : ((a:ℤ) - 1)^2 = 0 := by linear_combination ha
-      have h27 : (a:ℤ) - 1 = 0 := pow_eq_zero h26
+      have h27 : (a:ℤ) - 1 = 0 := eq_zero_of_pow_eq_zero h26
       have h28 : (a:ℤ) = 1 := Int.sub_eq_zero.mp h27
       exact Int.ofNat_inj.mp h28
     rw [h30] at h23
