@@ -26,11 +26,7 @@ snip begin
 
 lemma nonneg_mul_eq_two {a b : ℤ} (ha : 0 ≤ a) (hb : 0 ≤ b)
   (hab: a * b = 2) : (a = 1 ∧ b = 2) ∨ (a = 2 ∧ b = 1) := by
-  have ha_pos : 0 < a := by
-    apply lt_of_le_of_ne ha
-    contrapose! hab
-    rw [← hab, zero_mul]
-    norm_num
+  have ha_pos : 0 < a := by cutsat
   have hb' : b ≤ 2 := by
     rw [← hab]
     calc b
@@ -88,9 +84,7 @@ problem imo1994_p4 (m n : ℤ) :
     rw [pow_three] at hk
     have hk'_pos : 0 < k * (m * n - 1) := by
       rw [← hk]
-      calc 0
-          < n * (n * n) := mul_pos hn (mul_pos hn hn)
-        _ < n * (n * n) + 1 := by cutsat
+      positivity
     have hk_pos : 0 < k := by
       apply pos_of_mul_pos_left hk'_pos
       rw [sub_nonneg]
@@ -99,15 +93,11 @@ problem imo1994_p4 (m n : ℤ) :
         _ ≤ m * n := by apply mul_le_mul <;> cutsat
     have hk' : k + 1 = n * (k * m - n * n) := by grind
     set s := k * m - n * n with hs
-    have hs_pos' : 0 < n * s := by
-      rw [← hk']
-      cutsat
+    have hs_pos' : 0 < n * s := by cutsat
     have hs_pos : 0 < s := pos_of_mul_pos_right hs_pos' (le_of_lt hn)
     have hs' : m + s = n * (s * m - n) := by grind
     set t := s * m - n with ht
-    have ht_pos' : 0 < n * t := by
-      rw [← hs']
-      cutsat
+    have ht_pos' : 0 < n * t := by cutsat
     have ht_pos : 0 < t := pos_of_mul_pos_right ht_pos' (le_of_lt hn)
     have ht' : m * s = n + t := by grind
     by_cases hmnst : m = 1 ∨ n = 1 ∨ s = 1 ∨ t = 1
