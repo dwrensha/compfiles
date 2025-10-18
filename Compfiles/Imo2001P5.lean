@@ -228,8 +228,11 @@ end Setup
 
 snip end
 
+determine solution_ABC : ℝ := 4 * π / 9
+determine solution_ACB : ℝ := 2 * π / 9
+
 problem imo2001_p5 (s : Setup X) :
-    ∠ s.A s.B s.C = 4 * π / 9 ∧ ∠ s.A s.C s.B = 2 * π / 9 := by
+    ∠ s.A s.B s.C = solution_ABC ∧ ∠ s.A s.C s.B = solution_ACB := by
   rw [s.ABC_eq, s.ACB_eq, s.x_eq]; constructor <;> ring
 
 end Imo2001P5
