@@ -85,8 +85,7 @@ lemma extended_pigeonhole {α : Type u} {β : Type v} [DecidableEq α] [Decidabl
       rw [Finset.mem_insert] at ht'
       rcases ht' with (ht'pq|ht'tn')
       · rw [ht'pq]
-        apply Finset.card_insert_of_notMem
-        exact Finset.notMem_singleton.mpr hpq₁
+        exact Finset.card_pair hpq₁
       · exact htn'₃ t' ht'tn'
     · rw [Finset.coe_insert, Set.pairwiseDisjoint_insert]
       constructor
