@@ -92,10 +92,7 @@ lemma aux_3
     exact h₃ (n + 1) (m + k) hn₀
   refine Nat.Coprime.dvd_of_dvd_mul_left ?_ h₄
   refine Nat.Coprime.symm ?_
-  refine (Nat.coprime_factorial_iff ?_).mpr ?_
-  · exact Nat.Prime.ne_one h₁
-  · rw [Nat.Prime.minFac_eq h₁]
-    exact h₂
+  exact Nat.Prime.coprime_factorial_of_lt h₁ h₂
 
 lemma aux_4
     (k m n : ℕ)
