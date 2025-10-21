@@ -75,14 +75,8 @@ theorem lemma1
                                (by rw [Finset.mem_singleton]; intro hp
                                    exact (hp1 (Subtype.val_injective
                                           (Subtype.val_injective hp)).symm).elim)
-    let s3 : Finset Person := Finset.cons p2 s2
-                               (by rw [Finset.mem_cons, Finset.mem_singleton]
-                                   intro hp
-                                   cases hp with
-                                   | inl hp =>
-                                     exact (p4.val.property.symm hp).elim
-                                   | inr hp =>
-                                     exact (p3.val.property.symm hp).elim)
+    let s3 : Finset Person := Finset.cons p2 s2 (by grind)
+
     use s3
     grind
 

@@ -110,12 +110,7 @@ lemma usa2002_p1_generalized
                 (f a = Color.red ↔ s ∉ a ∧ f' (Finset.subtype _ a) = Color.red) := by
         intro a
         constructor
-        · intro ha
-          have haa : s ∉ a := by
-            intro hns
-            simp [hns, f] at ha
-          simp only [haa, f] at ha
-          exact ⟨haa, ha⟩
+        · cutsat
         · intro hsa
           simp [hsa, f]
       constructor

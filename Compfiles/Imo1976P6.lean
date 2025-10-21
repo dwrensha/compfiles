@@ -58,8 +58,7 @@ problem imo1976_p6 (u : ℕ → ℝ)
         subst h_2
         simp_all only [Nat.ofNat_pos, mul_pos_iff_of_pos_left, Int.reduceNeg, even_two,
                        Even.mul_right, Even.neg_pow, one_pow]
-        norm_num [ Int.negSucc_eq ] at h
-        linarith [ pow_le_pow_right₀ (by norm_num : (1 : ℤ) ≤ 2) (show 2 * w ≥ 2 by linarith)]
+        cutsat
       | inr h_3 =>
         subst h_3
         simp_all only [lt_add_iff_pos_left, add_pos_iff, Nat.ofNat_pos, mul_pos_iff_of_pos_left,

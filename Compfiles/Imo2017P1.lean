@@ -467,11 +467,7 @@ theorem aux_5
       rw [hd₅, ht₀, ← pow_two, ht₁]
       rw [ht₀, ← pow_two] at hd₃
       exact Nat.Prime.dvd_of_dvd_pow Nat.prime_three hd₃
-    · have hd₅: a x d = a x (d - 1) + 3 := by
-        have hd₅₁: d - 1 + 1 = d := by exact Nat.sub_add_cancel hd₁
-        simp_all only [↓reduceIte]
-      rw [hd₅]
-      exact Nat.dvd_add_self_right.mpr hd₃
+    · cutsat
   · push_neg at hd₁
     interval_cases d
     rw [ha₀]
@@ -652,19 +648,13 @@ problem imo2017_p1
                     exact Nat.sqrt_eq r
                   rw [← hr₁]
                   exact hd₄
-                · have hd₆: a x d = a x (d - (1 : ℕ)) + (3 : ℕ) := by simp_all only [↓reduceIte]
-                  rw [hd₆]
-                  contrapose! hd₄
-                  exact Nat.dvd_add_self_right.mp hd₄
+                · cutsat
               · have hd₂: d = 0 := Nat.eq_zero_of_not_pos hd₁
                 rw [hd₂, ha₀]
                 exact hA₀
             rw [← hi₀]
             exact hh₀ i
-          have hc₇: c = 2 ∨ c = 5 := by omega
-          have hc₈: c ≡ 2 [MOD 3] := by
-            obtain rfl | rfl := hc₇ <;> rfl
-          exact False.elim (hhc hc₈)
+          cutsat
         · refine aux_4 a ha₁ x hx₀ ?_ A
           use 0
           rw [ha₀]

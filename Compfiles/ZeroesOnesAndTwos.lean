@@ -164,10 +164,7 @@ lemma prepend_two_div (n : ℕ) (hn : 0 < n) : prepend_two n / 10 = prepend_two 
   | zero => cases Nat.lt_asymm hn hn
   | succ n =>
     rw [digits_len' n.succ (Nat.succ_pos n)]
-    rw [pow_add, pow_one, add_comm]
-    rw [←mul_left_comm]
-    rw [Nat.add_mul_div_left _ _ (Nat.succ_pos 9)]
-    exact add_comm _ _
+    cutsat
 
 lemma prepend_two_mod (n : ℕ) (hn : 0 < n) : prepend_two n % 10 = n % 10 := by
   rw [prepend_two]
