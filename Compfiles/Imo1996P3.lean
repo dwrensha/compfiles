@@ -140,7 +140,7 @@ problem imo1996_p3 (f : ℕ → ℕ) :
       f n = f (r + f (k * q)) := by
               rw [mul_comm, h3, add_comm, mul_comm]
               exact congrArg f hnd
-        _ = f r + f (k * q) := by grind
+        _ = f r + f (k * q) := by rw [hf]
         _ = k * q + f r :=  by rw [mul_comm, h3]; ring
 
     -- Hence f(r) = r

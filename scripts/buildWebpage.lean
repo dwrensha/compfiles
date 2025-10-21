@@ -74,7 +74,7 @@ def allImoUrls (year : Nat) (idx : Nat) : List WriteupLink :=
 
 -- If the problem is an Imo problem, return the year number and the problem number
 def parseImoProblemId (probId : String) : Option (Nat × Nat) :=
-  if probId.startsWith "Imo" ∧ probId.get ⟨3⟩ ∈ ['1', '2']
+  if probId.startsWith "Imo" ∧ String.Pos.Raw.get probId ⟨3⟩ ∈ ['1', '2']
   then let ys := Substring.mk probId ⟨3⟩ ⟨7⟩
        let ns := Substring.mk probId ⟨8⟩ ⟨9⟩
        .some ⟨ys.toString.toNat!, ns.toString.toNat!⟩
@@ -123,7 +123,7 @@ def allUsamoUrls (year : Nat) (idx : Nat) : List WriteupLink :=
 
 -- If the problem is an Imo problem, return the year number and the problem number
 def parseUsamoProblemId (probId : String) : Option (Nat × Nat) :=
-  if probId.startsWith "Usa" ∧ probId.get ⟨3⟩ ∈ ['1', '2']
+  if probId.startsWith "Usa" ∧ String.Pos.Raw.get probId ⟨3⟩ ∈ ['1', '2']
   then let ys := Substring.mk probId ⟨3⟩ ⟨7⟩
        let ns := Substring.mk probId ⟨8⟩ ⟨9⟩
        .some ⟨ys.toString.toNat!, ns.toString.toNat!⟩
@@ -176,7 +176,7 @@ def stringifyPercent (p : Float) : String :=
   if pos = s1.endPos then
     s1 ++ "%"
   else
-    let p1 := pos + ⟨3⟩
+    let p1 : String.Pos.Raw := ⟨pos.1 + 3⟩
     let s2 := Substring.mk s1 0 p1
     s2.toString ++ "%"
 
