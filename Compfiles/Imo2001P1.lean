@@ -332,12 +332,10 @@ lemma wbtw_BPC : Wbtw ℝ cfg.P cfg.B cfg.C ∨ Wbtw ℝ cfg.C cfg.P cfg.B := by
   have h₂ := (PBC_collinear cfg).wbtw_or_wbtw_or_wbtw
   contrapose! h₁
   constructor
-  · tauto
+  · grind
   · rcases h₁ with ⟨h_PBC, h_CPB⟩
     constructor
-    · contrapose! h_PBC
-      rw [h_PBC]
-      apply wbtw_self_right
+    · exact C_ne_B cfg
     · contrapose! h_CPB
       rw [h_CPB]
       apply wbtw_self_left
