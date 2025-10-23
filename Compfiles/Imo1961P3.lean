@@ -74,7 +74,7 @@ problem imo1961_p3 {n : ℕ} {x : ℝ} (npos : 0 < n) :
           simp [hsinx, hcosx] at this
         | 2 =>
           rw [← cos_sq_add_sin_sq x, sub_eq_add_neg, add_right_inj, CharZero.neg_eq_self_iff] at h
-          exact absurd (pow_eq_zero h) hsinx
+          exact absurd (eq_zero_of_pow_eq_zero h) hsinx
         | (n + 1 + 2) =>
           set m := n + 1
           refine absurd ?_ h.not_lt

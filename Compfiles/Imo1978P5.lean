@@ -52,7 +52,7 @@ lemma aux_1
     intro x _
     rw [div_eq_mul_one_div, smul_eq_mul]
   let sf : Finset ℝ := Finset.image f₂ (Finset.Icc 1 n)
-  set sf_sorted : List ℝ := Finset.sort (fun (x₁ x₂) => x₁ ≤ x₂) sf with hf₁
+  set sf_sorted : List ℝ := sf.sort (fun (x₁ x₂) => x₁ ≤ x₂) with hf₁
   let f₃: ℕ → ℝ := fun k => sf_sorted.getD (k - 1) 0
   have hf₀: ∀ k, f₃ k = sf_sorted.getD (k - 1) 0 := by exact fun k => rfl
   have hf₂: sf = Finset.image f₂ s := by rfl
@@ -63,7 +63,7 @@ lemma aux_1
     refine Nat.le_induction ?_ ?_ n h₂
     · simp
     · simp
-  have hf₄: sf_sorted.length = n ∧ (sort (fun x₁ x₂ => x₁ ≤ x₂) (image f s)).length = n := by
+  have hf₄: sf_sorted.length = n ∧ (sort (image f s) (fun x₁ x₂ => x₁ ≤ x₂) ).length = n := by
     have hl₂: sf.card = n := by
       rw [← hl₁]
       refine Finset.card_image_of_injOn ?_
@@ -124,13 +124,13 @@ lemma aux_1
     have hb₁: b - 1 < sf_sorted.length := by exact hf₅ b hb₀
     rw [hf₁, hf₂]
     let sfo : Finset ℕ := image f s
-    have hso₂: ∀ k ∈ s, (sort (fun x₁ x₂ => x₁ ≤ x₂) (image f₂ s)).getD (k - 1) 0
-      = (sort (fun x₁ x₂ => x₁ ≤ x₂) (image f s)).getD (k - 1) 0 := by
+    have hso₂: ∀ k ∈ s, ((image f₂ s).sort (fun x₁ x₂ => x₁ ≤ x₂)).getD (k - 1) 0
+      = ((image f s).sort (fun x₁ x₂ => x₁ ≤ x₂)).getD (k - 1) 0 := by
       intro k hk₀
       have hk₃: Function.Injective f₁ := by exact CharZero.cast_injective
       let fe : ℕ ↪ ℝ := {toFun := f₁ , inj' := hk₃}
-      have hk₅: (sort (fun x₁ x₂ => x₁ ≤ x₂) (image f₂ s)) =
-        List.map f₁ (sort (fun x₁ x₂ => x₁ ≤ x₂) (image f s)) := by
+      have hk₅: ((image f₂ s).sort (fun x₁ x₂ => x₁ ≤ x₂)) =
+        List.map f₁ ((image f s).sort (fun x₁ x₂ => x₁ ≤ x₂)) := by
         have hh₀: fe = {toFun := f₁ , inj' := hk₃} := by rfl
         have hh₁: (image f₂ s) = Finset.map fe (image f s) := by
           rw [hf₃, hh₀]
@@ -172,10 +172,10 @@ lemma aux_1
           rw [Finset.sort_insert (fun x₁ x₂ => x₁ ≤ x₂) hz₅ hz₆]
           simp
           exact List.cons_eq_cons.mp (congrArg (List.cons ↑z) hz₁)
-      have hk₁: k - 1 < (List.map f₁ (sort (fun x₁ x₂ => x₁ ≤ x₂) sfo)).length := by
+      have hk₁: k - 1 < (List.map f₁ (sfo.sort (fun x₁ x₂ => x₁ ≤ x₂))).length := by
         rw [← hk₅]
         exact hf₅ k hk₀
-      have hk₂: k - 1 < (sort (fun x₁ x₂ => x₁ ≤ x₂) (sfo)).length := by
+      have hk₂: k - 1 < (sfo.sort (fun x₁ x₂ => x₁ ≤ x₂)).length := by
         rw [hf₄.2, ← hf₄.1]
         exact hf₅ k hk₀
       rw [hk₅, List.getD_eq_getElem _ 0 hk₁, List.getD_eq_getElem _ 0 hk₂]
@@ -183,14 +183,14 @@ lemma aux_1
     rw [hso₂ a ha₀, hso₂ b hb₀]
     norm_cast
     refine Nat.succ_le_of_lt ?_
-    have ha₂: a - 1 < (sort (fun x₁ x₂ => x₁ ≤ x₂) (image f s)).length := by
+    have ha₂: a - 1 < ((image f s).sort (fun x₁ x₂ => x₁ ≤ x₂)).length := by
       rw [hf₄.2, ← hf₄.1]
       exact ha₁
-    have hb₂: b - 1 < (sort (fun x₁ x₂ => x₁ ≤ x₂) (image f s)).length := by
+    have hb₂: b - 1 < ((image f s).sort (fun x₁ x₂ => x₁ ≤ x₂)).length := by
       rw [hf₄.2, ← hf₄.1]
       exact hb₁
     rw [List.getD_eq_getElem _ 0 ha₂, List.getD_eq_getElem _ 0 hb₂]
-    have hso₄: List.Sorted (fun x₁ x₂ => x₁ < x₂) (sort (fun x₁ x₂ => x₁ ≤ x₂) (image f s)) := by
+    have hso₄: List.Sorted (fun x₁ x₂ => x₁ < x₂) ((image f s).sort (fun x₁ x₂ => x₁ ≤ x₂)) := by
       exact Finset.sort_sorted_lt (image f s)
     refine List.Sorted.rel_get_of_lt hso₄ ?_
     simp
@@ -199,7 +199,7 @@ lemma aux_1
     omega
   have hρ: ∃ ρ: Equiv.Perm ℕ, (∀ a ∈ Icc 1 n, f₂ a = f₃ (ρ a)) ∧ ∀ a ∉ Icc 1 n, ρ a = a := by
     let so : Finset ℕ := image f (Icc 1 n)
-    let lo_sorted : List ℕ := sort (fun x₁ x₂ => x₁ ≤ x₂) so
+    let lo_sorted : List ℕ := so.sort (fun x₁ x₂ => x₁ ≤ x₂)
     let sl := List.range' 1 n 1
     have hs₀: sl = List.range' 1 n 1 := by rfl
     let lo : List ℕ := List.map f sl
@@ -284,16 +284,16 @@ lemma aux_1
               rw [gg₁₁]
               apply Finset.mem_Icc.mp at hk₀
               exact Nat.sub_one_lt_of_le hk₀.1 hk₀.2
-            have hk₂: lo_sorted = sort (fun x₁ x₂ => x₁ ≤ x₂) so := by rfl
+            have hk₂: lo_sorted = so.sort (fun x₁ x₂ => x₁ ≤ x₂) := by rfl
             have hk₃: lo = List.map f sl := by rfl
             rw [gg₀, hk₂, hk₃]
             ring_nf
             have hk₄: so = image f (Icc 1 n) := by rfl
             rw [gg₁₁, ← gg₉, hk₂, hk₄] at hk₁
             rw [List.getD_eq_getElem _ 0 hk₁]
-            let j : ℕ := (sort (fun x₁ x₂ => x₁ ≤ x₂) (image f (Icc 1 n)))[k - 1]
-            have hj₀: j = (sort (fun x₁ x₂ => x₁ ≤ x₂) (image f (Icc 1 n)))[k - 1] := by rfl
-            have hj₁: j ∈ (sort (fun x₁ x₂ => x₁ ≤ x₂) (image f (Icc 1 n))) := List.getElem_mem hk₁
+            let j : ℕ := ((image f (Icc 1 n)).sort (fun x₁ x₂ => x₁ ≤ x₂))[k - 1]
+            have hj₀: j = ((image f (Icc 1 n)).sort (fun x₁ x₂ => x₁ ≤ x₂))[k - 1] := by rfl
+            have hj₁: j ∈ ((image f (Icc 1 n)).sort (fun x₁ x₂ => x₁ ≤ x₂)) := List.getElem_mem hk₁
             have hj₂: j ∈ image f s := by exact (mem_sort fun x₁ x₂ => x₁ ≤ x₂).mp hj₁
             rw [← hj₀]
             exact List.mem_dedup.mp hj₂
@@ -312,7 +312,7 @@ lemma aux_1
         · intro z sz _ hz₁
           simp
           exact congrArg (insert ↑(f z)) hz₁
-      have g₁: lo_sorted = sort (fun x₁ x₂ => x₁ ≤ x₂) so := by rfl
+      have g₁: lo_sorted = so.sort (fun x₁ x₂ => x₁ ≤ x₂) := by rfl
       have g₂: so = image f s := by rfl
       rw [hf₁, hf₂, g₁, g₂, hh₁]
       refine Finset.induction_on_min (image f s) ?_ ?_
@@ -349,7 +349,7 @@ lemma aux_1
         exact List.cons_eq_cons.mp (congrArg (List.cons ↑z) hz₁)
     have gg₁₄: ∀ x y, x ∈ s → y ∈ s → f₄ x = f₄ y → x = y := by
       intro x y hx₀ hy₀ hx₁
-      have hx₂: List.Nodup lo_sorted := by exact sort_nodup (fun x₁ x₂ => x₁ ≤ x₂) so
+      have hx₂: List.Nodup lo_sorted := by exact sort_nodup so (fun x₁ x₂ => x₁ ≤ x₂)
       rw [gg₀] at hx₁
       ring_nf at hx₁
       have hx₃: x - 1 < lo_sorted.length := by

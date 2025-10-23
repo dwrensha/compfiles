@@ -63,12 +63,7 @@ theorem final_solution_nat (f : ℕ → ℕ) :
     ∧ (∀ x y : ℕ, x ≤ f y + f (y + f x))
     ∧ (∀ x y : ℕ, f y ≤ f (y + f x) + x))
       ↔ f = λ x ↦ x := by
-  ---- First, the easier direction: `←`
-  symm; constructor
-  · rintro rfl
-    refine ⟨λ x y ↦ le_refl (y + x), λ x y ↦ ?_, λ x y ↦ ?_⟩
-    · rw [← add_assoc]; exact le_add_self
-    rw [add_assoc]; exact le_self_add
+  refine ⟨?_, by cutsat⟩
 
   ---- For the harder case, first prove that `f(0) = 0`
   rintro ⟨h, h0, h1⟩

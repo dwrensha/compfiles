@@ -68,7 +68,6 @@ lemma aux_1
     have hc₁: t ^ 2 < 2 ^ 2 := by
       refine sq_lt_sq.mpr ?_
       refine lt_of_lt_of_le hc₀ ?_
-      rw [abs_of_nonneg]
       norm_num
     apply sub_neg_of_lt at hc₁
     have hc₂: ∀ (s : ℝ), discrim 1 (-t) 1 ≠ s ^ 2 := by
@@ -122,8 +121,7 @@ lemma aux_1
         have h₅₂: 2 ^ 2 ≤ t ^ 2 := by
           refine sq_le_sq.mpr ?_
           refine le_trans ?_ ht₁
-          rw [abs_of_nonneg]
-          positivity
+          norm_num
         have h₅₃: 0 ≤ t ^ 2 - 4 := by linarith
         have h₅₄: 0 ≤ 5 * t ^ 2 - 4 := by linarith
         rw [h₅₁]

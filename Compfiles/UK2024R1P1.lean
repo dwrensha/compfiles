@@ -266,7 +266,7 @@ lemma S_succ_k_card_eq_two_pow_k {k : ℕ} :
       constructor <;> simp [S]
       · rw [Equiv.ext_iff]
         omega
-      · intro h n
+      · intro h
         simp [h, f, Fin.eq_zero]
   | succ n hn =>
       rw [Nat.pow_succ, ←hn, S_succ_succ_k_card_eq_two_mul_S_succ_k_card]

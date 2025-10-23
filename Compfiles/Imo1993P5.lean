@@ -4,8 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Roozbeh Yousefzadeh, Zheng Yuan
 -/
 
-import Mathlib.Data.Real.GoldenRatio
-import Mathlib.Tactic
+import Mathlib
 
 import ProblemExtraction
 
@@ -65,7 +64,7 @@ lemma imo_1993_p5_N:
     rw [← abs_of_nonneg g₀, ← abs_of_nonneg g₁]
     refine sq_lt_sq.mp ?_
     rw [Real.sq_sqrt (by positivity)]
-    linarith
+    norm_num1
   have hg₁: 0 < G - 1 := by
     rw [hG]
     ring_nf
@@ -152,8 +151,8 @@ lemma imo_1993_p5_N:
 
 snip end
 
-problem imo1993_p5 :
-    if DoesExist then ∃ f, Good f else ¬∃ f, Good f := by
+problem imo1993_p5 : DoesExist ↔ ∃ f, Good f  := by
+  simp only [decide_true, true_iff]
   have h₀: ∃ f : ℕ → ℕ, f 1 = 2 ∧ (∀ n, f (f n) = f n + n) ∧ (∀ n, f n < f (n + 1)) := by
     exact imo_1993_p5_N
   obtain ⟨f₀, hf₀, hf₁, hf₂⟩ := h₀

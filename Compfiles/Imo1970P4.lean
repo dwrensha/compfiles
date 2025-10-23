@@ -30,27 +30,12 @@ lemma card_opposite (s s' s'' : Finset ℕ) (predicate: ℕ → Prop)
   rw [opposite_filter]
   exact Finset.filter_card_add_filter_neg_card_eq_card predicate
 
-lemma no_other_p_divisors_nearby (x : ℕ) (y : ℕ) (p : ℕ) (p_gt_5 : p > 5) (x_lt_y : x < y) (close_by: ∃ k, k ≤ 5 ∧ x + k = y) (x_div_p : p ∣ x) : ¬ (p ∣ y) := by
-  obtain ⟨k, ⟨bound, sum⟩⟩ := close_by
-  intro H
-  obtain ⟨a, Ha⟩ := x_div_p
-  obtain ⟨b, Hb⟩ := H
-  rw[Ha] at sum
-  rw[Hb] at sum
-  rw[Ha] at x_lt_y
-  rw[Hb] at x_lt_y
-  have a_lt_b : a < b := by
-    exact (Nat.mul_lt_mul_left (show 0 < p by omega)).mp x_lt_y
-  have a_lt_b_2 : 1 ≤ (b - a) := by
-    omega
-  have k_eq : p * (b - a) = k := by
-    calc p * (b - a) = p * b - p * a := mul_tsub p b a
-    _ = p * a + k - p * a := by rw[sum]
-    _ = k := by omega
-  have : p * (b - a) > 5 := by
-    calc p * (b - a) > 5 * (b - a) := by rel[p_gt_5]
-         _ ≥ 5 * 1 := by rel[a_lt_b_2]
-  omega
+lemma no_other_p_divisors_nearby (x : ℕ) (y : ℕ) (p : ℕ) (p_gt_5 : p > 5) (x_lt_y : x < y)
+    (close_by: ∃ k, k ≤ 5 ∧ x + k = y) (x_div_p : p ∣ x) : ¬ p ∣ y := by
+  obtain ⟨k, hk_le, rfl⟩ := close_by
+  have h_not_div_k : ¬ p ∣ k :=
+    Nat.not_dvd_of_pos_of_lt (Nat.lt_add_right_iff_pos.mp x_lt_y) (Nat.lt_of_le_of_lt hk_le p_gt_5)
+  simp_all [Nat.dvd_add_right]
 
 lemma no_other_5_divisors_nearby (x : ℕ) (y : ℕ) (x_lt_y : x < y) (close_by: ∃ k, k ≤ 4 ∧ x + k = y) (x_div_p : 5 ∣ x) : ¬ (5 ∣ y) := by
   omega
@@ -162,18 +147,17 @@ lemma p_gt_five_not_divides (n : ℕ) (s1 s2 : Finset ℕ) (partition : s1 ∪ s
     apply p_not_dvd_prod_y
     exact p_dvd_prod_y
 
-lemma odd_props (n : ℕ) (odd_s : Finset ℕ) (s_odd_eq : odd_s = (Finset.Icc n (n + 5)).filter (λ x => Odd x)) :
-  ∃ (a b c : ℕ), {a, b, c} = odd_s ∧ b = a + 2 ∧ c = b + 2 := by
-  cases Decidable.em (Odd n)
-  case inl h =>
-    have h2 := Odd.not_two_dvd_nat h
+lemma odd_props (n : ℕ) (odd_s : Finset ℕ)
+    (s_odd_eq : odd_s = (Finset.Icc n (n + 5)).filter (λ x => Odd x)) :
+    ∃ (a b c : ℕ), {a, b, c} = odd_s ∧ b = a + 2 ∧ c = b + 2 := by
+  by_cases h : Odd n
+  · have h2 := Odd.not_two_dvd_nat h
     use n, n + 2, n + 4
     simp_all only [Nat.two_dvd_ne_zero, and_self, and_true]
     ext x
     simp_all only [Finset.mem_insert, Finset.mem_singleton, Finset.mem_filter, Finset.mem_Icc]
     apply Iff.intro <;> grind
-  case inr h =>
-    use n + 1, n + 3, n + 5
+  · use n + 1, n + 3, n + 5
     simp_all only [Nat.not_odd_iff_even, and_self, and_true]
     have := Even.two_dvd h
     ext x

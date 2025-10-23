@@ -203,10 +203,7 @@ problem imo1988_p6 {a b : ℕ} (h : a * b + 1 ∣ a ^ 2 + b ^ 2) :
       hk (fun x => k * x) (fun x => x * x - k) fun _ _ => False <;>
     clear hk a b
   · -- We will now show that the fibers of the solution set are described by a quadratic equation.
-    intro x y
-    rw [← Int.natCast_inj, ← sub_eq_zero]
-    apply eq_iff_eq_cancel_right.2
-    simp; ring
+    cutsat
   · -- Show that the solution set is symmetric in a and b.
     intro x y
     simp [add_comm (x * x), mul_comm x]

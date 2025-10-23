@@ -22,20 +22,20 @@ namespace ProblemExtraction
 open Lean Elab
 
 structure Replacement where
-  startPos : String.Pos
-  endPos : String.Pos
+  startPos : String.Pos.Raw
+  endPos : String.Pos.Raw
   newValue : String
 deriving Inhabited
 
 inductive EntryVariant where
   /-- full file text and the position where extraction should start-/
-  | file : String → String.Pos → EntryVariant
+  | file : String → String.Pos.Raw → EntryVariant
 
   /-- substring replacement. positions are relative to the full file -/
   | replace : Replacement → EntryVariant
 
-  | snip_begin : String.Pos → EntryVariant
-  | snip_end : String.Pos → EntryVariant
+  | snip_begin : String.Pos.Raw → EntryVariant
+  | snip_end : String.Pos.Raw → EntryVariant
 
 /-- An entry in the state of the Problem Extraction environment extension -/
 structure Entry where
@@ -127,7 +127,7 @@ def parseAuthors (src : String) : List String := Id.run do
   for l in lines do
     if l.startsWith "Authors: "
     then
-      return (l.stripPrefix "Authors: ").split (fun c => c = ',')
+      return (l.stripPrefix "Authors: ").splitToList (fun c => c = ',')
   return []
 
 def parseCopyrightHeader (src : String) : String := Id.run do
@@ -310,7 +310,7 @@ def extractFromExt {m : Type → Type} [Monad m] [MonadEnv m] [MonadError m]
   let env ← getEnv
   let st := ext.getState env
 
-  let mut inProgress : NameMap (String × String.Pos × String) := mkNameMap _
+  let mut inProgress : NameMap (String × String.Pos.Raw × String) := mkNameMap _
   for ⟨module, variant⟩ in st do
     match variant with
     | .file s p =>

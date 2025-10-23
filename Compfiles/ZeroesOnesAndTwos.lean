@@ -131,7 +131,7 @@ lemma prepend_one_eq_append (n : ℕ) :
     Nat.digits 10 (prepend_one n) = (Nat.digits 10 n) ++ [1] := by
   induction n using Nat.strong_induction_on with | h n' ih =>
   cases n' with
-  | zero => simp +arith +decide [prepend_one]
+  | zero => simp +arith +decide
   | succ n' =>
     rw [Nat.digits_def' two_le_ten (prepend_one_pos _)]
     rw [prepend_one_div _ (Nat.succ_pos n')]
@@ -164,10 +164,7 @@ lemma prepend_two_div (n : ℕ) (hn : 0 < n) : prepend_two n / 10 = prepend_two 
   | zero => cases Nat.lt_asymm hn hn
   | succ n =>
     rw [digits_len' n.succ (Nat.succ_pos n)]
-    rw [pow_add, pow_one, add_comm]
-    rw [←mul_left_comm]
-    rw [Nat.add_mul_div_left _ _ (Nat.succ_pos 9)]
-    exact add_comm _ _
+    cutsat
 
 lemma prepend_two_mod (n : ℕ) (hn : 0 < n) : prepend_two n % 10 = n % 10 := by
   rw [prepend_two]

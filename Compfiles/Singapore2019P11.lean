@@ -47,6 +47,6 @@ problem singapore2019_r1_p11 :
     · linarith [Real.pi_gt_three]
 
   field_simp [h2, h3]
-  nlinarith
+  norm_num
 
 end Singapore2019R1P11

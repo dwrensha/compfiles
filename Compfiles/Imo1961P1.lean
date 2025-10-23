@@ -123,7 +123,7 @@ lemma aux_1
     have hc₁: 0 < (3 * a ^ 2 - b ^ 2) := by
       refine sub_pos_of_lt ?_
       refine lt_trans h₁₀ ?_
-      refine lt_mul_left ?_ (by linarith)
+      refine lt_mul_left ?_ (by norm_num1)
       exact sq_pos_of_pos ha
     have hc₂: (3 * a ^ 2 - b ^ 2) * (3 * b ^ 2 - a ^ 2) ≤ 0 := by
       refine mul_nonpos_of_nonneg_of_nonpos ?_ hc₀

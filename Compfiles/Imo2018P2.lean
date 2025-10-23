@@ -117,7 +117,7 @@ lemma three_periodic {n : ℕ} [NeZero n] {i : ZMod n} {a : ZMod n → ℝ} (ha 
 
   apply_fun (· - a (i + 3)) using add_left_injective _
   dsimp
-  rw [pow_eq_zero this]
+  rw [eq_zero_of_pow_eq_zero this]
   norm_num
 
 lemma satisfies_is_mod_3 {n : ℕ} (hn : 3 ≤ n) (h : ∃ a : ZMod n → ℝ, P a) :

@@ -214,7 +214,7 @@ lemma mylemma_h8
     · simp at hf
       exfalso
       linarith [hf]
-    · linarith
+    · rfl
   rw [hfeq1, one_mul] at hf
   exact hf
 
