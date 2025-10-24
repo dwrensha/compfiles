@@ -70,7 +70,7 @@ theorem exists_between_and_separated {ι : Type*} (S : Finset ι) (f : ι → �
       exact disjoint hi hj
     rw [card_univ, Fintype.card_fin] at this
     omega
-  push_neg at h; simp at h
+  push_neg at h; simp only [mem_univ, Set.mem_Ioo, mem_filter, and_imp, true_and] at h
   -- the `i`th interval in disjoint with `(f '' S) ∩ (a, b)`
   obtain ⟨i, h⟩ := h; unfold rel at h
   -- use the midpoint of the `i`th interval
@@ -79,7 +79,7 @@ theorem exists_between_and_separated {ι : Type*} (S : Finset ι) (f : ι → �
   have : b - a > 0 := sub_pos.mpr hab
   -- check that the point is in between `a` and `b`
   refine ⟨⟨?_, ?_⟩, ?_⟩
-  · simp [AffineMap.lineMap_apply_ring']
+  · simp only [one_div, mul_inv_rev, AffineMap.lineMap_apply_ring', lt_add_iff_pos_left]
     positivity
   · rw [AffineMap.lineMap_apply_ring']
     have ineq₂: (1 / (2 * n) : ℝ) < 1 / n := by
@@ -163,7 +163,8 @@ theorem exists_affine_between_and_separated {ι : Type*} (S : Finset ι) (f : ι
     abs_of_pos (by positivity)] at hx
   rw [Metric.infDist_eq_iInf]
   apply le_ciInf
-  simp [dist_eq_norm_vsub]
+  simp only [SetLike.coe_sort_coe, dist_eq_norm_vsub, Subtype.forall, AffineSubspace.mem_mk',
+             LinearMap.mem_ker, innerₛₗ_apply]
   intro y hy
   rw [← mul_le_mul_iff_right₀ this]
   calc
@@ -176,7 +177,7 @@ theorem exists_affine_between_and_separated {ι : Type*} (S : Finset ι) (f : ι
     _ = |⟪a -ᵥ b, f p -ᵥ (AffineMap.lineMap a b) (x / ‖a -ᵥ b‖)⟫| := by
       congr 1
       rw [sub_eq_iff_eq_add', ← inner_add_right]
-      simp
+      simp only [vsub_add_vsub_cancel, AffineMap.left_vsub_lineMap]
       rw [inner_smul_right, real_inner_self_eq_norm_sq]
       field_simp
     _ = |⟪a -ᵥ b, f p -ᵥ y⟫| := by congr 1; rw [← sub_eq_zero, ← inner_sub_right]; simp; exact hy
@@ -302,7 +303,7 @@ problem imo2020_p6 : ∃ c : ℝ, 0 < c ∧ ∀ {n : ℕ}, 1 < n → ∀ {S : Fi
       ∀ i ∈ {i | i = 0}, basis i = ‖b -ᵥ a‖⁻¹ • (b -ᵥ a) := by
     refine Orthonormal.exists_orthonormalBasis_extension_of_card_eq ?_ ?_
     · simp [‹Fact (finrank ℝ V = 2)›.1]
-    simp [Set.restrict_def]
+    simp only [Fin.isValue, Set.setOf_eq_eq_singleton, Set.restrict_def]
     rw [orthonormal_iff_ite]
     simp
     rw [real_inner_smul_left, real_inner_smul_right, real_inner_self_eq_norm_mul_norm]
