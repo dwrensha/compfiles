@@ -31,8 +31,7 @@ lemma lemma3 : ∑ i ∈ Finset.range 1319, (-(1:ℚ))^i / (i + 1) =
            (Finset.range 1319) (Even ·) (λ i ↦ (1:ℚ) / (i + 1))
   rw [←h2]
   let g : ℕ ↪ ℕ :=
-    ⟨fun x ↦ 2 * x + 1,
-     by intro a b hab; dsimp at hab; omega⟩
+    ⟨fun x ↦ 2 * x + 1, by intro a b hab; cutsat⟩
 
   have h4 : (Finset.range 659).map g =
         (Finset.range 1319).filter (fun x ↦ ¬Even x) := by
@@ -172,8 +171,7 @@ problem imo1979_p1 (p q : ℤ) (hp : 0 < p) (hq : 0 < q)
       1979 / ((660 + (i:ℚ)) * (1319 - (i:ℚ))) := by
     intro i hi
     rw [Finset.mem_range] at hi
-    have h5 : (((659 + i) : ℕ) : ℚ) + 1 = 660 + (i : ℚ) := by
-      push_cast; linarith
+    have h5 : (((659 + i) : ℕ) : ℚ) + 1 = 660 + (i : ℚ) := by grind
     have h6 : (((659 + (2 * 330 - 1 - i)):ℕ):ℚ) + 1 = 1319 - (i:ℚ) := by
       rw [show 2 * 330 - 1 - i = 659 - i by omega]
       rw [show 659 + (659 - i) = 1318 - i by omega]
