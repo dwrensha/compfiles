@@ -247,7 +247,7 @@ variable [Fact (Module.finrank ℝ V = 2)]
 problem imo2020_p6 : ∃ c : ℝ, 0 < c ∧ ∀ {n : ℕ}, 1 < n → ∀ {S : Finset P}, #S = n →
     ((S : Set P).Pairwise fun x y ↦ 1 ≤ dist x y) →
     ∃ l : AffineSubspace ℝ P, finrank ℝ l.direction = 1 ∧
-      (∃ p₁ p₂, p₁ ∈ S ∧ p₂ ∈ S ∧ l.SOppSide p₁ p₂) ∧
+      (∃ p₁ ∈ S, ∃ p₂ ∈ S, l.SOppSide p₁ p₂) ∧
       ∀ p ∈ S, c * (n : ℝ) ^ (-1 / 3 : ℝ) ≤ Metric.infDist p l := by
   let c : ℝ := 1/100
   use c, by norm_num
@@ -259,13 +259,13 @@ problem imo2020_p6 : ∃ c : ℝ, 0 < c ∧ ∀ {n : ℕ}, 1 < n → ∀ {S : Fi
     obtain ⟨a, ha, b, hb, hab⟩ := h_dist
     have : 0 < dist a b := lt_of_lt_of_le (by positivity) hab
     rw [dist_pos] at this
-    obtain ⟨l, rank, _sOpp, h⟩ := exists_affine_between_and_separated 1 S (·) (n*2) a b 0 (dist a b)
+    obtain ⟨l, rank, sOpp, h⟩ := exists_affine_between_and_separated 1 S (·) (n*2) a b 0 (dist a b)
       le_rfl (dist_pos.mpr this) le_rfl (by
       rw [le_sub_iff_add_le]; norm_cast
       exact lt_of_le_of_lt (card_filter_le S _) (by omega)) this
     norm_num at h
     use l, rank
-    constructor; · use a, b, ha, hb
+    refine ⟨⟨a, ha, b, hb, sOpp⟩, ?_⟩
     intro p hp
     specialize h p hp
     grw [← h, ← hab]
@@ -353,7 +353,7 @@ problem imo2020_p6 : ∃ c : ℝ, 0 < c ∧ ∀ {n : ℕ}, 1 < n → ∀ {S : Fi
   obtain ⟨l, rank, sOpp, h⟩ := exists_affine_between_and_separated 1 S (·) _ a b 0 (1/2) le_rfl
     (by norm_num) (by linarith only [one_le_dist ha hb h_ne]) bound h_ne
   use l, rank
-  refine ⟨⟨a, b, ha, hb, sOpp⟩, ?_⟩
+  refine ⟨⟨a, ha, b, hb, sOpp⟩, ?_⟩
   intro p hp
   specialize h p hp
   grw [← h]
