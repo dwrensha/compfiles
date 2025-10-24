@@ -86,7 +86,6 @@ problem usa2018_p1 (a b c : ℝ) :
         rw [(mul_assoc _ _ 8)]
         simp only [mul_eq_mul_left_iff]
         left
-        rw [←Real.sqrt_eq_rpow]
         norm_num1
 
 

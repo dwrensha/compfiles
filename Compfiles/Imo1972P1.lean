@@ -62,6 +62,7 @@ problem imo1972_p1 (S : Finset ℕ)
   let t : Finset ℕ := Finset.range 991
   have h7 : t.card = 991 := Finset.card_range _
   have h8 : t.card < S.powerset.card := by omega
+  replace h3 : Set.MapsTo _ _ _ := h3
   have h9 := Finset.exists_ne_map_eq_of_card_lt_of_maps_to h8 h3
   obtain ⟨A, hA, B, hB, hAB1, hAB2⟩ := h9
   let C := A ∩ B
@@ -85,6 +86,5 @@ problem imo1972_p1 (S : Finset ℕ)
     unfold A' B'
     dsimp at h14 h15
     omega
-
 
 end Imo1972P1

@@ -30,7 +30,7 @@ lemma extended_pigeonhole {α : Type u} {β : Type v} [DecidableEq α] [Decidabl
   : ∃ t : Finset (Finset α), t.card = n
     ∧ (∀ t' : Finset α, t' ∈ t → t' ⊆ s)
     ∧ (∀ t' : Finset α, t' ∈ t → t'.card = 2)
-    ∧ ((t.toSet).PairwiseDisjoint id)
+    ∧ ((t : Set (Finset α)).PairwiseDisjoint id)
     ∧ (∀ t' : Finset α, t' ∈ t → ∃ p : β, ∀ n : α, n ∈ t' → f n = p)
     := by
   induction' n with n' hn'

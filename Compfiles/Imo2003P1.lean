@@ -66,7 +66,7 @@ theorem induction_lemma (A : Finset ℕ) (_AS : A ⊆ S) (Acard : A.card = 101)
         intro y z hyz
         have hy := (hu y)
         have hz := (hu z)
-        rw [Subtype.eq_iff]
+        rw [Subtype.eq_iff, SetLike.coe_eq_coe]
         simp [hyz ▸ hy] at hz
         exact hz
       exact Bcard ▸ Finset.card_le_card_of_injective this

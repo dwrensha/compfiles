@@ -41,7 +41,8 @@ lemma lemma2 {f : ZMod 101 → ℤ} (y : ZMod 101)
     have h8: a % 101 = b % 101 := Iff.mp (ZMod.natCast_eq_natCast_iff' a b 101) h5
     rw [Finset.mem_range] at ha hb
     rwa [Nat.mod_eq_of_lt ha, Nat.mod_eq_of_lt hb] at h8
-  rw[← Finset.sum_image hg]
+  replace hg : Set.InjOn g (Finset.range 101) := hg
+  rw [←Finset.sum_image hg]
   have h3 : Finset.image g (Finset.range 101) = Finset.univ := by
      rw [Finset.eq_univ_iff_forall]
      intro a
@@ -100,6 +101,7 @@ problem integers_in_a_circle
       rw [Finset.mem_Ico] at ha hb
       rwa [Nat.mod_eq_of_lt (ha.2.trans y.prop),
            Nat.mod_eq_of_lt (hb.2.trans y.prop)] at h13
+    replace h10 : Set.InjOn Nat.cast _ := h10
     rw [←Finset.sum_image h10, ←ha_sum]
     have h9 : (Finset.Ico x.val y.val).image (λ i:ℕ ↦ (i : ZMod 101)) ⊂ Finset.univ := by
       rw [Finset.ssubset_univ_iff]
