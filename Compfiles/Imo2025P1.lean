@@ -1135,13 +1135,11 @@ lemma coverGridConfig.any_cover (C : coverGridConfig) :
       · obtain ⟨d, hd⟩ := hE
         have := C.reduce_count d hd
         have := ih (reduce C d hd)
-        omega
+        cutsat
       · push_neg at hE
         let C' : coverGridNoEdgeConfig := {C with hE := hE, hn := by omega}
         have := C'.cover_edge
-        have : C'.n = C.n := by rfl
-        have : C'.nS = C.nS := by rfl
-        omega
+        cutsat
 
 /-- A `coverGridConfig` with the additional requirements every line in `lines` goes through at
 least one point in `g`. This is used to inductively construct covers of `grid n` with exactly
