@@ -350,10 +350,10 @@ problem imo2020_p6 : ∃ c : ℝ, 0 < c ∧ ∀ {n : ℕ}, 1 < n → ∀ {S : Fi
     rw [coe_filter] at hx hy
     exact one_le_dist hx.1 hy.1
   simp_rw [← project_eq_eqv] at bound
-  obtain ⟨l, rank, _sOpp, h⟩ := exists_affine_between_and_separated 1 S (·) _ a b 0 (1/2) le_rfl
+  obtain ⟨l, rank, sOpp, h⟩ := exists_affine_between_and_separated 1 S (·) _ a b 0 (1/2) le_rfl
     (by norm_num) (by linarith only [one_le_dist ha hb h_ne]) bound h_ne
   use l, rank
-  constructor; · use a, b, ha, hb
+  refine ⟨⟨a, b, ha, hb, sOpp⟩, ?_⟩
   intro p hp
   specialize h p hp
   grw [← h]
