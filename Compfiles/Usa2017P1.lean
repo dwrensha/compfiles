@@ -28,11 +28,11 @@ namespace Usa2017P1
 def condition (a b : ℕ) : Prop :=
   Nat.gcd a b = 1 ∧ a > 1 ∧ b > 1 ∧ (a + b) ∣ (a ^ b + b ^ a)
 
-def solution_set : Set (ℕ × ℕ) := { x | condition x.1 x.2 }
-
 snip begin
 
-lemma divisibility_helper {n k} : k = 3 \/ k = 5 → (2 * n + k) ^ 2 ≡ 1 [MOD 4 * n + 8] := by
+def solution_set : Set (ℕ × ℕ) := { x | condition x.1 x.2 }
+
+lemma divisibility_helper {n k} : k = 3 ∨ k = 5 → (2 * n + k) ^ 2 ≡ 1 [MOD 4 * n + 8] := by
   intro H
   cases H
   case inl h3 =>
@@ -119,8 +119,9 @@ def build : ℕ → solution_set :=
 
 snip end
 
-problem infinite_solution_set : Infinite solution_set := by
-  apply Infinite.of_injective build (fun _ => _)
-  unfold build; simp
+problem infinite_solution_set :
+    Infinite { (x, y) : ℕ × ℕ | condition x y } := by
+  refine Infinite.of_injective build (fun _ => ?_)
+  simp [build]
 
 end Usa2017P1
