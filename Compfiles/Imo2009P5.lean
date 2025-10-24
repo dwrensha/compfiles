@@ -34,12 +34,9 @@ snip begin
 section extra_lemmas
 
 lemma exists_sup_fn_fin (f : ℕ → ℕ) (c : ℕ) : ∃ K : ℕ, ∀ n : ℕ, n < c → f n ≤ K := by
-  induction' c with c ih
-  · simp
-  · obtain ⟨k, hk⟩ := ih
-    use max k (f c)
-    intro n hn
-    obtain hlt | rfl := Nat.lt_succ_iff_lt_or_eq.mp hn <;> aesop
+  use Finset.sup (Finset.range c) f
+  intro n hn
+  exact Finset.le_sup (Finset.mem_range.mpr hn)
 
 private lemma pnat_to_nat_prop {P : ℕ+ → Prop} :
   (∀ n : ℕ+, P n) ↔ (∀ n : ℕ, P n.succPNat) :=
