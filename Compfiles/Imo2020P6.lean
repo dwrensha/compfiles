@@ -256,7 +256,6 @@ problem imo2020_p6 : ∃ c : ℝ, 0 < c ∧ ∀ {n : ℕ}, 1 < n → ∀ {S : Fi
   by_cases h_dist : ∃ᵉ (a ∈ S) (b ∈ S), (n : ℝ) ^ (2 / 3 : ℝ) ≤ dist a b
   · -- If there are points with distance at least `n^(2/3)`, then we can solve the problem by
     -- choosing the best perpendicular line though this segment.
-    -- sorry
     obtain ⟨a, ha, b, hb, hab⟩ := h_dist
     have : 0 < dist a b := lt_of_lt_of_le (by positivity) hab
     rw [dist_pos] at this
