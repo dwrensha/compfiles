@@ -34,12 +34,7 @@ problem singapore2019_r1_p2 : (√10 - √2)^(1 / 3 : ℝ) * (√10 + √2)^(7 /
     (√10 - √2) * (√10 + √2)
       = ((√10) ^ 2 - (√2) ^ 2 : ℝ) := by ring
     _ = 8 := by simp [sq_sqrt] ; norm_num
-  have h3 : ((√10 - √2) * (√10 + √2) : ℝ)^(1 / 3 : ℝ) = 2 := by
-    rw [h2]
-    have h4 : 8 ^ (1 / 3 : ℝ) = (2 : ℝ) := by
-      rw [show 8 ^ (1 / 3 : ℝ) = ((2 : ℝ) ^ (3 : ℝ)) ^ (1 / 3 : ℝ) by norm_num, ← rpow_mul]
-      repeat norm_num
-    rw [h4]
+  have h3 : ((√10 - √2) * (√10 + √2) : ℝ)^(1 / 3 : ℝ) = 2 := by norm_num [h2]
   rw [h3]
   have h5 : (√10 + √2) ^ (2 : ℝ) = (12 + 4 * √5 : ℝ) := by
     norm_cast

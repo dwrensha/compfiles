@@ -56,8 +56,7 @@ problem usa2000_p1 :
       rw [zero_add]
       have h4 : -((n : ℝ) + 1) = - (n : ℝ) - 1 := by ring
       rw [h4, div_eq_mul_one_div]
-      have h5 : (1:ℝ) / 2 = 2 ^ (-(1:ℝ)) := by
-         rw [Real.rpow_neg (by norm_num)]; norm_num
+      have h5 : (1:ℝ) / 2 = 2 ^ (-(1:ℝ)) := by norm_num
       rw [h5, ←Real.rpow_add h2p]
       congr
     rw [h3] at h2
@@ -80,8 +79,7 @@ problem usa2000_p1 :
       rw [zero_add]
       have h4 : -((n : ℝ) + 1) = - (n : ℝ) - 1 := by ring
       rw [h4, div_eq_mul_one_div]
-      have h5 : (1:ℝ) / 2 = 2 ^ (-(1:ℝ)) := by
-         rw [Real.rpow_neg (by norm_num)]; norm_num
+      have h5 : (1:ℝ) / 2 = 2 ^ (-(1:ℝ)) := by norm_num
       rw [h5, neg_mul, ←Real.rpow_add h2p]
       congr
     rw [h3] at h2; clear h3
