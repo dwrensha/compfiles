@@ -358,16 +358,13 @@ problem imo2020_p6 : ∃ c : ℝ, 0 < c ∧ ∀ {n : ℕ}, 1 < n → ∀ {S : Fi
   intro p hp
   specialize h p hp
   grw [← h]
-  field_simp
   rw [le_div_iff₀ (by simp [h_ne])]
-
   specialize h_dist a ha b hb
   grw [Real.sqrt_le_sqrt h_dist.le]
   rw [Real.sqrt_eq_rpow, ← Real.rpow_mul (by positivity)]
-  rw [Real.rpow_neg (by positivity)]
-  norm_num
+  rw [neg_div, Real.rpow_neg (by positivity)]
   ring_nf
-  field_simp
+  simp only [fieldLe, c]
   norm_num
 
 end Imo2020P6
