@@ -43,16 +43,9 @@ def Condition (a b : ℕ) : Prop :=
 lemma dvd_pow_iff_of_dvd_sub {a b d n : ℕ} {z : ℤ} (ha : a.Coprime d)
     (hd : (φ d : ℤ) ∣ (n : ℤ) - z) :
     d ∣ a ^ n + b ↔ (((ZMod.unitOfCoprime _ ha) ^ z : (ZMod d)ˣ) : ZMod d) + b = 0 := by
-  rcases hd with ⟨k, hk⟩
-  rw [← ZMod.natCast_eq_zero_iff]
-  convert Iff.rfl
-  push_cast
-  congr
-  suffices (((ZMod.unitOfCoprime _ ha) ^ z : (ZMod d)ˣ) : ZMod d) =
-      (((ZMod.unitOfCoprime _ ha) ^ (n : ℤ) : (ZMod d)ˣ) : ZMod d) by
-    convert this
-  rw [sub_eq_iff_eq_add] at hk
-  rw [hk, zpow_add, zpow_mul]
+  obtain ⟨k, hk⟩ := hd
+  rw [show z = n + (-k) * φ d by cutsat]
+  rw [zpow_add, zpow_mul', ←ZMod.natCast_eq_zero_iff]
   simp
 
 namespace Condition
