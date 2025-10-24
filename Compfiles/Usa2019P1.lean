@@ -166,7 +166,7 @@ lemma lemma_3
       rw[lemma_1 f hf k m2 _ rfl h3]
       exact h3
     · have h5 : f^[2] m2 = m2 ∧ f^[f m2] m2 = m2 := by
-         simp at h2 h4
+         simp only [Function.iterate_succ, Function.comp_apply, not_lt] at h2 h4
          by_contra H
          rw [not_and_or] at H
          obtain h9 | h9 := H
@@ -229,8 +229,8 @@ problem usa2019_p1 (m : ℕ+) :
           rw [Function.iterate_mul, Function.iterate_fixed hmsq]
           exact (sq m).symm
         · have hn : f n = n := by
-            simp [hf]
-            simp_rw[eq_false hne']
+            simp only [hf]
+            simp_rw [eq_false hne']
             simp only [ite_false, ite_eq_right_iff]; intro h2; exact (hne h2).elim
           rw [hn, hn]
           rw [Function.iterate_fixed hn]
