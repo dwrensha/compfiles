@@ -338,7 +338,7 @@ def extractFromExt {m : Type → Type} [Monad m] [MonadEnv m] [MonadError m]
     let mut imports := ""
     for im in ← findModuleImports env module do
       if im.module.toString ≠ "Init" && im.module ≠ `ProblemExtraction
-      then imports := imports ++ s!"import {im}\n"
+      then imports := imports ++ s!"import {im.module}\n"
 
     result := result.insert module
       (imports ++ acc ++ (Substring.mk src endPos src.endPos).toString)

@@ -3,11 +3,7 @@ Copyright (c) 2025 Joseph Myers. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Joseph Myers (Problem statement), Yizheng Zhu (Solution)
 -/
-import Mathlib.Algebra.Group.Pointwise.Finset.Basic
-import Mathlib.Analysis.InnerProductSpace.PiL2
-import Mathlib.Data.Real.Basic
-import Mathlib.LinearAlgebra.AffineSpace.AffineEquiv
-import Mathlib.LinearAlgebra.AffineSpace.AffineSubspace.Defs
+import Mathlib
 
 import ProblemExtraction
 
@@ -1182,8 +1178,10 @@ noncomputable def oneSunny : strongCoverGridConfig where
   lines_cover := by
     dsimp only [grid, Fin.isValue, Nat.reduceAdd, Set.mem_setOf_eq]
     intro x ⟨a, b, ha, hb, ha0, hb0, hab⟩
-    have : a = 1 ∧ b = 1 := by omega
-    simp [line, ← SetLike.mem_coe, SetLike.coe, ha, hb, this]
+    obtain ⟨rfl, rfl⟩ : a = 1 ∧ b = 1 := by cutsat
+    simp only [line, neg_mul, one_mul, add_zero, Finset.mem_singleton, exists_eq_left]
+    rw [← SetLike.mem_coe, SetLike.coe]
+    simp [AffineSubspace.instSetLike, ha, hb]
   sunny_count := by
     have : Sunny (line (-1) 1 0) := by
       rw [sunny_slope] <;>
