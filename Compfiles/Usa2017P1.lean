@@ -28,7 +28,9 @@ namespace Usa2017P1
 def condition (a b : ℕ) : Prop :=
   Nat.gcd a b = 1 ∧ a > 1 ∧ b > 1 ∧ (a + b) ∣ (a ^ b + b ^ a)
 
-determine solution_set : Set (ℕ × ℕ) := { x | condition x.1 x.2 }
+def solution_set : Set (ℕ × ℕ) := { x | condition x.1 x.2 }
+
+snip begin
 
 lemma divisibility_helper {n k} : k = 3 \/ k = 5 → (2 * n + k) ^ 2 ≡ 1 [MOD 4 * n + 8] := by
   intro H
@@ -114,6 +116,8 @@ lemma build_condition (n : ℕ) : condition (2 * n + 3) (2 * n + 5) := by
 
 def build : ℕ → solution_set :=
   fun n => ⟨ (2 * n + 3, 2 * n + 5) , build_condition n ⟩
+
+snip end
 
 problem infinite_solution_set : Infinite solution_set := by
   apply Infinite.of_injective build (fun _ => _)
