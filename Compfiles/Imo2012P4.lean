@@ -248,7 +248,10 @@ problem imo2012_p4 (f : ℤ → ℤ) :
                 by_cases h : (x : ℤ) - 1 ≥ 0
                 · rcases x with _ | x
                   case pos.zero => simp [even]
-                  simp; apply ih; omega; simp
+                  simp only [Nat.cast_add, Nat.cast_one, add_sub_cancel_right]
+                  apply ih
+                  · cutsat
+                  · simp
 
                 simp at h; simp [h, even]
 
