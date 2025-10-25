@@ -83,7 +83,7 @@ theorem not_pow_cons_factors_other_prime {p e c : ℕ} (hp : p.Prime)
     · rw [hq, Finsupp.single_eq_same]
     · rw [Finsupp.single_eq_of_ne hq]
       have {q : ℕ} (q_ne_p : q ≠ p) : c.factorization q = 0 := by
-        refine (em q.Prime).elim (fun q_prime => ?_) (Nat.factorization_eq_zero_of_non_prime c)
+        refine (em q.Prime).elim (fun q_prime => ?_) (Nat.factorization_eq_zero_of_not_prime c)
         by_contra h₂
         exact h ⟨q, q_ne_p, q_prime, Nat.dvd_of_factorization_pos h₂⟩
       exact this hq
@@ -132,7 +132,7 @@ theorem inv_cons_factors {n a b x y : ℕ} (hn : 0 < n) (ha : n = a * x)
 theorem factorization_prime {n p : ℕ} (h : n.factorization p ≠ 0) : p.Prime := by
   by_cases hp : p.Prime
   · exact hp
-  · exact False.elim (h (Nat.factorization_eq_zero_of_non_prime n hp))
+  · exact False.elim (h (Nat.factorization_eq_zero_of_not_prime n hp))
 
 /-- If `n` is not a prime power, then its `ordCompl[p]` with respect to any `p`
  is `> 1`. -/

@@ -31,7 +31,7 @@ problem imo1963_p5 :
     simp only [ne_eq, mul_eq_zero, OfNat.ofNat_ne_zero, false_or]
     apply ne_of_gt
     apply Real.sin_pos_of_pos_of_lt_pi
-    simp only [Nat.ofNat_pos, div_pos_iff_of_pos_right, Real.pi_pos]
+    · simp only [Nat.ofNat_pos, div_pos_iff_of_pos_right, Real.pi_pos]
     trans 1
     · rw [div_lt_one (by linarith only)]
       linarith only [Real.pi_le_four]

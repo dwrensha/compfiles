@@ -37,8 +37,8 @@ problem singapore2019_r1_p11 :
 
   have h2 : 0 < sin (12 * π / 180) := by
     apply sin_pos_of_pos_of_lt_pi
-    positivity
-    linarith [Real.pi_pos]
+    · positivity
+    · linarith [Real.pi_pos]
 
   have h3 : 0 < cos (12 * π / 180) := by
     apply cos_pos_of_mem_Ioo

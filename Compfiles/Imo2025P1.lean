@@ -1053,7 +1053,8 @@ lemma coverGridNoEdgeConfig.cover_no_edge_4_impossible (C : coverGridNoEdgeConfi
     rw [← C.cover_no_edge_line_surj d, Finset.mem_map] at hL'
     obtain ⟨⟨i, hi1⟩, hi2⟩ := hL'; simp only [Finset.mem_univ, Function.Embedding.coeFn_mk,
       true_and] at hi1
-    use i; constructor; assumption
+    use i; constructor
+    · assumption
     constructor
     all_goals
       by_contra hC

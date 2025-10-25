@@ -88,12 +88,13 @@ theorem exists_between_and_separated {ι : Type*} (S : Finset ι) (f : ι → �
   intro p hp
   -- the `i`th interval is disjoint with `f '' S`
   have : f p ∉ interval i := by
-    by_cases ha : a < f p; by_cases hb : f p < b
-    · exact h p hp ha hb
-    · apply Set.notMem_Ioo_of_ge
-      push_neg at hb
-      rw [AffineMap.lineMap_apply_ring']
-      linear_combination ineq₁ * (b - a) + hb
+    by_cases ha : a < f p
+    · by_cases hb : f p < b
+      · exact h p hp ha hb
+      · apply Set.notMem_Ioo_of_ge
+        push_neg at hb
+        rw [AffineMap.lineMap_apply_ring']
+        linear_combination ineq₁ * (b - a) + hb
     · apply Set.notMem_Ioo_of_le
       push_neg at ha
       grw [ha]

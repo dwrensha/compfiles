@@ -33,7 +33,8 @@ problem imo1965_p1 :
   have h0 : ∀ x, (√(1 + sin (2*x)) - √(1 - sin (2*x)))^2 = 2 - 2*|cos (2*x)| := by
     intro x
     rw [←sqrt_sq_eq_abs (cos (2 * x)), cos_sq', sub_sq, sq_sqrt, sq_sqrt, mul_assoc,
-      ←sqrt_mul]; ring_nf
+      ←sqrt_mul]
+    · ring_nf
     repeat { linarith [sin_le_one (2 * x), neg_one_le_sin (2 * x)] }
   have : ∀ x, |√(1 + sin (2*x)) - √(1 - sin (2*x))| ≤ √2 := by
     intro x
