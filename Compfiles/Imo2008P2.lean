@@ -111,9 +111,9 @@ problem imo2008_p2b : Set.Infinite rationalSolutions := by
         set z : ℚ := -t * (t + 1) with hz_def
         simp only [t, W, K, g, Set.mem_image, Prod.exists]
         use x, y, z; constructor
-        simp only [Set.mem_setOf_eq]
-        · use x, y, z; constructor
-          rfl
+        · simp only [Set.mem_setOf_eq]
+          use x, y, z; constructor
+          · rfl
           · use t; constructor
             · exact lt_max_of_lt_right zero_lt_one
             exact ⟨rfl, rfl, rfl⟩

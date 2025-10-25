@@ -48,8 +48,8 @@ problem imo1976_p6 (u : ℕ → ℝ)
     obtain ⟨w, h⟩ := h_int
     use 2 ^ w.natAbs
     obtain a | a := w <;> norm_num [ Real.rpow_def_of_pos ] at *
-    simp_all only [Int.reduceNeg]
-    · norm_num [ ← h, Real.exp_mul, Real.exp_log ];
+    · simp_all only [Int.reduceNeg]
+      norm_num [ ← h, Real.exp_mul, Real.exp_log ];
       norm_num [ show ( 2 ^ n - ( -1 ) ^ n : ℝ ) = 3 * a by exact_mod_cast h ];
     · obtain ⟨w, h_1⟩ := Nat.even_or_odd' n
       simp_all only [Int.reduceNeg]
