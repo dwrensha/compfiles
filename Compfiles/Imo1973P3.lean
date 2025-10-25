@@ -52,7 +52,6 @@ lemma aux_1
     rw [mul_comm x a, mul_assoc a, pow_two, mul_inv,
         ← mul_assoc x, mul_inv_cancel₀ hx, one_mul] at h₂₀
     rw [mul_comm _ a, mul_assoc a, ← pow_two, inv_pow, ← pow_sub₀, ← pow_sub₀] at h₂₀
-    simp at h₂₀
     all_goals try assumption
     all_goals try linarith
   have ht₁: 2 ≤ abs t := by

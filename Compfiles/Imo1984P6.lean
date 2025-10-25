@@ -75,9 +75,9 @@ lemma mylemma_k_le_m_alt
     have h₈₀: c - a < d - a := by
       have g₀: c - a + a < d - a + a := by
         rw [Nat.sub_add_cancel ?_]
-        rw [Nat.sub_add_cancel ?_]
-        · exact h₂.2.2
-        · linarith
+        · rw [Nat.sub_add_cancel ?_]
+          · exact h₂.2.2
+          · linarith
         · linarith
       exact Nat.lt_of_add_lt_add_right g₀
     refine lt_trans ?_ h₈₀
@@ -339,7 +339,7 @@ problem imo_1984_p6
           · cutsat
         · refine le_of_lt ?_
           rw [mul_two, Nat.add_sub_assoc, Nat.pow_add, mul_comm (2 ^ m) _]
-          refine (Nat.mul_lt_mul_right (by omega)).mpr g₀
+          · refine (Nat.mul_lt_mul_right (by omega)).mpr g₀
           omega
       nth_rewrite 2 [← Nat.one_mul (2 ^ (2 * m - 2))] at h₉₂
       rw [← Nat.mul_sub_right_distrib 2 1 (2 ^ (2 * m - 2))] at h₉₂

@@ -73,9 +73,10 @@ theorem final_solution_nat (f : ℕ → ℕ) :
 
   ---- Now get `f(f(x)) = x` for all `x`
   replace h0 : ∀ x : ℕ, f (f x) = x := by
-    intro x; apply le_antisymm
-    replace h := h x 0
-    rwa [h1, zero_add, zero_add] at h
+    intro x
+    apply le_antisymm
+    · replace h := h x 0
+      rwa [h1, zero_add, zero_add] at h
     replace h0 := h0 x 0
     rwa [h1, zero_add, zero_add] at h0
 

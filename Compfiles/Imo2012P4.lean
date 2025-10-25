@@ -121,13 +121,15 @@ problem imo2012_p4 (f : ℤ → ℤ) :
 
     have ext_eq_zero {{a : ℤ}} (h : f a = 0) : ∀ x, f (a * x) = 0 := by
       rintro (x | x)
-      rotate_left; rw [← even, Int.neg_mul_eq_mul_neg, Int.neg_negSucc]
+      rotate_left
+      rw [← even, Int.neg_mul_eq_mul_neg, Int.neg_negSucc]
       all_goals
         induction' x with x ih
         · simpa
 
       have := P a (a * (Nat.succ x))
-      rotate_left; have := P a (a * x)
+      rotate_left
+      have := P a (a * x)
 
       all_goals
         simp at ih; simp [ih, h] at this
