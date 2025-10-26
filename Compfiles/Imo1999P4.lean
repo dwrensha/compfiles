@@ -22,10 +22,8 @@ namespace Imo1999P4
 
 snip begin
 
-def isLeastPrimeFactor (n p : ℕ) := p.Prime ∧ p ∣ n ∧ ∀ q : ℕ, q.Prime → q ∣ n → p ≤ q
-
 lemma exists_least_prime_factor (n : ℕ) (hn : 2 ≤ n):
-  ∃ p : ℕ, isLeastPrimeFactor n p := by
+  ∃ p : ℕ, p.Prime ∧ p ∣ n ∧ ∀ q : ℕ, q.Prime → q ∣ n → p ≤ q := by
   have hnpf : BddBelow (n.primeFactors : Set ℕ) := by
     apply Finset.bddBelow
   have hnpf' : n.primeFactors.Nonempty := by
@@ -35,7 +33,6 @@ lemma exists_least_prime_factor (n : ℕ) (hn : 2 ≤ n):
   simp [IsLeast, lowerBounds] at hp
   rcases hp with ⟨⟨hp₁, hp₂, hn'⟩, hp₃⟩
   use p
-  simp [isLeastPrimeFactor]
   constructorm* _ ∧ _
   · exact hp₁
   · exact hp₂
