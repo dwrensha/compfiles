@@ -22,9 +22,9 @@ namespace Imo1999P4
 
 snip begin
 
-lemma exists_least_prime_factor (n : ℕ) (hn : 2 ≤ n):
+lemma exists_least_prime_factor {n : ℕ} (hn : n ≠ 1) :
     ∃ p : ℕ, p.Prime ∧ p ∣ n ∧ ∀ q : ℕ, q.Prime → q ∣ n → p ≤ q := by
-  use Nat.minFac n, Nat.minFac_prime (by cutsat), Nat.minFac_dvd n
+  use Nat.minFac n, Nat.minFac_prime hn, Nat.minFac_dvd n
   intro q hq hqn
   exact Nat.minFac_le_of_dvd hq.two_le hqn
 
@@ -127,7 +127,7 @@ problem imo1999_p4 (n p : ℕ) :
         interval_cases n <;> norm_num at *
         exact hp2
       · right
-        rcases exists_least_prime_factor n (by cutsat:_) with ⟨q, ⟨hq₁, hq₂, hq₃⟩⟩
+        rcases exists_least_prime_factor hn1 with ⟨q, ⟨hq₁, hq₂, hq₃⟩⟩
         haveI: Fact (Nat.Prime p) := { out := hp }
         haveI: Fact (Nat.Prime q) := { out := hq₁ }
         have hp' := hp.two_le
@@ -185,7 +185,7 @@ problem imo1999_p4 (n p : ℕ) :
           norm_num
         · have hmn : m ∣ n := Dvd.intro 3 (id (Eq.symm hm))
           rw [hm, padicValNat.mul (by cutsat:_) (by norm_num:_), padicValNat_self] at hp_padic_le
-          rcases exists_least_prime_factor m (by cutsat:_) with ⟨qq, ⟨hqq₁, hqq₂, hqq₃⟩⟩
+          rcases exists_least_prime_factor hm1 with ⟨qq, ⟨hqq₁, hqq₂, hqq₃⟩⟩
           have hqq'' : qq ∣ 8 ^ m + 1 := dvd_trans (dvd_mul_of_dvd_left (dvd_pow hqq₂ (by cutsat:_)) 9) h
           have hq1' := hqq₁.two_le
           have hqq2 : ¬qq = 2 := by
