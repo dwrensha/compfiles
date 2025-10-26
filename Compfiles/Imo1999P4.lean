@@ -23,21 +23,10 @@ namespace Imo1999P4
 snip begin
 
 lemma exists_least_prime_factor (n : ℕ) (hn : 2 ≤ n):
-  ∃ p : ℕ, p.Prime ∧ p ∣ n ∧ ∀ q : ℕ, q.Prime → q ∣ n → p ≤ q := by
-  have hnpf : BddBelow (n.primeFactors : Set ℕ) := by
-    apply Finset.bddBelow
-  have hnpf' : n.primeFactors.Nonempty := by
-    simp
-    cutsat
-  rcases BddBelow.exists_isLeast_of_nonempty hnpf hnpf' with ⟨p, hp⟩
-  simp [IsLeast, lowerBounds] at hp
-  rcases hp with ⟨⟨hp₁, hp₂, hn'⟩, hp₃⟩
-  use p
-  constructorm* _ ∧ _
-  · exact hp₁
-  · exact hp₂
-  · intro q hq₁ hq₂
-    exact hp₃ hq₁ hq₂ hn'
+    ∃ p : ℕ, p.Prime ∧ p ∣ n ∧ ∀ q : ℕ, q.Prime → q ∣ n → p ≤ q := by
+  use Nat.minFac n, Nat.minFac_prime (by cutsat), Nat.minFac_dvd n
+  intro q hq hqn
+  exact Nat.minFac_le_of_dvd hq.two_le hqn
 
 lemma padicValNat_le_padicValNat_of_dvd {p a b : ℕ} (hb: b ≠ 0) (hp: p.Prime) (hab: a ∣ b):
   padicValNat p a ≤ padicValNat p b := by
