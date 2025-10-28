@@ -76,18 +76,7 @@ problem imo1999_p6 (f : ℝ → ℝ) :
   -- Hence f(x) = f(a - b) = f(b) + ab + f(a) - 1.
   have h11 : ∀ x, f x = c - x^2 / 2 := fun x ↦ by
     obtain ⟨a, b, ha, hb, hab⟩ := h2 x
-    have h3 : f x = f (a - b) := congrArg f hab
-    have h4 : f (a - b) = f b  + a * b + f a - 1 := by
-      obtain ⟨d, hd⟩ := hb
-      specialize hf a d
-      subst hd
-      exact hf
-    have h5 := h3.trans h4
-    -- So, using (h1):   f(x) = c - b^2/2 + ab - a^2/2 = c - x^2/2.
-    have h6 := h1 a ha
-    have h7 := h1 b hb
-    calc _ = c - b^2/2 + a * b - a^2/2 := by linarith only [h5, h6, h7]
-         _ = _ := by rw [hab]; linarith
+    grind
 
   ext x
   -- In particular, this is true for x in A.
