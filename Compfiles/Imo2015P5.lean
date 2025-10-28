@@ -83,14 +83,7 @@ problem imo2015_p5 (f : ℝ → ℝ) :
     have h10 : ∀ x, x + 1 + f x ∈ S := fun x ↦ by
       have h11 := hf 1 (f x + x - 1)
       have h12 := h8 x
-      simp only [Set.mem_setOf_eq, S] at h12 ⊢
-      rw [add_comm] at h12
-      have h13 := h9 x
-      simp only [Set.mem_setOf_eq, S] at h13
-      rw [show x - 1 + f x = f x + x - 1 by ring] at h13
-      simp only [add_sub_cancel, one_mul, h12, h13, h6, mul_one] at h11
-      rw [show 1 + (f x + x) = x + 1 + f x by ring] at h11
-      linarith only [h11]
+      grind
     have h11 := hf x (-1)
     have h12 := h10 (x + -1)
     simp only [neg_add_cancel_right, S, Set.mem_setOf_eq] at h12
