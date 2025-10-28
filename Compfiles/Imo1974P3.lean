@@ -97,24 +97,7 @@ lemma aux_4
         omega
       · intro b hb₀
         use ((b - 1) / 2)
-        refine exists_prop.mpr ?_
-        have hb₁: b ∈ fs₂ ∧ Odd b := Finset.mem_filter.mp hb₀
-        have hb₂: 1 ≤ b := by
-          by_contra! hc₀
-          interval_cases b
-          have hc₁: ¬ Odd 0 := by decide
-          apply hc₁ hb₁.2
-        have hb₃: Even (b - 1) := by
-          refine (Nat.even_sub hb₂).mpr ?_
-          simp only [Nat.not_even_one, iff_false, Nat.not_even_iff_odd]
-          exact hb₁.2
-        constructor
-        · have hb₄: b < 2 * n + 2 := by exact List.mem_range.mp hb₁.1
-          have hb₅: (b - 1) / 2 < n + 1 := by omega
-          exact Finset.mem_range.mpr hb₅
-        · have hb₆: 2 * ((b - 1) / 2) = b - 1 := Nat.two_mul_div_two_of_even hb₃
-          rw [hb₆]
-          exact Nat.sub_add_cancel hb₂
+        grind
       · exact fun a _ => rfl
     exact h₀₁
   have h₁: ∑ x ∈ Finset.range (n + 1), ↑((2 * n + 1).choose (2 * x)) * k ^ (2 * x) =
