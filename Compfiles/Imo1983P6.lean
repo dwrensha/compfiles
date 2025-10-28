@@ -136,14 +136,7 @@ theorem lemma1 {x y z : ℝ} (hx : 0 < x) (hy : 0 < y) (hz : 0 < z)
   rw [Real.sqrt_mul (by positivity), Real.sqrt_mul (by positivity),
       Real.sqrt_mul (by positivity)]
   rw [Real.sqrt_sq hx.le, Real.sqrt_sq hy.le, Real.sqrt_sq hz.le]
-  have h1 : √x * (y * √y) * √z + √y * (z * √z) * √x + √z * (x * √x) * √y =
-            (√x * √y * √z) * (z + x + y) := by ring
-  rw [h1]; clear h1
-  simp only [mul_pow]
-  simp only [Real.sq_sqrt hx.le, Real.sq_sqrt hy.le, Real.sq_sqrt hz.le]
-  rw [pow_two (z + x + y), ←mul_assoc]
-  apply_fun (· * (z + x + y)) at hxyz
-  linarith only [hxyz]
+  grind
 
 snip end
 
