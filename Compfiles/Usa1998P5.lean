@@ -61,19 +61,7 @@ problem usa1998_p5 (n : ℕ) (_hn : 2 ≤ n) :
       | inr hx => simp_all
     · constructor
       · --cardinality is n + 1
-        have hdisj : Disjoint (Finset.map (addLeftEmbedding L) Sp) {0} := by
-          intro X hX h0 y hy
-          have hyy := h0 hy
-          rw [Finset.mem_singleton] at hyy
-          rw [hyy] at hy
-          have hxx := hX hy
-          rw [Finset.mem_map] at hxx
-          obtain ⟨z, hz, hz2⟩ := hxx
-          replace hz2 : L + z = 0 := hz2
-          have := sp_nonnegative z hz
-          omega
-        rw [Finset.card_union_of_disjoint hdisj, Finset.card_singleton,
-            Finset.card_map, sp_card]
+        grind
       · intro α hα β hβ α_ne_β
         rw [Finset.mem_union, Finset.mem_map] at hα hβ
         -- If α,β ∈ Sₙ₊₁ and either α or β is zero, then (α - β)² divides αβ.
