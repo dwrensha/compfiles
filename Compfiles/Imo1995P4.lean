@@ -23,21 +23,9 @@ namespace Imo1995P4
 
 snip begin
 
-lemma aux₁ {a b : ℝ} (ha : 0 < a) (hb : 0 < b) : a + 2 / a = 2 * b + 1 / b ↔ b = 1 / a ∨ b = a / 2 := by
-  constructor
-  · intro hab
-    rw [← sub_eq_zero] at hab
-    have hab' : (b - 1 / a) * (a / b - 2) = 0 := by
-      rw [← hab]
-      field
-    rw [mul_eq_zero] at hab'
-    rcases hab' with (hab'|hab')
-    · left
-      exact sub_eq_zero.mp hab'
-    · right
-      rw [← sub_eq_zero.mp hab']
-      field
-  · rintro (hab|hab) <;> rw [hab] <;> field
+lemma aux₁ {a b : ℝ} (ha : 0 < a) (hb : 0 < b) :
+    a + 2 / a = 2 * b + 1 / b ↔ b = 1 / a ∨ b = a / 2 := by
+  grind
 
 lemma aux₂ {x : ℕ → ℝ} {n : ℕ} (hn : 1 ≤ n) (hx₁ : ∀ (i : ℕ), 0 < x i)
   (hx₂ : ∀ (i : ℕ), 0 < i ∧ i ≤ n → x (i - 1) + 2 / x (i - 1) = 2 * x i + 1 / x i)
