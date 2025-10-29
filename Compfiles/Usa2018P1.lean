@@ -42,12 +42,7 @@ problem usa2018_p1 (a b c : ℝ) :
   -- https://artofproblemsolving.com/wiki/index.php/2018_USAMO_Problems/Problem_1
   intro ha hb hc heq
   wlog h1 : a ≤ b with H1
-  · move_add [←(b^2)]
-    convert (H1 b a c hb ha hc ?_ ?_) using 3
-    · ring_nf
-    · rw [min_comm (a*a)]
-    · linear_combination (norm := (ring_nf)) 1 * heq
-    · exact le_of_lt (not_le.mp h1)
+  · grind only [= min_def]
   · wlog h2 : a ≤ c with H2
     · move_add [←(c^2)]; move_add [(a^2)]
       convert (H2 c b a hc hb ha ?_ ?_ ?_) using 3
