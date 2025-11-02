@@ -209,7 +209,7 @@ problem imo2025_p3 :
               exact hp2 y1
             exact Nat.Prime.odd_of_ne_two hp1 hp3
 
-          have r2 := Nat.setOf_prime_and_eq_mod_infinite (a := (2 : ZMod p)) r1
+          have r2 := Nat.infinite_setOf_prime_and_eq_mod (a := (2 : ZMod p)) r1
           obtain ⟨x,hx⟩ := h5
           have r3 := Set.Infinite.exists_gt r2 x
           obtain ⟨q2,htq⟩ := r3
