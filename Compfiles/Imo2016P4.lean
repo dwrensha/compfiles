@@ -48,7 +48,7 @@ def fragrantMap : ℕ → ℕ
 lemma P_inj : Function.Injective P := by
   apply StrictMono.injective
   intro i j hij
-  simp
+  rw [add_lt_add_iff_right]
   apply add_lt_add _ hij
   rw [pow_two, pow_two]
   exact Nat.mul_self_lt_mul_self hij
