@@ -40,13 +40,13 @@ lemma divisibility_helper {n k} : k = 3 ∨ k = 5 → (2 * n + k) ^ 2 ≡ 1 [MOD
     ring_nf
     have factorized : 9 + n * 12 + n ^ 2 * 4 = (8 + n * 4) * (1 + n) + 1 := by ring_nf
     rw [factorized]
-    apply Nat.ModEq.self_mul_add
+    apply Nat.ModEq.modulus_mul_add
   case inr h5 =>
     rw [h5]
     ring_nf
     have factorized : 25 + n * 20 + n ^ 2 * 4 = (8 + n * 4) * (3 + n) + 1 := by ring_nf
     rw [factorized]
-    apply Nat.ModEq.self_mul_add
+    apply Nat.ModEq.modulus_mul_add
 
 lemma build_condition_divisibility {n} : (2 * n + 3) + (2 * n + 5) ∣
                                          (2 * n + 3) ^ (2 * n + 5) + (2 * n + 5) ^ (2 * n + 3) := by
@@ -91,10 +91,10 @@ lemma build_condition_divisibility {n} : (2 * n + 3) + (2 * n + 5) ∣
   have h_m0 : (4 * n + 8) ≡ 0 [MOD m] := by
     have : (4 * n + 8) = (4 * n + 8) * 1 := by rw [mul_one]
     rw [this]
-    apply @Nat.ModEq.self_mul_add (4 * n + 8) 1 0
+    apply @Nat.ModEq.modulus_mul_add (4 * n + 8) 1 0
   have h_ab0 : (2 * n + 3) + (2 * n + 5) ≡ 0 [MOD m] := by
     have hm : (2 * n + 3) + (2 * n + 5) = 4 * n + 8 := by ring
-    simpa [m, hm] using h_m0
+    simp [m, hm]
 
   exact h_reduce.trans (h_sum_ab.trans h_ab0)
 

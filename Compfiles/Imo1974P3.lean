@@ -354,8 +354,7 @@ problem imo1974_p3
     have hc₄: a ^ 2 ≡ 3 [MOD 5] := by
       rw [← add_assoc, ← zero_add 3] at hc₃
       norm_num at hc₃
-      have hc₄: 5 ≡ 0 [MOD 5] := by decide
-      exact Nat.ModEq.add_left_cancel hc₄ hc₃
+      exact hc₃
     have hc₅: ¬ a ^ 2 ≡ 3 [MOD 5] := by exact aux_2 a
     exact hc₅ hc₄
   · rw [h₃] at h₄₁
