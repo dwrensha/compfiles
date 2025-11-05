@@ -90,7 +90,6 @@ abbrev AffSubOfPlane := AffineSubspace ℝ Plane
 lemma vec_eq (x1 x2 y1 y2 : ℝ) : !₂[x1, y1] = !₂[x2, y2] ↔ (x1 = x2 ∧ y1 = y2) := by
   constructor
   · intro h
-    apply_fun (fun w ↦ (w.ofLp 0, w.ofLp 1)) at h
     simpa using h
   · simp (config := { contextual := true })
 
@@ -438,7 +437,7 @@ lemma grid_shift (n : ℕ) (d : Fin 3) :
     all_goals
       simp only [line, Fin.isValue, edgeCoeffs, one_mul, zero_mul, add_zero, gridShift, ←
         SetLike.mem_coe, SetLike.coe, Set.mem_setOf_eq, PiLp.add_apply, PiLp.neg_apply,
-        PiLp.toLp_apply, Matrix.cons_val_zero, neg_neg, add_neg_cancel_comm, Matrix.cons_val_one,
+        Matrix.cons_val_zero, neg_neg, add_neg_cancel_comm, Matrix.cons_val_one,
         Matrix.cons_val_fin_one, zero_add] at h2
       simp only [gridShift, Fin.isValue, PiLp.toLp_apply, Matrix.cons_val_zero, neg_neg, neg_zero,
         zero_add] at ha
@@ -484,7 +483,7 @@ lemma grid_shift (n : ℕ) (d : Fin 3) :
         omega
       · simp only [edgeLine, line', line, Fin.isValue, edgeCoeffs, one_mul, zero_mul, add_zero,
           gridShift, ← SetLike.mem_coe, SetLike.coe, Set.mem_setOf_eq, PiLp.add_apply,
-          PiLp.neg_apply, PiLp.toLp_apply, Matrix.cons_val_zero, neg_neg, add_neg_cancel_comm]
+          PiLp.neg_apply, Matrix.cons_val_zero, neg_neg, add_neg_cancel_comm]
         intro hC; rw [hC] at ha; norm_cast at ha; omega
     · constructor
       · use a
@@ -496,7 +495,7 @@ lemma grid_shift (n : ℕ) (d : Fin 3) :
         omega
       · simp only [edgeLine, line', line, Fin.isValue, edgeCoeffs, zero_mul, one_mul, zero_add,
           gridShift, ← SetLike.mem_coe, SetLike.coe, Set.mem_setOf_eq, PiLp.add_apply,
-          PiLp.neg_apply, PiLp.toLp_apply, Matrix.cons_val_one, Matrix.cons_val_fin_one, neg_neg,
+          PiLp.neg_apply, Matrix.cons_val_one, Matrix.cons_val_fin_one, neg_neg,
           add_neg_cancel_comm]
         intro hC; rw [hC] at hb; norm_cast at hb; omega
     · constructor
@@ -508,7 +507,7 @@ lemma grid_shift (n : ℕ) (d : Fin 3) :
         omega
       · simp only [edgeLine, line', line, Fin.isValue, edgeCoeffs, Nat.cast_add, Nat.cast_one,
         neg_add_rev, one_mul, gridShift, ← SetLike.mem_coe, SetLike.coe, Set.mem_setOf_eq,
-        PiLp.add_apply, PiLp.neg_apply, PiLp.toLp_apply, Matrix.cons_val_zero, neg_zero, zero_add,
+        PiLp.add_apply, PiLp.neg_apply, Matrix.cons_val_zero, neg_zero, zero_add,
         Matrix.cons_val_one, Matrix.cons_val_fin_one]
         intro hC; rw [ha, hb] at hC; norm_cast at hC; omega
 
@@ -1077,21 +1076,21 @@ lemma coverGridNoEdgeConfig.cover_no_edge_4_impossible (C : coverGridNoEdgeConfi
     simp [← hC] at this
   have hi0: (!₂[1, ((iFunc 0).val + 1 : ℕ)] : Plane) ∈ L' := by
     rw [← hiFunc1 0]
-    convert (C.find_line_edge_correct 0 (iFunc 0)).right
-    dsimp only [coverGridConfig.edgePoint]
-    rw [vec_eq]; simp
+    have := (C.find_line_edge_correct 0 (iFunc 0)).right
+    dsimp only [coverGridConfig.edgePoint] at this
+    norm_cast at this
   have hi1: (!₂[((iFunc 1).val + 1 : ℕ), 1] : Plane) ∈ L' := by
     rw [← hiFunc1 1]
-    convert (C.find_line_edge_correct 1 (iFunc 1)).right
-    dsimp only [coverGridConfig.edgePoint]
-    rw [vec_eq]; simp
+    have := (C.find_line_edge_correct 1 (iFunc 1)).right
+    dsimp only [coverGridConfig.edgePoint] at this
+    norm_cast at this
   have hi2: (!₂[((iFunc 2).val + 1 : ℕ), (C.n - 1 - (iFunc 2).val + 1 : ℕ)] : Plane) ∈ L' := by
     rw [← hiFunc1 2]
-    convert (C.find_line_edge_correct 2 (iFunc 2)).right
-    dsimp only [coverGridConfig.edgePoint]
-    rw [vec_eq]; constructor
-    · rfl
-    · norm_cast; omega
+    have := (C.find_line_edge_correct 2 (iFunc 2)).right
+    dsimp only [coverGridConfig.edgePoint] at this
+    have hr : C.n - 1 - ↑(iFunc 2) + 1 = C.n - ↑(iFunc 2) := by cutsat
+    rw [hr]
+    exact this
   have := C.lines_rank
   apply not_colinear_nat L' (C.n - 1) (iFunc 0) (iFunc 1) (iFunc 2)
   any_goals
@@ -1197,7 +1196,7 @@ noncomputable def oneSunny : strongCoverGridConfig where
     simp only [Finset.mem_singleton, forall_eq]
     use !₂[1, 1]; constructor
     · simp only [grid, Fin.isValue, Nat.reduceAdd, exists_and_left, Set.mem_setOf_eq,
-      PiLp.toLp_apply, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_fin_one]
+      Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_fin_one]
       use 1; norm_cast; simp
     · simp [line, ← SetLike.mem_coe, SetLike.coe]
 
@@ -1335,7 +1334,7 @@ noncomputable def strongCoverGridConfig.extend (C : strongCoverGridConfig) :
     by_cases hE : L = edgeLine (C.n + 1) 2
     · use !₂[1, C.n + 1]
       constructor
-      · use 1; simp only [Fin.isValue, PiLp.toLp_apply, Matrix.cons_val_zero, Nat.cast_one,
+      · use 1; simp only [Fin.isValue, Matrix.cons_val_zero, Nat.cast_one,
           Matrix.cons_val_one, Matrix.cons_val_fin_one, zero_lt_one, true_and]
         use C.n + 1; simp only [Nat.cast_add, Nat.cast_one, lt_add_iff_pos_left, add_pos_iff,
           zero_lt_one, or_true, true_and]
