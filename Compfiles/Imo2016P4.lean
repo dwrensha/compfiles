@@ -51,8 +51,7 @@ lemma P_inj : Function.Injective P := by
   simp
   apply add_lt_add _ hij
   rw [pow_two, pow_two]
-  apply mul_self_lt_mul_self _ hij
-  apply Nat.zero_le
+  exact Nat.mul_self_lt_mul_self hij
 
 lemma ncard_set {a : ℕ} {b : ℕ+} : {p : ℕ+ | ∃ i : ℕ+, i ≤ b ∧ p = P (a + i)}.ncard = b := by
   set f : Fin b → ℕ+ := fun i : Fin b ↦ ⟨(P (a + i + 1)), (by simp : _)⟩
