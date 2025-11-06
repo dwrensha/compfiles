@@ -309,7 +309,7 @@ lemma line_eq_check (a b c a' b' c' : ℝ) (h : a ≠ 0 ∨ b ≠ 0) (h' : a' �
       simp only [ha, zero_mul, ha', true_and]
       specialize heq !₂[0, -c / b]
       rw [AffineSubspace.mem_coe, AffineSubspace.mem_coe, point_on_line, point_on_line] at heq
-      have : a * 0 + b * (-c / b) + c = 0 := by field_simp; ring
+      have : a * 0 + b * (-c / b) + c = 0 := by field
       replace heq := (heq.mp) this; simp only [mul_zero, zero_add] at heq
       calc
       _ = b * (-(b' * (-c / b))) := by congr 1; linarith
@@ -317,7 +317,7 @@ lemma line_eq_check (a b c a' b' c' : ℝ) (h : a ≠ 0 ∨ b ≠ 0) (h' : a' �
     · constructor
       · specialize heq !₂[-c / a, 0]
         rw [AffineSubspace.mem_coe, AffineSubspace.mem_coe, point_on_line, point_on_line] at heq
-        have : a * (-c / a) + b * 0 + c = 0 := by field_simp; ring
+        have : a * (-c / a) + b * 0 + c = 0 := by field
         replace heq := (heq.mp) this; simp only [mul_zero, add_zero] at heq
         calc
         _ = a * (-(a' * (-c / a))) := by congr 1; linarith
@@ -327,7 +327,7 @@ lemma line_eq_check (a b c a' b' c' : ℝ) (h : a ≠ 0 ∨ b ≠ 0) (h' : a' �
           simp [hb, hb']
         · specialize heq !₂[0, -c / b]
           rw [AffineSubspace.mem_coe, AffineSubspace.mem_coe, point_on_line, point_on_line] at heq
-          have : a * 0 + b * (-c / b) + c = 0 := by field_simp; ring
+          have : a * 0 + b * (-c / b) + c = 0 := by field
           replace heq := (heq.mp) this; simp only [mul_zero, zero_add] at heq
           calc
           _ = b * (-(b' * (-c / b))) := by congr 1; linarith

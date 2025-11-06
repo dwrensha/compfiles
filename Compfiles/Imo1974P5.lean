@@ -60,7 +60,7 @@ lemma condition_implies_solution_set (s : ℝ)
 
     calc
       _ < a / (a + b) + b / (a + b) + c / (c + d) + d / (c + d) := by gcongr
-      _ = 2 := by field_simp; ring
+      _ = 2 := by field
 
 noncomputable def S (a b c d : ℝ) : ℝ :=
     a / (a + b + d) + b / (a + b + c) +

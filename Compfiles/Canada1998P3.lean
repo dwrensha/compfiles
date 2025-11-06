@@ -120,7 +120,7 @@ problem canada1998_p3 (n : ℕ) (hn : 2 ≤ n) :
 
        --    = (1/2 + 1/4 + ... + 1/2k) + (k + 2)/(2k + 2).
        _ = (∑i ∈ Finset.range k, 1 / (2 * (i:ℝ) + 1 + 1)) +
-              (k+2)/(2 * k + 2) := by field_simp; ring
+              (k+2)/(2 * k + 2) := by field
 
    --
    -- Then we are done because
