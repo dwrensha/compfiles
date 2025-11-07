@@ -37,14 +37,9 @@ lemma exists_powerOfTwo_mul_odd (n : ℕ) (hn : 0 < n) :
     · rcases exists_eq_mul_left_of_dvd hn'' with ⟨m, hm⟩
       rcases hn' m (by cutsat : _) (by cutsat : _) with ⟨t', l', ht'l', hl'⟩
       use t' + 1, l'
-      constructor
-      · rw [hm, ht'l']
-        ring
-      · exact hl'
+      cutsat
     · use 0, n' + 1
-      constructor
-      · ring
-      · exact hn''
+      cutsat
 
 lemma aux {l n s t: ℕ} (hl : ¬2 ∣ l) (hs : s ≠ 0) (hn : n = 2 ^ t * l) :
   Nat.Coprime (l + 2 ^ s) n := by
@@ -142,7 +137,6 @@ problem imo1991_p2 (n : ℕ) (hn : 6 < n)
         constructor
         · apply lt_of_lt_of_le' hin_sub_1k
           rw [← Nat.mul_le_mul_right_iff hd, ← @Nat.add_le_add_iff_left _ _ a₀]
-          rw [← hi', ← hin_sub_1]
           cutsat
         · exact hi'
       exact ((ha₀ m).mpr him).left
