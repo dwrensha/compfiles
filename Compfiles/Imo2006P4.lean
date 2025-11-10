@@ -263,7 +263,6 @@ problem imo2006_p4 :
                   ring_nf
                   congr 1
                   · nth_rw 2 [show x = x - 1 + 1 by rw [Nat.sub_add_cancel]; exact hxpos]
-                    rw [pow_add]
                     ring
                   · congr
                     exact Nat.sub_one_mul _ _

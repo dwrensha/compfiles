@@ -53,7 +53,7 @@ problem imo1963_p5 :
   rw [Real.sin_zero]
   ring_nf
   rw [← Real.sin_pi_sub]
-  rw [show (π - π * (6 / 7)) = π / 7 by linarith]
   congr
-  linarith
+  ring
+
 end Imo1963P5
