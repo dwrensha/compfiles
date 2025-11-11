@@ -157,9 +157,7 @@ problem imo2003_p2 (a b : ℤ) :
           _ ≤ c * b ^ 2 := by
               rw [le_mul_iff_one_le_left (by positivity : _)]
               cutsat
-          _ < c * (2 * a * b ^ 2 - b ^ 3 + 1) := by
-              rw [mul_lt_mul_iff_of_pos_left hc]
-              exact h''
+          _ < c * (2 * a * b ^ 2 - b ^ 3 + 1) := Int.mul_lt_mul_of_pos_left h'' hc
 
 
 end Imo2003P2
