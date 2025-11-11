@@ -25,12 +25,8 @@ namespace Imo2003P2
 snip begin
 
 lemma aux₁ {n : ℤ} (hn : 0 < n) : 1 < 8 * n ^ 3 := by
-  apply lt_of_lt_of_le (by norm_num : (1 : ℤ) < 8)
-  nth_rw 1 [← mul_one 8]
-  rw [mul_le_mul_iff_right₀ (by norm_num : _)]
-  apply Int.le_of_lt_add_one
-  rw [lt_add_iff_pos_left]
-  positivity
+  suffices 1 < 8 ∧ 1 ≤ n ^ 3 by cutsat
+  exact ⟨by norm_num, one_le_pow₀ hn⟩
 
 snip end
 
