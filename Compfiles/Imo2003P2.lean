@@ -25,8 +25,8 @@ namespace Imo2003P2
 snip begin
 
 lemma aux₁ {n : ℤ} (hn : 0 < n) : 1 < 8 * n ^ 3 := by
-  suffices 1 < 8 ∧ 1 ≤ n ^ 3 by cutsat
-  exact ⟨by norm_num, one_le_pow₀ hn⟩
+  suffices 1 ≤ n ^ 3 by cutsat
+  exact one_le_pow₀ hn
 
 snip end
 
