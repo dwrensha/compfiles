@@ -116,7 +116,7 @@ noncomputable def project (a b p : P) : ℝ := innerSL ℝ (a -ᵥ b) (a -ᵥ p)
 
 @[simp] theorem project_self_left {a b : P} : project a b a = 0 := by simp [project]
 @[simp] theorem project_self_right {a b : P} (h : a ≠ b) : project a b b = ‖a -ᵥ b‖ := by
-  simp [project]
+  simp only [project, innerSL_apply]
   rw [real_inner_self_eq_norm_sq, div_eq_iff, pow_two]
   · rwa [norm_ne_zero_iff, vsub_ne_zero]
 
@@ -306,7 +306,8 @@ problem imo2020_p6 : ∃ c : ℝ, 0 < c ∧ ∀ {n : ℕ}, 1 < n → ∀ {S : Fi
     · simp [‹Fact (finrank ℝ V = 2)›.1]
     simp only [Fin.isValue, Set.setOf_eq_eq_singleton, Set.restrict_def]
     rw [orthonormal_iff_ite]
-    simp
+    simp only [Fin.isValue, Subtype.forall, Set.mem_singleton_iff, Fin.forall_fin_two, forall_true_left,
+      one_ne_zero, IsEmpty.forall_iff, and_true, Subtype.mk.injEq, forall_eq, ↓reduceIte]
     rw [real_inner_smul_left, real_inner_smul_right, real_inner_self_eq_norm_mul_norm]
     field_simp
   simp at hbasis₀

@@ -103,8 +103,8 @@ lemma aux₃ {i : ℕ} {x : ℝ} (hi : 2 ≤ i) (hx : 0 < x) : (1 + x) ^ i =
     cutsat
   repeat rw [← Real.rpow_natCast]
   rw [← Real.mul_rpow (by positivity) (by positivity)]
-  field
-  ring
+  field_simp
+  ring_nf
 
 lemma aux₄ {i : ℕ} {x : ℝ} (hi : 2 ≤ i) (hx : 0 < x) :
   (i : ℝ) ^ i / ((i : ℝ) - 1) ^ (i - 1) * x ≤ (1 + x) ^ i := by
