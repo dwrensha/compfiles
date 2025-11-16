@@ -26,11 +26,11 @@ snip begin
 universe u v
 
 lemma Finset.prod_eq_prod_iff_of_pos_of_le {ι : Type u} {R : Type v}
-  [CommMonoidWithZero R] [PartialOrder R] [ZeroLEOneClass R]
-  [PosMulStrictMono R] [MulPosStrictMono R] [Nontrivial R]
-  [DecidableEq ι] {f g : ι → R} {s : Finset ι}
-  (h₀ : ∀ i ∈ s, 0 < f i) (h₁ : ∀ i ∈ s, f i ≤ g i) :
-  ∏ i ∈ s, f i = ∏ i ∈ s, g i ↔ ∀ i ∈ s, f i = g i := by
+    [CommMonoidWithZero R] [PartialOrder R] [ZeroLEOneClass R]
+    [PosMulStrictMono R] [MulPosStrictMono R] [Nontrivial R]
+    [DecidableEq ι] {f g : ι → R} {s : Finset ι}
+    (h₀ : ∀ i ∈ s, 0 < f i) (h₁ : ∀ i ∈ s, f i ≤ g i) :
+    ∏ i ∈ s, f i = ∏ i ∈ s, g i ↔ ∀ i ∈ s, f i = g i := by
   constructor
   · intro h i hi
     rw [← Finset.insert_erase hi] at h
@@ -52,9 +52,9 @@ lemma Finset.prod_eq_prod_iff_of_pos_of_le {ι : Type u} {R : Type v}
     exact Finset.prod_congr (by rfl) h
 
 lemma Real.geom_mean_eq_arith_mean2_weighted_iff
-  {w₁ w₂ p₁ p₂ : ℝ} (hw₁ : 0 < w₁) (hw₂ : 0 < w₂)
-  (hp₁ : 0 < p₁) (hp₂ : 0 < p₂) (hw : w₁ + w₂ = 1) :
-  p₁ ^ w₁ * p₂ ^ w₂ = w₁ * p₁ + w₂ * p₂ ↔ p₁ = p₂ := by
+    {w₁ w₂ p₁ p₂ : ℝ} (hw₁ : 0 < w₁) (hw₂ : 0 < w₂)
+    (hp₁ : 0 < p₁) (hp₂ : 0 < p₂) (hw : w₁ + w₂ = 1) :
+    p₁ ^ w₁ * p₂ ^ w₂ = w₁ * p₁ + w₂ * p₂ ↔ p₁ = p₂ := by
   have h' := Real.geom_mean_eq_arith_mean_weighted_iff' Finset.univ ![w₁, w₂] ![p₁, p₂]
   simp at h'
   have h'' := h' hw₁ hw₂ hw (le_of_lt hp₁) (le_of_lt hp₂)
@@ -77,8 +77,9 @@ lemma aux₁ {n : ℕ} (hn : 2 ≤ n) : (n : ℝ) ^ n = ∏ i ∈ Finset.Icc 2 n
     field_simp
     ring
 
-lemma aux₂ {i : ℕ} {x : ℝ} (hi : 2 ≤ i) (hx : 0 < x) : (i : ℝ) ^ i / ((i : ℝ) - 1) ^ (i - 1) * x
-  = (i : ℝ) ^ i * (x ^ (1 / (i : ℝ)) * (1 / ((i : ℝ) - 1)) ^ (((i : ℝ) - 1) / (i : ℝ))) ^ i := by
+lemma aux₂ {i : ℕ} {x : ℝ} (hi : 2 ≤ i) (hx : 0 < x) :
+    (i : ℝ) ^ i / ((i : ℝ) - 1) ^ (i - 1) * x =
+    (i : ℝ) ^ i * (x ^ (1 / (i : ℝ)) * (1 / ((i : ℝ) - 1)) ^ (((i : ℝ) - 1) / (i : ℝ))) ^ i := by
   have hpos₁ : 0 < (i : ℝ) := by
     rw [Nat.cast_pos]
     cutsat
@@ -107,7 +108,7 @@ lemma aux₃ {i : ℕ} {x : ℝ} (hi : 2 ≤ i) (hx : 0 < x) : (1 + x) ^ i =
   ring_nf
 
 lemma aux₄ {i : ℕ} {x : ℝ} (hi : 2 ≤ i) (hx : 0 < x) :
-  (i : ℝ) ^ i / ((i : ℝ) - 1) ^ (i - 1) * x ≤ (1 + x) ^ i := by
+    (i : ℝ) ^ i / ((i : ℝ) - 1) ^ (i - 1) * x ≤ (1 + x) ^ i := by
   have hpos₁ : 0 < (i : ℝ) := by
       rw [Nat.cast_pos]
       cutsat
@@ -120,7 +121,7 @@ lemma aux₄ {i : ℕ} {x : ℝ} (hi : 2 ≤ i) (hx : 0 < x) :
   field
 
 lemma aux₅ {i : ℕ} {x : ℝ} (hi : 2 ≤ i) (hx : 0 < x) :
-  (i : ℝ) ^ i / ((i : ℝ) - 1) ^ (i - 1) * x = (1 + x) ^ i ↔ x = 1 / ((i : ℝ) - 1) := by
+    (i : ℝ) ^ i / ((i : ℝ) - 1) ^ (i - 1) * x = (1 + x) ^ i ↔ x = 1 / ((i : ℝ) - 1) := by
   have hpos₁ : 0 < (i : ℝ) := by
       rw [Nat.cast_pos]
       cutsat
