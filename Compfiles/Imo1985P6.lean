@@ -772,7 +772,7 @@ lemma aux_unique_top
     · refine le_of_lt ?_
       exact hd₁ i a b ha₀
     · refine one_le_pow₀ ?_
-      linarith
+      norm_num
   · push_neg at hz₀
     have hz₁: 0 < fd a b i := by exact hd₁ i a b ha₀
     have hz₂: 0 < Real.log (z / fd a b i) := by

@@ -33,7 +33,7 @@ problem imo1963_p5 :
     apply Real.sin_pos_of_pos_of_lt_pi
     · simp only [Nat.ofNat_pos, div_pos_iff_of_pos_right, Real.pi_pos]
     trans 1
-    · rw [div_lt_one (by linarith only)]
+    · rw [div_lt_one (by norm_num)]
       linarith only [Real.pi_le_four]
     · linarith only [Real.pi_gt_three]
   apply (mul_right_inj' h).mp

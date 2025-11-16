@@ -29,9 +29,9 @@ noncomputable abbrev solution : ℝ := (4:ℝ)/5
 snip begin
 
 lemma aux_1
-  (a b : ℝ)
-  (h₀ : ∃ (x : ℝ), x ^ 4 + a * x ^ 3 + b * x ^ 2 + a * x + 1 = 0) :
-  4 / 5 ≤ a^2 + b^2 := by
+    (a b : ℝ)
+    (h₀ : ∃ (x : ℝ), x ^ 4 + a * x ^ 3 + b * x ^ 2 + a * x + 1 = 0) :
+    4 / 5 ≤ a^2 + b^2 := by
   obtain ⟨x, h₁⟩ := h₀
   let t :=  x + 1 / x
   have ht₀: t = x + 1 / x := by rfl
@@ -43,7 +43,7 @@ lemma aux_1
     rw [ht₀]
     ring_nf
     rw [mul_inv_cancel₀ hx]
-    simp
+    simp only [one_mul, neg_add_cancel, zero_add, inv_pow]
     have h₂₀: (x ^ 4 + a * x ^ 3 + b * x ^ 2 + a * x + 1) / (x ^ 2) = 0 / (x ^ 2) := by
       exact congrFun (congrArg HDiv.hDiv h₁) (x ^ 2)
     ring_nf at h₂₀
@@ -144,8 +144,8 @@ problem imo1973_p3
     constructor
     · simp only [hS, Set.mem_setOf_eq]
       use -1
-      group
-    · group
+      norm_num
+    · norm_num
   · refine mem_lowerBounds.mpr ?_
     simp only [Prod.exists, Set.mem_setOf_eq, forall_exists_index, and_imp]
     intro x a b h₀ h₁
