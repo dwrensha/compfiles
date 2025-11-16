@@ -51,8 +51,7 @@ lemma aux_1
     rw [mul_comm (x ^ 2), mul_assoc b, inv_pow, mul_inv_cancel₀ hx₁, mul_one] at h₂₀
     rw [mul_comm x a, mul_assoc a, pow_two, mul_inv,
         ← mul_assoc x, mul_inv_cancel₀ hx, one_mul] at h₂₀
-    rw [mul_comm _ a, mul_assoc a, ← pow_two, inv_pow, ← pow_sub₀, ← pow_sub₀] at h₂₀
-    all_goals try assumption
+    rw [mul_comm _ a, mul_assoc a, ← pow_two, inv_pow, ← pow_sub₀ _ hx, ← pow_sub₀ _ hx] at h₂₀
     all_goals try linarith
   have ht₁: 2 ≤ abs t := by
     have g₀: 1 * (x * x) + (-t) * x + 1 = 0 := by
@@ -100,7 +99,7 @@ lemma aux_1
       exact Finset.sum_mul_sq_le_sq_mul_sq s f g
     refine le_trans h₃₅ ?_
     rw [Finset.sum_range_succ, Finset.sum_range_succ, Finset.sum_range_succ, Finset.sum_range_succ]
-    simp
+    simp only [Finset.range_zero, Finset.sum_empty, zero_add, one_pow]
     rw [h₃₀, h₃₁, h₃₂, h₃₃]
     linarith
   rw [mul_one, one_pow] at h₃
@@ -134,13 +133,12 @@ lemma aux_1
 snip end
 
 problem imo1973_p3
-  (S : Set (ℝ × ℝ))
-  (hS : S = {(a, b) | ∃ x : ℝ, x ^ 4 + a * x ^ 3 + b * x ^ 2 + a * x + 1 = 0}) :
-  IsLeast { x.1 ^ 2 + x.2 ^ 2 | x ∈ S } solution := by
+    (S : Set (ℝ × ℝ))
+    (hS : S = {(a, b) | ∃ x : ℝ, x ^ 4 + a * x ^ 3 + b * x ^ 2 + a * x + 1 = 0}) :
+    IsLeast { x.1 ^ 2 + x.2 ^ 2 | x ∈ S } solution := by
   constructor
   · simp only [Prod.exists, Set.mem_setOf_eq]
-    use 4/5
-    use -2/5
+    use 4/5, -2/5
     constructor
     · simp only [hS, Set.mem_setOf_eq]
       use -1
@@ -151,6 +149,6 @@ problem imo1973_p3
     intro x a b h₀ h₁
     rw [←h₁]
     refine aux_1 a b ?_
-    bound
+    simpa only [hS, Set.mem_setOf_eq] using h₀
 
 end Imo1973P3
