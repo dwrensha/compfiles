@@ -116,7 +116,7 @@ noncomputable def project (a b p : P) : ℝ := innerSL ℝ (a -ᵥ b) (a -ᵥ p)
 
 @[simp] theorem project_self_left {a b : P} : project a b a = 0 := by simp [project]
 @[simp] theorem project_self_right {a b : P} (h : a ≠ b) : project a b b = ‖a -ᵥ b‖ := by
-  simp only [project, innerSL_apply]
+  simp only [project, innerSL_apply_apply]
   rw [real_inner_self_eq_norm_sq, div_eq_iff, pow_two]
   · rwa [norm_ne_zero_iff, vsub_ne_zero]
 
@@ -165,7 +165,7 @@ theorem exists_affine_between_and_separated {ι : Type*} (S : Finset ι) (f : ι
   rw [Metric.infDist_eq_iInf]
   apply le_ciInf
   simp only [SetLike.coe_sort_coe, dist_eq_norm_vsub, Subtype.forall, AffineSubspace.mem_mk',
-             LinearMap.mem_ker, innerₛₗ_apply]
+             LinearMap.mem_ker, innerₛₗ_apply_apply]
   intro y hy
   rw [← mul_le_mul_iff_right₀ this]
   calc
