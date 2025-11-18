@@ -22,46 +22,228 @@ The infinite sequence a₁, a₂, ... consists of positive integers, each of whi
 divisors. For each n ≥ 1, the integer aₙ + 1 is the sum of the three largest proper divisors of aₙ.
 Determine all possible values of a₁.
 -/
+
 open Finset
+
+namespace Nat
+
+/-- The proper divisors of `n`, sorted in decreasing order. -/
+@[simp]
+def sortedProperDivisors (n : ℕ) : List ℕ :=
+  (Nat.properDivisors n).sort GE.ge
+
+variable {n : ℕ}
+
+lemma sortedProperDivisors_eq : sortedProperDivisors n = (Nat.properDivisors n).toList.insertionSort GE.ge := by
+  unfold sortedProperDivisors
+  apply List.eq_of_perm_of_sorted (r := GE.ge)
+  · trans n.properDivisors.toList
+    · apply sort_perm_toList
+    · symm
+      apply List.perm_insertionSort
+  · apply sort_sorted
+  · apply List.sorted_insertionSort
+
+#check List.sorted_insertionSort
+@[simp]
+lemma length_sortedProperDivisors : (sortedProperDivisors n).length = #n.properDivisors := by
+  simp
+
+lemma mem_properDivisors_iff_mem_sortedProperDivisors :
+    ∀ {d}, d ∈ n.properDivisors ↔ d ∈ n.sortedProperDivisors := by
+  simp
+
+lemma sortedProperDivisors_sorted (n : ℕ) :
+    List.Sorted GT.gt n.sortedProperDivisors :=
+  n.properDivisors.sort_sorted_gt
+
+lemma sortedProperDivisors_strictAnti (n : ℕ) :
+    StrictAnti n.sortedProperDivisors.get :=
+  fun _ _ h => (sortedProperDivisors_sorted n).rel_get_of_lt h
+
+lemma le_div_two_of_mem_properDivisors {x : ℕ} : ∀ y ∈ properDivisors x, y ≤ x / 2 := by
+  intro y hy
+  if hx : x = 0 then
+    rw [hx, properDivisors_zero] at hy
+    contradiction
+  else
+    have ⟨k, hk₁, hk₂⟩ := (mem_properDivisors_iff_exists hx).mp hy
+    rw [hk₂]
+    trans y * (k / 2)
+    · apply Nat.le_mul_of_pos_right
+      omega
+    · apply mul_div_le_mul_div_assoc
+
+-- Antitonicity but for a specific element and index
+lemma getIdx_eq_of {l : List ℕ} {x : ℕ} {i : Fin l.length}
+    (mem : x ∈ l) (left : ∀ j, (hj : j < i) → l.get j > x) (right : ∀ j, (hj : j > i) → l.get j < x)
+    : x = l.get i := by
+  rw [List.mem_iff_get] at mem
+  have ⟨i', hi'⟩ := mem
+  suffices i = i' from this ▸ hi'.symm
+  by_contra hi
+  apply (Fin.lt_or_lt_of_ne hi).elim
+  · intro hi
+    suffices l.get i' < x by omega
+    apply right _ hi
+  · intro hi
+    suffices l.get i' > x by omega
+    apply left _ hi
+
+lemma sortedProperDivisors_getIdx_eq {d : ℕ} (mem : d ∈ n.properDivisors)
+    {i : Fin n.sortedProperDivisors.length}
+    (left : ∀ j, (hj : j < i) → n.sortedProperDivisors.get j > d)
+    (right : ∀ j, (hj : j > i) → n.sortedProperDivisors.get j < d)
+    : d = n.sortedProperDivisors.get i := by
+  apply getIdx_eq_of
+  case' mem => rw [←mem_properDivisors_iff_mem_sortedProperDivisors]
+  all_goals assumption
+
+/-- Like `mem_properDivisors.mpr`, but for the multiplicative inverse -/
+lemma mem_properDivisors' {n m : ℕ} (h₁ : n > 1) (h₂ : n ∣ m) (h₃ : 0 < m) : (m / n) ∈ m.properDivisors := by
+  rw [mem_properDivisors]
+  constructor
+  · exact div_dvd_of_dvd h₂
+  · exact div_lt_self h₃ h₁
+
+lemma sortedProperDivisors_get {i : Fin #n.properDivisors} {x : ℕ}
+    (hx₁ : x ∈ n.properDivisors) (hx₂ : #{y ∈ n.properDivisors | y > x} = i)
+    : x = n.sortedProperDivisors[i.cast length_sortedProperDivisors.symm] := by
+  rw [mem_properDivisors_iff_mem_sortedProperDivisors,
+      List.mem_iff_get] at hx₁
+  -- x has to be in the list somewhere, at index `i'`
+
+  have ⟨i', hi'⟩ := hx₁
+  -- show `i = i'`
+  suffices #({y ∈ n.properDivisors | y > x}) = i' by simp_all
+  -- establish a bijection between ↑ the set and `Fin i'`
+  apply Finset.card_eq_of_equiv_fin
+  symm
+
+  let get (j : Fin i') : {y ∈ n.properDivisors | y > x} := by
+    use n.sortedProperDivisors[j]
+    rw [mem_filter]
+    split_ands
+    · rw [mem_properDivisors_iff_mem_sortedProperDivisors]
+      apply List.getElem_mem
+    · simp only [←hi']
+      dsimp
+      apply sortedProperDivisors_strictAnti
+      exact j.is_lt
+
+  apply Equiv.ofBijective get
+  constructor
+  · intro j k h
+    simp only [Subtype.mk.injEq, get] at h
+    have := (sortedProperDivisors_sorted n).nodup.get_inj_iff (i := j.castLE i'.is_le') (j := k.castLE i'.is_le')
+    apply Fin.castLE_inj.mp ∘ this.mp
+    exact h
+  · intro ⟨y, hy⟩
+    rw [mem_filter, mem_properDivisors_iff_mem_sortedProperDivisors] at hy
+    have ⟨j, hj⟩ := List.get_of_mem hy.left
+    refine ⟨⟨j, ?_⟩, ?_⟩
+    · apply (sortedProperDivisors_strictAnti n).antitone.reflect_lt
+      rw [hi', hj]
+      exact hy.right
+    · simp only [Subtype.mk.injEq, get]
+      exact hj
+
+end Nat
 
 /-- The type of sequences `aₙ` that satisfy the problem constraints -/
 structure IsAllowed (a : ℕ → ℕ+) : Prop where
   atLeastThree : ∀ n, #(Nat.properDivisors (a n)) ≥ 3
   isSumOfPrevMaxThree : ∀ n,
-    let prevDivisors := Nat.properDivisors (a n)
-    let maxThree := @prevDivisors.orderEmbOfCardLe
-      _ (.swap _ inferInstance) -- decreasing
-      _ (atLeastThree n)
-    a (n + 1) = maxThree 0 + maxThree 1 + maxThree 2
+    let divisors := Nat.sortedProperDivisors (a n)
+    have : divisors.length ≥ 3 := by
+      simp [divisors, atLeastThree]
+    a (n + 1) = divisors[0] + divisors[1] + divisors[2]
 
 /-- The set of all possible values of `a₀` that give allowed sequences -/
 def A₀ := { a₀ | ∃ a, a 0 = a₀ ∧ IsAllowed a }
 
 variable {x : ℕ+}
 
-lemma two_dvd_a₀ : x ∈ A₀ → 2 ∣ x :=
-  sorry
+/-- A constant sequence from a number divisible by 2 and 3 but not by 4 and 5 is allowed -/
+lemma isAllowed_of_constant (h₂ : 2 ∣ x.val) (h₃ : 3 ∣ x.val) (h₄ : ¬4 ∣ x.val) (h₅ : ¬5 ∣ x.val) : IsAllowed (fun _ => x) :=
+  have h₆ : 6 ∣ x.val := by
+    rw [show 6 = 2 * 3 from rfl]
+    apply Nat.Coprime.mul_dvd_of_dvd_of_dvd <;> trivial
 
-lemma three_dvd_a₀ : x ∈ A₀ → 3 ∣ x :=
-  sorry
-
-/-- A constant sequence from a number divisible by six is allowed -/
-lemma isAllowed_of_constant : IsAllowed (fun _ => 6 * x) where
-  atLeastThree _ := by
-    have : (6 : ℕ) ≤ 6 * x :=
-      Nat.le_mul_of_pos_right 6 x.pos
-
-    simp [le_card_iff_exists_subset_card]
-    refine ⟨{1, 2, 3}, ?_, rfl⟩
+  have atLeastThree _ := by
+    rw [ge_iff_le, Finset.le_card_iff_exists_subset_card]
+    refine ⟨{ 1, 2, 3 }, ?_, rfl⟩
     simp only [insert_subset_iff, singleton_subset_iff]
+    have : (6 : ℕ) ≤ x := Nat.le_of_dvd x.property h₆
     split_ands
-    · rw [Nat.one_mem_properDivisors_iff_one_lt]
-      omega
     all_goals
       rw [Nat.mem_properDivisors]
-      exact ⟨Nat.dvd_mul_right_of_dvd (by decide) _, by omega⟩
+      constructor
+      · first | assumption | apply Nat.one_dvd
+      · omega
 
-  isSumOfPrevMaxThree _ := sorry
+  have isSumOfPrevMaxThree _ := by
+    dsimp [-Nat.sortedProperDivisors]
+    apply Eq.trans <|
+      show x.val = x / 2 + x / 3 + x / 6 by omega
+
+    have : #x.val.properDivisors ≥ 3 := by
+      simp [atLeastThree 0]
+
+    have h₂' : x.val / 2 ∈ x.val.properDivisors := by
+      apply Nat.mem_properDivisors' <;> omega
+    have h₃' : x.val / 3 ∈ x.val.properDivisors := by
+      apply Nat.mem_properDivisors' <;> omega
+
+    have lt_lemma {y k l : ℕ} (h₁ : y * k / l < y) (h₂ : l > 0) : k < l :=
+      have := lt_of_le_of_lt (Nat.mul_div_le_mul_div_assoc ..) h₁
+      have := lt_one_of_mul_lt_right this
+      (Nat.div_lt_one_iff h₂).mp this
+
+    congr
+    · apply Nat.sortedProperDivisors_get (i := ⟨0, by omega⟩)
+      · exact h₂'
+      · dsimp
+        simp only [gt_iff_lt, card_eq_zero, filter_eq_empty_iff]
+        intro d hd₁ hd₂
+        have := Nat.le_div_two_of_mem_properDivisors d hd₁
+        omega
+    · apply Nat.sortedProperDivisors_get (i := ⟨1, by omega⟩)
+      · exact h₃'
+      · suffices {y ∈ x.val.properDivisors | x.val / 3 < y} = {x.val / 2} by rw [this]; rfl
+        ext y
+        simp only [mem_filter, mem_singleton]
+        constructor
+        · intro ⟨hy₁, hy₂⟩
+          have ⟨k, hk₁, hk₂⟩ := (Nat.mem_properDivisors_iff_exists (by omega)).mp hy₁
+          rw [hk₂]
+          have : k < 3 := lt_lemma (hk₂ ▸ hy₂) (by decide)
+          simp [show k = 2 from Nat.eq_of_le_of_lt_succ hk₁ this]
+        · intro hy
+          rw [hy]
+          exact ⟨h₂', by omega⟩
+    · apply Nat.sortedProperDivisors_get (i := ⟨2, by omega⟩)
+      · apply Nat.mem_properDivisors' <;> omega
+      · suffices {y ∈ x.val.properDivisors | x.val / 6 < y} = {x.val / 2, x.val / 3} by
+          rw [this, Finset.card_eq_two]
+          refine ⟨_, _, ?_, rfl⟩
+          omega
+        ext y
+        simp only [mem_filter, mem_insert, mem_singleton]
+        constructor
+        · intro ⟨hy₁, hy₂⟩
+          have ⟨k, hk₁, hk₂⟩ := (Nat.mem_properDivisors_iff_exists (by omega)).mp hy₁
+          rw [hk₂]
+          have : k < 6 := lt_lemma (hk₂ ▸ hy₂) (by decide)
+          match k with
+          | 2 | 3 => simp
+          | 4 | 5 => exfalso; omega
+        · rintro (hy|hy)
+          all_goals
+            rw [hy]
+            exact ⟨by assumption, by omega⟩
+
+  { atLeastThree, isSumOfPrevMaxThree }
 
 determine answer : Set ℕ+ :=
   { x | ∃ (k : ℕ) (m : ℕ+), x = 6 * 12^k * m ∧ ¬2 ∣ m ∧ ¬5 ∣ m }
@@ -75,7 +257,26 @@ problem imo2025_p4 : A₀ = answer := by
     induction k generalizing x with
     | zero =>
       -- Use the constant sequence 6 * m, 6 * m, ...
-      exact ⟨_, rfl, isAllowed_of_constant⟩
+      refine ⟨fun _ => 6 * m, rfl, ?_⟩
+      apply isAllowed_of_constant
+      · rw [show 6 * m = 2 * (3 * m) by ring]
+        apply dvd_mul_right
+      · rw [show 6 * m = 3 * (2 * m) by ring]
+        apply dvd_mul_right
+      · dsimp
+        intro hn
+        apply not_two_dvd_m
+        rw [show 4 = 2 * 2 from rfl,
+            show 6 * m.val = 2 * (3 * m) by ring] at hn
+        rw [Nat.mul_dvd_mul_iff_left (by decide),
+            Nat.Coprime.dvd_mul_left (by decide)] at hn
+        rwa [PNat.dvd_iff]
+      · dsimp
+        intro hn
+        apply not_five_dvd_m
+        rw [Nat.Coprime.dvd_mul_left (by decide)] at hn
+        rwa [PNat.dvd_iff]
+
     | succ k' ih =>
       sorry
   case mp => -- the hard direction
