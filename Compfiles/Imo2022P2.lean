@@ -45,10 +45,7 @@ lemma amgm (a b : ℝ+) : ⟨2, two_pos⟩ ≤ a / b + b / a := by
   change 2 ≤ a.val / b.val + b.val / a.val
   obtain ⟨a, ha⟩ := a
   obtain ⟨b, hb⟩ := b
-  dsimp only
-  field_simp
-  suffices H : 2 * (b * a) ≤ a * a + b * b by grind
-  linarith [sq_nonneg (a - b)]
+  simp [field, two_mul_le_add_sq a b]
 
 lemma lemma1 (a : ℝ+) : a + a = ⟨2, two_pos⟩ * a := by
   obtain ⟨a, ha⟩ := a
