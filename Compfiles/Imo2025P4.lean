@@ -44,7 +44,6 @@ lemma sortedProperDivisors_eq : sortedProperDivisors n = (Nat.properDivisors n).
   · apply sort_sorted
   · apply List.sorted_insertionSort
 
-#check List.sorted_insertionSort
 @[simp]
 lemma length_sortedProperDivisors : (sortedProperDivisors n).length = #n.properDivisors := by
   simp
@@ -150,6 +149,8 @@ lemma sortedProperDivisors_get {i : Fin #n.properDivisors} {x : ℕ}
 
 end Nat
 
+namespace Imo2025P4
+
 /-- The type of sequences `aₙ` that satisfy the problem constraints -/
 structure IsAllowed (a : ℕ → ℕ+) : Prop where
   atLeastThree : ∀ n, #(Nat.properDivisors (a n)) ≥ 3
@@ -254,7 +255,8 @@ problem imo2025_p4 : A₀ = answer := by
   case mpr => -- the easy direction
     intro ⟨k, m, hx, not_two_dvd_m, not_five_dvd_m⟩
     rw [hx]
-    induction k generalizing x with
+    clear hx
+    induction k generalizing m with
     | zero =>
       -- Use the constant sequence 6 * m, 6 * m, ...
       refine ⟨fun _ => 6 * m, rfl, ?_⟩
