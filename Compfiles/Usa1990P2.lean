@@ -41,21 +41,7 @@ problem usa1990_p2 (n : ℕ) (x : ℝ) : x ∈ solution_set n ↔ f n x = 2 * x 
       positivity
 
   suffices H : ∀ x, 0 ≤ x → ((4 < x → f n x < 2 * x) ∧ (x = 4 → f n x = 2 * x) ∧
-                     (x < 4 → 2 * x < f n x)) by
-    constructor
-    · intro hxx
-      rw [Set.mem_singleton_iff] at hxx
-      have := H 4 zero_le_four
-      aesop
-    · intro h
-      have hx : 0 ≤ x := by
-        specialize hfnp n x
-        rw [h] at hfnp
-        linarith
-      replace H := H x hx
-      by_contra! H2
-      rw [Set.mem_singleton_iff] at H2
-      obtain h1 | h2 | h3 := lt_trichotomy x 4 <;> aesop
+                     (x < 4 → 2 * x < f n x)) by grind
   induction n with
   | zero =>
     intro x hx5

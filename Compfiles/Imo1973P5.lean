@@ -108,26 +108,7 @@ problem imo1973_p5 {G : Set (ℝ → ℝ)}
         have r : f = id := by
           exact Function.forall_isFixedPt_iff.mp hb2
         exact hf3 r
-      · by_cases hc1 : c-1=0
-        · replace hc1 : c=1 := by
-            calc
-              c = (c-1)+1 := by ring
-              _ = 0+1 := by rw[hc1]
-              _ = 1 := by ring
-          obtain ⟨z,hz⟩ := hfix g hg2
-          rw [hd2,hc1] at hz
-          simp at hz
-          rw [hd2,hc1,hz]
-          ring
-        · have h2 : -b/(a-1) = -d/(c-1) := by
-            rw [div_eq_div_iff ha1 hc1]
-            grind
-          rw [hb2] at hx
-          have hx' : x = -b/(a-1) := by
-            grind
-          rw [hx', hd2, h2]
-          field_simp
-          ring
+      · grind
     · push_neg at non_id
       use 0
       intro f hf2
