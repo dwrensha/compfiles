@@ -104,7 +104,7 @@ problem bulgaria1998_p8 (n : ℕ) (x y : R) : P n x y = P n y x := by
     intro x y; rw [h1 x y, h2 x y, h4 x y]; dsimp only [U]; ring
 
   have h8 : n < n.succ := lt_add_one n
-  have h9 : n < n.succ.succ := Nat.lt.step h8
+  have h9 : n < n.succ.succ := Nat.lt_succ_of_lt h8
 
   intro x y
   calc P n.succ.succ x y

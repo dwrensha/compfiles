@@ -37,7 +37,10 @@ lemma exists_powerOfTwo_mul_odd (n : ℕ) (hn : 0 < n) :
     · rcases exists_eq_mul_left_of_dvd hn'' with ⟨m, hm⟩
       rcases hn' m (by cutsat : _) (by cutsat : _) with ⟨t', l', ht'l', hl'⟩
       use t' + 1, l'
-      cutsat
+      constructor
+      · rw [hm, ht'l']
+        ring
+      · exact hl'
     · use 0, n' + 1
       cutsat
 

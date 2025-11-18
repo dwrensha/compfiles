@@ -41,7 +41,7 @@ def aopsImoUrl (year : Nat) (idx : Nat) : String :=
   s!"https://artofproblemsolving.com/wiki/index.php/{year}_IMO_Problems/Problem_{idx}"
 
 def scholesImoUrl (year : Nat) (idx : Nat) : String :=
-  let year' := Substring.mk s!"{year}" ⟨2⟩ ⟨4⟩
+  let year' := Substring.Raw.mk s!"{year}" ⟨2⟩ ⟨4⟩
   s!"https://prase.cz/kalva/imo/isoln/isoln{year'}{idx}.html"
 
 def chenImoUrl (year : Nat) (_idx : Nat) : String :=
@@ -75,8 +75,8 @@ def allImoUrls (year : Nat) (idx : Nat) : List WriteupLink :=
 -- If the problem is an Imo problem, return the year number and the problem number
 def parseImoProblemId (probId : String) : Option (Nat × Nat) :=
   if probId.startsWith "Imo" ∧ String.Pos.Raw.get probId ⟨3⟩ ∈ ['1', '2']
-  then let ys := Substring.mk probId ⟨3⟩ ⟨7⟩
-       let ns := Substring.mk probId ⟨8⟩ ⟨9⟩
+  then let ys := Substring.Raw.mk probId ⟨3⟩ ⟨7⟩
+       let ns := Substring.Raw.mk probId ⟨8⟩ ⟨9⟩
        .some ⟨ys.toString.toNat!, ns.toString.toNat!⟩
   else .none
 
@@ -106,7 +106,7 @@ def aopsUsamoUrl (year : Nat) (idx : Nat) : String :=
   s!"https://artofproblemsolving.com/wiki/index.php/{year}_USAMO_Problems/Problem_{idx}"
 
 def scholesUsamoUrl (year : Nat) (idx : Nat) : String :=
-  let year' := Substring.mk s!"{year}" ⟨2⟩ ⟨4⟩
+  let year' := Substring.Raw.mk s!"{year}" ⟨2⟩ ⟨4⟩
   s!"https://prase.cz/kalva/usa/usoln/usol{year'}{idx}.html"
 
 def chenUsamoUrl (year : Nat) (_idx : Nat) : String :=
@@ -124,8 +124,8 @@ def allUsamoUrls (year : Nat) (idx : Nat) : List WriteupLink :=
 -- If the problem is an Imo problem, return the year number and the problem number
 def parseUsamoProblemId (probId : String) : Option (Nat × Nat) :=
   if probId.startsWith "Usa" ∧ String.Pos.Raw.get probId ⟨3⟩ ∈ ['1', '2']
-  then let ys := Substring.mk probId ⟨3⟩ ⟨7⟩
-       let ns := Substring.mk probId ⟨8⟩ ⟨9⟩
+  then let ys := Substring.Raw.mk probId ⟨3⟩ ⟨7⟩
+       let ns := Substring.Raw.mk probId ⟨8⟩ ⟨9⟩
        .some ⟨ys.toString.toNat!, ns.toString.toNat!⟩
   else .none
 
@@ -158,26 +158,26 @@ def sortProblems (infos : List ProblemInfo) : List ProblemInfo :=
    ++ (rest.toArray.qsort (fun a1 a2 ↦ a1.name < a2.name)).toList
 
 def htmlEscapeAux (racc : List Char) : List Char → String
-| [] => String.mk racc.reverse
-| '&'::cs => htmlEscapeAux (("&amp;".data.reverse)++racc) cs
-| '<'::cs => htmlEscapeAux (("&lt;".data.reverse)++racc) cs
-| '>'::cs => htmlEscapeAux (("&gt;".data.reverse)++racc) cs
-| '\"'::cs => htmlEscapeAux (("&quot;".data.reverse)++racc) cs
+| [] => String.ofList racc.reverse
+| '&'::cs => htmlEscapeAux (("&amp;".toList.reverse)++racc) cs
+| '<'::cs => htmlEscapeAux (("&lt;".toList.reverse)++racc) cs
+| '>'::cs => htmlEscapeAux (("&gt;".toList.reverse)++racc) cs
+| '\"'::cs => htmlEscapeAux (("&quot;".toList.reverse)++racc) cs
 -- TODO other things that need escaping
 -- https://developer.mozilla.org/en-US/docs/Glossary/Entity#reserved_characters
 | c::cs => htmlEscapeAux (c::racc) cs
 
 def htmlEscape (s : String) : String :=
-  htmlEscapeAux [] s.data
+  htmlEscapeAux [] s.toList
 
 def stringifyPercent (p : Float) : String :=
   let s1 := s!"{p * 100}"
   let pos := s1.find (fun c ↦ c = '.')
-  if pos = s1.endPos then
+  if pos = s1.rawEndPos then
     s1 ++ "%"
   else
     let p1 : String.Pos.Raw := ⟨pos.1 + 3⟩
-    let s2 := Substring.mk s1 0 p1
+    let s2 := Substring.Raw.mk s1 0 p1
     s2.toString ++ "%"
 
 def olean_path_to_github_url (path : System.FilePath) : IO String := do
@@ -187,7 +187,7 @@ def olean_path_to_github_url (path : System.FilePath) : IO String := do
   assert!(relative_olean_path_components.take 4 = [".lake", "build", "lib", "lean"])
   let sfx := ".olean"
   let path' := (System.mkFilePath (relative_olean_path_components.drop 4)).toString
-  assert!(sfx.data.isSuffixOf path'.data)
+  assert!(sfx.toList.isSuffixOf path'.toList)
   return "https://github.com/dwrensha/compfiles/blob/main/" ++
             (path'.stripSuffix sfx) ++ ".lean"
 

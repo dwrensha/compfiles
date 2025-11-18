@@ -177,7 +177,7 @@ lemma extend_function_anti
 
 lemma int_dichotomy (z : ℤ) : ∃ n : ℕ, (n:ℤ) = z ∨ -(n:ℤ) = z := by
   cases z with
-  | ofNat z => use z; left; simp only [Int.ofNat_eq_coe]
+  | ofNat z => use z; left; simp only [Int.ofNat_eq_natCast]
   | negSucc z =>  use z + 1; right; rfl
 
 lemma exp_characterization

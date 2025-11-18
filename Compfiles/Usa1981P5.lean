@@ -88,7 +88,7 @@ problem usa1981_p5 (x : ℝ) (n : ℕ) :
         rw [Finset.mem_Icc]
         constructor
         · exact Nat.one_le_of_lt hii1
-        · exact Nat.lt_succ.mp hii2
+        · exact Nat.lt_succ_iff.mp hii2
       exact hm2 ⟨ii, h22⟩
     have h19 : ∑ _i ∈ Finset.Ico (n - m + 1) (n + 1), a m / ↑m ≤
                ∑ i ∈ Finset.Ico (n - m + 1) (n + 1), a i / ↑i := Finset.sum_le_sum h18

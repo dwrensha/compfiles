@@ -49,7 +49,7 @@ problem imo1981_p6 (f : ℕ → ℕ → ℕ)
     cases y with
     | zero => simp [h1, h2]
     | succ y =>
-      rw [h3 0 y, ih y (Nat.lt.base y)]
+      rw [h3 0 y, ih y (Nat.lt_add_one y)]
       rw [h1 (y + 2)]
   have h20 : ∀ y, f 2 y = 2 * y + 3 := by
     intro y;

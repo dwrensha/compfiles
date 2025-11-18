@@ -68,7 +68,7 @@ problem integers_in_a_circle
 
   -- By the pigeonhole principle, two of these sums are equivalent mod 100.
   obtain ⟨x,y,hxy',hfxy⟩ := Fintype.exists_ne_map_eq_of_card_lt (Int.cast ∘ f)
-            (Nat.lt.base (Fintype.card (ZMod 100)))
+            (Nat.lt_add_one (Fintype.card (ZMod 100)))
 
   dsimp only [Function.comp_apply] at hfxy
   rw[ZMod.intCast_eq_intCast_iff] at hfxy

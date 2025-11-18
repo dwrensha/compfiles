@@ -319,13 +319,13 @@ def extractFromExt {m : Type → Type} [Monad m] [MonadEnv m] [MonadError m]
       match inProgress.find? module with
       | .some ⟨src, cur, acc⟩ =>
          inProgress := inProgress.insert module
-            ⟨src, endPos, acc ++ (Substring.mk src cur startPos).toString ++ s⟩
+            ⟨src, endPos, acc ++ (Substring.Raw.mk src cur startPos).toString ++ s⟩
       | .none => pure ()
     | .snip_begin pos =>
       match inProgress.find? module with
       | .some ⟨src, cur, acc⟩ =>
          inProgress := inProgress.insert module
-            ⟨src, pos, acc ++ (Substring.mk src cur pos).toString⟩
+            ⟨src, pos, acc ++ (Substring.Raw.mk src cur pos).toString⟩
       | .none => pure ()
     | .snip_end pos =>
       match inProgress.find? module with
@@ -341,7 +341,7 @@ def extractFromExt {m : Type → Type} [Monad m] [MonadEnv m] [MonadError m]
       then imports := imports ++ s!"import {im.module}\n"
 
     result := result.insert module
-      (imports ++ acc ++ (Substring.mk src endPos src.endPos).toString)
+      (imports ++ acc ++ (Substring.Raw.mk src endPos src.rawEndPos).toString)
 
   pure result
 

@@ -16,7 +16,7 @@ def olean_path_to_extracted_path (dst_dir : System.FilePath)
   assert!(relative_olean_path_components.take 5 = [".lake", "build", "lib", "lean", "Compfiles"])
   let sfx : String := ".olean"
   let olean_path' := (System.mkFilePath (relative_olean_path_components.drop 5)).toString
-  assert!(sfx.data.isSuffixOf olean_path'.data)
+  assert!(sfx.toList.isSuffixOf olean_path'.toList)
   return dst_dir.join ((olean_path'.stripSuffix sfx) ++ ".lean")
 
 unsafe def main (_args : List String) : IO Unit := do

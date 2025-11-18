@@ -172,7 +172,7 @@ lemma f'_in_S'_k (hm : m ≤ 1) {g : Equiv.Perm (Fin (k + 1))} (hg : g ∈ S (k 
         simp only [hn', ↓reduceIte ]
       · apply le_trans (Fin.castSucc_le_castSucc_iff.2 (hg (n.pred hn)))
         rw [Fin.succ_pred]
-        exact le_of_lt (Fin.castSucc_lt_succ n)
+        exact le_of_lt Fin.castSucc_lt_succ
       · rw [←Fin.succ_castSucc]
         apply le_trans (Fin.succ_le_succ_iff.2 (hg (n.pred hn)))
         rw [Fin.succ_pred]
@@ -247,7 +247,7 @@ lemma S_succ_succ_k_card_eq_two_mul_S_succ_k_card : (S (k + 2)).ncard = (S (k + 
         · left
           replace hx' : x 0 = 0 := by
             rw [←Fin.val_eq_val, Fin.val_zero, ←Nat.lt_one_iff]
-            rwa [Fin.lt_iff_val_lt_val, Fin.val_one] at hx'
+            rwa [Fin.lt_def, Fin.val_one] at hx'
           exact ⟨hx, hx'⟩
         · right
           exact ⟨hx, hx'⟩

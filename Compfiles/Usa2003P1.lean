@@ -96,8 +96,10 @@ problem usa2003_p1 (n : ℕ) :
     use aa
     constructor
     · exact haa1
-    · have h12 : (2^n + a + 2 ^ (n + 1) * aa) % 5 = (2^n + a + b) % 5 :=
-        Nat.ModEq.add rfl haa2
-      cutsat
+    · have h12 : (2^n + a + 2 ^ (n + 1) * aa) % 5 = (2^n + a + b) % 5 := Nat.ModEq.add rfl haa2
+      rw[hb] at h12
+      have h13 : (2 ^ n + a + 2 ^ (n + 1) * aa) = 2 ^ n * (2 * aa + 1) + a := by ring
+      rw[h13] at h12
+      exact Nat.dvd_of_mod_eq_zero h12
 
 end Usa2003P1

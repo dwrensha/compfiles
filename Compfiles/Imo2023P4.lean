@@ -261,7 +261,7 @@ theorem imo2023_p4_generalized
     have hei : Function.Injective e := by
       intro a b hab
       simp only [e, Subtype.mk.injEq] at hab
-      exact Subtype.eq hab
+      exact Subtype.ext hab
     have h20 {y : ℕ} (hy : y ∈ Finset.Icc 1 (2 * m + 1)) :
         Finset.map ⟨e, hei⟩ (Finset.filter (fun x ↦ x ≤ ⟨y, hy⟩) Finset.univ) =
           Finset.filter
@@ -322,7 +322,7 @@ theorem imo2023_p4_generalized
       simp only [x'] at hab
       specialize hxi hab
       simp only [Subtype.mk.injEq] at hxi
-      exact Subtype.eq hxi
+      exact Subtype.ext hxi
     have hxa' : ∀ (i : { x // x ∈ Finset.Icc 1 (2 * m + 1) }),
                     ∃ k : ℤ, aa m x' i = ↑k := by
       rintro ⟨y, hy⟩

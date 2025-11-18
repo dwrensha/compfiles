@@ -140,7 +140,24 @@ theorem lemma2 (f : ↑(Set.Icc 0 1) → ℝ) (x : ℝ) (hx : 0 ≤ x ∧ x ≤ 
       intro k hk
       induction' k with k ih
       · simp
-      · grind
+      · have hk' : k ≤ m := Nat.le_of_succ_le hk
+        have memk  := mem_pow k hk'
+        have memkp := mem_pow (k+1) hk
+        -- multiply IH by 2, then apply h3 at the same point (self + self)
+        have step1 :
+          (2 : ℝ) * ((2 : ℝ)^k * f ⟨x, hx⟩) ≤
+          (2 : ℝ) * f ⟨(2 : ℝ)^k * x, memk⟩ :=
+          by
+            have : 0 ≤ (2 : ℝ) := by norm_num
+            exact mul_le_mul_of_nonneg_left (ih hk') this
+        have step2 :
+          (2 : ℝ) * f ⟨(2 : ℝ)^k * x, memk⟩ ≤
+          f ⟨(2 : ℝ)^(k+1) * x, memkp⟩ := by
+          -- h3 applied to the same point adds values
+          grind
+
+        -- rewrite 2^(k+1) and combine
+        simpa [pow_succ, mul_comm, mul_left_comm, mul_assoc] using step1.trans step2
 
     -- At k = m we get (2^m) f(x) ≤ f(2^m x) ≤ 1.
     have two_pow_f_le_one :

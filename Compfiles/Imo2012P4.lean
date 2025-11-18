@@ -57,7 +57,7 @@ def myInduction.{u}
       | x' + 4 =>
         rw [show Int.ofNat (x' + 4) = (Int.ofNat x') + 4 by rfl, add4]
         have : sizeOf (x' : Int) < sizeOf ((x' + 4 : Nat) : Int) := by
-          rw [← Int.ofNat_eq_coe, ← Int.ofNat_eq_coe]
+          rw [← Int.ofNat_eq_natCast, ← Int.ofNat_eq_natCast]
           simp [sizeOf, Int._sizeOf_1]
         apply myInduction <;> assumption
     case negSucc =>

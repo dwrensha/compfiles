@@ -140,7 +140,7 @@ lemma can_get_a_later_one_zmod :
       have hpi6 : p < 6 := Nat.succ_lt_succ_iff.mp hpi7
       have hinc := hii p hpi6
       have hadd : n2 + p + 1 = n2 + p.succ := rfl
-      have hi6 : p < 7 := Nat.lt.step hpi6
+      have hi6 : p < 7 := Nat.lt_succ_of_lt hpi6
       have hpp := hp hi6
       have hp1: (p.succ : ZMod 7) = (p : ZMod 7) + 1 := Nat.cast_succ p
       rw [←hadd, hinc, hpp, hp1]
