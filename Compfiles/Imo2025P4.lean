@@ -149,6 +149,13 @@ lemma sortedProperDivisors_get {i : Fin #n.properDivisors} {x : ℕ}
     · simp only [Subtype.mk.injEq, get]
       exact hj
 
+lemma three_le_card_properDivisors_of_six_dvd (h₁ : 6 ∣ n) (h₂ : n > 0) : 3 ≤ #n.properDivisors := by
+  rw [Finset.le_card_iff_exists_subset_card]
+  refine ⟨{ 1, 2, 3 }, ?_, rfl⟩
+  simp only [insert_subset_iff, singleton_subset_iff]
+  repeat rw [Nat.mem_properDivisors]
+  omega
+
 end Nat
 
 namespace Imo2025P4
@@ -173,17 +180,8 @@ lemma isAllowed_of_constant (h₂ : 2 ∣ x.val) (h₃ : 3 ∣ x.val) (h₄ : ¬
     rw [show 6 = 2 * 3 from rfl]
     apply Nat.Coprime.mul_dvd_of_dvd_of_dvd <;> trivial
 
-  have atLeastThree _ := by
-    rw [ge_iff_le, Finset.le_card_iff_exists_subset_card]
-    refine ⟨{ 1, 2, 3 }, ?_, rfl⟩
-    simp only [insert_subset_iff, singleton_subset_iff]
-    have : (6 : ℕ) ≤ x := Nat.le_of_dvd x.property h₆
-    split_ands
-    all_goals
-      rw [Nat.mem_properDivisors]
-      constructor
-      · first | assumption | apply Nat.one_dvd
-      · omega
+  have atLeastThree _ :=
+    Nat.three_le_card_properDivisors_of_six_dvd h₆ x.pos
 
   have isSumOfPrevMaxThree _ := by
     dsimp [-Nat.sortedProperDivisors]
@@ -284,7 +282,23 @@ problem imo2025_p4 : A₀ = answer := by
         rwa [PNat.dvd_iff]
 
     | succ k' ih =>
-      sorry
+      let a : ℕ → ℕ+
+        | 0 => 6 * 12 ^ (k' + 1) * m
+        | _ => 6 * 12 ^ k' * (13 * m)
+      use a
+      have : (a 1 : ℕ) = (a 0 / 2) + (a 0 / 3) + (a 0 / 4) := by
+        dsimp [a]
+        grind
+      have : 6 * 12 ^ k' * (13 * m) ∈ A₀ := by
+        apply ih
+        all_goals
+          rw [PNat.dvd_iff, PNat.mul_coe, Nat.Coprime.dvd_mul_left, ←PNat.dvd_iff]
+          <;> trivial
+      refine ⟨rfl, ?_, ?_⟩
+      · intro n
+        apply Nat.three_le_card_properDivisors_of_six_dvd
+        <;> cases n <;> simp [a, mul_assoc]
+      · sorry
   case mp => -- the hard direction
     intro ⟨a, ha, hx⟩
     sorry
