@@ -27,6 +27,8 @@ open Finset
 
 namespace Nat
 
+snip begin
+
 /-- The proper divisors of `n`, sorted in decreasing order. -/
 @[simp]
 def sortedProperDivisors (n : ℕ) : List ℕ :=
@@ -245,6 +247,8 @@ lemma isAllowed_of_constant (h₂ : 2 ∣ x.val) (h₃ : 3 ∣ x.val) (h₄ : ¬
             exact ⟨by assumption, by omega⟩
 
   { atLeastThree, isSumOfPrevMaxThree }
+
+snip end
 
 determine answer : Set ℕ+ :=
   { x | ∃ (k : ℕ) (m : ℕ+), x = 6 * 12^k * m ∧ ¬2 ∣ m ∧ ¬5 ∣ m }
