@@ -28,6 +28,8 @@ open Nat
 
 snip begin
 
+namespace Imo2025P4
+
 /-- The proper divisors of `n`, sorted in decreasing order. -/
 def sortedProperDivisors (n : ℕ) : List ℕ :=
   (Nat.properDivisors n).sort GE.ge
@@ -189,16 +191,85 @@ lemma sortedProperDivisors_get_one_eq_div_three (h₁ : 2 ∣ n) (h₂ : 3 ∣ n
       rw [hy]
       exact ⟨mem_properDivisors' (by decide) h₁ h₃, by omega⟩
 
-namespace Imo2025P4
+lemma sortedProperDivisors_get_two_eq
+    (hn₁ : 2 ∣ n) (hn₂ : 3 ∣ n) (hn₃ : n > 0)
+    {d : ℕ} (hd₁ : d > 3) (hd₂ : ∀ x, 3 < x → x < d → ¬x ∣ n) (hd₃ : d ∣ n)
+    : ∃ pf, n / d = (sortedProperDivisors n).get ⟨2, pf⟩ := by
+  have two_lt_length : 2 < (sortedProperDivisors n).length := by
+    rw [sortedProperDivisors, length_sort]
+    apply three_le_card_properDivisors_of_six_dvd
+    <;> omega
+  use two_lt_length
+  apply sortedProperDivisors_get (i := ⟨2, by rwa [←length_sortedProperDivisors]⟩)
+  · apply mem_properDivisors' <;> omega
+  · rw [card_eq_two]
+    use n / 2, n / 3
+    constructor
+    · omega
+    · ext y
+      simp only [mem_filter, mem_insert, mem_singleton]
+      constructor
+      · intro ⟨hy₁, hy₂⟩
+        have ⟨k, hk₁, hk₂⟩ := (Nat.mem_properDivisors_iff_exists (Nat.ne_zero_of_lt hn₃)).mp hy₁
+        -- have : k < d := lt_lemma (hk₂ ▸ hy₂) (lt_trans (by decide) hd₁)
+        suffices k < 4 by
+          match k with | 2 | 3 => simp [hk₂]
+        -- refine lt_lemma (y := y) ?_ (by decide)
+        -- rw [←hk₂]
+        apply Nat.lt_succ_of_le
+        apply Nat.le_of_not_gt
+        intro hn
+        apply hd₂ k hn
+        · apply lt_lemma (y := y)
+          · rwa [←hk₂]
+          · exact lt_trans (by decide) hd₁
+        · exact Dvd.intro_left _ hk₂.symm
+      · rintro (hy|hy)
+        all_goals
+          rw [hy]
+          constructor
+          · exact mem_properDivisors' (by decide) ‹_› hn₃
+          · rw [gt_iff_lt, Nat.div_lt_div_left (Nat.ne_zero_of_lt hn₃) hd₃ ‹_›]
+            first | exact hd₁ | exact lt_trans (by decide) hd₁
+
+@[simp]
+lemma two_dvd_six_mul (x) : 2 ∣ 6 * x := by
+  rw [show 6 = 2 * 3 by rfl, mul_assoc]
+  apply Nat.dvd_mul_right
+
+@[simp]
+lemma three_dvd_six_mul (x) : 3 ∣ 6 * x := by
+  rw [show 6 = 3 * 2 by rfl, mul_assoc]
+  apply Nat.dvd_mul_right
+
+def threeDivisorSum (n : ℕ) (h : #n.properDivisors ≥ 3) : ℕ+ :=
+  let divisors := sortedProperDivisors n
+  have : divisors.length ≥ 3 := by
+    simp [divisors, h]
+  Subtype.mk (divisors[0] + divisors[1] + divisors[2]) <| by
+    apply Nat.add_pos_right
+    apply Nat.pos_of_mem_properDivisors (n := n)
+    rw [mem_properDivisors_iff_mem_sortedProperDivisors]
+    apply List.getElem_mem
+
+lemma threeDivisorSum_eq_thirteen_mul_self_div_twelve_of_twelve_dvd (h₁ : 12 ∣ n) (h₂ : n > 0) : ∃ pf, threeDivisorSum n pf = 13 * n / 12 := by
+  have three_le_length : 3 ≤ #n.properDivisors := by
+    apply three_le_card_properDivisors_of_six_dvd <;> omega
+  use three_le_length
+
+  simp only [threeDivisorSum, PNat.mk_coe,
+             show 13 * n / 12 = n / 2 + n / 3 + n / 4 by grind]
+  congr <;> symm
+  · apply sortedProperDivisors_get_zero_eq_div_two <;> omega
+  · refine (sortedProperDivisors_get_one_eq_div_three ?_ ?_ ?_).2 <;> omega
+  · refine (sortedProperDivisors_get_two_eq ?_ ?_ ?_ ?_ ?_ ?_).2 <;> omega
+
 
 /-- The type of sequences `aₙ` that satisfy the problem constraints -/
 structure IsAllowed (a : ℕ → ℕ+) : Prop where
   atLeastThree : ∀ n, #(Nat.properDivisors (a n)) ≥ 3
   isSumOfPrevMaxThree : ∀ n,
-    let divisors := sortedProperDivisors (a n)
-    have : divisors.length ≥ 3 := by
-      simp [divisors, atLeastThree]
-    a (n + 1) = divisors[0] + divisors[1] + divisors[2]
+    a (n + 1) = threeDivisorSum (a n) (atLeastThree n)
 
 /-- The set of all possible values of `a₀` that give allowed sequences -/
 def A₀ := { a₀ | ∃ a, a 0 = a₀ ∧ IsAllowed a }
@@ -215,43 +286,35 @@ lemma isAllowed_of_constant (h₂ : 2 ∣ x.val) (h₃ : 3 ∣ x.val) (h₄ : ¬
     three_le_card_properDivisors_of_six_dvd h₆ x.pos
 
   have isSumOfPrevMaxThree _ := by
-    dsimp
+    apply PNat.eq
     apply Eq.trans <|
       show x.val = x / 2 + x / 3 + x / 6 by omega
-
-    have : #x.val.properDivisors ≥ 3 := by
-      simp [atLeastThree 0]
-
-    have h₂' : x.val / 2 ∈ x.val.properDivisors := by
-      apply mem_properDivisors' <;> omega
-    have h₃' : x.val / 3 ∈ x.val.properDivisors := by
-      apply mem_properDivisors' <;> omega
-
     congr
     · exact sortedProperDivisors_get_zero_eq_div_two h₂ x.pos
     · exact (sortedProperDivisors_get_one_eq_div_three h₂ h₃ x.pos).2
-    · apply sortedProperDivisors_get (i := ⟨2, by omega⟩)
-      · apply mem_properDivisors' <;> omega
-      · suffices {y ∈ x.val.properDivisors | x.val / 6 < y} = {x.val / 2, x.val / 3} by
-          rw [this, Finset.card_eq_two]
-          refine ⟨_, _, ?_, rfl⟩
-          omega
-        ext y
-        simp only [mem_filter, mem_insert, mem_singleton]
-        constructor
-        · intro ⟨hy₁, hy₂⟩
-          have ⟨k, hk₁, hk₂⟩ := (Nat.mem_properDivisors_iff_exists (by omega)).mp hy₁
-          rw [hk₂]
-          have : k < 6 := lt_lemma (hk₂ ▸ hy₂) (by decide)
-          match k with
-          | 2 | 3 => simp
-          | 4 | 5 => exfalso; omega
-        · rintro (hy|hy)
-          all_goals
-            rw [hy]
-            exact ⟨by assumption, by omega⟩
+    · refine (sortedProperDivisors_get_two_eq h₂ h₃ x.pos (by decide) ?_ h₆).2
+      intro y _ _
+      match y with
+      | 4 | 5 => assumption
 
   { atLeastThree, isSumOfPrevMaxThree }
+
+/-- Some `a₀` is in `A₀` if the next value (under `threeDivisorSum`) is in `A₀`. -/
+-- N.B. I think this is also true in the other direction but we don't need it yet
+lemma mem_A₀_of_threeDivisorSum_mem_A₀ {a₀ : ℕ+} (h₁ : #a₀.val.properDivisors ≥ 3) (h₂ : threeDivisorSum a₀ h₁ ∈ A₀) : a₀ ∈ A₀ := by
+  have ⟨a, ha₁, ha₂, ha₃⟩ := h₂
+  let a' : ℕ → ℕ+
+    | 0 => a₀
+    | i + 1 => a i
+
+  refine ⟨a', rfl, ?_, ?_⟩
+  · rintro ⟨_, _⟩
+    · exact h₁
+    · simp [a', ha₂]
+  · rintro ⟨_, _⟩
+    · simp [a', ha₁]
+    · rename_i k
+      simp [a', ha₃]
 
 snip end
 
@@ -270,16 +333,14 @@ problem imo2025_p4 : A₀ = answer := by
       -- Use the constant sequence 6 * m, 6 * m, ...
       refine ⟨fun _ => 6 * m, rfl, ?_⟩
       apply isAllowed_of_constant
-      · rw [show 6 * m = 2 * (3 * m) by ring]
-        apply dvd_mul_right
-      · rw [show 6 * m = 3 * (2 * m) by ring]
-        apply dvd_mul_right
+      · simp
+      · simp
       · dsimp
         intro hn
         apply not_two_dvd_m
         rw [show 4 = 2 * 2 from rfl,
-            show 6 * m.val = 2 * (3 * m) by ring] at hn
-        rw [Nat.mul_dvd_mul_iff_left (by decide),
+            show 6 * m.val = 2 * (3 * m) by ring,
+            Nat.mul_dvd_mul_iff_left (by decide),
             Nat.Coprime.dvd_mul_left (by decide)] at hn
         rwa [PNat.dvd_iff]
       · dsimp
@@ -289,32 +350,27 @@ problem imo2025_p4 : A₀ = answer := by
         rwa [PNat.dvd_iff]
 
     | succ k' ih =>
-      let a : ℕ → ℕ+
-        | 0 => 6 * 12 ^ (k' + 1) * m
-        | _ => 6 * 12 ^ k' * (13 * m)
-
-      use a
-      have : (a 1 : ℕ) = (a 0 / 2) + (a 0 / 3) + (a 0 / 4) := by
-        dsimp [a]
-        grind
-      have : 6 * 12 ^ k' * (13 * m) ∈ A₀ := by
-        apply ih
-        all_goals
-          rw [PNat.dvd_iff, PNat.mul_coe, Nat.Coprime.dvd_mul_left, ←PNat.dvd_iff]
-          <;> trivial
-      refine ⟨rfl, ?_, ?_⟩
-      · rintro (_|_)
-        <;> apply three_le_card_properDivisors_of_six_dvd
-        <;> simp [a, mul_assoc]
-      · rintro (_|_)
+      apply mem_A₀_of_threeDivisorSum_mem_A₀
+      swap
+      · apply three_le_card_properDivisors_of_six_dvd
+        · simp [mul_assoc]
         · simp
-          convert_to (a 1 : ℕ) = (a 0 / 2) + (a 0 / 3) + (a 0 / 4)
-          · congr
-            · sorry
-            · sorry
-            · sorry
-          · grind
-        · sorry
+      · convert_to 6 * 12 ^ k' * (13 * m) ∈ A₀
+        · simp only [PNat.mul_coe, PNat.val_ofNat, PNat.pow_coe]
+          have := (threeDivisorSum_eq_thirteen_mul_self_div_twelve_of_twelve_dvd
+            (n := 6 * 12 ^ (k' + 1) * ↑m) ?_ ?_).2
+          · apply PNat.eq
+            rw [this]
+            simp only [PNat.mul_coe, PNat.val_ofNat, PNat.pow_coe]
+            ring_nf
+            rw [Nat.mul_div_assoc _ (by decide)]
+            congr
+          · simp_rw [pow_succ', ←mul_assoc, mul_comm 6, mul_assoc, dvd_mul_right]
+          · simp
+        · apply ih
+          <;> rw [PNat.dvd_iff, PNat.mul_coe, Nat.Coprime.dvd_mul_left, ←PNat.dvd_iff]
+          <;> trivial
+
   case mp => -- the hard direction
     intro ⟨a, ha, hx⟩
     sorry
