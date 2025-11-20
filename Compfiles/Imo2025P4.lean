@@ -89,6 +89,16 @@ lemma mem_properDivisors_iff_mem_sortedProperDivisors :
     ∀ {d}, d ∈ n.properDivisors ↔ d ∈ sortedProperDivisors n := by
   simp [sortedProperDivisors]
 
+@[simp]
+lemma mem_properDivisors_of_getElem (i : ℕ)
+    (hi : i < #n.properDivisors := by first
+      | get_elem_tactic
+      | rw [←length_sortedProperDivisors]; get_elem_tactic)
+    : (sortedProperDivisors n)[i]'(by simp [hi]) ∈ n.properDivisors := by
+  rw [mem_properDivisors_iff_mem_sortedProperDivisors]
+  apply List.mem_of_getElem (i := i) <;> trivial
+
+
 lemma sortedProperDivisors_sorted (n : ℕ) :
     List.Sorted GT.gt (sortedProperDivisors n) :=
   n.properDivisors.sort_sorted_gt
@@ -100,7 +110,7 @@ lemma sortedProperDivisors_strictAnti (n : ℕ) :
 /-- The core theorem that establishes where a divisor appears in `sortedProperDivisors`. -/
 theorem sortedProperDivisors_get {i : Fin #n.properDivisors} {x : ℕ}
     (hx₁ : x ∈ n.properDivisors) (hx₂ : #{y ∈ n.properDivisors | y > x} = i)
-    : x = (sortedProperDivisors n)[i.cast length_sortedProperDivisors.symm] := by
+    : x = (sortedProperDivisors n)[i] := by
   rw [mem_properDivisors_iff_mem_sortedProperDivisors,
       List.mem_iff_get] at hx₁
   -- x has to be in the list somewhere, at index `i'`
@@ -116,8 +126,7 @@ theorem sortedProperDivisors_get {i : Fin #n.properDivisors} {x : ℕ}
     use (sortedProperDivisors n)[j]
     rw [mem_filter]
     split_ands
-    · rw [mem_properDivisors_iff_mem_sortedProperDivisors]
-      apply List.getElem_mem
+    · apply mem_properDivisors_of_getElem j
     · simp only [←hi']
       dsimp
       apply sortedProperDivisors_strictAnti
@@ -214,6 +223,41 @@ theorem sortedProperDivisors_get_two_eq
           · rw [gt_iff_lt, Nat.div_lt_div_left (Nat.ne_zero_of_lt hn₃) hd₃ ‹_›]
             first | exact hd₁ | exact lt_trans (by decide) hd₁
 
+lemma le_div_succ_of_lt_div_of_dvd {x a b : ℕ} (h₁ : x < a / b) (h₂ : x ∣ a) : x ≤ a / (b + 1) := by
+  have ⟨k, hk⟩ := h₂
+  rw [hk] at ⊢ h₁
+  refine le_trans ?_ (Nat.mul_div_le_mul_div_assoc _ _ _)
+  apply Nat.le_mul_of_pos_right x
+  apply Nat.div_pos
+  · show b < k
+    rw [Nat.lt_div_iff_mul_lt (Nat.pos_of_ne_zero fun hb => by simp_all)] at h₁
+    replace h₁ := Nat.add_lt_of_lt_sub h₁
+    replace h₁ := Nat.lt_of_add_right_lt h₁
+    exact Nat.lt_of_mul_lt_mul_left h₁
+  · apply zero_lt_succ
+
+/-- The greatest proper divisor is always `≤ n / 2`, the second greatest `≤ n / 3`, etc. -/
+theorem sortedProperDivisors_get_le {i : Fin #(properDivisors n)} : (sortedProperDivisors n)[i] ≤ n / (i + 2) := by
+  replace ⟨i, hi⟩ := i
+  induction i with
+  | zero =>
+    apply le_div_two_of_mem_properDivisors
+    simp only [sortedProperDivisors, ←Finset.mem_sort GE.ge]
+    exact List.mem_of_getElem rfl
+  | succ i ih =>
+    have _ : i + 1 < (sortedProperDivisors n).length := by simp [*]
+    have _ : i < (sortedProperDivisors n).length := lt_of_succ_lt ‹_›
+    simp [Fin.getElem_fin] at ⊢ ih
+    suffices (sortedProperDivisors n)[i + 1] < n / (i + 2) by
+      rw [show i + 1 + 2 = (i + 2) + 1 by ring]
+      apply le_div_succ_of_lt_div_of_dvd this
+      apply And.left ∘ Nat.mem_properDivisors.mp
+      apply mem_properDivisors_of_getElem (i + 1)
+    apply lt_of_lt_of_le (b := (sortedProperDivisors n)[i])
+    · apply sortedProperDivisors_strictAnti
+      simp
+    · exact ih (lt_of_succ_lt hi)
+
 end SortedProperDivisors
 
 section ProblemTheory -- The more advanced theorems and definitions needed for the problem
@@ -226,8 +270,7 @@ def threeDivisorSum (n : ℕ) (h : #n.properDivisors ≥ 3) : ℕ+ :=
   Subtype.mk (divisors[0] + divisors[1] + divisors[2]) <| by
     apply Nat.add_pos_right
     apply Nat.pos_of_mem_properDivisors (n := n)
-    rw [mem_properDivisors_iff_mem_sortedProperDivisors]
-    apply List.getElem_mem
+    apply mem_properDivisors_of_getElem 2
 
 lemma threeDivisorSum_eq_thirteen_mul_self_div_twelve_of_twelve_dvd (h₁ : 12 ∣ n) (h₂ : n > 0) : ∃ pf, threeDivisorSum n pf = 13 * n / 12 := by
   have three_le_length : 3 ≤ #n.properDivisors := by
@@ -240,6 +283,33 @@ lemma threeDivisorSum_eq_thirteen_mul_self_div_twelve_of_twelve_dvd (h₁ : 12 �
   · apply sortedProperDivisors_get_zero_eq_div_two <;> omega
   · refine (sortedProperDivisors_get_one_eq_div_three ?_ ?_ ?_).2 <;> omega
   · refine (sortedProperDivisors_get_two_eq ?_ ?_ ?_ ?_ ?_ ?_).2 <;> omega
+
+lemma threeDivisorSum_lt_self_of_odd (h₁ : ¬2 ∣ n) (h₂ : #n.properDivisors ≥ 3) : threeDivisorSum n h₂ < n := by
+  -- In the video n ↦ n/3 + n/5 + n/7, but this bound is easier to show
+  -- because the two later terms are handled by `sortedProperDivisors_get_le`
+  refine lt_of_le_of_lt (b := n / 3 + n / 3 + n / 4) ?_ (by omega)
+  simp [threeDivisorSum]
+  apply Nat.add_le_add
+  · apply Nat.add_le_add
+    · have := sortedProperDivisors_get_le (n := n) (i := ⟨0, by omega⟩)
+      simp only [Fin.getElem_fin, zero_add] at this
+      have _ : (sortedProperDivisors n).length ≥ 3 := by
+        simp [h₂]
+      have : (sortedProperDivisors n)[0] ∈ properDivisors n :=
+        mem_properDivisors_of_getElem 0
+      have ⟨k, hk₁, hk₂⟩ := (mem_properDivisors_iff_exists (by omega)).mp this
+      conv => rhs; rw [hk₂]
+      rw [Nat.le_div_iff_mul_le (by decide)]
+      apply Nat.mul_le_mul_left
+      match k with
+      | 2 =>
+        exfalso
+        apply h₁
+        use (sortedProperDivisors n)[0]
+        rwa [mul_comm]
+      | _ + 3 => omega
+    · apply sortedProperDivisors_get_le (i := ⟨1, by omega⟩)
+  · apply sortedProperDivisors_get_le (i := ⟨2, by omega⟩)
 
 /-- The type of sequences `aₙ` that satisfy the problem constraints -/
 structure IsAllowed (a : ℕ → ℕ+) : Prop where
@@ -266,6 +336,15 @@ theorem mem_A₀_of_threeDivisorSum_mem_A₀ {a₀ : ℕ+} (h₁ : #a₀.val.pro
     · simp [a', ha₁]
     · rename_i k
       simp [a', ha₃]
+
+theorem even_of_mem_A₀ {a₀ : ℕ+} (h : a₀ ∈ A₀) : 2 ∣ a₀ := by
+  by_contra hn
+  have ⟨a, ha₁, ha₂, ha₃⟩ := h
+  have := ha₃ 0
+  simp_rw [ha₁, zero_add] at this
+  suffices ∀ n, a n > a (n + 1) by
+    sorry
+  sorry
 
 /-- A constant sequence from a number divisible by 2 and 3 but not by 4 and 5 is allowed -/
 lemma isAllowed_of_constant {x : ℕ+} (h₂ : 2 ∣ x.val) (h₃ : 3 ∣ x.val) (h₄ : ¬4 ∣ x.val) (h₅ : ¬5 ∣ x.val) : IsAllowed (fun _ => x) :=
