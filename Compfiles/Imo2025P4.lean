@@ -284,7 +284,7 @@ lemma threeDivisorSum_eq_thirteen_mul_self_div_twelve_of_twelve_dvd (h₁ : 12 �
   · refine (sortedProperDivisors_get_one_eq_div_three ?_ ?_ ?_).2 <;> omega
   · refine (sortedProperDivisors_get_two_eq ?_ ?_ ?_ ?_ ?_ ?_).2 <;> omega
 
-lemma threeDivisorSum_lt_self_of_odd (h₁ : ¬2 ∣ n) (h₂ : #n.properDivisors ≥ 3) : threeDivisorSum n h₂ < n := by
+lemma threeDivisorSum_lt_self_of_not_two_dvd (h₁ : ¬2 ∣ n) (h₂ : #n.properDivisors ≥ 3) : threeDivisorSum n h₂ < n := by
   -- In the video n ↦ n/3 + n/5 + n/7, but this bound is easier to show
   -- because the two later terms are handled by `sortedProperDivisors_get_le`
   refine lt_of_le_of_lt (b := n / 3 + n / 3 + n / 4) ?_ (by omega)
@@ -311,6 +311,19 @@ lemma threeDivisorSum_lt_self_of_odd (h₁ : ¬2 ∣ n) (h₂ : #n.properDivisor
     · apply sortedProperDivisors_get_le (i := ⟨1, by omega⟩)
   · apply sortedProperDivisors_get_le (i := ⟨2, by omega⟩)
 
+lemma threeDivisorSum_not_two_dvd_of_not_two_dvd (h₁ : ¬2 ∣ n) (h₂ : #n.properDivisors ≥ 3) : ¬2 ∣ threeDivisorSum n h₂ := by
+  rw [PNat.dvd_iff]
+  simp only [PNat.val_ofNat, threeDivisorSum, PNat.mk_coe]
+  have {a b c : ℕ} (ha : ¬2 ∣ a) (hb : ¬2 ∣ b) (hc : ¬2 ∣ c) : ¬2 ∣ (a + b + c) := by
+    omega
+  apply this
+  all_goals
+    intro hn
+    apply h₁
+    apply Nat.dvd_trans hn
+    apply And.left ∘ Nat.mem_properDivisors.mp
+    apply mem_properDivisors_of_getElem _
+
 /-- The type of sequences `aₙ` that satisfy the problem constraints -/
 structure IsAllowed (a : ℕ → ℕ+) : Prop where
   atLeastThree : ∀ n, #(Nat.properDivisors (a n)) ≥ 3
@@ -320,31 +333,49 @@ structure IsAllowed (a : ℕ → ℕ+) : Prop where
 /-- The set of all possible values of `a₀` that give allowed sequences -/
 def A₀ := { a₀ | ∃ a, a 0 = a₀ ∧ IsAllowed a }
 
-/-- Some `a₀` is in `A₀` if the next value (under `threeDivisorSum`) is in `A₀`. -/
--- N.B. I think this is also true in the other direction but we don't need it yet
-theorem mem_A₀_of_threeDivisorSum_mem_A₀ {a₀ : ℕ+} (h₁ : #a₀.val.properDivisors ≥ 3) (h₂ : threeDivisorSum a₀ h₁ ∈ A₀) : a₀ ∈ A₀ := by
-  have ⟨a, ha₁, ha₂, ha₃⟩ := h₂
-  let a' : ℕ → ℕ+
-    | 0 => a₀
-    | i + 1 => a i
+variable {a₀ : ℕ+}
 
-  refine ⟨a', rfl, ?_, ?_⟩
-  · rintro ⟨_, _⟩
-    · exact h₁
+lemma three_le_card_properDivisors_of_mem_Aₐ (h : a₀ ∈ A₀) : 3 ≤ #a₀.val.properDivisors := by
+  have ⟨_, ha₁, ha₂, _⟩ := h
+  have := ha₂ 0
+  rwa [ha₁] at this
+
+/-- Some `x` is in `A₀` iff the next value (under `threeDivisorSum`) is in `x`. -/
+theorem mem_A₀_iff_threeDivisorSum_mem_A₀ {x : ℕ+} : (∃ pf, threeDivisorSum x pf ∈ A₀) ↔ x ∈ A₀ := by
+  constructor
+  · intro ⟨h, a, ha₁, ha₂, ha₃⟩
+    let a' : ℕ → ℕ+
+      | 0 => x
+      | i + 1 => a i
+
+    refine ⟨a', rfl, ?_, ?_⟩
+    · rintro ⟨_, _⟩
+      · exact h
+      · simp [a', ha₂]
+    · rintro ⟨_, _⟩
+      · simp [a', ha₁]
+      · rename_i k
+        simp [a', ha₃]
+
+  · intro h@⟨a, ha₁, ha₂, ha₃⟩
+    let a' (i : ℕ) := a (i + 1)
+
+    use three_le_card_properDivisors_of_mem_Aₐ h
+    refine ⟨a', ?_, ?_, ?_⟩
+    · simp [a', ha₃, ha₁]
     · simp [a', ha₂]
-  · rintro ⟨_, _⟩
-    · simp [a', ha₁]
-    · rename_i k
-      simp [a', ha₃]
+    · simp [a', ha₃]
 
-theorem even_of_mem_A₀ {a₀ : ℕ+} (h : a₀ ∈ A₀) : 2 ∣ a₀ := by
-  by_contra hn
-  have ⟨a, ha₁, ha₂, ha₃⟩ := h
-  have := ha₃ 0
-  simp_rw [ha₁, zero_add] at this
-  suffices ∀ n, a n > a (n + 1) by
-    sorry
-  sorry
+theorem not_mem_A₀_of_not_two_dvd {a₀ : ℕ+} (h : ¬2 ∣ a₀) : a₀ ∉ A₀ := by
+  intro h'
+  rw [PNat.dvd_iff] at h
+  have three_le := three_le_card_properDivisors_of_mem_Aₐ h'
+  have := threeDivisorSum_lt_self_of_not_two_dvd h three_le
+  -- recurse
+  apply not_mem_A₀_of_not_two_dvd  (a₀ := threeDivisorSum a₀ three_le)
+  · apply threeDivisorSum_not_two_dvd_of_not_two_dvd h
+  · exact (mem_A₀_iff_threeDivisorSum_mem_A₀.mpr h').2
+termination_by a₀.val
 
 /-- A constant sequence from a number divisible by 2 and 3 but not by 4 and 5 is allowed -/
 lemma isAllowed_of_constant {x : ℕ+} (h₂ : 2 ∣ x.val) (h₃ : 3 ∣ x.val) (h₄ : ¬4 ∣ x.val) (h₅ : ¬5 ∣ x.val) : IsAllowed (fun _ => x) :=
@@ -404,7 +435,10 @@ problem imo2025_p4 : A₀ = answer := by
         rw [Nat.Coprime.dvd_mul_left (by decide)] at hn
         rwa [PNat.dvd_iff]
     | succ k' ih =>
-      apply mem_A₀_of_threeDivisorSum_mem_A₀
+      refine mem_A₀_iff_threeDivisorSum_mem_A₀.mp ⟨?_, ?_⟩
+      · apply three_le_card_properDivisors_of_six_dvd
+        · simp [mul_assoc]
+        · simp
       · convert_to 6 * 12 ^ k' * (13 * m) ∈ A₀
         · simp only [PNat.mul_coe, PNat.val_ofNat, PNat.pow_coe]
           have := (threeDivisorSum_eq_thirteen_mul_self_div_twelve_of_twelve_dvd
@@ -420,9 +454,7 @@ problem imo2025_p4 : A₀ = answer := by
         · apply ih
           <;> rw [PNat.dvd_iff, PNat.mul_coe, Nat.Coprime.dvd_mul_left, ←PNat.dvd_iff]
           <;> trivial
-      · apply three_le_card_properDivisors_of_six_dvd
-        · simp [mul_assoc]
-        · simp
+
 
   case mp => -- the hard direction
     intro ⟨a, ha, hx⟩
