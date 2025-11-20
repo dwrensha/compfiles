@@ -60,8 +60,7 @@ lemma pow_of_two_dvd_odd_mul_self_sub_1 {m : ℕ} {a : ℤ}
   · rw [(by ring : (2 * k + 1) ^ 2 - 1 = (4 * k + 4) * k)] at h
     have h' : 2 ^ m ∣4 * k + 4 := by
       apply IsCoprime.dvd_of_dvd_mul_right _ h
-      apply pow_of_two_coprime_odd m
-      exact hk'
+      exact pow_of_two_coprime_odd m hk'
     calc 2 ^ m
         ≤ 4 * k + 4 := Int.le_of_dvd (by cutsat) h'
       _ ≤ 2 * (2 * k + 1) + 2 := by cutsat
@@ -256,8 +255,7 @@ problem imo2015_p2 (a b c : ℤ) :
         have h₂ : c * a - b ∣ a ^ 2 - 1 := by
           apply IsCoprime.dvd_of_dvd_mul_left _ h₁
           rw [hcab]
-          apply pow_of_two_coprime_odd mcab
-          exact hc'
+          exact pow_of_two_coprime_odd mcab hc'
         rw [hcab] at h₂
         apply pow_of_two_dvd_odd_mul_self_sub_1 ha' (by cutsat) at h₂
         have hc_ne_2 : c ≠ 2 := by
