@@ -129,20 +129,7 @@ lemma aux_2_4
   by_cases hlp: i < l
   · have hl₃: a x l = a x i + (l - i) * 3 := by
       exact aux_2_1 a ha₁ x i j l hx₀ hl₀ hl₁ hl₂
-    by_cases hl₄: a x l ≤ (c.sqrt + (1 : ℕ)) ^ (2 : ℕ)
-    · obtain hl₅ | hl₅ := lt_or_eq_of_le hl₄
-      · refine hh₄ (a x l) ?_ hl₅
-        rw [hl₃, hi₀]
-        simp
-      · cutsat
-    · push_neg at hl₄
-      have h₃: a x l < (c.sqrt + (2 : ℕ)) ^ (2 : ℕ) := by
-        rw [hl₃]
-        have h₃₁: a x i + (l - i) * (3 : ℕ) < a x i + (i + j - i) * 3 := by omega
-        refine lt_of_lt_of_le h₃₁ ?_
-        rw [Nat.add_sub_cancel_left, hj₀, hi₀]
-        omega
-      exact h₀ (a x l) hl₄ h₃
+    grind
   · push_neg at hlp
     have hl₃: l = i := Nat.le_antisymm hlp hl₁
     rw [hl₃, hi₀]

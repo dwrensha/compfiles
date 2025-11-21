@@ -183,7 +183,7 @@ theorem lemma2 (f : ↑(Set.Icc 0 1) → ℝ) (x : ℝ) (hx : 0 ≤ x ∧ x ≤ 
   · -- large x
     have : (1 : ℝ) ≤ 2 * x := by
       have : (1 : ℝ)/2 < x := lt_of_le_of_ne (le_of_not_ge hxhalf) (by grind)
-      nlinarith
+      grind
     exact (h6 ⟨x, hx⟩).trans this
 
 snip end

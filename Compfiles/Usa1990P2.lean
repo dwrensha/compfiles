@@ -74,19 +74,7 @@ problem usa1990_p2 (n : ℕ) (x : ℝ) : x ∈ solution_set n ↔ f n x = 2 * x 
         have h4 : 0 < 4 * x ^ 2 := by positivity
         exact (Real.sqrt_lt_sqrt_iff_of_pos h4).mpr hc
       rwa [h5] at hc'
-    · intro hx1
-      have h2 : f n x = 2 * x := (ih x hx5).2.1 hx1
-      unfold f
-      have hc :=
-        calc x ^ 2 + 6 * f n x = x ^ 2 + 6 * (2 * x) := by rw [h2]
-             _ = x ^ 2 + 3 * (4 * x) := by ring
-             _ = x ^ 2 + 3 * (x * x) := by rw [hx1]
-             _ = 4 * x^2 := by ring
-
-      have hc' : Real.sqrt (x ^ 2 + 6 * f n x) = Real.sqrt (4 * x ^ 2) := by
-        exact congrArg Real.sqrt hc
-      rwa [h5] at hc'
-
+    · grind [f]
     · intro hx1
       have h2 : 2 * x < f n x := (ih x hx5).2.2 hx1
       obtain rfl | hx6 := LE.le.eq_or_lt hx5
