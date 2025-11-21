@@ -85,15 +85,15 @@ problem imo1985_p2 {n j : ℕ} (hn : 3 ≤ n) (hj : j ∈ Set.Ico 1 n)
     (cpj : Nat.Coprime n j) {C : ℕ → Fin 2} (hC : Condition n j C)
     {i : ℕ} (hi : i ∈ Set.Ico 1 n) :
     C i = C j := by
-  obtain ⟨v, hv⟩ := Nat.exists_mul_emod_eq_one_of_coprime cpj.symm (by omega)
+  obtain ⟨v, hv⟩ := Nat.exists_mul_mod_eq_one_of_coprime cpj.symm (by omega)
   have hvi : i = (v * i % n) * j % n := by
-    rw [Nat.mod_mul_mod, ← mul_rotate, ← Nat.mod_mul_mod, hv, one_mul, Nat.mod_eq_of_lt hi.2]
+    rw [Nat.mod_mul_mod, ← mul_rotate, ← Nat.mod_mul_mod, hv.2, one_mul, Nat.mod_eq_of_lt hi.2]
   have vib : v * i % n ∈ Set.Ico 1 n := by
     refine ⟨(?_ : 0 < _), Nat.mod_lt _ (by omega)⟩
     by_contra! h; rw [Nat.le_zero, ← Nat.dvd_iff_mod_eq_zero] at h
     rw [mul_comm, ← Nat.mod_eq_of_lt (show 1 < n by omega)] at hv
     have i0 := Nat.eq_zero_of_dvd_of_lt
-      ((Nat.coprime_of_mul_modEq_one _ hv).symm.dvd_of_dvd_mul_left h) hi.2
+      ((Nat.coprime_of_mul_modEq_one _ hv.2).symm.dvd_of_dvd_mul_left h) hi.2
     subst i; simp at hi
   rw [hvi, C_mul_mod hn hj cpj hC vib]
 
