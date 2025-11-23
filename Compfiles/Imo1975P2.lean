@@ -97,7 +97,7 @@ problem imo1975_p2 (a : ℕ → ℤ)
     have r2 : ∃ r s j : ℕ, a m = r * a i + s * a j ∧ i < j ∧ 0 < r ∧ 0 < s := by
       have s3 : 0<y-x := by
         have t1 : a k < a m := strictMono_nat_of_lt_succ ha hm.left
-        have t2 : a m - t > a k - t :=  add_lt_add_right t1 (-t)
+        have t2 : a m - t > a k - t :=  add_lt_add_left t1 (-t)
         rw [hy] at t2
         rw [hx] at t2
         have t3 := (mul_lt_mul_iff_right₀ (apos i)).mp t2

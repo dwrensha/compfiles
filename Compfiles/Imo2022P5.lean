@@ -63,10 +63,10 @@ lemma mylemma_42
     (h₀ : 2 ≤ a)
     (h₁ : a < b) :
     (a + b < a * b) := by
-  have h₂: a + b < b + b := add_lt_add_right h₁ b
+  have h₂: a + b < b + b := add_lt_add_left h₁ b
   have h₃: b + b ≤ a * b := by
     rw [← two_mul]
-    exact mul_le_mul_right' h₀ b
+    exact mul_le_mul_left h₀ b
   exact lt_of_le_of_lt' h₃ h₂
 
 lemma mylemma_43 (p : ℕ) :
@@ -150,7 +150,7 @@ lemma mylemma_41
     exact (p ^ 2).sub_le ((x + 1) ^ 2)
   simp at *
   have h₄: b.factorial + p ≤ (p ^ 2) ^ (p - 1) * p + p := by
-    refine add_le_add_right ?_ p
+    refine add_le_add_left ?_ p
     refine le_trans ?_ h₃
     rw [← h₂]
     rw [Finset.prod_range_add_one_eq_factorial]
@@ -205,7 +205,7 @@ lemma mylemma_4
     · push_neg at hc
       have g₃: p^2 ≤ a := by
         rw [h₂, pow_two]
-        exact mul_le_mul_left' hc p
+        exact mul_le_mul_right hc p
       have h₃: p^(2*p) ≤ a^p := by
         rw [pow_mul]
         exact pow_left_mono p g₃

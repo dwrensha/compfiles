@@ -166,7 +166,7 @@ problem imo1999_p4 (n p : ℕ) :
         have hp3' : p ≤ 3 := by
           contrapose! hp_padic_le
           calc 1 + padicValNat p n
-              ≤ padicValNat p n + padicValNat p n := add_le_add_right hpadic_pn _
+              ≤ padicValNat p n + padicValNat p n := add_le_add_left hpadic_pn _
             _ = 2 * padicValNat p n := by ring
             _ < (p - 1) * padicValNat p n := (mul_lt_mul_iff_left₀ (by cutsat:_)).mpr (by cutsat:_)
         have hp3 : p = 3 := by cutsat

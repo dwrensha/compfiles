@@ -285,7 +285,7 @@ example {a b : ℕ} (h : a * b ∣ a ^ 2 + b ^ 2 + 1) : 3 * a * b = a ^ 2 + b ^ 
         _ ≥ x * (x + 1) := by apply mul_le_mul <;> omega
         _ > x * x + 1 := by
           rw [mul_add, mul_one]
-          apply add_lt_add_left
+          apply add_lt_add_right
           assumption_mod_cast
   · -- Show the base case.
     intro x y h h_base

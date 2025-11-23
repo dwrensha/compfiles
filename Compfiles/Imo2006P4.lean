@@ -54,7 +54,7 @@ problem imo2006_p4 :
           calc
             _ < (1 : ℝ) + 1 + 1 := by
               apply add_lt_add
-              · apply add_lt_add_left
+              · apply add_lt_add_right
                 apply zpow_lt_one_of_neg₀
                 · norm_num
                 · exact hx

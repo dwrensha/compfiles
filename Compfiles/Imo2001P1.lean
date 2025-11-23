@@ -62,9 +62,9 @@ lemma aux₁ {x y z : ℝ}
     · calc -z
           _ < y := by exact (abs_lt.mp hy).left
           _ = 0 + y := by exact (zero_add y).symm
-          _ ≤ x + y := by exact add_le_add_right hx' y
+          _ ≤ x + y := by exact add_le_add_left hx' y
     · calc x + y
-        _ ≤ x + 0 := by exact add_le_add_left hy' x
+        _ ≤ x + 0 := by exact add_le_add_right hy' x
         _ = x := by exact add_zero x
         _ < z := by exact (abs_lt.mp hx).right
 
@@ -102,7 +102,7 @@ lemma aux₃ {a b : Real.Angle} (h : 2 • a + 2 • b = Real.pi)
       norm_num
     have h₃ : |a' + b'| + |Real.pi / 2| < 2 * Real.pi := by
       calc |a' + b'| + |Real.pi / 2|
-            < Real.pi + |Real.pi / 2| := by exact add_lt_add_right h₁ _
+            < Real.pi + |Real.pi / 2| := by exact add_lt_add_left h₁ _
           _ = Real.pi + Real.pi / 2 := by exact (add_right_inj _).mpr (abs_eq_self.mpr h₂)
           _ ≤ Real.pi + Real.pi / 2 + Real.pi / 2 := by exact (le_add_iff_nonneg_right _).mpr h₂
           _ = 2 * Real.pi := by ring
@@ -538,7 +538,7 @@ lemma COP_le_OCP : ∠ cfg.C cfg.O cfg.P < ∠ cfg.O cfg.C cfg.P := by
 theorem result : ∠ cfg.C cfg.A cfg.B + ∠ cfg.C cfg.ABC.circumcenter cfg.P < Real.pi / 2 := by
   rw [CAB_OCP]
   calc Real.pi / 2 - ∠ cfg.O cfg.C cfg.P + ∠ cfg.C cfg.O cfg.P
-      < Real.pi / 2 - ∠ cfg.O cfg.C cfg.P + ∠ cfg.O cfg.C cfg.P := by exact add_lt_add_left (COP_le_OCP cfg) _
+      < Real.pi / 2 - ∠ cfg.O cfg.C cfg.P + ∠ cfg.O cfg.C cfg.P := add_lt_add_right (COP_le_OCP cfg) _
     _ = Real.pi / 2 := by ring
 
 end Imo2001q1Cfg

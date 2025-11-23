@@ -93,7 +93,7 @@ lemma card_not_easy_le_210 {α β : Type} [Fintype α] [Fintype β]
     _ ≤ ∑ i : β, 5 * 2 := by
       gcongr with i
       rw [sum_const, smul_eq_mul]
-      exact mul_le_mul_right' (card_not_easy_le_five hcard_α (hA _) (hB _)) _
+      exact mul_le_mul_left (card_not_easy_le_five hcard_α (hA _) (hB _)) _
     _ = _ := by simp [←hcard_β]
 
 snip end

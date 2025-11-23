@@ -154,8 +154,8 @@ lemma fixed_point_of_gt_1 {f : ℚ → ℝ} {x : ℚ} (hx : 1 < x)
   obtain ⟨N, hN⟩ := pow_unbounded_of_one_lt (1 + x) ha1
   have h_big_enough : (1:ℚ) < a^N - x := lt_sub_iff_add_lt.mpr hN
   have h1 := calc (x : ℝ) + ((a^N - x) : ℚ)
-                ≤ f x + ((a^N - x) : ℚ) := add_le_add_right (H5 x hx) _
-              _ ≤ f x + f (a^N - x)     := add_le_add_left (H5 _ h_big_enough) _
+                ≤ f x + ((a^N - x) : ℚ) := add_le_add_left (H5 x hx) _
+              _ ≤ f x + f (a^N - x)     := add_le_add_right (H5 _ h_big_enough) _
   have hxp : 0 < x := zero_lt_one.trans hx
   have hNp : 0 < N := by
     by_contra H; push_neg at H; rw [le_zero_iff.mp H] at hN; linarith
@@ -189,7 +189,7 @@ problem imo2013_p5
         calc  ↑(pn + 2) * f x
             = (↑pn + 1 + 1) * f x            := by norm_cast
           _ = (↑pn + 1) * f x + f x          := by ring
-          _ ≤ f ((↑pn.succ) * x) + f x       := by exact_mod_cast add_le_add_right
+          _ ≤ f ((↑pn.succ) * x) + f x       := by exact_mod_cast add_le_add_left
                                                     (hpn pn.succ_pos) (f x)
           _ ≤ f ((↑pn + 1) * x + x)          := by exact_mod_cast H2 _ _
                                                     (mul_pos pn.cast_add_one_pos hx) hx

@@ -141,10 +141,10 @@ problem canada1998_p3 (n : ℕ) (hn : 2 ≤ n) :
                    rw [Finset.sum_range_succ]; ring
        _ > k * (∑i ∈ Finset.range k, 1 / (2 * (i:ℝ) + 1)) +
              ((∑i ∈ Finset.range k, 1 / (2 * (i:ℝ) + 1 + 1)) +
-                (k + 2) / (2 * k + 2)) := add_lt_add_left h9 _
+                (k + 2) / (2 * k + 2)) := add_lt_add_right h9 _
        _ > (k + 1) * (∑i ∈ Finset.range k, 1 / (2 * (i:ℝ) + 2)) +
              ((∑i ∈ Finset.range k, 1 / (2 * (i:ℝ) + 1 + 1)) +
-                (k + 2) / (2 * k + 2)) := add_lt_add_right ih _
+                (k + 2) / (2 * k + 2)) := add_lt_add_left ih _
        _ = (k + 1) * (∑i ∈ Finset.range k, 1 / (2 * (i:ℝ) + 2)) +
              ((∑i ∈ Finset.range k, 1 / (2 * (i:ℝ) + 2)) +
                 (k + 2) / (2 * k + 2)) := by

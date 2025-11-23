@@ -48,10 +48,10 @@ lemma prod_le_sum_pow_sum (s : Multiset ℕ) : s.prod ≤ s.sum ^ s.sum := by
     · push_neg at hi
       rw [← Nat.one_le_iff_ne_zero] at hi
       calc i * s'.prod
-          ≤ i * s'.sum ^ s'.sum := by exact mul_le_mul_left' hs' i
-        _ ≤ (i + s'.sum) * s'.sum ^ s'.sum := by exact mul_le_mul_right' (Nat.le_add_right _ _) _
-        _ ≤ (i + s'.sum) * (i + s'.sum) ^ s'.sum := by
-          exact mul_le_mul_left' (pow_le_pow_left' (Nat.le_add_left _ _) _) _
+          ≤ i * s'.sum ^ s'.sum := mul_le_mul_right hs' i
+        _ ≤ (i + s'.sum) * s'.sum ^ s'.sum := mul_le_mul_left (Nat.le_add_right _ _) _
+        _ ≤ (i + s'.sum) * (i + s'.sum) ^ s'.sum :=
+            mul_le_mul_right (pow_le_pow_left' (Nat.le_add_left _ _) _) _
         _ = (i + s'.sum) ^ (s'.sum + 1) := by exact Nat.pow_add_one'.symm
         _ ≤ (i + s'.sum) ^ (i + s'.sum) := by
           apply pow_le_pow_right'

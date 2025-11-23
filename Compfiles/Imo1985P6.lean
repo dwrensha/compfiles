@@ -862,7 +862,7 @@ lemma aux_unique_nhds
     · have hl₃: u * (2 + 1 / u) ≤ u * ↑((2:ℕ) + ⌈(1:ℝ) / u⌉₊) := by
         refine (mul_le_mul_iff_right₀ hl₂).mpr ?_
         rw [Nat.cast_add 2 _, Nat.cast_two]
-        refine add_le_add_left ?_ 2
+        refine add_le_add_right ?_ 2
         exact Nat.le_ceil (1 / u)
       refine le_trans ?_ hl₃
       rw [mul_add, mul_one_div u u, div_self (ne_of_gt hl₂)]
