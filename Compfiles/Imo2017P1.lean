@@ -601,7 +601,6 @@ problem imo2017_p1
         have hx₂: x ≡ 1 [MOD 3] ∨ x ≡ 2 [MOD 3] := by
           have hx₁₂: x % 3 = 1 ∨ x % 3 = 2 := by omega
           exact hx₁₂
-        rw [Set.not_infinite]
         obtain hx₂ | hx₂ := hx₂
         · exfalso
           have hc₆: ¬(3 : ℕ) ∣ c := by

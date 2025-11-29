@@ -162,7 +162,7 @@ lemma exists_infinite_setOf_apply_eq : ∃ m, {i | a i = m}.Infinite := by
   by_contra hi
   have hr : (Set.range a).Infinite := by
     contrapose! hi with hr
-    rw [Set.not_infinite, ← Set.finite_coe_iff] at hr
+    rw [← Set.finite_coe_iff] at hr
     obtain ⟨n, hn⟩ := Finite.exists_infinite_fiber (Set.rangeFactorization a)
     rw [Set.infinite_coe_iff, Set.preimage] at hn
     simp only [Set.mem_singleton_iff, Set.rangeFactorization, Subtype.ext_iff] at hn
