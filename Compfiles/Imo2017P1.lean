@@ -175,10 +175,10 @@ lemma aux_2_5
       · exfalso
         have hl₆: (a x l) % 3 = 1 := by
           rw [hl₅, Nat.pow_mod]
-          have hl₇: (c.sqrt + (1 : ℕ)) % (3 : ℕ) = 1 := by omega
+          have hl₇: (c.sqrt + (1 : ℕ)) % (3 : ℕ) = 1 := by cutsat
           rw [hl₇, one_pow]
           group
-        have hl₇: a x l % 3 = 0 := by omega
+        have hl₇: a x l % 3 = 0 := by cutsat
         rw [hl₆] at hl₇
         norm_num at hl₇
     · push_neg at hl₄
@@ -188,18 +188,11 @@ lemma aux_2_5
         · exfalso
           have hl₇: (a x l) % 3 = 1 := by
             rw [hl₆, Nat.pow_mod]
-            have hl₇: (c.sqrt + (2 : ℕ)) % (3 : ℕ) = 2 := by omega
+            have hl₇: (c.sqrt + (2 : ℕ)) % (3 : ℕ) = 2 := by cutsat
             rw [hl₇]
-          have hl₈: a x l % 3 = 0 := by omega
-          rw [hl₇] at hl₈
-          norm_num at hl₈
+          cutsat
       · push_neg at hl₅
-        have h₃: a x l < (c.sqrt + (3 : ℕ)) ^ (2 : ℕ) := by
-          rw [hl₃]
-          have h₃₁: a x i + (l - i) * (3 : ℕ) < a x i + (i + j - i) * 3 := by omega
-          refine lt_of_lt_of_le h₃₁ ?_
-          rw [Nat.add_sub_cancel_left, hj₀, hi₀]
-          omega
+        have h₃: a x l < (c.sqrt + (3 : ℕ)) ^ (2 : ℕ) := by cutsat
         exact h₀ (a x l) 2 hl₅ h₃
   · push_neg at hlp
     have hl₃: l = i := by exact Nat.le_antisymm hlp hl₁
@@ -223,8 +216,8 @@ lemma aux_3
     (c.sqrt + (1 : ℕ)) ^ (2 : ℕ) ∈ S ∨
     (c.sqrt + (2 : ℕ)) ^ (2 : ℕ) ∈ S ∨
     (c.sqrt + (3 : ℕ)) ^ (2 : ℕ) ∈ S := by
-  have hh₁: c % 3 = 0 ∨ c % 3 = 1 := by omega
-  have hh₂: c.sqrt % 3 = 0 ∨ c.sqrt % 3 = 1 ∨ c.sqrt % 3 = 2 := by omega
+  have hh₁: c % 3 = 0 ∨ c % 3 = 1 := by cutsat
+  have hh₂: c.sqrt % 3 = 0 ∨ c.sqrt % 3 = 1 ∨ c.sqrt % 3 = 2 := by cutsat
   have hh₃: c < (c.sqrt + (1 : ℕ)) ^ (2 : ℕ) := by exact Nat.lt_succ_sqrt' c
   have hh₅: c < (c.sqrt + (2 : ℕ)) ^ (2 : ℕ) := by
     refine lt_trans hh₃ ?_
@@ -269,7 +262,7 @@ lemma aux_3
         refine Nat.sub_mod_eq_zero_of_mod_eq ?_
         rw [hh₁]
         rw [Nat.pow_mod]
-        have h₀: (c.sqrt + (3 : ℕ)) % (3 : ℕ) = 0 := by omega
+        have h₀: (c.sqrt + (3 : ℕ)) % (3 : ℕ) = 0 := by cutsat
         rw [h₀]
     obtain hh₂ | hh₂ := hh₂
     · right; left
