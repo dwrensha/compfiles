@@ -63,10 +63,7 @@ theorem lemma1 (c1 : ℝ) :
       linarith [sq_nonneg (c1 - 1), sq_nonneg ((1 + (2 - c1) / 4) / 2 - 1 / 2), hc1]
   rcases h9 with ⟨a, ha1, ha2, h10⟩
   have h1' := h1 a ⟨by linarith, ha2⟩
-  have h5 : f ⟨a, ⟨by linarith, ha2⟩⟩ = 1 := by
-    simp only [one_div, ite_eq_right_iff, zero_ne_one, imp_false, not_le, f]
-    linarith
-  order
+  cutsat
 
 private lemma dyadicBracket
     (x : ℝ) (hx0 : 0 < x) (hxhalf : x ≤ (1 : ℝ) / 2) :
