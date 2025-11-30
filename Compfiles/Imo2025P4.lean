@@ -14,6 +14,8 @@ problem_file {
   tags := [.NumberTheory]
 }
 
+snip begin
+
 /-!
 # International Mathematical Olympiad 2025, Problem 4
 Problem text:
@@ -27,8 +29,6 @@ Proof follows https://www.youtube.com/watch?v=Kb4h_GVFT1k
 
 open Finset
 open Nat
-
-snip begin
 
 namespace Imo2025P4
 
