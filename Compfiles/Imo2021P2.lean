@@ -5,7 +5,6 @@ Authors: David Renshaw, Benpigchu
 -/
 
 import Mathlib
-import Mathlib.Tactic
 
 import ProblemExtraction
 
@@ -73,17 +72,11 @@ lemma unbounded_at_pos_infinity_add {f₁ f₂ : ℝ → ℝ}
   intro y
   rcases h₁ (y / 2) with ⟨x₁, hx₁⟩
   rcases h₂ (y / 2) with ⟨x₂, hx₂⟩
-  use (max x₁ x₂)
+  use max x₁ x₂
   intro t ht
   rw [Pi.add_apply]
   rw [(by ring : y = y / 2 + y / 2)]
-  apply add_le_add
-  · apply hx₁ t
-    apply le_trans' ht
-    apply le_max_left
-  · apply hx₂ t
-    apply le_trans' ht
-    apply le_max_right
+  grind
 
 lemma unbounded_at_pos_infinity_sum {α : Type u} (s : Finset α) (hs : s.Nonempty)
     (f' : α → ℝ → ℝ)
@@ -111,17 +104,11 @@ lemma unbounded_at_neg_infinity_add {f₁ f₂ : ℝ → ℝ}
   intro y
   rcases h₁ (y / 2) with ⟨x₁, hx₁⟩
   rcases h₂ (y / 2) with ⟨x₂, hx₂⟩
-  use (min x₁ x₂)
+  use min x₁ x₂
   intro t ht
   rw [Pi.add_apply]
   rw [(by ring : y = y / 2 + y / 2)]
-  apply add_le_add
-  · apply hx₁ t
-    apply le_trans ht
-    apply min_le_left
-  · apply hx₂ t
-    apply le_trans ht
-    apply min_le_right
+  grind
 
 lemma unbounded_at_neg_infinity_sum {α : Type u} (s : Finset α) (hs : s.Nonempty)
     (f' : α → ℝ → ℝ)
@@ -417,7 +404,7 @@ lemma unbounded_at_pos_infinity_sqrt_dist (x : ℝ) :
   intro y
   use (x + y ^ 2)
   intro t ht
-  simp
+  dsimp only
   rw [← le_sub_iff_add_le'] at ht
   apply Real.le_sqrt_of_sq_le
   rw [abs_sub_comm, abs_of_nonneg (le_trans (sq_nonneg _) ht)]
@@ -428,7 +415,7 @@ lemma unbounded_at_neg_infinity_sqrt_dist (x : ℝ) :
   intro y
   use (x - y ^ 2)
   intro t ht
-  simp
+  dsimp only
   rw [← le_sub_comm] at ht
   apply Real.le_sqrt_of_sq_le
   rw [abs_of_nonneg (le_trans (sq_nonneg _) ht)]
@@ -512,9 +499,7 @@ theorem imo2021_p2_finset_version {α : Type u} [DecidableEq α] (s : Finset α)
         ring_nf
       rw [Finset.sum_congr rfl hsum₁]
       ring_nf at ⊢ h'
-      repeat rw [add_assoc]
-      repeat rw [add_le_add_iff_left]
-      exact h'
+      exact (add_le_add_iff_left _).mpr h'
     · set s' := s \ {k, l} with hs'
       set x' := fun i ↦ x i - (x k + x l) / 2
       have hkl'' : {k, l} ⊆ s := by
