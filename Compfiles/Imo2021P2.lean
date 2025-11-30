@@ -167,7 +167,6 @@ lemma piecewise_concave_plus_sum {α : Type u} [DecidableEq α] (s : Finset α) 
 def ExistsDecreaseOn (s : Finset ℝ) (f : ℝ → ℝ) :=
   ∀ t : ℝ, ∃ x ∈ s , f x ≤ f t
 
-#check ConcaveOn.min_le_of_mem_Icc
 lemma exists_decrease_of_piecewise_concave_plus {s : Finset ℝ} {f : ℝ → ℝ}
     (h : PiecewiseConcavePlusOn s f) : ExistsDecreaseOn s f := by
   rcases h with ⟨h₁, h₂, h₃⟩
