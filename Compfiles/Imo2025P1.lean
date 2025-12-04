@@ -1186,10 +1186,7 @@ noncomputable def oneSunny : strongCoverGridConfig where
         simp only [ne_eq, neg_eq_zero, one_ne_zero, not_false_eq_true, or_self, true_and]
       norm_num
     calc
-    _ = #{line (-1) 1 0} := by
-      congr 1; ext l
-      simp only [Finset.mem_filter, Finset.mem_singleton, and_iff_left_iff_imp]
-      intro hl; rwa [hl]
+    _ = #{line (-1) 1 0} := by congr 1; simpa
     _ = 1 := by simp
   g_is_grid := by rfl
   lines_used := by

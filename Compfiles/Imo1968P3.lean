@@ -246,12 +246,8 @@ problem imo1968_p3 {n : ℕ} (a b c : ℝ) (a_ne_zero : a ≠ 0) :
     constructor
     · apply nonempty_subtype.mpr
       exact ⟨x, hx⟩
-    apply subsingleton_iff.mpr
-    intro s1 s2
-    apply SetCoe.ext
-    rw [sol_unique s1, sol_unique s2]
-    · exact Subtype.coe_prop s2
-    exact Subtype.coe_prop s1
+    rw [Set.subsingleton_coe]
+    exact Set.subsingleton_of_forall_eq x sol_unique
 
   intro h
   rcases (sol_structure_f a b c a_ne_zero).2.2 h with ⟨y1, y2, hy_ne, hy1, hy2⟩
