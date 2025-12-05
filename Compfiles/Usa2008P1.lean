@@ -62,7 +62,7 @@ lemma main_identity (n : ℕ) :
 lemma kseq_succ_eq (n : ℕ) : kseq (n + 1) = xseq n ^ 2 - xseq n + 1 := by
   unfold kseq xseq
   simp only [Nat.add_sub_cancel, if_neg (Nat.succ_ne_zero n)]
-  ring
+  ring_nf
 
 -- gcd(x² + x + 1, x² - x + 1) = 1
 lemma gcd_quad_identity (x : ℤ) :
@@ -93,16 +93,13 @@ lemma k_coprime_with_product (n : ℕ) :
   rw [main_identity, kseq_succ_eq, Nat.coprime_iff_gcd_eq_one]
   apply gcd_quad_identity_nat (xseq n)
 
-lemma kseq_dvd_product (i n : ℕ) (h : i ≤ n) :
-    kseq i ∣ ∏ j : Fin (n + 1), kseq ↑j := by
-  apply Finset.dvd_prod_of_mem (fun j : Fin (n+1) => kseq ↑j) (Finset.mem_univ ⟨i, by omega⟩)
-
 -- Show the main coprime lemma
 -- Strategy: kseq j is coprime to product k₀...k_{j-1}, and kseq i divides that product
 lemma k_are_coprime (i j : ℕ) (hij: i < j) : Nat.Coprime (kseq i) (kseq j) := by
   obtain ⟨n, rfl⟩ : ∃ n, j = n + 1 := ⟨j - 1, by omega⟩
   let P := ∏ k : Fin (n + 1), kseq ↑k  -- the product k₀ ... kₙ
-  have hdvd : kseq i ∣ P := kseq_dvd_product i n (show i ≤ n by omega)
+  have hdvd : kseq i ∣ P := by
+    apply Finset.dvd_prod_of_mem (fun j : Fin (n+1) => kseq ↑j) (Finset.mem_univ ⟨i, by omega⟩)
   have hcop : Nat.Coprime P (kseq (n + 1)) := k_coprime_with_product n
   exact Nat.Coprime.coprime_dvd_left hdvd hcop
 snip end
