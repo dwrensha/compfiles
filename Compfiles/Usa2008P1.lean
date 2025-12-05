@@ -42,38 +42,21 @@ lemma quartic_polynomial_identity (t : ℕ) :
     (t^2 + t + 1) * (t^2 - t + 1) = t^4 + t^2 + 1 := by
   zify [show t ≤ t^2 by nlinarith]
   ring
+
 lemma main_identity (n : ℕ) :
-  (∏ i : Fin (n+1), (kseq ↑i)) = (xseq n) ^ 2 +  (xseq n) + 1 := by
+  (∏ i : Fin (n+1), (kseq ↑i)) = (xseq n) ^ 2 + (xseq n) + 1 := by
   induction n with
   | zero => decide
   | succ n ih =>
       rw [Fin.prod_univ_castSucc]
       simp
       rw [ih]
-      simp only [kseq]
-      simp
+      simp [kseq]
       rw [show 2 ^ 2 ^ (n + 1) = (xseq n)^2 by unfold xseq; ring]
       rw [show xseq (n + 1) = (xseq n)^2 by unfold xseq; ring]
       rw [show 2 ^ 2 ^ n = xseq n from rfl]
       rw [quartic_polynomial_identity (xseq n)]
       ring
-
--- Mod 7 crap because of the edge case when n = 0
-lemma pow_two_pow_mod_seven (k : ℕ) : 2 ^ 2 ^ k % 7 = if k % 2 = 0 then 2 else 4 :=
-  match k with
-  | 0 => by decide
-  | 1 => by decide
-  | k + 2 => by
-    rw [show 2 ^ 2 ^ (k + 2) = (2 ^ 2 ^ k) ^ 4 by ring, Nat.pow_mod]
-    rw [pow_two_pow_mod_seven k]
-    simp
-    split_ifs <;> decide
-lemma k_nonzero_mod_7 (j : ℕ) :
-    0 < j → (2 ^ (2 ^ j) - 2 ^ (2 ^ (j - 1)) + 1) % 7 ≠ 0 := by
-  intro -- j > 0
-  have h1 := pow_two_pow_mod_seven j
-  have h2 := pow_two_pow_mod_seven (j - 1)
-  split_ifs at h1 h2 <;> omega
 
 -- kseq (n+1) = xseq(n)² - xseq(n) + 1
 lemma kseq_succ_eq (n : ℕ) : kseq (n + 1) = xseq n ^ 2 - xseq n + 1 := by
@@ -86,7 +69,7 @@ lemma gcd_quad_identity (x : ℤ) :
     Int.gcd (x^2 + x + 1) (x^2 - x + 1) = 1 := by
   -- Apply Euclidean algorithm one step
   rw [show x^2 + x + 1 = 2 * x + (x^2 - x + 1) by ring, Int.gcd_add_self_left, Int.gcd_comm]
-  -- Now we need to show x^2-x+1 is coprime to 2x
+  -- Now we need to show x^2-x+1 is coprime to 2x, so we split into two
   have h1 : Int.gcd (x^2 - x + 1) x = 1 := by simp
   have h2 : Int.gcd (x^2 - x + 1) 2 = 1 := by
     have h_odd: (x^2 - x + 1) % 2 = 1 := by
@@ -97,6 +80,7 @@ lemma gcd_quad_identity (x : ℤ) :
   rw [Int.gcd_mul_right_right_of_gcd_eq_one h2]
   exact h1
 
+-- we also need an ℕ version of the previous identity
 lemma gcd_quad_identity_nat (x : ℕ) :
     Nat.gcd (x^2 + x + 1) (x^2 - x + 1) = 1 := by
   convert gcd_quad_identity (x : ℤ)
@@ -131,19 +115,19 @@ problem usa2008_p1 (n : ℕ) (hn : 0 < n) :
 
   use fun i ↦ kseq i -- choose k
 
-  constructor -- check kₙ > 1
-  · intro i
-    apply k_greater_than_one ↑i
+  refine ⟨?_, ?_, ?_⟩
 
-  constructor -- check coprime
-  · intro i j hij
+  · intro i -- check kₙ > 1
+    exact k_greater_than_one ↑i
+
+  · intro i j hij  -- check coprime
     have hij' : (↑i : ℕ) ≠ ↑j := Fin.val_injective.ne hij
     rcases Nat.lt_or_gt_of_ne hij' with h | h
     · exact k_are_coprime ↑i ↑j h
     · exact (k_are_coprime ↑j ↑i h).symm
 
-  use xseq n -- choose m = xₙ and finish up
-  rw [main_identity n]
-  ring
+  · use xseq n -- choose m = xₙ and finish up
+    rw [main_identity n]
+    ring
 
 end Usa2008P1
