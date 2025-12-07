@@ -58,7 +58,7 @@ lemma main_identity (n : ℕ) :
       rw [quartic_polynomial_identity (xseq n)]
       ring
 
--- kseq (n+1) = xseq(n)² - xseq(n) + 1
+-- kₙ₊₁ = xₙ² - xₙ + 1
 lemma kseq_succ_eq (n : ℕ) : kseq (n + 1) = xseq n ^ 2 - xseq n + 1 := by
   unfold kseq xseq
   simp only [Nat.add_sub_cancel, if_neg (Nat.succ_ne_zero n)]
@@ -87,14 +87,14 @@ lemma gcd_quad_identity_nat (x : ℕ) :
   · have : x ≤ x^2 := by nlinarith
     norm_cast
 
--- kseq (n+1) is coprime to the product k₀...kₙ
+-- kₙ₊₁ is coprime to the product k₀...kₙ
 lemma k_coprime_with_product (n : ℕ) :
     Nat.Coprime (∏ i : Fin (n + 1), kseq ↑i) (kseq (n + 1)) := by
   rw [main_identity, kseq_succ_eq, Nat.coprime_iff_gcd_eq_one]
   apply gcd_quad_identity_nat (xseq n)
 
 -- Show the main coprime lemma
--- Strategy: kseq j is coprime to product k₀...k_{j-1}, and kseq i divides that product
+-- Strategy: kⱼ is coprime to product P := k₀...kⱼ₋₁, and kseq i divides that product
 lemma k_are_coprime (i j : ℕ) (hij: i < j) : Nat.Coprime (kseq i) (kseq j) := by
   obtain ⟨n, rfl⟩ : ∃ n, j = n + 1 := ⟨j - 1, by omega⟩
   let P := ∏ k : Fin (n + 1), kseq ↑k  -- the product k₀ ... kₙ
@@ -102,6 +102,7 @@ lemma k_are_coprime (i j : ℕ) (hij: i < j) : Nat.Coprime (kseq i) (kseq j) := 
     apply Finset.dvd_prod_of_mem (fun j : Fin (n+1) => kseq ↑j) (Finset.mem_univ ⟨i, by omega⟩)
   have hcop : Nat.Coprime P (kseq (n + 1)) := k_coprime_with_product n
   exact Nat.Coprime.coprime_dvd_left hdvd hcop
+
 snip end
 
 problem usa2008_p1 (n : ℕ) (hn : 0 < n) :
