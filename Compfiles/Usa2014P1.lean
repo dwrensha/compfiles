@@ -62,22 +62,17 @@ lemma vieta (x: Fin 4 → ℝ) (a : ℝ) (b : ℝ) (c : ℝ) (d : ℝ) :
 lemma main_bound {x} (hx : Conditions x) : Objective x >= 16 := by
   rcases hx with ⟨_a, b, _c, d, hbd, hpoly⟩
   -- we'll just define a and c to be the Vieta ones we want
-  -- since it's not actually needed to tie them to coeffs pof polynomial
+  -- since it's not actually needed to tie them to coeffs of polynomial
   let a := (x 0) + (x 1) + (x 2) + (x 3)
   let c := (x 0) * (x 1) * (x 2) + (x 1) * (x 2) * (x 3) + (x 2) * (x 3) * (x 0) + (x 3) * (x 0) * (x 1)
   apply vieta at hpoly -- replace hpoly with the Vieta relations
-
   have key_identity : Objective x = (b-d-1)^2 + (a-c)^2 := by
     unfold Objective
     rw [hpoly.1, hpoly.2] -- apply Vieta for b and d
     rw [Fin.prod_univ_four] -- thank god
-    -- in the informal solution, this is proved using a trick with i = sqrt(-1)
-    -- but in Lean let's just use ring
-    ring
+    ring -- in the informal solution, this is proved using a trick with i = sqrt(-1)
   rw [key_identity]
-  have h1 : (b-d-1)^2 ≥ 16 := by nlinarith
-  have h2 : (a-c)^2 ≥ 0 := by nlinarith
-  linarith -- add h1 and h2
+  linarith [show (b-d-1)^2 ≥ 16 by nlinarith, show (a-c)^2 ≥ 0 by nlinarith]
 snip end
 
 noncomputable determine solution : ℝ := 16
