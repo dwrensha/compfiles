@@ -24,7 +24,7 @@ open Polynomial
 
 noncomputable def Objective (x : Fin 4 → ℝ) : ℝ := ∏ i, ((x i)^2 + 1)
 
-def Condition (x : Fin 4 → ℝ) : Prop :=
+def Conditions (x : Fin 4 → ℝ) : Prop :=
   ∃ a b c d : ℝ, (b - d ≥ 5) ∧ (
     (X - C (x 0)) * (X - C (x 1)) * (X - C (x 2)) * (X - C (x 3))
     = X^4 + C a * X^3 + C b * X^2 + C c * X + C d)
@@ -34,10 +34,19 @@ snip begin
 -- This follows the solution in
 -- https://web.evanchen.cc/exams/USAMO-2014-notes.pdf
 
+lemma construction_for_16 : exists x, Conditions x ∧ Objective x = 16 := by
+  sorry
+
+lemma main_bound {x} (hx : Conditions x) : Objective x >= 16 := by
+  sorry
+
 snip end
 
 noncomputable determine solution : ℝ := 16
 
-problem usa2014_p1 : IsLeast (Objective '' { x | Condition x } ) solution := by
-  sorry
+problem usa2014_p1 : IsLeast (Objective '' { x | Conditions x } ) solution := by
+  constructor
+  · simp [construction_for_16]
+  · rintro _ ⟨x, hcond, rfl⟩
+    exact main_bound hcond
 end Usa2014P1
