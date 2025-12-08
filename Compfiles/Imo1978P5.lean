@@ -190,9 +190,10 @@ lemma aux_1
       rw [hf₄.2, ← hf₄.1]
       exact hb₁
     rw [List.getD_eq_getElem _ 0 ha₂, List.getD_eq_getElem _ 0 hb₂]
-    have hso₄: List.Sorted (fun x₁ x₂ => x₁ < x₂) ((image f s).sort (fun x₁ x₂ => x₁ ≤ x₂)) := by
-      exact Finset.sort_sorted_lt (image f s)
-    refine List.Sorted.rel_get_of_lt hso₄ ?_
+    refine List.Pairwise.rel_get_of_lt ?_ ?_
+    · have := Finset.sortedLT_sort (image f s)
+      rw [List.sortedLT_iff_pairwise] at this
+      exact this
     simp only [Fin.mk_lt_mk]
     apply Finset.mem_Icc.mp at ha₀
     apply Finset.mem_Icc.mp at hb₀
