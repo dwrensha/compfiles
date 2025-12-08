@@ -211,9 +211,7 @@ lemma mylemma_h8
     have hf₁: f < 2 := by
       exact Nat.lt_of_mul_lt_mul_right hf₀
     interval_cases f
-    · simp at hf
-      exfalso
-      linarith [hf]
+    · lia
     · rfl
   rw [hfeq1, one_mul] at hf
   exact hf

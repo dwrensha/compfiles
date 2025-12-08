@@ -54,8 +54,8 @@ problem usa1972_p1 (a b c : ℕ) :
   let t := c.factorization p
   repeat rw [factorization_mul (by simp; tauto) (by simp; tauto)]
   simp
-  repeat rw [factorization_lcm (by simp; tauto) (by simp; tauto)]
-  repeat rw [factorization_gcd (by simp; tauto) (by simp; tauto)]
+  repeat rw [factorization_lcm (by simp; lia) (by simp; tauto)]
+  repeat rw [factorization_gcd (by simp; lia) (by simp; tauto)]
   simp
   grind
 

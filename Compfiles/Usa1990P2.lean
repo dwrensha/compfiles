@@ -52,8 +52,8 @@ problem usa1990_p2 (n : ℕ) (x : ℝ) : x ∈ solution_set n ↔ f n x = 2 * x 
              fun _ ↦ by linarith only [h1]⟩
     · norm_num
     · exact ⟨fun _ ↦ by linarith only [h3],
-             fun h1' ↦ by linarith,
-             fun h1' ↦ by linarith⟩
+             fun h1' ↦ by lia,
+             fun h1' ↦ by lia⟩
 
   | succ n ih =>
     intro x hx5

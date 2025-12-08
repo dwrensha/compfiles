@@ -258,9 +258,7 @@ lemma imo_1990_p3_forward
     have hd : d = 1 := by
       by_contra! hd₁
       obtain hd₂ | hd₂ := lt_or_gt_of_ne hd₁
-      · interval_cases d
-        rw [hn₁, zero_mul] at hn₀
-        bound [hn₀]
+      · lia
       · let sq : Finset ℕ := d.primeFactors
         have hsq₁: sq.Nonempty := Nat.nonempty_primeFactors.mpr hd₂
         let q : ℕ := Finset.min' sq hsq₁
