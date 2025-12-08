@@ -13,9 +13,9 @@ problem_file { tags := [.Algebra] }
 /-!
 # USA Mathematical Olympiad 2014, Problem 1
 
-Let $a$, $b$, $c$, $d$ be real numbers such that $b-d \ge 5$ and all zeros
-$x_1$, $x_2$, $x_3$, and $x_4$ of the polynomial $P(x)=x^4+ax^3+bx^2+cx+d$ are real.
-Find the smallest value the product $(x_1^2+1)(x_2^2+1)(x_3^2+1)(x_4^2+1)$ can take.
+Let a, b, c, d be real numbers such that b-d ≥ 5 and all zeros
+x₁, x₂, x₃, x₄ of x⁴+ax³+bx²+cx+d are real.
+Find the smallest value the product $(x₁²+1)(x₂²+1)(x₃²+1)(x₄²+1)$ can take.
 -/
 
 namespace Usa2014P1
