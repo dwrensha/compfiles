@@ -49,9 +49,10 @@ lemma main_identity (n : ℕ) :
   | zero => decide
   | succ n ih =>
       rw [Fin.prod_univ_castSucc]
-      simp
+      simp only [Fin.coe_castSucc, Fin.val_last]
       rw [ih]
-      simp [kseq]
+      simp only [kseq, Nat.add_eq_zero_iff, one_ne_zero, and_false, ↓reduceIte,
+        add_tsub_cancel_right]
       rw [show 2 ^ 2 ^ (n + 1) = (xseq n)^2 by unfold xseq; ring]
       rw [show xseq (n + 1) = (xseq n)^2 by unfold xseq; ring]
       rw [show 2 ^ 2 ^ n = xseq n from rfl]
@@ -74,7 +75,7 @@ lemma gcd_quad_identity (x : ℤ) :
   have h2 : Int.gcd (x^2 - x + 1) 2 = 1 := by
     have h_odd: (x^2 - x + 1) % 2 = 1 := by
       rcases Int.even_or_odd x with ⟨k, hk⟩ | ⟨k, hk⟩ <;>
-      · simp [hk]; ring_nf; omega
+      · subst hk; ring_nf; omega
     rw [← Int.gcd_emod, h_odd]
     decide
   rw [Int.gcd_mul_right_right_of_gcd_eq_one h2]
@@ -105,7 +106,7 @@ lemma k_are_coprime (i j : ℕ) (hij: i < j) : Nat.Coprime (kseq i) (kseq j) := 
 
 snip end
 
-problem usa2008_p1 (n : ℕ) (hn : 0 < n) :
+problem usa2008_p1 (n : ℕ) (_hn : 0 < n) :
     ∃ k : Fin (n + 1) → ℕ,
       (∀ i, 1 < k i) ∧
       (∀ i j, i ≠ j → Nat.Coprime (k i) (k j)) ∧
