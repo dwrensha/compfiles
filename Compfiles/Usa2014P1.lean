@@ -51,16 +51,25 @@ lemma construction_for_16 : exists x, Conditions x ∧ Objective x = 16 := by
     simp only [one_pow, Finset.prod_const, Finset.card_univ, Fintype.card_fin]
     norm_num -- (1+1)^4 = 16
 
+-- Vieta formulas for b and d (we don't actually need them for a and c)
+lemma vieta (x: Fin 4 → ℝ) (a : ℝ) (b : ℝ) (c : ℝ) (d : ℝ) :
+    (hpoly : (X - C (x 0)) * (X - C (x 1)) * (X - C (x 2)) * (X - C (x 3))
+    = X^4 + C a * X^3 + C b * X^2 + C c * X + C d) →
+    b = (x 0) * (x 1) + (x 0) * (x 2) + (x 0) * (x 3) + (x 1) * (x 2)
+    + (x 1) * (x 3) + (x 2) * (x 3) ∧ d = (x 0) * (x 1) * (x 2) * (x 3) := by
+  sorry
 --
 lemma main_bound {x} (hx : Conditions x) : Objective x >= 16 := by
-  rcases hx with ⟨a, b, c, d, hbd, hpoly⟩
+  rcases hx with ⟨_a, b, _c, d, hbd, hpoly⟩
+  -- we'll just define a and c to be the Vieta ones we want
+  -- since it's not actually needed to tie them to coeffs pof polynomial
+  let a := (x 0) + (x 1) + (x 2) + (x 3)
+  let c := (x 0) * (x 1) * (x 2) + (x 1) * (x 2) * (x 3) + (x 2) * (x 3) * (x 0) + (x 3) * (x 0) * (x 1)
+  apply vieta at hpoly -- replace hpoly with the Vieta relations
+
   have key_identity : Objective x = (b-d-1)^2 + (a-c)^2 := by
     unfold Objective
-    have ha : a = (x 0) + (x 1) + (x 2) + (x 3) := by sorry
-    have hb : b = (x 0) * (x 1) + (x 0) * (x 2) + (x 0) * (x 3) + (x 1) * (x 2) + (x 1) * (x 3) + (x 2) * (x 3) := by sorry
-    have hc : c = (x 0) * (x 1) * (x 2) + (x 1) * (x 2) * (x 3) + (x 2) * (x 3) * (x 0) + (x 3) * (x 0) * (x 1) := by sorry
-    have hd : d = (x 0) * (x 1) * (x 2) * (x 3) := by sorry
-    rw [ha, hb, hc, hd]
+    rw [hpoly.1, hpoly.2] -- apply Vieta for b and d
     rw [Fin.prod_univ_four] -- thank god
     -- in the informal solution, this is proved using a trick with i = sqrt(-1)
     -- but in Lean let's just use ring
