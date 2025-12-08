@@ -35,7 +35,20 @@ snip begin
 -- https://web.evanchen.cc/exams/USAMO-2014-notes.pdf
 
 lemma construction_for_16 : exists x, Conditions x ∧ Objective x = 16 := by
-  sorry
+  use fun _ => 1 -- Set every x_i to 1
+  constructor
+  · unfold Conditions
+    use -4, 6, -4, 1 -- a=4, b=6, c=4, d=1
+    constructor
+    · norm_num -- Checks b-d=5
+    · simp only [map_one]
+      -- i can't figure out how to kill the C's without actually specifying them like this
+      rw [show (C (-4 : ℝ) : ℝ[X]) = -4 by norm_cast]
+      rw [show (C (6 : ℝ) : ℝ[X]) = 6 by norm_cast]
+      ring
+  · unfold Objective
+    simp only [one_pow, Finset.prod_const, Finset.card_univ, Fintype.card_fin]
+    norm_num -- (1+1)^4 = 16
 
 lemma main_bound {x} (hx : Conditions x) : Objective x >= 16 := by
   sorry
