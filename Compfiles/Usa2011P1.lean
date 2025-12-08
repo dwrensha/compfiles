@@ -26,6 +26,14 @@ variable {a b c : ℝ}
 
 snip begin
 
+lemma bound (ha : 0 < a) (hb : 0 < b)
+    (h : a ^ 2 + b ^ 2 + c ^ 2 + (a + b + c) ^ 2 ≤ 4) :
+    (a * b + 1) / (a + b)^2 >= 1 / 2 * (1 + (c + a) * (c + b) / (a + b)^2) := by
+  rw [show 1 / 2 * (1 + (c + a) * (c + b) / (a + b)^2)
+      = (a * b + (a ^ 2 + b ^ 2 + c ^ 2 + (a + b + c) ^ 2) / 4) / (a + b)^2 by field_simp ; ring]
+  gcongr
+  linarith
+
 snip end
 
 problem usa2011_p1 (ha : 0 < a) (hb : 0 < b) (hc : 0 < c)
