@@ -52,13 +52,21 @@ lemma construction_for_16 : exists x, Conditions x ∧ Objective x = 16 := by
     norm_num -- (1+1)^4 = 16
 
 -- Vieta formulas for b and d (we don't actually need them for a and c)
-lemma vieta (x: Fin 4 → ℝ) (a : ℝ) (b : ℝ) (c : ℝ) (d : ℝ) :
+lemma vieta (x: Fin 4 → ℝ) (a : ℝ) (b : ℝ) (c : ℝ) (d : ℝ)
     (hpoly : (X - C (x 0)) * (X - C (x 1)) * (X - C (x 2)) * (X - C (x 3))
-    = X^4 + C a * X^3 + C b * X^2 + C c * X + C d) →
+    = X^4 + C a * X^3 + C b * X^2 + C c * X + C d) :
     b = (x 0) * (x 1) + (x 0) * (x 2) + (x 0) * (x 3) + (x 1) * (x 2)
     + (x 1) * (x 3) + (x 2) * (x 3) ∧ d = (x 0) * (x 1) * (x 2) * (x 3) := by
-  sorry
---
+  constructor
+  · sorry
+  · have h := congr_arg (Polynomial.eval 0) hpoly
+    --  the output of simp? here is impressive
+    simp only [Fin.isValue, eval_mul, eval_sub, eval_X, eval_C, zero_sub, mul_neg, neg_mul,
+      neg_neg, eval_add, eval_pow, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true,
+      zero_pow, mul_zero, add_zero, zero_add] at h
+    rw [h]
+
+-- Now use Vieta relation to prove the key bound
 lemma main_bound {x} (hx : Conditions x) : Objective x >= 16 := by
   rcases hx with ⟨_a, b, _c, d, hbd, hpoly⟩
   -- we'll just define a and c to be the Vieta ones we want
