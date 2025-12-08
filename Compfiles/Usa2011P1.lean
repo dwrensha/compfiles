@@ -57,12 +57,12 @@ lemma AMGM {x y z : ℝ} (hx : 0 < x) (hy : 0 < y) (hz : 0 < z) :
     (show 1/3 + 1/3 + 1/3 = 1 by norm_num)
   rw [cube_root hx hy, cube_root hy hz, cube_root hz hx] at amgm
   linarith
+
 snip end
 
 problem usa2011_p1 (ha : 0 < a) (hb : 0 < b) (hc : 0 < c)
     (h : a ^ 2 + b ^ 2 + c ^ 2 + (a + b + c) ^ 2 ≤ 4) :
     (a * b + 1) / (a + b) ^ 2 + (b * c + 1) / (b + c) ^ 2 + (c * a + 1) / (c + a) ^ 2 ≥ 3 := by
-
   -- Apply AM-GM on a+b, b+c, c+a
   let S := (c + a) * (c + b) / (a + b)^2
       + (a + b) * (a + c) / (b + c)^2
@@ -70,7 +70,6 @@ problem usa2011_p1 (ha : 0 < a) (hb : 0 < b) (hc : 0 < c)
   have hS : S ≥ 3 := by
     convert AMGM (add_pos ha hb) (add_pos hb hc) (add_pos hc ha) using 1
     ring
-
   calc
     _ ≥ _ := by
       have b1 := bound ha hb h
