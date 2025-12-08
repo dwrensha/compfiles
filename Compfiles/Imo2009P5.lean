@@ -60,7 +60,7 @@ theorem final_solution_nat (f : ℕ → ℕ) :
     ∧ (∀ x y : ℕ, x ≤ f y + f (y + f x))
     ∧ (∀ x y : ℕ, f y ≤ f (y + f x) + x))
       ↔ f = λ x ↦ x := by
-  refine ⟨?_, by cutsat⟩
+  refine ⟨?_, by lia⟩
 
   ---- For the harder case, first prove that `f(0) = 0`
   rintro ⟨h, h0, h1⟩

@@ -31,7 +31,7 @@ lemma lemma3 : ∑ i ∈ Finset.range 1319, (-(1:ℚ))^i / (i + 1) =
            (Finset.range 1319) (Even ·) (λ i ↦ (1:ℚ) / (i + 1))
   rw [←h2]
   let g : ℕ ↪ ℕ :=
-    ⟨fun x ↦ 2 * x + 1, by intro a b hab; cutsat⟩
+    ⟨fun x ↦ 2 * x + 1, by intro a b hab; lia⟩
 
   have h4 : (Finset.range 659).map g =
         (Finset.range 1319).filter (fun x ↦ ¬Even x) := by
@@ -104,7 +104,7 @@ lemma lemma4 (n m : ℕ) (f : ℕ → ℚ) :
   rw [←Finset.sum_range_reflect (fun x ↦ f (n + (m + x)))]
   refine Finset.sum_congr rfl fun x hx => ?_
   rw [Finset.mem_range] at hx
-  cutsat
+  lia
 
 lemma lemma9' (i : ℕ) (hi : i ∈ Finset.range 330) :
      (((∏ j ∈ Finset.range 330,

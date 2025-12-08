@@ -107,7 +107,7 @@ lemma dvd_lemma (a b c : ℕ ) (h : c ≠ 0) : a ≤ b → b ∣ c → c < 2 * a
   match k with
   | 0 => simp at hk; exfalso; exact h hk
   | 1 => simp [hk]
-  | k + 2 => cutsat
+  | k + 2 => lia
 
 lemma zero_of_le_sub_pos {a b : ℕ} : b ≠ 0 → a ≤ a - b → a = 0 := by omega
 
@@ -152,7 +152,7 @@ problem imo1987_p6
       _ = _:= hN0
       _ ≤  3*r^2 + 6*r + 2 + (r+s)*(r+s+1) := by nlinarith only [hN0, ieq4, hs, hksr]
       _ = 4*r^2 + 2* r*s + s^2 + 7*r+s+2 := by ring_nf
-      _ < 4*r^2 +4*s^2 +8*r*s+4*r+4*s+1 := by cutsat
+      _ < 4*r^2 +4*s^2 +8*r*s+4*r+4*s+1 := by lia
       _ = _ := by ring
     rw [<-hksr] at hN1
 

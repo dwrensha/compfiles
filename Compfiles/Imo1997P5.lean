@@ -139,7 +139,7 @@ lemma mylemma_2y2_lt_x
     (hxy : y < x) :
     2 * y ^ 2 < x := by
   by_cases hy1: y = 1
-  · cutsat
+  · lia
   · have hy: 1 < y := by omega
     clear hy1
     have h₂: (↑y:ℝ) ^ 2 < ↑x := by

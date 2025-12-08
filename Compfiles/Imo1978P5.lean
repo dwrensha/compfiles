@@ -197,7 +197,7 @@ lemma aux_1
     simp only [Fin.mk_lt_mk]
     apply Finset.mem_Icc.mp at ha₀
     apply Finset.mem_Icc.mp at hb₀
-    cutsat
+    lia
   have hρ: ∃ ρ: Equiv.Perm ℕ, (∀ a ∈ Icc 1 n, f₂ a = f₃ (ρ a)) ∧ ∀ a ∉ Icc 1 n, ρ a = a := by
     let so : Finset ℕ := image f (Icc 1 n)
     let lo_sorted : List ℕ := so.sort (fun x₁ x₂ => x₁ ≤ x₂)
@@ -412,7 +412,7 @@ lemma aux_1
           rw [← List.getD_eq_getElem sl 0 hy₄, g₀]
           rw [List.getD_eq_getElem (List.range' 1 n 1) 0 hy₃]
           rw [List.getElem_range' hy₃]
-          cutsat
+          lia
         · intro j hj₀
           rw [Nat.sub_add_cancel hy₀.1]
           apply Finset.mem_Icc.mpr at hy₀

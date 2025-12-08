@@ -89,7 +89,7 @@ lemma lemma3 {m : ℕ} (hm : (m % 10) + 1 < 10) :
   · simp [h]
   nth_rw 2 [Nat.digits_eq_cons_digits_div (by norm_num) (by omega)]
   simp only [List.sum_cons]
-  cutsat
+  lia
 
 theorem lemma6 {b : ℕ} {l1 l2 : List ℕ} (hg : List.Forall₂ (· ≥ ·) l1 l2) :
     Nat.ofDigits b l1 ≥ Nat.ofDigits b l2 := by

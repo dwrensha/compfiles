@@ -188,7 +188,7 @@ problem imo2025_p3 :
               rw [g2'] at hp1
               exact hp1
             have g3 := Int.eq_zero_of_dvd_of_nonneg_of_lt g1 g2 r9
-            have g4 : (f b : ℤ) = (b : ℤ) := by cutsat
+            have g4 : (f b : ℤ) = (b : ℤ) := by lia
             simp at g4
             rw [g4] at hb
             simp at hb
@@ -413,7 +413,7 @@ problem imo2025_p3 :
           have g2 : (a:ℕ)>0 := by
             simp
           have r3 := Nat.le_of_dvd g2 r2
-          cutsat
+          lia
 
         have h12 : ∀ (a : ℕ+), Odd (a:ℕ) → f a = 1 := by
           intro a ha
@@ -519,7 +519,7 @@ problem imo2025_p3 :
               simp
               have y2 : (2*(x:ℤ))^4 = 2^4*(x:ℤ)^4 := by
                 grind
-              cutsat
+              lia
         · by_cases r2: Odd (a:ℕ)
           · have g1 : f a = 1 := by grind
             rw [g1]
@@ -537,7 +537,7 @@ problem imo2025_p3 :
                 decide
               exact Int.dvd_sub y1 y2
             · by_cases t2: Odd (b:ℕ)
-              · have g2 : f b = 1 := by cutsat
+              · have g2 : f b = 1 := by lia
                 rw [g1,g2]
                 simp
                 have y1 : Odd (b:ℤ) := (odd_coe_nat _).mpr t2
@@ -548,7 +548,7 @@ problem imo2025_p3 :
                   exact y2
                 exact even_iff_two_dvd.mp y4
 
-              · have g2 : f b = 2 := by cutsat
+              · have g2 : f b = 2 := by lia
                 rw [g1,g2]
                 simp
                 rw [Nat.not_odd_iff_even] at t2

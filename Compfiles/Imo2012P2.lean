@@ -71,7 +71,7 @@ lemma aux₁ {n : ℕ} (hn : 2 ≤ n) : (n : ℝ) ^ n = ∏ i ∈ Finset.Icc 2 n
   induction' n, hn using Nat.le_induction with n' hn' h'
   · norm_num
   · nth_rw 3 [← Nat.succ_eq_add_one]
-    rw [← Nat.succ_eq_succ, ← Finset.insert_Icc_right_eq_Icc_succ (by cutsat : 2 ≤ n'.succ)]
+    rw [← Nat.succ_eq_succ, ← Finset.insert_Icc_right_eq_Icc_succ (by lia : 2 ≤ n'.succ)]
     rw [Finset.prod_insert (by simp), Nat.succ_eq_succ, Nat.succ_eq_add_one, ← h']
     push_cast
     field_simp
@@ -82,26 +82,26 @@ lemma aux₂ {i : ℕ} {x : ℝ} (hi : 2 ≤ i) (hx : 0 < x) :
     (i : ℝ) ^ i * (x ^ (1 / (i : ℝ)) * (1 / ((i : ℝ) - 1)) ^ (((i : ℝ) - 1) / (i : ℝ))) ^ i := by
   have hpos₁ : 0 < (i : ℝ) := by
     rw [Nat.cast_pos]
-    cutsat
+    lia
   have hpos₂ : 0 < (i : ℝ) - 1 := by
-    rw [← Nat.cast_one, ← Nat.cast_sub (by cutsat), Nat.cast_pos]
-    cutsat
+    rw [← Nat.cast_one, ← Nat.cast_sub (by lia), Nat.cast_pos]
+    lia
   repeat rw [← Real.rpow_natCast]
   rw [Real.mul_rpow (by positivity) (by positivity), ← Real.rpow_mul (by positivity)]
   rw [← Real.rpow_mul (by positivity), Real.div_rpow (by positivity) (by positivity)]
   rw [Real.one_rpow]
   repeat rw [div_mul_cancel₀ _ (by positivity)]
   field_simp
-  rw [Real.rpow_one, mul_comm, Nat.cast_sub (by cutsat), Nat.cast_one]
+  rw [Real.rpow_one, mul_comm, Nat.cast_sub (by lia), Nat.cast_one]
 
 lemma aux₃ {i : ℕ} {x : ℝ} (hi : 2 ≤ i) (hx : 0 < x) : (1 + x) ^ i =
     (i : ℝ) ^ i * ((1 / (i : ℝ)) * x + (((i : ℝ) - 1) / (i : ℝ)) * (1 / ((i : ℝ) - 1))) ^ i := by
   have hpos₁ : 0 < (i : ℝ) := by
     rw [Nat.cast_pos]
-    cutsat
+    lia
   have hpos₂ : 0 < (i : ℝ) - 1 := by
-    rw [← Nat.cast_one, ← Nat.cast_sub (by cutsat), Nat.cast_pos]
-    cutsat
+    rw [← Nat.cast_one, ← Nat.cast_sub (by lia), Nat.cast_pos]
+    lia
   repeat rw [← Real.rpow_natCast]
   rw [← Real.mul_rpow (by positivity) (by positivity)]
   field_simp
@@ -111,12 +111,12 @@ lemma aux₄ {i : ℕ} {x : ℝ} (hi : 2 ≤ i) (hx : 0 < x) :
     (i : ℝ) ^ i / ((i : ℝ) - 1) ^ (i - 1) * x ≤ (1 + x) ^ i := by
   have hpos₁ : 0 < (i : ℝ) := by
       rw [Nat.cast_pos]
-      cutsat
+      lia
   have hpos₂ : 0 < (i : ℝ) - 1 := by
-    rw [← Nat.cast_one, ← Nat.cast_sub (by cutsat), Nat.cast_pos]
-    cutsat
+    rw [← Nat.cast_one, ← Nat.cast_sub (by lia), Nat.cast_pos]
+    lia
   rw [aux₂ hi hx, aux₃ hi hx, mul_le_mul_iff_right₀ (by positivity)]
-  rw [pow_le_pow_iff_left₀ (by positivity) (by positivity) (by cutsat)]
+  rw [pow_le_pow_iff_left₀ (by positivity) (by positivity) (by lia)]
   apply Real.geom_mean_le_arith_mean2_weighted (by positivity) (by positivity) (by positivity) (by positivity)
   field
 
@@ -124,10 +124,10 @@ lemma aux₅ {i : ℕ} {x : ℝ} (hi : 2 ≤ i) (hx : 0 < x) :
     (i : ℝ) ^ i / ((i : ℝ) - 1) ^ (i - 1) * x = (1 + x) ^ i ↔ x = 1 / ((i : ℝ) - 1) := by
   have hpos₁ : 0 < (i : ℝ) := by
       rw [Nat.cast_pos]
-      cutsat
+      lia
   have hpos₂ : 0 < (i : ℝ) - 1 := by
-    rw [← Nat.cast_one, ← Nat.cast_sub (by cutsat), Nat.cast_pos]
-    cutsat
+    rw [← Nat.cast_one, ← Nat.cast_sub (by lia), Nat.cast_pos]
+    lia
   rw [aux₂ hi hx, aux₃ hi hx, mul_left_cancel_iff_of_pos (by positivity)]
   repeat rw [← Real.rpow_natCast]
   rw [Real.rpow_left_inj (by positivity) (by positivity) (by positivity)]
@@ -138,13 +138,13 @@ lemma aux₆ {n : ℕ} (hn : 2 ≤ n) : ∏ x ∈ Finset.Icc 2 n, ((x : ℝ) - 1
   induction' n, hn using Nat.le_induction with n' hn' h'
   · norm_num
   · nth_rw 1 [← Nat.succ_eq_add_one]
-    rw [← Nat.succ_eq_succ, ← Finset.insert_Icc_right_eq_Icc_succ (by cutsat : 2 ≤ n'.succ)]
+    rw [← Nat.succ_eq_succ, ← Finset.insert_Icc_right_eq_Icc_succ (by lia : 2 ≤ n'.succ)]
     rw [Finset.prod_insert (by simp), Nat.succ_eq_succ, Nat.succ_eq_add_one, h']
     push_cast
     field_simp
     ring_nf
     norm_cast
-    rw [Nat.mul_factorial_pred (by cutsat: _)]
+    rw [Nat.mul_factorial_pred (by lia: _)]
 
 snip end
 
@@ -169,7 +169,7 @@ problem imo2012_p2 (n : ℕ) (hn : 3 ≤ n) (a : Finset.Icc 2 n → ℝ)
     intro n a' hn ha'prod
     rw [Finset.prod_mul_distrib, ha'prod, mul_one]
     exact aux₁ hn
-  rw [hnn n a' (by cutsat) aprod]
+  rw [hnn n a' (by lia) aprod]
   have ha'pos : ∀ i : ℕ, 0 < a' i := by
     intro i
     simp only [a']
@@ -182,10 +182,10 @@ problem imo2012_p2 (n : ℕ) (hn : 3 ≤ n) (a : Finset.Icc 2 n → ℝ)
     intro i hi
     rw [Finset.mem_Icc] at hi
     rw [mul_pos_iff_of_pos_right (ha'pos i)]
-    rw [div_pos_iff_of_pos_left (pow_pos (Nat.cast_pos.mpr (by cutsat)) _)]
+    rw [div_pos_iff_of_pos_left (pow_pos (Nat.cast_pos.mpr (by lia)) _)]
     apply pow_pos
-    rw [← Nat.cast_one, ← Nat.cast_sub (by cutsat), Nat.cast_pos]
-    cutsat
+    rw [← Nat.cast_one, ← Nat.cast_sub (by lia), Nat.cast_pos]
+    lia
   have hnn'' : ∀ i ∈ Finset.Icc 2 n, 0 ≤ (i : ℝ) ^ i / ((i : ℝ) - 1) ^ (i - 1) * a' i := by
     intro i hi
     apply le_of_lt
@@ -206,13 +206,13 @@ problem imo2012_p2 (n : ℕ) (hn : 3 ≤ n) (a : Finset.Icc 2 n → ℝ)
     exact h' i hi
   rw [Finset.prod_congr (by rfl) ha', Finset.prod_div_distrib, Finset.prod_eq_one (by simp)]
   apply ne_of_lt
-  rw [aux₆ (by cutsat : 2 ≤ n), div_lt_comm₀ (Nat.cast_pos.mpr (Nat.factorial_pos _)) (by norm_num)]
+  rw [aux₆ (by lia : 2 ≤ n), div_lt_comm₀ (Nat.cast_pos.mpr (Nat.factorial_pos _)) (by norm_num)]
   rw [div_one, ← Nat.cast_one, Nat.cast_lt]
   apply lt_of_le_of_ne (Nat.one_le_iff_ne_zero.mpr (Nat.ne_zero_iff_zero_lt.mpr (Nat.factorial_pos _)))
   symm
   intro h''
   rw [Nat.factorial_eq_one] at h''
-  cutsat
+  lia
 
 
 end Imo2012P2

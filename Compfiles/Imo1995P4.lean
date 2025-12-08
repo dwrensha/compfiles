@@ -47,9 +47,9 @@ lemma aux₂ {x : ℕ → ℝ} {n : ℕ} (hn : 1 ≤ n) (hx₁ : ∀ (i : ℕ), 
       field
   · have h'' : (∀ (i : ℕ), 0 < i ∧ i ≤ n' → x (i - 1) + 2 / x (i - 1) = 2 * x i + 1 / x i) := by
       intro i hi
-      exact hx₂ i (by cutsat:_)
+      exact hx₂ i (by lia:_)
     have h' := hn'₂ h''
-    have h'n' := hx₂ (n' + 1) (by cutsat:_)
+    have h'n' := hx₂ (n' + 1) (by lia:_)
     simp [-one_div] at h'n'
     rw [aux₁ (hx₁ n') (hx₁ (n' + 1))] at h'n'
     rcases h' with (⟨k, ⟨hk₁, hk₂, hk₃, hk₄⟩⟩|⟨k, ⟨hk₁, hk₂, hk₃, hk₄⟩⟩)
@@ -57,34 +57,34 @@ lemma aux₂ {x : ℕ → ℝ} {n : ℕ} (hn : 1 ≤ n) (hx₁ : ∀ (i : ℕ), 
       · right
         use -k
         constructorm* _ ∧ _
-        · cutsat
-        · cutsat
-        · cutsat
+        · lia
+        · lia
+        · lia
         · rw [h'n', hk₄, zpow_neg]
           field
       · left
         use k - 1
         constructorm* _ ∧ _
-        · cutsat
-        · cutsat
-        · cutsat
+        · lia
+        · lia
+        · lia
         · rw [h'n', hk₄, zpow_sub₀ (by norm_num:_)]
           field
     · rcases  h'n' with (h'n'|h'n')
       · left
         use -k
         constructorm* _ ∧ _
-        · cutsat
-        · cutsat
-        · cutsat
+        · lia
+        · lia
+        · lia
         · rw [h'n', hk₄, zpow_neg]
           field
       · right
         use k - 1
         constructorm* _ ∧ _
-        · cutsat
-        · cutsat
-        · cutsat
+        · lia
+        · lia
+        · lia
         · rw [h'n', hk₄, zpow_sub₀ (by norm_num:_)]
           field
 
@@ -102,27 +102,27 @@ theorem generalized (n : ℕ) (hn : 0 < n) (hn' : ¬2 ∣ n) : IsGreatest { x₀
       rw [aux₁ (Real.rpow_pos_of_pos (by norm_num:_) _) (Real.rpow_pos_of_pos (by norm_num:_) _)]
       by_cases hi' : i < n
       · right
-        have hi'' : i - 1 < n := by cutsat
+        have hi'' : i - 1 < n := by lia
         rw [if_pos hi', if_pos hi'']
-        rw [Nat.cast_sub (by cutsat:_), Nat.cast_one, ← sub_add, Real.rpow_add_one (by norm_num:_)]
+        rw [Nat.cast_sub (by lia:_), Nat.cast_one, ← sub_add, Real.rpow_add_one (by norm_num:_)]
         field
       · left
-        have hi'' : i - 1 < n := by cutsat
-        have hi''' : i = n := by cutsat
+        have hi'' : i - 1 < n := by lia
+        have hi''' : i = n := by lia
         rw [if_neg hi', if_pos hi'', hi''']
-        rw [Nat.cast_sub (by cutsat:_), Nat.cast_one, one_div, ← Real.rpow_neg (by norm_num:_)]
+        rw [Nat.cast_sub (by lia:_), Nat.cast_one, one_div, ← Real.rpow_neg (by norm_num:_)]
         congr
         ring
   · intro x₀ hx₀
     rcases hx₀ with ⟨x, ⟨hx₁, hx₂, hx₃, hx₄⟩⟩
-    rcases aux₂ (by cutsat:_) hx₂ hx₄ with (⟨k, ⟨hk₁, hk₂, hk₃, hk₄⟩⟩|⟨k, ⟨hk₁, hk₂, hk₃, hk₄⟩⟩)
+    rcases aux₂ (by lia:_) hx₂ hx₄ with (⟨k, ⟨hk₁, hk₂, hk₃, hk₄⟩⟩|⟨k, ⟨hk₁, hk₂, hk₃, hk₄⟩⟩)
     · rw [← hx₃] at hk₄
       symm at hk₄
       rw [mul_left_eq_self₀] at hk₄
       rcases hk₄ with (h'|h')
       · rw [zpow_eq_one_iff_right₀ (by norm_num:_) (by norm_num:_)] at h'
         contrapose! h'
-        cutsat
+        lia
       · contrapose! h'
         exact ne_of_gt (hx₂ 0)
     · rw [← hx₃] at hk₄

@@ -1088,7 +1088,7 @@ lemma coverGridNoEdgeConfig.cover_no_edge_4_impossible (C : coverGridNoEdgeConfi
     rw [← hiFunc1 2]
     have := (C.find_line_edge_correct 2 (iFunc 2)).right
     dsimp only [coverGridConfig.edgePoint] at this
-    have hr : C.n - 1 - ↑(iFunc 2) + 1 = C.n - ↑(iFunc 2) := by cutsat
+    have hr : C.n - 1 - ↑(iFunc 2) + 1 = C.n - ↑(iFunc 2) := by lia
     rw [hr]
     exact this
   have := C.lines_rank
@@ -1135,11 +1135,11 @@ lemma coverGridConfig.any_cover (C : coverGridConfig) :
       · obtain ⟨d, hd⟩ := hE
         have := C.reduce_count d hd
         have := ih (reduce C d hd)
-        cutsat
+        lia
       · push_neg at hE
         let C' : coverGridNoEdgeConfig := {C with hE := hE, hn := by omega}
         have := C'.cover_edge
-        cutsat
+        lia
 
 /-- A `coverGridConfig` with the additional requirements every line in `lines` goes through at
 least one point in `g`. This is used to inductively construct covers of `grid n` with exactly
@@ -1176,7 +1176,7 @@ noncomputable def oneSunny : strongCoverGridConfig where
   lines_cover := by
     dsimp only [grid, Fin.isValue, Nat.reduceAdd, Set.mem_setOf_eq]
     intro x ⟨a, b, ha, hb, ha0, hb0, hab⟩
-    obtain ⟨rfl, rfl⟩ : a = 1 ∧ b = 1 := by cutsat
+    obtain ⟨rfl, rfl⟩ : a = 1 ∧ b = 1 := by lia
     simp only [line, neg_mul, one_mul, add_zero, Finset.mem_singleton, exists_eq_left]
     rw [← SetLike.mem_coe, SetLike.coe]
     simp [AffineSubspace.instSetLike, ha, hb]

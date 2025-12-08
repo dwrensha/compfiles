@@ -190,7 +190,7 @@ theorem constant_descent_vieta_jumping (x y : ℕ) {claim : Prop} {H : ℕ → �
     rw [H_symm, H_quad]
     simpa using h_root
   · -- For the second condition, we note that it suffices to check that c ≠ m_x.
-    cutsat
+    lia
 
 snip end
 
@@ -203,7 +203,7 @@ problem imo1988_p6 {a b : ℕ} (h : a * b + 1 ∣ a ^ 2 + b ^ 2) :
       hk (fun x => k * x) (fun x => x * x - k) fun _ _ => False <;>
     clear hk a b
   · -- We will now show that the fibers of the solution set are described by a quadratic equation.
-    cutsat
+    lia
   · -- Show that the solution set is symmetric in a and b.
     intro x y
     simp [add_comm (x * x), mul_comm x]
@@ -259,7 +259,7 @@ example {a b : ℕ} (h : a * b ∣ a ^ 2 + b ^ 2 + 1) : 3 * a * b = a ^ 2 + b ^ 
   apply constant_descent_vieta_jumping a b (H := fun a b => a * a + b * b + 1 = a * b * k)
       hk (fun x => k * x) (fun x => x * x + 1) fun x _ => x ≤ 1 <;>
     clear hk a b
-  · cutsat
+  · lia
   · -- Show that the solution set is symmetric in a and b.
     intro x y; ring_nf -- Porting note: Originally, `cc` solved the entire goal
   · -- Show that the claim is true if b = 0.

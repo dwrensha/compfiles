@@ -95,7 +95,7 @@ problem imo1977_p4 (f : ℝ → ℝ) (a b A B : ℝ)
     have h₁₂ : A * Real.cos (2 * (θ / 2)) + B * Real.sin (2 * (θ / 2)) > 1 := by
       have h₁₃ : Real.cos (2 * (θ / 2)) = Real.cos θ := by ring_nf
       have h₁₄ : Real.sin (2 * (θ / 2)) = Real.sin θ := by ring_nf
-      cutsat
+      lia
     have h₁₃ : A * Real.cos (2 * (θ / 2)) + B * Real.sin (2 * (θ / 2)) ≤ 1 := by
       have h₁₄ : f (θ / 2) + f (θ / 2 + Real.pi) ≥ 0 := by
         have h₁₅ : f (θ / 2) ≥ 0 := h₁ (θ / 2)
@@ -200,7 +200,7 @@ problem imo1977_p4 (f : ℝ → ℝ) (a b A B : ℝ)
         have h₉ : C ^ 2 + D ^ 2 > 4 := hC_sq_add_D_sq_gt_4
         rw [←hR_sq, show 4 = (2:ℝ)^2 by norm_num] at h₉
         exact (sq_lt_sq₀ (by positivity) (by positivity)).mp h₉
-      cutsat
+      lia
 
     have h₇ : C * Real.cos θ - D * Real.sin θ ≤ 2 := by
       have h₈ : f θ + f (θ + Real.pi / 2) ≥ 0 := by

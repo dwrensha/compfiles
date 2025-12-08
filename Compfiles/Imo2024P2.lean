@@ -44,7 +44,7 @@ lemma dvd_pow_iff_of_dvd_sub {a b d n : ℕ} {z : ℤ} (ha : a.Coprime d)
     (hd : (φ d : ℤ) ∣ (n : ℤ) - z) :
     d ∣ a ^ n + b ↔ (((ZMod.unitOfCoprime _ ha) ^ z : (ZMod d)ˣ) : ZMod d) + b = 0 := by
   obtain ⟨k, hk⟩ := hd
-  rw [show z = n + (-k) * φ d by cutsat]
+  rw [show z = n + (-k) * φ d by lia]
   rw [zpow_add, zpow_mul', ←ZMod.natCast_eq_zero_iff]
   simp
 

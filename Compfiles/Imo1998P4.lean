@@ -41,7 +41,7 @@ problem imo1998_p4 (a b : ℤ) :
       rcases hk with ⟨k, hk⟩
       use k
       constructorm* _ ∧ _
-      · cutsat
+      · lia
       · grind
       · grind
     · left
@@ -51,11 +51,11 @@ problem imo1998_p4 (a b : ℤ) :
         rw [← lt_self_iff_false (-(a * 7) + b ^ 2)]
         calc -(a * 7) + b ^ 2
             < b ^ 2 := (add_lt_iff_neg_right _).mpr (neg_lt_zero.mpr (by positivity:_))
-          _ ≤ a * b ^ 2 := le_mul_of_one_le_left (by positivity:_) (by cutsat:_)
+          _ ≤ a * b ^ 2 := le_mul_of_one_le_left (by positivity:_) (by lia:_)
           _ < 7 + a * b ^ 2 := (lt_add_iff_pos_left _).mpr (by norm_num:_)
           _ < 7 + a * b ^ 2 + b := (lt_add_iff_pos_right _).mpr hb
           _ ≤ -(a * 7) + b ^ 2 := hab''
-      · have hab''' : 0 < -(-(a * 7) + b ^ 2) := by cutsat
+      · have hab''' : 0 < -(-(a * 7) + b ^ 2) := by lia
         rw [← dvd_neg] at h'
         have hab'' := Int.le_of_dvd hab''' h'
         have hb' : b < 3 := by
@@ -73,13 +73,13 @@ problem imo1998_p4 (a b : ℤ) :
           rw [← @Int.dvd_add_mul_self _ _ 7] at h''
           ring_nf at h''
           have ha'' := Int.le_of_dvd (by norm_num:_) h''
-          have ha''' : a ≤ 49 := by cutsat
+          have ha''' : a ≤ 49 := by lia
           interval_cases a <;> norm_num at h'' <;> norm_num
         · have h'' := dvd_mul_of_dvd_left h' (-4)
           rw [← @Int.dvd_add_mul_self _ _ 7] at h''
           ring_nf at h''
           have ha'' := Int.le_of_dvd (by norm_num:_) h''
-          have ha''' : a ≤ 17 := by cutsat
+          have ha''' : a ≤ 17 := by lia
           interval_cases a <;> norm_num at h''
   · intro h
     simp at h

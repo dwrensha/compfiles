@@ -250,7 +250,7 @@ problem imo2012_p4 (f : ℤ → ℤ) :
                   case pos.zero => simp [even]
                   simp only [Nat.cast_add, Nat.cast_one, add_sub_cancel_right]
                   apply ih
-                  · cutsat
+                  · lia
                   · simp
 
                 simp at h; simp [h, even]
@@ -264,7 +264,7 @@ problem imo2012_p4 (f : ℤ → ℤ) :
               rcases this with goal | «f(x+1)=(x-3)²*f1»; case inl => exact goal
               have := «f(x+1)=(x-3)²*f1»
               rw [«f(x+1)=(x-1)²*f1», mul_eq_mul_right_iff, pow_eq_pow_iff_cases] at this
-              cutsat
+              lia
 
           right
           use f 1

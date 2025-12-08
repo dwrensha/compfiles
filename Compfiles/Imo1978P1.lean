@@ -147,6 +147,6 @@ problem imo1978_p1 (m n : ℕ)
   rw [h12] at h11; clear h12
 
   simp only [Finset.mem_insert, Finset.mem_singleton] at h11
-  cutsat
+  lia
 
 end Imo1978P1

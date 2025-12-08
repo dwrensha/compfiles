@@ -25,7 +25,7 @@ namespace Imo2003P2
 snip begin
 
 lemma aux₁ {n : ℤ} (hn : 0 < n) : 1 < 8 * n ^ 3 := by
-  suffices 1 ≤ n ^ 3 by cutsat
+  suffices 1 ≤ n ^ 3 by lia
   exact one_le_pow₀ hn
 
 snip end
@@ -74,7 +74,7 @@ problem imo2003_p2 (a b : ℤ) :
     · left
       rw [ha'0, mul_zero] at haa'₁
       symm at haa'₁
-      rw [mul_eq_zero_iff_right (by cutsat : _), sub_eq_zero] at haa'₁
+      rw [mul_eq_zero_iff_right (by lia : _), sub_eq_zero] at haa'₁
       rw [pow_eq_one_iff_of_ne_zero (by norm_num : _)] at haa'₁
       norm_num at haa'₁
       rw [ha'0, haa'₁] at haa'₀
@@ -95,7 +95,7 @@ problem imo2003_p2 (a b : ℤ) :
           ring
         rw [add_comm] at haa'₀
         rw [mul_comm] at haa'₁
-        have h := this a' ha'_pos ha'bc ha' a habc' haa'₀ haa'₁ (by cutsat : _) ha (by cutsat : _)
+        have h := this a' ha'_pos ha'bc ha' a habc' haa'₀ haa'₁ (by lia : _) ha (by lia : _)
         rcases h with (ha'b|ha'b) <;> rcases ha'b with ⟨n, hn, hna', hnb⟩ <;> rw [hna', hnb] at haa'₀ ha'
         · right
           use n, hn
@@ -152,11 +152,11 @@ problem imo2003_p2 (a b : ℤ) :
         apply ne_of_gt
         calc a ^ 2
             < b ^ 2 := by
-              rw [pow_lt_pow_iff_left₀ (by cutsat : _) (by cutsat : _) (by norm_num : _)]
+              rw [pow_lt_pow_iff_left₀ (by lia : _) (by lia : _) (by norm_num : _)]
               exact hab
           _ ≤ c * b ^ 2 := by
               rw [le_mul_iff_one_le_left (by positivity : _)]
-              cutsat
+              lia
           _ < c * (2 * a * b ^ 2 - b ^ 3 + 1) := Int.mul_lt_mul_of_pos_left h'' hc
 
 

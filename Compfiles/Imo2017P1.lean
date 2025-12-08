@@ -175,10 +175,10 @@ lemma aux_2_5
       · exfalso
         have hl₆: (a x l) % 3 = 1 := by
           rw [hl₅, Nat.pow_mod]
-          have hl₇: (c.sqrt + (1 : ℕ)) % (3 : ℕ) = 1 := by cutsat
+          have hl₇: (c.sqrt + (1 : ℕ)) % (3 : ℕ) = 1 := by lia
           rw [hl₇, one_pow]
           group
-        have hl₇: a x l % 3 = 0 := by cutsat
+        have hl₇: a x l % 3 = 0 := by lia
         rw [hl₆] at hl₇
         norm_num at hl₇
     · push_neg at hl₄
@@ -188,11 +188,11 @@ lemma aux_2_5
         · exfalso
           have hl₇: (a x l) % 3 = 1 := by
             rw [hl₆, Nat.pow_mod]
-            have hl₇: (c.sqrt + (2 : ℕ)) % (3 : ℕ) = 2 := by cutsat
+            have hl₇: (c.sqrt + (2 : ℕ)) % (3 : ℕ) = 2 := by lia
             rw [hl₇]
-          cutsat
+          lia
       · push_neg at hl₅
-        have h₃: a x l < (c.sqrt + (3 : ℕ)) ^ (2 : ℕ) := by cutsat
+        have h₃: a x l < (c.sqrt + (3 : ℕ)) ^ (2 : ℕ) := by lia
         exact h₀ (a x l) 2 hl₅ h₃
   · push_neg at hlp
     have hl₃: l = i := by exact Nat.le_antisymm hlp hl₁
@@ -216,8 +216,8 @@ lemma aux_3
     (c.sqrt + (1 : ℕ)) ^ (2 : ℕ) ∈ S ∨
     (c.sqrt + (2 : ℕ)) ^ (2 : ℕ) ∈ S ∨
     (c.sqrt + (3 : ℕ)) ^ (2 : ℕ) ∈ S := by
-  have hh₁: c % 3 = 0 ∨ c % 3 = 1 := by cutsat
-  have hh₂: c.sqrt % 3 = 0 ∨ c.sqrt % 3 = 1 ∨ c.sqrt % 3 = 2 := by cutsat
+  have hh₁: c % 3 = 0 ∨ c % 3 = 1 := by lia
+  have hh₂: c.sqrt % 3 = 0 ∨ c.sqrt % 3 = 1 ∨ c.sqrt % 3 = 2 := by lia
   have hh₃: c < (c.sqrt + (1 : ℕ)) ^ (2 : ℕ) := by exact Nat.lt_succ_sqrt' c
   have hh₅: c < (c.sqrt + (2 : ℕ)) ^ (2 : ℕ) := by
     refine lt_trans hh₃ ?_
@@ -262,7 +262,7 @@ lemma aux_3
         refine Nat.sub_mod_eq_zero_of_mod_eq ?_
         rw [hh₁]
         rw [Nat.pow_mod]
-        have h₀: (c.sqrt + (3 : ℕ)) % (3 : ℕ) = 0 := by cutsat
+        have h₀: (c.sqrt + (3 : ℕ)) % (3 : ℕ) = 0 := by lia
         rw [h₀]
     obtain hh₂ | hh₂ := hh₂
     · right; left
@@ -383,8 +383,8 @@ theorem aux_4
             refine hh₀ (d - 1) ?_
             exact Nat.le_sub_one_of_lt hd₃
           have hd₆ := ha₁ x (d - 1) hx₀
-          cutsat
-        · cutsat
+          lia
+        · lia
       rw [h₂ j hj₀, h₂ k hk₀]
       simp
       exact Nat.sub_lt_sub_right hj₀ hj₁
@@ -441,13 +441,13 @@ theorem aux_5
       exact Nat.sub_one_lt_of_lt hd₁
     have hd₅₀ := ha₁ x (d - 1) hx₀
     by_cases hd₄: IsSquare (a x (d - 1))
-    · have hd₅: a x d = (a x (d - 1)).sqrt := by cutsat
+    · have hd₅: a x d = (a x (d - 1)).sqrt := by lia
       obtain ⟨t, ht₀⟩ := hd₄
       have ht₁: (t ^ (2 : ℕ)).sqrt = t := by exact Nat.sqrt_eq' t
       rw [hd₅, ht₀, ← pow_two, ht₁]
       rw [ht₀, ← pow_two] at hd₃
       exact Nat.Prime.dvd_of_dvd_pow Nat.prime_three hd₃
-    · cutsat
+    · lia
   · push_neg at hd₁
     interval_cases d
     rw [ha₀]
@@ -627,13 +627,13 @@ problem imo2017_p1
                     exact Nat.sqrt_eq r
                   rw [← hr₁]
                   exact hd₄
-                · cutsat
+                · lia
               · have hd₂: d = 0 := Nat.eq_zero_of_not_pos hd₁
                 rw [hd₂, ha₀]
                 exact hA₀
             rw [← hi₀]
             exact hh₀ i
-          cutsat
+          lia
         · refine aux_4 a ha₁ x hx₀ ?_ A
           use 0
           rw [ha₀]

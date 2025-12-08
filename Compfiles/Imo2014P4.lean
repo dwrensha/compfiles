@@ -64,7 +64,7 @@ lemma eq_max_of_max_ne_top
     contrapose! h
     apply Submodule.eq_top_of_finrank_eq
     rw [planeFiniteDim.out, h]
-  cutsat
+  lia
 
 lemma affineSpan_pair_finrank {A B : EuclideanSpace ℝ (Fin 2)}
   (hAB : A ≠ B): Module.finrank ℝ (affineSpan ℝ {A, B}).direction = 1 := by

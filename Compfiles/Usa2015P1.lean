@@ -101,8 +101,8 @@ problem usa2015_p1 (x y : ℤ) :
       rw [sq_eq_sq_iff_eq_or_eq_neg] at ht7
       simp only [Set.mem_union, Set.mem_setOf_eq]
       obtain h | h := ht7
-      · left; use n; cutsat
-      · right; use n; cutsat
+      · left; use n; lia
+      · right; use n; lia
 
 
 end Usa2015P1

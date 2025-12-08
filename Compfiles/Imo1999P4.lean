@@ -55,7 +55,7 @@ lemma aux₁ {a p n: ℕ} (hp : p.Prime) (hp' : 2 < p) (hn :0 < n)
     rw [Nat.Prime.coprime_iff_not_dvd hp]
     intro h'
     rw [← Int.natCast_dvd_natCast, ← ZMod.intCast_zmod_eq_zero_iff_dvd, Int.cast_natCast] at h'
-    rw [h', zero_pow (by cutsat:_), zero_add] at hpa
+    rw [h', zero_pow (by lia:_), zero_add] at hpa
     norm_num at hpa
   have hnq_gcd : gcd (2 * n) (p - 1) ∣ 2 := by
     rw [gcd_comm]
@@ -77,7 +77,7 @@ lemma aux₁ {a p n: ℕ} (hp : p.Prime) (hp' : 2 < p) (hn :0 < n)
     rw [← Int.cast_two, ZMod.intCast_zmod_eq_zero_iff_dvd, Int.natCast_dvd] at hpa
     norm_num at hpa
     apply Nat.le_of_dvd (by norm_num:_) at hpa
-    cutsat
+    lia
   · rw [← Int.natCast_dvd_natCast, ← ZMod.intCast_zmod_eq_zero_iff_dvd]
     rw [Int.cast_natCast, Nat.cast_add, Nat.cast_one, ha_cast]
 
@@ -88,8 +88,8 @@ lemma aux₂ {p n: ℕ} (hp : p.Prime) (hpn : ∀ q : ℕ, q.Prime → q ∣ n �
   exfalso
   have hp'p := hpn p' hp'₁ hp'₃
   have hp' := hp.two_le
-  apply Nat.le_of_dvd (by cutsat:_) at hp'₂
-  cutsat
+  apply Nat.le_of_dvd (by lia:_) at hp'₂
+  lia
 
 snip end
 
@@ -132,7 +132,7 @@ problem imo1999_p4 (n p : ℕ) :
         haveI: Fact (Nat.Prime q) := { out := hq₁ }
         have hp' := hp.two_le
         have hq' := hq₁.two_le
-        have h' : n ∣ (p - 1) ^ n + 1 := dvd_trans (dvd_pow_self n (by cutsat:_)) h
+        have h' : n ∣ (p - 1) ^ n + 1 := dvd_trans (dvd_pow_self n (by lia:_)) h
         have hq'' : q ∣ (p - 1) ^ n + 1 := dvd_trans hq₂ h'
         have hp_odd : Odd p := Nat.Prime.odd_of_ne_two hp hp2
         have hn_odd : Odd n := by
@@ -141,40 +141,40 @@ problem imo1999_p4 (n p : ℕ) :
           apply Dvd.dvd.even h' at hn'
           rw [Nat.even_add'] at hn'
           norm_num at hn'
-          rw [Nat.odd_pow_iff (by cutsat:_), Nat.odd_sub' (by cutsat:_)] at hn'
+          rw [Nat.odd_pow_iff (by lia:_), Nat.odd_sub' (by lia:_)] at hn'
           norm_num at hn'
           contrapose! hp_odd
           exact Nat.not_odd_iff_even.mpr hn'
         have hq2 : ¬q = 2 := by
           push_neg
           exact Odd.ne_two_of_dvd_nat hn_odd hq₂
-        have hqp := aux₁ hq₁ (by cutsat:_) (by cutsat:_) (aux₂ hq₁ hq₃) hq''
-        rw [Nat.sub_add_cancel (by cutsat:_), Nat.prime_dvd_prime_iff_eq hq₁ hp] at hqp
+        have hqp := aux₁ hq₁ (by lia:_) (by lia:_) (aux₂ hq₁ hq₃) hq''
+        rw [Nat.sub_add_cancel (by lia:_), Nat.prime_dvd_prime_iff_eq hq₁ hp] at hqp
         rw [hqp] at hq₂
         have hp_padic_le := padicValNat_le_padicValNat_of_dvd (by positivity:_) hp h
-        rw [padicValNat.pow (p - 1) (by cutsat:_)] at hp_padic_le
+        rw [padicValNat.pow (p - 1) (by lia:_)] at hp_padic_le
         nth_rw 3 [← one_pow n] at hp_padic_le
         have hlte₁ : p ∣ (p - 1) + 1 := by
-          rw [Nat.sub_add_cancel (by cutsat:_)]
+          rw [Nat.sub_add_cancel (by lia:_)]
         have hlte₂ : ¬p ∣ (p - 1) := by
           intro h'p
-          apply Nat.le_of_dvd (by cutsat:_) at h'p
-          cutsat
+          apply Nat.le_of_dvd (by lia:_) at h'p
+          lia
         rw [padicValNat.pow_add_pow hp_odd hlte₁ hlte₂ hn_odd] at hp_padic_le
-        rw [Nat.sub_add_cancel (by cutsat:_), padicValNat_self] at hp_padic_le
-        have hpadic_pn := one_le_padicValNat_of_dvd (by cutsat:_) hq₂
+        rw [Nat.sub_add_cancel (by lia:_), padicValNat_self] at hp_padic_le
+        have hpadic_pn := one_le_padicValNat_of_dvd (by lia:_) hq₂
         have hp3' : p ≤ 3 := by
           contrapose! hp_padic_le
           calc 1 + padicValNat p n
               ≤ padicValNat p n + padicValNat p n := add_le_add_left hpadic_pn _
             _ = 2 * padicValNat p n := by ring
-            _ < (p - 1) * padicValNat p n := (mul_lt_mul_iff_left₀ (by cutsat:_)).mpr (by cutsat:_)
-        have hp3 : p = 3 := by cutsat
+            _ < (p - 1) * padicValNat p n := (mul_lt_mul_iff_left₀ (by lia:_)).mpr (by lia:_)
+        have hp3 : p = 3 := by lia
         rw [hp3] at h hp_padic_le hq₂
         norm_num at h hp_padic_le
         -- The rest is just IMO1990P3.
         -- If we added `import Compfiles.Imo1990P3` at beginning of the file,
-        -- We can get `n = 3` simply by `have hn3 := Imo1990P3.imo_1990_p3_forward n (by cutsat:_) h`.
+        -- We can get `n = 3` simply by `have hn3 := Imo1990P3.imo_1990_p3_forward n (by lia:_) h`.
         -- We will use another approach here, since we can use the aux lemma again
         -- (and we don't want to depend on other problem files)
         rcases exists_eq_mul_left_of_dvd hq₂ with ⟨m, hm⟩
@@ -184,20 +184,20 @@ problem imo1999_p4 (n p : ℕ) :
         · rw [hp3, hm, hm1]
           norm_num
         · have hmn : m ∣ n := Dvd.intro 3 (id (Eq.symm hm))
-          rw [hm, padicValNat.mul (by cutsat:_) (by norm_num:_), padicValNat_self] at hp_padic_le
+          rw [hm, padicValNat.mul (by lia:_) (by norm_num:_), padicValNat_self] at hp_padic_le
           rcases exists_least_prime_factor hm1 with ⟨qq, ⟨hqq₁, hqq₂, hqq₃⟩⟩
-          have hqq'' : qq ∣ 8 ^ m + 1 := dvd_trans (dvd_mul_of_dvd_left (dvd_pow hqq₂ (by cutsat:_)) 9) h
+          have hqq'' : qq ∣ 8 ^ m + 1 := dvd_trans (dvd_mul_of_dvd_left (dvd_pow hqq₂ (by lia:_)) 9) h
           have hq1' := hqq₁.two_le
           have hqq2 : ¬qq = 2 := by
             push_neg
             exact Odd.ne_two_of_dvd_nat hn_odd (dvd_trans hqq₂ hmn)
-          have hq'p := aux₁ hqq₁ (by cutsat:_) (by cutsat:_) (aux₂ hqq₁ hqq₃) hqq''
+          have hq'p := aux₁ hqq₁ (by lia:_) (by lia:_) (aux₂ hqq₁ hqq₃) hqq''
           norm_num at hq'p
           have hqq_le := Nat.le_of_dvd (by norm_num:_) hq'p
           have hqq3 : qq = 3 := by
             interval_cases qq <;> norm_num at hq'p <;> norm_num at hqq₁ ; norm_num
           rw [hqq3] at hqq₂
-          have hpadic_3m := one_le_padicValNat_of_dvd (by cutsat:_) hqq₂
+          have hpadic_3m := one_le_padicValNat_of_dvd (by lia:_) hqq₂
           rw [Nat.one_le_iff_ne_zero, Nat.ne_zero_iff_zero_lt] at hpadic_3m
           contrapose! hp_padic_le
           ring_nf

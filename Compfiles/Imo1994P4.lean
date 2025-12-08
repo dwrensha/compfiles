@@ -26,13 +26,13 @@ snip begin
 
 lemma nonneg_mul_eq_two {a b : ℤ} (ha : 0 ≤ a) (hb : 0 ≤ b)
   (hab: a * b = 2) : (a = 1 ∧ b = 2) ∨ (a = 2 ∧ b = 1) := by
-  have ha_pos : 0 < a := by cutsat
+  have ha_pos : 0 < a := by lia
   have hb' : b ≤ 2 := by
     rw [← hab]
     calc b
         = 1 * b := by rw [one_mul]
-      _ ≤ a * b := by apply mul_le_mul <;> cutsat
-  interval_cases b <;> cutsat
+      _ ≤ a * b := by apply mul_le_mul <;> lia
+  interval_cases b <;> lia
 
 lemma aux₁ {a b c d : ℤ}
   (ha : 0 < a) (hb : 0 < b) (hc : 0 < c) (hd : 0 < d)
@@ -42,8 +42,8 @@ lemma aux₁ {a b c d : ℤ}
   rw [one_mul] at h₁
   rw [h₁] at h₂
   have hcd : (c - 1) * (d - 1) = 2 := by grind
-  have hcd' := by apply nonneg_mul_eq_two _ _ hcd <;> cutsat
-  cutsat
+  have hcd' := by apply nonneg_mul_eq_two _ _ hcd <;> lia
+  lia
 
 lemma aux₂ {a b c d : ℤ}
   (ha : 2 ≤ a) (hb : 2 ≤ b) (hc : 2 ≤ c) (hd : 2 ≤ d)
@@ -55,14 +55,14 @@ lemma aux₂ {a b c d : ℤ}
       apply le_add_of_nonneg_right
       rw [sub_nonneg]
       nth_rw 1 [← one_mul 1]
-      apply mul_le_mul <;> cutsat
+      apply mul_le_mul <;> lia
     _ = c * d := by ring
     _ = a + b := h₂.symm
     _ < a + b + ((a - 1) * (b - 1) - 1) := by
       apply lt_add_of_pos_right
       apply Int.lt_of_le_sub_one
       rw [sub_nonneg, le_sub_iff_add_le, ← mul_one (1 + 1)]
-      apply mul_le_mul <;> cutsat
+      apply mul_le_mul <;> lia
     _ = a * b := by ring
 
 snip end
@@ -90,14 +90,14 @@ problem imo1994_p4 (m n : ℤ) :
       rw [sub_nonneg]
       calc 1
           = 1 * 1 := by norm_num
-        _ ≤ m * n := by apply mul_le_mul <;> cutsat
+        _ ≤ m * n := by apply mul_le_mul <;> lia
     have hk' : k + 1 = n * (k * m - n * n) := by grind
     set s := k * m - n * n with hs
-    have hs_pos' : 0 < n * s := by cutsat
+    have hs_pos' : 0 < n * s := by lia
     have hs_pos : 0 < s := pos_of_mul_pos_right hs_pos' (le_of_lt hn)
     have hs' : m + s = n * (s * m - n) := by grind
     set t := s * m - n with ht
-    have ht_pos' : 0 < n * t := by cutsat
+    have ht_pos' : 0 < n * t := by lia
     have ht_pos : 0 < t := pos_of_mul_pos_right ht_pos' (le_of_lt hn)
     have ht' : m * s = n + t := by grind
     by_cases hmnst : m = 1 ∨ n = 1 ∨ s = 1 ∨ t = 1
@@ -115,7 +115,7 @@ problem imo1994_p4 (m n : ℤ) :
         have h := aux₁ ht_pos hn hm hs_pos hs'.symm ht'.symm hmnst
         rcases h with (h'|h') <;> rcases h' with ⟨_, hn', hm', _⟩ <;> rw [hn', hm'] <;> simp
     · push_neg at hmnst
-      have hmnst'' : 2 ≤ m ∧ 2 ≤ n ∧ 2 ≤ s ∧ 2 ≤ t := by cutsat
+      have hmnst'' : 2 ≤ m ∧ 2 ≤ n ∧ 2 ≤ s ∧ 2 ≤ t := by lia
       rcases hmnst'' with ⟨h'm, h'n, h's, h't⟩
       by_cases hmnst' : m ≠ 2 ∨ n ≠ 2
       · apply False.elim

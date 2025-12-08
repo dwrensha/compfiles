@@ -55,15 +55,15 @@ lemma pow_of_two_dvd_odd_mul_self_sub_1 {m : ℕ} {a : ℤ}
       rw [Int.not_even_iff_odd]
       exact Even.add_one hk'
     calc 2 ^ m
-        ≤ 4 * k := Int.le_of_dvd (by cutsat) h'
-      _ ≤ 2 * (2 * k + 1) + 2 := by cutsat
+        ≤ 4 * k := Int.le_of_dvd (by lia) h'
+      _ ≤ 2 * (2 * k + 1) + 2 := by lia
   · rw [(by ring : (2 * k + 1) ^ 2 - 1 = (4 * k + 4) * k)] at h
     have h' : 2 ^ m ∣4 * k + 4 := by
       apply IsCoprime.dvd_of_dvd_mul_right _ h
       exact pow_of_two_coprime_odd m hk'
     calc 2 ^ m
-        ≤ 4 * k + 4 := Int.le_of_dvd (by cutsat) h'
-      _ ≤ 2 * (2 * k + 1) + 2 := by cutsat
+        ≤ 4 * k + 4 := Int.le_of_dvd (by lia) h'
+      _ ≤ 2 * (2 * k + 1) + 2 := by lia
 
 lemma dvd_pow_of_two {m : ℕ} {a : ℤ}
     (ha' : 0 ≤ a) (h : a ∣ 2 ^ m) : ∃ k : ℕ, a = 2 ^ k := by
@@ -89,12 +89,12 @@ lemma odd_dvd_pow_of_two {m : ℕ} {a : ℤ}
 lemma sq_pow_of_two_sub_two {m₁ m₂ : ℕ} {a : ℤ} (ha : 2 ≤ a)
     (h₁ : a ∣ 2 ^ m₁) (h₂ : a ^ 2 - 2 ∣ 2 ^ m₂)
     : a = 2 := by
-  apply dvd_pow_of_two (by cutsat) at h₁
+  apply dvd_pow_of_two (by lia) at h₁
   have ha' : 0 ≤ a ^ 2 - 2 := by
     rw [sub_nonneg]
     calc 2
         ≤ 2 ^ 2 := by norm_num
-      _ ≤ a ^ 2 := (pow_le_pow_iff_left₀ (by norm_num) (by cutsat) (by norm_num)).mpr ha
+      _ ≤ a ^ 2 := (pow_le_pow_iff_left₀ (by norm_num) (by lia) (by norm_num)).mpr ha
   apply dvd_pow_of_two ha' at h₂
   rcases h₁ with ⟨k₁, hk₁⟩
   rcases h₂ with ⟨k₂, hk₂⟩
@@ -150,7 +150,7 @@ problem imo2015_p2 (a b c : ℤ) :
       is_power_of_two (b * c - a) ∧
       is_power_of_two (c * a - b) := by
   wlog hbc : c ≤ b generalizing a b c
-  · have h := this a c b (by cutsat)
+  · have h := this a c b (by lia)
     nth_rw 2 [← and_assoc]
     nth_rw 3 [and_comm]
     nth_rw 3 [← and_rotate]
@@ -158,13 +158,13 @@ problem imo2015_p2 (a b c : ℤ) :
     rw [mul_comm c a, mul_comm b c, mul_comm a b, and_assoc, ← h, swap_bc_solution]
   wlog hab : b ≤ a generalizing a b c
   · by_cases! hac : a ≤ c
-    · have h := this b c a (by cutsat) (by cutsat)
+    · have h := this b c a (by lia) (by lia)
       nth_rw 2 [← and_assoc]
       nth_rw 1 [← and_assoc]
       nth_rw 2 [and_rotate]
       nth_rw 3 [and_rotate]
       rw [and_assoc, and_assoc, ← h, swap_ab_solution, swap_bc_solution]
-    · have h := this b a c (by cutsat) (by cutsat)
+    · have h := this b a c (by lia) (by lia)
       nth_rw 1 [← and_assoc]
       nth_rw 2 [and_comm]
       nth_rw 5 [and_comm]
@@ -198,7 +198,7 @@ problem imo2015_p2 (a b c : ℤ) :
       rw [← pow_le_pow_iff_right₀ (by norm_num : 1 < (2 : ℤ))]
       rw [← hbca, ← hcab, sub_le_sub_iff]
       rw [(by ring : b * c + b = b * (c + 1)), (by ring : c * a + a = a * (c + 1))]
-      rw [mul_le_mul_iff_left₀ (by cutsat)]
+      rw [mul_le_mul_iff_left₀ (by lia)]
       exact hab
     have h_cab_dvd_abc : c * a - b ∣ a * b - c := by
       rw [habc, hcab]
@@ -206,7 +206,7 @@ problem imo2015_p2 (a b c : ℤ) :
       rw [← pow_le_pow_iff_right₀ (by norm_num : 1 < (2 : ℤ))]
       rw [← habc, ← hcab, sub_le_sub_iff]
       rw [(by ring : c * a + c = c * (a + 1)), (by ring : a * b + b = b * (a + 1))]
-      rw [mul_le_mul_iff_left₀ (by cutsat)]
+      rw [mul_le_mul_iff_left₀ (by lia)]
       exact hbc
     have h_bca_dvd_abc : b * c - a ∣ a * b - c := dvd_trans h_bca_dvd_cab h_cab_dvd_abc
     have h₁ := dvd_add (h_cab_dvd_abc) (dvd_mul_of_dvd_right (dvd_refl _) a )
@@ -224,10 +224,10 @@ problem imo2015_p2 (a b c : ℤ) :
         contrapose! h₂'
         rw [lt_sub_iff_add_lt]
         calc c + b
-            ≤ 2 * a := by cutsat
-          _ < c * a := (mul_lt_mul_iff_left₀ ha).mpr (by cutsat)
-      have ha_two : a = 2 := by cutsat
-      have hb_two : b = 2 := by cutsat
+            ≤ 2 * a := by lia
+          _ < c * a := (mul_lt_mul_iff_left₀ ha).mpr (by lia)
+      have ha_two : a = 2 := by lia
+      have hb_two : b = 2 := by lia
       rw [ha_two, hb_two, hc_two]
       simp
     · have h_abc_even : 2 ∣ a * b - c := by
@@ -236,16 +236,16 @@ problem imo2015_p2 (a b c : ℤ) :
         rw [← Nat.one_le_iff_ne_zero, ← pow_le_pow_iff_right₀ (by norm_num : 1 < (2 : ℤ))]
         rw [← habc, pow_one, le_sub_iff_add_le]
         calc 2 + c
-            ≤ a * 2 := by cutsat
-          _ ≤ a * b := (mul_le_mul_iff_right₀ ha).mpr (by cutsat)
+            ≤ a * 2 := by lia
+          _ ≤ a * b := (mul_le_mul_iff_right₀ ha).mpr (by lia)
       have h_cab_even : 2 ∣ c * a - b := by
         rw [hcab]
         apply dvd_pow_self
         rw [← Nat.one_le_iff_ne_zero, ← pow_le_pow_iff_right₀ (by norm_num : 1 < (2 : ℤ))]
         rw [← hcab, pow_one, le_sub_iff_add_le]
         calc 2 + b
-            ≤ 2 * a := by cutsat
-          _ ≤ c * a := (mul_le_mul_iff_left₀ ha).mpr (by cutsat)
+            ≤ 2 * a := by lia
+          _ ≤ c * a := (mul_le_mul_iff_left₀ ha).mpr (by lia)
       by_cases! hb' : ¬2 ∣ b
       · have hc' : ¬2 ∣ c := by
           contrapose! h_abc_even with hc'
@@ -257,7 +257,7 @@ problem imo2015_p2 (a b c : ℤ) :
           rw [hcab]
           exact pow_of_two_coprime_odd mcab hc'
         rw [hcab] at h₂
-        apply pow_of_two_dvd_odd_mul_self_sub_1 ha' (by cutsat) at h₂
+        apply pow_of_two_dvd_odd_mul_self_sub_1 ha' (by lia) at h₂
         have hc_ne_2 : c ≠ 2 := by
           contrapose! hc'
           rw [hc']
@@ -265,8 +265,8 @@ problem imo2015_p2 (a b c : ℤ) :
           intro h'
           rw [h', (by ring : a * c - a = a * (c - 1))] at hbca
           apply dvd_of_mul_right_eq at hbca
-          apply odd_dvd_pow_of_two ha' (by cutsat) at hbca
-          cutsat
+          apply odd_dvd_pow_of_two ha' (by lia) at hbca
+          lia
         have hb_add_1_ne_a : b + 1 ≠ a := by
           contrapose! ha'
           rw [← ha']
@@ -278,20 +278,20 @@ problem imo2015_p2 (a b c : ℤ) :
           contrapose! h₂ with h'
           rw [lt_sub_iff_add_lt]
           calc 2 * a + 2 + b
-              ≤ 3 * a := by cutsat
-            _ < c * a := (mul_lt_mul_iff_left₀ ha).mpr (by cutsat)
+              ≤ 3 * a := by lia
+            _ < c * a := (mul_lt_mul_iff_left₀ ha).mpr (by lia)
         have hb_add_two_a : b + 2 = a := by
           contrapose! h₂ with h'
           rw [lt_sub_iff_add_lt]
           calc 2 * a + 2 + b
-              < 3 * a := by cutsat
-            _ ≤ c * a := (mul_le_mul_iff_left₀ ha).mpr (by cutsat)
+              < 3 * a := by lia
+            _ ≤ c * a := (mul_le_mul_iff_left₀ ha).mpr (by lia)
         have h₃ : mbca < mcab := by
           rw [← pow_lt_pow_iff_right₀ (by norm_num : 1 < (2 : ℤ))]
           rw [← hbca, ← hcab, sub_lt_sub_iff]
           rw [(by ring : b * c + b = b * (c + 1)), (by ring : c * a + a = a * (c + 1))]
-          rw [mul_lt_mul_iff_left₀ (by cutsat)]
-          cutsat
+          rw [mul_lt_mul_iff_left₀ (by lia)]
+          lia
         rw [Nat.lt_iff_add_one_le] at h₃
         rw [← pow_le_pow_iff_right₀ (by norm_num : 1 < (2 : ℤ))] at h₃
         rw [pow_add, pow_one, ← hbca, ← hcab, hc_three, ← hb_add_two_a, ← sub_nonneg] at h₃
@@ -305,10 +305,10 @@ problem imo2015_p2 (a b c : ℤ) :
           intro h'
           rw [h', (by ring : b * a - b = b * (a - 1))] at hcab
           apply dvd_of_mul_right_eq at hcab
-          apply odd_dvd_pow_of_two hb' (by cutsat) at hcab
-          cutsat
-        have hb_four : 4 < b := by cutsat
-        have hb_five : b = 5 := by cutsat
+          apply odd_dvd_pow_of_two hb' (by lia) at hcab
+          lia
+        have hb_four : 4 < b := by lia
+        have hb_five : b = 5 := by lia
         rw [hb_five] at hb_add_two_a
         norm_num at hb_add_two_a
         rw [hc_three, hb_five, ← hb_add_two_a]
@@ -353,12 +353,12 @@ problem imo2015_p2 (a b c : ℤ) :
             calc -(-c + (c ^ 3 - b)) + (b + c)
                 = 2 * b + 2 * c - c ^ 3 := by ring
               _ < 2 * b + 2 * c := Int.sub_lt_self _ (by positivity)
-              _ ≤ b * 4 := by cutsat
+              _ ≤ b * 4 := by lia
               _ = b * 2 ^ 2 := by norm_num
               _ ≤ b * c ^ 2 := by
                   rw [mul_le_mul_iff_right₀ hb]
-                  rw [pow_le_pow_iff_left₀ (by norm_num) (by cutsat) (by norm_num)]
-                  cutsat
+                  rw [pow_le_pow_iff_left₀ (by norm_num) (by lia) (by norm_num)]
+                  lia
           · rw [abs_of_nonneg h''] at h₅
             rw [(by ring : -c + (c ^ 3 - b) = c * c ^ 2 - b - c)] at h₅
             rw [sub_sub, sub_sub] at h₅
@@ -370,7 +370,7 @@ problem imo2015_p2 (a b c : ℤ) :
             have hc₁ := dvd_mul_right c (c ^ 2 - 2)
             have hc₂ := dvd_mul_left (c ^ 2 - 2) c
             rw [habc] at hc₁ hc₂
-            have hc_two := sq_pow_of_two_sub_two (by cutsat) hc₁ hc₂
+            have hc_two := sq_pow_of_two_sub_two (by lia) hc₁ hc₂
             rw [hc_two] at h₂ hbc'
             norm_num at h₂
             rw [← h₂, hbc', hc_two]
@@ -381,7 +381,7 @@ problem imo2015_p2 (a b c : ℤ) :
           have hc₁ := dvd_mul_of_dvd_left (dvd_mul_right c (c ^ 2)) (c ^ 2 - 2)
           have hc₂ := dvd_mul_left (c ^ 2 - 2) (c * c ^ 2)
           rw [hcab] at hc₁ hc₂
-          have hc_two := sq_pow_of_two_sub_two (by cutsat) hc₁ hc₂
+          have hc_two := sq_pow_of_two_sub_two (by lia) hc₁ hc₂
           rw [hc_two] at h₂ h'
           norm_num at h₂ h'
           rw [← h₂, ← h', hc_two]

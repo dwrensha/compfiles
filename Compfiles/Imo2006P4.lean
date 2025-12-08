@@ -241,7 +241,7 @@ problem imo2006_p4 :
                 apply Nat.eq_add_of_sub_eq at ht
                 · use s, hs', -1
                   simp [ht, h', pow_add]
-                  cutsat
+                  lia
                 · exact hypos
               · intro h'
                 simp [ht''] at h'
@@ -315,7 +315,7 @@ problem imo2006_p4 :
             have : m ^ 2 < 3 ^ 2 := by apply lt_of_le_of_lt hm'; simp
             apply Nat.pow_lt_pow_iff_left ?_ |>.mp this
             simp
-          cutsat
+          lia
         · -- For $\epsilon=-1$ equation (2) gives us $$ 1+m=2^{x-2}\left(m^{2}-8\right) \geq 2\left(m^{2}-8\right),
           simp [hε] at this
           have hle : 1 + (m : ℤ) ≥ 2 * (m ^ 2 - 8) := by
