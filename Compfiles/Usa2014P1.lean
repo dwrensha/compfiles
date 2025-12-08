@@ -24,15 +24,16 @@ open Polynomial
 
 noncomputable def Objective (x : Fin 4 → ℝ) : ℝ := ∏ i, ((x i)^2 + 1)
 
-def Conditions (x : Fin 4 → ℝ) : Prop :=
-  ∃ a b c d : ℝ, (b - d ≥ 5) ∧ (
-    (X - C (x 0)) * (X - C (x 1)) * (X - C (x 2)) * (X - C (x 3))
+def Conditions (x : Fin 4 → ℝ) : Prop := ∃ a b c d : ℝ, (b - d ≥ 5) ∧
+    ((X - C (x 0)) * (X - C (x 1)) * (X - C (x 2)) * (X - C (x 3))
     = X^4 + C a * X^3 + C b * X^2 + C c * X + C d)
 
 snip begin
 
 -- This follows the solution in
 -- https://web.evanchen.cc/exams/USAMO-2014-notes.pdf
+-- The basic idea is to show the desired product equals (b-d-1)^2 + (a-c)^2
+-- which makes the problem obvious.
 
 -- For construction, set all roots to 1 and check it gives 16
 lemma construction_for_16 : exists x, Conditions x ∧ Objective x = 16 := by
@@ -41,8 +42,10 @@ lemma construction_for_16 : exists x, Conditions x ∧ Objective x = 16 := by
   · unfold Conditions
     use -4, 6, -4, 1 -- a=4, b=6, c=4, d=1
     constructor
-    · norm_num -- Checks b-d=5
-    · simp only [map_one]
+    · -- Checks b-d=5
+      norm_num
+    · -- Checks (X-1)^4 = X^4 - 4X^3 + 6X^2 - 4X + 1
+      simp only [map_one]
       -- i can't figure out how to kill the C's without actually specifying them like this
       rw [show (C (-4 : ℝ) : ℝ[X]) = -4 by norm_cast]
       rw [show (C (6 : ℝ) : ℝ[X]) = 6 by norm_cast]
@@ -59,31 +62,24 @@ lemma vieta (x: Fin 4 → ℝ) (a : ℝ) (b : ℝ) (c : ℝ) (d : ℝ)
     + (x 0) * (x 3) + (x 1) * (x 2) + (x 1) * (x 3) + (x 2) * (x 3) := by
   constructor
   · replace hpoly := congr_arg (Polynomial.eval 0) hpoly
-    --  the output of simp? here is impressive
-    simp only [Fin.isValue, eval_mul, eval_sub, eval_X, eval_C, zero_sub, mul_neg, neg_mul,
-      neg_neg, eval_add, eval_pow, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true,
-      zero_pow, mul_zero, add_zero, zero_add] at hpoly
-    symm
-    exact hpoly
+    simp_all
   · replace hpoly := congr_arg Polynomial.derivative hpoly
     replace hpoly := congr_arg Polynomial.derivative hpoly
     replace hpoly := congr_arg (Polynomial.eval 0) hpoly
-    simp only [Fin.isValue, derivative_mul, derivative_sub, derivative_X, derivative_C, sub_zero,
-      one_mul, mul_one, eval_add, eval_mul, eval_one, eval_sub, eval_X, eval_C,
-      zero_sub, mul_neg, neg_mul, neg_neg, derivative_X_pow_succ, Nat.cast_ofNat, map_add, map_one,
-      zero_mul, zero_add, Nat.cast_one, pow_one, add_zero, derivative_one, eval_pow, ne_eq,
-      OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow, mul_zero] at hpoly
-    ring_nf at hpoly
+    simp at hpoly -- this looks truly hideous when expanded
     linarith
---
+
 -- Now use Vieta relation to prove the key bound
 lemma main_bound {x} (hx : Conditions x) : Objective x >= 16 := by
-  rcases hx with ⟨_a, b, _c, d, hbd, hpoly⟩
+  rcases hx with ⟨a, b, c, d, hbd, hpoly⟩
+  -- we need the actual b and d from the condition, so we have b-d ≥ 5
+  apply vieta at hpoly -- replace hpoly with the Vieta relations
   -- we'll just define a and c to be the Vieta ones we want
   -- since it's not actually needed to tie them to coeffs of polynomial
+  clear a
+  clear c
   let a := (x 0) + (x 1) + (x 2) + (x 3)
   let c := (x 0) * (x 1) * (x 2) + (x 1) * (x 2) * (x 3) + (x 2) * (x 3) * (x 0) + (x 3) * (x 0) * (x 1)
-  apply vieta at hpoly -- replace hpoly with the Vieta relations
   have key_identity : Objective x = (b-d-1)^2 + (a-c)^2 := by
     unfold Objective
     rw [hpoly.1, hpoly.2] -- apply Vieta for b and d
@@ -95,7 +91,7 @@ snip end
 
 noncomputable determine solution : ℝ := 16
 
-problem usa2014_p1 : IsLeast (Objective '' { x | Conditions x } ) solution := by
+problem usa2014_p1 : IsLeast (Objective '' { x | Conditions x }) solution := by
   constructor
   · simp [construction_for_16]
   · rintro _ ⟨x, hcond, rfl⟩
