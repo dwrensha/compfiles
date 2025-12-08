@@ -34,6 +34,7 @@ snip begin
 -- This follows the solution in
 -- https://web.evanchen.cc/exams/USAMO-2014-notes.pdf
 
+-- For construction, set all roots to 1 and check it gives 16
 lemma construction_for_16 : exists x, Conditions x ∧ Objective x = 16 := by
   use fun _ => 1 -- Set every x_i to 1
   constructor
@@ -50,9 +51,24 @@ lemma construction_for_16 : exists x, Conditions x ∧ Objective x = 16 := by
     simp only [one_pow, Finset.prod_const, Finset.card_univ, Fintype.card_fin]
     norm_num -- (1+1)^4 = 16
 
+--
 lemma main_bound {x} (hx : Conditions x) : Objective x >= 16 := by
-  sorry
-
+  rcases hx with ⟨a, b, c, d, hbd, hpoly⟩
+  have key_identity : Objective x = (b-d-1)^2 + (a-c)^2 := by
+    unfold Objective
+    have ha : a = (x 0) + (x 1) + (x 2) + (x 3) := by sorry
+    have hb : b = (x 0) * (x 1) + (x 0) * (x 2) + (x 0) * (x 3) + (x 1) * (x 2) + (x 1) * (x 3) + (x 2) * (x 3) := by sorry
+    have hc : c = (x 0) * (x 1) * (x 2) + (x 1) * (x 2) * (x 3) + (x 2) * (x 3) * (x 0) + (x 3) * (x 0) * (x 1) := by sorry
+    have hd : d = (x 0) * (x 1) * (x 2) * (x 3) := by sorry
+    rw [ha, hb, hc, hd]
+    rw [Fin.prod_univ_four] -- thank god
+    -- in the informal solution, this is proved using a trick with i = sqrt(-1)
+    -- but in Lean let's just use ring
+    ring
+  rw [key_identity]
+  have h1 : (b-d-1)^2 ≥ 16 := by nlinarith
+  have h2 : (a-c)^2 ≥ 0 := by nlinarith
+  linarith -- add h1 and h2
 snip end
 
 noncomputable determine solution : ℝ := 16
