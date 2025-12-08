@@ -55,17 +55,27 @@ lemma construction_for_16 : exists x, Conditions x ∧ Objective x = 16 := by
 lemma vieta (x: Fin 4 → ℝ) (a : ℝ) (b : ℝ) (c : ℝ) (d : ℝ)
     (hpoly : (X - C (x 0)) * (X - C (x 1)) * (X - C (x 2)) * (X - C (x 3))
     = X^4 + C a * X^3 + C b * X^2 + C c * X + C d) :
-    b = (x 0) * (x 1) + (x 0) * (x 2) + (x 0) * (x 3) + (x 1) * (x 2)
-    + (x 1) * (x 3) + (x 2) * (x 3) ∧ d = (x 0) * (x 1) * (x 2) * (x 3) := by
+    d = (x 0) * (x 1) * (x 2) * (x 3) ∧ b = (x 0) * (x 1) + (x 0) * (x 2)
+    + (x 0) * (x 3) + (x 1) * (x 2) + (x 1) * (x 3) + (x 2) * (x 3) := by
   constructor
-  · sorry
-  · have h := congr_arg (Polynomial.eval 0) hpoly
+  · replace hpoly := congr_arg (Polynomial.eval 0) hpoly
     --  the output of simp? here is impressive
     simp only [Fin.isValue, eval_mul, eval_sub, eval_X, eval_C, zero_sub, mul_neg, neg_mul,
       neg_neg, eval_add, eval_pow, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true,
-      zero_pow, mul_zero, add_zero, zero_add] at h
-    rw [h]
-
+      zero_pow, mul_zero, add_zero, zero_add] at hpoly
+    symm
+    exact hpoly
+  · replace hpoly := congr_arg Polynomial.derivative hpoly
+    replace hpoly := congr_arg Polynomial.derivative hpoly
+    replace hpoly := congr_arg (Polynomial.eval 0) hpoly
+    simp only [Fin.isValue, derivative_mul, derivative_sub, derivative_X, derivative_C, sub_zero,
+      one_mul, mul_one, eval_add, eval_mul, eval_one, eval_sub, eval_X, eval_C,
+      zero_sub, mul_neg, neg_mul, neg_neg, derivative_X_pow_succ, Nat.cast_ofNat, map_add, map_one,
+      zero_mul, zero_add, Nat.cast_one, pow_one, add_zero, derivative_one, eval_pow, ne_eq,
+      OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow, mul_zero] at hpoly
+    ring_nf at hpoly
+    linarith
+--
 -- Now use Vieta relation to prove the key bound
 lemma main_bound {x} (hx : Conditions x) : Objective x >= 16 := by
   rcases hx with ⟨_a, b, _c, d, hbd, hpoly⟩
