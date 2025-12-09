@@ -37,13 +37,13 @@ lemma condition_implies_solution_set (s : ℝ)
 
   constructor
   · have h8 : a / (a + b + c + d) < a / (a + b + d) :=
-       div_lt_div_of_pos_left ha (by linarith) (by linarith)
+       div_lt_div_of_pos_left ha (by positivity) (by linarith)
     have h9 : b / (a + b + c + d) < b / (a + b + c) :=
-       div_lt_div_of_pos_left hb (by linarith) (lt_add_of_pos_right _ hd)
+       div_lt_div_of_pos_left hb (by positivity) (lt_add_of_pos_right _ hd)
     have h10 : c / (a + b + c + d) < c / (b + c + d) :=
-       div_lt_div_of_pos_left hc (by linarith) (by linarith)
+       div_lt_div_of_pos_left hc (by positivity) (by linarith)
     have h11 : d / (a + b + c + d) < d / (a + c + d) :=
-       div_lt_div_of_pos_left hd (by linarith) (by linarith)
+       div_lt_div_of_pos_left hd (by positivity) (by linarith)
 
     calc 1 = a / (a + b + c + d) + b / (a + b + c + d) +
              c / (a + b + c + d) + d / (a + b + c + d) := by field_simp

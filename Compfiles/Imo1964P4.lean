@@ -162,7 +162,7 @@ problem imo1964_p4
     have h3 : Fintype Topic' := Fintype.ofFinite Topic'
     have h4 : Fintype.card Topic' = 2 := by
       simp [Fintype.card_subtype_compl, card_topic, Topic']
-    have t0 : Topic' := Nonempty.some (Fintype.card_pos_iff.mp (by rw [h4]; norm_num))
+    have t0 : Topic' := Nonempty.some (Fintype.card_pos_iff.mp (by positivity))
 
     let discusses' : α → α → Topic' :=
       fun (p2 p3 : α) ↦

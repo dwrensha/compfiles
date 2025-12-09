@@ -96,8 +96,7 @@ theorem generalized (n : ℕ) (hn : 0 < n) (hn' : ¬2 ∣ n) : IsGreatest { x₀
     simp [-one_div]
     constructor
     · intro i
-      apply Real.rpow_pos_of_pos
-      norm_num
+      positivity
     · intro i hi₁ hi₂
       rw [aux₁ (Real.rpow_pos_of_pos (by norm_num:_) _) (Real.rpow_pos_of_pos (by norm_num:_) _)]
       by_cases hi' : i < n

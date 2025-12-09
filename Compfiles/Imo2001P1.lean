@@ -474,8 +474,7 @@ lemma four_sin_B_cos_A_le_one : 4 * Real.sin (∠ cfg.A cfg.B cfg.C) * Real.cos 
   have h₁ : Real.cos (∠ cfg.A cfg.C cfg.B) ≤ Real.cos (∠ cfg.A cfg.B cfg.C + Real.pi / 6) := by
     apply Real.cos_le_cos_of_nonneg_of_le_pi
     · apply add_nonneg (angle_nonneg _ _ _)
-      apply div_nonneg Real.pi_nonneg
-      norm_num
+      positivity
     · apply angle_le_pi
     · nth_rw 2 [angle_comm]
       exact cfg.hAB
@@ -491,9 +490,7 @@ lemma four_sin_B_cos_A_le_one : 4 * Real.sin (∠ cfg.A cfg.B cfg.C) * Real.cos 
       ≤ 4 * Real.sin (∠ cfg.A cfg.B cfg.C) * Real.cos (∠ cfg.A cfg.B cfg.C + Real.pi / 6) := by
         rw [mul_le_mul_iff_right₀]
         · exact h₁
-        · apply mul_pos
-          · norm_num
-          · exact h₂
+        · positivity
     _ = 2 * (2 * Real.sin (∠ cfg.A cfg.B cfg.C) * Real.cos (∠ cfg.A cfg.B cfg.C + Real.pi / 6)) := by ring
     _ = 2 * (Real.sin (∠ cfg.A cfg.B cfg.C - (∠ cfg.A cfg.B cfg.C + Real.pi / 6)) + Real.sin (∠ cfg.A cfg.B cfg.C + (∠ cfg.A cfg.B cfg.C + Real.pi / 6))) := by
         rw [Real.two_mul_sin_mul_cos]
