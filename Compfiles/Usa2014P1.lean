@@ -84,7 +84,7 @@ lemma main_bound {x} (hx : Conditions x) : Objective x >= 16 := by
     rw [Fin.prod_univ_four] -- thank god
     ring -- in the informal solution, this is proved using a trick with i = sqrt(-1)
   rw [key_identity]
-  linarith [show (b-d-1)^2 ≥ 16 by nlinarith, show (a-c)^2 ≥ 0 by nlinarith]
+  linarith [show (b-d-1)^2 ≥ 16 by nlinarith, show (a-c)^2 ≥ 0 by positivity]
 snip end
 
 noncomputable determine solution : ℝ := 16
