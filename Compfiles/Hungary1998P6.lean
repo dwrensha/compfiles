@@ -100,15 +100,7 @@ problem hungary1998_p6 (x y : ℤ) (z : ℕ) (hz : 1 < z) :
 
   -- Since z ≥ 2, 3²∣yᶻ, but 3² does not divide
   -- 33(3x² + 300x + 50 ⬝ 199), contradiction.
-  have h10 : (3 * k) ^ z * (3 * k) * (3 * k) = 3 * (k * (3 * k * (3 * k) ^ z))
-       := by ring
-  rw [h10, mul_right_inj' three_ne_zero] at h7
-  replace h7 : 3 * (k * k * (3 * k) ^ z) = 3 * (11 * (x ^ 2 + 100 * x + 3316) + 7) + 1 := by
-    linear_combination h7
-
-  apply_fun (· % 3) at h7
-  norm_num [Int.add_emod] at h7
-
+  lia
 
 
 end Hungary1998P6

@@ -330,11 +330,7 @@ problem imo_1984_p6
         · rw [add_comm] at h₉₁
           symm
           rw [← Nat.pow_succ', Nat.succ_eq_add_one]
-          rw [← Nat.sub_add_comm ?_]
-          · refine Nat.sub_eq_of_eq_add ?_
-            rw [mul_comm 2 m, ← h₉₁]
-            exact rfl
-          · lia
+          lia
         · refine le_of_lt ?_
           rw [mul_two, Nat.add_sub_assoc, Nat.pow_add, mul_comm (2 ^ m) _]
           · refine (Nat.mul_lt_mul_right (by omega)).mpr g₀
