@@ -61,9 +61,9 @@ lemma vieta (x: Fin 4 → ℝ) (a : ℝ) (b : ℝ) (c : ℝ) (d : ℝ)
     d = (x 0) * (x 1) * (x 2) * (x 3) ∧ b = (x 0) * (x 1) + (x 0) * (x 2)
     + (x 0) * (x 3) + (x 1) * (x 2) + (x 1) * (x 3) + (x 2) * (x 3) := by
   constructor
-  · replace hpoly := congr_arg (Polynomial.eval 0) hpoly
+  · apply_fun (·.eval 0) at hpoly
     simp_all
-  · apply_fun fun p ↦ p.derivative.derivative.eval 0 at hpoly
+  · apply_fun (·.derivative.derivative.eval 0) at hpoly
     simp at hpoly -- this looks truly hideous when expanded
     linarith
 
