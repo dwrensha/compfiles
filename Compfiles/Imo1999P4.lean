@@ -35,51 +35,33 @@ lemma padicValNat_le_padicValNat_of_dvd {p a b : ℕ} (hb: b ≠ 0) (hp: p.Prime
   apply dvd_trans _ hab
   exact pow_padicValNat_dvd
 
-lemma aux₁ {a p n: ℕ} (hp : p.Prime) (hp' : 2 < p) (hn :0 < n)
-  (hnp : (p - 1).Coprime n) (hpa: p ∣ a ^ n + 1) :
-  p ∣ a + 1 := by
-  haveI: Fact (Nat.Prime p) := { out := hp }
-  rw [← Int.natCast_dvd_natCast, ← ZMod.intCast_zmod_eq_zero_iff_dvd, Int.cast_natCast] at hpa
-  rw [Nat.cast_add, Nat.cast_pow, Nat.cast_one] at hpa
-  have han_eq : ↑a ^ (2 * n) - (1 : ZMod p) = (↑a ^ n + 1) * (↑a ^ n - 1) := by
-    ring
-  have h_order₁: orderOf (a : ZMod p) ∣ 2 * n := by
-    apply orderOf_dvd_of_pow_eq_one
-    rw [← sub_eq_zero]
-    rw [han_eq, hpa, zero_mul]
-  have h_order₂: orderOf (a : ZMod p) ∣ p - 1 := by
-    apply ZMod.orderOf_dvd_card_sub_one
-    rw [← Int.cast_natCast]
-    apply ZMod.ne_zero_of_gcd_eq_one hp
-    rw [Int.gcd_natCast_natCast, Nat.gcd_comm, ← Nat.coprime_iff_gcd_eq_one]
-    rw [Nat.Prime.coprime_iff_not_dvd hp]
-    intro h'
-    rw [← Int.natCast_dvd_natCast, ← ZMod.intCast_zmod_eq_zero_iff_dvd, Int.cast_natCast] at h'
-    rw [h', zero_pow (by lia:_), zero_add] at hpa
-    norm_num at hpa
-  have hnq_gcd : gcd (2 * n) (p - 1) ∣ 2 := by
-    rw [gcd_comm]
-    apply dvd_trans (gcd_mul_dvd_mul_gcd (p - 1) 2 n)
-    nth_rw 2 [← mul_one 2]
-    apply mul_dvd_mul (gcd_dvd_right _ _)
-    simp [gcd]
-    rw [← Nat.coprime_iff_gcd_eq_one]
-    exact hnp
-  have h_order := dvd_trans (dvd_gcd h_order₁ h_order₂) hnq_gcd
-  rw [orderOf_dvd_iff_pow_eq_one, ← sub_eq_zero] at h_order
-  have hp_eq : a ^ 2 - (1 : ZMod p) = (a - 1) * (a + 1):= by
-    ring
-  rw [hp_eq, mul_eq_zero] at h_order
-  rcases h_order with (ha_cast|ha_cast)
-  · rw [sub_eq_zero] at ha_cast
-    rw [ha_cast] at hpa
-    norm_num at hpa
-    rw [← Int.cast_two, ZMod.intCast_zmod_eq_zero_iff_dvd, Int.natCast_dvd] at hpa
-    norm_num at hpa
-    apply Nat.le_of_dvd (by norm_num:_) at hpa
-    lia
-  · rw [← Int.natCast_dvd_natCast, ← ZMod.intCast_zmod_eq_zero_iff_dvd]
-    rw [Int.cast_natCast, Nat.cast_add, Nat.cast_one, ha_cast]
+lemma aux₁ {a p n: ℕ} (hp : p.Prime) (hp' : 2 < p) (hn : 0 < n)
+    (hnp : (p - 1).Coprime n) (hpa: p ∣ a ^ n + 1) :
+    p ∣ a + 1 := by
+  have := Fact.mk hp
+  -- Since $p \nmid a$, we have $a^n \equiv -1 \pmod{p}$, which implies that the order of
+  -- $a$ modulo $p$ divides $2n$ but not $n$.
+  have h_order : orderOf (a : ZMod p) ∣ 2 * n ∧ ¬(orderOf (a : ZMod p) ∣ n) := by
+    simp only [orderOf_dvd_iff_pow_eq_one]
+    simp_all only [← ZMod.natCast_eq_zero_iff, Nat.cast_add, Nat.cast_pow,
+      Nat.cast_one, pow_mul', sq_eq_one_iff]
+    constructor
+    · right; exact eq_neg_of_add_eq_zero_left hpa
+    · intro h₁
+      rw [h₁] at hpa
+      rcases p with ( _ | _ | _ | p ) <;> cases hpa <;> contradiction
+  -- Since the order of $a$ modulo $p$ divides $2n$ but not $n$, it must divide $2$.
+  have h_order_div_2 : orderOf (a : ZMod p) ∣ 2 := by
+    -- Since the order of $a$ modulo $p$ divides $2n$ and $\gcd(p-1, n) = 1$, it must divide $2$.
+    have h_order_div_2 : orderOf (a : ZMod p) ∣ 2 * n ∧ orderOf (a : ZMod p) ∣ p - 1 := by
+      simp_all only [orderOf_dvd_iff_pow_eq_one, true_and]
+      rw [ZMod.pow_card_sub_one_eq_one ]
+      cases n <;> aesop
+    refine Nat.Coprime.dvd_of_dvd_mul_right ?_ h_order_div_2.1
+    exact Nat.Coprime.coprime_dvd_left h_order_div_2.2 hnp
+  rw [← ZMod.natCast_eq_zero_iff]
+  simp_all only [orderOf_dvd_iff_pow_eq_one, sq_eq_one_iff]
+  aesop
 
 lemma aux₂ {p n: ℕ} (hp : p.Prime) (hpn : ∀ q : ℕ, q.Prime → q ∣ n → p ≤ q) :
   (p - 1).Coprime n := by
