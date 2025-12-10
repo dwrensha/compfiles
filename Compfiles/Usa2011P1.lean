@@ -75,7 +75,7 @@ problem usa2011_p1 (ha : 0 < a) (hb : 0 < b) (hc : 0 < c)
     _ ≤ 3/2 + 1/2 * S := by linarith
     _ ≤ _ := by
       have b1 := bound ha hb h
-      have b2 := @bound b c a hb hc (show b ^ 2 + c ^ 2 + a ^ 2 + (b + c + a) ^ 2 ≤ 4 by linarith)
-      have b3 := @bound c a b hc ha (show c ^ 2 + a ^ 2 + b ^ 2 + (c + a + b) ^ 2 ≤ 4 by linarith)
+      have b2 := bound hb hc (show b ^ 2 + c ^ 2 + a ^ 2 + (b + c + a) ^ 2 ≤ 4 by linarith)
+      have b3 := bound hc ha (show c ^ 2 + a ^ 2 + b ^ 2 + (c + a + b) ^ 2 ≤ 4 by linarith)
       linarith
 end Usa2011P1
