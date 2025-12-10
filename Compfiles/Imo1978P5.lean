@@ -43,7 +43,7 @@ lemma aux₁
   let f₀ : ℕ → ℝ := fun k => 1 / (k:ℝ) ^ 2
   let f₁ : ℕ → ℝ := fun k => (k:ℝ)
   let f₂ : ℕ → ℝ := fun k => ((f k):ℝ)
-  have h₃: ∑ k ∈ Icc 1 n, ((k):ℝ) / (k) ^ 2 = ∑ k ∈ Icc 1 n, f₁ k • f₀ k := by
+  have h₃: ∑ k ∈ Icc 1 n, (k : ℝ) / k ^ 2 = ∑ k ∈ Icc 1 n, f₁ k • f₀ k := by
     refine Finset.sum_congr rfl ?_
     intro x _
     rw [div_eq_mul_one_div, smul_eq_mul]
@@ -609,7 +609,7 @@ problem imo_1978_p5
     (h₁ : ∀ (p q : ℕ), 0 < p → 0 < q → p ≠ q → f p ≠ f q)
     (h₂ : 0 < n) :
     ∑ k ∈ Finset.Icc 1 n, (1 : ℝ) / k ≤ ∑ k ∈ Finset.Icc 1 n, ((f k):ℝ) / k ^ 2 := by
-  have h₃ : ∑ k ∈ Icc 1 n, ((k):ℝ) / (k) ^ 2 ≤ ∑ k ∈ Icc 1 n, ((f k):ℝ) / (k) ^ 2 :=
+  have h₃ : ∑ k ∈ Icc 1 n, (k : ℝ) / k ^ 2 ≤ ∑ k ∈ Icc 1 n, ((f k):ℝ) / (k) ^ 2 :=
     aux₁ f h₀ h₁ h₂
   refine le_trans ?_ h₃
   refine Finset.sum_le_sum ?_
