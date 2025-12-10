@@ -36,16 +36,19 @@ lemma bound (ha : 0 < a) (hb : 0 < b) (hc : 0 < c) :
   have h : 0 ≤ (a-b)^2*(a+b) := by positivity
   linarith
 
+-- Add the three bounds together
+def main_sum (ha : 0 < a) (hb : 0 < b) (hc : 0 < c) :=
+  let h1 := bound ha hb hc
+  let h2 := bound hb hc ha
+  let h3 := bound hc ha hb
+  add_le_add h1 (add_le_add h2 h3)
+
 snip end
 
 problem usa1997_p5 (ha : 0 < a) (hb : 0 < b) (hc : 0 < c) :
     1 / (a^3 + b^3 + a*b*c) + 1 / (b^3 + c^3 + a*b*c) + 1 / (c^3 + a^3 + a*b*c) ≤ 1 / (a*b*c) := by
-  have h1 := bound ha hb hc
-  have h2 := bound hb hc ha
-  have h3 := bound hc ha hb
-  have hsum := add_le_add h1 (add_le_add h2 h3) -- sum the three bounds
-  convert hsum using 1
-  · ring -- LHS of hsum = LHS of desired
-  · field -- RHS of hsum = RHS of desired
+  convert main_sum ha hb hc using 1
+  · ring -- LHS of main sum = LHS of desired
+  · field -- RHS of main sum = RHS of desired
 
 end Usa1997P5
