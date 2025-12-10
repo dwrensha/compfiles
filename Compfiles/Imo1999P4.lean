@@ -28,14 +28,14 @@ lemma exists_least_prime_factor {n : ℕ} (hn : n ≠ 1) :
   intro q hq hqn
   exact Nat.minFac_le_of_dvd hq.two_le hqn
 
-lemma padicValNat_le_padicValNat_of_dvd {p a b : ℕ} (hb: b ≠ 0) (hp: p.Prime) (hab: a ∣ b):
-  padicValNat p a ≤ padicValNat p b := by
-  haveI: Fact (Nat.Prime p) := { out := hp }
+lemma padicValNat_le_padicValNat_of_dvd {p a b : ℕ} (hb : b ≠ 0) (hp : p.Prime) (hab : a ∣ b) :
+    padicValNat p a ≤ padicValNat p b := by
+  have : Fact (Nat.Prime p) := Fact.mk hp
   rw [← padicValNat_dvd_iff_le hb]
   apply dvd_trans _ hab
   exact pow_padicValNat_dvd
 
-lemma aux₁ {a p n: ℕ} (hp : p.Prime) (hp' : 2 < p) (hn : 0 < n)
+lemma aux₁ {a p n : ℕ} (hp : p.Prime) (hp' : 2 < p) (hn : 0 < n)
     (hnp : (p - 1).Coprime n) (hpa: p ∣ a ^ n + 1) :
     p ∣ a + 1 := by
   have := Fact.mk hp
@@ -63,13 +63,13 @@ lemma aux₁ {a p n: ℕ} (hp : p.Prime) (hp' : 2 < p) (hn : 0 < n)
   aesop
 
 lemma aux₂ {p n: ℕ} (hp : p.Prime) (hpn : ∀ q : ℕ, q.Prime → q ∣ n → p ≤ q) :
-  (p - 1).Coprime n := by
+    (p - 1).Coprime n := by
   apply Nat.coprime_of_dvd'
   intro p' hp'₁ hp'₂ hp'₃
   exfalso
   have hp'p := hpn p' hp'₁ hp'₃
   have hp' := hp.two_le
-  apply Nat.le_of_dvd (by lia:_) at hp'₂
+  apply Nat.le_of_dvd (by lia) at hp'₂
   lia
 
 snip end
@@ -80,7 +80,8 @@ problem imo1999_p4 (n p : ℕ) :
     (n,p) ∈ SolutionSet ↔
     0 < n ∧ n ≤ 2 * p ∧ p.Prime ∧ n^(p - 1) ∣ (p - 1)^n + 1 := by
   constructor
-  · simp
+  · simp only [Set.mem_union, Set.mem_insert_iff, Prod.mk.injEq, Set.mem_singleton_iff,
+               Set.mem_setOf_eq]
     intro h
     casesm* _ ∨ _ <;> rcases h with ⟨hn, hp⟩
     · rw [hn, hp]

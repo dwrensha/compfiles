@@ -25,17 +25,15 @@ snip begin
 universe u v w
 
 lemma extended_pigeonhole {α : Type u} {β : Type v} [DecidableEq α] [DecidableEq β]
-  {s : Finset α} {f: α → β} {s' : Finset β} (hf : ∀ n ∈ s, f n ∈ s')
-  (n : ℕ) (hn : 2 * n + s'.card - 1 ≤ s.card)
-  : ∃ t : Finset (Finset α), t.card = n
-    ∧ (∀ t' : Finset α, t' ∈ t → t' ⊆ s)
-    ∧ (∀ t' : Finset α, t' ∈ t → t'.card = 2)
-    ∧ ((t : Set (Finset α)).PairwiseDisjoint id)
-    ∧ (∀ t' : Finset α, t' ∈ t → ∃ p : β, ∀ n : α, n ∈ t' → f n = p)
-    := by
+    {s : Finset α} {f: α → β} {s' : Finset β} (hf : ∀ n ∈ s, f n ∈ s')
+    (n : ℕ) (hn : 2 * n + s'.card - 1 ≤ s.card)
+    : ∃ t : Finset (Finset α), t.card = n
+      ∧ (∀ t' : Finset α, t' ∈ t → t' ⊆ s)
+      ∧ (∀ t' : Finset α, t' ∈ t → t'.card = 2)
+      ∧ ((t : Set (Finset α)).PairwiseDisjoint id)
+      ∧ (∀ t' : Finset α, t' ∈ t → ∃ p : β, ∀ n : α, n ∈ t' → f n = p) := by
   induction' n with n' hn'
-  · use ∅
-    tauto
+  · use ∅; simp
   · have h'n' : 2 * n' + s'.card - 1 ≤ s.card := by omega
     rcases hn' h'n' with ⟨tn', ⟨htn'₁, htn'₂, htn'₃, htn'₄, htn'₅⟩⟩
     let s'' := s \ (Finset.disjiUnion tn' id htn'₄)
@@ -61,7 +59,7 @@ lemma extended_pigeonhole {α : Type u} {β : Type v} [DecidableEq α] [Decidabl
       exact hf x (Finset.mem_sdiff.mp hxs'').left
     have h's'' : s'.card < s''.card := by lia
     rcases Finset.exists_ne_map_eq_of_card_lt_of_maps_to h's'' hf' with ⟨p, hp, q, hq, hpq₁, hpq₂⟩
-    use (insert {p, q} tn')
+    use insert {p, q} tn'
     have hpqs'' : {p, q} ⊆ s'' := Finset.insert_subset hp (Finset.singleton_subset_iff.mpr hq)
     constructorm* _ ∧ _
     · rw [← htn'₁]
@@ -111,15 +109,14 @@ lemma extended_pigeonhole {α : Type u} {β : Type v} [DecidableEq α] [Decidabl
       · exact htn'₅ t' ht'tn'
 
 lemma double_pigeonhole {α : Type u} {β : Type v} {γ : Type w} [DecidableEq α] [DecidableEq β] [DecidableEq γ]
-  {s : Finset α} {f₁: α → β} {f₂: (Finset α) → γ} {s₁ : Finset β} {s₂ : Finset γ}
-  (hf₁ : ∀ n ∈ s, f₁ n ∈ s₁) (hf₂ : ∀ s' ⊆ s, f₂ s' ∈ s₂)
-  (hs: 2 * s₂.card + s₁.card + 1 ≤ s.card)
-  : ∃ t₁ t₂ : (Finset α), t₁.card = 2 ∧ t₂.card = 2
-    ∧ t₁ ⊆ s ∧ t₂ ⊆ s ∧ Disjoint t₁ t₂
-    ∧ (∃ p : β, ∀ n : α, n ∈ t₁ → f₁ n = p)
-    ∧ (∃ p : β, ∀ n : α, n ∈ t₂ → f₁ n = p)
-    ∧ (f₂ t₁ = f₂ t₂)
-    := by
+    {s : Finset α} {f₁: α → β} {f₂: (Finset α) → γ} {s₁ : Finset β} {s₂ : Finset γ}
+    (hf₁ : ∀ n ∈ s, f₁ n ∈ s₁) (hf₂ : ∀ s' ⊆ s, f₂ s' ∈ s₂)
+    (hs: 2 * s₂.card + s₁.card + 1 ≤ s.card)
+    : ∃ t₁ t₂ : (Finset α), t₁.card = 2 ∧ t₂.card = 2
+      ∧ t₁ ⊆ s ∧ t₂ ⊆ s ∧ Disjoint t₁ t₂
+      ∧ (∃ p : β, ∀ n : α, n ∈ t₁ → f₁ n = p)
+      ∧ (∃ p : β, ∀ n : α, n ∈ t₂ → f₁ n = p)
+      ∧ (f₂ t₁ = f₂ t₂) := by
   have h's : 2 * (s₂.card + 1) + s₁.card - 1 ≤ s.card := by omega
   rcases extended_pigeonhole hf₁ (s₂.card + 1) h's with ⟨t, ⟨ht₁, ht₂, ht₃, ht₄, ht₅⟩⟩
   have h't : s₂.card < t.card := by omega
@@ -148,7 +145,7 @@ noncomputable def pow_of_first_k_prime_mod_two (k : ℕ) (n : ℕ) :=
   fun (k' : ℕ) ↦ fun (_ : k' ∈ Finset.range k) ↦ pow_of_kth_prime_mod_two k' n
 
 lemma pow_of_first_k_prime_mod_two_mem_two_pow_k_finset (k : ℕ) (n : ℕ) :
-  pow_of_first_k_prime_mod_two k n ∈ two_pow_k_finset k := by
+    pow_of_first_k_prime_mod_two k n ∈ two_pow_k_finset k := by
   rw [two_pow_k_finset, Finset.mem_pi]
   intro a ha
   simp [pow_of_first_k_prime_mod_two, pow_of_kth_prime_mod_two]
@@ -156,8 +153,8 @@ lemma pow_of_first_k_prime_mod_two_mem_two_pow_k_finset (k : ℕ) (n : ℕ) :
   norm_num
 
 lemma square_of_pow_of_pow_of_kth_prime_mod_two_eq {m n : ℕ}
-  (hm₀ : m ≠ 0) (hn₀ : n ≠ 0)
-  (hmn : ∀ k , pow_of_kth_prime_mod_two k m = pow_of_kth_prime_mod_two k n):
+    (hm₀ : m ≠ 0) (hn₀ : n ≠ 0)
+    (hmn : ∀ k , pow_of_kth_prime_mod_two k m = pow_of_kth_prime_mod_two k n) :
   ∃ k, m * n = k ^ 2 := by
   let k := ∏ p ∈ Finset.range (m * n + 1) with Nat.Prime p, p ^ ((padicValNat p m + padicValNat p n) / 2)
   use k
@@ -170,7 +167,7 @@ lemma square_of_pow_of_pow_of_kth_prime_mod_two_eq {m n : ℕ}
   have hp' := hp.right
   rw [← pow_mul]
   congr
-  haveI : Fact (Nat.Prime p) := { out := hp' }
+  have : Fact (Nat.Prime p) := { out := hp' }
   rw [padicValNat.mul hm₀ hn₀]
   symm
   apply Nat.div_mul_cancel
@@ -181,23 +178,21 @@ lemma square_of_pow_of_pow_of_kth_prime_mod_two_eq {m n : ℕ}
   omega
 
 lemma padicValNat_eq_zero_of_divisors {k m k': ℕ} (hm₀ : m ≠ 0)
-  (hm : ∀ p, p.Prime ∧ p ∣ m → p ≤ Nat.nth Nat.Prime k) (hk' : k < k'):
-  padicValNat (Nat.nth Nat.Prime k') m = 0 := by
+    (hm : ∀ p, p.Prime ∧ p ∣ m → p ≤ Nat.nth Nat.Prime k) (hk' : k < k'):
+    padicValNat (Nat.nth Nat.Prime k') m = 0 := by
   by_contra! hdiv
-  haveI : Fact (Nat.Prime (Nat.nth Nat.Prime k')) := {
-    out := Nat.prime_nth_prime k'
-  }
+  have : Fact (Nat.Prime (Nat.nth Nat.Prime k')) := Fact.mk (Nat.prime_nth_prime k')
   rw [← dvd_iff_padicValNat_ne_zero hm₀] at hdiv
   have hdiv' := hm (Nat.nth Nat.Prime k') ⟨Nat.prime_nth_prime k', hdiv⟩
   rw [Nat.nth_le_nth Nat.infinite_setOf_prime] at hdiv'
   omega
 
 lemma square_of_pow_of_first_k_prime_mod_two_eq {k m n : ℕ}
-  (hm₀ : m ≠ 0) (hn₀ : n ≠ 0)
-  (hmn : pow_of_first_k_prime_mod_two (k + 1) m = pow_of_first_k_prime_mod_two (k + 1) n)
-  (hm : ∀ p, p.Prime ∧ p ∣ m → p ≤ Nat.nth Nat.Prime k)
-  (hn : ∀ p, p.Prime ∧ p ∣ n → p ≤ Nat.nth Nat.Prime k) :
-  ∃ k, m * n = k ^ 2 := by
+    (hm₀ : m ≠ 0) (hn₀ : n ≠ 0)
+    (hmn : pow_of_first_k_prime_mod_two (k + 1) m = pow_of_first_k_prime_mod_two (k + 1) n)
+    (hm : ∀ p, p.Prime ∧ p ∣ m → p ≤ Nat.nth Nat.Prime k)
+    (hn : ∀ p, p.Prime ∧ p ∣ n → p ≤ Nat.nth Nat.Prime k) :
+    ∃ k, m * n = k ^ 2 := by
   have hmn' : ∀ k' , pow_of_kth_prime_mod_two k' m = pow_of_kth_prime_mod_two k' n := by
     intro k'
     by_cases hk' : k' ≤ k
@@ -215,10 +210,10 @@ lemma square_of_pow_of_first_k_prime_mod_two_eq {k m n : ℕ}
   exact square_of_pow_of_pow_of_kth_prime_mod_two_eq hm₀ hn₀ hmn'
 
 lemma prod_square_of_pow_of_first_k_prime_mod_two_eq {M : Finset ℕ} {k : ℕ}
-  (Mdivisors : ∀ m ∈ M, ∀ n, n.Prime ∧ n ∣ m → n ≤ Nat.nth Nat.Prime k)
-  (Mpos : ∀ m ∈ M, 0 < m) {s : Finset ℕ} (hs₁ : s.card = 2) (hs₂ : s ⊆ M)
-  (hs₃ : ∃ f, ∀ n ∈ s, pow_of_first_k_prime_mod_two (k+1) n = f) :
-  ∃ k, s.prod id = k ^ 2 := by
+    (Mdivisors : ∀ m ∈ M, ∀ n, n.Prime ∧ n ∣ m → n ≤ Nat.nth Nat.Prime k)
+    (Mpos : ∀ m ∈ M, 0 < m) {s : Finset ℕ} (hs₁ : s.card = 2) (hs₂ : s ⊆ M)
+    (hs₃ : ∃ f, ∀ n ∈ s, pow_of_first_k_prime_mod_two (k+1) n = f) :
+    ∃ k, s.prod id = k ^ 2 := by
   rw [Finset.card_eq_two] at hs₁
   rcases hs₁ with ⟨m, n, hmn₁, hmn₂⟩
   rw [hmn₂, Finset.prod_insert (Finset.notMem_singleton.mpr hmn₁), Finset.prod_singleton, id_eq, id_eq]
@@ -238,8 +233,8 @@ lemma prod_square_of_pow_of_first_k_prime_mod_two_eq {M : Finset ℕ} {k : ℕ}
   exact square_of_pow_of_first_k_prime_mod_two_eq hm₀ hn₀ hmn hm hn
 
 lemma sqrt_prod_subset_ne_zero {M s : Finset ℕ} {k : ℕ}
-  (Mpos : ∀ m ∈ M, 0 < m) (hs: s ⊆ M) (hk : s.prod id = k ^ 2) :
-  k ≠ 0 := by
+    (Mpos : ∀ m ∈ M, 0 < m) (hs: s ⊆ M) (hk : s.prod id = k ^ 2) :
+    k ≠ 0 := by
   contrapose! hk
   rw [hk]
   simp
@@ -249,8 +244,8 @@ lemma sqrt_prod_subset_ne_zero {M s : Finset ℕ} {k : ℕ}
   exact Nat.ne_zero_iff_zero_lt.mpr (Mpos n (hs hn))
 
 lemma sqrt_divisors_subset {M s : Finset ℕ} {k k₁: ℕ}
-  (Mdivisors : ∀ m ∈ M, ∀ n, n.Prime ∧ n ∣ m → n ≤ Nat.nth Nat.Prime k)
-  (hs: s ⊆ M) (hk₁ : s.prod id = k₁ ^ 2) : ∀ p, p.Prime ∧ p ∣ k₁ → p ≤ Nat.nth Nat.Prime k := by
+    (Mdivisors : ∀ m ∈ M, ∀ n, n.Prime ∧ n ∣ m → n ≤ Nat.nth Nat.Prime k)
+    (hs: s ⊆ M) (hk₁ : s.prod id = k₁ ^ 2) : ∀ p, p.Prime ∧ p ∣ k₁ → p ≤ Nat.nth Nat.Prime k := by
   rintro p' ⟨hp', h'p'⟩
   rw [← Prime.dvd_pow_iff_dvd (Nat.Prime.prime hp') (by norm_num:2 ≠ 0)] at h'p'
   rw [← hk₁] at h'p'
@@ -259,9 +254,9 @@ lemma sqrt_divisors_subset {M s : Finset ℕ} {k k₁: ℕ}
   exact Mdivisors n (hs hn) p' ⟨hp', hn'⟩
 
 theorem generalized (M : Finset ℕ) (k : ℕ)
-  (Mcard : 3 * 2 ^ (k + 1) + 1 ≤ M.card) (Mpos : ∀ m ∈ M, 0 < m)
-  (Mdivisors : ∀ m ∈ M, ∀ n, n.Prime ∧ n ∣ m → n ≤ Nat.nth Nat.Prime k)
-  : ∃ M' : Finset ℕ, M' ⊆ M ∧ M'.card = 4 ∧ ∃ k, M'.prod id = k^4 := by
+    (Mcard : 3 * 2 ^ (k + 1) + 1 ≤ M.card) (Mpos : ∀ m ∈ M, 0 < m)
+    (Mdivisors : ∀ m ∈ M, ∀ n, n.Prime ∧ n ∣ m → n ≤ Nat.nth Nat.Prime k) :
+    ∃ M' : Finset ℕ, M' ⊆ M ∧ M'.card = 4 ∧ ∃ k, M'.prod id = k^4 := by
   let f₁ := fun (n : ℕ) ↦ pow_of_first_k_prime_mod_two (k+1) n
   have hf₁ : ∀ n ∈ M, f₁ n ∈ two_pow_k_finset (k + 1) := by
     intro m hm
