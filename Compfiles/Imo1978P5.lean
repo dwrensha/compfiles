@@ -21,7 +21,7 @@ problem_file {
 
 Let a_k be a sequence of distinct positive integers for k = 1,2,3, ...
 
-Prove that for all natral numbers n, we have:
+Prove that for all natural numbers n, we have:
 
 sum_{k=1}^{n} a(k)/(k^2) >= sum_{k=1}^{n} (1/k).
 -/
