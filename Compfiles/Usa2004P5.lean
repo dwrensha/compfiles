@@ -38,18 +38,43 @@ lemma poly_nonneg {x : ℝ} (hx : 0 < x) : x^5 - x^2 + 3 ≥ 0 := by
   have h2 : x ^ 3 + 2 ≥ 0 := by nlinarith
   linarith
 
-lemma holder_nn (a b c : NNReal) : (a^3 + 2) * (b^3 + 2) * (c^3 + 2) ≥ (a+b+c)^3 := by
-  let f1 : (Fin 3) → NNReal := fun | 0 => a^3 | 1 => 1 | 2 => 1
-  let f2 : (Fin 3) → NNReal := fun | 0 => 1 | 1 => b^3 | 2 => 1
-  let f3 : (Fin 3) → NNReal := fun | 0 => 1 | 1 => 1 | 2 => c^3
+
+-- 3-variable Holder inequality
+lemma holder_conjugate_2 : Real.HolderConjugate 2 2:= by
+  rw [@Real.holderConjugate_iff 2 2]
+  norm_num
+lemma holder_conjugate_3 : Real.HolderConjugate 3 (3/2) := by
+  rw [@Real.holderConjugate_iff 3 (3/2)]
+  norm_num
+theorem triple_holder (S : Finset ℕ) (f1 f2 f3 : ℕ → NNReal) :
+    (∑ i ∈ S, (f1 i) * (f2 i) * (f3 i)) ^ 3
+    ≤ (∑ i ∈ S, (f1 i) ^ 3) * (∑ i ∈ S, (f2 i) ^ 3) * (∑ i ∈ S, (f3 i) ^ 3) := by
+  have h1 := NNReal.inner_le_Lp_mul_Lq S f1 (f2 * f3) holder_conjugate_3
+  have h2 := NNReal.inner_le_Lp_mul_Lq S (f2 ^ (3/2)) (f3 ^ (3/2)) holder_conjugate_2
   sorry
 
-lemma holder {a b c : ℝ} (ha : 0 < a) (hb : 0 < b) (hc : 0 < c) :
+lemma usamo_2004_holder_nn (a b c : NNReal) : (a^3 + 2) * (b^3 + 2) * (c^3 + 2) ≥ (a+b+c)^3 := by
+  rw [ge_iff_le]
+  let f1 : ℕ → NNReal := fun | 0 => a | _ => 1
+  let f2 : ℕ → NNReal := fun | 1 => b | _ => 1
+  let f3 : ℕ → NNReal := fun | 2 => c | _ => 1
+  have h := triple_holder (Finset.range 3) f1 f2 f3
+  -- now expand the sums
+  simp only [← Fin.sum_univ_eq_sum_range, Fin.sum_univ_three, Fin.isValue, Fin.coe_ofNat_eq_mod,
+      Nat.zero_mod, Nat.one_mod, Nat.mod_succ] at h
+  unfold f1 at h
+  unfold f2 at h
+  unfold f3 at h
+  simp only [mul_one, one_mul, one_pow] at h
+  convert h using 1
+  ring
+
+lemma usamo_2004_holder {a b c : ℝ} (ha : 0 < a) (hb : 0 < b) (hc : 0 < c) :
     (a^3 + 2) * (b^3 + 2) * (c^3 + 2) ≥ (a + b + c)^3 := by
   have ha_nn := Real.toNNReal_of_nonneg (show a ≥ 0 by positivity)
   have hb_nn := Real.toNNReal_of_nonneg (show b ≥ 0 by positivity)
   have hc_nn := Real.toNNReal_of_nonneg (show c ≥ 0 by positivity)
-  have h := holder_nn a.toNNReal b.toNNReal c.toNNReal
+  have h := usamo_2004_holder_nn a.toNNReal b.toNNReal c.toNNReal
   simp_all only [ge_iff_le]
   exact h
 
