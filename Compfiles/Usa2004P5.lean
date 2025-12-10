@@ -21,6 +21,8 @@ namespace Usa2004P5
 
 snip begin
 
+-- This is the solution at https://web.evanchen.cc/exams/USAMO-2004-notes.pdf
+
 -- Main estimate that lets us convert into Holder
 lemma poly_bound {x : ℝ} (hx : 0 < x) : x^3 + 2 ≤ x^5 - x^2 + 3 := by
   have h1 : (x-1)^2 ≥ 0 := by positivity
