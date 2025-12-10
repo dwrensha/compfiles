@@ -24,7 +24,7 @@ open Polynomial
 
 noncomputable def Objective (x : Fin 4 → ℝ) : ℝ := ∏ i, ((x i)^2 + 1)
 
-def Conditions (x : Fin 4 → ℝ) : Prop := ∃ a b c d : ℝ, (b - d ≥ 5) ∧
+def Conditions (x : Fin 4 → ℝ) : Prop := ∃ a b c d : ℝ, (5 ≤ b - d) ∧
     ((X - C (x 0)) * (X - C (x 1)) * (X - C (x 2)) * (X - C (x 3))
     = X^4 + C a * X^3 + C b * X^2 + C c * X + C d)
 
@@ -68,7 +68,7 @@ lemma vieta (x: Fin 4 → ℝ) (a : ℝ) (b : ℝ) (c : ℝ) (d : ℝ)
     linarith
 
 -- Now use Vieta relation to prove the key bound
-lemma main_bound {x} (hx : Conditions x) : Objective x >= 16 := by
+lemma main_bound {x} (hx : Conditions x) : 16 ≤ Objective x := by
   rcases hx with ⟨a, b, c, d, hbd, hpoly⟩
   -- we need the actual b and d from the condition, so we have b-d ≥ 5
   apply vieta at hpoly -- replace hpoly with the Vieta relations
@@ -84,7 +84,7 @@ lemma main_bound {x} (hx : Conditions x) : Objective x >= 16 := by
     rw [Fin.prod_univ_four] -- thank god
     ring -- in the informal solution, this is proved using a trick with i = sqrt(-1)
   rw [key_identity]
-  linarith [show (b-d-1)^2 ≥ 16 by nlinarith, show (a-c)^2 ≥ 0 by positivity]
+  linarith [show 16 ≤ (b-d-1)^2 by nlinarith, show 0 ≤ (a-c)^2 by positivity]
 snip end
 
 noncomputable determine solution : ℝ := 16

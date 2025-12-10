@@ -30,7 +30,7 @@ def kseq (n : ℕ) : ℕ :=
   if n = 0 then 7 else 2 ^ (2 ^ n) - 2 ^ (2 ^ (n - 1)) + 1
 def xseq (n : ℕ) : ℕ := 2 ^ (2 ^ n)
 
-lemma k_greater_than_one (n : ℕ) : kseq n > 1 := by
+lemma k_greater_than_one (n : ℕ) : 1 < kseq n := by
   unfold kseq
   split_ifs -- split on n = 0 and n > 0
   · norm_num
@@ -121,7 +121,7 @@ problem usa2008_p1 (n : ℕ) (_hn : 0 < n) :
 
   · intro i j hij  -- check coprime
     have hij' : (↑i : ℕ) ≠ ↑j := Fin.val_injective.ne hij
-    rcases Nat.lt_or_gt_of_ne hij' with h | h
+    obtain h | h := lt_or_gt_of_ne hij'
     · exact k_are_coprime ↑i ↑j h
     · exact (k_are_coprime ↑j ↑i h).symm
 
