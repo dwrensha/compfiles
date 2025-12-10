@@ -23,11 +23,9 @@ snip begin
 
 -- Main estimate that lets us convert into Holder
 lemma poly_bound {x : ℝ} (hx : 0 < x) : x^5 - x^2 + 3 ≥ x^3 + 2 := by
-  have h : (x-1)^2 * ((x+1) * (x^2+x+1)) ≥ 0 := by
-    have h1 : (x-1)^2 ≥ 0 := by nlinarith
-    have h2 : (x+1) * (x^2+x+1) ≥ 0 := by nlinarith
-    apply mul_nonneg h1 h2
-  linarith
+  have h1 : (x-1)^2 ≥ 0 := by nlinarith
+  have h2 : (x+1) * (x^2+x+1) ≥ 0 := by nlinarith
+  nlinarith
 
 -- It's not obvious a priori that x⁵ - x² + 3 is even positive
 -- and this will make life annoying later when we try to multiply ineq's together
@@ -37,7 +35,7 @@ lemma poly_nonneg {x : ℝ} (hx : 0 < x) : x^5 - x^2 + 3 ≥ 0 := by
   have h2 : x ^ 3 + 2 ≥ 0 := by nlinarith
   linarith
 
--- 3-variable Holder inequality
+-- 3-variable Holder inequality (the painful part...)
 lemma holder_conjugate_2 : Real.HolderConjugate 2 2 := by
   rw [@Real.holderConjugate_iff 2 2]
   norm_num
@@ -55,31 +53,26 @@ theorem triple_holder (S : Finset ℕ) (f1 f2 f3 : ℕ → NNReal) :
   -- Fight through exponent hell
   simp_all only [NNReal.mul_rpow, ← NNReal.rpow_natCast, ← NNReal.rpow_mul]
   norm_num at h1 h2 ⊢
+  -- if at first you don't succeed, try try again
+  -- (by which i mean copy paste the same two lines and pray to the mathlib gods)
   simp_all only [NNReal.mul_rpow, ← NNReal.rpow_natCast, ← NNReal.rpow_mul]
   norm_num at h1 h2 ⊢
   apply h1.trans (mul_le_mul_left h2 _)
 
-lemma usamo_2004_holder (a b c : NNReal) : (a^3 + 2) * (b^3 + 2) * (c^3 + 2) ≥ (a+b+c)^3 := by
+lemma key_holder (a b c : NNReal) : (a^3 + 2) * (b^3 + 2) * (c^3 + 2) ≥ (a+b+c)^3 := by
   rw [ge_iff_le]
-  let f1 : ℕ → NNReal := fun | 0 => a | _ => 1
-  let f2 : ℕ → NNReal := fun | 1 => b | _ => 1
-  let f3 : ℕ → NNReal := fun | 2 => c | _ => 1
-  have h := triple_holder (Finset.range 3) f1 f2 f3
-  -- now expand the sums
-  simp only [← Fin.sum_univ_eq_sum_range, Fin.sum_univ_three, Fin.isValue, Fin.coe_ofNat_eq_mod,
-      Nat.zero_mod, Nat.one_mod, Nat.mod_succ] at h
-  unfold f1 at h
-  unfold f2 at h
-  unfold f3 at h
-  simp only [mul_one, one_mul, one_pow] at h
-  convert h using 1
-  ring
+  -- only need values at 0 1 2 for these, the rest are junk values
+  -- (the mathlib holder seems to demand you define the function on all of ℕ)
+  have h := triple_holder (Finset.range 3)
+    (fun | 0 => a | _ => 1) -- a, 1, 1
+    (fun | 1 => b | _ => 1) -- 1, b, 1
+    (fun | 2 => c | _ => 1) -- 1, 1, c
+  simp only [← Fin.sum_univ_eq_sum_range, Fin.sum_univ_three] at h
+  convert h using 1 <;> ring
 
 lemma key_holder_real {a b c : ℝ} (ha : 0 < a) (hb : 0 < b) (hc : 0 < c) :
     (a^3 + 2) * (b^3 + 2) * (c^3 + 2) ≥ (a + b + c)^3 := by
-  rw [← Real.coe_toNNReal a ha.le]
-  rw [← Real.coe_toNNReal b hb.le]
-  rw [← Real.coe_toNNReal c hc.le]
+  rw [← Real.coe_toNNReal a ha.le, ← Real.coe_toNNReal b hb.le, ← Real.coe_toNNReal c hc.le]
   exact key_holder a.toNNReal b.toNNReal c.toNNReal
 
 lemma multiplied_bound {a b c : ℝ} (ha : 0 < a) (hb : 0 < b) (hc : 0 < c) :
