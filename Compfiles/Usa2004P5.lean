@@ -75,14 +75,12 @@ lemma usamo_2004_holder (a b c : NNReal) : (a^3 + 2) * (b^3 + 2) * (c^3 + 2) ≥
   convert h using 1
   ring
 
-lemma usamo_2004_holder_real {a b c : ℝ} (ha : 0 < a) (hb : 0 < b) (hc : 0 < c) :
+lemma key_holder_real {a b c : ℝ} (ha : 0 < a) (hb : 0 < b) (hc : 0 < c) :
     (a^3 + 2) * (b^3 + 2) * (c^3 + 2) ≥ (a + b + c)^3 := by
-  have ha_nn := Real.toNNReal_of_nonneg (show a ≥ 0 by positivity)
-  have hb_nn := Real.toNNReal_of_nonneg (show b ≥ 0 by positivity)
-  have hc_nn := Real.toNNReal_of_nonneg (show c ≥ 0 by positivity)
-  have h := usamo_2004_holder a.toNNReal b.toNNReal c.toNNReal
-  simp_all only [ge_iff_le]
-  exact h
+  rw [← Real.coe_toNNReal a ha.le]
+  rw [← Real.coe_toNNReal b hb.le]
+  rw [← Real.coe_toNNReal c hc.le]
+  exact key_holder a.toNNReal b.toNNReal c.toNNReal
 
 lemma multiplied_bound {a b c : ℝ} (ha : 0 < a) (hb : 0 < b) (hc : 0 < c) :
     (a^5 - a^2 + 3) * (b^5 - b^2 + 3) * (c^5 - c^2 + 3) ≥ (a^3 + 2) * (b^3 + 2) * (c^3 + 2) := by
@@ -96,8 +94,5 @@ snip end
 
 problem usa2004_p5 {a b c : ℝ} (ha : 0 < a) (hb : 0 < b) (hc : 0 < c) :
     (a^5 - a^2 + 3) * (b^5 - b^2 + 3) * (c^5 - c^2 + 3) ≥ (a + b + c) ^ 3 := by
-  rw [ge_iff_le]
-  have h1 := multiplied_bound ha hb hc
-  have h2 := usamo_2004_holder_real ha hb hc
-  exact h2.trans h1
+  exact (multiplied_bound ha hb hc).trans' (key_holder_real ha hb hc)
 end Usa2004P5
