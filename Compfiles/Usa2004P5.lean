@@ -35,6 +35,15 @@ lemma poly_nonneg {x : ℝ} (hx : 0 < x) : x^5 - x^2 + 3 ≥ 0 := by
   have h2 : x ^ 3 + 2 ≥ 0 := by nlinarith
   linarith
 
+-- Multiply these all together to get to the intermediate (a³+2)(b³+2)(c³+2)
+lemma multiplied_bound {a b c : ℝ} (ha : 0 < a) (hb : 0 < b) (hc : 0 < c) :
+    (a^5 - a^2 + 3) * (b^5 - b^2 + 3) * (c^5 - c^2 + 3) ≥ (a^3 + 2) * (b^3 + 2) * (c^3 + 2) := by
+  -- multiply first two ineq's together
+  have h := mul_le_mul (poly_bound ha) (poly_bound hb) (by positivity) (poly_nonneg ha)
+  -- multiply the third inequality on
+  apply mul_le_mul h (poly_bound hc) (by positivity)
+  exact mul_nonneg (poly_nonneg ha) (poly_nonneg hb)
+
 -- 3-variable Holder inequality (the painful part...)
 lemma holder_conjugate_2 : Real.HolderConjugate 2 2 := by
   rw [@Real.holderConjugate_iff 2 2]
@@ -47,7 +56,7 @@ theorem triple_holder (S : Finset ℕ) (f1 f2 f3 : ℕ → NNReal) :
     ≤ (∑ i ∈ S, (f1 i) ^ 3) * (∑ i ∈ S, (f2 i) ^ 3) * (∑ i ∈ S, (f3 i) ^ 3) := by
   have h1 := NNReal.inner_le_Lp_mul_Lq S (f1 * f2) f3 holder_conjugate_3
   have h2 := NNReal.inner_le_Lp_mul_Lq S (f1 ^ (3/2 : ℝ)) (f2 ^ (3/2 : ℝ)) holder_conjugate_2
-  -- Raise the mathlib Holder expressions to suitable powers
+  -- Cube both sides of h1, square both sides of h2
   replace h1 := NNReal.rpow_le_rpow h1 (by norm_num : (0 : ℝ) ≤ 3)
   replace h2 := NNReal.rpow_le_rpow h2 (by norm_num : (0 : ℝ) ≤ 2)
   -- Fight through exponent hell
@@ -74,14 +83,6 @@ lemma key_holder_real {a b c : ℝ} (ha : 0 < a) (hb : 0 < b) (hc : 0 < c) :
     (a^3 + 2) * (b^3 + 2) * (c^3 + 2) ≥ (a + b + c)^3 := by
   rw [← Real.coe_toNNReal a ha.le, ← Real.coe_toNNReal b hb.le, ← Real.coe_toNNReal c hc.le]
   exact key_holder a.toNNReal b.toNNReal c.toNNReal
-
-lemma multiplied_bound {a b c : ℝ} (ha : 0 < a) (hb : 0 < b) (hc : 0 < c) :
-    (a^5 - a^2 + 3) * (b^5 - b^2 + 3) * (c^5 - c^2 + 3) ≥ (a^3 + 2) * (b^3 + 2) * (c^3 + 2) := by
-  -- multiply first two ineq's together
-  have h := mul_le_mul (poly_bound ha) (poly_bound hb) (by positivity) (poly_nonneg ha)
-  -- multiply the third inequality on
-  apply mul_le_mul h (poly_bound hc) (by positivity)
-  apply mul_nonneg (poly_nonneg ha) (poly_nonneg hb)
 
 snip end
 
