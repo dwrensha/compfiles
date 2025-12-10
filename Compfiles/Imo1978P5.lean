@@ -32,13 +32,13 @@ namespace Imo1978P5
 
 snip begin
 
-lemma aux_1
-  (n : ℕ)
-  (f : ℕ → ℕ)
-  (h₀ : ∀ (m : ℕ), 0 < m → 0 < f m)
-  (h₁ : ∀ (p q : ℕ), 0 < p → 0 < q → p ≠ q → f p ≠ f q)
-  (h₂ : 0 < n) :
-  ∑ k ∈ Finset.Icc 1 n, ((k):ℝ) / (k) ^ 2 ≤ ∑ k ∈ Finset.Icc 1 n, ((f k):ℝ) / (k) ^ 2 := by
+lemma aux₁
+    {n : ℕ}
+    (f : ℕ → ℕ)
+    (h₀ : ∀ (m : ℕ), 0 < m → 0 < f m)
+    (h₁ : ∀ (p q : ℕ), 0 < p → 0 < q → p ≠ q → f p ≠ f q)
+    (h₂ : 0 < n) :
+    ∑ k ∈ Finset.Icc 1 n, ((k):ℝ) / (k) ^ 2 ≤ ∑ k ∈ Finset.Icc 1 n, ((f k):ℝ) / (k) ^ 2 := by
   let s := Finset.Icc 1 n
   let f₀ : ℕ → ℝ := fun k => 1 / (k:ℝ) ^ 2
   let f₁ : ℕ → ℝ := fun k => (k:ℝ)
@@ -100,7 +100,7 @@ lemma aux_1
     intro a ha₀
     rw [hf₄.1]
     apply Finset.mem_Icc.mp at ha₀
-    omega
+    lia
   have hf₆: ∀ k ∈ s, 1 ≤ f₃ k := by
     have hs₂: ∀ k ∈ sf_sorted, 1 ≤ k := by
       rw [hf₁, hf₂, hf₃]
@@ -428,12 +428,12 @@ lemma aux_1
           · have ht: ∀ t ∈ sl, 1 ≤ t := by
               intro t ht₀
               apply List.mem_range'.mp at ht₀
-              omega
+              lia
             refine ht sl[j] ?_
             exact List.getElem_mem hj₄
-          · omega
+          · lia
           · rw [List.getElem_range' hj₃]
-            omega
+            lia
       · intro hx₁
         have hx₃: f (f₈ x) = f₄ x := by
           rw [hx₁]
@@ -586,7 +586,7 @@ lemma aux_1
         refine hf₆ 1 ?_
         exact left_mem_Icc.mpr h₂
       · intro y hy₀ hy₁ hy₂
-        have hy₃: y ≤ n := by omega
+        have hy₃: y ≤ n := Nat.le_of_succ_le hy₂
         have hy₄: f₃ y + 1 ≤ f₃ (y + 1) := by
           refine hf₇ y ?_ (y + 1) ?_ (by omega)
           · exact Finset.mem_Icc.mpr ⟨hy₀, hy₃⟩
@@ -603,20 +603,20 @@ lemma aux_1
 snip end
 
 problem imo_1978_p5
-  (n : ℕ)
-  (f : ℕ → ℕ)
-  (h₀ : ∀ (m : ℕ), 0 < m → 0 < f m)
-  (h₁ : ∀ (p q : ℕ), 0 < p → 0 < q → p ≠ q → f p ≠ f q)
-  (h₂ : 0 < n) :
-  (∑ k ∈ Finset.Icc 1 n, (1 : ℝ) / k) ≤ ∑ k ∈ Finset.Icc 1 n, ((f k):ℝ) / k ^ 2 := by
-  have h₃: ∑ k ∈ Icc 1 n, ((k):ℝ) / (k) ^ 2 ≤ ∑ k ∈ Icc 1 n, ((f k):ℝ) / (k) ^ 2 := by
-    exact aux_1 n f h₀ h₁ h₂
+    (n : ℕ)
+    (f : ℕ → ℕ)
+    (h₀ : ∀ (m : ℕ), 0 < m → 0 < f m)
+    (h₁ : ∀ (p q : ℕ), 0 < p → 0 < q → p ≠ q → f p ≠ f q)
+    (h₂ : 0 < n) :
+    ∑ k ∈ Finset.Icc 1 n, (1 : ℝ) / k ≤ ∑ k ∈ Finset.Icc 1 n, ((f k):ℝ) / k ^ 2 := by
+  have h₃ : ∑ k ∈ Icc 1 n, ((k):ℝ) / (k) ^ 2 ≤ ∑ k ∈ Icc 1 n, ((f k):ℝ) / (k) ^ 2 :=
+    aux₁ f h₀ h₁ h₂
   refine le_trans ?_ h₃
   refine Finset.sum_le_sum ?_
   intro x hx₀
   rw [pow_two, ← div_div, div_self]
-  apply Finset.mem_Icc.mp at hx₀
+  rw [Finset.mem_Icc] at hx₀
   norm_cast
-  omega
+  lia
 
 end Imo1978P5
