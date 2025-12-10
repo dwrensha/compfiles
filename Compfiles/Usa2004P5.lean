@@ -23,17 +23,15 @@ snip begin
 
 -- Main estimate that lets us convert into Holder
 lemma poly_bound {x : ℝ} (hx : 0 < x) : x^5 - x^2 + 3 ≥ x^3 + 2 := by
-  have h1 : (x-1)^2 ≥ 0 := by nlinarith
-  have h2 : (x+1) * (x^2+x+1) ≥ 0 := by nlinarith
+  have h1 : (x-1)^2 ≥ 0 := by positivity
+  have h2 : (x+1) * (x^2+x+1) ≥ 0 := by positivity
   nlinarith
 
 -- It's not obvious a priori that x⁵ - x² + 3 is even positive
 -- and this will make life annoying later when we try to multiply ineq's together
 -- Thus, define a corollary that follows from the above
 lemma poly_nonneg {x : ℝ} (hx : 0 < x) : x^5 - x^2 + 3 ≥ 0 := by
-  have h1 := poly_bound hx
-  have h2 : x ^ 3 + 2 ≥ 0 := by nlinarith
-  linarith
+  exact (poly_bound hx).trans' (show x^3 + 2 ≥ 0 by positivity)
 
 -- Multiply these all together to get to the intermediate (a³+2)(b³+2)(c³+2)
 lemma multiplied_bound {a b c : ℝ} (ha : 0 < a) (hb : 0 < b) (hc : 0 < c) :
