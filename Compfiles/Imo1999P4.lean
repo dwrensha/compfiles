@@ -53,12 +53,12 @@ lemma aux₁ {a p n: ℕ} (hp : p.Prime) (hp' : 2 < p) (hn : 0 < n)
   -- Since the order of $a$ modulo $p$ divides $2n$ but not $n$, it must divide $2$.
   have h_order_div_2 : orderOf (a : ZMod p) ∣ 2 := by
     -- Since the order of $a$ modulo $p$ divides $2n$ and $\gcd(p-1, n) = 1$, it must divide $2$.
-    have h_order_div_2 : orderOf (a : ZMod p) ∣ 2 * n ∧ orderOf (a : ZMod p) ∣ p - 1 := by
-      simp_all only [orderOf_dvd_iff_pow_eq_one, true_and]
-      rw [ZMod.pow_card_sub_one_eq_one ]
+    have h_order_div_2 : orderOf (a : ZMod p) ∣ p - 1 := by
+      simp_all only [orderOf_dvd_iff_pow_eq_one]
+      rw [ZMod.pow_card_sub_one_eq_one]
       cases n <;> aesop
-    refine Nat.Coprime.dvd_of_dvd_mul_right ?_ h_order_div_2.1
-    exact Nat.Coprime.coprime_dvd_left h_order_div_2.2 hnp
+    refine Nat.Coprime.dvd_of_dvd_mul_right ?_ h_order.1
+    exact Nat.Coprime.coprime_dvd_left h_order_div_2 hnp
   rw [← ZMod.natCast_eq_zero_iff]
   simp_all only [orderOf_dvd_iff_pow_eq_one, sq_eq_one_iff]
   aesop
