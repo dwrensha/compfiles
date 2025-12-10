@@ -34,9 +34,7 @@ snip begin
 lemma bound (ha : 0 < a) (hb : 0 < b)
     (h : a ^ 2 + b ^ 2 + c ^ 2 + (a + b + c) ^ 2 ≤ 4) :
     1 / 2 * (1 + (c + a) * (c + b) / (a + b)^2) ≤ (a * b + 1) / (a + b)^2 := by
-  rw [show 1 / 2 * (1 + (c + a) * (c + b) / (a + b)^2)
-      = (a * b + (a ^ 2 + b ^ 2 + c ^ 2 + (a + b + c) ^ 2) / 4) / (a + b)^2 by field_simp ; ring]
-  gcongr
+  field_simp
   linarith
 
 lemma cube_root {p q : ℝ} (hp : 0 < p) (hq : 0 < q) : (p^3 * q^3)^(1 / 3 : ℝ) = p * q := by
@@ -64,18 +62,12 @@ problem usa2011_p1 (ha : 0 < a) (hb : 0 < b) (hc : 0 < c)
     (h : a ^ 2 + b ^ 2 + c ^ 2 + (a + b + c) ^ 2 ≤ 4) :
     3 ≤ (a * b + 1) / (a + b) ^ 2 + (b * c + 1) / (b + c) ^ 2 + (c * a + 1) / (c + a) ^ 2 := by
   -- Apply AM-GM on a+b, b+c, c+a
-  let S := (c + a) * (c + b) / (a + b)^2
-      + (a + b) * (a + c) / (b + c)^2
-      + (b + c) * (b + a)/ (c + a)^2
+  let S := (c+a)*(c+b)/(a+b)^2 + (a+b)*(a+c)/(b+c)^2 + (b+c)*(b+a)/(c+a)^2
   have hS : 3 ≤ S := by
     convert AMGM (add_pos ha hb) (add_pos hb hc) (add_pos hc ha) using 1
     ring
-  calc
-    3 = 3/2 + 1/2 * 3 := by ring
-    _ ≤ 3/2 + 1/2 * S := by linarith
-    _ ≤ _ := by
-      have b1 := bound ha hb h
-      have b2 := bound hb hc (show b ^ 2 + c ^ 2 + a ^ 2 + (b + c + a) ^ 2 ≤ 4 by linarith)
-      have b3 := bound hc ha (show c ^ 2 + a ^ 2 + b ^ 2 + (c + a + b) ^ 2 ≤ 4 by linarith)
-      linarith
+  have b1 := bound ha hb h
+  have b2 := bound hb hc (show b ^ 2 + c ^ 2 + a ^ 2 + (b + c + a) ^ 2 ≤ 4 by linarith)
+  have b3 := bound hc ha (show c ^ 2 + a ^ 2 + b ^ 2 + (c + a + b) ^ 2 ≤ 4 by linarith)
+  linarith
 end Usa2011P1
