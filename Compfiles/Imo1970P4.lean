@@ -28,7 +28,7 @@ lemma card_opposite (s s' s'' : Finset ℕ) (predicate: ℕ → Prop)
     s'.card + s''.card = s.card := by
   rw [filter]
   rw [opposite_filter]
-  exact Finset.filter_card_add_filter_neg_card_eq_card predicate
+  exact Finset.card_filter_add_card_filter_not predicate
 
 lemma no_other_p_divisors_nearby (x : ℕ) (y : ℕ) (p : ℕ) (p_gt_5 : p > 5) (x_lt_y : x < y)
     (close_by: ∃ k, k ≤ 5 ∧ x + k = y) (x_div_p : p ∣ x) : ¬ p ∣ y := by
