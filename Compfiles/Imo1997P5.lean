@@ -64,7 +64,7 @@ theorem imo1997_p5 (a b : ℕ) (ha : 0 < a) (hb : 0 < b) :
         rw [← pow_mul, ← pow_add]; congr; lia
       have h₃ : b ^ 2 ∣ a := by
         rw [h₂] at H
-        exact aux₃ (by nlinarith) H
+        exact aux₃ (by positivity) H
       obtain ⟨d, hd⟩ := h₃
       rw [hd, mul_comm, pow_mul, Nat.pow_left_inj (pow_ne_zero 2 (Nat.ne_zero_of_lt hb))] at H
       obtain h₄ | h₄ := aux₁ H
@@ -84,7 +84,7 @@ theorem imo1997_p5 (a b : ℕ) (ha : 0 < a) (hb : 0 < b) :
     · simp at h₁
       have h₂ : (b ^ 2) ^ (b ^ 2) = a ^ (b ^ 2) * b ^ (2 * b ^ 2 - a) := by
         rw [H, ← pow_add, ← pow_mul]; congr; lia
-      have h₃ : a ∣ b ^ 2 := aux₃ (by nlinarith) h₂
+      have h₃ : a ∣ b ^ 2 := aux₃ (by positivity) h₂
       obtain ⟨d, hd⟩ := h₃
       rw [hd, mul_comm, pow_mul, Nat.pow_left_inj (Nat.ne_zero_of_lt ha)] at H
       rw [← H] at hd
