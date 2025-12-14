@@ -34,14 +34,15 @@ lemma collinear_iff_sum {a b c : ℝ} (hab : a ≠ b) (hbc : b ≠ c) (hca : c �
   rw [collinear_iff_finrank_le_one]
   rw [show {A, B, C} = (S : Set Pt) by simp [S]]
   rw [vectorSpan_eq_span_vsub_finset_right_ne ℝ (show C ∈ S by simp [S])]
-  rw [show S.erase C = {A, B} by grind]
+  rw [show S.erase C = {A, B} by grind only [= mem_erase, = mem_insert, = mem_singleton]]
   rw [image_insert, image_singleton]
   simp only [vsub_eq_sub]
   -- grab the dimension n
   let n : ℕ := ?_
   change n ≤ 1 ↔ _
   have hn : n ≤ 1 ↔ 2 ≠ n := by
-    have : n ≤ 2 := (finrank_span_le_card _).trans (by simp; grind)
+    have : n ≤ 2 := (finrank_span_le_card _).trans (by simp; grind only [= card_insert_of_notMem,
+      = card_singleton, = mem_singleton, = Set.mem_singleton_iff])
     omega
   rw [hn]
   -- type cast like crazy
@@ -64,7 +65,7 @@ lemma collinear_iff_sum {a b c : ℝ} (hab : a ≠ b) (hbc : b ≠ c) (hca : c �
     aesop
   rw [hM]
   simp [Matrix.det_fin_two]
-  grind
+  grind only
 
 snip end
 
