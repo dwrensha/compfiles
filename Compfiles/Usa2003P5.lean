@@ -14,6 +14,8 @@ problem_file { tags := [.Algebra, .Inequality] }
 /-!
 # USA Mathematical Olympiad 2003, Problem 5
 
+Prove that for a,b,c > 0:
+(2a+b+c)² / (2a²+(b+c)²) + (2b+c+a)² / (2b²+(c+a)²) + (2c+a+b)² / (2c²+(a+b)²) ≤ 8
 -/
 
 namespace Usa2003P5
@@ -21,13 +23,13 @@ namespace Usa2003P5
 snip begin
 
 -- This is the solution at https://web.evanchen.cc/exams/USAMO-2003-notes.pdf
--- We skip the homogenization step and directly encode it in the inequality
+-- We skip the homogenization step and directly encode it in the inequality with x=(a+b+c)/3
 -- to make life easier on the Lean side
 
 lemma bound {a b c : ℝ} (ha : 0 < a) (hb : 0 < b) (hc : 0 < c) :
     (2*a+b+c)^2/(2*a^2+(b+c)^2) ≤ 4*a/(a+b+c) + 4/3 := by
   field_simp
-  have h : 0 ≤ (2*a-b-c)^2 * (15*a+3*b+3*c) := by positivity
+  have h : 0 ≤ (2*a-b-c)^2 * (5*a+b+c) := by positivity
   linarith
 
 snip end
