@@ -49,9 +49,9 @@ lemma collinear_iff_sum {a b c : ℝ} (hab : a ≠ b) (hbc : b ≠ c) (hca : c �
   set A := f a
   set B := f b
   set C := f c
-  have hAB : A ≠ B := by exact f_injective hab
-  have hBC : B ≠ C := by exact f_injective hbc
-  have hCA : C ≠ A := by exact f_injective hca
+  have hAB : A ≠ B := f_injective hab
+  have hBC : B ≠ C := f_injective hbc
+  have hCA : C ≠ A := f_injective hca
   let S : Finset Pt := {A, B, C}
   -- convert collinearity condition into a rank condition on A-C and B-C
   rw [collinear_iff_finrank_le_one]

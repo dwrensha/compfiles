@@ -25,12 +25,12 @@ snip begin
 
 -- f(0)=0
 lemma f_zero {f : ℝ → ℝ} (hf : FE f):
-    (f 0) = 0 := by
+    f 0 = 0 := by
   convert hf 0 0 <;> simp_all
 
 -- f(x^2) = xf(x)
 lemma squarish {f : ℝ → ℝ} (hf : FE f) (x : ℝ) :
-    f (x^2) = x * (f x) := by
+    f (x^2) = x * f x := by
   have h := hf x 0
   rw [f_zero hf] at h
   simp_all
@@ -43,7 +43,7 @@ lemma square_additive {f : ℝ → ℝ} (hf : FE f) (x : ℝ) (y : ℝ)  :
 
 -- f is odd
 lemma f_odd {f : ℝ → ℝ} (hf : FE f) (x : ℝ)  :
-    - f (x) = f (- x) := by
+    -f x = f (-x) := by
   by_cases hx : x ≥ 0
   · have h := square_additive hf 0 (Real.sqrt x)
     simp_all [f_zero hf]
@@ -53,7 +53,7 @@ lemma f_odd {f : ℝ → ℝ} (hf : FE f) (x : ℝ)  :
 
 -- f(x+y) = f(x)+f(y) with x,y ≥ 0 first
 lemma additive_pos {f : ℝ → ℝ} (hf : FE f) {x : ℝ} {y : ℝ} (hx : 0 ≤ x) (hy : 0 ≤ y):
-    (f (x+y)) = f x + f y := by
+    f (x + y) = f x + f y := by
   have h := square_additive hf (Real.sqrt (x + y)) (Real.sqrt y)
   grind only [usr Real.sq_sqrt', = max_def]
 
@@ -64,7 +64,7 @@ lemma additive {f : ℝ → ℝ} (hf : FE f) (x : ℝ) (y : ℝ)  :
   · have h := H y x
     simp [show y ≤ x by grind only] at h
     convert h using 1
-    · rw [show x + y = y + x by ring]
+    · rw [add_comm]
     · grind only
   by_cases hx : 0 ≤ x
   · exact additive_pos hf hx (show 0 ≤ y by grind only)
@@ -86,7 +86,7 @@ lemma additive {f : ℝ → ℝ} (hf : FE f) (x : ℝ) (y : ℝ)  :
 
 -- Apply Cauchy four times to f
 lemma four_additive {f : ℝ → ℝ} (hf : FE f) (a : ℝ) (b : ℝ) (c : ℝ) (d : ℝ) :
-    (f (a+b+c+d)) = f a + f b + f c + f d := by
+    f (a + b + c + d) = f a + f b + f c + f d := by
   have h1 := additive hf (a+b+c) d
   have h2 := additive hf (a+b) c
   have h3 := additive hf a b
@@ -94,7 +94,7 @@ lemma four_additive {f : ℝ → ℝ} (hf : FE f) (a : ℝ) (b : ℝ) (c : ℝ) 
 
 -- Show the FE implies f(x) = f(1)*x
 lemma main_proof {f : ℝ → ℝ} (hf : FE f) (x : ℝ)  :
-    (f x) = (f 1) * x := by
+    f x = f 1 * x := by
   have h := squarish hf (x+1)
   rw [show (f (x+1)) = _ by exact additive hf x 1] at h
   rw [show (x+1)^2 = x^2 + x + x + 1 by ring] at h
@@ -104,7 +104,7 @@ lemma main_proof {f : ℝ → ℝ} (hf : FE f) (x : ℝ)  :
 
 snip end
 
-determine solution_set : Set (ℝ → ℝ) := { f | ∃ c : ℝ, ∀ x, (f x) = c * x }
+determine solution_set : Set (ℝ → ℝ) := { f | ∃ c : ℝ, ∀ x, f x = c * x }
 
 problem usa2002_p4 (f : ℝ → ℝ) :
     f ∈ solution_set ↔ FE f := by
