@@ -149,7 +149,7 @@ lemma aux_1
             omega
         · exfalso
           interval_cases abs ((↑a : ℤ) - (22 : ℤ))
-          · exact (ha₁ s 14 (by omega)) h₈₂
+          · exact false_of_ne ha₁₆
           · exact (ha₁ s 12 (by omega)) h₈₂
           · exact (ha₁ s 10 (by omega)) h₈₂
           · exact (ha₁ s 6 (by omega)) h₈₂

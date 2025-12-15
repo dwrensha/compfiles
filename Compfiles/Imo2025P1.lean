@@ -179,9 +179,8 @@ lemma line_direction (a b c : ℝ) (h : a ≠ 0 ∨ b ≠ 0) (w : Plane) :
 /-- The rank of the line `a * x + b * y + c = 0` is `1` when `a` and `b` are not both zero -/
 lemma line_rank (a b c : ℝ) (h : a ≠ 0 ∨ b ≠ 0) : finrank ℝ (line a b c).direction = 1 := by
   have hv_mem : !₂[-b, a] ∈ AffineSubspace.direction (line a b c) := by
-    rw [line_direction]
-    · use 1; rw [vec_mul, vec_eq]; simp
-    · exact h
+    rw [line_direction _ _ _ h]
+    exact ⟨1, MulAction.one_smul !₂[-b, a]⟩
   rw [finrank_eq_one_iff']
   use ⟨!₂[-b, a], hv_mem⟩
   constructor

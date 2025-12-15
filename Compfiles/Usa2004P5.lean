@@ -45,9 +45,6 @@ lemma multiplied_bound {a b c : ℝ} (ha : 0 < a) (hb : 0 < b) (hc : 0 < c) :
   exact mul_nonneg (poly_nonneg ha) (poly_nonneg hb)
 
 -- 3-variable Holder inequality (the painful part...)
-lemma holder_conjugate_2 : Real.HolderConjugate 2 2 := by
-  rw [@Real.holderConjugate_iff 2 2]
-  norm_num
 lemma holder_conjugate_3 : Real.HolderConjugate (3/2 : ℝ) 3 := by
   rw [@Real.holderConjugate_iff (3/2 : ℝ) 3]
   norm_num
@@ -55,7 +52,7 @@ theorem triple_holder (S : Finset ℕ) (f1 f2 f3 : ℕ → NNReal) :
     (∑ i ∈ S, (f1 i) * (f2 i) * (f3 i)) ^ 3
     ≤ (∑ i ∈ S, (f1 i) ^ 3) * (∑ i ∈ S, (f2 i) ^ 3) * (∑ i ∈ S, (f3 i) ^ 3) := by
   have h1 := NNReal.inner_le_Lp_mul_Lq S (f1 * f2) f3 holder_conjugate_3
-  have h2 := NNReal.inner_le_Lp_mul_Lq S (f1 ^ (3/2 : ℝ)) (f2 ^ (3/2 : ℝ)) holder_conjugate_2
+  have h2 := NNReal.inner_le_Lp_mul_Lq S (f1 ^ (3/2 : ℝ)) (f2 ^ (3/2 : ℝ)) Real.HolderConjugate.two_two
   -- Cube both sides of h1, square both sides of h2
   replace h1 := NNReal.rpow_le_rpow h1 (by norm_num : (0 : ℝ) ≤ 3)
   replace h2 := NNReal.rpow_le_rpow h2 (by norm_num : (0 : ℝ) ≤ 2)
