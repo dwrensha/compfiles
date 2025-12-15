@@ -89,7 +89,7 @@ lemma sign_eq_of_contra {n : ℕ}
       Finset.sum_pair Fin.castSucc_lt_succ.ne, Finset.sum_pair Fin.castSucc_lt_succ.ne,
       Equiv.Perm.mul_apply, Equiv.Perm.mul_apply, ← hi, Equiv.swap_apply_left,
       Equiv.swap_apply_right, add_comm, add_sub_add_comm, ← sub_mul, ← sub_mul, Fin.val_succ,
-      Fin.coe_castSucc, Nat.cast_add, Nat.cast_one, add_sub_cancel_left, sub_add_cancel_left,
+      Fin.val_castSucc, Nat.cast_add, Nat.cast_one, add_sub_cancel_left, sub_add_cancel_left,
       one_mul, neg_one_mul]
     calc
       _ ≤ |x (p i.succ)| + |-x (p i.castSucc)| := abs_add_le ..

@@ -142,14 +142,13 @@ lemma aux_2_5
       (1 : ℕ) < x → if IsSquare (a x i)
                     then a x (i + (1 : ℕ)) = (a x i).sqrt
                     else a x (i + (1 : ℕ)) = a x i + (3 : ℕ))
-    (x c i j : ℕ)
+    (x c i : ℕ)
     (hx₀ : (1 : ℕ) < x)
     (hi₀ : a x i = c)
     (hh₃ : c < (c.sqrt + (1 : ℕ)) ^ (2 : ℕ))
     (hh₄ : ∀ (y : ℕ), c ≤ y → y < (c.sqrt + (1 : ℕ)) ^ (2 : ℕ) → ¬IsSquare y)
     (hh₁ : c % (3 : ℕ) = (0 : ℕ))
-    (hh₂ : c.sqrt % (3 : ℕ) = (0 : ℕ))
-     (hj₀ : j = ((c.sqrt + (3 : ℕ)) ^ (2 : ℕ) - c) / (3 : ℕ)) :
+    (hh₂ : c.sqrt % (3 : ℕ) = (0 : ℕ)) :
     ∀ (k : ℕ), i ≤ k → k < i + ((c.sqrt + (3 : ℕ)) ^ (2 : ℕ) - c) / (3 : ℕ) → ¬IsSquare (a x k) := by
   intro k
   have h₀: ∀ y t, (c.sqrt + (t : ℕ)) ^ (2 : ℕ) < y →
@@ -257,7 +256,7 @@ lemma aux_3
       use (i + j)
       refine aux_2_3 a ha₁ x c i j ((c.sqrt + (3 : ℕ)) ^ (2 : ℕ)) hx₀ hi₀ hh₆ ?_ ?_ hj₀
       · simp_all
-        exact aux_2_5 a ha₁ x c i j hx₀ hi₀ hh₃ hh₄ hh₁ hh₂ hj₀
+        exact aux_2_5 a ha₁ x c i hx₀ hi₀ hh₃ hh₄ hh₁ hh₂
       · refine Nat.dvd_of_mod_eq_zero ?_
         refine Nat.sub_mod_eq_zero_of_mod_eq ?_
         rw [hh₁]

@@ -173,10 +173,10 @@ def htmlEscape (s : String) : String :=
 def stringifyPercent (p : Float) : String :=
   let s1 := s!"{p * 100}"
   let pos := s1.find (fun c ↦ c = '.')
-  if pos = s1.rawEndPos then
+  if pos = s1.endPos then
     s1 ++ "%"
   else
-    let p1 : String.Pos.Raw := ⟨pos.1 + 3⟩
+    let p1 : String.Pos.Raw := ⟨pos.1.1 + 3⟩
     let s2 := Substring.Raw.mk s1 0 p1
     s2.toString ++ "%"
 
@@ -189,7 +189,7 @@ def olean_path_to_github_url (path : System.FilePath) : IO String := do
   let path' := (System.mkFilePath (relative_olean_path_components.drop 4)).toString
   assert!(sfx.toList.isSuffixOf path'.toList)
   return "https://github.com/dwrensha/compfiles/blob/main/" ++
-            (path'.stripSuffix sfx) ++ ".lean"
+            (path'.dropSuffix sfx) ++ ".lean"
 
 def extractModuleDoc (env : Environment) (m : Name) : String :=
   match Lean.getModuleDoc? env m with
@@ -353,8 +353,8 @@ unsafe def main (_args : List String) : IO Unit := do
            if v.hasSorry then proved := false
 
       let metadata := (mds.find? m).getD {}
-      let probId := m.toString.stripPrefix "Compfiles."
-      infos := ⟨probId,
+      let probId := m.toString.dropPrefix "Compfiles."
+      infos := ⟨probId.toString,
                 extractModuleDoc env m,
                 metadata,
                 solutionUrl, problemUrl, proved⟩ :: infos
@@ -381,7 +381,7 @@ unsafe def main (_args : List String) : IO Unit := do
         -- Make github urls a little nicer to look at.
         let text :=
           if url.startsWith "https://github.com/"
-          then let rest := url.stripPrefix "https://github.com/"
+          then let rest := (url.dropPrefix "https://github.com/").toString
                match rest.splitOn "/" with
                | _ns :: repo :: _blob :: _branch :: rest =>
                   "/".intercalate (repo :: rest)
@@ -406,7 +406,7 @@ unsafe def main (_args : List String) : IO Unit := do
         h.putStr s!"<li><a href=\"{rawSolLiveUrl}\">{soldesc}</a></li>"
       h.putStrLn "</ul></div>"
 
-      let writeupLinks := getWriteupLinks probId
+      let writeupLinks := getWriteupLinks probId.toString
       if writeupLinks.length > 0
       then h.putStrLn s!"<div>External resources:<ul class=\"writeups\">"
            for ⟨url, text⟩ in writeupLinks do

@@ -352,7 +352,6 @@ lemma mylemma_case_k_2
   (h₀: 1 < p ∧ p < q ∧ q < r)
   (hpl: 2 ≤ p)
   (hql: 3 ≤ q)
-  (hrl: 4 ≤ r)
   (hpu: p < 4)
   (hk: p * q * r - 1 = (p - 1) * (q - 1) * (r - 1) * 2) :
   (p, q, r) = (2, 4, 8) ∨ (p, q, r) = (3, 5, 15) := by
@@ -405,7 +404,7 @@ problem imo1992_p1 (a b c : ℤ) (ha : 1 < a) (hb : a < b) (hc : b < c) :
   have hk1: 1 < k := mylemma_k_gt_1 a b c k hk h₁ hpl hql hrl hden
   have hpu: a < 4 := mylemma_p_lt_4 a b c k ⟨ha, hb, hc⟩ hk h₁ hpl hql hrl hden
   interval_cases k
-  · exact mylemma_case_k_2 a b c ⟨ha, hb, hc⟩ hpl hql hrl hpu hk
+  · exact mylemma_case_k_2 a b c ⟨ha, hb, hc⟩ hpl hql hpu hk
   · exact mylemma_case_k_3 a b c ⟨ha, hb, hc⟩ hpl hql hpu hk
 
 

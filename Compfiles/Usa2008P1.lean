@@ -49,7 +49,7 @@ lemma main_identity (n : ℕ) :
   | zero => decide
   | succ n ih =>
       rw [Fin.prod_univ_castSucc]
-      simp only [Fin.coe_castSucc, Fin.val_last]
+      simp only [Fin.val_castSucc, Fin.val_last]
       rw [ih]
       simp only [kseq, Nat.add_eq_zero_iff, one_ne_zero, and_false, ↓reduceIte,
         add_tsub_cancel_right]

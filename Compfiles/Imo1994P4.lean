@@ -35,7 +35,7 @@ lemma nonneg_mul_eq_two {a b : ℤ} (ha : 0 ≤ a) (hb : 0 ≤ b)
   interval_cases b <;> lia
 
 lemma aux₁ {a b c d : ℤ}
-  (ha : 0 < a) (hb : 0 < b) (hc : 0 < c) (hd : 0 < d)
+  (hc : 0 < c) (hd : 0 < d)
   (h₁ : a * b = c + d) (h₂ : a + b = c * d) (ha': a = 1) :
   (a = 1 ∧ b = 5 ∧ c = 3 ∧ d = 2) ∨ (a = 1 ∧ b = 5 ∧ c = 2 ∧ d = 3) := by
   rw [ha'] at h₁ h₂
@@ -102,17 +102,17 @@ problem imo1994_p4 (m n : ℤ) :
     have ht' : m * s = n + t := by grind
     by_cases hmnst : m = 1 ∨ n = 1 ∨ s = 1 ∨ t = 1
     · casesm* _ ∨ _
-      · have h := aux₁ hm hs_pos hn ht_pos ht' hs' hmnst
+      · have h := aux₁ hn ht_pos ht' hs' hmnst
         rcases h with (h'|h') <;> rcases h' with ⟨hm', _, hn', _⟩ <;> rw [hm', hn'] <;> simp
-      · have h := aux₁ hn ht_pos hm hs_pos hs'.symm ht'.symm hmnst
+      · have h := aux₁ hm hs_pos hs'.symm ht'.symm hmnst
         rcases h with (h'|h') <;> rcases h' with ⟨hn', _, hm', _⟩ <;> rw [hn', hm'] <;> simp
       · rw [mul_comm] at ht'
         rw [add_comm] at hs'
-        have h := aux₁ hs_pos hm hn ht_pos ht' hs' hmnst
+        have h := aux₁ hn ht_pos ht' hs' hmnst
         rcases h with (h'|h') <;> rcases h' with ⟨_, hm', hn', _⟩ <;> rw [hn', hm'] <;> simp
       · rw [add_comm] at ht'
         rw [mul_comm] at hs'
-        have h := aux₁ ht_pos hn hm hs_pos hs'.symm ht'.symm hmnst
+        have h := aux₁ hm hs_pos hs'.symm ht'.symm hmnst
         rcases h with (h'|h') <;> rcases h' with ⟨_, hn', hm', _⟩ <;> rw [hn', hm'] <;> simp
     · push_neg at hmnst
       have hmnst'' : 2 ≤ m ∧ 2 ≤ n ∧ 2 ≤ s ∧ 2 ≤ t := by lia

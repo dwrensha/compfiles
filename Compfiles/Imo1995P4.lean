@@ -88,7 +88,7 @@ lemma aux₂ {x : ℕ → ℝ} {n : ℕ} (hn : 1 ≤ n) (hx₁ : ∀ (i : ℕ), 
         · rw [h'n', hk₄, zpow_sub₀ (by norm_num:_)]
           field
 
-theorem generalized (n : ℕ) (hn : 0 < n) (hn' : ¬2 ∣ n) : IsGreatest { x₀ | ∃ x : ℕ → ℝ, x 0 = x₀ ∧ (∀ i : ℕ, 0 < x i) ∧ x 0 = x n
+theorem generalized (n : ℕ) (hn' : ¬2 ∣ n) : IsGreatest { x₀ | ∃ x : ℕ → ℝ, x 0 = x₀ ∧ (∀ i : ℕ, 0 < x i) ∧ x 0 = x n
     ∧ (∀ i : ℕ, 0 < i ∧ i ≤ n → x (i - 1) + (2 / x (i - 1)) = 2 * x i + (1 / x i))
   } (2 ^ ((n - (1 : ℝ)) / 2)) := by
   constructor
@@ -144,7 +144,7 @@ problem imo1995_p4 :
   } solution := by
   have h : solution = (2 ^ ((1995 - (1 : ℝ)) / 2)) := by norm_num
   rw [h]
-  exact generalized 1995 (by norm_num:_) (by norm_num:_)
+  exact generalized 1995 (by norm_num:_)
 
 
 end Imo1995P4

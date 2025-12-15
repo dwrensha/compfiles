@@ -127,7 +127,7 @@ def parseAuthors (src : String) : List String := Id.run do
   for l in lines do
     if l.startsWith "Authors: "
     then
-      return (l.stripPrefix "Authors: ").splitToList (fun c => c = ',')
+      return (l.dropPrefix "Authors: ").toString.splitToList (fun c => c = ',')
   return []
 
 def parseCopyrightHeader (src : String) : String := Id.run do
