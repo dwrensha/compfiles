@@ -29,7 +29,7 @@ abbrev op (f : S → S) (a b : S) : S :=
 snip begin
 
 lemma sol_prop {a : ℝ} (ha : -1 < a) : -1 < -a / (1 + a) :=
-   (lt_div_iff₀ (show 0 < 1 + a by linarith)).mpr (by linarith)
+   (lt_div_iff₀ (show 0 < 1 + a by linarith)).mpr (by simp)
 
 snip end
 

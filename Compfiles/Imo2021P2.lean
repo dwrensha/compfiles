@@ -309,7 +309,7 @@ lemma exists_decrease_of_piecewise_concave_plus {s : Finset ℝ} {f : ℝ → �
           use (max t r')
           rw [and_iff_right (le_max_right _ _)]
           apply lt_of_le_of_lt h''
-          apply lt_add_of_pos_right _ (by norm_num : (0 : ℝ) < 1)
+          exact lt_add_one (f t)
 
 noncomputable def Finset.SumSqrtDist {α : Type u} (s : Finset α)
     (x : α → ℝ) (t : ℝ) := ∑ i ∈ s, √|x i - t|

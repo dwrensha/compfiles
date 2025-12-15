@@ -39,8 +39,7 @@ def result : ℕ → ℕ
 
 lemma prod_le_sum_pow_sum (s : Multiset ℕ) : s.prod ≤ s.sum ^ s.sum := by
   induction' s using Multiset.induction with i s' hs'
-  · rw [Multiset.sum_zero, Multiset.prod_zero]
-    norm_num
+  · simp
   · rw [Multiset.sum_cons, Multiset.prod_cons]
     by_cases hi : i = 0
     · rw [hi, zero_mul]

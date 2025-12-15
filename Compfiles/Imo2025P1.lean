@@ -87,11 +87,7 @@ abbrev Plane := EuclideanSpace ℝ (Fin 2)
 abbrev AffSubOfPlane := AffineSubspace ℝ Plane
 
 /-- Two vectors are equal iff their x and y coordinates are equal. -/
-lemma vec_eq (x1 x2 y1 y2 : ℝ) : !₂[x1, y1] = !₂[x2, y2] ↔ (x1 = x2 ∧ y1 = y2) := by
-  constructor
-  · intro h
-    simpa using h
-  · simp (config := { contextual := true })
+lemma vec_eq (x1 x2 y1 y2 : ℝ) : !₂[x1, y1] = !₂[x2, y2] ↔ (x1 = x2 ∧ y1 = y2) := by simp
 
 /-- Get the x coordinate of a vector. -/
 lemma vec_repr_x (x y : ℝ) : !₂[x, y] 0 = x := by simp
@@ -1337,8 +1333,7 @@ noncomputable def strongCoverGridConfig.extend (C : strongCoverGridConfig) :
         omega
       · rw [hE, edgeLine, line', edgeCoeffs, point_on_line]
         ring_nf
-        rw [show (1 + C.n : ℕ) = 1 + (C.n : ℝ) by norm_cast]
-        ring
+        simp
     · have : L ∈ C.lines := Finset.mem_of_mem_cons_of_ne hL hE
       obtain ⟨x, hx1, hx2⟩ := C.lines_used L this
       use x; simp only [hx2, and_true]

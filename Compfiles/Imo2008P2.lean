@@ -121,7 +121,7 @@ problem imo2008_p2b : Set.Infinite rationalSolutions := by
           rw [hg, hz_def]; ring
       have h₂ : q < t * (t + 1) := by
         calc
-          q < q + 1 := by linarith
+          q < q + 1 := lt_add_one q
           _ ≤ t := (le_max_left (q + 1) 1)
           _ ≤ t + t ^ 2 := by linarith [sq_nonneg t]
           _ = t * (t + 1) := by ring
