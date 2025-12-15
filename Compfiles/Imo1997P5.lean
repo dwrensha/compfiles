@@ -56,7 +56,7 @@ snip end
 
 determine solution_set : Set (ℕ × ℕ) := {(1, 1), (16, 2), (27, 3)}
 
-theorem imo1997_p5 (a b : ℕ) (ha : 0 < a) (hb : 0 < b) :
+problem imo1997_p5 (a b : ℕ) (ha : 0 < a) (hb : 0 < b) :
     a ^ (b ^ 2) = b ^ a ↔ (a, b) ∈ solution_set := by
   simp [solution_set]; constructor <;> intro H
   · by_cases h₁ : 2 * b ^ 2 ≤ a
