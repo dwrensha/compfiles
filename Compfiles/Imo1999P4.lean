@@ -178,13 +178,6 @@ problem imo1999_p4 (n p : ℕ) :
           have hqq_le := Nat.le_of_dvd (by norm_num:_) hq'p
           have hqq3 : qq = 3 := by
             interval_cases qq <;> norm_num at hq'p <;> norm_num at hqq₁ ; norm_num
-          rw [hqq3] at hqq₂
-          have hpadic_3m := one_le_padicValNat_of_dvd (by lia:_) hqq₂
-          rw [Nat.one_le_iff_ne_zero, Nat.ne_zero_iff_zero_lt] at hpadic_3m
-          contrapose! hp_padic_le
-          ring_nf
-          calc 2 + padicValNat 3 m
-            _ < 2 + padicValNat 3 m + padicValNat 3 m := (lt_add_iff_pos_right _).mpr hpadic_3m
-            _ = 2 + padicValNat 3 m * 2 := by ring
+          lia
 
 end Imo1999P4

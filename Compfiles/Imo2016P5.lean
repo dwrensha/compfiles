@@ -35,7 +35,7 @@ snip end
 
 determine solution_value : ℕ := 2016
 
-problem imo2015_p5 :
+problem imo2016_p5 :
     IsLeast { k | ∃ L R : Finset ℕ,
                   L ⊂ Finset.Icc 1 2016 ∧
                   R ⊂ Finset.Icc 1 2016 ∧
@@ -50,9 +50,7 @@ problem imo2015_p5 :
     -- https://web.evanchen.cc/exams/IMO-2016-notes.pdf
     use (Finset.Icc 1 2016).filter (fun n ↦ n % 4 = 2 ∨ n % 4 = 3)
     use (Finset.Icc 1 2016).filter (fun n ↦ n % 4 = 0 ∨ n % 4 = 1)
-    have hp : ∀ n, (n % 4 = 2 ∨ n % 4 = 3) =  ¬ (n % 4 = 0 ∨ n % 4 = 1) := fun n ↦ by
-      have : n % 4 < 4 := Nat.mod_lt _ (by norm_num)
-      interval_cases n % 4 <;> norm_num
+    have hp : ∀ n, (n % 4 = 2 ∨ n % 4 = 3) = ¬(n % 4 = 0 ∨ n % 4 = 1) := by lia
     refine ⟨?_, ?_, ?_, ?_⟩
     · refine ⟨Finset.filter_subset _ _, ?_⟩
       intro h
@@ -93,7 +91,7 @@ problem imo2015_p5 :
     have hic2 : i ∈ Finset.Icc 1 2016 \ R := by
       rw [Finset.mem_sdiff]; exact ⟨hic, hiR⟩
     rw [←Finset.prod_erase_mul _ _ hic1, ←Finset.prod_erase_mul _ _ hic2] at hLR
-    simp (config := {decide := true}) at hLR
+    simp at hLR
 
 
 end Imo2016P5

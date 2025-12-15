@@ -581,12 +581,7 @@ problem imo2017_p1
       ring_nf
       refine Nat.le_induction ?_ ?_ c hc₃
       · norm_num
-      · intro d hd₀ hd₁
-        simp_all
-        refine Nat.add_lt_of_lt_sub ?_
-        refine lt_trans hd₁ ?_
-        ring_nf
-        omega
+      · lia
     have hc₅: c ≠ 4 := by
       contrapose! hc₂
       rw [hc₂]

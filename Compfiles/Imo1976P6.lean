@@ -63,8 +63,8 @@ problem imo1976_p6 (u : ℕ → ℝ)
         subst h_3
         simp_all only [lt_add_iff_pos_left, add_pos_iff, Nat.ofNat_pos, mul_pos_iff_of_pos_left,
                        zero_lt_one, or_true, Int.reduceNeg]
-        norm_num [ Int.negSucc_eq ] at h
-        linarith [ pow_pos Nat.zero_lt_two ( 2 * w + 1 ) ];
+        norm_num [Int.negSucc_eq] at h
+        lia
   simp_all only [pow_zero, sub_self, zero_div, Real.rpow_zero, neg_add_cancel,
                  pow_one, sub_neg_eq_add, gt_iff_lt]
   obtain ⟨w, h⟩ := h_int

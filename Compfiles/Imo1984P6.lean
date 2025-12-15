@@ -107,7 +107,7 @@ lemma mylemma_h8
       refine (Nat.lt_div_iff_mul_lt' ?_ b).mpr ?_
       · refine even_iff_two_dvd.mp ?_
         exact Odd.add_odd h₁.2.1 h₁.2.2.1
-      · linarith
+      · lia
     have g₁: (b + c) / 2 = 2 ^ (m-1) := by
       rw [h₅]
       rw [← Nat.pow_sub_mul_pow 2 hm1]
