@@ -27,11 +27,9 @@ of 17 elements each, all with the same sum of elements.
 
 namespace Imo1989P1
 
-snip begin
-
-set_option maxHeartbeats 0
-
 abbrev S := Finset.Icc 1 1989
+
+snip begin
 
 lemma s_equiv : S = Finset.Ioc 0 1989 := rfl
 
@@ -166,6 +164,7 @@ def pre_solution : PreSolution := by
     simp only [Fin.isValue, avg, Finset.coe_Icc, sol]
     split_ifs <;> (simp [Set.insert_subset_iff]; try omega)
 
+set_option maxHeartbeats 500000 in
 noncomputable def fill_element (i : Fin 117) (presol : PreSolution' i) : PreSolution'' i := by
   have ⟨presol, hpresol⟩ := presol
   exact if h : Set.ncard (presol.A i) = 17 then ⟨presol, λ j hj ↦ if h : i = j then (by simp_all) else by simp_all [hpresol j (by grind)]⟩ else by
@@ -440,7 +439,7 @@ problem imo1989_p1 : ∃ (A : Fin 117 → Set ℕ),
       have : ∑ᶠ (i : Fin 117), 17 = 117 * 17 := by simp [finsum_eq_sum_of_fintype]
       simp_all [sol.fill]
   · exact sol.presol.disjoint i j hij
-  · rw [sol.fill i (by grind)]
+  · rw [sol.fill i (Fin.zero_le i)]
   · rw [sol.presol.mean i, sol.presol.mean j, sol.fill i (by grind), sol.fill j (by grind)]
 
 
