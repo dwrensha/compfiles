@@ -8,7 +8,10 @@ import Mathlib.Tactic
 
 import ProblemExtraction
 
-problem_file { tags := [.Algebra] }
+problem_file {
+  tags := [.Algebra]
+  videos := ["https://youtu.be/5NbYtDfXfR4"]
+}
 
 /-!
 # International Mathematical Olympiad 1996, Problem 3

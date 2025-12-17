@@ -389,6 +389,13 @@ unsafe def main (_args : List String) : IO Unit := do
           else url
         h.putStrLn s!"<p>The solution was imported from <a class=\"external\" href=\"{url}\">{text}</a>.</p>"
 
+      if metadata.videos.length > 0 then
+        h.putStrLn "<div>Video:"
+        h.putStr "<ul class=\"video-links\">"
+        for v in metadata.videos do
+          h.putStrLn s!"<li><a href=\"{v}\">{v}</a></li>"
+        h.putStrLn "</ul></div>"
+
       let hraw ← IO.FS.Handle.mk ("_site/" ++ rawProblemFile) IO.FS.Mode.write
       hraw.putStr s!"{metadata.copyrightHeader}{problem_src}"
 

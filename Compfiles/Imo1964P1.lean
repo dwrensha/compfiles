@@ -9,7 +9,10 @@ import Mathlib.Tactic
 
 import ProblemExtraction
 
-problem_file { tags := [.NumberTheory] }
+problem_file {
+  tags := [.NumberTheory]
+  videos := ["http://youtu.be/9d2nicgd68Q"]
+}
 
 /-!
 # International Mathematical Olympiad 1964, Problem 1

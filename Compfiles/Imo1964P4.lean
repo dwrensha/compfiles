@@ -10,7 +10,10 @@ import Mathlib.Tactic.Linarith
 
 import ProblemExtraction
 
-problem_file { tags := [.Combinatorics] }
+problem_file {
+  tags := [.Combinatorics]
+  videos := ["http://youtu.be/TOzS4aC_K1g"]
+}
 
 /-!
 # International Mathematical Olympiad 1964, Problem 4

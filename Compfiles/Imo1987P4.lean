@@ -11,7 +11,10 @@ import Mathlib.Tactic.Ring
 
 import ProblemExtraction
 
-problem_file { tags := [.Algebra] }
+problem_file {
+  tags := [.Algebra]
+  videos := ["https://youtu.be/gi8ZTjRO-xI"]
+}
 
 /-!
 # International Mathematical Olympiad 1987, Problem 4
