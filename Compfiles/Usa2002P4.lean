@@ -29,16 +29,12 @@ snip begin
 -- Following https://web.evanchen.cc/exams/USAMO-2002-notes.pdf
 
 -- f(0)=0
-lemma f_zero {f : ℝ → ℝ} (hf : FE f):
-    f 0 = 0 := by
-  convert hf 0 0 <;> simp_all
+lemma f_zero {f : ℝ → ℝ} (hf : FE f) : f 0 = 0 := by
+  simpa using hf 0 0
 
 -- f(x^2) = xf(x)
-lemma squarish {f : ℝ → ℝ} (hf : FE f) (x : ℝ) :
-    f (x^2) = x * f x := by
-  have h := hf x 0
-  rw [f_zero hf] at h
-  simp_all
+lemma squarish {f : ℝ → ℝ} (hf : FE f) (x : ℝ) : f (x^2) = x * f x := by
+  simpa [f_zero hf] using hf x 0
 
 -- f(x^2) = f(x^2)-f(y^2)
 lemma square_additive {f : ℝ → ℝ} (hf : FE f) (x : ℝ) (y : ℝ)  :
@@ -119,7 +115,7 @@ problem usa2002_p4 (f : ℝ → ℝ) :
     grind only [usr Set.mem_setOf_eq]
   · -- conversely, if f obeys the FE, then choose c = f(1)
     intro hf
-    use (f 1) -- c = f(1)
+    use f 1 -- c = f(1)
     apply main_proof
     exact hf
 
