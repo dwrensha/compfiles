@@ -103,9 +103,8 @@ structure ProblemFileMetadata where
   --- is automatically populated via the file's copyright header.
   authors : List String := []
 
-  --- Names of the people who wrote the solution. This field
-  --- is automatically populated via the file's copyright header,
-  --- which is assumed to be everything before the first 'import'.
+  --- Everything in the file up to but not including the first `import`.
+  --- This is automatically populated during extraction.
   copyrightHeader : String := ""
 
 structure ProblemMetadataEntry where
