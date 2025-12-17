@@ -67,8 +67,7 @@ lemma collinear_iff_sum {a b c : ℝ} (hab : a ≠ b) (hbc : b ≠ c) (hca : c �
   let n : ℕ := ?_
   change n ≤ 1 ↔ _
   have hn : n ≤ 1 ↔ 2 ≠ n := by
-    have : n ≤ 2 := (finrank_span_le_card _).trans (by simp; grind only [= card_insert_of_notMem,
-      = card_singleton, = mem_singleton, = Set.mem_singleton_iff])
+    have : n ≤ 2 := (finrank_span_le_card _).trans (by simp [card_le_two])
     omega
   rw [hn]
   -- type cast like crazy
