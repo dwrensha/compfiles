@@ -2,15 +2,16 @@
 Copyright (c) 2025 The Compfiles Contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Evan Chen
-
-YouTube: https://youtu.be/LgS5UrQzXJI
 -/
 
 import Mathlib.Tactic
 import ProblemExtraction
 import Mathlib.LinearAlgebra.AffineSpace.FiniteDimensional
 
-problem_file { tags := [.Geometry] }
+problem_file {
+  tags := [.Geometry]
+  videos := ["https://youtu.be/LgS5UrQzXJI"]
+}
 
 /-!
 # USA Mathematical Olympiad 2014, Problem 3

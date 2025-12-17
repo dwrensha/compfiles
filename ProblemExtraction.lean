@@ -99,6 +99,10 @@ structure ProblemFileMetadata where
   --- then this field should contain the URL of that source.
   importedFrom : Option String := .none
 
+  -- List of URLs to videos relevant to the solution, for example recordings
+  -- of livestreams.
+  videos : List String := []
+
   --- Names of the people who wrote the solution. By default, this
   --- is automatically populated via the file's copyright header.
   authors : List String := []

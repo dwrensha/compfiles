@@ -2,12 +2,15 @@
 Copyright (c) 2025 The Compfiles Contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Evan Chen
-
-YouTube: https://youtu.be/JJubxpCN0fM
 -/
 
 import Mathlib.Tactic
 import ProblemExtraction
+
+problem_file {
+  tags := [.Algebra]
+  videos := ["https://youtu.be/JJubxpCN0fM"]
+}
 
 /-!
 # USA Mathematical Olympiad 2002, Problem 4

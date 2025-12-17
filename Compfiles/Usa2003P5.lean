@@ -2,8 +2,6 @@
 Copyright (c) 2025 The Compfiles Contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Evan Chen
-
-YouTube: https://youtu.be/7AF_ekJfk30
 -/
 
 import Mathlib.Tactic
@@ -11,7 +9,10 @@ import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 import ProblemExtraction
 
-problem_file { tags := [.Algebra, .Inequality] }
+problem_file {
+  tags := [.Algebra, .Inequality]
+  videos := ["https://youtu.be/7AF_ekJfk30"]
+}
 
 /-!
 # USA Mathematical Olympiad 2003, Problem 5
