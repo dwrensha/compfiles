@@ -84,10 +84,8 @@ lemma collinear_iff_sum {a b c : ℝ} (hab : a ≠ b) (hbc : b ≠ c) (hca : c �
   rw [Matrix.linearIndependent_rows_iff_isUnit, Matrix.isUnit_iff_isUnit_det, isUnit_iff_ne_zero]
   -- Write the explicit matrix
   have hM : M = !![a-c, (a-(2014/3))^3-(c-(2014/3))^3; b-c, (b-(2014/3))^3-(c-(2014/3))^3] := by
-    simp [← Matrix.ext_iff, Fin.forall_fin_succ]
-    simp [M, isom, X, A, B, C]
-    unfold f
-    simp_all
+    rw [← Matrix.ext_iff, Fin.forall_fin_succ]
+    simp [M, isom, X, A, B, C, f]
   rw [hM]
   simp [Matrix.det_fin_two]
   grind only -- this line does like 90% of the mathematical work (e.g. factoring determinant)
