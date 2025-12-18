@@ -14,6 +14,12 @@ import ProblemExtraction
 
 problem_file { tags := [.NumberTheory] }
 
+namespace Imo1998P3
+
+determine solution_set : Set ℕ := {x | ∃ k : ℕ , x = 2 * k + 1}
+
+snip begin
+
 /-!
 # International Mathematical Olympiad 1998, Problem 3
 
@@ -110,10 +116,6 @@ $$k \equiv 1 \pmod{2} \iff \exists n > 0, \frac{d(n^2)}{d(n)} = k$$
 
 as desired.
 -/
-
-namespace Imo1998P3
-
-determine solution_set : Set ℕ := {x | ∃ k : ℕ , x = 2 * k + 1}
 
 /-- Define `d(n)`, the function counting the number of positive divisors of `n`. -/
 def d (n : ℕ) : ℕ := (Nat.divisors n).card
@@ -622,6 +624,8 @@ theorem odd_k_satisfies (k : ℕ)
             simp
           rw [hkj, mul_comm (2 ^ t * j - 1), mul_assoc, mul_comm (d nⱼ)]
           rw [htelescopes.symm, hnⱼ.right, mul_comm, mul_assoc]
+
+snip end
 
 problem imo1998_p3 (k : ℕ) :
     k ∈ solution_set ↔
