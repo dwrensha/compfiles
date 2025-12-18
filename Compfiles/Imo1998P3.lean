@@ -14,8 +14,6 @@ import ProblemExtraction
 
 problem_file { tags := [.NumberTheory] }
 
-determine solution_set : Set ℕ := {x | ∃ k : ℕ , x = 2 * k + 1}
-
 /-!
 # International Mathematical Olympiad 1998, Problem 3
 
@@ -25,6 +23,8 @@ Determine all positive integers $k$ such that $d(n^2)/d(n) = k$ for some $n$.
 -/
 
 namespace Imo1998P3
+
+determine solution_set : Set ℕ := {x | ∃ k : ℕ , x = 2 * k + 1}
 
 snip begin
 
