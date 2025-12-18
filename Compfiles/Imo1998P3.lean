@@ -187,8 +187,7 @@ theorem k_is_odd (k : ℕ)
           rw [pow_mul']
       _ = (nfac.prod fun p k ↦ p ^ k) ^ 2 := by
           unfold Finsupp.prod
-          simp
-          rw [Finset.prod_pow]
+          exact Finset.prod_pow nfac.support 2 fun x ↦ x ^ nfac x
       _ = n ^ 2 := by rw [hneqnfac]
     have hd : d (n ^ 2) = (nfac.prod fun _ x2 ↦ ((2 * x2) + 1)) := d_n2 n hn.left
     let powers := nfac.support.toList.map (fun x ↦ 2 * nfac x + 1)
@@ -221,7 +220,7 @@ lemma exists_distinct_primes (t n : ℕ) (hnneq0 : n ≠ 0) (primes : List ℕ) 
   | succ t ih =>
       obtain ⟨l, props⟩ := ih
       let existing_numbers := (primes ++ l ++ [n])
-      have he : existing_numbers ≠ [] := by dsimp [existing_numbers]; simp
+      have he : existing_numbers ≠ [] := List.concat_ne_nil n _
       let bound := existing_numbers.max he
       have hexists := Nat.exists_infinite_primes (bound + 1)
       obtain ⟨new, hnew⟩ := hexists
@@ -242,9 +241,7 @@ lemma exists_distinct_primes (t n : ℕ) (hnneq0 : n ≠ 0) (primes : List ℕ) 
                   apply List.mem_append_left
                   apply List.mem_append_left
                   exact hin
-                have hnewlemax := List.le_max_of_mem (l := existing_numbers) hnewinexisting
-                simp [bound]
-                exact hnewlemax
+                exact List.le_max_of_mem hnewinexisting
               linarith [hnewlebound, hnewgtbound]
             have hnewcoprimen : new.Coprime n := by
               refine Nat.coprime_of_lt_prime hnneq0 ?_ hnewprime
@@ -283,9 +280,7 @@ lemma repeated_multiplicity_of_d (l : List ℕ) (hcoprime : l.Pairwise Nat.Copri
       simp only [List.prod_cons, List.map_cons]
       rw [d_multiplicative]
       · rw [ih]; exact htail
-      · apply Nat.coprime_list_prod_right_iff.mpr
-        intro n hnintail
-        exact hhead n hnintail
+      · exact Nat.coprime_list_prod_right_iff.mpr hhead
 
 /--
 Proof that `d(∏ᵢpᵢᵏᵢ) = ∏ᵢ(kᵢ + 1)`. Intuitively, we know `ps` and `exps` form
@@ -309,8 +304,7 @@ lemma d_of_factorization (t : ℕ) (ps exps : List ℕ)
       · intro n hind1 hind2
         have hnltexpslen : n < exps.length := by rw [List.length_map] at hind2; exact hind2
         simp
-        have hnltpslen : n < ps.length := by
-          rw [List.length_map, List.length_map] at hind1; exact List.lt_length_left_of_zip hind1
+        have hnltpslen : n < ps.length := Nat.lt_of_lt_of_eq hnltexpslen hlen.symm
         have hpsnprime : Nat.Prime (ps[n]'hnltpslen) :=
           hallprime ps[n] (List.get_mem ps ⟨n, hnltpslen⟩)
         exact @prime_power_divisors ps[n] exps[n] hpsnprime
@@ -333,8 +327,7 @@ lemma d_of_factorization (t : ℕ) (ps exps : List ℕ)
           · intro heq
             have hpowdvd : p₁ ∣ p₂ ^ k₂ := by
               rw [←heq]
-              apply dvd_pow_self
-              apply Nat.ne_of_gt hk₁gt0
+              exact Nat.div_pow_of_pos p₁ k₁ hk₁gt0
             have hdvd : p₁ ∣ p₂ := Nat.Prime.dvd_of_dvd_pow hp₁prime hpowdvd
             have heq2 : p₁ = p₂ := (Nat.prime_dvd_prime_iff_eq hp₁prime hp₂prime).mp hdvd
             contradiction
@@ -437,8 +430,7 @@ theorem odd_k_satisfies (k : ℕ)
               dsimp [kk]
               have hpos : 0 < k_minus_1 := Nat.pos_of_ne_zero hk1
               linarith
-            have h2le2t : 2 ≤ 2 ^ t := by
-              refine Nat.le_self_pow ?_ 2; linarith
+            have h2le2t : 2 ≤ 2 ^ t := Nat.le_pow htpos
             have hbound : kk + 1 ≥ 2 * j := calc
               kk + 1 = j * 2^t := hkkeqjt
               _      ≥ j * 2   := Nat.mul_le_mul_left j h2le2t
@@ -572,15 +564,11 @@ theorem odd_k_satisfies (k : ℕ)
                 rw [List.range_succ_eq_map, List.map_cons, List.map_map]
               have hrhs : (List.map f (List.range t)).prod * f t =
                         (List.map f (List.range (t + 1))).prod := by
-                rw [List.range_succ, List.map_append, List.prod_append]; simp
+                exact (List.prod_range_succ f t).symm
               rw [hlhs, hrhs]
             have hfactor : (2 ^ (2 * t) * j - 2 ^ t * (j + 1) + 1) =
               (2 ^ t * j - 1) * (2 ^ t - 1) := by
-              have h1 : 1 ≤ 2^t := by
-                apply Nat.succ_le_of_lt
-                apply Nat.lt_of_succ_lt
-                apply Nat.one_lt_two_pow
-                exact Nat.ne_of_gt htpos
+              have h1 : 1 ≤ 2^t := Nat.one_le_two_pow
               have h2 : 1 ≤ 2^t * j := by linarith [h1, hjodd.pos]
               have h3 : 2 ^ t * (j + 1) ≤ 2 ^ (2 * t) * j := by
                 rw [Nat.mul_add, two_mul, pow_add, (Nat.mul_add (2 ^ t) j 1).symm]
@@ -589,9 +577,7 @@ theorem odd_k_satisfies (k : ℕ)
                 calc j + 1 ≤ 2 * j     := by linarith [hjodd.pos]
                      _     ≤ 2 ^ t * j := by
                             apply Nat.mul_le_mul_right j
-                            apply Nat.succ_le_of_lt
-                            apply Nat.one_lt_two_pow
-                            exact Nat.ne_of_gt htpos
+                            exact Nat.le_pow htpos
               zify
               rw [Nat.cast_sub h3]
               zify [h1, h2]
