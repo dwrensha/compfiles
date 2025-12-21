@@ -24,6 +24,11 @@ determine solution_set : Set (ℂ × ℂ × ℂ) := { ⟨1, 1, 1⟩ }
 problem usa1973_p4 (x y z : ℂ) :
     x + y + z = 3 ∧
     x ^ 2 + y ^ 2 + z ^ 2 = 3 ∧
-    x ^ 3 + y ^ 3 + z ^ 3 = 3 ↔ ⟨x,y,z⟩ ∈ solution_set := sorry
+    x ^ 3 + y ^ 3 + z ^ 3 = 3 ↔ ⟨x,y,z⟩ ∈ solution_set := by
+  constructor
+  · intro
+    ext <;> grind
+  rintro _
+  grind
 
 end Usa1973P4
