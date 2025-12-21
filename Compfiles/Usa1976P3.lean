@@ -5,8 +5,6 @@ Authors: Maximiliano Onofre Martínez
 -/
 
 import Mathlib.Data.Int.Basic
-import Mathlib.Data.ZMod.Basic
-import Mathlib.Tactic.Ring
 
 import ProblemExtraction
 
