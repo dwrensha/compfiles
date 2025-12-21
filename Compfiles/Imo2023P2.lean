@@ -66,14 +66,6 @@ lemma aux₃ {a b : Real.Angle} (h : a + b = Real.pi) (h' : a.sign ≠ 0)
   exact Real.Angle.abs_toReal_add_abs_toReal_eq_pi_of_two_zsmul_add_eq_zero_of_sign_eq
     h₁ h₂ h'
 
-lemma Real.Angle.abs_toReal_neg_eq_abs_toReal (a : Real.Angle)
-  : |(-a).toReal| = |a.toReal| := by
-  by_cases! h : a = Real.pi
-  · rw [h]
-    simp
-  · rw [Real.Angle.toReal_neg_eq_neg_toReal_iff.mpr h]
-    rw [abs_neg]
-
 lemma aux₄ {a b c : Real.Angle}
   (ha : a.sign ≠ 0)
   (hc : c.sign ≠ 0)
@@ -90,9 +82,7 @@ lemma aux₄ {a b c : Real.Angle}
     have h₁ : (-a) + (-b) = (-c) := by
       rw [← h]
       abel
-    have h₂ : |(-a).toReal| + |(-b).toReal| = |(-c).toReal| := by
-      repeat rw [Real.Angle.abs_toReal_neg_eq_abs_toReal]
-      exact h'
+    have h₂ : |(-a).toReal| + |(-b).toReal| = |(-c).toReal| := by simp [h']
     have h'' := SignType.trichotomy c.sign
     have h₃ : (-c).sign = -1 := by
       rw [Real.Angle.sign_neg, neg_eq_iff_eq_neg]
@@ -176,10 +166,7 @@ lemma aux₅ {a b c : Real.Angle}
       have h_neg_a : (-a).sign ≠ 0 := by
         rw [Real.Angle.sign_neg, SignType.neg_eq_zero_iff.ne]
         exact ha
-      have h₂ : |(-a).toReal| < |(-c).toReal| := by
-        rw [Real.Angle.abs_toReal_neg_eq_abs_toReal]
-        rw [Real.Angle.abs_toReal_neg_eq_abs_toReal]
-        exact h'
+      have h₂ : |(-a).toReal| < |(-c).toReal| := by simp [h']
       have h'' := SignType.trichotomy a.sign
       have h₃ : (-a).sign = -1 := by
         rw [Real.Angle.sign_neg, neg_eq_iff_eq_neg]
@@ -219,8 +206,7 @@ lemma aux₅ {a b c : Real.Angle}
       _ < c' + (-a') + (-b') := by
             apply add_lt_add_of_lt_of_le
             · apply add_lt_add
-              · rw [hcc']
-                apply Real.Angle.neg_pi_lt_toReal
+              · exact Real.Angle.neg_pi_lt_toReal c
               · apply neg_pos_of_neg ha'
             · apply neg_le_neg
               apply Real.Angle.toReal_le_pi
@@ -387,10 +373,7 @@ lemma affineSpan_pair_finrank {A B : Pt}
   (hAB : A ≠ B): Module.finrank ℝ (affineSpan ℝ {A, B}).direction = 1 := by
   rw [direction_affineSpan]
   have h := affineIndependent_of_ne ℝ hAB
-  have h' : Set.range ![A, B] = {A, B} := by
-    simp
-    rw [Set.pair_comm]
-  rw [← h']
+  rw [← Matrix.range_cons_cons_empty]
   apply AffineIndependent.finrank_vectorSpan h
   simp
 
@@ -764,9 +747,7 @@ lemma trans {P₅ : Pt} (h : SphereOrder V Pt P₁ P₂ P₃ P₄)
       · exact h'.P₃_ne_P₄
       · exact h'.P₁_ne_P₄.symm
   · rw [← EuclideanGeometry.oangle_rotate_sign]
-    rw [h'.symm.sign_oangle₁₂₃_eq_sign_oangle₂₃₄]
-    rw [← EuclideanGeometry.oangle_rotate_sign]
-    exact h.sign_oangle₃₄₁_ne_zero
+    exact sign_oangle₃₄₁_ne_zero V Pt h'
   · rw [← EuclideanGeometry.oangle_rotate_sign]
     rw [h'.symm.sign_oangle₁₂₃_eq_sign_oangle₂₃₄]
     rw [← EuclideanGeometry.oangle_rotate_sign]
@@ -2617,8 +2598,7 @@ lemma oangle_OZF_eq_oangle_ADF {Z : Pt} (hZ : Z ∈ cfg.Z_set)
     exact cfg.sphereOrder_PAFM.sign_oangle₁₂₃_ne_zero
   · exact Collinear.mem_affineSpan_of_mem_of_ne cfg.sbtw_AOF.wbtw.collinear
       (by simp) (by simp) (by simp : cfg.A ∈ _) cfg.F_ne_O.symm
-  · apply mem_affineSpan
-    simp
+  · exact right_mem_affineSpan_pair ℝ cfg.Ω.center (F V Pt cfg)
   · have h₁ := Collinear.mem_affineSpan_of_mem_of_ne cfg.sbtw_ADE.wbtw.collinear
       (by simp) (by simp) (by simp : cfg.D ∈ _) cfg.h_E_ne_A.symm
     have h₂ := Collinear.mem_affineSpan_of_mem_of_ne cfg.sbtw_SOM.wbtw.collinear
@@ -2863,8 +2843,7 @@ lemma oangle_AXO_eq_oangle_AYF {X : Pt} (hX : X ∈ cfg.X_set)
     contrapose! h
     rw [Set.insert_comm]
     exact collinear_insert_of_mem_affineSpan_pair h
-  · apply mem_affineSpan
-    simp
+  · exact left_mem_affineSpan_pair ℝ cfg.A cfg.Ω.center
   · exact Collinear.mem_affineSpan_of_mem_of_ne cfg.sbtw_AOF.wbtw.collinear
       (by simp) (by simp) (by simp : cfg.F ∈ _) cfg.O_ne_A.symm
   · have h₁ := Collinear.mem_affineSpan_of_mem_of_ne (cfg.sbtw_AXM V Pt hX).wbtw.collinear
@@ -2889,8 +2868,7 @@ lemma oangle_XOA_eq_oangle_YFA {X : Pt} (hX : X ∈ cfg.X_set)
     exact collinear_insert_of_mem_affineSpan_pair h
   · exact Collinear.mem_affineSpan_of_mem_of_ne (cfg.collinear_AXY V Pt hX hY)
       (by simp) (by simp) (by simp : Y ∈ _) (cfg.X_ne_A V Pt hX)
-  · apply mem_affineSpan
-    simp
+  · exact right_mem_affineSpan_pair ℝ X cfg.A
   · have h := Collinear.mem_affineSpan_of_mem_of_ne (cfg.sbtw_PYF V Pt hY).wbtw.collinear
       (by simp) (by simp) (by simp : Y ∈ _) cfg.P_ne_F
     rw [affineSpan_pair_eq_of_left_mem_of_ne h (cfg.Y_ne_F V Pt hY)]
@@ -3031,9 +3009,7 @@ lemma X_in_tang_P_ω {X : Pt} (hX : X ∈ cfg.X_set)
   have h₂ := EuclideanGeometry.Sphere.IsTangentAt.eq_orthRadius_of_finrank_add_one_eq
     (cfg.PX_isTangentAt_ω V Pt hX) cfg.ω_radius_ne_zero h''
   rw [h₁, ← h₂]
-  apply mem_affineSpan
-  apply Set.mem_insert_of_mem
-  apply Set.mem_singleton
+  exact right_mem_affineSpan_pair ℝ cfg.P X
 
 theorem result : ∃ X : Pt,
     X ∈ (cfg.tang_P_ω : Set Pt) ∩ line[ℝ, cfg.B, cfg.S]
