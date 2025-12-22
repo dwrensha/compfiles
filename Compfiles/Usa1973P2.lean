@@ -63,8 +63,8 @@ lemma a_add_2_mod_8_eq (k : ℕ) : (Even k → a (k + 2) % 8 = 3) ∧ (Odd k →
 
 lemma a_add_2_mod_8_mem (k : ℕ) : a (k + 2) % 8 = 3 ∨ a (k + 2) % 8 = 5 := by
   cases Nat.even_or_odd k with
-  | inl h => left; apply (a_add_2_mod_8_eq k).1 h
-  | inr h => right; apply (a_add_2_mod_8_eq k).2 h
+  | inl h => left; exact (a_add_2_mod_8_eq k).1 h
+  | inr h => right; exact (a_add_2_mod_8_eq k).2 h
 
 problem usa1973_p2 (n m : ℕ) (h : a n = b m): a n = 1 := by
   by_cases hn : n < 2
