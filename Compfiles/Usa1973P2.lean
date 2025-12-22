@@ -77,3 +77,5 @@ problem usa1973_p2 (n m : ℕ) (h : a n = b m): a n = 1 := by
   have hb := b_mod_8_mem m
   rw [h] at ha
   grind
+
+end Usa1973P2
