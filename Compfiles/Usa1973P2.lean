@@ -33,6 +33,8 @@ def b : ℕ → ℕ
 | 1 => 7
 | n + 2 => 2 * b (n + 1) + 3 * b n
 
+snip begin
+
 lemma b_mod_8_eq (n : ℕ) : (Even n → b n % 8 = 1) ∧ (Odd n → b n % 8 = 7) := by
   induction n using Nat.twoStepInduction with
   | zero => simp [b]
