@@ -33,12 +33,6 @@ def possible_num_colors : Set ℕ :=
 
 determine min_colors : ℕ := 23
 
--- theorem subproblem (k : ℕ) (fk : Fin k -> ℕ) (hk : k ≥ 6) (δ : Fin k → Fin 2) (ss : (∑ j : Fin k, (δ j).val * (fk j).val) <= 13) : ∑ j: Fin k, δ j / fk j := sorry
-
--- set_option pp.notation false in
--- -- set_option pp.explicit true in
--- theorem te : (∑ (x : Fin 8), x) = 36 := by
-   
 lemma l {α} (s : Finset α) (sz : s.card = 6) (gen : α -> ℕ) (gt : ∀ i ∈ s, gen i ≥ 1) (sum : (∑ i ∈ s, gen i) ≤ 13) : (36:ℝ)/(13:ℝ) ≤ (∑ i ∈ s, 1 / (gen i:ℝ)) := by
   let f := λ (i : α) ↦ Real.sqrt (gen i : ℝ)
   let g := λ (i : α) ↦ (1 : ℝ) / Real.sqrt (gen i : ℝ)
@@ -71,7 +65,6 @@ lemma ll {m n : ℕ} (f : Fin m → Finset (Fin n)) (p : Fin n → Bool) (i : Fi
   obtain ⟨hb1, hb2⟩ := hb
   use a, b
 
--- -- set_option pp.notation false in
 set_option maxHeartbeats 1234567 in
 problem usa2001_p1 : IsLeast possible_num_colors min_colors := by
   -- Informal solution from
@@ -125,8 +118,9 @@ problem usa2001_p1 : IsLeast possible_num_colors min_colors := by
     rw [nsum]
     apply lt_of_lt_of_le ((by linarith) : (22 < 8 * ((36:ℝ) / (13:ℝ))))
     trans ∑ (k : Fin n), ∑ i : Fin 8, ((count k i):ℝ) / ((count_k k):ℝ)
-    pick_goal 2; rify; gcongr with k i; rw [<-Finset.sum_div]; unfold count_k; rify;
-                 set x := (∑ i:Fin 8, (count k i):ℝ) with hx; by_cases h:x=0; rw [h]; simp; rw [div_self]; exact h
+    pick_goal 2;
+    · rify; gcongr with k i; rw [<-Finset.sum_div]; unfold count_k; rify;
+      set x := (∑ i:Fin 8, (count k i):ℝ) with hx; by_cases h:x=0; rw [h]; simp; rw [div_self]; exact h
     rw [Finset.sum_comm]
     have : 8 * ((36:ℝ) / (13:ℝ)) = ∑ i:Fin 8, ((36:ℝ) / (13:ℝ)) := by simp
     rw [this]
@@ -181,70 +175,6 @@ problem usa2001_p1 : IsLeast possible_num_colors min_colors := by
     obtain ⟨ex, ey, p1, p2, p3, p4, p5⟩ := this
     apply h2 ex ey i z ?_ p1 p3 p5 ⟨p2,p4⟩
     · intro h; apply this; rw [h]
-
-
-    -- conv => rhs; simp [count, h1 i]
-
-    -- have : ∑ x, ((count x i):ℝ) / ((count_k x):ℝ) = ∑ x, 1 / ((count_k x):ℝ) := by
-    --   apply Finset.sum_congr; rfl; intro x hx; congr; unfold count; simp;
-    -- rw [this]
-
-
-    -- have : ∑ (x : f i), ↑(if x ∈ f i then 1 else 0) / ↑(count_k x) = ∑ x, 1 / ↑(count_k x) := by apply Finset.sum_congr; rfl; 
-    -- conv => rhs; unfold count;
-
-
-    -- have : 13 ≤ (∑ x, (count_k x):ℝ) := by sorry
-    
-    
-    
-    -- have : (∑ i, ∑ k, ((count k i):ℝ) / ((count_k k):ℝ)) = (∑ i, ∑ k : f i, 1 / ((count_k k):ℝ)) := by sorry
-    -- rw [this]
-    -- have : ∑ k : f i, ((count_k k):ℝ) ≤ 13 := by sorry
-    -- set xf : Fin n -> ℝ := fun k => Real.sqrt ((count_k k):ℝ) with xhf
-    -- set xg : Fin n -> ℝ := fun k => 1 / Real.sqrt ((count_k k):ℝ) with xhg
-    -- have x := Finset.sum_mul_sq_le_sq_mul_sq (f i) xf xg
-    -- revert x;
-    -- conv => arg 1; lhs; arg 1; arg 2; ext k; rw [xhf, xhg]; dsimp; rw [mul_div, mul_one];
-    -- have ss : (∑ k ∈ f i, √↑(count_k k) / √↑(count_k k)) = ∑ k ∈ f i, 1 := by
-    --   apply Finset.sum_congr; rfl; intro k hk; apply div_self; simp; simp at count_ne_zero; apply count_ne_zero i; exact hk
-    -- rw [ss]; clear ss
-    -- conv => lhs; simp [(h1 i)]
-    -- conv => lhs; rhs; lhs; rw [xhf]; dsimp; simp
-    -- conv => lhs; rhs; rhs; rw [xhg]; dsimp; simp
-    -- ring_nf; field_simp
-    -- intro h; trans ?_; exact h
-    
-    -- conv => arg 1; lhs; arg 1; 
-    
-
-
-
-    -- have hi : ∀ (k : Fin n), ∑ i : Fin 8, ((count k i):ℚ) / ((count_k k):ℚ) = 1 := by
-    --  intro k; rw [<-Finset.sum_div]; unfold count_k; qify; apply div_self
-      
-  -- · rw [possible_num_colors]
-  --   let f : Fin 8 → Finset (Fin 23)
-  --       | 0 => {1, 2, 3, 4, 5, 6}
-  --       | 1 => {1, 7, 8, 9, 10, 11}
-  --       | 2 => {1, 12, 13, 14, 15, 16}
-  --       | 3 => {2, 7, 12, 17, 18, 19}
-  --       | 4 => {3, 8, 13, 17, 20, 21}
-  --       | 5 => {4, 9, 14, 17, 22, 23}
-  --       | 6 => {5, 10, 15, 18, 20, 22}
-  --       | 7 => {6, 11, 16, 19, 21, 23}
-  --   use f
-  --   constructor
-  --   · intro i
-  --     fin_cases i <;> simp (config := {decide := true}) [f]
-  --   · intro x y i j hij hx hy hxy
-  --     unfold min_colors at x y
-  --     fin_cases i <;> fin_cases j <;> dsimp [f] at hx <;> dsimp [f] at hy <;> dsimp at hij <;> dsimp [f]
-  --     all_goals clear f ; try contradiction
-  --     all_goals fin_cases hx <;> fin_cases hy
-  --     all_goals (first | decide | contradiction)
-
-    
 
 
 end Usa2001P1
