@@ -54,18 +54,6 @@ lemma l {α} (s : Finset α) (sz : s.card = 6) (gen : α -> ℕ) (gt : ∀ i ∈
   · exact h
   · nlinarith
 
-lemma ll {m n : ℕ} (f : Fin m → Finset (Fin n)) (p : Fin n → Bool) (i : Fin m) : (∑ x ∈ f i, if p x then 1 else 0) > 1 → ∃ a b, a ∈ f i ∧ b ∈ f i ∧ a ≠ b ∧ p a ∧ p b := by
-  intro h
-  rw [<-Finset.sum_filter] at h
-  simp only [Finset.sum_const, smul_eq_mul, mul_one, gt_iff_lt] at h
-  rw [Finset.one_lt_card] at h
-  obtain ⟨a, ⟨ha, ⟨b, ⟨hb, hab⟩⟩⟩⟩ := h
-  rw [Finset.mem_filter] at ha
-  rw [Finset.mem_filter] at hb
-  obtain ⟨ha1, ha2⟩ := ha
-  obtain ⟨hb1, hb2⟩ := hb
-  use a, b
-
 set_option maxHeartbeats 1234567 in
 problem usa2001_p1 : IsLeast possible_num_colors min_colors := by
   -- Informal solution from
@@ -141,12 +129,14 @@ problem usa2001_p1 : IsLeast possible_num_colors min_colors := by
     rw [← this]
     gcongr with j a
     by_contra!
-    apply ll at this
-    obtain ⟨ex, ey, p1, p2, p3, p4, p5⟩ := this
-    simp at p4
-    simp at p5
-    refine h2 ex ey i j ?_ p1 p2 p3 ⟨p4,p5⟩
+    rw [<-Finset.sum_filter, Finset.sum_const, smul_eq_mul, mul_one, Finset.one_lt_card] at this
     rw [Finset.mem_erase] at a;
-    symm
-    exact a.1
+    obtain ⟨ex, ⟨p1, ⟨ey, ⟨p2, p3⟩⟩⟩⟩ := this
+    rw [Finset.mem_filter] at p1
+    rw [Finset.mem_filter] at p2
+    obtain ⟨p1, p4⟩ := p1
+    obtain ⟨p2, p5⟩ := p2
+    simp? at p4
+    simp at p5
+    refine h2 ex ey i j a.1.symm p1 p2 p3 ⟨p4,p5⟩
 end Usa2001P1
