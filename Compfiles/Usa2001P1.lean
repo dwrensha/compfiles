@@ -65,30 +65,27 @@ problem usa2001_p1 : IsLeast possible_num_colors min_colors := by
   -- Informal solution from
   -- https://artofproblemsolving.com/wiki/index.php/2001_USAMO_Problems/Problem_1
   constructor
-  · sorry
-  -- · rw [possible_num_colors]
-  --   let f : Fin 8 → Finset (Fin 23)
-  --       | 0 => {1, 2, 3, 4, 5, 6}
-  --       | 1 => {1, 7, 8, 9, 10, 11}
-  --       | 2 => {1, 12, 13, 14, 15, 16}
-  --       | 3 => {2, 7, 12, 17, 18, 19}
-  --       | 4 => {3, 8, 13, 17, 20, 21}
-  --       | 5 => {4, 9, 14, 17, 22, 23}
-  --       | 6 => {5, 10, 15, 18, 20, 22}
-  --       | 7 => {6, 11, 16, 19, 21, 23}
-  --   use f
-  --   constructor
-  --   · intro i
-  --     fin_cases i <;> simp (config := { decide := true }) only [Fin.isValue, Fin.zero_eta, Finset.mem_insert, not_false_eq_true,
-  --   Finset.card_insert_of_notMem, Finset.mem_singleton, Finset.card_singleton, Nat.reduceAdd, f]
-  --   · intro x y i j hij hx hy hxy
-  --     unfold min_colors at x y
-  --     fin_cases i <;> fin_cases j <;> dsimp [f] at hx <;> dsimp [f] at hy <;> dsimp at hij <;> dsimp [f]
-  --     all_goals clear f ; try contradiction
-  --     all_goals fin_cases hx <;> fin_cases hy
-  --     all_goals (first | decide | contradiction)
-
-
+  · rw [possible_num_colors]
+    let f : Fin 8 → Finset (Fin 23)
+        | 0 => {1, 2, 3, 4, 5, 6}
+        | 1 => {1, 7, 8, 9, 10, 11}
+        | 2 => {1, 12, 13, 14, 15, 16}
+        | 3 => {2, 7, 12, 17, 18, 19}
+        | 4 => {3, 8, 13, 17, 20, 21}
+        | 5 => {4, 9, 14, 17, 22, 23}
+        | 6 => {5, 10, 15, 18, 20, 22}
+        | 7 => {6, 11, 16, 19, 21, 23}
+    use f
+    constructor
+    · intro i
+      fin_cases i <;> simp (config := { decide := true }) only [Fin.isValue, Fin.zero_eta, Finset.mem_insert, not_false_eq_true,
+    Finset.card_insert_of_notMem, Finset.mem_singleton, Finset.card_singleton, Nat.reduceAdd, f]
+    · intro x y i j hij hx hy hxy
+      unfold min_colors at x y
+      fin_cases i <;> fin_cases j <;> dsimp [f] at hx <;> dsimp [f] at hy <;> dsimp at hij <;> dsimp [f]
+      all_goals clear f ; try contradiction
+      all_goals fin_cases hx <;> fin_cases hy
+      all_goals (first | decide | contradiction)
   · rw [min_colors, mem_lowerBounds]
     by_contra! ⟨n, ⟨f, ⟨h1, h2⟩⟩, ha_lt⟩
     suffices (22 : ℝ) < n by norm_cast at this; omega
@@ -108,7 +105,7 @@ problem usa2001_p1 : IsLeast possible_num_colors min_colors := by
     apply lt_of_lt_of_le (by linarith : (22 < ∑ (i : Fin 8), ((36:ℝ) / (13:ℝ))))
     gcongr with i a
     rw [← Finset.sum_subset (by simp : f i ⊆ Finset.univ) (by intros; simp [count, *])]
-    have : ∀ k ∈ f i, (count k i) = 1 := by intro k hk; unfold count; simp [hk]
+    have : ∀ k ∈ f i, (count k i) = 1 := by intro k hk; simp [count, hk]
     rw [Finset.sum_congr (g := λ k ↦ 1 / ((count_k k):ℝ)) rfl (λ k hk ↦ by congr; norm_cast; exact this k hk)]
     refine usa2001_p1_lemma _ (h1 i) count_k ?_ ?_
     · intro ii hii
@@ -123,7 +120,7 @@ problem usa2001_p1 : IsLeast possible_num_colors min_colors := by
     gcongr with j a
     rw [Finset.mem_erase] at a;
     by_contra!
-    rw [<-Finset.sum_filter, Finset.sum_const, smul_eq_mul, mul_one, Finset.one_lt_card] at this
+    rw [← Finset.sum_filter, Finset.sum_const, smul_eq_mul, mul_one, Finset.one_lt_card] at this
     simp only [Finset.mem_filter] at this
     obtain ⟨ex, ⟨⟨p1, p4⟩, ⟨ey, ⟨⟨p2, p5⟩, p3⟩⟩⟩⟩ := this
     refine h2 ex ey i j a.1.symm p1 p2 p3 ⟨p4,p5⟩
