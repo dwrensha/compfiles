@@ -97,18 +97,15 @@ problem usa2001_p1 : IsLeast possible_num_colors min_colors := by
       by_cases h : (∑ x, count i x) = 0
       · rw [h]; simp only [CharP.cast_eq_zero, div_zero, zero_le_one]
       · apply le_of_eq; rw [div_self]; norm_cast
-    refine lt_of_lt_of_le ?_ this
+    refine lt_of_lt_of_le ?_ this; clear this
     rw [Finset.sum_comm]
-    have : ∀ i, ∑ (x : Fin n), ((count x i):ℝ) / ((count_k x):ℝ) = ∑ (k ∈ f i), ((count k i):ℝ) / ((count_k k):ℝ) := by
-      intro i
-      have : f i ⊆ (Finset.univ : (Finset (Fin n))) := by simp
-      have : ∑ (x : Fin n), ((count x i):ℝ) / ((count_k x):ℝ) = ∑ (x ∈ f i), ((count x i):ℝ) / ((count_k x):ℝ) := by
-        symm; apply Finset.sum_subset this; intro x hx hne; unfold count; simp; left; exact hne
-      rw [this]
-    conv => rhs; arg 2; intro y; rw [this y]
     apply lt_of_lt_of_le (by linarith : (22 < ∑ (i : Fin 8), ((36:ℝ) / (13:ℝ))))
     gcongr with i a
-
+    have : ∑ (x : Fin n), ((count x i):ℝ) / ((count_k x):ℝ) = ∑ (k ∈ f i), ((count k i):ℝ) / ((count_k k):ℝ) := by
+      symm; apply Finset.sum_subset;
+      · simp
+      · intros; simp [count, *]
+    rw [this]
     have : ∀ k ∈ f i, (count k i) = 1 := by intro k hk; unfold count; simp [hk]
     rw [Finset.sum_congr (g := λ k ↦ 1 / ((count_k k):ℝ)) rfl (λ k hk ↦ by congr; norm_cast; exact this k hk)]
 
@@ -116,11 +113,9 @@ problem usa2001_p1 : IsLeast possible_num_colors min_colors := by
     apply l _ (h1 i)
     · intro ii hii; unfold count_k; unfold count; simp; use i; simp; exact hii
 
-    unfold count_k
     rw [Finset.sum_comm]
     rw [← Finset.sum_erase_add (h := a)]
-    have : (∑ x ∈ f i, count x i) = 6 := by
-      unfold count; simp [*]
+    have : (∑ x ∈ f i, count x i) = 6 := by simp [count, *]
     rw [this]
     simp only [Nat.reduceLeDiff, ge_iff_le]
     have : (∑ x ∈ Finset.univ.erase i, 1) = 7 := by simp
