@@ -101,10 +101,6 @@ problem usa2001_p1 : IsLeast possible_num_colors min_colors := by
     clear ha_lt
     let count color i := if decide (color ∈ f i) = true then 1 else 0
     let count_k : Fin n → ℕ := λ color ↦ ∑ i : Fin 8, count color i
-    -- have count_k_pos : ∀ k, ∑ i : Fin 8, (count k i) > 0 := by
-    --   unfold count; intro k; apply Finset.sum_pos
-    -- have addk : ∀ k, ∑ i : Fin 8, ((count k i):ℝ) / ((count_k k):ℝ) = 1 := by
-    --   intro k; unfold count_k; rw [← Finset.sum_div]; norm_cast; rw [div_self];
     have : (∑ (k : Fin n), ∑ i : Fin 8, ((count k i):ℝ) / ((count_k k):ℝ)) ≤ n := by
       have nsum : n = ∑ (k : Fin n), 1 := by simp only [Finset.sum_const, Finset.card_univ, Fintype.card_fin, smul_eq_mul, mul_one]
       conv => rhs; rw [nsum]
@@ -114,17 +110,16 @@ problem usa2001_p1 : IsLeast possible_num_colors min_colors := by
       · rw [h]; simp only [CharP.cast_eq_zero, div_zero, zero_le_one]
       · apply le_of_eq; rw [div_self]; norm_cast
     refine lt_of_lt_of_le ?_ this
-    apply lt_of_lt_of_le ((by linarith) : (22 < 8 * ((36:ℝ) / (13:ℝ))))
     rw [Finset.sum_comm]
-    have : 8 * ((36:ℝ) / (13:ℝ)) = ∑ i:Fin 8, ((36:ℝ) / (13:ℝ)) := by simp only [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul, Nat.cast_ofNat]
-    rw [this]
-    gcongr with i a
-    have : ∑ (x : Fin n), ((count x i):ℝ) / ((count_k x):ℝ) = ∑ (k ∈ f i), ((count k i):ℝ) / ((count_k k):ℝ) := by
+    have : ∀ i, ∑ (x : Fin n), ((count x i):ℝ) / ((count_k x):ℝ) = ∑ (k ∈ f i), ((count k i):ℝ) / ((count_k k):ℝ) := by
+      intro i
       have : f i ⊆ (Finset.univ : (Finset (Fin n))) := by simp
       have : ∑ (x : Fin n), ((count x i):ℝ) / ((count_k x):ℝ) = ∑ (x ∈ f i), ((count x i):ℝ) / ((count_k x):ℝ) := by
         symm; apply Finset.sum_subset this; intro x hx hne; unfold count; simp; left; exact hne
       rw [this]
-    rw [this]
+    conv => rhs; arg 2; intro y; rw [this y]
+    apply lt_of_lt_of_le (by linarith : (22 < ∑ (i : Fin 8), ((36:ℝ) / (13:ℝ))))
+    gcongr with i a
     have : ∑ (k ∈ f i), ((count k i):ℝ) / ((count_k k):ℝ) = ∑ (k ∈ f i), 1 / ((count_k k):ℝ) := by
       apply Finset.sum_congr rfl; intro x hx; congr; unfold count; simp [hx]
     rw [this]
