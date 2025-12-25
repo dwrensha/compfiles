@@ -116,11 +116,9 @@ problem usa2001_p1 : IsLeast possible_num_colors min_colors := by
     apply l _ (h1 i)
     · intro ii hii; unfold count_k; unfold count; simp; use i; simp; exact hii
 
-
     unfold count_k
     rw [Finset.sum_comm]
     rw [← Finset.sum_erase_add (h := a)]
-
     have : (∑ x ∈ f i, count x i) = 6 := by
       unfold count; simp [*]
     rw [this]
@@ -128,13 +126,10 @@ problem usa2001_p1 : IsLeast possible_num_colors min_colors := by
     have : (∑ x ∈ Finset.univ.erase i, 1) = 7 := by simp
     rw [← this]
     gcongr with j a
+    rw [Finset.mem_erase] at a;
     by_contra!
     rw [<-Finset.sum_filter, Finset.sum_const, smul_eq_mul, mul_one, Finset.one_lt_card] at this
-    rw [Finset.mem_erase] at a;
-    obtain ⟨ex, ⟨p1, ⟨ey, ⟨p2, p3⟩⟩⟩⟩ := this
-    rw [Finset.mem_filter] at p1
-    rw [Finset.mem_filter] at p2
-    obtain ⟨p1, p4⟩ := p1
-    obtain ⟨p2, p5⟩ := p2
+    simp only [Finset.mem_filter] at this
+    obtain ⟨ex, ⟨⟨p1, p4⟩, ⟨ey, ⟨⟨p2, p5⟩, p3⟩⟩⟩⟩ := this
     refine h2 ex ey i j a.1.symm p1 p2 p3 ⟨p4,p5⟩
 end Usa2001P1
