@@ -103,8 +103,9 @@ problem usa2001_p1 : IsLeast possible_num_colors min_colors := by
     by_contra
     push_neg at this
     obtain ⟨n, ha_mem, ha_lt⟩ := this
-    suffices : n ≥ min_colors; omega; clear ha_lt;
-    suffices : n > 22; unfold min_colors; omega;
+    suffices n ≥ min_colors by omega
+    clear ha_lt
+    suffices n > 22 by { unfold min_colors; omega }
     dsimp [possible_num_colors] at ha_mem
     obtain ⟨f, ⟨h1, h2⟩⟩ := ha_mem
     let count color i := if decide (color ∈ f i) = true then 1 else 0
@@ -118,7 +119,8 @@ problem usa2001_p1 : IsLeast possible_num_colors min_colors := by
       · simp
     have count_ne_zero : ∀ i : Fin 8, ∀ k : f i, count_k k ≠ 0 := by
       intros; apply ne_of_gt; apply lt_of_lt_of_le ((by omega):(0<1)); apply count_pos
-    suffices: (n: ℝ) > 22; revert this; simp
+    suffices (n: ℝ) > 22 by
+    { revert this; simp }
     have nsum : n = ∑ k : Fin n, 1 := by simp
     rw [nsum]
     apply lt_of_lt_of_le ((by linarith) : (22 < 8 * ((36:ℝ) / (13:ℝ))))
