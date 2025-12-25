@@ -120,15 +120,17 @@ problem usa2001_p1 : IsLeast possible_num_colors min_colors := by
     conv => rhs; arg 2; intro y; rw [this y]
     apply lt_of_lt_of_le (by linarith : (22 < ∑ (i : Fin 8), ((36:ℝ) / (13:ℝ))))
     gcongr with i a
-    have : ∑ (k ∈ f i), ((count k i):ℝ) / ((count_k k):ℝ) = ∑ (k ∈ f i), 1 / ((count_k k):ℝ) := by
-      apply Finset.sum_congr rfl; intro x hx; congr; unfold count; simp [hx]
-    rw [this]
+
+    have : ∀ k ∈ f i, (count k i) = 1 := by intro k hk; unfold count; simp [hk]
+    rw [Finset.sum_congr (g := λ k ↦ 1 / ((count_k k):ℝ)) rfl (λ k hk ↦ by congr; norm_cast; exact this k hk)]
+
+
     apply l _ (h1 i)
     · intro ii hii; unfold count_k; unfold count; simp; use i; simp; exact hii
+
+
     unfold count_k
     rw [Finset.sum_comm]
-    -- have := Finset.sum_erase_add
-    let xx := Fin.fintype 8
     have : (∑ y, ∑ x ∈ f i, count x y) = ∑ y ∈ ((Fin.fintype 8).elems), (λ y ↦ ∑ x ∈ f i, count x y) y := by
       simp; rfl
     rw [this]
@@ -141,6 +143,7 @@ problem usa2001_p1 : IsLeast possible_num_colors min_colors := by
     simp
     by_contra
     simp at this
+    let xx := Fin.fintype 8
     have : ∃ z ∈ Fintype.elems.erase i, ∑ x ∈ f i, count x z > 1 := by
       by_contra
       push_neg at this
