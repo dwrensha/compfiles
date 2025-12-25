@@ -101,18 +101,11 @@ problem usa2001_p1 : IsLeast possible_num_colors min_colors := by
     rw [Finset.sum_comm]
     apply lt_of_lt_of_le (by linarith : (22 < ∑ (i : Fin 8), ((36:ℝ) / (13:ℝ))))
     gcongr with i a
-    have : ∑ (x : Fin n), ((count x i):ℝ) / ((count_k x):ℝ) = ∑ (k ∈ f i), ((count k i):ℝ) / ((count_k k):ℝ) := by
-      symm; apply Finset.sum_subset;
-      · simp
-      · intros; simp [count, *]
-    rw [this]
+    rw [← Finset.sum_subset (by simp : f i ⊆ Finset.univ) (by intros; simp [count, *])]
     have : ∀ k ∈ f i, (count k i) = 1 := by intro k hk; unfold count; simp [hk]
     rw [Finset.sum_congr (g := λ k ↦ 1 / ((count_k k):ℝ)) rfl (λ k hk ↦ by congr; norm_cast; exact this k hk)]
-
-
     apply l _ (h1 i)
-    · intro ii hii; unfold count_k; unfold count; simp; use i; simp; exact hii
-
+    · intro ii hii; unfold count_k; unfold count; simp; use i; simp [hii]
     rw [Finset.sum_comm]
     rw [← Finset.sum_erase_add (h := a)]
     have : (∑ x ∈ f i, count x i) = 6 := by simp [count, *]
