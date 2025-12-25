@@ -103,15 +103,6 @@ problem usa2001_p1 : IsLeast possible_num_colors min_colors := by
     obtain ⟨f, ⟨h1, h2⟩⟩ := ha_mem
     let count color i := if decide (color ∈ f i) = true then 1 else 0
     let count_k : Fin n → ℕ := λ color ↦ ∑ i : Fin 8, count color i
-    have count_pos : ∀ i : Fin 8, ∀ k : (f i), count_k k >= 1 := by
-      intro i k; unfold count_k;
-      have ii : count k i = 1 := by unfold count; simp;
-      rw [<-ii]
-      apply Finset.single_le_sum
-      · intros; unfold count; simp
-      · simp
-    have count_ne_zero : ∀ i : Fin 8, ∀ k : f i, count_k k ≠ 0 := by
-      intros; apply ne_of_gt; apply lt_of_lt_of_le ((by omega):(0<1)); apply count_pos
     suffices (n: ℝ) > 22 by
     { revert this; simp }
     have nsum : n = ∑ k : Fin n, 1 := by simp
