@@ -40,15 +40,16 @@ lemma l {α} (s : Finset α) (sz : s.card = 6) (gen : α -> ℕ) (gt : ∀ i ∈
   unfold f g at h
   have : (∑ x ∈ s, √(gen x : ℝ) * (1 / √(gen x : ℝ))) = ∑ x ∈ s, 1 := by
     apply Finset.sum_congr rfl; intro x hx; have := gt x hx; field_simp
-  rw [this] at h; simp [sz] at h;
+  rw [this] at h; simp only [Finset.sum_const, sz, nsmul_eq_mul, Nat.cast_ofNat, mul_one, Nat.cast_nonneg, Real.sq_sqrt,
+    one_div, inv_pow] at h;
   have : (∑ x ∈ s, (gen x:ℝ)⁻¹) = (∑ x ∈ s, 1 / (gen x : ℝ)) := by
     apply Finset.sum_congr rfl; intro x hx; have := gt x hx; field_simp
   rw [this] at h;
   set aa := (∑ x ∈ s, (gen x : ℝ)) with haa
   set bb := (∑ x ∈ s, (1 / (gen x : ℝ))) with hbb
   rify at sum; rw [←haa] at sum; norm_num at h; 
-  have : aa ≥ 0 := by rw [haa]; apply Finset.sum_nonneg; intro i hi; simp
-  have : bb ≥ 0 := by rw [hbb]; apply Finset.sum_nonneg; intro i hi; simp
+  have : aa ≥ 0 := by rw [haa]; apply Finset.sum_nonneg; intro i hi; simp only [Nat.cast_nonneg]
+  have : bb ≥ 0 := by rw [hbb]; apply Finset.sum_nonneg; intro i hi; simp only [one_div, inv_nonneg, Nat.cast_nonneg]
   field_simp; trans aa*bb;
   · exact h
   · nlinarith
@@ -56,7 +57,7 @@ lemma l {α} (s : Finset α) (sz : s.card = 6) (gen : α -> ℕ) (gt : ∀ i ∈
 lemma ll {m n : ℕ} (f : Fin m → Finset (Fin n)) (p : Fin n → Bool) (i : Fin m) : (∑ x ∈ f i, if p x then 1 else 0) > 1 → ∃ a b, a ∈ f i ∧ b ∈ f i ∧ a ≠ b ∧ p a ∧ p b := by
   intro h
   rw [<-Finset.sum_filter] at h
-  simp at h
+  simp only [Finset.sum_const, smul_eq_mul, mul_one, gt_iff_lt] at h
   rw [Finset.one_lt_card] at h
   obtain ⟨a, ⟨ha, ⟨b, ⟨hb, hab⟩⟩⟩⟩ := h
   rw [Finset.mem_filter] at ha
@@ -83,7 +84,8 @@ problem usa2001_p1 : IsLeast possible_num_colors min_colors := by
     use f
     constructor
     · intro i
-      fin_cases i <;> simp (config := {decide := true}) [f]
+      fin_cases i <;> simp (config := { decide := true }) only [Fin.isValue, Fin.zero_eta, Finset.mem_insert, not_false_eq_true,
+    Finset.card_insert_of_notMem, Finset.mem_singleton, Finset.card_singleton, Nat.reduceAdd, f]
     · intro x y i j hij hx hy hxy
       unfold min_colors at x y
       fin_cases i <;> fin_cases j <;> dsimp [f] at hx <;> dsimp [f] at hy <;> dsimp at hij <;> dsimp [f]
@@ -104,18 +106,18 @@ problem usa2001_p1 : IsLeast possible_num_colors min_colors := by
     let count color i := if decide (color ∈ f i) = true then 1 else 0
     let count_k : Fin n → ℕ := λ color ↦ ∑ i : Fin 8, count color i
     suffices (n: ℝ) > 22 by
-    { revert this; simp }
-    have nsum : n = ∑ k : Fin n, 1 := by simp
+    { revert this; simp only [gt_iff_lt, Nat.ofNat_lt_cast, imp_self] }
+    have nsum : n = ∑ k : Fin n, 1 := by simp only [Finset.sum_const, Finset.card_univ, Fintype.card_fin, smul_eq_mul, mul_one]
     rw [nsum]
     apply lt_of_lt_of_le ((by linarith) : (22 < 8 * ((36:ℝ) / (13:ℝ))))
     trans ∑ (k : Fin n), ∑ i : Fin 8, ((count k i):ℝ) / ((count_k k):ℝ)
     pick_goal 2;
     · rify; gcongr with k i; rw [<-Finset.sum_div]; unfold count_k; rify;
       set x := (∑ i:Fin 8, (count k i):ℝ) with hx; by_cases h:x=0;
-      · rw [h]; simp;
+      · rw [h]; simp only [div_zero, zero_le_one];
       · rw [div_self]; exact h
     rw [Finset.sum_comm]
-    have : 8 * ((36:ℝ) / (13:ℝ)) = ∑ i:Fin 8, ((36:ℝ) / (13:ℝ)) := by simp
+    have : 8 * ((36:ℝ) / (13:ℝ)) = ∑ i:Fin 8, ((36:ℝ) / (13:ℝ)) := by simp?
     rw [this]
     gcongr with i a
     have : ∑ (x : Fin n), ((count x i):ℝ) / ((count_k x):ℝ) = ∑ (k ∈ f i), ((count k i):ℝ) / ((count_k k):ℝ) := by
