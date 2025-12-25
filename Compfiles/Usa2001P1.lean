@@ -133,40 +133,20 @@ problem usa2001_p1 : IsLeast possible_num_colors min_colors := by
     rw [Finset.sum_comm]
     rw [← Finset.sum_erase_add (h := a)]
 
-
-
-
-
-
-
-
-
-
     have : (∑ x ∈ f i, count x i) = 6 := by
       unfold count; simp [*]
     rw [this]
-    simp
-    by_contra
-    simp at this
-    let xx := Fin.fintype 8
-    have : ∃ z ∈ Finset.univ.erase i, ∑ x ∈ f i, count x z > 1 := by
-      by_contra
-      push_neg at this
-      have : ∑ z ∈ Finset.univ.erase i, ∑ x ∈ f i, count x z ≤ 7 := by
-        trans ∑ z ∈ Finset.univ.erase i, 1
-        · gcongr with xx yy; simp [*]
-        · simp; 
-    obtain ⟨z, ⟨hz1, hz2⟩⟩ := this
-    have : z ≠ i := by
-      intro h; rw [h] at hz1; apply Finset.notMem_erase i; exact hz1
-    unfold count at hz2
-    have : ∃ (x y : Fin n), (x ∈ f i) ∧ (x ∈ f z) ∧ (y ∈ f i) ∧ (y ∈ f z) ∧ (x ≠ y) := by
-      have := ll (m := 8) (n := n) f (p := λ finn ↦ finn ∈ f z) i hz2
-      obtain ⟨x, y, q1, q2, q3, q4, q5⟩ := this
-      simp at q4
-      simp at q5
-      use x, y
+    simp only [Nat.reduceLeDiff, ge_iff_le]
+    have : (∑ x ∈ Finset.univ.erase i, 1) = 7 := by simp
+    rw [← this]
+    gcongr with j a
+    by_contra!
+    apply ll at this
     obtain ⟨ex, ey, p1, p2, p3, p4, p5⟩ := this
-    apply h2 ex ey i z ?_ p1 p3 p5 ⟨p2,p4⟩
-    · intro h; apply this; rw [h]
+    simp at p4
+    simp at p5
+    refine h2 ex ey i j ?_ p1 p2 p3 ⟨p4,p5⟩
+    rw [Finset.mem_erase] at a;
+    symm
+    exact a.1
 end Usa2001P1
