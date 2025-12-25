@@ -33,7 +33,13 @@ def possible_num_colors : Set ℕ :=
 
 determine min_colors : ℕ := 23
 
-lemma l {α} (s : Finset α) (sz : s.card = 6) (gen : α -> ℕ) (gt : ∀ i ∈ s, gen i ≥ 1) (sum : (∑ i ∈ s, gen i) ≤ 13) : (36:ℝ)/(13:ℝ) ≤ (∑ i ∈ s, 1 / (gen i:ℝ)) := by
+/--
+  if
+    a₁, ... a₆ is positive, ∑ (i=1 to 6), aᵢ ≤ 13
+  then
+    ∑ (i=1 to 6) (1 / aᵢ) ≥ 36/13
+-/
+lemma usa2001_p1_lemma {α} (s : Finset α) (sz : s.card = 6) (gen : α -> ℕ) (gt : ∀ i ∈ s, gen i > 0) (sum : (∑ i ∈ s, gen i) ≤ 13) : (36:ℝ)/(13:ℝ) ≤ (∑ i ∈ s, 1 / (gen i:ℝ)) := by
   let f := λ (i : α) ↦ Real.sqrt (gen i : ℝ)
   let g := λ (i : α) ↦ (1 : ℝ) / Real.sqrt (gen i : ℝ)
   have h := Finset.sum_mul_sq_le_sq_mul_sq s f g
@@ -104,12 +110,13 @@ problem usa2001_p1 : IsLeast possible_num_colors min_colors := by
     rw [← Finset.sum_subset (by simp : f i ⊆ Finset.univ) (by intros; simp [count, *])]
     have : ∀ k ∈ f i, (count k i) = 1 := by intro k hk; unfold count; simp [hk]
     rw [Finset.sum_congr (g := λ k ↦ 1 / ((count_k k):ℝ)) rfl (λ k hk ↦ by congr; norm_cast; exact this k hk)]
-    apply l _ (h1 i)
-    · intro ii hii; unfold count_k; unfold count; simp; use i; simp [hii]
-    rw [Finset.sum_comm]
-    rw [← Finset.sum_erase_add (h := a)]
+    refine usa2001_p1_lemma _ (h1 i) count_k ?_ ?_
+    · intro ii hii
+      apply Finset.sum_pos'
+      · intros; simp [count]
+      · use i; simp [count, hii]
     have : (∑ x ∈ f i, count x i) = 6 := by simp [count, *]
-    rw [this]
+    rw [Finset.sum_comm, ← Finset.sum_erase_add (h := a), this]
     simp only [Nat.reduceLeDiff, ge_iff_le]
     have : (∑ x ∈ Finset.univ.erase i, 1) = 7 := by simp
     rw [← this]
