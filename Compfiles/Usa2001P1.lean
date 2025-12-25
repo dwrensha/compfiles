@@ -87,7 +87,7 @@ problem usa2001_p1 : IsLeast possible_num_colors min_colors := by
     by_contra! ⟨n, ⟨f, ⟨h1, h2⟩⟩, ha_lt⟩
     suffices (22 : ℝ) < n by norm_cast at this; omega
     clear ha_lt
-    let count color i := if decide (color ∈ f i) = true then 1 else 0
+    let count color i := if color ∈ f i then 1 else 0
     let count_k : Fin n → ℕ := λ color ↦ ∑ i : Fin 8, count color i
     have : (∑ (k : Fin n), ∑ i : Fin 8, ((count k i):ℝ) / ((count_k k):ℝ)) ≤ n := by
       have nsum : n = ∑ (k : Fin n), 1 := by simp only [Finset.sum_const, Finset.card_univ, Fintype.card_fin, smul_eq_mul, mul_one]
@@ -136,7 +136,5 @@ problem usa2001_p1 : IsLeast possible_num_colors min_colors := by
     rw [Finset.mem_filter] at p2
     obtain ⟨p1, p4⟩ := p1
     obtain ⟨p2, p5⟩ := p2
-    simp? at p4
-    simp at p5
     refine h2 ex ey i j a.1.symm p1 p2 p3 ⟨p4,p5⟩
 end Usa2001P1
