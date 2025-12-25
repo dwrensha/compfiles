@@ -125,9 +125,10 @@ problem usa2001_p1 : IsLeast possible_num_colors min_colors := by
       rw [this]
     rw [this]
     have : ∑ (k ∈ f i), ((count k i):ℝ) / ((count_k k):ℝ) = ∑ (k ∈ f i), 1 / ((count_k k):ℝ) := by
-      apply Finset.sum_congr; rfl; intro x hx; congr; unfold count; simp [hx]
+      apply Finset.sum_congr rfl; intro x hx; congr; unfold count; simp [hx]
     rw [this]
-    apply l; exact h1 i; intro ii hii; unfold count_k; unfold count; simp; use i; simp; exact hii
+    apply l _ (h1 i)
+    · intro ii hii; unfold count_k; unfold count; simp; use i; simp; exact hii
     unfold count_k
     rw [Finset.sum_comm]
     -- have := Finset.sum_erase_add
@@ -137,8 +138,7 @@ problem usa2001_p1 : IsLeast possible_num_colors min_colors := by
     rw [this]
     have : ∀ (i : Fin 8) (f : Fin 8 → ℕ), (∑ y ∈ (Fin.fintype 8).elems, f y) = (∑ y ∈ ((Fin.fintype 8).elems.erase i), f y) + f i := by
       intro i f; rw [Finset.sum_erase_add]; apply Finset.mem_univ
-    rw [this]
-    pick_goal 2; exact i
+    rw [(this i)]
     have : (∑ x ∈ f i, count x i) = 6 := by
       unfold count; simp [*]
     rw [this]
