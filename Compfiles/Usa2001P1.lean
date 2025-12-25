@@ -111,7 +111,9 @@ problem usa2001_p1 : IsLeast possible_num_colors min_colors := by
     trans ∑ (k : Fin n), ∑ i : Fin 8, ((count k i):ℝ) / ((count_k k):ℝ)
     pick_goal 2;
     · rify; gcongr with k i; rw [<-Finset.sum_div]; unfold count_k; rify;
-      set x := (∑ i:Fin 8, (count k i):ℝ) with hx; by_cases h:x=0; rw [h]; simp; rw [div_self]; exact h
+      set x := (∑ i:Fin 8, (count k i):ℝ) with hx; by_cases h:x=0;
+      · rw [h]; simp;
+      · rw [div_self]; exact h
     rw [Finset.sum_comm]
     have : 8 * ((36:ℝ) / (13:ℝ)) = ∑ i:Fin 8, ((36:ℝ) / (13:ℝ)) := by simp
     rw [this]
