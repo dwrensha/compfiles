@@ -131,12 +131,17 @@ problem usa2001_p1 : IsLeast possible_num_colors min_colors := by
 
     unfold count_k
     rw [Finset.sum_comm]
-    have : (∑ y, ∑ x ∈ f i, count x y) = ∑ y ∈ ((Fin.fintype 8).elems), (λ y ↦ ∑ x ∈ f i, count x y) y := by
-      simp; rfl
-    rw [this]
-    have : ∀ (i : Fin 8) (f : Fin 8 → ℕ), (∑ y ∈ (Fin.fintype 8).elems, f y) = (∑ y ∈ ((Fin.fintype 8).elems.erase i), f y) + f i := by
-      intro i f; rw [Finset.sum_erase_add]; apply Finset.mem_univ
-    rw [(this i)]
+    rw [← Finset.sum_erase_add (h := a)]
+
+
+
+
+
+
+
+
+
+
     have : (∑ x ∈ f i, count x i) = 6 := by
       unfold count; simp [*]
     rw [this]
@@ -144,16 +149,13 @@ problem usa2001_p1 : IsLeast possible_num_colors min_colors := by
     by_contra
     simp at this
     let xx := Fin.fintype 8
-    have : ∃ z ∈ Fintype.elems.erase i, ∑ x ∈ f i, count x z > 1 := by
+    have : ∃ z ∈ Finset.univ.erase i, ∑ x ∈ f i, count x z > 1 := by
       by_contra
       push_neg at this
-      have : ∑ z ∈ Fintype.elems.erase i, ∑ x ∈ f i, count x z ≤ 7 := by
-        trans ∑ z ∈ Fintype.elems.erase i, 1
+      have : ∑ z ∈ Finset.univ.erase i, ∑ x ∈ f i, count x z ≤ 7 := by
+        trans ∑ z ∈ Finset.univ.erase i, 1
         · gcongr with xx yy; simp [*]
-        · simp; apply le_of_eq; rw [Finset.card_erase_eq_ite];
-          have : i ∈ (Fin.fintype 8).elems := by apply Finset.mem_univ
-          simp [this]; rfl
-      omega
+        · simp; 
     obtain ⟨z, ⟨hz1, hz2⟩⟩ := this
     have : z ≠ i := by
       intro h; rw [h] at hz1; apply Finset.notMem_erase i; exact hz1
