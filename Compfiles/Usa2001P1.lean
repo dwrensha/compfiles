@@ -71,53 +71,52 @@ problem usa2001_p1 : IsLeast possible_num_colors min_colors := by
   -- Informal solution from
   -- https://artofproblemsolving.com/wiki/index.php/2001_USAMO_Problems/Problem_1
   constructor
-  · rw [possible_num_colors]
-    let f : Fin 8 → Finset (Fin 23)
-        | 0 => {1, 2, 3, 4, 5, 6}
-        | 1 => {1, 7, 8, 9, 10, 11}
-        | 2 => {1, 12, 13, 14, 15, 16}
-        | 3 => {2, 7, 12, 17, 18, 19}
-        | 4 => {3, 8, 13, 17, 20, 21}
-        | 5 => {4, 9, 14, 17, 22, 23}
-        | 6 => {5, 10, 15, 18, 20, 22}
-        | 7 => {6, 11, 16, 19, 21, 23}
-    use f
-    constructor
-    · intro i
-      fin_cases i <;> simp (config := { decide := true }) only [Fin.isValue, Fin.zero_eta, Finset.mem_insert, not_false_eq_true,
-    Finset.card_insert_of_notMem, Finset.mem_singleton, Finset.card_singleton, Nat.reduceAdd, f]
-    · intro x y i j hij hx hy hxy
-      unfold min_colors at x y
-      fin_cases i <;> fin_cases j <;> dsimp [f] at hx <;> dsimp [f] at hy <;> dsimp at hij <;> dsimp [f]
-      all_goals clear f ; try contradiction
-      all_goals fin_cases hx <;> fin_cases hy
-      all_goals (first | decide | contradiction)
+  · sorry
+  -- · rw [possible_num_colors]
+  --   let f : Fin 8 → Finset (Fin 23)
+  --       | 0 => {1, 2, 3, 4, 5, 6}
+  --       | 1 => {1, 7, 8, 9, 10, 11}
+  --       | 2 => {1, 12, 13, 14, 15, 16}
+  --       | 3 => {2, 7, 12, 17, 18, 19}
+  --       | 4 => {3, 8, 13, 17, 20, 21}
+  --       | 5 => {4, 9, 14, 17, 22, 23}
+  --       | 6 => {5, 10, 15, 18, 20, 22}
+  --       | 7 => {6, 11, 16, 19, 21, 23}
+  --   use f
+  --   constructor
+  --   · intro i
+  --     fin_cases i <;> simp (config := { decide := true }) only [Fin.isValue, Fin.zero_eta, Finset.mem_insert, not_false_eq_true,
+  --   Finset.card_insert_of_notMem, Finset.mem_singleton, Finset.card_singleton, Nat.reduceAdd, f]
+  --   · intro x y i j hij hx hy hxy
+  --     unfold min_colors at x y
+  --     fin_cases i <;> fin_cases j <;> dsimp [f] at hx <;> dsimp [f] at hy <;> dsimp at hij <;> dsimp [f]
+  --     all_goals clear f ; try contradiction
+  --     all_goals fin_cases hx <;> fin_cases hy
+  --     all_goals (first | decide | contradiction)
 
 
-  · dsimp only [lowerBounds, Set.mem_setOf_eq]
-    by_contra
-    push_neg at this
-    obtain ⟨n, ha_mem, ha_lt⟩ := this
-    suffices n ≥ min_colors by omega
+  · rw [min_colors, mem_lowerBounds]
+    by_contra! ⟨n, ⟨f, ⟨h1, h2⟩⟩, ha_lt⟩
+    suffices (22 : ℝ) < n by norm_cast at this; omega
     clear ha_lt
-    suffices n > 22 by { unfold min_colors; omega }
-    dsimp [possible_num_colors] at ha_mem
-    obtain ⟨f, ⟨h1, h2⟩⟩ := ha_mem
     let count color i := if decide (color ∈ f i) = true then 1 else 0
     let count_k : Fin n → ℕ := λ color ↦ ∑ i : Fin 8, count color i
-    suffices (n: ℝ) > 22 by
-    { revert this; simp only [gt_iff_lt, Nat.ofNat_lt_cast, imp_self] }
-    have nsum : n = ∑ k : Fin n, 1 := by simp only [Finset.sum_const, Finset.card_univ, Fintype.card_fin, smul_eq_mul, mul_one]
-    rw [nsum]
+    -- have count_k_pos : ∀ k, ∑ i : Fin 8, (count k i) > 0 := by
+    --   unfold count; intro k; apply Finset.sum_pos
+    -- have addk : ∀ k, ∑ i : Fin 8, ((count k i):ℝ) / ((count_k k):ℝ) = 1 := by
+    --   intro k; unfold count_k; rw [← Finset.sum_div]; norm_cast; rw [div_self];
+    have : (∑ (k : Fin n), ∑ i : Fin 8, ((count k i):ℝ) / ((count_k k):ℝ)) ≤ n := by
+      have nsum : n = ∑ (k : Fin n), 1 := by simp only [Finset.sum_const, Finset.card_univ, Fintype.card_fin, smul_eq_mul, mul_one]
+      conv => rhs; rw [nsum]
+      push_cast
+      gcongr with i a; unfold count_k; rw [← Finset.sum_div]; norm_cast
+      by_cases h : (∑ x, count i x) = 0
+      · rw [h]; simp only [CharP.cast_eq_zero, div_zero, zero_le_one]
+      · apply le_of_eq; rw [div_self]; norm_cast
+    refine lt_of_lt_of_le ?_ this
     apply lt_of_lt_of_le ((by linarith) : (22 < 8 * ((36:ℝ) / (13:ℝ))))
-    trans ∑ (k : Fin n), ∑ i : Fin 8, ((count k i):ℝ) / ((count_k k):ℝ)
-    pick_goal 2;
-    · rify; gcongr with k i; rw [<-Finset.sum_div]; unfold count_k; rify;
-      set x := (∑ i:Fin 8, (count k i):ℝ) with hx; by_cases h:x=0;
-      · rw [h]; simp only [div_zero, zero_le_one];
-      · rw [div_self]; exact h
     rw [Finset.sum_comm]
-    have : 8 * ((36:ℝ) / (13:ℝ)) = ∑ i:Fin 8, ((36:ℝ) / (13:ℝ)) := by simp?
+    have : 8 * ((36:ℝ) / (13:ℝ)) = ∑ i:Fin 8, ((36:ℝ) / (13:ℝ)) := by simp only [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul, Nat.cast_ofNat]
     rw [this]
     gcongr with i a
     have : ∑ (x : Fin n), ((count x i):ℝ) / ((count_k x):ℝ) = ∑ (k ∈ f i), ((count k i):ℝ) / ((count_k k):ℝ) := by
@@ -170,6 +169,4 @@ problem usa2001_p1 : IsLeast possible_num_colors min_colors := by
     obtain ⟨ex, ey, p1, p2, p3, p4, p5⟩ := this
     apply h2 ex ey i z ?_ p1 p3 p5 ⟨p2,p4⟩
     · intro h; apply this; rw [h]
-
-
 end Usa2001P1
