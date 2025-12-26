@@ -578,7 +578,7 @@ lemma comm (h : SphereOrder V Pt P₁ P₂ P₃ P₄) : SphereOrder V Pt P₁ P�
     exact h.sign_oangle₁₂₃_ne_zero
   · rw [EuclideanGeometry.oangle_rev, Real.Angle.sign_neg]
     rw [← h.sign_oangle₁₂₃_eq_sign_oangle₃₄₁]
-    rw [← Real.Angle.sign_neg, ← EuclideanGeometry.oangle_rev]
+    exact oangle_swap₁₃_sign P₁ P₂ P₃
 
 lemma P₁_ne_P₂ (h : SphereOrder V Pt P₁ P₂ P₃ P₄) : P₁ ≠ P₂ := by
   exact EuclideanGeometry.left_ne_of_oangle_sign_ne_zero h.sign_oangle₁₂₃_ne_zero
