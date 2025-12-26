@@ -33,6 +33,8 @@ def possible_num_colors : Set ℕ :=
 
 determine min_colors : ℕ := 23
 
+snip begin
+
 /--
   if
     a₁, ... a₆ is positive, ∑ (i=1 to 6), aᵢ ≤ 13
