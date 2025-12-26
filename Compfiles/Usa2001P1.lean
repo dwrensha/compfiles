@@ -62,6 +62,8 @@ lemma usa2001_p1_lemma {α} (s : Finset α) (sz : s.card = 6) (gen : α -> ℕ) 
   · exact h
   · nlinarith
 
+snip end
+
 set_option maxHeartbeats 1234567 in
 problem usa2001_p1 : IsLeast possible_num_colors min_colors := by
   -- Informal solution from
