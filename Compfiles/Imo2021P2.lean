@@ -267,10 +267,9 @@ lemma exists_decrease_of_piecewise_concave_plus {s : Finset ℝ} {f : ℝ → �
         have h'' := ConcaveOn.min_le_of_mem_Icc h' (Set.left_mem_Icc.mpr hl'r') (Set.right_mem_Icc.mpr hl'r') ht
         rcases min_choice (f (min t l')) (f r') with hmin|hmin <;> rw [hmin] at h''
         · contrapose! hl'
-          use (min t l')
+          use min t l'
           rw [and_iff_right (min_le_right _ _)]
-          apply lt_of_le_of_lt h''
-          apply lt_add_of_pos_right _ (by norm_num : (0 : ℝ) < 1)
+          exact lt_of_le_of_lt h'' (lt_add_one _)
         · use r'
           rw [and_iff_left h'']
           exact hr''.left
