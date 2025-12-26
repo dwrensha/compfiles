@@ -55,7 +55,7 @@ lemma usa2001_p1_lemma {α} (s : Finset α) (sz : s.card = 6) (gen : α -> ℕ) 
   rw [this] at h;
   set aa := (∑ x ∈ s, (gen x : ℝ)) with haa
   set bb := (∑ x ∈ s, (1 / (gen x : ℝ))) with hbb
-  rify at sum; rw [←haa] at sum; norm_num at h; 
+  rify at sum; rw [←haa] at sum; norm_num at h
   have : aa ≥ 0 := by rw [haa]; apply Finset.sum_nonneg; intro i hi; simp only [Nat.cast_nonneg]
   have : bb ≥ 0 := by rw [hbb]; apply Finset.sum_nonneg; intro i hi; simp only [one_div, inv_nonneg, Nat.cast_nonneg]
   field_simp; trans aa*bb;
@@ -64,7 +64,6 @@ lemma usa2001_p1_lemma {α} (s : Finset α) (sz : s.card = 6) (gen : α -> ℕ) 
 
 snip end
 
-set_option maxHeartbeats 1234567 in
 problem usa2001_p1 : IsLeast possible_num_colors min_colors := by
   -- Informal solution from
   -- https://artofproblemsolving.com/wiki/index.php/2001_USAMO_Problems/Problem_1
@@ -82,17 +81,17 @@ problem usa2001_p1 : IsLeast possible_num_colors min_colors := by
     use f
     constructor
     · intro i
-      fin_cases i <;> simp (config := { decide := true }) only [Fin.isValue, Fin.zero_eta, Finset.mem_insert, not_false_eq_true,
+      fin_cases i <;> simp +decide only [Fin.isValue, Fin.zero_eta, Finset.mem_insert, not_false_eq_true,
     Finset.card_insert_of_notMem, Finset.mem_singleton, Finset.card_singleton, Nat.reduceAdd, f]
     · intro x y i j hij hx hy hxy
       unfold min_colors at x y
       fin_cases i <;> fin_cases j <;> dsimp [f] at hx <;> dsimp [f] at hy <;> dsimp at hij <;> dsimp [f]
-      all_goals clear f ; try contradiction
+      all_goals clear f; try contradiction
       all_goals fin_cases hx <;> fin_cases hy
       all_goals (first | decide | contradiction)
   · rw [min_colors, mem_lowerBounds]
     by_contra! ⟨n, ⟨f, ⟨h1, h2⟩⟩, ha_lt⟩
-    suffices (22 : ℝ) < n by norm_cast at this; omega
+    suffices (22 : ℝ) < n by norm_cast at this; lia
     clear ha_lt
     let count color i := if color ∈ f i then 1 else 0
     let count_k : Fin n → ℕ := λ color ↦ ∑ i : Fin 8, count color i
@@ -106,7 +105,7 @@ problem usa2001_p1 : IsLeast possible_num_colors min_colors := by
       · apply le_of_eq; rw [div_self]; norm_cast
     refine lt_of_lt_of_le ?_ this; clear this
     rw [Finset.sum_comm]
-    apply lt_of_lt_of_le (by linarith : (22 < ∑ (i : Fin 8), ((36:ℝ) / (13:ℝ))))
+    apply lt_of_lt_of_le (by norm_num : (22 < ∑ (i : Fin 8), ((36:ℝ) / (13:ℝ))))
     gcongr with i a
     rw [← Finset.sum_subset (by simp : f i ⊆ Finset.univ) (by intros; simp [count, *])]
     have : ∀ k ∈ f i, (count k i) = 1 := by intro k hk; simp [count, hk]
@@ -122,10 +121,11 @@ problem usa2001_p1 : IsLeast possible_num_colors min_colors := by
     have : (∑ x ∈ Finset.univ.erase i, 1) = 7 := by simp
     rw [← this]
     gcongr with j a
-    rw [Finset.mem_erase] at a;
+    rw [Finset.mem_erase] at a
     by_contra!
     rw [← Finset.sum_filter, Finset.sum_const, smul_eq_mul, mul_one, Finset.one_lt_card] at this
     simp only [Finset.mem_filter] at this
     obtain ⟨ex, ⟨⟨p1, p4⟩, ⟨ey, ⟨⟨p2, p5⟩, p3⟩⟩⟩⟩ := this
     refine h2 ex ey i j a.1.symm p1 p2 p3 ⟨p4,p5⟩
+
 end Usa2001P1
