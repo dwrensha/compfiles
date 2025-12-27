@@ -41,26 +41,35 @@ snip begin
   then
     ∑ (i=1 to 6) (1 / aᵢ) ≥ 36/13
 -/
-lemma usa2001_p1_lemma {α} (s : Finset α) (sz : s.card = 6) (gen : α -> ℕ) (gt : ∀ i ∈ s, gen i > 0) (sum : (∑ i ∈ s, gen i) ≤ 13) : (36:ℝ)/(13:ℝ) ≤ (∑ i ∈ s, 1 / (gen i:ℝ)) := by
-  let f := λ (i : α) ↦ Real.sqrt (gen i : ℝ)
-  let g := λ (i : α) ↦ (1 : ℝ) / Real.sqrt (gen i : ℝ)
+lemma usa2001_p1_lemma {α} (s : Finset α) (sz : s.card = 6) (gen : α -> ℕ)
+    (gt : ∀ i ∈ s, gen i > 0) (sum : (∑ i ∈ s, gen i) ≤ 13) :
+    (36:ℝ)/(13:ℝ) ≤ (∑ i ∈ s, 1 / (gen i:ℝ)) := by
+  let f := fun (i : α) ↦ √(gen i : ℝ)
+  let g := fun (i : α) ↦ (1 : ℝ) / √(gen i : ℝ)
   have h := Finset.sum_mul_sq_le_sq_mul_sq s f g
   unfold f g at h
-  have : (∑ x ∈ s, √(gen x : ℝ) * (1 / √(gen x : ℝ))) = ∑ x ∈ s, 1 := by
-    apply Finset.sum_congr rfl; intro x hx; have := gt x hx; field_simp
-  rw [this] at h; simp only [Finset.sum_const, sz, nsmul_eq_mul, Nat.cast_ofNat, mul_one, Nat.cast_nonneg, Real.sq_sqrt,
-    one_div, inv_pow] at h;
+  have : ∑ x ∈ s, √(gen x : ℝ) * (1 / √(gen x : ℝ)) = ∑ x ∈ s, 1 := by
+    apply Finset.sum_congr rfl
+    intro x hx
+    have := gt x hx
+    field_simp
+  rw [this] at h
+  simp only [Finset.sum_const, sz, nsmul_eq_mul, Nat.cast_ofNat, mul_one, Nat.cast_nonneg,
+    Real.sq_sqrt, one_div, inv_pow] at h
   have : (∑ x ∈ s, (gen x:ℝ)⁻¹) = (∑ x ∈ s, 1 / (gen x : ℝ)) := by
     apply Finset.sum_congr rfl; intro x hx; have := gt x hx; field_simp
-  rw [this] at h;
+  rw [this] at h
   set aa := (∑ x ∈ s, (gen x : ℝ)) with haa
   set bb := (∑ x ∈ s, (1 / (gen x : ℝ))) with hbb
-  rify at sum; rw [←haa] at sum; norm_num at h
-  have : aa ≥ 0 := by rw [haa]; apply Finset.sum_nonneg; intro i hi; simp only [Nat.cast_nonneg]
-  have : bb ≥ 0 := by rw [hbb]; apply Finset.sum_nonneg; intro i hi; simp only [one_div, inv_nonneg, Nat.cast_nonneg]
-  field_simp; trans aa*bb;
+  rify at sum
+  rw [←haa] at sum
+  norm_num1 at h
+  have : aa ≥ 0 := by positivity
+  have : bb ≥ 0 := by positivity
+  field_simp
+  trans aa * bb
   · exact h
-  · nlinarith
+  · gcongr
 
 snip end
 
