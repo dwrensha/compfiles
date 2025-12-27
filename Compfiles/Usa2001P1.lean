@@ -83,12 +83,11 @@ problem usa2001_p1 : IsLeast possible_num_colors min_colors := by
     · intro i
       fin_cases i <;> simp +decide only [Fin.isValue, Fin.zero_eta, Finset.mem_insert, not_false_eq_true,
     Finset.card_insert_of_notMem, Finset.mem_singleton, Finset.card_singleton, Nat.reduceAdd, f]
-    · intro x y i j hij hx hy hxy
+    · rintro x y i j hij hx hy hxy ⟨h₁, h₂⟩
       unfold min_colors at x y
-      fin_cases i <;> fin_cases j <;> dsimp [f] at hx <;> dsimp [f] at hy <;> dsimp at hij <;> dsimp [f]
-      all_goals clear f; try contradiction
-      all_goals fin_cases hx <;> fin_cases hy
-      all_goals (first | decide | contradiction)
+      subst f
+      fin_cases i <;> fin_cases j <;> dsimp only at hx hy hij h₁ h₂ <;> (try contradiction) <;>
+        fin_cases hx <;> fin_cases hy <;> contradiction
   · rw [min_colors, mem_lowerBounds]
     by_contra! ⟨n, ⟨f, ⟨h1, h2⟩⟩, ha_lt⟩
     suffices (22 : ℝ) < n by norm_cast at this; lia
