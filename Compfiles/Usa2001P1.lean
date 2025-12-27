@@ -56,8 +56,7 @@ lemma usa2001_p1_lemma {α} (s : Finset α) (sz : s.card = 6) (gen : α -> ℕ)
   rw [this] at h
   simp only [Finset.sum_const, sz, nsmul_eq_mul, Nat.cast_ofNat, mul_one, Nat.cast_nonneg,
     Real.sq_sqrt, one_div, inv_pow] at h
-  have : (∑ x ∈ s, (gen x:ℝ)⁻¹) = (∑ x ∈ s, 1 / (gen x : ℝ)) := by
-    apply Finset.sum_congr rfl; intro x hx; have := gt x hx; field_simp
+  have : (∑ x ∈ s, (gen x:ℝ)⁻¹) = (∑ x ∈ s, 1 / (gen x : ℝ)) := by congr; simp
   rw [this] at h
   set aa := (∑ x ∈ s, (gen x : ℝ)) with haa
   set bb := (∑ x ∈ s, (1 / (gen x : ℝ))) with hbb
