@@ -91,11 +91,20 @@ problem usa2001_p1 : IsLeast possible_num_colors min_colors := by
     · intro i
       fin_cases i <;> simp +decide only [Fin.isValue, Fin.zero_eta, Finset.mem_insert, not_false_eq_true,
     Finset.card_insert_of_notMem, Finset.mem_singleton, Finset.card_singleton, Nat.reduceAdd, f]
-    · rintro x y i j hij hx hy hxy ⟨h₁, h₂⟩
-      unfold min_colors at x y
-      subst f
-      fin_cases i <;> fin_cases j <;> dsimp only at hx hy hij h₁ h₂ <;> (try contradiction) <;>
-        fin_cases hx <;> fin_cases hy <;> contradiction
+    · suffices ∀ (x y : Fin min_colors) (i j : Fin 8), i ≠ j → (f i ∩ f j).card ≤ 1 by
+        rintro x y i j hij hx hy hxy ⟨h₁, h₂⟩
+        specialize this x y i j hij
+        have h₃ : x ∈ f i ∩ f j := Finset.mem_inter_of_mem hx h₁
+        have h₄ : y ∈ f i ∩ f j := Finset.mem_inter_of_mem hy h₂
+        have h₅ : {x, y} ⊆ f i ∩ f j := by
+          intro z hz
+          simp only [Finset.mem_insert, Finset.mem_singleton] at hz
+          obtain rfl | rfl := hz <;> assumption
+        have h₆ : Finset.card {x, y} = 2 := by grind
+        have h₇ : 2 ≤ (f i ∩ f j).card := by rw [←h₆]; exact Finset.card_le_card h₅
+        lia
+      rintro x y i j hij
+      fin_cases i <;> fin_cases j <;> dsimp only at hij ⊢ <;> (try contradiction) <;> decide
   · rw [min_colors, mem_lowerBounds]
     by_contra! ⟨n, ⟨f, ⟨h1, h2⟩⟩, ha_lt⟩
     suffices (22 : ℝ) < n by norm_cast at this; lia
