@@ -140,6 +140,7 @@ lemma order_nth_smallest_eq_id {n : ℕ} {a : Fin n → ℝ} (ha : Function.Inje
   apply order_eq_id_of_strictMono
   exact nth_smallest_strictMono ha
 
+snip end
 
 noncomputable determine solution_set_generalized {n : ℕ} (hn : 2 ≤ n)
     {a : Fin n → ℝ} (ha : Function.Injective a) : Set ((Fin n → ℝ)) := {
@@ -148,6 +149,8 @@ noncomputable determine solution_set_generalized {n : ℕ} (hn : 2 ≤ n)
       then 1 / (nth_smallest ha ⟨n - 1, by lia⟩ - nth_smallest ha ⟨0, by lia⟩)
       else 0
   }
+
+snip begin
 
 theorem imo1966_p5_generalized
   {n : ℕ}
