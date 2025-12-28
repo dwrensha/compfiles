@@ -162,9 +162,7 @@ theorem imo1966_p5_generalized
   wlog h_mono_a : StrictMono a generalizing a x
   · set a' := nth_smallest ha with ha'
     set x' := x ∘ nth_smallest_index ha with hx'
-    have h_mono_a' : StrictMono a' := by
-      rw [ha']
-      apply nth_smallest_strictMono
+    have h_mono_a' : StrictMono a' := nth_smallest_strictMono ha
     have h' := this x' a' h_mono_a'.injective h_mono_a'
     have h_iff_left : (∀ (i : Fin n), ∑ j, |a' i - a' j| * x' j = 1)
       ↔ (∀ (i : Fin n), ∑ j, |a i - a j| * x j = 1) := by
@@ -232,7 +230,7 @@ theorem imo1966_p5_generalized
         by_cases! hij : j ≤ i
         · rw [h_abs hij, h_abs (by rw [Fin.le_def]; lia), if_pos hij]
           ring
-        · rw [h_abs' (by rw [Fin.le_def]; lia), h_abs' (by rw [Fin.le_def]; lia), if_neg (by rw [Fin.le_def]; lia)]
+        · rw [h_abs' (by rw [Fin.le_def]; lia), h_abs' (Fin.mk_le_of_le_val hij), if_neg (by rw [Fin.le_def]; lia)]
           ring
       have h₃ : ∀ (i : Fin n) (hi : i < ⟨n - 1, by lia⟩),
         ∑ j, (a ⟨↑i + 1, by lia⟩ - a i) * ((if j ≤ i then -1 else 1) * x j)
@@ -258,7 +256,7 @@ theorem imo1966_p5_generalized
         · rw [hij, if_neg (by rw [Fin.le_def]; lia), if_pos (by rfl), if_pos (by rfl)]
           ring
         · by_cases! hij' : j < i
-          · rw [if_pos (by rw [Fin.le_def]; lia), if_pos (by rw [Fin.le_def]; lia), if_neg (by lia)]
+          · rw [if_pos (by rw [Fin.le_def]; lia), if_pos (Fin.le_of_lt hij'), if_neg (by lia)]
             ring
           · rw [if_neg (by rw [Fin.le_def]; lia), if_neg (by rw [Fin.le_def]; lia), if_neg (by lia)]
             ring
