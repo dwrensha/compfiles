@@ -408,7 +408,7 @@ theorem monotone_of_upper_lower_continuous
     exact h9 h8
 
   have h0 : Set.Ici z ⊆ f ⁻¹' (Set.Ici (f z)) :=
-    real_induction L1 L2 (@Set.left_mem_Ici _ _ (f z))
+    real_induction L1 L2 (@Set.self_mem_Ici _ _ (f z))
   exact h0 hz
 
 snip end
