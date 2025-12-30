@@ -1,12 +1,16 @@
 /-
 Copyright (c) 2025 lean-tom. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors:　lean-tom (with assistance from Gemini)
+Authors: lean-tom (with assistance from Gemini)
 -/
 
 import Mathlib.Data.Real.Basic
 import Mathlib.Analysis.SpecialFunctions.Sqrt
 import Mathlib.Tactic
+
+import ProblemExtraction
+
+problem_file { languages := [.html] }
 
 /-!
 # IMO 1961 P2
@@ -20,7 +24,7 @@ Weitzenböck's Inequality.
 
 namespace Imo1961P2
 
--- snip begin
+/- snip begin -/
 /-!
 ## Proof strategy
 
@@ -47,7 +51,7 @@ lemma weitzenbock_identity (a b c T : ℝ)
 **IMO 1961 P2 (Inequality)**:
 Using Heron's formula to characterize the area $T$, we prove the inequality.
 -/
-theorem imo1961_p2 (a b c T : ℝ)
+problem imo1961_p2 (a b c T : ℝ)
     (h_pos_a : 0 < a) (h_pos_b : 0 < b) (h_pos_c : 0 < c)
     (h_area : 16 * T^2 = (a + b + c) * (a + b - c) * (a - b + c) * (-a + b + c)) :
     a^2 + b^2 + c^2 ≥ 4 * Real.sqrt 3 * T := by
