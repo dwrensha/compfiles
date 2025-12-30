@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2025 lean-tom. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors:　lean-tom (with assistance from Gemini)
+-/
+
 import Mathlib.Data.Real.Basic
 import Mathlib.Analysis.SpecialFunctions.Sqrt
 import Mathlib.Tactic
@@ -10,9 +16,6 @@ $$ a^2 + b^2 + c^2 \ge 4\sqrt{3} T $$
 Equality holds if and only if the triangle is equilateral.
 
 Weitzenböck's Inequality.
-
-Authors:　lean-tom (with assistance from Gemini)
-
 -/
 
 namespace Imo1961P2
@@ -26,7 +29,6 @@ The inequality is then equivalent to the algebraic inequality:
 $$(a^2 + b^2 + c^2)^2 \ge 48 T^2$$
 Substituting Heron's formula leads to a sum of squares identity.
 -/
-
 
 /--
 Helper lemma: The key algebraic identity for Weitzenböck's inequality.
