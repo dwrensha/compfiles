@@ -18,14 +18,13 @@ problem_file
 Let $a, b, c$ be the sides of a triangle, and $T$ its area. Prove:
 $$ a^2 + b^2 + c^2 \ge 4\sqrt{3} T $$
 Equality holds if and only if the triangle is equilateral.
-
-Weitzenböck's Inequality.
 -/
 
 namespace Imo1961P2
 
-/- snip begin -/
-/-!
+snip begin
+
+/-
 ## Proof strategy
 
 We use Heron's formula to express the area $T$ in terms of the sides $a, b, c$.
@@ -45,13 +44,13 @@ lemma weitzenbock_identity (a b c T : ℝ)
   have h48T : 48 * T^2 = 3 * (16 * T^2) := by ring
   rw [h48T, h_area]
   ring
-/- snip end -/
+
+snip end
 
 /--
-**IMO 1961 P2 (Inequality)**:
-Using Heron's formula to characterize the area $T$, we prove the inequality.
+**IMO 1961 P2 (Inequality Case)**
 -/
-problem imo1961_p2 (a b c T : ℝ)
+problem imo1961_p2a (a b c T : ℝ)
     (h_pos_a : 0 < a) (h_pos_b : 0 < b) (h_pos_c : 0 < c)
     (h_area : 16 * T^2 = (a + b + c) * (a + b - c) * (a - b + c) * (-a + b + c)) :
     a^2 + b^2 + c^2 ≥ 4 * Real.sqrt 3 * T := by
@@ -67,10 +66,9 @@ problem imo1961_p2 (a b c T : ℝ)
     linarith [key_ident, sq_nonneg (a^2 - b^2), sq_nonneg (b^2 - c^2), sq_nonneg (c^2 - a^2)]
 
 /--
-**IMO 1961 P2 (Equality Case)**:
-Equality holds if and only if $a=b=c$.
+**IMO 1961 P2 (Equality Case)**
 -/
-theorem imo1961_p2_eq_iff (a b c T : ℝ)
+problem imo1961_p2b (a b c T : ℝ)
     (h_pos_a : 0 < a) (h_pos_b : 0 < b) (h_pos_c : 0 < c) (h_pos_T : 0 < T)
     (h_area : 16 * T^2 = (a + b + c) * (a + b - c) * (a - b + c) * (-a + b + c)) :
     a^2 + b^2 + c^2 = 4 * Real.sqrt 3 * T ↔ a = b ∧ b = c := by
