@@ -10,7 +10,7 @@ import Mathlib.Tactic
 
 import ProblemExtraction
 
-problem_file { languages := [.html] }
+problem_file
 
 /-!
 # IMO 1961 P2
