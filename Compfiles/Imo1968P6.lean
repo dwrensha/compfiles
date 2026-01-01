@@ -14,7 +14,7 @@ open Nat BigOperators Finset
 problem_file
 
 /-!
-# IMO 1968 P6
+# International Mathematical Olympiad 1968, Problem 6
 
 For every natural number n, prove that the sum
 ∑_{k=0}^{∞} [(n + 2^k) / 2^(k+1)] = n.
