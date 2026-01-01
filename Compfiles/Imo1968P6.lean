@@ -9,9 +9,7 @@ import Mathlib.Tactic
 
 import ProblemExtraction
 
-open Nat BigOperators Finset
-
-problem_file 
+problem_file { tags := [.Algebra] }
 
 /-!
 # International Mathematical Olympiad 1968, Problem 6
@@ -19,8 +17,6 @@ problem_file
 For every natural number n, evaluate the sum
 ∑_{k=0}^{∞} [(n + 2^k) / 2^(k+1)]
 where [x] denotes the greatest integer less than or equal to x.
-
-The answer is n.
 -/
 
 namespace Imo1968P6
@@ -51,10 +47,11 @@ problem imo1968_p6 (n : ℕ) : ∑' k, (n + 2^k) / 2^(k+1) = n_ans n := by
   -- We truncate the sum at k_max = n + 1, since terms are zero afterwards.
   let k_max := n + 1
 
-  have sum_eq_finite : ∑' k, (n + 2^k) / 2^(k+1) = ∑ k ∈ range k_max, (n + 2^k) / 2^(k+1) := by
+  have sum_eq_finite : ∑' k, (n + 2^k) / 2^(k+1) =
+                       ∑ k ∈ Finset.range k_max, (n + 2^k) / 2^(k+1) := by
     apply tsum_eq_sum
     intro k hk
-    simp only [mem_range, not_lt] at hk
+    simp only [Finset.mem_range, not_lt] at hk
     apply Nat.div_eq_of_lt
     calc
       n + 2^k < 2^k + 2^k := by
@@ -68,19 +65,19 @@ problem imo1968_p6 (n : ℕ) : ∑' k, (n + 2^k) / 2^(k+1) = n_ans n := by
   rw [sum_eq_finite]
 
   -- Rewrite the sum using the telescoping lemma
-  have sum_rewrite : ∑ k ∈ range k_max, (n + 2^k) / 2^(k+1) =
-                     ∑ k ∈ range k_max, (n / 2^k - n / 2^(k+1)) := by
-    apply sum_congr rfl
+  have sum_rewrite : ∑ k ∈ Finset.range k_max, (n + 2^k) / 2^(k+1) =
+                     ∑ k ∈ Finset.range k_max, (n / 2^k - n / 2^(k+1)) := by
+    apply Finset.sum_congr rfl
     intro k hk
     rw [term_telescope]
   rw [sum_rewrite]
 
   -- Prove the telescoping sum formula for natural numbers (requiring decreasing terms)
-  have telescoping (m : ℕ) : ∑ k ∈ range m, (n / 2^k - n / 2^(k+1)) = n - n / 2^m := by
+  have telescoping (m : ℕ) : ∑ k ∈ Finset.range m, (n / 2^k - n / 2^(k+1)) = n - n / 2^m := by
     induction m with
     | zero => simp
     | succ m hm =>
-      rw [sum_range_succ, hm, Nat.sub_add_sub_cancel]
+      rw [Finset.sum_range_succ, hm, Nat.sub_add_sub_cancel]
       · apply Nat.div_le_self
       · gcongr
         · norm_num

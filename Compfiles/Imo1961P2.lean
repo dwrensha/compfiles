@@ -13,7 +13,7 @@ import ProblemExtraction
 problem_file
 
 /-!
-# IMO 1961 P2
+# International Mathematical Olympiad 1961, Problem 2
 
 Let $a, b, c$ be the sides of a triangle, and $T$ its area. Prove:
 $$ a^2 + b^2 + c^2 \ge 4\sqrt{3} T $$
