@@ -1,5 +1,5 @@
 /-
-Copyright (c) 2025 lean-tom. All rights reserved.
+Copyright (c) 2026 lean-tom. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: lean-tom (with assistance from Gemini)
 -/
@@ -11,7 +11,7 @@ import ProblemExtraction
 
 open Nat BigOperators Finset
 
-problem_file
+problem_file 
 
 /-!
 # International Mathematical Olympiad 1968, Problem 6
@@ -40,8 +40,14 @@ lemma term_telescope (n k : ℕ) :
 
 snip end
 
-problem imo1968_p6 (n : ℕ) : ∑' k, (n + 2^k) / 2^(k+1) = determine n_ans n := by
-  determine n_ans n
+/--
+The answer is n. We pull this into a `determine` statement as required.
+-/
+determine n_ans (n : ℕ) : ℕ := n
+
+problem imo1968_p6 (n : ℕ) : ∑' k, (n + 2^k) / 2^(k+1) = n_ans n := by
+  -- Proof starts here. We first unfold the answer definition.
+  unfold n_ans
   -- We truncate the sum at k_max = n + 1, since terms are zero afterwards.
   let k_max := n + 1
 
