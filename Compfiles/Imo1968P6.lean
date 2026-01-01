@@ -16,8 +16,11 @@ problem_file
 /-!
 # International Mathematical Olympiad 1968, Problem 6
 
-For every natural number n, prove that the sum
-∑_{k=0}^{∞} [(n + 2^k) / 2^(k+1)] = n.
+For every natural number n, evaluate the sum
+∑_{k=0}^{∞} [(n + 2^k) / 2^(k+1)]
+where [x] denotes the greatest integer less than or equal to x.
+
+The answer is n.
 -/
 
 namespace Imo1968P6
@@ -37,7 +40,8 @@ lemma term_telescope (n k : ℕ) :
 
 snip end
 
-problem imo1968_p6 (n : ℕ) : ∑' k, (n + 2^k) / 2^(k+1) = n := by
+problem imo1968_p6 (n : ℕ) : ∑' k, (n + 2^k) / 2^(k+1) = determine n_ans n := by
+  determine n_ans n
   -- We truncate the sum at k_max = n + 1, since terms are zero afterwards.
   let k_max := n + 1
 
