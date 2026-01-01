@@ -79,8 +79,11 @@ problem imo1994_p1 (n : ℕ) (m : ℕ) (A : Finset ℕ) (hm : A.card = m + 1)
   -- We exhibit `k+1` elements of `A` greater than `a (rev k)`
   set f : Fin (m + 1) ↪ ℕ :=
     ⟨fun i => a i + a (rev k), by
-      apply injective_of_le_imp_le
+      apply Function.Injective.of_eq_imp_le
       intro i j hij
+      --have :  a i = a j :=  by exact Nat.add_right_cancel hij
+      have : a i + a (rev k) ≤ a j + a (rev k):= by exact Nat.le_of_eq hij
+      replace hij := Nat.le_of_eq hij
       rwa [add_le_add_iff_right, a.map_rel_iff] at hij ⟩
   -- Proof that the `f i` are greater than `a (rev k)` for `i ≤ k`
   have hf : map f (Icc 0 k) ⊆ map a.toEmbedding (Ioc (rev k) (Fin.last m)) := by
