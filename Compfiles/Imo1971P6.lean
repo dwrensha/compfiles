@@ -26,8 +26,6 @@ snip begin
 
 open BigOperators Matrix
 
-snip end
-
 variable {n : ℕ} (A : Matrix (Fin n) (Fin n) ℕ)
 
 -- Definitions of row sum, column sum, and total sum
@@ -93,6 +91,8 @@ lemma aux {n : ℕ} (A : Matrix (Fin n) (Fin n) ℕ) (n_pos : 0 < n)
     have h_ny_cast : (↑(n - y) : ℤ) = ↑n - ↑y := Int.ofNat_sub (by linarith)
     rw [h_nx_cast, h_ny_cast] at h_bound
     nlinarith
+
+snip end
 
 problem imo1971_p6 {n : ℕ} (A : Matrix (Fin n) (Fin n) ℕ) (n_pos : 0 < n)
     (h_cond : ∀ i j : Fin n, A i j = 0 → rowSum A i + colSum A j ≥ n) :
