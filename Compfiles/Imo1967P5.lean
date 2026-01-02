@@ -10,7 +10,7 @@ import ProblemExtraction
 
 
 problem_file {
-  tags := [.Combinatorics]
+  tags := [.Algebra]
 }
 
 /-!
@@ -34,7 +34,8 @@ namespace Imo1967P5
 determine solution : (Fin 8 → ℝ) → Set ℕ := sorry
 
 problem imo1967_p5 (a : Fin 8 → ℝ)
-    (h : Set.Infinite {n | ∑ i, a i ^ n = 0}) :
+    (h₁ : Set.Infinite {n | ∑ i, a i ^ n = 0})
+    (h₂ : ¬∀ i, a i = 0) :
     solution a = {n | ∑ i, a i ^ n = 0} := by
   sorry
 
