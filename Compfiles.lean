@@ -80,6 +80,7 @@ import Compfiles.Imo1985P2
 import Compfiles.Imo1985P4
 import Compfiles.Imo1985P6
 import Compfiles.Imo1986P1
+import Compfiles.Imo1986P3
 import Compfiles.Imo1986P5
 import Compfiles.Imo1987P1
 import Compfiles.Imo1987P4
