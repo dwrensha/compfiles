@@ -5,6 +5,7 @@ import Compfiles.Bulgaria1998P6
 import Compfiles.Bulgaria1998P8
 import Compfiles.Bulgaria1998P11
 import Compfiles.CIIM2022P6
+import Compfiles.CJMO2024P1
 import Compfiles.Canada1998P3
 import Compfiles.Canada1998P5
 import Compfiles.Egmo2023P1
