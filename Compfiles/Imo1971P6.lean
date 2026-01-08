@@ -78,7 +78,7 @@ lemma aux {n : ℕ} (A : Matrix (Fin n) (Fin n) ℕ) (n_pos : 0 < n)
 
     have h_bound : (∑ j ∈ Y, colSum A j) + (∑ j ∈ Yᶜ, colSum A j) ≥ y * x + (n - y) * (n - x) := by
       apply add_le_add
-      · have h_yx : y * x = ∑ j ∈ Y, x := by simp [y, Finset.sum_const, nsmul_eq_mul]
+      · have h_yx : y * x = ∑ j ∈ Y, x := by simp [y, Finset.sum_const]
         rw [h_yx]; apply Finset.sum_le_sum; intro j _; exact h_min_col j
       · have h_col_Yc (j : Fin n) (hj : j ∈ Yᶜ) : colSum A j ≥ n - x := by
           have h_zero : A i₀ j = 0 := by simp [Y] at hj; exact hj
@@ -114,7 +114,7 @@ problem imo1971_p6 {n : ℕ} (A : Matrix (Fin n) (Fin n) ℕ) (n_pos : 0 < n)
     simp at h_row
     exact aux A n_pos h_cond x h_min_row h_min_col h_row
   · -- Case B: The minimum x is a column sum
-    simp only [S_vals, Finset.mem_image] at h_col
+    simp only [Finset.mem_image] at h_col
     rw [totalSum_transpose_eq A]
     apply aux Aᵀ n_pos _ x
     · intro i; simp [rowSum]; exact h_min_col i

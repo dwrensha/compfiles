@@ -317,10 +317,7 @@ lemma subsets_must_overlap_pigeonhole (s s1 s2 : Finset ℕ) (predicate_s1: ℕ 
   intro h
   simp only [not_and] at h
   have step_1 : (∀ x ∈ s, predicate_s1 x → ¬predicate_s2 x) → (∀ x ∈ s, x ∈ s1 → ¬ x ∈ s2) := by
-    intro left
-    intro x x_in_s
-    intro predicate_s1_fulfills
-    intro predicate_s2_fulfills
+    intro left x x_in_s predicate_s1_fulfills predicate_s2_fulfills
     have part_1 := ((lift_x_in_s1 x x_in_s).mp predicate_s1_fulfills)
     have part_2 := ((lift_x_in_s2 x x_in_s).mp predicate_s2_fulfills)
     exact left x x_in_s part_1 part_2
@@ -346,8 +343,7 @@ lemma subsets_must_overlap_pigeonhole (s s1 s2 : Finset ℕ) (predicate_s1: ℕ 
   have s1_s2_subset : (s1 ∪ s2) ⊆ s := by
     dsimp[Finset.instHasSubset]
     simp only [Finset.mem_union]
-    intro a
-    intro s1_or_s2
+    intro a s1_or_s2
     cases s1_or_s2
     case inl left =>
       simp_all only [Finset.filter_subset, Finset.mem_filter]
@@ -476,8 +472,7 @@ lemma contradiction_of_finset_icc_1_6 (s1 s2 : Finset ℕ) (partition : s1 ∪ s
       simp_all only [Finset.disjoint_singleton_right]
       exact this
     have others : ∀ k ∈ s2, ¬ 5 ∣ k := by
-      intro k
-      intro k_in_s2
+      intro k k_in_s2
       have k_in_explicit_s2 : k ∈ ({1, 2, 3, 4, 6} : Finset ℕ) := by
         exact mem_of_subst k s2 {1, 2, 3, 4, 6} k_in_s2 explicit_s2
       intro five_div_k
@@ -521,8 +516,7 @@ lemma contradiction_of_finset_icc_1_6 (s1 s2 : Finset ℕ) (partition : s1 ∪ s
       simp_all only [Finset.disjoint_singleton_right]
       exact this
     have others : ∀ k ∈ s1, ¬ 5 ∣ k := by
-      intro k
-      intro k_in_s1
+      intro k k_in_s1
       have k_in_explicit_s1 : k ∈ ({1, 2, 3, 4, 6} : Finset ℕ) := by
         exact mem_of_subst k s1 {1, 2, 3, 4, 6} k_in_s1 explicit_s1
       intro five_div_k
