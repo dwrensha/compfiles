@@ -123,11 +123,7 @@ namespace Nat
 theorem sub_mod {a b c : Nat} (h : b ≤ a) : (a - b) % c = (a - b % c) % c := by
   nth_rw 3 [Nat.mod_eq_sub_div_mul]
   rw [Nat.sub_sub_right, Nat.sub_add_comm]
-  · induction b/c with
-    | zero => simp
-    | succ n ih =>
-      rw [Nat.add_mul, one_mul, <-Nat.add_assoc, Nat.add_mod_right]
-      trivial
+  · exact (Nat.add_mul_mod_self_right (a - b) (b / c) c).symm
   · exact h
   · exact Nat.div_mul_le_self b c
 
@@ -159,8 +155,7 @@ theorem imo1992_p6_a : ∀ n ≥ 4, S n ≤ n^2-14 := by
       apply Nat.lt_of_add_one_le
       simp_all
       exact Nat.le_of_add_left_le this
-    apply pow_left_mono 2
-    exact nge
+    exact pow_le_pow_left' nge 2
   have nge' : 13 < n^2 := by
     trans 14
     · simp
@@ -458,8 +453,7 @@ theorem msos.card_repeat_shift_le_card (C:Multiset ℕ+) : (msos.repeat_shift C)
   · trivial
   · expose_names
     apply le_trans _ (le_of_eq (card_shift x i a _))
-    · apply le_trans ih1
-      apply Nat.le_add_right
+    · exact Nat.le_add_right_of_le ih1
     · apply Nat.mul_div_le
 
 
@@ -709,8 +703,7 @@ theorem sos_add (z1 z2 k1 k2: ℕ) (h1 : is_sum_of_pos_squares z1 k1) (h2 : is_s
       intro i b
       apply Fin.eq_of_val_eq
       simp only
-      rw [Nat.sub_add_cancel]
-      exact b
+      exact Nat.sub_add_cancel b
   · intro i
     simp only
     split_ifs
@@ -1023,8 +1016,7 @@ theorem complete_mul (n1 n2) (lb1 : 13 ≤ n1) (lb2 : 13 ≤ n2) (n1h : complete
       obtain ⟨d, dpos, db, dh1, dh2⟩ := sos_split (n1 ^ 2) u u.prop (n1h u ub)
       have : (n1 * n2).val ^ 2 = (n1^2-d^2) * n2^2 + d^2*n2^2 := by
         rw [Nat.sub_mul, PNat.mul_coe, mul_pow, Nat.sub_add_cancel]
-        simp only [PNat.pos, pow_succ_pos, mul_le_mul_iff_left₀]
-        exact db
+        exact Nat.mul_le_mul_right (↑n2 ^ 2) db
       rw [this, hk]
       apply sos_add
       · apply sos_mul
