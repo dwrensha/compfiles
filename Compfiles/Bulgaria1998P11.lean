@@ -254,10 +254,6 @@ lemma Thue's_lemma
 example (a b n : ℕ) (ha : a < n + 1) (hb : b < n + 1) : ((a : ℤ) - (b : ℤ))^2 ≤ n^2 := by
   nlinarith
 
-lemma mod_z_of_mod_n {a b m : ℕ} (h : a ≡ b [MOD m]) : a ≡ b [ZMOD m] := by
-  change _ % _ = _ % _ at *
-  norm_cast
-
 lemma square_mod_4_zmod (x : ZMod 4) : x ^ 2 = 1 ∨ x ^ 2 = 0 := by
   fin_cases x <;> simp +arith +decide
 
@@ -464,7 +460,7 @@ problem bulgaria1998_p11
     clear hn1
     obtain ⟨mod_expression, x_lower, x_higher, y_higher⟩ := x_y_props
 
-    have lifted_m₁_result := mod_z_of_mod_n (Nat.modEq_zero_iff_dvd.mpr m₁_divides_for_thues_lemma)
+    have lifted_m₁_result := Int.natCast_modEq_iff.mpr (Nat.modEq_zero_iff_dvd.mpr m₁_divides_for_thues_lemma)
     norm_num at lifted_m₁_result
 
     have expression : 3 * x ^ 2 + y ^ 2 ≡ 0 [ZMOD m₁] := by
@@ -510,7 +506,7 @@ problem bulgaria1998_p11
       exact lt_of_mul_lt_mul_of_nonneg_left lower_bound_expression zero_lt_m₁.le
 
     have m₁_sub_5_mod_6 : ↑m₁ - 5 ≡ 0 [ZMOD 6] := by
-      exact Int.ModEq.sub (mod_z_of_mod_n m₁_eq_5_mod_6) rfl
+      exact Int.ModEq.sub (Int.natCast_modEq_iff.mpr m₁_eq_5_mod_6) rfl
 
     interval_cases s
     · -- s = 1

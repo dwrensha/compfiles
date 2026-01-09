@@ -447,8 +447,7 @@ problem imo2016_p4 :
         · exfalso
           exact gcd_p_of_diff_one (by ring: (a + 4) = (a + 3) + 1) hpi4₂
         · exfalso
-          rw [ne_self_iff_false] at hpi4₁
-          exact hpi4₁
+          exact false_of_ne hpi4₁
         · exfalso
           rw [Nat.coprime_comm] at hpi4₂
           exact gcd_p_of_diff_one (by ring: (a + 5) = (a + 4) + 1) hpi4₂

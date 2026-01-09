@@ -657,17 +657,19 @@ theorem imo1999_p3_necessity (n : ℕ) (h_even : Even n) (s : Finset (Square n))
   -- Apply Lower Bound Lemma
   have h_bound_sb : sb.card ≥ n * (n + 2) / 8 := by
     rw [← two_mul] at h_n
-    apply card_lower_bound_of_cover n k h_n sb 0 (by omega)
+    apply card_lower_bound_of_cover n k h_n sb 0 zero_le_one
     intro p h_parity0
-    exact h_cover_even p
-      (by dsimp [even_sum_squares, squaresEvenSum]; rw [mem_filter]; simp; exact h_parity0)
+    refine h_cover_even p ?_
+    dsimp [even_sum_squares, squaresEvenSum]
+    exact (mem_filter_univ p).mpr h_parity0
 
   have h_bound_sw : sw.card ≥ n * (n + 2) / 8 := by
     rw [← two_mul] at h_n
-    apply card_lower_bound_of_cover n k h_n sw 1 (by omega)
+    apply card_lower_bound_of_cover n k h_n sw 1 (le_refl _)
     intro p h_parity1
-    exact h_cover_odd p
-      (by dsimp [odd_sum_squares, squaresOddSum]; rw [mem_filter]; simp; exact h_parity1)
+    refine h_cover_odd p ?_
+    dsimp [odd_sum_squares, squaresOddSum]
+    exact (mem_filter_univ p).mpr h_parity1
 
   rw [h_card_s]
   have h_sum_ge : sw.card + sb.card ≥ n * (n + 2) / 8 + n * (n + 2) / 8 :=
@@ -694,9 +696,7 @@ problem imo1999_p3 (n : ℕ) (h_pos : 0 < n) (h_even : Even n) :
   -- 1. Membership (Sufficiency): A valid marking of size N exists.
   · simp only [Set.mem_setOf_eq]
     use solutionSet n
-    constructor
-    · exact (imo1999_p3_sufficiency n h_pos h_even).2
-    · exact (imo1999_p3_sufficiency n h_pos h_even).1
+    exact (imo1999_p3_sufficiency n h_pos h_even).symm
   -- 2. Lower Bound (Necessity): Any valid marking has size at least N.
   · intro k hk
     simp only [Set.mem_setOf_eq] at hk
