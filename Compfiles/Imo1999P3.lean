@@ -7,7 +7,9 @@ import Mathlib.Data.Finset.Basic
 import Mathlib.Tactic
 import ProblemExtraction
 
-problem_file
+problem_file {
+  tags := [.Combinatorics]
+}
 
 /-!
 # International Mathematical Olympiad 1999, Problem 3
@@ -194,7 +196,9 @@ lemma card_sw_eq_triangular (n k : ℕ) (h_n : n = 2 * k) :
         constructor <;> omega
       · intro _ _ _ _ h
         simp at h
-        ext; exact h.1; exact h.2
+        ext
+        · exact h.1
+        · exact h.2
       · intro ⟨i, j⟩ h
         simp only [s, mem_sigma, mem_range] at h
         refine ⟨(⟨i, by omega⟩, ⟨j, by omega⟩), ?_, ?_⟩
@@ -237,7 +241,7 @@ lemma card_sw_eq_triangular (n k : ℕ) (h_n : n = 2 * k) :
   -- [Goal C] Surjectivity
   · intro b hb
     -- 1. Expand definitions
-    simp only [f, t]
+    simp only [f]
     -- 2. Obtain the pre-image p using the surjectivity lemma
     rcases transform_surjective_on_t n k h_n b hb with ⟨p, hp, heq⟩
     -- 3. Use p
@@ -501,7 +505,7 @@ lemma disjoint_sw_sb (n : ℕ) (h_pos : 0 < n) (h_even : Even n) :
 Lemma: Symmetry implies |sw| = |sb|.
 The map x ↦ n - 1 - x is a bijection swapping the two sets.
 -/
-lemma card_sw_eq_card_sb (n : ℕ) (h_pos : 0 < n) (h_even : Even n) :
+lemma card_sw_eq_card_sb (n : ℕ) :
   (sw n).card = (sb n).card := by
   let f : Square n → Square n := λ p =>
     (⟨n - 1 - p.1.val, by omega⟩, p.2)
@@ -509,9 +513,11 @@ lemma card_sw_eq_card_sb (n : ℕ) (h_pos : 0 < n) (h_even : Even n) :
   · -- Bijective
     rw [Function.Bijective]; constructor
     · intro a b h; simp [f] at h; ext <;> omega
-    · intro b; use f b; simp [f]; ext ;
-      have h_le : b.1.val ≤ n - 1 := Nat.le_pred_of_lt b.1.isLt;
-      apply Nat.sub_sub_self h_le; rfl
+    · intro b; use f b; simp [f]
+      ext
+      · have h_le : b.1.val ≤ n - 1 := Nat.le_pred_of_lt b.1.isLt
+        apply Nat.sub_sub_self h_le
+      · rfl
   · -- Maps sw to sb (and vice versa logic implies bijection on domains)
     intro p
     simp only [f]; unfold sw sb; simp only [mem_filter, Finset.mem_univ, true_and]
@@ -534,7 +540,7 @@ theorem imo1999_p3_sufficiency (n : ℕ) (h_pos : 0 < n) (h_even : Even n) :
 
     -- 2. Apply Lemmata
     have h_disjoint := disjoint_sw_sb n h_pos h_even
-    have h_sym := card_sw_eq_card_sb n h_pos h_even
+    have h_sym := card_sw_eq_card_sb n
 
     -- Calculate |sw|
     have h_card_sw : (sw n).card = n * (n + 2) / 8 := by
