@@ -111,6 +111,7 @@ import Compfiles.Imo1998P2
 import Compfiles.Imo1998P3
 import Compfiles.Imo1998P4
 import Compfiles.Imo1998P6
+import Compfiles.Imo1999P3
 import Compfiles.Imo1999P4
 import Compfiles.Imo1999P6
 import Compfiles.Imo2000P2
