@@ -7,7 +7,8 @@ import Mathlib.Data.Fin.VecNotation
 import Mathlib.Data.List.ChainOfFn
 import Mathlib.Data.List.TakeWhile
 import Mathlib.Data.Nat.Dist
-import Mathlib.Order.Fin.Basic
+import Mathlib.Data.Fintype.Fin
+import Mathlib.Tactic.FinCases
 import Mathlib.Tactic.IntervalCases
 
 import ProblemExtraction
