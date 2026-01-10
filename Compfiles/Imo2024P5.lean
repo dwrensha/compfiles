@@ -190,11 +190,7 @@ lemma Path.exists_mem_fst_eq (p : Path N) (r : Fin (N + 2)) : ∃ c ∈ p.cells,
   have hi : i < p.cells.length := by
     refine List.findIdx_lt_length_of_exists ⟨p.cells.getLast p.nonempty, ?_⟩
     simp only [List.getLast_mem, p.last_last_row, decide_eq_true_eq, true_and]
-    simp only [Fin.last]
-    rw [Fin.le_def]
-    have h := r.isLt
-    rw [Nat.lt_succ_iff] at h
-    convert h
+    exact Fin.le_last r
   have hig : r ≤ (p.cells[i]).1 := of_decide_eq_true (List.findIdx_getElem (w := hi))
   refine ⟨p.cells[i], List.getElem_mem _, ?_⟩
   rcases hig.lt_or_eq.symm with h | h
