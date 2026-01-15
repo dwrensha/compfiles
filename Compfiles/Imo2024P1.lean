@@ -184,7 +184,7 @@ problem imo2024_p1 (α : ℝ) :
     exact condition_two_mul_int m
   · change Condition α at h
     rw [← condition_toIcoMod_iff, condition_iff_of_mem_Ico (toIcoMod_mem_Ico' _ _),
-        ← AddCommGroup.modEq_iff_toIcoMod_eq_left, AddCommGroup.ModEq] at h
+        ← AddCommGroup.modEq_iff_toIcoMod_eq_left, AddCommGroup.modEq_iff_zsmul'] at h
     simp_rw [sub_zero] at h
     rcases h with ⟨m, rfl⟩
     rw [zsmul_eq_mul, mul_comm]
