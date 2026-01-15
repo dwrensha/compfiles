@@ -15,21 +15,15 @@ import Lean
 import ProblemExtraction
 
 problem_file
+/-
+# International Mathematical Olympiad 1992, Problem 5
 
--- The IMO1992-5 Problem states:
-
--- Let $S$ be a finite set of points in three-dimensional space. Let $S_x,S_y$ and $S_z$ be the sets consisting of the orthogonal projections of the points of $S$ onto the $yz$-plane, $zx$-plane and $xy$-plane, respectively.
--- Prove that $$|S|^2≤|S_x| \cdot |S_y|\cdot|S_z|$$
--- where $|A|$ denotes the number of elements in the finite set $|A|$.
-
--- I'll adhere to the proof at https://artofproblemsolving.com/wiki/index.php/1992_IMO_Problems/Problem_5
-
--- The proof uses the cardinatily of Finsets, but needs to manipulate them as real numbers, so I use Finset.rcard instead of Finset.card where needed.
--- The projections of the Set S onto the three planes are defined as S_x, S_y, and S_z respectively,
--- so the goal is simply to show that (S.rcard)^2 ≤ (S_x.rcard) * (S_y.rcard) * (S_z.rcard)
-
--- I used a little Github Copilot (no agents) to help me learn Lean a bit, but most of the code is my own.
--- I did get access to aristotle today and it managed to fill out all my "sorries", but the places where I used it are marked.
+Let S be a finite set of points in three-dimensional space.
+Let Sx,Sy and Sz be the sets consisting of the orthogonal projections of the points of S onto the yz-plane, zx-plane and xy-plane, respectively.
+Prove that |S|²≤|Sx|·|Sy|·|Sz|.
+where |A| denotes the number of elements in the finite set |A|.
+(Note: The orthogonal projection of a point onto a plane is the foot of the perpendicular from the point to the plane.)
+-/
 
 noncomputable def point3 := Fin 3 → ℝ
 
@@ -67,7 +61,6 @@ noncomputable instance : DecidableEq point3 := by
 
 -- I'll start by declaring the induction construction of the projections.
 
-@[aesop apply unsafe 70%]
 noncomputable def projection (d: Fin 3) (p: point3) : point3 :=
   fun i => if i = d then 0 else p i
 
@@ -75,7 +68,6 @@ noncomputable def projection (d: Fin 3) (p: point3) : point3 :=
 -- AND because they are not mapping to the reals when applied to naturals,
 -- We'll instead express cardinality as a real number.
 -- It can be undone by `unfold Finset.rcard; refine Nat.cast_inj.mpr ?_`. --/
-@[aesop unfold unsafe 40%]
 noncomputable def Finset.rcard {α : Type*} (S: Finset α) : ℝ :=
   (S.card: ℝ)
 
@@ -97,7 +89,6 @@ lemma Finset.rcard_le_rcard {α: Type*} {S T: Finset α} : S ⊆ T → S.rcard �
   }
 
 -- Helper Constructions: Project a set (S) into the X, y, or z direction
-@[aesop apply unsafe 90%]
 noncomputable def project_set (d: Fin 3) (S: Finset point3) : Finset point3 :=
 
     -- We cannot use the Finset.map function, because that only allows embeddings,
@@ -107,22 +98,18 @@ noncomputable def project_set (d: Fin 3) (S: Finset point3) : Finset point3 :=
     -- But it does require DecidableEq instances for the types involved.
   Finset.image (projection d) S
 
-@[aesop apply unsafe 70%]
 noncomputable def S_x (S: Finset point3) : Finset point3 :=
   project_set 0 S
 
-@[aesop apply unsafe 70%]
 noncomputable def S_y (S: Finset point3) : Finset point3 :=
   project_set 1 S
 
-@[aesop apply unsafe 70%]
 noncomputable def S_z (S: Finset point3) : Finset point3 :=
   project_set 2 S
 
 snip begin
 
 -- Helper lemma: each value of some projected set corresponds to some point in the original set.
-@[aesop forward unsafe 10%]
 lemma project_set_mem (S: Finset point3) (d: Fin 3) (s_d: point3) (hs: s_d ∈ project_set d S) : ∃ p ∈ S, projection d p = s_d := by
   {
     unfold project_set at hs
@@ -130,7 +117,6 @@ lemma project_set_mem (S: Finset point3) (d: Fin 3) (s_d: point3) (hs: s_d ∈ p
   }
 
 -- Helper lemma: if set a is a subset of set b, then after projecting them, this is still the case.
-@[aesop forward unsafe 70%]
 lemma project_set_subset (S T: Finset point3) (d: Fin 3) (h: S ⊆ T) : project_set d S ⊆ project_set d T := by
   {
     unfold project_set projection
@@ -148,23 +134,19 @@ lemma project_set_subset (S T: Finset point3) (d: Fin 3) (h: S ⊆ T) : project_
 -- Next in the proof, we need to construct the Z_i sets.
 -- Given S, the Z_i sets are the sets of points in S with the same Z coordinate.
 -- This means that the union on Z_i is S and that each point in S is in exactly one Z_i set.
-@[aesop apply unsafe 80%]
 noncomputable def Z_i (S: Finset point3) (r: ℝ) : Finset point3 :=
   S.filter (fun p => p 2 = r)
 
 -- Something is a Z_i set iff its third component is constant across all points.
 -- To handle empty sets better, I'll rewrite it as "cardinality of z coordinated ≤1"
 -- This makes the proof harder, so I'll instead move to the old definition, but remove the "only one" requirement.
-@[aesop safe]
 noncomputable def is_Z_i_set (Z_i: Finset point3) : Prop :=
   ∃ r: ℝ, ∀ p ∈ Z_i, p 2 = r
 
-@[aesop apply unsafe 50%]
 noncomputable def Z (S: Finset point3) : Finset (Finset point3) :=
   S.image (fun p => Z_i S (p 2))
 
 -- Helper lemma: Z S contains all elements of S in two layers
-@[aesop forward safe]
 lemma Z_S_mem_mem_S (S z: Finset point3) (w: point3) (hz: z ∈ Z S) (hw: w ∈ z) : w ∈ S := by
   {
     unfold Z Z_i at hz
@@ -176,7 +158,6 @@ lemma Z_S_mem_mem_S (S z: Finset point3) (w: point3) (hz: z ∈ Z S) (hw: w ∈ 
   }
 
 -- Helper lemma for the helper lemma for the helper lemma below: If two elements of a Z_i set project to the same, they are the same.
-@[aesop forward unsafe 70%]
 lemma project_set_Z_i_inj (Z_i: Finset point3) (h_Zi: is_Z_i_set Z_i) : ∀ p1 ∈ Z_i, ∀ p2 ∈ Z_i, projection 2 p1 = projection 2 p2 → p1 = p2 := by
   {
     intro p1 hp1 p2 hp2 h
@@ -198,7 +179,6 @@ lemma project_set_Z_i_inj (Z_i: Finset point3) (h_Zi: is_Z_i_set Z_i) : ∀ p1 �
   }
 
 -- Helper lemma for the helper lemma below: projecting a Z_i set constructs a bijection
-@[aesop forward unsafe 70%]
 lemma project_set_bij_Z_i (Z_i: Finset point3) (h_Zi: is_Z_i_set Z_i) : ∀ p1 ∈ (project_set 2 Z_i), ∃! p2 ∈ Z_i, projection 2 p2 = p1 := by
   {
     intro s_z hs_z
@@ -236,11 +216,9 @@ lemma project_set_Z_i_card (Z_i: Finset point3) (hz_i: is_Z_i_set Z_i) : (projec
   }
 
 -- Exercise: show that the Z_i sets partition S
-@[aesop forward unsafe 90%]
 lemma Z_i_partition (S: Finset point3) : (Z S).biUnion id = S := by
   {
     unfold Z Z_i
-    -- aesop moment
     ext a : 1
     simp_all only [Fin.isValue, Finset.mem_biUnion, Finset.mem_image, id_eq, exists_exists_and_eq_and,
       Finset.mem_filter]
@@ -257,12 +235,10 @@ lemma Z_i_partition (S: Finset point3) : (Z S).biUnion id = S := by
         on_goal 2 => {rfl
         }
         · simp_all only
-    -- aesop moment
 
   }
 
 -- Exercise: show that if a set comes from Z_i, it is a Z_i set.
-@[aesop forward safe]
 lemma Z_i_is_Z_i_set (S: Finset point3) (r: ℝ): is_Z_i_set (Z_i S r) := by
   {
     unfold is_Z_i_set Z_i
@@ -272,13 +248,11 @@ lemma Z_i_is_Z_i_set (S: Finset point3) (r: ℝ): is_Z_i_set (Z_i S r) := by
   }
 
 -- Show that all results from the Z call are Z_i sets.
-@[aesop forward safe]
 lemma Z_are_Z_i_sets (S: Finset point3) : ∀ z_i ∈ Z S, is_Z_i_set z_i := by
   {
     intro z_i hZ_i
     unfold is_Z_i_set
     unfold Z Z_i at hZ_i
-    -- aesop moment
     simp_all only [Fin.isValue, Finset.mem_image]
     obtain ⟨w, h⟩ := hZ_i
     obtain ⟨_, right⟩ := h
@@ -287,50 +261,40 @@ lemma Z_are_Z_i_sets (S: Finset point3) : ∀ z_i ∈ Z S, is_Z_i_set z_i := by
     apply Exists.intro
     · intro p _ _
       rfl
-    -- aesop moment
   }
 
 
 -- Now we construct a_i and b_i.
 -- They are the values in each Z_i, projected into y and z respectively.
-@[aesop apply unsafe 70%]
 noncomputable def a_i (S: Finset point3) (r: ℝ) : Finset point3 :=
   (Z_i S r).image (fun p => projection 0 p)
 
-@[aesop apply unsafe 70%]
 noncomputable def b_i (S: Finset point3) (r: ℝ) : Finset point3 :=
   (Z_i S r).image (fun p => projection 1 p)
 
-@[aesop apply unsafe 70%]
 noncomputable def a_i_from_Z_i (Z_i: Finset point3) : Finset point3 :=
   Z_i.image (fun p => projection 0 p)
 
-@[aesop apply unsafe 70%]
 noncomputable def b_i_from_Z_i (Z_i: Finset point3) : Finset point3 :=
   Z_i.image (fun p => projection 1 p)
 
 -- All a_i sets, given S
-@[aesop apply unsafe 60%]
 noncomputable def a (S: Finset point3) : Finset (Finset point3) :=
   S.image (fun p => a_i S (p 2))
 
-@[aesop apply unsafe 60%]
 noncomputable def b (S: Finset point3) : Finset (Finset point3) :=
   S.image (fun p => b_i S (p 2))
 
 -- The cardinality of all a_i sets, in order, given S.
-@[aesop apply unsafe 60%]
 noncomputable def a_card (S: Finset point3) : Multiset Nat :=
   (a S).val.map (fun p => p.card)
 
 -- The cardinality of all b_i sets, in order, given S.
-@[aesop apply unsafe 60%]
 noncomputable def b_card (S: Finset point3) : Multiset Nat :=
   (b S).val.map (fun p => p.card)
 
 
 -- Show that obtaining the as using a or a_i_from_Z_i is the same.
-@[aesop apply unsafe 10%]
 lemma a_eq_a_i_from_Z_i (S: Finset point3) : (a S) = (Z S).image (fun z => a_i_from_Z_i z) := by
   {
     unfold a a_i_from_Z_i a_i Z Z_i
@@ -339,7 +303,6 @@ lemma a_eq_a_i_from_Z_i (S: Finset point3) : (a S) = (Z S).image (fun z => a_i_f
   }
 
 -- Show that when two Z_i sets come from the same S, they are either equal or disjoint.
-@[aesop forward unsafe 10%]
 lemma z_i_sets_eq_or_disjoint (S le ri: Finset point3) (hle_Z : ri ∈ Z S) (hri_Z : le ∈ Z S) : ri = le ∨ (le ∩ ri) = ∅ := by {
   have fwd : is_Z_i_set le := Z_are_Z_i_sets S le hri_Z
   have fwd_1 : is_Z_i_set ri := Z_are_Z_i_sets S ri hle_Z
@@ -394,7 +357,6 @@ lemma z_i_sets_eq_or_disjoint (S le ri: Finset point3) (hle_Z : ri ∈ Z S) (hri
 
 -- Another helper lemma for a_disjoint below.
 -- If two elements from Z S have a matching Z-level, they are identical.
-@[aesop forward safe]
 lemma z_i_eq_if_proj_eq (S: Finset point3) (ri le: Finset point3) (hle_Z : ri ∈ Z S) (hri_Z : le ∈ Z S) (hslice: ∃ r ∈ ri, ∃ l ∈ le, (r 2) = (l 2)) : ri = le := by {
   obtain ⟨r_point, h⟩ := hslice
   obtain ⟨hr_p_in_ri, right⟩ := h
@@ -442,7 +404,6 @@ lemma z_i_eq_if_proj_eq (S: Finset point3) (ri le: Finset point3) (hle_Z : ri �
 
 
 -- I got stuck at a_disjoint and wanted to clean it up, so I'll move the statement I got stuck at here, to have it be cleaner.
-@[aesop forward safe]
 lemma a_disjoint_helper (le ri S: Finset point3) (hri_Z : ri ∈ Z S) (hle_Z : le ∈ Z S) (hp_nempty: (a_i_from_Z_i le ∩ a_i_from_Z_i ri).Nonempty) (h_disjoint: le ∩ ri = ∅) (hneq: ri ≠ le) : False := by {
 
 
@@ -561,7 +522,6 @@ lemma a_disjoint_helper (le ri S: Finset point3) (hri_Z : ri ∈ Z S) (hle_Z : l
 }
 
 -- Show that the results of (a S) are pairwise disjoint.
--- @[aesop forward safe]
 lemma a_disjoint (S: Finset point3): (SetLike.coe (a S)).PairwiseDisjoint id := by {
   refine Finset.pairwiseDisjoint_iff.mpr ?_
   intro k hk l hl hkl
@@ -612,7 +572,6 @@ lemma a_disjoint (S: Finset point3): (SetLike.coe (a S)).PairwiseDisjoint id := 
 
 -- Helper lemma:
 -- Basically, if a set is a Z_i set, then every subset is also a Z_i set.
-@[aesop forward safe]
 lemma is_Z_i_set_subset (z1: Finset point3) (z2: Finset point3) (h_z2: is_Z_i_set z2) (h_subset: z1 ⊆ z2) : is_Z_i_set z1 := by
   {
     unfold is_Z_i_set at h_z2
@@ -716,7 +675,6 @@ theorem equation_2 (S: Finset point3) : S.rcard = ∑ z_i ∈ (Z S), z_i.rcard :
 lemma a_i_partitions_S_x (S: Finset point3) : (a S).biUnion id = S_x S := by
   {
     unfold a S_x project_set a_i projection Z_i
-    -- aesop moment
     ext a : 1
     simp_all only [Fin.isValue, Finset.mem_biUnion, Finset.mem_image, id_eq, exists_exists_and_eq_and,
       Finset.mem_filter]
@@ -745,7 +703,6 @@ lemma a_i_partitions_S_x (S: Finset point3) : (a S).biUnion id = S_x S := by
             on_goal 2 => {rfl
             }
             · simp_all only [Fin.isValue, and_self]
-    -- aesop moment
 
   }
 
@@ -881,7 +838,6 @@ theorem equation_4 (S: Finset point3) : (S_y S).card = ((b S).biUnion id).card :
 
 
 -- Another Helper Lemma for equation 5.
-@[aesop forward safe]
 lemma Z_preserves_mem_project_set (S w: Finset point3) (hw: w ∈ Z S) : project_set 2 w ⊆ project_set 2 S := by {
   unfold project_set
   intro a ap
@@ -897,7 +853,6 @@ lemma Z_preserves_mem_project_set (S w: Finset point3) (hw: w ∈ Z S) : project
 
 -- Yet another helper lemma for equation 5.
 -- The idea is to show that an element of s_z must correspond to some element of Z_i S.
-@[aesop apply unsafe 40%]
 lemma s_z_mem_projected_Z_i (S: Finset point3) (s_z: point3) (hs_z: s_z ∈ S_z S) : ∃ z_i ∈ Z S, s_z ∈ project_set 2 z_i := by
   {
     have temp := project_set_mem S 2 s_z hs_z
@@ -919,7 +874,6 @@ lemma s_z_mem_projected_Z_i (S: Finset point3) (s_z: point3) (hs_z: s_z ∈ S_z 
 -- Helper lemma for equation 5: Z_i S (w 2) ⊆ S_z S for all w in S.
 -- However, we want project_set ({Z_i S (w 2)}.biUnion id) 2 = S_z S
 -- That is, when we project the union of all Z_i S onto the Z coordinate, we get S_z S
-@[aesop apply unsafe 90%]
 lemma projected_Z_i_partitions_S_Z (S: Finset point3): (Finset.image (fun zi => project_set 2 zi) (Z S)).biUnion id = S_z S := by
   {
     have fwd : (Z S).biUnion id = S := Z_i_partition S
@@ -947,7 +901,6 @@ lemma projected_Z_i_partitions_S_Z (S: Finset point3): (Finset.image (fun zi => 
 
 -- The fifth equation is a bit more complicated.
 -- It says that each Z_i contains less elements than the entirety of S_z.
-@[aesop apply unsafe 90%]
 theorem equation_5 (S: Finset point3) : ∀ z_i ∈ Z S, z_i.rcard ≤ (S_z S).rcard := by
   {
     unfold Z
@@ -985,7 +938,6 @@ theorem equation_5 (S: Finset point3) : ∀ z_i ∈ Z S, z_i.rcard ≤ (S_z S).r
   }
 
 -- Helper theorem for 6: multiply Equation 1 with 5.
-@[aesop apply unsafe 90%]
 lemma equation_1_and_5 (S Z_i: Finset point3) (hz_i: is_Z_i_set Z_i) (hz_i_in: Z_i ∈ Z S): (Z_i.rcard)^2 ≤ (S_z S).rcard * (a_i_from_Z_i Z_i).rcard * (b_i_from_Z_i Z_i).rcard := by
   {
     have eq1 := equation_1 Z_i hz_i
@@ -1000,7 +952,6 @@ lemma equation_1_and_5 (S Z_i: Finset point3) (hz_i: is_Z_i_set Z_i) (hz_i_in: Z
   }
 
 -- taking the square root of that
-@[aesop apply unsafe 90%]
 lemma equation_1_and_5_sqrt (S Z_i: Finset point3) (hz_i: is_Z_i_set Z_i) (hz_i_in: Z_i ∈ Z S): (Z_i.rcard) ≤ (((S_z S).rcard * (a_i_from_Z_i Z_i).rcard * (b_i_from_Z_i Z_i).rcard)).sqrt := by
   {
     have h15 := equation_1_and_5 S Z_i hz_i hz_i_in
@@ -1010,7 +961,6 @@ lemma equation_1_and_5_sqrt (S Z_i: Finset point3) (hz_i: is_Z_i_set Z_i) (hz_i_
   }
 
 -- Helper lemma for equation 6: if for each of the elements of the set, an inequality holds, this extends to the sum.
-@[aesop apply unsafe 90%]
 lemma sum_inequality {α: Type*} {h: DecidableEq α} (f g: α → ℝ) (s: Finset α) (h: ∀ x ∈ s, f x ≤ g x) : (∑ x ∈ s, f x) ≤ (∑ x ∈ s, g x) := by
   {
     induction s using Finset.induction_on with
@@ -1028,7 +978,6 @@ lemma sum_inequality {α: Type*} {h: DecidableEq α} (f g: α → ℝ) (s: Finse
 
 
 -- Equation 6: the sum of the square roots of all Z_i is less than or equal to the sum of square roots of (a_i*a_b*|S_z|)
-@[aesop apply unsafe 90%]
 theorem equation_6 (S: Finset point3) : ∑ z_i ∈ Z S, z_i.rcard ≤ ∑ z_i ∈ Z S, (((S_z S).rcard * (a_i_from_Z_i z_i).rcard * (b_i_from_Z_i z_i).rcard)).sqrt := by
   {
     -- apply? gave the hint:
@@ -1045,7 +994,6 @@ theorem equation_6 (S: Finset point3) : ∑ z_i ∈ Z S, z_i.rcard ≤ ∑ z_i �
   }
 
 -- Helper lemma for the rearranging: express that the S_Z can be pulled out.
-@[aesop apply unsafe 90%]
 lemma sum_prod {α: Type*} {hα : DecidableEq α} (f: α → ℝ) (s: Finset α) (g: ℝ) : (∑ x ∈ s, f x * g) = g * (∑ x ∈ s, f x):= by {
   induction s using Finset.induction_on with
   | empty =>
@@ -1058,14 +1006,12 @@ lemma sum_prod {α: Type*} {hα : DecidableEq α} (f: α → ℝ) (s: Finset α)
 
 }
 
-@[aesop apply unsafe 90%]
 lemma sqrt_mul (a b c: ℝ) (h: a ≥ 0 ∧ b ≥ 0 ∧ c ≥ 0) : (a * b).sqrt * c.sqrt = (a * b * c).sqrt := by {
   simp_all only [ge_iff_le, Real.sqrt_mul, Real.sqrt_mul']
 }
 
 
 -- The sixth equation can be rearranged to have the square root of S_z out of the sum.
-@[aesop apply unsafe 20%]
 lemma equation_6_rearr (S: Finset point3) : ∑ z_i ∈ Z S, z_i.rcard ≤ (S_z S).rcard.sqrt * ∑ z_i ∈ Z S, (((a_i_from_Z_i z_i).rcard * (b_i_from_Z_i z_i).rcard)).sqrt := by {
   have h6 := equation_6 S
   -- set s_z_card_sqrt := (S_z S).card.sqrt
@@ -1096,7 +1042,6 @@ lemma equation_6_rearr (S: Finset point3) : ∑ z_i ∈ Z S, z_i.rcard ≤ (S_z 
 }
 
 -- Now, we substitute equation 2 in equation 6.
-@[aesop apply unsafe 30%]
 lemma subst_2_6 (S: Finset point3): S.rcard ≤ (S_z S).rcard.sqrt * ∑ z_i ∈ Z S, (((a_i_from_Z_i z_i).rcard * (b_i_from_Z_i z_i).rcard)).sqrt := by {
   rw [equation_2 S]
 
@@ -1104,7 +1049,6 @@ lemma subst_2_6 (S: Finset point3): S.rcard ≤ (S_z S).rcard.sqrt * ∑ z_i ∈
 }
 
 -- Helper lemma for squaring two sides of an inequality
-@[aesop apply unsafe 20%]
 lemma square_inequality {a b : ℝ} (h2: a ≥ 0) : a ≤ b → a^2 ≤ b^2 := by {
   intro h
   rw [ge_iff_le] at h2
@@ -1114,7 +1058,6 @@ lemma square_inequality {a b : ℝ} (h2: a ≥ 0) : a ≤ b → a^2 ≤ b^2 := b
 }
 
 -- Now, we square both sides
-@[aesop apply unsafe 10%]
 lemma subst_2_6_sqr (S: Finset point3): S.rcard ^ 2 ≤ (S_z S).rcard * (∑ z_i ∈ Z S, √((a_i_from_Z_i z_i).rcard * (b_i_from_Z_i z_i).rcard)) ^ 2 := by {
   -- Which theorem states this?
 
