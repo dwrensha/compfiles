@@ -115,7 +115,7 @@ lemma aux_1
     · by_cases ha₁₅: abs ((↑a : ℤ) - (22 : ℤ)) < 28
       · exfalso
         interval_cases abs ((↑a : ℤ) - (22 : ℤ))
-        · exact (ha₅ s (by omega)) h₈₂
+        · exact false_of_ne ha₁₄
         · exact (ha₆ s (by omega)) h₈₂
         · exact (ha₇ s (by omega)) h₈₂
         · exact (ha₇ s (by omega)) h₈₂

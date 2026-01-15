@@ -45,7 +45,7 @@ lemma aux_1
     rw [mul_inv_cancel₀ hx]
     simp only [one_mul, neg_add_cancel, zero_add, inv_pow]
     have h₂₀: (x ^ 4 + a * x ^ 3 + b * x ^ 2 + a * x + 1) / (x ^ 2) = 0 / (x ^ 2) := by
-      exact congrFun (congrArg HDiv.hDiv h₁) (x ^ 2)
+      exact congr(HDiv.hDiv $h₁ (x ^ 2))
     ring_nf at h₂₀
     have hx₁: x ^ 2 ≠ 0 := by exact pow_ne_zero 2 hx
     rw [mul_comm (x ^ 2), mul_assoc b, inv_pow, mul_inv_cancel₀ hx₁, mul_one] at h₂₀

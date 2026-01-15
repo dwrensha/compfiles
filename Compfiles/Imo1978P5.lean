@@ -338,7 +338,7 @@ lemma aux₁
       apply Finset.mem_Icc.mp at hy₀
       apply Finset.mem_Icc.mp at hx₀
       rw [← Nat.sub_add_cancel hy₀.1, ← Nat.sub_add_cancel hx₀.1]
-      exact congrFun (congrArg HAdd.hAdd hj₉) 1
+      exact congr(HAdd.hAdd $hj₉ 1)
     have hh₀: ∀ k ∈ s, f₄ (f₆ k) = f k := by
       intro k hk₀
       have g₀: f₆ k = f₅ k := gg₅ k hk₀

@@ -47,7 +47,7 @@ problem usa2018_p1 (a b c : ℝ) :
     · move_add [←(c^2)]; move_add [(a^2)]
       convert (H2 c b a hc hb ha ?_ ?_ ?_) using 3
       · ring_nf
-      · rw [min_comm, min_assoc, min_comm (a*a)]
+      · exact inf_left_right_swap _ _ _
       · linear_combination (norm := (ring_nf)) 1 * heq
       · linarith
       · linarith

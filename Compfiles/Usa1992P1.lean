@@ -87,7 +87,7 @@ lemma lemma3 {m : ℕ} (hm : (m % 10) + 1 < 10) :
   rw [Nat.digits_eq_cons_digits_div (by norm_num) (by omega)]
   by_cases h : m = 0
   · simp [h]
-  nth_rw 2 [Nat.digits_eq_cons_digits_div (by norm_num) (by omega)]
+  nth_rw 2 [Nat.digits_eq_cons_digits_div (by norm_num) (by exact h)]
   simp only [List.sum_cons]
   lia
 

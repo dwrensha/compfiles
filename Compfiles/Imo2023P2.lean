@@ -2420,8 +2420,7 @@ lemma Z_ne_D {Z : Pt} (hZ : Z ∈ cfg.Z_set)
   rw [oangle_rotate_sign] at h
   rw [← cfg.sbtw_BDS.symm.oangle_eq_left] at h
   rw [← (cfg.sbtw_SZM V Pt hZ).oangle_eq_right] at h
-  contrapose! h
-  rw [h, oangle_self_left_right, Real.Angle.sign_zero]
+  exact (left_ne_right_of_oangle_sign_ne_zero h).symm
 
 lemma Z_ne_O {Z : Pt} (hZ : Z ∈ cfg.Z_set)
   : Z ≠ cfg.Ω.center := by
@@ -2429,8 +2428,7 @@ lemma Z_ne_O {Z : Pt} (hZ : Z ∈ cfg.Z_set)
   rw [← oangle_rotate_sign] at h
   rw [← cfg.sbtw_AOF.symm.oangle_eq_left] at h
   rw [← (cfg.sbtw_PZF V Pt hZ).symm.oangle_eq_right] at h
-  contrapose! h
-  rw [h, oangle_self_left_right, Real.Angle.sign_zero]
+  exact (left_ne_right_of_oangle_sign_ne_zero h).symm
 
 lemma X_ne_D
     {X : Pt} (hX : X ∈ cfg.X_set) :
@@ -2439,8 +2437,7 @@ lemma X_ne_D
   rw [oangle_rotate_sign] at h
   rw [← cfg.sbtw_ADE.oangle_eq_left] at h
   rw [← (cfg.sbtw_AXM V Pt hX).oangle_eq_right] at h
-  contrapose! h
-  rw [h, oangle_self_left_right, Real.Angle.sign_zero]
+  exact (left_ne_right_of_oangle_sign_ne_zero h).symm
 
 lemma collinear_SXD {X : Pt} (hX : X ∈ cfg.X_set)
   : Collinear ℝ {cfg.S, X, cfg.D} := by
