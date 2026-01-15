@@ -27,27 +27,25 @@ where |A| denotes the number of elements in the finite set |A|.
 
 namespace Imo1992P5
 
-noncomputable def point3 := Fin 3 → ℝ
+-- noncomputable def point3 := Fin 3 → ℝ
+
+abbrev point3 := (ℝ × ℝ × ℝ)
 
 noncomputable def point3_eq (p q: point3) : Decidable (Eq p q) :=
-  if h1: p 0 = q 0 then
-    if h2: p 1 = q 1 then
-      if h3: p 2 = q 2 then
+  if h1: p.fst = q.fst then
+    if h2: p.snd.fst = q.snd.fst then
+      if h3: p.snd.snd = q.snd.snd then
         have h : p = q := by
           {
-            funext d
-            match d with
-            | 0 => simpa
-            | 1 => simpa
-            | 2 => simpa
+            grind
           }
         isTrue h
       else
-        isFalse (by exact fun a => h3 (congrFun a 2))
+        isFalse (by exact Ne.intro fun a ↦ h3 (congrArg Prod.snd (congrArg Prod.snd a)))
     else
-      isFalse (by exact fun a => h2 (congrFun a 1))
+      isFalse (by exact Ne.intro fun a ↦ h2 (congrArg Prod.fst (congrArg Prod.snd a)))
   else
-    isFalse (by exact fun a => h1 (congrFun a 0))
+    isFalse (by exact Ne.intro fun a ↦ h1 (congrArg Prod.fst a))
 
 noncomputable instance : DecidableEq point3 := by
   {
@@ -55,9 +53,18 @@ noncomputable instance : DecidableEq point3 := by
     exact point3_eq p q
   }
 
+-- def point_index (d: Fin 3) (p: point3) : ℝ :=
+--   match d with
+--   | 0 => p.fst
+--   | 1 => p.snd.fst
+--   | 2 => p.snd.snd
 
 noncomputable def projection (d: Fin 3) (p: point3) : point3 :=
-  fun i => if i = d then 0 else p i
+  -- fun i => if i = d then 0 else ((point_index i p))
+  (if d = 0 then 0 else p.fst,
+    if d = 1 then 0 else p.snd.fst,
+    if d = 2 then 0 else p.snd.snd)
+
 
 snip begin
 
@@ -140,26 +147,26 @@ lemma project_set_subset (S T: Finset point3) (d: Fin 3) (h: S ⊆ T) : project_
 -- Given S, the Z_i sets are the sets of points in S with the same Z coordinate.
 -- This means that the union on Z_i is S and that each point in S is in exactly one Z_i set.
 noncomputable def Z_i (S: Finset point3) (r: ℝ) : Finset point3 :=
-  S.filter (fun p => p 2 = r)
+  S.filter (fun p => p.snd.snd = r)
 
 -- Something is a Z_i set iff its third component is constant across all points.
 -- To handle empty sets better, I'll rewrite it as "cardinality of z coordinated ≤1"
 -- This makes the proof harder, so I'll instead move to the old definition, but remove the "only one" requirement.
 noncomputable def is_Z_i_set (Z_i: Finset point3) : Prop :=
-  ∃ r: ℝ, ∀ p ∈ Z_i, p 2 = r
+  ∃ r: ℝ, ∀ p ∈ Z_i, p.snd.snd = r
 
 noncomputable def Z (S: Finset point3) : Finset (Finset point3) :=
-  S.image (fun p => Z_i S (p 2))
+  S.image (fun p => Z_i S (p.snd.snd))
 
 -- Helper lemma: Z S contains all elements of S in two layers
 lemma Z_S_mem_mem_S (S z: Finset point3) (w: point3) (hz: z ∈ Z S) (hw: w ∈ z) : w ∈ S := by
   {
     unfold Z Z_i at hz
-    simp_all only [Fin.isValue, Finset.mem_image]
+    simp_all only [Finset.mem_image]
     obtain ⟨w_1, h⟩ := hz
     obtain ⟨_, right⟩ := h
     subst right
-    simp_all only [Fin.isValue, Finset.mem_filter]
+    simp_all only [Finset.mem_filter]
   }
 
 -- Helper lemma for the helper lemma for the helper lemma below: If two elements of a Z_i set project to the same, they are the same.
@@ -170,17 +177,13 @@ lemma project_set_Z_i_inj (Z_i: Finset point3) (h_Zi: is_Z_i_set Z_i) : ∀ p1 �
     unfold is_Z_i_set at h_Zi
     obtain ⟨r, hr⟩ := h_Zi
 
-    apply congrFun at h
-    apply funext
-    intro d
-    -- fin_cases d
-    match d with
-    | 0 =>
-      exact h 0
-    | 1 =>
-      exact h 1
-    | 2 =>
-      simp_all
+    unfold projection at h
+    simp at h
+    obtain ⟨h1, h2⟩ := h
+    ext
+    · assumption
+    · assumption
+    · grind
   }
 
 -- Helper lemma for the helper lemma below: projecting a Z_i set constructs a bijection
@@ -200,10 +203,7 @@ lemma project_set_bij_Z_i (Z_i: Finset point3) (h_Zi: is_Z_i_set Z_i) : ∀ p1 �
     · assumption
     intro z_i h_zi hp
     subst hp2
-    have fwd : z_i = p2 := project_set_Z_i_inj Z_i h_Zi z_i h_zi p2 p2z_i hp
-    subst fwd
-    simp_all only [Fin.isValue]
-
+    exact fun a a_1 ↦ project_set_Z_i_inj Z_i h_Zi (z_i, h_zi, hp) a p2 p2z_i a_1
   }
 
 -- Helper lemma: show that if a Z_i set is projected, its cardinality is preserved.
@@ -224,16 +224,16 @@ lemma Z_i_partition (S: Finset point3) : (Z S).biUnion id = S := by
   {
     unfold Z Z_i
     ext a : 1
-    simp_all only [Fin.isValue, Finset.mem_biUnion, Finset.mem_image, id_eq, exists_exists_and_eq_and,
+    simp_all only [Finset.mem_biUnion, Finset.mem_image, id_eq, exists_exists_and_eq_and,
       Finset.mem_filter]
     apply Iff.intro
     · intro a_1
       obtain ⟨w, h⟩ := a_1
       obtain ⟨_, right⟩ := h
       obtain ⟨left_1, _⟩ := right
-      simp_all only [Fin.isValue]
+      simp_all only
     · intro a_1
-      simp_all only [Fin.isValue, true_and]
+      simp_all only [true_and]
       apply Exists.intro
       · apply And.intro
         on_goal 2 => {rfl
@@ -248,7 +248,7 @@ lemma Z_i_is_Z_i_set (S: Finset point3) (r: ℝ): is_Z_i_set (Z_i S r) := by
     unfold is_Z_i_set Z_i
     use r
     intro p a
-    simp_all only [Fin.isValue, Finset.mem_filter]
+    simp_all only [Finset.mem_filter]
   }
 
 -- Show that all results from the Z call are Z_i sets.
@@ -257,11 +257,11 @@ lemma Z_are_Z_i_sets (S: Finset point3) : ∀ z_i ∈ Z S, is_Z_i_set z_i := by
     intro z_i hZ_i
     unfold is_Z_i_set
     unfold Z Z_i at hZ_i
-    simp_all only [Fin.isValue, Finset.mem_image]
+    simp_all only [Finset.mem_image]
     obtain ⟨w, h⟩ := hZ_i
     obtain ⟨_, right⟩ := h
     subst right
-    simp_all only [Fin.isValue, Finset.mem_filter, and_imp]
+    simp_all only [Finset.mem_filter, and_imp]
     apply Exists.intro
     · intro p _ _
       rfl
@@ -284,10 +284,10 @@ noncomputable def b_i_from_Z_i (Z_i: Finset point3) : Finset point3 :=
 
 -- All a_i sets, given S
 noncomputable def a (S: Finset point3) : Finset (Finset point3) :=
-  S.image (fun p => a_i S (p 2))
+  S.image (fun p => a_i S (p.snd.snd))
 
 noncomputable def b (S: Finset point3) : Finset (Finset point3) :=
-  S.image (fun p => b_i S (p 2))
+  S.image (fun p => b_i S (p.snd.snd))
 
 -- The cardinality of all a_i sets, in order, given S.
 noncomputable def a_card (S: Finset point3) : Multiset Nat :=
@@ -324,17 +324,15 @@ lemma z_i_sets_eq_or_disjoint (S le ri: Finset point3) (hle_Z : ri ∈ Z S) (hri
 
     unfold Z Z_i at hle_Z hri_Z
     subst h
-    simp_all only [Fin.isValue, Finset.mem_image]
+    simp_all only [Finset.mem_image]
     obtain ⟨slice_point_1, hsp1⟩ := hle_Z
     obtain ⟨slice_point_2, hsp2⟩ := hri_Z
     obtain ⟨hsp1_in_S, ri_def⟩ := hsp1
     obtain ⟨hsp2_in_S, le_def⟩ := hsp2
     subst ri_def le_def
-    simp_all only [Fin.isValue, Finset.mem_filter, and_imp]
+    simp_all only [Finset.mem_filter, and_imp]
 
-    have hsp1_z := hs2 slice_point_1 hsp1_in_S rfl
-    have hsp2_z := hs1 slice_point_2 hsp2_in_S rfl
-    simp_all
+    grind only [= Finset.mem_filter]
 
   }
   {
@@ -347,21 +345,14 @@ lemma z_i_sets_eq_or_disjoint (S le ri: Finset point3) (hle_Z : ri ∈ Z S) (hri
     obtain ⟨slice_point_2, hsp2⟩ := hri_Z
     obtain ⟨hsp1_in_S, ri_def⟩ := hsp1
     obtain ⟨hsp2_in_S, le_def⟩ := hsp2
-    subst ri_def le_def
-    simp_all only [Fin.isValue, Finset.mem_filter, and_imp]
-
-    have hsp1_z := hs2 slice_point_1 hsp1_in_S rfl
-    have hsp2_z := hs1 slice_point_2 hsp2_in_S rfl
-
-    ext a : 1
-    simp_all
+    grind only [= Finset.mem_filter, = Finset.mem_inter, ← Finset.notMem_empty]
   }
 
 }
 
 -- Another helper lemma for a_disjoint below.
 -- If two elements from Z S have a matching Z-level, they are identical.
-lemma z_i_eq_if_proj_eq (S: Finset point3) (ri le: Finset point3) (hle_Z : ri ∈ Z S) (hri_Z : le ∈ Z S) (hslice: ∃ r ∈ ri, ∃ l ∈ le, (r 2) = (l 2)) : ri = le := by {
+lemma z_i_eq_if_proj_eq (S: Finset point3) (ri le: Finset point3) (hle_Z : ri ∈ Z S) (hri_Z : le ∈ Z S) (hslice: ∃ r ∈ ri, ∃ l ∈ le, (r.snd.snd) = (l.snd.snd)) : ri = le := by {
   obtain ⟨r_point, h⟩ := hslice
   obtain ⟨hr_p_in_ri, right⟩ := h
   obtain ⟨l_point, h⟩ := right
@@ -392,16 +383,16 @@ lemma z_i_eq_if_proj_eq (S: Finset point3) (ri le: Finset point3) (hle_Z : ri �
 
     unfold Z_i at ri_def le_def
 
-    have h_slice_point_1_in_ri : slice_point_1 ∈ ri := by {
-      subst ri_def h_r_eq_l le_def
-      simp_all only [Fin.isValue, Finset.mem_filter, and_self, true_and, and_imp]
-    }
-    have h_slice_point_2_in_le : slice_point_2 ∈ le := by {
-      subst ri_def h_r_eq_l le_def
-      simp_all only [Fin.isValue, Finset.mem_filter, and_self, true_and, and_imp]
-    }
+    -- have h_slice_point_1_in_ri : slice_point_1 ∈ ri := by {
+    --   subst ri_def h_r_eq_l le_def
+    --   simp_all only [Fin.isValue, Finset.mem_filter, and_self, true_and, and_imp]
+    -- }
+    -- have h_slice_point_2_in_le : slice_point_2 ∈ le := by {
+    --   subst ri_def h_r_eq_l le_def
+    --   simp_all only [Fin.isValue, Finset.mem_filter, and_self, true_and, and_imp]
+    -- }
 
-    simp_all only [Fin.isValue]
+    grind only [= Finset.mem_filter]
 
   }
 }
@@ -442,37 +433,29 @@ lemma a_disjoint_helper (le ri S: Finset point3) (hri_Z : ri ∈ Z S) (hle_Z : l
 
     -- If this were the case, the reference points need to be equal in dimension 2 (which is Z)
 
-    have hle_p_eq_ri_p_2 : le_p 2 = ri_p 2 := by {
+    have hle_p_eq_ri_p_2 : le_p.snd.snd = ri_p.snd.snd := by {
       rw [← helem_le] at  helem_ri
-      apply congrFun at helem_ri
-      have temp := helem_ri 2
-      simp_all
+      simp at helem_ri
+      exact Real.ext_cauchy (congrArg Real.cauchy (congrArg Prod.snd (id (Eq.symm helem_ri))))
     }
 
-    have hle_p_eq_ri_p_1 : le_p 1 = ri_p 1 := by {
+    have hle_p_eq_ri_p_1 : le_p.snd.fst = ri_p.snd.fst := by {
       rw [← helem_le] at  helem_ri
-      apply congrFun at helem_ri
-      have temp := helem_ri 1
-      simp_all
+      simp at helem_ri
+      exact Real.ext_cauchy (congrArg Real.cauchy (congrArg Prod.fst (id (Eq.symm helem_ri))))
     }
 
     -- Now we can do a by_cases based on the third dimension of those points.
     -- If it's equal, then le and ri have a nonzero intersection, contradicting h_disjoint.
     -- If it's not equal, then two contradictory defintions of inter_elem exist.
 
-    by_cases h: le_p 0 = ri_p 0
+    by_cases h: le_p.fst = ri_p.fst
     {
       -- They are equal, so we have a point in the intersection of le and ri.
       have ri_le_eq: le_p = ri_p := by {
-        apply funext
-        intro d
-        -- fin_cases d
-        match d with
-        | 0 =>
+        ext
         · exact h
-        | 1 =>
         · exact hle_p_eq_ri_p_1
-        | 2 =>
         · exact hle_p_eq_ri_p_2
       }
       subst ri_le_eq
@@ -503,7 +486,7 @@ lemma a_disjoint_helper (le ri S: Finset point3) (hri_Z : ri ∈ Z S) (hle_Z : l
 
       simp_all
 
-      have insert_elem_in_ri: (∃ r ∈ le, ∃ l ∈ ri, r 2 = l 2) := by {
+      have insert_elem_in_ri: (∃ r ∈ le, ∃ l ∈ ri, r.snd.snd = l.snd.snd) := by {
         use le_p
         use hle_p_in_le
         use ri_p
@@ -559,13 +542,13 @@ lemma a_disjoint (S: Finset point3): (SetLike.coe (a S)).PairwiseDisjoint id := 
     -- Now we have two assumptions that stand in direct contradiction.
     -- The w_w_1_eq_or_disjoint says they are disjoint, but hkl says they their projections intersect.
 
-    simp_all only [Fin.isValue]
+    simp_all only
     have w_w_1_disjoint : (w ∩ w_1) = ∅ := by {
       cases w_w_1_eq_or_disjoint with
       | inl h_2 =>
         subst h_2
-        simp_all only [Fin.isValue, Finset.inter_self, not_true_eq_false]
-      | inr h_3 => simp_all only [Fin.isValue]
+        simp_all only [Finset.inter_self, not_true_eq_false]
+      | inr h_3 => simp_all only
     }
 
     have applied := a_disjoint_helper w w_1 S left_1 left hkl w_w_1_disjoint
@@ -605,13 +588,13 @@ theorem equation_1 (z: Finset point3) (h: is_Z_i_set z): (z.card: ℝ) ≤ (a_i_
       have h_bij : Finset.card z ≤ Finset.card (Finset.image (fun p => (projection 0 p, projection 1 p)) z) := by
         rw [ Finset.card_image_of_injOn ];
         intros p hp q hq h_eq
+        unfold projection at h_eq
         simp_all
-        have := congr_fun h_eq.1 0; have := congr_fun h_eq.1 1; have := congr_fun h_eq.1 2; have := congr_fun h_eq.2 0; have := congr_fun h_eq.2 1; have := congr_fun h_eq.2 2; simp_all +decide [ projection ] ;
-        exact funext fun i => by
-          match i with
-          | 0 => assumption
-          | 1 => assumption
-          | 2 => simp_all only [Fin.isValue]
+        obtain ⟨h_eq0, h_eq1⟩ := h_eq
+        ext
+        · simp_all only [and_true]
+        · simp_all only [and_true]
+        · simp_all only
       refine le_trans h_bij ?_;
       exact le_trans ( Finset.card_le_card <| show Finset.image ( fun p => ( projection 0 p, projection 1 p ) ) z ⊆ Finset.image ( fun p => ( projection 0 p, projection 1 p ) ) ( z ) from Finset.Subset.refl _ ) ( by rw [ ← Finset.card_product ] ; exact Finset.card_le_card <| Finset.image_subset_iff.mpr fun x hx => Finset.mem_product.mpr ⟨ Finset.mem_image_of_mem _ hx, Finset.mem_image_of_mem _ hx ⟩ )
     convert h_optimal z h using 1
@@ -692,7 +675,7 @@ lemma a_i_partitions_S_x (S: Finset point3) : (a S).biUnion id = S_x S := by
       · apply And.intro
         on_goal 2 => {rfl
         }
-        · simp_all only [Fin.isValue]
+        · simp_all only
     · intro a_1
       obtain ⟨w, h⟩ := a_1
       obtain ⟨left, right⟩ := h
@@ -704,7 +687,7 @@ lemma a_i_partitions_S_x (S: Finset point3) : (a S).biUnion id = S_x S := by
           · apply And.intro
             on_goal 2 => {rfl
             }
-            · simp_all only [Fin.isValue, and_self]
+            · simp_all only [and_self]
 
   }
 
@@ -814,7 +797,7 @@ lemma b_i_partitions_S_y (S: Finset point3) : (b S).biUnion id = S_y S := by
       · apply And.intro
         on_goal 2 => {rfl
         }
-        · simp_all only [Fin.isValue]
+        · simp_all only
     · intro a_1
       obtain ⟨w, h⟩ := a_1
       obtain ⟨left, right⟩ := h
@@ -826,7 +809,7 @@ lemma b_i_partitions_S_y (S: Finset point3) : (b S).biUnion id = S_y S := by
           · apply And.intro
             on_goal 2 => {rfl
             }
-            · simp_all only [Fin.isValue, and_self]
+            · simp_all only [and_self]
 
   }
 
@@ -908,29 +891,29 @@ theorem equation_5 (S: Finset point3) : ∀ z_i ∈ Z S, (z_i.card: ℝ) ≤ ((S
     unfold Z
     intro z_i a
 
-    simp_all only [Fin.isValue, Finset.mem_image]
+    simp_all only [ Finset.mem_image]
     obtain ⟨w, h⟩ := a
     obtain ⟨_, right⟩ := h
     subst right
 
     -- Another approach: project Z_i S (w 2) onto xy and show that that is a subset of S_z S.
-    have middle_right: ((project_set 2 (Z_i S (w 2))).card: ℝ)  ≤ ((S_z S).card: ℝ) := by {
+    have middle_right: ((project_set 2 (Z_i S (w.snd.snd))).card: ℝ)  ≤ ((S_z S).card: ℝ) := by {
       simp
       refine Finset.card_le_card ?_
       unfold S_z
-      have h1 : (Z_i S (w 2)) ⊆ S := by {
+      have h1 : (Z_i S (w.snd.snd)) ⊆ S := by {
         unfold Z_i
         simp
       }
-      have temp := project_set_subset (Z_i S (w 2)) S 2 h1
+      have temp := project_set_subset (Z_i S (w.snd.snd)) S 2 h1
       assumption
     }
 
 
     -- We know middle_right, now we need left_middle.
-    have left_middle: ((Z_i S (w 2)).card: ℝ) = (project_set 2 (Z_i S (w 2))).card := by {
-      set z_i := (Z_i S (w 2))
-      have z_i_is_zi := Z_i_is_Z_i_set S (w 2)
+    have left_middle: ((Z_i S (w.snd.snd)).card: ℝ) = (project_set 2 (Z_i S (w.snd.snd))).card := by {
+      set z_i := (Z_i S (w.snd.snd))
+      have z_i_is_zi := Z_i_is_Z_i_set S (w.snd.snd)
 
       have temp := project_set_Z_i_card z_i z_i_is_zi
       simp_all
@@ -1209,7 +1192,7 @@ lemma e3_e7_translate (S: Finset point3) : (∑ z_i ∈ Z S, ((a_i_from_Z_i z_i)
   have h_a_card_def : a_card S = (Z S).val.map (fun z => (a_i_from_Z_i z).card) := by
     unfold a_card a;
     -- Since $Z S$ is the image of $S$ under the function that maps each point to its $Z_i$ set, and $a_i S (p 2)$ is the image of $S$ under the function that maps each point to its $a_i$ set, these two images are equal.
-    have h_eq : Finset.image (fun p => a_i S (p 2)) S = Finset.image (fun z => a_i_from_Z_i z) (Z S) := by
+    have h_eq : Finset.image (fun p => a_i S (p.snd.snd)) S = Finset.image (fun z => a_i_from_Z_i z) (Z S) := by
       unfold Z a_i_from_Z_i
       ext a : 1
       simp_all only [Fin.isValue, Finset.mem_image, exists_exists_and_eq_and]
@@ -1224,8 +1207,10 @@ lemma e3_e7_translate (S: Finset point3) : (∑ z_i ∈ Z S, ((a_i_from_Z_i z_i)
       obtain ⟨ p2, hp2, hp2_eq ⟩ := Finset.mem_image.mp hx2
       have h_proj_eq : projection 0 p1 = projection 0 p2 := by
         exact hp2_eq.symm;
-      have h_proj_eq : p1 1 = p2 1 ∧ p1 2 = p2 2 := by
-        exact ⟨ by simpa using congr_fun h_proj_eq 1, by simpa using congr_fun h_proj_eq 2 ⟩;
+      have h_proj_eq : p1.snd.fst = p2.snd.fst ∧ p1.snd.snd = p2.snd.snd := by
+        -- exact ⟨ by simpa using congr_fun h_proj_eq 1, by simpa using congr_fun h_proj_eq 2 ⟩;
+        unfold projection at h_proj_eq
+        simp_all
       have h_proj_eq : z1 = z2 := by
         apply z_i_eq_if_proj_eq S z1 z2 hz1 hz2;
         exact ⟨ p1, hp1, p2, hp2, h_proj_eq.2 ⟩;
@@ -1254,37 +1239,43 @@ lemma e4_e7_translate (S: Finset point3) : (∑ z_i ∈ (Z S), ((b_i_from_Z_i z_
     ext
     simp [b]
     unfold b_i_from_Z_i b_i Z
-    simp_all only [Fin.isValue, Finset.mem_image, exists_exists_and_eq_and]
+    simp_all only [Fin.isValue, Finset.mem_image, Prod.exists, ↓existsAndEq, and_true]
   rw [ hb_biUnion, Finset.card_biUnion ]
   · simp_all only [Nat.cast_sum]
   intro x hx y hy hxy;
   -- Since $x$ and $y$ are distinct elements of $Z S$, they are Z_i sets with different z-coordinates.
   obtain ⟨r, hr⟩ : ∃ r, x = Z_i S r := by
     unfold Z at hx
-    simp_all only [Fin.isValue, Finset.coe_image, Set.mem_image, Finset.mem_coe, ne_eq]
+    simp_all only [Finset.coe_image, Set.mem_image, Finset.mem_coe, ne_eq]
     obtain ⟨w, h⟩ := hx
     obtain ⟨_, right⟩ := h
     subst right
-    simp_all only [Fin.isValue, exists_apply_eq_apply']
+    simp_all only [exists_apply_eq_apply']
   obtain ⟨s, hs⟩ : ∃ s, y = Z_i S s := by
     unfold Z at hy
     subst hr
-    simp_all only [Fin.isValue, Finset.coe_image, Set.mem_image, Finset.mem_coe, ne_eq]
+    simp_all only [Finset.coe_image, Set.mem_image, Finset.mem_coe, ne_eq]
     obtain ⟨w, h⟩ := hy
     obtain ⟨_, right⟩ := h
     subst right
-    simp_all only [Fin.isValue, exists_apply_eq_apply']
+    simp_all only [exists_apply_eq_apply']
   have hz : r ≠ s := by
     contrapose! hxy
     subst hxy hr hs
     rfl
   -- Since $r \neq s$, the projections of $x$ and $y$ onto the $yz$-plane are disjoint.
   have h_disjoint : ∀ p ∈ x, ∀ q ∈ y, projection 1 p ≠ projection 1 q := by
-    intros p hp q hq h_eq; have := congr_fun h_eq 2
-    simp_all +decide [ projection ]
+    -- intros p hp q hq h_eq; have := congr_fun h_eq 2
+    -- simp_all +decide [ projection ]
+    -- unfold Z_i at hp hq
+    -- subst hr hs
+    -- simp_all only [Fin.isValue, Finset.mem_filter, and_false]
+    intros p hp q hq h_eq
+    unfold projection at h_eq
+    simp_all
     unfold Z_i at hp hq
     subst hr hs
-    simp_all only [Fin.isValue, Finset.mem_filter, and_false]
+    simp_all only [Finset.mem_filter, and_false]
   exact (Finset.disjoint_left.mpr fun p hp hp' =>
     by obtain ⟨ q, hq, rfl ⟩ := Finset.mem_image.mp hp; obtain ⟨ q', hq', hq'' ⟩ :=
     Finset.mem_image.mp hp'; specialize h_disjoint q hq q' hq'; subst hs hr; simp_all only [ne_eq, Fin.isValue, not_true_eq_false])
