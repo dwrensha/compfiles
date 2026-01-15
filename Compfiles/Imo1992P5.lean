@@ -68,25 +68,27 @@ noncomputable def projection (d: Fin 3) (p: point3) : point3 :=
 -- AND because they are not mapping to the reals when applied to naturals,
 -- We'll instead express cardinality as a real number.
 -- It can be undone by `unfold Finset.rcard; refine Nat.cast_inj.mpr ?_`. --/
-noncomputable def Finset.rcard {α : Type*} (S: Finset α) : ℝ :=
-  (S.card: ℝ)
+-- Note: this was removed to simplify the solution description. I did learn
+-- that this is identical to (S.card: R) in-line.
+-- noncomputable def Finset.rcard {α : Type*} (S: Finset α) : ℝ :=
+--   (S.card: ℝ)
 
 -- Proves that the rcard of a set is ≥0
-@[simp]
-lemma rcard_nonneg (S: Finset point3) : 0 ≤ S.rcard := by
-  {
-    unfold Finset.rcard
-    simp
-  }
+-- @[simp]
+-- lemma rcard_nonneg (S: Finset point3) : 0 ≤ S.rcard := by
+--   {
+--     unfold Finset.rcard
+--     simp
+--   }
 
 -- The card_le_card is also used, so well show it here.
-lemma Finset.rcard_le_rcard {α: Type*} {S T: Finset α} : S ⊆ T → S.rcard ≤ T.rcard := by
-  {
-    intro h
-    unfold Finset.rcard
-    simp_all only [Nat.cast_le]
-    exact Finset.card_le_card h
-  }
+-- lemma Finset.rcard_le_rcard {α: Type*} {S T: Finset α} : S ⊆ T → S.rcard ≤ T.rcard := by
+--   {
+--     intro h
+--     unfold Finset.rcard
+--     simp_all only [Nat.cast_le]
+--     exact Finset.card_le_card h
+--   }
 
 -- Helper Constructions: Project a set (S) into the X, y, or z direction
 noncomputable def project_set (d: Fin 3) (S: Finset point3) : Finset point3 :=
@@ -202,9 +204,8 @@ lemma project_set_bij_Z_i (Z_i: Finset point3) (h_Zi: is_Z_i_set Z_i) : ∀ p1 �
   }
 
 -- Helper lemma: show that if a Z_i set is projected, its cardinality is preserved.
-lemma project_set_Z_i_card (Z_i: Finset point3) (hz_i: is_Z_i_set Z_i) : (project_set 2 Z_i).rcard = Z_i.rcard := by
+lemma project_set_Z_i_card (Z_i: Finset point3) (hz_i: is_Z_i_set Z_i) : (project_set 2 Z_i).card = Z_i.card := by
   {
-    unfold Finset.rcard
     refine Nat.cast_inj.mpr ?_
     apply Finset.card_image_of_injOn
     unfold Set.InjOn
@@ -588,7 +589,7 @@ lemma is_Z_i_set_subset (z1: Finset point3) (z2: Finset point3) (h_z2: is_Z_i_se
 ---------
 -- First Equation:  |Z_i| ≤ |a_i| * |b_i|
 -------
-theorem equation_1 (z: Finset point3) (h: is_Z_i_set z): z.rcard ≤ (a_i_from_Z_i z).rcard * (b_i_from_Z_i z).rcard := by
+theorem equation_1 (z: Finset point3) (h: is_Z_i_set z): (z.card: ℝ) ≤ (a_i_from_Z_i z).card * ((b_i_from_Z_i z).card: ℝ) := by
   {
 
     -- I'm not sure whether an induction is the right step. So I'm giving aristotle full control.
@@ -611,7 +612,6 @@ theorem equation_1 (z: Finset point3) (h: is_Z_i_set z): z.rcard ≤ (a_i_from_Z
       refine le_trans h_bij ?_;
       exact le_trans ( Finset.card_le_card <| show Finset.image ( fun p => ( projection 0 p, projection 1 p ) ) z ⊆ Finset.image ( fun p => ( projection 0 p, projection 1 p ) ) ( z ) from Finset.Subset.refl _ ) ( by rw [ ← Finset.card_product ] ; exact Finset.card_le_card <| Finset.image_subset_iff.mpr fun x hx => Finset.mem_product.mpr ⟨ Finset.mem_image_of_mem _ hx, Finset.mem_image_of_mem _ hx ⟩ )
     convert h_optimal z h using 1
-    unfold Finset.rcard
     norm_cast
     -------- Aristotle end --------
   }
@@ -620,7 +620,7 @@ theorem equation_1 (z: Finset point3) (h: is_Z_i_set z): z.rcard ≤ (a_i_from_Z
 --------
 -- Second Equation: |S| = sum |Z_i|
 --------
-lemma equation_2_old (S: Finset point3) : S.rcard = ((Z S).biUnion id).rcard := by
+lemma equation_2_old (S: Finset point3) : S.card = ((Z S).biUnion id).card := by
 -- The second equation follows from the fact that the Z_i sets partition S.
   {
     have h := Z_i_partition S
@@ -628,13 +628,12 @@ lemma equation_2_old (S: Finset point3) : S.rcard = ((Z S).biUnion id).rcard := 
     rw [h]
   }
 
-theorem equation_2 (S: Finset point3) : S.rcard = ∑ z_i ∈ (Z S), z_i.rcard := by
+theorem equation_2 (S: Finset point3) : S.card = ∑ z_i ∈ (Z S), z_i.card := by
   {
     rw [equation_2_old]
 
-    have set_set_eq (Z : Finset (Finset point3)) (h: ∀ zi ∈ Z, ∀ zj ∈ Z, Disjoint zi zj ∨ zi = zj) : ∑ z ∈ Z, z.rcard = (Z.biUnion id).rcard := by
+    have set_set_eq (Z : Finset (Finset point3)) (h: ∀ zi ∈ Z, ∀ zj ∈ Z, Disjoint zi zj ∨ zi = zj) : ∑ z ∈ Z, z.card = (Z.biUnion id).card := by
       {
-        unfold Finset.rcard;
         -- apply Finset.card_biUnion
         ------ Aristotle start --------
         rw_mod_cast [ Finset.card_biUnion ];
@@ -901,7 +900,7 @@ lemma projected_Z_i_partitions_S_Z (S: Finset point3): (Finset.image (fun zi => 
 
 -- The fifth equation is a bit more complicated.
 -- It says that each Z_i contains less elements than the entirety of S_z.
-theorem equation_5 (S: Finset point3) : ∀ z_i ∈ Z S, z_i.rcard ≤ (S_z S).rcard := by
+theorem equation_5 (S: Finset point3) : ∀ z_i ∈ Z S, (z_i.card: ℝ) ≤ ((S_z S).card: ℝ) := by
   {
     unfold Z
     intro z_i a
@@ -912,8 +911,9 @@ theorem equation_5 (S: Finset point3) : ∀ z_i ∈ Z S, z_i.rcard ≤ (S_z S).r
     subst right
 
     -- Another approach: project Z_i S (w 2) onto xy and show that that is a subset of S_z S.
-    have middle_right: (project_set 2 (Z_i S (w 2))).rcard ≤ (S_z S).rcard := by {
-      refine Finset.rcard_le_rcard ?_
+    have middle_right: ((project_set 2 (Z_i S (w 2))).card: ℝ)  ≤ ((S_z S).card: ℝ) := by {
+      simp
+      refine Finset.card_le_card ?_
       unfold S_z
       have h1 : (Z_i S (w 2)) ⊆ S := by {
         unfold Z_i
@@ -925,7 +925,7 @@ theorem equation_5 (S: Finset point3) : ∀ z_i ∈ Z S, z_i.rcard ≤ (S_z S).r
 
 
     -- We know middle_right, now we need left_middle.
-    have left_middle: (Z_i S (w 2)).rcard = (project_set 2 (Z_i S (w 2))).rcard := by {
+    have left_middle: ((Z_i S (w 2)).card: ℝ) = (project_set 2 (Z_i S (w 2))).card := by {
       set z_i := (Z_i S (w 2))
       have z_i_is_zi := Z_i_is_Z_i_set S (w 2)
 
@@ -938,13 +938,13 @@ theorem equation_5 (S: Finset point3) : ∀ z_i ∈ Z S, z_i.rcard ≤ (S_z S).r
   }
 
 -- Helper theorem for 6: multiply Equation 1 with 5.
-lemma equation_1_and_5 (S Z_i: Finset point3) (hz_i: is_Z_i_set Z_i) (hz_i_in: Z_i ∈ Z S): (Z_i.rcard)^2 ≤ (S_z S).rcard * (a_i_from_Z_i Z_i).rcard * (b_i_from_Z_i Z_i).rcard := by
+lemma equation_1_and_5 (S Z_i: Finset point3) (hz_i: is_Z_i_set Z_i) (hz_i_in: Z_i ∈ Z S): (Z_i.card : ℝ)^2 ≤ ((S_z S).card: ℝ) * ((a_i_from_Z_i Z_i).card: ℝ) * ((b_i_from_Z_i Z_i).card: ℝ) := by
   {
     have eq1 := equation_1 Z_i hz_i
     have eq5 := equation_5 S Z_i hz_i_in
-    have eq1_nonneg := rcard_nonneg Z_i
-    have a_nonneg := rcard_nonneg (a_i_from_Z_i Z_i)
-    have b_nonneg := rcard_nonneg (b_i_from_Z_i Z_i)
+    have eq1_nonneg : 0 ≤ (Z_i.card: ℝ) := Nat.cast_nonneg' Z_i.card
+    have a_nonneg : 0 ≤ ((a_i_from_Z_i Z_i).card : ℝ ) := Nat.cast_nonneg' (a_i_from_Z_i Z_i).card
+    have b_nonneg : 0 ≤ ((b_i_from_Z_i Z_i).card : ℝ ) := Nat.cast_nonneg' (b_i_from_Z_i Z_i).card
     have a_b_nonneg := mul_nonneg a_nonneg b_nonneg
     have temp := mul_le_mul eq1 eq5 eq1_nonneg a_b_nonneg
     ring_nf at *
@@ -952,7 +952,7 @@ lemma equation_1_and_5 (S Z_i: Finset point3) (hz_i: is_Z_i_set Z_i) (hz_i_in: Z
   }
 
 -- taking the square root of that
-lemma equation_1_and_5_sqrt (S Z_i: Finset point3) (hz_i: is_Z_i_set Z_i) (hz_i_in: Z_i ∈ Z S): (Z_i.rcard) ≤ (((S_z S).rcard * (a_i_from_Z_i Z_i).rcard * (b_i_from_Z_i Z_i).rcard)).sqrt := by
+lemma equation_1_and_5_sqrt (S Z_i: Finset point3) (hz_i: is_Z_i_set Z_i) (hz_i_in: Z_i ∈ Z S): (Z_i.card: ℝ) ≤ ((((S_z S).card: ℝ) * ((a_i_from_Z_i Z_i).card: ℝ) * (b_i_from_Z_i Z_i).card)).sqrt := by
   {
     have h15 := equation_1_and_5 S Z_i hz_i hz_i_in
     -- exact Nat.le_sqrt'.mpr h15
@@ -978,7 +978,7 @@ lemma sum_inequality {α: Type*} {h: DecidableEq α} (f g: α → ℝ) (s: Finse
 
 
 -- Equation 6: the sum of the square roots of all Z_i is less than or equal to the sum of square roots of (a_i*a_b*|S_z|)
-theorem equation_6 (S: Finset point3) : ∑ z_i ∈ Z S, z_i.rcard ≤ ∑ z_i ∈ Z S, (((S_z S).rcard * (a_i_from_Z_i z_i).rcard * (b_i_from_Z_i z_i).rcard)).sqrt := by
+theorem equation_6 (S: Finset point3) : ∑ z_i ∈ Z S, (z_i.card: ℝ) ≤ ∑ z_i ∈ Z S, ((((S_z S).card: ℝ) * (a_i_from_Z_i z_i).card * (b_i_from_Z_i z_i).card)).sqrt := by
   {
     -- apply? gave the hint:
     -- (expose_names; refine sum_inequality Finset.card (fun x ↦ ((S_z S).card * (a_i_from_Z_i x).card * (b_i_from_Z_i x).card).sqrt) (Z S) ?_)
@@ -1012,28 +1012,27 @@ lemma sqrt_mul (a b c: ℝ) (h: a ≥ 0 ∧ b ≥ 0 ∧ c ≥ 0) : (a * b).sqrt 
 
 
 -- The sixth equation can be rearranged to have the square root of S_z out of the sum.
-lemma equation_6_rearr (S: Finset point3) : ∑ z_i ∈ Z S, z_i.rcard ≤ (S_z S).rcard.sqrt * ∑ z_i ∈ Z S, (((a_i_from_Z_i z_i).rcard * (b_i_from_Z_i z_i).rcard)).sqrt := by {
+lemma equation_6_rearr (S: Finset point3) : ∑ z_i ∈ Z S, (z_i.card: ℝ) ≤ ((S_z S).card: ℝ).sqrt * ∑ z_i ∈ Z S, ((((a_i_from_Z_i z_i).card: ℝ) * (b_i_from_Z_i z_i).card)).sqrt := by {
   have h6 := equation_6 S
   -- set s_z_card_sqrt := (S_z S).card.sqrt
   rw [← sum_prod]
-  · convert_to ∑ z_i ∈ Z S, z_i.rcard ≤ ∑ x ∈ Z S, (((a_i_from_Z_i x).rcard * (b_i_from_Z_i x).rcard).sqrt * (S_z S).rcard.sqrt)
-    convert_to ∑ z_i ∈ Z S, z_i.rcard ≤ ∑ x ∈ Z S, (((a_i_from_Z_i x).rcard * (b_i_from_Z_i x).rcard) * (S_z S).rcard).sqrt
+  · convert_to ∑ z_i ∈ Z S, (z_i.card: ℝ) ≤ ∑ x ∈ Z S, ((((a_i_from_Z_i x).card: ℝ) * ((b_i_from_Z_i x).card: ℝ)).sqrt * ((S_z S).card: ℝ).sqrt)
+    convert_to ∑ z_i ∈ Z S, (z_i.card: ℝ) ≤ ∑ x ∈ Z S, ((((a_i_from_Z_i x).card: ℝ) * ((b_i_from_Z_i x).card: ℝ)) * (S_z S).card).sqrt
     · apply Finset.sum_congr
       · rfl
       intro z_i _
-      set a_card := (a_i_from_Z_i z_i).rcard
-      set b_card := (b_i_from_Z_i z_i).rcard
-      set s_z_card := (S_z S).rcard
+      set a_card := ((a_i_from_Z_i z_i).card: ℝ)
+      set b_card := ((b_i_from_Z_i z_i).card: ℝ)
+      set s_z_card := ((S_z S).card: ℝ)
       apply sqrt_mul
       simp
-      simp_all only [Finset.rcard, Nat.cast_nonneg, and_self, a_card, b_card, s_z_card]
-    unfold Finset.rcard
-    convert_to ∑ z_i ∈ Z S, z_i.rcard ≤ ∑ z_i ∈ Z S, √((S_z S).rcard * (a_i_from_Z_i z_i).rcard * (b_i_from_Z_i z_i).rcard)
+      simp_all only [Finset.card, Nat.cast_nonneg, and_self, a_card, b_card, s_z_card]
+    convert_to ∑ z_i ∈ Z S, (z_i.card: ℝ) ≤ ∑ z_i ∈ Z S, √(((S_z S).card: ℝ) * (a_i_from_Z_i z_i).card * (b_i_from_Z_i z_i).card)
     · apply Finset.sum_congr
       · rfl
       simp
-      exact fun x _ ↦
-        Eq.symm (mul_rotate √(S_z S).rcard √(a_i_from_Z_i x).rcard √(b_i_from_Z_i x).rcard)
+      exact fun x a ↦
+        Eq.symm (mul_rotate √↑(S_z S).card √↑(a_i_from_Z_i x).card √↑(b_i_from_Z_i x).card)
 
     exact h6
 
@@ -1042,10 +1041,11 @@ lemma equation_6_rearr (S: Finset point3) : ∑ z_i ∈ Z S, z_i.rcard ≤ (S_z 
 }
 
 -- Now, we substitute equation 2 in equation 6.
-lemma subst_2_6 (S: Finset point3): S.rcard ≤ (S_z S).rcard.sqrt * ∑ z_i ∈ Z S, (((a_i_from_Z_i z_i).rcard * (b_i_from_Z_i z_i).rcard)).sqrt := by {
+lemma subst_2_6 (S: Finset point3): (S.card: ℝ) ≤ ((S_z S).card: ℝ).sqrt * ∑ z_i ∈ Z S, ((((a_i_from_Z_i z_i).card: ℝ) * ((b_i_from_Z_i z_i).card: ℝ))).sqrt := by {
   rw [equation_2 S]
 
-  exact equation_6_rearr S
+  have := equation_6_rearr S
+  simp_all only [Nat.cast_nonneg, Real.sqrt_mul, Nat.cast_sum]
 }
 
 -- Helper lemma for squaring two sides of an inequality
@@ -1058,21 +1058,20 @@ lemma square_inequality {a b : ℝ} (h2: a ≥ 0) : a ≤ b → a^2 ≤ b^2 := b
 }
 
 -- Now, we square both sides
-lemma subst_2_6_sqr (S: Finset point3): S.rcard ^ 2 ≤ (S_z S).rcard * (∑ z_i ∈ Z S, √((a_i_from_Z_i z_i).rcard * (b_i_from_Z_i z_i).rcard)) ^ 2 := by {
+lemma subst_2_6_sqr (S: Finset point3): (S.card: ℝ) ^ 2 ≤ ((S_z S).card: ℝ) * (∑ z_i ∈ Z S, √(((a_i_from_Z_i z_i).card: ℝ) * ((b_i_from_Z_i z_i).card: ℝ))) ^ 2 := by {
   -- Which theorem states this?
 
   have h2_6 := subst_2_6 S
-  have S_card_nonneg : 0 ≤ S.rcard := by {
-    unfold Finset.rcard
-    apply Nat.cast_nonneg'
+  have S_card_nonneg : 0 ≤ (S.card: ℝ) := by {
+    exact Nat.cast_nonneg' S.card
   }
   have temp := square_inequality S_card_nonneg h2_6
   -- Rewrite a bit
-  convert_to S.rcard ^ 2 ≤ (√(S_z S).rcard * ∑ z_i ∈ Z S, √((a_i_from_Z_i z_i).rcard * (b_i_from_Z_i z_i).rcard)) ^ 2
+  convert_to (S.card: ℝ) ^ 2 ≤ (√((S_z S).card: ℝ) * ∑ z_i ∈ Z S, √(((a_i_from_Z_i z_i).card: ℝ) * ((b_i_from_Z_i z_i).card: ℝ ))) ^ 2
   · ring_nf
     rw  [Real.sq_sqrt]
     · ring
-    exact rcard_nonneg (S_z S)
+    exact Nat.cast_nonneg' (S_z S).card
   exact temp
 }
 
@@ -1080,13 +1079,11 @@ lemma subst_2_6_sqr (S: Finset point3): S.rcard ^ 2 ≤ (S_z S).rcard * (∑ z_i
 -- Next lemma on the way to equation 7:
 -- sum of sqrt (a_i b_i) ≤ sqrt (sum a_i) * sqrt (sum b_i)
 
-lemma sum_sqrt_le_sqrt_sum (S: Finset point3) : ∑ z_i ∈ Z S, √((a_i_from_Z_i z_i).rcard * (b_i_from_Z_i z_i).rcard) ≤ √(∑ z_i ∈ Z S, (a_i_from_Z_i z_i).rcard) * √(∑ z_i ∈ Z S, (b_i_from_Z_i z_i).rcard) := by {
+lemma sum_sqrt_le_sqrt_sum (S: Finset point3) : ∑ z_i ∈ Z S, √(((a_i_from_Z_i z_i).card: ℝ) * ((b_i_from_Z_i z_i).card: ℝ)) ≤ √(∑ z_i ∈ Z S, ((a_i_from_Z_i z_i).card: ℝ)) * √(∑ z_i ∈ Z S, ((b_i_from_Z_i z_i).card: ℝ)) := by {
 
 
-  have a_i_rcard_noneg : ∀ z_i ∈ Z S, 0 ≤ (a_i_from_Z_i z_i).rcard := by {
-    intro z_i _
-    unfold Finset.rcard
-    apply Nat.cast_nonneg'
+  have a_i_rcard_noneg : ∀ z_i ∈ Z S, 0 ≤ ((a_i_from_Z_i z_i).card: ℝ) := by {
+    exact fun z_i a ↦ Nat.cast_nonneg' (a_i_from_Z_i z_i).card
   }
 
   -- Ok, but why though?
@@ -1096,7 +1093,7 @@ lemma sum_sqrt_le_sqrt_sum (S: Finset point3) : ∑ z_i ∈ Z S, √((a_i_from_Z
     exact fun u v ↦ Finset.sum_mul_sq_le_sq_mul_sq (Z S) u v;
   rw [ ← Real.sqrt_mul ];
   · refine Real.le_sqrt_of_sq_le ?_;
-    convert h_cauchy_schwarz ( fun z_i => Real.sqrt ( a_i_from_Z_i z_i |> Finset.rcard ) ) ( fun z_i => Real.sqrt ( b_i_from_Z_i z_i |> Finset.rcard ) ) using 3 <;> norm_num [ Real.sqrt_mul, a_i_rcard_noneg ];
+    convert h_cauchy_schwarz ( fun z_i => Real.sqrt ( a_i_from_Z_i z_i |> Finset.card : ℝ ) ) ( fun z_i => Real.sqrt ( b_i_from_Z_i z_i |> Finset.card : ℝ ) ) using 3 <;> norm_num [ Real.sqrt_mul, a_i_rcard_noneg ];
   · exact Finset.sum_nonneg a_i_rcard_noneg
   ------- Aristotle end --------
 
@@ -1134,7 +1131,7 @@ lemma le_trans_mul_sqr {a b c d: ℝ} (hcd: 0 ≤ c) (hb: 0 ≤ b) (h1: a ≤ b 
 -- |S| ≤ |S_z| (sqrt(sum(a_i))*sqrt(sum(b_i)))^2
 -- Which is basically just the previous two lemmas combined by transitivity.
 
-lemma pre_7 (S: Finset point3) : S.rcard^2 ≤ (S_z S).rcard * (√(∑ z_i ∈ Z S, (a_i_from_Z_i z_i).rcard) * √(∑ z_i ∈ Z S, (b_i_from_Z_i z_i).rcard))^2 := by {
+lemma pre_7 (S: Finset point3) : (S.card: ℝ)^2 ≤ ((S_z S).card: ℝ) * (√(∑ z_i ∈ Z S, ((a_i_from_Z_i z_i).card: ℝ)) * √(∑ z_i ∈ Z S, ((b_i_from_Z_i z_i).card: ℝ)))^2 := by {
   have h1 := subst_2_6_sqr S
   have h2 := sum_sqrt_le_sqrt_sum S
   -- apply le_trans h1
@@ -1142,7 +1139,7 @@ lemma pre_7 (S: Finset point3) : S.rcard^2 ≤ (S_z S).rcard * (√(∑ z_i ∈ 
   -- simp
   -- exact?
 
-  set inner := ∑ z_i ∈ Z S, √((a_i_from_Z_i z_i).rcard * (b_i_from_Z_i z_i).rcard)
+  set inner := ∑ z_i ∈ Z S, √(((a_i_from_Z_i z_i).card: ℝ) * ((b_i_from_Z_i z_i).card: ℝ))
 
   -- Setting up the le_trans_mul_sqr
   have hcd : 0 ≤ inner := by {
@@ -1151,13 +1148,13 @@ lemma pre_7 (S: Finset point3) : S.rcard^2 ≤ (S_z S).rcard * (√(∑ z_i ∈ 
     · exact instDecidableEqOfLawfulBEq
 
     intro x _hx
-    have left_nonneg :=  Real.sqrt_nonneg (a_i_from_Z_i x).rcard
-    have right_nonneg :=  Real.sqrt_nonneg (b_i_from_Z_i x).rcard
+    have left_nonneg :=  Real.sqrt_nonneg ((a_i_from_Z_i x).card: ℝ)
+    have right_nonneg :=  Real.sqrt_nonneg ((b_i_from_Z_i x).card: ℝ)
     exact Left.mul_nonneg left_nonneg right_nonneg
   }
 
-  have hb : 0 ≤ (S_z S).rcard := by {
-    exact rcard_nonneg (S_z S)
+  have hb : 0 ≤ ((S_z S).card: ℝ) := by {
+    exact Nat.cast_nonneg' (S_z S).card
   }
 
   exact le_trans_mul_sqr hcd hb h1 h2
@@ -1168,14 +1165,14 @@ lemma pre_7 (S: Finset point3) : S.rcard^2 ≤ (S_z S).rcard * (√(∑ z_i ∈ 
 -- Almost there: Equation 7:
 -- |S|^2 ≤ |S_z| * (sum a_i) * (sum b_i)
 
-theorem equation_7 (S: Finset point3) : S.rcard^2 ≤ (S_z S).rcard * (∑ z_i ∈ Z S, (a_i_from_Z_i z_i).rcard) * (∑ z_i ∈ Z S, (b_i_from_Z_i z_i).rcard) := by {
+theorem equation_7 (S: Finset point3) : (S.card: ℝ)^2 ≤ ((S_z S).card: ℝ) * (∑ z_i ∈ Z S, ((a_i_from_Z_i z_i).card: ℝ)) * (∑ z_i ∈ Z S, ((b_i_from_Z_i z_i).card: ℝ)) := by {
   let p_7 := pre_7 S
 
   -- abbreviating to get an overview
-  set a := ∑ z_i ∈ Z S, (a_i_from_Z_i z_i).rcard
-  set b := ∑ z_i ∈ Z S, (b_i_from_Z_i z_i).rcard
+  set a := ∑ z_i ∈ Z S, ((a_i_from_Z_i z_i).card: ℝ)
+  set b := ∑ z_i ∈ Z S, ((b_i_from_Z_i z_i).card: ℝ)
 
-  convert_to S.rcard ^ 2 ≤ (S_z S).rcard * (√a * √b) ^ 2
+  convert_to (S.card: ℝ) ^ 2 ≤ ((S_z S).card: ℝ) * (√a * √b) ^ 2
   · ring_nf
 
     have a_nonneg : 0 ≤ a := by {
@@ -1184,7 +1181,6 @@ theorem equation_7 (S: Finset point3) : S.rcard^2 ≤ (S_z S).rcard * (∑ z_i �
       · exact instDecidableEqOfLawfulBEq
 
       intro x _hx
-      unfold Finset.rcard
       apply Nat.cast_nonneg'
     }
     have b_nonneg : 0 ≤ b := by {
@@ -1193,7 +1189,6 @@ theorem equation_7 (S: Finset point3) : S.rcard^2 ≤ (S_z S).rcard * (∑ z_i �
       · exact instDecidableEqOfLawfulBEq
 
       intro x _hx
-      unfold Finset.rcard
       apply Nat.cast_nonneg'
     }
 
@@ -1204,7 +1199,7 @@ theorem equation_7 (S: Finset point3) : S.rcard^2 ≤ (S_z S).rcard * (∑ z_i �
 }
 
 -- Give a way to translate equation 3 in equation 7
-lemma e3_e7_translate (S: Finset point3) : (∑ z_i ∈ Z S, (a_i_from_Z_i z_i).rcard) = (a_card S).sum := by {
+lemma e3_e7_translate (S: Finset point3) : (∑ z_i ∈ Z S, ((a_i_from_Z_i z_i).card: ℝ)) = (a_card S).sum := by {
   -- Note: the same translation for equation 4 to 7 was already done below, but there are some subtle differences.
   ------ Aristotle start --------
   -- By definition of `a_card`, we know that it is the sum of the cardinalities of the `a_i_from_Z_i` sets.
@@ -1243,14 +1238,13 @@ lemma e3_e7_translate (S: Finset point3) : (∑ z_i ∈ Z S, (a_i_from_Z_i z_i).
     · rw [ Multiset.map_map ];
       rfl;
     · exact Multiset.Nodup.map_on ( fun z1 hz1 z2 hz2 h => h_dedup z1 z2 hz1 hz2 h ) ( Finset.nodup _ );
-  unfold Finset.rcard
   simp_all only [Finset.sum_map_val, Nat.cast_sum]
   ------- Aristotle end --------
 
 }
 
 -- Give a way to translate equation 4 in equation 7
-lemma e4_e7_translate (S: Finset point3) : (∑ z_i ∈ (Z S), (b_i_from_Z_i z_i).rcard) = ((b S).biUnion id).card := by {
+lemma e4_e7_translate (S: Finset point3) : (∑ z_i ∈ (Z S), ((b_i_from_Z_i z_i).card: ℝ)) = ((b S).biUnion id).card := by {
   ------ Aristotle start --------
   -- By definition of $b$, we know that $(b S).biUnion id$ is the union of all $b_i$ sets.
   have hb_biUnion : (b S).biUnion id = Finset.biUnion (Z S) (fun z_i => b_i_from_Z_i z_i) := by
@@ -1259,8 +1253,7 @@ lemma e4_e7_translate (S: Finset point3) : (∑ z_i ∈ (Z S), (b_i_from_Z_i z_i
     unfold b_i_from_Z_i b_i Z
     simp_all only [Fin.isValue, Finset.mem_image, exists_exists_and_eq_and]
   rw [ hb_biUnion, Finset.card_biUnion ]
-  · unfold Finset.rcard
-    simp_all only [Nat.cast_sum]
+  · simp_all only [Nat.cast_sum]
   intro x hx y hy hxy;
   -- Since $x$ and $y$ are distinct elements of $Z S$, they are Z_i sets with different z-coordinates.
   obtain ⟨r, hr⟩ : ∃ r, x = Z_i S r := by
@@ -1299,7 +1292,7 @@ lemma e4_e7_translate (S: Finset point3) : (∑ z_i ∈ (Z S), (b_i_from_Z_i z_i
 snip end
 
 -- Goal: Show that |S|^2 ≤ |S_x| * |S_y| * |S_z|
-problem imo1992_p5 (S: Finset point3) : S.rcard^2 ≤ (S_x S).rcard * (S_y S).rcard * (S_z S).rcard := by {
+problem imo1992_p5 (S: Finset point3) : (S.card: ℝ)^2 ≤ ((S_x S).card: ℝ) * ((S_y S).card: ℝ) * ((S_z S).card: ℝ) := by {
   have e7 := equation_7 S
 
   -- We use equations 4 and 3 in 7.
@@ -1312,7 +1305,6 @@ problem imo1992_p5 (S: Finset point3) : S.rcard^2 ≤ (S_x S).rcard * (S_y S).rc
   have trans47 := e4_e7_translate S
   rw [trans47, ← e4] at e7
 
-  unfold Finset.rcard at *
   grind only
 
 }
