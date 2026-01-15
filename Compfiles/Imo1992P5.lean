@@ -27,6 +27,8 @@ where |A| denotes the number of elements in the finite set |A|.
 
 namespace Imo1992P5
 
+
+
 -- noncomputable def point3 := Fin 3 → ℝ
 
 abbrev point3 := (ℝ × ℝ × ℝ)
@@ -64,9 +66,6 @@ noncomputable def projection (d: Fin 3) (p: point3) : point3 :=
   (if d = 0 then 0 else p.fst,
     if d = 1 then 0 else p.snd.fst,
     if d = 2 then 0 else p.snd.snd)
-
-
-snip begin
 
 -- Note: I was not able to remove the projection from the problem definition due to
 -- the ad-hoc definition of it not using the some equality definition.
@@ -1286,10 +1285,10 @@ lemma e4_e7_translate (S: Finset point3) : (∑ z_i ∈ (Z S), ((b_i_from_Z_i z_
 -- Goal: Show that |S|^2 ≤ |S_x| * |S_y| * |S_z|
 snip end
 
-problem imo1992_p5 (S: Finset point3) : (S.card: ℝ)^2 ≤
-  ((Finset.image (projection 0) S).card: ℝ) *
-  ((Finset.image (projection 1) S).card: ℝ) *
-  ((Finset.image (projection 2) S).card: ℝ) := by {
+problem imo1992_p5 (S: Finset (ℝ × ℝ × ℝ)) :  (S.card: ℝ)^2 ≤
+  ((Finset.image (fun p => ((0: ℝ) , p.2.1, p.2.2)) S).card: ℝ) *
+  ((Finset.image (fun p => (p.1, ((0: ℝ) , p.2.2))) S).card: ℝ) *
+  ((Finset.image (fun p => (p.1, p.2.1, (0: ℝ) )) S).card: ℝ) := by {
   -- Revert to our own notation for S_x, S_y and S_z
   convert_to (S.card: ℝ)^2 ≤ ((S_x S).card: ℝ) * ((S_y S).card: ℝ) * ((S_z S).card: ℝ)
 
