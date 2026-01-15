@@ -25,9 +25,10 @@ where |A| denotes the number of elements in the finite set |A|.
 (Note: The orthogonal projection of a point onto a plane is the foot of the perpendicular from the point to the plane.)
 -/
 
+namespace Imo1992P5
+
 noncomputable def point3 := Fin 3 → ℝ
 
--- Helper for the DecidableEq instance for point3
 noncomputable def point3_eq (p q: point3) : Decidable (Eq p q) :=
   if h1: p 0 = q 0 then
     if h2: p 1 = q 1 then
@@ -35,14 +36,10 @@ noncomputable def point3_eq (p q: point3) : Decidable (Eq p q) :=
         have h : p = q := by
           {
             funext d
-            -- fin_cases d
             match d with
-            | 0 =>
-              simpa
-            | 1 =>
-              simpa
-            | 2 =>
-              simpa
+            | 0 => simpa
+            | 1 => simpa
+            | 2 => simpa
           }
         isTrue h
       else
@@ -55,14 +52,22 @@ noncomputable def point3_eq (p q: point3) : Decidable (Eq p q) :=
 noncomputable instance : DecidableEq point3 := by
   {
     intros p q
-    unfold point3
     exact point3_eq p q
   }
 
--- I'll start by declaring the induction construction of the projections.
 
 noncomputable def projection (d: Fin 3) (p: point3) : point3 :=
   fun i => if i = d then 0 else p i
+
+snip begin
+
+-- Note: I was not able to remove the projection from the problem definition due to
+-- the ad-hoc definition of it not using the some equality definition.
+-- I'd be happy to make the problem cleaner if there is a way to do so.
+
+
+
+-- I'll start by declaring the induction construction of the projections.
 
 /-- Because we need to argue with the cardinality of sets and also need to take square roots
 -- AND because they are not mapping to the reals when applied to naturals,
@@ -108,8 +113,6 @@ noncomputable def S_y (S: Finset point3) : Finset point3 :=
 
 noncomputable def S_z (S: Finset point3) : Finset point3 :=
   project_set 2 S
-
-snip begin
 
 -- Helper lemma: each value of some projected set corresponds to some point in the original set.
 lemma project_set_mem (S: Finset point3) (d: Fin 3) (s_d: point3) (hs: s_d ∈ project_set d S) : ∃ p ∈ S, projection d p = s_d := by
@@ -1289,10 +1292,16 @@ lemma e4_e7_translate (S: Finset point3) : (∑ z_i ∈ (Z S), ((b_i_from_Z_i z_
   ------- Aristotle end --------
 }
 
+-- Goal: Show that |S|^2 ≤ |S_x| * |S_y| * |S_z|
 snip end
 
--- Goal: Show that |S|^2 ≤ |S_x| * |S_y| * |S_z|
-problem imo1992_p5 (S: Finset point3) : (S.card: ℝ)^2 ≤ ((S_x S).card: ℝ) * ((S_y S).card: ℝ) * ((S_z S).card: ℝ) := by {
+problem imo1992_p5 (S: Finset point3) : (S.card: ℝ)^2 ≤
+  ((Finset.image (projection 0) S).card: ℝ) *
+  ((Finset.image (projection 1) S).card: ℝ) *
+  ((Finset.image (projection 2) S).card: ℝ) := by {
+  -- Revert to our own notation for S_x, S_y and S_z
+  convert_to (S.card: ℝ)^2 ≤ ((S_x S).card: ℝ) * ((S_y S).card: ℝ) * ((S_z S).card: ℝ)
+
   have e7 := equation_7 S
 
   -- We use equations 4 and 3 in 7.
@@ -1308,3 +1317,5 @@ problem imo1992_p5 (S: Finset point3) : (S.card: ℝ)^2 ≤ ((S_x S).card: ℝ) 
   grind only
 
 }
+
+end Imo1992P5
