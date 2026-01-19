@@ -99,7 +99,7 @@ theorem a_injective (a : ℕ → ℤ) (rem : ∀ n > 0, ((Finset.range n).image 
   intro i1 i2 e
   contrapose! rem
   let B := 1 + max i1 i2
-  use B, (by unfold B; simp)
+  use B, (by positivity)
   nth_rw 3 [<-Finset.card_range B]
   rw [ne_eq, Finset.card_image_iff]
   rw [Set.InjOn]
@@ -378,8 +378,7 @@ theorem an_inductive' (a : ℕ → ℤ) (rem : ∀ n > 0, ((Finset.range n).imag
           simp at pos
           have : a j ≤ j := by
             have : _ := abs_bound _ rem a0 j
-            rw [abs_le] at this
-            exact this.right
+            exact le_of_max_le_left this
           have : (n + 2) * k ≤ n := by omega
           contrapose! this
           apply Int.lt_of_add_one_le
@@ -410,7 +409,7 @@ theorem an_inductive' (a : ℕ → ℤ) (rem : ∀ n > 0, ((Finset.range n).imag
             unfold ZMod.val
             simp
             rw [max_eq_left]
-            · linarith
+            · lia
             · let := abs_le.mp (abs_bound _ rem a0 (n+1))
               omega
           rw [this]
@@ -418,7 +417,7 @@ theorem an_inductive' (a : ℕ → ℤ) (rem : ∀ n > 0, ((Finset.range n).imag
           unfold ZMod.val
           simp only [Int.ofNat_toNat, sup_eq_left, ge_iff_le]
           let := abs_le.mp (abs_bound _ rem a0 (n+1))
-          omega
+          lia
         rw [ZMod.intCast_eq_iff] at hmodmin
         let ⟨k, kh⟩ := hmodmin
         simp only [ZMod.natCast_val, Nat.cast_add, Nat.cast_ofNat] at kh
@@ -429,8 +428,8 @@ theorem an_inductive' (a : ℕ → ℤ) (rem : ∀ n > 0, ((Finset.range n).imag
         let ⟨j, jb, jh⟩ := this
         unfold prefix_min at kh
         rw [<-jh] at kh
-        have kh : a j - 1 - (↑n + 2) * (k+1) = a (n + 1) := by linarith
-        suffices k = -1 by subst k; linarith
+        have kh : a j - 1 - (↑n + 2) * (k+1) = a (n + 1) := by lia
+        suffices k = -1 by lia
         have nkpos : ¬ k+1 > 0 := by
           have : _ := abs_bound _ rem a0 (n+1)
           rw [<-kh] at this
@@ -442,10 +441,10 @@ theorem an_inductive' (a : ℕ → ℤ) (rem : ∀ n > 0, ((Finset.range n).imag
             simp only [Finset.mem_image, Finset.mem_range, Order.lt_add_one_iff]
             use 0
             simp [a0]
-          have : - ↑(n + 1) ≤ - 1 - (↑n + 2) * (k + 1) := by omega
+          have : - ↑(n + 1) ≤ - 1 - (↑n + 2) * (k + 1) := by lia
           contrapose! this
-          suffices - (↑n + 2) * (k + 1) ≤ -↑(n + 1) by linarith
-          suffices ↑(n + 2) * 1 ≤ ↑(n + 2) * (k + 1) by simp only [Nat.cast_add, Nat.cast_ofNat] at this; omega
+          suffices - (↑n + 2) * (k + 1) ≤ -↑(n + 1) by lia
+          suffices ↑(n + 2) * 1 ≤ ↑(n + 2) * (k + 1) by lia
           rw [mul_le_mul_iff_of_pos_left]
           · exact Int.le_of_sub_one_lt this
           · exact Int.sign_eq_one_iff_pos.mp rfl
@@ -454,13 +453,12 @@ theorem an_inductive' (a : ℕ → ℤ) (rem : ∀ n > 0, ((Finset.range n).imag
           simp at neg
           have : a j ≥ -j := by
             have : _ := abs_bound _ rem a0 j
-            rw [abs_le] at this
-            omega
+            exact neg_le_of_abs_le this
           have : (n + 2) * (k+1) ≥ -n := by omega
           contrapose! this
           apply Int.lt_of_le_sub_one
           trans -n-2
-          · suffices (↑n + 2) * (k + 1) ≤ (↑n + 2) * (-1) by linarith
+          · suffices (↑n + 2) * (k + 1) ≤ (↑n + 2) * (-1) by lia
             rw [mul_le_mul_iff_of_pos_left]
             · exact Int.add_le_zero_iff_le_neg.mp this
             · exact Int.sign_eq_one_iff_pos.mp rfl
@@ -499,19 +497,12 @@ problem imo2005_p2 (a : ℕ → ℤ)
       nth_rw 3 [<-rem n npos]
       apply Finset.card_bij (fun x h => (x + a 0)%n)
       · simp
-        intro x xltn
-        use x
-        and_intros
-        · exact xltn
-        · unfold a'
-          simp
+        lia
       · unfold a'
         simp only [Finset.mem_image, Finset.mem_range, forall_exists_index, and_imp,
           forall_apply_eq_imp_iff₂, Int.emod_add_emod, sub_add_cancel]
         intro x1 _ x2 _ e
-        rw [Int.sub_emod, Int.sub_emod]
-        rw [e]
-        simp
+        exact (Int.emod_sub_cancel_right (a 0)).mpr e
       · simp only [Finset.mem_image, Finset.mem_range, exists_prop, exists_exists_and_eq_and,
           Int.emod_add_emod, forall_exists_index, and_imp, forall_apply_eq_imp_iff₂]
         intro x xltn
@@ -536,9 +527,7 @@ problem imo2005_p2 (a : ℕ → ℤ)
       let ⟨⟨i, h1, h2⟩, h3⟩ := yh
       and_intros
       · use i
-        and_intros
-        · grind only
-        · grind only
+        lia
       · grind only
     · unfold a'
       apply Set.infinite_of_not_bddBelow
@@ -561,8 +550,7 @@ problem imo2005_p2 (a : ℕ → ℤ)
         · grind only
         · grind only
       · grind only
-    · unfold a'
-      simp
+    · exact Int.sub_self (a 0)
 
   suffices Function.Surjective a by
     apply Function.Bijective.existsUnique
@@ -589,7 +577,7 @@ problem imo2005_p2 (a : ℕ → ℤ)
       simp only [exists_prop, Set.mem_image, Set.mem_setOf_eq, exists_exists_and_eq_and] at yh1
       let ⟨i, ih⟩ := yh1
       use i
-      omega
+      lia
     let := (con (i+1)) (a i) z 0 ?_ ?_ ?_ ?_
     · simp only [Finset.mem_image, Finset.mem_range, Order.lt_add_one_iff] at this
       grind only
@@ -613,7 +601,7 @@ problem imo2005_p2 (a : ℕ → ℤ)
       simp only [exists_prop, Set.mem_image, Set.mem_setOf_eq, exists_exists_and_eq_and] at yh1
       let ⟨i, ih⟩ := yh1
       use i
-      omega
+      lia
     let := (con (i+1)) 0 z (a i) ?_ ?_ ?_ ?_
     · simp only [Finset.mem_image, Finset.mem_range, Order.lt_add_one_iff] at this
       grind only
