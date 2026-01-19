@@ -475,9 +475,18 @@ problem imo2005_p2 (a : ℕ → ℤ)
   (neg_inf : Set.Infinite {i | a i < 0})
   (rem : ∀ n > 0, ((Finset.range n).image (fun i => a i % n)).card = n)
     : ∀ z : ℤ, ∃! i, a i = z := by
-  replace pos_inf : Set.Infinite { a i | (i) (_ : 0 < a i)} := by sorry
-  replace neg_inf : Set.Infinite { a i | (i) (_ : a i < 0)} := by sorry
-  replace rem := rem -- to make the order of hypotheses still work with the wlog below
+
+  replace pos_inf : Set.Infinite { a i | (i) (_ : 0 < a i)} := by
+    rw [<-Set.infinite_image_iff (f:=a)] at pos_inf
+    · simp only [exists_prop]
+      exact pos_inf
+    · exact (a_injective a rem).injOn
+  replace neg_inf : Set.Infinite { a i | (i) (_ : a i < 0)} := by
+    rw [<-Set.infinite_image_iff (f:=a)] at neg_inf
+    · simp only [exists_prop]
+      exact neg_inf
+    · exact (a_injective a rem).injOn
+
   wlog a0 : a 0 = 0
   · let a' (i) := a i - a 0
     have : _ := this a' ?_ ?_ ?_ ?_
@@ -486,6 +495,31 @@ problem imo2005_p2 (a : ℕ → ℤ)
       let := this (z - a 0)
       simp only [sub_left_inj] at this
       exact this
+    · intro n npos
+      nth_rw 3 [<-rem n npos]
+      apply Finset.card_bij (fun x h => (x + a 0)%n)
+      · simp
+        intro x xltn
+        use x
+        and_intros
+        · exact xltn
+        · unfold a'
+          simp
+      · unfold a'
+        simp only [Finset.mem_image, Finset.mem_range, forall_exists_index, and_imp,
+          forall_apply_eq_imp_iff₂, Int.emod_add_emod, sub_add_cancel]
+        intro x1 _ x2 _ e
+        rw [Int.sub_emod, Int.sub_emod]
+        rw [e]
+        simp
+      · simp only [Finset.mem_image, Finset.mem_range, exists_prop, exists_exists_and_eq_and,
+          Int.emod_add_emod, forall_exists_index, and_imp, forall_apply_eq_imp_iff₂]
+        intro x xltn
+        use x
+        and_intros
+        · exact xltn
+        · unfold a'
+          simp
     · unfold a'
       apply Set.infinite_of_not_bddAbove
       have : Set.Infinite ((·.toNat) '' {a i | (i) (pos: 0 < a i)}) := by
@@ -527,31 +561,6 @@ problem imo2005_p2 (a : ℕ → ℤ)
         · grind only
         · grind only
       · grind only
-    · intro n npos
-      nth_rw 3 [<-rem n npos]
-      apply Finset.card_bij (fun x h => (x + a 0)%n)
-      · simp
-        intro x xltn
-        use x
-        and_intros
-        · exact xltn
-        · unfold a'
-          simp
-      · unfold a'
-        simp only [Finset.mem_image, Finset.mem_range, forall_exists_index, and_imp,
-          forall_apply_eq_imp_iff₂, Int.emod_add_emod, sub_add_cancel]
-        intro x1 _ x2 _ e
-        rw [Int.sub_emod, Int.sub_emod]
-        rw [e]
-        simp
-      · simp only [Finset.mem_image, Finset.mem_range, exists_prop, exists_exists_and_eq_and,
-          Int.emod_add_emod, forall_exists_index, and_imp, forall_apply_eq_imp_iff₂]
-        intro x xltn
-        use x
-        and_intros
-        · exact xltn
-        · unfold a'
-          simp
     · unfold a'
       simp
 
