@@ -471,10 +471,13 @@ snip end
 
 
 problem imo2005_p2 (a : ℕ → ℤ)
-  (pos_inf : Set.Infinite {a i | (i) (_: 0 < a i)})
-  (neg_inf : Set.Infinite {a i | (i) (_: a i < 0)})
+  (pos_inf : Set.Infinite {i | 0 < a i})
+  (neg_inf : Set.Infinite {i | a i < 0})
   (rem : ∀ n > 0, ((Finset.range n).image (fun i => a i % n)).card = n)
     : ∀ z : ℤ, ∃! i, a i = z := by
+  replace pos_inf : Set.Infinite { a i | (i) (_ : 0 < a i)} := by sorry
+  replace neg_inf : Set.Infinite { a i | (i) (_ : a i < 0)} := by sorry
+  replace rem := rem -- to make the order of hypotheses still work with the wlog below
   wlog a0 : a 0 = 0
   · let a' (i) := a i - a 0
     have : _ := this a' ?_ ?_ ?_ ?_
