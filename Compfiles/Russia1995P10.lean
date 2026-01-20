@@ -29,9 +29,9 @@ problem russia1995_p10 {m n : ℕ} (h₀ : n ≠ 0 ∧ m ≠ 0)
   let g := gcd m n
   have h₁ : g + m * n / g = m + n := by aesop
   have h₂ : m * n + g^2 = g * (m + n) := by
-    rw [<- h₁]
+    rw [← h₁]
     rw [Nat.left_distrib]
-    rw [<- pow_two]
+    rw [← pow_two]
     rw [Nat.mul_div_cancel']
     · rw [Nat.add_comm]
     exact dvd_trans (Nat.gcd_dvd_left m n) (Nat.dvd_mul_right m n)

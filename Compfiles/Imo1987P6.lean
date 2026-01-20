@@ -154,13 +154,13 @@ problem imo1987_p6
       _ = 4*r^2 + 2* r*s + s^2 + 7*r+s+2 := by ring_nf
       _ < 4*r^2 +4*s^2 +8*r*s+4*r+4*s+1 := by lia
       _ = _ := by ring
-    rw [<-hksr] at hN1
+    rw [←hksr] at hN1
 
     have hP : ∀ i , kk < i → i ≤ 2*(kk) → Coprime N i := by
       by_contra H
       push_neg at H
       obtain ⟨j, hj1,hj2,hj3⟩ := H
-      have hj1' : s+r +1 ≤ j := by rw [<-hksr]; apply succ_le_of_lt hj1
+      have hj1' : s+r +1 ≤ j := by rw [←hksr]; apply succ_le_of_lt hj1
       let  ss :=  j-(s+r+1)
       have hss0 : j =  ss + (s+r+1) := Nat.eq_add_of_sub_eq hj1' (by rfl)
 
@@ -169,7 +169,7 @@ problem imo1987_p6
 
       have hss1 : ss ≤ k := by
         apply Nat.le_of_add_le_add_right (b :=s+r+1)
-        rw [<-hss0,<-hksr]
+        rw [←hss0,←hksr]
         calc
         _ ≤ _ := hj2
         _ = _ := by omega
@@ -178,7 +178,7 @@ problem imo1987_p6
         unfold f
         rw [hN0]
         zify
-        rw [Int.natCast_sub hj2,hss0,<-hksr]
+        rw [Int.natCast_sub hj2,hss0,←hksr]
         push_cast
         ring_nf
       change ¬N.gcd j = 1 at hj3
@@ -196,7 +196,7 @@ problem imo1987_p6
         calc
           p ≤ ss^2 + p := Nat.le_add_left _ _
           _ = _ := hfss3
-          _ = _ := by rw [<-hksr]
+          _ = _ := by rw [←hksr]
       have hc2: p ≤ p-1 := by
         calc
         _ ≤ _ := hc1

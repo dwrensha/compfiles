@@ -72,7 +72,7 @@ lemma term_bound (seq : IncreasingSequenceFromOne) (k : ℕ) :
       rw [isUnit_iff_ne_zero]
       let j := k - 1
       have hj : j = k-1 := rfl
-      rw [<-hj]
+      rw [←hj]
       have := seq_pos seq j
       linarith
     ring_nf
@@ -100,7 +100,7 @@ lemma term_bound (seq : IncreasingSequenceFromOne) (k : ℕ) :
           exact (div_le_one (ck_pos k)).mpr hcseq
       _ = 2 := one_add_one_eq_two
 
-  rw [h1, h2, <-mul_assoc]
+  rw [h1, h2, ←mul_assoc]
   apply mul_le_mul_of_nonneg_right h3
   rw [sub_nonneg]
   exact one_div_le_one_div_of_le (ck_pos (k - 1)) hcseq
@@ -245,7 +245,7 @@ problem imo1970_p3 :
         rw [←Real.log_lt_log_iff]
         · rw [Real.log_pow d N]
           suffices Real.log (1 - (d * (1 + d))⁻¹ * c) / Real.log d < ↑N by
-            rwa [<-div_lt_iff_of_neg (Real.log_neg dpos d_lt_one)]
+            rwa [←div_lt_iff_of_neg (Real.log_neg dpos d_lt_one)]
           calc
             _ < 1 + Real.log (1 - (d * (1 + d))⁻¹ * c) / Real.log d := lt_one_add _
             _ = 1 + Real.log (1 - c / (d * (1 + d))) / Real.log d := by field_simp
@@ -259,7 +259,7 @@ problem imo1970_p3 :
         apply tsub_le_tsub (le_refl 1)
         exact pow_le_pow_of_le_one d_nonneg d_leq_one hn
       _ = ∑ x ∈ Finset.range n, (1 - d^2) * d^(x + 1) := by
-        rw [<-Finset.mul_sum]
+        rw [←Finset.mul_sum]
         have : ∑ i ∈ Finset.range n, d ^ (i + 1) = d * ∑ i ∈ Finset.range n, d ^ i := by
           rw [Finset.mul_sum]
           congr
@@ -270,7 +270,7 @@ problem imo1970_p3 :
           _ = (1 - d ^ 2) * (d * ((1 - d ^ n) * (1 - d)⁻¹)) := by
             field_simp
             ring_nf
-          _ = (1 - d ^ 2) * (d * (-(1 - d ^ n) / -(1 - d))) := by rw [<-div_eq_mul_inv, neg_div_neg_eq]
+          _ = (1 - d ^ 2) * (d * (-(1 - d ^ n) / -(1 - d))) := by rw [←div_eq_mul_inv, neg_div_neg_eq]
           _ = _ := by ring_nf
       _ = _ := by
         congr

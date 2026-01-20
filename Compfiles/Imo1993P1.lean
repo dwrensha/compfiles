@@ -34,7 +34,7 @@ problem imo1993_p1 : ∀ n > 1, ¬∃ p q : ℤ[X], f n = p*q ∧ ¬ isConstant 
   unfold f at fprod
 
   have h1 : (b.eval 0) * (c.eval 0) = 3 := by
-    rw [<-eval_mul, <-fprod]
+    rw [←eval_mul, ←fprod]
     simp only [eval_add, eval_pow, eval_X, eval_mul, eval_ofNat, add_eq_right]
     rw [zero_pow, zero_pow]
     · simp
@@ -88,9 +88,9 @@ problem imo1993_p1 : ∀ n > 1, ¬∃ p q : ℤ[X], f n = p*q ∧ ¬ isConstant 
 
   have h2 : ∀ i, 0 < i → i < n-1 → (b*c).coeff i = 0 := by
     intro i ibd1 ibd2
-    rw [<-fprod]
+    rw [←fprod]
     simp only [coeff_add, coeff_X_pow, coeff_ofNat_mul, mul_ite, mul_one, mul_zero]
-    rw [<-C_ofNat, coeff_C]
+    rw [←C_ofNat, coeff_C]
     repeat rw [ite_eq_right_iff.mpr (by grind)]
     rfl
 
@@ -115,12 +115,12 @@ problem imo1993_p1 : ∀ n > 1, ¬∃ p q : ℤ[X], f n = p*q ∧ ¬ isConstant 
             simp
           _ = - (∑ x ∈ Finset.antidiagonal i, c.coeff (x.1 + 1) * b.coeff x.2) % 3 := by
             rw [add_eq_zero_iff_eq_neg] at h2
-            rw [<-h2]
+            rw [←h2]
           _ = (∑ x ∈ Finset.antidiagonal i, (- c.coeff (x.1 + 1)) * b.coeff x.2) % 3 := by
-            rw [<-Finset.sum_neg_distrib]
+            rw [←Finset.sum_neg_distrib]
             simp_rw [neg_mul]
           _ = (∑ x ∈ Finset.antidiagonal i, ((- c.coeff (x.1 + 1)) * b.coeff x.2)%3) % 3 := by
-            rw [<-Finset.sum_int_mod]
+            rw [←Finset.sum_int_mod]
           _ = (∑ x ∈ Finset.antidiagonal i, (((- c.coeff (x.1 + 1)) % 3) * (b.coeff x.2 % 3))%3) % 3 := by
             simp_rw [Int.mul_emod _ (b.coeff _)]
           _ = 0 % 3 := by
@@ -128,7 +128,7 @@ problem imo1993_p1 : ∀ n > 1, ¬∃ p q : ℤ[X], f n = p*q ∧ ¬ isConstant 
             apply Finset.sum_eq_zero
             intro x xh
             suffices b.coeff x.2 % 3 = 0 by simp [this]
-            rw [<-Int.dvd_iff_emod_eq_zero]
+            rw [←Int.dvd_iff_emod_eq_zero]
             rw [Finset.mem_antidiagonal] at xh
             apply ih <;> omega
           _ = _ := by simp
@@ -146,12 +146,12 @@ problem imo1993_p1 : ∀ n > 1, ¬∃ p q : ℤ[X], f n = p*q ∧ ¬ isConstant 
         intro x xh
         rw [Int.mul_emod]
         suffices b.coeff x.2 % 3 = 0 by simp [this]
-        rw [<-Int.dvd_iff_emod_eq_zero]
+        rw [←Int.dvd_iff_emod_eq_zero]
         apply h3
         rw [Finset.mem_antidiagonal] at xh
         grind
       _ = _ := by
-        rw [<-fprod]
+        rw [←fprod]
         simp only [coeff_add, coeff_X_pow, coeff_ofNat_mul, mul_ite, mul_one, mul_zero,
           coeff_ofNat_succ, add_zero]
         rw [ite_eq_right_iff.mpr (by grind)]
@@ -181,17 +181,17 @@ problem imo1993_p1 : ∀ n > 1, ¬∃ p q : ℤ[X], f n = p*q ∧ ¬ isConstant 
       exact compareOfLessAndEq_eq_lt.mp rfl
 
   have degbc : (b*c).degree = n := by
-    rw [<-fprod]
+    rw [←fprod]
     rw [degree_add_eq_left_of_degree_lt, degree_add_eq_left_of_degree_lt]
     · exact degree_X_pow n
     · rw [degree_X_pow, degree_mul_X_pow]
-      rw [<-C_ofNat, degree_C (by simp)]
+      rw [←C_ofNat, degree_C (by simp)]
       simp [Nat.zero_lt_of_lt n_gt_1]
-    · rw [<-C_ofNat, degree_C (by simp)]
+    · rw [←C_ofNat, degree_C (by simp)]
       rw [degree_add_eq_left_of_degree_lt]
       · simp [Nat.zero_lt_of_lt n_gt_1]
       · rw [degree_X_pow, degree_mul_X_pow]
-        rw [<-C_ofNat, degree_C (by simp)]
+        rw [←C_ofNat, degree_C (by simp)]
         simp [Nat.zero_lt_of_lt n_gt_1]
 
   have degbc : (b*c).natDegree = n := by
@@ -207,7 +207,7 @@ problem imo1993_p1 : ∀ n > 1, ¬∃ p q : ℤ[X], f n = p*q ∧ ¬ isConstant 
     rw [natDegree_mul] at degbc
     · have : n-1 ≤ b.natDegree := by
         rw [natDegree, WithBot.le_unbotD_iff]
-        · simp [degb, <-Nat.cast_withBot]
+        · simp [degb, ←Nat.cast_withBot]
         · contrapose! degb
           rw [degb]
           exact compareOfLessAndEq_eq_lt.mp rfl
@@ -217,17 +217,17 @@ problem imo1993_p1 : ∀ n > 1, ¬∃ p q : ℤ[X], f n = p*q ∧ ¬ isConstant 
 
   have mc : IsUnit c.leadingCoeff := by
     have : (b*c).leadingCoeff = 1 := by
-      rw [<-fprod]
+      rw [←fprod]
       rw [leadingCoeff_add_of_degree_lt', leadingCoeff_add_of_degree_lt']
       · exact leadingCoeff_X_pow n
       · rw [degree_X_pow, degree_mul_X_pow]
-        rw [<-C_ofNat, degree_C (by simp)]
+        rw [←C_ofNat, degree_C (by simp)]
         simp [Nat.zero_lt_of_lt n_gt_1]
-      · rw [<-C_ofNat, degree_C (by simp)]
+      · rw [←C_ofNat, degree_C (by simp)]
         rw [degree_add_eq_left_of_degree_lt]
         · simp [Nat.zero_lt_of_lt n_gt_1]
         · rw [degree_X_pow, degree_mul_X_pow]
-          rw [<-C_ofNat, degree_C (by simp)]
+          rw [←C_ofNat, degree_C (by simp)]
           simp [Nat.zero_lt_of_lt n_gt_1]
     rw [Int.isUnit_iff]
     rw [leadingCoeff_mul, Int.mul_eq_one_iff_eq_one_or_neg_one] at this
@@ -256,7 +256,7 @@ problem imo1993_p1 : ∀ n > 1, ¬∃ p q : ℤ[X], f n = p*q ∧ ¬ isConstant 
     nth_rw 4 [this]
     simp
     nth_rw 2 [mul_comm]
-    rw [<-mul_assoc]
+    rw [←mul_assoc]
     rw [Invertible.mul_invOf_self (self:=mc.invertible)]
     simp
 
@@ -266,7 +266,7 @@ problem imo1993_p1 : ∀ n > 1, ¬∃ p q : ℤ[X], f n = p*q ∧ ¬ isConstant 
         rw [eval_mul, xr]
         simp
       _ = (x ^ n + 5 * x ^ (n - 1) + 3) % 2 := by
-        rw [<-fprod]
+        rw [←fprod]
         simp
       _ = (x * x ^ (n - 2) * (x+5) + 3) % 2 := by
         congr 1

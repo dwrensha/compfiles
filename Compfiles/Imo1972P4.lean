@@ -74,9 +74,9 @@ problem imo1972_p4 (a b c d e : ℝ)
       have h₃ : d * e = d * b := by rwa [sub_eq_zero] at h₂
       exact mul_left_cancel₀ (ne_of_gt h₀.2.2.2.1) h₃
 
-    have ab : a = b := by rw [<- da]; exact bd.symm
-    have bc : b = c := by rw [<- eb]; exact ce.symm
-    have cd : c = d := by rwa [<- bc]
+    have ab : a = b := by rw [← da]; exact bd.symm
+    have bc : b = c := by rw [← eb]; exact ce.symm
+    have cd : c = d := by rwa [← bc]
     have de : d = e := by rwa [cd] at ce
     exact ⟨ab, bc, cd, de⟩
   · intro h

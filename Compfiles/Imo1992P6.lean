@@ -52,7 +52,7 @@ lemma S_set_bounded (n) : ∀ k ∈ S_set n, k ≤ n^2 := by
   let kh := kh k
   simp only [le_refl, forall_const] at kh
   let ⟨s,sh1, sh2⟩ := kh
-  rw [<-PNat.coe_le_coe]
+  rw [←PNat.coe_le_coe]
   norm_cast at sh1
   rw [sh1]
   calc
@@ -107,7 +107,7 @@ theorem sum_sub {α : Type} [DecidableEq α] [AddCommMonoid α] (s t : Multiset 
   · intro a t ih s h
     simp only [Multiset.sub_cons, Multiset.sum_cons]
     nth_rw 2 [add_comm]
-    rw [<-add_assoc, ih]
+    rw [←add_assoc, ih]
     · rw [add_comm, Multiset.sum_erase]
       apply Multiset.mem_of_le h (by simp)
     · rw [Multiset.le_iff_exists_add] at h
@@ -128,7 +128,7 @@ theorem sub_mod {a b c : Nat} (h : b ≤ a) : (a - b) % c = (a - b % c) % c := b
   · exact Nat.div_mul_le_self b c
 
 theorem sub_mod_eq_add_mod {a b c : Nat} (h : b ≤ a) (cnz : c ≠ 0) : (a - b) % c = (a + (c - b % c)) % c := by
-  rw [<-Nat.add_sub_assoc, Nat.sub_add_comm, Nat.add_mod_right]
+  rw [←Nat.add_sub_assoc, Nat.sub_add_comm, Nat.add_mod_right]
   · exact sub_mod h
   · trans b
     · exact Nat.mod_le b c
@@ -150,8 +150,8 @@ theorem imo1992_p6_a : ∀ n ≥ 4, S n ≤ n^2-14 := by
   have nge : 14 < n ^ 2 := by
     simp at nge
     suffices 4^2 ≤ n^2 by
-      rw [<-PNat.coe_le_coe] at this
-      rw [<-PNat.coe_lt_coe]
+      rw [←PNat.coe_le_coe] at this
+      rw [←PNat.coe_lt_coe]
       apply Nat.lt_of_add_one_le
       simp_all
       exact Nat.le_of_add_left_le this
@@ -166,8 +166,8 @@ theorem imo1992_p6_a : ∀ n ≥ 4, S n ≤ n^2-14 := by
       simp [nge']
     rw [this]
     apply (S_spec n).prop (n^2-13)
-    rw [<-PNat.coe_lt_coe, PNat.sub_coe] at h
-    rw [<-PNat.coe_le_coe, PNat.sub_coe]
+    rw [←PNat.coe_lt_coe, PNat.sub_coe] at h
+    rw [←PNat.coe_le_coe, PNat.sub_coe]
     simp [nge, nge'] at h ⊢
     rw [Nat.sub_lt_iff_lt_add] at h
     · exact Nat.le_of_lt_succ h
@@ -181,7 +181,7 @@ theorem imo1992_p6_a : ∀ n ≥ 4, S n ≤ n^2-14 := by
       calc
         _ = ∑ i, s i ^ 2 := sh1
         _ = ∑ i ∈ Finset.univ \ {j}, s i ^ 2 + s j ^ 2 := by
-          rw [<-Finset.sum_eq_sum_diff_singleton_add]
+          rw [←Finset.sum_eq_sum_diff_singleton_add]
           apply Finset.mem_univ
         _ ≥ ∑ i ∈ Finset.univ \ {j}, 1 + s j ^ 2 := by
           rw [ge_iff_le, add_le_add_iff_right]
@@ -202,9 +202,9 @@ theorem imo1992_p6_a : ∀ n ≥ 4, S n ≤ n^2-14 := by
           apply pow_left_mono 2
           exact h
         _ > _ := by
-          rw [<-Nat.sub_add_comm]
+          rw [←Nat.sub_add_comm]
           · simp
-            rw [<-PNat.pow_coe, PNat.val]
+            rw [←PNat.pow_coe, PNat.val]
             simp
           · exact nge'
     simp at this
@@ -255,9 +255,9 @@ theorem imo1992_p6_a : ∀ n ≥ 4, S n ≤ n^2-14 := by
         simp_all
         simp_all only [Subtype.mk.injEq, s', V]
       _ = ∑ j ∈ {1,2,3}, Finset.card {i | s i = j} + ∑ j ∈ {1,2,3}, Finset.card {i | s i = j} * (j ^ 2 - 1) := by
-        rw [<-Finset.sum_add_distrib]
-        nth_rw 1 [<-Finset.sum_attach]
-        nth_rw 2 [<-Finset.sum_attach]
+        rw [←Finset.sum_add_distrib]
+        nth_rw 1 [←Finset.sum_attach]
+        nth_rw 2 [←Finset.sum_attach]
         congr
         funext j
         rw [Nat.mul_sub, Nat.mul_one, Nat.add_sub_cancel']
@@ -382,7 +382,7 @@ theorem msos.sq_sum_shift (C:Multiset ℕ+) (i : ℕ+) (a : ℕ) (h4 : 4*a ≤ C
   unfold sq_sum msos.shift
   rw [Multiset.map_add, Multiset.map_replicate, Multiset.map_sub_of_injective, Multiset.sum_add]
   · rw [Multiset.map_replicate, Multiset.sum_replicate]
-    rw [<-Multiset.sum_sub (Multiset.map (fun x ↦ x.val ^ 2) C) (Multiset.replicate (4 * a) (i.val ^ 2))]
+    rw [←Multiset.sum_sub (Multiset.map (fun x ↦ x.val ^ 2) C) (Multiset.replicate (4 * a) (i.val ^ 2))]
     · simp only [PNat.mul_coe, PNat.val_ofNat, smul_eq_mul, Multiset.sum_replicate,
         Nat.add_left_cancel_iff]
       grind
@@ -390,7 +390,7 @@ theorem msos.sq_sum_shift (C:Multiset ℕ+) (i : ℕ+) (a : ℕ) (h4 : 4*a ≤ C
       intro x
       rw [Multiset.count_replicate]
       split_ifs with h
-      · rw [<-h, Multiset.count_map_eq_count' (fun (y:ℕ+) ↦ y.val ^ 2)]
+      · rw [←h, Multiset.count_map_eq_count' (fun (y:ℕ+) ↦ y.val ^ 2)]
         · exact h4
         · intro x1 x2 e
           simp_all
@@ -410,7 +410,7 @@ def msos.repeat_shift (C:Multiset ℕ+) : Multiset ℕ+ :=
   termination_by C.card
   decreasing_by
     expose_names
-    rw [<-Nat.add_lt_add_iff_right (k:=3*a), msos.card_shift]
+    rw [←Nat.add_lt_add_iff_right (k:=3*a), msos.card_shift]
     · unfold a
       simp only [lt_add_iff_pos_right, Nat.ofNat_pos, mul_pos_iff_of_pos_left, Nat.div_pos_iff, true_and]
       suffices i ∈ C'.toFinset by simp_all only [Multiset.toFinset_filter, Finset.mem_filter, Multiset.mem_toFinset, C', i]
@@ -440,9 +440,9 @@ theorem msos.repeat_shift.forall (C:Multiset ℕ+) :
         grind
       have : b - a ≤ ((shift x i a).card - (repeat_shift (shift x i a)).card) / 3 := by
         simp
-        nth_rw 1 [<-msos.card_shift _ i a] at bh <;> grind
+        nth_rw 1 [←msos.card_shift _ i a] at bh <;> grind
       obtain ⟨y, yh1, yh2⟩ := ih1 (b-a) this
-      rw [<-add_left_inj (3*a), msos.card_shift] at yh2
+      rw [←add_left_inj (3*a), msos.card_shift] at yh2
       · use y
         rw [yh1, sq_sum_shift] <;> and_intros <;> grind
       · grind
@@ -484,7 +484,7 @@ theorem msos.card_repeat_shift_le (C:Multiset ℕ+) : (msos.repeat_shift C).card
             · unfold C'
               simp only [Multiset.toFinset_filter, Finset.mem_filter, Multiset.mem_toFinset, c,
                 and_true]
-              rw [<-Multiset.one_le_count_iff_mem]
+              rw [←Multiset.one_le_count_iff_mem]
               exact Nat.one_le_of_lt c
             · simp
           rw [this]
@@ -518,7 +518,7 @@ theorem is_sum_of_pos_squares_by_repeat_shift (C:Multiset ℕ+) :
       · grind
       · exact (Finset.mem_Icc.mp kbs).right
     · omega
-  rw [this, <-h1]
+  rw [this, ←h1]
   apply msos.is_sum_of_pos_squares
 
 
@@ -560,12 +560,12 @@ theorem msos.count_mk (L : List (ℕ × ℕ+)) (a : ℕ+) : Multiset.count a (ms
     rw [List.filter_cons]
     by_cases c : b.2 = a
     · simp only [c, BEq.rfl, ↓reduceIte, List.map_cons, List.sum_cons]
-      rw [<-ih]
+      rw [←ih]
       unfold mk
-      rw [<-c]
+      rw [←c]
       simp
     · simp only [beq_iff_eq, c, reduceIte]
-      rw [<-ih]
+      rw [←ih]
       unfold mk
       simp only [Multiset.empty_eq_zero, List.map_cons, List.foldr_cons, Multiset.count_add,
         Nat.add_eq_right, Multiset.count_eq_zero]
@@ -579,7 +579,7 @@ theorem sos_13_0mod3 : ∀ k:ℕ, k≠0 → k ≤ 13^2-14 → k%3=0 → is_sum_o
   by_cases lb : 9 ≤ k
   · let C := msos.mk [(151,1), (2, 3)]
     have s : msos.sq_sum C = 13^2 := by native_decide
-    rw [<-s]
+    rw [←s]
     apply is_sum_of_pos_squares_by_repeat_shift
     · rw [Finset.mem_Icc]
       and_intros
@@ -597,16 +597,16 @@ theorem sos_13_0mod3 : ∀ k:ℕ, k≠0 → k ≤ 13^2-14 → k%3=0 → is_sum_o
     · intro keq
       let C := msos.mk [(1,3), (1, 4), (1,12)]
       have : msos.sq_sum C = 13^2 := by native_decide
-      rw [<-this]
+      rw [←this]
       have : C.card = k := by unfold C; rw [keq]; simp
-      rw [<-this]
+      rw [←this]
       apply msos.is_sum_of_pos_squares
     · intro keq
       let C := msos.mk [(4,2), (1, 3), (1,12)]
       have : msos.sq_sum C = 13^2 := by native_decide
-      rw [<-this]
+      rw [←this]
       have : C.card = k := by unfold C; rw [keq]; simp
-      rw [<-this]
+      rw [←this]
       apply msos.is_sum_of_pos_squares
 
 theorem sos_13_1mod3 : ∀ k:ℕ, k ≤ 13^2-14 → k%3=1 → is_sum_of_pos_squares (13^2) k := by
@@ -614,7 +614,7 @@ theorem sos_13_1mod3 : ∀ k:ℕ, k ≤ 13^2-14 → k%3=1 → is_sum_of_pos_squa
   by_cases lb : 7 ≤ k
   · let C := msos.mk [(149,1), (5, 2)]
     have s : msos.sq_sum C = 13^2 := by native_decide
-    rw [<-s]
+    rw [←s]
     apply is_sum_of_pos_squares_by_repeat_shift
     · rw [Finset.mem_Icc]
       and_intros
@@ -632,16 +632,16 @@ theorem sos_13_1mod3 : ∀ k:ℕ, k ≤ 13^2-14 → k%3=1 → is_sum_of_pos_squa
     · intro keq
       let C := msos.mk [(1,13)]
       have : msos.sq_sum C = 13^2 := by native_decide
-      rw [<-this]
+      rw [←this]
       have : C.card = k := by unfold C; rw [keq]; simp
-      rw [<-this]
+      rw [←this]
       apply msos.is_sum_of_pos_squares
     · intro keq
       let C := msos.mk [(1,1), (1, 2), (1,8), (1,10)]
       have : msos.sq_sum C = 13^2 := by native_decide
-      rw [<-this]
+      rw [←this]
       have : C.card = k := by unfold C; rw [keq]; simp
-      rw [<-this]
+      rw [←this]
       apply msos.is_sum_of_pos_squares
 
 theorem sos_13_2mod3 : ∀ k:ℕ, k ≤ 13^2-14 → k%3=2 → is_sum_of_pos_squares (13^2) k := by
@@ -649,7 +649,7 @@ theorem sos_13_2mod3 : ∀ k:ℕ, k ≤ 13^2-14 → k%3=2 → is_sum_of_pos_squa
   by_cases lb : 5 ≤ k
   · let C := msos.mk [(152, 1), (2, 2), (1,3)]
     have s : msos.sq_sum C = 13^2 := by native_decide
-    rw [<-s]
+    rw [←s]
     apply is_sum_of_pos_squares_by_repeat_shift
     · rw [Finset.mem_Icc]
       and_intros
@@ -665,9 +665,9 @@ theorem sos_13_2mod3 : ∀ k:ℕ, k ≤ 13^2-14 → k%3=2 → is_sum_of_pos_squa
   · have keq : k=2 := by omega
     let C := msos.mk [(1,5), (1,12)]
     have : msos.sq_sum C = 13^2 := by native_decide
-    rw [<-this]
+    rw [←this]
     have : C.card = k := by unfold C; rw [keq]; simp
-    rw [<-this]
+    rw [←this]
     apply msos.is_sum_of_pos_squares
 
 theorem complete_13 : complete 13 := by
@@ -685,7 +685,7 @@ theorem sos_mul_const (z k m : ℕ) (mpos : 0 < m) (h : is_sum_of_pos_squares z 
   use fun i => m * s i
   and_intros
   · simp_rw [mul_pow]
-    rw [<-Finset.mul_sum, <-sh1, mul_comm]
+    rw [←Finset.mul_sum, ←sh1, mul_comm]
   · intro i
     simp [sb i, mpos]
 
@@ -723,7 +723,7 @@ theorem sos_mul (z1 z2 k1 k2: ℕ) (h1 : is_sum_of_pos_squares z1 k1) (h2 : is_s
       unfold f
       simp_rw [mul_pow, implies_true]
     simp_rw [this]
-    rw [<-Finset.sum_fiberwise (ι:=Fin (k1*k2)) _ (fun x => (equi x).1)]
+    rw [←Finset.sum_fiberwise (ι:=Fin (k1*k2)) _ (fun x => (equi x).1)]
     congr
     funext i
     rw [Eq.comm]
@@ -759,7 +759,7 @@ theorem sos_split (z k: ℕ) (kb : 1 ≤ k) (h : is_sum_of_pos_squares z k) : �
     · simp
       rw [Nat.sub_eq_iff_eq_add]
       · rw [sh]
-        rw [<-Finset.sum_erase_add (a:=⟨k-1, by grind⟩) _ _ (by simp)]
+        rw [←Finset.sum_erase_add (a:=⟨k-1, by grind⟩) _ _ (by simp)]
         rw [Nat.add_right_cancel_iff]
         apply Finset.sum_bij' (fun i _ => ⟨i.val, by grind⟩) (fun i _ => i.castLT (by grind)) <;> simp
         intro i
@@ -789,7 +789,7 @@ theorem complete_mul (n1 n2) (lb1 : 13 ≤ n1) (lb2 : 13 ≤ n2) (n1h : complete
   by_cases c : k1*k2 ≤ k
   · generalize Ndef : ((n1 * n2).val ^ 2) = N
     have N_lb : (13*13)^2 ≤ N := by
-      rw [<-Ndef, PNat.mul_coe]
+      rw [←Ndef, PNat.mul_coe]
       exact Nat.pow_le_pow_left n1n2_lb 2
     have h14 : 3*N ≤ 4 * (n1 ^ 2 - 14).val * (n2 ^ 2 - 14).val := by
       qify
@@ -797,12 +797,12 @@ theorem complete_mul (n1 n2) (lb1 : 13 ≤ n1) (lb2 : 13 ≤ n2) (n1h : complete
       · simp only [PNat.pow_coe, Nat.cast_pow, PNat.val_ofNat, Nat.cast_ofNat]
         ring_nf
         have : n1.val ^ 2 * n2.val ^ 2 = (N : ℚ) := by
-          rw [<-Ndef]
+          rw [←Ndef]
           simp [mul_pow]
         rw [this]
         suffices n1 ^ 2 * 56 + n2 ^ 2 * 56 ≤ 784 + (N : ℚ) by linarith
         suffices N/(n1^2) * 56 + N/(n2^2) * 56 ≤ 784 + (N : ℚ) by
-          rw [<-Ndef] at this ⊢
+          rw [←Ndef] at this ⊢
           simp only [PNat.mul_coe, mul_pow, Nat.cast_mul, Nat.cast_pow, ne_eq, OfNat.ofNat_ne_zero,
             not_false_eq_true, pow_eq_zero_iff, Nat.cast_eq_zero, PNat.ne_zero, mul_div_cancel_left₀,
             isUnit_iff_ne_zero, IsUnit.mul_div_cancel_right] at this
@@ -819,12 +819,12 @@ theorem complete_mul (n1 n2) (lb1 : 13 ≤ n1) (lb2 : 13 ≤ n2) (n1h : complete
                 · simp
                 · simp
                 · apply Nat.ofNat_le_cast.mpr
-                  rw [<-PNat.val_ofNat, PNat.coe_le_coe]
+                  rw [←PNat.val_ofNat, PNat.coe_le_coe]
                   simp [lb1, lb2]
             }
           _ ≤ (N : ℚ) := by
             ring_nf
-            rw [<-mul_div_assoc, div_le_iff₀]
+            rw [←mul_div_assoc, div_le_iff₀]
             · apply Rat.mul_le_mul_of_nonneg_left rfl
               simp
             · simp
@@ -836,7 +836,7 @@ theorem complete_mul (n1 n2) (lb1 : 13 ≤ n1) (lb2 : 13 ≤ n2) (n1h : complete
           exact lb2
       · intro h
         contrapose! h
-        rw [<-PNat.coe_lt_coe]
+        rw [←PNat.coe_lt_coe]
         apply Nat.lt_of_succ_le
         trans 13^2
         · simp
@@ -848,7 +848,7 @@ theorem complete_mul (n1 n2) (lb1 : 13 ≤ n1) (lb2 : 13 ≤ n2) (n1h : complete
           exact lb1
       · intro h
         contrapose! h
-        rw [<-PNat.coe_lt_coe]
+        rw [←PNat.coe_lt_coe]
         apply Nat.lt_of_succ_le
         trans 13^2
         · simp
@@ -858,7 +858,7 @@ theorem complete_mul (n1 n2) (lb1 : 13 ≤ n1) (lb2 : 13 ≤ n2) (n1h : complete
     have C1_card : C1.card = N-14 := by
       unfold C1
       simp only [msos.card_mk, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, add_zero, Nat.reduceAdd]
-      rw [<-Nat.sub_add_comm]
+      rw [←Nat.sub_add_comm]
       · simp
       · apply le_trans (by simp) N_lb
     have C1_sq_sum : msos.sq_sum C1 = N := by
@@ -871,7 +871,7 @@ theorem complete_mul (n1 n2) (lb1 : 13 ≤ n1) (lb2 : 13 ≤ n2) (n1h : complete
     have C2_card : C2.card = N-15 := by
       unfold C2
       simp only [msos.card_mk, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, add_zero]
-      rw [<-Nat.sub_add_comm]
+      rw [←Nat.sub_add_comm]
       · simp
       · apply le_trans (by simp) N_lb
     have C2_sq_sum : msos.sq_sum C2 = N := by
@@ -884,7 +884,7 @@ theorem complete_mul (n1 n2) (lb1 : 13 ≤ n1) (lb2 : 13 ≤ n2) (n1h : complete
     have C3_card : C3.card = N-16 := by
       unfold C3
       simp only [msos.card_mk, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, add_zero]
-      rw [<-Nat.sub_add_comm]
+      rw [←Nat.sub_add_comm]
       · simp
       · apply le_trans (by simp) N_lb
     have C3_sq_sum : msos.sq_sum C3 = N := by
@@ -894,23 +894,23 @@ theorem complete_mul (n1 n2) (lb1 : 13 ≤ n1) (lb2 : 13 ≤ n2) (n1h : complete
       apply Nat.sub_add_cancel
       · apply le_trans (by simp) N_lb
     have kb' : k ≤ N - 14 := by
-      rw [<-PNat.coe_le_coe] at kb
-      rw [<-Ndef]
+      rw [←PNat.coe_le_coe] at kb
+      rw [←Ndef]
       rw [PNat.sub_coe, ite_eq_left_iff.mpr] at kb
       · exact kb
       · intro h
         contrapose h
         apply PNat.add_one_le_iff.mp
-        rw [<-PNat.coe_le_coe]
+        rw [←PNat.coe_le_coe]
         trans (13*13)^2
         · simp
         · rw [PNat.pow_coe, PNat.mul_coe]
           exact Nat.pow_le_pow_left n1n2_lb 2
     unfold k1 k2 at c
-    rw [<-PNat.coe_le_coe, PNat.mul_coe] at c
+    rw [←PNat.coe_le_coe, PNat.mul_coe] at c
     have : k.val%3 = (N-14)%3 ∨ k.val%3 = (N-15)%3 ∨ k.val%3 = (N-16)%3 := by omega
     apply this.elim3
-    · rw [<-C1_card, <-C1_sq_sum]
+    · rw [←C1_card, ←C1_sq_sum]
       apply is_sum_of_pos_squares_by_repeat_shift
       rw [Finset.mem_Icc]
       and_intros
@@ -922,15 +922,15 @@ theorem complete_mul (n1 n2) (lb1 : 13 ≤ n1) (lb2 : 13 ≤ n2) (n1h : complete
           OfNat.ofNat_ne_one, not_false_eq_true, List.filter_cons_of_neg, List.filter_nil,
           List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, add_zero, tsub_le_iff_right]
         apply le_of_mul_le_mul_left (a:=4) _ (by simp)
-        rw [mul_add, mul_add, <-mul_assoc]
-        rw [<-add_le_add_iff_left N] at h14
+        rw [mul_add, mul_add, ←mul_assoc]
+        rw [←add_le_add_iff_left N] at h14
         trans N+3*N
         · grind
         · apply le_trans h14
           omega
       · rw [C1_card]
         exact kb'
-    · rw [<-C2_card, <-C2_sq_sum]
+    · rw [←C2_card, ←C2_sq_sum]
       intro m
       apply is_sum_of_pos_squares_by_repeat_shift _ _ _ m
       rw [Finset.mem_Icc]
@@ -943,15 +943,15 @@ theorem complete_mul (n1 n2) (lb1 : 13 ≤ n1) (lb2 : 13 ≤ n2) (n1h : complete
           OfNat.ofNat_ne_one, not_false_eq_true, List.filter_cons_of_neg, List.filter_nil,
           List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, add_zero, tsub_le_iff_right]
         apply le_of_mul_le_mul_left (a:=4) _ (by simp)
-        rw [mul_add, mul_add, <-mul_assoc]
-        rw [<-add_le_add_iff_left N] at h14
+        rw [mul_add, mul_add, ←mul_assoc]
+        rw [←add_le_add_iff_left N] at h14
         trans N+3*N
         · grind
         · apply le_trans h14
           omega
       · rw [C2_card] at m ⊢
         omega
-    · rw [<-C3_card, <-C3_sq_sum]
+    · rw [←C3_card, ←C3_sq_sum]
       intro m
       apply is_sum_of_pos_squares_by_repeat_shift _ _ _ m
       rw [Finset.mem_Icc]
@@ -964,8 +964,8 @@ theorem complete_mul (n1 n2) (lb1 : 13 ≤ n1) (lb2 : 13 ≤ n2) (n1h : complete
           OfNat.ofNat_ne_one, not_false_eq_true, List.filter_cons_of_neg, List.filter_nil,
           List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, add_zero, tsub_le_iff_right]
         apply le_of_mul_le_mul_left (a:=4) _ (by simp)
-        rw [mul_add, mul_add, <-mul_assoc]
-        rw [<-add_le_add_iff_left N] at h14
+        rw [mul_add, mul_add, ←mul_assoc]
+        rw [←add_le_add_iff_left N] at h14
         trans N+3*N
         · grind
         · apply le_trans h14
@@ -988,7 +988,7 @@ theorem complete_mul (n1 n2) (lb1 : 13 ≤ n1) (lb2 : 13 ≤ n2) (n1h : complete
           trans k.natPred
           · apply Nat.div_mul_le_self
           · simp [PNat.natPred]
-        · rw [<-PNat.coe_le_coe, PNat.mk_coe]
+        · rw [←PNat.coe_le_coe, PNat.mk_coe]
           have : k/k2.val < k1 := by
             apply Nat.lt_of_mul_lt_mul_right (a:=k2)
             apply lt_of_le_of_lt (b:=k.val)
@@ -999,10 +999,10 @@ theorem complete_mul (n1 n2) (lb1 : 13 ≤ n1) (lb2 : 13 ≤ n2) (n1h : complete
             apply Nat.div_le_div_right
             simp [PNat.natPred]
           · exact Order.add_one_le_iff.mpr this
-        · rw [<-PNat.coe_le_coe]
+        · rw [←PNat.coe_le_coe]
           simp only [PNat.mk_coe, tsub_le_iff_right, PNat.natPred]
           rw [Nat.div_mul_self_eq_mod_sub_self]
-          rw [<-Nat.add_sub_assoc, Nat.sub_add_comm, <-Nat.sub_le_iff_le_add, Nat.sub_sub_self, Nat.le_sub_iff_add_le, Nat.one_add_le_iff]
+          rw [←Nat.add_sub_assoc, Nat.sub_add_comm, ←Nat.sub_le_iff_le_add, Nat.sub_sub_self, Nat.le_sub_iff_add_le, Nat.one_add_le_iff]
           · apply Nat.mod_lt
             simp
           · apply le_of_lt
@@ -1053,7 +1053,7 @@ theorem imo1992_p6_c : {n | S n = n^2 - 14}.Infinite := by
   · intro e' e'pos ih
     rw [pow_add]
     apply complete_mul
-    · nth_rw 1 [<-pow_one 13]
+    · nth_rw 1 [←pow_one 13]
       apply pow_right_monotone (by simp)
       exact Nat.one_le_of_lt e'pos
     · simp
