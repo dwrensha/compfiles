@@ -30,16 +30,12 @@ We follow the proof from https://artofproblemsolving.com/wiki/index.php/2005_IMO
 -/
 
 def prefix_max (a : ℕ → ℤ) (n : ℕ) (npos : 0 < n) : ℤ :=
-  Finset.max' ((Finset.range n).image (fun i => a i)) (by {
-    simp only [Finset.image_nonempty, Finset.nonempty_range_iff, ne_eq]
-    exact Nat.ne_zero_of_lt npos
-  })
+  Finset.max' ((Finset.range n).image (fun i => a i)) (by
+    simpa using Nat.ne_zero_of_lt npos)
 
 def prefix_min (a : ℕ → ℤ) (n : ℕ) (npos : 0 < n) : ℤ :=
-  Finset.min' ((Finset.range n).image (fun i => a i)) (by {
-    simp only [Finset.image_nonempty, Finset.nonempty_range_iff, ne_eq]
-    exact Nat.ne_zero_of_lt npos
-  })
+  Finset.min' ((Finset.range n).image (fun i => a i)) (by
+    simpa using Nat.ne_zero_of_lt npos)
 
 def consecutive {S : Type} [SetLike S ℤ] (s : S) : Prop := ∀ (a b c : ℤ), a < b → b < c → a ∈ s → c ∈ s → b ∈ s
 
@@ -100,9 +96,8 @@ theorem a_injective (a : ℕ → ℤ) (rem : ∀ n > 0, ((Finset.range n).image 
   contrapose! rem
   let B := 1 + max i1 i2
   use B, (by positivity)
-  nth_rw 3 [<-Finset.card_range B]
-  rw [ne_eq, Finset.card_image_iff]
-  rw [Set.InjOn]
+  nth_rw 3 [←Finset.card_range B]
+  rw [ne_eq, Finset.card_image_iff, Set.InjOn]
   simp only [Finset.coe_range, Set.mem_Iio, not_forall, exists_prop]
   use i1, ?_, i2, ?_, ?_
   · unfold B
@@ -116,9 +111,8 @@ theorem mod_nonzero (a : ℕ → ℤ) (rem : ∀ n > 0, ((Finset.range n).image 
   intro n npos d dgt
   contrapose! rem
   use d, (by grind)
-  nth_rw 3 [<-Finset.card_range d]
-  rw [ne_eq, Finset.card_image_iff]
-  rw [Set.InjOn]
+  nth_rw 3 [←Finset.card_range d]
+  rw [ne_eq, Finset.card_image_iff, Set.InjOn]
   simp only [Finset.coe_range, Set.mem_Iio, not_forall, exists_prop]
   use 0, ?_, n, ?_, ?_
   · exact Nat.ne_of_lt npos
@@ -179,9 +173,8 @@ theorem an_inductive' (a : ℕ → ℤ) (rem : ∀ n > 0, ((Finset.range n).imag
         intro i ilen
         contrapose! rem
         use n+2, (by simp)
-        nth_rw 3 [<-Finset.card_range (n+2)]
-        rw [ne_eq, Finset.card_image_iff]
-        rw [Set.InjOn]
+        nth_rw 3 [←Finset.card_range (n+2)]
+        rw [ne_eq, Finset.card_image_iff, Set.InjOn]
         simp
         use i, (by grind), n+1, (by simp)
         and_intros
@@ -193,7 +186,7 @@ theorem an_inductive' (a : ℕ → ℤ) (rem : ∀ n > 0, ((Finset.range n).imag
 
       have modset_Ico : modset = Finset.Ico (α:=ℤ) 0 (n+2) := by
         unfold modset
-        rw [<-Finset.eq_iff_card_le_of_subset]
+        rw [←Finset.eq_iff_card_le_of_subset]
         · rw [rem]
           repeat simp
         · refine Finset.image_subset_iff.mpr ?_
@@ -216,27 +209,25 @@ theorem an_inductive' (a : ℕ → ℤ) (rem : ∀ n > 0, ((Finset.range n).imag
         unfold modset at this
         simp only [Nat.cast_add, Nat.cast_ofNat, Finset.mem_image, Finset.mem_range] at this
         let ⟨i, h1, h2⟩ := this
-        rw [<-Int.ModEq] at h2
-        rw [show @Nat.cast ℤ _ n + 2 = (n+2).cast by simp] at h2
-        rw [<-ZMod.intCast_eq_intCast_iff] at h2
+        rw [←Int.ModEq, show @Nat.cast ℤ _ n + 2 = (n+2).cast by simp,
+          ←ZMod.intCast_eq_intCast_iff] at h2
         have h1 : i < n+1 := by
           by_contra
           have : i = n+1 := by omega
           subst i
-          rw [<-sub_eq_zero] at h2
-          simp only [Int.cast_sub, Int.cast_one, sub_sub_cancel] at h2
-          rw [ZMod.one_eq_zero_iff] at h2
+          rw [←sub_eq_zero] at h2
+          simp only [Int.cast_sub, Int.cast_one, sub_sub_cancel, ZMod.one_eq_zero_iff] at h2
           grind only
         have : a i + 1 = (a (n + 1) : ZMod (n+2)) := by
           rw [h2]
           simp
-        rw [<-this]
+        rw [←this]
         simp only [Int.cast_add, Int.cast_one, add_left_inj]
         unfold prefix_max
         let := Finset.max'_mem (Finset.image (fun i ↦ a i) (Finset.range (n + 1))) (by simp)
         simp only [Finset.mem_image, Finset.mem_range, Order.lt_add_one_iff] at this
         let ⟨j, jb, jh⟩ := this
-        rw [<-jh]
+        rw [←jh]
         congr
         by_contra c
         let := consecutive' con (a i) (a i + 1) (a j) (by simp) ?_ ?_ ?_
@@ -251,7 +242,7 @@ theorem an_inductive' (a : ℕ → ℤ) (rem : ∀ n > 0, ((Finset.range n).imag
           apply Finset.lt_max'_of_mem_erase_max'
           simp only [Finset.mem_erase, ne_eq, Finset.mem_image, Finset.mem_range,
             Order.lt_add_one_iff]
-          rw [<-jh]
+          rw [←jh]
           and_intros
           · rw [Eq.comm]
             exact Ne.intro fun x ↦ c (a_injective _ rem x)
@@ -275,27 +266,26 @@ theorem an_inductive' (a : ℕ → ℤ) (rem : ∀ n > 0, ((Finset.range n).imag
         unfold modset at this
         simp only [Nat.cast_add, Nat.cast_ofNat, Finset.mem_image, Finset.mem_range] at this
         let ⟨i, h1, h2⟩ := this
-        rw [<-Int.ModEq] at h2
-        rw [show @Nat.cast ℤ _ n + 2 = (n+2).cast by simp] at h2
-        rw [<-ZMod.intCast_eq_intCast_iff] at h2
+        rw [←Int.ModEq, show @Nat.cast ℤ _ n + 2 = (n+2).cast by simp,
+          ←ZMod.intCast_eq_intCast_iff] at h2
         have h1 : i < n+1 := by
           by_contra
           have : i = n+1 := by omega
           subst i
-          rw [<-sub_eq_zero] at h2
-          simp only [Int.cast_add, Int.cast_one, sub_add_cancel_left, neg_eq_zero] at h2
-          rw [ZMod.one_eq_zero_iff] at h2
+          rw [←sub_eq_zero] at h2
+          simp only [Int.cast_add, Int.cast_one, sub_add_cancel_left, neg_eq_zero,
+            ZMod.one_eq_zero_iff] at h2
           grind only
         have : a i - 1 = (a (n + 1) : ZMod (n+2)) := by
           rw [h2]
           simp
-        rw [<-this]
+        rw [←this]
         simp only [Int.cast_sub, Int.cast_one, sub_left_inj]
         unfold prefix_min
         let := Finset.min'_mem (Finset.image (fun i ↦ a i) (Finset.range (n + 1))) (by simp)
         simp only [Finset.mem_image, Finset.mem_range, Order.lt_add_one_iff] at this
         let ⟨j, jb, jh⟩ := this
-        rw [<-jh]
+        rw [←jh]
         congr
         by_contra c
         let := consecutive' con (a j) (a i - 1) (a i) ?_ (by simp) ?_ ?_
@@ -310,7 +300,7 @@ theorem an_inductive' (a : ℕ → ℤ) (rem : ∀ n > 0, ((Finset.range n).imag
           apply Finset.min'_lt_of_mem_erase_min'
           simp only [Finset.mem_erase, ne_eq, Finset.mem_image, Finset.mem_range,
             Order.lt_add_one_iff]
-          rw [<-jh]
+          rw [←jh]
           and_intros
           · rw [Eq.comm]
             exact Ne.intro fun x ↦ c (a_injective _ rem x)
@@ -355,11 +345,10 @@ theorem an_inductive' (a : ℕ → ℤ) (rem : ∀ n > 0, ((Finset.range n).imag
         simp only [Finset.mem_image, Finset.mem_range, Order.lt_add_one_iff] at this
         let ⟨j, jb, jh⟩ := this
         unfold prefix_max at kh
-        rw [<-jh, Int.sub_eq_iff_eq_add.symm] at kh
+        rw [←jh, Int.sub_eq_iff_eq_add.symm] at kh
         have nkneg : ¬ k < 0 := by
           have : _ := abs_bound _ rem a0 (n+1)
-          rw [<-kh] at this
-          rw [abs_le] at this
+          rw [←kh, abs_le] at this
           let := this.right
           have : a j ≥ 0 := by
             rw [jh]
@@ -374,7 +363,7 @@ theorem an_inductive' (a : ℕ → ℤ) (rem : ∀ n > 0, ((Finset.range n).imag
           · exact Int.add_le_zero_iff_le_neg.mp this
           · exact Int.sign_eq_one_iff_pos.mp rfl
         have nkpos : ¬ k > 0 := by
-          rw [<-kh] at pos
+          rw [←kh] at pos
           simp at pos
           have : a j ≤ j := by
             have : _ := abs_bound _ rem a0 j
@@ -384,7 +373,7 @@ theorem an_inductive' (a : ℕ → ℤ) (rem : ∀ n > 0, ((Finset.range n).imag
           apply Int.lt_of_add_one_le
           trans n+2
           · simp
-          · nth_rw 1 [<-mul_one (n.cast+2)]
+          · nth_rw 1 [←mul_one (n.cast+2)]
             rw [mul_le_mul_iff_of_pos_left]
             · exact Int.le_of_sub_one_lt this
             · exact Int.sign_eq_one_iff_pos.mp rfl
@@ -427,13 +416,12 @@ theorem an_inductive' (a : ℕ → ℤ) (rem : ∀ n > 0, ((Finset.range n).imag
         simp only [Finset.mem_image, Finset.mem_range, Order.lt_add_one_iff] at this
         let ⟨j, jb, jh⟩ := this
         unfold prefix_min at kh
-        rw [<-jh] at kh
+        rw [←jh] at kh
         have kh : a j - 1 - (↑n + 2) * (k+1) = a (n + 1) := by lia
         suffices k = -1 by lia
         have nkpos : ¬ k+1 > 0 := by
           have : _ := abs_bound _ rem a0 (n+1)
-          rw [<-kh] at this
-          rw [abs_le] at this
+          rw [←kh, abs_le] at this
           let ⟨h1, h2⟩ := this
           have : a j ≤ 0 := by
             rw [jh]
@@ -449,7 +437,7 @@ theorem an_inductive' (a : ℕ → ℤ) (rem : ∀ n > 0, ((Finset.range n).imag
           · exact Int.le_of_sub_one_lt this
           · exact Int.sign_eq_one_iff_pos.mp rfl
         have nkneg : ¬ k+1 < 0 := by
-          rw [<-kh] at neg
+          rw [←kh] at neg
           simp at neg
           have : a j ≥ -j := by
             have : _ := abs_bound _ rem a0 j
@@ -475,12 +463,12 @@ problem imo2005_p2 (a : ℕ → ℤ)
     : ∀ z : ℤ, ∃! i, a i = z := by
 
   replace pos_inf : Set.Infinite { a i | (i) (_ : 0 < a i)} := by
-    rw [<-Set.infinite_image_iff (f:=a)] at pos_inf
+    rw [←Set.infinite_image_iff (f:=a)] at pos_inf
     · simp only [exists_prop]
       exact pos_inf
     · exact (a_injective a rem).injOn
   replace neg_inf : Set.Infinite { a i | (i) (_ : a i < 0)} := by
-    rw [<-Set.infinite_image_iff (f:=a)] at neg_inf
+    rw [←Set.infinite_image_iff (f:=a)] at neg_inf
     · simp only [exists_prop]
       exact neg_inf
     · exact (a_injective a rem).injOn
@@ -494,7 +482,7 @@ problem imo2005_p2 (a : ℕ → ℤ)
       simp only [sub_left_inj] at this
       exact this
     · intro n npos
-      nth_rw 3 [<-rem n npos]
+      nth_rw 3 [←rem n npos]
       apply Finset.card_bij (fun x h => (x + a 0)%n)
       · simp
         lia
