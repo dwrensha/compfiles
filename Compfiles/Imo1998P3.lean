@@ -155,61 +155,19 @@ lemma d_n2 (n : ℕ) (hn : n ≠ 0) : d (n ^ 2) = n.factorization.prod (fun _ k 
 lemma list_prod_odd (l : List ℕ) : (∀ x ∈ l, Odd x) → Odd l.prod := by
   induction l with
   | nil => simp
-  | cons head tail ih =>
-      intro hallodd2
-      rw [List.prod_cons]
-      apply Odd.mul
-      · apply hallodd2; exact @List.mem_cons_self _ head tail
-      · apply ih
-        intro x hx
-        apply hallodd2
-        exact List.mem_cons_of_mem head hx
+  | cons head tail ih => intro h; simp [Odd.mul (h _ (.head _)) (ih fun x hx => h x (.tail _ hx))]
 
 /-- We begin by first proving that every value of `k` must be an odd number. -/
 theorem k_is_odd (k : ℕ)
     (h : ∃ n : ℕ, n ≠ 0 ∧ d (n ^ 2) = k * d n) :
     (k % 2 = 1) := by
-  obtain ⟨n, hn⟩ := h
-  let nfac := n.factorization
-  have hprime : ∀ p ∈ nfac.support, Nat.Prime p := by
-    intro p hp
-    dsimp [nfac] at hp
-    exact Nat.prime_of_mem_primeFactors hp
-  have hnfac := Nat.eq_factorization_iff hn.left hprime
-  have hneqnfac : (nfac.prod fun x1 x2 ↦ x1 ^ x2) = n := hnfac.mp (by rfl)
-  have hdn2odd : (d (n ^ 2)) % 2 = 1 := by
-    have hn2eqnfac : (nfac.prod fun p k ↦ p ^ (2 * k)) = n ^ 2 := calc
-      (nfac.prod fun p k ↦ p ^ (2 * k))
-      _ = (nfac.prod fun p k ↦ (p ^ k) ^ 2) := by
-          apply Finset.prod_congr rfl
-          intro p _
-          simp
-          rw [pow_mul']
-      _ = (nfac.prod fun p k ↦ p ^ k) ^ 2 := by
-          unfold Finsupp.prod
-          exact Finset.prod_pow nfac.support 2 fun x ↦ x ^ nfac x
-      _ = n ^ 2 := by rw [hneqnfac]
-    have hd : d (n ^ 2) = (nfac.prod fun _ x2 ↦ ((2 * x2) + 1)) := d_n2 n hn.left
-    let powers := nfac.support.toList.map (fun x ↦ 2 * nfac x + 1)
-    have hallodd : (∀ i ∈ powers, Odd i) := by
-      intro i hi
-      rw [Nat.odd_iff]
-      rw [List.mem_map] at hi
-      obtain ⟨p, _, rfl⟩ := hi
-      simp
-    have hoddmul : (Odd (nfac.prod fun _ x2 ↦ ((2 * x2) + 1))) := by
-      have h_eq : (nfac.prod fun _ x2 ↦ ((2 * x2) + 1)) = powers.prod := by
-        dsimp [powers]
-        rw [Finsupp.prod]
-        rw [Finset.prod_eq_multiset_prod]
-        simp
-      rw [h_eq]
-      exact list_prod_odd powers hallodd
-    rw [hd]
-    exact Nat.odd_iff.mp hoddmul
-  rw [hn.right] at hdn2odd
-  have hodd : Odd (k * (d n)) := Nat.odd_iff.mpr hdn2odd
-  exact Nat.odd_iff.mp (Nat.odd_mul.mp hodd).left
+  obtain ⟨n, hn, hd⟩ := h
+  have : Odd (d (n ^ 2)) := by
+    rw [d_n2 n hn, Finsupp.prod]
+    refine Finset.prod_induction _ (fun x => Odd x) (fun _ _ => Odd.mul) odd_one ?_
+    intro _ _; simp
+  rw [hd] at this
+  exact Nat.odd_iff.mp (Nat.odd_mul.mp this).1
 
 /-- Proof that we can pick `t` new and distinct primes given a list of `t` primes. -/
 lemma exists_distinct_primes (t n : ℕ) (hnneq0 : n ≠ 0) (primes : List ℕ) :
