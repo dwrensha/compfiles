@@ -42,7 +42,7 @@ lemma aux_1_mono
     (h₁ : ∀ (s : ℕ), c s = s * (s + 1)) :
     Monotone c := by
   intro a b h
-  simp [h₁]
+  simp only [h₁]
   have h1 : a * (a + 1) ≤ b * (a + 1) := Nat.mul_le_mul_right _ h
   have h2 : b * (a + 1) ≤ b * (b + 1) := Nat.mul_le_mul_left _ (Nat.succ_le_succ h)
   exact h1.trans h2
@@ -105,9 +105,6 @@ problem imo1967_p3
   (h₂ : Nat.Prime (k + m + 1))
   (h₃ : n + 1 < k + m + 1) :
   (∏ i ∈ Finset.Icc 1 n, (↑(c i):ℤ)) ∣ (∏ i ∈ Finset.Icc 1 n, (((c (m + i)):ℤ) - ((c k):ℤ))) := by
-  have hc_sub : ∀ a b, c a - c b = (a - b) * (a + b + 1) := by
-    exact fun a b ↦ aux_1 c h₁ a b
-  have hc_mono : Monotone c := aux_1_mono c h₁
   have h₄: ∏ i ∈ Finset.Icc 1 n, (↑(c i):ℤ) = n.factorial * (n + 1).factorial := by
     norm_cast
     have h₄₀ : ∀ i, c i = i * (i + 1) := by
@@ -135,10 +132,10 @@ problem imo1967_p3
         refine Nat.cast_sub ?_
 
         have hk_le_mx : k ≤ m + x := hk₀.trans (Nat.le_add_right _ _)
-        exact hc_mono hk_le_mx
+        exact aux_1_mono c h₁ hk_le_mx
       rw [h₅₁, ← Nat.cast_mul]
       norm_cast
-      simp_rw [hc_sub]
+      simp_rw [aux_1 c h₁]
       rw [Nat.mul_comm]
       exact Finset.prod_mul_distrib
     have h₇: n.factorial ∣ (∏ i ∈ Finset.Icc 1 n, (m + i - k)) := by
@@ -179,10 +176,10 @@ problem imo1967_p3
           have hmx_le_k : m + x ≤ k := by
             have hx' : m + x ≤ m + n := Nat.add_le_add_left hx₁ m
             exact le_of_lt (lt_of_le_of_lt hx' hk₁)
-          exact hc_mono hmx_le_k
+          exact aux_1_mono c h₁ hmx_le_k
         rw [h₅₁, ← Nat.cast_mul]
         norm_cast
-        simp_rw [hc_sub]
+        simp_rw [aux_1 c h₁]
         exact Finset.prod_mul_distrib
       rw [h₅, Finset.prod_mul_distrib, h₆]
       have h₇: (↑n.factorial : ℤ) * (↑(n + 1).factorial : ℤ) ∣
