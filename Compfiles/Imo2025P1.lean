@@ -896,21 +896,15 @@ lemma coverGridNoEdgeConfig.cover_no_edge_corner_distinct (C : coverGridNoEdgeCo
     C.findLineCorner 0 ≠ C.findLineCorner 1 ∧
     C.findLineCorner 0 ≠ C.findLineCorner 2 ∧
     C.findLineCorner 1 ≠ C.findLineCorner 2 := by
-  suffices
-      C.findLineCorner (edgeEndpointCornerId 0 0) ≠ C.findLineCorner (edgeEndpointCornerId 0 1) ∧
-      C.findLineCorner (edgeEndpointCornerId 1 0) ≠ C.findLineCorner (edgeEndpointCornerId 1 1) ∧
-      C.findLineCorner (edgeEndpointCornerId 2 0) ≠ C.findLineCorner (edgeEndpointCornerId 2 1) by
-    congr
-  have := C.find_line_corner_eq_edge
-  have := C.hn
-  repeat' constructor
-  all_goals
-    rw [C.find_line_corner_eq_edge, C.find_line_corner_eq_edge]
-    intro hC
-    apply C.cover_no_edge_line_inj at hC
-    rw [edgeEndpointIndex, edgeEndpointIndex] at hC
-    apply_fun (·.val) at hC; simp only at hC
-    omega
+  suffices h : ∀ d : Fin 3,
+      C.findLineCorner (edgeEndpointCornerId d 0) ≠ C.findLineCorner (edgeEndpointCornerId d 1) by
+    exact ⟨h 0, h 1, h 2⟩
+  intro d
+  rw [C.find_line_corner_eq_edge, C.find_line_corner_eq_edge]
+  intro hC
+  have h1 := C.cover_no_edge_line_inj d hC
+  simp only [edgeEndpointIndex, Fin.mk.injEq] at h1
+  have := C.hn; lia
 
 /-- `findLineCorner` is injective. -/
 lemma coverGridNoEdgeConfig.cover_no_edge_corner_inj (C : coverGridNoEdgeConfig) :
