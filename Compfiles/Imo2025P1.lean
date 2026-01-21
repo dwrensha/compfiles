@@ -353,12 +353,9 @@ lemma line_contains (L L' : AffSubOfPlane) (hL : finrank ℝ L.direction = 1) (a
 lemma get_line_eq
     (L L' : AffSubOfPlane) (hL : finrank ℝ L.direction = 1) (hL' : finrank ℝ L'.direction = 1)
     (a b : Plane) (hab : a ≠ b)
-    (ha : a ∈ L) (hb : b ∈ L) (ha' : a ∈ L') (hb' : b ∈ L') : L = L' := by
-  have h1 := line_contains L L' hL a b hab ha hb ha' hb'
-  have h2 := line_contains L' L hL' a b hab ha' hb' ha hb
-  rw [AffineSubspace.le_def] at *
-  rw [AffineSubspace.ext_iff]
-  exact Set.Subset.antisymm h1 h2
+    (ha : a ∈ L) (hb : b ∈ L) (ha' : a ∈ L') (hb' : b ∈ L') : L = L' :=
+  (line_contains L L' hL a b hab ha hb ha' hb').antisymm
+    (line_contains L' L hL' a b hab ha' hb' ha hb)
 
 end LineOnPlane
 
@@ -551,16 +548,9 @@ lemma shift_line_inv (v : Plane) (L : AffSubOfPlane) : (shiftLine (-v)) ((shiftL
 
 /-- If `L` is sunny, then so is its shift. -/
 lemma shift_sunny (v : Plane) (L : AffSubOfPlane) : Sunny L → Sunny (shiftLine v L) := by
-  rw [Sunny, Sunny]
-  have (L' : AffSubOfPlane) : L ∥ L' ↔ shiftLine v L ∥ L' := by
-    constructor
-    · intro h
-      apply AffineSubspace.Parallel.trans _ h
-      symm; apply shift_para
-    · intro h
-      apply AffineSubspace.Parallel.trans _ h
-      apply shift_para
-  grind
+  simp only [Sunny]
+  intro ⟨h1, h2, h3⟩
+  refine ⟨fun hp => h1 ?_, fun hp => h2 ?_, fun hp => h3 ?_⟩ <;> exact (shift_para v L).trans hp
 
 /-- Shift a `coverConfig` by the vector `v`. -/
 def coverConfig.shift (C : coverConfig) (v : Plane) : coverConfig where
@@ -720,27 +710,10 @@ then `L` is sunny. -/
 lemma line_sunny_two_points (L : AffSubOfPlane) (x1 y1 x2 y2 : ℝ)
     (h1 : !₂[x1, y1] ∈ L) (h2 : !₂[x2, y2] ∈ L)
     (hx : x1 ≠ x2) (hy : y1 ≠ y2) (hxy : x2 - x1 ≠ y1 - y2) : Sunny L := by
-  rw [Sunny]
-  constructor
-  · rw [← x_ax_line]
-    intro hp
-    symm at hp
-    have := line_para_two_points 0 1 0 (by simp) L x1 y1 x2 y2 hp h1 h2
-    have : y1 = y2 := by linarith
-    contradiction
-  · constructor
-    · rw [← y_ax_line]
-      intro hp
-      symm at hp
-      have := line_para_two_points 1 0 0 (by simp) L x1 y1 x2 y2 hp h1 h2
-      have : x1 = x2 := by linarith
-      contradiction
-    · rw [← xy0_line]
-      intro hp
-      symm at hp
-      have := line_para_two_points 1 1 0 (by simp) L x1 y1 x2 y2 hp h1 h2
-      have : x2 - x1 = y1 - y2 := by linarith
-      contradiction
+  simp only [Sunny, ← x_ax_line, ← y_ax_line, ← xy0_line]
+  refine ⟨fun hp => hy ?_, fun hp => hx ?_, fun hp => hxy ?_⟩ <;>
+    have := line_para_two_points _ _ 0 (by simp) L x1 y1 x2 y2 hp.symm h1 h2 <;>
+    simp only [zero_mul, one_mul, zero_add, add_zero] at this <;> linarith
 
 section FindLines
 
@@ -1223,8 +1196,8 @@ lemma threeSunnyLinesMem (L : AffSubOfPlane) : L ∈ threeSunnyLines ↔
   simp only [threeSunnyLines, Finset.mem_map, Finset.mem_univ, Function.Embedding.coeFn_mk,
     true_and, Fin.isValue]
   constructor
-  · intro ⟨d, hd⟩; fin_cases d <;> (simp only at hd; tauto)
-  · rintro (h | h | h) <;> (rw [h]; simp)
+  · rintro ⟨d, rfl⟩; fin_cases d <;> simp
+  · rintro (rfl | rfl | rfl) <;> simp
 
 /-- The points in `grid 3` -/
 lemma grid3Points (x : Plane) : x ∈ grid 3 ↔
