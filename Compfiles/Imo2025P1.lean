@@ -289,7 +289,7 @@ lemma line_para_two_points (a b c : ℝ) (h : a ≠ 0 ∨ b ≠ 0) (L : AffSubOf
     rw [vec_mul, vec_eq] at hk
     rw [← hk.left, ← hk.right]; ring
 
-/-- If the linex `a * x + b * y + c = 0` and `a' * x + b' * y + c = 0` are equal,
+/-- If the lines `a * x + b * y + c = 0` and `a' * x + b' * y + c = 0` are equal,
 then `a * b' = a' * b ∧ a * c' = a' * c ∧ b * c' = b' * c`. -/
 lemma line_eq_check (a b c a' b' c' : ℝ) (h : a ≠ 0 ∨ b ≠ 0) (h' : a' ≠ 0 ∨ b' ≠ 0)
     (heq : line a b c = line a' b' c') :
