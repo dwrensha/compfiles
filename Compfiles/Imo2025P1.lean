@@ -296,37 +296,25 @@ lemma line_eq_check (a b c a' b' c' : ℝ) (h : a ≠ 0 ∨ b ≠ 0) (h' : a' �
     a * b' = a' * b ∧ a * c' = a' * c ∧ b * c' = b' * c := by
   have hab : a * b' = a' * b := by rw [← line_para a b c a' b' c' h h', heq]
   rw [AffineSubspace.ext_iff, Set.ext_iff] at heq
-  constructor
-  · exact hab
+  refine ⟨hab, ?_, ?_⟩
   · by_cases ha : a = 0
-    · have hb : b ≠ 0 := by grind
-      have ha' : a' = 0 := by rw [ha] at hab; simp only [zero_mul, zero_eq_mul] at hab; grind
-      simp only [ha, zero_mul, ha', true_and]
-      specialize heq !₂[0, -c / b]
+    · have ha' : a' = 0 := by grind
+      simp [ha, ha']
+    · specialize heq !₂[-c / a, 0]
       rw [AffineSubspace.mem_coe, AffineSubspace.mem_coe, point_on_line, point_on_line] at heq
-      have : a * 0 + b * (-c / b) + c = 0 := by field
-      replace heq := (heq.mp) this; simp only [mul_zero, zero_add] at heq
-      calc
-      _ = b * (-(b' * (-c / b))) := by congr 1; linarith
-      _ = b' * c := by field_simp
-    · constructor
-      · specialize heq !₂[-c / a, 0]
-        rw [AffineSubspace.mem_coe, AffineSubspace.mem_coe, point_on_line, point_on_line] at heq
-        have : a * (-c / a) + b * 0 + c = 0 := by field
-        replace heq := (heq.mp) this; simp only [mul_zero, add_zero] at heq
-        calc
-        _ = a * (-(a' * (-c / a))) := by congr 1; linarith
+      have on_line : a * (-c / a) + b * 0 + c = 0 := by field
+      have h' := (heq.mp on_line); simp only [mul_zero, add_zero] at h'
+      calc a * c' = a * (-(a' * (-c / a))) := by congr 1; linarith only [h']
         _ = a' * c := by field_simp
-      · by_cases hb : b = 0
-        · have hb' : b' = 0 := by rw [hb] at hab; simp only [mul_zero, mul_eq_zero] at hab; grind
-          simp [hb, hb']
-        · specialize heq !₂[0, -c / b]
-          rw [AffineSubspace.mem_coe, AffineSubspace.mem_coe, point_on_line, point_on_line] at heq
-          have : a * 0 + b * (-c / b) + c = 0 := by field
-          replace heq := (heq.mp) this; simp only [mul_zero, zero_add] at heq
-          calc
-          _ = b * (-(b' * (-c / b))) := by congr 1; linarith
-          _ = b' * c := by field_simp
+  · by_cases hb : b = 0
+    · have hb' : b' = 0 := by grind
+      simp [hb, hb']
+    · specialize heq !₂[0, -c / b]
+      rw [AffineSubspace.mem_coe, AffineSubspace.mem_coe, point_on_line, point_on_line] at heq
+      have on_line : a * 0 + b * (-c / b) + c = 0 := by field
+      have h' := (heq.mp on_line); simp only [mul_zero, zero_add] at h'
+      calc b * c' = b * (-(b' * (-c / b))) := by congr 1; linarith only [h']
+        _ = b' * c := by field_simp
 
 /-- Preparation lemma for `get_line_eq`. -/
 lemma line_contains (L L' : AffSubOfPlane) (hL : finrank ℝ L.direction = 1) (a b : Plane) :
