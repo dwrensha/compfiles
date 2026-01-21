@@ -37,6 +37,16 @@ lemma aux_1
   have h_factor : a + a^2 - (b + b^2) = (a - b) * (a + b + 1) := by rw [tsub_mul]; grind
   grind
 
+lemma aux_1_mono
+    (c : ℕ → ℕ)
+    (h₁ : ∀ (s : ℕ), c s = s * (s + 1)) :
+    Monotone c := by
+  intro a b h
+  simp [h₁]
+  have h1 : a * (a + 1) ≤ b * (a + 1) := Nat.mul_le_mul_right _ h
+  have h2 : b * (a + 1) ≤ b * (b + 1) := Nat.mul_le_mul_left _ (Nat.succ_le_succ h)
+  exact h1.trans h2
+
 lemma aux_2 :
   ∀ (n m : ℕ), 0 < n → n.factorial ∣ ∏ i ∈ Finset.Icc 1 n, (m + i) := by
   intro s t _
@@ -95,6 +105,9 @@ problem imo1967_p3
   (h₂ : Nat.Prime (k + m + 1))
   (h₃ : n + 1 < k + m + 1) :
   (∏ i ∈ Finset.Icc 1 n, (↑(c i):ℤ)) ∣ (∏ i ∈ Finset.Icc 1 n, (((c (m + i)):ℤ) - ((c k):ℤ))) := by
+  have hc_sub : ∀ a b, c a - c b = (a - b) * (a + b + 1) := by
+    exact fun a b ↦ aux_1 c h₁ a b
+  have hc_mono : Monotone c := aux_1_mono c h₁
   have h₄: ∏ i ∈ Finset.Icc 1 n, (↑(c i):ℤ) = n.factorial * (n + 1).factorial := by
     norm_cast
     have h₄₀ : ∀ i, c i = i * (i + 1) := by
@@ -114,8 +127,6 @@ problem imo1967_p3
   rw [h₄]
   by_cases hk₀: k ≤ m
   · have h₅: (∏ i ∈ Finset.Icc 1 n, (((c (m + i)):ℤ) - ((c k):ℤ))) = (∏ i ∈ Finset.Icc 1 n, (m + i + k + 1)) * (∏ i ∈ Finset.Icc 1 n, (m + i - k)) := by
-      have h₅₀: ∀ a b, c a - c b = (a - b) * (a + b + 1) := by
-        exact fun a b ↦ aux_1 c h₁ a b
       have h₅₁: ∏ i ∈ Finset.Icc 1 n, (((c (m + i)):ℤ) - ((c k):ℤ)) = (↑(∏ i ∈ Finset.Icc 1 n, ((c (m + i)) - (c k))):ℤ) := by
         rw [@Nat.cast_prod]
         refine Finset.prod_congr rfl ?_
@@ -123,19 +134,11 @@ problem imo1967_p3
         symm
         refine Nat.cast_sub ?_
 
-        -- grind used to work here
         have hk_le_mx : k ≤ m + x := hk₀.trans (Nat.le_add_right _ _)
-        have hprod_le : k * (k + 1) ≤ (m + x) * (m + x + 1) := by
-          have h1 : k * (k + 1) ≤ (m + x) * (k + 1) :=
-            Nat.mul_le_mul_right _ hk_le_mx
-          have h2 : (m + x) * (k + 1) ≤ (m + x) * (m + x + 1) :=
-            Nat.mul_le_mul_left _ (Nat.succ_le_succ hk_le_mx)
-          exact h1.trans h2
-
-        simpa [h₁] using hprod_le
+        exact hc_mono hk_le_mx
       rw [h₅₁, ← Nat.cast_mul]
       norm_cast
-      simp_rw [h₅₀]
+      simp_rw [hc_sub]
       rw [Nat.mul_comm]
       exact Finset.prod_mul_distrib
     have h₇: n.factorial ∣ (∏ i ∈ Finset.Icc 1 n, (m + i - k)) := by
@@ -165,8 +168,6 @@ problem imo1967_p3
         ∏ i ∈ Finset.Icc (1 : ℕ) n, (((↑(c k) : ℤ) - (↑(c (m + i)) : ℤ)) * (-1:ℤ)) := by
         group
       have h₆: ∏ i ∈ Finset.Icc 1 n, ((↑(c k) : ℤ) - (↑(c (m + i)) : ℤ)) = (∏ i ∈ Finset.Icc 1 n, (k - (m + i))) * (∏ i ∈ Finset.Icc 1 n, (k + (m + i) + 1)) := by
-        have h₅₀: ∀ a b, c a - c b = (a - b) * (a + b + 1) := by
-          exact fun a b ↦ aux_1 c h₁ a b
         have h₅₁: ∏ i ∈ Finset.Icc 1 n, (((c k):ℤ) - ((c (m + i)):ℤ)) = (↑(∏ i ∈ Finset.Icc 1 n, (c k - c (m + i))):ℤ) := by
           rw [@Nat.cast_prod]
           refine Finset.prod_congr rfl ?_
@@ -174,24 +175,14 @@ problem imo1967_p3
           intro x hx₀ hx₁
           symm
           refine Nat.cast_sub ?_
-            -- from x ≤ n and m + n < k, we get m + x ≤ k
+          -- from x ≤ n and m + n < k, we get m + x ≤ k
           have hmx_le_k : m + x ≤ k := by
             have hx' : m + x ≤ m + n := Nat.add_le_add_left hx₁ m
             exact le_of_lt (lt_of_le_of_lt hx' hk₁)
-
-          -- multiply the two sides by (m + x + 1) and then by k to compare products
-          have hprod_le : (m + x) * (m + x + 1) ≤ k * (k + 1) := by
-           have h1 : (m + x) * (m + x + 1) ≤ k * (m + x + 1) :=
-            Nat.mul_le_mul_right _ hmx_le_k
-           have h2 : k * (m + x + 1) ≤ k * (k + 1) :=
-             Nat.mul_le_mul_left _ (Nat.succ_le_succ hmx_le_k)
-           exact h1.trans h2
-
-          -- rewrite c s = s * (s + 1)
-          simpa [h₁] using hprod_le
+          exact hc_mono hmx_le_k
         rw [h₅₁, ← Nat.cast_mul]
         norm_cast
-        simp_rw [h₅₀]
+        simp_rw [hc_sub]
         exact Finset.prod_mul_distrib
       rw [h₅, Finset.prod_mul_distrib, h₆]
       have h₇: (↑n.factorial : ℤ) * (↑(n + 1).factorial : ℤ) ∣
