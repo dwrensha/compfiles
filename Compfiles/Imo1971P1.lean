@@ -5,6 +5,7 @@ Authors: Francesco Cappetti
 -/
 
 import Mathlib.Tactic
+import Mathlib.Data.Fin.Tuple.Sort
 
 import ProblemExtraction
 
@@ -46,45 +47,22 @@ lemma E_equiv_perm {n : ℕ} {a b : Fin n → ℝ} (h : ∃ σ : Equiv.Perm (Fin
   intro j hj
   simp [hσ, Equiv.apply_symm_apply]
 
--- This gets a permutation of the indeces of a such that the resulting sequence is antitone.
-lemma exists_antitone_perm {n : ℕ} (a : Fin n → ℝ) : ∃ b, ∃ σ : Equiv.Perm (Fin n), b = a ∘ σ ∧ Antitone b := by
-  -- We get the indices of a and sort the indices of b based on the values in a
-  let la := List.finRange n
-  let lb := la.mergeSort (fun i j ↦ a i ≥ a j)
+-- This gets a permutation of the indices of a such that the resulting sequence is antitone.
+-- Uses Tuple.sort (which gives monotone) composed with Fin.revPerm (which reverses) to get antitone.
+lemma antitone_of_monotone_comp_rev {n : ℕ} (f : Fin n → ℝ) (σ : Equiv.Perm (Fin n))
+    (hm : Monotone (f ∘ σ)) : Antitone (f ∘ σ ∘ Fin.revPerm) := by
+  intro i j hij
+  simp only [Function.comp_apply]
+  exact hm (by simp [Fin.revPerm_apply, Fin.rev_le_rev, hij])
 
-  have hla : la.length = n := List.length_finRange
-  have hlb : lb.length = la.length := List.length_mergeSort la
-
-  -- Construct the permutation
-  let σ : Equiv.Perm (Fin n) := ⟨
-    fun i ↦ lb.get (Fin.cast (by grind) i),
-    fun i ↦ ⟨lb.idxOf i, by grind [List.mem_mergeSort]⟩,
-    by grind [List.nodup_mergeSort, List.nodup_finRange],
-    by grind
-  ⟩
-
-  -- Our new sequence is obtained by composition of a and σ
-  let b := a ∘ σ
-  have hσ : b = a ∘ σ := by simp [b]
-
-  -- Show that b is antitone (i.e., sorted in non-increasing order)
-  have b_Antitone : Antitone b := by
-    intro i j i_le_j
-
-    simp [b, σ]
-
-    -- Define our relation, the ordering criterion that we used to sort the indices
-    let r : Fin n → Fin n → Prop := fun i j ↦ a i ≥ a j
-
-    -- Our relation must respect certain properties to ensure is maintained for all elements pairwise
-    haveI r_DecidableRel : DecidableRel r := inferInstance
-    haveI r_IsTotal : IsTotal (Fin n) r := ⟨by grind⟩
-    haveI r_IsTrans : IsTrans (Fin n) r := ⟨by grind⟩
-
-    have hp : List.Pairwise r lb := by grind [List.pairwise_mergeSort']
-    exact hp.rel_get_of_le i_le_j
-
-  exact ⟨b, ⟨σ, ⟨hσ, b_Antitone⟩⟩⟩
+lemma exists_antitone_perm {n : ℕ} (a : Fin n → ℝ) :
+    ∃ b, ∃ σ : Equiv.Perm (Fin n), b = a ∘ σ ∧ Antitone b := by
+  let σ : Equiv.Perm (Fin n) := Tuple.sort a * Fin.revPerm
+  use a ∘ σ, σ
+  constructor
+  · rfl
+  · simp only [σ, Equiv.Perm.coe_mul, Function.comp_def]
+    exact antitone_of_monotone_comp_rev a _ (Tuple.monotone_sort a)
 
 snip end
 
