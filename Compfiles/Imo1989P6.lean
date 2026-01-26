@@ -5,6 +5,7 @@ Authors: Constantin Seebach
 -/
 
 import Mathlib.Tactic
+import Mathlib.Data.Nat.Dist
 
 import ProblemExtraction
 
@@ -27,7 +28,7 @@ variable (n : ℕ)
 
 def T (x : Perm (Finset.Icc 1 (2*n))) :=
   ∃ i, ∃ _ : i ∈ Finset.Icc 1 (2*n-1),
-    |(x ⟨i, by grind⟩ : ℤ) - (x ⟨i+1, by grind⟩ : ℤ)| = n
+    (x ⟨i, by grind⟩ : ℕ).dist (x ⟨i+1, by grind⟩) = n
 
 snip begin
 
@@ -42,10 +43,11 @@ noncomputable def A :=
   {x | ¬ T n x}
 
 noncomputable def B :=
-  {⟨x, k⟩ : Perm (Finset.Icc 1 (2*n)) × Finset.Icc 2 (2*n-1) | ∀ j : Finset.Icc 1 (2*n-1), k.val=j.val ↔ |(x ⟨j, by grind⟩ : ℤ) - (x ⟨j+1, by grind⟩ : ℤ)| = n}
+  {⟨x, k⟩ : Perm (Finset.Icc 1 (2*n)) × Finset.Icc 2 (2*n-1) | ∀ j : Finset.Icc 1 (2*n-1), k.val=j.val ↔ (x ⟨j, by grind⟩ : ℕ).dist (x ⟨j+1, by grind⟩) = n}
 
 
-theorem unique_ndiff (i j : Finset.Icc 1 (2*n)) : |(i:ℤ)-(j:ℤ)| = n ↔ j = (if i ≤ n then i+n else i-n) := by
+theorem unique_ndiff (i j : Finset.Icc 1 (2*n)) : (i : ℕ).dist j = n ↔ j = (if i ≤ n then i+n else i-n) := by
+  simp only [Nat.dist_eq_max_sub_min]
   grind
 
 def fin_equiv : Finset.Icc 1 (2*n) ≃ Fin (2*n) := {
@@ -165,7 +167,7 @@ theorem partial_cycle.symm.apply_of_le [NeZero n] (x : Perm $ Finset.Icc 1 (2 * 
 def transform_A_to_B [NeZero n] : (A n) → (B n) := fun x ↦ by
   let x_1 := x.val 1
   let x_k : Finset.Icc 1 (2*n) := ⟨if x_1 ≤ n then x_1+n else x_1-n, by grind⟩
-  have ndiff : |(x_1:ℤ) - x_k| = n := by rw [unique_ndiff]
+  have ndiff : (x_1 : ℕ).dist x_k = n := by rw [unique_ndiff]
   let k := x.val.symm x_k
   let k_sub_1 : Finset.Icc 2 (2*n-1) := ⟨k-1, by {
     suffices k.val ≠ 1 ∧ k.val ≠ 2 by
@@ -211,7 +213,7 @@ def transform_A_to_B [NeZero n] : (A n) → (B n) := fun x ↦ by
       nth_rw 1 [partial_cycle.apply_of_lt _ _ _ _ (by rw [<-Subtype.coe_lt_coe]; lia)]
       nth_rw 1 [partial_cycle.apply_of_eq _ _ _ _ (by lia)]
       unfold x_1 at ndiff
-      rw [abs_sub_comm]
+      rw [Nat.dist_comm]
       rw [unique_ndiff] at ⊢ ndiff
       rw [<-ndiff]
       simp
@@ -234,7 +236,7 @@ def transform_A_to_B [NeZero n] : (A n) → (B n) := fun x ↦ by
 def transform_B_to_A [NeZero n] : (B n) → (A n) := fun ⟨⟨x, k⟩, h⟩ ↦ by
   let x_k := x ⟨k, by grind⟩
   let x_k_1 := x ⟨k+1, by grind⟩
-  have ndiff : |(x_k:ℤ) - x_k_1| = n := by
+  have ndiff : (x_k : ℕ).dist x_k_1 = n := by
     unfold B at h
     simp only [Subtype.forall, Set.mem_setOf_eq] at h
     apply (h _ _).mp
@@ -262,7 +264,7 @@ def transform_B_to_A [NeZero n] : (B n) → (A n) := fun ⟨⟨x, k⟩, h⟩ ↦
     nth_rw 1 [partial_cycle.symm.apply_of_le _ _ _ _ (by rfl) (by simpa using igt)]
     nth_rw 1 [partial_cycle.symm.apply_of_gt _ _ _ _ (by simp)]
     simp only [ne_eq]
-    rw [abs_sub_comm] at ⊢ ndiff
+    rw [Nat.dist_comm] at ⊢ ndiff
     rw [unique_ndiff] at ⊢ ndiff
     rw [<-ndiff]
     unfold x_k
@@ -384,12 +386,11 @@ theorem embed_B.not_Surjective [NeZero n] : ¬ Function.Surjective (embed_B n) :
       unfold swap2
       split_ifs <;> grind
   }
-  have Tx1 : |(x ⟨1, by grind⟩ : ℤ) - (x ⟨1+1, by grind⟩ : ℤ)| = n := by
+  have Tx1 : (x ⟨1, by grind⟩ : ℕ).dist (x ⟨1+1, by grind⟩) = n := by
     unfold x swap2
-    simp only [coe_fn_mk, OfNat.one_ne_ofNat, ↓reduceIte, Nat.left_eq_add, Nat.reduceAdd,
-      Nat.cast_add, Nat.cast_one]
+    simp only [coe_fn_mk, OfNat.one_ne_ofNat, ↓reduceIte, Nat.left_eq_add, Nat.reduceAdd]
     rw [ite_eq_right_iff.mpr (by grind)]
-    simp
+    simp [Nat.dist_eq_sub_of_le]
   use ⟨x, by unfold T; exists 1, (by grind)⟩
   by_contra ⟨⟨⟨y, k⟩, h⟩, h'⟩
   unfold embed_B at h'
