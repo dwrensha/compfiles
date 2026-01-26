@@ -50,11 +50,11 @@ theorem unique_ndiff (i j : Finset.Icc 1 (2*n)) : (i : ℕ).dist j = n ↔ j = (
   simp only [Nat.dist_eq_max_sub_min]
   grind
 
-def fin_equiv : Finset.Icc 1 (2*n) ≃ Fin (2*n) := {
+def fin_equiv : Finset.Icc 1 (2*n) ≃ Fin (2*n) where
   toFun x := ⟨x.val-1, by grind⟩
   invFun x := ⟨x.val+1, by grind⟩
   left_inv x := by grind
-}
+  right_inv x := by grind
 
 def perm_fin_equiv : Perm (Finset.Icc 1 (2*n)) ≃ Perm (Fin (2*n)) := equivCongr (fin_equiv n) (fin_equiv n)
 
@@ -66,18 +66,11 @@ theorem one_le_val (k : Finset.Icc 1 (2 * n)) : 1 ≤ k.val := by grind
 theorem val_le_2n (k : Finset.Icc 1 (2 * n)) : k.val ≤ 2*n := by grind
 
 
-def partial_cycle (k : Finset.Icc 1 (2 * n)) : Perm $ Perm $ Finset.Icc 1 (2 * n) := {
+def partial_cycle (k : Finset.Icc 1 (2 * n)) : Perm $ Perm $ Finset.Icc 1 (2 * n) where
   toFun x := (perm_fin_equiv n).symm ((perm_fin_equiv n) x * Fin.cycleRange (fin_equiv n k))
   invFun x := (perm_fin_equiv n).symm ((perm_fin_equiv n) x * (Fin.cycleRange (fin_equiv n k)).symm)
-  left_inv x := by
-    simp only [apply_symm_apply]
-    rw [mul_assoc]
-    simp
-  right_inv x := by
-    simp only [apply_symm_apply]
-    rw [mul_assoc]
-    simp
-}
+  left_inv x := by simp [mul_assoc]
+  right_inv x := by simp [mul_assoc]
 
 theorem partial_cycle.apply_of_eq [NeZero n] (x : Perm $ Finset.Icc 1 (2 * n)) (k i : Finset.Icc 1 (2 * n)) (h : i = k)
     : (partial_cycle n k x) i = x 1 := by
@@ -367,7 +360,7 @@ def embed_B : (B n) ↪ {x | T n x} := {
 }
 
 theorem embed_B.not_Surjective [NeZero n] : ¬ Function.Surjective (embed_B n) := by
-  let npos := Nat.pos_of_neZero n
+  have npos := Nat.pos_of_neZero n
   rw [Function.Surjective, not_forall]
   let swap2 (i : Finset.Icc 1 (2*n)) : Finset.Icc 1 (2*n) :=
     if i.val = 2 then
