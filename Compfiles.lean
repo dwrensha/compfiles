@@ -92,6 +92,7 @@ import Compfiles.Imo1989P1
 import Compfiles.Imo1989P5
 import Compfiles.Imo1989P6
 import Compfiles.Imo1990P3
+import Compfiles.Imo1990P4
 import Compfiles.Imo1991P2
 import Compfiles.Imo1991P5
 import Compfiles.Imo1991P6
