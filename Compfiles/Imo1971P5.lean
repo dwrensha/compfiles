@@ -36,8 +36,7 @@ lemma norm_one_infinity : {p : Pt | ‖p‖ = 1}.Infinite := by
     intro n
     rw [sub_nonneg]
     norm_cast
-    rw [one_le_pow_iff (by norm_num)]
-    apply PNat.one_le
+    exact PNat.one_le (n ^ 2)
   have hf' : (Set.range f) ⊆ {p : Pt | ‖p‖ = 1} := by
     intro p hp
     rcases hp with ⟨n, hn⟩
@@ -73,8 +72,7 @@ lemma exists_three_of_infinite
   have h₃ : (s \ {p, q}).Nonempty := by
     apply Set.Infinite.nonempty
     apply Set.Infinite.diff hs
-    rw [Set.finite_insert]
-    apply Set.finite_singleton
+    exact Set.toFinite {p, q}
   rcases h₃ with ⟨r, hr⟩
   rw [Set.mem_diff] at hq hr
   rw [Set.mem_insert_iff] at hr
@@ -208,11 +206,7 @@ problem imo1971_p5 (m : ℕ) :
       rw [h'S'']
       apply Set.Finite.image
       exact hS'₂
-    have hf' : Function.Injective f := by
-      intro s t hst
-      rw [hf] at hst
-      dsimp at hst
-      exact add_right_cancel hst
+    have hf' : Function.Injective f := add_left_injective d
     have hf'' : ∀ s ∈ S', {t | t ∈ f '' S' ∧ dist (f s) t = 1} = f '' {t | t ∈ S' ∧ dist s t = 1} := by
       intro s hs
       ext t
