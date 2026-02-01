@@ -94,8 +94,7 @@ problem imo1996_p6 {p q n : ℕ} (x : ℕ → ℤ)
     have : ∃ x' : ℕ → ℤ, ∀ i ≤ n, x i = x' i * w := by
       use (fun i ↦ (x i) / w)
       intro i hi
-      simp
-      exact Eq.symm (Int.ediv_mul_cancel (h_w_dvd_xi i hi))
+      exact (Int.ediv_mul_cancel (h_w_dvd_xi i hi)).symm
 
     obtain ⟨x', hx'⟩ := this
     have h₁' : 0 < p' := by rw [hp'] at h₁ ; exact Nat.pos_of_mul_pos_right h₁
@@ -185,8 +184,7 @@ problem imo1996_p6 {p q n : ℕ} (x : ℕ → ℤ)
 
   have h_h_eq_p_add_q : h = p + q := by
     rw [hh, mul_comm] at h_p_add_q_mul_k_eq_n
-    apply mul_left_cancel₀ (Nat.ne_zero_of_lt h_k_pos) at h_p_add_q_mul_k_eq_n
-    exact h_p_add_q_mul_k_eq_n.symm
+    exact (Nat.eq_of_mul_eq_mul_left h_k_pos h_p_add_q_mul_k_eq_n).symm
 
   let d := fun i ↦ x (i + h) - x i
   have h_h_dvd_di : ∀ i ≤ n - h, ↑h ∣ d i := by
@@ -214,8 +212,7 @@ problem imo1996_p6 {p q n : ℕ} (x : ℕ → ℤ)
       calc
         (↑t : ℤ) * ↑p + (↑h - ↑t) * -↑q = ↑t * (↑p + ↑q) - ↑h * ↑q := by grind
         _ = (↑t - ↑q) * ↑h := by rw [h_h_eq_p_add_q] ; grind
-    rw [this]
-    exact Int.dvd_mul_left (↑t - ↑q) ↑h
+    exact Dvd.intro_left (↑t - ↑q) this.symm
 
   have h_di_delta : ∀ i < n - h, d (i + 1) - d i ∈ { z : ℤ | z = 0 ∨ z = h ∨ z = -h } := by
     intro i hi
@@ -308,8 +305,7 @@ problem imo1996_p6 {p q n : ℕ} (x : ℕ → ℤ)
         have h_t_in_I₃ : t ∈ I₃ := Finset.min'_mem I₃ h_I3_nonempty
         simp at h_t_in_I₃
         exact (Finset.mem_filter.mp h_t_in_I₃).2
-      rw [← h_t_pred_sign] at h_t_sign
-      exact h_t_sign.symm
+      exact ne_of_eq_of_ne h_t_pred_sign h_t_sign.symm
     have h_t_in_I₃ : t ∈ I₃ := Finset.min'_mem I₃ h_I3_nonempty
     have h_t_lt_nh : t < n - h + 1 := Finset.mem_range.mp (Finset.mem_of_mem_filter t h_t_in_I₃)
     obtain ⟨v, hv⟩ := exists_eq_mul_left_of_dvd (h_h_dvd_di t (Nat.le_of_lt_succ h_t_lt_nh))
