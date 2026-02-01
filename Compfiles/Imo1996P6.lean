@@ -164,8 +164,7 @@ problem imo1996_p6 {p q n : ℕ} (x : ℕ → ℤ)
     have h2: r = q := by
       simp [h1, mul_comm] at h_rp_eq_sq
       exact h_rp_eq_sq.resolve_right (Nat.ne_zero_of_lt h₁)
-    have h3: p + q = n := by linarith
-    linarith
+    lia
 
   have h_p_add_q_mul_k_eq_n : (p + q) * k = n := by
     rw [hk, mul_comm, mul_assoc] at h_rp_eq_sq
