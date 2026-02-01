@@ -28,16 +28,17 @@ namespace Imo1996P6
 
 snip begin
 
-lemma one_lt_gcd_of_not_coprime {p q : ℕ} (h₁ : 0 < p) (h₂ : ¬Nat.Coprime p q) : 1 < p.gcd q := by
-  simp at h₂
-  have h_ne_zero : p.gcd q ≠ 0 := gcd_ne_zero_of_left (ne_zero_of_lt h₁)
-  exact Nat.one_lt_iff_ne_zero_and_ne_one.mpr ⟨h_ne_zero, h₂⟩
+lemma one_lt_gcd_of_not_coprime {p q : ℕ} (h₁ : 0 < p) (h₂ : ¬Nat.Coprime p q) : 1 < p.gcd q :=
+  Nat.one_lt_iff_ne_zero_and_ne_one.mpr ⟨(Nat.gcd_pos_of_pos_left q h₁).ne', by simp_all⟩
 
-lemma dist_gt_one_of_ne_sign {p q : ℤ} (h₁ : p.sign ≠ q.sign) (h₂ : p ≠ 0) (h₃ : q ≠ 0) : 1 < |p - q| := by grind
+lemma dist_gt_one_of_ne_sign {p q : ℤ} (h₁ : p.sign ≠ q.sign) (h₂ : p ≠ 0) (h₃ : q ≠ 0) : 1 < |p - q| := by
+  grind
 
-lemma diff_ne_one_of_dist_gt_one {p q : ℤ} (h : 1 < |p - q|) : p - q ≠ 1 ∧ p - q ≠ -1 := by grind
+lemma diff_ne_pm_one_of_dist_gt_one {p q : ℤ} (h : 1 < |p - q|) : p - q ≠ 1 ∧ p - q ≠ -1 := by
+  grind
 
-lemma ne_zero_of_mul {p q r : ℤ} (h₁ : p ≠ 0) (h₂ : p = q * r) : q ≠ 0 ∧ r ≠ 0 := by grind
+lemma ne_zero_of_eq_mul {a b c : ℤ} (h₁ : a ≠ 0) (h₂ : a = b * c) : b ≠ 0 ∧ c ≠ 0 := by
+  grind
 
 lemma sum_bivalued {p q : ℤ} (s : Finset (ℕ)) (f : ℕ → ℤ) (h : ∀ i ∈ s, f i = p ∨ f i = q) :
   ∃ r : ℕ, ∑ i ∈ s, f i = r * p + (s.card - r) * q ∧ r ≤ s.card := by
@@ -103,14 +104,9 @@ problem imo1996_p6 {p q n : ℕ} (x : ℕ → ℤ)
       have h_lt_p : p' < p := by rw [hp'] ; exact (Nat.lt_mul_iff_one_lt_right h₁').mpr h_one_lt_w
       have h_lt_q : q' < q := by rw [hq'] ; exact (Nat.lt_mul_iff_one_lt_right h₂').mpr h_one_lt_w
       exact Nat.lt_trans (Nat.add_lt_add h_lt_p h_lt_q) h₄
-    have h₅' : x' 0 = 0 := by
-      have := hx' 0
-      rw [h₅] at this
-      exact eq_zero_of_ne_zero_of_mul_right_eq_zero (Int.ofNat_ne_zero.mpr (Nat.ne_zero_of_lt h_one_lt_w)) (this (Nat.zero_le n)).symm
-    have h₆' : x' n = 0 := by
-      have := hx' n
-      rw [h₆] at this
-      exact eq_zero_of_ne_zero_of_mul_right_eq_zero (Int.ofNat_ne_zero.mpr (Nat.ne_zero_of_lt h_one_lt_w)) (this (Nat.le_refl n)).symm
+    have h_w_ne : (w : ℤ) ≠ 0 := Int.ofNat_ne_zero.mpr (Nat.ne_zero_of_lt h_one_lt_w)
+    have h₅' : x' 0 = 0 := eq_zero_of_ne_zero_of_mul_right_eq_zero h_w_ne ((hx' 0 (Nat.zero_le n)).symm.trans h₅)
+    have h₆' : x' n = 0 := eq_zero_of_ne_zero_of_mul_right_eq_zero h_w_ne ((hx' n le_rfl).symm.trans h₆)
     have h₇' : ∀ i < n, x' (i + 1) - x' i = p' ∨ x' (i + 1) - x' i = -q' := by
       intro i hi
       cases' h₇ i hi with hp hq
@@ -191,7 +187,7 @@ problem imo1996_p6 {p q n : ℕ} (x : ℕ → ℤ)
     intro i hi
     unfold d
     have : x (i + h) - x i = ∑ j ∈ Finset.Ico i (i + h), (x (j + 1) - x j) := by
-      have hlt : i ≤ i + h := by omega
+      have hlt : i ≤ i + h := by lia
       rw [←h_tsum_i (i + h), ←h_tsum_i, sub_eq_iff_eq_add]
       conv_rhs =>
         rw [add_comm]
@@ -201,7 +197,7 @@ problem imo1996_p6 {p q n : ℕ} (x : ℕ → ℤ)
         intro j hj
         have h_j_lt_n : j < n := by
           rw [Finset.mem_Ico] at hj
-          omega
+          lia
         exact h₇ j h_j_lt_n
       obtain ⟨t, ht⟩ := sum_bivalued (Finset.Ico i (i + h)) (fun j ↦ x (j + 1) - x j) this
       use t
@@ -222,8 +218,8 @@ problem imo1996_p6 {p q n : ℕ} (x : ℕ → ℤ)
       grind only
     rw [this]
     have h₈ : ∀ i < n, g i = p ∨ g i = -q := h₇
-    have h_gih := h₈ (i + h) (by omega)
-    have h_gi := h₈ i (by omega)
+    have h_gih := h₈ (i + h) (by lia)
+    have h_gi := h₈ i (by lia)
     cases' h_gih with h_gihp h_gihq
     · cases' h_gi with h_gip h_giq
       · rw [h_gihp, h_gip]
@@ -240,16 +236,7 @@ problem imo1996_p6 {p q n : ℕ} (x : ℕ → ℤ)
   -- First, if there is any d i = 0, then this trivially gives the proof
   by_cases! h_di_zero : ∃i ≤ n - h, d i = 0
   · obtain ⟨i, hi, hdi⟩ := h_di_zero
-    use i, i+h
-    constructor
-    · exact Nat.zero_le i
-    constructor
-    · exact (lt_add_iff_pos_right i).mpr h_pos
-    constructor
-    · omega
-    constructor
-    · grind only
-    exact Eq.symm (Int.eq_of_sub_eq_zero hdi)
+    exact ⟨i, i+h, Nat.zero_le i, (lt_add_iff_pos_right i).mpr h_pos, by lia, by grind only, (Int.eq_of_sub_eq_zero hdi).symm⟩
 
 
   -- Here we have ∀ i, d i ≠ 0. We complete the proof by contradiction
@@ -264,54 +251,29 @@ problem imo1996_p6 {p q n : ℕ} (x : ℕ → ℤ)
     let s0 := (d 0).sign
     let I₃ := I₂.filter (fun j ↦ (d j).sign ≠ s0)
     have h_I3_nonempty : I₃.Nonempty := by
-      obtain ⟨i, hi, h_di_sign⟩ := h_pos_and_neg.1
-      obtain ⟨j, hj, h_dj_sign⟩ := h_pos_and_neg.2
-      by_cases h_di_sign_eq_s0 : (d i).sign = s0
-      · have : (d j).sign ≠ (d i).sign := by grind
-        replace : (d j).sign ≠ s0 := by rw [h_di_sign_eq_s0] at this ; exact this
-        replace : j ∈ I₃ := by
-          exact Finset.mem_filter.mpr ⟨hj, this⟩
-        exact I₃.nonempty_def.mpr (Exists.intro j this)
-      · have : (d i).sign ≠ s0 := h_di_sign_eq_s0
-        replace : i ∈ I₃ := by
-          exact Finset.mem_filter.mpr ⟨hi, this⟩
-        exact I₃.nonempty_def.mpr (Exists.intro i this)
+      obtain ⟨i, hi, h_di_le⟩ := h_pos_and_neg.1
+      obtain ⟨j, hj, h_dj_ge⟩ := h_pos_and_neg.2
+      have h_di_neg : d i < 0 := lt_of_le_of_ne h_di_le (h_di_zero i (by simp [I₂] at hi; lia))
+      have h_dj_pos : 0 < d j := lt_of_le_of_ne h_dj_ge (h_di_zero j (by simp [I₂] at hj; lia)).symm
+      have h_diff_sign : (d i).sign ≠ (d j).sign := by simp [Int.sign_eq_one_of_pos h_dj_pos, Int.sign_eq_neg_one_of_neg h_di_neg]
+      rcases eq_or_ne (d i).sign s0 with h_eq | h_ne
+      · exact ⟨j, Finset.mem_filter.mpr ⟨hj, fun h ↦ h_diff_sign (h_eq ▸ h.symm)⟩⟩
+      · exact ⟨i, Finset.mem_filter.mpr ⟨hi, h_ne⟩⟩
     let t := I₃.min' h_I3_nonempty
-    have h_t_pos : 0 < t := by
-      by_contra h_t_zero
-      have h_t_zero : t = 0 := Nat.eq_zero_of_le_zero (Nat.le_of_not_gt h_t_zero)
-      have h_t_in_I₃ : t ∈ I₃ := Finset.min'_mem I₃ h_I3_nonempty
-      have : (d t).sign ≠ s0 := by
-        simp at t
-        exact (Finset.mem_filter.mp h_t_in_I₃).2
-      rw [h_t_zero] at this
-      exact Ne.elim this (by rfl)
-
-    have h_diff_sgn : (d (t - 1)).sign ≠ (d t).sign := by
-      have h_t_pred_not_in_I₃ : t - 1 ∉ I₃ := by
-        by_contra h_in
-        have h_t_min : t ≤ t - 1 := I₃.min'_le (t - 1) h_in
-        exact Nat.not_le_of_lt (Nat.sub_one_lt_of_lt h_t_pos) h_t_min
-      have h_t_pred_in_I₂ : t - 1 ∈ I₂ := by
-        have : t ∈ I₃ := Finset.min'_mem I₃ h_I3_nonempty
-        replace : t ∈ I₂ := Finset.mem_of_mem_filter t this
-        replace : t < n - h + 1 := Finset.mem_range.mp this
-        replace : t - 1 < n - h + 1:= Nat.sub_lt_of_lt this
-        exact Finset.mem_range.mpr this
-      have h_t_pred_sign : (d (t - 1)).sign = s0 := by
-        simp at h_t_pred_not_in_I₃
-        exact Classical.by_contradiction (fun h_contra ↦ h_t_pred_not_in_I₃ (Finset.mem_filter.mpr ⟨h_t_pred_in_I₂, h_contra⟩))
-      have h_t_sign : (d t).sign ≠ s0 := by
-        have h_t_in_I₃ : t ∈ I₃ := Finset.min'_mem I₃ h_I3_nonempty
-        simp at h_t_in_I₃
-        exact (Finset.mem_filter.mp h_t_in_I₃).2
-      exact ne_of_eq_of_ne h_t_pred_sign h_t_sign.symm
     have h_t_in_I₃ : t ∈ I₃ := Finset.min'_mem I₃ h_I3_nonempty
+    have h_t_pos : 0 < t := Nat.pos_of_ne_zero fun h_eq ↦ (Finset.mem_filter.mp h_t_in_I₃).2 (h_eq ▸ rfl)
+
+    have h_t_in_I₂ : t ∈ I₂ := Finset.mem_of_mem_filter t h_t_in_I₃
+    have h_t_pred_in_I₂ : t - 1 ∈ I₂ := Finset.mem_range.mpr (Nat.sub_lt_of_lt (Finset.mem_range.mp h_t_in_I₂))
+    have h_t_pred_not_in_I₃ : t - 1 ∉ I₃ := fun h_in ↦ Nat.not_le_of_lt (Nat.sub_one_lt_of_lt h_t_pos) (I₃.min'_le _ h_in)
+    have h_diff_sgn : (d (t - 1)).sign ≠ (d t).sign := by
+      have h_t_pred_sign : (d (t - 1)).sign = s0 := by_contra fun h ↦ h_t_pred_not_in_I₃ (Finset.mem_filter.mpr ⟨h_t_pred_in_I₂, h⟩)
+      exact ne_of_eq_of_ne h_t_pred_sign (Finset.mem_filter.mp h_t_in_I₃).2.symm
     have h_t_lt_nh : t < n - h + 1 := Finset.mem_range.mp (Finset.mem_of_mem_filter t h_t_in_I₃)
     obtain ⟨v, hv⟩ := exists_eq_mul_left_of_dvd (h_h_dvd_di t (Nat.le_of_lt_succ h_t_lt_nh))
-    obtain ⟨w, hw⟩ := exists_eq_mul_left_of_dvd (h_h_dvd_di (t-1) (by omega))
-    have h_v_ne_zero : v ≠ 0 := (ne_zero_of_mul (h_di_zero t (Nat.le_of_lt_succ h_t_lt_nh)) hv).1
-    have h_w_ne_zero : w ≠ 0 := (ne_zero_of_mul (h_di_zero (t-1) (by omega)) hw).1
+    obtain ⟨w, hw⟩ := exists_eq_mul_left_of_dvd (h_h_dvd_di (t-1) (by lia))
+    have h_v_ne_zero : v ≠ 0 := (ne_zero_of_eq_mul (h_di_zero t (Nat.le_of_lt_succ h_t_lt_nh)) hv).1
+    have h_w_ne_zero : w ≠ 0 := (ne_zero_of_eq_mul (h_di_zero (t-1) (by lia)) hw).1
     replace h_diff_sgn : v.sign ≠ w.sign := by
       have : (↑h : ℤ).sign = 1 := Int.sign_eq_one_of_pos (Int.natCast_pos.mpr h_pos)
       rw [hv, hw, Int.sign_mul, Int.sign_mul, this, mul_one, mul_one] at h_diff_sgn
@@ -321,84 +283,30 @@ problem imo1996_p6 {p q n : ℕ} (x : ℕ → ℤ)
     have : d t - d (t - 1) = (v - w) * ↑h := by
       rw [hv, hw, ←sub_mul]
     repeat rw [this] at h_di_delta_t_minus_1
-    rcases h_di_delta_t_minus_1 with h_zero | h_eq_pos | h_eq_neg
-    · have : v = w := by
-        rw [mul_eq_zero] at h_zero
-        cases' h_zero with h_1 h_zero
-        · exact Int.eq_of_sub_eq_zero h_1
-        · by_contra ; linarith
-      exact Ne.elim h_diff_sgn (congrArg Int.sign this)
-    · have : v - w = 1 := by
-        nth_rw 2 [← Int.one_mul ↑h] at h_eq_pos
-        exact mul_right_cancel₀ (Int.natCast_ne_zero_iff_pos.mpr h_pos) h_eq_pos
-      exact Ne.elim (diff_ne_one_of_dist_gt_one (dist_gt_one_of_ne_sign h_diff_sgn h_v_ne_zero h_w_ne_zero)).1 this
-    · have : w - v = 1 := by
-        nth_rw 2 [← Int.one_mul ↑h] at h_eq_neg
-        rw [← neg_eq_iff_eq_neg, ←neg_mul, neg_sub] at h_eq_neg
-        exact mul_right_cancel₀ (Int.natCast_ne_zero_iff_pos.mpr h_pos) h_eq_neg
-      exact Ne.elim (diff_ne_one_of_dist_gt_one (dist_gt_one_of_ne_sign h_diff_sgn.symm h_w_ne_zero h_v_ne_zero)).1 this
+    have h_h_ne : (h : ℤ) ≠ 0 := Int.natCast_ne_zero_iff_pos.mpr h_pos
+    rcases h_di_delta_t_minus_1 with h_zero | h_eq_h | h_eq_neg_h
+    · exact h_diff_sgn (congrArg Int.sign (Int.eq_of_sub_eq_zero ((mul_eq_zero.mp h_zero).resolve_right (by linarith))))
+    · exact (diff_ne_pm_one_of_dist_gt_one (dist_gt_one_of_ne_sign h_diff_sgn h_v_ne_zero h_w_ne_zero)).1
+        (mul_right_cancel₀ h_h_ne (by rwa [Int.one_mul]))
+    · have : w - v = 1 := mul_right_cancel₀ h_h_ne (by linarith)
+      exact (diff_ne_pm_one_of_dist_gt_one (dist_gt_one_of_ne_sign h_diff_sgn.symm h_w_ne_zero h_v_ne_zero)).1 this
 
-  let Ik := I₂.filter (fun i ↦ i ≤ n - h ∧ h ∣ i)
-  have h_Ik_nonempty : Ik.Nonempty := by
-    have h_dvd_0 : h ∣ 0 := by simp
-    have h_zero_in_I : 0 ∈ I₂ := Finset.mem_range.mpr (Nat.zero_lt_succ (n - h))
-    have h_mem_Ik : 0 ∈ Ik := by
-      exact Finset.mem_filter.mpr ⟨h_zero_in_I, Nat.zero_le (n - h), h_dvd_0⟩
-    use 0
-  have h_di_pos_or_neg : (∀ i ∈ Ik, 0 < d i) ∨ (∀ i ∈ Ik, d i < 0) := by
-    cases' h_di_pos_or_neg with h_pos h_neg
-    · left ; intro i hi ; exact h_pos i (Finset.mem_of_mem_filter i hi)
-    · right ; intro i hi ; exact h_neg i (Finset.mem_of_mem_filter i hi)
-  have h_di_sum_eq_zero : ∑ i ∈ Ik, d i = 0 := by
-    have hs₁: ∑ i ∈ Ik, d i = ∑ i ∈ Finset.range k, d (i * h) := by
-      have : Ik = Finset.image (fun i ↦ i * h) (Finset.range k) := by
-        ext j
-        constructor
-        · intro hj
-          rw [Finset.mem_filter] at hj
-          obtain ⟨m, hm⟩ := exists_eq_mul_left_of_dvd hj.2.2
-          have : j < n := by grind only [= Finset.mem_range]
-          have h_m_in_range : m < k := by
-            rw [hh, hm] at this
-            exact (Nat.mul_lt_mul_right h_pos).mp this
-          exact Finset.mem_image.mpr ⟨m, Finset.mem_range.mpr h_m_in_range, hm.symm⟩
-        · intro hj
-          rw [Finset.mem_image] at hj
-          obtain ⟨m, hm_range, hm_eq⟩ := hj
-          rw [Finset.mem_filter]
-          have : j ≤ n - h := by
-            have : m < k := List.mem_range.mp hm_range
-            have : m ≤ k - 1 := (Nat.le_sub_one_iff_lt h_k_pos).mpr this
-            calc
-              j = m * h := hm_eq.symm
-              _ ≤ (k - 1) * h := (Nat.mul_le_mul_right_iff h_pos).mpr this
-              _ = n - h := by rw [hh] ; exact Nat.sub_one_mul k h
-          constructor
-          · exact Finset.mem_range.mpr (by omega)
-          · exact ⟨this, Dvd.intro_left m hm_eq⟩
-      rw [this]
-      exact Finset.sum_image (fun i hi j hj h_eq ↦ Nat.eq_of_mul_eq_mul_right h_pos h_eq)
-    have hs₂: ∑ i ∈ Finset.range k, d (i * h) = x n - x 0 := by
-      let f := fun i ↦ x (i * h)
-      simp [d]
-      have hf₁: ∀ i, x (i * h + h) = f (i + 1) := by
-        intro i
-        unfold f
-        congr
-        exact Eq.symm (Nat.succ_mul i h)
-      have hf₂: ∀ i, x (i * h) = f i := by intro i ; rfl
-      conv_lhs => arg 1 ; arg 2 ; intro j ; rw [hf₁ j]
-      conv_lhs => arg 2 ; arg 2 ; intro j ; rw [hf₂ j]
-      rw [← Finset.sum_sub_distrib (fun i ↦ f (i + 1)) f, Finset.sum_range_sub f]
-      unfold f
-      simp [hh]
-    rw [hs₁, hs₂, h₅, h₆, sub_zero]
-
-  rcases h_di_pos_or_neg with h_pos | h_neg
-  · have := Finset.sum_pos h_pos h_Ik_nonempty
-    exact this.ne h_di_sum_eq_zero.symm
-  · have := Finset.sum_neg h_neg h_Ik_nonempty
-    exact this.ne h_di_sum_eq_zero
+  -- The sum ∑ i < k, d(i*h) = x(n) - x(0) = 0, but all terms have the same sign
+  have h_range_nonempty : (Finset.range k).Nonempty := ⟨0, Finset.mem_range.mpr h_k_pos⟩
+  have h_k_sub_mul : (k - 1) * h = n - h := by rw [hh]; exact Nat.sub_one_mul k h
+  have h_mult_in_I₂ : ∀ i < k, i * h ∈ I₂ := fun i hi ↦ Finset.mem_range.mpr (by
+    calc i * h ≤ (k - 1) * h := Nat.mul_le_mul_right h ((Nat.le_sub_one_iff_lt h_k_pos).mpr hi)
+      _ = n - h := h_k_sub_mul
+      _ < n - h + 1 := Nat.lt_succ_self _)
+  have h_di_pos_or_neg' : (∀ i ∈ Finset.range k, 0 < d (i * h)) ∨ (∀ i ∈ Finset.range k, d (i * h) < 0) :=
+    h_di_pos_or_neg.imp (fun hp i hi ↦ hp (i * h) (h_mult_in_I₂ i (Finset.mem_range.mp hi)))
+      (fun hn i hi ↦ hn (i * h) (h_mult_in_I₂ i (Finset.mem_range.mp hi)))
+  have h_sum_eq_zero : ∑ i ∈ Finset.range k, d (i * h) = 0 := by
+    have heq : ∀ i, d (i * h) = x ((i + 1) * h) - x (i * h) := fun i ↦ by simp only [d]; ring_nf
+    simp_rw [heq, Finset.sum_range_sub (fun i ↦ x (i * h)), Nat.zero_mul, hh.symm, h₅, h₆, sub_zero]
+  rcases h_di_pos_or_neg' with h_pos | h_neg
+  · exact (Finset.sum_pos h_pos h_range_nonempty).ne h_sum_eq_zero.symm
+  · exact (Finset.sum_neg h_neg h_range_nonempty).ne h_sum_eq_zero
 termination_by p
 decreasing_by
   rw [hp']
