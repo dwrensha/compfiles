@@ -63,10 +63,7 @@ lemma Nat.getI_digits_add (m n : ℕ) {b : ℕ} (hb : 2 ≤ b)
     intro i
     by_cases! hi : i = 0
     · rw [hi, List.getI_cons_zero, List.getI_cons_zero, List.getI_cons_zero]
-      rw [Nat.add_mod]
-      symm
-      apply Nat.mod_eq_of_lt
-      exact h0
+      exact (Nat.add_mod_of_add_mod_lt h0).symm
     · rcases Nat.exists_eq_succ_of_ne_zero hi with ⟨i', hi'⟩
       rw [hi', List.getI_cons_succ, List.getI_cons_succ, List.getI_cons_succ]
       have hm' : m / b < m := by
@@ -79,11 +76,7 @@ lemma Nat.getI_digits_add (m n : ℕ) {b : ℕ} (hb : 2 ≤ b)
       have h'm'n' := h' (m / b) hm' (n / b) h'mn
       rw [h'm'n' i']
       congr
-      rw [Nat.add_div (by lia)]
-      have h0' : ¬ b ≤ m % b + n % b := by
-        push_neg
-        exact h0
-      rw [if_neg h0', add_zero]
+      exact (Nat.add_div_eq_of_add_mod_lt h0).symm
 
 lemma Nat.eq_iff_getI_digits_eq (m n b: ℕ)
   : m = n ↔ (∀ i : ℕ, (b.digits m).getI i  = (b.digits n).getI i) := by
