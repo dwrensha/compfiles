@@ -19,7 +19,7 @@ if there is a constant C such that |xᵢ| ≤ C for every i ≥ 0.
 Given any real number a > 1, construct a bounded infinite sequence
 x₀,x₁,x₂,... such that
 
-                  |xᵢ - xⱼ|⬝|i - j| ≥ 1
+                  |xᵢ - xⱼ|⬝|i - j|ᵃ ≥ 1
 
 for every pair of distinct nonnegative integers i, j.
 -/
@@ -33,7 +33,7 @@ determine solution (a : ℝ) (ha : 1 < a) : ℕ → ℝ := sorry
 problem imo1991_p6 (a : ℝ) (ha : 1 < a) :
     Bounded (solution a ha) ∧
     ∀ i j, i ≠ j →
-      1 ≤ |solution a ha i - solution a ha j| * |(i:ℝ) - j| := by
+      1 ≤ |solution a ha i - solution a ha j| * |(i:ℝ) - j|^a := by
   sorry
 
 
