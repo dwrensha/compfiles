@@ -37,15 +37,7 @@ snip begin
 
 def f (a b c : ℝ) : ℝ → ℝ := fun x ↦ a * x^2 + (b-1)* x + c
 
-lemma f_continuous (a b c : ℝ) : Continuous (f a b c) := by
- show Continuous (fun x ↦ a * x^2 + (b-1)* x + c)
- apply Continuous.add
- · apply Continuous.add
-   · apply Continuous.mul
-     · exact continuous_const
-     exact continuous_pow 2
-   exact continuous_mul_left (b - 1)
- exact continuous_const
+lemma f_continuous (a b c : ℝ) : Continuous (f a b c) := by unfold f; fun_prop
 
 lemma IVT {g : ℝ → ℝ} (hg : Continuous g) {a b : ℝ} (ha : g a ≤ 0) (hb : g b ≥ 0) : ∃ z : ℝ, g z = 0 := by
   by_cases hab : a ≤ b
