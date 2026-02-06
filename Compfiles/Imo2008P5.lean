@@ -296,7 +296,7 @@ lemma claim (n k : ℕ) (hn : 0 < n) (hnk : n ≤ k) (_he : Even (k - n))
           have hij : (⟨(f.val j).val, hM j⟩ : Fin n) = i := Fin.ext hfi
           have : (toggle x j).val = (toggle y j).val := congrArg (fun h => (h j).val) hxy'
           simp [toggle, hij, hj, hj₂] at this; lia
-      have hi2n : ∀ i : Fin n, (i : ℕ) < 2 * n := fun i => by nlinarith [i.is_lt, hn]
+      have hi2n : ∀ i : Fin n, (i : ℕ) < 2 * n := fun i => by lia
       have hmem_selected : ∀ cs : S, ∀ i : Fin n, ∀ ji : {j : Fin k | f.val j = ⟨i, hi2n i⟩},
           ji ∈ (cs i).1 ↔ ji.1 ∈ selected cs i :=
         fun cs i ji => ⟨fun h => ⟨ji, h, rfl⟩, fun ⟨u, hu, huv⟩ => (Subtype.ext huv) ▸ hu⟩
@@ -397,7 +397,8 @@ lemma lemma1 (α : Type) (A B : Set α) (hA : A.Finite) (hB : B.Finite)
     rw [Finset.sum_congr rfl (fun b _ => h2 b), Finset.sum_const, Finset.card_univ, smul_eq_mul]
   rw [← Nat.card_coe_set_eq, ← Nat.card_coe_set_eq (s := A)]
   change Nat.card {x // B x} * n = Nat.card {x // A x}
-  rw [Nat.card_eq_fintype_card, Nat.card_eq_fintype_card]; linarith
+  rw [Nat.card_eq_fintype_card, Nat.card_eq_fintype_card]
+  lia
 
 snip end
 
