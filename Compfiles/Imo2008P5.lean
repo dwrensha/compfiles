@@ -110,16 +110,99 @@ def ψ (n k : ℕ) : { f // NSequence n k f } → { f // MSequence n k f } :=
           omega
     ⟨f', mf'⟩
 
+private lemma symmDiff_singleton_card_parity {α : Type} [DecidableEq α]
+    (a : α) (s : Finset α) :
+    Even s.card ↔ Odd (symmDiff s {a}).card := by
+  by_cases ha : a ∈ s
+  · have hsym : symmDiff s {a} = s.erase a := by
+      ext x; simp only [Finset.mem_symmDiff, Finset.mem_erase, Finset.mem_singleton]
+      constructor
+      · rintro (⟨hx, hxa⟩ | ⟨rfl, hx⟩)
+        · exact ⟨hxa, hx⟩
+        · exact absurd ha hx
+      · rintro ⟨hxa, hx⟩; left; exact ⟨hx, hxa⟩
+    rw [hsym, Finset.card_erase_of_mem ha]
+    have hpos : 0 < s.card := Finset.card_pos.mpr ⟨a, ha⟩
+    constructor
+    · intro ⟨k, hk⟩; exact ⟨k - 1, by omega⟩
+    · intro ⟨k, hk⟩; exact ⟨k + 1, by omega⟩
+  · have hsym : symmDiff s {a} = Finset.cons a s ha := by
+      ext x; simp only [Finset.mem_symmDiff, Finset.mem_cons, Finset.mem_singleton]
+      constructor
+      · rintro (⟨hx, hxa⟩ | ⟨rfl, hx⟩)
+        · exact Or.inr hx
+        · exact Or.inl rfl
+      · rintro (rfl | hx)
+        · right; exact ⟨rfl, ha⟩
+        · left; exact ⟨hx, fun h => ha (h ▸ hx)⟩
+    rw [hsym, Finset.card_cons]
+    constructor
+    · intro ⟨k, hk⟩; exact ⟨k, by omega⟩
+    · intro ⟨k, hk⟩; exact ⟨k, by omega⟩
+
 lemma even_subsets_card {α : Type} [Fintype α] :
     Fintype.card {s : Finset α // Even (Finset.card s) } = 2^(Fintype.card α - 1) := by
-  sorry
+  classical
+  obtain h | h := Nat.eq_zero_or_pos (Fintype.card α)
+  · have hemp : IsEmpty α := Fintype.card_eq_zero_iff.mp h
+    simp only [h, Nat.zero_sub, pow_zero, Fintype.card_eq_one_iff]
+    exact ⟨⟨∅, ⟨0, rfl⟩⟩, fun ⟨s, _⟩ => by congr 1; exact Finset.eq_empty_of_isEmpty s⟩
+  · obtain ⟨a⟩ : Nonempty α := Fintype.card_pos_iff.mp h
+    have hbij : Fintype.card {s : Finset α // Even s.card} =
+                Fintype.card {s : Finset α // ¬ Even s.card} := by
+      apply Fintype.card_of_bijective (f := fun ⟨s, hs⟩ =>
+        ⟨symmDiff s {a}, by rwa [Nat.not_even_iff_odd, ← symmDiff_singleton_card_parity]⟩)
+      constructor
+      · rintro ⟨s₁, h₁⟩ ⟨s₂, h₂⟩ heq
+        simp only [Subtype.mk.injEq] at heq ⊢
+        have : symmDiff (symmDiff s₁ {a}) {a} = symmDiff (symmDiff s₂ {a}) {a} := by rw [heq]
+        rwa [symmDiff_assoc, symmDiff_self, symmDiff_bot,
+             symmDiff_assoc, symmDiff_self, symmDiff_bot] at this
+      · rintro ⟨t, ht⟩
+        rw [Nat.not_even_iff_odd] at ht
+        refine ⟨⟨symmDiff t {a}, ?_⟩, by simp⟩
+        rwa [symmDiff_singleton_card_parity, symmDiff_assoc, symmDiff_self, symmDiff_bot]
+    have hsum : Fintype.card {s : Finset α // Even s.card} +
+                Fintype.card {s : Finset α // ¬ Even s.card} =
+                Fintype.card (Finset α) := by
+      have := @Fintype.card_subtype_compl (Finset α) _ (fun s => Even s.card) _ _
+      have := Fintype.card_subtype_le (fun s : Finset α => Even s.card)
+      omega
+    rw [Fintype.card_finset] at hsum
+    have h1 : 2 ^ Fintype.card α = 2 * 2 ^ (Fintype.card α - 1) := by
+      cases hn : Fintype.card α with
+      | zero => omega
+      | succ m => simp [pow_succ, mul_comm]
+    omega
 
 lemma claim (n k : ℕ) (hn : 0 < n) (hnk : n ≤ k) (he : Even (k - n))
     (f : {b : Sequence n k // MSequence n k b }) :
     Set.ncard {g | ψ n k g = f} = 2^(k - n) := by
   let c : Fin n → ℕ := fun i ↦ Nat.card { j | f.val j = ⟨i, by omega⟩ }
-  have hcp : ∀ i : Fin n, 0 < c i := by sorry
-  have hc : ∑ i : Fin n, c i = k := by sorry
+  have hcp : ∀ i : Fin n, 0 < c i := by
+    intro i
+    obtain ⟨⟨hN, _⟩, _⟩ := f.property
+    have hN' := hN i.val (Fin.is_lt i)
+    apply Odd.pos
+    convert hN' using 1
+    apply congrArg Nat.card
+    apply congrArg Subtype
+    funext j
+    exact propext ⟨fun h => congrArg Fin.val h, fun h => Fin.ext h⟩
+  have hM : ∀ j : Fin k, (f.val j).val < n := by
+    intro j
+    obtain ⟨_, hM⟩ := f.property
+    by_contra h; push_neg at h; exact hM (f.val j) h j rfl
+  have hc : ∑ i : Fin n, c i = k := by
+    obtain ⟨⟨_, _⟩, hMseq⟩ := f.property
+    let g : Fin k → Fin n := fun j ↦ ⟨(f.val j).val, hM j⟩
+    have hceq : ∀ i : Fin n, c i = Nat.card { j | g j = i } := by
+      intro i; apply congrArg Nat.card; apply congrArg Subtype
+      funext j; simp only [g, Set.mem_setOf_eq, Fin.ext_iff]
+    simp_rw [hceq, Nat.card_eq_fintype_card]
+    conv_lhs =>
+      arg 2; ext i; rw [show Fintype.card ↑{j | g j = i} = Fintype.card {j // g j = i} from rfl]
+    rw [← Fintype.card_sigma, Fintype.card_congr (Equiv.sigmaFiberEquiv g), Fintype.card_fin]
   let S : Type :=
     (i : Fin n) →
       {s : Finset { j : Fin k | f.val j = ⟨i, by omega⟩} // Even (Finset.card s) }
@@ -129,11 +212,11 @@ lemma claim (n k : ℕ) (hn : 0 < n) (hnk : n ≤ k) (he : Even (k - n))
        let g1 :=
          fun (i : Fin k) ↦
            let y : Fin (2 * n) := f.val ⟨i, by omega⟩
-           let y' : Fin n := ⟨y.val, by sorry⟩
+           let y' : Fin n := ⟨y.val, by exact hM ⟨i, by omega⟩⟩
            let ys : { s : Finset _ // Even s.card } := cs y'
-           if ⟨i, by sorry⟩ ∈ ys.val then ⟨y.val + n, by sorry⟩ else y
-       let hg1 := by sorry
-       let hgg := by sorry
+           if ⟨i, rfl⟩ ∈ ys.val then ⟨y.val + n, by have := hM ⟨↑i, by omega⟩; omega⟩ else y
+       let hg1 : NSequence n k g1 := by sorry
+       let hgg : ψ n k ⟨g1, hg1⟩ = f := by sorry
        ⟨⟨g1, hg1⟩, hgg⟩
   have Scard : Fintype.card S = ∏ i : Fin n, 2 ^ (c i - 1) := by
     unfold S
@@ -141,10 +224,9 @@ lemma claim (n k : ℕ) (hn : 0 < n) (hnk : n ≤ k) (he : Even (k - n))
     apply Fintype.prod_congr
     intro a
     rw [even_subsets_card]
-    norm_num
-    congr
-    -- exact Nat.card_eq_fintype_card.symm
-    sorry
+    congr 1; congr 1
+    dsimp only [c]
+    rw [Nat.card_eq_fintype_card]
   have Scard' : Fintype.card S = 2^(k-n) := by
     rw [Scard]
     have h1 : ∏ i : Fin n, 2 ^ (c i - 1) = 2 ^ (∑ i : Fin n, (c i - 1)) :=
@@ -163,7 +245,6 @@ lemma claim (n k : ℕ) (hn : 0 < n) (hnk : n ≤ k) (he : Even (k - n))
   have h1 : p.Bijective := by
     constructor
     · intro x y hxy
-      --dsimp [p] at hxy
       sorry
     · rintro ⟨g, hg⟩
       sorry
