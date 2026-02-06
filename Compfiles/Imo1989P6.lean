@@ -154,7 +154,7 @@ theorem partial_cycle.symm.apply_of_le [NeZero n] (x : Perm $ Finset.Icc 1 (2 * 
     · apply Nat.lt_of_le_sub_one
       · grind
       · apply Nat.sub_le_sub_right
-        exact Subtype.GCongr.coe_le_coe h1
+        exact h1
 
 
 def transform_A_to_B [NeZero n] : (A n) → (B n) := fun x ↦ by

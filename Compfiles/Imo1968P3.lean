@@ -186,7 +186,7 @@ problem imo1968_p3 {n : ℕ} (a b c : ℝ) (a_ne_zero : a ≠ 0) :
   (discrim a (b-1) c > 0 → #(solution_set n a b c) > 1) := by
   constructor
   · intro h
-    apply mk_emptyCollection_iff.mpr
+    apply mk_set_eq_zero_iff.mpr
     apply Set.subset_empty_iff.mp
     intro x hx
     exfalso
