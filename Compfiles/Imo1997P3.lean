@@ -103,7 +103,7 @@ lemma S_one_add_S_revPerm {n : ℕ}
   simp_rw [Fin.revPerm_apply, Fin.val_rev, Fin.rev_rev, S, Equiv.Perm.one_apply,
            ← Finset.sum_add_distrib, ← add_mul]
   have cg : ∑ i : Fin n, (i + 1 + ((n - (i + 1) : ℕ) + 1)) * x i = ∑ i, (n + 1) * x i := by
-    congr! 2 with i; norm_cast; omega
+    congr! 2 with i; norm_cast; lia
   rw [cg, ← Finset.mul_sum, abs_mul, hx₁, mul_one]; exact abs_of_nonneg (by positivity)
 
 snip end

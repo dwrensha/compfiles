@@ -37,7 +37,7 @@ problem imo1972_p1 (S : Finset ℕ)
     have h5 := Nat.base_pow_length_digits_le _ n one_lt_ten h4
     rw [h2] at h3 h5
     rw [sq] at h5
-    have h6 : 10 ≤ n := by omega
+    have h6 : 10 ≤ n := by lia
     rw [Finset.mem_Ico]
     exact ⟨h6, h3⟩
   have h2 := Finset.card_powerset S
@@ -50,7 +50,7 @@ problem imo1972_p1 (S : Finset ℕ)
         rw [Finset.mem_powerset] at hs
         exact Sdigits (hs hn)
       rw [Finset.mem_Ico] at h5
-      omega
+      lia
 
     have h5 : ∑ n ∈ s, n ≤ ∑ n ∈ s, 99 := Finset.sum_le_sum h4
     simp only [Finset.sum_const, smul_eq_mul] at h5
@@ -58,10 +58,10 @@ problem imo1972_p1 (S : Finset ℕ)
       rw [Finset.mem_powerset] at hs
       exact Finset.card_le_card hs
     rw [Finset.mem_range]
-    omega
+    lia
   let t : Finset ℕ := Finset.range 991
   have h7 : t.card = 991 := Finset.card_range _
-  have h8 : t.card < S.powerset.card := by omega
+  have h8 : t.card < S.powerset.card := by lia
   replace h3 : Set.MapsTo _ _ _ := h3
   have h9 := Finset.exists_ne_map_eq_of_card_lt_of_maps_to h8 h3
   obtain ⟨A, hA, B, hB, hAB1, hAB2⟩ := h9
@@ -85,6 +85,6 @@ problem imo1972_p1 (S : Finset ℕ)
     have h15 := Finset.sum_sdiff (f := id) h13
     unfold A' B'
     dsimp at h14 h15
-    omega
+    lia
 
 end Imo1972P1

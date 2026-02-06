@@ -80,7 +80,7 @@ problem imo1978_p1 (m n : ℕ)
 
   -- and 125 divides 1978^(n'-m') - 1.
   have h6 : (125 : ℤ) ∣ 1978^(n'-m') - 1 := by
-    obtain ⟨k, hk⟩ : ∃ k, k + 3 = m' := ⟨m' - 3, by omega⟩
+    obtain ⟨k, hk⟩ : ∃ k, k + 3 = m' := ⟨m' - 3, by lia⟩
     rw [←hk] at h4
     nth_rw 1 [←hk] at h3
     have h7 : (1978:ℤ) ^ (k + 3) * (1978 ^ (n' - m') - 1) =
@@ -95,9 +95,9 @@ problem imo1978_p1 (m n : ℕ)
 
   rw [Prod.mk.injEq] at hmn
   obtain ⟨rfl, rfl⟩ := hmn
-  suffices H : 100 ≤ n' - m' by omega
+  suffices H : 100 ≤ n' - m' by lia
 
-  suffices H : ∀ r, 0 < r → 125 ∣ (1978 : ℤ) ^ r - 1 → 100 ≤ r from H (n' - m') (by omega) h6
+  suffices H : ∀ r, 0 < r → 125 ∣ (1978 : ℤ) ^ r - 1 → 100 ≤ r from H (n' - m') (by lia) h6
   clear m' n' h1 h2 h3 h4 h5 h6
 
   intro r
@@ -138,7 +138,7 @@ problem imo1978_p1 (m n : ℕ)
       exact Int.ModEq.dvd h20.symm
     have h15 : 0 < r' := Nat.emod_pos_of_not_dvd h10
     have h13 := ih r' h12 h15 h14
-    omega
+    lia
 
   have h11 : r ∈ Nat.divisors 100 := by
     rw [Nat.mem_divisors]

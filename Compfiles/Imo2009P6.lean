@@ -46,7 +46,7 @@ lemma lemma2 (n : ℕ) (a : Fin n → ℤ)
   exact lt_of_le_of_ne h2 fun a ↦ h3 (ainj a)
 
 def embedFinLE {m n : ℕ} (hmn : m ≤ n) : Fin m ↪ Fin n :=
-  ⟨fun x ↦ ⟨x, by omega⟩,
+  ⟨fun x ↦ ⟨x, by lia⟩,
    by intro x y hxy; dsimp at hxy; apply_fun (·.val) at hxy
       exact Fin.eq_of_val_eq hxy⟩
 
@@ -54,7 +54,7 @@ def embedFinLE {m n : ℕ} (hmn : m ≤ n) : Fin m ↪ Fin n :=
 noncomputable abbrev extendPerm {m n : ℕ} (f : Equiv.Perm (Fin m)) (h : m ≤ n) :
     Equiv.Perm (Fin n) :=
   let f' : Fin n → Fin n :=
-     fun (x : Fin n) ↦ if h1 : x < m then ⟨f ⟨x, h1⟩, by omega⟩ else x
+     fun (x : Fin n) ↦ if h1 : x < m then ⟨f ⟨x, h1⟩, by lia⟩ else x
   have hf' : f'.Injective := by
     intro x y hxy
     simp only [f'] at hxy
@@ -99,7 +99,7 @@ theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
     have hyM' : y ∉ M' := by
       intro hy
       rw [Finset.mem_filter] at hy
-      omega
+      lia
     have h3 : M'.card ≤ n - 2 := by
       let M'' := Finset.cons y M' hyM'
       have h4 : M'' ⊆ M := by
@@ -110,8 +110,8 @@ theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
         · exact Finset.mem_of_mem_filter a ha
       have h4' : M''.card ≤ M.card := Finset.card_le_card h4
       have h5 : M''.card = M'.card + 1 := Finset.card_cons hyM'
-      have h6 : M'.card + 1 ≤ M.card := by omega
-      omega
+      have h6 : M'.card + 1 ≤ M.card := by lia
+      lia
     intro hM
     obtain h7 | h7 := Nat.eq_zero_or_pos M'.card
     · refine ⟨Equiv.refl _, ?_⟩
@@ -124,7 +124,7 @@ theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
                      Finset.filter (fun x ↦ ↑x < n - 1) Finset.univ := by
             intro x hx
             simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hx ⊢
-            omega
+            lia
           exact Finset.sum_le_sum_of_subset_of_nonneg h50 fun i_1 a a ↦ h49 i_1
         intro h10
         change z ∈ M at h10
@@ -135,30 +135,30 @@ theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
         have h12 := Finset.notMem_empty z
         rw [h7] at h11
         exact h12 h11
-      · have h9 : i.val + 1 = n := by omega
+      · have h9 : i.val + 1 = n := by lia
         have h10 : Finset.filter (fun x ↦ x ≤ i) Finset.univ =
                     Finset.univ (α := Fin n) := by
           ext x
           rw [Finset.mem_filter]
           suffices x ≤ i from and_iff_left_of_imp fun a ↦ this
-          omega
+          lia
         rw [h10]
         exact hM
     let n' := n - 1
-    let a' := fun i : Fin n' ↦ a ⟨i, by omega⟩
+    let a' := fun i : Fin n' ↦ a ⟨i, by lia⟩
     have ainj' : a'.Injective := by
       intro i j hij
-      have h11 : a ⟨i, by omega⟩ = a ⟨j, by omega⟩ := by
+      have h11 : a ⟨i, by lia⟩ = a ⟨j, by lia⟩ := by
         simp only [a'] at hij
         exact hij
-      have h12 := congrArg Fin.val (@ainj ⟨i, by omega⟩ ⟨j, by omega⟩ h11)
+      have h12 := congrArg Fin.val (@ainj ⟨i, by lia⟩ ⟨j, by lia⟩ h11)
       dsimp at h12
       exact Fin.eq_of_val_eq h12
     have apos' : ∀ (i : Fin n'), 0 < a' i :=
-      fun i ↦ apos ⟨i.val, by omega⟩
+      fun i ↦ apos ⟨i.val, by lia⟩
     have asorted' : ∀ (i j : Fin n'), i < j → a' i < a' j := by
       intro i j hij
-      exact asorted ⟨i, by omega⟩ ⟨j, by omega⟩ hij
+      exact asorted ⟨i, by lia⟩ ⟨j, by lia⟩ hij
     have Mpos' : (∀ m ∈ M', 0 < m) := by
       intro m hm
       rw [Finset.mem_filter] at hm
@@ -177,7 +177,7 @@ theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
             obtain ⟨y', hy'⟩ := y
             exact hy'
           · rintro ⟨_, h41⟩
-            use ⟨x.val, by omega⟩
+            use ⟨x.val, by lia⟩
             simp [f, embedFinLE]
         unfold x
         rw [←h40, Finset.sum_map]
@@ -188,7 +188,7 @@ theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
       intro h15
       exact (h1 h15).elim
     obtain ⟨p', hp⟩ :=
-      ih n' (by omega) (by omega) a' ainj' apos' asorted' M' Mpos' (by omega) hM'
+      ih n' (by lia) (by lia) a' ainj' apos' asorted' M' Mpos' (by lia) hM'
     clear ih
     let p : Equiv.Perm (Fin n) := extendPerm p' (Nat.sub_le n 1)
     refine ⟨p, ?_⟩
@@ -215,7 +215,7 @@ theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
             dsimp
             exact hy1
           · rintro ⟨hx1, hx2⟩
-            use ⟨x, by omega⟩
+            use ⟨x, by lia⟩
             simp only [Finset.mem_filter, embedFinLE]
             dsimp
             simp only [eq_self, and_true, Finset.mem_univ, true_and]
@@ -227,18 +227,18 @@ theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
         sorry
       intro H
       exact (h31 ⟨H, h34⟩).elim
-    · have h31 : i.val = n' := by omega
+    · have h31 : i.val = n' := by lia
       have h32 : ∑ j ∈ Finset.filter (fun x ↦ x ≤ i) Finset.univ, a (p j) =
                  ∑ i : Fin n, a i := by
         have pb : p.toFun.Bijective := EquivLike.bijective p
         rw [←Function.Bijective.sum_comp pb (fun j ↦ a j)]
-        have h33 : i.val + 1 = n := by omega
+        have h33 : i.val + 1 = n := by lia
         have h10 : Finset.filter (fun x ↦ x ≤ i) Finset.univ =
                     Finset.univ (α := Fin n) := by
           ext x
           rw [Finset.mem_filter]
           suffices x ≤ i from and_iff_left_of_imp fun a ↦ this
-          omega
+          lia
         rw [h10]
         dsimp
       rw [h32]

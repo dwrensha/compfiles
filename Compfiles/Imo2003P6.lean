@@ -171,7 +171,7 @@ problem imo2003_p6 (p : ℕ) (hp : p.Prime) :
     have q_dvd_p_1 : q ∣ p - 1 := (Nat.modEq_iff_dvd' hp.one_le).mp (id (Nat.ModEq.symm this))
 
     have one_mod_p_1 : 1 % (p - 1) = 1 :=
-      (Nat.mod_eq_iff_lt (by omega)).mpr p_ge_3
+      (Nat.mod_eq_iff_lt (by lia)).mpr p_ge_3
     have p_mod_p_1 : p % (p - 1) = 1 := by
       rw [Nat.mod_eq_sub_mod]
       · have : p - (p - 1) = 1 := Nat.sub_sub_self hp.one_le

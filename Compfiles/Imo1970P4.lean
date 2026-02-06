@@ -38,7 +38,7 @@ lemma no_other_p_divisors_nearby (x : ℕ) (y : ℕ) (p : ℕ) (p_gt_5 : p > 5) 
   simp_all [Nat.dvd_add_right]
 
 lemma no_other_5_divisors_nearby (x : ℕ) (y : ℕ) (x_lt_y : x < y) (close_by: ∃ k, k ≤ 4 ∧ x + k = y) (x_div_p : 5 ∣ x) : ¬ (5 ∣ y) := by
-  omega
+  lia
 
 -- The next few functions apply the following logic from the Art of Problem Solving Solution 1
 
@@ -56,7 +56,7 @@ lemma elems_in_interval_nearby (x y n : ℕ ) (s : Finset ℕ) (interval : s = F
   (x_in_s : x ∈ s) (y_in_s : y ∈ s) (x_lt_y : x < y) : ∃ k ≤ 5, x + k = y := by
   simp_all only [Finset.mem_Icc]
   use y - x
-  omega
+  lia
 
 lemma p_gt_five_not_divides (n : ℕ) (s1 s2 : Finset ℕ) (partition : s1 ∪ s2 = Finset.Icc n (n + 5)) (no_dups: s1 ∩ s2 = ∅)
                             (equal_products : ∏ m ∈ s1, m = ∏ m ∈ s2, m) (x : ℕ) (x_in_interval : x ∈ s1 ∪ s2)
@@ -178,7 +178,7 @@ lemma at_most_one (n : ℕ) (x y : ℕ)
   (y_non_div_2 : ¬ 2 ∣ y) :
   x = y := by
   simp_all only [Finset.mem_Icc, Nat.two_dvd_ne_zero]
-  omega
+  lia
 
 lemma card_of_equal (s : Finset ℕ) : (∀ x ∈ s, ∀ y ∈ s,  x = y) → s.card ≤ 1 := by
   exact (@Finset.card_le_one ℕ s).mpr
@@ -229,7 +229,7 @@ lemma unique_divisor (n : ZMod 3) (a b c : ℕ) (n_eq_a : n = a) (s : Finset ℕ
     · rintro o ⟨o_in_s, three_div_o⟩
       rw[s_eq] at o_in_s
       simp_all only [Fin.mk_one, Finset.mem_insert, Finset.mem_singleton]
-      omega
+      lia
   · use c
     have three_div_c : 3 ∣ c := by
       simp_all only [Nat.dvd_add_self_right]
@@ -243,7 +243,7 @@ lemma unique_divisor (n : ZMod 3) (a b c : ℕ) (n_eq_a : n = a) (s : Finset ℕ
     · rintro o ⟨o_in_s, three_div_o⟩
       rw[s_eq] at o_in_s
       simp_all only [Nat.dvd_add_self_right, Finset.mem_insert, Finset.mem_singleton]
-      omega
+      lia
 
 lemma card_1_of_exists_unique (s : Finset ℕ)
   (predicate: ℕ → Prop)
@@ -275,7 +275,7 @@ lemma enumerate_primes_le_5 (p : ℕ) (pp : p.Prime) (p_le_5 : p ≤ 5) : p ∈ 
   simp only [Finset.mem_insert, Finset.mem_singleton, not_or] at H
   obtain ⟨a, b, c⟩ := H
   have := Nat.Prime.five_le_of_ne_two_of_ne_three pp
-  omega
+  lia
 
 lemma two_three_five_and_more_is_enough (x : ℕ) (two_does_not_divide : ¬ 2 ∣ x) (three_does_not_divide : ¬ 3 ∣ x) (five_does_not_divide : ¬ 5 ∣ x)
   (p_gt_5_not_dvd : ∀ (p : ℕ), p.Prime → p > 5 → ¬p ∣ x):
@@ -289,7 +289,7 @@ lemma two_three_five_and_more_is_enough (x : ℕ) (two_does_not_divide : ¬ 2 �
     cases this
     case inl h =>
       simp_all only [Nat.two_dvd_ne_zero, gt_iff_lt, Finset.mem_insert, Finset.mem_singleton, true_or]
-      omega
+      lia
     case inr h => grind
   grind
 
@@ -352,7 +352,7 @@ lemma subsets_must_overlap_pigeonhole (s s1 s2 : Finset ℕ) (predicate_s1: ℕ 
   have : (s1 ∪ s2).card ≤ s.card := by
     apply Finset.card_le_card
     exact s1_s2_subset
-  omega
+  lia
 
 lemma contains_one_or_zero (n : ℕ) (s1 s2 : Finset ℕ) (partition : s1 ∪ s2 = Finset.Icc n (n + 5)) (no_dups: s1 ∩ s2 = ∅)
                       (equal_products : ∏ m ∈ s1, m = ∏ m ∈ s2, m) : ∃ x ∈ (s1 ∪ s2), x = 1 ∨ x = 0 := by
@@ -380,17 +380,17 @@ lemma contains_one_or_zero (n : ℕ) (s1 s2 : Finset ℕ) (partition : s1 ∪ s2
     have := card_opposite odd_s odd_div_by_3 odd_non_div_by_3 (λ x => 3 ∣ x) rfl rfl
     rw[three_odd_numbers] at this
     rw[odd_div_by_3_card] at this
-    omega
+    lia
 
   have at_least_2_non_divisers_of_5 : odd_non_div_by_5.card ≥ 2 := by
     have := card_opposite odd_s odd_div_by_5 odd_non_div_by_5 (fun x => 5 ∣ x) rfl rfl
     rw[three_odd_numbers] at this
-    omega
+    lia
 
   let b := odd_non_div_by_5.card
 
   have size_calculation : 2 + b > 3 := by
-    omega
+    lia
 
   have exists_odd_x_non_div_by_3_5 : ∃ x ∈ s1 ∪ s2, ¬ 3 ∣ x ∧ ¬ 5 ∣ x ∧ ¬ 2 ∣ x := by
     obtain ⟨x, ⟨x_in_odd_s, non_div_3, non_div_5⟩⟩ := subsets_must_overlap_pigeonhole
@@ -427,7 +427,7 @@ lemma contains_one_or_zero (n : ℕ) (s1 s2 : Finset ℕ) (partition : s1 ∪ s2
 lemma n_eq_1_of_contains_one
   (n : ℕ) (n_not_zero : n ≠ 0) (contains_one : 1 ∈ Finset.Icc n (n + 5)) : n = 1 := by
   simp_all only [ne_eq, Finset.mem_Icc, le_add_iff_nonneg_left, zero_le, and_true]
-  omega
+  lia
 
 lemma diffs_of_disjoint (t s w : Finset ℕ) (t_subst_s : t ⊆ s) (disjoint: Disjoint t w) : t ⊆ s \ w := by
   simp only [Finset.subset_sdiff, and_self, t_subst_s, disjoint]
@@ -521,7 +521,7 @@ lemma contradiction_of_finset_icc_1_6 (s1 s2 : Finset ℕ) (partition : s1 ∪ s
         exact mem_of_subst k s1 {1, 2, 3, 4, 6} k_in_s1 explicit_s1
       intro five_div_k
       simp_all only [Finset.mem_insert, Finset.mem_singleton]
-      omega
+      lia
 
     have five_div_prod_s2 := Finset.dvd_prod_of_mem (λ n : ℕ => n) five_in_s2
     have five_div_prod_s1 : 5 ∣ ∏ m ∈ s1, m := by

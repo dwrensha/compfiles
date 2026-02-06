@@ -130,7 +130,7 @@ problem imo1993_p1 : ∀ n > 1, ¬∃ p q : ℤ[X], f n = p*q ∧ ¬ isConstant 
             suffices b.coeff x.2 % 3 = 0 by simp [this]
             rw [←Int.dvd_iff_emod_eq_zero]
             rw [Finset.mem_antidiagonal] at xh
-            apply ih <;> omega
+            apply ih <;> lia
           _ = _ := by simp
 
   have h4 : (b.coeff (n-1) * c.coeff 0) % 3 = 2 := by
@@ -211,7 +211,7 @@ problem imo1993_p1 : ∀ n > 1, ¬∃ p q : ℤ[X], f n = p*q ∧ ¬ isConstant 
         · contrapose! degb
           rw [degb]
           exact compareOfLessAndEq_eq_lt.mp rfl
-      omega
+      lia
     · exact ne_zero_of_coe_le_degree degb
     · exact ne_zero_of_natDegree_gt degc
 
@@ -270,16 +270,16 @@ problem imo1993_p1 : ∀ n > 1, ¬∃ p q : ℤ[X], f n = p*q ∧ ¬ isConstant 
         simp
       _ = (x * x ^ (n - 2) * (x+5) + 3) % 2 := by
         congr 1
-        have : n - 2 = n - 1 - 1 := by omega
+        have : n - 2 = n - 1 - 1 := by lia
         rw [this, mul_add, mul_pow_sub_one, mul_comm _ x, mul_pow_sub_one]
         · ring
-        · omega
-        · omega
+        · lia
+        · lia
       _ = 1 % 2 := by
         rw [Int.add_emod]
         rw [Int.mul_emod]
         nth_rw 2 [Int.mul_emod]
-        have : (x + 5) % 2 = 0 ∨ x % 2 = 0 := by omega
+        have : (x + 5) % 2 = 0 ∨ x % 2 = 0 := by lia
         apply this.by_cases <;> {
           intro h
           simp [h]

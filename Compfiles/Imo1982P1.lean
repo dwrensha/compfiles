@@ -37,7 +37,7 @@ problem imo1982_p1 (f : ℕ → ℕ)
   have h4 : f 1 = 0 := by
     have h5 := hf 1 1 Nat.one_pos Nat.one_pos
     rw [h2] at h5
-    omega
+    lia
   have h5 : f 3 = 1 := by
     have := hf 1 2 Nat.one_pos two_pos
     aesop
@@ -54,10 +54,10 @@ problem imo1982_p1 (f : ℕ → ℕ)
     induction' l with l ih
     · simp
     · have h10 := h6 (k + l) (Nat.add_pos_left hk l)
-      have h11 : 3 * (k + l) + 3 = 3 * (k + Nat.succ l) := by omega
-      have h12 : f (3 * k) + Nat.succ l = f (3 * k) + l + 1 := by omega
+      have h11 : 3 * (k + l) + 3 = 3 * (k + Nat.succ l) := by lia
+      have h12 : f (3 * k) + Nat.succ l = f (3 * k) + l + 1 := by lia
       rw [←h11, h12]
-      omega
+      lia
   have h8 : ∀ k, 0 < k → k ≤ 3333 → f (3 * k) = k := by
      intro k hk0 hk1
      by_contra! H
@@ -68,15 +68,15 @@ problem imo1982_p1 (f : ℕ → ℕ)
      have h14 := h9 k (3333 - k) hk0
      have h15 : k + (3333 - k) = 3333 := Nat.add_sub_of_le hk1
      rw [h15, h9999] at h14
-     omega
+     lia
   have h20 : ∀ k, 0 < k → f k ≤ f (k + 1) := by grind
   have h30 : ∀ k l, 0 < k → l ≤ f k → l + l ≤ f (k + k) := by grind
   have h10 : ∀ k, 0 < k → 12 * k + 9 ≤ 9999 → f (3 * k + 2) = k := by
     intro k hk hk1
     obtain h11 | h11 :=  hf (3*k) 2 (Nat.succ_mul_pos 2 hk) two_pos
     · rw [h11, h2, add_zero]
-      exact h8 k hk (by omega)
-    · rw [h2, add_zero, h8 k hk (by omega)] at h11
+      exact h8 k hk (by lia)
+    · rw [h2, add_zero, h8 k hk (by lia)] at h11
       exfalso
       have h12 : 2 * k + 2 ≤ f (6 * k + 4) := by
         have h14 : 3 * k + 2 + (3 * k + 2) = 6 * k + 4 := by ring
@@ -94,7 +94,7 @@ problem imo1982_p1 (f : ℕ → ℕ)
         exact h20 _ (Nat.succ_pos _)
       have h15 : f (12 * k + 9) = 4 * k + 3 := by
          have h16 : 3 * (4 * k + 3) = 12 * k + 9 := by ring
-         have h17 := h8 (4 * k + 3) (Nat.succ_pos _) (by omega)
+         have h17 := h8 (4 * k + 3) (Nat.succ_pos _) (by lia)
          rw [h16] at h17
          exact h17
       rw [h15] at h14

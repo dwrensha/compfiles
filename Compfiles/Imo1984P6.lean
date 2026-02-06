@@ -44,7 +44,7 @@ lemma mylemma_sub_sq
   rw [Nat.sub_right_comm]
   repeat rw [Nat.mul_sub_right_distrib a b b]
   ring_nf
-  omega
+  lia
 
 lemma mylemma_k_le_m_alt
     (a b c d k m : ℕ)
@@ -83,7 +83,7 @@ lemma mylemma_k_le_m_alt
     refine lt_trans ?_ h₈₀
     refine Nat.sub_lt_sub_left ?_ h₂.1
     exact lt_trans h₂.1 h₂.2.1
-  omega
+  lia
 
 lemma mylemma_h8
   (a b c d k m : ℕ)
@@ -101,7 +101,7 @@ lemma mylemma_h8
   have hm1: 1 ≤ m := by
     by_contra! hc
     interval_cases m
-    omega
+    lia
   have h₈₀: b - a < 2 ^ (m - 1) := by
     have g₀: b < (b + c) / 2 := by
       refine (Nat.lt_div_iff_mul_lt' ?_ b).mpr ?_
@@ -185,7 +185,7 @@ lemma mylemma_h8
     have hi₂: i < 2 := by
       have g₀: i < 2 ∨ j < 2 := by
         exact hp₅ i j { left := hpd , right:= hqd }
-      omega
+      lia
     have hi₃: 0 < i := by
       rw [hp] at hp₃
       refine Nat.zero_lt_of_ne_zero ?_
@@ -244,12 +244,12 @@ problem imo_1984_p6
           · refine Nat.eq_add_of_sub_eq ?_ h₃
             rw [pow_two]
             refine le_of_lt ?_
-            refine mul_lt_mul' (by omega) ?_ (le_of_lt h₀.2.1) h₀.2.1
-            omega
+            refine mul_lt_mul' (by lia) ?_ (le_of_lt h₀.2.1) h₀.2.1
+            lia
           · rw [pow_two]
             refine le_of_lt ?_
-            refine mul_lt_mul' (by omega) ?_ (le_of_lt h₀.1) h₀.1
-            omega
+            refine mul_lt_mul' (by lia) ?_ (le_of_lt h₀.1) h₀.1
+            lia
         · refine le_of_lt ?_
           rw [pow_two, pow_two]
           exact mul_lt_mul h₂.1 (le_of_lt h₂.1) h₀.1 (le_of_lt h₀.2.1)
@@ -270,26 +270,26 @@ problem imo_1984_p6
       have gb: 3 ≤ b := by
         by_contra! hc
         interval_cases b
-        · omega
-        · omega
+        · lia
+        · lia
         · have g₀: ¬ Odd 2 := by decide
           exact g₀ h₁.2.1
       have gm: 3 ≤ m := by
         have gm₀: 2 ^ 2 ≤ 2 ^ (m - 1) := by
           norm_num
           rw [← h₈]
-          omega
+          lia
         have gm₁: 2 ≤ m - 1 := by
           exact (Nat.pow_le_pow_iff_right (by norm_num)).mp gm₀
-        omega
+        lia
       have g₀: a < 2 ^ (m - 2) := by
         have g₀₀: a + a < b + a := by simp [h₂.1]
         rw [h₈, ← mul_two a] at g₀₀
         have g₀₁: m - 1 = Nat.succ (m - 2) := by
           rw [← Nat.succ_sub ?_]
           · rw [Nat.succ_eq_add_one]
-            omega
-          · omega
+            lia
+          · lia
         rw [g₀₁, Nat.pow_succ 2 _] at g₀₀
         exact Nat.lt_of_mul_lt_mul_right g₀₀
       have h₉₀: b = 2 ^ (m - 1) - a := by
@@ -298,7 +298,7 @@ problem imo_1984_p6
       rw [h₈, h₉₀] at h₆
       repeat rw [Nat.mul_sub_right_distrib] at h₆
       repeat rw [← Nat.pow_add] at h₆
-      have hm1: 1 ≤ m := by omega
+      have hm1: 1 ≤ m := by lia
       repeat rw [← Nat.sub_add_comm hm1] at h₆
       repeat rw [← Nat.add_sub_assoc hm1] at h₆
       ring_nf at h₆
@@ -319,7 +319,7 @@ problem imo_1984_p6
         rw [g₁] at h₆
         have g₂: 2 ^ (m * 2 - 2) ≤ a * 2 ^ m := by exact Nat.le_of_sub_eq_zero h₆.symm
         have g₃: 2 ^ (m - 2) ≤ a := by
-          rw [mul_two, Nat.add_sub_assoc (by omega) m] at g₂
+          rw [mul_two, Nat.add_sub_assoc (by lia) m] at g₂
           rw [Nat.pow_add, mul_comm] at g₂
           refine Nat.le_of_mul_le_mul_right g₂ ?_
           exact Nat.two_pow_pos m
@@ -333,8 +333,8 @@ problem imo_1984_p6
           lia
         · refine le_of_lt ?_
           rw [mul_two, Nat.add_sub_assoc, Nat.pow_add, mul_comm (2 ^ m) _]
-          · refine (Nat.mul_lt_mul_right (by omega)).mpr g₀
-          omega
+          · refine (Nat.mul_lt_mul_right (by lia)).mpr g₀
+          lia
       nth_rewrite 2 [← Nat.one_mul (2 ^ (2 * m - 2))] at h₉₂
       rw [← Nat.mul_sub_right_distrib 2 1 (2 ^ (2 * m - 2))] at h₉₂
       norm_num at h₉₂
@@ -346,7 +346,7 @@ problem imo_1984_p6
       by_contra! hc
       obtain hc₀ | hc₁ := lt_or_gt_of_ne hc
       · interval_cases a
-        omega
+        lia
       · have hc₂: ¬ Odd a := by
           refine (Nat.not_odd_iff_even).mpr ?_
           have hc₃: 1 ≤ 2 * m - k - 2 := by
@@ -367,6 +367,6 @@ problem imo_1984_p6
         refine (Nat.div_eq_zero_iff).mpr ?_
         right
         exact Nat.pow_lt_pow_right (by norm_num) hk2m
-      omega
+      lia
 
 end Imo1984P6

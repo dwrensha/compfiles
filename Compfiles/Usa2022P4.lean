@@ -80,12 +80,12 @@ problem usa2022_p4 (p q : ℕ) :
   have h5 : p ∣ b + a := Or.resolve_left ((Nat.Prime.dvd_mul hpp).mp h4) h3
 
   -- Since and b + a < 2p, we have that a + b must in fact equal p.
-  have h6 : b + a < 2 * p := by omega
+  have h6 : b + a < 2 * p := by lia
   have h7 : b + a = p := by
     obtain ⟨k, hk⟩ := h5
     rw [mul_comm, hk] at h6
     have : k < 2 := (Nat.mul_lt_mul_left hp_pos).mp h6
-    interval_cases k <;> omega
+    interval_cases k <;> lia
 
   -- Hence q - 1 = b - a.
   have h8 : q - 1 = b - a := by
@@ -111,7 +111,7 @@ problem usa2022_p4 (p q : ℕ) :
         obtain h16 | h16 := Nat.Prime.eq_one_or_self_of_dvd hpp _ h15
         · norm_num at h16
         · exact h16.symm
-      omega
+      lia
     | succ p' =>
       cases p' with
       | zero =>
@@ -124,7 +124,7 @@ problem usa2022_p4 (p q : ℕ) :
         obtain h16 | h16 := Nat.Prime.eq_one_or_self_of_dvd hpq _ h15
         · norm_num at h16
         · exact h16.symm
-      | succ _ => omega
+      | succ _ => lia
   have h11 : p = 3 := by
     have h20 : b - a = 1 := by rw [h9] at h8; exact h8.symm
     have h22 : a ≤ b := Nat.le_of_lt hba

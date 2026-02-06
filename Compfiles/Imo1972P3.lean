@@ -34,19 +34,19 @@ problem imo1972_p3 (m n : ℕ) :
     simp only [Nat.factorial_zero, mul_one, add_zero, mul_zero]
     use Nat.choose (2*m) m
     rw [← Nat.choose_mul_factorial_mul_factorial (n := 2 * m) (k := m)]
-    · rw [show 2*m-m = m by omega]
+    · rw [show 2*m-m = m by lia]
       ring_nf
-    omega
+    lia
   · intro m
     zify
     use (4 * f m n - f (m + 1) n)
     rify
     dsimp only [f]
     rw [Nat.cast_div, Nat.cast_div]
-    · rw [show 2 * Nat.succ n = Nat.succ (Nat.succ (2 * n)) by omega]
-      rw [show m + Nat.succ n = Nat.succ (m + n) by omega]
-      rw [show 2 * (m + 1) = Nat.succ (Nat.succ (2 * m)) by omega]
-      rw [show (m + 1 + n) = Nat.succ (m + n) by omega]
+    · rw [show 2 * Nat.succ n = Nat.succ (Nat.succ (2 * n)) by lia]
+      rw [show m + Nat.succ n = Nat.succ (m + n) by lia]
+      rw [show 2 * (m + 1) = Nat.succ (Nat.succ (2 * m)) by lia]
+      rw [show (m + 1 + n) = Nat.succ (m + n) by lia]
       simp only [Nat.factorial_succ]
       push_cast
       field_simp

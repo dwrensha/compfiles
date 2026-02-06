@@ -40,7 +40,7 @@ lemma exists_prime_and_not_dvd {n : ℤ} (hn : n ≠ 0) : ∃ p, Prime p ∧ ¬ 
   intro hpn
   rw [← Int.dvd_natAbs, Int.ofNat_dvd] at hpn
   apply Nat.le_of_dvd (Int.natAbs_pos.mpr hn) at hpn
-  omega
+  lia
 
 snip end
 
@@ -79,7 +79,7 @@ problem usa2014_p2 {f : ℤ → ℤ} : P f ↔ f ∈ S := by
       simp [h1] at h
       field_simp at h
       qify
-      omega
+      lia
 
   have h3 (x : ℤ) : x ^ 2 * f x = f (-x) ^ 2 := by
     specialize h2 (-x)
@@ -95,7 +95,7 @@ problem usa2014_p2 {f : ℤ → ℤ} : P f ↔ f ∈ S := by
         simp only at this
         rw [← mul_sub, sq_sub_sq, ← neg_sub, ← neg_mul_comm] at this
         apply Int.eq_of_mul_eq_mul_right (sub_ne_zero_of_ne hg) at this
-        omega
+        lia
       have hx1 : 0 < x ^ 2 := sq_pos_of_ne_zero hx
       have : 0 ≤ f x := by
         apply nonneg_of_mul_nonneg_right _ hx1
@@ -103,7 +103,7 @@ problem usa2014_p2 {f : ℤ → ℤ} : P f ↔ f ∈ S := by
       have : 0 ≤ f (-x) := by
         apply nonneg_of_mul_nonneg_right _ hx1
         simp [h2 x, sq_nonneg]
-      omega
+      lia
 
   have h5 (x : ℤ) (hx : f x ≠ 0) : f x = x ^ 2 := by
     simpa [← h4, pow_two (f x), hx] using (h3 x).symm
@@ -167,7 +167,7 @@ problem usa2014_p2 {f : ℤ → ℤ} : P f ↔ f ∈ S := by
     specialize h9 (m ^ 2) hm2
     simp [_h, _hm, hm2] at h9
     ring_nf at h9
-    omega
+    lia
 
   have h11 (k : ℤ) (hk : k ≠ 0) : f (4 * k - m ^ 2) = 0 := by
     specialize h9 k hk
@@ -220,7 +220,7 @@ problem usa2014_p2 {f : ℤ → ℤ} : P f ↔ f ∈ S := by
       contradiction
     have : m = - m ^ 2 := by
       rw [← hl, ← hn]
-      omega
+      lia
     grind
 
 end Usa2014P2

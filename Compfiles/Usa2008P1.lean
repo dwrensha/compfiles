@@ -34,8 +34,8 @@ lemma k_greater_than_one (n : ℕ) : 1 < kseq n := by
   unfold kseq
   split_ifs -- split on n = 0 and n > 0
   · norm_num
-  · have : 2^(2^(n-1)) < 2^(2^n) := by gcongr <;> omega
-    omega
+  · have : 2^(2^(n-1)) < 2^(2^n) := by gcongr <;> lia
+    lia
 
 -- Main identity k₀k₁...kₙ - 1 = xₙ (xₙ + 1)
 lemma quartic_polynomial_identity (t : ℕ) :
@@ -75,7 +75,7 @@ lemma gcd_quad_identity (x : ℤ) :
   have h2 : Int.gcd (x^2 - x + 1) 2 = 1 := by
     have h_odd: (x^2 - x + 1) % 2 = 1 := by
       rcases Int.even_or_odd x with ⟨k, hk⟩ | ⟨k, hk⟩ <;>
-      · subst hk; ring_nf; omega
+      · subst hk; ring_nf; lia
     rw [← Int.gcd_emod, h_odd]
     decide
   rw [Int.gcd_mul_right_right_of_gcd_eq_one h2]
@@ -97,10 +97,10 @@ lemma k_coprime_with_product (n : ℕ) :
 -- Show the main coprime lemma
 -- Strategy: kⱼ is coprime to product P := k₀...kⱼ₋₁, and kseq i divides that product
 lemma k_are_coprime (i j : ℕ) (hij: i < j) : Nat.Coprime (kseq i) (kseq j) := by
-  obtain ⟨n, rfl⟩ : ∃ n, j = n + 1 := ⟨j - 1, by omega⟩
+  obtain ⟨n, rfl⟩ : ∃ n, j = n + 1 := ⟨j - 1, by lia⟩
   let P := ∏ k : Fin (n + 1), kseq ↑k  -- the product k₀ ... kₙ
   have hdvd : kseq i ∣ P := by
-    apply Finset.dvd_prod_of_mem (fun j : Fin (n+1) => kseq ↑j) (Finset.mem_univ ⟨i, by omega⟩)
+    apply Finset.dvd_prod_of_mem (fun j : Fin (n+1) => kseq ↑j) (Finset.mem_univ ⟨i, by lia⟩)
   have hcop : Nat.Coprime P (kseq (n + 1)) := k_coprime_with_product n
   exact Nat.Coprime.coprime_dvd_left hdvd hcop
 

@@ -35,13 +35,13 @@ lemma digits_pow (m : ℕ) : (Nat.digits 10 (10^m)).length = m + 1 := by
 
 lemma lemma2 {m y: ℕ} (hy : y < 10^m) : (Nat.digits 10 y).length < m + 1 := by
   induction m generalizing y with
-  | zero => simp [show y = 0 by omega]
+  | zero => simp [show y = 0 by lia]
   | succ m ih =>
     obtain rfl | hyp := Nat.eq_zero_or_pos y
     · simp
     rw [Nat.digits_def' (by norm_num) hyp]
     rw [List.length_cons, add_lt_add_iff_right]
-    have h2 : y / 10 < 10 ^ m := by omega
+    have h2 : y / 10 < 10 ^ m := by lia
     exact ih h2
 
 lemma digits_sum_mul_pow {m x : ℕ} :
@@ -49,7 +49,7 @@ lemma digits_sum_mul_pow {m x : ℕ} :
   cases x with
   | zero => simp
   | succ x =>
-    rw [mul_comm, Nat.digits_base_pow_mul (by omega) (by omega)]
+    rw [mul_comm, Nat.digits_base_pow_mul (by lia) (by lia)]
     simp
 
 lemma digits_sum (m x y : ℕ)
@@ -84,7 +84,7 @@ lemma Finset.prod_odd {α : Type} [DecidableEq α] {f : α → ℕ} {s : Finset 
 
 lemma lemma3 {m : ℕ} (hm : (m % 10) + 1 < 10) :
     (Nat.digits 10 (m + 1)).sum = (Nat.digits 10 m).sum + 1 := by
-  rw [Nat.digits_eq_cons_digits_div (by norm_num) (by omega)]
+  rw [Nat.digits_eq_cons_digits_div (by norm_num) (by lia)]
   by_cases h : m = 0
   · simp [h]
   nth_rw 2 [Nat.digits_eq_cons_digits_div (by norm_num) (by exact h)]
@@ -126,7 +126,7 @@ theorem ofDigits_sub_ofDigits_eq_ofDigits_zipWith {b : ℕ} {l1 l2 : List ℕ}
       have h2 : b * Nat.ofDigits b tl₁ ≥ b * Nat.ofDigits b tl₂ := by
         have : Nat.ofDigits b tl₁ ≥ Nat.ofDigits b tl₂ := lemma6 htl
         gcongr
-      omega
+      lia
 
 lemma lemma8 {n : ℕ} : 10 ^ n - 1 = Nat.ofDigits 10 (List.replicate n 9) := by
   induction n with
@@ -135,9 +135,9 @@ lemma lemma8 {n : ℕ} : 10 ^ n - 1 = Nat.ofDigits 10 (List.replicate n 9) := by
     rw [List.replicate_succ, Nat.ofDigits_cons]
     replace ih : 10 ^ n = Nat.ofDigits 10 (List.replicate n 9) + 1 := by
       have : 1 ≤ 10 ^ n := Nat.one_le_pow' n 9
-      omega
+      lia
     rw [pow_succ, ih]
-    omega
+    lia
 
 lemma lemma9 {m n : ℕ} (hm : m < 10^n) : (Nat.digits 10 m).length ≤ n := by
   exact (Nat.digits_length_le_iff (by norm_num) m).mpr hm
@@ -156,7 +156,7 @@ theorem digitsPadded_lt_base {b m n d : ℕ} (hb : 1 < b)
   simp only [List.mem_append, List.mem_replicate, ne_eq] at hd
   obtain hd | hd := hd
   · exact Nat.digits_lt_base hb hd
-  · omega
+  · lia
 
 theorem digitsPaddedLength (b m n : ℕ) (hm : (Nat.digits b m).length ≤ n) :
      (digitsPadded b m n).length = n := by
@@ -210,7 +210,7 @@ theorem digitsPadded_ofDigits (b n : ℕ) (h : 1 < b) (L : List ℕ) (w₁ : ∀
              List.replicate_append_replicate, List.append_cancel_left_eq, List.replicate_inj,
              or_true, and_true]
   simp only [List.length_append, List.length_replicate] at hn
-  omega
+  lia
 
 theorem digitsPadded_sum (b m n : ℕ) :
     (digitsPadded b m n).sum = (Nat.digits b m).sum := by
@@ -234,7 +234,7 @@ lemma lemma5 {m n : ℕ} (hm : m < 10^n) :
   have h_length : m_digits_padded.length = n := by
     rw [List.length_append, List.length_replicate]
     have : m_digits.length ≤ n := lemma9 hm
-    omega
+    lia
 
   have h_sub2 : m = Nat.ofDigits 10 m_digits_padded := by
     unfold m_digits_padded padding m_digits
@@ -275,7 +275,7 @@ lemma lemma5 {m n : ℕ} (hm : m < 10^n) :
     intro x hx
     simp only [List.map_append, List.mem_append, List.mem_map, complement_digits, m_digits_padded,
                padding, m_digits] at hx
-    omega
+    lia
   have h14 : complement_digits.length ≤ n := by
     simp only [List.map_append, List.length_append, List.length_map, complement_digits,
                m_digits_padded, padding, List.length_replicate, m_digits]
@@ -300,7 +300,7 @@ match l1, l2 with
   simp only [List.zipWith_cons_cons, List.sum_cons]
   rw [ih.1]
   have h3 : hd1 ≥ hd2 := (List.forall₂_cons.mp h2).1
-  omega
+  lia
 
 lemma List.sum_map_sub (l1 l2 : List ℕ) (h2 : List.Forall₂ (· ≥ ·) l1 l2) :
     (List.zipWith (fun x1 x2 ↦ x1 - x2) l1 l2).sum = l1.sum - l2.sum :=
@@ -318,7 +318,7 @@ lemma lemma4 {m n : ℕ} (hm : m < 10^n) :
      intro x1 hx1 hx2
      simp only [List.get_eq_getElem, List.getElem_replicate, ge_iff_le]
      have h7 := digitsPadded_lt_base (show 1 < 10 by norm_num) (List.getElem_mem hx2)
-     omega
+     lia
   have h4 := List.sum_map_sub _ _ h5
   simp only [List.sum_replicate, smul_eq_mul] at h4
   rw [mul_comm]
@@ -346,14 +346,14 @@ problem usa1992_p1 (n : ℕ) :
   have h1 : ∀ i, a i < 10 ^ (2 ^ i) := fun i ↦ by
     dsimp [a]
     have h2 : 0 < 10 ^ 2 ^ i := by positivity
-    omega
+    lia
 
   have ha1 : ∀ i, 1 ≤ a i := fun i ↦ by
     dsimp [a]
     have h3 : 1 ≤ 2 ^ i := Nat.one_le_two_pow
     have h4 : 10 ^ 1 ≤ 10 ^ (2 ^ i) :=
       Nat.pow_le_pow_right (by norm_num) h3
-    omega
+    lia
 
   let b : ℕ → ℕ := fun m ↦ ∏ i ∈ Finset.range (m + 1), a i
   change (Nat.digits 10 (b (n +1))).sum = solution (n + 1)
@@ -420,7 +420,7 @@ problem usa1992_p1 (n : ℕ) :
              (Nat.sub_lt_self h9 h5.le) -- ..
    rw [←h10, h4]
    congr 2
-   omega
+   lia
 
   -- b n is odd
   have h9 : ∀ n, Odd (b n) := by
@@ -443,7 +443,7 @@ problem usa1992_p1 (n : ℕ) :
   have h10 : (Nat.digits 10 (b n)).head! ≠ 0 := by
     rw [Nat.head!_digits (by norm_num)]
     intro h11
-    have h13 : 2 ∣ b n := by omega
+    have h13 : 2 ∣ b n := by lia
     have h14 : ¬ 2 ∣ b n := Odd.not_two_dvd_nat (h9 _)
     contradiction
 
@@ -451,19 +451,19 @@ problem usa1992_p1 (n : ℕ) :
 
   -- ... so the digit sum of `b n - 1` is one less than the digit sum of `b n`,
   have h11 : (Nat.digits 10 (b n - 1)).sum = (Nat.digits 10 (b n)).sum - 1 := by
-    rw [Nat.digits_def' one_lt_ten (by omega)]
-    nth_rewrite 2 [Nat.digits_def' one_lt_ten (by omega)]
+    rw [Nat.digits_def' one_lt_ten (by lia)]
+    nth_rewrite 2 [Nat.digits_def' one_lt_ten (by lia)]
     rw [List.sum_cons, List.sum_cons]
     have h13 : b n % 10 ≠ 0 := by
       intro h11
-      have h13 : 2 ∣ b n := by omega
+      have h13 : 2 ∣ b n := by lia
       have h14 : ¬ 2 ∣ b n := Odd.not_two_dvd_nat (h9 _)
       contradiction
 
-    have h12 : (b n - 1) / 10 = b n / 10 := by omega
+    have h12 : (b n - 1) / 10 = b n / 10 := by lia
     rw [h12]
-    suffices H : (b n - 1) % 10 + 1 = b n % 10 by omega
-    omega
+    suffices H : (b n - 1) % 10 + 1 = b n % 10 by lia
+    lia
 
   -- ... and hence is 9·2^n - 1.
   rw [ih, solution] at h11
@@ -485,7 +485,7 @@ problem usa1992_p1 (n : ℕ) :
   have h13 : (Nat.digits 10 (10 ^ 2 ^ (n + 1) - b n)).sum = 9 * 2^(n + 1) - 9 * 2^n + 1 := by
     have h15 : ((10 ^ 2 ^ (n + 1) - 1 - b n) % 10) + 1 < 10 := by
       by_contra! H
-      replace H : 9 % 10 = (10 ^ 2 ^ (n + 1) - 1 - b n) % 10 := by omega
+      replace H : 9 % 10 = (10 ^ 2 ^ (n + 1) - 1 - b n) % 10 := by lia
       change _ ≡ _ [MOD 10] at H
       rw [show 10 = 2 * 5 by rfl] at H
       have h40 : Nat.Coprime 2 5 := by norm_num
@@ -509,7 +509,7 @@ problem usa1992_p1 (n : ℕ) :
       simp [H1] at h47
     apply_fun (· + 1) at h12
     rw [←lemma3 h15] at h12
-    have h17 : 10 ^ 2 ^ (n + 1) - 1 - b n + 1 = 10 ^ 2 ^ (n + 1) - b n := by omega
+    have h17 : 10 ^ 2 ^ (n + 1) - 1 - b n + 1 = 10 ^ 2 ^ (n + 1) - b n := by lia
     rw [←h17]
     exact h12
 
@@ -518,6 +518,6 @@ problem usa1992_p1 (n : ℕ) :
 
   -- Hence b n has digit sum (9·2^n - 1) + (9·2^(n+1) - 9·2^n + 1) = 9·2^(n+1).
   have h14 : 1 ≤ 2 ^ n := Nat.one_le_two_pow
-  omega
+  lia
 
 end Usa1992P1

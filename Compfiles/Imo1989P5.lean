@@ -143,8 +143,8 @@ problem imo1989_p5 (n : ℕ) : ∃ m, ∀ j < n, ¬IsPrimePow (m + j) := by
   -- Let p₁,p₂,...pₙ,q₁,q₂,...,qₙ be distinct primes.
   obtain ⟨l, hll, hld, hl⟩ := get_primes (2 * n) n
   let ci : List ChinesePair :=
-    List.ofFn (fun x : Fin n ↦ have hx0: ↑x < List.length l := by omega
-                               have hx1: ↑x + n < List.length l := by omega
+    List.ofFn (fun x : Fin n ↦ have hx0: ↑x < List.length l := by lia
+                               have hx1: ↑x + n < List.length l := by lia
                                let p := l.get ⟨x.1, hx0⟩
                                let q := l.get ⟨x.1 + n, hx1⟩
                                ⟨p * q, p * q - x.1⟩)

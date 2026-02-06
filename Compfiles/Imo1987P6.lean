@@ -32,11 +32,11 @@ lemma minFac_le_sq {n : ℕ} (hnezero : n ≠ 0) (hn : minFac n ≠ n) : (minFac
   | n+2 =>
     obtain ⟨r,hr⟩ := Nat.minFac_dvd (n+2)
     match r with
-    | 0 => omega
+    | 0 => lia
     | 1 => nth_rw 2 [hr] at hn; simp at hn
     | r+2 =>
       have hh : (r+2) ∣ (n+2) := ⟨minFac (n+2), (by nth_rw 1 [hr,mul_comm])⟩
-      have hr' : minFac (n+2) ≤ (r+2) := Nat.minFac_le_of_dvd (by omega) hh
+      have hr' : minFac (n+2) ≤ (r+2) := Nat.minFac_le_of_dvd (by lia) hh
       calc
       _ =  (minFac (n+2)) * minFac (n+2) := by ring_nf
       _ ≤ minFac (n+2) * (r+2) := Nat.mul_le_mul_left _ hr'
@@ -46,11 +46,11 @@ lemma prime_of_coprime' (n : ℕ) (h1 : 1 < n)
     (h2 : ∀ m:ℕ, m^2  ≤  n → m ≠ 0 → n.Coprime m) : Nat.Prime n := by
   rw [Nat.prime_def_minFac]
   by_contra H; push_neg at H
-  replace H := H (by omega)
+  replace H := H (by lia)
   let m := minFac n
-  have nneone : n ≠ 1 := by omega
+  have nneone : n ≠ 1 := by lia
   have mpos := Nat.minFac_pos n
-  replace h2 := h2 (m) (minFac_le_sq (by omega) H) (by omega)
+  replace h2 := h2 (m) (minFac_le_sq (by lia) H) (by lia)
   apply Nat.Prime.not_coprime_iff_dvd.2 ?_ h2
   use (minFac n)
   simp [Nat.minFac_prime nneone,Nat.minFac_dvd,m]
@@ -58,14 +58,14 @@ lemma prime_of_coprime' (n : ℕ) (h1 : 1 < n)
 lemma dyadic {k b : ℕ} (h1 : 1 ≤ k) (h2 : k ≤ b) : ∃ i, b < 2^i * k ∧ 2^i *k ≤ 2* b := by
   have hbk :  b/k ≠ 0 := by
     apply (Nat.div_ne_zero_iff (a:=b) (b:=k)).2
-    omega
+    lia
   use Nat.log2 (b/k) + 1
   constructor
   · have h2bk: (b/k).log2 < (b/k).log2 + 1 := Nat.lt_succ_self _
     replace h2bk := (Nat.log2_lt hbk).1 h2bk
     replace h2bk := succ_le_of_lt h2bk
     calc
-    _ < b/k * k + k := lt_div_mul_add (by omega)
+    _ < b/k * k + k := lt_div_mul_add (by lia)
     _ = (b/k+1) *k := by ring
     _ ≤  2 ^((b/k).log2 +1) * k := Nat.mul_le_mul_right k h2bk
   · have h2 : 2 ^((b/k).log2 +1)  = 2 * 2^( (b/k).log2 ):=
@@ -96,11 +96,11 @@ lemma key_lemma'  {m b: ℕ } (h1 : 1 < m)
   · simp [hk0]
   push_neg at hk0
   refine h k ?_ ?_
-  · omega
+  · lia
   · replace h2 := lt_of_le_of_lt hk1 h2
     rw [pow_two,pow_two] at h2
     replace h2 := Nat.mul_self_lt_mul_self_iff.1 h2
-    omega
+    lia
 
 lemma dvd_lemma (a b c : ℕ ) (h : c ≠ 0) : a ≤ b → b ∣ c → c < 2 * a → b = c := by
   intro h1 ⟨k, hk⟩ h3
@@ -109,9 +109,9 @@ lemma dvd_lemma (a b c : ℕ ) (h : c ≠ 0) : a ≤ b → b ∣ c → c < 2 * a
   | 1 => simp [hk]
   | k + 2 => lia
 
-lemma zero_of_le_sub_pos {a b : ℕ} : b ≠ 0 → a ≤ a - b → a = 0 := by omega
+lemma zero_of_le_sub_pos {a b : ℕ} : b ≠ 0 → a ≤ a - b → a = 0 := by lia
 
-lemma sub_le_lemma {a b : ℕ} : b ≤ a → b ≠ 0 → a - b < a := by omega
+lemma sub_le_lemma {a b : ℕ} : b ≤ a → b ≠ 0 → a - b < a := by lia
 
 snip end
 
@@ -145,7 +145,7 @@ problem imo1987_p6
         have casteq: ((r:ℝ)+1)^2 * 3 = ((3*r^2+6*r+3:ℕ):ℝ) := by simp;ring_nf
         rw [←casteq]
         exact ieq5
-      omega
+      lia
     have hN0 : N = kk^2+kk+p := rfl
     have hN1 : N < (2 * (s + r) +1)^2  := by
       calc
@@ -165,15 +165,15 @@ problem imo1987_p6
       have hss0 : j =  ss + (s+r+1) := Nat.eq_add_of_sub_eq hj1' (by rfl)
 
 
-      have hp: 2 ≤ p :=  Nat.lt_of_sub_ne_zero (by omega: p-2 ≠ 0) |> le_of_lt
+      have hp: 2 ≤ p :=  Nat.lt_of_sub_ne_zero (by lia: p-2 ≠ 0) |> le_of_lt
 
       have hss1 : ss ≤ k := by
         apply Nat.le_of_add_le_add_right (b :=s+r+1)
         rw [←hss0,←hksr]
         calc
         _ ≤ _ := hj2
-        _ = _ := by omega
-      replace hss1 : Nat.Prime (f ss) := IH ss hss1 (by omega)
+        _ = _ := by lia
+      replace hss1 : Nat.Prime (f ss) := IH ss hss1 (by lia)
       have hfss: N = f ss + (2*kk - j+1) *j := by
         unfold f
         rw [hN0]
@@ -185,9 +185,9 @@ problem imo1987_p6
       rw [hfss, ←Nat.coprime_iff_gcd_eq_one, Nat.coprime_add_mul_right_left] at hj3
       have hss2 : f ss ∣ j := Nat.Prime.dvd_iff_not_coprime hss1 |>.2 hj3
       have hfss1: p ≤ f ss := Nat.le_add_left p (ss ^ 2 + ss)
-      have hp1 : p - 2 < p := sub_le_lemma hp (by omega)
-      have hfss2: j < 2*p := by omega
-      have hj : j ≠ 0 := by omega
+      have hp1 : p - 2 < p := sub_le_lemma hp (by lia)
+      have hfss2: j < 2*p := by lia
+      have hj : j ≠ 0 := by lia
       have hfss3:  f ss = j := dvd_lemma _ _ _ hj hfss1 hss2  hfss2
       unfold f at hfss3
       rw [hss0,add_comm _ ss,add_assoc] at hfss3
@@ -201,17 +201,17 @@ problem imo1987_p6
         calc
         _ ≤ _ := hc1
         _ = (k+1) + 1 := by ring_nf
-        _ ≤ (p-2)+1 := by omega
-        _ = p - 1 := by omega
+        _ ≤ (p-2)+1 := by lia
+        _ = p - 1 := by lia
       have : p = 0 := zero_of_le_sub_pos (by simp) hc2
-      omega
+      lia
     have hfk : 1 < f kk := by
       unfold f
       rw [hksr]
       calc
       _ < 1 + 1 := by decide
       _ ≤ s^2 + s  := by nlinarith only [hs]
-      _ ≤ s^2 + 2 * r *s + r^2 + s + r + p := by omega
+      _ ≤ s^2 + 2 * r *s + r^2 + s + r + p := by lia
       _ = _ := by ring
     exact key_lemma' (hfk) hP hN1
 

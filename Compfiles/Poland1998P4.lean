@@ -79,12 +79,12 @@ lemma can_get_a_later_one_zmod :
 
   -- a' (2 * n - 1), a' (2 * n), and a' (2 * n + 1) are all equal
 
-  have hn1v : n1 = 2 * n - 1 := by omega
+  have hn1v : n1 = 2 * n - 1 := by lia
   have hn2 : 2 ≤ n1 + 1 := Nat.succ_le_succ le_add_self
 
   let an1 := a' n1
 
-  have hn1 : (n1 + 1) = 2 * n := by omega
+  have hn1 : (n1 + 1) = 2 * n := by lia
 
   have ha1 : a' (n1 + 1) = an1 + a' n := by
     have haa : a' (n1 + 1) = a' n1 + a' (n1.succ / 2) := a'_recurrence (n1 + 1) hn2
@@ -95,7 +95,7 @@ lemma can_get_a_later_one_zmod :
   have ha2 : a' (n1 + 2) = a' (n1 + 1) +  a' n := by
     have haa : a' (n1 + 2) = a' (n1 + 1) + a' (n1.succ.succ / 2) :=
       a'_recurrence (n1 + 2) le_add_self
-    have h1 : (2 * n + 1) / 2 = n := by omega
+    have h1 : (2 * n + 1) / 2 = n := by lia
     have hn1v' : 2 * n = n1 + 1 := hn1.symm
     rw [haa]
     congr
@@ -128,7 +128,7 @@ lemma can_get_a_later_one_zmod :
 
   have hii : ∀ i, i < 6 → a' (n2 + i + 1) = a' (n2 + i) + a' n1 := by
     intro i hi
-    have hn2ge2 : 2 ≤ n2 + i + 1 := by omega
+    have hn2ge2 : 2 ≤ n2 + i + 1 := by lia
     have hr := a'_recurrence (n2 + i + 1) hn2ge2
     grind
 
@@ -149,14 +149,14 @@ lemma can_get_a_later_one_zmod :
   obtain (haez : a' n1 = 0) | (hanez : ¬ a' n1 = 0) := em (a' n1 = 0)
   · use n1
     constructor
-    · omega
+    · lia
     · exact haez
 
   · have := lemma3 n2 (a' n1) hanez hik
     obtain ⟨ii, _, hia'⟩ := this
     use (n2 + ii)
     constructor
-    · omega
+    · lia
     · assumption
 
 lemma can_get_a_later_one : (∀ N : ℕ, 7 ∣ a N → (∃ M : ℕ, N < M ∧ 7 ∣ a M)) := by
@@ -182,7 +182,7 @@ lemma strengthen
     exact ⟨M, pos_of_gt left, right⟩
   · obtain ⟨m, hm, hmp⟩ := hpn
     obtain ⟨M, left, right⟩ := h m hmp
-    exact ⟨M, by omega, right⟩
+    exact ⟨M, by lia, right⟩
 
 theorem poland1998_p4' : (∀ N : ℕ, ∃ M : ℕ, N < M ∧ 7 ∣ a M) := by
   have he : 7 ∣ a 5 := by simp [a]

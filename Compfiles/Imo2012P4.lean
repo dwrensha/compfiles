@@ -107,7 +107,7 @@ problem imo2012_p4 (f : ℤ → ℤ) :
 
     have P (a b : ℤ) : (f a) ^ 2 + (f b) ^ 2 + f (a + b) ^ 2 =
                        2 * f a * f b + 2 * f (a + b) * (f a + f b) := by
-      have := constraint a b (- (a + b)) (by omega)
+      have := constraint a b (- (a + b)) (by lia)
       rw [even (a + b)] at this
       rw [this]
       ring
@@ -158,7 +158,7 @@ problem imo2012_p4 (f : ℤ → ℤ) :
         case right =>
           rintro ⟨k, hk⟩
           convert even_zero k using 2
-          omega
+          lia
       left
       left
       assumption
@@ -187,7 +187,7 @@ problem imo2012_p4 (f : ℤ → ℤ) :
         rw [← sub_eq_zero, ← sub_eq_zero (a := f 3), ← Int.mul_eq_zero, ← this]
         ring_nf
 
-      have «P(2,2)» : f 4 = 0 ∨ f 4 = 16 * f 1 := by convert «P(a,a)» 2 using 2; omega
+      have «P(2,2)» : f 4 = 0 ∨ f 4 = 16 * f 1 := by convert «P(a,a)» 2 using 2; lia
 
       cases «P(1,2)»
 
@@ -225,7 +225,7 @@ problem imo2012_p4 (f : ℤ → ℤ) :
               rcases x with x | x; case ofNat => simp at pos
               rw [Int.negSucc_eq, even, neg_pow_two]
               apply H <;> try assumption
-              · omega
+              · lia
 
             rcases x with x | x; case negSucc => simp at pos
             induction x using Nat.strongRecOn with
@@ -243,7 +243,7 @@ problem imo2012_p4 (f : ℤ → ℤ) :
               rcases this with «f(x+1)=(x-1)²*f1» | goal; case inr => exact goal
 
               have := P (x + 1) (-2)
-              rw [show (x : ℤ) + 1 + (-2) = x - 1 by omega, even] at this
+              rw [show (x : ℤ) + 1 + (-2) = x - 1 by lia, even] at this
               have «f(x-1)=(x-1)²*f1» : f ((x : ℤ) - 1) = ((x : ℤ) - 1) ^ 2 * f 1 := by
                 by_cases h : (x : ℤ) - 1 ≥ 0
                 · rcases x with _ | x
@@ -274,7 +274,7 @@ problem imo2012_p4 (f : ℤ → ℤ) :
     rintro ((sol | sol) | sol)
     all_goals
       intro a b c H
-      have c_eq : c = - (a + b) := by omega
+      have c_eq : c = - (a + b) := by lia
       rcases sol with ⟨d, h⟩
 
     · have ⟨hal, har⟩ := h a

@@ -42,7 +42,7 @@ structure State (n : ℕ) where
 theorem halve_even (x : ℕ+) (he : Even x.val) : 0 < x.val / 2 := by
    obtain ⟨x, hx⟩ := x
    obtain ⟨t, ht⟩ := he
-   dsimp at *; omega
+   dsimp at *; lia
 
 def valid_moves (a : ℕ+) (n : ℕ) : State n → Set (State n)
 | ⟨b, .Alice⟩ =>
@@ -119,7 +119,7 @@ lemma lemma3 (N : ℕ) (b : Blackboard N)
      exact Nat.maxPowDiv.le_of_dvd one_lt_two (PNat.ne_zero (b i)) h2
   rw [Finset.sum_eq_zero_iff] at hd
   have h2 := hd i (Finset.mem_univ i)
-  omega
+  lia
 
 lemma lemma5 {a x : ℕ} (hx : 0 < x)
     (hax : Nat.maxPowDiv 2 x < Nat.maxPowDiv 2 a) :
@@ -131,7 +131,7 @@ lemma lemma5 {a x : ℕ} (hx : 0 < x)
     Nat.pow_dvd_of_le_of_pow_dvd H h1
   have h5 : 2 ^ (Nat.maxPowDiv 2 a) ∣ x := (Nat.dvd_add_iff_left h2).mpr h4
   have h6 := Nat.maxPowDiv.le_of_dvd one_lt_two (Nat.ne_zero_of_lt hx) h5
-  omega
+  lia
 
 lemma lemma5' {a x : ℕ} (hx : 0 < x)
     (hax : Nat.maxPowDiv 2 x < Nat.maxPowDiv 2 a) :
@@ -154,7 +154,7 @@ lemma lemma5' {a x : ℕ} (hx : 0 < x)
     rw [mul_assoc, ←mul_add]
 
   have h12 : 2 ^ Nat.maxPowDiv 2 x ∣ x + a := Dvd.intro _ h10.symm
-  replace h12 := Nat.maxPowDiv.le_of_dvd one_lt_two (by omega) h12
+  replace h12 := Nat.maxPowDiv.le_of_dvd one_lt_two (by lia) h12
   suffices H : Nat.maxPowDiv 2 (x + a) ≤ Nat.maxPowDiv 2 x from Nat.le_antisymm H h12
   by_contra! H
 
@@ -165,7 +165,7 @@ lemma lemma5' {a x : ℕ} (hx : 0 < x)
     rw [←mul_assoc, ←pow_succ] at hxx
     have h17 : 2 ^ (Nat.maxPowDiv 2 x + 1) ∣ x := Dvd.intro z hxx.symm
     replace h17 := Nat.maxPowDiv.le_of_dvd one_lt_two (Nat.ne_zero_of_lt hx) h17
-    omega
+    lia
 
   have h15' : ¬ 2 ∣ xx + 2 ^ (1 + c) * aa := by
     intro HH
@@ -183,7 +183,7 @@ lemma lemma5' {a x : ℕ} (hx : 0 < x)
     have h18 := Nat.maxPowDiv.pow_dvd 2 ee
     generalize hee' : Nat.maxPowDiv 2 ee = ee'
     rw [hee'] at h18 HH
-    cases ee' with | zero => omega | succ ee' =>
+    cases ee' with | zero => lia | succ ee' =>
     rw [pow_succ] at h18
     have : 2 ∣ ee := Nat.dvd_of_pow_dvd HH h18
     contradiction
@@ -196,7 +196,7 @@ lemma lemma5' {a x : ℕ} (hx : 0 < x)
 
   rw [Nat.maxPowDiv.base_pow_mul one_lt_two h13] at H
   rw [h15, zero_add] at H
-  omega
+  lia
 
 lemma alice_move_preserves_nu
      (a : ℕ+) (N : ℕ) (b0 : Blackboard N)
@@ -282,8 +282,8 @@ lemma lemma2' (a : ℕ+) (N : ℕ) (hN : 1 < N) (s0 : State N)
       intro s hs
       have h2 : Even (a:ℕ) := by
         have ha : 0 < Nat.maxPowDiv 2 ↑a := by
-          have := hd ⟨0, by omega⟩
-          omega
+          have := hd ⟨0, by lia⟩
+          lia
         have ha1 := Nat.maxPowDiv.pow_dvd 2 a
         rw [even_iff_two_dvd]
         exact Nat.dvd_of_pow_dvd ha ha1

@@ -103,12 +103,12 @@ lemma lemma2 (n : ℕ) (f : ℕ → ℝ) :
         · intro hy
           rw [Finset.mem_erase, Finset.mem_range] at hy
           rw [Finset.mem_insert, Finset.mem_erase, Finset.mem_range]
-          omega
+          lia
         · intro hy
           rw [Finset.mem_insert, Finset.mem_erase, Finset.mem_range] at hy
           rw [Finset.mem_range] at hx
           rw [Finset.mem_erase, Finset.mem_range]
-          omega
+          lia
       rw [h7, Finset.prod_insert h7']
       ring
     rw [h3]

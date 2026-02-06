@@ -34,7 +34,7 @@ lemma extended_pigeonhole {α : Type u} {β : Type v} [DecidableEq α] [Decidabl
       ∧ (∀ t' : Finset α, t' ∈ t → ∃ p : β, ∀ n : α, n ∈ t' → f n = p) := by
   induction' n with n' hn'
   · use ∅; simp
-  · have h'n' : 2 * n' + s'.card - 1 ≤ s.card := by omega
+  · have h'n' : 2 * n' + s'.card - 1 ≤ s.card := by lia
     rcases hn' h'n' with ⟨tn', ⟨htn'₁, htn'₂, htn'₃, htn'₄, htn'₅⟩⟩
     let s'' := s \ (Finset.disjiUnion tn' id htn'₄)
     have hs'' : s''.card = s.card - 2 * n' := by
@@ -117,9 +117,9 @@ lemma double_pigeonhole {α : Type u} {β : Type v} {γ : Type w} [DecidableEq �
       ∧ (∃ p : β, ∀ n : α, n ∈ t₁ → f₁ n = p)
       ∧ (∃ p : β, ∀ n : α, n ∈ t₂ → f₁ n = p)
       ∧ (f₂ t₁ = f₂ t₂) := by
-  have h's : 2 * (s₂.card + 1) + s₁.card - 1 ≤ s.card := by omega
+  have h's : 2 * (s₂.card + 1) + s₁.card - 1 ≤ s.card := by lia
   rcases extended_pigeonhole hf₁ (s₂.card + 1) h's with ⟨t, ⟨ht₁, ht₂, ht₃, ht₄, ht₅⟩⟩
-  have h't : s₂.card < t.card := by omega
+  have h't : s₂.card < t.card := by lia
   have h'f₂ : Set.MapsTo f₂ t s₂ := by
     intro x hxt
     rw [Finset.mem_coe] at *
@@ -159,7 +159,7 @@ lemma square_of_pow_of_pow_of_kth_prime_mod_two_eq {m n : ℕ}
   let k := ∏ p ∈ Finset.range (m * n + 1) with Nat.Prime p, p ^ ((padicValNat p m + padicValNat p n) / 2)
   use k
   have hmn₀ : m * n ≠ 0 := Nat.mul_ne_zero hm₀ hn₀
-  rw [← Nat.prod_pow_prime_padicValNat (m * n) hmn₀ (m * n + 1) (by omega:_)]
+  rw [← Nat.prod_pow_prime_padicValNat (m * n) hmn₀ (m * n + 1) (by lia:_)]
   rw [← Finset.prod_pow]
   apply Finset.prod_congr rfl
   intro p hp
@@ -175,7 +175,7 @@ lemma square_of_pow_of_pow_of_kth_prime_mod_two_eq {m n : ℕ}
   have hmn':= hmn (Nat.primeCounting' p)
   simp [pow_of_kth_prime_mod_two, Nat.primeCounting'] at hmn'
   rw [Nat.nth_count hp'] at hmn'
-  omega
+  lia
 
 lemma padicValNat_eq_zero_of_divisors {k m k': ℕ} (hm₀ : m ≠ 0)
     (hm : ∀ p, p.Prime ∧ p ∣ m → p ≤ Nat.nth Nat.Prime k) (hk' : k < k'):
@@ -185,7 +185,7 @@ lemma padicValNat_eq_zero_of_divisors {k m k': ℕ} (hm₀ : m ≠ 0)
   rw [← dvd_iff_padicValNat_ne_zero hm₀] at hdiv
   have hdiv' := hm (Nat.nth Nat.Prime k') ⟨Nat.prime_nth_prime k', hdiv⟩
   rw [Nat.nth_le_nth Nat.infinite_setOf_prime] at hdiv'
-  omega
+  lia
 
 lemma square_of_pow_of_first_k_prime_mod_two_eq {k m n : ℕ}
     (hm₀ : m ≠ 0) (hn₀ : n ≠ 0)

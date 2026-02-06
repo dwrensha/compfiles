@@ -588,7 +588,7 @@ lemma aux₁
       · intro y hy₀ hy₁ hy₂
         have hy₃: y ≤ n := Nat.le_of_succ_le hy₂
         have hy₄: f₃ y + 1 ≤ f₃ (y + 1) := by
-          refine hf₇ y ?_ (y + 1) ?_ (by omega)
+          refine hf₇ y ?_ (y + 1) ?_ (by lia)
           · exact Finset.mem_Icc.mpr ⟨hy₀, hy₃⟩
           · refine Finset.mem_Icc.mpr ⟨Nat.le_add_right_of_le hy₀, hy₂⟩
         refine le_trans ?_ hy₄

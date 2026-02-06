@@ -194,7 +194,7 @@ theorem imo1992_p6_a : ∀ n ≥ 4, S n ≤ n^2-14 := by
         _ = n^2 - 14 + s j ^ 2 := by
           rw [Finset.sum_const, smul_eq_mul, mul_one, Nat.add_right_cancel_iff, Finset.card_sdiff,
               Finset.card_univ, Fintype.card_fin, Finset.inter_univ, Finset.card_singleton]
-          omega
+          lia
         _ ≥ n ^ 2 - 14 + 16 := by
           simp
           have : 16 = 4^2 := by simp
@@ -231,7 +231,7 @@ theorem imo1992_p6_a : ∀ n ≥ 4, S n ≤ n^2-14 := by
       zify at this
       rw [Nat.cast_sub (Nat.le_of_add_left_le nge)] at this
       simp only [Nat.cast_pow, Nat.cast_ofNat] at this
-      omega
+      lia
     calc
       _ = ∑ i, (s' i).val ^ 2 := by
         nth_rw 1 [sh1']
@@ -508,7 +508,7 @@ theorem is_sum_of_pos_squares_by_repeat_shift (C:Multiset ℕ+) :
     unfold b
     apply Nat.div_le_div_right
     let := (Finset.mem_Icc.mp kbs).left
-    omega
+    lia
   })
   have : k = C'.card := by
     unfold b at h2
@@ -517,7 +517,7 @@ theorem is_sum_of_pos_squares_by_repeat_shift (C:Multiset ℕ+) :
       rw [Nat.cast_sub] at h2
       · grind
       · exact (Finset.mem_Icc.mp kbs).right
-    · omega
+    · lia
   rw [this, ←h1]
   apply msos.is_sum_of_pos_squares
 
@@ -588,11 +588,11 @@ theorem sos_13_0mod3 : ∀ k:ℕ, k≠0 → k ≤ 13^2-14 → k%3=0 → is_sum_o
         assumption
       · unfold C
         simp
-        omega
+        lia
     · unfold C
       rw [kmod]
       simp
-  · have : k=3 ∨ k=6 := by omega
+  · have : k=3 ∨ k=6 := by lia
     apply this.by_cases
     · intro keq
       let C := msos.mk [(1,3), (1, 4), (1,12)]
@@ -623,11 +623,11 @@ theorem sos_13_1mod3 : ∀ k:ℕ, k ≤ 13^2-14 → k%3=1 → is_sum_of_pos_squa
         assumption
       · unfold C
         simp
-        omega
+        lia
     · unfold C
       rw [kmod]
       simp
-  · have : k=1 ∨ k=4 := by omega
+  · have : k=1 ∨ k=4 := by lia
     apply this.by_cases
     · intro keq
       let C := msos.mk [(1,13)]
@@ -658,11 +658,11 @@ theorem sos_13_2mod3 : ∀ k:ℕ, k ≤ 13^2-14 → k%3=2 → is_sum_of_pos_squa
         assumption
       · unfold C
         simp
-        omega
+        lia
     · unfold C
       rw [kmod]
       simp
-  · have keq : k=2 := by omega
+  · have keq : k=2 := by lia
     let C := msos.mk [(1,5), (1,12)]
     have : msos.sq_sum C = 13^2 := by native_decide
     rw [←this]
@@ -673,7 +673,7 @@ theorem sos_13_2mod3 : ∀ k:ℕ, k ≤ 13^2-14 → k%3=2 → is_sum_of_pos_squa
 theorem complete_13 : complete 13 := by
   rw [complete_iff_sos _ (by simp)]
   intro k kb
-  have : k.val%3 = 0 ∨ k.val%3 = 1 ∨ k.val%3 = 2 := by omega
+  have : k.val%3 = 0 ∨ k.val%3 = 1 ∨ k.val%3 = 2 := by lia
   apply this.elim3
   · apply sos_13_0mod3 _ (by grind) kb
   · apply sos_13_1mod3 _ kb
@@ -908,7 +908,7 @@ theorem complete_mul (n1 n2) (lb1 : 13 ≤ n1) (lb2 : 13 ≤ n2) (n1h : complete
           exact Nat.pow_le_pow_left n1n2_lb 2
     unfold k1 k2 at c
     rw [←PNat.coe_le_coe, PNat.mul_coe] at c
-    have : k.val%3 = (N-14)%3 ∨ k.val%3 = (N-15)%3 ∨ k.val%3 = (N-16)%3 := by omega
+    have : k.val%3 = (N-14)%3 ∨ k.val%3 = (N-15)%3 ∨ k.val%3 = (N-16)%3 := by lia
     apply this.elim3
     · rw [←C1_card, ←C1_sq_sum]
       apply is_sum_of_pos_squares_by_repeat_shift
@@ -927,7 +927,7 @@ theorem complete_mul (n1 n2) (lb1 : 13 ≤ n1) (lb2 : 13 ≤ n2) (n1h : complete
         trans N+3*N
         · grind
         · apply le_trans h14
-          omega
+          lia
       · rw [C1_card]
         exact kb'
     · rw [←C2_card, ←C2_sq_sum]
@@ -948,9 +948,9 @@ theorem complete_mul (n1 n2) (lb1 : 13 ≤ n1) (lb2 : 13 ≤ n2) (n1h : complete
         trans N+3*N
         · grind
         · apply le_trans h14
-          omega
+          lia
       · rw [C2_card] at m ⊢
-        omega
+        lia
     · rw [←C3_card, ←C3_sq_sum]
       intro m
       apply is_sum_of_pos_squares_by_repeat_shift _ _ _ m
@@ -969,9 +969,9 @@ theorem complete_mul (n1 n2) (lb1 : 13 ≤ n1) (lb2 : 13 ≤ n2) (n1h : complete
         trans N+3*N
         · grind
         · apply le_trans h14
-          omega
+          lia
       · rw [C3_card] at m ⊢
-        omega
+        lia
   · rw [complete_iff_sos] at n1h n2h
     · simp at c
       obtain ⟨u,v,hk, ub, vb⟩ : ∃ u v : ℕ+, k = (u.val-1)*k2+v ∧ u ≤ k1 ∧ v ≤ k2 := by

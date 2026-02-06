@@ -60,7 +60,7 @@ problem imo2006_p4 :
                 · exact hx
               · apply zpow_lt_one_of_neg₀
                 · norm_num
-                · omega
+                · lia
             _ < 2 ^ 2 := by norm_num
       have hk2 : k > 1 := by
         suffices h : ((y.natAbs ^ 2 : ℤ) : ℝ) > (1 : ℝ) ^ 2

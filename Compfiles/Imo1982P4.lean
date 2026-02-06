@@ -48,7 +48,7 @@ problem imo1982_p4 (n : ℕ)
     have ⟨h₂, h₃⟩ : (x : ℤ) % 7 = 0 ∧ (y : ℤ) % 7 = 0 := by
       replace hxy : (x : ℤ) ^ 3 - 3 * x * y ^ 2 + y ^ 3 ≡ 0 [ZMOD (7:ℕ)] := by
         norm_num [Int.ModEq] at hxy ⊢
-        omega
+        lia
       replace hxy : (x : ZMod 7) ^ 3 - 3 * (x : ZMod 7) * (y : ZMod 7) ^ 2 +
                       (y : ZMod 7) ^ 3 = 0 := by
         rw [←ZMod.intCast_eq_intCast_iff] at hxy
@@ -73,7 +73,7 @@ problem imo1982_p4 (n : ℕ)
     ring_nf at hxy
     have h₉ : (7 : ℤ) ∣ 59 := by
       use (a ^ 3 + b ^ 3 - 3 * a * b ^ 2)
-      omega
+      lia
     norm_num at h₉
   have h_part2 : ∃ x1 x2 x3 y1 y2 y3 : ℤ,
       (x1^3 - 3 * x1 * y1^2 + y1^3 = n ∧ x2^3 - 3 * x2 * y2^2 + y2^3 = n ∧
@@ -95,7 +95,7 @@ problem imo1982_p4 (n : ℕ)
       have h₄ : y = 0 := by grind
       simp [h₃, h₄] at hxy
       norm_cast at hxy
-      omega
+      lia
     })
   exact ⟨h_part1, h_part2⟩
 

@@ -129,7 +129,7 @@ problem usa1987_p1 (m n : ℤ) :
           simp only [Set.mem_insert_iff, true_or, or_true]
         · obtain rfl : n = -21 := by linarith only [h28]
           simp only [Set.mem_insert_iff, Set.mem_singleton_iff, or_true]
-      · omega
+      · lia
     · rw [hm'] at h13
       have h21 : 5^2 < m'^2 := by rw [←h13]; norm_num
       have h23 : 5 < m' := lt_of_pow_lt_pow_left₀ 2 hm0' h21

@@ -69,7 +69,7 @@ theorem exists_between_and_separated {ι : Type*} (S : Finset ι) (f : ι → �
       rw [Set.disjoint_left] at disjoint
       exact disjoint hi hj
     rw [card_univ, Fintype.card_fin] at this
-    omega
+    lia
   push_neg at h; simp only [mem_univ, Set.mem_Ioo, mem_filter, and_imp, true_and] at h
   -- the `i`th interval in disjoint with `(f '' S) ∩ (a, b)`
   obtain ⟨i, h⟩ := h; unfold rel at h
@@ -83,7 +83,7 @@ theorem exists_between_and_separated {ι : Type*} (S : Finset ι) (f : ι → �
     positivity
   · rw [AffineMap.lineMap_apply_ring']
     have ineq₂: (1 / (2 * n) : ℝ) < 1 / n := by
-      gcongr; norm_cast; omega
+      gcongr; norm_cast; lia
     linear_combination (ineq₁ + ineq₂) * (b - a)
   intro p hp
   -- the `i`th interval is disjoint with `f '' S`
@@ -264,7 +264,7 @@ problem imo2020_p6 : ∃ c : ℝ, 0 < c ∧ ∀ {n : ℕ}, 1 < n → ∀ {S : Fi
     obtain ⟨l, rank, sOpp, h⟩ := exists_affine_between_and_separated 1 S (·) (n*2) a b 0 (dist a b)
       le_rfl (dist_pos.mpr this) le_rfl (by
       rw [le_sub_iff_add_le]; norm_cast
-      exact lt_of_le_of_lt (card_filter_le S _) (by omega)) this
+      exact lt_of_le_of_lt (card_filter_le S _) (by lia)) this
     norm_num at h
     use l, rank
     refine ⟨⟨a, ha, b, hb, sOpp⟩, ?_⟩
@@ -282,7 +282,7 @@ problem imo2020_p6 : ∃ c : ℝ, 0 < c ∧ ∀ {n : ℕ}, 1 < n → ∀ {S : Fi
   -- picking the furthest such points `a` and `b`, and choosing the best perpendiculer line
   -- through the segment of width `1/2` at the edge.
   obtain ⟨a, ha, b, hb, h_max⟩ : ∃ᵉ (a ∈ S) (b ∈ S), ∀ᵉ (x ∈ S) (y ∈ S), dist x y ≤ dist a b := by
-    have : Nonempty S := Nonempty.to_subtype (Finset.card_pos.mp (by omega))
+    have : Nonempty S := Nonempty.to_subtype (Finset.card_pos.mp (by lia))
     obtain ⟨⟨⟨a, ha⟩, ⟨b, hb⟩⟩, _, hab⟩ :=
       Set.finite_univ.exists_maximalFor (fun xy : S × S => dist xy.1.val xy.2.val)
         Set.univ Set.univ_nonempty
@@ -295,7 +295,7 @@ problem imo2020_p6 : ∃ c : ℝ, 0 < c ∧ ∀ {n : ℕ}, 1 < n → ∀ {S : Fi
   have h_ne : a ≠ b := by
     rintro rfl
     simp [← Finset.card_le_one] at h_max
-    omega
+    lia
   have : 0 < ‖b -ᵥ a‖ := by
     simp [h_ne.symm]
 

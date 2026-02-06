@@ -45,14 +45,14 @@ lemma lemma3 : ∑ i ∈ Finset.range 1319, (-(1:ℚ))^i / (i + 1) =
       rw [Finset.mem_range] at hb1
       rw [←hb2]
       constructor
-      · omega
+      · lia
       · exact Nat.not_even_iff_odd.mpr ⟨b, rfl⟩
     · rintro ⟨ha1, ha2⟩
       have h5 : Odd a := Nat.not_even_iff_odd.mp ha2
       obtain ⟨r, hr⟩ := h5
       use r
       constructor
-      · rw [Finset.mem_range]; omega
+      · rw [Finset.mem_range]; lia
       · exact hr.symm
   have h5 : ∑ i ∈ Finset.range 659, 1 / (2 * ((i:ℚ) + 1))
        = ∑ i ∈ Finset.range 659, (1 / (((g i):ℚ) + 1)) := by
@@ -114,7 +114,7 @@ lemma lemma9' (i : ℕ) (hi : i ∈ Finset.range 330) :
   rw [Finset.mem_range] at hi
   push_cast
   have h1 : (((1319 - i):ℕ):ℚ) = 1319 - (i:ℚ) := by
-    have : i ≤ 1319 := by omega
+    have : i ≤ 1319 := by lia
     simp_all only [Nat.cast_sub, Nat.cast_ofNat]
   rw [h1, mul_div_assoc]
   have h2 : ((660 + (i:ℚ)) * (1319 - (i:ℚ))) /
@@ -155,13 +155,13 @@ problem imo1979_p1 (p q : ℤ) (hp : 0 < p) (hq : 0 < q)
     intro a ha ha1
     rw [Finset.mem_range] at ha
     rw [Finset.mem_Ico] at ha1
-    omega
+    lia
   have h3 : Finset.range 1319 =
       Finset.disjUnion (Finset.range 659) (Finset.Ico 659 1319) h2 := by
     ext a
     rw [Finset.mem_range, Finset.disjUnion_eq_union, Finset.mem_union,
         Finset.mem_range, Finset.mem_Ico]
-    omega
+    lia
   rw [h3] at h; clear h3
   rw [Finset.sum_disjUnion, add_sub_cancel_left] at h; clear h2
   rw [lemma4 659 330] at h
@@ -173,17 +173,17 @@ problem imo1979_p1 (p q : ℤ) (hp : 0 < p) (hq : 0 < q)
     rw [Finset.mem_range] at hi
     have h5 : (((659 + i) : ℕ) : ℚ) + 1 = 660 + (i : ℚ) := by grind
     have h6 : (((659 + (2 * 330 - 1 - i)):ℕ):ℚ) + 1 = 1319 - (i:ℚ) := by
-      rw [show 2 * 330 - 1 - i = 659 - i by omega]
-      rw [show 659 + (659 - i) = 1318 - i by omega]
+      rw [show 2 * 330 - 1 - i = 659 - i by lia]
+      rw [show 659 + (659 - i) = 1318 - i by lia]
       have h10 : (((1318 - i):ℕ):ℚ) = 1318 - ↑i := by
-        have : i ≤ 1318 := by omega
+        have : i ≤ 1318 := by lia
         rw [Nat.cast_sub this]
         rfl
       rw [h10]
       ring
     rw [h5, h6]; clear h5 h6
     have : (1319 : ℚ) - i ≠ 0 := by
-      have h8 : 1319 ≠ i := by omega
+      have h8 : 1319 ≠ i := by lia
       intro H
       have h9 : 1319 = (i : ℚ) := by linarith
       norm_cast at h9
@@ -202,7 +202,7 @@ problem imo1979_p1 (p q : ℤ) (hp : 0 < p) (hq : 0 < q)
       rw [Finset.mem_range] at hi
       intro H
       have := (Nat.Prime.dvd_mul hpp).mp H
-      omega
+      lia
     exact Prime.not_dvd_finset_prod (Nat.prime_iff.mp hpp) h30
   obtain ⟨p', rfl⟩ := Int.eq_ofNat_of_zero_le (le_of_lt hp)
   obtain ⟨q', rfl⟩ := Int.eq_ofNat_of_zero_le (le_of_lt hq)

@@ -45,12 +45,12 @@ theorem lemma1
       2 < s.card ∧
         ∀ p1 ∈ s, ∀ p2 ∈ s, p1 ≠ p2 → discusses p1 p2 = t := by
   -- Choose a person p2.
-  have p2 : Person := Nonempty.some (Fintype.card_pos_iff.mp (by omega))
+  have p2 : Person := Nonempty.some (Fintype.card_pos_iff.mp (by lia))
   let Person' := {p3 // p3 ≠ p2}
   have hfcα : 4 < Fintype.card Person' := by
     rw [Fintype.card_subtype_compl, Fintype.card_ofSubsingleton]
     exact lt_tsub_of_add_lt_left card_person
-  have h1 : Fintype.card Topic * 2 < Fintype.card Person' := by omega
+  have h1 : Fintype.card Topic * 2 < Fintype.card Person' := by lia
 
   -- By the pigeonhole principle, there must be some topic t2 such that the
   -- size of the set {p3 // p3 ≠ p2 ∧ discusses p2 p3 = t2} is at least 3.
@@ -116,7 +116,7 @@ problem imo1964_p4
       2 < s.card ∧
         ∀ p1 ∈ s, ∀ p2 ∈ s, p1 ≠ p2 → discusses p1 p2 = t := by
   -- Choose a person p1.
-  have p1 : Person := Nonempty.some (Fintype.card_pos_iff.mp (by omega))
+  have p1 : Person := Nonempty.some (Fintype.card_pos_iff.mp (by lia))
   let Person' := {p2 // p2 ≠ p1}
 
   -- By the pigeonhole principle, there must be some topic t1 such

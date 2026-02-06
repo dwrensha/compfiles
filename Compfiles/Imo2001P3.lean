@@ -67,7 +67,7 @@ lemma card_not_easy_le_five {α β : Type} [Fintype α]
     _ = #((β_solved i).biUnion fun p ↦ {j | p ∈ α_solved j}) := by congr 1; ext j; simp [not_disjoint_iff]
     _ ≤ ∑ p ∈ β_solved i, #{j | p ∈ α_solved j}              := card_biUnion_le
     _ ≤ ∑ p ∈ β_solved i, 2                           := sum_le_sum fun p mp ↦ Nat.le_of_lt_succ (h p mp)
-    _ ≤ _                                      := by rw [sum_const, smul_eq_mul]; omega
+    _ ≤ _                                      := by rw [sum_const, smul_eq_mul]; lia
 
 open Classical in
 /-- There are at most 210 girl-boy pairs who solved some problem in common that was not easy for

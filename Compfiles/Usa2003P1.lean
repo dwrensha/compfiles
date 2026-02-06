@@ -23,7 +23,7 @@ namespace Usa2003P1
 
 snip begin
 
-lemma nat_mod_inv (a : ℕ) : ∃ b, (a + b) % 5 = 0 := ⟨5 - (a % 5), by omega⟩
+lemma nat_mod_inv (a : ℕ) : ∃ b, (a + b) % 5 = 0 := ⟨5 - (a % 5), by lia⟩
 
 lemma lemma2 (a b c : ℕ) (hb : 0 < b) (h : Nat.Coprime a b) : ∃ k, k < b ∧ a * k ≡ c [MOD b] := by
   let ⟨N, HN1, HN2⟩ := Nat.chineseRemainder h 0 c
@@ -79,7 +79,7 @@ problem usa2003_p1 (n : ℕ) :
     suffices h : ∃ j, j < 5 ∧ 5 ∣ (2^n * (2 * j + 1) + a) by
       obtain ⟨j, hj1, hj2⟩ := h
       refine ⟨2 * j + 1, odd_two_mul_add_one j, ?_, hj2⟩
-      · omega
+      · lia
     clear ha hpm1 hpm3
 
     obtain ⟨b, hb⟩ : ∃ b, ((2^n + a) + b) % 5 = 0 := nat_mod_inv (2^n + a)

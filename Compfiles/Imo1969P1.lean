@@ -73,7 +73,7 @@ theorem polynomial_not_prime {m : ℕ} (h1 : 1 < m) (n : ℕ) : ¬Nat.Prime (n ^
 def aChoice (b : ℕ) : ℕ := 4 * (2 + b) ^ 4
 
 theorem aChoice_good (b : ℕ) : aChoice b ∈ goodNats :=
-  polynomial_not_prime (show 1 < 2 + b by omega)
+  polynomial_not_prime (show 1 < 2 + b by lia)
 
 /-- `aChoice` is a strictly monotone function; this is easily proven by chaining together lemmas
 in the `strictMono` namespace. -/

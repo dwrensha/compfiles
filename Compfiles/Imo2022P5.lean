@@ -34,15 +34,15 @@ lemma mylemma_1
     (h₀ : 0 < b)
     (hbp : b < p) :
     (1 + (b * p + b ^ p) ≤ (1 + b) ^ p) := by
-  replace hbp : 2 ≤ p := by omega
+  replace hbp : 2 ≤ p := by lia
   induction p, hbp using Nat.le_induction with
-  | base => ring_nf; omega
+  | base => ring_nf; lia
   | succ n _ h₂ =>
     simp only [Nat.pow_succ, Nat.mul_add, mul_one]
     calc
-      _ ≤ 1 + (b * n + b ^ n) + (1 + b ^ n) * b := by ring_nf; omega
+      _ ≤ 1 + (b * n + b ^ n) + (1 + b ^ n) * b := by ring_nf; lia
       _ ≤ (1 + b) ^ n + (1 + b ^ n) * b := Nat.add_le_add_right h₂ _
-      _ ≤ _ := Nat.add_le_add_left (Nat.mul_le_mul_right b (by omega)) _
+      _ ≤ _ := Nat.add_le_add_left (Nat.mul_le_mul_right b (by lia)) _
 
 lemma mylemma_3
   (a b p : ℕ)
@@ -73,7 +73,7 @@ lemma mylemma_43 (p : ℕ) :
     ∏ x ∈ Finset.Ico p (2 * p - 1), (x + 1)
       = ∏ x ∈ Finset.range (p - 1), (p + (x + 1)) := by
   rw [Finset.prod_Ico_eq_prod_range _ p (2 * p - 1)]
-  have h₀: 2 * p - 1 - p = p - 1 := by omega
+  have h₀: 2 * p - 1 - p = p - 1 := by lia
   rw [h₀]
   exact rfl
 
@@ -115,7 +115,7 @@ lemma mylemma_41
            * (Finset.Ico ((p - 1) + 1) (2 * p - 1)).prod f := by
       symm
       refine Finset.prod_range_mul_prod_Ico f ?_
-      omega
+      lia
     have g₁: (Finset.range ((p - 1) + 1)).prod (fun (x : ℕ) => x + 1) =
        (Finset.range (p - 1)).prod (fun (x : ℕ) => x + 1) * ((p - 1) + 1) := by
       exact Finset.prod_range_succ _ (p - 1)
@@ -160,7 +160,7 @@ lemma mylemma_41
     rw [add_comm]
     nth_rewrite 2 [mul_comm]
     refine mylemma_42 p ((p ^ 2) ^ (p - 1) * p) gp ?_
-    refine lt_mul_left (by omega) ?_
+    refine lt_mul_left (by lia) ?_
     rw [← pow_mul]
     refine Nat.one_lt_pow ?_ (Nat.lt_of_succ_le gp)
     refine Nat.mul_ne_zero (by norm_num) ?_
@@ -187,19 +187,19 @@ lemma mylemma_4
     have gc: 0 < c :=
       Nat.pos_of_mul_pos_left (Nat.lt_of_lt_of_eq (Nat.zero_lt_of_lt h₃) h₂)
     by_cases hc: c < p
-    · have g₁: c ∣ c^p := dvd_pow_self c (by omega)
+    · have g₁: c ∣ c^p := dvd_pow_self c (by lia)
       have h₄: c ∣ a^p := by
         rw [h₂, mul_pow]
         exact dvd_mul_of_dvd_right g₁ (p ^ p)
-      have h₅: c ∣ b.factorial := Nat.dvd_factorial gc (by omega)
-      have g₂: p = a ^ p - b.factorial := by omega
+      have h₅: c ∣ b.factorial := Nat.dvd_factorial gc (by lia)
+      have g₂: p = a ^ p - b.factorial := by lia
       have h₆: c ∣ p := by
         rw [g₂]
         exact Nat.dvd_sub h₄ h₅
       have h₇: c = 1 ∨ c = p := by exact (Nat.dvd_prime hp).mp h₆
       obtain h₇₀ | h₇₁ := h₇
       · rw [h₇₀, mul_one] at h₂
-        omega
+        lia
       · rw [h₇₁] at hc
         simp at hc
     · push_neg at hc
@@ -210,7 +210,7 @@ lemma mylemma_4
         rw [pow_mul]
         exact pow_left_mono p g₃
       have h₇: b.factorial + p < p^(2*p) := by exact mylemma_41 b p hp hb2p
-      omega
+      lia
   exact h₃.symm
 
 lemma mylemma_53
@@ -230,7 +230,7 @@ lemma mylemma_53
            (↑p + 1) ^ k * (-1:ℤ) ^ (p - k) * ↑(p.choose k)) := by
     rw [sub_eq_add_neg]
     rw [add_pow ((↑p:ℤ) + 1) (-1:ℤ)]
-    have g₀: 2 ≤ p + 1 := by omega
+    have g₀: 2 ≤ p + 1 := by lia
     have g₁: 1 ≤ 2 := one_le_two
     rw [← Finset.sum_range_add_sum_Ico _ g₀]
     rw [← Finset.sum_range_add_sum_Ico _ g₁]
@@ -284,9 +284,9 @@ lemma mylemma_52
       rw [add_comm, Nat.add_sub_assoc]
       · simp
       · rw [← pow_two]
-        refine Nat.one_le_pow 2 p (by omega)
+        refine Nat.one_le_pow 2 p (by lia)
     rw [Nat.cast_sub g₄]
-    have g₅: 1 ≤ p * (p + 1) := by omega
+    have g₅: 1 ≤ p * (p + 1) := by lia
     rw [Nat.cast_sub g₅]
     rw [← sub_eq_add_neg] at h₁
     norm_cast
@@ -311,7 +311,7 @@ lemma mylemma_52
       exact Nat.sq_sub_sq p 1
     simp at g₀
     rw [g₀] at h₄
-    have g₁: p + 1 ≠ 0 := by omega
+    have g₁: p + 1 ≠ 0 := by lia
     refine Nat.ModEq.mul_right_cancel' g₁ ?_
     rw [zero_mul]
     exact h₄
@@ -319,7 +319,7 @@ lemma mylemma_52
     refine Nat.ModEq.le_of_lt_add h₅ ?_
     rw [zero_add]
     exact Nat.sub_lt_succ p 1
-  omega
+  lia
 
 lemma mylemma_51
     (p : ℕ)
@@ -334,10 +334,10 @@ lemma mylemma_51
       rw [add_comm (n + 1)]
       rw [mul_comm (n + 1)]
     rw [h₂, pow_add, pow_one ]
-    refine Nat.mul_lt_mul_of_pos_right ?_ (by omega)
+    refine Nat.mul_lt_mul_of_pos_right ?_ (by lia)
     have h₅: n ^ n < (n + 1) ^ n :=
-      Nat.pow_lt_pow_left (lt_add_one n) (by omega)
-    omega
+      Nat.pow_lt_pow_left (lt_add_one n) (by lia)
+    lia
 
 lemma mylemma_5
     (b p : ℕ)
@@ -367,9 +367,9 @@ lemma mylemma_5
         have gg₁: (p + 1).factorial ∣ b.factorial := by exact Nat.factorial_dvd_factorial g₁
         have gg₂: (p + 1).factorial = (p + 1) * p.factorial := Nat.factorial_succ p
         rw [mul_comm] at gg₂
-        have gg₃: 6/2 ≤ (p + 1)/2 := by omega
+        have gg₃: 6/2 ≤ (p + 1)/2 := by lia
         norm_num at gg₃
-        have gg₄: 2 + (p+1)/2 ≤ p := by omega
+        have gg₄: 2 + (p+1)/2 ≤ p := by lia
         have gg₅: (2+(p+1)/2).factorial ∣ p.factorial :=
           Nat.factorial_dvd_factorial gg₄
         have gg₆: (2:ℕ).factorial * ((p+1)/2).factorial ∣ p.factorial := by
@@ -379,7 +379,7 @@ lemma mylemma_5
           refine dvd_trans ?_ gg₆
           simp
           refine mul_dvd_mul_left 2 ?_
-          refine Nat.dvd_factorial (by positivity) (by omega)
+          refine Nat.dvd_factorial (by positivity) (by lia)
         have gg₈: 2 * ((p+1)/2) * (p + 1) ∣ p.factorial * (p + 1) := by
           refine mul_dvd_mul_right ?_ (p + 1)
           exact gg₇
@@ -407,7 +407,7 @@ lemma mylemma_6
   have g₄: p.factorial * p.factorial ∣ (p+p).factorial :=
     Nat.factorial_mul_factorial_dvd_factorial_add p p
   rw [← pow_two, ← two_mul] at g₄
-  have g₅: p ∣ p.factorial := by exact Nat.dvd_factorial (by omega) (by omega)
+  have g₅: p ∣ p.factorial := by exact Nat.dvd_factorial (by lia) (by lia)
   have h₄: p ^ 2 ∣ p.factorial ^ 2 := by exact pow_dvd_pow_of_dvd g₅ 2
   have g₆: p ^ 2 ∣ (2 * p).factorial := by exact dvd_trans h₄ g₄
   have h₅: p^2 ∣ b.factorial := by exact dvd_trans g₆ g₃
@@ -437,10 +437,10 @@ problem imo2022_p5 (a b p : ℕ) (ha : 0 < a) (hb : 0 < b) (hp : p.Prime) :
       have h₄: a = 1 := by
         have g₄: a = 1 ∨ a = p := by
           exact (Nat.dvd_prime hp).mp h₃
-        omega
+        lia
       rw [h₄] at h₁
       simp at h₁
-      omega
+      lia
     · push_neg at hab
       have h₂: (b+1)^p ≤ a^p := by
         refine (Nat.pow_le_pow_iff_left ?_).mpr hab
@@ -457,7 +457,7 @@ problem imo2022_p5 (a b p : ℕ) (ha : 0 < a) (hb : 0 < b) (hp : p.Prime) :
       have g₅: b^b ≤ b^p := by
         refine Nat.pow_le_pow_right hb ?_
         exact le_of_lt hbp
-      omega
+      lia
   · push_neg at hbp
     have h₂: p ∣ a := by exact mylemma_3 a b p hp h₁ hbp
     by_cases hb2p: b < 2*p
@@ -468,21 +468,21 @@ problem imo2022_p5 (a b p : ℕ) (ha : 0 < a) (hb : 0 < b) (hp : p.Prime) :
         interval_cases p
         · left
           norm_num at h₁
-          have h₄: b.factorial = 2 := by omega
+          have h₄: b.factorial = 2 := by lia
           have g₅: (2:ℕ).factorial = 2 := by norm_num
           rw [← g₅] at h₄
           have h₅: b = 2 := by
             refine (Nat.factorial_inj ?_).mp h₄
-            omega
+            lia
           rw [h₅]
         · right
           norm_num at h₁
-          have h₄: b.factorial = 24 := by omega
+          have h₄: b.factorial = 24 := by lia
           have g₅: (4:ℕ).factorial = 24 := by exact rfl
           rw [← g₅] at h₄
           have h₅: b = 4 := by
             refine (Nat.factorial_inj ?_).mp h₄
-            omega
+            lia
           rw [h₅]
         · exfalso
           contradiction
@@ -492,7 +492,7 @@ problem imo2022_p5 (a b p : ℕ) (ha : 0 < a) (hb : 0 < b) (hp : p.Prime) :
     · push_neg at hb2p
       exfalso
       have h₃: p^2 ∣ a^p - b.factorial := by exact mylemma_6 a b p hp h₂ hb2p
-      have g₄: a^p - b.factorial = p := by omega
+      have g₄: a^p - b.factorial = p := by lia
       have h₄: p^2 ∣ p := by
         rw [g₄] at h₃
         exact h₃

@@ -28,7 +28,7 @@ snip begin
 
 lemma lemma1 {a : ℤ} (h1 : a % 100 = 0) (h2 : 0 < a) (h3 : a < 300) :
     a = 200 ∨ a = 100 := by
-  omega
+  lia
 
 lemma lemma2 {f : ZMod 101 → ℤ} (y : ZMod 101)
     : ∑ z : ZMod 101, f z = ∑ i ∈ Finset.range 101, f (y + i) := by
@@ -107,7 +107,7 @@ problem integers_in_a_circle
       rw [Finset.ssubset_univ_iff]
       intro hn
       rw [hn] at h7
-      omega
+      lia
     rw [Finset.ssubset_iff] at h9
     obtain ⟨z, hzn, _⟩ := h9
     exact Finset.sum_lt_sum_of_subset (Finset.subset_univ _)
@@ -165,7 +165,7 @@ problem integers_in_a_circle
       rw [←Nat.add_assoc, add_comm x.val _, Nat.sub_add_cancel (le_of_lt hxy)]
 
     rw [Finset.sum_congr rfl h21] at h19
-    omega
+    lia
 
 
 end IntegersInACircle

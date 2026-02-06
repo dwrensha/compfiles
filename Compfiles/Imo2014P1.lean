@@ -41,12 +41,12 @@ lemma lemma1 (s : ℕ → ℤ) (hs : ∀ i, s i < s (i + 1)) (z : ℤ) (hs0 : s 
     use Int.toNat (z - s 0)
     rw [Set.mem_setOf_eq]
     have h8 := h5 (Int.toNat (z - s 0))
-    have h6 : 0 ≤ z - s 0 := by omega
+    have h6 : 0 ≤ z - s 0 := by lia
     have h7 : ((Int.toNat (z - s 0)) :ℤ) = z - s 0 := Int.toNat_of_nonneg h6
     rw [h7] at h8
     rw [add_sub_cancel] at h8
     have h12 : s (Int.toNat (z - s 0)) < s (Int.toNat (z - s 0) + 1) := hs _
-    omega
+    lia
   use Nat.find h3
   dsimp [S]
   refine ⟨⟨?_, ?_⟩, ?_⟩
@@ -67,7 +67,7 @@ lemma lemma1 (s : ℕ → ℤ) (hs : ∀ i, s i < s (i + 1)) (z : ℤ) (hs0 : s 
     intro k hk hkk
     have h9 : s (k + 1) ≤ s m := (StrictMono.le_iff_le hmono).mpr hk
     simp only [Set.mem_setOf_eq] at hkk
-    omega
+    lia
 
 snip end
 

@@ -56,8 +56,8 @@ problem poland2016_s1_p8 (a b c : ℤ) : ∃ n : ℤ, n > 0 ∧ ¬ IsSquare (n^3
   apply H 4
   refine ⟨by positivity, ?_⟩
   rintro ⟨n, H4⟩
-  have m_square_minus_k_square : m * m - k * k = 2 * (13 + 4 * a + b) := by omega
-  have n_square_minus_l_square : n * n - l * l = 2 * (28 + 6 * a + b) := by omega
+  have m_square_minus_k_square : m * m - k * k = 2 * (13 + 4 * a + b) := by lia
+  have n_square_minus_l_square : n * n - l * l = 2 * (28 + 6 * a + b) := by lia
   have difference_m_square_k_square_as_product : m * m - k * k = (m + k) * (m - k) := by ring
   have difference_n_square_l_square_as_product : n * n - l * l = (n + l) * (n - l) := by ring
   have even_m_square_minus_k_square : Even ((m + k) * (m - k)) := by
@@ -108,6 +108,6 @@ problem poland2016_s1_p8 (a b c : ℤ) : ∃ n : ℤ, n > 0 ∧ ¬ IsSquare (n^3
         · exact n_plus_l_even
         · exact n_minus_l_even
     exact div_4_mul_of_both_even both_factors_even_n_l
-  omega
+  lia
 
 end Poland2016S1P8

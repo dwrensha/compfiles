@@ -57,7 +57,7 @@ problem usa1998_p5 (n : ℕ) (_hn : 2 ≤ n) :
         obtain ⟨w, hw1, hw2⟩ := hx
         have := sp_nonnegative w hw1
         replace hw2 : L + w = x := hw2
-        omega
+        lia
       | inr hx => simp_all
     · constructor
       · --cardinality is n + 1
@@ -75,7 +75,7 @@ problem usa1998_p5 (n : ℕ) (_hn : 2 ≤ n) :
             replace ha2 : L + a = α := ha2
             obtain ⟨b, hb, hb2⟩ := hβ
             replace hb2 : L + b = β := hb2
-            have a_ne_b : a ≠ b := by omega
+            have a_ne_b : a ≠ b := by lia
             have ih := hsp a ha b hb a_ne_b
             have h5 : L = (∏ t ∈ Sp.erase a, (a-t)^2) *
                          ∏ s ∈ Sp.erase a, ∏ t ∈ Sp.erase s, (s-t)^2 :=
@@ -96,7 +96,7 @@ problem usa1998_p5 (n : ℕ) (_hn : 2 ≤ n) :
                have h9 :  a * b % (a - b) ^ 2 = 0 := Int.emod_eq_zero_of_dvd ih
                rw [h8, h9]
                norm_num
-            have hab : a - b = α - β := by omega
+            have hab : a - b = α - β := by lia
             rw [ha2, hb2, hab] at Lmod'
             exact Int.dvd_of_emod_eq_zero Lmod'
 

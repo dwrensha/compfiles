@@ -199,7 +199,7 @@ def transform_A_to_B [NeZero n] : (A n) → (B n) := fun x ↦ by
     contrapose e
     unfold k_sub_1 at e
     simp only at e
-    have : j.val = k.val-2 ∨ j.val < k.val-2 ∨ j.val ≥ k.val := by omega
+    have : j.val = k.val-2 ∨ j.val < k.val-2 ∨ j.val ≥ k.val := by lia
     apply this.elim3
     · intro jeq
       simp_rw [jeq]

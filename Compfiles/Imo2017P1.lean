@@ -273,14 +273,14 @@ lemma aux_3
       refine aux_2_3 a ha₁ x c i j ((c.sqrt + (2 : ℕ)) ^ (2 : ℕ)) hx₀ hi₀ hh₅ ?_ ?_ hj₀
       · intro k hk₀ hk₁
         refine aux_2_4 a ha₁ x c i j hj₀ hx₀ hi₀ hh₃ hh₄ ?_ k hk₀ hk₁
-        have hc₂: (c.sqrt + (1 : ℕ)) % (3 : ℕ) = 2 := by omega
+        have hc₂: (c.sqrt + (1 : ℕ)) % (3 : ℕ) = 2 := by lia
         rw [hh₁, Nat.pow_mod, hc₂]
         finiteness
       · refine Nat.dvd_of_mod_eq_zero ?_
         refine Nat.sub_mod_eq_zero_of_mod_eq ?_
         rw [hh₁]
         rw [Nat.pow_mod]
-        have h₀: (c.sqrt + (2 : ℕ)) % (3 : ℕ) = 0 := by omega
+        have h₀: (c.sqrt + (2 : ℕ)) % (3 : ℕ) = 0 := by lia
         rw [h₀]
     · left
       have hj₀: j = ((c.sqrt + (3 : ℕ) - c.sqrt % (3 : ℕ)) ^ (2 : ℕ) - c) / (3 : ℕ) := by rfl
@@ -293,7 +293,7 @@ lemma aux_3
       refine Nat.sub_mod_eq_zero_of_mod_eq ?_
       rw [hh₁]
       rw [Nat.pow_mod]
-      have h₀: (c.sqrt + (1 : ℕ)) % (3 : ℕ) = 0 := by omega
+      have h₀: (c.sqrt + (1 : ℕ)) % (3 : ℕ) = 0 := by lia
       rw [h₀]
   · obtain hh₂ | hh₂ := hh₂
     · let j : ℕ := ((c.sqrt + (1 : ℕ)) ^ (2 : ℕ) - c) / (3 : ℕ)
@@ -304,7 +304,7 @@ lemma aux_3
           refine Nat.sub_mod_eq_zero_of_mod_eq ?_
           rw [hh₁]
           rw [Nat.pow_mod]
-          have h₀: (c.sqrt + (1 : ℕ)) % (3 : ℕ) = 1 := by omega
+          have h₀: (c.sqrt + (1 : ℕ)) % (3 : ℕ) = 1 := by lia
           rw [h₀]
         exact aux_2_2 a ha₁ x c i j ((c.sqrt + (1 : ℕ)) ^ (2 : ℕ)) rfl hx₀ hi₀ hh₃ hh₄ hc₂
       left
@@ -318,7 +318,7 @@ lemma aux_3
           refine Nat.sub_mod_eq_zero_of_mod_eq ?_
           rw [hh₁]
           rw [Nat.pow_mod]
-          have h₀: (c.sqrt + (1 : ℕ)) % (3 : ℕ) = 2 := by omega
+          have h₀: (c.sqrt + (1 : ℕ)) % (3 : ℕ) = 2 := by lia
           rw [h₀]
         exact aux_2_2 a ha₁ x c i j ((c.sqrt + (1 : ℕ)) ^ (2 : ℕ)) rfl hx₀ hi₀ hh₃ hh₄ hc₃
       left
@@ -330,14 +330,14 @@ lemma aux_3
         · simp_all
           intro k hk₀ hk₁
           refine aux_2_4 a ha₁ x c i j rfl hx₀ hi₀ hh₃ hh₄ ?_ k hk₀ hk₁
-          have hc₂: (c.sqrt + (1 : ℕ)) % (3 : ℕ) = 0 := by omega
+          have hc₂: (c.sqrt + (1 : ℕ)) % (3 : ℕ) = 0 := by lia
           rw [hh₁, Nat.pow_mod, hc₂]
           finiteness
         · refine Nat.dvd_of_mod_eq_zero ?_
           refine Nat.sub_mod_eq_zero_of_mod_eq ?_
           rw [hh₁]
           rw [Nat.pow_mod]
-          have h₀: (c.sqrt + (2 : ℕ)) % (3 : ℕ) = 1 := by omega
+          have h₀: (c.sqrt + (2 : ℕ)) % (3 : ℕ) = 1 := by lia
           rw [h₀]
       right; left
       rw [← hj₀]
@@ -391,7 +391,7 @@ theorem aux_4
     have h₂: {n : ℕ | a x n = A} = {n : ℕ | a x n = A ∧ i ≤ n} ∪ {n : ℕ | a x n = A ∧ n < i} := by
       ext j
       simp
-      omega
+      lia
     by_cases h₃: ∃ j, a x j = A ∧ i ≤ j
     · obtain ⟨j, hj₀⟩ := h₃
       use j
@@ -495,7 +495,7 @@ problem imo2017_p1
           have hd₈: 2 ≤ (a x (d - (1 : ℕ))).sqrt := by exact Nat.le_sqrt'.mpr hd₇
           exact hd₈
         · have hd₆: a x d = a x (d - (1 : ℕ)) + 3 := by simp_all only [↓reduceIte]
-          omega
+          lia
       · have hd₂: d = 0 := Nat.eq_zero_of_not_pos hd₁
         rw [hd₂, ha₀]
         exact hx₀
@@ -512,7 +512,7 @@ problem imo2017_p1
     have hh₅: c ≤ c.sqrt := by
       have hh₆: c ∈ lowerBounds S := by exact Set.mem_of_mem_inter_right hc₀
       exact hh₆ hh₄
-    omega
+    lia
   by_cases hhc: c % 3 = 2
   · constructor
     · intro h₀
@@ -527,7 +527,7 @@ problem imo2017_p1
       have h₃: 3 ∣ c := by
         rw [← hi₀]
         exact h₂ i
-      omega
+      lia
   · have hc₃: c ≤ Nat.sqrt c + 3 := by
       have hh₀: (Nat.sqrt c + 1) ^ 2 ∈ S ∨ (Nat.sqrt c + 2) ^ 2 ∈ S ∨ (Nat.sqrt c + 3) ^ 2 ∈ S := by
         exact aux_3 a ha₁ x c i hx₀ S rfl hi₀ hc₂ hhc
@@ -593,7 +593,7 @@ problem imo2017_p1
       · exact Nat.zero_lt_of_lt hx₀
       · contrapose! hA₀
         have hx₂: x ≡ 1 [MOD 3] ∨ x ≡ 2 [MOD 3] := by
-          have hx₁₂: x % 3 = 1 ∨ x % 3 = 2 := by omega
+          have hx₁₂: x % 3 = 1 ∨ x % 3 = 2 := by lia
           exact hx₁₂
         obtain hx₂ | hx₂ := hx₂
         · exfalso
@@ -641,7 +641,7 @@ problem imo2017_p1
           have hc₆: 3 ∣ c := by
             exact (Nat.ModEq.dvd_iff (congrFun (congrArg HMod.hMod hi₀) x) h₂).mp (h₃₀ i)
           interval_cases c
-          all_goals try omega
+          all_goals try lia
         use i
         rw [hi₀, hc₅]
       obtain ⟨i, h₃⟩ := h₃
@@ -679,7 +679,7 @@ problem imo2017_p1
       use i + (j + 1) * 3
       constructor
       · exact h₄ (j + 1)
-      · omega
+      · lia
 
 
 end Imo2017P1

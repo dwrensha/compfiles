@@ -68,14 +68,14 @@ problem imo1974_p1
 
   -- Any score is at least p.
   have p_le : ∀i, p ≤ ![p,q,r] i := by
-    intro i; fin_cases i <;> simp <;> omega
+    intro i; fin_cases i <;> simp <;> lia
 
   -- Any score is at most r.
   have le_r : ∀i, ![p,q,r] i ≤ r := by
-    intro i; fin_cases i <;> simp <;> omega
+    intro i; fin_cases i <;> simp <;> lia
 
   -- Because 1 ≤ p and 2 ≤ q and 3 ≤ r, we have 6 ≤ p+q+r.
-  have hs : 6 ≤ p+q+r := by omega
+  have hs : 6 ≤ p+q+r := by lia
 
   -- Each round, the players win p+q+r counters in total.
   have h_total i : C i 0 + C i 1 + C i 2 = p + q + r := by
@@ -99,11 +99,11 @@ problem imo1974_p1
     apply Nat.mem_divisors.mpr; exact ⟨h2, by decide⟩
 
   -- In fact, n = 3, and p+q+r = 13.
-  fin_cases h3 <;> try omega
+  fin_cases h3 <;> try lia
   simp only [Nat.succ_eq_add_one, Nat.reduceAdd, Nat.one_lt_ofNat,
     Fin.isValue, Nat.add_one_sub_one, Nat.reduceDvd] at *
   clear h2 hn
-  have h4 : p+q+r = 13 := by omega
+  have h4 : p+q+r = 13 := by lia
 
   -- Simplify the score sums.
   rw [Finset.sum] at hA hB hC
@@ -114,19 +114,19 @@ problem imo1974_p1
 
   -- Show 2+r ≤ 10, and thus r ≤ 8:
   have h5 : 2+r ≤ 10 := calc
-    2+r ≤ r     + p     + p     := by omega
+    2+r ≤ r     + p     + p     := by lia
     _   ≤ r     + C 1 1 + C 0 1 := by gcongr <;> apply p_le
     _   = C 2 1 + C 1 1 + C 0 1 := by unfold C; rw [hl]
     _   = 10                    := hB
 
-  have h6 : r ≤ 8 := by omega
+  have h6 : r ≤ 8 := by lia
 
   -- Show 20 ≤ r+r+r, and thus r > 6:
   have h7 : 20 ≤ r+r+r := calc
     20 = C 2 0 + C 1 0 + C 0 0 := hA.symm
     _  ≤ r+r+r                 := by gcongr <;> apply le_r
 
-  have h8 : r > 6 := by omega
+  have h8 : r > 6 := by lia
 
   -- Proof idea:
   -- hB claims: r + (p|q|r) + (p|q|r) = 10.
@@ -136,11 +136,11 @@ problem imo1974_p1
   have h9 : r + p + p = 10 ∨ r + q + q = 10 := by grind
 
   -- r = 7 leads to a contradiction. Thus r = 8:
-  have hr : r = 8 := by omega
+  have hr : r = 8 := by lia
 
   -- Then p and q are also determined.
-  have hp : p = 1 := by omega
-  have hq : q = 4 := by omega
+  have hp : p = 1 := by lia
+  have hq : q = 4 := by lia
 
   -- Clean up now that we know (p,q,r).
   rw [hl] at hB
@@ -167,6 +167,6 @@ problem imo1974_p1
     simp only [Fin.isValue, Matrix.cons_val, Nat.reduceEqDiff] at hC; grind
 
   -- So there is only one option left: (game 0) 2 = 1.
-  unfold solution; omega
+  unfold solution; lia
 
 end Imo1974P1

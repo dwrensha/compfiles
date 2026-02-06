@@ -30,10 +30,10 @@ snip begin
 
 -- outline of the proof, modified from https://prase.cz/kalva/imo/isoln/isoln661.html
 example (a b c d e : ℕ)
-  (h1 : a + b + c + d + e = 25)
+  (_ : a + b + c + d + e = 25)
   (h2 : b + d = 2 * (c + d))
   (h3 : a = 1 + 25 - a - b - c - d)
-  (h4 : a = b + c) : b = 6 := by omega
+  (h4 : a = b + c) : b = 6 := by lia
 
 lemma lemma2 (A B : Finset U) : A = (A ∩ B) ∪ (A \ B) := by
   ext x; simp; tauto

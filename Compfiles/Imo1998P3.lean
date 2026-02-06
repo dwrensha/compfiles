@@ -374,7 +374,7 @@ theorem odd_k_satisfies (k : ℕ)
           have htpos : 0 < t := by
             apply Nat.Prime.factorization_pos_of_dvd Nat.prime_two
             · simp
-            · dsimp [kk]; omega
+            · dsimp [kk]; lia
           let j := (kk + 1) / (2 ^ t)
           have h_div : 2 ^ t ∣ (kk + 1) := Nat.ordProj_dvd (kk + 1) 2
           have hjodd : Odd j := by
@@ -393,7 +393,7 @@ theorem odd_k_satisfies (k : ℕ)
               kk + 1 = j * 2^t := hkkeqjt
               _      ≥ j * 2   := Nat.mul_le_mul_left j h2le2t
               _      = 2 * j   := mul_comm _ _
-            omega
+            lia
           have hjworks := ih j hjltkk (Nat.odd_iff.mp hjodd)
           obtain ⟨nⱼ, hnⱼ⟩ := hjworks
           let kfac := kk.factorization

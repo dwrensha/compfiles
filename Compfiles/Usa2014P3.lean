@@ -68,7 +68,7 @@ lemma collinear_iff_sum {a b c : ℝ} (hab : a ≠ b) (hbc : b ≠ c) (hca : c �
   change n ≤ 1 ↔ _
   have hn : n ≤ 1 ↔ 2 ≠ n := by
     have : n ≤ 2 := (finrank_span_le_card _).trans (by simp [card_le_two])
-    omega
+    lia
   rw [hn]
   -- type cast like crazy
   let X : Fin 2 → Pt := ![A - C, B - C]

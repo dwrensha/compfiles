@@ -431,7 +431,7 @@ lemma grid_shift (n : ℕ) (d : Fin 3) :
         rw [add_tsub_cancel_left] at ha
         rw [ha, ← Nat.cast_pred ha0]
       · use b
-        constructor <;> (try (first | assumption | omega))
+        constructor <;> (try (first | assumption | lia))
     · have : b ≠ 1 := by intro hC; rw [hC] at hb
                          simp only [Fin.isValue, Nat.cast_one, add_eq_left] at hb; exact h2 hb
       use a
@@ -442,15 +442,15 @@ lemma grid_shift (n : ℕ) (d : Fin 3) :
         · apply_fun (·-1) at hb
           rw [add_tsub_cancel_left] at hb
           rw [hb, ← Nat.cast_pred hb0]
-        · constructor <;> (try (first | assumption | omega))
+        · constructor <;> (try (first | assumption | lia))
     · have : a + b ≠ n + 2 := by
-        intro hC; rw [ha, hb] at h2; norm_cast at h2; omega
+        intro hC; rw [ha, hb] at h2; norm_cast at h2; lia
       use a
       constructor
       · exact ha
       · use b; constructor
         · exact hb
-        · constructor <;> (try (first | assumption | omega))
+        · constructor <;> (try (first | assumption | lia))
   · intro ⟨a, ha, b, hb, ha0, hb0, hab⟩
     fin_cases d
     · constructor
@@ -460,11 +460,11 @@ lemma grid_shift (n : ℕ) (d : Fin 3) :
           zero_add, add_pos_iff, zero_lt_one, ha0, or_self, true_and]
         use b
         simp only [Fin.isValue, hb, hb0, true_and]
-        omega
+        lia
       · simp only [edgeLine, line', line, Fin.isValue, edgeCoeffs, one_mul, zero_mul, add_zero,
           gridShift, ← SetLike.mem_coe, SetLike.coe, Set.mem_setOf_eq, PiLp.add_apply,
           PiLp.neg_apply, Matrix.cons_val_zero, neg_neg, add_neg_cancel_comm]
-        intro hC; rw [hC] at ha; norm_cast at ha; omega
+        intro hC; rw [hC] at ha; norm_cast at ha; lia
     · constructor
       · use a
         simp only [gridShift, Fin.isValue, PiLp.toLp_apply, Matrix.cons_val_zero, neg_zero, ha,
@@ -472,24 +472,24 @@ lemma grid_shift (n : ℕ) (d : Fin 3) :
         use 1 + b
         simp only [Fin.isValue, hb, Nat.cast_add, Nat.cast_one, add_pos_iff, zero_lt_one,
           hb0, or_self, true_and]
-        omega
+        lia
       · simp only [edgeLine, line', line, Fin.isValue, edgeCoeffs, zero_mul, one_mul, zero_add,
           gridShift, ← SetLike.mem_coe, SetLike.coe, Set.mem_setOf_eq, PiLp.add_apply,
           PiLp.neg_apply, Matrix.cons_val_one, Matrix.cons_val_fin_one, neg_neg,
           add_neg_cancel_comm]
-        intro hC; rw [hC] at hb; norm_cast at hb; omega
+        intro hC; rw [hC] at hb; norm_cast at hb; lia
     · constructor
       · use a
         simp only [gridShift, Fin.isValue, PiLp.toLp_apply, Matrix.cons_val_zero, neg_zero, ha,
           zero_add, Matrix.cons_val_one, Matrix.cons_val_fin_one, true_and]
         use b
         simp only [Fin.isValue, hb, hb0, true_and]
-        omega
+        lia
       · simp only [edgeLine, line', line, Fin.isValue, edgeCoeffs, Nat.cast_add, Nat.cast_one,
         neg_add_rev, one_mul, gridShift, ← SetLike.mem_coe, SetLike.coe, Set.mem_setOf_eq,
         PiLp.add_apply, PiLp.neg_apply, Matrix.cons_val_zero, neg_zero, zero_add,
         Matrix.cons_val_one, Matrix.cons_val_fin_one]
-        intro hC; rw [ha, hb] at hC; norm_cast at hC; omega
+        intro hC; rw [ha, hb] at hC; norm_cast at hC; lia
 
 /-- After removing the diagonal edge from `grid (n + 1)` , the resulting set is `grid n`. -/
 lemma grid_remove_diag (n : ℕ) : grid (n + 1) \ (edgeLine (n + 1) 2) = grid n := by
@@ -633,7 +633,7 @@ noncomputable def reduce (C : coverGridConfig) (d : Fin 3) (hd : C.edgeLine d �
   g_is_grid := by
     simp only [coverConfig.shift, coverConfig.removeLine]
     have : C.n > 0 := by rw [← C.lines_count]; simp; use C.edgeLine d
-    have : C.n = C.n - 1 + 1 := by omega
+    have : C.n = C.n - 1 + 1 := by lia
     convert grid_shift (C.n - 1) d
     · rw [C.g_is_grid, ← this]
     · rw [coverGridConfig.edgeLine, ← this]
@@ -687,11 +687,11 @@ lemma not_colinear_nat (L : AffSubOfPlane) (M a b c : ℕ) :
     (!₂[(c + 1 : ℕ), (M - c + 1 : ℕ)] : Plane) ∈ L →
     False := by
   intros
-  have: M ≥ c := by omega
+  have: M ≥ c := by lia
   convert not_colinear L M a b c _ _ _ _ _ _ _ _ _ _ _ <;> norm_cast
 
 /-- If `n : ℕ` and `n > 1`, if `n' : ℕ` and `n' = n - 1`, then `(n' : ℝ) + (1 : ℝ) = (n : ℝ)`. -/
-lemma n_minus_plus (n : ℕ) (hn : n > 1) : (n - 1 : ℕ) + (1 : ℝ) = n := by norm_cast; omega
+lemma n_minus_plus (n : ℕ) (hn : n > 1) : (n - 1 : ℕ) + (1 : ℝ) = n := by norm_cast; lia
 
 /-- If `L` goes through `(x1, y1)` and `(x2, y2)`, and `x1 ≠ x2`, `y1 ≠ y2`, `x2 - x1 ≠ y1 - y2`,
 then `L` is sunny. -/
@@ -745,7 +745,7 @@ lemma coverGridConfig.edge_point_in_grid (C : coverGridConfig) (d : Fin 3) (i : 
     C.edgePoint d i ∈ C.g := by
   rw [C.g_is_grid]
   dsimp only [edgePoint]
-  fin_cases d <;> (simp only; rw [point_in_grid]; omega)
+  fin_cases d <;> (simp only; rw [point_in_grid]; lia)
 
 /-- The points on the three edges of a `coverGridConfig` are on their edge lines. -/
 lemma coverGridConfig.edge_point_on_line (C : coverGridConfig) (d : Fin 3) (i : Fin C.n) :
@@ -791,7 +791,7 @@ lemma coverGridNoEdgeConfig.cover_no_edge_line_inj (C : coverGridNoEdgeConfig) (
       simp only
       intro hC'; rw [vec_eq] at hC'; obtain ⟨hC'1, hC'2⟩ := hC'
       norm_cast at hC'1; norm_cast at hC'2
-      omega )
+      lia )
   · assumption
   · dsimp [edgeCoeffs]; fin_cases d <;> simp
   · apply coverGridConfig.edge_point_on_line
@@ -816,9 +816,9 @@ lemma coverGridNoEdgeConfig.cover_no_edge_line_surj (C : coverGridNoEdgeConfig) 
     obtain ⟨i, hi⟩ := hx;
     rw [← hi]
     simp [C.find_line_edge_correct]
-  apply Finset.eq_of_subset_of_card_le <;> try (first | assumption | omega)
+  apply Finset.eq_of_subset_of_card_le <;> try (first | assumption | lia)
   have := C.lines_count
-  omega
+  lia
 
 def edgeEndpointCornerId (d : Fin 3) (r : Fin 2) : Fin 3 := match d, r with
   | 0, 0 => 0   -- edge 0 left corner is 0
@@ -830,8 +830,8 @@ def edgeEndpointCornerId (d : Fin 3) (r : Fin 2) : Fin 3 := match d, r with
 
 def coverGridNoEdgeConfig.edgeEndpointIndex (C : coverGridNoEdgeConfig) (r : Fin 2) : Fin C.n :=
   match r with
-    | 0 => ⟨0, by have := C.hn; omega⟩        -- left endpoint has index 0
-    | 1 => ⟨C.n - 1, by have := C.hn; omega⟩  -- right endpoint has index C.n - 1
+    | 0 => ⟨0, by have := C.hn; lia⟩        -- left endpoint has index 0
+    | 1 => ⟨C.n - 1, by have := C.hn; lia⟩  -- right endpoint has index C.n - 1
 
 /-- The points on the three corners of `grid n` -/
 def coverGridNoEdgeConfig.cornerPoint (C : coverGridNoEdgeConfig) (c : Fin 3) : Plane :=
@@ -938,19 +938,19 @@ lemma coverGridNoEdgeConfig.cover_no_edge_3_lines (C : coverGridNoEdgeConfig)
     | 1 => 1
     | 2 => 0
   have line_edge_middle (d : Fin 3) :
-      C.findLineEdge d ⟨1, by omega⟩ = C.findLineCorner (line_edge_middle_to_corner d) := by
-    have : C.findLineEdge d ⟨1, by omega⟩ ∈ C.corner_set := by
+      C.findLineEdge d ⟨1, by lia⟩ = C.findLineCorner (line_edge_middle_to_corner d) := by
+    have : C.findLineEdge d ⟨1, by lia⟩ ∈ C.corner_set := by
       rw [Leq]; exact (C.find_line_edge_correct _ _).left
     simp only [coverGridNoEdgeConfig.corner_set, Finset.mem_map, Finset.mem_univ,
       Function.Embedding.coeFn_mk, true_and] at this
     obtain ⟨i, hi⟩ := this
     have middle_neq_endpoints (r : Fin 2) :
-        C.findLineEdge d ⟨1, by omega⟩ ≠ C.findLineCorner (edgeEndpointCornerId d r) := by
+        C.findLineEdge d ⟨1, by lia⟩ ≠ C.findLineCorner (edgeEndpointCornerId d r) := by
       rw [C.find_line_corner_eq_edge]
       intro hC
       have := C.cover_no_edge_line_inj d hC
       fin_cases r <;> simp [coverGridNoEdgeConfig.edgeEndpointIndex] at this
-      omega
+      lia
     have := middle_neq_endpoints 0
     have := middle_neq_endpoints 1
     clear middle_neq_endpoints
@@ -961,18 +961,18 @@ lemma coverGridNoEdgeConfig.cover_no_edge_3_lines (C : coverGridNoEdgeConfig)
     rw [
       show !₂[1, 1] = C.cornerPoint 0 by
         simp [coverGridNoEdgeConfig.cornerPoint, coverGridConfig.edgePoint],
-      show !₂[2, 2] = C.edgePoint 2 ⟨1, by omega⟩ by simp [coverGridConfig.edgePoint, hn3],
+      show !₂[2, 2] = C.edgePoint 2 ⟨1, by lia⟩ by simp [coverGridConfig.edgePoint, hn3],
       show !₂[1, 3] = C.cornerPoint 1 by
         simp [coverGridNoEdgeConfig.cornerPoint, coverGridConfig.edgePoint,
           coverGridNoEdgeConfig.edgeEndpointIndex, hn3],
-      show !₂[2, 1] = C.edgePoint 1 ⟨1, by omega⟩ by simp [coverGridConfig.edgePoint],
-      show !₂[1, 2] = C.edgePoint 0 ⟨1, by omega⟩ by simp [coverGridConfig.edgePoint],
+      show !₂[2, 1] = C.edgePoint 1 ⟨1, by lia⟩ by simp [coverGridConfig.edgePoint],
+      show !₂[1, 2] = C.edgePoint 0 ⟨1, by lia⟩ by simp [coverGridConfig.edgePoint],
       show !₂[3, 1] = C.cornerPoint 2 by
         simp [coverGridNoEdgeConfig.cornerPoint, coverGridConfig.edgePoint,
           coverGridNoEdgeConfig.edgeEndpointIndex, hn3]]
     repeat' constructor <;> try exact (C.find_line_corner_correct _).right
     all_goals
-      convert (C.find_line_edge_correct _ ⟨1, by omega⟩).right
+      convert (C.find_line_edge_correct _ ⟨1, by lia⟩).right
       rw [line_edge_middle]
   rw [← C.sunny_count, ← Leq, ← hn3, ← C.lines_count, ← Leq]
   congr 1
@@ -993,7 +993,7 @@ lemma coverGridNoEdgeConfig.cover_no_edge_4_impossible (C : coverGridNoEdgeConfi
     calc
     _ = #C.lines - #(C.corner_set) := Finset.card_sdiff_of_subset C.corner_set_subset_lines
     _ ≥ C.n - 3 := by rw [C.lines_count, C.corner_set_card]
-    _ ≥ 1 := by omega
+    _ ≥ 1 := by lia
   simp only [ge_iff_le, Finset.one_le_card] at this
   obtain ⟨L', hL'⟩ := Finset.Nonempty.exists_mem this
   simp only [Finset.mem_sdiff] at hL'
@@ -1016,12 +1016,12 @@ lemma coverGridNoEdgeConfig.cover_no_edge_4_impossible (C : coverGridNoEdgeConfi
   choose iFunc hiFunc1 hiFunc2 hiFunc3 using hL'0
   have not_left_endpoint (d : Fin 3): (iFunc d).val > 0 := by
     by_contra
-    have hC : (iFunc d).val = 0 := by omega
+    have hC : (iFunc d).val = 0 := by lia
     have := hiFunc2 d
     simp [← hC] at this
   have not_right_endpoint (d : Fin 3): (iFunc d).val < C.n - 1 := by
     by_contra
-    have hC : (iFunc d).val = C.n - 1 := by omega
+    have hC : (iFunc d).val = C.n - 1 := by lia
     have := hiFunc3 d
     simp [← hC] at this
   have hi0: (!₂[1, ((iFunc 0).val + 1 : ℕ)] : Plane) ∈ L' := by
@@ -1046,7 +1046,7 @@ lemma coverGridNoEdgeConfig.cover_no_edge_4_impossible (C : coverGridNoEdgeConfi
   any_goals
     first | assumption | exact not_left_endpoint _ | exact not_right_endpoint _
   · apply this; exact hL'.left
-  · omega
+  · lia
 
 end FindLines
 
@@ -1060,7 +1060,7 @@ lemma coverGridNoEdgeConfig.cover_edge (C : coverGridNoEdgeConfig) : C.n = 3 ∧
     _ = 3 := by exact C.corner_set_card
   by_cases C.n = 3
   · have := C.cover_no_edge_3_lines; tauto
-  · have : C.n ≥ 4 := by omega
+  · have : C.n ≥ 4 := by lia
     have := C.cover_no_edge_4_impossible
     tauto
 
@@ -1075,19 +1075,19 @@ lemma coverGridConfig.any_cover (C : coverGridConfig) :
   | zero =>
     have := C.nS_leq_n
     intro hn0
-    omega
+    lia
   | succ n ih =>
     have := C.nS_leq_n
     intro h
     by_cases n = 0
-    · omega
+    · lia
     · by_cases hE : ∃ e, C.edgeLine e ∈ C.lines
       · obtain ⟨d, hd⟩ := hE
         have := C.reduce_count d hd
         have := ih (reduce C d hd)
         lia
       · push_neg at hE
-        let C' : coverGridNoEdgeConfig := {C with hE := hE, hn := by omega}
+        let C' : coverGridNoEdgeConfig := {C with hE := hE, hn := by lia}
         have := C'.cover_edge
         lia
 
@@ -1112,7 +1112,7 @@ def zeroSunny : strongCoverGridConfig where
     simp only [Set.mem_empty_iff_false, Fin.isValue, zero_add,
       exists_and_left, Set.mem_setOf_eq, false_iff, not_exists, not_and, not_le]
     intros
-    omega
+    lia
   lines_used := by simp
 
 /-- A `strongCoverGridConfig` with `n = 1` and `nS = 1` -/
@@ -1191,7 +1191,7 @@ lemma grid3Points (x : Plane) : x ∈ grid 3 ↔
     rw [vec_repr x]
     rw [ha, hb, vec_eq, vec_eq, vec_eq, vec_eq, vec_eq, vec_eq]
     norm_cast
-    omega
+    lia
   · intro hx
     rw [vec_repr x, vec_eq, vec_eq, vec_eq, vec_eq, vec_eq, vec_eq] at hx
     obtain hx | hx | hx | hx | hx | hx := hx
@@ -1285,7 +1285,7 @@ noncomputable def strongCoverGridConfig.extend (C : strongCoverGridConfig) :
           Matrix.cons_val_one, Matrix.cons_val_fin_one, zero_lt_one, true_and]
         use C.n + 1; simp only [Nat.cast_add, Nat.cast_one, lt_add_iff_pos_left, add_pos_iff,
           zero_lt_one, or_true, true_and]
-        omega
+        lia
       · rw [hE, edgeLine, line', edgeCoeffs, point_on_line]
         ring_nf
         simp
@@ -1316,14 +1316,14 @@ lemma existsStrongCover (n nS : ℕ) :
     intro h hS
     use zeroSunny
     simp only [zeroSunny, true_and]
-    omega
+    lia
   | succ n ih =>
     intro h hS
     by_cases hE : nS ≤ n
     · have ⟨C, hL⟩ := ih hE hS
       use C.extend
       simpa [strongCoverGridConfig.extend]
-    · have : nS = n + 1 := by omega
+    · have : nS = n + 1 := by lia
       rw [← this]
       obtain hS | hS | hS := hS
       · rw [hS]; use zeroSunny; simp [zeroSunny]
@@ -1367,7 +1367,7 @@ problem imo2025_p1 (n : Set.Ici 3) :
     grind
   · intro hS
     have : n.val ≥ 3 := by exact n.property
-    have : nS ≤ n.val := by omega
+    have : nS ≤ n.val := by lia
     obtain ⟨C, h⟩ := existsStrongCover n nS this hS
     use C.lines
     simp only [C.lines_count, h, C.sunny_count, and_true, true_and]
@@ -1376,6 +1376,6 @@ problem imo2025_p1 (n : Set.Ici 3) :
     · intro a b ha0 hb0 hab
       convert C.lines_cover !₂[(a : ℝ), (b : ℝ)] _
       rw [C.g_is_grid, point_in_grid]
-      omega
+      lia
 
 end Imo2025P1

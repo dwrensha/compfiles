@@ -51,7 +51,7 @@ problem usa2015_p1 (x y : ℤ) :
     have h1 : (x ^ (2 : ℕ) + x * y + y ^ (2 : ℕ)) * (27 : ℤ) % 3 =
               (x + y + (3 : ℤ)) ^ (3 : ℕ) % 3 := by rw [h]
     clear h
-    have h2 : (x ^ (2 : ℕ) + x * y + y ^ (2 : ℕ)) * (27 : ℤ) % 3 = 0 := by omega
+    have h2 : (x ^ (2 : ℕ) + x * y + y ^ (2 : ℕ)) * (27 : ℤ) % 3 = 0 := by lia
     rw [h2] at h1
     clear h2
     have h3 : (x + y + (3 : ℤ)) ^ (3 : ℕ) =

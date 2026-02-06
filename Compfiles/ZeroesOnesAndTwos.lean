@@ -82,7 +82,7 @@ problem zeroes_and_ones
   have h4 : ∀ (l : ℕ), l ∈ List.replicate a 0 ++ List.replicate (b - a) 1 → l < 10 := by
     intro l hl
     rw [List.mem_append, List.mem_replicate, List.mem_replicate] at hl
-    omega
+    lia
   have h5 : ∀ (h : List.replicate a 0 ++ List.replicate (b - a) 1 ≠ []),
       List.getLast (List.replicate a 0 ++ List.replicate (b - a) 1) h ≠ 0 := by
     rw [hc] at *
@@ -94,7 +94,7 @@ problem zeroes_and_ones
   rw [Nat.digits_ofDigits _ one_lt_ten _ h4 h5]
   intro e he
   rw [List.mem_append, List.mem_replicate, List.mem_replicate] at he
-  omega
+  lia
 
 snip begin
 
@@ -125,7 +125,7 @@ lemma prepend_one_div (n : ℕ) (hn : 0 < n) : prepend_one n / 10 = prepend_one 
 lemma prepend_one_mod (n : ℕ) (hn : 0 < n) : prepend_one n % 10 = n % 10 := by
   rw [prepend_one]
   rw [Nat.digits_len _ _ two_le_ten (ne_of_gt hn)]
-  omega
+  lia
 
 lemma prepend_one_eq_append (n : ℕ) :
     Nat.digits 10 (prepend_one n) = (Nat.digits 10 n) ++ [1] := by
@@ -169,7 +169,7 @@ lemma prepend_two_div (n : ℕ) (hn : 0 < n) : prepend_two n / 10 = prepend_two 
 lemma prepend_two_mod (n : ℕ) (hn : 0 < n) : prepend_two n % 10 = n % 10 := by
   rw [prepend_two]
   rw [Nat.digits_len _ _ two_le_ten (ne_of_gt hn)]
-  omega
+  lia
 
 lemma prepend_two_eq_append (n : ℕ) :
     Nat.digits 10 (prepend_two n) = (Nat.digits 10 n) ++ [2] := by
@@ -235,7 +235,7 @@ lemma ones_and_twos_aux (n : ℕ) :
     have hkp': 0 < k' := by
       cases k'
       · have hzz := prepend_two_pos (2 ^ pn.succ * ↑pk)
-        omega
+        lia
       · exact Nat.succ_pos _
     use ⟨k', hkp'⟩
     rw [PNat.mk_coe, ←hk']
@@ -261,7 +261,7 @@ lemma ones_and_twos_aux (n : ℕ) :
     have hkp': 0 < k' := by
       cases k'
       · have hzz := prepend_one_pos (2 ^ pn.succ * ↑pk)
-        omega
+        lia
       · exact Nat.succ_pos _
     use ⟨k', hkp'⟩
     rw [PNat.mk_coe,←hk']

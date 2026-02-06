@@ -60,27 +60,27 @@ Now we can eliminate possibilities for `(digits 10 c).length` until we get to th
 theorem case_0_digit {c n : ℕ} (h1 : (digits 10 c).length = 0) : ¬ProblemPredicate' c n := by
   intro h2
   have h3 : 6 * 10 ^ 0 + c = 6 * 10 ^ (digits 10 c).length + c := by rw [h1]
-  omega
+  lia
 
 theorem case_1_digit {c n : ℕ} (h1 : (digits 10 c).length = 1) : ¬ProblemPredicate' c n := by
   intro h2
   have h3 : 6 * 10 ^ 1 + c = 6 * 10 ^ (digits 10 c).length + c := by rw [h1]
-  omega
+  lia
 
 theorem case_2_digit {c n : ℕ} (h1 : (digits 10 c).length = 2) : ¬ProblemPredicate' c n := by
   intro h2
   have h3 : 6 * 10 ^ 2 + c = 6 * 10 ^ (digits 10 c).length + c := by rw [h1]
-  omega
+  lia
 
 theorem case_3_digit {c n : ℕ} (h1 : (digits 10 c).length = 3) : ¬ProblemPredicate' c n := by
   intro h2
   have h3 : 6 * 10 ^ 3 + c = 6 * 10 ^ (digits 10 c).length + c := by rw [h1]
-  omega
+  lia
 
 theorem case_4_digit {c n : ℕ} (h1 : (digits 10 c).length = 4) : ¬ProblemPredicate' c n := by
   intro h2
   have h3 : 6 * 10 ^ 4 + c = 6 * 10 ^ (digits 10 c).length + c := by rw [h1]
-  omega
+  lia
 
 /-- Putting this inline causes a deep recursion error, so we separate it out. -/
 theorem helper_5_digit {c : ℤ} (h : 6 * 10 ^ 5 + c = 4 * (10 * c + 6)) : c = 15384 := by linarith
@@ -88,7 +88,7 @@ theorem helper_5_digit {c : ℤ} (h : 6 * 10 ^ 5 + c = 4 * (10 * c + 6)) : c = 1
 theorem case_5_digit {c n : ℕ} (h1 : (digits 10 c).length = 5) (h2 : ProblemPredicate' c n) :
     c = 15384 := by
   have h3 : 6 * 10 ^ 5 + c = 6 * 10 ^ (digits 10 c).length + c := by rw [h1]
-  omega
+  lia
 
 /-- `linarith` fails on numbers this large, so this lemma spells out some of the arithmetic
 that normally would be automated.

@@ -85,7 +85,7 @@ lemma two_n_and_rest_factorisation (m : ℕ) (even_m : Even m) (h: 0 < m) :
   have ⟨a, ha⟩ := Nat.maxPowDiv.pow_dvd 2 m
   refine ⟨Nat.maxPowDiv 2 m, a, ?_⟩
   obtain ⟨k, hk⟩ := even_iff_two_dvd.mp even_m
-  have hk0 : 0 < k := by omega
+  have hk0 : 0 < k := by lia
   refine ⟨?_, ?_, ha⟩
   · rw [hk]
     rw [show 2 * k = 2^1 * k from rfl]
@@ -214,9 +214,9 @@ lemma thue
     have p2 := y₂.prop
     have : r + 1 ≤ n := by
       have h31 := Nat.sqrt_lt_self hn
-      omega
-    have h10 : y₁.val < n := by omega
-    have h11 : y₂.val < n := by omega
+      lia
+    have h10 : y₁.val < n := by lia
+    have h11 : y₂.val < n := by lia
     rw [Nat.mod_eq_of_lt h10, Nat.mod_eq_of_lt h11] at h4
     have h12 : y₁ = y₂ := Fin.eq_of_val_eq h4
     rw [H,h12] at hxyn
@@ -293,7 +293,7 @@ problem bulgaria1998_p11
     rw [← h] at this
     contradiction
   have even_m : Even m := by
-    have n_ne_zero : n ≠ 0 := by omega
+    have n_ne_zero : n ≠ 0 := by lia
     replace evenA : (A : ZMod 2) = (0:ℕ) := by
       rw [Nat.even_iff] at even_A
       exact (ZMod.natCast_eq_natCast_iff' A 0 2).mpr even_A
@@ -348,7 +348,7 @@ problem bulgaria1998_p11
                 exact m_add_3_pow_n_mod_m n m
 
     have l_eq_2 : l = 2 := by
-      have two_le_l : 2 ≤ l := by omega
+      have two_le_l : 2 ≤ l := by lia
       obtain left | right := lt_or_eq_of_le two_le_l
       · have two_pow_l_divides_expresion : 2 ^ l ∣ (3^n + 1) := by
           have m_divides_expression : m ∣ (3 ^ n) + 1 := by
@@ -455,7 +455,7 @@ problem bulgaria1998_p11
 
     have hn1 : 1 < m₁ := by
       change _ % _ = _ % _ at m₁_eq_2_mod_3
-      omega
+      lia
     obtain ⟨x, y, x_y_props⟩ := Thue's_lemma a m₁ hn1
     clear hn1
     obtain ⟨mod_expression, x_lower, x_higher, y_higher⟩ := x_y_props
@@ -489,10 +489,10 @@ problem bulgaria1998_p11
 
     obtain ⟨s, Hs⟩ := Int.modEq_zero_iff_dvd.mp expression
     rw [m_eq_4_m₁] at zero_lt_m
-    have zero_lt_m₁ : 0 < @Nat.cast ℤ _ m₁ := by omega
+    have zero_lt_m₁ : 0 < @Nat.cast ℤ _ m₁ := by lia
 
     have upper_bound_s : s ≤ 4 := by
-      have upper_bound_expression: 3 * x ^ 2 + y ^ 2 ≤ 4 * m₁ := by omega
+      have upper_bound_expression: 3 * x ^ 2 + y ^ 2 ≤ 4 * m₁ := by lia
       rw [Hs] at upper_bound_expression
       rw [show m₁ * s = s * m₁ by ring] at upper_bound_expression
       exact le_of_mul_le_mul_right upper_bound_expression zero_lt_m₁
@@ -541,7 +541,7 @@ problem bulgaria1998_p11
       have := Int.modEq_zero_iff_dvd.mp m₁_sub_5_mod_6
       dsimp[Dvd.dvd] at this
       obtain ⟨c, this⟩ := this
-      have expr_m₁_mod_6 : ↑m₁ = 6 * c + 5 := by omega
+      have expr_m₁_mod_6 : ↑m₁ = 6 * c + 5 := by lia
       rw[expr_m₁_mod_6] at Hs
       ring_nf at Hs
       have expression_mod_3 :
@@ -558,7 +558,7 @@ problem bulgaria1998_p11
       rw[show x ^ 2 * 3 + y' ^ 2 * 9 = 3 * (x ^ 2 + 3 * y' ^ 2) by ring] at Hs
       rw[show 15 + c * 18 = 3 * (5 + 6 * c) by ring] at Hs
       have reduced_expression : (x ^ 2 + 3 * y' ^ 2) = (5 + 6 * c) := by
-        omega
+        lia
 
       rw[show 5 + 6 * c = 6 * c + 5 by ring] at reduced_expression
       rw[← expr_m₁_mod_6] at reduced_expression
@@ -577,7 +577,7 @@ problem bulgaria1998_p11
         mod_cases Hyy : yy % 3 <;>
            change _ % _ = _ % _ at Hyy m₁_eq_2_mod_3 <;>
            simp [Nat.pow_mod, Hyy] at m₁_eq_2_mod_3
-      omega
+      lia
 
 
 end Bulgaria1998P11

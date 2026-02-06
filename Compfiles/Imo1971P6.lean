@@ -82,7 +82,7 @@ lemma aux {n : ℕ} (A : Matrix (Fin n) (Fin n) ℕ) (n_pos : 0 < n)
         rw [h_yx]; apply Finset.sum_le_sum; intro j _; exact h_min_col j
       · have h_col_Yc (j : Fin n) (hj : j ∈ Yᶜ) : colSum A j ≥ n - x := by
           have h_zero : A i₀ j = 0 := by simp [Y] at hj; exact hj
-          have h_app := h_cond i₀ j h_zero; rw [h_xi0] at h_app; omega
+          have h_app := h_cond i₀ j h_zero; rw [h_xi0] at h_app; lia
         have h_nx : (n - y) * (n - x) = ∑ j ∈ Yᶜ, (n - x) := by simp [y, Finset.card_compl]
         rw [h_nx]; exact Finset.sum_le_sum h_col_Yc
 

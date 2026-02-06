@@ -112,11 +112,11 @@ theorem imo2023_p4_generalized
     have hn1 : n + 1 ∈ Finset.Icc 1 (2 * (m + 1) + 1) := by
       simp only [Finset.mem_Icc, le_add_iff_nonneg_left, zero_le,
                  add_le_add_iff_right, true_and, n]
-      omega
+      lia
     have hn2 : n + 2 ∈ Finset.Icc 1 (2 * (m + 1) + 1) := by
       simp only [Finset.mem_Icc, le_add_iff_nonneg_left, zero_le,
                  true_and, n]
-      omega
+      lia
 
     let u := √(x ⟨n + 1, hn1⟩ / x ⟨n + 2, hn2⟩)
     have hu : u ≠ 1 := by
@@ -172,7 +172,7 @@ theorem imo2023_p4_generalized
         obtain ⟨y, hy'⟩ := y
         simp only [Subtype.mk_le_mk] at hy
         simp only [Subtype.mk.injEq, Subtype.mk_le_mk]
-        omega
+        lia
       · intro hy
         simp only [Finset.univ_eq_attach, Finset.cons_eq_insert,
                    Finset.mem_insert, Finset.mem_filter,
@@ -181,7 +181,7 @@ theorem imo2023_p4_generalized
         simp only [Subtype.mk.injEq, Subtype.mk_le_mk] at hy
         simp only [Finset.univ_eq_attach, Finset.mem_filter, Finset.mem_attach,
                    Subtype.mk_le_mk, true_and]
-        omega
+        lia
     simp only [h6] at h1
     simp only [Finset.cons_eq_insert, Finset.mem_filter,
                Subtype.mk_le_mk, add_le_add_iff_left,
@@ -214,7 +214,7 @@ theorem imo2023_p4_generalized
         obtain ⟨y, hy'⟩ := y
         simp only [Subtype.mk_le_mk] at hy
         simp only [Subtype.mk.injEq, Subtype.mk_le_mk]
-        omega
+        lia
       · intro hy
         simp only [Finset.univ_eq_attach, Finset.cons_eq_insert,
                    Finset.mem_insert, Finset.mem_filter,
@@ -223,7 +223,7 @@ theorem imo2023_p4_generalized
         simp only [Subtype.mk.injEq, Subtype.mk_le_mk] at hy
         simp only [Finset.univ_eq_attach, Finset.mem_filter, Finset.mem_attach,
                    Subtype.mk_le_mk, true_and]
-        omega
+        lia
 
     simp only [h8] at h1
     clear h6 h8
@@ -254,10 +254,10 @@ theorem imo2023_p4_generalized
     clear hx1 hx2 hx3 hy1 hy2 hy3
     rw [←h1] at h9; clear h1
     let x' : { a // a ∈ Finset.Icc 1 (2 * m + 1) } → ℝ :=
-      fun ⟨z, hz⟩ ↦ x ⟨z, by simp only [Finset.mem_Icc] at hz ⊢; omega⟩
+      fun ⟨z, hz⟩ ↦ x ⟨z, by simp only [Finset.mem_Icc] at hz ⊢; lia⟩
     let e : { x // x ∈ Finset.Icc 1 (2 * m + 1) } →
             { x // x ∈ Finset.Icc 1 (2 * (m + 1) + 1) }
-      | ⟨y, hy⟩ => ⟨y, by simp only [Finset.mem_Icc] at hy ⊢; omega⟩
+      | ⟨y, hy⟩ => ⟨y, by simp only [Finset.mem_Icc] at hy ⊢; lia⟩
     have hei : Function.Injective e := by
       intro a b hab
       simp only [e, Subtype.mk.injEq] at hab
@@ -265,7 +265,7 @@ theorem imo2023_p4_generalized
     have h20 {y : ℕ} (hy : y ∈ Finset.Icc 1 (2 * m + 1)) :
         Finset.map ⟨e, hei⟩ (Finset.filter (fun x ↦ x ≤ ⟨y, hy⟩) Finset.univ) =
           Finset.filter
-           (fun x ↦ x ≤ ⟨y, by simp only [Finset.mem_Icc] at hy ⊢; omega⟩)
+           (fun x ↦ x ≤ ⟨y, by simp only [Finset.mem_Icc] at hy ⊢; lia⟩)
              Finset.univ := by
       ext a
       constructor
@@ -292,7 +292,7 @@ theorem imo2023_p4_generalized
         simp only [Finset.mem_Icc] at haa hy
         simp only [Subtype.mk_le_mk] at ha
         simp only [exists_prop, and_true, e]
-        omega
+        lia
 
     have h10 : √((∑ x_1 ∈ Finset.filter
                   (fun x ↦ x ≤ ⟨n, by simp [n]⟩) Finset.univ, x x_1) *
@@ -315,7 +315,7 @@ theorem imo2023_p4_generalized
       simp only [x']
       have hy' : y ∈ Finset.Icc 1 (2 * (m + 1) + 1) := by
         simp only [Finset.mem_Icc] at hy ⊢
-        omega
+        lia
       exact hxp ⟨y, hy'⟩
     have hxi' : Function.Injective x' := by
       intro a b hab
@@ -328,7 +328,7 @@ theorem imo2023_p4_generalized
       rintro ⟨y, hy⟩
       have hy' : y ∈ Finset.Icc 1 (2 * (m + 1) + 1) := by
         simp only [Finset.mem_Icc] at hy ⊢
-        omega
+        lia
       specialize hxa ⟨y, hy'⟩
       obtain ⟨k, hk⟩ := hxa
       use k

@@ -70,7 +70,7 @@ lemma aux_1
   have ha₁₀: ∀ k:ℤ, 23^2 < k ∧ k < 24 ^ 2 → ¬ IsSquare k := by exact fun k a => ha₁ k 23 a
   have ha₁₁: abs ((↑a : ℤ) - (22 : ℤ)) ≤ 31 := by
     refine abs_le.mpr ?_
-    omega
+    lia
   rw [← sq_abs ((↑a : ℤ) - (22 : ℤ))] at h₁ hs h₈₀
   have ha₁₂: 0 ≤ abs ((↑a : ℤ) - (22 : ℤ)) := by exact abs_nonneg ((↑a : ℤ) - (22 : ℤ))
   by_cases ha₁₃: abs ((↑a : ℤ) - (22 : ℤ)) < 15
@@ -82,12 +82,12 @@ lemma aux_1
         exact h₈₁
       have hh₁: ¬ IsSquare (1009:ℤ) := Prime.not_isSquare (by norm_num)
       exact hh₁ hh₀
-    all_goals try exact (ha₂ s (by omega)) h₈₂
-    all_goals try exact (ha₃ s (by omega)) h₈₂
-    · exact (ha₄ s (by omega)) h₈₂
-    · exact (ha₄ s (by omega)) h₈₂
-    · exact (ha₅ s (by omega)) h₈₂
-    · exact (ha₅ s (by omega)) h₈₂
+    all_goals try exact (ha₂ s (by lia)) h₈₂
+    all_goals try exact (ha₃ s (by lia)) h₈₂
+    · exact (ha₄ s (by lia)) h₈₂
+    · exact (ha₄ s (by lia)) h₈₂
+    · exact (ha₅ s (by lia)) h₈₂
+    · exact (ha₅ s (by lia)) h₈₂
   · push_neg at ha₁₃
     by_cases ha₁₄: abs ((↑a : ℤ) - (22 : ℤ)) = 15
     · apply (abs_eq (by norm_num)).mp at ha₁₄
@@ -111,28 +111,28 @@ lemma aux_1
         simp at h₁
         rw [hh₀]
         rw [@Prod.mk_right_inj]
-        omega
+        lia
     · by_cases ha₁₅: abs ((↑a : ℤ) - (22 : ℤ)) < 28
       · exfalso
         interval_cases abs ((↑a : ℤ) - (22 : ℤ))
         · exact false_of_ne ha₁₄
-        · exact (ha₆ s (by omega)) h₈₂
-        · exact (ha₇ s (by omega)) h₈₂
-        · exact (ha₇ s (by omega)) h₈₂
-        · exact (ha₈ s (by omega)) h₈₂
-        · exact (ha₉ s (by omega)) h₈₂
-        · exact (ha₁₀ s (by omega)) h₈₂
-        · exact (ha₁ s 22 (by omega)) h₈₂
-        · exact (ha₁ s 21 (by omega)) h₈₂
-        · exact (ha₁ s 20 (by omega)) h₈₂
-        · exact (ha₁ s 19 (by omega)) h₈₂
-        · exact (ha₁ s 18 (by omega)) h₈₂
-        · exact (ha₁ s 16 (by omega)) h₈₂
+        · exact (ha₆ s (by lia)) h₈₂
+        · exact (ha₇ s (by lia)) h₈₂
+        · exact (ha₇ s (by lia)) h₈₂
+        · exact (ha₈ s (by lia)) h₈₂
+        · exact (ha₉ s (by lia)) h₈₂
+        · exact (ha₁₀ s (by lia)) h₈₂
+        · exact (ha₁ s 22 (by lia)) h₈₂
+        · exact (ha₁ s 21 (by lia)) h₈₂
+        · exact (ha₁ s 20 (by lia)) h₈₂
+        · exact (ha₁ s 19 (by lia)) h₈₂
+        · exact (ha₁ s 18 (by lia)) h₈₂
+        · exact (ha₁ s 16 (by lia)) h₈₂
       · by_cases ha₁₆: abs ((↑a : ℤ) - (22 : ℤ)) = 28
         · right; right
           have ha₁₇: a = 50 := by
             apply (abs_eq (by norm_num)).mp at ha₁₆
-            omega
+            lia
           rw [ha₁₇]
           rw [ha₁₇] at h₁
           simp at h₁
@@ -143,16 +143,16 @@ lemma aux_1
           obtain h₁ | h₁ := h₁
           · simp
             right
-            omega
+            lia
           · simp
             left
-            omega
+            lia
         · exfalso
           interval_cases abs ((↑a : ℤ) - (22 : ℤ))
           · exact false_of_ne ha₁₆
-          · exact (ha₁ s 12 (by omega)) h₈₂
-          · exact (ha₁ s 10 (by omega)) h₈₂
-          · exact (ha₁ s 6 (by omega)) h₈₂
+          · exact (ha₁ s 12 (by lia)) h₈₂
+          · exact (ha₁ s 10 (by lia)) h₈₂
+          · exact (ha₁ s 6 (by lia)) h₈₂
 
 lemma aux_2
   (a b q r : ℕ)
@@ -195,8 +195,8 @@ lemma aux_2
     by_contra hc₀
     push_neg at hc₀
     have hc₁: q ^ 2 ≤ 43 ^ 2 := by exact Nat.pow_le_pow_left hc₀ 2
-    omega
-  have hq₀: q = 44 := by omega
+    lia
+  have hq₀: q = 44 := by lia
   rw [hq₀] at hr₀
   norm_num at hr₀
   rw [hq₀, hr₀] at h₅₂
@@ -209,9 +209,9 @@ lemma aux_2
     apply Nat.succ_le_iff.mpr at ha₀
     simp at ha₀
     have ha₁: 32 ^ 2 ≤ ((a:ℤ) - 22) ^ 2 := by
-      refine pow_le_pow_left₀ (by omega) (by omega) 2
+      refine pow_le_pow_left₀ (by lia) (by lia) 2
     have hb₁: 0 ≤ ((b:ℤ) - 22) ^ 2 := by positivity
-    omega
+    lia
   · push_neg at ha₀
     exact aux_1 a b h₆ ha₀
 

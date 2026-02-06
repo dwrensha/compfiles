@@ -41,7 +41,7 @@ lemma mylemma_main_lt2
       linarith [hpl]
     have g₂: ↑p * ↑(3:ℚ) ≤ ↑(4:ℚ) * (↑(p - 1):ℚ) := by
       norm_cast
-      omega
+      lia
     refine (div_le_iff₀ g₁).mpr ?_
     rw [div_mul_eq_mul_div]
     refine (le_div_iff₀ ?_).mpr g₂
@@ -253,9 +253,9 @@ lemma mylemma_k_gt_1
   interval_cases k
   simp at hk
   exfalso
-  have g₂: p < p*q := by exact lt_mul_right (by omega) (by omega)
-  have g₃: q < q*r := by exact lt_mul_right (by omega) (by omega)
-  have g₄: r < r*p := by exact lt_mul_right (by omega) (by omega)
+  have g₂: p < p*q := by exact lt_mul_right (by lia) (by lia)
+  have g₃: q < q*r := by exact lt_mul_right (by lia) (by lia)
+  have g₄: r < r*p := by exact lt_mul_right (by lia) (by lia)
   linarith
 
 lemma mylemma_p_lt_4
@@ -270,11 +270,11 @@ lemma mylemma_p_lt_4
   (p < 4) := by
   by_contra hcp
   push_neg at hcp
-  have hcq: 5 ≤ q := by omega
-  have hcr: 6 ≤ r := by omega
+  have hcq: 5 ≤ q := by lia
+  have hcr: 6 ≤ r := by lia
   have h₃: k < 2 := by exact mylemma_k_lt_2 p q r k hk hcp hcq hcr hden
   have h₄: 1 < k := by exact mylemma_k_gt_1 p q r k hk h₁ hpl hql hrl hden
-  omega
+  lia
 
 lemma q_r_divisor_of_prime
   (q r : ℤ)
@@ -319,7 +319,7 @@ lemma q_r_divisor_of_prime
         norm_cast
   obtain hq_abs | hq_abs := h_abs
   · norm_cast at *
-    omega
+    lia
   · right
     right
     exact Or.symm (eq_or_eq_neg_of_abs_eq hq_abs)
@@ -387,9 +387,9 @@ problem imo1992_p1 (a b c : ℤ) (ha : 1 < a) (hb : a < b) (hc : b < c) :
   · aesop
   intro ⟨k, hk⟩
   simp only [solution_set, Set.mem_insert_iff, Set.mem_singleton_iff]
-  have hpl: 2 ≤ a := by omega
-  have hql: 3 ≤ b := by omega
-  have hrl: 4 ≤ c := by omega
+  have hpl: 2 ≤ a := by lia
+  have hql: 3 ≤ b := by lia
+  have hrl: 4 ≤ c := by lia
   have hden: 0 < (a - 1) * (b - 1) * (c - 1) := by bound
   have h₁: ↑k = (↑(a * b * c - 1):ℚ) / (↑((a - 1) * (b - 1) * (c - 1)):ℚ) := by
     have g₁: ↑(a * b * c - 1) = ↑k * (↑((a - 1) * (b - 1) * (c - 1)):ℚ) := by

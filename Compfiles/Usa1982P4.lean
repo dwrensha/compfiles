@@ -23,7 +23,7 @@ snip begin
 
 lemma not_prime_of_dvd : ∀ n : ℕ, n ≥ 2 → (∃ m, m ≥ 2 ∧ m ≠ n ∧ m ∣ n) → ¬ Prime n := by
   intro n hn h p
-  have ngt0 : 0 < n := by omega
+  have ngt0 : 0 < n := by lia
   have p := (Nat.prime_iff).mpr p
   obtain ⟨m, ⟨h1, ⟨h2, h3⟩⟩⟩ := h
   apply (Nat.not_prime_iff_minFac_lt hn).mpr _ p
@@ -73,8 +73,8 @@ lemma usa1982_p4_lemma (e a b)
       · rw [one_mul]; exact Nat.one_le_two_pow
       · gcongr; decide
     · use e; rw [he]
-      constructor; omega
-      constructor; omega
+      constructor; lia
+      constructor; lia
       apply Nat.modEq_zero_iff_dvd.mp
       -- trans (a ? 1 : -1) * (a ? -1 : 1) + 1
       trans (a / a * 1 + (1 - a / a) * (e - 1)) * (a / a * (e - 1) + (1 - a / a) * 1) + 1 <;>
@@ -104,9 +104,9 @@ problem usa1982_p4 :
   refine ⟨2935363331541925531, by norm_num, ?_⟩
   intro n
   set m := n % 64 with hm
-  have : m < 64 := by rw [hm]; apply Nat.mod_lt; omega
+  have : m < 64 := by rw [hm]; apply Nat.mod_lt; lia
   match m with
-  | m + 64 => omega
+  | m + 64 => lia
   |  0 => _|  1 => _|  2 => _|  3 => _|  4 => _|  5 => _|  6 => _|  7 => _|  8 => _|  9 => _
   | 10 => _| 11 => _| 12 => _| 13 => _| 14 => _| 15 => _| 16 => _| 17 => _| 18 => _| 19 => _
   | 20 => _| 21 => _| 22 => _| 23 => _| 24 => _| 25 => _| 26 => _| 27 => _| 28 => _| 29 => _

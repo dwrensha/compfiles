@@ -83,7 +83,7 @@ problem imo1987_p4 : ¬∃ f : ℕ → ℕ, ∀ n, f (f n) = n + 1987 := by
 
   rw [Set.ncard_union_eq ab_disjoint a_finite b_finite] at ab_card
   rw [Set.ncard_image_of_injective _ f_injective] at ab_card
-  omega
+  lia
 
 
 end Imo1987P4

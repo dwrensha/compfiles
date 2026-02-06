@@ -82,7 +82,7 @@ lemma p_le_aa_plus_dd (hp : Nat.Prime p) : p ≤ a ^ 2 + d ^ 2 := by
   rcases h with ((h|h)|h) <;> apply Nat.le_of_dvd at h <;> try nlinarith
   · refine h.trans ?_
     calc
-      _ ≤ a + d := by omega
+      _ ≤ a + d := by lia
       _ ≤ _ := by gcongr <;> apply Nat.le_pow <;> norm_num
   · simp_all
 snip end

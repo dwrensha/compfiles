@@ -46,12 +46,12 @@ lemma lemma0 (n : ℕ) : (∑ x ∈ Finset.Icc 1 (4 * n + 2), (x:ℤ) % 2) % 2 =
   induction n with
   | zero => simp +arith +decide
   | succ n ih =>
-    rw [show 4 * (n + 1) + 2 = (4 * n + 2) + 4 by omega]
+    rw [show 4 * (n + 1) + 2 = (4 * n + 2) + 4 by lia]
     rw [Finset.sum_Icc_succ_top (by norm_num)]
     rw [Finset.sum_Icc_succ_top (by norm_num)]
     rw [Finset.sum_Icc_succ_top (by norm_num)]
     rw [Finset.sum_Icc_succ_top (by norm_num)]
-    omega
+    lia
 
 snip end
 

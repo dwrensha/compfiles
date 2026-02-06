@@ -247,7 +247,7 @@ problem imo2013_p5
   have hx2pos : 0 < 2 * x.den := by positivity
   have hx2cnezr : (x2denom : ℝ) ≠ (0 : ℝ) := by positivity
   have : 0 < x.num := Rat.num_pos.mpr hx
-  have hx2num_gt_one : (1 : ℚ) < (2 * x.num : ℤ) := by norm_cast; omega
+  have hx2num_gt_one : (1 : ℚ) < (2 * x.num : ℤ) := by norm_cast; lia
   apply mul_left_cancel₀ hx2cnezr
   calc
     x2denom * f x = f (x2denom * x) :=

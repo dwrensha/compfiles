@@ -34,12 +34,12 @@ theorem induction_lemma (A : Finset ℕ) (_AS : A ⊆ S) (Acard : A.card = 101)
   classical
   induction' k with k h
   · exact ⟨∅, by simp⟩
-  · obtain ⟨t, tS, tcard, ht⟩ := h (by omega)
+  · obtain ⟨t, tS, tcard, ht⟩ := h (by lia)
 
     /- For a shift of A by x, consider the shifts by y ∈ S intersecting it -/
     let f (x : ℕ) := {y ∈ S | ¬ Disjoint {x + a | a ∈ A} {y + a | a ∈ A}}
 
-    obtain ⟨a, aA⟩ : A.Nonempty := Finset.card_pos.mp (by omega)
+    obtain ⟨a, aA⟩ : A.Nonempty := Finset.card_pos.mp (by lia)
 
     let B := insert (a, a) A.offDiag
 
@@ -75,7 +75,7 @@ theorem induction_lemma (A : Finset ℕ) (_AS : A ⊆ S) (Acard : A.card = 101)
       refine le_trans Finset.card_biUnion_le ?_
       refine le_trans (Finset.sum_le_sum fcard) ?_
       simp [tcard]
-      omega
+      lia
 
     /- By counting, there must be a shift by x ∈ S intersecting neither of the shifts by tᵢ -/
     have : ∃ x ∈ S, x ∉ t.biUnion f := by
@@ -112,7 +112,7 @@ theorem induction_lemma (A : Finset ℕ) (_AS : A ⊆ S) (Acard : A.card = 101)
       rw [Finset.mem_insert] at xr yr
       rcases xr with xz | xt
       · rcases yr with yz | yt
-        · omega
+        · lia
         · rw [xz]
           exact Disjoint.symm (tw y yt)
       · rcases yr with yz | yt

@@ -30,7 +30,7 @@ lemma term_telescope (n k : ℕ) :
   have h_pos : 0 < 2^k := pow_pos (by norm_num) k
   rw [Nat.add_div_right n h_pos]
   -- Use the identity (a + 1) / 2 = a - a / 2
-  have identity (a : ℕ) : (a + 1) / 2 = a - a / 2 := by omega
+  have identity (a : ℕ) : (a + 1) / 2 = a - a / 2 := by lia
   rw [identity]
   rw [Nat.div_div_eq_div_mul, ← pow_succ]
 
@@ -58,7 +58,7 @@ problem imo1968_p6 (n : ℕ) : ∑' k, (n + 2^k) / 2^(k+1) = n_ans n := by
         apply add_lt_add_left
         calc
           n < 2^n := n.lt_two_pow_self
-          _ < 2^(n + 1) := Nat.pow_lt_pow_right (by norm_num) (by omega)
+          _ < 2^(n + 1) := Nat.pow_lt_pow_right (by norm_num) (by lia)
           _ ≤ 2^k_max := le_refl _
           _ ≤ 2^k := Nat.pow_le_pow_right (by norm_num) hk
       _ = 2^(k+1) := by rw [pow_succ, mul_two]
@@ -90,7 +90,7 @@ problem imo1968_p6 (n : ℕ) : ∑' k, (n + 2^k) / 2^(k+1) = n_ans n := by
     apply Nat.div_eq_of_lt
     calc
       n < 2^n := n.lt_two_pow_self
-      _ < 2^(n+1) := Nat.pow_lt_pow_right (by norm_num) (by omega)
+      _ < 2^(n+1) := Nat.pow_lt_pow_right (by norm_num) (by lia)
 
   rw [term_vanish, Nat.sub_zero]
 

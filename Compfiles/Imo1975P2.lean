@@ -71,15 +71,15 @@ problem imo1975_p2 (a : ℕ → ℤ)
     dsimp [t_int] at h6
     have g : (a (m + 1) - a i * (a (m + 1) / a i))≥0 := by
         have r : (a i)*(a (m + 1) / a i) ≤ a (m+1) := Int.mul_ediv_self_le (hn0 i)
-        omega
+        lia
     have h7 : ↑(a (m + 1) - a i * (a (m + 1) / a i)).natAbs = (a (m + 1) - a i * (a (m + 1) / a i)) := Int.natAbs_of_nonneg g
     rw [h7] at h6
     simp only [sub_sub_cancel, dvd_mul_right, ge_iff_le, forall_const] at h6
     unfold b at h6
     have h8 : a (m + 1) - a i * (a (m + 1) / a i) < (a i):= by
       have h8' : a i * (a (m + 1) / a i) + (a i) > a (m + 1) :=  Int.lt_mul_ediv_self_add (apos i)
-      omega
-    omega
+      lia
+    lia
   obtain ⟨t,ht⟩ := h1
   have g := ht (n0+i)
   obtain ⟨k,hk⟩ := g
@@ -93,7 +93,7 @@ problem imo1975_p2 (a : ℕ → ℤ)
           _   = a i * y - a i * x +(a k)     := by rw [hy, hx]
           _   = (y - x) * a i +(a k)        := by ring
   have rm : n0 ≤ m ∧ ∃ r s j : ℕ, a m = ↑r * a i + ↑s * a j ∧ i < j ∧ 0 < r ∧ 0 < s := by
-    have r1 : m ≥ n0 := by omega
+    have r1 : m ≥ n0 := by lia
     have r2 : ∃ r s j : ℕ, a m = r * a i + s * a j ∧ i < j ∧ 0 < r ∧ 0 < s := by
       have s3 : 0<y-x := by
         have t1 : a k < a m := strictMono_nat_of_lt_succ ha hm.left
@@ -103,7 +103,7 @@ problem imo1975_p2 (a : ℕ → ℤ)
         have t3 := (mul_lt_mul_iff_right₀ (apos i)).mp t2
         exact sub_pos.mpr t3
       have s : a m = (y-x) * a i + 1 * a k ∧ i < k ∧ 0 < (y - x).natAbs ∧ (0 : ℕ)<(1 : ℕ) := by
-        omega
+        lia
       use (y-x).natAbs, 1, k
       have abs_eq : ↑((y - x).natAbs) = y - x := by
         rw [Int.natAbs_of_nonneg (Int.le_of_lt s3)]

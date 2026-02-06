@@ -92,7 +92,7 @@ lemma aux_4
     (_ : n ≤ k - (m + 1)) :
     ∏ i ∈ Finset.Icc 1 n, (k - (m + i)) = (k - (m + 1)).descFactorial n := by
   rw [Nat.descFactorial_eq_prod_range, ← Finset.Ico_succ_right_eq_Icc, Finset.prod_Ico_eq_prod_range]
-  apply Finset.prod_congr rfl; intro i _; omega
+  apply Finset.prod_congr rfl; intro i _; lia
 
 snip end
 
@@ -116,7 +116,7 @@ problem imo1967_p3
     · simp
     · simp only [Nat.succ_eq_add_one, zero_add]
       intro d hd₀ hd₁
-      rw [Finset.prod_Icc_succ_top (by omega), hd₁]
+      rw [Finset.prod_Icc_succ_top (by lia), hd₁]
       rw [Nat.factorial_succ (d + (1 : ℕ))]
       rw [← mul_assoc, mul_comm _ (d + (1 : ℕ)), ← mul_assoc]
       rw [← Nat.factorial_succ]
@@ -156,7 +156,7 @@ problem imo1967_p3
         use (k - m)
         constructor
         · refine Finset.mem_Icc.mpr ?_
-          omega
+          lia
         · grind
       rw [h₆]
       exact Int.dvd_zero ((↑n.factorial : ℤ) * (↑(n + (1 : ℕ)).factorial : ℤ))
@@ -187,7 +187,7 @@ problem imo1967_p3
         rw [← Nat.cast_mul, ← Nat.cast_mul]
         refine Nat.cast_dvd_cast ?_
         refine Nat.mul_dvd_mul ?_ ?_
-        · have h₇₀: n ≤ k - (m + 1) := by omega
+        · have h₇₀: n ≤ k - (m + 1) := by lia
           rw [aux_4 k m n h₇₀]
           exact Nat.factorial_dvd_descFactorial (k - (m + 1)) n
         · have h₇₀: ∏ i ∈ Finset.Icc 1 n, (k + (m + i) + 1) = ∏ i ∈ Finset.Icc 1 n, (m + i + k + 1) := by group

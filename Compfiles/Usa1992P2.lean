@@ -34,7 +34,7 @@ problem usa1992_p2 :
     intro k
     cancel_denoms
     norm_cast
-    omega
+    lia
 
   have ha : sin (π / 180) ≠ 0 := by
     rw [← Real.cos_pi_div_two_sub]
@@ -64,10 +64,10 @@ problem usa1992_p2 :
   rw [Real.sin_sub, sub_div]
   norm_cast
   rw [div_mul_eq_div_div]
-  rw [mul_div_cancel_right₀ _ (cosi (show i < 90 by omega))]
+  rw [mul_div_cancel_right₀ _ (cosi (show i < 90 by lia))]
   rw [mul_comm (cos (↑(i + 1) * π / 180)) (sin (↑i * π / 180))]
   rw [mul_comm (cos (↑i * π / 180)) (cos (↑(i + 1) * π / 180))]
   rw [div_mul_eq_div_div]
-  rw [mul_div_cancel_right₀ _ (cosi (show (i+1) < 90 by omega))]
+  rw [mul_div_cancel_right₀ _ (cosi (show (i+1) < 90 by lia))]
 
 end Usa1992P2

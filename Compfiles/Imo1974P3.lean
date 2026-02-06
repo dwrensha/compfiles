@@ -88,13 +88,13 @@ lemma aux_4
         exact (2 * a + 1)
       · intro a ha₀
         have ha₁: a ≤ n := Finset.mem_range_succ_iff.mp ha₀
-        have ha₂: 2 * a + 1 ≤ 2 * n + 1 := by omega
+        have ha₂: 2 * a + 1 ≤ 2 * n + 1 := by lia
         have ha₃: (2 * a + 1) ∈ fs₂ := Finset.mem_range_succ_iff.mpr ha₂
         have ha₄: Odd (2 * a + 1) := odd_two_mul_add_one a
         refine Finset.mem_filter.mpr ?_
         exact And.symm ⟨ha₄, ha₃⟩
       · intro a _ b _ h₃
-        omega
+        lia
       · intro b hb₀
         use ((b - 1) / 2)
         grind
@@ -108,7 +108,7 @@ lemma aux_4
         exact (2 * a)
       · intro a ha₀
         have ha₁: a < n + 1 := List.mem_range.mp ha₀
-        have ha₂: 2 * a < 2 * n + 2 := by omega
+        have ha₂: 2 * a < 2 * n + 2 := by lia
         refine Finset.mem_filter.mpr ?_
         constructor
         · exact Finset.mem_range.mpr ha₂
@@ -185,12 +185,12 @@ lemma aux_5
         exact (2 * a + 1)
       · intro a ha₀
         have ha₁: a ≤ n := Finset.mem_range_succ_iff.mp ha₀
-        have ha₂: 2 * a + 1 ≤ 2 * n + 1 := by omega
+        have ha₂: 2 * a + 1 ≤ 2 * n + 1 := by lia
         have ha₃: (2 * a + 1) ∈ fs₂ := Finset.mem_range_succ_iff.mpr ha₂
         have ha₄: Odd (2 * a + 1) := odd_two_mul_add_one a
         exact Finset.mem_filter.mpr ⟨ha₃, ha₄⟩
       · intro a _ b _ h₃
-        omega
+        lia
       · intro b hb₀
         use ((b - 1) / 2)
         grind
@@ -211,7 +211,7 @@ lemma aux_5
         exact (2 * a)
       · intro a ha₀
         have ha₁: a < n + 1 := List.mem_range.mp ha₀
-        have ha₂: 2 * a < 2 * n + 2 := by omega
+        have ha₂: 2 * a < 2 * n + 2 := by lia
         refine Finset.mem_filter.mpr ?_
         constructor
         · exact Finset.mem_range.mpr ha₂

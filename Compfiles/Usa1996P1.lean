@@ -92,7 +92,7 @@ problem usa1996_p1 :
           have h18 : (((89 - x) : ℕ) : ℝ) = 89 - x := by
             apply Nat.cast_sub
             rw [Finset.mem_Ico] at hx
-            omega
+            lia
           rw [h18]
           ring
         rw [h9]; clear h9

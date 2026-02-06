@@ -48,7 +48,7 @@ snip begin
 def ψ (n k : ℕ) : { f // NSequence n k f } → { f // MSequence n k f } :=
   fun ⟨f, hf1, hf2⟩ ↦
     let f' := fun ii : Fin k ↦
-         if hfi : f ii < n then f ii else ⟨f ii - n, by omega⟩
+         if hfi : f ii < n then f ii else ⟨f ii - n, by lia⟩
     have mf' : MSequence n k f' := by
       refine ⟨⟨?_, ?_⟩, ?_⟩
       · intro i hi
@@ -64,7 +64,7 @@ def ψ (n k : ℕ) : { f // NSequence n k f } → { f // MSequence n k f } :=
              · dsimp at ha
                right
                dsimp
-               omega
+               lia
            · intro ha
              dsimp [f']
              obtain ha' | ha' := ha
@@ -72,21 +72,21 @@ def ψ (n k : ℕ) : { f // NSequence n k f } → { f // MSequence n k f } :=
                rw [←ha'] at hi
                simpa [hi]
              · rw [Set.mem_setOf] at ha'
-               have h8 : ¬ ↑(f a) < n := by omega
+               have h8 : ¬ ↑(f a) < n := by lia
                simp [h8]
-               omega
+               lia
         have h8 : Disjoint {j | ↑(f j) = i} {j | ↑(f j) = n + i} := by
           rw [Set.disjoint_left]
           intro a ha ha'
           rw [Set.mem_setOf] at ha ha'
-          omega
+          lia
         have h9 : Set.ncard {j | ↑(f' j) = i} =
                   Set.ncard {j | ↑(f j) = i} + Set.ncard {j | ↑(f j) = n + i} := by
            rw [h7]
            exact Set.ncard_union_eq h8
         rw [Nat.card_coe_set_eq, h9]
         rw [Nat.card_coe_set_eq] at h6
-        have h10 := hf2 (n + i) (by omega) (by omega)
+        have h10 := hf2 (n + i) (by lia) (by lia)
         rw [Nat.card_coe_set_eq] at h10
         exact Odd.add_even h6 h10
       · intro i hi1 _
@@ -94,8 +94,8 @@ def ψ (n k : ℕ) : { f // NSequence n k f } → { f // MSequence n k f } :=
           intro j
           dsimp [f']
           split_ifs with h10
-          · omega
-          · dsimp; omega
+          · lia
+          · dsimp; lia
         use 0
         dsimp
         rw [Nat.card_eq_fintype_card, Fintype.card_eq_zero_iff, isEmpty_subtype]
@@ -103,11 +103,11 @@ def ψ (n k : ℕ) : { f // NSequence n k f } → { f // MSequence n k f } :=
       · intro i hi j
         dsimp only [f']
         split_ifs with h3
-        · omega
+        · lia
         · intro h4
           apply_fun (·.val) at h4
           dsimp only at h4
-          omega
+          lia
     ⟨f', mf'⟩
 
 private lemma symmDiff_singleton_card_parity {α : Type} [DecidableEq α]
@@ -124,8 +124,8 @@ private lemma symmDiff_singleton_card_parity {α : Type} [DecidableEq α]
     rw [hsym, Finset.card_erase_of_mem ha]
     have hpos : 0 < s.card := Finset.card_pos.mpr ⟨a, ha⟩
     constructor
-    · intro ⟨k, hk⟩; exact ⟨k - 1, by omega⟩
-    · intro ⟨k, hk⟩; exact ⟨k + 1, by omega⟩
+    · intro ⟨k, hk⟩; exact ⟨k - 1, by lia⟩
+    · intro ⟨k, hk⟩; exact ⟨k + 1, by lia⟩
   · have hsym : symmDiff s {a} = Finset.cons a s ha := by
       ext x; simp only [Finset.mem_symmDiff, Finset.mem_cons, Finset.mem_singleton]
       constructor
@@ -137,8 +137,8 @@ private lemma symmDiff_singleton_card_parity {α : Type} [DecidableEq α]
         · left; exact ⟨hx, fun h => ha (h ▸ hx)⟩
     rw [hsym, Finset.card_cons]
     constructor
-    · intro ⟨k, hk⟩; exact ⟨k, by omega⟩
-    · intro ⟨k, hk⟩; exact ⟨k, by omega⟩
+    · intro ⟨k, hk⟩; exact ⟨k, by lia⟩
+    · intro ⟨k, hk⟩; exact ⟨k, by lia⟩
 
 lemma even_subsets_card {α : Type} [Fintype α] :
     Fintype.card {s : Finset α // Even (Finset.card s) } = 2^(Fintype.card α - 1) := by
@@ -167,18 +167,18 @@ lemma even_subsets_card {α : Type} [Fintype α] :
                 Fintype.card (Finset α) := by
       have := @Fintype.card_subtype_compl (Finset α) _ (fun s => Even s.card) _ _
       have := Fintype.card_subtype_le (fun s : Finset α => Even s.card)
-      omega
+      lia
     rw [Fintype.card_finset] at hsum
     have h1 : 2 ^ Fintype.card α = 2 * 2 ^ (Fintype.card α - 1) := by
       cases hn : Fintype.card α with
-      | zero => omega
+      | zero => lia
       | succ m => simp [pow_succ, mul_comm]
-    omega
+    lia
 
 lemma claim (n k : ℕ) (hn : 0 < n) (hnk : n ≤ k) (he : Even (k - n))
     (f : {b : Sequence n k // MSequence n k b }) :
     Set.ncard {g | ψ n k g = f} = 2^(k - n) := by
-  let c : Fin n → ℕ := fun i ↦ Nat.card { j | f.val j = ⟨i, by omega⟩ }
+  let c : Fin n → ℕ := fun i ↦ Nat.card { j | f.val j = ⟨i, by lia⟩ }
   have hcp : ∀ i : Fin n, 0 < c i := by
     intro i
     obtain ⟨⟨hN, _⟩, _⟩ := f.property
@@ -205,16 +205,16 @@ lemma claim (n k : ℕ) (hn : 0 < n) (hnk : n ≤ k) (he : Even (k - n))
     rw [← Fintype.card_sigma, Fintype.card_congr (Equiv.sigmaFiberEquiv g), Fintype.card_fin]
   let S : Type :=
     (i : Fin n) →
-      {s : Finset { j : Fin k | f.val j = ⟨i, by omega⟩} // Even (Finset.card s) }
+      {s : Finset { j : Fin k | f.val j = ⟨i, by lia⟩} // Even (Finset.card s) }
 
   let p : S → {g | ψ n k g = f} :=
     fun cs ↦
        let g1 :=
          fun (i : Fin k) ↦
-           let y : Fin (2 * n) := f.val ⟨i, by omega⟩
-           let y' : Fin n := ⟨y.val, by exact hM ⟨i, by omega⟩⟩
+           let y : Fin (2 * n) := f.val ⟨i, by lia⟩
+           let y' : Fin n := ⟨y.val, by exact hM ⟨i, by lia⟩⟩
            let ys : { s : Finset _ // Even s.card } := cs y'
-           if ⟨i, rfl⟩ ∈ ys.val then ⟨y.val + n, by have := hM ⟨↑i, by omega⟩; omega⟩ else y
+           if ⟨i, rfl⟩ ∈ ys.val then ⟨y.val + n, by have := hM ⟨↑i, by lia⟩; lia⟩ else y
        let hg1 : NSequence n k g1 := by sorry
        let hgg : ψ n k ⟨g1, hg1⟩ = f := by sorry
        ⟨⟨g1, hg1⟩, hgg⟩
@@ -232,7 +232,7 @@ lemma claim (n k : ℕ) (hn : 0 < n) (hnk : n ≤ k) (he : Even (k - n))
     have h1 : ∏ i : Fin n, 2 ^ (c i - 1) = 2 ^ (∑ i : Fin n, (c i - 1)) :=
       Finset.prod_pow_eq_pow_sum _ _ _
     rw [h1, pow_right_inj₀ zero_lt_two (by norm_num)]
-    suffices ∑ i : Fin n, (c i - 1) + n = k - n + n by omega
+    suffices ∑ i : Fin n, (c i - 1) + n = k - n + n by lia
     rw [Nat.sub_add_cancel hnk]
     have h2 : n = ∑ i : Fin n, 1 := by simp
     simp_rw [h2]
