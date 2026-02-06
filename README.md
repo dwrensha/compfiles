@@ -1,4 +1,4 @@
-# Compfiles: Catalog Of Math Problems Formalized In Lean, Emphasizing Solutions
+# Compfiles: Catalog Of Math Problems Formalized In Lean, Elegantly Solved
 
 A collection of olympiad-style math problems and their solutions,
 formalized in [Lean 4](https://github.com/leanprover/lean4).
