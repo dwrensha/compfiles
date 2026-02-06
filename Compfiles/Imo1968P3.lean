@@ -39,101 +39,37 @@ def f (a b c : ℝ) : ℝ → ℝ := fun x ↦ a * x^2 + (b-1)* x + c
 
 lemma f_continuous (a b c : ℝ) : Continuous (f a b c) := by unfold f; fun_prop
 
-lemma IVT {g : ℝ → ℝ} (hg : Continuous g) {a b : ℝ} (ha : g a ≤ 0) (hb : g b ≥ 0) : ∃ z : ℝ, g z = 0 := by
-  by_cases hab : a ≤ b
-  · have cont_on : ContinuousOn g (Set.Icc a b) := hg.continuousOn
-    have : 0 ∈ Set.Icc (g a) (g b) := Set.mem_Icc.mpr ⟨ha, hb⟩
-    rcases intermediate_value_Icc hab (cont_on) this with ⟨z, _, gz_eq⟩
-    exact ⟨z, gz_eq⟩
-  have hba : b ≤ a := by linarith
-  have cont_on : ContinuousOn g (Set.Icc b a) := hg.continuousOn
-  have : 0 ∈ Set.Icc (g a) (g b) := Set.mem_Icc.mpr ⟨ha, hb⟩
-  rcases intermediate_value_Icc' hba (cont_on) this with ⟨z, z_in, gz_eq⟩
-  exact ⟨z, gz_eq⟩
+lemma IVT {g : ℝ → ℝ} (hg : Continuous g) {a b : ℝ} (ha : g a ≤ 0) (hb : g b ≥ 0) : ∃ z : ℝ, g z = 0 :=
+  (intermediate_value_uIcc hg.continuousOn (Set.mem_uIcc.mpr (.inl ⟨ha, hb⟩))).imp fun _ ⟨_, hz⟩ ↦ hz
 
 lemma sol_structure_f (a b c : ℝ) (a_ne_zero : a ≠ 0) :
   (discrim a (b-1) c < 0 → ¬ ∃ x : ℝ, f a b c x = 0) ∧
   (discrim a (b-1) c = 0 → (∃ x : ℝ, f a b c x = 0 ∧ ∀ y : ℝ, f a b c y = 0 → y = x) ∧ ((∀ x : ℝ, f a b c x ≥ 0) ∨ ∀ x : ℝ, f a b c x ≤ 0)) ∧
   (discrim a (b-1) c > 0 → ∃ x y : ℝ, x≠y ∧ f a b c x = 0 ∧ f a b c y = 0) := by
-  constructor
-  · intro h
-    push_neg
-    intro x
-    show a * x^2 + (b-1)* x + c ≠ 0
-    rw [pow_two]
-    intro hx
-    apply (quadratic_eq_zero_iff_discrim_eq_sq a_ne_zero x).1 at hx
-    have : discrim a (b-1) c ≥ 0 := by rw [hx]; exact sq_nonneg (2 * a * x + (b - 1))
-    linarith
-  constructor
-  · intro h
-    constructor
-    · use -(b-1)/(2*a)
-      constructor
-      · show a * (-(b-1)/ (2 * a))^2 + (b-1) * (-(b-1)/ (2 * a)) + c = 0
-        rw [pow_two]
-        apply (quadratic_eq_zero_iff_discrim_eq_sq a_ne_zero (-(b-1) / (2 * a))).2
-        rw [h]
-        field_simp
-        ring
-      intro y hy
-      apply (quadratic_eq_zero_iff_of_discrim_eq_zero a_ne_zero h y).1
-      rw [← hy]
-      unfold f
-      ring
-    have : ∀ x : ℝ, f a b c x = a * (x + (b-1)/ (2 * a))^2 := by
-      intro x
-      simp [f]
-      have : c = (b-1)^2/(4*a) := by
-        unfold discrim at h
-        rw [sub_eq_zero] at h
-        rw [h]
-        field_simp
-      rw [this]
-      field_simp
-      ring
-    by_cases ha : a ≥ 0
-    · left
-      intro x
-      rw [this x]
-      apply mul_nonneg
-      · exact ha
-      exact sq_nonneg (x + (b - 1) / (2 * a))
-    right
-    intro x
-    rw [this x]
-    have : a ≤ 0 := by linarith
-    apply mul_nonpos_iff.2
-    right
-    constructor
-    · exact this
-    exact sq_nonneg (x + (b - 1) / (2 * a))
-  intro h
-  have : ∃ s : ℝ, discrim a (b-1) c = s * s := by
-    apply (isSquare_iff_exists_mul_self (discrim a (b - 1) c)).mp
-    apply Real.isSquare_iff.mpr
-    exact Std.le_of_lt h
-  rcases this with ⟨s, hs⟩
-  use (-b +1 + s) / (2 * a), (-b +1 - s) / (2 * a)
-  constructor
-  · have : s ≠ 0 := by
-      rw [hs] at h
-      exact mul_self_pos.mp h
-    intro h
-    field_simp at h
-    apply this
-    linarith
-  constructor
-  · unfold f
-    rw[pow_two]
-    apply (quadratic_eq_zero_iff a_ne_zero hs ((-b +1 + s) / (2 * a))).2
-    left
-    ring
-  unfold f
-  rw[pow_two]
-  apply (quadratic_eq_zero_iff a_ne_zero hs ((-b +1 - s) / (2 * a))).2
-  right
-  ring
+  have f_quad : ∀ x, f a b c x = 0 ↔ a * (x * x) + (b - 1) * x + c = 0 :=
+    fun x => by constructor <;> (intro h; simp [f, sq] at h ⊢; linarith)
+  refine ⟨fun hd ⟨x, hx⟩ => ?_, fun hd => ⟨?_, ?_⟩, fun hd => ?_⟩
+  -- Part 1: discrim < 0 → no roots
+  · exact quadratic_ne_zero_of_discrim_ne_sq
+      (fun s hs => absurd (hs ▸ sq_nonneg s) (not_le.mpr hd)) x ((f_quad x).mp hx)
+  -- Part 2a: discrim = 0 → unique root
+  · obtain ⟨x, hx, huniq⟩ := (discrim_eq_zero_iff a_ne_zero).mp hd
+    exact ⟨x, (f_quad x).mpr hx, fun y hy => huniq y ((f_quad y).mp hy)⟩
+  -- Part 2b: discrim = 0 → sign condition
+  · have csq : c = (b-1)^2/(4*a) := by unfold discrim at hd; field_simp at hd ⊢; linarith
+    have key : ∀ x, f a b c x = a * (x + (b-1)/(2*a))^2 := by
+      intro x; simp [f, csq]; field_simp; ring
+    by_cases ha : (0 : ℝ) ≤ a
+    · left; intro x; rw [key]; exact mul_nonneg ha (sq_nonneg _)
+    · right; intro x; rw [key]; exact mul_nonpos_of_nonpos_of_nonneg (not_le.mp ha).le (sq_nonneg _)
+  -- Part 3: discrim > 0 → two distinct roots
+  · have ⟨s, hs⟩ : ∃ s : ℝ, discrim a (b-1) c = s * s :=
+      ⟨Real.sqrt (discrim a (b-1) c), (Real.mul_self_sqrt hd.le).symm⟩
+    have hs_ne : s ≠ 0 := by rintro rfl; simp at hs; linarith
+    refine ⟨(-(b-1) + s) / (2*a), (-(b-1) - s) / (2*a), ?_, ?_, ?_⟩
+    · intro h; field_simp at h; exact hs_ne (by linarith)
+    · exact (f_quad _).mpr ((quadratic_eq_zero_iff a_ne_zero hs _).mpr (.inl (by ring)))
+    · exact (f_quad _).mpr ((quadratic_eq_zero_iff a_ne_zero hs _).mpr (.inr (by ring)))
 
 lemma solution (n : ℕ) {a b c y : ℝ} (h : f a b c y = 0) : (fun i ↦ if i ∈ range (n+1) then y else 0) ∈ solution_set n a b c := by
   let x := (fun i ↦ if i ∈ range (n+1) then y else 0)
