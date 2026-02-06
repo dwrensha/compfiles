@@ -200,8 +200,6 @@ theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
       have h35 : n' ≤ n := Nat.sub_le n 1
       have h33 : ∑ j ∈ Finset.filter (· ≤ i') Finset.univ, a' (p' j) =
                  ∑ j ∈ Finset.filter (· ≤ i) Finset.univ, a (p j) := by
-        sorry
-        /-
         have h36 : (Finset.univ.filter (· ≤ i')).map (embedFinLE h35) =
                      Finset.univ.filter (· ≤ i) := by
           ext x
@@ -221,10 +219,45 @@ theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
             simp only [eq_self, and_true, Finset.mem_univ, true_and]
             exact hx2
         rw [← h36]
-        simp [embedFinLE, a', p] -/
+        simp [embedFinLE, a', p]
       rw [h33] at h31
       have h34 : ∑ j ∈ Finset.filter (· ≤ i) Finset.univ, a (p j) ≤ x := by
-        sorry
+        rw [←h33]
+        have h36 : Finset.filter (· ≤ i') Finset.univ ⊆ Finset.univ := by
+          intro j hj
+          simp
+        have h38 : ∑ j ∈ Finset.filter (· ≤ i') Finset.univ, a' (p' j) ≤
+            ∑ j : Fin n', a' (p' j) := by
+          simpa [Finset.sum_filter] using
+            (Finset.sum_le_sum_of_subset_of_nonneg h36 (by
+              intro j hj1 hj2
+              exact le_of_lt (apos' (p' j))))
+        have pb' : p'.toFun.Bijective := EquivLike.bijective p'
+        have h39 : (∑ j : Fin n', a' (p' j)) = ∑ j : Fin n', a' j := by
+          simpa using (Function.Bijective.sum_comp pb' (fun j ↦ a' j))
+        have h40 : (∑ j : Fin n', a' j) = x := by
+          let f : Fin n' ↪ Fin n := embedFinLE (Nat.sub_le _ _)
+          have h41 : (Finset.univ (α := Fin n')).map f =
+             Finset.filter (·.val < n - 1) Finset.univ := by
+            ext z
+            rw [Finset.mem_map, Finset.mem_filter]
+            constructor
+            · rintro ⟨y, hy1, hy2⟩
+              simp only [Finset.mem_univ, true_and]
+              rw [←hy2]
+              obtain ⟨y', hy'⟩ := y
+              exact hy'
+            · rintro ⟨_, hz⟩
+              use ⟨z.val, by lia⟩
+              simp [f, embedFinLE]
+          unfold x
+          rw [←h41, Finset.sum_map]
+          congr
+        calc
+          ∑ j ∈ Finset.filter (· ≤ i') Finset.univ, a' (p' j) ≤
+              ∑ j : Fin n', a' (p' j) := h38
+          _ = ∑ j : Fin n', a' j := h39
+          _ = x := h40
       intro H
       exact (h31 ⟨H, h34⟩).elim
     · have h31 : i.val = n' := by lia
