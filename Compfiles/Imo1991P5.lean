@@ -80,7 +80,6 @@ lemma one_div_two_lt_sin {a : ℝ}
       apply Real.sin_lt_sin_of_lt_of_le_pi_div_two (by linarith) (by linarith) (by linarith)
 
 theorem analytic_version {a₁ a₂ a₃ b₁ b₂ b₃ : ℝ}
-    (ha₁ : 0 ≤ a₁) (ha₂ : 0 ≤ a₂) (ha₃ : 0 ≤ a₃)
     (hb₁ : 0 ≤ b₁) (hb₂ : 0 ≤ b₂) (hb₃ : 0 ≤ b₃)
     (hab : a₁ + a₂ + a₃ + b₁ + b₂ + b₃ = π)
     (h : Real.sin a₁ * Real.sin a₂ * Real.sin a₃ = Real.sin b₁ * Real.sin b₂ * Real.sin b₃)
@@ -237,9 +236,6 @@ problem imo1991_p5
   have hsum := sum_angle hABC hP
   have hsin := trigonometric_ceva A B C P hABC
   apply analytic_version
-    (EuclideanGeometry.angle_nonneg _ _ _)
-    (EuclideanGeometry.angle_nonneg _ _ _)
-    (EuclideanGeometry.angle_nonneg _ _ _)
     (EuclideanGeometry.angle_nonneg _ _ _)
     (EuclideanGeometry.angle_nonneg _ _ _)
     (EuclideanGeometry.angle_nonneg _ _ _)
