@@ -96,11 +96,10 @@ snip end
 
 
 problem imo1994_p6 :
-  ∃ A : Set ℕ,
-    ∀ S : Set ℕ, Infinite S ∧ (∀ p ∈ S, p.Prime) →
+  ∃ A : Set ℕ, ∀ a ∈ A, 0 < a ∧ ∀ S : Set ℕ, Infinite S ∧ (∀ p ∈ S, p.Prime) →
     ∃ k m n : ℕ, 2 ≤ k ∧
-      (m ∈ A ∧ IsProductOfkDistinctMembers m k S) ∧
-      (n ∉ A ∧ IsProductOfkDistinctMembers n k S) := by
+      (m ∈ A ∧ 0 < m ∧ IsProductOfkDistinctMembers m k S) ∧
+      (n ∉ A ∧ 0 < n ∧ IsProductOfkDistinctMembers n k S) := by
   -- Solution based on https://prase.cz/kalva/imo/isoln/isoln946.html
   -- Note that https://artofproblemsolving.com/wiki/index.php/1994_IMO_Problems/Problem_6
   -- interprets the problem differently, allowing m and n to be products of different
@@ -108,6 +107,9 @@ problem imo1994_p6 :
 
   let A : Set ℕ := { x | ∃ h : 1 < x, primes_iso ((ω x) - 1) < (Nat.primeFactors x).min' (Nat.nonempty_primeFactors.mpr h) }
   use A
+  intro a ha
+  constructor
+  · grind
   intro S ⟨hS_inf, hS_mem_prime⟩
 
   let pₛ := Nat.Subtype.orderIsoOfNat S
@@ -157,28 +159,28 @@ problem imo1994_p6 :
     unfold k
     simp only [add_tsub_cancel_right, OrderIso.apply_symm_apply]
 
-  have aux₂ {i : ℕ} (h_gt_one : 1 < (∏ p ∈ (Sⱼ i), p.val)) : (∏ p ∈ (Sⱼ i), p.val).primeFactors.min' (Nat.nonempty_primeFactors.mpr h_gt_one) = pₛ i := by
+  have aux₃ {i : ℕ} : 1 < (∏ p ∈ (Sⱼ i), p.val) := by
+    have hprime : ∀ x ∈ (Sⱼ i), x.val.Prime := by grind
+    have h₁ : ∀ x ∈ (Sⱼ i), 1 < x.val := by intro x hx ; exact Nat.Prime.one_lt (hprime x hx)
+    have h₂ : pₛ i ∈ (Sⱼ i) := by aesop
+    have h₃ : 1 < (pₛ i).val := by grind
+    have h₄ : ∃x ∈ (Sⱼ i), 1 < x.val := by use pₛ i
+    exact (Finset.one_lt_prod_iff_of_one_le (fun x hx ↦ le_of_lt (h₁ x hx))).mpr h₄
+
+  have aux₂ {i : ℕ} : (∏ p ∈ (Sⱼ i), p.val).primeFactors.min' (Nat.nonempty_primeFactors.mpr aux₃) = pₛ i := by
     have hnon_empty : (Sⱼ i).Nonempty := (Finset.image_nonempty.mpr (Finset.nonempty_range_iff.mpr (Nat.ne_zero_of_lt hk_gt_two)))
     have : (Sⱼ i).min' hnon_empty = pₛ i := by grind only [orderiso_min_image]
     conv => arg 1 ; arg 1 ; rw [prod_of_primes hS_mem_prime]
     rw [min_of_embedded (Sⱼ i) hnon_empty, this]
 
+
   -- Define m and prove m ∈ A
   let Sₘ := Sⱼ 2
   let m : ℕ := ∏ p ∈ Sₘ, p
   have hm_in_A : m ∈ A := by
-    have h : 1 < m := by
-      unfold m
-      have hprime : ∀ x ∈ Sₘ, x.val.Prime := by grind
-      have h₁ : ∀ x ∈ Sₘ, 1 < x.val := by intro x hx ; exact Nat.Prime.one_lt (hprime x hx)
-      have h₂ : pₛ 2 ∈ Sₘ := by grind
-      have h₃ : 1 < (pₛ 2).val := by grind
-      have h₄ : ∃x ∈ Sₘ, 1 < x.val := by use pₛ 2
-      exact (Finset.one_lt_prod_iff_of_one_le (fun x hx ↦ le_of_lt (h₁ x hx))).mpr h₄
-
     rw [Set.mem_setOf_eq, aux₁]
-    use h
-    rw [aux₂ h]
+    use aux₃
+    rw [aux₂]
     simp only [Subtype.coe_lt_coe, OrderIso.lt_iff_lt, Nat.one_lt_two]
 
 
@@ -187,10 +189,14 @@ problem imo1994_p6 :
   let n : ℕ := ∏ p ∈ Sₙ, p
   have hn_nin_A : n ∉ A := by
     by_contra hn_in_A
-    obtain ⟨hn₁, hn₂⟩ := hn_in_A
-    rw [aux₁, aux₂ hn₁] at hn₂
+    obtain ⟨_, hn₂⟩ := hn_in_A
+    rw [aux₁, aux₂] at hn₂
     simp_all only [Subtype.coe_lt_coe, OrderIso.lt_iff_lt]
     exact (lt_self_iff_false 1).mp hn₂
+
+  -- Prove that m and n are positive
+  have hm_pos : 0 < m := Nat.zero_lt_of_lt aux₃
+  have hn_pos : 0 < n := Nat.zero_lt_of_lt aux₃
 
   -- Prove that both m and n is the product of k primes from S
   have hm_prod : IsProductOfkDistinctMembers m k S := prod_of_distinct_members k 2 S pₛ
