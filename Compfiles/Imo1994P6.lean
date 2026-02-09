@@ -96,7 +96,7 @@ snip end
 
 
 problem imo1994_p6 :
-  ∃ A : Set ℕ, ∀ a ∈ A, 0 < a ∧ ∀ S : Set ℕ, Infinite S ∧ (∀ p ∈ S, p.Prime) →
+  ∃ A : Set ℕ, (∀ a ∈ A, 0 < a) ∧ ∀ S : Set ℕ, Infinite S ∧ (∀ p ∈ S, p.Prime) →
     ∃ k m n : ℕ, 2 ≤ k ∧
       (m ∈ A ∧ 0 < m ∧ IsProductOfkDistinctMembers m k S) ∧
       (n ∉ A ∧ 0 < n ∧ IsProductOfkDistinctMembers n k S) := by
@@ -107,8 +107,7 @@ problem imo1994_p6 :
 
   let A : Set ℕ := { x | ∃ h : 1 < x, primes_iso ((ω x) - 1) < (Nat.primeFactors x).min' (Nat.nonempty_primeFactors.mpr h) }
   use A
-  intro a ha
-  constructor
+  refine ⟨fun a ha ↦ ?_, ?_⟩
   · grind
   intro S ⟨hS_inf, hS_mem_prime⟩
 
