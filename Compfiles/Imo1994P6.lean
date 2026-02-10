@@ -80,9 +80,7 @@ lemma prod_of_distinct_members (k i : ℕ) (S : Set ℕ) (f : ℕ ≃o S) : IsPr
     unfold Sₘ
     rw [Finset.card_image_of_injective (Finset.range k) hinj]
     grind
-  constructor
-  · exact this
-  · constructor
+  exact ⟨this, rfl⟩
 
 lemma primeFactors_card  {S : Set ℕ} (k i : ℕ) (f : ℕ ≃o S) (h : ∀ s ∈ S, s.Prime) : ω (∏ p ∈ ((Finset.range k).image (fun j ↦ f (j+i))), p) = k := by
   let Sₙ := (Finset.range k).image (fun j ↦ f (j+i))
