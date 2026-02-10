@@ -43,29 +43,32 @@ lemma prod_of_primes {S : Set ℕ} {S' : Finset S} (h : ∀p ∈ S, p.Prime) :
   rw [this, Nat.primeFactors_prod]
   aesop
 
-lemma orderiso_min_image {α : Type} [DecidableEq α] [LinearOrder α] (f : ℕ ≃o α) (k i : ℕ) (h₁ : 0 < k)
-  : ((Finset.range k).image (fun j ↦ f (j + i))).min' (Finset.image_nonempty.mpr (Finset.nonempty_range_iff.mpr (Nat.ne_zero_of_lt h₁))) = f i := by
-  let S := (Finset.range k).image (fun j ↦ f (j + i))
-  have h_non_empty : S.Nonempty := by grind only [Finset.image_nonempty, Finset.nonempty_range_iff]
-  have h' : S.min' h_non_empty = f i := by
-    have h₄: ∀ j : ℕ, f i ≤ f (j + i) := by intro i ; aesop
-    have h₅: f i ∈ S := by aesop
-    have h₆: ∀x ∈ S, ∃j, x = f j := by grind
-    rw [Finset.min'_eq_iff]
-    grind
-  grind only [Finset.coe_min']
-
-
-lemma min_of_embedded {A : Set ℕ} (S : Finset A) (h : S.Nonempty) :
-  (S.map ⟨Subtype.val, Subtype.val_injective⟩).min' (Finset.Nonempty.map h) = (S.min' h).val := by
-  let T : Finset ℕ := S.map ⟨Subtype.val, Subtype.val_injective⟩
+lemma minFac_prod_primes {S : Set ℕ} (k i : ℕ) (f : ℕ ≃o S)
+    (hS : ∀ s ∈ S, s.Prime) (hk : 0 < k) :
+    (∏ p ∈ (Finset.range k).image (fun j ↦ f (j + i)), (p : ℕ)).minFac = (f i).val := by
+  set Sf := (Finset.range k).image (fun j ↦ f (j + i))
+  have hfi_mem : f i ∈ Sf :=
+    Finset.mem_image.mpr ⟨0, Finset.mem_range.mpr hk, by simp⟩
+  have hfi_prime : ((f i) : ℕ).Prime := hS _ (f i).prop
+  have hprod_ne_one : ∏ p ∈ Sf, (p : ℕ) ≠ 1 := by
+    intro h
+    exact absurd ((Finset.prod_eq_one_iff_of_one_le'
+      (fun x hx ↦ (hS x.val x.prop).one_le)).mp h _ hfi_mem) hfi_prime.one_lt.ne'
   apply le_antisymm
-  · have hmem : (S.min' h).val ∈ T := by simp [T, Finset.min'_mem]
-    exact Finset.min'_le T (↑(S.min' h)) hmem
-  · apply Finset.le_min'
-    intro x hx
-    rcases Finset.mem_map.mp hx with ⟨y, hy, rfl⟩
-    exact Finset.min'_le S y hy
+  · exact Nat.minFac_le_of_dvd hfi_prime.two_le (Finset.dvd_prod_of_mem _ hfi_mem)
+  · -- minFac is prime and divides the product, so it divides some prime factor
+    have hmf_prime := Nat.minFac_prime hprod_ne_one
+    obtain ⟨a, ha_mem, hmf_dvd_a⟩ :=
+      (hmf_prime.prime.dvd_finset_prod_iff _).mp (Nat.minFac_dvd _)
+    -- Since both minFac and a.val are prime, minFac = a.val
+    have : (∏ p ∈ Sf, (p : ℕ)).minFac = a.val := by
+      cases (hS a.val a.prop).eq_one_or_self_of_dvd _ hmf_dvd_a with
+      | inl h => exact absurd h hmf_prime.one_lt.ne'
+      | inr h => exact h
+    -- And a = f(j+i) for some j ≥ 0, so a.val ≥ (f i).val
+    rw [this]
+    obtain ⟨j, _, rfl⟩ := Finset.mem_image.mp ha_mem
+    exact (f.monotone (Nat.le_add_left i j))
 
 lemma prod_of_distinct_members (k i : ℕ) (S : Set ℕ) (f : ℕ ≃o S) : IsProductOfkDistinctMembers (∏ p ∈ ((Finset.range k).image (fun j ↦ f (j+i))), p) k S := by
   unfold IsProductOfkDistinctMembers
@@ -101,104 +104,52 @@ problem imo1994_p6 :
       (m ∈ A ∧ 0 < m ∧ IsProductOfkDistinctMembers m k S) ∧
       (n ∉ A ∧ 0 < n ∧ IsProductOfkDistinctMembers n k S) := by
   -- Solution based on https://prase.cz/kalva/imo/isoln/isoln946.html
-  -- Note that https://artofproblemsolving.com/wiki/index.php/1994_IMO_Problems/Problem_6
-  -- interprets the problem differently, allowing m and n to be products of different
-  -- numbers of primes, which is not what the original wording suggests.
-
-  let A : Set ℕ := { x | ∃ h : 1 < x, primes_iso ((ω x) - 1) < (Nat.primeFactors x).min' (Nat.nonempty_primeFactors.mpr h) }
+  -- A = { x > 1 | the (ω(x)-1)-th prime < x's smallest prime factor }
+  let A : Set ℕ := { x | 1 < x ∧ (primes_iso ((ω x) - 1)).val < x.minFac }
   use A
-  refine ⟨fun a ha ↦ ?_, ?_⟩
-  · grind
+  refine ⟨fun a ⟨h, _⟩ ↦ by lia, ?_⟩
   intro S ⟨hS_inf, hS_mem_prime⟩
-
   let pₛ := Nat.Subtype.orderIsoOfNat S
-
-  -- Note: John Scholes' proof use the index of the smallest prime in S to construct k,
-  -- but that might result in k being 1 (if 2 ∈ S). For that reason, we ignore the smallest
-  -- prime in S, both when constructing k and when selecting prime factors for m and n.
-
-  -- k is the number of factors to use when constructing m and n
-  -- The order isomorphism is 0-based, so we add one
+  -- k = index of pₛ(1) among all primes + 1
   let k := (primes_iso.symm ⟨pₛ 1, hS_mem_prime (pₛ 1).val (pₛ 1).val_prop⟩) + 1
 
-  have hk_gt_two : 2 ≤ k := by
-    unfold k
-    simp
-    have h₁ : 3 ≤ (pₛ 1).val := by
-      have h : (pₛ 0).val < (pₛ 1).val := by
-        simp_all only [Subtype.coe_lt_coe, OrderIso.lt_iff_lt, zero_lt_one, pₛ]
-      have : (pₛ 0).val ∈ S := Subtype.coe_prop (pₛ 0)
-      replace : (pₛ 0).val.Prime := hS_mem_prime (↑(pₛ 0)) this
-      replace : 2 ≤ (pₛ 0).val := Nat.Prime.two_le this
-      grind
-    have h₂ : ∀ p, 3 ≤ p.val → 1 ≤ primes_iso.symm p := by
-      intro p hp
-      by_contra
-      simp at this
-      have : p.val = 2 := by
-        unfold primes_iso at this
-        have hq : ∀ q : ↑Primes, q ≤ p → (Nat.Subtype.orderIsoOfNat Primes).symm q ≤ (Nat.Subtype.orderIsoOfNat Primes).symm p := by
-          exact fun _ hq ↦ (OrderIso.le_iff_le (Nat.Subtype.orderIsoOfNat Primes).symm).mpr hq
-        rw [this] at hq
-        replace hq : ∀ q ≤ p, (Nat.Subtype.orderIsoOfNat Primes).symm q = 0 := fun q a ↦ Nat.eq_zero_of_le_zero (hq q a)
-        replace : p = Nat.Subtype.orderIsoOfNat Primes 0 := (OrderIso.symm_apply_eq (Nat.Subtype.orderIsoOfNat Primes)).mp this
-        replace hq : ∀ q ≤ p, q = Nat.Subtype.orderIsoOfNat Primes 0 := fun q a ↦ (OrderIso.symm_apply_eq (Nat.Subtype.orderIsoOfNat Primes)).mp (hq q a)
-        rw [←this] at hq
-        let q : ↑Primes := ⟨2, Nat.prime_two⟩
-        have hq_le : q ≤ p := Std.le_of_lt hp
-        grind
-      linarith
-    exact Nat.one_le_of_lt (h₂ ⟨↑(pₛ 1), hS_mem_prime (↑(pₛ 1)) (Subtype.val_prop (pₛ 1))⟩ h₁)
-
+  have hk_ge_two : 2 ≤ k := by
+    -- pₛ(0) < pₛ(1) as primes, so their indices in the global enumeration differ
+    show 2 ≤ primes_iso.symm ⟨↑(pₛ 1), hS_mem_prime _ (pₛ 1).val_prop⟩ + 1
+    have : (⟨(pₛ 0).val, hS_mem_prime _ (pₛ 0).prop⟩ : Primes) <
+           ⟨(pₛ 1).val, hS_mem_prime _ (pₛ 1).prop⟩ :=
+      Subtype.mk_lt_mk.mpr (pₛ.strictMono (by lia))
+    have := primes_iso.symm.strictMono this
+    lia
 
   let Sⱼ := fun j ↦ (Finset.range k).image (fun i ↦ pₛ (i + j))
 
-  have aux₁ {i : ℕ} : (primes_iso (ω (∏ p ∈ (Sⱼ i), p.val) - 1)).val = pₛ 1 := by
-    rw [primeFactors_card k i pₛ hS_mem_prime]
-    unfold k
-    simp only [add_tsub_cancel_right, OrderIso.apply_symm_apply]
+  -- Key fact 1: primes_iso(ω(product) - 1) = pₛ(1) for any starting index
+  have aux₁ {i : ℕ} : (primes_iso (ω (∏ p ∈ (Sⱼ i), p.val) - 1)).val = (pₛ 1).val := by
+    rw [primeFactors_card k i pₛ hS_mem_prime]; simp [k]
 
+  -- Key fact 2: minFac of the product = pₛ(starting index)
+  have aux₂ {i : ℕ} : (∏ p ∈ (Sⱼ i), p.val).minFac = (pₛ i).val :=
+    minFac_prod_primes k i pₛ hS_mem_prime (by lia)
+
+  -- Key fact 3: the product is > 1
   have aux₃ {i : ℕ} : 1 < (∏ p ∈ (Sⱼ i), p.val) := by
-    have hprime : ∀ x ∈ (Sⱼ i), x.val.Prime := by grind
-    have h₁ : ∀ x ∈ (Sⱼ i), 1 < x.val := by intro x hx ; exact Nat.Prime.one_lt (hprime x hx)
-    have h₂ : pₛ i ∈ (Sⱼ i) := by aesop
-    have h₃ : 1 < (pₛ i).val := by grind
-    have h₄ : ∃x ∈ (Sⱼ i), 1 < x.val := by use pₛ i
-    exact (Finset.one_lt_prod_iff_of_one_le (fun x hx ↦ le_of_lt (h₁ x hx))).mpr h₄
+    have hmem : pₛ i ∈ Sⱼ i := Finset.mem_image.mpr ⟨0, Finset.mem_range.mpr (by lia), by simp⟩
+    exact (Finset.one_lt_prod_iff_of_one_le
+      (fun x hx ↦ (hS_mem_prime x.val x.prop).one_le)).mpr
+      ⟨pₛ i, hmem, (hS_mem_prime _ (pₛ i).prop).one_lt⟩
 
-  have aux₂ {i : ℕ} : (∏ p ∈ (Sⱼ i), p.val).primeFactors.min' (Nat.nonempty_primeFactors.mpr aux₃) = pₛ i := by
-    have hnon_empty : (Sⱼ i).Nonempty := (Finset.image_nonempty.mpr (Finset.nonempty_range_iff.mpr (Nat.ne_zero_of_lt hk_gt_two)))
-    have : (Sⱼ i).min' hnon_empty = pₛ i := by grind only [orderiso_min_image]
-    conv => arg 1 ; arg 1 ; rw [prod_of_primes hS_mem_prime]
-    rw [min_of_embedded (Sⱼ i) hnon_empty, this]
+  -- m = product of k primes starting from pₛ(2); m ∈ A since pₛ(1) < pₛ(2) = minFac(m)
+  let m : ℕ := ∏ p ∈ Sⱼ 2, p
+  have hm_in_A : m ∈ A := ⟨aux₃, by rw [aux₁, aux₂]; exact pₛ.strictMono (by lia)⟩
 
-
-  -- Define m and prove m ∈ A
-  let Sₘ := Sⱼ 2
-  let m : ℕ := ∏ p ∈ Sₘ, p
-  have hm_in_A : m ∈ A := by
-    rw [Set.mem_setOf_eq, aux₁]
-    use aux₃
-    rw [aux₂]
-    simp only [Subtype.coe_lt_coe, OrderIso.lt_iff_lt, Nat.one_lt_two]
-
-
-  -- Define n and prove n ∉ A
-  let Sₙ := Sⱼ 1
-  let n : ℕ := ∏ p ∈ Sₙ, p
+  -- n = product of k primes starting from pₛ(1); n ∉ A since pₛ(1) = minFac(n), not <
+  let n : ℕ := ∏ p ∈ Sⱼ 1, p
   have hn_nin_A : n ∉ A := by
-    by_contra hn_in_A
-    obtain ⟨_, hn₂⟩ := hn_in_A
-    rw [aux₁, aux₂, lt_self_iff_false] at hn₂
-    exact hn₂
+    intro ⟨_, h⟩; rw [aux₁, aux₂] at h; exact lt_irrefl _ h
 
-  -- Prove that m and n are positive
-  have hm_pos : 0 < m := Nat.zero_lt_of_lt aux₃
-  have hn_pos : 0 < n := Nat.zero_lt_of_lt aux₃
-
-  -- Prove that both m and n is the product of k primes from S
-  have hm_prod : IsProductOfkDistinctMembers m k S := prod_of_distinct_members k 2 S pₛ
-  have hn_prod : IsProductOfkDistinctMembers n k S := prod_of_distinct_members k 1 S pₛ
-  use k, m, n
+  exact ⟨k, m, n, hk_ge_two,
+    ⟨hm_in_A, Nat.zero_lt_of_lt aux₃, prod_of_distinct_members k 2 S pₛ⟩,
+    ⟨hn_nin_A, Nat.zero_lt_of_lt aux₃, prod_of_distinct_members k 1 S pₛ⟩⟩
 
 end Imo1994P6
