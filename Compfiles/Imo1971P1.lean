@@ -132,7 +132,7 @@ problem imo1971_p1 : P 3 ∧ P 5 ∧ ∀ n > 2, n ≠ 3 ∧ n ≠ 5 → ¬P n :=
       simp [Fin.prod_univ_succ, a, h_0,  h_1, h_2, h_3]
       calc ((2 : ℝ) - 1) * ((2 - 1) * ((2 - 1) * (2 - 3) ^ (n - 4)))
         _ = (-1) ^ (n - 4) := by norm_num
-        _ < 0 := by simp [Odd.neg_one_pow (Nat.Odd.sub_even (by omega) n_odd (by decide))]
+        _ < 0 := by simp [(Nat.Odd.sub_even n_pos n_odd (show Even 4 by norm_num)).neg_one_pow]
 
     -- Prove that the second, third and fourth terms are zero
     have h₁ : ∏ j ≠ 1, (a 1 - a j) = 0 := by
