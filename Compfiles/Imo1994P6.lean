@@ -189,9 +189,8 @@ problem imo1994_p6 :
   have hn_nin_A : n ∉ A := by
     by_contra hn_in_A
     obtain ⟨_, hn₂⟩ := hn_in_A
-    rw [aux₁, aux₂] at hn₂
-    simp_all only [Subtype.coe_lt_coe, OrderIso.lt_iff_lt]
-    exact (lt_self_iff_false 1).mp hn₂
+    rw [aux₁, aux₂, lt_self_iff_false] at hn₂
+    exact hn₂
 
   -- Prove that m and n are positive
   have hm_pos : 0 < m := Nat.zero_lt_of_lt aux₃
