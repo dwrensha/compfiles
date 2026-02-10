@@ -75,10 +75,10 @@ problem imo1971_p1 : P 3 ∧ P 5 ∧ ∀ n > 2, n ≠ 3 ∧ n ≠ 5 → ¬P n :=
   have h1 : ∀ n > 2, Even n → ¬P n := by
     intro n n_gt_2 n_even
 
-    have n_pos : 0 < n := by omega
+    have n_pos : 0 < n := by lia
 
     -- Rewriting now lets us decompose the sum later
-    rw [show n = n - 1 + 1 by omega]
+    rw [show n = n - 1 + 1 by lia]
     simp [P]
 
     -- Our counterexample
@@ -110,10 +110,10 @@ problem imo1971_p1 : P 3 ∧ P 5 ∧ ∀ n > 2, n ≠ 3 ∧ n ≠ 5 → ¬P n :=
   have h2 : ∀ n ≥ 7, Odd n → ¬P n := by
     intro n n_ge_7 n_odd
 
-    have n_pos : 4 ≤ n := by omega
+    have n_pos : 4 ≤ n := by lia
 
     -- Rewriting now lets us decompose the sum later
-    rw [show n = n - 4 + 4 by omega]
+    rw [show n = n - 4 + 4 by lia]
     simp [P]
 
     -- Our counterexample
@@ -137,17 +137,17 @@ problem imo1971_p1 : P 3 ∧ P 5 ∧ ∀ n > 2, n ≠ 3 ∧ n ≠ 5 → ¬P n :=
     -- Prove that the second, third and fourth terms are zero
     have h₁ : ∏ j ≠ 1, (a 1 - a j) = 0 := by
       rw [Finset.prod_eq_zero_iff]
-      use ⟨2, by omega⟩
+      use ⟨2, by lia⟩
       simp [a]
       norm_cast
     have h₂ : ∏ j ≠ 2, (a 2 - a j) = 0 := by
       rw [prod_ne_eq_prod_ite, Finset.prod_eq_zero_iff]
-      use ⟨1, by omega⟩
+      use ⟨1, by lia⟩
       simp [a]
       norm_cast
     have h₃ : ∏ j ≠ Fin.succ 2, (a (Fin.succ 2) - a j) = 0 := by
       rw [prod_ne_eq_prod_ite, Finset.prod_eq_zero_iff]
-      use ⟨1, by omega⟩
+      use ⟨1, by lia⟩
       simp [a]
       norm_cast
 
@@ -156,11 +156,11 @@ problem imo1971_p1 : P 3 ∧ P 5 ∧ ∀ n > 2, n ≠ 3 ∧ n ≠ 5 → ¬P n :=
       apply Finset.sum_eq_zero
       intro i hi
       apply Finset.prod_eq_zero_iff.mpr
-      by_cases hi' : i.succ.succ.succ.succ = ⟨4, by omega⟩
-      · use ⟨5, by omega⟩
+      by_cases hi' : i.succ.succ.succ.succ = ⟨4, by lia⟩
+      · use ⟨5, by lia⟩
         simp [hi', a]
         norm_cast
-      · use ⟨4, by omega⟩
+      · use ⟨4, by lia⟩
         simp [hi', a, eq_comm]
         norm_cast
 
@@ -192,7 +192,7 @@ problem imo1971_p1 : P 3 ∧ P 5 ∧ ∀ n > 2, n ≠ 3 ∧ n ≠ 5 → ¬P n :=
         rw [← sub_neg_eq_add, sub_nonneg]
         calc -((a 1 - a 0) * (a 1 - a 2))
           _ = (a 0 - a 1) * (a 1 - a 2) := by rw [← neg_sub, neg_mul, neg_neg]
-          _ ≤ (a 0 - a 1) * (a 0 - a 2) := by apply mul_le_mul <;> linarith
+          _ ≤ (a 0 - a 1) * (a 0 - a 2) := by apply mul_le_mul <;> lia
 
       -- Show that the third term is also non-negative
       have h₂ : 0 ≤ (a 2 - a 0) * (a 2 - a 1) := by apply mul_nonneg_of_nonpos_of_nonpos <;> linarith
@@ -255,7 +255,7 @@ problem imo1971_p1 : P 3 ∧ P 5 ∧ ∀ n > 2, n ≠ 3 ∧ n ≠ 5 → ¬P n :=
           · linarith
           · linarith
           · apply mul_nonneg <;> linarith
-        · linarith
+        · lia
 
       -- Close the goal
       linarith
