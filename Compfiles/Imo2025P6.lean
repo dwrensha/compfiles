@@ -4534,9 +4534,9 @@ theorem matilda_solution_general (k : ℕ) (hk : 2 ≤ k) :
 
 snip end
 
-determine solution_value (ans : ℕ) : ℕ := 2112
+determine solution_value : ℕ := 2112
 
-problem imo2025_p6 : IsMinMatildaCount 2025  (solution_value ans) := by
+problem imo2025_p6 : IsMinMatildaCount 2025  solution_value := by
   let k := 45
   have h_general := matilda_solution_general k (by norm_num)
   norm_num at h_general
