@@ -6,6 +6,9 @@ Authors: lean-tom (with assistance from Gemini)
 
 import Mathlib.Analysis.MeanInequalities
 import Archive.Wiedijk100Theorems.AscendingDescendingSequences
+import Mathlib.Data.List.Sort
+import Mathlib.Tactic
+import ProblemExtraction
 
 open Finset Function
 
