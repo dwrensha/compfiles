@@ -36,7 +36,7 @@ We take the sequence construction from https://artofproblemsolving.com/wiki/inde
 
 
 theorem fract_sqrt_two_mul_gt (k : ℕ) (pk : 0 < k) : Int.fract (√2 * k) > 1 / (2 * (√2 * k + 1)) := by
-  field_simp
+  rw [gt_iff_lt, div_lt_iff₀ (by positivity)]
 
   set x : ℝ := √2 * k
   let y := ⌊x⌋
@@ -65,7 +65,7 @@ theorem fract_sqrt_two_mul_gt (k : ℕ) (pk : 0 < k) : Int.fract (√2 * k) > 1 
 
 
 theorem fract_neg_sqrt_two_mul_gt (k : ℕ) (pk : 0 < k) : Int.fract (-√2 * k) > 1 / (2 * (√2 * k + 1)) := by
-  field_simp
+  rw [gt_iff_lt, div_lt_iff₀ (by positivity), neg_mul, mul_comm]
   nth_rw 1 [<-neg_neg (√2 * ↑k)]
 
   set x : ℝ := -(√2 * k)
