@@ -6,8 +6,6 @@ Authors: lean-tom (with assistance from Gemini)
 
 import Mathlib.Analysis.MeanInequalities
 import Archive.Wiedijk100Theorems.AscendingDescendingSequences
-import Mathlib.Data.List.Sort
-import Mathlib.Tactic
 import ProblemExtraction
 
 open Finset Function
@@ -29,7 +27,7 @@ that is not covered by any tile.
 namespace Imo2025P6
 
 -- =================================================================
--- 1. Core Definitions (Visible to the reader)
+--  Core Definitions (Visible to the reader)
 -- =================================================================
 
 variable {n : ℕ} [NeZero n]
@@ -71,13 +69,14 @@ def IsMinMatildaCount (n : ℕ) [NeZero n] (m : ℕ) : Prop :=
 
 snip begin
 
-instance px_refl : IsRefl (Point n) ((· ≤ ·) on px) := ⟨fun _ => le_refl _⟩
-instance py_refl : IsRefl (Point n) ((· ≤ ·) on py) := ⟨fun _ => le_refl _⟩
+instance px_refl : @Std.Refl (Point n) ((· ≤ ·) on px) := ⟨fun _ => le_refl _⟩
+instance py_refl : @Std.Refl (Point n) ((· ≤ ·) on py) := ⟨fun _ => le_refl _⟩
 def rect (n : ℕ) (x_min x_max y_min y_max : ℕ) : Finset (Point n) :=
   univ.filter (fun p =>
     x_min ≤ px p ∧ px p < x_max ∧
     y_min ≤ py p ∧ py p < y_max
   )
+
 @[simp]
 lemma mem_rect {x_min x_max y_min y_max : ℕ} {p : Point n} :
     p ∈ rect n x_min x_max y_min y_max ↔
@@ -85,13 +84,16 @@ lemma mem_rect {x_min x_max y_min y_max : ℕ} {p : Point n} :
     y_min ≤ py p ∧ py p < y_max := by
   simp [rect]
 syntax "contradict_max" term "using" term "as" ident ident ident : tactic
+
 macro_rules
-  | `(tactic| contradict_max $max_hyp using $not_mem as $q $hq $h_ord) =>
-    `(tactic| apply $max_hyp _ $not_mem <;> intro $q $hq $h_ord)
+  | `(tactic| contradict_max $max_hyp:term using $not_mem:term as $q:ident $hq:ident $h_ord:ident) =>
+    `(tactic| apply ($max_hyp) _ ($not_mem) <;> intro $q $hq $h_ord)
+
 macro "solve_grid" : tactic =>
-  `(tactic| {
-    simp only [Fin.le_iff_val_le_val, px, py] at *; linarith
-  })
+  `(tactic| (
+    simp only [Fin.le_iff_val_le_val, px, py] at *
+    linarith
+  ))
 
 section CommonProperties
 
@@ -114,6 +116,7 @@ section ChainProperties
 
 variable {n : ℕ} [NeZero n]
 variable {u v : Finset (Point n)}
+
 lemma chain_u_mono_le
     (h_u_mono : ∀ a ∈ u, ∀ b ∈ u, px a < px b → py a < py b)
     (h_u_inj : ∀ a ∈ u, ∀ b ∈ u, px a = px b → a = b)
@@ -122,6 +125,7 @@ lemma chain_u_mono_le
   rcases lt_or_eq_of_le hx with h_lt | h_eq
   · exact le_of_lt (h_u_mono a ha b hb h_lt)
   · have := h_u_inj a ha b hb h_eq; subst this; exact le_refl _
+
 lemma chain_v_mono_le
     (h_v_mono : ∀ a ∈ v, ∀ b ∈ v, px a < px b → py b < py a)
     (h_v_inj : ∀ a ∈ v, ∀ b ∈ v, px a = px b → a = b)
@@ -130,6 +134,7 @@ lemma chain_v_mono_le
   rcases lt_or_eq_of_le hx with h_lt | h_eq
   · exact le_of_lt (h_v_mono a ha b hb h_lt)
   · have := h_v_inj a ha b hb h_eq; subst this; exact le_refl _
+
 lemma chain_u_inj_y
     (h_u_mono : ∀ a ∈ u, ∀ b ∈ u, px a < px b → py a < py b)
     (h_u_inj : ∀ a ∈ u, ∀ b ∈ u, px a = px b → a = b)
@@ -139,6 +144,7 @@ lemma chain_u_inj_y
   · have := h_u_mono a ha b hb h_lt; linarith
   · exact h_u_inj a ha b hb h_eq
   · have := h_u_mono b hb a ha h_gt; linarith
+
 lemma chain_v_inj_y
     (h_v_mono : ∀ a ∈ v, ∀ b ∈ v, px a < px b → py b < py a)
     (h_v_inj : ∀ a ∈ v, ∀ b ∈ v, px a = px b → a = b)
@@ -163,15 +169,15 @@ def v_upper : Finset (Point n) := v.biUnion (fun r => rect n (px r) n (py r) n)
 @[simp]
 lemma mem_u_lower (p : Point n) :
     p ∈ u_lower u ↔ ∃ q ∈ u, px q ≤ px p ∧ py p ≤ py q := by
-simp [u_lower, mem_rect, Nat.lt_succ_iff]
+simp [u_lower, mem_rect]
 @[simp]
 lemma mem_u_upper (p : Point n) :
     p ∈ u_upper u ↔ ∃ q ∈ u, px p ≤ px q ∧ py q ≤ py p := by
-  simp [u_upper, mem_rect, Nat.lt_succ_iff]
+  simp [u_upper, mem_rect]
 @[simp]
 lemma mem_v_lower (p : Point n) :
     p ∈ v_lower v ↔ ∃ r ∈ v, px p ≤ px r ∧ py p ≤ py r := by
-  simp [v_lower, mem_rect, Nat.lt_succ_iff]
+  simp [v_lower, mem_rect]
 @[simp]
 lemma mem_v_upper (p : Point n) :
     p ∈ v_upper v ↔ ∃ r ∈ v, px r ≤ px p ∧ py r ≤ py p := by
@@ -254,20 +260,26 @@ lemma card_filter_ge_sub_one {α : Type*} [DecidableEq α]
     (h_boundary : (S.filter (fun x => ¬ P x)).card ≤ 1) :
     (S.filter P).card ≥ S.card - 1 := by
   have h_card_split : S.card = (S.filter P).card + (S.filter (fun x => ¬ P x)).card := by
-    rw [← card_union_of_disjoint (disjoint_filter_filter_neg S S P), filter_union_filter_neg_eq]
+    rw [← card_union_of_disjoint (disjoint_filter_filter_not S S P), filter_union_filter_not_eq]
   omega
+
 macro "solve_boundary_count" S:term "," P:term "," h_unique:term "," mem_thm:term : tactic =>
-  `(tactic| {
-    apply card_filter_ge_sub_one $S $P
+  `(tactic| (
+    apply card_filter_ge_sub_one ($S) ($P)
     rw [card_le_one_iff]
     intro p q hp hq
-    have h_mem := $mem_thm
+    have h_mem := ($mem_thm)
     simp only [mem_filter, not_lt, h_mem] at hp hq
-    have hp_blk : p ∈ all_black := hp.1.1; have hq_blk : q ∈ all_black := hq.1.1
-    have hpxp : px p < n := p.1.isLt; have hpyp : py p < n := p.2.isLt
-    have hpxq : px q < n := q.1.isLt; have hpyq : py q < n := q.2.isLt
-    apply $h_unique p hp_blk q hq_blk; omega
-  })
+    have hp_blk : p ∈ all_black := hp.1.1
+    have hq_blk : q ∈ all_black := hq.1.1
+    have hpxp : px p < n := p.1.isLt
+    have hpyp : py p < n := p.2.isLt
+    have hpxq : px q < n := q.1.isLt
+    have hpyq : py q < n := q.2.isLt
+    apply ($h_unique) p hp_blk q hq_blk
+    omega
+  ))
+
 theorem targetsWin_inequality
     (h_unique_y : ∀ p ∈ all_black, ∀ q ∈ all_black, py p = py q → p = q) :
     (targetsWin u v all_black).card ≥ (targetsW u v all_black).card - 1 := by
@@ -293,11 +305,13 @@ theorem targetsEin_inequality
   (fun p => py p < n - 1), h_unique_y, mem_targetsE (n := n)
 
 variable {u v all_black : Finset (Point n)}
+
 def incidence_count (u v all_black : Finset (Point n)) (p : Point n) : ℕ :=
   (if p ∈ targetsW u v all_black then 1 else 0) +
   (if p ∈ targetsN u v all_black then 1 else 0) +
   (if p ∈ targetsE u v all_black then 1 else 0) +
   (if p ∈ targetsS u v all_black then 1 else 0)
+
 lemma sum_card_eq_sum_incidence :
     (targetsW u v all_black).card + (targetsN u v all_black).card +
     (targetsE u v all_black).card + (targetsS u v all_black).card
@@ -311,6 +325,7 @@ lemma sum_card_eq_sum_incidence :
     · ext x; simp only [mem_filter]; simp  [targetsW, targetsN, targetsE, targetsS]
     · intro x hx; rfl
   }
+
 lemma u_parts_intersection_eq_u
     (h_u_mono : ∀ a ∈ u, ∀ b ∈ u, px a < px b → py a < py b)
     (h_u_inj : ∀ a ∈ u, ∀ b ∈ u, px a = px b → a = b)
@@ -588,6 +603,7 @@ lemma incidence_count_of_v_diff
       rw [mem_u_lower]; use pivot; exact ⟨h_piv_u, le_of_lt h_gt, le_of_lt hy⟩
     have h_not_lo : p ∉ u_upper u := fun h_up => h_not_both ⟨h_lo, h_up⟩
     simp [h_in_W, h_in_N, h_in_E, h_in_S, h_lo, h_not_lo, hp_all]
+
 lemma covering_of_maximal_u
     (p : Point n) (hp : p ∈ all_black) (hp_not_u : p ∉ u)
     (h_maximal : ∀ p ∈ all_black, p ∉ u →
@@ -635,6 +651,7 @@ lemma covering_of_maximal_v
     have h_x_le : px p ≤ px q := le_of_lt hx_lt
     have h_not_y_le : ¬(py p ≤ py q) := fun h => h_not_lo h_x_le h
     linarith
+
 lemma incidence_count_of_others
     (p : Point n) (hp : p ∈ all_black) (hp_not_u : p ∉ u) (hp_not_v : p ∉ v)
     (h_u_mono : ∀ a ∈ u, ∀ b ∈ u, px a < px b → py a < py b)
@@ -663,7 +680,6 @@ lemma incidence_count_of_others
       rw [h_lo] at h_u_exclusive; exact h_u_exclusive ⟨trivial, h_up⟩
   have h_v_cover : p ∈ v_lower v ∨ p ∈ v_upper v :=
     covering_of_maximal_v p hp hp_not_v h_v_max
-
   have h_v_exclusive : ¬(p ∈ v_lower v ∧ p ∈ v_upper v) := by
     intro h_both
     have : p ∈ v := by
@@ -711,7 +727,9 @@ lemma incidence_count_of_others
       simp only [hv_lo] at h_v_exact;
       by_contra h_not_in; rw [eq_false h_not_in] at h_v_exact; contradiction
     simp [hu_lo, hv_lo, hu_up, hv_up]
+
 section MatildaSection
+
 variable {n : ℕ} [NeZero n]
 variable {all_black : Finset (Point n)}
 
@@ -722,6 +740,7 @@ variable {all_black : Finset (Point n)}
 lemma fin_val_sub_one_eq {i : Fin n} (h : 0 < i.val) :
     (i - 1).val = i.val - 1 := by
   apply Fin.val_sub_one_of_ne_zero; exact ne_of_gt h
+
 lemma fin_val_add_one_eq {i : Fin n} (h : i.val < n - 1) :
     (i + 1).val = i.val + 1 := by
   rw [Fin.val_add]; simp; rw [Nat.mod_eq_of_lt]; omega
@@ -1045,6 +1064,7 @@ lemma am_gm_bound_nat (a b n : ℕ) (h_mul : n ≤ a * b) :
       ≤ (4 * (a * b)).sqrt       := Nat.sqrt_le_sqrt h1
     _ ≤ ((a + b) * (a + b)).sqrt := Nat.sqrt_le_sqrt h2
     _ = a + b                    := Nat.sqrt_eq (a + b)
+
 lemma matilda_eq_iff_bounds_eq (m1 m2 : Matilda n all_black) :
     m1 = m2 ↔
     m1.x_min = m2.x_min ∧ m1.x_max = m2.x_max ∧
@@ -1057,6 +1077,7 @@ lemma matilda_eq_iff_bounds_eq (m1 m2 : Matilda n all_black) :
     simp at h
     rcases h with ⟨rfl, rfl, rfl, rfl⟩
     congr
+
 instance : Finite (Matilda n all_black) := by
   let f (m : Matilda n all_black) : (Fin n × Fin n × Fin n × Fin n) :=
     (
@@ -1085,6 +1106,7 @@ structure Label (n : ℕ) where
   source : Point n
   type : LabelType
   deriving DecidableEq, Repr, Fintype
+
 @[simp]
 def Label.position (l : Label n) : Point n :=
   match l.type with
@@ -1103,6 +1125,7 @@ def label_pos (l : Label n) : Point n × Point n :=
   | .E => (p, (p.1, p.2 + 1))
   | .S => (p, (p.1 + 1, p.2))
   | .X => (p, p)
+
 @[simp]
 def covers (m : Matilda n all_black) (l : Label n) : Prop :=
   m.mem (label_pos l).2
@@ -1171,7 +1194,9 @@ lemma disj_middle : Disjoint ({c.pivot} ∪ (c.u \ {c.pivot})) (c.v \ {c.pivot})
   rw [disjoint_union_left]; exact ⟨c.disj_piv_v, c.disj_u_v_diff⟩
 
 def Others := c.all_black \ (c.u ∪ c.v)
+
 lemma Others_def : c.Others = c.all_black \ (c.u ∪ c.v) := rfl
+
 lemma partition_eq :
     c.all_black = {c.pivot} ∪ (c.u \ {c.pivot}) ∪ (c.v \ {c.pivot}) ∪ c.Others := by
   rw [← c.h_inter]; dsimp [Others]
@@ -1179,9 +1204,11 @@ lemma partition_eq :
   have h_u : p ∈ c.u → p ∈ c.all_black := fun h => c.hu_sub h
   have h_v : p ∈ c.v → p ∈ c.all_black := fun h => c.hv_sub h
   simp only [mem_union, mem_inter, mem_sdiff]; tauto
+
 lemma disj_others :
     Disjoint ({c.pivot} ∪ (c.u \ {c.pivot}) ∪ (c.v \ {c.pivot})) c.Others := by
   rw [disjoint_iff_inter_eq_empty]; ext p; rw [← h_inter]; simp [Others]; tauto
+
 theorem total_labels_eq_sum :
     (targetsW c.u c.v c.all_black).card + (targetsN c.u c.v c.all_black).card +
     (targetsE c.u c.v c.all_black).card + (targetsS c.u c.v c.all_black).card
@@ -1258,6 +1285,7 @@ theorem total_labels_eq_sum :
 
   zify [ha, hb, h_le]
   omega
+
 theorem labels_total_intersection :
     (targetsWin c.u c.v c.all_black).card + (targetsNin c.u c.v c.all_black).card +
     (targetsEin c.u c.v c.all_black).card + (targetsSin c.u c.v c.all_black).card
@@ -1281,6 +1309,7 @@ theorem labels_total_intersection :
     linarith
   zify [h_total_ge_3] at hW hN hE hS h_sum_eq ⊢
   linarith
+
 noncomputable def validLabels : Finset (Label n) :=
   let to_W : Point n ↪ Label n := ⟨fun p => ⟨p, .W⟩, by intro a b h; injection h⟩
   let to_N : Point n ↪ Label n := ⟨fun p => ⟨p, .N⟩, by intro a b h; injection h⟩
@@ -1291,6 +1320,7 @@ noncomputable def validLabels : Finset (Label n) :=
   (targetsNin c.u c.v c.all_black).map to_N ∪
   (targetsEin c.u c.v c.all_black).map to_E ∪
   (targetsSin c.u c.v c.all_black).map to_S
+
 lemma card_validLabels :
     (validLabels c).card =
     (targetsWin c.u c.v c.all_black).card + (targetsNin c.u c.v c.all_black).card +
@@ -1307,11 +1337,13 @@ lemma card_validLabels :
   }
 
 open Classical
+
 lemma not_valid_label_X {n : ℕ} [NeZero n] (c : IntersectionSetup n) (l : Label n)
     (h_valid : l ∈ validLabels c) (h_type : l.type = .X) : False := by
   simp only [validLabels, mem_union, mem_map, or_assoc] at h_valid
   rcases h_valid with ⟨_, _, rfl⟩ | ⟨_, _, rfl⟩ | ⟨_, _, rfl⟩ | ⟨_, _, rfl⟩
   <;> simp at h_type
+
 lemma matilda_covers_at_most_one (m : Matilda n c.all_black) :
     ({l ∈ validLabels c | covers m l}).card ≤ 1 := by
   rw [card_le_one_iff]
@@ -1524,6 +1556,7 @@ lemma matilda_covers_at_most_one (m : Matilda n c.all_black) :
   · exact not_valid_label_X c l2 h_valid2 h2
   case X.W | X.N | X.E | X.S | X.X =>
     exact not_valid_label_X c l1 h_valid1 h1
+
 lemma grid_size_ge_two_of_label {source : Point n} {lbl : LabelType}
     (hl : { source := source, type := lbl } ∈ c.validLabels) : 2 ≤ n := by
   cases lbl <;>
@@ -1532,6 +1565,7 @@ lemma grid_size_ge_two_of_label {source : Point n} {lbl : LabelType}
     simp_all
     try omega
   }
+
 lemma valid_label_pos_not_black {n : ℕ} [NeZero n] (c : IntersectionSetup n)
     (l : Label n) (hl : l ∈ validLabels c) : (label_pos l).2 ∉ c.all_black := by
   intro h_pos_black
@@ -1616,8 +1650,10 @@ lemma valid_label_pos_not_black {n : ℕ} [NeZero n] (c : IntersectionSetup n)
     rw [Nat.mod_eq_of_lt (by omega)] at h_eq
     omega
   · exact (not_valid_label_X c { source := source, type := .X } hl rfl).elim
+
 variable (matildas_partition : Finset (Matilda n c.all_black))
 variable (h_partition : ∀ p : Point n, p ∉ c.all_black → ∃! m ∈ matildas_partition, m.mem p)
+
 theorem matilda_count_ge_label_count
   (matildas_partition : Finset (Matilda n c.all_black))
   (h_partition : ∀ p : Point n, p ∉ c.all_black → ∃! m ∈ matildas_partition, m.mem p):
@@ -1654,6 +1690,7 @@ theorem matilda_count_ge_label_count
   rw [← Fintype.card_coe (validLabels c)]
   rw [← Fintype.card_coe matildas_partition]
   apply Fintype.card_le_of_injective f f_inj
+
 theorem matildas_count_ge_intersection_bound
     (matildas_partition : Finset (Matilda n c.all_black))
     (h_partition : ∀ p : Point n, p ∉ c.all_black → ∃! m ∈ matildas_partition, m.mem p) :
@@ -1662,6 +1699,7 @@ theorem matildas_count_ge_intersection_bound
   rw [card_validLabels] at h_ge_labels
   have h_labels_bound := labels_total_intersection c
   exact Nat.le_trans h_labels_bound h_ge_labels
+
 theorem intersection_case_final_bound
     (matildas_partition : Finset (Matilda n c.all_black))
     (h_partition : ∀ p : Point n, p ∉ c.all_black → ∃! m ∈ matildas_partition, m.mem p)
@@ -1719,8 +1757,10 @@ lemma u_inj_y : ∀ a ∈ c.u, ∀ b ∈ c.u, py a = py b → a = b :=
   chain_u_inj_y c.h_u_mono c.h_u_inj
 lemma v_inj_y : ∀ a ∈ c.v, ∀ b ∈ c.v, py a = py b → a = b :=
   chain_v_inj_y c.h_v_mono c.h_v_inj
+
 noncomputable def u_list : List (Point n) := c.u.toList.mergeSort ((· ≤ ·) on px)
 noncomputable def v_list : List (Point n) := c.v.toList.mergeSort ((· ≤ ·) on px)
+
 @[simp]
 lemma u_list_length : c.u_list.length = c.a := by simp [u_list, c.hu]
 @[simp]
@@ -1730,12 +1770,12 @@ lemma mem_u_list (p : Point n) : p ∈ c.u_list ↔ p ∈ c.u := by simp [u_list
 @[simp]
 lemma mem_v_list (p : Point n) : p ∈ c.v_list ↔ p ∈ c.v := by simp [v_list]
 
-lemma u_list_sorted : c.u_list.Sorted ((· ≤ ·) on px) := by
+lemma u_list_sorted : c.u_list.Pairwise ((· ≤ ·) on px) := by
   rw [u_list]; simpa using List.pairwise_mergeSort
     (le := fun p q => px p ≤ px q)
     (fun _ _ _ => by simp; apply le_trans) (fun a b => by simp; apply le_total)
     c.u.toList
-lemma v_list_sorted : c.v_list.Sorted ((· ≤ ·) on px) := by
+lemma v_list_sorted : c.v_list.Pairwise ((· ≤ ·) on px) := by
   rw [v_list]; simpa using List.pairwise_mergeSort
     (le := fun p q => px p ≤ px q)
     (fun _ _ _ => by simp; apply le_trans) (fun a b => by simp; apply le_total)
@@ -1748,33 +1788,37 @@ lemma u_list_nodup : c.u_list.Nodup := by
   rw [u_list]; exact (nodup_toList c.u).perm (List.mergeSort_perm _ _).symm
 lemma v_list_nodup : c.v_list.Nodup := by
   rw [v_list]; exact (nodup_toList c.v).perm (List.mergeSort_perm _ _).symm
-lemma head_le_of_mem_sorted {α : Type*} {l : List α} {r : α → α → Prop} [IsRefl α r]
-    (h_sorted : l.Sorted r) (h_ne : l ≠ []) (x : α) (hx : x ∈ l) :
+
+lemma head_le_of_mem_sorted {α : Type*} {l : List α} {r : α → α → Prop} [Std.Refl r]
+    (h_sorted : l.Pairwise r) (h_ne : l ≠ []) (x : α) (hx : x ∈ l) :
     r (l.head h_ne) x := by
   cases l with
   | nil => contradiction
   | cons a tail =>
-    rw [List.sorted_cons] at h_sorted
+    rw [List.pairwise_cons] at h_sorted
     simp only [List.mem_cons] at hx
     rcases hx with rfl | h_in_tail
-    · exact refl _
+    · apply refl_of r
     · exact h_sorted.1 x h_in_tail
-lemma last_le_of_mem_sorted {α : Type*} {l : List α} {r : α → α → Prop} [IsRefl α r]
-    (h_sorted : l.Sorted r) (h_ne : l ≠ []) (x : α) (hx : x ∈ l) :
+
+lemma last_le_of_mem_sorted {α : Type*} {l : List α} {r : α → α → Prop} [Std.Refl r]
+    (h_sorted : l.Pairwise r) (h_ne : l ≠ []) (x : α) (hx : x ∈ l) :
     r x (l.getLast h_ne) := by
   cases l using List.reverseRecOn with
   | nil => contradiction
   | append_singleton xs a =>
     simp only [List.getLast_append_singleton]
-    rw [List.Sorted, List.pairwise_append] at h_sorted
+    rw [List.pairwise_append] at h_sorted
     simp only [List.mem_append, List.mem_singleton] at hx
     rcases hx with h_in_xs | rfl
     · exact h_sorted.2.2 x h_in_xs a (List.mem_singleton_self a)
     · exact refl _
+
 lemma px_head_le_of_mem_u (ha_pos : 0 < c.a) (q : Point n) (hq : q ∈ c.u) :
     px (c.u_list.head (c.u_list_ne_nil ha_pos)) ≤ px q := by
     apply head_le_of_mem_sorted c.u_list_sorted (c.u_list_ne_nil ha_pos)
     simpa using hq
+
 lemma py_head_le_of_mem_u (ha_pos : 0 < c.a) (q : Point n) (hq : q ∈ c.u) :
     py (c.u_list.head (c.u_list_ne_nil ha_pos)) ≤ py q := by
   let u0 := c.u_list.head (c.u_list_ne_nil ha_pos)
@@ -1790,6 +1834,7 @@ lemma px_le_last_of_mem_u (ha_pos : 0 < c.a) (q : Point n) (hq : q ∈ c.u) :
   let u_last := c.u_list.getLast (c.u_list_ne_nil ha_pos)
   apply last_le_of_mem_sorted c.u_list_sorted (c.u_list_ne_nil ha_pos)
   simpa using hq
+
 lemma py_le_last_of_mem_u (ha_pos : 0 < c.a) (q : Point n) (hq : q ∈ c.u) :
     py q ≤ py (c.u_list.getLast (c.u_list_ne_nil ha_pos)) := by
   let u_last := c.u_list.getLast (c.u_list_ne_nil ha_pos)
@@ -1799,10 +1844,12 @@ lemma py_le_last_of_mem_u (ha_pos : 0 < c.a) (q : Point n) (hq : q ∈ c.u) :
   · exact le_of_lt (c.h_u_mono q hq u_last h_u_last_mem h_lt)
   · have h_same : q = u_last := c.h_u_inj q hq u_last h_u_last_mem h_eq
     subst h_same; exact le_refl _
+
 lemma px_head_le_of_mem_v (hb_pos : 0 < c.b) (q : Point n) (hq : q ∈ c.v) :
     px (c.v_list.head (c.v_list_ne_nil hb_pos)) ≤ px q := by
   apply head_le_of_mem_sorted c.v_list_sorted (c.v_list_ne_nil hb_pos)
   simpa using hq
+
 lemma py_head_ge_of_mem_v (hb_pos : 0 < c.b) (q : Point n) (hq : q ∈ c.v) :
     py q ≤ py (c.v_list.head (c.v_list_ne_nil hb_pos)) := by
   let v0 := c.v_list.head (c.v_list_ne_nil hb_pos)
@@ -1815,10 +1862,12 @@ lemma py_head_ge_of_mem_v (hb_pos : 0 < c.b) (q : Point n) (hq : q ∈ c.v) :
   · have h_same : v0 = q := c.h_v_inj v0 h_v0_mem q hq h_eq
     subst h_same
     exact le_refl _
+
 lemma px_le_last_of_mem_v (hb_pos : 0 < c.b) (q : Point n) (hq : q ∈ c.v) :
     px q ≤ px (c.v_list.getLast (c.v_list_ne_nil hb_pos)) := by
   apply last_le_of_mem_sorted c.v_list_sorted (c.v_list_ne_nil hb_pos)
   simpa using hq
+
 lemma py_ge_last_of_mem_v (hb_pos : 0 < c.b) (q : Point n) (hq : q ∈ c.v) :
     py (c.v_list.getLast (c.v_list_ne_nil hb_pos)) ≤ py q := by
   let v_last := c.v_list.getLast (c.v_list_ne_nil hb_pos)
@@ -1827,39 +1876,44 @@ lemma py_ge_last_of_mem_v (hb_pos : 0 < c.b) (q : Point n) (hq : q ∈ c.v) :
   rcases hx_le.lt_or_eq with h_lt | h_eq
   · exact le_of_lt (c.h_v_mono q hq v_last h_vl_mem h_lt)
   · rw [c.h_v_inj q hq v_last h_vl_mem h_eq]
+
 lemma mem_of_mem_lower_of_mem_upper {p : Point n}
     (h_lo : p ∈ v_lower c.v) (h_up : p ∈ v_upper c.v) : p ∈ c.v := by
   rw [← v_parts_intersection_eq_v c.h_v_mono c.h_v_inj, mem_inter]
   exact ⟨h_lo, h_up⟩
+
 lemma px_ne_of_mem_disjoint {p q : Point n} (hp : p ∈ c.u) (hq : q ∈ c.v) :
     px p ≠ px q := by
   intro h_eq
   have h_same : p = q := c.h_unique_x p (c.hu_sub hp) q (c.hv_sub hq) h_eq
   subst h_same
   exact disjoint_left.mp c.h_disj hp hq
+
 lemma py_ne_of_mem_disjoint {p q : Point n} (hp : p ∈ c.u) (hq : q ∈ c.v) :
     py p ≠ py q := by
   intro h_eq
   have h_same : p = q := c.h_unique_y p (c.hu_sub hp) q (c.hv_sub hq) h_eq
   subst h_same
   exact disjoint_left.mp c.h_disj hp hq
+
 syntax "contradict_max" term "using" term "," term "as" ident ident ident : tactic
 macro_rules
-  | `(tactic| contradict_max $max_hyp using $hp_blk, $not_mem as $q $hq $h_ord) =>
-    `(tactic| apply $max_hyp _ $hp_blk $not_mem <;> intro $q $hq $h_ord)
+  | `(tactic| contradict_max $max_hyp:term using $hp_blk:term, $not_mem:term as $q:ident $hq:ident $h_ord:ident) =>
+    `(tactic| apply ($max_hyp) _ ($hp_blk) ($not_mem) <;> intro $q $hq $h_ord)
 macro "solve_no_black" p:term "," hp:term "," max_hyp:term "using" b_x:term "," b_y:term : tactic =>
-  `(tactic| {
-    have h_not_mem : $p ∉ _ := fun h => by
-      have h_bx := $b_x $p h
-      have h_by := $b_y $p h
+  `(tactic| (
+    have h_not_mem : ($p) ∉ _ := fun h => by
+      have h_bx := ($b_x) ($p) h
+      have h_by := ($b_y) ($p) h
       linarith
-    contradict_max $max_hyp using $hp, h_not_mem as q hq h_ord
-    all_goals {
-      have h_bx := $b_x q hq
-      have h_by := $b_y q hq
+    contradict_max ($max_hyp) using ($hp), h_not_mem as q hq h_ord
+    all_goals (
+      have h_bx := ($b_x) q hq
+      have h_by := ($b_y) q hq
       linarith
-    }
-  })
+    )
+  ))
+
 lemma no_black_left_down_of_u_head (ha_pos : 0 < c.a) (p : Point n)
     (hp : p ∈ c.all_black)
     (hx : px p < px (c.u_list.head (c.u_list_ne_nil ha_pos)))
@@ -1884,6 +1938,7 @@ lemma no_black_right_down_of_v_last (hb_pos : 0 < c.b) (p : Point n)
     (hy : py p < py (c.v_list.getLast (c.v_list_ne_nil hb_pos))) : False := by
   solve_no_black p, hp, c.h_v_max using
     c.px_le_last_of_mem_v hb_pos, c.py_ge_last_of_mem_v hb_pos
+
 lemma u_head_mem_v_lower (ha_pos : 0 < c.a) :
     c.u_list.head (c.u_list_ne_nil ha_pos) ∈ v_lower c.v := by
   let u0 := c.u_list.head (c.u_list_ne_nil ha_pos)
@@ -1903,6 +1958,7 @@ lemma u_head_mem_v_lower (ha_pos : 0 < c.a) :
       have : vj = u0 := c.h_unique_y vj (c.hv_sub hvj) u0 (c.hu_sub h_in_u) h_eq
       subst this; contradiction
     exact c.no_black_left_down_of_u_head ha_pos vj (c.hv_sub hvj) hx_lt hy_lt
+
 lemma u_last_mem_v_upper (ha_pos : 0 < c.a) :
     c.u_list.getLast (c.u_list_ne_nil ha_pos) ∈ v_upper c.v := by
   let u_last := c.u_list.getLast (c.u_list_ne_nil ha_pos)
@@ -1922,6 +1978,7 @@ lemma u_last_mem_v_upper (ha_pos : 0 < c.a) :
       subst this; contradiction
     exact c.no_black_right_up_of_u_last ha_pos vj (c.hv_sub hvj) hx_lt hy_lt
   · exact h_up
+
 lemma a_ge_two (ha_pos : 0 < c.a) : 2 ≤ c.a := by
   by_contra h_lt
   have h_len : c.u_list.length = 1 := by rw [c.u_list_length]; omega
@@ -1931,6 +1988,7 @@ lemma a_ge_two (ha_pos : 0 < c.a) : 2 ≤ c.a := by
   have h_in_v : u0 ∈ c.v := c.mem_of_mem_lower_of_mem_upper h_lo h_up
   have h_in_u : u0 ∈ c.u := by rw [← mem_u_list, h_list]; exact List.mem_singleton.mpr rfl
   exact disjoint_left.mp c.h_disj h_in_u h_in_v
+
 lemma exists_crossing_u (ha_pos : 0 < c.a) :
     ∃ k : Fin (c.a - 1),
       (c.u_list.get ⟨k, by simp; omega⟩ ∈ v_lower c.v) ∧
@@ -1979,6 +2037,7 @@ lemma exists_crossing_u (ha_pos : 0 < c.a) :
     rcases covering_of_maximal_v u_next h_next_blk h_not_v c.h_v_max with h_lo | h_up
     · contradiction
     · exact h_up
+
 lemma v_head_mem_u_upper (hb_pos : 0 < c.b) :
     c.v_list.head (c.v_list_ne_nil hb_pos) ∈ u_upper c.u := by
   let v0 := c.v_list.head (c.v_list_ne_nil hb_pos)
@@ -1998,6 +2057,7 @@ lemma v_head_mem_u_upper (hb_pos : 0 < c.b) :
       subst this; contradiction
     exact c.no_black_left_up_of_v_head hb_pos ui (c.hu_sub hui) hx_lt hy_lt
   · exact h_up
+
 lemma v_last_mem_u_lower (hb_pos : 0 < c.b) :
     c.v_list.getLast (c.v_list_ne_nil hb_pos) ∈ u_lower c.u := by
   let v_last := c.v_list.getLast (c.v_list_ne_nil hb_pos)
@@ -2017,6 +2077,7 @@ lemma v_last_mem_u_lower (hb_pos : 0 < c.b) :
       have : v_last = ui := c.h_unique_y v_last (c.hv_sub h_in_v) ui (c.hu_sub hui) h_eq.symm
       subst this; contradiction
     exact c.no_black_right_down_of_v_last hb_pos ui (c.hu_sub hui) hx_lt hy_lt
+
 lemma b_ge_two (hb_pos : 0 < c.b) : 2 ≤ c.b := by
   by_contra h_lt
   have h_len : c.v_list.length = 1 := by rw [c.v_list_length]; omega
@@ -2027,6 +2088,7 @@ lemma b_ge_two (hb_pos : 0 < c.b) : 2 ≤ c.b := by
   rw [u_parts_intersection_eq_u c.h_u_mono c.h_u_inj] at h_inter
   have h_in_v : v0 ∈ c.v := by rw [← mem_v_list, h_list]; exact List.mem_singleton.mpr rfl
   exact disjoint_right.mp c.h_disj h_in_v h_inter
+
 lemma exists_crossing_v (hb_pos : 0 < c.b) :
     ∃ k : Fin (c.b - 1),
       (c.v_list.get ⟨k, by simp; omega⟩ ∈ u_upper c.u) ∧
@@ -2077,6 +2139,7 @@ lemma exists_crossing_v (hb_pos : 0 < c.b) :
     rcases covering_of_maximal_u v_next h_next_blk h_not_u c.h_u_max with h_lo | h_up
     · exact h_lo
     · contradiction
+
 structure CrossingPoints where
   k : Fin (c.a - 1)
   l : Fin (c.b - 1)
@@ -2108,6 +2171,7 @@ noncomputable def getCrossingPoints (ha_pos : 0 < c.a) (hb_pos : 0 < c.b) : Cros
     h_uk_lo := hk.1, h_uk1_up := hk.2
     h_vl_up := hl.1, h_vl1_lo := hl.2
   }
+
 variable (cp : CrossingPoints c)
 
 def Pivot : Finset (Point n) :=
@@ -2125,8 +2189,8 @@ lemma pivot_nonempty : (Pivot c cp).Nonempty := by
   let range_y := (Ico (py uk) (py uk1)) ∩ (Ico (py vl1) (py vl))
   have h_range_empty : range_x = ∅ ∨ range_y = ∅ := by
     by_contra h_both_nonempty; push_neg at h_both_nonempty
-    obtain ⟨x, hx⟩ := nonempty_iff_ne_empty.mpr h_both_nonempty.1
-    obtain ⟨y, hy⟩ := nonempty_iff_ne_empty.mpr h_both_nonempty.2
+    obtain ⟨x, hx⟩ := h_both_nonempty.1
+    obtain ⟨y, hy⟩ := h_both_nonempty.2
     have hx_lt : x < n := by
       rw [mem_inter] at hx; have := hx.1; rw [mem_Ico] at this
       exact lt_trans this.2 uk1.1.isLt
@@ -2273,8 +2337,9 @@ lemma pivot_nonempty : (Pivot c cp).Nonempty := by
           rw [u_parts_intersection_eq_u c.h_u_mono c.h_u_inj] at h_both
           exact h_both
         exact disjoint_right.mp c.h_disj mem_vl in_u
-lemma not_mem_of_strictly_between_sorted {α : Type*} {r : α → α → Prop} [IsRefl α r]
-    (L : List α) (h_sorted : L.Sorted r)
+
+lemma not_mem_of_strictly_between_sorted {α : Type*} {r : α → α → Prop} [Std.Refl r]
+    (L : List α) (h_sorted : L.Pairwise r)
     (k : Fin L.length) (k_next : Fin L.length) (h_adj : k.1 + 1 = k_next.1)
     (p : α) (hp : p ∈ L)
     (val : α → ℕ)
@@ -2285,16 +2350,17 @@ lemma not_mem_of_strictly_between_sorted {α : Type*} {r : α → α → Prop} [
   by_cases h_le : i.1 ≤ k.1
   · have h_idx_le : i ≤ k := by simp [Fin.le_iff_val_le_val, h_le]
     have : r (L.get i) (L.get k) :=
-      List.Sorted.rel_get_of_le h_sorted h_idx_le
+      List.Pairwise.rel_get_of_le h_sorted h_idx_le
     have : val (L.get i) ≤ val (L.get k) := rel_val _ _ this
     linarith [h_between.1]
   · push_neg at h_le
     have h_ge : k_next.1 ≤ i.1 := by rw [← h_adj]; omega
     have h_idx_ge : k_next ≤ i := by simp [Fin.le_iff_val_le_val, h_ge]
     have : r (L.get k_next) (L.get i) :=
-      List.Sorted.rel_get_of_le h_sorted h_idx_ge
+      List.Pairwise.rel_get_of_le h_sorted h_idx_ge
     have : val (L.get k_next) ≤ val (L.get i) := rel_val _ _ this
     linarith [h_between.2]
+
 lemma pivot_no_black (cp : CrossingPoints c) :
     ∀ p ∈ Pivot c cp, p ∉ c.all_black := by
   let uk := cp.uk; let uk1 := cp.uk1
@@ -2414,6 +2480,7 @@ lemma pivot_no_black (cp : CrossingPoints c) :
   have h_uk_in_v : uk ∈ c.v := by rw [h_eq]; exact mem_vl
   have h_uk_not_in_v : uk ∉ c.v := disjoint_left.mp c.h_disj mem_uk
   contradiction
+
 lemma incidence_count_of_u_disjoint
     (p : Point n) (hp : p ∈ c.u) :
     incidence_count c.u c.v c.all_black p = 2 := by
@@ -2434,6 +2501,7 @@ lemma incidence_count_of_u_disjoint
     simp [h_v_lo, h_not_up]
   · have h_not_lo : p ∉ v_lower c.v := fun h => h_excl ⟨h, h_v_up⟩
     simp [h_v_up, h_not_lo]
+
 lemma incidence_count_of_v_disjoint
     (p : Point n) (hp : p ∈ c.v) :
     incidence_count c.u c.v c.all_black p = 2 := by
@@ -2454,6 +2522,7 @@ lemma incidence_count_of_v_disjoint
     simp [h_u_lo, h_not_up]
   · have h_not_lo : p ∉ u_lower c.u := fun h => h_excl ⟨h, h_u_up⟩
     simp [h_u_up, h_not_lo]
+
 theorem total_labels_eq_sum_disjoint :
     (targetsW c.u c.v c.all_black).card + (targetsN c.u c.v c.all_black).card +
     (targetsE c.u c.v c.all_black).card + (targetsS c.u c.v c.all_black).card
@@ -2496,6 +2565,7 @@ theorem total_labels_eq_sum_disjoint :
     _         ≤ c.all_black.card    := card_le_card (union_subset c.hu_sub c.hv_sub)
     _         = n                   := c.h_n
   omega
+
 theorem labels_total_disjoint (ha_pos : 0 < c.a) (hb_pos : 0 < c.b) :
     (targetsWin c.u c.v c.all_black).card + (targetsNin c.u c.v c.all_black).card +
     (targetsEin c.u c.v c.all_black).card + (targetsSin c.u c.v c.all_black).card
@@ -2516,10 +2586,13 @@ theorem labels_total_disjoint (ha_pos : 0 < c.a) (hb_pos : 0 < c.b) :
   have h_total_ge_3 : 3 ≤ n + c.a + c.b := by linarith
   zify [h_total_ge_3] at hW hN hE hS h_sum_eq ⊢
   linarith
+
 noncomputable def wx (cp : CrossingPoints c) : Point n :=
   (c.pivot_nonempty cp).choose
+
 lemma wx_mem_pivot (cp : CrossingPoints c) : c.wx cp ∈ Pivot c cp :=
   (c.pivot_nonempty cp).choose_spec
+
 lemma wx_bounds (cp : CrossingPoints c) :
     let p := c.wx cp
     (px cp.uk ≤ px p ∧ px p < px cp.uk1) ∧
@@ -2532,8 +2605,10 @@ lemma wx_bounds (cp : CrossingPoints c) :
   rw [mem_inter, mem_Ico, mem_Ico] at h
   rcases h with ⟨⟨hx_u, hx_v⟩, ⟨hy_u, hy_v⟩⟩
   exact ⟨hx_u, hx_v, hy_u, hy_v⟩
+
 lemma wx_not_black (cp : CrossingPoints c) : c.wx cp ∉ c.all_black :=
   c.pivot_no_black cp (c.wx cp) (c.wx_mem_pivot cp)
+
 noncomputable def validLabels (cp : CrossingPoints c) : Finset (Label n) :=
   let to_W : Point n ↪ Label n := ⟨fun p => ⟨p, .W⟩, by intro a b h; injection h⟩
   let to_N : Point n ↪ Label n := ⟨fun p => ⟨p, .N⟩, by intro a b h; injection h⟩
@@ -2546,13 +2621,16 @@ noncomputable def validLabels (cp : CrossingPoints c) : Finset (Label n) :=
   (targetsEin c.u c.v c.all_black).map to_E ∪
   (targetsSin c.u c.v c.all_black).map to_S ∪
   map to_X {c.wx cp}
+
 @[simp]
 def covers (m : Matilda n c.all_black) (l : Label n) : Prop :=
   m.mem (label_pos l).2
+
 lemma pivot_overlap_x (cp : CrossingPoints c) :
     px cp.vl < px cp.uk1 := by
   have h := c.wx_bounds cp
   linarith [h.1.2, h.2.1.1]
+
 lemma u_y_le_uk_of_x_lt_uk1 (cp : CrossingPoints c) (q : Point n)
     (hq : q ∈ c.u) (hx : px q < px cp.uk1) : py q ≤ py cp.uk := by
   rw [← c.mem_u_list, List.mem_iff_get] at hq
@@ -2566,7 +2644,7 @@ lemma u_y_le_uk_of_x_lt_uk1 (cp : CrossingPoints c) (q : Point n)
     have h_idx_le : k1_idx ≤ i := by
       rw [Fin.le_iff_val_le_val]; exact h_gt
     have h_val_le : px (c.u_list.get k1_idx) ≤ px (c.u_list.get i) :=
-      List.Sorted.rel_get_of_le c.u_list_sorted h_idx_le
+      List.Pairwise.rel_get_of_le c.u_list_sorted h_idx_le
     have h_uk1_def : cp.uk1 = c.u_list.get k1_idx := by
       rw [cp.h_uk1]
     rw [← h_uk1_def] at h_val_le
@@ -2577,7 +2655,7 @@ lemma u_y_le_uk_of_x_lt_uk1 (cp : CrossingPoints c) (q : Point n)
   have h_idx_le : i ≤ k_idx := by
     rw [Fin.le_iff_val_le_val]; exact h_i_le_k
   have h_px_le : px (c.u_list.get i) ≤ px (c.u_list.get k_idx) :=
-    List.Sorted.rel_get_of_le c.u_list_sorted h_idx_le
+    List.Pairwise.rel_get_of_le c.u_list_sorted h_idx_le
   have h_uk_def : cp.uk = c.u_list.get k_idx := by
     rw [cp.h_uk]
   have mem_uk : cp.uk ∈ c.u := by
@@ -2587,6 +2665,7 @@ lemma u_y_le_uk_of_x_lt_uk1 (cp : CrossingPoints c) (q : Point n)
   have h_px_le' : px (c.u_list.get i) ≤ px cp.uk := by
     rw [h_uk_def]; exact h_px_le
   apply c.u_mono_le (c.u_list.get i) mem_ui cp.uk mem_uk h_px_le'
+
 lemma v_y_le_vl1_of_x_ge_uk1 (cp : CrossingPoints c) (q : Point n)
     (hq : q ∈ c.v) (hx : px cp.uk1 ≤ px q) : py q ≤ py cp.vl1 := by
   have h_vl_lt_q : px cp.vl < px q := lt_of_lt_of_le (c.pivot_overlap_x cp) hx
@@ -2601,7 +2680,7 @@ lemma v_y_le_vl1_of_x_ge_uk1 (cp : CrossingPoints c) (q : Point n)
     have h_idx_le : j ≤ l_idx := by
       rw [Fin.le_iff_val_le_val]; linarith
     have h_val_le : px (c.v_list.get j) ≤ px (c.v_list.get l_idx) :=
-      List.Sorted.rel_get_of_le c.v_list_sorted h_idx_le
+      List.Pairwise.rel_get_of_le c.v_list_sorted h_idx_le
     have h_vl_def : cp.vl = c.v_list.get l_idx := by
       rw [cp.h_vl]
     rw [← h_vl_def] at h_val_le
@@ -2612,7 +2691,7 @@ lemma v_y_le_vl1_of_x_ge_uk1 (cp : CrossingPoints c) (q : Point n)
   have h_idx_ge_fin : l1_idx ≤ j := by
     rw [Fin.le_iff_val_le_val]; exact h_idx_ge
   have h_px_le : px (c.v_list.get l1_idx) ≤ px (c.v_list.get j) :=
-    List.Sorted.rel_get_of_le c.v_list_sorted h_idx_ge_fin
+    List.Pairwise.rel_get_of_le c.v_list_sorted h_idx_ge_fin
   have h_vl1_def : cp.vl1 = c.v_list.get l1_idx := by
     rw [cp.h_vl1]
   have mem_vl1 : cp.vl1 ∈ c.v := by
@@ -2624,12 +2703,12 @@ lemma v_y_le_vl1_of_x_ge_uk1 (cp : CrossingPoints c) (q : Point n)
   have h_px_le' : px cp.vl1 ≤ px (c.v_list.get j) := by
     rw [h_vl1_def]; exact h_px_le
   apply c.v_mono_le cp.vl1 mem_vl1 (c.v_list.get j) mem_vj h_px_le'
+
 lemma disjoint_label_X_W (cp : CrossingPoints c) (m : Matilda n c.all_black) (bw : Point n)
     (hbw : bw ∈ c.all_black) (hbw_pos : 0 < py bw)
     (h_w_in : m.mem ⟨bw.1, bw.2 - 1⟩)
     (h_x_in : m.mem (c.wx cp))
     (h_bw_reg : bw ∈ regionWExtend c.u c.v) : False := by
-
   obtain ⟨hx_u, hx_v, hy_u, hy_v⟩ := c.wx_bounds cp
   let wx := c.wx cp
   simp only [Matilda.mem, px_mk_val, py_mk_val] at h_w_in h_x_in
@@ -2653,6 +2732,7 @@ lemma disjoint_label_X_W (cp : CrossingPoints c) (m : Matilda n c.all_black) (bw
     simp only [Matilda.mem]
     repeat (first | constructor | linarith | omega)
   exact m.h_disjoint bw hbw h_bw_in_m
+
 lemma u_x_le_uk_of_y_lt_uk1 (cp : CrossingPoints c) (q : Point n)
     (hq : q ∈ c.u) (hy : py q < py cp.uk1) : px q ≤ px cp.uk := by
   rw [← c.mem_u_list, List.mem_iff_get] at hq
@@ -2662,7 +2742,7 @@ lemma u_x_le_uk_of_y_lt_uk1 (cp : CrossingPoints c) (q : Point n)
     let k1_idx : Fin c.u_list.length := ⟨cp.k.val + 1, by simp; omega⟩
     have h_idx_le : k1_idx ≤ i := by rw [Fin.le_iff_val_le_val]; exact h_gt
     have h_x_le : px (c.u_list.get k1_idx) ≤ px (c.u_list.get i) :=
-      List.Sorted.rel_get_of_le c.u_list_sorted h_idx_le
+      List.Pairwise.rel_get_of_le c.u_list_sorted h_idx_le
     have h_uk1_def : cp.uk1 = c.u_list.get k1_idx := by rw [cp.h_uk1]
     have mem_uk1 : cp.uk1 ∈ c.u := by rw [h_uk1_def, ← c.mem_u_list]; exact List.get_mem _ _
     have mem_ui : c.u_list.get i ∈ c.u := by
@@ -2674,12 +2754,14 @@ lemma u_x_le_uk_of_y_lt_uk1 (cp : CrossingPoints c) (q : Point n)
   let k_idx : Fin c.u_list.length := ⟨cp.k.val, by rw [c.u_list_length]; have := cp.k.isLt; omega⟩
   have h_idx_le_k : i ≤ k_idx := by rw [Fin.le_iff_val_le_val]; exact h_idx_le
   have : px (c.u_list.get i) ≤ px (c.u_list.get k_idx) :=
-    List.Sorted.rel_get_of_le c.u_list_sorted h_idx_le_k
+    List.Pairwise.rel_get_of_le c.u_list_sorted h_idx_le_k
   rwa [← cp.h_uk] at this
+
 lemma pivot_overlap_y (cp : CrossingPoints c) :
     py cp.vl1 < py cp.uk1 := by
   have h := c.wx_bounds cp
   linarith [h.1, h.2]
+
 lemma v_x_le_vl_of_y_ge_uk1 (cp : CrossingPoints c) (q : Point n)
     (hq : q ∈ c.v) (hy : py cp.uk1 ≤ py q) : px q ≤ px cp.vl := by
   rw [← c.mem_v_list, List.mem_iff_get] at hq
@@ -2692,14 +2774,14 @@ lemma v_x_le_vl_of_y_ge_uk1 (cp : CrossingPoints c) (q : Point n)
     let l_idx : Fin c.v_list.length := ⟨cp.l.val, by rw [c.v_list_length]; have := cp.l.isLt; omega⟩
     have h_idx_le : j ≤ l_idx := by rw [Fin.le_iff_val_le_val]; exact h_le
     have h_x_le : px (c.v_list.get j) ≤ px (c.v_list.get l_idx) :=
-      List.Sorted.rel_get_of_le c.v_list_sorted h_idx_le
+      List.Pairwise.rel_get_of_le c.v_list_sorted h_idx_le
     have h_vl_def : cp.vl = c.v_list.get l_idx := by rw [cp.h_vl]
     rw [← h_vl_def] at h_x_le
     linarith
   let l1_idx : Fin c.v_list.length := ⟨cp.l.val + 1, by simp; omega⟩
   have h_idx_ge : l1_idx ≤ j := by rw [Fin.le_iff_val_le_val]; exact h_l_lt_j
   have h_x_ge : px (c.v_list.get l1_idx) ≤ px (c.v_list.get j) :=
-    List.Sorted.rel_get_of_le c.v_list_sorted h_idx_ge
+    List.Pairwise.rel_get_of_le c.v_list_sorted h_idx_ge
   have h_vl1_def : cp.vl1 = c.v_list.get l1_idx := by rw [cp.h_vl1]
   have mem_vl1 : cp.vl1 ∈ c.v := by
     rw [h_vl1_def, ← c.mem_v_list]; exact List.get_mem c.v_list l1_idx
@@ -2710,6 +2792,7 @@ lemma v_x_le_vl_of_y_ge_uk1 (cp : CrossingPoints c) (q : Point n)
     apply c.v_mono_le cp.vl1 mem_vl1 (c.v_list.get j) mem_q h_x_ge
   have h_pivot_y := c.pivot_overlap_y cp
   linarith
+
 lemma disjoint_label_X_N (cp : CrossingPoints c) (m : Matilda n c.all_black) (bn : Point n)
     (hbn : bn ∈ c.all_black) (hbn_pos : 0 < px bn)
     (h_n_in : m.mem ⟨bn.1 - 1, bn.2⟩)
@@ -2738,6 +2821,7 @@ lemma disjoint_label_X_N (cp : CrossingPoints c) (m : Matilda n c.all_black) (bn
     simp only [Matilda.mem]
     repeat (first | constructor | linarith | omega)
   exact m.h_disjoint bn hbn h_bn_in_m
+
 lemma u_x_ge_uk1_of_x_gt_uk (cp : CrossingPoints c) (q : Point n)
     (hq : q ∈ c.u) (hx : px cp.uk < px q) : px cp.uk1 ≤ px q := by
   rw [← c.mem_u_list, List.mem_iff_get] at hq
@@ -2748,7 +2832,7 @@ lemma u_x_ge_uk1_of_x_gt_uk (cp : CrossingPoints c) (q : Point n)
     let k_idx : Fin c.u_list.length := ⟨cp.k.val, by simp; omega⟩
     have h_idx_le : i ≤ k_idx := by rw [Fin.le_iff_val_le_val]; exact h_le
     have h_val_le : px (c.u_list.get i) ≤ px (c.u_list.get k_idx) :=
-      List.Sorted.rel_get_of_le c.u_list_sorted h_idx_le
+      List.Pairwise.rel_get_of_le c.u_list_sorted h_idx_le
     have h_uk_def : cp.uk = c.u_list.get k_idx := by rw [cp.h_uk]
     rw [← h_uk_def] at h_val_le
     linarith
@@ -2757,17 +2841,17 @@ lemma u_x_ge_uk1_of_x_gt_uk (cp : CrossingPoints c) (q : Point n)
     let k1_idx : Fin c.u_list.length := ⟨cp.k.val + 1, by simp; omega⟩
     have h_idx_ge : k1_idx ≤ i := by rw [Fin.le_iff_val_le_val]; exact h_ge
     have h_val_ge : px (c.u_list.get k1_idx) ≤ px (c.u_list.get i) :=
-      List.Sorted.rel_get_of_le c.u_list_sorted h_idx_ge
+      List.Pairwise.rel_get_of_le c.u_list_sorted h_idx_ge
     have h_uk1_def : cp.uk1 = c.u_list.get k1_idx := by rw [cp.h_uk1]
     rw [← h_uk1_def] at h_val_ge
     linarith
   omega
+
 lemma disjoint_label_X_E (cp : CrossingPoints c) (m : Matilda n c.all_black) (be : Point n)
     (hbe : be ∈ c.all_black) (hbe_bound : py be < n - 1)
     (h_x_in : m.mem (c.wx cp))
     (h_e_in : m.mem ⟨be.1, be.2 + 1⟩)
     (h_be_reg : be ∈ regionEExtend c.u c.v) : False := by
-
   obtain ⟨hx_u, hx_v, hy_u, hy_v⟩ := c.wx_bounds cp
   let wx := c.wx cp
   simp only [Matilda.mem, px_mk_val, py_mk_val] at h_e_in h_x_in
@@ -2796,14 +2880,14 @@ lemma disjoint_label_X_E (cp : CrossingPoints c) (m : Matilda n c.all_black) (be
           let l1_idx : Fin c.v_list.length := ⟨cp.l.val + 1, by simp; omega⟩
           have h_idx_le : l1_idx ≤ j := by rw [Fin.le_iff_val_le_val]; exact h_gt
           have h_val_le : px (c.v_list.get l1_idx) ≤ px (c.v_list.get j) :=
-             List.Sorted.rel_get_of_le c.v_list_sorted h_idx_le
+             List.Pairwise.rel_get_of_le c.v_list_sorted h_idx_le
           have h_vl1_def : cp.vl1 = c.v_list.get l1_idx := by rw [cp.h_vl1]
           rw [← h_vl1_def] at h_val_le
           linarith
         let l_idx : Fin c.v_list.length := ⟨cp.l.val, by simp; omega⟩
         have h_idx_le : j ≤ l_idx := by rw [Fin.le_iff_val_le_val]; exact h_j_le_l
         have h_x_le_vl : px (c.v_list.get j) ≤ px (c.v_list.get l_idx) :=
-          List.Sorted.rel_get_of_le c.v_list_sorted h_idx_le
+          List.Pairwise.rel_get_of_le c.v_list_sorted h_idx_le
         have h_vl_def : cp.vl = c.v_list.get l_idx := by rw [cp.h_vl]
         have mem_vl : cp.vl ∈ c.v := by rw [h_vl_def, ← c.mem_v_list]; exact List.get_mem _ _
         have mem_rj : c.v_list.get j ∈ c.v := by rw [← c.mem_v_list]; exact List.get_mem _ _
@@ -2829,12 +2913,13 @@ lemma disjoint_label_X_E (cp : CrossingPoints c) (m : Matilda n c.all_black) (be
   have h_be_in_m : m.mem be := by
     simp only [Matilda.mem]
     repeat (first | constructor | linarith | omega)
-
   exact m.h_disjoint be hbe h_be_in_m
+
 lemma pivot_overlap_y_2 (cp : CrossingPoints c) :
     py cp.uk < py cp.vl := by
   have h := c.wx_bounds cp
   linarith [h.2]
+
 lemma v_y_ge_vl_of_x_lt_vl1 (cp : CrossingPoints c) (q : Point n)
     (hq : q ∈ c.v) (hx : px q < px cp.vl1) : py cp.vl ≤ py q := by
   rw [← c.mem_v_list, List.mem_iff_get] at hq
@@ -2844,24 +2929,24 @@ lemma v_y_ge_vl_of_x_lt_vl1 (cp : CrossingPoints c) (q : Point n)
     let l1_idx : Fin c.v_list.length := ⟨cp.l.val + 1, by simp; omega⟩
     have h_idx_le : l1_idx ≤ j := by rw [Fin.le_iff_val_le_val]; exact h_gt
     have h_x_le : px (c.v_list.get l1_idx) ≤ px (c.v_list.get j) :=
-      List.Sorted.rel_get_of_le c.v_list_sorted h_idx_le
+      List.Pairwise.rel_get_of_le c.v_list_sorted h_idx_le
     have h_vl1_def : cp.vl1 = c.v_list.get l1_idx := by rw [cp.h_vl1]
     rw [← h_vl1_def] at h_x_le
     linarith
   let l_idx : Fin c.v_list.length := ⟨cp.l.val, by simp; omega⟩
   have h_idx_le_fin : j ≤ l_idx := by rw [Fin.le_iff_val_le_val]; exact h_idx_le
   have h_x_le : px (c.v_list.get j) ≤ px (c.v_list.get l_idx) :=
-     List.Sorted.rel_get_of_le c.v_list_sorted h_idx_le_fin
+     List.Pairwise.rel_get_of_le c.v_list_sorted h_idx_le_fin
   have h_vl_def : cp.vl = c.v_list.get l_idx := by rw [cp.h_vl]
   have mem_vl : cp.vl ∈ c.v := by rw [h_vl_def, ← c.mem_v_list]; exact List.get_mem _ _
   have mem_q : c.v_list.get j ∈ c.v := by rw [← c.mem_v_list]; exact List.get_mem _ _
   rw [← h_vl_def] at h_x_le
   apply c.v_mono_le _ mem_q _ mem_vl h_x_le
+
 lemma u_x_ge_uk1_of_y_ge_vl (cp : CrossingPoints c) (q : Point n)
     (hq : q ∈ c.u) (hy : py cp.vl ≤ py q) : px cp.uk1 ≤ px q := by
   have h_pivot := c.pivot_overlap_y_2 cp
   have h_uk_lt_q : py cp.uk < py q := lt_of_lt_of_le h_pivot hy
-
   rw [← c.mem_u_list, List.mem_iff_get] at hq
   obtain ⟨i, rfl⟩ := hq
   have h_idx_ge : cp.k.val + 1 ≤ i.val := by
@@ -2869,7 +2954,7 @@ lemma u_x_ge_uk1_of_y_ge_vl (cp : CrossingPoints c) (q : Point n)
     let k_idx : Fin c.u_list.length := ⟨cp.k.val, by rw [c.u_list_length]; have := cp.k.isLt; omega⟩
     have h_idx_le : i ≤ k_idx := by rw [Fin.le_iff_val_le_val]; linarith
     have h_x_le : px (c.u_list.get i) ≤ px (c.u_list.get k_idx) :=
-      List.Sorted.rel_get_of_le c.u_list_sorted h_idx_le
+      List.Pairwise.rel_get_of_le c.u_list_sorted h_idx_le
     have h_uk_def : cp.uk = c.u_list.get k_idx := by rw [cp.h_uk]
     have mem_uk : cp.uk ∈ c.u := by rw [h_uk_def, ← c.mem_u_list]; exact List.get_mem _ _
     have mem_q : c.u_list.get i ∈ c.u := by rw [← c.mem_u_list]; exact List.get_mem _ _
@@ -2880,22 +2965,20 @@ lemma u_x_ge_uk1_of_y_ge_vl (cp : CrossingPoints c) (q : Point n)
   let k1_idx : Fin c.u_list.length := ⟨cp.k.val + 1, by simp; omega⟩
   have h_idx_ge_fin : k1_idx ≤ i := by rw [Fin.le_iff_val_le_val]; exact h_idx_ge
   have h_x_ge : px (c.u_list.get k1_idx) ≤ px (c.u_list.get i) :=
-    List.Sorted.rel_get_of_le c.u_list_sorted h_idx_ge_fin
+    List.Pairwise.rel_get_of_le c.u_list_sorted h_idx_ge_fin
   have h_uk1_def : cp.uk1 = c.u_list.get k1_idx := by rw [cp.h_uk1]
   rw [← h_uk1_def] at h_x_ge
   exact h_x_ge
+
 lemma disjoint_label_X_S (cp : CrossingPoints c) (m : Matilda n c.all_black) (bs : Point n)
     (hbs : bs ∈ c.all_black) (hbs_bound : px bs < n - 1)
     (h_s_in : m.mem ⟨bs.1 + 1, bs.2⟩)
     (h_x_in : m.mem (c.wx cp))
     (h_bs_reg : bs ∈ regionSExtend c.u c.v) : False := by
-
   obtain ⟨hx_u, hx_v, hy_u, hy_v⟩ := c.wx_bounds cp
   let wx := c.wx cp
-
   simp only [Matilda.mem, px_mk_val, py_mk_val] at h_s_in h_x_in
   have h_s_add : ↑(bs.1 + 1).val = px bs + 1 := fin_val_add_one_eq hbs_bound
-
   rw [mem_regionSExtend] at h_bs_reg
   obtain ⟨h_bs_u_lo, h_bs_v_up⟩ := h_bs_reg
   have h_px_le : px wx ≤ px bs := by
@@ -2915,10 +2998,10 @@ lemma disjoint_label_X_S (cp : CrossingPoints c) (m : Matilda n c.all_black) (bs
   have h_bs_in_m : m.mem bs := by
     simp only [Matilda.mem]
     repeat (first | constructor | linarith | omega)
-
   exact m.h_disjoint bs hbs h_bs_in_m
 
 open Classical
+
 lemma matilda_covers_at_most_one (cp : CrossingPoints c) (m : Matilda n c.all_black) :
     ({l ∈ validLabels c cp | covers c m l}).card ≤ 1 := by
   rw [card_le_one_iff]
@@ -3191,6 +3274,7 @@ lemma matilda_covers_at_most_one (cp : CrossingPoints c) (m : Matilda n c.all_bl
       · rw [hX1, hX2]
       · rw [h1, h2]
     contradiction
+
 lemma grid_size_ge_two_of_label {source : Point n} {lbl : LabelType}
     (ha_pos : 0 < c.a) (hb_pos : 0 < c.b)
     (hl : { source := source, type := lbl } ∈ c.validLabels cp) : 2 ≤ n := by
@@ -3207,6 +3291,7 @@ lemma grid_size_ge_two_of_label {source : Point n} {lbl : LabelType}
       apply union_subset c.hu_sub c.hv_sub
     rw [c.hu, c.hv, c.h_n] at h_card
     omega
+
 lemma valid_label_pos_not_black (ha_pos : 0 < c.a) (hb_pos : 0 < c.b)
     (l : Label n) (hl : l ∈ c.validLabels cp) :
     (label_pos l).2 ∉ c.all_black := by
@@ -3281,6 +3366,7 @@ lemma valid_label_pos_not_black (ha_pos : 0 < c.a) (hb_pos : 0 < c.b)
     simp at h_pos_black
     have h_not_black := c.wx_not_black cp
     contradiction
+
 lemma card_validLabels_disjoint :
     (c.validLabels cp).card =
     (targetsWin c.u c.v c.all_black).card + (targetsNin c.u c.v c.all_black).card +
@@ -3301,13 +3387,11 @@ lemma card_validLabels_disjoint :
         simp at h2
         have h_black : c.wx cp ∈ c.all_black := by
              rcases h1 with ⟨_, h, _⟩ | ⟨_, h, _⟩ | ⟨_, h, _⟩ | ⟨_, h, _⟩
-             <;> exact h.1.1
-        have h_white := c.wx_not_black cp
-        contradiction
       }
       cases type <;> simp at h1 h2
     }
   }
+
 theorem matilda_count_ge_label_count
   (ha_pos : 0 < c.a) (hb_pos : 0 < c.b)
   (matildas_partition : Finset (Matilda n c.all_black))
@@ -3342,6 +3426,7 @@ theorem matilda_count_ge_label_count
   rw [← Fintype.card_coe (c.validLabels cp)]
   rw [← Fintype.card_coe matildas_partition]
   apply Fintype.card_le_of_injective f f_inj
+
 theorem disjoint_case_final_bound
     (ha_pos : 0 < c.a) (hb_pos : 0 < c.b)
     (cp : c.CrossingPoints)
@@ -3371,6 +3456,7 @@ variable {all_black : Finset (Point n)}
 variable (h_card_n : all_black.card = n)
 variable (h_unique_x : ∀ p ∈ all_black, ∀ q ∈ all_black, px p = px q → p = q)
 variable (h_unique_y : ∀ p ∈ all_black, ∀ q ∈ all_black, py p = py q → p = q)
+
 lemma exists_y_for_x (h_card_n : all_black.card = n)
   (h_unique_x : ∀ p ∈ all_black, ∀ q ∈ all_black, px p = px q → p = q) (x : Fin n)
   : ∃ y, (x, y) ∈ all_black := by
@@ -3400,10 +3486,13 @@ lemma exists_y_for_x (h_card_n : all_black.card = n)
   simp [other_rows , card_univ] at h_card_le
   have h_pos : 0 < n := NeZero.pos n
   omega
+
 noncomputable def blackPerm : Fin n → Fin n := fun x =>
   (exists_y_for_x h_card_n h_unique_x x).choose
+
 lemma blackPerm_spec (x : Fin n) : (x, blackPerm h_card_n h_unique_x x) ∈ all_black :=
   (exists_y_for_x h_card_n h_unique_x x).choose_spec
+
 lemma blackPerm_injective
   (h_unique_y : ∀ p ∈ all_black, ∀ q ∈ all_black, py p = py q → p = q)
     : Function.Injective (blackPerm h_card_n h_unique_x) := by
@@ -3417,10 +3506,13 @@ lemma blackPerm_injective
   injection hp
 
 open Classical
+
 def IsChain (s : Finset (Point n)) : Prop :=
   ∀ p ∈ s, ∀ q ∈ s, px p < px q → py p < py q
 def IsAntiChain (s : Finset (Point n)) : Prop :=
   ∀ p ∈ s, ∀ q ∈ s, px p < px q → py q < py p
+
+omit [NeZero n] in
 lemma exists_maximal_chain (s : Finset (Point n)) (h_s : s ⊆ all_black) (h_chain : IsChain s) :
     ∃ m, s ⊆ m ∧ m ⊆ all_black ∧ IsChain m ∧
     (∀ p, p ∉ m → p ∈ all_black → ¬IsChain (insert p m)) := by
@@ -3441,6 +3533,8 @@ lemma exists_maximal_chain (s : Finset (Point n)) (h_s : s ⊆ all_black) (h_cha
   have h_card_le : (insert p m).card ≤ m.card := by
     rw [← hm_max]; exact le_sup h_in_chains
   linarith
+
+omit [NeZero n] in
 lemma exists_maximal_antichain (s : Finset (Point n))
   (h_s : s ⊆ all_black) (h_antichain : IsAntiChain s) :
     ∃ m, s ⊆ m ∧ m ⊆ all_black ∧ IsAntiChain m ∧
@@ -3462,30 +3556,35 @@ lemma exists_maximal_antichain (s : Finset (Point n))
   have h_card_le : (insert p m).card ≤ m.card := by
     rw[← hm_max]; exact le_sup h_in_chains
   linarith
+
 section ErdosSzekeresBase
 
 variable {n : ℕ}
+
 def incSubsets (f : Fin n → Fin n) : Finset (Finset (Fin n)) :=
   univ.powerset.filter (fun t => StrictMonoOn f (t : Set (Fin n)))
 def decSubsets (f : Fin n → Fin n) : Finset (Finset (Fin n)) :=
   univ.powerset.filter (fun t => StrictAntiOn f (t : Set (Fin n)))
+
 @[simp]
 lemma mem_incSubsets {f : Fin n → Fin n} {t : Finset (Fin n)} :
     t ∈ incSubsets f ↔ StrictMonoOn f (t : Set (Fin n)) := by
   simp [incSubsets]
-
 @[simp]
 lemma mem_decSubsets {f : Fin n → Fin n} {t : Finset (Fin n)} :
     t ∈ decSubsets f ↔ StrictAntiOn f (t : Set (Fin n)) := by
   simp [decSubsets]
+
 lemma incSubsets_nonempty (f : Fin n → Fin n) : (incSubsets f).Nonempty := by
   use ∅; simp [incSubsets, StrictMonoOn]
 lemma decSubsets_nonempty (f : Fin n → Fin n) : (decSubsets f).Nonempty := by
   use ∅; simp [decSubsets, StrictAntiOn]
+
 noncomputable def lisLength (f : Fin n → Fin n) : ℕ :=
   (incSubsets f).sup card
 noncomputable def ldsLength (f : Fin n → Fin n) : ℕ :=
   (decSubsets f).sup card
+
 theorem erdos_szekeres_direct (n : ℕ) (f : Fin n → Fin n) (hf : Function.Injective f) :
     n ≤ (lisLength f) * (ldsLength f) := by
   let a := lisLength f
@@ -3508,12 +3607,15 @@ theorem erdos_szekeres_direct (n : ℕ) (f : Fin n → Fin n) (hf : Function.Inj
     linarith
 
 end ErdosSzekeresBase
+
 def toGridSubset (f : Fin n → Fin n) (t : Finset (Fin n)) : Finset (Point n) :=
   t.image (fun r => (r, f r))
+
 @[simp]
 lemma card_toGridSubset (f : Fin n → Fin n) (t : Finset (Fin n)) :
     (toGridSubset f t).card = t.card :=
   card_image_of_injective t (fun _ _ h => by injection h)
+
 lemma is_chain_of_strict_mono {f : Fin n → Fin n} {t : Finset (Fin n)}
     (h : StrictMonoOn f t) : IsChain (toGridSubset f t) := by
   intros p hp q hq hx
@@ -3525,6 +3627,7 @@ lemma is_chain_of_strict_mono {f : Fin n → Fin n} {t : Finset (Fin n)}
   have h_r_lt : r1 < r2 := Fin.lt_def.mpr h_val_lt
   have h_f_lt : f r1 < f r2 := h hr1 hr2 h_r_lt
   simp only [py_mk_val]; exact h_f_lt
+
 lemma is_antichain_of_strict_anti {f : Fin n → Fin n} {t : Finset (Fin n)}
     (h : StrictAntiOn f t) : IsAntiChain (toGridSubset f t) := by
   intros p hp q hq hx
@@ -3535,6 +3638,7 @@ lemma is_antichain_of_strict_anti {f : Fin n → Fin n} {t : Finset (Fin n)}
   have h_r_lt : r1 < r2 := Fin.lt_def.mpr hx
   have h_f_lt : f r2 < f r1 := h hr1 hr2 h_r_lt
   simp only [py_mk_val]; exact h_f_lt
+
 theorem exists_optimal_u_v (h_card_n : all_black.card = n)
    (h_unique_x : ∀ p ∈ all_black, ∀ q ∈ all_black, px p = px q → p = q)
    (h_unique_y : ∀ p ∈ all_black, ∀ q ∈ all_black, py p = py q → p = q) :
@@ -3616,6 +3720,7 @@ theorem exists_optimal_u_v (h_card_n : all_black.card = n)
       · exact hv_chain a ha_v b hb_v hx
 
 end ErdosSzekeresBridge
+
 theorem matilda_final_theorem
     (h_card_n : all_black.card = n)
     (h_unique_x : ∀ p ∈ all_black, ∀ q ∈ all_black, px p = px q → p = q)
@@ -3708,11 +3813,13 @@ local notation "n" => k * k
 abbrev mod_base : ℤ := (k : ℤ)^2 + 1
 abbrev val_s (p : Point n) : ℤ := (p.1 : ℤ) + k * p.2 + k + 1
 abbrev val_t (p : Point n) : ℤ := (k : ℤ) * p.1 - p.2 + k^2 + k
+
 def calc_s (p : Point n) : Int := (val_s k p) / (mod_base k)
 def calc_t (p : Point n) : Int := (val_t k p) / (mod_base k)
 def all_black_k : Finset (Point n) :=
   univ.filter fun p =>
     ((val_s k p) % (mod_base k) == 0) ∧ ((val_t k p) % (mod_base k) == 0)
+
 @[simp]
 def b_st_coords (s t : Int) : Int × Int := ((s - 1) + (t - 1) * k, s * k - t)
 def make_b_point (s t : Int)
@@ -3728,6 +3835,7 @@ def M_st (s t : Int) : Finset (Point n) :=
 def in_white_rect (s t : Int) (p : Point n) : Prop :=
   ((s - 1) + (t - 1) * k + 1 ≤ (p.1 : ℤ) ∧ (p.1 : ℤ) ≤ (s - 1) + t * k) ∧
   (s * k - t ≤ (p.2 : ℤ) ∧ (p.2 : ℤ) ≤ (s + 1) * k - t - 1)
+
 structure BlackPointProps (s t : Int) (p : Point n) : Prop where
   is_s : calc_s k p = s
   is_t : calc_t k p = t
@@ -3752,6 +3860,7 @@ lemma b_st_props (s t : Int)
   · simp only [all_black_k, mem_filter, mem_univ, true_and]
     rw [beq_iff_eq, beq_iff_eq]; rw [h_vals.1, h_vals.2];
     exact ⟨Int.mul_emod_left _ _, Int.mul_emod_left _ _⟩
+
 lemma M_subset_rect (s t : Int) (p : Point n) (hk : 2 ≤ k) :
     p ∈ M_st k s t → in_white_rect k s t p := by
   intro h_mem
@@ -3886,10 +3995,12 @@ lemma rect_subset_M (s t : Int) (p : Point n)
       constructor
       · exact le_of_lt h_val_t_strict.1
       · linarith [h_val_t_strict.2]
+
 instance (k : ℕ) (s t : Int) : DecidablePred (in_white_rect k s t) := by
   intro p; unfold in_white_rect; infer_instance
 def rect_finset (s t : Int) : Finset (Point n) :=
   univ.filter (in_white_rect k s t)
+
 lemma M_st_eq_rect (s t : Int) (hk : 2 ≤ k) :
     M_st k s t = rect_finset k s t := by
   ext p
@@ -3897,10 +4008,12 @@ lemma M_st_eq_rect (s t : Int) (hk : 2 ≤ k) :
   constructor
   · exact M_subset_rect k s t p hk
   · exact rect_subset_M k s t p hk
+
 lemma mem_rect_iff_idx_eq (p : Point (k * k)) (s t : ℤ) (hk : 2 ≤ k) :
     p ∈ rect_finset k s t ↔ (p ∉ all_black_k k ∧ calc_s k p = s ∧ calc_t k p = t) := by
   rw [← M_st_eq_rect k s t hk]
   simp [M_st]
+
 lemma s_t_range (hk : 2 ≤ k) (p : Point n) :
     0 ≤ calc_s k p ∧ calc_s k p ≤ k ∧
     0 ≤ calc_t k p ∧ calc_t k p ≤ k := by
@@ -3945,6 +4058,7 @@ lemma s_t_range (hk : 2 ≤ k) (p : Point n) :
       _ = (k + 1) * k^2 := by ring
       _ < k^3 + k^2 + k + 1 := by linarith
       _ = (k+1) * (k^2 + 1) := by ring
+
 lemma M_00_empty (hk : 2 ≤ k) : M_st k 0 0 = ∅ := by
   rw [eq_empty_iff_forall_notMem]
   intro p hp
@@ -3969,6 +4083,7 @@ lemma M_00_empty (hk : 2 ≤ k) : M_st k 0 0 = ∅ := by
       _ > k^2 + k := by linarith
   dsimp [M] at hs
   linarith [hs.2, h_contra, (by omega : 0 < (k : ℤ))]
+
 lemma M_k0_empty : M_st k k 0 = ∅ := by
   rw [eq_empty_iff_forall_notMem]
   intro p hp
@@ -3989,6 +4104,7 @@ lemma M_k0_empty : M_st k k 0 = ∅ := by
     dsimp [val_s, M] at hs
     linarith [hs.1]
   nlinarith [h_y_ge, h_s_bound, h_y_upper]
+
 lemma M_0k_empty (hk : 2 ≤ k) : M_st k 0 k = ∅ := by
   rw [eq_empty_iff_forall_notMem]
   intro p hp
@@ -4007,6 +4123,7 @@ lemma M_0k_empty (hk : 2 ≤ k) : M_st k 0 k = ∅ := by
     linarith [ht.1]
   have hp_y_nonneg : 0 ≤ (p.2 : ℤ) := Int.natCast_nonneg p.2
   nlinarith [h_s_upper, h_t_lower, hp_y_nonneg]
+
 lemma M_kk_empty (_ : 2 ≤ k) : M_st k k k = ∅ := by
   rw [eq_empty_iff_forall_notMem]
   intro p hp
@@ -4057,6 +4174,7 @@ lemma M_kk_empty (_ : 2 ≤ k) : M_st k k k = ∅ := by
       rw [h_eq]
       exact Int.mul_emod_left _ _
   contradiction
+
 def clipped_rect [NeZero k] (hk : 2 ≤ k) (s t : Int) : Option (Matilda (k * k) (all_black_k k)) :=
   let r_xmin := (s - 1) + (t - 1) * k + 1
   let r_xmax := (s - 1) + t * k
@@ -4106,10 +4224,12 @@ def clipped_rect [NeZero k] (hk : 2 ≤ k) (s t : Int) : Option (Matilda (k * k)
     }
   else
     none
+
 variable (h_00 : M_st k 0 0 = ∅)
 variable (h_k0 : M_st k k 0 = ∅)
 variable (h_0k : M_st k 0 k = ∅)
 variable (h_kk : M_st k k k = ∅)
+
 lemma matilda_upper_bound_sum (k : ℕ) (hk : 2 ≤ k) :
     let kz : ℤ := k
     let range_sq := Finset.Icc 0 kz ×ˢ Finset.Icc 0 kz
@@ -4141,6 +4261,7 @@ lemma matilda_upper_bound_sum (k : ℕ) (hk : 2 ≤ k) :
   have h_eq: (k + 1) * (k + 1) = k^2 + 2 * k + 1 := by ring
   rw [h_eq]
   omega
+
 lemma eq_of_modEq_fin {k : ℕ} (_ : 2 ≤ k) {a b : Fin (k * k)}
     (h_equiv : (a : ℤ) ≡ b [ZMOD mod_base k]) : a = b := by
   let M := mod_base k
@@ -4167,11 +4288,9 @@ lemma eq_of_modEq_fin {k : ℕ} (_ : 2 ≤ k) {a b : Fin (k * k)}
     linarith
   omega
 
-
 lemma unique_row_all_black (k : ℕ) (hk : 2 ≤ k) :
     ∀ p1 ∈ all_black_k k, ∀ p2 ∈ all_black_k k, px p1 = px p2 → p1 = p2 := by
   intro p1 hp1 p2 hp2 hx
-
   simp only [all_black_k, mem_filter, beq_iff_eq] at hp1 hp2
   obtain ⟨_, ht1⟩ := hp1
   obtain ⟨_, ht2⟩ := hp2
@@ -4195,6 +4314,7 @@ lemma unique_row_all_black (k : ℕ) (hk : 2 ≤ k) :
     simpa using h_neg_y
   have h_y_eq : p1.2 = p2.2 := eq_of_modEq_fin hk h_y_equiv
   ext; exact hx; rw [h_y_eq]
+
 lemma unique_col_all_black (k : ℕ) (hk : 2 ≤ k) :
     ∀ p1 ∈ all_black_k k, ∀ p2 ∈ all_black_k k, py p1 = py p2 → p1 = p2 := by
   intro p1 hp1 p2 hp2 hy
@@ -4214,6 +4334,7 @@ lemma unique_col_all_black (k : ℕ) (hk : 2 ≤ k) :
   have h_x_equiv : (p1.1 : ℤ) ≡ p2.1 [ZMOD M] := by exact Int.ModEq.add_right_cancel' C h_equiv
   have h_x_eq : p1.1 = p2.1 := eq_of_modEq_fin hk h_x_equiv
   ext; rw [h_x_eq]; exact hy
+
 theorem card_all_black_le (k : ℕ) (hk : 2 ≤ k) :
     (all_black_k k).card ≤ k * k := by
   nth_rewrite 2 [← Fintype.card_fin (k * k)]
@@ -4222,6 +4343,7 @@ theorem card_all_black_le (k : ℕ) (hk : 2 ≤ k) :
   · intro p hp; exact mem_univ p.1
   · intro p1 hp1 p2 hp2 hx
     exact unique_row_all_black k hk p1 hp1 p2 hp2 (congrArg Fin.val hx)
+
 lemma b_st_bounds_valid (k : ℕ) (hk : 2 ≤ k) (s t : ℕ)
     (hs : 1 ≤ s ∧ s ≤ k) (ht : 1 ≤ t ∧ t ≤ k) :
     let b := b_st_coords k s t
@@ -4240,6 +4362,7 @@ lemma b_st_bounds_valid (k : ℕ) (hk : 2 ≤ k) (s t : ℕ)
   · calc (s : ℤ) * k - t
       _ ≤ k * k - 1 := by gcongr <;> omega
       _ < k * k := by linarith
+
 theorem card_all_black_ge (k : ℕ) (hk : 2 ≤ k) :
     k * k ≤ (all_black_k k).card := by
   let domain : Finset (Fin k × Fin k) := univ
@@ -4296,6 +4419,7 @@ lemma card_all_black_k_eq_n (k : ℕ) (hk : 2 ≤ k) :
   le_antisymm (card_all_black_le k hk) (card_all_black_ge k hk)
 
 end Construction
+
 noncomputable def construct_partition (k : ℕ) (hk : 2 ≤ k) [NeZero k]
     [DecidableEq (Matilda (k * k) (all_black_k k))] :
     Finset (Matilda (k * k) (all_black_k k)) :=
@@ -4314,9 +4438,11 @@ noncomputable def construct_partition (k : ℕ) (hk : 2 ≤ k) [NeZero k]
 
 variable {k : ℕ} (hk : 2 ≤ k) [NeZero k]
 def f (p : Point (k * k)) : ℤ × ℤ := (calc_s k p, calc_t k p)
+
 lemma mem_M_st_iff_fiber {k : ℕ} {p : Point (k * k)} {s t : ℤ} :
     p ∈ M_st k s t ↔ (f p = (s, t) ∧ p ∉ all_black_k k) := by
   simp [f, M_st]; tauto
+
 lemma mem_matilda_iff_mem_M_st {k : ℕ} {hk : 2 ≤ k} [NeZero k]
     {idx : ℤ × ℤ} {m : Matilda (k * k) (all_black_k k)}
     (h_clipped : clipped_rect k hk idx.1 idx.2 = some m) {p : Point (k * k)} :
@@ -4373,10 +4499,10 @@ lemma mem_matilda_iff_mem_M_st {k : ℕ} {hk : 2 ≤ k} [NeZero k]
       · constructor
         · exact h_M.2.1
         · left; exact h_M.2.2
+
 lemma construction_is_valid_partition (k : ℕ) (hk : 2 ≤ k) [NeZero k]
     [DecidableEq (Matilda (k * k) (all_black_k k))] :
     ∀ p ∉ all_black_k k, ∃! m ∈ construct_partition k hk, m.mem p := by
-
   intro p hp_white
   let s := calc_s k p; let t := calc_t k p
   have h_range := s_t_range k hk p
@@ -4477,7 +4603,6 @@ theorem matilda_solution_general (k : ℕ) (hk : 2 ≤ k) :
     let n := k * k
     haveI : NeZero n := ⟨by apply mul_ne_zero <;> linarith⟩
     IsMinMatildaCount n (k^2 + 2 * k - 3) := by
-
   intro n
   let m_ans := k^2 + 2 * k - 3
   haveI : NeZero n := ⟨by
