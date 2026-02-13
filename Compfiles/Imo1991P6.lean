@@ -64,64 +64,11 @@ theorem fract_sqrt_two_mul_gt (k : ℕ) (pk : 0 < k) : Int.fract (√2 * k) > 1 
   nlinarith
 
 
-theorem fract_neg_sqrt_two_mul_gt (k : ℕ) (pk : 0 < k) : Int.fract (-√2 * k) > 1 / (2 * (√2 * k + 1)) := by
-  rw [gt_iff_lt, div_lt_iff₀ (by positivity), neg_mul, mul_comm]
-  nth_rw 1 [<-neg_neg (√2 * ↑k)]
-
-  set x : ℝ := -(√2 * k)
-  let y := ⌊x⌋
-  have fract_eq : Int.fract x = x - y := rfl
-  have : x < 0 := by
-    unfold x
-    simp [pk]
-  have : (y:ℝ) ≤ 0 := by
-    unfold y x
-    simp [Int.floor_nonpos]
-
-  have fract_pos : Int.fract x > 0 := by
-    have := (irrational_sqrt_two.mul_ratCast (q:=-k) (by simpa using Nat.ne_zero_of_lt pk)).ne_rat y
-    rw [Rat.cast_neg, mul_neg] at this
-    rw [gt_iff_lt, Int.fract_pos]
-    apply this
-
-  have h_diff : (x - y) * (x + y) = 2 * k ^ 2 - y ^ 2 := by
-    rw [show 2 * k ^ 2 = x^2 by unfold x; simp [mul_pow]]
-    rw [mul_comm, sq_sub_sq]
-
-  have h_diff_pos : y ^ 2 - 2 * k ^ 2 ≥ 1 := by
-    apply Int.le_of_sub_one_lt
-    rify
-    rw [<-neg_lt_neg_iff, neg_sub, <-h_diff]
-    nlinarith
-
-  rify at h_diff_pos
-  rw [fract_eq]
-  nlinarith
-
-
-
 section Int.fract
 open Int
 variable {R : Type} [Ring R] [LinearOrder R] [FloorRing R] [IsStrictOrderedRing R] [AddLeftMono R]
 
 theorem Int.fract_sub_eq (a b : R) : ∃ z : Fin 2, fract (a - b) = fract a - fract b + z := by
-  wlog w1 : b ≤ a
-  · let ⟨z, zh⟩ := this b a (by lia)
-    rw [<-neg_neg (a-b), neg_sub]
-    by_cases h : fract (b - a) = 0
-    · rw [fract_eq_zero_iff] at h
-      let ⟨y, yh⟩ := h
-      rw [Eq.comm, sub_eq_iff_eq_add] at yh
-      subst b
-      simp_all [<-Int.cast_neg, fract_intCast]
-    · rw [fract_neg h, zh]
-      rw [sub_eq_add_neg, neg_add, neg_sub, add_comm, add_assoc]
-      simp_rw [add_right_inj]
-      use 1-z
-      rw [<-Nat.cast_one, add_comm, <-sub_eq_add_neg, <-Nat.cast_sub (Fin.is_le _), Nat.cast_inj]
-      clear zh
-      revert z
-      decide
   by_cases h1 : fract b ≤ fract a
   · use 0
     simp only [Fin.isValue, Fin.coe_ofNat_eq_mod, Nat.zero_mod, CharP.cast_eq_zero, add_zero]
@@ -150,14 +97,26 @@ end Int.fract
 
 
 theorem one_sub_fract_sqrt_two_mul_gt (k : ℕ) (kpos : 0 < k) : 1 - Int.fract (√2 * k) > 1 / (2*(√2*k + 1)) := by
-  rw [<-Int.fract_neg]
-  · rw [<-neg_mul]
-    exact fract_neg_sqrt_two_mul_gt k kpos
-  · rw [Ne, Int.fract_eq_zero_iff]
-    simp only [Set.mem_range, not_exists]
-    intro z
-    have := (irrational_sqrt_two.mul_ratCast (q:=k) (by simpa using Nat.ne_zero_of_lt kpos)).ne_rat z
-    exact Ne.intro (Ne.symm this)
+  rw [gt_iff_lt, div_lt_iff₀ (by positivity)]
+  set x : ℝ := √2 * k
+  let y := ⌊x⌋
+  have fract_eq : Int.fract x = x - y := rfl
+  have : x > 0 := by positivity
+  have : 0 ≤ (y:ℝ) := by positivity
+
+  have h_diff : ((y:ℝ) + 1 - x) * ((y:ℝ) + 1 + x) = (y + 1) ^ 2 - 2 * k ^ 2 := by
+    rw [show 2 * k ^ 2 = x ^ 2 from by unfold x; simp [mul_pow]]
+    rw [mul_comm, sq_sub_sq]
+
+  have h_diff_pos : (y + 1) ^ 2 - 2 * (k:ℤ) ^ 2 ≥ 1 := by
+    apply Int.le_of_sub_one_lt
+    rify
+    rw [<-h_diff]
+    nlinarith [Int.fract_lt_one x, fract_eq]
+
+  rify at h_diff_pos
+  rw [fract_eq]
+  nlinarith [Int.floor_le x]
 
 
 theorem abs_fract_sqrt_two_mul_sub_fract_sqrt_two_mul (i j : ℕ) (hji : j < i) : |Int.fract (√2 * i) - Int.fract (√2 * j)| > 1 / (2*(√2*(i-j) + 1)) := by
