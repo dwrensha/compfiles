@@ -312,7 +312,7 @@ lemma sum_card_eq_sum_incidence :
     = ∑ p ∈  all_black, incidence_count u v all_black p := by
   simp only [incidence_count]
   rw [sum_add_distrib, sum_add_distrib, sum_add_distrib]
-  congr 1; congr 1; congr 1
+  congr 3
   all_goals {
     rw [card_eq_sum_ones]; rw [← sum_filter]
     apply sum_congr
@@ -3358,8 +3358,7 @@ lemma valid_label_pos_not_black (ha_pos : 0 < c.a) (hb_pos : 0 < c.b)
     simp at h_eq
     rw [Nat.mod_eq_of_lt (by omega)] at h_eq
     omega
-  ·
-    rcases hX with ⟨p, hp, heq⟩
+  · rcases hX with ⟨p, hp, heq⟩
     simp at heq; obtain ⟨rfl, rfl⟩ := heq
     simp at hp
     subst p
