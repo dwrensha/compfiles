@@ -1131,18 +1131,14 @@ lemma am_gm_bound_nat (a b n : ℕ) (h_mul : n ≤ a * b) :
     _ ≤ ((a + b) * (a + b)).sqrt := Nat.sqrt_le_sqrt h2
     _ = a + b                    := Nat.sqrt_eq (a + b)
 
-structure IntersectionSetup (n : ℕ) [NeZero n] where
-
+structure BaseSetup (n : ℕ) [NeZero n] where
   u : Finset (Point n)
   v : Finset (Point n)
   all_black : Finset (Point n)
-  pivot : Point n
   a : ℕ
   b : ℕ
   hu : u.card = a
   hv : v.card = b
-
-  h_inter : u ∩ v = {pivot}
   hu_sub : u ⊆ all_black
   hv_sub : v ⊆ all_black
   h_n : all_black.card = n
@@ -1162,9 +1158,9 @@ structure IntersectionSetup (n : ℕ) [NeZero n] where
   h_unique_x : ∀ p ∈ all_black, ∀ q ∈ all_black, px p = px q → p = q
   h_unique_y : ∀ p ∈ all_black, ∀ q ∈ all_black, py p = py q → p = q
 
-namespace IntersectionSetup
+namespace BaseSetup
 
-variable {n : ℕ} [NeZero n] (c : IntersectionSetup n)
+variable {n : ℕ} [NeZero n] (c : BaseSetup n)
 
 lemma u_mono_le : ∀ a ∈ c.u, ∀ b ∈ c.u, px a ≤ px b → py a ≤ py b :=
   chain_u_mono_le c.h_u_mono c.h_u_inj
@@ -1175,174 +1171,9 @@ lemma u_inj_y : ∀ a ∈ c.u, ∀ b ∈ c.u, py a = py b → a = b :=
 lemma v_inj_y : ∀ a ∈ c.v, ∀ b ∈ c.v, py a = py b → a = b :=
   chain_v_inj_y c.h_v_mono c.h_v_inj
 
-lemma pivot_mem_u : c.pivot ∈ c.u :=
-  mem_of_mem_inter_left (by rw [c.h_inter]; simp)
-lemma pivot_mem_v : c.pivot ∈ c.v :=
-  mem_of_mem_inter_right (by rw [c.h_inter]; simp)
 lemma union_sub : c.u ∪ c.v ⊆ c.all_black := union_subset c.hu_sub c.hv_sub
 
-lemma a_pos : 1 ≤ c.a :=
-  c.hu ▸ card_pos.mpr ⟨c.pivot, c.pivot_mem_u⟩
-lemma b_pos : 1 ≤ c.b :=
-  c.hv ▸ card_pos.mpr ⟨c.pivot, c.pivot_mem_v⟩
-
-lemma disj_piv_u : Disjoint {c.pivot} (c.u \ {c.pivot}) := disjoint_sdiff_self_right
-lemma disj_piv_v : Disjoint {c.pivot} (c.v \ {c.pivot}) := disjoint_sdiff_self_right
-lemma disj_u_v_diff : Disjoint (c.u \ {c.pivot}) (c.v \ {c.pivot}) := by
-   rw [disjoint_iff_inter_eq_empty]; ext p; simp [← h_inter]; tauto
-lemma disj_middle : Disjoint ({c.pivot} ∪ (c.u \ {c.pivot})) (c.v \ {c.pivot}) := by
-  rw [disjoint_union_left]; exact ⟨c.disj_piv_v, c.disj_u_v_diff⟩
-
-def Others := c.all_black \ (c.u ∪ c.v)
-
-lemma Others_def : c.Others = c.all_black \ (c.u ∪ c.v) := rfl
-
-lemma partition_eq :
-    c.all_black = {c.pivot} ∪ (c.u \ {c.pivot}) ∪ (c.v \ {c.pivot}) ∪ c.Others := by
-  rw [← c.h_inter]; dsimp [Others]
-  ext p
-  have h_u : p ∈ c.u → p ∈ c.all_black := fun h => c.hu_sub h
-  have h_v : p ∈ c.v → p ∈ c.all_black := fun h => c.hv_sub h
-  simp only [mem_union, mem_inter, mem_sdiff]; tauto
-
-lemma disj_others :
-    Disjoint ({c.pivot} ∪ (c.u \ {c.pivot}) ∪ (c.v \ {c.pivot})) c.Others := by
-  rw [disjoint_iff_inter_eq_empty]; ext p; rw [← h_inter]; simp [Others]; tauto
-
-theorem total_labels_eq_sum :
-    (targetsW c.u c.v c.all_black).card + (targetsN c.u c.v c.all_black).card +
-    (targetsE c.u c.v c.all_black).card + (targetsS c.u c.v c.all_black).card
-    = n + c.a + c.b + 1 := by
-  let u := c.u; let v := c.v; let pivot := c.pivot; let all_black := c.all_black
-  rw [sum_card_eq_sum_incidence]
-  nth_rewrite 1 [c.partition_eq]
-  rw [sum_union c.disj_others]
-  rw [sum_union c.disj_middle]
-  rw [sum_union c.disj_piv_u]
-  have sum_pivot : ∑ x ∈ {pivot}, incidence_count u v all_black x = 4 := by
-    rw [sum_singleton]
-    exact incidence_count_of_pivot pivot c.h_inter (c.hu_sub c.pivot_mem_u)
-  have sum_u : ∑ x ∈ u \ {pivot}, incidence_count u v all_black x = (c.a - 1) * 2 := by
-    calc
-       ∑ x ∈ u \ {pivot}, incidence_count u v all_black x
-           = ∑ x ∈ u \ {pivot}, 2 := by
-             apply sum_congr rfl
-             intro x hx
-             rw [← c.h_inter, mem_sdiff] at hx
-             have hx_not_v : x ∉ v := by
-              intro hv
-              have : x ∈ u ∩ v := by rw [mem_inter]; exact ⟨hx.1, hv⟩
-              tauto
-             exact incidence_count_of_u_diff x hx.1 hx_not_v pivot
-              c.h_inter c.hu_sub c.h_u_mono c.h_v_mono c.h_u_inj c.h_v_inj
-        _ = (c.a - 1) * 2 := by
-            simp; rw [card_sdiff, c.hu]; congr 1
-            rw [singleton_inter_of_mem c.pivot_mem_u]; simp
-  have sum_v : ∑ x ∈ v \ {pivot}, incidence_count u v all_black x = (c.b - 1) * 2 := by
-    calc
-      ∑ x ∈ v \ {pivot}, incidence_count u v all_black x
-          = ∑ x ∈ v \ {pivot}, 2 := by
-            apply sum_congr rfl
-            intro x hx
-            rw [← c.h_inter, mem_sdiff] at hx
-            have hx_not_u : x ∉ u := by
-              intro hu
-              have : x ∈ u ∩ v := by rw [mem_inter]; exact ⟨hu, hx.1⟩
-              tauto
-            exact incidence_count_of_v_diff x hx.1 hx_not_u pivot
-              c.h_inter c.hv_sub c.h_u_mono c.h_v_mono c.h_u_inj c.h_v_inj
-        _ = (c.b - 1) * 2 := by
-            simp; rw [card_sdiff, c.hv]; congr 1
-            rw [singleton_inter_of_mem c.pivot_mem_v]; simp
-  have sum_others : ∑ x ∈ c.Others, incidence_count u v all_black x = n - (c.a + c.b - 1) := by
-    calc
-      ∑ x ∈ c.Others, incidence_count u v all_black x
-          = ∑ x ∈ c.Others, 1 := by
-            apply sum_congr rfl
-            intro x hx
-            rw [Others, mem_sdiff, mem_union, not_or] at hx
-            exact incidence_count_of_others x hx.1 hx.2.1 hx.2.2
-              c.h_u_mono c.h_v_mono c.h_u_inj c.h_v_inj c.h_u_max c.h_v_max
-      _ = c.Others.card := by simp
-      _ = n - (c.a + c.b - 1) := by
-          simp only [Others]; rw [card_sdiff]; rw [h_n]
-          congr 1
-          have h_reduction : (u ∪ v) ∩ all_black = u ∪ v :=
-            inter_eq_left.mpr c.union_sub
-          rw [h_reduction]; rw [card_union]
-          rw [hu, hv, h_inter, card_singleton]
-
-  rw [sum_pivot, sum_u, sum_v, sum_others]
-  have h_le : c.a + c.b - 1 ≤ n := by
-    calc
-      c.a + c.b - 1 = (c.u ∪ c.v).card  := by
-                        rw [card_union c.u c.v, c.hu, c.hv,c.h_inter, card_singleton]
-      _             ≤ c.all_black.card  := card_le_card c.union_sub
-      _             = n                 := c.h_n
-
-  have ha := c.a_pos
-  have hb := c.b_pos
-
-  zify [ha, hb, h_le]
-  omega
-
-theorem labels_total_intersection :
-    (targetsWin c.u c.v c.all_black).card + (targetsNin c.u c.v c.all_black).card +
-    (targetsEin c.u c.v c.all_black).card + (targetsSin c.u c.v c.all_black).card
-    ≥ n + c.a + c.b - 3 := by
-  have h_sum_eq := total_labels_eq_sum c
-  have hW : (targetsWin c.u c.v c.all_black).card + 1 ≥ (targetsW c.u c.v c.all_black).card :=
-    Nat.le_add_of_sub_le (targetsWin_inequality c.u c.v c.all_black c.h_unique_y)
-  have hN : (targetsNin c.u c.v c.all_black).card + 1 ≥ (targetsN c.u c.v c.all_black).card :=
-    Nat.le_add_of_sub_le (targetsNin_inequality c.u c.v c.all_black c.h_unique_x)
-  have hS : (targetsSin c.u c.v c.all_black).card + 1 ≥ (targetsS c.u c.v c.all_black).card :=
-    Nat.le_add_of_sub_le (targetsSin_inequality c.u c.v c.all_black c.h_unique_x)
-  have hE : (targetsEin c.u c.v c.all_black).card + 1 ≥ (targetsE c.u c.v c.all_black).card :=
-    Nat.le_add_of_sub_le (targetsEin_inequality c.u c.v c.all_black c.h_unique_y)
-  have ha_pos := c.a_pos
-  have hb_pos := c.b_pos
-  have h_total_ge_3 : 3 ≤ n + c.a + c.b := by
-    have h_a_le_n : c.a ≤ n := calc
-      c.a = c.u.card         := c.hu.symm
-      _   ≤ c.all_black.card := card_le_card c.hu_sub
-      _   = n                := c.h_n
-    linarith
-  zify [h_total_ge_3] at hW hN hE hS h_sum_eq ⊢
-  linarith
-
-noncomputable def validLabels : Finset (Label n) :=
-  let to_W : Point n ↪ Label n := ⟨fun p => ⟨p, .W⟩, by intro a b h; injection h⟩
-  let to_N : Point n ↪ Label n := ⟨fun p => ⟨p, .N⟩, by intro a b h; injection h⟩
-  let to_E : Point n ↪ Label n := ⟨fun p => ⟨p, .E⟩, by intro a b h; injection h⟩
-  let to_S : Point n ↪ Label n := ⟨fun p => ⟨p, .S⟩, by intro a b h; injection h⟩
-
-  (targetsWin c.u c.v c.all_black).map to_W ∪
-  (targetsNin c.u c.v c.all_black).map to_N ∪
-  (targetsEin c.u c.v c.all_black).map to_E ∪
-  (targetsSin c.u c.v c.all_black).map to_S
-
-lemma card_validLabels :
-    (validLabels c).card =
-    (targetsWin c.u c.v c.all_black).card + (targetsNin c.u c.v c.all_black).card +
-    (targetsEin c.u c.v c.all_black).card + (targetsSin c.u c.v c.all_black).card := by
-  rw [validLabels]
-  repeat rw [card_union_of_disjoint]
-  · simp only [card_map]
-  all_goals {
-    rw [disjoint_left]
-    intro x h1 h2
-    simp only [mem_union, mem_map, Function.Embedding.coeFn_mk] at h1 h2
-    rcases x with ⟨p, type⟩
-    cases type <;> simp at h1 h2
-  }
-
-open Classical
-
-lemma not_valid_label_X {n : ℕ} [NeZero n] (c : IntersectionSetup n) (l : Label n)
-    (h_valid : l ∈ validLabels c) (h_type : l.type = .X) : False := by
-  simp only [validLabels, mem_union, mem_map, or_assoc] at h_valid
-  rcases h_valid with ⟨_, _, rfl⟩ | ⟨_, _, rfl⟩ | ⟨_, _, rfl⟩ | ⟨_, _, rfl⟩
-  <;> simp at h_type
+end BaseSetup
 
 lemma matilda_covers_at_most_one_core {n : ℕ} [NeZero n]
     {all_black u v : Finset (Point n)}
@@ -1505,6 +1336,182 @@ lemma matilda_covers_at_most_one_core {n : ℕ} [NeZero n]
   case X.W | X.N | X.E | X.S | X.X =>
     exact absurd h1 h_not_X1
 
+structure IntersectionSetup (n : ℕ) [NeZero n] extends BaseSetup n where
+  pivot : Point n
+  h_inter : u ∩ v = {pivot}
+
+namespace IntersectionSetup
+
+variable {n : ℕ} [NeZero n] (c : IntersectionSetup n)
+
+lemma pivot_mem_u : c.pivot ∈ c.u :=
+  mem_of_mem_inter_left (by rw [c.h_inter]; simp)
+lemma pivot_mem_v : c.pivot ∈ c.v :=
+  mem_of_mem_inter_right (by rw [c.h_inter]; simp)
+
+lemma a_pos : 1 ≤ c.a :=
+  c.hu ▸ card_pos.mpr ⟨c.pivot, c.pivot_mem_u⟩
+lemma b_pos : 1 ≤ c.b :=
+  c.hv ▸ card_pos.mpr ⟨c.pivot, c.pivot_mem_v⟩
+
+lemma disj_piv_u : Disjoint {c.pivot} (c.u \ {c.pivot}) := disjoint_sdiff_self_right
+lemma disj_piv_v : Disjoint {c.pivot} (c.v \ {c.pivot}) := disjoint_sdiff_self_right
+lemma disj_u_v_diff : Disjoint (c.u \ {c.pivot}) (c.v \ {c.pivot}) := by
+   rw [disjoint_iff_inter_eq_empty]; ext p; simp [← h_inter]; tauto
+lemma disj_middle : Disjoint ({c.pivot} ∪ (c.u \ {c.pivot})) (c.v \ {c.pivot}) := by
+  rw [disjoint_union_left]; exact ⟨c.disj_piv_v, c.disj_u_v_diff⟩
+
+def Others := c.all_black \ (c.u ∪ c.v)
+
+lemma Others_def : c.Others = c.all_black \ (c.u ∪ c.v) := rfl
+
+lemma partition_eq :
+    c.all_black = {c.pivot} ∪ (c.u \ {c.pivot}) ∪ (c.v \ {c.pivot}) ∪ c.Others := by
+  rw [← c.h_inter]; dsimp [Others]
+  ext p
+  have h_u : p ∈ c.u → p ∈ c.all_black := fun h => c.hu_sub h
+  have h_v : p ∈ c.v → p ∈ c.all_black := fun h => c.hv_sub h
+  simp only [mem_union, mem_inter, mem_sdiff]; tauto
+
+lemma disj_others :
+    Disjoint ({c.pivot} ∪ (c.u \ {c.pivot}) ∪ (c.v \ {c.pivot})) c.Others := by
+  rw [disjoint_iff_inter_eq_empty]; ext p; rw [← h_inter]; simp [Others]; tauto
+
+theorem total_labels_eq_sum :
+    (targetsW c.u c.v c.all_black).card + (targetsN c.u c.v c.all_black).card +
+    (targetsE c.u c.v c.all_black).card + (targetsS c.u c.v c.all_black).card
+    = n + c.a + c.b + 1 := by
+  let u := c.u; let v := c.v; let pivot := c.pivot; let all_black := c.all_black
+  rw [sum_card_eq_sum_incidence]
+  nth_rewrite 1 [c.partition_eq]
+  rw [sum_union c.disj_others]
+  rw [sum_union c.disj_middle]
+  rw [sum_union c.disj_piv_u]
+  have sum_pivot : ∑ x ∈ {pivot}, incidence_count u v all_black x = 4 := by
+    rw [sum_singleton]
+    exact incidence_count_of_pivot pivot c.h_inter (c.hu_sub c.pivot_mem_u)
+  have sum_u : ∑ x ∈ u \ {pivot}, incidence_count u v all_black x = (c.a - 1) * 2 := by
+    calc
+       ∑ x ∈ u \ {pivot}, incidence_count u v all_black x
+           = ∑ x ∈ u \ {pivot}, 2 := by
+             apply sum_congr rfl
+             intro x hx
+             rw [← c.h_inter, mem_sdiff] at hx
+             have hx_not_v : x ∉ v := by
+              intro hv
+              have : x ∈ u ∩ v := by rw [mem_inter]; exact ⟨hx.1, hv⟩
+              tauto
+             exact incidence_count_of_u_diff x hx.1 hx_not_v pivot
+              c.h_inter c.hu_sub c.h_u_mono c.h_v_mono c.h_u_inj c.h_v_inj
+        _ = (c.a - 1) * 2 := by
+            simp; rw [card_sdiff, c.hu]; congr 1
+            rw [singleton_inter_of_mem c.pivot_mem_u]; simp
+  have sum_v : ∑ x ∈ v \ {pivot}, incidence_count u v all_black x = (c.b - 1) * 2 := by
+    calc
+      ∑ x ∈ v \ {pivot}, incidence_count u v all_black x
+          = ∑ x ∈ v \ {pivot}, 2 := by
+            apply sum_congr rfl
+            intro x hx
+            rw [← c.h_inter, mem_sdiff] at hx
+            have hx_not_u : x ∉ u := by
+              intro hu
+              have : x ∈ u ∩ v := by rw [mem_inter]; exact ⟨hu, hx.1⟩
+              tauto
+            exact incidence_count_of_v_diff x hx.1 hx_not_u pivot
+              c.h_inter c.hv_sub c.h_u_mono c.h_v_mono c.h_u_inj c.h_v_inj
+        _ = (c.b - 1) * 2 := by
+            simp; rw [card_sdiff, c.hv]; congr 1
+            rw [singleton_inter_of_mem c.pivot_mem_v]; simp
+  have sum_others : ∑ x ∈ c.Others, incidence_count u v all_black x = n - (c.a + c.b - 1) := by
+    calc
+      ∑ x ∈ c.Others, incidence_count u v all_black x
+          = ∑ x ∈ c.Others, 1 := by
+            apply sum_congr rfl
+            intro x hx
+            rw [Others, mem_sdiff, mem_union, not_or] at hx
+            exact incidence_count_of_others x hx.1 hx.2.1 hx.2.2
+              c.h_u_mono c.h_v_mono c.h_u_inj c.h_v_inj c.h_u_max c.h_v_max
+      _ = c.Others.card := by simp
+      _ = n - (c.a + c.b - 1) := by
+          simp only [Others]; rw [card_sdiff]; rw [c.h_n]
+          congr 1
+          have h_reduction : (u ∪ v) ∩ all_black = u ∪ v :=
+            inter_eq_left.mpr c.union_sub
+          rw [h_reduction]; rw [card_union]
+          rw [c.hu, c.hv, c.h_inter, card_singleton]
+
+  rw [sum_pivot, sum_u, sum_v, sum_others]
+  have h_le : c.a + c.b - 1 ≤ n := by
+    calc
+      c.a + c.b - 1 = (c.u ∪ c.v).card  := by
+                        rw [card_union c.u c.v, c.hu, c.hv,c.h_inter, card_singleton]
+      _             ≤ c.all_black.card  := card_le_card c.union_sub
+      _             = n                 := c.h_n
+
+  have ha := c.a_pos
+  have hb := c.b_pos
+
+  zify [ha, hb, h_le]
+  omega
+
+theorem labels_total_intersection :
+    (targetsWin c.u c.v c.all_black).card + (targetsNin c.u c.v c.all_black).card +
+    (targetsEin c.u c.v c.all_black).card + (targetsSin c.u c.v c.all_black).card
+    ≥ n + c.a + c.b - 3 := by
+  have h_sum_eq := total_labels_eq_sum c
+  have hW : (targetsWin c.u c.v c.all_black).card + 1 ≥ (targetsW c.u c.v c.all_black).card :=
+    Nat.le_add_of_sub_le (targetsWin_inequality c.u c.v c.all_black c.h_unique_y)
+  have hN : (targetsNin c.u c.v c.all_black).card + 1 ≥ (targetsN c.u c.v c.all_black).card :=
+    Nat.le_add_of_sub_le (targetsNin_inequality c.u c.v c.all_black c.h_unique_x)
+  have hS : (targetsSin c.u c.v c.all_black).card + 1 ≥ (targetsS c.u c.v c.all_black).card :=
+    Nat.le_add_of_sub_le (targetsSin_inequality c.u c.v c.all_black c.h_unique_x)
+  have hE : (targetsEin c.u c.v c.all_black).card + 1 ≥ (targetsE c.u c.v c.all_black).card :=
+    Nat.le_add_of_sub_le (targetsEin_inequality c.u c.v c.all_black c.h_unique_y)
+  have ha_pos := c.a_pos
+  have hb_pos := c.b_pos
+  have h_total_ge_3 : 3 ≤ n + c.a + c.b := by
+    have h_a_le_n : c.a ≤ n := calc
+      c.a = c.u.card         := c.hu.symm
+      _   ≤ c.all_black.card := card_le_card c.hu_sub
+      _   = n                := c.h_n
+    linarith
+  zify [h_total_ge_3] at hW hN hE hS h_sum_eq ⊢
+  linarith
+
+noncomputable def validLabels : Finset (Label n) :=
+  let to_W : Point n ↪ Label n := ⟨fun p => ⟨p, .W⟩, by intro a b h; injection h⟩
+  let to_N : Point n ↪ Label n := ⟨fun p => ⟨p, .N⟩, by intro a b h; injection h⟩
+  let to_E : Point n ↪ Label n := ⟨fun p => ⟨p, .E⟩, by intro a b h; injection h⟩
+  let to_S : Point n ↪ Label n := ⟨fun p => ⟨p, .S⟩, by intro a b h; injection h⟩
+
+  (targetsWin c.u c.v c.all_black).map to_W ∪
+  (targetsNin c.u c.v c.all_black).map to_N ∪
+  (targetsEin c.u c.v c.all_black).map to_E ∪
+  (targetsSin c.u c.v c.all_black).map to_S
+
+lemma card_validLabels :
+    (validLabels c).card =
+    (targetsWin c.u c.v c.all_black).card + (targetsNin c.u c.v c.all_black).card +
+    (targetsEin c.u c.v c.all_black).card + (targetsSin c.u c.v c.all_black).card := by
+  rw [validLabels]
+  repeat rw [card_union_of_disjoint]
+  · simp only [card_map]
+  all_goals {
+    rw [disjoint_left]
+    intro x h1 h2
+    simp only [mem_union, mem_map, Function.Embedding.coeFn_mk] at h1 h2
+    rcases x with ⟨p, type⟩
+    cases type <;> simp at h1 h2
+  }
+
+open Classical
+
+lemma not_valid_label_X {n : ℕ} [NeZero n] (c : IntersectionSetup n) (l : Label n)
+    (h_valid : l ∈ validLabels c) (h_type : l.type = .X) : False := by
+  simp only [validLabels, mem_union, mem_map, or_assoc] at h_valid
+  rcases h_valid with ⟨_, _, rfl⟩ | ⟨_, _, rfl⟩ | ⟨_, _, rfl⟩ | ⟨_, _, rfl⟩
+  <;> simp at h_type
+
 lemma matilda_covers_at_most_one (m : Matilda n c.all_black) :
     ({l ∈ validLabels c | covers m l}).card ≤ 1 := by
   rw [card_le_one_iff]
@@ -1638,48 +1645,12 @@ theorem intersection_case_final_bound
 
 end IntersectionSetup
 
-structure DisjointSetup (n : ℕ) [NeZero n] where
-  u : Finset (Point n)
-  v : Finset (Point n)
-  all_black : Finset (Point n)
-  a : ℕ
-  b : ℕ
-
-  hu : u.card = a
-  hv : v.card = b
-  hu_sub : u ⊆ all_black
-  hv_sub : v ⊆ all_black
-  h_n : all_black.card = n
-
+structure DisjointSetup (n : ℕ) [NeZero n] extends BaseSetup n where
   h_disj : Disjoint u v
-
-  h_u_mono : ∀ p ∈ u, ∀ q ∈ u, px p < px q → py p < py q
-  h_v_mono : ∀ p ∈ v, ∀ q ∈ v, px p < px q → py q < py p
-  h_u_inj : ∀ p ∈ u, ∀ q ∈ u, px p = px q → p = q
-  h_v_inj : ∀ p ∈ v, ∀ q ∈ v, px p = px q → p = q
-
-  h_u_max : ∀ p ∈ all_black, p ∉ u →
-      (∀ q ∈ u, px q < px p → py q < py p) →
-      (∀ q ∈ u, px p < px q → py p < py q) → False
-  h_v_max : ∀ p ∈ all_black, p ∉ v →
-      (∀ q ∈ v, px q < px p → py p < py q) →
-      (∀ q ∈ v, px p < px q → py q < py p) → False
-
-  h_unique_x : ∀ p ∈ all_black, ∀ q ∈ all_black, px p = px q → p = q
-  h_unique_y : ∀ p ∈ all_black, ∀ q ∈ all_black, py p = py q → p = q
 
 namespace DisjointSetup
 
 variable {n : ℕ} [NeZero n] (c : DisjointSetup n)
-
-lemma u_mono_le : ∀ a ∈ c.u, ∀ b ∈ c.u, px a ≤ px b → py a ≤ py b :=
-  chain_u_mono_le c.h_u_mono c.h_u_inj
-lemma v_mono_le : ∀ a ∈ c.v, ∀ b ∈ c.v, px a ≤ px b → py b ≤ py a :=
-  chain_v_mono_le c.h_v_mono c.h_v_inj
-lemma u_inj_y : ∀ a ∈ c.u, ∀ b ∈ c.u, py a = py b → a = b :=
-  chain_u_inj_y c.h_u_mono c.h_u_inj
-lemma v_inj_y : ∀ a ∈ c.v, ∀ b ∈ c.v, py a = py b → a = b :=
-  chain_v_inj_y c.h_v_mono c.h_v_inj
 
 noncomputable def u_list : List (Point n) := c.u.toList.mergeSort ((· ≤ ·) on px)
 noncomputable def v_list : List (Point n) := c.v.toList.mergeSort ((· ≤ ·) on px)
@@ -2323,7 +2294,7 @@ lemma pivot_no_black (cp : CrossingPoints c) :
           have h_qx_ge : px vl1 ≤ px q := by
             by_contra h_lt; push_neg at h_lt
             exact c.v_not_between_vl_vl1 cp q hq ⟨lt_trans h_px_strict hp_lt_q, h_lt⟩
-          have : py q ≤ py vl1 := v_mono_le c vl1 mem_vl1 q hq h_qx_ge
+          have : py q ≤ py vl1 := c.v_mono_le vl1 mem_vl1 q hq h_qx_ge
           exact lt_of_le_of_lt this h_py_strict
       · exfalso
         have h_p_eq_vl1 : p = vl1 :=
@@ -2387,7 +2358,7 @@ theorem total_labels_eq_sum_disjoint :
   have h_disj_uv : Disjoint c.u c.v := c.h_disj
   have h_disj_others : Disjoint (c.u ∪ c.v) others := disjoint_sdiff_self_right
   have h_union : c.all_black = c.u ∪ c.v ∪ others := by
-    exact (union_sdiff_of_subset (union_subset c.hu_sub c.hv_sub)).symm
+    exact (union_sdiff_of_subset c.union_sub).symm
   nth_rewrite 1 [h_union]
   rw [sum_union h_disj_others]
   rw [sum_union h_disj_uv]
@@ -2408,16 +2379,16 @@ theorem total_labels_eq_sum_disjoint :
               c.h_u_mono c.h_v_mono c.h_u_inj c.h_v_inj c.h_u_max c.h_v_max
       _ = others.card := by simp
       _ = n - (c.a + c.b) := by
-          simp only [others]; rw [card_sdiff]; rw [h_n]
+          simp only [others]; rw [card_sdiff]; rw [c.h_n]
           congr 1
-          rw [inter_eq_left.mpr (union_subset c.hu_sub c.hv_sub)]
+          rw [inter_eq_left.mpr c.union_sub]
           rw [card_union_of_disjoint c.h_disj]
           rw [c.hu, c.hv]
   rw [sum_u, sum_v, sum_others]
   have h_le : c.a + c.b ≤ n := calc
     c.a + c.b = c.u.card + c.v.card := by rw [c.hu, c.hv]
     _         = (c.u ∪ c.v).card    := by rw [card_union_of_disjoint c.h_disj]
-    _         ≤ c.all_black.card    := card_le_card (union_subset c.hu_sub c.hv_sub)
+    _         ≤ c.all_black.card    := card_le_card c.union_sub
     _         = n                   := c.h_n
   omega
 
@@ -2784,7 +2755,7 @@ lemma matilda_covers_at_most_one (cp : CrossingPoints c) (m : Matilda n c.all_bl
     exact c.covers_X_other cp m h_cov2 l1 h1X h_cov1
       ⟨props1.1, props1.2.1, props1.2.2.1, props1.2.2.2.1⟩
   · -- Neither is X: use shared core lemma
-    exact IntersectionSetup.matilda_covers_at_most_one_core c.h_unique_x c.h_unique_y
+    exact matilda_covers_at_most_one_core c.h_unique_x c.h_unique_y
       c.u_mono_le c.v_mono_le c.u_inj_y c.v_inj_y m l1 l2 h_ne h_cov1 h_cov2
       ⟨props1.1, props1.2.1, props1.2.2.1, props1.2.2.2.1⟩
       ⟨props2.1, props2.2.1, props2.2.2.1, props2.2.2.2.1⟩ h1X h2X
@@ -2802,7 +2773,7 @@ lemma grid_size_ge_two_of_label {source : Point n} {lbl : LabelType}
     have h_card : c.u.card + c.v.card ≤ c.all_black.card := by
       rw [← card_union_of_disjoint c.h_disj]
       apply card_le_card
-      apply union_subset c.hu_sub c.hv_sub
+      exact c.union_sub
     rw [c.hu, c.hv, c.h_n] at h_card
     omega
 
@@ -3193,6 +3164,26 @@ theorem matilda_lower_bound [NeZero n]
   have h_prod_pos : 0 < u.card * v.card := lt_of_lt_of_le (NeZero.pos (a := n)) h_dilworth
   have ha_pos : 0 < u.card := pos_of_mul_pos_left h_prod_pos (Nat.zero_le _)
   have hb_pos : 0 < v.card := pos_of_mul_pos_right h_prod_pos (Nat.zero_le _)
+  let base : BaseSetup n := {
+    all_black := all_black
+    u := u
+    v := v
+    a := u.card
+    b := v.card
+    hu := rfl
+    hv := rfl
+    hu_sub := hu_sub
+    hv_sub := hv_sub
+    h_n := h_card_n
+    h_u_mono := h_u_mono
+    h_v_mono := h_v_mono
+    h_u_inj := h_u_inj
+    h_v_inj := h_v_inj
+    h_u_max := h_u_max
+    h_v_max := h_v_max
+    h_unique_x := h_unique_x
+    h_unique_y := h_unique_y
+  }
   by_cases h_inter : (u ∩ v).Nonempty
   · let pivot := h_inter.choose
     have h_pivot_mem : pivot ∈ u ∩ v := h_inter.choose_spec
@@ -3204,55 +3195,17 @@ theorem matilda_lower_bound [NeZero n]
       · intros x hx
         rw [card_le_one_iff] at h_le_one
         exact h_le_one hx h_pivot_mem
-    let c : IntersectionSetup n := {
-      all_black := all_black
-      u := u
-      v := v
+    let c : IntersectionSetup n := { base with
       pivot := pivot
-      a := u.card
-      b := v.card
-      hu := rfl
-      hv := rfl
-      h_n := h_card_n
-      hu_sub := hu_sub
-      hv_sub := hv_sub
       h_inter := h_inter_eq
-      h_u_mono := h_u_mono
-      h_v_mono := h_v_mono
-      h_u_inj := h_u_inj
-      h_v_inj := h_v_inj
-      h_u_max := h_u_max
-      h_v_max := h_v_max
-      h_unique_x := h_unique_x
-      h_unique_y := h_unique_y
     }
-
-    apply c.intersection_case_final_bound  matildas_partition h_partition h_dilworth
+    apply c.intersection_case_final_bound matildas_partition h_partition h_dilworth
 
   · rw [not_nonempty_iff_eq_empty] at h_inter
     have h_disjoint : Disjoint u v := disjoint_iff_inter_eq_empty.mpr h_inter
-    let c : DisjointSetup n := {
-      all_black := all_black
-      u := u
-      v := v
-      a := u.card
-      b := v.card
-      hu := rfl
-      hv := rfl
-      hu_sub := hu_sub
-      hv_sub := hv_sub
-      h_n := h_card_n
+    let c : DisjointSetup n := { base with
       h_disj := h_disjoint
-      h_u_mono := h_u_mono
-      h_v_mono := h_v_mono
-      h_u_inj := h_u_inj
-      h_v_inj := h_v_inj
-      h_u_max := h_u_max
-      h_v_max := h_v_max
-      h_unique_x := h_unique_x
-      h_unique_y := h_unique_y
     }
-
     let cp := c.getCrossingPoints ha_pos hb_pos
     apply c.disjoint_case_final_bound ha_pos hb_pos cp matildas_partition h_partition h_dilworth
 
