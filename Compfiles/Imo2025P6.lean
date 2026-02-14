@@ -3371,11 +3371,9 @@ lemma card_validLabels_disjoint :
     (targetsWin c.u c.v c.all_black).card + (targetsNin c.u c.v c.all_black).card +
     (targetsEin c.u c.v c.all_black).card + (targetsSin c.u c.v c.all_black).card + 1 := by
   rw [validLabels]
-  rw [card_union_of_disjoint]
-  rw [card_union_of_disjoint]
-  rw [card_union_of_disjoint]
-  rw [card_union_of_disjoint]
-  simp only [card_map, card_singleton]
+  rw [card_union_of_disjoint, card_union_of_disjoint, card_union_of_disjoint,
+    card_union_of_disjoint]
+  · simp only [card_map, card_singleton]
   all_goals {
     try rw [disjoint_left]
     try intro x h1 h2
@@ -3469,7 +3467,10 @@ lemma exists_y_for_x [NeZero n] (h_card_n : all_black.card = n)
     rw [mem_erase]
     constructor
     · by_contra h_eq
-      have p_eq : p = (x, p.2) := by ext; rw [h_eq]; rfl
+      have p_eq : p = (x, p.2) := by
+        ext
+        · rw [h_eq]
+        · rfl
       rw [p_eq] at hp
       exact h_none p.2 hp
     · exact mem_univ p.1
@@ -3525,7 +3526,9 @@ lemma exists_maximal_chain (s : Finset (Point n)) (h_s : s ⊆ all_black) (h_cha
   have h_in_chains : insert p m ∈ all_chains := by
     simp only [all_chains, mem_filter, mem_powerset]
     refine ⟨insert_subset hp_in_all hm_mem.1, ?_, h_chain_insert⟩
-    trans m; exact hm_mem.2.1; exact subset_insert p m
+    trans m
+    · exact hm_mem.2.1
+    · exact subset_insert p m
   have h_card_gt : (insert p m).card > m.card := by simp [hp_not_m]
   have h_card_le : (insert p m).card ≤ m.card := by
     rw [← hm_max]; exact le_sup h_in_chains
@@ -3547,7 +3550,9 @@ lemma exists_maximal_antichain (s : Finset (Point n))
   have h_in_chains : insert p m ∈ all_antichains := by
     simp only [all_antichains, mem_filter, mem_powerset]
     refine ⟨insert_subset hp_in_all hm_mem.1, ?_, h_antichain_insert⟩
-    trans m; exact hm_mem.2.1; exact subset_insert p m
+    trans m
+    · exact hm_mem.2.1
+    · exact subset_insert p m
   have h_card_gt : (insert p m).card > m.card := by simp [hp_not_m]
   have h_card_le : (insert p m).card ≤ m.card := by
     rw[← hm_max]; exact le_sup h_in_chains
@@ -3689,9 +3694,10 @@ theorem exists_optimal_u_v [NeZero n] (h_card_n : all_black.card = n)
     apply hu_max p hp_not_u hp_blk
     intros a ha b hb hx
     simp at ha hb
-    rcases ha with rfl | ha_u; rcases hb with rfl | hb_u
-    · linarith
-    · apply h_right b hb_u hx
+    rcases ha with rfl | ha_u
+    · rcases hb with rfl | hb_u
+      · linarith
+      · apply h_right b hb_u hx
     · rcases hb with rfl | hb_u
       · exact h_left a ha_u hx
       · exact hu_chain a ha_u b hb_u hx
@@ -3702,9 +3708,10 @@ theorem exists_optimal_u_v [NeZero n] (h_card_n : all_black.card = n)
     apply hv_max p hp_not_v hp_blk
     intros a ha b hb hx
     simp at ha hb
-    rcases ha with rfl | ha_v; rcases hb with rfl | hb_v
-    · linarith
-    · apply h_right b hb_v hx
+    rcases ha with rfl | ha_v
+    · rcases hb with rfl | hb_v
+      · linarith
+      · apply h_right b hb_v hx
     · rcases hb with rfl | hb_v
       · exact h_left a ha_v hx
       · exact hv_chain a ha_v b hb_v hx
@@ -3900,7 +3907,7 @@ lemma M_subset_rect (s t : Int) (p : Point n) (hk : 2 ≤ k) :
     · have : M * (p.1 - xb) < M * (k + 1) := by
         rw [h_diff_x]
         calc (val_s k p - s * M) + k * (val_t k p - t * M)
-          _ < M + k * M := by gcongr; linarith; linarith
+          _ < M + k * M := by gcongr <;> linarith
           _ = M * (k + 1) := by ring
       rw [Int.mul_lt_mul_left (by dsimp [M, mod_base]; nlinarith)] at this
       linarith
@@ -4037,7 +4044,10 @@ lemma s_t_range (hk : 2 ≤ k) (p : Point n) :
     rw [Int.ediv_lt_iff_lt_mul h_pos]
     dsimp [val_s, M, mod_base]
     calc (p.1 : ℤ) + k * p.2 + k + 1
-      _ ≤ (k^2 - 1) + k * (k^2 - 1) + k + 1 := by gcongr; exact hx.2; exact hy.2
+      _ ≤ (k^2 - 1) + k * (k^2 - 1) + k + 1 := by
+        gcongr
+        · exact hx.2
+        · exact hy.2
       _ = k^3 + k^2 := by ring
       _ < k^3 + k^2 + k + 1 := by linarith
       _ = (k+1) * (k^2 + 1) := by ring
@@ -4050,7 +4060,10 @@ lemma s_t_range (hk : 2 ≤ k) (p : Point n) :
     rw [Int.ediv_lt_iff_lt_mul h_pos]
     dsimp [val_t, M, mod_base]
     calc (k:ℤ) * p.1 - p.2 + k^2 + k
-      _ ≤ k * (k^2 - 1) - 0 + k^2 + k := by gcongr; exact hx.2; exact hy.1
+      _ ≤ k * (k^2 - 1) - 0 + k^2 + k := by
+        gcongr
+        · exact hx.2
+        · exact hy.1
       _ = (k + 1) * k^2 := by ring
       _ < k^3 + k^2 + k + 1 := by linarith
       _ = (k+1) * (k^2 + 1) := by ring
@@ -4309,7 +4322,9 @@ lemma unique_row_all_black (k : ℕ) (hk : 2 ≤ k) :
     apply Int.ModEq.neg at h_neg_y
     simpa using h_neg_y
   have h_y_eq : p1.2 = p2.2 := eq_of_modEq_fin hk h_y_equiv
-  ext; exact hx; rw [h_y_eq]
+  ext
+  · exact hx
+  · rw [h_y_eq]
 
 lemma unique_col_all_black (k : ℕ) (hk : 2 ≤ k) :
     ∀ p1 ∈ all_black_k k, ∀ p2 ∈ all_black_k k, py p1 = py p2 → p1 = p2 := by
@@ -4329,7 +4344,9 @@ lemma unique_col_all_black (k : ℕ) (hk : 2 ≤ k) :
   rw [h_step1, h_step2] at h_equiv
   have h_x_equiv : (p1.1 : ℤ) ≡ p2.1 [ZMOD M] := by exact Int.ModEq.add_right_cancel' C h_equiv
   have h_x_eq : p1.1 = p2.1 := eq_of_modEq_fin hk h_x_equiv
-  ext; rw [h_x_eq]; exact hy
+  ext
+  · rw [h_x_eq]
+  · exact hy
 
 theorem card_all_black_le (k : ℕ) (hk : 2 ≤ k) :
     (all_black_k k).card ≤ k * k := by
@@ -4347,7 +4364,9 @@ lemma b_st_bounds_valid (k : ℕ) (hk : 2 ≤ k) (s t : ℕ)
   dsimp [b_st_coords]
   zify at hs ht hk
   refine ⟨?_,?_, ?_, ?_⟩
-  · apply add_nonneg; linarith; apply mul_nonneg <;> linarith
+  · apply add_nonneg
+    · linarith
+    · apply mul_nonneg <;> linarith
   · calc ((s : ℤ) - 1) + ((t : ℤ) - 1) * k
       _ ≤ (k - 1) + (k - 1) * k := by gcongr <;> omega
       _ = k^2 - 1 := by ring
