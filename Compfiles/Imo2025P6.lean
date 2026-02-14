@@ -1714,33 +1714,18 @@ lemma v_list_nodup : c.v_list.Nodup := by
 
 lemma head_le_of_mem_sorted {α : Type*} {l : List α} {r : α → α → Prop} [Std.Refl r]
     (h_sorted : l.Pairwise r) (h_ne : l ≠ []) (x : α) (hx : x ∈ l) :
-    r (l.head h_ne) x := by
-  cases l with
-  | nil => contradiction
-  | cons a tail =>
-    rw [List.pairwise_cons] at h_sorted
-    simp only [List.mem_cons] at hx
-    rcases hx with rfl | h_in_tail
-    · apply refl_of r
-    · exact h_sorted.1 x h_in_tail
+    r (l.head h_ne) x :=
+  List.Pairwise.rel_head h_sorted hx
 
 lemma last_le_of_mem_sorted {α : Type*} {l : List α} {r : α → α → Prop} [Std.Refl r]
     (h_sorted : l.Pairwise r) (h_ne : l ≠ []) (x : α) (hx : x ∈ l) :
-    r x (l.getLast h_ne) := by
-  cases l using List.reverseRecOn with
-  | nil => contradiction
-  | append_singleton xs a =>
-    simp only [List.getLast_append_singleton]
-    rw [List.pairwise_append] at h_sorted
-    simp only [List.mem_append, List.mem_singleton] at hx
-    rcases hx with h_in_xs | rfl
-    · exact h_sorted.2.2 x h_in_xs a (List.mem_singleton_self a)
-    · exact refl _
+    r x (l.getLast h_ne) :=
+  List.Pairwise.rel_getLast h_sorted hx
 
 lemma px_head_le_of_mem_u (ha_pos : 0 < c.a) (q : Point n) (hq : q ∈ c.u) :
     px (c.u_list.head (c.u_list_ne_nil ha_pos)) ≤ px q := by
-    apply head_le_of_mem_sorted c.u_list_sorted (c.u_list_ne_nil ha_pos)
-    simpa using hq
+  apply head_le_of_mem_sorted c.u_list_sorted (c.u_list_ne_nil ha_pos)
+  simpa using hq
 
 lemma py_head_le_of_mem_u (ha_pos : 0 < c.a) (q : Point n) (hq : q ∈ c.u) :
     py (c.u_list.head (c.u_list_ne_nil ha_pos)) ≤ py q := by
@@ -1991,14 +1976,10 @@ lemma v_last_mem_u_lower (hb_pos : 0 < c.b) :
   · exfalso
     rw [mem_u_upper] at h_up
     obtain ⟨ui, hui, hx_le, hy_ge⟩ := h_up
-    have hx_lt : px v_last < px ui := hx_le.lt_of_ne <| by
-      intro h_eq
-      have : v_last = ui := c.h_unique_x v_last (c.hv_sub h_in_v) ui (c.hu_sub hui) h_eq
-      subst this; contradiction
-    have hy_lt : py ui < py v_last := hy_ge.lt_of_ne <| by
-      intro h_eq
-      have : v_last = ui := c.h_unique_y v_last (c.hv_sub h_in_v) ui (c.hu_sub hui) h_eq.symm
-      subst this; contradiction
+    have hx_lt : px v_last < px ui := hx_le.lt_of_ne <|
+      (px_ne_of_mem_disjoint c hui h_in_v).symm
+    have hy_lt : py ui < py v_last := hy_ge.lt_of_ne <|
+      py_ne_of_mem_disjoint c hui h_in_v
     exact c.no_black_right_down_of_v_last hb_pos ui (c.hu_sub hui) hx_lt hy_lt
 
 lemma b_ge_two (hb_pos : 0 < c.b) : 2 ≤ c.b := by
@@ -2352,10 +2333,7 @@ lemma pivot_no_black (cp : CrossingPoints c) :
           have h_qx_ge : px vl1 ≤ px q := by
             by_contra h_lt; push_neg at h_lt
             exact c.v_not_between_vl_vl1 cp q hq ⟨lt_trans h_px_strict hp_lt_q, h_lt⟩
-          have : py q ≤ py vl1 := by
-             rcases lt_or_eq_of_le h_qx_ge with h_lt | h_eq
-             · exact le_of_lt (c.h_v_mono vl1 mem_vl1 q hq h_lt)
-             · rw [c.h_v_inj vl1 mem_vl1 q hq h_eq]
+          have : py q ≤ py vl1 := v_mono_le c vl1 mem_vl1 q hq h_qx_ge
           exact lt_of_le_of_lt this h_py_strict
       · exfalso
         have h_p_eq_vl1 : p = vl1 :=
@@ -2925,10 +2903,7 @@ theorem matilda_count_ge_label_count
     apply h_at_most_one
     · simp; exact ⟨hl1, h_cov1⟩
     · simp; exact ⟨hl2, h_cov2⟩
-
-  rw [← Fintype.card_coe (c.validLabels cp)]
-  rw [← Fintype.card_coe matildas_partition]
-  apply Fintype.card_le_of_injective f f_inj
+  exact card_le_card_of_injective f_inj
 
 theorem disjoint_case_final_bound
     (ha_pos : 0 < c.a) (hb_pos : 0 < c.b)
@@ -3089,7 +3064,7 @@ theorem erdos_szekeres_direct (n : ℕ) (f : Fin n → Fin n) (hf : Function.Inj
 
   rcases h_thm with ⟨t_inc, _, h_mono_inc⟩ | ⟨t_dec, _, h_mono_dec⟩
   · have h_mem : t_inc ∈ incSubsets f := by
-      simp [incSubsets]; exact h_mono_inc
+      exact mem_incSubsets.mpr h_mono_inc
     have h_le : t_inc.card ≤ a := le_sup h_mem
     linarith
   · have h_mem : t_dec ∈ decSubsets f := by
@@ -3126,7 +3101,7 @@ lemma is_antichain_of_strict_anti {f : Fin n → Fin n} {t : Finset (Fin n)}
   simp only [px_mk_val] at hx
   have h_r_lt : r1 < r2 := Fin.lt_def.mpr hx
   have h_f_lt : f r2 < f r1 := h hr1 hr2 h_r_lt
-  simp only [py_mk_val]; exact h_f_lt
+  exact Fin.lt_def.mp (h hr1 hr2 hx)
 
 theorem exists_optimal_u_v [NeZero n] (h_card_n : all_black.card = n)
    (h_unique_x : ∀ p ∈ all_black, ∀ q ∈ all_black, px p = px q → p = q)
@@ -3363,9 +3338,9 @@ lemma M_subset_rect (s t : Int) (p : Point n) (hk : 2 ≤ k) :
   let yb := s * k - t
   have h_s := hs_eq
   unfold calc_s at h_s
-  rw [Int.ediv_eq_iff_of_pos (by dsimp [M, mod_base]; nlinarith)] at h_s
+  rw [Int.ediv_eq_iff_of_pos (mod_base_pos k)] at h_s
   have h_t := ht_eq
-  rw [calc_t, Int.ediv_eq_iff_of_pos (by dsimp [M, mod_base]; nlinarith)] at h_t
+  rw [calc_t, Int.ediv_eq_iff_of_pos (mod_base_pos k)] at h_t
   have h_diff_x : M * (p.1 - xb) = (val_s k p - s * M) + k * (val_t k p - t * M) := by
     dsimp [val_s, val_t, M, xb]; ring
   have h_diff_y : M * (p.2 - yb) = (k : ℤ) * (val_s k p - s * M) - (val_t k p - t * M) := by
@@ -3398,7 +3373,7 @@ lemma M_subset_rect (s t : Int) (p : Point n) (hk : 2 ≤ k) :
         calc (val_s k p - s * M) + k * (val_t k p - t * M)
           _ < M + k * M := by gcongr <;> linarith
           _ = M * (k + 1) := by ring
-      rw [Int.mul_lt_mul_left (by dsimp [M, mod_base]; nlinarith)] at this
+      rw [Int.mul_lt_mul_left (mod_base_pos k)] at this
       linarith
   · constructor
     · have h_yb_le : yb ≤ (p.2 : ℤ) := by
@@ -3422,7 +3397,7 @@ lemma M_subset_rect (s t : Int) (p : Point n) (hk : 2 ≤ k) :
           _ ≤ (k : ℤ) * val_s k p - t * M := by gcongr; exact h_t.1
           _ < (k : ℤ) * ((s + 1) * M) - t * M := by gcongr; linarith [h_s.2]
           _ = M * ((s + 1) * k - t) := by dsimp [M]; ring
-      rw [mul_lt_mul_iff_right₀ (by dsimp [M, mod_base]; nlinarith)] at this
+      rw [mul_lt_mul_iff_right₀ (mod_base_pos k)] at this
       exact Int.le_sub_one_of_lt this
 
 lemma rect_subset_M (s t : Int) (p : Point n)
@@ -3460,7 +3435,7 @@ lemma rect_subset_M (s t : Int) (p : Point n)
         _ ≤ k * ((s - 1) + t * k) - (s * k - t) + k^2 + k := by gcongr
         _ = t * M + k^2 := by dsimp [M]; ring
         _ < t * M + (k^2 + 1) := by linarith
-        _ = (t + 1) * M := by dsimp [M]; ring
+        _ = (t + 1) * M := (add_one_mul t M).symm
   simp only  [M_st, mem_filter, mem_univ, true_and]
   constructor
   · simp only [all_black_k, mem_filter]
@@ -3757,7 +3732,6 @@ lemma matilda_upper_bound_sum (k : ℕ) (hk : 2 ≤ k) :
 lemma eq_of_modEq_fin {k : ℕ} (_ : 2 ≤ k) {a b : Fin (k * k)}
     (h_equiv : (a : ℤ) ≡ b [ZMOD mod_base k]) : a = b := by
   let M := mod_base k
-  have h_bound : (k : ℤ)^2 < M := by dsimp [M, mod_base]; linarith
   rw [Int.modEq_iff_dvd] at h_equiv
   let diff : ℤ := (b : ℤ) - (a : ℤ)
   change M ∣ diff at h_equiv
@@ -3770,14 +3744,14 @@ lemma eq_of_modEq_fin {k : ℕ} (_ : 2 ≤ k) {a b : Fin (k * k)}
       constructor
       · calc (b : ℤ) - a
           _ < (k:ℤ)^2 - 0 := by linarith [Int.natCast_nonneg b]
-          _ < M           := by linarith
+          _ < M           := by lia
       · calc (a : ℤ) - b
           _ < (k:ℤ)^2 - 0 := by linarith [Int.natCast_nonneg a]
-          _ < M          := by linarith
+          _ < M          := by lia
     have h_dvd_abs : M ∣ |diff| := by rw [dvd_abs]; exact h_equiv
     have h_le : M ≤ |diff| :=
       Int.le_of_dvd (abs_pos.mpr h_ne) h_dvd_abs
-    linarith
+    lia
   omega
 
 lemma unique_row_all_black (k : ℕ) (hk : 2 ≤ k) :
@@ -3790,8 +3764,7 @@ lemma unique_row_all_black (k : ℕ) (hk : 2 ≤ k) :
   have h_pos : M > 0 := by apply Int.add_pos_of_nonneg_of_pos (sq_nonneg _) (by decide)
   have h_equiv : val_t k p1 ≡ val_t k p2 [ZMOD M] := ht1.2.trans ht2.2.symm
   dsimp [val_t] at h_equiv
-  have h_x_eq : (p1.1 : ℤ) = p2.1 := by zify [px] at hx; exact hx
-  rw [h_x_eq] at h_equiv
+  rw [Int.ofNat_inj.mpr hx] at h_equiv
   let C := (k : ℤ) * p2.1 + k^2 + k
   have h_step : (k : ℤ) * p2.1 - p1.2 + k^2 + k = C - p1.2 := by
     dsimp [C]; ring
@@ -3819,8 +3792,7 @@ lemma unique_col_all_black (k : ℕ) (hk : 2 ≤ k) :
   have h_pos : M > 0 := by apply Int.add_pos_of_nonneg_of_pos (sq_nonneg _) (by decide)
   have h_equiv : val_s k p1 ≡ val_s k p2 [ZMOD M] := hs1.1.trans hs2.1.symm
   dsimp [val_s] at h_equiv
-  have h_y_eq : (p1.2 : ℤ) = p2.2 := by zify [py] at hy; exact hy
-  rw [h_y_eq] at h_equiv
+  rw [Int.ofNat_inj.mpr hy] at h_equiv
   let C := (k : ℤ) * p2.2 + k + 1
   have h_step1 : (p1.1 : ℤ) + k * p2.2 + k + 1 = p1.1 + C := by dsimp [C]; ring
   have h_step2 : (p2.1 : ℤ) + k * p2.2 + k + 1 = p2.1 + C := by dsimp [C]; ring
@@ -3976,13 +3948,13 @@ lemma mem_matilda_iff_mem_M_st {k : ℕ} {hk : 2 ≤ k} [NeZero k]
     · constructor
       · constructor
         · exact h.1
-        · have : ↑↑p.1 = 0 := by rw [hp1_zero]; simp
+        · have : ↑↑p.1 = 0 := Fin.val_eq_zero_iff.mpr hp1_zero
           linarith [h_valid]
       · constructor
         · exact h.2.2.1
         · rcases h.2.2.2 with hy_le | hp2_zero
           · exact hy_le
-          · have : ↑↑p.2 = 0 := by rw [hp2_zero]; simp
+          · have : ↑↑p.2 = 0 := Fin.val_eq_zero_iff.mpr hp2_zero
             simp [this]; exact h_valid.2.2.1
   · intro h_M
     rw [← mem_rect_iff_idx_eq k p idx.1 idx.2 hk] at h_M
@@ -4044,7 +4016,7 @@ lemma construction_is_valid_partition (k : ℕ) (hk : 2 ≤ k) [NeZero k]
       obtain ⟨⟨hx_low, hx_high⟩, ⟨hy_low, hy_high⟩⟩ := h_in_M
 
       exact h_valid ⟨by simp only [max_le_iff, le_min_iff]; exact ⟨⟨by linarith, by linarith⟩, by linarith, by linarith⟩,
-        by simp only [max_le_iff, le_min_iff]; exact ⟨⟨by nlinarith, by linarith⟩, by linarith, by linarith⟩⟩
+        by simp only [max_le_iff, le_min_iff]; exact ⟨⟨Int.le_of_lt h_pos, by linarith⟩, by linarith, by linarith⟩⟩
   exists m_target
   constructor
   · constructor
@@ -4118,7 +4090,7 @@ theorem matilda_solution_general (k : ℕ) (hk : 2 ≤ k) :
         rw [length_toList]
         rw [matilda_upper_bound_sum k hk]
       · have h_valid_P : IsValidConfiguration n (all_black_k k) P := ⟨
-          by dsimp [n]; rw [card_all_black_k_eq_n k hk],
+          card_all_black_k_eq_n k hk,
           unique_row_all_black k hk,
           unique_col_all_black k hk,
           by dsimp [P]; exact construction_is_valid_partition k hk
