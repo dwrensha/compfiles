@@ -26,9 +26,7 @@ that is not covered by any tile.
 
 namespace Imo2025P6
 
--- =================================================================
---  Core Definitions (Visible to the reader)
--- =================================================================
+section ProblemSetup
 
 variable {n : ℕ} [NeZero n]
 
@@ -66,6 +64,8 @@ def IsMinMatildaCount (n : ℕ) [NeZero n] (m : ℕ) : Prop :=
       IsValidConfiguration n all_black partition → m ≤ partition.card) ∧
   (∃ (all_black : Finset (Point n)) (partition : Finset (Matilda n all_black)),
       IsValidConfiguration n all_black partition ∧ partition.card = m)
+
+end ProblemSetup
 
 snip begin
 
@@ -114,7 +114,6 @@ end CommonProperties
 
 section ChainProperties
 
-variable {n : ℕ} [NeZero n]
 variable {u v : Finset (Point n)}
 
 lemma chain_u_mono_le
@@ -157,9 +156,9 @@ lemma chain_v_inj_y
 
 end ChainProperties
 
-variable (u v : Finset (Point n))
-
 section Regions
+
+variable (u v : Finset (Point n))
 
 def u_lower : Finset (Point n) := u.biUnion (fun q => rect n (px q) n 0 ((py q) + 1))
 def u_upper : Finset (Point n) := u.biUnion (fun q => rect n 0 ((px q) + 1) (py q) n)
@@ -187,7 +186,7 @@ end Regions
 
 section MainRegions
 
-variable (u v : Finset (Point n))
+variable {n : ℕ}  (u v : Finset (Point n)) (all_black : Finset (Point n))
 
 def regionWExtend : Finset (Point n) := (u_lower u) ∩ (v_lower v)
 def regionNExtend : Finset (Point n) := (u_upper u) ∩ (v_lower v)
@@ -206,10 +205,6 @@ lemma mem_regionSExtend (p : Point n) :
 @[simp]
 lemma mem_regionEExtend (p : Point n) :
     p ∈ regionEExtend u v ↔ p ∈ u_upper u ∧ p ∈ v_upper v := by unfold regionEExtend; simp
-
-end MainRegions
-
-variable (all_black : Finset (Point n))
 
 def targetsW (u v all_black : Finset (Point n)) : Finset (Point n) :=
   all_black.filter (fun p => p ∈ regionWExtend u v)
@@ -303,6 +298,10 @@ theorem targetsEin_inequality
     (targetsEin u v all_black).card ≥ (targetsE u v all_black).card - 1 := by
   solve_boundary_count (targetsE u v all_black),
   (fun p => py p < n - 1), h_unique_y, mem_targetsE (n := n)
+
+end MainRegions
+
+section IncidenceCount
 
 variable {u v all_black : Finset (Point n)}
 
@@ -728,14 +727,16 @@ lemma incidence_count_of_others
       by_contra h_not_in; rw [eq_false h_not_in] at h_v_exact; contradiction
     simp [hu_lo, hv_lo, hu_up, hv_up]
 
-section MatildaSection
+end IncidenceCount
 
-variable {n : ℕ} [NeZero n]
-variable {all_black : Finset (Point n)}
+section LabelingConsistency
 
+variable {n : ℕ} {all_black : Finset (Point n)}
 
 @[simp] lemma px_mk_val (x y : Fin n) : px (x, y) = x.val := rfl
 @[simp] lemma py_mk_val (x y : Fin n) : py (x, y) = y.val := rfl
+
+variable {n : ℕ} [NeZero n] {all_black : Finset (Point n)}
 
 lemma fin_val_sub_one_eq {i : Fin n} (h : 0 < i.val) :
     (i - 1).val = i.val - 1 := by
@@ -1049,21 +1050,11 @@ lemma disjoint_label_N_S (m : Matilda n all_black) (bn bs : Point n)
     repeat (first | constructor | linarith | omega)
   exact m.h_disjoint bn hbn h_bn_in_m
 
-end MatildaSection
+end LabelingConsistency
 
-lemma am_gm_bound_nat (a b n : ℕ) (h_mul : n ≤ a * b) :
-    (4 * n).sqrt ≤ a + b := by
-  have h1 : 4 * n ≤ 4 * (a * b) := Nat.mul_le_mul_left 4 h_mul
-  have h2 : 4 * (a * b) ≤ (a + b) * (a + b) := by
-    calc
-      4 * (a * b) = 2 * a * b + 2 * (a * b) := by ring
-        _ ≤ (a ^ 2 + b ^ 2) + 2 * (a * b) := Nat.add_le_add_right (two_mul_le_add_sq a b) _
-        _ = (a + b) * (a + b) := by ring
-  calc
-    (4 * n).sqrt
-      ≤ (4 * (a * b)).sqrt       := Nat.sqrt_le_sqrt h1
-    _ ≤ ((a + b) * (a + b)).sqrt := Nat.sqrt_le_sqrt h2
-    _ = a + b                    := Nat.sqrt_eq (a + b)
+section LabelingMachinery
+
+variable {n : ℕ} [NeZero n]
 
 lemma matilda_eq_iff_bounds_eq (m1 m2 : Matilda n all_black) :
     m1 = m2 ↔
@@ -1130,6 +1121,21 @@ def label_pos (l : Label n) : Point n × Point n :=
 def covers (m : Matilda n all_black) (l : Label n) : Prop :=
   m.mem (label_pos l).2
 
+end LabelingMachinery
+
+lemma am_gm_bound_nat (a b n : ℕ) (h_mul : n ≤ a * b) :
+    (4 * n).sqrt ≤ a + b := by
+  have h1 : 4 * n ≤ 4 * (a * b) := Nat.mul_le_mul_left 4 h_mul
+  have h2 : 4 * (a * b) ≤ (a + b) * (a + b) := by
+    calc
+      4 * (a * b) = 2 * a * b + 2 * (a * b) := by ring
+        _ ≤ (a ^ 2 + b ^ 2) + 2 * (a * b) := Nat.add_le_add_right (two_mul_le_add_sq a b) _
+        _ = (a + b) * (a + b) := by ring
+  calc
+    (4 * n).sqrt
+      ≤ (4 * (a * b)).sqrt       := Nat.sqrt_le_sqrt h1
+    _ ≤ ((a + b) * (a + b)).sqrt := Nat.sqrt_le_sqrt h2
+    _ = a + b                    := Nat.sqrt_eq (a + b)
 
 structure IntersectionSetup (n : ℕ) [NeZero n] where
 
@@ -3451,13 +3457,12 @@ end DisjointSetup
 
 section ErdosSzekeresBridge
 
-variable {n : ℕ} [NeZero n]
 variable {all_black : Finset (Point n)}
 variable (h_card_n : all_black.card = n)
 variable (h_unique_x : ∀ p ∈ all_black, ∀ q ∈ all_black, px p = px q → p = q)
 variable (h_unique_y : ∀ p ∈ all_black, ∀ q ∈ all_black, py p = py q → p = q)
 
-lemma exists_y_for_x (h_card_n : all_black.card = n)
+lemma exists_y_for_x [NeZero n] (h_card_n : all_black.card = n)
   (h_unique_x : ∀ p ∈ all_black, ∀ q ∈ all_black, px p = px q → p = q) (x : Fin n)
   : ∃ y, (x, y) ∈ all_black := by
   by_contra h_none
@@ -3487,13 +3492,13 @@ lemma exists_y_for_x (h_card_n : all_black.card = n)
   have h_pos : 0 < n := NeZero.pos n
   omega
 
-noncomputable def blackPerm : Fin n → Fin n := fun x =>
+noncomputable def blackPerm [NeZero n] : Fin n → Fin n := fun x =>
   (exists_y_for_x h_card_n h_unique_x x).choose
 
-lemma blackPerm_spec (x : Fin n) : (x, blackPerm h_card_n h_unique_x x) ∈ all_black :=
+lemma blackPerm_spec [NeZero n](x : Fin n) : (x, blackPerm h_card_n h_unique_x x) ∈ all_black :=
   (exists_y_for_x h_card_n h_unique_x x).choose_spec
 
-lemma blackPerm_injective
+lemma blackPerm_injective [NeZero n]
   (h_unique_y : ∀ p ∈ all_black, ∀ q ∈ all_black, py p = py q → p = q)
     : Function.Injective (blackPerm h_card_n h_unique_x) := by
   intros x1 x2 h_eq
@@ -3512,7 +3517,6 @@ def IsChain (s : Finset (Point n)) : Prop :=
 def IsAntiChain (s : Finset (Point n)) : Prop :=
   ∀ p ∈ s, ∀ q ∈ s, px p < px q → py q < py p
 
-omit [NeZero n] in
 lemma exists_maximal_chain (s : Finset (Point n)) (h_s : s ⊆ all_black) (h_chain : IsChain s) :
     ∃ m, s ⊆ m ∧ m ⊆ all_black ∧ IsChain m ∧
     (∀ p, p ∉ m → p ∈ all_black → ¬IsChain (insert p m)) := by
@@ -3534,7 +3538,6 @@ lemma exists_maximal_chain (s : Finset (Point n)) (h_s : s ⊆ all_black) (h_cha
     rw [← hm_max]; exact le_sup h_in_chains
   linarith
 
-omit [NeZero n] in
 lemma exists_maximal_antichain (s : Finset (Point n))
   (h_s : s ⊆ all_black) (h_antichain : IsAntiChain s) :
     ∃ m, s ⊆ m ∧ m ⊆ all_black ∧ IsAntiChain m ∧
@@ -3556,10 +3559,6 @@ lemma exists_maximal_antichain (s : Finset (Point n))
   have h_card_le : (insert p m).card ≤ m.card := by
     rw[← hm_max]; exact le_sup h_in_chains
   linarith
-
-section ErdosSzekeresBase
-
-variable {n : ℕ}
 
 def incSubsets (f : Fin n → Fin n) : Finset (Finset (Fin n)) :=
   univ.powerset.filter (fun t => StrictMonoOn f (t : Set (Fin n)))
@@ -3606,8 +3605,6 @@ theorem erdos_szekeres_direct (n : ℕ) (f : Fin n → Fin n) (hf : Function.Inj
     have h_le : t_dec.card ≤ b := le_sup h_mem
     linarith
 
-end ErdosSzekeresBase
-
 def toGridSubset (f : Fin n → Fin n) (t : Finset (Fin n)) : Finset (Point n) :=
   t.image (fun r => (r, f r))
 
@@ -3639,7 +3636,7 @@ lemma is_antichain_of_strict_anti {f : Fin n → Fin n} {t : Finset (Fin n)}
   have h_f_lt : f r2 < f r1 := h hr1 hr2 h_r_lt
   simp only [py_mk_val]; exact h_f_lt
 
-theorem exists_optimal_u_v (h_card_n : all_black.card = n)
+theorem exists_optimal_u_v [NeZero n] (h_card_n : all_black.card = n)
    (h_unique_x : ∀ p ∈ all_black, ∀ q ∈ all_black, px p = px q → p = q)
    (h_unique_y : ∀ p ∈ all_black, ∀ q ∈ all_black, py p = py q → p = q) :
 
@@ -3721,7 +3718,9 @@ theorem exists_optimal_u_v (h_card_n : all_black.card = n)
 
 end ErdosSzekeresBridge
 
-theorem matilda_final_theorem
+section LowerBound
+
+theorem matilda_lower_bound [NeZero n]
     (h_card_n : all_black.card = n)
     (h_unique_x : ∀ p ∈ all_black, ∀ q ∈ all_black, px p = px q → p = q)
     (h_unique_y : ∀ p ∈ all_black, ∀ q ∈ all_black, py p = py q → p = q)
@@ -3805,6 +3804,8 @@ theorem matilda_final_theorem
 
     let cp := c.getCrossingPoints ha_pos hb_pos
     apply c.disjoint_case_final_bound ha_pos hb_pos cp matildas_partition h_partition h_dilworth
+
+end LowerBound
 
 section Construction
 
@@ -3934,6 +3935,7 @@ lemma M_subset_rect (s t : Int) (p : Point n) (hk : 2 ≤ k) :
           _ = M * ((s + 1) * k - t) := by dsimp [M]; ring
       rw [mul_lt_mul_iff_right₀ (by dsimp [M, mod_base]; nlinarith)] at this
       exact Int.le_sub_one_of_lt this
+
 lemma rect_subset_M (s t : Int) (p : Point n)
     (hk : 2 ≤ k) :
     in_white_rect k s t p → p ∈ M_st k s t := by
@@ -3998,6 +4000,7 @@ lemma rect_subset_M (s t : Int) (p : Point n)
 
 instance (k : ℕ) (s t : Int) : DecidablePred (in_white_rect k s t) := by
   intro p; unfold in_white_rect; infer_instance
+
 def rect_finset (s t : Int) : Finset (Point n) :=
   univ.filter (in_white_rect k s t)
 
@@ -4418,19 +4421,16 @@ lemma card_all_black_k_eq_n (k : ℕ) (hk : 2 ≤ k) :
     (all_black_k k).card = k * k :=
   le_antisymm (card_all_black_le k hk) (card_all_black_ge k hk)
 
-end Construction
-
 noncomputable def construct_partition (k : ℕ) (hk : 2 ≤ k) [NeZero k]
     [DecidableEq (Matilda (k * k) (all_black_k k))] :
     Finset (Matilda (k * k) (all_black_k k)) :=
-  let n := k * k
   let kz : ℤ := k
-  haveI : NeZero n := ⟨mul_ne_zero (NeZero.ne k) (NeZero.ne k)⟩
+  haveI : NeZero (k * k) := ⟨Nat.mul_ne_zero NeZero.out NeZero.out⟩
   let valid_indices := (Icc 0 kz ×ˢ Icc 0 kz) \
                        {(0, 0), (kz, 0), (0, kz), (kz, kz)}
   let P_list := valid_indices.toList.filterMap (fun x =>
     match clipped_rect k hk x.1 x.2 with
-    | some m => some (cast (by dsimp [n]) m)
+    | some m => some (cast (by dsimp) m)
     | none => none
   )
 
@@ -4599,6 +4599,8 @@ lemma construction_is_valid_partition (k : ℕ) (hk : 2 ≤ k) [NeZero k]
       rw [h_res] at h_some
       injection h_some with h_final
 
+end Construction
+
 theorem matilda_solution_general (k : ℕ) (hk : 2 ≤ k) :
     let n := k * k
     haveI : NeZero n := ⟨by apply mul_ne_zero <;> linarith⟩
@@ -4612,7 +4614,7 @@ theorem matilda_solution_general (k : ℕ) (hk : 2 ≤ k) :
   constructor
   · intro all_black partition h_valid
     obtain ⟨h_card, h_row, h_col, h_part⟩ := h_valid
-    have h_raw := matilda_final_theorem h_card h_row h_col partition h_part
+    have h_raw := matilda_lower_bound h_card h_row h_col partition h_part
     rw [show n + (4 * n).sqrt - 3 = k^2 + 2 * k - 3 by
       dsimp [n]
       have h_sqrt : (4 * (k * k)).sqrt = 2 * k := by
@@ -4645,7 +4647,7 @@ theorem matilda_solution_general (k : ℕ) (hk : 2 ≤ k) :
           unique_col_all_black k hk,
           by dsimp [P]; exact construction_is_valid_partition k hk
         ⟩
-        have h_lower := matilda_final_theorem
+        have h_lower := matilda_lower_bound
           h_valid_P.1 h_valid_P.2.1 h_valid_P.2.2.1 P h_valid_P.2.2.2
         rw [show n + (4 * n).sqrt - 3 = k^2 + 2 * k - 3 by
           dsimp [n]
