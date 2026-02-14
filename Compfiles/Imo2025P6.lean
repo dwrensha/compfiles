@@ -1712,19 +1712,9 @@ lemma u_list_nodup : c.u_list.Nodup := by
 lemma v_list_nodup : c.v_list.Nodup := by
   rw [v_list]; exact (nodup_toList c.v).perm (List.mergeSort_perm _ _).symm
 
-lemma head_le_of_mem_sorted {α : Type*} {l : List α} {r : α → α → Prop} [Std.Refl r]
-    (h_sorted : l.Pairwise r) (h_ne : l ≠ []) (x : α) (hx : x ∈ l) :
-    r (l.head h_ne) x :=
-  List.Pairwise.rel_head h_sorted hx
-
-lemma last_le_of_mem_sorted {α : Type*} {l : List α} {r : α → α → Prop} [Std.Refl r]
-    (h_sorted : l.Pairwise r) (h_ne : l ≠ []) (x : α) (hx : x ∈ l) :
-    r x (l.getLast h_ne) :=
-  List.Pairwise.rel_getLast h_sorted hx
-
 lemma px_head_le_of_mem_u (ha_pos : 0 < c.a) (q : Point n) (hq : q ∈ c.u) :
     px (c.u_list.head (c.u_list_ne_nil ha_pos)) ≤ px q := by
-  apply head_le_of_mem_sorted c.u_list_sorted (c.u_list_ne_nil ha_pos)
+  refine List.Pairwise.rel_head c.u_list_sorted ?_
   simpa using hq
 
 lemma py_head_le_of_mem_u (ha_pos : 0 < c.a) (q : Point n) (hq : q ∈ c.u) :
@@ -1740,7 +1730,7 @@ lemma py_head_le_of_mem_u (ha_pos : 0 < c.a) (q : Point n) (hq : q ∈ c.u) :
 lemma px_le_last_of_mem_u (ha_pos : 0 < c.a) (q : Point n) (hq : q ∈ c.u) :
     px q ≤ px (c.u_list.getLast (c.u_list_ne_nil ha_pos)) := by
   let u_last := c.u_list.getLast (c.u_list_ne_nil ha_pos)
-  apply last_le_of_mem_sorted c.u_list_sorted (c.u_list_ne_nil ha_pos)
+  refine List.Pairwise.rel_getLast c.u_list_sorted ?_
   simpa using hq
 
 lemma py_le_last_of_mem_u (ha_pos : 0 < c.a) (q : Point n) (hq : q ∈ c.u) :
@@ -1755,7 +1745,7 @@ lemma py_le_last_of_mem_u (ha_pos : 0 < c.a) (q : Point n) (hq : q ∈ c.u) :
 
 lemma px_head_le_of_mem_v (hb_pos : 0 < c.b) (q : Point n) (hq : q ∈ c.v) :
     px (c.v_list.head (c.v_list_ne_nil hb_pos)) ≤ px q := by
-  apply head_le_of_mem_sorted c.v_list_sorted (c.v_list_ne_nil hb_pos)
+  refine List.Pairwise.rel_head c.v_list_sorted ?_
   simpa using hq
 
 lemma py_head_ge_of_mem_v (hb_pos : 0 < c.b) (q : Point n) (hq : q ∈ c.v) :
@@ -1763,7 +1753,7 @@ lemma py_head_ge_of_mem_v (hb_pos : 0 < c.b) (q : Point n) (hq : q ∈ c.v) :
   let v0 := c.v_list.head (c.v_list_ne_nil hb_pos)
   have h_v0_mem : v0 ∈ c.v := by rw [← mem_v_list]; exact List.head_mem _
   have hx_le : px v0 ≤ px q := by
-    apply head_le_of_mem_sorted c.v_list_sorted (c.v_list_ne_nil hb_pos)
+    refine List.Pairwise.rel_head c.v_list_sorted ?_
     simpa using hq
   rcases hx_le.lt_or_eq with h_lt | h_eq
   · exact le_of_lt (c.h_v_mono v0 h_v0_mem q hq h_lt)
@@ -1773,7 +1763,7 @@ lemma py_head_ge_of_mem_v (hb_pos : 0 < c.b) (q : Point n) (hq : q ∈ c.v) :
 
 lemma px_le_last_of_mem_v (hb_pos : 0 < c.b) (q : Point n) (hq : q ∈ c.v) :
     px q ≤ px (c.v_list.getLast (c.v_list_ne_nil hb_pos)) := by
-  apply last_le_of_mem_sorted c.v_list_sorted (c.v_list_ne_nil hb_pos)
+  refine List.Pairwise.rel_getLast c.v_list_sorted ?_
   simpa using hq
 
 lemma py_ge_last_of_mem_v (hb_pos : 0 < c.b) (q : Point n) (hq : q ∈ c.v) :
