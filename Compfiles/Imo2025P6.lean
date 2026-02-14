@@ -659,68 +659,26 @@ lemma incidence_count_of_others
         (∀ q ∈ v, px q < px p → py p < py q) →
         (∀ q ∈ v, px p < px q → py q < py p) → False)
     : incidence_count u v all_black p = 1 := by
-  have h_u_cover : p ∈ u_lower u ∨ p ∈ u_upper u :=
-    covering_of_maximal_u p hp hp_not_u h_u_max
-  have h_u_exclusive : ¬(p ∈ u_lower u ∧ p ∈ u_upper u) := by
-    intro h_both
-    have : p ∈ u := by
-      rw [← u_parts_intersection_eq_u h_u_mono h_u_inj, mem_inter]; exact h_both
-    contradiction
-  have h_u_exact : (p ∈ u_lower u) ≠ (p ∈ u_upper u) := by
-    rcases h_u_cover with h_lo | h_up
-    · simp only [h_lo]; intro h_up
-      rw [← h_up] at h_u_exclusive; exact h_u_exclusive ⟨h_lo, trivial⟩
-    · simp only [h_up]; intro h_lo;
-      rw [h_lo] at h_u_exclusive; exact h_u_exclusive ⟨trivial, h_up⟩
-  have h_v_cover : p ∈ v_lower v ∨ p ∈ v_upper v :=
-    covering_of_maximal_v p hp hp_not_v h_v_max
-  have h_v_exclusive : ¬(p ∈ v_lower v ∧ p ∈ v_upper v) := by
-    intro h_both
-    have : p ∈ v := by
-      rw [← v_parts_intersection_eq_v h_v_mono h_v_inj, mem_inter]; exact h_both
-    contradiction
-  have h_v_exact : (p ∈ v_lower v) ≠ (p ∈ v_upper v) := by
-    rcases h_v_cover with h_lo | h_up
-    · simp only [h_lo]; intro h_up
-      rw [← h_up] at h_v_exclusive; exact h_v_exclusive ⟨h_lo ,trivial⟩
-    · simp only[h_up]; intro h_lo
-      rw [h_lo] at h_v_exclusive; exact h_v_exclusive ⟨trivial, h_up⟩
-  have hW : p ∈ regionWExtend u v ↔ (p ∈ u_lower u ∧ p ∈ v_lower v) := by
-    rw [regionWExtend, mem_inter]
-  have hN : p ∈ regionNExtend u v ↔ (p ∈ u_upper u ∧ p ∈ v_lower v) := by
-    rw [regionNExtend, mem_inter]
-  have hE : p ∈ regionEExtend u v ↔ (p ∈ u_upper u ∧ p ∈ v_upper v) := by
-    rw [regionEExtend, mem_inter]
-  have hS : p ∈ regionSExtend u v ↔ (p ∈ u_lower u ∧ p ∈ v_upper v) := by
-    rw [regionSExtend, mem_inter]
+  have h_u_cover := covering_of_maximal_u p hp hp_not_u h_u_max
+  have h_u_excl : ¬(p ∈ u_lower u ∧ p ∈ u_upper u) := by
+    intro ⟨h1, h2⟩
+    exact hp_not_u (by rw [← u_parts_intersection_eq_u h_u_mono h_u_inj]; exact mem_inter.mpr ⟨h1, h2⟩)
+  have h_v_cover := covering_of_maximal_v p hp hp_not_v h_v_max
+  have h_v_excl : ¬(p ∈ v_lower v ∧ p ∈ v_upper v) := by
+    intro ⟨h1, h2⟩
+    exact hp_not_v (by rw [← v_parts_intersection_eq_v h_v_mono h_v_inj]; exact mem_inter.mpr ⟨h1, h2⟩)
   unfold incidence_count
-  simp only [mem_targetsW, mem_targetsN, mem_targetsS, mem_targetsE, hp]
-  simp only [hW, hN, hE, hS]
-  by_cases hu_lo : p ∈ u_lower u <;> by_cases hv_lo : p ∈ v_lower v
-  · have hu_up : p ∉ u_upper u := by
-      simp only [hu_lo] at h_u_exact; exact fun h_in => h_u_exact (eq_true h_in).symm
-    have hv_up : p ∉ v_upper v := by
-      simp only [hv_lo] at h_v_exact; exact fun h_in => h_v_exact (eq_true h_in).symm
-    simp [hu_lo, hv_lo, hu_up, hv_up]
-  · have hu_up : p ∉ u_upper u := by
-      simp only [hu_lo] at h_u_exact; exact fun h_in => h_u_exact (eq_true h_in).symm
-    have hv_up : p ∈ v_upper v := by
-      simp only[hv_lo] at h_v_exact
-      by_contra h_not_in; rw [eq_false h_not_in] at h_v_exact; contradiction
-    simp [hu_lo, hv_lo, hu_up, hv_up]
-  · have hu_up : p ∈ u_upper u := by
-      simp only [hu_lo] at h_u_exact
-      by_contra h_not_in; rw [eq_false h_not_in] at h_u_exact; contradiction
-    have hv_up : p ∉ v_upper v := by
-      simp only [hv_lo] at h_v_exact; exact fun h_in => h_v_exact (eq_true h_in).symm
-    simp [hu_lo, hv_lo, hu_up, hv_up]
-  · have hu_up : p ∈ u_upper u := by
-      simp only [hu_lo] at h_u_exact
-      by_contra h_not_in; rw [eq_false h_not_in] at h_u_exact; contradiction
-    have hv_up : p ∈ v_upper v := by
-      simp only [hv_lo] at h_v_exact;
-      by_contra h_not_in; rw [eq_false h_not_in] at h_v_exact; contradiction
-    simp [hu_lo, hv_lo, hu_up, hv_up]
+  simp only [mem_targetsW, mem_targetsN, mem_targetsS, mem_targetsE, hp, true_and,
+    regionWExtend, regionNExtend, regionEExtend, regionSExtend, mem_inter]
+  rcases h_u_cover with h_ulo | h_uup <;> rcases h_v_cover with h_vlo | h_vup
+  · simp [h_ulo, h_vlo, show p ∉ u_upper u from fun h => h_u_excl ⟨h_ulo, h⟩,
+      show p ∉ v_upper v from fun h => h_v_excl ⟨h_vlo, h⟩]
+  · simp [h_ulo, h_vup, show p ∉ u_upper u from fun h => h_u_excl ⟨h_ulo, h⟩,
+      show p ∉ v_lower v from fun h => h_v_excl ⟨h, h_vup⟩]
+  · simp [h_uup, h_vlo, show p ∉ u_lower u from fun h => h_u_excl ⟨h, h_uup⟩,
+      show p ∉ v_upper v from fun h => h_v_excl ⟨h_vlo, h⟩]
+  · simp [h_uup, h_vup, show p ∉ u_lower u from fun h => h_u_excl ⟨h, h_uup⟩,
+      show p ∉ v_lower v from fun h => h_v_excl ⟨h, h_vup⟩]
 
 end IncidenceCount
 
@@ -1080,9 +1038,6 @@ instance : Finite (Matilda n all_black) := by
 noncomputable instance : Fintype (Matilda n all_black) :=
   Fintype.ofFinite _
 
-noncomputable def matildas (n : ℕ) [NeZero n] (all_black : Finset (Point n))
-  : Finset (Matilda n all_black) := univ
-
 inductive LabelType
   | W | N | E | S | X
   deriving DecidableEq, Repr, Fintype
@@ -1092,14 +1047,10 @@ structure Label (n : ℕ) where
   type : LabelType
   deriving DecidableEq, Repr, Fintype
 
-@[simp]
-def Label.position (l : Label n) : Point n :=
-  match l.type with
-  | .W => ⟨l.source.1, l.source.2 -1⟩
-  | .N => ⟨l.source.1 - 1, l.source.2⟩
-  | .E => ⟨l.source.1, l.source.2 + 1⟩
-  | .S => ⟨l.source.1 - 1, l.source.2⟩
-  | .X => l.source
+omit [NeZero n] in
+private lemma Label.source_ne_of_ne {l1 l2 : Label n}
+    (h_ne : l1 ≠ l2) (h_type : l1.type = l2.type) : l1.source ≠ l2.source := by
+  intro h_src; exact h_ne (by rcases l1; rcases l2; simp_all)
 
 @[simp]
 def label_pos (l : Label n) : Point n × Point n :=
@@ -1116,6 +1067,55 @@ def covers (m : Matilda n all_black) (l : Label n) : Prop :=
   m.mem (label_pos l).2
 
 end LabelingMachinery
+
+private lemma fin_ne_sub_one {n : ℕ} [NeZero n] (h_n : 2 ≤ n) (a : Fin n)
+    (h : 0 < a.val) : a ≠ a - 1 := by
+  intro h_eq; apply Fin.ext_iff.mp at h_eq
+  have h_le : (1 : Fin n) ≤ a := by
+    rw [Fin.le_def]; show 1 % n ≤ a.val; rw [Nat.mod_eq_of_lt h_n]; omega
+  rw [Fin.sub_val_of_le h_le] at h_eq
+  have : (1 : Fin n).val = 1 := by show 1 % n = 1; rw [Nat.mod_eq_of_lt h_n]
+  omega
+
+private lemma fin_ne_add_one {n : ℕ} [NeZero n] (a : Fin n)
+    (h : a.val < n - 1) : a ≠ a + 1 := by
+  intro h_eq; apply Fin.ext_iff.mp at h_eq
+  rw [Fin.val_add] at h_eq
+  have h1v : (1 : Fin n).val = 1 % n := rfl
+  rw [Nat.mod_eq_of_lt (by omega : 1 < n)] at h1v; rw [h1v] at h_eq
+  rw [Nat.mod_eq_of_lt (by omega)] at h_eq; omega
+
+private lemma label_pos_W_absurd {n : ℕ} [NeZero n] (h_n : 2 ≤ n)
+    {all_black : Finset (Point n)}
+    (h_unique_x : ∀ p ∈ all_black, ∀ q ∈ all_black, px p = px q → p = q)
+    {p : Point n} (hp : p ∈ all_black) (h_pos : 0 < p.2.val)
+    (h_adj : (p.1, p.2 - 1) ∈ all_black) : False := by
+  have h_eq := h_unique_x p hp (p.1, p.2 - 1) h_adj (by simp [px])
+  exact absurd (Prod.ext_iff.mp h_eq).2 (fin_ne_sub_one h_n p.2 h_pos)
+
+private lemma label_pos_N_absurd {n : ℕ} [NeZero n] (h_n : 2 ≤ n)
+    {all_black : Finset (Point n)}
+    (h_unique_y : ∀ p ∈ all_black, ∀ q ∈ all_black, py p = py q → p = q)
+    {p : Point n} (hp : p ∈ all_black) (h_pos : 0 < p.1.val)
+    (h_adj : (p.1 - 1, p.2) ∈ all_black) : False := by
+  have h_eq := h_unique_y p hp (p.1 - 1, p.2) h_adj (by simp [py])
+  exact absurd (Prod.ext_iff.mp h_eq).1 (fin_ne_sub_one h_n p.1 h_pos)
+
+private lemma label_pos_E_absurd {n : ℕ} [NeZero n]
+    {all_black : Finset (Point n)}
+    (h_unique_x : ∀ p ∈ all_black, ∀ q ∈ all_black, px p = px q → p = q)
+    {p : Point n} (hp : p ∈ all_black) (h_bound : p.2.val < n - 1)
+    (h_adj : (p.1, p.2 + 1) ∈ all_black) : False := by
+  have h_eq := h_unique_x p hp (p.1, p.2 + 1) h_adj (by simp [px])
+  exact absurd (Prod.ext_iff.mp h_eq).2 (fin_ne_add_one p.2 h_bound)
+
+private lemma label_pos_S_absurd {n : ℕ} [NeZero n]
+    {all_black : Finset (Point n)}
+    (h_unique_y : ∀ p ∈ all_black, ∀ q ∈ all_black, py p = py q → p = q)
+    {p : Point n} (hp : p ∈ all_black) (h_bound : p.1.val < n - 1)
+    (h_adj : (p.1 + 1, p.2) ∈ all_black) : False := by
+  have h_eq := h_unique_y p hp (p.1 + 1, p.2) h_adj (by simp [py])
+  exact absurd (Prod.ext_iff.mp h_eq).1 (fin_ne_add_one p.1 h_bound)
 
 lemma am_gm_bound_nat (a b n : ℕ) (h_mul : n ≤ a * b) :
     (4 * n).sqrt ≤ a + b := by
@@ -1344,6 +1344,167 @@ lemma not_valid_label_X {n : ℕ} [NeZero n] (c : IntersectionSetup n) (l : Labe
   rcases h_valid with ⟨_, _, rfl⟩ | ⟨_, _, rfl⟩ | ⟨_, _, rfl⟩ | ⟨_, _, rfl⟩
   <;> simp at h_type
 
+lemma matilda_covers_at_most_one_core {n : ℕ} [NeZero n]
+    {all_black u v : Finset (Point n)}
+    (h_uniq_x : ∀ p ∈ all_black, ∀ q ∈ all_black, px p = px q → p = q)
+    (h_uniq_y : ∀ p ∈ all_black, ∀ q ∈ all_black, py p = py q → p = q)
+    (h_u_mono : ∀ a ∈ u, ∀ b ∈ u, px a ≤ px b → py a ≤ py b)
+    (h_v_mono : ∀ a ∈ v, ∀ b ∈ v, px a ≤ px b → py b ≤ py a)
+    (h_u_inj : ∀ a ∈ u, ∀ b ∈ u, py a = py b → a = b)
+    (h_v_inj : ∀ a ∈ v, ∀ b ∈ v, py a = py b → a = b)
+    (m : Matilda n all_black) (l1 l2 : Label n)
+    (h_ne : l1 ≠ l2) (h_cov1 : m.mem (label_pos l1).2) (h_cov2 : m.mem (label_pos l2).2)
+    (props1 : (l1.type = .W → l1.source ∈ targetsWin u v all_black) ∧
+              (l1.type = .N → l1.source ∈ targetsNin u v all_black) ∧
+              (l1.type = .E → l1.source ∈ targetsEin u v all_black) ∧
+              (l1.type = .S → l1.source ∈ targetsSin u v all_black))
+    (props2 : (l2.type = .W → l2.source ∈ targetsWin u v all_black) ∧
+              (l2.type = .N → l2.source ∈ targetsNin u v all_black) ∧
+              (l2.type = .E → l2.source ∈ targetsEin u v all_black) ∧
+              (l2.type = .S → l2.source ∈ targetsSin u v all_black))
+    (h_not_X1 : l1.type ≠ .X) (h_not_X2 : l2.type ≠ .X) : False := by
+  let p1 := l1.source; let p2 := l2.source
+  cases h1 : l1.type <;> cases h2 : l2.type
+  · have hp1 := props1.1 h1; have hp2 := props2.1 h2
+    simp only [mem_targetsWin, mem_targetsW] at hp1 hp2
+    simp [h1, h2] at h_cov1 h_cov2
+    have h_p_ne : p1 ≠ p2 := Label.source_ne_of_ne h_ne (by rw [h1, h2])
+    exact unique_label_W (m := m) (p := p1) (q := p2)
+      (hp := hp1.1.1) (hq := hp2.1.1) (h_ne := h_p_ne)
+      (hp_pos := hp1.2) (hq_pos := hp2.2)
+      (hp_in := h_cov1) (hq_in := h_cov2) (h_unique_y := h_uniq_y)
+  · have hW := props1.1 h1; have hN := props2.2.1 h2
+    simp only [mem_targetsWin, mem_targetsW] at hW
+    simp only [mem_targetsNin, mem_targetsN] at hN
+    simp [h1, h2] at h_cov1 h_cov2
+    apply disjoint_label_W_N (m := m) (u := u) (bw := p1) (bn := p2)
+      (hbw := hW.1.1) (hbn := hN.1.1) (hbw_pos := hW.2) (hbn_pos := hN.2)
+      (h_u_mono := h_u_mono) (h_u_inj := h_u_inj) (h_w_in := h_cov1) (h_n_in := h_cov2)
+    · simp only [mem_regionWExtend] at hW; exact hW.1.2.1
+    · simp only [mem_regionNExtend] at hN; exact hN.1.2.1
+  · have hW := props1.1 h1; have hE := props2.2.2.1 h2
+    simp only [mem_targetsWin, mem_targetsW] at hW
+    simp only [mem_targetsEin, mem_targetsE] at hE
+    simp [h1, h2] at h_cov1 h_cov2
+    apply disjoint_label_W_E (m := m) (u := u) (v := v) (bw := p1) (be := p2)
+      (hbw := hW.1.1) (hbw_pos := hW.2) (hbe_bound := hE.2)
+      (h_u_mono := h_u_mono) (h_v_mono := h_v_mono) (h_u_inj := h_u_inj)
+      (h_w_in := h_cov1) (h_e_in := h_cov2) (h_bw_reg := hW.1.2) (h_be_reg := hE.1.2)
+  · have hW := props1.1 h1; have hS := props2.2.2.2 h2
+    simp only [mem_targetsWin, mem_targetsW] at hW
+    simp only [mem_targetsSin, mem_targetsS] at hS
+    simp [h1, h2] at h_cov1 h_cov2
+    apply disjoint_label_S_W (m := m) (v := v) (bs := p2) (bw := p1)
+      (hbs := hS.1.1) (hbw := hW.1.1) (hbs_bound := hS.2) (hbw_pos := hW.2)
+      (h_v_mono := h_v_mono) (h_v_inj := h_v_inj) (h_s_in := h_cov2) (h_w_in := h_cov1)
+    · simp only [mem_regionSExtend] at hS; exact hS.1.2.2
+    · simp only [mem_regionWExtend] at hW; exact hW.1.2.2
+  · exact absurd h2 h_not_X2
+  · have hN := props1.2.1 h1; have hW := props2.1 h2
+    simp only [mem_targetsWin, mem_targetsW] at hW
+    simp only [mem_targetsNin, mem_targetsN] at hN
+    simp [h1, h2] at h_cov1 h_cov2
+    apply disjoint_label_W_N (m := m) (u := u) (bw := p2) (bn := p1)
+      (hbw := hW.1.1) (hbn := hN.1.1) (hbw_pos := hW.2) (hbn_pos := hN.2)
+      (h_u_mono := h_u_mono) (h_u_inj := h_u_inj) (h_w_in := h_cov2) (h_n_in := h_cov1)
+    · simp only [mem_regionWExtend] at hW; exact hW.1.2.1
+    · simp only [mem_regionNExtend] at hN; exact hN.1.2.1
+  · have hp1 := props1.2.1 h1; have hp2 := props2.2.1 h2
+    simp only [mem_targetsNin, mem_targetsN] at hp1 hp2
+    simp [h1, h2] at h_cov1 h_cov2
+    have h_p_ne : p1 ≠ p2 := Label.source_ne_of_ne h_ne (by rw [h1, h2])
+    exact unique_label_N (m := m) (p := p1) (q := p2) (hp := hp1.1.1) (hq := hp2.1.1)
+      (h_ne := h_p_ne) (hp_pos := hp1.2) (hq_pos := hp2.2)
+      (hp_in := h_cov1) (hq_in := h_cov2) (h_unique_x := h_uniq_x)
+  · have hN := props1.2.1 h1; have hE := props2.2.2.1 h2
+    simp only [mem_targetsNin, mem_targetsN] at hN
+    simp only [mem_targetsEin, mem_targetsE] at hE
+    simp [h1, h2] at h_cov1 h_cov2
+    apply disjoint_label_E_N (m := m) (v := v) (be := p2) (bn := p1)
+      (hbe := hE.1.1) (hbn := hN.1.1) (hbe_bound := hE.2) (hbn_pos := hN.2)
+      (h_v_mono := h_v_mono) (h_v_inj := h_v_inj) (h_e_in := h_cov2) (h_n_in := h_cov1)
+    · simp only [mem_regionEExtend] at hE; exact hE.1.2.2
+    · simp only [mem_regionNExtend] at hN; exact hN.1.2.2
+  · have hN := props1.2.1 h1; have hS := props2.2.2.2 h2
+    simp only [mem_targetsNin, mem_targetsN] at hN
+    simp only [mem_targetsSin, mem_targetsS] at hS
+    simp [h1, h2] at h_cov1 h_cov2
+    apply disjoint_label_N_S (m := m) (u := u) (v := v) (bn := p1) (bs := p2)
+      (hbn := hN.1.1) (hbn_pos := hN.2) (hbs_bound := hS.2)
+      (h_u_mono := h_u_mono) (h_v_mono := h_v_mono) (h_v_inj := h_v_inj)
+      (h_n_in := h_cov1) (h_s_in := h_cov2) (h_bn_reg := hN.1.2) (h_bs_reg := hS.1.2)
+  · exact absurd h2 h_not_X2
+  · have hE := props1.2.2.1 h1; have hW := props2.1 h2
+    simp only [mem_targetsEin, mem_targetsE] at hE
+    simp only [mem_targetsWin, mem_targetsW] at hW
+    simp [h1, h2] at h_cov1 h_cov2
+    exact disjoint_label_W_E (m := m) (u := u) (v := v) (bw := p2) (be := p1)
+      (hbw := hW.1.1) (hbw_pos := hW.2) (hbe_bound := hE.2)
+      (h_u_mono := h_u_mono) (h_v_mono := h_v_mono) (h_u_inj := h_u_inj)
+      (h_w_in := h_cov2) (h_e_in := h_cov1) (h_bw_reg := hW.1.2) (h_be_reg := hE.1.2)
+  · have hE := props1.2.2.1 h1; have hN := props2.2.1 h2
+    simp only [mem_targetsEin, mem_targetsE] at hE
+    simp only [mem_targetsNin, mem_targetsN] at hN
+    simp [h1, h2] at h_cov1 h_cov2
+    apply disjoint_label_E_N (m := m) (v := v) (be := p1) (bn := p2)
+      (hbe := hE.1.1) (hbn := hN.1.1) (hbe_bound := hE.2) (hbn_pos := hN.2)
+      (h_v_mono := h_v_mono) (h_v_inj := h_v_inj) (h_e_in := h_cov1) (h_n_in := h_cov2)
+    · simp only [mem_regionEExtend] at hE; exact hE.1.2.2
+    · simp only [mem_regionNExtend] at hN; exact hN.1.2.2
+  · have hp1 := props1.2.2.1 h1; have hp2 := props2.2.2.1 h2
+    simp only [mem_targetsEin, mem_targetsE] at hp1 hp2
+    simp [h1, h2] at h_cov1 h_cov2
+    have h_p_ne : p1 ≠ p2 := Label.source_ne_of_ne h_ne (by rw [h1, h2])
+    exact unique_label_E (m := m) (p := p1) (q := p2) (hp := hp1.1.1) (hq := hp2.1.1)
+      (h_ne := h_p_ne) (hp_bound := hp1.2) (hq_bound := hp2.2)
+      (hp_in := h_cov1) (hq_in := h_cov2) (h_unique_y := h_uniq_y)
+  · have hE := props1.2.2.1 h1; have hS := props2.2.2.2 h2
+    simp only [mem_targetsEin, mem_targetsE] at hE
+    simp only [mem_targetsSin, mem_targetsS] at hS
+    simp [h1, h2] at h_cov1 h_cov2
+    apply disjoint_label_E_S (m := m) (u := u) (be := p1) (bs := p2)
+      (hbe := hE.1.1) (hbs := hS.1.1) (hbe_bound := hE.2) (hbs_bound := hS.2)
+      (h_u_mono := h_u_mono) (h_u_inj := h_u_inj) (h_e_in := h_cov1) (h_s_in := h_cov2)
+    · simp only [mem_regionEExtend] at hE; exact hE.1.2.1
+    · simp only [mem_regionSExtend] at hS; exact hS.1.2.1
+  · exact absurd h2 h_not_X2
+  · have hS := props1.2.2.2 h1; have hW := props2.1 h2
+    simp only [mem_targetsSin, mem_targetsS] at hS
+    simp only [mem_targetsWin, mem_targetsW] at hW
+    simp [h1, h2] at h_cov1 h_cov2
+    apply disjoint_label_S_W (m := m) (v := v) (bs := p1) (bw := p2)
+      (hbs := hS.1.1) (hbw := hW.1.1) (hbs_bound := hS.2) (hbw_pos := hW.2)
+      (h_v_mono := h_v_mono) (h_v_inj := h_v_inj) (h_s_in := h_cov1) (h_w_in := h_cov2)
+    · simp only [mem_regionSExtend] at hS; exact hS.1.2.2
+    · simp only [mem_regionWExtend] at hW; exact hW.1.2.2
+  · have hS := props1.2.2.2 h1; have hN := props2.2.1 h2
+    simp only [mem_targetsSin, mem_targetsS] at hS
+    simp only [mem_targetsNin, mem_targetsN] at hN
+    simp [h1, h2] at h_cov1 h_cov2
+    apply disjoint_label_N_S (m := m) (u := u) (v := v) (bn := p2) (bs := p1)
+      (hbn := hN.1.1) (hbn_pos := hN.2) (hbs_bound := hS.2)
+      (h_u_mono := h_u_mono) (h_v_mono := h_v_mono) (h_v_inj := h_v_inj)
+      (h_n_in := h_cov2) (h_s_in := h_cov1) (h_bn_reg := hN.1.2) (h_bs_reg := hS.1.2)
+  · have hS := props1.2.2.2 h1; have hE := props2.2.2.1 h2
+    simp only [mem_targetsSin, mem_targetsS] at hS
+    simp only [mem_targetsEin, mem_targetsE] at hE
+    simp [h1, h2] at h_cov1 h_cov2
+    apply disjoint_label_E_S (m := m) (u := u) (be := p2) (bs := p1)
+      (hbe := hE.1.1) (hbs := hS.1.1) (hbe_bound := hE.2) (hbs_bound := hS.2)
+      (h_u_mono := h_u_mono) (h_u_inj := h_u_inj) (h_e_in := h_cov2) (h_s_in := h_cov1)
+    · simp only [mem_regionEExtend] at hE; exact hE.1.2.1
+    · simp only [mem_regionSExtend] at hS; exact hS.1.2.1
+  · have hp1 := props1.2.2.2 h1; have hp2 := props2.2.2.2 h2
+    simp only [mem_targetsSin, mem_targetsS] at hp1 hp2
+    simp [h1, h2] at h_cov1 h_cov2
+    have h_p_ne : p1 ≠ p2 := Label.source_ne_of_ne h_ne (by rw [h1, h2])
+    exact unique_label_S (m := m) (p := p1) (q := p2) (hp := hp1.1.1) (hq := hp2.1.1)
+      (h_ne := h_p_ne) (hp_bound := hp1.2) (hq_bound := hp2.2)
+      (hp_in := h_cov1) (hq_in := h_cov2) (h_unique_x := h_uniq_x)
+  · exact absurd h2 h_not_X2
+  case X.W | X.N | X.E | X.S | X.X =>
+    exact absurd h1 h_not_X1
+
 lemma matilda_covers_at_most_one (m : Matilda n c.all_black) :
     ({l ∈ validLabels c | covers m l}).card ≤ 1 := by
   rw [card_le_one_iff]
@@ -1351,8 +1512,6 @@ lemma matilda_covers_at_most_one (m : Matilda n c.all_black) :
   rw [mem_filter] at hl1 hl2
   obtain ⟨h_valid1, h_cov1⟩ := hl1; obtain ⟨h_valid2, h_cov2⟩ := hl2
   by_contra h_ne
-  let p1 := l1.source; let t1 := l1.type; let p2 := l2.source; let t2 := l2.type
-  have h_uniq_x := c.h_unique_x; have h_uniq_y := c.h_unique_y
   have get_props : ∀ l ∈ validLabels c,
       (l.type = .W → l.source ∈ targetsWin c.u c.v c.all_black) ∧
       (l.type = .N → l.source ∈ targetsNin c.u c.v c.all_black) ∧
@@ -1362,200 +1521,12 @@ lemma matilda_covers_at_most_one (m : Matilda n c.all_black) :
     simp only [validLabels, mem_union, mem_map, or_assoc] at hl
     rcases hl with ⟨p, hp, rfl⟩ | ⟨p, hp, rfl⟩ | ⟨p, hp, rfl⟩ | ⟨p, hp, rfl⟩
     <;> simp [hp]
-
-  have props1 := get_props l1 h_valid1; have props2 := get_props l2 h_valid2
-  cases h1 : l1.type <;> cases h2 : l2.type
-  · have hp1 := props1.1 h1; have hp2 := props2.1 h2
-    simp only [mem_targetsWin, mem_targetsW] at hp1 hp2
-    simp [h1, h2] at h_cov1 h_cov2
-    have h_p_ne : p1 ≠ p2 := by
-      contrapose! h_ne
-      rcases l1 with ⟨src1, type1⟩
-      rcases l2 with ⟨src2, type2⟩
-      simp only [Label.mk.injEq]
-      constructor
-      · exact h_ne
-      · simp at h1 h2; rw [h1, h2]
-    exact unique_label_W (m := m) (p := p1) (q := p2)
-      (hp := hp1.1.1) (hq := hp2.1.1) (h_ne := h_p_ne)
-      (hp_pos := hp1.2) (hq_pos := hp2.2)
-      (hp_in := h_cov1) (hq_in := h_cov2)
-      (h_unique_y := h_uniq_y)
-  · have hW := props1.1 h1; have hN := props2.2.1 h2
-    simp only [mem_targetsWin, mem_targetsW] at hW
-    simp only [mem_targetsNin, mem_targetsN] at hN
-    simp [h1, h2] at h_cov1 h_cov2
-    apply disjoint_label_W_N (m := m) (u := c.u) (bw := p1) (bn := p2)
-      (hbw := hW.1.1) (hbn := hN.1.1)
-      (hbw_pos := hW.2) (hbn_pos := hN.2)
-      (h_u_mono := c.u_mono_le) (h_u_inj := c.u_inj_y)
-      (h_w_in := h_cov1) (h_n_in := h_cov2)
-    · simp only [mem_regionWExtend] at hW; exact hW.1.2.1
-    · simp only [mem_regionNExtend] at hN; exact hN.1.2.1
-  · have hW := props1.1 h1; have hE := props2.2.2.1 h2
-    simp only [mem_targetsWin, mem_targetsW] at hW
-    simp only [mem_targetsEin, mem_targetsE] at hE
-    simp [h1, h2] at h_cov1 h_cov2
-    apply disjoint_label_W_E (m := m) (u := c.u) (v := c.v) (bw := p1) (be := p2)
-      (hbw := hW.1.1) (hbw_pos := hW.2) (hbe_bound := hE.2)
-      (h_u_mono := c.u_mono_le) (h_v_mono := c.v_mono_le)
-      (h_u_inj := c.u_inj_y)
-      (h_w_in := h_cov1) (h_e_in := h_cov2)
-      (h_bw_reg := hW.1.2) (h_be_reg := hE.1.2)
-  · have hW := props1.1 h1; have hS := props2.2.2.2 h2
-    simp only [mem_targetsWin, mem_targetsW] at hW
-    simp only [mem_targetsSin, mem_targetsS] at hS
-    simp [h1, h2] at h_cov1 h_cov2
-    apply disjoint_label_S_W (m := m) (v := c.v) (bs := p2) (bw := p1)
-      (hbs := hS.1.1) (hbw := hW.1.1)
-      (hbs_bound := hS.2) (hbw_pos := hW.2)
-      (h_v_mono := c.v_mono_le) (h_v_inj := c.v_inj_y)
-      (h_s_in := h_cov2) (h_w_in := h_cov1)
-    · simp only [mem_regionSExtend] at hS; exact hS.1.2.2
-    · simp only [mem_regionWExtend] at hW; exact hW.1.2.2
-  · exact not_valid_label_X c l2 h_valid2 h2
-  · have hN := props1.2.1 h1; have hW := props2.1 h2
-    simp only [mem_targetsWin, mem_targetsW] at hW
-    simp only [mem_targetsNin, mem_targetsN] at hN
-    simp [h1, h2] at h_cov1 h_cov2
-    apply disjoint_label_W_N (m := m) (u := c.u)  (bw := p2) (bn := p1)
-      (hbw := hW.1.1) (hbn := hN.1.1)
-      (hbw_pos := hW.2) (hbn_pos := hN.2)
-      (h_u_mono := c.u_mono_le) (h_u_inj := c.u_inj_y)
-      (h_w_in := h_cov2) (h_n_in := h_cov1)
-    · simp only [mem_regionWExtend] at hW; exact hW.1.2.1
-    · simp only [mem_regionNExtend] at hN; exact hN.1.2.1
-  · have hp1 := props1.2.1 h1; have hp2 := props2.2.1 h2
-    simp only [mem_targetsNin, mem_targetsN] at hp1 hp2
-    simp [h1, h2] at h_cov1 h_cov2
-    have h_p_ne : p1 ≠ p2 := by
-      contrapose! h_ne
-      rcases l1 with ⟨src1, type1⟩
-      rcases l2 with ⟨src2, type2⟩
-      simp only [Label.mk.injEq]
-      constructor
-      · exact h_ne
-      · simp at h1 h2; rw [h1, h2]
-    exact unique_label_N (m := m) (p := p1) (q := p2) (hp := hp1.1.1) (hq := hp2.1.1)
-     (h_ne := h_p_ne) (hp_pos := hp1.2) (hq_pos := hp2.2)
-     (hp_in := h_cov1) (hq_in := h_cov2) (h_unique_x := h_uniq_x)
-  · have hN := props1.2.1 h1; have hE := props2.2.2.1 h2
-    simp only [mem_targetsNin, mem_targetsN] at hN
-    simp only [mem_targetsEin, mem_targetsE] at hE
-    simp [h1, h2] at h_cov1 h_cov2
-    apply disjoint_label_E_N (m := m) (v := c.v) (be := p2) (bn := p1)
-      (hbe := hE.1.1) (hbn := hN.1.1)
-      (hbe_bound := hE.2) (hbn_pos := hN.2)
-      (h_v_mono := c.v_mono_le) (h_v_inj := c.v_inj_y)
-      (h_e_in := h_cov2) (h_n_in := h_cov1)
-    · simp only [mem_regionEExtend] at hE; exact hE.1.2.2
-    · simp only [mem_regionNExtend] at hN; exact hN.1.2.2
-  · have hN := props1.2.1 h1; have hS := props2.2.2.2 h2
-    simp only [mem_targetsNin, mem_targetsN] at hN
-    simp only [mem_targetsSin, mem_targetsS] at hS
-    simp [h1, h2] at h_cov1 h_cov2
-    apply disjoint_label_N_S (m := m) (u := c.u) (v := c.v) (bn := p1) (bs := p2)
-      (hbn := hN.1.1)
-      (hbn_pos := hN.2) (hbs_bound := hS.2)
-      (h_u_mono := c.u_mono_le) (h_v_mono := c.v_mono_le)
-      (h_v_inj := c.v_inj_y)
-      (h_n_in := h_cov1) (h_s_in := h_cov2)
-      (h_bn_reg := hN.1.2) (h_bs_reg := hS.1.2)
-  · exact not_valid_label_X c l2 h_valid2 h2
-  · have hE := props1.2.2.1 h1; have hW := props2.1 h2
-    simp only [mem_targetsEin, mem_targetsE] at hE
-    simp only [mem_targetsWin, mem_targetsW] at hW
-    simp [h1, h2] at h_cov1 h_cov2
-    exact disjoint_label_W_E (m := m) (u := c.u) (v := c.v) (bw := p2) (be := p1)
-      (hbw := hW.1.1) (hbw_pos := hW.2) (hbe_bound := hE.2)
-      (h_u_mono := c.u_mono_le) (h_v_mono := c.v_mono_le)
-      (h_u_inj := c.u_inj_y) (h_w_in := h_cov2) (h_e_in := h_cov1)
-      (h_bw_reg := hW.1.2) (h_be_reg := hE.1.2)
-  · have hE := props1.2.2.1 h1; have hN := props2.2.1 h2
-    simp only [mem_targetsEin, mem_targetsE] at hE
-    simp only [mem_targetsNin, mem_targetsN] at hN
-    simp [h1, h2] at h_cov1 h_cov2
-    apply disjoint_label_E_N (m := m) (v := c.v) (be := p1) (bn := p2)
-      (hbe := hE.1.1) (hbn := hN.1.1)
-      (hbe_bound := hE.2) (hbn_pos := hN.2)
-      (h_v_mono := c.v_mono_le) (h_v_inj := c.v_inj_y)
-      (h_e_in := h_cov1) (h_n_in := h_cov2)
-    · simp only [mem_regionEExtend] at hE; exact hE.1.2.2
-    · simp only [mem_regionNExtend] at hN; exact hN.1.2.2
-  · have hp1 := props1.2.2.1 h1; have hp2 := props2.2.2.1 h2
-    simp only [mem_targetsEin, mem_targetsE] at hp1 hp2
-    simp [h1, h2] at h_cov1 h_cov2
-    have h_p_ne : p1 ≠ p2 := by
-      contrapose! h_ne
-      rcases l1 with ⟨src1, type1⟩
-      rcases l2 with ⟨src2, type2⟩
-      simp only [Label.mk.injEq]
-      constructor
-      · exact h_ne
-      · simp at h1 h2; rw [h1, h2]
-    exact unique_label_E (m := m) (p := p1) (q := p2) (hp := hp1.1.1) (hq := hp2.1.1)
-      (h_ne := h_p_ne) (hp_bound := hp1.2) (hq_bound := hp2.2)
-      (hp_in := h_cov1) (hq_in := h_cov2) (h_unique_y := h_uniq_y)
-  · have hE := props1.2.2.1 h1; have hS := props2.2.2.2 h2
-    simp only [mem_targetsEin, mem_targetsE] at hE
-    simp only [mem_targetsSin, mem_targetsS] at hS
-    simp [h1, h2] at h_cov1 h_cov2
-    apply disjoint_label_E_S (m := m) (u := c.u) (be := p1) (bs := p2)
-      (hbe := hE.1.1) (hbs := hS.1.1)
-      (hbe_bound := hE.2) (hbs_bound := hS.2)
-      (h_u_mono := c.u_mono_le) (h_u_inj := c.u_inj_y)
-      (h_e_in := h_cov1) (h_s_in := h_cov2)
-    · simp only [mem_regionEExtend] at hE; exact hE.1.2.1
-    · simp only [mem_regionSExtend] at hS; exact hS.1.2.1
-  · exact not_valid_label_X c l2 h_valid2 h2
-  · have hS := props1.2.2.2 h1; have hW := props2.1 h2
-    simp only [mem_targetsSin, mem_targetsS] at hS
-    simp only [mem_targetsWin, mem_targetsW] at hW
-    simp [h1, h2] at h_cov1 h_cov2
-    apply disjoint_label_S_W (m := m) (v := c.v) (bs := p1) (bw := p2)
-      (hbs := hS.1.1) (hbw := hW.1.1) (hbs_bound := hS.2) (hbw_pos := hW.2)
-      (h_v_mono := c.v_mono_le) (h_v_inj := c.v_inj_y) (h_s_in := h_cov1) (h_w_in := h_cov2)
-    · simp only [mem_regionSExtend] at hS; exact hS.1.2.2
-    · simp only [mem_regionWExtend] at hW; exact hW.1.2.2
-  · have hS := props1.2.2.2 h1; have hN := props2.2.1 h2
-    simp only [mem_targetsSin, mem_targetsS] at hS
-    simp only [mem_targetsNin, mem_targetsN] at hN
-    simp [h1, h2] at h_cov1 h_cov2
-    apply disjoint_label_N_S (m := m) (u := c.u) (v := c.v) (bn := p2) (bs := p1)
-      (hbn := hN.1.1)
-      (hbn_pos := hN.2) (hbs_bound := hS.2)
-      (h_u_mono := c.u_mono_le) (h_v_mono := c.v_mono_le)
-      (h_v_inj := c.v_inj_y)
-      (h_n_in := h_cov2) (h_s_in := h_cov1)
-      (h_bn_reg := hN.1.2) (h_bs_reg := hS.1.2)
-  · have hS := props1.2.2.2 h1; have hE := props2.2.2.1 h2
-    simp only [mem_targetsSin, mem_targetsS] at hS
-    simp only [mem_targetsEin, mem_targetsE] at hE
-    simp [h1, h2] at h_cov1 h_cov2
-    apply disjoint_label_E_S (m := m) (u := c.u) (be := p2) (bs := p1)
-      (hbe := hE.1.1) (hbs := hS.1.1)
-      (hbe_bound := hE.2) (hbs_bound := hS.2)
-      (h_u_mono := c.u_mono_le) (h_u_inj := c.u_inj_y)
-      (h_e_in := h_cov2) (h_s_in := h_cov1)
-    · simp only [mem_regionEExtend] at hE; exact hE.1.2.1
-    · simp only [mem_regionSExtend] at hS; exact hS.1.2.1
-  · have hp1 := props1.2.2.2 h1; have hp2 := props2.2.2.2 h2
-    simp only [mem_targetsSin, mem_targetsS] at hp1 hp2
-    simp [h1, h2] at h_cov1 h_cov2
-    have h_p_ne : p1 ≠ p2 := by
-      contrapose! h_ne
-      rcases l1 with ⟨src1, type1⟩
-      rcases l2 with ⟨src2, type2⟩
-      simp only [Label.mk.injEq]
-      constructor
-      · exact h_ne
-      · simp at h1 h2; rw [h1, h2]
-    exact unique_label_S (m := m) (p := p1) (q := p2) (hp := hp1.1.1) (hq := hp2.1.1)
-      (h_ne := h_p_ne) (hp_bound := hp1.2) (hq_bound := hp2.2)
-      (hp_in := h_cov1) (hq_in := h_cov2) (h_unique_x := h_uniq_x)
-  · exact not_valid_label_X c l2 h_valid2 h2
-  case X.W | X.N | X.E | X.S | X.X =>
-    exact not_valid_label_X c l1 h_valid1 h1
+  exact matilda_covers_at_most_one_core c.h_unique_x c.h_unique_y
+    c.u_mono_le c.v_mono_le c.u_inj_y c.v_inj_y m l1 l2 h_ne
+    (by simp at h_cov1; exact h_cov1) (by simp at h_cov2; exact h_cov2)
+    (get_props l1 h_valid1) (get_props l2 h_valid2)
+    (fun h => (not_valid_label_X c l1 h_valid1 h).elim)
+    (fun h => (not_valid_label_X c l2 h_valid2 h).elim)
 
 lemma grid_size_ge_two_of_label {source : Point n} {lbl : LabelType}
     (hl : { source := source, type := lbl } ∈ c.validLabels) : 2 ≤ n := by
@@ -1580,79 +1551,31 @@ lemma valid_label_pos_not_black {n : ℕ} [NeZero n] (c : IntersectionSetup n)
                mem_union, mem_map] at hl
     rcases type <;> simp_all
   cases type
-  · change (source.1, source.2 - 1) ∈ c.all_black at h_pos_black
-    have h_eq : source = (source.1, source.2 - 1) := by
-      apply c.h_unique_x source h_src_black _ h_pos_black; simp
-    replace h_eq := (Prod.ext_iff.mp h_eq).2
-    have h_pos : 0 < source.2.val := by
+  · have h_pos : 0 < source.2.val := by
       simp only [validLabels, mem_union, mem_map] at hl
       rcases hl with h | h
       · simp at h; omega
       · simp at h
-    apply (Fin.ext_iff).mp at h_eq
-    have h_le : (1 : Fin n) ≤ source.2 := by
-      simp [Fin.le_def]
-      rw [Nat.mod_eq_of_lt h_n_ge_2]
-      apply Nat.succ_le_of_lt
-      simp [h_pos]
-    rw [Fin.sub_val_of_le h_le] at h_eq
-    have h_one_val : (1 : Fin n).val = 1 := by
-      simp; rw [Nat.mod_eq_of_lt h_n_ge_2]
-    omega
-  · change (source.1 - 1, source.2) ∈ c.all_black at h_pos_black
-    have h_eq : source = (source.1 - 1, source.2) := by
-      apply c.h_unique_y source h_src_black (source.1 - 1, source.2)  h_pos_black
-      simp
-    replace h_eq := (Prod.ext_iff.mp h_eq).1
-    have h_pos : 0 < source.1.val := by
+    exact label_pos_W_absurd h_n_ge_2 c.h_unique_x h_src_black h_pos h_pos_black
+  · have h_pos : 0 < source.1.val := by
       simp only [validLabels, mem_union, mem_map] at hl
       rcases hl with h | h
       · simp at h; omega
       · simp at h
-    apply (Fin.ext_iff).mp at h_eq
-    have h_le : (1 : Fin n) ≤ source.1 := by
-      simp [Fin.le_def]
-      rw [Nat.mod_eq_of_lt h_n_ge_2]
-      apply Nat.succ_le_of_lt
-      exact h_pos
-    rw [Fin.sub_val_of_le h_le] at h_eq
-    have h_one_val : (1 : Fin n).val = 1 := by
-      simp; rw [Nat.mod_eq_of_lt h_n_ge_2]
-    omega
-  · change (source.1, source.2 + 1) ∈ c.all_black at h_pos_black
-    have h_eq : source = (source.1, source.2 + 1) := by
-      apply c.h_unique_x source h_src_black (source.1, source.2 + 1) h_pos_black
-      simp
-    replace h_eq := (Prod.ext_iff.mp h_eq).2
-    have h_lt : source.2.val < n - 1 := by
+    exact label_pos_N_absurd h_n_ge_2 c.h_unique_y h_src_black h_pos h_pos_black
+  · have h_lt : source.2.val < n - 1 := by
       simp only [validLabels, mem_union, mem_map] at hl
       rcases hl with h | h
       · simp at h; linarith
       · simp at h
-    apply (Fin.ext_iff).mp at h_eq
-    rw [Fin.val_add] at h_eq
-    simp at h_eq
-    rw [Nat.mod_eq_of_lt (by omega)] at h_eq
-    omega
-  · change (source.1 + 1, source.2) ∈ c.all_black at h_pos_black
-    have h_eq : source = (source.1 + 1, source.2) := by
-      apply c.h_unique_y source h_src_black (source.1 + 1, source.2) h_pos_black
-      simp
-    replace h_eq := (Prod.ext_iff.mp h_eq).1
-    have h_lt : source.1.val < n - 1 := by
+    exact label_pos_E_absurd c.h_unique_x h_src_black h_lt h_pos_black
+  · have h_lt : source.1.val < n - 1 := by
       simp only [validLabels, mem_union, mem_map] at hl
       rcases hl with h | h
       · simp at h
       · simp at h; linarith
-    apply (Fin.ext_iff).mp at h_eq
-    rw [Fin.val_add] at h_eq
-    simp at h_eq
-    rw [Nat.mod_eq_of_lt (by omega)] at h_eq
-    omega
+    exact label_pos_S_absurd c.h_unique_y h_src_black h_lt h_pos_black
   · exact (not_valid_label_X c { source := source, type := .X } hl rfl).elim
-
-variable (matildas_partition : Finset (Matilda n c.all_black))
-variable (h_partition : ∀ p : Point n, p ∉ c.all_black → ∃! m ∈ matildas_partition, m.mem p)
 
 theorem matilda_count_ge_label_count
   (matildas_partition : Finset (Matilda n c.all_black))
@@ -2174,10 +2097,35 @@ noncomputable def getCrossingPoints (ha_pos : 0 < c.a) (hb_pos : 0 < c.b) : Cros
 
 variable (cp : CrossingPoints c)
 
+lemma CrossingPoints.mem_uk : cp.uk ∈ c.u := by
+  rw [cp.h_uk, ← c.mem_u_list]; exact List.get_mem _ _
+lemma CrossingPoints.mem_uk1 : cp.uk1 ∈ c.u := by
+  rw [cp.h_uk1, ← c.mem_u_list]; exact List.get_mem _ _
+lemma CrossingPoints.mem_vl : cp.vl ∈ c.v := by
+  rw [cp.h_vl, ← c.mem_v_list]; exact List.get_mem _ _
+lemma CrossingPoints.mem_vl1 : cp.vl1 ∈ c.v := by
+  rw [cp.h_vl1, ← c.mem_v_list]; exact List.get_mem _ _
+
 def Pivot : Finset (Point n) :=
   let range_x := (Ico (px cp.uk) (px cp.uk1)) ∩ (Ico (px cp.vl) (px cp.vl1))
   let range_y := (Ico (py cp.uk) (py cp.uk1)) ∩ (Ico (py cp.vl1) (py cp.vl))
   univ.filter (fun p => px p ∈ range_x ∧ py p ∈ range_y)
+
+omit [NeZero n] in
+private lemma px_strict_lt_of_sorted
+    {l : List (Point n)} {i j : Fin l.length}
+    (h_sorted : l.Pairwise ((· ≤ ·) on px)) (h_nodup : l.Nodup)
+    (h_lt : i < j)
+    {s : Finset (Point n)} (h_mem : ∀ p, p ∈ l ↔ p ∈ s)
+    (h_inj : ∀ a ∈ s, ∀ b ∈ s, px a = px b → a = b) :
+    px (l.get i) < px (l.get j) := by
+  have h_le := List.pairwise_iff_get.mp h_sorted i j h_lt
+  apply lt_of_le_of_ne h_le
+  intro h_px_eq
+  have h_ne : l.get i ≠ l.get j := by
+    intro h_eq; exact absurd ((List.Nodup.get_inj_iff h_nodup).mp h_eq) (Fin.ne_of_lt h_lt)
+  exact h_ne (h_inj (l.get i) ((h_mem _).mp (List.get_mem l i))
+    (l.get j) ((h_mem _).mp (List.get_mem l j)) h_px_eq)
 
 lemma pivot_nonempty : (Pivot c cp).Nonempty := by
   let uk := cp.uk; let uk1 := cp.uk1; let vl := cp.vl; let vl1 := cp.vl1
@@ -2203,44 +2151,23 @@ lemma pivot_nonempty : (Pivot c cp).Nonempty := by
       exact ⟨hx, hy⟩
     rw [← filter_eq_empty_iff, ← not_nonempty_iff_eq_empty] at h_not_nonempty
     exact h_not_nonempty ⟨p, hp_in⟩
-  have mem_uk : uk ∈ c.u := by simp only [uk]; rw[cp.h_uk, ← mem_u_list]; exact List.get_mem _ _
-  have mem_uk1 : uk1 ∈ c.u := by
-    simp only [uk1]; rw [cp.h_uk1, ← mem_u_list]; exact List.get_mem _ _
-  have mem_vl : vl ∈ c.v := by
-    simp only [vl]; rw [cp.h_vl, ← mem_v_list]; exact List.get_mem _ _
-  have mem_vl1 : vl1 ∈ c.v := by
-    simp only [vl1]; rw [cp.h_vl1, ← mem_v_list]; exact List.get_mem _ _
+  have mem_uk : uk ∈ c.u := cp.mem_uk
+  have mem_uk1 : uk1 ∈ c.u := cp.mem_uk1
+  have mem_vl : vl ∈ c.v := cp.mem_vl
+  have mem_vl1 : vl1 ∈ c.v := cp.mem_vl1
   rcases h_range_empty with h_x_empty | h_y_empty
   · simp only [range_x] at h_x_empty
     rw [Ico_inter_Ico, Ico_eq_empty_iff] at h_x_empty
     have h_u_lt : px uk < px uk1 := by
-        have h_le : px uk ≤ px uk1 := by
-           simp only [uk, uk1]; rw [cp.h_uk, cp.h_uk1]
-           apply List.pairwise_iff_get.mp c.u_list_sorted
-           simp
-        have h_ne : uk ≠ uk1 := by
-           simp only [uk, uk1]; rw [cp.h_uk, cp.h_uk1]
-           intro h_eq
-           have h_idx := (List.Nodup.get_inj_iff c.u_list_nodup).mp h_eq
-           simp at h_idx
-        apply lt_of_le_of_ne h_le
-        intro h_px_eq
-        apply h_ne
-        exact c.h_u_inj uk mem_uk uk1 mem_uk1 h_px_eq
+      simp only [uk, uk1]; rw [cp.h_uk, cp.h_uk1]
+      apply px_strict_lt_of_sorted c.u_list_sorted c.u_list_nodup _
+        (fun p => c.mem_u_list p) c.h_u_inj
+      simp
     have h_v_lt : px vl < px vl1 := by
-      have h_le : px vl ≤ px vl1 := by
-         simp only [vl, vl1]; rw [cp.h_vl, cp.h_vl1]
-         apply List.pairwise_iff_get.mp c.v_list_sorted
-         simp
-      have h_ne : vl ≠ vl1 := by
-        simp only [vl, vl1]; rw [cp.h_vl, cp.h_vl1]
-        intro h_eq
-        have h_idx := (List.Nodup.get_inj_iff c.v_list_nodup).mp h_eq
-        simp at h_idx
-      apply lt_of_le_of_ne h_le
-      intro h_px_eq
-      apply h_ne
-      exact c.h_v_inj vl mem_vl vl1 mem_vl1 h_px_eq
+      simp only [vl, vl1]; rw [cp.h_vl, cp.h_vl1]
+      apply px_strict_lt_of_sorted c.v_list_sorted c.v_list_nodup _
+        (fun p => c.mem_v_list p) c.h_v_inj
+      simp
     have h_split : px uk1 ≤ px vl ∨ px vl1 ≤ px uk := by
       by_contra h_not_or; push_neg at h_not_or
       push_neg at  h_x_empty
@@ -2278,33 +2205,17 @@ lemma pivot_nonempty : (Pivot c cp).Nonempty := by
   · simp only [range_y] at h_y_empty
     rw [Ico_inter_Ico, Ico_eq_empty_iff] at h_y_empty
     have h_u_py_lt : py uk < py uk1 := by
-      have h_x_le : px uk ≤ px uk1 := by
-         simp only [uk, uk1]; rw [cp.h_uk, cp.h_uk1]
-         apply List.pairwise_iff_get.mp c.u_list_sorted; simp
-      have h_x_ne : uk ≠ uk1 := by
-         simp only [uk, uk1]; rw [cp.h_uk, cp.h_uk1]
-         intro h
-         have h_idx := (List.Nodup.get_inj_iff c.u_list_nodup).mp h
-         simp at h_idx
-      have h_x_lt : px uk < px uk1 := by
-         apply lt_of_le_of_ne h_x_le
-         intro h_eq
-         exact h_x_ne (c.h_u_inj uk mem_uk uk1 mem_uk1 h_eq)
-      exact c.h_u_mono uk mem_uk uk1 mem_uk1 h_x_lt
+      have h_px_lt : px uk < px uk1 := by
+        simp only [uk, uk1]; rw [cp.h_uk, cp.h_uk1]
+        exact px_strict_lt_of_sorted c.u_list_sorted c.u_list_nodup (by simp)
+          (fun p => c.mem_u_list p) c.h_u_inj
+      exact c.h_u_mono uk mem_uk uk1 mem_uk1 h_px_lt
     have h_v_py_lt : py vl1 < py vl := by
-      have h_x_le : px vl ≤ px vl1 := by
-         simp only [vl, vl1]; rw [cp.h_vl, cp.h_vl1]
-         apply List.pairwise_iff_get.mp c.v_list_sorted; simp
-      have h_x_ne : vl ≠ vl1 := by
-         simp only [vl, vl1]; rw [cp.h_vl, cp.h_vl1]
-         intro h
-         have h_idx :=  (List.Nodup.get_inj_iff c.v_list_nodup).mp h
-         simp at h_idx
-      have h_x_lt : px vl < px vl1 := by
-         apply lt_of_le_of_ne h_x_le
-         intro h_eq
-         exact h_x_ne (c.h_v_inj vl mem_vl vl1 mem_vl1 h_eq)
-      exact c.h_v_mono vl mem_vl vl1 mem_vl1 h_x_lt
+      have h_px_lt : px vl < px vl1 := by
+        simp only [vl, vl1]; rw [cp.h_vl, cp.h_vl1]
+        exact px_strict_lt_of_sorted c.v_list_sorted c.v_list_nodup (by simp)
+          (fun p => c.mem_v_list p) c.h_v_inj
+      exact c.h_v_mono vl mem_vl vl1 mem_vl1 h_px_lt
     have h_split : py uk1 ≤ py vl1 ∨ py vl ≤ py uk := by
       by_contra h_not_or; push_neg at h_not_or; push_neg at h_y_empty
       simp only [min_le_iff, le_max_iff] at h_y_empty
@@ -2361,18 +2272,30 @@ lemma not_mem_of_strictly_between_sorted {α : Type*} {r : α → α → Prop} [
     have : val (L.get k_next) ≤ val (L.get i) := rel_val _ _ this
     linarith [h_between.2]
 
+private lemma u_not_between_uk_uk1 (cp : CrossingPoints c) (q : Point n)
+    (hq : q ∈ c.u) (hbetween : px cp.uk < px q ∧ px q < px cp.uk1) : False := by
+  apply not_mem_of_strictly_between_sorted c.u_list c.u_list_sorted
+    ⟨cp.k.val, by simp; omega⟩ ⟨cp.k.val + 1, by simp; omega⟩ rfl q
+  · rwa [c.mem_u_list]
+  · intro x y h; exact h
+  · rw [← cp.h_uk, ← cp.h_uk1]; exact hbetween
+
+private lemma v_not_between_vl_vl1 (cp : CrossingPoints c) (q : Point n)
+    (hq : q ∈ c.v) (hbetween : px cp.vl < px q ∧ px q < px cp.vl1) : False := by
+  apply not_mem_of_strictly_between_sorted c.v_list c.v_list_sorted
+    ⟨cp.l.val, by simp; omega⟩ ⟨cp.l.val + 1, by simp; omega⟩ rfl q
+  · rwa [c.mem_v_list]
+  · intro x y h; exact h
+  · rw [← cp.h_vl, ← cp.h_vl1]; exact hbetween
+
 lemma pivot_no_black (cp : CrossingPoints c) :
     ∀ p ∈ Pivot c cp, p ∉ c.all_black := by
   let uk := cp.uk; let uk1 := cp.uk1
   let vl := cp.vl; let vl1 := cp.vl1
-  have mem_uk : uk ∈ c.u := by
-    rw [← c.mem_u_list]; dsimp only [uk]; rw[cp.h_uk]; apply List.get_mem
-  have mem_uk1 : uk1 ∈ c.u := by
-    rw [← c.mem_u_list]; dsimp only [uk1]; rw[cp.h_uk1]; apply List.get_mem
-  have mem_vl : vl ∈ c.v := by
-    rw [← c.mem_v_list]; dsimp only [vl]; rw[cp.h_vl]; apply List.get_mem
-  have mem_vl1 : vl1 ∈ c.v := by
-    rw [← c.mem_v_list]; dsimp only [vl1]; rw[cp.h_vl1]; apply List.get_mem
+  have mem_uk : uk ∈ c.u := cp.mem_uk
+  have mem_uk1 : uk1 ∈ c.u := cp.mem_uk1
+  have mem_vl : vl ∈ c.v := cp.mem_vl
+  have mem_vl1 : vl1 ∈ c.v := cp.mem_vl1
   intro p hp_piv hp_blk
   rw [Pivot, mem_filter] at hp_piv
   obtain ⟨_, ⟨hx_range, hy_range⟩⟩ := hp_piv
@@ -2386,25 +2309,13 @@ lemma pivot_no_black (cp : CrossingPoints c) :
     rcases lt_or_eq_of_le h_px_u_le with h_px_strict | h_px_eq
     · rcases lt_or_eq_of_le h_py_u_le with h_py_strict | h_py_eq
       · exfalso
-        have h_p_not_in_u : p ∉ c.u := by
-          intro h_in
-          let k_idx : Fin c.u_list.length := ⟨cp.k, by simp; omega⟩
-          let k1_idx : Fin c.u_list.length := ⟨cp.k + 1, by simp; omega⟩
-          apply not_mem_of_strictly_between_sorted c.u_list c.u_list_sorted k_idx k1_idx rfl p
-          · rwa [c.mem_u_list]
-          · intro x y h; exact h
-          · rw[← cp.h_uk, ← cp.h_uk1]; exact ⟨h_px_strict, h_px_u_lt⟩
+        have h_p_not_in_u : p ∉ c.u :=
+          fun h_in => c.u_not_between_uk_uk1 cp p h_in ⟨h_px_strict, h_px_u_lt⟩
         apply c.h_u_max p hp_blk h_p_not_in_u
         · intro q hq hq_lt_p
           have h_qx_le : px q ≤ px uk := by
-             by_contra h_gt; push_neg at h_gt
-             have h_q_lt_uk1 : px q < px uk1 := lt_trans hq_lt_p h_px_u_lt
-             let k_idx : Fin c.u_list.length := ⟨cp.k, by simp; omega⟩
-             let k1_idx : Fin c.u_list.length := ⟨cp.k + 1, by simp; omega⟩
-             apply not_mem_of_strictly_between_sorted c.u_list c.u_list_sorted k_idx k1_idx rfl q
-             · rwa [c.mem_u_list]
-             · intro x y h; exact h
-             · rw [← cp.h_uk, ← cp.h_uk1]; exact ⟨h_gt, h_q_lt_uk1⟩
+            by_contra h_gt; push_neg at h_gt
+            exact c.u_not_between_uk_uk1 cp q hq ⟨h_gt, lt_trans hq_lt_p h_px_u_lt⟩
           have : py q ≤ py uk := by
             rcases lt_or_eq_of_le h_qx_le with h_lt | h_eq
             · exact le_of_lt (c.h_u_mono q hq uk mem_uk h_lt)
@@ -2412,14 +2323,8 @@ lemma pivot_no_black (cp : CrossingPoints c) :
           exact lt_of_le_of_lt this h_py_strict
         · intro q hq hp_lt_q
           have h_qx_ge : px uk1 ≤ px q := by
-             by_contra h_lt; push_neg at h_lt
-             have h_uk_lt_q : px uk < px q := lt_trans h_px_strict hp_lt_q
-             let k_idx : Fin c.u_list.length := ⟨cp.k, by simp; omega⟩
-             let k1_idx : Fin c.u_list.length := ⟨cp.k + 1, by simp; omega⟩
-             apply not_mem_of_strictly_between_sorted c.u_list c.u_list_sorted k_idx k1_idx rfl q
-             · rwa [c.mem_u_list]
-             · intro x y h; exact h
-             · rw [← cp.h_uk, ← cp.h_uk1]; exact ⟨h_uk_lt_q, h_lt⟩
+            by_contra h_lt; push_neg at h_lt
+            exact c.u_not_between_uk_uk1 cp q hq ⟨lt_trans h_px_strict hp_lt_q, h_lt⟩
           have : py uk1 ≤ py q := by
             rcases lt_or_eq_of_le h_qx_ge with h_lt | h_eq
             · exact le_of_lt (c.h_u_mono uk1 mem_uk1 q hq h_lt)
@@ -2431,25 +2336,13 @@ lemma pivot_no_black (cp : CrossingPoints c) :
     rcases lt_or_eq_of_le h_px_v_le with h_px_strict | h_px_eq
     · rcases lt_or_eq_of_le h_py_v_le with h_py_strict | h_py_eq
       · exfalso
-        have h_p_not_in_v : p ∉ c.v := by
-          intro h_in
-          let l_idx : Fin c.v_list.length := ⟨cp.l, by simp; omega⟩
-          let l1_idx : Fin c.v_list.length := ⟨cp.l + 1, by simp; omega⟩
-          apply not_mem_of_strictly_between_sorted c.v_list c.v_list_sorted l_idx l1_idx rfl p
-          · rwa [c.mem_v_list]
-          · intro x y h; exact h
-          · rw [← cp.h_vl, ← cp.h_vl1]; exact ⟨h_px_strict, h_px_v_lt⟩
+        have h_p_not_in_v : p ∉ c.v :=
+          fun h_in => c.v_not_between_vl_vl1 cp p h_in ⟨h_px_strict, h_px_v_lt⟩
         apply c.h_v_max p hp_blk h_p_not_in_v
         · intro q hq hq_lt_p
           have h_qx_le : px q ≤ px vl := by
-             by_contra h_gt; push_neg at h_gt
-             have h_q_lt_vl1 : px q < px vl1 := lt_trans hq_lt_p h_px_v_lt
-             let l_idx : Fin c.v_list.length := ⟨cp.l, by simp; omega⟩
-             let l1_idx : Fin c.v_list.length := ⟨cp.l + 1, by simp; omega⟩
-             apply not_mem_of_strictly_between_sorted c.v_list c.v_list_sorted l_idx l1_idx rfl q
-             · rwa [c.mem_v_list]
-             · intro x y h; exact h
-             · rw [← cp.h_vl, ← cp.h_vl1]; exact ⟨h_gt, h_q_lt_vl1⟩
+            by_contra h_gt; push_neg at h_gt
+            exact c.v_not_between_vl_vl1 cp q hq ⟨h_gt, lt_trans hq_lt_p h_px_v_lt⟩
           have : py vl ≤ py q := by
              rcases lt_or_eq_of_le h_qx_le with h_lt | h_eq
              · exact le_of_lt (c.h_v_mono q hq vl mem_vl h_lt)
@@ -2457,14 +2350,8 @@ lemma pivot_no_black (cp : CrossingPoints c) :
           exact lt_of_lt_of_le h_py_v_lt this
         · intro q hq hp_lt_q
           have h_qx_ge : px vl1 ≤ px q := by
-             by_contra h_lt; push_neg at h_lt
-             have h_vl_lt_q : px vl < px q := lt_trans h_px_strict hp_lt_q
-             let l_idx : Fin c.v_list.length := ⟨cp.l, by simp; omega⟩
-             let l1_idx : Fin c.v_list.length := ⟨cp.l + 1, by simp; omega⟩
-             apply not_mem_of_strictly_between_sorted c.v_list c.v_list_sorted l_idx l1_idx rfl q
-             · rwa [c.mem_v_list]
-             · intro x y h; exact h
-             · rw [← cp.h_vl, ← cp.h_vl1]; exact ⟨h_vl_lt_q, h_lt⟩
+            by_contra h_lt; push_neg at h_lt
+            exact c.v_not_between_vl_vl1 cp q hq ⟨lt_trans h_px_strict hp_lt_q, h_lt⟩
           have : py q ≤ py vl1 := by
              rcases lt_or_eq_of_le h_qx_ge with h_lt | h_eq
              · exact le_of_lt (c.h_v_mono vl1 mem_vl1 q hq h_lt)
@@ -2631,78 +2518,40 @@ lemma pivot_overlap_x (cp : CrossingPoints c) :
   have h := c.wx_bounds cp
   linarith [h.1.2, h.2.1.1]
 
+omit [NeZero n] in
+private lemma idx_lt_of_px_lt {L : List (Point n)}
+    (hL : L.Pairwise ((· ≤ ·) on px)) {i j : Fin L.length}
+    (h : px (L.get i) < px (L.get j)) : i < j := by
+  by_contra hg; push_neg at hg
+  exact absurd h (not_lt.mpr (List.Pairwise.rel_get_of_le hL hg))
+
 lemma u_y_le_uk_of_x_lt_uk1 (cp : CrossingPoints c) (q : Point n)
     (hq : q ∈ c.u) (hx : px q < px cp.uk1) : py q ≤ py cp.uk := by
   rw [← c.mem_u_list, List.mem_iff_get] at hq
   obtain ⟨i, rfl⟩ := hq
-  have h_i_le_k : i.val ≤ cp.k.val := by
-    by_contra h_gt
-    push_neg at h_gt
-    let k1_val := cp.k.val + 1
-    have h_k1_valid : k1_val < c.u_list.length := by simp; omega
-    let k1_idx : Fin c.u_list.length := ⟨k1_val, h_k1_valid⟩
-    have h_idx_le : k1_idx ≤ i := by
-      rw [Fin.le_iff_val_le_val]; exact h_gt
-    have h_val_le : px (c.u_list.get k1_idx) ≤ px (c.u_list.get i) :=
-      List.Pairwise.rel_get_of_le c.u_list_sorted h_idx_le
-    have h_uk1_def : cp.uk1 = c.u_list.get k1_idx := by
-      rw [cp.h_uk1]
-    rw [← h_uk1_def] at h_val_le
-    linarith
-  let k_val := cp.k.val
-  have h_k_valid : k_val < c.u_list.length := by simp; omega
-  let k_idx : Fin c.u_list.length := ⟨k_val, h_k_valid⟩
-  have h_idx_le : i ≤ k_idx := by
-    rw [Fin.le_iff_val_le_val]; exact h_i_le_k
-  have h_px_le : px (c.u_list.get i) ≤ px (c.u_list.get k_idx) :=
-    List.Pairwise.rel_get_of_le c.u_list_sorted h_idx_le
-  have h_uk_def : cp.uk = c.u_list.get k_idx := by
-    rw [cp.h_uk]
-  have mem_uk : cp.uk ∈ c.u := by
-    rw [h_uk_def, ← c.mem_u_list]; exact List.get_mem c.u_list k_idx
-  have mem_ui : c.u_list.get i ∈ c.u := by
-    rw [← c.mem_u_list]; exact List.get_mem c.u_list i
-  have h_px_le' : px (c.u_list.get i) ≤ px cp.uk := by
-    rw [h_uk_def]; exact h_px_le
-  apply c.u_mono_le (c.u_list.get i) mem_ui cp.uk mem_uk h_px_le'
+  have h_lt := idx_lt_of_px_lt c.u_list_sorted (i := i) (j := ⟨cp.k.val + 1, by simp; omega⟩)
+    (by rw [← cp.h_uk1]; exact hx)
+  have h_le : i ≤ (⟨cp.k.val, by simp; omega⟩ : Fin c.u_list.length) := by
+    simp only [Fin.le_iff_val_le_val, Fin.lt_def] at h_lt ⊢; omega
+  have h_px : px (c.u_list.get i) ≤ px (c.u_list.get ⟨cp.k.val, by simp; omega⟩) :=
+    List.Pairwise.rel_get_of_le c.u_list_sorted h_le
+  rw [← cp.h_uk] at h_px
+  have mem_i : c.u_list.get i ∈ c.u := by rw [← c.mem_u_list]; exact List.get_mem _ _
+  exact c.u_mono_le _ mem_i _ cp.mem_uk h_px
 
 lemma v_y_le_vl1_of_x_ge_uk1 (cp : CrossingPoints c) (q : Point n)
     (hq : q ∈ c.v) (hx : px cp.uk1 ≤ px q) : py q ≤ py cp.vl1 := by
-  have h_vl_lt_q : px cp.vl < px q := lt_of_lt_of_le (c.pivot_overlap_x cp) hx
   rw [← c.mem_v_list, List.mem_iff_get] at hq
   obtain ⟨j, rfl⟩ := hq
-  have h_idx_ge : cp.l.val + 1 ≤ j.val := by
-    by_contra h_lt
-    push_neg at h_lt
-    let l_val := cp.l.val
-    have h_l_valid : l_val < c.v_list.length := by simp; omega
-    let l_idx : Fin c.v_list.length := ⟨l_val, h_l_valid⟩
-    have h_idx_le : j ≤ l_idx := by
-      rw [Fin.le_iff_val_le_val]; linarith
-    have h_val_le : px (c.v_list.get j) ≤ px (c.v_list.get l_idx) :=
-      List.Pairwise.rel_get_of_le c.v_list_sorted h_idx_le
-    have h_vl_def : cp.vl = c.v_list.get l_idx := by
-      rw [cp.h_vl]
-    rw [← h_vl_def] at h_val_le
-    linarith
-  let l1_val := cp.l.val + 1
-  have h_l1_valid : l1_val < c.v_list.length := by simp; omega
-  let l1_idx : Fin c.v_list.length := ⟨l1_val, h_l1_valid⟩
-  have h_idx_ge_fin : l1_idx ≤ j := by
-    rw [Fin.le_iff_val_le_val]; exact h_idx_ge
-  have h_px_le : px (c.v_list.get l1_idx) ≤ px (c.v_list.get j) :=
-    List.Pairwise.rel_get_of_le c.v_list_sorted h_idx_ge_fin
-  have h_vl1_def : cp.vl1 = c.v_list.get l1_idx := by
-    rw [cp.h_vl1]
-  have mem_vl1 : cp.vl1 ∈ c.v := by
-    rw [h_vl1_def, ← c.mem_v_list]; exact List.get_mem _ _
-  have mem_vl1 : cp.vl1 ∈ c.v := by
-    rw [h_vl1_def, ← c.mem_v_list]; exact List.get_mem c.v_list l1_idx
-  have mem_vj : c.v_list.get j ∈ c.v := by
-    rw [← c.mem_v_list]; exact List.get_mem c.v_list j
-  have h_px_le' : px cp.vl1 ≤ px (c.v_list.get j) := by
-    rw [h_vl1_def]; exact h_px_le
-  apply c.v_mono_le cp.vl1 mem_vl1 (c.v_list.get j) mem_vj h_px_le'
+  have h_lt := idx_lt_of_px_lt c.v_list_sorted (i := ⟨cp.l.val, by simp; omega⟩) (j := j)
+    (by rw [← cp.h_vl]; exact lt_of_lt_of_le (c.pivot_overlap_x cp) hx)
+  have h_ge : (⟨cp.l.val + 1, by simp; omega⟩ : Fin c.v_list.length) ≤ j := by
+    simp only [Fin.le_iff_val_le_val, Fin.lt_def] at h_lt ⊢; omega
+  have h_px : px (c.v_list.get ⟨cp.l.val + 1, by simp; omega⟩) ≤ px (c.v_list.get j) :=
+    List.Pairwise.rel_get_of_le c.v_list_sorted h_ge
+  rw [← cp.h_vl1] at h_px
+  have mem_j : c.v_list.get j ∈ c.v := by rw [← c.mem_v_list]; exact List.get_mem _ _
+  exact c.v_mono_le _ cp.mem_vl1 _ mem_j h_px
 
 lemma disjoint_label_X_W (cp : CrossingPoints c) (m : Matilda n c.all_black) (bw : Point n)
     (hbw : bw ∈ c.all_black) (hbw_pos : 0 < py bw)
@@ -2737,25 +2586,17 @@ lemma u_x_le_uk_of_y_lt_uk1 (cp : CrossingPoints c) (q : Point n)
     (hq : q ∈ c.u) (hy : py q < py cp.uk1) : px q ≤ px cp.uk := by
   rw [← c.mem_u_list, List.mem_iff_get] at hq
   obtain ⟨i, rfl⟩ := hq
-  have h_idx_le : i.val ≤ cp.k.val := by
-    by_contra h_gt; push_neg at h_gt
-    let k1_idx : Fin c.u_list.length := ⟨cp.k.val + 1, by simp; omega⟩
-    have h_idx_le : k1_idx ≤ i := by rw [Fin.le_iff_val_le_val]; exact h_gt
-    have h_x_le : px (c.u_list.get k1_idx) ≤ px (c.u_list.get i) :=
-      List.Pairwise.rel_get_of_le c.u_list_sorted h_idx_le
-    have h_uk1_def : cp.uk1 = c.u_list.get k1_idx := by rw [cp.h_uk1]
-    have mem_uk1 : cp.uk1 ∈ c.u := by rw [h_uk1_def, ← c.mem_u_list]; exact List.get_mem _ _
-    have mem_ui : c.u_list.get i ∈ c.u := by
-      rw [← c.mem_u_list]; exact List.get_mem c.u_list i
-    have : py cp.uk1 ≤ py (c.u_list.get i) := by
-      rw [← h_uk1_def] at h_x_le
-      apply c.u_mono_le cp.uk1 mem_uk1 (c.u_list.get i) mem_ui h_x_le
-    linarith
-  let k_idx : Fin c.u_list.length := ⟨cp.k.val, by rw [c.u_list_length]; have := cp.k.isLt; omega⟩
-  have h_idx_le_k : i ≤ k_idx := by rw [Fin.le_iff_val_le_val]; exact h_idx_le
-  have : px (c.u_list.get i) ≤ px (c.u_list.get k_idx) :=
-    List.Pairwise.rel_get_of_le c.u_list_sorted h_idx_le_k
-  rwa [← cp.h_uk] at this
+  have h_px_lt : px (c.u_list.get i) < px cp.uk1 := by
+    by_contra hg; push_neg at hg
+    have mem_i : c.u_list.get i ∈ c.u := by rw [← c.mem_u_list]; exact List.get_mem _ _
+    linarith [c.u_mono_le cp.uk1 cp.mem_uk1 _ mem_i hg]
+  have h_lt := idx_lt_of_px_lt c.u_list_sorted (i := i) (j := ⟨cp.k.val + 1, by simp; omega⟩)
+    (by rw [← cp.h_uk1]; exact h_px_lt)
+  have h_le : i ≤ (⟨cp.k.val, by simp; omega⟩ : Fin c.u_list.length) := by
+    simp only [Fin.le_iff_val_le_val, Fin.lt_def] at h_lt ⊢; omega
+  have h_px : px (c.u_list.get i) ≤ px (c.u_list.get ⟨cp.k.val, by simp; omega⟩) :=
+    List.Pairwise.rel_get_of_le c.u_list_sorted h_le
+  rw [← cp.h_uk] at h_px; exact h_px
 
 lemma pivot_overlap_y (cp : CrossingPoints c) :
     py cp.vl1 < py cp.uk1 := by
@@ -2766,32 +2607,16 @@ lemma v_x_le_vl_of_y_ge_uk1 (cp : CrossingPoints c) (q : Point n)
     (hq : q ∈ c.v) (hy : py cp.uk1 ≤ py q) : px q ≤ px cp.vl := by
   rw [← c.mem_v_list, List.mem_iff_get] at hq
   obtain ⟨j, rfl⟩ := hq
-  by_contra h_gt
-  push_neg at h_gt
-  have h_l_lt_j : cp.l.val < j.val := by
-    by_contra h_le
-    push_neg at h_le
-    let l_idx : Fin c.v_list.length := ⟨cp.l.val, by rw [c.v_list_length]; have := cp.l.isLt; omega⟩
-    have h_idx_le : j ≤ l_idx := by rw [Fin.le_iff_val_le_val]; exact h_le
-    have h_x_le : px (c.v_list.get j) ≤ px (c.v_list.get l_idx) :=
-      List.Pairwise.rel_get_of_le c.v_list_sorted h_idx_le
-    have h_vl_def : cp.vl = c.v_list.get l_idx := by rw [cp.h_vl]
-    rw [← h_vl_def] at h_x_le
-    linarith
-  let l1_idx : Fin c.v_list.length := ⟨cp.l.val + 1, by simp; omega⟩
-  have h_idx_ge : l1_idx ≤ j := by rw [Fin.le_iff_val_le_val]; exact h_l_lt_j
-  have h_x_ge : px (c.v_list.get l1_idx) ≤ px (c.v_list.get j) :=
-    List.Pairwise.rel_get_of_le c.v_list_sorted h_idx_ge
-  have h_vl1_def : cp.vl1 = c.v_list.get l1_idx := by rw [cp.h_vl1]
-  have mem_vl1 : cp.vl1 ∈ c.v := by
-    rw [h_vl1_def, ← c.mem_v_list]; exact List.get_mem c.v_list l1_idx
-  have mem_q : c.v_list.get j ∈ c.v := by
-    rw [← c.mem_v_list]; exact List.get_mem c.v_list j
-  have h_y_le : py (c.v_list.get j) ≤ py cp.vl1 := by
-    rw [← h_vl1_def] at h_x_ge
-    apply c.v_mono_le cp.vl1 mem_vl1 (c.v_list.get j) mem_q h_x_ge
-  have h_pivot_y := c.pivot_overlap_y cp
-  linarith
+  by_contra h_gt; push_neg at h_gt
+  have h_lt := idx_lt_of_px_lt c.v_list_sorted (i := ⟨cp.l.val, by simp; omega⟩) (j := j)
+    (by rw [← cp.h_vl]; exact h_gt)
+  have h_ge : (⟨cp.l.val + 1, by simp; omega⟩ : Fin c.v_list.length) ≤ j := by
+    simp only [Fin.le_iff_val_le_val, Fin.lt_def] at h_lt ⊢; omega
+  have h_px : px (c.v_list.get ⟨cp.l.val + 1, by simp; omega⟩) ≤ px (c.v_list.get j) :=
+    List.Pairwise.rel_get_of_le c.v_list_sorted h_ge
+  rw [← cp.h_vl1] at h_px
+  have mem_j : c.v_list.get j ∈ c.v := by rw [← c.mem_v_list]; exact List.get_mem _ _
+  linarith [c.v_mono_le _ cp.mem_vl1 _ mem_j h_px, c.pivot_overlap_y cp]
 
 lemma disjoint_label_X_N (cp : CrossingPoints c) (m : Matilda n c.all_black) (bn : Point n)
     (hbn : bn ∈ c.all_black) (hbn_pos : 0 < px bn)
@@ -2826,26 +2651,26 @@ lemma u_x_ge_uk1_of_x_gt_uk (cp : CrossingPoints c) (q : Point n)
     (hq : q ∈ c.u) (hx : px cp.uk < px q) : px cp.uk1 ≤ px q := by
   rw [← c.mem_u_list, List.mem_iff_get] at hq
   obtain ⟨i, rfl⟩ := hq
-  by_contra h_lt
-  have h_idx_gt : cp.k.val < i.val := by
-    by_contra h_le; push_neg at h_le
-    let k_idx : Fin c.u_list.length := ⟨cp.k.val, by simp; omega⟩
-    have h_idx_le : i ≤ k_idx := by rw [Fin.le_iff_val_le_val]; exact h_le
-    have h_val_le : px (c.u_list.get i) ≤ px (c.u_list.get k_idx) :=
-      List.Pairwise.rel_get_of_le c.u_list_sorted h_idx_le
-    have h_uk_def : cp.uk = c.u_list.get k_idx := by rw [cp.h_uk]
-    rw [← h_uk_def] at h_val_le
-    linarith
-  have h_idx_lt : i.val < cp.k.val + 1 := by
-    by_contra h_ge; push_neg at h_ge
-    let k1_idx : Fin c.u_list.length := ⟨cp.k.val + 1, by simp; omega⟩
-    have h_idx_ge : k1_idx ≤ i := by rw [Fin.le_iff_val_le_val]; exact h_ge
-    have h_val_ge : px (c.u_list.get k1_idx) ≤ px (c.u_list.get i) :=
-      List.Pairwise.rel_get_of_le c.u_list_sorted h_idx_ge
-    have h_uk1_def : cp.uk1 = c.u_list.get k1_idx := by rw [cp.h_uk1]
-    rw [← h_uk1_def] at h_val_ge
-    linarith
-  omega
+  by_contra h_lt; push_neg at h_lt
+  have h1 := idx_lt_of_px_lt c.u_list_sorted (i := ⟨cp.k.val, by simp; omega⟩) (j := i)
+    (by rw [← cp.h_uk]; exact hx)
+  have h2 := idx_lt_of_px_lt c.u_list_sorted (i := i) (j := ⟨cp.k.val + 1, by simp; omega⟩)
+    (by rw [← cp.h_uk1]; exact h_lt)
+  simp only [Fin.lt_def] at h1 h2; omega
+
+lemma v_y_ge_vl_of_x_lt_vl1 (cp : CrossingPoints c) (q : Point n)
+    (hq : q ∈ c.v) (hx : px q < px cp.vl1) : py cp.vl ≤ py q := by
+  rw [← c.mem_v_list, List.mem_iff_get] at hq
+  obtain ⟨j, rfl⟩ := hq
+  have h_lt := idx_lt_of_px_lt c.v_list_sorted (i := j) (j := ⟨cp.l.val + 1, by simp; omega⟩)
+    (by rw [← cp.h_vl1]; exact hx)
+  have h_le : j ≤ (⟨cp.l.val, by simp; omega⟩ : Fin c.v_list.length) := by
+    simp only [Fin.le_iff_val_le_val, Fin.lt_def] at h_lt ⊢; omega
+  have h_px : px (c.v_list.get j) ≤ px (c.v_list.get ⟨cp.l.val, by simp; omega⟩) :=
+    List.Pairwise.rel_get_of_le c.v_list_sorted h_le
+  rw [← cp.h_vl] at h_px
+  have mem_q : c.v_list.get j ∈ c.v := by rw [← c.mem_v_list]; exact List.get_mem _ _
+  exact c.v_mono_le _ mem_q _ cp.mem_vl h_px
 
 lemma disjoint_label_X_E (cp : CrossingPoints c) (m : Matilda n c.all_black) (be : Point n)
     (hbe : be ∈ c.all_black) (hbe_bound : py be < n - 1)
@@ -2863,38 +2688,15 @@ lemma disjoint_label_X_E (cp : CrossingPoints c) (m : Matilda n c.all_black) (be
     · rw [mem_u_upper] at h_be_u_up
       obtain ⟨qi, hqi, hx_le, hy_le⟩ := h_be_u_up
       have h_idx_le : px cp.uk1 ≤ px qi := le_trans h_split_u hx_le
-      have h_uk1_mem : cp.uk1 ∈ c.u := by
-        rw [cp.h_uk1, ← c.mem_u_list]; exact List.get_mem _ _
       have h_y_le : py cp.uk1 ≤ py qi :=
-        c.u_mono_le cp.uk1 h_uk1_mem qi hqi h_idx_le
+        c.u_mono_le cp.uk1 cp.mem_uk1 qi hqi h_idx_le
       linarith [hy_u.2, hy_le]
     · push_neg at h_split_u
       by_cases h_split_v : px be < px cp.vl1
       · rw [mem_v_upper] at h_be_v_up
         obtain ⟨rj, hrj, hx_le, hy_le⟩ := h_be_v_up
-        have h_idx_lt : px rj < px cp.vl1 := lt_of_le_of_lt hx_le h_split_v
-        rw [← c.mem_v_list, List.mem_iff_get] at hrj
-        obtain ⟨j, rfl⟩ := hrj
-        have h_j_le_l : j.val ≤ cp.l.val := by
-          by_contra h_gt; push_neg at h_gt
-          let l1_idx : Fin c.v_list.length := ⟨cp.l.val + 1, by simp; omega⟩
-          have h_idx_le : l1_idx ≤ j := by rw [Fin.le_iff_val_le_val]; exact h_gt
-          have h_val_le : px (c.v_list.get l1_idx) ≤ px (c.v_list.get j) :=
-             List.Pairwise.rel_get_of_le c.v_list_sorted h_idx_le
-          have h_vl1_def : cp.vl1 = c.v_list.get l1_idx := by rw [cp.h_vl1]
-          rw [← h_vl1_def] at h_val_le
-          linarith
-        let l_idx : Fin c.v_list.length := ⟨cp.l.val, by simp; omega⟩
-        have h_idx_le : j ≤ l_idx := by rw [Fin.le_iff_val_le_val]; exact h_j_le_l
-        have h_x_le_vl : px (c.v_list.get j) ≤ px (c.v_list.get l_idx) :=
-          List.Pairwise.rel_get_of_le c.v_list_sorted h_idx_le
-        have h_vl_def : cp.vl = c.v_list.get l_idx := by rw [cp.h_vl]
-        have mem_vl : cp.vl ∈ c.v := by rw [h_vl_def, ← c.mem_v_list]; exact List.get_mem _ _
-        have mem_rj : c.v_list.get j ∈ c.v := by rw [← c.mem_v_list]; exact List.get_mem _ _
-        rw [← h_vl_def] at h_x_le_vl
-        have h_y_ge_vl : py cp.vl ≤ py (c.v_list.get j) :=
-          c.v_mono_le (c.v_list.get j) mem_rj cp.vl mem_vl h_x_le_vl
-        linarith [hy_v.2, hy_le]
+        have h_rj_lt : px rj < px cp.vl1 := lt_of_le_of_lt hx_le h_split_v
+        linarith [hy_v.2, c.v_y_ge_vl_of_x_lt_vl1 cp rj hrj h_rj_lt]
       · push_neg at h_split_v
         rw [mem_u_upper] at h_be_u_up
         obtain ⟨qi, hqi, hx_le, hy_le⟩ := h_be_u_up
@@ -2905,10 +2707,8 @@ lemma disjoint_label_X_E (cp : CrossingPoints c) (m : Matilda n c.all_black) (be
            linarith
         have h_uk1_le_qi : px cp.uk1 ≤ px qi :=
           c.u_x_ge_uk1_of_x_gt_uk cp qi hqi h_uk_lt_qi
-        have h_uk1_mem : cp.uk1 ∈ c.u := by
-          rw [cp.h_uk1, ← c.mem_u_list]; exact List.get_mem _ _
         have h_y_ge_uk1 : py cp.uk1 ≤ py qi :=
-          c.u_mono_le cp.uk1 h_uk1_mem qi hqi h_uk1_le_qi
+          c.u_mono_le cp.uk1 cp.mem_uk1 qi hqi h_uk1_le_qi
         linarith [hy_u.2, hy_le]
   have h_be_in_m : m.mem be := by
     simp only [Matilda.mem]
@@ -2920,55 +2720,11 @@ lemma pivot_overlap_y_2 (cp : CrossingPoints c) :
   have h := c.wx_bounds cp
   linarith [h.2]
 
-lemma v_y_ge_vl_of_x_lt_vl1 (cp : CrossingPoints c) (q : Point n)
-    (hq : q ∈ c.v) (hx : px q < px cp.vl1) : py cp.vl ≤ py q := by
-  rw [← c.mem_v_list, List.mem_iff_get] at hq
-  obtain ⟨j, rfl⟩ := hq
-  have h_idx_le : j.val ≤ cp.l.val := by
-    by_contra h_gt; push_neg at h_gt
-    let l1_idx : Fin c.v_list.length := ⟨cp.l.val + 1, by simp; omega⟩
-    have h_idx_le : l1_idx ≤ j := by rw [Fin.le_iff_val_le_val]; exact h_gt
-    have h_x_le : px (c.v_list.get l1_idx) ≤ px (c.v_list.get j) :=
-      List.Pairwise.rel_get_of_le c.v_list_sorted h_idx_le
-    have h_vl1_def : cp.vl1 = c.v_list.get l1_idx := by rw [cp.h_vl1]
-    rw [← h_vl1_def] at h_x_le
-    linarith
-  let l_idx : Fin c.v_list.length := ⟨cp.l.val, by simp; omega⟩
-  have h_idx_le_fin : j ≤ l_idx := by rw [Fin.le_iff_val_le_val]; exact h_idx_le
-  have h_x_le : px (c.v_list.get j) ≤ px (c.v_list.get l_idx) :=
-     List.Pairwise.rel_get_of_le c.v_list_sorted h_idx_le_fin
-  have h_vl_def : cp.vl = c.v_list.get l_idx := by rw [cp.h_vl]
-  have mem_vl : cp.vl ∈ c.v := by rw [h_vl_def, ← c.mem_v_list]; exact List.get_mem _ _
-  have mem_q : c.v_list.get j ∈ c.v := by rw [← c.mem_v_list]; exact List.get_mem _ _
-  rw [← h_vl_def] at h_x_le
-  apply c.v_mono_le _ mem_q _ mem_vl h_x_le
-
 lemma u_x_ge_uk1_of_y_ge_vl (cp : CrossingPoints c) (q : Point n)
     (hq : q ∈ c.u) (hy : py cp.vl ≤ py q) : px cp.uk1 ≤ px q := by
-  have h_pivot := c.pivot_overlap_y_2 cp
-  have h_uk_lt_q : py cp.uk < py q := lt_of_lt_of_le h_pivot hy
-  rw [← c.mem_u_list, List.mem_iff_get] at hq
-  obtain ⟨i, rfl⟩ := hq
-  have h_idx_ge : cp.k.val + 1 ≤ i.val := by
-    by_contra h_lt; push_neg at h_lt
-    let k_idx : Fin c.u_list.length := ⟨cp.k.val, by rw [c.u_list_length]; have := cp.k.isLt; omega⟩
-    have h_idx_le : i ≤ k_idx := by rw [Fin.le_iff_val_le_val]; linarith
-    have h_x_le : px (c.u_list.get i) ≤ px (c.u_list.get k_idx) :=
-      List.Pairwise.rel_get_of_le c.u_list_sorted h_idx_le
-    have h_uk_def : cp.uk = c.u_list.get k_idx := by rw [cp.h_uk]
-    have mem_uk : cp.uk ∈ c.u := by rw [h_uk_def, ← c.mem_u_list]; exact List.get_mem _ _
-    have mem_q : c.u_list.get i ∈ c.u := by rw [← c.mem_u_list]; exact List.get_mem _ _
-    rw [← h_uk_def] at h_x_le
-    have h_y_le : py (c.u_list.get i) ≤ py cp.uk :=
-      c.u_mono_le _ mem_q _ mem_uk h_x_le
-    linarith
-  let k1_idx : Fin c.u_list.length := ⟨cp.k.val + 1, by simp; omega⟩
-  have h_idx_ge_fin : k1_idx ≤ i := by rw [Fin.le_iff_val_le_val]; exact h_idx_ge
-  have h_x_ge : px (c.u_list.get k1_idx) ≤ px (c.u_list.get i) :=
-    List.Pairwise.rel_get_of_le c.u_list_sorted h_idx_ge_fin
-  have h_uk1_def : cp.uk1 = c.u_list.get k1_idx := by rw [cp.h_uk1]
-  rw [← h_uk1_def] at h_x_ge
-  exact h_x_ge
+  apply c.u_x_ge_uk1_of_x_gt_uk cp q hq
+  by_contra hg; push_neg at hg
+  linarith [c.u_mono_le q hq cp.uk cp.mem_uk hg, c.pivot_overlap_y_2 cp]
 
 lemma disjoint_label_X_S (cp : CrossingPoints c) (m : Matilda n c.all_black) (bs : Point n)
     (hbs : bs ∈ c.all_black) (hbs_bound : px bs < n - 1)
@@ -3002,16 +2758,36 @@ lemma disjoint_label_X_S (cp : CrossingPoints c) (m : Matilda n c.all_black) (bs
 
 open Classical
 
+private lemma covers_X_other (cp : CrossingPoints c) (m : Matilda n c.all_black)
+    (h_x_in : m.mem (c.wx cp)) (l : Label n) (h_not_X : l.type ≠ .X)
+    (h_cov : m.mem (label_pos l).2)
+    (h_props : (l.type = .W → l.source ∈ targetsWin c.u c.v c.all_black) ∧
+               (l.type = .N → l.source ∈ targetsNin c.u c.v c.all_black) ∧
+               (l.type = .E → l.source ∈ targetsEin c.u c.v c.all_black) ∧
+               (l.type = .S → l.source ∈ targetsSin c.u c.v c.all_black)) : False := by
+  cases h : l.type
+  · simp only [label_pos, h] at h_cov
+    have hW := h_props.1 h; simp only [mem_targetsWin, mem_targetsW] at hW
+    exact c.disjoint_label_X_W cp m l.source hW.1.1 hW.2 h_cov h_x_in hW.1.2
+  · simp only [label_pos, h] at h_cov
+    have hN := h_props.2.1 h; simp only [mem_targetsNin, mem_targetsN] at hN
+    exact c.disjoint_label_X_N cp m l.source hN.1.1 hN.2 h_cov h_x_in hN.1.2
+  · simp only [label_pos, h] at h_cov
+    have hE := h_props.2.2.1 h; simp only [mem_targetsEin, mem_targetsE] at hE
+    exact c.disjoint_label_X_E cp m l.source hE.1.1 hE.2 h_x_in h_cov hE.1.2
+  · simp only [label_pos, h] at h_cov
+    have hS := h_props.2.2.2 h; simp only [mem_targetsSin, mem_targetsS] at hS
+    exact c.disjoint_label_X_S cp m l.source hS.1.1 hS.2 h_cov h_x_in hS.1.2
+  · exact absurd h h_not_X
+
 lemma matilda_covers_at_most_one (cp : CrossingPoints c) (m : Matilda n c.all_black) :
     ({l ∈ validLabels c cp | covers c m l}).card ≤ 1 := by
   rw [card_le_one_iff]
   intro l1 l2 hl1 hl2
   rw [mem_filter] at hl1 hl2
-  obtain ⟨h_valid1, h_cov1⟩ := hl1
-  obtain ⟨h_valid2, h_cov2⟩ := hl2
+  obtain ⟨h_valid1, h_cov1⟩ := hl1; obtain ⟨h_valid2, h_cov2⟩ := hl2
   by_contra h_ne
-
-  let p1 := l1.source; let t1 := l1.type; let p2 := l2.source; let t2 := l2.type
+  let p1 := l1.source; let p2 := l2.source
   have get_props : ∀ l ∈ validLabels c cp,
       (l.type = .W → l.source ∈ targetsWin c.u c.v c.all_black) ∧
       (l.type = .N → l.source ∈ targetsNin c.u c.v c.all_black) ∧
@@ -3022,258 +2798,28 @@ lemma matilda_covers_at_most_one (cp : CrossingPoints c) (m : Matilda n c.all_bl
     simp only [validLabels, mem_union, mem_map, or_assoc] at hl
     rcases hl with ⟨p, hp, rfl⟩ | ⟨p, hp, rfl⟩ | ⟨p, hp, rfl⟩ | ⟨p, hp, rfl⟩ | ⟨p, hp, rfl⟩
     <;> simp_all [mem_singleton]
-
   have props1 := get_props l1 h_valid1; have props2 := get_props l2 h_valid2
-  cases h1 : l1.type <;> cases h2 : l2.type
-  · have hp1 := props1.1 h1; have hp2 := props2.1 h2
-    simp only [mem_targetsWin, mem_targetsW] at hp1 hp2
-    simp [h1, h2] at h_cov1 h_cov2
-    have h_p_ne : p1 ≠ p2 := by
-      contrapose! h_ne
-      rcases l1 with ⟨src1, type1⟩
-      rcases l2 with ⟨src2, type2⟩
-      simp only [Label.mk.injEq]
-      constructor
-      · exact h_ne
-      · simp at h1 h2; rw [h1, h2]
-    exact unique_label_W (m := m) (p := p1) (q := p2)
-      (hp := hp1.1.1) (hq := hp2.1.1) (h_ne := h_p_ne)
-      (hp_pos := hp1.2) (hq_pos := hp2.2)
-      (hp_in := h_cov1) (hq_in := h_cov2) (h_unique_y := c.h_unique_y)
-  · have hW := props1.1 h1; have hN := props2.2.1 h2
-    simp only [mem_targetsWin, mem_targetsW] at hW
-    simp only [mem_targetsNin, mem_targetsN] at hN
-    simp [h1, h2] at h_cov1 h_cov2
-    apply disjoint_label_W_N (m := m) (u := c.u) (bw := p1) (bn := p2)
-      (hbw := hW.1.1) (hbn := hN.1.1) (hbw_pos := hW.2) (hbn_pos := hN.2)
-      (h_u_mono := c.u_mono_le) (h_u_inj := c.u_inj_y)
-      (h_w_in := h_cov1) (h_n_in := h_cov2)
-    · simp only [mem_regionWExtend] at hW; exact hW.1.2.1
-    · simp only [mem_regionNExtend] at hN; exact hN.1.2.1
-  · have hW := props1.1 h1; have hE := props2.2.2.1 h2
-    simp only [mem_targetsWin, mem_targetsW] at hW
-    simp only [mem_targetsEin, mem_targetsE] at hE
-    simp [h1, h2] at h_cov1 h_cov2
-    apply disjoint_label_W_E (m := m) (u := c.u) (v := c.v) (bw := p1) (be := p2)
-      (hbw := hW.1.1) (hbw_pos := hW.2) (hbe_bound := hE.2)
-      (h_u_mono := c.u_mono_le) (h_v_mono := c.v_mono_le) (h_u_inj := c.u_inj_y)
-      (h_w_in := h_cov1) (h_e_in := h_cov2)
-      (h_bw_reg := hW.1.2) (h_be_reg := hE.1.2)
-  · have hW := props1.1 h1; have hS := props2.2.2.2.1 h2
-    simp only [mem_targetsWin, mem_targetsW] at hW
-    simp only [mem_targetsSin, mem_targetsS] at hS
-    simp [h1, h2] at h_cov1 h_cov2
-    apply disjoint_label_S_W (m := m) (v := c.v) (bs := p2) (bw := p1)
-      (hbs := hS.1.1) (hbw := hW.1.1) (hbs_bound := hS.2) (hbw_pos := hW.2)
-      (h_v_mono := c.v_mono_le) (h_v_inj := c.v_inj_y)
-      (h_s_in := h_cov2) (h_w_in := h_cov1)
-    · simp only [mem_regionSExtend] at hS; exact hS.1.2.2
-    · simp only [mem_regionWExtend] at hW; exact hW.1.2.2
-  · have hW := props1.1 h1; have hX := props2.2.2.2.2 h2
-    simp only [mem_targetsWin, mem_targetsW] at hW
-    simp [h1, h2] at h_cov1 h_cov2
-    rw [hX] at h_cov2
-    apply disjoint_label_X_W (cp := cp) (m := m) (bw := p1)
-      (hbw := hW.1.1) (hbw_pos := hW.2)
-      (h_w_in := h_cov1) (h_x_in := h_cov2)
-    · exact hW.1.2
-  · have hN := props1.2.1 h1; have hW := props2.1 h2
-    simp only [mem_targetsWin, mem_targetsW] at hW
-    simp only [mem_targetsNin, mem_targetsN] at hN
-    simp [h1, h2] at h_cov1 h_cov2
-    apply disjoint_label_W_N (m := m) (u := c.u) (bw := p2) (bn := p1)
-      (hbw := hW.1.1) (hbn := hN.1.1) (hbw_pos := hW.2) (hbn_pos := hN.2)
-      (h_u_mono := c.u_mono_le) (h_u_inj := c.u_inj_y)
-      (h_w_in := h_cov2) (h_n_in := h_cov1)
-    · simp only [mem_regionWExtend] at hW; exact hW.1.2.1
-    · simp only [mem_regionNExtend] at hN; exact hN.1.2.1
-  · have hp1 := props1.2.1 h1; have hp2 := props2.2.1 h2
-    simp only [mem_targetsNin, mem_targetsN] at hp1 hp2
-    simp [h1, h2] at h_cov1 h_cov2
-    have h_p_ne : p1 ≠ p2 := by
-      contrapose! h_ne
-      rcases l1 with ⟨src1, type1⟩
-      rcases l2 with ⟨src2, type2⟩
-      simp only [Label.mk.injEq]
-      constructor
-      · exact h_ne
-      · simp at h1 h2; rw [h1, h2]
-    exact unique_label_N (m := m) (p := p1) (q := p2)
-      (hp := hp1.1.1) (hq := hp2.1.1) (h_ne := h_p_ne)
-      (hp_pos := hp1.2) (hq_pos := hp2.2)
-      (hp_in := h_cov1) (hq_in := h_cov2) (h_unique_x := c.h_unique_x)
-  · have hN := props1.2.1 h1; have hE := props2.2.2.1 h2
-    simp only [mem_targetsNin, mem_targetsN] at hN
-    simp only [mem_targetsEin, mem_targetsE] at hE
-    simp [h1, h2] at h_cov1 h_cov2
-    apply disjoint_label_E_N (m := m) (v := c.v) (be := p2) (bn := p1)
-      (hbe := hE.1.1) (hbn := hN.1.1) (hbe_bound := hE.2) (hbn_pos := hN.2)
-      (h_v_mono := c.v_mono_le) (h_v_inj := c.v_inj_y)
-      (h_e_in := h_cov2) (h_n_in := h_cov1)
-    · simp only [mem_regionEExtend] at hE; exact hE.1.2.2
-    · simp only [mem_regionNExtend] at hN; exact hN.1.2.2
-  · have hN := props1.2.1 h1; have hS := props2.2.2.2.1 h2
-    simp only [mem_targetsNin, mem_targetsN] at hN
-    simp only [mem_targetsSin, mem_targetsS] at hS
-    simp [h1, h2] at h_cov1 h_cov2
-    apply disjoint_label_N_S (m := m) (u := c.u) (v := c.v) (bn := p1) (bs := p2)
-      (hbn := hN.1.1) (hbn_pos := hN.2) (hbs_bound := hS.2)
-      (h_u_mono := c.u_mono_le) (h_v_mono := c.v_mono_le) (h_v_inj := c.v_inj_y)
-      (h_n_in := h_cov1) (h_s_in := h_cov2)
-      (h_bn_reg := hN.1.2) (h_bs_reg := hS.1.2)
-  · have hN := props1.2.1 h1; have hX := props2.2.2.2.2 h2
-    simp only [mem_targetsNin, mem_targetsN] at hN
-    simp [h1, h2] at h_cov1 h_cov2
-    rw [hX] at h_cov2
-    apply disjoint_label_X_N (cp := cp) (m := m) (bn := p1)
-      (hbn := hN.1.1) (hbn_pos := hN.2)
-      (h_n_in := h_cov1) (h_x_in := h_cov2)
-    · exact hN.1.2
-  · have hE := props1.2.2.1 h1; have hW := props2.1 h2
-    simp only [mem_targetsEin, mem_targetsE] at hE
-    simp only [mem_targetsWin, mem_targetsW] at hW
-    simp [h1, h2] at h_cov1 h_cov2
-    apply disjoint_label_W_E (m := m) (u := c.u) (v := c.v) (bw := p2) (be := p1)
-      (hbw := hW.1.1) (hbw_pos := hW.2) (hbe_bound := hE.2)
-      (h_u_mono := c.u_mono_le) (h_v_mono := c.v_mono_le) (h_u_inj := c.u_inj_y)
-      (h_w_in := h_cov2) (h_e_in := h_cov1)
-      (h_bw_reg := hW.1.2) (h_be_reg := hE.1.2)
-  · have hE := props1.2.2.1 h1; have hN := props2.2.1 h2
-    simp only [mem_targetsEin, mem_targetsE] at hE
-    simp only [mem_targetsNin, mem_targetsN] at hN
-    simp [h1, h2] at h_cov1 h_cov2
-    apply disjoint_label_E_N (m := m) (v := c.v) (be := p1) (bn := p2)
-      (hbe := hE.1.1) (hbn := hN.1.1) (hbe_bound := hE.2) (hbn_pos := hN.2)
-      (h_v_mono := c.v_mono_le) (h_v_inj := c.v_inj_y)
-      (h_e_in := h_cov1) (h_n_in := h_cov2)
-    · simp only [mem_regionEExtend] at hE; exact hE.1.2.2
-    · simp only [mem_regionNExtend] at hN; exact hN.1.2.2
-  · have hp1 := props1.2.2.1 h1; have hp2 := props2.2.2.1 h2
-    simp only [mem_targetsEin, mem_targetsE] at hp1 hp2
-    simp [h1, h2] at h_cov1 h_cov2
-    have h_p_ne : p1 ≠ p2 := by
-      contrapose! h_ne
-      rcases l1 with ⟨src1, type1⟩
-      rcases l2 with ⟨src2, type2⟩
-      simp only [Label.mk.injEq]
-      constructor
-      · exact h_ne
-      · simp at h1 h2; rw [h1, h2]
-    exact unique_label_E (m := m) (p := p1) (q := p2)
-      (hp := hp1.1.1) (hq := hp2.1.1) (h_ne := h_p_ne)
-      (hp_bound := hp1.2) (hq_bound := hp2.2)
-      (hp_in := h_cov1) (hq_in := h_cov2) (h_unique_y := c.h_unique_y)
-  · have hE := props1.2.2.1 h1; have hS := props2.2.2.2.1 h2
-    simp only [mem_targetsEin, mem_targetsE] at hE
-    simp only [mem_targetsSin, mem_targetsS] at hS
-    simp [h1, h2] at h_cov1 h_cov2
-    apply disjoint_label_E_S (m := m) (u := c.u) (be := p1) (bs := p2)
-      (hbe := hE.1.1) (hbs := hS.1.1) (hbe_bound := hE.2) (hbs_bound := hS.2)
-      (h_u_mono := c.u_mono_le) (h_u_inj := c.u_inj_y)
-      (h_e_in := h_cov1) (h_s_in := h_cov2)
-    · simp only [mem_regionEExtend] at hE; exact hE.1.2.1
-    · simp only [mem_regionSExtend] at hS; exact hS.1.2.1
-  · have hE := props1.2.2.1 h1; have hX := props2.2.2.2.2 h2
-    simp only [mem_targetsEin, mem_targetsE] at hE
-    simp [h1, h2] at h_cov1 h_cov2
-    rw [hX] at h_cov2
-    apply disjoint_label_X_E (cp := cp) (m := m) (be := p1)
-      (hbe := hE.1.1) (hbe_bound := hE.2)
-      (h_x_in := h_cov2) (h_e_in := h_cov1)
-    · exact hE.1.2
-  · have hS := props1.2.2.2.1 h1; have hW := props2.1 h2
-    simp only [mem_targetsSin, mem_targetsS] at hS
-    simp only [mem_targetsWin, mem_targetsW] at hW
-    simp [h1, h2] at h_cov1 h_cov2
-    apply disjoint_label_S_W (m := m) (v := c.v) (bs := p1) (bw := p2)
-      (hbs := hS.1.1) (hbw := hW.1.1) (hbs_bound := hS.2) (hbw_pos := hW.2)
-      (h_v_mono := c.v_mono_le) (h_v_inj := c.v_inj_y)
-      (h_s_in := h_cov1) (h_w_in := h_cov2)
-    · simp only [mem_regionSExtend] at hS; exact hS.1.2.2
-    · simp only [mem_regionWExtend] at hW; exact hW.1.2.2
-  · have hS := props1.2.2.2.1 h1; have hN := props2.2.1 h2
-    simp only [mem_targetsSin, mem_targetsS] at hS
-    simp only [mem_targetsNin, mem_targetsN] at hN
-    simp [h1, h2] at h_cov1 h_cov2
-    apply disjoint_label_N_S (m := m) (u := c.u) (v := c.v) (bn := p2) (bs := p1)
-      (hbn := hN.1.1) (hbn_pos := hN.2) (hbs_bound := hS.2)
-      (h_u_mono := c.u_mono_le) (h_v_mono := c.v_mono_le) (h_v_inj := c.v_inj_y)
-      (h_n_in := h_cov2) (h_s_in := h_cov1)
-      (h_bn_reg := hN.1.2) (h_bs_reg := hS.1.2)
-  · have hS := props1.2.2.2.1 h1; have hE := props2.2.2.1 h2
-    simp only [mem_targetsSin, mem_targetsS] at hS
-    simp only [mem_targetsEin, mem_targetsE] at hE
-    simp [h1, h2] at h_cov1 h_cov2
-    apply disjoint_label_E_S (m := m) (u := c.u) (be := p2) (bs := p1)
-      (hbe := hE.1.1) (hbs := hS.1.1) (hbe_bound := hE.2) (hbs_bound := hS.2)
-      (h_u_mono := c.u_mono_le) (h_u_inj := c.u_inj_y)
-      (h_e_in := h_cov2) (h_s_in := h_cov1)
-    · simp only [mem_regionEExtend] at hE; exact hE.1.2.1
-    · simp only [mem_regionSExtend] at hS; exact hS.1.2.1
-  · have hp1 := props1.2.2.2.1 h1; have hp2 := props2.2.2.2.1 h2
-    simp only [mem_targetsSin, mem_targetsS] at hp1 hp2
-    simp [h1, h2] at h_cov1 h_cov2
-    have h_p_ne : p1 ≠ p2 := by
-      contrapose! h_ne
-      rcases l1 with ⟨src1, type1⟩
-      rcases l2 with ⟨src2, type2⟩
-      simp only [Label.mk.injEq]
-      constructor
-      · exact h_ne
-      · simp at h1 h2; rw [h1, h2]
-    exact unique_label_S (m := m) (p := p1) (q := p2)
-      (hp := hp1.1.1) (hq := hp2.1.1) (h_ne := h_p_ne)
-      (hp_bound := hp1.2) (hq_bound := hp2.2)
-      (hp_in := h_cov1) (hq_in := h_cov2) (h_unique_x := c.h_unique_x)
-  · have hS := props1.2.2.2.1 h1; have hX := props2.2.2.2.2 h2
-    simp only [mem_targetsSin, mem_targetsS] at hS
-    simp [h1, h2] at h_cov1 h_cov2
-    rw [hX] at h_cov2
-    apply disjoint_label_X_S (cp := cp) (m := m) (bs := p1)
-      (hbs := hS.1.1) (hbs_bound := hS.2)
-      (h_s_in := h_cov1) (h_x_in := h_cov2)
-    · exact hS.1.2
-  · have hX := props1.2.2.2.2 h1; have hW := props2.1 h2
-    simp only [mem_targetsWin, mem_targetsW] at hW
-    simp [h1, h2] at h_cov1 h_cov2
-    rw [hX] at h_cov1
-    apply disjoint_label_X_W (cp := cp) (m := m) (bw := p2)
-      (hbw := hW.1.1) (hbw_pos := hW.2)
-      (h_w_in := h_cov2) (h_x_in := h_cov1)
-    · exact hW.1.2
-  · have hX := props1.2.2.2.2 h1; have hN := props2.2.1 h2
-    simp only [mem_targetsNin, mem_targetsN] at hN
-    simp [h1, h2] at h_cov1 h_cov2
-    rw [hX] at h_cov1
-    apply disjoint_label_X_N (cp := cp) (m := m) (bn := p2)
-      (hbn := hN.1.1) (hbn_pos := hN.2)
-      (h_n_in := h_cov2) (h_x_in := h_cov1)
-    · exact hN.1.2
-  · have hX := props1.2.2.2.2 h1; have hE := props2.2.2.1 h2
-    simp only [mem_targetsEin, mem_targetsE] at hE
-    simp [h1, h2] at h_cov1 h_cov2
-    rw [hX] at h_cov1
-    apply disjoint_label_X_E (cp := cp) (m := m) (be := p2)
-      (hbe := hE.1.1) (hbe_bound := hE.2)
-      (h_x_in := h_cov1) (h_e_in := h_cov2)
-    · exact hE.1.2
-  · have hX := props1.2.2.2.2 h1; have hS := props2.2.2.2.1 h2
-    simp only [mem_targetsSin, mem_targetsS] at hS
-    simp [h1, h2] at h_cov1 h_cov2
-    rw [hX] at h_cov1
-    apply disjoint_label_X_S (cp := cp) (m := m) (bs := p2)
-      (hbs := hS.1.1) (hbs_bound := hS.2)
-      (h_s_in := h_cov2) (h_x_in := h_cov1)
-    · exact hS.1.2
-  · have hX1 := props1.2.2.2.2 h1; have hX2 := props2.2.2.2.2 h2
+  simp only [covers] at h_cov1 h_cov2
+  -- Handle non-X cases via shared helper
+  by_cases h1X : l1.type = .X <;> by_cases h2X : l2.type = .X
+  · -- Both X: derive l1 = l2
     have h_eq : l1 = l2 := by
-      cases l1; cases l2
-      simp only [Label.mk.injEq]
-      dsimp at h1 h2 hX1 hX2
-      constructor
-      · rw [hX1, hX2]
-      · rw [h1, h2]
+      cases l1; cases l2; simp only [Label.mk.injEq]
+      exact ⟨(props1.2.2.2.2 h1X).trans (props2.2.2.2.2 h2X).symm, h1X.trans h2X.symm⟩
     contradiction
+  · -- l1 is X, l2 is WNSE
+    simp only [label_pos, h1X] at h_cov1; rw [props1.2.2.2.2 h1X] at h_cov1
+    exact c.covers_X_other cp m h_cov1 l2 h2X h_cov2
+      ⟨props2.1, props2.2.1, props2.2.2.1, props2.2.2.2.1⟩
+  · -- l1 is WNSE, l2 is X
+    simp only [label_pos, h2X] at h_cov2; rw [props2.2.2.2.2 h2X] at h_cov2
+    exact c.covers_X_other cp m h_cov2 l1 h1X h_cov1
+      ⟨props1.1, props1.2.1, props1.2.2.1, props1.2.2.2.1⟩
+  · -- Neither is X: use shared core lemma
+    exact IntersectionSetup.matilda_covers_at_most_one_core c.h_unique_x c.h_unique_y
+      c.u_mono_le c.v_mono_le c.u_inj_y c.v_inj_y m l1 l2 h_ne h_cov1 h_cov2
+      ⟨props1.1, props1.2.1, props1.2.2.1, props1.2.2.2.1⟩
+      ⟨props2.1, props2.2.1, props2.2.2.1, props2.2.2.2.1⟩ h1X h2X
 
 lemma grid_size_ge_two_of_label {source : Point n} {lbl : LabelType}
     (ha_pos : 0 < c.a) (hb_pos : 0 < c.b)
@@ -3298,7 +2844,6 @@ lemma valid_label_pos_not_black (ha_pos : 0 < c.a) (hb_pos : 0 < c.b)
   have h_n_ge_2 := c.grid_size_ge_two_of_label cp ha_pos hb_pos hl
   intro h_pos_black
   rcases l with ⟨source, type⟩
-  have h_n_ge_2 := c.grid_size_ge_two_of_label cp ha_pos hb_pos hl
   simp only [label_pos] at h_pos_black
   simp only [validLabels, mem_union, mem_map, or_assoc] at hl
   rcases hl with hW | hN | hE | hS | hX
@@ -3306,65 +2851,26 @@ lemma valid_label_pos_not_black (ha_pos : 0 < c.a) (hb_pos : 0 < c.b)
     simp at heq; obtain ⟨rfl, rfl⟩ := heq
     simp only [mem_targetsWin, mem_targetsW] at hp
     simp at h_pos_black
-    have h_eq : p = (p.1, p.2 - 1) := by
-       apply c.h_unique_x p hp.1.1 _ h_pos_black; simp
-    replace h_eq := (Prod.ext_iff.mp h_eq).2
-    apply (Fin.ext_iff).mp at h_eq
-    have h_pos : 0 < p.2.val := hp.2
-    have h_le : (1 : Fin n) ≤ p.2 := by
-      simp [Fin.le_def]; rw [Nat.mod_eq_of_lt h_n_ge_2]
-      exact Nat.succ_le_of_lt h_pos
-    rw [Fin.sub_val_of_le h_le] at h_eq
-    have : (1 : Fin n).val = 1 := by simp; rw [Nat.mod_eq_of_lt h_n_ge_2]
-    omega
+    exact label_pos_W_absurd h_n_ge_2 c.h_unique_x hp.1.1 hp.2 h_pos_black
   · rcases hN with ⟨p, hp, heq⟩
     simp at heq; obtain ⟨rfl, rfl⟩ := heq
     simp only [mem_targetsNin, mem_targetsN] at hp
     simp at h_pos_black
-    have h_eq : p = (p.1 - 1, p.2) := by
-       apply c.h_unique_y p hp.1.1 _ h_pos_black; simp
-    replace h_eq := (Prod.ext_iff.mp h_eq).1
-    apply (Fin.ext_iff).mp at h_eq
-    have h_pos : 0 < p.1.val := hp.2
-    have h_le : (1 : Fin n) ≤ p.1 := by
-      simp [Fin.le_def]; rw [Nat.mod_eq_of_lt h_n_ge_2]
-      exact Nat.succ_le_of_lt h_pos
-    rw [Fin.sub_val_of_le h_le] at h_eq
-    have : (1 : Fin n).val = 1 := by simp; rw [Nat.mod_eq_of_lt h_n_ge_2]
-    omega
+    exact label_pos_N_absurd h_n_ge_2 c.h_unique_y hp.1.1 hp.2 h_pos_black
   · rcases hE with ⟨p, hp, heq⟩
     simp at heq; obtain ⟨rfl, rfl⟩ := heq
     simp only [mem_targetsEin, mem_targetsE] at hp
     simp at h_pos_black
-    have h_eq : p = (p.1, p.2 + 1) := by
-       apply c.h_unique_x p hp.1.1 _ h_pos_black; simp
-    replace h_eq := (Prod.ext_iff.mp h_eq).2
-    apply (Fin.ext_iff).mp at h_eq
-    have h_lt : p.2.val < n - 1 := hp.2
-    rw [Fin.val_add] at h_eq
-    simp at h_eq
-    rw [Nat.mod_eq_of_lt (by omega)] at h_eq
-    omega
+    exact label_pos_E_absurd c.h_unique_x hp.1.1 hp.2 h_pos_black
   · rcases hS with ⟨p, hp, heq⟩
     simp at heq; obtain ⟨rfl, rfl⟩ := heq
     simp only [mem_targetsSin, mem_targetsS] at hp
     simp at h_pos_black
-    have h_eq : p = (p.1 + 1, p.2) := by
-       apply c.h_unique_y p hp.1.1 _ h_pos_black; simp
-    replace h_eq := (Prod.ext_iff.mp h_eq).1
-    apply (Fin.ext_iff).mp at h_eq
-    have h_lt : p.1.val < n - 1 := hp.2
-    rw [Fin.val_add] at h_eq
-    simp at h_eq
-    rw [Nat.mod_eq_of_lt (by omega)] at h_eq
-    omega
+    exact label_pos_S_absurd c.h_unique_y hp.1.1 hp.2 h_pos_black
   · rcases hX with ⟨p, hp, heq⟩
     simp at heq; obtain ⟨rfl, rfl⟩ := heq
-    simp at hp
-    subst p
-    simp at h_pos_black
-    have h_not_black := c.wx_not_black cp
-    contradiction
+    simp at hp; subst p; simp at h_pos_black
+    exact absurd h_pos_black (c.wx_not_black cp)
 
 lemma card_validLabels_disjoint :
     (c.validLabels cp).card =
@@ -3511,52 +3017,40 @@ def IsChain (s : Finset (Point n)) : Prop :=
 def IsAntiChain (s : Finset (Point n)) : Prop :=
   ∀ p ∈ s, ∀ q ∈ s, px p < px q → py q < py p
 
-lemma exists_maximal_chain (s : Finset (Point n)) (h_s : s ⊆ all_black) (h_chain : IsChain s) :
-    ∃ m, s ⊆ m ∧ m ⊆ all_black ∧ IsChain m ∧
-    (∀ p, p ∉ m → p ∈ all_black → ¬IsChain (insert p m)) := by
-  let all_chains := all_black.powerset.filter (fun t => s ⊆ t ∧ IsChain t)
-  have h_nonempty : all_chains.Nonempty := by
+private lemma exists_maximal_subset (P : Finset (Point n) → Prop)
+    (s : Finset (Point n)) (h_s : s ⊆ all_black) (h_prop : P s) :
+    ∃ m, s ⊆ m ∧ m ⊆ all_black ∧ P m ∧
+    (∀ p, p ∉ m → p ∈ all_black → ¬P (insert p m)) := by
+  let candidates := all_black.powerset.filter (fun t => s ⊆ t ∧ P t)
+  have h_nonempty : candidates.Nonempty := by
     use s
-    simp only [all_chains, mem_filter, mem_powerset]
-    exact ⟨h_s, subset_refl _, h_chain⟩
-  obtain ⟨m, hm_mem, hm_max⟩ := exists_mem_eq_sup all_chains h_nonempty card
-  simp only [all_chains, mem_filter, mem_powerset] at hm_mem
+    simp only [candidates, mem_filter, mem_powerset]
+    exact ⟨h_s, subset_refl _, h_prop⟩
+  obtain ⟨m, hm_mem, hm_max⟩ := exists_mem_eq_sup candidates h_nonempty card
+  simp only [candidates, mem_filter, mem_powerset] at hm_mem
   refine ⟨m, hm_mem.2.1, hm_mem.1, hm_mem.2.2, ?_⟩
-  intros p hp_not_m hp_in_all h_chain_insert
-  have h_in_chains : insert p m ∈ all_chains := by
-    simp only [all_chains, mem_filter, mem_powerset]
-    refine ⟨insert_subset hp_in_all hm_mem.1, ?_, h_chain_insert⟩
+  intros p hp_not_m hp_in_all h_prop_insert
+  have h_in : insert p m ∈ candidates := by
+    simp only [candidates, mem_filter, mem_powerset]
+    refine ⟨insert_subset hp_in_all hm_mem.1, ?_, h_prop_insert⟩
     trans m
     · exact hm_mem.2.1
     · exact subset_insert p m
   have h_card_gt : (insert p m).card > m.card := by simp [hp_not_m]
   have h_card_le : (insert p m).card ≤ m.card := by
-    rw [← hm_max]; exact le_sup h_in_chains
+    rw [← hm_max]; exact le_sup h_in
   linarith
+
+lemma exists_maximal_chain (s : Finset (Point n)) (h_s : s ⊆ all_black) (h_chain : IsChain s) :
+    ∃ m, s ⊆ m ∧ m ⊆ all_black ∧ IsChain m ∧
+    (∀ p, p ∉ m → p ∈ all_black → ¬IsChain (insert p m)) :=
+  exists_maximal_subset IsChain s h_s h_chain
 
 lemma exists_maximal_antichain (s : Finset (Point n))
   (h_s : s ⊆ all_black) (h_antichain : IsAntiChain s) :
     ∃ m, s ⊆ m ∧ m ⊆ all_black ∧ IsAntiChain m ∧
-    (∀ p, p ∉ m → p ∈ all_black → ¬IsAntiChain (insert p m)) := by
-  let all_antichains := all_black.powerset.filter (fun t => s ⊆ t ∧ IsAntiChain t)
-  have h_nonempty : all_antichains.Nonempty := by
-    use s
-    simp only [all_antichains, mem_filter, mem_powerset]
-    exact ⟨h_s, subset_refl _, h_antichain⟩
-  obtain ⟨m, hm_mem, hm_max⟩ := exists_mem_eq_sup all_antichains h_nonempty card
-  simp only [all_antichains, mem_filter, mem_powerset] at hm_mem
-  refine ⟨m, hm_mem.2.1, hm_mem.1, hm_mem.2.2, ?_⟩
-  intros p hp_not_m hp_in_all h_antichain_insert
-  have h_in_chains : insert p m ∈ all_antichains := by
-    simp only [all_antichains, mem_filter, mem_powerset]
-    refine ⟨insert_subset hp_in_all hm_mem.1, ?_, h_antichain_insert⟩
-    trans m
-    · exact hm_mem.2.1
-    · exact subset_insert p m
-  have h_card_gt : (insert p m).card > m.card := by simp [hp_not_m]
-  have h_card_le : (insert p m).card ≤ m.card := by
-    rw[← hm_max]; exact le_sup h_in_chains
-  linarith
+    (∀ p, p ∉ m → p ∈ all_black → ¬IsAntiChain (insert p m)) :=
+  exists_maximal_subset IsAntiChain s h_s h_antichain
 
 def incSubsets (f : Fin n → Fin n) : Finset (Finset (Fin n)) :=
   univ.powerset.filter (fun t => StrictMonoOn f (t : Set (Fin n)))
@@ -3731,17 +3225,9 @@ theorem matilda_lower_bound [NeZero n]
           h_u_mono, h_u_inj, h_u_max,
           h_v_mono, h_v_inj, h_v_max⟩ :=
     exists_optimal_u_v h_card_n h_unique_x h_unique_y
-  have ha_pos : 0 < u.card := by
-    have : 1 ≤ n := NeZero.one_le
-    have h_mul : 1 ≤ u.card * v.card := le_trans this h_dilworth
-    rw [Nat.one_le_iff_ne_zero] at h_mul
-    exact Nat.pos_of_ne_zero (left_ne_zero_of_mul h_mul)
-
-  have hb_pos : 0 < v.card := by
-    have : 1 ≤ n := NeZero.one_le
-    have h_mul: 1 ≤ u.card * v.card := le_trans this h_dilworth
-    rw [Nat.one_le_iff_ne_zero] at h_mul
-    exact Nat.pos_of_ne_zero (right_ne_zero_of_mul h_mul)
+  have h_prod_pos : 0 < u.card * v.card := lt_of_lt_of_le (NeZero.pos (a := n)) h_dilworth
+  have ha_pos : 0 < u.card := pos_of_mul_pos_left h_prod_pos (Nat.zero_le _)
+  have hb_pos : 0 < v.card := pos_of_mul_pos_right h_prod_pos (Nat.zero_le _)
   by_cases h_inter : (u ∩ v).Nonempty
   · let pivot := h_inter.choose
     have h_pivot_mem : pivot ∈ u ∩ v := h_inter.choose_spec
@@ -3812,6 +3298,9 @@ section Construction
 variable (k : ℕ)
 local notation "n" => k * k
 abbrev mod_base : ℤ := (k : ℤ)^2 + 1
+
+lemma mod_base_pos : 0 < mod_base k := by positivity
+
 abbrev val_s (p : Point n) : ℤ := (p.1 : ℤ) + k * p.2 + k + 1
 abbrev val_t (p : Point n) : ℤ := (k : ℤ) * p.1 - p.2 + k^2 + k
 
@@ -3868,7 +3357,7 @@ lemma M_subset_rect (s t : Int) (p : Point n) (hk : 2 ≤ k) :
   rw [M_st, mem_filter] at h_mem
   obtain ⟨_, hp_white, hs_eq, ht_eq⟩ := h_mem
   let M := mod_base k
-  have h_pos : 0 < M := by nlinarith
+  have h_pos : 0 < M := mod_base_pos k
   have hk_pos : 0 < (k:ℤ) := by omega
   let xb := (s - 1) + (t - 1) * k
   let yb := s * k - t
@@ -3941,7 +3430,7 @@ lemma rect_subset_M (s t : Int) (p : Point n)
     in_white_rect k s t p → p ∈ M_st k s t := by
   intro h_rect
   let M := mod_base k
-  have h_pos : 0 < M := by apply Int.add_pos_of_nonneg_of_pos (sq_nonneg _) (by decide)
+  have h_pos : 0 < M := mod_base_pos k
   rcases h_rect with ⟨⟨hx_ge, hx_le⟩, ⟨hy_ge, hy_le⟩⟩
   have h_val_s_strict : s * M < val_s k p ∧ val_s k p < (s + 1) * M := by
     constructor
@@ -4021,8 +3510,7 @@ lemma s_t_range (hk : 2 ≤ k) (p : Point n) :
     0 ≤ calc_s k p ∧ calc_s k p ≤ k ∧
     0 ≤ calc_t k p ∧ calc_t k p ≤ k := by
   let M := mod_base k
-  have h_pos : 0 < M := by apply Int.add_pos_of_nonneg_of_pos (sq_nonneg _) (by decide)
-  have h_pos' : 0 < mod_base k := by dsimp [M] at h_pos; exact h_pos
+  have h_pos : 0 < M := mod_base_pos k
   have hk_pos : 0 < (k : ℤ) := by omega
   have hx : 0 ≤ (p.1 : ℤ) ∧ (p.1 : ℤ) ≤ k^2 - 1 := by
     constructor
@@ -4074,7 +3562,7 @@ lemma M_00_empty (hk : 2 ≤ k) : M_st k 0 0 = ∅ := by
   rw [M_st, mem_filter] at hp
   obtain ⟨_, _, hs, ht⟩ := hp
   let M := mod_base k
-  have h_pos : 0 < M := by apply Int.add_pos_of_nonneg_of_pos (sq_nonneg _) (by decide)
+  have h_pos : 0 < M := mod_base_pos k
   have hk_pos : 0 < (k : ℤ) := by omega
   rw [calc_s, Int.ediv_eq_iff_of_pos h_pos] at hs
   rw [calc_t, Int.ediv_eq_iff_of_pos h_pos] at ht
@@ -4099,7 +3587,7 @@ lemma M_k0_empty : M_st k k 0 = ∅ := by
   simp only [M_st, mem_filter, mem_univ, true_and] at hp
   obtain ⟨_, hs, ht⟩ := hp
   let M := mod_base k
-  have h_pos : 0 < M := by apply Int.add_pos_of_nonneg_of_pos (sq_nonneg _) (by decide)
+  have h_pos : 0 < M := mod_base_pos k
   rw [calc_s, Int.ediv_eq_iff_of_pos h_pos] at hs
   rw [calc_t, Int.ediv_eq_iff_of_pos h_pos] at ht
   simp only [Int.zero_mul, Int.zero_add] at hs ht
@@ -4120,7 +3608,7 @@ lemma M_0k_empty (hk : 2 ≤ k) : M_st k 0 k = ∅ := by
   simp only [M_st, mem_filter, mem_univ, true_and] at hp
   obtain ⟨_, hs, ht⟩ := hp
   let M := mod_base k
-  have h_pos : 0 < M := by apply Int.add_pos_of_nonneg_of_pos (sq_nonneg _) (by decide)
+  have h_pos : 0 < M := mod_base_pos k
   rw [calc_s, Int.ediv_eq_iff_of_pos h_pos] at hs
   rw [calc_t, Int.ediv_eq_iff_of_pos h_pos] at ht
   simp only [Int.zero_mul, Int.zero_add] at hs
@@ -4139,7 +3627,7 @@ lemma M_kk_empty (_ : 2 ≤ k) : M_st k k k = ∅ := by
   simp only [M_st, mem_filter, mem_univ, true_and] at hp
   obtain ⟨_, hs, ht⟩ := hp
   let M := mod_base k
-  have h_pos : 0 < M := by apply Int.add_pos_of_nonneg_of_pos (sq_nonneg _) (by decide)
+  have h_pos : 0 < M := mod_base_pos k
   rw [calc_s, Int.ediv_eq_iff_of_pos h_pos] at hs
   rw [calc_t, Int.ediv_eq_iff_of_pos h_pos] at ht
   have h_x_bound : (p.1 : ℤ) ≤  k^2 - 1 := by
@@ -4233,11 +3721,6 @@ def clipped_rect [NeZero k] (hk : 2 ≤ k) (s t : Int) : Option (Matilda (k * k)
     }
   else
     none
-
-variable (h_00 : M_st k 0 0 = ∅)
-variable (h_k0 : M_st k k 0 = ∅)
-variable (h_0k : M_st k 0 k = ∅)
-variable (h_kk : M_st k k k = ∅)
 
 lemma matilda_upper_bound_sum (k : ℕ) (hk : 2 ≤ k) :
     let kz : ℤ := k
@@ -4560,28 +4043,8 @@ lemma construction_is_valid_partition (k : ℕ) (hk : 2 ≤ k) [NeZero k]
       simp only [rect_finset, mem_filter, mem_univ, true_and, in_white_rect] at h_in_M
       obtain ⟨⟨hx_low, hx_high⟩, ⟨hy_low, hy_high⟩⟩ := h_in_M
 
-      apply h_valid
-      constructor
-      · rw [max_le_iff]
-        constructor
-        · rw [le_min_iff]
-          constructor
-          · exact le_of_lt h_pos
-          · exact le_trans hx_range.1 hx_high
-        · rw [le_min_iff]
-          constructor
-          · exact le_trans hx_low hx_range.2
-          · exact le_trans hx_low hx_high
-      · rw [max_le_iff]
-        constructor
-        · rw [le_min_iff]
-          constructor
-          · nlinarith
-          · exact le_trans hy_range.1 hy_high
-        · rw [le_min_iff]
-          constructor
-          · exact le_trans hy_low hy_range.2
-          · exact le_trans hy_low hy_high
+      exact h_valid ⟨by simp only [max_le_iff, le_min_iff]; exact ⟨⟨by linarith, by linarith⟩, by linarith, by linarith⟩,
+        by simp only [max_le_iff, le_min_iff]; exact ⟨⟨by nlinarith, by linarith⟩, by linarith, by linarith⟩⟩
   exists m_target
   constructor
   · constructor
@@ -4613,6 +4076,13 @@ lemma construction_is_valid_partition (k : ℕ) (hk : 2 ≤ k) [NeZero k]
 
 end Construction
 
+private lemma sqrt_kk (k : ℕ) :
+    k * k + (4 * (k * k)).sqrt - 3 = k ^ 2 + 2 * k - 3 := by
+  have h_sqrt : (4 * (k * k)).sqrt = 2 * k := by
+    have : 4 * (k * k) = (2 * k) * (2 * k) := by ring
+    rw [this, Nat.sqrt_eq]
+  rw [h_sqrt]; ring_nf
+
 theorem matilda_solution_general (k : ℕ) (hk : 2 ≤ k) :
     let n := k * k
     haveI : NeZero n := ⟨by apply mul_ne_zero <;> linarith⟩
@@ -4627,13 +4097,7 @@ theorem matilda_solution_general (k : ℕ) (hk : 2 ≤ k) :
   · intro all_black partition h_valid
     obtain ⟨h_card, h_row, h_col, h_part⟩ := h_valid
     have h_raw := matilda_lower_bound h_card h_row h_col partition h_part
-    rw [show n + (4 * n).sqrt - 3 = k^2 + 2 * k - 3 by
-      dsimp [n]
-      have h_sqrt : (4 * (k * k)).sqrt = 2 * k := by
-        have h_eq: 4 * (k * k) = (2 * k) * (2 * k) := by ring
-        rw [h_eq, Nat.sqrt_eq]
-      rw [h_sqrt]; ring_nf
-    ] at h_raw
+    rw [sqrt_kk k] at h_raw
     exact h_raw
   · haveI : NeZero k := ⟨by linarith⟩
     letI : DecidableEq (Matilda (k * k) (all_black_k k)) := Classical.decEq _
@@ -4661,14 +4125,7 @@ theorem matilda_solution_general (k : ℕ) (hk : 2 ≤ k) :
         ⟩
         have h_lower := matilda_lower_bound
           h_valid_P.1 h_valid_P.2.1 h_valid_P.2.2.1 P h_valid_P.2.2.2
-        rw [show n + (4 * n).sqrt - 3 = k^2 + 2 * k - 3 by
-          dsimp [n]
-          have h_sqrt : (4 * (k * k)).sqrt = 2 * k := by
-            have : 4 * (k * k) = (2 * k) * (2 * k) := by ring
-            rw [this, Nat.sqrt_eq]
-          rw [h_sqrt]
-          ring_nf
-        ] at h_lower
+        rw [sqrt_kk k] at h_lower
         exact h_lower
 
 snip end
