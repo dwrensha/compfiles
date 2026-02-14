@@ -26,16 +26,15 @@ that is not covered by any tile.
 
 namespace Imo2025P6
 
-section ProblemSetup
-
-variable {n : ℕ} [NeZero n]
-
-/-- A square in the n x n grid. -/
+variable {n : ℕ}
 abbrev Point (n : ℕ) := Fin n × Fin n
+variable {all_black : Finset (Point n)}
+
+section ProblemSetup
+variable [NeZero n]
 abbrev px (p : Point n) : ℕ := p.1.val
 abbrev py (p : Point n) : ℕ := p.2.val
-variable {all_black : Finset (Point n)}
-/-- A rectangular tile that does not cover any of the specified black squares. -/
+
 structure Matilda (n : ℕ) [NeZero n] (all_black : Finset (Point n)) where
   x_min : ℕ
   x_max : ℕ
@@ -50,7 +49,6 @@ structure Matilda (n : ℕ) [NeZero n] (all_black : Finset (Point n)) where
 def Matilda.mem (m : Matilda n all_black) (p : Point n) : Prop :=
   m.x_min ≤ px p ∧ px p ≤ m.x_max ∧ m.y_min ≤ py p ∧ py p ≤ m.y_max
 
-/-- Configuration where each row/column has exactly one uncovered square (all_black). -/
 def IsValidConfiguration (n : ℕ) [NeZero n]
   (all_black : Finset (Point n)) (partition : Finset (Matilda n all_black)) : Prop :=
   all_black.card = n ∧
@@ -58,7 +56,6 @@ def IsValidConfiguration (n : ℕ) [NeZero n]
   (∀ p ∈ all_black, ∀ q ∈ all_black, py p = py q → p = q) ∧
   (∀ p : Point n, p ∉ all_black → ∃! m ∈ partition, m.mem p)
 
-/-- The minimum number of tiles needed across all valid black square sets. -/
 def IsMinMatildaCount (n : ℕ) [NeZero n] (m : ℕ) : Prop :=
   (∀ (all_black : Finset (Point n)) (partition : Finset (Matilda n all_black)),
       IsValidConfiguration n all_black partition → m ≤ partition.card) ∧
@@ -96,8 +93,6 @@ macro "solve_grid" : tactic =>
   ))
 
 section CommonProperties
-
-variable {all_black : Finset (Point n)}
 
 lemma eq_of_px_eq
     (h_unique_x : ∀ p ∈ all_black, ∀ q ∈ all_black, px p = px q → p = q)
@@ -160,10 +155,10 @@ section Regions
 
 variable (u v : Finset (Point n))
 
-def u_lower : Finset (Point n) := u.biUnion (fun q => rect n (px q) n 0 ((py q) + 1))
-def u_upper : Finset (Point n) := u.biUnion (fun q => rect n 0 ((px q) + 1) (py q) n)
-def v_lower : Finset (Point n) := v.biUnion (fun r => rect n 0 ((px r) + 1) 0 ((py r) + 1))
-def v_upper : Finset (Point n) := v.biUnion (fun r => rect n (px r) n (py r) n)
+def u_lower (u : Finset (Point n)): Finset (Point n) := u.biUnion (fun q => rect n (px q) n 0 ((py q) + 1))
+def u_upper (u : Finset (Point n)): Finset (Point n) := u.biUnion (fun q => rect n 0 ((px q) + 1) (py q) n)
+def v_lower (v : Finset (Point n)): Finset (Point n) := v.biUnion (fun r => rect n 0 ((px r) + 1) 0 ((py r) + 1))
+def v_upper (v : Finset (Point n)): Finset (Point n) := v.biUnion (fun r => rect n (px r) n (py r) n)
 
 @[simp]
 lemma mem_u_lower (p : Point n) :
@@ -188,10 +183,10 @@ section MainRegions
 
 variable {n : ℕ}  (u v : Finset (Point n)) (all_black : Finset (Point n))
 
-def regionWExtend : Finset (Point n) := (u_lower u) ∩ (v_lower v)
-def regionNExtend : Finset (Point n) := (u_upper u) ∩ (v_lower v)
-def regionSExtend : Finset (Point n) := (u_lower u) ∩ (v_upper v)
-def regionEExtend : Finset (Point n) := (u_upper u) ∩ (v_upper v)
+def regionWExtend (u v : Finset (Point n)): Finset (Point n) := (u_lower u) ∩ (v_lower v)
+def regionNExtend (u v : Finset (Point n)): Finset (Point n) := (u_upper u) ∩ (v_lower v)
+def regionSExtend (u v : Finset (Point n)): Finset (Point n) := (u_lower u) ∩ (v_upper v)
+def regionEExtend (u v : Finset (Point n)): Finset (Point n) := (u_upper u) ∩ (v_upper v)
 
 @[simp]
 lemma mem_regionWExtend (p : Point n) :
@@ -1053,8 +1048,7 @@ lemma disjoint_label_N_S (m : Matilda n all_black) (bn bs : Point n)
 end LabelingConsistency
 
 section LabelingMachinery
-
-variable {n : ℕ} [NeZero n]
+variable [NeZero n]
 
 lemma matilda_eq_iff_bounds_eq (m1 m2 : Matilda n all_black) :
     m1 = m2 ↔
