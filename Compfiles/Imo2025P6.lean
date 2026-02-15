@@ -3022,7 +3022,6 @@ theorem erdos_szekeres_direct (n : ℕ) (f : Fin n → Fin n) (hf : Function.Inj
     rw [Fintype.card_fin]
     exact h_contra
   have h_thm := Theorems100.erdos_szekeres h_card_lt hf
-
   rcases h_thm with ⟨t_inc, _, h_mono_inc⟩ | ⟨t_dec, _, h_mono_dec⟩
   · have h_mem : t_inc ∈ incSubsets f := by
       exact mem_incSubsets.mpr h_mono_inc
@@ -3067,7 +3066,6 @@ lemma is_antichain_of_strict_anti {f : Fin n → Fin n} {t : Finset (Fin n)}
 theorem exists_optimal_u_v [NeZero n] (h_card_n : all_black.card = n)
    (h_unique_x : ∀ p ∈ all_black, ∀ q ∈ all_black, px p = px q → p = q)
    (h_unique_y : ∀ p ∈ all_black, ∀ q ∈ all_black, py p = py q → p = q) :
-
     ∃ (u v : Finset (Point n)),
       u ⊆ all_black ∧ v ⊆ all_black ∧
       n ≤ u.card * v.card ∧
