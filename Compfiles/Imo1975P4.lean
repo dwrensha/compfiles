@@ -92,9 +92,9 @@ problem imo1975_p4 : sum_digits_B = (Nat.digits 10 B).sum := by
     rw [Nat.ModEq, Nat.pow_mod]
     rw [show 4444%9 = 7 by simp]
     rw [show 4444 = 3*1481+1 by simp]
-    rw [Nat.pow_succ]
-    rw [Nat.mul_mod, pow_mul, Nat.pow_mod]
-    rw [show 7 ^ 3 % 9 = 1 by simp, one_pow]
+    simp only [pow_add, pow_mul, pow_one]
+    rw [Nat.mul_mod, Nat.pow_mod]
+    simp only [show 7 ^ 3 % 9 = 1 by simp, one_pow]
     unfold sum_digits_B
     rfl
   have sumBmod' : (Nat.digits 10 B).sum ≡ 4444 ^ 4444 [MOD 9] := by
