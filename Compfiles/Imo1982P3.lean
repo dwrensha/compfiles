@@ -10,7 +10,7 @@ import ProblemExtraction
 
 problem_file {
   tags := [.Algebra]
-  importedFrom :=
+  solutionImportedFrom :=
     "https://github.com/leanprover-community/mathlib4/blob/master/Archive/Imo/Imo1982Q3.lean"
 }
 

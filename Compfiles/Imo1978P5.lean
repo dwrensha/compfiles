@@ -11,7 +11,7 @@ import ProblemExtraction
 
 problem_file {
   tags := [.Algebra]
-  importedFrom :=
+  solutionImportedFrom :=
     "https://github.com/roozbeh-yz/IMO-Steps/blob/main/imo_proofs/imo_1978_p5.lean",
 }
 

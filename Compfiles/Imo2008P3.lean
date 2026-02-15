@@ -14,7 +14,7 @@ import ProblemExtraction
 
 problem_file {
   tags := [.NumberTheory],
-  importedFrom :=
+  solutionImportedFrom :=
     "https://github.com/leanprover-community/mathlib4/blob/master/Archive/Imo/Imo2008P3.lean",
 }
 

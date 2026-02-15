@@ -15,7 +15,7 @@ import ProblemExtraction
 
 problem_file {
   tags := [.Combinatorics]
-  importedFrom :=
+  solutionImportedFrom :=
     "https://github.com/leanprover-community/mathlib4/blob/master/Archive/Imo/Imo2024Q5.lean",
 }
 

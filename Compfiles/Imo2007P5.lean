@@ -11,7 +11,7 @@ import ProblemExtraction
 
 problem_file {
   tags := [.NumberTheory]
-  importedFrom :=
+  solutionImportedFrom :=
     "https://github.com/mortarsanjaya/imo-A-and-N/blob/main/src/IMO2007/N6/N6.lean",
 }
 

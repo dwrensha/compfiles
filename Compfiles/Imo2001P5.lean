@@ -9,7 +9,7 @@ import ProblemExtraction
 
 problem_file {
   tags := [.Geometry]
-  importedFrom :=
+  solutionImportedFrom :=
     "https://github.com/leanprover-community/mathlib4/blob/master/Archive/Imo/Imo2001Q5.lean"
 }
 

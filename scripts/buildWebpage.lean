@@ -376,7 +376,20 @@ unsafe def main (_args : List String) : IO Unit := do
       else
         h.putStrLn
           s!"<p>This problem <a class=\"external\" href=\"{solutionUrl}\">does not yet have a complete formalized solution</a>.</p>"
-      if let .some url := metadata.importedFrom
+      if let .some url := metadata.problemImportedFrom
+      then
+        -- Make github urls a little nicer to look at.
+        let text :=
+          if url.startsWith "https://github.com/"
+          then let rest := (url.dropPrefix "https://github.com/").toString
+               match rest.splitOn "/" with
+               | _ns :: repo :: _blob :: _branch :: rest =>
+                  "/".intercalate (repo :: rest)
+               | _ => url
+          else url
+        h.putStrLn s!"<p>The problem was imported from <a class=\"external\" href=\"{url}\">{text}</a>.</p>"
+
+      if let .some url := metadata.solutionImportedFrom
       then
         -- Make github urls a little nicer to look at.
         let text :=

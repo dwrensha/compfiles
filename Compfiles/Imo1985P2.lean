@@ -12,7 +12,7 @@ import ProblemExtraction
 
 problem_file {
   tags := [.Combinatorics]
-  importedFrom := "https://github.com/leanprover-community/mathlib4/blob/master/Archive/Imo/Imo1985Q2.lean"
+  solutionImportedFrom := "https://github.com/leanprover-community/mathlib4/blob/master/Archive/Imo/Imo1985Q2.lean"
 }
 
 /-!

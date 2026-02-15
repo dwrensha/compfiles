@@ -12,7 +12,7 @@ import ProblemExtraction
 
 problem_file {
   tags := [.Algebra],
-  importedFrom :=
+  solutionImportedFrom :=
     "https://github.com/mortarsanjaya/imo-A-and-N/blob/main/src/IMO2009/A3/A3.lean",
 }
 

@@ -9,7 +9,7 @@ import ProblemExtraction
 
 problem_file {
   tags := [.Algebra, .Inequality],
-  importedFrom :=
+  solutionImportedFrom :=
     "https://github.com/leanprover-community/mathlib4/blob/master/Archive/Imo/Imo2001Q2.lean"
 }
 

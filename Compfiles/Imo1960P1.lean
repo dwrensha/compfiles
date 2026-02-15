@@ -9,7 +9,7 @@ import ProblemExtraction
 
 problem_file {
   tags := [.NumberTheory],
-  importedFrom :=
+  solutionImportedFrom :=
     "https://github.com/leanprover-community/mathlib4/blob/master/Archive/Imo/Imo1960Q1.lean"
 }
 

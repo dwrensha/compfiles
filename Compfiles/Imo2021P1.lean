@@ -11,7 +11,7 @@ import ProblemExtraction
 
 problem_file {
   tags := [.Algebra]
-  importedFrom :=
+  solutionImportedFrom :=
     "https://github.com/leanprover-community/mathlib4/blob/master/Archive/Imo/Imo2021Q1.lean"
 }
 

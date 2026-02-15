@@ -95,9 +95,13 @@ instance : ToString ProblemTag where
 structure ProblemFileMetadata where
   tags : List ProblemTag := []
 
+  --- If the problem formalization was imported from somewhere else,
+  --- then this field should contain the URL of that source.
+  problemImportedFrom : Option String := .none
+
   --- If the formalized solution was imported from somewhere else,
   --- then this field should contain the URL of that source.
-  importedFrom : Option String := .none
+  solutionImportedFrom : Option String := .none
 
   -- List of URLs to videos relevant to the solution, for example recordings
   -- of livestreams.

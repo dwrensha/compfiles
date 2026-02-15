@@ -9,7 +9,7 @@ import ProblemExtraction
 
 problem_file {
   tags := [.Combinatorics],
-  importedFrom :=
+  solutionImportedFrom :=
     "https://github.com/leanprover-community/mathlib4/pull/27258"
 }
 

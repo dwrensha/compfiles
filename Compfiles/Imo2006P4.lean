@@ -9,7 +9,7 @@ import ProblemExtraction
 
 problem_file {
   tags := [.NumberTheory],
-  importedFrom :=
+  solutionImportedFrom :=
     "https://huggingface.co/datasets/AI-MO/NuminaMath-LEAN",
 }
 

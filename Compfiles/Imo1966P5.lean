@@ -10,7 +10,7 @@ import ProblemExtraction
 
 problem_file {
   tags := [.Algebra]
-  importedFrom := "https://github.com/roozbeh-yz/IMO-Steps/blob/main/Lean_v20/imo_proofs/imo_1966_p5.lean"
+  solutionImportedFrom := "https://github.com/roozbeh-yz/IMO-Steps/blob/main/Lean_v20/imo_proofs/imo_1966_p5.lean"
 }
 
 /-!

@@ -10,7 +10,7 @@ import ProblemExtraction
 
 problem_file {
   tags := [.Algebra]
-  importedFrom :=
+  solutionImportedFrom :=
     "https://github.com/mortarsanjaya/IMOSLLean4/blob/main/IMOSLLean4/IMO2017/A6/A6.lean"
 }
 
