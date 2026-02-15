@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Constantin Seebach
 -/
 
-import Mathlib.Tactic
+import Mathlib
 import ProblemExtraction
 
 
@@ -31,12 +31,6 @@ snip begin
 /-!
 We follow the proof from https://prase.cz/kalva/imo/isoln/isoln754.html
 -/
-
-/--
-This theorem is copied from Mathlib.Data.Nat.Digits.Div so we don't have to import that module.
--/
-theorem Nat.modEq_nine_digits_sum (n : ℕ) : n ≡ (Nat.digits 10 n).sum [MOD 9] :=
-  Nat.modEq_digits_sum 9 10 (by simp) n
 
 /-!
 I'd love to have the following theorems in Mathlib :)
