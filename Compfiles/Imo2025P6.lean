@@ -3274,74 +3274,58 @@ lemma M_subset_rect (s t : Int) (p : Point n) (hk : 2 ≤ k) :
   intro h_mem
   rw [M_st, mem_filter] at h_mem
   obtain ⟨_, hp_white, hs_eq, ht_eq⟩ := h_mem
-  let M := mod_base k
-  have h_pos : 0 < M := mod_base_pos k
-  have hk_pos : 0 < (k:ℤ) := by omega
-  let xb := (s - 1) + (t - 1) * k
-  let yb := s * k - t
-  have h_s := hs_eq
-  unfold calc_s at h_s
-  rw [Int.ediv_eq_iff_of_pos (mod_base_pos k)] at h_s
-  have h_t := ht_eq
-  rw [calc_t, Int.ediv_eq_iff_of_pos (mod_base_pos k)] at h_t
-  have h_diff_x : M * (p.1 - xb) = (val_s k p - s * M) + k * (val_t k p - t * M) := by
-    dsimp [val_s, val_t, M, xb]; ring
-  have h_diff_y : M * (p.2 - yb) = (k : ℤ) * (val_s k p - s * M) - (val_t k p - t * M) := by
-    dsimp [val_s, val_t, M, yb]; ring
-  constructor
-  · constructor
-    · have h_ge_0 : 0 ≤ (p.1 : ℤ) - xb := by
-        apply Int.nonneg_of_mul_nonneg_left _ h_pos
-        rw [mul_comm]; rw [h_diff_x]; nlinarith [h_s.1, h_t.1]
-      have h_ne_0 : (p.1 : ℤ) - xb ≠ 0 := by
-        intro h_zero
-        have h_sum_zero : (val_s k p - s * M) + k * (val_t k p - t * M) = 0 := by
-          rw [← h_diff_x, h_zero, mul_zero]
-        have h_vs : val_s k p = s * M := by
-          have : 0 ≤ val_t k p - t * M := by linarith [h_t.1]
-          nlinarith [h_s.1, h_sum_zero, (by omega : 0 < (k:ℤ))]
-        have h_vt : val_t k p = t * M := by
-          rw [h_vs] at h_sum_zero
-          simp only [sub_self, zero_add] at h_sum_zero
-          replace h_sum_zero := Int.mul_eq_zero.mp h_sum_zero |>.resolve_left hk_pos.ne'
-          linarith
-        have h_is_black : p ∈ all_black_k k := by
-          simp [all_black_k]
-          rw [h_vs, h_vt]
-          dsimp [M]; simp
-        contradiction
-      omega
-    · have : M * (p.1 - xb) < M * (k + 1) := by
-        rw [h_diff_x]
-        calc (val_s k p - s * M) + k * (val_t k p - t * M)
-          _ < M + k * M := by gcongr <;> linarith
-          _ = M * (k + 1) := by ring
-      rw [Int.mul_lt_mul_left (mod_base_pos k)] at this
-      linarith
-  · constructor
-    · have h_yb_le : yb ≤ (p.2 : ℤ) := by
-        have h_scaled : M * (yb - 1) < M * p.2 := by
-          dsimp [yb]
-          calc M * (s * k - t - 1)
-            _ = (k : ℤ) * (s * M) - (t + 1) * M := by dsimp [M]; ring
-            _ ≤ (k : ℤ) * val_s k p - (t + 1) * M := by gcongr; exact h_s.1
-            _ < (k : ℤ) * val_s k p - val_t k p := by linarith [h_t.2]
-            _ = M * p.2 := by
-              linarith [h_diff_y]
-        have h_lt : yb - 1 < (p.2 : ℤ) := by
-          rwa [mul_lt_mul_iff_right₀ h_pos] at h_scaled
-        linarith
-      exact h_yb_le
-    · have : M * p.2 < M * ((s + 1) * k - t) := by
-        have h_linear_y_orig : (k : ℤ) * val_s k p - val_t k p = M * p.2 := by
-            dsimp [val_s, val_t, M]; ring
-        rw [← h_linear_y_orig]
-        calc (k : ℤ) * val_s k p - val_t k p
-          _ ≤ (k : ℤ) * val_s k p - t * M := by gcongr; exact h_t.1
-          _ < (k : ℤ) * ((s + 1) * M) - t * M := by gcongr; linarith [h_s.2]
-          _ = M * ((s + 1) * k - t) := by dsimp [M]; ring
-      rw [mul_lt_mul_iff_right₀ (mod_base_pos k)] at this
-      exact Int.le_sub_one_of_lt this
+  have hM : (0 : ℤ) < mod_base k := mod_base_pos k
+  have hk_pos : (0 : ℤ) < k := by omega
+  unfold calc_s at hs_eq; rw [Int.ediv_eq_iff_of_pos hM] at hs_eq
+  rw [calc_t, Int.ediv_eq_iff_of_pos hM] at ht_eq
+  -- ds, dt are the "remainders": 0 ≤ ds, dt < M
+  set ds := val_s k p - s * mod_base k
+  set dt := val_t k p - t * mod_base k
+  have hds : 0 ≤ ds ∧ ds < mod_base k := ⟨by linarith [hs_eq.1], by linarith [hs_eq.2]⟩
+  have hdt : 0 ≤ dt ∧ dt < mod_base k := ⟨by linarith [ht_eq.1], by linarith [ht_eq.2]⟩
+  -- Key identities relating coordinates to remainders
+  have hx : mod_base k * ((p.1 : ℤ) - ((s - 1) + (t - 1) * k)) = ds + k * dt := by
+    simp only [ds, dt, val_s, val_t, mod_base]; ring
+  have hy : mod_base k * ((p.2 : ℤ) - (s * k - t)) = k * ds - dt := by
+    simp only [ds, dt, val_s, val_t, mod_base]; ring
+  have hkdt_nn : 0 ≤ k * dt := mul_nonneg hk_pos.le hdt.1
+  have hkds_nn : 0 ≤ k * ds := mul_nonneg hk_pos.le hds.1
+  -- ds + k*dt > 0 because equality would make p black
+  have hx_pos : 0 < ds + k * dt := by
+    rcases lt_or_eq_of_le (by linarith : 0 ≤ ds + k * dt) with h | h
+    · exact h
+    · exfalso
+      have hds0 : ds = 0 := by linarith
+      have hkdt0 : k * dt = 0 := by linarith
+      have hdt0 : dt = 0 := (mul_eq_zero.mp hkdt0).resolve_left (by omega)
+      simp only [ds] at hds0; simp only [dt] at hdt0
+      exact hp_white (by simp [all_black_k, beq_iff_eq, show val_s k p = s * mod_base k by linarith,
+        show val_t k p = t * mod_base k by linarith, Int.mul_emod_left])
+  refine ⟨⟨?_, ?_⟩, ⟨?_, ?_⟩⟩
+  · -- x lower: ds + k*dt > 0 and M > 0, so p.1 - xb ≥ 1
+    by_contra hc; push_neg at hc
+    have := Int.lt_add_one_iff.mp hc
+    linarith [mul_nonpos_of_nonneg_of_nonpos hM.le (show (p.1 : ℤ) - ((s-1)+(t-1)*k) ≤ 0 from by linarith)]
+  · -- x upper: ds + k*dt < M + k*M = M*(k+1)
+    by_contra hc; push_neg at hc
+    have h1 := Int.add_one_le_iff.mpr hc
+    have h2 : (t : ℤ) * k - (t - 1) * k = k := by ring
+    have h3 := mul_le_mul_of_nonneg_left (show (k : ℤ)+1 ≤ (p.1 : ℤ)-((s-1)+(t-1)*k) from by linarith) hM.le
+    have h4 : mod_base k + k * mod_base k = mod_base k * (↑k + 1) := by ring
+    linarith [hds.2, mul_lt_mul_of_pos_left hdt.2 hk_pos]
+  · -- y lower: k*ds - dt > -M
+    by_contra hc; push_neg at hc
+    have h1 := mul_le_mul_of_nonneg_left (show (p.2 : ℤ) - (s * k - t) ≤ -1 from by
+      linarith [Int.lt_add_one_iff.mp (show (p.2 : ℤ) < s * k - t + 1 by linarith)]) hM.le
+    have h2 : mod_base k * (-1 : ℤ) = -mod_base k := by ring
+    linarith [hy, hdt.2]
+  · -- y upper: k*ds - dt < k*M
+    by_contra hc; push_neg at hc
+    have h1 := Int.add_one_le_iff.mpr hc
+    have h2 : (s + 1 : ℤ) * k - s * k = k := by ring
+    have h3 := mul_le_mul_of_nonneg_left (show (k : ℤ) ≤ (p.2 : ℤ)-(s*k-t) from by linarith) hM.le
+    have h4 : k * mod_base k = mod_base k * k := by ring
+    linarith [mul_lt_mul_of_pos_left hds.2 hk_pos, hdt.1]
 
 lemma rect_subset_M (s t : Int) (p : Point n)
     (hk : 2 ≤ k) :
