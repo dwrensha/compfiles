@@ -183,6 +183,7 @@ import Compfiles.Imo2020P5
 import Compfiles.Imo2020P6
 import Compfiles.Imo2021P1
 import Compfiles.Imo2021P2
+import Compfiles.Imo2021P3
 import Compfiles.Imo2021P5
 import Compfiles.Imo2021P6
 import Compfiles.Imo2022P1
