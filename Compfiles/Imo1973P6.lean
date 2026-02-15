@@ -275,8 +275,7 @@ problem imo1973_p6 (npos : 0 < n) (hq : q ∈ Set.Ioo 0 1) (apos : ∀ i, 0 < a 
           · simp
           · intro y yh
             use y-1, ?_ <;> grind only [= Finset.mem_Ioo, = Finset.mem_Iio]
-          · simp_rw [pow_add, pow_one, mul_comm]
-            simp
+          · simp [pow_succ']
         _ < _ := by
           rw [Nat.Iio_eq_range, geom_sum_eq (ne_of_lt hq.right)]
           apply lt_of_mul_lt_mul_of_nonneg_right (a:=1-q) ?_ (by lia)
