@@ -3426,9 +3426,7 @@ lemma s_t_range (hk : 2 ≤ k) (p : Point n) :
       zify at h; linarith
   refine ⟨?_, ?_, ?_, ?_⟩
   · rw [calc_s]
-    apply Int.ediv_nonneg
-    · dsimp [val_s]; nlinarith
-    · exact le_of_lt h_pos
+    exact Int.ediv_nonneg (Int.zero_le_ofNat _) (le_of_lt h_pos)
   · dsimp [calc_s]
     rw [Int.le_iff_lt_add_one]
     rw [Int.ediv_lt_iff_lt_mul h_pos]
