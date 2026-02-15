@@ -197,6 +197,7 @@ import Compfiles.Imo2023P2
 import Compfiles.Imo2023P3
 import Compfiles.Imo2023P4
 import Compfiles.Imo2023P5
+import Compfiles.Imo2023P6
 import Compfiles.Imo2024P1
 import Compfiles.Imo2024P2
 import Compfiles.Imo2024P3
