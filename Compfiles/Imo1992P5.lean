@@ -333,31 +333,17 @@ lemma equation_6_rearr (S: Finset point3) : ∑ z_i ∈ Z S, (z_i.card: ℝ) ≤
 }
 
 -- Now, we substitute equation 2 in equation 6.
-lemma subst_2_6 (S: Finset point3): (S.card: ℝ) ≤ ((S_z S).card: ℝ).sqrt * ∑ z_i ∈ Z S, ((((a_i_from_Z_i z_i).card: ℝ) * ((b_i_from_Z_i z_i).card: ℝ))).sqrt := by {
+lemma subst_2_6 (S: Finset point3): (S.card: ℝ) ≤ ((S_z S).card: ℝ).sqrt * ∑ z_i ∈ Z S, ((((a_i_from_Z_i z_i).card: ℝ) * ((b_i_from_Z_i z_i).card: ℝ))).sqrt := by
   rw [equation_2 S]
-
   have := equation_6_rearr S
   simp_all only [Nat.cast_nonneg, Real.sqrt_mul, Nat.cast_sum]
-}
-
--- Helper lemma for squaring two sides of an inequality
-lemma square_inequality {a b : ℝ} (h2: a ≥ 0) : a ≤ b → a^2 ≤ b^2 := by {
-  intro h
-  rw [ge_iff_le] at h2
-  apply sq_le_sq'
-  · grind
-  · assumption
-}
 
 -- Now, we square both sides
-lemma subst_2_6_sqr (S: Finset point3): (S.card: ℝ) ^ 2 ≤ ((S_z S).card: ℝ) * (∑ z_i ∈ Z S, √(((a_i_from_Z_i z_i).card: ℝ) * ((b_i_from_Z_i z_i).card: ℝ))) ^ 2 := by {
+lemma subst_2_6_sqr (S: Finset point3): (S.card: ℝ) ^ 2 ≤ ((S_z S).card: ℝ) * (∑ z_i ∈ Z S, √(((a_i_from_Z_i z_i).card: ℝ) * ((b_i_from_Z_i z_i).card: ℝ))) ^ 2 := by
   -- Which theorem states this?
-
   have h2_6 := subst_2_6 S
-  have S_card_nonneg : 0 ≤ (S.card: ℝ) := by {
-    exact Nat.cast_nonneg' S.card
-  }
-  have temp := square_inequality S_card_nonneg h2_6
+  have S_card_nonneg : 0 ≤ (S.card: ℝ) := Nat.cast_nonneg' S.card
+  have temp := pow_le_pow_left₀ S_card_nonneg h2_6 2
   -- Rewrite a bit
   convert_to (S.card: ℝ) ^ 2 ≤ (√((S_z S).card: ℝ) * ∑ z_i ∈ Z S, √(((a_i_from_Z_i z_i).card: ℝ) * ((b_i_from_Z_i z_i).card: ℝ ))) ^ 2
   · ring_nf
@@ -365,8 +351,6 @@ lemma subst_2_6_sqr (S: Finset point3): (S.card: ℝ) ^ 2 ≤ ((S_z S).card: ℝ
     · ring
     exact Nat.cast_nonneg' (S_z S).card
   exact temp
-}
-
 
 /-- Cauchy-Schwarz: sum of sqrt (a_i b_i) ≤ sqrt (sum a_i) * sqrt (sum b_i) -/
 lemma sum_sqrt_le_sqrt_sum (S: Finset point3) :
@@ -380,14 +364,13 @@ lemma sum_sqrt_le_sqrt_sum (S: Finset point3) :
     (fun z_i => √((b_i_from_Z_i z_i).card : ℝ)) using 3 <;>
   norm_num [Real.sqrt_mul, a_i_nonneg]
 
-lemma le_trans_mul_sqr {a b c d: ℝ} (hcd: 0 ≤ c) (hb: 0 ≤ b) (h1: a ≤ b * c ^2) (h2: c ≤ d) : a ≤ b * d ^ 2 := by {
+lemma le_trans_mul_sqr {a b c d: ℝ} (hcd: 0 ≤ c) (hb: 0 ≤ b) (h1: a ≤ b * c ^2) (h2: c ≤ d) : a ≤ b * d ^ 2 := by
   apply le_trans h1
   apply mul_le_mul
   · exact Preorder.le_refl b
-  · exact square_inequality hcd h2
+  · exact pow_le_pow_left₀ hcd h2 2
   · exact sq_nonneg c
   assumption
-}
 
 lemma pre_7 (S: Finset point3) :
     (S.card: ℝ)^2 ≤ ((S_z S).card: ℝ) * (√(∑ z_i ∈ Z S, ((a_i_from_Z_i z_i).card: ℝ)) *

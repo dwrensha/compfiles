@@ -149,11 +149,8 @@ problem imo1970_p3 :
 
           -- The sum telescopes
           have telescoping : ∑ k ∈ Finset.range n, (1 / c_seq seq (k + 1) - 1 / c_seq seq (k + 2)) =
-            1 / c_seq seq 1 - 1 / c_seq seq (n + 1) := by
-            induction n with
-            | zero => simp
-            | succ n ih =>
-              exact Finset.sum_range_sub' (fun i ↦ 1 / c_seq seq (i + 1)) (n + 1)
+              1 / c_seq seq 1 - 1 / c_seq seq (n + 1) :=
+            Finset.sum_range_sub' (fun i ↦ 1 / c_seq seq (i + 1)) n
 
           -- Handle the k = 0 term
           have first_term_bound : (1 - seq.a 0 / seq.a 1) / Real.sqrt (seq.a 1) ≤ 2 * (1 / c_seq seq 0 - 1 / c_seq seq 1) := by
