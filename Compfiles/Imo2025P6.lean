@@ -2994,8 +2994,11 @@ lemma mem_decSubsets {f : Fin n → Fin n} {t : Finset (Fin n)} :
     t ∈ decSubsets f ↔ StrictAntiOn f (t : Set (Fin n)) := by
   simp [decSubsets]
 
+set_option backward.isDefEq.respectTransparency false in
 lemma incSubsets_nonempty (f : Fin n → Fin n) : (incSubsets f).Nonempty := by
   use ∅; simp [incSubsets, StrictMonoOn]
+
+set_option backward.isDefEq.respectTransparency false in
 lemma decSubsets_nonempty (f : Fin n → Fin n) : (decSubsets f).Nonempty := by
   use ∅; simp [decSubsets, StrictAntiOn]
 
@@ -3302,7 +3305,7 @@ lemma M_subset_rect (s t : Int) (p : Point n) (hk : 2 ≤ k) :
     have h2 : (t : ℤ) * k - (t - 1) * k = k := by ring
     have h3 := mul_le_mul_of_nonneg_left (show (k : ℤ)+1 ≤ (p.1 : ℤ)-((s-1)+(t-1)*k) from by linarith) hM.le
     have h4 : mod_base k + k * mod_base k = mod_base k * (↑k + 1) := by ring
-    linarith [hds.2, mul_lt_mul_of_pos_left hdt.2 hk_pos]
+    linarith [hds.2, Int.mul_lt_mul_of_pos_left hdt.2 hk_pos]
   · -- y lower: k*ds - dt > -M
     by_contra hc; push_neg at hc
     have h1 := mul_le_mul_of_nonneg_left (show (p.2 : ℤ) - (s * k - t) ≤ -1 from by
@@ -3315,7 +3318,7 @@ lemma M_subset_rect (s t : Int) (p : Point n) (hk : 2 ≤ k) :
     have h2 : (s + 1 : ℤ) * k - s * k = k := by ring
     have h3 := mul_le_mul_of_nonneg_left (show (k : ℤ) ≤ (p.2 : ℤ)-(s*k-t) from by linarith) hM.le
     have h4 : k * mod_base k = mod_base k * k := by ring
-    linarith [mul_lt_mul_of_pos_left hds.2 hk_pos, hdt.1]
+    linarith [Int.mul_lt_mul_of_pos_left hds.2 hk_pos, hdt.1]
 
 lemma rect_subset_M (s t : Int) (p : Point n)
     (hk : 2 ≤ k) :
@@ -3580,9 +3583,9 @@ def clipped_rect [NeZero k] (hk : 2 ≤ k) (s t : Int) : Option (Matilda (k * k)
       h_x_le := Int.toNat_le_toNat h_valid.1
       h_y_le := Int.toNat_le_toNat h_valid.2
       h_x_bound := by
-        zify; simp; exact ⟨lt_of_le_of_lt (min_le_left _ _) (by omega), NeZero.ne k⟩
+        zify; simp; exact ⟨lt_of_le_of_lt (min_le_left _ _) (by omega), by omega⟩
       h_y_bound := by
-        zify; simp; exact ⟨lt_of_le_of_lt (min_le_left _ _) (by omega), NeZero.ne k⟩
+        zify; simp; exact ⟨lt_of_le_of_lt (min_le_left _ _) (by omega), by omega⟩
       h_disjoint := by
         intro p hp h_in_rect
         zify at h_in_rect
@@ -3622,8 +3625,8 @@ lemma matilda_upper_bound_sum (k : ℕ) (hk : 2 ≤ k) :
   have h_total : range_sq.card = (k + 1) * (k + 1) := by
     dsimp [range_sq]
     rw [Finset.card_product]
-    simp only [Int.card_Icc, sub_zero]
-    have : (kz + 1).toNat = k + 1 := by dsimp [kz]
+    simp only [Int.card_Icc]
+    have : (kz + 1 - 0).toNat = k + 1 := by dsimp [kz]; simp
     rw [this]
   have h_corners : corners.card = 4 := by
     dsimp [corners]

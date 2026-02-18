@@ -12,6 +12,8 @@ import Mathlib.GroupTheory.Perm.Fin
 
 import ProblemExtraction
 
+set_option backward.isDefEq.respectTransparency false
+
 problem_file {
   tags := [.Algebra]
   solutionImportedFrom :=

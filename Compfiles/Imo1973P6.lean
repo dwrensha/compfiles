@@ -8,6 +8,8 @@ import Mathlib.Tactic
 
 import ProblemExtraction
 
+set_option backward.isDefEq.respectTransparency false
+
 problem_file
 
 /-!
@@ -79,11 +81,11 @@ theorem imo1973_p6_of_n_eq_one (hn : n = 1) (hq : q ∈ Set.Ioo 0 1) (apos : ∀
     true_and]
   rw [Set.mem_Ioo] at hq
   have : 1 < (1 + q) / (1 - q) := by
-    refine (one_lt_div ?_).mpr ?_ <;> grind only
+    refine (one_lt_div ?_).mpr ?_ <;> linarith
   use fun _ => √((1+q) / (1-q)) * a 0
   and_intros
   · rw [lt_mul_iff_one_lt_left (apos 0)]
-    refine (Real.lt_sqrt ?_).mpr ?_ <;> lia
+    refine (Real.lt_sqrt ?_).mpr ?_ <;> linarith
   · rw [mul_lt_mul_iff_left₀ (apos 0)]
     refine (Real.sqrt_lt' ?_).mpr ?_ <;> nlinarith
 
@@ -103,7 +105,7 @@ problem imo1973_p6 (npos : 0 < n) (hq : q ∈ Set.Ioo 0 1) (apos : ∀ i, 0 < a 
   have nnz : NeZero n := NeZero.of_gt this
   rw [Set.mem_Ioo] at hq
   have q_lt_inv_q : q < 1 / q := by
-    rw [lt_div_iff₀, <-sq, sq_lt_one_iff₀] <;> lia
+    rw [lt_div_iff₀, <-sq, sq_lt_one_iff₀] <;> linarith
   and_intros
   -- (a) --
   · intro k
@@ -152,7 +154,9 @@ problem imo1973_p6 (npos : 0 < n) (hq : q ∈ Set.Ioo 0 1) (apos : ∀ i, 0 < a 
       rw [h2] at h1
       rw [mul_eq_mul_right_iff] at h1
       have h (_t) := Q_pos n q hq ⟨k, _t⟩ b
-      apply h1.elim <;> lia
+      rcases h1 with hq_eq | hb0
+      · have := q_lt_inv_q; rw [one_div, hq_eq] at this; exact absurd this (lt_irrefl q)
+      · linarith [h (show k < n by omega)]
     let X := ∑ i ∈ Xi, Q n q ⟨k, by lia⟩ i * a i
     let Y := ∑ i ∈ Yi, Q n q ⟨k, by lia⟩ i * a i
     have Xpos : 0 < X := by
@@ -274,11 +278,13 @@ problem imo1973_p6 (npos : 0 < n) (hq : q ∈ Set.Ioo 0 1) (apos : ∀ i, 0 < a 
             lia
           · simp
           · intro y yh
-            use y-1, ?_ <;> grind only [= Finset.mem_Ioo, = Finset.mem_Iio]
+            use y-1, ?_
+            · simp only [Finset.mem_Ioo] at yh; omega
+            · simp only [Finset.mem_Ioo] at yh; simp only [Finset.mem_Iio]; omega
           · simp [pow_succ']
         _ < _ := by
           rw [Nat.Iio_eq_range, geom_sum_eq (ne_of_lt hq.right)]
-          apply lt_of_mul_lt_mul_of_nonneg_right (a:=1-q) ?_ (by lia)
+          apply lt_of_mul_lt_mul_of_nonneg_right (a:=1-q) ?_ (by linarith)
           rw [IsUnit.div_mul_cancel, <-mul_assoc, mul_div_assoc', <-neg_div_neg_eq, neg_sub,
             add_mul, <-neg_mul, IsUnit.div_mul_cancel, one_mul]
           · ring_nf

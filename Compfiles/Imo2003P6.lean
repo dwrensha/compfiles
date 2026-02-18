@@ -9,6 +9,8 @@ import Mathlib.Tactic.NormNum.Prime
 
 import ProblemExtraction
 
+set_option backward.isDefEq.respectTransparency false
+
 problem_file { tags := [.NumberTheory] }
 
 /-!

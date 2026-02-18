@@ -9,6 +9,8 @@ import Mathlib.Tactic
 
 import ProblemExtraction
 
+set_option backward.isDefEq.respectTransparency false
+
 problem_file {
   tags := [.Algebra]
   solutionImportedFrom := "https://github.com/leanprover-community/mathlib4/blob/master/Archive/Imo/Imo2024Q1.lean"
@@ -102,7 +104,7 @@ lemma mem_Ico_n_of_mem_Ioo (h : α ∈ Set.Ioo 0 2)
   · obtain ⟨h1, h2⟩ := hc.mem_Ico_one_of_mem_Ioo h
     simp only [Finset.Icc_self, Finset.sum_singleton, Nat.cast_one, one_mul, one_pow,
                Int.floor_eq_iff, Int.cast_one, mul_one, div_one, Set.mem_Ico, tsub_le_iff_right]
-    lia
+    constructor <;> constructor <;> linarith
   · rcases hk with ⟨hks, hkl, hk2⟩
     have hs : (∑ i ∈ Finset.Icc 1 (k + 1), ⌊i * α⌋) =
          ⌊(k + 1 : ℕ) * α⌋ + ((k : ℕ) : ℤ) ^ 2 := by

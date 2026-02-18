@@ -8,6 +8,8 @@ import Mathlib.Tactic
 
 import ProblemExtraction
 
+set_option backward.isDefEq.respectTransparency false
+
 problem_file
 
 /-!
@@ -105,7 +107,7 @@ problem imo1977_p2 :
       rw [<-Matrix.dotProduct_mulVec, one_dotProduct]
       apply Fintype.sum_pos
       exact lt_of_strongLT cpos
-    lia
+    linarith
 
 
 end Imo1977P2

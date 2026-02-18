@@ -9,6 +9,8 @@ import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 import ProblemExtraction
 
+set_option backward.isDefEq.respectTransparency false
+
 problem_file { tags := [.Algebra] }
 
 /-!

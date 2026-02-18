@@ -8,6 +8,8 @@ import Mathlib.Tactic
 
 import ProblemExtraction
 
+set_option backward.isDefEq.respectTransparency false
+
 problem_file { tags := [.Algebra] }
 
 /-!
@@ -87,7 +89,7 @@ theorem Int.fract_sub_eq (a b : R) : ∃ z : Fin 2, fract (a - b) = fract a - fr
     and_intros
     · rw [add_comm, add_sub, le_sub_iff_add_le]
       apply le_trans (b:=1) <;> simp [le_of_lt (fract_lt_one _)]
-    · lia
+    · exact (add_lt_add_left (sub_neg_of_lt h1) 1).trans_eq (zero_add (1 : R))
     · rw [fract, fract]
       use ⌊a⌋-⌊b⌋-1
       rw [Int.cast_sub, Int.cast_sub, sub_sub_sub_comm, sub_add, sub_sub_cancel]
@@ -185,7 +187,7 @@ problem imo1991_p6 (a : ℝ) (ha : 1 < a) :
         · trans 2 * (√2 * (↑i - ↑j)) + 2*(↑i - ↑j)
           · simp
             norm_cast; lia
-          · lia
+          · ring_nf; exact le_refl _
         · simp
         · apply mul_pos
           · norm_cast; lia

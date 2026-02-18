@@ -10,6 +10,8 @@ import Mathlib.Tactic.Linarith
 
 import ProblemExtraction
 
+set_option backward.isDefEq.respectTransparency false
+
 problem_file {
   tags := [.Combinatorics]
   videos := ["http://youtu.be/TOzS4aC_K1g"]

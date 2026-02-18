@@ -9,6 +9,8 @@ import Mathlib.Tactic
 
 import ProblemExtraction
 
+set_option backward.isDefEq.respectTransparency false
+
 problem_file {
   tags := [.NumberTheory]
   videos := ["http://youtu.be/9d2nicgd68Q"]

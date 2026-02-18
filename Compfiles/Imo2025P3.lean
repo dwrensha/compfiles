@@ -12,6 +12,8 @@ import Mathlib.Data.Real.Basic
 import Mathlib.Order.Bounds.Basic
 import ProblemExtraction
 
+set_option backward.isDefEq.respectTransparency false
+
 problem_file {
   tags := [.NumberTheory]
 }

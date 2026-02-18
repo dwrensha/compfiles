@@ -8,6 +8,8 @@ import Mathlib.Tactic
 
 import ProblemExtraction
 
+set_option backward.isDefEq.respectTransparency false
+
 problem_file { tags := [.Algebra] }
 
 /-!
@@ -63,13 +65,14 @@ theorem lemma1 (c1 : ℝ) :
       linarith [sq_nonneg (c1 - 1), sq_nonneg ((1 + (2 - c1) / 4) / 2 - 1 / 2), hc1]
   rcases h9 with ⟨a, ha1, ha2, h10⟩
   have h1' := h1 a ⟨by linarith, ha2⟩
-  lia
+  simp only [f, show ¬(a ≤ 1 / 2) from by linarith, ite_false] at h1'
+  linarith
 
 private lemma dyadicBracket
     (x : ℝ) (hx0 : 0 < x) (hxhalf : x ≤ (1 : ℝ) / 2) :
     ∃ m : ℕ, (1 : ℝ) / (2 : ℝ)^(m+1) < x ∧ x ≤ 1 / (2 : ℝ)^m := by
   obtain ⟨m, hm1, hm2⟩ :=
-    exists_nat_pow_near_of_lt_one hx0 (by grind) (show 0 < (1:ℝ)/2 by norm_num) (by norm_num)
+    exists_nat_pow_near_of_lt_one hx0 (by linarith) (show 0 < (1:ℝ)/2 by norm_num) (by norm_num)
   use m
   refine ⟨?_, ?_⟩
   · field_simp at hm1

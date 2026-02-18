@@ -12,12 +12,12 @@ weak.linter.tacticAnalysis.tryAtEachStepFromEnv = true
 [[require]]
 name = "mathlib"
 git = "https://github.com/leanprover-community/mathlib4"
-rev = "v4.28.0"
+rev = "master"
 
 [[require]]
 name = "tryAtEachStep"
 git = "https://github.com/dwrensha/tryAtEachStep"
-rev = "lean-v4.28.0"
+rev = "main"
 
 [[lean_lib]]
 name = "ProblemExtraction"

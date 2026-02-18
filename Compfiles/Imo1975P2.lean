@@ -11,6 +11,8 @@ import Mathlib.Data.Int.Basic
 import Mathlib.Data.Finset.Basic
 import ProblemExtraction
 
+set_option backward.isDefEq.respectTransparency false
+
 
 problem_file { tags := [.Algebra] }
 

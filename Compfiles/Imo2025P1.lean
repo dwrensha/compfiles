@@ -7,6 +7,8 @@ import Mathlib
 
 import ProblemExtraction
 
+set_option backward.isDefEq.respectTransparency false
+
 problem_file {
   tags := [.Combinatorics]
   solutionImportedFrom := "https://github.com/leanprover-community/mathlib4/pull/27817"
@@ -500,7 +502,7 @@ lemma grid_remove_diag (n : ℕ) : grid (n + 1) \ (edgeLine (n + 1) 2) = grid n 
   rw [show -!₂[0, 0] + x = x by simp]
 
 /-- `shiftLineMap v L` shifts the line L by the vector `v`. -/
-def shiftLineMap (v : Plane) (L : AffSubOfPlane) : AffSubOfPlane :=
+noncomputable def shiftLineMap (v : Plane) (L : AffSubOfPlane) : AffSubOfPlane :=
   AffineSubspace.map (AffineEquiv.constVAdd ℝ Plane v) L
 
 /-- The preparation lemma on composing two line-shifts. -/
@@ -509,7 +511,7 @@ lemma affine_trans (e : Plane ≃ᵃ[ℝ] Plane) (e' : Plane ≃ᵃ[ℝ] Plane) 
 
 /-- `shiftLineMap v` is the injective map `AffSubOfPlane ↪ AffSubOfPlane`
 that shifts by the vector `v`. -/
-def shiftLine (v : Plane) : AffSubOfPlane ↪ AffSubOfPlane := ⟨
+noncomputable def shiftLine (v : Plane) : AffSubOfPlane ↪ AffSubOfPlane := ⟨
   shiftLineMap v,
   by
     dsimp only [Function.Injective]; intro L1 L2 h
@@ -525,7 +527,7 @@ lemma shift_para (v : Plane) (L : AffSubOfPlane) :  L ∥ shiftLine v L := by
   dsimp only [shiftLine, Function.Embedding.coeFn_mk, shiftLineMap, AffineSubspace.Parallel]; use v
 
 /-- `shiftLines v lines` is the collection of `shiftLine v L` for `L ∈ lines`. -/
-def shiftLines (v : Plane) (lines : Finset AffSubOfPlane) : Finset AffSubOfPlane :=
+noncomputable def shiftLines (v : Plane) (lines : Finset AffSubOfPlane) : Finset AffSubOfPlane :=
   Finset.map (shiftLine v) lines
 
 /-- `shiftLine (-v)` is the inverse of `shiftLine v`. -/
@@ -541,7 +543,7 @@ lemma shift_sunny (v : Plane) (L : AffSubOfPlane) : Sunny L → Sunny (shiftLine
   refine ⟨fun hp => h1 ?_, fun hp => h2 ?_, fun hp => h3 ?_⟩ <;> exact (shift_para v L).trans hp
 
 /-- Shift a `coverConfig` by the vector `v`. -/
-def coverConfig.shift (C : coverConfig) (v : Plane) : coverConfig where
+noncomputable def coverConfig.shift (C : coverConfig) (v : Plane) : coverConfig where
   lines := shiftLines v C.lines
   g := shiftSet v C.g
   n := C.n

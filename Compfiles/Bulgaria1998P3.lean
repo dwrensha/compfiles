@@ -10,6 +10,8 @@ import Mathlib.Analysis.SpecificLimits.Basic
 
 import ProblemExtraction
 
+set_option backward.isDefEq.respectTransparency false
+
 problem_file { tags := [.Algebra] }
 
 /-!

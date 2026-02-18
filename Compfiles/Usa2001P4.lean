@@ -11,6 +11,8 @@ import Mathlib.Geometry.Euclidean.Triangle
 
 import ProblemExtraction
 
+set_option backward.isDefEq.respectTransparency false
+
 problem_file { tags := [.Geometry] }
 
 /-!

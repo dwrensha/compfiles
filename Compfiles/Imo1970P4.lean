@@ -7,6 +7,8 @@ Authors: David Renshaw, Adam Kurkiewicz
 import Mathlib.Tactic
 import ProblemExtraction
 
+set_option backward.isDefEq.respectTransparency false
+
 problem_file { tags := [.NumberTheory] }
 
 /-!
@@ -324,13 +326,11 @@ lemma subsets_must_overlap_pigeonhole (s s1 s2 : Finset ℕ) (predicate_s1: ℕ 
   have step_2 : (∀ x ∈ s, x ∈ s1 → x ∉ s2) → Disjoint s1 s2 := by
     intro left
     dsimp [Disjoint]
-    dsimp [Finset.instHasSubset]
-    simp only [Finset.notMem_empty, imp_false]
     intro s3 rel1 rel2 a a_in_s3
     have a_in_s1 := rel1 a_in_s3
     have a_in_s2 := rel2 a_in_s3
     have a_in_s : a ∈ s := s1_is_subset (rel1 a_in_s3)
-    exact left a a_in_s a_in_s1 a_in_s2
+    exact absurd a_in_s2 (left a a_in_s a_in_s1)
   have s1_s2_disjoint : Disjoint s1 s2 := by
     apply step_2
     apply step_1
@@ -341,14 +341,10 @@ lemma subsets_must_overlap_pigeonhole (s s1 s2 : Finset ℕ) (predicate_s1: ℕ 
   rw[← card_calc] at total_size_exceeds
   rw[← card_s] at total_size_exceeds
   have s1_s2_subset : (s1 ∪ s2) ⊆ s := by
-    dsimp[Finset.instHasSubset]
-    simp only [Finset.mem_union]
     intro a s1_or_s2
-    cases s1_or_s2
-    case inl left =>
-      simp_all only [Finset.filter_subset, Finset.mem_filter]
-    case inr left =>
-      simp_all only [Finset.filter_subset, Finset.mem_filter]
+    rcases Finset.mem_union.mp s1_or_s2 with left | left
+    · exact s1_is_subset left
+    · rw [s2_filter] at left; exact (Finset.mem_filter.mp left).1
   have : (s1 ∪ s2).card ≤ s.card := by
     apply Finset.card_le_card
     exact s1_s2_subset

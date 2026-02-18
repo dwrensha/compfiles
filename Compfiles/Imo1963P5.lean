@@ -10,6 +10,8 @@ import Mathlib.Analysis.Real.Pi.Bounds
 
 import ProblemExtraction
 
+set_option backward.isDefEq.respectTransparency false
+
 problem_file { tags := [.Algebra] }
 
 /-!

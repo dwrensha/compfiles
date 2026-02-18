@@ -9,6 +9,8 @@ import Mathlib.Data.Fin.Tuple.Sort
 
 import ProblemExtraction
 
+set_option backward.isDefEq.respectTransparency false
+
 problem_file { tags := [.Algebra] }
 
 /-!
@@ -192,7 +194,8 @@ problem imo1971_p1 : P 3 ∧ P 5 ∧ ∀ n > 2, n ≠ 3 ∧ n ≠ 5 → ¬P n :=
         rw [← sub_neg_eq_add, sub_nonneg]
         calc -((a 1 - a 0) * (a 1 - a 2))
           _ = (a 0 - a 1) * (a 1 - a 2) := by rw [← neg_sub, neg_mul, neg_neg]
-          _ ≤ (a 0 - a 1) * (a 0 - a 2) := by apply mul_le_mul <;> lia
+          _ ≤ (a 0 - a 1) * (a 0 - a 2) := by
+              apply mul_le_mul <;> linarith [h.1, h.2]
 
       -- Show that the third term is also non-negative
       have h₂ : 0 ≤ (a 2 - a 0) * (a 2 - a 1) := by apply mul_nonneg_of_nonpos_of_nonpos <;> linarith
@@ -255,7 +258,7 @@ problem imo1971_p1 : P 3 ∧ P 5 ∧ ∀ n > 2, n ≠ 3 ∧ n ≠ 5 → ¬P n :=
           · linarith
           · linarith
           · apply mul_nonneg <;> linarith
-        · lia
+        · linarith [h.2.2.2]
 
       -- Close the goal
       linarith

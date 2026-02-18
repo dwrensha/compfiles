@@ -27,7 +27,7 @@ problem singapore2019_r1_p2 : (√10 - √2)^(1 / 3 : ℝ) * (√10 + √2)^(7 /
         (√10 - √2)^(1 / 3 : ℝ) * (√10 + √2)^(1 / 3 : ℝ) * (√10 + √2)^(2 : ℝ) := by
       rw [show (√10 + √2)^(7 / 3 : ℝ) = (√10 + √2)^(1 / 3 + 2 : ℝ) by norm_num, rpow_add (by positivity)]
       ring_nf
-    rw [h2, ← mul_rpow (by norm_num)]
+    rw [h2, ← mul_rpow (by bound)]
     positivity
   rw [h1]
   have h2 := calc
@@ -45,7 +45,7 @@ problem singapore2019_r1_p2 : (√10 - √2)^(1 / 3 : ℝ) * (√10 + √2)^(7 /
       rw [← sqrt_mul]
       repeat norm_num
     have h11 : √20 = 2 * √5 := by
-      rw [sqrt_eq_iff_mul_self_eq] <;> norm_num
+      rw [sqrt_eq_iff_mul_self_eq (by positivity) (by positivity)]
       ring_nf
       norm_num
     rw [h8, h9, h10, h11]

@@ -8,6 +8,8 @@ import Mathlib.Tactic
 
 import ProblemExtraction
 
+set_option backward.isDefEq.respectTransparency false
+
 problem_file {
   tags := [.Algebra]
   solutionImportedFrom := "https://github.com/roozbeh-yz/IMO-Steps/blob/main/Lean_v20/imo_proofs/imo_1966_p5.lean"
@@ -58,7 +60,7 @@ lemma bijective_order {n : ℕ} {a : Fin n → ℝ} (ha : Function.Injective a)
     wlog hij' : a i < a j generalizing i j
     · symm
       apply this hij.symm
-      lia
+      exact lt_of_le_of_ne (not_lt.mp hij') (Ne.symm (ha.ne hij))
     apply ne_of_lt
     simp only [order, raw_order, Fin.mk_lt_mk]
     apply Finset.card_lt_card
