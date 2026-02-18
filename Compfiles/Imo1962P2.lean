@@ -8,8 +8,6 @@ import Mathlib.Tactic
 
 import ProblemExtraction
 
-set_option backward.isDefEq.respectTransparency false
-
 problem_file { tags := [.Algebra] }
 
 /-!
@@ -61,7 +59,7 @@ problem imo1962_p2 (x : ℝ) :
       have h3 : x + 1 < 3 - x := by linarith
       suffices H : (1 / 2)^2 < (Real.sqrt (3 - x) - Real.sqrt (x + 1))^2
       · have h31 : 0 ≤ Real.sqrt (3 - x) - Real.sqrt (x + 1) := by
-          rw [sub_nonneg]
+          rw [sub_nonneg (α := ℝ)]
           apply le_of_lt
           exact Real.sqrt_lt_sqrt hx1' h3
         exact lt_of_pow_lt_pow_left₀ 2 h31 H
