@@ -130,12 +130,6 @@ lemma lemma3 {α : Type} (l : List α)
   --TODO why do neither aesop nor library_search succeed here?
   exact hij (List.nodup_iff_injective_get.mp hl hij')
 
-lemma lemma4 {a b : ℕ} (h : a ≡ b [MOD b]) : a ≡ 0 [MOD b] := by
-  have h1 : a % b = b % b := h
-  have h2 : b % b = 0 := Nat.mod_self b
-  rw [h2] at h1
-  exact h1
-
 snip end
 
 problem imo1989_p5 (n : ℕ) : ∃ m, ∀ j < n, ¬IsPrimePow (m + j) := by
@@ -200,7 +194,7 @@ problem imo1989_p5 (n : ℕ) : ∃ m, ∀ j < n, ¬IsPrimePow (m + j) := by
 
   rw [Nat.sub_add_cancel h7] at h6
   clear h1 h7
-  have h8 := lemma4 h6
+  have h8 := (Nat.modEq_modulus_add_iff (b := 0)).mp h6
   replace h8 := Nat.dvd_of_mod_eq_zero h8
   have h9 := dvd_of_mul_right_dvd h8
   have h10 := dvd_of_mul_left_dvd h8

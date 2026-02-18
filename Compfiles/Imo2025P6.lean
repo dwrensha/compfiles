@@ -613,14 +613,10 @@ lemma covering_of_maximal_u
   apply h_maximal p hp hp_not_u
   · intro q hq hx_lt
     specialize h_not_lo q hq
-    have h_x_le : px q ≤ px p := le_of_lt hx_lt
-    have h_not_y_le : ¬(py p ≤ py q) := fun h => h_not_lo h_x_le h
-    linarith
+    exact Nat.lt_of_not_le (h_not_lo (le_of_lt hx_lt))
   · intro q hq hx_lt
     specialize h_not_up q hq
-    have h_x_le : px p ≤ px q := le_of_lt hx_lt
-    have h_not_y_le : ¬(py q ≤ py p) := fun h => h_not_up h_x_le h
-    linarith
+    exact Nat.lt_of_not_le (h_not_up (le_of_lt hx_lt))
 
 lemma covering_of_maximal_v
     (p : Point n) (hp : p ∈ all_black) (hp_not_v : p ∉ v)
@@ -1722,11 +1718,8 @@ lemma py_head_ge_of_mem_v (hb_pos : 0 < c.b) (q : Point n) (hq : q ∈ c.v) :
   have hx_le : px v0 ≤ px q := by
     refine List.Pairwise.rel_head c.v_list_sorted ?_
     simpa using hq
-  rcases hx_le.lt_or_eq with h_lt | h_eq
-  · exact le_of_lt (c.h_v_mono v0 h_v0_mem q hq h_lt)
-  · have h_same : v0 = q := c.h_v_inj v0 h_v0_mem q hq h_eq
-    subst h_same
-    exact le_refl _
+  exact
+    BaseSetup.v_mono_le c.toBaseSetup (c.v_list.head (v_list_ne_nil c hb_pos)) h_v0_mem q hq hx_le
 
 lemma px_le_last_of_mem_v (hb_pos : 0 < c.b) (q : Point n) (hq : q ∈ c.v) :
     px q ≤ px (c.v_list.getLast (c.v_list_ne_nil hb_pos)) := by
@@ -1738,9 +1731,8 @@ lemma py_ge_last_of_mem_v (hb_pos : 0 < c.b) (q : Point n) (hq : q ∈ c.v) :
   let v_last := c.v_list.getLast (c.v_list_ne_nil hb_pos)
   have h_vl_mem : v_last ∈ c.v := by rw [← mem_v_list]; exact List.getLast_mem _
   have hx_le : px q ≤ px v_last := c.px_le_last_of_mem_v hb_pos q hq
-  rcases hx_le.lt_or_eq with h_lt | h_eq
-  · exact le_of_lt (c.h_v_mono q hq v_last h_vl_mem h_lt)
-  · rw [c.h_v_inj q hq v_last h_vl_mem h_eq]
+  exact BaseSetup.v_mono_le c.toBaseSetup q hq
+          (c.v_list.getLast (v_list_ne_nil c hb_pos)) h_vl_mem hx_le
 
 lemma mem_of_mem_lower_of_mem_upper {p : Point n}
     (h_lo : p ∈ v_lower c.v) (h_up : p ∈ v_upper c.v) : p ∈ c.v := by
@@ -1829,14 +1821,10 @@ lemma u_last_mem_v_upper (ha_pos : 0 < c.a) :
   · exfalso
     rw [mem_v_lower] at h_lo
     obtain ⟨vj, hvj, hx_le, hy_le⟩ := h_lo
-    have hx_lt : px u_last < px vj := hx_le.lt_of_ne <| by
-      intro h_eq
-      have : u_last = vj := c.h_unique_x u_last (c.hu_sub h_in_u) vj (c.hv_sub hvj) h_eq
-      subst this; contradiction
-    have hy_lt : py u_last < py vj := hy_le.lt_of_ne <| by
-      intro h_eq
-      have : u_last = vj := c.h_unique_y u_last (c.hu_sub h_in_u) vj (c.hv_sub hvj) h_eq
-      subst this; contradiction
+    have hx_lt : px u_last < px vj := hx_le.lt_of_ne <|
+      px_ne_of_mem_disjoint c h_in_u hvj
+    have hy_lt : py u_last < py vj := hy_le.lt_of_ne <|
+      py_ne_of_mem_disjoint c h_in_u hvj
     exact c.no_black_right_up_of_u_last ha_pos vj (c.hv_sub hvj) hx_lt hy_lt
   · exact h_up
 
@@ -1908,14 +1896,10 @@ lemma v_head_mem_u_upper (hb_pos : 0 < c.b) :
   · exfalso
     rw [mem_u_lower] at h_lo
     obtain ⟨ui, hui, hx_le, hy_le⟩ := h_lo
-    have hx_lt : px ui < px v0 := hx_le.lt_of_ne <| by
-      intro h_eq
-      have : ui = v0 := c.h_unique_x ui (c.hu_sub hui) v0 (c.hv_sub h_in_v) h_eq
-      subst this; contradiction
-    have hy_lt : py v0 < py ui := hy_le.lt_of_ne <| by
-      intro h_eq
-      have : ui = v0 := c.h_unique_y ui (c.hu_sub hui) v0 (c.hv_sub h_in_v) h_eq.symm
-      subst this; contradiction
+    have hx_lt : px ui < px v0 := hx_le.lt_of_ne <|
+      px_ne_of_mem_disjoint c hui h_in_v
+    have hy_lt : py v0 < py ui := hy_le.lt_of_ne <|
+      (py_ne_of_mem_disjoint c hui h_in_v).symm
     exact c.no_black_left_up_of_v_head hb_pos ui (c.hu_sub hui) hx_lt hy_lt
   · exact h_up
 

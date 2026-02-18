@@ -189,10 +189,7 @@ theorem imo1992_p6_a : ∀ n ≥ 4, S n ≤ n^2-14 := by
           rw [ge_iff_le, add_le_add_iff_right]
           apply Finset.sum_le_sum
           intro i _
-          have : 1 = 1^2 := by rfl
-          rw [this]
-          apply pow_left_mono 2
-          apply sh2
+          exact Nat.one_le_pow 2 (s i) (sh2 i)
         _ = n^2 - 14 + s j ^ 2 := by
           rw [Finset.sum_const, smul_eq_mul, mul_one, Nat.add_right_cancel_iff, Finset.card_sdiff,
               Finset.card_univ, Fintype.card_fin, Finset.inter_univ, Finset.card_singleton]
@@ -252,10 +249,8 @@ theorem imo1992_p6_a : ∀ n ≥ 4, S n ≤ n^2-14 := by
         unfold s'
         congr
         funext j
-        simp
-        obtain ⟨val, property⟩ := i
-        simp_all
-        simp_all only [Subtype.mk.injEq, s', V]
+        simp only [eq_iff_iff]
+        exact Subtype.mk_eq_mk
       _ = ∑ j ∈ {1,2,3}, Finset.card {i | s i = j} + ∑ j ∈ {1,2,3}, Finset.card {i | s i = j} * (j ^ 2 - 1) := by
         rw [←Finset.sum_add_distrib]
         nth_rw 1 [←Finset.sum_attach]
