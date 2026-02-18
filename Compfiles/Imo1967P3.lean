@@ -8,9 +8,6 @@ import Mathlib
 
 import ProblemExtraction
 
-set_option backward.isDefEq.respectTransparency false
-
-
 problem_file {
   tags := [.NumberTheory]
   solutionImportedFrom := "https://github.com/roozbeh-yz/IMO-Steps/blob/main/Lean_v20/imo_proofs/imo_1967_p3.lean"
@@ -164,8 +161,7 @@ problem imo1967_p3
       exact Int.dvd_zero ((↑n.factorial : ℤ) * (↑(n + (1 : ℕ)).factorial : ℤ))
     · push_neg at hk₁
       have h₅: ∏ i ∈ Finset.Icc (1 : ℕ) n, ((↑(c (m + i)) : ℤ) - (↑(c k) : ℤ)) =
-        ∏ i ∈ Finset.Icc (1 : ℕ) n, (((↑(c k) : ℤ) - (↑(c (m + i)) : ℤ)) * (-1:ℤ)) := by
-        group
+          ∏ i ∈ Finset.Icc (1 : ℕ) n, (((↑(c k) : ℤ) - (↑(c (m + i)) : ℤ)) * (-1:ℤ)) := by simp
       have h₆: ∏ i ∈ Finset.Icc 1 n, ((↑(c k) : ℤ) - (↑(c (m + i)) : ℤ)) = (∏ i ∈ Finset.Icc 1 n, (k - (m + i))) * (∏ i ∈ Finset.Icc 1 n, (k + (m + i) + 1)) := by
         have h₅₁: ∏ i ∈ Finset.Icc 1 n, (((c k):ℤ) - ((c (m + i)):ℤ)) = (↑(∏ i ∈ Finset.Icc 1 n, (c k - c (m + i))):ℤ) := by
           rw [@Nat.cast_prod]

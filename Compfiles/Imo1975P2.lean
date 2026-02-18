@@ -11,8 +11,6 @@ import Mathlib.Data.Int.Basic
 import Mathlib.Data.Finset.Basic
 import ProblemExtraction
 
-set_option backward.isDefEq.respectTransparency false
-
 
 problem_file { tags := [.Algebra] }
 
@@ -102,6 +100,7 @@ problem imo1975_p2 (a : ℕ → ℤ)
         have t2 : a m - t > a k - t :=  add_lt_add_left t1 (-t)
         rw [hy] at t2
         rw [hx] at t2
+        have : PosMulStrictMono ℤ := PosMulMono.toPosMulStrictMono
         have t3 := (mul_lt_mul_iff_right₀ (apos i)).mp t2
         exact sub_pos.mpr t3
       have s : a m = (y-x) * a i + 1 * a k ∧ i < k ∧ 0 < (y - x).natAbs ∧ (0 : ℕ)<(1 : ℕ) := by

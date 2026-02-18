@@ -9,8 +9,6 @@ import Mathlib.Algebra.GroupWithZero.Basic
 
 import ProblemExtraction
 
-set_option backward.isDefEq.respectTransparency false
-
 problem_file { tags := [.Algebra] }
 
 /-!
@@ -50,7 +48,7 @@ problem imo1972_p4 (a b c d e : ℝ)
            0 ≤ (c * d - c * a)^2 ∧ 0 ≤ (d * e - d * b)^2 ∧
            0 ≤ (e * a - e * c)^2 ∧ 0 ≤ (a * c - a * e)^2 ∧
            0 ≤ (b * d - b * a)^2 ∧ 0 ≤ (c * e - c * b)^2 ∧
-           0 ≤ (d * a - d * c)^2 ∧ 0 ≤ (e * b - e * d)^2 := by simp [sq_nonneg]
+           0 ≤ (d * a - d * c)^2 ∧ 0 ≤ (e * b - e * d)^2 := by simp [sq_nonneg (R := ℝ)]
 
     have bd : b = d := by
       have h₁ : (a * b - a * d)^2 = 0 := by linarith

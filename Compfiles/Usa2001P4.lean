@@ -11,8 +11,6 @@ import Mathlib.Geometry.Euclidean.Triangle
 
 import ProblemExtraction
 
-set_option backward.isDefEq.respectTransparency false
-
 problem_file { tags := [.Geometry] }
 
 /-!
@@ -29,6 +27,7 @@ open scoped EuclideanGeometry
 
 snip begin
 
+set_option backward.isDefEq.respectTransparency false in
 lemma lemma1 (a b c d : ℝ) : a * c + b * d ≤ Real.sqrt (a^2 + b^2) * Real.sqrt (c^2 + d^2) := by
   let v1 : EuclideanSpace ℝ (Fin 2) := !₂[a, b]
   let v2 : EuclideanSpace ℝ (Fin 2) := !₂[c, d]
@@ -84,6 +83,8 @@ problem usa2001_p4
   have h42 : 0 < dist A B := dist_pos.mpr (ne₁₂_of_not_collinear h50)
   rw [dist_comm] at h42
   have h43 : 0 < dist A C := dist_pos.mpr (ne₁₃_of_not_collinear h50)
+  have hmp : MulPosStrictMono ℝ := MulPosReflectLT.toMulPosStrictMono ℝ
+  have hpm : PosMulStrictMono ℝ := posMulStrictMono_iff_mulPosStrictMono.mpr hmp
   have h23 := calc
     _ ≤ _ := ptolemy
     _ ≤ _ := h2

@@ -132,14 +132,13 @@ lemma exists_le_of_mem_of_lt_sum {n : ℕ} {s : Multiset ℕ}
   rw [ht, Multiset.insert_eq_cons]
   exact Multiset.cons_le_cons n (Multiset.singleton_le.mpr hm)
 
-set_option backward.isDefEq.respectTransparency false in
 lemma zero_not_in_max_prod_set {s : Multiset ℕ}
   (hs: IsMaxProdSet s) : 0 ∉ s := by
   contrapose! hs
   have ha : s.sum = (Multiset.replicate s.sum 1).sum := by
-    rw [Multiset.sum_replicate, Nat.nsmul_eq_mul, mul_one]
+    rw [Multiset.sum_replicate, Nat.nsmul_eq_mul, mul_one (M := ℕ)]
   apply not_max_prod_set_of_prod_lt_prod ha
-  rw [Multiset.prod_replicate, one_pow, Multiset.prod_eq_zero hs]
+  rw [Multiset.prod_replicate, one_pow (M := ℕ), Multiset.prod_eq_zero hs]
   norm_num
 
 lemma max_prod_set_of_subset_of_max_prod_set {s t : Multiset ℕ}

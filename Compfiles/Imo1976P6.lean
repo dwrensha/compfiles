@@ -8,8 +8,6 @@ import Mathlib.Tactic
 
 import ProblemExtraction
 
-set_option backward.isDefEq.respectTransparency false
-
 problem_file { tags := [.Algebra] }
 
 /-!
@@ -28,6 +26,7 @@ problem imo1976_p6 (u : ℕ → ℝ)
     (h₁ : u 1 = 5 / 2)
     (h₂ : ∀ n, u (n + 2) = u (n + 1) * ((u n) ^ 2 - 2) - u 1) :
       ∀ n > 0, ⌊u n⌋  = (2 : ℝ) ^ ((2^n - (-1 : ℝ) ^ n) / 3) := by
+  set_option backward.isDefEq.respectTransparency false in
   have h_ind : ∀ n, u n = 2 ^ ((2 ^ n - (-1) ^ n) / 3 : ℝ) +
                           2 ^ ((-2 ^ n + (-1) ^ n) / 3 : ℝ) := by
     intro n
