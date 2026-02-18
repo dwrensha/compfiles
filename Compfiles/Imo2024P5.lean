@@ -512,7 +512,7 @@ lemma Strategy.play_one (s : Strategy N) (m : MonsterData N) {k : ℕ} (hk : 1 <
   have hk' : 2 ≤ k := by lia
   rw [s.play_apply_of_le m one_lt_two hk']
   simp only [play, Fin.snoc, lt_self_iff_false, ↓reduceDIte, Nat.reduceAdd,
-    Fin.mk_one, Fin.isValue, cast_eq, Nat.succ_eq_add_one]
+    cast_eq, Nat.succ_eq_add_one]
   congr
   refine funext fun i ↦ ?_
   simp_rw [Fin.fin_one_eq_zero]

@@ -43,7 +43,7 @@ lemma nicomachus (n : ℕ) :
     cases n with
     | zero => simp
     | succ n =>
-      simp only [Nat.succ_sub_succ_eq_sub, tsub_zero]
+      simp only [Nat.succ_sub_succ_eq_sub]
       ring
   lia
 
