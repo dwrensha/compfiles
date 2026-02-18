@@ -8,8 +8,6 @@ import Mathlib.Tactic
 
 import ProblemExtraction
 
-set_option backward.isDefEq.respectTransparency false
-
 problem_file { tags := [.NumberTheory] }
 
 /-!
@@ -104,6 +102,7 @@ lemma two_n_and_rest_factorisation (m : ℕ) (even_m : Even m) (h: 0 < m) :
     have h4 := Nat.maxPowDiv.le_of_dvd one_lt_two (Nat.ne_zero_of_lt h) h3
     exact (lt_self_iff_false _).mp (Nat.succ_le_iff.mp h4)
 
+set_option backward.isDefEq.respectTransparency false in
 lemma m_mod_2_contradiction (m n A : ℕ)
                             (even_A : Even A)
                             (m_eq_2_mod_4 : m ≡ 2 [MOD 4])
@@ -116,7 +115,7 @@ lemma m_mod_2_contradiction (m n A : ℕ)
   push_cast at h
   rw [←two_mul] at h
   ring_nf at h; reduce_mod_char at h
-  rw [one_pow] at h
+  rw [one_pow n] at h
   simp +arith +decide at h
 
 lemma m_add_3_pow_n_mod_m (n m : ℕ) : (m + 3)^n ≡ 3^n [MOD m] := by
@@ -273,7 +272,7 @@ lemma leaf_contradiction {x y m₁ : ℤ} (h: 3 * x ^ 2 + y ^ 2 = m₁) (h2 : m�
   rw [h2] at h
   reduce_mod_char at h
   generalize hz : (y : ZMod 3) = z
-  fin_cases z <;> rw [hz] at h <;> simp +arith +decide at h
+  fin_cases z <;> rw [hz] at h <;> grind
 
 snip end
 
@@ -308,6 +307,7 @@ problem bulgaria1998_p11
     simp only [Nat.cast_zero, mul_zero] at h
     generalize hm' : (m : ZMod 2) = m'
     rw [hm'] at h
+    set_option backward.isDefEq.respectTransparency false in
     fin_cases m'
     · rfl
     · simp +arith +decide at h; reduce_mod_char at h
@@ -367,7 +367,8 @@ problem bulgaria1998_p11
           rw[show (3 ^ 2) = 9 by rfl]
           push_cast
           reduce_mod_char
-          rw [one_pow]
+          set_option backward.isDefEq.respectTransparency false in
+          rw [one_pow (M := ZMod 8) k]
           simp +arith +decide
         exfalso
         exact too_good_to_be_true
@@ -497,6 +498,7 @@ problem bulgaria1998_p11
       have upper_bound_expression: 3 * x ^ 2 + y ^ 2 ≤ 4 * m₁ := by lia
       rw [Hs] at upper_bound_expression
       rw [show m₁ * s = s * m₁ by ring] at upper_bound_expression
+      set_option backward.isDefEq.respectTransparency false in
       exact le_of_mul_le_mul_right upper_bound_expression zero_lt_m₁
 
     have lower_bound_s : 0 < s := by
@@ -527,6 +529,7 @@ problem bulgaria1998_p11
         rw[Hs]
       reduce_mod_char at expression_mod_4
       obtain left_x | right_x := square_mod_4_zmod x
+      set_option backward.isDefEq.respectTransparency false in
       · rw[left_x] at expression_mod_4
         obtain left_y | right_y := square_mod_4_zmod y
         · rw[left_y] at expression_mod_4
@@ -539,6 +542,7 @@ problem bulgaria1998_p11
           simp +arith +decide at expression_mod_4
         · rw[right_y] at expression_mod_4
           simp +arith +decide at expression_mod_4
+    set_option backward.isDefEq.respectTransparency false in
     · -- s = 3
       have := Int.modEq_zero_iff_dvd.mp m₁_sub_5_mod_6
       dsimp[Dvd.dvd] at this

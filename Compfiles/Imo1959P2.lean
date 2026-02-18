@@ -7,8 +7,6 @@ import Mathlib.Data.Real.Sqrt
 
 import ProblemExtraction
 
-set_option backward.isDefEq.respectTransparency false
-
 problem_file {
   tags := [.Algebra]
   solutionImportedFrom :=
@@ -110,6 +108,7 @@ theorem isGood_iff_of_sqrt_two_lt (hA : sqrt 2 < A) : IsGood x A ↔ x = (A / 2)
     rw [isGood_iff_eq_sqrt hx, eq_comm, sqrt_eq_iff_eq_sq] at h <;> linarith
   · rintro rfl
     rw [isGood_iff_eq_sqrt]
+    set_option backward.isDefEq.respectTransparency false in
     · conv_lhs => rw [← sqrt_sq this.le]
       ring_nf
     · rw [sqrt_lt' this] at hA

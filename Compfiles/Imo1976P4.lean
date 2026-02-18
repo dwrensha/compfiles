@@ -8,8 +8,6 @@ import Mathlib.Tactic
 
 import ProblemExtraction
 
-set_option backward.isDefEq.respectTransparency false
-
 problem_file { tags := [.NumberTheory] }
 
 /-!
@@ -134,6 +132,7 @@ lemma exists_le_of_mem_of_lt_sum {n : ℕ} {s : Multiset ℕ}
   rw [ht, Multiset.insert_eq_cons]
   exact Multiset.cons_le_cons n (Multiset.singleton_le.mpr hm)
 
+set_option backward.isDefEq.respectTransparency false in
 lemma zero_not_in_max_prod_set {s : Multiset ℕ}
   (hs: IsMaxProdSet s) : 0 ∉ s := by
   contrapose! hs

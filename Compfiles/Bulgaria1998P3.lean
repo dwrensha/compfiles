@@ -10,8 +10,6 @@ import Mathlib.Analysis.SpecificLimits.Basic
 
 import ProblemExtraction
 
-set_option backward.isDefEq.respectTransparency false
-
 problem_file { tags := [.Algebra] }
 
 /-!
@@ -118,6 +116,7 @@ problem bulgaria1998_p3
   have h1: ∀ n: ℕ, x_seq n < 1 + 3 * f 1 := by
     intro n
     norm_num [x_seq]
+    have : MulPosStrictMono ℝ := MulPosReflectLT.toMulPosStrictMono ℝ
     calc ∑ i ∈ Finset.range n, f 1 / (2:ℝ) ^ i
          = (∑ i ∈ Finset.range n, 1 / (2:ℝ) ^ i) * f 1 := by rw [Finset.sum_mul]; field_simp
        _ < 3 * f 1 := (mul_lt_mul_iff_left₀ hf1).mpr (geom_sum_bound n)
