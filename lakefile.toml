@@ -8,6 +8,7 @@ relaxedAutoImplicit = false
 weak.linter.style.multiGoal = true
 weak.linter.style.cdot = true
 weak.linter.tacticAnalysis.tryAtEachStepFromEnv = true
+backward.isDefEq.respectTransparency = false
 
 [[require]]
 name = "mathlib"
