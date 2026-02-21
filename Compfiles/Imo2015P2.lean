@@ -17,7 +17,7 @@ Determine all triples of positive integers a, b, c such that each of
 ab - c, bc - a, ca - b is a power of two.
 -/
 
-namespace Imo2012P2
+namespace Imo2015P2
 
 determine SolutionSet : Set (ℤ × ℤ × ℤ) := {
   (2, 2, 2),
@@ -387,5 +387,4 @@ problem imo2015_p2 (a b c : ℤ) :
           rw [← h₂, ← h', hc_two]
           simp
 
-
-end Imo2012P2
+end Imo2015P2
