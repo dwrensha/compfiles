@@ -67,14 +67,10 @@ lemma pow_of_two_dvd_odd_mul_self_sub_1 {m : ℕ} {a : ℤ}
 
 lemma dvd_pow_of_two {m : ℕ} {a : ℤ}
     (ha' : 0 ≤ a) (h : a ∣ 2 ^ m) : ∃ k : ℕ, a = 2 ^ k := by
-    rw [← Int.natAbs_dvd_natAbs, Int.natAbs_pow] at h
-    rw [← Int.ofNat_two, Int.natAbs_natCast] at h
-    rw [Nat.dvd_prime_pow Nat.prime_two] at h
-    rcases h with ⟨k, hk', hk⟩
-    use k
-    rw [← Int.natCast_inj, Int.natAbs_of_nonneg ha'] at hk
-    rw [Int.natCast_pow, Int.ofNat_two] at hk
-    exact hk
+  lift a to ℕ using ha'
+  norm_cast at h
+  obtain ⟨k, -, hk⟩ := (Nat.dvd_prime_pow Nat.prime_two).mp h
+  exact ⟨k, by exact_mod_cast hk⟩
 
 lemma odd_dvd_pow_of_two {m : ℕ} {a : ℤ}
     (ha : ¬2 ∣ a) (ha' : 0 ≤ a) (h : a ∣ 2 ^ m) : a = 1 := by
