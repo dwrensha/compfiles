@@ -64,14 +64,14 @@ def pre_solution : PreSolution := by
     simp_all only [Fin.isValue, ne_eq, avg, ↓reduceIte, sol]
     split_ifs
     · refine Set.ncard_eq_three.mpr ⟨995 + ↑i + 150, 995 + ↑i + 151, 995 - 2 * ↑i - 301, ?_⟩
-      split_ands; (any_goals omega); simp
+      split_ands <;> lia
     · refine Set.ncard_eq_three.mpr ⟨995 - ↑i - 149, 995 - ↑i - 150, 995 + 2 * ↑i + 299, ?_⟩
-      split_ands; (any_goals omega); simp
+      split_ands <;> lia
   refine ⟨sol, ?_, λ i j h => ?_, λ i => ?_, λ i => ?_, λ i => ?_, λ i k => ?_, λ i => ?_⟩
   · exact ⟨0, by simp_all [sol]⟩
   · unfold sol
     split_ifs with _ _ _ hi _ hj
-    any_goals (simp_all; try split_ands; any_goals omega)
+    any_goals (simp_all; try split_ands; any_goals lia)
     · exact mt (congr_arg (λ x => x % 2)) <| by
         conv => arg 1; lhs; rw [Nat.add_mod]; arg 1; arg 1; try rw [Nat.add_mod]
         conv => arg 1; rhs; rw [Nat.add_mod]; arg 1; arg 1; try rw [Nat.add_mod]
@@ -84,32 +84,32 @@ def pre_solution : PreSolution := by
         have eq₁ : 995 - (i : ℤ) - 150 = Int.ofNat (995 - i - 150) := by
           rw [sub_right_comm, Nat.sub_right_comm]
           simp only [Int.reduceSub, Nat.reduceSub, Int.ofNat_eq_natCast]
-          exact (Int.ofNat_sub (by by_contra!; have := i.isLt; omega)).symm
+          exact (Int.ofNat_sub (by lia)).symm
         have eq₂ : 995 - (j : ℤ) - 149 = Int.ofNat (995 - j - 149) := by
           rw [sub_right_comm, Nat.sub_right_comm]
           simp only [Int.reduceSub, Nat.reduceSub, Int.ofNat_eq_natCast]
-          exact (Int.ofNat_sub (by by_contra!; have := i.isLt; omega)).symm
+          exact (Int.ofNat_sub (by lia)).symm
         rw [←eq₁, ←eq₂]
         conv => arg 1; lhs; rw [Int.sub_emod]; arg 1; arg 1; try rw [Int.sub_emod]
         conv => arg 1; rhs; rw [Int.sub_emod]; arg 1; arg 1; try rw [Int.sub_emod]
         have ⟨v₁, h₁⟩ := hi
         have ⟨v₂, h₂⟩ := (by assumption : Even j.val)
-        simp [Int.even_iff.mp (⟨v₁, by omega⟩ : Even (i : ℤ)), Int.even_iff.mp (⟨v₂, by omega⟩ : Even (j : ℤ))]
+        simp [Int.even_iff.mp (⟨v₁, by lia⟩ : Even (i : ℤ)), Int.even_iff.mp (⟨v₂, by lia⟩ : Even (j : ℤ))]
     · exact mt (congr_arg (λ x => (Int.ofNat x) % 2)) <| by
         have eq₁ : 995 - (i : ℤ) - 149 = Int.ofNat (995 - i - 149) := by
           rw [sub_right_comm, Nat.sub_right_comm]
           simp only [Int.reduceSub, Nat.reduceSub, Int.ofNat_eq_natCast]
-          exact (Int.ofNat_sub (by by_contra!; have := i.isLt; omega)).symm
+          exact (Int.ofNat_sub (by lia)).symm
         have eq₂ : 995 - (j : ℤ) - 150 = Int.ofNat (995 - j - 150) := by
           rw [sub_right_comm, Nat.sub_right_comm]
           simp only [Int.reduceSub, Nat.reduceSub, Int.ofNat_eq_natCast]
-          exact (Int.ofNat_sub (by by_contra!; have := i.isLt; omega)).symm
+          exact (Int.ofNat_sub (by lia)).symm
         rw [←eq₁, ←eq₂]
         conv => arg 1; lhs; rw [Int.sub_emod]; arg 1; arg 1; try rw [Int.sub_emod]
         conv => arg 1; rhs; rw [Int.sub_emod]; arg 1; arg 1; try rw [Int.sub_emod]
         have ⟨v₁, h₁⟩ := hi
         have ⟨v₂, h₂⟩ := (by assumption : Even j.val)
-        simp [Int.even_iff.mp (⟨v₁, by omega⟩ : Even (i : ℤ)), Int.even_iff.mp (⟨v₂, by omega⟩ : Even (j : ℤ))]
+        simp [Int.even_iff.mp (⟨v₁, by lia⟩ : Even (i : ℤ)), Int.even_iff.mp (⟨v₂, by lia⟩ : Even (j : ℤ))]
   · exact if h : i = 0 then (by simp_all [sol]) else (by rw [card_sol i h]; exact ⟨1, rfl⟩)
   · exact if h : i = 0 then (by simp_all [sol]) else (by simp_all [card_sol i h])
   · exact if h : i = 0 then (by simp_all [sol]) else by
@@ -119,7 +119,7 @@ def pre_solution : PreSolution := by
       all_goals
         rw [finsum_mem_insert, finsum_mem_insert, finsum_mem_singleton]
         any_goals omega
-        all_goals (simp; try omega)
+        all_goals (simp; try lia)
   · exact if h : i = 0 then (by simp_all only [sol]; exact λ eq ↦ ⟨0, by simp_all⟩) else by
       simp only [Fin.isValue, avg, Nat.reduceMul, sol]
       split_ifs with hi
@@ -143,7 +143,7 @@ def pre_solution : PreSolution := by
           · have := Nat.odd_add_one.mp hp
             contradiction
           · rw [Set.mem_insert_iff, Set.mem_insert_iff, Set.mem_singleton_iff, hk]
-            omega
+            lia
       · intro hk
         use i - 1
         have eq : (i - 1).val = i.val - 1 := Fin.val_sub_one_of_ne_zero h
@@ -152,17 +152,17 @@ def pre_solution : PreSolution := by
         all_goals
           split_ifs with hz hp
           · rw [Fin.ext_iff, eq] at hz
-            have : i.val = 1 := by omega
+            have : i.val = 1 := by lia
             have : Odd i.val := ⟨0, by omega⟩
             contradiction
           · rw [Set.mem_insert_iff, Set.mem_insert_iff, Set.mem_singleton_iff, hk]
             omega
-          · have := (not_iff_not.mpr (Nat.odd_sub (by omega : 1 ≤ i))).mp hp
+          · have := (not_iff_not.mpr (Nat.odd_sub (by lia : 1 ≤ i))).mp hp
             simp_all
   · have : i.val ≥ 0 := i.zero_le
     have : i.val < 117 := i.isLt
     simp only [Fin.isValue, avg, Finset.coe_Icc, sol]
-    split_ifs <;> (simp [Set.insert_subset_iff]; try omega)
+    split_ifs <;> (simp [Set.insert_subset_iff]; try lia)
 
 set_option maxHeartbeats 400000 in
 noncomputable def fill_element (i : Fin 117) (presol : PreSolution' i) : PreSolution'' i := by
