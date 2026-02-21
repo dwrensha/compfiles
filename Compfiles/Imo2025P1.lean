@@ -7,8 +7,6 @@ import Mathlib
 
 import ProblemExtraction
 
-set_option backward.isDefEq.respectTransparency false
-
 problem_file {
   tags := [.Combinatorics]
   solutionImportedFrom := "https://github.com/leanprover-community/mathlib4/pull/27817"

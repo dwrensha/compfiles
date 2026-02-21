@@ -9,8 +9,6 @@ import Mathlib.Data.Nat.Dist
 
 import ProblemExtraction
 
-set_option backward.isDefEq.respectTransparency false
-
 problem_file {
 }
 

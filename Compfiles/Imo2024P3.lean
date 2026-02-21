@@ -10,8 +10,6 @@ import Mathlib.Data.Nat.Nth
 
 import ProblemExtraction
 
-set_option backward.isDefEq.respectTransparency false
-
 problem_file {
   tags := [.Combinatorics]
   solutionImportedFrom := "https://github.com/leanprover-community/mathlib4/blob/master/Archive/Imo/Imo2024Q3.lean"

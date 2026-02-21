@@ -12,8 +12,6 @@ import Mathlib.NumberTheory.Divisors
 
 import ProblemExtraction
 
-set_option backward.isDefEq.respectTransparency false
-
 problem_file { tags := [.NumberTheory] }
 
 /-!

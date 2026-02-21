@@ -7,8 +7,6 @@ Authors: Tomas Ortega
 import Mathlib.Tactic
 import ProblemExtraction
 
-set_option backward.isDefEq.respectTransparency false
-
 problem_file { tags := [.NumberTheory] }
 
 /-!

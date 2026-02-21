@@ -9,8 +9,6 @@ import Mathlib.Tactic
 
 import ProblemExtraction
 
-set_option backward.isDefEq.respectTransparency false
-
 problem_file {
   tags := [.Algebra]
   solutionImportedFrom := "https://github.com/leanprover-community/mathlib4/blob/master/Archive/Imo/Imo2024Q1.lean"

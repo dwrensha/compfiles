@@ -8,8 +8,6 @@ import Mathlib.Analysis.Normed.Module.Basic
 
 import ProblemExtraction
 
-set_option backward.isDefEq.respectTransparency false
-
 problem_file {
   tags := [.Algebra]
   solutionImportedFrom :=

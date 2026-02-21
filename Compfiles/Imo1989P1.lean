@@ -16,8 +16,6 @@ import Mathlib.Order.Interval.Finset.Fin
 
 import ProblemExtraction
 
-set_option backward.isDefEq.respectTransparency false
-
 problem_file { tags := [.Combinatorics] }
 
 /-!

@@ -13,8 +13,6 @@ import Mathlib.Tactic.WLOG
 
 import ProblemExtraction
 
-set_option backward.isDefEq.respectTransparency false
-
 problem_file {
   tags := [.NumberTheory],
   solutionImportedFrom :=

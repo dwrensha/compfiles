@@ -8,8 +8,6 @@ import Mathlib.Tactic
 
 import ProblemExtraction
 
-set_option backward.isDefEq.respectTransparency false
-
 problem_file {
   tags := [.NumberTheory]
   solutionImportedFrom := "https://github.com/roozbeh-yz/IMO-Steps/blob/main/Lean_v20/imo_proofs/imo_1977_p5.lean"
