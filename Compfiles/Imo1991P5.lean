@@ -134,13 +134,11 @@ theorem trigonometric_ceva
     · rw [h]
       rw [EuclideanGeometry.angle_self_of_ne hBneC]
       rw [EuclideanGeometry.angle_self_of_ne hAneB.symm]
-      rw [Real.sin_zero]
-      ring
+      simp only [Real.sin_zero, mul_zero, zero_mul]
     · rw [h]
       rw [EuclideanGeometry.angle_self_of_ne hCneA]
       rw [EuclideanGeometry.angle_self_of_ne hBneC.symm]
-      rw [Real.sin_zero]
-      ring
+      simp only [Real.sin_zero, mul_zero, zero_mul]
   · rcases h with ⟨hPA, hPB, hPC⟩
     have hAB := EuclideanGeometry.law_sin A B P
     have hBC := EuclideanGeometry.law_sin B C P

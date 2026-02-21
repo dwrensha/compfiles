@@ -45,7 +45,7 @@ problem imo1963_p5 :
     linarith only
   rw [prod_sum, prod_sum, prod_sum]
   rw [show (π / 7 + π / 7)     = 2 * π / 7 by linarith only]
-  rw [show (π / 7 - π / 7)     = 0         by linarith only]
+  rw [show (π / 7 - π / 7)     = 0         by simp]
   rw [show (π / 7 + 5 * π / 7) = 6 * π / 7 by linarith only]
   rw [show (5 * π / 7 - π / 7) = 4 * π / 7 by linarith only]
   rw [show (π / 7 + 3 * π / 7) = 4 * π / 7 by linarith only]

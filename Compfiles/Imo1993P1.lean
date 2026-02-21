@@ -254,10 +254,9 @@ problem imo1993_p1 : ∀ n > 1, ¬∃ p q : ℤ[X], f n = p*q ∧ ¬ isConstant 
           grind
     use - (c.coeff 0) * mc.invertible.invOf
     nth_rw 4 [this]
-    simp
+    simp only [neg_mul, eq_intCast, eval_add, eval_mul, eval_intCast, Int.cast_eq,
+               eval_X, mul_neg]
     nth_rw 2 [mul_comm]
-    rw [←mul_assoc]
-    rw [Invertible.mul_invOf_self (self:=mc.invertible)]
     simp
 
   have : 0 = (1 : ℤ) := by

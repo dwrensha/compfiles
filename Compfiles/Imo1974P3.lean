@@ -228,13 +228,7 @@ lemma aux_5
           exact Finset.mem_range.mpr hb₃
         · exact Nat.two_mul_div_two_of_even hb₁.2
       · intro b hb₀
-        have hb₁: (-1:ℝ) ^ (b * 2) = 1 := by
-          refine (neg_one_pow_eq_one_iff_even (by norm_num)).mpr ?_
-          rw [mul_comm]
-          exact even_two_mul b
-        simp only [f₀, f₁]
-        ring_nf
-        rw [hb₁, mul_one]
+        simp [f₀, f₁]
     exact h₁₁
   have h₂: ∑ x ∈ Finset.range (2 * n + 1 + 1), (-k) ^ x * ↑((2 * n + 1).choose x) =
     ∑ x ∈ fs₂, ↑((2 * n + 1).choose x) * (-k) ^ x := by

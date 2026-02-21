@@ -73,9 +73,7 @@ lemma aux₁ {n : ℕ} (hn : 2 ≤ n) : (n : ℝ) ^ n = ∏ i ∈ Finset.Icc 2 n
   · nth_rw 3 [← Nat.succ_eq_add_one]
     rw [← Nat.succ_eq_succ, ← Finset.insert_Icc_right_eq_Icc_succ (by lia : 2 ≤ n'.succ)]
     rw [Finset.prod_insert (by simp), Nat.succ_eq_succ, Nat.succ_eq_add_one, ← h']
-    push_cast
-    field_simp
-    ring
+    simp
 
 lemma aux₂ {i : ℕ} {x : ℝ} (hi : 2 ≤ i) (hx : 0 < x) :
     (i : ℝ) ^ i / ((i : ℝ) - 1) ^ (i - 1) * x =

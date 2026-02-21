@@ -3338,7 +3338,7 @@ lemma rect_subset_M (s t : Int) (p : Point n)
         _ = k * p.1 - p.2 + k^2 + k := rfl
         _ ≤ k * ((s - 1) + t * k) - (s * k - t) + k^2 + k := by gcongr
         _ = t * M + k^2 := by dsimp [M]; ring
-        _ < t * M + (k^2 + 1) := by linarith
+        _ < t * M + (k^2 + 1) := by simp
         _ = (t + 1) * M := (add_one_mul t M).symm
   simp only  [M_st, mem_filter, mem_univ, true_and]
   constructor
@@ -3414,7 +3414,7 @@ lemma s_t_range (hk : 2 ≤ k) (p : Point n) :
         · exact hx.2
         · exact hy.2
       _ = k^3 + k^2 := by ring
-      _ < k^3 + k^2 + k + 1 := by linarith
+      _ < k^3 + k^2 + k + 1 := by simp
       _ = (k+1) * (k^2 + 1) := by ring
   · rw [calc_t]
     apply Int.ediv_nonneg
@@ -3454,7 +3454,7 @@ lemma M_00_empty (hk : 2 ≤ k) : M_st k 0 0 = ∅ := by
       _ = p.1 * (1 + k^2) + k^2 + k + 1 := by ring
       _ ≥ 0 * (1 + k^2) + k^2 + k + 1 := by gcongr; exact Int.natCast_nonneg p.1
       _ = k^2 + k + 1 := by ring
-      _ > k^2 + k := by linarith
+      _ > k^2 + k := Int.lt_succ _
   dsimp [M] at hs
   linarith [hs.2, h_contra, (by omega : 0 < (k : ℤ))]
 

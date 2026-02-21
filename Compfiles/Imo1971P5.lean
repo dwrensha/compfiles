@@ -94,9 +94,7 @@ lemma sphere_inter_finite
 lemma sphere_eq_sub_norm (o : Pt) (r : ℝ)
   : {p : Pt | ‖p - o‖ = r} = (EuclideanGeometry.Sphere.mk o r : Set Pt) := by
   ext p
-  rw [EuclideanGeometry.Sphere.mem_coe, EuclideanGeometry.mem_sphere]
-  dsimp
-  rw [dist_eq_norm]
+  rw [Set.mem_setOf_eq, mem_sphere_iff_norm]
 
 lemma norm_one_inter_finite {s : Pt} (hs : s ≠ 0)
   : ({p : Pt | ‖p - 0‖ = 1} ∩ {p : Pt | ‖p - s‖ = 1}).Finite := by
