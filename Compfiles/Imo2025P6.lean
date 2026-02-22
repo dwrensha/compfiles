@@ -1062,7 +1062,46 @@ def label_pos (l : Label n) : Point n × Point n :=
 def covers (m : Matilda n all_black) (l : Label n) : Prop :=
   m.mem (label_pos l).2
 
+instance (m : Matilda n all_black) : DecidablePred (covers m) := by
+  intro l
+  cases l.type <;> (simp [covers, label_pos, Matilda.mem]; infer_instance)
+
 end LabelingMachinery
+
+section LabelingCore
+variable [NeZero n]
+variable {all_black : Finset (Point n)}
+
+lemma matilda_count_ge_label_count
+  (L : Finset (Label n))
+  (h_white : ∀ l ∈ L, (label_pos l).2 ∉ all_black)
+  (h_one : ∀ m : Matilda n all_black, ({l ∈ L | covers m l}).card ≤ 1)
+  (matildas_partition : Finset (Matilda n all_black))
+  (h_partition : ∀ p : Point n, p ∉ all_black → ∃! m ∈ matildas_partition, m.mem p) :
+    L.card ≤ matildas_partition.card := by
+  let f : { l // l ∈ L } → { m // m ∈ matildas_partition } := fun ⟨l, hl⟩ =>
+    let m_obj := (h_partition (label_pos l).2 (h_white l hl)).choose
+    ⟨m_obj, (h_partition (label_pos l).2 (h_white l hl)).choose_spec.1.1⟩
+  have f_inj : Function.Injective f := by
+    intro x1 x2 h_eq
+    rcases x1 with ⟨l1, hl1⟩; rcases x2 with ⟨l2, hl2⟩
+    simp only [f, Subtype.mk.injEq] at h_eq
+    set M :=
+      (h_partition (label_pos l1).2 (h_white l1 hl1)).choose
+    have h_cov1 : covers M l1 :=
+      (h_partition (label_pos l1).2 (h_white l1 hl1)).choose_spec.1.2
+    have h_cov2 : covers M l2 := by
+      rw [h_eq]
+      exact (h_partition (label_pos l2).2 (h_white l2 hl2)).choose_spec.1.2
+    have h_at_most_one := h_one M
+    rw [card_le_one_iff] at h_at_most_one
+    apply Subtype.ext
+    apply h_at_most_one
+    · simp; exact ⟨hl1, h_cov1⟩
+    · simp; exact ⟨hl2, h_cov2⟩
+  exact card_le_card_of_injective f_inj
+
+end LabelingCore
 
 private lemma fin_ne_sub_one {n : ℕ} [NeZero n] (h_n : 2 ≤ n) (a : Fin n)
     (h : 0 < a.val) : a ≠ a - 1 := by
@@ -1580,48 +1619,15 @@ lemma valid_label_pos_not_black {n : ℕ} [NeZero n] (c : IntersectionSetup n)
     exact label_pos_S_absurd c.h_unique_y h_src_black h_lt h_pos_black
   · exact (not_valid_label_X c { source := source, type := .X } hl rfl).elim
 
-theorem matilda_count_ge_label_count
-  (matildas_partition : Finset (Matilda n c.all_black))
-  (h_partition : ∀ p : Point n, p ∉ c.all_black → ∃! m ∈ matildas_partition, m.mem p):
-    (validLabels c).card ≤ matildas_partition.card := by
-  let f : { l // l ∈ validLabels c } → { m // m ∈ matildas_partition } := fun ⟨l, hl⟩ =>
-    have h_white : (label_pos l).2 ∉ c.all_black :=
-      valid_label_pos_not_black c l hl
-    let m_obj := (h_partition (label_pos l).2 h_white).choose
-    have h_mem : m_obj ∈ matildas_partition :=
-      (h_partition (label_pos l).2 h_white).choose_spec.1.1
-    ⟨m_obj, h_mem⟩
-  have f_inj : Function.Injective f := by
-    intro x1 x2 h_eq
-    rcases x1 with ⟨l1, hl1⟩; rcases x2 with ⟨l2, hl2⟩
-    simp only [f, Subtype.mk.injEq] at h_eq
-    set M1 := (h_partition (label_pos l1).2 (valid_label_pos_not_black c l1 hl1)).choose
-    set M2 := (h_partition (label_pos l2).2 (valid_label_pos_not_black c l2 hl2)).choose
-    have h_cov1 : covers M1 l1 :=
-      (h_partition (label_pos l1).2 (valid_label_pos_not_black c l1 hl1)).choose_spec.1.2
-    have h_cov2 : covers M2 l2 :=
-      (h_partition (label_pos l2).2 (valid_label_pos_not_black c l2 hl2)).choose_spec.1.2
-    rw [← h_eq] at h_cov2
-    let labels_in_M1 := {l ∈ validLabels c | covers M1 l}
-    have h_l1_in : l1 ∈ labels_in_M1 := by
-      simp only [labels_in_M1]; rw [mem_filter]
-      exact ⟨hl1, h_cov1⟩
-    have h_l2_in : l2 ∈ labels_in_M1 := by
-      simp only [labels_in_M1]; rw [mem_filter]
-      exact ⟨hl2, h_cov2⟩
-    have h_card_le_1 := matilda_covers_at_most_one c M1
-    rw [card_le_one_iff] at h_card_le_1
-    have h_l_eq : l1 = l2 := h_card_le_1 h_l1_in h_l2_in
-    ext; exact h_l_eq
-  rw [← Fintype.card_coe (validLabels c)]
-  rw [← Fintype.card_coe matildas_partition]
-  apply Fintype.card_le_of_injective f f_inj
-
 theorem matildas_count_ge_intersection_bound
     (matildas_partition : Finset (Matilda n c.all_black))
     (h_partition : ∀ p : Point n, p ∉ c.all_black → ∃! m ∈ matildas_partition, m.mem p) :
     n + c.a + c.b - 3 ≤ matildas_partition.card := by
-  have h_ge_labels := matilda_count_ge_label_count c matildas_partition h_partition
+  have h_ge_labels :=
+    matilda_count_ge_label_count (L := validLabels c)
+      (h_white := valid_label_pos_not_black c)
+      (h_one := matilda_covers_at_most_one c)
+      matildas_partition h_partition
   rw [card_validLabels] at h_ge_labels
   have h_labels_bound := labels_total_intersection c
   exact Nat.le_trans h_labels_bound h_ge_labels
@@ -2424,10 +2430,6 @@ noncomputable def validLabels (cp : CrossingPoints c) : Finset (Label n) :=
   (targetsSin c.u c.v c.all_black).map to_S ∪
   map to_X {c.wx cp}
 
-@[simp]
-def covers (m : Matilda n c.all_black) (l : Label n) : Prop :=
-  m.mem (label_pos l).2
-
 lemma pivot_overlap_x (cp : CrossingPoints c) :
     px cp.vl < px cp.uk1 := by
   have h := c.wx_bounds cp
@@ -2696,7 +2698,7 @@ private lemma covers_X_other (cp : CrossingPoints c) (m : Matilda n c.all_black)
   · exact absurd h h_not_X
 
 lemma matilda_covers_at_most_one (cp : CrossingPoints c) (m : Matilda n c.all_black) :
-    ({l ∈ validLabels c cp | covers c m l}).card ≤ 1 := by
+    ({l ∈ validLabels c cp | covers m l}).card ≤ 1 := by
   rw [card_le_one_iff]
   intro l1 l2 hl1 hl2
   rw [mem_filter] at hl1 hl2
@@ -2810,38 +2812,6 @@ lemma card_validLabels_disjoint :
     }
   }
 
-theorem matilda_count_ge_label_count
-  (ha_pos : 0 < c.a) (hb_pos : 0 < c.b)
-  (matildas_partition : Finset (Matilda n c.all_black))
-  (h_partition : ∀ p : Point n, p ∉ c.all_black → ∃! m ∈ matildas_partition, m.mem p) :
-    (c.validLabels cp).card ≤ matildas_partition.card := by
-  let f : { l // l ∈ c.validLabels cp } → { m // m ∈ matildas_partition } := fun ⟨l, hl⟩ =>
-    have h_white : (label_pos l).2 ∉ c.all_black :=
-      c.valid_label_pos_not_black cp ha_pos hb_pos l hl
-    let m_obj := (h_partition (label_pos l).2 h_white).choose
-    ⟨m_obj, (h_partition (label_pos l).2 h_white).choose_spec.1.1⟩
-
-  have f_inj : Function.Injective f := by
-    intro x1 x2 h_eq
-    rcases x1 with ⟨l1, hl1⟩; rcases x2 with ⟨l2, hl2⟩
-    simp only [f, Subtype.mk.injEq] at h_eq
-    set M :=
-      (h_partition (label_pos l1).2 (c.valid_label_pos_not_black cp ha_pos hb_pos l1 hl1)).choose
-    have h_cov1 : c.covers M l1 :=
-      (h_partition
-       (label_pos l1).2 (c.valid_label_pos_not_black cp ha_pos hb_pos l1 hl1)).choose_spec.1.2
-    have h_cov2 : c.covers M l2 := by
-       rw [h_eq]
-       exact (h_partition (label_pos l2).2
-        (c.valid_label_pos_not_black cp ha_pos hb_pos l2 hl2)).choose_spec.1.2
-    have h_at_most_one := c.matilda_covers_at_most_one cp M
-    rw [card_le_one_iff] at h_at_most_one
-    apply Subtype.ext
-    apply h_at_most_one
-    · simp; exact ⟨hl1, h_cov1⟩
-    · simp; exact ⟨hl2, h_cov2⟩
-  exact card_le_card_of_injective f_inj
-
 theorem disjoint_case_final_bound
     (ha_pos : 0 < c.a) (hb_pos : 0 < c.b)
     (cp : c.CrossingPoints)
@@ -2853,7 +2823,10 @@ theorem disjoint_case_final_bound
     rw [c.card_validLabels_disjoint cp]
     apply c.labels_total_disjoint ha_pos hb_pos
   have h_matilda_ge : matildas_partition.card ≥ (c.validLabels cp).card :=
-    c.matilda_count_ge_label_count cp ha_pos hb_pos matildas_partition h_partition
+    matilda_count_ge_label_count (L := c.validLabels cp)
+      (h_white := c.valid_label_pos_not_black cp ha_pos hb_pos)
+      (h_one := c.matilda_covers_at_most_one cp)
+      matildas_partition h_partition
   have h_alg := am_gm_bound_nat c.a c.b n h_dilworth
   calc
     n + (4 * n).sqrt - 3
