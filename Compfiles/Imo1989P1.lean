@@ -4,13 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Francesco Vercellesi
 -/
 
-import Mathlib.Algebra.Order.Ring.Star
-import Mathlib.Data.Finite.Card
-import Mathlib.Data.Set.Card.Arithmetic
-import Mathlib.Order.Interval.Finset.Fin
-import Mathlib.Order.Interval.Set.Nat
-import Mathlib.Tactic.Linarith
-import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+import Mathlib
 
 import ProblemExtraction
 
@@ -39,43 +33,35 @@ def row (j : ℕ) (i : Fin n) : ℕ :=
   else if j = 15 then 15 * n + (i.val + 58) % n + 1
   else 16 * n + (2 * n - 1 - 2 * i.val) % n + 1
 
-def A (i : Fin n) : Set ℕ := { row j i | j < 17 }
+def A (i : Fin n) : Finset ℕ := (Finset.range 17).image (λ j ↦ row j i)
 
 lemma row_quot (j : ℕ) (hj : j < 17) (i : Fin n) : (row j i - 1) / n = j := by
   unfold row; split_ifs <;> (simp [n] at *; omega)
 
-lemma row_inj {j1 j2 : ℕ} {i1 i2 : Fin n} (hj1 : j1 < 17) (hj2 : j2 < 17) :
-    row j1 i1 = row j2 i2 ↔ j1 = j2 ∧ i1 = i2 := by
-  constructor
-  · intro h
-    have hj : j1 = j2 := by
-      have h1 := row_quot j1 hj1 i1
-      have h2 := row_quot j2 hj2 i2
-      rw [h] at h1
-      exact h1.symm.trans h2
-    refine ⟨hj, ?_⟩; subst hj; apply Fin.ext; unfold row at h; split_ifs at h <;> (simp [n] at *; try omega)
-  · rintro ⟨rfl, rfl⟩; rfl
+lemma row_inj {j₁ j₂ : ℕ} {i₁ i₂ : Fin n} (hj₁ : j₁ < 17) (hj₂ : j₂ < 17) :
+    row j₁ i₁ = row j₂ i₂ ↔ j₁ = j₂ ∧ i₁ = i₂ := by
+  refine ⟨fun h => ?_, fun ⟨rfl, rfl⟩ => rfl⟩
+  have hj : j₁ = j₂ := by
+    have h1 := row_quot j₁ hj₁ i₁; have h2 := row_quot j₂ hj₂ i₂
+    rw [h] at h1; exact h1.symm.trans h2
+  exact ⟨hj, by subst hj; ext; unfold row at h; split_ifs at h <;> (simp [n] at *; try omega)⟩
 
-lemma A_finite (i : Fin n) : (A i).Finite := by
-  have : A i = (λ j ↦ row j i) '' Set.Iio 17 := by ext; simp [A, Set.Iio]
-  rw [this]; exact (Set.finite_Iio 17).image _
+private lemma row_injOn (i : Fin n) :
+    Set.InjOn (fun j => row j i) (Finset.range 17 : Set ℕ) :=
+  fun _ hj₁ _ hj₂ h =>
+    ((row_inj (Finset.mem_range.mp hj₁) (Finset.mem_range.mp hj₂)).1 h).1
 
-lemma A_card (i : Fin n) : Set.ncard (A i) = 17 := by
-  have : A i = (λ j ↦ row j i) '' Set.Iio 17 := by ext; simp [A, Set.Iio]
-  rw [this]
-  rw [Set.InjOn.ncard_image]
-  · rw [Set.ncard_Iio_nat 17]
-  · intro j1 hj1 j2 hj2 h
-    exact ((row_inj hj1 hj2).1 h).1
+private lemma row_image_inj {j₁ j₂ : ℕ} (hj₁ : j₁ ∈ Finset.range 17)
+    (hj₂ : j₂ ∈ Finset.range 17) {i : Fin n} (h : row j₁ i = row j₂ i) : j₁ = j₂ :=
+  ((row_inj (Finset.mem_range.mp hj₁) (Finset.mem_range.mp hj₂)).1 h).1
 
-lemma A_sum (i : Fin n) : ∑ᶠ a ∈ A i, a = 16915 := by
-  have hA : A i = ↑(Finset.image (λ j ↦ row j i) (Finset.range 17)) := by
-    ext x; simp [A]
-  rw [hA, finsum_mem_coe_finset]
-  rw [Finset.sum_image (fun j1 hj1 j2 hj2 h =>
-    ((row_inj (Finset.mem_range.mp hj1) (Finset.mem_range.mp hj2)).1 h).1)]
-  simp only [Finset.sum_range_succ, Finset.sum_range_zero]
-  simp only [row]
+lemma A_card (i : Fin n) : (A i).card = 17 := by
+  simp [A, Finset.card_image_of_injOn (row_injOn i)]
+
+lemma A_sum (i : Fin n) : (A i).sum id = 16915 := by
+  simp only [A]
+  rw [Finset.sum_image fun _ h₁ _ h₂ h => row_image_inj h₁ h₂ h]
+  simp only [Finset.sum_range_succ, Finset.sum_range_zero, id, row]
   norm_num [n]
   have hi := i.isLt; simp only [n] at hi
   by_cases h59 : i.val < 59
@@ -90,25 +76,52 @@ lemma A_sum (i : Fin n) : ∑ᶠ a ∈ A i, a = 16915 := by
     have h2 : (233 - 2 * i.val) % 117 = 233 - 2 * i.val := Nat.mod_eq_of_lt (by omega)
     omega
 
+lemma A_injective : Function.Injective A := by
+  intro i₁ i₂ h
+  have : row 0 i₁ ∈ A i₂ := h ▸ Finset.mem_image.mpr ⟨0, by simp, rfl⟩
+  obtain ⟨j, hj, h_eq⟩ := Finset.mem_image.mp this
+  exact ((row_inj (by omega) (Finset.mem_range.mp hj)).1 h_eq.symm).2
+
+lemma A_le_S (i : Fin n) : A i ≤ S := by
+  intro x hx; obtain ⟨j, _, rfl⟩ := Finset.mem_image.mp hx
+  unfold row; simp [S]; split_ifs <;> (simp [n] at *; omega)
+
+lemma A_disjoint {i₁ i₂ : Fin n} (h : i₁ ≠ i₂) : Disjoint (A i₁) (A i₂) := by
+  rw [Finset.disjoint_left]
+  rintro _ hx hy
+  obtain ⟨j₁, hj₁, rfl⟩ := Finset.mem_image.mp hx
+  obtain ⟨j₂, hj₂, h_eq⟩ := Finset.mem_image.mp hy
+  exact h ((row_inj (Finset.mem_range.mp hj₁) (Finset.mem_range.mp hj₂)).1 h_eq.symm).2
+
+def P : Finpartition S where
+  parts := Finset.univ.image A
+  supIndep := by
+    rw [Finset.supIndep_iff_pairwiseDisjoint]
+    simp only [Set.PairwiseDisjoint, Set.Pairwise, Finset.mem_coe, Finset.mem_image,
+      Finset.mem_univ, true_and, Function.onFun, id]
+    rintro _ ⟨i, rfl⟩ _ ⟨j, rfl⟩ h
+    exact A_disjoint fun hij => h (hij ▸ rfl)
+  sup_parts := by
+    rw [Finset.sup_image, Function.id_comp, Finset.sup_eq_biUnion]
+    apply Finset.eq_of_subset_of_card_le
+    · exact Finset.biUnion_subset.mpr fun i _ => A_le_S i
+    · rw [Finset.card_biUnion fun i _ j _ hij => A_disjoint hij]
+      simp [A_card, S, n]
+  bot_notMem := by
+    simp only [Finset.mem_image, Finset.mem_univ, true_and]
+    rintro ⟨i, hi⟩; exact absurd (hi ▸ A_card i) (by norm_num)
+
 snip end
 
-problem imo1989_p1 : ∃ (A : Fin 117 → Set ℕ),
-    S = ⨆ i : Fin 117, A i ∧
-    ∀ i j, i ≠ j → Disjoint (A i) (A j) ∧
-    Set.ncard (A i) = 17 ∧
-    ∑ᶠ a ∈ A i, a = ∑ᶠ a ∈ A j, a := by
-  refine ⟨A, ?_, λ i j hij ↦ ⟨?_, A_card i, by rw [A_sum, A_sum]⟩⟩
-  · symm; apply Set.eq_of_subset_of_ncard_le (ht := S.finite_toSet)
-    · simp only [Set.iSup_eq_iUnion, Set.iUnion_subset_iff]; intro i x hx; rcases hx with ⟨j, hj, rfl⟩
-      unfold row; simp [S]; split_ifs <;> (simp [n]; omega)
-    · simp only [Set.iSup_eq_iUnion]
-      have h := Set.ncard_iUnion_of_finite (λ i ↦ A_finite i) (λ i j h ↦ ?_)
-      · rw [finsum_eq_sum_of_fintype] at h; simp [A_card, S, n] at h ⊢; omega
-      · simp only [Function.onFun, Set.disjoint_left]
-        intro x hx hy; rcases hx with ⟨j1, hj1, rfl⟩; rcases hy with ⟨j2, hj2, h_eq⟩
-        exact h ((row_inj hj1 hj2).1 h_eq.symm).2
-  · rw [Set.disjoint_left]; intro x hx hy; rcases hx with ⟨j1, hj1, rfl⟩; rcases hy with ⟨j2, hj2, h_eq⟩
-    have h := (row_inj hj1 hj2).1 h_eq.symm
-    exact hij h.2
+problem imo1989_p1 : ∃ (P : Finpartition S),
+    P.parts.card = 117 ∧
+    (∀ p ∈ P.parts, p.card = 17) ∧
+    (∀ p ∈ P.parts, ∀ q ∈ P.parts, p.sum id = q.sum id) := by
+  refine ⟨P, ?_, ?_, ?_⟩
+  · simp [P, Finset.card_image_of_injective _ A_injective, n]
+  · simp only [show P.parts = Finset.univ.image A from rfl, Finset.forall_mem_image]
+    exact fun _ _ => A_card _
+  · simp only [show P.parts = Finset.univ.image A from rfl, Finset.forall_mem_image]
+    intros; rw [A_sum, A_sum]
 
 end Imo1989P1
