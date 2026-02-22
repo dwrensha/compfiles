@@ -3927,13 +3927,11 @@ private lemma sqrt_kk (k : ℕ) :
 
 theorem matilda_solution_general (k : ℕ) (hk : 2 ≤ k) :
     let n := k * k
-    haveI : NeZero n := ⟨by apply mul_ne_zero <;> linarith⟩
+    haveI : NeZero n := ⟨by positivity⟩
     IsMinMatildaCount n (k^2 + 2 * k - 3) := by
   intro n
   let m_ans := k^2 + 2 * k - 3
-  haveI : NeZero n := ⟨by
-    dsimp [n]
-    apply mul_ne_zero <;> linarith [hk]⟩
+  haveI : NeZero n := ⟨by positivity⟩
   dsimp [IsMinMatildaCount]
   constructor
   · intro all_black partition h_valid
@@ -3941,7 +3939,7 @@ theorem matilda_solution_general (k : ℕ) (hk : 2 ≤ k) :
     have h_raw := matilda_lower_bound h_card h_row h_col partition h_part
     rw [sqrt_kk k] at h_raw
     exact h_raw
-  · haveI : NeZero k := ⟨by linarith⟩
+  · haveI : NeZero k := ⟨by positivity⟩
     letI : DecidableEq (Matilda (k * k) (all_black_k k)) := Classical.decEq _
     let P := construct_partition k hk
     exists (all_black_k k), P

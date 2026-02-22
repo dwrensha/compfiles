@@ -175,9 +175,7 @@ lemma mylemma_h8
       rw [hp] at hpq
       rw [hj₀, ← Nat.pow_div him (by norm_num)]
       refine Nat.eq_div_of_mul_eq_right ?_ hpq
-      refine Nat.ne_of_gt ?_
-      rw [← hp]
-      linarith [hp₃]
+      positivity
     rw [hp] at hpd
     rw [hq] at hqd
     have hj₃: ¬ j < 2 := by

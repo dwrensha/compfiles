@@ -284,7 +284,7 @@ problem imo1996_p6 {p q n : ℕ} (x : ℕ → ℤ)
     repeat rw [this] at h_di_delta_t_minus_1
     have h_h_ne : (h : ℤ) ≠ 0 := Int.natCast_ne_zero_iff_pos.mpr h_pos
     rcases h_di_delta_t_minus_1 with h_zero | h_eq_h | h_eq_neg_h
-    · exact h_diff_sgn (congrArg Int.sign (Int.eq_of_sub_eq_zero ((mul_eq_zero.mp h_zero).resolve_right (by linarith))))
+    · exact h_diff_sgn (congrArg Int.sign (Int.eq_of_sub_eq_zero ((mul_eq_zero.mp h_zero).resolve_right (by positivity))))
     · exact (diff_ne_pm_one_of_dist_gt_one (dist_gt_one_of_ne_sign h_diff_sgn h_v_ne_zero h_w_ne_zero)).1
         (mul_right_cancel₀ h_h_ne (by rwa [Int.one_mul]))
     · have : w - v = 1 := mul_right_cancel₀ h_h_ne (by linarith)
