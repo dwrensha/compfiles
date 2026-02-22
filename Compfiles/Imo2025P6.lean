@@ -92,21 +92,6 @@ macro "solve_grid" : tactic =>
     linarith
   ))
 
-section CommonProperties
-
-lemma eq_of_px_eq
-    (h_unique_x : ∀ p ∈ all_black, ∀ q ∈ all_black, px p = px q → p = q)
-    {p q : Point n} (hp : p ∈ all_black) (hq : q ∈ all_black)
-    (h_eq : px p = px q) : p = q :=
-  h_unique_x p hp q hq h_eq
-lemma eq_of_py_eq
-    (h_unique_y : ∀ p ∈ all_black, ∀ q ∈ all_black, py p = py q → p = q)
-    {p q : Point n} (hp : p ∈ all_black) (hq : q ∈ all_black)
-    (h_eq : py p = py q) : p = q :=
-  h_unique_y p hp q hq h_eq
-
-end CommonProperties
-
 section ChainProperties
 
 variable {u v : Finset (Point n)}
@@ -378,110 +363,6 @@ lemma inter_card_le_one
   · have h_u_inc : py q < py p := h_u_mono q hq.1 p hp.1 h_gt
     have h_v_dec : py p < py q := h_v_mono q hq.2 p hp.2 h_gt
     linarith
-
-lemma incidence_of_u_diff
-    (pivot : Point n) (h_inter : u ∩ v = {pivot})
-    (h_u_mono : ∀ a ∈ u, ∀ b ∈ u, px a < px b → py a < py b)
-    : ∀ p ∈ u \ {pivot},
-      (px p < px pivot → p ∈ regionWExtend u v) ∧
-      (px pivot < px p → p ∈ regionEExtend u v) := by
-  have h_piv_u : pivot ∈ u := mem_of_mem_inter_left (by rw [h_inter]; simp)
-  have h_piv_v : pivot ∈ v := mem_of_mem_inter_right (by rw [h_inter]; simp)
-  intro p hp
-  rw [mem_sdiff, mem_singleton] at hp
-  obtain ⟨hp_u, h_ne_piv⟩ := hp
-  constructor
-  · intro h_lt
-    have hy_lt : py p < py pivot := h_u_mono p hp_u pivot h_piv_u h_lt
-    simp only at h_lt hy_lt
-    simp
-    constructor
-    · use p.1, p.2
-    · use pivot.1, pivot.2
-      simp only [Fin.le_iff_val_le_val]
-      constructor
-      · exact h_piv_v
-      · constructor <;> linarith
-  · intro h_gt
-    have hy_gt : py pivot < py p := h_u_mono pivot h_piv_u p hp_u h_gt
-    simp only at h_gt hy_gt
-    simp
-    constructor
-    · use p.1, p.2
-    · use pivot.1, pivot.2
-      simp only [Fin.le_iff_val_le_val]
-      constructor
-      · exact h_piv_v
-      · constructor <;> linarith
-
-lemma incidence_of_v_diff
-    (pivot : Point n)
-    (h_inter : u ∩ v = {pivot})
-    (h_v_mono : ∀ a ∈ v, ∀ b ∈ v, px a < px b → py b < py a)
-    : ∀ p ∈ v \ {pivot},
-      (px p < px pivot → p ∈ regionNExtend u v) ∧
-      (px pivot < px p → p ∈ regionSExtend u v) := by
-  have h_piv_u : pivot ∈ u := mem_of_mem_inter_left (by rw [h_inter]; simp)
-  have h_piv_v : pivot ∈ v := mem_of_mem_inter_right (by rw [h_inter]; simp)
-  intro p hp
-  rw [mem_sdiff, mem_singleton] at hp
-  obtain ⟨hp_v, h_ne_piv⟩ := hp
-  constructor
-  · intro h_lt
-    have hy_gt : py pivot < py p := h_v_mono p hp_v pivot h_piv_v h_lt
-    simp only at h_lt hy_gt
-    simp
-    constructor
-    · use pivot.1, pivot.2
-      simp only [Fin.le_iff_val_le_val]
-      constructor
-      · exact h_piv_u
-      · constructor <;> linarith
-    · use p.1, p.2
-  · intro h_gt
-    have hy_lt : py p < py pivot := h_v_mono pivot h_piv_v p hp_v h_gt
-    simp only at h_gt hy_lt
-    simp
-    constructor
-    · use pivot.1, pivot.2
-      simp only [Fin.le_iff_val_le_val]
-      constructor
-      · exact h_piv_u
-      · constructor <;> linarith
-    · use p.1, p.2
-
-lemma pivot_in_all_regions
-    (pivot : Point n)
-    (h_piv_u : pivot ∈ u)
-    (h_piv_v : pivot ∈ v)
-    : pivot ∈ regionWExtend u v ∧ pivot ∈ regionEExtend u v ∧
-      pivot ∈ regionNExtend u v ∧ pivot ∈ regionSExtend u v := by
-  refine ⟨?_, ?_, ?_, ?_⟩ <;>
-  · simp;  constructor <;> use pivot.1, pivot.2
-
-lemma incidence_of_intersection
-    (pivot : Point n) (h_piv_u : pivot ∈ u) (h_piv_v : pivot ∈ v)
-    (h_u_mono : ∀ a ∈ u, ∀ b ∈ u, px a < px b → py a < py b)
-    (h_v_mono : ∀ a ∈ v, ∀ b ∈ v, px a < px b → py b < py a)
-    (h_u_inj : ∀ a ∈ u, ∀ b ∈ u, px a = px b → a = b)
-    : u ∩ v = {pivot} := by
-  ext p
-  simp
-  constructor
-  · intro ⟨hp_u, hp_v⟩
-    rcases lt_trichotomy (px p) (px pivot) with h_lt | h_eq | h_gt
-    · have h_u_lt : py p < py pivot := h_u_mono p hp_u pivot h_piv_u h_lt
-      have h_v_gt : py pivot < py p := h_v_mono p hp_v pivot h_piv_v h_lt
-      simp only at h_u_lt h_v_gt
-      linarith
-    · exact h_u_inj p hp_u pivot h_piv_u h_eq
-    · have h_u_gt : py pivot < py p := h_u_mono pivot h_piv_u p hp_u h_gt
-      have h_v_lt : py p < py pivot := h_v_mono pivot h_piv_v p hp_v h_gt
-      simp only  at h_u_gt h_v_lt
-      linarith
-  · intro h_eq
-    subst h_eq
-    exact ⟨h_piv_u, h_piv_v⟩
 
 lemma incidence_count_of_pivot
     (pivot : Point n)
@@ -1397,8 +1278,6 @@ lemma disj_middle : Disjoint ({c.pivot} ∪ (c.u \ {c.pivot})) (c.v \ {c.pivot})
   rw [disjoint_union_left]; exact ⟨c.disj_piv_v, c.disj_u_v_diff⟩
 
 def Others := c.all_black \ (c.u ∪ c.v)
-
-lemma Others_def : c.Others = c.all_black \ (c.u ∪ c.v) := rfl
 
 lemma partition_eq :
     c.all_black = {c.pivot} ∪ (c.u \ {c.pivot}) ∪ (c.v \ {c.pivot}) ∪ c.Others := by
@@ -3973,9 +3852,6 @@ snip end
 determine solution_value : ℕ := 2112
 
 problem imo2025_p6 : IsMinMatildaCount 2025  solution_value := by
-  let k := 45
-  have h_general := matilda_solution_general k (by norm_num)
-  norm_num at h_general
-  exact h_general
+  simpa [solution_value] using matilda_solution_general 45 (by norm_num)
 
 end Imo2025P6
