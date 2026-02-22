@@ -36,7 +36,7 @@ def row (j : ℕ) (i : Fin n) : ℕ :=
 def A (i : Fin n) : Finset ℕ := (Finset.range 17).image (λ j ↦ row j i)
 
 lemma row_quot (j : ℕ) (hj : j < 17) (i : Fin n) : (row j i - 1) / n = j := by
-  unfold row; split_ifs <;> (simp [n] at *; omega)
+  unfold row; split_ifs <;> (simp [n] at *; lia)
 
 lemma row_inj {j₁ j₂ : ℕ} {i₁ i₂ : Fin n} (hj₁ : j₁ < 17) (hj₂ : j₂ < 17) :
     row j₁ i₁ = row j₂ i₂ ↔ j₁ = j₂ ∧ i₁ = i₂ := by
@@ -44,7 +44,7 @@ lemma row_inj {j₁ j₂ : ℕ} {i₁ i₂ : Fin n} (hj₁ : j₁ < 17) (hj₂ :
   have hj : j₁ = j₂ := by
     have h1 := row_quot j₁ hj₁ i₁; have h2 := row_quot j₂ hj₂ i₂
     rw [h] at h1; exact h1.symm.trans h2
-  exact ⟨hj, by subst hj; ext; unfold row at h; split_ifs at h <;> (simp [n] at *; try omega)⟩
+  exact ⟨hj, by subst hj; ext; unfold row at h; split_ifs at h <;> (simp [n] at *; try lia)⟩
 
 private lemma row_injOn (i : Fin n) :
     Set.InjOn (fun j => row j i) (Finset.range 17 : Set ℕ) :=
@@ -65,26 +65,26 @@ lemma A_sum (i : Fin n) : (A i).sum id = 16915 := by
   norm_num [n]
   have hi := i.isLt; simp only [n] at hi
   by_cases h59 : i.val < 59
-  · have h1 : (i.val + 58) % 117 = i.val + 58 := Nat.mod_eq_of_lt (by omega)
+  · have h1 : (i.val + 58) % 117 = i.val + 58 := Nat.mod_eq_of_lt (by lia)
     have h2 : (233 - 2 * i.val) % 117 = 116 - 2 * i.val := by
-      have : 233 - 2 * i.val = 117 + (116 - 2 * i.val) := by omega
-      rw [this, Nat.add_mod_left, Nat.mod_eq_of_lt (by omega)]
-    omega
+      have : 233 - 2 * i.val = 117 + (116 - 2 * i.val) := by lia
+      rw [this, Nat.add_mod_left, Nat.mod_eq_of_lt (by lia)]
+    lia
   · have h1 : (i.val + 58) % 117 = i.val - 59 := by
-      have : i.val + 58 = 117 + (i.val - 59) := by omega
-      rw [this, Nat.add_mod_left, Nat.mod_eq_of_lt (by omega)]
-    have h2 : (233 - 2 * i.val) % 117 = 233 - 2 * i.val := Nat.mod_eq_of_lt (by omega)
-    omega
+      have : i.val + 58 = 117 + (i.val - 59) := by lia
+      rw [this, Nat.add_mod_left, Nat.mod_eq_of_lt (by lia)]
+    have h2 : (233 - 2 * i.val) % 117 = 233 - 2 * i.val := Nat.mod_eq_of_lt (by lia)
+    lia
 
 lemma A_injective : Function.Injective A := by
   intro i₁ i₂ h
   have : row 0 i₁ ∈ A i₂ := h ▸ Finset.mem_image.mpr ⟨0, by simp, rfl⟩
   obtain ⟨j, hj, h_eq⟩ := Finset.mem_image.mp this
-  exact ((row_inj (by omega) (Finset.mem_range.mp hj)).1 h_eq.symm).2
+  exact ((row_inj (by lia) (Finset.mem_range.mp hj)).1 h_eq.symm).2
 
 lemma A_le_S (i : Fin n) : A i ≤ S := by
   intro x hx; obtain ⟨j, _, rfl⟩ := Finset.mem_image.mp hx
-  unfold row; simp [S]; split_ifs <;> (simp [n] at *; omega)
+  unfold row; simp [S]; split_ifs <;> (simp [n] at *; lia)
 
 lemma A_disjoint {i₁ i₂ : Fin n} (h : i₁ ≠ i₂) : Disjoint (A i₁) (A i₂) := by
   rw [Finset.disjoint_left]
