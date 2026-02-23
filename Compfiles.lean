@@ -60,6 +60,7 @@ import Compfiles.Imo1975P1
 import Compfiles.Imo1975P2
 import Compfiles.Imo1975P4
 import Compfiles.Imo1975P5
+import Compfiles.Imo1976P2
 import Compfiles.Imo1976P4
 import Compfiles.Imo1976P6
 import Compfiles.Imo1977P2
