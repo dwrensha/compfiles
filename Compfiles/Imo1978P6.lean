@@ -31,7 +31,7 @@ theorem Nat.ceilDiv_pos (a b : ℕ) (apos : 0 < a) (bpos : 0 < b) : 0 < a ⌈/�
 
 variable {M N : ℕ}
 
-abbrev Name : Type := Finset.Icc (1 : ℤ) M
+abbrev Name : Type := Finset.Icc 1 M
 
 variable (C : @Name M → Fin N)
 
@@ -40,7 +40,7 @@ noncomputable abbrev members_of (i : Fin N) : Finset (@Name M) := {k | C k = i}
 
 def motive (Cdone : Finset (Fin N)) (k : ℕ) : Prop :=
   ∃ Δ : Finset Name,
-      (∀ y ∈ Cdone, ∃ a0 ∈ members_of C y, ∀ x ∈ Δ, ∃ hb, ⟨x.val+a0.val, hb⟩ ∈ members_of C y)
+      (∀ y ∈ Cdone, ∃ a0, C a0 = y ∧ ∀ x ∈ Δ, ∃ hb, C ⟨x.val+a0.val, hb⟩ = y)
     ∧ Disjoint (Δ.image C) Cdone
     ∧ k ≤ Δ.card
 
@@ -78,8 +78,10 @@ theorem induction_step [NeZero N] (h : ∀ (j i k), C i = C j → C j = C k → 
     · use y
       and_intros
       · rw [Finset.disjoint_iff_inter_eq_empty] at ih2
-        grind only [usr Finset.card_image_iff, = Set.mem_image, = Finset.mem_coe,
-          = Finset.mem_filter]
+        contrapose! ih2
+        use y.val
+        rw [Finset.mem_inter, <-SetLike.mem_coe]
+        simp only [Finset.coe_image, Subtype.coe_prop, ih2, and_self]
       · calc
           _ ≤ Δ'.card ⌈/⌉ (N - Cdone.card) := by
             rw [Nat.ceilDiv_eq_add_pred_div, Nat.ceilDiv_eq_add_pred_div]
@@ -93,7 +95,8 @@ theorem induction_step [NeZero N] (h : ∀ (j i k), C i = C j → C j = C k → 
               intro x hx
               simp [<-Subtype.val_inj] at hx ⊢
               exact hx
-            · simp
+            · simp only [Finset.univ_eq_attach, Finset.coe_filter, Finset.mem_attach, true_and,
+                SetLike.coe_eq_coe, implies_true, Set.injOn_of_eq_iff_eq]
     · apply lt_of_le_of_lt (b:=(N - Cdone.card) * (Δ'.card ⌈/⌉ (N - Cdone.card) - 1))
       · apply Nat.mul_le_mul_right
         rw [show N - Cdone.card = (Finset.univ \ Cdone).card by
@@ -134,14 +137,18 @@ theorem induction_step [NeZero N] (h : ∀ (j i k), C i = C j → C j = C k → 
   let Δ : Finset (@Name M) := ((Δ' ∩ members_of C y).erase xmin).attach.map (⟨fun x => ⟨x.val.val - xmin.val, by {
     rw [Finset.mem_Icc]
     and_intros
-    · rw [le_sub_iff_add_le', Int.add_one_le_iff, Subtype.coe_lt_coe]
+    · apply Nat.le_sub_of_add_le'
+      rw [Nat.add_one_le_iff, Subtype.coe_lt_coe]
       apply Finset.min'_lt_of_mem_erase_min'
-      simp
-    · grind only [= Finset.mem_Icc]
+      apply SetLike.coe_mem
+    · have := Finset.mem_Icc.mp xmin.prop
+      have := Finset.mem_Icc.mp x.val.prop
+      lia
   }⟩, by {
     intro x1 x2 e
-    simp at e
-    trivial
+    rw [Subtype.mk.injEq, tsub_left_inj, SetLike.coe_eq_coe, SetLike.coe_eq_coe] at e
+    · trivial
+    all_goals simp only [Subtype.coe_le_coe]; grind only [usr Subtype.property, = Finset.mem_erase, Finset.min'_le]
   }⟩)
   use Δ
   apply (show ∀ (a b c : Prop), (a ∧ (a → b) ∧ c) → (a ∧ b ∧ c) by grind only)
@@ -150,7 +157,7 @@ theorem induction_step [NeZero N] (h : ∀ (j i k), C i = C j → C j = C k → 
     and_intros
     · use xmin
       and_intros
-      · grind only [!Finset.min'_mem, = Finset.mem_inter]
+      · grind only [!Finset.min'_mem, = Finset.mem_inter, = Finset.mem_filter]
       · intro x hx
         unfold Δ at hx
         simp only [Finset.mem_map, Finset.mem_attach, Function.Embedding.coeFn_mk, true_and,
@@ -158,9 +165,12 @@ theorem induction_step [NeZero N] (h : ∀ (j i k), C i = C j → C j = C k → 
           Finset.univ_eq_attach] at hx
         let ⟨a, ha1, ha2, ha3⟩ := hx
         subst x
-        simp only [sub_add_cancel, Finset.mem_filter, Finset.univ_eq_attach, Finset.mem_attach, true_and]
-        simp_rw [ha2]
-        simp [ha1]
+        rw [Nat.sub_add_cancel]
+        · simp_rw [ha2.right.right]
+          simp only [ha1, exists_const]
+        · rw [Subtype.coe_le_coe (y:=⟨a, ha1⟩)]
+          grind only [= Finset.nonempty_def, Finset.min'_le, = Finset.mem_inter,
+            = Finset.mem_filter, ← Finset.mem_univ]
     · intro y' hy'
       let ⟨b0, h1, h2⟩ := ih1 y' hy'
       use ⟨b0 + xmin, ?_⟩
@@ -170,21 +180,23 @@ theorem induction_step [NeZero N] (h : ∀ (j i k), C i = C j → C j = C k → 
           grind only [!Finset.min'_mem, = Finset.mem_inter]
         · intro x hx
           unfold Δ at hx
-          simp at hx
+          simp only [Finset.mem_map, Finset.mem_attach, Function.Embedding.coeFn_mk, true_and,
+            Subtype.exists, Finset.mem_erase, ne_eq, Finset.mem_inter, Finset.mem_filter,
+            Finset.univ_eq_attach, Finset.mem_Icc] at hx
           have hs1 : ∀ (_h), ⟨x.val+xmin.val, _h⟩ ∈ Δ' := by
             grind only
+          have xsx : x.val + xmin.val ∈ Finset.Icc 1 M := by
+            lia
           use ?_
-          · have := (h2 ⟨x.val+xmin.val, ?_⟩ ?_).snd
+          · have := (h2 ⟨x.val+xmin.val, xsx⟩ ?_).snd
             · simp_rw [<-add_assoc, add_comm, add_assoc]
               simp_rw [add_comm] at this
               apply this
-            · grind only
             · apply hs1
-          · have := (h2 ⟨x.val+xmin.val, ?_⟩ ?_).snd
+          · have := (h2 ⟨x.val+xmin.val, xsx⟩ ?_).snd
             · simp_rw [<-add_assoc, add_comm, add_assoc]
               simp_rw [add_comm] at this
               grind only
-            · grind only
             · apply hs1
       · rw [add_comm]
         apply (h2 _ _).fst
@@ -245,25 +257,12 @@ theorem compute_finite_induction [NeZero N] (hC : ∀ (j i k), C i = C j → C j
       apply induction_step C hC _ _ (hcom' n _) _ (ih _) <;> lia
 
 
-theorem imo1978_p6_alt (C : @Name 1978 → Fin 6) :
-  ∃ j i k,
-    C i = C j ∧
-    C j = C k ∧
-    i.val + k.val = j.val := by
-  by_contra! c
-  apply compute_finite_induction C c
-  decide
-
 snip end
 
 problem imo1978_p6 (C : Finset.Icc 1 1978 → Fin 6) :
   ∃ j i k, C i = C j ∧ C j = C k ∧ i.val + k.val = j.val := by
-  have hmem : ∀ (i : @Name 1978), (i : ℤ).toNat ∈ Finset.Icc 1 1978 := by
-    intro ⟨_, hv⟩; simp only [Finset.mem_Icc] at hv ⊢; lia
-  let C' : @Name 1978 → Fin 6 := fun i => C ⟨(i : ℤ).toNat, hmem i⟩
-  obtain ⟨j, i, k, h1, h2, h3⟩ := imo1978_p6_alt C'
-  refine ⟨⟨_, hmem j⟩, ⟨_, hmem i⟩, ⟨_, hmem k⟩, h1, h2, ?_⟩
-  have := i.property; have := k.property; have := j.property
-  simp only [Finset.mem_Icc] at *; lia
+    by_contra! c
+    apply compute_finite_induction C c
+    decide
 
 end Imo1978P6
