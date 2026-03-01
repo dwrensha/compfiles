@@ -95,8 +95,7 @@ theorem induction_step [NeZero N] (h : ∀ (j i k), C i = C j → C j = C k → 
               intro x hx
               simp [<-Subtype.val_inj] at hx ⊢
               exact hx
-            · simp only [Finset.univ_eq_attach, Finset.coe_filter, Finset.mem_attach, true_and,
-                SetLike.coe_eq_coe, implies_true, Set.injOn_of_eq_iff_eq]
+            · exact Set.injOn_subtype_val
     · apply lt_of_le_of_lt (b:=(N - Cdone.card) * (Δ'.card ⌈/⌉ (N - Cdone.card) - 1))
       · apply Nat.mul_le_mul_right
         rw [show N - Cdone.card = (Finset.univ \ Cdone).card by

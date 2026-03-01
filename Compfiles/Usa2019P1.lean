@@ -205,10 +205,7 @@ problem usa2019_p1 (m : ℕ+) :
       := exists_eq
     have hmeq : m = f 1000 := by
       simp only [hf, ite_true]
-      obtain heq | hne := eq_or_ne 1000 m
-      · rw [heq]; simp
-      · simp_rw[eq_false hne]
-        simp
+      exact right_eq_ite_iff.mpr fun a ↦ a.symm
     have hmeq1 : f m = 1000 := by simp [hf]
     have hmsq : f^[2] m = m := by simp [hf]
     have hmsq' : f^[2] 1000 = 1000 := by simp [hf]

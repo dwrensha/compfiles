@@ -376,8 +376,7 @@ theorem aux_4
               have ht₃ := ha₁ x t hx₀
               have ht₄: a x (t + (1 : ℕ)) = a x t + (3 : ℕ) := by simp_all only [↓reduceIte]
               rw [ht₄]
-              have ht₅: a x t + 3 ≡ 2 + 3 [MOD (3 : ℕ)] := by exact Nat.ModEq.add_right (3 : ℕ) ht₁
-              exact ht₅
+              exact Nat.ModEq.add_right (3 : ℕ) ht₁
             refine aux_1 (a x (d - 1)) ?_
             refine hh₀ (d - 1) ?_
             exact Nat.le_sub_one_of_lt hd₃

@@ -286,11 +286,7 @@ lemma aux_9
   rw [hfb₀]
   refine Nat.le_induction ?_ ?_ m hm₀
   · have g₁: fi 1 0 = 0 := by exact hf₅ 0
-    have g₂: (2:NNReal).HolderConjugate (2:NNReal) := by
-      refine (NNReal.holderConjugate_iff_eq_conjExponent ?_).mpr ?_
-      · exact one_lt_two
-      · norm_cast
-        simp
+    have g₂: (2:NNReal).HolderConjugate (2:NNReal) := NNReal.HolderConjugate.two_two
     simp
     norm_cast
     rw [g₁, NNReal.HolderConjugate.one_sub_inv g₂]
@@ -366,11 +362,7 @@ lemma aux_10
     decide
   let nb : ↑sn := ⟨2, hnb₀⟩
   have g₀: 0 < fb nb := by
-    have g₁: (2:NNReal).HolderConjugate (2:NNReal) := by
-      refine (NNReal.holderConjugate_iff_eq_conjExponent ?_).mpr ?_
-      · exact one_lt_two
-      · norm_cast
-        simp
+    have g₁: (2:NNReal).HolderConjugate (2:NNReal) := NNReal.HolderConjugate.two_two
     rw [hfb₀]
     simp
     have hnb₁: nb.val = 2 := by exact rfl

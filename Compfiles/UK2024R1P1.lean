@@ -245,9 +245,7 @@ lemma S_succ_succ_k_card_eq_two_mul_S_succ_k_card : (S (k + 2)).ncard = (S (k + 
           exact hx 0
         obtain hx' | hx' := le_iff_lt_or_eq.mp hx'
         · left
-          replace hx' : x 0 = 0 := by
-            rw [←Fin.val_eq_val, Fin.val_zero, ←Nat.lt_one_iff]
-            rwa [Fin.lt_def, Fin.val_one] at hx'
+          replace hx' : x 0 = 0 := (Fin.lt_one_iff (x 0)).mp hx'
           exact ⟨hx, hx'⟩
         · right
           exact ⟨hx, hx'⟩

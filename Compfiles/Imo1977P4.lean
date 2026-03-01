@@ -209,12 +209,6 @@ problem imo1977_p4 (f : ℝ → ℝ) (a b A B : ℝ)
         have h₁₁ : f (θ + Real.pi / 2) = 1 - a * Real.cos (θ + Real.pi / 2) - b * Real.sin (θ + Real.pi / 2) - A * Real.cos (2 * (θ + Real.pi / 2)) - B * Real.sin (2 * (θ + Real.pi / 2)) := by
           rw [h₀]
         rw [h₁₀, h₁₁]
-        have h₁₂ : Real.cos (θ + Real.pi / 2) = -Real.sin θ := by
-          rw [Real.cos_add]
-          simp [Real.cos_pi_div_two, Real.sin_pi_div_two]
-        have h₁₃ : Real.sin (θ + Real.pi / 2) = Real.cos θ := by
-          rw [Real.sin_add]
-          simp [Real.cos_pi_div_two, Real.sin_pi_div_two]
         have h₁₄ : Real.cos (2 * (θ + Real.pi / 2)) = -Real.cos (2 * θ) := by
           have h₁₅ : 2 * (θ + Real.pi / 2) = 2 * θ + Real.pi := by ring_nf
           rw [h₁₅]
@@ -223,7 +217,7 @@ problem imo1977_p4 (f : ℝ → ℝ) (a b A B : ℝ)
           have h₁₆ : 2 * (θ + Real.pi / 2) = 2 * θ + Real.pi := by ring_nf
           rw [h₁₆]
           exact Real.sin_add_pi _
-        rw [h₁₂, h₁₃, h₁₄, h₁₅]
+        rw [Real.cos_add_pi_div_two θ, Real.sin_add_pi_div_two θ, h₁₄, h₁₅]
         have h₁₆ : C = a + b := by rw [hC_def]
         have h₁₇ : D = a - b := by rw [hD_def]
         simp only [h₁₆, h₁₇] at *

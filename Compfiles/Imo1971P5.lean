@@ -31,9 +31,9 @@ lemma norm_one_infinity : {p : Pt | ‖p‖ = 1}.Infinite := by
   suffices h : (Metric.sphere (0 : Pt) 1).Infinite by
     convert h using 1; ext p; simp
   apply IsPreconnected.infinite_of_nontrivial
-  · have hrank : 1 < Module.rank ℝ Pt := by
-      rw [← Module.finrank_eq_rank (R := ℝ) (M := Pt), finrank_euclideanSpace_fin]; norm_num
-    exact (isPathConnected_sphere hrank 0 (by norm_num)).isConnected.isPreconnected
+  · refine isPreconnected_sphere ?_ 0 1
+    rw [← Module.finrank_eq_rank (R := ℝ) (M := Pt), finrank_euclideanSpace_fin]
+    norm_num
   · refine ⟨EuclideanSpace.single 0 1, by simp [EuclideanSpace.norm_single],
             EuclideanSpace.single 1 1, by simp [EuclideanSpace.norm_single], ?_⟩
     intro h
