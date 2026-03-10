@@ -162,7 +162,6 @@ problem imo1961_p1a (a b x y z : ℝ) :
     by_cases ha₀: a = 0
     · right
       have hb₀ : b = 0 := by grind
-      set_option backward.isDefEq.respectTransparency false in
       rw [hb₀, zero_pow two_ne_zero, ← h₂, add_sq] at h₃
       ring_nf at h₃
       have h₄ : x ^ 3 = y ^ 3 := by grind
@@ -179,7 +178,7 @@ problem imo1961_p1a (a b x y z : ℝ) :
       bound
     · left
       refine ⟨ha₀, ?_⟩
-      have h₄: (x + y) ^ 2 - z ^ 2 = (x + y + z) * (x + y - z) := by exact sq_sub_sq (x + y) z
+      have h₄: (x + y) ^ 2 - z ^ 2 = (x + y + z) * (x + y - z) := sq_sub_sq (x + y) z
       have h₅: z = (a ^ 2 - b ^ 2) / (2 * a) := by grind
       refine ⟨h₅, ?_⟩
       intro m

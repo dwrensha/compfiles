@@ -306,10 +306,11 @@ problem bulgaria1998_p11
     simp only [Nat.cast_zero, mul_zero] at h
     generalize hm' : (m : ZMod 2) = m'
     rw [hm'] at h
-    set_option backward.isDefEq.respectTransparency false in
     fin_cases m'
     · rfl
-    · simp +arith +decide at h; reduce_mod_char at h
+    · dsimp only [Nat.reduceAdd, Fin.mk_one, Fin.isValue] at h
+      set_option backward.isDefEq.respectTransparency false in
+      reduce_mod_char at h
       rw [zero_pow n_ne_zero, zero_add] at h
       exact (zero_ne_one h).elim
 

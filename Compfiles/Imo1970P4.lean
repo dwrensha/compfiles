@@ -213,19 +213,17 @@ lemma five_divides_odd_at_most_once (n : ℕ) (s odd_s : Finset ℕ) (partition 
 lemma unique_divisor (n : ZMod 3) (a b c : ℕ) (n_eq_a : n = a) (s : Finset ℕ) (s_eq : s = ({a, b, c} : Finset ℕ)) (b_eq: b = a + 2) (c_eq : c = b + 2) : ∃! a', a' ∈ s ∧ 3 ∣ a' := by
   fin_cases n
   · use a
-    set_option backward.isDefEq.respectTransparency false in
     have three_div_a : 3 ∣ a := by
       apply (ZMod.natCast_eq_zero_iff a 3).mp
-      simp_all only [Fin.zero_eta]
+      exact n_eq_a.symm
     grind
   · use b
-    set_option backward.isDefEq.respectTransparency false in
     have three_div_b : 3 ∣ b := by
       simp_all only [Fin.mk_one]
       apply (ZMod.natCast_eq_zero_iff (a + 2) 3).mp
       simp_all only [Nat.cast_add, Nat.cast_ofNat]
-      rw[← n_eq_a]
-      reduce_mod_char
+      rw [← n_eq_a]
+      rfl
     constructor
     · simp_all only [Fin.mk_one, Finset.mem_insert, add_eq_left, OfNat.ofNat_ne_zero, Finset.mem_singleton, left_eq_add, or_false, or_true, and_self]
     · rintro o ⟨o_in_s, three_div_o⟩
@@ -233,14 +231,13 @@ lemma unique_divisor (n : ZMod 3) (a b c : ℕ) (n_eq_a : n = a) (s : Finset ℕ
       simp_all only [Fin.mk_one, Finset.mem_insert, Finset.mem_singleton]
       lia
   · use c
-    set_option backward.isDefEq.respectTransparency false in
     have three_div_c : 3 ∣ c := by
       simp_all only [Nat.dvd_add_self_right]
       apply (ZMod.natCast_eq_zero_iff (a + 1) 3).mp
       simp_all only [Nat.cast_add, Nat.cast_one]
       rw[← n_eq_a]
       simp only [Nat.reduceAdd, Fin.reduceFinMk, Fin.isValue]
-      reduce_mod_char
+      rfl
     constructor
     · simp_all only [Nat.dvd_add_self_right, Finset.mem_insert, add_eq_left, OfNat.ofNat_ne_zero, Finset.mem_singleton, or_true, and_self]
     · rintro o ⟨o_in_s, three_div_o⟩
