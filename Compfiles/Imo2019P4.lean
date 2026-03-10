@@ -42,6 +42,7 @@ individually.
 theorem upper_bound {k n : ℕ} (hk : k > 0)
     (h : (k ! : ℤ) = ∏ i ∈ Finset.range n, ((2:ℤ) ^ n - (2:ℤ) ^ i)) : n < 6 := by
   have h2 : ∑ i ∈ Finset.range n, i < k := by
+    set_option backward.isDefEq.respectTransparency false in
     suffices emultiplicity 2 (k ! : ℤ) = ↑(∑ i ∈ Finset.range n, i : ℕ) by
       rw [← Nat.cast_lt (α := ℕ∞), ← this]; change emultiplicity ((2 : ℕ) : ℤ) _ < _
       simp_rw [Int.natCast_emultiplicity, Nat.emultiplicity_two_factorial_lt hk.lt.ne.symm]

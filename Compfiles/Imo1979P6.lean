@@ -81,6 +81,7 @@ theorem isTerminalWalk_copy {V : Type} {G : SimpleGraph V} {u v u' v' : V} (h1 :
   intro h
   simp [<-h2, h]
 
+set_option backward.isDefEq.respectTransparency false in
 theorem isTerminalWalk_map {V V' : Type} {G : SimpleGraph V} {G' : SimpleGraph V'} (f : G ↪g G') {u v : V} (w : G.Walk u v) :
     isTerminalWalk w → isTerminalWalk (w.map f.toHom) := by
   unfold isTerminalWalk
@@ -132,22 +133,26 @@ def C_G_symm (n : ℕ) : {w : Octagon.Walk C E // isTerminalWalk w ∧ w.length 
     · apply isTerminalWalk_copy
       apply isTerminalWalk_map
       exact h.left
-    · simp [h.right]
+    · set_option backward.isDefEq.respectTransparency false in
+      simp [h.right]
   }⟩
   invFun := fun ⟨w, h⟩ => ⟨(w.map Octagon.mirror.toHom).copy (by decide) (by decide), by {
     and_intros
     · apply isTerminalWalk_copy
       apply isTerminalWalk_map
       exact h.left
-    · simp [h.right]
+    · set_option backward.isDefEq.respectTransparency false in
+      simp [h.right]
   }⟩
   left_inv := fun ⟨w, h⟩ => by
+    set_option backward.isDefEq.respectTransparency false in
     simp only [RelEmbedding.coe_toRelHom, RelIso.coe_toRelEmbedding, Walk.copy_rfl_rfl,
       Walk.map_map, Subtype.mk.injEq]
     apply Walk.ext_support
     unfold Octagon.mirror
     simp
   right_inv := fun ⟨w, h⟩ => by
+    set_option backward.isDefEq.respectTransparency false in
     simp only [RelEmbedding.coe_toRelHom, RelIso.coe_toRelEmbedding, Walk.copy_rfl_rfl,
       Walk.map_map, Subtype.mk.injEq]
     apply Walk.ext_support
@@ -213,6 +218,7 @@ theorem a_b_recurrence_1 (n : ℕ) (npos : 0 < n) : a (n+2) = 2 * a n + 2 * b n 
       := by
         decide +revert
   unfold a b
+  set_option backward.isDefEq.respectTransparency false in
   calc
     _ = Fintype.card {w : Octagon.Walk A E // isTerminalWalk w ∧ w.length = 2 + n} := by
       rw [Set.ncard_eq_toFinset_card', add_comm]
@@ -243,6 +249,7 @@ theorem a_b_recurrence_2 (n : ℕ) (npos : 0 < n) : b (n+2) = a n + 2 * b n := b
       := by
         decide +revert
   unfold a b
+  set_option backward.isDefEq.respectTransparency false in
   calc
     _ = Fintype.card {w : Octagon.Walk C E // isTerminalWalk w ∧ w.length = 2 + n} := by
       rw [Set.ncard_eq_toFinset_card', add_comm]

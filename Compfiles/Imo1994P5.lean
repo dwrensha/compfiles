@@ -144,6 +144,7 @@ problem imo1994_p5 (f : S → S) :
   have h6 := h5 x
   unfold op at h6
   obtain ⟨x, hx⟩ := x
+  set_option backward.isDefEq.respectTransparency false in
   rw [Subtype.mk_eq_mk] at h6
   dsimp only at h6
   have h7 : (f ⟨x, hx⟩).val = -x / (1 + x) := by

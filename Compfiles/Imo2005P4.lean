@@ -57,6 +57,7 @@ determine SolutionSet : Set ℕ+ := { 1 }
 
 problem imo2005_p4 {k : ℕ} (hk : 0 < k) :
     (∀ n : ℕ, 1 ≤ n → IsCoprime (a n) k) ↔ ⟨k, hk⟩ ∈ SolutionSet := by
+  set_option backward.isDefEq.respectTransparency false in
   rw [Set.mem_singleton_iff,
       show ((⟨k, hk⟩: ℕ+) = 1) ↔ k = 1 from eq_iff_eq_of_cmp_eq_cmp rfl]
   constructor; rotate_left

@@ -25,6 +25,7 @@ namespace Imo1982P4
 
 snip begin
 
+set_option backward.isDefEq.respectTransparency false in
 lemma lemma1 {x' y' : ZMod 7}
     (hxy : x' ^ 3 - 3 * x' * y' ^ 2 + y' ^ 3 = 0) : x' = 0 ∧ y' = 0 := by
   fin_cases x' <;> fin_cases y' <;> simp +decide at hxy ⊢

@@ -61,6 +61,7 @@ theorem map_ne_zero_iff : f x ≠ 0 ↔ x < 2 := by simp [hf.map_eq_zero]
 theorem map_of_lt_two (hx : x < 2) : f x = 2 / (2 - x) := by
   have hx' : 0 < 2 - x := tsub_pos_of_lt hx
   have hfx : f x ≠ 0 := hf.map_ne_zero_iff.2 hx
+  set_option backward.isDefEq.respectTransparency false in
   apply le_antisymm
   · rw [le_div_iff₀ hx', ← le_div_iff₀' hfx.bot_lt,
         tsub_le_iff_right, ← hf.map_eq_zero,
@@ -90,6 +91,7 @@ problem imo1986_p5 {f : ℝ≥0 → ℝ≥0} : IsGood f ↔ f ∈ SolutionSet :=
     cases lt_or_ge y 2 with
     | inl hy =>
       have hy' : 2 - y ≠ 0 := (tsub_pos_of_lt hy).ne'
+      set_option backward.isDefEq.respectTransparency false in
       rw [div_mul_div_comm, tsub_mul, mul_assoc, div_mul_cancel₀ _ hy', mul_comm x,
         ← mul_tsub, tsub_add_eq_tsub_tsub_swap, mul_div_mul_left _ _ two_ne_zero]
     | inr hy =>

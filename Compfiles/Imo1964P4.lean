@@ -48,6 +48,7 @@ theorem lemma1
   have p2 : Person := Nonempty.some (Fintype.card_pos_iff.mp (by lia))
   let Person' := {p3 // p3 ≠ p2}
   have hfcα : 4 < Fintype.card Person' := by
+    set_option backward.isDefEq.respectTransparency false in
     rw [Fintype.card_subtype_compl, Fintype.card_ofSubsingleton]
     exact lt_tsub_of_add_lt_left card_person
   have h1 : Fintype.card Topic * 2 < Fintype.card Person' := by lia

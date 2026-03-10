@@ -88,8 +88,7 @@ problem bulgaria1998_p6
   have hc' : 0 < |c| := by
     obtain hc1 | hc2 | hc3 := lt_trichotomy 0 |c|
     · exact hc1
-    · set_option backward.isDefEq.respectTransparency false in
-      have hab : a^2 = b^2 := by
+    · have hab : a^2 = b^2 := by
         rw [← hc2, zero_pow (by norm_num)] at hc
         have hc3 : (a^2)^2 = (b^2)^2 := by linear_combination hc
         have hap : 0 ≤ a^2 := by positivity

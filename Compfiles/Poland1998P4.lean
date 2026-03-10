@@ -73,7 +73,8 @@ lemma can_get_a_later_one_zmod :
   intro n hn
 
   obtain (hlt : n < 2) | (hlte : 2 ≤ n) := lt_or_ge n 2
-  · exact ⟨5, Nat.le.step <| Nat.le.step <| Nat.le.step hlt, by simp [a', a]⟩
+  · set_option backward.isDefEq.respectTransparency false in
+    exact ⟨5, Nat.le.step <| Nat.le.step <| Nat.le.step hlt, by simp [a', a]⟩
 
   let n1 : ℕ := 2 * (n - 1) + 1
 
@@ -164,6 +165,7 @@ lemma can_get_a_later_one : (∀ N : ℕ, 7 ∣ a N → (∃ M : ℕ, N < M ∧ 
   have ha' : a' n = 0 := by
     have : a' n = ⟨a n % 7, Nat.mod_lt _ (Nat.succ_pos _)⟩ := by simp[a']
     rw [this]
+    set_option backward.isDefEq.respectTransparency false in
     simp only [Nat.mod_eq_zero_of_dvd hn, Fin.mk_zero]
   obtain ⟨m, hmgt, hm7⟩ := can_get_a_later_one_zmod n ha'
   use m

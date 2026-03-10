@@ -387,6 +387,7 @@ theorem embed_B.not_Surjective [NeZero n] : ¬ Function.Surjective (embed_B n) :
   use ⟨x, by unfold T; exists 1, (by grind)⟩
   by_contra ⟨⟨⟨y, k⟩, h⟩, h'⟩
   unfold embed_B at h'
+  set_option backward.isDefEq.respectTransparency false in
   simp at h'
   subst y
   unfold B at h

@@ -240,6 +240,7 @@ lemma imo_1990_p3_forward
         rw [Nat.Prime.emultiplicity_self hp₁] at hk₂₁
         rw [FiniteMultiplicity.emultiplicity_eq_multiplicity hn₂] at hk₂₁
         rw [FiniteMultiplicity.emultiplicity_eq_multiplicity hn₃] at hk₂₁
+        set_option backward.isDefEq.respectTransparency false in
         norm_cast at hk₂₁
         rw [hk₂₁]
         exact Nat.add_comm (1 : ℕ) (multiplicity (3 : ℕ) n)

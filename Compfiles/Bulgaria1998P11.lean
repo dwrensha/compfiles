@@ -102,7 +102,6 @@ lemma two_n_and_rest_factorisation (m : ℕ) (even_m : Even m) (h: 0 < m) :
     have h4 := Nat.maxPowDiv.le_of_dvd one_lt_two (Nat.ne_zero_of_lt h) h3
     exact (lt_self_iff_false _).mp (Nat.succ_le_iff.mp h4)
 
-set_option backward.isDefEq.respectTransparency false in
 lemma m_mod_2_contradiction (m n A : ℕ)
                             (even_A : Even A)
                             (m_eq_2_mod_4 : m ≡ 2 [MOD 4])
@@ -367,7 +366,6 @@ problem bulgaria1998_p11
           rw[show (3 ^ 2) = 9 by rfl]
           push_cast
           reduce_mod_char
-          set_option backward.isDefEq.respectTransparency false in
           rw [one_pow (M := ZMod 8) k]
           simp +arith +decide
         exfalso
@@ -498,7 +496,6 @@ problem bulgaria1998_p11
       have upper_bound_expression: 3 * x ^ 2 + y ^ 2 ≤ 4 * m₁ := by lia
       rw [Hs] at upper_bound_expression
       rw [show m₁ * s = s * m₁ by ring] at upper_bound_expression
-      set_option backward.isDefEq.respectTransparency false in
       exact le_of_mul_le_mul_right upper_bound_expression zero_lt_m₁
 
     have lower_bound_s : 0 < s := by
@@ -528,7 +525,6 @@ problem bulgaria1998_p11
         rw[Hs]
       reduce_mod_char at expression_mod_4
       obtain left_x | right_x := square_mod_4_zmod x
-      set_option backward.isDefEq.respectTransparency false in
       · rw[left_x] at expression_mod_4
         obtain left_y | right_y := square_mod_4_zmod y
         · rw[left_y] at expression_mod_4
@@ -541,7 +537,6 @@ problem bulgaria1998_p11
           simp +arith +decide at expression_mod_4
         · rw[right_y] at expression_mod_4
           simp +arith +decide at expression_mod_4
-    set_option backward.isDefEq.respectTransparency false in
     · -- s = 3
       have := Int.modEq_zero_iff_dvd.mp m₁_sub_5_mod_6
       dsimp[Dvd.dvd] at this

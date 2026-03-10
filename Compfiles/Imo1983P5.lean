@@ -153,7 +153,8 @@ theorem generalized (n : ℕ+) :
   set S' := Finset.image base_two_to_base_three (Finset.range (2 ^ n.val) \ Finset.range 1) with hS'
   use Finset.subtype (fun n ↦ 0 < n) S'
   constructorm* _ ∧ _
-  · rw [Finset.card_subtype]
+  · set_option backward.isDefEq.respectTransparency false in
+    rw [Finset.card_subtype]
     have hS'_filter : ∀ n ∈ S', 0 < n := by
       simp only [hS', Finset.mem_image, Finset.mem_sdiff, Finset.mem_range, Nat.lt_one_iff,
                  forall_exists_index, and_imp]
@@ -164,6 +165,7 @@ theorem generalized (n : ℕ+) :
     congr 1
     exact min_eq_left (Nat.one_le_pow _ _ (by norm_num))
   · intro x hx
+    set_option backward.isDefEq.respectTransparency false in
     rw [Finset.mem_subtype, hS', Finset.mem_image] at hx
     rcases hx with ⟨m, hm, hmx⟩
     rw [PNat.val, ← hmx, base_two_to_base_three, Nat.ofDigits_eq]
@@ -182,6 +184,7 @@ theorem generalized (n : ℕ+) :
     exact hm.left
   · rintro x hx y hy z hz h'
     contrapose! h'
+    set_option backward.isDefEq.respectTransparency false in
     rw [Finset.mem_subtype, hS', Finset.mem_image] at hx hy hz
     rcases hx with ⟨x', hx', hx'x⟩
     rcases hy with ⟨y', hy', hy'y⟩

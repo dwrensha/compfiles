@@ -2671,11 +2671,9 @@ lemma mem_decSubsets {f : Fin n → Fin n} {t : Finset (Fin n)} :
     t ∈ decSubsets f ↔ StrictAntiOn f (t : Set (Fin n)) := by
   simp [decSubsets]
 
-set_option backward.isDefEq.respectTransparency false in
 lemma incSubsets_nonempty (f : Fin n → Fin n) : (incSubsets f).Nonempty := by
   use ∅; simp [incSubsets, StrictMonoOn]
 
-set_option backward.isDefEq.respectTransparency false in
 lemma decSubsets_nonempty (f : Fin n → Fin n) : (decSubsets f).Nonempty := by
   use ∅; simp [decSubsets, StrictAntiOn]
 

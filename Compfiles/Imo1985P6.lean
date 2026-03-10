@@ -158,6 +158,7 @@ lemma aux_7
   (hmo₄ : ∀ (n : ℕ), 0 < n → Continuous (f₀ n)) :
   ∀ (n : ℕ), 0 < n → Function.Surjective (f₀ n) := by
   intro n hn₀
+  set_option backward.isDefEq.respectTransparency false in
   refine Continuous.surjective (hmo₄ n hn₀) ?_ ?_
   · refine Monotone.tendsto_atTop_atTop ?_ ?_
     · exact StrictMono.monotone (hmo₂ n hn₀)

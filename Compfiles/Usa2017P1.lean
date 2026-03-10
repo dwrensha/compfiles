@@ -118,6 +118,7 @@ snip end
 problem infinite_solution_set :
     Infinite { (x, y) : ℕ × ℕ | condition x y } := by
   refine Infinite.of_injective build (fun _ => ?_)
+  set_option backward.isDefEq.respectTransparency false in
   simp [build]
 
 end Usa2017P1

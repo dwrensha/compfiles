@@ -276,6 +276,7 @@ def PRat.mk_mul_hom_fun (g : ℕ → ℚ+) : ℚ+ →* ℚ+ := {
         : ⟨a / b, h1⟩ * (⟨b, h2⟩ : ℕ+) = (⟨a, apos⟩ : ℕ+) := by
       ext
       refine Nat.div_mul_cancel dvd
+    set_option backward.isDefEq.respectTransparency false in
     rw [this]
     · have : ∀ h1, ∀ h2, (⟨a.val.den, h1⟩ : ℕ+) * (⟨b.val.den, h2⟩ : ℕ+) = (⟨a.val.den * b.val.den, (Nat.mul_pos h1 h2)⟩ : ℕ+) := by
         intro h1 h2

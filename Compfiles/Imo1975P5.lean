@@ -80,6 +80,7 @@ theorem not_irrational_sin_θ_mul_and_not_irrational_cos_θ_mul (n : ℕ)
 
 theorem not_irrational_dist_P_P (i j : ℕ) : ¬ Irrational (dist (P i) (P j)) := by
   unfold P
+  set_option backward.isDefEq.respectTransparency false in
   rw [Subtype.dist_eq, Complex.dist_mk, Real.cos_sub_cos, Real.sin_sub_sin, mul_right_comm]
   repeat rw [mul_pow]
   simp only [even_two, Even.neg_pow]
@@ -118,6 +119,7 @@ theorem P_injective : Function.Injective P := by
     have := this e.symm
     grind only
   unfold P
+  set_option backward.isDefEq.respectTransparency false in
   rw [Ne, Iff.not (Subtype.ext_iff)]
   simp only [Complex.mk.injEq, not_and]
   intro _
