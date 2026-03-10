@@ -60,6 +60,7 @@ def Sunny (s : AffineSubspace ℝ (EuclideanSpace ℝ (Fin 2))) : Prop :=
    ¬ s ∥ xAxis ∧ ¬ s ∥ yAxis ∧ ¬ s ∥ linexy0
 
 /-- The decidable predicate `Sunny`. -/
+@[implicit_reducible]
 noncomputable def sunnyPred : DecidablePred Sunny := Classical.decPred _
 
 snip begin

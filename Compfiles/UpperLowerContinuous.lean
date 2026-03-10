@@ -32,15 +32,18 @@ def lower_intervals : Set (Set ℝ) := {s : Set ℝ | ∃ a b : ℝ, Set.Ico a b
 def open_intervals : Set (Set ℝ) := {s : Set ℝ | ∃ a b : ℝ, Set.Ioo a b = s}
 
 /-- Generate the toplogy on ℝ by intervals of the form (a, b]. -/
+@[implicit_reducible]
 def tᵤ : TopologicalSpace ℝ := TopologicalSpace.generateFrom upper_intervals
 
 /-- Generate the toplogy on ℝ by intervals of the form [a, b). -/
+@[implicit_reducible]
 def tₗ : TopologicalSpace ℝ := TopologicalSpace.generateFrom lower_intervals
 
 /-- This should be equivalent to the default instance
 for `TopologicalSpace ℝ`, which goes through `UniformSpace`, but for
 now I don't want to bother with proving that equivalence.
 -/
+@[implicit_reducible]
 def tₛ : TopologicalSpace ℝ := TopologicalSpace.generateFrom open_intervals
 
 -- activate the Continuous[t1, t2] notation
