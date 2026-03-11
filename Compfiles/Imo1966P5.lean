@@ -175,11 +175,10 @@ theorem imo1966_p5_generalized
       rw [solution_set_generalized, solution_set_generalized, Set.mem_singleton_iff, Set.mem_singleton_iff]
       rw [nth_smallest_nth_smallest_eq_nth_smallest, hx']
       constructor <;> intro h <;> ext i
-      · set_option backward.isDefEq.respectTransparency false in
-        rw [← Function.comp_id x, ← nth_smallest_index_comp_order_eq_id ha]
+      · rw [← Function.comp_id x, ← nth_smallest_index_comp_order_eq_id ha]
         rw [← Function.comp_assoc, h, ha']
         rw [order_nth_smallest_eq_id]
-        dsimp
+        simp
       · rw [h, ha']
         dsimp
         rw [order_nth_smallest_eq_id, ← @Function.comp_apply _ _ _ (order a)]

@@ -81,11 +81,11 @@ theorem isTerminalWalk_copy {V : Type} {G : SimpleGraph V} {u v u' v' : V} (h1 :
   intro h
   simp [<-h2, h]
 
-set_option backward.isDefEq.respectTransparency false in
 theorem isTerminalWalk_map {V V' : Type} {G : SimpleGraph V} {G' : SimpleGraph V'} (f : G ↪g G') {u v : V} (w : G.Walk u v) :
     isTerminalWalk w → isTerminalWalk (w.map f.toHom) := by
   unfold isTerminalWalk
   intro h
+  set_option backward.isDefEq.respectTransparency false in
   simp
   contrapose! h
   rw [List.dropLast_eq_take, List.mem_take_iff_getElem] at h ⊢

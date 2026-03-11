@@ -27,7 +27,6 @@ open scoped EuclideanGeometry
 
 snip begin
 
-set_option backward.isDefEq.respectTransparency false in
 lemma lemma1 (a b c d : ℝ) : a * c + b * d ≤ Real.sqrt (a^2 + b^2) * Real.sqrt (c^2 + d^2) := by
   let v1 : EuclideanSpace ℝ (Fin 2) := !₂[a, b]
   let v2 : EuclideanSpace ℝ (Fin 2) := !₂[c, d]
