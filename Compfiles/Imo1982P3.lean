@@ -88,7 +88,6 @@ problem imo1982_p3a {x : ℕ → ℝ} (hx : Antitone x) (h0 : x 0 = 1) (hp : ∀
 
 noncomputable determine sol : ℕ → ℝ := fun k ↦ 2⁻¹ ^ k
 
-set_option backward.isDefEq.respectTransparency false in
 problem imo1982_p3b : Antitone sol ∧ sol 0 = 1 ∧ (∀ k, 0 < sol k)
     ∧ ∀ n, ∑ k ∈ Finset.range n, sol k ^ 2 / sol (k + 1) < 4 := by
   refine ⟨?_, pow_zero _, ?_, fun n ↦ ?_⟩
