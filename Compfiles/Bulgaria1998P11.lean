@@ -82,24 +82,24 @@ lemma two_le_pow_two (l : ℕ) : 2 ≤ 2 ^ (l + 1) := by
 
 lemma two_n_and_rest_factorisation (m : ℕ) (even_m : Even m) (h: 0 < m) :
     ∃ (l : ℕ) (m₁ : ℕ), 1 ≤ l ∧ Odd m₁ ∧ m = 2 ^ l * m₁ := by
-  have ⟨a, ha⟩ := Nat.maxPowDiv.pow_dvd 2 m
-  refine ⟨Nat.maxPowDiv 2 m, a, ?_⟩
+  have ⟨a, ha⟩ := (pow_padicValNat_dvd : 2 ^ padicValNat 2 m ∣ m)
+  refine ⟨padicValNat 2 m, a, ?_⟩
   obtain ⟨k, hk⟩ := even_iff_two_dvd.mp even_m
   have hk0 : 0 < k := by lia
   refine ⟨?_, ?_, ha⟩
   · rw [hk]
     rw [show 2 * k = 2^1 * k from rfl]
-    rw [Nat.maxPowDiv.base_pow_mul one_lt_two hk0]
-    exact Nat.le_add_left 1 (Nat.maxPowDiv 2 k)
+    rw [padicValNat_base_pow_mul one_lt_two hk0.ne']
+    exact Nat.le_add_left 1 (padicValNat 2 k)
   · by_contra! Ha
     rw [Nat.not_odd_iff_even] at Ha
     obtain ⟨b, hb⟩ := Ha
-    have h3 : 2 ^ (Nat.maxPowDiv 2 m  + 1) ∣ m := by
+    have h3 : 2 ^ (padicValNat 2 m  + 1) ∣ m := by
       use b
       rw [hb] at ha
       rw [pow_succ]
       linarith only [ha]
-    have h4 := Nat.maxPowDiv.le_of_dvd one_lt_two (Nat.ne_zero_of_lt h) h3
+    have h4 := (Nat.pow_dvd_iff_le_padicValNat (by omega) (Nat.ne_zero_of_lt h)).mp h3
     exact (lt_self_iff_false _).mp (Nat.succ_le_iff.mp h4)
 
 lemma m_mod_2_contradiction (m n A : ℕ)
