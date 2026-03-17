@@ -40,12 +40,7 @@ namespace Imo2022P1
 inductive Coin : Type where
   | A : Coin
   | B : Coin
-
-instance : DecidableEq Coin := by
-  intros a b
-  cases a <;> cases b <;> first
-    | right; rfl
-    | left; intro; contradiction
+deriving DecidableEq
 
 /-- A row of coins. -/
 abbrev Row (n : ℕ) : Type := Fin (2 * n) → Coin
