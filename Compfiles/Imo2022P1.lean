@@ -505,9 +505,7 @@ lemma Row.leftmostNSame_iff_of_valid {n : ℕ} {c : Row n} (hc : c.valid):
     constructor
     · intro h
       by_cases! hn : n ≠ 0
-      · haveI : NeZero (2 * n) := by
-          constructor
-          lia
+      · have : NeZero (2 * n) := ⟨by positivity⟩
         use c 0
         rw [Row.valid] at hc
         have hA := @Finset.card_filter_add_card_filter_not _ Finset.univ (fun i ↦ c i = Coin.A) _ _
@@ -2095,7 +2093,7 @@ problem imo2022_p1 : {(n, k) | ∃ hk1 : 1 ≤ k, ∃ hkn : k ≤ 2 * n, ∀ c :
     contrapose! +distrib h
     intro hk1 hkn
     have hn : 0 < n := by lia
-    have hnz : NeZero n := NeZero.of_pos hn
+    have : NeZero n := NeZero.of_pos hn
     have hcounter {c : Row n} (hc : c.valid)
       (hlen : ∀ i, ((Row.operationOneBased hk1 hkn)^[i] c).blocks.length ≠ 2) :
       ∃ c : Row n, c.valid ∧ ∀ i, ¬ ((Row.operationOneBased hk1 hkn)^[i] c).leftmostNSame := by
