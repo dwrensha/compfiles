@@ -2094,34 +2094,37 @@ problem imo2022_p1 : {(n, k) | ∃ hk1 : 1 ≤ k, ∃ hkn : k ≤ 2 * n, ∀ c :
   · intro h
     contrapose! +distrib h
     intro hk1 hkn
-    have hn : ¬ n ≤ 0 := by lia
-    haveI : NeZero n := by
-      constructor
-      lia
-    rw [or_iff_right hn] at h
-    rcases h with (h|h)
+    have hn : 0 < n := by lia
+    have hnz : NeZero n := NeZero.of_pos hn
+    have hcounter {c : Row n} (hc : c.valid)
+      (hlen : ∀ i, ((Row.operationOneBased hk1 hkn)^[i] c).blocks.length ≠ 2) :
+      ∃ c : Row n, c.valid ∧ ∀ i, ¬ ((Row.operationOneBased hk1 hkn)^[i] c).leftmostNSame := by
+        refine ⟨c, hc, ?_⟩
+        intro i hi
+        have hic := Row.operationOneBased_iterate_valid hc hk1 hkn i
+        rw [Row.leftmostNSame_iff_length_blocks_ofFn_of_valid hic] at hi
+        exact hlen i hi
+    rw [or_iff_right (show ¬ n ≤ 0 by lia)] at h
+    rcases h with h | h
     · set blocks := [k, n, n - k] with h_blocks
       have h_blocks' : blocks.sum = 2 * n := by
         rw [h_blocks, List.sum_cons, List.sum_pair]
         lia
       set c := Row.ofBlocks blocks Coin.A h_blocks' with hc
-      use c
       have hc' : c.valid := by
         rw [hc, Row.ofBlocks_valid_iff_alternateSum_eq blocks Coin.A h_blocks' false]
         simp [h_blocks, List.alternateSum]
-      rw [and_iff_right hc']
+      refine hcounter hc' ?_
       intro i
-      have hic := Row.operationOneBased_iterate_valid hc' hk1 hkn i
-      rw [Row.leftmostNSame_iff_length_blocks_ofFn_of_valid hic]
       have h_blocks'' : ∀ x ∈ blocks, 0 < x := by
         intro x hx
         rw [h_blocks] at hx
         simp at hx
-        casesm* _ ∨ _ <;> rw [hx] <;> lia
-      have h : ((Row.operationOneBased hk1 hkn)^[i] c).blocks = blocks := by
+        rcases hx with rfl | rfl | rfl <;> lia
+      have h_fixed : ((Row.operationOneBased hk1 hkn)^[i] c).blocks = blocks := by
         apply Row.blocks_operationOneBased_iterate_eq_blocks_of hk1 hkn
         · rw [hc]
-          apply Row.blocks_ofBlocks _ _ h_blocks' h_blocks''
+          exact Row.blocks_ofBlocks _ _ h_blocks' h_blocks''
         · rw [indexInBlock, Finset.max'_eq_iff]
           simp
           intro j hj₁ hj₂
@@ -2132,50 +2135,45 @@ problem imo2022_p1 : {(n, k) | ∃ hk1 : 1 ≤ k, ∃ hkn : k ≤ 2 * n, ∀ c :
           rw [List.take_take, min_eq_left hj₂]
           apply le_add_of_le_left
           rw [h_blocks, List.take_succ_cons, List.take_zero, List.sum_singleton]
-      rw [h, h_blocks, List.length_cons, List.length_cons, List.length_singleton]
-      norm_num
+      simp [h_fixed, h_blocks]
     · set blocks := [n ⌈/⌉ 2, n ⌈/⌉ 2, n ⌊/⌋ 2, n ⌊/⌋ 2] with h_blocks
       have h_blocks' : blocks.sum = 2 * n := by
         rw [h_blocks, List.sum_cons, List.sum_cons, List.sum_pair]
         nth_rw 5 [← Nat.ceilDiv_two_add_floorDiv_two n]
         ring
       set c := Row.ofBlocks blocks Coin.A h_blocks' with hc
-      use c
       have hc' : c.valid := by
         rw [hc, Row.ofBlocks_valid_iff_alternateSum_eq blocks Coin.A h_blocks' false]
         simp [h_blocks, List.alternateSum, -Nat.floorDiv_eq_div]
-        apply Nat.ceilDiv_two_add_floorDiv_two
-      rw [and_iff_right hc']
+        exact Nat.ceilDiv_two_add_floorDiv_two n
+      refine hcounter hc' ?_
       intro i
-      have hic := Row.operationOneBased_iterate_valid hc' hk1 hkn i
-      rw [Row.leftmostNSame_iff_length_blocks_ofFn_of_valid hic]
       have h_blocks'' : ∀ x ∈ blocks, 0 < x := by
         intro x hx
         rw [h_blocks] at hx
         simp at hx
         rw [Nat.ceilDiv_eq_add_pred_div] at h
-        casesm* _ ∨ _ <;> rw [hx]
+        rcases hx with rfl | rfl
         · rw [Nat.ceilDiv_eq_add_pred_div]
           lia
         · lia
-      have h : ((Row.operationOneBased hk1 hkn)^[i] c).blocks = (blocks.reverse.rotate i).reverse := by
+      have h_large : ∀ x ∈ blocks, 2 * n < x + k := by
+        intro x hx
+        rw [h_blocks] at hx
+        simp at hx
+        rw [Nat.ceilDiv_eq_add_pred_div] at h
+        rcases hx with rfl | rfl
+        · rw [Nat.ceilDiv_eq_add_pred_div]
+          lia
+        · lia
+      have h_rotate : ((Row.operationOneBased hk1 hkn)^[i] c).blocks = (blocks.reverse.rotate i).reverse := by
         apply Row.blocks_operationOneBased_iterate_eq_rotate_blocks_of hk1 hkn
         · rw [h_blocks, List.length_cons, List.length_cons, List.length_cons, List.length_singleton]
           norm_num
         · rw [hc]
-          apply Row.blocks_ofBlocks _ _ h_blocks' h_blocks''
-        · intro x hx
-          rw [h_blocks] at hx
-          simp at hx
-          rw [Nat.ceilDiv_eq_add_pred_div] at h
-          casesm* _ ∨ _ <;> rw [hx]
-          · rw [Nat.ceilDiv_eq_add_pred_div]
-            lia
-          · lia
-      rw [h]
-      rw [List.length_reverse, List.length_rotate, List.length_reverse]
-      rw [h_blocks, List.length_cons, List.length_cons, List.length_cons, List.length_singleton]
-      norm_num
+          exact Row.blocks_ofBlocks _ _ h_blocks' h_blocks''
+        · exact h_large
+      simp [h_rotate, h_blocks]
   · rintro ⟨hn, hk₁, hk₂⟩
     have hk1 : 1 ≤ k := by lia
     have hkn : k ≤ 2 * n := by
@@ -2185,12 +2183,10 @@ problem imo2022_p1 : {(n, k) | ∃ hk1 : 1 ≤ k, ∃ hkn : k ≤ 2 * n, ∀ c :
     use hk1
     use hkn
     intro c hc
-    set l := c.blocks.length with hl
-    have h := Row.exists_length_blocks_operationOneBased_iterate_eq_two hn hk₁ hk₂ hc hl
-    rcases h with ⟨i, hi⟩
-    use i
+    rcases Row.exists_length_blocks_operationOneBased_iterate_eq_two hn hk₁ hk₂ hc rfl with ⟨i, hi⟩
+    refine ⟨i, ?_⟩
     have hic := Row.operationOneBased_iterate_valid hc hk1 hkn i
-    have : NeZero n := NeZero.of_pos hn
+    have hnz : NeZero n := NeZero.of_pos hn
     rw [Row.leftmostNSame_iff_length_blocks_ofFn_of_valid hic]
     exact hi
 
