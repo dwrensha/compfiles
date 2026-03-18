@@ -1511,8 +1511,7 @@ lemma List.blocks_operation_middle_segment {α : Type u} [DecidableEq α] (l : L
       congr 1
       · rw [List.take_take]
         congr
-        apply min_eq_left
-        lia
+        exact Nat.min_add_right_self
       · rw [List.drop_take]
         lia
     · apply List.chainLeft_eq
@@ -1727,9 +1726,7 @@ lemma Row.blocks_operationOneBased_eq_rotate_one_blocks_of
       rw [Option.mem_def] at hx hy
       rw [hy, Option.map_some, List.blockIndex, Fin.val_mk, hc, hk] at hx
       rw [if_neg h_blocks', Option.some_inj, Coin.flip_eq_iff] at hx
-      rw [beq_eq_false_iff_ne]
-      symm
-      exact hx
+      exact beq_false_of_ne hx.symm
     rw [List.blocks_append h_ne, List.blocks_operation_left_segment, List.blocks_operation_middle_segment]
     rw [← List.take_append_drop (List.blockIndex (List.ofFn c) ⟨k - 1, h_mk⟩) blocks, hc]
     rw [List.reverse_append]
@@ -2193,9 +2190,7 @@ problem imo2022_p1 : {(n, k) | ∃ hk1 : 1 ≤ k, ∃ hkn : k ≤ 2 * n, ∀ c :
     rcases h with ⟨i, hi⟩
     use i
     have hic := Row.operationOneBased_iterate_valid hc hk1 hkn i
-    haveI : NeZero n := by
-      constructor
-      lia
+    have : NeZero n := NeZero.of_pos hn
     rw [Row.leftmostNSame_iff_length_blocks_ofFn_of_valid hic]
     exact hi
 
