@@ -124,7 +124,7 @@ lemma prepend_one_div (n : ℕ) (hn : 0 < n) : prepend_one n / 10 = prepend_one 
 
 lemma prepend_one_mod (n : ℕ) (hn : 0 < n) : prepend_one n % 10 = n % 10 := by
   rw [prepend_one]
-  rw [Nat.digits_len _ _ two_le_ten (ne_of_gt hn)]
+  rw [Nat.length_digits _ _ two_le_ten (ne_of_gt hn)]
   lia
 
 lemma prepend_one_eq_append (n : ℕ) :
@@ -168,7 +168,7 @@ lemma prepend_two_div (n : ℕ) (hn : 0 < n) : prepend_two n / 10 = prepend_two 
 
 lemma prepend_two_mod (n : ℕ) (hn : 0 < n) : prepend_two n % 10 = n % 10 := by
   rw [prepend_two]
-  rw [Nat.digits_len _ _ two_le_ten (ne_of_gt hn)]
+  rw [Nat.length_digits _ _ two_le_ten (ne_of_gt hn)]
   lia
 
 lemma prepend_two_eq_append (n : ℕ) :

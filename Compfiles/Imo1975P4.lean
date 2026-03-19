@@ -56,7 +56,7 @@ theorem Nat.digits_sum_le_mul_digits_length (n b : ℕ) (hb : 1 < b) : (Nat.digi
   apply Nat.digits_lt_base hb xh
 
 theorem Nat.digits_sum_le_log (n b : ℕ) (hn : n ≠ 0) (hb : 1 < b) : (Nat.digits b n).sum ≤ (Nat.log b n + 1) * (b-1) := by
-  rw [<-Nat.digits_len _ _ hb hn]
+  rw [← Nat.length_digits _ _ hb hn]
   exact digits_sum_le_mul_digits_length n b hb
 
 theorem Nat.digits_sum_le_of_le (n b u : ℕ) (hb : 1 < b) (hn : n ≤ u) : (Nat.digits b n).sum ≤ (Nat.clog b u + 1) * (b-1) := by

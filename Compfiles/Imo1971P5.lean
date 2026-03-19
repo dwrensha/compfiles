@@ -34,12 +34,12 @@ lemma norm_one_infinity : {p : Pt | ‖p‖ = 1}.Infinite := by
   · refine isPreconnected_sphere ?_ 0 1
     rw [← Module.finrank_eq_rank (R := ℝ) (M := Pt), finrank_euclideanSpace_fin]
     norm_num
-  · refine ⟨EuclideanSpace.single 0 1, by simp [EuclideanSpace.norm_single],
-            EuclideanSpace.single 1 1, by simp [EuclideanSpace.norm_single], ?_⟩
+  · refine ⟨EuclideanSpace.single 0 1, by simp [PiLp.norm_single],
+            EuclideanSpace.single 1 1, by simp [PiLp.norm_single], ?_⟩
     intro h
     have : (EuclideanSpace.single 0 (1 : ℝ) : Pt) 1 = (EuclideanSpace.single 1 (1 : ℝ) : Pt) 1 :=
       congr_arg (· 1) h
-    simp [EuclideanSpace.single_apply] at this
+    simp at this
 
 universe u
 
