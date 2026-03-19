@@ -245,7 +245,11 @@ lemma bob_moves_after_alice {a : ℕ+} {N : Nat} (b0 : Blackboard N)
 
 lemma lemma6 {x : ℕ} (hp : 0 < x) (hx : Even x)
     : padicValNat 2 (x / 2) + 1 = padicValNat 2 x := by
-  sorry
+  have h2 : (2 : ℕ) ∣ x := even_iff_two_dvd.mp hx
+  have hv : 1 ≤ padicValNat 2 x := by
+    rwa [← Nat.pow_dvd_iff_le_padicValNat (by omega) (by omega), pow_one]
+  rw [padicValNat.div h2]
+  omega
 
 -- When N ≥ 2, if ν2(x) < ν2(a) for all x ∈ S, the game must terminate
 -- in ∑_{x∈S} ν2(x) moves, no matter what either player does.
@@ -309,7 +313,26 @@ lemma lemma2' (a : ℕ+) (N : ℕ) (hN : 1 < N) (s0 : State N)
       intro s hs
       dsimp [valid_moves] at hs
       obtain ⟨i, hie, his⟩ := hs
-      sorry
+      subst his
+      apply ih
+      · intro k
+        simp only at hd
+        by_cases hki : k = i
+        · subst hki; simp [Function.update_self]
+          have hv1 := lemma6 (b0 k).pos hie; have := hd k; omega
+        · simp [Function.update_of_ne hki]; exact hd k
+      · simp only at hd hms ⊢
+        have hv := lemma6 (b0 i).pos hie
+        have hae := Finset.add_sum_erase Finset.univ (fun k => padicValNat 2 ↑(b0 k)) (Finset.mem_univ i)
+        dsimp at hae
+        trans (padicValNat 2 (↑(b0 i) / 2) + ∑ k ∈ Finset.univ.erase i, padicValNat 2 ↑(b0 k))
+        · rw [← Finset.add_sum_erase _ _ (Finset.mem_univ i)]
+          congr 1
+          · simp [Function.update_self]
+          · apply Finset.sum_congr rfl
+            intro k hk; rw [Finset.mem_erase] at hk
+            simp [Function.update_of_ne hk.1]
+        · omega
   | .Alice =>
     apply EndInevitableIn.AliceTurn _ ⟨b0, .Alice⟩
     intro s hs
@@ -330,7 +353,33 @@ lemma lemma2' (a : ℕ+) (N : ℕ) (hN : 1 < N) (s0 : State N)
     dsimp [valid_moves] at hs2
     obtain ⟨j, hje, hj⟩ := hs2
     specialize ih s2
-    sorry
+    subst hj
+    apply ih
+    · intro k
+      have hd1 : ∀ k, padicValNat 2 ↑(b1 k) < padicValNat 2 ↑a := by
+        intro k; subst hi
+        by_cases hki : k = i
+        · subst hki; simp only [Function.update_self]; push_cast
+          exact lemma5 (b0 k).pos (hd k)
+        · simp only [Function.update_of_ne hki]; exact hd k
+      by_cases hkj : k = j
+      · subst hkj; simp only [Function.update_self]
+        show padicValNat 2 (↑(b1 k) / 2) < padicValNat 2 ↑a
+        have hv1 := lemma6 (b1 k).pos hje
+        have := hd1 k; omega
+      · simp only [Function.update_of_ne hkj]; exact hd1 k
+    · simp only at hms ⊢
+      have hv := lemma6 (b1 j).pos hje
+      have hae := Finset.add_sum_erase Finset.univ (fun k => padicValNat 2 ↑(b1 k)) (Finset.mem_univ j)
+      dsimp at hae
+      trans (padicValNat 2 (↑(b1 j) / 2) + ∑ k ∈ Finset.univ.erase j, padicValNat 2 ↑(b1 k))
+      · rw [← Finset.add_sum_erase _ _ (Finset.mem_univ j)]
+        congr 1
+        · simp [Function.update_self]
+        · apply Finset.sum_congr rfl
+          intro k hk; rw [Finset.mem_erase] at hk
+          simp [Function.update_of_ne hk.1]
+      · omega
 
 
 -- When N ≥ 2, if ν2(x) < ν2(a) for all x ∈ S, the game must terminate no
@@ -340,8 +389,87 @@ lemma lemma2 (a : ℕ+) (N : ℕ) (hN : 1 < N) (s0 : State N)
     EndInevitable a N s0 := by
   exact end_inevitable_n (lemma2' a N hN s0 hd)
 
--- Claim — When N ≥ 2, if there exists a number x on the board such that ν2(x) ≥
--- ν2(a), then Alice can cause the game to go on forever.
+-- Key fact: when ν₂(x) = ν₂(a), ν₂(x+a) ≥ ν₂(a) + 1
+lemma lemma7 {x a : ℕ} (hx : 0 < x) (ha : 0 < a)
+    (heq : padicValNat 2 x = padicValNat 2 a) :
+    padicValNat 2 a + 1 ≤ padicValNat 2 (x + a) := by
+  set k := padicValNat 2 a with hk_def
+  suffices h : 2 ^ (k + 1) ∣ (x + a) from
+    (Nat.pow_dvd_iff_le_padicValNat (by omega) (by omega)).mp h
+  have hkx : 2 ^ k ∣ x := by rw [← heq]; exact pow_padicValNat_dvd
+  have hka : 2 ^ k ∣ a := pow_padicValNat_dvd
+  obtain ⟨x', hx'⟩ := hkx
+  obtain ⟨a', ha'⟩ := hka
+  have hx'_odd : ¬ 2 ∣ x' := by
+    intro ⟨z, hz⟩
+    have h1 : 2 ^ (k + 1) ∣ x := by
+      rw [hx', hz, pow_succ]; exact mul_dvd_mul_left _ (dvd_mul_right (2 : ℕ) z)
+    have h2 := (Nat.pow_dvd_iff_le_padicValNat (by omega) (by omega)).mp h1
+    omega
+  have ha'_odd : ¬ 2 ∣ a' := by
+    intro ⟨z, hz⟩
+    have h1 : 2 ^ (k + 1) ∣ a := by
+      rw [ha', hz, pow_succ]; exact mul_dvd_mul_left _ (dvd_mul_right (2 : ℕ) z)
+    have h2 := (Nat.pow_dvd_iff_le_padicValNat (by omega) (by omega)).mp h1
+    omega
+  have hse : 2 ∣ (x' + a') := by
+    rw [Nat.dvd_iff_mod_eq_zero]
+    have h1 := mt (Nat.dvd_iff_mod_eq_zero (m := 2) (n := x')).mpr hx'_odd
+    have h2 := mt (Nat.dvd_iff_mod_eq_zero (m := 2) (n := a')).mpr ha'_odd
+    omega
+  rw [hx', ha', ← mul_add, pow_succ]
+  exact mul_dvd_mul_left _ hse
+
+-- When N ≥ 2, if ∃ i with ν₂(b i) ≥ ν₂(a) (+ offset by turn), then ¬BobCanForceEnd.
+lemma alice_prevents_end (a : ℕ+) (N : ℕ) (hN : 1 < N)
+    (s : State N) (he : BobCanForceEnd a N s)
+    (hinv : ∃ i : Fin N,
+      padicValNat 2 ↑a + (match s.turn with | .Alice => 0 | .Bob => 1) ≤
+      padicValNat 2 ↑(s.board i)) :
+    False := by
+  induction he with
+  | BaseCase b hnm =>
+    obtain ⟨i, hi⟩ := hinv
+    simp only at hi
+    have heven : Even (↑(b i) : ℕ) := by
+      rw [even_iff_two_dvd]
+      exact Nat.dvd_of_pow_dvd (by omega : 1 ≤ padicValNat 2 ↑(b i)) pow_padicValNat_dvd
+    rw [Set.eq_empty_iff_forall_notMem] at hnm
+    exact hnm ⟨Function.update b i ⟨↑(b i) / 2, halve_even _ heven⟩, .Alice⟩ ⟨i, heven, rfl⟩
+  | BobTurn b m hm he' ih =>
+    obtain ⟨i₀, hi₀⟩ := hinv
+    simp only at hi₀
+    dsimp [valid_moves] at hm
+    obtain ⟨j, hje, rfl⟩ := hm
+    apply ih; dsimp
+    by_cases hji : j = i₀
+    · subst hji
+      refine ⟨j, ?_⟩
+      rw [Function.update_self]
+      show padicValNat 2 ↑a ≤ padicValNat 2 (↑(b j) / 2)
+      have := lemma6 (b j).pos hje; omega
+    · refine ⟨i₀, ?_⟩
+      have hboard : (Function.update b j ⟨↑(b j) / 2, halve_even _ hje⟩ : Blackboard N) i₀ = b i₀ := by
+        apply Function.update_of_ne; exact Ne.symm hji
+      rw [hboard]; omega
+  | AliceTurn b hall ih =>
+    obtain ⟨i, hi⟩ := hinv
+    dsimp at hi
+    by_cases heq : padicValNat 2 ↑(b i) = padicValNat 2 ↑a
+    · apply ih ⟨Function.update b i (b i + a), .Bob⟩ ⟨i, rfl⟩
+      dsimp
+      refine ⟨i, ?_⟩; simp only [Function.update_self]
+      push_cast; exact lemma7 (b i).pos a.pos heq
+    · have hi_gt : padicValNat 2 ↑a + 1 ≤ padicValNat 2 ↑(b i) := by omega
+      obtain ⟨j, hji⟩ : ∃ j : Fin N, j ≠ i := by
+        exact ⟨if i = ⟨0, by omega⟩ then ⟨1, by omega⟩ else ⟨0, by omega⟩,
+               by split_ifs with h <;> (simp_all [Fin.ext_iff]; try omega)⟩
+      apply ih ⟨Function.update b j (b j + a), .Bob⟩ ⟨j, rfl⟩
+      dsimp
+      refine ⟨i, ?_⟩
+      have hboard : (Function.update b j (b j + a) : Blackboard N) i = b i := by
+        apply Function.update_of_ne; exact hji.symm
+      simp_rw [hboard]; exact hi_gt
 
 snip end
 
@@ -352,7 +480,12 @@ problem usa2023_p4 (a : ℕ+) (N : ℕ) (hN : 0 < N) (b0 : Blackboard N)
   -- https://web.evanchen.cc/exams/USAMO-2023-notes.pdf
   obtain rfl | hN : 1 = N ∨ 1 < N := LE.le.eq_or_lt hN
   · exact lemma1 a ⟨b0, .Alice⟩ he
-  sorry
+  suffices h : ∀ i : Fin N, padicValNat 2 ↑(b0 i) < padicValNat 2 ↑a from
+    lemma2 a N hN ⟨b0, .Alice⟩ h
+  by_contra h_not
+  push_neg at h_not
+  obtain ⟨i₀, hi₀⟩ := h_not
+  exact alice_prevents_end a N hN ⟨b0, .Alice⟩ he ⟨i₀, by dsimp; exact hi₀⟩
 
 
 end Usa2023P4
