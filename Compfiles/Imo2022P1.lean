@@ -1268,11 +1268,8 @@ lemma List.some_get_eq_head?_get?_segments_blockIndex {α : Type u} [DecidableEq
       ((segments l).get ⟨blockIndex l k, h_lt⟩).length := by
         rw [List.length_append] at h_left
         lia
-    have h_if₂ : ¬((segments l).get ⟨blockIndex l k, h_lt⟩).length = 0 := by
-      rw [← ne_eq, ← Nat.pos_iff_ne_zero, List.length_pos_iff_ne_nil]
-      simp only [List.segments]
-      apply @List.ne_nil_of_mem_splitBy _ _ (fun x1 x2 ↦ x1 == x2) l
-      apply List.get_mem
+    have h_if₂ : ¬((segments l).get ⟨blockIndex l k, h_lt⟩).length = 0 :=
+      Nat.ne_zero_of_lt h_if₁
     rw [if_pos h_if₁, if_neg h_if₂]
 
 lemma some_get_eq_head?_bind_get?_segments_blockIndex (l : List Coin) (k : Fin l.length)

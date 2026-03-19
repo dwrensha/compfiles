@@ -167,7 +167,7 @@ lemma lemma5' {a x : ℕ} (hx : 0 < x)
     replace h17 := (Nat.pow_dvd_iff_le_padicValNat (by omega) (Nat.ne_zero_of_lt hx)).mp h17
     lia
 
-  have h15' : ¬ 2 ∣ xx + 2 ^ (1 + c) * aa := by
+  have h15 : ¬ 2 ∣ xx + 2 ^ (1 + c) * aa := by
     intro HH
     have h19 : 2 ∣ 2 ^ (1 + c) * aa := by
       rw [pow_add, pow_one, mul_assoc]
@@ -175,24 +175,14 @@ lemma lemma5' {a x : ℕ} (hx : 0 < x)
     have : 2 ∣ xx := (Nat.dvd_add_iff_left h19).mpr HH
     contradiction
 
-  have h15 : padicValNat 2 (xx + 2 ^ (1 + c) * aa) = 0 := by
-    by_contra! HH
-    replace HH : 0 < padicValNat 2 (xx + 2 ^ (1 + c) * aa) := Nat.zero_lt_of_ne_zero HH
-    generalize hee : xx + 2 ^ (1 + c) * aa = ee
-    rw [hee] at HH h15'
-    have h18 : 2 ^ padicValNat 2 ee ∣ ee := pow_padicValNat_dvd
-    generalize hee' : padicValNat 2 ee = ee'
-    rw [hee'] at h18 HH
-    cases ee' with | zero => lia | succ ee' =>
-    rw [pow_succ] at h18
-    have : 2 ∣ ee := Nat.dvd_of_pow_dvd HH h18
-    contradiction
-
   have h13 : 0 < xx + 2 ^ (1 + c) * aa := by
-    have h21 : (xx + 2 ^ (1 + c) * aa) % 2 = 1 := Nat.two_dvd_ne_zero.mp h15'
+    have h21 : (xx + 2 ^ (1 + c) * aa) % 2 = 1 := Nat.two_dvd_ne_zero.mp h15
     obtain ⟨k, hk⟩ : Odd (xx + 2 ^ (1 + c) * aa) := Nat.odd_iff.mpr h21
     rw [hk]
     exact Nat.zero_lt_succ (2 * k)
+
+  replace h15 : padicValNat 2 (xx + 2 ^ (1 + c) * aa) = 0 :=
+    padicValNat.eq_zero_of_not_dvd h15
 
   rw [padicValNat_base_pow_mul one_lt_two h13.ne'] at H
   rw [h15, zero_add] at H

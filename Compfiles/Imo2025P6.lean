@@ -902,9 +902,8 @@ lemma matilda_covers_at_most_one_core {n : ℕ} [NeZero n]
     -- If px u1 ≤ px u2, then py u1 ≤ py u2 (by u_mono), contradicting py u2 ≤ py p2 < py p1 ≤ py u1
     -- So px u2 < px u1.
     have h_u_y : py u2 < py u1 := by linarith
-    have h_u_x : px u2 < px u1 := by
-      by_contra h; push_neg at h
-      exact absurd (h_u_mono u1 hu1_mem u2 hu2_mem h) (by linarith)
+    have h_u_x : px u2 < px u1 :=
+      lt_imp_lt_of_le_imp_le (h_u_mono u1 hu1_mem u2 hu2_mem) h_u_y
     -- v-chain: py p1 ≤ py v1, py v2 ≤ py p2
     -- If px v1 ≤ px v2, then py v2 ≤ py v1 (by v_anti_mono), so both orderings consistent.
     -- But we need contradiction from x-coordinates.
@@ -1018,9 +1017,8 @@ lemma matilda_covers_at_most_one_core {n : ℕ} [NeZero n]
     rcases (mem_v_lower v p2).mp h_bw_v with ⟨v1, hv1_mem, hv1_x, hv1_y⟩
     rcases (mem_v_upper v p1).mp h_be_v with ⟨v2, hv2_mem, hv2_x, hv2_y⟩
     have h_u_y : py u2 < py u1 := by linarith
-    have h_u_x : px u2 < px u1 := by
-      by_contra h; push_neg at h
-      exact absurd (h_u_mono u1 hu1_mem u2 hu2_mem h) (by linarith)
+    have h_u_x : px u2 < px u1 :=
+      lt_imp_lt_of_le_imp_le (h_u_mono u1 hu1_mem u2 hu2_mem) h_u_y
     have h_v_mono := h_v_mono v2 hv2_mem v1 hv1_mem (by omega)
     linarith
   · -- E.N: symmetric to N.E

@@ -160,9 +160,7 @@ lemma aux_recursive (I : Finset (Fin 8)) (a : Fin 8 → ℝ)
       have hmIneq : |m| * amax^N < amax^N := by
         have h_pow_ak_le_q : ∀ i ∈ K, |a i|^N ≤ q^N := by
           intro i hI
-          have hq : |a i| ≤ q := by exact RCLike.ofReal_le_ofReal.mp (h_ak_le_q i hI)
-          have haipos : 0 ≤ |a i| := by exact abs_nonneg (a i)
-          exact pow_le_pow_left₀ haipos hq N
+          exact (Odd.pow_le_pow h_odd_N).mpr (h_ak_le_q i hI)
 
         calc
           |m| * amax^N = |m * amax^N| := by simp [abs_mul, abs_of_pos (pow_pos h_pos_amax N)]
