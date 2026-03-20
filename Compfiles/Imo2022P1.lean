@@ -5,12 +5,6 @@ Authors: Joseph Myers, Benpigchu
 -/
 import Mathlib
 
-import ProblemExtraction
-
-problem_file {
-  problemImportedFrom :=
-    "https://github.com/jsm28/IMOLean/blob/main/IMO/IMO2022P1.lean"
-}
 
 /-!
 # International Mathematical Olympiad 2022, Problem 1
@@ -79,8 +73,6 @@ def Row.operationOneBased {n k : ℕ} (hk1 : 1 ≤ k) (hkn : k ≤ 2 * n) (c : R
 /-- The property of a row having leftmost `n` coin with the same type. -/
 def Row.leftmostNSame {n : ℕ} (c : Row n) := ∀ j₁ j₂ : Fin (2 * n),
   (j₁ : ℕ) < n → (j₂ : ℕ) < n → c j₁ = c j₂
-
-snip begin
 
 lemma Nat.ceilDiv_two_add_floorDiv_two (n : Nat) : n ⌈/⌉ 2 + n ⌊/⌋ 2 = n := by
   rw [Nat.ceilDiv_eq_add_pred_div, Nat.floorDiv_eq_div]
@@ -2074,12 +2066,11 @@ lemma Row.exists_length_blocks_operationOneBased_iterate_eq_two
       rw [Function.iterate_add_apply]
       rw [← hc', hj]
 
-snip end
 
 /-- The answer to be determined. -/
-determine answer : Set (ℕ × ℕ) := {(n, k) : ℕ × ℕ | 0 < n ∧ n ≤ k ∧ k ≤ 3 * n ⌈/⌉ 2}
+abbrev answer : Set (ℕ × ℕ) := {(n, k) : ℕ × ℕ | 0 < n ∧ n ≤ k ∧ k ≤ 3 * n ⌈/⌉ 2}
 
-problem imo2022_p1 : {(n, k) | ∃ hk1 : 1 ≤ k, ∃ hkn : k ≤ 2 * n, ∀ c : Row n, c.valid →
+theorem imo2022_p1 : {(n, k) | ∃ hk1 : 1 ≤ k, ∃ hkn : k ≤ 2 * n, ∀ c : Row n, c.valid →
     ∃ i, ((Row.operationOneBased hk1 hkn)^[i] c).leftmostNSame} =
     answer := by
   rw [answer]
