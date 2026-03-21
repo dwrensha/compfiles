@@ -312,7 +312,7 @@ problem imo2025_p3 :
             intro q hq
             simp at hq
             exact Finset.mem_singleton.mpr (r1 q hq)
-          have r3 := Nat.factorization_prod_pow_eq_self (Nat.ne_zero_iff_zero_lt.2 (f a).2)
+          have r3 := Nat.prod_factorization_pow_eq_self (Nat.ne_zero_iff_zero_lt.2 (f a).2)
           symm at r3
           have r4 := Finsupp.prod_of_support_subset ((f a :ℕ).factorization) r2 (fun x1 x2 => x1 ^ x2)
           simp at r4
