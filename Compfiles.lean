@@ -160,6 +160,7 @@ import Compfiles.Imo2009P6
 import Compfiles.Imo2010P1
 import Compfiles.Imo2010P3
 import Compfiles.Imo2010P5
+import Compfiles.Imo2010P6
 import Compfiles.Imo2011P3
 import Compfiles.Imo2011P5
 import Compfiles.Imo2012P2
