@@ -148,7 +148,7 @@ lemma pow_of_first_k_prime_mod_two_mem_two_pow_k_finset (k : ℕ) (n : ℕ) :
     pow_of_first_k_prime_mod_two k n ∈ two_pow_k_finset k := by
   rw [two_pow_k_finset, Finset.mem_pi]
   intro a ha
-  simp [pow_of_first_k_prime_mod_two, pow_of_kth_prime_mod_two]
+  simp only [pow_of_first_k_prime_mod_two, pow_of_kth_prime_mod_two, Finset.mem_range]
   apply Nat.mod_lt
   norm_num
 
