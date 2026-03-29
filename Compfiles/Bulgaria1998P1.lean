@@ -71,8 +71,9 @@ lemma lemma2 :
   use coloring_of_eight
   intro h
   obtain ⟨⟨i, hi1, hi2⟩, ⟨j, hj1, hj2⟩, hij1, hij2, hc1, hc2⟩ := h
-  dsimp [coloring_of_eight] at *
-  interval_cases i <;> interval_cases j <;> sorry --aesop (simp_config := {decide := true})
+  interval_cases i <;> interval_cases j <;> (try omega) <;>
+    (try simp_all [coloring_of_eight]) <;>
+    (simp only [Set.mem_Icc] at hij2; omega)
 
 snip end
 
