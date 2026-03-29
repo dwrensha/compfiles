@@ -2070,11 +2070,7 @@ lemma angle_BAO_add_angle_OAC_eq_angle_BAC :
   rw [← eq_sub_iff_add_eq] at h₁ h₂
   rw [angle_comm cfg.C cfg.A cfg.Ω.center, angle_comm cfg.A cfg.B cfg.C] at h₁
   rw [h₁, h₂]
-  ring_nf
-  rw [sub_eq_add_neg, ← neg_add, ← sub_eq_add_neg, sub_eq_iff_eq_add, ← add_assoc]
-  symm
-  apply angle_add_angle_add_angle_eq_pi
-  exact cfg.B_ne_A.symm
+  linarith only [angle_add_angle_add_angle_eq_pi cfg.C cfg.B_ne_A.symm]
 
 lemma sign_oangle_BAO_ne_zero : (∡ cfg.B cfg.A cfg.Ω.center).sign ≠ 0 := by
   rw [cfg.sbtw_AOF.oangle_eq_right]

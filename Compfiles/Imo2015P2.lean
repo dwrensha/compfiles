@@ -333,7 +333,7 @@ problem imo2015_p2 (a b c : ℤ) :
         nth_rw 2 [← h₃] at h₄
         ring_nf at h₄
         rw [← h₃] at h₄
-        by_cases! h' : -c + (c ^ 3 - b) ≠ 0
+        by_cases! h' : -c + c ^ 3 - b ≠ 0
         · have h₅ := Int.natAbs_le_of_dvd_ne_zero h₄ h'
           rw [← Int.ofNat_le, Int.natCast_natAbs, Int.natCast_natAbs] at h₅
           have hcab'' : 0 ≤ c * a - b := by
@@ -341,12 +341,12 @@ problem imo2015_p2 (a b c : ℤ) :
             positivity
           rw [← h₃] at hcab''
           rw [abs_of_nonneg hcab''] at h₅
-          by_cases! h'' : -c + (c ^ 3 - b) < 0
+          by_cases! h'' : -c + c ^ 3 - b < 0
           · rw [abs_of_neg h''] at h₅
             exfalso
             contrapose! h₅
             rw [sub_sub, lt_sub_iff_add_lt]
-            calc -(-c + (c ^ 3 - b)) + (b + c)
+            calc -(-c + c ^ 3 - b) + (b + c)
                 = 2 * b + 2 * c - c ^ 3 := by ring
               _ < 2 * b + 2 * c := Int.sub_lt_self _ (by positivity)
               _ ≤ b * 4 := by lia
@@ -356,7 +356,7 @@ problem imo2015_p2 (a b c : ℤ) :
                   rw [pow_le_pow_iff_left₀ (by norm_num) (by lia) (by norm_num)]
                   lia
           · rw [abs_of_nonneg h''] at h₅
-            rw [(by ring : -c + (c ^ 3 - b) = c * c ^ 2 - b - c)] at h₅
+            rw [(by ring : -c + c ^ 3 - b = c * c ^ 2 - b - c)] at h₅
             rw [sub_sub, sub_sub] at h₅
             rw [sub_le_sub_iff_right (b + c)] at h₅
             rw [mul_le_mul_iff_left₀ (by positivity)] at h₅
@@ -371,7 +371,7 @@ problem imo2015_p2 (a b c : ℤ) :
             norm_num at h₂
             rw [← h₂, hbc', hc_two]
             simp
-        · rw [add_sub, sub_eq_zero] at h'
+        · rw [Int.add_sub_assoc, add_sub, sub_eq_zero] at h'
           rw [← h', sub_eq_iff_eq_add, ← sub_eq_iff_eq_add'] at h₂
           rw [← h₂, ← h', (by ring : c * ((-c + c ^ 3) * c - 1) - (-c + c ^ 3) = c * c ^ 2 * (c ^ 2 - 2) )] at hcab
           have hc₁ := dvd_mul_of_dvd_left (dvd_mul_right c (c ^ 2)) (c ^ 2 - 2)

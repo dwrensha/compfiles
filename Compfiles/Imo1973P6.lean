@@ -286,7 +286,7 @@ problem imo1973_p6 (npos : 0 < n) (hq : q ∈ Set.Ioo 0 1) (apos : ∀ i, 0 < a 
           rw [IsUnit.div_mul_cancel, <-mul_assoc, mul_div_assoc', <-neg_div_neg_eq, neg_sub,
             add_mul, <-neg_mul, IsUnit.div_mul_cancel, one_mul]
           · ring_nf
-            simp only [add_lt_add_iff_left, sub_lt_self_iff, Nat.ofNat_pos, mul_pos_iff_of_pos_right]
+            simp only [sub_lt_self_iff, Nat.ofNat_pos, mul_pos_iff_of_pos_right]
             rw [mul_pow_sub_one nnz.out]
             apply pow_pos hq.left
           · exact Ne.isUnit (sub_ne_zero_of_ne (ne_of_gt hq.right))
