@@ -4,8 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: David Renshaw
 -/
 
-import Mathlib.Tactic.NormNum
-import Mathlib.Tactic.IntervalCases
+import Mathlib.Tactic
 
 import ProblemExtraction
 
@@ -79,12 +78,43 @@ snip end
 
 determine solution_value : ℕ := 9
 
+private def check9 (f : Fin 9 → Fin 2) : Bool :=
+  (List.finRange 9).any fun i =>
+    (List.finRange 9).any fun j =>
+      decide (i < j) &&
+        if h : 2 * j.val - i.val < 9 then
+          decide (f i = f j) && decide (f i = f ⟨2 * j.val - i.val, h⟩)
+        else false
+
+private def toFin9 (color : Set.Icc 1 9 → Fin 2) : Fin 9 → Fin 2 :=
+  fun i => color ⟨i.val + 1, by constructor <;> omega⟩
+
+private lemma of_check9 (color : Set.Icc 1 9 → Fin 2)
+    (h : check9 (toFin9 color) = true) : coloring_is_good color := by
+  simp only [check9, toFin9, List.any_eq_true, List.mem_finRange, true_and] at h
+  obtain ⟨i, j, hrest⟩ := h
+  split at hrest
+  case isTrue hk =>
+    simp only [Bool.and_eq_true, decide_eq_true_eq] at hrest
+    obtain ⟨hij, hcij, hcik⟩ := hrest
+    have hmem : 2 * (j.val + 1) - (i.val + 1) ∈ Set.Icc 1 9 := by
+      simp only [Set.mem_Icc]; omega
+    refine ⟨⟨i.val + 1, by simp only [Set.mem_Icc]; omega⟩,
+           ⟨j.val + 1, by simp only [Set.mem_Icc]; omega⟩,
+           by simp only [Subtype.mk_lt_mk]; omega, hmem, hcij, ?_⟩
+    have heq : 2 * (j.val + 1) - (i.val + 1) = 2 * j.val - i.val + 1 := by omega
+    have : (⟨2 * (j.val + 1) - (i.val + 1), hmem⟩ : Set.Icc 1 9) =
+           ⟨2 * j.val - i.val + 1, by simp only [Set.mem_Icc]; omega⟩ :=
+      Subtype.ext heq
+    rw [this]; exact hcik
+  case isFalse hk => simp at hrest
+
 problem bulgaria1998_p1 : IsLeast { m | all_colorings_are_good m } solution_value := by
   constructor
   · rw [Set.mem_setOf_eq]
-    refine ⟨by norm_num, ?_⟩
-    intro color
-    sorry
+    refine ⟨by norm_num, fun color => of_check9 color ?_⟩
+    revert color
+    set_option maxRecDepth 4000 in decide
   · rw [mem_lowerBounds]
     intro n hn
     rw [Set.mem_setOf_eq] at hn
