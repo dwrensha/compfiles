@@ -103,7 +103,7 @@ problem usa2022_p3 (f : ℝ+ → ℝ+) :
   have h6 : f.Injective := by
     intro a b h
     wlog hab : b > a
-    · push_neg at hab
+    · push Not at hab
       rcases lt_or_eq_of_le hab with hab | hab
       · rw [this f hf h1 h2 h3 h4 h5 h.symm hab]
       · rw [hab]

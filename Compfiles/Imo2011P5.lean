@@ -102,7 +102,7 @@ problem imo2011_p5 (f : ℤ → ℤ)
     | inl _ => grind
     | inr _ => grind
 
-  · push_neg at h0
+  · push Not at h0
     by_cases f_m_eq_f_n : f m = f n
     · rw [f_m_eq_f_n]
     · grind

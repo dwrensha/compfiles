@@ -42,7 +42,7 @@ problem imo1975_p2 (a : ℕ → ℤ)
   intro n0
   have h1 : ∃t:ℕ , ∀ n1:ℕ , ∃ n:ℕ , n > n1 ∧ a i ∣ (a n-t) := by
     by_contra h2
-    push_neg at h2
+    push Not at h2
 
     choose f hf using h2
     let m := Nat.succ (Finset.sup ((List.range (b i)).toFinset) f)

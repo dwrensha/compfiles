@@ -109,7 +109,7 @@ problem usa2014_p2 {f : ℤ → ℤ} : P f ↔ f ∈ S := by
     simpa [← h4, pow_two (f x), hx] using (h3 x).symm
 
   wlog h6 : ∃ t, t ≠ 0 ∧ f t = 0
-  · push_neg at h6
+  · push Not at h6
     right
     funext x
     by_cases! hx : x = 0

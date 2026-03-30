@@ -43,7 +43,7 @@ problem imo2006_p4 :
     simp at h
     have hxnonneg : x ≥ 0 := by
       by_contra hx
-      push_neg at hx
+      push Not at hx
       let k : ℕ := y.natAbs
       have hk1 : k < 2 := by
         suffices h : ((y.natAbs ^ 2 : ℤ) : ℝ) < (2 : ℝ) ^ 2
@@ -77,7 +77,7 @@ problem imo2006_p4 :
     -- If $(x, y)$ is a solution then obviously $x \geq 0$ and $(x,-y)$ is a solution too.
     wlog hynonneg : y ≥ 0 with H
     · have : (1 + 2 ^ x + 2 ^ (2 * x + 1)) = (-y) ^ 2 := by simp; exact h
-      have hy : -y ≥ 0 := by push_neg at hynonneg; apply neg_nonneg_of_nonpos; exact le_of_lt hynonneg
+      have hy : -y ≥ 0 := by push Not at hynonneg; apply neg_nonneg_of_nonpos; exact le_of_lt hynonneg
       apply H (-y) x this at hy
       simp at hy
       rcases hy with ⟨hx, hy⟩ | ⟨hx, hy⟩ | ⟨hx, hy⟩ | ⟨hx, hy⟩

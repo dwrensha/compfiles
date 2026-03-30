@@ -114,7 +114,7 @@ problem imo1994_p4 (m n : ℤ) :
         rw [mul_comm] at hs'
         have h := aux₁ hm hs_pos hs'.symm ht'.symm hmnst
         rcases h with (h'|h') <;> rcases h' with ⟨_, hn', hm', _⟩ <;> rw [hn', hm'] <;> simp
-    · push_neg at hmnst
+    · push Not at hmnst
       have hmnst'' : 2 ≤ m ∧ 2 ≤ n ∧ 2 ≤ s ∧ 2 ≤ t := by lia
       rcases hmnst'' with ⟨h'm, h'n, h's, h't⟩
       by_cases hmnst' : m ≠ 2 ∨ n ≠ 2
@@ -122,7 +122,7 @@ problem imo1994_p4 (m n : ℤ) :
         casesm* _ ∨ _
         · exact aux₂ h'm h's h'n h't ht' hs' hmnst'
         · exact aux₂ h'n h't h'm h's hs'.symm ht'.symm hmnst'
-      · push_neg at hmnst'
+      · push Not at hmnst'
         rcases hmnst' with ⟨hm2, hn2⟩
         rw [hm2, hn2]
         simp

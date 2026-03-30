@@ -1087,7 +1087,7 @@ lemma coverGridConfig.any_cover (C : coverGridConfig) :
         have := C.reduce_count d hd
         have := ih (reduce C d hd)
         lia
-      · push_neg at hE
+      · push Not at hE
         let C' : coverGridNoEdgeConfig := {C with hE := hE, hn := by lia}
         have := C'.cover_edge
         lia

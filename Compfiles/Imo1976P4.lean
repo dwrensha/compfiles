@@ -44,7 +44,7 @@ lemma prod_le_sum_pow_sum (s : Multiset ℕ) : s.prod ≤ s.sum ^ s.sum := by
     by_cases hi : i = 0
     · rw [hi, zero_mul]
       apply Nat.zero_le
-    · push_neg at hi
+    · push Not at hi
       rw [← Nat.one_le_iff_ne_zero] at hi
       calc i * s'.prod
           ≤ i * s'.sum ^ s'.sum := mul_le_mul_right hs' i

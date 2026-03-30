@@ -84,7 +84,7 @@ theorem lemma1
     use s3
     grind
 
-  · push_neg at h6
+  · push Not at h6
     use t3
     let α' := Finset.map ⟨λ (x :Person') => x.val, Subtype.coe_injective⟩ α
     use α'
@@ -161,7 +161,7 @@ problem imo1964_p4
     grind
 
   · -- So the people in α must all discuss only the remaining two topics.
-    push_neg at h6
+    push Not at h6
     let Topic' := {t2 // t2 ≠ t1}
     have h3 : Fintype Topic' := Fintype.ofFinite Topic'
     have h4 : Fintype.card Topic' = 2 := by

@@ -134,7 +134,7 @@ problem imo2002_p5 (f : ℝ → ℝ) :
         simp only [hy x, one_div]
     grind
   right; right
-  push_neg at h2
+  push Not at h2
   have h3 : f 0 = 0 := by
     obtain ⟨y1, hy1⟩ := h2 (1/2)
     have h4 := fun y t ↦ hf 0 y 0 t

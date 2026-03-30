@@ -62,7 +62,7 @@ def f_toFun (g : Equiv.Perm (Fin (k + 2))) (hg : g ∈ (S' k m)) (n : Fin (k + 1
     )
   else
     (g n.succ).pred (by
-      push_neg at hg'
+      push Not at hg'
       exact Fin.ne_zero_of_lt hg'
     )
 
@@ -93,7 +93,7 @@ lemma f_left_inv (g : Equiv.Perm (Fin (k + 2))) (hg : g ∈ (S' k m)) :
     apply dif_neg
     intro hg''
     apply hg'
-    push_neg at hg'
+    push Not at hg'
     rwa [←Fin.lt_castPred_iff (Fin.ne_last_of_lt hg'), Fin.pred_lt_castPred_iff] at hg''
 
 lemma f_right_inv (g : Equiv.Perm (Fin (k + 2))) (hg : g ∈ (S' k m)) :
@@ -140,7 +140,7 @@ lemma f'_left_inv (g : Equiv.Perm (Fin (k + 1))) :
   · simp only [hg, reduceIte, ne_of_lt, reduceDIte, Fin.castPred_castSucc,
                Equiv.symm_apply_apply, Fin.succ_pred]
   · simp [hg]
-    push_neg at hg
+    push Not at hg
     simp only [hg, Fin.le_castSucc_iff.mp, ne_of_gt, reduceIte, not_lt_of_gt, reduceDIte]
 
 lemma f'_right_inv (g : Equiv.Perm (Fin (k + 1))) :
@@ -154,7 +154,7 @@ lemma f'_right_inv (g : Equiv.Perm (Fin (k + 1))) :
   · simp_rw [hg, reduceDIte, Fin.succ_ne_zero, reduceDIte, Fin.pred_succ,
              Equiv.apply_symm_apply, Fin.succ_pred]
     apply dif_neg
-    push_neg at *
+    push Not at *
     rw [Fin.le_castSucc_pred_iff]
     exact lt_iff_le_and_ne.2 ⟨hg, Ne.symm hn⟩
 
@@ -188,7 +188,7 @@ lemma f_f'_left_inv {g : Equiv.Perm (Fin (k + 2))} (hg : g ∈ S' k m) : f' m (f
     exact dif_pos (lt_iff_le_and_ne.2 ⟨hx', g_nonzero_ne_m hg x hx⟩)
   · simp only [hx', reduceDIte, Fin.succ_pred]
     apply dif_neg
-    push_neg at *
+    push Not at *
     rwa [Fin.le_castSucc_pred_iff]
 
 lemma f_f'_right_inv (hm : m ≤ 1) {g : Equiv.Perm (Fin (k + 1))} (hg : g ∈ S (k + 1)) :

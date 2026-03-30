@@ -148,7 +148,7 @@ problem imo1967_p3
     rw [h₅, mul_comm]
     refine Nat.cast_dvd_cast ?_
     exact Nat.mul_dvd_mul h₈ h₇
-  · push_neg at hk₀
+  · push Not at hk₀
     by_cases hk₁: k ≤ m + n
     · have h₆ : ∏ i ∈ Finset.Icc (1 : ℕ) n, ((↑(c (m + i)) : ℤ) - (↑(c k) : ℤ)) = 0 := by
         refine Finset.prod_eq_zero_iff.mpr ?_
@@ -159,7 +159,7 @@ problem imo1967_p3
         · grind
       rw [h₆]
       exact Int.dvd_zero ((↑n.factorial : ℤ) * (↑(n + (1 : ℕ)).factorial : ℤ))
-    · push_neg at hk₁
+    · push Not at hk₁
       have h₅: ∏ i ∈ Finset.Icc (1 : ℕ) n, ((↑(c (m + i)) : ℤ) - (↑(c k) : ℤ)) =
           ∏ i ∈ Finset.Icc (1 : ℕ) n, (((↑(c k) : ℤ) - (↑(c (m + i)) : ℤ)) * (-1:ℤ)) := by simp
       have h₆: ∏ i ∈ Finset.Icc 1 n, ((↑(c k) : ℤ) - (↑(c (m + i)) : ℤ)) = (∏ i ∈ Finset.Icc 1 n, (k - (m + i))) * (∏ i ∈ Finset.Icc 1 n, (k + (m + i) + 1)) := by

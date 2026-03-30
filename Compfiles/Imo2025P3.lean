@@ -135,7 +135,7 @@ problem imo2025_p3 :
             simp
 
         have h5 : ∃N:ℕ+, ∀p:ℕ+, (p>N ∧ Nat.Prime (p : ℕ)) → (f p = 1) := by
-          push_neg at h2
+          push Not at h2
           obtain ⟨b,hb⟩ := h2
           use (f b - b)
           intro p hp
@@ -267,7 +267,7 @@ problem imo2025_p3 :
           intro a p hp
           obtain ⟨hp1,hp2⟩ := hp
           by_contra r1
-          push_neg at r1
+          push Not at r1
           specialize h6 p (And.intro hp1 r1)
           specialize hf a p
           rw [h6] at hf
@@ -422,7 +422,7 @@ problem imo2025_p3 :
           obtain ⟨k,hk⟩ := h8
           rw [hk] at h1
           by_contra y1
-          push_neg at y1
+          push Not at y1
           have g1 : k≠0 := by
             by_contra y2
             rw [y2] at hk

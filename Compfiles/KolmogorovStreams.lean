@@ -250,7 +250,7 @@ problem kolmogorov_streams
       rw [break_into_words_cons]
       exact check_indecent_words is_decent a' hn'
 
-  · unfold p at hnot; push_neg at hnot
+  · unfold p at hnot; push Not at hnot
     obtain ⟨k, hkp, hinit⟩ := hnot 0
     have hdka : a.drop (0 + k) = a.drop k := by { rw [←Stream'.drop_drop]; rfl }
     rw [hdka] at hinit

@@ -73,7 +73,7 @@ snip end
 problem usa1973_p2 (n m : ℕ) (h : a n = b m): a n = 1 := by
   by_cases hn : n < 2
   · interval_cases n <;> rfl
-  push_neg at hn
+  push Not at hn
   have ⟨k, hk⟩ := Nat.exists_eq_add_of_le hn
   rw [hk] at h
   rw [Nat.add_comm 2 k] at h

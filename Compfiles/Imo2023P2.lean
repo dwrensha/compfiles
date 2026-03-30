@@ -264,7 +264,7 @@ lemma aux₉ {x y z : ℝ} (h : |x + y| = z)
     by_cases hx' : 0 ≤ x
     · have hy' := h.left hx'
       exact aux₈ hx' (le_of_lt hy') hx hy
-    · push_neg at hx'
+    · push Not at hx'
       have hy' := h.right (le_of_lt hx')
       rw [add_comm]
       exact aux₈ (le_of_lt hy') (le_of_lt hx') hy hx

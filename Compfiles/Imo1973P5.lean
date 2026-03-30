@@ -109,12 +109,12 @@ problem imo1973_p5 {G : Set (ℝ → ℝ)}
           exact Function.forall_isFixedPt_iff.mp hb2
         exact hf3 r
       · grind
-    · push_neg at non_id
+    · push Not at non_id
       use 0
       intro f hf2
       rw [non_id f hf2]
       rfl
-  · push_neg at hnep
+  · push Not at hnep
     use 0
     intro f hf2
     exfalso

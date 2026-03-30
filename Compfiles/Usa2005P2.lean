@@ -36,7 +36,7 @@ problem usa2005_p2 :
        x^3 + x^3 * y + y^2 + y + z^9 = 157^147 := by
   -- we follow
   -- https://artofproblemsolving.com/wiki/index.php/2005_USAMO_Problems/Problem_2
-  push_neg
+  push Not
   intro x' y' z' h1 h2
   with_reducible generalize hM : ((147:ℤ) ^ 157) = M at h1
   with_reducible generalize hN : ((157:ℤ) ^ 147) = N at h2

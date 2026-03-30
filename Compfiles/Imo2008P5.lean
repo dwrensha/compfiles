@@ -160,7 +160,7 @@ lemma claim (n k : ℕ) (hn : 0 < n) (hnk : n ≤ k) (_he : Even (k - n))
   have hM : ∀ j : Fin k, (f.val j).val < n := by
     intro j
     obtain ⟨_, hM⟩ := f.property
-    by_contra h; push_neg at h; exact hM (f.val j) h j rfl
+    by_contra h; push Not at h; exact hM (f.val j) h j rfl
   have hc : ∑ i : Fin n, c i = k := by
     obtain ⟨⟨_, _⟩, hMseq⟩ := f.property
     let g : Fin k → Fin n := fun j ↦ ⟨(f.val j).val, hM j⟩

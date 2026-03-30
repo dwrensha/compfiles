@@ -60,7 +60,7 @@ lemma aux {n : ℕ} (A : Matrix (Fin n) (Fin n) ℕ) (n_pos : 0 < n)
       _ = n * x := by simp
     zify at h_total_ge_nx h_x_large ⊢; nlinarith
   · -- Case 2: x < n/2
-    push_neg at h_x_large
+    push Not at h_x_large
     let Y := (Finset.univ : Finset (Fin n)).filter (fun j => A i₀ j ≠ 0)
     let y := Y.card
     have h_y_le_x : y ≤ x := by

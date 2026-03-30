@@ -249,7 +249,7 @@ lemma mylemma_k_gt_1
     exact div_pos g₂ g₃
   norm_cast at hk0
   by_contra hc
-  push_neg at hc
+  push Not at hc
   interval_cases k
   simp at hk
   exfalso
@@ -269,7 +269,7 @@ lemma mylemma_p_lt_4
   (hden: 0 < (p - 1) * (q - 1) * (r - 1) ) :
   (p < 4) := by
   by_contra hcp
-  push_neg at hcp
+  push Not at hcp
   have hcq: 5 ≤ q := by lia
   have hcr: 6 ≤ r := by lia
   have h₃: k < 2 := by exact mylemma_k_lt_2 p q r k hk hcp hcq hcr hden

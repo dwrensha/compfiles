@@ -72,7 +72,7 @@ problem imo1983_p1 (f : ℝ+ → ℝ+) :
       rwa [h4] at h7
     · simp [ha]
     · have h6 : a < 1 := by
-        push_neg at H1
+        push Not at H1
         exact lt_of_le_of_ne H1 H
       exact one_lt_div'.mpr h6
   have hi3 : ∀ m, f (a^m) = a^m := by

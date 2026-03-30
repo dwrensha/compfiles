@@ -142,7 +142,7 @@ problem imo1971_p5 (m : ℕ) :
     have hd_set := (norm_one_infinity.diff ((finite₁ hS'₂).union (finite₂ hS'₂))).nonempty
     rw [← Set.diff_diff] at hd_set
     obtain ⟨d, ⟨hd₁, hd₂⟩, hd₃⟩ := hd_set
-    dsimp at hd₁ hd₂ hd₃; push_neg at hd₂ hd₃
+    dsimp at hd₁ hd₂ hd₃; push Not at hd₂ hd₃
     -- Define translated set S'' = S' + d
     set f := fun p ↦ p + d with hf
     set S'' := {p : Pt | ∃ p' ∈ S', p = p' + d} with hS''

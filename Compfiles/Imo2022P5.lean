@@ -202,7 +202,7 @@ lemma mylemma_4
         lia
       · rw [h₇₁] at hc
         simp at hc
-    · push_neg at hc
+    · push Not at hc
       have g₃: p^2 ≤ a := by
         rw [h₂, pow_two]
         exact mul_le_mul_right hc p
@@ -441,7 +441,7 @@ problem imo2022_p5 (a b p : ℕ) (ha : 0 < a) (hb : 0 < b) (hp : p.Prime) :
       rw [h₄] at h₁
       simp at h₁
       lia
-    · push_neg at hab
+    · push Not at hab
       have h₂: (b+1)^p ≤ a^p := by
         refine (Nat.pow_le_pow_iff_left ?_).mpr hab
         exact Nat.Prime.ne_zero hp
@@ -458,7 +458,7 @@ problem imo2022_p5 (a b p : ℕ) (ha : 0 < a) (hb : 0 < b) (hp : p.Prime) :
         refine Nat.pow_le_pow_right hb ?_
         exact le_of_lt hbp
       lia
-  · push_neg at hbp
+  · push Not at hbp
     have h₂: p ∣ a := by exact mylemma_3 a b p hp h₁ hbp
     by_cases hb2p: b < 2*p
     · have h₃ : a = p := by exact mylemma_4 a b p ⟨ha, hb⟩ hp h₁ hbp h₂ hb2p
@@ -486,10 +486,10 @@ problem imo2022_p5 (a b p : ℕ) (ha : 0 < a) (hb : 0 < b) (hp : p.Prime) :
           rw [h₅]
         · exfalso
           contradiction
-      · push_neg at hp5
+      · push Not at hp5
         exfalso -- lifting the exponent
         exact mylemma_5 b p hp hbp h₁ hp5
-    · push_neg at hb2p
+    · push Not at hb2p
       exfalso
       have h₃: p^2 ∣ a^p - b.factorial := by exact mylemma_6 a b p hp h₂ hb2p
       have g₄: a^p - b.factorial = p := by lia

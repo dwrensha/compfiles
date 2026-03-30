@@ -66,7 +66,7 @@ lemma real_induction
     : Set.Ici z ⊆ S := by
 
   -- Suppose not. Then there is w₁ in [z,∞) that is not in S.
-  by_contra H; rw[Set.subset_def] at H; push_neg at H
+  by_contra H; rw[Set.subset_def] at H; push Not at H
   obtain ⟨w₁, hw₁, hw₁'⟩ := H
 
   -- Take the set W = {w | z ≤ w ∧ w ∉ S}.
@@ -99,7 +99,7 @@ lemma real_induction
 
     have h12 : y ∈ lowerBounds W := by
       intro a ha;
-      by_contra H'; push_neg at H'
+      by_contra H'; push Not at H'
       exact ha.2 (hy2 ⟨h9 a ha, H'⟩)
     exact (not_le.mpr hy1) ((isGLB_iff_le_iff.mp h13 y).mpr h12)
 
@@ -115,7 +115,7 @@ lemma real_induction
 
   have h12 : y ∈ lowerBounds W := by
     intro a ha;
-    by_contra H'; push_neg at H'
+    by_contra H'; push Not at H'
     apply ha.2
     obtain hlt | hle := lt_or_ge a w₀
     · exact h7 ⟨ha.1, hlt⟩

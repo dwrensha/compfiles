@@ -184,7 +184,7 @@ theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
         congr
       rw [←h14] at h1
       rw [Finset.mem_filter]
-      push_neg
+      push Not
       intro h15
       exact (h1 h15).elim
     obtain ⟨p', hp⟩ :=

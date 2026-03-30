@@ -40,7 +40,7 @@ theorem lemma1 (c1 : ℝ) :
            2 ≤ c1 := by
   intro f h1 h2 h3 h4
   by_contra h
-  push_neg at h
+  push Not at h
   have hc1 : c1 ≥ 0 := by
     have h1' := h1 (1 / 2 : ℝ) (by norm_num)
     have h5 : f ⟨(1 / 2 : ℝ), by norm_num⟩ = (0 : ℝ) := by

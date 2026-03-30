@@ -483,7 +483,7 @@ problem usa2023_p4 (a : ℕ+) (N : ℕ) (hN : 0 < N) (b0 : Blackboard N)
   suffices h : ∀ i : Fin N, padicValNat 2 ↑(b0 i) < padicValNat 2 ↑a from
     lemma2 a N hN ⟨b0, .Alice⟩ h
   by_contra h_not
-  push_neg at h_not
+  push Not at h_not
   obtain ⟨i₀, hi₀⟩ := h_not
   exact alice_prevents_end a N hN ⟨b0, .Alice⟩ he ⟨i₀, by dsimp; exact hi₀⟩
 

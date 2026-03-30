@@ -114,7 +114,7 @@ problem imo1969_p2
     use (tm - tn)
     rw [Int.cast_sub]
     ring_nf
-  · push_neg at hmn
+  · push Not at hmn
     have h₇: Real.tan x₂ = Real.tan x₁ := by
       have h₇₀: ∀ (x:ℝ), (f x = 0 ∧ Real.cos x ≠ 0) → Real.tan x = Ccos / Csin := by
         intro x hx₀

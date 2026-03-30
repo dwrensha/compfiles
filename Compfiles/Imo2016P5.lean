@@ -64,7 +64,7 @@ problem imo2016_p5 :
       simp only [Finset.mem_Icc, Finset.mem_filter] at h2
       norm_num at h2
     · simp_rw [hp]; rw [Finset.filter_not, lemma1]; simp
-    · push_neg
+    · push Not
       intro x
       sorry
   · rw [mem_lowerBounds]
@@ -84,7 +84,7 @@ problem imo2016_p5 :
       rw [←hcard] at H
       exact ((h4.trans h2).trans_lt H).false
     obtain ⟨i, hic, hiL, hiR⟩ := h1
-    push_neg at hLR
+    push Not at hLR
     specialize hLR i
     have hic1 : i ∈ Finset.Icc 1 2016 \ L := by
       rw [Finset.mem_sdiff]; exact ⟨hic, hiL⟩

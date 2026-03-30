@@ -128,7 +128,7 @@ problem imo1999_p4 (n p : ℕ) :
           contrapose! hp_odd
           exact Nat.not_odd_iff_even.mpr hn'
         have hq2 : ¬q = 2 := by
-          push_neg
+          push Not
           exact Odd.ne_two_of_dvd_nat hn_odd hq₂
         have hqp := aux₁ hq₁ (by lia:_) (by lia:_) (aux₂ hq₁ hq₃) hq''
         rw [Nat.sub_add_cancel (by lia:_), Nat.prime_dvd_prime_iff_eq hq₁ hp] at hqp
@@ -171,7 +171,7 @@ problem imo1999_p4 (n p : ℕ) :
           have hqq'' : qq ∣ 8 ^ m + 1 := dvd_trans (dvd_mul_of_dvd_left (dvd_pow hqq₂ (by lia:_)) 9) h
           have hq1' := hqq₁.two_le
           have hqq2 : ¬qq = 2 := by
-            push_neg
+            push Not
             exact Odd.ne_two_of_dvd_nat hn_odd (dvd_trans hqq₂ hmn)
           have hq'p := aux₁ hqq₁ (by lia:_) (by lia:_) (aux₂ hqq₁ hqq₃) hqq''
           norm_num at hq'p

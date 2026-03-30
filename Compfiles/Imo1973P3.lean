@@ -62,7 +62,7 @@ lemma aux_1
     have g₁: discrim 1 (-t) 1 = (-t) ^ 2 - 4 * 1 * 1 := by exact rfl
     simp at g₁
     by_contra hc₀
-    push_neg at hc₀
+    push Not at hc₀
     have hc₁: t ^ 2 < 2 ^ 2 := by
       refine sq_lt_sq.mpr ?_
       refine lt_of_lt_of_le hc₀ ?_

@@ -57,7 +57,7 @@ lemma lemma1 (s : ℕ → ℤ) (hs : ∀ i, s i < s (i + 1)) (z : ℤ) (hs0 : s 
         Nat.sub_one_lt_of_le h5 Nat.le.refl
       have h7 := h4 h6
       rw [Set.mem_setOf_eq] at h7
-      push_neg at h7
+      push Not at h7
       rwa [Nat.sub_add_cancel h5] at h7
   · exact Nat.find_spec h3
   · rintro m ⟨hm1, hm2⟩

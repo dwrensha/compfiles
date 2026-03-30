@@ -62,7 +62,7 @@ lemma imo_1990_p3_forward
   · exfalso
     interval_cases n
     simp at h₁
-  · push_neg at hn₀
+  · push Not at hn₀
     have h₂: Odd n := by
       by_contra hc
       apply Nat.not_odd_iff_even.mp at hc

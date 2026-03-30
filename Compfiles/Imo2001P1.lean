@@ -78,7 +78,7 @@ lemma aux₂ {x y z : ℝ} (h : |x + y| = z)
     by_cases hx' : 0 ≤ x
     · have hy' := h.left hx'
       exact aux₁ hx' (le_of_lt hy') hx hy
-    · push_neg at hx'
+    · push Not at hx'
       have hy' := h.right (le_of_lt hx')
       rw [add_comm]
       exact aux₁ (le_of_lt hy') (le_of_lt hx') hy hx
@@ -150,7 +150,7 @@ lemma aux₅ {x y z: ℝ} (h : ∃ k : ℤ, x - y = z * k)
   by_cases h': k = 0
   · rw [h', Int.cast_zero, mul_zero, sub_eq_zero] at hk
     rw [hk]
-  · push_neg at h'
+  · push Not at h'
     apply le_trans hy
     have h₁ : (1 : ℝ) ≤ |↑k| := by
       rw [← Int.cast_one, ← Int.cast_abs, Int.cast_le]

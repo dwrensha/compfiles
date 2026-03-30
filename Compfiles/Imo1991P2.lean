@@ -72,7 +72,7 @@ problem imo1991_p2 (n : ℕ) (hn : 6 < n)
       apply Set.eq_empty_of_forall_notMem
       intro x
       dsimp
-      push_neg
+      push Not
       intro i
       rw [hk'] at i
       apply finZeroElim i

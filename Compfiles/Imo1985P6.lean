@@ -763,7 +763,7 @@ lemma aux_unique_top
       exact hd₁ i a b ha₀
     · refine one_le_pow₀ ?_
       norm_num
-  · push_neg at hz₀
+  · push Not at hz₀
     have hz₁: 0 < fd a b i := by exact hd₁ i a b ha₀
     have hz₂: 0 < Real.log (z / fd a b i) := by
       refine Real.log_pos ?_
@@ -951,7 +951,7 @@ lemma aux_unique
         norm_cast
         exact Nat.le_add_left 1 (↑N + 2)
   · have hy₂: y < x := by
-      push_neg at hy₁
+      push Not at hy₁
       exact lt_of_le_of_ne hy₁ hc₀.symm
     have hy₃: Filter.Tendsto (fd y x) Filter.atTop Filter.atTop := by
       refine hfd₂ y x hy₂ ?_
@@ -1238,7 +1238,7 @@ problem imo_1985_p6
       rw [Real.coe_toNNReal y hy₂]
       exact hy₀ n hn₀
   · exfalso
-    push_neg at hy₂
+    push Not at hy₂
     have hy₃: f 1 y < 0 := by
       rw [h₀]
       exact hy₂

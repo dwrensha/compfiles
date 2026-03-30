@@ -246,7 +246,7 @@ problem imo2015_p2 (a b c : ℤ) :
       · have hc' : ¬2 ∣ c := by
           contrapose! h_abc_even with hc'
           rw [dvd_sub_left hc', Prime.dvd_mul Int.prime_two]
-          push_neg
+          push Not
           exact ⟨ha', hb'⟩
         have h₂ : c * a - b ∣ a ^ 2 - 1 := by
           apply IsCoprime.dvd_of_dvd_mul_left _ h₁
@@ -312,7 +312,7 @@ problem imo2015_p2 (a b c : ℤ) :
       · have hc' : 2 ∣ c := by
           contrapose! h_cab_even with hc'
           rw [dvd_sub_left hb', Prime.dvd_mul Int.prime_two]
-          push_neg
+          push Not
           exact ⟨hc', ha'⟩
         have h₂ := dvd_refl (b * c - a)
         nth_rw 2 [hbca] at h₂

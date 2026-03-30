@@ -164,7 +164,7 @@ lemma List.splitBy_append' {α : Type u} {r : α → α → Bool} {a b : List α
       rw [List.dropLast_concat_getLast, List.singleton_append, List.cons_head_tail]
       rw [List.flatten_append, List.flatten_splitBy, List.flatten_splitBy]
     · rw [List.mem_append, List.mem_append, List.mem_singleton]
-      push_neg
+      push Not
       constructorm* _ ∧ _
       · have h := List.nil_notMem_splitBy r a
         contrapose! h

@@ -62,9 +62,9 @@ problem imo1976_p6 (u : ℕ → ℝ)
         lia
       | inr h_3 =>
         subst h_3
-        simp_all only [lt_add_iff_pos_left, add_pos_iff, Nat.ofNat_pos, mul_pos_iff_of_pos_left,
-                       zero_lt_one, or_true, Int.reduceNeg]
-        norm_num [Int.negSucc_eq] at h
+        exfalso; clear h₂ h_ind hn_pos
+        rw [Int.negSucc_eq, Odd.neg_one_pow ⟨w, rfl⟩] at h
+        simp only [Int.reduceNeg, sub_neg_eq_add] at h
         lia
   simp_all only [pow_zero, sub_self, zero_div, Real.rpow_zero, neg_add_cancel,
                  pow_one, sub_neg_eq_add, gt_iff_lt]

@@ -75,7 +75,7 @@ problem imo1965_p1 :
       linarith
   rintro ⟨⟨h1, h2⟩, h3⟩
   by_contra h4
-  rw [the_answer, mem_Icc, not_and_or] at h4; push_neg at h4
+  rw [the_answer, mem_Icc, not_and_or] at h4; push Not at h4
   have cos2x_nonneg : 0 ≤ cos (2*x) := by
     rcases h4 with h4 | h4
     · apply cos_nonneg_of_neg_pi_div_two_le_of_le <;> linarith

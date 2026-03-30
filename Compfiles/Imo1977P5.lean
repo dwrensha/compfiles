@@ -54,7 +54,7 @@ lemma aux_1
     · rw [abs_of_nonneg hn] at hk₀
       nth_rw 2 [abs_of_nonneg (by linarith)] at hk₁
       linarith
-    · push_neg at hn
+    · push Not at hn
       have hn₁: n + 1 ≤ 0 := by linarith
       rw [abs_of_neg hn] at hk₀
       rw [abs_of_nonpos hn₁] at hk₁
@@ -88,7 +88,7 @@ lemma aux_1
     · exact (ha₄ s (by lia)) h₈₂
     · exact (ha₅ s (by lia)) h₈₂
     · exact (ha₅ s (by lia)) h₈₂
-  · push_neg at ha₁₃
+  · push Not at ha₁₃
     by_cases ha₁₄: abs ((↑a : ℤ) - (22 : ℤ)) = 15
     · apply (abs_eq (by norm_num)).mp at ha₁₄
       obtain ha₁₄ | ha₁₄ := ha₁₄
@@ -168,7 +168,7 @@ lemma aux_2
     exact Eq.symm (Nat.div_add_mod' (a ^ 2 + b ^ 2) (a + b))
   have h₅₃: q ≤ 44 := by
     by_contra hc₀
-    push_neg at hc₀
+    push Not at hc₀
     apply Nat.succ_le_iff.mpr at hc₀
     have hc₁: 45 ^ 2 ≤ q ^ 2 := by exact Nat.pow_le_pow_left hc₀ 2
     linarith
@@ -193,7 +193,7 @@ lemma aux_2
       refine lt_trans ?_ g₂
       exact Nat.mod_lt (a ^ 2 + b ^ 2) h₅₁
     by_contra hc₀
-    push_neg at hc₀
+    push Not at hc₀
     have hc₁: q ^ 2 ≤ 43 ^ 2 := by exact Nat.pow_le_pow_left hc₀ 2
     lia
   have hq₀: q = 44 := by lia
@@ -212,7 +212,7 @@ lemma aux_2
       refine pow_le_pow_left₀ (by lia) (by lia) 2
     have hb₁: 0 ≤ ((b:ℤ) - 22) ^ 2 := by positivity
     lia
-  · push_neg at ha₀
+  · push Not at ha₀
     exact aux_1 a b h₆ ha₀
 
 snip end

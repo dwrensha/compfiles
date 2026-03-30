@@ -40,7 +40,7 @@ lemma raw_order_lt {n : ℕ} (a : Fin n → ℝ) (i : Fin n)
   · apply card_finset_fin_le
   · simp only [← Finset.card_fin n]
     rw [ne_eq, Finset.card_filter_eq_iff]
-    push_neg
+    push Not
     use i
     constructor
     · apply Finset.mem_univ

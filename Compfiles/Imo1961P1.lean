@@ -203,7 +203,7 @@ problem imo1961_p1b (a b x y z : ℝ) (h₀ : IsSolution a b x y z) :
       by_cases hx₁: 0 < x
       · refine ⟨hx₁, ?_⟩
         exact (pos_iff_pos_of_mul_pos hx₀).mp hx₁
-      · push_neg at hx₁
+      · push Not at hx₁
         exfalso
         have h₈₀: (x + y) ^ 2 - z ^ 2 = b ^ 2 := by
           rw [add_sq, mul_assoc 2, h₂, ← h₁]

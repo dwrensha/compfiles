@@ -87,7 +87,7 @@ theorem induction_lemma (A : Finset ℕ) (_AS : A ⊆ S) (Acard : A.card = 101)
     have xf (x : ℕ) (xS : x ∈ S) : x ∈ f x := by
       unfold f
       simp [Finset.mem_filter, xS]
-      push_neg
+      push Not
       use x + a
       simp [aA]
 

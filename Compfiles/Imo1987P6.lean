@@ -45,7 +45,7 @@ lemma minFac_le_sq {n : ℕ} (hnezero : n ≠ 0) (hn : minFac n ≠ n) : (minFac
 lemma prime_of_coprime' (n : ℕ) (h1 : 1 < n)
     (h2 : ∀ m:ℕ, m^2  ≤  n → m ≠ 0 → n.Coprime m) : Nat.Prime n := by
   rw [Nat.prime_def_minFac]
-  by_contra H; push_neg at H
+  by_contra H; push Not at H
   replace H := H (by lia)
   let m := minFac n
   have nneone : n ≠ 1 := by lia
@@ -82,7 +82,7 @@ lemma key_lemma {m b: ℕ}
    intro k hk1 hk2
    by_cases hk0 : b < k
    · exact h k hk0 hk2
-   · push_neg at hk0
+   · push Not at hk0
      obtain ⟨i, hi1, hi2⟩  :=  dyadic (le_of_lt hk1) hk0
      exact Coprime.coprime_mul_left_right (h (2 ^ i * k) hi1 hi2)
 
@@ -94,7 +94,7 @@ lemma key_lemma'  {m b: ℕ } (h1 : 1 < m)
   intro k hk1 hk2
   by_cases hk0 : k=1
   · simp [hk0]
-  push_neg at hk0
+  push Not at hk0
   refine h k ?_ ?_
   · lia
   · replace h2 := lt_of_le_of_lt hk1 h2
@@ -127,7 +127,7 @@ problem imo1987_p6
   intro k IH hk
   by_cases h : k+1 ≤ r
   · exact h₁ (k+1) h
-  · push_neg at h
+  · push Not at h
     let kk := k+1
     let s := kk - r
     let N := f kk
@@ -158,7 +158,7 @@ problem imo1987_p6
 
     have hP : ∀ i , kk < i → i ≤ 2*(kk) → Coprime N i := by
       by_contra H
-      push_neg at H
+      push Not at H
       obtain ⟨j, hj1,hj2,hj3⟩ := H
       have hj1' : s+r +1 ≤ j := by rw [←hksr]; apply succ_le_of_lt hj1
       let  ss :=  j-(s+r+1)
