@@ -52,12 +52,9 @@ problem imo1976_p6 (u : ℕ → ℝ)
       simp_all only [Int.reduceNeg]
       norm_num [ ← h, Real.exp_mul, Real.exp_log ]
       norm_num [ show ( 2 ^ n - ( -1 ) ^ n : ℝ ) = 3 * a by exact_mod_cast h ]
-    · obtain ⟨w, rfl | rfl⟩ := Nat.even_or_odd' n
-      · simp only [even_two, Even.mul_right, Even.neg_pow, one_pow] at h
-        lia
-      · exfalso; clear* -h
-        rw [Odd.neg_one_pow ⟨w, rfl⟩] at h
-        lia
+    · exfalso; clear* -h
+      have : (-1)^n ≤ 1 := by cases neg_one_pow_eq_or ℤ n <;> lia
+      lia
   simp_all only [pow_zero, sub_self, zero_div, Real.rpow_zero, neg_add_cancel,
                  pow_one, sub_neg_eq_add, gt_iff_lt]
   obtain ⟨w, h⟩ := h_int
