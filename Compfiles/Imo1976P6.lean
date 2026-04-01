@@ -29,15 +29,13 @@ problem imo1976_p6 (u : ℕ → ℝ)
   have h_ind : ∀ n, u n = 2 ^ ((2 ^ n - (-1) ^ n) / 3 : ℝ) +
                           2 ^ ((-2 ^ n + (-1) ^ n) / 3 : ℝ) := by
     intro n
-    induction' n using Nat.strong_induction_on with n ih
-    rcases n with ( _ | _ | n ) <;> norm_num
+    induction' n using Nat.twoStepInduction with n ih₁ ih₂ <;> norm_num1
     · exact h₀
     · exact h₁
-    simp_all only [lt_add_iff_pos_left, add_pos_iff, Nat.ofNat_pos, or_true, pow_zero,
-                   sub_self, zero_div, Real.rpow_zero, neg_add_cancel,
-                   zero_lt_one, pow_one, sub_neg_eq_add, lt_add_iff_pos_right]
-    ring_nf at * ; norm_num at *
-    rw [ih n (by lia)] ; ring_nf; norm_num [ sq, ← Real.rpow_add ] ; ring_nf
+    simp only [h₁, h₂, ih₁, ih₂]
+    ring_nf
+    norm_num [sq, ← Real.rpow_add]
+    ring_nf
     obtain h | h := Nat.even_or_odd n <;> norm_num [h.neg_one_pow] <;> ring_nf
   intro n hn_pos
   have h_int : ∃ k : ℤ, (2 : ℝ) ^ ((2 ^ n - (-1) ^ n) / 3 : ℝ) = k := by
