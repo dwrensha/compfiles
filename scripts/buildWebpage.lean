@@ -83,7 +83,7 @@ def parseImoProblemId (probId : String) : Option (Nat × Nat) :=
 def isImoProblemId (probId : String) : Bool := (parseImoProblemId probId).isSome
 
 def usamoProblemCounts :=
-  [(2025, 6),
+  [(2026, 6), (2025, 6),
    (2024, 6), (2023, 6), (2022, 6), (2021, 6), (2020, 6),
    (2019, 6), (2018, 6), (2017, 6), (2016, 6), (2015, 6),
    (2014, 6), (2013, 6), (2012, 6), (2011, 6), (2010, 6),
