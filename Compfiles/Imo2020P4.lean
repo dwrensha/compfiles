@@ -300,15 +300,9 @@ lemma Company.low_le_of_mem_path {n k : ℕ} {c : Company n k} {l h : Fin (n ^ 2
     · have hi'' : i < p.length := by
         apply lt_of_le_of_ne hi
         contrapose! h''v'
-        use l
-        constructor
-        · rw [SimpleGraph.Walk.mem_support_iff_exists_getVert]
-          use 0
-          constructor
-          · rw [SimpleGraph.Walk.getVert_zero]
-          · apply Nat.zero_le
-        · rw [← hiv', h''v', SimpleGraph.Walk.getVert_length]
-          exact hlh
+        refine ⟨l,SimpleGraph.Walk.start_mem_support p, ?_⟩
+        rw [← hiv', h''v', SimpleGraph.Walk.getVert_length]
+        exact hlh
       have h := SimpleGraph.Walk.IsPath.ncard_neighborSet_toSubgraph_internal_eq_two hp hi' hi''
       rw [Set.ncard_eq_two] at h
       rcases h with ⟨x, y, hxy, hv'xy⟩
@@ -367,15 +361,9 @@ lemma Company.le_high_of_mem_path {n k : ℕ} {c : Company n k} {l h : Fin (n ^ 
         apply lt_of_le_of_ne hi hi'
       have hi''' : i ≠ 0 := by
         contrapose! h''v'
-        use h
-        constructor
-        · rw [SimpleGraph.Walk.mem_support_iff_exists_getVert]
-          use p.length
-          constructor
-          · rw [SimpleGraph.Walk.getVert_length]
-          · apply le_refl
-        · rw [← hiv', h''v', SimpleGraph.Walk.getVert_zero]
-          exact hlh
+        refine ⟨h, SimpleGraph.Walk.end_mem_support p, ?_⟩
+        rw [← hiv', h''v', SimpleGraph.Walk.getVert_zero]
+        exact hlh
       have h := SimpleGraph.Walk.IsPath.ncard_neighborSet_toSubgraph_internal_eq_two hp hi''' hi''
       rw [Set.ncard_eq_two] at h
       rcases h with ⟨x, y, hxy, hv'xy⟩
@@ -448,12 +436,7 @@ lemma Company.linked_of_graph_reachable {n k : ℕ} {c : Company n k} {l h : Fin
       · use {
           cars := [i],
           nonempty := List.cons_ne_nil _ _,
-          valid := by
-            rw [List.isChain_cons, and_iff_left List.isChain_nil]
-            intro head hhead
-            contrapose! hhead
-            rw [List.head?_nil]
-            apply Option.not_mem_none
+          valid := List.IsChain.singleton i
         }
         constructor
         · rw [Company.linkage.start]

@@ -3276,10 +3276,10 @@ def clipped_rect [NeZero k] (hk : 2 ≤ k) (s t : Int) : Option (Matilda (k * k)
           constructor
           · constructor
             · linarith [le_max_right 0 r_xmin, hx1]
-            · linarith [min_le_right (k * k - 1 : ℤ) r_xmax, hx2]
+            · exact le_of_le_min_right hx2
           · constructor
             · linarith [le_max_right 0 r_ymin, hy1]
-            · linarith [min_le_right (k * k - 1 : ℤ) r_ymax, hy2]
+            · exact le_of_le_min_right hy2
         have h_in_M := rect_subset_M k s t p hk h_wr
         rw [M_st, mem_filter] at h_in_M
         rcases h_in_M with ⟨_, h_not_black, _⟩

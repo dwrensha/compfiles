@@ -129,11 +129,7 @@ lemma imo_1990_p3_forward
           refine (Nat.even_pow' ?_).mpr ?_
           · exact Nat.ne_zero_of_lt h₀
           · exact Nat.even_iff.mpr rfl
-        have hp₆₁: 2 ≤ p := Nat.Prime.two_le hp₁
-        by_contra! hh₀
-        interval_cases p
-        have hh₁: ¬ Odd 2 := by norm_num
-        exact hh₁ hp₆₀
+        exact (Nat.Prime.odd_iff hp₁).mp hp₆₀
       have hp₇: p ∣ Nat.gcd (2 ^ (2 * n) - 1) (2 ^ (p - 1) - 1) := by
         exact Nat.dvd_gcd hp₅ hp₆
       have hp₈: p ∣ 2 ^ (Nat.gcd (2 * n) (p - 1)) - 1 := by
