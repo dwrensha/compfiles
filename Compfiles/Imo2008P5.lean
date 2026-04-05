@@ -134,7 +134,7 @@ lemma even_subsets_card {α : Type} [Fintype α] :
                 Fintype.card (Finset α) := by
       have := @Fintype.card_subtype_compl (Finset α) _ (fun s => Even s.card) _ _
       have := Fintype.card_subtype_le (fun s : Finset α => Even s.card)
-      lia
+      omega
     rw [Fintype.card_finset] at hsum
     have h1 : 2 ^ Fintype.card α = 2 * 2 ^ (Fintype.card α - 1) := by
       cases hn : Fintype.card α with

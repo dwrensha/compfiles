@@ -265,7 +265,7 @@ lemma line_para (a b c a' b' c' : ℝ) (h : a ≠ 0 ∨ b ≠ 0) (h' : a' ≠ 0 
       have : SetLike.coe (line a' b' c') ≠ ∅ := by
         rw [← Set.nonempty_iff_ne_empty]
         exact line_nonempty a' b' c' h'
-      grind
+      tauto
 
 /-- If the line `a * x + b * y + c` is parallel to `L`,
 and both lines go through `(x1, y1)`, `(x2, y2)`,
@@ -819,7 +819,7 @@ lemma coverGridNoEdgeConfig.cover_no_edge_line_surj (C : coverGridNoEdgeConfig) 
     simp [C.find_line_edge_correct]
   apply Finset.eq_of_subset_of_card_le <;> try (first | assumption | lia)
   have := C.lines_count
-  lia
+  omega
 
 def edgeEndpointCornerId (d : Fin 3) (r : Fin 2) : Fin 3 := match d, r with
   | 0, 0 => 0   -- edge 0 left corner is 0

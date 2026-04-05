@@ -158,7 +158,20 @@ problem imo1964_p4
 
     let s3 : Finset Person := Finset.cons p1 s2 hs2
     use s3
-    grind
+    constructor
+    · simp (config := {decide := true})
+        only [Finset.card_cons, Finset.card_singleton, s1, s2, s3]
+    · intro p1' hp1' p2' hp2' hp1p2
+      rw [Finset.mem_cons, Finset.mem_cons, Finset.mem_singleton] at hp1' hp2'
+      have hp4d : discusses p1 ↑↑p4 = t1 := by
+         have := p4.property
+         simp only [ne_eq, Finset.mem_filter, Finset.mem_univ, true_and, α] at this
+         exact this
+      have hp3d : discusses p1 ↑↑p3 = t1 := by
+         have := p3.property
+         simp only [ne_eq, Finset.mem_filter, Finset.mem_univ, true_and, α] at this
+         exact this
+      aesop
 
   · -- So the people in α must all discuss only the remaining two topics.
     push Not at h6

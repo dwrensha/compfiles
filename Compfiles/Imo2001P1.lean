@@ -315,7 +315,7 @@ lemma wbtw_BPC : Wbtw ℝ cfg.P cfg.B cfg.C ∨ Wbtw ℝ cfg.C cfg.P cfg.B := by
   have h₂ := (PBC_collinear cfg).wbtw_or_wbtw_or_wbtw
   contrapose! h₁
   constructor
-  · grind
+  · tauto
   · rcases h₁ with ⟨h_PBC, h_CPB⟩
     constructor
     · exact C_ne_B cfg

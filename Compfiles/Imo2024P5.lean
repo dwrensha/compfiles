@@ -808,7 +808,7 @@ lemma path1_firstMonster_of_not_edge (hN : 2 ≤ N) {m : MonsterData N} (hc₁0 
     (hc₁N : (m (row1 hN) : ℕ) ≠ N) :
     (path1 hN (m (row1 hN))).firstMonster m = none ∨
       (path1 hN (m (row1 hN))).firstMonster m =
-        some (⟨2, by lia⟩, ⟨(m (row1 hN) : ℕ) - 1, by lia⟩) := by
+        some (⟨2, by lia⟩, ⟨(m (row1 hN) : ℕ) - 1, by omega⟩) := by
   refine Path.firstMonster_none_or_some fun c hc ↦ ?_
   simp only [path1, hc₁0, ↓reduceDIte, hc₁N, ↓reduceIte, path1OfNotEdge, Path.ofFn_cells,
     List.mem_ofFn] at hc

@@ -100,7 +100,7 @@ lemma finite₂ {S : Set Pt} (hS : S.Finite)
     ext p
     simp
     constructor <;> rintro ⟨s, hs, t, ht, hstp⟩ <;> use s <;> rw [and_iff_right hs]
-      <;> use t <;> rw [and_iff_right ht] <;> grind only
+      <;> use t <;> rw [and_iff_right ht] <;> tauto
   rw [h']
   apply Set.Finite.biUnion hS
   intro s hs
