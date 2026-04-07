@@ -346,11 +346,10 @@ unsafe def main (_args : List String) : IO Unit := do
       let mut proved := true
       let decls ← getDeclsInPackage m
       for d in decls do
-        let c ← getConstInfo d
-        match c.value? with
-        | none => pure ()
-        | some v => do
-           if v.hasSorry then proved := false
+       let axioms ← Lean.collectAxioms d
+       for a in axioms do
+         if not (a ∈ [``propext, ``Classical.choice, ``Quot.sound]) then
+           proved := false
 
       let metadata := (mds.find? m).getD {}
       let probId := m.toString.dropPrefix "Compfiles."
