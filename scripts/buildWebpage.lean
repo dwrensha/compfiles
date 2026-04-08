@@ -411,7 +411,7 @@ unsafe def main (_args : List String) : IO Unit := do
       let hraw ← IO.FS.Handle.mk ("_site/" ++ rawProblemFile) IO.FS.Mode.write
       hraw.putStr s!"{metadata.copyrightHeader}{problem_src}"
 
-      let rawProblemLiveUrl := s!"https://live.lean-lang.org/#url={System.Uri.escapeUri rawProblemUrl}"
+      let rawProblemLiveUrl := s!"https://live.lean-lang.org/#url={rawProblemUrl}"
 
       h.putStrLn s!"<div>Open with the in-brower editor at live.lean-lang.org:"
       h.putStr s!"<ul class=\"live-links\"><li><a href=\"{rawProblemLiveUrl}\">problem statement only</a></li>"
@@ -421,7 +421,7 @@ unsafe def main (_args : List String) : IO Unit := do
         let rawSolUrl := s!"{←getBaseUrl}{rawSolFile}"
         let hraw ← IO.FS.Handle.mk ("_site/" ++ rawSolFile) IO.FS.Mode.write
         hraw.putStr s!"{metadata.copyrightHeader}{sol_src}"
-        let rawSolLiveUrl := s!"https://live.lean-lang.org/#url={System.Uri.escapeUri rawSolUrl}"
+        let rawSolLiveUrl := s!"https://live.lean-lang.org/#url={rawSolUrl}"
         h.putStr s!"<li><a href=\"{rawSolLiveUrl}\">{soldesc}</a></li>"
       h.putStrLn "</ul></div>"
 
