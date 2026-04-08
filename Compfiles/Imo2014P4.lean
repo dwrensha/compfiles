@@ -58,7 +58,7 @@ lemma eq_max_of_max_ne_top
   have hAB := Submodule.finrank_le (A ⊔ B)
   rw [planeFiniteDim.out] at hAB
   have hAB' : 1 ≤ Module.finrank ℝ ↥(A ⊔ B) := by
-    rw [← hA]
+    simp_rw [← hA]
     exact Submodule.finrank_mono le_sup_left
   have hAB'' : Module.finrank ℝ ↥(A ⊔ B) ≠ 2 := by
     contrapose! h
