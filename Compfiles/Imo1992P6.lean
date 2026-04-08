@@ -573,12 +573,12 @@ theorem sos_13_0mod3 : ∀ k:ℕ, k≠0 → k ≤ 13^2-14 → k%3=0 → is_sum_o
   intro k knz kle kmod
   by_cases lb : 9 ≤ k
   · let C := msos.mk [(151,1), (2, 3)]
-    have s : msos.sq_sum C = 13^2 := by native_decide
+    have s : msos.sq_sum C = 13^2 := by decide +kernel
     rw [←s]
     apply is_sum_of_pos_squares_by_repeat_shift
     · rw [Finset.mem_Icc]
       and_intros
-      · have : (msos.repeat_shift C).card = 9 := by native_decide
+      · have : (msos.repeat_shift C).card = 9 := by decide +kernel
         rw [this]
         assumption
       · unfold C
@@ -591,14 +591,14 @@ theorem sos_13_0mod3 : ∀ k:ℕ, k≠0 → k ≤ 13^2-14 → k%3=0 → is_sum_o
     apply this.by_cases
     · intro keq
       let C := msos.mk [(1,3), (1, 4), (1,12)]
-      have : msos.sq_sum C = 13^2 := by native_decide
+      have : msos.sq_sum C = 13^2 := by decide +kernel
       rw [←this]
       have : C.card = k := by unfold C; rw [keq]; simp
       rw [←this]
       apply msos.is_sum_of_pos_squares
     · intro keq
       let C := msos.mk [(4,2), (1, 3), (1,12)]
-      have : msos.sq_sum C = 13^2 := by native_decide
+      have : msos.sq_sum C = 13^2 := by decide +kernel
       rw [←this]
       have : C.card = k := by unfold C; rw [keq]; simp
       rw [←this]
@@ -608,12 +608,12 @@ theorem sos_13_1mod3 : ∀ k:ℕ, k ≤ 13^2-14 → k%3=1 → is_sum_of_pos_squa
   intro k kle kmod
   by_cases lb : 7 ≤ k
   · let C := msos.mk [(149,1), (5, 2)]
-    have s : msos.sq_sum C = 13^2 := by native_decide
+    have s : msos.sq_sum C = 13^2 := by decide +kernel
     rw [←s]
     apply is_sum_of_pos_squares_by_repeat_shift
     · rw [Finset.mem_Icc]
       and_intros
-      · have : (msos.repeat_shift C).card = 7 := by native_decide
+      · have : (msos.repeat_shift C).card = 7 := by decide +kernel
         rw [this]
         assumption
       · unfold C
@@ -626,14 +626,14 @@ theorem sos_13_1mod3 : ∀ k:ℕ, k ≤ 13^2-14 → k%3=1 → is_sum_of_pos_squa
     apply this.by_cases
     · intro keq
       let C := msos.mk [(1,13)]
-      have : msos.sq_sum C = 13^2 := by native_decide
+      have : msos.sq_sum C = 13^2 := by decide +kernel
       rw [←this]
       have : C.card = k := by unfold C; rw [keq]; simp
       rw [←this]
       apply msos.is_sum_of_pos_squares
     · intro keq
       let C := msos.mk [(1,1), (1, 2), (1,8), (1,10)]
-      have : msos.sq_sum C = 13^2 := by native_decide
+      have : msos.sq_sum C = 13^2 := by decide +kernel
       rw [←this]
       have : C.card = k := by unfold C; rw [keq]; simp
       rw [←this]
@@ -643,12 +643,12 @@ theorem sos_13_2mod3 : ∀ k:ℕ, k ≤ 13^2-14 → k%3=2 → is_sum_of_pos_squa
   intro k kle kmod
   by_cases lb : 5 ≤ k
   · let C := msos.mk [(152, 1), (2, 2), (1,3)]
-    have s : msos.sq_sum C = 13^2 := by native_decide
+    have s : msos.sq_sum C = 13^2 := by decide +kernel
     rw [←s]
     apply is_sum_of_pos_squares_by_repeat_shift
     · rw [Finset.mem_Icc]
       and_intros
-      · have : (msos.repeat_shift C).card = 5 := by native_decide
+      · have : (msos.repeat_shift C).card = 5 := by decide +kernel
         rw [this]
         assumption
       · unfold C
@@ -659,7 +659,7 @@ theorem sos_13_2mod3 : ∀ k:ℕ, k ≤ 13^2-14 → k%3=2 → is_sum_of_pos_squa
       simp
   · have keq : k=2 := by lia
     let C := msos.mk [(1,5), (1,12)]
-    have : msos.sq_sum C = 13^2 := by native_decide
+    have : msos.sq_sum C = 13^2 := by decide +kernel
     rw [←this]
     have : C.card = k := by unfold C; rw [keq]; simp
     rw [←this]
