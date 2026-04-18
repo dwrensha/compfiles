@@ -30,12 +30,12 @@ namespace Imo1975P6
 open Polynomial
 open Polynomial.Bivariate
 
-determine solution_set : Set (ℝ[X][Y]) := {P | ∃ n : ℕ+, P = (C X - 2 * Y)*(C X + Y)^(n.val - 1)}
+determine solution_set : Set (ℝ[X][Y]) := {P | ∃ n : ℕ, P = (C X - 2 * Y)*(C X + Y)^n}
 
 snip begin
 
-lemma mul_pow_eq_pow_succ {n : ℕ+} {t : ℝ} : t * t^(n.val - 1) = t^n.val := by
-  rw [←(pow_mul_comm' t (n.val - 1)), ←pow_succ, Nat.sub_add_cancel (Nat.succ_le_of_lt n.pos)]
+lemma mul_pow_eq_pow_succ {n : ℕ} (hn : 0 < n) (t : ℝ) : t * t^(n - 1) = t^n := by
+  rw [←(pow_mul_comm' t (n - 1)), ←pow_succ, Nat.sub_add_cancel hn]
 
 lemma eq_if_continuous_and_eq_almost_everywhere {f g : ℝ → ℝ} (hf : Continuous f) (hg : Continuous g)
     (h : ∀ x : ℚ, f x = g x) : ∀ x, f x = g x := by
@@ -102,12 +102,12 @@ problem imo1975_p6 {P : ℝ[X][Y]} : P ∈ solution_set ↔
     (∀ a b c : ℝ, P.evalEval (b+c) a + P.evalEval (c+a) b + P.evalEval (a+b) c = 0) ∧
     (P.evalEval 1 0 = 1) := by
   constructor
-  · rintro ⟨n, hp⟩
-    split_ands
-    · use n
-      intro t x y
+  · rintro ⟨m, hp⟩
+    refine ⟨⟨⟨m + 1, by omega⟩, ?_⟩, ?_, ?_⟩
+    · intro t x y
       simp [hp, eval_X, evalEval]
-      grind [LeftDistribClass.left_distrib t x y, mul_pow_eq_pow_succ, mul_pow]
+      rw [show t * x + t * y = t * (x + y) from by ring, mul_pow]
+      ring
     · intro a b c
       simp [hp, eval_X, evalEval]
       ring
@@ -151,7 +151,7 @@ problem imo1975_p6 {P : ℝ[X][Y]} : P ∈ solution_set ↔
         rw [hf x] at hfx
         have : a + b ≠ 0 := by grind
         exact aux₂ this (add_eq_of_eq_sub hfx)
-      grind only [mul_pow_eq_pow_succ]
+      grind only [mul_pow_eq_pow_succ n.pos]
 
     have hP_eval' : ∀ b a, P.evalEval a b = (a - 2 * b) * (a + b)^(n.val - 1) := by
       intro b a
@@ -165,6 +165,6 @@ problem imo1975_p6 {P : ℝ[X][Y]} : P ∈ solution_set ↔
       apply eq_if_evalEval_eq
       simp [hP_eval', evalEval]
 
-    exact ⟨n, hP⟩
+    exact ⟨n.val - 1, hP⟩
 
 end Imo1975P6
