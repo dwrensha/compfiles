@@ -56,8 +56,7 @@ problem usa2022_p4 (p q : ℕ) :
   -- Subtracting our equations gives (b - a)(b + a) = b² - a² = p(q - 1),
   have h1 : (b + a) * (b - a) = p * (q - 1) := by
     rw [←Nat.sq_sub_sq, Nat.mul_sub_left_distrib, mul_one]
-    have h2 : (b^2 + q) - (a^2 + q) = p * q - p :=
-      Mathlib.Tactic.LinearCombination'.sub_pf hb ha
+    have h2 : (b^2 + q) - (a^2 + q) = p * q - p := by rw [ha, hb]
     rw [Nat.add_sub_add_right] at h2
     exact h2
 
