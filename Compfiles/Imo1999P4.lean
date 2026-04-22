@@ -110,8 +110,7 @@ problem imo1999_p4 (n p : ℕ) :
         exact hp2
       · right
         rcases exists_least_prime_factor hn1 with ⟨q, ⟨hq₁, hq₂, hq₃⟩⟩
-        haveI: Fact (Nat.Prime p) := { out := hp }
-        haveI: Fact (Nat.Prime q) := { out := hq₁ }
+        have : Fact (Nat.Prime p) := { out := hp }
         have hp' := hp.two_le
         have hq' := hq₁.two_le
         have h' : n ∣ (p - 1) ^ n + 1 := dvd_trans (dvd_pow_self n (by lia:_)) h

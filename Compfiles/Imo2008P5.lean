@@ -390,9 +390,9 @@ lemma lemma1 (α : Type) (A B : Set α) (hA : A.Finite) (hB : B.Finite)
     (n : Nat) (h1 : ∀ b, Set.ncard { a | f a = b } = n)
     : B.ncard * n = A.ncard := by
   classical
-  haveI hfa : Fintype {x // A x} := hA.fintype
-  haveI hfb : Fintype {x // B x} := hB.fintype
-  haveI : ∀ b, Fintype { a : {x // A x} // f a = b } := fun b =>
+  have hfa : Fintype {x // A x} := hA.fintype
+  have hfb : Fintype {x // B x} := hB.fintype
+  have : ∀ b, Fintype { a : {x // A x} // f a = b } := fun b =>
     have : Fintype { x // A x } := hfa; setFintype fun x ↦ f x = b
   have h2 : ∀ b, Fintype.card { a : {x // A x} // f a = b } = n := by
     intro b; rw [Fintype.card_eq_nat_card]; exact_mod_cast h1 b

@@ -76,7 +76,7 @@ structure Path (N : ℕ) where
 
 /-- The first monster on a path, or `none`. -/
 noncomputable def Path.firstMonster (p : Path N) (m : MonsterData N) : Option (Cell N) :=
-  letI := Classical.propDecidable
+  let := Classical.propDecidable
   p.cells.find? (fun x ↦ (x ∈ m.monsterCells : Bool))
 
 /-- A strategy, given the results of initial attempts, returns a path for the next attempt. -/

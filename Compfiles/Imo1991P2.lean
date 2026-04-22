@@ -82,7 +82,7 @@ problem imo1991_p2 (n : ℕ) (hn : 6 < n)
     constructor
     · exact Nat.coprime_one_left n
     · lia
-  haveI : NeZero k := { out := hk }
+  have : NeZero k := { out := hk }
   have ha : ∀ (i : ℕ) (hi : i < k), a ⟨i, hi⟩ = a 0 + i * d := by
     intro i hi
     induction' i with i' hi'

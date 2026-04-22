@@ -235,7 +235,7 @@ theorem Q_not_mem_CB : cfg.Q ∉ line[ℝ, cfg.C, cfg.B] := by
     rw [AffineSubspace.le_def'] at hQA₁
     exact hQA₁ _ cfg.sbtw_Q_A₁_Q₁.right_mem_affineSpan
   have hc : Collinear ℝ ({cfg.C, cfg.Q₁, cfg.Q} : Set Pt) :=
-    haveI hc' : Collinear ℝ ({cfg.B, cfg.C, cfg.Q₁, cfg.Q} : Set Pt) := by
+    have hc' : Collinear ℝ ({cfg.B, cfg.C, cfg.Q₁, cfg.Q} : Set Pt) := by
       rw [Set.insert_comm cfg.B, Set.insert_comm cfg.B, Set.pair_comm, Set.insert_comm cfg.C,
         Set.insert_comm cfg.C]
       exact collinear_insert_insert_of_mem_affineSpan_pair hQ₁ hQ
@@ -290,7 +290,7 @@ theorem A₁_ne_B : cfg.A₁ ≠ cfg.B := by
     rw [AffineSubspace.eq_iff_direction_eq_of_mem (left_mem_affineSpan_pair _ _ _)
       hwbtw.mem_affineSpan]
     exact cfg.PQ_parallel_AB.direction_eq
-  haveI := someOrientation V
+  have := someOrientation V
   have haQ : (2 : ℤ) • ∡ cfg.C cfg.B cfg.Q = (2 : ℤ) • ∡ cfg.C cfg.B cfg.A := by
     rw [Collinear.two_zsmul_oangle_eq_right _ cfg.A_ne_B cfg.Q_ne_B]
     rw [Set.pair_comm, Set.insert_comm]
@@ -401,7 +401,7 @@ end Oriented
 /- ### More obvious configuration properties -/
 
 theorem not_collinear_QPA₂ : ¬Collinear ℝ ({cfg.Q, cfg.P, cfg.A₂} : Set Pt) := by
-  haveI := someOrientation V
+  have := someOrientation V
   rw [collinear_iff_of_two_zsmul_oangle_eq cfg.two_zsmul_oangle_QPA₂_eq_two_zsmul_oangle_BAA₂, ←
     affineIndependent_iff_not_collinear_set]
   have h : Cospherical ({cfg.B, cfg.A, cfg.A₂} : Set Pt) := by
@@ -470,7 +470,7 @@ end Oriented
 /- ### Conclusions from that first angle chase -/
 
 theorem cospherical_QPB₂A₂ : Cospherical ({cfg.Q, cfg.P, cfg.B₂, cfg.A₂} : Set Pt) :=
-  haveI := someOrientation V
+  have := someOrientation V
   cospherical_of_two_zsmul_oangle_eq_of_not_collinear
     cfg.two_zsmul_oangle_QPA₂_eq_two_zsmul_oangle_QB₂A₂ cfg.not_collinear_QPA₂
 
@@ -519,13 +519,13 @@ end Oriented
 /- ### Conclusions from that second angle chase -/
 
 theorem not_collinear_CA₂A₁ : ¬Collinear ℝ ({cfg.C, cfg.A₂, cfg.A₁} : Set Pt) := by
-  haveI := someOrientation V
+  have := someOrientation V
   rw [collinear_iff_of_two_zsmul_oangle_eq cfg.two_zsmul_oangle_CA₂A₁_eq_two_zsmul_oangle_CBA,
     Set.pair_comm, Set.insert_comm, Set.pair_comm]
   exact cfg.not_collinear_ABC
 
 theorem cospherical_A₁Q₁CA₂ : Cospherical ({cfg.A₁, cfg.Q₁, cfg.C, cfg.A₂} : Set Pt) := by
-  haveI := someOrientation V
+  have := someOrientation V
   rw [Set.insert_comm cfg.Q₁, Set.insert_comm cfg.A₁, Set.pair_comm, Set.insert_comm cfg.A₁,
     Set.pair_comm]
   exact cospherical_of_two_zsmul_oangle_eq_of_not_collinear
@@ -557,7 +557,7 @@ end Oriented
 /- ### Conclusions from that third angle chase -/
 
 theorem Q₁_mem_ω : cfg.Q₁ ∈ cfg.ω :=
-  haveI := someOrientation V
+  have := someOrientation V
   Affine.Triangle.mem_circumsphere_of_two_zsmul_oangle_eq (by decide : (0 : Fin 3) ≠ 1)
     (by decide : (0 : Fin 3) ≠ 2) (by decide) cfg.two_zsmul_oangle_QQ₁A₂_eq_two_zsmul_oangle_QPA₂
 

@@ -781,7 +781,7 @@ problem imo2020_p4 (n : Set.Ioi 1) :
       rw [Fintype.card_fin, hA, pow_two]
       rw [Nat.mul_lt_mul_right (by lia)]
       lia
-    haveI : DecidableEq A.graph.ConnectedComponent := by
+    have : DecidableEq A.graph.ConnectedComponent := by
       intro a b
       use Classical.propDecidable _
     have h₁ := Fintype.exists_lt_card_fiber_of_mul_lt_card (fun v : Fin (n ^ 2) ↦ A.graph.connectedComponentMk v) h₁'

@@ -31,12 +31,12 @@ noncomputable abbrev d {n : ℕ} (a : Fin n → ℝ) (i : Fin n) :=
 problem imo2007_p1a {n : ℕ} (hn : 0 < n) (a x : Fin n → ℝ) (h : Monotone x) :
     (⨆ i, d a i) / 2 ≤ ⨆ i, |x i - a i| := by
   have h₁ : ∃ i : Fin n, d a i = ⨆ i, d a i:= by
-    haveI : Nonempty (Fin n) := Fin.pos_iff_nonempty.mp hn
+    have : Nonempty (Fin n) := Fin.pos_iff_nonempty.mp hn
     apply exists_eq_ciSup_of_finite
   rcases h₁ with ⟨i, hi⟩
   rw [←hi, d]
   have h₂ : ∃ j : {j // j ≤ i}, a j = ⨆ j : {j // j ≤ i}, a j:= by
-    haveI : Nonempty {j // j ≤ i} := by
+    have : Nonempty {j // j ≤ i} := by
       rw [nonempty_subtype]
       use i
     apply exists_eq_ciSup_of_finite
@@ -69,14 +69,14 @@ problem imo2007_p1a {n : ℕ} (hn : 0 < n) (a x : Fin n → ℝ) (h : Monotone x
 problem imo2007_p1b {n : ℕ} (hn : 0 < n) {a : Fin n → ℝ} :
     ∃ x : Fin n → ℝ, Monotone x ∧
       (⨆ i, d a i) / 2 = ⨆ i, |x i - a i| := by
-  haveI : Nonempty (Fin n) := Fin.pos_iff_nonempty.mp hn
+  have : Nonempty (Fin n) := Fin.pos_iff_nonempty.mp hn
   set d' := (⨆ i, d a i) / 2
   set x := fun (i: Fin n) ↦ (⨆ j : {j // j ≤ i}, a j) - d'
   use x
   have h : Monotone x := by
     intro i j i_le_j
     apply sub_le_sub_right
-    haveI : Nonempty {j // j ≤ i} := by
+    have : Nonempty {j // j ≤ i} := by
       rw [nonempty_subtype]
       use i
     rw [ciSup_le_iff (Finite.bddAbove_range fun (j : { j // j ≤ i }) ↦ a j)]
@@ -103,7 +103,7 @@ problem imo2007_p1b {n : ℕ} (hn : 0 < n) {a : Fin n → ℝ} :
           _ ≤ d' := by
               apply add_le_of_nonpos_right
               apply sub_nonpos_of_le
-              haveI : Nonempty {j // j ≤ i} := by
+              have : Nonempty {j // j ≤ i} := by
                 rw [nonempty_subtype]
                 use i
               exact Finite.le_ciSup (fun (j : { j // j ≤ i }) ↦ a j) ⟨i, le_rfl⟩
