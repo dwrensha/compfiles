@@ -3483,7 +3483,7 @@ noncomputable def construct_partition (k : ℕ) (hk : 2 ≤ k) [NeZero k]
     [DecidableEq (Matilda (k * k) (all_black_k k))] :
     Finset (Matilda (k * k) (all_black_k k)) :=
   let kz : ℤ := k
-  haveI : NeZero (k * k) := ⟨Nat.mul_ne_zero NeZero.out NeZero.out⟩
+  have : NeZero (k * k) := ⟨Nat.mul_ne_zero NeZero.out NeZero.out⟩
   let valid_indices := (Icc 0 kz ×ˢ Icc 0 kz) \
                        {(0, 0), (kz, 0), (0, kz), (kz, kz)}
   let P_list := valid_indices.toList.filterMap (fun x =>
@@ -3643,11 +3643,11 @@ private lemma sqrt_kk (k : ℕ) :
 
 theorem matilda_solution_general (k : ℕ) (hk : 2 ≤ k) :
     let n := k * k
-    haveI : NeZero n := ⟨by positivity⟩
+    have : NeZero n := ⟨by positivity⟩
     IsMinMatildaCount n (k^2 + 2 * k - 3) := by
   intro n
   let m_ans := k^2 + 2 * k - 3
-  haveI : NeZero n := ⟨by positivity⟩
+  have : NeZero n := ⟨by positivity⟩
   dsimp [IsMinMatildaCount]
   constructor
   · intro all_black partition h_valid
@@ -3655,8 +3655,8 @@ theorem matilda_solution_general (k : ℕ) (hk : 2 ≤ k) :
     have h_raw := matilda_lower_bound h_card h_row h_col partition h_part
     rw [sqrt_kk k] at h_raw
     exact h_raw
-  · haveI : NeZero k := ⟨by positivity⟩
-    letI : DecidableEq (Matilda (k * k) (all_black_k k)) := Classical.decEq _
+  · have : NeZero k := ⟨by positivity⟩
+    let : DecidableEq (Matilda (k * k) (all_black_k k)) := Classical.decEq _
     let P := construct_partition k hk
     exists (all_black_k k), P
     constructor
