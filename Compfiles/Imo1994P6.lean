@@ -59,7 +59,7 @@ lemma minFac_prod_primes {S : Set ℕ} (k i : ℕ) (f : ℕ ≃o S)
   · -- minFac is prime and divides the product, so it divides some prime factor
     have hmf_prime := Nat.minFac_prime hprod_ne_one
     obtain ⟨a, ha_mem, hmf_dvd_a⟩ :=
-      (hmf_prime.prime.dvd_finset_prod_iff _).mp (Nat.minFac_dvd _)
+      (hmf_prime.prime.dvd_finsetProd_iff _).mp (Nat.minFac_dvd _)
     -- Since both minFac and a.val are prime, minFac = a.val
     have : (∏ p ∈ Sf, (p : ℕ)).minFac = a.val := by
       cases (hS a.val a.prop).eq_one_or_self_of_dvd _ hmf_dvd_a with
