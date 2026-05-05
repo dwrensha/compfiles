@@ -675,7 +675,7 @@ lemma not_colinear (L : AffSubOfPlane) (M a b c : ℝ) :
       _ = (b - a) * (M - c) + a * (M - b) := by linarith
       _ > (b - a) * (M - c) + a * (b - b) := by gcongr
       _ = (b - a) * (M - c) := by simp
-      _ ≥ (a - a) * (M - c) := by gcongr; linarith
+      _ ≥ (a - a) * (M - c) := by gcongr
       _ = 0 := by simp
     linarith
 

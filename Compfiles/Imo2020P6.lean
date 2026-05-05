@@ -171,9 +171,10 @@ theorem exists_affine_between_and_separated {ι : Type*} (S : Finset ι) (f : ι
   calc
     _ ≤ ‖a -ᵥ b‖ * ((j - i) / (2 * ↑(⌊n - 1⌋₊ + 1))) := by
       gcongr
-      · linarith only [hij]
-      · push_cast; rw [← le_sub_iff_add_le]
-        refine Nat.floor_le (by grw [← hS]; simp)
+      push_cast; rw [← le_sub_iff_add_le]
+      refine Nat.floor_le ?_
+      grw [← hS]
+      simp
     _ ≤ |x * ‖a -ᵥ b‖ - ⟪a -ᵥ b, a -ᵥ f p⟫| := hx
     _ = |⟪a -ᵥ b, f p -ᵥ (AffineMap.lineMap a b) (x / ‖a -ᵥ b‖)⟫| := by
       congr 1
