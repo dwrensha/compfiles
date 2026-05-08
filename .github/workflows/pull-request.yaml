@@ -21,7 +21,7 @@ jobs:
 
       - name: restore build cache
         id: restore-build-cache
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v5
         with:
           path: .lake
           key: build-${{ hashFiles('lakefile.toml', 'lake-manifest.json', 'lean-toolchain') }}
