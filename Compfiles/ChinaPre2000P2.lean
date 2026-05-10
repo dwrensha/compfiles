@@ -10,7 +10,7 @@ import ProblemExtraction
 problem_file { tags := [.NumberTheory] }
 
 /-!
-# China Mathematical Olympiad 2000, Second Round, Problem 2
+# China Pre-CMO (National High School Math League, Second Round) 2000, Problem 2
 
 Define the sequences `a_n` and `b_n` for `n ≥ 0` by
 `a_0 = 1`, `a_1 = 4`, `a_2 = 49`, and for `n ≥ 0`:
@@ -19,7 +19,7 @@ Define the sequences `a_n` and `b_n` for `n ≥ 0` by
 Prove that for any non-negative integer `n`, `a_n` is a perfect square.
 -/
 
-namespace Cmo2000P2
+namespace ChinaPre2000P2
 
 snip begin
 
@@ -61,4 +61,4 @@ problem cmo2000_p2 (a b : ℕ → ℤ) (ha0 : a 0 = 1) (ha1 : a 1 = 4) (ha2 : a 
       mul_comm (b m) 3, ihb, add_comm 1 m, c_sq_identity m]; ring
   intro n; use c n; exact this n |>.left
 
-end Cmo2000P2
+end ChinaPre2000P2

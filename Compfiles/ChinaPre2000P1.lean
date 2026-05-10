@@ -14,7 +14,7 @@ import Mathlib.Geometry.Euclidean.Sphere.Power
 problem_file { tags := [.Geometry] }
 
 /-!
-# China Mathematical Olympiad 2000, Problem 1
+# China Pre-CMO (National High School Math League, Second Round) 2000, Problem 1
 
 In acute-angled triangle `ABC`, `E`, `F` are on the side `BC`, such that
 `∠BAE = ∠CAF`, and let `M`, `N` be the projections of `F` onto
@@ -35,7 +35,7 @@ variable [NormedAddCommGroup V] [InnerProductSpace ℝ V] [MetricSpace Pt]
 
 variable [NormedAddTorsor V Pt]
 
-namespace Cmo2000P1
+namespace ChinaPre2000P1
 
 /-- Area of triangle `XYZ` via the formula `½·|v||w|·sin θ`,
 where `v = Y-X`, `w = Z-X`. -/
@@ -789,4 +789,4 @@ problem cmo2000_p1
     h_MAD_BAE, h_BAE_CAF, h_NAF_CAF, h_DAN_EAC, h_MAF_EAC
   ]; ring
 
-end Cmo2000P1
+end ChinaPre2000P1
