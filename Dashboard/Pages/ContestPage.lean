@@ -29,7 +29,7 @@ variable {idxType subIdxType : Type} [Ord idxType] [Ord subIdxType]
 def problemTable (c : Contest idxType subIdxType) (config : SConfig)
   (mds : Lean.NameMap ProblemMeta)
   (fmtIdx : idxType → String) (fmtSubIdx : subIdxType → String)
-  : Html := .table [cls "full-problem-grid"] <| c.mergeNeighbors.map
+  : Html := .table [cls "full-problem-grid"] <| c.mergeNeighbors.reverse.map
   fun ⟨idx, l⟩ ↦ .tr [] <| .td [cls "year"] (fmtIdx idx) :: l.map
   fun subIdx ↦
     let name := c.toName idx subIdx

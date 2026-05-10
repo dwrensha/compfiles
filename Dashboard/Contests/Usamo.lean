@@ -1,4 +1,5 @@
 import Dashboard.Models.Contests
+import Dashboard.Pages.ContestPage
 import Dashboard.Pages.ProblemPage
 import SSG.Html
 import SSG.Tags
@@ -48,7 +49,9 @@ public def usamoContest : Contest Nat Nat := {
 }
 
 public def Usamo.genAll (config : SConfig)
-  (mdsRef : IO.Ref <| Lean.NameMap ProblemMeta) : IO <| List Page := do
+  (mds : Lean.NameMap ProblemMeta) : IO <| List Page := do
   let mut pages := []
-  pages := pages ++ (← usamoContest.generateProblems config mdsRef)
+  pages := pages ++ (← usamoContest.generateProblems config mds)
+  pages := (← usamoContest.generate config
+    "usamo.html" .usamo mds (s!"{·}") (s!"P{·}")) :: pages
   return pages

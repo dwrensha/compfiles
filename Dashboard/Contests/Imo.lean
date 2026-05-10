@@ -1,4 +1,5 @@
 import Dashboard.Models.Contests
+import Dashboard.Pages.ContestPage
 import Dashboard.Pages.ProblemPage
 import SSG.Html
 import SSG.Tags
@@ -65,7 +66,9 @@ public def imoContest : Contest Nat Nat := {
 }
 
 public def Imo.genAll (config : SConfig)
-  (mdsRef : IO.Ref <| Lean.NameMap ProblemMeta) : IO <| List Page := do
+  (mds : Lean.NameMap ProblemMeta) : IO <| List Page := do
   let mut pages := []
-  pages := pages ++ (← imoContest.generateProblems config mdsRef)
+  pages := pages ++ (← imoContest.generateProblems config mds)
+  pages := (← imoContest.generate config
+    "imo.html" .imo mds (s!"{·}") (s!"P{·}")) :: pages
   return pages

@@ -74,7 +74,7 @@ def writeups (p : ProblemInfo C) : List Html :=
 def Problem.generateStub (p : ProblemInfo C) : List Html := [
   .h2 [] [.text <| p.leanName.toString.dropPrefix "Compfiles." |>.toString],
   .p [] [.text "This problem has not been formalized yet!"],
-  .p [] [.text "To add a formalization of it, submit a pull request to the",
+  .p [] [.text "To add a formalization of it, submit a pull request to the ",
     .a "https://github.com/dwrensha/compfiles" [cls "external"]
       [.text "Compfiles Github repository"]],
 ] ++ (let writeupLinks := C.externalUrls p.idx p.subIdx
@@ -125,7 +125,7 @@ namespace Contest
 
 def generateProblems {idxType subIdxType : Type} [Ord idxType] [Ord subIdxType]
   (c : Contest idxType subIdxType) (config : SConfig)
-  (mdsRef : IO.Ref <| Lean.NameMap ProblemMeta)
+  (mds : Lean.NameMap ProblemMeta)
   : IO <| List Page := do
   IO.println s!"Collecting contest: {c.fullName}"
   let mut pages : List Page := []
@@ -134,7 +134,7 @@ def generateProblems {idxType subIdxType : Type} [Ord idxType] [Ord subIdxType]
     let info : ProblemInfo c := {
       idx := idx
       subIdx := subIdx
-      detail := ← mdsRef.modifyGet fun m => (m.find? name, m.erase name)
+      detail := mds.get? name
     }
     pages := pages ++ (← Problem.generate config info)
   return pages
