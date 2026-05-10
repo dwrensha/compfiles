@@ -20,6 +20,12 @@ git = "https://github.com/dwrensha/tryAtEachStep"
 rev = "main"
 
 [[lean_lib]]
+name = "SSG"
+
+[[lean_lib]]
+name = "Dashboard"
+
+[[lean_lib]]
 name = "ProblemExtraction"
 
 [[lean_lib]]
