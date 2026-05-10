@@ -8,7 +8,6 @@ import Dashboard.Contests.Usamo
 import Dashboard.Models.Contests
 import Dashboard.Pages.All
 import Dashboard.Pages.Index
-import Dashboard.Pages.ContestPage
 import ProblemExtraction
 import SSG.Core
 
@@ -74,13 +73,8 @@ unsafe def generateAll (config : SConfig) : IO (List Page) := do
     pure ()
   mdsArray := mdsArray.qsort fun n₁ n₂ ↦ n₁.1.toString < n₂.1.toString
   allPages := (← All.generate config numProved mdsArray) :: allPages
-  let mdsRef ← IO.mkRef mds
-  allPages := allPages ++ (← Imo.genAll config mdsRef)
-  allPages := (← imoContest.generate config
-    "imo.html" .imo mds (s!"{·}") (s!"P{·}")) :: allPages
-  allPages := allPages ++ (← Usamo.genAll config mdsRef)
-  allPages := (← usamoContest.generate config
-    "usamo.html" .imo mds (s!"{·}") (s!"P{·}")) :: allPages
+  allPages := allPages ++ (← Imo.genAll config mds)
+  allPages := allPages ++ (← Usamo.genAll config mds)
   allPages := (← Index.generate config tagFormalizedCounts
     tagSolvedCounts numProved mds) :: allPages
   return allPages
