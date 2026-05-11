@@ -333,8 +333,7 @@ problem imo1974_p3
     exact Nat.modEq_zero_iff_dvd.mpr hc₀
   simp at hc₁
   have h₅: a ^ 2 < b ^ 2 * 8 := by
-    have h₅₀: 0 < 7 ^ (2 * n + 1) := by
-      exact Nat.pow_pos (by norm_num)
+    have h₅₀: 0 < 7 ^ (2 * n + 1) := by positivity
     rw [h₃] at h₅₀
     exact Nat.lt_of_sub_pos h₅₀
   obtain h₄₀ | h₄₁ := h₄
