@@ -114,7 +114,7 @@ problem bulgaria1998_p1 : IsLeast { m | all_colorings_are_good m } solution_valu
   · rw [Set.mem_setOf_eq]
     refine ⟨by norm_num, fun color => of_check9 color ?_⟩
     revert color
-    set_option maxRecDepth 4000 in decide
+    decide +kernel
   · rw [mem_lowerBounds]
     intro n hn
     rw [Set.mem_setOf_eq] at hn
