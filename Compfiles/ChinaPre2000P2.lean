@@ -12,6 +12,12 @@ problem_file { tags := [.NumberTheory] }
 /-!
 # China Pre-CMO (National High School Math League, Second Round) 2000, Problem 2
 
+设数列 {aₙ} 和 {bₙ} 满足 a₀ = 1, b₀ = 0，且
+  ⎧ aₙ₊₁ = 7aₙ + 6bₙ − 3
+  ⎨
+  ⎩ bₙ₊₁ = 8aₙ + 7bₙ − 4  , n = 0,1,2,…
+证明：aₙ（n = 0,1,2,…）是完全平方数。
+
 Define the sequences `a_n` and `b_n` for `n ≥ 0` by
 `a_0 = 1`, `a_1 = 4`, `a_2 = 49`, and for `n ≥ 0`:
 `a_{n+1} = 7a_n + 6b_n - 3`,
