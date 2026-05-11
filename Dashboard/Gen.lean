@@ -3,7 +3,9 @@ import Lean.Meta.Basic
 
 import Dashboard.Common
 import Dashboard.Components.Base
+import Dashboard.Contests.Cmo
 import Dashboard.Contests.Imo
+import Dashboard.Contests.PreCmo
 import Dashboard.Contests.Usamo
 import Dashboard.Models.Contests
 import Dashboard.Pages.All
@@ -75,6 +77,8 @@ unsafe def generateAll (config : SConfig) : IO (List Page) := do
   allPages := (← All.generate config numProved mdsArray) :: allPages
   allPages := allPages ++ (← Imo.genAll config mds)
   allPages := allPages ++ (← Usamo.genAll config mds)
+  allPages := allPages ++ (← Cmo.genAll config mds)
+  allPages := allPages ++ (← PreCmo.genAll config mds)
   allPages := (← Index.generate config tagFormalizedCounts
     tagSolvedCounts numProved mds) :: allPages
   return allPages

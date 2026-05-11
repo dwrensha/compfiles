@@ -40,7 +40,7 @@ def allUsamoUrls (year : Nat) (idx : Nat) : List WriteupLink := Id.run do
 public def usamoContest : Contest Nat Nat := {
   fullName := "USAMO"
   problems := fromCounts usamoProblemCounts
-  toName := fun year num => s!"Compfiles.Usa{year}P{num}".toName
+  toName := fun year num ↦ s!"Compfiles.Usa{year}P{num}".toName
   externalUrls := allUsamoUrls
   desc := fun n ↦ [Html.p [] [
     "Since 1972, the USA Mathematical Olympiad has included a total of ",
