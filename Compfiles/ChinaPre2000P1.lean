@@ -736,7 +736,7 @@ lemma helper_ABACeqADAF {A B C D E F : Pt}
 
 snip end
 
-problem cmo2000_p1
+problem chinaPre2000_p1
   [Fact (finrank ℝ V = 2)] [Oriented ℝ V (Fin 2)]
   (A B C E F M N D : Pt)
   (h_tri : AffineIndependent ℝ ![A, B, C])

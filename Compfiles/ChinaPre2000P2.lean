@@ -44,7 +44,8 @@ lemma c_sq_identity (n : ℕ) : c (n + 1) ^ 2 = 4 * c (n + 1) * c n - c n ^ 2 - 
 
 snip end
 
-problem cmo2000_p2 (a b : ℕ → ℤ) (ha0 : a 0 = 1) (ha1 : a 1 = 4) (ha2 : a 2 = 49)
+problem chinaPre2000_p2 (a b : ℕ → ℤ) (ha0 : a 0 = 1)
+  (ha1 : a 1 = 4) (ha2 : a 2 = 49)
   (ha_rec : ∀ n, a (n + 1) = 7 * a n + 6 * b n - 3)
   (hb_rec : ∀ n, b (n + 1) = 8 * a n + 7 * b n - 4)
   : ∀ n, ∃ k : ℤ, a n = k ^ 2 := by
