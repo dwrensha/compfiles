@@ -85,8 +85,8 @@ theorem isTerminalWalk_map {V V' : Type} {G : SimpleGraph V} {G' : SimpleGraph V
     isTerminalWalk w → isTerminalWalk (w.map f.toHom) := by
   unfold isTerminalWalk
   intro h
-  set_option backward.isDefEq.respectTransparency false in
-  simp
+  simp only [RelHom.coeFn_mk, Function.Embedding.toFun_eq_coe,
+    RelEmbedding.coe_toEmbedding, Walk.support_map]
   contrapose! h
   rw [List.dropLast_eq_take, List.mem_take_iff_getElem] at h ⊢
   simp only [List.getElem_map, EmbeddingLike.apply_eq_iff_eq] at h
