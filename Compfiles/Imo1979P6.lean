@@ -133,16 +133,14 @@ def C_G_symm (n : ℕ) : {w : Octagon.Walk C E // isTerminalWalk w ∧ w.length 
     · apply isTerminalWalk_copy
       apply isTerminalWalk_map
       exact h.left
-    · set_option backward.isDefEq.respectTransparency false in
-      simp [h.right]
+    · simp [h.right]
   }⟩
   invFun := fun ⟨w, h⟩ => ⟨(w.map Octagon.mirror.toHom).copy (by decide) (by decide), by {
     and_intros
     · apply isTerminalWalk_copy
       apply isTerminalWalk_map
       exact h.left
-    · set_option backward.isDefEq.respectTransparency false in
-      simp [h.right]
+    · simp [h.right]
   }⟩
   left_inv := fun ⟨w, h⟩ => by
     set_option backward.isDefEq.respectTransparency false in
