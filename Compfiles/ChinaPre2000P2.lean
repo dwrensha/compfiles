@@ -1,5 +1,5 @@
 /-
-Copyright (c) 2025 The Compfiles Contributors. All rights reserved.
+Copyright (c) 2026 The Compfiles Contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: sjfhsjfh & deepseek-v4-pro@claude-code
 -/
