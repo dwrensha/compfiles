@@ -7,6 +7,7 @@ import Compfiles.Bulgaria1998P11
 import Compfiles.CIIM2022P6
 import Compfiles.ChinaPre2000P1
 import Compfiles.ChinaPre2000P2
+import Compfiles.ChinaPre2000P3
 import Compfiles.Canada1998P3
 import Compfiles.Canada1998P5
 import Compfiles.Egmo2023P1
