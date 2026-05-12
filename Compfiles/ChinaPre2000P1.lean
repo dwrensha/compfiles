@@ -16,7 +16,7 @@ problem_file { tags := [.Geometry] }
 /-!
 # China Pre-CMO (National High School Math League, Second Round) 2000, Problem 1
 
-如图，在锐角三角形 ABC 的 BC 边上有两点 E, F，满足
+在锐角三角形 ABC 的 BC 边上有两点 E, F，满足
 ∠BAE = ∠CAF，作 FM ⟂ AB, FN ⟂ AC（M, N 为垂足），
 延长 AE 交 △ABC 的外接圆于 D 点。
 证明：四边形 AMDN 与 △ABC 的面积相等。
