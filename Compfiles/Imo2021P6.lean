@@ -4,8 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: David Renshaw, Markus Rydh
 -/
 
-import Mathlib.Tactic
-import Mathlib.NumberTheory.SiegelsLemma
+import Mathlib
 
 import ProblemExtraction
 
