@@ -19,7 +19,7 @@ def cmoProblemCounts : List (Nat × Nat) := [
 public def cmoContest : Contest Nat Nat := {
   fullName := "CMO"
   problems := fromCounts cmoProblemCounts
-  toName := fun year num ↦ s!"Compfiles.Cmo{year}P{num}".toName
+  toName := fun year num ↦ s!"Compfiles.China{year}P{num}".toName
   externalUrls := fun _ _ ↦ []
   desc := fun n ↦ [Html.p [] [
     "The China Mathematical Olympiad (CMO) has included a total of ",
