@@ -3,10 +3,10 @@ Copyright (c) 2026 The Compfiles Contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: sjfhsjfh
 -/
+import Mathlib.Algebra.Order.Archimedean.Basic
 import Mathlib.Algebra.Polynomial.Basic
 import Mathlib.Analysis.InnerProductSpace.Basic
 import Mathlib.Analysis.Real.Pi.Irrational
-import Mathlib.Analysis.SpecialFunctions.Complex.Arg
 import Mathlib.Data.Complex.Basic
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Real.Basic
@@ -96,29 +96,25 @@ lemma existsTheta (P : Polynomial ℂ) (hP : P ≠ 0) (hP' : ¬ IsUnit P)
   · use 0; simp [apos.le, h]
   have := InnerProductGeometry.inner_eq_zero_iff_angle_eq_pi_div_two _ _ |>.mpr h
   simp [sub_eq_zero] at this
-  use 1 / 41; simp; refine ⟨?_, ?_⟩
-  · refine (le_div_iff₀' Nat.ofNat_pos).mpr ?_
-    simp only [ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, mul_inv_cancel₀]
-    exact le_trans one_le_two Real.two_le_pi
+  obtain ⟨q, ⟨hql, hqr⟩⟩ := exists_rat_btwn apos; use q; simp [hql.le, hqr.le]
   rewrite [InnerProductGeometry.inner_eq_zero_iff_angle_eq_pi_div_two _ _ |>.symm.not,
-    mul_assoc, mul_comm I _, ← mul_assoc, mul_comm 41⁻¹ _, ← div_eq_mul_inv,
-    ← ofReal_ofNat, ← ofReal_natCast, ← ofReal_div, ← Rat.cast_natCast, ← Rat.cast_ofNat,
-    ← Rat.cast_div, exp_mul_I]; set q : ℚ := n / 41
+    mul_assoc, mul_comm I _, ← mul_assoc, ← ofReal_natCast, ← Rat.cast_natCast,
+    ← ofReal_ratCast, ← ofReal_mul, ← Rat.cast_mul, ofReal_ratCast, exp_mul_I]
+  set q' : ℚ := q * n
   simp [this, mul_add, sub_eq_add_neg]
-  simp only [← ofReal_ratCast, ← ofReal_sin, ← ofReal_cos, ofReal_im, ofReal_re]
-  simp only [mul_zero, neg_zero, add_zero, zero_add]
+  simp only [← ofReal_ratCast, ← ofReal_sin, ← ofReal_cos, ofReal_im, ofReal_re,
+    mul_zero, neg_zero, add_zero, zero_add]
   rewrite [add_comm (_ + _), add_assoc, ← add_assoc _ _ (-_), neg_add_cancel, zero_add,
     add_self_eq_zero, neg_eq_zero, ← ne_eq, mul_ne_zero_iff]; refine ⟨?_, ?_⟩
   · by_contra h; absurd hc; refine Complex.ext_iff.mpr ?_
     rewrite [this, h]; simp only [zero_re, zero_im, and_self]
   refine Real.sin_ne_zero_iff.mpr ?_; intro m
   by_cases! hm : m = 0
-  · by_contra! h; subst hm; simp [q] at h
-    have := div_eq_zero_iff.mp h.symm |>.resolve_right Nat.ofNat_pos.ne.symm
-    simp only [Nat.cast_eq_zero] at this; simp only [this, lt_self_iff_false] at hn
+  · by_contra! h; subst hm; simp [q'] at h
+    have := h.resolve_right hn.ne'; subst this; simp at hql
   rewrite [ne_eq, mul_comm, ← div_eq_iff_mul_eq <| Int.cast_ne_zero.mpr hm,
     show (↑m : ℝ) = ↑(↑m : ℚ) by exact Real.ext_cauchy rfl, ← Rat.cast_div, Eq.comm]
-  exact Irrational.ne_rat irrational_pi (q / ↑m)
+  exact Irrational.ne_rat irrational_pi (q' / ↑m)
 
 lemma existsQ (P : Polynomial ℂ) (hPne : ∀ (r : ℂ), r.re = r.im → P ≠ C r)
   : ∃ Q : Polynomial ℝ, ∃ f : ℝ → ℂ, (∀ r ≥ 0, f r ∈ A) ∧ Q.degree = P.degree
