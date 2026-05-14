@@ -294,9 +294,7 @@ def PRat.mk_mul_hom_fun (g : ℕ → ℚ+) : ℚ+ →* ℚ+ := {
         · rw [Int.ediv_mul_cancel hd]
           rw [<-(@Int.eq_natCast_toNat _).mpr ?_]
           exact Int.le_of_lt apos
-        · refine (Int.ediv_nonneg_iff_of_pos ?_).mpr ?_
-          · exact Int.natCast_pos.mpr h2
-          · exact Int.le_of_lt apos
+        · positivity
       rw [this]
       · congr
         refine Int.toNat_mul ?_ ?_ <;> {

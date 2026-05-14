@@ -85,8 +85,8 @@ theorem isTerminalWalk_map {V V' : Type} {G : SimpleGraph V} {G' : SimpleGraph V
     isTerminalWalk w → isTerminalWalk (w.map f.toHom) := by
   unfold isTerminalWalk
   intro h
-  set_option backward.isDefEq.respectTransparency false in
-  simp
+  simp only [RelHom.coeFn_mk, Function.Embedding.toFun_eq_coe,
+    RelEmbedding.coe_toEmbedding, Walk.support_map]
   contrapose! h
   rw [List.dropLast_eq_take, List.mem_take_iff_getElem] at h ⊢
   simp only [List.getElem_map, EmbeddingLike.apply_eq_iff_eq] at h
@@ -133,16 +133,14 @@ def C_G_symm (n : ℕ) : {w : Octagon.Walk C E // isTerminalWalk w ∧ w.length 
     · apply isTerminalWalk_copy
       apply isTerminalWalk_map
       exact h.left
-    · set_option backward.isDefEq.respectTransparency false in
-      simp [h.right]
+    · simp [h.right]
   }⟩
   invFun := fun ⟨w, h⟩ => ⟨(w.map Octagon.mirror.toHom).copy (by decide) (by decide), by {
     and_intros
     · apply isTerminalWalk_copy
       apply isTerminalWalk_map
       exact h.left
-    · set_option backward.isDefEq.respectTransparency false in
-      simp [h.right]
+    · simp [h.right]
   }⟩
   left_inv := fun ⟨w, h⟩ => by
     set_option backward.isDefEq.respectTransparency false in
