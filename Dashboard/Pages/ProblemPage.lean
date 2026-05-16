@@ -99,9 +99,11 @@ def Problem.generate (config : SConfig) (p : ProblemInfo C) : IO (List Page) := 
     (currentPage := .none) (includeHljs := true) <| [
       .h2 [] probId,
       .pre [cls "problem"] [.code [cls "language-lean"] detail.problemSrc],
-    ] ++ if ¬ metadata.authors.isEmpty then [
+    ]
+    ++ (if ¬ metadata.authors.isEmpty then [
       .p [cls "authors"] [s!"File author(s): {", ".intercalate metadata.authors}"],
-    ] else [] ++ [
+    ] else [])
+    ++ [
       .p [] ["This problem ", .a (solutionUrl probId) [cls "external"] <|
         if detail.proved then
           "has a complete formalized solution"
