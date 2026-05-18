@@ -22,7 +22,7 @@ def problemImports (m : ProblemExtraction.ProblemFileMetadata) : List Html :=
               "/".intercalate (repo :: rest)
             | _ => url
       else url
-    [.p [] "The problem was imported from ", .a url [cls "external"] text, "."]
+    [.p [] ["The problem was imported from ", .a url [cls "external"] text, "."]]
   else []
 
 def solutionImports (m : ProblemExtraction.ProblemFileMetadata) : List Html :=
@@ -35,12 +35,13 @@ def solutionImports (m : ProblemExtraction.ProblemFileMetadata) : List Html :=
               "/".intercalate (repo :: rest)
             | _ => url
       else url
-    [.p [] "The solution was imported from ", .a url [cls "external"] text, "."]
+    [.p [] ["The solution was imported from ", .a url [cls "external"] text, "."]]
   else []
 
 def videos (m : ProblemExtraction.ProblemFileMetadata) : List Html :=
   if m.videos.length > 0 then
-    [.div [] ["Video", .ul [cls "video-links"] <| m.videos.map fun v ↦ .a v [] v]]
+    [.div [] ["Video: ", .ul [cls "video-links"] <|
+      m.videos.map fun v ↦ .li [] [.a v [] v]]]
   else []
 
 variable {idxType subIdxType : Type} [Ord idxType] [Ord subIdxType]
