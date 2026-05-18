@@ -86,11 +86,11 @@ def ProblemTag.toNat (t : ProblemTag) : Nat := match t with
 
 instance : ToString ProblemTag where
   toString := fun p => match p with
-    | .Geometry => "geometry"
-    | .Inequality => "inequality"
-    | .Combinatorics => "combinatorics"
-    | .NumberTheory => "number theory"
-    | .Algebra => "algebra"
+    | .Geometry => "Geometry"
+    | .Inequality => "Inequality"
+    | .Combinatorics => "Combinatorics"
+    | .NumberTheory => "Number Theory"
+    | .Algebra => "Algebra"
 
 structure ProblemFileMetadata where
   tags : List ProblemTag := []
