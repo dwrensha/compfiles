@@ -69,8 +69,8 @@ theorem val_le_2n (k : Finset.Icc 1 (2 * n)) : k.val ≤ 2*n := by grind
 def partial_cycle (k : Finset.Icc 1 (2 * n)) : Perm $ Perm $ Finset.Icc 1 (2 * n) where
   toFun x := (perm_fin_equiv n).symm ((perm_fin_equiv n) x * Fin.cycleRange (fin_equiv n k))
   invFun x := (perm_fin_equiv n).symm ((perm_fin_equiv n) x * (Fin.cycleRange (fin_equiv n k)).symm)
-  left_inv x := by simp [mul_assoc]
-  right_inv x := by simp [mul_assoc]
+  left_inv x := by simp [mul_assoc, push_end]
+  right_inv x := by simp [mul_assoc, push_end]
 
 theorem partial_cycle.apply_of_eq [NeZero n] (x : Perm $ Finset.Icc 1 (2 * n)) (k i : Finset.Icc 1 (2 * n)) (h : i = k)
     : (partial_cycle n k x) i = x 1 := by
