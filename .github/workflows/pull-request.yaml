@@ -57,10 +57,14 @@ jobs:
           result_run1=$?
           echo "Complete at $(date +'%T'); return value $result_run1"
 
+      - name: Setup Pages
+        id: pages
+        uses: actions/configure-pages@v6
+
       - name: run buildWebpage
         id: run-buildWebpage
         env:
-          GITHUB_PAGES_BASEURL: https://dwrensha.github.io/compfiles/
+          GITHUB_PAGES_BASEURL: ${{ steps.pages.outputs.base_url }}
         run: |
           set -o pipefail
           echo "Starting build at $(date +'%T')"

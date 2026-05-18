@@ -196,9 +196,14 @@ def extractModuleDoc (env : Environment) (m : Name) : String :=
   | some mda => String.join (mda.toList.map ModuleDoc.doc)
   | _ => ""
 
+def ensureTrailingSlash (s : String) : String :=
+  if s.endsWith "/"
+  then s
+  else s ++ "/"
+
 def getBaseUrl : IO String := do
   let cwd ← IO.currentDir
-  pure ((← IO.getEnv "GITHUB_PAGES_BASEURL").getD s!"file://{cwd}/_site/")
+  pure <| ensureTrailingSlash ((← IO.getEnv "GITHUB_PAGES_BASEURL").getD s!"file://{cwd}/_site/")
 
 def htmlHeader (title : String) (includeHljs : Bool := false) : IO String := do
   let baseurl ← getBaseUrl
@@ -517,8 +522,8 @@ unsafe def main (_args : List String) : IO Unit := do
     h.putStr "<div class=\"toplevel-tables\"><table class=\"toplevel-olympiad-stats\">"
     h.putStr "<thead><tr><th></th><th title=\"This total includes problems not added to Compfiles.\">Total</th><th>Formalized</th><th>Solved</th></tr></thead>"
     h.putStr "<tbody>"
-    h.putStr s!"<tr><th><a href=\"imo.html\">IMO</a></th><td>{totalImoProblemCount}</td><td>{imoFormalizedCount}</td><td>{imoSolvedCount}</td></tr>"
-    h.putStr s!"<tr><th><a href=\"usamo.html\">USAMO</a></th><td>{totalUsamoProblemCount}</td><td>{usamoFormalizedCount}</td><td>{usamoSolvedCount}</td></tr>"
+    h.putStr s!"<tr><th><a href=\"{←getBaseUrl}imo.html\">IMO</a></th><td>{totalImoProblemCount}</td><td>{imoFormalizedCount}</td><td>{imoSolvedCount}</td></tr>"
+    h.putStr s!"<tr><th><a href=\"{←getBaseUrl}usamo.html\">USAMO</a></th><td>{totalUsamoProblemCount}</td><td>{usamoFormalizedCount}</td><td>{usamoSolvedCount}</td></tr>"
     h.putStr "</tbody>"
     h.putStr "</table>"
 
