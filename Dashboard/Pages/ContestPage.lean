@@ -36,7 +36,7 @@ def problemTable (c : Contest idxType subIdxType) (config : SConfig)
     let stateCls := match mds.find? name with
     | .some detail => if detail.proved then "proved" else "formalized"
     | .none => "todo"
-    .td [cls stateCls] [.a (config.resolveRel ["problems", s!"{name}.html"]) []
+    .td [cls stateCls] [.a (config.resolveAbs ["problems", s!"{name}.html"]) []
       <| fmtSubIdx subIdx]
 
 def generate (c : Contest idxType subIdxType)

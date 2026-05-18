@@ -106,7 +106,7 @@ def faq (config : SConfig) : List Html := [
     .a "https://github.com/dwrensha/compfiles/blob/16ce9a86e9e1c147482b264a6bbdbd4cd605a93e/Compfiles/Imo2015P5.lean#L25"
       [] ["in the source code"],
     " and ",
-    .a (config.resolveRel ["problems/Compfiles.Imo2015P5.html"])
+    .a (config.resolveAbs ["problems/Compfiles.Imo2015P5.html"])
       [] ["on the rendered webpage"],
     ", and you can see its definition ",
     .a "https://github.com/dwrensha/compfiles/blob/16ce9a86e9e1c147482b264a6bbdbd4cd605a93e/ProblemExtraction.lean#L245-L252"
@@ -135,7 +135,7 @@ def Index.generate (config : SConfig)
       ],
       .p [] [
         "So far, ",
-        .a (config.resolveRel ["all.html"]) [] [
+        .a (config.resolveAbs ["all.html"]) [] [
           .b [] s!"{mds.size}", " problems and ",
           .b [] s!"{numProved}", " solutions",
         ],

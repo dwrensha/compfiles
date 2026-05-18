@@ -21,9 +21,9 @@ def navbar (config : SConfig) (currentPage : NavbarState) : List Html := [
     ": Catalog Of Math Problems Formalized In Lean",
   ],
   .div [cls "navbar"] [
-    renderTab "About" (config.resolveRel ["index.html"]) (currentPage == .about),
-    renderTab "IMO" (config.resolveRel ["imo.html"]) (currentPage == .imo),
-    renderTab "USAMO" (config.resolveRel ["usamo.html"]) (currentPage == .usamo),
-    renderTab "All" (config.resolveRel ["all.html"]) (currentPage == .all),
+    renderTab "About" (config.resolveAbs ["index.html"]) (currentPage == .about),
+    renderTab "IMO" (config.resolveAbs ["imo.html"]) (currentPage == .imo),
+    renderTab "USAMO" (config.resolveAbs ["usamo.html"]) (currentPage == .usamo),
+    renderTab "All" (config.resolveAbs ["all.html"]) (currentPage == .all),
   ]
 ]
