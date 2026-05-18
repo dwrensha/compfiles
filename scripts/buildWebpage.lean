@@ -30,7 +30,6 @@ def getBaseUrl : IO String := do
   let raw := (← IO.getEnv "GITHUB_PAGES_BASEURL").getD s!"file://{cwd}/_site"
   pure <| stripTrailingSlash raw
 
-set_option maxRecDepth 2000 in
 unsafe def main (_args : List String) : IO Unit := do
   let config : SConfig := {
     baseUrl := ← getBaseUrl
