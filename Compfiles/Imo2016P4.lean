@@ -79,8 +79,7 @@ lemma ncard_set {a : ℕ} {b : ℕ+} : {p : ℕ+ | ∃ i : ℕ+, i ≤ b ∧ p =
       apply PNat.eq
       rw [PNat.mk_coe, hi']
       simp [P]
-      have hi'' : (1 : ℕ) ≤ ↑i := by
-        apply PNat.one_le
+      have hi'' : (1 : ℕ) ≤ ↑i := one_le (a := i)
       rw [add_assoc]
       rw [Nat.sub_add_cancel hi'']
   have hf : Function.Injective f := by
