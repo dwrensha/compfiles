@@ -71,10 +71,10 @@ def resolveRel (config : SiteConfig Custom) (path : List String) : String :=
   "/" ++ ("/".intercalate <| parts.filter fun p ↦ ¬ p.isEmpty)
 
 def resolveAbs (config : SiteConfig Custom) (path : List String) : String :=
-  config.baseUrl ++ "/" ++ config.resolveRel path
+  config.baseUrl ++ config.resolveRel path
 
 def resolveAsset (config : SiteConfig Custom) (asset : Asset) : String :=
-  config.resolveRel <| asset.dst.split "/" |>.filterMap
+  config.resolveAbs <| asset.dst.split "/" |>.filterMap
     (fun s ↦ if ¬ s.isEmpty then s.toString else .none) |>.toList
 
 end SiteConfig

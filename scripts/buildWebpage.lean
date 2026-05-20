@@ -21,11 +21,15 @@ def assets : List Asset := [
   Assets.ogPreviewPng,
 ]
 
+def stripTrailingSlash (s : String) : String :=
+  let chars := s.toList.reverse.dropWhile (· = '/')
+  String.ofList chars.reverse
+
 def getBaseUrl : IO String := do
   let cwd ← IO.currentDir
-  pure ((← IO.getEnv "GITHUB_PAGES_BASEURL").getD s!"file://{cwd}/_site/")
+  let raw := (← IO.getEnv "GITHUB_PAGES_BASEURL").getD s!"file://{cwd}/_site"
+  pure <| stripTrailingSlash raw
 
-set_option maxRecDepth 2000 in
 unsafe def main (_args : List String) : IO Unit := do
   let config : SConfig := {
     baseUrl := ← getBaseUrl

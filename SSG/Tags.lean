@@ -35,7 +35,7 @@ def li (attrs : List Attr := []) (c : List Html) := elem "li" attrs c
 def code (attrs : List Attr := []) (c : List Html) := elem "code" attrs c
 def pre (attrs : List Attr := []) (c : List Html) := elem "pre" attrs c
 def table (attrs : List Attr := []) (c : List Html) := elem "table" attrs c
-def tbody (attrs : List Attr := []) (c : List Html) := elem "thead" attrs c
+def tbody (attrs : List Attr := []) (c : List Html) := elem "tbody" attrs c
 def thead (attrs : List Attr := []) (c : List Html) := elem "thead" attrs c
 def td (attrs : List Attr := []) (c : List Html) := elem "td" attrs c
 def th (attrs : List Attr := []) (c : List Html) := elem "th" attrs c

@@ -25,7 +25,7 @@ namespace Imo2010P6
 noncomputable def rec_max {n : ℕ+} (f : ℕ+ → ℝ) (h : 1 < n) := Finset.max' ((Finset.Icc 1 (n - 1)).image (fun k ↦ f k + f (n - k)))
     (Finset.image_nonempty.mpr (Finset.nonempty_Icc.mpr (PNat.le_sub_one_of_lt h)))
 
-def Rec (s : ℕ+) (f : ℕ+ → ℝ) := ∀ n (h : n > s), f n = rec_max f (PNat.one_lt_of_lt h)
+def Rec (s : ℕ+) (f : ℕ+ → ℝ) := ∀ n (h : n > s), f n = rec_max f (one_lt_of_gt h)
 
 snip begin
 
@@ -34,10 +34,10 @@ variable {l s n N : ℕ+}
 
 lemma exists_max_ratio (a : ℕ+ → ℝ) (s : ℕ+) :
     ∃ l ∈ Finset.Icc 1 s, ∀ i ∈ Finset.Icc 1 s, a i / (i : ℝ) ≤ a l / (l : ℝ) := by
-  have hsne : (Finset.Icc 1 s).Nonempty := ⟨1, by simp [PNat.one_le s]⟩
+  have hsne : (Finset.Icc 1 s).Nonempty := ⟨1, by simp [one_le]⟩
   simpa using Finset.exists_max_image (Finset.Icc 1 s) (fun i : ℕ+ ↦ a i / (i : ℝ)) hsne
 
-lemma finset_nonempty (n : ℕ+) : (Finset.Icc 1 n).Nonempty := Finset.nonempty_Icc.mpr (PNat.one_le n)
+lemma finset_nonempty (n : ℕ+) : (Finset.Icc 1 n).Nonempty := Finset.nonempty_Icc.mpr one_le
 
 noncomputable def res (a : ℕ+ → ℝ) (l n : ℕ+) : ℝ := a n - (n : ℝ) * (a l / (l : ℝ))
 
@@ -68,11 +68,11 @@ lemma sum_multiset {α : Finset ℕ+} (S₁ S₂ : Multiset α) (f : ℕ+ → �
 lemma res_expansion (n : ℕ+) (h_res_rec : Rec s (res a l)) :
     ∃ S : Multiset (Finset.Icc 1 s), res a l n = (S.map (res a l)).sum := by
   by_cases hns : n ≤ s
-  · use {⟨n, Finset.mem_Icc.mpr ⟨PNat.one_le n, hns⟩⟩}
+  · use {⟨n, Finset.mem_Icc.mpr ⟨one_le, hns⟩⟩}
     simp [res]
   obtain ⟨k, hk, hrec⟩ := max_of_image (finset_nonempty (n-1)) (h_res_rec n (lt_of_not_ge hns))
   have hk_lt_n : k < n := lt_of_le_of_lt (Finset.mem_Icc.mp hk).2 <| by
-    rw [← PNat.sub_add_of_lt (PNat.one_lt_of_lt (lt_of_not_ge hns))]
+    rw [← PNat.sub_add_of_lt (one_lt_of_gt (lt_of_not_ge hns))]
     exact PNat.lt_add_right (n - 1) 1
   have hkn_lt_n : n - k < n := by simpa [PNat.add_sub_of_lt hk_lt_n] using PNat.lt_add_left (n - k) k
   obtain ⟨S₁, hS₁⟩ := res_expansion k (h_res_rec)
@@ -237,7 +237,7 @@ lemma max_of_image_sub {S : Finset ℕ+} {f : ℕ+ → ℝ} {a : ℝ} (h : S.Non
 
 lemma res_rec (l : ℕ+) (hrec : Rec s a) : Rec s (res a l) := by
   intro n hn
-  have h_one_lt_n : 1 < n := PNat.one_lt_of_lt hn
+  have h_one_lt_n : 1 < n := one_lt_of_gt hn
   set u := a l / (l : ℝ)
   have : rec_max (res a l) h_one_lt_n =
       Finset.max' ((Finset.Icc 1 (n - 1)).image (fun k ↦ a k + a (n - k) - u * n)) (Finset.image_nonempty.mpr (finset_nonempty (n - 1))) := by
@@ -259,7 +259,7 @@ lemma res_l_zero : res a l l = 0 := by
 lemma res_step_monotone (hres_rec : Rec s (res a l)) :
     ∀ n (_ : n + l > s), res a l n ≤ res a l (n + l) := by
   intro n hn
-  have h_one_lt : 1 < n + l := PNat.one_lt_of_lt hn
+  have h_one_lt : 1 < n + l := one_lt_of_gt hn
   calc
     res a l n = res a l l + res a l n := (add_eq_right.mpr res_l_zero).symm
     _ = res a l l + res a l (n + l - l) := by rw [PNat.add_sub]
@@ -347,7 +347,7 @@ lemma res_eventually_t_step_eq
       rw [gt_iff_lt]
       calc
         s < x := hx
-        _ ≤ x * l := (le_mul_iff_one_le_right' x).mpr (PNat.one_le l)
+        _ ≤ x * l := (le_mul_iff_one_le_right' x).mpr one_le
         _ < t + x * l := PNat.lt_add_left (x * l) t
         _ < t + x * l + l := PNat.lt_add_right (t + x * l) l
     simpa [f, add_one_mul, add_assoc] using h_step_monotone (t + x * l) this
@@ -371,7 +371,7 @@ lemma decompose (h : l < n) : ∃ (t k : ℕ+), t ∈ Finset.Icc 1 l ∧ n = t +
     exact (not_le_of_gt h hnle)
   use ⟨k', hk'_pos⟩
   constructor
-  · exact Finset.mem_Icc.mpr ⟨PNat.one_le (n.mod l), (PNat.mod_le n l).2⟩
+  · exact Finset.mem_Icc.mpr ⟨one_le, (PNat.mod_le n l).2⟩
   · apply PNat.coe_injective
     simpa [mul_comm] using hmod_add_div
 

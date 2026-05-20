@@ -73,7 +73,16 @@ unsafe def generateAll (config : SConfig) : IO (List Page) := do
       pure ()
     if md.proved then numProved := numProved + 1
     pure ()
-  mdsArray := mdsArray.qsort fun n₁ n₂ ↦ n₁.1.toString < n₂.1.toString
+  let bucket (s : String) : Nat :=
+    if s.startsWith "Compfiles.Imo" then 0
+    else if s.startsWith "Compfiles.Usa" then 1
+    else 2
+  mdsArray := mdsArray.qsort fun n₁ n₂ ↦
+    let s₁ := n₁.1.toString
+    let s₂ := n₂.1.toString
+    let b₁ := bucket s₁
+    let b₂ := bucket s₂
+    if b₁ ≠ b₂ then b₁ < b₂ else s₁ < s₂
   allPages := (← All.generate config numProved mdsArray) :: allPages
   allPages := allPages ++ (← Imo.genAll config mds)
   allPages := allPages ++ (← Usamo.genAll config mds)
