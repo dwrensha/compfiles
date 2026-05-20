@@ -57,8 +57,10 @@ lemma pow_mul_gt (n q : ℕ) (hn : 3 ≤ n) (hq : 3 ≤ q) :
   have h_ineq : q * (2 ^ n + 1) ≤ q * 2 ^ (n + 1) := by
     exact Nat.mul_le_mul_left _ (by ring_nf; linarith [Nat.pow_le_pow_right two_pos hn]);
   have h_ineq2 : q * 2 ^ (n + 1) ≤ 2 ^ (q + n + 1) := by
-    ring_nf at *;
-    gcongr ; linarith [show q ≤ 2 ^ q by exact le_of_lt (Nat.recOn q (by norm_num) fun n ihn => by rw [pow_succ'] ; linarith [Nat.one_le_pow n 2 zero_lt_two])] ;
+    ring_nf at *
+    gcongr
+    linarith [show q ≤ 2 ^ q by
+               exact le_of_lt (Nat.recOn q (by norm_num) fun n ihn => Nat.lt_two_pow_self)]
   refine lt_of_le_of_lt h_ineq (lt_of_le_of_lt h_ineq2 ?_);
   exact Nat.lt_succ_of_le (pow_le_pow_right₀ (by decide) (by nlinarith))
 
@@ -77,8 +79,12 @@ lemma quotient_not_dvd_of_ne {n q : ℕ} {p : ℕ} (hp : Nat.Prime p) (_hpodd : 
     rw [Int.ediv_eq_of_eq_mul_right] <;> norm_cast ; norm_num [pow_mul];
     have := geom_sum₂_mul (-1 : ℤ) (2 ^ n) q; simp_all +decide [mul_comm] ;
     linarith [show (-1 : ℤ) ^ q = -1 from by rw [neg_one_pow_eq_pow_mod_two] ; norm_num [hq_prime.eq_two_or_odd.resolve_left hq_odd]];
-  rw [← Int.natCast_dvd_natCast] ; simp_all +decide [Int.ModEq] ;
-  exact fun h => hpq <| by have := Int.dvd_of_emod_eq_zero (h_phi.symm.trans <| Int.emod_eq_zero_of_dvd h) ; norm_cast at this; have := Nat.prime_dvd_prime_iff_eq hp hq_prime; tauto;
+  rw [← Int.natCast_dvd_natCast]
+  simp only [Int.ModEq] at h_phi
+  refine fun h => hpq ?_
+  have := Int.dvd_of_emod_eq_zero (h_phi.symm.trans <| Int.emod_eq_zero_of_dvd h)
+  norm_cast at this
+  exact (Nat.prime_dvd_prime_iff_eq hp hq_prime).mp this
 
 lemma quotient_val_q {n q : ℕ} (hq_prime : Nat.Prime q) (hq_odd : q ≠ 2)
     (hqdvd : q ∣ 2 ^ n + 1) (_hn_pos : 0 < n)
