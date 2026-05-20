@@ -247,12 +247,13 @@ lemma mod_4_of_isLangford {n : ℕ}
 
 snip end
 
-determine answer : Prop := False
+determine answer : Bool := false
 
 problem china1986_p5 : (∃ f : Equiv.Perm (Fin (2 * 1986)),
   ∀ k, 1 ≤ k → k ≤ 1986 → ∃ i j : Fin (2 * 1986),
     (i < j ∧ rawList (f i) = k ∧ rawList (f j) = k ∧ j.val = i.val + (k + 1)))
-      = answer := by
+      = (↑answer : Prop) := by
+  simp only [Bool.false_eq_true]
   change (∃ f : Equiv.Perm (Fin (2 * 1986)), isLangford f) = False
   rewrite [eq_iff_iff, iff_false]
   refine mt mod_4_of_isLangford ?_
