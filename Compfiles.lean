@@ -14,6 +14,9 @@ import Compfiles.ChinaPre1983P2
 import Compfiles.ChinaPre1983P3
 import Compfiles.ChinaPre1983P4
 import Compfiles.ChinaPre1983P5
+import Compfiles.ChinaPre1986P1
+import Compfiles.ChinaPre1986P2
+import Compfiles.ChinaPre1986P3
 import Compfiles.ChinaPre2000P1
 import Compfiles.ChinaPre2000P2
 import Compfiles.ChinaPre2000P3
