@@ -202,7 +202,7 @@ problem imo1989_p5 (n : ℕ) : ∃ m, ∀ j < n, ¬IsPrimePow (m + j) := by
     intro h12
     have h13 := (List.Nodup.get_inj_iff hld).mp h12
     simp only [Fin.mk.injEq, left_eq_add] at h13
-    simp only [h13, not_lt_zero'] at hj
+    simp only [h13, not_lt_zero] at hj
   exact not_prime_power_of_two_factors h2 h4 h11 h9 h10
 
 
