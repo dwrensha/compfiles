@@ -67,7 +67,7 @@ problem imo2004_p2 (P : Polynomial ℝ) :
           have h := h' n
           simp only [coeff_add, ← C_ofNat, coeff_mul_C] at h
           rw [neg_eq_neg_one_mul, ← C_1, ← C_neg, comp_C_mul_X_coeff] at h
-          rw [comp_X, comp_zero, coeff_C_ne_zero hn'', ← sub_eq_zero, add_zero] at h
+          rw [comp_X, comp_zero, coeff_C_of_ne_zero hn'', ← sub_eq_zero, add_zero] at h
           nth_rw 1 [← mul_one (P.coeff n)] at h
           simp only [← mul_add, ← mul_sub] at h
           apply (mul_eq_zero_iff_right _).mp h
