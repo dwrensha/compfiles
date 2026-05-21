@@ -23,11 +23,11 @@ namespace Imo2025P4
 
 open Finset
 
-determine answer : Set ℕ := { x | ∃ e l : ℕ, x = 12^e * 6 * l ∧ l.Coprime 10}
+determine answer : Set ℕ := { x | ∃ e l : ℕ, x = 12^e * 6 * l ∧ l.Coprime 10 }
 
 snip begin
 
-variable {a₁ : ℕ} {a : ℕ → ℕ}
+variable {a₁ : ℕ} {a : ℕ → ℕ} {x d d₁ d₂ d₃ : ℕ}
 
 def ψ (n : ℕ) : ℕ := (((Nat.properDivisors n).sort (· ≤ ·)).reverse.take 3).sum
 
@@ -35,9 +35,30 @@ def S : Set ℕ := {x | 3 ≤ #(Nat.properDivisors x)}
 
 def ValidSequence (a : ℕ → ℕ) := ∀ i, 0 < a i ∧ a i ∈ S ∧ a (i + 1) = ψ (a i)
 
+def smallDivisors (n : ℕ) : List ℕ := (n.divisors.erase 1).sort (· ≤ ·)
+
+def threeSmallestDivisors (n : ℕ) : List ℕ := (smallDivisors n).take 3
+
+@[simp] lemma take_smallDivisors_eq_threeSmallestDivisors {n : ℕ} :
+    List.take 3 (smallDivisors n) = threeSmallestDivisors n := rfl
+
+@[simp] lemma mem_divisors_erase_one {d n : ℕ} :
+    d ∈ n.divisors.erase 1 ↔ d ≠ 1 ∧ d ∣ n ∧ n ≠ 0 := by
+  rw [mem_erase, Nat.mem_divisors]
+
+lemma dvd_of_mem_divisors_erase_one {d n : ℕ} (h : d ∈ n.divisors.erase 1) : d ∣ n :=
+  (mem_divisors_erase_one.mp h).2.1
+
+lemma pos_of_mem_divisors_erase_one {d n : ℕ} (h : d ∈ n.divisors.erase 1) : 0 < d :=
+  Nat.pos_of_mem_divisors (Nat.mem_divisors.mpr (mem_divisors_erase_one.mp h).2)
+
+lemma mem_divisors_erase_one_of_dvd_ne_one {d n : ℕ}
+    (hd : d ∣ n) (hn : n ≠ 0) (hd1 : d ≠ 1) : d ∈ n.divisors.erase 1 :=
+  mem_divisors_erase_one.mpr ⟨hd1, hd, hn⟩
+
 lemma reverse_properDivisors_eq_div_divisors_erase_one {n : ℕ} (hn : n ≠ 0) :
     ((Nat.properDivisors n).sort (· ≤ ·)).reverse =
-    (((Nat.divisors n).erase 1).sort (· ≤ ·)).map (fun d => n / d) := by
+    (smallDivisors n).map (fun d => n / d) := by
   apply List.SortedGT.eq_of_mem_iff
   · exact (sortedLT_sort (Nat.properDivisors n)).reverse
   · rw [List.sortedGT_iff_pairwise, List.pairwise_map]
@@ -47,23 +68,29 @@ lemma reverse_properDivisors_eq_div_divisors_erase_one {n : ℕ} (hn : n ≠ 0) 
     rcases h with ⟨ha, hb, hab⟩
     rw [gt_iff_lt, Nat.div_lt_div_left hn]
     · exact hab
-    · exact (Nat.mem_divisors.mp (mem_erase.mp ((mem_sort (r := (· ≤ ·))).mp hb)).2).1
-    · exact (Nat.mem_divisors.mp (mem_erase.mp ((mem_sort (r := (· ≤ ·))).mp ha)).2).1
+    · exact dvd_of_mem_divisors_erase_one ((mem_sort (r := (· ≤ ·))).mp hb)
+    · exact dvd_of_mem_divisors_erase_one ((mem_sort (r := (· ≤ ·))).mp ha)
   · intro x
     simp only [List.mem_reverse, mem_sort, List.mem_map]
     constructor
     · intro hx
       refine ⟨n / x, ?_, Nat.div_div_self (Nat.mem_properDivisors.mp hx).1 hn⟩
-      · rw [mem_erase, Nat.mem_divisors]
+      · simp [smallDivisors, mem_erase, Nat.mem_divisors]
         refine ⟨?_, ⟨Nat.div_dvd_of_dvd (Nat.mem_properDivisors.mp hx).1, hn⟩⟩
         exact ne_of_gt (Nat.one_lt_div_of_mem_properDivisors hx)
     · rintro ⟨d, hd, rfl⟩
-      rw [mem_erase, Nat.mem_divisors] at hd
+      simp [smallDivisors] at hd
       rw [Nat.mem_properDivisors]
       refine ⟨Nat.div_dvd_of_dvd hd.2.1, ?_⟩
       apply Nat.div_lt_self (Nat.pos_of_ne_zero hn)
       · have hdpos : 0 < d := Nat.pos_of_mem_divisors (Nat.mem_divisors.mpr hd.2)
         lia
+
+lemma psi_eq_of_threeSmallestDivisors_eq (hx0 : x ≠ 0)
+    (hdiv : threeSmallestDivisors x = [d₁, d₂, d₃]) : ψ x = x / d₁ + x / d₂ + x / d₃ := by
+  rw [ψ, reverse_properDivisors_eq_div_divisors_erase_one hx0, ← List.map_take,
+    take_smallDivisors_eq_threeSmallestDivisors, hdiv]
+  simp [add_assoc]
 
 lemma answer_mem_S : a₁ ∈ answer → a₁ ∈ S := by
   intro ha₁
@@ -92,17 +119,13 @@ lemma answer_pos : a₁ ∈ answer → 0 < a₁ := fun ha ↦ pos_of_mem_S (answ
 
 lemma sort_take_three_eq_of_first_three {s : Finset ℕ} {a b c : ℕ}
     (ha : a ∈ s) (hb : b ∈ s.erase a) (hc : c ∈ (s.erase a).erase b)
-    (ha_le : ∀ x ∈ s, a ≤ x)
-    (hb_le : ∀ x ∈ s.erase a, b ≤ x)
-    (hc_le : ∀ x ∈ (s.erase a).erase b, c ≤ x) :
+    (ha_le : ∀ x ∈ s, a ≤ x) (hb_le : ∀ x ∈ s.erase a, b ≤ x) (hc_le : ∀ x ∈ (s.erase a).erase b, c ≤ x) :
     (s.sort (· ≤ ·)).take 3 = [a, b, c] := by
-  rw [← insert_erase ha, sort_insert] <;> try grind
-  rw [← insert_erase hb, sort_insert] <;> try grind
-  rw [← insert_erase hc, sort_insert] <;> grind
+  grind [insert_erase ha, insert_erase hb, insert_erase hc, sort_insert]
 
 lemma divisors_erase_one_sort_take_three_eq_two_three_six {n : ℕ}
     (hn : n ≠ 0) (h2 : 2 ∣ n) (h3 : 3 ∣ n) (h4 : ¬ 4 ∣ n) (h5 : ¬ 5 ∣ n) :
-    (((n.divisors.erase 1).sort (· ≤ ·)).take 3) = [2, 3, 6] := by
+    threeSmallestDivisors n = [2, 3, 6] := by
   apply sort_take_three_eq_of_first_three (by grind) (by grind) (by grind)
   all_goals
     intro x hx
@@ -110,12 +133,10 @@ lemma divisors_erase_one_sort_take_three_eq_two_three_six {n : ℕ}
     have hxpos : 0 < x := Nat.pos_of_mem_divisors (Nat.mem_divisors.mpr (by aesop))
     try lia
   by_contra hlt
-  have hxlt : x < 6 := by omega
   interval_cases x <;> simp_all
 
 lemma divisors_erase_one_sort_take_three_eq_two_three_four {n : ℕ}
-    (hn : n ≠ 0) (h2 : 2 ∣ n) (h3 : 3 ∣ n) (h4 : 4 ∣ n) :
-    (((n.divisors.erase 1).sort (· ≤ ·)).take 3) = [2, 3, 4] := by
+    (hn : n ≠ 0) (h2 : 2 ∣ n) (h3 : 3 ∣ n) (h4 : 4 ∣ n) : threeSmallestDivisors n = [2, 3, 4] := by
   apply sort_take_three_eq_of_first_three (by grind) (by grind) (by grind)
   all_goals
   intro x hx
@@ -125,7 +146,7 @@ lemma divisors_erase_one_sort_take_three_eq_two_three_four {n : ℕ}
 
 lemma divisors_erase_one_sort_take_three_eq_two_three_five {n : ℕ}
     (hn : n ≠ 0) (h2 : 2 ∣ n) (h3 : 3 ∣ n) (h4 : ¬ 4 ∣ n) (h5 : 5 ∣ n) :
-    (((n.divisors.erase 1).sort (· ≤ ·)).take 3) = [2, 3, 5] := by
+    threeSmallestDivisors n = [2, 3, 5] := by
   apply sort_take_three_eq_of_first_three (by grind) (by grind) (by grind)
   all_goals
     intro x hx
@@ -137,36 +158,34 @@ lemma divisors_erase_one_sort_take_three_eq_two_three_five {n : ℕ}
 
 lemma psi_answer_mem_S' {aᵢ : ℕ} : aᵢ ∈ answer → ψ aᵢ ∈ answer := by
   intro haᵢ
-  have : aᵢ ≠ 0 := by grind only [answer_pos haᵢ]
+  have haᵢ0 : aᵢ ≠ 0 := by grind only [answer_pos haᵢ]
   obtain ⟨e, l, haᵢ, hl⟩ := haᵢ
   by_cases hcase : e = 0
-  · rw [haᵢ, ψ, reverse_properDivisors_eq_div_divisors_erase_one, hcase]
-    · refine ⟨0, l, ?_, hl⟩
-      have h2 : ¬ 2 ∣ l := Nat.prime_two.coprime_iff_not_dvd.mp (Nat.Coprime.of_dvd_left (by lia) hl.symm)
-      have h5 : ¬ 5 ∣ l := Nat.prime_five.coprime_iff_not_dvd.mp (Nat.Coprime.of_dvd_left (by lia) hl.symm)
-      have : (((6 * l).divisors.erase 1).sort (· ≤ ·)).take 3 = [2,3,6] :=
-        divisors_erase_one_sort_take_three_eq_two_three_six (by simpa [haᵢ, hcase] using this)
-          (by lia) (by lia) (by lia) (by lia)
-      simp [← List.map_take, this]
+  · refine ⟨0, l, ?_, hl⟩
+    have h2 : ¬ 2 ∣ l := Nat.prime_two.coprime_iff_not_dvd.mp (Nat.Coprime.of_dvd_left (by lia) hl.symm)
+    have h5 : ¬ 5 ∣ l := Nat.prime_five.coprime_iff_not_dvd.mp (Nat.Coprime.of_dvd_left (by lia) hl.symm)
+    have h236 : threeSmallestDivisors (6 * l) = [2,3,6] :=
+      divisors_erase_one_sort_take_three_eq_two_three_six (by simpa [haᵢ, hcase] using haᵢ0)
+        (by lia) (by lia) (by lia) (by lia)
+    rw [haᵢ, hcase]
+    simp
+    rw [psi_eq_of_threeSmallestDivisors_eq (by simpa [haᵢ, hcase] using haᵢ0) h236]
+    grind
+  · refine ⟨e-1, 13*l, ?_, ?_⟩
+    · have h_e_pos : 0 < e := Nat.zero_lt_of_ne_zero hcase
+      have h_four_dvd : 4 ∣ aᵢ := by grind
+      have h234 : threeSmallestDivisors (12 ^ e * 6 * l) = [2,3,4] := by
+        apply divisors_erase_one_sort_take_three_eq_two_three_four <;> lia
+      have : 12 ^ e / 12 * 6 * (13 * l) = 12 ^ e * 6 * l * 13 / 12 := by
+        have hdvd : 12 ∣ 12 ^ e := dvd_pow_self 12 hcase
+        calc
+          12 ^ e / 12 * 6 * (13 * l) = (6 * l * 13) * (12 ^ e / 12) := by ring_nf
+          _ = (6 * l * 13) * 12 ^ e / 12 := by rw [Nat.mul_div_assoc _ hdvd]
+          _ = 12 ^ e * 6 * l * 13 / 12 := by ring_nf
+      rw [haᵢ, psi_eq_of_threeSmallestDivisors_eq (by simpa [haᵢ] using haᵢ0) h234]
+      rw [Nat.pow_sub_one (by positivity) hcase, this]
       grind
-    · rwa [← haᵢ]
-  · rw [haᵢ, ψ, reverse_properDivisors_eq_div_divisors_erase_one]
-    · refine ⟨e-1, 13*l, ?_, ?_⟩
-      · have h_e_pos : 0 < e := Nat.zero_lt_of_ne_zero hcase
-        have h_four_dvd : 4 ∣ aᵢ := by grind
-        have : (((12 ^ e * 6 * l).divisors.erase 1).sort (· ≤ ·)).take 3 = [2,3,4] := by
-          apply divisors_erase_one_sort_take_three_eq_two_three_four <;> lia
-        simp [← List.map_take, this]
-        have : 12 ^ e / 12 * 6 * (13 * l) = 12 ^ e * 6 * l * 13 / 12 := by
-          have hdvd : 12 ∣ 12 ^ e := dvd_pow_self 12 hcase
-          calc
-            12 ^ e / 12 * 6 * (13 * l) = (6 * l * 13) * (12 ^ e / 12) := by ring_nf
-            _ = (6 * l * 13) * 12 ^ e / 12 := by rw [Nat.mul_div_assoc _ hdvd]
-            _ = 12 ^ e * 6 * l * 13 / 12 := by ring_nf
-        rw [Nat.pow_sub_one (by positivity) hcase, this, ← haᵢ]
-        grind
-      · grind [Nat.coprime_mul_iff_left]
-    · rwa [← haᵢ]
+    · grind [Nat.coprime_mul_iff_left]
 
 lemma psi_answer_mem_S {i : ℕ} : a₁ ∈ answer → ψ^[i] a₁ ∈ answer := by
   intro h
@@ -182,14 +201,12 @@ lemma answer_sufficient : a₁ ∈ answer → ∃ a : ℕ → ℕ, a 0 = a₁ �
     have : a i ∈ answer := psi_answer_mem_S ha₁
     exact ⟨answer_pos this, answer_mem_S this, Function.iterate_succ_apply' ψ i a₁⟩
 
-lemma odd_sum_iff_length_of_forall_odd {S : List ℕ} (hodd : ∀ x ∈ S, Odd x) :
-    Odd S.sum ↔ Odd S.length := by
+lemma odd_sum_iff_length_of_forall_odd {S : List ℕ} (hodd : ∀ x ∈ S, Odd x) : Odd S.sum ↔ Odd S.length := by
   induction S with
   | nil => simp
   | cons a S ih =>
       have hS : ∀ x ∈ S, Odd x := fun x hx ↦ hodd x (by simp [hx])
-      rw [List.sum_cons, List.length_cons, Nat.odd_add, Nat.odd_add]
-      rw [← Nat.not_odd_iff_even, ← Nat.not_odd_iff_even, ih hS]
+      rw [List.sum_cons, List.length_cons, Nat.odd_add, Nat.odd_add, ← Nat.not_odd_iff_even, ih hS]
       simp [hodd a (by simp)]
 
 lemma odd_of_sum_odd {S : List ℕ} {n : ℕ} (hn : Odd n) (hlen : n ≤ S.length)
@@ -212,30 +229,29 @@ lemma two_dvd_of_two_dvd_psi {x : ℕ} : x ∈ S → 2 ∣ ψ x → 2 ∣ x := b
   set s := (List.take 3 (x.properDivisors.sort (· ≤ ·)).reverse).sum
   grind only [= Nat.odd_iff]
 
-lemma psi_le_of_three_smallest_ge {x b₁ b₂ b₃ : ℕ} (hx : x ≠ 0)
+lemma psi_le_of_three_smallest_ge {b₁ b₂ b₃ : ℕ} (hx : x ≠ 0)
     (hb₁0 : b₁ ≠ 0) (hb₂0 : b₂ ≠ 0) (hb₃0 : b₃ ≠ 0)
-    (hge : ∃ d₁ d₂ d₃, ((x.divisors.erase 1).sort (· ≤ ·)).take 3 = [d₁, d₂, d₃] ∧
+    (hge : ∃ d₁ d₂ d₃, threeSmallestDivisors x = [d₁, d₂, d₃] ∧
      b₁ ≤ d₁ ∧ b₂ ≤ d₂ ∧ b₃ ≤ d₃) : ψ x ≤ x / b₁ + x / b₂ + x / b₃ := by
   obtain ⟨d₁, d₂, d₃, htake, hb₁, hb₂, hb₃⟩ := hge
-  rw [ψ, reverse_properDivisors_eq_div_divisors_erase_one hx, ← List.map_take, htake]
-  simp only [List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, add_zero]
+  rw [psi_eq_of_threeSmallestDivisors_eq hx htake]
   have h₁ : x / d₁ ≤ x / b₁ := by gcongr
   have h₂ : x / d₂ ≤ x / b₂ := by gcongr
   have h₃ : x / d₃ ≤ x / b₃ := by gcongr
   lia
 
-lemma min_divisors_of_mem_S {x : ℕ} : x ∈ S → (x ≠ 0) ∧ ∃ d₁ d₂ d₃,
-    ((x.divisors.erase 1).sort (· ≤ ·)).take 3 = [d₁, d₂, d₃] ∧
+lemma min_divisors_of_mem_S {x : ℕ} : x ∈ S → (x ≠ 0) ∧ ∃ d₁ d₂ d₃, threeSmallestDivisors x = [d₁, d₂, d₃] ∧
     (d₁ ∈ (x.divisors.erase 1)) ∧ (d₂ ∈ (x.divisors.erase 1)) ∧ (d₃ ∈ (x.divisors.erase 1)) ∧
     (2 ≤ d₁) ∧ (d₁ < d₂) ∧ (d₂ < d₃) := by
   intro hx
   have hx0 : x ≠ 0 := Nat.ne_zero_of_lt (pos_of_mem_S hx)
   have hcard_eq : #x.properDivisors = #(x.divisors.erase 1) := by
     have := congrArg List.length (reverse_properDivisors_eq_div_divisors_erase_one hx0)
-    simpa [List.length_reverse, length_sort] using this
+    simpa [List.length_reverse, smallDivisors, length_sort] using this
   have hcard : 3 ≤ #(x.divisors.erase 1) := by rwa [← hcard_eq]
-  let L := ((x.divisors.erase 1).sort (· ≤ ·)).take 3
-  have hlen : L.length = 3 := by simp [L, List.length_take, length_sort, min_eq_left hcard]
+  let L := threeSmallestDivisors x
+  have hlen : L.length = 3 := by
+    simp [L, threeSmallestDivisors, smallDivisors, List.length_take, length_sort, min_eq_left hcard]
   obtain ⟨d₁, d₂, d₃, htake⟩ := List.length_eq_three.mp hlen
   have hsorted : [d₁, d₂, d₃].SortedLT := by
     rw [List.sortedLT_iff_isChain, ← htake]
@@ -248,13 +264,50 @@ lemma min_divisors_of_mem_S {x : ℕ} : x ∈ S → (x ≠ 0) ∧ ∃ d₁ d₂ 
     exact List.mem_of_mem_take (by simp [L, htake, hd] : d ∈ L)
   have hd₁mem : d₁ ∈ x.divisors.erase 1 := hdmem d₁ (by simp)
   have hd₁ge : 2 ≤ d₁ := by
-    simp [mem_erase, Nat.mem_divisors] at hd₁mem
-    have hd₁pos : 0 < d₁ := Nat.pos_of_mem_divisors (Nat.mem_divisors.mpr hd₁mem.2)
+    have hd₁pos : 0 < d₁ := pos_of_mem_divisors_erase_one hd₁mem
+    have hd₁ne : d₁ ≠ 1 := (mem_divisors_erase_one.mp hd₁mem).1
     lia
   exact ⟨hx0, d₁, d₂, d₃, htake, hd₁mem, hdmem d₂ (by simp), hdmem d₃ (by simp), hd₁ge, hpair.1.1, hpair.2⟩
 
-lemma mem_take_or_gt_of_divisor {x d d₁ d₂ d₃ : ℕ} : x ∈ S → d ∈ x.divisors.erase 1 →
-    ((x.divisors.erase 1).sort (· ≤ ·)).take 3 = [d₁, d₂, d₃] → d ∈ [d₁, d₂, d₃] ∨ d₃ < d := by
+lemma mem_of_threeSmallestDivisors_eq (hdiv : threeSmallestDivisors x = [d₁, d₂, d₃]) :
+    d₁ ∈ x.divisors.erase 1 ∧ d₂ ∈ x.divisors.erase 1 ∧ d₃ ∈ x.divisors.erase 1 := by
+  have hmem {d : ℕ} (hd : d ∈ [d₁, d₂, d₃]) : d ∈ x.divisors.erase 1 := by
+    have hd_take : d ∈ threeSmallestDivisors x := by simp [hdiv, hd]
+    exact (mem_sort (r := (· ≤ ·))).mp (by simpa [smallDivisors] using List.mem_of_mem_take hd_take)
+  exact ⟨hmem (by simp), hmem (by simp), hmem (by simp)⟩
+
+lemma dvd_of_threeSmallestDivisors_eq (hdiv : threeSmallestDivisors x = [d₁, d₂, d₃]) :
+    d₁ ∣ x ∧ d₂ ∣ x ∧ d₃ ∣ x := by
+  obtain ⟨hd₁mem, hd₂mem, hd₃mem⟩ := mem_of_threeSmallestDivisors_eq hdiv
+  exact ⟨dvd_of_mem_divisors_erase_one hd₁mem, dvd_of_mem_divisors_erase_one hd₂mem,
+    dvd_of_mem_divisors_erase_one hd₃mem⟩
+
+structure ThreeMinDivisors (x d₁ d₂ d₃ : ℕ) : Prop where
+  hdiv : threeSmallestDivisors x = [d₁, d₂, d₃]
+  hd₁ge : 2 ≤ d₁
+  hd₁₂ : d₁ < d₂
+  hd₂₃ : d₂ < d₃
+
+namespace ThreeMinDivisors
+
+lemma mems (h : ThreeMinDivisors x d₁ d₂ d₃) :
+    d₁ ∈ x.divisors.erase 1 ∧ d₂ ∈ x.divisors.erase 1 ∧ d₃ ∈ x.divisors.erase 1 :=
+  mem_of_threeSmallestDivisors_eq h.hdiv
+
+lemma dvds (h : ThreeMinDivisors x d₁ d₂ d₃) : d₁ ∣ x ∧ d₂ ∣ x ∧ d₃ ∣ x := dvd_of_threeSmallestDivisors_eq h.hdiv
+
+lemma psi_eq (h : ThreeMinDivisors x d₁ d₂ d₃) (hx0 : x ≠ 0) : ψ x = x / d₁ + x / d₂ + x / d₃ :=
+  psi_eq_of_threeSmallestDivisors_eq hx0 h.hdiv
+
+end ThreeMinDivisors
+
+lemma threeMinDivisors_of_mem_S {x : ℕ} (hx : x ∈ S) :
+    x ≠ 0 ∧ ∃ d₁ d₂ d₃, ThreeMinDivisors x d₁ d₂ d₃ := by
+  obtain ⟨hx0, d₁, d₂, d₃, hdiv, _, _, _, hd₁ge, hd₁₂, hd₂₃⟩ := min_divisors_of_mem_S hx
+  exact ⟨hx0, d₁, d₂, d₃, ⟨hdiv, hd₁ge, hd₁₂, hd₂₃⟩⟩
+
+lemma mem_take_or_gt_of_divisor : x ∈ S → d ∈ x.divisors.erase 1 →
+    threeSmallestDivisors x = [d₁, d₂, d₃] → d ∈ [d₁, d₂, d₃] ∨ d₃ < d := by
   intro hx hd hdiv
   by_cases h : d ∈ [d₁, d₂, d₃]
   · exact Or.inl h
@@ -272,148 +325,150 @@ lemma mem_take_or_gt_of_divisor {x d d₁ d₂ d₃ : ℕ} : x ∈ S → d ∈ x
     simp at hpairT
     exact h2 (hpairT.2.2.1 d hdTail)
 
+lemma mem_of_dvd_mem_threeSmallest (hmin : ThreeMinDivisors x d₁ d₂ d₃) (hx : x ∈ S) (hx0 : x ≠ 0)
+    {k d : ℕ} (hk_dvd : k ∣ d) (hd_mem : d ∈ [d₁, d₂, d₃]) (htwo_le : 2 ≤ k) :
+    k ∈ [d₁, d₂, d₃] := by
+  rcases hmin.dvds, hmin.hd₁ge, hmin.hd₁₂, hmin.hd₂₃ with ⟨⟨hd₁dvd, hd₂dvd, hd₃dvd⟩, hd₁ge, hd₁₂, hd₂₃⟩
+  by_cases hcase : d₃ < k
+  · by_contra
+    simp at hd_mem
+    rcases hd_mem with hd | hd | hd <;> grind [show k ≤ d by exact Nat.le_of_dvd (by lia) hk_dvd]
+  · have hd_dvd_x : d ∣ x := by grind only [List.mem_cons, List.not_mem_nil]
+    have hmem := mem_divisors_erase_one_of_dvd_ne_one (dvd_trans hk_dvd hd_dvd_x) hx0 (by lia)
+    exact (mem_take_or_gt_of_divisor hx hmem hmin.hdiv).resolve_right hcase
+
 lemma prime_mul_prime_dvd {a b c : ℕ} : Nat.Prime a → Nat.Prime b → a ∣ c → b ∣ c → a ≠ b → a * b ∣ c := by
   intro hprime_a hprime_b ha_dvd_c hb_dvd_c ha_ne_b
   have hcoprime : a.Coprime b := (Nat.coprime_primes hprime_a hprime_b).mpr ha_ne_b
   exact Nat.Coprime.mul_dvd_of_dvd_of_dvd hcoprime ha_dvd_c hb_dvd_c
+
+lemma first_min_divisor_eq_two_of_two_dvd (hx : x ∈ S) (h2x : 2 ∣ x)
+    (hmin : ThreeMinDivisors x d₁ d₂ d₃) : d₁ = 2 := by
+  have hx0 : x ≠ 0 := Nat.ne_zero_of_lt (pos_of_mem_S hx)
+  have hmem := mem_divisors_erase_one_of_dvd_ne_one h2x hx0 (by norm_num)
+  have h := mem_take_or_gt_of_divisor hx hmem hmin.hdiv
+  rcases hmin.hd₁ge, hmin.hd₁₂, hmin.hd₂₃ with ⟨hd₁ge, hd₁₂, hd₂₃⟩
+  grind only [List.mem_cons, List.not_mem_nil]
+
+lemma second_min_divisor_eq_four_of_four_dvd (hx : x ∈ S) (hx0 : x ≠ 0)
+    (h3x : ¬ 3 ∣ x) (h4 : 4 ∣ x)
+    (hmin : ThreeMinDivisors x d₁ d₂ d₃) (hd₁ : d₁ = 2) : d₂ = 4 := by
+  have hmem := mem_divisors_erase_one_of_dvd_ne_one h4 hx0 (by norm_num)
+  have h := mem_take_or_gt_of_divisor hx hmem hmin.hdiv
+  rcases hmin.hd₁₂, hmin.hd₂₃, hmin.dvds with ⟨hd₁₂, hd₂₃, ⟨_, hd₂dvd, _⟩⟩
+  grind only [List.mem_cons, List.not_mem_nil]
+
+lemma not_three_dvd_psi_of_second_min_divisor_four (hx0 : x ≠ 0) (h3x : ¬ 3 ∣ x) (h4 : 4 ∣ x)
+    (hmin : ThreeMinDivisors x d₁ d₂ d₃) (hd₁ : d₁ = 2) (hd₂ : d₂ = 4) : ¬ 3 ∣ ψ x := by
+  have hpsi : ψ x = 3 * x / 4 + x / d₃ := by
+    rw [hmin.psi_eq hx0]
+    simp [hd₁, hd₂]
+    lia
+  have h3d₃ : ¬ 3 ∣ x / d₃ := fun h3 ↦ h3x (by
+      convert dvd_mul_of_dvd_right h3 d₃ using 1
+      exact (Nat.mul_div_cancel' hmin.dvds.2.2).symm)
+  grind
+
+lemma second_min_divisor_prime_of_not_four_dvd (hx : x ∈ S) (hx0 : x ≠ 0)
+    (hmin : ThreeMinDivisors x d₁ d₂ d₃) (hd₁ : d₁ = 2) (h4 : ¬ 4 ∣ x) : Nat.Prime d₂ := by
+  rcases hmin.dvds, hmin.hd₁₂, hmin.hd₂₃ with ⟨⟨_, hd₂_dvd_x, _⟩, hd₁₂, hd₂₃⟩
+  have hdvd_eq_d₁ : ∀ k > 1, k ∣ d₂ → k ≠ d₂ → k = d₁ := by
+    intro k hgt_one hk hk_ne_d₂
+    have hmem := mem_divisors_erase_one_of_dvd_ne_one (dvd_trans hk hd₂_dvd_x) hx0 (by lia)
+    have h := mem_take_or_gt_of_divisor hx hmem hmin.hdiv
+    have hlt_d₂ : k ≤ d₂ := Nat.le_of_dvd (by lia) hk
+    rcases h with h | h
+    · simp at h
+      rcases h with h | h | h <;> lia
+    · lia
+  by_contra hnot_prime
+  obtain ⟨m, hm_dvd, hm_ge_two, hm_lt⟩ := (Nat.not_prime_iff_exists_dvd_lt (by lia : 2 ≤ d₂)).mp hnot_prime
+  obtain ⟨n, hmn⟩ := hm_dvd
+  have hm_ne_d₂ : m ≠ d₂ := by lia
+  have hn_ne_d₂ : n ≠ d₂ := by nlinarith
+  have h₁ : m = 2 := by
+    simpa [hd₁] using hdvd_eq_d₁ m (Nat.lt_of_succ_le hm_ge_two) (Dvd.intro n hmn.symm) hm_ne_d₂
+  have h₂ : n = 2 := by simpa [hd₁] using hdvd_eq_d₁ n (by lia) (Dvd.intro_left m hmn.symm) hn_ne_d₂
+  have : d₂ = 4 := by simpa [h₁, h₂] using hmn
+  exact h4 (dvd_trans (dvd_of_eq this.symm) hd₂_dvd_x)
+
+lemma third_min_divisor_prime_of_not_double_second (hx : x ∈ S) (hx0 : x ≠ 0)
+    (h2x : 2 ∣ x) (h4 : ¬ 4 ∣ x) (hmin : ThreeMinDivisors x d₁ d₂ d₃)
+    (hd₁ : d₁ = 2)
+    (hd₂prime : Nat.Prime d₂) (h2p : ¬ d₃ = 2 * d₂) : Nat.Prime d₃ := by
+  rcases hmin.dvds, hmin.mems, hmin.hd₁₂, hmin.hd₂₃ with
+    ⟨⟨_, hd₂_dvd_x, hd₃_dvd_x⟩, ⟨hd₁mem, hd₂mem, hd₃mem⟩, hd₁₂, hd₂₃⟩
+  by_contra hnot_prime
+  obtain ⟨m, hm_dvd, hm_ge_two, hm_lt⟩ := (Nat.not_prime_iff_exists_dvd_lt (by lia : 2 ≤ d₃)).mp hnot_prime
+  obtain ⟨n, hmn⟩ := hm_dvd
+  have hm_ne_d₃ : m ≠ d₃ := by lia
+  have hn_ne_d₃ : n ≠ d₃ := by nlinarith
+  have hm_mem := mem_of_dvd_mem_threeSmallest hmin hx hx0 (by simp [hmn] : m ∣ d₃) (by simp) hm_ge_two
+  have hn_mem := mem_of_dvd_mem_threeSmallest hmin hx hx0 (by simp [hmn] : n ∣ d₃) (by simp) (by nlinarith)
+  replace hm_mem : m ∈ [d₁, d₂] := by grind only [List.mem_cons, List.eq_or_mem_of_mem_cons]
+  replace hn_mem : n ∈ [d₁, d₂] := by grind only [List.mem_cons, List.eq_or_mem_of_mem_cons]
+  by_cases hm_eq_n : m = n
+  · by_cases hm_eq_d₁ : m = d₁
+    · exact h4 (dvd_trans (by lia : 4 ∣ d₃) hd₃_dvd_x)
+    · have hm : m = d₂ := by simpa [hm_eq_d₁] using hm_mem
+      have htwo_d₂_dvd := prime_mul_prime_dvd Nat.prime_two hd₂prime h2x hd₂_dvd_x (by lia)
+      replace htwo_d₂_dvd := mem_divisors_erase_one_of_dvd_ne_one htwo_d₂_dvd hx0 (by lia)
+      have htwo_d₂_lt : 2 * d₂ < d₃ := by
+        simp [hmn, ← hm_eq_n, hm, ← hd₁]
+        nlinarith [hd₂prime.two_le]
+      have htwo_d₂_mem := (mem_take_or_gt_of_divisor hx htwo_d₂_dvd hmin.hdiv).resolve_right (by lia)
+      simp at htwo_d₂_mem
+      rcases htwo_d₂_mem with h | h | h <;> lia
+  · grind only [List.mem_cons, List.not_mem_nil]
+
+lemma psi_mod_two_eq_one_of_min_divisors_prime (hx0 : x ≠ 0) (h2x : 2 ∣ x) (h4 : ¬ 4 ∣ x)
+    (hmin : ThreeMinDivisors x d₁ d₂ d₃) (hd₁ : d₁ = 2)
+    (hd₂prime : Nat.Prime d₂) (hd₃prime : Nat.Prime d₃) : ψ x % 2 = 1 := by
+  obtain ⟨_, hd₂_dvd_x, hd₃_dvd_x⟩ := hmin.dvds
+  have h_two_dvd : ∀ d, Nat.Prime d → d₁ < d → d ∣ x → 2 ∣ x / d := by
+    intro d hprime hlt hdvd
+    have hnot_two_dvd : ¬ 2 ∣ d := by grind [Nat.prime_dvd_prime_iff_eq Nat.prime_two hprime]
+    obtain ⟨k, hk⟩ := hdvd
+    have : 2 ∣ d * k := by rwa [hk] at h2x
+    grind [(Nat.prime_two.dvd_mul.mp this).resolve_left hnot_two_dvd, Nat.mul_div_right]
+  simp [hmin.psi_eq hx0, hd₁]
+  grind only [hmin.hd₁₂, hmin.hd₂₃]
+
+lemma not_six_dvd_psi_of_not_four_dvd (hx : x ∈ S) (hx0 : x ≠ 0)
+    (h2x : 2 ∣ x) (h3x : ¬ 3 ∣ x) (hmin : ThreeMinDivisors x d₁ d₂ d₃)
+    (hd₁ : d₁ = 2) (h4 : ¬ 4 ∣ x) : ¬ 6 ∣ ψ x := by
+  have hd₂prime := second_min_divisor_prime_of_not_four_dvd hx hx0 hmin hd₁ h4
+  by_cases h2p : d₃ = 2 * d₂
+  · have hpsi : ψ x = x / 2 + x / d₂ + x / (2 * d₂) := by simp [hmin.psi_eq hx0, hd₁, h2p]
+    replace hpsi : ψ x = x / 2 + 3 * (x / d₃) := by
+      have h2d₂ : 2 * d₂ ∣ x := by simpa [h2p] using hmin.dvds.2.2
+      obtain ⟨k, rfl⟩ := h2d₂
+      calc
+        ψ ((2 * d₂) * k) = (2 * d₂) * k / 2 + (2 * d₂) * k / d₂ + (2 * d₂) * k / (2 * d₂) := hpsi
+        _ = (2 * d₂) * k / 2 + 3 * ((2 * d₂) * k / d₃) := by
+          have hdivd₂ : d₂ * (2 * k) / d₂ = 2 * ((2 * d₂) * k / (2 * d₂)) := by aesop
+          grind only
+    lia
+  · have hd₃prime := third_min_divisor_prime_of_not_double_second hx hx0 h2x h4 hmin hd₁ hd₂prime h2p
+    have hmod2 := psi_mod_two_eq_one_of_min_divisors_prime hx0 h2x h4 hmin hd₁ hd₂prime hd₃prime
+    grind only
 
 lemma six_dvd_of_six_dvd_psi {x : ℕ} : x ∈ S → 6 ∣ ψ x → 6 ∣ x := by
   intro hx h6
   by_contra h6x
   have h2x := two_dvd_of_two_dvd_psi hx (by lia)
   have h3x : ¬ 3 ∣ x := by lia
-  obtain ⟨hx0, d₁, d₂, d₃, hdiv, hd₁mem, hd₂mem, hd₃mem, hd₁, hd₁₂, hd₂₃⟩ := min_divisors_of_mem_S hx
-  replace hd₁ : d₁ = 2 := by
-    have := mem_take_or_gt_of_divisor hx (by aesop : 2 ∈ x.divisors.erase 1) hdiv
-    grind only [= List.mem_cons, ← List.not_mem_nil]
+  obtain ⟨hx0, d₁, d₂, d₃, hmin⟩ := threeMinDivisors_of_mem_S hx
+  have hd₁ : d₁ = 2 := first_min_divisor_eq_two_of_two_dvd hx h2x hmin
   by_cases h4 : 4 ∣ x
-  · have hd₂ : d₂ = 4 := by
-      have := mem_take_or_gt_of_divisor hx (by aesop : 4 ∈ x.divisors.erase 1) hdiv
-      by_cases hd₃ : d₃ < 4
-      · grind only
-      · simp [hd₁, hd₃] at this
-        by_cases hd₂ : d₂ = 4
-        · assumption
-        · have : d₃ = 4 := by lia
-          have : d₂ = 3 := by lia
-          grind only [= mem_erase, = Nat.mem_divisors]
-    have hpsi : ψ x = 3 * x / 4 + x / d₃ := by
-      simp [ψ, reverse_properDivisors_eq_div_divisors_erase_one hx0, ← List.map_take, hdiv, hd₁, hd₂]
-      lia
-    have hmod3 : ψ x % 3 ≠ 0 := by
-      have hd₃dvd : d₃ ∣ x := (Nat.mem_divisors.mp (mem_erase.mp hd₃mem).2).1
-      have h3d₃ : ¬ 3 ∣ x / d₃ := fun h3 ↦ h3x (by
-          convert dvd_mul_of_dvd_right h3 d₃ using 1
-          exact (Nat.mul_div_cancel' hd₃dvd).symm)
-      have hterm : 3 ∣ 3 * x / 4 := by lia
-      rw [hpsi, Nat.add_mod, Nat.dvd_iff_mod_eq_zero.mp hterm, zero_add]
-      exact fun hmod ↦ h3d₃ (by simpa [Nat.dvd_iff_mod_eq_zero, Nat.mod_mod] using hmod)
-    have h3 : ¬ 3 ∣ ψ x := by lia
-    lia
-  · have hd₂_dvd_x := (Nat.mem_divisors.mp (mem_erase.mp hd₂mem).2).1
-    have hd₃_dvd_x := (Nat.mem_divisors.mp (mem_erase.mp hd₃mem).2).1
-    have hdvd_eq_d₁ : ∀ k > 1, k ∣ d₂ → k ≠ d₂ → k = d₁ := by
-      intro k hgt_one hk hk_ne_d₂
-      have : k ∣ x := dvd_trans hk hd₂_dvd_x
-      have hne_one : k ≠ 1 := by lia
-      replace : k ∈ x.divisors.erase 1 := by simp [Nat.mem_divisors, mem_erase, this, hx0, hne_one]
-      replace := mem_take_or_gt_of_divisor hx (by aesop : k ∈ x.divisors.erase 1) hdiv
-      have hlt_d₂ : k ≤ d₂ := Nat.le_of_dvd (by lia) hk
-      grind only [= List.mem_cons, ← List.not_mem_nil]
-    have hd₂prime : Nat.Prime d₂ := by
-      by_contra hnot_prime
-      obtain ⟨m, hm_dvd, hm_ge_two, hm_lt⟩ := (Nat.not_prime_iff_exists_dvd_lt (by omega : 2 ≤ d₂)).mp hnot_prime
-      obtain ⟨n, hmn⟩ := hm_dvd
-      have hm_ne_d₂ : m ≠ d₂ := by lia
-      have hn_ne_d₂ : n ≠ d₂ := by nlinarith
-      have h₁ : m = 2 := by simpa [hd₁] using hdvd_eq_d₁ m (Nat.lt_of_succ_le hm_ge_two) (Dvd.intro n hmn.symm) hm_ne_d₂
-      have h₂ : n = 2 := by simpa [hd₁] using hdvd_eq_d₁ n (by lia) (Dvd.intro_left m hmn.symm) hn_ne_d₂
-      have : d₂ = 4 := by simpa [h₁, h₂] using hmn
-      exact h4 (dvd_trans (dvd_of_eq this.symm) hd₂_dvd_x)
-
-    by_cases h2p : d₃ = 2 * d₂
-    · have : ψ x = x / 2 + x / d₂ + x / (2 * d₂) := by
-        simp [ψ, reverse_properDivisors_eq_div_divisors_erase_one hx0, ← List.map_take, hdiv, hd₁, h2p]
-        lia
-      replace : ψ x = x / 2 + 3 * (x / d₃) := by
-        have h2d₂ : 2 * d₂ ∣ x := by rwa [← h2p]
-        obtain ⟨k, rfl⟩ := h2d₂
-        calc
-          ψ ((2 * d₂) * k) = (2 * d₂) * k / 2 + (2 * d₂) * k / d₂ + (2 * d₂) * k / (2 * d₂) := this
-          _ = (2 * d₂) * k / 2 + 3 * ((2 * d₂) * k / d₃) := by
-            have hd₂pos : 0 < d₂ := Nat.zero_lt_of_lt hd₁₂
-            have hdivd₂ : (2 * d₂) * k / d₂ = 2 * ((2 * d₂) * k / (2 * d₂)) := by
-              calc
-                (2 * d₂) * k / d₂ = d₂ * (2 * k) / d₂ := by ring_nf
-                _ = 2 * k := by rw [Nat.mul_div_right _ hd₂pos]
-                _ = 2 * ((2 * d₂) * k / (2 * d₂)) := by
-                  rw [Nat.mul_div_right _ (by positivity : 0 < 2 * d₂)]
-            grind only
-      have : ψ x % 3 ≠ 0 := by lia
-      lia
-    · have hd₃prime : Nat.Prime d₃ := by
-        by_contra hnot_prime
-        obtain ⟨m, hm_dvd, hm_ge_two, hm_lt⟩ := (Nat.not_prime_iff_exists_dvd_lt (by omega : 2 ≤ d₃)).mp hnot_prime
-        obtain ⟨n, hmn⟩ := hm_dvd
-        have hm_ne_d₃ : m ≠ d₃ := by lia
-        have hn_ne_d₃ : n ≠ d₃ := by nlinarith
-        have h_dvd {k d : ℕ} : k ∣ d → d ∈ [d₁, d₂, d₃] → 2 ≤ k → k ∈ [d₁, d₂, d₃] := by
-          intro hk_dvd hd_mem htwo_le
-          have : d ∣ x := by grind only [List.mem_cons, List.not_mem_nil]
-          replace : k ∈ x.divisors.erase 1 := by simp [dvd_trans hk_dvd this, (by lia : k ≠ 1), hx0]
-          replace := mem_take_or_gt_of_divisor hx this hdiv
-          by_cases hcase : d₃ < k
-          · by_contra
-            simp at hd_mem
-            simp at this
-            have hk_le_d : k ≤ d := by exact Nat.le_of_dvd (by lia) hk_dvd
-            rcases hd_mem with hd | hd | hd <;> grind
-          · exact this.resolve_right hcase
-        have hn_ge_two : 2 ≤ n := by nlinarith
-        have hm_mem := h_dvd (by simp [hmn] : m ∣ d₃) (by simp) hm_ge_two
-        have hn_mem := h_dvd (by simp [hmn] : n ∣ d₃) (by simp) hn_ge_two
-        have hm_dvd : m ∈ x.divisors.erase 1 := by grind only [List.mem_cons, List.not_mem_nil]
-        replace hm_mem : m ∈ [d₁, d₂, d₃] := by grind [mem_take_or_gt_of_divisor hx hm_dvd hdiv]
-        have hn_dvd : n ∈ x.divisors.erase 1 := by grind only [List.mem_cons, List.not_mem_nil]
-        replace hn_mem : n ∈ [d₁, d₂, d₃] := by grind [mem_take_or_gt_of_divisor hx hn_dvd hdiv]
-        replace hm_mem : m ∈ [d₁, d₂] := by grind only [List.mem_cons, List.eq_or_mem_of_mem_cons]
-        replace hn_mem : n ∈ [d₁, d₂] := by grind only [List.mem_cons, List.eq_or_mem_of_mem_cons]
-        by_cases hm_eq_n : m = n
-        · by_cases hm_eq_d₁ : m = d₁
-          · exact h4 (dvd_trans (by lia : 4 ∣ d₃) (by lia : d₃ ∣ x))
-          · have hm : m = d₂ := by simpa [hm_eq_d₁] using hm_mem
-            have htwo_d₂_dvd : 2 * d₂ ∣ x := prime_mul_prime_dvd Nat.prime_two hd₂prime h2x hd₂_dvd_x (by lia)
-            replace htwo_d₂_dvd : 2 * d₂ ∈ x.divisors := Nat.mem_divisors.mpr ⟨htwo_d₂_dvd, hx0⟩
-            replace htwo_d₂_dvd : 2 * d₂ ∈ x.divisors.erase 1 := by simpa [mem_erase] using htwo_d₂_dvd
-            have htwo_d₂_lt : 2 * d₂ < d₃ := by
-              simp [hmn, ← hm_eq_n, hm, ← hd₁]
-              nlinarith
-            have htwo_d₂_mem : 2 * d₂ ∈ [d₁, d₂, d₃] := (mem_take_or_gt_of_divisor hx htwo_d₂_dvd hdiv).resolve_right (by lia)
-            simp at htwo_d₂_mem
-            rcases htwo_d₂_mem with hd | hd | hd <;> grind only
-        · grind only [List.mem_cons, List.not_mem_nil]
-      have : ψ x % 2 = 1 := by
-        simp [ψ, reverse_properDivisors_eq_div_divisors_erase_one hx0, ← List.map_take, hdiv, hd₁]
-        have hx₂odd : x / 2 % 2 = 1 := by lia
-        have h_two_dvd : ∀ d, Nat.Prime d → d₁ < d → d ∣ x → 2 ∣ x / d := by
-          intro d hprime hlt hdvd
-          have hnot_two_dvd : ¬ 2 ∣ d := by
-            intro h
-            have : 2 = d := (Nat.prime_dvd_prime_iff_eq Nat.prime_two hprime).mp h
-            lia
-          obtain ⟨k, hk⟩ := hdvd
-          have hdpos : 0 < d := Nat.zero_lt_of_lt hlt
-          have : 2 ∣ d * k := by rwa [hk] at h2x
-          have h2k : 2 ∣ k := (Nat.prime_two.dvd_mul.mp this).resolve_left hnot_two_dvd
-          rwa [hk, Nat.mul_div_right k hdpos]
-        have hxd₂ : 2 ∣ x / d₂ := h_two_dvd d₂ hd₂prime hd₁₂ hd₂_dvd_x
-        have hxd₃ : 2 ∣ x / d₃ := h_two_dvd d₃ hd₃prime (lt_trans hd₁₂ hd₂₃) ((Nat.mem_divisors.mp (mem_erase.mp hd₃mem).2).1)
-        lia
-      lia
+  · have hd₂ := second_min_divisor_eq_four_of_four_dvd hx hx0 h3x h4 hmin hd₁
+    exact not_three_dvd_psi_of_second_min_divisor_four hx0 h3x h4 hmin hd₁ hd₂
+      (dvd_trans (by norm_num : 3 ∣ 6) h6)
+  · exact not_six_dvd_psi_of_not_four_dvd hx hx0 h2x h3x hmin hd₁ h4 h6
 
 lemma psi_lt_of_not_two_dvd {x : ℕ} : x ∈ S → ¬ 2 ∣ x → ψ x < x := by
   intro hx h2
-  obtain ⟨hx0, d₁, d₂, d₃, hdiv, hd₁mem, hd₂mem, hd₃mem, hd₁ge, hd₁₂, hd₂₃⟩ := min_divisors_of_mem_S hx
+  obtain ⟨hx0, d₁, d₂, d₃, hdiv, _, _, _, hd₁ge, hd₁₂, hd₂₃⟩ := min_divisors_of_mem_S hx
   have h2div : ∀ d ∈ x.divisors, ¬ 2 ∣ d := fun d hd h2' ↦ h2 (dvd_trans h2' (Nat.mem_divisors.mp hd).1)
   have hle : ψ x ≤ x / 3 + x / 5 + x / 7 := by
     apply psi_le_of_three_smallest_ge hx0 (by norm_num) (by norm_num) (by norm_num)
@@ -423,17 +478,13 @@ lemma psi_lt_of_not_two_dvd {x : ℕ} : x ∈ S → ¬ 2 ∣ x → ψ x < x := b
 
 lemma psi_lt_of_two_dvd_not_three_dvd {x : ℕ} : x ∈ S → 2 ∣ x → ¬ 3 ∣ x → ψ x < x := by
   intro hx h2 h3
-  obtain ⟨hx0, d₁, d₂, d₃, hdiv, hd₁mem, hd₂mem, _, hd₁ge, hd₁₂, hd₂₃⟩ := min_divisors_of_mem_S hx
-  have hd₂ge : 4 ≤ d₂ := by
-    have hd₂dvd : d₂ ∣ x := (Nat.mem_divisors.mp (mem_erase.mp hd₂mem).2).1
-    have hd₂ne3 : d₂ ≠ 3 := fun hd₂ ↦ h3 (by rwa [hd₂] at hd₂dvd)
-    lia
+  obtain ⟨hx0, d₁, d₂, d₃, hdiv, _, _, _, hd₁ge, hd₁₂, hd₂₃⟩ := min_divisors_of_mem_S hx
+  have hd₂ge : 4 ≤ d₂ := by grind only [= mem_erase, = Nat.mem_divisors]
   have hd₃ge : 5 ≤ d₃ := by lia
   have hle : ψ x ≤ x / 2 + x / 4 + x / 5 := by
     apply psi_le_of_three_smallest_ge hx0 (by norm_num) (by norm_num) (by norm_num)
     exact ⟨d₁, d₂, d₃, hdiv, hd₁ge, hd₂ge, hd₃ge⟩
-  have hlt : x / 2 + x / 4 + x / 5 < x := by lia
-  exact lt_of_le_of_lt hle hlt
+  lia
 
 lemma descending_contra (P : ℕ → Prop) (f : ℕ → ℕ) (h₀ : P 0) (h₁ : ∀ i, P i → P (i + 1))
     (h₂ : ∀ i, P i → f (i + 1) < f i) : False := by
@@ -485,12 +536,14 @@ lemma psi_of_six_dvd {x : ℕ} : x ∈ S → 6 ∣ x →
     ψ x = if 4 ∣ x then x * 13 / 12 else if 5 ∣ x then x * 31 / 30 else x := by
   intro hx h6
   have h_ne_zero : x ≠ 0 := Nat.ne_zero_of_lt (pos_of_mem_S hx)
-  simp [ψ, reverse_properDivisors_eq_div_divisors_erase_one h_ne_zero, ← List.map_take]
   by_cases h4 : 4 ∣ x
-  · grind [divisors_erase_one_sort_take_three_eq_two_three_four h_ne_zero (by lia) (by lia) h4]
+  · grind only [psi_eq_of_threeSmallestDivisors_eq h_ne_zero
+      (divisors_erase_one_sort_take_three_eq_two_three_four h_ne_zero (by lia) (by lia) h4)]
   · by_cases h5 : 5 ∣ x
-    · grind [divisors_erase_one_sort_take_three_eq_two_three_five h_ne_zero (by lia) (by lia) h4 h5]
-    · grind [divisors_erase_one_sort_take_three_eq_two_three_six h_ne_zero (by lia) (by lia) h4 h5]
+    · grind only [psi_eq_of_threeSmallestDivisors_eq h_ne_zero
+        (divisors_erase_one_sort_take_three_eq_two_three_five h_ne_zero (by lia) (by lia) h4 h5)]
+    · grind only [psi_eq_of_threeSmallestDivisors_eq h_ne_zero
+        (divisors_erase_one_sort_take_three_eq_two_three_six h_ne_zero (by lia) (by lia) h4 h5)]
 
 lemma odd_of_five_branch {x : ℕ} (h6 : 6 ∣ x) (h5 : 5 ∣ x) (h4 : ¬ 4 ∣ x) : ¬ 2 ∣ x * 31 / 30 := by grind
 
