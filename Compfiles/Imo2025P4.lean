@@ -10,7 +10,7 @@ import ProblemExtraction
 problem_file {
   tags := [.Algebra]
   problemImportedFrom :=
-    "https://github.com/jsm28/IMOLean/blob/main/IMO/IMO2020P4.lean"
+    "https://github.com/jsm28/IMOLean/blob/main/IMO/IMO2025P4.lean"
 }
 
 /-!
