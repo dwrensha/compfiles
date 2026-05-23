@@ -7,7 +7,11 @@ import Mathlib
 
 import ProblemExtraction
 
-problem_file { tags := [.Algebra] }
+problem_file {
+  tags := [.Algebra]
+  problemImportedFrom :=
+    "https://github.com/jsm28/IMOLean/blob/main/IMO/IMO2020P4.lean"
+}
 
 /-!
 # International Mathematical Olympiad 2025, Problem 4
