@@ -217,6 +217,7 @@ import Compfiles.Imo2024P6
 import Compfiles.Imo2025P1
 import Compfiles.Imo2025P2
 import Compfiles.Imo2025P3
+import Compfiles.Imo2025P4
 import Compfiles.Imo2025P5
 import Compfiles.Imo2025P6
 import Compfiles.India1998P1
