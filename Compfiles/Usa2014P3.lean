@@ -4,9 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Evan Chen
 -/
 
-import Mathlib.Tactic
+import Mathlib
 import ProblemExtraction
-import Mathlib.LinearAlgebra.AffineSpace.FiniteDimensional
 
 problem_file {
   tags := [.Geometry]

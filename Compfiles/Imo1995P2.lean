@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Zheng Yuan
 -/
 
-import Mathlib.Tactic
+import Mathlib
 
 import ProblemExtraction
 

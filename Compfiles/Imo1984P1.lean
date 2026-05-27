@@ -4,8 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: InternLM-MATH LEAN Formalizer v0.1, Hongyu Ouyang
 -/
 
-import Mathlib.Tactic
-import Mathlib.Analysis.SpecialFunctions.Pow.Real
+import Mathlib
 
 import ProblemExtraction
 
