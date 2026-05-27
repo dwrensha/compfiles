@@ -518,9 +518,6 @@ lemma zmod_two_natCast_ninety_seven : (97 : ZMod 2) = 1 :=
 lemma zmod_two_natCast_one_ninety_three : (193 : ZMod 2) = 1 :=
   Odd.natCast_zmod_two (by norm_num : Odd 193)
 
-lemma zmod_two_natCast_one_ninety_four : (194 : ZMod 2) = 0 :=
-  Even.natCast_zmod_two (by norm_num : Even 194)
-
 lemma cornerDelta_left_open (c : ZMod 2) (y : Fin 99)
     (hy0 : 0 < y.val) (hy98 : y.val < 98) :
     cornerDelta (constAddStart c) ((0 : Fin 99), y) = 1 := by
@@ -577,22 +574,19 @@ lemma cornerDelta_top_left (c : ZMod 2) :
     cornerDelta (constAddStart c) ((0 : Fin 99), (98 : Fin 99)) = c + 1 := by
   unfold cornerDelta maskedCell cellValue constAddStart start_coloring
   simp
-  ring_nf
-  rw [zmod_two_natCast_ninety_seven]
+  reduce_mod_char
 
 lemma cornerDelta_bottom_right (c : ZMod 2) :
     cornerDelta (constAddStart c) ((98 : Fin 99), (0 : Fin 99)) = c + 1 := by
   unfold cornerDelta maskedCell cellValue constAddStart start_coloring
   simp
-  ring_nf
-  rw [zmod_two_natCast_ninety_seven]
+  reduce_mod_char
 
 lemma cornerDelta_top_right (c : ZMod 2) :
     cornerDelta (constAddStart c) ((98 : Fin 99), (98 : Fin 99)) = c := by
   unfold cornerDelta maskedCell cellValue constAddStart start_coloring
   simp
-  ring_nf
-  rw [zmod_two_natCast_one_ninety_four]
+  reduce_mod_char
 
 def innerCoord (i : Fin 97) : Fin 99 :=
   ⟨i.val + 1, by omega⟩
@@ -716,8 +710,7 @@ lemma mem_oppositeBoardCorners (p : Corner) :
 
 lemma fin99_boundary_or_inner (i : Fin 99) :
     i = (0 : Fin 99) ∨ i = (98 : Fin 99) ∨ (0 < i.val ∧ i.val < 98) := by
-  have h : i.val = 0 ∨ i.val = 98 ∨ (0 < i.val ∧ i.val < 98) := by
-    omega
+  have h : i.val = 0 ∨ i.val = 98 ∨ (0 < i.val ∧ i.val < 98) := by lia
   rcases h with h | h | h
   · exact Or.inl (Fin.ext h)
   · exact Or.inr (Or.inl (Fin.ext h))
@@ -755,19 +748,15 @@ lemma mem_cornerSupport_constAddStart (c : ZMod 2) (p : Corner) :
       rw [mem_cornerSupport, mem_openBoundary, mem_sameBoardCorners, mem_oppositeBoardCorners]
       rcases fin99_boundary_or_inner x with hx0 | hx98 | hxmid <;>
         rcases fin99_boundary_or_inner y with hy0 | hy98 | hymid
-      · subst x
-        subst y
+      · subst x y
         simp [cornerDelta_bottom_left]
-      · subst x
-        subst y
+      · subst x y
         simp [cornerDelta_top_left]
       · subst x
         simp [cornerDelta_left_open, hymid.1, hymid.2]
-      · subst x
-        subst y
+      · subst x y
         simp [cornerDelta_bottom_right]
-      · subst x
-        subst y
+      · subst x y
         simp [cornerDelta_top_right]
       · subst x
         simp [cornerDelta_right_open, hymid.1, hymid.2]
