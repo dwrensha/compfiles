@@ -18,7 +18,7 @@ a labeling of the lattice points in ℤ² with positive integers for which:
 
   1. only finitely many distinct labels occur, and
   2. for each label i, the distance between any two points labeled i
-     is at most cⁱ.
+     is at least cⁱ.
 -/
 
 namespace Usa2017P5
@@ -35,7 +35,7 @@ problem usa2017_p5 (c : ℝ) :
        (Set.range l).Finite ∧
        (∀ p, 0 < l p) ∧
        ∀ {p1 p2}, p1 ≠ p2 → (l p1 = l p2) →
-            dist (l p1) (l p2) ≤ c ^ (l p1)) := by
+            c ^ (l p1) ≤ dist p1 p2) := by
   sorry
 
 

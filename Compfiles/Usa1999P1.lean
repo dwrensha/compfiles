@@ -39,6 +39,7 @@ problem usa1999_p1 (n : ℕ) (c : Finset (checkerboard n))
     (ha : ∀ x : checkerboard n, x ∈ c ∨ (∃ y ∈ c, adjacent x y))
     (hb : ∀ x ∈ c, ∀ y ∈ c,
       ∃ p : List (checkerboard n),
+        (∀ z, z ∈ p → z ∈ c) ∧
         List.IsChain adjacent p ∧
         List.head? p = x ∧
         List.getLast? p = y) :
