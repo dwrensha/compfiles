@@ -1790,8 +1790,6 @@ lemma signature_model_lower_bound
     _ = SignatureObjective g := hgobj.symm
     _ ≤ SignatureObjective f := hobj_le
 
-snip end
-
 /-- The signature construction realizes the claimed value. -/
 lemma construction_attains_solution :
     ∃ S, Good S ∧
@@ -1809,6 +1807,8 @@ lemma at_least_solution_elements (S : Fin 100 → Set ℤ) (hS : Good S) :
     (signatureCount S)
     (signatureCount_condition_of_good S hS)
     (signatureCount_top_pos_of_good S hS)
+
+snip end
 
 problem usa2024_p2 :
     IsLeast
