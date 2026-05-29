@@ -1,4 +1,5 @@
 import Dashboard.Components.Base
+import Dashboard.Components.Navbar
 import Dashboard.Models.Problems
 import Dashboard.Pages.ProblemPage
 import ProblemExtraction
@@ -39,12 +40,21 @@ def problemTable (config : SConfig)
   ]).toList,
 ]
 
-def All.generate (config : SConfig)
-  (numProved : Nat) (mdsArray : Array <| Lean.Name × ProblemMeta)
-  : IO Page := pure <| Page.dynamic "all.html" <| pure <| renderDoc <|
-    base "Compfiles: Catalog of Math Problems Formalized in Lean"
-    config (currentPage := .all) (includeHljs := true) [
+private def generate' (config : SConfig)
+  (filePath : String) (navbarState : NavbarState) (numProved : Nat)
+  (mdsArray : Array <| Lean.Name × ProblemMeta)
+  : IO Page := pure <| Page.dynamic filePath <| pure <| renderDoc <|
+  base "Compfiles: Catalog of Math Problems Formalized in Lean"
+  config (currentPage := navbarState) (includeHljs := true) [
   .p [] [.b [] s!"{mdsArray.size}", " problems have been formalized."],
   .p [] [.b [] s!"{numProved}", " problems have complete formalized solutions."],
   problemTable config mdsArray,
 ]
+
+def All.generate (config : SConfig)
+  (numProved : Nat) (mdsArray : Array <| Lean.Name × ProblemMeta)
+  : IO Page := generate' config "all.html" .all numProved mdsArray
+
+def All.generateMisc (config : SConfig)
+  (numProved : Nat) (mdsArray : Array <| Lean.Name × ProblemMeta)
+  : IO Page := generate' config "misc.html" .misc numProved mdsArray

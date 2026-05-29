@@ -26,6 +26,15 @@ def compRow {idxType subIdxType : Type} [Ord idxType] [Ord subIdxType]
 
 end Contest
 
+def miscRow (config : SConfig)
+  (filePath : List String)
+  (formalized : Nat) (solved : Nat) : Html := .tr [] [
+  .th [] <| compAnchor config "Misc" filePath,
+    .td [] "",
+    .td [] s!"{formalized}",
+    .td [] s!"{solved}",
+]
+
 def compTable (rows : List <| Html)
   : Html := .table [cls "toplevel-olympiad-stats"] [
   .thead [] [.tr [] [
@@ -124,6 +133,7 @@ def faq (config : SConfig) : List Html := [
 def Index.generate (config : SConfig)
   (tagFormalizedCounts : Array Nat) (tagSolvedCounts : Array Nat)
   (numProved : Nat) (mds : Lean.NameMap ProblemMeta)
+  (miscFormalized : Nat) (miscSolved : Nat)
   : IO Page := pure <| Page.dynamic "index.html" <| pure <| renderDoc <|
     base "Compfiles: Catalog of Math Problems Formalized in Lean"
     config (currentPage := .about) (includeHljs := true) <| [
@@ -145,6 +155,7 @@ def Index.generate (config : SConfig)
         compTable [
           imoContest.compRow config ["imo.html"] mds,
           usamoContest.compRow config ["usamo.html"] mds,
+          miscRow config ["misc.html"] miscFormalized miscSolved,
         ],
         tagTable tagFormalizedCounts tagSolvedCounts,
       ],

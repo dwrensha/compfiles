@@ -7,6 +7,7 @@ inductive NavbarState where
 | about
 | imo
 | usamo
+| misc
 | all
 | none
 deriving BEq
@@ -24,6 +25,7 @@ def navbar (config : SConfig) (currentPage : NavbarState) : List Html := [
     renderTab "About" (config.resolveAbs ["index.html"]) (currentPage == .about),
     renderTab "IMO" (config.resolveAbs ["imo.html"]) (currentPage == .imo),
     renderTab "USAMO" (config.resolveAbs ["usamo.html"]) (currentPage == .usamo),
+    renderTab "Misc" (config.resolveAbs ["misc.html"]) (currentPage == .misc),
     renderTab "All" (config.resolveAbs ["all.html"]) (currentPage == .all),
   ]
 ]

@@ -62,6 +62,8 @@ unsafe def generateAll (config : SConfig) : IO (List Page) := do
   let mut tagSolvedCounts : Array Nat := Array.mk [0, 0, 0, 0, 0]
   let mut numProved : Nat := 0
   let mut mdsArray : Array <| Lean.Name × ProblemMeta := Array.mk []
+  let mut miscMdsArray : Array <| Lean.Name × ProblemMeta := Array.mk []
+  let mut miscSolved : Nat := 0
   for ⟨name, md⟩ in mds do
     mdsArray := mdsArray.push ⟨name, md⟩
     for tag in md.metadata.tags do
@@ -82,14 +84,19 @@ unsafe def generateAll (config : SConfig) : IO (List Page) := do
     let b₁ := bucket s₁
     let b₂ := bucket s₂
     if b₁ ≠ b₂ then b₁ < b₂ else s₁ < s₂
-  allPages := (← All.generate config numProved mdsArray) :: allPages
   allPages := allPages ++ (← Imo.genAll config mds)
   allPages := allPages ++ (← Usamo.genAll config mds)
   for ⟨name, detail⟩ in mds do
     if imoContest.hasProblemName name || usamoContest.hasProblemName name then
       pure ()
     else
+      miscMdsArray := miscMdsArray.push ⟨name, detail⟩
+      if detail.proved then miscSolved := miscSolved + 1
       allPages := allPages ++ (← Problem.generateFormalized config name detail [])
+  miscMdsArray := miscMdsArray.qsort fun n₁ n₂ ↦
+    n₁.1.toString < n₂.1.toString
+  allPages := (← All.generate config numProved mdsArray) :: allPages
+  allPages := (← All.generateMisc config miscSolved miscMdsArray) :: allPages
   allPages := (← Index.generate config tagFormalizedCounts
-    tagSolvedCounts numProved mds) :: allPages
+    tagSolvedCounts numProved mds miscMdsArray.size miscSolved) :: allPages
   return allPages
