@@ -47,6 +47,9 @@ All problems listed (including not yet formalized ones)
 -/
 def problemCount (c : Contest idx subIdx) : Nat := c.filterProblemCount fun _ _ => true
 
+def hasProblemName (c : Contest idx subIdx) (name : Lean.Name) : Bool :=
+  c.problems.any fun ⟨idx, subIdx⟩ ↦ c.toName idx subIdx == name
+
 def mergeNeighbors (c : Contest idx subIdx) : List <| idx × List subIdx :=
   c.problems.mergeSort (
     fun a b ↦ match compare a.1 b.1 with

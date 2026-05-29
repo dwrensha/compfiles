@@ -19,12 +19,11 @@ def problemTable (config : SConfig)
     .th [] "tags",
   ]],
   .tbody [] (mdsArray.map fun ⟨rawName, metadata⟩ ↦
-    let name := rawName.toString.dropPrefix "Compfiles." |>.toString
+    let name := problemId rawName
     .tr [] [
     -- title=informal (sic) ???
     .td [("title", metadata.informal), cls "problem-page-link"] [
-      -- TODO: DRY with toId
-      .a (config.resolveAbs ["problems", s!"{name}.html"]) [] name,
+      .a (problemHtmlUrl config rawName) [] name,
     ],
     .td [cls "solved-col"] [
       .a s!"https://github.com/dwrensha/compfiles/blob/main/Compfiles/{name}.lean"
