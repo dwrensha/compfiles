@@ -12,6 +12,23 @@ def solutionUrl (id : String) : String :=
 
 open Html
 
+def problemId (name : Lean.Name) : String :=
+  name.toString.dropPrefix "Compfiles." |>.toString
+
+def problemPath (name : Lean.Name) (extension : String) : List String :=
+  ["problems", s!"{name}{extension}"]
+
+def problemRel (name : Lean.Name) (extension : String) : String :=
+  "/".intercalate (problemPath name extension)
+
+def problemUrl (config : SConfig) (name : Lean.Name) (extension : String) : String :=
+  config.resolveAbs (problemPath name extension)
+
+def problemHtmlRel (name : Lean.Name) : String := problemRel name ".html"
+
+def problemHtmlUrl (config : SConfig) (name : Lean.Name) : String :=
+  problemUrl config name ".html"
+
 def problemImports (m : ProblemExtraction.ProblemFileMetadata) : List Html :=
   if let .some url := m.problemImportedFrom then
     let text :=
@@ -47,56 +64,57 @@ def videos (m : ProblemExtraction.ProblemFileMetadata) : List Html :=
 variable {idxType subIdxType : Type} [Ord idxType] [Ord subIdxType]
   {C : Contest idxType subIdxType}
 
-def probLeanRel (p : ProblemInfo C) : String := s!"problems/{p.leanName}.lean"
+def probLeanRelName (name : Lean.Name) : String := problemRel name ".lean"
 
-def solLeanRel (p : ProblemInfo C) : String := s!"problems/{p.leanName}.sol.lean"
+def solLeanRelName (name : Lean.Name) : String := problemRel name ".sol.lean"
 
-def liveLean (config : SConfig) (p : ProblemInfo C) (proved : Bool) : List Html
+def probLeanRel (p : ProblemInfo C) : String := probLeanRelName p.leanName
+
+def solLeanRel (p : ProblemInfo C) : String := solLeanRelName p.leanName
+
+def liveLeanForName (config : SConfig) (name : Lean.Name) (proved : Bool) : List Html
   := List.singleton <| .div [] [
   "Open with the in-brower editor at live.lean-lang.org:",
   let soldesc := if proved then "complete solution" else "in-progress solution"
   let liveLeanUrl := fun u ↦ s!"https://live.lean-lang.org/#url={uriEncodeComponent u}"
   .ul [cls "live-links"] [
-    .li [] [.a (liveLeanUrl <| config.resolveAbs [probLeanRel p])
+    .li [] [.a (liveLeanUrl <| problemUrl config name ".lean")
       [] "problem statement only"],
-    .li [] [.a (liveLeanUrl <| config.resolveAbs [solLeanRel p])
+    .li [] [.a (liveLeanUrl <| problemUrl config name ".sol.lean")
       [] soldesc],
   ]
 ]
 
-def writeups (p : ProblemInfo C) : List Html :=
-  let writeups := C.externalUrls p.idx p.subIdx |>.map fun w ↦
+def liveLean (config : SConfig) (p : ProblemInfo C) (proved : Bool) : List Html :=
+  liveLeanForName config p.leanName proved
+
+def writeupList (links : List WriteupLink) : List Html :=
+  let writeups := links.map fun w ↦
     .li [] [.a w.url [cls "external"] w.text]
   if writeups.length > 0 then
     [.div [] ["External resources:", .ul [cls "writeups"] writeups]]
   else
     []
 
+def writeups (p : ProblemInfo C) : List Html :=
+  writeupList (C.externalUrls p.idx p.subIdx)
+
 def Problem.generateStub (p : ProblemInfo C) : List Html := [
-  .h2 [] [.text <| p.leanName.toString.dropPrefix "Compfiles." |>.toString],
+  .h2 [] [.text <| problemId p.leanName],
   .p [] [.text "This problem has not been formalized yet!"],
   .p [] [.text "To add a formalization of it, submit a pull request to the ",
     .a "https://github.com/dwrensha/compfiles" [cls "external"]
       [.text "Compfiles Github repository"]],
-] ++ (let writeupLinks := C.externalUrls p.idx p.subIdx
-  if writeupLinks.length > 0 then [
-    .div [] [.text "External resources:", .ul [cls "writeups"] <|
-      writeupLinks.map (fun wl ↦ .li [] [.a wl.url [cls "external"] [.text wl.text]])]
-  ] else [])
+] ++ writeups p
 
-def Problem.generate (config : SConfig) (p : ProblemInfo C) : IO (List Page) := do
-  let htmlPath := s!"problems/{p.leanName}.html"
-  -- sic
-  let probId := C.toName p.idx p.subIdx |>.toString.dropPrefix "Compfiles." |>.toString
-  match p.detail with
-  | .none => return [Page.dynamic htmlPath <| pure <| renderDoc <| base probId config
-    (currentPage := .none) (includeHljs := true) <| Problem.generateStub p]
-  | .some detail =>
+def Problem.generateFormalized (config : SConfig) (name : Lean.Name)
+  (detail : ProblemMeta) (writeupLinks : List WriteupLink) : IO (List Page) := do
+  let probId := problemId name
   let metadata := detail.metadata
   let mut pages := []
   -- HTML page
-  let htmlPage := Page.dynamic htmlPath <| pure <| renderDoc <| base
-    (p.leanName.toString.dropPrefix "Compfiles." |>.toString) config
+  let htmlPage := Page.dynamic (problemHtmlRel name) <| pure <| renderDoc <| base
+    probId config
     (currentPage := .none) (includeHljs := true) <| [
       .h2 [] probId,
       .pre [cls "problem"] [.code [cls "language-lean"] detail.problemSrc],
@@ -113,16 +131,25 @@ def Problem.generate (config : SConfig) (p : ProblemInfo C) : IO (List Page) := 
     ++ problemImports metadata
     ++ solutionImports metadata
     ++ videos metadata
-    ++ liveLean config p detail.proved
-    ++ writeups p
+    ++ liveLeanForName config name detail.proved
+    ++ writeupList writeupLinks
   pages := htmlPage :: pages
   -- .lean file
-  pages := (Page.static (probLeanRel p) <|
+  pages := (Page.static (probLeanRelName name) <|
     metadata.copyrightHeader ++ detail.problemSrc) :: pages
   -- .sol.lean file
-  pages := (Page.static (solLeanRel p) <|
+  pages := (Page.static (solLeanRelName name) <|
     metadata.copyrightHeader ++ detail.solutionSrc) :: pages
   return pages
+
+def Problem.generate (config : SConfig) (p : ProblemInfo C) : IO (List Page) := do
+  let name := p.leanName
+  let probId := problemId name
+  match p.detail with
+  | .none => return [Page.dynamic (problemHtmlRel name) <| pure <| renderDoc <| base probId config
+    (currentPage := .none) (includeHljs := true) <| Problem.generateStub p]
+  | .some detail =>
+    Problem.generateFormalized config name detail (C.externalUrls p.idx p.subIdx)
 
 namespace Contest
 

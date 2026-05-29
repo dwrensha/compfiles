@@ -8,6 +8,7 @@ import Dashboard.Contests.Usamo
 import Dashboard.Models.Contests
 import Dashboard.Pages.All
 import Dashboard.Pages.Index
+import Dashboard.Pages.ProblemPage
 import ProblemExtraction
 import SSG.Core
 
@@ -84,6 +85,11 @@ unsafe def generateAll (config : SConfig) : IO (List Page) := do
   allPages := (← All.generate config numProved mdsArray) :: allPages
   allPages := allPages ++ (← Imo.genAll config mds)
   allPages := allPages ++ (← Usamo.genAll config mds)
+  for ⟨name, detail⟩ in mds do
+    if imoContest.hasProblemName name || usamoContest.hasProblemName name then
+      pure ()
+    else
+      allPages := allPages ++ (← Problem.generateFormalized config name detail [])
   allPages := (← Index.generate config tagFormalizedCounts
     tagSolvedCounts numProved mds) :: allPages
   return allPages
