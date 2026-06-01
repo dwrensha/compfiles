@@ -341,11 +341,6 @@ lemma mem_of_dvd_mem_threeSmallest (hmin : ThreeMinDivisors x d₁ d₂ d₃) (h
     have hmem := mem_divisors_erase_one_of_dvd_ne_one (dvd_trans hk_dvd hd_dvd_x) hx0 (by lia)
     exact (mem_take_or_gt_of_divisor hx hmem hmin.hdiv).resolve_right hcase
 
-lemma prime_mul_prime_dvd {a b c : ℕ} : Nat.Prime a → Nat.Prime b → a ∣ c → b ∣ c → a ≠ b → a * b ∣ c := by
-  intro hprime_a hprime_b ha_dvd_c hb_dvd_c ha_ne_b
-  have hcoprime : a.Coprime b := (Nat.coprime_primes hprime_a hprime_b).mpr ha_ne_b
-  exact Nat.Coprime.mul_dvd_of_dvd_of_dvd hcoprime ha_dvd_c hb_dvd_c
-
 lemma first_min_divisor_eq_two_of_two_dvd (hx : x ∈ S) (h2x : 2 ∣ x)
     (hmin : ThreeMinDivisors x d₁ d₂ d₃) : d₁ = 2 := by
   have hx0 : x ≠ 0 := Nat.ne_zero_of_lt (pos_of_mem_S hx)
@@ -415,7 +410,7 @@ lemma third_min_divisor_prime_of_not_double_second (hx : x ∈ S) (hx0 : x ≠ 0
   · by_cases hm_eq_d₁ : m = d₁
     · exact h4 (dvd_trans (by lia : 4 ∣ d₃) hd₃_dvd_x)
     · have hm : m = d₂ := by simpa [hm_eq_d₁] using hm_mem
-      have htwo_d₂_dvd := prime_mul_prime_dvd Nat.prime_two hd₂prime h2x hd₂_dvd_x (by lia)
+      have htwo_d₂_dvd := Nat.Prime.dvd_mul_of_dvd_ne (by lia) Nat.prime_two hd₂prime h2x hd₂_dvd_x
       replace htwo_d₂_dvd := mem_divisors_erase_one_of_dvd_ne_one htwo_d₂_dvd hx0 (by lia)
       have htwo_d₂_lt : 2 * d₂ < d₃ := by
         simp [hmn, ← hm_eq_n, hm, ← hd₁]

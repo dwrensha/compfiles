@@ -61,7 +61,6 @@ theorem map_ne_zero_iff : f x ≠ 0 ↔ x < 2 := by simp [hf.map_eq_zero]
 theorem map_of_lt_two (hx : x < 2) : f x = 2 / (2 - x) := by
   have hx' : 0 < 2 - x := tsub_pos_of_lt hx
   have hfx : f x ≠ 0 := hf.map_ne_zero_iff.2 hx
-  set_option backward.isDefEq.respectTransparency false in
   apply le_antisymm
   · rw [le_div_iff₀ hx', ← le_div_iff₀' hfx.bot_lt,
         tsub_le_iff_right, ← hf.map_eq_zero,

@@ -103,8 +103,7 @@ lemma ncard_preimage_eq_sum_fibers
       _ = ∑ b : ↑({b : β | p b}), ({a : α | g a = b.1}).ncard := by
         refine Finset.sum_congr rfl ?_
         intro b _
-        rw [Set.ncard_eq_toFinset_card ({a : α | g a = b.1}) (hfiber_fin b)]
-        exact (hfiber_fin b).card_toFinset.symm
+        exact Set.fintypeCard_eq_ncard {a | g a = ↑b}
   calc
     {a : α | p (g a)}.ncard = Fintype.card ↑({a : α | p (g a)}) := hAcard
     _ =
@@ -322,12 +321,7 @@ lemma canonicalHighCount_grouped_sum_eq {a m : ℕ}
           · subst hm
             simp
           · have hmpos : 0 < m := Nat.pos_of_ne_zero hm
-            have hpow : 2 ^ m = 2 * 2 ^ (m - 1) := by
-              calc
-                2 ^ m = 2 ^ ((m - 1) + 1) := by rw [Nat.sub_add_cancel hmpos]
-                _ = 2 ^ (m - 1) * 2 := by rw [pow_succ]
-                _ = 2 * 2 ^ (m - 1) := by ring
-            rw [hpow]
+            rw [← mul_pow_sub_one hm 2]
             have hsubadd : a - m + m = a := Nat.sub_add_cancel hm_le_a
             calc
               (a - m) * (2 * 2 ^ (m - 1)) + 2 * (m * 2 ^ (m - 1))
@@ -502,10 +496,8 @@ lemma high_rank_weighted_choose_sum :
       _ = 100 * ((Nat.choose 99 49 : ℤ) - Nat.choose 99 (50 + 50)) := by
               simpa using high_rank_choose_telescope_int 50
       _ = ((50 * Nat.choose 100 50 : ℕ) : ℤ) := by
-              have hboundary :
-                  100 * Nat.choose 99 49 = Nat.choose 100 50 * 50 := by
-                simpa [Nat.mul_comm, Nat.mul_left_comm, Nat.mul_assoc] using
-                  (Nat.add_one_mul_choose_eq 99 49)
+              have hboundary : 100 * Nat.choose 99 49 = Nat.choose 100 50 * 50 :=
+                Nat.add_one_mul_choose_eq 99 49
               have hzero : Nat.choose 99 (50 + 50) = 0 := by
                 exact Nat.choose_eq_zero_of_lt (by norm_num)
               rw [hzero]

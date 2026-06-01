@@ -1408,14 +1408,12 @@ lemma mem_v_list (p : Point n) : p ∈ c.v_list ↔ p ∈ c.v := by simp [v_list
 
 lemma u_list_sorted : c.u_list.Pairwise ((· ≤ ·) on px) := by
   rw [u_list]
-  exact (List.pairwise_mergeSort (le := (· ≤ ·) on px)
-    (fun _ _ _ => by simp; apply le_trans) (fun a b => by simp; apply le_total)
-    c.u.toList).imp (fun h => by simpa [Function.onFun] using h)
+  exact List.pairwise_mergeSort' ((fun x1 x2 ↦ x1 ≤ x2) on px) c.u.toList
+
 lemma v_list_sorted : c.v_list.Pairwise ((· ≤ ·) on px) := by
   rw [v_list]
-  exact (List.pairwise_mergeSort (le := (· ≤ ·) on px)
-    (fun _ _ _ => by simp; apply le_trans) (fun a b => by simp; apply le_total)
-    c.v.toList).imp (fun h => by simpa [Function.onFun] using h)
+  exact List.pairwise_mergeSort' ((fun x1 x2 ↦ x1 ≤ x2) on px) c.v.toList
+
 lemma u_list_ne_nil (ha_pos : 0 < c.a) : c.u_list ≠ [] := by
   rw [← List.length_pos_iff_ne_nil, u_list_length]; exact ha_pos
 lemma v_list_ne_nil (hb_pos : 0 < c.b) : c.v_list ≠ [] := by

@@ -165,13 +165,8 @@ lemma collinear_perpBisector_eq {a b p q : Point}
     (hcol : Collinear ℝ ({p, a, q} : Set Point)) :
     p = q := by
   by_contra hpq
-  have hspan_pair_le : affineSpan ℝ ({p, q} : Set Point) ≤ AffineSubspace.perpBisector a b := by
-    rw [affineSpan_le]
-    intro x hx
-    simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hx
-    rcases hx with rfl | rfl
-    · exact hp
-    · exact hq
+  have hspan_pair_le : affineSpan ℝ ({p, q} : Set Point) ≤ AffineSubspace.perpBisector a b :=
+    affineSpan_pair_le_of_mem_of_mem hp hq
   have ha_span : a ∈ affineSpan ℝ ({p, q} : Set Point) := by
     exact hcol.mem_affineSpan_of_mem_of_ne (by simp) (by simp) (by simp) hpq
   have ha_perp : a ∈ AffineSubspace.perpBisector a b := hspan_pair_le ha_span

@@ -108,10 +108,7 @@ lemma siegel_incidence_relation (hm : 2 ≤ m) (hB : ∀ k, B k ⊆ A)
     have hexp : (A.card : ℝ) / ((m : ℝ) - A.card) < 1 := by
       rw [div_lt_one hden]
       linarith [show (2 * A.card : ℝ) < m by exact_mod_cast hlt_two]
-    calc
-      (m : ℝ) ^ ((A.card : ℝ) / ((m : ℝ) - A.card)) < (m : ℝ) ^ (1 : ℝ) :=
-        Real.rpow_lt_rpow_of_exponent_lt hbase hexp
-      _ = (m : ℝ) := by rw [Real.rpow_one]
+    exact Real.rpow_lt_self_of_one_lt hbase hexp
   have hsmall : ∀ k : Fin m, |t k| < m := by
     intro k
     have htk_real : ‖t k‖ < (m : ℝ) := by
