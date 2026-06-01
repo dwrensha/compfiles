@@ -119,9 +119,13 @@ problem imo1975_p6 {P : ℝ[X][Y]} : P ∈ solution_set ↔
     have hQ_cont : ∀ Q : ℝ[X][Y], Continuous (fun x => (Q.evalEval (1-x) x)) := by
       intro Q
       induction Q using Polynomial.induction_on' with
-      | add Q R hQcont hRcont => simpa [Polynomial.evalEval_add] using hQcont.add hRcont
-      | monomial n p => simpa [Polynomial.evalEval, Polynomial.eval_monomial] using
-            (p.continuous.comp (continuous_const.sub continuous_id)).mul (continuous_pow n)
+      | add Q R hQcont hRcont =>
+          simp only [Polynomial.evalEval_add]
+          exact hQcont.add hRcont
+      | monomial n p =>
+          simp only [Polynomial.evalEval, Polynomial.eval_monomial, Polynomial.eval_mul,
+            Polynomial.eval_pow, Polynomial.eval_C]
+          fun_prop
 
     let f : ℝ → ℝ := fun x => (P.evalEval (1-x) x) - 1
     have hf_cont : Continuous f := by

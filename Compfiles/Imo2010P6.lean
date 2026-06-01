@@ -231,9 +231,12 @@ lemma coe_mul_sub {u : ℝ} {n l : ℕ+} (h : l < n) : ↑↑(n - l) * u = n * u
 
 lemma max_of_image_sub {S : Finset ℕ+} {f : ℕ+ → ℝ} {a : ℝ} (h : S.Nonempty) :
     Finset.max' (Finset.image (fun k ↦ f k - a) S) (Finset.image_nonempty.mpr h) = Finset.max' (Finset.image f S) (Finset.image_nonempty.mpr h) - a := by
-  simpa [Finset.image_image, Function.comp, Finset.image_nonempty]
-    using (Finset.max'_image (s := Finset.image f S) (f := fun x : ℝ => x - a)
-      (hf := by intro x y hxy; linarith) (h := by simp_all only [Finset.image_nonempty]))
+  have himg : Finset.image (fun k ↦ f k - a) S
+      = Finset.image (fun x : ℝ ↦ x - a) (Finset.image f S) := by
+    rw [Finset.image_image]; rfl
+  have hmono : Monotone (fun x : ℝ ↦ x - a) := fun _ _ hxy ↦ by linarith
+  simp only [himg]
+  exact Finset.max'_image hmono _ _
 
 lemma res_rec (l : ℕ+) (hrec : Rec s a) : Rec s (res a l) := by
   intro n hn

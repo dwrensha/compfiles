@@ -205,15 +205,17 @@ theorem C_mem_ωA : cfg.C ∈ cfg.ωA := rfl
 theorem C_mem_ωB : cfg.C ∈ cfg.ωB := rfl
 
 theorem C'_mem_ωA : cfg.C' ∈ cfg.ωA := by
-  simpa only [dist_comm cfg.A] using
-    (dist_reflection_eq_of_mem line[ℝ, cfg.A, cfg.B]
-    (left_mem_affineSpan_pair _ _ _) cfg.C)
+  show dist cfg.C' cfg.A = dist cfg.C cfg.A
+  rw [dist_comm cfg.C' cfg.A, dist_comm cfg.C cfg.A, cfg.C'_def]
+  exact dist_reflection_eq_of_mem line[ℝ, cfg.A, cfg.B]
+    (left_mem_affineSpan_pair _ _ _) cfg.C
 
 theorem C'_mem_ωB : cfg.C' ∈ cfg.ωB :=
   cfg.symm_C' ▸ cfg.symm.C'_mem_ωA
 
 theorem XA_lt_radius_ωA : dist cfg.X cfg.A < cfg.ωA.radius := by
   have : dist cfg.C' cfg.A = dist cfg.C cfg.A := cfg.C'_mem_ωA
+  show dist cfg.X cfg.A < dist cfg.C cfg.A
   simpa [this] using cfg.sbtw_CXC'.dist_lt_max_dist cfg.A
 
 theorem XB_lt_radius_ωB : dist cfg.X cfg.B < cfg.ωB.radius :=

@@ -403,7 +403,7 @@ lemma not_medium_of_N'aux_lt {j : ℕ} (h : N'aux a N < j) : ¬Medium a (a j) :=
     rintro i ⟨hk, -⟩
     rwa [hc.finite_setOf_apply_eq_iff_not_small (by lia), Small, not_le]
   exact fun hm ↦ notMem_of_csSup_lt (le_sup_left.trans_lt h)
-    (hf.subset fun i hi ↦ (by simpa [s] using hi)).bddAbove hm
+    (hf.subset fun i hi ↦ (by simpa [s, Medium] using hi)).bddAbove hm
 
 lemma small_or_big_of_N'aux_lt {j : ℕ} (h : N'aux a N < j) : Small a (a j) ∨ Big a (a j) := by
   have _ := hc.not_medium_of_N'aux_lt h
@@ -827,10 +827,14 @@ lemma card_filter_apply_eq_Ico_add_p_le_one (n : ℕ) {j : ℕ} (hjs : Small a j
   simp only [Finset.mem_filter, Finset.mem_Ico] at hx hy
   rcases lt_trichotomy x y with hxy | rfl | hxy
   · replace h := h.2 (y - n) x hx.1.1 (by lia) (hx.2 ▸ hjs)
-    lia
+    have hny : n + (y - n) = y := by lia
+    rw [hny, hy.2, hx.2] at h
+    exact absurd (h rfl) (by lia)
   · rfl
   · replace h := h.2 (x - n) y hy.1.1 (by lia) (hy.2 ▸ hjs)
-    lia
+    have hnx : n + (x - n) = x := by lia
+    rw [hnx, hx.2, hy.2] at h
+    exact absurd (h rfl) (by lia)
 
 lemma apply_add_p_eq {n : ℕ} (hn : N' a N + 2 < n) (hs : Small a (a n)) : a (n + p a n) = a n := by
   rcases hc.exists_mem_Ico_small_and_apply_add_p_eq n with ⟨i, hiIco, his, hin⟩

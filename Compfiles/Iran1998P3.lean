@@ -54,7 +54,6 @@ problem iran1998_p3
     have xnonneg : ∀ i ∈ Finset.range 4, 0 ≤ x i := by
       intro i _; exact le_of_lt (x_positive i)
     rw [Real.finsetProd_rpow (Finset.range 4) x xnonneg, h, Real.one_rpow] at amgm'
-    dsimp at amgm'
     rw [←Finset.mul_sum] at amgm'
 
     let C := 1/4 * ∑ i ∈ Finset.range 4, x i

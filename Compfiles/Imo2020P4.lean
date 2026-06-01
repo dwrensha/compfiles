@@ -786,13 +786,11 @@ problem imo2020_p4 (n : Set.Ioi 1) :
       use Classical.propDecidable _
     have h₁ := Fintype.exists_lt_card_fiber_of_mul_lt_card (fun v : Fin (n ^ 2) ↦ A.graph.connectedComponentMk v) h₁'
     rcases h₁ with ⟨CC_A, hCC_A⟩
-    dsimp at hCC_A
     have h₂' : Fintype.card B.graph.ConnectedComponent < Fintype.card ({x | A.graph.connectedComponentMk x = CC_A} : Finset _) := by
       rw [Fintype.card_coe]
       lia
     have h₂ := Fintype.exists_ne_map_eq_of_card_lt (fun v : ({x | A.graph.connectedComponentMk x = CC_A} : Finset _) ↦ B.graph.connectedComponentMk v) h₂'
     rcases h₂ with ⟨x, y, hxy₁, hxy₂⟩
-    dsimp at hxy₂
     have hx := Subtype.property x
     have hy := Subtype.property y
     rw [Finset.mem_filter] at hx hy

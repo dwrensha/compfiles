@@ -102,7 +102,7 @@ def fixedPointsEquiv' :
 theorem main_fintype :
     ∑ k ∈ Finset.range (card α + 1), k * p α k = card α * (card α - 1)! := by
   have A : ∀ (k) (σ : fiber α k), card (fixedPoints (↑σ : Perm α)) = k := fun k σ => σ.2
-  simpa [A, ← Fin.sum_univ_eq_sum_range, -card_ofFinset, Finset.card_univ, card_fixed_points,
+  simpa [A, p, ← Fin.sum_univ_eq_sum_range, -card_ofFinset, Finset.card_univ, card_fixed_points,
     mul_comm] using card_congr (fixedPointsEquiv' α)
 
 /-- Main statement for permutations of `Fin n`, a version that works for `n = 0`. -/

@@ -1500,7 +1500,7 @@ lemma List.blocks_operation_middle_segment {α : Type u} [DecidableEq α] (l : L
         congr
         exact Nat.min_add_right_self
       · rw [List.drop_take]
-        lia
+        rw [Nat.add_sub_cancel_left]
     · apply List.chainLeft_eq
 
 lemma List.blocks_operation_left_head? {α : Type u} [DecidableEq α] (l : List α) (k : Fin l.length) (h : (List.chainLeft l k).val ≠ 0)

@@ -5,7 +5,7 @@ Authors: David Renshaw
 -/
 
 import Mathlib.Algebra.Order.Ring.GeomSum
-import Mathlib.Data.Real.Archimedean
+import Mathlib
 import Mathlib.Tactic
 
 import ProblemExtraction

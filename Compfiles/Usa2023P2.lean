@@ -74,7 +74,6 @@ problem usa2023_p2 (f : ℝ+ → ℝ+) :
       have P1 : ∀ x : ℝ+, a^2 * x.val + a * b + b = b * x.val + 2 := by
         intro x
         have P2 := P x 1
-        simp only at P2
         rw [←Subtype.coe_inj] at P2
         simp only [mul_one, Positive.coe_add, Positive.val_mul, hab, Positive.val_one] at P2
         linarith

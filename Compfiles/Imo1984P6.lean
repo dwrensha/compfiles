@@ -328,6 +328,8 @@ problem imo_1984_p6
         · rw [add_comm] at h₉₁
           symm
           rw [← Nat.pow_succ', Nat.succ_eq_add_one]
+          rw [show 2 * m - 2 + 1 = m * 2 - 1 from by lia,
+            show 2 * m - 2 = m * 2 - 2 from by lia]
           lia
         · refine le_of_lt ?_
           rw [mul_two, Nat.add_sub_assoc, Nat.pow_add, mul_comm (2 ^ m) _]

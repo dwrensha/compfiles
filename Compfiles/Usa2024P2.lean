@@ -1592,7 +1592,7 @@ lemma high_signature_count_forced_after_supersets_normalized
     by_cases htop_v : v = topSignature
     · subst htop_v
       have hmod0 : f topSignature ≡ 0 [MOD topSignature.card] := by
-        simpa [canonicalHighCount_top, topSignature_card] using hmod
+        simpa [canonicalHighCount_top, topSignature_card, Nat.ModEq] using hmod
       have hdvd_top : topSignature.card ∣ f topSignature :=
         Nat.modEq_zero_iff_dvd.mp hmod0
       rcases hdvd_top with ⟨m, hm⟩

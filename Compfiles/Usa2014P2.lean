@@ -92,7 +92,6 @@ problem usa2014_p2 {f : ℤ → ℤ} : P f ↔ f ∈ S := by
     · by_contra! hg
       have := congrArg₂ (fun x y ↦ x - y) (h2 x) (h3 x)
       have : f x + f (-x) = - x ^ 2 := by
-        simp only at this
         rw [← mul_sub, sq_sub_sq, ← neg_sub, ← neg_mul_comm] at this
         apply Int.eq_of_mul_eq_mul_right (sub_ne_zero_of_ne hg) at this
         lia

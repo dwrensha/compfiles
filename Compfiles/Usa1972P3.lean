@@ -59,7 +59,7 @@ lemma card_digits_noFive_noEven :
     Fintype.card {d : Digit // to_nat_digit d ≠ 5 ∧ ¬ Even (to_nat_digit d)} = 4 := by decide
 
 lemma ten_dvd_iff_two_and_five (m : ℕ) : 10 ∣ m ↔ 2 ∣ m ∧ 5 ∣ m := by
-  simpa using (lcm_dvd_iff (a := 2) (b := 5) (c := m))
+  exact lcm_dvd_iff (a := 2) (b := 5) (c := m)
 
 lemma two_dvd_prod_iff_hasEven {n : ℕ} (s : DigitSeq n) :
     2 ∣ ∏ a, to_nat_digit (s a) ↔ HasEven s := by
@@ -104,10 +104,10 @@ lemma card_good_balance (n : ℕ) :
     tauto
   have hAcard : A.ncard = 8 ^ n := by
     rw [← Set.fintypeCard_eq_ncard A]
-    simpa [A] using card_all_noFive n
+    exact card_all_noFive n
   have hBcard : B.ncard = 5 ^ n := by
     rw [← Set.fintypeCard_eq_ncard B]
-    simpa [B] using card_all_noEven n
+    exact card_all_noEven n
   have hABcard : (A ∩ B).ncard = 4 ^ n := by
     have hAB : A ∩ B = {s : DigitSeq n | NoFive s ∧ NoEven s} := by
       ext s

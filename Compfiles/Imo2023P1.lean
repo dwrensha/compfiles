@@ -39,7 +39,6 @@ lemma PrimePow_ne {a b p q : ℕ} (p_prime : p.Prime) (q_prime : q.Prime) (p_ne_
   obtain ⟨_, k_ne_0, ha⟩ := ha
   obtain ⟨_, _, hb⟩ := hb
   let h := congrArg (Nat.factorization · p) (hb ▸ a_eq_b ▸ ha)
-  dsimp at h
   rw [Nat.Prime.factorization_pow p_prime,
       Nat.Prime.factorization_pow q_prime,
       Finsupp.single_eq_same,
@@ -173,7 +172,6 @@ theorem ordCompl_of_non_prime_pow {n p : ℕ} (hn : 1 < n) (hp : ¬IsPrimePow n)
       rw [h, Finsupp.single_eq_same]
     else
       let c_fact_q := congrArg (· q) (Nat.factorization_ordCompl n p)
-      dsimp at c_fact_q
       rw [Finsupp.erase_ne h] at c_fact_q
       rw [← c_fact_q, Finsupp.single_eq_of_ne h]
       exact c_fact_eq_0 q

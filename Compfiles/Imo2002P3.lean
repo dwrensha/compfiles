@@ -121,6 +121,6 @@ problem imo2002_p3 {m n : ℕ} (hm : 3 ≤ m) (hn : 3 ≤ n) :
   conv =>
     enter [1, 1, a]
     rw [show a ^ 5 + a - 1 = (a ^ 2 - a + 1) * (a ^ 3 + a ^ 2 - 1) by ring]
-  simpa using Set.Ioi_infinite 0
+  simp only [dvd_mul_left, and_true]; exact Set.Ioi_infinite 0
 
 end Imo2002P3

@@ -335,7 +335,7 @@ lemma line_contains (L L' : AffSubOfPlane) (hL : finrank ℝ L.direction = 1) (a
     contradiction
   have x_a_expr : x - a = (q / k) • (a - b) := by rw [← hk, ← hq, ← mul_smul]; congr 1; field_simp
   have := L'.smul_vsub_vadd_mem (q / k) (p₁ := a) (p₂ := b) (p₃ := a) ha' hb' ha'
-  simpa [← x_a_expr] using this
+  simp only [vsub_eq_sub, vadd_eq_add, ← x_a_expr, sub_add_cancel] at this; exact this
 
 /-- If both of the two non-degenerate lines `L` and `L'` go through two different points
 `a` and `b`, then `L = L'`. -/

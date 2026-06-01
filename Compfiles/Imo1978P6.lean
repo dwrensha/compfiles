@@ -185,7 +185,7 @@ theorem induction_step [NeZero N] (h : ∀ (j i k), C i = C j → C j = C k → 
           have hs1 : ∀ (_h), ⟨x.val+xmin.val, _h⟩ ∈ Δ' := by
             grind only
           have xsx : x.val + xmin.val ∈ Finset.Icc 1 M := by
-            lia
+            grind
           use ?_
           · have := (h2 ⟨x.val+xmin.val, xsx⟩ ?_).snd
             · simp_rw [<-add_assoc, add_comm, add_assoc]
@@ -237,7 +237,6 @@ theorem compute_finite_induction [NeZero N] (hC : ∀ (j i k), C i = C j → C j
       intro n nb
       apply Nat.decreasingInduction' (P:=fun n => 0 < @compute_k M N n) _ nb hcom
       intro k _ _
-      simp only
       intro h
       unfold compute_k at h
       contrapose! h

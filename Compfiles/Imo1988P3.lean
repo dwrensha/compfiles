@@ -145,7 +145,7 @@ lemma pnatBinaryReverse_satisfiesRecurrence :
       four_three := ?_ }
   · intro n
     apply PNat.eq
-    simpa only [PNat.mul_coe] using binaryReverse_two_mul (n : ℕ) (Nat.ne_of_gt n.2)
+    exact binaryReverse_two_mul (n : ℕ) (Nat.ne_of_gt n.2)
   · intro n
     apply PNat.eq
     simp only [PNat.add_coe, PNat.mul_coe]
@@ -196,7 +196,7 @@ lemma recurrence_unique {f g : ℕ+ → ℕ+}
         intro hm
         constructor
         · simpa using hf.one.trans hg.one.symm
-        · simpa using hf.three.trans hg.three.symm
+        · exact hf.three.trans hg.three.symm
     | bit b m hm ih =>
         intro hbit
         let p : ℕ+ := ⟨m, Nat.pos_of_ne_zero hm⟩
@@ -207,7 +207,7 @@ lemma recurrence_unique {f g : ℕ+ → ℕ+}
           have harg : 2 * q + 1 = 4 * p + 1 := by
             exact PNat.eq (by simp [q, p, Nat.bit_false_apply]; ring)
           constructor
-          · simpa [q, p, Nat.bit_false_apply] using hstep.1
+          · exact hstep.1
           · change f (2 * q + 1) = g (2 * q + 1)
             rw [harg]
             exact hstep.2.1
@@ -215,7 +215,7 @@ lemma recurrence_unique {f g : ℕ+ → ℕ+}
           have harg : 2 * q + 1 = 4 * p + 3 := by
             exact PNat.eq (by simp [q, p, Nat.bit_true_apply]; ring)
           constructor
-          · simpa [q, p, Nat.bit_true_apply] using ihp.2
+          · exact ihp.2
           · change f (2 * q + 1) = g (2 * q + 1)
             rw [harg]
             exact hstep.2.2

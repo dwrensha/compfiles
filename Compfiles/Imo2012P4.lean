@@ -115,7 +115,7 @@ problem imo2012_p4 (f : ℤ → ℤ) :
     have «P(a,a)» (a : ℤ) : f (2 * a) = 0 ∨ f (2 * a) = 4 * f a := by
       conv => rhs; rw [← sub_eq_zero]
       rw [← Int.mul_eq_zero]
-      have := P a a; simp at this
+      have := P a a
       rw [← sub_eq_zero] at this; rw [← this]
       ring_nf
 
@@ -264,7 +264,17 @@ problem imo2012_p4 (f : ℤ → ℤ) :
               rcases this with goal | «f(x+1)=(x-3)²*f1»; case inl => exact goal
               have := «f(x+1)=(x-3)²*f1»
               rw [«f(x+1)=(x-1)²*f1», mul_eq_mul_right_iff, pow_eq_pow_iff_cases] at this
-              lia
+              simp only [Int.ofNat_eq_natCast, Nat.cast_add, Nat.cast_one]
+              rcases this with (h | h | ⟨h, -⟩) | h
+              · exact absurd h (by decide)
+              · exact absurd h (by lia)
+              · have hx2 : (x : ℤ) = 2 := by lia
+                have h1 : f (↑x + 1) = f 1 := by rw [«f(x+1)=(x-1)²*f1», hx2]; ring
+                have h2 : f (↑x + 1) = 9 * f 1 := by
+                  rw [show (↑x : ℤ) + 1 = 3 from by rw [hx2]; ring]; exact «f3=9*f1»
+                have hf0 : f 1 = 0 := by rw [h1] at h2; lia
+                rw [«f(x+1)=(x-1)²*f1», hf0]; ring
+              · rw [«f(x+1)=(x-1)²*f1», h]; ring
 
           right
           use f 1

@@ -89,6 +89,7 @@ lemma lemma3 {m : ℕ} (hm : (m % 10) + 1 < 10) :
   · simp [h]
   nth_rw 2 [Nat.digits_eq_cons_digits_div (by norm_num) (by exact h)]
   simp only [List.sum_cons]
+  rw [show (m + 1) / 10 = m / 10 from by lia, show (m + 1) % 10 = m % 10 + 1 from by lia]
   lia
 
 theorem lemma6 {b : ℕ} {l1 l2 : List ℕ} (hg : List.Forall₂ (· ≥ ·) l1 l2) :
@@ -290,17 +291,17 @@ lemma lemma5 {m n : ℕ} (hm : m < 10^n) :
 
 lemma List.sum_map_sub_aux (l1 l2 : List ℕ) (h2 : List.Forall₂ (· ≥ ·) l1 l2) :
     (List.zipWith (fun x1 x2 ↦ x1 - x2) l1 l2).sum = l1.sum - l2.sum ∧ l1.sum ≥ l2.sum := by
-match l1, l2 with
-| [], [] => simp
-| [], h :: tl => simp_all
-| h :: tl, [] => simp_all
-| hd1 :: tl1, hd2 :: tl2 =>
-  have hp : List.Forall₂ (fun x1 x2 ↦ x1 ≥ x2) tl1 tl2 := by simp_all only [List.forall₂_cons]
-  have ih := List.sum_map_sub_aux tl1 tl2 hp
-  simp only [List.zipWith_cons_cons, List.sum_cons]
-  rw [ih.1]
-  have h3 : hd1 ≥ hd2 := (List.forall₂_cons.mp h2).1
-  lia
+  match l1, l2 with
+  | [], [] => simp
+  | [], h :: tl => simp_all
+  | h :: tl, [] => simp_all
+  | hd1 :: tl1, hd2 :: tl2 =>
+    have hp : List.Forall₂ (fun x1 x2 ↦ x1 ≥ x2) tl1 tl2 := by simp_all only [List.forall₂_cons]
+    have ih := List.sum_map_sub_aux tl1 tl2 hp
+    simp only [List.zipWith_cons_cons, List.sum_cons]
+    rw [ih.1]
+    have h3 : hd1 ≥ hd2 := (List.forall₂_cons.mp h2).1
+    lia
 
 lemma List.sum_map_sub (l1 l2 : List ℕ) (h2 : List.Forall₂ (· ≥ ·) l1 l2) :
     (List.zipWith (fun x1 x2 ↦ x1 - x2) l1 l2).sum = l1.sum - l2.sum :=

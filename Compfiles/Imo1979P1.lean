@@ -104,7 +104,7 @@ lemma lemma4 (n m : ℕ) (f : ℕ → ℚ) :
   rw [←Finset.sum_range_reflect (fun x ↦ f (n + (m + x)))]
   refine Finset.sum_congr rfl fun x hx => ?_
   rw [Finset.mem_range] at hx
-  lia
+  congr 1; lia
 
 lemma lemma9' (i : ℕ) (hi : i ∈ Finset.range 330) :
      (((∏ j ∈ Finset.range 330,

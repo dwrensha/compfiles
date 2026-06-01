@@ -107,7 +107,6 @@ lemma p_gt_five_not_divides (n : ℕ) (s1 s2 : Finset ℕ) (partition : s1 ∪ s
 
   case inr x_in_s2 =>
     have := Finset.dvd_prod_of_mem (λ n : ℕ => n) x_in_s2
-    simp only at this
     have p_dvd_prod_x : p ∣ ∏ m ∈ s2, m := (Dvd.dvd.trans p_dvd_x this)
 
     have p_dvd_prod_y : p ∣ ∏ m ∈ s1, m := by

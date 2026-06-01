@@ -204,7 +204,7 @@ def transform_A_to_B [NeZero n] : (A n) → (B n) := fun x ↦ by
     · intro jeq
       simp_rw [jeq]
       nth_rw 1 [partial_cycle.apply_of_lt _ _ _ _ (by rw [<-Subtype.coe_lt_coe]; lia)]
-      nth_rw 1 [partial_cycle.apply_of_eq _ _ _ _ (by lia)]
+      nth_rw 1 [partial_cycle.apply_of_eq _ _ _ _ (by rw [← Subtype.coe_inj]; lia)]
       unfold x_1 at ndiff
       rw [Nat.dist_comm]
       rw [unique_ndiff] at ⊢ ndiff
@@ -254,7 +254,7 @@ def transform_B_to_A [NeZero n] : (B n) → (A n) := fun ⟨⟨x, k⟩, h⟩ ↦
   have igt : 1 < i := by grind
   by_cases cik : i = k
   · subst cik
-    nth_rw 1 [partial_cycle.symm.apply_of_le _ _ _ _ (by rfl) (by simpa using igt)]
+    nth_rw 1 [partial_cycle.symm.apply_of_le _ _ _ _ (by rfl) (by exact_mod_cast igt)]
     nth_rw 1 [partial_cycle.symm.apply_of_gt _ _ _ _ (by simp)]
     simp only [ne_eq]
     rw [Nat.dist_comm] at ⊢ ndiff
@@ -265,12 +265,13 @@ def transform_B_to_A [NeZero n] : (B n) → (A n) := fun ⟨⟨x, k⟩, h⟩ ↦
     rw [Nat.sub_one_eq_self]
     exact Nat.ne_zero_of_lt ib1
   by_cases c2 : i < k
-  · nth_rw 1 [partial_cycle.symm.apply_of_le _ _ _ _ (by simp; grind) (by simpa using igt)]
+  · nth_rw 1 [partial_cycle.symm.apply_of_le _ _ _ _ (by simp; grind) (by exact_mod_cast igt)]
     nth_rw 1 [partial_cycle.symm.apply_of_le _ _ _ _ (by simpa using c2) (by rw [<-Subtype.coe_lt_coe]; exact Nat.lt_add_of_pos_left ib1)]
     simp only [add_tsub_cancel_right]
     unfold B at h
     simp only [Subtype.forall, Set.mem_setOf_eq] at h
-    have : ∀ h, (⟨i, h⟩ : Finset.Icc 1 (2 * n)) = ⟨i-1+1, by grind⟩ := by lia
+    have : ∀ h, (⟨i, h⟩ : Finset.Icc 1 (2 * n)) = ⟨i-1+1, by simp only [Finset.mem_Icc]; lia⟩ := by
+      intro h; simp only [Subtype.mk.injEq]; lia
     simp_rw [this]
     apply (h _ _).not.mp
     · grind only

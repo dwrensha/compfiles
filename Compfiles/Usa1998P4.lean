@@ -114,8 +114,7 @@ lemma foldl_recolor_rect_apply (rs : List Rectangle) (f : coloring) (s : chessbo
 lemma length_filter_map {α β : Type} (l : List α) (f : α → β) (p : β → Prop)
     [DecidablePred p] :
     ((l.map f).filter p).length = (l.filter fun a ↦ p (f a)).length := by
-  simpa using congrArg List.length
-    (List.filter_map (l := l) (f := f) (p := fun b ↦ decide (p b)))
+  rw [List.filter_map, List.length_map]; rfl
 
 lemma evenCoord_filter_length (m : ℕ) (hm : m < 98) :
     ((List.range 49).filter fun k ↦ m = 2 * k).length =

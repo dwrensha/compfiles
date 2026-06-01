@@ -177,6 +177,10 @@ problem imo1999_p4 (n p : ℕ) :
           have hqq_le := Nat.le_of_dvd (by norm_num:_) hq'p
           have hqq3 : qq = 3 := by
             interval_cases qq <;> norm_num at hq'p <;> norm_num at hqq₁ ; norm_num
+          have : Fact (Nat.Prime 3) := ⟨by norm_num⟩
+          have hm0 : m ≠ 0 := by rintro rfl; lia
+          have h3m : (3 : ℕ) ∣ m := hqq3 ▸ hqq₂
+          have hv1 : 1 ≤ padicValNat 3 m := one_le_padicValNat_of_dvd hm0 h3m
           lia
 
 end Imo1999P4

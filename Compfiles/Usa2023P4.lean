@@ -323,8 +323,9 @@ lemma lemma2' (a : ℕ+) (N : ℕ) (hN : 1 < N) (s0 : State N)
         · simp [Function.update_of_ne hki]; exact hd k
       · simp only at hd hms ⊢
         have hv := lemma6 (b0 i).pos hie
-        have hae := Finset.add_sum_erase Finset.univ (fun k => padicValNat 2 ↑(b0 k)) (Finset.mem_univ i)
-        dsimp at hae
+        have hae : padicValNat 2 ↑(b0 i) + ∑ k ∈ Finset.univ.erase i, padicValNat 2 ↑(b0 k)
+            = ∑ k, padicValNat 2 ↑(b0 k) :=
+          Finset.add_sum_erase _ (fun k => padicValNat 2 ↑(b0 k)) (Finset.mem_univ i)
         trans (padicValNat 2 (↑(b0 i) / 2) + ∑ k ∈ Finset.univ.erase i, padicValNat 2 ↑(b0 k))
         · rw [← Finset.add_sum_erase _ _ (Finset.mem_univ i)]
           congr 1
@@ -370,8 +371,9 @@ lemma lemma2' (a : ℕ+) (N : ℕ) (hN : 1 < N) (s0 : State N)
       · simp only [Function.update_of_ne hkj]; exact hd1 k
     · simp only at hms ⊢
       have hv := lemma6 (b1 j).pos hje
-      have hae := Finset.add_sum_erase Finset.univ (fun k => padicValNat 2 ↑(b1 k)) (Finset.mem_univ j)
-      dsimp at hae
+      have hae : padicValNat 2 ↑(b1 j) + ∑ k ∈ Finset.univ.erase j, padicValNat 2 ↑(b1 k)
+          = ∑ k, padicValNat 2 ↑(b1 k) :=
+        Finset.add_sum_erase _ (fun k => padicValNat 2 ↑(b1 k)) (Finset.mem_univ j)
       trans (padicValNat 2 (↑(b1 j) / 2) + ∑ k ∈ Finset.univ.erase j, padicValNat 2 ↑(b1 k))
       · rw [← Finset.add_sum_erase _ _ (Finset.mem_univ j)]
         congr 1

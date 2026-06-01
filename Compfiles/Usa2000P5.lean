@@ -142,9 +142,9 @@ lemma adjacent_vertices_ne {A : ZMod 3 → Point}
     (hABC : AffineIndependent ℝ ![A 0, A 1, A 2]) (i : Fin 7) :
     leftVertex A i ≠ rightVertex A i := by
   fin_cases i <;> first
-    | simpa [leftVertex, rightVertex] using vertex_ne_01 hABC
-    | simpa [leftVertex, rightVertex] using vertex_ne_12 hABC
-    | simpa [leftVertex, rightVertex] using vertex_ne_20 hABC
+    | exact vertex_ne_01 hABC
+    | exact vertex_ne_12 hABC
+    | exact vertex_ne_20 hABC
 
 lemma sphere_center_ne_of_mem_of_ne {s : Circle} {p q : Point}
     (hp : p ∈ s) (hq : q ∈ s) (hpq : p ≠ q) : s.center ≠ p := by
@@ -190,9 +190,9 @@ lemma centers_eq_of_oangle_eq
     sphere_center_ne_of_mem_of_ne (hA 0).1 (hA 0).2 (vertex_ne_01 hABC)
   have hcenter6 : (ω 6).center ≠ A 0 := by
     have hp : A 0 ∈ ω 6 := by
-      simpa using (hA 6).1
+      exact (hA 6).1
     have hq : A 1 ∈ ω 6 := by
-      simpa using (hA 6).2
+      exact (hA 6).2
     exact sphere_center_ne_of_mem_of_ne hp hq (vertex_ne_01 hABC)
   have ho0 : EuclideanGeometry.oangle (ω 0).center (A 0) (ω 6).center = 0 := by
     have hadd := EuclideanGeometry.oangle_add hside hcenter0 hcenter6
@@ -204,7 +204,7 @@ lemma centers_eq_of_oangle_eq
   have hp : (ω 0).center ∈ AffineSubspace.perpBisector (A 0) (A 1) := by
     simpa [leftVertex, rightVertex, circleCenter] using center_mem_perpBisector hA 0
   have hq : (ω 6).center ∈ AffineSubspace.perpBisector (A 0) (A 1) := by
-    simpa [leftVertex, rightVertex, circleCenter] using center_mem_perpBisector hA 6
+    exact center_mem_perpBisector hA 6
   exact collinear_perpBisector_eq (vertex_ne_01 hABC) hp hq hcol
 
 -- The shared vertex lies strictly between tangent centers.
@@ -304,11 +304,11 @@ lemma side_oangle_eq_after_six
   have h23 : θ 2 + θ 3 + τ 2 = (Real.pi : Real.Angle) := by
     simpa using step 2 (by decide)
   have h34 : θ 3 + θ 4 + τ 0 = (Real.pi : Real.Angle) := by
-    simpa [τ, turnAngle, leftVertex, rightVertex] using step 3 (by decide)
+    exact step 3 (by decide)
   have h45 : θ 4 + θ 5 + τ 1 = (Real.pi : Real.Angle) := by
-    simpa [τ, turnAngle, leftVertex, rightVertex] using step 4 (by decide)
+    exact step 4 (by decide)
   have h56 : θ 5 + θ 6 + τ 2 = (Real.pi : Real.Angle) := by
-    simpa [τ, turnAngle, leftVertex, rightVertex] using step 5 (by decide)
+    exact step 5 (by decide)
   have samePair {x y z w t : Real.Angle}
       (hxy : x + y + t = (Real.pi : Real.Angle))
       (hzw : z + w + t = (Real.pi : Real.Angle)) :
@@ -340,7 +340,7 @@ lemma circle_eq_of_center_eq
     (hcenter : (ω 0).center = (ω 6).center) :
     ω 0 = ω 6 := by
   refine (EuclideanGeometry.Sphere.center_eq_iff_eq_of_mem (hA 0).1 ?_).mp hcenter
-  simpa using (hA 6).1
+  exact (hA 6).1
 
 snip end
 
@@ -353,7 +353,6 @@ problem usa2000_p5
     : ω 0 = ω 6 := by
   apply circle_eq_of_center_eq hA
   apply centers_eq_of_oangle_eq hABC hA
-  simpa [sideAngle, leftVertex, rightVertex, circleCenter] using
-    side_oangle_eq_after_six hABC hTangent hA
+  exact side_oangle_eq_after_six hABC hTangent hA
 
 end Usa2000P5

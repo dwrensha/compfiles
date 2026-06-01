@@ -5,7 +5,7 @@ Authors: David Renshaw
 -/
 
 import Mathlib.Data.Real.Basic
-import Mathlib.Data.Real.Sqrt
+import Mathlib
 
 import Mathlib.Analysis.InnerProductSpace.PiL2
 import Mathlib.Analysis.Normed.Lp.PiLp

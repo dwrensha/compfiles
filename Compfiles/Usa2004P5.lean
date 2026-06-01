@@ -72,7 +72,8 @@ lemma key_holder (a b c : NNReal) : (a+b+c)^3 ≤ (a^3 + 2) * (b^3 + 2) * (c^3 +
     (fun | 0 => a | _ => 1) -- a, 1, 1
     (fun | 1 => b | _ => 1) -- 1, b, 1
     (fun | 2 => c | _ => 1) -- 1, 1, c
-  simp only [← Fin.sum_univ_eq_sum_range, Fin.sum_univ_three] at h
+  simp only [← Fin.sum_univ_eq_sum_range, Fin.sum_univ_three, Fin.val_zero, Fin.val_one,
+    Fin.val_two] at h
   convert h using 1 <;> ring
 
 lemma key_holder_real {a b c : ℝ} (ha : 0 < a) (hb : 0 < b) (hc : 0 < c) :

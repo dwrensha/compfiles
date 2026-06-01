@@ -148,7 +148,7 @@ def v_upper (v : Finset (Point n)): Finset (Point n) := v.biUnion (fun r => rect
 @[simp]
 lemma mem_u_lower (p : Point n) :
     p ∈ u_lower u ↔ ∃ q ∈ u, px q ≤ px p ∧ py p ≤ py q := by
-simp [u_lower, mem_rect]
+  simp [u_lower, mem_rect]
 @[simp]
 lemma mem_u_upper (p : Point n) :
     p ∈ u_upper u ↔ ∃ q ∈ u, px p ≤ px q ∧ py q ≤ py p := by
@@ -1407,15 +1407,15 @@ lemma mem_u_list (p : Point n) : p ∈ c.u_list ↔ p ∈ c.u := by simp [u_list
 lemma mem_v_list (p : Point n) : p ∈ c.v_list ↔ p ∈ c.v := by simp [v_list]
 
 lemma u_list_sorted : c.u_list.Pairwise ((· ≤ ·) on px) := by
-  rw [u_list]; simpa using List.pairwise_mergeSort
-    (le := fun p q => px p ≤ px q)
+  rw [u_list]
+  exact (List.pairwise_mergeSort (le := (· ≤ ·) on px)
     (fun _ _ _ => by simp; apply le_trans) (fun a b => by simp; apply le_total)
-    c.u.toList
+    c.u.toList).imp (fun h => by simpa [Function.onFun] using h)
 lemma v_list_sorted : c.v_list.Pairwise ((· ≤ ·) on px) := by
-  rw [v_list]; simpa using List.pairwise_mergeSort
-    (le := fun p q => px p ≤ px q)
+  rw [v_list]
+  exact (List.pairwise_mergeSort (le := (· ≤ ·) on px)
     (fun _ _ _ => by simp; apply le_trans) (fun a b => by simp; apply le_total)
-    c.v.toList
+    c.v.toList).imp (fun h => by simpa [Function.onFun] using h)
 lemma u_list_ne_nil (ha_pos : 0 < c.a) : c.u_list ≠ [] := by
   rw [← List.length_pos_iff_ne_nil, u_list_length]; exact ha_pos
 lemma v_list_ne_nil (hb_pos : 0 < c.b) : c.v_list ≠ [] := by
@@ -1623,7 +1623,7 @@ lemma exists_crossing_u (ha_pos : 0 < c.a) :
     have h_not_lo : u_next ∉ v_lower c.v := by
       intro h_in
       have : next_idx ∈ valid_indices := by
-        simpa [valid_indices, P, h_next_lt_a] using h_in
+        simpa [valid_indices, P, h_next_lt_a, u_next, List.get_eq_getElem] using h_in
       have : next_idx ≤ i_idx := le_max' _ _ this
       omega
     have h_next_mem_u : u_next ∈ c.u := by rw [← mem_u_list]; exact List.get_mem _ _
@@ -1716,7 +1716,7 @@ lemma exists_crossing_v (hb_pos : 0 < c.b) :
     have h_not_up : v_next ∉ u_upper c.u := by
       intro h_in
       have : next_idx ∈ valid_indices := by
-        simpa [valid_indices, P, h_next_lt_b] using h_in
+        simpa [valid_indices, P, h_next_lt_b, v_next, List.get_eq_getElem] using h_in
       have : next_idx ≤ j_idx := le_max' _ _ this
       omega
 
@@ -3520,7 +3520,6 @@ lemma mem_matilda_iff_mem_M_st {k : ℕ} {hk : 2 ≤ k} [NeZero k]
   constructor
   · intro h
     rw [← mem_rect_iff_idx_eq k p idx.1 idx.2 hk]
-    simp at h
     simp [rect_finset, in_white_rect]
     rcases h.2.1 with hx_le | hp1_zero
     · constructor
