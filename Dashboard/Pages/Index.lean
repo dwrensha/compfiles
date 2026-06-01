@@ -1,6 +1,8 @@
 import Dashboard.Components.Base
 import Dashboard.Components.CompAnchor
+import Dashboard.Contests.Cmo
 import Dashboard.Contests.Imo
+import Dashboard.Contests.PreCmo
 import Dashboard.Contests.Usamo
 import Dashboard.Models.Contests
 import Dashboard.Models.Problems
@@ -145,6 +147,8 @@ def Index.generate (config : SConfig)
         compTable [
           imoContest.compRow config ["imo.html"] mds,
           usamoContest.compRow config ["usamo.html"] mds,
+          cmoContest.compRow config ["cmo.html"] mds,
+          preCmoContest.compRow config ["pre-cmo.html"] mds,
         ],
         tagTable tagFormalizedCounts tagSolvedCounts,
       ],

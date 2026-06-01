@@ -57,7 +57,7 @@ def allImoUrls (year : Nat) (idx : Nat) : List WriteupLink := Id.run do
 public def imoContest : Contest Nat Nat := {
   fullName := "IMO"
   problems := fromCounts imoProblemCounts
-  toName := fun year num => s!"Compfiles.Imo{year}P{num}".toName
+  toName := fun year num ↦ s!"Compfiles.Imo{year}P{num}".toName
   externalUrls := allImoUrls
   desc := fun n ↦ [Html.p [] [
     "Since 1959, the International Mathematical Olympiad has included a total of ",
