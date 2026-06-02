@@ -39,44 +39,34 @@ def square_set : Set (ℤ → ℤ) := fun f =>
 theorem sub_sq'' {x y : Int} : x ^ 2 + y ^ 2 = (2 * x * y) ↔ x = y := by
   rw [← sub_eq_zero, ← sub_sq', sq_eq_zero_iff, sub_eq_zero]
 
-theorem Int.lt_of_ns_lt_ns {x x' : ℕ} (h : Int.negSucc x < Int.negSucc x') : x' < x := by
-  grind
-
-def myInduction.{u}
-  {motive : ℤ -> Sort u}
+theorem myInduction
+  {motive : ℤ → Prop}
   (P0 : motive 0) (P1 : motive 1) (P2 : motive 2) (P3 : motive 3)
   (add4 : ∀ x, motive (x + 4) = motive x)
   : ∀ x, motive x := by
-    rintro (x | x)
-    case ofNat =>
-      match x with
-      | 0 => exact P0
-      | 1 => exact P1
-      | 2 => exact P2
-      | 3 => exact P3
-      | x' + 4 =>
-        rw [show Int.ofNat (x' + 4) = (Int.ofNat x') + 4 by rfl, add4]
-        have : sizeOf (x' : Int) < sizeOf ((x' + 4 : Nat) : Int) := by
-          rw [← Int.ofNat_eq_natCast, ← Int.ofNat_eq_natCast]
-          simp [sizeOf, Int._sizeOf_1]
-        apply myInduction <;> assumption
-    case negSucc =>
-      rw [← add4]
-      cases h : Int.negSucc x + 4
-      case ofNat x' =>
-        match x' with
-        | 0 => exact P0
-        | 1 => exact P1
-        | 2 => exact P2
-        | 3 => exact P3
-        | x' + 4 => simp at h
-      case negSucc x' =>
-        have : x' < x := by
-          have := Int.sub_lt_self (Int.negSucc x + 4) (b := 4) (h := by simp)
-          conv at this => rhs; rw [h]
-          simp at this
-          apply Int.lt_of_ns_lt_ns this
-        apply myInduction <;> assumption
+    -- shifting by any multiple of 4 preserves the motive
+    have shift : ∀ (k r : ℤ), motive r → motive (r + 4 * k) := by
+      intro k
+      induction k using Int.induction_on with
+      | zero => intro r h; simpa using h
+      | succ i ih =>
+          intro r h
+          rw [show r + 4 * ((i : ℤ) + 1) = (r + 4 * i) + 4 by ring, add4]
+          exact ih r h
+      | pred i ih =>
+          intro r h
+          rw [show r + 4 * (-(i : ℤ) - 1) = (r + 4 * (-(i : ℤ)) - 4) by ring,
+              ← add4 (r + 4 * (-(i : ℤ)) - 4),
+              show (r + 4 * (-(i : ℤ)) - 4) + 4 = r + 4 * (-(i : ℤ)) by ring]
+          exact ih r h
+    intro x
+    have e : x % 4 + 4 * (x / 4) = x := by omega
+    rcases (by omega : x % 4 = 0 ∨ x % 4 = 1 ∨ x % 4 = 2 ∨ x % 4 = 3) with h | h | h | h <;>
+      rw [← e, h]
+    · exact shift _ _ P0
+    · exact shift _ _ P1
+    · exact shift _ _ P2
+    · exact shift _ _ P3
 
 snip end
 
