@@ -23,7 +23,7 @@ def imoProblemCounts := [
 ]
 
 def officialImoUrl (year : Nat) (_idx : Nat) : String :=
-  s!"https://www.imo-official.org/problems/{year}/eng.pdf"
+  s!"https://www.imo-official.org/assets/documents/problems/{year}/{year}_eng.pdf"
 
 def aopsImoUrl (year : Nat) (idx : Nat) : String :=
   s!"https://artofproblemsolving.com/wiki/index.php/{year}_IMO_Problems/Problem_{idx}"
