@@ -178,6 +178,7 @@ import Compfiles.Imo2012P6
 import Compfiles.Imo2013P1
 import Compfiles.Imo2013P5
 import Compfiles.Imo2014P1
+import Compfiles.Imo2014P2
 import Compfiles.Imo2014P4
 import Compfiles.Imo2015P2
 import Compfiles.Imo2015P5
