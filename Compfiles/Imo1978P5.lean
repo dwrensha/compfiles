@@ -570,11 +570,7 @@ lemma aux₁
     have hx₁: 1 ≤ x := by
       apply Finset.mem_Icc.mp at hx₀
       exact hx₀.1
-    have hx₂: 0 < f₀ x := by
-      ring_nf
-      refine div_pos zero_lt_one ?_
-      norm_cast
-      exact Nat.pow_pos hx₁
+    have hx₂: 0 < f₀ x := by positivity
     refine (smul_le_smul_iff_of_pos_right hx₂).mpr ?_
     have hh₀: f₁ = fun (k:ℕ) => (↑k:ℝ) := by rfl
     rw [hh₀]

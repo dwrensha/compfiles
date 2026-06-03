@@ -91,8 +91,6 @@ problem usa2001_p3 (a b c : ℝ) (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c)
     · rw [(by ring_nf : g a b c = g c a b)]
       apply usa2001_p3_lemma c a b hc (by rw [←h]; unfold f; ring_nf)
       rw [(by ring_nf : (a - 1) * (b - 1) = (1 - a) * (1 - b))]
-      have : (1 - a ≥ 0) := by linarith
-      have : (1 - b ≥ 0) := by linarith
       positivity
 
 

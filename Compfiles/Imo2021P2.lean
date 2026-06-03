@@ -389,10 +389,7 @@ lemma piecewise_concave_sqrt_dist (x : ℝ) :
       have hqx : 0 ≤ x - q := by
         rw [sub_nonneg]
         apply le_trans hq.right hx
-      have h'x : 0 ≤ a * (x - p) + b * (x - q) := by
-        apply add_nonneg
-        · apply mul_nonneg ha hpx
-        · apply mul_nonneg hb hqx
+      have h'x : 0 ≤ a * (x - p) + b * (x - q) := by positivity
       rw [abs_of_nonneg hpx, abs_of_nonneg hqx, abs_of_nonneg h'x]
   · simp only [g]
     have h'' := Real.monotoneOn_rpow_Ici_of_exponent_nonneg (by norm_num : (0 : ℝ) ≤ 1 / 2)

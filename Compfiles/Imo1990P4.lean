@@ -306,8 +306,7 @@ def PRat.mk_mul_hom_fun (g : ℕ → ℚ+) : ℚ+ →* ℚ+ := {
           apply (Subtype.prop _)
         }
       · exact Rat.normalize.dvd_num rfl
-    · rw [CanonicallyOrderedAdd.mul_pos]
-      and_intros <;> exact Rat.den_pos _
+    · positivity
     · apply Nat.gcd_dvd_right
   map_one' := by
     unfold PNat.mk_mul_hom_fun
