@@ -17,8 +17,6 @@ problem_file { tags := [.Algebra] }
 Fix an integer n ≥ 2. For which real numbers x is
   ⌊nx⌋ - ∑_{k=1}^n ⌊kx⌋/k
 maximal, and what is the maximal value that this expression can take?
-
-Mathematical solution sketch by Evan Chen: https://web.evanchen.cc/twitch/Ep177-USAMO-2026-1-Solution.pdf
 -/
 
 namespace Usa2026P1
@@ -31,6 +29,12 @@ noncomputable def f (n : ℕ) (x : ℝ) : ℝ :=
 
 noncomputable determine solution_value : ℕ → ℝ := fun n ↦
   ∑ k ∈ Icc 2 n, (1 : ℝ) / (k : ℝ)
+
+snip begin
+
+/-
+Mathematical solution sketch by Evan Chen: https://web.evanchen.cc/twitch/Ep177-USAMO-2026-1-Solution.pdf
+-/
 
 lemma f_periodic (n : ℕ) (x : ℝ) : f n (x + 1) = f n x := by
   unfold f
@@ -377,6 +381,8 @@ lemma T_nonneg (n : ℕ) (y : ℝ) (hn : 2 ≤ n) (hy1 : 0 < y) (hy2 : y ≤ 1) 
 
     rw [h_T_eq]
     exact sub_nonneg.mpr h_sum_le
+
+snip end
 
 problem usa2026_p1 (n : ℕ) (hn : 2 ≤ n) :
   (∀ x : ℝ, f n x ≤ solution_value n) ∧
