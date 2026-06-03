@@ -64,7 +64,7 @@ theorem Walk.take_append {V : Type} {G : SimpleGraph V} {u v w : V}
   (w1 : G.Walk u v) (w2 : G.Walk v w) :
   (w1.append w2).take w1.length = w1.copy rfl (by simp) := by
     apply Walk.ext_support
-    rw [Walk.take_support_eq_support_take_succ, Walk.support_append]
+    rw [Walk.support_take, Walk.support_append]
     simp
 
 @[simp]
@@ -164,7 +164,7 @@ def isTerminalWalk_length_cons_equiv {V : Type} {G : SimpleGraph V} {u t : V} (m
     toFun := fun ⟨w, h⟩ => ⟨w.getVert m, ⟨w.take m, by {
       and_intros
       · unfold isTerminalWalk at h
-        rw [Walk.take_support_eq_support_take_succ]
+        rw [Walk.support_take]
         rw [List.dropLast_eq_take] at h
         have : m+1 ≤ w.support.length - 1 := by
           rw [Walk.length_support]
