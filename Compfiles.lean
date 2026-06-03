@@ -162,6 +162,7 @@ import Compfiles.Imo2008P3
 import Compfiles.Imo2008P4
 import Compfiles.Imo2008P5
 import Compfiles.Imo2009P1
+import Compfiles.Imo2009P3
 import Compfiles.Imo2009P5
 import Compfiles.Imo2009P6
 import Compfiles.Imo2010P1
