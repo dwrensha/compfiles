@@ -170,48 +170,40 @@ lemma covering_restrict {K M N : ℕ} (hNM : N ≤ M)
   classical
   set f : Fin N → Fin N := fun i =>
     if h : ((τ (Fin.castLE hNM i)) : ℕ) < N then ⟨(τ (Fin.castLE hNM i)), h⟩ else i with hf_def
-  set GR : Finset (Fin N) :=
-    Finset.univ.filter (fun i => ((τ (Fin.castLE hNM i)) : ℕ) < N) with hGR_def
-  have hmemGR : ∀ i, i ∈ GR ↔ ((τ (Fin.castLE hNM i)) : ℕ) < N := by
-    intro i; rw [hGR_def, Finset.mem_filter]; simp
-  have hfinj : Set.InjOn f ↑GR := by
+  set good : Set (Fin N) := {i | ((τ (Fin.castLE hNM i)) : ℕ) < N} with hgood_def
+  have hfinj : Set.InjOn f good := by
     intro a ha b hb hab
-    rw [Finset.mem_coe, hmemGR] at ha hb
-    simp only [hf_def, ha, hb, dif_pos, Fin.mk.injEq] at hab
-    exact Fin.castLE_injective hNM (τ.injective (Fin.ext hab))
-  set GC : Finset (Fin N) := GR.image f with hGC_def
-  have hGCcard : GC.card = GR.card := by rw [hGC_def]; exact Finset.card_image_of_injOn hfinj
-  have e : {x // x ∈ GRᶜ} ≃ {x // x ∈ GCᶜ} :=
-    Fintype.equivOfCardEq (by simp [Fintype.card_coe, hGCcard])
-  set g : Fin N → Fin N := fun i =>
-    if h : i ∈ GR then f i else (e ⟨i, Finset.mem_compl.mpr h⟩ : Fin N) with hg_def
-  have hginj : Function.Injective g := by
-    intro a b hab
-    simp only [hg_def] at hab
-    split_ifs at hab with ha hb hb
-    · exact hfinj ha hb hab
-    · exfalso
-      have hfa : f a ∈ GC := by rw [hGC_def]; exact Finset.mem_image_of_mem f ha
-      rw [hab] at hfa
-      exact (Finset.mem_compl.mp (e ⟨b, Finset.mem_compl.mpr hb⟩).2) hfa
-    · exfalso
-      have hfb : f b ∈ GC := by rw [hGC_def]; exact Finset.mem_image_of_mem f hb
-      rw [← hab] at hfb
-      exact (Finset.mem_compl.mp (e ⟨a, Finset.mem_compl.mpr ha⟩).2) hfb
-    · have h1 : (e ⟨a, Finset.mem_compl.mpr ha⟩) = (e ⟨b, Finset.mem_compl.mpr hb⟩) :=
-        Subtype.ext hab
-      exact congrArg Subtype.val (e.injective h1)
-  refine ⟨Equiv.ofBijective g (Finite.injective_iff_bijective.mp hginj), ?_⟩
+    have ha' : ((τ (Fin.castLE hNM a)) : ℕ) < N := by simpa [hgood_def] using ha
+    have hb' : ((τ (Fin.castLE hNM b)) : ℕ) < N := by simpa [hgood_def] using hb
+    have hval : ((τ (Fin.castLE hNM a)) : ℕ) = (τ (Fin.castLE hNM b) : ℕ) := by
+      simpa [hf_def, ha', hb'] using congrArg Fin.val hab
+    exact Fin.castLE_injective hNM (τ.injective (Fin.ext hval))
+  have hmaps : good.MapsTo f (Finset.univ : Finset (Fin N)) := by
+    intro i hi
+    simp
+  obtain ⟨g, hg⟩ := Set.MapsTo.exists_equiv_extend_of_card_eq
+    (α := Fin N) (β := Fin N) (t := (Finset.univ : Finset (Fin N)))
+    (s := good) (f := f) (by simp) hmaps hfinj
+  let eUniv : ↑(Finset.univ : Finset (Fin N)) ≃ Fin N :=
+    Equiv.ofBijective (fun x => (x : Fin N))
+      ⟨Subtype.val_injective, fun y => ⟨⟨y, by simp⟩, rfl⟩⟩
+  let σ : Equiv.Perm (Fin N) := g.trans eUniv
+  refine ⟨σ, ?_⟩
   intro r c hr hc
   obtain ⟨i, hi1, hi2, hc1, hc2⟩ := hτ r c (le_trans hr hNM) (le_trans hc hNM)
   have hiN : (i : ℕ) < N := lt_of_lt_of_le hi2 hr
   have hcastle : Fin.castLE hNM ⟨i, hiN⟩ = i := by apply Fin.ext; simp
-  have hgood : (⟨i, hiN⟩ : Fin N) ∈ GR := by rw [hmemGR, hcastle]; omega
+  have hi_good : (⟨i, hiN⟩ : Fin N) ∈ good := by
+    rw [hgood_def]
+    change ((τ (Fin.castLE hNM ⟨i, hiN⟩)) : ℕ) < N
+    rw [hcastle]
+    omega
   refine ⟨⟨i, hiN⟩, hi1, hi2, ?_, ?_⟩ <;>
-  · have hval : ((Equiv.ofBijective g (Finite.injective_iff_bijective.mp hginj)) ⟨i, hiN⟩ : ℕ)
-        = (τ i : ℕ) := by
-      show (g ⟨i, hiN⟩ : ℕ) = (τ i : ℕ)
-      simp only [hg_def, hgood, dif_pos, hf_def]
+  · have hval : (σ ⟨i, hiN⟩ : ℕ) = (τ i : ℕ) := by
+      have hσf : σ ⟨i, hiN⟩ = f ⟨i, hiN⟩ := by
+        simpa [σ, eUniv] using hg ⟨i, hiN⟩ hi_good
+      rw [hσf]
+      simp only [hf_def]
       rw [dif_pos (by rw [hcastle]; exact lt_of_lt_of_le hc2 hc)]
       simp [hcastle]
     rw [hval]
