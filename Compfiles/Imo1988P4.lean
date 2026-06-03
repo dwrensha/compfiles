@@ -24,14 +24,10 @@ open scoped BigOperators
 
 problem imo1988_p4 :
     ∃ (n : ℕ) (I : Fin n → Set ℝ),
-      -- each `I i` is an interval
       (∀ i, (I i).OrdConnected) ∧
-      -- the intervals are pairwise disjoint
       (Pairwise fun i j ↦ Disjoint (I i) (I j)) ∧
-      -- their union is the solution set
       (⋃ i, I i) =
         {x : ℝ | (5 : ℝ) / 4 ≤ ∑ k ∈ Finset.Icc (1 : ℕ) 70, (k : ℝ) / (x - k)} ∧
-      -- the sum of their lengths is 1988
       ∑ i, MeasureTheory.volume (I i) = 1988 := by
   sorry
 

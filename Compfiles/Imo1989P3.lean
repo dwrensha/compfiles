@@ -28,10 +28,8 @@ abbrev Pt := EuclideanSpace ℝ (Fin 2)
 problem imo1989_p3 (n k : ℕ) (hn : 0 < n) (hk : 0 < k)
     (S : Finset Pt)
     (hcard : S.card = n)
-    -- no three points of `S` are collinear
     (hcol : ∀ p₁ ∈ S, ∀ p₂ ∈ S, ∀ p₃ ∈ S,
               p₁ ≠ p₂ → p₁ ≠ p₃ → p₂ ≠ p₃ → ¬ Collinear ℝ {p₁, p₂, p₃})
-    -- for each point `P` of `S` there are at least `k` points of `S` equidistant from `P`
     (hequi : ∀ P ∈ S, ∃ (r : ℝ) (T : Finset Pt),
                T ⊆ S ∧ k ≤ T.card ∧ ∀ Q ∈ T, dist P Q = r) :
     (k : ℝ) < 1 / 2 + Real.sqrt (2 * n) := by
