@@ -4,9 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: David Renshaw
 -/
 
-import Mathlib.Algebra.Order.Ring.GeomSum
 import Mathlib
-import Mathlib.Tactic
 
 import ProblemExtraction
 
@@ -77,23 +75,20 @@ lemma f_pos_of_pos {f : ℚ → ℝ} {q : ℚ} (hq : 0 < q)
                     _ ≤ f q * f q.den := H1 q q.den hq (Nat.cast_pos.mpr q.pos)
 
   -- Now we just need to show that `f q.num` and `f q.denom` are positive.
-  -- Then nlinarith will be able to close the goal.
   have num_pos : 0 < q.num := Rat.num_pos.mpr hq
-  have hqna : (q.num.natAbs : ℤ) = q.num := Int.natAbs_of_nonneg num_pos.le
+  have hqfn' : (q.num : ℝ) ≤ f q.num := by
+    rw [← Int.natAbs_of_nonneg num_pos.le]
+    exact H4 q.num.natAbs (Int.natAbs_pos.mpr (ne_of_gt num_pos))
 
-  have hqfn' := calc (q.num : ℝ)
-         = ((q.num.natAbs : ℤ) : ℝ) := congr_arg Int.cast (Eq.symm hqna)
-       _ ≤ f q.num.natAbs           := H4 q.num.natAbs
-                                            (Int.natAbs_pos.mpr (ne_of_gt num_pos))
-       _ = f q.num                   := by rw [Nat.cast_natAbs, abs_of_nonneg num_pos.le]
+  have f_num_pos : 0 < f q.num :=
+    lt_of_lt_of_le (mod_cast num_pos) hqfn'
+  have f_den_pos : 0 < f q.den :=
+    lt_of_lt_of_le (mod_cast q.pos) (H4 q.den q.pos)
 
-  have f_num_pos := calc (0 : ℝ) < q.num := Int.cast_pos.mpr num_pos
-                         _ ≤ f q.num     := hqfn'
-
-  have f_den_pos := calc (0 : ℝ) < q.den := Nat.cast_pos.mpr q.pos
-                         _ ≤ f q.den     := H4 q.den q.pos
-
-  nlinarith
+  by_contra hfq
+  exact not_lt_of_ge
+    (hfqn.trans (mul_nonpos_of_nonpos_of_nonneg (le_of_not_gt hfq) f_den_pos.le))
+    f_num_pos
 
 lemma fx_gt_xm1 {f : ℚ → ℝ} {x : ℚ} (hx : 1 ≤ x)
     (H1 : ∀ x y, 0 < x → 0 < y → f (x * y) ≤ f x * f y)
@@ -102,7 +97,7 @@ lemma fx_gt_xm1 {f : ℚ → ℝ} {x : ℚ} (hx : 1 ≤ x)
     (x - 1 : ℝ) < f x := by
   have hx0 :=
     calc (x - 1 : ℝ)
-          < ⌊x⌋₊   := by exact_mod_cast Nat.sub_one_lt_floor x
+          < ⌊x⌋₊   := mod_cast Nat.sub_one_lt_floor x
         _ ≤ f ⌊x⌋₊ := H4 _ (Nat.floor_pos.2 hx)
 
   obtain h_eq | h_lt := (Nat.floor_le <| zero_le_one.trans hx).eq_or_lt
@@ -118,7 +113,7 @@ lemma pow_f_le_f_pow {f : ℚ → ℝ} {n : ℕ} (hn : 0 < n) {x : ℚ} (hx : 1 
     (H4 : ∀ n : ℕ, 0 < n → (n : ℝ) ≤ f n) :
     f (x^n) ≤ (f x)^n := by
   induction n with
-  | zero => exfalso; exact Nat.lt_asymm hn hn
+  | zero => lia
   | succ pn hpn =>
     cases pn with
     | zero => simp [pow_one]
@@ -128,7 +123,8 @@ lemma pow_f_le_f_pow {f : ℚ → ℝ} {n : ℕ} (hn : 0 < n) {x : ℚ} (hx : 1 
       have hxp : 0 < x := zero_lt_one.trans hx
       calc f ((x ^ (pn+1)) * x)
           ≤ f (x ^ (pn+1)) * f x := H1 (x ^ (pn+1)) x (pow_pos hxp (pn+1)) hxp
-        _ ≤ (f x) ^ (pn+1) * f x := (mul_le_mul_iff_left₀ (f_pos_of_pos hxp H1 H4)).mpr hpn'
+        _ ≤ (f x) ^ (pn+1) * f x :=
+            mul_le_mul_of_nonneg_right hpn' (f_pos_of_pos hxp H1 H4).le
 
 lemma fixed_point_of_pos_nat_pow {f : ℚ → ℝ} {n : ℕ} (hn : 0 < n)
     (H1 : ∀ x y, 0 < x → 0 < y → f (x * y) ≤ f x * f y)
@@ -136,12 +132,12 @@ lemma fixed_point_of_pos_nat_pow {f : ℚ → ℝ} {n : ℕ} (hn : 0 < n)
     (H5 : ∀ x : ℚ, 1 < x → (x : ℝ) ≤ f x)
     {a : ℚ} (ha1 : 1 < a) (hae : f a = a) :
     f (a^n) = a^n := by
-  have hh0 : (a : ℝ) ^ n ≤ f (a ^ n) := by
-    exact_mod_cast H5 (a ^ n) (one_lt_pow₀ ha1 hn.ne')
+  have hh0 : (a : ℝ) ^ n ≤ f (a ^ n) :=
+    mod_cast H5 (a ^ n) (one_lt_pow₀ ha1 hn.ne')
 
   have hh1 := calc f (a^n) ≤ (f a)^n := pow_f_le_f_pow hn ha1 H1 H4
                    _ = (a : ℝ)^n     := by rw [←hae]
-  exact_mod_cast hh1.antisymm hh0
+  exact mod_cast hh1.antisymm hh0
 
 lemma fixed_point_of_gt_1 {f : ℚ → ℝ} {x : ℚ} (hx : 1 < x)
     (H1 : ∀ x y, 0 < x → 0 < y → f (x * y) ≤ f x * f y)
@@ -166,7 +162,7 @@ lemma fixed_point_of_gt_1 {f : ℚ → ℝ} {x : ℚ} (hx : 1 < x)
               _ = (a^N : ℝ)         := fixed_point_of_pos_nat_pow hNp H1 H4 H5 ha1 hae
               _ = (x:ℝ) + ((a^N:ℝ) - (x:ℝ))     := by ring
 
-  have heq := h1.antisymm (by exact_mod_cast h2)
+  have heq := h1.antisymm (mod_cast h2)
   linarith [H5 x hx, H5 _ h_big_enough]
 
 snip end
@@ -181,30 +177,29 @@ problem imo2013_p5
   have H3 : ∀ x : ℚ, 0 < x → ∀ n : ℕ, 0 < n → ↑n * f x ≤ f (n * x) := by
     intro x hx n hn
     cases n with
-    | zero => exfalso; exact Nat.lt_asymm hn hn
+    | zero => lia
     | succ n =>
       induction n with
       | zero => simp [one_mul, Nat.cast_one]
       | succ pn hpn =>
+        have hpn' : (↑pn + 1) * f x ≤ f ((↑pn + 1) * x) :=
+          mod_cast hpn pn.succ_pos
         calc  ↑(pn + 2) * f x
             = (↑pn + 1 + 1) * f x            := by norm_cast
           _ = (↑pn + 1) * f x + f x          := by ring
-          _ ≤ f ((↑pn.succ) * x) + f x       := by exact_mod_cast add_le_add_left
-                                                    (hpn pn.succ_pos) (f x)
-          _ ≤ f ((↑pn + 1) * x + x)          := by exact_mod_cast H2 _ _
-                                                    (mul_pos pn.cast_add_one_pos hx) hx
+          _ ≤ f ((↑pn + 1) * x) + f x        := add_le_add_left hpn' (f x)
+          _ ≤ f ((↑pn + 1) * x + x)          := H2 _ _ (mul_pos (by positivity) hx) hx
           _ = f ((↑pn + 1 + 1) * x)          := by ring_nf
           _ = f (↑(pn + 2) * x)              := by norm_cast
 
   have H4 : ∀ n : ℕ, 0 < n → (n : ℝ) ≤ f n := by
     intro n hn
     have hf1 : 1 ≤ f 1 := by
-      suffices ↑a * 1 ≤ ↑a * f 1 from (mul_le_mul_iff_right₀ (by positivity)).mp this
-      calc _ = ↑a := mul_one _
-           _ = f a        := hae.symm
-           _ = f (a * 1)  := by rw [mul_one]
-           _ ≤ f a * f 1  := (H1 a 1) (zero_lt_one.trans ha1) zero_lt_one
-           _ = ↑a * f 1   := by rw [hae]
+      have h := H1 a 1 (zero_lt_one.trans ha1) zero_lt_one
+      rw [mul_one, hae] at h
+      have ha0 : (0 : ℝ) < a := by positivity
+      have h' : (a : ℝ) * 1 ≤ (a : ℝ) * f 1 := by simpa [mul_one] using h
+      exact (mul_le_mul_iff_right₀ ha0).mp h'
 
     calc (n : ℝ) = (n : ℝ) * 1 := (mul_one _).symm
          _ ≤ (n : ℝ) * f 1     := by gcongr
@@ -215,18 +210,18 @@ problem imo2013_p5
     intro x hx
     have hxnm1 : ∀ n : ℕ, 0 < n → (x : ℝ)^n - 1 < (f x)^n := by
       intro n hn
-      calc (x : ℝ)^n - 1 < f (x^n) := by exact_mod_cast fx_gt_xm1 (one_le_pow₀ hx.le)
-                                           H1 H2 H4
+      have hxpow : (((x ^ n : ℚ) : ℝ) - 1) < f (x ^ n) :=
+        fx_gt_xm1 (x := x ^ n) (one_le_pow₀ hx.le) H1 H2 H4
+      calc (x : ℝ)^n - 1 < f (x^n) := by simpa using hxpow
                        _ ≤ (f x)^n := pow_f_le_f_pow hn hx H1 H4
-    have hx' : 1 < (x : ℝ) := mod_cast hx
-    have hxp : 0 < x := zero_lt_one.trans hx
-    exact le_of_all_pow_lt_succ' hx' (f_pos_of_pos hxp H1 H4) hxnm1
+    exact le_of_all_pow_lt_succ' (mod_cast hx)
+      (f_pos_of_pos (zero_lt_one.trans hx) H1 H4) hxnm1
 
   have h_f_commutes_with_pos_nat_mul : ∀ n : ℕ, 0 < n → ∀ x : ℚ, 0 < x → f (n * x) = n * f x := by
     intro n hn x hx
     have h2 : f (n * x) ≤ n * f x := by
       rcases n with _ | _ | n
-      · exact (Nat.lt_asymm hn hn).elim
+      · lia
       · simp
       · have hfneq : f (n.succ.succ) = n.succ.succ := by
           have := fixed_point_of_gt_1
