@@ -176,6 +176,57 @@ lemma init_sorted {n : ℕ} {a : Fin n → ℤ}
   intro i j hij
   exact asorted ⟨i, by omega⟩ ⟨j, by omega⟩ hij
 
+-- The image of the prefix `{j ≤ i'}` of `Fin m` under `embedFinLE` is the
+-- prefix `{j ≤ i}` of `Fin n`, provided `i` lies in the small range.
+lemma embedFinLE_map_Iic {m n : ℕ} (hmn : m ≤ n) (i : Fin n) (hi : i.val < m) :
+    (Finset.univ.filter (· ≤ (⟨i.val, hi⟩ : Fin m))).map (embedFinLE hmn) =
+      Finset.univ.filter (· ≤ i) := by
+  ext z
+  rw [Finset.mem_map, Finset.mem_filter]
+  constructor
+  · rintro ⟨j, hj, hjz⟩
+    simp only [Finset.mem_univ, true_and]
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hj
+    rw [← hjz]
+    exact hj
+  · rintro ⟨-, hzle⟩
+    use ⟨z.val, by omega⟩
+    simp only [Finset.mem_filter, embedFinLE]
+    dsimp
+    simp only [eq_self, and_true, Finset.mem_univ, true_and]
+    exact hzle
+
+-- The image of `{j : Fin m | j.val < c}` under `embedFinLE` is the prefix
+-- `{j ≤ ⟨c⟩}` of `Fin n` with the point `⟨c⟩` removed.
+lemma embedFinLE_map_Iio {m n : ℕ} (hmn : m ≤ n) (c : ℕ) (hcm : c ≤ m) (hcn : c < n) :
+    (Finset.univ.filter (fun j : Fin m => j.val < c)).map (embedFinLE hmn) =
+      (Finset.univ.filter (fun j : Fin n => j ≤ ⟨c, hcn⟩)).erase ⟨c, hcn⟩ := by
+  ext z
+  rw [Finset.mem_map, Finset.mem_erase]
+  constructor
+  · rintro ⟨j, hj, hjz⟩
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hj
+    have hzv : z.val = j.val := by rw [← hjz]; rfl
+    refine ⟨?_, ?_⟩
+    · intro hzc
+      have := congrArg Fin.val hzc
+      simp at this
+      omega
+    · simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+      change z.val ≤ c
+      omega
+  · rintro ⟨hz_ne, hzle⟩
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hzle
+    have hzc : z.val ≠ c := by
+      intro hzv
+      exact hz_ne (Fin.ext hzv)
+    have hzlt : z.val ≤ c := hzle
+    use ⟨z.val, by omega⟩
+    simp only [Finset.mem_filter, embedFinLE]
+    dsimp
+    simp only [eq_self, and_true, Finset.mem_univ, true_and]
+    omega
+
 lemma prefix_extendPerm {β : Type*} [AddCommMonoid β] {m n : ℕ}
     (f : Fin n → β) (p : Equiv.Perm (Fin m)) (hmn : m ≤ n)
     (i : Fin n) (hi : i.val < m) :
@@ -185,21 +236,7 @@ lemma prefix_extendPerm {β : Type*} [AddCommMonoid β] {m n : ℕ}
   let i' : Fin m := ⟨i.val, hi⟩
   let emb : Fin m ↪ Fin n := embedFinLE hmn
   have hmap : (Finset.univ.filter (· ≤ i')).map emb =
-      Finset.univ.filter (· ≤ i) := by
-    ext z
-    rw [Finset.mem_map, Finset.mem_filter]
-    constructor
-    · rintro ⟨j, hj, hjz⟩
-      simp only [Finset.mem_univ, true_and]
-      simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hj
-      rw [← hjz]
-      exact hj
-    · rintro ⟨-, hzle⟩
-      use ⟨z.val, by omega⟩
-      simp only [Finset.mem_filter, emb, embedFinLE]
-      dsimp
-      simp only [eq_self, and_true, Finset.mem_univ, true_and]
-      exact hzle
+      Finset.univ.filter (· ≤ i) := embedFinLE_map_Iic hmn i hi
   rw [← hmap, Finset.sum_map]
   apply Finset.sum_congr rfl
   intro j hj
@@ -500,21 +537,7 @@ theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
               ∑ j ∈ Finset.filter (· ≤ i') Finset.univ, b (p' j) := by
           let embM : Fin m ↪ Fin n := embedFinLE (by omega)
           have hmap : (Finset.univ.filter (· ≤ i')).map embM =
-              Finset.univ.filter (· ≤ i) := by
-            ext z
-            rw [Finset.mem_map, Finset.mem_filter]
-            constructor
-            · rintro ⟨j, hj, hjz⟩
-              simp only [Finset.mem_univ, true_and]
-              simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hj
-              rw [← hjz]
-              exact hj
-            · rintro ⟨-, hzle⟩
-              use ⟨z.val, by omega⟩
-              simp only [Finset.mem_filter, embM, embedFinLE]
-              dsimp
-              simp only [eq_self, and_true, Finset.mem_univ, true_and]
-              exact hzle
+              Finset.univ.filter (· ≤ i) := embedFinLE_map_Iic (by omega) i hi_before
           rw [← hmap, Finset.sum_map]
           apply Finset.sum_congr rfl
           intro j hj
@@ -554,36 +577,11 @@ theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
                 a lastFull + ∑ j : Fin m, b (p' j) := by
             change ∑ j ∈ P, a (p j) = a lastFull + ∑ j : Fin m, b (p' j)
             let embM : Fin m ↪ Fin n := embedFinLE (by omega)
+            have huniv : Finset.univ.filter (fun j : Fin m => j.val < m) = Finset.univ :=
+              Finset.filter_true_of_mem (fun j _ => j.isLt)
             have hmap_all : (Finset.univ (α := Fin m)).map embM = P.erase secondLast := by
-              ext z
-              rw [Finset.mem_map, Finset.mem_erase]
-              constructor
-              · rintro ⟨j, -, hjz⟩
-                constructor
-                · intro hzsecond
-                  have hv := congrArg Fin.val (hjz.trans hzsecond)
-                  dsimp [embM, embedFinLE, secondLast, m] at hv
-                  omega
-                · rw [← hjz]
-                  simp only [P, Finset.mem_filter, Finset.mem_univ, true_and]
-                  change j.val ≤ secondLast.val
-                  dsimp [secondLast, m]
-                  omega
-              · rintro ⟨hz_ne, hzP⟩
-                simp only [P, Finset.mem_filter, Finset.mem_univ, true_and] at hzP
-                use ⟨z.val, by
-                  have hz_ne_val : z.val ≠ m := by
-                    intro hzv
-                    apply hz_ne
-                    apply Fin.ext
-                    simpa [secondLast] using hzv
-                  change z.val ≤ secondLast.val at hzP
-                  dsimp [secondLast, m] at hzP
-                  omega⟩
-                constructor
-                · simp
-                · apply Fin.ext
-                  rfl
+              rw [← huniv]
+              exact embedFinLE_map_Iio (by omega) m le_rfl (by omega)
             rw [← Finset.add_sum_erase P (fun j => a (p j)) hPsecond]
             rw [hp_second]
             congr 1
@@ -803,40 +801,8 @@ theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
           change ∑ j ∈ P, a (p j) = a lastFull + ∑ j ∈ Sprev, a' (p' j)
           let emb : Fin n' ↪ Fin n := embedFinLE (Nat.sub_le n 1)
           have hmap_prev : Sprev.map emb = P.erase hitFull := by
-            ext q
-            rw [Finset.mem_map, Finset.mem_erase]
-            constructor
-            · rintro ⟨j, hjS, hjq⟩
-              have hjlt : j < k := by simpa [Sprev] using hjS
-              constructor
-              · intro hqhit
-                have hv := congrArg Fin.val (hjq.trans hqhit)
-                dsimp [emb, embedFinLE, hitFull] at hv
-                have hvlt : j.val < k.val := by exact hjlt
-                omega
-              · rw [← hjq]
-                simp only [P, Finset.mem_filter, Finset.mem_univ, true_and]
-                change j.val ≤ hitFull.val
-                dsimp [hitFull]
-                exact le_of_lt hjlt
-            · rintro ⟨hq_ne, hqP⟩
-              simp only [P, Finset.mem_filter, Finset.mem_univ, true_and] at hqP
-              have hqle : q.val ≤ k.val := by
-                change q.val ≤ hitFull.val at hqP
-                dsimp [hitFull] at hqP
-                exact hqP
-              use ⟨q.val, by omega⟩
-              constructor
-              · simp only [Sprev, Finset.mem_filter, Finset.mem_univ, true_and]
-                have hq_ne_val : q.val ≠ k.val := by
-                  intro hqv
-                  apply hq_ne
-                  apply Fin.ext
-                  simpa [hitFull] using hqv
-                change q.val < k.val
-                omega
-              · apply Fin.ext
-                rfl
+            simp only [Sprev, Fin.lt_def]
+            exact embedFinLE_map_Iio (Nat.sub_le n 1) k.val (le_of_lt k.isLt) (by omega)
           rw [← Finset.add_sum_erase P (fun j => a (p j)) hPhit]
           rw [hp_hit]
           congr 1
@@ -892,21 +858,7 @@ theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
                   ∑ j ∈ Finset.filter (· ≤ i') Finset.univ, a' (p' j) := by
               let emb : Fin n' ↪ Fin n := embedFinLE (Nat.sub_le n 1)
               have hmap : (Finset.univ.filter (· ≤ i')).map emb =
-                  Finset.univ.filter (· ≤ i) := by
-                ext q
-                rw [Finset.mem_map, Finset.mem_filter]
-                constructor
-                · rintro ⟨j, hj, hjq⟩
-                  simp only [Finset.mem_univ, true_and]
-                  simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hj
-                  rw [← hjq]
-                  exact hj
-                · rintro ⟨-, hqle⟩
-                  use ⟨q.val, by omega⟩
-                  simp only [Finset.mem_filter, emb, embedFinLE]
-                  dsimp
-                  simp only [eq_self, and_true, Finset.mem_univ, true_and]
-                  exact hqle
+                  Finset.univ.filter (· ≤ i) := embedFinLE_map_Iic (Nat.sub_le n 1) i (by omega)
               rw [← hmap, Finset.sum_map]
               apply Finset.sum_congr rfl
               intro j hj
