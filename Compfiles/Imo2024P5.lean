@@ -299,102 +299,33 @@ lemma Path.one_lt_length_cells (p : Path N) : 1 < p.cells.length := by
       Fin.val_zero] at h1 h2
     lia
 
-/-- Remove the first cell from a path, if the second cell is also on the first row. -/
-def Path.tail (p : Path N) : Path N where
-  cells := if (p.cells[1]'p.one_lt_length_cells).1 = 0 then p.cells.tail else p.cells
-  nonempty := by
-    split_ifs
-    · rw [← List.length_pos_iff_ne_nil, List.length_tail, Nat.sub_pos_iff_lt]
-      exact p.one_lt_length_cells
-    · exact p.nonempty
-  head_first_row := by
-    split_ifs with h
-    · convert h
-      rw [List.head_tail]
-    · exact p.head_first_row
-  last_last_row := by
-    split_ifs
-    · rw [← p.last_last_row, List.getLast_tail]
-    · exact p.last_last_row
-  valid_move_seq := by
-    split_ifs
-    · exact List.IsChain.tail p.valid_move_seq
-    · exact p.valid_move_seq
-
-lemma Path.tail_induction {motive : Path N → Prop} (ind : ∀ p, motive p.tail → motive p)
-    (base : ∀ p, (p.cells[1]'p.one_lt_length_cells).1 ≠ 0 → motive p) (p : Path N) : motive p := by
-  rcases p with ⟨cells, nonempty, head_first_row, last_last_row, valid_move_seq⟩
-  let p' : Path N := ⟨cells, nonempty, head_first_row, last_last_row, valid_move_seq⟩
-  induction cells
-  case nil => simp at nonempty
-  case cons head tail hi =>
-    by_cases h : (p'.cells[1]'p'.one_lt_length_cells).1 = 0
-    · refine ind p' ?_
-      simp_rw [Path.tail, if_pos h, p', List.tail_cons]
-      exact hi _ _ _ _
-    · exact base p' h
-
-lemma Path.tail_findFstEq (p : Path N) {r : Fin (N + 2)} (hr : r ≠ 0) :
-    p.tail.findFstEq r = p.findFstEq r := by
-  by_cases h : (p.cells[1]'p.one_lt_length_cells).1 = 0
-  · simp_rw [Path.tail, if_pos h]
-    nth_rw 2 [Path.findFstEq]
-    rcases p with ⟨cells, nonempty, head_first_row, last_last_row, valid_move_seq⟩
-    rcases cells with ⟨⟩ | ⟨head, tail⟩
-    · simp at nonempty
-    · simp only [List.head_cons] at head_first_row
-      simp only [List.find?_cons, head_first_row, hr.symm, decide_false]
-      rfl
-  · simp_rw [Path.tail, if_neg h]
-
-lemma Path.tail_firstMonster (p : Path N) (m : MonsterData N) :
-    p.tail.firstMonster m = p.firstMonster m := by
-  by_cases h : (p.cells[1]'p.one_lt_length_cells).1 = 0
-  · simp_rw [Path.tail, if_pos h]
-    nth_rw 2 [Path.firstMonster]
-    rcases p with ⟨cells, nonempty, head_first_row, last_last_row, valid_move_seq⟩
-    rcases cells with ⟨⟩ | ⟨head, tail⟩
-    · simp at nonempty
-    · simp only [List.head_cons] at head_first_row
-      simp only [List.find?_cons, m.not_mem_monsterCells_of_fst_eq_zero head_first_row,
-                 decide_false]
-      rfl
-  · simp_rw [Path.tail, if_neg h]
-
 lemma Path.firstMonster_eq_of_findFstEq_mem {p : Path N} {m : MonsterData N}
     (h : p.findFstEq 1 ∈ m.monsterCells) : p.firstMonster m = some (p.findFstEq 1) := by
-  induction p using Path.tail_induction
-  case base p h0 =>
-    have hl := p.one_lt_length_cells
-    have adj : Adjacent p.cells[0] p.cells[1] := List.isChain_iff_getElem.1 p.valid_move_seq 0 (by lia)
-    simp_rw [Adjacent, Nat.dist] at adj
-    have hc0 : (p.cells[0].1 : ℕ) = 0 := by
-      convert Fin.ext_iff.1 p.head_first_row
-      exact List.getElem_zero _
-    have hc1 : (p.cells[1].1 : ℕ) ≠ 0 := Fin.val_ne_iff.2 h0
-    have h1 : (p.cells[1].1 : ℕ) = 1 := by lia
-    simp_rw [firstMonster, findFstEq]
-    rcases p with ⟨cells, nonempty, head_first_row, last_last_row, valid_move_seq⟩
-    rcases cells with ⟨⟩ | ⟨head, tail⟩
-    · simp at nonempty
-    · simp only [List.head_cons] at head_first_row
-      simp only [List.getElem_cons_succ] at h1
-      simp only [List.length_cons, lt_add_iff_pos_left, List.length_pos_iff_ne_nil] at hl
-      simp only [m.not_mem_monsterCells_of_fst_eq_zero head_first_row, decide_false,
-        Bool.false_eq_true, not_false_eq_true, List.find?_cons_of_neg, head_first_row,
-        Fin.zero_eq_one_iff, Nat.reduceEqDiff, Option.some_get]
-      simp only [findFstEq, head_first_row, Fin.zero_eq_one_iff, Nat.reduceEqDiff, decide_false,
-        Bool.false_eq_true, not_false_eq_true, List.find?_cons_of_neg] at h
-      rcases tail with ⟨⟩ | ⟨htail, ttail⟩
-      · simp at hl
-      · simp only [List.getElem_cons_zero] at h1
-        have h1' : htail.1 = 1 := by simp [Fin.ext_iff, h1]
-        simp only [h1', decide_true, List.find?_cons_of_pos, Option.get_some] at h
-        simp only [h1', h, decide_true, List.find?_cons_of_pos]
-  case ind p ht =>
-    have h1 : (1 : Fin (N + 2)) ≠ 0 := by simp
-    rw [p.tail_findFstEq h1, p.tail_firstMonster m] at ht
-    exact ht h
+  classical
+  -- `findFstEq 1` is the first cell with row `≥ 1`; every earlier cell lies in row `0`, hence is
+  -- monster-free, so the first monster on the path is exactly `findFstEq 1`.
+  set nq : Cell N → Bool := fun c ↦ !decide ((1 : Fin (N + 2)) ≤ c.1) with hnq
+  have hex : ∃ c ∈ p.cells, (1 : Fin (N + 2)) ≤ c.1 := p.exists_mem_le_fst 1
+  have hd : p.cells.dropWhile nq ≠ [] := by simpa [hnq] using hex
+  obtain ⟨c, rest, hcr⟩ := List.exists_cons_of_ne_nil hd
+  have hchead : c = p.findFstEq 1 := by
+    have he := List.find?_eq_head_dropWhile_not (l := p.cells)
+      (p := fun c ↦ (1 : Fin (N + 2)) ≤ c.1) (by simpa using hex)
+    have hcc : some c = p.cells.find? (fun c ↦ (1 : Fin (N + 2)) ≤ c.1) := by
+      rw [he]; simp only [← hnq, hcr, List.head_cons]
+    have hcc2 : some (p.findFstEq 1) = some c := by
+      rw [p.findFstEq_eq_find?_le, Option.some_get, ← hcc]
+    exact (Option.some.inj hcc2).symm
+  have hmono : ∀ x ∈ p.cells.takeWhile nq, x ∉ m.monsterCells := by
+    intro x hx
+    have hxnq := List.mem_takeWhile_imp hx
+    simp only [hnq, Bool.not_eq_true', decide_eq_false_iff_not, not_le, Fin.lt_def,
+      Fin.val_one] at hxnq
+    exact m.not_mem_monsterCells_of_fst_eq_zero (by simp only [Fin.ext_iff, Fin.val_zero]; lia)
+  simp_rw [Path.firstMonster]
+  rw [← p.cells.takeWhile_append_dropWhile (p := nq), List.find?_append, hcr,
+      List.find?_cons_of_pos (by simp only [hchead, decide_eq_true_eq]; exact h),
+      List.find?_eq_none.2 (by simpa using hmono), Option.none_or, hchead]
 
 lemma Path.findFstEq_fst_sub_one_mem (p : Path N) {r : Fin (N + 2)} (hr : r ≠ 0) :
     (⟨(r : ℕ) - 1, by lia⟩, (p.findFstEq r).2) ∈ p.cells := by
