@@ -81,12 +81,6 @@ lemma extendPerm_apply_of_not_lt {m n : ℕ} (f : Equiv.Perm (Fin m)) (h : m ≤
     extendPerm f h x = x := by
   simp [extendPerm, hx]
 
-lemma sum_perm {α β : Type*} [Fintype α] [AddCommMonoid β]
-    (p : Equiv.Perm α) (f : α → β) :
-    (∑ i, f (p i)) = ∑ i, f i := by
-  have hp : p.toFun.Bijective := EquivLike.bijective p
-  simpa using Function.Bijective.sum_comp hp f
-
 lemma filter_le_last {n : ℕ} (last : Fin n) (hlast : last.val = n - 1) :
     Finset.filter (fun i : Fin n => i ≤ last) Finset.univ = Finset.univ := by
   ext i
@@ -102,7 +96,7 @@ lemma prefix_last_perm {β : Type*} [AddCommMonoid β] {n : ℕ}
     (f : Fin n → β) (p : Equiv.Perm (Fin n)) (last : Fin n) (hlast : last.val = n - 1) :
     (∑ j ∈ Finset.filter (fun j : Fin n => j ≤ last) Finset.univ, f (p j)) = ∑ j, f j := by
   rw [filter_le_last last hlast]
-  exact sum_perm p f
+  exact Equiv.sum_comp p f
 
 lemma sum_init {β : Type*} [AddCommMonoid β] {n : ℕ} (f : Fin n → β) :
     (∑ i : Fin (n - 1), f ⟨i, by omega⟩) =
@@ -558,7 +552,7 @@ theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
             exact Finset.sum_le_sum_of_subset_of_nonneg hsubset (by
               intro z hz1 hz2
               exact le_of_lt (bpos (p' z)))
-          have hsum_perm : (∑ j : Fin m, b (p' j)) = ∑ j : Fin m, b j := sum_perm p' b
+          have hsum_perm : (∑ j : Fin m, b (p' j)) = ∑ j : Fin m, b j := Equiv.sum_comp p' b
           calc
             ∑ j ∈ Finset.filter (· ≤ i') Finset.univ, b (p' j) ≤ ∑ j : Fin m, b (p' j) := hle_total
             _ = ∑ j : Fin m, b j := hsum_perm
@@ -593,7 +587,7 @@ theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
               exact j.isLt
             rw [hp_before (embM j) hjlt]
             simp [b, embM, embedFinLE]
-          have hsum_perm : (∑ j : Fin m, b (p' j)) = ∑ j : Fin m, b j := sum_perm p' b
+          have hsum_perm : (∑ j : Fin m, b (p' j)) = ∑ j : Fin m, b j := Equiv.sum_comp p' b
           have hvalue : ∑ j ∈ Finset.filter (· ≤ secondLast) Finset.univ, a (p j) = s - a (small r) := by
             rw [hprefix_second, hsum_perm, hsum_rest]
             rw [hs_eq]
@@ -706,7 +700,7 @@ theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
                 intro j hj1 hj2
                 exact le_of_lt (apos' (p' j))))
           have pb' : p'.toFun.Bijective := EquivLike.bijective p'
-          have h39 : (∑ j : Fin n', a' (p' j)) = ∑ j : Fin n', a' j := sum_perm p' a'
+          have h39 : (∑ j : Fin n', a' (p' j)) = ∑ j : Fin n', a' j := Equiv.sum_comp p' a'
           have h40 : (∑ j : Fin n', a' j) = x := by
             simpa [a', x, n'] using sum_init a
           calc
