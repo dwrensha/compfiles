@@ -5,6 +5,7 @@ Authors: David Renshaw
 -/
 
 import Mathlib.Tactic
+import Mathlib.Data.Nat.Dist
 
 import ProblemExtraction
 
@@ -46,8 +47,7 @@ antipascal triangle with n rows
 structure antipascal_triangle (n : ℕ) where
 (f : Coords → ℕ)
 (antipascal : ∀ x : Coords, x.row + 1 < n ∧ x.col ≤ x.row →
-  f x + f (left_child x) = f (right_child x) ∨
-  f x + f (right_child x) = f (left_child x))
+  f x = Nat.dist (f (left_child x)) (f (right_child x)))
 
 def exists_desired_triangle : Prop :=
    ∃ t : antipascal_triangle 2018,
@@ -272,33 +272,14 @@ private lemma loser_col (x : Coords) :
   · left; rfl
   · right; rfl
 
-/-- `winner` and `loser` are the two children, in some order. -/
-private lemma winner_loser_cols (x : Coords) :
-    ((winner t x).col = x.col ∧ (loser t x).col = x.col + 1) ∨
-    ((winner t x).col = x.col + 1 ∧ (loser t x).col = x.col) := by
-  rw [winner, loser]; split
-  · right; exact ⟨rfl, rfl⟩
-  · left; exact ⟨rfl, rfl⟩
-
-private lemma loser_ne_winner (x : Coords) : loser t x ≠ winner t x := by
-  rw [winner, loser]; split <;>
-  · intro h; rw [left_child, right_child, Coords.mk.injEq] at h; omega
-
-include hsurj in
 /-- The defining anti-Pascal relation, oriented: `winner = parent + loser`. -/
 private lemma winner_val (x : Coords) (hx : x ∈ tri) (hb : x.row + 1 < NR) :
     t.f (winner t x) = t.f x + t.f (loser t x) := by
-  have hfx : 1 ≤ t.f x := ((bijection t hsurj).1 x hx).1
-  have hap := t.antipascal x ⟨hb, (mem_tri.mp hx).2⟩
+  have hd := t.antipascal x ⟨hb, (mem_tri.mp hx).2⟩
+  unfold Nat.dist at hd
   by_cases hle : t.f (left_child x) ≤ t.f (right_child x)
-  · rw [winner, loser, if_pos hle, if_pos hle]
-    rcases hap with h | h
-    · exact h.symm
-    · omega
-  · rw [winner, loser, if_neg hle, if_neg hle]
-    rcases hap with h | h
-    · omega
-    · exact h.symm
+  · rw [winner, loser, if_pos hle, if_pos hle]; omega
+  · rw [winner, loser, if_neg hle, if_neg hle]; omega
 
 /-- Children of a valid parent lie in the triangle. -/
 private lemma left_child_mem {x : Coords} (hx : x ∈ tri) (hb : x.row + 1 < NR) :
@@ -346,13 +327,11 @@ private lemma chain_mem (i : ℕ) (hi : i < NR) : chain t i ∈ tri := by
       rw [chain_succ]
       exact winner_mem t (ih (by omega)) (by rw [chain_row]; exact hi)
 
-include hsurj in
 private lemma chain_step_val (k : ℕ) (hk : k + 1 < NR) :
     t.f (chain t (k + 1)) = t.f (chain t k) + t.f (loser t (chain t k)) := by
   rw [chain_succ]
-  exact winner_val t hsurj (chain t k) (chain_mem t k (by omega)) (by rw [chain_row]; exact hk)
+  exact winner_val t (chain t k) (chain_mem t k (by omega)) (by rw [chain_row]; exact hk)
 
-include hsurj in
 private lemma chain_sum : ∀ k, k < NR →
     t.f (chain t k) = t.f (chain t 0) + ∑ i ∈ Finset.range k, t.f (loser t (chain t i)) := by
   intro k
@@ -360,7 +339,7 @@ private lemma chain_sum : ∀ k, k < NR →
   | zero => intro _; simp
   | succ m ih =>
       intro hk
-      rw [chain_step_val t hsurj m hk, ih (by omega), Finset.sum_range_succ]
+      rw [chain_step_val t m hk, ih (by omega), Finset.sum_range_succ]
       ring
 
 /-- The smaller children dropped along the apex path (the "losers"). -/
@@ -407,13 +386,12 @@ private lemma smallCells_subset : smallCells t ⊆ tri := by
     rw [Finset.mem_range] at hi
     exact loser_mem t (chain_mem t i (by omega)) (by rw [chain_row]; omega)
 
-include hsurj in
 private lemma smallCells_sum :
     ∑ x ∈ smallCells t, t.f x = t.f (chain t (NR - 1)) := by
   rw [smallCells, Finset.sum_insert (chain_zero_not_losers t), losers,
       Finset.sum_image (losers_inj t)]
   have hNR := NR_val
-  exact (chain_sum t hsurj (NR - 1) (by omega)).symm
+  exact (chain_sum t (NR - 1) (by omega)).symm
 
 include hsurj in
 private lemma smallCells_injOn : Set.InjOn t.f ↑(smallCells t) :=
@@ -424,7 +402,7 @@ private lemma chain_bottom : t.f (chain t (NR - 1)) = TN := by
   have hNR := NR_val
   have hsumV : ∑ v ∈ (smallCells t).image t.f, v = t.f (chain t (NR - 1)) := by
     rw [Finset.sum_image (smallCells_injOn t hsurj)]
-    exact smallCells_sum t hsurj
+    exact smallCells_sum t
   have hpos : ∀ x ∈ (smallCells t).image t.f, 1 ≤ x := by
     intro v hv
     rw [Finset.mem_image] at hv
@@ -449,7 +427,7 @@ private lemma smallCells_image : (smallCells t).image t.f = Finset.Icc 1 NR := b
     rw [Finset.card_image_of_injOn (smallCells_injOn t hsurj), smallCells_card]
   have hsumV : ∑ v ∈ (smallCells t).image t.f, v = t.f (chain t (NR - 1)) := by
     rw [Finset.sum_image (smallCells_injOn t hsurj)]
-    exact smallCells_sum t hsurj
+    exact smallCells_sum t
   have heq := min_sum_eq ((smallCells t).image t.f) hpos
     (by rw [hcard, TN_def, hsumV, chain_bottom t hsurj])
   rw [heq, hcard]
@@ -542,7 +520,6 @@ private lemma walk_row (s : Coords) (k : ℕ) : (walk t s k).row = s.row + k := 
   | zero => rfl
   | succ m ih => rw [walk_succ, winner_row, ih]; omega
 
-include hsurj in
 private lemma walk_sum (s : Coords) (L : ℕ)
     (hmem : ∀ k, k < L → walk t s k ∈ tri ∧ (walk t s k).row + 1 < NR) :
     t.f (walk t s L) = t.f s + ∑ k ∈ Finset.range L, t.f (loser t (walk t s k)) := by
@@ -550,7 +527,7 @@ private lemma walk_sum (s : Coords) (L : ℕ)
   | zero => simp [walk_zero]
   | succ m ih =>
       rw [walk_succ,
-          winner_val t hsurj (walk t s m) (hmem m (by omega)).1 (hmem m (by omega)).2,
+          winner_val t (walk t s m) (hmem m (by omega)).1 (hmem m (by omega)).2,
           ih (fun k hk => hmem k (by omega)), Finset.sum_range_succ]
       ring
 
@@ -607,7 +584,7 @@ private lemma corner_contra (p q : ℕ) (hp : p ≤ NR - 1)
   have hmemv : ∀ k, k < L → walk t ⟨p, q⟩ k ∈ tri ∧ (walk t ⟨p, q⟩ k).row + 1 < NR := by
     intro k hk
     exact ⟨(hsub _ (hin k (by omega))).1, by rw [hwr]; omega⟩
-  have hsum := walk_sum t hsurj ⟨p, q⟩ L hmemv
+  have hsum := walk_sum t ⟨p, q⟩ L hmemv
   have hbig : ∀ k, k < L → NR < t.f (loser t (walk t ⟨p, q⟩ k)) := by
     intro k hk
     refine not_small t hsurj _ ?_ ?_
