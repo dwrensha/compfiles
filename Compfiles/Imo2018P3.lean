@@ -122,24 +122,20 @@ private lemma min_sum : ∀ (V : Finset ℕ), (∀ x ∈ V, 1 ≤ x) →
       omega
 
 /-- `n` distinct positive integers with sum at most `1 + 2 + ⋯ + n` are exactly `{1, …, n}`. -/
-private lemma min_sum_eq : ∀ (V : Finset ℕ), (∀ x ∈ V, 1 ≤ x) →
+private lemma min_sum_eq (V : Finset ℕ) (hpos : ∀ x ∈ V, 1 ≤ x) :
     ∑ x ∈ V, x ≤ ∑ i ∈ Finset.range V.card, (i + 1) →
     V = Finset.Icc 1 V.card := by
-  intro V
-  induction V using Finset.strongInduction with
-  | _ V ih =>
-    intro hpos hsum
-    rcases V.eq_empty_or_nonempty with h | h
-    · subst h; simp
-    · set M := V.max' h with hMdef
-      have hMmem : M ∈ V := V.max'_mem h
-      have hcardM : V.card ≤ M := by
-        calc V.card ≤ (Finset.Icc 1 M).card :=
-              Finset.card_le_card (fun x hx => Finset.mem_Icc.mpr ⟨hpos x hx, V.le_max' x hx⟩)
-          _ = M := by rw [Nat.card_Icc, Nat.add_sub_cancel]
-      have hcardpos : 1 ≤ V.card := Finset.card_pos.mpr h
-      have herase : (V.erase M).card = V.card - 1 := Finset.card_erase_of_mem hMmem
+  intro hsum
+  rcases V.eq_empty_or_nonempty with h | h
+  · subst h; simp
+  · set M := V.max' h with hMdef
+    have hMmem : M ∈ V := V.max'_mem h
+    have hcardpos : 1 ≤ V.card := Finset.card_pos.mpr h
+    have hMle : M ≤ V.card := by
+      by_contra hnot
+      push Not at hnot
       have hkey := min_sum (V.erase M) (fun x hx => hpos x (Finset.mem_of_mem_erase hx))
+      have herase : (V.erase M).card = V.card - 1 := Finset.card_erase_of_mem hMmem
       rw [herase] at hkey
       have hsplit : ∑ x ∈ V.erase M, x + M = ∑ x ∈ V, x :=
         Finset.sum_erase_add V _ hMmem
@@ -147,25 +143,14 @@ private lemma min_sum_eq : ∀ (V : Finset ℕ), (∀ x ∈ V, 1 ≤ x) →
           = ∑ i ∈ Finset.range (V.card - 1), (i + 1) + V.card := by
         conv_lhs => rw [show V.card = (V.card - 1) + 1 by omega, Finset.sum_range_succ]
         omega
-      have hMeq : M = V.card := by omega
-      have herase_le : ∑ x ∈ V.erase M, x ≤ ∑ i ∈ Finset.range (V.card - 1), (i + 1) := by omega
-      have hV'eq := ih (V.erase M) (Finset.erase_ssubset hMmem)
-                      (fun x hx => hpos x (Finset.mem_of_mem_erase hx))
-                      (by rw [herase]; exact herase_le)
-      rw [herase] at hV'eq
-      ext y
-      rw [Finset.mem_Icc]
-      constructor
-      · intro hy
-        exact ⟨hpos y hy, by rw [← hMeq]; exact V.le_max' y hy⟩
-      · rintro ⟨hy1, hy2⟩
-        by_cases hyM : y = M
-        · rw [hyM]; exact hMmem
-        · have hye : y ∈ V.erase M := by
-            rw [hV'eq, Finset.mem_Icc]
-            rw [hMeq] at hyM
-            omega
-          exact Finset.mem_of_mem_erase hye
+      have htoo_big : ∑ i ∈ Finset.range (V.card - 1), (i + 1) + M ≤ ∑ x ∈ V, x := by
+        rw [← hsplit]
+        exact Nat.add_le_add_right hkey M
+      omega
+    apply Finset.eq_of_subset_of_card_le
+    · intro x hx
+      exact Finset.mem_Icc.mpr ⟨hpos x hx, (V.le_max' x hx).trans hMle⟩
+    · rw [Nat.card_Icc, Nat.add_sub_cancel]
 
 private lemma two_mul_sum (n : ℕ) : 2 * (∑ i ∈ Finset.range n, (i + 1)) = n * (n + 1) := by
   induction n with
@@ -472,37 +457,38 @@ private lemma chain_col_le_add {a b : ℕ} (hab : a ≤ b) :
 
 /-! ### Locations of small cells (the band) -/
 
+private lemma smallCells_col (r j : ℕ) (hr : 1 ≤ r)
+    (hmem : (⟨r, j⟩ : Coords) ∈ smallCells t) :
+    j = (chain t (r - 1)).col ∨ j = (chain t (r - 1)).col + 1 := by
+  rw [smallCells, Finset.mem_insert] at hmem
+  rcases hmem with hzero | hloser
+  · rw [chain_zero, Coords.mk.injEq] at hzero
+    omega
+  · rw [losers, Finset.mem_image] at hloser
+    obtain ⟨i, _, hi⟩ := hloser
+    have hrow : i + 1 = r := by
+      have h := congrArg Coords.row hi
+      rw [loser_chain_row] at h
+      exact h
+    have hri : r - 1 = i := by omega
+    have hcol : (loser t (chain t i)).col = j := by rw [hi]
+    rcases loser_col t (chain t i) with h | h
+    · left
+      rw [hri]
+      exact hcol.symm.trans h
+    · right
+      rw [hri]
+      exact hcol.symm.trans h
+
 private lemma notMem_small_left (r j : ℕ) (hr : 1 ≤ r) (hj : j < (chain t (r - 1)).col) :
     (⟨r, j⟩ : Coords) ∉ smallCells t := by
-  rw [smallCells, Finset.mem_insert]
-  push Not
-  refine ⟨?_, ?_⟩
-  · intro h; rw [chain_zero, Coords.mk.injEq] at h; omega
-  · rw [losers, Finset.mem_image]
-    push Not
-    intro i _ heq
-    have hrow : i + 1 = r := by
-      have h := congrArg Coords.row heq; rw [loser_chain_row] at h; exact h
-    subst hrow
-    rw [Nat.add_sub_cancel] at hj
-    have hcol : (loser t (chain t i)).col = j := by rw [heq]
-    rcases loser_col t (chain t i) with h | h <;> (rw [h] at hcol; omega)
+  intro hmem
+  rcases smallCells_col t r j hr hmem with h | h <;> omega
 
 private lemma notMem_small_right (r j : ℕ) (hr : 1 ≤ r)
     (hj : (chain t (r - 1)).col + 1 < j) : (⟨r, j⟩ : Coords) ∉ smallCells t := by
-  rw [smallCells, Finset.mem_insert]
-  push Not
-  refine ⟨?_, ?_⟩
-  · intro h; rw [chain_zero, Coords.mk.injEq] at h; omega
-  · rw [losers, Finset.mem_image]
-    push Not
-    intro i _ heq
-    have hrow : i + 1 = r := by
-      have h := congrArg Coords.row heq; rw [loser_chain_row] at h; exact h
-    subst hrow
-    rw [Nat.add_sub_cancel] at hj
-    have hcol : (loser t (chain t i)).col = j := by rw [heq]
-    rcases loser_col t (chain t i) with h | h <;> (rw [h] at hcol; omega)
+  intro hmem
+  rcases smallCells_col t r j hr hmem with h | h <;> omega
 
 /-! ### A downward sub-triangle and the second path -/
 
