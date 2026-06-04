@@ -677,6 +677,10 @@ private lemma Label.source_ne_of_ne {l1 l2 : Label n}
   intro h_src; exact h_ne (by rcases l1; rcases l2; simp_all)
 
 @[simp]
+def Label.emb (t : LabelType) : Point n ↪ Label n :=
+  ⟨fun p => ⟨p, t⟩, by intro a b h; injection h⟩
+
+@[simp]
 def label_pos (l : Label n) : Point n × Point n :=
   let p := l.source
   match l.type with
@@ -1254,15 +1258,10 @@ theorem labels_total_intersection :
   linarith
 
 noncomputable def validLabels : Finset (Label n) :=
-  let to_W : Point n ↪ Label n := ⟨fun p => ⟨p, .W⟩, by intro a b h; injection h⟩
-  let to_N : Point n ↪ Label n := ⟨fun p => ⟨p, .N⟩, by intro a b h; injection h⟩
-  let to_E : Point n ↪ Label n := ⟨fun p => ⟨p, .E⟩, by intro a b h; injection h⟩
-  let to_S : Point n ↪ Label n := ⟨fun p => ⟨p, .S⟩, by intro a b h; injection h⟩
-
-  (targetsWin c.u c.v c.all_black).map to_W ∪
-  (targetsNin c.u c.v c.all_black).map to_N ∪
-  (targetsEin c.u c.v c.all_black).map to_E ∪
-  (targetsSin c.u c.v c.all_black).map to_S
+  (targetsWin c.u c.v c.all_black).map (Label.emb .W) ∪
+  (targetsNin c.u c.v c.all_black).map (Label.emb .N) ∪
+  (targetsEin c.u c.v c.all_black).map (Label.emb .E) ∪
+  (targetsSin c.u c.v c.all_black).map (Label.emb .S)
 
 lemma card_validLabels :
     (validLabels c).card =
@@ -1274,7 +1273,7 @@ lemma card_validLabels :
   all_goals {
     rw [disjoint_left]
     intro x h1 h2
-    simp only [mem_union, mem_map, Function.Embedding.coeFn_mk] at h1 h2
+    simp only [mem_union, mem_map, Label.emb, Function.Embedding.coeFn_mk] at h1 h2
     rcases x with ⟨p, type⟩
     cases type <;> simp at h1 h2
   }
@@ -2150,17 +2149,11 @@ lemma wx_not_black (cp : CrossingPoints c) : c.wx cp ∉ c.all_black :=
   c.pivot_no_black cp (c.wx cp) (c.wx_mem_pivot cp)
 
 noncomputable def validLabels (cp : CrossingPoints c) : Finset (Label n) :=
-  let to_W : Point n ↪ Label n := ⟨fun p => ⟨p, .W⟩, by intro a b h; injection h⟩
-  let to_N : Point n ↪ Label n := ⟨fun p => ⟨p, .N⟩, by intro a b h; injection h⟩
-  let to_E : Point n ↪ Label n := ⟨fun p => ⟨p, .E⟩, by intro a b h; injection h⟩
-  let to_S : Point n ↪ Label n := ⟨fun p => ⟨p, .S⟩, by intro a b h; injection h⟩
-  let to_X : Point n ↪ Label n := ⟨fun p => ⟨p, .X⟩, by intro a b h; injection h⟩
-
-  (targetsWin c.u c.v c.all_black).map to_W ∪
-  (targetsNin c.u c.v c.all_black).map to_N ∪
-  (targetsEin c.u c.v c.all_black).map to_E ∪
-  (targetsSin c.u c.v c.all_black).map to_S ∪
-  map to_X {c.wx cp}
+  (targetsWin c.u c.v c.all_black).map (Label.emb .W) ∪
+  (targetsNin c.u c.v c.all_black).map (Label.emb .N) ∪
+  (targetsEin c.u c.v c.all_black).map (Label.emb .E) ∪
+  (targetsSin c.u c.v c.all_black).map (Label.emb .S) ∪
+  map (Label.emb .X) {c.wx cp}
 
 lemma pivot_overlap_x (cp : CrossingPoints c) :
     px cp.vl < px cp.uk1 := by
@@ -2516,14 +2509,9 @@ lemma card_validLabels_disjoint :
   all_goals {
     try rw [disjoint_left]
     try intro x h1 h2
-    try simp only [mem_union, mem_map, Function.Embedding.coeFn_mk] at h1 h2
+    try simp only [mem_union, mem_map, Label.emb, Function.Embedding.coeFn_mk] at h1 h2
     try {
       rcases x with ⟨src, type⟩
-      try {
-        simp at h2
-        have h_black : c.wx cp ∈ c.all_black := by
-             rcases h1 with ⟨_, h, _⟩ | ⟨_, h, _⟩ | ⟨_, h, _⟩ | ⟨_, h, _⟩
-      }
       cases type <;> simp at h1 h2
     }
   }
@@ -2713,10 +2701,7 @@ lemma is_chain_of_strict_mono {f : Fin n → Fin n} {t : Finset (Fin n)}
   rcases hp with ⟨r1, hr1, rfl⟩
   rcases hq with ⟨r2, hr2, rfl⟩
   simp only [px_mk_val] at hx
-  have h_val_lt : r1.val < r2.val := hx
-  have h_r_lt : r1 < r2 := Fin.lt_def.mpr h_val_lt
-  have h_f_lt : f r1 < f r2 := h hr1 hr2 h_r_lt
-  simp only [py_mk_val]; exact h_f_lt
+  exact Fin.lt_def.mp (h hr1 hr2 hx)
 
 lemma is_antichain_of_strict_anti {f : Fin n → Fin n} {t : Finset (Fin n)}
     (h : StrictAntiOn f t) : IsAntiChain (toGridSubset f t) := by
@@ -2725,8 +2710,6 @@ lemma is_antichain_of_strict_anti {f : Fin n → Fin n} {t : Finset (Fin n)}
   rcases hp with ⟨r1, hr1, rfl⟩
   rcases hq with ⟨r2, hr2, rfl⟩
   simp only [px_mk_val] at hx
-  have h_r_lt : r1 < r2 := Fin.lt_def.mpr hx
-  have h_f_lt : f r2 < f r1 := h hr1 hr2 h_r_lt
   exact Fin.lt_def.mp (h hr1 hr2 hx)
 
 theorem exists_optimal_u_v [NeZero n] (h_card_n : all_black.card = n)
