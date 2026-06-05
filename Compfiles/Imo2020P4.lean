@@ -71,6 +71,13 @@ snip begin
 
 universe u
 
+-- `Fintype G.edgeSet` previously resolved via a noncomputable instance derived from finiteness
+-- of the vertex type (as still happens for `SetLike` types such as `ConnectedComponent`).
+-- Recent mathlib only provides a computable instance requiring `[DecidableRel G.Adj]`, so we
+-- supply the noncomputable instance locally.
+noncomputable instance instFintypeEdgeSetOfFinite {V : Type*} [Finite V] (G : SimpleGraph V) :
+    Fintype G.edgeSet := Fintype.ofFinite _
+
 lemma Sym2.exists_mk {α : Type u} (z : Sym2 α) : ∃ x y : α, z = s(x, y) := by
   have h := Sym2.out_fst_mem z
   rw [Sym2.mem_iff_exists] at h

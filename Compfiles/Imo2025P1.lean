@@ -1130,7 +1130,7 @@ noncomputable def oneSunny : strongCoverGridConfig where
     obtain ⟨rfl, rfl⟩ : a = 1 ∧ b = 1 := by lia
     simp only [line, neg_mul, one_mul, add_zero, Finset.mem_singleton, exists_eq_left]
     rw [← SetLike.mem_coe, SetLike.coe]
-    simp [AffineSubspace.instSetLike, ha, hb]
+    simp [AffineSubspace.instSetLike, ha, hb, -AffineSubspace.carrier_eq_coe]
   sunny_count := by
     have : Sunny (line (-1) 1 0) := by
       rw [sunny_slope] <;>
