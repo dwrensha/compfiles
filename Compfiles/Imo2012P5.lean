@@ -372,7 +372,7 @@ theorem isTangentAt_AL : s.IsTangentAt cfg.L line[ℝ, cfg.A, cfg.L] := by
     (s.radius_nonneg_of_mem hs.K_mem) cfg.A_mem_line_KK' hs.K_mem hs.K'_mem ?_
   by_contra! h
   have : Collinear ℝ {cfg.K, cfg.A, cfg.K'} := by
-    convert cfg.sbtw_AKK'.wbtw.collinear using 1
+    convert! cfg.sbtw_AKK'.wbtw.collinear using 1
     grind
   replace : Sbtw ℝ cfg.K cfg.A cfg.K' :=
     this.sbtw_of_dist_eq_of_dist_lt hs.K_mem h hs.K'_mem cfg.sbtw_KXK'.left_ne_right

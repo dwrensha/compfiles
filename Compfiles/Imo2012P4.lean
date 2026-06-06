@@ -177,7 +177,7 @@ problem imo2012_p4 (f : ℤ → ℤ) :
         rw [← sub_eq_zero, ← sub_eq_zero (a := f 3), ← Int.mul_eq_zero, ← this]
         ring_nf
 
-      have «P(2,2)» : f 4 = 0 ∨ f 4 = 16 * f 1 := by convert «P(a,a)» 2 using 2; lia
+      have «P(2,2)» : f 4 = 0 ∨ f 4 = 16 * f 1 := by convert! «P(a,a)» 2 using 2; lia
 
       cases «P(1,2)»
 

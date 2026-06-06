@@ -270,7 +270,7 @@ lemma Path.findFstEq_eq_find?_le (p : Path N) (r : Fin (N + 2)) : p.findFstEq r 
 
 lemma Path.firstMonster_isSome {p : Path N} {m : MonsterData N} :
     (p.firstMonster m).isSome = true ↔ ∃ x, x ∈ p.cells ∧ x ∈ m.monsterCells := by
-  convert List.find?_isSome
+  convert! List.find?_isSome
   simp
 
 lemma Path.firstMonster_none_or_some {p : Path N} {m : MonsterData N} {target : Cell N}
@@ -515,7 +515,7 @@ lemma row1_mem_monsterCells_monsterData12 (hN : 2 ≤ N) (c₁ c₂ : Fin (N + 1
 
 lemma row2_mem_monsterCells_monsterData12 (hN : 2 ≤ N) {c₁ c₂ : Fin (N + 1)} (h : c₁ ≠ c₂) :
     (⟨2, by lia⟩, c₂) ∈ (monsterData12 hN c₁ c₂).monsterCells := by
-  convert Set.mem_range_self (row2 hN)
+  convert! Set.mem_range_self (row2 hN)
   exact (monsterData12_apply_row2 hN h).symm
 
 lemma Strategy.not_forcesWinIn_two (s : Strategy N) (hN : 2 ≤ N) : ¬ s.ForcesWinIn 2 := by

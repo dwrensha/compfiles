@@ -69,7 +69,7 @@ problem usa2018_p1 (a b c : ℝ) :
         have amgm := am_gm (a * ((4 : ℝ) * (a * b * c) ^ ((1 : ℝ) / 3))) (b * c)
                            (by positivity) (by positivity)
         rw [←mul_le_mul_iff_right₀ zero_lt_four] at amgm
-        convert amgm
+        convert! amgm
         ring_nf
         nth_rw 2 [(by simp : a * b * c = (a * b * c) ^ (1 : ℕ))]
         rw [←Real.rpow_two, ←Real.rpow_mul (by positivity)]

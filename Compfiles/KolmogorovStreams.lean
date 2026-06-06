@@ -61,7 +61,7 @@ lemma break_into_words_closed_form
    : break_into_words lengths a =
       (fun i ↦ Stream'.take (lengths i) (Stream'.drop (∑ j ∈ Finset.range i, lengths j) a)) := by
   funext n
-  convert_to ((Stream'.corec (fun x ↦ Stream'.take (x.fst.head) x.snd)
+  convert_to! ((Stream'.corec (fun x ↦ Stream'.take (x.fst.head) x.snd)
                  (fun x ↦ ⟨x.fst.tail, Stream'.drop (x.fst.head) x.snd⟩)) :
                   Stream' ℕ × Stream' α → Stream' (List α)) ⟨lengths, a⟩ n =
              Stream'.take (lengths n) (Stream'.drop (∑ j ∈ Finset.range n, lengths j) a)
