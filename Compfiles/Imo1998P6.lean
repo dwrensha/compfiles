@@ -1,12 +1,27 @@
+/-
+Copyright (c) 2026 lean-tom. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Daniel Liao
+-/
 import Mathlib
+import ProblemExtraction
 
--- problem_file { tags := [.Algebra] }
+problem_file {
+  tags := [.Algebra]
+}
 
--- snip begin
+/-!
+# International Mathematical Olympiad 1998, Problem 6
 
-set_option maxHeartbeats 1600000
+Determine the least possible value of `f(1998)`, where `f : ℕ+ → ℕ+` satisfies
+`f(n^2 * f(m)) = m * f(n)^2` for all `m, n ∈ ℕ+`.
+-/
 
 namespace Imo1998P6
+
+snip begin
+
+set_option maxHeartbeats 1600000
 
 section AlgebraicLemmas
 
@@ -238,16 +253,16 @@ theorem imo1998_p6_lb :
   intro k ⟨f, hf_eq, hf_1998⟩
   rw [← hf_1998]
   show (120 : ℕ) ≤ (f 1998 : ℕ)
-  exact Imo1998P6.f_1998_ge f hf_eq
+  exact f_1998_ge f hf_eq
 
-end Imo1998P6
+snip end
 
--- snip end
+determine answer : ℕ+ := 120
 
-def Imo1998P6.answer : ℕ+ := 120
-
-theorem imo1998_p6 :
+problem imo1998_p6 :
     IsLeast
       {k : ℕ+ | ∃ f : ℕ+ → ℕ+, (∀ m n : ℕ+, f (n ^ 2 * f m) = m * f n ^ 2) ∧ f 1998 = k}
-      Imo1998P6.answer :=
-  ⟨Imo1998P6.imo1998_p6_mem, Imo1998P6.imo1998_p6_lb⟩
+      answer :=
+  ⟨imo1998_p6_mem, imo1998_p6_lb⟩
+
+end Imo1998P6
