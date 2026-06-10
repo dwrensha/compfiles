@@ -35,30 +35,20 @@ We provide a direct translation of the solution found in
 https://www.imo-official.org/problems/IMO2013SL.pdf
 -/
 
-lemma le_of_all_pow_lt_succ {x y : ℝ} (hy : 1 < y)
+lemma le_of_all_pow_lt_succ {x y : ℝ} (hx : 1 < x) (hy : 0 < y)
     (h : ∀ n : ℕ, 0 < n → x^n - 1 < y^n) :
     x ≤ y := by
   by_contra! hxy
-  obtain ⟨n, hn⟩ : ∃ n : ℕ, (x / y) ^ n > 2 := by
-    refine pow_unbounded_of_one_lt _ ?_
-    rwa [one_lt_div (by positivity)]
-  have h_mul : x^n > 2 * y^n := by
-    rwa [div_pow, gt_iff_lt, lt_div_iff₀ (by positivity)] at hn;
-  specialize h n (Nat.pos_of_ne_zero (by rintro rfl; norm_num at hn))
-  linarith only [h, h_mul, one_le_pow₀ (n := n) hy.le]
-
-/--
- Like le_of_all_pow_lt_succ, but with a weaker assumption for y.
--/
-lemma le_of_all_pow_lt_succ' {x y : ℝ} (hx : 1 < x) (hy : 0 < y)
-    (h : ∀ n : ℕ, 0 < n → x^n - 1 < y^n) :
-    x ≤ y := by
-  refine le_of_all_pow_lt_succ ?_ h
-  -- If y were at most 1, then x^n < y^n + 1 ≤ 2 for all n, contradicting 1 < x.
-  by_contra! hy1
-  obtain ⟨n, hn⟩ : ∃ n : ℕ, (2:ℝ) < x ^ n := pow_unbounded_of_one_lt 2 hx
+  -- Compare x against z = max y 1, which satisfies 1 ≤ z < x and y^n ≤ z^n. Since (x/z)^n is
+  -- unbounded, some x^n exceeds 2 * z^n ≥ z^n + 1 ≥ y^n + 1, contradicting the hypothesis.
+  have hz0 : (0:ℝ) < max y 1 := lt_max_of_lt_right zero_lt_one
+  obtain ⟨n, hn⟩ : ∃ n : ℕ, (2:ℝ) < (x / max y 1) ^ n :=
+    pow_unbounded_of_one_lt 2 ((one_lt_div hz0).mpr (max_lt hxy hx))
   have hn0 : 0 < n := Nat.pos_of_ne_zero (by rintro rfl; norm_num at hn)
-  have h1 : y ^ n ≤ 1 := pow_le_one₀ hy.le hy1
+  have h_mul : 2 * max y 1 ^ n < x ^ n := by
+    rwa [div_pow, lt_div_iff₀ (pow_pos hz0 n)] at hn
+  have hyz : y ^ n ≤ max y 1 ^ n := pow_le_pow_left₀ hy.le (le_max_left y 1) n
+  have h1z : 1 ≤ max y 1 ^ n := one_le_pow₀ (le_max_right y 1)
   linarith [h n hn0]
 
 lemma f_pos_of_pos {f : ℚ → ℝ} {q : ℚ} (hq : 0 < q)
@@ -192,7 +182,7 @@ problem imo2013_p5
         fx_gt_xm1 (x := x ^ n) (one_le_pow₀ hx.le) H1 H2 H4
       calc (x : ℝ)^n - 1 < f (x^n) := by simpa using hxpow
                        _ ≤ (f x)^n := pow_f_le_f_pow hn hx H1 H4
-    exact le_of_all_pow_lt_succ' (mod_cast hx)
+    exact le_of_all_pow_lt_succ (mod_cast hx)
       (f_pos_of_pos (zero_lt_one.trans hx) H1 H4) hxnm1
 
   have h_f_commutes_with_pos_nat_mul : ∀ n : ℕ, 0 < n → ∀ x : ℚ, 0 < x → f (n * x) = n * f x := by
