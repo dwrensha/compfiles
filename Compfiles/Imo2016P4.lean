@@ -34,23 +34,8 @@ abbrev P (n : ℕ) : ℕ := n^2 + n + 1
 
 snip begin
 
-def fragrantMap : ℕ → ℕ
-  | 0 => 0
-  | 1 => 5
-  | 2 => 4
-  | 3 => 6
-  | 4 => 2
-  | 5 => 1
-  | 6 => 3
-  | _ => 0
-
-lemma P_inj : Function.Injective P := by
-  apply StrictMono.injective
-  intro i j hij
-  rw [add_lt_add_iff_right]
-  apply add_lt_add _ hij
-  rw [pow_two, pow_two]
-  exact Nat.mul_self_lt_mul_self hij
+lemma P_inj : Function.Injective P :=
+  StrictMono.injective <| strictMono_nat_of_lt_succ fun n ↦ by simp only [P]; ring_nf; lia
 
 lemma ncard_set {a : ℕ} {b : ℕ+} : {p : ℕ+ | ∃ i : ℕ+, i ≤ b ∧ p = P (a + i)}.ncard = b := by
   have h : {p : ℕ+ | ∃ i : ℕ+, i ≤ b ∧ p = P (a + i)} =
@@ -92,29 +77,30 @@ lemma nine_not_dvd_P (n : ℕ) : ¬ 9 ∣ P n := by
 lemma dvd_of_dvd_two_mul {g x : ℕ} (hg : ¬ 2 ∣ g) (h : g ∣ 2 * x) : g ∣ x :=
   ((Nat.Prime.coprime_iff_not_dvd Nat.prime_two).mpr hg).symm.dvd_of_dvd_mul_left h
 
-/-- Adjacent values of `P` are coprime: a common divisor `g` is odd (values of `P` are odd)
-and divides `P (b+1) - P b = 2*(b+1)`, hence divides `b+1`, hence divides `P b - b*(b+1) = 1`. -/
+/-- A common divisor of `P (b + k)` and `P b` divides `c` whenever
+`P (b + k) - P b = 2 * c`, since values of `P` are odd. -/
+lemma gcd_P_dvd_of_eq {b k c : ℕ} (h : P b + 2 * c = P (b + k)) :
+    (P (b + k)).gcd (P b) ∣ c := by
+  have hodd : ¬ 2 ∣ (P (b + k)).gcd (P b) :=
+    fun h' ↦ two_not_dvd_P b (h'.trans (Nat.gcd_dvd_right _ _))
+  refine dvd_of_dvd_two_mul hodd ((Nat.dvd_add_right (Nat.gcd_dvd_right _ _)).mp ?_)
+  rw [h]
+  exact Nat.gcd_dvd_left _ _
+
+/-- Adjacent values of `P` are coprime: a common divisor divides
+`(P (b+1) - P b) / 2 = b + 1`, hence divides `P b - b*(b+1) = 1`. -/
 lemma coprime_P_succ (b : ℕ) : Nat.Coprime (P (b + 1)) (P b) := by
   rw [Nat.coprime_iff_gcd_eq_one]
-  set g := (P (b + 1)).gcd (P b) with hg
-  have hg1 : g ∣ P (b + 1) := Nat.gcd_dvd_left _ _
-  have hg2 : g ∣ P b := Nat.gcd_dvd_right _ _
-  have hodd : ¬ 2 ∣ g := fun h ↦ two_not_dvd_P b (h.trans hg2)
-  have h1 : g ∣ b + 1 := by
-    refine dvd_of_dvd_two_mul hodd ((Nat.dvd_add_right hg2).mp ?_)
-    rwa [show P b + 2 * (b + 1) = P (b + 1) from by simp only [P]; ring]
+  have h1 : (P (b + 1)).gcd (P b) ∣ b + 1 := gcd_P_dvd_of_eq (by simp only [P]; ring)
   refine Nat.dvd_one.mp ((Nat.dvd_add_right (h1.mul_left b)).mp ?_)
-  rwa [show b * (b + 1) + 1 = P b from by simp only [P]; ring]
+  rw [show b * (b + 1) + 1 = P b from by simp only [P]; ring]
+  exact Nat.gcd_dvd_right _ _
 
 /-- The gcd of values of `P` at distance two divides 7. -/
 lemma gcd_P_add_two_dvd (b : ℕ) : (P (b + 2)).gcd (P b) ∣ 7 := by
   set g := (P (b + 2)).gcd (P b) with hg
-  have hg1 : g ∣ P (b + 2) := Nat.gcd_dvd_left _ _
   have hg2 : g ∣ P b := Nat.gcd_dvd_right _ _
-  have hodd : ¬ 2 ∣ g := fun h ↦ two_not_dvd_P b (h.trans hg2)
-  have h1 : g ∣ 2 * b + 3 := by
-    refine dvd_of_dvd_two_mul hodd ((Nat.dvd_add_right hg2).mp ?_)
-    rwa [show P b + 2 * (2 * b + 3) = P (b + 2) from by simp only [P]; ring]
+  have h1 : g ∣ 2 * b + 3 := gcd_P_dvd_of_eq (by simp only [P]; ring)
   have h2 : g ∣ 8 * b + 5 := by
     have h := h1.mul_left (2 * b + 3)
     rw [show (2 * b + 3) * (2 * b + 3) = 4 * P b + (8 * b + 5) from by simp only [P]; ring] at h
@@ -126,12 +112,8 @@ lemma gcd_P_add_two_dvd (b : ℕ) : (P (b + 2)).gcd (P b) ∣ 7 := by
 /-- The gcd of values of `P` at distance three divides 3. -/
 lemma gcd_P_add_three_dvd (b : ℕ) : (P (b + 3)).gcd (P b) ∣ 3 := by
   set g := (P (b + 3)).gcd (P b) with hg
-  have hg1 : g ∣ P (b + 3) := Nat.gcd_dvd_left _ _
   have hg2 : g ∣ P b := Nat.gcd_dvd_right _ _
-  have hodd : ¬ 2 ∣ g := fun h ↦ two_not_dvd_P b (h.trans hg2)
-  have h1 : g ∣ 3 * b + 6 := by
-    refine dvd_of_dvd_two_mul hodd ((Nat.dvd_add_right hg2).mp ?_)
-    rwa [show P b + 2 * (3 * b + 6) = P (b + 3) from by simp only [P]; ring]
+  have h1 : g ∣ 3 * b + 6 := gcd_P_dvd_of_eq (by simp only [P]; ring)
   have h2 : g ∣ 27 * b + 27 := by
     have h := h1.mul_left (3 * b + 6)
     rw [show (3 * b + 6) * (3 * b + 6) = 9 * P b + (27 * b + 27) from by simp only [P]; ring] at h
@@ -180,37 +162,26 @@ problem imo2016_p4 :
       Solution := by
   rw [Solution]
   constructor
-  · set a := 196
-    use a
-    constructor
+  · -- a = 196 works: indices pair up as (1,5), (2,4), (3,6), and the paired values share
+    -- the factors 19, 7, 3 respectively.
+    refine ⟨196, ?_, ?_⟩
     · rw [ncard_set]
       norm_num
-    · intro m hm
-      simp at *
-      rcases hm with ⟨i, hi, hmi⟩
+    · rintro m ⟨i, hi, hmi⟩
       rw [← PNat.coe_le_coe, PNat.val_ofNat] at hi
-      set result := fragrantMap i.val
-      set val := P (a + result)
-      have hval : 0 < val := by
-        simp [val, result, fragrantMap]
-      use ⟨val, hval⟩
-      have hi' := PNat.pos i
-      constructorm* _ ∧ _
-      · have hresult : 0 < result := by
-          simp [result, fragrantMap]
-          interval_cases i.val <;> simp
-        use ⟨result, hresult⟩
-        constructor
-        · rw [← PNat.coe_le_coe, PNat.val_ofNat, PNat.mk_coe]
-          simp [result, fragrantMap]
-          interval_cases i.val <;> simp
-        · simp [val]
-      · rw [← PNat.coe_inj]
-        simp [hmi, val, a, result, fragrantMap]
-        interval_cases i.val <;> simp
-      · rw [← PNat.coprime_coe, PNat.mk_coe]
-        simp [hmi, val, a, result, fragrantMap, P]
-        interval_cases i.val <;> simp
+      -- It suffices to name a partner index j whose value shares a factor with m.
+      have key : ∀ j : ℕ+, j ≤ 6 → ¬Nat.Coprime (↑m) (P (196 + j)) → P (196 + j) ≠ ↑m →
+          ∃ n ∈ {p : ℕ+ | ∃ i : ℕ+, i ≤ 6 ∧ p = P (196 + i)}, n ≠ m ∧ ¬Nat.Coprime ↑m ↑n :=
+        fun j hj hcop hne ↦ ⟨⟨P (196 + j), by positivity⟩, ⟨j, hj, rfl⟩,
+          fun h ↦ hne (by rw [← h]; rfl), hcop⟩
+      have hp := i.pos
+      interval_cases i.val
+      · exact key 5 (by decide) (by rw [hmi]; norm_num [P]) (by rw [hmi]; norm_num [P])
+      · exact key 4 (by decide) (by rw [hmi]; norm_num [P]) (by rw [hmi]; norm_num [P])
+      · exact key 6 (by decide) (by rw [hmi]; norm_num [P]) (by rw [hmi]; norm_num [P])
+      · exact key 2 (by decide) (by rw [hmi]; norm_num [P]) (by rw [hmi]; norm_num [P])
+      · exact key 1 (by decide) (by rw [hmi]; norm_num [P]) (by rw [hmi]; norm_num [P])
+      · exact key 3 (by decide) (by rw [hmi]; norm_num [P]) (by rw [hmi]; norm_num [P])
   · rw [lowerBounds]
     intro b hb
     rcases hb with ⟨a, hcard, ha⟩
