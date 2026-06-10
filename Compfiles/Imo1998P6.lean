@@ -21,8 +21,6 @@ namespace Imo1998P6
 
 snip begin
 
-set_option maxHeartbeats 1600000
-
 section AlgebraicLemmas
 
 variable (f : ℕ+ → ℕ+) (hf : ∀ m n : ℕ+, f (n ^ 2 * f m) = m * f n ^ 2)
