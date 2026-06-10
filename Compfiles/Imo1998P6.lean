@@ -224,7 +224,7 @@ lemma g_func_eq {m n : ℕ} (hm : m ≠ 0) (hn : n ≠ 0) : g (n ^ 2 * g m) = m 
       show g (n ^ 2) = g n ^ 2 from by rw [sq, g_mul hn hn, sq],
       g_invol hm, mul_comm]
 
-lemma g_1998 : g 1998 = 120 := by native_decide
+lemma g_1998 : g 1998 = 120 := by decide +kernel
 
 def gPNat (n : ℕ+) : ℕ+ := ⟨g n.val, g_pos n.val⟩
 
