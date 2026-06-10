@@ -68,7 +68,6 @@ lemma f_pos_of_pos {f : ℚ → ℝ} {q : ℚ} (hq : 0 < q)
     lt_of_lt_of_le (mod_cast num_pos) hqfn'
   have f_den_pos : 0 < f q.den :=
     lt_of_lt_of_le (mod_cast q.pos) (H4 q.den q.pos)
-
   exact pos_of_mul_pos_left (f_num_pos.trans_le hfqn) f_den_pos.le
 
 lemma fx_gt_xm1 {f : ℚ → ℝ} {x : ℚ} (hx : 1 ≤ x)

@@ -43,9 +43,7 @@ lemma solution_5 : IsSolution 5 := by
 
 lemma solution_9 : IsSolution 9 := by
   use fun i ↦ if i ∈ Finset.Ico 1 2 then 2 else if i ∈ Finset.Ico 2 6 then 3 else if i ∈ Finset.Icc 6 9 then 4 else 0
-  constructor
-  · decide
-  · constructor <;> rw [show Finset.Icc 1 9 = {1, 2, 3, 4, 5, 6, 7, 8, 9} by decide] <;> norm_num
+  decide_cbv
 
 -- If n=4k+1 is a solution then n=4k+2 is also a solution.
 lemma ind_4k1_to_4k2 : ∀ k, IsSolution (4 * k + 1) → IsSolution (4 * k + 2) := by

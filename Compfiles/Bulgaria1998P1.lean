@@ -68,11 +68,7 @@ def coloring_of_eight {n : ℕ} : Set.Icc 1 n → Fin 2
 lemma lemma2 :
     ∃ f : Set.Icc 1 8 → Fin 2, ¬coloring_is_good f := by
   use coloring_of_eight
-  intro h
-  obtain ⟨⟨i, hi1, hi2⟩, ⟨j, hj1, hj2⟩, hij1, hij2, hc1, hc2⟩ := h
-  interval_cases i <;> interval_cases j <;>
-    (first | omega | simp_all [coloring_of_eight]) <;>
-    (simp only [Set.mem_Icc] at hij2; omega)
+  decide
 
 snip end
 
