@@ -191,7 +191,7 @@ problem imo2013_p5
       obtain rfl | hn2 : n = 1 ∨ 2 ≤ n := by lia
       · simp
       · have hfneq : f n = n := by
-          have h := fixed_point_of_gt_1 (x := n) (by exact_mod_cast hn2) H1 H2 H4 H5 ha1 hae
+          have h := fixed_point_of_gt_1 (x := n) (mod_cast hn2) H1 H2 H4 H5 ha1 hae
           rwa [Rat.cast_natCast] at h
         rw [←hfneq]
         exact H1 n x (Nat.cast_pos.mpr hn) hx
