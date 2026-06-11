@@ -28,7 +28,16 @@ determine solution_val : ℕ := 2
 
 snip begin
 
-noncomputable section
+/-
+Let B be the set of nonzero b ≠ 4 with both b and 4 - b squares, and C the set of
+nonzero n ≠ 4 with n * (4 - n) a square. By multiplicativity of the quadratic
+character, C is the disjoint union of A and B. The map n ↦ n * (4 - n) sends
+C \ {2} to B, and the fiber over b is {2 + c, 2 - c} where c² = 4 - b, which has
+product (2 + c) * (2 - c) = 4 - c² = b. Hence ∏ C \ {2} = ∏ B, and cancelling
+∏ B ≠ 0 from ∏ A * ∏ B = ∏ C = 2 * ∏ C \ {2} gives ∏ A = 2.
+-/
+
+section
 
 variable (p : ℕ) [hp : Fact (Nat.Prime p)] (hp2 : p ≠ 2)
 
@@ -41,98 +50,82 @@ private abbrev setB' : Finset (ZMod p) :=
 private abbrev setC' : Finset (ZMod p) :=
   Finset.univ.filter (fun n => n ≠ 0 ∧ n ≠ 4 ∧ IsSquare (n * (4 - n)))
 
-include hp2 in
-private lemma hp_odd : Odd p := by
-  have hpp := hp.out
-  rw [Nat.odd_iff]
-  rcases hpp.eq_two_or_odd with rfl | h
-  · exact absurd rfl hp2
-  · exact h
-
 private lemma isSquare_mul_iff_same {a b : ZMod p} (ha : a ≠ 0) (hb : b ≠ 0) :
     IsSquare (a * b) ↔ (IsSquare a ∧ IsSquare b) ∨ (¬IsSquare a ∧ ¬IsSquare b) := by
-  by_cases ha : IsSquare a <;> by_cases hb : IsSquare b <;> simp_all +decide [isSquare_iff_exists_sq]
-  · exact Exists.elim ha fun x hx => Exists.elim hb fun y hy => ⟨x * y, by rw [hx, hy, mul_pow]⟩
-  · obtain ⟨r, rfl⟩ := ha
-    intro x hx; exact hb (x / r) (by rw [div_pow, eq_div_iff ha]; linear_combination' hx)
-  · rintro x hx; obtain ⟨r, rfl⟩ := hb; simp_all +decide
-    exact ha (x / r) (by rw [div_pow, eq_div_iff (pow_ne_zero 2 hb)]; linear_combination' hx)
-  · have h_prod_residue : legendreSym p a.val = -1 ∧ legendreSym p b.val = -1 → ∃ r : ZMod p, a * b = r ^ 2 := by
-      intro h
-      have h_prod_residue : legendreSym p (a.val * b.val) = 1 := by
-        rw [legendreSym.mul]; aesop
-      rw [legendreSym.eq_one_iff] at h_prod_residue
-      · obtain ⟨r, hr⟩ := h_prod_residue; use r; simp_all +decide [sq]
-      · simp_all +decide
-    simp_all +decide [legendreSym.eq_neg_one_iff]
-    exact h_prod_residue (fun ⟨x, hx⟩ => ha x <| by rw [hx, sq]) (fun ⟨x, hx⟩ => hb x <| by rw [hx, sq])
+  rw [← quadraticChar_one_iff_isSquare (mul_ne_zero ha hb),
+      ← quadraticChar_one_iff_isSquare ha, ← quadraticChar_one_iff_isSquare hb, map_mul]
+  rcases quadraticChar_dichotomy ha with h1 | h1 <;>
+    rcases quadraticChar_dichotomy hb with h2 | h2 <;>
+      norm_num [h1, h2]
 
-private lemma setC_eq_union :
-    setC' p = setA' p ∪ setB' p := by
+private lemma setC_eq_union : setC' p = setA' p ∪ setB' p := by
   ext a
-  simp [setA', setB', setC']
-  by_cases ha : a = 0 <;> by_cases hb : 4 - a = 0 <;> simp_all +decide [isSquare_mul_iff_same]
-  · exact fun h => False.elim <| h <| by linear_combination' -hb
-  · grind +ring
+  simp only [setA', setB', setC', Finset.mem_union, Finset.mem_filter, Finset.mem_univ, true_and]
+  by_cases ha : a = 0
+  · simp [ha]
+  by_cases ha4 : a = 4
+  · simp [ha4]
+  · rw [isSquare_mul_iff_same p ha (sub_ne_zero_of_ne (Ne.symm ha4))]
+    tauto
 
-private lemma disjoint_AB :
-    Disjoint (setA' p) (setB' p) := by
-  exact Finset.disjoint_filter.mpr fun _ _ _ _ => by aesop
-
-include hp2 in
-private lemma p_two_ne_zero : (2 : ZMod p) ≠ 0 := by
-  exact fun h => hp2 <| by rcases p with _ | _ | _ | p <;> cases h <;> trivial
+private lemma disjoint_AB : Disjoint (setA' p) (setB' p) :=
+  Finset.disjoint_filter.mpr fun _ _ _ _ => by aesop
 
 include hp2 in
-private lemma p_two_ne_four : (2 : ZMod p) ≠ 4 := by
-  intro h; have := Fact.out (p := p.Prime); rcases p with _ | _ | _ | p | p | p <;> cases h
-  · trivial
-  · contradiction
+private lemma p_two_ne_zero : (2 : ZMod p) ≠ 0 :=
+  Ring.two_ne_zero (by rwa [ZMod.ringChar_zmod_n])
 
 include hp2 in
-private lemma two_mem_setC : (2 : ZMod p) ∈ setC' p := by
-  simp +decide [setC']
-  grind +suggestions
+private lemma p_two_ne_four : (2 : ZMod p) ≠ 4 := fun h =>
+  p_two_ne_zero p hp2 (by linear_combination -h)
 
-private lemma map_mem_setB {n : ZMod p} (hn : n ∈ setC' p)
-    (hn2 : n ≠ 2) : n * (4 - n) ∈ setB' p := by
-  simp_all +decide [setB']
-  refine' ⟨sub_ne_zero_of_ne <| by tauto, _, _⟩
-  · grind +ring
-  · exact ⟨2 - n, by ring⟩
+include hp2 in
+private lemma two_mem_setC : (2 : ZMod p) ∈ setC' p :=
+  Finset.mem_filter.mpr ⟨Finset.mem_univ _, p_two_ne_zero p hp2, p_two_ne_four p hp2, 2, by ring⟩
+
+private lemma map_mem_setB {n : ZMod p} (hn : n ∈ setC' p) (hn2 : n ≠ 2) :
+    n * (4 - n) ∈ setB' p := by
+  obtain ⟨-, hn0, hn4, hsq⟩ := Finset.mem_filter.mp hn
+  refine Finset.mem_filter.mpr ⟨Finset.mem_univ _,
+    mul_ne_zero hn0 (sub_ne_zero_of_ne (Ne.symm hn4)),
+    fun h => hn2 (sub_eq_zero.mp (sq_eq_zero_iff.mp (show (n - 2) ^ 2 = 0 by linear_combination -h))),
+    hsq, 2 - n, by ring⟩
 
 include hp2 in
 private lemma fiber_prod {b : ZMod p} (hb : b ∈ setB' p) :
     ∏ n ∈ ((setC' p).erase 2).filter (fun m => m * (4 - m) = b), n = b := by
-  obtain ⟨c, hc⟩ : ∃ c : ZMod p, c ≠ 0 ∧ c^2 = 4 - b := by
-    simp_all +decide [setB']
-    obtain ⟨c, hc⟩ := hb.2.2.2; use c; simp_all +decide [sq, sub_eq_iff_eq_add]
+  obtain ⟨-, hb0, hb4, hsqb, c, hc⟩ := Finset.mem_filter.mp hb
+  have hc0 : c ≠ 0 := by rintro rfl; exact hb4 (by linear_combination -hc)
   have h_roots : ∀ n : ZMod p, n * (4 - n) = b ↔ n = 2 + c ∨ n = 2 - c := by
-    grind
-  have h_prod : (2 + c) ∈ (setC' p).erase 2 ∧ (2 - c) ∈ (setC' p).erase 2 := by
-    grind
-  rw [show (Finset.filter (fun n => n * (4 - n) = b) ((setC' p).erase 2)) = {2 + c, 2 - c} from ?_, Finset.prod_pair]
-  · linear_combination' -hc.2
-  · simp_all +decide [sub_eq_add_neg]
-    rw [eq_neg_iff_add_eq_zero]; simp_all +decide [← two_mul]
-    exact p_two_ne_zero p hp2
-  · grind
+    refine fun n => ⟨fun hn => ?_, by rintro (rfl | rfl) <;> linear_combination hc⟩
+    have h0 : (n - (2 + c)) * (n - (2 - c)) = 0 := by linear_combination -hn + hc
+    exact (mul_eq_zero.mp h0).imp sub_eq_zero.mp sub_eq_zero.mp
+  have hmem : ∀ n : ZMod p, n * (4 - n) = b → n ∈ setC' p := by
+    intro n hn
+    have hn0 : n ≠ 0 := by rintro rfl; exact hb0 (by linear_combination -hn)
+    have hn4 : n ≠ 4 := by rintro rfl; exact hb0 (by linear_combination -hn)
+    exact Finset.mem_filter.mpr ⟨Finset.mem_univ _, hn0, hn4, hn.symm ▸ hsqb⟩
+  have hfilter : ((setC' p).erase 2).filter (fun m => m * (4 - m) = b) = {2 + c, 2 - c} := by
+    ext n
+    rw [Finset.mem_filter, Finset.mem_insert, Finset.mem_singleton, ← h_roots n]
+    refine ⟨fun h => h.2, fun h => ⟨Finset.mem_erase.mpr ⟨?_, hmem n h⟩, h⟩⟩
+    rintro rfl
+    exact hb4 (by linear_combination -h)
+  have hcc : 2 + c ≠ 2 - c := fun h =>
+    mul_ne_zero (p_two_ne_zero p hp2) hc0 (by linear_combination h)
+  rw [hfilter, Finset.prod_pair hcc]
+  linear_combination hc
 
 include hp2 in
 private lemma prod_C_erase_eq_prod_B :
     ∏ n ∈ (setC' p).erase 2, n = ∏ b ∈ setB' p, b := by
-  rw [← Finset.prod_congr rfl fun x hx => fiber_prod p hp2 hx]
-  rw [← Finset.prod_biUnion]
-  · congr
-    ext m; simp [setC', setB']
-    intro hm₁ hm₂ hm₃ hm₄; refine' ⟨⟨hm₂, sub_ne_zero_of_ne <| Ne.symm hm₃⟩, _, hm₄, _⟩ <;> simp_all +decide [isSquare_iff_exists_sq]
-    · exact fun h => hm₁ <| mul_left_cancel₀ (sub_ne_zero_of_ne hm₁) <| by linear_combination' -h
-    · exact ⟨2 - m, by ring⟩
-  · exact fun x hx y hy hxy => Finset.disjoint_filter.2 fun z => by aesop
+  rw [← Finset.prod_fiberwise_of_maps_to
+    (fun n hn => map_mem_setB p (Finset.mem_of_mem_erase hn) (Finset.ne_of_mem_erase hn))
+    (fun n => n)]
+  exact Finset.prod_congr rfl fun _ hb => fiber_prod p hp2 hb
 
-private lemma prod_B_ne_zero :
-    ∏ b ∈ setB' p, b ≠ 0 := by
-  exact Finset.prod_ne_zero_iff.mpr fun x hx => by aesop
+private lemma prod_B_ne_zero : ∏ b ∈ setB' p, b ≠ 0 :=
+  Finset.prod_ne_zero_iff.mpr fun _ hb => (Finset.mem_filter.mp hb).2.1
 
 end
 
@@ -140,13 +133,14 @@ snip end
 
 problem usamo2020_p3 (p : ℕ) [hp : Fact (Nat.Prime p)] (hp2 : p ≠ 2) :
     ∏ a ∈ Finset.univ.filter (fun (a : ZMod p) => a ≠ 0 ∧ ¬IsSquare a ∧ ¬IsSquare (4 - a)), a = (solution_val : ZMod p) := by
-  have h_setA : Finset.univ.filter (fun (a : ZMod p) => a ≠ 0 ∧ ¬IsSquare a ∧ ¬IsSquare (4 - a)) = setA' p := rfl
-  rw [h_setA]
-  have h_union : ∏ n ∈ setC' p, n = (∏ a ∈ setA' p, a) * (∏ b ∈ setB' p, b) := by
-    rw [← Finset.prod_union (disjoint_AB p), ← setC_eq_union]
-  have h_two : 2 * ∏ n ∈ (setC' p).erase 2, n = ∏ n ∈ setC' p, n := by
-    rw [← Finset.mul_prod_erase _ _ (two_mem_setC p hp2)]
-  rw [h_union, mul_comm] at h_two
-  exact mul_left_cancel₀ (show (∏ b ∈ setB' p, b) ≠ 0 from prod_B_ne_zero p) (by rw [prod_C_erase_eq_prod_B p hp2] at h_two; linear_combination h_two.symm)
+  apply mul_left_cancel₀ (prod_B_ne_zero p)
+  calc (∏ b ∈ setB' p, b) * ∏ a ∈ setA' p, a
+      = ∏ n ∈ setC' p, n := by
+        rw [setC_eq_union p, Finset.prod_union (disjoint_AB p), mul_comm]
+    _ = 2 * ∏ n ∈ (setC' p).erase 2, n :=
+        (Finset.mul_prod_erase _ _ (two_mem_setC p hp2)).symm
+    _ = (∏ b ∈ setB' p, b) * (solution_val : ZMod p) := by
+        rw [prod_C_erase_eq_prod_B p hp2, mul_comm]
+        norm_num [solution_val]
 
 end Usamo2020P3
