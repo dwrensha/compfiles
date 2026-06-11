@@ -219,10 +219,7 @@ lemma transpose_covering (K : ℕ) (hK : 1 ≤ K) :
   have hbound : ∀ i : Fin (K * K), K * (i.val % K) + (i.val / K) < K * K := by
     intro i
     have h1 : i.val % K < K := Nat.mod_lt _ hKpos
-    calc K * (i.val % K) + i.val / K
-        < K * (i.val % K) + K := by have := hdiv i; omega
-      _ = K * (i.val % K + 1) := (Nat.mul_succ K _).symm
-      _ ≤ K * K := Nat.mul_le_mul_left K (by omega)
+    exact Nat.mul_add_lt_mul_of_lt_of_lt h1 (hdiv i)
   -- the grid-transpose `t`, an involution
   set t : Fin (K * K) → Fin (K * K) := fun i => ⟨K * (i.val % K) + (i.val / K), hbound i⟩
     with ht_def

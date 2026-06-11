@@ -518,10 +518,7 @@ theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
         have hnot : ¬ (⟨secondLast.val, hlt⟩ : Fin n1).val < m := by
           dsimp [secondLast]
           omega
-        have hps := hpSmall_last ⟨secondLast.val, hlt⟩ hnot
-        have hv := congrArg Fin.val hps
-        dsimp [small] at hv ⊢
-        exact hv
+        exact Fin.mk.inj_iff.mp (hpSmall_last ⟨↑secondLast, hlt⟩ hnot)
       refine ⟨p, ?_⟩
       intro i
       by_cases hi_before : i.val < m

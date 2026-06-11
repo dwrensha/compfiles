@@ -173,9 +173,7 @@ lemma key {n : ℕ} (hn : 3 ≤ n) (t : Fin n → ℝ) (ht : ∀ i, 0 < t i)
     have h36 : (6 * M) ^ 2 ≤ (X1 * Y2 + X2 * Y1) ^ 2 := by
       have e : (6 * M) ^ 2 = 36 * M ^ 2 := by ring
       rw [e]; linarith [sq_nonneg M]
-    calc 6 * M = Real.sqrt ((6 * M) ^ 2) := (Real.sqrt_sq (by linarith)).symm
-      _ ≤ Real.sqrt ((X1 * Y2 + X2 * Y1) ^ 2) := Real.sqrt_le_sqrt h36
-      _ = X1 * Y2 + X2 * Y1 := Real.sqrt_sq hPnn
+    exact le_of_sq_le_sq h36 hPnn
   -- Assemble the final contradiction.
   have hfinal : (n : ℝ) ^ 2 + 1 ≤ (∑ i, t i) * (∑ i, 1 / t i) := by
     rw [hsplitT, hsplitR]

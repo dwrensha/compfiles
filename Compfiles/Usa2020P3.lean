@@ -101,7 +101,6 @@ private lemma map_mem_setB {n : ZMod p} (hn : n ∈ setC' p)
   · grind +ring
   · exact ⟨2 - n, by ring⟩
 
-set_option maxHeartbeats 800000 in
 include hp2 in
 private lemma fiber_prod {b : ZMod p} (hb : b ∈ setB' p) :
     ∏ n ∈ ((setC' p).erase 2).filter (fun m => m * (4 - m) = b), n = b := by
@@ -116,7 +115,7 @@ private lemma fiber_prod {b : ZMod p} (hb : b ∈ setB' p) :
   · linear_combination' -hc.2
   · simp_all +decide [sub_eq_add_neg]
     rw [eq_neg_iff_add_eq_zero]; simp_all +decide [← two_mul]
-    erw [ZMod.natCast_eq_zero_iff]; exact Nat.not_dvd_of_pos_of_lt (by decide) (lt_of_le_of_ne hp.1.two_le (Ne.symm hp2))
+    exact p_two_ne_zero p hp2
   · grind
 
 include hp2 in
