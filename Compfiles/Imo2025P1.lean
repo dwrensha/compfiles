@@ -409,8 +409,8 @@ lemma grid_shift (n : ℕ) (d : Fin 3) :
     shiftSet (gridShift d) (grid (n + 1) \ (edgeLine (n + 1) d)) = grid n := by
   ext x
   simp only [shiftSet, AffineEquiv.constVAdd_apply, vadd_eq_add, Set.image_add_left, grid,
-    Fin.isValue, exists_and_left, Set.preimage_diff, Set.preimage_setOf_eq, PiLp.add_apply,
-    PiLp.neg_apply, Set.mem_diff, Set.mem_setOf_eq, Set.mem_preimage, SetLike.mem_coe]
+    Fin.isValue, exists_and_left, Set.preimage_sdiff, Set.preimage_setOf_eq, PiLp.add_apply,
+    PiLp.neg_apply, Set.mem_sdiff, Set.mem_setOf_eq, Set.mem_preimage, SetLike.mem_coe]
   constructor
   · intro ⟨⟨a, ha, b, hb, ha0, hb0, hab⟩, h2⟩
     simp only [edgeLine, line'] at h2
@@ -600,7 +600,7 @@ noncomputable def coverConfig.removeLine (C : coverConfig) (L : AffSubOfPlane) (
     exact C.lines_rank L' (by simp only [Finset.mem_erase, ne_eq] at hL'; exact hL'.right)
   lines_cover := by
     intro x hx
-    simp only [Set.mem_diff, SetLike.mem_coe] at hx
+    simp only [Set.mem_sdiff, SetLike.mem_coe] at hx
     obtain ⟨L', hL'⟩ := C.lines_cover x hx.left
     use L'; simp only [Finset.mem_erase, ne_eq, hL', and_true]
     intro hC

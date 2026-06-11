@@ -48,7 +48,7 @@ lemma exists_three_of_infinite
   : ∃ p q r : α, p ∈ s ∧ q ∈ s ∧ r ∈ s
     ∧ p ≠ q ∧ q ≠ r ∧ r ≠ p := by
   obtain ⟨p, hp, q, hq, hpq⟩ := hs.nontrivial
-  obtain ⟨r, hr, hrpq⟩ := (hs.diff (Set.toFinite {p, q})).nonempty
+  obtain ⟨r, hr, hrpq⟩ := (hs.sdiff (Set.toFinite {p, q})).nonempty
   simp only [Set.mem_insert_iff, Set.mem_singleton_iff, not_or] at hrpq
   exact ⟨p, q, r, hp, hq, hr, hpq, fun h => hrpq.2 h.symm, fun h => hrpq.1 h⟩
 
@@ -139,8 +139,8 @@ problem imo1971_p5 (m : ℕ) :
       rw [hs, ht, dist_self] at hst; norm_num at hst⟩
   · rcases h with ⟨S', hS'₁, hS'₂, hS'₃⟩
     -- Pick d on the unit circle avoiding finitely many bad values
-    have hd_set := (norm_one_infinity.diff ((finite₁ hS'₂).union (finite₂ hS'₂))).nonempty
-    rw [← Set.diff_diff] at hd_set
+    have hd_set := (norm_one_infinity.sdiff ((finite₁ hS'₂).union (finite₂ hS'₂))).nonempty
+    rw [← Set.sdiff_sdiff] at hd_set
     obtain ⟨d, ⟨hd₁, hd₂⟩, hd₃⟩ := hd_set
     dsimp at hd₁ hd₂ hd₃; push Not at hd₂ hd₃
     -- Define translated set S'' = S' + d

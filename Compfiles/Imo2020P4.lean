@@ -198,8 +198,8 @@ lemma SimpleGraph.card_connectedComponent_add_card_edge_eq_card_vertex_of_acycli
 def Company.graph {n k : ℕ} (c : Company n k) : SimpleGraph (Fin (n ^ 2)) where
   Adj := fun a b ↦ ∃ i : Fin k, s((c.cars i).start, (c.cars i).finish) = s(a, b)
   symm := by
+    constructor
     intro a b
-    dsimp
     rintro ⟨i, h⟩
     use i
     rw [h, Sym2.eq_swap]
