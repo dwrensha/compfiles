@@ -29,130 +29,37 @@ determine solution_set : Set (ℕ×ℕ) := {(7,50), (37, 50), (50, 7), (50, 37)}
 
 snip begin
 
+/-- 1009 is prime and `≡ 1 (mod 4)`, so its representation as a sum of two
+squares is unique: `1009 = 15² + 28²`. -/
+lemma sq_add_sq_eq : ∀ m < 32, ∀ n < 32, m ^ 2 + n ^ 2 = 1009 →
+    (m = 15 ∧ n = 28) ∨ (m = 28 ∧ n = 15) := by decide
+
 lemma aux_1
   (a b : ℕ)
-  (h₁ : ((↑b : ℤ) - 22) ^ 2 = 1009 - ((↑a : ℤ) - 22) ^ 2)
-  (ha₀ : a ≤ 53) :
+  (hp : 0 < a ∧ 0 < b)
+  (h₁ : ((a : ℤ) - 22) ^ 2 + ((b : ℤ) - 22) ^ 2 = 1009) :
   (a, b) ∈ solution_set := by
-  let s : ℤ := 1009 - (↑(a:ℤ) - 22) ^ 2
-  have hs: s = 1009 - (↑(a:ℤ) - 22) ^ 2 := by rfl
-  have h₈₀: IsSquare (((a:ℤ) - 22) ^ 2) := by exact IsSquare.sq ((a:ℤ) - 22)
-  have h₈₁: IsSquare (((b:ℤ) - 22) ^ 2) := by exact IsSquare.sq ((b:ℤ) - 22)
-  have h₈₂: IsSquare s := by
-    rw [hs, ← h₁]
-    exact h₈₁
-  have ha₁: ∀ k n:ℤ, n^2 < k ∧ k < (n + 1) ^ 2 → ¬ IsSquare k := by
-    intro k n hk₀
-    obtain ⟨hk₀, hk₁⟩ := hk₀
-    by_contra hc₂
-    apply (isSquare_iff_exists_sq k).mp at hc₂
-    let ⟨d, hd₀⟩ := hc₂
-    rw [hd₀] at hk₀ hk₁
-    apply sq_lt_sq.mp at hk₀
-    apply sq_lt_sq.mp at hk₁
-    by_cases hn: 0 ≤ n
-    · rw [abs_of_nonneg hn] at hk₀
-      nth_rw 2 [abs_of_nonneg (by linarith)] at hk₁
-      linarith
-    · push Not at hn
-      have hn₁: n + 1 ≤ 0 := by linarith
-      rw [abs_of_neg hn] at hk₀
-      rw [abs_of_nonpos hn₁] at hk₁
-      linarith
-  have ha₂: ∀ k:ℤ, 31^2 < k ∧ k < 32 ^ 2 → ¬ IsSquare k := by exact fun k a => ha₁ k 31 a
-  have ha₃: ∀ k:ℤ, 30^2 < k ∧ k < 31 ^ 2 → ¬ IsSquare k := by exact fun k a => ha₁ k 30 a
-  have ha₄: ∀ k:ℤ, 29^2 < k ∧ k < 30 ^ 2 → ¬ IsSquare k := by exact fun k a => ha₁ k 29 a
-  have ha₅: ∀ k:ℤ, 28^2 < k ∧ k < 29 ^ 2 → ¬ IsSquare k := by exact fun k a => ha₁ k 28 a
-  have ha₆: ∀ k:ℤ, 27^2 < k ∧ k < 28 ^ 2 → ¬ IsSquare k := by exact fun k a => ha₁ k 27 a
-  have ha₇: ∀ k:ℤ, 26^2 < k ∧ k < 27 ^ 2 → ¬ IsSquare k := by exact fun k a => ha₁ k 26 a
-  have ha₈: ∀ k:ℤ, 25^2 < k ∧ k < 26 ^ 2 → ¬ IsSquare k := by exact fun k a => ha₁ k 25 a
-  have ha₉: ∀ k:ℤ, 24^2 < k ∧ k < 25 ^ 2 → ¬ IsSquare k := by exact fun k a => ha₁ k 24 a
-  have ha₁₀: ∀ k:ℤ, 23^2 < k ∧ k < 24 ^ 2 → ¬ IsSquare k := by exact fun k a => ha₁ k 23 a
-  have ha₁₁: abs ((↑a : ℤ) - (22 : ℤ)) ≤ 31 := by
-    refine abs_le.mpr ?_
+  obtain ⟨ha, hb⟩ := hp
+  -- Pass to absolute values, which are natural numbers below 32.
+  have hmn : ((a : ℤ) - 22).natAbs ^ 2 + ((b : ℤ) - 22).natAbs ^ 2 = 1009 := by
+    have h : ((((a : ℤ) - 22).natAbs ^ 2 + ((b : ℤ) - 22).natAbs ^ 2 : ℕ) : ℤ)
+        = 1009 := by push_cast [Int.natCast_natAbs, sq_abs]; linarith
+    exact_mod_cast h
+  have hbound : ∀ m k : ℕ, m ^ 2 + k = 1009 → m < 32 := by
+    intro m k hmk
+    by_contra h
+    push Not at h
+    have : (1024 : ℕ) ≤ m ^ 2 := by
+      calc (1024 : ℕ) = 32 ^ 2 := by norm_num
+        _ ≤ m ^ 2 := Nat.pow_le_pow_left h 2
     lia
-  rw [← sq_abs ((↑a : ℤ) - (22 : ℤ))] at h₁ hs h₈₀
-  have ha₁₂: 0 ≤ abs ((↑a : ℤ) - (22 : ℤ)) := by exact abs_nonneg ((↑a : ℤ) - (22 : ℤ))
-  by_cases ha₁₃: abs ((↑a : ℤ) - (22 : ℤ)) < 15
-  · exfalso
-    interval_cases abs ((↑a : ℤ) - (22 : ℤ))
-    · have hh₀: IsSquare (1009:ℤ) := by
-        rw [zero_pow (by norm_num), sub_zero] at h₁
-        rw [← h₁]
-        exact h₈₁
-      have hh₁: ¬ IsSquare (1009:ℤ) := Prime.not_isSquare (by norm_num)
-      exact hh₁ hh₀
-    all_goals try exact (ha₂ s (by lia)) h₈₂
-    all_goals try exact (ha₃ s (by lia)) h₈₂
-    · exact (ha₄ s (by lia)) h₈₂
-    · exact (ha₄ s (by lia)) h₈₂
-    · exact (ha₅ s (by lia)) h₈₂
-    · exact (ha₅ s (by lia)) h₈₂
-  · push Not at ha₁₃
-    by_cases ha₁₄: abs ((↑a : ℤ) - (22 : ℤ)) = 15
-    · apply (abs_eq (by norm_num)).mp at ha₁₄
-      obtain ha₁₄ | ha₁₄ := ha₁₄
-      · right; left
-        have hh₀: a = 37 := by bound
-        rw [hh₀] at h₁
-        simp at h₁
-        have hh₁: (784:ℤ) = 28 ^ 2 := by norm_num1
-        rw [hh₁] at h₁
-        apply pow_eq_pow_iff_cases.mp at h₁
-        simp at h₁
-        bound
-      · left
-        have hh₀: a = 7 := by bound
-        rw [hh₀] at h₁
-        simp at h₁
-        have hh₁: (784:ℤ) = 28 ^ 2 := by norm_num1
-        rw [hh₁] at h₁
-        apply pow_eq_pow_iff_cases.mp at h₁
-        simp at h₁
-        rw [hh₀]
-        rw [@Prod.mk_right_inj]
-        lia
-    · by_cases ha₁₅: abs ((↑a : ℤ) - (22 : ℤ)) < 28
-      · exfalso
-        interval_cases abs ((↑a : ℤ) - (22 : ℤ))
-        · exact false_of_ne ha₁₄
-        · exact (ha₆ s (by lia)) h₈₂
-        · exact (ha₇ s (by lia)) h₈₂
-        · exact (ha₇ s (by lia)) h₈₂
-        · exact (ha₈ s (by lia)) h₈₂
-        · exact (ha₉ s (by lia)) h₈₂
-        · exact (ha₁₀ s (by lia)) h₈₂
-        · exact (ha₁ s 22 (by lia)) h₈₂
-        · exact (ha₁ s 21 (by lia)) h₈₂
-        · exact (ha₁ s 20 (by lia)) h₈₂
-        · exact (ha₁ s 19 (by lia)) h₈₂
-        · exact (ha₁ s 18 (by lia)) h₈₂
-        · exact (ha₁ s 16 (by lia)) h₈₂
-      · by_cases ha₁₆: abs ((↑a : ℤ) - (22 : ℤ)) = 28
-        · right; right
-          have ha₁₇: a = 50 := by
-            apply (abs_eq (by norm_num)).mp at ha₁₆
-            lia
-          rw [ha₁₇]
-          rw [ha₁₇] at h₁
-          simp at h₁
-          have hh₀: (225:ℤ) = 15 ^ 2 := by bound
-          rw [hh₀] at h₁
-          apply pow_eq_pow_iff_cases.mp at h₁
-          simp at h₁
-          obtain h₁ | h₁ := h₁
-          · simp
-            right
-            lia
-          · simp
-            left
-            lia
-        · exfalso
-          interval_cases abs ((↑a : ℤ) - (22 : ℤ))
-          · exact false_of_ne ha₁₆
-          · exact (ha₁ s 12 (by lia)) h₈₂
-          · exact (ha₁ s 10 (by lia)) h₈₂
-          · exact (ha₁ s 6 (by lia)) h₈₂
+  have hu : ((a : ℤ) - 22).natAbs < 32 := hbound _ _ hmn
+  have hv : ((b : ℤ) - 22).natAbs < 32 :=
+    hbound _ _ (by rw [add_comm]; exact hmn)
+  have key := sq_add_sq_eq _ hu _ hv hmn
+  -- `|a - 22|, |b - 22| ∈ {15, 28}` pins down the four solutions.
+  simp only [solution_set, Set.mem_insert_iff, Set.mem_singleton_iff, Prod.mk.injEq]
+  lia
 
 lemma aux_2
   (a b q r : ℕ)
@@ -200,20 +107,11 @@ lemma aux_2
   rw [hq₀] at hr₀
   norm_num at hr₀
   rw [hq₀, hr₀] at h₅₂
-  have h₆: ((a:ℤ) - 22) ^ 2 + ((b:ℤ) - 22) ^ 2 = 1009 := by
-    ring_nf
-    linarith
-  apply eq_sub_of_add_eq' at h₆
-  by_cases ha₀: 53 < a
-  · exfalso
-    apply Nat.succ_le_iff.mpr at ha₀
-    simp at ha₀
-    have ha₁: 32 ^ 2 ≤ ((a:ℤ) - 22) ^ 2 := by
-      refine pow_le_pow_left₀ (by lia) (by lia) 2
-    have hb₁: 0 ≤ ((b:ℤ) - 22) ^ 2 := by positivity
-    lia
-  · push Not at ha₀
-    exact aux_1 a b h₆ ha₀
+  have hcast : (a : ℤ) ^ 2 + (b : ℤ) ^ 2 = 44 * ((a : ℤ) + (b : ℤ)) + 41 := by
+    exact_mod_cast h₅₂
+  have h₆ : ((a : ℤ) - 22) ^ 2 + ((b : ℤ) - 22) ^ 2 = 1009 := by
+    linear_combination hcast
+  exact aux_1 a b hp h₆
 
 snip end
 
