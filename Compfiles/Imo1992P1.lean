@@ -37,16 +37,16 @@ problem imo1992_p1 (a b c : ℤ) (ha : 1 < a) (hb : a < b) (hc : b < c) :
   intro ⟨k, hk⟩
   -- `hk : a * b * c - 1 = (a - 1) * (b - 1) * (c - 1) * k`.
   simp only [solution_set, Set.mem_insert_iff, Set.mem_singleton_iff, Prod.mk.injEq]
-  have ha2 : 2 ≤ a := by linarith
-  have hb3 : 3 ≤ b := by linarith
-  have hc4 : 4 ≤ c := by linarith
-  have ha1 : 0 < a - 1 := by linarith
-  have hb1 : 0 < b - 1 := by linarith
-  have hc1 : 0 < c - 1 := by linarith
+  have ha2 : 2 ≤ a := by lia
+  have hb3 : 3 ≤ b := by lia
+  have hc4 : 4 ≤ c := by lia
+  have ha1 : 0 < a - 1 := by positivity
+  have hb1 : 0 < b - 1 := by lia
+  have hc1 : 0 < c - 1 := by lia
   have hden : 0 < (a - 1) * (b - 1) * (c - 1) := mul_pos (mul_pos ha1 hb1) hc1
-  have hA : (0 : ℤ) ≤ a - 2 := by linarith
-  have hB : (0 : ℤ) ≤ b - 3 := by linarith
-  have hC : (0 : ℤ) ≤ c - 4 := by linarith
+  have hA : (0 : ℤ) ≤ a - 2 := by positivity
+  have hB : (0 : ℤ) ≤ b - 3 := by positivity
+  have hC : (0 : ℤ) ≤ c - 4 := by positivity
   have e3 : 0 ≤ (a - 2) * (b - 3) * (c - 4) := mul_nonneg (mul_nonneg hA hB) hC
   have eab : 0 ≤ (a - 2) * (b - 3) := mul_nonneg hA hB
   have eac : 0 ≤ (a - 2) * (c - 4) := mul_nonneg hA hC
@@ -55,12 +55,12 @@ problem imo1992_p1 (a b c : ℤ) (ha : 1 < a) (hb : a < b) (hc : b < c) :
     have key : a * b * c = (a - 2) * (b - 3) * (c - 4) + 4 * ((a - 2) * (b - 3))
         + 3 * ((a - 2) * (c - 4)) + 2 * ((b - 3) * (c - 4))
         + 12 * (a - 2) + 8 * (b - 3) + 6 * (c - 4) + 24 := by ring
-    linarith
+    lia
   -- The quotient `k` satisfies `2 ≤ k < 4`.
   have hk1 : 1 ≤ k := by
     by_contra h
     push Not at h
-    have hk0 : k ≤ 0 := by omega
+    have hk0 : k ≤ 0 := by lia
     linarith [mul_nonpos_of_nonneg_of_nonpos hden.le hk0, hk, habc]
   have hk_ne1 : k ≠ 1 := by
     rintro rfl
@@ -73,7 +73,7 @@ problem imo1992_p1 (a b c : ℤ) (ha : 1 < a) (hb : a < b) (hc : b < c) :
         = a * b * c - a * b - a * c - b * c + a + b + c - 1 := by ring
     linarith [mul_pos ha1 hb1, mul_pos hb1 hc1, mul_pos ha1 hc1,
       hexp, iab, ibc, iac]
-  have hk2 : 2 ≤ k := by omega
+  have hk2 : 2 ≤ k := by lia
   -- Since `a/(a-1) · b/(b-1) · c/(c-1) ≤ 2·(3/2)·(4/3) = 4`, we get `k < 4`.
   have hk4 : k < 4 := by
     have hub : a * b * c ≤ 4 * ((a - 1) * (b - 1) * (c - 1)) := by
@@ -81,7 +81,7 @@ problem imo1992_p1 (a b c : ℤ) (ha : 1 < a) (hb : a < b) (hc : b < c) :
           = 3 * ((a - 2) * (b - 3) * (c - 4)) + 8 * ((a - 2) * (b - 3))
             + 5 * ((a - 2) * (c - 4)) + 2 * ((b - 3) * (c - 4))
             + 12 * (a - 2) + 4 * (b - 3) + 2 * (c - 4) := by ring
-      linarith
+      lia
     have hlt : (a - 1) * (b - 1) * (c - 1) * k <
                (a - 1) * (b - 1) * (c - 1) * 4 := by linarith [hub, hk]
     exact lt_of_mul_lt_mul_left hlt hden.le
@@ -89,11 +89,11 @@ problem imo1992_p1 (a b c : ℤ) (ha : 1 < a) (hb : a < b) (hc : b < c) :
   have ha4 : a < 4 := by
     by_contra h
     push Not at h
-    have hb5 : 5 ≤ b := by linarith
-    have hc6 : 6 ≤ c := by linarith
-    have hA' : (0 : ℤ) ≤ a - 4 := by linarith
-    have hB' : (0 : ℤ) ≤ b - 5 := by linarith
-    have hC' : (0 : ℤ) ≤ c - 6 := by linarith
+    have hb5 : 5 ≤ b := by lia
+    have hc6 : 6 ≤ c := by lia
+    have hA' : (0 : ℤ) ≤ a - 4 := by positivity
+    have hB' : (0 : ℤ) ≤ b - 5 := by positivity
+    have hC' : (0 : ℤ) ≤ c - 6 := by positivity
     have hub2 : a * b * c ≤ 2 * ((a - 1) * (b - 1) * (c - 1)) := by
       have key : 2 * ((a - 1) * (b - 1) * (c - 1)) - a * b * c
           = (a - 4) * (b - 5) * (c - 6) + 4 * ((a - 4) * (b - 5))
@@ -104,7 +104,7 @@ problem imo1992_p1 (a b c : ℤ) (ha : 1 < a) (hb : a < b) (hc : b < c) :
       have eab' : 0 ≤ (a - 4) * (b - 5) := mul_nonneg hA' hB'
       have eac' : 0 ≤ (a - 4) * (c - 6) := mul_nonneg hA' hC'
       have ebc' : 0 ≤ (b - 5) * (c - 6) := mul_nonneg hB' hC'
-      linarith
+      lia
     have hge : (a - 1) * (b - 1) * (c - 1) * 2 ≤
                (a - 1) * (b - 1) * (c - 1) * k :=
       mul_le_mul_of_nonneg_left hk2 hden.le
@@ -113,23 +113,23 @@ problem imo1992_p1 (a b c : ℤ) (ha : 1 < a) (hb : a < b) (hc : b < c) :
   interval_cases a <;> interval_cases k
   · -- a = 2, k = 2: forces `2b + 2c = 3`, impossible.
     have key : 2 * b + 2 * c = 3 := by linear_combination hk
-    omega
+    lia
   · -- a = 2, k = 3: `(b - 3)(c - 3) = 5`, so `b = 4, c = 8`.
     have key : (b - 3) * (c - 3) = 5 := by linear_combination -hk
     -- `5 = (b-3)(c-4) + (b-3) ≥ b - 3`, so `b` is bounded.
-    have hp : 0 ≤ (b - 3) * (c - 4) := mul_nonneg (by linarith) (by linarith)
+    have hp : 0 ≤ (b - 3) * (c - 4) := by positivity
     have hid : (b - 3) * (c - 3) = (b - 3) * (c - 4) + (b - 3) := by ring
-    have hbu : b ≤ 8 := by linarith
-    interval_cases b <;> omega
+    have hbu : b ≤ 8 := by lia
+    interval_cases b <;> lia
   · -- a = 3, k = 2: `(b - 4)(c - 4) = 11`, so `b = 5, c = 15`.
     have key : (b - 4) * (c - 4) = 11 := by linear_combination -hk
     -- `11 = (b-4)(c-5) + (b-4) ≥ b - 4`, so `b` is bounded.
-    have hp : 0 ≤ (b - 4) * (c - 5) := mul_nonneg (by linarith) (by linarith)
+    have hp : 0 ≤ (b - 4) * (c - 5) := mul_nonneg (by lia) (by lia)
     have hid : (b - 4) * (c - 4) = (b - 4) * (c - 5) + (b - 4) := by ring
-    have hbu : b ≤ 15 := by linarith
-    interval_cases b <;> omega
+    have hbu : b ≤ 15 := by lia
+    interval_cases b <;> lia
   · -- a = 3, k = 3: forces `3·(bc) = 6b + 6c - 7`, impossible mod 3.
     have key : 3 * (b * c) = 6 * b + 6 * c - 7 := by linear_combination -hk
-    omega
+    lia
 
 end Imo1992P1
