@@ -133,7 +133,7 @@ problem imo1999_p4 (n p : ℕ) :
         rw [Nat.sub_add_cancel (by lia:_), Nat.prime_dvd_prime_iff_eq hq₁ hp] at hqp
         rw [hqp] at hq₂
         have hp_padic_le := padicValNat_le_padicValNat_of_dvd (by positivity:_) hp h
-        rw [padicValNat.pow (p - 1) (by lia:_)] at hp_padic_le
+        rw [padicValNat.pow n (p - 1)] at hp_padic_le
         nth_rw 3 [← one_pow n] at hp_padic_le
         have hlte₁ : p ∣ (p - 1) + 1 := by
           rw [Nat.sub_add_cancel (by lia:_)]
