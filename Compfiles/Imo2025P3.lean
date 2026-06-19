@@ -539,15 +539,10 @@ problem imo2025_p3 :
             · by_cases t2: Odd (b:ℕ)
               · have g2 : f b = 1 := by lia
                 rw [g1,g2]
-                simp
+                simp only [PNat.val_ofNat, Nat.cast_ofNat, Nat.cast_one, one_pow]
                 have y1 : Odd (b:ℤ) := (odd_coe_nat _).mpr t2
-                have y2 : Odd ((b:ℤ)^(a:ℕ)) := Odd.pow y1
-                have y4 : Even ((b:ℤ)^(a:ℕ)-1) := by
-                  apply even_sub_one.mpr
-                  rw [not_even_iff_odd]
-                  exact y2
-                exact even_iff_two_dvd.mp y4
-
+                rw [← even_iff_two_dvd, even_sub_one, not_even_iff_odd]
+                exact Odd.pow y1
               · have g2 : f b = 2 := by lia
                 rw [g1,g2]
                 simp

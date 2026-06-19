@@ -252,11 +252,9 @@ lemma classify {a b c d : ℕ} (ha : 0 < a) (hab : a < b) (hbc : b < c)
 /-- Any 4-element finset of naturals can be listed in increasing order. -/
 lemma exists_sorted_four {A : Finset ℕ} (hA : A.card = 4) :
     ∃ a b c d : ℕ, a < b ∧ b < c ∧ c < d ∧ A = {a, b, c, d} := by
-  have h4 : (A.sort (· ≤ ·)).length = 4 := by rw [Finset.length_sort, hA]
   obtain ⟨a, b, c, d, hL⟩ : ∃ a b c d : ℕ, A.sort (· ≤ ·) = [a, b, c, d] := by
-    rcases hl : A.sort (· ≤ ·) with _ | ⟨a, _ | ⟨b, _ | ⟨c, _ | ⟨d, _ | ⟨e, l⟩⟩⟩⟩⟩ <;>
-      rw [hl] at h4 <;> simp at h4
-    exact ⟨a, b, c, d, rfl⟩
+    refine List.length_eq_four.mp ?_
+    rw [Finset.length_sort, hA]
   have hsorted := (Finset.sortedLT_sort A).pairwise
   rw [hL] at hsorted
   simp only [List.pairwise_cons, List.mem_cons, List.not_mem_nil] at hsorted

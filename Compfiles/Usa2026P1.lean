@@ -42,8 +42,7 @@ lemma f_periodic (n : ℕ) (x : ℝ) : f n (x + 1) = f n x := by
 
   have h_floor : ∀ m : ℕ, ⌊(m : ℝ) * x + (m : ℝ)⌋ = ⌊(m : ℝ) * x⌋ + (m : ℤ) := by
     intro m
-    have : (m : ℝ) = ((m : ℤ) : ℝ) := by push_cast; rfl
-    rw [this, Int.floor_add_intCast]
+    exact Int.floor_add_natCast (↑m * x) m
 
   have h2 : ∀ k ∈ Icc 1 n, (⌊(k : ℝ) * x + (k : ℝ)⌋ : ℝ) / (k : ℝ) = ((⌊(k : ℝ) * x⌋ : ℝ) / (k : ℝ)) + 1 := by
     intro k hk

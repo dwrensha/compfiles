@@ -560,14 +560,11 @@ lemma alice_wins {c : ℝ} (hc : Real.sqrt 2 / 2 < c) : ∃ s : Strategy, s.Winn
     have hxNbig : Real.sqrt ((N : ℝ) + 2) < x N := by
       rw [hxN]
       linarith
-    have hxNsq : (N : ℝ) + 2 < x N ^ 2 := by
-      nlinarith [Real.sq_sqrt (show (0:ℝ) ≤ (N : ℝ) + 2 by positivity),
-        Real.sqrt_nonneg ((N : ℝ) + 2)]
     have hterm : x N ^ 2 ≤ ∑ i ∈ range (N + 1 + 1), x i ^ 2 :=
       Finset.single_le_sum (f := fun i => x i ^ 2) (fun i _ => sq_nonneg (x i))
         (Finset.mem_range.mpr (by lia))
     push_cast at h1
-    linarith
+    linarith [Real.lt_sq_of_sqrt_lt hxNbig]
   -- Locate the first invalid index; it is odd, so Alice wins.
   have hex : ∃ j, ¬ ValidAt c x j := by
     by_cases hall : ∀ m < N + 1, ValidAt c x m
