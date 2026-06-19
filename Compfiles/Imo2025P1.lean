@@ -37,17 +37,17 @@ open Module
 /-- The `x`-axis, as an affine subspace. -/
 def xAxis : AffineSubspace ℝ (EuclideanSpace ℝ (Fin 2)) where
   carrier := {p | p 1 = 0}
-  smul_vsub_vadd_mem c p₁ p₂ p₃ hp₁ hp₂ hp₃ := by simp_all
+  smul_vsub_vadd_mem' c p₁ p₂ p₃ hp₁ hp₂ hp₃ := by simp_all
 
 /-- The `y`-axis, as an affine subspace. -/
 def yAxis : AffineSubspace ℝ (EuclideanSpace ℝ (Fin 2)) where
   carrier := {p | p 0 = 0}
-  smul_vsub_vadd_mem c p₁ p₂ p₃ hp₁ hp₂ hp₃ := by simp_all
+  smul_vsub_vadd_mem' c p₁ p₂ p₃ hp₁ hp₂ hp₃ := by simp_all
 
 /- The line `x+y=0`, as an affine subspace. -/
 def linexy0 : AffineSubspace ℝ (EuclideanSpace ℝ (Fin 2)) where
   carrier := {p | p 0 + p 1 = 0}
-  smul_vsub_vadd_mem c p₁ p₂ p₃ hp₁ hp₂ hp₃ := by
+  smul_vsub_vadd_mem' c p₁ p₂ p₃ hp₁ hp₂ hp₃ := by
     simp only [Fin.isValue, vsub_eq_sub, vadd_eq_add, Set.mem_setOf_eq, PiLp.add_apply,
       PiLp.smul_apply, PiLp.sub_apply, smul_eq_mul]
     suffices c * (p₁ 0 + p₁ 1 - (p₂ 0 + p₂ 1)) + (p₃ 0 + p₃ 1) = 0 by
@@ -111,7 +111,7 @@ lemma vec_sub (x1 y1 x2 y2 : ℝ) : !₂[x1, y1] - !₂[x2, y2] = !₂[x1 - x2, 
 Note: We don't enforce `a ≠ 0 ∨ b ≠ 0`. -/
 noncomputable def line (a b c : ℝ) : AffSubOfPlane where
   carrier := {p | a * p 0 + b * p 1 + c = 0}
-  smul_vsub_vadd_mem r p₁ p₂ p₃ hp₁ hp₂ hp₃ := by
+  smul_vsub_vadd_mem' r p₁ p₂ p₃ hp₁ hp₂ hp₃ := by
     simp only [Fin.isValue, vsub_eq_sub, vadd_eq_add, Set.mem_setOf_eq, PiLp.add_apply,
       PiLp.smul_apply, PiLp.sub_apply, smul_eq_mul]
     simp_all only [Fin.isValue, Set.mem_setOf_eq]

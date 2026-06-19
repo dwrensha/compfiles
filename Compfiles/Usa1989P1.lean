@@ -35,7 +35,7 @@ snip begin
 -- based on solution from
 -- https://artofproblemsolving.com/wiki/index.php/1989_USAMO_Problems/Problem_1
 
-def extract_one {n : ℕ} {f : ℕ → ℚ} :
+theorem extract_one {n : ℕ} {f : ℕ → ℚ} :
     (Finset.Icc 1 (n + 1)).sum f = f (n + 1) + (Finset.Icc 1 n).sum f := by
   rw [← Finset.insert_Icc_right_eq_Icc_add_one (by simp)]
   rw [Finset.sum_insert (by simp)]
