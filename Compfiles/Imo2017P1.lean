@@ -34,432 +34,204 @@ determine solution_set : Set ℕ := {x | 0 < x ∧ 3 ∣ x}
 
 snip begin
 
-lemma aux_1 : ∀ y, y ≡ 2 [MOD 3] → ¬ IsSquare y := by
-  rintro y hy₀ ⟨y, rfl⟩
-  change _ = _ at hy₀
-  rw [Nat.mul_mod] at hy₀
-  mod_cases H : y % 3 <;>
-    change _ % _ = _ % 3 at H <;> rw [H] at hy₀ <;> norm_num at hy₀
+/-- The recurrence rule defining the sequence. -/
+abbrev Rule (a : ℕ → ℕ → ℕ) : Prop :=
+  ∀ x i, 1 < x → if IsSquare (a x i)
+                 then a x (i + 1) = Nat.sqrt (a x i)
+                 else a x (i + 1) = a x i + 3
 
-lemma aux_2_1
-    (a : ℕ → ℕ → ℕ)
-    (ha₁ : ∀ (x i : ℕ),
-      (1 : ℕ) < x → if IsSquare (a x i)
-                    then a x (i + (1 : ℕ)) = (a x i).sqrt
-                    else a x (i + (1 : ℕ)) = a x i + (3 : ℕ))
-    (x i j l : ℕ)
-    (hx₀ : (1 : ℕ) < x)
-    (hl₀ : ∀ m < l, i ≤ m → m < i + j → ¬IsSquare (a x m))
-    (hl₁ : i ≤ l)
-    (hl₂ : l < i + j) :
-    a x l = a x i + (l - i) * (3 : ℕ) := by
-  induction hl₁ with
-  | refl => simp
-  | step ih => grind
+variable {a : ℕ → ℕ → ℕ} {x : ℕ}
 
-lemma aux_2_2
-    (a : ℕ → ℕ → ℕ)
-    (ha₁ : ∀ (x i : ℕ),
-      (1 : ℕ) < x → if IsSquare (a x i)
-                    then a x (i + (1 : ℕ)) = (a x i).sqrt
-                    else a x (i + (1 : ℕ)) = a x i + (3 : ℕ))
-    (x c i j t : ℕ)
-    (hj₀ : j = (t - c) / (3 : ℕ))
-    (hx₀ : (1 : ℕ) < x)
-    (hi₀ : a x i = c)
-    (hh₃ : c < t)
-    (hh₄ : ∀ (y : ℕ), c ≤ y → y < t → ¬IsSquare y)
-    (hc₂ : (3 : ℕ) ∣ t - c) :
-    a x (i + j) = t := by
-  have ha_step : ∀ k ≤ j, a x (i + k) = c + 3 * k := by
-    intro k hk
-    induction k with
-    | zero => exact hi₀
-    | succ k ih => grind
-  rw [ha_step j le_rfl, hj₀, Nat.mul_div_cancel' hc₂, add_tsub_cancel_of_le hh₃.le]
+lemma step_sq (ha₁ : Rule a) (hx : 1 < x) {i : ℕ} (h : IsSquare (a x i)) :
+    a x (i + 1) = (a x i).sqrt := by
+  have := ha₁ x i hx
+  rwa [if_pos h] at this
 
-lemma aux_2_3
-    (a : ℕ → ℕ → ℕ)
-    (ha₁ : ∀ (x i : ℕ),
-      (1 : ℕ) < x → if IsSquare (a x i)
-                    then a x (i + (1 : ℕ)) = (a x i).sqrt
-                    else a x (i + (1 : ℕ)) = a x i + (3 : ℕ))
-    (x c i j t : ℕ)
-    (hx₀ : (1 : ℕ) < x)
-    (hi₀ : a x i = c)
-    (hh₃ : c < t)
-    (hh₄ : ∀ (k : ℕ), i ≤ k → k < i + j → ¬IsSquare (a x k))
-    (hh₅ : 3 ∣ t - c)
-    (hj₀ : j = (t - c) / (3 : ℕ)) :
-    a x (i + j) = t := by
-  have h_a_form : ∀ k ≤ j, a x (i + k) = c + 3 * k := by
-    intro k hk₀
-    induction k with
-    | zero => simp [hi₀]
-    | succ k IH => grind
-  grind
+lemma step_nonsq (ha₁ : Rule a) (hx : 1 < x) {i : ℕ} (h : ¬IsSquare (a x i)) :
+    a x (i + 1) = a x i + 3 := by
+  have := ha₁ x i hx
+  rwa [if_neg h] at this
 
-lemma aux_2_4
-    (a : ℕ → ℕ → ℕ)
-    (ha₁ : ∀ (x i : ℕ),
-      (1 : ℕ) < x → if IsSquare (a x i)
-                    then a x (i + (1 : ℕ)) = (a x i).sqrt
-                    else a x (i + (1 : ℕ)) = a x i + (3 : ℕ))
-    (x c i j : ℕ)
-    (hj₀ : j = ((c.sqrt + (2 : ℕ)) ^ (2 : ℕ) - c) / (3 : ℕ))
-    (hx₀ : (1 : ℕ) < x)
-    (hi₀ : a x i = c)
-    (hh₃ : c < (c.sqrt + (1 : ℕ)) ^ (2 : ℕ))
-    (hh₄ : ∀ (y : ℕ), c ≤ y → y < (c.sqrt + (1 : ℕ)) ^ (2 : ℕ) → ¬IsSquare y)
-     (hh₁ : c % (3 : ℕ) ≠ ((c.sqrt + (1 : ℕ)) ^ (2 : ℕ)) % 3) :
-    ∀ (k : ℕ), i ≤ k → k < i + j → ¬IsSquare (a x k) := by
-  intro k
-  have h₀: ∀ y, (c.sqrt + (1 : ℕ)) ^ (2 : ℕ) < y →
-                        y < (c.sqrt + (2 : ℕ)) ^ (2 : ℕ) → ¬ IsSquare y := by
-    intro y hy₀ hy₁
-    contrapose! hy₀
-    obtain ⟨r, hr₀⟩ := hy₀
-    rw [hr₀, ← pow_two] at hy₁
-    have hr₁: r < c.sqrt + 2 := by exact lt_of_pow_lt_pow_left' (2 : ℕ) hy₁
-    rw [hr₀, ← pow_two]
-    refine Nat.pow_le_pow_left ?_ 2
-    exact Nat.le_of_lt_succ hr₁
-  refine Nat.strong_induction_on k ?_
-  intro l hl₀ hl₁ hl₂
-  by_cases hlp: i < l
-  · have hl₃: a x l = a x i + (l - i) * 3 := by
-      exact aux_2_1 a ha₁ x i j l hx₀ hl₀ hl₁ hl₂
-    grind
-  · push Not at hlp
-    have hl₃: l = i := Nat.le_antisymm hlp hl₁
-    rw [hl₃, hi₀]
-    refine hh₄ c ?_ hh₃
-    exact Nat.le_refl c
+lemma not_isSquare_of_mod_three {y : ℕ} (hy : y % 3 = 2) : ¬IsSquare y := by
+  rintro ⟨r, rfl⟩
+  rw [Nat.mul_mod] at hy
+  obtain h | h | h : r % 3 = 0 ∨ r % 3 = 1 ∨ r % 3 = 2 := by lia
+  all_goals rw [h] at hy; norm_num at hy
 
-lemma aux_2_5
-    (a : ℕ → ℕ → ℕ)
-    (ha₁ : ∀ (x i : ℕ),
-      (1 : ℕ) < x → if IsSquare (a x i)
-                    then a x (i + (1 : ℕ)) = (a x i).sqrt
-                    else a x (i + (1 : ℕ)) = a x i + (3 : ℕ))
-    (x c i : ℕ)
-    (hx₀ : (1 : ℕ) < x)
-    (hi₀ : a x i = c)
-    (hh₃ : c < (c.sqrt + (1 : ℕ)) ^ (2 : ℕ))
-    (hh₄ : ∀ (y : ℕ), c ≤ y → y < (c.sqrt + (1 : ℕ)) ^ (2 : ℕ) → ¬IsSquare y)
-    (hh₁ : c % (3 : ℕ) = (0 : ℕ))
-    (hh₂ : c.sqrt % (3 : ℕ) = (0 : ℕ)) :
-    ∀ (k : ℕ), i ≤ k → k < i + ((c.sqrt + (3 : ℕ)) ^ (2 : ℕ) - c) / (3 : ℕ) → ¬IsSquare (a x k) := by
-  intro k
-  have h₀: ∀ y t, (c.sqrt + (t : ℕ)) ^ (2 : ℕ) < y →
-                    y < (c.sqrt + t + (1 : ℕ)) ^ (2 : ℕ) → ¬ IsSquare y := by
-    intro y t hy₀ hy₁
-    contrapose! hy₀
-    obtain ⟨r, hr₀⟩ := hy₀
-    rw [hr₀, ← pow_two] at hy₁
-    have hr₁: r < c.sqrt + t + 1 := by exact lt_of_pow_lt_pow_left' (2 : ℕ) hy₁
-    rw [hr₀, ← pow_two]
-    refine Nat.pow_le_pow_left ?_ 2
-    exact Nat.le_of_lt_succ hr₁
-  refine Nat.strong_induction_on k ?_
-  intro l hl₀ hl₁ hl₂
-  by_cases hlp: i < l
-  · have hl₃: a x l = a x i + (l - i) * 3 := by
-      exact aux_2_1 a ha₁ x i (((c.sqrt + (3 : ℕ)) ^ (2 : ℕ) - c) / (3 : ℕ)) l hx₀ hl₀ hl₁ hl₂
-    by_cases hl₄: a x l ≤ (c.sqrt + (1 : ℕ)) ^ (2 : ℕ)
-    · obtain hl₅ | hl₅ := lt_or_eq_of_le hl₄
-      · refine hh₄ (a x l) ?_ hl₅
-        rw [hl₃, hi₀]
-        simp
-      · exfalso
-        have hl₆: (a x l) % 3 = 1 := by
-          rw [hl₅, Nat.pow_mod]
-          have hl₇: (c.sqrt + (1 : ℕ)) % (3 : ℕ) = 1 := by lia
-          rw [hl₇, one_pow]
-          group
-        have hl₇: a x l % 3 = 0 := by lia
-        rw [hl₆] at hl₇
-        norm_num at hl₇
-    · push Not at hl₄
-      by_cases hl₅: a x l ≤ (c.sqrt + (2 : ℕ)) ^ (2 : ℕ)
-      · obtain hl₆ | hl₆ := lt_or_eq_of_le hl₅
-        · exact h₀ (a x l) 1 hl₄ hl₆
-        · exfalso
-          have hl₇: (a x l) % 3 = 1 := by
-            rw [hl₆, Nat.pow_mod]
-            have hl₇: (c.sqrt + (2 : ℕ)) % (3 : ℕ) = 2 := by lia
-            rw [hl₇]
-          lia
-      · push Not at hl₅
-        have h₃: a x l < (c.sqrt + (3 : ℕ)) ^ (2 : ℕ) := by lia
-        exact h₀ (a x l) 2 hl₅ h₃
-  · push Not at hlp
-    have hl₃: l = i := by exact Nat.le_antisymm hlp hl₁
-    rw [hl₃, hi₀]
-    refine hh₄ c ?_ hh₃
-    exact Nat.le_refl c
-
-lemma aux_3
-    (a : ℕ → ℕ → ℕ)
-    (ha₁ : ∀ (x i : ℕ),
-      (1 : ℕ) < x → if IsSquare (a x i)
-                    then a x (i + (1 : ℕ)) = (a x i).sqrt
-                    else a x (i + (1 : ℕ)) = a x i + (3 : ℕ))
-    (x c i : ℕ)
-    (hx₀ : x > (1 : ℕ))
-    (S : Set ℕ)
-    (hS₁ : S = Set.range (a x))
-    (hi₀ : a x i = c)
-    (hc₂ : ¬IsSquare c)
-    (hhc : ¬c % (3 : ℕ) = (2 : ℕ)) :
-    (c.sqrt + (1 : ℕ)) ^ (2 : ℕ) ∈ S ∨
-    (c.sqrt + (2 : ℕ)) ^ (2 : ℕ) ∈ S ∨
-    (c.sqrt + (3 : ℕ)) ^ (2 : ℕ) ∈ S := by
-  have hh₁: c % 3 = 0 ∨ c % 3 = 1 := by lia
-  have hh₂: c.sqrt % 3 = 0 ∨ c.sqrt % 3 = 1 ∨ c.sqrt % 3 = 2 := by lia
-  have hh₃: c < (c.sqrt + (1 : ℕ)) ^ (2 : ℕ) := by exact Nat.lt_succ_sqrt' c
-  have hh₅: c < (c.sqrt + (2 : ℕ)) ^ (2 : ℕ) := by
-    refine lt_trans hh₃ ?_
-    refine (Nat.pow_lt_pow_iff_left ?_).mpr ?_
-    · exact Ne.symm (Nat.zero_ne_add_one (1 : ℕ))
-    · exact Nat.lt_add_one (c.sqrt + (1 : ℕ))
-  have hh₆: c < (c.sqrt + (3 : ℕ)) ^ (2 : ℕ) := by
-    refine lt_trans hh₃ ?_
-    refine (Nat.pow_lt_pow_iff_left ?_).mpr ?_
-    · exact Ne.symm (Nat.zero_ne_add_one (1 : ℕ))
-    · simp
-  have hh₄: ∀ y ≥ c, y < (c.sqrt + (1 : ℕ)) ^ (2 : ℕ) → ¬ IsSquare y := by
-    intro y hy₀ hy₁
-    have hy₂: (c.sqrt) ^ (2 : ℕ) < y := by
-      refine lt_of_lt_of_le ?_ hy₀
-      contrapose! hc₂
-      have hc₃: c.sqrt ^ (2 : ℕ) ≤ c := by exact Nat.sqrt_le' c
-      have hc₄: c = c.sqrt ^ 2 := by exact Nat.le_antisymm hc₂ hc₃
-      rw [hc₄]
-      exact IsSquare.sq c.sqrt
-    contrapose! hy₂
-    obtain ⟨r, hr₀⟩ := hy₂
-    rw [hr₀, ← pow_two] at hy₁
-    have hr₁: r < c.sqrt + 1 := by exact lt_of_pow_lt_pow_left' (2 : ℕ) hy₁
-    rw [hr₀, ← pow_two]
-    refine Nat.pow_le_pow_left ?_ 2
-    exact Nat.le_of_lt_succ hr₁
-  rw [hS₁]
-  obtain hh₁ | hh₁ := hh₁
-  · let j : ℕ := ((c.sqrt + (3 : ℕ) - c.sqrt % 3) ^ (2 : ℕ) - c) / (3 : ℕ)
-    obtain hh₂ | hh₂ := hh₂
-    · right; right
-      have hj₀: j = ((c.sqrt + (3 : ℕ) - c.sqrt % (3 : ℕ)) ^ (2 : ℕ) - c) / (3 : ℕ) := by rfl
-      rw [hh₂] at hj₀
-      simp at hj₀
-      simp_all
-      use (i + j)
-      refine aux_2_3 a ha₁ x c i j ((c.sqrt + (3 : ℕ)) ^ (2 : ℕ)) hx₀ hi₀ hh₆ ?_ ?_ hj₀
-      · simp_all
-        exact aux_2_5 a ha₁ x c i hx₀ hi₀ hh₃ hh₄ hh₁ hh₂
-      · refine Nat.dvd_of_mod_eq_zero ?_
-        refine Nat.sub_mod_eq_zero_of_mod_eq ?_
-        rw [hh₁]
-        rw [Nat.pow_mod]
-        have h₀: (c.sqrt + (3 : ℕ)) % (3 : ℕ) = 0 := by lia
-        rw [h₀]
-    obtain hh₂ | hh₂ := hh₂
-    · right; left
-      have hj₀: j = ((c.sqrt + (3 : ℕ) - c.sqrt % (3 : ℕ)) ^ (2 : ℕ) - c) / (3 : ℕ) := by rfl
-      rw [hh₂] at hj₀
-      simp at hj₀
-      simp_all
-      use (i + j)
-      refine aux_2_3 a ha₁ x c i j ((c.sqrt + (2 : ℕ)) ^ (2 : ℕ)) hx₀ hi₀ hh₅ ?_ ?_ hj₀
-      · intro k hk₀ hk₁
-        refine aux_2_4 a ha₁ x c i j hj₀ hx₀ hi₀ hh₃ hh₄ ?_ k hk₀ hk₁
-        have hc₂: (c.sqrt + (1 : ℕ)) % (3 : ℕ) = 2 := by lia
-        rw [hh₁, Nat.pow_mod, hc₂]
-        finiteness
-      · refine Nat.dvd_of_mod_eq_zero ?_
-        refine Nat.sub_mod_eq_zero_of_mod_eq ?_
-        rw [hh₁]
-        rw [Nat.pow_mod]
-        have h₀: (c.sqrt + (2 : ℕ)) % (3 : ℕ) = 0 := by lia
-        rw [h₀]
-    · left
-      have hj₀: j = ((c.sqrt + (3 : ℕ) - c.sqrt % (3 : ℕ)) ^ (2 : ℕ) - c) / (3 : ℕ) := by rfl
-      rw [hh₂] at hj₀
-      simp at hj₀
-      simp_all
-      use (i + j)
-      refine aux_2_2 a ha₁ x c i j ((c.sqrt + (1 : ℕ)) ^ (2 : ℕ)) hj₀ hx₀ hi₀ hh₃ hh₄ ?_
-      refine Nat.dvd_of_mod_eq_zero ?_
-      refine Nat.sub_mod_eq_zero_of_mod_eq ?_
-      rw [hh₁]
-      rw [Nat.pow_mod]
-      have h₀: (c.sqrt + (1 : ℕ)) % (3 : ℕ) = 0 := by lia
-      rw [h₀]
-  · obtain hh₂ | hh₂ := hh₂
-    · let j : ℕ := ((c.sqrt + (1 : ℕ)) ^ (2 : ℕ) - c) / (3 : ℕ)
-      have hj₀: a x (i + j) = (c.sqrt + (1 : ℕ)) ^ (2 : ℕ) := by
-        simp_all
-        have hc₂: (3 : ℕ) ∣ (c.sqrt + (1 : ℕ)) ^ (2 : ℕ) - c := by
-          refine Nat.dvd_of_mod_eq_zero ?_
-          refine Nat.sub_mod_eq_zero_of_mod_eq ?_
-          rw [hh₁]
-          rw [Nat.pow_mod]
-          have h₀: (c.sqrt + (1 : ℕ)) % (3 : ℕ) = 1 := by lia
-          rw [h₀]
-        exact aux_2_2 a ha₁ x c i j ((c.sqrt + (1 : ℕ)) ^ (2 : ℕ)) rfl hx₀ hi₀ hh₃ hh₄ hc₂
-      left
-      rw [← hj₀]
-      exact Set.mem_range_self (i + j)
-    obtain hh₂ | hh₂ := hh₂
-    · let j : ℕ := ((c.sqrt + (1 : ℕ)) ^ (2 : ℕ) - c) / (3 : ℕ)
-      have hj₀: a x (i + j) = (c.sqrt + (1 : ℕ)) ^ (2 : ℕ) := by
-        have hc₃: (3 : ℕ) ∣ (c.sqrt + (1 : ℕ)) ^ (2 : ℕ) - c := by
-          refine Nat.dvd_of_mod_eq_zero ?_
-          refine Nat.sub_mod_eq_zero_of_mod_eq ?_
-          rw [hh₁]
-          rw [Nat.pow_mod]
-          have h₀: (c.sqrt + (1 : ℕ)) % (3 : ℕ) = 2 := by lia
-          rw [h₀]
-        exact aux_2_2 a ha₁ x c i j ((c.sqrt + (1 : ℕ)) ^ (2 : ℕ)) rfl hx₀ hi₀ hh₃ hh₄ hc₃
-      left
-      rw [← hj₀]
-      exact Set.mem_range_self (i + j)
-    · let j : ℕ := ((c.sqrt + (2 : ℕ)) ^ (2 : ℕ) - c) / (3 : ℕ)
-      have hj₀: a x (i + j) = (c.sqrt + (2 : ℕ)) ^ (2 : ℕ) := by
-        refine aux_2_3 a ha₁ x c i j ((c.sqrt + (2 : ℕ)) ^ (2 : ℕ)) hx₀ hi₀ hh₅ ?_ ?_ rfl
-        · simp_all
-          intro k hk₀ hk₁
-          refine aux_2_4 a ha₁ x c i j rfl hx₀ hi₀ hh₃ hh₄ ?_ k hk₀ hk₁
-          have hc₂: (c.sqrt + (1 : ℕ)) % (3 : ℕ) = 0 := by lia
-          rw [hh₁, Nat.pow_mod, hc₂]
-          finiteness
-        · refine Nat.dvd_of_mod_eq_zero ?_
-          refine Nat.sub_mod_eq_zero_of_mod_eq ?_
-          rw [hh₁]
-          rw [Nat.pow_mod]
-          have h₀: (c.sqrt + (2 : ℕ)) % (3 : ℕ) = 1 := by lia
-          rw [h₀]
-      right; left
-      rw [← hj₀]
-      exact Set.mem_range_self (i + j)
-
-theorem aux_4
-    (a : ℕ → ℕ → ℕ)
-    (ha₁ : ∀ x i, 1 < x → if IsSquare (a x i)
-                          then a x (i + 1) = Nat.sqrt (a x i)
-                          else a x (i + 1) = a x i + 3) :
-    ∀ x > 1, (∃ j, a x j ≡ 2 [MOD 3]) → (∀ A, {n | a x n = A}.Finite) := by
-  intro x hx₀ hx₁ A
-  obtain ⟨i, hi₀⟩ := hx₁
-  rw [Set.finite_iff_bddBelow_bddAbove]
-  constructor
-  · simp
-  · let c : ℕ := a x i
-    have h₁: StrictMonoOn (a x) (Set.Ici i) := by
-      intro j hj₀ k hk₀ hj₁
-      have hc₈: c ≡ 2 [MOD 3] := by exact hi₀
-      have h₂: ∀ l ≥ i, a x l = c + (l - i) * 3 := by
-        intro l
-        refine Nat.strong_induction_on l ?_
-        intro d hd₀ hd₁
-        by_cases hd₃: i < d
-        · have hd₄: a x (d - 1) = c + (d - 1 - i) * (3 : ℕ) := by
-            refine hd₀ (d - 1) ?_ ?_
-            · exact Nat.sub_one_lt_of_lt hd₃
-            · exact Nat.le_sub_one_of_lt hd₃
-          have hd₅: ¬IsSquare (a x (d - 1)) := by
-            have hh₀: ∀ m ≥ i, a x m ≡ 2 [MOD 3] := by
-              intro m hm₀
-              refine Nat.le_induction hc₈ ?_ m hm₀
-              intro t _ ht₁
-              have ht₂: ¬ IsSquare (a x t) := by exact aux_1 (a x t) ht₁
-              have ht₃ := ha₁ x t hx₀
-              have ht₄: a x (t + (1 : ℕ)) = a x t + (3 : ℕ) := by simp_all only [↓reduceIte]
-              rw [ht₄]
-              exact Nat.ModEq.add_right (3 : ℕ) ht₁
-            refine aux_1 (a x (d - 1)) ?_
-            refine hh₀ (d - 1) ?_
-            exact Nat.le_sub_one_of_lt hd₃
-          have hd₆ := ha₁ x (d - 1) hx₀
-          rw [if_neg hd₅] at hd₆
-          rw [show d - 1 + 1 = d from by lia] at hd₆
-          rw [hd₆, hd₄]; lia
-        · have hdi : d = i := by lia
-          subst hdi
-          simp [c]
-      rw [h₂ j hj₀, h₂ k hk₀]
-      simp
-      exact Nat.sub_lt_sub_right hj₀ hj₁
-    rw [bddAbove_iff_subset_Iic]
-    have h₂: {n : ℕ | a x n = A} = {n : ℕ | a x n = A ∧ i ≤ n} ∪ {n : ℕ | a x n = A ∧ n < i} := by
-      ext j
-      simp
+/-- Every term of the sequence is greater than 1. -/
+lemma one_lt (ha₀ : ∀ x, a x 0 = x) (ha₁ : Rule a) (hx : 1 < x) :
+    ∀ i, 1 < a x i := by
+  intro i
+  induction i with
+  | zero => rw [ha₀]; exact hx
+  | succ i ih =>
+    by_cases h : IsSquare (a x i)
+    · rw [step_sq ha₁ hx h]
+      obtain ⟨r, hr⟩ := h
+      have h1 : 1 < r * r := hr ▸ ih
+      have h2 : 2 ≤ r := by nlinarith
+      have h3 : 2 ≤ (a x i).sqrt := Nat.le_sqrt.mpr (by rw [hr]; nlinarith)
       lia
-    by_cases h₃: ∃ j, a x j = A ∧ i ≤ j
-    · obtain ⟨j, hj₀⟩ := h₃
-      use j
-      intro k hk₀
-      simp_all
-      obtain hk₀ | hk₀ := hk₀
-      · contrapose! hk₀
-        intro hk₁
-        exfalso
-        have hk₂: k ∈ Set.Ici i := by
-          refine Set.mem_Ici.mpr ?_
-          refine le_trans hj₀.2 ?_
-          exact Nat.le_of_succ_le hk₀
-        have hj₁: j ∈ Set.Ici i := by exact Set.mem_Ici.mpr hj₀.2
-        have hk₄: a x j ≠ a x k := by
-          refine (Set.InjOn.ne_iff ?_ hj₁ hk₂).mpr (Nat.ne_of_lt hk₀)
-          exact StrictMonoOn.injOn h₁
-        bound
-      · refine le_trans ?_ hj₀.2
-        exact le_of_lt hk₀.2
-    · push Not at h₃
-      have h₄: {n : ℕ | a x n = A ∧ i ≤ n} = ∅ := by
-        refine Set.sep_eq_empty_iff_mem_false.mpr ?_
-        simp
-        intro j hj₀
-        exact h₃ j hj₀
-      rw [h₂, h₄, Set.empty_union]
-      use i
-      intro j hj₀
-      simp_all
-      exact le_of_lt hj₀.2
-
-theorem aux_5
-    (a : ℕ → ℕ → ℕ)
-    (ha₀ : ∀ x, a x 0 = x)
-    (ha₁ : ∀ x i, 1 < x → if IsSquare (a x i)
-                          then a x (i + 1) = Nat.sqrt (a x i)
-                          else a x (i + 1) = a x i + 3) :
-    ∀ x > 1, 3 ∣ x → ∀ i, 3 ∣ a x i := by
-  intro x hx₀ hx₁ i
-  refine Nat.strong_induction_on i ?_
-  intro d hd₀
-  by_cases hd₁: 0 < d
-  · have hd₃: (3 : ℕ) ∣ a x (d - 1) := by
-      refine hd₀ (d - 1) ?_
-      exact Nat.sub_one_lt_of_lt hd₁
-    have hd₅₀ := ha₁ x (d - 1) hx₀
-    by_cases hd₄: IsSquare (a x (d - 1))
-    · have hd₅: a x d = (a x (d - 1)).sqrt := by
-        rw [if_pos hd₄] at hd₅₀
-        rwa [show d - 1 + 1 = d from by lia] at hd₅₀
-      obtain ⟨t, ht₀⟩ := hd₄
-      have ht₁: (t ^ (2 : ℕ)).sqrt = t := by exact Nat.sqrt_eq' t
-      rw [hd₅, ht₀, ← pow_two, ht₁]
-      rw [ht₀, ← pow_two] at hd₃
-      exact Nat.Prime.dvd_of_dvd_pow Nat.prime_three hd₃
-    · rw [if_neg hd₄] at hd₅₀
-      rw [show d - 1 + 1 = d from by lia] at hd₅₀
-      rw [hd₅₀]
+    · rw [step_nonsq ha₁ hx h]
       lia
-  · push Not at hd₁
-    interval_cases d
-    rw [ha₀]
-    exact hx₁
 
+/-- Divisibility by 3 is invariant along the sequence. -/
+lemma three_dvd_iff (ha₀ : ∀ x, a x 0 = x) (ha₁ : Rule a) (hx : 1 < x) :
+    ∀ i, (3 ∣ a x i ↔ 3 ∣ x) := by
+  intro i
+  induction i with
+  | zero => rw [ha₀]
+  | succ i ih =>
+    by_cases h : IsSquare (a x i)
+    · rw [step_sq ha₁ hx h, ← ih]
+      obtain ⟨r, hr⟩ := h
+      rw [hr, Nat.sqrt_eq, Nat.prime_three.dvd_mul]
+      tauto
+    · rw [step_nonsq ha₁ hx h, ← ih]
+      lia
+
+/-- Once the sequence is 2 mod 3, it never again hits a perfect square, so
+it just increases by 3 forever. -/
+lemma run_linear (ha₁ : Rule a) (hx : 1 < x) {i : ℕ} (hi : a x i % 3 = 2) :
+    ∀ j, a x (i + j) = a x i + 3 * j := by
+  intro j
+  induction j with
+  | zero => simp
+  | succ j ih =>
+    have h2 : ¬IsSquare (a x (i + j)) := by
+      apply not_isSquare_of_mod_three
+      rw [ih]
+      lia
+    rw [show i + (j + 1) = (i + j) + 1 by ring, step_nonsq ha₁ hx h2, ih]
+    ring
+
+/-- If the sequence is ever 2 mod 3, then it takes each value only
+finitely often. -/
+lemma finite_visits (ha₁ : Rule a) (hx : 1 < x) {i : ℕ} (hi : a x i % 3 = 2)
+    (A : ℕ) : {n | a x n = A}.Finite := by
+  apply Set.Finite.subset (Set.finite_Icc 0 (i + A))
+  intro n hn
+  simp only [Set.mem_setOf_eq] at hn
+  obtain h | h : n ≤ i ∨ i < n := by lia
+  · exact Set.mem_Icc.mpr ⟨Nat.zero_le n, by lia⟩
+  · have h1 := run_linear ha₁ hx hi (n - i)
+    rw [show i + (n - i) = n by lia] at h1
+    exact Set.mem_Icc.mpr ⟨Nat.zero_le n, by lia⟩
+
+/-- From a value c that is not 2 mod 3, the sequence climbs to the *least*
+perfect square in the progression c, c+3, c+6, ..., and the next step takes
+it down to a value at most √c + 3.  (By minimality, no intermediate value of
+the climb is a square; and the progression does contain a square r² with
+√c < r ≤ √c + 3, where r is chosen with r² ≡ c (mod 3).) -/
+lemma climb (ha₁ : Rule a) (hx : 1 < x) {i c : ℕ} (hi : a x i = c)
+    (hc : c % 3 ≠ 2) : ∃ j, a x j ≤ c.sqrt + 3 := by
+  classical
+  obtain ⟨r, hr1, hr2, hr3⟩ : ∃ r, c.sqrt < r ∧ r ≤ c.sqrt + 3 ∧
+      r * r % 3 = c % 3 := by
+    obtain hs | hs | hs : c.sqrt % 3 = 0 ∨ c.sqrt % 3 = 1 ∨ c.sqrt % 3 = 2 := by
+      lia
+    all_goals obtain h | h : c % 3 = 0 ∨ c % 3 = 1 := by lia
+    · exact ⟨c.sqrt + 3, by lia, by lia,
+        by rw [Nat.mul_mod, show (c.sqrt + 3) % 3 = 0 by lia, h]⟩
+    · exact ⟨c.sqrt + 1, by lia, by lia,
+        by rw [Nat.mul_mod, show (c.sqrt + 1) % 3 = 1 by lia, h]⟩
+    · exact ⟨c.sqrt + 2, by lia, by lia,
+        by rw [Nat.mul_mod, show (c.sqrt + 2) % 3 = 0 by lia, h]⟩
+    · exact ⟨c.sqrt + 1, by lia, by lia,
+        by rw [Nat.mul_mod, show (c.sqrt + 1) % 3 = 2 by lia, h]⟩
+    · exact ⟨c.sqrt + 1, by lia, by lia,
+        by rw [Nat.mul_mod, show (c.sqrt + 1) % 3 = 0 by lia, h]⟩
+    · exact ⟨c.sqrt + 2, by lia, by lia,
+        by rw [Nat.mul_mod, show (c.sqrt + 2) % 3 = 1 by lia, h]⟩
+  have hcr : c ≤ r * r := by
+    have h1 : c < (c.sqrt + 1) * (c.sqrt + 1) := Nat.lt_succ_sqrt c
+    have h2 : (c.sqrt + 1) * (c.sqrt + 1) ≤ r * r :=
+      Nat.mul_le_mul (by lia) (by lia)
+    lia
+  have he : c + 3 * ((r * r - c) / 3) = r * r := by lia
+  have hex : ∃ t, IsSquare (c + 3 * t) := ⟨(r * r - c) / 3, r, he⟩
+  set t₀ := Nat.find hex with ht₀
+  -- the sequence adds 3 at every step until it reaches c + 3 * t₀
+  have hrun : ∀ s, s ≤ t₀ → a x (i + s) = c + 3 * s := by
+    intro s
+    induction s with
+    | zero => intro _; simpa using hi
+    | succ s ih =>
+      intro hs
+      have h1 : a x (i + s) = c + 3 * s := ih (by lia)
+      have h2 : ¬IsSquare (a x (i + s)) := by
+        rw [h1]
+        exact Nat.find_min hex (by lia)
+      rw [show i + (s + 1) = (i + s) + 1 by ring, step_nonsq ha₁ hx h2, h1]
+      ring
+  have ht₀r : c + 3 * t₀ ≤ r * r := by
+    have h1 : t₀ ≤ (r * r - c) / 3 := Nat.find_min' hex ⟨r, he⟩
+    lia
+  obtain ⟨s, hs⟩ := Nat.find_spec hex
+  have hsq : a x (i + t₀) = s * s := by rw [hrun t₀ le_rfl, ← hs]
+  refine ⟨i + t₀ + 1, ?_⟩
+  rw [step_sq ha₁ hx ⟨s, hsq⟩, hsq, Nat.sqrt_eq]
+  -- s ≤ r ≤ √c + 3
+  have h1 : s ≤ r := by
+    have h2 : s * s ≤ r * r := by lia
+    calc s = (s * s).sqrt := (Nat.sqrt_eq s).symm
+    _ ≤ (r * r).sqrt := Nat.sqrt_le_sqrt h2
+    _ = r := Nat.sqrt_eq r
+  lia
+
+/-- If the sequence never hits the class 2 mod 3, then its minimum value
+is 3 (so that 3 divides every term, and in particular x). -/
+lemma orbit_min_three (ha₀ : ∀ x, a x 0 = x) (ha₁ : Rule a) (hx : 1 < x)
+    (hno2 : ∀ i, a x i % 3 ≠ 2) : 3 ∣ x ∧ ∃ i, a x i = 3 := by
+  obtain ⟨c, ⟨i, hi⟩, hmin⟩ :
+      ∃ c, c ∈ Set.range (a x) ∧ ∀ j, c ≤ a x j :=
+    ⟨sInf (Set.range (a x)), Nat.sInf_mem (Set.range_nonempty (a x)),
+     fun j ↦ Nat.sInf_le ⟨j, rfl⟩⟩
+  have hc1 : 1 < c := hi ▸ one_lt ha₀ ha₁ hx i
+  -- the minimum is not a square: otherwise its square root would be a
+  -- smaller element of the orbit
+  have hnsq : ¬IsSquare c := by
+    rintro ⟨r, hr⟩
+    have h1 : a x (i + 1) = r := by
+      rw [step_sq ha₁ hx (by rw [hi]; exact ⟨r, hr⟩), hi, hr, Nat.sqrt_eq]
+    have h2 : c ≤ r := h1 ▸ hmin (i + 1)
+    nlinarith [hr ▸ hc1]
+  -- by the climb lemma and minimality, c ≤ √c + 3, whence c ≤ 5
+  obtain ⟨j, hj⟩ := climb ha₁ hx hi (by rw [← hi]; exact hno2 i)
+  have h5 : c ≤ c.sqrt + 3 := le_trans (hmin j) hj
+  have hc5 : c ≤ 5 := by
+    by_contra h6
+    obtain ⟨d, rfl⟩ : ∃ d, c = d + 6 := ⟨c - 6, by lia⟩
+    have h7 : d + 3 ≤ (d + 6).sqrt := by lia
+    have h8 := Nat.le_sqrt.mp h7
+    nlinarith
+  -- the only possible minimum is 3
+  have h2 := hno2 i
+  rw [hi] at h2
+  have hc3 : c = 3 := by
+    interval_cases c
+    · lia
+    · rfl
+    · exact absurd ⟨2, rfl⟩ hnsq
+    · lia
+  rw [hc3] at hi
+  exact ⟨(three_dvd_iff ha₀ ha₁ hx i).mp (by rw [hi]), i, hi⟩
+
+/-- Once the sequence hits 3, it cycles 3 → 6 → 9 → 3 forever. -/
+lemma cycle (ha₁ : Rule a) (hx : 1 < x) {i : ℕ} (h : a x i = 3) :
+    ∀ j, a x (i + 3 * j) = 3 := by
+  intro j
+  induction j with
+  | zero => simpa using h
+  | succ j ih =>
+    have h6 : a x (i + 3 * j + 1) = 6 := by
+      rw [step_nonsq ha₁ hx (by rw [ih]; norm_num), ih]
+    have h9 : a x (i + 3 * j + 2) = 9 := by
+      rw [show i + 3 * j + 2 = (i + 3 * j + 1) + 1 by ring,
+          step_nonsq ha₁ hx (by rw [h6]; norm_num), h6]
+    rw [show i + 3 * (j + 1) = (i + 3 * j + 2) + 1 by ring,
+        step_sq ha₁ hx (by rw [h9]; exact ⟨3, by norm_num⟩), h9,
+        show (9 : ℕ) = 3 * 3 by norm_num, Nat.sqrt_eq]
 
 snip end
 
@@ -471,221 +243,28 @@ problem imo2017_p1
                          else a x (i + 1) = a x i + 3) :
     ∀ x > 1, (∃ A, {n | a x n = A}.Infinite) ↔ x ∈ solution_set := by
   intro x hx₀
-  simp
-  let S : Set ℕ := Set.range (a x)
-  have hS₀: BddBelow S := by exact OrderBot.bddBelow S
-  have hS₁: ∃ c, IsLeast S c := by
-    refine BddBelow.exists_isLeast_of_nonempty hS₀ ?_
-    exact Set.range_nonempty (a x)
-  obtain ⟨c, hc₀⟩ := hS₁
-  have hc₁: c ∈ S := by exact Set.mem_of_mem_inter_left hc₀
-  obtain ⟨i, hi₀⟩ := hc₁
-  have hc₁ : 1 < c := by
-    have h₀: ∀ j, 1 < a x j := by
-      intro j
-      refine Nat.strong_induction_on j ?_
-      intro d hd₀
-      by_cases hd₁: 0 < d
-      · have hd₂ := ha₁ x (d - 1) hx₀
-        have hd₃: d - 1 + 1 = d := by exact Nat.sub_add_cancel hd₁
-        rw [hd₃] at hd₂
-        have hd₄: 1 < a x (d - 1) := by
-          refine hd₀ (d - 1) ?_
-          exact Nat.sub_one_lt_of_lt hd₁
-        by_cases hd₅: IsSquare (a x (d - (1 : ℕ)))
-        · have hd₆: a x d = (a x (d - (1 : ℕ))).sqrt := by bound
-          rw [hd₆]
-          have hd₇: 2 ^ 2 ≤ (a x (d - (1 : ℕ))) := by
-            contrapose! hd₅
-            interval_cases (a x (d - (1 : ℕ))) <;> norm_num
-          have hd₈: 2 ≤ (a x (d - (1 : ℕ))).sqrt := by exact Nat.le_sqrt'.mpr hd₇
-          exact hd₈
-        · have hd₆: a x d = a x (d - (1 : ℕ)) + 3 := by simp_all only [↓reduceIte]
-          lia
-      · have hd₂: d = 0 := Nat.eq_zero_of_not_pos hd₁
-        rw [hd₂, ha₀]
-        exact hx₀
-    rw [← hi₀]
-    exact h₀ i
-  have hc₂: ¬ IsSquare c := by
-    by_contra! hh₀
-    have hh₁ := ha₁ x i hx₀
-    have hh₂: a x (i + 1) = c.sqrt := by bound
-    have hh₃: c.sqrt < c := by exact Nat.sqrt_lt_self hc₁
-    have hh₄: c.sqrt ∈ S := by
-      rw [← hh₂]
-      exact Set.mem_range_self (i + (1 : ℕ))
-    have hh₅: c ≤ c.sqrt := by
-      have hh₆: c ∈ lowerBounds S := by exact Set.mem_of_mem_inter_right hc₀
-      exact hh₆ hh₄
-    lia
-  by_cases hhc: c % 3 = 2
-  · constructor
-    · intro h₀
-      exfalso
-      have h₁: (∀ A, {n | a x n = A}.Finite) := by
-        refine aux_4 a ha₁ x hx₀ ?_
-        bound
-      bound
-    · intro ⟨h₀, h₁⟩
-      exfalso
-      have h₂: ∀ j, 3 ∣ a x j := by exact fun (j : ℕ) ↦ aux_5 a ha₀ ha₁ x hx₀ h₁ j
-      have h₃: 3 ∣ c := by
-        rw [← hi₀]
-        exact h₂ i
+  simp only [solution_set, Set.mem_setOf_eq]
+  constructor
+  · -- If some value recurs infinitely often, the sequence never reaches the
+    -- class 2 mod 3, and then its minimum is 3, so 3 ∣ x.
+    rintro ⟨A, hA⟩
+    refine ⟨by lia, ?_⟩
+    by_cases hex : ∃ i, a x i % 3 = 2
+    · obtain ⟨i, hi⟩ := hex
+      exact absurd (finite_visits ha₁ hx₀ hi A) hA
+    · push Not at hex
+      exact (orbit_min_three ha₀ ha₁ hx₀ hex).1
+  · -- If 3 ∣ x, every term is divisible by 3, so the minimum of the orbit
+    -- is 3 and the sequence ends up cycling 3 → 6 → 9 → 3.
+    rintro ⟨-, h3⟩
+    have hno2 : ∀ i, a x i % 3 ≠ 2 := by
+      intro i
+      have h := (three_dvd_iff ha₀ ha₁ hx₀ i).mpr h3
       lia
-  · have hc₃: c ≤ Nat.sqrt c + 3 := by
-      have hh₀: (Nat.sqrt c + 1) ^ 2 ∈ S ∨ (Nat.sqrt c + 2) ^ 2 ∈ S ∨ (Nat.sqrt c + 3) ^ 2 ∈ S := by
-        exact aux_3 a ha₁ x c i hx₀ S rfl hi₀ hc₂ hhc
-      obtain hh₀ | hh₀ | hh₀ := hh₀
-      · obtain ⟨j, hj₀⟩ := hh₀
-        have hj₁: IsSquare (a x j) := by rw [hj₀]; exact IsSquare.sq (c.sqrt + (1 : ℕ))
-        have hj₂ := ha₁ x j hx₀
-        have hj₃: a x (j + 1) = (c.sqrt + (1 : ℕ)) := by
-          rw [hj₀] at hj₂
-          simp_all only [↓reduceIte]
-          exact Nat.sqrt_eq' (c.sqrt + (1 : ℕ))
-        have hj₄: a x (j + 1) ∈ S := by exact Set.mem_range_self (j + (1 : ℕ))
-        have hj₅: c ≤ c.sqrt + (1 : ℕ) := by
-          have hj₆: c ∈ lowerBounds S := by exact Set.mem_of_mem_inter_right hc₀
-          rw [hj₃] at hj₄
-          exact hj₆ hj₄
-        refine le_trans hj₅ ?_
-        simp
-      · obtain ⟨j, hj₀⟩ := hh₀
-        have hj₁: IsSquare (a x j) := by rw [hj₀]; exact IsSquare.sq (c.sqrt + (2 : ℕ))
-        have hj₂ := ha₁ x j hx₀
-        have hj₃: a x (j + 1) = (c.sqrt + (2 : ℕ)) := by
-          rw [hj₀] at hj₂
-          simp_all only [↓reduceIte]
-          exact Nat.sqrt_eq' (c.sqrt + (2 : ℕ))
-        have hj₄: a x (j + 1) ∈ S := by exact Set.mem_range_self (j + (1 : ℕ))
-        have hj₅: c ≤ c.sqrt + (2 : ℕ) := by
-          have hj₆: c ∈ lowerBounds S := by exact Set.mem_of_mem_inter_right hc₀
-          rw [hj₃] at hj₄
-          exact hj₆ hj₄
-        exact Nat.le_succ_of_le hj₅
-      · obtain ⟨j, hj₀⟩ := hh₀
-        have hj₁: IsSquare (a x j) := by rw [hj₀]; exact IsSquare.sq (c.sqrt + (3 : ℕ))
-        have hj₂ := ha₁ x j hx₀
-        have hj₃: a x (j + 1) = (c.sqrt + (3 : ℕ)) := by
-          rw [hj₀] at hj₂
-          simp_all only [↓reduceIte]
-          exact Nat.sqrt_eq' (c.sqrt + (3 : ℕ))
-        have hj₄: a x (j + 1) ∈ S := by exact Set.mem_range_self (j + (1 : ℕ))
-        have hj₆: c ∈ lowerBounds S := by exact Set.mem_of_mem_inter_right hc₀
-        rw [hj₃] at hj₄
-        exact hj₆ hj₄
-    have hc₄: c ≤ 5 := by
-      contrapose! hc₃
-      refine Nat.add_lt_of_lt_sub ?_
-      have hi₁: 2 ≠ 0 := by exact Ne.symm (Nat.zero_ne_add_one (1 : ℕ))
-      refine (Nat.pow_lt_pow_iff_left hi₁).mp ?_
-      have hc₄: c.sqrt ^ (2 : ℕ) ≤ c := by exact Nat.sqrt_le' c
-      refine lt_of_le_of_lt hc₄ ?_
-      rw [pow_two, Nat.mul_sub, Nat.sub_mul, Nat.sub_mul]
-      ring_nf
-      refine Nat.le_induction ?_ ?_ c hc₃
-      · norm_num
-      · lia
-    have hc₅: c ≠ 4 := by
-      contrapose! hc₂
-      rw [hc₂]
-      use 2
-    constructor
-    · intro hx₁
-      obtain ⟨A, hA₀⟩ := hx₁
-      constructor
-      · exact Nat.zero_lt_of_lt hx₀
-      · contrapose! hA₀
-        have hx₂: x ≡ 1 [MOD 3] ∨ x ≡ 2 [MOD 3] := by
-          have hx₁₂: x % 3 = 1 ∨ x % 3 = 2 := by lia
-          exact hx₁₂
-        obtain hx₂ | hx₂ := hx₂
-        · exfalso
-          have hc₆: ¬(3 : ℕ) ∣ c := by
-            have hh₀: ∀ j, ¬ 3 ∣ a x j := by
-              intro j
-              refine Nat.strong_induction_on j ?_
-              intro d hd₀
-              by_cases hd₁: 0 < d
-              · have hd₂: d - 1 + 1 = d := Nat.sub_add_cancel hd₁
-                have hd₃ := ha₁ x (d - 1) hx₀
-                rw [hd₂] at hd₃
-                have hd₄: ¬ 3 ∣ a x (d - 1) := by
-                  refine hd₀ (d - 1) ?_
-                  exact Nat.sub_one_lt_of_lt hd₁
-                by_cases hd₅: IsSquare (a x (d - 1))
-                · have hd₆: a x d = (a x (d - (1 : ℕ))).sqrt := by simp_all only [↓reduceIte]
-                  rw [hd₆]
-                  contrapose! hd₄
-                  obtain ⟨r, hr₀⟩ := hd₅
-                  rw [hr₀, ← pow_two]
-                  refine dvd_pow ?_ (by norm_num)
-                  have hr₁: (a x (d - (1 : ℕ))).sqrt = r := by
-                    rw [hr₀]
-                    exact Nat.sqrt_eq r
-                  rw [← hr₁]
-                  exact hd₄
-                · lia
-              · have hd₂: d = 0 := Nat.eq_zero_of_not_pos hd₁
-                rw [hd₂, ha₀]
-                exact hA₀
-            rw [← hi₀]
-            exact hh₀ i
-          lia
-        · refine aux_4 a ha₁ x hx₀ ?_ A
-          use 0
-          rw [ha₀]
-          exact hx₂
-    · intro ⟨h₀, h₂⟩
-      use 3
-      have h₃: ∃ i, a x i = 3 := by
-        have h₃₀: ∀ i, 3 ∣ a x i := by
-          exact fun (i : ℕ) ↦ aux_5 a ha₀ ha₁ x hx₀ h₂ i
-        have hc₅: c = 3 := by
-          have hc₆: 3 ∣ c := by
-            exact (Nat.ModEq.dvd_iff (congrFun (congrArg HMod.hMod hi₀) x) h₂).mp (h₃₀ i)
-          interval_cases c
-          all_goals try lia
-        use i
-        rw [hi₀, hc₅]
-      obtain ⟨i, h₃⟩ := h₃
-      have h₄: ∀ j, a x (i + j * 3) = 3 := by
-        intro j
-        induction' j with d hd₀
-        · exact h₃
-        · rw [add_mul, one_mul, ← add_assoc]
-          have hd₁: a x (i + d * (3 : ℕ) + 1) = 6 := by
-            have hh₀ := ha₁ x (i + d * (3 : ℕ)) hx₀
-            have hh₁: ¬ IsSquare (3 : ℕ) := by norm_num
-            have hh₂: a x (i + d * (3 : ℕ) + (1 : ℕ)) = a x (i + d * (3 : ℕ)) + (3 : ℕ) := by
-              rw [hd₀] at hh₀
-              simp [hh₁] at hh₀
-              rw [hd₀]
-              exact hh₀
-            rw [hh₂, hd₀]
-          have hd₂: a x (i + d * (3 : ℕ) + 2) = 9 := by
-            have hh₀ := ha₁ x (i + d * (3 : ℕ) + 1) hx₀
-            have hh₁: ¬ IsSquare (6 : ℕ) := by norm_num
-            have hh₂: a x (i + d * (3 : ℕ) + (2 : ℕ)) = a x (i + d * (3 : ℕ) + 1) + (3 : ℕ) := by
-              rw [hd₁] at hh₀
-              simp [hh₁] at hh₀
-              rw [hd₁]
-              exact hh₀
-            rw [hh₂, hd₁]
-          have hd₃ := ha₁ x (i + d * (3 : ℕ) + (2 : ℕ)) hx₀
-          rw [hd₂] at hd₃
-          have hh₁: IsSquare (9 : ℕ) := ⟨3, rfl⟩
-          norm_num [hh₁] at hd₃
-          exact hd₃
-      refine Set.infinite_iff_exists_gt.mpr ?_
-      simp
-      intro j
-      use i + (j + 1) * 3
-      constructor
-      · exact h₄ (j + 1)
-      · lia
+    obtain ⟨-, i, hi⟩ := orbit_min_three ha₀ ha₁ hx₀ hno2
+    refine ⟨3, Set.infinite_of_injective_forall_mem
+      (f := fun j : ℕ ↦ i + 3 * j) (fun p q hpq ↦ by lia) fun j ↦ ?_⟩
+    exact cycle ha₁ hx₀ hi j
 
 
 end Imo2017P1

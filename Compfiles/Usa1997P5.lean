@@ -37,7 +37,12 @@ lemma bound (ha : 0 < a) (hb : 0 < b) (hc : 0 < c) :
   linarith
 
 -- Add the three bounds together
-def main_sum (ha : 0 < a) (hb : 0 < b) (hc : 0 < c) :=
+theorem main_sum (ha : 0 < a) (hb : 0 < b) (hc : 0 < c) :
+    1 / (a ^ 3 + b ^ 3 + a * b * c) +
+      (1 / (b ^ 3 + c ^ 3 + b * c * a) + 1 / (c ^ 3 + a ^ 3 + c * a * b)) ≤
+    1 / (a ^ 2 * b + a * b ^ 2 + a * b * c) +
+      (1 / (b ^ 2 * c + b * c ^ 2 + b * c * a) +
+         1 / (c ^ 2 * a + c * a ^ 2 + c * a * b)):=
   let h1 := bound ha hb hc
   let h2 := bound hb hc ha
   let h3 := bound hc ha hb
@@ -47,7 +52,7 @@ snip end
 
 problem usa1997_p5 (ha : 0 < a) (hb : 0 < b) (hc : 0 < c) :
     1 / (a^3 + b^3 + a*b*c) + 1 / (b^3 + c^3 + a*b*c) + 1 / (c^3 + a^3 + a*b*c) ≤ 1 / (a*b*c) := by
-  convert main_sum ha hb hc using 1
+  convert! main_sum ha hb hc using 1
   · ring -- LHS of main sum = LHS of desired
   · field -- RHS of main sum = RHS of desired
 

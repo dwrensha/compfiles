@@ -383,7 +383,7 @@ problem imo2023_p4
     (hxa : ∀ i : Finset.Icc 1 2023, ∃ k : ℤ, a x i = k)
     : 3034 ≤ a x ⟨2023, by simp⟩ := by
   have := imo2023_p4_generalized 1011 x hxp hxi hxa
-  convert this
+  convert! this
   norm_num
 
 end Imo2023P4

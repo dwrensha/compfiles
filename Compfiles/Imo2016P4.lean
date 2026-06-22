@@ -4,8 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Benpigchu
 -/
 
-import Mathlib.Data.Set.Card
-import Mathlib.Tactic
+import Mathlib
 
 import ProblemExtraction
 
@@ -35,195 +34,123 @@ abbrev P (n : ℕ) : ℕ := n^2 + n + 1
 
 snip begin
 
-def fragrantMap : ℕ → ℕ
-  | 0 => 0
-  | 1 => 5
-  | 2 => 4
-  | 3 => 6
-  | 4 => 2
-  | 5 => 1
-  | 6 => 3
-  | _ => 0
-
-lemma P_inj : Function.Injective P := by
-  apply StrictMono.injective
-  intro i j hij
-  rw [add_lt_add_iff_right]
-  apply add_lt_add _ hij
-  rw [pow_two, pow_two]
-  exact Nat.mul_self_lt_mul_self hij
+lemma P_inj : Function.Injective P :=
+  StrictMono.injective <| strictMono_nat_of_lt_succ fun n ↦ by simp only [P]; ring_nf; lia
 
 lemma ncard_set {a : ℕ} {b : ℕ+} : {p : ℕ+ | ∃ i : ℕ+, i ≤ b ∧ p = P (a + i)}.ncard = b := by
-  set f : Fin b → ℕ+ := fun i : Fin b ↦ ⟨(P (a + i + 1)), (by simp : _)⟩
-  have hset : Set.range f = {p : ℕ+ | ∃ i : ℕ+, i ≤ b ∧ p = P (a + i)} := by
-    rw [Set.range_eq_iff]
+  have h : {p : ℕ+ | ∃ i : ℕ+, i ≤ b ∧ p = P (a + i)} =
+      (fun i : ℕ+ ↦ (⟨P (a + i), by positivity⟩ : ℕ+)) '' Set.Icc 1 b := by
+    ext p
+    simp only [Set.mem_setOf_eq]
     constructor
-    · intro i
-      simp [f]
-      use ⟨i.val + 1, (by simp : _)⟩
-      constructor
-      · rw [← PNat.coe_le_coe, PNat.mk_coe]
-        apply Nat.add_one_le_of_lt
-        exact Fin.is_lt i
-      · rw [PNat.mk_coe]
-        ring
-    · intro p hp
-      rcases hp with ⟨i, hi, hi'⟩
-      rw [← PNat.coe_le_coe] at hi
-      have hival : i.val - 1 < b := by
-        apply lt_of_lt_of_le _ hi
-        apply Nat.sub_one_lt
-        apply ne_of_gt
-        exact PNat.pos i
-      use ⟨i.val - 1, hival⟩
-      apply PNat.eq
-      rw [PNat.mk_coe, hi']
-      simp [P]
-      have hi'' : (1 : ℕ) ≤ ↑i := one_le (a := i)
-      rw [add_assoc]
-      rw [Nat.sub_add_cancel hi'']
-  have hf : Function.Injective f := by
+    · rintro ⟨i, hib, hp⟩
+      exact ⟨i, ⟨one_le, hib⟩, PNat.coe_injective hp.symm⟩
+    · rintro ⟨i, ⟨-, hib⟩, rfl⟩
+      exact ⟨i, hib, rfl⟩
+  have hinj : Function.Injective (fun i : ℕ+ ↦ (⟨P (a + i), by positivity⟩ : ℕ+)) := by
     intro i j hij
-    simp [f] at hij
-    rw [← PNat.coe_inj, PNat.mk_coe, PNat.mk_coe] at hij
-    apply P_inj at hij
-    apply Nat.add_right_cancel at hij
-    apply Nat.add_left_cancel at hij
-    exact Fin.eq_of_val_eq hij
-  rw [← hset, Set.ncard_range_of_injective hf, Nat.card_fin]
+    have h2 := P_inj (Subtype.mk_eq_mk.mp hij)
+    exact PNat.coe_injective (by lia)
+  calc {p : ℕ+ | ∃ i : ℕ+, i ≤ b ∧ p = P (a + i)}.ncard
+      = ((fun i : ℕ+ ↦ (⟨P (a + i), by positivity⟩ : ℕ+)) '' Set.Icc 1 b).ncard :=
+        congrArg Set.ncard h
+    _ = (Set.Icc 1 b).ncard := Set.ncard_image_of_injective _ hinj
+    _ = (Finset.Icc 1 b).card := by rw [← Finset.coe_Icc, Set.ncard_coe_finset]
+    _ = b := by rw [PNat.card_Icc]; simp
 
-lemma two_dvd_pow_two_add_self (x : ℤ) : ∃ k : ℤ, 2 * k + 1 = x ^ 2 + x + 1 := by
-  mod_cases hx : x % 2
-    <;> rw [Int.modEq_comm, Int.modEq_iff_dvd, dvd_iff_exists_eq_mul_right] at hx
-    <;> rcases hx with ⟨k, hk⟩
-    <;> rw [sub_eq_iff_eq_add] at hk
-  · use k * (2 * k + 1)
-    rw [hk]
-    ring
-  · use (2 * k + 1) * (k + 1)
-    rw [hk]
-    ring
+lemma two_not_dvd_P (n : ℕ) : ¬ 2 ∣ P n := by
+  have h : 2 ∣ n * (n + 1) := Even.two_dvd (Nat.even_mul_succ_self n)
+  have hP : P n = n * (n + 1) + 1 := by simp only [P]; ring
+  lia
 
-lemma there_dvd_pow_two_add_self (x : ℤ) : ∃ k : ℤ, 3 * k + 1 = x ^ 2 + x + 1 ∨ 9 * k + 3 = x ^ 2 + x + 1 := by
-  mod_cases hx : x % 3
-    <;> rw [Int.modEq_comm, Int.modEq_iff_dvd, dvd_iff_exists_eq_mul_right] at hx
-    <;> rcases hx with ⟨k, hk⟩
-    <;> rw [sub_eq_iff_eq_add] at hk
-  · use k * (3 * k + 1)
-    left
-    rw [hk]
-    ring
-  · use k * (k + 1)
-    right
-    rw [hk]
-    ring
-  · use (3 * k + 2) * (k + 1)
-    left
-    rw [hk]
-    ring
+lemma nine_not_dvd_P (n : ℕ) : ¬ 9 ∣ P n := by
+  intro h
+  obtain ⟨m, hm⟩ : ∃ m, n = 3 * m ∨ n = 3 * m + 1 ∨ n = 3 * m + 2 := ⟨n / 3, by lia⟩
+  rcases hm with rfl | rfl | rfl
+  · rw [show P (3 * m) = 9 * m ^ 2 + 3 * m + 1 from by simp only [P]; ring] at h
+    lia
+  · rw [show P (3 * m + 1) = 9 * (m ^ 2 + m) + 3 from by simp only [P]; ring] at h
+    lia
+  · rw [show P (3 * m + 2) = 9 * m ^ 2 + 15 * m + 7 from by simp only [P]; ring] at h
+    lia
 
-lemma gcd_p_of_diff_one {a b : ℕ} (hab : a = b + 1) (hab' : ¬Nat.Coprime (P a) (P b)) : False := by
-  have hpa := Nat.gcd_dvd_left (P a) (P b)
-  have hpb := Nat.gcd_dvd_right (P a) (P b)
-  rw [Nat.coprime_iff_gcd_eq_one] at hab'
-  set p := (P a).gcd (P b) with hp
-  simp [P] at hpa hpb
-  rw [← Int.ofNat_dvd, Nat.cast_add, Nat.cast_add, Nat.cast_pow, Nat.cast_one] at hpa hpb
-  rw [← Int.ofNat_inj, Nat.cast_add, Nat.cast_one] at hab
-  rw [hab] at hpa
-  ring_nf at hpa
-  have h₁ := Int.dvd_sub hpa hpb
-  ring_nf at h₁
-  have h₂ := Int.dvd_sub (dvd_mul_of_dvd_left hpb 3) hpa
-  ring_nf at h₂
-  have h₃ := Int.dvd_sub (dvd_mul_of_dvd_left h₁ ↑b) h₂
-  ring_nf at h₃
-  have h₄ := Int.dvd_sub h₁ h₃
-  ring_nf at h₄
-  rcases two_dvd_pow_two_add_self (b : ℤ) with ⟨k, hk⟩
-  have h₅ := hpb
-  rw [← hk] at h₅
-  have h₆ := Int.dvd_sub h₅ (dvd_mul_of_dvd_left h₄ k)
-  ring_nf at h₆
-  rw [Int.natCast_dvd, Int.natAbs_one, Nat.dvd_one] at h₆
-  contrapose! hab'
-  exact h₆
+lemma dvd_of_dvd_two_mul {g x : ℕ} (hg : ¬ 2 ∣ g) (h : g ∣ 2 * x) : g ∣ x :=
+  ((Nat.Prime.coprime_iff_not_dvd Nat.prime_two).mpr hg).symm.dvd_of_dvd_mul_left h
 
-lemma gcd_p_of_diff_two {a b : ℕ} (hab : a = b + 2) (hab' : ¬Nat.Coprime (P a) (P b)) : Nat.gcd (P a) (P b) = 7 := by
-  have hpa := Nat.gcd_dvd_left (P a) (P b)
-  have hpb := Nat.gcd_dvd_right (P a) (P b)
-  rw [Nat.coprime_iff_gcd_eq_one] at hab'
-  set p := (P a).gcd (P b)
-  simp [P] at hpa hpb
-  rw [← Int.ofNat_dvd, Nat.cast_add, Nat.cast_add, Nat.cast_pow, Nat.cast_one] at hpa hpb
-  rw [← Int.ofNat_inj, Nat.cast_add, Nat.cast_ofNat] at hab
-  rw [hab] at hpa
-  ring_nf at hpa
-  have h₁ := Int.dvd_sub hpa hpb
-  ring_nf at h₁
-  have h₂ := Int.dvd_sub (dvd_mul_of_dvd_left hpb 5) hpa
-  ring_nf at h₂
-  have h₃ := Int.dvd_sub (dvd_mul_of_dvd_left h₁ ↑b) h₂
-  ring_nf at h₃
-  have h₄ := Int.dvd_sub (dvd_mul_of_dvd_left h₁ 3) (dvd_mul_of_dvd_left h₃ 2)
-  ring_nf at h₄
-  rcases two_dvd_pow_two_add_self (b : ℤ) with ⟨k, hk⟩
-  have h₅ := hpb
-  rw [← hk] at h₅
-  have h₆ := Int.dvd_sub (dvd_mul_of_dvd_left h₅ 7) (dvd_mul_of_dvd_left h₄ k)
-  ring_nf at h₆
-  rw [Int.natCast_dvd] at h₆
-  norm_num at h₆
-  rw [Nat.dvd_prime (by norm_num : _)] at h₆
-  rcases h₆ with h₆|h₆
-  · contrapose! hab'
-    exact h₆
-  · exact h₆
+/-- A common divisor of `P (b + k)` and `P b` divides `c` whenever
+`P (b + k) - P b = 2 * c`, since values of `P` are odd. -/
+lemma gcd_P_dvd_of_eq {b k c : ℕ} (h : P b + 2 * c = P (b + k)) :
+    (P (b + k)).gcd (P b) ∣ c := by
+  have hodd : ¬ 2 ∣ (P (b + k)).gcd (P b) :=
+    fun h' ↦ two_not_dvd_P b (h'.trans (Nat.gcd_dvd_right _ _))
+  refine dvd_of_dvd_two_mul hodd ((Nat.dvd_add_right (Nat.gcd_dvd_right _ _)).mp ?_)
+  rw [h]
+  exact Nat.gcd_dvd_left _ _
 
-lemma gcd_p_of_diff_three {a b : ℕ} (hab : a = b + 3) (hab' : ¬Nat.Coprime (P a) (P b)) : Nat.gcd (P a) (P b) = 3 := by
-  have hpa := Nat.gcd_dvd_left (P a) (P b)
-  have hpb := Nat.gcd_dvd_right (P a) (P b)
-  rw [Nat.coprime_iff_gcd_eq_one] at hab'
-  set p := (P a).gcd (P b)
-  simp [P] at hpa hpb
-  rw [← Int.ofNat_dvd, Nat.cast_add, Nat.cast_add, Nat.cast_pow, Nat.cast_one] at hpa hpb
-  rw [← Int.ofNat_inj, Nat.cast_add, Nat.cast_ofNat] at hab
-  rw [hab] at hpa
-  ring_nf at hpa
-  have h₁ := Int.dvd_sub hpa hpb
-  ring_nf at h₁
-  have h₂ := Int.dvd_sub (dvd_mul_of_dvd_left hpb 7) hpa
-  ring_nf at h₂
-  have h₃ := Int.dvd_sub (dvd_mul_of_dvd_left h₁ ↑b) h₂
-  ring_nf at h₃
-  have h₄ := Int.dvd_sub (dvd_mul_of_dvd_left h₁ 2) h₃
-  ring_nf at h₄
-  rcases two_dvd_pow_two_add_self (b : ℤ) with ⟨k, hk⟩
-  have h₅ := hpb
-  rw [← hk] at h₅
-  have h₆ := Int.dvd_sub (dvd_mul_of_dvd_left h₅ 9) (dvd_mul_of_dvd_left h₄ k)
-  ring_nf at h₆
-  rcases there_dvd_pow_two_add_self (b : ℤ) with ⟨l, hl|hl⟩
-  · have h₇ := hpb
-    rw [← hl] at h₇
-    have h₈ := Int.dvd_sub (dvd_mul_of_dvd_left h₇ 3) (dvd_mul_of_dvd_left h₆ l)
-    ring_nf at h₈
-    have h₉ := Int.dvd_sub h₇ (dvd_mul_of_dvd_left h₈ l)
-    ring_nf at h₉
-    rw [Int.natCast_dvd, Int.natAbs_one, Nat.dvd_one] at h₉
-    contrapose! hab'
-    exact h₉
-  · have h₇ := hpb
-    rw [← hl] at h₇
-    have h₈ := Int.dvd_sub h₇ (dvd_mul_of_dvd_left h₆ l)
-    ring_nf at h₈
-    rw [Int.natCast_dvd] at h₈
-    norm_num at h₈
-    rw [Nat.dvd_prime (by norm_num : _)] at h₈
-    rcases h₈ with h₈|h₈
-    · contrapose! hab'
-      exact h₈
-    · exact h₈
+/-- Adjacent values of `P` are coprime: a common divisor divides
+`(P (b+1) - P b) / 2 = b + 1`, hence divides `P b - b*(b+1) = 1`. -/
+lemma coprime_P_succ (b : ℕ) : Nat.Coprime (P (b + 1)) (P b) := by
+  rw [Nat.coprime_iff_gcd_eq_one]
+  have h1 : (P (b + 1)).gcd (P b) ∣ b + 1 := gcd_P_dvd_of_eq (by simp only [P]; ring)
+  refine Nat.dvd_one.mp ((Nat.dvd_add_right (h1.mul_left b)).mp ?_)
+  rw [show b * (b + 1) + 1 = P b from by simp only [P]; ring]
+  exact Nat.gcd_dvd_right _ _
+
+/-- The gcd of values of `P` at distance two divides 7. -/
+lemma gcd_P_add_two_dvd (b : ℕ) : (P (b + 2)).gcd (P b) ∣ 7 := by
+  set g := (P (b + 2)).gcd (P b) with hg
+  have hg2 : g ∣ P b := Nat.gcd_dvd_right _ _
+  have h1 : g ∣ 2 * b + 3 := gcd_P_dvd_of_eq (by simp only [P]; ring)
+  have h2 : g ∣ 8 * b + 5 := by
+    have h := h1.mul_left (2 * b + 3)
+    rw [show (2 * b + 3) * (2 * b + 3) = 4 * P b + (8 * b + 5) from by simp only [P]; ring] at h
+    exact (Nat.dvd_add_right (hg2.mul_left 4)).mp h
+  have h3 := h1.mul_left 4
+  rw [show 4 * (2 * b + 3) = (8 * b + 5) + 7 from by ring] at h3
+  exact (Nat.dvd_add_right h2).mp h3
+
+/-- The gcd of values of `P` at distance three divides 3. -/
+lemma gcd_P_add_three_dvd (b : ℕ) : (P (b + 3)).gcd (P b) ∣ 3 := by
+  set g := (P (b + 3)).gcd (P b) with hg
+  have hg2 : g ∣ P b := Nat.gcd_dvd_right _ _
+  have h1 : g ∣ 3 * b + 6 := gcd_P_dvd_of_eq (by simp only [P]; ring)
+  have h2 : g ∣ 27 * b + 27 := by
+    have h := h1.mul_left (3 * b + 6)
+    rw [show (3 * b + 6) * (3 * b + 6) = 9 * P b + (27 * b + 27) from by simp only [P]; ring] at h
+    exact (Nat.dvd_add_right (hg2.mul_left 9)).mp h
+  have h27 : g ∣ 27 := by
+    have h := h1.mul_left 9
+    rw [show 9 * (3 * b + 6) = (27 * b + 27) + 27 from by ring] at h
+    exact (Nat.dvd_add_right h2).mp h
+  -- since 9 never divides a value of P, the gcd must divide 3
+  have h9 : ¬ 9 ∣ g := fun h ↦ nine_not_dvd_P b (h.trans hg2)
+  obtain ⟨i, hi, hgi⟩ := (Nat.dvd_prime_pow (by norm_num : Nat.Prime 3)).mp
+    (show g ∣ 3 ^ 3 by norm_num; exact h27)
+  rw [hgi] at h9 ⊢
+  interval_cases i
+  · norm_num
+  · norm_num
+  · exact absurd (by norm_num) h9
+  · exact absurd (by norm_num) h9
+
+/-- If values of `P` at distance two have a common factor, that factor is 7. -/
+lemma seven_dvd_P_of_not_coprime {b : ℕ} (h : ¬Nat.Coprime (P (b + 2)) (P b)) :
+    7 ∣ P (b + 2) ∧ 7 ∣ P b := by
+  rw [Nat.coprime_iff_gcd_eq_one] at h
+  have h7 : (P (b + 2)).gcd (P b) = 7 :=
+    ((Nat.dvd_prime (by norm_num)).mp (gcd_P_add_two_dvd b)).resolve_left h
+  exact ⟨h7 ▸ Nat.gcd_dvd_left _ _, h7 ▸ Nat.gcd_dvd_right _ _⟩
+
+/-- If values of `P` at distance three have a common factor, that factor is 3. -/
+lemma three_dvd_P_of_not_coprime {b : ℕ} (h : ¬Nat.Coprime (P (b + 3)) (P b)) :
+    3 ∣ P (b + 3) ∧ 3 ∣ P b := by
+  rw [Nat.coprime_iff_gcd_eq_one] at h
+  have h3 : (P (b + 3)).gcd (P b) = 3 :=
+    ((Nat.dvd_prime (by norm_num)).mp (gcd_P_add_three_dvd b)).resolve_left h
+  have hl := Nat.gcd_dvd_left (P (b + 3)) (P b)
+  have hr := Nat.gcd_dvd_right (P (b + 3)) (P b)
+  rw [h3] at hl hr
+  exact ⟨hl, hr⟩
 
 snip end
 
@@ -235,37 +162,26 @@ problem imo2016_p4 :
       Solution := by
   rw [Solution]
   constructor
-  · set a := 196
-    use a
-    constructor
+  · -- a = 196 works: indices pair up as (1,5), (2,4), (3,6), and the paired values share
+    -- the factors 19, 7, 3 respectively.
+    refine ⟨196, ?_, ?_⟩
     · rw [ncard_set]
       norm_num
-    · intro m hm
-      simp at *
-      rcases hm with ⟨i, hi, hmi⟩
+    · rintro m ⟨i, hi, hmi⟩
       rw [← PNat.coe_le_coe, PNat.val_ofNat] at hi
-      set result := fragrantMap i.val
-      set val := P (a + result)
-      have hval : 0 < val := by
-        simp [val, result, fragrantMap]
-      use ⟨val, hval⟩
-      have hi' := PNat.pos i
-      constructorm* _ ∧ _
-      · have hresult : 0 < result := by
-          simp [result, fragrantMap]
-          interval_cases i.val <;> simp
-        use ⟨result, hresult⟩
-        constructor
-        · rw [← PNat.coe_le_coe, PNat.val_ofNat, PNat.mk_coe]
-          simp [result, fragrantMap]
-          interval_cases i.val <;> simp
-        · simp [val]
-      · rw [← PNat.coe_inj]
-        simp [hmi, val, a, result, fragrantMap]
-        interval_cases i.val <;> simp
-      · rw [← PNat.coprime_coe, PNat.mk_coe]
-        simp [hmi, val, a, result, fragrantMap, P]
-        interval_cases i.val <;> simp
+      -- It suffices to name a partner index j whose value shares a factor with m.
+      have key : ∀ j : ℕ+, j ≤ 6 → ¬Nat.Coprime (↑m) (P (196 + j)) → P (196 + j) ≠ ↑m →
+          ∃ n ∈ {p : ℕ+ | ∃ i : ℕ+, i ≤ 6 ∧ p = P (196 + i)}, n ≠ m ∧ ¬Nat.Coprime ↑m ↑n :=
+        fun j hj hcop hne ↦ ⟨⟨P (196 + j), by positivity⟩, ⟨j, hj, rfl⟩,
+          fun h ↦ hne (by rw [← h]; rfl), hcop⟩
+      have hp := i.pos
+      interval_cases i.val
+      · exact key 5 (by decide) (by rw [hmi]; norm_num [P]) (by rw [hmi]; norm_num [P])
+      · exact key 4 (by decide) (by rw [hmi]; norm_num [P]) (by rw [hmi]; norm_num [P])
+      · exact key 6 (by decide) (by rw [hmi]; norm_num [P]) (by rw [hmi]; norm_num [P])
+      · exact key 2 (by decide) (by rw [hmi]; norm_num [P]) (by rw [hmi]; norm_num [P])
+      · exact key 1 (by decide) (by rw [hmi]; norm_num [P]) (by rw [hmi]; norm_num [P])
+      · exact key 3 (by decide) (by rw [hmi]; norm_num [P]) (by rw [hmi]; norm_num [P])
   · rw [lowerBounds]
     intro b hb
     rcases hb with ⟨a, hcard, ha⟩
@@ -273,198 +189,94 @@ problem imo2016_p4 :
     by_contra! hb'
     rw [ncard_set] at hcard
     rw [← PNat.coe_lt_coe, PNat.val_ofNat] at hb'
+    -- For each index k, fragrance provides a partner index j sharing a prime factor.
+    have partner : ∀ k : ℕ, 0 < k → k ≤ (b : ℕ) → ∃ j : ℕ, 0 < j ∧ j ≤ (b : ℕ) ∧ j ≠ k ∧
+        ¬Nat.Coprime (P (a + k)) (P (a + j)) := by
+      intro k hk hkb
+      have hmem : (⟨P (a + k), by positivity⟩ : ℕ+) ∈ S := by
+        refine ⟨⟨k, hk⟩, ?_, rfl⟩
+        rw [← PNat.coe_le_coe]
+        exact hkb
+      obtain ⟨n, ⟨j, hjb, hj⟩, hne, hncop⟩ := ha _ hmem
+      refine ⟨j, j.pos, by exact_mod_cast hjb, ?_, ?_⟩
+      · intro hjk
+        exact hne (PNat.coe_injective (by rw [hj, hjk]; rfl))
+      · rw [hj] at hncop
+        exact hncop
     interval_cases hb : b.val
-    · set pa1 : ℕ+ := ⟨(P (a + 1)), (by simp : _)⟩ with hpa1
-      have hpa1S : pa1 ∈ S := by
-        simp [S, hpa1]
-        use ⟨1, (by norm_num : _)⟩
-        simp
-      rcases ha pa1 hpa1S with ⟨pi1, ⟨i1, hi1₁, hi1₂⟩, hpi1₁, hpi1₂⟩
-      rw [← PNat.coe_le_coe, hb] at hi1₁
-      rw [← PNat.coe_inj.ne, hi1₂, hpa1, PNat.mk_coe] at hpi1₁
-      rw [hi1₂, hpa1, PNat.mk_coe] at hpi1₂
-      have hi1 := i1.pos
-      interval_cases i1.val
-      · rw [ne_self_iff_false] at hpi1₁
-        exact hpi1₁
-      · rw [Nat.coprime_comm] at hpi1₂
-        exact gcd_p_of_diff_one (by ring: (a + 2) = (a + 1) + 1) hpi1₂
-    · set pa2 : ℕ+ := ⟨(P (a + 2)), (by simp : _)⟩ with hpa2
-      have hpa2S : pa2 ∈ S := by
-        simp [S, hpa2]
-        use ⟨2, (by norm_num : _)⟩
-        simp
-        rw [← PNat.coe_le_coe, PNat.val_ofNat, hb]
-        norm_num
-      rcases ha pa2 hpa2S with ⟨pi2, ⟨i2, hi2₁, hi2₂⟩, hpi2₁, hpi2₂⟩
-      rw [← PNat.coe_le_coe, hb] at hi2₁
-      rw [← PNat.coe_inj.ne, hi2₂, hpa2, PNat.mk_coe] at hpi2₁
-      rw [hi2₂, hpa2, PNat.mk_coe] at hpi2₂
-      have hi2 := i2.pos
-      interval_cases i2.val
-      · exact gcd_p_of_diff_one (by ring: (a + 2) = (a + 1) + 1) hpi2₂
-      · rw [ne_self_iff_false] at hpi2₁
-        exact hpi2₁
-      · rw [Nat.coprime_comm] at hpi2₂
-        exact gcd_p_of_diff_one (by ring: (a + 3) = (a + 2) + 1) hpi2₂
-    · set pa2 : ℕ+ := ⟨(P (a + 2)), (by simp : _)⟩ with hpa2
-      have hpa2S : pa2 ∈ S := by
-        simp [S, hpa2]
-        use ⟨2, (by norm_num : _)⟩
-        simp
-        rw [← PNat.coe_le_coe, PNat.val_ofNat, hb]
-        norm_num
-      have hpa2' : 7 ∣ P (a + 2) := by
-        rcases ha pa2 hpa2S with ⟨pi2, ⟨i2, hi2₁, hi2₂⟩, hpi2₁, hpi2₂⟩
-        rw [← PNat.coe_le_coe, hb] at hi2₁
-        rw [← PNat.coe_inj.ne, hi2₂, hpa2, PNat.mk_coe] at hpi2₁
-        rw [hi2₂, hpa2, PNat.mk_coe] at hpi2₂
-        have hi2 := i2.pos
-        interval_cases i2.val
-        · exfalso
-          exact gcd_p_of_diff_one (by ring: (a + 2) = (a + 1) + 1) hpi2₂
-        · exfalso
-          rw [ne_self_iff_false] at hpi2₁
-          exact hpi2₁
-        · exfalso
-          rw [Nat.coprime_comm] at hpi2₂
-          exact gcd_p_of_diff_one (by ring: (a + 3) = (a + 2) + 1) hpi2₂
-        · rw [Nat.coprime_comm] at hpi2₂
-          have h := gcd_p_of_diff_two (by ring: (a + 4) = (a + 2) + 2) hpi2₂
-          rw [← h]
-          apply Nat.gcd_dvd_right
-      set pa3 : ℕ+ := ⟨(P (a + 3)), (by simp : _)⟩ with hpa3
-      have hpa3S : pa3 ∈ S := by
-        simp [S, hpa3]
-        use ⟨3, (by norm_num : _)⟩
-        simp
-        rw [← PNat.coe_le_coe, PNat.val_ofNat, hb]
-        norm_num
-      have hpa3' : 7 ∣ P (a + 3) := by
-        rcases ha pa3 hpa3S with ⟨pi3, ⟨i3, hi3₁, hi3₂⟩, hpi3₁, hpi3₂⟩
-        rw [← PNat.coe_le_coe, hb] at hi3₁
-        rw [← PNat.coe_inj.ne, hi3₂, hpa3, PNat.mk_coe] at hpi3₁
-        rw [hi3₂, hpa3, PNat.mk_coe] at hpi3₂
-        have hi3 := i3.pos
-        interval_cases i3.val
-        · have h := gcd_p_of_diff_two (by ring: (a + 3) = (a + 1) + 2) hpi3₂
-          rw [← h]
-          apply Nat.gcd_dvd_left
-        · exfalso
-          exact gcd_p_of_diff_one (by ring: (a + 3) = (a + 2) + 1) hpi3₂
-        · exfalso
-          rw [ne_self_iff_false] at hpi3₁
-          exact hpi3₁
-        · exfalso
-          rw [Nat.coprime_comm] at hpi3₂
-          exact gcd_p_of_diff_one (by ring: (a + 4) = (a + 3) + 1) hpi3₂
-      have h := Nat.not_coprime_of_dvd_of_dvd (by norm_num : 1 < 7) hpa3' hpa2'
-      exact gcd_p_of_diff_one (by ring: (a + 3) = (a + 2) + 1) h
-    · set pa3 : ℕ+ := ⟨(P (a + 3)), (by simp : _)⟩ with hpa3
-      have hpa3S : pa3 ∈ S := by
-        simp [S, hpa3]
-        use ⟨3, (by norm_num : _)⟩
-        simp
-        rw [← PNat.coe_le_coe, PNat.val_ofNat, hb]
-        norm_num
-      have hpa3' : 7 ∣ P (a + 3) := by
-        rcases ha pa3 hpa3S with ⟨pi3, ⟨i3, hi3₁, hi3₂⟩, hpi3₁, hpi3₂⟩
-        rw [← PNat.coe_le_coe, hb] at hi3₁
-        rw [← PNat.coe_inj.ne, hi3₂, hpa3, PNat.mk_coe] at hpi3₁
-        rw [hi3₂, hpa3, PNat.mk_coe] at hpi3₂
-        have hi3 := i3.pos
-        interval_cases i3.val
-        · have h := gcd_p_of_diff_two (by ring: (a + 3) = (a + 1) + 2) hpi3₂
-          rw [← h]
-          apply Nat.gcd_dvd_left
-        · exfalso
-          exact gcd_p_of_diff_one (by ring: (a + 3) = (a + 2) + 1) hpi3₂
-        · exfalso
-          rw [ne_self_iff_false] at hpi3₁
-          exact hpi3₁
-        · exfalso
-          rw [Nat.coprime_comm] at hpi3₂
-          exact gcd_p_of_diff_one (by ring: (a + 4) = (a + 3) + 1) hpi3₂
-        · rw [Nat.coprime_comm] at hpi3₂
-          have h := gcd_p_of_diff_two (by ring: (a + 5) = (a + 3) + 2) hpi3₂
-          rw [← h]
-          apply Nat.gcd_dvd_right
-      set pa2 : ℕ+ := ⟨(P (a + 2)), (by simp : _)⟩ with hpa2
-      have hpa2S : pa2 ∈ S := by
-        simp [S, hpa2]
-        use ⟨2, (by norm_num : _)⟩
-        simp
-        rw [← PNat.coe_le_coe, PNat.val_ofNat, hb]
-        norm_num
-      have hpa2' : 7 ∣ P (a + 2) ∨ 3 ∣ P (a + 2) := by
-        rcases ha pa2 hpa2S with ⟨pi2, ⟨i2, hi2₁, hi2₂⟩, hpi2₁, hpi2₂⟩
-        rw [← PNat.coe_le_coe, hb] at hi2₁
-        rw [← PNat.coe_inj.ne, hi2₂, hpa2, PNat.mk_coe] at hpi2₁
-        rw [hi2₂, hpa2, PNat.mk_coe] at hpi2₂
-        have hi2 := i2.pos
-        interval_cases i2.val
-        · exfalso
-          exact gcd_p_of_diff_one (by ring: (a + 2) = (a + 1) + 1) hpi2₂
-        · exfalso
-          rw [ne_self_iff_false] at hpi2₁
-          exact hpi2₁
-        · exfalso
-          rw [Nat.coprime_comm] at hpi2₂
-          exact gcd_p_of_diff_one (by ring: (a + 3) = (a + 2) + 1) hpi2₂
-        · left
-          rw [Nat.coprime_comm] at hpi2₂
-          have h := gcd_p_of_diff_two (by ring: (a + 4) = (a + 2) + 2) hpi2₂
-          rw [← h]
-          apply Nat.gcd_dvd_right
-        · right
-          rw [Nat.coprime_comm] at hpi2₂
-          have h := gcd_p_of_diff_three (by ring: (a + 5) = (a + 2) + 3) hpi2₂
-          rw [← h]
-          apply Nat.gcd_dvd_right
-      set pa4 : ℕ+ := ⟨(P (a + 4)), (by simp : _)⟩ with hpa4
-      have hpa4S : pa4 ∈ S := by
-        simp [S, hpa4]
-        use ⟨4, (by norm_num : _)⟩
-        simp
-        rw [← PNat.coe_le_coe, PNat.val_ofNat, hb]
-        norm_num
-      have hpa4' : 7 ∣ P (a + 4) ∨ 3 ∣ P (a + 4) := by
-        rcases ha pa4 hpa4S with ⟨pi4, ⟨i4, hi4₁, hi4₂⟩, hpi4₁, hpi4₂⟩
-        rw [← PNat.coe_le_coe, hb] at hi4₁
-        rw [← PNat.coe_inj.ne, hi4₂, hpa4, PNat.mk_coe] at hpi4₁
-        rw [hi4₂, hpa4, PNat.mk_coe] at hpi4₂
-        have hi4 := i4.pos
-        interval_cases i4.val
-        · right
-          have h := gcd_p_of_diff_three (by ring: (a + 4) = (a + 1) + 3) hpi4₂
-          rw [← h]
-          apply Nat.gcd_dvd_left
-        · left
-          have h := gcd_p_of_diff_two (by ring: (a + 4) = (a + 2) + 2) hpi4₂
-          rw [← h]
-          apply Nat.gcd_dvd_left
-        · exfalso
-          exact gcd_p_of_diff_one (by ring: (a + 4) = (a + 3) + 1) hpi4₂
-        · exfalso
-          exact false_of_ne hpi4₁
-        · exfalso
-          rw [Nat.coprime_comm] at hpi4₂
-          exact gcd_p_of_diff_one (by ring: (a + 5) = (a + 4) + 1) hpi4₂
-      by_cases hpa2pa4 : 3 ∣ P (a + 2) ∧ 3 ∣ P (a + 4)
-      · have hpa2pa4' := Nat.dvd_gcd hpa2pa4.right hpa2pa4.left
-        have hpa2pa4'' : ¬Nat.Coprime (P (a + 4)) (P (a + 2)) := by
-          rw [Nat.coprime_iff_gcd_eq_one]
-          contrapose! hpa2pa4'
-          rw [hpa2pa4']
-          norm_num
-        have h := gcd_p_of_diff_two (by ring: (a + 4) = (a + 2) + 2) hpa2pa4''
-        rw [h] at hpa2pa4'
-        norm_num at hpa2pa4'
-      · have hpa2pa4' : 7 ∣ P (a + 2) ∨ 7 ∣ P (a + 4) := by tauto
-        rcases hpa2pa4' with (hpa2''|hpa4'')
-        · have h := Nat.not_coprime_of_dvd_of_dvd (by norm_num : 1 < 7) hpa3' hpa2''
-          exact gcd_p_of_diff_one (by ring: (a + 3) = (a + 2) + 1) h
-        · have h := Nat.not_coprime_of_dvd_of_dvd (by norm_num : 1 < 7) hpa4'' hpa3'
-          exact gcd_p_of_diff_one (by ring: (a + 4) = (a + 3) + 1) h
+    · -- b = 2: the partner of index 1 must be index 2, but adjacent values are coprime.
+      obtain ⟨j, hj0, hjb, hjne, hp⟩ := partner 1 one_pos (by lia)
+      interval_cases j
+      · exact hjne rfl
+      · rw [Nat.coprime_comm] at hp
+        exact hp (coprime_P_succ (a + 1))
+    · -- b = 3: the partner of index 2 must be adjacent to it.
+      obtain ⟨j, hj0, hjb, hjne, hp⟩ := partner 2 two_pos (by lia)
+      interval_cases j
+      · exact hp (coprime_P_succ (a + 1))
+      · exact hjne rfl
+      · rw [Nat.coprime_comm] at hp
+        exact hp (coprime_P_succ (a + 2))
+    · -- b = 4: 7 divides both P (a+2) and P (a+3), which are coprime.
+      have h3 : 7 ∣ P (a + 3) := by
+        obtain ⟨j, hj0, hjb, hjne, hp⟩ := partner 3 (by norm_num) (by lia)
+        interval_cases j
+        · exact (seven_dvd_P_of_not_coprime hp).1
+        · exact absurd (coprime_P_succ (a + 2)) hp
+        · exact absurd rfl hjne
+        · rw [Nat.coprime_comm] at hp
+          exact absurd (coprime_P_succ (a + 3)) hp
+      have h2 : 7 ∣ P (a + 2) := by
+        obtain ⟨j, hj0, hjb, hjne, hp⟩ := partner 2 two_pos (by lia)
+        interval_cases j
+        · exact absurd (coprime_P_succ (a + 1)) hp
+        · exact absurd rfl hjne
+        · rw [Nat.coprime_comm] at hp
+          exact absurd (coprime_P_succ (a + 2)) hp
+        · rw [Nat.coprime_comm] at hp
+          exact (seven_dvd_P_of_not_coprime hp).2
+      exact absurd (coprime_P_succ (a + 2))
+        (Nat.not_coprime_of_dvd_of_dvd (by norm_num) h3 h2)
+    · -- b = 5: 7 ∣ P (a+3), and P (a+2), P (a+4) are each divisible by 7 or 3.
+      have h3 : 7 ∣ P (a + 3) := by
+        obtain ⟨j, hj0, hjb, hjne, hp⟩ := partner 3 (by norm_num) (by lia)
+        interval_cases j
+        · exact (seven_dvd_P_of_not_coprime hp).1
+        · exact absurd (coprime_P_succ (a + 2)) hp
+        · exact absurd rfl hjne
+        · rw [Nat.coprime_comm] at hp
+          exact absurd (coprime_P_succ (a + 3)) hp
+        · rw [Nat.coprime_comm] at hp
+          exact (seven_dvd_P_of_not_coprime hp).2
+      have h2 : 7 ∣ P (a + 2) ∨ 3 ∣ P (a + 2) := by
+        obtain ⟨j, hj0, hjb, hjne, hp⟩ := partner 2 two_pos (by lia)
+        interval_cases j
+        · exact absurd (coprime_P_succ (a + 1)) hp
+        · exact absurd rfl hjne
+        · rw [Nat.coprime_comm] at hp
+          exact absurd (coprime_P_succ (a + 2)) hp
+        · rw [Nat.coprime_comm] at hp
+          exact .inl (seven_dvd_P_of_not_coprime hp).2
+        · rw [Nat.coprime_comm] at hp
+          exact .inr (three_dvd_P_of_not_coprime hp).2
+      have h4 : 7 ∣ P (a + 4) ∨ 3 ∣ P (a + 4) := by
+        obtain ⟨j, hj0, hjb, hjne, hp⟩ := partner 4 (by norm_num) (by lia)
+        interval_cases j
+        · exact .inr (three_dvd_P_of_not_coprime hp).1
+        · exact .inl (seven_dvd_P_of_not_coprime hp).1
+        · exact absurd (coprime_P_succ (a + 3)) hp
+        · exact absurd rfl hjne
+        · rw [Nat.coprime_comm] at hp
+          exact absurd (coprime_P_succ (a + 4)) hp
+      -- If 7 divides P (a+2) or P (a+4), it divides two adjacent values, contradiction.
+      -- Otherwise 3 divides both P (a+2) and P (a+4), whose gcd divides 7, contradiction.
+      rcases h2 with h2 | h2
+      · exact absurd (coprime_P_succ (a + 2))
+          (Nat.not_coprime_of_dvd_of_dvd (by norm_num) h3 h2)
+      rcases h4 with h4 | h4
+      · exact absurd (coprime_P_succ (a + 3))
+          (Nat.not_coprime_of_dvd_of_dvd (by norm_num) h4 h3)
+      · have h := (Nat.dvd_gcd h4 h2).trans (gcd_P_add_two_dvd (a + 2))
+        norm_num at h
 
 end Imo2016P4

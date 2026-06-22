@@ -44,6 +44,6 @@ problem usa2003_p5 {a b c : ℝ} (ha : 0 < a) (hb : 0 < b) (hc : 0 < c) :
   have h2 := bound hb hc ha
   have h3 := bound hc ha hb
   have h := add_le_add h1 (add_le_add h2 h3)
-  convert h using 1 <;> field
+  convert! h using 1 <;> field
 
 end Usa2003P5

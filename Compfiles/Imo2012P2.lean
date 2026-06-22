@@ -55,7 +55,7 @@ lemma Real.geom_mean_eq_arith_mean2_weighted_iff
     {w₁ w₂ p₁ p₂ : ℝ} (hw₁ : 0 < w₁) (hw₂ : 0 < w₂)
     (hp₁ : 0 < p₁) (hp₂ : 0 < p₂) (hw : w₁ + w₂ = 1) :
     p₁ ^ w₁ * p₂ ^ w₂ = w₁ * p₁ + w₂ * p₂ ↔ p₁ = p₂ := by
-  have h' := Real.geom_mean_eq_arith_mean_weighted_iff' Finset.univ ![w₁, w₂] ![p₁, p₂]
+  have h' := Real.geom_mean_eq_arith_mean_weighted_iff_of_pos' Finset.univ ![w₁, w₂] ![p₁, p₂]
   simp at h'
   have h'' := h' hw₁ hw₂ hw (le_of_lt hp₁) (le_of_lt hp₂)
   rw [h'']

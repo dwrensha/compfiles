@@ -29,34 +29,13 @@ namespace Imo1991P2
 
 snip begin
 
-lemma exists_powerOfTwo_mul_odd (n : ℕ) (hn : 0 < n) :
-  ∃ t l : ℕ, n = 2 ^ t * l ∧ ¬2 ∣ l := by
-  induction' n using Nat.case_strong_induction_on with n' hn'
-  · lia
-  · by_cases! hn'' : 2 ∣ n' + 1
-    · rcases exists_eq_mul_left_of_dvd hn'' with ⟨m, hm⟩
-      rcases hn' m (by lia : _) (by lia : _) with ⟨t', l', ht'l', hl'⟩
-      use t' + 1, l'
-      constructor
-      · rw [hm, ht'l']
-        ring
-      · exact hl'
-    · use 0, n' + 1
-      lia
-
-lemma aux {l n s t: ℕ} (hl : ¬2 ∣ l) (hs : s ≠ 0) (hn : n = 2 ^ t * l) :
-  Nat.Coprime (l + 2 ^ s) n := by
-  by_contra h'
-  rw [Nat.Prime.not_coprime_iff_dvd] at h'
-  rcases h' with ⟨p, hp, hp', hp''⟩
-  rw [hn] at hp''
-  have hp2 := dvd_mul_of_dvd_right hp' (2 ^ t)
-  rw [mul_add, ← Nat.dvd_add_iff_right hp'', ← pow_add] at hp2
-  apply Nat.prime_eq_prime_of_dvd_pow hp Nat.prime_two at hp2
-  have h2s := dvd_pow_self 2 hs
-  rw [hp2, ← Nat.dvd_add_iff_left h2s] at hp'
-  contrapose! hl
-  exact hp'
+lemma aux {l n s t : ℕ} (hl : Odd l) (hs : s ≠ 0) (hn : n = 2 ^ t * l) :
+    Nat.Coprime (l + 2 ^ s) n := by
+  have h2 : Odd (l + 2 ^ s) := hl.add_even (Nat.even_pow.mpr ⟨even_two, hs⟩)
+  rw [hn]
+  refine Nat.Coprime.mul_right (h2.coprime_two_right.pow_right t) ?_
+  rw [add_comm, Nat.coprime_add_self_left]
+  exact hl.coprime_two_left.pow_left s
 
 snip end
 
@@ -66,127 +45,102 @@ problem imo1991_p2 (n : ℕ) (hn : 6 < n)
     (d : ℕ) (hd : 0 < d)
     (ha2 : ∀ i : Fin k, (h : i + 1 < k) → a i + d = a ⟨i + 1, h⟩) :
     n.Prime ∨ n.isPowerOfTwo := by
-  have hk : k ≠ 0 := by
-    intro hk'
-    have h': { a i | i } = ∅ := by
-      apply Set.eq_empty_of_forall_notMem
-      intro x
-      dsimp
-      push Not
-      intro i
-      rw [hk'] at i
-      apply finZeroElim i
-    rw [h'] at ha1
-    contrapose! ha1
-    use 1
-    constructor
-    · exact Nat.coprime_one_left n
-    · lia
-  have : NeZero k := { out := hk }
+  have hset := Set.ext_iff.mp ha1
+
+  -- The set contains 1, so k is positive.
+  obtain ⟨i0, -⟩ := (hset 1).mpr ⟨Nat.coprime_one_left n, by lia⟩
+  have : NeZero k := ⟨i0.pos.ne'⟩
+
   have ha : ∀ (i : ℕ) (hi : i < k), a ⟨i, hi⟩ = a 0 + i * d := by
     intro i hi
-    induction' i with i' hi'
+    induction' i with i' ih
     · rw [zero_mul, add_zero]
       rfl
-    · have hi'' : i' < k := lt_trans' hi (lt_add_one i')
-      rw [← ha2 ⟨i', hi''⟩, hi' hi'']
+    · have hi'' : i' < k := by lia
+      rw [← ha2 ⟨i', hi''⟩, ih hi'']
       ring
-  have h : ∃ a₀ : ℕ, ∀ m : ℕ, (Nat.Coprime m n ∧ m < n ↔ ∃ (i : ℕ), i < k ∧ m = a₀ + i * d) := by
-    use a 0
+
+  -- The set consists exactly of a 0, a 0 + d, ..., a 0 + (k - 1) * d.
+  have hmem : ∀ m : ℕ, (Nat.Coprime m n ∧ m < n) ↔ ∃ i < k, m = a 0 + i * d := by
     intro m
     constructor
-    · rintro hm
-      have hm'' : m ∈ {m | m.Coprime n ∧ m < n} := hm
-      rw [← ha1] at hm''
-      rcases hm'' with ⟨i, hi⟩
-      use i.val
-      constructor
-      · exact Fin.isLt i
-      · rw [← hi]
-        apply ha
-    · rintro ⟨i, hik, hi⟩
-      have hm : m ∈ { a i | i } := by
-        use ⟨i, hik⟩
-        rw [hi]
-        apply ha
-      rw [ha1] at hm
-      exact hm
-  rcases h with ⟨a₀, ha₀⟩
-  have h1 : Nat.Coprime 1 n ∧ 1 < n := by
+    · intro hm
+      obtain ⟨i, rfl⟩ := (hset m).mpr hm
+      exact ⟨i, i.isLt, ha i i.isLt⟩
+    · rintro ⟨i, hik, rfl⟩
+      exact (hset _).mp ⟨⟨i, hik⟩, ha i hik⟩
+
+  -- The set contains the endpoints 1 and n - 1.
+  obtain ⟨i1, hi1k, hi1⟩ := (hmem 1).mp ⟨Nat.coprime_one_left n, by lia⟩
+  obtain ⟨j, hjk, hj⟩ := (hmem (n - 1)).mp
+    ⟨by rw [Nat.coprime_self_sub_left (by lia)]; exact Nat.coprime_one_left n, by lia⟩
+
+  -- A number 0 < m < n is coprime to n iff it is ≡ 1 mod d.
+  have h' : ∀ m : ℕ, 0 < m → m < n → (Nat.Coprime m n ↔ m ≡ 1 [MOD d]) := by
+    intro m hm hm'
     constructor
-    · apply Nat.coprime_one_left
-    · lia
-  have hn_sub_1 : Nat.Coprime (n - 1) n ∧ (n - 1) < n := by
-    constructor
-    · rw [Nat.coprime_self_sub_left (by lia : _)]
-      apply Nat.coprime_one_left
-    · lia
-  rw [ha₀] at h1 hn_sub_1
-  rcases h1 with ⟨i1, hi1k, hi1⟩
-  rcases hn_sub_1 with ⟨in_sub_1, hin_sub_1k, hin_sub_1⟩
-  have h' : ∀ m : ℕ, 0 < m ∧ m < n → (Nat.Coprime m n ↔ m ≡ 1 [MOD d]):= by
-    rintro m ⟨hm, hm'⟩
-    constructor
+    · intro hc
+      obtain ⟨i, hik, rfl⟩ := (hmem m).mp ⟨hc, hm'⟩
+      rw [hi1, Nat.add_mul_modulus_modEq_iff, Nat.modEq_add_mul_modulus_iff]
     · intro hm''
-      rcases (ha₀ m).mp ⟨hm'', hm'⟩ with ⟨i, hik, hi⟩
-      rw [hi, hi1]
-      rw [Nat.add_mul_modulus_modEq_iff, Nat.modEq_add_mul_modulus_iff]
-    · intro hm''
-      rw [Nat.ModEq.comm, Nat.modEq_iff_dvd' (by lia : _), dvd_iff_exists_eq_mul_left] at hm''
-      rcases hm'' with ⟨i', hi'⟩
-      rw [Nat.sub_eq_iff_eq_add (by lia : _), hi1, add_left_comm, ← add_mul] at hi'
-      have him: ∃ i < k, m = a₀ + i * d := by
-        use i' + i1
-        constructor
-        · apply lt_of_lt_of_le' hin_sub_1k
-          rw [← Nat.mul_le_mul_right_iff hd, ← @Nat.add_le_add_iff_left _ _ a₀]
-          lia
-        · exact hi'
-      exact ((ha₀ m).mpr him).left
+      rw [Nat.ModEq.comm, Nat.modEq_iff_dvd' (by lia : 1 ≤ m),
+          dvd_iff_exists_eq_mul_left] at hm''
+      obtain ⟨i', hi'⟩ := hm''
+      rw [Nat.sub_eq_iff_eq_add (by lia), hi1, add_left_comm, ← add_mul] at hi'
+      have hik : i' + i1 < k := by
+        apply lt_of_lt_of_le' hjk
+        rw [← Nat.mul_le_mul_right_iff hd, ← @Nat.add_le_add_iff_left _ _ (a 0)]
+        lia
+      exact ((hmem m).mpr ⟨i' + i1, hik, hi'⟩).1
+
   by_cases! hn' : 2 ∣ n
   · right
-    rcases exists_powerOfTwo_mul_odd n (by lia : _) with ⟨t, l, htl, hl⟩
-    by_cases! hl' : l = 1
-    · rw [hl', mul_one] at htl
+    obtain ⟨t, l, hl, htl⟩ := Nat.exists_eq_two_pow_mul_odd (show n ≠ 0 by lia)
+    by_cases! hl1 : l = 1
+    · exact ⟨t, by rw [htl, hl1, mul_one]⟩
+    exfalso
+    have hl2 : l % 2 = 1 := Nat.odd_iff.mp hl
+    have ht : t ≠ 0 := by
+      rintro rfl
+      rw [pow_zero, one_mul] at htl
+      lia
+    have h4l : l + 4 < n := by
+      rcases eq_or_ne t 1 with rfl | ht1
+      · rw [pow_one] at htl
+        lia
+      · have h4t : 4 ≤ 2 ^ t := by
+          calc (4:ℕ) = 2 ^ 2 := by norm_num
+          _ ≤ 2 ^ t := Nat.pow_le_pow_right (by norm_num) (by lia)
+        have := Nat.mul_le_mul_right l h4t
+        lia
+    -- l + 2 and l + 4 are coprime to n, hence both ≡ 1 mod d, hence d ∣ 2,
+    -- hence l is also ≡ 1 mod d, hence coprime to n. But l divides n.
+    have hm2 : l + 2 ≡ 1 [MOD d] := (h' (l + 2) (by lia) (by lia)).mp
+      (by simpa using aux hl one_ne_zero htl)
+    have hm4 : l + 4 ≡ 1 [MOD d] := (h' (l + 4) (by lia) (by lia)).mp
+      (by simpa using aux hl two_ne_zero htl)
+    have hd2 : d ∣ 2 := by
+      have h24 := (Nat.modEq_iff_dvd' (by lia : l + 2 ≤ l + 4)).mp (hm2.trans hm4.symm)
+      rwa [show l + 4 - (l + 2) = 2 by lia] at h24
+    have hml : l ≡ 1 [MOD d] := by
+      have h0 : l + 2 ≡ l + 0 [MOD d] := Nat.ModEq.add_left l (Nat.modEq_zero_iff_dvd.mpr hd2)
+      rw [add_zero] at h0
+      exact h0.symm.trans hm2
+    have hcl : Nat.Coprime l n := (h' l (by lia) (by lia)).mpr hml
+    have hdvd : l ∣ n := by
       rw [htl]
-      use t
-    · exfalso
-      have ht : 0 < t := by lia
-      have hl'' : l + 4 < n := by
-        by_cases! ht' : t = 1
-        · lia
-        · rw [htl]
-          calc l + 4
-              < 2 ^ 2 * l := by lia
-            _ ≤ 2 ^ t * l := by
-              apply Nat.mul_le_mul_right
-              exact Nat.pow_le_pow_right (by norm_num : _) (by lia : _)
-      have hl_add_2 : Nat.Coprime (l + 2 ^ 1) n := aux hl (by norm_num : 1 ≠ 0) htl
-      have hl_add_4 : Nat.Coprime (l + 2 ^ 2) n := aux hl (by norm_num : 2 ≠ 0) htl
-      norm_num at hl_add_2 hl_add_4
-      rw [h' (l + 2) (by lia : _)] at hl_add_2
-      rw [h' (l + 4) (by lia : _), Nat.ModEq.comm] at hl_add_4
-      have hl2 := Nat.ModEq.trans hl_add_2 hl_add_4
-      rw [Nat.modEq_iff_dvd' (by lia : _), Nat.sub_add_eq, add_comm, Nat.add_sub_cancel] at hl2
-      norm_num at hl2
-      rw [dvd_iff_exists_eq_mul_left] at hl2
-      rcases hl2 with ⟨c, hc⟩
-      rw [hc, Nat.add_mul_modulus_modEq_iff] at hl_add_2
-      rw [← h' l (by lia : _)] at hl_add_2
-      contrapose hl_add_2
-      apply Nat.not_coprime_of_dvd_of_dvd (by lia : 1 < l) (dvd_rfl)
-      rw [htl]
-      apply dvd_mul_left
+      exact dvd_mul_left l (2 ^ t)
+    exact hl1 ((Nat.gcd_eq_left hdvd).symm.trans hcl)
   · left
-    apply Nat.prime_of_coprime n (by lia : _)
-    intro m hm hm'
-    have h2 : Nat.Coprime 2 n := by
-      rw [Nat.Prime.coprime_iff_not_dvd Nat.prime_two]
-      exact hn'
-    rw [h' 2 (by lia : _), Nat.ModEq.comm, Nat.modEq_iff_dvd' (by lia : _)] at h2
-    norm_num at h2
-    rw [Nat.coprime_comm, h' m (by lia : _)]
-    rw [h2]
-    apply Nat.modEq_one
+    have h2 : Nat.Coprime 2 n := Nat.prime_two.coprime_iff_not_dvd.mpr hn'
+    have hd1 : d = 1 := by
+      have h21 := (h' 2 (by lia) (by lia)).mp h2
+      have hdd := (Nat.modEq_iff_dvd' (by lia : 1 ≤ 2)).mp h21.symm
+      rw [show (2:ℕ) - 1 = 1 by lia] at hdd
+      exact Nat.dvd_one.mp hdd
+    subst hd1
+    apply Nat.prime_of_coprime n (by lia)
+    intro m hm hm0
+    exact Nat.coprime_comm.mp ((h' m (by lia) hm).mpr (Nat.modEq_one))
 
 end Imo1991P2

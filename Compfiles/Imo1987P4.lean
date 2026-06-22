@@ -50,15 +50,15 @@ problem imo1987_p4 : ¬∃ f : ℕ → ℕ, ∀ n, f (f n) = n + 1987 := by
   -- A and B have union ℕ - f(f(ℕ)).
   have ab_union : A ∪ B = Set.univ \ (f '' (f '' Set.univ)) := by
     -- Note that B = f(ℕ) - f(f(ℕ)).
-    simp only [A, B, Set.image_diff f_injective]
-    exact Set.diff_union_diff_cancel
+    simp only [A, B, Set.image_sdiff f_injective]
+    exact Set.sdiff_union_sdiff_cancel
       (Set.subset_univ _) (Set.image_mono (Set.subset_univ _))
 
   -- ... which is {0, 1, ... , 2 * m}.
   have ab_range : A ∪ B = {n | n < 2 * m + 1} := by
     rw [ab_union]
     ext x
-    rw [Set.mem_setOf_eq, ←not_iff_not, ←Set.compl_eq_univ_diff]
+    rw [Set.mem_setOf_eq, ←not_iff_not, ←Set.compl_eq_univ_sdiff]
     rw [Set.notMem_compl_iff, not_lt]
     simp only [Set.mem_image, Set.mem_univ, true_and, exists_exists_eq_and, hf]
     rw [le_iff_exists_add']
@@ -67,7 +67,7 @@ problem imo1987_p4 : ¬∃ f : ℕ → ℕ, ∀ n, f (f n) = n + 1987 := by
   -- A and B are disjoint.
   have ab_disjoint : Disjoint A B := by
     intro C hca hcb c hc
-    exact Set.notMem_of_mem_diff (hca hc) (Set.image_mono sdiff_le (hcb hc))
+    exact Set.notMem_of_mem_sdiff (hca hc) (Set.image_mono sdiff_le (hcb hc))
 
   -- But since f is injective, A and B have the
   -- same number of elements, which is impossible since {0, 1, ... , 2 * m}

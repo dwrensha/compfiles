@@ -364,7 +364,7 @@ lemma not_three_dvd_psi_of_second_min_divisor_four (hx0 : x ≠ 0) (h3x : ¬ 3 �
     simp [hd₁, hd₂]
     lia
   have h3d₃ : ¬ 3 ∣ x / d₃ := fun h3 ↦ h3x (by
-      convert dvd_mul_of_dvd_right h3 d₃ using 1
+      convert! dvd_mul_of_dvd_right h3 d₃ using 1
       exact (Nat.mul_div_cancel' hmin.dvds.2.2).symm)
   grind
 

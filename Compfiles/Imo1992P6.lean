@@ -181,8 +181,8 @@ theorem imo1992_p6_a : ∀ n ≥ 4, S n ≤ n^2-14 := by
       calc
         _ = ∑ i, s i ^ 2 := sh1
         _ = ∑ i ∈ Finset.univ \ {j}, s i ^ 2 + s j ^ 2 := by
-          rw [←Finset.sum_eq_sum_diff_singleton_add]
-          apply Finset.mem_univ
+          rw [Finset.sdiff_singleton_eq_erase,
+              Finset.sum_erase_add _ _ (Finset.mem_univ j)]
         _ ≥ ∑ i ∈ Finset.univ \ {j}, 1 + s j ^ 2 := by
           rw [ge_iff_le, add_le_add_iff_right]
           apply Finset.sum_le_sum

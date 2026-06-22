@@ -37,17 +37,17 @@ open Module
 /-- The `x`-axis, as an affine subspace. -/
 def xAxis : AffineSubspace ℝ (EuclideanSpace ℝ (Fin 2)) where
   carrier := {p | p 1 = 0}
-  smul_vsub_vadd_mem c p₁ p₂ p₃ hp₁ hp₂ hp₃ := by simp_all
+  smul_vsub_vadd_mem' c p₁ p₂ p₃ hp₁ hp₂ hp₃ := by simp_all
 
 /-- The `y`-axis, as an affine subspace. -/
 def yAxis : AffineSubspace ℝ (EuclideanSpace ℝ (Fin 2)) where
   carrier := {p | p 0 = 0}
-  smul_vsub_vadd_mem c p₁ p₂ p₃ hp₁ hp₂ hp₃ := by simp_all
+  smul_vsub_vadd_mem' c p₁ p₂ p₃ hp₁ hp₂ hp₃ := by simp_all
 
 /- The line `x+y=0`, as an affine subspace. -/
 def linexy0 : AffineSubspace ℝ (EuclideanSpace ℝ (Fin 2)) where
   carrier := {p | p 0 + p 1 = 0}
-  smul_vsub_vadd_mem c p₁ p₂ p₃ hp₁ hp₂ hp₃ := by
+  smul_vsub_vadd_mem' c p₁ p₂ p₃ hp₁ hp₂ hp₃ := by
     simp only [Fin.isValue, vsub_eq_sub, vadd_eq_add, Set.mem_setOf_eq, PiLp.add_apply,
       PiLp.smul_apply, PiLp.sub_apply, smul_eq_mul]
     suffices c * (p₁ 0 + p₁ 1 - (p₂ 0 + p₂ 1)) + (p₃ 0 + p₃ 1) = 0 by
@@ -111,7 +111,7 @@ lemma vec_sub (x1 y1 x2 y2 : ℝ) : !₂[x1, y1] - !₂[x2, y2] = !₂[x1 - x2, 
 Note: We don't enforce `a ≠ 0 ∨ b ≠ 0`. -/
 noncomputable def line (a b c : ℝ) : AffSubOfPlane where
   carrier := {p | a * p 0 + b * p 1 + c = 0}
-  smul_vsub_vadd_mem r p₁ p₂ p₃ hp₁ hp₂ hp₃ := by
+  smul_vsub_vadd_mem' r p₁ p₂ p₃ hp₁ hp₂ hp₃ := by
     simp only [Fin.isValue, vsub_eq_sub, vadd_eq_add, Set.mem_setOf_eq, PiLp.add_apply,
       PiLp.smul_apply, PiLp.sub_apply, smul_eq_mul]
     simp_all only [Fin.isValue, Set.mem_setOf_eq]
@@ -409,8 +409,8 @@ lemma grid_shift (n : ℕ) (d : Fin 3) :
     shiftSet (gridShift d) (grid (n + 1) \ (edgeLine (n + 1) d)) = grid n := by
   ext x
   simp only [shiftSet, AffineEquiv.constVAdd_apply, vadd_eq_add, Set.image_add_left, grid,
-    Fin.isValue, exists_and_left, Set.preimage_diff, Set.preimage_setOf_eq, PiLp.add_apply,
-    PiLp.neg_apply, Set.mem_diff, Set.mem_setOf_eq, Set.mem_preimage, SetLike.mem_coe]
+    Fin.isValue, exists_and_left, Set.preimage_sdiff, Set.preimage_setOf_eq, PiLp.add_apply,
+    PiLp.neg_apply, Set.mem_sdiff, Set.mem_setOf_eq, Set.mem_preimage, SetLike.mem_coe]
   constructor
   · intro ⟨⟨a, ha, b, hb, ha0, hb0, hab⟩, h2⟩
     simp only [edgeLine, line'] at h2
@@ -600,7 +600,7 @@ noncomputable def coverConfig.removeLine (C : coverConfig) (L : AffSubOfPlane) (
     exact C.lines_rank L' (by simp only [Finset.mem_erase, ne_eq] at hL'; exact hL'.right)
   lines_cover := by
     intro x hx
-    simp only [Set.mem_diff, SetLike.mem_coe] at hx
+    simp only [Set.mem_sdiff, SetLike.mem_coe] at hx
     obtain ⟨L', hL'⟩ := C.lines_cover x hx.left
     use L'; simp only [Finset.mem_erase, ne_eq, hL', and_true]
     intro hC
@@ -1130,7 +1130,7 @@ noncomputable def oneSunny : strongCoverGridConfig where
     obtain ⟨rfl, rfl⟩ : a = 1 ∧ b = 1 := by lia
     simp only [line, neg_mul, one_mul, add_zero, Finset.mem_singleton, exists_eq_left]
     rw [← SetLike.mem_coe, SetLike.coe]
-    simp [AffineSubspace.instSetLike, ha, hb]
+    simp [AffineSubspace.instSetLike, ha, hb, -AffineSubspace.carrier_eq_coe]
   sunny_count := by
     have : Sunny (line (-1) 1 0) := by
       rw [sunny_slope] <;>

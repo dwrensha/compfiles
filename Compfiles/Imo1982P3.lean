@@ -98,6 +98,6 @@ problem imo1982_p3b : Antitone sol ∧ sol 0 = 1 ∧ (∀ k, 0 < sol k)
     simp_rw [← pow_mul, pow_succ, ← div_eq_mul_inv, div_div_eq_mul_div, mul_comm, mul_div_assoc,
       ← Finset.mul_sum, div_eq_mul_inv, this, ← two_add_two_eq_four, ← mul_two,
       mul_lt_mul_iff_of_pos_left two_pos]
-    convert NNReal.coe_lt_coe.2 <| geom_sum_lt (inv_ne_zero two_ne_zero) two_inv_lt_one n
+    convert! NNReal.coe_lt_coe.2 <| geom_sum_lt (inv_ne_zero two_ne_zero) two_inv_lt_one n
     · simp
     · norm_num

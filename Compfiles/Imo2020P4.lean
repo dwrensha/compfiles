@@ -71,6 +71,13 @@ snip begin
 
 universe u
 
+-- `Fintype G.edgeSet` previously resolved via a noncomputable instance derived from finiteness
+-- of the vertex type (as still happens for `SetLike` types such as `ConnectedComponent`).
+-- Recent mathlib only provides a computable instance requiring `[DecidableRel G.Adj]`, so we
+-- supply the noncomputable instance locally.
+noncomputable instance instFintypeEdgeSetOfFinite {V : Type*} [Finite V] (G : SimpleGraph V) :
+    Fintype G.edgeSet := Fintype.ofFinite _
+
 lemma Sym2.exists_mk {α : Type u} (z : Sym2 α) : ∃ x y : α, z = s(x, y) := by
   have h := Sym2.out_fst_mem z
   rw [Sym2.mem_iff_exists] at h
@@ -191,8 +198,8 @@ lemma SimpleGraph.card_connectedComponent_add_card_edge_eq_card_vertex_of_acycli
 def Company.graph {n k : ℕ} (c : Company n k) : SimpleGraph (Fin (n ^ 2)) where
   Adj := fun a b ↦ ∃ i : Fin k, s((c.cars i).start, (c.cars i).finish) = s(a, b)
   symm := by
+    constructor
     intro a b
-    dsimp
     rintro ⟨i, h⟩
     use i
     rw [h, Sym2.eq_swap]

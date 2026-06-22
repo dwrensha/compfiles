@@ -65,14 +65,9 @@ We show that:
 def potential (s : State) : ℤ :=
   ∑ i : Fin 5, (s i - s (i + 2))^2
 
-/-- Helper lemma to expand sums over `Fin 5`. -/
-lemma sum_fin5 (f : Fin 5 → ℤ) :
-    (∑ i : Fin 5, f i) = f 0 + f 1 + f 2 + f 3 + f 4 := by
-  simp [Finset.sum]; abel
-
 /-- The sum of the integers is invariant under the move operation. -/
 lemma sum_invariant (s : State) (i : Fin 5) : (move s i).sum = s.sum := by
-  simp only [State.sum, sum_fin5]
+  simp only [State.sum, Fin.sum_univ_five]
   fin_cases i
   all_goals (
     simp (config := { decide := true }) [move]
@@ -84,7 +79,7 @@ lemma sum_invariant (s : State) (i : Fin 5) : (move s i).sum = s.sum := by
     $V(s') - V(s) = 2 \cdot s_i \cdot S$ where $S$ is the total sum. -/
 lemma potential_diff (s : State) (i : Fin 5) :
     potential (move s i) - potential s = 2 * (s i) * s.sum := by
-  simp only [potential, State.sum, sum_fin5]
+  simp only [potential, State.sum, Fin.sum_univ_five]
   fin_cases i
   all_goals (
     simp (config := { decide := true }) [move]

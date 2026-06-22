@@ -257,9 +257,9 @@ problem imo1973_p6 (npos : 0 < n) (hq : q ∈ Set.Ioo 0 1) (apos : ∀ i, 0 < a 
               lia
             · simp
         _ = 1 + ∑ k ∈ Finset.Ioc 0 i.val, q ^ k + ∑ k ∈ Finset.Ioo 0 (n-i.val), q ^ k := by
-          rw [add_left_inj, Finset.sum_eq_add_sum_diff_singleton (i:=0)]
-          · congr
-          · simp
+          rw [add_left_inj,
+              ← Finset.add_sum_erase _ _ (Finset.mem_Iic.mpr (Nat.zero_le _)), pow_zero]
+          congr 1
         _ ≤ 1 + 2 * ∑ k ∈ Finset.Ioo 0 n, q ^ k := by
           rw [one_add_one_eq_two.symm, add_mul, one_mul, add_assoc, add_le_add_iff_left]
           apply add_le_add <;> {
