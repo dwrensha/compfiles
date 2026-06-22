@@ -244,6 +244,9 @@ import Compfiles.Singapore2019P11
 import Compfiles.UK2024R1P1
 import Compfiles.UK2024R1P2
 import Compfiles.UK2024R1P4
+import Compfiles.USA2025P4
+import Compfiles.USA2025P5
+import Compfiles.USA2026P4
 import Compfiles.UpperLowerContinuous
 import Compfiles.Usa1972P1
 import Compfiles.Usa1972P3
