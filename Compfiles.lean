@@ -315,5 +315,7 @@ import Compfiles.Usa2023P2
 import Compfiles.Usa2023P4
 import Compfiles.Usa2023P5
 import Compfiles.Usa2024P2
+import Compfiles.Usa2025P4
 import Compfiles.Usa2026P1
+import Compfiles.Usa2026P4
 import Compfiles.ZeroesOnesAndTwos
