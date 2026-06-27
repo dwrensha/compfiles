@@ -11,8 +11,6 @@ import ProblemExtraction
 
 problem_file { tags := [.Geometry] }
 
-set_option maxHeartbeats 1000000
-
 /-!
 # USA Mathematical Olympiad 2025, Problem 4
 
@@ -27,6 +25,8 @@ Prove that `CX = CY`.
 namespace Usamo2025P4
 
 open EuclideanGeometry RealInnerProductSpace
+
+snip begin
 
 noncomputable def Mc (A H C : EuclideanSpace ℝ (Fin 2)) : EuclideanSpace ℝ (Fin 2) :=
   (2⁻¹ : ℝ) • (A - H + (2 : ℝ) • C)
@@ -212,6 +212,10 @@ lemma p4_not_collinear (A B C H F P O : EuclideanSpace ℝ (Fin 2)) (r : ℝ)
     hAF hAP hFP
   rwa [affineIndependent_iff_not_collinear_set] at hai
 
+set_option maxHeartbeats 1000000
+
+snip end
+
 problem usamo2025_p4
     (A B C H F P X Y : EuclideanSpace ℝ (Fin 2))
     (htri : AffineIndependent ℝ ![A, B, C])
@@ -232,8 +236,10 @@ problem usamo2025_p4
     dist C X = dist C Y := by
   obtain ⟨O, r, hOA, hOF, hOP, hOX, hOY⟩ := hcirc
   have hr_pos : 0 < r := by
-    by_contra hr_nonpos;
-    exact hXY ( by rw [ ← dist_le_zero ] at *; aesop )
+    by_contra hr_nonpos
+    refine hXY ?_
+    rw [← dist_le_zero ] at *
+    aesop
   have hOM : O = Mc A H C := by
     have hOM : ⟪O -ᵥ Mc A H C, A -ᵥ F⟫ = 0 ∧ ⟪O -ᵥ Mc A H C, A -ᵥ P⟫ = 0 := by
       have h_eq_dist : dist (Mc A H C) A = dist (Mc A H C) F ∧ dist (Mc A H C) A = dist (Mc A H C) P := by
@@ -245,15 +251,19 @@ problem usamo2025_p4
     have h_lin_ind : LinearIndependent ℝ ![A -ᵥ F, A -ᵥ P] := by
       have h_not_collinear : ¬ Collinear ℝ ({A, F, P} : Set (EuclideanSpace ℝ (Fin 2))) := by
         apply p4_not_collinear A B C H F P O r htri hacuteA hacuteB hacuteC hH1 hH2 hFline hFperp hPperp hPmid hOA hOF hOP;
-      rw [ linearIndependent_fin2 ];
-      simp_all +decide [ collinear_iff_exists_forall_eq_smul_vadd ];
-      constructor;
-      · intro h; simp_all +decide [ sub_eq_iff_eq_add ] ;
-        exact h_not_collinear P ( F - P ) 0 ( by norm_num ) 1 ( by norm_num ) 0 ( by norm_num );
-      · intro a ha; specialize h_not_collinear P ( A - P ) 1; simp_all +decide [ sub_eq_iff_eq_add ] ;
-        specialize h_not_collinear ( 1 - a ) ; simp_all +decide [ sub_smul ];
+      rw [linearIndependent_fin2]
+      simp_all [collinear_iff_exists_forall_eq_smul_vadd]
+      constructor
+      · intro h
+        simp_all [ sub_eq_iff_eq_add ]
+        exact h_not_collinear P ( F - P ) 0 ( by norm_num ) 1 ( by norm_num ) 0 ( by norm_num )
+      · intro a ha
+        specialize h_not_collinear P ( A - P ) 1
+        simp_all [ sub_eq_iff_eq_add ]
+        specialize h_not_collinear ( 1 - a )
+        simp_all [ sub_smul ]
     have h_span : Submodule.span ℝ (Set.range ![A -ᵥ F, A -ᵥ P]) = ⊤ := by
-      refine' Submodule.eq_top_of_finrank_eq _;
+      refine' Submodule.eq_top_of_finrank_eq _
       rw [ finrank_span_eq_card ] <;> aesop;
     have h_orthogonal : ∀ v ∈ Submodule.span ℝ (Set.range ![A -ᵥ F, A -ᵥ P]), ⟪O -ᵥ Mc A H C, v⟫ = 0 := by
       intro v hv; rw [ Submodule.mem_span_range_iff_exists_fun ] at hv; obtain ⟨ f, rfl ⟩ := hv; simp_all +decide [ inner_add_right, inner_smul_right ] ;
