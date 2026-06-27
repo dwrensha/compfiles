@@ -31,28 +31,49 @@ snip begin
 noncomputable def Mc (A H C : EuclideanSpace ℝ (Fin 2)) : EuclideanSpace ℝ (Fin 2) :=
   (2⁻¹ : ℝ) • (A - H + (2 : ℝ) • C)
 
+/-- A point on line `RS` differs from `R` by a multiple of `S -ᵥ R`. -/
+lemma vsub_smul_of_mem_pair {R S Q : EuclideanSpace ℝ (Fin 2)}
+    (hQ : Q ∈ affineSpan ℝ ({R, S} : Set (EuclideanSpace ℝ (Fin 2)))) :
+    ∃ k : ℝ, Q -ᵥ R = k • (S -ᵥ R) := by
+  have hmem : Q -ᵥ R ∈ vectorSpan ℝ ({R, S} : Set (EuclideanSpace ℝ (Fin 2))) := by
+    rw [← direction_affineSpan]
+    exact AffineSubspace.vsub_mem_direction hQ (left_mem_affineSpan_pair ℝ R S)
+  rw [vectorSpan_pair] at hmem
+  obtain ⟨k, hk⟩ := Submodule.mem_span_singleton.mp hmem
+  exact ⟨-k, by rw [← hk, neg_smul, ← smul_neg, neg_vsub_eq_vsub_rev]⟩
+
 lemma p4_reduction (B C O X Y : EuclideanSpace ℝ (Fin 2))
     (hperp : ⟪O -ᵥ C, B -ᵥ C⟫ = 0)
     (hX : X ∈ affineSpan ℝ ({B, C} : Set (EuclideanSpace ℝ (Fin 2))))
     (hY : Y ∈ affineSpan ℝ ({B, C} : Set (EuclideanSpace ℝ (Fin 2))))
     (hd : dist O X = dist O Y) :
     dist C X = dist C Y := by
-  obtain ⟨s, hs⟩ : ∃ s : ℝ, X = (1 - s) • B + s • C := by
-    rcases hX with ⟨ s, hs ⟩;
-    rcases hs with ⟨ rfl | rfl, v, hv, rfl ⟩;
-    · rw [ mem_vectorSpan_pair ] at hv;
-      rcases hv with ⟨ r, rfl ⟩ ; exact ⟨ -r, by ext ; simpa using by ring ⟩ ;
-    · rw [ mem_vectorSpan_pair ] at hv;
-      rcases hv with ⟨ r, rfl ⟩ ; exact ⟨ 1 - r, by ext ; simpa using by ring ⟩ ;
-  obtain ⟨u, hu⟩ : ∃ u : ℝ, Y = (1 - u) • B + u • C := by
-    rcases hY with ⟨ u, hu ⟩;
-    rcases hu with ⟨ rfl | rfl, v, hv, rfl ⟩ <;> simp_all +decide [ vectorSpan_pair ];
-    · rcases Submodule.mem_span_singleton.mp hv with ⟨ t, rfl ⟩ ; exact ⟨ -t, by ext ; simpa using by ring ⟩ ;
-    · obtain ⟨ t, rfl ⟩ := Submodule.mem_span_singleton.mp hv; exact ⟨ 1 - t, by ext ; simpa using by ring ⟩ ;
-  simp_all +decide [ dist_eq_norm, EuclideanSpace.norm_eq ];
-  rw [ Real.sqrt_inj ( by positivity ) ( by positivity ) ] at *;
-  simp_all +decide [ Fin.sum_univ_two, inner ];
-  grind
+  -- Every point `Z` on line `BC` satisfies `O -ᵥ C ⊥ Z -ᵥ C`, since `Z -ᵥ C` is a
+  -- multiple of `B -ᵥ C`.
+  have key : ∀ Z : EuclideanSpace ℝ (Fin 2),
+      Z ∈ affineSpan ℝ ({B, C} : Set (EuclideanSpace ℝ (Fin 2))) →
+      ⟪O -ᵥ C, Z -ᵥ C⟫ = 0 := by
+    intro Z hZ
+    obtain ⟨k, hk⟩ := vsub_smul_of_mem_pair hZ
+    have hZC : Z -ᵥ C = (1 - k) • (B -ᵥ C) := by
+      rw [show Z -ᵥ C = (Z -ᵥ B) + (B -ᵥ C) by rw [vsub_add_vsub_cancel], hk]
+      simp only [vsub_eq_sub]; module
+    rw [hZC, real_inner_smul_right, hperp, mul_zero]
+  -- Pythagoras: as `C` is the foot of the perpendicular from `O` to line `BC`,
+  -- `OZ² = OC² + CZ²` for any `Z` on the line.
+  have pyth : ∀ Z : EuclideanSpace ℝ (Fin 2), ⟪O -ᵥ C, Z -ᵥ C⟫ = 0 →
+      dist O Z ^ 2 = dist O C ^ 2 + dist C Z ^ 2 := by
+    intro Z hZ
+    simp only [dist_eq_norm_vsub (EuclideanSpace ℝ (Fin 2))]
+    rw [show O -ᵥ Z = (O -ᵥ C) - (Z -ᵥ C) by rw [vsub_sub_vsub_cancel_right],
+      norm_sub_sq_real, hZ, show C -ᵥ Z = -(Z -ᵥ C) by rw [neg_vsub_eq_vsub_rev], norm_neg]
+    ring
+  have hsq : dist C X ^ 2 = dist C Y ^ 2 := by
+    have e1 := pyth X (key X hX)
+    have e2 := pyth Y (key Y hY)
+    have hOXY : dist O X ^ 2 = dist O Y ^ 2 := by rw [hd]
+    linarith
+  exact (sq_eq_sq₀ dist_nonneg dist_nonneg).mp hsq
 
 lemma p4_circumcenter (A B C H F P : EuclideanSpace ℝ (Fin 2))
     (hH1 : ⟪H -ᵥ A, C -ᵥ B⟫ = 0)
@@ -62,35 +83,33 @@ lemma p4_circumcenter (A B C H F P : EuclideanSpace ℝ (Fin 2))
     (hPperp : ⟪P -ᵥ H, C -ᵥ B⟫ = 0)
     (hPmid : midpoint ℝ H P ∈ affineSpan ℝ ({B, C} : Set (EuclideanSpace ℝ (Fin 2)))) :
     dist (Mc A H C) A = dist (Mc A H C) F ∧ dist (Mc A H C) A = dist (Mc A H C) P := by
-  obtain ⟨v, hv⟩ : ∃ v : ℝ, midpoint ℝ H P = B + v • (C -ᵥ B) := by
-    rcases hPmid with ⟨ v, hv ⟩;
-    rcases hv with ⟨ rfl | rfl, w, hw, hw' ⟩ <;> simp_all +decide [ vectorSpan_pair ];
-    · rw [ Submodule.mem_span_singleton ] at hw ; obtain ⟨ k, rfl ⟩ := hw ; exact ⟨ -k, by ext ; simpa using by ring ⟩;
-    · obtain ⟨ k, hk ⟩ := Submodule.mem_span_singleton.mp hw; use 1 - k; simp_all +decide [ sub_smul, smul_sub ] ; abel_nf;
-      exact hk ▸ by abel1;
-  have hP : P = 2 • (B + v • (C -ᵥ B)) - H := by
-    rw [ ← hv ] ; ext ; norm_num [ midpoint_eq_smul_add ] ; ring;
-  obtain ⟨t, ht⟩ : ∃ t : ℝ, F = A + t • (B -ᵥ A) := by
-    rcases hFline with ⟨ t, ht ⟩;
-    rcases ht with ⟨ rfl | rfl, v, hv, rfl ⟩ <;> norm_num [ vectorSpan_pair ] at *;
-    · rw [ Submodule.mem_span_singleton ] at hv ; obtain ⟨ k, rfl ⟩ := hv ; exact ⟨ -k, by ext ; norm_num ; ring ⟩;
-    · rw [ Submodule.mem_span_singleton ] at hv;
-      obtain ⟨ a, rfl ⟩ := hv; exact ⟨ 1 - a, by ext ; simpa using by ring ⟩ ;
-  have hF : F = A + t • (B -ᵥ A) := by
-    exact ht;
-
-  unfold Mc
-  constructor
-  · simp_all +decide [dist_eq_norm, EuclideanSpace.norm_eq]
-    rw [Real.sqrt_inj (by positivity) (by positivity)]
-    simp_all +decide [Fin.sum_univ_two, inner]
-    ring_nf at *
-    grind
-  · simp_all +decide [dist_eq_norm, EuclideanSpace.norm_eq]
-    rw [Real.sqrt_inj (by positivity) (by positivity)]
-    simp_all +decide [Fin.sum_univ_two, inner]
-    ring_nf at *
-    grind
+  -- The third orthocenter relation: `CH ⊥ AB`, derived from `AH ⊥ BC` and `BH ⊥ CA`.
+  have hCH : ⟪C -ᵥ H, B -ᵥ A⟫ = 0 := by
+    have h1 := hH1; have h2 := hH2
+    simp only [vsub_eq_sub, inner_sub_left, inner_sub_right] at h1 h2 ⊢
+    linarith [real_inner_comm A B, real_inner_comm A C, real_inner_comm B C]
+  obtain ⟨t, ht⟩ := vsub_smul_of_mem_pair hFline
+  obtain ⟨w, hw⟩ := vsub_smul_of_mem_pair hPmid
+  refine ⟨AffineSubspace.mem_perpBisector_iff_dist_eq.mp ?_, AffineSubspace.mem_perpBisector_iff_dist_eq.mp ?_⟩
+  · -- `Mc` lies on the perpendicular bisector of `A` and `F`.
+    rw [AffineSubspace.mem_perpBisector_iff_inner_eq_zero']
+    have hmid : Mc A H C -ᵥ midpoint ℝ A F = (2⁻¹ : ℝ) • ((C -ᵥ H) + (C -ᵥ F)) := by
+      simp only [Mc, midpoint_eq_smul_add, vsub_eq_sub, invOf_eq_inv]; module
+    have e1 : ⟪B -ᵥ A, C -ᵥ H⟫ = 0 := by rw [real_inner_comm]; exact hCH
+    have e2 : ⟪B -ᵥ A, C -ᵥ F⟫ = 0 := by rw [real_inner_comm]; exact hFperp
+    rw [hmid, ht, real_inner_smul_left, real_inner_smul_right, inner_add_right, e1, e2]
+    ring
+  · -- `Mc` lies on the perpendicular bisector of `A` and `P`.
+    rw [AffineSubspace.mem_perpBisector_iff_inner_eq_zero']
+    have hmidP : Mc A H C -ᵥ midpoint ℝ A P = C -ᵥ midpoint ℝ H P := by
+      simp only [Mc, midpoint_eq_smul_add, vsub_eq_sub, invOf_eq_inv]; module
+    have hCm : C -ᵥ midpoint ℝ H P = (1 - w) • (C -ᵥ B) := by
+      rw [show C -ᵥ midpoint ℝ H P = (C -ᵥ B) - (midpoint ℝ H P -ᵥ B) by
+        rw [vsub_sub_vsub_cancel_right], hw, sub_smul, one_smul]
+    have hPACB : ⟪P -ᵥ A, C -ᵥ B⟫ = 0 := by
+      rw [show P -ᵥ A = (P -ᵥ H) + (H -ᵥ A) by rw [vsub_add_vsub_cancel],
+        inner_add_left, hPperp, hH1, add_zero]
+    rw [hmidP, hCm, real_inner_smul_right, hPACB, mul_zero]
 
 lemma p4_perp (A B C H : EuclideanSpace ℝ (Fin 2))
     (hH1 : ⟪H -ᵥ A, C -ᵥ B⟫ = 0) :
