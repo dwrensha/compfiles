@@ -220,7 +220,7 @@ theorem a_b_recurrence_1 (n : ℕ) (npos : 0 < n) : a (n+2) = 2 * a n + 2 * b n 
   calc
     _ = Fintype.card {w : Octagon.Walk A E // isTerminalWalk w ∧ w.length = 2 + n} := by
       rw [Set.ncard_eq_toFinset_card', add_comm]
-      simp
+      exact Set.toFinset_card _
     _ = ∑ v ∈ {A,C,G}, Fintype.card {w : Octagon.Walk A v // E ∉ w.support ∧ w.length = 2} * Fintype.card {w : Octagon.Walk v E // isTerminalWalk w ∧ w.length = n} := by
       rw [Fintype.card_eq.mpr (Nonempty.intro (isTerminalWalk_length_cons_equiv _ _ npos))]
       rw [Fintype.card_sigma]
@@ -251,7 +251,7 @@ theorem a_b_recurrence_2 (n : ℕ) (npos : 0 < n) : b (n+2) = a n + 2 * b n := b
   calc
     _ = Fintype.card {w : Octagon.Walk C E // isTerminalWalk w ∧ w.length = 2 + n} := by
       rw [Set.ncard_eq_toFinset_card', add_comm]
-      simp
+      exact Set.toFinset_card _
     _ = ∑ v ∈ {A,C}, Fintype.card {w : Octagon.Walk C v // E ∉ w.support ∧ w.length = 2} * Fintype.card {w : Octagon.Walk v E // isTerminalWalk w ∧ w.length = n} := by
       rw [Fintype.card_eq.mpr (Nonempty.intro (isTerminalWalk_length_cons_equiv _ _ npos))]
       rw [Fintype.card_sigma]
@@ -274,8 +274,12 @@ theorem a_even (n : ℕ) (npos : 0 < n) : a (2*n) = ((2+√2)^(n-1) - (2-√2)^(
   revert n
   apply Nat.le_induction
   · unfold a b
-    simp [Set.ncard_eq_toFinset_card']
-    decide
+    simp only [Set.ncard_eq_toFinset_card', Set.toFinset_card,
+      show Fintype.card ↑{w : Octagon.Walk A E | isTerminalWalk w ∧ w.length = 2 * Nat.succ 0} = 0
+        from by decide,
+      show Fintype.card ↑{w : Octagon.Walk C E | isTerminalWalk w ∧ w.length = 2 * Nat.succ 0} = 1
+        from by decide]
+    norm_num
   · intro n npos ih
     rw [mul_add, mul_one]
     rw [show n + 1 - 1 = (n - 1 + 1) by lia]

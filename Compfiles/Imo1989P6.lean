@@ -343,7 +343,7 @@ def embed_B : (B n) ↪ {x | T n x} := {
     · grind
   inj' x1 x2 e := by
     simp at e
-    have eq_perm : x1.val.1 = x2.val.1 := by exact Equiv.coe_inj.mp (congrArg DFunLike.coe e)
+    have eq_perm : x1.val.1 = x2.val.1 := congrArg Subtype.val e
     apply Subtype.ext
     apply Prod.ext
     · exact eq_perm

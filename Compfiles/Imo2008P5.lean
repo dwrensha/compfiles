@@ -81,7 +81,8 @@ def ψ (n k : ℕ) : { f // NSequence n k f } → { f // MSequence n k f } :=
           · dsimp; lia
         use 0
         dsimp
-        rw [Nat.card_eq_fintype_card, Fintype.card_eq_zero_iff, isEmpty_subtype]
+        rw [← Nat.card_coe_set_eq, Nat.card_eq_fintype_card, Fintype.card_eq_zero_iff,
+          isEmpty_subtype]
         exact h6
       · intro i hi j
         dsimp only [f']
@@ -350,10 +351,12 @@ lemma claim (n k : ℕ) (hn : 0 < n) (hnk : n ≤ k) (_he : Even (k - n))
         constructor
         · intro hj
           rcases hj with ⟨ji, hji, rfl⟩
-          simpa [a] using hji
+          simp only [a, Finset.coe_filter, Set.mem_setOf_eq, Finset.mem_univ, true_and] at hji
+          exact hji
         · intro hj
           refine ⟨⟨j, hfi_of_high i j hj⟩, ?_, rfl⟩
-          simp [a, hj]
+          simp only [a, Finset.coe_filter, Set.mem_setOf_eq, Finset.mem_univ, true_and]
+          exact hj
       apply Subtype.ext
       apply Subtype.ext
       funext j
