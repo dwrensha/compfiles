@@ -83,6 +83,7 @@ import Compfiles.Imo1982P1
 import Compfiles.Imo1982P3
 import Compfiles.Imo1982P4
 import Compfiles.Imo1983P1
+import Compfiles.Imo1983P3
 import Compfiles.Imo1983P5
 import Compfiles.Imo1983P6
 import Compfiles.Imo1984P1
@@ -121,6 +122,7 @@ import Compfiles.Imo1994P4
 import Compfiles.Imo1994P5
 import Compfiles.Imo1994P6
 import Compfiles.Imo1995P2
+import Compfiles.Imo1995P6
 import Compfiles.Imo1995P4
 import Compfiles.Imo1996P3
 import Compfiles.Imo1996P4
@@ -132,6 +134,7 @@ import Compfiles.Imo1998P2
 import Compfiles.Imo1998P3
 import Compfiles.Imo1998P4
 import Compfiles.Imo1998P6
+import Compfiles.Imo1999P2
 import Compfiles.Imo1999P3
 import Compfiles.Imo1999P4
 import Compfiles.Imo1999P6
