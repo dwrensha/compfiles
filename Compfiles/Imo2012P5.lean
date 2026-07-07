@@ -304,7 +304,7 @@ theorem not_collinear_ABX : ¬Collinear ℝ {cfg.A, cfg.B, cfg.X} := by
   intro h
   rw [← collinear_insert_iff_of_mem_affineSpan (p := cfg.D),
     ← collinear_insert_iff_of_mem_affineSpan (p := cfg.C)] at h
-  · have := h.subset (by grind : {cfg.C, cfg.B, cfg.A} ⊆ _)
+  · have := h.subset (by grind : ({cfg.C, cfg.B, cfg.A} : Set P) ⊆ {cfg.C, cfg.D, cfg.A, cfg.B, cfg.X})
     rw [(by simp : {cfg.C, cfg.B, cfg.A} = Set.range ![cfg.A, cfg.B, cfg.C]),
       collinear_iff_not_affineIndependent] at this
     exact this cfg.affineIndependent_ABC

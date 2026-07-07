@@ -858,7 +858,7 @@ lemma SignatureIntersectionCount_eq_self_add_strict
     rw [strictSupersetContribution]
     rw [← Finset.sum_erase_add (Finset.univ : Finset Signature) B (Finset.mem_univ u)]
     have hnss : ¬ u ⊂ u := by exact irrefl u
-    simp [B, hnss]
+    simp [B]
   calc
     SignatureIntersectionCount f u =
         (∑ w ∈ (Finset.univ : Finset Signature).erase u, A w) + A u := by
