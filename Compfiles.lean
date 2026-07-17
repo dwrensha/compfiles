@@ -261,10 +261,12 @@ import Compfiles.Usa1973P2
 import Compfiles.Usa1973P4
 import Compfiles.Usa1974P1
 import Compfiles.Usa1974P2
+import Compfiles.Usa1975P1
 import Compfiles.Usa1976P3
 import Compfiles.Usa1977P1
 import Compfiles.Usa1978P1
 import Compfiles.Usa1979P1
+import Compfiles.Usa1980P3
 import Compfiles.Usa1980P5
 import Compfiles.Usa1981P5
 import Compfiles.Usa1982P4
@@ -276,6 +278,7 @@ import Compfiles.Usa1988P4
 import Compfiles.Usa1989P1
 import Compfiles.Usa1989P5
 import Compfiles.Usa1990P2
+import Compfiles.Usa1991P4
 import Compfiles.Usa1992P1
 import Compfiles.Usa1992P2
 import Compfiles.Usa1993P1
