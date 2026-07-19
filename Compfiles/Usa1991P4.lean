@@ -13,7 +13,7 @@ problem_file {
 
 /-!
 # USA Mathematical Olympiad 1991, Problem 4
-let $ a =\frac{m^{m+1} + n^{n+1}}{m^m + n^n} $ where $\m$ and $n$ are positive integers. Prove that $a^m + a^n \geq m^m + n^n$.
+let $ a = \frac{m^{m+1} + n^{n+1}}{m^m + n^n} $ where $m$ and $n$ are positive integers. Prove that $a^m + a^n \geq m^m + n^n$.
 -/
 
 snip begin
@@ -108,6 +108,5 @@ problem usa1991_p4 (m n : ℕ) (a: ℝ) (hm: m > 0) (hn: n > 0)
           lia
         simp; ring_nf; simp only [Nat.sub_add_eq, mul_assoc, h₅]
     linarith
-
 
 end Usa1991P4
