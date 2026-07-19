@@ -25,7 +25,7 @@ is integral for all positive integral $m$ and $n$.
 -/
 
 snip begin
-
+-- Solution adapted from Art of Problem Solving
 -- from https://leanprover.zulipchat.com/#narrow/channel/217875-Is-there-code-for-X.3F/topic/Sylvester-Schur.3A.20.20p-adic.20valuation/near/525085669
 lemma Nat.Prime.multiplicity_factorial {p : ℕ} (hp : Prime p) {n b : ℕ} (h : log p n < b) :
   multiplicity p n.factorial = ∑ i ∈ Finset.Ico 1 b, n / p ^ i := by
@@ -51,10 +51,7 @@ lemma floor_le_trunCeil {a b : ℝ} (h : a < b) : ⌊a⌋ ≤ [[b]] := by
 lemma cases (a b : Fin 5) : [[(3 * ↑↑a + ↑↑b + 4) / 5]] + [[(3 * ↑↑b + ↑↑a + 4) / 5]] ≤ ↑↑a + ↑↑b := by
   fin_cases a <;> fin_cases b <;> simp [trunCeil] <;> ring_nf <;> linarith
 
-lemma specialized (x y : ℝ) (hx : 0 ≤ x) (hy : 0 ≤ y) : ⌊3*x + y⌋ + ⌊3*y + x⌋ ≤ ⌊5*x⌋ + ⌊5*y⌋ := by
-
-  sorry
-
+-- positivity doesn't seem to be necessary, but I couldn't find a way to prove it cleanly.
 lemma h (x y : ℝ) (hx : 0 ≤ x) (hy : 0 ≤ y) : ⌊x⌋ + ⌊y⌋ + ⌊3*x + y⌋ + ⌊3*y + x⌋ ≤ ⌊5*x⌋ + ⌊5*y⌋ := by
   wlog h : ⌊x⌋ = 0 ∧ ⌊y⌋ = 0
   · have := this (Int.fract x) (Int.fract y) (by simp) (by simp) ⟨Int.floor_fract _, Int.floor_fract _⟩
@@ -88,12 +85,8 @@ lemma h (x y : ℝ) (hx : 0 ≤ x) (hy : 0 ≤ y) : ⌊x⌋ + ⌊y⌋ + ⌊3*x +
       exact Int.lt_floor_add_one _
     calc
       ⌊3*x+y⌋ + ⌊3*y+x⌋
-      _ ≤ [[(3*a+b+4)/5]] + _ := by
-        rw [@Int.add_le_add_iff_right]
-        exact floor_le_trunCeil (by linarith)
-      _ ≤ _ + [[(3*b+a+4)/5]] := by
-        rw [@Int.add_le_add_iff_left]
-        exact floor_le_trunCeil (by linarith)
+      _ ≤ [[(3*a+b+4)/5]] + [[(3*b+a+4)/5]] := by
+        apply add_le_add <;> exact floor_le_trunCeil (by linarith)
       _ ≤ a + b := cases a b
       _ ≤ _ := by norm_cast at ha hb; rw [ha, hb]
 
@@ -101,10 +94,9 @@ snip end
 
 namespace Usa1975P1
 
-problem usa1975_p1a (x y: ℝ) (hx : 0 ≤ x) (hy : 0 ≤ y) : ⌊3*x + y⌋ + ⌊3*y + x⌋ ≤ ⌊5*x⌋ + ⌊5*y⌋ := by
-  apply le_trans ?_ <| h x y hx hy
-  simp
-  exact Int.add_nonneg (Int.floor_nonneg.mpr hx) (Int.floor_nonneg.mpr hy)
+problem usa1975_p1a (x y: ℝ) (hx : 0 ≤ x) (hy : 0 ≤ y) : ⌊3*x + y⌋ + ⌊3*y + x⌋ ≤ ⌊5*x⌋ + ⌊5*y⌋ :=
+  le_trans (by simpa using Int.add_nonneg (Int.floor_nonneg.mpr hx) (Int.floor_nonneg.mpr hy))
+    <| h x y hx hy
 
 open scoped Nat
 
