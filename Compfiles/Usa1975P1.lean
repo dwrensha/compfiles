@@ -26,11 +26,12 @@ is integral for all positive integral $m$ and $n$.
 
 namespace Usa1975P1
 
-problem usa1975_p1a (x y: ℝ) (hx : x > 0) (hy : y > 0) : ⌊5*x⌋₊+⌊5*y⌋ ≥ ⌊3*x+y⌋ + ⌊3*y + x⌋ :=
-by sorry
+problem usa1975_p1a (x y: ℝ) (hx : 0 ≤ x) (hy : 0 ≤ y) : ⌊3*x+y⌋ + ⌊3*y + x⌋ ≤ ⌊5*x⌋ + ⌊5*y⌋ := by
+  sorry
 
 open scoped Nat
 
-problem usa1975_p1b (m n : ℕ) : (m ! * n ! * (3*m+n) ! * (3*n+m) !) ∣ ((5*m)! * (5*n)!) := by sorry
+problem usa1975_p1b (m n : ℕ) (hm : 0 < m) (hn : 0 < n) : (m ! * n ! * (3*m+n) ! * (3*n+m) !) ∣ ((5*m)! * (5*n)!) := by
+  sorry
 
 end Usa1975P1
