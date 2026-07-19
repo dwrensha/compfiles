@@ -51,10 +51,9 @@ lemma floor_le_trunCeil {a b : ℝ} (h : a < b) : ⌊a⌋ ≤ [[b]] := by
 lemma cases (a b : Fin 5) : [[(3 * ↑↑a + ↑↑b + 4) / 5]] + [[(3 * ↑↑b + ↑↑a + 4) / 5]] ≤ ↑↑a + ↑↑b := by
   fin_cases a <;> fin_cases b <;> simp [trunCeil] <;> ring_nf <;> linarith
 
--- positivity doesn't seem to be necessary, but I couldn't find a way to prove it cleanly.
-lemma h (x y : ℝ) (hx : 0 ≤ x) (hy : 0 ≤ y) : ⌊x⌋ + ⌊y⌋ + ⌊3*x + y⌋ + ⌊3*y + x⌋ ≤ ⌊5*x⌋ + ⌊5*y⌋ := by
+lemma h (x y : ℝ) : ⌊x⌋ + ⌊y⌋ + ⌊3*x + y⌋ + ⌊3*y + x⌋ ≤ ⌊5*x⌋ + ⌊5*y⌋ := by
   wlog h : ⌊x⌋ = 0 ∧ ⌊y⌋ = 0
-  · have := this (Int.fract x) (Int.fract y) (by simp) (by simp) ⟨Int.floor_fract _, Int.floor_fract _⟩
+  · have := this (Int.fract x) (Int.fract y) ⟨Int.floor_fract _, Int.floor_fract _⟩
     rw [← Int.floor_add_fract x, ← Int.floor_add_fract y]
     ring_nf
     conv => enter [1, 2, 1]; rw [add_add_add_comm', add_assoc]
@@ -64,7 +63,9 @@ lemma h (x y : ℝ) (hx : 0 ≤ x) (hy : 0 ≤ y) : ⌊x⌋ + ⌊y⌋ + ⌊3*x +
     ring_nf at this ⊢
     simp_rw [add_le_add_iff_right]
     simpa using this
-  · simp_rw [h.1, h.2, zero_add]
+  · have hx : 0 ≤ x := by simp_all
+    have hy : 0 ≤ y := by simp_all
+    simp_rw [h.1, h.2, zero_add]
     have hx₁ : x < 1 := by simp_all
     have hy₁ : y < 1 := by simp_all
     let a : Fin 5 := ⟨⌊5*x⌋₊, by rw [← mul_one 5, Nat.floor_lt]; all_goals push_cast; linarith⟩
@@ -96,7 +97,7 @@ namespace Usa1975P1
 
 problem usa1975_p1a (x y: ℝ) (hx : 0 ≤ x) (hy : 0 ≤ y) : ⌊3*x + y⌋ + ⌊3*y + x⌋ ≤ ⌊5*x⌋ + ⌊5*y⌋ :=
   le_trans (by simpa using Int.add_nonneg (Int.floor_nonneg.mpr hx) (Int.floor_nonneg.mpr hy))
-    <| h x y hx hy
+    <| h x y
 
 open scoped Nat
 
@@ -120,7 +121,8 @@ problem usa1975_p1b (m n : ℕ) : (m ! * n ! * (3*m+n) ! * (3*n+m) !) ∣ ((5*m)
 
   simp_rw [← Finset.sum_add_distrib]
   refine Finset.sum_le_sum fun i hi => ?_
-  have := h (m / p ^ i) (n / p ^ i) (div_nonneg ?_ ?_) (div_nonneg ?_ ?_) <;> simp
+  push_cast
+  have := h (m / p ^ i) (n / p ^ i)
   field_simp at this ⊢
   convert this
 
