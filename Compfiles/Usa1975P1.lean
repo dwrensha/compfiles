@@ -43,12 +43,11 @@ lemma Int.div_eq_floor {a b : ℕ} : (a / b: ℕ) = ⌊(a : ℝ) / b⌋ := by
 @[reducible]
 noncomputable def trunCeil (x : ℝ) := ⌈x⌉ - 1
 
-notation "[[" x "]]" => trunCeil x
 
-lemma floor_le_trunCeil {a b : ℝ} (h : a < b) : ⌊a⌋ ≤ [[b]] := by
+lemma floor_le_trunCeil {a b : ℝ} (h : a < b) : ⌊a⌋ ≤ trunCeil b := by
   simpa using Int.floor_lt_ceil_of_lt h
 
-lemma cases (a b : Fin 5) : [[(3 * ↑↑a + ↑↑b + 4) / 5]] + [[(3 * ↑↑b + ↑↑a + 4) / 5]] ≤ ↑↑a + ↑↑b := by
+lemma cases (a b : Fin 5) : trunCeil ((3 * ↑↑a + ↑↑b + 4) / 5) + trunCeil ((3 * ↑↑b + ↑↑a + 4) / 5) ≤ ↑↑a + ↑↑b := by
   fin_cases a <;> fin_cases b <;> simp [trunCeil] <;> ring_nf <;> linarith
 
 lemma h (x y : ℝ) : ⌊x⌋ + ⌊y⌋ + ⌊3*x + y⌋ + ⌊3*y + x⌋ ≤ ⌊5*x⌋ + ⌊5*y⌋ := by
@@ -86,7 +85,7 @@ lemma h (x y : ℝ) : ⌊x⌋ + ⌊y⌋ + ⌊3*x + y⌋ + ⌊3*y + x⌋ ≤ ⌊5
       exact Int.lt_floor_add_one _
     calc
       ⌊3*x+y⌋ + ⌊3*y+x⌋
-      _ ≤ [[(3*a+b+4)/5]] + [[(3*b+a+4)/5]] := by
+      _ ≤ trunCeil ((3*a+b+4)/5) + trunCeil ((3*b+a+4)/5) := by
         apply add_le_add <;> exact floor_le_trunCeil (by linarith)
       _ ≤ a + b := cases a b
       _ ≤ _ := by norm_cast at ha hb; rw [ha, hb]
