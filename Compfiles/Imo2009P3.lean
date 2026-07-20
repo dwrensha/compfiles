@@ -44,8 +44,6 @@ lemma strictMono_add_right_le {s : ℕ → ℕ} (hs: StrictMono s) {a b : ℕ} :
     rw [Nat.add_one_le_iff]
     exact ih.trans_lt <| hs <| lt_add_one _
 
-example (f : ℕ → ℕ) (hf: StrictMono f) (a b : ℕ) (h : f a < f b) : a < b := by exact (StrictMono.lt_iff_lt hf).mp h
-
 snip end
 
 problem imo2009_p3 (s : ℕ → ℕ) (hs : StrictMono s)
@@ -57,9 +55,9 @@ problem imo2009_p3 (s : ℕ → ℕ) (hs : StrictMono s)
   obtain ⟨D, A, h1⟩ := h1
   obtain ⟨D', B, h2⟩ := h2
 
-  have h3 (n : ℕ) : s (s n) < s (s n + 1) := hs <| lt_add_one (s n)
+  have h3 (n : ℕ) : s (s n) < s (s n + 1) := hs <| lt_add_one _
   have h4 (n : ℕ) : s (s n + 1) ≤ s (s (n + 1)) :=
-    hs.monotone <| Order.add_one_le_iff.mpr <| hs <| Nat.lt_add_one _
+    hs.monotone <| Order.add_one_le_iff.mpr <| hs <| lt_add_one _
   have h3' (n : ℕ) := h3 n |>.trans_le <| h4 n
   have h4' := h4
   simp_rw [h1, h2] at h3 h4
@@ -86,8 +84,6 @@ problem imo2009_p3 (s : ℕ → ℕ) (hs : StrictMono s)
   let m := iInf diff
   have ⟨a, ha⟩ : ∃ a, diff a = M := exists_eq_ciSup_of_not_isSuccLimit h_bddAbove Order.not_isSuccLimit_of_isSuccArchimedean
   have ⟨b, hb⟩ : ∃ b, diff b = m := exists_eq_ciInf_of_not_isPredLimit h_bddBelow Order.not_isPredLimit_of_isPredArchimedean
-  have h_le_M (n : ℕ) : diff n ≤ M := le_csSup h_bddAbove <| Set.mem_range_self _
-  have h_m_le (n : ℕ) : m ≤ diff n := csInf_le h_bddBelow <| Set.mem_range_self _
 
   have ha_sum : ∑ i ∈ Finset.range (s (s (a+1)) - (s (s a))), diff (s (s a) + i) = D * M := by
     unfold diff
@@ -102,10 +98,12 @@ problem imo2009_p3 (s : ℕ → ℕ) (hs : StrictMono s)
     rw [Nat.add_sub_of_le <| h3' b |>.le, h1, h1, Nat.add_sub_add_right, ← Nat.mul_sub, mul_eq_mul_left_iff]
     left; exact hb
 
-  have : M = m := by calc M
+  have h_le_M (n : ℕ) : diff n ≤ M := le_csSup h_bddAbove <| Set.mem_range_self _
+  have h_m_le (n : ℕ) : m ≤ diff n := csInf_le h_bddBelow <| Set.mem_range_self _
+  have h_m_eq_M : M = m := by calc M
     _ = diff (s (s a)) := by
       contrapose! ha_sum
-      refine Nat.ne_of_lt ?_
+      apply Nat.ne_of_lt
       calc
         _ < ∑ i ∈ Finset.range _, M :=
           Finset.sum_lt_sum (by simp [h_le_M]) ⟨0, by simp [h3', h_le_M _ |>.lt_of_ne ha_sum.symm]⟩
@@ -113,19 +111,20 @@ problem imo2009_p3 (s : ℕ → ℕ) (hs : StrictMono s)
     _ = diff (s (s b)) := by unfold diff; simp_rw [h2, h1 (s _)]; lia
     _ = m := by
       contrapose! hb_sum
-      refine Nat.ne_of_gt ?_
+      apply Nat.ne_of_gt
       calc
         _ = ∑ i ∈ Finset.range (s (s (b + 1)) - s (s b)), m := by
           simp [h1, Nat.add_sub_add_right, ← Nat.mul_sub]
         _ < _ := Finset.sum_lt_sum (by simp [h_m_le]) ⟨0, by simp [h3', h_m_le _ |>.lt_of_ne hb_sum.symm]⟩
   have (n : ℕ) : diff n = m := by
-    apply Nat.le_antisymm <;> simp [↓h_m_le, ← this, h_le_M]
+    apply Nat.le_antisymm <;> simp [↓h_m_le, ← h_m_eq_M, h_le_M]
+
   simp_rw [diff] at this
   refine ⟨m, s 0, fun n => ?_⟩
   induction n with
   | zero => simp
   | succ n ih =>
     suffices s (n + 1) = m + s n by linarith
-    refine (Nat.sub_eq_iff_eq_add <| hs.monotone <| Nat.le_add_right _ _).mp (this n)
+    exact (Nat.sub_eq_iff_eq_add <| hs.monotone <| Nat.le_add_right _ _).mp (this n)
 
 end Imo2009P3
