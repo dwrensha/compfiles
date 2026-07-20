@@ -27,7 +27,7 @@ def IsArithProg (f : ℕ → ℕ) : Prop := ∃ d : ℕ, ∀ n, f (n + 1) = f n 
 
 snip begin
 -- Adapted from the solution by Alex Zhai presented by Evan Chen.
--- Note the writeup uses A as the bound, when it should be D.
+-- Note the writeup uses A as the upper bound, when the correct upper bound is D.
 -- The requirement that $s_i$ is positive can be removed.
 
 lemma IsArithProg_iff {f: ℕ → ℕ} : IsArithProg f ↔ ∃ d r : ℕ, ∀ n, f n = d * n + r := by
@@ -50,7 +50,6 @@ problem imo2009_p3 (s : ℕ → ℕ) (hs : StrictMono s)
     (h1 : IsArithProg (fun n ↦ s (s n)))
     (h2 : IsArithProg (fun n ↦ s (s n + 1))) :
     IsArithProg s := by
-  -- it may be more helpful to define a function ℤ → ℤ to be easier to prove
   rw [IsArithProg_iff] at h1 h2 ⊢
   obtain ⟨D, A, h1⟩ := h1
   obtain ⟨D', B, h2⟩ := h2
@@ -59,7 +58,6 @@ problem imo2009_p3 (s : ℕ → ℕ) (hs : StrictMono s)
   have h4 (n : ℕ) : s (s n + 1) ≤ s (s (n + 1)) :=
     hs.monotone <| Order.add_one_le_iff.mpr <| hs <| lt_add_one _
   have h3' (n : ℕ) := h3 n |>.trans_le <| h4 n
-  have h4' := h4
   simp_rw [h1, h2] at h3 h4
   have h5 : A < B := by simpa using h3 0
   have : D = D' := by
@@ -71,6 +69,8 @@ problem imo2009_p3 (s : ℕ → ℕ) (hs : StrictMono s)
       simpa [h7] using this
 
   let diff (n : ℕ) := s (n + 1) - s n
+  let M := iSup diff
+  let m := iInf diff
   have h_bddAbove : BddAbove (Set.range diff) := by
     use D
     simp_rw [mem_upperBounds, Set.mem_range]
@@ -80,27 +80,23 @@ problem imo2009_p3 (s : ℕ → ℕ) (hs : StrictMono s)
     simp_rw [h1]
     linarith
   have h_bddBelow : BddBelow (Set.range diff) := OrderBot.bddBelow <| Set.range diff
-  let M := iSup diff
-  let m := iInf diff
   have ⟨a, ha⟩ : ∃ a, diff a = M := exists_eq_ciSup_of_not_isSuccLimit h_bddAbove Order.not_isSuccLimit_of_isSuccArchimedean
   have ⟨b, hb⟩ : ∃ b, diff b = m := exists_eq_ciInf_of_not_isPredLimit h_bddBelow Order.not_isPredLimit_of_isPredArchimedean
 
   have ha_sum : ∑ i ∈ Finset.range (s (s (a+1)) - (s (s a))), diff (s (s a) + i) = D * M := by
-    unfold diff
-    simp_rw [add_assoc]
+    simp_rw [diff, add_assoc]
     rw [Finset.sum_range_tsub <| Monotone.covariant_of_const hs.monotone (s (s a)), add_zero]
     rw [Nat.add_sub_of_le <| h3' a |>.le, h1, h1, Nat.add_sub_add_right, ← Nat.mul_sub, mul_eq_mul_left_iff]
     left; exact ha
   have hb_sum : ∑ i ∈ Finset.range (s (s (b+1)) - (s (s b))), diff (s (s b) + i) = D * m := by
-    unfold diff
-    simp_rw [add_assoc]
+    simp_rw [diff, add_assoc]
     rw [Finset.sum_range_tsub <| Monotone.covariant_of_const hs.monotone (s (s b)), add_zero]
     rw [Nat.add_sub_of_le <| h3' b |>.le, h1, h1, Nat.add_sub_add_right, ← Nat.mul_sub, mul_eq_mul_left_iff]
     left; exact hb
 
   have h_le_M (n : ℕ) : diff n ≤ M := le_csSup h_bddAbove <| Set.mem_range_self _
   have h_m_le (n : ℕ) : m ≤ diff n := csInf_le h_bddBelow <| Set.mem_range_self _
-  have h_m_eq_M : M = m := by calc M
+  have h_m_eq_M : M = m := calc
     _ = diff (s (s a)) := by
       contrapose! ha_sum
       apply Nat.ne_of_lt
