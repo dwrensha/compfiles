@@ -20,9 +20,40 @@ A + B + C is an integral multiple of π. x, y, z are real numbers. If x sin A + 
 snip begin
 -- Solution adapted from Art of Problem Solving.
 -- The statement asks for positive integer n, but the proof also needs the base case of n = 0.
+open MvPolynomial
 -- Newton's Identities
 -- https://leanprover-community.github.io/mathlib4_docs/Mathlib/RingTheory/MvPolynomial/Symmetric/NewtonIdentities.html#MvPolynomial.mul_esymm_eq_sum
 -- MvPolynomial.mul_esymm_eq_sum
+lemma newton_sum (a b c : ℂ) (k : ℕ) :
+  let p (k: ℕ) := a ^ k + b ^ k + c ^ k
+  let s₁ := a + b + c
+  let s₂ := a * b + b * c + a * c
+  let s₃ := a * b * c
+  p (k + 3) = s₁ * p (k + 2) - s₂ * p (k + 1) + s₃ * p k := by
+  intro p s₁ s₂ s₃
+  let σ := ({a, b, c} : Finset ℂ)
+  let l := [a, b, c]
+  have := psum_eq_mul_esymm_sub_sum (Fin 3) ℂ 3 (by lia)
+  apply_fun (eval (l[·]) ·) at this
+  have psum_3 (f : Fin 3 → ℂ) : eval f (psum (Fin 3) ℂ 3) = (f 0) ^ 3 + (f 1) ^ 3 + (f 2) ^ 3 := by
+    sorry
+  simp only [eval_sub, eval_mul, eval_pow, eval_neg, eval_sum, eval_prod, eval_X, RingHom.map_one, map_natCast] at this
+
+  simp only [psum_3] at this
+  simp only [esymm, l, psum] at this
+  simp [Fin.sum_univ_three] at this
+  rw [← Finset.univ_filter_card_eq] at this
+
+
+  have : ∑ x : σ, (x : ℂ) ^ 3 = a ^ 3 + b ^ 3 + c ^ 3 := by calc
+    ∑ x : σ, (x : ℂ) ^ 3
+    _ = a ^ 3 + b ^ 3 + c ^ 3 := by
+      unfold σ
+      simp [Finset.image_image, Function.comp_def]
+      rw [Finset.sum_insert, Finset.sum_insert]
+      simp [← Finset.univ_eq_attach, add_assoc]
+      simp
+  sorry
 
 -- de Movire's Theorem
 -- Complex.cos_add_sin_mul_I_pow
@@ -79,12 +110,20 @@ problem usa1980_p3 (x y z A B C: ℝ) (habc: ∃ k : ℤ, A + B + C = k * π)
     simp only [hs₁, s₁, s₂, hs₄]
     ring_nf
   let p (k : ℕ) := a ^ k + b ^ k + c ^ k
+  let p' (k : ℕ) : MvPolynomial ({a, b, c}: Finset ℂ) ℂ := X ⟨a, by simp⟩ ^ k
   let σ := ({a, b, c} : Finset ℂ)
-  --   sorry
+  -- we have defined p as a function ℂ → ℂ, and want to use the results of rings
+  have m := ({a, b, c} : Multiset ℂ)
+  have := m.esymm 3
   have sum (i : ℕ) : p (i+3) = s₁ * p (i+2) - s₂ * p (i+1) + s₃ * p i := by
     -- have := MvPolynomial.sum_antidiagonal_card_esymm_psum_eq_zero ({a, b, c} : Finset ℂ) ℂ
-    have := psum_eq_mul_esymm_sub_sum ({a, b, c} : Finset ℂ) ℂ 3 (by lia)
-    rw [MvPolynomial.ext_iff] at this
+    -- have := psum_eq_mul_esymm_sub_sum σ ℂ 3 (by lia)
+    -- apply_fun (eval (fun s => ↑s) ·) at this
+    -- simp [esymm, σ, psum] at this
+    -- simp at this
+    -- rw [esymm_eq_multiset_esymm] at this
+
+    -- rw [MvPolynomial.ext_iff] at this
     -- simp [Finset.sum] at this
     sorry
   have h_equiv (n : ℕ) : x^n * sin (n*A) + y^n * sin (n*B) + z^n * sin (n*C) = 0 ↔ (p n).im = 0 := by
@@ -102,6 +141,10 @@ problem usa1980_p3 (x y z A B C: ℝ) (habc: ∃ k : ℤ, A + B + C = k * π)
     rw [h_equiv]
     norm_cast at ih
     simp_rw [h_equiv] at ih
+    -- have := newton_sum a b c n
+    -- simp at this
+    -- simp only [p, this]
+    -- rw [this]
     simpa [sum n, ← hs₁, ← hs₂, ← hs₃, ih] using Or.inr $ ih 0 (by lia)
 
 end Usa1980P3
