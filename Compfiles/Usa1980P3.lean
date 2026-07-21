@@ -20,10 +20,108 @@ A + B + C is an integral multiple of π. x, y, z are real numbers. If x sin A + 
 snip begin
 -- Solution adapted from Art of Problem Solving.
 -- The statement asks for positive integer n, but the proof also needs the base case of n = 0.
+-- Note that the Newton Sum formula given on the site only holds for k > 0.
+-- To account for this, we use base cases k ∈ Finset.range 4 for the induction.
 open MvPolynomial
 -- Newton's Identities
 -- https://leanprover-community.github.io/mathlib4_docs/Mathlib/RingTheory/MvPolynomial/Symmetric/NewtonIdentities.html#MvPolynomial.mul_esymm_eq_sum
 -- MvPolynomial.mul_esymm_eq_sum
+noncomputable section
+
+abbrev P (k: ℕ) : MvPolynomial (Fin 3) ℂ := psum (Fin 3) ℂ k
+
+abbrev S (k : ℕ) : MvPolynomial (Fin 3) ℂ := esymm (Fin 3) ℂ k
+
+def f (x y z A B C : ℝ) : Fin 3 → ℂ
+| 0 => x * Complex.exp (A * Complex.I)
+| 1 => y * Complex.exp (B * Complex.I)
+| 2 => z * Complex.exp (C * Complex.I)
+
+end
+
+lemma P_def (k : ℕ) : P k = X (0) ^ k + X (1) ^ k + X (2) ^ k := by
+  simp [P, psum, Fin.sum_univ_three]
+
+lemma S_zero : S 0 = C 1 := by simp [S]
+
+lemma S_one : S 1 = X (0) + X (1) + X (2) := by simp [S, Fin.sum_univ_three]
+
+lemma S_two : S 2 = X (0) * X (1) + X (1) * X (2) + X (0) * X (2) := by
+  simp [S, esymm]
+  sorry
+
+lemma S_three : S 3 = X (0) * X (1) * X (2) := by
+  simp [S, esymm]
+  have : Finset.powersetCard 3 (Finset.univ: Finset (Fin 3)) = {Finset.univ} :=
+    Finset.val_eq_singleton_iff.mp rfl
+  simp [this, Fin.prod_univ_three]
+
+lemma S_more' (k: ℕ) : S (k + 4) = 0 := by
+  have : Finset.powersetCard (k + 4) (Finset.univ : Finset (Fin 3)) = ∅ := by simp
+  simp [S, esymm, this]
+
+@[deprecated S_more']
+lemma S_more (k: ℕ) (h: k > 3) : S k = 0 := by
+  have : Finset.powersetCard k (Finset.univ : Finset (Fin 3)) = ∅ := by simp [h]
+  simp [S, esymm, this]
+
+lemma movire (n : ℕ) (z : ℂ) : Complex.exp (z * Complex.I) ^ n = Complex.exp (↑n * z * Complex.I) := by
+  simpa [Complex.cos_add_sin_I] using Complex.cos_add_sin_mul_I_pow n z
+
+open Real in
+lemma P_iff {x y z A B C : ℝ} (n: ℕ) : x^n * sin (n*A) + y^n * sin (n*B) + z^n * sin (n*C) = 0
+  ↔ (eval (f x y z A B C) (P n)).im = 0 := by
+  simp [P_def, f, mul_pow, movire]
+  norm_cast
+  simp
+  norm_cast
+  simp [↓Complex.exp_ofReal_mul_I_im]
+
+lemma P_three : P 3 = S 1 * P 2 - S 2 * P 1 + S 3 * 3 := by
+  have prop := mul_esymm_eq_sum (Fin 3) ℂ 3
+  have : Finset.filter (·.1 < 3) (Finset.antidiagonal 3) = {(0,3),(1,2),(2,1)} := by
+    rw [Finset.Nat.antidiagonal_eq_image]
+    simp [Finset.range, Finset.filter_insert, Finset.image, Finset.filter_singleton]
+    decide
+  rw [this] at prop
+  unfold P S
+  simp [Even.neg_one_pow (Nat.even_iff.mpr rfl : Even 4)] at prop
+  ring_nf at prop ⊢
+  simp [prop]
+  ring
+
+lemma P_more (k : ℕ) : P (k + 4) = S 1 * P (k + 3) - S 2 * P (k + 2) + S 3 * P (k + 1) := by
+  have prop := mul_esymm_eq_sum (Fin 3) ℂ (k+4)
+  let s₂ := Finset.filter (fun a => a.1 < k + 4) (Finset.antidiagonal (k + 4))
+  let s₁ : Finset (ℕ × ℕ) := {(0,k+4),(1,k+3),(2,k+2),(3,k+1)}
+  have : {(0,k+4),(1,k+3),(2,k+2),(3,k+1)} ⊆ s₂ := by
+    dsimp [s₁, s₂]
+    rw [Finset.Nat.antidiagonal_eq_image, Finset.subset_iff]
+    simp_rw [Finset.mem_insert, Finset.mem_singleton]
+    rintro ⟨a, b⟩ (h | h | h | h) <;> simp [h]
+
+  let g (a : ℕ × ℕ) := (-1) ^ a.1 * esymm (Fin 3) ℂ a.1 * psum (Fin 3) ℂ a.2
+  have h : ∀ x ∈ s₂ \ s₁, g x = 0 := by
+    intro ⟨a, b⟩ hx
+    simp [s₂, s₁] at hx
+    rcases hx with ⟨⟨_, _⟩, _, _, _, _⟩
+    simp [g]
+    left
+    rcases a with n | n | n | n | n
+    <;> simp_all
+    <;> first | omega | rw [← S_more']
+  have := Finset.sum_subset_zero_on_sdiff this h (fun x h => rfl)
+  dsimp [s₂, g] at this
+  simp [S_more'] at prop
+  rw [← this] at prop
+
+  unfold P S
+  simp at prop ⊢
+  ring_nf at prop ⊢
+  rw [sub_eq_zero] at prop
+  rw [← prop]
+  ring_nf
+
 lemma newton_sum (a b c : ℂ) (k : ℕ) :
   let p (k: ℕ) := a ^ k + b ^ k + c ^ k
   let s₁ := a + b + c
@@ -41,9 +139,9 @@ lemma newton_sum (a b c : ℂ) (k : ℕ) :
 
   simp only [psum_3] at this
   simp only [esymm, l, psum] at this
+  -- rw [Finset.Nat.sum_antidiagonal_eq_sum_range_succ] at this
   simp [Fin.sum_univ_three] at this
   rw [← Finset.univ_filter_card_eq] at this
-
 
   have : ∑ x : σ, (x : ℂ) ^ 3 = a ^ 3 + b ^ 3 + c ^ 3 := by calc
     ∑ x : σ, (x : ℂ) ^ 3
@@ -54,11 +152,7 @@ lemma newton_sum (a b c : ℂ) (k : ℕ) :
       simp [← Finset.univ_eq_attach, add_assoc]
       simp
   sorry
-
--- de Movire's Theorem
--- Complex.cos_add_sin_mul_I_pow
-open MvPolynomial
-
+section end
 snip end
 
 namespace Usa1980P3
