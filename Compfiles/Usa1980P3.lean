@@ -1,7 +1,7 @@
 /-
 Copyright (c) 2026 pacmanboss256. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Pacmanboss256
+Authors: Pacmanboss256, hillosanation
 -/
 import Mathlib
 
