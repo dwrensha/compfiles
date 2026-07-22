@@ -22,7 +22,10 @@ snip begin
 -- The statement asks for positive integer n, but the proof also needs the base case of n = 0.
 -- Note that the Newton Sum formula given on the site only holds for k > 0.
 -- To account for this, we use base cases k ∈ Finset.range 4 for the induction.
-open MvPolynomial Real
+open MvPolynomial Finset HasAntidiagonal
+open Complex hiding sin
+open scoped Real
+open Real (sin)
 
 noncomputable section
 
@@ -31,77 +34,78 @@ abbrev P (k: ℕ) : MvPolynomial (Fin 3) ℂ := psum (Fin 3) ℂ k
 abbrev S (k : ℕ) : MvPolynomial (Fin 3) ℂ := esymm (Fin 3) ℂ k
 
 def f (x y z A B C : ℝ) : Fin 3 → ℂ
-| 0 => x * Complex.exp (A * Complex.I)
-| 1 => y * Complex.exp (B * Complex.I)
-| 2 => z * Complex.exp (C * Complex.I)
+| 0 => x * exp (A * I)
+| 1 => y * exp (B * I)
+| 2 => z * exp (C * I)
 
 section end
 
-variable {x y z A B C : ℝ}
+variable {x y z α β γ : ℝ}
 
-lemma movire (n : ℕ) (z : ℂ) : Complex.exp (z * Complex.I) ^ n = Complex.exp (↑n * z * Complex.I) := by
-  simpa [Complex.cos_add_sin_I] using Complex.cos_add_sin_mul_I_pow n z
+lemma movire (n : ℕ) (z : ℂ) : exp (z * I) ^ n = exp (↑n * z * I) := by
+  simpa [cos_add_sin_I] using cos_add_sin_mul_I_pow n z
 
-lemma P_def (k : ℕ) : P k = X (0) ^ k + X (1) ^ k + X (2) ^ k := by
+lemma P_def (k : ℕ) : P k = X 0 ^ k + X 1 ^ k + X 2 ^ k := by
   simp [P, psum, Fin.sum_univ_three]
 
-lemma prod_f_im (habc: ∃ k : ℤ, A + B + C = k * π) : (∏ i, f x y z A B C i).im = 0 := by
+lemma prod_f_im (habc: ∃ k : ℤ, α + β + γ = k * π) : (∏ i, f x y z α β γ i).im = 0 := by
   obtain ⟨k, h⟩ := habc
-  refine Complex.sq_nonneg_iff.mp ?_
+  refine sq_nonneg_iff.mp ?_
   simp only [f, Fin.prod_univ_three]
   -- need to do this awkward maneuver instead of using `suffices` to avoid invoking LE ℂ
   have :
-    ↑x * Complex.exp (↑A * Complex.I) * (↑y * Complex.exp (↑B * Complex.I)) * (↑z * Complex.exp (↑C * Complex.I))
-      = ↑x * ↑y * ↑z * (Complex.exp (↑A * Complex.I) * Complex.exp (↑B * Complex.I) * Complex.exp (↑C * Complex.I)) := by field_simp
+    ↑x * exp (↑α * I) * (↑y * exp (↑β * I)) * (↑z * exp (↑γ * I))
+      = ↑x * ↑y * ↑z * (exp (↑α * I) * exp (↑β * I) * exp (↑γ * I)) := by field_simp
   rw [this, mul_pow]
   norm_cast
-  simp_rw [← Complex.exp_add, ← Complex.exp_nat_mul]
-  rw [Complex.exp_eq_one_iff.mpr ⟨k, ?_⟩]
+  simp_rw [← exp_add, ← exp_nat_mul]
+  rw [exp_eq_one_iff.mpr ⟨k, ?_⟩]
   · norm_cast; simpa using sq_nonneg _
-  · simp_rw [← add_mul, ← Complex.ofReal_add, h]
+  · simp_rw [← add_mul, ← ofReal_add, h]
     push_cast
     field_simp
 
-lemma sum_f_im (h1: x*sin A + y*sin B + z*sin C = 0) : (∑ i, f x y z A B C i).im = 0 := by
+lemma sum_f_im (h1: x*sin α + y*sin β + z*sin γ = 0) : (∑ i, f x y z α β γ i).im = 0 := by
   simp [Fin.sum_univ_three, f, h1]
 
-lemma S_two : (2: MvPolynomial (Fin 3) ℂ) * S 2 = S 1 * P 1 - P 2 := by
-  have : Finset.filter (·.1 < 2) (Finset.antidiagonal 2) = {(0,2),(1,1)} := by
-    simpa [Finset.Nat.antidiagonal_eq_image] using by decide
-  have newton := mul_esymm_eq_sum (Fin 3) ℂ 2
-  rw [Odd.neg_one_pow (by decide)] at newton
-  simpa [P, S, ↓this, sub_eq_add_neg] using newton
+lemma S_two : S 2 = C (1/2) * (S 1 * P 1 - P 2) := by
+  apply_fun (C (2) * ·) using (by intro _ _; simp)
+  have eq : ((2 : ℕ) : MvPolynomial (Fin 3) ℂ) = C 2 := by rfl
+  have : filter (·.1 < 2) (antidiagonal 2) = {(0,2),(1,1)} := by
+    simpa [Nat.antidiagonal_eq_image] using by decide
+  simpa [↓← mul_assoc, ↓← C_mul, ← eq, P, S, ↓this, sub_eq_add_neg, Odd.neg_one_pow (Nat.odd_iff.mpr rfl : Odd 3)]
+    using mul_esymm_eq_sum (Fin 3) ℂ 2
 
 lemma S_more (k: ℕ) : S (k + 4) = 0 := by
-  have : Finset.powersetCard (k + 4) (Finset.univ : Finset (Fin 3)) = ∅ := by simp
+  have : powersetCard (k + 4) (univ : Finset (Fin 3)) = ∅ := by simp
   simp [S, esymm, this]
 
-lemma P_iff {x y z A B C : ℝ} (n: ℕ) : x^n * sin (n*A) + y^n * sin (n*B) + z^n * sin (n*C) = 0
-  ↔ (eval (f x y z A B C) (P n)).im = 0 := by
+lemma P_iff (n: ℕ) : x^n * sin (n*α) + y^n * sin (n*β) + z^n * sin (n*γ) = 0
+  ↔ (eval (f x y z α β γ) (P n)).im = 0 := by
   simp [P_def, f, mul_pow, movire]
   norm_cast
   simp
   norm_cast
-  simp [↓Complex.exp_ofReal_mul_I_im]
+  simp [↓exp_ofReal_mul_I_im]
 
 lemma P_three : P 3 = S 1 * P 2 - S 2 * P 1 + S 3 * 3 := by
-  have prop := mul_esymm_eq_sum (Fin 3) ℂ 3
-  have : Finset.filter (·.1 < 3) (Finset.antidiagonal 3) = {(0,3),(1,2),(2,1)} := by
-    simpa [Finset.Nat.antidiagonal_eq_image] using by decide
-  rw [this] at prop
-  simp [Even.neg_one_pow (Nat.even_iff.mpr rfl : Even 4)] at prop
-  ring_nf at prop ⊢
-  simp [prop]
+  have newton := mul_esymm_eq_sum (Fin 3) ℂ 3
+  have : filter (·.1 < 3) (antidiagonal 3) = {(0,3),(1,2),(2,1)} := by
+    simpa [Nat.antidiagonal_eq_image] using by decide
+  rw [this] at newton
+  simp [Even.neg_one_pow (Nat.even_iff.mpr rfl : Even 4)] at newton
+  ring_nf at newton ⊢
+  simp [newton]
   ring
 
 lemma P_more (k : ℕ) : P (k + 4) = S 1 * P (k + 3) - S 2 * P (k + 2) + S 3 * P (k + 1) := by
-  have prop := mul_esymm_eq_sum (Fin 3) ℂ (k+4)
-  let s₂ := Finset.filter (fun a => a.1 < k + 4) (Finset.antidiagonal (k + 4))
+  have newton := mul_esymm_eq_sum (Fin 3) ℂ (k+4)
+  let s₂ := filter (fun a => a.1 < k + 4) (antidiagonal (k + 4))
   let s₁ : Finset (ℕ × ℕ) := {(0,k+4),(1,k+3),(2,k+2),(3,k+1)}
-  have : {(0,k+4),(1,k+3),(2,k+2),(3,k+1)} ⊆ s₂ := by
+  have : s₁ ⊆ s₂ := by
     dsimp [s₁, s₂]
-    rw [Finset.Nat.antidiagonal_eq_image, Finset.subset_iff]
-    simp_rw [Finset.mem_insert, Finset.mem_singleton]
+    rw [Nat.antidiagonal_eq_image, subset_iff]
+    simp_rw [mem_insert, mem_singleton]
     rintro ⟨a, b⟩ (h | h | h | h) <;> simp [h]
 
   let g (a : ℕ × ℕ) := (-1) ^ a.1 * esymm (Fin 3) ℂ a.1 * psum (Fin 3) ℂ a.2
@@ -113,34 +117,30 @@ lemma P_more (k : ℕ) : P (k + 4) = S 1 * P (k + 3) - S 2 * P (k + 2) + S 3 * P
       absurd hx
       simp [s₁, s₂]
     all_goals omega
-  have := Finset.sum_subset_zero_on_sdiff this h (fun x h => rfl)
+  have := sum_subset_zero_on_sdiff this h (fun x h => rfl)
   dsimp [s₂, g] at this
-  simp [S_more, ← this] at prop
+  simp [S_more, ← this] at newton
 
-  simp [← sub_eq_zero] at prop ⊢
-  ring_nf at prop ⊢
-  exact prop
+  simp [← sub_eq_zero, s₁] at newton ⊢
+  ring_nf at newton ⊢
+  exact newton
 
-lemma P_two_im (h2: x^2 * sin (2*A) + y^2 * sin (2*B) + z^2 * sin (2*C) = 0) : ((eval <| f x y z A B C) (P 2)).im = 0 := by
+lemma P_two_im (h2: x^2 * sin (2*α) + y^2 * sin (2*β) + z^2 * sin (2*γ) = 0) : ((eval <| f x y z α β γ) (P 2)).im = 0 := by
   simp only [P, psum, Fin.sum_univ_three, eval_add, eval_pow, eval_X, f, mul_pow, movire]
-  simp_rw [← Complex.cos_add_sin_I]
+  simp_rw [← cos_add_sin_I]
   norm_cast
-  simp [-Complex.ofReal_cos, -Complex.ofReal_sin]
+  simp [-ofReal_cos, -ofReal_sin]
   norm_cast
   linarith
 
-lemma S_two_im (h1: x*sin A + y*sin B + z*sin C = 0) (h2: x^2 * sin (2*A) + y^2 * sin (2*B) + z^2 * sin (2*C) = 0) : ((eval <| f x y z A B C) (S 2)).im = 0 := by
-  have : (2 : MvPolynomial (Fin 3) ℂ) = MvPolynomial.C 2 := by rfl
-  have : S 2 = MvPolynomial.C (1 / 2) * (2 * S 2) := by
-    simp [this, ← mul_assoc, ← C_mul]
-  rw [this]
+lemma S_two_im (h1: x*sin α + y*sin β + z*sin γ = 0)
+  (h2: x^2 * sin (2*α) + y^2 * sin (2*β) + z^2 * sin (2*γ) = 0)
+  : ((eval <| f x y z α β γ) (S 2)).im = 0 := by
   simp [sum_f_im h1, S_two, P_two_im h2]
 
-lemma S_three_im (habc: ∃ k : ℤ, A + B + C = k * π) : ((eval <| f x y z A B C) (S 3)).im = 0 := by
-  have : Finset.powersetCard 3 (Finset.univ: Finset (Fin 3)) = {Finset.univ} :=
-    Finset.val_eq_singleton_iff.mp rfl
+lemma S_three_im (habc: ∃ k : ℤ, α + β + γ = k * π) : ((eval <| f x y z α β γ) (S 3)).im = 0 := by
+  have : powersetCard 3 (univ: Finset (Fin 3)) = {univ} := val_eq_singleton_iff.mp rfl
   simp [S, esymm, this, prod_f_im habc]
-
 snip end
 
 namespace Usa1980P3
