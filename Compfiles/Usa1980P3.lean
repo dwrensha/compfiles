@@ -22,7 +22,7 @@ snip begin
 -- The statement asks for positive integer n, but the proof also needs the base case of n = 0.
 -- Note that the Newton Sum formula given on the site only holds for k > 0.
 -- To account for this, we use base cases k ∈ Finset.range 4 for the induction.
-open MvPolynomial
+open MvPolynomial Real
 -- Newton's Identities
 -- https://leanprover-community.github.io/mathlib4_docs/Mathlib/RingTheory/MvPolynomial/Symmetric/NewtonIdentities.html#MvPolynomial.mul_esymm_eq_sum
 -- MvPolynomial.mul_esymm_eq_sum
@@ -47,8 +47,8 @@ lemma movire (n : ℕ) (z : ℂ) : Complex.exp (z * Complex.I) ^ n = Complex.exp
 lemma P_def (k : ℕ) : P k = X (0) ^ k + X (1) ^ k + X (2) ^ k := by
   simp [P, psum, Fin.sum_univ_three]
 
-open Real in
-lemma sum_f_im (habc: ∃ k : ℤ, A + B + C = k * π) : (∏ i, f x y z A B C i).im = 0 := by
+
+lemma prod_f_im (habc: ∃ k : ℤ, A + B + C = k * π) : (∏ i, f x y z A B C i).im = 0 := by
   obtain ⟨k, h⟩ := habc
   refine Complex.sq_nonneg_iff.mp ?_
   simp only [f, Fin.prod_univ_three]
@@ -65,42 +65,18 @@ lemma sum_f_im (habc: ∃ k : ℤ, A + B + C = k * π) : (∏ i, f x y z A B C i
     push_cast
     field_simp
 
-lemma S_zero : S 0 = MvPolynomial.C 1 := by simp [S]
+lemma sum_f_im (h1: x*sin A + y*sin B + z*sin C = 0) : (∑ i, f x y z A B C i).im = 0 := by
+  simp [Fin.sum_univ_three, f, h1]
 
-lemma S_one : S 1 = X (0) + X (1) + X (2) := by simp [S, Fin.sum_univ_three]
-
-lemma S_two : S 2 = X (0) * X (1) + X (1) * X (2) + X (0) * X (2) := by
-  have : Finset.powersetCard 2 (Finset.univ: Finset (Fin 3)) = {{0, 1}, {1, 2}, {0, 2}} :=
-    Finset.symmDiff_eq_empty.mp rfl
-  simp [S, esymm, this]
-  rw [Finset.sum_insert (by decide), Finset.sum_insert (by decide), Finset.sum_singleton]
-  simp [add_assoc]
-
-example : (2: MvPolynomial (Fin 3) ℂ) = MvPolynomial.C 2 := by
-  rfl
-
-lemma S_two' : (2: MvPolynomial (Fin 3) ℂ) * S 2 = (S 1 * P 1 - P 2) := by
+lemma S_two : (2: MvPolynomial (Fin 3) ℂ) * S 2 = (S 1 * P 1 - P 2) := by
   have : Finset.filter (·.1 < 2) (Finset.antidiagonal 2) = {(0,2),(1,1)} := by
-    rw [Finset.Nat.antidiagonal_eq_image]
-    simp [Finset.range, Finset.filter_insert, Finset.image, Finset.filter_singleton]
-    decide
+    simpa [Finset.Nat.antidiagonal_eq_image] using by decide
   have newton := mul_esymm_eq_sum (Fin 3) ℂ 2
   rw [Odd.neg_one_pow (by decide)] at newton
   simpa [P, S, ↓this, sub_eq_add_neg] using newton
 
-@[deprecated "Only S_three_im is necessary"]
-lemma S_three : S 3 = X (0) * X (1) * X (2) := by
-  have : Finset.powersetCard 3 (Finset.univ: Finset (Fin 3)) = {Finset.univ} :=
-    Finset.val_eq_singleton_iff.mp rfl
-  simp [S, esymm, this, Fin.prod_univ_three]
-
-lemma S_more' (k: ℕ) : S (k + 4) = 0 := by
+lemma S_more (k: ℕ) : S (k + 4) = 0 := by
   have : Finset.powersetCard (k + 4) (Finset.univ : Finset (Fin 3)) = ∅ := by simp
-  simp [S, esymm, this]
-
-@[deprecated S_more']
-lemma S_more (k: ℕ) (h: k > 3) : S k = 0 := by
-  have : Finset.powersetCard k (Finset.univ : Finset (Fin 3)) = ∅ := by simp [h]
   simp [S, esymm, this]
 
 open Real in
@@ -115,11 +91,8 @@ lemma P_iff {x y z A B C : ℝ} (n: ℕ) : x^n * sin (n*A) + y^n * sin (n*B) + z
 lemma P_three : P 3 = S 1 * P 2 - S 2 * P 1 + S 3 * 3 := by
   have prop := mul_esymm_eq_sum (Fin 3) ℂ 3
   have : Finset.filter (·.1 < 3) (Finset.antidiagonal 3) = {(0,3),(1,2),(2,1)} := by
-    rw [Finset.Nat.antidiagonal_eq_image]
-    simp [Finset.range, Finset.filter_insert, Finset.image, Finset.filter_singleton]
-    decide
+    simpa [Finset.Nat.antidiagonal_eq_image] using by decide
   rw [this] at prop
-  unfold P S
   simp [Even.neg_one_pow (Nat.even_iff.mpr rfl : Even 4)] at prop
   ring_nf at prop ⊢
   simp [prop]
@@ -138,32 +111,21 @@ lemma P_more (k : ℕ) : P (k + 4) = S 1 * P (k + 3) - S 2 * P (k + 2) + S 3 * P
   let g (a : ℕ × ℕ) := (-1) ^ a.1 * esymm (Fin 3) ℂ a.1 * psum (Fin 3) ℂ a.2
   have h : ∀ x ∈ s₂ \ s₁, g x = 0 := by
     intro ⟨a, b⟩ hx
-    simp [s₂, s₁] at hx
+    simp [s₂, s₁, g] at hx ⊢
     rcases hx with ⟨⟨_, _⟩, _, _, _, _⟩
-    simp [g]
     left
     rcases a with n | n | n | n | n
     <;> simp_all
-    <;> first | omega | rw [← S_more']
+    <;> first | omega | rw [← S_more]
   have := Finset.sum_subset_zero_on_sdiff this h (fun x h => rfl)
   dsimp [s₂, g] at this
-  simp [S_more'] at prop
-  rw [← this] at prop
+  simp [S_more, ← this] at prop
 
-  unfold P S
   simp at prop ⊢
   ring_nf at prop ⊢
   rw [sub_eq_zero] at prop
   rw [← prop]
   ring_nf
-
-open Real
-
-lemma S_one_im (h1: x*sin A + y*sin B + z*sin C = 0) : ((eval <| f x y z A B C) (S 1)).im = 0 := by
-  simp [Fin.sum_univ_three, f, h1]
-
-lemma P_one_im (h1: x*sin A + y*sin B + z*sin C = 0) : ((eval <| f x y z A B C) (P 1)).im = 0 := by
-  simpa [P] using S_one_im h1
 
 lemma P_two_im (h2: x^2 * sin (2*A) + y^2 * sin (2*B) + z^2 * sin (2*C) = 0) : ((eval <| f x y z A B C) (P 2)).im = 0 := by
   simp only [P, psum, Fin.sum_univ_three, eval_add, eval_pow, eval_X, f, mul_pow, movire]
@@ -178,12 +140,12 @@ lemma S_two_im (h1: x*sin A + y*sin B + z*sin C = 0) (h2: x^2 * sin (2*A) + y^2 
   have : S 2 = MvPolynomial.C (1 / 2) * (2 * S 2) := by
     simp [this, ← mul_assoc, ← C_mul]
   rw [this]
-  simp [-psum_one, -esymm_one, S_two', S_one_im h1, P_two_im h2, P_one_im h1]
+  simp [sum_f_im h1, S_two, P_two_im h2]
 
 lemma S_three_im (habc: ∃ k : ℤ, A + B + C = k * π) : ((eval <| f x y z A B C) (S 3)).im = 0 := by
   have : Finset.powersetCard 3 (Finset.univ: Finset (Fin 3)) = {Finset.univ} :=
     Finset.val_eq_singleton_iff.mp rfl
-  simp [S, esymm, this, sum_f_im habc]
+  simp [S, esymm, this, prod_f_im habc]
 
 section end
 snip end
@@ -202,11 +164,11 @@ problem usa1980_p3 (x y z A B C: ℝ) (habc: ∃ k : ℤ, A + B + C = k * π)
   | base n hn =>
     rcases n with (rfl | rfl | rfl | rfl | _) <;> try lia
     · simp
-    · exact P_one_im h1
+    · simp [sum_f_im h1]
     · exact P_two_im h2
-    · simp [-esymm_one, -psum_one, P_three, S_one_im h1, S_two_im h1 h2, S_three_im habc, P_one_im h1, P_two_im h2]
+    · simp [sum_f_im h1, P_three, S_two_im h1 h2, S_three_im habc, P_two_im h2]
   | step n ih =>
-    simp [-esymm_one, -psum_one, P_more, ih, S_one_im h1, S_two_im h1 h2, S_three_im habc]
+    simp [sum_f_im h1, P_more, ih, S_two_im h1 h2, S_three_im habc]
 
 
 end Usa1980P3
