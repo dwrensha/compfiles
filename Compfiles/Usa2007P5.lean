@@ -12,14 +12,16 @@ import ProblemExtraction
 Prove that for every nonnegative integer n, the number 7^7^n + 1 is the product of at
 least 2n + 3 (not necessarily distinct) primes.
 -/
+set_option linter.style.multiGoal false
 
-
+namespace USA2007P5
+open Nat
+snip begin
 /-Proof ideas derived from an assortment of posts on https://artofproblemsolving.com/community/c6h145849p825508
   Proving the factorization in factor_poly_a in ℕ was my own, and several lemmas might be useful, such as any natural number having at least one prime factor and any composite having at least two. Factoring polynomials is a pain in Lean
 -/
 
-namespace USA2007P5
-open Nat
+
 lemma factor_poly_a (t : ℤ) : t^7 + 1 = (t+1) * (t^6 - t^5 + t^4 - t^3 + t^2 - t + 1) := by ring_nf
 
 lemma factor_poly_b (t : ℤ): (t^6 - t^5 + t^4 - t^3 + t^2 - t + 1) = (t+1)^6 - (7*t)*(t^2+t+1)^2  := by
@@ -73,6 +75,7 @@ lemma factor_poly_bn (t : ℕ)(ht : t ≥ 7) : (t^6 - t^5 + t^4 - t^3 + t^2 - t 
   induction' t with d hd
   decide
   grind
+snip end
 
 problem usa2007_p5 (n : ℕ) : (primeFactorsList (7^(7^n)+1)).length ≥ 2*n + 3 := by
   induction' n with d hd
@@ -152,7 +155,7 @@ problem usa2007_p5 (n : ℕ) : (primeFactorsList (7^(7^n)+1)).length ≥ 2*n + 3
     ((x+1)^3+(7 ^ ((7 ^ d + 1) / 2) * (x ^ 2 + x + 1))) * (((x+1)^3)-(7 ^ ((7 ^ d + 1) / 2) * (x ^ 2 + x + 1))) := by
       rw [ (show (x+1)^6 = ((x+1)^3)^2 by ring_nf)]
       rw [hql_eq, hq_sqrt, ← mul_pow]
-      rw [sq_sub_sq]
+      rw [Nat.sq_sub_sq]
 
     rw [hsq]
     have f5 : 7 ^ ((7 ^ d + 1) / 2) ≤ x := by
