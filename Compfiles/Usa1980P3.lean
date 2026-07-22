@@ -23,9 +23,7 @@ snip begin
 -- Note that the Newton Sum formula given on the site only holds for k > 0.
 -- To account for this, we use base cases k ∈ Finset.range 4 for the induction.
 open MvPolynomial Real
--- Newton's Identities
--- https://leanprover-community.github.io/mathlib4_docs/Mathlib/RingTheory/MvPolynomial/Symmetric/NewtonIdentities.html#MvPolynomial.mul_esymm_eq_sum
--- MvPolynomial.mul_esymm_eq_sum
+
 noncomputable section
 
 abbrev P (k: ℕ) : MvPolynomial (Fin 3) ℂ := psum (Fin 3) ℂ k
@@ -37,7 +35,7 @@ def f (x y z A B C : ℝ) : Fin 3 → ℂ
 | 1 => y * Complex.exp (B * Complex.I)
 | 2 => z * Complex.exp (C * Complex.I)
 
-end
+section end
 
 variable {x y z A B C : ℝ}
 
@@ -46,7 +44,6 @@ lemma movire (n : ℕ) (z : ℂ) : Complex.exp (z * Complex.I) ^ n = Complex.exp
 
 lemma P_def (k : ℕ) : P k = X (0) ^ k + X (1) ^ k + X (2) ^ k := by
   simp [P, psum, Fin.sum_univ_three]
-
 
 lemma prod_f_im (habc: ∃ k : ℤ, A + B + C = k * π) : (∏ i, f x y z A B C i).im = 0 := by
   obtain ⟨k, h⟩ := habc
@@ -68,7 +65,7 @@ lemma prod_f_im (habc: ∃ k : ℤ, A + B + C = k * π) : (∏ i, f x y z A B C 
 lemma sum_f_im (h1: x*sin A + y*sin B + z*sin C = 0) : (∑ i, f x y z A B C i).im = 0 := by
   simp [Fin.sum_univ_three, f, h1]
 
-lemma S_two : (2: MvPolynomial (Fin 3) ℂ) * S 2 = (S 1 * P 1 - P 2) := by
+lemma S_two : (2: MvPolynomial (Fin 3) ℂ) * S 2 = S 1 * P 1 - P 2 := by
   have : Finset.filter (·.1 < 2) (Finset.antidiagonal 2) = {(0,2),(1,1)} := by
     simpa [Finset.Nat.antidiagonal_eq_image] using by decide
   have newton := mul_esymm_eq_sum (Fin 3) ℂ 2
@@ -79,7 +76,6 @@ lemma S_more (k: ℕ) : S (k + 4) = 0 := by
   have : Finset.powersetCard (k + 4) (Finset.univ : Finset (Fin 3)) = ∅ := by simp
   simp [S, esymm, this]
 
-open Real in
 lemma P_iff {x y z A B C : ℝ} (n: ℕ) : x^n * sin (n*A) + y^n * sin (n*B) + z^n * sin (n*C) = 0
   ↔ (eval (f x y z A B C) (P n)).im = 0 := by
   simp [P_def, f, mul_pow, movire]
@@ -111,21 +107,19 @@ lemma P_more (k : ℕ) : P (k + 4) = S 1 * P (k + 3) - S 2 * P (k + 2) + S 3 * P
   let g (a : ℕ × ℕ) := (-1) ^ a.1 * esymm (Fin 3) ℂ a.1 * psum (Fin 3) ℂ a.2
   have h : ∀ x ∈ s₂ \ s₁, g x = 0 := by
     intro ⟨a, b⟩ hx
-    simp [s₂, s₁, g] at hx ⊢
-    rcases hx with ⟨⟨_, _⟩, _, _, _, _⟩
-    left
-    rcases a with n | n | n | n | n
-    <;> simp_all
-    <;> first | omega | rw [← S_more]
+    rcases a with _ | _ | _ | _ | n
+    on_goal 5 => simp [g, S_more]
+    all_goals
+      absurd hx
+      simp [s₁, s₂]
+    all_goals omega
   have := Finset.sum_subset_zero_on_sdiff this h (fun x h => rfl)
   dsimp [s₂, g] at this
   simp [S_more, ← this] at prop
 
-  simp at prop ⊢
+  simp [← sub_eq_zero] at prop ⊢
   ring_nf at prop ⊢
-  rw [sub_eq_zero] at prop
-  rw [← prop]
-  ring_nf
+  exact prop
 
 lemma P_two_im (h2: x^2 * sin (2*A) + y^2 * sin (2*B) + z^2 * sin (2*C) = 0) : ((eval <| f x y z A B C) (P 2)).im = 0 := by
   simp only [P, psum, Fin.sum_univ_three, eval_add, eval_pow, eval_X, f, mul_pow, movire]
@@ -147,7 +141,6 @@ lemma S_three_im (habc: ∃ k : ℤ, A + B + C = k * π) : ((eval <| f x y z A B
     Finset.val_eq_singleton_iff.mp rfl
   simp [S, esymm, this, prod_f_im habc]
 
-section end
 snip end
 
 namespace Usa1980P3
