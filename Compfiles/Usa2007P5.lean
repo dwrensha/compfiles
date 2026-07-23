@@ -12,7 +12,6 @@ import ProblemExtraction
 Prove that for every nonnegative integer n, the number 7^7^n + 1 is the product of at
 least 2n + 3 (not necessarily distinct) primes.
 -/
-set_option linter.style.multiGoal false
 
 namespace USA2007P5
 open Nat
@@ -27,27 +26,24 @@ lemma factor_poly_a (t : ℤ) : t^7 + 1 = (t+1) * (t^6 - t^5 + t^4 - t^3 + t^2 -
 lemma factor_poly_b (t : ℤ): (t^6 - t^5 + t^4 - t^3 + t^2 - t + 1) = (t+1)^6 - (7*t)*(t^2+t+1)^2  := by
   ring_nf
 
-
-
-
 /-`ring` fails here for `ℕ`-/
 lemma factor_poly_an (t : ℕ)(ht : t ≥ 7): t^7 + 1 = (t + 1) * (t^6 - t^5 + t^4 - t^3 + t^2 - t + 1) := by
   symm
   rw [(show (t + 1) * (t^6 - t^5 + t^4 - t^3 + t^2 - t + 1) = t * (t^6 - t^5 + t^4 - t^3 + t^2 - t + 1) + (t^6 - t^5 + t^4 - t^3 + t^2 - t + 1) by rw [add_mul, one_mul])]
   have f0 : t * ((t^6 - t^5) + (t^4 - t^3) + (t^2 - t) + 1) = t * (t^6 - t^5 + t^4 - t^3 + t^2 - t + 1) := by
     simp
-    rw [Nat.add_sub_assoc]
-    rw [Nat.add_sub_assoc]
     left
-    rfl
-    rw [Nat.pow_le_pow_iff_right]
-    decide
-    linarith
-    rw [pow_two]
-    nth_rw 1 [← one_mul t]
-    rw [Nat.mul_le_mul_right_iff]
-    linarith
-    linarith
+    rw [Nat.add_sub_assoc, Nat.add_sub_assoc]
+    focus
+      rw [pow_le_pow_iff_right₀]
+      · decide
+      linarith
+
+    nth_rw 1 [← pow_one t]
+    · rw [pow_le_pow_iff_right₀]
+      · decide
+      linarith
+
   have f1 : (t * ((t^6 - t^5) + (t^4 - t^3) + (t^2 - t) + 1)) + (t^6 - t^5 + t^4 - t^3 + t^2 - t + 1) = (t^7 - t^6 + t^5 - t^4 + t^3 - t^2 + t) + (t^6 - t^5 + t^4 - t^3 + t^2 - t + 1) := by
     simp
     repeat rw [mul_add]
@@ -55,45 +51,48 @@ lemma factor_poly_an (t : ℕ)(ht : t ≥ 7): t^7 + 1 = (t + 1) * (t^6 - t^5 + t
     repeat rw [Nat.mul_sub]
     repeat rw [mul_comm, ← pow_succ]
     simp
-    rw [← pow_two]
-    rw [Nat.add_sub_assoc]
-    rw [Nat.add_sub_assoc]
-    rw [Nat.pow_le_pow_iff_right]
-    decide
-    linarith
-    rw [Nat.pow_le_pow_iff_right]
-    decide
-    linarith
+    rw [← pow_two,Nat.add_sub_assoc,Nat.add_sub_assoc]
+    focus
+      rw [pow_le_pow_iff_right₀]
+      · decide
+      linarith
+    focus
+      rw [pow_le_pow_iff_right₀]
+      · decide
+      linarith
   rw [← f0, f1]
   induction' t with d hd
-  decide
+  · decide
   grind
 
 
 /-same here-/
 lemma factor_poly_bn (t : ℕ)(ht : t ≥ 7) : (t^6 - t^5 + t^4 - t^3 + t^2 - t + 1) = (t+1)^6 - (7*t)*(t^2+t+1)^2 := by
   induction' t with d hd
-  decide
+  · decide
   grind
 snip end
 
 problem usa2007_p5 (n : ℕ) : (primeFactorsList (7^(7^n)+1)).length ≥ 2*n + 3 := by
-  induction' n with d hd
-  rw [(show 7^(7^0) + 1 = 2^3 by decide)]
-  simp
+  induction n with
+  | zero =>
+    have f0 : 7^(7^0) + 1 = 2^3 := by simp
+    rw [f0]
+    simp
+  | succ d hd =>
   have h0 : (7^7^d)^7 +1 = (7 ^ 7 ^ (d + 1)) + 1 := by ring_nf
   let x := 7^(7^d)
+
   have hx : x ≥ 7 := by
     change 7^7^d ≥ 7
     induction' d with m hm
-    decide
+    · decide
     change 7^1 ≤ 7^7^(m+1)
     have hmpos: 0 < m+1:= by
       rw [← succ_eq_add_one]
       apply zero_lt_succ m
     rw [Nat.pow_le_pow_iff_right]
-    apply one_le_pow
-    decide
+    · apply one_le_pow; decide
     decide
 
   symm at h0
@@ -120,22 +119,26 @@ problem usa2007_p5 (n : ℕ) : (primeFactorsList (7^(7^n)+1)).length ≥ 2*n + 3
 
     have sq2 : IsSquare ((7*x)*(x^2+x+1)^2) := by
       apply IsSquare.mul
-      change IsSquare (7^1 * 7^(7^d))
-      rw [← pow_add]
-      suffices : Even (1 +7^d)
-      apply Even.isSquare_pow
-      assumption
-      rw [add_comm]
-      apply Odd.add_one
-      apply Odd.pow
-      decide
+      focus
+        change IsSquare (7^1 * 7^(7^d))
+        rw [← pow_add]
+        suffices : Even (1 +7^d)
+      focus
+        apply Even.isSquare_pow
+        assumption
+      focus
+        rw [add_comm]
+        apply Odd.add_one
+        apply Odd.pow
+        decide
       apply IsSquare.sq
+
+
     rw [l1]
     have hql_eq : (7*x) = 7^1 * 7^(7^d) := by
       change (7^1 * 7^(7^d) ) = 7^1 * 7^(7^d)
       rfl
     have hq_sqrt: (7^1*7^7^d) = (7^((7^d+1)/2))^2 := by
-      rw [pow_two, ← pow_add, ← pow_add, pow_right_inj₀]
       have h_even : Even (7^d + 1) := by
         apply Odd.add_one
         apply Odd.pow
@@ -145,9 +148,13 @@ problem usa2007_p5 (n : ℕ) : (primeFactorsList (7^(7^n)+1)).length ≥ 2*n + 3
         rw [← two_mul]
         apply two_mul_div_two_of_even
         assumption
-      rw [hhalf, add_comm]
+
+      rw [pow_two, ← pow_add, ← pow_add, pow_right_inj₀]
+      · rw [hhalf, add_comm]
+      · decide
       decide
-      decide
+
+
     have hq_eq : (7^1*7^7^d)*(x^2+x+1)^2 = (7^((7^d+1)/2))^2 * (x^2+x+1)^2 := by rw [hq_sqrt]
     rw [← mul_pow] at hq_eq
 
@@ -161,7 +168,7 @@ problem usa2007_p5 (n : ℕ) : (primeFactorsList (7^(7^n)+1)).length ≥ 2*n + 3
     have f5 : 7 ^ ((7 ^ d + 1) / 2) ≤ x := by
       change 7 ^ ((7 ^ d + 1) / 2) ≤ 7^(7^d)
       rw [Nat.pow_le_pow_iff_right]
-      grind
+      · grind
       decide
 
     let a₀ := (x + 1) ^ 3
@@ -169,11 +176,13 @@ problem usa2007_p5 (n : ℕ) : (primeFactorsList (7^(7^n)+1)).length ≥ 2*n + 3
     let c₀ := (7^ ((7 ^ d + 1) / 2) * (x ^ 2 + x + 1))
     have tr1: a₀ - b₀ ≤ a₀ - c₀ := by
       suffices tr1' : c₀ ≤ b₀
-      have tr2 := Nat.sub_le_sub_left tr1'
-      specialize tr2 a₀; assumption
+      focus
+        have tr2 := Nat.sub_le_sub_left tr1'
+        specialize tr2 a₀
+        assumption
       change 7^ ((7 ^ d + 1) / 2) * (x ^ 2 + x + 1) ≤ x * (x ^ 2 + x + 1)
       rw [mul_le_mul_iff_left₀]
-      exact f5
+      · exact f5
       grind
 
     have tr7 : a₀ - b₀ > 1 := by grind
