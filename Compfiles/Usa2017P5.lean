@@ -42,6 +42,20 @@ def labelling (c: ℝ) := { l : ℤ × ℤ → ℕ //
   ∀ {p1 p2}, p1 ≠ p2 → (l p1 = l p2) →
       c ^ (l p1) ≤ dist p1 p2}
 
+@[ext]
+theorem labelling.ext {c : ℝ} (l₁ l₂ : labelling c) : l₁.1 = l₂.1 → l₁ = l₂ := by
+  intro h
+  obtain ⟨l₁, _⟩ := l₁
+  obtain ⟨l₂, _⟩ := l₂
+  simp at h
+  simp [h]
+
+-- this doesn't work yet, simp still needs to reduce the funlike to its underlying function
+instance (c: ℝ) : FunLike (labelling c) (ℤ × ℤ) ℕ := by
+  refine ⟨(·.1), fun ⟨l, hl⟩ ⟨l', hl'⟩ => ?_⟩
+  rintro rfl
+  simp
+
 abbrev transpose (p : ℤ × ℤ) {c : ℝ} (l: labelling c) : {l': labelling c // l'.1 = l.1 ∘ (fun (q : ℤ × ℤ) => (p.1 + q.1, p.2 + q.2)) } := by
   have ⟨l, fin, pos, hdist⟩ := l
   let f (q : ℤ × ℤ) := (p.1 + q.1, p.2 + q.2)
@@ -58,19 +72,60 @@ abbrev transpose (p : ℤ × ℤ) {c : ℝ} (l: labelling c) : {l': labelling c 
   rfl
 
 abbrev flip (n : ℕ) {c : ℝ} (l: labelling c) : labelling c := by
-  have ⟨l, fin, pos, hdist⟩ := l
   let f (p: ℤ × ℤ) := (2 ^ n - 1 - p.1, p.2)
   use l ∘ f
+  obtain ⟨l, fin, pos, hdist⟩ := l
   and_intros
   · rw [Set.finite_iff_bddAbove, bddAbove_def] at fin ⊢
     aesop
-  · intros; simpa using pos _
+  · intros;
+    simpa [DFunLike.coe] using pos _
   · intro p1 p2 ne lbl
     apply_fun f at ne using (by intro _ _; grind : Function.Injective f)
-    simpa [dist, f, sub_sq_comm] using hdist ne lbl
+    simpa [DFunLike.coe, dist, f, sub_sq_comm] using hdist ne lbl
+
+example (c : ℝ) (n : ℕ) (p : ℤ × ℤ) (l: labelling c) : flip n l p = l (2 ^ n - 1 - p.1, p.2) := by
+  simp [DFunLike.coe]
 
 abbrev off (v : ℤ × ℤ) (p : ℕ × ℕ) : ℤ × ℤ :=
   (v + ((p.1 : ℤ), (p.2 : ℤ)))
+
+lemma dist_lt {p : ℤ × ℤ} {l : ℤ × ℤ → ℕ} {n : ℕ} (hp : 2 * n + 1 ≤ l p) (a : (Finset.Icc (-2 ^ n : ℤ) (2 ^ n : ℤ) × Finset.Icc (-2 ^ n : ℤ) (2 ^ n : ℤ)))
+  (ha₁: a ≠ (⟨0, by simp⟩, ⟨0, by simp⟩)) (ha₂ : |a.1.val| < 2 ^ n ∨ |a.2.val| < 2 ^ n)
+  : dist p (p + ((a.1 : ℤ), (a.2 : ℤ))) < √2 ^ l p := by
+  rw [dist]
+  suffices h: √(a.1 ^ 2 + a.2 ^ 2) < √2 ^ l p by simpa using h
+  calc √(a.1 ^ 2 + a.2 ^ 2)
+      _ = √(|a.1.val| ^ 2 + |a.2.val| ^ 2) := by simp [@sq_abs]
+      _ < √((2 ^ n) ^ 2 + (2 ^ n) ^ 2) := by
+        rw [Real.sqrt_lt_sqrt_iff_of_pos (by simp)]
+        obtain ⟨⟨x, hx⟩, ⟨y, hy⟩⟩ := a
+        replace hx := abs_le.mpr $ Finset.mem_Icc.mp hx
+        replace hy := abs_le.mpr $ Finset.mem_Icc.mp hy
+        rw [add_lt_add_iff_of_le_of_le (sq_le_sq.mpr (by simp; norm_cast)) (sq_le_sq.mpr (by simp; norm_cast))]
+        simp_rw [Int.cast_abs] at ha₂ ⊢
+        rcases ha₂ with _ | _
+        · left; refine (sq_lt_sq₀ (abs_nonneg _) (by simp)).mpr (by norm_cast)
+        · right; refine (sq_lt_sq₀ (abs_nonneg _) (by simp)).mpr (by norm_cast)
+      _ = √(2 ^ (2 * n + 1)) := by rw [← mul_two, ← pow_mul', ← pow_succ]
+      _ = √2 ^ (2 * n + 1) := by simp [Real.sqrt_eq_rpow, ← Real.rpow_pow_comm]
+      _ ≤ √2 ^ l p := (pow_le_pow_iff_right₀ one_lt_sqrt_two).mpr hp
+
+lemma dist_lt'  {p : ℤ × ℤ} {l : ℤ × ℤ → ℕ} {n : ℕ} (hp : l p = 2 * (n + 1)) (a : (Finset.Icc (-2 ^ n : ℤ) (2 ^ n : ℤ) × Finset.Icc (-2 ^ n : ℤ) (2 ^ n : ℤ)))
+  (ha₁: a ≠ (⟨0, by simp⟩, ⟨0, by simp⟩)) : dist p (p + ((a.1 : ℤ), (a.2 : ℤ))) < √2 ^ l p := by
+  rw [dist]
+  suffices h: √(a.1 ^ 2 + a.2 ^ 2) < √2 ^ l p by simpa using h
+  calc √(a.1 ^ 2 + a.2 ^ 2)
+    _ = √(|a.1.val| ^ 2 + |a.2.val| ^ 2) := by simp [@sq_abs]
+    _ ≤ √((2 ^ n) ^ 2 + (2 ^ n) ^ 2) := by
+      rw [Real.sqrt_le_sqrt_iff (by simp)]
+      obtain ⟨⟨x, hx⟩, ⟨y, hy⟩⟩ := a
+      replace hx := abs_le.mpr $ Finset.mem_Icc.mp hx
+      replace hy := abs_le.mpr $ Finset.mem_Icc.mp hy
+      refine add_le_add (sq_le_sq.mpr (by simp; norm_cast)) (sq_le_sq.mpr (by simp; norm_cast))
+    _ = √(2 ^ (2 * n + 1)) := by rw [← mul_two, ← pow_mul', ← pow_succ]
+    _ = √2 ^ (2 * n + 1) := by simp [Real.sqrt_eq_rpow, ← Real.rpow_pow_comm]
+    _ < √2 ^ l p := pow_lt_pow_right₀ one_lt_sqrt_two (by linarith)
 
 -- points close to a point p cannot be the labelled the same as p itself
 lemma exclusion {l : ℤ × ℤ → ℕ} (l_dist: ∀ {p1 p2}, p1 ≠ p2 → (l p1 = l p2) → √2 ^ (l p1) ≤ dist p1 p2)
@@ -91,27 +146,11 @@ lemma exclusion {l : ℤ × ℤ → ℕ} (l_dist: ∀ {p1 p2}, p1 ≠ p2 → (l 
     · exact ha₁.1
     · exact ha₁.2
   · exact l_dist.symm
-  · rw [dist]
-    suffices h: √(a.1 ^ 2 + a.2 ^ 2) < √2 ^ l p by simpa using h
-    calc √(a.1 ^ 2 + a.2 ^ 2)
-      _ = √(|a.1.val| ^ 2 + |a.2.val| ^ 2) := by simp [@sq_abs]
-      _ < √((2 ^ n) ^ 2 + (2 ^ n) ^ 2) := by
-        rw [Real.sqrt_lt_sqrt_iff_of_pos (by simp)]
-        obtain ⟨⟨x, hx⟩, ⟨y, hy⟩⟩ := a
-        replace hx := abs_le.mpr $ Finset.mem_Icc.mp hx
-        replace hy := abs_le.mpr $ Finset.mem_Icc.mp hy
-        rw [add_lt_add_iff_of_le_of_le (sq_le_sq.mpr (by simp; norm_cast)) (sq_le_sq.mpr (by simp; norm_cast))]
-        simp_rw [Int.cast_abs] at ha₂ ⊢
-        rcases ha₂ with _ | _
-        · left; refine (sq_lt_sq₀ (abs_nonneg _) (by simp)).mpr (by norm_cast)
-        · right; refine (sq_lt_sq₀ (abs_nonneg _) (by simp)).mpr (by norm_cast)
-      _ = √(2 ^ (2 * n + 1)) := by rw [← mul_two, ← pow_mul', ← pow_succ]
-      _ = √2 ^ (2 * n + 1) := by simp [Real.sqrt_eq_rpow, ← Real.rpow_pow_comm]
-      _ ≤ √2 ^ l p := (pow_le_pow_iff_right₀ Real.one_lt_sqrt_two).mpr hp
+  · exact dist_lt hp a ha₁ ha₂
 
 -- spcialized for 2 * (n + 1)
 lemma exclusion' {l : ℤ × ℤ → ℕ} (l_dist: ∀ {p1 p2}, p1 ≠ p2 → (l p1 = l p2) → √2 ^ (l p1) ≤ dist p1 p2)
-  {n: ℕ} {p : ℤ × ℤ} (hp : 2 * (n + 1) = l p)
+  {n: ℕ} {p : ℤ × ℤ} (hp : l p = 2 * (n + 1))
   (a : (Finset.Icc (-2 ^ n : ℤ) (2 ^ n : ℤ) × Finset.Icc (-2 ^ n : ℤ) (2 ^ n : ℤ)))
   (ha₁: a ≠ (⟨0, by simp⟩, ⟨0, by simp⟩))
   : l (p + (a.1.val, a.2.val)) ≠ l p := by
@@ -127,20 +166,7 @@ lemma exclusion' {l : ℤ × ℤ → ℕ} (l_dist: ∀ {p1 p2}, p1 ≠ p2 → (l
     · exact ha₁.1
     · exact ha₁.2
   · exact l_dist.symm
-  --a good refactor would be to retrieve the dist argument out of exclusion
-  · rw [dist]
-    suffices h: √(a.1 ^ 2 + a.2 ^ 2) < √2 ^ l p by simpa using h
-    calc √(a.1 ^ 2 + a.2 ^ 2)
-      _ = √(|a.1.val| ^ 2 + |a.2.val| ^ 2) := by simp [@sq_abs]
-      _ ≤ √((2 ^ n) ^ 2 + (2 ^ n) ^ 2) := by
-        rw [Real.sqrt_le_sqrt_iff (by simp)]
-        obtain ⟨⟨x, hx⟩, ⟨y, hy⟩⟩ := a
-        replace hx := abs_le.mpr $ Finset.mem_Icc.mp hx
-        replace hy := abs_le.mpr $ Finset.mem_Icc.mp hy
-        refine add_le_add (sq_le_sq.mpr (by simp; norm_cast)) (sq_le_sq.mpr (by simp; norm_cast))
-      _ = √(2 ^ (2 * n + 1)) := by rw [← mul_two, ← pow_mul', ← pow_succ]
-      _ = √2 ^ (2 * n + 1) := by simp [Real.sqrt_eq_rpow, ← Real.rpow_pow_comm]
-      _ < √2 ^ l p := pow_lt_pow_right₀ one_lt_sqrt_two (by linarith)
+  · exact dist_lt' hp a ha₁
 
 lemma square_squeeze' (n : ℕ) (l : ℤ × ℤ → ℕ) (_l_fin: (Set.range l).Finite) (l_pos: ∀ p, 0 < l p)
   (l_dist: ∀ {p1 p2}, p1 ≠ p2 → (l p1 = l p2) → √2 ^ (l p1) ≤ dist p1 p2)
@@ -288,7 +314,7 @@ lemma square_squeeze' (n : ℕ) (l : ℤ × ℤ → ℕ) (_l_fin: (Set.range l).
           norm_cast
           lia
       have p₃_ne_p₂ : l p₃ ≠ 2 * (n + 1) := by
-        have := exclusion' l_dist h₂.symm
+        have := exclusion' l_dist h₂
           ⟨⟨x₃ - 2 ^ n, by simp at hx₃ ⊢; linarith⟩, ⟨1 + y₁ + y₃ - y₂, ?_⟩⟩ (by rw [Finset.mem_range] at hx₃; norm_cast; lia)
         · simp [← h₂, off, v₃, p₃, add_assoc] at this ⊢
           ring_nf at this ⊢
@@ -306,17 +332,16 @@ lemma square_squeeze' (n : ℕ) (l : ℤ × ℤ → ℕ) (_l_fin: (Set.range l).
     · let v₃ := ((x₁ + 1 : ℕ), (y₂ + 1 : ℕ))
       have ⟨(⟨x₃, hx₃⟩, ⟨y₃, hy₃⟩), h₃⟩ := ih (v + ((v₃.1 : ℤ), (v₃.2 : ℤ)))
       let p₃ := off v (v₃ + ((x₃ : ℕ), (y₃ : ℕ)))
-
       have p₃_ne_p₁ : l p₃ ≠ 2 * n + 1 := by
+        simp at hy₁ hy₂ hy₃
         have := exclusion l_dist h₁.symm.le
-          ⟨⟨1 + x₃, by grind⟩, ⟨1 + y₃ + y₂ - y₁, ?_⟩⟩ (by grind) (by grind)
+          ⟨⟨1 + x₃, by grind⟩, ⟨1 + y₃ + y₂ - y₁, by simp; norm_cast; lia⟩⟩ (by grind) (by grind)
         simp [← h₁, off, v₃, p₃, add_assoc] at this ⊢
         ring_nf at this ⊢
         exact this
-        simp at hy₁ hy₂ hy₃ ⊢; norm_cast; lia
       have p₃_ne_p₂ : l p₃ ≠ 2 * (n + 1) := by
         simp only [Finset.mem_range, Subtype.mk_le_mk] at hy₁ hy₂ hy₃ hx₁ hx₂ hx₃ le
-        have := exclusion' l_dist h₂.symm
+        have := exclusion' l_dist h₂
           ⟨⟨1 + x₁ + x₃ - x₂ - 2 ^ n, ?_⟩, ⟨1 + y₃, ?_⟩⟩ (by norm_cast; lia)
         · simp [← h₂, off, v₃, p₃, add_assoc] at this ⊢
           ring_nf at this ⊢
