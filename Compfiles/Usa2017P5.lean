@@ -301,10 +301,10 @@ lemma square_squeeze' (n : ℕ) (l : ℤ × ℤ → ℕ) (_l_fin: (Set.range l).
     · let v₃ := ((x₂ : ℕ), (y₁ + 1 : ℕ))
       have ⟨(⟨x₃, hx₃⟩, ⟨y₃, hy₃⟩), h₃⟩ := ih (v + ((v₃.1 : ℤ), (v₃.2 : ℤ)))
       let p₃ := off v (v₃ + ((x₃ : ℕ), (y₃ : ℕ)))
+      simp only [Subtype.mk_le_mk, Finset.mem_range] at le hx₁ hx₂ hx₃ hy₁ hy₂ hy₃
       have p₃_ne_p₁ : l p₃ ≠ 2 * n + 1 := by
-        simp at le hx₁ hx₂ hx₃
         have := exclusion l_dist h₁.symm.le
-          ⟨⟨x₂ + x₃ - x₁, ?_⟩, ⟨1 + y₃, by simp at hy₃ ⊢; constructor <;> linarith⟩⟩ (by grind) ?_
+          ⟨⟨x₂ + x₃ - x₁, ?_⟩, ⟨1 + y₃, by simp at hy₃ ⊢; lia⟩⟩ (by grind) ?_
         · simpa [← h₁, off, v₃, p₃, add_assoc] using this
         · simp
           norm_cast
@@ -315,32 +315,29 @@ lemma square_squeeze' (n : ℕ) (l : ℤ × ℤ → ℕ) (_l_fin: (Set.range l).
           lia
       have p₃_ne_p₂ : l p₃ ≠ 2 * (n + 1) := by
         have := exclusion' l_dist h₂
-          ⟨⟨x₃ - 2 ^ n, by simp at hx₃ ⊢; linarith⟩, ⟨1 + y₁ + y₃ - y₂, ?_⟩⟩ (by rw [Finset.mem_range] at hx₃; norm_cast; lia)
+          ⟨⟨x₃ - 2 ^ n, by simp; lia⟩, ⟨1 + y₁ + y₃ - y₂, ?_⟩⟩ (by norm_cast; lia)
         · simp [← h₂, off, v₃, p₃, add_assoc] at this ⊢
           ring_nf at this ⊢
           exact this
         · rw [Finset.mem_Icc]
-          simp at hy₁ hy₂ hy₃ ⊢
           norm_cast
           lia
       replace h₃ : 2 * n < l p₃ := by simpa [p₃, off, v₃, add_assoc] using h₃
       have p₃_label : 2 * (n + 1) < l p₃ := by lia
       use ⟨⟨v₃.1 + x₃, by grind⟩, ⟨v₃.2 + y₃, by grind⟩⟩
-      simp [p₃, off, v₃, add_assoc] at p₃_ne_p₁ p₃_ne_p₂ ⊢
-      simpa [p₃, off, add_assoc, v₃] using p₃_label
+      convert p₃_label <;> rfl
     -- p₂ is higher, B is bounded north by p₂ and bounded west by p₁
     · let v₃ := ((x₁ + 1 : ℕ), (y₂ + 1 : ℕ))
       have ⟨(⟨x₃, hx₃⟩, ⟨y₃, hy₃⟩), h₃⟩ := ih (v + ((v₃.1 : ℤ), (v₃.2 : ℤ)))
+      simp only [Subtype.mk_le_mk, Finset.mem_range] at le hx₁ hx₂ hx₃ hy₁ hy₂ hy₃
       let p₃ := off v (v₃ + ((x₃ : ℕ), (y₃ : ℕ)))
       have p₃_ne_p₁ : l p₃ ≠ 2 * n + 1 := by
-        simp at hy₁ hy₂ hy₃
         have := exclusion l_dist h₁.symm.le
           ⟨⟨1 + x₃, by grind⟩, ⟨1 + y₃ + y₂ - y₁, by simp; norm_cast; lia⟩⟩ (by grind) (by grind)
         simp [← h₁, off, v₃, p₃, add_assoc] at this ⊢
         ring_nf at this ⊢
         exact this
       have p₃_ne_p₂ : l p₃ ≠ 2 * (n + 1) := by
-        simp only [Finset.mem_range, Subtype.mk_le_mk] at hy₁ hy₂ hy₃ hx₁ hx₂ hx₃ le
         have := exclusion' l_dist h₂
           ⟨⟨1 + x₁ + x₃ - x₂ - 2 ^ n, ?_⟩, ⟨1 + y₃, ?_⟩⟩ (by norm_cast; lia)
         · simp [← h₂, off, v₃, p₃, add_assoc] at this ⊢
@@ -351,8 +348,7 @@ lemma square_squeeze' (n : ℕ) (l : ℤ × ℤ → ℕ) (_l_fin: (Set.range l).
       replace h₃ : 2 * n < l p₃ := by simpa [p₃, off, v₃, add_assoc] using h₃
       have p₃_label : 2 * (n + 1) < l p₃ := by lia
       use ⟨⟨v₃.1 + x₃, by grind⟩, ⟨v₃.2 + y₃, by grind⟩⟩
-      simp [p₃, off, v₃, add_assoc] at p₃_ne_p₁ p₃_ne_p₂ ⊢
-      simpa [p₃, off, add_assoc, v₃] using p₃_label
+      convert p₃_label <;> rfl
 
 
 snip end
