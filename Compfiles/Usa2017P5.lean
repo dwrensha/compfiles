@@ -30,9 +30,7 @@ noncomputable def dist : ℤ × ℤ → ℤ × ℤ → ℝ
 
 snip begin
 -- Solution adapted from Evan Chen's presentation of Calvin Deng's solution: https://web.evanchen.cc/exams/USAMO-2017-notes.pdf
--- When the two labels are not in the same row, we can make B touch both labels, implying that it must contain a larger label.
--- However, if they are in the same row, we place B touching the smaller label, and B must at least share a corner with the larger one.
--- This is just close enough to the larger label to ensure all of B doesn't contain the same label.
+-- Note that this version starts the induction for √2 ≤ c at n = 0 to avoid case-bashing.
 open Real
 set_option linter.flexible true
 
@@ -168,15 +166,15 @@ lemma exclusion' {l : ℤ × ℤ → ℕ} (l_dist: ∀ {p1 p2}, p1 ≠ p2 → (l
   · exact l_dist.symm
   · exact dist_lt' hp a ha₁
 
-lemma square_squeeze' (n : ℕ) (l : ℤ × ℤ → ℕ) (_l_fin: (Set.range l).Finite) (l_pos: ∀ p, 0 < l p)
-  (l_dist: ∀ {p1 p2}, p1 ≠ p2 → (l p1 = l p2) → √2 ^ (l p1) ≤ dist p1 p2)
+lemma square_squeeze' (n : ℕ) (l : labelling √2)
   : ∀ v : ℤ × ℤ, ∃ p : Finset.range (2 ^ n) × Finset.range (2 ^ n), 2 * n < l (off v (p.1, p.2)) := by
   induction n with
   | zero => exact fun v =>
     -- by positivity we must have a label > 0
     -- this elides the need to check the n = 1 case
-    ⟨(⟨0, by simp⟩, ⟨0, by simp⟩), by simpa using l_pos (off v (0, 0))⟩
+    ⟨(⟨0, by simp⟩, ⟨0, by simp⟩), by simpa [DFunLike.coe] using l.2.2.1 (off v (0, 0))⟩
   | succ n ih =>
+    have l_dist := @l.2.2.2
     intro v
     -- we prove the setup of the two large labels here
     wlog quadrant : ∃ p₁ p₂ : Finset.range (2 ^ n) × Finset.range (2 ^ n), l (off v (p₁.1, p₁.2)) = 2 * n + 1
@@ -184,9 +182,9 @@ lemma square_squeeze' (n : ℕ) (l : ℤ × ℤ → ℕ) (_l_fin: (Set.range l).
     · push +distrib Not at quadrant
       obtain ⟨vx, vy⟩ := v
       -- In both cases, we can flip the labelling and continue
-      let l'_bundle := flip (n+1) ⟨l, _l_fin, l_pos, l_dist⟩
-      let l' := l'_bundle.1 -- maintain provenence of flip
-      specialize H l' l'_bundle.2.1 l'_bundle.2.2.1 l'_bundle.2.2.2 (fun v => by
+      let l' := flip (n+1) l
+      -- let l' := l'_bundle.1 -- maintain provenence of flip
+      specialize H l' (fun v => by
         have ⟨⟨⟨x, hx⟩, y⟩, hp⟩ := ih (2^n-v.1, v.2)
         have h1 : x ≤ 2 ^ n - 1 := by
           rw [Finset.mem_range] at hx
@@ -198,8 +196,7 @@ lemma square_squeeze' (n : ℕ) (l : ℤ × ℤ → ℕ) (_l_fin: (Set.range l).
           push_cast
           omega
         refine ⟨⟨⟨2^n - 1 - x, by simpa using h2⟩, y⟩ , ?_⟩
-        simp only [Prod.mk_add_mk, Function.comp_apply, Prod.fst_add, Prod.snd_add, l',
-          l'_bundle] at hp ⊢
+        simp only [DFunLike.coe, Prod.mk_add_mk, Function.comp_apply, Prod.fst_add, Prod.snd_add, l', flip] at hp ⊢
         rw [Int.ofNat_sub h1, Int.ofNat_sub <| Nat.one_le_two_pow]
         · push_cast
           ring_nf at hp ⊢
@@ -230,8 +227,7 @@ lemma square_squeeze' (n : ℕ) (l : ℤ × ℤ → ℕ) (_l_fin: (Set.range l).
         simp only [Finset.mem_range] at hx₂ hy₁ hy₂
         have := exclusion l_dist p₁_lb
           (⟨x₂ + 1, by simp; norm_cast; omega⟩, ⟨y₂ - y₁, by simp; constructor <;> linarith⟩) (not_eq_of_beq_eq_false rfl) (?_)
-        · symm at this
-          simpa [off, v₂, p₁, p₂, add_assoc, add_rotate'] using this
+        · simpa [DFunLike.coe, off, p₁, p₂, add_assoc, add_rotate'] using this.symm
         · right; simp [abs_sub_lt_iff]; constructor <;> linarith
       -- we need to show that p₂ is not in the quadrant
       have p₂x_large : 2 ^ n ≤ (1 + (x₁ + x₂): ℕ) := by
@@ -279,17 +275,17 @@ lemma square_squeeze' (n : ℕ) (l : ℤ × ℤ → ℕ) (_l_fin: (Set.range l).
         push_cast
         rfl
       have h4 : x₁ ≤ 2^n - 1 := by rwa [Nat.le_sub_one_iff_lt <| Nat.two_pow_pos _]
-      specialize H (-vx, vy) ⟨(⟨2^n - 1 - x₂', by rw [Finset.mem_range]; zify [h3]; lia⟩, ⟨y₂, by grind⟩), (⟨2 ^ n - 1 - x₁, by rw [Finset.mem_range]; zify [h4]; lia⟩, ⟨y₁, by grind⟩), ?_, ?_, ?_⟩
+      specialize H l'.2.2.2 (-vx, vy) ⟨(⟨2^n - 1 - x₂', by rw [Finset.mem_range]; zify [h3]; lia⟩, ⟨y₂, by grind⟩), (⟨2 ^ n - 1 - x₁, by rw [Finset.mem_range]; zify [h4]; lia⟩, ⟨y₁, by grind⟩), ?_, ?_, ?_⟩
       · zify at hx₂'
-        simp [DFunLike.coe, add_assoc, p₂, l', l'_bundle, hx₂', h3] at p₂_eq ⊢
+        simp [DFunLike.coe, add_assoc, p₂, l', hx₂', h3] at p₂_eq ⊢
         convert p₂_eq
         lia
       · simp
         zify [h3] at p₂x_large ⊢
         lia
-      · simp [DFunLike.coe, l', l'_bundle, p₂, ← p₁_eq, p₁, h4] at p₂_eq ⊢
+      · simp [DFunLike.coe, l', p₂, ← p₁_eq, p₁, h4] at p₂_eq ⊢
         ring_nf
-      simp [l', l'_bundle] at H
+      simp [l'] at H
       obtain ⟨x, hx, y, hy, h⟩ := H
       have h5 : ((2 ^ (n + 1) - 1 - x : ℕ) : ℤ) = (2 ^ (n + 1) - 1 - x : ℤ) := by
         rw [Int.ofNat_sub <| Nat.le_sub_one_iff_lt Nat.one_le_two_pow |>.mpr hx, Int.ofNat_sub Nat.one_le_two_pow]
@@ -313,7 +309,7 @@ lemma square_squeeze' (n : ℕ) (l : ℤ × ℤ → ℕ) (_l_fin: (Set.range l).
       have p₃_ne_p₁ : l p₃ ≠ 2 * n + 1 := by
         have := exclusion l_dist h₁.symm.le
           ⟨⟨x₂ + x₃ - x₁, ?_⟩, ⟨1 + y₃, by simp at hy₃ ⊢; lia⟩⟩ (by grind) ?_
-        · simpa [← h₁, off, v₃, p₃, add_assoc] using this
+        · simpa [DFunLike.coe, ← h₁, off, v₃, p₃, add_assoc] using this
         · simp
           norm_cast
           lia
@@ -400,8 +396,9 @@ problem usa2017_p5 (c : ℝ) :
     simp_rw [Set.finite_iff_bddAbove, bddAbove_def] at h
     obtain ⟨n, hn⟩ := h
     -- Construct a large enough square to force a label exceeding the bound
-    have ⟨p, hp⟩ := square_squeeze' n l l_fin l_pos l_dist (0, 0)
+    have ⟨p, hp⟩ := square_squeeze' n ⟨l, l_fin, l_pos, l_dist⟩ (0, 0)
     specialize hn (l (off (0,0) (p.1, p.2))) (Set.mem_range_self _)
+    simp only [DFunLike.coe] at hp
     linarith
 
 
