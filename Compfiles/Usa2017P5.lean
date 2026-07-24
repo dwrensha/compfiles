@@ -203,7 +203,7 @@ lemma square_squeeze' (n : ℕ) (l : ℤ × ℤ → ℕ) (_l_fin: (Set.range l).
         rw [Int.ofNat_sub h1, Int.ofNat_sub <| Nat.one_le_two_pow]
         · push_cast
           ring_nf at hp ⊢
-          exact hp) (2^n-vx, vy)
+          exact hp)
 
       -- then the quadrant must have a label > 2 * n
       have ⟨p₀, h₀⟩ := ih ⟨vx, vy⟩
@@ -270,30 +270,38 @@ lemma square_squeeze' (n : ℕ) (l : ℤ × ℤ → ℕ) (_l_fin: (Set.range l).
           exact ⟨p₁_eq, p₂_eq⟩
       -- we can now use our hypothesis, flipping the labelling
       clear p₁_lb p₁_ub p₂_lb p₂_ub rightmost quadrant
-      specialize H ⟨(⟨2 ^ n - 1 - x₂', by grind⟩, ⟨y₂, by grind⟩), (⟨2 ^ n - 1 - x₁, by grind⟩, ⟨y₁, by grind⟩), ?_, ?_, ?_⟩
-      · and_intros
-        zify at hx₂'
-        simp [p₂, p₁, sub_add_eq_add_sub, l', l'_bundle] at p₁_eq p₂_eq ⊢
+      simp [Finset.mem_range] at hx₁
+      have h2 : x₂' ≤ 2^n - 1 := by
+        rw [Nat.le_iff_lt_add_one, Nat.sub_add_cancel Nat.one_le_two_pow]
+        lia
+      have h3 : ((2 ^ n - 1 - x₂' : ℕ) : ℤ) = (2 ^ n - 1 - x₂' : ℤ) := by
+        rw [Int.ofNat_sub h2, Int.ofNat_sub <| Nat.one_le_two_pow]
+        push_cast
+        rfl
+      have h4 : x₁ ≤ 2^n - 1 := by rwa [Nat.le_sub_one_iff_lt <| Nat.two_pow_pos _]
+      specialize H (-vx, vy) ⟨(⟨2^n - 1 - x₂', by rw [Finset.mem_range]; zify [h3]; lia⟩, ⟨y₂, by grind⟩), (⟨2 ^ n - 1 - x₁, by rw [Finset.mem_range]; zify [h4]; lia⟩, ⟨y₁, by grind⟩), ?_, ?_, ?_⟩
+      · zify at hx₂'
+        simp [DFunLike.coe, add_assoc, p₂, l', l'_bundle, hx₂', h3] at p₂_eq ⊢
+        convert p₂_eq
+        lia
+      · simp
+        zify [h3] at p₂x_large ⊢
+        lia
+      · simp [DFunLike.coe, l', l'_bundle, p₂, ← p₁_eq, p₁, h4] at p₂_eq ⊢
         ring_nf
-        sorry
-      · zify at p₂x_large ⊢
-        simp
-        ring_nf
-        sorry
-      · simp [l', l'_bundle, p₂, ← p₁_eq, p₁] at p₂_eq ⊢
-        ring_nf
-        all_goals sorry
       simp [l', l'_bundle] at H
       obtain ⟨x, hx, y, hy, h⟩ := H
-      use ⟨⟨2 ^ n - 1 - x, sorry⟩, ⟨y, Finset.mem_range.mpr hy⟩⟩
-      simp at h ⊢
-      rw [Int.ofNat_sub ?_, Int.ofNat_sub]
-      push_cast
-      ring_nf at h ⊢
-      exact h
-
-      exact Nat.one_le_two_pow
-      all_goals sorry
+      have h5 : ((2 ^ (n + 1) - 1 - x : ℕ) : ℤ) = (2 ^ (n + 1) - 1 - x : ℤ) := by
+        rw [Int.ofNat_sub <| Nat.le_sub_one_iff_lt Nat.one_le_two_pow |>.mpr hx, Int.ofNat_sub Nat.one_le_two_pow]
+        simp
+      use ⟨⟨2 ^ (n+1) - 1 - x, ?_⟩, ⟨y, Finset.mem_range.mpr hy⟩⟩
+      · simp [DFunLike.coe, h5] at h ⊢
+        push_cast
+        ring_nf at h ⊢
+        exact h
+      · rw [Finset.mem_range]
+        zify [h5]
+        lia
     obtain ⟨⟨⟨x₁, hx₁⟩, ⟨y₁, hy₁⟩⟩, ⟨⟨x₂, hx₂⟩, ⟨y₂, hy₂⟩⟩, h₁, le, h₂⟩ := quadrant
 
     by_cases h : y₁ ≤ y₂
