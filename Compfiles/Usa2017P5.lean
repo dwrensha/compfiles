@@ -188,15 +188,14 @@ lemma square_squeeze' (n : ℕ) (l : labelling √2)
         have ⟨⟨⟨x, hx⟩, y⟩, hp⟩ := ih (2^n-v.1, v.2)
         have h1 : x ≤ 2 ^ n - 1 := by
           rw [Finset.mem_range] at hx
-          rw [Nat.le_sub_one_iff_lt (by lia)]
-          grind
+          rwa [Nat.le_sub_one_iff_lt (by lia)]
         have h2 : 2 ^ n - 1 - x < 2 ^ n := by
           zify
           rw [Int.ofNat_sub h1, Int.ofNat_sub <| Nat.one_le_two_pow]
           push_cast
           omega
         refine ⟨⟨⟨2^n - 1 - x, by simpa using h2⟩, y⟩ , ?_⟩
-        simp only [DFunLike.coe, Prod.mk_add_mk, Function.comp_apply, Prod.fst_add, Prod.snd_add, l', flip] at hp ⊢
+        simp only [DFunLike.coe, Prod.mk_add_mk, Function.comp_apply, Prod.fst_add, Prod.snd_add, l'] at hp ⊢
         rw [Int.ofNat_sub h1, Int.ofNat_sub <| Nat.one_le_two_pow]
         · push_cast
           ring_nf at hp ⊢
@@ -276,17 +275,16 @@ lemma square_squeeze' (n : ℕ) (l : labelling √2)
         rfl
       have h4 : x₁ ≤ 2^n - 1 := by rwa [Nat.le_sub_one_iff_lt <| Nat.two_pow_pos _]
       specialize H l'.2.2.2 (-vx, vy) ⟨(⟨2^n - 1 - x₂', by rw [Finset.mem_range]; zify [h3]; lia⟩, ⟨y₂, by grind⟩), (⟨2 ^ n - 1 - x₁, by rw [Finset.mem_range]; zify [h4]; lia⟩, ⟨y₁, by grind⟩), ?_, ?_, ?_⟩
-      · zify at hx₂'
-        simp [DFunLike.coe, add_assoc, p₂, l', hx₂', h3] at p₂_eq ⊢
-        convert p₂_eq
-        lia
+      · zify [h3] at hx₂' ⊢
+        simp [DFunLike.coe, add_assoc, p₂, l', hx₂'] at p₂_eq ⊢
+        grind
       · simp
         zify [h3] at p₂x_large ⊢
         lia
       · simp [DFunLike.coe, l', p₂, ← p₁_eq, p₁, h4] at p₂_eq ⊢
         ring_nf
-      simp [l'] at H
-      obtain ⟨x, hx, y, hy, h⟩ := H
+      obtain ⟨⟨⟨x, hx⟩, ⟨y, hy⟩⟩, h⟩ := H
+      simp [l'] at h hx hy
       have h5 : ((2 ^ (n + 1) - 1 - x : ℕ) : ℤ) = (2 ^ (n + 1) - 1 - x : ℤ) := by
         rw [Int.ofNat_sub <| Nat.le_sub_one_iff_lt Nat.one_le_two_pow |>.mpr hx, Int.ofNat_sub Nat.one_le_two_pow]
         simp
@@ -299,33 +297,26 @@ lemma square_squeeze' (n : ℕ) (l : labelling √2)
         zify [h5]
         lia
     obtain ⟨⟨⟨x₁, hx₁⟩, ⟨y₁, hy₁⟩⟩, ⟨⟨x₂, hx₂⟩, ⟨y₂, hy₂⟩⟩, h₁, le, h₂⟩ := quadrant
-
+    -- we follow the split of cases in the solution
     by_cases h : y₁ ≤ y₂
     -- p₁ is at least as high as p₂, B is bounded north by p₁ and bounded east by p₂
     · let v₃ := ((x₂ : ℕ), (y₁ + 1 : ℕ))
       have ⟨(⟨x₃, hx₃⟩, ⟨y₃, hy₃⟩), h₃⟩ := ih (v + ((v₃.1 : ℤ), (v₃.2 : ℤ)))
-      let p₃ := off v (v₃ + ((x₃ : ℕ), (y₃ : ℕ)))
       simp only [Subtype.mk_le_mk, Finset.mem_range] at le hx₁ hx₂ hx₃ hy₁ hy₂ hy₃
+      let p₃ := off v (v₃ + ((x₃ : ℕ), (y₃ : ℕ)))
       have p₃_ne_p₁ : l p₃ ≠ 2 * n + 1 := by
         have := exclusion l_dist h₁.symm.le
-          ⟨⟨x₂ + x₃ - x₁, ?_⟩, ⟨1 + y₃, by simp at hy₃ ⊢; lia⟩⟩ (by grind) ?_
+          ⟨⟨x₂ + x₃ - x₁, ?_⟩, ⟨1 + y₃, by simp; lia⟩⟩ (by grind) ?_
         · simpa [DFunLike.coe, ← h₁, off, v₃, p₃, add_assoc] using this
-        · simp
-          norm_cast
-          lia
-        · left
-          simp [abs_lt]
-          norm_cast
-          lia
+        · simp; lia
+        · simp [abs_lt]; lia
       have p₃_ne_p₂ : l p₃ ≠ 2 * (n + 1) := by
         have := exclusion' l_dist h₂
           ⟨⟨x₃ - 2 ^ n, by simp; lia⟩, ⟨1 + y₁ + y₃ - y₂, ?_⟩⟩ (by norm_cast; lia)
         · simp [← h₂, off, v₃, p₃, add_assoc] at this ⊢
           ring_nf at this ⊢
           exact this
-        · rw [Finset.mem_Icc]
-          norm_cast
-          lia
+        · simp; lia
       replace h₃ : 2 * n < l p₃ := by simpa [p₃, off, v₃, add_assoc] using h₃
       have p₃_label : 2 * (n + 1) < l p₃ := by lia
       use ⟨⟨v₃.1 + x₃, by grind⟩, ⟨v₃.2 + y₃, by grind⟩⟩
@@ -337,18 +328,18 @@ lemma square_squeeze' (n : ℕ) (l : labelling √2)
       let p₃ := off v (v₃ + ((x₃ : ℕ), (y₃ : ℕ)))
       have p₃_ne_p₁ : l p₃ ≠ 2 * n + 1 := by
         have := exclusion l_dist h₁.symm.le
-          ⟨⟨1 + x₃, by grind⟩, ⟨1 + y₃ + y₂ - y₁, by simp; norm_cast; lia⟩⟩ (by grind) (by grind)
+          ⟨⟨1 + x₃, by grind⟩, ⟨1 + y₃ + y₂ - y₁, by simp; lia⟩⟩ (by grind) (by grind)
         simp [← h₁, off, v₃, p₃, add_assoc] at this ⊢
         ring_nf at this ⊢
         exact this
       have p₃_ne_p₂ : l p₃ ≠ 2 * (n + 1) := by
         have := exclusion' l_dist h₂
-          ⟨⟨1 + x₁ + x₃ - x₂ - 2 ^ n, ?_⟩, ⟨1 + y₃, ?_⟩⟩ (by norm_cast; lia)
+          ⟨⟨1 + x₁ + x₃ - x₂ - 2 ^ n, ?_⟩, ⟨1 + y₃, ?_⟩⟩ (by lia)
         · simp [← h₂, off, v₃, p₃, add_assoc] at this ⊢
           ring_nf at this ⊢
           exact this
-        · simp; norm_cast; lia
-        · simp; norm_cast; lia
+        · simp; lia
+        · simp; lia
       replace h₃ : 2 * n < l p₃ := by simpa [p₃, off, v₃, add_assoc] using h₃
       have p₃_label : 2 * (n + 1) < l p₃ := by lia
       use ⟨⟨v₃.1 + x₃, by grind⟩, ⟨v₃.2 + y₃, by grind⟩⟩
