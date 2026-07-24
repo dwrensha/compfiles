@@ -48,26 +48,29 @@ theorem labelling.ext {c : ℝ} (l₁ l₂ : labelling c) : l₁.1 = l₂.1 → 
   simp at h
   simp [h]
 
--- this doesn't work yet, simp still needs to reduce the funlike to its underlying function
 instance (c: ℝ) : FunLike (labelling c) (ℤ × ℤ) ℕ := by
   refine ⟨(·.1), fun ⟨l, hl⟩ ⟨l', hl'⟩ => ?_⟩
   rintro rfl
   simp
 
-abbrev transpose (p : ℤ × ℤ) {c : ℝ} (l: labelling c) : {l': labelling c // l'.1 = l.1 ∘ (fun (q : ℤ × ℤ) => (p.1 + q.1, p.2 + q.2)) } := by
-  have ⟨l, fin, pos, hdist⟩ := l
+attribute [local simp] DFunLike.coe
+
+instance (n: ℕ) : CoeOut (Finset.range (2 ^ n) × Finset.range (2 ^ n)) (ℤ × ℤ) := ⟨fun ⟨x, y⟩ => ⟨x, y⟩⟩
+
+instance : Coe (ℕ × ℕ) (ℤ × ℤ) := ⟨fun ⟨x, y⟩ => ⟨x, y⟩⟩
+
+abbrev transpose (p : ℤ × ℤ) {c : ℝ} (l: labelling c) : labelling c := by
+  -- have ⟨l, fin, pos, hdist⟩ := l
   let f (q : ℤ × ℤ) := (p.1 + q.1, p.2 + q.2)
-  constructor
-  case val =>
-    use l ∘ f
-    and_intros
-    · rw [Set.finite_iff_bddAbove, bddAbove_def] at fin ⊢
-      aesop
-    · intros; simpa using pos _
-    · intro p1 p2 ne lbl
-      apply_fun f at ne using (by intro _ _; grind : Function.Injective f)
-      simpa [dist, f] using hdist ne lbl
-  rfl
+  use l ∘ f
+  and_intros
+  · have fin := l.2.1
+    rw [Set.finite_iff_bddAbove, bddAbove_def] at fin ⊢
+    aesop
+  · intros; simpa using l.2.2.1 _
+  · intro p1 p2 ne lbl
+    apply_fun f at ne using (by intro _ _; grind : Function.Injective f)
+    simpa [dist, f] using l.2.2.2 ne lbl
 
 abbrev flip (n : ℕ) {c : ℝ} (l: labelling c) : labelling c := by
   let f (p: ℤ × ℤ) := (2 ^ n - 1 - p.1, p.2)
@@ -77,13 +80,10 @@ abbrev flip (n : ℕ) {c : ℝ} (l: labelling c) : labelling c := by
   · rw [Set.finite_iff_bddAbove, bddAbove_def] at fin ⊢
     aesop
   · intros;
-    simpa [DFunLike.coe] using pos _
+    simpa using pos _
   · intro p1 p2 ne lbl
     apply_fun f at ne using (by intro _ _; grind : Function.Injective f)
-    simpa [DFunLike.coe, dist, f, sub_sq_comm] using hdist ne lbl
-
-example (c : ℝ) (n : ℕ) (p : ℤ × ℤ) (l: labelling c) : flip n l p = l (2 ^ n - 1 - p.1, p.2) := by
-  simp [DFunLike.coe]
+    simpa [dist, f, sub_sq_comm] using hdist ne lbl
 
 abbrev off (v : ℤ × ℤ) (p : ℕ × ℕ) : ℤ × ℤ :=
   (v + ((p.1 : ℤ), (p.2 : ℤ)))
@@ -167,72 +167,55 @@ lemma exclusion' {l : ℤ × ℤ → ℕ} (l_dist: ∀ {p1 p2}, p1 ≠ p2 → (l
   · exact dist_lt' hp a ha₁
 
 lemma square_squeeze' (n : ℕ) (l : labelling √2)
-  : ∀ v : ℤ × ℤ, ∃ p : Finset.range (2 ^ n) × Finset.range (2 ^ n), 2 * n < l (off v (p.1, p.2)) := by
-  induction n with
-  | zero => exact fun v =>
+  : ∃ p : Finset.range (2 ^ n) × Finset.range (2 ^ n), 2 * n < l (p.1, p.2) := by
+  induction n generalizing l with
+  | zero =>
     -- by positivity we must have a label > 0
     -- this elides the need to check the n = 1 case
-    ⟨(⟨0, by simp⟩, ⟨0, by simp⟩), by simpa [DFunLike.coe] using l.2.2.1 (off v (0, 0))⟩
+    exact ⟨(⟨0, by simp⟩, ⟨0, by simp⟩), by simpa [] using l.2.2.1 (0, 0)⟩
   | succ n ih =>
-    have l_dist := @l.2.2.2
-    intro v
     -- we prove the setup of the two large labels here
-    wlog quadrant : ∃ p₁ p₂ : Finset.range (2 ^ n) × Finset.range (2 ^ n), l (off v (p₁.1, p₁.2)) = 2 * n + 1
-      ∧ p₂.1 ≤ p₁.1 ∧ l (off v (2 ^ n + p₂.1, p₂.2)) = 2 * (n + 1) generalizing l ih v with H
+    wlog quadrant : ∃ p₁ p₂ : Finset.range (2 ^ n) × Finset.range (2 ^ n), l (p₁.1, p₁.2) = 2 * n + 1
+      ∧ p₂.1 ≤ p₁.1 ∧ l (2 ^ n + p₂.1, p₂.2) = 2 * (n + 1) generalizing l with H
     · push +distrib Not at quadrant
-      obtain ⟨vx, vy⟩ := v
+      have l_dist := @l.2.2.2
       -- In both cases, we can flip the labelling and continue
       let l' := flip (n+1) l
       -- let l' := l'_bundle.1 -- maintain provenence of flip
-      specialize H l' (fun v => by
-        have ⟨⟨⟨x, hx⟩, y⟩, hp⟩ := ih (2^n-v.1, v.2)
-        have h1 : x ≤ 2 ^ n - 1 := by
-          rw [Finset.mem_range] at hx
-          rwa [Nat.le_sub_one_iff_lt (by lia)]
-        have h2 : 2 ^ n - 1 - x < 2 ^ n := by
-          zify
-          rw [Int.ofNat_sub h1, Int.ofNat_sub <| Nat.one_le_two_pow]
-          push_cast
-          omega
-        refine ⟨⟨⟨2^n - 1 - x, by simpa using h2⟩, y⟩ , ?_⟩
-        simp only [DFunLike.coe, Prod.mk_add_mk, Function.comp_apply, Prod.fst_add, Prod.snd_add, l'] at hp ⊢
-        rw [Int.ofNat_sub h1, Int.ofNat_sub <| Nat.one_le_two_pow]
-        · push_cast
-          ring_nf at hp ⊢
-          exact hp)
+      specialize H l'
 
       -- then the quadrant must have a label > 2 * n
-      have ⟨p₀, h₀⟩ := ih ⟨vx, vy⟩
+      have ⟨p₀, h₀⟩ := ih l
       -- we also need to assume it is the rightmost label to force the large label in A to not be in the current quadrant
-      let s : Finset _ := {p : Finset.range (2 ^ n) × Finset.range (2 ^ n) | 2 * n < l (off (vx, vy) (p.1, p.2)) }
+      let s : Finset _ := {p : Finset.range (2 ^ n) × Finset.range (2 ^ n) | 2 * n < l (p.1, p.2) }
       have ⟨⟨⟨x₁, hx₁⟩, ⟨y₁, hy₁⟩⟩, p₁_lb, h₁⟩ := Finset.exists_mem_eq_sup s ⟨p₀, Finset.mem_filter_univ _ |>.mpr h₀⟩ (fun p => p.1.val)
-      have rightmost (p: Finset.range (2 ^ n) × Finset.range (2 ^ n)) (h : 2 * n < l (off (vx, vy) (p.1, p.2))) : p.1 ≤ x₁ := by
+      have rightmost (p: Finset.range (2 ^ n) × Finset.range (2 ^ n)) (h : 2 * n < l (p.1, p.2)) : p.1 ≤ x₁ := by
         dsimp at h₁
         rw [← h₁]
         exact @Finset.le_sup _ _ _ _ s (fun p ↦ p.1.val) _ (by simpa [s] using h)
-      let p₁ := off (vx, vy) (x₁, y₁)
+      let p₁ := (x₁, y₁)
       simp only [Finset.mem_filter, Finset.mem_univ, true_and, s] at p₁_lb
-      wlog! p₁_ub : l p₁ ≤ 2 * (n + 1)
+      wlog! p₁_ub : l (p₁.1, p₁.2) ≤ 2 * (n + 1)
       · use ⟨⟨x₁, by grind⟩, ⟨y₁, by grind⟩⟩
       -- construct A, then it must also contain a label > 2 * (n + 1), and is distinct from the first point
-      let v₂ := (vx, vy) + ((1 + x₁ : ℤ), (0 : ℤ))
-      have ⟨(⟨x₂, hx₂⟩, ⟨y₂, hy₂⟩), p₂_lb⟩ := ih v₂
-      let p₂ := off (vx, vy) (1 + x₁ + x₂, y₂)
-      wlog! p₂_ub : l (off (vx, vy) (1 + x₁ + x₂, y₂)) ≤ 2 * (n + 1)
+      let v₂ := ((1 + x₁ : ℤ), (0 : ℤ))
+      have ⟨(⟨x₂, hx₂⟩, ⟨y₂, hy₂⟩), p₂_lb⟩ := ih (transpose v₂ l)
+      let p₂ := (1 + x₁ + x₂, y₂)
+      wlog! p₂_ub : l ((1 + x₁ + x₂, y₂)) ≤ 2 * (n + 1)
       · clear this -- help out grind
-        use ⟨⟨1 + x₁ + x₂, by grind⟩, ⟨y₂, by grind⟩⟩
-      -- A touches p₁, so A cannot use the label of p₂
+        exact ⟨⟨⟨1 + x₁ + x₂, by grind⟩, ⟨y₂, by grind⟩⟩, p₂_ub⟩
+      -- A touches p₁, so A annot use the label of p₂
       have p₁_ne_p₂ : l p₁ ≠ l p₂ := by
         simp only [Finset.mem_range] at hx₂ hy₁ hy₂
         have := exclusion l_dist p₁_lb
           (⟨x₂ + 1, by simp; norm_cast; omega⟩, ⟨y₂ - y₁, by simp; constructor <;> linarith⟩) (not_eq_of_beq_eq_false rfl) (?_)
-        · simpa [DFunLike.coe, off, p₁, p₂, add_assoc, add_rotate'] using this.symm
+        · simpa [off, p₁, p₂, add_assoc, add_rotate'] using this.symm
         · right; simp [abs_sub_lt_iff]; constructor <;> linarith
       -- we need to show that p₂ is not in the quadrant
       have p₂x_large : 2 ^ n ≤ (1 + (x₁ + x₂): ℕ) := by
         contrapose! rightmost with p₂x_small
         refine ⟨⟨⟨1 + (x₁ + x₂), Finset.mem_range.mpr p₂x_small⟩, ⟨y₂, hy₂⟩⟩,
-          by simpa [off, v₂, add_assoc] using p₂_lb, by lia⟩
+          by simpa [off, v₂, add_assoc, transpose] using p₂_lb, by lia⟩
       -- change x-coordinate of p₂ to start at the next quadrant
       have ⟨x₂', hx₂'⟩ : ∃ x, (1 + (x₁ + x₂) : ℕ) = 2 ^ n + x := by
         rwa [le_iff_exists_add] at p₂x_large
@@ -248,19 +231,20 @@ lemma square_squeeze' (n : ℕ) (l : labelling √2)
         dsimp at quadrant
         rcases quadrant with quadrant | quadrant | quadrant
         · have p₁_eq : l p₁ = 2 * (n + 1) := by
-            simp [p₁, off] at p₁_lb p₁_ub ⊢
+            simp [p₁] at p₁_lb p₁_ub ⊢
             lia
+          -- simp at p₁_eq
           have p₂_eq : l p₂ = 2 * n + 1 := by
-            simp [p₁_eq, p₂, v₂, off] at p₂_lb p₂_ub p₁_ne_p₂ ⊢
+            simp [↓p₁_eq, p₂, v₂] at p₂_lb p₂_ub p₁_ne_p₂ ⊢
             lia
           exact ⟨p₁_eq, p₂_eq⟩
         · simp at quadrant; lia
         · have p₂_eq : l p₂ = 2 * n + 1 := by
             zify at hx₂'
-            simp [p₂, v₂, off, ← hx₂'] at p₂_lb p₂_ub p₁_ne_p₂ quadrant ⊢
+            simp [p₂, v₂, ← hx₂'] at p₂_lb p₂_ub p₁_ne_p₂ quadrant ⊢
             lia
           have p₁_eq : l p₁ = 2 * (n + 1) := by
-            simp [p₂_eq, p₁, off] at p₁_lb p₁_ub p₁_ne_p₂ ⊢
+            simp [↓p₂_eq, p₁] at p₁_lb p₁_ub p₁_ne_p₂ ⊢
             lia
           exact ⟨p₁_eq, p₂_eq⟩
       -- we can now use our hypothesis, flipping the labelling
@@ -274,77 +258,74 @@ lemma square_squeeze' (n : ℕ) (l : labelling √2)
         push_cast
         rfl
       have h4 : x₁ ≤ 2^n - 1 := by rwa [Nat.le_sub_one_iff_lt <| Nat.two_pow_pos _]
-      specialize H l'.2.2.2 (-vx, vy) ⟨(⟨2^n - 1 - x₂', by rw [Finset.mem_range]; zify [h3]; lia⟩, ⟨y₂, by grind⟩), (⟨2 ^ n - 1 - x₁, by rw [Finset.mem_range]; zify [h4]; lia⟩, ⟨y₁, by grind⟩), ?_, ?_, ?_⟩
+      specialize H ⟨(⟨2^n - 1 - x₂', by rw [Finset.mem_range]; zify [h3]; lia⟩, ⟨y₂, by grind⟩), (⟨2 ^ n - 1 - x₁, by rw [Finset.mem_range]; zify [h4]; lia⟩, ⟨y₁, by grind⟩), ?_, ?_, ?_⟩
       · zify [h3] at hx₂' ⊢
-        simp [DFunLike.coe, add_assoc, p₂, l', hx₂'] at p₂_eq ⊢
+        simp [add_assoc, p₂, l', hx₂'] at p₂_eq ⊢
         grind
       · simp
         zify [h3] at p₂x_large ⊢
         lia
-      · simp [DFunLike.coe, l', p₂, ← p₁_eq, p₁, h4] at p₂_eq ⊢
+      · simp [l', p₂, ← p₁_eq, p₁, h4] at p₂_eq ⊢
         ring_nf
       obtain ⟨⟨⟨x, hx⟩, ⟨y, hy⟩⟩, h⟩ := H
-      simp [l'] at h hx hy
+      simp only [l', Finset.mem_range] at h hx hy
       have h5 : ((2 ^ (n + 1) - 1 - x : ℕ) : ℤ) = (2 ^ (n + 1) - 1 - x : ℤ) := by
         rw [Int.ofNat_sub <| Nat.le_sub_one_iff_lt Nat.one_le_two_pow |>.mpr hx, Int.ofNat_sub Nat.one_le_two_pow]
         simp
       use ⟨⟨2 ^ (n+1) - 1 - x, ?_⟩, ⟨y, Finset.mem_range.mpr hy⟩⟩
-      · simp [DFunLike.coe, h5] at h ⊢
-        push_cast
+      · simp [h5] at h ⊢
         ring_nf at h ⊢
         exact h
       · rw [Finset.mem_range]
         zify [h5]
         lia
+    have l_dist := @l.2.2.2
     obtain ⟨⟨⟨x₁, hx₁⟩, ⟨y₁, hy₁⟩⟩, ⟨⟨x₂, hx₂⟩, ⟨y₂, hy₂⟩⟩, h₁, le, h₂⟩ := quadrant
     -- we follow the split of cases in the solution
     by_cases h : y₁ ≤ y₂
     -- p₁ is at least as high as p₂, B is bounded north by p₁ and bounded east by p₂
     · let v₃ := ((x₂ : ℕ), (y₁ + 1 : ℕ))
-      have ⟨(⟨x₃, hx₃⟩, ⟨y₃, hy₃⟩), h₃⟩ := ih (v + ((v₃.1 : ℤ), (v₃.2 : ℤ)))
+      have ⟨(⟨x₃, hx₃⟩, ⟨y₃, hy₃⟩), h₃⟩ := ih (transpose ((v₃.1 : ℤ), (v₃.2 : ℤ)) l)
       simp only [Subtype.mk_le_mk, Finset.mem_range] at le hx₁ hx₂ hx₃ hy₁ hy₂ hy₃
-      let p₃ := off v (v₃ + ((x₃ : ℕ), (y₃ : ℕ)))
+      let p₃ := (v₃ + ((x₃ : ℕ), (y₃ : ℕ)))
       have p₃_ne_p₁ : l p₃ ≠ 2 * n + 1 := by
         have := exclusion l_dist h₁.symm.le
           ⟨⟨x₂ + x₃ - x₁, ?_⟩, ⟨1 + y₃, by simp; lia⟩⟩ (by grind) ?_
-        · simpa [DFunLike.coe, ← h₁, off, v₃, p₃, add_assoc] using this
+        · simpa [← h₁, v₃, p₃, add_assoc] using this
         · simp; lia
         · simp [abs_lt]; lia
       have p₃_ne_p₂ : l p₃ ≠ 2 * (n + 1) := by
         have := exclusion' l_dist h₂
           ⟨⟨x₃ - 2 ^ n, by simp; lia⟩, ⟨1 + y₁ + y₃ - y₂, ?_⟩⟩ (by norm_cast; lia)
-        · simp [← h₂, off, v₃, p₃, add_assoc] at this ⊢
+        · simp [← h₂, v₃, p₃, add_assoc] at this ⊢
           ring_nf at this ⊢
           exact this
         · simp; lia
-      replace h₃ : 2 * n < l p₃ := by simpa [p₃, off, v₃, add_assoc] using h₃
+      replace h₃ : 2 * n < l p₃ := by simpa [p₃, v₃, add_assoc] using h₃
       have p₃_label : 2 * (n + 1) < l p₃ := by lia
       use ⟨⟨v₃.1 + x₃, by grind⟩, ⟨v₃.2 + y₃, by grind⟩⟩
-      convert p₃_label <;> rfl
     -- p₂ is higher, B is bounded north by p₂ and bounded west by p₁
     · let v₃ := ((x₁ + 1 : ℕ), (y₂ + 1 : ℕ))
-      have ⟨(⟨x₃, hx₃⟩, ⟨y₃, hy₃⟩), h₃⟩ := ih (v + ((v₃.1 : ℤ), (v₃.2 : ℤ)))
+      have ⟨(⟨x₃, hx₃⟩, ⟨y₃, hy₃⟩), h₃⟩ := ih (transpose ((v₃.1 : ℤ), (v₃.2 : ℤ)) l)
       simp only [Subtype.mk_le_mk, Finset.mem_range] at le hx₁ hx₂ hx₃ hy₁ hy₂ hy₃
-      let p₃ := off v (v₃ + ((x₃ : ℕ), (y₃ : ℕ)))
+      let p₃ := (v₃ + ((x₃ : ℕ), (y₃ : ℕ)))
       have p₃_ne_p₁ : l p₃ ≠ 2 * n + 1 := by
         have := exclusion l_dist h₁.symm.le
           ⟨⟨1 + x₃, by grind⟩, ⟨1 + y₃ + y₂ - y₁, by simp; lia⟩⟩ (by grind) (by grind)
-        simp [← h₁, off, v₃, p₃, add_assoc] at this ⊢
+        simp [← h₁, v₃, p₃, add_assoc] at this ⊢
         ring_nf at this ⊢
         exact this
       have p₃_ne_p₂ : l p₃ ≠ 2 * (n + 1) := by
         have := exclusion' l_dist h₂
           ⟨⟨1 + x₁ + x₃ - x₂ - 2 ^ n, ?_⟩, ⟨1 + y₃, ?_⟩⟩ (by lia)
-        · simp [← h₂, off, v₃, p₃, add_assoc] at this ⊢
+        · simp [← h₂, v₃, p₃, add_assoc] at this ⊢
           ring_nf at this ⊢
           exact this
         · simp; lia
         · simp; lia
-      replace h₃ : 2 * n < l p₃ := by simpa [p₃, off, v₃, add_assoc] using h₃
+      replace h₃ : 2 * n < l p₃ := by simpa [p₃, v₃, add_assoc] using h₃
       have p₃_label : 2 * (n + 1) < l p₃ := by lia
       use ⟨⟨v₃.1 + x₃, by grind⟩, ⟨v₃.2 + y₃, by grind⟩⟩
-      convert p₃_label <;> rfl
-
 
 snip end
 
@@ -387,8 +368,8 @@ problem usa2017_p5 (c : ℝ) :
     simp_rw [Set.finite_iff_bddAbove, bddAbove_def] at h
     obtain ⟨n, hn⟩ := h
     -- Construct a large enough square to force a label exceeding the bound
-    have ⟨p, hp⟩ := square_squeeze' n ⟨l, l_fin, l_pos, l_dist⟩ (0, 0)
-    specialize hn (l (off (0,0) (p.1, p.2))) (Set.mem_range_self _)
+    have ⟨p, hp⟩ := square_squeeze' n ⟨l, l_fin, l_pos, l_dist⟩
+    specialize hn (l (p.1, p.2)) (Set.mem_range_self _)
     simp only [DFunLike.coe] at hp
     linarith
 
