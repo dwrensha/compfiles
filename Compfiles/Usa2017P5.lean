@@ -36,22 +36,26 @@ snip begin
 open Real
 set_option linter.flexible true
 
-def labelling (c: ℝ) :=  ∃ l : ℤ × ℤ → ℕ,
+def labelling (c: ℝ) := { l : ℤ × ℤ → ℕ //
   (Set.range l).Finite ∧
   (∀ p, 0 < l p) ∧
   ∀ {p1 p2}, p1 ≠ p2 → (l p1 = l p2) →
-      c ^ (l p1) ≤ dist p1 p2
+      c ^ (l p1) ≤ dist p1 p2}
 
-abbrev transpose (x y : ℤ) {c : ℝ} (l: labelling c) : labelling c := by
+abbrev transpose (p : ℤ × ℤ) {c : ℝ} (l: labelling c) : {l': labelling c // l'.1 = l.1 ∘ (fun (q : ℤ × ℤ) => (p.1 + q.1, p.2 + q.2)) } := by
   have ⟨l, fin, pos, hdist⟩ := l
-  let f (p : ℤ × ℤ) := (p.1 + x, p.2 + y)
-  use l ∘ f
-  and_intros
-  sorry
-  · intros; simpa using pos _
-  · intro p1 p2 ne lbl
-    apply_fun f at ne using (by intro _ _; grind : Function.Injective f)
-    simpa [dist, f] using hdist ne lbl
+  let f (q : ℤ × ℤ) := (p.1 + q.1, p.2 + q.2)
+  constructor
+  case val =>
+    use l ∘ f
+    and_intros
+    · rw [Set.finite_iff_bddAbove, bddAbove_def] at fin ⊢
+      aesop
+    · intros; simpa using pos _
+    · intro p1 p2 ne lbl
+      apply_fun f at ne using (by intro _ _; grind : Function.Injective f)
+      simpa [dist, f] using hdist ne lbl
+  rfl
 
 abbrev flip (n : ℕ) {c : ℝ} (l: labelling c) : labelling c := by
   have ⟨l, fin, pos, hdist⟩ := l
@@ -67,7 +71,6 @@ abbrev flip (n : ℕ) {c : ℝ} (l: labelling c) : labelling c := by
 
 abbrev off (v : ℤ × ℤ) (p : ℕ × ℕ) : ℤ × ℤ :=
   (v + ((p.1 : ℤ), (p.2 : ℤ)))
-
 
 -- points close to a point p cannot be the labelled the same as p itself
 lemma exclusion {l : ℤ × ℤ → ℕ} (l_dist: ∀ {p1 p2}, p1 ≠ p2 → (l p1 = l p2) → √2 ^ (l p1) ≤ dist p1 p2)
@@ -176,96 +179,261 @@ lemma square_squeeze' (n : ℕ) (l : ℤ × ℤ → ℕ) (_l_fin: (Set.range l).
           ring_nf at hp ⊢
           exact hp) (2^n-vx, vy)
 
-      rcases quadrant with quadrant | quadrant
-      -- say the quadrant indeed has a label 2 * (n + 1)
-      · have ⟨⟨x₁, y₁⟩, p₁_lb⟩ := ih (vx, vy)
-        let p₁ := off (vx, vy) (x₁, y₁)
-        wlog! p₁_ub : l p₁ ≤ 2 * (n + 1)
-        · use ⟨⟨x₁, by grind⟩, ⟨y₁, by grind⟩⟩
-        have := quadrant ⟨x₁, y₁⟩
-        have p₁_eq : l p₁ = 2 * (n + 1) := by lia
-        -- then we can force a label of 2 * n + 1 using A
-        let v₂ := ((1 + x₁ : ℕ), 0)
-        have ⟨(x₂, y₂), p₂_lb⟩ := ih ((vx, vy) + (↑v₂.1, ↑v₂.2))
-        let p₂ := off ((vx, vy) + ((v₂.1 : ℤ), (v₂.2 : ℤ))) (x₂, y₂)
-        wlog! p₂_ub : l p₂ ≤ 2 * (n + 1)
-        · use ⟨⟨1 + x₁ + x₂, by grind⟩, ⟨y₂, by grind⟩⟩
-          simpa [v₂, p₂, add_assoc, off] using p₂_ub
-        have p₂_ne : l p₂ ≠ 2 * (n + 1) := by
-          -- A touches p₁, so p₂ cannot use the label of p₂
-          have := exclusion' l_dist p₁_eq.symm
-            (⟨x₂ + 1, by simp; norm_cast; grind⟩, ⟨y₂ - y₁, by simp; norm_cast; grind⟩) (not_eq_of_beq_eq_false rfl)
-          simpa [off, v₂, p₁, p₂, add_assoc, add_rotate', ← p₁_eq] using this
-        have p₂_eq : l p₂ = 2 * n + 1 := by lia
-        let ⟨⟨⟨x₃, hx₃⟩, y₃⟩, p₃_lb⟩ := H ⟨⟨?_, ?_⟩ , ⟨?_, ?_⟩⟩
-        · let p₃ := (x₃, y₃)
-          use ⟨⟨2 ^ n - 1 - p₃.1, by grind⟩, p₃.2⟩
-          dsimp [l', l'_bundle, off] at p₃_lb ⊢
-          rw [Int.ofNat_sub (by simp [p₃] at hx₃ ⊢; grind), Int.ofNat_sub (by grind)]
-          push_cast at p₃_lb ⊢
-          ring_nf at p₃_lb ⊢
-          exact p₃_lb
-        -- put in our flipped p₁ and p₂
-        · refine ⟨⟨2 ^ n - 1 - (v₂.1 + x₂ : ℕ), by simp; zify; sorry⟩, y₂⟩
-        · dsimp [l', l'_bundle]
-          rw [← p₂_eq]
-          rw [Int.ofNat_sub ?_]
-          simp [p₂, off, v₂]
-          ring_nf
+      -- then the quadrant must have a label > 2 * n
+      have ⟨p₀, h₀⟩ := ih ⟨vx, vy⟩
+      -- we also need to assume it is the rightmost label to force the large label in A to not be in the current quadrant
+      let s : Finset _ := {p : Finset.range (2 ^ n) × Finset.range (2 ^ n) | 2 * n < l (off (vx, vy) (p.1, p.2)) }
+      have ⟨⟨⟨x₁, hx₁⟩, ⟨y₁, hy₁⟩⟩, p₁_lb, h₁⟩ := Finset.exists_mem_eq_sup s ⟨p₀, Finset.mem_filter_univ _ |>.mpr h₀⟩ (fun p => p.1.val)
+      have rightmost (p: Finset.range (2 ^ n) × Finset.range (2 ^ n)) (h : 2 * n < l (off (vx, vy) (p.1, p.2))) : p.1 ≤ x₁ := by
+        dsimp at h₁
+        rw [← h₁]
+        exact @Finset.le_sup _ _ _ _ s (fun p ↦ p.1.val) _ (by simpa [s] using h)
+      let p₁ := off (vx, vy) (x₁, y₁)
+      simp only [Finset.mem_filter, Finset.mem_univ, true_and, s] at p₁_lb
+      wlog! p₁_ub : l p₁ ≤ 2 * (n + 1)
+      · use ⟨⟨x₁, by grind⟩, ⟨y₁, by grind⟩⟩
+      -- construct A, then it must also contain a label > 2 * (n + 1), and is distinct from the first point
+      let v₂ := (vx, vy) + ((1 + x₁ : ℤ), (0 : ℤ))
+      have ⟨(⟨x₂, hx₂⟩, ⟨y₂, hy₂⟩), p₂_lb⟩ := ih v₂
+      let p₂ := off (vx, vy) (1 + x₁ + x₂, y₂)
+      wlog! p₂_ub : l (off (vx, vy) (1 + x₁ + x₂, y₂)) ≤ 2 * (n + 1)
+      · clear this -- help out grind
+        use ⟨⟨1 + x₁ + x₂, by grind⟩, ⟨y₂, by grind⟩⟩
+      -- A touches p₁, so A cannot use the label of p₂
+      have p₁_ne_p₂ : l p₁ ≠ l p₂ := by
+        simp only [Finset.mem_range] at hx₂ hy₁ hy₂
+        have := exclusion l_dist p₁_lb
+          (⟨x₂ + 1, by simp; norm_cast; omega⟩, ⟨y₂ - y₁, by simp; constructor <;> linarith⟩) (not_eq_of_beq_eq_false rfl) (?_)
+        · symm at this
+          simpa [off, v₂, p₁, p₂, add_assoc, add_rotate'] using this
+        · right; simp [abs_sub_lt_iff]; constructor <;> linarith
+      -- we need to show that p₂ is not in the quadrant
+      have p₂x_large : 2 ^ n ≤ (1 + (x₁ + x₂): ℕ) := by
+        contrapose! rightmost with p₂x_small
+        refine ⟨⟨⟨1 + (x₁ + x₂), Finset.mem_range.mpr p₂x_small⟩, ⟨y₂, hy₂⟩⟩,
+          by simpa [off, v₂, add_assoc] using p₂_lb, by lia⟩
+      -- change x-coordinate of p₂ to start at the next quadrant
+      have ⟨x₂', hx₂'⟩ : ∃ x, (1 + (x₁ + x₂) : ℕ) = 2 ^ n + x := by
+        rwa [le_iff_exists_add] at p₂x_large
+      -- by the bounds of A, we have that p₂.1 is not too far from p₁.1
+      have : x₂' ≤ x₁ := by
+        -- TODO: grind is kind of slow here
+        rw [← add_le_add_iff_left (2^n), ← hx₂']
+        simp at hx₂
+        omega
+      -- by our assumption, the labels of p₁ and p₂ are forced
+      specialize quadrant (⟨x₁, hx₁⟩, ⟨y₁, hy₁⟩) (⟨x₂', by grind⟩, ⟨y₂, hy₂⟩)
+      have ⟨p₁_eq, p₂_eq⟩ : l p₁ = 2 * (n + 1) ∧ l p₂ = 2 * n + 1 := by
+        dsimp at quadrant
+        rcases quadrant with quadrant | quadrant | quadrant
+        · have p₁_eq : l p₁ = 2 * (n + 1) := by
+            simp [p₁, off] at p₁_lb p₁_ub ⊢
+            lia
+          have p₂_eq : l p₂ = 2 * n + 1 := by
+            simp [p₁_eq, p₂, v₂, off] at p₂_lb p₂_ub p₁_ne_p₂ ⊢
+            lia
+          exact ⟨p₁_eq, p₂_eq⟩
+        · simp at quadrant; lia
+        · have p₂_eq : l p₂ = 2 * n + 1 := by
+            zify at hx₂'
+            simp [p₂, v₂, off, ← hx₂'] at p₂_lb p₂_ub p₁_ne_p₂ quadrant ⊢
+            lia
+          have p₁_eq : l p₁ = 2 * (n + 1) := by
+            simp [p₂_eq, p₁, off] at p₁_lb p₁_ub p₁_ne_p₂ ⊢
+            lia
+          exact ⟨p₁_eq, p₂_eq⟩
+      -- we can now use our hypothesis, flipping the labelling
+      clear p₁_lb p₁_ub p₂_lb p₂_ub rightmost quadrant
+      specialize H ⟨(⟨2 ^ n - 1 - x₂', by grind⟩, ⟨y₂, by grind⟩), (⟨2 ^ n - 1 - x₁, by grind⟩, ⟨y₁, by grind⟩), ?_, ?_, ?_⟩
+      · and_intros
+        zify at hx₂'
+        simp [p₂, p₁, sub_add_eq_add_sub, l', l'_bundle] at p₁_eq p₂_eq ⊢
+        ring_nf
+        sorry
+      · zify at p₂x_large ⊢
+        simp
+        ring_nf
+        sorry
+      · simp [l', l'_bundle, p₂, ← p₁_eq, p₁] at p₂_eq ⊢
+        ring_nf
+        all_goals sorry
+      simp [l', l'_bundle] at H
+      obtain ⟨x, hx, y, hy, h⟩ := H
+      use ⟨⟨2 ^ n - 1 - x, sorry⟩, ⟨y, Finset.mem_range.mpr hy⟩⟩
+      simp at h ⊢
+      rw [Int.ofNat_sub ?_, Int.ofNat_sub]
+      push_cast
+      ring_nf at h ⊢
+      exact h
 
-          all_goals sorry
-        · refine ⟨⟨2 ^ n - 1 - (x₁ : ℕ), by simp; sorry⟩, y₁⟩
-        · dsimp [l', l'_bundle]
-          rw [← p₁_eq, Int.ofNat_sub <| Nat.le_sub_one_iff_lt (Nat.two_pow_pos n) |>.mpr (by grind)]
-          simp [p₁]
-          ring_nf
-      · all_goals sorry
-    have pigeonhole (p: ℤ × ℤ) (hp : 2 * n < l p) (h_ne₁ : l p ≠ 2 * n + 1) (h_ne₂ : l p ≠ 2 * (n + 1)) : 2 * (n + 1) < l p := by lia
-    -- assume a quadrant has no label > 2 * (n + 2)
-    -- construct B, which touches both p₁ and p₂
-    -- we can then use pigeonhole to show B contains a large enough label
-    obtain ⟨⟨⟨x₁, y₁⟩, h₁⟩, ⟨⟨x₂, y₂⟩, h₂⟩⟩ := quadrant
+      exact Nat.one_le_two_pow
+      all_goals sorry
+    obtain ⟨⟨⟨x₁, hx₁⟩, ⟨y₁, hy₁⟩⟩, ⟨⟨x₂, hx₂⟩, ⟨y₂, hy₂⟩⟩, h₁, le, h₂⟩ := quadrant
 
     by_cases h : y₁ ≤ y₂
     -- p₁ is at least as high as p₂, B is bounded north by p₁ and bounded east by p₂
     · let v₃ := ((x₂ : ℕ), (y₁ + 1 : ℕ))
-      have ⟨(x₃, y₃), h₃⟩ := ih (v + ((v₃.1 : ℤ), (v₃.2 : ℤ)))
+      have ⟨(⟨x₃, hx₃⟩, ⟨y₃, hy₃⟩), h₃⟩ := ih (v + ((v₃.1 : ℤ), (v₃.2 : ℤ)))
       let p₃ := off v (v₃ + ((x₃ : ℕ), (y₃ : ℕ)))
       have p₃_ne_p₁ : l p₃ ≠ 2 * n + 1 := by
-        -- rw [← h₁]
-        obtain ⟨y₃, hy₃⟩ := y₃
-        have h1 : (x₂.val + x₃.val - x₁.val : ℤ) ∈ Finset.Icc (-2 ^ n) (2 ^ n) := by
-          simp
-          sorry
+        simp at le hx₁ hx₂ hx₃
         have := exclusion l_dist h₁.symm.le
-          ⟨⟨x₂ + x₃ - x₁, h1⟩, ⟨1 + y₃, by simp at hy₃ ⊢; constructor <;> linarith⟩⟩ (by grind) (by simp; sorry)
-        simpa [← h₁, off, v₃, p₃, add_assoc] using this
+          ⟨⟨x₂ + x₃ - x₁, ?_⟩, ⟨1 + y₃, by simp at hy₃ ⊢; constructor <;> linarith⟩⟩ (by grind) ?_
+        · simpa [← h₁, off, v₃, p₃, add_assoc] using this
+        · simp
+          norm_cast
+          lia
+        · left
+          simp [abs_lt]
+          norm_cast
+          lia
       have p₃_ne_p₂ : l p₃ ≠ 2 * (n + 1) := by
-        obtain ⟨x₃, hx₃⟩ := x₃
         have := exclusion' l_dist h₂.symm
-          ⟨⟨x₃ - 2 ^ n, by simp at hx₃ ⊢; linarith⟩, ⟨1 + y₁ + y₃ - y₂, ?_⟩⟩ (by rw [Finset.mem_range] at hx₃; zify at hx₃; lia)
-        simp [← h₂, off, v₃, p₃, add_assoc] at this ⊢
-        ring_nf at this ⊢
-        exact this
-        calc
-          1 + (y₁: ℤ) + y₃ - y₂
-          _ = 1 + y₃ + y₁ - y₂ := by ring
-          _ ≤ 1 + y₃ := by sorry
-
-        sorry
+          ⟨⟨x₃ - 2 ^ n, by simp at hx₃ ⊢; linarith⟩, ⟨1 + y₁ + y₃ - y₂, ?_⟩⟩ (by rw [Finset.mem_range] at hx₃; norm_cast; lia)
+        · simp [← h₂, off, v₃, p₃, add_assoc] at this ⊢
+          ring_nf at this ⊢
+          exact this
+        · rw [Finset.mem_Icc]
+          simp at hy₁ hy₂ hy₃ ⊢
+          norm_cast
+          lia
       replace h₃ : 2 * n < l p₃ := by simpa [p₃, off, v₃, add_assoc] using h₃
       have p₃_label : 2 * (n + 1) < l p₃ := by lia
       use ⟨⟨v₃.1 + x₃, by grind⟩, ⟨v₃.2 + y₃, by grind⟩⟩
       simp [p₃, off, v₃, add_assoc] at p₃_ne_p₁ p₃_ne_p₂ ⊢
       simpa [p₃, off, add_assoc, v₃] using p₃_label
     -- p₂ is higher, B is bounded north by p₂ and bounded west by p₁
-    ·
-      all_goals sorry
+    · let v₃ := ((x₁ + 1 : ℕ), (y₂ + 1 : ℕ))
+      have ⟨(⟨x₃, hx₃⟩, ⟨y₃, hy₃⟩), h₃⟩ := ih (v + ((v₃.1 : ℤ), (v₃.2 : ℤ)))
+      let p₃ := off v (v₃ + ((x₃ : ℕ), (y₃ : ℕ)))
+
+      have p₃_ne_p₁ : l p₃ ≠ 2 * n + 1 := by
+        have := exclusion l_dist h₁.symm.le
+          ⟨⟨1 + x₃, by grind⟩, ⟨1 + y₃ + y₂ - y₁, ?_⟩⟩ (by grind) (by grind)
+        simp [← h₁, off, v₃, p₃, add_assoc] at this ⊢
+        ring_nf at this ⊢
+        exact this
+        simp at hy₁ hy₂ hy₃ ⊢; norm_cast; lia
+      have p₃_ne_p₂ : l p₃ ≠ 2 * (n + 1) := by
+        simp only [Finset.mem_range, Subtype.mk_le_mk] at hy₁ hy₂ hy₃ hx₁ hx₂ hx₃ le
+        have := exclusion' l_dist h₂.symm
+          ⟨⟨1 + x₁ + x₃ - x₂ - 2 ^ n, ?_⟩, ⟨1 + y₃, ?_⟩⟩ (by norm_cast; lia)
+        · simp [← h₂, off, v₃, p₃, add_assoc] at this ⊢
+          ring_nf at this ⊢
+          exact this
+        · simp; norm_cast; lia
+        · simp; norm_cast; lia
+      replace h₃ : 2 * n < l p₃ := by simpa [p₃, off, v₃, add_assoc] using h₃
+      have p₃_label : 2 * (n + 1) < l p₃ := by lia
+      use ⟨⟨v₃.1 + x₃, by grind⟩, ⟨v₃.2 + y₃, by grind⟩⟩
+      simp [p₃, off, v₃, add_assoc] at p₃_ne_p₁ p₃_ne_p₂ ⊢
+      simpa [p₃, off, add_assoc, v₃] using p₃_label
+
+-- -- base case of a 2x2 square
+-- lemma small_square (l : ℤ × ℤ → ℕ) (_l_fin: (Set.range l).Finite) (_l_pos: ∀ p, 0 < l p)
+--   (l_dist: ∀ {p1 p2}, p1 ≠ p2 → (l p1 = l p2) → √2 ^ (l p1) ≤ dist p1 p2)
+--   : ∀ v : ℤ × ℤ, ∃ p : Finset.range (2) × Finset.range (2), 2 < l (off v (p.1, p.2)) := by
+--   contrapose! l_dist
+--   by_cases h : l (0, 0) = l (0, 1)
+
+--   refine ⟨(0, 0), (0, 1), by simp, ?_, ?_⟩
 
 
-        all_goals sorry
-      use (⟨1 + x₁ + x₃, by grind⟩, ⟨y₂ + 1 + y₃, by grind⟩)
-      simpa [p₃, off, v₃, v₂, add_assoc] using pigeonhole p₃ h₃ p₃_ne_p₁ p₃_ne_p₂
+--   sorry
+--   simp [dist]
+--   all_goals sorry
+
+-- lemma square_squeeze (n : ℕ) (l : ℤ × ℤ → ℕ) (_l_fin: (Set.range l).Finite) (_l_pos: ∀ p, 0 < l p)
+--   (l_dist: ∀ {p1 p2}, p1 ≠ p2 → (l p1 = l p2) → √2 ^ (l p1) ≤ dist p1 p2)
+--   : ∀ v : ℤ × ℤ, ∃ p : Finset.range (2 ^ (n + 1)) × Finset.range (2 ^ (n + 1)), 2 * (n + 1) < l (off v (p.1, p.2)) := by
+--   induction n with
+--   | zero => simpa using small_square l _l_fin _l_pos l_dist
+--   | succ n ih =>
+--     intro v
+--     -- assume a quadrant has no label > 2 * (n + 2)
+--     wlog! quadrant : ∀ p : Finset.range (2 ^ (n + 1)) × Finset.range (2 ^ (n + 1)), l (off v (p.1, p.2)) ≤ 2 * (n + 1 + 1)
+--     · obtain ⟨⟨⟨x, hx⟩, ⟨y, hy⟩⟩, hp⟩ := quadrant
+--       -- for some reason grind doens't work on the latter hole
+--       use ⟨⟨x, by grind⟩, ⟨y, ?_⟩⟩
+--       simp only [Finset.mem_range] at hy ⊢
+--       apply hy.trans_le
+--       grind
+--     -- then the quadrant must have a label > 2 * n
+--     have ⟨p₀, h₀⟩ := ih v
+--     -- we also need to assume it is the rightmost label to force the large label in A to not be in the current quadrant
+--     let s : Finset _ := {p : Finset.range (2 ^ (n + 1)) × Finset.range (2 ^ (n + 1)) | 2 * (n + 1) < l (off v (p.1, p.2)) }
+--     have ⟨⟨x₁, y₁⟩, p₁_lb, h₁⟩ := Finset.exists_mem_eq_sup s ⟨p₀, Finset.mem_filter_univ _ |>.mpr h₀⟩ (fun p => p.1.val)
+--     have rightmost (p: Finset.range (2 ^ (n + 1)) × Finset.range (2 ^ (n + 1))) (h : 2 * (n + 1) < l (off v (p.1, p.2))) : p.1 ≤ x₁ := by
+--       rw [← Subtype.coe_le_coe, ← h₁]
+--       exact @Finset.le_sup _ _ _ _ s (fun p ↦ p.1.val) _ (by simpa [s] using h)
+--     let p₁ := off v (x₁, y₁)
+--     simp only [Finset.mem_filter, Finset.mem_univ, true_and, s] at p₁_lb
+--     have p₁_ub := quadrant (x₁, y₁)
+--     -- construct A, then it must also contain a label > 2 * (n + 1), and is distinct from the first point
+--     let v₂ := ((1 + x₁ : ℤ), (0 : ℤ))
+--     have ⟨(x₂, y₂), p₂_lb⟩ := ih (v + v₂)
+--     let p₂ := off (v + v₂) (x₂, y₂)
+--     wlog! p₂_ub : l p₂ ≤ 2 * (n + 2)
+--     · use ⟨⟨1 + x₁ + x₂, by grind⟩, ⟨y₂, by grind⟩⟩
+--       simpa [p₂, v₂, off, add_assoc] using p₂_ub
+--     -- A touches p₁, so A cannot use the label of p₂
+--     have p₁_ne_p₂ : l p₁ ≠ l p₂ := by
+--       have := exclusion l_dist p₁_lb
+--         (⟨x₂ + 1, by grind⟩, ⟨y₂ - y₁, by grind⟩) (not_eq_of_beq_eq_false rfl) (by grind)
+--       symm at this
+--       simpa [off, v₂, p₁, p₂, add_assoc, add_rotate'] using this
+--     -- we need to show that p₂ is not in the quadrant
+--     have p₂x_large : 2 ^ (n + 1) ≤ (1 + (x₁ + x₂): ℕ) := by
+--       contrapose! rightmost with p₂x_small
+--       refine ⟨⟨⟨1 + (x₁ + x₂), Finset.mem_range.mpr p₂x_small⟩, y₂⟩,
+--         by simpa [off, v₂, add_assoc] using p₂_lb, by rw [← Subtype.coe_lt_coe]; lia⟩
+--     -- plumbing: if the label > 2 * (n + 1) and cannot be the same as p₁ and p₂, it must by > 2 * (n + 2)
+--     have pigeonhole (p: ℤ × ℤ) (hp : 2 * (n + 1) < l p) (h_ne₁ : l p ≠ l p₁) (h_ne₂ : l p ≠ l p₂) : 2 * (n + 2) < l p := by lia
+--     -- construct B, which touches both p₁ and p₂
+--     -- we can then use pigeonhole to show B contains a large enough label
+--     rcases lt_trichotomy y₁ y₂ with h | h | h
+--     -- p₁ is higher,
+--     · let v₃ := ((v₂.1 + x₂ - 2 ^ (n + 1) : ℤ), (y₁ + 1 : ℤ))
+--       have ⟨(x₃, y₃), h₃⟩ := ih (v + v₃)
+--       let p₃ := off (v + v₃) (x₃, y₃)
+--       have p₃_ne_p₁ : l p₃ ≠ l p₁ := by
+--         have := exclusion l_dist p₁_lb
+--           ⟨⟨1 + x₂ - 2 ^ (n + 1) + x₃, by grind⟩, ⟨1 + y₃, by grind⟩⟩ (by grind) (by grind)
+--         simp [off, v₃, v₂, p₁, p₃, add_assoc] at this ⊢
+--         ring_nf at this ⊢
+--         exact this
+--       have p₃_ne_p₂ : l p₃ ≠ l p₂ := by
+--         have := exclusion l_dist p₂_lb
+--           ⟨⟨- 2 ^ (n + 1) + x₃, by grind⟩, ⟨y₁ + 1 + y₃ - y₂, ?_⟩⟩ ?_ ?_
+--         simp [off, v₃, v₂, p₂, p₃, add_assoc] at this ⊢
+--         ring_nf at this ⊢
+--         exact this
+
+--         all_goals sorry
+--       use (⟨1 + x₁ + x₂ - 2 ^ (n + 1) + x₃, by grind⟩, ⟨y₁ + 1 + y₃, by grind⟩)
+--       simpa [p₃, off, v₃, v₂, add_assoc, Int.ofNat_sub p₂x_large] using pigeonhole p₃ h₃ p₃_ne_p₁ p₃_ne_p₂
+--     · sorry
+--     · -- sorry
+--       let v₃ := (v₂.1, (y₂ + 1: ℤ))
+--       have ⟨(x₃, y₃), h₃⟩ := ih (v + v₃)
+--       let p₃ := off (v + v₃) (x₃, y₃)
+--       have p₃_ne_p₁ : l p₃ ≠ l p₁ := by
+--         have := exclusion l_dist p₁_lb
+--           ⟨⟨1 + x₃, by grind⟩, ⟨- y₁ + 1 + y₃ + y₂, ?_⟩⟩ (by grind) ?_
+--         simp [off, v₃, v₂, p₁, p₃, add_assoc] at this ⊢
+--         ring_nf at this ⊢
+--         exact this
+--         all_goals sorry
+--       have p₃_ne_p₂ : l p₃ ≠ l p₂ := by
+--         have := exclusion l_dist p₂_lb
+--           ⟨⟨- x₂ + x₃, ?_⟩, ⟨1 + y₃, by grind⟩⟩ (by grind) ?_
+--         simp [off, v₃, v₂, p₂, p₃, add_assoc] at this ⊢
+--         ring_nf at this ⊢
+--         exact this
+
+--         all_goals sorry
+--       use (⟨1 + x₁ + x₃, by grind⟩, ⟨y₂ + 1 + y₃, by grind⟩)
+--       simpa [p₃, off, v₃, v₂, add_assoc] using pigeonhole p₃ h₃ p₃_ne_p₁ p₃_ne_p₂
 
 snip end
 
@@ -308,7 +476,7 @@ problem usa2017_p5 (c : ℝ) :
     simp_rw [Set.finite_iff_bddAbove, bddAbove_def] at h
     obtain ⟨n, hn⟩ := h
     -- Construct a large enough square to force a label exceeding the bound
-    have ⟨p, hp⟩ := square_squeeze n l l_fin l_pos l_dist (0, 0)
+    have ⟨p, hp⟩ := square_squeeze' n l l_fin l_pos l_dist (0, 0)
     specialize hn (l (off (0,0) (p.1, p.2))) (Set.mem_range_self _)
     linarith
 
