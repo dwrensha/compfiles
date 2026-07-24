@@ -17,10 +17,10 @@ def workDir : System.FilePath := "_check"
 def copyFile (src : System.FilePath) (dst : System.FilePath) : IO Unit := do
   IO.FS.writeFile dst (←IO.FS.readFile src)
 
-def compileFile (file : System.FilePath) (outputFile : System.FilePath) : IO Unit := do
+def compileFile (file : System.FilePath) (outputFile : System.FilePath) (extraArgs: Array String := #[]) : IO Unit := do
   let child ← IO.Process.spawn {
     cmd := "lean"
-    args := #[file.toString, "-o", outputFile.toString]
+    args := #[file.toString, "-o", outputFile.toString] ++ extraArgs
     env := #[⟨"LEAN_PATH", LEAN_PATH⟩]
   }
   let exitCode ← child.wait
@@ -57,7 +57,8 @@ unsafe def compileProblem (problem_id : String) : IO CompileProblemResult := do
     then panic! s!"no such problem {problem_id}"
 
   let s := ProblemExtraction.determineDeclsExtension.getState env
-  compileFile lean_file olean_file
+  -- We always expect a sorry from the problem file
+  compileFile lean_file olean_file #["-D", "warn.sorry=false"]
   return ⟨lean_file, olean_file, s.toList⟩
 
 unsafe def verifyTypesAndAxioms (problem_mod : Name) (solution_mod : Name)
