@@ -32,32 +32,23 @@ snip begin
 -- Solution adapted from Evan Chen's presentation of Calvin Deng's solution: https://web.evanchen.cc/exams/USAMO-2017-notes.pdf
 -- Note that this version starts the induction for √2 ≤ c at n = 0 to avoid case-bashing.
 open Real
-set_option linter.flexible true
 
-def labelling (c: ℝ) := { l : ℤ × ℤ → ℕ //
+def labelling (c : ℝ) := { l : ℤ × ℤ → ℕ //
   (Set.range l).Finite ∧
   (∀ p, 0 < l p) ∧
   ∀ {p1 p2}, p1 ≠ p2 → (l p1 = l p2) →
-      c ^ (l p1) ≤ dist p1 p2}
+      c ^ (l p1) ≤ dist p1 p2 }
 
-@[ext]
-theorem labelling.ext {c : ℝ} (l₁ l₂ : labelling c) : l₁.1 = l₂.1 → l₁ = l₂ := by
-  intro h
-  obtain ⟨l₁, _⟩ := l₁
-  obtain ⟨l₂, _⟩ := l₂
-  simp at h
-  simp [h]
-
-instance (c: ℝ) : FunLike (labelling c) (ℤ × ℤ) ℕ :=
+instance (c : ℝ) : FunLike (labelling c) (ℤ × ℤ) ℕ :=
   ⟨(·.1), fun ⟨l, hl⟩ ⟨l', hl'⟩ => by rintro rfl; simp⟩
 
 attribute [local simp] DFunLike.coe
 
-instance (n: ℕ) : CoeOut (Finset.range (2 ^ n) × Finset.range (2 ^ n)) (ℤ × ℤ) := ⟨fun ⟨x, y⟩ => ⟨x, y⟩⟩
+instance (n : ℕ) : CoeOut (Finset.range (2 ^ n) × Finset.range (2 ^ n)) (ℤ × ℤ) := ⟨fun ⟨x, y⟩ => ⟨x, y⟩⟩
 
 instance : Coe (ℕ × ℕ) (ℤ × ℤ) := ⟨fun ⟨x, y⟩ => ⟨x, y⟩⟩
 
-abbrev transpose (p : ℤ × ℤ) {c : ℝ} (l: labelling c) : labelling c := by
+abbrev transpose (p : ℤ × ℤ) {c : ℝ} (l : labelling c) : labelling c := by
   let f (q : ℤ × ℤ) := p + q
   use l ∘ f
   obtain ⟨l, fin, pos, hdist⟩ := l
@@ -69,8 +60,8 @@ abbrev transpose (p : ℤ × ℤ) {c : ℝ} (l: labelling c) : labelling c := by
     apply_fun f at ne using (by intro _ _; grind : Function.Injective f)
     simpa [dist, f] using hdist ne lbl
 
-abbrev flip (n : ℕ) {c : ℝ} (l: labelling c) : labelling c := by
-  let f (p: ℤ × ℤ) := (2 ^ n - 1 - p.1, p.2)
+abbrev flip (n : ℕ) {c : ℝ} (l : labelling c) : labelling c := by
+  let f (p : ℤ × ℤ) := (2 ^ n - 1 - p.1, p.2)
   use l ∘ f
   obtain ⟨l, fin, pos, hdist⟩ := l
   and_intros
@@ -86,7 +77,7 @@ lemma dist_lt {p : ℤ × ℤ} {l : ℤ × ℤ → ℕ} {n : ℕ} (hp : 2 * n + 
   (ha : |a.1.val| < 2 ^ n ∨ |a.2.val| < 2 ^ n)
   : dist p (p + ((a.1 : ℤ), (a.2 : ℤ))) < √2 ^ l p := by
   rw [dist]
-  suffices h: √(a.1 ^ 2 + a.2 ^ 2) < √2 ^ l p by simpa using h
+  suffices h : √(a.1 ^ 2 + a.2 ^ 2) < √2 ^ l p by simpa using h
   calc √(a.1 ^ 2 + a.2 ^ 2)
     _ = √(|a.1.val| ^ 2 + |a.2.val| ^ 2) := by simp [@sq_abs]
     _ < √((2 ^ n) ^ 2 + (2 ^ n) ^ 2) := by
@@ -101,10 +92,10 @@ lemma dist_lt {p : ℤ × ℤ} {l : ℤ × ℤ → ℕ} {n : ℕ} (hp : 2 * n + 
     _ = √2 ^ (2 * n + 1) := by simp [← mul_two, ← pow_mul', ← pow_succ, Real.sqrt_eq_rpow, ← Real.rpow_pow_comm]
     _ ≤ √2 ^ l p := (pow_le_pow_iff_right₀ one_lt_sqrt_two).mpr hp
 
-lemma dist_lt'  {p : ℤ × ℤ} {l : ℤ × ℤ → ℕ} {n : ℕ} (hp : l p = 2 * (n + 1)) (a : (Finset.Icc (-2 ^ n : ℤ) (2 ^ n : ℤ) × Finset.Icc (-2 ^ n : ℤ) (2 ^ n : ℤ)))
+lemma dist_lt' {p : ℤ × ℤ} {l : ℤ × ℤ → ℕ} {n : ℕ} (hp : l p = 2 * (n + 1)) (a : (Finset.Icc (-2 ^ n : ℤ) (2 ^ n : ℤ) × Finset.Icc (-2 ^ n : ℤ) (2 ^ n : ℤ)))
   : dist p (p + ((a.1 : ℤ), (a.2 : ℤ))) < √2 ^ l p := by
   rw [dist]
-  suffices h: √(a.1 ^ 2 + a.2 ^ 2) < √2 ^ l p by simpa using h
+  suffices h : √(a.1 ^ 2 + a.2 ^ 2) < √2 ^ l p by simpa using h
   calc √(a.1 ^ 2 + a.2 ^ 2)
     _ = √(|a.1.val| ^ 2 + |a.2.val| ^ 2) := by simp [@sq_abs]
     _ ≤ √((2 ^ n) ^ 2 + (2 ^ n) ^ 2) := by
@@ -137,9 +128,9 @@ lemma dist_scale {a b c d : ℤ} : dist (a * 2, b * 2) (c * 2, d * 2) = dist (a,
   rw [sqrt_mul (by nlinarith)]
   ring
 
-lemma exclusion {l : ℤ × ℤ → ℕ} (l_dist: ∀ {p1 p2}, p1 ≠ p2 → (l p1 = l p2) → √2 ^ (l p1) ≤ dist p1 p2)
-  {n: ℕ} {a : (Finset.Icc (-2 ^ n : ℤ) (2 ^ n : ℤ) × Finset.Icc (-2 ^ n : ℤ) (2 ^ n : ℤ))} {p : ℤ × ℤ}
-  (ha₂ : dist p (p + ((a.1 : ℤ), (a.2 : ℤ))) < √2 ^ l p) (ha₁: a ≠ (⟨0, by simp⟩, ⟨0, by simp⟩))
+lemma exclusion {l : ℤ × ℤ → ℕ} (l_dist : ∀ {p1 p2}, p1 ≠ p2 → (l p1 = l p2) → √2 ^ (l p1) ≤ dist p1 p2)
+  {n : ℕ} {a : (Finset.Icc (-2 ^ n : ℤ) (2 ^ n : ℤ) × Finset.Icc (-2 ^ n : ℤ) (2 ^ n : ℤ))} {p : ℤ × ℤ}
+  (ha₂ : dist p (p + ((a.1 : ℤ), (a.2 : ℤ))) < √2 ^ l p) (ha₁ : a ≠ (⟨0, by simp⟩, ⟨0, by simp⟩))
   : l (p + (a.1.val, a.2.val)) ≠ l p := by
   -- points close to a point p cannot be the labelled the same as p itself
   -- otherwise, they violate the distance property of l
@@ -154,10 +145,9 @@ lemma exclusion {l : ℤ × ℤ → ℕ} (l_dist: ∀ {p1 p2}, p1 ≠ p2 → (l 
 lemma square_squeeze' (n : ℕ) (l : labelling √2)
   : ∃ p : Finset.range (2 ^ n) × Finset.range (2 ^ n), 2 * n < l p := by
   induction n generalizing l with
-  | zero =>
-    -- by positivity we must have a label > 0
-    -- this elides the need to check the n = 1 case
-    exact ⟨(⟨0, by simp⟩, ⟨0, by simp⟩), by simpa using l.2.2.1 (0, 0)⟩
+  -- by positivity we must have a label > 0
+  -- this elides the need to check the n = 1 case
+  | zero => exact ⟨(⟨0, by simp⟩, ⟨0, by simp⟩), by simpa using l.2.2.1 (0, 0)⟩
   | succ n ih =>
     -- we prove the setup of the two large labels here
     wlog setup : ∃ p₁ p₂ : Finset.range (2 ^ n) × Finset.range (2 ^ n), l p₁ = 2 * n + 1
@@ -309,9 +299,7 @@ lemma label_max : label limit p ≤ 2 * limit + 1 := by
   | zero => simp [label]
   | succ limit ih =>
     rw [label]
-    repeat (split; lia)
-    specialize ih (p.1 / 2, p.2 / 2)
-    lia
+    grind
 
 lemma label_finite : (Set.range <| label limit).Finite := by
   simp_rw [Set.finite_iff_bddAbove, bddAbove_def, Set.mem_range]
@@ -328,7 +316,7 @@ lemma label_pos : 0 < label limit p := by
 lemma label_cases : label (limit + 1) p = 1 ∨ label (limit + 1) p = 2 ∨ label (limit + 1) p = 2 + label limit (p.1 / 2, p.2 / 2) := by
   obtain ⟨a, b⟩ := p
   if h : Odd (a + b) then simp [h, label]
-  else if h': Odd a ∧ Odd b then grind [label]
+  else if h' : Odd a ∧ Odd b then grind [label]
   else simp [h, h', label]
 
 lemma label_one_iff : label (limit + 1) p = 1 ↔ Odd (p.1 + p.2) := by
