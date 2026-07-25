@@ -115,6 +115,28 @@ lemma dist_lt'  {p : ℤ × ℤ} {l : ℤ × ℤ → ℕ} {n : ℕ} (hp : l p = 
     _ = √2 ^ (2 * n + 1) := by simp [← mul_two, ← pow_mul', ← pow_succ, Real.sqrt_eq_rpow, ← Real.rpow_pow_comm]
     _ < √2 ^ l p := pow_lt_pow_right₀ one_lt_sqrt_two (by linarith)
 
+lemma dist_ne {p₁ p₂ : ℤ × ℤ} (h : p₁ ≠ p₂) : 1 ≤ dist p₁ p₂ := by
+  obtain ⟨x₁, y₁⟩ := p₁
+  obtain ⟨x₂, y₂⟩ := p₂
+  rw [dist]
+  refine one_le_sqrt.mpr ?_
+  norm_cast
+  simp at h
+  by_cases h2 : x₁ = x₂
+  · simp [h2]
+    grind
+  · rw [← sq_abs]
+    have : 1 ≤ |x₂ - x₁| ^ 2 := by refine one_le_pow₀ (by grind)
+    nlinarith
+
+lemma dist_scale {a b c d : ℤ} : dist (a * 2, b * 2) (c * 2, d * 2) = dist (a, b) (c, d) * 2 := by
+  simp_rw [dist]
+  norm_cast
+  simp_rw [← sub_mul, mul_pow, ← add_mul, Int.cast_mul]
+  push_cast
+  rw [sqrt_mul (by nlinarith)]
+  ring
+
 lemma exclusion {l : ℤ × ℤ → ℕ} (l_dist: ∀ {p1 p2}, p1 ≠ p2 → (l p1 = l p2) → √2 ^ (l p1) ≤ dist p1 p2)
   {n: ℕ} {a : (Finset.Icc (-2 ^ n : ℤ) (2 ^ n : ℤ) × Finset.Icc (-2 ^ n : ℤ) (2 ^ n : ℤ))} {p : ℤ × ℤ}
   (ha₂ : dist p (p + ((a.1 : ℤ), (a.2 : ℤ))) < √2 ^ l p) (ha₁: a ≠ (⟨0, by simp⟩, ⟨0, by simp⟩))
@@ -135,7 +157,7 @@ lemma square_squeeze' (n : ℕ) (l : labelling √2)
   | zero =>
     -- by positivity we must have a label > 0
     -- this elides the need to check the n = 1 case
-    exact ⟨(⟨0, by simp⟩, ⟨0, by simp⟩), by simpa [] using l.2.2.1 (0, 0)⟩
+    exact ⟨(⟨0, by simp⟩, ⟨0, by simp⟩), by simpa using l.2.2.1 (0, 0)⟩
   | succ n ih =>
     -- we prove the setup of the two large labels here
     wlog setup : ∃ p₁ p₂ : Finset.range (2 ^ n) × Finset.range (2 ^ n), l p₁ = 2 * n + 1
@@ -272,74 +294,8 @@ lemma square_squeeze' (n : ℕ) (l : labelling √2)
       have p₃_label : 2 * (n + 1) < l p₃ := by lia
       use ⟨⟨v₃.1 + x₃, by grind⟩, ⟨v₃.2 + y₃, by grind⟩⟩
 
-def checkerboard : ℤ × ℤ → ℕ
-| (x, y) => if (x + y) % 2 = 1 then 1 else 0
-
-section
-variable  (p₁ p₂ : ℤ × ℤ)
-lemma a (h: checkerboard p₁ = 1) (h2: checkerboard p₁ = checkerboard p₂) : ∃ a b : ℤ, p₁ = (p₂.1 + a + b, p₂.2 + a - b) := by
-  obtain ⟨x₁, y₁⟩ := p₁
-  obtain ⟨x₂, y₂⟩ := p₂
-  simp [h] at h2
-  simp [checkerboard] at h h2
-  rw [← Int.odd_iff] at h h2
-  rw [odd_iff_exists_bit1] at h h2
-  rcases h with ⟨a, ha⟩
-  rcases h2 with ⟨b, hb⟩
-  use a - b
-  use (x₁ - y₁ + x₂ - y₂) / 2
-  simp
-  constructor
-  sorry
-
-example (h1 : p₁ ≠ p₂) (h: checkerboard p₁ = 1) (h2 : checkerboard p₁ = checkerboard p₂) : √2 ^ 1 ≤ dist p₁ p₂ := by
-  rcases a p₁ p₂ h h2 with ⟨a, b, rfl⟩
-  rw [dist]
-  push_cast
-  ring_nf
-  refine sqrt_le_sqrt ?_
-  suffices h : |a| ≠ 0 ∨ |b| ≠ 0 by
-    norm_cast
-    simp only [ne_eq, abs_eq_zero, ← sq_pos_iff] at h
-    rcases h with h | h
-    all_goals nlinarith
-  grind
-end
-
-lemma dist_ne {p₁ p₂ : ℤ × ℤ} (h : p₁ ≠ p₂) : 1 ≤ dist p₁ p₂ := by
-  obtain ⟨x₁, y₁⟩ := p₁
-  obtain ⟨x₂, y₂⟩ := p₂
-  rw [dist]
-  refine one_le_sqrt.mpr ?_
-  norm_cast
-  simp at h
-  by_cases h2 : x₁ = x₂
-  · simp [h2]
-    grind
-  · rw [← sq_abs]
-    have : 1 ≤ |x₂ - x₁| ^ 2 := by refine one_le_pow₀ (by grind)
-    nlinarith
-
-lemma dist_scale {a b c d : ℤ} : dist (a * 2, b * 2) (c * 2, d * 2) = dist (a, b) (c, d) * 2 := by
-  simp_rw [dist]
-  norm_cast
-  simp_rw [← sub_mul, mul_pow, ← add_mul, Int.cast_mul]
-  push_cast
-  rw [sqrt_mul (by nlinarith)]
-  ring
-
 -- We take care of 3/4 of the space in one iteration, removing the need to fiddle with the parity of being aligned with the grid
 -- this does mean that we need an N twice as large
-def ply : ℤ × ℤ → ℕ
-| (a, b) => by
-  if Odd (a + b) then exact 1
-  else if Odd a ∧ Odd b then exact 2
-  else exact 0
-
-example (a b: ℤ) (h: ply (a, b) = 0) : Even (a + b) := by
-  simp [ply, ite_eq_iff] at h
-  sorry
-
 def labeltest : ℕ → ℤ × ℤ → ℕ
 | 0, _ => 1
 | limit + 1, (a, b) =>
@@ -386,9 +342,6 @@ lemma label_two_iff : labeltest (limit + 1) p = 2 ↔ Odd p.1 ∧ Odd p.2 := by
 lemma label_more_iff : labeltest (limit + 1) p = 2 + labeltest limit (p.1 / 2, p.2 / 2) ↔ Even p.1 ∧ Even p.2 := by
   grind [labeltest, label_pos]
 
--- lemma label_more_iff' : labeltest (limit + 1) (a, b) = 2 + labeltest limit (p.1 / 2, p.2 / 2) ↔ Even p.1 ∧ Even p.2 := by
---   grind [labeltest, label_pos]
-
 lemma label_max_iff (h : labeltest limit p = 2 * limit + 1) : ∃ a b : ℤ, p = (a * 2 ^ limit, b * 2 ^ limit) := by
   induction limit generalizing p with
   | zero => exact ⟨p.1, p.2, by simp⟩
@@ -409,6 +362,7 @@ lemma label_dist (limit v : ℕ) (p₁ p₂ : ℤ × ℤ) (h_ne : p₁ ≠ p₂)
   | zero => grind [labeltest]
   | succ limit ih =>
     rcases label_congr <| hp₁.trans hp₂.symm with ⟨h₁, h₂⟩ | ⟨h₁, h₂, h₃, h₄⟩ | ⟨h₁, h₂, h₃, h₄⟩
+    -- v = 1, checkerboard has dist ≥ √2
     · rw [label_one_iff _ _ |>.mpr h₁]
       rw [pow_one, dist, sqrt_le_iff]
       refine ⟨sqrt_nonneg _, ?_⟩
@@ -424,25 +378,26 @@ lemma label_dist (limit v : ℕ) (p₁ p₂ : ℤ × ℤ) (h_ne : p₁ ≠ p₂)
         linarith
       · push +distrib Not at h
         rcases h with h | h
-        · rw [h] at h₁ ⊢
-          have : 2 ≤ |p₂.2 - p₁.2| := by grind
-          have : 2 ≤ |p₂.2 - p₁.2| ^ 2 := by nlinarith
+        · have : 2 ≤ |p₂.2 - p₁.2| := by grind
           nth_rw 2 [← sq_abs]
-          linarith
-        · rw [h] at h₁ ⊢
-          have : 2 ≤ |p₂.1 - p₁.1| := by grind
-          have : 2 ≤ |p₂.1 - p₁.1| ^ 2 := by nlinarith
+          nlinarith
+        · have : 2 ≤ |p₂.1 - p₁.1| := by grind
           rw [← sq_abs]
-          linarith
+          nlinarith
+    -- v = 2, 1/4 spaced board has dist ≥ 2
     · rw [label_two_iff _ _ |>.mpr ⟨h₁, h₂⟩, dist]
-      simp
+      simp only [Nat.ofNat_nonneg, sq_sqrt]
       rw [le_sqrt' zero_lt_two]
       norm_cast
-      simp
-
-
-
-      sorry
+      simp only [Nat.reducePow, Nat.cast_ofNat]
+      by_cases! h : p₁.1 ≠ p₂.1
+      · have : 2 ≤ |p₂.1 - p₁.1| := by grind
+        rw [← sq_abs]
+        nlinarith
+      · have : 2 ≤ |p₂.2 - p₁.2| := by grind
+        nth_rw 2 [← sq_abs]
+        nlinarith
+    -- induction, points are 1/4 more sparse than the previous grid
     · rw [label_more_iff _ _ |>.mpr ⟨h₁, h₂⟩]
       have hp1 := label_more_iff limit p₁ |>.mpr ⟨h₁, h₂⟩
       have hp2 := label_more_iff limit p₂ |>.mpr ⟨h₃, h₄⟩
@@ -459,7 +414,7 @@ lemma label_dist (limit v : ℕ) (p₁ p₂ : ℤ × ℤ) (h_ne : p₁ ≠ p₂)
       rw [sqrt_div (by nlinarith), sqrt_sq (by linarith)] at ih
       grind [dist]
 
-lemma label_dist_max (limit v : ℕ) (p₁ p₂ : ℤ × ℤ) (h : p₁ ≠ p₂)
+lemma label_dist_max (limit : ℕ) (p₁ p₂ : ℤ × ℤ) (h : p₁ ≠ p₂)
   (hp₁ : labeltest limit p₁ = 2 * limit + 1) (hp₂ : labeltest limit p₂ = 2 * limit + 1)
   : √2 ^ (2 * limit) ≤ dist p₁ p₂ := by
   induction limit generalizing p₁ p₂ with
@@ -468,13 +423,16 @@ lemma label_dist_max (limit v : ℕ) (p₁ p₂ : ℤ × ℤ) (h : p₁ ≠ p₂
     obtain ⟨a1, b1, rfl⟩ := label_max_iff (limit + 1) p₁ hp₁
     obtain ⟨a2, b2, rfl⟩ := label_max_iff (limit + 1) p₂ hp₂
     simp_rw [pow_succ, ← mul_assoc]
-    rw [dist_scale]
-    rw [Nat.mul_add_one, pow_add]
-    rw [sq_sqrt zero_le_two]
-    rw [mul_le_mul_iff_left₀ zero_lt_two]
-    specialize ih (a1 * 2 ^ limit, b1 * 2 ^ limit) (a2 * 2 ^ limit, b2 * 2 ^ limit) (by grind)
-
-    sorry
+    rw [dist_scale, Nat.mul_add_one, pow_add, sq_sqrt zero_le_two, mul_le_mul_iff_left₀ zero_lt_two]
+    apply ih (a1 * 2 ^ limit, b1 * 2 ^ limit) (a2 * 2 ^ limit, b2 * 2 ^ limit) (by grind)
+    · rw [labeltest] at hp₁
+      repeat (split at hp₁; lia)
+      simp_rw [pow_succ, ← mul_assoc, Int.mul_ediv_cancel _ (by decide : (2 : ℤ) ≠ 0)] at hp₁
+      lia
+    · rw [labeltest] at hp₂
+      repeat (split at hp₂; lia)
+      simp_rw [pow_succ, ← mul_assoc, Int.mul_ediv_cancel _ (by decide : (2 : ℤ) ≠ 0)] at hp₂
+      lia
 
 snip end
 
@@ -505,7 +463,7 @@ problem usa2017_p5 (c : ℝ) :
     intro p₁ p₂ h_ne h_label
     have := label_max (n+1) p₁
     rcases this.eq_or_lt with eq | lt
-    · have := label_dist_max (n+1) (labeltest (n+1) p₁) p₁ p₂ h_ne eq (h_label.symm.trans eq)
+    · have := label_dist_max (n+1) p₁ p₂ h_ne eq (h_label.symm.trans eq)
       rw [eq]
       -- this is a bit contrived because we used the tight bound from the solution
       have := calc c ^ (2 * (n + 1) + 1)
