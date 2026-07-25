@@ -171,7 +171,7 @@ lemma square_squeeze' (n : ℕ) (l : labelling √2)
       have ⟨p₀, h₀⟩ := ih l
       -- we also need to assume it is the rightmost label to force the large label in A to not be in the current quadrant
       let s : Finset _ := {p : Finset.range (2 ^ n) × Finset.range (2 ^ n) | 2 * n < l p }
-      have ⟨⟨⟨x₁, hx₁⟩, ⟨y₁, hy₁⟩⟩, p₁_lb, h₁⟩ := Finset.exists_mem_eq_sup s ⟨p₀, Finset.mem_filter_univ _ |>.mpr h₀⟩ (fun p => p.1.val)
+      have ⟨⟨⟨x₁, hx₁⟩, ⟨y₁, hy₁⟩⟩, p₁_lb, h₁⟩ := Finset.exists_mem_eq_sup s ⟨p₀, Finset.mem_filter_univ _ |>.mpr h₀⟩ (·.1.val)
       have rightmost (p: Finset.range (2 ^ n) × Finset.range (2 ^ n)) (h : 2 * n < l p) : p.1 ≤ x₁ := by
         dsimp at h₁
         rw [← h₁]
@@ -197,7 +197,7 @@ lemma square_squeeze' (n : ℕ) (l : labelling √2)
       -- we need to show that p₂ is not in the quadrant
       have p₂x_large : 2 ^ n ≤ (1 + (x₁ + x₂): ℕ) := by
         contrapose! rightmost with p₂x_small
-        refine ⟨⟨⟨1 + (x₁ + x₂), Finset.mem_range.mpr p₂x_small⟩, ⟨y₂, hy₂⟩⟩,
+        exact ⟨⟨⟨1 + (x₁ + x₂), Finset.mem_range.mpr p₂x_small⟩, ⟨y₂, hy₂⟩⟩,
           by simpa [v₂, add_assoc, transpose] using p₂_lb, by lia⟩
       -- change x-coordinate of p₂ to start at the next quadrant
       have ⟨x₂', hx₂'⟩ : ∃ x, (1 + (x₁ + x₂) : ℕ) = 2 ^ n + x := by
@@ -296,72 +296,71 @@ lemma square_squeeze' (n : ℕ) (l : labelling √2)
 
 -- We take care of 3/4 of the space in one iteration, removing the need to fiddle with the parity of being aligned with the grid
 -- this does mean that we need an N twice as large
-def labeltest : ℕ → ℤ × ℤ → ℕ
+variable (limit : ℕ) (p : ℤ × ℤ)
+def label : ℕ → ℤ × ℤ → ℕ
 | 0, _ => 1
 | limit + 1, (a, b) =>
   if Odd (a + b) then 1
   else if Odd a ∧ Odd b then 2
-  else 2 + labeltest limit (a / 2, b / 2)
+  else 2 + label limit (a / 2, b / 2)
 
-#eval (List.range 30) |>.map (List.range 30 |>.map fun x => labeltest 2 ⟨x, ·⟩)
-
-lemma label_max (limit : ℕ) (p : ℤ × ℤ) : labeltest limit p ≤ 2 * limit + 1 := by
+lemma label_max : label limit p ≤ 2 * limit + 1 := by
   induction limit generalizing p with
-  | zero => simp [labeltest]
+  | zero => simp [label]
   | succ limit ih =>
-    rw [labeltest]
+    rw [label]
     repeat (split; lia)
     specialize ih (p.1 / 2, p.2 / 2)
     lia
 
-lemma label_finite (limit : ℕ) : (Set.range <| labeltest limit).Finite := by
+lemma label_finite : (Set.range <| label limit).Finite := by
   simp_rw [Set.finite_iff_bddAbove, bddAbove_def, Set.mem_range]
   use 2 * limit + 1
   rintro _ ⟨p, rfl⟩
   exact label_max _ _
 
-lemma label_pos (limit : ℕ) (p : ℤ × ℤ) : 0 < labeltest limit p := by
+lemma label_pos : 0 < label limit p := by
   induction limit
-  · simp [labeltest]
-  · rw [labeltest]
+  · simp [label]
+  · rw [label]
     lia
 
-variable (limit : ℕ) (p : ℤ × ℤ)
-lemma label_cases : labeltest (limit + 1) p = 1 ∨ labeltest (limit + 1) p = 2 ∨ labeltest (limit + 1) p = 2 + labeltest limit (p.1 / 2, p.2 / 2) := by
+lemma label_cases : label (limit + 1) p = 1 ∨ label (limit + 1) p = 2 ∨ label (limit + 1) p = 2 + label limit (p.1 / 2, p.2 / 2) := by
   obtain ⟨a, b⟩ := p
-  if h : Odd (a + b) then simp [h, labeltest]
-  else if h': Odd a ∧ Odd b then grind [labeltest]
-  else simp [h, h', labeltest]
+  if h : Odd (a + b) then simp [h, label]
+  else if h': Odd a ∧ Odd b then grind [label]
+  else simp [h, h', label]
 
-lemma label_one_iff : labeltest (limit + 1) p = 1 ↔ Odd (p.1 + p.2) := by
-  grind [labeltest]
+lemma label_one_iff : label (limit + 1) p = 1 ↔ Odd (p.1 + p.2) := by
+  grind [label]
 
-lemma label_two_iff : labeltest (limit + 1) p = 2 ↔ Odd p.1 ∧ Odd p.2 := by
-  grind [labeltest, label_pos]
+lemma label_two_iff : label (limit + 1) p = 2 ↔ Odd p.1 ∧ Odd p.2 := by
+  grind [label, label_pos]
 
-lemma label_more_iff : labeltest (limit + 1) p = 2 + labeltest limit (p.1 / 2, p.2 / 2) ↔ Even p.1 ∧ Even p.2 := by
-  grind [labeltest, label_pos]
+lemma label_more_iff : label (limit + 1) p = 2 + label limit (p.1 / 2, p.2 / 2) ↔ Even p.1 ∧ Even p.2 := by
+  grind [label, label_pos]
 
-lemma label_max_iff (h : labeltest limit p = 2 * limit + 1) : ∃ a b : ℤ, p = (a * 2 ^ limit, b * 2 ^ limit) := by
+lemma label_max_exists_eq (h : label limit p = 2 * limit + 1) : ∃ a b : ℤ, p = (a * 2 ^ limit, b * 2 ^ limit) := by
   induction limit generalizing p with
   | zero => exact ⟨p.1, p.2, by simp⟩
   | succ limit ih =>
-    have ⟨a, b, hab⟩ := ih (p.1 / 2, p.2 / 2) (by simp [labeltest] at h; lia)
-    refine ⟨a, b, by grind [labeltest]⟩
+    have ⟨a, b, hab⟩ := ih (p.1 / 2, p.2 / 2) (by simp [label] at h; lia)
+    refine ⟨a, b, by grind [label]⟩
 
-lemma label_congr {limit : ℕ} {p₁ p₂ : ℤ × ℤ} (h : labeltest (limit + 1) p₁ = labeltest (limit + 1) p₂)
+lemma label_congr {limit : ℕ} {p₁ p₂ : ℤ × ℤ} (h : label (limit + 1) p₁ = label (limit + 1) p₂)
   : (Odd (p₁.1 + p₁.2) ∧ Odd (p₂.1 + p₂.2))
     ∨ (Odd p₁.1 ∧ Odd p₁.2 ∧ Odd p₂.1 ∧ Odd p₂.2)
     ∨ (Even p₁.1 ∧ Even p₁.2 ∧ Even p₂.1 ∧ Even p₂.2) := by
-  grind [labeltest, label_pos]
+  grind [label, label_pos]
 
-lemma label_dist (limit v : ℕ) (p₁ p₂ : ℤ × ℤ) (h_ne : p₁ ≠ p₂)
-  (hp₁ : labeltest limit p₁ = v) (hp₂ : labeltest limit p₂ = v)
-  (hv : v ≠ 2 * limit + 1) : √2 ^ (labeltest limit p₁) ≤ dist p₁ p₂ := by
-  induction limit generalizing v p₁ p₂ with
-  | zero => grind [labeltest]
+-- For the normal case, following the bound of √2 ^ i < dist p₁ p₂
+lemma label_dist {p₁ p₂ : ℤ × ℤ} (h_ne : p₁ ≠ p₂) {limit : ℕ}
+  (hp : label limit p₁ = label limit p₂)
+  (hv : label limit p₁ ≠ 2 * limit + 1) : √2 ^ (label limit p₁) ≤ dist p₁ p₂ := by
+  induction limit generalizing p₁ p₂ with
+  | zero => grind [label]
   | succ limit ih =>
-    rcases label_congr <| hp₁.trans hp₂.symm with ⟨h₁, h₂⟩ | ⟨h₁, h₂, h₃, h₄⟩ | ⟨h₁, h₂, h₃, h₄⟩
+    rcases label_congr <| hp with ⟨h₁, h₂⟩ | ⟨h₁, h₂, h₃, h₄⟩ | ⟨h₁, h₂, h₃, h₄⟩
     -- v = 1, checkerboard has dist ≥ √2
     · rw [label_one_iff _ _ |>.mpr h₁]
       rw [pow_one, dist, sqrt_le_iff]
@@ -401,7 +400,7 @@ lemma label_dist (limit v : ℕ) (p₁ p₂ : ℤ × ℤ) (h_ne : p₁ ≠ p₂)
     · rw [label_more_iff _ _ |>.mpr ⟨h₁, h₂⟩]
       have hp1 := label_more_iff limit p₁ |>.mpr ⟨h₁, h₂⟩
       have hp2 := label_more_iff limit p₂ |>.mpr ⟨h₃, h₄⟩
-      specialize ih (labeltest limit (p₁.1 / 2, p₁.2 / 2)) (p₁.1 / 2, p₁.2 / 2) (p₂.1 / 2, p₂.2 / 2) (by grind) rfl (by lia) (by lia)
+      specialize @ih (p₁.1 / 2, p₁.2 / 2) (p₂.1 / 2, p₂.2 / 2) (by grind) (by lia) (by lia)
       ring_nf
       rw [sq_sqrt zero_le_two]
       rw [dist] at ih
@@ -414,22 +413,23 @@ lemma label_dist (limit v : ℕ) (p₁ p₂ : ℤ × ℤ) (h_ne : p₁ ≠ p₂)
       rw [sqrt_div (by nlinarith), sqrt_sq (by linarith)] at ih
       grind [dist]
 
-lemma label_dist_max (limit : ℕ) (p₁ p₂ : ℤ × ℤ) (h : p₁ ≠ p₂)
-  (hp₁ : labeltest limit p₁ = 2 * limit + 1) (hp₂ : labeltest limit p₂ = 2 * limit + 1)
+-- For the last case, where all of the rest of the unfilled squares are marked with the same label
+lemma label_dist_max {p₁ p₂ : ℤ × ℤ} (h : p₁ ≠ p₂) {limit : ℕ}
+  (hp₁ : label limit p₁ = 2 * limit + 1) (hp₂ : label limit p₂ = 2 * limit + 1)
   : √2 ^ (2 * limit) ≤ dist p₁ p₂ := by
   induction limit generalizing p₁ p₂ with
   | zero => simp [dist_ne h]
   | succ limit ih =>
-    obtain ⟨a1, b1, rfl⟩ := label_max_iff (limit + 1) p₁ hp₁
-    obtain ⟨a2, b2, rfl⟩ := label_max_iff (limit + 1) p₂ hp₂
+    obtain ⟨a1, b1, rfl⟩ := label_max_exists_eq (limit + 1) p₁ hp₁
+    obtain ⟨a2, b2, rfl⟩ := label_max_exists_eq (limit + 1) p₂ hp₂
     simp_rw [pow_succ, ← mul_assoc]
     rw [dist_scale, Nat.mul_add_one, pow_add, sq_sqrt zero_le_two, mul_le_mul_iff_left₀ zero_lt_two]
-    apply ih (a1 * 2 ^ limit, b1 * 2 ^ limit) (a2 * 2 ^ limit, b2 * 2 ^ limit) (by grind)
-    · rw [labeltest] at hp₁
+    apply ih (by grind)
+    · rw [label] at hp₁
       repeat (split at hp₁; lia)
       simp_rw [pow_succ, ← mul_assoc, Int.mul_ediv_cancel _ (by decide : (2 : ℤ) ≠ 0)] at hp₁
       lia
-    · rw [labeltest] at hp₂
+    · rw [label] at hp₂
       repeat (split at hp₂; lia)
       simp_rw [pow_succ, ← mul_assoc, Int.mul_ediv_cancel _ (by decide : (2 : ℤ) ≠ 0)] at hp₂
       lia
@@ -449,43 +449,26 @@ problem usa2017_p5 (c : ℝ) :
   constructor
   · intro c_lt
     -- calculate an upper bound
-    have ⟨n, hn⟩ : ∃ n : ℕ, n > (Real.log √2) / (Real.log √2 - Real.log c) := exists_nat_gt _
-    have c_bound : c ^ n < √2 ^ ((n: ℤ) - 1) := by
-      rw [zpow_natCast_sub_one₀ (by simp), Real.pow_lt_iff_lt_log c_pos (by simp)]
-      rw [log_div (by simp) (by simp), log_pow, lt_sub_comm, ← mul_sub, ← div_lt_iff₀ ?_]
-      · norm_cast
-      · rw [← log_div (by simp) (by linarith)]
-        apply log_pos
-        field_simp
-        exact c_lt
-    -- the construction here is basically a truncation of an infinite one,
-    refine ⟨labeltest (n+1), label_finite _, label_pos _, ?_⟩
-    intro p₁ p₂ h_ne h_label
-    have := label_max (n+1) p₁
-    rcases this.eq_or_lt with eq | lt
-    · have := label_dist_max (n+1) p₁ p₂ h_ne eq (h_label.symm.trans eq)
-      rw [eq]
-      -- this is a bit contrived because we used the tight bound from the solution
-      have := calc c ^ (2 * (n + 1) + 1)
-        _ = (c ^ n) ^ 2 * c ^ 3 := by ring
-        _ < (√2 ^ ((n: ℤ) - 1)) ^ (2 : ℤ) * √2 ^ 3 := by
-          refine mul_lt_mul_of_nonneg_of_pos ?_ ?_ (sq_nonneg _) (by simp)
-          · exact pow_lt_pow_left₀ c_bound (pow_nonneg c_pos.le _) (by decide)
-          · exact pow_le_pow_left₀ c_pos.le c_lt.le _
-        _ = √2 ^ (2 * ((n : ℤ) - 1) + 3) := by
-          rw [← zpow_mul, ← zpow_natCast, ← zpow_add' (by lia)]
-          ring_nf
-        _ < √2 ^ (2 * (n + 1) : ℤ) := zpow_lt_zpow_iff_right₀ one_lt_sqrt_two |>.mpr (by linarith)
-        _ ≤ dist p₁ p₂ := by norm_cast
-      exact this.le
-    · have := label_dist (n+1) (labeltest (n+1) p₁) p₁ p₂ h_ne rfl h_label.symm lt.ne
-      calc
-        c ^ labeltest (n + 1) p₁
-        _ ≤ √2 ^ labeltest (n + 1) p₁ := pow_le_pow_iff_left₀ c_pos.le (sqrt_nonneg _) (label_pos _ _ |>.ne.symm) |>.mpr c_lt.le
-        _ ≤ dist p₁ p₂ := this
+    -- this is weaker than the one given in the solution, as it makes calculating the explicit bounds for our construction easier
+    have ⟨n, hn⟩ : ∃ m : ℕ, Real.log c / (2 * (Real.log √2 - Real.log c)) < m := exists_nat_gt _
+    have c_bound : c ^ (2 * n + 1) < √2 ^ (2 * n) := by
+      rw [Real.pow_lt_iff_lt_log c_pos (by simp), log_pow]
+      push_cast
+      rw [add_one_mul, ← lt_tsub_iff_left, ← mul_sub, ← mul_rotate, ← div_lt_iff₀' ?_]
+      · simpa [mul_comm] using hn
+      · refine (mul_pos_iff_of_pos_left ?_).mpr zero_lt_two
+        rwa [sub_pos, log_lt_log_iff c_pos (c_pos.trans c_lt)]
+    refine ⟨label n, label_finite _, label_pos _, fun {p₁ p₂} h_ne h_label => ?_⟩
+    rcases (label_max n p₁).eq_or_lt with eq | lt
+    · rw [eq]
+      exact c_bound.trans_le (label_dist_max h_ne eq (h_label.symm.trans eq)) |>.le
+    · calc
+        c ^ label n p₁
+        _ ≤ √2 ^ label n p₁ := pow_le_pow_iff_left₀ c_pos.le (sqrt_nonneg _) (label_pos _ _ |>.ne.symm) |>.mpr c_lt.le
+        _ ≤ dist p₁ p₂ := label_dist h_ne h_label lt.ne
   · contrapose
     -- Any counterexample we have for c = √2 works for c > √2 as well
-    wlog hc : √2 = c with rest
+    wlog hc : c = √2 with rest
     · push Not at rest ⊢
       exact fun h => (have ⟨p1, p2, h1, h2, h3⟩ := rest √2 (by simp) (by simp) (by simp) · · ·
         ⟨p1, p2, h1, h2, h3.trans_le <| pow_le_pow_left₀ (by simp) h _⟩)
