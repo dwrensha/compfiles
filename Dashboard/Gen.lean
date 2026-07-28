@@ -52,7 +52,8 @@ unsafe def generateAll (config : SConfig) : IO (List Page) := do
   let mut allPages : List Page := []
   IO.println "Extracting Problems..."
   Lean.enableInitializersExecution
-  let env ← Lean.importModules #[{module}] {} (trustLevel := 1024) #[] True True
+  let env ← Lean.importModules #[{module}] {} (trustLevel := 1024)
+    (leakEnv := true) (loadExts := true) (level := .exported)
   let ctx : Lean.Core.Context := {fileName := "", fileMap := default}
   let state := {env}
   let mut mds ← Prod.fst <$> (Lean.Core.CoreM.toIO · ctx state) do

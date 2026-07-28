@@ -33,7 +33,8 @@ unsafe def main (_args : List String) : IO Unit := do
   initSearchPath (← findSysroot)
 
   Lean.enableInitializersExecution
-  let env ← importModules #[{module}] {} (trustLevel := 1024) #[] True True
+  let env ← importModules #[{module}] {} (trustLevel := 1024)
+    (leakEnv := true) (loadExts := true) (level := .exported)
   let ctx := {fileName := "", fileMap := default}
   let state := {env}
   Prod.fst <$> (CoreM.toIO · ctx state) do

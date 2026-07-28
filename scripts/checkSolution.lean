@@ -44,7 +44,8 @@ unsafe def compileProblem (problem_id : String) : IO CompileProblemResult := do
 
   let module := `Compfiles
   Lean.enableInitializersExecution
-  let env ← importModules #[{module}] {} (trustLevel := 1024) #[] true true
+  let env ← importModules #[{module}] {} (trustLevel := 1024)
+    (leakEnv := true) (loadExts := true) (level := .exported)
   let ctx := {fileName := "", fileMap := default}
   let state := {env}
   Prod.fst <$> (CoreM.toIO · ctx state) do
@@ -110,15 +111,21 @@ unsafe def replayFromImports (module : Name) : IO Unit := do
   let mFile ← findOLean module
   unless (← mFile.pathExists) do
     throw <| IO.userError s!"object file '{mFile}' of module {module} does not exist"
-  let (mod, region) ← readModuleData mFile
-  let (_, s) ← importModulesCore mod.imports |>.run
+  let serverFile := OLeanLevel.server.adjustFileName mFile
+  let privateFile := OLeanLevel.private.adjustFileName mFile
+  let files :=
+    if ← privateFile.pathExists then #[mFile, serverFile, privateFile] else #[mFile]
+  let parts ← readModuleDataParts files
+  let some (firstPart, _) := parts[0]? |
+    throw <| IO.userError s!"module data for {module} is empty"
+  let (_, s) ← importModulesCore firstPart.imports |>.run
   let env ← finalizeImport s #[{module}] {} 0 True True
   let mut newConstants := {}
-  for name in mod.constNames, ci in mod.constants do
-    newConstants := newConstants.insert name ci
+  for (part, _) in parts do
+    for name in part.constNames, ci in part.constants do
+      newConstants := newConstants.insert name ci
   let env' ← env.replay newConstants
   env'.freeRegions
-  region.free
 
 unsafe def printDetermineVals (determineDecls : List Name) (solution_mod : Name)
     : IO Unit := do
