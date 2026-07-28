@@ -314,6 +314,7 @@ public import Compfiles.Usa2014P2
 public import Compfiles.Usa2014P3
 public import Compfiles.Usa2015P1
 public import Compfiles.Usa2015P5
+public import Compfiles.Usa2016P4
 public import Compfiles.Usa2017P1
 public import Compfiles.Usa2017P5
 public import Compfiles.Usa2017P6
