@@ -195,13 +195,14 @@ def extractFromExt {m : Type → Type} [Monad m] [MonadEnv m] [MonadError m]
 
   let mut result := mkNameMap _
   for ⟨module, ⟨src, endPos, acc⟩⟩ in inProgress do
-    let mut imports := ""
+    let mut header := "module\n\n"
     for im in ← findModuleImports env module do
       if im.module.toString ≠ "Init" && im.module ≠ `ProblemExtraction
-      then imports := imports ++ s!"import {im.module}\n"
+      then header := header ++ s!"{im}\n"
+    header := header ++ "\npublic section\n\n"
 
     result := result.insert module
-      (imports ++ acc ++ (Substring.Raw.mk src endPos src.rawEndPos).toString)
+      (header ++ acc ++ (Substring.Raw.mk src endPos src.rawEndPos).toString)
 
   pure result
 
