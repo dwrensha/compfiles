@@ -4,10 +4,14 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Evan Chen, Kenny Lau, Jujian Zhang
 -/
 
-import Mathlib
-import Mathlib.Tactic
+module
 
-import ProblemExtraction
+public import Mathlib
+public import Mathlib.Tactic
+
+public import ProblemExtraction
+
+@[expose] public section
 
 problem_file { tags := [.NumberTheory] }
 

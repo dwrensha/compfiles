@@ -4,12 +4,16 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Shalev Wengrowsky
 -/
 
-import Mathlib.Tactic
-import Mathlib.Tactic.NthRewrite
-import Mathlib.Data.Rat.Defs
-import Mathlib.Data.Fin.Basic
+module
 
-import ProblemExtraction
+public import Mathlib.Tactic
+public import Mathlib.Tactic.NthRewrite
+public import Mathlib.Data.Rat.Defs
+public import Mathlib.Data.Fin.Basic
+
+public import ProblemExtraction
+
+@[expose] public section
 
 problem_file { tags := [.Algebra] }
 

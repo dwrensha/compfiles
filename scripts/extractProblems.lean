@@ -1,10 +1,14 @@
-import Batteries.Data.String.Basic
-import Batteries.Tactic.Lint
-import Lean.Environment
-import Mathlib.Data.String.Defs
-import Lean.Meta.Basic
+module
 
-import ProblemExtraction
+public import Batteries.Data.String.Basic
+public import Batteries.Tactic.Lint
+public import Lean.Environment
+public import Mathlib.Data.String.Defs
+public import Lean.Meta.Basic
+
+public import ProblemExtraction
+
+public section
 
 open Lean Core Elab
 

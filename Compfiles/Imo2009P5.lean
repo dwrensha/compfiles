@@ -4,11 +4,15 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Gian Sanjaya
 -/
 
-import Mathlib.Algebra.Order.Positive.Field
-import Mathlib.Data.Nat.Periodic
-import Mathlib.Tactic
+module
 
-import ProblemExtraction
+public import Mathlib.Algebra.Order.Positive.Field
+public import Mathlib.Data.Nat.Periodic
+public import Mathlib.Tactic
+
+public import ProblemExtraction
+
+@[expose] public section
 
 problem_file {
   tags := [.Algebra],

@@ -1,14 +1,18 @@
-import Dashboard.Components.Base
-import Dashboard.Components.CompAnchor
-import Dashboard.Contests.Imo
-import Dashboard.Contests.Usamo
-import Dashboard.Models.Contests
-import Dashboard.Models.Problems
-import Dashboard.Pages.ProblemPage
-import SSG.Html
-import SSG.Tags
+module
 
-import ProblemExtraction
+public import Dashboard.Components.Base
+public import Dashboard.Components.CompAnchor
+public import Dashboard.Contests.Imo
+public import Dashboard.Contests.Usamo
+public import Dashboard.Models.Contests
+public import Dashboard.Models.Problems
+public import Dashboard.Pages.ProblemPage
+public import SSG.Html
+public import SSG.Tags
+
+public import ProblemExtraction
+
+@[expose] public section
 
 open Html ProblemExtraction.ProblemTag
 

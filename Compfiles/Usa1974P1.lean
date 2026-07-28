@@ -4,10 +4,14 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Maximiliano Onofre Martínez
 -/
 
-import Mathlib.Data.Int.Basic
-import Mathlib.Algebra.Polynomial.Div
+module
 
-import ProblemExtraction
+public import Mathlib.Data.Int.Basic
+public import Mathlib.Algebra.Polynomial.Div
+
+public import ProblemExtraction
+
+@[expose] public section
 
 problem_file { tags := [.NumberTheory] }
 

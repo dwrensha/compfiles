@@ -4,13 +4,17 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Constantin Seebach
 -/
 
-import Mathlib.Tactic
-import Mathlib.Algebra.Order.Positive.Field
-import Mathlib.Data.Set.Card.Arithmetic
-import Mathlib.Algebra.Ring.BooleanRing
-import Mathlib.Algebra.Algebra.Hom.Rat
+module
 
-import ProblemExtraction
+public import Mathlib.Tactic
+public import Mathlib.Algebra.Order.Positive.Field
+public import Mathlib.Data.Set.Card.Arithmetic
+public import Mathlib.Algebra.Ring.BooleanRing
+public import Mathlib.Algebra.Algebra.Hom.Rat
+
+public import ProblemExtraction
+
+@[expose] public section
 
 problem_file {
   tags := [.NumberTheory, .Algebra]

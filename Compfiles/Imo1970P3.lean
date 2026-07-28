@@ -4,8 +4,12 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Tomas Ortega
 -/
 
-import Mathlib.Tactic
-import ProblemExtraction
+module
+
+public import Mathlib.Tactic
+public import ProblemExtraction
+
+@[expose] public section
 
 problem_file { tags := [.NumberTheory] }
 

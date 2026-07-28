@@ -4,10 +4,14 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Maximiliano Onofre Martínez
 -/
 
-import Mathlib.Tactic
-import Mathlib.Data.Nat.GCD.Basic
+module
 
-import ProblemExtraction
+public import Mathlib.Tactic
+public import Mathlib.Data.Nat.GCD.Basic
+
+public import ProblemExtraction
+
+@[expose] public section
 
 problem_file { tags := [.NumberTheory] }
 

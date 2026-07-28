@@ -4,16 +4,20 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: David Renshaw, Jason Reed
 -/
 
-import Mathlib.Algebra.Ring.Equiv
-import Mathlib.Data.Real.Basic
-import Mathlib.Topology.Order
-import Mathlib.Topology.MetricSpace.Basic
-import Mathlib.Topology.Algebra.Ring.Basic
-import Mathlib.Topology.Bases
+module
 
-import Mathlib.Tactic.Linarith
+public import Mathlib.Algebra.Ring.Equiv
+public import Mathlib.Data.Real.Basic
+public import Mathlib.Topology.Order
+public import Mathlib.Topology.MetricSpace.Basic
+public import Mathlib.Topology.Algebra.Ring.Basic
+public import Mathlib.Topology.Bases
 
-import ProblemExtraction
+public import Mathlib.Tactic.Linarith
+
+public import ProblemExtraction
+
+@[expose] public section
 
 problem_file
 

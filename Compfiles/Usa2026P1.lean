@@ -4,10 +4,14 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Daniel Liao
 -/
 
-import Mathlib.Tactic
-import Compfiles.Usa1981P5
+module
 
-import ProblemExtraction
+public import Mathlib.Tactic
+public import Compfiles.Usa1981P5
+
+public import ProblemExtraction
+
+@[expose] public section
 
 problem_file { tags := [.Algebra] }
 

@@ -3,9 +3,13 @@ Copyright (c) 2020 Kevin Lacker. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Kevin Lacker
 -/
-import Mathlib.Data.Nat.Digits.Lemmas
+module
 
-import ProblemExtraction
+public import Mathlib.Data.Nat.Digits.Lemmas
+
+public import ProblemExtraction
+
+@[expose] public section
 
 problem_file {
   tags := [.NumberTheory]

@@ -8,7 +8,11 @@
 # remove an initial `./`
 # replace all `/` with `.`
 # remove the `.lean` suffix
-# prepend `import `
-find Compfiles -name \*.lean \
-  | sed 's,^\./,,;s,/,.,g;s,\.lean$,,;s,^,import ,' \
-  | sort -V -t . -k 2 > Compfiles.lean
+# prepend `public import `
+{
+  echo "module"
+  echo
+  find Compfiles -name \*.lean \
+    | sed 's,^\./,,;s,/,.,g;s,\.lean$,,;s,^,public import ,' \
+    | sort -V -t . -k 2
+} > Compfiles.lean

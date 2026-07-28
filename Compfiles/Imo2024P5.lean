@@ -3,15 +3,19 @@ Copyright (c) 2024 Joseph Myers. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Joseph Myers
 -/
-import Mathlib.Data.Fin.VecNotation
-import Mathlib.Data.List.ChainOfFn
-import Mathlib.Data.List.TakeWhile
-import Mathlib.Data.Nat.Dist
-import Mathlib.Data.Fintype.Fin
-import Mathlib.Tactic.FinCases
-import Mathlib.Tactic.IntervalCases
+module
 
-import ProblemExtraction
+public import Mathlib.Data.Fin.VecNotation
+public import Mathlib.Data.List.ChainOfFn
+public import Mathlib.Data.List.TakeWhile
+public import Mathlib.Data.Nat.Dist
+public import Mathlib.Data.Fintype.Fin
+public import Mathlib.Tactic.FinCases
+public import Mathlib.Tactic.IntervalCases
+
+public import ProblemExtraction
+
+public section
 
 problem_file {
   tags := [.Combinatorics]
@@ -118,7 +122,7 @@ def Cell.reflect (c : Cell N) : Cell N := (c.1, c.2.rev)
 /-! ### API definitions and lemmas about `MonsterData` -/
 
 /-- The row 1, in the form required for MonsterData. -/
-def row1 (hN : 2 ≤ N) : InteriorRow N :=
+@[expose] def row1 (hN : 2 ≤ N) : InteriorRow N :=
   ⟨1, ⟨by lia, by
     rw [Fin.le_def]
     simp
@@ -314,7 +318,7 @@ lemma Path.mem_of_firstMonster_eq_some {p : Path N} {m : MonsterData N} {c : Cel
   exact ⟨h₁, h₂⟩
 
 /-- Convert a function giving the cells of a path to a `Path`. -/
-def Path.ofFn {m : ℕ} (f : Fin m → Cell N) (hm : m ≠ 0)
+@[expose] def Path.ofFn {m : ℕ} (f : Fin m → Cell N) (hm : m ≠ 0)
     (hf : (f ⟨0, Nat.pos_of_ne_zero hm⟩).1 = 0)
     (hl : (f ⟨m - 1, Nat.sub_one_lt hm⟩).1 = ⟨N + 1, Nat.lt_add_one _⟩)
     (ha : ∀ (i : ℕ) (hi : i + 1 < m), Adjacent (f ⟨i, Nat.lt_of_succ_lt hi⟩) (f ⟨i + 1, hi⟩)) :

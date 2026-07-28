@@ -4,19 +4,23 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: David Renshaw
 -/
 
-import Batteries.Data.List.Basic
-import Mathlib.Data.Finset.Basic
-import Mathlib.Data.Finset.Card
-import Mathlib.Data.Fintype.BigOperators
-import Mathlib.Data.Fintype.Prod
-import Mathlib.Data.List.Chain
-import Mathlib.Combinatorics.SimpleGraph.Acyclic
-import Mathlib.Combinatorics.SimpleGraph.DegreeSum
-import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
-import Mathlib.Combinatorics.SimpleGraph.Hasse
-import Mathlib.Tactic.Linarith
+module
 
-import ProblemExtraction
+public import Batteries.Data.List.Basic
+public import Mathlib.Data.Finset.Basic
+public import Mathlib.Data.Finset.Card
+public import Mathlib.Data.Fintype.BigOperators
+public import Mathlib.Data.Fintype.Prod
+public import Mathlib.Data.List.Chain
+public import Mathlib.Combinatorics.SimpleGraph.Acyclic
+public import Mathlib.Combinatorics.SimpleGraph.DegreeSum
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
+public import Mathlib.Combinatorics.SimpleGraph.Hasse
+public import Mathlib.Tactic.Linarith
+
+public import ProblemExtraction
+
+@[expose] public section
 
 problem_file { tags := [.Combinatorics] }
 

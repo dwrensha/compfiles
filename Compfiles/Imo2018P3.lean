@@ -4,10 +4,14 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: David Renshaw
 -/
 
-import Mathlib.Tactic
-import Mathlib.Data.Nat.Dist
+module
 
-import ProblemExtraction
+public import Mathlib.Tactic
+public import Mathlib.Data.Nat.Dist
+
+public import ProblemExtraction
+
+public section
 
 problem_file { tags := [.Combinatorics] }
 
@@ -54,7 +58,12 @@ def exists_desired_triangle : Prop :=
      ∀ n, 1 ≤ n → n ≤ ∑ i ∈ Finset.range 2018, (i + 1) →
          ∃ r, r < 2018 ∧ ∃ c, c ≤ r ∧ t.f ⟨r,c⟩ = n
 
+end Imo2018P3
+end
+
 snip begin
+
+namespace Imo2018P3
 
 
 /-- Number of rows. -/
@@ -71,8 +80,8 @@ private lemma TN_def : (∑ i ∈ Finset.range NR, (i + 1)) = TN := rfl
 private def tri : Finset Coords :=
   (Finset.range NR).biUnion (fun r => (Finset.range (r + 1)).image (fun c => ⟨r, c⟩))
 
--- Keep `tri` from being unfolded (and `Finset.range 2018` evaluated) during unification.
-attribute [local irreducible] tri
+-- Keep these constants from expanding `Finset.range 2018` during unification.
+attribute [local irreducible] NR TN tri
 
 private lemma mem_tri {x : Coords} : x ∈ tri ↔ x.row < NR ∧ x.col ≤ x.row := by
   simp only [tri, Finset.mem_biUnion, Finset.mem_range, Finset.mem_image]
@@ -643,7 +652,13 @@ private lemma not_exists_desired : False := by
 
 end
 
+end Imo2018P3
+
 snip end
+
+public section
+
+namespace Imo2018P3
 
 determine does_exist : Bool := false
 

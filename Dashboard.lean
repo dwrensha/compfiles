@@ -1,1 +1,3 @@
-import Dashboard.Gen
+module
+
+public import Dashboard.Gen

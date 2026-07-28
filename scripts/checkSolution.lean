@@ -1,12 +1,15 @@
-import Mathlib.Data.String.Defs
-import Batteries.Data.String.Basic
-import Batteries.Tactic.Lint
-import Lean.Environment
-import Lean.Elab.Print
-import Lean.Meta.Basic
-import Lean.Replay
+module
 
-import ProblemExtraction
+public import Mathlib.Data.String.Defs
+public import Batteries.Data.String.Basic
+public import Lean.Environment
+public import Lean.Elab.Print
+public import Lean.Meta.Basic
+public import Lean.Replay
+
+public import ProblemExtraction
+
+public section
 
 open Lean Core Elab
 
@@ -64,6 +67,7 @@ unsafe def compileProblem (problem_id : String) : IO CompileProblemResult := do
 unsafe def verifyTypesAndAxioms (problem_mod : Name) (solution_mod : Name)
     : IO Unit := do
   initSearchPath (← findSysroot) [workDir]
+  Lean.enableInitializersExecution
 
   withImportModules #[{module := problem_mod}] {} (trustLevel := 1024) fun prob_env =>
     withImportModules #[{module := solution_mod}] {} (trustLevel := 1024) fun sol_env => do
@@ -71,7 +75,7 @@ unsafe def verifyTypesAndAxioms (problem_mod : Name) (solution_mod : Name)
       let prob_state := {env := prob_env}
       let prob_infos ← Prod.fst <$> (CoreM.toIO · prob_ctx prob_state) do
         let mut infos : RBMap Name ConstantInfo Name.quickCmp := {}
-        let decls ← Batteries.Tactic.Lint.getDeclsInPackage problem_mod
+        let decls ← ProblemExtraction.getDeclsInPackage problem_mod
         for d in decls do
           if not d.isInternal then
             infos := infos.insert d (← getConstInfo d)
@@ -80,7 +84,7 @@ unsafe def verifyTypesAndAxioms (problem_mod : Name) (solution_mod : Name)
       let sol_ctx := {fileName := "", fileMap := default}
       let sol_state := {env := sol_env}
       Prod.fst <$> (CoreM.toIO · sol_ctx sol_state) do
-        let decls ← Batteries.Tactic.Lint.getDeclsInPackage solution_mod
+        let decls ← ProblemExtraction.getDeclsInPackage solution_mod
         let mut prob_infos := prob_infos
         for d in decls do
           if not d.isInternal then
@@ -102,6 +106,7 @@ unsafe def verifyTypesAndAxioms (problem_mod : Name) (solution_mod : Name)
 -- copied from lean4checker (https://github.com/leanprover/lean4checker/)
 unsafe def replayFromImports (module : Name) : IO Unit := do
   initSearchPath (← findSysroot) [workDir]
+  Lean.enableInitializersExecution
   let mFile ← findOLean module
   unless (← mFile.pathExists) do
     throw <| IO.userError s!"object file '{mFile}' of module {module} does not exist"
@@ -118,12 +123,13 @@ unsafe def replayFromImports (module : Name) : IO Unit := do
 unsafe def printDetermineVals (determineDecls : List Name) (solution_mod : Name)
     : IO Unit := do
   initSearchPath (← findSysroot) [workDir]
+  Lean.enableInitializersExecution
 
   withImportModules #[{module := solution_mod}] {} (trustLevel := 1024) fun sol_env => do
     let sol_ctx := {fileName := "", fileMap := default}
     let sol_state := {env := sol_env}
     Prod.fst <$> (CoreM.toIO · sol_ctx sol_state) do
-      let decls ← Batteries.Tactic.Lint.getDeclsInPackage solution_mod
+      let decls ← ProblemExtraction.getDeclsInPackage solution_mod
       for d in decls do
         if determineDecls.contains d then
           let sol_const ← getConstInfo d

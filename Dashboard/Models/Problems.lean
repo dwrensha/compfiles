@@ -1,5 +1,9 @@
-import Dashboard.Models.Contests
-import ProblemExtraction
+module
+
+public import Dashboard.Models.Contests
+public import ProblemExtraction
+
+@[expose] public section
 
 structure ProblemMeta where
   metadata : ProblemExtraction.ProblemFileMetadata

@@ -4,11 +4,15 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Markus Rydh
 -/
 
-import Mathlib.Tactic
-import Mathlib.Data.PNat.Basic
-import Mathlib.Data.Nat.Nth
+module
 
-import ProblemExtraction
+public import Mathlib.Tactic
+public import Mathlib.Data.PNat.Basic
+public import Mathlib.Data.Nat.Nth
+
+public import ProblemExtraction
+
+@[expose] public section
 
 problem_file { tags := [.NumberTheory] }
 

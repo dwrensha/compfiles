@@ -4,12 +4,16 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Jeremy Tan
 -/
 
-import Mathlib.Algebra.Group.Submonoid.Membership
-import Mathlib.Data.Real.Sign
-import Mathlib.GroupTheory.Perm.Sign
-import Mathlib.Tactic
+module
 
-import ProblemExtraction
+public import Mathlib.Algebra.Group.Submonoid.Membership
+public import Mathlib.Data.Real.Sign
+public import Mathlib.GroupTheory.Perm.Sign
+public import Mathlib.Tactic
+
+public import ProblemExtraction
+
+@[expose] public section
 
 problem_file {
   tags := [.Algebra]
