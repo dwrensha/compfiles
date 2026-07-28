@@ -1,6 +1,10 @@
-import Batteries.Data.String.Basic
-import Lean.Data.NameMap.Basic
-import SSG.Html
+module
+
+public import Batteries.Data.String.Basic
+public import Lean.Data.NameMap.Basic
+public import SSG.Html
+
+@[expose] public section
 
 /-!
 # Contest Metadata

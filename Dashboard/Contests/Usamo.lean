@@ -1,8 +1,12 @@
-import Dashboard.Models.Contests
-import Dashboard.Pages.ContestPage
-import Dashboard.Pages.ProblemPage
-import SSG.Html
-import SSG.Tags
+module
+
+public import Dashboard.Models.Contests
+public import Dashboard.Pages.ContestPage
+public import Dashboard.Pages.ProblemPage
+public import SSG.Html
+public import SSG.Tags
+
+@[expose] public section
 
 def usamoProblemCounts := [
   (2026, 6), (2025, 6),
@@ -33,7 +37,7 @@ def allUsamoUrls (year : Nat) (idx : Nat) : List WriteupLink := Id.run do
   let mut result := [⟨aopsUsamoUrl year idx, "Art of Problem Solving"⟩]
   if year ≤ 2003 ∧ year ≠ 1989 /- 1989 is weirdly missing -/ then
     result := result ++ [⟨scholesUsamoUrl year idx, "John Scholes"⟩]
-  if year ≥ 1996 ∧ year ≤ 2025 then
+  if year ≥ 1996 ∧ year ≤ 2026 then
     result := result ++ [⟨chenUsamoUrl year idx, "Evan Chen"⟩]
   return result
 

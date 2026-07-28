@@ -4,11 +4,15 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: David Renshaw
 -/
 
-import Mathlib.Data.PNat.Basic
+module
 
-import Mathlib.Tactic
+public import Mathlib.Data.PNat.Basic
 
-import ProblemExtraction
+public import Mathlib.Tactic
+
+public import ProblemExtraction
+
+@[expose] public section
 
 problem_file { tags := [.Algebra] }
 

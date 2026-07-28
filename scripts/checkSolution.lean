@@ -1,12 +1,15 @@
-import Mathlib.Data.String.Defs
-import Batteries.Data.String.Basic
-import Batteries.Tactic.Lint
-import Lean.Environment
-import Lean.Elab.Print
-import Lean.Meta.Basic
-import Lean.Replay
+module
 
-import ProblemExtraction
+public import Mathlib.Data.String.Defs
+public import Batteries.Data.String.Basic
+public import Lean.Environment
+public import Lean.Elab.Print
+public import Lean.Meta.Basic
+public import Lean.Replay
+
+public import ProblemExtraction
+
+public section
 
 open Lean Core Elab
 
@@ -17,10 +20,10 @@ def workDir : System.FilePath := "_check"
 def copyFile (src : System.FilePath) (dst : System.FilePath) : IO Unit := do
   IO.FS.writeFile dst (←IO.FS.readFile src)
 
-def compileFile (file : System.FilePath) (outputFile : System.FilePath) : IO Unit := do
+def compileFile (file : System.FilePath) (outputFile : System.FilePath) (extraArgs: Array String := #[]) : IO Unit := do
   let child ← IO.Process.spawn {
     cmd := "lean"
-    args := #[file.toString, "-o", outputFile.toString]
+    args := #[file.toString, "-o", outputFile.toString] ++ extraArgs
     env := #[⟨"LEAN_PATH", LEAN_PATH⟩]
   }
   let exitCode ← child.wait
@@ -41,7 +44,8 @@ unsafe def compileProblem (problem_id : String) : IO CompileProblemResult := do
 
   let module := `Compfiles
   Lean.enableInitializersExecution
-  let env ← importModules #[{module}] {} (trustLevel := 1024) #[] true true
+  let env ← importModules #[{module}] {} (trustLevel := 1024)
+    (leakEnv := true) (loadExts := true) (level := .exported)
   let ctx := {fileName := "", fileMap := default}
   let state := {env}
   Prod.fst <$> (CoreM.toIO · ctx state) do
@@ -57,12 +61,14 @@ unsafe def compileProblem (problem_id : String) : IO CompileProblemResult := do
     then panic! s!"no such problem {problem_id}"
 
   let s := ProblemExtraction.determineDeclsExtension.getState env
-  compileFile lean_file olean_file
+  -- We always expect a sorry from the problem file
+  compileFile lean_file olean_file #["-D", "warn.sorry=false"]
   return ⟨lean_file, olean_file, s.toList⟩
 
 unsafe def verifyTypesAndAxioms (problem_mod : Name) (solution_mod : Name)
     : IO Unit := do
   initSearchPath (← findSysroot) [workDir]
+  Lean.enableInitializersExecution
 
   withImportModules #[{module := problem_mod}] {} (trustLevel := 1024) fun prob_env =>
     withImportModules #[{module := solution_mod}] {} (trustLevel := 1024) fun sol_env => do
@@ -70,7 +76,7 @@ unsafe def verifyTypesAndAxioms (problem_mod : Name) (solution_mod : Name)
       let prob_state := {env := prob_env}
       let prob_infos ← Prod.fst <$> (CoreM.toIO · prob_ctx prob_state) do
         let mut infos : RBMap Name ConstantInfo Name.quickCmp := {}
-        let decls ← Batteries.Tactic.Lint.getDeclsInPackage problem_mod
+        let decls ← ProblemExtraction.getDeclsInPackage problem_mod
         for d in decls do
           if not d.isInternal then
             infos := infos.insert d (← getConstInfo d)
@@ -79,7 +85,7 @@ unsafe def verifyTypesAndAxioms (problem_mod : Name) (solution_mod : Name)
       let sol_ctx := {fileName := "", fileMap := default}
       let sol_state := {env := sol_env}
       Prod.fst <$> (CoreM.toIO · sol_ctx sol_state) do
-        let decls ← Batteries.Tactic.Lint.getDeclsInPackage solution_mod
+        let decls ← ProblemExtraction.getDeclsInPackage solution_mod
         let mut prob_infos := prob_infos
         for d in decls do
           if not d.isInternal then
@@ -101,28 +107,36 @@ unsafe def verifyTypesAndAxioms (problem_mod : Name) (solution_mod : Name)
 -- copied from lean4checker (https://github.com/leanprover/lean4checker/)
 unsafe def replayFromImports (module : Name) : IO Unit := do
   initSearchPath (← findSysroot) [workDir]
+  Lean.enableInitializersExecution
   let mFile ← findOLean module
   unless (← mFile.pathExists) do
     throw <| IO.userError s!"object file '{mFile}' of module {module} does not exist"
-  let (mod, region) ← readModuleData mFile
-  let (_, s) ← importModulesCore mod.imports |>.run
+  let serverFile := OLeanLevel.server.adjustFileName mFile
+  let privateFile := OLeanLevel.private.adjustFileName mFile
+  let files :=
+    if ← privateFile.pathExists then #[mFile, serverFile, privateFile] else #[mFile]
+  let parts ← readModuleDataParts files
+  let some (firstPart, _) := parts[0]? |
+    throw <| IO.userError s!"module data for {module} is empty"
+  let (_, s) ← importModulesCore firstPart.imports |>.run
   let env ← finalizeImport s #[{module}] {} 0 True True
   let mut newConstants := {}
-  for name in mod.constNames, ci in mod.constants do
-    newConstants := newConstants.insert name ci
+  for (part, _) in parts do
+    for name in part.constNames, ci in part.constants do
+      newConstants := newConstants.insert name ci
   let env' ← env.replay newConstants
   env'.freeRegions
-  region.free
 
 unsafe def printDetermineVals (determineDecls : List Name) (solution_mod : Name)
     : IO Unit := do
   initSearchPath (← findSysroot) [workDir]
+  Lean.enableInitializersExecution
 
   withImportModules #[{module := solution_mod}] {} (trustLevel := 1024) fun sol_env => do
     let sol_ctx := {fileName := "", fileMap := default}
     let sol_state := {env := sol_env}
     Prod.fst <$> (CoreM.toIO · sol_ctx sol_state) do
-      let decls ← Batteries.Tactic.Lint.getDeclsInPackage solution_mod
+      let decls ← ProblemExtraction.getDeclsInPackage solution_mod
       for d in decls do
         if determineDecls.contains d then
           let sol_const ← getConstInfo d

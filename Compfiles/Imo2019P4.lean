@@ -4,11 +4,15 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Floris van Doorn
 -/
 
-import Mathlib.Data.Nat.Factorial.BigOperators
-import Mathlib.Data.Nat.Multiplicity
-import Mathlib.Tactic
+module
 
-import ProblemExtraction
+public import Mathlib.Data.Nat.Factorial.BigOperators
+public import Mathlib.Data.Nat.Multiplicity
+public import Mathlib.Tactic
+
+public import ProblemExtraction
+
+@[expose] public section
 
 problem_file {
   tags := [.NumberTheory],

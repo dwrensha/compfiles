@@ -4,9 +4,13 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Evan Chen
 -/
 
-import Mathlib.Analysis.SpecialFunctions.Pow.Real
+module
 
-import ProblemExtraction
+public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+
+public import ProblemExtraction
+
+@[expose] public section
 
 problem_file { tags := [.Algebra, .Inequality] }
 

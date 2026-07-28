@@ -4,10 +4,14 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: David Renshaw, Zhiyi Luo
 -/
 
-import Mathlib.Tactic
-import Mathlib.Tactic.NormNum.Prime
+module
 
-import ProblemExtraction
+public import Mathlib.Tactic
+public import Mathlib.Tactic.NormNum.Prime
+
+public import ProblemExtraction
+
+@[expose] public section
 
 problem_file { tags := [.NumberTheory] }
 

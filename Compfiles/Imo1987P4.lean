@@ -4,12 +4,16 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: David Renshaw
 -/
 
-import Mathlib.Data.Set.Basic
-import Mathlib.Data.Set.Card
-import Mathlib.Order.Interval.Finset.Nat
-import Mathlib.Tactic.Ring
+module
 
-import ProblemExtraction
+public import Mathlib.Data.Set.Basic
+public import Mathlib.Data.Set.Card
+public import Mathlib.Order.Interval.Finset.Nat
+public import Mathlib.Tactic.Ring
+
+public import ProblemExtraction
+
+@[expose] public section
 
 problem_file {
   tags := [.Algebra]

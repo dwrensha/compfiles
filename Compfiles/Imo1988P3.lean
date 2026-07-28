@@ -4,12 +4,16 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: InternLM-MATH LEAN Formalizer v0.1, Goedel-Prover-V2
 -/
 
-import Mathlib.Data.Nat.Digits.Lemmas
-import Mathlib.Data.List.Palindrome
-import Mathlib.Data.PNat.Basic
-import Mathlib.Data.Set.Card
+module
 
-import ProblemExtraction
+public import Mathlib.Data.Nat.Digits.Lemmas
+public import Mathlib.Data.List.Palindrome
+public import Mathlib.Data.PNat.Basic
+public import Mathlib.Data.Set.Card
+
+public import ProblemExtraction
+
+@[expose] public section
 
 problem_file { tags := [.Algebra] }
 

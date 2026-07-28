@@ -4,10 +4,14 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Kevin Lacker
 -/
 
-import Mathlib.Algebra.Divisibility.Basic
-import Mathlib.Tactic.Ring
-import Mathlib.Data.Nat.Prime.Basic
-import ProblemExtraction
+module
+
+public import Mathlib.Algebra.Divisibility.Basic
+public import Mathlib.Tactic.Ring
+public import Mathlib.Data.Nat.Prime.Basic
+public import ProblemExtraction
+
+@[expose] public section
 
 problem_file {
   tags := [.NumberTheory],

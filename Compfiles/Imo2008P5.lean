@@ -4,10 +4,14 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: David Renshaw
 -/
 
-import Mathlib.Tactic
-import Mathlib.Data.Set.Card
+module
 
-import ProblemExtraction
+public import Mathlib.Tactic
+public import Mathlib.Data.Set.Card
+
+public import ProblemExtraction
+
+public section
 
 problem_file { tags := [.Combinatorics] }
 
@@ -40,7 +44,12 @@ abbrev MSequence (n k : ℕ) (f : Sequence n k) : Prop :=
   NSequence n k f ∧
   (∀ i : Fin (2 * n), n ≤ i → ∀ j : Fin k, f j ≠ i)
 
+end Imo2008P5
+end
+
 snip begin
+
+namespace Imo2008P5
 
 -- We follow the informal solution from
 -- https://web.evanchen.cc/exams/IMO-2008-notes.pdf
@@ -317,8 +326,9 @@ lemma claim (n k : ℕ) (hn : 0 < n) (hnk : n ≤ k) (_he : Even (k - n))
           congrArg (fun h => ((h.val j).val)) hgψ
         by_cases hlt : (gfun j).val < n
         · left; simpa [ψ, hlt] using hEq
-        · right; have : (gfun j).val - n = (f.val j).val := by simpa [ψ, hlt] using hEq
-          lia
+        · right
+          have hsub : (gfun j).val - n = (f.val j).val := by simpa [ψ, hlt] using hEq
+          exact (Nat.sub_eq_iff_eq_add (Nat.le_of_not_gt hlt)).mp hsub
       have hfi_of_high : ∀ (i : Fin n) (j : Fin k),
           (gfun j).val = n + i → f.val j = ⟨i, by lia⟩ := by
         intro i j hj; apply Fin.ext; dsimp
@@ -407,7 +417,13 @@ lemma lemma1 (α : Type) (A B : Set α) (hA : A.Finite) (hB : B.Finite)
   rw [Nat.card_eq_fintype_card, Nat.card_eq_fintype_card]
   lia
 
+end Imo2008P5
+
 snip end
+
+public section
+
+namespace Imo2008P5
 
 determine solution (n k : ℕ) : ℚ := 2 ^ (k - n)
 

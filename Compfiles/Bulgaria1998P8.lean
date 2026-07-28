@@ -4,10 +4,14 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: David Renshaw
 -/
 
-import Mathlib.Algebra.Ring.Basic
-import Mathlib.Tactic.Ring
+module
 
-import ProblemExtraction
+public import Mathlib.Algebra.Ring.Basic
+public import Mathlib.Tactic.Ring
+
+public import ProblemExtraction
+
+@[expose] public section
 
 problem_file { tags := [.Algebra] }
 

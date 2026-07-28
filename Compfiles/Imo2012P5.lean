@@ -3,12 +3,16 @@ Copyright (c) 2026 The Compfiles Contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: tenthmascot
 -/
-import Mathlib.Geometry.Euclidean.Altitude
-import Mathlib.Geometry.Euclidean.Angle.Sphere
-import Mathlib.Geometry.Euclidean.Sphere.Power
-import Mathlib.Geometry.Euclidean.Sphere.SecondInter
+module
 
-import ProblemExtraction
+public import Mathlib.Geometry.Euclidean.Altitude
+public import Mathlib.Geometry.Euclidean.Angle.Sphere
+public import Mathlib.Geometry.Euclidean.Sphere.Power
+public import Mathlib.Geometry.Euclidean.Sphere.SecondInter
+
+public import ProblemExtraction
+
+@[expose] public section
 
 problem_file {
   tags := [.Geometry]

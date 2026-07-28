@@ -1,11 +1,15 @@
-import Dashboard.Models.Contests
-import Dashboard.Pages.ContestPage
-import Dashboard.Pages.ProblemPage
-import SSG.Html
-import SSG.Tags
+module
+
+public import Dashboard.Models.Contests
+public import Dashboard.Pages.ContestPage
+public import Dashboard.Pages.ProblemPage
+public import SSG.Html
+public import SSG.Tags
+
+@[expose] public section
 
 def imoProblemCounts := [
-  (2025, 6),
+  (2026, 6), (2025, 6),
   (2024, 6), (2023, 6), (2022, 6), (2021, 6), (2020, 6),
   (2019, 6), (2018, 6), (2017, 6), (2016, 6), (2015, 6),
   (2014, 6), (2013, 6), (2012, 6), (2011, 6), (2010, 6),
@@ -48,7 +52,7 @@ def allImoUrls (year : Nat) (idx : Nat) : List WriteupLink := Id.run do
     ⟨aopsImoUrl year idx, "Art of Problem Solving"⟩]
   if year ≤ 2003 then
     result := result ++ [⟨scholesImoUrl year idx, "John Scholes"⟩]
-  if year ≥ 1997 ∧ year ≤ 2025 then
+  if year ≥ 1997 ∧ year ≤ 2026 then
     result := result ++ [⟨chenImoUrl year idx, "Evan Chen"⟩]
   if let some url := scannedPaperUrl year idx then
     result := result ++ [⟨url, "scan of original paper"⟩]

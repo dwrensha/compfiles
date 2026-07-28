@@ -4,10 +4,14 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Karl Mehltretter
 -/
 
-import Mathlib.Data.PNat.Basic
-import Mathlib.Algebra.Polynomial.Basic
+module
 
-import ProblemExtraction
+public import Mathlib.Data.PNat.Basic
+public import Mathlib.Algebra.Polynomial.Basic
+
+public import ProblemExtraction
+
+@[expose] public section
 
 problem_file { tags := [.Algebra] }
 

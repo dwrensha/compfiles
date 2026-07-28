@@ -4,13 +4,17 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: David Renshaw
 -/
 
-import Mathlib.Data.Real.Basic
-import Mathlib
+module
 
-import Mathlib.Analysis.InnerProductSpace.PiL2
-import Mathlib.Analysis.Normed.Lp.PiLp
+public import Mathlib.Data.Real.Basic
+public import Mathlib
 
-import ProblemExtraction
+public import Mathlib.Analysis.InnerProductSpace.PiL2
+public import Mathlib.Analysis.Normed.Lp.PiLp
+
+public import ProblemExtraction
+
+@[expose] public section
 
 problem_file { tags := [.Algebra, .Inequality] }
 

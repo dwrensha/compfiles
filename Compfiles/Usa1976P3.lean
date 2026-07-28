@@ -4,12 +4,16 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Maximiliano Onofre Martínez
 -/
 
-import Mathlib.Tactic
-import Mathlib.Data.Int.Basic
-import Mathlib.Data.Set.Insert
-import Mathlib.Algebra.Group.Even
+module
 
-import ProblemExtraction
+public import Mathlib.Tactic
+public import Mathlib.Data.Int.Basic
+public import Mathlib.Data.Set.Insert
+public import Mathlib.Algebra.Group.Even
+
+public import ProblemExtraction
+
+@[expose] public section
 
 problem_file { tags := [.NumberTheory] }
 

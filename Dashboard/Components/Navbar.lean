@@ -1,5 +1,9 @@
-import Dashboard.Common
-import SSG.Html
+module
+
+public import Dashboard.Common
+public import SSG.Html
+
+@[expose] public section
 
 open Html
 

@@ -4,13 +4,17 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: David Renshaw
 -/
 
-import Mathlib.Data.Fintype.Card
-import Mathlib.Data.Finset.Basic
-import Mathlib.Data.Finset.Card
+module
 
-import Mathlib.Tactic
+public import Mathlib.Data.Fintype.Card
+public import Mathlib.Data.Finset.Basic
+public import Mathlib.Data.Finset.Card
 
-import ProblemExtraction
+public import Mathlib.Tactic
+
+public import ProblemExtraction
+
+@[expose] public section
 
 problem_file { tags := [.Combinatorics] }
 

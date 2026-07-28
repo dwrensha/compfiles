@@ -4,10 +4,14 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: David Renshaw
 -/
 
-import Mathlib.Algebra.QuadraticDiscriminant
-import Mathlib.Tactic
+module
 
-import ProblemExtraction
+public import Mathlib.Algebra.QuadraticDiscriminant
+public import Mathlib.Tactic
+
+public import ProblemExtraction
+
+@[expose] public section
 
 problem_file { tags := [.Algebra] }
 

@@ -4,9 +4,13 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Elan Roth
 -/
 
-import Mathlib
+module
 
-import ProblemExtraction
+public import Mathlib
+
+public import ProblemExtraction
+
+@[expose] public section
 
 problem_file { tags := [.Algebra, .NumberTheory] }
 

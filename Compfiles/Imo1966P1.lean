@@ -4,8 +4,12 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Shalev Wengrowsky
 -/
 
-import Mathlib.Data.Set.Card
-import ProblemExtraction
+module
+
+public import Mathlib.Data.Set.Card
+public import ProblemExtraction
+
+@[expose] public section
 
 problem_file { tags := [.Combinatorics] }
 

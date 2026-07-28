@@ -1,17 +1,21 @@
-import Mathlib.Data.Finset.Card
-import Mathlib.Data.Finset.Prod
-import Mathlib.Data.Finset.Sum
-import Mathlib.Data.Fintype.Card
-import Mathlib.Data.Fintype.Prod
-import Mathlib.Combinatorics.Hall.Finite
-import Mathlib.GroupTheory.Perm.Sign
-import Mathlib.Logic.Equiv.Fintype
-import Mathlib.Tactic.FinCases
-import Mathlib.Tactic.GCongr
-import Mathlib.Tactic.Ring
-import Lean.Elab.Tactic.Omega
+module
 
-import ProblemExtraction
+public import Mathlib.Data.Finset.Card
+public import Mathlib.Data.Finset.Prod
+public import Mathlib.Data.Finset.Sum
+public import Mathlib.Data.Fintype.Card
+public import Mathlib.Data.Fintype.Prod
+public import Mathlib.Combinatorics.Hall.Finite
+public import Mathlib.GroupTheory.Perm.Sign
+public import Mathlib.Logic.Equiv.Fintype
+public import Mathlib.Tactic.FinCases
+public import Mathlib.Tactic.GCongr
+public import Mathlib.Tactic.Ring
+public import Lean.Elab.Tactic.Omega
+
+public import ProblemExtraction
+
+@[expose] public section
 
 problem_file { tags := [.Combinatorics] }
 

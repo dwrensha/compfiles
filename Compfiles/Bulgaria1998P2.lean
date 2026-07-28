@@ -4,12 +4,16 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: David Renshaw
 -/
 
-import Mathlib.Analysis.InnerProductSpace.PiL2
-import Mathlib.LinearAlgebra.AffineSpace.Midpoint
-import Mathlib.Geometry.Euclidean.Basic
-import Mathlib.Geometry.Euclidean.Triangle
+module
 
-import ProblemExtraction
+public import Mathlib.Analysis.InnerProductSpace.PiL2
+public import Mathlib.LinearAlgebra.AffineSpace.Midpoint
+public import Mathlib.Geometry.Euclidean.Basic
+public import Mathlib.Geometry.Euclidean.Triangle
+
+public import ProblemExtraction
+
+@[expose] public section
 
 problem_file { tags := [.Geometry] }
 

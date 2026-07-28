@@ -4,10 +4,14 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Francesco Cappetti
 -/
 
-import Mathlib.Tactic
-import Mathlib.Data.Fin.Tuple.Sort
+module
 
-import ProblemExtraction
+public import Mathlib.Tactic
+public import Mathlib.Data.Fin.Tuple.Sort
+
+public import ProblemExtraction
+
+@[expose] public section
 
 problem_file { tags := [.Algebra] }
 

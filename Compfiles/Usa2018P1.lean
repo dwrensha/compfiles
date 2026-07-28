@@ -4,10 +4,14 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Hongyu Ouyang
 -/
 
-import Mathlib.Tactic
-import Mathlib.Analysis.MeanInequalities
+module
 
-import ProblemExtraction
+public import Mathlib.Tactic
+public import Mathlib.Analysis.MeanInequalities
+
+public import ProblemExtraction
+
+@[expose] public section
 
 problem_file { tags := [.Algebra, .Inequality] }
 

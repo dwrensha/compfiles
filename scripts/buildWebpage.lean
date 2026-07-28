@@ -1,13 +1,17 @@
-import Lean.Environment
-import Mathlib.Data.String.Defs
+module
 
-import SSG.Core
-import SSG.Builder
+public import Lean.Environment
+public import Mathlib.Data.String.Defs
 
-import Dashboard.Gen
-import Dashboard.Assets
+public import SSG.Core
+public import SSG.Builder
 
-import ProblemExtraction
+public import Dashboard.Gen
+public import Dashboard.Assets
+
+public import ProblemExtraction
+
+public section
 
 set_option linter.style.longLine false
 
