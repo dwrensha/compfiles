@@ -3,11 +3,15 @@ Copyright (c) 2021 Mantas Bakšys. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mantas Bakšys
 -/
-import Mathlib.Order.Interval.Finset.Nat
-import Mathlib.Tactic.IntervalCases
-import Mathlib.Tactic.Linarith
+module
 
-import ProblemExtraction
+public import Mathlib.Order.Interval.Finset.Nat
+public import Mathlib.Tactic.IntervalCases
+public import Mathlib.Tactic.Linarith
+
+public import ProblemExtraction
+
+@[expose] public section
 
 problem_file {
   tags := [.Algebra]

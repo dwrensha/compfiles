@@ -1,16 +1,19 @@
-import Batteries.Tactic.Lint.Frontend
-import Lean.Meta.Basic
+module
 
-import Dashboard.Common
-import Dashboard.Components.Base
-import Dashboard.Contests.Imo
-import Dashboard.Contests.Usamo
-import Dashboard.Models.Contests
-import Dashboard.Pages.All
-import Dashboard.Pages.Index
-import Dashboard.Pages.ProblemPage
-import ProblemExtraction
-import SSG.Core
+public import Lean.Meta.Basic
+
+public import Dashboard.Common
+public import Dashboard.Components.Base
+public import Dashboard.Contests.Imo
+public import Dashboard.Contests.Usamo
+public import Dashboard.Models.Contests
+public import Dashboard.Pages.All
+public import Dashboard.Pages.Index
+public import Dashboard.Pages.ProblemPage
+public import ProblemExtraction
+public import SSG.Core
+
+@[expose] public section
 
 def extractModuleDoc (env : Lean.Environment) (m : Lean.Name) : String :=
   match Lean.getModuleDoc? env m with
@@ -27,7 +30,7 @@ def collectProblemMeta (env : Lean.Environment)
     let ps := problems.get! name
     let ss := solutions.get! name
     let mut proved := true
-    let decls ← Batteries.Tactic.Lint.getDeclsInPackage name
+    let decls ← ProblemExtraction.getDeclsInPackage name
     for d in decls do
       let axioms ← Lean.collectAxioms d
       for a in axioms do
@@ -49,7 +52,8 @@ unsafe def generateAll (config : SConfig) : IO (List Page) := do
   let mut allPages : List Page := []
   IO.println "Extracting Problems..."
   Lean.enableInitializersExecution
-  let env ← Lean.importModules #[{module}] {} (trustLevel := 1024) #[] True True
+  let env ← Lean.importModules #[{module}] {} (trustLevel := 1024)
+    (leakEnv := true) (loadExts := true) (level := .exported)
   let ctx : Lean.Core.Context := {fileName := "", fileMap := default}
   let state := {env}
   let mut mds ← Prod.fst <$> (Lean.Core.CoreM.toIO · ctx state) do

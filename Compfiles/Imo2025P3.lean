@@ -3,14 +3,18 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Reuven Peleg (Problem statement) , Shahar Blumentzvaig
 -/
 
-import Mathlib.Tactic
-import Mathlib.Data.ENat.Basic
-import Mathlib.NumberTheory.LSeries.PrimesInAP
-import Mathlib.NumberTheory.Multiplicity
-import Mathlib.Data.Nat.Basic
-import Mathlib.Data.Real.Basic
-import Mathlib.Order.Bounds.Basic
-import ProblemExtraction
+module
+
+public import Mathlib.Tactic
+public import Mathlib.Data.ENat.Basic
+public import Mathlib.NumberTheory.LSeries.PrimesInAP
+public import Mathlib.NumberTheory.Multiplicity
+public import Mathlib.Data.Nat.Basic
+public import Mathlib.Data.Real.Basic
+public import Mathlib.Order.Bounds.Basic
+public import ProblemExtraction
+
+@[expose] public section
 
 problem_file {
   tags := [.NumberTheory]

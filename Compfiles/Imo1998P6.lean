@@ -3,8 +3,12 @@ Copyright (c) 2026 lean-tom. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Daniel Liao
 -/
-import Mathlib
-import ProblemExtraction
+module
+
+public import Mathlib
+public import ProblemExtraction
+
+@[expose] public section
 
 problem_file {
   tags := [.Algebra]

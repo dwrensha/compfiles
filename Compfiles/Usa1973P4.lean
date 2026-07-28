@@ -4,9 +4,13 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Shalev Wengrowsky
 -/
 
-import Mathlib.Data.Complex.Basic
+module
 
-import ProblemExtraction
+public import Mathlib.Data.Complex.Basic
+
+public import ProblemExtraction
+
+@[expose] public section
 
 problem_file { tags := [.Algebra] }
 

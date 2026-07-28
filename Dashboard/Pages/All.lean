@@ -1,9 +1,13 @@
-import Dashboard.Components.Base
-import Dashboard.Models.Problems
-import Dashboard.Pages.ProblemPage
-import ProblemExtraction
-import SSG.Html
-import SSG.Tags
+module
+
+public import Dashboard.Components.Base
+public import Dashboard.Models.Problems
+public import Dashboard.Pages.ProblemPage
+public import ProblemExtraction
+public import SSG.Html
+public import SSG.Tags
+
+@[expose] public section
 
 open Html
 

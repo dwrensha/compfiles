@@ -3,10 +3,14 @@ Copyright (c) 2022 Violeta Hernández Palacios. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Violeta Hernández Palacios
 -/
-import Mathlib.Algebra.Polynomial.Roots
-import Mathlib.Dynamics.PeriodicPts.Defs
+module
 
-import ProblemExtraction
+public import Mathlib.Algebra.Polynomial.Roots
+public import Mathlib.Dynamics.PeriodicPts.Defs
+
+public import ProblemExtraction
+
+@[expose] public section
 
 problem_file {
   tags := [.NumberTheory],

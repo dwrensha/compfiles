@@ -4,14 +4,18 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Elan Roth
 -/
 
-import Mathlib.Data.Nat.Basic
-import Mathlib.Data.Nat.ModEq
-import Mathlib.Data.Nat.GCD.Basic
-import Mathlib.Data.Set.Card
-import Mathlib.Data.Nat.Prime.Basic
-import Mathlib.Tactic.Ring
+module
 
-import ProblemExtraction
+public import Mathlib.Data.Nat.Basic
+public import Mathlib.Data.Nat.ModEq
+public import Mathlib.Data.Nat.GCD.Basic
+public import Mathlib.Data.Set.Card
+public import Mathlib.Data.Nat.Prime.Basic
+public import Mathlib.Tactic.Ring
+
+public import ProblemExtraction
+
+@[expose] public section
 
 problem_file { tags := [.NumberTheory]}
 

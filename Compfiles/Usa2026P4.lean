@@ -4,11 +4,15 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Daniel Liao
 -/
 
-import Mathlib.Data.Nat.Digits.Lemmas
-import Mathlib.Data.Finset.Basic
-import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+module
 
-import ProblemExtraction
+public import Mathlib.Data.Nat.Digits.Lemmas
+public import Mathlib.Data.Finset.Basic
+public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+
+public import ProblemExtraction
+
+@[expose] public section
 
 problem_file { tags := [.Combinatorics, .NumberTheory] }
 

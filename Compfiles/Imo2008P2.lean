@@ -3,14 +3,18 @@ Copyright (c) 2021 Manuel Candales. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Manuel Candales
 -/
-import Mathlib.Data.Real.Basic
-import Mathlib.Data.Set.Finite.Lattice
-import Mathlib.Tactic.FieldSimp
-import Mathlib.Tactic.Abel
-import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.Ring
+module
 
-import ProblemExtraction
+public import Mathlib.Data.Real.Basic
+public import Mathlib.Data.Set.Finite.Lattice
+public import Mathlib.Tactic.FieldSimp
+public import Mathlib.Tactic.Abel
+public import Mathlib.Tactic.Linarith
+public import Mathlib.Tactic.Ring
+
+public import ProblemExtraction
+
+@[expose] public section
 
 problem_file {
   tags := [.Algebra],

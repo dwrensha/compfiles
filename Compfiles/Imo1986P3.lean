@@ -4,10 +4,14 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: lean-tom (with assistance from Gemini)
 -/
 
-import Mathlib.Data.Fin.Basic
-import Mathlib.Tactic
+module
 
-import ProblemExtraction
+public import Mathlib.Data.Fin.Basic
+public import Mathlib.Tactic
+
+public import ProblemExtraction
+
+@[expose] public section
 
 problem_file
 

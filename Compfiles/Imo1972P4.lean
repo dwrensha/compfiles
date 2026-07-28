@@ -4,10 +4,14 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: InternLM-MATH LEAN Formalizer v0.1, Maximiliano Onofre-Martínez
 -/
 
-import Mathlib.Tactic
-import Mathlib.Algebra.GroupWithZero.Basic
+module
 
-import ProblemExtraction
+public import Mathlib.Tactic
+public import Mathlib.Algebra.GroupWithZero.Basic
+
+public import ProblemExtraction
+
+@[expose] public section
 
 problem_file { tags := [.Algebra] }
 

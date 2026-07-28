@@ -4,8 +4,12 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Evan Chen
 -/
 
-import Mathlib
-import ProblemExtraction
+module
+
+public import Mathlib
+public import ProblemExtraction
+
+@[expose] public section
 
 problem_file {
   tags := [.Geometry]

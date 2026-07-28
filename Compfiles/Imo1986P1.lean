@@ -3,12 +3,16 @@ Copyright (c) 2023 Moritz Firsching. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Moritz Firsching
 -/
-import Mathlib.Data.Fintype.Card
-import Mathlib.Data.Nat.ModEq
-import Mathlib.Data.ZMod.Basic
-import Mathlib.Tactic
+module
 
-import ProblemExtraction
+public import Mathlib.Data.Fintype.Card
+public import Mathlib.Data.Nat.ModEq
+public import Mathlib.Data.ZMod.Basic
+public import Mathlib.Tactic
+
+public import ProblemExtraction
+
+@[expose] public section
 
 problem_file { tags := [.NumberTheory] }
 

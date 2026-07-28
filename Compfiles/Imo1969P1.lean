@@ -3,12 +3,16 @@ Copyright (c) 2020 Kevin Lacker. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Kevin Lacker
 -/
-import Mathlib.Algebra.Ring.Identities
-import Mathlib.Data.Int.NatPrime
-import Mathlib.Tactic.Linarith
-import Mathlib.Data.Set.Finite.Basic
+module
 
-import ProblemExtraction
+public import Mathlib.Algebra.Ring.Identities
+public import Mathlib.Data.Int.NatPrime
+public import Mathlib.Tactic.Linarith
+public import Mathlib.Data.Set.Finite.Basic
+
+public import ProblemExtraction
+
+@[expose] public section
 
 problem_file {
   tags := [.NumberTheory],

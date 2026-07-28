@@ -5,11 +5,15 @@ Authors: InternLM-MATH LEAN Formalizer v0.1, Shahar Blumentzvaig
 -/
 
 
-import Mathlib.Tactic
-import Mathlib.Data.Nat.Basic
-import Mathlib.Data.Int.Basic
-import Mathlib.Data.Finset.Basic
-import ProblemExtraction
+module
+
+public import Mathlib.Tactic
+public import Mathlib.Data.Nat.Basic
+public import Mathlib.Data.Int.Basic
+public import Mathlib.Data.Finset.Basic
+public import ProblemExtraction
+
+@[expose] public section
 
 
 problem_file { tags := [.Algebra] }

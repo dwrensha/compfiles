@@ -1,8 +1,12 @@
-import SSG.Core
-import SSG.Html
-import SSG.Tags
+module
 
-import Dashboard.Assets
+public import SSG.Core
+public import SSG.Html
+public import SSG.Tags
+
+public import Dashboard.Assets
+
+@[expose] public section
 
 structure Config where
   commitHash : String

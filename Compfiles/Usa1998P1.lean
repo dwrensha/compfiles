@@ -4,13 +4,17 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: David Renshaw
 -/
 
-import Mathlib.Algebra.BigOperators.Intervals
-import Mathlib.Data.Int.ModEq
-import Mathlib.Data.Finset.Interval
-import Mathlib.Data.Fintype.BigOperators
-import Mathlib.Tactic
+module
 
-import ProblemExtraction
+public import Mathlib.Algebra.BigOperators.Intervals
+public import Mathlib.Data.Int.ModEq
+public import Mathlib.Data.Finset.Interval
+public import Mathlib.Data.Fintype.BigOperators
+public import Mathlib.Tactic
+
+public import ProblemExtraction
+
+@[expose] public section
 
 problem_file { tags := [.NumberTheory] }
 

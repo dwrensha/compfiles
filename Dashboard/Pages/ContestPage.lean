@@ -1,14 +1,18 @@
-import Lean.Data.NameMap.Basic
+module
 
-import Dashboard.Common
-import Dashboard.Components.Base
-import Dashboard.Components.Navbar
-import Dashboard.Models.Contests
-import Dashboard.Models.Problems
-import Dashboard.Pages.ProblemPage
-import SSG.Core
-import SSG.Html
-import SSG.Tags
+public import Lean.Data.NameMap.Basic
+
+public import Dashboard.Common
+public import Dashboard.Components.Base
+public import Dashboard.Components.Navbar
+public import Dashboard.Models.Contests
+public import Dashboard.Models.Problems
+public import Dashboard.Pages.ProblemPage
+public import SSG.Core
+public import SSG.Html
+public import SSG.Tags
+
+@[expose] public section
 
 open Html
 

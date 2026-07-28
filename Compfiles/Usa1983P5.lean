@@ -4,13 +4,17 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors:
 -/
 
-import Mathlib.Data.Set.Card
-import Mathlib.Data.Nat.Factorization.Basic
-import Mathlib.Data.Real.Basic
-import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.Order
+module
 
-import ProblemExtraction
+public import Mathlib.Data.Set.Card
+public import Mathlib.Data.Nat.Factorization.Basic
+public import Mathlib.Data.Real.Basic
+public import Mathlib.Tactic.Linarith
+public import Mathlib.Tactic.Order
+
+public import ProblemExtraction
+
+@[expose] public section
 
 problem_file { tags := [.NumberTheory] }
 

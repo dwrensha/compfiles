@@ -4,12 +4,16 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Zhiyi Luo
 -/
 
-import Mathlib.Data.Real.Basic
-import Mathlib.Data.NNReal.Basic
-import Mathlib.Algebra.Order.Positive.Field
-import Mathlib.Tactic
+module
 
-import ProblemExtraction
+public import Mathlib.Data.Real.Basic
+public import Mathlib.Data.NNReal.Basic
+public import Mathlib.Algebra.Order.Positive.Field
+public import Mathlib.Tactic
+
+public import ProblemExtraction
+
+@[expose] public section
 
 problem_file { tags := [.Algebra] }
 

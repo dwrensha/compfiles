@@ -4,11 +4,15 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Karl Mehltretter
 -/
 
-import Mathlib.Geometry.Euclidean.Incenter
-import Mathlib.Geometry.Euclidean.Circumcenter
-import Mathlib.Geometry.Euclidean.Triangle
+module
 
-import ProblemExtraction
+public import Mathlib.Geometry.Euclidean.Incenter
+public import Mathlib.Geometry.Euclidean.Circumcenter
+public import Mathlib.Geometry.Euclidean.Triangle
+
+public import ProblemExtraction
+
+@[expose] public section
 
 problem_file { tags := [.Geometry] }
 

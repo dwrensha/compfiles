@@ -3,14 +3,18 @@ Copyright (c) 2021 Manuel Candales. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Manuel Candales
 -/
-import Mathlib.Data.Real.Basic
-import Mathlib
-import Mathlib.Data.Nat.Prime.Basic
-import Mathlib.NumberTheory.PrimesCongruentOne
-import Mathlib.NumberTheory.LegendreSymbol.QuadraticReciprocity
-import Mathlib.Tactic.LinearCombination
+module
 
-import ProblemExtraction
+public import Mathlib.Data.Real.Basic
+public import Mathlib
+public import Mathlib.Data.Nat.Prime.Basic
+public import Mathlib.NumberTheory.PrimesCongruentOne
+public import Mathlib.NumberTheory.LegendreSymbol.QuadraticReciprocity
+public import Mathlib.Tactic.LinearCombination
+
+public import ProblemExtraction
+
+@[expose] public section
 
 problem_file {
   tags := [.NumberTheory],

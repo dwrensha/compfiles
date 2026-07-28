@@ -1,8 +1,12 @@
-import Dashboard.Models.Contests
-import Dashboard.Pages.ContestPage
-import Dashboard.Pages.ProblemPage
-import SSG.Html
-import SSG.Tags
+module
+
+public import Dashboard.Models.Contests
+public import Dashboard.Pages.ContestPage
+public import Dashboard.Pages.ProblemPage
+public import SSG.Html
+public import SSG.Tags
+
+@[expose] public section
 
 def usamoProblemCounts := [
   (2026, 6), (2025, 6),

@@ -4,12 +4,16 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: David Renshaw
 -/
 
-import Mathlib.Geometry.Euclidean.Sphere.Tangent
-import Mathlib.Geometry.Euclidean.PerpBisector
-import Mathlib.Geometry.Euclidean.Triangle
-import Mathlib.Geometry.Euclidean.Angle.Oriented.Affine
+module
 
-import ProblemExtraction
+public import Mathlib.Geometry.Euclidean.Sphere.Tangent
+public import Mathlib.Geometry.Euclidean.PerpBisector
+public import Mathlib.Geometry.Euclidean.Triangle
+public import Mathlib.Geometry.Euclidean.Angle.Oriented.Affine
+
+public import ProblemExtraction
+
+@[expose] public section
 
 problem_file { tags := [.Geometry] }
 

@@ -4,13 +4,17 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Jeremy Tan
 -/
 
-import Mathlib.Algebra.BigOperators.Intervals
-import Mathlib.Algebra.Order.Ring.Star
-import Mathlib.Analysis.Normed.Ring.Lemmas
-import Mathlib.Data.Int.Star
-import Mathlib.GroupTheory.Perm.Fin
+module
 
-import ProblemExtraction
+public import Mathlib.Algebra.BigOperators.Intervals
+public import Mathlib.Algebra.Order.Ring.Star
+public import Mathlib.Analysis.Normed.Ring.Lemmas
+public import Mathlib.Data.Int.Star
+public import Mathlib.GroupTheory.Perm.Fin
+
+public import ProblemExtraction
+
+@[expose] public section
 
 problem_file {
   tags := [.Algebra]

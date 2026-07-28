@@ -4,12 +4,16 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors:
 -/
 
-import Mathlib.Data.Set.Card
-import Mathlib.Data.Nat.Choose.Sum
-import Mathlib.Tactic.NormNum.Basic
-import Mathlib.Tactic.Ring.RingNF
+module
 
-import ProblemExtraction
+public import Mathlib.Data.Set.Card
+public import Mathlib.Data.Nat.Choose.Sum
+public import Mathlib.Tactic.NormNum.Basic
+public import Mathlib.Tactic.Ring.RingNF
+
+public import ProblemExtraction
+
+@[expose] public section
 
 problem_file { tags := [.Combinatorics] }
 
