@@ -4,9 +4,14 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Pacmanboss256
 -/
 
-import Mathlib.Tactic
-import ProblemExtraction
+module
+
+public import Mathlib.Tactic
+
+public import ProblemExtraction
 import Mathlib.Analysis.SpecialFunctions.Log.Base
+
+@[expose] public section
 
 /-!
 # USA Mathematical Olympiad 2016 P4
