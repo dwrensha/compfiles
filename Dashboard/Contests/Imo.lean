@@ -52,7 +52,7 @@ def allImoUrls (year : Nat) (idx : Nat) : List WriteupLink := Id.run do
     ⟨aopsImoUrl year idx, "Art of Problem Solving"⟩]
   if year ≤ 2003 then
     result := result ++ [⟨scholesImoUrl year idx, "John Scholes"⟩]
-  if year ≥ 1997 ∧ year ≤ 2025 then
+  if year ≥ 1997 ∧ year ≤ 2026 then
     result := result ++ [⟨chenImoUrl year idx, "Evan Chen"⟩]
   if let some url := scannedPaperUrl year idx then
     result := result ++ [⟨url, "scan of original paper"⟩]
