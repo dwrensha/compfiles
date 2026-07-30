@@ -56,7 +56,7 @@ lemma exists_triangle {a b c : ℝ} (ha : 0 < a) (hb : 0 < b) (hc : 0 < c)
     have f1 : 0 < b - a + c := by linarith
     have f2 : 0 < b + a - c := by linarith
     have f3 : 0 < a + c - b := by linarith
-    have f4 : 0 < a + c + b := by linarith
+    have f4 : 0 < a + c + b := by positivity
     positivity
   set py := Real.sqrt (c^2 - px^2)
   have hpy2 : py^2 = c^2 - px^2 := Real.sq_sqrt hpos.le
@@ -158,10 +158,7 @@ lemma key {n : ℕ} (hn : 3 ≤ n) (t : Fin n → ℝ) (ht : ∀ i, 0 < t i)
   have hMval : M = (n : ℝ) - 3 := by
     rw [hMdef, Finset.card_compl, Fintype.card_fin, hscard, Nat.cast_sub hn]
     norm_num
-  have hMnn : 0 ≤ M := by
-    rw [hMval]
-    have h3 : (3:ℝ) ≤ n := by exact_mod_cast hn
-    linarith
+  have hMnn : 0 ≤ M := by positivity
   have hX2Y2 : M ^ 2 ≤ X2 * Y2 := card_sq_le sᶜ t (fun i _ => ht i)
   -- Combine: the cross terms are at least `6M`.
   have hPnn : 0 ≤ X1 * Y2 + X2 * Y1 :=

@@ -234,7 +234,7 @@ lemma two_dvd_of_two_dvd_psi {x : ℕ} : x ∈ S → 2 ∣ ψ x → 2 ∣ x := b
     fun k hk ↦ this k ((mem_sort (· ≤ ·)).mp (List.mem_reverse.mp hk))
   have hlen : 3 ≤ ((x.properDivisors.sort (· ≤ ·)).reverse).length := by
     rwa [List.length_reverse, length_sort]
-  have := odd_of_sum_odd (show Odd 3 by native_decide) hlen this
+  have := odd_of_sum_odd (show Odd 3 by decide) hlen this
   set s := (List.take 3 (x.properDivisors.sort (· ≤ ·)).reverse).sum
   grind only [= Nat.odd_iff]
 
@@ -566,7 +566,7 @@ lemma not_five_branch_of_ValidSequence : ValidSequence a → ∀ i, ¬ (¬ 4 ∣
 lemma padicValNat_step_thirteen_twelfths {x y : ℕ} (hx : x ≠ 0) (hy : 12 * y = 13 * x) :
     padicValNat 2 y + 2 = padicValNat 2 x := by
   have hy0 : y ≠ 0 := by lia
-  have h12 : padicValNat 2 12 = 2 := by native_decide
+  have h12 : padicValNat 2 12 = 2 := by decide +kernel
   have hval := congrArg (padicValNat 2) hy
   norm_num [padicValNat.mul, hx, hy0, padicValNat.eq_zero_of_not_dvd, h12] at hval
   lia
@@ -638,7 +638,7 @@ lemma start_eq_pow_mul_of_first_fixed_branch : ValidSequence a → ∀ j, (∀ i
   intro hvalid j hmin
   let m := a j / 13 ^ j
   have hrel := twelve_pow_mul_of_first_fixed_branch hvalid j hmin
-  have hcoprime : Nat.Coprime 12 13 := by native_decide
+  have hcoprime : Nat.Coprime 12 13 := by decide
   have hcoprime' : Nat.Coprime (12 ^ j) (13 ^ j) := (hcoprime.pow_left j).pow_right j
   have h13 : 13 ^ j ∣ 12 ^ j * a j := Dvd.intro (a 0) hrel.symm
   replace h13 : 13 ^ j ∣ a j := hcoprime'.symm.dvd_of_dvd_mul_left h13
@@ -662,7 +662,7 @@ lemma start_eq_pow_of_first_fixed_branch : ValidSequence a →  ∀ j, (∀ i < 
   have h6 : 6 ∣ m := by
     have : 6 ∣ a j := six_dvd_of_ValidSequence hvalid j
     rw [haj] at this
-    have hcop : Nat.Coprime 6 13 := by native_decide
+    have hcop : Nat.Coprime 6 13 := by decide
     exact Nat.Coprime.dvd_of_dvd_mul_left (hcop.pow_right j) this
   obtain ⟨l, hl⟩ := h6
   simp [hl, ← mul_assoc] at ha0

@@ -126,8 +126,7 @@ problem imo1999_p2 (n : ℕ) (hn : 2 ≤ n) :
     let y : Fin n → ℝ := fun i => if i = i0 then 1 else if i = i1 then 1 else 0
     have hy0 : ∀ i, 0 ≤ y i := by
       intro i
-      simp only [y]
-      split_ifs <;> norm_num
+      positivity
     have hyi0 : y i0 = 1 := by simp only [y, if_pos rfl]
     have hyi1 : y i1 = 1 := by
       simp [y]

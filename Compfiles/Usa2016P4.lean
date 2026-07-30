@@ -20,18 +20,15 @@ Find all functions f : ℝ → ℝ such that for all x, y ∈ ℝ:
 
 -/
 
-namespace USA2016P4
+namespace Usa2016P4
 def f_good (f : ℝ → ℝ) : Prop :=  ∀ x y, (f x + x*y) * f (x - 3*y) + (f y + x * y) * f (3*x - y) = (f (x+y))^2
 
 snip begin
 /-roughly follows https://artofproblemsolving.com/wiki/index.php/2016_USAMO_Problems/Problem_4 and https://web.evanchen.cc/exams/USAMO-2016-notes.pdf
 the hard part is proving no other solutions work
 -/
-variable (f: ℝ→ℝ) (hf : f_good f)
-include f hf
 
-
-theorem f_zero: f 0 = 0 := by
+theorem f_zero (f: ℝ→ℝ) (hf : f_good f) : f 0 = 0 := by
     specialize hf 0 0
     simp at hf
     rw [← pow_two, ← two_mul] at hf
@@ -39,7 +36,7 @@ theorem f_zero: f 0 = 0 := by
     rw [sq_eq_zero_iff] at hf
     assumption
 
-theorem f_t_even : ∀t, f t ≠ 0 → f t = f (-t) := by
+theorem f_t_even (f: ℝ→ℝ) (hf : f_good f) : ∀t, f t ≠ 0 → f t = f (-t) := by
     intro t y_ne_zero
     have hf_c := hf
     specialize hf 0 t
@@ -54,7 +51,7 @@ theorem f_t_even : ∀t, f t ≠ 0 → f t = f (-t) := by
     contradiction
 
 
-lemma f_even_zero : ∀t, f t = 0 → f (-t) = 0 := by
+lemma f_even_zero (f: ℝ→ℝ) (hf : f_good f) : ∀t, f t = 0 → f (-t) = 0 := by
     intro t
     have hf_c := hf
     specialize hf 0 (-t)
@@ -71,7 +68,7 @@ lemma f_even_zero : ∀t, f t = 0 → f (-t) = 0 := by
 
 
 
-theorem f_even : ∀t, f t = f (-t) := by
+theorem f_even (f: ℝ→ℝ) (hf : f_good f) : ∀t, f t = f (-t) := by
   intro t
   by_cases hfz : f t = 0
   · have hnfz := f_even_zero f hf t hfz
@@ -81,7 +78,7 @@ theorem f_even : ∀t, f t = f (-t) := by
   · assumption
   assumption
 
-theorem f_half_zero : ∀t, f t = 0 → f (t/2) = 0 := by
+theorem f_half_zero (f: ℝ→ℝ) (hf : f_good f) : ∀t, f t = 0 → f (t/2) = 0 := by
   intro t ftz
   have hf_c := hf
   specialize hf (3*(t/8)) (t/8)
@@ -100,7 +97,7 @@ theorem f_half_zero : ∀t, f t = 0 → f (t/2) = 0 := by
   assumption
 
 
-lemma eq_2 (t:ℝ) : f t + f (-t) - 2 * t ^ 2 = 0 ∨ f (4 * t) = 0 := by
+lemma eq_2 (f: ℝ→ℝ) (hf : f_good f) (t:ℝ) : f t + f (-t) - 2 * t ^ 2 = 0 ∨ f (4 * t) = 0 := by
   have hf_c := hf
   specialize hf t (-t)
   simp at hf
@@ -116,7 +113,7 @@ lemma eq_2 (t:ℝ) : f t + f (-t) - 2 * t ^ 2 = 0 ∨ f (4 * t) = 0 := by
   rw [factor, mul_eq_zero] at hf
   assumption
 
-theorem hf_opts : ∀t, f t = t^2 ∨ f t = 0 := by
+theorem hf_opts (f: ℝ→ℝ) (hf : f_good f) : ∀t, f t = t^2 ∨ f t = 0 := by
     intro t
     have eq_2 := eq_2 f hf t
     by_cases hf_zero : f t = 0
@@ -142,7 +139,7 @@ theorem hf_opts : ∀t, f t = t^2 ∨ f t = 0 := by
     ring_nf at this
     assumption
 
-lemma eq_3 : ∀t, (f t + 3*t^2) * f (t*8) = f (t*4)^2 := by
+lemma eq_3 (f: ℝ→ℝ) (hf : f_good f) : ∀t, (f t + 3*t^2) * f (t*8) = f (t*4)^2 := by
   intro t
   have hf_c := hf
   specialize hf (3*t) t
@@ -153,7 +150,7 @@ lemma eq_3 : ∀t, (f t + 3*t^2) * f (t*8) = f (t*4)^2 := by
   rw [← mul_rotate, ← add_mul, add_comm] at hf
   assumption
 
-theorem f_two_zero : ∀t, f t = 0 → f (2 * t) = 0 := by
+theorem f_two_zero (f: ℝ→ℝ) (hf : f_good f) : ∀t, f t = 0 → f (2 * t) = 0 := by
   have l2 : ∀t, f (t * 4) = 0 → f (t * 8) = 0 := by
     intro t ftz
     have eq_3 := eq_3
@@ -183,7 +180,7 @@ theorem f_two_zero : ∀t, f t = 0 → f (2 * t) = 0 := by
   rw [mul_comm]
   exact l2
 
-theorem f_ge_zero : ∀t, f t ≥ 0 := by
+theorem f_ge_zero (f: ℝ→ℝ) (hf : f_good f) : ∀t, f t ≥ 0 := by
   intro t
   have hf_opts := hf_opts f hf t
   rcases hf_opts with hl | hr
@@ -193,7 +190,8 @@ theorem f_ge_zero : ∀t, f t ≥ 0 := by
 
 
 /-if a ≠ 0 and f a = 0 then wlog a > 0-/
-theorem ha_zero: ∀(_:ℝ), ((∃a, a ≠ 0 ∧ f a = 0)↔ ∃ a > 0, f a = 0) := by
+theorem ha_zero (f: ℝ→ℝ) (hf : f_good f) :
+    ∀(_:ℝ), ((∃a, a ≠ 0 ∧ f a = 0)↔ ∃ a > 0, f a = 0) := by
   intro t
   constructor
   · intro h
@@ -223,151 +221,146 @@ theorem ha_zero: ∀(_:ℝ), ((∃a, a ≠ 0 ∧ f a = 0)↔ ∃ a > 0, f a = 0)
   assumption
 
 /-The main part, proving that if there is some nonzero a such that f a = 0 then we must have f b = 0 for all b-/
-theorem f_eq_zero_if_not_sq : ∀(b:ℝ),(∃a, a≠0 ∧ f a = 0) → f b = 0 := by
-    intro b
-    by_cases hbz : b = 0
-    · intro h
-      rw [hbz]
-      apply f_zero f hf
-    wlog hb: 0 < b generalizing b with H
-    · push Not at hb
-      rw [← neg_zero, le_neg] at hb
-      specialize H (-b)
-      by_cases hb' : 0 < -b
-      · apply H at hb'
-        · intro ex
-          apply hb' at ex
-          rw [f_even f hf]
-          assumption
-        push Not
-        rw [neg_ne_zero]
+theorem f_eq_zero_if_not_sq (f: ℝ→ℝ) (hf : f_good f) :
+    ∀(b:ℝ),(∃a, a≠0 ∧ f a = 0) → f b = 0 := by
+  intro b
+  by_cases hbz : b = 0
+  · intro h
+    rw [hbz]
+    apply f_zero f hf
+  wlog hb: 0 < b generalizing b with H
+  · push Not at hb
+    rw [← neg_zero, le_neg] at hb
+    specialize H (-b)
+    by_cases hb' : 0 < -b
+    · apply H at hb'
+      · intro ex
+        apply hb' at ex
+        rw [f_even f hf]
         assumption
-      push Not at hb'
-      simp at hb hb'
-      have : b = 0 := by linarith
-      contradiction
+      push Not
+      rw [neg_ne_zero]
+      assumption
+    push Not at hb'
+    simp at hb hb'
+    have : b = 0 := by linarith
+    contradiction
 
-    intro h
-    have ha_zero := ha_zero f hf b
-    rw [ha_zero] at h
-    obtain ⟨a, a_pos, f_a_zero⟩ := h
-    have hab_pos : b/a > 0 := by
-        apply div_pos
-        · assumption
-        assumption
+  intro h
+  have ha_zero := ha_zero f hf b
+  rw [ha_zero] at h
+  obtain ⟨a, a_pos, f_a_zero⟩ := h
+  have hab_pos : b/a > 0 := by
+      apply div_pos
+      · assumption
+      assumption
 
-    let c:ℝ := 2 * a * 2 ^ (⌈Real.logb 2 (b/a)⌉)
+  let c:ℝ := 2 * a * 2 ^ (⌈Real.logb 2 (b/a)⌉)
 
-    have cb_pos : c > b := by
-      have cbtrans : b < 2 * a * 2 ^ ((Real.logb 2 (b/a))) := by
-        rw [← div_lt_iff₀', Real.rpow_logb]
-        · field_simp; linarith
-        · linarith
-        · linarith
-        · assumption
-        linarith
-
-      have ceil_trans :  2 * a * (2 ^ (Real.logb 2 (b/a))) ≤ 2 * a * (2 ^ (⌈Real.logb 2 (b/a)⌉)):= by
-        rw [mul_le_mul_iff_right₀]
-        · have : Real.logb 2 (b/a) ≤ ⌈Real.logb 2 (b/a)⌉ := by
-           apply Int.le_ceil
-          apply Real.rpow_le_rpow_of_exponent_le (by norm_num : (1:ℝ) ≤ 2) at this
-          rw [← Real.rpow_intCast]
-          exact this
-        linarith
+  have cb_pos : c > b := by
+    have cbtrans : b < 2 * a * 2 ^ ((Real.logb 2 (b/a))) := by
+      rw [← div_lt_iff₀', Real.rpow_logb]
+      · field_simp; linarith
+      · linarith
+      · linarith
+      · assumption
       linarith
 
-    have f_two_pow_zero : ∀(t: ℝ), ∀(n: ℤ), f t = 0 → (f (2^n * t) = 0):= by
-      intro t n hft
-      induction n using Int.induction_on with
-      | zero => simp; assumption
-      | succ i ih =>
-        norm_cast
-        rw [pow_add]
-        simp
-        nth_rw 2 [mul_comm]
-        apply f_two_zero at ih
-        · rw [← mul_assoc] at ih
-          assumption
+    have ceil_trans :  2 * a * (2 ^ (Real.logb 2 (b/a))) ≤ 2 * a * (2 ^ (⌈Real.logb 2 (b/a)⌉)):= by
+      rw [mul_le_mul_iff_right₀]
+      · have : Real.logb 2 (b/a) ≤ ⌈Real.logb 2 (b/a)⌉ := by
+          apply Int.le_ceil
+        apply Real.rpow_le_rpow_of_exponent_le (by norm_num : (1:ℝ) ≤ 2) at this
+        rw [← Real.rpow_intCast]
+        exact this
+      linarith
+    linarith
+
+  have f_two_pow_zero : ∀(t: ℝ), ∀(n: ℤ), f t = 0 → (f (2^n * t) = 0):= by
+    intro t n hft
+    induction n using Int.induction_on with
+    | zero => simp; assumption
+    | succ i ih =>
+      norm_cast
+      rw [pow_add]
+      simp
+      nth_rw 2 [mul_comm]
+      apply f_two_zero at ih
+      · rw [← mul_assoc] at ih
         assumption
-      | pred i ih =>
-        rw [← neg_add', zpow_neg]
-        norm_cast
-        rw [pow_add]
-        push_cast
-        rw [mul_inv, mul_rotate,inv_mul_eq_div]
-        norm_cast at ih
-        rw [zpow_neg, mul_comm] at ih
-        norm_num at ih
-        apply f_half_zero at ih
-        · rw [mul_div_right_comm] at ih
-          assumption
-        assumption
-
-
-
-
-
-    have f_c_zero : f c = 0 := by
-      change f (2 * a * 2 ^ (⌈Real.logb 2 (b/a)⌉)) = 0
-      have hh1 : f (a * 2 ^ (⌈Real.logb 2 (b/a)⌉)) = 0 := by
-        specialize f_two_pow_zero a (⌈Real.logb 2 (b / a)⌉)
-        apply f_two_pow_zero at f_a_zero
-        rw [mul_comm]
-        assumption
-      apply f_two_zero at hh1
-      · rw [← mul_assoc] at hh1
+      assumption
+    | pred i ih =>
+      rw [← neg_add', zpow_neg]
+      norm_cast
+      rw [pow_add]
+      push_cast
+      rw [mul_inv, mul_rotate,inv_mul_eq_div]
+      norm_cast at ih
+      rw [zpow_neg, mul_comm] at ih
+      norm_num at ih
+      apply f_half_zero at ih
+      · rw [mul_div_right_comm] at ih
         assumption
       assumption
 
-    have hf_c := hf
-    specialize hf_c ((3*c+b)/4) ((c-b)/4)
-    let x' := ((3*c+b)/4)
-    let y' := ((c-b)/4)
-
-    change (f x' + x'*y')* f ((3 * c + b) / 4 - 3 * ((c - b) / 4)) + (f y' + x'*y')* f (3*x' - y') = f ((3 * c + b) / 4 + (c - b) / 4) ^ 2 at hf_c
-    ring_nf at hf_c
-    rw [f_c_zero] at hf_c
-    simp at hf_c
-    rw [← add_mul,add_assoc,← add_mul] at hf_c
-    have x_prime_pos : x' > 0 := by
-      unfold x'
-      linarith
-    have y_prime_pos : y' > 0 := by
-      unfold y'
-      linarith
-    have xyprime_pos : x'*y' > 0 := by apply Right.mul_pos x_prime_pos y_prime_pos
-    have t1 : 0 ≤ (x' * y' + f y') * f (x' * 3 - y') := by
-      rw [mul_nonneg_iff]
-      left
-      constructor
-      · have t1: f y' ≥ 0 := by apply f_ge_zero f hf y'
-        linarith
-      apply f_ge_zero f hf (x'*3-y')
-
-    have t2 : (f x' + x' * y') * f b ≤ (f x' + x' * y') * f b + (x' * y' + f y') * f (x' * 3 - y') := by linarith
-    rw [hf_c] at t2
-    have fb_zero : f b = 0 := by
-      have lpos: (f x' + x' * y') > 0 := by
-        have : f x' ≥ 0 := by apply f_ge_zero f hf x'
-        linarith
-      rw [mul_nonpos_iff] at t2
-      rcases t2 with pos_neg | neg_pos
-      · obtain ⟨_, fb_neg⟩ := pos_neg
-        have fb_ge_zero : f b ≥ 0 := by apply f_ge_zero f hf b
-        linarith
-      obtain ⟨l,r⟩ := neg_pos
-      apply not_le_of_gt at lpos
-      contradiction
+  have f_c_zero : f c = 0 := by
+    change f (2 * a * 2 ^ (⌈Real.logb 2 (b/a)⌉)) = 0
+    have hh1 : f (a * 2 ^ (⌈Real.logb 2 (b/a)⌉)) = 0 := by
+      specialize f_two_pow_zero a (⌈Real.logb 2 (b / a)⌉)
+      apply f_two_pow_zero at f_a_zero
+      rw [mul_comm]
+      assumption
+    apply f_two_zero at hh1
+    · rw [← mul_assoc] at hh1
+      assumption
     assumption
 
-determine solution_set : Set (ℝ → ℝ) := {fun t ↦ 0, fun t ↦ t^2}
+  have hf_c := hf
+  specialize hf_c ((3*c+b)/4) ((c-b)/4)
+  let x' := ((3*c+b)/4)
+  let y' := ((c-b)/4)
+
+  change (f x' + x'*y')* f ((3 * c + b) / 4 - 3 * ((c - b) / 4)) + (f y' + x'*y')* f (3*x' - y') = f ((3 * c + b) / 4 + (c - b) / 4) ^ 2 at hf_c
+  ring_nf at hf_c
+  rw [f_c_zero] at hf_c
+  simp at hf_c
+  rw [← add_mul,add_assoc,← add_mul] at hf_c
+  have x_prime_pos : x' > 0 := by
+    unfold x'
+    linarith
+  have y_prime_pos : y' > 0 := by
+    unfold y'
+    linarith
+  have xyprime_pos : x'*y' > 0 := by apply Right.mul_pos x_prime_pos y_prime_pos
+  have t1 : 0 ≤ (x' * y' + f y') * f (x' * 3 - y') := by
+    rw [mul_nonneg_iff]
+    left
+    constructor
+    · have t1: f y' ≥ 0 := by apply f_ge_zero f hf y'
+      linarith
+    apply f_ge_zero f hf (x'*3-y')
+
+  have t2 : (f x' + x' * y') * f b ≤ (f x' + x' * y') * f b + (x' * y' + f y') * f (x' * 3 - y') := by linarith
+  rw [hf_c] at t2
+  have fb_zero : f b = 0 := by
+    have lpos: (f x' + x' * y') > 0 := by
+      have : f x' ≥ 0 := by apply f_ge_zero f hf x'
+      linarith
+    rw [mul_nonpos_iff] at t2
+    rcases t2 with pos_neg | neg_pos
+    · obtain ⟨_, fb_neg⟩ := pos_neg
+      have fb_ge_zero : f b ≥ 0 := by apply f_ge_zero f hf b
+      linarith
+    obtain ⟨l,r⟩ := neg_pos
+    apply not_le_of_gt at lpos
+    contradiction
+  assumption
 
 snip end
 
-omit hf in
-problem usa2016p4:
-    f ∈ solution_set ↔ f_good f := by
+determine solution_set : Set (ℝ → ℝ) := {fun t ↦ 0, fun t ↦ t^2}
+
+problem usa2016p4 (f : ℝ → ℝ) : f ∈ solution_set ↔ f_good f := by
   constructor
   /- Prove solutions in set satisfy requirements-/
   · intro h_mem x y
@@ -419,4 +412,4 @@ problem usa2016p4:
     assumption
   assumption
 
-end USA2016P4
+end Usa2016P4
