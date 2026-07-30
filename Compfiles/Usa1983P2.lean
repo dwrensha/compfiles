@@ -26,7 +26,7 @@ Prove that the zeros of
 cannot all be real if $2a^2<5b$.
 -/
 
-namespace USA1983P2
+namespace Usa1983P2
 open Polynomial
 
 snip begin
@@ -51,7 +51,6 @@ lemma vieta (a b c d e : ℝ) (x : Fin 5 → ℝ)
       simp at hp
       ring_nf at hp
       linarith
-
 
 theorem ineqs (a b c d e : ℝ) (x : Fin 5 → ℝ)
   (hp: ((X - C (x 0)) * (X - C (x 1)) * (X - C (x 2)) * (X - C (x 3)) * (X - C (x 4))
@@ -103,28 +102,9 @@ theorem ineqs (a b c d e : ℝ) (x : Fin 5 → ℝ)
           rfl
         linarith
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 snip end
 
-
-theorem usa1983_p2 (a b c d e : ℝ)(x : Fin 5 → ℝ):
+problem usa1983_p2 (a b c d e : ℝ)(x : Fin 5 → ℝ):
     2*a^2 < 5*b → ¬(((X - C (x 0)) * (X - C (x 1)) * (X - C (x 2)) * (X - C (x 3)) * (X - C (x 4))
     = X^5 + C a * X^4 + C b * X^3 + C c * X^2 + C d * X + C e)) := by
   contrapose!
@@ -132,4 +112,4 @@ theorem usa1983_p2 (a b c d e : ℝ)(x : Fin 5 → ℝ):
   have h1 := ineqs a b c d e x hp
   linarith
 
-end USA1983P2
+end Usa1983P2
