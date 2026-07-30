@@ -135,7 +135,7 @@ lemma component_atBot (k: singularities) : Tendsto (fun (x: ℝ) => k / (x - k))
     rw [div_le_iff_of_neg (sub_neg.mpr hy), ← le_div_iff₀' (by linarith), sub_le_iff_le_add]
     refine hy.le.trans ?_
     rw [le_add_iff_nonneg_left]
-    exact div_nonneg n_pos.le (by linarith)
+    positivity
 
 lemma component_atTop (k: singularities) : Tendsto (fun (x: ℝ) => k / (x - k)) (𝓝[>] k) atTop := by
   rw [@Filter.tendsto_atTop]

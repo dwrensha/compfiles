@@ -31,9 +31,7 @@ problem usa1991_p4 (m n : ℕ) (a: ℝ) (hm: 0 < m) (hn: 0 < n)
   (ha : a = (m^(m+1)+ n^(n+1))/(m^m + n^n)) : m^m + n^n ≤ a^m + a^n := by
   have h₀ : 0 ≤ a := by
     rw [ha]
-    field_simp
-    norm_cast
-    simp
+    positivity
   have h_sum {m : ℕ} (h: 0 < m) : ∑ i ∈ range m, a^i * m^(m-1-i)
     = 1 / m * (∑ i ∈ range m, (a/m) ^ i) * m ^ m := by
     rw [mul_sum, sum_mul, sum_congr rfl]
