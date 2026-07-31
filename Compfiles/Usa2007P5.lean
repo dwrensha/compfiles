@@ -21,44 +21,22 @@ namespace USA2007P5
 open Nat
 snip begin
 /-Proof ideas derived from an assortment of posts on https://artofproblemsolving.com/community/c6h145849p825508
-  Proving the factorization in factor_poly_a in ℕ was my own, and several lemmas might be useful, such as any natural number having at least one prime factor and any composite having at least two. Factoring polynomials is a pain in Lean
+  Several lemmas might be useful, such as any natural number having at least one prime factor and any composite having at least two.
 -/
 
-
-lemma factor_poly_a (t : ℤ) : t^7 + 1 = (t+1) * (t^6 - t^5 + t^4 - t^3 + t^2 - t + 1) := by ring_nf
-
-lemma factor_poly_b (t : ℤ): (t^6 - t^5 + t^4 - t^3 + t^2 - t + 1) = (t+1)^6 - (7*t)*(t^2+t+1)^2 := by ring_nf
-
-/-`ring` fails here for `ℕ`-/
-lemma factor_poly_an (t : ℕ) (ht : 7 ≤ t): t^7 + 1 = (t + 1) * (t^6 - t^5 + t^4 - t^3 + t^2 - t + 1) := by
-  have f0 : (t^6 - t^5) + (t^4 - t^3) + (t^2 - t) + 1 = t^6 - t^5 + t^4 - t^3 + t^2 - t + 1 := by
-    simp
-    rw [Nat.add_sub_assoc, Nat.add_sub_assoc]
-    · rw [pow_le_pow_iff_right₀]
-      · decide
-      omega
-    nth_rw 1 [← pow_one t]
-    · rw [pow_le_pow_iff_right₀]
-      · decide
-      omega
-
-  have f1 : t * ((t^6 - t^5) + (t^4 - t^3) + (t^2 - t) + 1) = (t^7 - t^6 + t^5 - t^4 + t^3 - t^2 + t) := by
-    simp [f0, Nat.mul_add, Nat.mul_sub]
-    ring_nf
-  rw [add_mul, one_mul, ← f0, f1]
+lemma factor_poly_an (t : ℕ) : t^7 + 1 = (t + 1) * ((t^6 - t^5) + (t^4 - t^3) + (t^2 - t) + 1) := by
   cases t
   · decide
-  · grind
+  · grind [add_mul, Nat.mul_add, Nat.mul_sub]
 
-
-/-same here-/
-lemma factor_poly_bn (t : ℕ)(ht : t ≥ 7) : (t^6 - t^5 + t^4 - t^3 + t^2 - t + 1) = (t+1)^6 - (7*t)*(t^2+t+1)^2 := by
+lemma factor_poly_bn (t : ℕ) : ((t^6 - t^5) + (t^4 - t^3) + (t^2 - t) + 1) = (t+1)^6 - (7*t)*(t^2+t+1)^2 := by
   cases t
   · decide
-  · grind
+  · lia
+
 snip end
 
-problem usa2007_p5 (n : ℕ) : 2*n + 3 ≤ (primeFactorsList (7^(7^n)+1)).length := by
+problem usa2007_p5 (n : ℕ) : 2*n + 3 ≤ (primeFactorsList (7^7^n+1)).length := by
   induction n with
   | zero => simp
   | succ d hd =>
@@ -70,9 +48,9 @@ problem usa2007_p5 (n : ℕ) : 2*n + 3 ≤ (primeFactorsList (7^(7^n)+1)).length
     apply one_le_pow
     decide
 
-  rw [h0, factor_poly_an x hx]
+  rw [h0, factor_poly_an x]
   have ha : x+1 ≠ 0 := add_one_ne_zero _
-  let p := (x ^ 6 - x ^ 5 + x ^ 4 - x ^ 3 + x ^ 2 - x + 1)
+  let p := ((x ^ 6 - x ^ 5) + (x ^ 4 - x ^ 3) + (x ^ 2 - x) + 1)
   have hb : p ≠ 0 := add_one_ne_zero _
   have hfacs := Nat.perm_primeFactorsList_mul ha hb
   rw [List.Perm.length_eq hfacs, List.length_append]
@@ -81,27 +59,27 @@ problem usa2007_p5 (n : ℕ) : 2*n + 3 ≤ (primeFactorsList (7^(7^n)+1)).length
   suffices f4 : p.primeFactorsList.length ≥ 2 by omega
 
   unfold p
-  rw [factor_poly_bn x hx]
+  rw [factor_poly_bn x]
   have hql_eq : (7*x) = 7^1 * 7^(7^d) := rfl
   have h_even : Even (7^d + 1) := Odd.add_one <| Odd.pow <| odd_iff.mpr rfl
   have hq_sqrt: (7^1*7^7^d) = (7^((7^d+1)/2))^2 := by
     rw [← Nat.pow_mul, div_two_mul_two_of_even h_even, Nat.pow_add']
-  rw [ (show (x+1)^6 = ((x+1)^3)^2 by ring_nf)]
+  rw [(show (x+1)^6 = ((x+1)^3)^2 by ring_nf)]
   rw [hql_eq, hq_sqrt, ← mul_pow, Nat.sq_sub_sq]
 
   let a₀ := (x + 1) ^ 3
   let b₀ := (x * (x ^ 2 + x + 1))
   let c₀ := (7^ ((7 ^ d + 1) / 2) * (x ^ 2 + x + 1))
   have tr1: a₀ - b₀ ≤ a₀ - c₀ := by
-    suffices tr1' : c₀ ≤ b₀ from Nat.sub_le_sub_left tr1' a₀
+    refine Nat.sub_le_sub_left ?_ a₀
     rw [mul_le_mul_iff_left₀ <| zero_lt_succ _]
     rw [Nat.pow_le_pow_iff_right (by decide)]
-    grind
+    lia
 
   let s := (x + 1) ^ 3 + (7^((7 ^ d + 1) / 2)) * (x ^ 2 + x + 1)
   let q := (x + 1) ^ 3 - (7^((7 ^ d + 1) / 2)) * (x ^ 2 + x + 1)
-  have tr3 : 1 < s := by grind
-  have tr4 : 1 < q := by grind
+  have tr3 : 1 < s := by lia
+  have tr4 : 1 < q := by lia
   have tr3' : s ≠ 0 := by linarith
   have tr4' : q ≠ 0 := by linarith
   have hfac_second := Nat.perm_primeFactorsList_mul tr3' tr4'
