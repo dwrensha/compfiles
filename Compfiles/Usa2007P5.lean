@@ -42,44 +42,42 @@ problem usa2007_p5 (n : ℕ) : 2*n + 3 ≤ (primeFactorsList (7^7^n+1)).length :
   induction n with
   | zero => simp
   | succ d hd =>
-  have h0 : 7 ^ 7 ^ (d + 1) + 1 = (7^7^d)^7 +1 := by ring_nf
-  let x := 7^(7^d)
 
+  let x := 7^7^d
   have hx : 7 ≤ x := by
     rw [← pow_one 7, Nat.pow_le_pow_iff_right (by decide)]
     apply one_le_pow
     decide
 
-  rw [h0, factor_poly_an x]
+  rw [pow_succ, pow_mul, factor_poly_an x]
   have ha : x+1 ≠ 0 := add_one_ne_zero _
-  let p := ((x ^ 6 - x ^ 5) + (x ^ 4 - x ^ 3) + (x ^ 2 - x) + 1)
+  let p := (x ^ 6 - x ^ 5) + (x ^ 4 - x ^ 3) + (x ^ 2 - x) + 1
   have hb : p ≠ 0 := add_one_ne_zero _
   have hfacs := Nat.perm_primeFactorsList_mul ha hb
   rw [List.Perm.length_eq hfacs, List.length_append]
 
   change 2 * d + 3 ≤ (x + 1).primeFactorsList.length at hd
-  suffices f4 : p.primeFactorsList.length ≥ 2 by omega
+  suffices _ : p.primeFactorsList.length ≥ 2 by omega
 
   unfold p
   rw [factor_poly_bn x]
-  have hql_eq : (7*x) = 7^1 * 7^(7^d) := rfl
+  have hql_eq : 7*x = 7^1 * 7^(7^d) := rfl
   have h_even : Even (7^d + 1) := Odd.add_one <| Odd.pow <| odd_iff.mpr rfl
-  have hq_sqrt: (7^1*7^7^d) = (7^((7^d+1)/2))^2 := by
+  have hq_sqrt: 7^1*7^7^d = (7^((7^d+1)/2))^2 := by
     rw [← Nat.pow_mul, div_two_mul_two_of_even h_even, Nat.pow_add']
   rw [(show (x+1)^6 = ((x+1)^3)^2 by ring_nf)]
   rw [hql_eq, hq_sqrt, ← mul_pow, Nat.sq_sub_sq]
 
   let a₀ := (x + 1) ^ 3
-  let b₀ := (x * (x ^ 2 + x + 1))
-  let c₀ := (7^ ((7 ^ d + 1) / 2) * (x ^ 2 + x + 1))
+  let b₀ := x * (x ^ 2 + x + 1)
+  let c₀ := 7^ ((7 ^ d + 1) / 2) * (x ^ 2 + x + 1)
   have tr1: a₀ - b₀ ≤ a₀ - c₀ := by
     refine Nat.sub_le_sub_left ?_ a₀
-    rw [mul_le_mul_iff_left₀ <| zero_lt_succ _]
-    rw [Nat.pow_le_pow_iff_right (by decide)]
+    rw [mul_le_mul_iff_left₀ <| zero_lt_succ _, Nat.pow_le_pow_iff_right (by decide)]
     lia
 
-  let s := (x + 1) ^ 3 + (7^((7 ^ d + 1) / 2)) * (x ^ 2 + x + 1)
-  let q := (x + 1) ^ 3 - (7^((7 ^ d + 1) / 2)) * (x ^ 2 + x + 1)
+  let s := a₀ + c₀
+  let q := a₀ - c₀
   have tr3 : 1 < s := by lia
   have tr4 : 1 < q := by lia
   have tr3' : s ≠ 0 := by linarith
