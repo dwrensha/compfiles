@@ -79,12 +79,9 @@ snip end
 
 problem usa2007_p5 (n : ℕ) : (primeFactorsList (7^(7^n)+1)).length ≥ 2*n + 3 := by
   induction n with
-  | zero =>
-    have f0 : 7^(7^0) + 1 = 2^3 := by simp
-    rw [f0]
-    simp
+  | zero => simp
   | succ d hd =>
-  have h0 : (7^7^d)^7 +1 = (7 ^ 7 ^ (d + 1)) + 1 := by ring_nf
+  have h0 : 7 ^ 7 ^ (d + 1) + 1 = (7^7^d)^7 +1 := by ring_nf
   let x := 7^(7^d)
 
   have hx : x ≥ 7 := by
@@ -99,59 +96,26 @@ problem usa2007_p5 (n : ℕ) : (primeFactorsList (7^(7^n)+1)).length ≥ 2*n + 3
     · apply one_le_pow; decide
     decide
 
-  symm at h0
   rw [h0]
   change (x^7 + 1).primeFactorsList.length ≥ 2 * d + 5
   rw [factor_poly_an x hx]
   have ha : x+1 ≠ 0 := by linarith
-  have hb : (x ^ 6 - x ^ 5 + x ^ 4 - x ^ 3 + x ^ 2 - x + 1) ≠ 0 := by linarith
-  have hfacs := Nat.perm_primeFactorsList_mul ha hb
-  have f2 : ((x + 1).primeFactorsList ++ (x ^ 6 - x ^ 5 + x ^ 4 - x ^ 3 + x ^ 2 - x + 1).primeFactorsList).length = (((x + 1) * (x ^ 6 - x ^ 5 + x ^ 4 - x ^ 3 + x ^ 2 - x + 1)).primeFactorsList).length := by
-    rw [← List.Perm.length_eq hfacs]
-  rw [← f2]
-  rw [List.length_append]
   let p := (x ^ 6 - x ^ 5 + x ^ 4 - x ^ 3 + x ^ 2 - x + 1)
+  have hb : p ≠ 0 := by unfold p; linarith
+  have hfacs := Nat.perm_primeFactorsList_mul ha hb
+  rw [List.Perm.length_eq hfacs, List.length_append]
   change (x + 1).primeFactorsList.length ≥ 2 * d + 3 at hd
-  have f3: (x + 1).primeFactorsList.length + (p).primeFactorsList.length ≥ 2*d+3 + (p).primeFactorsList.length := by linarith
-  change (x + 1).primeFactorsList.length + (p).primeFactorsList.length ≥ 2 * d + 5
-  have f4 : (p).primeFactorsList.length ≥ 2 := by
+  have f3: (x + 1).primeFactorsList.length + p.primeFactorsList.length ≥ 2*d+3 + p.primeFactorsList.length := by linarith
+  have f4 : p.primeFactorsList.length ≥ 2 := by
     have l1 : p = (x+1)^6 - (7*x)*(x^2+x+1)^2 := by rw [← factor_poly_bn x hx]
-    have sq1 : IsSquare ((x+1)^6) := by
-      have : (x+1)^6 = ((x+1)^3)^2 := by ring_nf
-      rw [this]
-      apply IsSquare.sq
-
-    have sq2 : IsSquare ((7*x)*(x^2+x+1)^2) := by
-      apply IsSquare.mul
-      focus
-        change IsSquare (7^1 * 7^(7^d))
-        rw [← pow_add]
-        suffices : Even (1 +7^d)
-      focus
-        apply Even.isSquare_pow
-        assumption
-      focus
-        rw [add_comm]
-        apply Odd.add_one
-        apply Odd.pow
-        decide
-      apply IsSquare.sq
-
-
     rw [l1]
-    have hql_eq : (7*x) = 7^1 * 7^(7^d) := by
-      change (7^1 * 7^(7^d) ) = 7^1 * 7^(7^d)
-      rfl
+    have hql_eq : (7*x) = 7^1 * 7^(7^d) := rfl
+    have h_even : Even (1 + 7^d) := Odd.one_add <| Odd.pow <| odd_iff.mpr rfl
     have hq_sqrt: (7^1*7^7^d) = (7^((7^d+1)/2))^2 := by
-      have h_even : Even (7^d + 1) := by
-        apply Odd.add_one
-        apply Odd.pow
-        decide
-
       have hhalf : (7 ^ d + 1) / 2 + (7 ^ d + 1) / 2 = (7 ^ d + 1) := by
         rw [← two_mul]
         apply two_mul_div_two_of_even
-        assumption
+        rwa [add_comm]
 
       rw [pow_two, ← pow_add, ← pow_add, pow_right_inj₀]
       · rw [hhalf, add_comm]
@@ -159,8 +123,7 @@ problem usa2007_p5 (n : ℕ) : (primeFactorsList (7^(7^n)+1)).length ≥ 2*n + 3
       decide
 
 
-    have hq_eq : (7^1*7^7^d)*(x^2+x+1)^2 = (7^((7^d+1)/2))^2 * (x^2+x+1)^2 := by rw [hq_sqrt]
-    rw [← mul_pow] at hq_eq
+    have hq_eq : (7^1*7^7^d)*(x^2+x+1)^2 = ((7^((7^d+1)/2)) * (x^2+x+1))^2 := by rw [hq_sqrt, mul_pow]
 
     have hsq : (x+1)^6 - (7*x)*(x^2+x+1)^2 =
     ((x+1)^3+(7 ^ ((7 ^ d + 1) / 2) * (x ^ 2 + x + 1))) * (((x+1)^3)-(7 ^ ((7 ^ d + 1) / 2) * (x ^ 2 + x + 1))) := by
@@ -179,11 +142,7 @@ problem usa2007_p5 (n : ℕ) : (primeFactorsList (7^(7^n)+1)).length ≥ 2*n + 3
     let b₀ := (x * (x ^ 2 + x + 1))
     let c₀ := (7^ ((7 ^ d + 1) / 2) * (x ^ 2 + x + 1))
     have tr1: a₀ - b₀ ≤ a₀ - c₀ := by
-      suffices tr1' : c₀ ≤ b₀
-      focus
-        have tr2 := Nat.sub_le_sub_left tr1'
-        specialize tr2 a₀
-        assumption
+      suffices tr1' : c₀ ≤ b₀ from Nat.sub_le_sub_left tr1' a₀
       change 7^ ((7 ^ d + 1) / 2) * (x ^ 2 + x + 1) ≤ x * (x ^ 2 + x + 1)
       rw [mul_le_mul_iff_left₀]
       · exact f5
@@ -200,12 +159,10 @@ problem usa2007_p5 (n : ℕ) : (primeFactorsList (7^(7^n)+1)).length ≥ 2*n + 3
     have tr4' : q ≠ 0 := by linarith
     have hfac_second := Nat.perm_primeFactorsList_mul tr3' tr4'
 
-    have f6 : (s.primeFactorsList ++ q.primeFactorsList).length =
-    (s*q).primeFactorsList.length := by
+    have f6 : (s*q).primeFactorsList.length = (s.primeFactorsList ++ q.primeFactorsList).length := by
       rw [← List.Perm.length_eq hfac_second]
 
-    rw [← f6]
-    rw [List.length_append]
+    rw [f6, List.length_append]
     rw [← Nat.primeFactorsList_ne_nil] at tr3 tr4
     apply List.length_pos_of_ne_nil at tr3
     apply List.length_pos_of_ne_nil at tr4
