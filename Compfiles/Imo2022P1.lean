@@ -7,8 +7,11 @@ module
 
 public import Mathlib
 
+public import ProblemExtraction
+
 @[expose] public section
 
+problem_file { tags := [.Combinatorics] }
 
 /-!
 # International Mathematical Olympiad 2022, Problem 1
