@@ -11,6 +11,8 @@ public import ProblemExtraction
 
 @[expose] public section
 
+problem_file { tags := [.NumberTheory] }
+
 /-!
 # USA Mathematical Olympiad 2007 P5
 Prove that for every nonnegative integer n, the number 7^7^n + 1 is the product of at
