@@ -265,6 +265,7 @@ public import Compfiles.Usa1974P1
 public import Compfiles.Usa1974P2
 public import Compfiles.Usa1975P1
 public import Compfiles.Usa1976P3
+public import Compfiles.Usa1976P5
 public import Compfiles.Usa1977P1
 public import Compfiles.Usa1978P1
 public import Compfiles.Usa1979P1
