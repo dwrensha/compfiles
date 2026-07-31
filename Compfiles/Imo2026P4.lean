@@ -320,12 +320,16 @@ lemma not_wins (θ : ℝ) : (∀ m : ℤ, (180 : ℝ) ≠ (m : ℝ) * θ) → �
 
 snip end
 
+/-- The angles Mulan can guarantee victory for: `180 / n` for an integer `n ≥ 2`. -/
+determine answer : Set ℝ := {θ : ℝ | ∃ n : ℕ, 2 ≤ n ∧ θ = 180 / n}
+
 /-- **Main theorem.** For `0 < θ < 180`, Mulan can guarantee her victory in finitely
 many steps, no matter how Shan-Yu plays, if and only if `θ = 180 / n` for some
 integer `n ≥ 2`. -/
 problem imo2026_p4 (θ : ℝ) (hθ0 : 0 < θ) (hθ180 : θ < 180) :
-    MulanCanGuarantee θ ↔ ∃ n : ℕ, 2 ≤ n ∧ θ = 180 / n := by
+    MulanCanGuarantee θ ↔ θ ∈ answer := by
   classical
+  change MulanCanGuarantee θ ↔ ∃ n : ℕ, 2 ≤ n ∧ θ = 180 / n
   constructor
   · -- (⇒) If Mulan can guarantee victory, then `θ = 180 / n` for some `n ≥ 2`.
     intro hG
