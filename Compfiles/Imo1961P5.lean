@@ -208,12 +208,16 @@ lemma config_of_cond {b c ω : ℝ} (hb : 0 < b) (hc : 0 < c)
 
 snip end
 
+/-- The range of `c` for which such a triangle exists. -/
+determine answer (b ω : ℝ) : Set ℝ := {c : ℝ | b * Real.tan (ω / 2) ≤ c ∧ c < b}
+
 /-- **IMO 1961 P5.** A triangle $ABC$ with $AC = b$, $AB = c$ and
 $\angle AMB = \omega$ (where $M$ is the midpoint of $BC$, $\omega < 90°$)
 exists if and only if $b\tan(\omega/2) \le c < b$. -/
 problem imo1961_p5 (b c ω : ℝ) (hb : 0 < b) (hc : 0 < c)
     (hω : 0 < ω) (hω2 : ω < Real.pi / 2) :
-    Configuration b c ω ↔ b * Real.tan (ω / 2) ≤ c ∧ c < b := by
+    Configuration b c ω ↔ c ∈ answer b ω := by
+  change Configuration b c ω ↔ b * Real.tan (ω / 2) ≤ c ∧ c < b
   have hcos := cos_pos_of_acute hω hω2
   have ht := tan_half_pos_of_acute hω hω2
   have ht2 := tan_half_sq ω (cos_half_ne_zero_of_acute hω hω2)
