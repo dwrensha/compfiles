@@ -31,31 +31,11 @@ right turns at each junction. She does this until she gets back to the junction
 where she started. What is the largest possible number of times she could have
 entered any junction during her walk, over all possible layouts of the park?
 
-## Solution overview
+# Formalization notes
 
-The answer is `3`, proved here as `IsGreatest numberOfEntries 3`.
-
-A planar drawing of the park determines a *rotation system*: a cyclic ordering of
-the three trails at each junction (the clockwise one, say). Turning left or right
-at a junction means leaving by the trail that immediately follows or precedes the
-incoming trail in that ordering. We axiomatize a park as a finite simple
-3-regular graph equipped with such a rotation system (`Park`), and prove the
-result for *every* rotation system — the argument is purely combinatorial and
-never uses planarity (so the theorem proved is slightly stronger than the
-competition statement).
-
-The trajectory of the visitor is a sequence of *turns* (a junction, an incoming
-trail, an outgoing trail). The process is deterministic in both directions, hence
-totally periodic, so the visitor always returns to the start and every turn
-occurs at most once per period; naively this bounds the number of entries into a
-junction by `6`. The key lemma (`Park.no_mirror`) says that the two turns
-`a → b → c` and `c → b → a` can never both occur in one trajectory: the turns
-immediately following/preceding them at `c` would form another such "mirror"
-pair, and iterating produces an infinite strictly decreasing sequence of gaps.
-The six possible turns at a junction thus pair up into three forbidden pairs, of
-which at most one each can occur, giving the bound `3`. The bound is attained by
-an explicit 10-junction park (`Park.wangPark`), the example of Danielle Wang from
-the official solution.
+A park is axiomatized below as a finite simple 3-regular graph equipped with a
+rotation system (`Park`). The example park `Park.wangPark` is the example of
+Danielle Wang from the official solution.
 -/
 
 namespace Usa2021P2

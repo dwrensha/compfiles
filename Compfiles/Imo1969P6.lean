@@ -59,6 +59,9 @@ theorem amgm_chain {x₁ x₂ y₁ y₂ z₁ z₂ p q : ℝ}
 
 snip end
 
+/-- The condition for equality to hold. -/
+determine eqCondition (x₁ x₂ y₁ y₂ z₁ z₂ : ℝ) : Prop := x₁ = x₂ ∧ y₁ = y₂ ∧ z₁ = z₂
+
 problem imo1969_p6 (x₁ x₂ y₁ y₂ z₁ z₂ : ℝ)
     (hx₁ : 0 < x₁) (hx₂ : 0 < x₂)
     (h₁ : z₁ ^ 2 < x₁ * y₁) (h₂ : z₂ ^ 2 < x₂ * y₂) :
@@ -66,7 +69,7 @@ problem imo1969_p6 (x₁ x₂ y₁ y₂ z₁ z₂ : ℝ)
         1 / (x₁ * y₁ - z₁ ^ 2) + 1 / (x₂ * y₂ - z₂ ^ 2) ∧
       (8 / ((x₁ + x₂) * (y₁ + y₂) - (z₁ + z₂) ^ 2) =
           1 / (x₁ * y₁ - z₁ ^ 2) + 1 / (x₂ * y₂ - z₂ ^ 2) ↔
-        x₁ = x₂ ∧ y₁ = y₂ ∧ z₁ = z₂) := by
+        eqCondition x₁ x₂ y₁ y₂ z₁ z₂) := by
   have ha : 0 < x₁ * y₁ - z₁ ^ 2 := sub_pos.mpr h₁
   have hb : 0 < x₂ * y₂ - z₂ ^ 2 := sub_pos.mpr h₂
   have hy₁ : 0 < y₁ := pos_of_mul_pos_right (lt_of_le_of_lt (sq_nonneg z₁) h₁) hx₁.le

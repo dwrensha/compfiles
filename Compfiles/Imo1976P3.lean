@@ -29,18 +29,8 @@ The box has integer dimensions `a ≤ b ≤ c`. A cube of volume `2` has side
 length `k = ∛2` (the real cube root of two), and along an edge of integer
 length `n` exactly `⌊n / k⌋₊` such cubes fit, so the "exactly 40%" condition
 reads `a * b * c = 5 * (⌊a / k⌋₊ * ⌊b / k⌋₊ * ⌊c / k⌋₊)`. We prove that the
-sorted dimensions are exactly `2 × 3 × 5` or `2 × 5 × 6`.
-
-# Solution
-
-We follow https://prase.cz/kalva/imo/isoln/isoln763.html . Writing
-`n' = ⌊n / k⌋₊`, the defining property of the floor becomes the pair of
-integer inequalities `2 * n'^3 ≤ n^3 < 2 * (n' + 1)^3`, and everything is
-done in `ℕ` from then on. One shows `n^3 < 5 * n'^3` for all `n ≥ 3`, which
-forces the smallest dimension to be `2`; then `7 * n < 10 * n'` for `n ≥ 11`
-bounds the middle dimension by `10`, and a finite case analysis on
-`b ∈ {2, …, 10}` (using `2 * b * c = 5 * b' * c'` and the divisibility it
-implies) leaves only `c = 5` (when `b = 3`) and `c = 6` (when `b = 5`).
+sorted dimensions are exactly `2 × 3 × 5` or `2 × 5 × 6`. The formalized
+solution follows https://prase.cz/kalva/imo/isoln/isoln763.html .
 -/
 
 namespace Imo1976P3

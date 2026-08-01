@@ -24,10 +24,6 @@ divisible by a prime less than 13?
 
 (b) Do there exist 21 consecutive positive integers, each of which is
 divisible by a prime less than 17?
-
-# Answer
-
-(a) No.  (b) Yes: for example 9440, 9441, …, 9460.
 -/
 
 namespace Usa1986P1
