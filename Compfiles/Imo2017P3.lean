@@ -1049,10 +1049,22 @@ end
 
 snip end
 
+/-- The answer to the question "can the hunter always ensure that the distance
+between her and the rabbit becomes at most 100?" is no. -/
+determine does_exist : Bool := false
+
 problem imo2017_p3 :
-    ¬ ∃ σ : Strategy, ValidStrategy σ ∧
-      ∀ A p : ℕ → Pt, ValidRabbit A → ValidReports A p →
-        dist (A totalRounds) (hunterPos σ p totalRounds) ≤ 100 := by
+    if does_exist then
+      ∃ σ : Strategy, ValidStrategy σ ∧
+        ∀ A p : ℕ → Pt, ValidRabbit A → ValidReports A p →
+          dist (A totalRounds) (hunterPos σ p totalRounds) ≤ 100
+    else
+      ¬ ∃ σ : Strategy, ValidStrategy σ ∧
+        ∀ A p : ℕ → Pt, ValidRabbit A → ValidReports A p →
+          dist (A totalRounds) (hunterPos σ p totalRounds) ≤ 100 := by
+  change ¬ ∃ σ : Strategy, ValidStrategy σ ∧
+        ∀ A p : ℕ → Pt, ValidRabbit A → ValidReports A p →
+          dist (A totalRounds) (hunterPos σ p totalRounds) ≤ 100
   rintro ⟨σ, hσ, hgua⟩
   obtain ⟨A, p, hA, hp, hdist⟩ := adversary σ hσ
   exact absurd (hgua A p hA hp) (not_le.mpr hdist)
