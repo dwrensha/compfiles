@@ -196,8 +196,16 @@ theorem reachable_invariant {b : Config}
 
 snip end
 
+/-- The answer to the question "is there a sequence of allowed moves to a
+target configuration?" is no. -/
+determine does_exist : Bool := false
+
 problem usa1994_p2 :
-    ¬ ∃ m : ZMod 99, Relation.ReflTransGen Move initial (target m) := by
+    if does_exist then
+      ∃ m : ZMod 99, Relation.ReflTransGen Move initial (target m)
+    else
+      ¬ ∃ m : ZMod 99, Relation.ReflTransGen Move initial (target m) := by
+  change ¬ ∃ m : ZMod 99, Relation.ReflTransGen Move initial (target m)
   rintro ⟨m, hm⟩
   obtain ⟨hw, -⟩ := reachable_invariant hm
   rw [totalWeight_target_eq m, totalWeight_target_zero, totalWeight_initial] at hw

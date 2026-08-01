@@ -66,9 +66,21 @@ theorem factorization_eq_of_pow (k : ℕ) (hk : 0 < k) (y z C : ℕ)
 
 snip end
 
+/-- The answer to the first question (finite sets of any size) is yes. -/
+determine does_exist_finite : Bool := true
+
+/-- The answer to the second question (infinite sets) is no. -/
+determine does_exist_infinite : Bool := false
+
 problem usa1984_p2a (n : ℕ) :
-    ∃ s : Finset ℕ, s.card = n ∧ (∀ x ∈ s, 0 < x) ∧
-      ∀ t : Finset ℕ, t ⊆ s → t.Nonempty → ∃ m : ℕ, m ^ t.card = ∏ x ∈ t, x := by
+    if does_exist_finite then
+      ∃ s : Finset ℕ, s.card = n ∧ (∀ x ∈ s, 0 < x) ∧
+        ∀ t : Finset ℕ, t ⊆ s → t.Nonempty → ∃ m : ℕ, m ^ t.card = ∏ x ∈ t, x
+    else
+      ¬ ∃ s : Finset ℕ, s.card = n ∧ (∀ x ∈ s, 0 < x) ∧
+        ∀ t : Finset ℕ, t ⊆ s → t.Nonempty → ∃ m : ℕ, m ^ t.card = ∏ x ∈ t, x := by
+  change ∃ s : Finset ℕ, s.card = n ∧ (∀ x ∈ s, 0 < x) ∧
+        ∀ t : Finset ℕ, t ⊆ s → t.Nonempty → ∃ m : ℕ, m ^ t.card = ∏ x ∈ t, x
   classical
   have hinj : Function.Injective (· ^ n !) := Nat.pow_left_injective (Nat.factorial_ne_zero n)
   refine ⟨(Finset.Icc 1 n).image (· ^ n !), ?_, ?_, ?_⟩
@@ -93,8 +105,14 @@ problem usa1984_p2a (n : ℕ) :
     exact ⟨(∏ x ∈ u, x) ^ (n ! / u.card), by rw [← pow_mul, Nat.div_mul_cancel hdvd]⟩
 
 problem usa1984_p2b :
-    ¬ ∃ S : Set ℕ, S.Infinite ∧ (∀ x ∈ S, 0 < x) ∧
-      ∀ s : Finset ℕ, s.Nonempty → ↑s ⊆ S → ∃ m : ℕ, m ^ s.card = ∏ x ∈ s, x := by
+    if does_exist_infinite then
+      ∃ S : Set ℕ, S.Infinite ∧ (∀ x ∈ S, 0 < x) ∧
+        ∀ s : Finset ℕ, s.Nonempty → ↑s ⊆ S → ∃ m : ℕ, m ^ s.card = ∏ x ∈ s, x
+    else
+      ¬ ∃ S : Set ℕ, S.Infinite ∧ (∀ x ∈ S, 0 < x) ∧
+        ∀ s : Finset ℕ, s.Nonempty → ↑s ⊆ S → ∃ m : ℕ, m ^ s.card = ∏ x ∈ s, x := by
+  change ¬ ∃ S : Set ℕ, S.Infinite ∧ (∀ x ∈ S, 0 < x) ∧
+        ∀ s : Finset ℕ, s.Nonempty → ↑s ⊆ S → ∃ m : ℕ, m ^ s.card = ∏ x ∈ s, x
   rintro ⟨S, hSinf, hSpos, hS⟩
   -- Pick two distinct elements `a`, `b` of `S`.
   obtain ⟨a, haS⟩ := hSinf.nonempty

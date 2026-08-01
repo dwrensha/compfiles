@@ -942,6 +942,10 @@ lemma main_lemma : ∀ n : ℕ, ∀ S : Finset (ℤ × ℤ), S.card ≤ n → �
 
 snip end
 
+/-- The answer to the question "is it always possible to color the points?"
+is yes. -/
+determine does_exist : Bool := true
+
 /-- **IMO 1986, Problem 6.**  Given a finite set `S` of points in the plane with
 integer coordinates, the points can be colored red or white so that on every
 line parallel to one of the coordinate axes the numbers of white and red points
@@ -952,10 +956,17 @@ We encode the coloring by a sign function `ε : ℤ × ℤ → ℤ` with values 
 line is then exactly the difference between the numbers of white and red points
 on that line. -/
 problem imo1986_p6 (S : Finset (ℤ × ℤ)) :
-    ∃ ε : ℤ × ℤ → ℤ,
-      (∀ p ∈ S, ε p = 1 ∨ ε p = -1) ∧
-      (∀ x : ℤ, |∑ p ∈ S.filter (fun p => p.1 = x), ε p| ≤ 1) ∧
-      (∀ y : ℤ, |∑ p ∈ S.filter (fun p => p.2 = y), ε p| ≤ 1) := by
+    if does_exist then
+      ∃ ε : ℤ × ℤ → ℤ,
+        (∀ p ∈ S, ε p = 1 ∨ ε p = -1) ∧
+        (∀ x : ℤ, |∑ p ∈ S.filter (fun p => p.1 = x), ε p| ≤ 1) ∧
+        (∀ y : ℤ, |∑ p ∈ S.filter (fun p => p.2 = y), ε p| ≤ 1)
+    else
+      ¬ ∃ ε : ℤ × ℤ → ℤ,
+        (∀ p ∈ S, ε p = 1 ∨ ε p = -1) ∧
+        (∀ x : ℤ, |∑ p ∈ S.filter (fun p => p.1 = x), ε p| ≤ 1) ∧
+        (∀ y : ℤ, |∑ p ∈ S.filter (fun p => p.2 = y), ε p| ≤ 1) := by
+  simp only [ite_true]
   obtain ⟨ε, hε⟩ := main_lemma S.card S (le_refl _)
   exact ⟨ε, hε⟩
 

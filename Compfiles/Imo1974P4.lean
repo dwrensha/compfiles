@@ -92,6 +92,9 @@ determine solutions : Finset (Finset ℕ) :=
   {{1, 2, 3, 4, 5, 7, 10}, {1, 2, 3, 4, 5, 8, 9},
    {1, 2, 3, 4, 6, 7, 9}, {1, 2, 3, 5, 6, 7, 8}}
 
+/-- The maximum possible number of white squares. -/
+determine maxCount : ℕ := 7
+
 snip begin
 
 /-- The number of unit squares of a rectangle is the product of its two
@@ -227,9 +230,9 @@ def decomp₄ : Finset Rect :=
 snip end
 
 problem imo1974_p4 :
-    (∀ T : Finset Rect, ValidDecomp T → T.card ≤ 7 ∧
-      (T.card = 7 → T.image Rect.whiteCount ∈ solutions)) ∧
-    ∀ s ∈ solutions, ∃ T : Finset Rect, ValidDecomp T ∧ T.card = 7 ∧
+    (∀ T : Finset Rect, ValidDecomp T → T.card ≤ maxCount ∧
+      (T.card = maxCount → T.image Rect.whiteCount ∈ solutions)) ∧
+    ∀ s ∈ solutions, ∃ T : Finset Rect, ValidDecomp T ∧ T.card = maxCount ∧
       T.image Rect.whiteCount = s := by
   refine ⟨fun T hT ↦ ?_, fun s hs ↦ ?_⟩
   · -- Upper bound and classification.

@@ -147,9 +147,21 @@ lemma not_all_divisible (a : ℕ) :
 
 snip end
 
+/-- The answer to part (a) (14 consecutive integers) is no. -/
+determine does_exist_14 : Bool := false
+
+/-- The answer to part (b) (21 consecutive integers) is yes. -/
+determine does_exist_21 : Bool := true
+
 problem usa1986_p1a :
-    ¬ ∃ n : ℕ, 0 < n ∧
-      ∀ i ∈ Finset.range 14, ∃ p : ℕ, p.Prime ∧ p < 13 ∧ p ∣ n + i := by
+    if does_exist_14 then
+      ∃ n : ℕ, 0 < n ∧
+        ∀ i ∈ Finset.range 14, ∃ p : ℕ, p.Prime ∧ p < 13 ∧ p ∣ n + i
+    else
+      ¬ ∃ n : ℕ, 0 < n ∧
+        ∀ i ∈ Finset.range 14, ∃ p : ℕ, p.Prime ∧ p < 13 ∧ p ∣ n + i := by
+  change ¬ ∃ n : ℕ, 0 < n ∧
+        ∀ i ∈ Finset.range 14, ∃ p : ℕ, p.Prime ∧ p < 13 ∧ p ∣ n + i
   rintro ⟨n, -, h⟩
   -- Among `n, …, n + 13` there are seven odd numbers; writing the smallest of
   -- them as `a = n + 1 - n % 2`, they are `a + 2 * j` for `j < 7`.
@@ -166,8 +178,14 @@ problem usa1986_p1a :
   · exact h11 hdiv
 
 problem usa1986_p1b :
-    ∃ n : ℕ, 0 < n ∧
-      ∀ i ∈ Finset.range 21, ∃ p : ℕ, p.Prime ∧ p < 17 ∧ p ∣ n + i := by
+    if does_exist_21 then
+      ∃ n : ℕ, 0 < n ∧
+        ∀ i ∈ Finset.range 21, ∃ p : ℕ, p.Prime ∧ p < 17 ∧ p ∣ n + i
+    else
+      ¬ ∃ n : ℕ, 0 < n ∧
+        ∀ i ∈ Finset.range 21, ∃ p : ℕ, p.Prime ∧ p < 17 ∧ p ∣ n + i := by
+  change ∃ n : ℕ, 0 < n ∧
+        ∀ i ∈ Finset.range 21, ∃ p : ℕ, p.Prime ∧ p < 17 ∧ p ∣ n + i
   -- The odd numbers among 9440, …, 9460 are divisible by
   -- 3, 7, 5, 3, 11, 13, 3, 5, 7, 3 respectively.
   refine ⟨9440, by norm_num, fun i hi ↦ ?_⟩
