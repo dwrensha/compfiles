@@ -23,33 +23,10 @@ The point S on BC is such that BS = CU. PS meets the incircle at
 two points. The nearer to P is Q. Take W on PC such that PW = CV.
 Let BW and PS meet at R. Show that PQ = RS.
 
-# Solution
+# Formalization notes
 
-We use coordinates. Write the side lengths of the triangle as
-`p = |BC|`, `b = |PC|`, `c = |PB|` and place `B = (0, 0)`, `C = (p, 0)`
-and `P = (px, py)` with `py > 0`. Let `s = (p + b + c)/2` be the
-semiperimeter. The classical equal-tangents facts read
-`CU = CV = s - c`, `BU = s - b`, `PV = s - p`, and the inradius is
-`r = p * py / (2 * s)` (area over semiperimeter), so the incircle has
-center `I = (s - b, r)` and radius `r`.
-
-Set `Q := P + ((s - p)/s) • (S - P)` and `R := P + (p/s) • (S - P)`.
-Then `dist P Q = ((s - p)/s) * dist P S = dist R S` is immediate, and
-`R = (b/s) • W` shows that `R` lies on the line `BW`. The heart of the
-proof is the following polynomial identity, checked by `ring` after
-clearing denominators: for every `t`,
-
-  `|P + t • (S - P) - I|² = r² + (t - (s - p)/s) * (|PS|² * t - s * (s - p))`.
-
-It says that the line `PS` meets the incircle exactly at the parameters
-`t₁ = (s - p)/s` (i.e. at `Q`) and `t₂ = s * (s - p)/|PS|²`, and
-`|PS|² < s²` implies `t₁ < t₂`, so `Q` is indeed the intersection point
-nearer to `P`.
-
-(Equivalently, in the classical synthetic solution one first observes
-that `S` is the touchpoint of the `P`-excircle and then applies
-Menelaus' theorem to the triangle `PSC` with the transversal `B-R-W`;
-see e.g. https://prase.cz/kalva/usa/usoln/usol012.html .)
+The problem is formalized in coordinates. For the classical synthetic
+solution see e.g. https://prase.cz/kalva/usa/usoln/usol012.html .
 -/
 
 namespace Usa2001P2

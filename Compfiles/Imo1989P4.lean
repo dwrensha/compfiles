@@ -29,56 +29,9 @@ at a distance $h$ from the line $CD$ such that $AP = h + AD$ and
 $BP = h + BC$. Show that:
 $$ \frac{1}{\sqrt{h}} \geq \frac{1}{\sqrt{AD}} + \frac{1}{\sqrt{BC}}. $$
 
-## Solution sketch (after Gerhard Wöginger)
-
-Let $C_A$ be the circle with center $A$ and radius $AD$, and $C_B$ the circle
-with center $B$ and radius $BC$; the two circles touch each other since
-$AB = AD + BC$. The circle $C_P$ with center $P$ and radius $h$ touches $C_A$,
-$C_B$ and the line $CD$. Let $t$ be the common tangent to $C_A$ and $C_B$
-whose points of contact are on the same side of $AB$ as $C$ and $D$. Then
-$C_P$ is confined inside the curvilinear triangle bounded by $t$, $C_A$ and
-$C_B$, so $h$ is at most the value attained when $C_P$ also touches $t$. In
-that extremal configuration the angles $\angle ADC$ and $\angle BCD$ are right
-angles, so $CD^2 = AB^2 - (AD - BC)^2 = 4 \cdot AD \cdot BC$; similarly, if
-$E$ is the point where $t$ touches $C_P$, then $DE^2 = 4h \cdot AD$ and
-$CE^2 = 4h \cdot BC$. Since $CD = DE + CE$, we get
-$1/\sqrt{h} = 1/\sqrt{AD} + 1/\sqrt{BC}$ in the extremal case, which gives
-the inequality in general.
-
 ## Formalization note
 
-We work in coordinates: put $a = AD$, $b = BC$, place $A = (0, 0)$ and
-$B = (a + b, 0)$ (using $AB = AD + BC$) and take the side of $AB$ containing
-$C$, $D$ (and hence $P$) to have positive second coordinate; `hpy` records
-this orientation choice. The hypotheses `hAP`, `hBP`, `hAD`, `hBC` are the
-side-length conditions $AP = h + a$, $BP = h + b$, $AD = a$, $BC = b$;
-`hdist` says that the distance from `P` to the line `CD` (i.e. to its
-orthogonal projection on `line[ℝ, C, D]`) equals `h`; `hP` says that `P`
-lies in the interior of the convex hull of the four vertices, which is the
-content of "`ABCD` is a convex quadrilateral and `P` is inside it" that the
-proof uses.
-
-The confinement step of the sketch — the circle around $P$ stays below the
-common external tangent line $t$ — is *derived* in the lemma `confine`:
-writing $P$ as a convex combination of the four vertices (from `hP`) and
-evaluating the two affine functions $f(X) = \langle X, n_0 \rangle$ (height
-towards $t$) and $g(X) = \langle X - Q, \hat m \rangle$ (signed distance to
-the line $CD$, with $Q$ the foot of the perpendicular from $P$ and
-$\hat m = (P-Q)/h$) on this combination gives
-$\langle P, n_0 \rangle \le a - a w_A - b w_B$ and
-$h \le a w_A + b w_B$, hence $\langle P, n_0 \rangle \le a - h$, i.e.
-$\operatorname{dist}(P, t) \ge h$. The interior-hull hypothesis is essential:
-the metric equations alone admit spurious configurations with arbitrarily
-large $h$.
-
-From here the proof is purely algebraic. The two distance equations give
-$p_x = a + h(a-b)/(a+b)$ and $p_y^2 = 4abh(a+b+h)/(a+b)^2$; substituting in
-the confinement inequality yields, with
-$G(x) := x(a^2+b^2) + 2ab\sqrt{x(a+b+x)}$, that $G(h) \le ab(a+b)$.
-But $G$ is strictly increasing on $(0, \infty)$ and a direct computation
-shows $G(h_0) = ab(a+b)$ for $h_0 := ab/(\sqrt a + \sqrt b)^2$, so
-$h \le h_0$, which rearranges to
-$1/\sqrt{h} \ge 1/\sqrt{a} + 1/\sqrt{b}$.
+The proof follows a solution sketch by Gerhard Wöginger.
 -/
 
 namespace Imo1989P4

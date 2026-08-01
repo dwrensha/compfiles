@@ -26,22 +26,6 @@ such that
   a₀xⁿ + a₁xⁿ⁻¹y + a₂xⁿ⁻²y² + ... + aₙ₋₁xyⁿ⁻¹ + aₙyⁿ = 1
 
 for each (x,y) ∈ S.
-
-## Solution
-
-We represent homogeneous bivariate polynomials by their coefficient
-functions (`HForm`). The construction proceeds as follows.
-Group the points of `S` into antipodal classes and pick a set `T` of
-representatives. For each `t ∈ T` Bézout gives a linear form `Lₜ` with
-`Lₜ(t) = 1`, and `ℓₜ(x,y) = t.2 * x - t.1 * y` vanishes exactly on the
-class of `t`. Using the Chinese remainder theorem one builds a form `g`
-whose value `vₜ = g(t)` is nonzero and coprime to
-`Δₜ = ∏_{t' ≠ t} ℓ_{t'}(t)^E` for every `t`. Raising `g` to the power
-`K = |T| * ∏ φ(|Δₜ|)` gives `vₜ^K ≡ 1 (mod Δₜ)` by Euler's theorem, and
-the correction
-`F = g^K - Σₜ ((vₜ^K - 1)/Δₜ) • Lₜ^{m} • ∏_{t' ≠ t} ℓ_{t'}^E`
-is homogeneous of positive degree and takes the value `1` at every point
-of `S`.
 -/
 
 namespace Imo2017P6

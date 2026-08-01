@@ -29,38 +29,10 @@ midpoint of the side BC. The bisectors of the angles ∠BAC and ∠MON intersect
 at R. Prove that the circumcircles of the triangles BMR and CNR have a common
 point lying on the side BC.
 
-# Solution
-
-We give a coordinate proof. The classical synthetic solution (see e.g. Evan
-Chen's IMO 2004 notes) first observes that A, M, R, N are concyclic (the
-bisector of ∠MON is the perpendicular bisector of MN since OM = ON, so R is
-the midpoint of arc MN of the circumcircle of AMN), and then Miquel's theorem
-implies that the circumcircles of BMR and CNR meet again on BC. That common
-point is the foot of the internal bisector of ∠BAC on BC, and here we simply
-verify directly, in coordinates, that this point is concyclic with B, M, R
-and with C, N, R by computing both circumcenters explicitly.
-
 # Formalization notes
 
-We place the figure in the Euclidean plane `EuclideanSpace ℝ (Fin 2)` with A at
-the origin and the internal bisector of ∠BAC as the x-axis: for positive reals
-`p`, `q` (the directions of the two sides, unnormalized — no relation
-`p² + q² = 1` is needed because every step of the proof is an algebraic
-identity) and positive `b`, `c` we take
-* `A = (0, 0)`, `B = c • (p, q)`, `C = b • (p, -q)`; then `AB ≠ AC` is `b ≠ c`;
-* `M` is the foot of the perpendicular from `C` on line `AB`, which is the
-  second intersection of line `AB` with the circle of diameter `BC` because
-  `∠BMC = 90°` by Thales' theorem: `M = b(p²-q²)/(p²+q²) • (p, q)`;
-* `N` is analogous: `N = c(p²-q²)/(p²+q²) • (p, -q)`;
-* `R` lies on the bisector of `∠BAC` (the x-axis); the bisector of `∠MON` is
-  the perpendicular bisector of `MN` as `OM = ON`, so `R` is determined by
-  `RM = RN`: `R = ((b+c)(p²-q²)/(2p), 0)`.
-The hypotheses that the angles of `ABC` are acute read `q < p` (angle `A`),
-`b(p²-q²) < c(p²+q²)` (angle `B`) and `c(p²-q²) < b(p²+q²)` (angle `C`).
-
-The claimed common point is `K = (2bcp/(b+c), 0)`: it lies on side `BC` (it is
-`B + (c/(b+c)) • (C - B)`, the meet of the bisector of `∠BAC` with `BC`) and we
-show that it is equidistant from the explicit circumcenters of `BMR` and `CNR`.
+The proof is a direct coordinate computation; for the classical synthetic
+solution see e.g. Evan Chen's IMO 2004 notes.
 -/
 
 namespace Imo2004P1

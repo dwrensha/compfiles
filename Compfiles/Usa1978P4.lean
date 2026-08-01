@@ -29,36 +29,6 @@ problem_file { tags := [.Geometry] }
 Show that if the angle between each pair of faces of a tetrahedron is equal,
 then the tetrahedron is regular. Does a tetrahedron have to be regular if five
 of the angles are equal?
-
-# Solution outline
-
-We work in `EuclideanSpace ℝ (Fin 3)`.  For a tetrahedron with vertices
-`v : Fin 4 → Pt` we consider the outward-pointing unit normals `n i` to the
-four faces (face `i` being the one opposite vertex `v i`).  The interior
-dihedral angle along the edge shared by faces `i` and `j` equals
-`π - angle (n i) (n j)`, so the hypothesis that all six dihedral angles are
-equal says that the six pairwise inner products `⟪n i, n j⟫` are all equal to
-some constant `c`.
-
-*Part 1.*  Since four vectors in a 3-dimensional space are linearly
-dependent, taking inner products with the `n j` forces `c = -1/3`, and then
-`n 0 + n 1 + n 2 + n 3 = 0`.  Writing `d j` for the common value of
-`⟪n j, v i⟫` (`i ≠ j`, i.e. the equation of the plane containing face `j`),
-one checks that `v i - v j = -(3/4) * (∑ d) • (n i - n j)`: both sides have
-the same inner product with three linearly independent normals.  Hence all
-six edge lengths are equal.
-
-*Part 2.*  The answer is **no**.  We give an explicit tetrahedron whose five
-dihedral angles are equal but whose edges are not: with `s = √3`,
-the unit vectors
-`W = (5s/28, 15/28, 11/14)`, `X = (s/2, 0, -1/2)`,
-`Y = (-s/4, 3/4, -1/2)`, `Z = (-s/4, -3/4, -1/2)`
-satisfy `W·X = W·Y = X·Y = X·Z = Y·Z = -1/8` and `W·Z = -13/14`.
-The four planes `u ↦ ⟪n i, u⟫ = 1` cut out a tetrahedron with outward unit
-normals `n` (the origin lies strictly inside it), five of whose dihedral
-angles are therefore equal, while the edge lengths are not all equal
-(two of the squared edge lengths are `144` and `84`).
-
 -/
 
 namespace Usa1978P4

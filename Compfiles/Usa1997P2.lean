@@ -35,21 +35,7 @@ hypothesis that D, E, F are not collinear (which also guarantees that
 EF, FD and DE are genuine lines and that the first two perpendiculars
 actually meet).
 
-## Solution
-
-We follow the classical "equal differences of squares" argument
-(J. Scholes' kalva solution): for any point P, P lies on the line
-through A perpendicular to EF iff `PF² - PE² = AF² - AE²`, since both
-conditions say that P and A have the same projection onto EF. Hence if P
-is the intersection of the perpendiculars through A and through B, then
-`PD² - PE² = (BD² - BF²) - (AE² - AF²) = CD² - CE²`,
-using `FA = FB`, `DB = DC` and `EA = EC`, so P also lies on the
-perpendicular to DE through C.
-
-Here everything is phrased with inner products: the three lines are the
-sets `{P | ⟪P - A, E - F⟫ = 0}` etc., and the intersection point of the
-first two is computed explicitly as a linear combination of `E - F` and
-`F - D` (Cramer's rule for the 2×2 Gram system).
+The formalization follows J. Scholes' kalva solution.
 -/
 
 namespace Usa1997P2

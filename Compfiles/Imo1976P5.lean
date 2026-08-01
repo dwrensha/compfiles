@@ -24,15 +24,7 @@ n is a positive integer and m = 2n. aᵢⱼ = 0, 1 or -1 for 1 ≤ i ≤ n,
 for i = 1, 2, ... , n. Prove that the system has a solution in integers
 of absolute value at most m, not all zero.
 
-# Solution
-
-We use a counting argument
-(https://prase.cz/kalva/imo/isoln/isoln765.html). If each |xⱼ| ≤ n, then
-each left-hand side is an integer between -2n² and 2n², so the tuple of
-left-hand sides takes at most (4n² + 1)ⁿ values. But there are
-(2n + 1)²ⁿ = (4n² + 4n + 1)ⁿ > (4n² + 1)ⁿ such tuples (x₁, ... , xₘ),
-so two distinct tuples x and x' give the same left-hand sides. Then
-x - x' is a nonzero integer solution with |xⱼ - x'ⱼ| ≤ 2n = m.
+(Solution source: https://prase.cz/kalva/imo/isoln/isoln765.html)
 -/
 
 namespace Imo1976P5

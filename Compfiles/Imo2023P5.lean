@@ -34,22 +34,7 @@ row is reached.
 In terms of n, determine the greatest k such that in each Japanese triangle
 there is a ninja path containing at least k red dots.
 
-## Solution
-
-The answer is `⌊log₂ n⌋ + 1`, which we write uniformly (so that it is also
-correct for `n = 0`) as `Nat.clog 2 (n + 1)`.
-
-For the lower bound (following Helio Ng's proof), for each dot `(i, p)` let
-`f j i p` be the maximal number of red dots on a ninja path from the top to
-that dot.  Writing `S i = ∑ p, f j i p`, one shows
-`S (i+1) ≥ S i + S i / i + 1`, and induction gives
-`S i ≥ (log₂ i) * i + 2 * (i - 2 ^ log₂ i) + 1`, so some dot in the last row
-is reached by a path with at least `⌊log₂ n⌋ + 1` red dots.
-
-For the upper bound, place the red dot of row `i` at position
-`2 ^ (clog₂ (i+1)) - 1 - i`.  Inside each dyadic block of rows, the red
-positions strictly decrease while positions along a ninja path can never
-decrease, so any ninja path collects at most one red dot per block.
+The lower-bound argument formalized here follows Helio Ng's proof.
 -/
 
 namespace Imo2023P5

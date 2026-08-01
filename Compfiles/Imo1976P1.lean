@@ -20,28 +20,6 @@ problem_file { tags := [.Geometry] }
 A plane convex quadrilateral has area 32, and the sum of two opposite sides
 and a diagonal is 16. Determine all possible lengths for the other diagonal.
 
-# Answer
-
-The other diagonal must have length `8 * √2`.
-
-# Solution
-
-Let the quadrilateral be `A B C D`; without loss of generality the two
-opposite sides are `AB`, `CD` and the given diagonal is `AC` (any other
-labeling is symmetric). The area of the quadrilateral is the sum of the
-areas of the triangles `ABC` and `ACD`, and each of these areas is at most
-half the product of `AC` with the corresponding side (`AB` resp. `CD`),
-with equality only if that side is perpendicular to `AC`. Hence, using
-AM–GM,
-
-`32 ≤ AC * (AB + CD) / 2 ≤ ((AC + AB + CD) / 2)^2 / 2 = 32`,
-
-so equality holds throughout: `AC = AB + CD = 8` and both `AB` and `CD` are
-perpendicular to `AC`. Since the quadrilateral is convex, `B` and `D` lie on
-opposite sides of `AC`, so the other diagonal satisfies
-`BD² = AC² + (AB + CD)² = 128`, i.e. `BD = 8 * √2`. This value is attained,
-for example by `A = (0,0)`, `B = (0,4)`, `C = (8,0)`, `D = (8,-4)`.
-
 (Problem and answer source: https://prase.cz/kalva/imo/isoln/isoln761.html)
 -/
 

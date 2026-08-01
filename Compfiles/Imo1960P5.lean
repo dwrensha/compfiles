@@ -27,20 +27,6 @@ X is any point of the face diagonal AC and Y is any point of B'D'.
 
 (b) Find the locus of the point Z which lies one-third of the way along XY,
     so that ZY = 2·XZ.
-
-# Solution
-
-We may take the cube to have side length 1, with the face A'B'C'D' in the
-plane `z = 0` and ABCD in the plane `z = 1`.
-
-(a) The midpoint of XY always lies in the plane halfway between ABCD and
-    A'B'C'D', and the locus is the square whose vertices are the centers of
-    the four vertical faces of the cube.
-
-(b) Similarly, Z lies in the plane one-third of the way from ABCD to
-    A'B'C'D', and the locus is the rectangle whose vertices are the points
-    one-third of the way along AB', CB', CD' and AD' (with side lengths
-    √2/3 and 2√2/3 for a unit cube).
 -/
 
 namespace Imo1960P5

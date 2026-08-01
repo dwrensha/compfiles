@@ -26,46 +26,8 @@ and C. Points B₀ and C₀ are defined similarly. Prove that the area of the
 triangle A₀B₀C₀ is twice the area of the hexagon AC₁BA₁CB₁ and at least four
 times the area of the triangle ABC.
 
-## Solution sketch (after Marcin Mazur and Thomas Jäger, via kalva)
-
-Let I be the incenter. One shows that A₁ is the midpoint of the segment IA₀
-(and similarly), hence area IBA₀C = 2·area IBA₁C etc., and adding gives
-area A₀B₀C₀ = 2·area(hexagon). For the inequality, write
-area CA₁B = ¼·BC²·tan(A/2) and area ABC = r²(x + y + z) with
-x = cot(A/2), y = cot(B/2), z = cot(C/2); the claim reduces to the comparison
-of the arithmetic and harmonic means of x, y, z.
-
-## Formalization notes
-
-We prove the result by coordinates. Applying a rigid motion (which preserves
-bisectors, the circumcircle and areas), we place the circumcircle of ABC as the
-circle of radius R centered at the origin, with A₁ (the midpoint of the arc BC
-not containing A) at angle 0. Writing α, β, γ for the angles of the triangle at
-A, B, C (so α + β + γ = π), the vertices and arc midpoints are
-  A = R·(cos(β−γ+π), sin(β−γ+π)),  B = R·(cos(β+γ+π), sin(β+γ+π)),
-  C = R·(cos(π−β−γ), sin(π−β−γ)),
-  A₁ = R·(1, 0),  B₁ = R·(cos(π−γ), sin(π−γ)),  C₁ = R·(cos(β+π), sin(β+π)).
-The point A₀ is the excenter opposite A (the internal bisector of A and the
-external bisectors of B and C all pass through it), with barycentric weights
-(−sin α : sin β : sin γ); substituting the coordinates and simplifying gives
-  A₀ = R·(1 + cos β + cos γ, sin β − sin γ),
-and cyclically (rotating the picture by the angle of B₁, resp. C₁)
-  B₀ = R·(cos β − cos γ − 1, sin β + sin γ),
-  C₀ = R·(cos γ − cos β − 1, −(sin β + sin γ)).
-Both claims then become shoelace computations. Twice the signed areas are
-  2·area(A₀B₀C₀)  = 4R²(sin β + sin γ + sin(β+γ)),
-  2·area(hexagon) = 2R²(sin β + sin γ + sin(β+γ)),
-  2·area(ABC)     = 4R² sin β sin γ sin(β+γ),
-so the first claim is an identity and the second claim, with α = π − β − γ,
-is the classical inequality
-  sin α + sin β + sin γ ≥ 4 sin α sin β sin γ
-for the angles of a triangle. Writing the sum as 4·cos(α/2)cos(β/2)cos(γ/2)
-and the product as 32·∏sin(·/2)·∏cos(·/2), it reduces to
-sin(α/2)sin(β/2)sin(γ/2) ≤ 1/8, which follows from
-sin(β/2)sin(γ/2) = (cos((β−γ)/2) − sin(α/2))/2 ≤ (1 − sin(α/2))/2
-and x(1−x) ≤ 1/4. Note that, as observed on kalva, the acuteness hypothesis
-is in fact unnecessary for the conclusion; we keep it for fidelity with the
-problem statement.
+The proof below is after the solution by Marcin Mazur and Thomas Jäger, via
+kalva.
 -/
 
 namespace Imo1989P2

@@ -22,51 +22,6 @@ where $M$ is the midpoint of segment $BC$ and $\omega < 90°$.
 Prove that a solution exists if and only if
 $$ b \tan\frac{\omega}{2} \le c < b. $$
 In what case does the equality hold?
-
-## Answer
-
-Equality holds exactly when $\angle BAC = 90^\circ$ (and then
-$\angle ACB = \omega/2$).
-
-## Solution sketch
-
-Put $M$ at the origin, $B = (s, 0)$, $C = (-s, 0)$ (so $s = BM > 0$) and
-$A = (r\cos\omega, r\sin\omega)$ with $r = AM > 0$; this is without loss of
-generality by a rigid motion and, if needed, a reflection in the line $BC$.
-Then $\angle AMB = \omega$, the triangle is non-degenerate
-(since $r\sin\omega \neq 0$), and by the law of cosines
-$$c^2 = AB^2 = r^2 + s^2 - 2rs\cos\omega, \qquad
-  b^2 = AC^2 = r^2 + s^2 + 2rs\cos\omega.$$
-
-A direct computation gives
-$$b^2(1-\cos\omega) - c^2(1+\cos\omega) = -2(r-s)^2\cos\omega \le 0,
-  \qquad b^2 - c^2 = 4rs\cos\omega > 0.$$
-Together with the half-angle identity
-$\tan^2(\omega/2) = \frac{1-\cos\omega}{1+\cos\omega}$ this yields
-$b\tan(\omega/2) \le c < b$.
-
-Conversely, if $b\tan(\omega/2) \le c < b$, then with
-$u = \frac{b^2+c^2}{2}$ and $v = \frac{b^2-c^2}{2\cos\omega}$ we have
-$0 < v \le u$; putting $w = \sqrt{u^2-v^2}$, $r = \sqrt{(u+w)/2}$ and
-$s = \sqrt{(u-w)/2}$ gives $r, s > 0$ with $r^2+s^2 = u$ and $2rs = v$,
-hence the two law-of-cosines equations above, i.e. the required triangle
-exists.
-
-Finally, equality $b\tan(\omega/2) = c$ holds iff $(r-s)^2 = 0$ iff $r = s$
-iff $b^2 + c^2 = (2s)^2 = BC^2$, which by the converse of Pythagoras'
-theorem means $\angle BAC = 90^\circ$.
-
-## Formalization notes
-
-The geometric configuration is encoded by `Configuration b c ω`: there exist
-$r, s > 0$ satisfying the two law-of-cosines equations above. As explained in
-the sketch (place $M$ at the origin, $B=(s,0)$, $C=(-s,0)$,
-$A=(r\cos\omega, r\sin\omega)$), this is equivalent to the existence of a
-genuine triangle with the required data: given a triangle, take $r = AM$,
-$s = BM$ and apply the law of cosines in triangles $AMB$ and $AMC$
-(using $\angle AMC = \pi - \omega$); conversely, from $r, s > 0$ one
-reassembles the points, and the triangle is non-degenerate because
-$r\sin\omega > 0$.
 -/
 
 namespace Imo1961P5

@@ -25,32 +25,14 @@ triangulate this n-gon into n − 2 triangles, each colored one of m colors, so
 that each color has an equal sum of areas. For which (m, n) is such a
 triangulation and coloring possible?
 
-# Solution
+# Formalization notes
 
-The answer is: exactly when `m` is a proper divisor of `n`.
-
-We place the regular `n`-gon at the vertices `1, ω, …, ω^(n-1)` of the unit
-circle, where `ω = exp(2πi/n)`. The shoelace formula gives, for a triangle with
-vertices `ω^a, ω^b, ω^c`, that `4i` times its signed area equals
-`(ω^(b-a) - 1)(ω^(c-a) - 1)(ω^(a-c) - ω^(a-b))`, which is always `(ω^2 - 1)`
-times an algebraic integer (use that one of the exponents `b-a`, `c-a`, `c-b`
-is even). If a coloring with equal color sums `S` exists, then `S` is `1/m` of
-the total area of the polygon, and one computes `4i * S = (n/m)(ω - ω⁻¹)`.
-Comparing the two expressions shows that `n/m` is an algebraic integer, hence
-an integer, i.e. `m ∣ n`. Moreover every color is used (the common area is
-nonzero), so `m ≤ n - 2 < n`.
-
-Conversely, if `m` is a proper divisor of `n`, the fan triangulation from the
-vertex `1`, with the triangles colored cyclically modulo `m`, works: the sum of
-`ω^j` over any residue class of `ℤ/mℤ` vanishes, and a short computation shows
-that every color class has area `(n/m)(ω - ω⁻¹)/(4i)`.
-
-Note on the formalization: a triangulation is encoded by the two numerical
-properties of triangulations that the problem actually uses — it consists of
-`n - 2` inscribed triangles whose signed areas add up to the signed area of the
-whole polygon. Every genuine triangulation has these properties (orient every
-triangle counterclockwise; the triangle areas are then positive and add up over
-the partition), and the construction direction builds the genuine fan
+A triangulation is encoded by the two numerical properties of triangulations
+that the problem actually uses — it consists of `n - 2` inscribed triangles
+whose signed areas add up to the signed area of the whole polygon. Every
+genuine triangulation has these properties (orient every triangle
+counterclockwise; the triangle areas are then positive and add up over the
+partition), and the construction direction builds the genuine fan
 triangulation, so the `↔` statement proved here is exactly the olympiad
 problem.
 -/

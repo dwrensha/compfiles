@@ -32,26 +32,6 @@ the quadrilateral $ABCD$ satisfies the following conditions:
   (3) it is an isosceles trapezoid with $AB \parallel CD$ (meaning that $AD = BC$, but
       $AD$ is not parallel to $BC$ unless it is a square), and
   (4) a circle can be inscribed in $ABCD$ touching the sides.
-
-## Solution outline
-
-Let the planes meet in the line $L$. Then $AB$ and $CD$ must be parallel to $L$
-(since $AB \subset P$, $CD \subset Q$ and $AB \parallel CD$). Let $H$ be the foot of the
-perpendicular from $C$ to the line through $A$ parallel to $L$. The inscribed circle gives
-$AB + CD = BC + AD$ (equal tangents from the vertices), and the isosceles condition then
-yields $AH = AD = BC$. Hence a construction is possible whenever $CH \le AH$: with
-$s = \sqrt{AH^2 - CH^2}$ and $u$ a unit vector along $L$ pointing from $A$ towards $H$,
-take $B = A + (AH + s)u$ and $D = C - (AH - s)u$. (If $CH > AH$ no such trapezoid exists;
-if $CH = AH$ the unique solution is a square.)
-
-Below we formalize the construction: given the feasibility condition $CH \le AH$
-(encoded by `Feasible`, which says that for every nonzero vector $u$ along $P \cap Q$,
-$\|C - A\|^2 \le 2 \langle C - A, u \rangle^2 / \|u\|^2$; the right-hand side is
-$2 AH^2$ and the left-hand side is $AH^2 + CH^2$), we exhibit the required points
-$B$ and $D$. Condition (4) is encoded by Pitot's equality $AB + CD = BC + AD$, which
-for a convex quadrilateral is equivalent to the existence of an inscribed circle, and
-condition (2) is encoded by the parallel sides $\overrightarrow{AB}$ and
-$\overrightarrow{DC}$ pointing in the same direction.
 -/
 
 namespace Imo1959P6

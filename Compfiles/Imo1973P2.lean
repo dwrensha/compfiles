@@ -20,29 +20,7 @@ Can we find a finite set of non-coplanar points in space, such that given any
 two points, `A` and `B`, there are two others, `C` and `D`, with the lines `AB`
 and `CD` parallel and distinct?
 
-# Answer
-
-Yes.
-
-# Solution
-
-We give an explicit example with integer coordinates: the twelve vertices of a
-cuboctahedron, i.e. all permutations of `(±1, ±1, 0)`. The set is centrally
-symmetric, so for a pair `A, B` with `B ≠ -A` we may take `C = -A` and
-`D = -B`: the line `CD` is the image of the line `AB` under point reflection in
-the origin, hence parallel to it, and one checks it is distinct from `AB`
-because `A` and `B` are linearly independent (all twelve points have the same
-squared norm `2` and distinct directions up to sign). For an antipodal pair
-`(A, -A)` the direction of `A` is one of the six diagonal directions of the
-coordinate planes, and each of these is parallel to an edge of the
-cuboctahedron disjoint from the pair; we exhibit such an edge in each of the
-twelve cases. Finally the set is not coplanar since e.g. the four points
-`(1,1,0)`, `(1,-1,0)`, `(1,0,1)`, `(0,1,1)` are affinely independent.
-
-(Problem and answer source: https://prase.cz/kalva/imo/isoln/isoln732.html —
-kalva's solution uses two perpendicular regular hexagons sharing a long
-diagonal; the cuboctahedron used here is a coordinatization-friendly variant
-of the same idea.)
+(Problem and answer source: https://prase.cz/kalva/imo/isoln/isoln732.html)
 -/
 
 namespace Imo1973P2

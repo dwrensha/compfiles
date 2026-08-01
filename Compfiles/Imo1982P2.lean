@@ -57,17 +57,8 @@ The conclusion "the lines M₁S₁, M₂S₂, M₃S₃ are concurrent" is formal
 where collinearity of three points is the vanishing of the scalar cross
 product `cr`.
 
-# Solution
-
-Following https://prase.cz/kalva/imo/isoln/isoln822.html one shows that
-`S₂S₃ ∥ A₂A₃` etc., so the triangles `S₁S₂S₃` and `M₁M₂M₃` are homothetic and
-the lines through corresponding vertices concur at the homothety center.
-Computing that center explicitly gives
-`P = ((3uv - u + v - 1)(3uv + u - v - 1)/D, 2(u - v)(3uv - 1)/D)` with
-`D = 9u²v² + u² - 8uv + v² + 1`, which is strictly positive when `u ≠ v`
-because `D * (9v² + 1) = ((9v² + 1)u - 4v)² + (3v² - 1)²` is a sum of squares
-that can only vanish when `u = v`. The three collinearities are then rational
-identities in `u` and `v`, verified by `field_simp` and `ring`.
+The solution formalized below follows
+https://prase.cz/kalva/imo/isoln/isoln822.html.
 -/
 
 namespace Imo1982P2

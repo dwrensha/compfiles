@@ -24,19 +24,6 @@ In the plane, let C be a circle, L a line tangent to C, and M a point on L.
 Find the locus of all points P such that there exist points Q and R on L,
 equidistant from M, with C the incircle of the triangle PQR.
 
-# Answer
-
-Let X be the point where C touches L, let O be the centre of C, let the
-diameter through X meet C again at Z, and let Y be the point of L such that
-M is the midpoint of XY. The locus is the open ray from Z along the line YZ
-on the opposite side of Z from Y, i.e. the set of points Z + t • (Z - Y)
-with 0 < t.
-
-We prove this in Cartesian coordinates: by a rigid motion we may assume that
-L is the x-axis, that C touches L at the origin X = (0, 0), that the centre
-of C is O = (0, r) with 0 < r (so Z = (0, 2r)), and that M = (m, 0); then
-Y = (2m, 0) and the locus is { (2m(1 - t), 2rt) | 1 < t }.
-Since Q ≠ R are equidistant from M, M is the midpoint of QR.
 -/
 
 namespace Imo1992P4

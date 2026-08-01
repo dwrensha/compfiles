@@ -22,43 +22,6 @@ $DM$ cuts $\Omega$ again at $K$. Lines $MK$ and $BC$ meet at $S$, and $N$ is the
 midpoint of $IS$. The circumcircles of $\triangle KID$ and $\triangle MAN$
 intersect at points $L_1$ and $L_2$. Prove that $\Omega$ passes through the
 midpoint of either $IL_1$ or $IL_2$.
-
-## Solution (complex numbers)
-
-We identify the plane with `ℂ` and assume that $\Omega$ is the unit circle.
-It is classical (cf. "complex bashing") that one can write $A = a^2$, $B = b^2$,
-$C = c^2$ with $|a| = |b| = |c| = 1$ in such a way that the incenter is
-$I = -(ab + bc + ca)$ and the midpoint of arc $BC$ not containing $A$
-(where ray $AI$ meets $\Omega$ again) is $M = -bc$. We set $X = bc$ (the point
-of $\Omega$ opposite $M$). All constructed points are then *rational* functions
-of $a, b, c$ (conjugates are eliminated via $\bar a = 1/a$ etc.):
-
-* $D = AI \cap BC = (a^2b^2 + a^2c^2 + a^2bc - b^2c^2)/(a^2 + bc)$,
-* $K = (a^2b^2 + a^2c^2 - 2b^2c^2)/(2a^2 - b^2 - c^2)$; one checks $|K| = 1$,
-  $\angle DKM = 90^\circ$ and that $K$ lies on line $DX$, so $K$ is indeed the
-  second intersection of the circle with diameter $DM$ with $\Omega$,
-* $S = MK \cap BC = (a^2b^2 - a^2bc + a^2c^2 - b^2c^2)/(a^2 - bc)$,
-* $N = (I + S)/2$.
-
-A circle in the complex plane is described by an equation
-$z\bar z + uz + \bar u\bar z + v = 0$ (predicate `OnCirc u v z` below); the two
-circumcircles correspond to the explicit coefficients `circU₁, circV₁` (through
-$K, I, D$) and `circU₂, circV₂` (through $M, A, N$) below, and we verify
-membership of each of the three defining points.
-
-The key point is
-$$L = \frac{ab^2 + ac^2 + b^2c + bc^2}{2a + b + c},$$
-which lies on both circumcircles, and $T = (I + L)/2$ satisfies $|T| = 1$,
-i.e. the midpoint of $IL$ lies on $\Omega$. (In the classical solution $L$ is
-the foot of the altitude from $X$ in the excentral triangle, and $T$ is the
-contact point of the $A$-mixtilinear incircle.) Finally, two distinct circles
-meet in at most two points (`eq_of_three_common`), and the two circles
-here are distinct (`hcircles_distinct`), so $L \in \{L_1, L_2\}$ and the result
-follows.
-
-The hypotheses `hab, hbc, hac` express that the vertices are distinct and
-`hp, hm` that $AB \neq AC$ (part of "scalene"); they imply all the
-nondegeneracy needed along the way.
 -/
 
 namespace Usa2017P3

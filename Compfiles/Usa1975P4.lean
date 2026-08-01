@@ -24,20 +24,6 @@ problem_file { tags := [.Geometry] }
 Two circles intersect at two points, one of them X. Find Y on one circle and
 Z on the other, so that X, Y and Z are collinear and XY · XZ is as large as
 possible.
-
-# Solution
-
-Parametrize the lines through `X` by unit vectors `u`. The second
-intersection of such a line with the circle centered at `c` passing through
-`X` is `(2 * ⟪c -ᵥ X, u⟫) • u +ᵥ X`, so with `a := c₁ -ᵥ X` and `b := c₂ -ᵥ X`
-the quantity to maximize is `4 * |⟪a, u⟫ * ⟪b, u⟫|`. Reflecting `a` across
-the line spanned by `u` gives
-`|⟪a, u⟫ * ⟪b, u⟫| ≤ (|⟪a, b⟫| + ‖a‖ * ‖b‖) / 2`, with equality when `u`
-bisects `a` and `b` (if `⟪a, b⟫ ≥ 0`) or `a` and `-b` (otherwise).
-Since `2 * ⟪a, b⟫ = r₁ ^ 2 + r₂ ^ 2 - d ^ 2` (with `d` the distance between
-the centers), the maximum value is `2 * r₁ * r₂ + |r₁ ^ 2 + r₂ ^ 2 - d ^ 2|`.
-(The hypothesis that the circles intersect in *two* points is not needed for
-the value of the maximum.)
 -/
 
 namespace Usa1975P4

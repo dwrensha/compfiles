@@ -23,24 +23,6 @@ problem_file {
 
 Given four distinct parallel planes, prove that there exists a regular
 tetrahedron with a vertex on each plane.
-
-# Solution
-
-We model the four planes as the level sets `{x | ⟪n, x⟫ = c i}` of a common
-nonzero normal vector `n : ℝ³` at four distinct offsets `c i`. Normalizing,
-we may assume that `ν = n/‖n‖` is a unit vector; write `k i` for the rescaled
-offsets, `km` for their mean and `d i = k i - km`, so that `∑ i, d i = 0`.
-
-Start from the standard regular tetrahedron with vertices
-`v₀ = (1,1,1)`, `v₁ = (1,-1,-1)`, `v₂ = (-1,1,-1)`, `v₃ = (-1,-1,1)`.
-The only linear relation among these four vectors is that their sum is zero,
-so the system `⟪w, vᵢ⟫ = d i` has the solution
-`w = ((d₀+d₁)/2, (d₀+d₂)/2, (d₀+d₃)/2)`. Put `s = ‖w‖` and `u = w/s`, and let
-`H` be a linear isometry with `H ν = u` (the identity if `ν = u`, otherwise
-the reflection across the hyperplane perpendicular to `ν - u`). Then the
-points `P i = s • H vᵢ + km • ν` satisfy `⟪ν, P i⟫ = k i` and are pairwise at
-distance `s√8`, so they form a regular tetrahedron with one vertex on each
-(rescaled) plane; rescaling back gives the result for the original planes.
 -/
 
 namespace Imo1972P6

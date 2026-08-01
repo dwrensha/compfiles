@@ -22,18 +22,10 @@ M is the midpoint of XY. The points P and Q lie on a line through Y on
 opposite sides of Y, such that |XQ| = 2|MP| and |XY|/2 < |MP| < 3|XY|/2.
 For what value of |PY|/|QY| is |PQ| a minimum?
 
-# Solution
+# Formalization notes
 
-The minimum is never attained. Whatever admissible positions of P and Q
-one chooses, P can be moved along the line (keeping all the constraints)
-so as to make |PQ| strictly smaller. Consequently there is no value of
-|PY|/|QY| at which |PQ| is a minimum: |PQ| is minimized only in the
-limit, as |PY|/|QY| → ∞ (equivalently, as Q → Y and P tends to the
-midpoint of YY', where Y' is the point of the line with |XY'| = |XY|).
-We formalize this as the statement that no admissible configuration
-minimizes |PQ|.
-
-Reference: https://prase.cz/kalva/usa/usoln/usol874.html
+The formalization follows the reference solution:
+https://prase.cz/kalva/usa/usoln/usol874.html
 -/
 
 open scoped RealInnerProductSpace

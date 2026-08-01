@@ -23,22 +23,6 @@ CD = c and let the perpendicular distance from A to CD be h. Show how to
 construct all points X on the axis of symmetry such that ∠BXC = ∠AXD = 90°.
 Find the distance of each such X from AB and from CD. What is the condition
 for such points to exist?
-
-# Solution
-
-Place the trapezoid in the plane so that its axis of symmetry is the y-axis
-and the line AB is the x-axis:
-A = (-a/2, 0), B = (a/2, 0), C = (c/2, h), D = (-c/2, h).
-This is no loss of generality: any isosceles trapezoid can be moved to this
-position by a rigid motion, and rigid motions preserve angles and distances.
-A point X of the axis of symmetry has the form X = (0, t), where t is its
-distance from AB and h - t is its distance from CD.
-
-The condition ∠BXC = 90° is (B - X) · (C - X) = 0, i.e.
-t² - ht + ac/4 = 0, and by symmetry the same equation expresses ∠AXD = 90°.
-Hence t = (h ± √(h² - ac))/2, and such points exist if and only if
-ac ≤ h². (Construction: intersect the axis of symmetry with the circle of
-diameter BC, equivalently AD.)
 -/
 
 namespace Imo1960P7

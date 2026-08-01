@@ -27,30 +27,6 @@ problem_file { tags := [.Geometry] }
 
 P lies between the rays OA and OB. Find Q on OA and R on OB collinear with P
 so that 1/PQ + 1/PR is as large as possible.
-
-# Answer
-
-1/PQ + 1/PR is as large as possible exactly when QR is perpendicular to OP.
-
-# Formalization notes
-
-We place O at the origin of an arbitrary real inner product space (the whole
-configuration lives in the plane spanned by the two rays anyway).  Let `u` and
-`v` be the unit vectors along the rays OA and OB, and write P = a • u + b • v.
-The hypothesis `0 < a` and `0 < b` says precisely that P lies strictly between
-the two rays.  Points Q on ray OA and R on ray OB are written as `q • u` and
-`r • v` with `0 < q` and `0 < r`; collinearity with P is expressed by the
-existence of a real number `t` with `P = (1 - t) • Q + t • R`.
-
-The answer "QR ⟂ OP" is only achievable when the line through P perpendicular
-to OP actually meets both rays in their positive direction.  Algebraically this
-is the condition `0 < a + b * ⟪u, v⟫` and `0 < b + a * ⟪u, v⟫` (which is
-automatic when the angle AOB is not obtuse, since then `0 ≤ ⟪u, v⟫`), and we
-assume it as a hypothesis.  Under this hypothesis we prove that the maximum
-value of `1/PQ + 1/PR` is
-`Real.sqrt (a^2 + b^2 + 2*a*b*⟪u,v⟫) / (a * b * Real.sqrt (1 - ⟪u,v⟫^2))`
-and that it is attained exactly for the configuration with QR perpendicular
-to OP.
 -/
 
 namespace Usa1979P4

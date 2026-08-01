@@ -30,31 +30,6 @@ The circumcenter O of the triangle ABC does not lie on any side or median.
 Let the midpoints of BC, CA, AB be L, M, N respectively. Take P, Q, R on the
 rays OL, OM, ON respectively so that ∠OPA = ∠OAL, ∠OQB = ∠OBM and
 ∠ORC = ∠OCN. Show that AP, BQ and CR meet at a point.
-
-## Solution outline
-
-Put the circumcenter `O` at the origin and write `r` for the circumradius, so
-`‖A‖ = ‖B‖ = ‖C‖ = r`.
-
-**Step 1 (the angle condition).** For `P = t • L` with `t > 0` on the ray `OL`,
-take `cos` of both sides of `∠OPA = ∠OAL`. With `s = ‖L‖²` and `m = ⟪A, L⟫` this
-gives `(t*s - m) * (r * ‖L - A‖) = (r² - m) * (√s * ‖A - P‖)`, and squaring
-produces `(r²s - m²) * (s*t - r²) * (s*t + r² - 2*m) = 0`. The first factor
-vanishing would mean `|⟪A, L⟫| = ‖A‖ * ‖L‖`, i.e. `A ∥ L`, putting `O` on the
-median from `A` — excluded. The third factor vanishing contradicts the sign of
-the unsquared equation. Hence `s*t = r²`, i.e. `OP · OL = OA²`: `P` is the
-inverse of `L` in the circumcircle, equivalently the intersection of the
-tangents at `B` and `C`: `P = (r² / (r² + ⟪B, C⟫)) • (B + C)`.
-
-**Step 2 (concurrency).** The symmedian point
-`K = ((r²−⟪B,C⟫)•A + (r²−⟪C,A⟫)•B + (r²−⟪A,B⟫)•C) / σ` with
-`σ = (r²−⟪B,C⟫) + (r²−⟪C,A⟫) + (r²−⟪A,B⟫)` lies on the line `AP` (the
-`A`-symmedian): `K = (1 - c) • A + c • P` with
-`c = (r²+⟪B,C⟫−⟪C,A⟫−⟪A,B⟫) / σ`. The required vector identity reduces,
-coordinate-wise, to Lagrange's identity
-`(B₀²+B₁²)(C₀²+C₁²) = ⟪B,C⟫² + (B₀C₁−B₁C₀)²` and the two-dimensional relation
-`(B₀C₁−B₁C₀)•A + (C₀A₁−C₁A₀)•B + (A₀B₁−A₁B₀)•C = 0`. By cyclic symmetry `K`
-also lies on `BQ` and `CR`.
 -/
 
 open scoped EuclideanGeometry RealInnerProductSpace InnerProductSpace

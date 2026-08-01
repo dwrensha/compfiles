@@ -38,14 +38,7 @@ externally when `ABC` is oriented counterclockwise (the clockwise case is
 symmetric). The conclusion `∠QRP = 90°` is expressed as
 `⟪Q - R, P - R⟫ = 0` and `QR = RP` as `dist Q R = dist P R`.
 
-# Solution
-
-We show `P - R = -rot90 (Q - R)`: the segment `RP` is obtained from `RQ`
-by a quarter turn, which gives both claims at once. The identity is linear
-in `A`, `B`, `C`, so after unfolding it closes by `ring`; the coefficients
-satisfy `(√3 - 1)/2 + (2 - √3)/2 = 1/2` and `(3 - √3)/2 - (2 - √3)/2 = 1/2`,
-which is the whole content of the trigonometric solution in
-https://prase.cz/kalva/imo/isoln/isoln753.html.
+(Problem and solution source: https://prase.cz/kalva/imo/isoln/isoln753.html)
 -/
 
 namespace Imo1975P3

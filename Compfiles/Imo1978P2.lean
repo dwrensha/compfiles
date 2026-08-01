@@ -26,29 +26,6 @@ intersect the sphere at points U, V and W. Q denotes the vertex diagonally
 opposite P in the parallelepiped determined by PU, PV, PW. Find the locus
 of Q for all possible sets of such rays from P.
 
-# Answer
-
-The locus of Q is the sphere with the same center O as the given sphere and
-radius `√(3 R² - 2 OP²)`, where R is the radius of the given sphere.
-
-# Solution
-
-Write vectors with origin at the center O of the sphere.  Let `a` be the
-vector OP, and let `x, y, z` be the vectors PU, PV, PW; they are pairwise
-orthogonal.  From `|a + x|² = R²` we get `|x|² + 2⟨a,x⟩ = R² - |a|²`, and
-similarly for `y, z`.  Since `Q = P + x + y + z`, expanding `|OQ|²` gives
-`|OQ|² = |a|² + 3(R² - |a|²) = 3R² - 2|a|²`, so Q lies on the claimed
-sphere.
-
-Conversely, given Q on that sphere, set `F(u) = ⟨OQ,u⟩² - ⟨OP,u⟩²` for unit
-vectors `u`; then `F` sums to `3(R² - |OP|²)` over any orthonormal basis, so
-the intermediate value theorem applied along rotations in coordinate planes
-produces an orthonormal basis `u₁, u₂, u₃` with `F(uᵢ) = R² - |OP|²` for all
-`i`.  Taking `tᵢ = ⟨OQ - OP, uᵢ⟩` and `U = P + t₁u₁`, `V = P + t₂u₂`,
-`W = P + t₃u₃`, the three points lie on the sphere, the vectors
-PU, PV, PW are pairwise orthogonal, and Q is the vertex of the resulting
-parallelepiped opposite P.
-
 (Problem and answer source: https://prase.cz/kalva/imo/isoln/isoln782.html)
 -/
 

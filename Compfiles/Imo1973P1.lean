@@ -26,21 +26,6 @@ We formalize "all the points lie on the same side of a line through $O$" as:
 there exists a unit vector $u$ (a normal vector of the line) such that
 $\langle u, OP_i \rangle \geq 0$ for all $i$. This closed half-plane
 formulation is a priori stronger than the hypothesis of the problem.
-
-# Solution
-
-By induction on $n$. For $n = 0$ there is a single unit vector and the claim
-is clear. For the induction step, measure the angle of every vector in the
-oriented orthonormal basis $(u, u')$ of the plane, where $u'$ is $u$ rotated
-by $90^\circ$; the half-plane condition forces every angle into
-$[-\pi/2, \pi/2]$. Take vectors $OP_{\min}$, $OP_{\max}$ of minimal and
-maximal angle. If the two angles agree, all $2n+3$ vectors are equal and the
-sum has norm $2n+3 \geq 1$. Otherwise remove the two extremes and apply the
-induction hypothesis to the remaining $2n+1$ vectors, whose sum $v$ has norm
-at least $1$: since $OP_{\min} + OP_{\max}$ makes an angle of at most
-$90^\circ$ with every vector between the extremes,
-$\langle v, OP_{\min} + OP_{\max} \rangle \geq 0$, hence
-$|v + OP_{\min} + OP_{\max}| \geq |v| \geq 1$.
 -/
 
 namespace Imo1973P1

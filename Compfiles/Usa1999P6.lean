@@ -47,18 +47,6 @@ The remaining data are encoded as follows:
 The conclusion "`△AFG` is isosceles" is proved in the form `AF = GF`
 (i.e. `dist A F = dist G F`), which is the actual content of the official
 problem.
-
-# Solution
-
-Direct coordinate computation. Writing `p = |AD| = |BC|` and `q = |AC| = |BD|`
-(so `p² = (d − a)² + h²`, `q² = (d + a)² + h²`), one finds `E = ((q − p)/2, 0)`,
-`F = ((q − p)/2, f)` with
-`f = (a² − d² + h² − pq + a(q − p) − d(p + q)) / (2h)`
-(in fact `F` is the excenter of `△ACD` opposite `A`, with
-`f = −2dh / (p + q − 2d)`), and `G = (−d − p, 0)`.
-The claim `AF² = GF²` then reduces to algebraic identities that are checked
-here by `linear_combination` certificates against the relations
-`p² = (d − a)² + h²` and `q² = (d + a)² + h²`.
 -/
 
 namespace Usa1999P6

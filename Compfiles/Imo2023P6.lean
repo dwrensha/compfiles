@@ -41,43 +41,6 @@ BA₁ meet at $C₂.
 
 Prove that if triangle A₁B₁C₁ is scalene, then the three circumcircles
 of triangles AA₁A₂, BB₁B₂ and CC₁C₂ all pass through two common points.
-
-## Solution approach (computer algebra / coordinate proof)
-
-We place the figure in coordinates adapted to the equilateral triangle:
-with `O` the circumcenter of `ABC`, `R` its circumradius, and an
-orthonormal basis `e₁, e₂` with `A -ᵥ O = R • e₁`, the hypotheses give
-
-* `B -ᵥ O = (-R/2) • e₁ + (R√3/2) • e₂`, `C -ᵥ O = (-R/2) • e₁ - (R√3/2) • e₂`,
-* `A₁ -ᵥ O = (R(u-1)/2) • e₁`, `B₁ -ᵥ O = (R(1-v)/4) • e₁ + (R√3(v-1)/4) • e₂`,
-  `C₁ -ᵥ O = (R(1-u₃)/4) • e₁ + (R√3(1-u₃)/4) • e₂`
-
-for real parameters `u = 3·w_A`, `v = 3·w_B`, `u₃ = 3·w_C` (three times the
-barycentric weights of `A, B, C` in `A₁, B₁, C₁` respectively).  The angle
-condition `∠BA₁C + ∠CB₁A + ∠AC₁B = 480°` becomes, with
-`x = arctan (u/√3)` etc., `3π - 2(x + y + z) = 8π/3`, i.e. `x + y + z = π/6`;
-taking tangents gives the polynomial constraint
-
-    u₃·(3 + u + v - u·v) = 3 - u·v - 3·u - 3·v   (hrel)
-
-with `0 < u, v, u₃ < 1`.  The scalene hypothesis translates into
-`u ≠ v`, `d_A ≠ 0`, `d_B ≠ 0` (and hence `u₃ ≠ v`, `u₃ ≠ u`), where
-`d_A = u v² - 2 u v - 3 u - v² - 6 v + 3`, `d_B = u² v - u² - 2 u v - 6 u - 3 v + 3`.
-
-The three circumcircles are given by explicit polynomial equations
-`Ω_A, Ω_B, Ω_C` (coefficients are polynomials in `u, v, √3, R`); one verifies
-by `ring` that each passes through its three points.  Coaxality:
-`σ_B Ω_A - σ_A Ω_B = σ_C Ω_A - σ_A Ω_C = α X + β Y + γ` (a common radical
-axis), and the squared half chord `hhe = |n|² R_A² - ρ²` satisfies
-
-    hhet = -254803968 · R⁴ (u²+3)⁴ (v²+3)⁶ d_A² · Q₃ > 0
-
-since `Q₃ < 0` on the parameter domain (proved by an explicit
-Bernstein-basis positivity certificate after the rational substitution
-`v = 3t(1-u)/(3+u)` mapping the domain to the open unit square).
-The two common points are `M ± S·t` where `M` is the foot of the
-perpendicular from the center of circle `A` to the radical axis and `t`
-a direction vector of the axis; both lie on all three circles.
 -/
 
 open scoped Cardinal EuclideanGeometry Real InnerProductSpace

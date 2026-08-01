@@ -21,17 +21,6 @@ problem_file { tags := [.Geometry] }
 
 Prove that in every tetrahedron there is a vertex such that the three edges
 meeting there have lengths which are the sides of a triangle.
-
-# Solution
-
-Let `AB` be a longest edge of the tetrahedron. Then one of the vertices `A`,
-`B` works. Indeed, suppose not. Since `AB` is at least as long as any other
-edge at `A`, the two inequalities `AC < AB + AD` and `AD < AB + AC` hold
-automatically, so the failure of the triangle property at `A` forces
-`AC + AD ≤ AB`. Similarly `BC + BD ≤ BA`. Adding yields
-`AC + AD + BC + BD ≤ 2·AB`. But the faces `ABC` and `ABD` are genuine
-triangles, so `AB < AC + BC` and `AB < AD + BD`; adding gives the opposite
-strict inequality — a contradiction.
 -/
 
 namespace Imo1968P4

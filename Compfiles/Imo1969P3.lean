@@ -22,22 +22,6 @@ problem_file { tags := [.Geometry] }
 For each of k = 1, 2, 3, 4, 5 find necessary and sufficient conditions on
 a > 0 such that there exists a tetrahedron with k edges length a and the
 remainder length 1.
-
-# Solution
-
-Write the tetrahedron as ABCD. The answers are:
-
-* k = 1: exactly when 0 < a < √3. Hinge the unit triangles ACD and BCD about
-  CD; the extreme (degenerate) positions give AB = 0 and AB = √3.
-* k = 2: exactly when 0 < a < √(2 + √3). If the two edges of length a are
-  adjacent, the degenerate extremes are a = √(2 - √3) and a = √(2 + √3);
-  if they are opposite, the extremes are a = 0 and a = √2.
-* k = 3: every a > 0. For a ≤ 1 take the edges of length a to form a triangle;
-  for a ≥ 1 take a unit triangle and join its vertices to the fourth vertex
-  with edges of length a.
-* k = 4: exactly when a > √(2 - √3), by scaling the k = 2 configuration
-  (with a replaced by 1/a).
-* k = 5: exactly when a > 1/√3, by scaling the k = 1 configuration.
 -/
 
 namespace Imo1969P3

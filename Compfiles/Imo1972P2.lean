@@ -26,28 +26,11 @@ problem_file { tags := [.Geometry] }
 Given `n > 4`, prove that every cyclic quadrilateral can be dissected into `n` cyclic
 quadrilaterals.
 
-# Solution
-
-(After J. Scholes, kalva.) First, every cyclic quadrilateral `ABCD` can be dissected into
-four cyclic quadrilaterals: take a point `P` inside the quadrilateral and points `K`, `L`,
-`M`, `N` on `AB`, `BC`, `CD`, `DA` such that `∠KPL = 180° − ∠B`, `∠LPM = 180° − ∠C`,
-`∠MPN = 180° − ∠D`; then also `∠NPK = 180° − ∠A`, so each of the quadrilaterals `KPLB`,
-`LPMC`, `MPND`, `NPKA` has a pair of supplementary opposite angles, hence is cyclic.
-Choosing the first ray `PK` parallel to `AD` (which forces `PL` parallel to `CD`) makes the
-piece `AKPN` a trapezoid, and taking `P` close enough to a vertex guarantees that the four
-points land on the sides and not on their extensions.
-
-Second, a cyclic trapezoid (which is necessarily isosceles) can be dissected into two
-isosceles trapezoids — hence into two cyclic quadrilaterals — by any line parallel to its
-two parallel sides. Starting from the dissection into four pieces and subdividing a
-trapezoid piece one step at a time therefore gives a dissection into `n` cyclic
-quadrilaterals for every `n ≥ 4`, in particular for every `n > 4`.
+# Formalization notes
 
 We formalize a *dissection* of a quadrilateral as a finite family of cyclic quadrilaterals
 whose regions (the convex hulls of their vertices) are contained in the original region,
-cover it, and have pairwise disjoint interiors, and we prove the statement by induction
-on `n`, the base case `n = 4` and the subdivision step being the two geometric inputs
-above.
+cover it, and have pairwise disjoint interiors. (Solution after J. Scholes, kalva.)
 -/
 
 namespace Imo1972P2

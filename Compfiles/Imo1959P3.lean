@@ -28,7 +28,7 @@ namespace Imo1959P3
 `a * cos x ^ 2 + b * cos x + c = 0`: writing `cos (2 * x) = 2 * cos x ^ 2 - 1`
 and eliminating the odd power of `cos x` by squaring yields the equation
 `formedQuadratic a b c (cos (2 * x)) = 0`. -/
-def formedQuadratic (a b c : ℝ) (t : ℝ) : ℝ :=
+determine formedQuadratic (a b c : ℝ) (t : ℝ) : ℝ :=
   a ^ 2 * t ^ 2 + (2 * a ^ 2 + 4 * a * c - 2 * b ^ 2) * t +
     (a ^ 2 + 4 * a * c - 2 * b ^ 2 + 4 * c ^ 2)
 

@@ -25,20 +25,6 @@ be the radii of the circles inscribed in `ABC`, `AMC`, `BMC`, and let `q` be
 the radius of the circle on the opposite side of `AB` to `C`, touching `AB`
 and the extensions of `CA` and `CB`; `q₁` and `q₂` are defined similarly.
 Prove that `r₁r₂q = rq₁q₂`.
-
-# Solution
-
-For a triangle with inradius `r`, and with `q` the radius of the excircle
-touching the side `c = AB` (on the opposite side of `AB` from the third
-vertex), one has `r / q = tan(A/2) · tan(B/2)`: writing `s` for the
-semiperimeter, `r / q = (s - c) / s`, and the half-angle formulas together
-with the law of cosines give `tan(A/2) · tan(B/2) = (s - c) / s`.
-
-Applying this to the three triangles, with `θ = ∠AMC` and `φ = ∠BMC`,
-`r / q = tan(A/2)tan(B/2)`, `r₁ / q₁ = tan(A/2)tan(θ/2)` and
-`r₂ / q₂ = tan(B/2)tan(φ/2)`. Since `M` lies on `AB`, `θ + φ = π`, so
-`tan(φ/2) = tan(π/2 - θ/2) = 1 / tan(θ/2)` and hence
-`r₁r₂q / (rq₁q₂) = tan(θ/2)tan(φ/2) = 1`.
 -/
 
 namespace Imo1970P1

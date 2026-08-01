@@ -24,28 +24,6 @@ AB than N. Let CD be the line parallel to AB and passing through the point M,
 with C on G₁ and D on G₂. Lines AC and BD meet at E; lines AN and CD meet at P;
 lines BN and CD meet at Q. Prove that EP = EQ.
 
-# Solution
-
-We use coordinates. Applying a similarity transformation (rotate, translate and
-scale), we may assume that `M = (0, 0)` and that the common tangent line `AB`
-is the line `y = 1`. Write `A = (a, 1)` and `B = (b, 1)`; since the two circles
-are distinct, `a ≠ b`.
-
-The first circle is tangent to the line `y = 1` at `A` and passes through the
-origin, so its center is `(a, (1 - a²)/2)` and its radius is `(1 + a²)/2`;
-it meets the line `CD` (the `x`-axis, i.e. the line through `M` parallel to
-`AB`) again at `C = (2a, 0)`. Similarly the second circle has center
-`(b, (1 - b²)/2)`, radius `(1 + b²)/2`, and meets the `x`-axis again at
-`D = (2b, 0)`. Their second intersection point is
-`N = (2(a+b)(1+ab)/(4+(a+b)²), 4(1+ab)/(4+(a+b)²))`. The hypothesis that `M`
-lies closer to `AB` than `N` is equivalent to `1 + a * b < 0` (in particular
-`N ≠ M` and `M` lies between `C` and `D`).
-
-The lines `AC` and `BD` meet at `E = (0, 2)` (the reflection of `M` in `AB`,
-as in the classical synthetic solution), and one computes
-`P = AN ∩ CD = (−2(1+ab)/(a−b), 0)` and `Q = BN ∩ CD = (2(1+ab)/(a−b), 0)`.
-Thus `M` is the midpoint of `PQ` and `E` lies on its perpendicular bisector,
-so `EP = EQ`.
 -/
 
 namespace Imo2000P1

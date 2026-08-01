@@ -24,16 +24,6 @@ $n(P) - \deg(P) \leq 2$.
 We formalize $n(P)$ as the cardinality (`Set.ncard`) of the set of integers
 `k` with `P.eval k ^ 2 = 1`, and prove the equivalent inequality
 `n(P) ≤ deg(P) + 2`.
-
-# Solution
-
-Let $r$ be the smallest integer with $(P(r))^2 = 1$ (if there is none, then
-$n(P) = 0$). Suppose $P(r) = 1$; the case $P(r) = -1$ is symmetric (apply the
-argument to $-P$). The nonzero polynomial $P - 1$ has at most $\deg P$
-distinct roots, so at most $\deg P$ integers $k$ satisfy $P(k) = 1$. If
-$P(s) = -1$ then $s - r$ divides $P(s) - P(r) = -2$; since $s \geq r$ and
-$s \neq r$ we get $s \in \{r + 1, r + 2\}$, contributing at most $2$ further
-integers. Hence $n(P) \leq \deg P + 2$.
 -/
 
 namespace Imo1974P6

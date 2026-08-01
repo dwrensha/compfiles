@@ -45,16 +45,6 @@ equidistant from the vertices, i.e. the circumcenter), a nonzero scalar $s$,
 the centers $D$, $E$, $F$ given as the images of $A$, $B$, $C$ under the
 homothety of ratio $s$ about $I$, and a point $O$ equidistant from $D$, $E$,
 $F$. The conclusion is that $O$, $I$ and $K$ are collinear.
-
-# Solution
-
-The homothety $X \mapsto s • X + (1 - s) • I$ multiplies all distances by
-$|s|$, so the image $K' = s • K + (1 - s) • I$ of the circumcenter is
-equidistant from $D$, $E$, $F$: it is a circumcenter of the triangle $DEF$.
-In the plane, a non-degenerate triangle has a unique circumcenter: two points
-both equidistant from $D$, $E$, $F$ must coincide (their difference vector is
-orthogonal to $E - D$ and $F - D$, whose determinant is nonzero). Hence
-$O = K'$, and $K' - I = s • (K - I)$ shows that $O$ lies on the line $IK$.
 -/
 
 namespace Imo1981P5

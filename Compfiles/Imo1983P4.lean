@@ -24,11 +24,6 @@ three segments AB, BC and CA (including A, B and C). Determine whether, for ever
 partition of E into two disjoint subsets, at least one of the two subsets contains
 the vertices of a right-angled triangle.
 
-# Answer
-
-Yes: at least one of the two subsets always contains the vertices of a
-right-angled triangle.
-
 # Formalization note
 
 All equilateral triangles in the plane are similar, and the property in question

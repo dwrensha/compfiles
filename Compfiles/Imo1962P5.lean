@@ -21,29 +21,6 @@ problem_file { tags := [.Geometry] }
 
 Given three distinct points A, B, C on a circle K, construct a point D on K,
 such that a circle can be inscribed in ABCD.
-
-# Solution outline
-
-A (convex) cyclic quadrilateral admits an inscribed circle if and only if the
-sums of the lengths of its opposite sides are equal (Pitot's theorem, together
-with its converse, which is valid for cyclic quadrilaterals). So it suffices to
-produce a point `D` on the arc `AC` not containing `B` with
-`AB + CD = BC + AD`, i.e. `AD - CD = AB - BC`.
-
-Parametrize `K` as the unit circle by angle, with `A`, `B`, `C` at angles
-`a < b < c < a + 2π`, and look for `D` at an angle `d ∈ (c, a + 2π)`. The chord
-length between angles `s ≤ t` (within one revolution) is `2 sin ((t - s) / 2)`,
-so the quantity `AD - CD = 2 sin ((d - a) / 2) - 2 sin ((d - c) / 2)` depends
-continuously on `d`, equals `AC` at `d = c` and `-AC` at `d = a + 2π`. Since
-`AB - BC ∈ (-AC, AC)` by the (strict) triangle inequality, the intermediate
-value theorem yields the desired `d`. The resulting point `D` is distinct from
-`A`, `B`, `C`, and the four points occur on `K` in the order `A, B, C, D`, so
-`ABCD` is a convex cyclic quadrilateral with `AB + CD = BC + AD`, which is
-exactly the condition for `ABCD` to admit an inscribed circle. (The official
-solution additionally describes how to obtain `D` by straightedge and compass:
-the incenter `I` is found as the intersection of the bisector of `∠ABC` with
-the circle through `A` and `C` whose points `X` satisfy `∠AXC = 270° - ∠ABC`,
-and `D` is then determined from `I` by angle bisection at `A`.)
 -/
 
 namespace Imo1962P5

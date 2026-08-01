@@ -23,37 +23,7 @@ and meets the circumcircle of ABC again at N. From L perpendiculars are drawn to
 AB and AC, with feet K and M respectively. Prove that the quadrilateral AKNM and
 the triangle ABC have equal areas.
 
-## Solution sketch (after Gerhard Wöginger)
-
-The triangles AKL and AML are congruent, so KM is perpendicular to AN and
-area(AKNM) = KM·AN/2. The quadrilateral AKLM is cyclic (two opposite right
-angles), and the sine rule gives KM = AL·sin BAC. The triangles ABL and ANC are
-similar, so AB·AC = AN·AL. Hence
-area(ABC) = AB·AC·sin BAC/2 = AN·AL·sin BAC/2 = AN·KM/2 = area(AKNM).
-
-## Formalization notes
-
-We prove the result by coordinates. Applying a rigid motion (which preserves
-angles, circles, perpendicularity and areas), we place A at the origin and the
-interior bisector of ∠BAC along the positive x-axis. Writing 2α for ∠BAC,
-c = AB and b = AC, the vertices are
-  A = (0, 0),  B = (c·cos α, c·sin α),  C = (b·cos α, -b·sin α).
-The remaining points are then determined:
-* L = AL ∩ BC. By the angle bisector theorem BL : LC = c : b, which gives
-  L = (2·b·c·cos α/(b + c), 0).
-* K (resp. M) is the orthogonal projection of L onto the line AB (resp. AC):
-  K = (2·b·c·cos³α/(b+c), 2·b·c·cos²α·sin α/(b+c)) and M its mirror image.
-* The circumcircle of ABC has equation x² + y² + Dx + Ey = 0 with
-  D = -(b + c)/(2·cos α), so it meets the x-axis again in
-  N = ((b + c)/(2·cos α), 0).
-The auxiliary lemmas below verify that the points so defined have the required
-geometric properties: L lies on BC with BL : LC = c : b, K lies on AB with
-LK ⟂ AB, M lies on AC with LM ⟂ AC, and A, B, C, N are concyclic.
-The area statement then becomes a shoelace computation: twice the
-signed area of both AKNM and ABC equals -2·b·c·sin α·cos α. Note that the
-equality of areas in fact holds for the whole configuration, whether or not the
-triangle is acute (acuteness only guarantees that K, M lie on the segments and
-that the quadrilateral is convex); we assume α < π/4 so that ∠BAC < 90°.
+The proof below is after the solution by Gerhard Wöginger.
 -/
 
 namespace Imo1987P2

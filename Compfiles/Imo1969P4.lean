@@ -23,38 +23,6 @@ is the foot of the perpendicular from `C` to `AB`. The circle `K1` is the
 incircle of `ABC`, the circle `K2` touches `CD`, `DA` and the semicircle, and
 the circle `K3` touches `CD`, `DB` and the semicircle. Prove that `K1`, `K2`
 and `K3` have another common tangent apart from `AB`.
-
-# Solution
-
-We formalize the configuration in coordinates. By a rigid motion we may place
-`A = (0, 0)` and `B = (c, 0)`, where `c = AB`, with `C` above the x-axis.
-Writing `a = BC` and `b = CA`, the triangle `ABC` is right-angled at `C`
-(Thales' theorem), so `a² + b² = c²`, and one computes `C = (b²/c, ab/c)` and
-`D = (b²/c, 0)`. The three circles are then determined by their tangency
-conditions:
-
-* `K1` (the incircle): center `O1 = ((b + c - a)/2, r1)` and radius
-  `r1 = (a + b - c)/2`;
-* `K2` (touching `CD`, `DA` and the semicircle): center `O2 = (c - a, r2)` and
-  radius `r2 = a - a²/c`;
-* `K3` (touching `CD`, `DB` and the semicircle): center `O3 = (b, r3)` and
-  radius `r3 = b - b²/c`.
-
-For example, the center of `K2` has the form `(b²/c - r2, r2)` (it touches the
-lines `AB` and `CD` from inside the region bounded by `DA`, `DC` and the
-semicircle), and internal tangency with the circle of the semicircle gives
-`r2² + 2(c - b²/c) r2 - (b² - b⁴/c²) = 0`, whose positive root is
-`r2 = a - a²/c` (using `c² = a² + b²`).
-
-The key observation is that `O1` is the midpoint of `O2O3`: indeed
-`r2 + r3 = 2 * r1` and `(O2 + O3) / 2 = O1`. Therefore the reflection of the
-common tangent line `AB` in the line of centers `O2O3` is another common
-tangent of the three circles. Concretely, with `N = r2² + r3²`, the unit
-vector `u = ((r2² - r3²)/N, 2 r2 r3/N)` satisfies `⟪O2 - O1, u⟫ = r1 - r2`
-and `⟪O3 - O1, u⟫ = r1 - r3`; hence the points `T i = O i + r i • u` all lie
-on the line through `T1` perpendicular to `u`, which is therefore tangent to
-all three circles. Since the tangent point `T1` lies strictly above `AB`, this
-line is different from `AB`.
 -/
 
 namespace Imo1969P4

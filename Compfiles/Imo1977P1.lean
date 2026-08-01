@@ -34,20 +34,8 @@ half-side vectors), and the apices of the four equilateral triangles are
 square, and each apex is at distance `(√3 / 2) * |AB|` from the midpoint of the
 corresponding side, on the same side as the center `O` (i.e. inside the
 square). The counterclockwise labeling of the square is without loss of
-generality; the clockwise case is symmetric.
-
-# Solution
-
-Follows the coordinate computation of
-https://prase.cz/kalva/imo/isoln/isoln771.html : with `e = 2 - √3` and
-`d = (√3 - 1) / 2`, the twelve midpoints are
-`O + (1/2, e/2)`, `O + (d, d)`, `O + (e/2, 1/2)`, `O + (-e/2, 1/2)`,
-`O + (-d, d)`, `O + (-1/2, e/2)`, `O + (-1/2, -e/2)`, `O + (-d, -d)`,
-`O + (-e/2, -1/2)`, `O + (e/2, -1/2)`, `O + (d, -d)`, `O + (1/2, -e/2)`
-(in the `(u, v)` basis, in angular order). Each has squared distance
-`(2 - √3) * |u|²` from `O`, and each is the rotation of the previous one by
-`π/6` about `O`, since `cos (π/6) = √3 / 2` and `sin (π/6) = 1/2`. Hence they
-are the vertices of a regular dodecagon.
+generality; the clockwise case is symmetric. The formalized solution follows
+the coordinate computation of https://prase.cz/kalva/imo/isoln/isoln771.html .
 -/
 
 namespace Imo1977P1

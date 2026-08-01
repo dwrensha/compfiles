@@ -33,32 +33,9 @@ For which n₀ does
 (b) B have a winning strategy?
 (c) neither player have a winning strategy?
 
-## Solution sketch (after kalva)
-
-Answer: A wins iff n₀ ≥ 8; B wins iff n₀ ∈ {2, 3, 4, 5}; for n₀ ∈ {6, 7} neither player
-has a winning strategy (optimal play cycles 6 → 30 → 6 → …, a draw).
-
-* A's winning strategy, given `n`: pick 60 for `n ∈ [8, 11]`, 140 for `n ∈ [12, 16]`,
-  280 for `n ∈ [17, 22]`, 504 for `n ∈ [23, 44]`, 1990 for `n ∈ [45, 1990]`,
-  1991 for `n = 1991 = 11·181`, and `11^(r+1)·181` for
-  `n ∈ (11^r·181, 11^(r+1)·181]`, `r ≥ 1`. One checks that after each pair of moves
-  either A has won or A receives a number in `[8, n)` in the last case (finite tree
-  in the first cases), so A eventually wins.
-* If B is given a number `m ≤ 29`, B can move to `{1, 2, 3, 4}`: this wins because
-  from `n ∈ {2, 3, 4, 5}` every move of A lands in `[n, n²] ⊆ [2, 29]` (chaining
-  through `[2, 11]` and `[2, 19]`). So B wins for `n₀ ∈ {2, 3, 4, 5}`.
-* Given 6, A can only avoid losing by picking 30 (everything else in `[6, 36]` either
-  is a prime power, or lets B move into `{1, …, 5}`); B's answers to 30 are 6, 10, 15,
-  and 10, 15 are winning for A, so B must answer 6: a draw. Given 7, A's only
-  non-losing picks are 30 and 42 = 2·3·7, and B must answer 6 again.
-
 ## Formalization notes
 
-The game is a reachability game with finite branching, so each player's winning region
-is exactly its attractor, which we write as an inductive predicate: `AWins n` (A to move
-from `n` wins) and `BWins m` (B to move from `m` wins); `BWinsStart n` says that B wins
-from the initial position (A to move from `n`). The three parts are then the
-equivalences proved in `imo1990_p5`.
+The proof follows a solution sketch after kalva.
 -/
 
 namespace Imo1990P5

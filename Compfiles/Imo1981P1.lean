@@ -32,17 +32,8 @@ distances from `P` to the lines `BC`, `CA`, `AB`, which are computed with the
 scalar cross product. We show that `P` minimises `BC/PD + CA/PE + AB/PF` if
 and only if `P` is the incenter of the triangle, given by the standard
 formula `(a • A + b • B + c • C) / (a + b + c)` where `a = BC`, `b = CA`,
-`c = AB`.
-
-# Solution
-
-Follows https://prase.cz/kalva/imo/isoln/isoln811.html . If `P` has
-barycentric coordinates `(α, β, γ)`, then `PD = α * 2 * area / BC`, etc.,
-because `area PBC = α * area ABC`. Hence the objective equals
-`(a²/α + b²/β + c²/γ) / (2 * area)`, and the Engel form of Cauchy–Schwarz
-(Titu's lemma) gives `a²/α + b²/β + c²/γ ≥ (a + b + c)² / (α + β + γ)
-= (a + b + c)²`, with equality if and only if `α : β : γ = a : b : c`, i.e.
-if and only if `P` is the incenter.
+`c = AB`. The formalized solution follows
+https://prase.cz/kalva/imo/isoln/isoln811.html .
 -/
 
 namespace Imo1981P1
