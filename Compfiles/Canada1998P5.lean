@@ -32,13 +32,9 @@ def A (m : ℕ) (hm : 0 < m) : ℕ → ℤ
 | 1 => (↑m)
 | n + 2 => (m : ℤ)^2 * A m hm (n + 1) - A m hm n
 
-determine answer (m : ℕ) (hm : 0 < m) : Set (ℕ × ℕ) :=
-  {p : ℕ × ℕ | ∃ n : ℕ, (p.1 : ℤ) = A m hm n ∧ (p.2 : ℤ) = A m hm (n + 1)}
-
 problem canada1998_p5 (m : ℕ) (hm : 0 < m) (a b : ℕ) (hab : a ≤ b) :
-    a^2 + b^2 = m^2 * (a * b + 1) ↔ (a, b) ∈ answer m hm := by
-  change a^2 + b^2 = m^2 * (a * b + 1) ↔
-     ∃ n : ℕ, (a:ℤ) = A m hm n ∧ (b:ℤ) = A m hm (n + 1)
+    a^2 + b^2 = m^2 * (a * b + 1) ↔
+     ∃ n : ℕ, (a:ℤ) = A m hm n ∧ (b:ℤ) = A m hm (n + 1) := by
   -- consecutive terms of the sequence satisfy the equation
   have hQ : ∀ n : ℕ, (A m hm n)^2 + (A m hm (n + 1))^2
       = (m:ℤ)^2 * (A m hm n * A m hm (n + 1) + 1) := by

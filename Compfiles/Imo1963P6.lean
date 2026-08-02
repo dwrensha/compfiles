@@ -41,9 +41,6 @@ permutation `π : Equiv.Perm (Fin 5)`, where `π s` is the place of student `s`.
 each student to the place in which it was predicted to finish. -/
 def secondPrediction : Fin 5 → Fin 5 := ![1, 4, 3, 0, 2]
 
-/-- The outcome of the contest: the students finished in the order
-E, D, A, C, B. We record it as the permutation sending each student to
-its place. -/
 determine answer : Equiv.Perm (Fin 5) where
   toFun := ![2, 4, 3, 1, 0]
   invFun := ![4, 3, 0, 2, 1]

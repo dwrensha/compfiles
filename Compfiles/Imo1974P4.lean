@@ -85,9 +85,6 @@ instance (T : Finset Rect) : Decidable (ValidDecomp T) := by
   unfold ValidDecomp
   infer_instance
 
-/-- The answer: the maximum value of p is 7, and for p = 7 the possible
-sequences (a₁, ..., a₇) are the increasing orderings of the following four
-sets of white-square counts. -/
 determine solutions : Finset (Finset ℕ) :=
   {{1, 2, 3, 4, 5, 7, 10}, {1, 2, 3, 4, 5, 8, 9},
    {1, 2, 3, 4, 6, 7, 9}, {1, 2, 3, 5, 6, 7, 8}}
