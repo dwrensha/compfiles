@@ -41,7 +41,7 @@ The boxes are labeled by `ZMod 3` and a placement of the cards `1, ..., n` is a
 function `f : ℕ → ZMod 3`. Being able to identify the third box from the sum of
 two cards drawn from two different boxes is equivalent to: whenever two pairs of
 cards from two different pairs of boxes have equal sums, the two pairs of boxes
-coincide (`Good`).
+coincide (`GoodPlacement`; the equivalence is `valid_iff_good`).
 
 The valid placements of `1, ..., n` (for `3 ≤ n`) are exactly:
 * the placements by residue mod 3 (`Mod3`), and
@@ -332,16 +332,47 @@ lemma classify (n : ℕ) (hn : 3 ≤ n) (f : ℕ → ZMod 3) :
 snip end
 
 /-- A placement of the 100 cards into 3 boxes (labeled by `ZMod 3`) is *valid*
-if every box is nonempty and whenever two pairs of cards from two different
-pairs of boxes have the same sum, the pairs of boxes coincide; equivalently,
-the sum of the two drawn cards always determines the third box.
+if every box is nonempty and whenever two boxes are selected and a card is
+taken from each, the sum of the two drawn cards always suffices to identify
+the third box: any two such selections of two distinct boxes and two cards
+with the same sum leave the same box unselected.
 Card `i + 1` is represented by the index `i : Fin 100`. -/
 def ValidPlacement (f : Fin 100 → ZMod 3) : Prop :=
+  Function.Surjective f ∧
+  ∀ i j k l : Fin 100, f i ≠ f j → f k ≠ f l →
+    (i : ℕ) + 1 + ((j : ℕ) + 1) = (k : ℕ) + 1 + ((l : ℕ) + 1) →
+    ∀ b : ZMod 3, (b ≠ f i ∧ b ≠ f j) ↔ (b ≠ f k ∧ b ≠ f l)
+
+snip begin
+
+/-- Combinatorial form of validity: whenever two pairs of cards from two
+different pairs of boxes have the same sum of indices, the pairs of boxes
+coincide. Equivalent to `ValidPlacement` (`valid_iff_good`); this is the form
+used in the classification argument. -/
+def GoodPlacement (f : Fin 100 → ZMod 3) : Prop :=
   Function.Surjective f ∧
   ∀ i j k l : Fin 100, f i ≠ f j → f k ≠ f l → (i : ℕ) + j = (k : ℕ) + l →
     (f i = f k ∧ f j = f l) ∨ (f i = f l ∧ f j = f k)
 
-snip begin
+/-- Two pairs of distinct boxes leave the same third box unselected if and
+only if the two pairs of boxes coincide. -/
+lemma third_box_iff_pair {x y z w : ZMod 3} (hxy : x ≠ y) (hzw : z ≠ w) :
+    (∀ b : ZMod 3, (b ≠ x ∧ b ≠ y) ↔ (b ≠ z ∧ b ≠ w)) ↔
+      (x = z ∧ y = w) ∨ (x = w ∧ y = z) := by
+  revert x y z w
+  decide
+
+/-- The olympiad formulation of validity is equivalent to its combinatorial
+form: the sum of two cards drawn from two different boxes determines the
+third box iff equal sums force the two pairs of boxes to coincide. -/
+lemma valid_iff_good (f : Fin 100 → ZMod 3) :
+    ValidPlacement f ↔ GoodPlacement f := by
+  constructor <;> rintro ⟨hsurj, h⟩ <;> refine ⟨hsurj, fun i j k l hij hkl hsum ↦ ?_⟩
+  · exact (third_box_iff_pair hij hkl).mp
+      (h i j k l hij hkl (by omega : (i : ℕ) + 1 + ((j : ℕ) + 1) =
+        (k : ℕ) + 1 + ((l : ℕ) + 1)))
+  · exact (third_box_iff_pair hij hkl).mpr
+      (h i j k l hij hkl (by omega : (i : ℕ) + j = (k : ℕ) + l))
 
 /-- Extend a placement `g : Fin 100 → ZMod 3` to all of `ℕ` (by `0` outside
 `[1, 100]`); card `a` corresponds to index `a - 1`. -/
@@ -355,7 +386,7 @@ lemma lift_apply_fin (g : Fin 100 → ZMod 3) (i : Fin 100) : lift g (↑i + 1) 
   rw [lift_apply g (a := ↑i + 1) (by omega) (by omega)]
   exact congrArg g (Fin.ext (show (↑i : ℕ) + 1 - 1 = (i : ℕ) by omega))
 
-lemma lift_good {g : Fin 100 → ZMod 3} (hg : ValidPlacement g) : Good 100 (lift g) := by
+lemma lift_good {g : Fin 100 → ZMod 3} (hg : GoodPlacement g) : Good 100 (lift g) := by
   constructor
   · intro b
     obtain ⟨i, hi⟩ := hg.1 b
@@ -428,7 +459,7 @@ lemma endsfun_apply2 (σ : Equiv.Perm (ZMod 3)) : endsfun σ 2 = σ 2 := by
 lemma endsfun_apply99 (σ : Equiv.Perm (ZMod 3)) : endsfun σ 99 = σ 1 := by
   show σ (T 99) = σ 1; rw [T_of_99 99 rfl]
 
-lemma mod3fun_valid (σ : Equiv.Perm (ZMod 3)) : ValidPlacement (mod3fun σ) := by
+lemma mod3fun_valid (σ : Equiv.Perm (ZMod 3)) : GoodPlacement (mod3fun σ) := by
   constructor
   · intro b
     obtain ⟨r, hr⟩ := σ.surjective b
@@ -483,7 +514,7 @@ lemma ends_pair {i j k l : Fin 100} (hij : T i ≠ T j) (hkl : T k ≠ T l)
     | (rcases hp with ⟨h1, h2⟩ | ⟨h1, h2⟩ <;>
        rcases hq with ⟨h3, h4⟩ | ⟨h3, h4⟩ <;> simp_all)
 
-lemma endsfun_valid (σ : Equiv.Perm (ZMod 3)) : ValidPlacement (endsfun σ) := by
+lemma endsfun_valid (σ : Equiv.Perm (ZMod 3)) : GoodPlacement (endsfun σ) := by
   constructor
   · intro b
     obtain ⟨r, hr⟩ := σ.surjective b
@@ -499,7 +530,7 @@ lemma endsfun_valid (σ : Equiv.Perm (ZMod 3)) : ValidPlacement (endsfun σ) := 
     · exact Or.inr ⟨congrArg σ h1, congrArg σ h2⟩
 
 /-- Every valid placement is one of the twelve explicit placements. -/
-lemma mem_solutions {g : Fin 100 → ZMod 3} (hg : ValidPlacement g) :
+lemma mem_solutions {g : Fin 100 → ZMod 3} (hg : GoodPlacement g) :
     g ∈ Set.range mod3fun ∪ Set.range endsfun := by
   rcases classify 100 (by norm_num) (lift g) (lift_good hg) with hmod | hends
   · obtain ⟨σ, hσ⟩ := hmod
@@ -582,9 +613,9 @@ lemma card_endsfun_range : (Set.range endsfun).ncard = 6 := by
   rw [← Set.image_univ, Set.ncard_image_of_injective Set.univ endsfun_injective,
     Set.ncard_univ, Nat.card_eq_fintype_card, card_perm_zmod3]
 
-lemma card_solutions : {g : Fin 100 → ZMod 3 | ValidPlacement g}.ncard = 12 := by
+lemma card_solutions : {g : Fin 100 → ZMod 3 | GoodPlacement g}.ncard = 12 := by
   have h12 : 6 + 6 = 12 := rfl
-  have hset : {g : Fin 100 → ZMod 3 | ValidPlacement g} =
+  have hset : {g : Fin 100 → ZMod 3 | GoodPlacement g} =
       Set.range mod3fun ∪ Set.range endsfun := by
     ext g
     constructor
@@ -596,12 +627,21 @@ lemma card_solutions : {g : Fin 100 → ZMod 3 | ValidPlacement g}.ncard = 12 :=
   rw [hset, Set.ncard_union_eq disjoint_ranges (Set.toFinite _) (Set.toFinite _),
     card_mod3fun_range, card_endsfun_range, h12]
 
+/-- The valid placements are exactly the good placements, so there are
+twelve of them. -/
+lemma card_valid : {g : Fin 100 → ZMod 3 | ValidPlacement g}.ncard = 12 := by
+  have hset : {g : Fin 100 → ZMod 3 | ValidPlacement g} =
+      {g : Fin 100 → ZMod 3 | GoodPlacement g} :=
+    Set.ext fun g ↦ valid_iff_good g
+  rw [hset]
+  exact card_solutions
+
 snip end
 
 determine solution_value : ℕ := 12
 
 problem imo2000_p4 :
     {g : Fin 100 → ZMod 3 | ValidPlacement g}.ncard = solution_value := by
-  exact card_solutions
+  exact card_valid
 
 end Imo2000P4

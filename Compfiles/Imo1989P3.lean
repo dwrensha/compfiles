@@ -34,9 +34,9 @@ namespace Imo1989P3
 
 abbrev Pt := EuclideanSpace ℝ (Fin 2)
 
-open scoped InnerProductSpace
-
 snip begin
+
+open scoped InnerProductSpace
 
 /-- If `P` and `Q` are both equidistant from `A` and `B`, then `P - Q` is
 orthogonal to `B - A`. -/

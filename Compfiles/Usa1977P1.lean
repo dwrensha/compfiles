@@ -247,11 +247,11 @@ lemma dvd_of_gcd_eq_one {m n : ℕ+} (hgcd : Nat.gcd ((m : ℕ) + 1) (n : ℕ) =
 
 snip end
 
-determine solution_set : Set (ℕ+ × ℕ+) := {p | Nat.gcd ((p.1 : ℕ) + 1) (p.2 : ℕ) = 1}
+determine solution_set : Set (ℕ+ × ℕ+) := {p | ((p.1 : ℕ) + 1).Coprime (p.2 : ℕ) }
 
 problem usa1977_p1 (m n : ℕ+) :
     (m, n) ∈ solution_set ↔ geomSum m ∣ geomSumStep m n := by
-  show Nat.gcd ((m : ℕ) + 1) (n : ℕ) = 1 ↔ geomSum m ∣ geomSumStep m n
+  show ((m : ℕ) + 1).Coprime (n : ℕ) ↔ geomSum m ∣ geomSumStep m n
   constructor
   · exact dvd_of_gcd_eq_one
   · intro h

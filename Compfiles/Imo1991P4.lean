@@ -252,6 +252,13 @@ lemma gcd_congr_on {s : Finset (Sym2 V)} {Φ Ψ : Sym2 V → ℕ} (h : ∀ e ∈
     rw [Finset.gcd_insert, Finset.gcd_insert, h a (Finset.mem_insert_self a s),
       ih (fun e he => h e (Finset.mem_insert_of_mem he))]
 
+omit [Fintype V] in
+/-- The gcd over the `attach`ed finset, with the function applied to the underlying
+values, equals the gcd over the finset itself. -/
+lemma gcd_attach_val {s : Finset (Sym2 V)} {f : Sym2 V → ℕ} :
+    s.attach.gcd (f ∘ Subtype.val) = s.gcd f := by
+  rw [← Finset.gcd_image, Finset.attach_image_val]
+
 /-- At an interior vertex of a trail, two consecutive edges meet, so the gcd of
 the labels at that vertex is 1. -/
 lemma gcd_interior {s₀ t : V} {w : G.Walk s₀ t} (htrail : w.IsTrail) {n : ℕ}
@@ -501,10 +508,12 @@ snip end
 
 problem imo1991_p4 {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V)
     [DecidableRel G.Adj] (hG : G.Connected) :
-    ∃ Φ : Sym2 V → ℕ,
-      (∀ e ∈ G.edgeSet, 1 ≤ Φ e ∧ Φ e ≤ Fintype.card G.edgeSet) ∧
-      (∀ e₁ ∈ G.edgeSet, ∀ e₂ ∈ G.edgeSet, Φ e₁ = Φ e₂ → e₁ = e₂) ∧
-      (∀ v : V, 2 ≤ G.degree v → (G.incidenceFinset v).gcd Φ = 1) := by
+    ∃ Φ : G.edgeSet → ℕ,
+      (∀ e : G.edgeSet, 1 ≤ Φ e ∧ Φ e ≤ Fintype.card G.edgeSet) ∧
+      (Function.Injective Φ) ∧
+      (∀ v : V, 2 ≤ G.degree v →
+        ((G.incidenceFinset v).attach.gcd fun ⟨x, h⟩ =>
+          Φ ⟨x, mem_edgeFinset.mp <| incidenceFinset_subset G v h⟩) = 1) := by
   have hcard : G.edgeFinset.card = Fintype.card G.edgeSet := Set.toFinset_card _
   by_cases hk0 : G.edgeFinset.card = 0
   · -- No edges: everything is vacuous.
@@ -513,10 +522,10 @@ problem imo1991_p4 {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V)
       intro e he
       exact Finset.notMem_empty e (hfin ▸ G.mem_edgeFinset.mpr he)
     refine ⟨fun _ => 0, ?_, ?_, ?_⟩
-    · intro e he
-      exact absurd he (hempty e)
-    · intro e₁ he₁ _ _ _
-      exact absurd he₁ (hempty e₁)
+    · intro e
+      exact absurd e.2 (hempty e.1)
+    · intro e₁ _
+      exact absurd e₁.2 (hempty e₁.1)
     · intro v hdeg
       have h0 : G.degree v = 0 := by
         rw [← G.card_incidenceFinset_eq_degree, Finset.card_eq_zero]
@@ -553,8 +562,9 @@ problem imo1991_p4 {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V)
         exact w.edges_subset_edgeSet he
       rw [edgeFinset_deleteEdges_trail, Finset.card_sdiff, Finset.inter_eq_left.mpr hsub,
         List.toFinset_card_of_nodup htrail.edges_nodup, w.length_edges]
-    refine ⟨trailLabel w 0 Φ', ?_, ?_, ?_⟩
-    · -- Bounds.
+    -- Bounds.
+    have hb : ∀ e ∈ G.edgeSet,
+        1 ≤ trailLabel w 0 Φ' e ∧ trailLabel w 0 Φ' e ≤ Fintype.card G.edgeSet := by
       intro e he
       by_cases h : e ∈ w.edges
       · rw [trailLabel_of_mem h]
@@ -568,7 +578,9 @@ problem imo1991_p4 {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V)
         obtain ⟨h1, h2⟩ := hΦ'b e he'
         rw [← hcard]
         constructor <;> omega
-    · -- Injectivity.
+    -- Injectivity.
+    have hinj : ∀ e₁ ∈ G.edgeSet, ∀ e₂ ∈ G.edgeSet,
+        trailLabel w 0 Φ' e₁ = trailLabel w 0 Φ' e₂ → e₁ = e₂ := by
       intro e₁ he₁ e₂ he₂ heq
       by_cases h1 : e₁ ∈ w.edges <;> by_cases h2 : e₂ ∈ w.edges
       · rw [trailLabel_of_mem h1, trailLabel_of_mem h2] at heq
@@ -594,7 +606,9 @@ problem imo1991_p4 {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V)
         have he₂' : e₂ ∈ (G.deleteEdges (↑w.edges.toFinset)).edgeSet :=
           mem_edgeSet_deleteEdges.mpr ⟨he₂, by simpa using h2⟩
         exact hΦ'inj e₁ he₁' e₂ he₂' heq
-    · -- The gcd condition.
+    -- The gcd condition.
+    have hgcd : ∀ v : V, 2 ≤ G.degree v →
+        (G.incidenceFinset v).gcd (trailLabel w 0 Φ') = 1 := by
       intro v hdeg
       by_cases hva : v = a
       · subst hva
@@ -623,5 +637,8 @@ problem imo1991_p4 {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V)
             have hg := hΦ'gcd v hvS' hdeg'
             rw [← hg]
             exact gcd_transfer hnone
+    refine ⟨fun e => trailLabel w 0 Φ' e.1, fun e => hb e.1 e.2,
+      fun e₁ e₂ heq => Subtype.ext (hinj e₁.1 e₁.2 e₂.1 e₂.2 heq), fun v hdeg => ?_⟩
+    exact gcd_attach_val.trans (hgcd v hdeg)
 
 end Imo1991P4

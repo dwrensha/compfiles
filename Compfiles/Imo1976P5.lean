@@ -23,13 +23,15 @@ n is a positive integer and m = 2n. aᵢⱼ = 0, 1 or -1 for 1 ≤ i ≤ n,
 
 for i = 1, 2, ... , n. Prove that the system has a solution in integers
 of absolute value at most m, not all zero.
-
-(Solution source: https://prase.cz/kalva/imo/isoln/isoln765.html)
 -/
 
 namespace Imo1976P5
 
 snip begin
+
+/-!
+We follow the proof from https://prase.cz/kalva/imo/isoln/isoln765.html
+-/
 
 /-- The candidate values for the tuple of unknowns: integers between `-n`
 and `n` in each coordinate. -/

@@ -40,34 +40,38 @@ The proof follows a solution sketch after kalva.
 
 namespace Imo1990P5
 
+/-- A legal move of player A: from the number `n` just chosen by B (or the initial
+number `n₀`), A may choose any `m` with `n ≤ m ≤ n ^ 2` (A wins by choosing 1990). -/
+@[reducible] def AMove (n m : ℕ) : Prop := n ≤ m ∧ m ≤ n ^ 2
+
 /-- A legal move of player B: from the number `m` just chosen by A, B may choose any
 `m'` such that `m / m'` is a prime power `p ^ r` with `r ≥ 1` (B wins by choosing 1). -/
 @[reducible] def BMove (m m' : ℕ) : Prop := ∃ p r : ℕ, p.Prime ∧ 0 < r ∧ m = m' * p ^ r
 
 /-- `AWins n`: it is A's turn and the current number is `n` (the initial position has
 `n = n₀`), and A has a winning strategy. A either wins immediately by choosing 1990
-(possible iff `n ≤ 1990 ≤ n²`), or chooses some `m ∈ [n, n²]` which is not a prime power
-(so B cannot win immediately) and such that every legal answer of B is again a winning
+(a legal move from `n`), or chooses a legal move `m` from which B cannot win
+(B wins by choosing 1) and such that every legal answer of B is again a winning
 position for A. -/
 inductive AWins : ℕ → Prop
-  | win (n : ℕ) (h₁ : n ≤ 1990) (h₂ : 1990 ≤ n ^ 2) : AWins n
-  | move (n m : ℕ) (h₁ : n ≤ m) (h₂ : m ≤ n ^ 2) (h₃ : ¬ IsPrimePow m)
-      (h₄ : ∀ m', BMove m m' → AWins m') : AWins n
+  | win (n : ℕ) (h : AMove n 1990) : AWins n
+  | move (n m : ℕ) (h₁ : AMove n m) (h₂ : ¬ BMove m 1)
+      (h₃ : ∀ m', BMove m m' → AWins m') : AWins n
 
 /-- `BWins m`: it is B's turn and the current number is `m`, and B has a winning
-strategy. B either wins immediately by choosing 1 (possible iff `m` is a prime power),
-or chooses a legal move to some `m' ≠ 1` such that A cannot win immediately
-(`1990 ∉ [m', m'²]`) and every answer of A is again a winning position for B. -/
+strategy. B either wins immediately by choosing 1, or chooses a legal move `m' ≠ 1`
+from which A cannot win (A wins by choosing 1990) and such that every legal answer
+of A is again a winning position for B. -/
 inductive BWins : ℕ → Prop
   | one (m : ℕ) (h : BMove m 1) : BWins m
   | move (m m' : ℕ) (h : BMove m m') (h₁ : m' ≠ 1)
-      (h₂ : ∀ m'', m' ≤ m'' → m'' ≤ m' ^ 2 → m'' ≠ 1990)
-      (h₃ : ∀ m'', m' ≤ m'' → m'' ≤ m' ^ 2 → BWins m'') : BWins m
+      (h₂ : ∀ m'', AMove m' m'' → m'' ≠ 1990)
+      (h₃ : ∀ m'', AMove m' m'' → BWins m'') : BWins m
 
 /-- `BWinsStart n`: B has a winning strategy from the initial position with `n₀ = n`
-(it is A's turn): whatever A chooses as a first move `m ∈ [n, n²]`, it is not 1990
-and B wins from `m`. -/
-def BWinsStart (n : ℕ) : Prop := ∀ m, n ≤ m → m ≤ n ^ 2 → m ≠ 1990 ∧ BWins m
+(it is A's turn): whatever legal first move `m` A makes, it is not 1990 and B wins
+from `m`. -/
+def BWinsStart (n : ℕ) : Prop := ∀ m, AMove n m → m ≠ 1990 ∧ BWins m
 
 snip begin
 
@@ -77,6 +81,16 @@ theorem prime_pow_ne_one {p r : ℕ} (hp : p.Prime) (hr : 1 ≤ r) : p ^ r ≠ 1
       _ = p ^ 1 := (pow_one p).symm
       _ ≤ p ^ r := Nat.pow_le_pow_right hp.pos hr
   omega
+
+/-- B can win from the move `m` (by choosing 1) iff `m` is a prime power. -/
+theorem bmove_one_iff_isPrimePow {m : ℕ} : BMove m 1 ↔ IsPrimePow m := by
+  constructor
+  · rintro ⟨p, r, hp, hr, h⟩
+    exact (isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, by rw [h, one_mul]⟩
+  · intro h
+    rw [isPrimePow_nat_iff] at h
+    obtain ⟨p, r, hp, hr, hpr⟩ := h
+    exact ⟨p, r, hp, hr, by rw [one_mul, hpr]⟩
 
 /-- A number divisible by two distinct primes is not a prime power. -/
 theorem not_isPrimePow_of_dvd_of_dvd {m a b : ℕ} (ha : a.Prime) (hb : b.Prime)
@@ -198,14 +212,12 @@ strong induction. -/
 
 theorem aw_45_1990 {n : ℕ} (h₁ : 45 ≤ n) (h₂ : n ≤ 1990) : AWins n := by
   apply AWins.win
-  · exact h₂
-  · nlinarith [h₁]
+  exact ⟨h₂, by nlinarith [h₁]⟩
 
 theorem aw_23_44 {n : ℕ} (h₁ : 23 ≤ n) (h₂ : n ≤ 44) : AWins n := by
   apply AWins.move (m := 504)
-  · omega
-  · nlinarith [h₁]
-  · exact not_pp504
+  · exact ⟨by omega, by nlinarith [h₁]⟩
+  · exact mt bmove_one_iff_isPrimePow.mp not_pp504
   · intro m' hm'
     obtain ⟨p, r, hp, hr, h⟩ := hm'
     have hd : m' ∈ Nat.divisors 504 := Nat.mem_divisors.mpr ⟨⟨p ^ r, h⟩, by decide⟩
@@ -256,9 +268,8 @@ theorem aw_23_44 {n : ℕ} (h₁ : 23 ≤ n) (h₂ : n ≤ 44) : AWins n := by
 
 theorem aw_17_22 {n : ℕ} (h₁ : 17 ≤ n) (h₂ : n ≤ 22) : AWins n := by
   apply AWins.move (m := 280)
-  · omega
-  · nlinarith [h₁]
-  · exact not_pp280
+  · exact ⟨by omega, by nlinarith [h₁]⟩
+  · exact mt bmove_one_iff_isPrimePow.mp not_pp280
   · intro m' hm'
     obtain ⟨p, r, hp, hr, h⟩ := hm'
     have hd : m' ∈ Nat.divisors 280 := Nat.mem_divisors.mpr ⟨⟨p ^ r, h⟩, by decide⟩
@@ -294,9 +305,8 @@ theorem aw_17_22 {n : ℕ} (h₁ : 17 ≤ n) (h₂ : n ≤ 22) : AWins n := by
 
 theorem aw_12_16 {n : ℕ} (h₁ : 12 ≤ n) (h₂ : n ≤ 16) : AWins n := by
   apply AWins.move (m := 140)
-  · omega
-  · nlinarith [h₁]
-  · exact not_pp140
+  · exact ⟨by omega, by nlinarith [h₁]⟩
+  · exact mt bmove_one_iff_isPrimePow.mp not_pp140
   · intro m' hm'
     obtain ⟨p, r, hp, hr, h⟩ := hm'
     have hd : m' ∈ Nat.divisors 140 := Nat.mem_divisors.mpr ⟨⟨p ^ r, h⟩, by decide⟩
@@ -325,9 +335,8 @@ theorem aw_12_16 {n : ℕ} (h₁ : 12 ≤ n) (h₂ : n ≤ 16) : AWins n := by
 
 theorem aw_8_11 {n : ℕ} (h₁ : 8 ≤ n) (h₂ : n ≤ 11) : AWins n := by
   apply AWins.move (m := 60)
-  · omega
-  · nlinarith [h₁]
-  · exact not_pp60
+  · exact ⟨by omega, by nlinarith [h₁]⟩
+  · exact mt bmove_one_iff_isPrimePow.mp not_pp60
   · intro m' hm'
     obtain ⟨p, r, hp, hr, h⟩ := hm'
     have hd : m' ∈ Nat.divisors 60 := Nat.mem_divisors.mpr ⟨⟨p ^ r, h⟩, by decide⟩
@@ -356,9 +365,8 @@ theorem aw_8_11 {n : ℕ} (h₁ : 8 ≤ n) (h₂ : n ≤ 11) : AWins n := by
 
 theorem aw_1991 : AWins 1991 := by
   apply AWins.move (m := 1991)
-  · decide
-  · decide
-  · exact not_pp1991
+  · exact ⟨by decide, by decide⟩
+  · exact mt bmove_one_iff_isPrimePow.mp not_pp1991
   · intro m' hm'
     obtain ⟨p, r, hp, hr, h⟩ := hm'
     have hd : m' ∈ Nat.divisors 1991 := Nat.mem_divisors.mpr ⟨⟨p ^ r, h⟩, by decide⟩
@@ -398,8 +406,8 @@ theorem aw_big {n : ℕ} (h : 1992 ≤ n) (IH : ∀ m', m' < n → 8 ≤ m' → 
     AWins n := by
   obtain ⟨r, hr1, hlt, hle⟩ := exists_interval h
   apply AWins.move (m := 11 ^ (r + 1) * 181)
-  · exact hle
-  · -- `11 ^ (r + 1) * 181 ≤ n ^ 2`
+  · refine ⟨hle, ?_⟩
+    -- `11 ^ (r + 1) * 181 ≤ n ^ 2`
     have key : 11 ≤ 11 ^ r * 181 := by
       calc (11 : ℕ) = 11 ^ 1 := (pow_one _).symm
         _ ≤ 11 ^ r := Nat.pow_le_pow_right (by decide) hr1
@@ -411,7 +419,8 @@ theorem aw_big {n : ℕ} (h : 1992 ≤ n) (IH : ∀ m', m' < n → 8 ≤ m' → 
             Nat.mul_le_mul (le_refl _) (Nat.mul_le_mul key (le_refl 181))
         _ = (11 ^ r * 181) ^ 2 := by rw [pow_two]; ring
     exact le_trans h1 (Nat.pow_le_pow_left (le_of_lt hlt) 2)
-  · -- `11 ^ (r + 1) * 181` is not a prime power
+  · -- B cannot win from `11 ^ (r + 1) * 181`, which is not a prime power
+    apply mt bmove_one_iff_isPrimePow.mp
     apply not_isPrimePow_of_dvd_of_dvd (a := 11) (b := 181) (by norm_num) (by norm_num)
       (by decide)
     · exact ⟨11 ^ r * 181, by rw [pow_succ']; ring⟩
@@ -570,7 +579,8 @@ theorem escape_le49 {m : ℕ} (h₁ : 2 ≤ m) (h₂ : m ≤ 49) (h₃ : ¬ IsPr
 
 theorem awins_ge {n : ℕ} (h : AWins n) : n = 1 ∨ 8 ≤ n := by
   induction h with
-  | win n h₁ h₂ =>
+  | win n h =>
+      obtain ⟨-, h₂⟩ := h
       right
       by_contra hc
       have h44 : n ≤ 44 := by omega
@@ -578,21 +588,22 @@ theorem awins_ge {n : ℕ} (h : AWins n) : n = 1 ∨ 8 ≤ n := by
         calc n ^ 2 ≤ 44 ^ 2 := Nat.pow_le_pow_left h44 2
           _ = 1936 := by decide
       omega
-  | move n m h₁ h₂ h₃ h₄ IH =>
+  | move n m h₁ h₂ h₃ IH =>
       by_cases hn : 8 ≤ n
       · exact Or.inr hn
       · by_cases hn1 : n = 1
         · exact Or.inl hn1
         · by_cases hn0 : n = 0
           · subst hn0
-            have h₂' : m ≤ 0 := by simpa using h₂
+            have h₂' : m ≤ 0 := by simpa using h₁.2
             have hm0 : m = 0 := by omega
             subst hm0
             exact IH 0 ⟨2, 1, by norm_num, by decide, by decide⟩
           · have h2n : 2 ≤ n := by omega
             have h7n : n ≤ 7 := by omega
-            obtain ⟨m', hbm, h2', h7'⟩ := escape_le49 (le_trans h2n h₁)
-              (le_trans h₂ (le_trans (Nat.pow_le_pow_left h7n 2) (by decide))) h₃
+            obtain ⟨m', hbm, h2', h7'⟩ := escape_le49 (le_trans h2n h₁.1)
+              (le_trans h₁.2 (le_trans (Nat.pow_le_pow_left h7n 2) (by decide)))
+              (mt bmove_one_iff_isPrimePow.mpr h₂)
             have hIH := IH m' hbm
             omega
 
@@ -600,18 +611,16 @@ theorem awins_ge {n : ℕ} (h : AWins n) : n = 1 ∨ 8 ≤ n := by
 
 theorem awins_not_bwinsstart {n : ℕ} (hA : AWins n) : BWinsStart n → False := by
   induction hA with
-  | win n h₁ h₂ =>
+  | win n h =>
       intro hB
-      exact (hB 1990 h₁ h₂).1 rfl
-  | move n m h₁ h₂ h₃ h₄ IH =>
+      exact (hB 1990 h).1 rfl
+  | move n m h₁ h₂ h₃ IH =>
       intro hB
-      have hBm := (hB m h₁ h₂).2
+      have hBm := (hB m h₁).2
       cases hBm with
-      | one m₁ h =>
-          obtain ⟨p, r, hp, hr, hmr⟩ := h
-          exact h₃ ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, by omega⟩)
+      | one m₁ h => exact h₂ h
       | move m₁ m' hl hm1 hm2 hm3 =>
-          exact IH m' hl (fun m'' a b => ⟨hm2 m'' a b, hm3 m'' a b⟩)
+          exact IH m' hl (fun m'' h'' => ⟨hm2 m'' h'', hm3 m'' h''⟩)
 
 /-! ### B wins from `n₀ ∈ {2, 3, 4, 5}` -/
 
@@ -628,10 +637,10 @@ theorem bw_le_11 {m : ℕ} (h₁ : 2 ≤ m) (h₂ : m ≤ 11) : BWins m := by
   · exact bw_pp ((isPrimePow_nat_iff _).mpr ⟨2, 2, by norm_num, by decide, by decide⟩)
   · exact bw_pp ((isPrimePow_nat_iff _).mpr ⟨5, 1, by norm_num, by decide, by decide⟩)
   · apply BWins.move (m := 6) (m' := 2) (⟨3, 1, by norm_num, by decide, by decide⟩ : BMove 6 2) (by decide)
-    · intro m'' h₁ h₂
+    · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 4 := le_trans h₂ (by decide)
       omega
-    · intro m'' h₁ h₂
+    · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 4 := le_trans h₂ (by decide)
       interval_cases m''
       · exact bw_pp ((isPrimePow_nat_iff _).mpr ⟨2, 1, by norm_num, by decide, by decide⟩)
@@ -641,10 +650,10 @@ theorem bw_le_11 {m : ℕ} (h₁ : 2 ≤ m) (h₂ : m ≤ 11) : BWins m := by
   · exact bw_pp ((isPrimePow_nat_iff _).mpr ⟨2, 3, by norm_num, by decide, by decide⟩)
   · exact bw_pp ((isPrimePow_nat_iff _).mpr ⟨3, 2, by norm_num, by decide, by decide⟩)
   · apply BWins.move (m := 10) (m' := 2) (⟨5, 1, by norm_num, by decide, by decide⟩ : BMove 10 2) (by decide)
-    · intro m'' h₁ h₂
+    · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 4 := le_trans h₂ (by decide)
       omega
-    · intro m'' h₁ h₂
+    · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 4 := le_trans h₂ (by decide)
       interval_cases m''
       · exact bw_pp ((isPrimePow_nat_iff _).mpr ⟨2, 1, by norm_num, by decide, by decide⟩)
@@ -659,52 +668,52 @@ theorem bw_le_19 {m : ℕ} (h₁ : 2 ≤ m) (h₂ : m ≤ 19) : BWins m := by
   · exact bw_pp ((isPrimePow_nat_iff _).mpr ⟨2, 2, by norm_num, by decide, by decide⟩)
   · exact bw_pp ((isPrimePow_nat_iff _).mpr ⟨5, 1, by norm_num, by decide, by decide⟩)
   · apply BWins.move (m := 6) (m' := 2) (⟨3, 1, by norm_num, by decide, by decide⟩ : BMove 6 2) (by decide)
-    · intro m'' h₁ h₂
+    · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 4 := le_trans h₂ (by decide)
       omega
-    · intro m'' h₁ h₂
+    · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 4 := le_trans h₂ (by decide)
       interval_cases m'' <;> exact bw_le_11 (by decide) (by decide)
   · exact bw_pp ((isPrimePow_nat_iff _).mpr ⟨7, 1, by norm_num, by decide, by decide⟩)
   · exact bw_pp ((isPrimePow_nat_iff _).mpr ⟨2, 3, by norm_num, by decide, by decide⟩)
   · exact bw_pp ((isPrimePow_nat_iff _).mpr ⟨3, 2, by norm_num, by decide, by decide⟩)
   · apply BWins.move (m := 10) (m' := 2) (⟨5, 1, by norm_num, by decide, by decide⟩ : BMove 10 2) (by decide)
-    · intro m'' h₁ h₂
+    · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 4 := le_trans h₂ (by decide)
       omega
-    · intro m'' h₁ h₂
+    · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 4 := le_trans h₂ (by decide)
       interval_cases m'' <;> exact bw_le_11 (by decide) (by decide)
   · exact bw_pp ((isPrimePow_nat_iff _).mpr ⟨11, 1, by norm_num, by decide, by decide⟩)
   · apply BWins.move (m := 12) (m' := 3) (⟨2, 2, by norm_num, by decide, by decide⟩ : BMove 12 3) (by decide)
-    · intro m'' h₁ h₂
+    · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 9 := le_trans h₂ (by decide)
       omega
-    · intro m'' h₁ h₂
+    · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 9 := le_trans h₂ (by decide)
       interval_cases m'' <;> exact bw_le_11 (by decide) (by decide)
   · exact bw_pp ((isPrimePow_nat_iff _).mpr ⟨13, 1, by norm_num, by decide, by decide⟩)
   · apply BWins.move (m := 14) (m' := 2) (⟨7, 1, by norm_num, by decide, by decide⟩ : BMove 14 2) (by decide)
-    · intro m'' h₁ h₂
+    · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 4 := le_trans h₂ (by decide)
       omega
-    · intro m'' h₁ h₂
+    · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 4 := le_trans h₂ (by decide)
       interval_cases m'' <;> exact bw_le_11 (by decide) (by decide)
   · apply BWins.move (m := 15) (m' := 3) (⟨5, 1, by norm_num, by decide, by decide⟩ : BMove 15 3) (by decide)
-    · intro m'' h₁ h₂
+    · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 9 := le_trans h₂ (by decide)
       omega
-    · intro m'' h₁ h₂
+    · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 9 := le_trans h₂ (by decide)
       interval_cases m'' <;> exact bw_le_11 (by decide) (by decide)
   · exact bw_pp ((isPrimePow_nat_iff _).mpr ⟨2, 4, by norm_num, by decide, by decide⟩)
   · exact bw_pp ((isPrimePow_nat_iff _).mpr ⟨17, 1, by norm_num, by decide, by decide⟩)
   · apply BWins.move (m := 18) (m' := 2) (⟨3, 2, by norm_num, by decide, by decide⟩ : BMove 18 2) (by decide)
-    · intro m'' h₁ h₂
+    · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 4 := le_trans h₂ (by decide)
       omega
-    · intro m'' h₁ h₂
+    · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 4 := le_trans h₂ (by decide)
       interval_cases m'' <;> exact bw_le_11 (by decide) (by decide)
   · exact bw_pp ((isPrimePow_nat_iff _).mpr ⟨19, 1, by norm_num, by decide, by decide⟩)
@@ -716,119 +725,119 @@ theorem bw_le_29 {m : ℕ} (h₁ : 2 ≤ m) (h₂ : m ≤ 29) : BWins m := by
   · exact bw_pp ((isPrimePow_nat_iff _).mpr ⟨2, 2, by norm_num, by decide, by decide⟩)
   · exact bw_pp ((isPrimePow_nat_iff _).mpr ⟨5, 1, by norm_num, by decide, by decide⟩)
   · apply BWins.move (m := 6) (m' := 2) (⟨3, 1, by norm_num, by decide, by decide⟩ : BMove 6 2) (by decide)
-    · intro m'' h₁ h₂
+    · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 4 := le_trans h₂ (by decide)
       omega
-    · intro m'' h₁ h₂
+    · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 4 := le_trans h₂ (by decide)
       interval_cases m'' <;> exact bw_le_11 (by decide) (by decide)
   · exact bw_pp ((isPrimePow_nat_iff _).mpr ⟨7, 1, by norm_num, by decide, by decide⟩)
   · exact bw_pp ((isPrimePow_nat_iff _).mpr ⟨2, 3, by norm_num, by decide, by decide⟩)
   · exact bw_pp ((isPrimePow_nat_iff _).mpr ⟨3, 2, by norm_num, by decide, by decide⟩)
   · apply BWins.move (m := 10) (m' := 2) (⟨5, 1, by norm_num, by decide, by decide⟩ : BMove 10 2) (by decide)
-    · intro m'' h₁ h₂
+    · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 4 := le_trans h₂ (by decide)
       omega
-    · intro m'' h₁ h₂
+    · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 4 := le_trans h₂ (by decide)
       interval_cases m'' <;> exact bw_le_11 (by decide) (by decide)
   · exact bw_pp ((isPrimePow_nat_iff _).mpr ⟨11, 1, by norm_num, by decide, by decide⟩)
   · apply BWins.move (m := 12) (m' := 3) (⟨2, 2, by norm_num, by decide, by decide⟩ : BMove 12 3) (by decide)
-    · intro m'' h₁ h₂
+    · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 9 := le_trans h₂ (by decide)
       omega
-    · intro m'' h₁ h₂
+    · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 9 := le_trans h₂ (by decide)
       interval_cases m'' <;> exact bw_le_11 (by decide) (by decide)
   · exact bw_pp ((isPrimePow_nat_iff _).mpr ⟨13, 1, by norm_num, by decide, by decide⟩)
   · apply BWins.move (m := 14) (m' := 2) (⟨7, 1, by norm_num, by decide, by decide⟩ : BMove 14 2) (by decide)
-    · intro m'' h₁ h₂
+    · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 4 := le_trans h₂ (by decide)
       omega
-    · intro m'' h₁ h₂
+    · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 4 := le_trans h₂ (by decide)
       interval_cases m'' <;> exact bw_le_11 (by decide) (by decide)
   · apply BWins.move (m := 15) (m' := 3) (⟨5, 1, by norm_num, by decide, by decide⟩ : BMove 15 3) (by decide)
-    · intro m'' h₁ h₂
+    · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 9 := le_trans h₂ (by decide)
       omega
-    · intro m'' h₁ h₂
+    · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 9 := le_trans h₂ (by decide)
       interval_cases m'' <;> exact bw_le_11 (by decide) (by decide)
   · exact bw_pp ((isPrimePow_nat_iff _).mpr ⟨2, 4, by norm_num, by decide, by decide⟩)
   · exact bw_pp ((isPrimePow_nat_iff _).mpr ⟨17, 1, by norm_num, by decide, by decide⟩)
   · apply BWins.move (m := 18) (m' := 2) (⟨3, 2, by norm_num, by decide, by decide⟩ : BMove 18 2) (by decide)
-    · intro m'' h₁ h₂
+    · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 4 := le_trans h₂ (by decide)
       omega
-    · intro m'' h₁ h₂
+    · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 4 := le_trans h₂ (by decide)
       interval_cases m'' <;> exact bw_le_11 (by decide) (by decide)
   · exact bw_pp ((isPrimePow_nat_iff _).mpr ⟨19, 1, by norm_num, by decide, by decide⟩)
   · apply BWins.move (m := 20) (m' := 4) (⟨5, 1, by norm_num, by decide, by decide⟩ : BMove 20 4) (by decide)
-    · intro m'' h₁ h₂
+    · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 16 := le_trans h₂ (by decide)
       omega
-    · intro m'' h₁ h₂
+    · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 16 := le_trans h₂ (by decide)
       interval_cases m'' <;> exact bw_le_19 (by decide) (by decide)
   · apply BWins.move (m := 21) (m' := 3) (⟨7, 1, by norm_num, by decide, by decide⟩ : BMove 21 3) (by decide)
-    · intro m'' h₁ h₂
+    · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 9 := le_trans h₂ (by decide)
       omega
-    · intro m'' h₁ h₂
+    · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 9 := le_trans h₂ (by decide)
       interval_cases m'' <;> exact bw_le_11 (by decide) (by decide)
   · apply BWins.move (m := 22) (m' := 2) (⟨11, 1, by norm_num, by decide, by decide⟩ : BMove 22 2) (by decide)
-    · intro m'' h₁ h₂
+    · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 4 := le_trans h₂ (by decide)
       omega
-    · intro m'' h₁ h₂
+    · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 4 := le_trans h₂ (by decide)
       interval_cases m'' <;> exact bw_le_11 (by decide) (by decide)
   · exact bw_pp ((isPrimePow_nat_iff _).mpr ⟨23, 1, by norm_num, by decide, by decide⟩)
   · apply BWins.move (m := 24) (m' := 3) (⟨2, 3, by norm_num, by decide, by decide⟩ : BMove 24 3) (by decide)
-    · intro m'' h₁ h₂
+    · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 9 := le_trans h₂ (by decide)
       omega
-    · intro m'' h₁ h₂
+    · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 9 := le_trans h₂ (by decide)
       interval_cases m'' <;> exact bw_le_11 (by decide) (by decide)
   · exact bw_pp ((isPrimePow_nat_iff _).mpr ⟨5, 2, by norm_num, by decide, by decide⟩)
   · apply BWins.move (m := 26) (m' := 2) (⟨13, 1, by norm_num, by decide, by decide⟩ : BMove 26 2) (by decide)
-    · intro m'' h₁ h₂
+    · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 4 := le_trans h₂ (by decide)
       omega
-    · intro m'' h₁ h₂
+    · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 4 := le_trans h₂ (by decide)
       interval_cases m'' <;> exact bw_le_11 (by decide) (by decide)
   · exact bw_pp ((isPrimePow_nat_iff _).mpr ⟨3, 3, by norm_num, by decide, by decide⟩)
   · apply BWins.move (m := 28) (m' := 4) (⟨7, 1, by norm_num, by decide, by decide⟩ : BMove 28 4) (by decide)
-    · intro m'' h₁ h₂
+    · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 16 := le_trans h₂ (by decide)
       omega
-    · intro m'' h₁ h₂
+    · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 16 := le_trans h₂ (by decide)
       interval_cases m'' <;> exact bw_le_19 (by decide) (by decide)
   · exact bw_pp ((isPrimePow_nat_iff _).mpr ⟨29, 1, by norm_num, by decide, by decide⟩)
 
 theorem bwinsstart_2 : BWinsStart 2 := by
-  intro m h₁ h₂
+  intro m ⟨h₁, h₂⟩
   have h4 : m ≤ 4 := le_trans h₂ (by decide)
   exact ⟨by omega, bw_le_11 (by omega) (by omega)⟩
 
 theorem bwinsstart_3 : BWinsStart 3 := by
-  intro m h₁ h₂
+  intro m ⟨h₁, h₂⟩
   have h9 : m ≤ 9 := le_trans h₂ (by decide)
   exact ⟨by omega, bw_le_11 (by omega) (by omega)⟩
 
 theorem bwinsstart_4 : BWinsStart 4 := by
-  intro m h₁ h₂
+  intro m ⟨h₁, h₂⟩
   have h16 : m ≤ 16 := le_trans h₂ (by decide)
   exact ⟨by omega, bw_le_19 (by omega) (by omega)⟩
 
 theorem bwinsstart_5 : BWinsStart 5 := by
-  intro m h₁ h₂
+  intro m ⟨h₁, h₂⟩
   have h25 : m ≤ 25 := le_trans h₂ (by decide)
   exact ⟨by omega, bw_le_29 (by omega) (by omega)⟩
 
@@ -862,9 +871,9 @@ theorem not_bwins_trap {m : ℕ} (h : BWins m) :
           exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp10
         · have hpr : p ^ r = 6 := by omega
           exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp6
-        · exact (IH 30 (by decide) (by decide)).1 rfl
-        · exact (IH 60 (by decide) (by decide)).2.1 rfl
-        · exact (IH 140 (by decide) (by decide)).2.2.1 rfl
+        · exact (IH 30 ⟨by decide, by decide⟩).1 rfl
+        · exact (IH 60 ⟨by decide, by decide⟩).2.1 rfl
+        · exact (IH 140 ⟨by decide, by decide⟩).2.2.1 rfl
         · have hpr : p ^ r = 1 := by omega
           exact absurd hpr (prime_pow_ne_one hp hr)
       · -- B to move at 60
@@ -885,10 +894,10 @@ theorem not_bwins_trap {m : ℕ} (h : BWins m) :
           exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp10
         · have hpr : p ^ r = 6 := by omega
           exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp6
-        · exact (IH 140 (by decide) (by decide)).2.2.1 rfl
-        · exact (IH 140 (by decide) (by decide)).2.2.1 rfl
-        · exact (IH 280 (by decide) (by decide)).2.2.2.1 rfl
-        · exact (IH 504 (by decide) (by decide)).2.2.2.2 rfl
+        · exact (IH 140 ⟨by decide, by decide⟩).2.2.1 rfl
+        · exact (IH 140 ⟨by decide, by decide⟩).2.2.1 rfl
+        · exact (IH 280 ⟨by decide, by decide⟩).2.2.2.1 rfl
+        · exact (IH 504 ⟨by decide, by decide⟩).2.2.2.2 rfl
         · have hpr : p ^ r = 1 := by omega
           exact absurd hpr (prime_pow_ne_one hp hr)
       · -- B to move at 140
@@ -909,10 +918,10 @@ theorem not_bwins_trap {m : ℕ} (h : BWins m) :
           exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp14
         · have hpr : p ^ r = 10 := by omega
           exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp10
-        · exact (IH 280 (by decide) (by decide)).2.2.2.1 rfl
-        · exact (IH 504 (by decide) (by decide)).2.2.2.2 rfl
-        · exact (IH 504 (by decide) (by decide)).2.2.2.2 rfl
-        · exact hm2 1990 (by decide) (by decide) rfl
+        · exact (IH 280 ⟨by decide, by decide⟩).2.2.2.1 rfl
+        · exact (IH 504 ⟨by decide, by decide⟩).2.2.2.2 rfl
+        · exact (IH 504 ⟨by decide, by decide⟩).2.2.2.2 rfl
+        · exact hm2 1990 ⟨by decide, by decide⟩ rfl
         · have hpr : p ^ r = 1 := by omega
           exact absurd hpr (prime_pow_ne_one hp hr)
       · -- B to move at 280
@@ -939,11 +948,11 @@ theorem not_bwins_trap {m : ℕ} (h : BWins m) :
           exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp14
         · have hpr : p ^ r = 10 := by omega
           exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp10
-        · exact (IH 504 (by decide) (by decide)).2.2.2.2 rfl
-        · exact (IH 504 (by decide) (by decide)).2.2.2.2 rfl
-        · exact hm2 1990 (by decide) (by decide) rfl
-        · exact hm2 1990 (by decide) (by decide) rfl
-        · exact hm2 1990 (by decide) (by decide) rfl
+        · exact (IH 504 ⟨by decide, by decide⟩).2.2.2.2 rfl
+        · exact (IH 504 ⟨by decide, by decide⟩).2.2.2.2 rfl
+        · exact hm2 1990 ⟨by decide, by decide⟩ rfl
+        · exact hm2 1990 ⟨by decide, by decide⟩ rfl
+        · exact hm2 1990 ⟨by decide, by decide⟩ rfl
         · have hpr : p ^ r = 1 := by omega
           exact absurd hpr (prime_pow_ne_one hp hr)
       · -- B to move at 504
@@ -982,25 +991,25 @@ theorem not_bwins_trap {m : ℕ} (h : BWins m) :
           exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp14
         · have hpr : p ^ r = 12 := by omega
           exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp12
-        · exact hm2 1990 (by decide) (by decide) rfl
-        · exact hm2 1990 (by decide) (by decide) rfl
-        · exact hm2 1990 (by decide) (by decide) rfl
+        · exact hm2 1990 ⟨by decide, by decide⟩ rfl
+        · exact hm2 1990 ⟨by decide, by decide⟩ rfl
+        · exact hm2 1990 ⟨by decide, by decide⟩ rfl
         · have hpr : p ^ r = 6 := by omega
           exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp6
-        · exact hm2 1990 (by decide) (by decide) rfl
-        · exact hm2 1990 (by decide) (by decide) rfl
-        · exact hm2 1990 (by decide) (by decide) rfl
+        · exact hm2 1990 ⟨by decide, by decide⟩ rfl
+        · exact hm2 1990 ⟨by decide, by decide⟩ rfl
+        · exact hm2 1990 ⟨by decide, by decide⟩ rfl
         · have hpr : p ^ r = 1 := by omega
           exact absurd hpr (prime_pow_ne_one hp hr)
 
 theorem not_bwinsstart_6 : ¬ BWinsStart 6 := by
   intro h
-  obtain ⟨h1, h2⟩ := h 30 (by decide) (by decide)
+  obtain ⟨h1, h2⟩ := h 30 ⟨by decide, by decide⟩
   exact (not_bwins_trap h2).1 rfl
 
 theorem not_bwinsstart_7 : ¬ BWinsStart 7 := by
   intro h
-  obtain ⟨h1, h2⟩ := h 30 (by decide) (by decide)
+  obtain ⟨h1, h2⟩ := h 30 ⟨by decide, by decide⟩
   exact (not_bwins_trap h2).1 rfl
 
 snip end
