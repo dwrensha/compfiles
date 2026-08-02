@@ -204,10 +204,12 @@ problem imo1996_p1_b : Relation.ReflTransGen (Move 73) SqA SqB := by
     (Relation.ReflTransGen.head s9 (Relation.ReflTransGen.head s10
     (Relation.ReflTransGen.head s11 Relation.ReflTransGen.refl))))))))))
 
-/- The answer to part (c): the task cannot be done when `r = 97`. -/
-determine answer : Prop := ¬ Relation.ReflTransGen (Move 97) SqA SqB
+determine does_exist_97 : Bool := false
 
-problem imo1996_p1_c : answer := by
+problem imo1996_p1_c :
+    if does_exist_97 then Relation.ReflTransGen (Move 97) SqA SqB
+    else ¬ Relation.ReflTransGen (Move 97) SqA SqB := by
+  change ¬ Relation.ReflTransGen (Move 97) SqA SqB
   intro h
   exact absurd (reach97 h (by decide)) (by decide)
 

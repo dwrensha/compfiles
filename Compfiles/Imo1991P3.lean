@@ -57,13 +57,13 @@ def coprimeSet6 : Finset ℕ := {46, 57, 85, 91, 121}
 def bigUnion : Finset ℕ :=
   coprimeSet1 ∪ coprimeSet2 ∪ coprimeSet3 ∪ coprimeSet4 ∪ coprimeSet5 ∪ coprimeSet6
 
-set_option maxRecDepth 10000 in
+set_option maxRecDepth 1000 in
 lemma bigUnion_card : bigUnion.card = 88 := by decide
 
-set_option maxRecDepth 10000 in
+set_option maxRecDepth 1000 in
 lemma bigUnion_subset : ∀ x ∈ bigUnion, x ∈ Finset.Icc 1 280 := by decide
 
-set_option maxRecDepth 10000 in
+set_option maxRecDepth 1000 in
 lemma coprimeSet1_pairwise :
     ∀ a ∈ coprimeSet1, ∀ b ∈ coprimeSet1, a ≠ b → Nat.gcd a b = 1 := by decide
 

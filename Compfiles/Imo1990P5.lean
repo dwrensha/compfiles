@@ -1009,8 +1009,6 @@ determine aWinsSet : Set ℕ := {n | 8 ≤ n}
 
 determine bWinsSet : Finset ℕ := {2, 3, 4, 5}
 
-/-- The answer to part (c): the initial values for which neither player has a winning
-strategy (a draw). -/
 determine drawSet : Finset ℕ := {6, 7}
 
 problem imo1990_p5 (n : ℕ) (hn : 2 ≤ n) :

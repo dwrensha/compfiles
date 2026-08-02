@@ -942,8 +942,6 @@ lemma main_lemma : ∀ n : ℕ, ∀ S : Finset (ℤ × ℤ), S.card ≤ n → �
 
 snip end
 
-/-- The answer to the question "is it always possible to color the points?"
-is yes. -/
 determine does_exist : Bool := true
 
 /-- **IMO 1986, Problem 6.**  Given a finite set `S` of points in the plane with

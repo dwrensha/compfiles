@@ -23,16 +23,6 @@ Let $q = \dfrac{3p-5}{2}$ where $p$ is an odd prime, and let
 
 Prove that if $\dfrac{1}{p}-2S_q = \dfrac{m}{n}$ for integers $m$ and $n$, then $m-n$ is divisible by $p$.
 
-## Note on the formalization
-An earlier version of this file stated the conclusion as
-`∃ m n : ℕ, 1/p - 2*S q = m/n → p ∣ (m - n)`, which is trivially true
-(take `m = n = 0`; the implication's conclusion `p ∣ (0 - 0)` holds
-regardless of the hypothesis), and defined `S` as the sum over *every*
-integer `k ∈ [2, q]`, whereas the original problem sums only over the
-indices `2, 5, 8, …, q`, i.e. those with `k ≡ 2 (mod 3)`. The statement
-below has been corrected to be faithful to the original problem: the sum
-is restricted to `k % 3 = 2`, and the claim is universally quantified over
-integers `m`, `n` (with `n ≠ 0`), with divisibility taken in `ℤ`.
 -/
 
 namespace Usa2010P5

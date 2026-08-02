@@ -24,13 +24,17 @@ open Real
 
 namespace Imo1959P3
 
-/-- The quadratic equation in `cos (2 * x)` formed from
+/-- The coefficients of the quadratic equation in `cos (2 * x)` formed from
 `a * cos x ^ 2 + b * cos x + c = 0`: writing `cos (2 * x) = 2 * cos x ^ 2 - 1`
-and eliminating the odd power of `cos x` by squaring yields the equation
-`formedQuadratic a b c (cos (2 * x)) = 0`. -/
-determine formedQuadratic (a b c : ℝ) (t : ℝ) : ℝ :=
-  a ^ 2 * t ^ 2 + (2 * a ^ 2 + 4 * a * c - 2 * b ^ 2) * t +
-    (a ^ 2 + 4 * a * c - 2 * b ^ 2 + 4 * c ^ 2)
+and eliminating the odd power of `cos x` by squaring. -/
+determine formedQuadratic (a b c : ℝ) : ℝ × ℝ × ℝ :=
+  (a ^ 2, 2 * a ^ 2 + 4 * a * c - 2 * b ^ 2, a ^ 2 + 4 * a * c - 2 * b ^ 2 + 4 * c ^ 2)
+
+/-- The formed quadratic evaluated at `t`, i.e. the quadratic with coefficients
+`formedQuadratic a b c` applied to `t`. -/
+def formedQuadraticEval (a b c : ℝ) (t : ℝ) : ℝ :=
+  (formedQuadratic a b c).1 * t ^ 2 + (formedQuadratic a b c).2.1 * t +
+    (formedQuadratic a b c).2.2
 
 snip begin
 
@@ -45,23 +49,23 @@ lemma sq_b_mul_cos (a b c x : ℝ) (h : a * cos x ^ 2 + b * cos x + c = 0) :
 /-- The formed quadratic evaluated at `cos (2 * x)`, expressed back in terms of
 `cos x` via `cos (2 * x) = 2 * cos x ^ 2 - 1`. -/
 lemma formedQuadratic_cos_two_mul (a b c x : ℝ) :
-    formedQuadratic a b c (cos (2 * x)) =
+    formedQuadraticEval a b c (cos (2 * x)) =
       4 * ((a * cos x ^ 2 + c) ^ 2 - b ^ 2 * cos x ^ 2) := by
-  unfold formedQuadratic
+  unfold formedQuadraticEval formedQuadratic
   rw [cos_two_mul x]
   ring
 
 snip end
 
 problem imo1959_p3 (a b c x : ℝ) (h : a * cos x ^ 2 + b * cos x + c = 0) :
-    formedQuadratic a b c (cos (2 * x)) = 0 := by
+    formedQuadraticEval a b c (cos (2 * x)) = 0 := by
   rw [formedQuadratic_cos_two_mul, sq_b_mul_cos a b c x h]
   ring
 
 /-- For `a = 4`, `b = 2`, `c = -1` the formed equation in `cos 2x` is four
 times the original equation in `cos x`: the two equations are the same. -/
 problem imo1959_p3_comparison (t : ℝ) :
-    formedQuadratic 4 2 (-1) t = 4 * (4 * t ^ 2 + 2 * t - 1) := by
-  unfold formedQuadratic; ring
+    formedQuadraticEval 4 2 (-1) t = 4 * (4 * t ^ 2 + 2 * t - 1) := by
+  unfold formedQuadraticEval formedQuadratic; ring
 
 end Imo1959P3

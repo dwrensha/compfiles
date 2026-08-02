@@ -37,8 +37,6 @@ namespace Imo2023P3
 
 open Polynomial
 
-/-- The answer: the sequence must be an arithmetic progression with
-non-negative common difference (and any such sequence works). -/
 determine SolutionSet {k : ℕ} (hk : 2 ≤ k) : Set (ℕ+ → ℕ+) :=
   {a | ∃ a₀ d : ℕ, ∀ m : ℕ, (a ⟨m + 1, Nat.succ_pos m⟩).val = a₀ + d * m}
 

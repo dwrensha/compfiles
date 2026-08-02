@@ -373,15 +373,15 @@ noncomputable def stateD (n : ℕ) : Finset (ℤ × ℤ) :=
 lemma phase1_step (n k : ℕ) (hk : k < n) : Reachable (stateA n k) (stateA n (k + 1)) := by
   have h := purge (s := stateA n k) (p := ((k : ℤ), (n : ℤ))) (u := ((0 : ℤ), (1 : ℤ)))
     (w := ((1 : ℤ), (0 : ℤ))) (by decide) (by decide) (by decide)
-    (by simp only [stateA, mem_initPos, Finset.mem_filter, Prod.mk_add_mk, Prod.fst_add, Prod.snd_add, Prod.fst_sub, Prod.snd_sub, true_and, and_true, or_true, or_false, false_or, and_false, false_and, true_or, not_true, not_false]; omega) (by simp only [stateA, mem_initPos, Finset.mem_filter, Prod.mk_add_mk, Prod.fst_add, Prod.snd_add, Prod.fst_sub, Prod.snd_sub, true_and, and_true, or_true, or_false, false_or, and_false, false_and, true_or, not_true, not_false]; omega)
-    (by simp only [stateA, mem_initPos, Finset.mem_filter, Prod.mk_add_mk, Prod.fst_add, Prod.snd_add, Prod.fst_sub, Prod.snd_sub, true_and, and_true, or_true, or_false, false_or, and_false, false_and, true_or, not_true, not_false]; omega) (by simp only [stateA, mem_initPos, Finset.mem_filter, Prod.mk_add_mk, Prod.fst_add, Prod.snd_add, Prod.fst_sub, Prod.snd_sub, true_and, and_true, or_true, or_false, false_or, and_false, false_and, true_or, not_true, not_false]; omega)
-    (by simp only [stateA, mem_initPos, Finset.mem_filter, Prod.mk_add_mk, Prod.fst_add, Prod.snd_add, Prod.fst_sub, Prod.snd_sub, true_and, and_true, or_true, or_false, false_or, and_false, false_and, true_or, not_true, not_false]; omega)
+    (by simp only [stateA, mem_initPos, Finset.mem_filter, Prod.mk_add_mk, Prod.fst_add, Prod.snd_add, Prod.fst_sub, Prod.snd_sub]; omega) (by simp only [stateA, mem_initPos, Finset.mem_filter, Prod.mk_add_mk, Prod.fst_add, Prod.snd_add, Prod.fst_sub, Prod.snd_sub]; omega)
+    (by simp only [stateA, mem_initPos, Finset.mem_filter, Prod.mk_add_mk, Prod.fst_add, Prod.snd_add, Prod.fst_sub, Prod.snd_sub]; omega) (by simp only [stateA, mem_initPos, Finset.mem_filter, Prod.mk_add_mk, Prod.fst_add, Prod.snd_add, Prod.fst_sub, Prod.snd_sub]; omega)
+    (by simp only [stateA, mem_initPos, Finset.mem_filter, Prod.mk_add_mk, Prod.fst_add, Prod.snd_add, Prod.fst_sub, Prod.snd_sub]; omega)
   rw [show stateA n (k + 1) = stateA n k \ {((k : ℤ), (n : ℤ)), ((k : ℤ), (n : ℤ)) + ((0 : ℤ), (1 : ℤ)),
       ((k : ℤ), (n : ℤ)) + ((0 : ℤ), (1 : ℤ)) + ((0 : ℤ), (1 : ℤ))} by
     ext ⟨a, b⟩
     simp only [stateA, mem_initPos, Finset.mem_filter, Finset.mem_sdiff, Finset.mem_insert,
       Finset.mem_singleton, ne_eq, Prod.ext_iff, Prod.mk_add_mk, Prod.fst_add, Prod.snd_add,
-      Prod.fst_sub, Prod.snd_sub, true_and, and_true, or_true, or_false, false_or, and_false, false_and, true_or, not_true, not_false]
+      Prod.fst_sub, Prod.snd_sub]
     omega]
   exact h
 
@@ -402,16 +402,16 @@ lemma phase1 (n : ℕ) (k : ℕ) (hk : k ≤ n) : Reachable (initPos (n + 3)) (s
 lemma phase2a_step (n k : ℕ) (hk : k < n) : Reachable (stateB n k) (stateB n (k + 1)) := by
   have h := purge (s := stateB n k) (p := ((n : ℤ), (n : ℤ) + 2 - (k : ℤ))) (u := ((1 : ℤ), (0 : ℤ)))
     (w := ((0 : ℤ), (-1 : ℤ))) (by decide) (by decide) (by decide)
-    (by simp only [stateB, mem_initPos, Finset.mem_filter, Prod.mk_add_mk, Prod.fst_add, Prod.snd_add, Prod.fst_sub, Prod.snd_sub, true_and, and_true, or_true, or_false, false_or, and_false, false_and, true_or, not_true, not_false]; omega) (by simp only [stateB, mem_initPos, Finset.mem_filter, Prod.mk_add_mk, Prod.fst_add, Prod.snd_add, Prod.fst_sub, Prod.snd_sub, true_and, and_true, or_true, or_false, false_or, and_false, false_and, true_or, not_true, not_false]; omega)
-    (by simp only [stateB, mem_initPos, Finset.mem_filter, Prod.mk_add_mk, Prod.fst_add, Prod.snd_add, Prod.fst_sub, Prod.snd_sub, true_and, and_true, or_true, or_false, false_or, and_false, false_and, true_or, not_true, not_false]; omega) (by simp only [stateB, mem_initPos, Finset.mem_filter, Prod.mk_add_mk, Prod.fst_add, Prod.snd_add, Prod.fst_sub, Prod.snd_sub, true_and, and_true, or_true, or_false, false_or, and_false, false_and, true_or, not_true, not_false]; omega)
-    (by simp only [stateB, mem_initPos, Finset.mem_filter, Prod.mk_add_mk, Prod.fst_add, Prod.snd_add, Prod.fst_sub, Prod.snd_sub, true_and, and_true, or_true, or_false, false_or, and_false, false_and, true_or, not_true, not_false]; omega)
+    (by simp only [stateB, mem_initPos, Finset.mem_filter, Prod.mk_add_mk, Prod.fst_add, Prod.snd_add, Prod.fst_sub, Prod.snd_sub]; omega) (by simp only [stateB, mem_initPos, Finset.mem_filter, Prod.mk_add_mk, Prod.fst_add, Prod.snd_add, Prod.fst_sub, Prod.snd_sub]; omega)
+    (by simp only [stateB, mem_initPos, Finset.mem_filter, Prod.mk_add_mk, Prod.fst_add, Prod.snd_add, Prod.fst_sub, Prod.snd_sub]; omega) (by simp only [stateB, mem_initPos, Finset.mem_filter, Prod.mk_add_mk, Prod.fst_add, Prod.snd_add, Prod.fst_sub, Prod.snd_sub]; omega)
+    (by simp only [stateB, mem_initPos, Finset.mem_filter, Prod.mk_add_mk, Prod.fst_add, Prod.snd_add, Prod.fst_sub, Prod.snd_sub]; omega)
   rw [show stateB n (k + 1) = stateB n k \ {((n : ℤ), (n : ℤ) + 2 - (k : ℤ)),
       ((n : ℤ), (n : ℤ) + 2 - (k : ℤ)) + ((1 : ℤ), (0 : ℤ)),
       ((n : ℤ), (n : ℤ) + 2 - (k : ℤ)) + ((1 : ℤ), (0 : ℤ)) + ((1 : ℤ), (0 : ℤ))} by
     ext ⟨a, b⟩
     simp only [stateB, mem_initPos, Finset.mem_filter, Finset.mem_sdiff, Finset.mem_insert,
       Finset.mem_singleton, ne_eq, Prod.ext_iff, Prod.mk_add_mk, Prod.fst_add, Prod.snd_add,
-      Prod.fst_sub, Prod.snd_sub, true_and, and_true, or_true, or_false, false_or, and_false, false_and, true_or, not_true, not_false]
+      Prod.fst_sub, Prod.snd_sub]
     omega]
   exact h
 
@@ -432,39 +432,39 @@ lemma phase2a (n : ℕ) (k : ℕ) (hk : k ≤ n) : Reachable (initPos (n + 3)) (
 lemma phase2b (n : ℕ) (hn : 1 ≤ n) : Reachable (stateB n n) (initPos n) := by
   have h1 := purge (s := stateB n n) (p := (((n : ℤ) + 2), (0 : ℤ))) (u := ((0 : ℤ), (1 : ℤ)))
     (w := ((-1 : ℤ), (0 : ℤ))) (by decide) (by decide) (by decide)
-    (by simp only [stateB, mem_initPos, Finset.mem_filter, Prod.mk_add_mk, Prod.fst_add, Prod.snd_add, Prod.fst_sub, Prod.snd_sub, true_and, and_true, or_true, or_false, false_or, and_false, false_and, true_or, not_true, not_false]; omega) (by simp only [stateB, mem_initPos, Finset.mem_filter, Prod.mk_add_mk, Prod.fst_add, Prod.snd_add, Prod.fst_sub, Prod.snd_sub, true_and, and_true, or_true, or_false, false_or, and_false, false_and, true_or, not_true, not_false]; omega)
-    (by simp only [stateB, mem_initPos, Finset.mem_filter, Prod.mk_add_mk, Prod.fst_add, Prod.snd_add, Prod.fst_sub, Prod.snd_sub, true_and, and_true, or_true, or_false, false_or, and_false, false_and, true_or, not_true, not_false]; omega) (by simp only [stateB, mem_initPos, Finset.mem_filter, Prod.mk_add_mk, Prod.fst_add, Prod.snd_add, Prod.fst_sub, Prod.snd_sub, true_and, and_true, or_true, or_false, false_or, and_false, false_and, true_or, not_true, not_false]; omega)
-    (by simp only [stateB, mem_initPos, Finset.mem_filter, Prod.mk_add_mk, Prod.fst_add, Prod.snd_add, Prod.fst_sub, Prod.snd_sub, true_and, and_true, or_true, or_false, false_or, and_false, false_and, true_or, not_true, not_false]; omega)
+    (by simp only [stateB, mem_initPos, Finset.mem_filter, Prod.mk_add_mk, Prod.fst_add, Prod.snd_add, Prod.fst_sub, Prod.snd_sub]; omega) (by simp only [stateB, mem_initPos, Finset.mem_filter, Prod.mk_add_mk, Prod.fst_add, Prod.snd_add, Prod.fst_sub, Prod.snd_sub]; omega)
+    (by simp only [stateB, mem_initPos, Finset.mem_filter, Prod.mk_add_mk, Prod.fst_add, Prod.snd_add, Prod.fst_sub, Prod.snd_sub]; omega) (by simp only [stateB, mem_initPos, Finset.mem_filter, Prod.mk_add_mk, Prod.fst_add, Prod.snd_add, Prod.fst_sub, Prod.snd_sub]; omega)
+    (by simp only [stateB, mem_initPos, Finset.mem_filter, Prod.mk_add_mk, Prod.fst_add, Prod.snd_add, Prod.fst_sub, Prod.snd_sub]; omega)
   rw [show stateB n n \ {((n : ℤ) + 2, (0 : ℤ)), ((n : ℤ) + 2, (0 : ℤ)) + ((0 : ℤ), (1 : ℤ)),
       ((n : ℤ) + 2, (0 : ℤ)) + ((0 : ℤ), (1 : ℤ)) + ((0 : ℤ), (1 : ℤ))} = stateC n by
     ext ⟨a, b⟩
     simp only [stateB, stateC, mem_initPos, Finset.mem_filter, Finset.mem_sdiff, Finset.mem_insert,
       Finset.mem_singleton, ne_eq, Prod.ext_iff, Prod.mk_add_mk, Prod.fst_add, Prod.snd_add,
-      Prod.fst_sub, Prod.snd_sub, true_and, and_true, or_true, or_false, false_or, and_false, false_and, true_or, not_true, not_false]
+      Prod.fst_sub, Prod.snd_sub]
     omega] at h1
   have h2 := purge (s := stateC n) (p := (((n : ℤ) + 1), (0 : ℤ))) (u := ((0 : ℤ), (1 : ℤ)))
     (w := ((-1 : ℤ), (0 : ℤ))) (by decide) (by decide) (by decide)
-    (by simp only [stateC, mem_initPos, Finset.mem_filter, Prod.mk_add_mk, Prod.fst_add, Prod.snd_add, Prod.fst_sub, Prod.snd_sub, true_and, and_true, or_true, or_false, false_or, and_false, false_and, true_or, not_true, not_false]; omega) (by simp only [stateC, mem_initPos, Finset.mem_filter, Prod.mk_add_mk, Prod.fst_add, Prod.snd_add, Prod.fst_sub, Prod.snd_sub, true_and, and_true, or_true, or_false, false_or, and_false, false_and, true_or, not_true, not_false]; omega)
-    (by simp only [stateC, mem_initPos, Finset.mem_filter, Prod.mk_add_mk, Prod.fst_add, Prod.snd_add, Prod.fst_sub, Prod.snd_sub, true_and, and_true, or_true, or_false, false_or, and_false, false_and, true_or, not_true, not_false]; omega) (by simp only [stateC, mem_initPos, Finset.mem_filter, Prod.mk_add_mk, Prod.fst_add, Prod.snd_add, Prod.fst_sub, Prod.snd_sub, true_and, and_true, or_true, or_false, false_or, and_false, false_and, true_or, not_true, not_false]; omega)
-    (by simp only [stateC, mem_initPos, Finset.mem_filter, Prod.mk_add_mk, Prod.fst_add, Prod.snd_add, Prod.fst_sub, Prod.snd_sub, true_and, and_true, or_true, or_false, false_or, and_false, false_and, true_or, not_true, not_false]; omega)
+    (by simp only [stateC, mem_initPos, Finset.mem_filter, Prod.mk_add_mk, Prod.fst_add, Prod.snd_add, Prod.fst_sub, Prod.snd_sub]; omega) (by simp only [stateC, mem_initPos, Finset.mem_filter, Prod.mk_add_mk, Prod.fst_add, Prod.snd_add, Prod.fst_sub, Prod.snd_sub]; omega)
+    (by simp only [stateC, mem_initPos, Finset.mem_filter, Prod.mk_add_mk, Prod.fst_add, Prod.snd_add, Prod.fst_sub, Prod.snd_sub]; omega) (by simp only [stateC, mem_initPos, Finset.mem_filter, Prod.mk_add_mk, Prod.fst_add, Prod.snd_add, Prod.fst_sub, Prod.snd_sub]; omega)
+    (by simp only [stateC, mem_initPos, Finset.mem_filter, Prod.mk_add_mk, Prod.fst_add, Prod.snd_add, Prod.fst_sub, Prod.snd_sub]; omega)
   rw [show stateC n \ {((n : ℤ) + 1, (0 : ℤ)), ((n : ℤ) + 1, (0 : ℤ)) + ((0 : ℤ), (1 : ℤ)),
       ((n : ℤ) + 1, (0 : ℤ)) + ((0 : ℤ), (1 : ℤ)) + ((0 : ℤ), (1 : ℤ))} = stateD n by
     ext ⟨a, b⟩
     simp only [stateC, stateD, mem_initPos, Finset.mem_filter, Finset.mem_sdiff, Finset.mem_insert,
       Finset.mem_singleton, ne_eq, Prod.ext_iff, Prod.mk_add_mk, Prod.fst_add, Prod.snd_add,
-      Prod.fst_sub, Prod.snd_sub, true_and, and_true, or_true, or_false, false_or, and_false, false_and, true_or, not_true, not_false]
+      Prod.fst_sub, Prod.snd_sub]
     omega] at h2
   have h3 := purge (s := stateD n) (p := ((n : ℤ), (0 : ℤ))) (u := ((0 : ℤ), (1 : ℤ)))
     (w := ((-1 : ℤ), (0 : ℤ))) (by decide) (by decide) (by decide)
     (by simp only [stateD, mem_initPos, Finset.mem_filter, Prod.mk_add_mk, Prod.fst_add, Prod.snd_add, Prod.fst_sub, Prod.snd_sub, true_and, and_true, or_true, or_false, false_or, and_false, false_and, true_or, not_true, not_false]; omega) (by simp only [stateD, mem_initPos, Finset.mem_filter, Prod.mk_add_mk, Prod.fst_add, Prod.snd_add, Prod.fst_sub, Prod.snd_sub, true_and, and_true, or_true, or_false, false_or, and_false, false_and, true_or, not_true, not_false]; omega)
-    (by simp only [stateD, mem_initPos, Finset.mem_filter, Prod.mk_add_mk, Prod.fst_add, Prod.snd_add, Prod.fst_sub, Prod.snd_sub, true_and, and_true, or_true, or_false, false_or, and_false, false_and, true_or, not_true, not_false]; omega) (by simp only [stateD, mem_initPos, Finset.mem_filter, Prod.mk_add_mk, Prod.fst_add, Prod.snd_add, Prod.fst_sub, Prod.snd_sub, true_and, and_true, or_true, or_false, false_or, and_false, false_and, true_or, not_true, not_false]; omega)
-    (by simp only [stateD, mem_initPos, Finset.mem_filter, Prod.mk_add_mk, Prod.fst_add, Prod.snd_add, Prod.fst_sub, Prod.snd_sub, true_and, and_true, or_true, or_false, false_or, and_false, false_and, true_or, not_true, not_false]; omega)
+    (by simp only [stateD, mem_initPos, Finset.mem_filter, Prod.mk_add_mk, Prod.fst_add, Prod.snd_add, Prod.fst_sub, Prod.snd_sub]; omega) (by simp only [stateD, mem_initPos, Finset.mem_filter, Prod.mk_add_mk, Prod.fst_add, Prod.snd_add, Prod.fst_sub, Prod.snd_sub]; omega)
+    (by simp only [stateD, mem_initPos, Finset.mem_filter, Prod.mk_add_mk, Prod.fst_add, Prod.snd_add, Prod.fst_sub, Prod.snd_sub]; omega)
   rw [show stateD n \ {((n : ℤ), (0 : ℤ)), ((n : ℤ), (0 : ℤ)) + ((0 : ℤ), (1 : ℤ)),
       ((n : ℤ), (0 : ℤ)) + ((0 : ℤ), (1 : ℤ)) + ((0 : ℤ), (1 : ℤ))} = initPos n by
     ext ⟨a, b⟩
     simp only [stateD, mem_initPos, Finset.mem_filter, Finset.mem_sdiff, Finset.mem_insert,
       Finset.mem_singleton, ne_eq, Prod.ext_iff, Prod.mk_add_mk, Prod.fst_add, Prod.snd_add,
-      Prod.fst_sub, Prod.snd_sub, true_and, and_true, or_true, or_false, false_or, and_false, false_and, true_or, not_true, not_false]
+      Prod.fst_sub, Prod.snd_sub]
     omega] at h3
   exact h1.trans (h2.trans h3)
 
@@ -478,7 +478,7 @@ lemma solvable_one : Solvable 1 := by
   refine ⟨((0 : ℤ), (0 : ℤ)), ?_⟩
   rw [show initPos 1 = {((0 : ℤ), (0 : ℤ))} by
     ext ⟨a, b⟩
-    simp only [mem_initPos, Finset.mem_singleton, ne_eq, Prod.ext_iff, true_and, and_true, or_true, or_false, false_or, and_false, false_and, true_or, not_true, not_false]
+    simp only [mem_initPos, Finset.mem_singleton, ne_eq, Prod.ext_iff]
     omega]
   exact Reachable.refl _
 
@@ -488,12 +488,12 @@ lemma solvable_two : Solvable 2 := by
   have m1 : IsMove (initPos 2)
       (insert ((2 : ℤ), (0 : ℤ)) (((initPos 2).erase ((0 : ℤ), (0 : ℤ))).erase ((1 : ℤ), (0 : ℤ)))) := by
     refine ⟨((0 : ℤ), (0 : ℤ)), ((1 : ℤ), (0 : ℤ)), by decide, ?_, ?_, ?_, ?_⟩
-    · simp only [mem_initPos, Prod.mk_add_mk, true_and, and_true, or_true, or_false, false_or, and_false, false_and, true_or, not_true, not_false]; omega
-    · simp only [mem_initPos, Prod.mk_add_mk, true_and, and_true, or_true, or_false, false_or, and_false, false_and, true_or, not_true, not_false]; omega
-    · simp only [mem_initPos, Prod.mk_add_mk, true_and, and_true, or_true, or_false, false_or, and_false, false_and, true_or, not_true, not_false]; omega
+    · simp only [mem_initPos, Prod.mk_add_mk]; omega
+    · simp only [mem_initPos, Prod.mk_add_mk]; omega
+    · simp only [mem_initPos, Prod.mk_add_mk]; omega
     · ext ⟨a, b⟩
       simp only [mem_initPos, Finset.mem_insert, Finset.mem_erase, ne_eq, Prod.ext_iff,
-        Prod.mk_add_mk, Prod.fst_add, Prod.snd_add, Finset.mem_singleton, true_and, and_true, or_true, or_false, false_or, and_false, false_and, true_or, not_true, not_false]
+        Prod.mk_add_mk, Prod.fst_add, Prod.snd_add, Finset.mem_singleton]
       omega
   have m2 : IsMove
       (insert ((2 : ℤ), (0 : ℤ)) (((initPos 2).erase ((0 : ℤ), (0 : ℤ))).erase ((1 : ℤ), (0 : ℤ))))
@@ -502,14 +502,14 @@ lemma solvable_two : Solvable 2 := by
         ((1 : ℤ), (1 : ℤ)))) := by
     refine ⟨((0 : ℤ), (1 : ℤ)), ((1 : ℤ), (0 : ℤ)), by decide, ?_, ?_, ?_, ?_⟩
     · simp only [mem_initPos, Finset.mem_insert, Finset.mem_erase, ne_eq, Prod.ext_iff,
-        Prod.mk_add_mk, Prod.fst_add, Prod.snd_add, true_and, and_true, or_true, or_false, false_or, and_false, false_and, true_or, not_true, not_false]; omega
+        Prod.mk_add_mk, Prod.fst_add, Prod.snd_add]; omega
     · simp only [mem_initPos, Finset.mem_insert, Finset.mem_erase, ne_eq, Prod.ext_iff,
-        Prod.mk_add_mk, Prod.fst_add, Prod.snd_add, true_and, and_true, or_true, or_false, false_or, and_false, false_and, true_or, not_true, not_false]; omega
+        Prod.mk_add_mk, Prod.fst_add, Prod.snd_add]; omega
     · simp only [mem_initPos, Finset.mem_insert, Finset.mem_erase, ne_eq, Prod.ext_iff,
-        Prod.mk_add_mk, Prod.fst_add, Prod.snd_add, true_and, and_true, or_true, or_false, false_or, and_false, false_and, true_or, not_true, not_false]; omega
+        Prod.mk_add_mk, Prod.fst_add, Prod.snd_add]; omega
     · ext ⟨a, b⟩
       simp only [mem_initPos, Finset.mem_insert, Finset.mem_erase, ne_eq, Prod.ext_iff,
-        Prod.mk_add_mk, Prod.fst_add, Prod.snd_add, Finset.mem_singleton, true_and, and_true, or_true, or_false, false_or, and_false, false_and, true_or, not_true, not_false]
+        Prod.mk_add_mk, Prod.fst_add, Prod.snd_add, Finset.mem_singleton]
       omega
   have m3 : IsMove
       (insert ((2 : ℤ), (1 : ℤ)) (((insert ((2 : ℤ), (0 : ℤ)) (((initPos 2).erase
@@ -518,14 +518,14 @@ lemma solvable_two : Solvable 2 := by
       {((2 : ℤ), (2 : ℤ))} := by
     refine ⟨((2 : ℤ), (0 : ℤ)), ((0 : ℤ), (1 : ℤ)), by decide, ?_, ?_, ?_, ?_⟩
     · simp only [mem_initPos, Finset.mem_insert, Finset.mem_erase, ne_eq, Prod.ext_iff,
-        Prod.mk_add_mk, Prod.fst_add, Prod.snd_add, true_and, and_true, or_true, or_false, false_or, and_false, false_and, true_or, not_true, not_false]; omega
+        Finset.mem_singleton, Prod.mk_add_mk, Prod.fst_add, Prod.snd_add, true_and, and_true, or_true, or_false, false_or, and_false, false_and, true_or, not_true, not_false]; omega
     · simp only [mem_initPos, Finset.mem_insert, Finset.mem_erase, ne_eq, Prod.ext_iff,
-        Prod.mk_add_mk, Prod.fst_add, Prod.snd_add, true_and, and_true, or_true, or_false, false_or, and_false, false_and, true_or, not_true, not_false]; omega
+        Finset.mem_singleton, Prod.mk_add_mk, Prod.fst_add, Prod.snd_add, true_and, and_true, or_true, or_false, false_or, and_false, false_and, true_or, not_true, not_false]; omega
     · simp only [mem_initPos, Finset.mem_insert, Finset.mem_erase, ne_eq, Prod.ext_iff,
-        Prod.mk_add_mk, Prod.fst_add, Prod.snd_add, true_and, and_true, or_true, or_false, false_or, and_false, false_and, true_or, not_true, not_false]; omega
+        Prod.mk_add_mk, Prod.fst_add, Prod.snd_add]; omega
     · ext ⟨a, b⟩
       simp only [mem_initPos, Finset.mem_insert, Finset.mem_erase, ne_eq, Prod.ext_iff,
-        Prod.mk_add_mk, Prod.fst_add, Prod.snd_add, Finset.mem_singleton, true_and, and_true, or_true, or_false, false_or, and_false, false_and, true_or, not_true, not_false]
+        Prod.mk_add_mk, Prod.fst_add, Prod.snd_add, Finset.mem_singleton]
       omega
   exact Reachable.step m1 (Reachable.step m2 (Reachable.step m3 (Reachable.refl _)))
 
