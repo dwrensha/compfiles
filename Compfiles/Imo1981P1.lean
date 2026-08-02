@@ -29,11 +29,7 @@ a point `P` is inside the triangle if it is a barycentric combination of the
 vertices with strictly positive coefficients. Since `D`, `E`, `F` are the
 feet of the perpendiculars from `P`, the lengths `PD`, `PE`, `PF` are the
 distances from `P` to the lines `BC`, `CA`, `AB`, which are computed with the
-scalar cross product. We show that `P` minimises `BC/PD + CA/PE + AB/PF` if
-and only if `P` is the incenter of the triangle, given by the standard
-formula `(a • A + b • B + c • C) / (a + b + c)` where `a = BC`, `b = CA`,
-`c = AB`. The formalized solution follows
-https://prase.cz/kalva/imo/isoln/isoln811.html .
+scalar cross product.
 -/
 
 namespace Imo1981P1

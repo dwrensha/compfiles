@@ -18,9 +18,7 @@ public import ProblemExtraction
 
 problem_file {
   tags := [.Algebra]
-  solutionImportedFrom :=
-    "https://prase.cz/kalva/imo/isoln/isoln676.html"
-}
+  }
 
 /-!
 # International Mathematical Olympiad 1967, Problem 6
@@ -45,6 +43,8 @@ abbrev MedalsProcess (m n : ℕ) (r : ℕ → ℤ) : Prop :=
         7 ∣ r (k - 1) - ↑k ∧ r k = r (k - 1) - (↑k + (r (k - 1) - ↑k) / 7)
 
 snip begin
+
+-- Solution formalized from https://prase.cz/kalva/imo/isoln/isoln676.html
 
 /-- The day-`k` rule implies the recurrence `7 * r k = 6 * (r (k - 1) - k)`. -/
 theorem rec_eq {r : ℕ → ℤ} {k : ℕ} (h7 : 7 ∣ r (k - 1) - ↑k)

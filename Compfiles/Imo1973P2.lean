@@ -325,7 +325,6 @@ lemma not_coplanar : ¬ Coplanar (cuboct : Set Point) := by
 
 snip end
 
-/-- The answer to the question "Can we find such a set of points?" is yes. -/
 determine does_exist : Bool := true
 
 problem imo1973_p2 :

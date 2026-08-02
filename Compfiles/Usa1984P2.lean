@@ -66,10 +66,8 @@ theorem factorization_eq_of_pow (k : ℕ) (hk : 0 < k) (y z C : ℕ)
 
 snip end
 
-/-- The answer to the first question (finite sets of any size) is yes. -/
 determine does_exist_finite : Bool := true
 
-/-- The answer to the second question (infinite sets) is no. -/
 determine does_exist_infinite : Bool := false
 
 problem usa1984_p2a (n : ℕ) :

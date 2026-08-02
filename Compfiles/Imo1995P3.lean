@@ -27,7 +27,6 @@ namespace Imo1995P3
 /-- The Euclidean plane. -/
 abbrev Pt := EuclideanSpace ℝ (Fin 2)
 
-/-- The answer: only `n = 4`. -/
 determine solution_set : Set ℕ := { 4 }
 
 snip begin

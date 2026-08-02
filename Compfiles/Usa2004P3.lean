@@ -3202,7 +3202,6 @@ lemma dissectable_inverse {k : ℝ} (hk : 0 < k) (h : Dissectable k) : Dissectab
 
 snip end
 
-/-- The answer: the dissection is possible exactly for positive `k ≠ 1`. -/
 determine SolutionSet : Set ℝ := {k | 0 < k ∧ k ≠ 1}
 
 problem usa2004_p3 (k : ℝ) (hk : 0 < k) : Dissectable k ↔ k ≠ 1 := by

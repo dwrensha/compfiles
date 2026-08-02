@@ -1293,7 +1293,6 @@ lemma AForce_mono {k l : ℕ} (hkl : k ≤ l) {s : Finset Cell} (h : AForce l s)
 
 snip end
 
-/-- The answer: the minimum value of `k` is `6`. -/
 determine solution : ℕ := 6
 
 problem usa2014_p4 : IsLeast {k : ℕ | 0 < k ∧ ¬ ACanWin k} solution := by

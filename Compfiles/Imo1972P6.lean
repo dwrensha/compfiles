@@ -15,8 +15,7 @@ public import ProblemExtraction
 
 problem_file {
   tags := [.Geometry]
-  solutionImportedFrom := "https://prase.cz/kalva/imo/isoln/isoln726.html"
-}
+  }
 
 /-!
 # International Mathematical Olympiad 1972, Problem 6
@@ -33,6 +32,8 @@ open scoped RealInnerProductSpace
 abbrev Pt := EuclideanSpace ℝ (Fin 3)
 
 snip begin
+
+-- Solution formalized from https://prase.cz/kalva/imo/isoln/isoln726.html
 
 /-- The vertices of the regular tetrahedron inscribed in the cube `{-1,1}³`,
 used as the starting configuration of the construction. -/

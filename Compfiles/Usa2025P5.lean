@@ -31,7 +31,6 @@ namespace Usa2025P5
 open Finset
 open scoped Nat
 
-/-- The answer to the problem: all even positive integers `k`. -/
 determine solution_set : Set ℕ := { k | Even k }
 
 snip begin

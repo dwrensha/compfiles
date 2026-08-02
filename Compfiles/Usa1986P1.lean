@@ -143,10 +143,8 @@ lemma not_all_divisible (a : ℕ) :
 
 snip end
 
-/-- The answer to part (a) (14 consecutive integers) is no. -/
 determine does_exist_14 : Bool := false
 
-/-- The answer to part (b) (21 consecutive integers) is yes. -/
 determine does_exist_21 : Bool := true
 
 problem usa1986_p1a :

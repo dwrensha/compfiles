@@ -31,7 +31,6 @@ namespace Usa2009P2
 abbrev IsGood (A : Finset ℤ) : Prop :=
   ∀ a ∈ A, ∀ b ∈ A, ∀ c ∈ A, a + b + c ≠ 0
 
-/-- The answer to the problem: `n` when `n` is even, and `n + 1` when `n` is odd. -/
 determine answer (n : ℕ) : ℕ := if Even n then n else n + 1
 
 snip begin

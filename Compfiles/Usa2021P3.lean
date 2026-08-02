@@ -34,7 +34,6 @@ has no stones?
 
 namespace Usa2021P3
 
-/-- The answer: precisely the multiples of `3`. -/
 determine answer : ℕ → Prop := fun n ↦ 3 ∣ n
 
 snip begin

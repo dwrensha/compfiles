@@ -28,9 +28,7 @@ Determine the possible dimensions of the box.
 The box has integer dimensions `a ≤ b ≤ c`. A cube of volume `2` has side
 length `k = ∛2` (the real cube root of two), and along an edge of integer
 length `n` exactly `⌊n / k⌋₊` such cubes fit, so the "exactly 40%" condition
-reads `a * b * c = 5 * (⌊a / k⌋₊ * ⌊b / k⌋₊ * ⌊c / k⌋₊)`. We prove that the
-sorted dimensions are exactly `2 × 3 × 5` or `2 × 5 × 6`. The formalized
-solution follows https://prase.cz/kalva/imo/isoln/isoln763.html .
+reads `a * b * c = 5 * (⌊a / k⌋₊ * ⌊b / k⌋₊ * ⌊c / k⌋₊)`.
 -/
 
 namespace Imo1976P3

@@ -171,7 +171,6 @@ lemma main_inequality {k : ℝ} (hk : k ^ 3 = 2) (x : ℚ) (hx : 0 ≤ x) :
 
 snip end
 
-/-- One valid choice of integers: `(A, B, C, a, b, c) = (2, 2, 2, 1, 2, 2)`. -/
 determine solution : ℤ × ℤ × ℤ × ℤ × ℤ × ℤ := (2, 2, 2, 1, 2, 2)
 
 problem usa1972_p4 (k : ℝ) (hk : k ^ 3 = 2) :

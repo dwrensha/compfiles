@@ -20,7 +20,6 @@ public import ProblemExtraction
 
 problem_file {
   tags := [.Combinatorics],
-  solutionImportedFrom := "https://web.evanchen.cc/exams/IMO-2005-notes.pdf",
 }
 
 /-!
@@ -37,6 +36,8 @@ namespace Imo2005P6
 open Finset
 
 snip begin
+
+-- Solution formalized from https://web.evanchen.cc/exams/IMO-2005-notes.pdf
 
 set_option maxHeartbeats 1000000 in
 /-- The arithmetic heart of the problem: fifteen pair counts, each at least `(2 * n + 1) / 5`,

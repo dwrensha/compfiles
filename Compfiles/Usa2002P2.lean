@@ -60,7 +60,6 @@ noncomputable def relation (a b c : ℝ) : Prop :=
   (3 * ((semiperimeter a b c - c) / inradius a b c))^2 =
   (6 * semiperimeter a b c / (7 * inradius a b c))^2
 
-/-- The side lengths of the triangle `T`: 13, 40, 45. -/
 determine solution : ℕ × ℕ × ℕ := (13, 40, 45)
 
 snip begin

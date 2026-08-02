@@ -1470,7 +1470,6 @@ end Triang
 
 snip end
 
-/-- The possible values of `n`: numbers of the form `2^a * (2^b + 1)`. -/
 determine answer : Set ℕ := { n | ∃ a b : ℕ, n = 2 ^ a * (2 ^ b + 1) }
 
 problem usa2008_p4 (n : ℕ) (hn : 3 ≤ n) :

@@ -56,7 +56,6 @@ inductive Player : Type
   | alice : Player
   | bob : Player
 
-/-- The answer to the problem: Alice has a winning strategy. -/
 determine winner : Player := .alice
 
 snip begin

@@ -13,8 +13,7 @@ public import ProblemExtraction
 
 problem_file {
   tags := [.Geometry]
-  solutionImportedFrom := "https://prase.cz/kalva/imo/isoln/isoln822.html"
-}
+  }
 
 /-!
 # International Mathematical Olympiad 1982, Problem 2
@@ -124,6 +123,8 @@ noncomputable def S2 (u v : ℝ) : Point := reflLine (A2 u) (T2 v)
 noncomputable def S3 (u v : ℝ) : Point := reflLine (A3 v) (T3 u)
 
 snip begin
+
+-- Solution formalized from https://prase.cz/kalva/imo/isoln/isoln822.html
 
 /-- The midpoint `M₁` in coordinates. -/
 lemma m1_eq (u v : ℝ) (hu : 0 < u) (hv : 0 < v) :

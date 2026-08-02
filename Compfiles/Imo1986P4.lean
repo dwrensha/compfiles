@@ -15,8 +15,7 @@ public import ProblemExtraction
 
 problem_file {
   tags := [.Geometry]
-  solutionImportedFrom := "https://prase.cz/kalva/imo/isoln/isoln864.html"
-}
+  }
 
 /-!
 # International Mathematical Olympiad 1986, Problem 4
@@ -94,6 +93,8 @@ determine locus (n : ℕ) : Set Pt :=
   ⋃ k : Fin n, segment ℝ 0 ((1 - (Real.cos (π / n))⁻¹) • V n k)
 
 snip begin
+
+-- Solution formalized from https://prase.cz/kalva/imo/isoln/isoln864.html
 
 /-- Points of the plane are determined by their two coordinates. -/
 theorem Pt_ext {x y : Pt} (h0 : x 0 = y 0) (h1 : x 1 = y 1) : x = y := by

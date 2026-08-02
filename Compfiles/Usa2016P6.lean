@@ -1007,7 +1007,6 @@ lemma not_winnable_of_eq {n : ℕ} (σ : Strategy n) (hσ : σ.Valid n) :
 
 snip end
 
-/-- The answer: the game is winnable exactly when `k < n`. -/
 determine answer : ℕ → ℕ → Prop := fun n k ↦ k < n
 
 problem usa2016_p6 (n k : ℕ) (hk : 2 ≤ k) (hkn : k ≤ n) : Winnable n k ↔ answer n k := by

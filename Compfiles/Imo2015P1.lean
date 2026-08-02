@@ -51,7 +51,6 @@ def CenterFree (S : Finset ℂ) : Prop :=
   ∀ A ∈ S, ∀ B ∈ S, ∀ C ∈ S, A ≠ B → B ≠ C → A ≠ C →
     ¬∃ P ∈ S, dist P A = dist P B ∧ dist P B = dist P C
 
-/-- The answer to part (b): the odd integers `n ≥ 3`. -/
 determine SolutionSet : Set ℕ := {n | Odd n}
 
 snip begin

@@ -70,7 +70,6 @@ def canonicalPlay (A B C : ℕ) : List Card :=
 def plays (A B C : ℕ) : Finset (List Card) :=
   (canonicalPlay A B C).permutations.toFinset
 
-/-- The lowest possible score: `min (A*C, 3*A*B, 2*B*C)`. -/
 determine lowestScore (A B C : ℕ) : ℕ := min (min (A * C) (3 * A * B)) (2 * B * C)
 
 /-- The number of different ways the lowest score can be achieved. -/

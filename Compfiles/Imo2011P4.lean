@@ -731,7 +731,6 @@ lemma card_ways (n : ℕ) : Nat.card (Ways (n + 1)) = (2 * n + 1)‼ := by
 
 snip end
 
-/-- The answer: `(2n - 1)!!`. -/
 determine solution_value : ℕ → ℕ := fun n ↦ (2 * n - 1)‼
 
 problem imo2011_p4 (n : ℕ) (hn : 0 < n) :

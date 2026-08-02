@@ -15,8 +15,7 @@ public import ProblemExtraction
 
 problem_file {
   tags := [.Geometry]
-  solutionImportedFrom := "https://prase.cz/kalva/imo/isoln/isoln851.html"
-}
+  }
 
 /-!
 # International Mathematical Olympiad 1985, Problem 1
@@ -77,6 +76,8 @@ noncomputable def vtxD (r u v : ℝ) : Pt :=
   !₂[r * (v - 2 * u - u^2 * v) / (1 + u^2), r * (1 - u^2 + 2 * u * v) / (1 + u^2)]
 
 snip begin
+
+-- Solution formalized from https://prase.cz/kalva/imo/isoln/isoln851.html
 
 lemma dist2 (x1 y1 x2 y2 : ℝ) :
     dist (!₂[x1, y1] : Pt) !₂[x2, y2]

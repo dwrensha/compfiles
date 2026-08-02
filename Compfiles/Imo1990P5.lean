@@ -1005,10 +1005,8 @@ theorem not_bwinsstart_7 : ¬ BWinsStart 7 := by
 
 snip end
 
-/-- The answer to part (a): the initial values from which A has a winning strategy. -/
 determine aWinsSet : Set ℕ := {n | 8 ≤ n}
 
-/-- The answer to part (b): the initial values from which B has a winning strategy. -/
 determine bWinsSet : Finset ℕ := {2, 3, 4, 5}
 
 /-- The answer to part (c): the initial values for which neither player has a winning

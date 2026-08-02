@@ -442,7 +442,6 @@ lemma zero_contra (f : PositiveReal → PositiveReal) (h : IsAdmissible f) (a : 
 
 snip end
 
-/-- The admissible functions: the translations `x ↦ x + c` with `c ≥ 0`. -/
 determine answer : Set (PositiveReal → PositiveReal) :=
   {f : PositiveReal → PositiveReal |
     ∃ c : ℝ, 0 ≤ c ∧ ∀ x : PositiveReal, (f x : ℝ) = (x : ℝ) + c}
