@@ -26,8 +26,6 @@ or 1 + 1 + 1 + 1. Prove that for any integer n ≥ 3,
 
 namespace Imo1997P6
 
-snip begin
-
 /-- `f n` is the number of ways of representing `n` as a sum of powers of two
 with non-negative integer exponents, where representations that differ only in
 the order of their summands are considered the same. Rather than defining `f`
@@ -42,6 +40,8 @@ def f : ℕ → ℕ
   | n + 1 => f n + if (n + 1) % 2 = 0 then f ((n + 1) / 2) else 0
 termination_by n => n
 decreasing_by all_goals omega
+
+snip begin
 
 /-- Unfolding equation for the recursive definition. -/
 lemma f_succ (n : ℕ) :

@@ -28,15 +28,15 @@ namespace Imo1990P2
 
 determine solution (n : ℕ) : ℕ := if n % 3 = 2 then n - 1 else n
 
-snip begin
-
 /-- Label the points by `ZMod (2 * n - 1)`. A set `B` of black points is
-*good* if it contains two points differing by `n + 1` or `n - 2`, which is
-exactly the condition that one of the two arcs between them contains `n`
-points of `E` in its interior. -/
+*good* if it contains two points `x` and `y` with `y - x = n + 1` or
+`x - y = n + 1`, which is exactly the condition that one of the two arcs
+between them contains `n` points of `E` in its interior. -/
 def IsGood (n : ℕ) (B : Finset (ZMod (2 * n - 1))) : Prop :=
   ∃ x ∈ B, ∃ y ∈ B, y - x = ((n + 1 : ℕ) : ZMod (2 * n - 1)) ∨
-    y - x = ((n - 2 : ℕ) : ZMod (2 * n - 1))
+    x - y = ((n + 1 : ℕ) : ZMod (2 * n - 1))
+
+snip begin
 
 theorem IsGood.mono {n : ℕ} {B B' : Finset (ZMod (2 * n - 1))} (hsub : B' ⊆ B)
     (h : IsGood n B') : IsGood n B := by
@@ -238,15 +238,19 @@ theorem exists_bad {n : ℕ} (hn : 3 ≤ n) :
         · have heq : a + (n + 1) = 2 * n - 1 := by omega
           rw [heq, Nat.mod_self] at hmod'
           omega
-      · have hb' : (b : ZMod (2 * n - 1)) = ((a + (n - 2) : ℕ) : ZMod (2 * n - 1)) := by
+      · have ha' : (a : ZMod (2 * n - 1)) = ((b + (n + 1) : ℕ) : ZMod (2 * n - 1)) := by
           rw [Nat.cast_add]
           rw [sub_eq_iff_eq_add.1 hxy, add_comm]
-        have hmod : b ≡ a + (n - 2) [MOD 2 * n - 1] :=
-          (ZMod.natCast_eq_natCast_iff _ _ _).1 hb'
-        have hmod' : b % (2 * n - 1) = (a + (n - 2)) % (2 * n - 1) := hmod
-        rw [Nat.mod_eq_of_lt (by omega : b < 2 * n - 1),
-          Nat.mod_eq_of_lt (by omega : a + (n - 2) < 2 * n - 1)] at hmod'
-        omega
+        have hmod : a ≡ b + (n + 1) [MOD 2 * n - 1] :=
+          (ZMod.natCast_eq_natCast_iff _ _ _).1 ha'
+        have hmod' : a % (2 * n - 1) = (b + (n + 1)) % (2 * n - 1) := hmod
+        rw [Nat.mod_eq_of_lt (by omega : a < 2 * n - 1)] at hmod'
+        by_cases hle : b + (n + 1) < 2 * n - 1
+        · rw [Nat.mod_eq_of_lt hle] at hmod'
+          omega
+        · have heq : b + (n + 1) = 2 * n - 1 := by omega
+          rw [heq, Nat.mod_self] at hmod'
+          omega
   · -- The set `{2 * j * (n + 1) mod (2 * n - 1) : 0 ≤ j ≤ n - 2}` is bad and
     -- has `n - 1` elements: these are every other vertex of the cycle.
     have hcop : Nat.Coprime (2 * n - 1) (n + 1) := coprime_aux hn h3
@@ -311,13 +315,7 @@ theorem exists_bad {n : ℕ} (hn : 3 ≤ n) :
           omega
       rcases hxy with hxy | hxy
       · exact key a b ha hb hxy
-      · have hcast : ((n - 2 : ℕ) : ZMod (2 * n - 1)) =
-            -((n + 1 : ℕ) : ZMod (2 * n - 1)) := by
-          rw [eq_neg_iff_add_eq_zero, ← Nat.cast_add,
-            show n - 2 + (n + 1) = 2 * n - 1 by omega]
-          exact ZMod.natCast_self _
-        rw [hcast, ← neg_sub] at hxy
-        exact key b a hb ha (neg_inj.1 hxy)
+      · exact key b a hb ha hxy
 
 snip end
 
