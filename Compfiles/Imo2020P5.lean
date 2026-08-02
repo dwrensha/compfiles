@@ -36,11 +36,10 @@ noncomputable def geometric_mean {α : Type} (f : α → ℕ+) (s : Finset α) :
 problem imo2020_p5 (n : ℕ) :
     n ∈ SolutionSet ↔
     (1 < n ∧
-     (∀ α : Type, [Fintype α] → Fintype.card α = n →
-         ∀ f : α → ℕ+,
-           (Pairwise fun a b ↦ ∃ s : Finset α,
-              s.Nonempty ∧ geometric_mean f s = (((f a):ℝ) + f b) / 2)
-           → ∃ y, ∀ a, f a = y )) := by
+     (∀ f : Fin n → ℕ+,
+        (Pairwise fun a b ↦ ∃ s : Finset (Fin n),
+          s.Nonempty ∧ geometric_mean f s = (((f a):ℝ) + f b) / 2)
+        → ∃ y, ∀ a, f a = y )) := by
   sorry
 
 end Imo2020P5
