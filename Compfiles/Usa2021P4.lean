@@ -33,7 +33,6 @@ such that for every `s ∈ S` and every positive divisor `d` of `s` there exists
 def IsValid (S : Finset ℕ) : Prop :=
   (∀ s ∈ S, 0 < s) ∧ ∀ s ∈ S, ∀ d : ℕ, 0 < d → d ∣ s → ∃! t : ℕ, t ∈ S ∧ Nat.gcd s t = d
 
-/-- The answer to the problem: the possible cardinalities are exactly the powers of `2`. -/
 determine solution_set : Set ℕ := {n | ∃ k : ℕ, n = 2 ^ k}
 
 snip begin

@@ -320,7 +320,6 @@ lemma not_wins (θ : ℝ) : (∀ m : ℤ, (180 : ℝ) ≠ (m : ℝ) * θ) → �
 
 snip end
 
-/-- The angles Mulan can guarantee victory for: `180 / n` for an integer `n ≥ 2`. -/
 determine answer : Set ℝ := {θ : ℝ | ∃ n : ℕ, 2 ≤ n ∧ θ = 180 / n}
 
 /-- **Main theorem.** For `0 < θ < 180`, Mulan can guarantee her victory in finitely

@@ -17,8 +17,7 @@ public import ProblemExtraction
 
 problem_file {
   tags := [.NumberTheory]
-  solutionImportedFrom := "https://web.evanchen.cc/exams/USAMO-2012-notes.pdf"
-}
+  }
 
 /-!
 # USA Mathematical Olympiad 2012, Problem 4
@@ -41,6 +40,8 @@ def IsSolution (f : ℕ → ℕ) : Prop :=
       ∀ (m n : ℕ), 0 < m → 0 < n → m ≠ n → (m : ℤ) - n ∣ (f m : ℤ) - f n
 
 snip begin
+
+-- Solution formalized from https://web.evanchen.cc/exams/USAMO-2012-notes.pdf
 
 /-- If a positive integer equals its own factorial, then it is `1` or `2`. -/
 lemma eq_one_or_two_of_factorial_eq_self {x : ℕ} (hx : 0 < x) (h : x ! = x) :

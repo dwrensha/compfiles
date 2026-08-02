@@ -18,7 +18,6 @@ public import ProblemExtraction
 
 problem_file {
   tags := [.Inequality],
-  solutionImportedFrom := "https://prase.cz/kalva/imo/isoln/isoln873.html",
 }
 
 /-!
@@ -34,6 +33,8 @@ $$|a_1 x_1 + a_2 x_2 + \cdots + a_n x_n| \leq \frac{(k - 1)\sqrt{n}}{k^n - 1}.$$
 namespace Imo1987P3
 
 snip begin
+
+-- Solution formalized from https://prase.cz/kalva/imo/isoln/isoln873.html
 
 /- The proof is an application of the pigeonhole principle. Consider the $k^n$
 sums $\sum_i b_i |x_i|$ with $b_i \in \{0, 1, \ldots, k - 1\}$. By the

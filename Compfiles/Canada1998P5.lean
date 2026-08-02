@@ -32,7 +32,6 @@ def A (m : ℕ) (hm : 0 < m) : ℕ → ℤ
 | 1 => (↑m)
 | n + 2 => (m : ℤ)^2 * A m hm (n + 1) - A m hm n
 
-/-- The solutions: consecutive term pairs of the sequence `A m hm`. -/
 determine answer (m : ℕ) (hm : 0 < m) : Set (ℕ × ℕ) :=
   {p : ℕ × ℕ | ∃ n : ℕ, (p.1 : ℤ) = A m hm n ∧ (p.2 : ℤ) = A m hm (n + 1)}
 

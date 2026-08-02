@@ -222,7 +222,6 @@ lemma constr_ineq {i j : ℕ} (hij : i < j) :
 
 snip end
 
-/-- The answer: `3 * 7 * 11 * ⋯ * 4019`. -/
 determine answer : ℝ := ∏ k ∈ Finset.range 1005, (4 * k + 3)
 
 problem usa2010_p3 :

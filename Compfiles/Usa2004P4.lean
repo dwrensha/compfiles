@@ -20,9 +20,7 @@ public import ProblemExtraction
 
 problem_file {
   tags := [.Combinatorics]
-  solutionImportedFrom :=
-    "https://web.evanchen.cc/exams/USAMO-2004-notes.pdf"
-}
+  }
 
 /-!
 # USA Mathematical Olympiad 2004, Problem 4
@@ -47,6 +45,8 @@ Row `0` is the top row of the grid and row `5` the bottom row. -/
 abbrev Cell : Type := Fin 6 × Fin 6
 
 snip begin
+
+-- Solution formalized from https://web.evanchen.cc/exams/USAMO-2004-notes.pdf
 
 /-- The pairing of columns: each column is paired with the column three places away. -/
 def colMate (j : Fin 6) : Fin 6 :=

@@ -14,8 +14,7 @@ public import ProblemExtraction
 
 problem_file {
   tags := [.Algebra, .Inequality]
-  solutionImportedFrom := "https://prase.cz/kalva/imo/isoln/isoln696.html"
-}
+  }
 
 /-!
 # International Mathematical Olympiad 1969, Problem 6
@@ -31,6 +30,8 @@ Give necessary and sufficient conditions for equality.
 namespace Imo1969P6
 
 snip begin
+
+-- Solution formalized from https://prase.cz/kalva/imo/isoln/isoln696.html
 
 /-- The core AM–GM chain of the solution: with `p² = x₁y₁ - z₁²` and `q² = x₂y₂ - z₂²`
 we have `pq + z₁z₂ ≤ √(x₁y₁ · x₂y₂) = √(x₁y₂) · √(x₂y₁)` and
