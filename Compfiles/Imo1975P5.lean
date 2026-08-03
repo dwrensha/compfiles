@@ -123,8 +123,7 @@ theorem P_injective : Function.Injective P := by
     have := this e.symm
     grind only
   unfold P
-  set_option backward.isDefEq.respectTransparency false in
-  rw [Ne, Iff.not (Subtype.ext_iff)]
+  rw [Ne, Circle.ext_iff]
   simp only [Complex.mk.injEq, not_and]
   intro _
   suffices Real.sin (θ*2*(i-j)) ≠ 0 by

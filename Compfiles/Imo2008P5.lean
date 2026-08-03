@@ -346,9 +346,7 @@ lemma claim (n k : ℕ) (hn : 0 < n) (hnk : n ≤ k) (_he : Even (k - n))
             constructor
             · intro x y hxy; exact Subtype.ext (Subtype.ext (by simpa using congrArg (·.1) hxy))
             · intro y
-              set_option backward.isDefEq.respectTransparency false in
               exact ⟨⟨⟨y.1, hfi_of_high i y.1 y.2⟩, by simp [s, y.2]⟩, Subtype.ext rfl⟩
-          set_option backward.isDefEq.respectTransparency false in
           have : s.card = Nat.card {j : Fin k | (gfun j).val = n + i} := by
             rw [Nat.card_eq_fintype_card, ← show Fintype.card {x // x ∈ s} = s.card from by simp]
             exact Fintype.card_of_bijective hbij
@@ -357,7 +355,6 @@ lemma claim (n k : ℕ) (hn : 0 < n) (hnk : n ≤ k) (_he : Even (k - n))
       refine ⟨a, ?_⟩
       have hselA : ∀ (i : Fin n) (j : Fin k), j ∈ selected a i ↔ (gfun j).val = n + i := by
         intro i j
-        set_option backward.isDefEq.respectTransparency false in
         constructor
         · intro hj
           rcases hj with ⟨ji, hji, rfl⟩
