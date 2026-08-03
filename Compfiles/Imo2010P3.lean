@@ -1,12 +1,13 @@
 /-
 Copyright (c) 2023 The Compfiles Contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Kimi K3
+Authors: Elan Roth, Claude Opus 5
 -/
 
 module
 
 public import Mathlib.Tactic
+
 public import ProblemExtraction
 
 @[expose] public section
@@ -29,288 +30,234 @@ abbrev PosInt : Type := { x : ℤ // 0 < x }
 
 notation "ℤ>0" => PosInt
 
+determine SolutionSet : Set (ℤ>0 → ℤ>0) := { f | f = id ∨ ∃ c, ∀ x, f x = x + c }
+
 snip begin
 
-/-- The values of `g`, reindexed as a function `ℕ → ℕ`
-(the natural `n` stands for the positive integer `n + 1`). -/
-def gF (g : ℤ>0 → ℤ>0) (n : ℕ) : ℕ := (g ⟨↑n + 1, by omega⟩).1.natAbs
+/-- The square condition forces `g` to be injective. -/
+lemma injective_of_sq (g : ℤ>0 → ℤ>0)
+    (h : ∀ m n : ℤ>0, IsSquare ((g m + n) * (g n + m))) :
+    Function.Injective g := by
+  intro a b hab
+  -- Pick a prime `p` exceeding both `max a b` and `g a + max a b`, and set `m = p - g a`,
+  -- so that `g a + m = p`. Then `(g m + a) * p` and `(g m + b) * p` are both squares, so
+  -- `p` divides each square root; dividing through by `p` forces `k ^ 2 = l ^ 2`, and
+  -- `p > max a b` leaves `a = b` as the only possibility.
+  obtain ⟨p, hp_prime, hp_gt⟩ :
+      ∃ p : ℕ, Nat.Prime p ∧ p > max a.val b.val ∧
+        p > (g a).val + max a.val b.val := by
+    obtain ⟨p, hp⟩ := Nat.exists_infinite_primes (Int.natAbs (g a + max a b) + 1)
+    have hga : (g a : ℤ) > 0 := mod_cast Subtype.property (g a)
+    have hmax : (max a b : ℤ) > 0 := mod_cast lt_max_iff.mpr (Or.inl a.prop)
+    refine ⟨p, hp.2, ?_, ?_⟩ <;>
+      cases max_cases (a : ℤ) (b : ℤ) <;> cases abs_cases (g a + max a b : ℤ) <;>
+        linarith! [hga, hmax]
+  set m : PosInt := ⟨p - (g a).val, by grind⟩
+  -- `set` leaves the positivity side-goal as an anonymous proof term; name it so the
+  -- `linarith` calls below can see it.
+  generalize_proofs at *
+  -- Both `(g m + a) * p` and `(g m + b) * p` are squares.
+  have h_sq_a : IsSquare ((g m + a).val * p) := by
+    obtain ⟨k, hk⟩ := h m a
+    use k.val
+    convert congr_arg Subtype.val hk using 1 <;> norm_num [m]
+  have h_sq_b : IsSquare ((g m + b).val * p) := by
+    obtain ⟨k, hk⟩ := h m b
+    use k.val
+    convert congr_arg Subtype.val hk using 1 <;> simp +zetaDelta at *
+    grind
+  obtain ⟨k, hk⟩ := h_sq_a
+  obtain ⟨l, hl⟩ := h_sq_b
+  simp_all
+  -- Since $p$ is prime, $p$ must divide $k$ and $l$.
+  have hp_div_k : (p : ℤ) ∣ k := by
+    exact Int.Prime.dvd_pow' hp_prime <| by rw [sq] ; exact hk ▸ dvd_mul_left _ _
+  have hp_div_l : (p : ℤ) ∣ l := by
+    exact Int.Prime.dvd_pow' hp_prime <| by rw [sq] ; exact hl ▸ dvd_mul_left _ _
+  obtain ⟨k, rfl⟩ := hp_div_k; obtain ⟨l, rfl⟩ := hp_div_l; ring_nf at hk hl
+  -- Dividing both sides of the equations by $p$, we get $g(m) + a = p k^2$ and $g(m) + b = p l^2$.
+  have h_div_a : (g m).val + a.val = p * k ^ 2 := by
+    nlinarith only [hk, hp_prime.two_le]
+  have h_div_b : (g m).val + b.val = p * l ^ 2 := by
+    nlinarith only [hl, hp_prime.two_le]
+  -- Since $p$ is prime and $p > \max(a, b)$, we have $k^2 = l^2$.
+  have h_kl : k ^ 2 = l ^ 2 := by
+    nlinarith [show (a : ℤ) > 0 from mod_cast a.prop, show (b : ℤ) > 0 from mod_cast b.prop]
+  grind
 
-/-- If `A * B` is a square and the prime `p` occurs in `A` to an odd power,
-then `p` divides `B`. -/
-lemma kf {p A B s : ℕ} (hp : p.Prime) (hA : A ≠ 0) (hB : B ≠ 0)
-    (hs : A * B = s * s) (hodd : Odd ((Nat.factorization A) p)) : p ∣ B := by
-  have hs0 : s ≠ 0 := by
+lemma padicValInt_eq_of_dvd_not_dvd {p k : ℕ} (hp : Nat.Prime p) {z : ℤ}
+    (hk : (p : ℤ) ^ k ∣ z) (hsucc : ¬(p : ℤ) ^ (k + 1) ∣ z) :
+    padicValInt p z = k := by
+  contrapose! hsucc; haveI := Fact.mk hp; simp_all +decide [padicValInt_dvd_iff]
+  grind
+
+lemma exists_positive_shift_odd_padic {p : ℕ} (hp : Nat.Prime p) {a b : ℤ}
+    (ha : 0 < a) (hb : 0 < b) (hab : (p : ℤ) ∣ a - b) :
+    ∃ M : ℤ, 0 < M ∧ Odd (padicValInt p (M + a)) ∧ Odd (padicValInt p (M + b)) := by
+  -- Set d = a - b. If d = 0, set x = p*(1+p*a), M = x - a; x > a, and p exactly
+  -- divides x, so both valuations are 1.
+  set d := a - b with hd
+  by_cases hd_zero : d = 0
+  · refine ⟨p * (1 + p * a) - a, ?_, ?_, ?_⟩
+    · nlinarith [hp.two_le, mul_pos (Nat.cast_pos.mpr hp.pos) ha]
+    · simp +zetaDelta at *
+      haveI := Fact.mk hp; rw [padicValInt.mul] <;> norm_num [hp.ne_zero, hp.ne_one, ha.ne', hb.ne']
+      · rw [padicValInt.eq_zero_of_not_dvd] <;> norm_num
+        exact_mod_cast hp.not_dvd_one
+      · nlinarith [hp.two_le]
+    · norm_num [show a = b by linarith] at *
+      haveI := Fact.mk hp; rw [padicValInt.mul] <;> norm_num [hp.ne_zero, hp.ne_one, ha.ne']
+      · rw [padicValInt.eq_zero_of_not_dvd] <;> norm_num [hp.ne_one, hp.ne_zero, ha.ne']
+        exact_mod_cast hp.not_dvd_one
+      · finiteness
+  · obtain ⟨t, ht⟩ : ∃ t : ℕ, (p : ℤ) ^ t ∣ d ∧ ¬(p : ℤ) ^ (t + 1) ∣ d := by
+      refine ⟨d.natAbs.factorization p, ?_, ?_⟩
+      · simpa using Int.natCast_dvd.mpr (Nat.ordProj_dvd _ _)
+      · simpa using Int.natCast_dvd.not.mpr
+          (Nat.pow_succ_factorization_not_dvd (Int.natAbs_ne_zero.mpr hd_zero) hp)
+    have ht_pos : 1 ≤ t := by
+      contrapose! ht; aesop
+    by_cases ht_odd : Odd t
+    · -- If t is odd, set x = p^(t+2)*(1+p*a), M = x - a.
+      use p^(t+2)*(1+p*a) - a
+      have hp_pos : (0 : ℤ) < p := Nat.cast_pos.mpr hp.pos
+      have hx_pos : 0 < p^(t+2)*(1+p*a) - a := by
+        ring_nf
+        nlinarith [pow_pos hp_pos 2, pow_pos hp_pos t, pow_pos hp_pos 3,
+          mul_pos (pow_pos hp_pos t) ha, mul_pos (pow_pos hp_pos 3) ha]
+      have hx_val : padicValInt p (p^(t+2)*(1+p*a)) = t + 2 := by
+        convert padicValInt_eq_of_dvd_not_dvd hp _ _ using 1
+        · exact dvd_mul_right _ _
+        · rw [pow_succ,
+            mul_dvd_mul_iff_left (pow_ne_zero _ (Nat.cast_ne_zero.mpr hp.ne_zero))]
+          intro h
+          have hone := Int.dvd_sub h (dvd_mul_right (p : ℤ) a)
+          norm_num at hone
+          have := Int.le_of_dvd (by positivity) hone
+          nlinarith [hp.two_le]
+      have hy_val : padicValInt p (p^(t+2)*(1+p*a) - d) = t := by
+        apply padicValInt_eq_of_dvd_not_dvd hp
+        · exact dvd_sub (dvd_mul_of_dvd_left (pow_dvd_pow _ (by linarith)) _) ht.1
+        · intro h
+          have := dvd_sub h
+            (dvd_mul_of_dvd_left (pow_dvd_pow _ (by linarith : t + 1 ≤ t + 2)) (1 + p * a))
+          simp_all +decide [pow_succ, mul_assoc]
+          exact ht.2 (by simpa [dvd_sub_comm] using this)
+      have hM_val : Odd (padicValInt p (p^(t+2)*(1+p*a) - a + a)) ∧
+          Odd (padicValInt p (p^(t+2)*(1+p*a) - a + b)) := by
+        grind
+      exact ⟨hx_pos, hM_val⟩
+    · -- Set r = t - 1 and x = p^r * (1 + p * a), M = x - a.
+      obtain ⟨r, hr⟩ : ∃ r : ℕ, t = r + 1 := by
+        exact Nat.exists_eq_succ_of_ne_zero (ne_bot_of_gt ht_pos)
+      obtain ⟨x, hx⟩ :
+          ∃ x : ℤ, (p : ℤ) ^ r ∣ x ∧ ¬(p : ℤ) ^ (r + 1) ∣ x ∧ x > a := by
+        use (p : ℤ) ^ r * (1 + p * (a.natAbs + 1))
+        norm_num [pow_add, mul_dvd_mul_iff_left, hp.ne_zero]
+        refine ⟨mod_cast hp.not_dvd_one, ?_⟩
+        nlinarith [abs_of_pos ha, hp.two_le, pow_pos hp.pos r,
+          mul_pos (pow_pos hp.pos r) hp.pos]
+      obtain ⟨M, hM⟩ : ∃ M : ℤ, M = x - a ∧ 0 < M := by
+        exact ⟨_, rfl, by linarith⟩
+      have hx_div : (p : ℤ) ^ r ∣ x ∧ ¬(p : ℤ) ^ (r + 1) ∣ x := by
+        tauto
+      have hx_div_b : (p : ℤ) ^ r ∣ (x - d) ∧ ¬(p : ℤ) ^ (r + 1) ∣ (x - d) := by
+        simp_all +decide [pow_succ, mul_assoc]
+        exact ⟨dvd_sub hx_div (dvd_of_mul_right_dvd ht.1),
+          fun h => hx.1 <| by simpa using dvd_add h ht.1⟩
+      have hM_pos : 0 < M := by
+        linarith
+      have hM_val : padicValInt p (M + a) = r ∧ padicValInt p (M + b) = r := by
+        haveI := Fact.mk hp; simp_all +decide [padicValInt_dvd_iff]
+        grind
+      have hM_odd : Odd (padicValInt p (M + a)) ∧ Odd (padicValInt p (M + b)) := by
+        grind
+      exact ⟨M, hM_pos, hM_odd⟩
+
+lemma prime_dvd_other_factor_of_square {p : ℕ} (hp : Nat.Prime p) {x y : ℤ}
+    (hx : x ≠ 0) (hy : y ≠ 0) (hsq : IsSquare (x * y))
+    (hodd : Odd (padicValInt p x)) : (p : ℤ) ∣ y := by
+  obtain ⟨z, hz⟩ := hsq
+  have hz_ne : z ≠ 0 := by
     rintro rfl
-    rw [mul_zero] at hs
-    rcases Nat.mul_eq_zero.mp hs with h | h
-    · exact hA h
-    · exact hB h
-  have e2 : (Nat.factorization (A * B)) p
-      = (Nat.factorization A) p + (Nat.factorization B) p := by
-    rw [Nat.factorization_mul hA hB, Finsupp.add_apply]
-  rw [hs] at e2
-  have e3 : (Nat.factorization (s * s)) p = 2 * (Nat.factorization s) p := by
-    rw [Nat.factorization_mul hs0 hs0, Finsupp.add_apply, two_mul]
-  rw [e3] at e2
-  obtain ⟨k, hk⟩ := hodd
-  have h1 : 1 ≤ (Nat.factorization B) p := by omega
-  have h2 := (hp.pow_dvd_iff_le_factorization hB).mpr h1
-  rwa [pow_one] at h2
-
-/-- A product of two positive integers differing by `1` or `2` is never a square. -/
-lemma not_sq_between {W s d : ℕ} (hW : 1 ≤ W) (hd : d = 1 ∨ d = 2)
-    (h : W * (W + d) = s * s) : False := by
-  have h1 : W * W < s * s := by
-    have hlt : W * W < W * (W + d) := mul_lt_mul_of_pos_left (by omega) (by omega)
-    rwa [h] at hlt
-  have h2 : s * s < (W + 1) * (W + 1) := by
-    rw [← h]
-    rcases hd with rfl | rfl <;> nlinarith [hW]
-  have hWs : W < s := by
-    by_contra hle
-    push Not at hle
-    have := Nat.mul_le_mul hle hle
+    norm_num at hz
+    rcases hz with hx0 | hy0
+    · exact hx hx0
+    · exact hy hy0
+  have h_val : padicValInt p x + padicValInt p y = 2 * padicValInt p z := by
+    letI := Fact.mk hp
+    rw [← padicValInt.mul hx hy, hz, padicValInt.mul hz_ne hz_ne]
     omega
-  have hsW : s < W + 1 := by
-    by_contra hle
-    push Not at hle
-    have := Nat.mul_le_mul hle hle
-    omega
-  omega
+  contrapose! hodd
+  simp_all +decide [padicValInt.eq_zero_of_not_dvd]
 
-/-- `F` cannot take the same value at two indices at distance `1` or `2`. -/
-lemma F_ne {F : ℕ → ℕ}
-    (hsq : ∀ a b : ℕ, ∃ s : ℕ, (F a + (b + 1)) * (F b + (a + 1)) = s * s)
-    (a : ℕ) {d : ℕ} (hd : d = 1 ∨ d = 2) : F a ≠ F (a + d) := by
-  intro h
-  obtain ⟨s, hs⟩ := hsq a (a + d)
-  rw [← h] at hs
-  have e : (F a + (a + d + 1)) * (F a + (a + 1))
-      = (F a + (a + 1)) * ((F a + (a + 1)) + d) := by ring
-  rw [e] at hs
-  exact not_sq_between (by omega) hd hs
+lemma input_modEq_of_output_modEq (g : ℤ>0 → ℤ>0)
+    (hsq : ∀ m n : ℤ>0, IsSquare ((g m + n) * (g n + m)))
+    {p : ℕ} (hp : Nat.Prime p) (a b : ℤ>0)
+    (hab : (g a).val ≡ (g b).val [ZMOD p]) : a.val ≡ b.val [ZMOD p] := by
+  by_contra h_contra
+  obtain ⟨M, hM_pos, hM_odd⟩ :
+      ∃ M : ℤ, 0 < M ∧ Odd (padicValInt p (M + (g a).val)) ∧
+        Odd (padicValInt p (M + (g b).val)) := by
+    apply exists_positive_shift_odd_padic hp (Subtype.property (g a)) (Subtype.property (g b))
+    exact hab.symm.dvd
+  -- Apply the square condition at `(M, a)` and `(M, b)`.
+  have h_div_a : (p : ℤ) ∣ (g ⟨M, hM_pos⟩).val + a.val := by
+    apply prime_dvd_other_factor_of_square hp
+    · exact ne_of_gt (add_pos hM_pos (mod_cast Subtype.property (g a)))
+    · exact ne_of_gt (add_pos (mod_cast Subtype.property _) (mod_cast Subtype.property _))
+    · obtain ⟨k, hk⟩ := hsq ⟨M, hM_pos⟩ a
+      exact ⟨k, by simpa [add_comm, mul_comm] using congr_arg Subtype.val hk⟩
+    · exact hM_odd.1
+  have h_div_b : (p : ℤ) ∣ (g ⟨M, hM_pos⟩).val + b.val := by
+    apply prime_dvd_other_factor_of_square hp
+    · exact ne_of_gt (add_pos hM_pos (mod_cast Subtype.property (g b)))
+    · exact ne_of_gt (add_pos (mod_cast Subtype.property _) (mod_cast Subtype.property _))
+    · obtain ⟨k, hk⟩ := hsq ⟨M, hM_pos⟩ b
+      exact ⟨k, by simpa [add_comm, mul_comm] using congr_arg Subtype.val hk⟩
+    · exact hM_odd.2
+  apply h_contra
+  apply Int.modEq_of_dvd
+  obtain ⟨qa, hqa⟩ := h_div_a
+  obtain ⟨qb, hqb⟩ := h_div_b
+  refine ⟨qb - qa, ?_⟩
+  linear_combination hqb - hqa
 
-/-- Given `F a ≡ F b [MOD p]`, one can find a positive `x` such that both `F a + x`
-and `F b + x` contain the prime `p` to an odd power. -/
-lemma choose_x {F : ℕ → ℕ} {p : ℕ} (hp : p.Prime) {a b : ℕ}
-    (h : F a ≡ F b [MOD p]) :
-    ∃ x : ℕ, 1 ≤ x ∧ Odd ((Nat.factorization (F a + x)) p)
-      ∧ Odd ((Nat.factorization (F b + x)) p) := by
-  have hp2 : 2 ≤ p := hp.two_le
-  have hM : 0 < p ^ 2 := pow_pos hp.pos 2
-  have hM4 : 0 < p ^ 4 := pow_pos hp.pos 4
-  -- first choice of `x`: it satisfies `F a + x = p + p^2 * (F a + 1)`
-  set x := p + p ^ 2 * (F a + 1) - F a with hxdef
-  have hA : F a + 1 ≤ p ^ 2 * (F a + 1) := by
-    have h1 : 1 * (F a + 1) ≤ p ^ 2 * (F a + 1) :=
-      mul_le_mul_left (one_le_pow₀ (by omega : (1 : ℕ) ≤ p)) (F a + 1)
-    rwa [one_mul] at h1
-  have hx1 : 1 ≤ x := by omega
-  have hxFa : F a + x = p + p ^ 2 * (F a + 1) := by omega
-  have hdiv1 : p ∣ F a + x := by
-    rw [hxFa]
-    exact ⟨1 + p * (F a + 1), by ring⟩
-  have hndiv1 : ¬ p ^ 2 ∣ F a + x := by
-    rw [hxFa]
-    rintro ⟨u, hu⟩
-    have e1 : p * (1 + p * (F a + 1)) = p * (p * u) := by linear_combination hu
-    have e2 : 1 + p * (F a + 1) = p * u := mul_left_cancel₀ hp.pos.ne' e1
-    have hd1 : p ∣ 1 := ⟨u - (F a + 1), by rw [Nat.mul_sub]; omega⟩
-    exact hp.not_dvd_one hd1
-  have hfa : (Nat.factorization (F a + x)) p = 1 := by
-    have hn0 : F a + x ≠ 0 := by omega
-    have h1 : 1 ≤ (Nat.factorization (F a + x)) p :=
-      (hp.pow_dvd_iff_le_factorization hn0).mp (by rwa [pow_one])
-    have h2 : ¬ 2 ≤ (Nat.factorization (F a + x)) p :=
-      fun h2 => hndiv1 ((hp.pow_dvd_iff_le_factorization hn0).mpr h2)
-    omega
-  have hdiv2 : p ∣ F b + x := by
-    have m1 : F a + x ≡ F b + x [MOD p] := h.add (Nat.ModEq.refl x)
-    have m2 : F a + x ≡ 0 [MOD p] := Nat.modEq_zero_iff_dvd.mpr hdiv1
-    have m3 : F b + x ≡ 0 [MOD p] := m1.symm.trans m2
-    exact Nat.modEq_zero_iff_dvd.mp m3
-  by_cases hcase : p ^ 2 ∣ F b + x
-  · -- the first choice fails for `F b`; take `x'` with `F a + x' = p^3 + p^4 * (F a + 1)`
-    obtain ⟨U, hU⟩ := hcase
-    set x' := p ^ 3 + p ^ 4 * (F a + 1) - F a with hx'def
-    have hA' : F a + 1 ≤ p ^ 4 * (F a + 1) := by
-      have h1 : 1 * (F a + 1) ≤ p ^ 4 * (F a + 1) :=
-        mul_le_mul_left (one_le_pow₀ (by omega : (1 : ℕ) ≤ p)) (F a + 1)
-      rwa [one_mul] at h1
-    have hx'1 : 1 ≤ x' := by omega
-    have hx'Fa : F a + x' = p ^ 3 + p ^ 4 * (F a + 1) := by omega
-    have hdiv1' : p ^ 3 ∣ F a + x' := by
-      rw [hx'Fa]
-      exact ⟨1 + p * (F a + 1), by ring⟩
-    have hndiv1' : ¬ p ^ 4 ∣ F a + x' := by
-      rw [hx'Fa]
-      rintro ⟨u, hu⟩
-      have e1 : p ^ 3 * (1 + p * (F a + 1)) = p ^ 3 * (p * u) := by linear_combination hu
-      have e2 : 1 + p * (F a + 1) = p * u :=
-        mul_left_cancel₀ (by positivity : p ^ 3 ≠ 0) e1
-      have hd1 : p ∣ 1 := ⟨u - (F a + 1), by rw [Nat.mul_sub]; omega⟩
-      exact hp.not_dvd_one hd1
-    have hfa' : (Nat.factorization (F a + x')) p = 3 := by
-      have hn0 : F a + x' ≠ 0 := by omega
-      have h1 : 3 ≤ (Nat.factorization (F a + x')) p :=
-        (hp.pow_dvd_iff_le_factorization hn0).mp hdiv1'
-      have h2 : ¬ 4 ≤ (Nat.factorization (F a + x')) p :=
-        fun h2 => hndiv1' ((hp.pow_dvd_iff_le_factorization hn0).mpr h2)
-      omega
-    have hdiv2' : p ∣ F b + x' := by
-      have m1 : F a + x' ≡ F b + x' [MOD p] := h.add (Nat.ModEq.refl x')
-      have hp3 : p ∣ p ^ 3 := ⟨p ^ 2, by ring⟩
-      have m2 : F a + x' ≡ 0 [MOD p] := Nat.modEq_zero_iff_dvd.mpr (dvd_trans hp3 hdiv1')
-      have m3 : F b + x' ≡ 0 [MOD p] := m1.symm.trans m2
-      exact Nat.modEq_zero_iff_dvd.mp m3
-    have hndiv2' : ¬ p ^ 2 ∣ F b + x' := by
-      rintro ⟨V, hV⟩
-      have e : p + p ^ 2 * (V + (F a + 1)) = p ^ 2 * (p + p ^ 2 * (F a + 1) + U) := by
-        have ee : (F b + x') + (F a + x) = (F a + x') + (F b + x) := by ring
-        rw [hxFa, hx'Fa, hU, hV] at ee
-        linear_combination ee
-      have hX : p ^ 2 * (V + (F a + 1)) ≤ p ^ 2 * (p + p ^ 2 * (F a + 1) + U) := by omega
-      have hle : V + (F a + 1) ≤ p + p ^ 2 * (F a + 1) + U :=
-        le_of_mul_le_mul_left hX hM
-      have e2 : p = p ^ 2 * ((p + p ^ 2 * (F a + 1) + U) - (V + (F a + 1))) := by
-        rw [Nat.mul_sub]
-        omega
-      have hdvd : p ^ 2 ∣ p := ⟨_, e2⟩
-      have hpp : p ^ 2 ≤ p := Nat.le_of_dvd (by omega) hdvd
-      have hpp2 : p * p ≤ p * 1 := by
-        rw [pow_two] at hpp
-        rwa [mul_one]
-      have hp1 : p ≤ 1 := le_of_mul_le_mul_left hpp2 (by omega)
-      exact (not_le_of_gt hp.one_lt) hp1
-    have hfb' : (Nat.factorization (F b + x')) p = 1 := by
-      have hn0 : F b + x' ≠ 0 := by omega
-      have h1 : 1 ≤ (Nat.factorization (F b + x')) p :=
-        (hp.pow_dvd_iff_le_factorization hn0).mp (by rwa [pow_one])
-      have h2 : ¬ 2 ≤ (Nat.factorization (F b + x')) p :=
-        fun h2 => hndiv2' ((hp.pow_dvd_iff_le_factorization hn0).mpr h2)
-      omega
-    exact ⟨x', hx'1, by rw [hfa']; exact ⟨1, rfl⟩, by rw [hfb']; exact odd_one⟩
-  · refine ⟨x, hx1, by rw [hfa]; exact odd_one, ?_⟩
-    have hfb : (Nat.factorization (F b + x)) p = 1 := by
-      have hn0 : F b + x ≠ 0 := by omega
-      have h1 : 1 ≤ (Nat.factorization (F b + x)) p :=
-        (hp.pow_dvd_iff_le_factorization hn0).mp (by rwa [pow_one])
-      have h2 : ¬ 2 ≤ (Nat.factorization (F b + x)) p :=
-        fun h2 => hcase ((hp.pow_dvd_iff_le_factorization hn0).mpr h2)
-      omega
-    rw [hfb]; exact odd_one
-
-/-- The key claim: any prime dividing `F a - F b` also divides `a - b`;
-equivalently, `F a ≡ F b [MOD p]` implies `a ≡ b [MOD p]`. -/
-lemma key {F : ℕ → ℕ}
-    (hsq : ∀ a b : ℕ, ∃ s : ℕ, (F a + (b + 1)) * (F b + (a + 1)) = s * s)
-    {p : ℕ} (hp : p.Prime) {a b : ℕ} (h : F a ≡ F b [MOD p]) :
-    a ≡ b [MOD p] := by
-  obtain ⟨x, hx1, hoddA, hoddB⟩ := choose_x hp h
-  obtain ⟨s1, hs1⟩ := hsq a (x - 1)
-  obtain ⟨s2, hs2⟩ := hsq b (x - 1)
-  rw [Nat.sub_add_cancel hx1] at hs1 hs2
-  have hd1 : p ∣ F (x - 1) + (a + 1) := kf hp (by omega) (by omega) hs1 hoddA
-  have hd2 : p ∣ F (x - 1) + (b + 1) := kf hp (by omega) (by omega) hs2 hoddB
-  rw [Nat.modEq_iff_dvd]
-  have h1z : (p : ℤ) ∣ (F (x - 1) : ℤ) + ((a : ℤ) + 1) := by exact_mod_cast hd1
-  have h2z : (p : ℤ) ∣ (F (x - 1) : ℤ) + ((b : ℤ) + 1) := by exact_mod_cast hd2
-  have hsub := dvd_sub h2z h1z
-  have e : (F (x - 1) : ℤ) + ((b : ℤ) + 1) - ((F (x - 1) : ℤ) + ((a : ℤ) + 1))
-      = (b : ℤ) - (a : ℤ) := by ring
-  rw [e] at hsub
-  exact hsub
-
-/-- Consecutive values of `F` differ by exactly `1`. -/
-lemma step2 {F : ℕ → ℕ}
-    (hsq : ∀ a b : ℕ, ∃ s : ℕ, (F a + (b + 1)) * (F b + (a + 1)) = s * s)
-    (n : ℕ) : F (n + 1) = F n + 1 ∨ F n = F (n + 1) + 1 := by
-  have hne : F n ≠ F (n + 1) := F_ne hsq n (Or.inl rfl)
-  rcases lt_or_gt_of_ne hne with hlt | hgt
-  · left
-    by_cases hd1 : F (n + 1) - F n = 1
-    · omega
-    · exfalso
-      obtain ⟨p, hp, hpd⟩ := Nat.exists_prime_and_dvd hd1
-      have hm : F n ≡ F (n + 1) [MOD p] := (Nat.modEq_iff_dvd' (le_of_lt hlt)).mpr hpd
-      have hm2 : n ≡ n + 1 [MOD p] := key hsq hp hm
-      have hdvd : p ∣ (n + 1) - n := (Nat.modEq_iff_dvd' (Nat.le_succ n)).mp hm2
-      have e : (n + 1) - n = 1 := by omega
-      rw [e] at hdvd
-      exact hp.not_dvd_one hdvd
-  · right
-    by_cases hd1 : F n - F (n + 1) = 1
-    · omega
-    · exfalso
-      obtain ⟨p, hp, hpd⟩ := Nat.exists_prime_and_dvd hd1
-      have hm : F (n + 1) ≡ F n [MOD p] := (Nat.modEq_iff_dvd' (le_of_lt hgt)).mpr hpd
-      have hm2 : n + 1 ≡ n [MOD p] := key hsq hp hm
-      have hdvd : p ∣ (n + 1) - n := (Nat.modEq_iff_dvd' (Nat.le_succ n)).mp hm2.symm
-      have e : (n + 1) - n = 1 := by omega
-      rw [e] at hdvd
-      exact hp.not_dvd_one hdvd
-
-/-- The consecutive difference is always `+1` (a constant `-1` would eventually
-make `F` nonpositive, and a change of direction would force `F n = F (n + 2)`). -/
-lemma all_up {F : ℕ → ℕ}
-    (hsq : ∀ a b : ℕ, ∃ s : ℕ, (F a + (b + 1)) * (F b + (a + 1)) = s * s)
-    (hFpos : ∀ n, 1 ≤ F n) : ∀ n, F (n + 1) = F n + 1 := by
-  have h2 : ∀ n, F n ≠ F (n + 2) := fun n => F_ne hsq n (Or.inr rfl)
-  have hstep : ∀ n, F (n + 1) = F n + 1 → F (n + 2) = F (n + 1) + 1 := by
-    intro n hn
-    rcases step2 hsq (n + 1) with h | h
-    · exact h
-    · exfalso
-      have heq : F (n + 1 + 1) = F n := by omega
-      exact h2 n heq.symm
-  by_cases h1 : F 1 = F 0 + 1
-  · intro n
-    induction n with
-    | zero => exact h1
-    | succ k ih => exact hstep k ih
-  · exfalso
-    have h1' : F 0 = F 1 + 1 := by
-      rcases step2 hsq 0 with h | h
-      · exact absurd h h1
-      · exact h
-    have hstep' : ∀ n, F n = F (n + 1) + 1 → F (n + 1) = F (n + 2) + 1 := by
-      intro n hn
-      rcases step2 hsq (n + 1) with h | h
-      · exfalso
-        have heq : F (n + 1 + 1) = F n := by omega
-        exact h2 n heq.symm
-      · exact h
-    have hall : ∀ n, F n = F (n + 1) + 1 := by
-      intro n
-      induction n with
-      | zero => exact h1'
-      | succ k ih => exact hstep' k ih
-    have hsum : ∀ n, F n + n = F 0 := by
-      intro n
-      induction n with
-      | zero => simp
-      | succ k ih =>
-          have hk := hall k
-          omega
-    have h0 := hsum (F 0)
-    have hpos0 := hFpos (F 0)
-    omega
-
-/-- The values of `g` are completely determined: `F n = n + F 0`. -/
-lemma F_eq {F : ℕ → ℕ}
-    (hsq : ∀ a b : ℕ, ∃ s : ℕ, (F a + (b + 1)) * (F b + (a + 1)) = s * s)
-    (hFpos : ∀ n, 1 ≤ F n) : ∀ n, F n = n + F 0 := by
-  have hup : ∀ n, F (n + 1) = F n + 1 := all_up hsq hFpos
+/-
+Key lemma: |g(n+1) - g(n)| = 1
+From the functional equation with m and varying n,
+once we know g is injective and the sq condition holds,
+consecutive values must differ by exactly 1.
+-/
+lemma step_one (g : ℤ>0 → ℤ>0)
+    (hsq : ∀ m n : ℤ>0, IsSquare ((g m + n) * (g n + m)))
+    (hinj : Function.Injective g) :
+    ∀ n : ℤ>0, (g ⟨n.val + 1, by linarith [n.prop]⟩).val = g n + 1 ∨
+               (g ⟨n.val + 1, by linarith [n.prop]⟩).val + 1 = g n := by
   intro n
-  induction n with
-  | zero => simp
-  | succ k ih =>
-      rw [hup k, ih]
-      omega
+  -- Name the anonymous positivity proofs inside the `⟨n.val + 1, _⟩` coercions above,
+  -- so the case analysis below can rewrite under them.
+  generalize_proofs at *
+  -- Show that the absolute difference between consecutive values is 1.
+  have h_abs_diff : Int.natAbs ((g ⟨n.val + 1, by linarith⟩).val - (g n).val) = 1 := by
+    by_contra h_contra
+    -- Let $p$ be a prime divisor of $|g(n+1) - g(n)|$.
+    obtain ⟨p, hp_prime, hp_div⟩ :
+        ∃ p : ℕ, Nat.Prime p ∧
+          (p : ℤ) ∣ (g ⟨n.val + 1, by linarith⟩).val - (g n).val := by
+      exact ⟨Nat.minFac _, Nat.minFac_prime h_contra, Int.natCast_dvd.mpr <| Nat.minFac_dvd _⟩
+    -- Applying `input_modEq_of_output_modEq` would make consecutive inputs
+    -- congruent modulo the prime `p`.
+    have h_contradiction : (n.val + 1 : ℤ) ≡ n.val [ZMOD p] := by
+      apply input_modEq_of_output_modEq g hsq hp_prime ⟨n.val + 1, by linarith⟩ n
+      exact Int.ModEq.symm <| Int.modEq_of_dvd hp_div
+    exact absurd h_contradiction (by
+      rw [Int.modEq_iff_dvd]
+      norm_num
+      exact mod_cast hp_prime.not_dvd_one)
+  grind
 
 snip end
-
-determine SolutionSet : Set (ℤ>0 → ℤ>0) := { f | f = id ∨ ∃ c, ∀ x, f x = x + c }
 
 problem imo2010_p3 (g : ℤ>0 → ℤ>0) :
     g ∈ SolutionSet ↔ ∀ m n, IsSquare ((g m + n) * (g n + m)) := by
@@ -318,73 +265,39 @@ problem imo2010_p3 (g : ℤ>0 → ℤ>0) :
   · rintro (rfl | ⟨c, hc⟩) m n
     · use m + n; rw [id, id, add_comm m n]
     · use m + n + c; rw [hc m, hc n]; simp only [add_comm, add_left_comm]
-  · intro h
-    have hFpos : ∀ n, 1 ≤ gF g n := by
+  · -- The square condition makes `g` injective and consecutive values differ by one.
+    -- A downward step would eventually violate positivity, so `g n = n + (g 1 - 1)`.
+    intro hsq
+    have hinj : Function.Injective g := injective_of_sq g hsq
+    have h_step : ∀ n : PosInt,
+        (g ⟨n.val + 1, by linarith [n.prop]⟩).val = g n + 1 ∨
+        (g ⟨n.val + 1, by linarith [n.prop]⟩).val + 1 = g n :=
+      step_one g hsq hinj
+    -- By induction, we can show that $g(n) = g(1) + (n - 1)$ for all $n$.
+    have h_ind : ∀ n : PosInt, (g n).val = (g ⟨1, by linarith⟩).val + (n.val - 1) := by
       intro n
-      have hg := (g ⟨↑n + 1, by omega⟩).2
-      have h2 : 0 < (g ⟨↑n + 1, by omega⟩).1.natAbs := Int.natAbs_pos.mpr (ne_of_gt hg)
-      exact h2
-    have hsq : ∀ a b : ℕ, ∃ s : ℕ, (gF g a + (b + 1)) * (gF g b + (a + 1)) = s * s := by
-      intro a b
-      obtain ⟨r, hr⟩ := h ⟨↑a + 1, by omega⟩ ⟨↑b + 1, by omega⟩
-      refine ⟨r.1.natAbs, ?_⟩
-      have hz := congrArg Subtype.val hr
-      simp only [Positive.val_mul, Positive.coe_add] at hz
-      have hsq2 : ((gF g a + (b + 1)) * (gF g b + (a + 1)) : ℕ)
-          = r.1.natAbs * r.1.natAbs := by
-        apply Nat.cast_injective (R := ℤ)
-        push_cast
-        simp only [gF]
-        rw [Int.natAbs_of_nonneg (le_of_lt (g _).2),
-          Int.natAbs_of_nonneg (le_of_lt (g _).2),
-          abs_of_nonneg (le_of_lt r.2)]
-        exact hz
-      exact hsq2
-    have hform : ∀ n, gF g n = n + gF g 0 := F_eq hsq hFpos
-    have hF0 : 1 ≤ gF g 0 := hFpos 0
-    by_cases h0 : gF g 0 = 1
-    · show g = id ∨ ∃ c, ∀ x, g x = x + c
-      left
-      funext x
-      apply Subtype.ext
-      show (g x).1 = x.1
-      set n := x.1.natAbs - 1 with hn
-      have hpos : 0 < x.1.natAbs := Int.natAbs_pos.mpr (ne_of_gt x.2)
-      have e2 : ((x.1.natAbs : ℤ)) = x.1 := Int.natAbs_of_nonneg (by omega)
-      have hxn : x = ⟨↑n + 1, by omega⟩ := by
-        apply Subtype.ext
-        show x.1 = ↑n + 1
-        omega
-      have e4 : (g x).1 = ↑(gF g n) := by
-        rw [hxn]
-        show (g ⟨↑n + 1, by omega⟩).1 = ↑((g ⟨↑n + 1, by omega⟩).1.natAbs)
-        exact (Int.natAbs_of_nonneg (le_of_lt (g _).2)).symm
-      have e5 : (↑(gF g n) : ℤ) = ↑n + ↑(gF g 0) := by rw [hform n, Nat.cast_add]
-      rw [e4, e5, h0, Nat.cast_one]
-      omega
-    · show g = id ∨ ∃ c, ∀ x, g x = x + c
-      right
-      have h2 : (2 : ℤ) ≤ gF g 0 := by
-        have h2' : 2 ≤ gF g 0 := by omega
-        exact_mod_cast h2'
-      refine ⟨⟨(gF g 0 : ℤ) - 1, by omega⟩, ?_⟩
-      intro x
-      apply Subtype.ext
-      simp only [Positive.coe_add]
-      show (g x).1 = x.1 + ((gF g 0 : ℤ) - 1)
-      set n := x.1.natAbs - 1 with hn
-      have hpos : 0 < x.1.natAbs := Int.natAbs_pos.mpr (ne_of_gt x.2)
-      have e2 : ((x.1.natAbs : ℤ)) = x.1 := Int.natAbs_of_nonneg (by omega)
-      have hxn : x = ⟨↑n + 1, by omega⟩ := by
-        apply Subtype.ext
-        show x.1 = ↑n + 1
-        omega
-      have e4 : (g x).1 = ↑(gF g n) := by
-        rw [hxn]
-        show (g ⟨↑n + 1, by omega⟩).1 = ↑((g ⟨↑n + 1, by omega⟩).1.natAbs)
-        exact (Int.natAbs_of_nonneg (le_of_lt (g _).2)).symm
-      have e5 : (↑(gF g n) : ℤ) = ↑n + ↑(gF g 0) := by rw [hform n, Nat.cast_add]
-      rw [e4, e5]
-      omega
+      induction' n with n ih
+      induction' n using Int.induction_on with n ihn n ihn <;> norm_num at *
+      · contradiction
+      · rcases n with (_ | n) <;> simp_all +decide
+        cases h_step (n + 1) (by linarith) <;> simp_all +decide [add_assoc]
+        contrapose! hsq
+        refine ⟨n + 2, by linarith, 1, by linarith, ?_⟩ ; simp_all +decide [IsSquare]
+        intro x hx; erw [Subtype.mk_eq_mk] at *; simp_all +decide [← sq]
+        intro h
+        have hg1 : (g ⟨1, by linarith⟩ : ℤ) > 0 := mod_cast Subtype.property _
+        have hxv : x = g ⟨1, by linarith⟩ + n + 1 := by nlinarith only [hx, h, hg1]
+        nlinarith only [hxv, h, hg1]
+      · linarith
+    -- Let $c = g(1) - 1$. Then $g(n) = n + c$ for all $n$.
+    obtain ⟨c, hc⟩ : ∃ c : ℤ, ∀ n : PosInt, (g n).val = n.val + c := by
+      exact ⟨(g ⟨1, by decide⟩ : ℤ) - 1, fun n => by linarith [h_ind n]⟩
+    -- Since $g$ maps to positive integers, we must have $c \geq 0$.
+    have hc_nonneg : 0 ≤ c := by
+      linarith! [hc ⟨1, by decide⟩, Subtype.property (g ⟨1, by decide⟩)]
+    -- `c = 0` gives `g = id`; `c > 0` gives the shifted solution.
+    rcases c with ⟨_ | c⟩ <;> norm_num at hc hc_nonneg
+    · exact Or.inl <| funext fun x => Subtype.ext <| hc x x.prop
+    · exact Or.inr ⟨⟨c + 1, by linarith⟩, fun x => Subtype.ext <| hc x x.prop⟩
 
 end Imo2010P3

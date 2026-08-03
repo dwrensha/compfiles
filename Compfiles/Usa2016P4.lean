@@ -13,6 +13,8 @@ import Mathlib.Analysis.SpecialFunctions.Log.Base
 
 @[expose] public section
 
+problem_file { tags := [.Algebra] }
+
 /-!
 # USA Mathematical Olympiad 2016 P4
 Find all functions f : ℝ → ℝ such that for all x, y ∈ ℝ:
