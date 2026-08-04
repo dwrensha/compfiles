@@ -130,15 +130,8 @@ theorem cyclotomic_roots (P Q R S : ℂ[X]):  (∀x, P.eval (x^5) + x * Q.eval (
       rw [sub_ne_zero]
       simp [z₂,z₀]
       by_contra! hne
-      have : z^1 ≠ z^3 := by
-        by_contra distinct
-        apply IsPrimitiveRoot.pow_inj hz at distinct
-        · tauto
-        · decide
-        decide
-      rw [pow_one] at this
-      symm at this
-      contradiction
+      nth_rw 2 [← pow_one z] at hne
+      linarith [IsPrimitiveRoot.pow_inj hz (by decide) (by decide) hne]
 
 
 
