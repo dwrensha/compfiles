@@ -184,13 +184,10 @@ theorem generalized (n : ℕ+) :
     exact hm.left
   · rintro x hx y hy z hz h'
     contrapose! h'
-    rw [Finset.mem_map] at hx hy hz
-    simp_rw [Finset.mem_attach, true_and, DFunLike.coe] at hx hy hz
-    rcases hx with ⟨⟨x', hx'⟩, hx'x⟩
-    rcases hy with ⟨⟨y', hy'⟩, hy'y⟩
-    rcases hz with ⟨⟨z', hz'⟩, hz'z⟩
-    rw [← PNat.coe_inj] at hx'x hy'y hz'z
-    simp_rw [PNat.mk_coe] at hx'x hy'y hz'z
+    simp_rw [Finset.mem_map, DFunLike.coe, ← PNat.coe_inj, PNat.mk_coe] at hx hy hz
+    rcases hx with ⟨x', -, hx'x⟩
+    rcases hy with ⟨y', -, hy'y⟩
+    rcases hz with ⟨z', -, hz'z⟩
     rw [← PNat.coe_lt_coe, ← PNat.coe_le_coe, PNat.val]
     apply zero_or_one_in_base_three_of_eq_base_two_to_base_three at hx'x
     apply zero_or_one_in_base_three_of_eq_base_two_to_base_three at hy'y

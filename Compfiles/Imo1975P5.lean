@@ -119,7 +119,6 @@ theorem P_injective : Function.Injective P := by
   · rw [ne_comm]
     have := this e.symm
     grind only
-
   simp_rw [Ne, Circle.ext_iff, P_cast_eq]
   simp only [Complex.mk.injEq, not_and]
   intro _
