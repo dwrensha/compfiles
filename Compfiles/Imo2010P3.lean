@@ -1,16 +1,15 @@
 /-
 Copyright (c) 2023 The Compfiles Contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Elan Roth, Claude Opus 5
+Authors:
 -/
 
-module
+import Mathlib.Tactic
 
-public import Mathlib.Tactic
+import Mathlib.Data.Int.GCD
+import Mathlib.NumberTheory.Multiplicity
 
-public import ProblemExtraction
-
-@[expose] public section
+import ProblemExtraction
 
 problem_file { tags := [.Algebra] }
 
@@ -30,28 +29,24 @@ abbrev PosInt : Type := { x : ℤ // 0 < x }
 
 notation "ℤ>0" => PosInt
 
+instance : Add PosInt where
+  add a b := ⟨a.val + b.val, by linarith [a.prop, b.prop]⟩
+
 determine SolutionSet : Set (ℤ>0 → ℤ>0) := { f | f = id ∨ ∃ c, ∀ x, f x = x + c }
 
 snip begin
 
 /-- The square condition forces `g` to be injective. -/
-lemma injective_of_sq (g : ℤ>0 → ℤ>0)
-    (h : ∀ m n : ℤ>0, IsSquare ((g m + n) * (g n + m))) :
+lemma injective_of_sq (g : ℤ>0 → ℤ>0) (h : ∀ m n : ℤ>0, IsSquare ((g m + n) * (g n + m))) :
     Function.Injective g := by
   intro a b hab
   -- Pick a prime `p` exceeding both `max a b` and `g a + max a b`, and set `m = p - g a`,
   -- so that `g a + m = p`. Then `(g m + a) * p` and `(g m + b) * p` are both squares, so
   -- `p` divides each square root; dividing through by `p` forces `k ^ 2 = l ^ 2`, and
   -- `p > max a b` leaves `a = b` as the only possibility.
-  obtain ⟨p, hp_prime, hp_gt⟩ :
-      ∃ p : ℕ, Nat.Prime p ∧ p > max a.val b.val ∧
-        p > (g a).val + max a.val b.val := by
+  obtain ⟨p, hp_prime, hp_gt⟩ : ∃ p : ℕ, Nat.Prime p ∧ p > max a.val b.val ∧ p > (g a).val + max a.val b.val := by
     obtain ⟨p, hp⟩ := Nat.exists_infinite_primes (Int.natAbs (g a + max a b) + 1)
-    have hga : (g a : ℤ) > 0 := mod_cast Subtype.property (g a)
-    have hmax : (max a b : ℤ) > 0 := mod_cast lt_max_iff.mpr (Or.inl a.prop)
-    refine ⟨p, hp.2, ?_, ?_⟩ <;>
-      cases max_cases (a : ℤ) (b : ℤ) <;> cases abs_cases (g a + max a b : ℤ) <;>
-        linarith! [hga, hmax]
+    exact ⟨p, hp.2, by cases max_cases (a : ℤ) (b : ℤ) <;> cases abs_cases (g a + max a b : ℤ) <;> linarith! [show (g a : ℤ) > 0 from mod_cast Subtype.property (g a), show (max a b : ℤ) > 0 from mod_cast lt_max_iff.mpr (Or.inl a.prop)], by cases max_cases (a : ℤ) (b : ℤ) <;> cases abs_cases (g a + max a b : ℤ) <;> linarith! [show (g a : ℤ) > 0 from mod_cast Subtype.property (g a), show (max a b : ℤ) > 0 from mod_cast lt_max_iff.mpr (Or.inl a.prop)]⟩
   set m : PosInt := ⟨p - (g a).val, by grind⟩
   -- `set` leaves the positivity side-goal as an anonymous proof term; name it so the
   -- `linarith` calls below can see it.
@@ -68,7 +63,7 @@ lemma injective_of_sq (g : ℤ>0 → ℤ>0)
     grind
   obtain ⟨k, hk⟩ := h_sq_a
   obtain ⟨l, hl⟩ := h_sq_b
-  simp_all
+  simp_all +decide
   -- Since $p$ is prime, $p$ must divide $k$ and $l$.
   have hp_div_k : (p : ℤ) ∣ k := by
     exact Int.Prime.dvd_pow' hp_prime <| by rw [sq] ; exact hk ▸ dvd_mul_left _ _
@@ -94,8 +89,7 @@ lemma padicValInt_eq_of_dvd_not_dvd {p k : ℕ} (hp : Nat.Prime p) {z : ℤ}
 lemma exists_positive_shift_odd_padic {p : ℕ} (hp : Nat.Prime p) {a b : ℤ}
     (ha : 0 < a) (hb : 0 < b) (hab : (p : ℤ) ∣ a - b) :
     ∃ M : ℤ, 0 < M ∧ Odd (padicValInt p (M + a)) ∧ Odd (padicValInt p (M + b)) := by
-  -- Set d = a - b. If d = 0, set x = p*(1+p*a), M = x - a; x > a, and p exactly
-  -- divides x, so both valuations are 1.
+  -- Set d = a - b. If d = 0, set x = p*(1+p*a), M = x - a; x > a, and p exactly divides x, so both valuations are 1.
   set d := a - b with hd
   by_cases hd_zero : d = 0
   · refine ⟨p * (1 + p * a) - a, ?_, ?_, ?_⟩
@@ -111,60 +105,41 @@ lemma exists_positive_shift_odd_padic {p : ℕ} (hp : Nat.Prime p) {a b : ℤ}
         exact_mod_cast hp.not_dvd_one
       · finiteness
   · obtain ⟨t, ht⟩ : ∃ t : ℕ, (p : ℤ) ^ t ∣ d ∧ ¬(p : ℤ) ^ (t + 1) ∣ d := by
-      refine ⟨d.natAbs.factorization p, ?_, ?_⟩
-      · simpa using Int.natCast_dvd.mpr (Nat.ordProj_dvd _ _)
-      · simpa using Int.natCast_dvd.not.mpr
-          (Nat.pow_succ_factorization_not_dvd (Int.natAbs_ne_zero.mpr hd_zero) hp)
+      exact ⟨d.natAbs.factorization p, by simpa using Int.natCast_dvd.mpr (Nat.ordProj_dvd _ _), by simpa using Int.natCast_dvd.not.mpr (Nat.pow_succ_factorization_not_dvd (Int.natAbs_ne_zero.mpr hd_zero) hp)⟩
     have ht_pos : 1 ≤ t := by
       contrapose! ht; aesop
     by_cases ht_odd : Odd t
     · -- If t is odd, set x = p^(t+2)*(1+p*a), M = x - a.
       use p^(t+2)*(1+p*a) - a
-      have hp_pos : (0 : ℤ) < p := Nat.cast_pos.mpr hp.pos
       have hx_pos : 0 < p^(t+2)*(1+p*a) - a := by
         ring_nf
-        nlinarith [pow_pos hp_pos 2, pow_pos hp_pos t, pow_pos hp_pos 3,
-          mul_pos (pow_pos hp_pos t) ha, mul_pos (pow_pos hp_pos 3) ha]
+        nlinarith [show (p : ℤ) ^ 2 > 0 by exact pow_pos (Nat.cast_pos.mpr hp.pos) 2, show (p : ℤ) ^ t > 0 by exact pow_pos (Nat.cast_pos.mpr hp.pos) t, show (p : ℤ) ^ 3 > 0 by exact pow_pos (Nat.cast_pos.mpr hp.pos) 3, show (p : ℤ) ^ t * a > 0 by exact mul_pos (pow_pos (Nat.cast_pos.mpr hp.pos) t) ha, show (p : ℤ) ^ 3 * a > 0 by exact mul_pos (pow_pos (Nat.cast_pos.mpr hp.pos) 3) ha]
       have hx_val : padicValInt p (p^(t+2)*(1+p*a)) = t + 2 := by
         convert padicValInt_eq_of_dvd_not_dvd hp _ _ using 1
         · exact dvd_mul_right _ _
-        · rw [pow_succ,
-            mul_dvd_mul_iff_left (pow_ne_zero _ (Nat.cast_ne_zero.mpr hp.ne_zero))]
-          intro h
-          have hone := Int.dvd_sub h (dvd_mul_right (p : ℤ) a)
-          norm_num at hone
-          have := Int.le_of_dvd (by positivity) hone
-          nlinarith [hp.two_le]
+        · rw [pow_succ, mul_dvd_mul_iff_left (by exact pow_ne_zero _ (Nat.cast_ne_zero.mpr hp.ne_zero))] ; exact fun h => by have := Int.dvd_sub h (dvd_mul_right (p : ℤ) a) ; norm_num at this ; exact absurd this (by exact fun h' => by have := Int.le_of_dvd (by positivity) h'; nlinarith [hp.two_le])
       have hy_val : padicValInt p (p^(t+2)*(1+p*a) - d) = t := by
         apply padicValInt_eq_of_dvd_not_dvd hp
         · exact dvd_sub (dvd_mul_of_dvd_left (pow_dvd_pow _ (by linarith)) _) ht.1
-        · intro h
-          have := dvd_sub h
-            (dvd_mul_of_dvd_left (pow_dvd_pow _ (by linarith : t + 1 ≤ t + 2)) (1 + p * a))
-          simp_all +decide [pow_succ, mul_assoc]
+        · intro h; have := dvd_sub h (dvd_mul_of_dvd_left (pow_dvd_pow _ (by linarith : t + 1 ≤ t + 2)) (1 + p * a)) ; simp_all +decide [pow_succ, mul_assoc]
           exact ht.2 (by simpa [dvd_sub_comm] using this)
-      have hM_val : Odd (padicValInt p (p^(t+2)*(1+p*a) - a + a)) ∧
-          Odd (padicValInt p (p^(t+2)*(1+p*a) - a + b)) := by
+      have hM_val : Odd (padicValInt p (p^(t+2)*(1+p*a) - a + a)) ∧ Odd (padicValInt p (p^(t+2)*(1+p*a) - a + b)) := by
         grind
       exact ⟨hx_pos, hM_val⟩
     · -- Set r = t - 1 and x = p^r * (1 + p * a), M = x - a.
       obtain ⟨r, hr⟩ : ∃ r : ℕ, t = r + 1 := by
         exact Nat.exists_eq_succ_of_ne_zero (ne_bot_of_gt ht_pos)
-      obtain ⟨x, hx⟩ :
-          ∃ x : ℤ, (p : ℤ) ^ r ∣ x ∧ ¬(p : ℤ) ^ (r + 1) ∣ x ∧ x > a := by
+      obtain ⟨x, hx⟩ : ∃ x : ℤ, (p : ℤ) ^ r ∣ x ∧ ¬(p : ℤ) ^ (r + 1) ∣ x ∧ x > a := by
         use (p : ℤ) ^ r * (1 + p * (a.natAbs + 1))
         norm_num [pow_add, mul_dvd_mul_iff_left, hp.ne_zero]
-        refine ⟨mod_cast hp.not_dvd_one, ?_⟩
-        nlinarith [abs_of_pos ha, hp.two_le, pow_pos hp.pos r,
-          mul_pos (pow_pos hp.pos r) hp.pos]
+        exact ⟨mod_cast hp.not_dvd_one, by nlinarith [abs_of_pos ha, hp.two_le, pow_pos hp.pos r, mul_pos (pow_pos hp.pos r) (hp.pos)]⟩
       obtain ⟨M, hM⟩ : ∃ M : ℤ, M = x - a ∧ 0 < M := by
         exact ⟨_, rfl, by linarith⟩
       have hx_div : (p : ℤ) ^ r ∣ x ∧ ¬(p : ℤ) ^ (r + 1) ∣ x := by
         tauto
       have hx_div_b : (p : ℤ) ^ r ∣ (x - d) ∧ ¬(p : ℤ) ^ (r + 1) ∣ (x - d) := by
         simp_all +decide [pow_succ, mul_assoc]
-        exact ⟨dvd_sub hx_div (dvd_of_mul_right_dvd ht.1),
-          fun h => hx.1 <| by simpa using dvd_add h ht.1⟩
+        exact ⟨dvd_sub hx_div (dvd_of_mul_right_dvd ht.1), fun h => hx.1 <| by simpa using dvd_add h ht.1⟩
       have hM_pos : 0 < M := by
         linarith
       have hM_val : padicValInt p (M + a) = r ∧ padicValInt p (M + b) = r := by
@@ -196,23 +171,23 @@ lemma input_modEq_of_output_modEq (g : ℤ>0 → ℤ>0)
     {p : ℕ} (hp : Nat.Prime p) (a b : ℤ>0)
     (hab : (g a).val ≡ (g b).val [ZMOD p]) : a.val ≡ b.val [ZMOD p] := by
   by_contra h_contra
-  obtain ⟨M, hM_pos, hM_odd⟩ :
-      ∃ M : ℤ, 0 < M ∧ Odd (padicValInt p (M + (g a).val)) ∧
-        Odd (padicValInt p (M + (g b).val)) := by
+  obtain ⟨M, hM_pos, hM_odd⟩ : ∃ M : ℤ, 0 < M ∧ Odd (padicValInt p (M + (g a).val)) ∧ Odd (padicValInt p (M + (g b).val)) := by
     apply exists_positive_shift_odd_padic hp (Subtype.property (g a)) (Subtype.property (g b))
     exact hab.symm.dvd
   -- Apply the square condition at `(M, a)` and `(M, b)`.
   have h_div_a : (p : ℤ) ∣ (g ⟨M, hM_pos⟩).val + a.val := by
+    have h_div_a : IsSquare ((g ⟨M, hM_pos⟩ + a) * (g a + ⟨M, hM_pos⟩)) := by
+      exact hsq _ _
     apply prime_dvd_other_factor_of_square hp
-    · exact ne_of_gt (add_pos hM_pos (mod_cast Subtype.property (g a)))
+    exact ne_of_gt (add_pos hM_pos (mod_cast Subtype.property (g a)))
     · exact ne_of_gt (add_pos (mod_cast Subtype.property _) (mod_cast Subtype.property _))
-    · obtain ⟨k, hk⟩ := hsq ⟨M, hM_pos⟩ a
-      exact ⟨k, by simpa [add_comm, mul_comm] using congr_arg Subtype.val hk⟩
+    · obtain ⟨k, hk⟩ := h_div_a; use k; erw [← Subtype.coe_inj] at *; simp_all +decide [add_comm, mul_comm]
     · exact hM_odd.1
   have h_div_b : (p : ℤ) ∣ (g ⟨M, hM_pos⟩).val + b.val := by
-    apply prime_dvd_other_factor_of_square hp
-    · exact ne_of_gt (add_pos hM_pos (mod_cast Subtype.property (g b)))
-    · exact ne_of_gt (add_pos (mod_cast Subtype.property _) (mod_cast Subtype.property _))
+    convert prime_dvd_other_factor_of_square hp _ _ _ _ using 1
+    exact M + (g b : ℤ)
+    · linarith [show (g b : ℤ) > 0 from mod_cast Subtype.property (g b)]
+    · grind +splitImp
     · obtain ⟨k, hk⟩ := hsq ⟨M, hM_pos⟩ b
       exact ⟨k, by simpa [add_comm, mul_comm] using congr_arg Subtype.val hk⟩
     · exact hM_odd.2
@@ -242,9 +217,7 @@ lemma step_one (g : ℤ>0 → ℤ>0)
   have h_abs_diff : Int.natAbs ((g ⟨n.val + 1, by linarith⟩).val - (g n).val) = 1 := by
     by_contra h_contra
     -- Let $p$ be a prime divisor of $|g(n+1) - g(n)|$.
-    obtain ⟨p, hp_prime, hp_div⟩ :
-        ∃ p : ℕ, Nat.Prime p ∧
-          (p : ℤ) ∣ (g ⟨n.val + 1, by linarith⟩).val - (g n).val := by
+    obtain ⟨p, hp_prime, hp_div⟩ : ∃ p : ℕ, Nat.Prime p ∧ (p : ℤ) ∣ (g ⟨n.val + 1, by linarith⟩).val - (g n).val := by
       exact ⟨Nat.minFac _, Nat.minFac_prime h_contra, Int.natCast_dvd.mpr <| Nat.minFac_dvd _⟩
     -- Applying `input_modEq_of_output_modEq` would make consecutive inputs
     -- congruent modulo the prime `p`.
@@ -284,10 +257,7 @@ problem imo2010_p3 (g : ℤ>0 → ℤ>0) :
         contrapose! hsq
         refine ⟨n + 2, by linarith, 1, by linarith, ?_⟩ ; simp_all +decide [IsSquare]
         intro x hx; erw [Subtype.mk_eq_mk] at *; simp_all +decide [← sq]
-        intro h
-        have hg1 : (g ⟨1, by linarith⟩ : ℤ) > 0 := mod_cast Subtype.property _
-        have hxv : x = g ⟨1, by linarith⟩ + n + 1 := by nlinarith only [hx, h, hg1]
-        nlinarith only [hxv, h, hg1]
+        exact fun h => by nlinarith only [show x = g ⟨1, by linarith⟩ + n + 1 by nlinarith only [hx, h, show (g ⟨1, by linarith⟩ : ℤ) > 0 from mod_cast Subtype.property _], h, show (g ⟨1, by linarith⟩ : ℤ) > 0 from mod_cast Subtype.property _]
       · linarith
     -- Let $c = g(1) - 1$. Then $g(n) = n + c$ for all $n$.
     obtain ⟨c, hc⟩ : ∃ c : ℤ, ∀ n : PosInt, (g n).val = n.val + c := by
