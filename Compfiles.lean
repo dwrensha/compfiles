@@ -277,6 +277,7 @@ public import Compfiles.Usa1983P5
 public import Compfiles.Usa1984P5
 public import Compfiles.Usa1985P1
 public import Compfiles.Usa1987P1
+public import Compfiles.Usa1988P2
 public import Compfiles.Usa1988P4
 public import Compfiles.Usa1989P1
 public import Compfiles.Usa1989P5
