@@ -268,8 +268,6 @@ theorem PNat.mk_mul_hom_fun.inv (g : ℕ → ℚ+) (a : ℕ+) :
 theorem PNat.mk_mul_mk (a b : ℕ) (ha : 0 < a) (hb : 0 < b) : (⟨a, ha⟩ : ℕ+) * ⟨b, hb⟩ = ⟨a * b, Nat.mul_pos ha hb⟩ :=
   Subtype.coe_eq_of_eq_mk rfl
 
-example (q : ℚ) : q.den ≠ 0 := by exact q.den_nz
-
 def PRat.mk_mul_hom_fun (g : ℕ → ℚ+) : ℚ+ →* ℚ+ := {
   toFun q := ⟨(PNat.mk_mul_hom_fun g ⟨q.val.num.toNat, by simpa using q.prop⟩) * (PNat.mk_mul_hom_fun g⁻¹ ⟨q.val.den, Rat.den_pos ↑q⟩), by
     refine (Rat.mul_pos_iff_of_pos_left ?_).mpr ?_ <;> exact Subtype.prop _
