@@ -149,10 +149,8 @@ theorem PRat.prime_induction (P : ℚ+ → Prop) (base : P 1)
   have := this ⟨x.val.num.toNat, x.val.den⟩ (by {
     simp only [cast_num_toNat]
     refine (Rat.lt_div_iff ?_).mpr ?_
-    · simp
-      exact Rat.den_pos _
-    · simp
-      exact Subtype.prop _
+    · simpa using Rat.den_pos _
+    · simpa using Subtype.prop _
   })
   have h (t) : ⟨x.val.num.toNat / x.val.den, t⟩ = x := by simp
   rw [h] at this
