@@ -52,11 +52,7 @@ problem usa1988_p2 (a b c r s t k : ℝ) (hk : k = a^2 - 3*b)(hpol: X^3 + C a * 
     ring_nf
   constructor
   · have k_nonneg : 0 ≤ (r-s)^2+(s-t)^2 +(r-t)^2 := by
-      apply add_nonneg
-      · apply add_nonneg
-        · apply sq_nonneg
-        apply sq_nonneg
-      apply sq_nonneg
+      apply_rules [add_nonneg, sq_nonneg]
     linarith
   rw [Real.sqrt_le_iff]
   constructor
