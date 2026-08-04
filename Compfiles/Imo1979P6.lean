@@ -147,19 +147,17 @@ def C_G_symm (n : ℕ) : {w : Octagon.Walk C E // isTerminalWalk w ∧ w.length 
     · simp [h.right]
   }⟩
   left_inv := fun ⟨w, h⟩ => by
-    set_option backward.isDefEq.respectTransparency false in
-    simp only [RelEmbedding.coe_toRelHom, RelIso.coe_toRelEmbedding, Walk.copy_rfl_rfl,
-      Walk.map_map, Subtype.mk.injEq]
-    apply Walk.ext_support
+    simp only [RelEmbedding.coe_toRelHom, RelIso.coe_toRelEmbedding, Subtype.mk.injEq]
     unfold Octagon.mirror
-    simp
+    apply Walk.ext_support
+    set_option backward.isDefEq.respectTransparency false in
+    simp [Walk.copy_rfl_rfl, Walk.map_map]
   right_inv := fun ⟨w, h⟩ => by
-    set_option backward.isDefEq.respectTransparency false in
-    simp only [RelEmbedding.coe_toRelHom, RelIso.coe_toRelEmbedding, Walk.copy_rfl_rfl,
-      Walk.map_map, Subtype.mk.injEq]
+    simp only [RelEmbedding.coe_toRelHom, RelIso.coe_toRelEmbedding, Subtype.mk.injEq]
     apply Walk.ext_support
     unfold Octagon.mirror
-    simp
+    set_option backward.isDefEq.respectTransparency false in
+    simp [Walk.copy_rfl_rfl, Walk.map_map]
 }
 
 def isTerminalWalk_length_cons_equiv {V : Type} {G : SimpleGraph V} {u t : V} (m n : ℕ) (npos : 0 < n) :
@@ -220,7 +218,6 @@ theorem a_b_recurrence_1 (n : ℕ) (npos : 0 < n) : a (n+2) = 2 * a n + 2 * b n 
       := by
         decide +revert
   unfold a b
-  set_option backward.isDefEq.respectTransparency false in
   calc
     _ = Fintype.card {w : Octagon.Walk A E // isTerminalWalk w ∧ w.length = 2 + n} := by
       rw [Set.ncard_eq_toFinset_card', add_comm]
@@ -240,7 +237,8 @@ theorem a_b_recurrence_1 (n : ℕ) (npos : 0 < n) : a (n+2) = 2 * a n + 2 * b n 
       repeat rw [walks_from_A]
       simp only [Set.ncard_eq_toFinset_card', Set.toFinset_card, Set.coe_setOf]
       rw [<-Fintype.card_eq.mpr (Nonempty.intro (C_G_symm _))]
-      lia
+      ring_nf
+      rfl
 
 theorem a_b_recurrence_2 (n : ℕ) (npos : 0 < n) : b (n+2) = a n + 2 * b n := by
   have walks_from_C (v) : Fintype.card { w : Octagon.Walk C v // E ∉ w.support ∧ w.length = 2 } =
@@ -251,7 +249,6 @@ theorem a_b_recurrence_2 (n : ℕ) (npos : 0 < n) : b (n+2) = a n + 2 * b n := b
       := by
         decide +revert
   unfold a b
-  set_option backward.isDefEq.respectTransparency false in
   calc
     _ = Fintype.card {w : Octagon.Walk C E // isTerminalWalk w ∧ w.length = 2 + n} := by
       rw [Set.ncard_eq_toFinset_card', add_comm]
@@ -270,7 +267,8 @@ theorem a_b_recurrence_2 (n : ℕ) (npos : 0 < n) : b (n+2) = a n + 2 * b n := b
       rw [Finset.sum_singleton]
       repeat rw [walks_from_C]
       simp only [Set.ncard_eq_toFinset_card', Set.toFinset_card, Set.coe_setOf]
-      lia
+      ring_nf
+      rfl
 
 
 theorem a_even (n : ℕ) (npos : 0 < n) : a (2*n) = ((2+√2)^(n-1) - (2-√2)^(n-1)) / √2 := by

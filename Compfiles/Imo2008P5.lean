@@ -188,75 +188,77 @@ lemma claim (n k : ℕ) (hn : 0 < n) (hnk : n ≤ k) (_he : Even (k - n))
   let selected (cs : S) (i : Fin n) : Set (Fin k) :=
     Subtype.val '' (↑((cs i).1) : Set { j : Fin k | f.val j = ⟨i, by lia⟩ })
 
-  let p : S → {g | ψ n k g = f} :=
-    fun cs ↦
-       let g1 : Fin k → Fin (2 * n) :=
-         fun j ↦
-           let y : Fin (2 * n) := f.val j
-           let y' : Fin n := ⟨y.val, hM j⟩
-           if j ∈ selected cs y' then ⟨y.val + n, by
-             have hy : y.val < n := hM j
-             lia⟩ else y
-       let hg1 : NSequence n k g1 := by
-         obtain ⟨⟨hN, _⟩, _⟩ := f.property
-         have hsel_subset : ∀ i : Fin n, selected cs i ⊆ {j : Fin k | ↑(f.val j) = (i : ℕ)} := by
-           intro i j hj
-           rcases hj with ⟨x, hx, rfl⟩
-           exact congrArg Fin.val x.2
-         have hsel_even : ∀ i : Fin n, Even (Set.ncard (selected cs i)) := by
-           intro i
-           have : Set.ncard (selected cs i) = ((cs i).1).card := by
-             dsimp [selected]
-             set_option backward.isDefEq.respectTransparency false in
-             rw [Set.ncard_image_of_injective _ Subtype.val_injective, Set.ncard_coe_finset]
-           rw [this]; exact (cs i).2
-         have hhigh : ∀ i : Fin n, {j : Fin k | ↑(g1 j) = n + i} = selected cs i := by
-           intro i; ext j; simp only [Set.mem_setOf]
-           constructor
-           · intro hj
-             let y' : Fin n := ⟨(f.val j).val, hM j⟩
-             by_cases hmem : j ∈ selected cs y'
-             · have hg1v : (g1 j).val = (f.val j).val + n := by simp [g1, y', hmem]
-               have : (f.val j).val = i := by lia
-               have : y' = i := Fin.ext this
-               simpa [this] using hmem
-             · have : (f.val j).val = n + ↑i := by simpa [g1, y', hmem] using hj
-               exact absurd (this ▸ hM j) (by lia)
-           · intro hj
-             have hfj : (f.val j).val = i := hsel_subset i hj
-             have : (⟨(f.val j).val, hM j⟩ : Fin n) = i := Fin.ext hfj
-             have hmem : j ∈ selected cs ⟨(f.val j).val, hM j⟩ := by simpa [this] using hj
-             have : (g1 j).val = (f.val j).val + n := by simp [g1, hmem]
-             lia
-         have hred : ∀ j, (f.val j).val =
-             if (g1 j).val < n then (g1 j).val else (g1 j).val - n := by
-           intro j; simp only [g1]; split_ifs with hmem <;> simp_all
-         refine ⟨?_, ?_⟩
-         · intro i hi
-           let i' : Fin n := ⟨i, hi⟩
-           have hcard := fiber_ncard_of_mod_n (f := g1) (g := f.val) hred i hi
-           rw [Nat.card_coe_set_eq, show Set.ncard {j | (g1 j).val = i} =
-             Set.ncard {j | (f.val j).val = i} - Set.ncard {j | (g1 j).val = n + i} by lia]
-           exact Nat.Odd.sub_even (by lia)
-             (by rw [← Nat.card_coe_set_eq]; exact hN i hi)
-             (by rw [hhigh i']; exact hsel_even i')
-         · intro i hi1 hi2
-           let i' : Fin n := ⟨i - n, by lia⟩
-           have hi' : n + ↑i' = i := Nat.add_sub_of_le hi1
-           rw [show {j : Fin k | ↑(g1 j) = i} = {j | ↑(g1 j) = n + ↑i'} from by
-             ext j; simp [hi'], Nat.card_coe_set_eq, hhigh i']
-           exact hsel_even i'
-       let hgg : ψ n k ⟨g1, hg1⟩ = f := by
-         rcases hg1 with ⟨hg1a, hg1b⟩
-         apply Subtype.ext; funext j; apply Fin.ext
-         simp only [ψ]
-         let y' : Fin n := ⟨(f.val j).val, hM j⟩
-         by_cases hmem : j ∈ selected cs y'
-         · have hg1v : (g1 j).val = (f.val j).val + n := by simp [g1, y', hmem]
-           have hnot : ¬ (g1 j).val < n := by lia
-           simp [hg1v]
-         · simp [g1, y', hmem, hM j]
-       ⟨⟨g1, hg1⟩, hgg⟩
+  let selected_fin (cs : S) (i : Fin n) : Finset (Fin k) :=
+    Finset.map ⟨Subtype.val, Subtype.val_injective⟩ ((cs i).1)
+
+  let selected_eq_fin (cs : S) (i : Fin n) : selected cs i = selected_fin cs i := by
+    simp [selected, selected_fin]
+    rfl
+
+  let p (cs : S) : {g | ψ n k g = f} :=
+    let g1 (j : Fin k) : Fin (2 * n) :=
+      let y : Fin (2 * n) := f.val j
+      let y' : Fin n := ⟨y.val, hM j⟩
+      if j ∈ selected cs y' then ⟨y.val + n, by
+        have hy : y.val < n := hM j
+        lia⟩ else y
+    let hg1 : NSequence n k g1 := by
+      obtain ⟨⟨hN, _⟩, _⟩ := f.property
+      have hsel_subset : ∀ i : Fin n, selected cs i ⊆ {j : Fin k | ↑(f.val j) = (i : ℕ)} := by
+        intro i j hj
+        rcases hj with ⟨x, hx, rfl⟩
+        exact congrArg Fin.val x.2
+      have hsel_even : ∀ i : Fin n, Even (Set.ncard (selected cs i)) := by
+        intro i
+        rw [selected_eq_fin, Set.ncard_coe_finset, Finset.card_map]
+        exact (cs i).2
+      have hhigh : ∀ i : Fin n, {j : Fin k | ↑(g1 j) = n + i} = selected cs i := by
+        intro i; ext j; simp only [Set.mem_setOf]
+        constructor
+        · intro hj
+          let y' : Fin n := ⟨(f.val j).val, hM j⟩
+          by_cases hmem : j ∈ selected cs y'
+          · have hg1v : (g1 j).val = (f.val j).val + n := by simp [g1, y', hmem]
+            have : (f.val j).val = i := by lia
+            have : y' = i := Fin.ext this
+            simpa [this] using hmem
+          · have : (f.val j).val = n + ↑i := by simpa [g1, y', hmem] using hj
+            exact absurd (this ▸ hM j) (by lia)
+        · intro hj
+          have hfj : (f.val j).val = i := hsel_subset i hj
+          have : (⟨(f.val j).val, hM j⟩ : Fin n) = i := Fin.ext hfj
+          have hmem : j ∈ selected cs ⟨(f.val j).val, hM j⟩ := by simpa [this] using hj
+          have : (g1 j).val = (f.val j).val + n := by simp [g1, hmem]
+          lia
+      have hred : ∀ j, (f.val j).val =
+          if (g1 j).val < n then (g1 j).val else (g1 j).val - n := by
+        intro j; simp only [g1]; split_ifs with hmem <;> simp_all
+      refine ⟨?_, ?_⟩
+      · intro i hi
+        let i' : Fin n := ⟨i, hi⟩
+        have hcard := fiber_ncard_of_mod_n (f := g1) (g := f.val) hred i hi
+        rw [Nat.card_coe_set_eq, show Set.ncard {j | (g1 j).val = i} =
+          Set.ncard {j | (f.val j).val = i} - Set.ncard {j | (g1 j).val = n + i} by lia]
+        exact Nat.Odd.sub_even (by lia)
+          (by rw [← Nat.card_coe_set_eq]; exact hN i hi)
+          (by rw [hhigh i']; exact hsel_even i')
+      · intro i hi1 hi2
+        let i' : Fin n := ⟨i - n, by lia⟩
+        have hi' : n + ↑i' = i := Nat.add_sub_of_le hi1
+        rw [show {j : Fin k | ↑(g1 j) = i} = {j | ↑(g1 j) = n + ↑i'} from by
+          ext j; simp [hi'], Nat.card_coe_set_eq, hhigh i']
+        exact hsel_even i'
+    let hgg : ψ n k ⟨g1, hg1⟩ = f := by
+      rcases hg1 with ⟨hg1a, hg1b⟩
+      apply Subtype.ext; funext j; apply Fin.ext
+      simp only [ψ]
+      let y' : Fin n := ⟨(f.val j).val, hM j⟩
+      by_cases hmem : j ∈ selected cs y'
+      · have hg1v : (g1 j).val = (f.val j).val + n := by simp [g1, y', hmem]
+        have hnot : ¬ (g1 j).val < n := by lia
+        simp [hg1v]
+      · simp [g1, y', hmem, hM j]
+    ⟨⟨g1, hg1⟩, hgg⟩
   have Scard : Fintype.card S = ∏ i : Fin n, 2 ^ (c i - 1) := by
     unfold S
     rw [Fintype.card_pi]
@@ -346,9 +348,7 @@ lemma claim (n k : ℕ) (hn : 0 < n) (hnk : n ≤ k) (_he : Even (k - n))
             constructor
             · intro x y hxy; exact Subtype.ext (Subtype.ext (by simpa using congrArg (·.1) hxy))
             · intro y
-              set_option backward.isDefEq.respectTransparency false in
               exact ⟨⟨⟨y.1, hfi_of_high i y.1 y.2⟩, by simp [s, y.2]⟩, Subtype.ext rfl⟩
-          set_option backward.isDefEq.respectTransparency false in
           have : s.card = Nat.card {j : Fin k | (gfun j).val = n + i} := by
             rw [Nat.card_eq_fintype_card, ← show Fintype.card {x // x ∈ s} = s.card from by simp]
             exact Fintype.card_of_bijective hbij
@@ -357,7 +357,6 @@ lemma claim (n k : ℕ) (hn : 0 < n) (hnk : n ≤ k) (_he : Even (k - n))
       refine ⟨a, ?_⟩
       have hselA : ∀ (i : Fin n) (j : Fin k), j ∈ selected a i ↔ (gfun j).val = n + i := by
         intro i j
-        set_option backward.isDefEq.respectTransparency false in
         constructor
         · intro hj
           rcases hj with ⟨ji, hji, rfl⟩

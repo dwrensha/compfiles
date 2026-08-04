@@ -391,9 +391,10 @@ theorem embed_B.not_Surjective [NeZero n] : ¬ Function.Surjective (embed_B n) :
     simp [Nat.dist_eq_sub_of_le]
   use ⟨x, by unfold T; exists 1, (by grind)⟩
   by_contra ⟨⟨⟨y, k⟩, h⟩, h'⟩
-  unfold embed_B at h'
-  set_option backward.isDefEq.respectTransparency false in
-  simp at h'
+  replace h' : y = x := by
+    unfold embed_B at h'
+    simp only [Set.mem_setOf_eq, Function.Embedding.coeFn_mk] at h'
+    rwa [← Subtype.mk_eq_mk]
   subst y
   unfold B at h
   simp only [Subtype.forall, Set.mem_setOf_eq] at h
