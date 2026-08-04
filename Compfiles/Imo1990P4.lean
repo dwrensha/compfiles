@@ -158,6 +158,8 @@ theorem PRat.prime_induction (P : ℚ+ → Prop) (base : P 1)
   rw [h] at this
   exact this
 
+theorem PRat.mk_mul_mk (a b : ℚ) (ha : 0 < a) (hb : 0 < b) : (⟨a, ha⟩ : ℚ+) * ⟨b, hb⟩ = ⟨a * b, Rat.mul_pos ha hb⟩ :=
+  Subtype.coe_eq_of_eq_mk rfl
 
 /-! The theorems in the following section are part of the original proof and
   illustrate the thought process behind solving the problem, but we do not need them - they are here just_for_fun.
@@ -258,60 +260,35 @@ theorem PNat.mk_mul_hom_fun.cancel {R : Type} [CommMonoid R]
       apply List.prod_eq_one
       aesop
 
+theorem PNat.mk_mul_hom_fun.inv (g : ℕ → ℚ+) (a : ℕ+) :
+    mk_mul_hom_fun g⁻¹ a = (mk_mul_hom_fun g a)⁻¹ := by
+  simp [mk_mul_hom_fun, List.prod_inv, List.map_map]
+  rfl
+
+theorem PNat.mk_mul_mk (a b : ℕ) (ha : 0 < a) (hb : 0 < b) : (⟨a, ha⟩ : ℕ+) * ⟨b, hb⟩ = ⟨a * b, Nat.mul_pos ha hb⟩ :=
+  Subtype.coe_eq_of_eq_mk rfl
+
+example (q : ℚ) : q.den ≠ 0 := by exact q.den_nz
 
 def PRat.mk_mul_hom_fun (g : ℕ → ℚ+) : ℚ+ →* ℚ+ := {
-  toFun q := ⟨(PNat.mk_mul_hom_fun g ⟨q.val.num.toNat, by simpa using q.prop⟩) * (PNat.mk_mul_hom_fun g⁻¹ ⟨q.val.den, Rat.den_pos ↑q⟩), by {
-    refine (Rat.mul_pos_iff_of_pos_left ?_).mpr ?_ <;> exact (Subtype.prop _)
-  }⟩
+  toFun q := ⟨(PNat.mk_mul_hom_fun g ⟨q.val.num.toNat, by simpa using q.prop⟩) * (PNat.mk_mul_hom_fun g⁻¹ ⟨q.val.den, Rat.den_pos ↑q⟩), by
+    refine (Rat.mul_pos_iff_of_pos_left ?_).mpr ?_ <;> exact Subtype.prop _
+  ⟩
   map_mul' a b := by
-    ext
+    simp_rw [PNat.mk_mul_hom_fun.inv, Positive.coe_inv, ← Rat.div_def, PRat.mk_mul_mk, ← Subtype.coe_inj]
+    field_simp
+    rw [div_eq_div_iff (by simp [@Subtype.coe_eq_iff]) (by simp [@Subtype.coe_eq_iff])]
+    simp_rw [<-Positive.val_mul, <-map_mul]
+    congr 2
     simp only [Positive.val_mul]
-
-    rw [<-Positive.val_mul]
-    rw [mul_mul_mul_comm]
-    simp_rw [<-Positive.val_mul]
-    rw [<-map_mul]
-    rw [<-map_mul]
-
-    rw [←PNat.mk_mul_hom_fun.cancel _ _ (by simp) _ _ ⟨(a.val.num * b.val.num).natAbs.gcd (a.val.den * b.val.den), by positivity⟩]
-    simp only [Positive.val_mul]
-    simp_rw [Rat.den_mul]
-    have (a b : ℕ) (apos : 0 < a) (dvd : b ∣ a) (h1 : _) (h2 : _)
-        : ⟨a / b, h1⟩ * (⟨b, h2⟩ : ℕ+) = (⟨a, apos⟩ : ℕ+) := by
-      ext
-      refine Nat.div_mul_cancel dvd
     set_option backward.isDefEq.respectTransparency false in
-    rw [this]
-    · have : ∀ h1, ∀ h2, (⟨a.val.den, h1⟩ : ℕ+) * (⟨b.val.den, h2⟩ : ℕ+) = (⟨a.val.den * b.val.den, (Nat.mul_pos h1 h2)⟩ : ℕ+) := by
-        intro h1 h2
-        rfl
-      simp_rw [this]
-      congr 1
-
-      simp_rw [Rat.num_mul]
-      have (a : ℤ) (b : ℕ) (apos : 0 < a) (hd : b.cast ∣ a) (h1 : _) (h2 : _)
-          : ⟨(a / b.cast).toNat, h1⟩ * (⟨b, h2⟩ : ℕ+) = (⟨a.toNat, Int.pos_iff_toNat_pos.mp apos⟩ : ℕ+) := by
-        ext
-        simp only [Positive.val_mul]
-        zify
-        rw [<-(@Int.eq_natCast_toNat _).mpr ?_]
-        · rw [Int.ediv_mul_cancel hd]
-          rw [<-(@Int.eq_natCast_toNat _).mpr ?_]
-          exact Int.le_of_lt apos
-        · positivity
-      rw [this]
-      · congr
-        refine Int.toNat_mul ?_ ?_ <;> {
-          refine Rat.num_nonneg.mpr ?_
-          apply le_of_lt ((Subtype.prop _))
-        }
-      · refine Int.mul_pos ?_ ?_ <;> {
-          refine Rat.num_pos.mpr ?_
-          apply (Subtype.prop _)
-        }
-      · exact Rat.normalize.dvd_num rfl
-    · positivity
-    · apply Nat.gcd_dvd_right
+     repeat rw [PNat.mk_mul_mk]
+    rw [← PNat.coe_inj]
+    simp_rw [PNat.mk_coe]
+    zify [Int.toNat_of_nonneg <| Rat.num_nonneg.mpr a.2.le,
+          Int.toNat_of_nonneg <| Rat.num_nonneg.mpr b.2.le,
+          Int.toNat_of_nonneg <| Rat.num_nonneg.mpr <| Rat.mul_nonneg a.2.le b.2.le]
+    rw [← Rat.mul_num_den', mul_assoc]
   map_one' := by
     unfold PNat.mk_mul_hom_fun
     simp only [MulHom.coe_mk, PNat.mk_coe, Positive.val_one, Rat.num_ofNat, Int.toNat_one,
