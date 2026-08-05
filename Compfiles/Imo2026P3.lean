@@ -88,7 +88,7 @@ These pin down that the encoded definitions behave as intended. -/
 
 /-- The piece lengths of an admissible cut set sum to `1` (the total stick
 length). -/
-problem pieceLengths_sum (S : Finset ℝ) (hS : ↑S ⊆ Set.Ioo (0 : ℝ) 1) :
+problem pieceLengths_sum (S : Finset ℝ) (_hS : ↑S ⊆ Set.Ioo (0 : ℝ) 1) :
     (pieceLengths S).sum = 1 := by
   have tele : ∀ l : List ℝ,
       (List.zipWith (fun a b => b - a) l l.tail).sum = l.getLastD 0 - l.headD 0 := by
@@ -256,7 +256,7 @@ lemma zipWith_scanl_tail (l : List ℝ) (a : ℝ) :
         cases xs <;> simp [List.scanl_cons]
       have ih' := ih (a := a + x)
       rw [hq] at ih' ⊢
-      simp only [List.zipWith_cons_cons, List.tail_cons, List.cons.injEq]
+      simp only [List.zipWith_cons_cons, List.cons.injEq]
       exact ⟨by ring, ih'⟩
 
 lemma scanl_zipWith_diff (l : List ℝ) (a : ℝ) :
@@ -342,7 +342,6 @@ lemma boundaryList_eq_scanl (l : List ℝ) (hne : l ≠ []) (hsum : l.sum = 1) :
       unfold interiorPartialSums
       rw [List.scanl_cons]
       simp only [List.tail_cons]
-      congr 1
       have hneScan : xs.scanl (· + ·) (0 + x) ≠ [] := by simp
       have hlast : (xs.scanl (· + ·) (0 + x)).getLast hneScan = 1 := by
         rw [scanl_last_eq_sum]
@@ -486,10 +485,10 @@ lemma evenSum_cons2 (x y : ℝ) (t : List ℝ) :
     evenSum (x :: y :: t) = x + evenSum t := by
   unfold evenSum
   rw [List.zipIdx_cons, List.zipIdx_cons]
-  simp only [List.filter_cons, List.map_cons, List.sum_cons]
+  simp only [List.filter_cons]
   have h0 : ((0 : ℕ) % 2 = 0) := by simp
   have h1 : ¬ ((1 : ℕ) % 2 = 0) := by simp
-  simp [h0, h1]
+  simp [h1]
   rw [evenSum_zipIdx_offset' t 2 0 (by simp)]
 
 lemma evenSum_nil : evenSum [] = 0 := rfl
@@ -608,7 +607,7 @@ lemma pairwise_pairDup {xs : List ℝ} (hxs : xs.Pairwise (· ≥ ·)) :
       exact ⟨by
         intro z hz
         cases List.mem_cons.mp hz with
-        | inl hzx => simpa [hzx]
+        | inl hzx => simp [hzx]
         | inr hzrest => exact hxdup z hzrest,
         hxdup, ih hxs.2⟩
 
@@ -846,7 +845,7 @@ theorem sign3_cases (z : ZMod 3) : sign3 z = 0 ∨ sign3 z = 1 ∨ sign3 z = -1 
   by_cases h0 : z = 0
   · simp [sign3, h0]
   · by_cases h1 : z = 1
-    · simp [sign3, h0, h1]
+    · simp [sign3, h1]
     · simp [sign3, h0, h1]
 
 theorem sign3_ne_zero {z : ZMod 3} (hz : z ≠ 0) : sign3 z ≠ 0 := by
@@ -1070,7 +1069,7 @@ theorem mem_of_unpaired_eq_some {a : α} : ∀ {l : List α},
           | nil =>
               intro h
               simp [unpaired] at h
-              simpa [h]
+              simp [h]
           | cons c u => exact (hshape b c u rfl).elim
 
 def labelWeight [DecidableEq ι] (l : List (ℝ × ι)) (v : ι) : ℝ :=
@@ -1423,10 +1422,8 @@ lemma blockIndices_eq_range' (f : ℕ → ℕ) (hf : Monotone f) (N : ℕ) :
                 rw [Nat.add_sub_of_le h0N]
         _ = List.range' (f 0)
               ((f N - f 0) + (f (N + 1) - f N)) := by
-                simpa using (List.range'_append
-                  (s := f 0) (m := f N - f 0)
-                  (n := f (N + 1) - f N) (step := 1))
-        _ = List.range' (f 0) (f (N + 1) - f 0) := by congr 2 <;> omega
+                simp
+        _ = List.range' (f 0) (f (N + 1) - f 0) := by congr 2; omega
 
 lemma map_val_finRange (N : ℕ) :
     (List.finRange N).map (fun i => i.val) = List.range N := by
@@ -1523,7 +1520,7 @@ lemma clippedEmbedding_of_le {N M : ℕ} (e : Fin (N + 1) ↪o Fin (M + 1))
   simp [clippedEmbedding, Nat.min_eq_left hj]
 
 theorem exists_tagged_piece_refinement {S T : Finset ℝ}
-    (hST : S ⊆ T) (hS : ↑S ⊆ Set.Ioo (0 : ℝ) 1)
+    (hST : S ⊆ T) (_hS : ↑S ⊆ Set.Ioo (0 : ℝ) 1)
     (hT : ↑T ⊆ Set.Ioo (0 : ℝ) 1) :
     ∃ l : List (ℝ × Fin (S.card + 1)),
       l.map Prod.fst = pieceLengths T ∧
@@ -1662,7 +1659,7 @@ lemma codexLowerCuts_piece_getD (n : ℕ) (i : Fin (n + 1)) :
   rw [List.getD_eq_getElem (hn := hi)]
   simp [codexDyadicWeights]
 
-theorem codex_lower_bound_complete (n : ℕ) (hn : 0 < n) :
+theorem codex_lower_bound_complete (n : ℕ) (_hn : 0 < n) :
     ∃ A : Finset ℝ, AdmissibleMark n A ∧
       ∀ B : Finset ℝ, AdmissibleMark n B → Disjoint A B →
         (2 : ℝ) ^ n / ((2 : ℝ) ^ (n + 1) - 1) ≤ L A B := by
@@ -1810,7 +1807,7 @@ lemma scanl_mem_bisectLengths (l : List ℝ) (a : ℝ) {z : ℝ}
         exact List.mem_cons_of_mem _ (List.mem_cons_of_mem _ htail)
 
 lemma mem_interiorPartialSums_of_mem_scanl_Ioo (l : List ℝ) (hne : l ≠ [])
-    (hpos : ∀ x ∈ l, 0 < x) (hsum : l.sum = 1) {z : ℝ}
+    (_hpos : ∀ x ∈ l, 0 < x) (hsum : l.sum = 1) {z : ℝ}
     (hzfull : z ∈ l.scanl (· + ·) 0) (hzIoo : z ∈ Set.Ioo (0 : ℝ) 1) :
     z ∈ interiorPartialSums l := by
   rw [← boundaryList_eq_scanl l hne hsum] at hzfull
@@ -1939,7 +1936,7 @@ theorem exists_close_pair_of_finite {α : Type*} [Fintype α]
   · letI : LinearOrder α := LinearOrder.lift' f hf
     let s : List α := Finset.univ.sort (· ≤ ·)
     have hslen : s.length = Fintype.card α := by
-      simpa [s] using Finset.length_sort (s := (Finset.univ : Finset α)) (· ≤ ·)
+      simp [s]
     have hspw : s.Pairwise (fun a b => f a ≤ f b) := by
       have h := Finset.pairwise_sort (Finset.univ : Finset α) (· ≤ ·)
       exact h.imp (by
@@ -2492,13 +2489,13 @@ theorem exists_blocks_of_scanRefines (coarse fine : List ℝ)
     rw [List.getLast_eq_getElem] at hlast
     simp only [zero_add] at hlast
     rw [List.getD_eq_getElem (hn := by rw [hqLen]; omega)]
-    convert hlast using 1 <;> simp [q, N]
+    convert hlast using 1; simp [q, N]
   have hrLastD : r.getD M 0 = fine.sum := by
     have hlast := scanl_last_eq_sum fine 0 (by simp)
     rw [List.getLast_eq_getElem] at hlast
     simp only [zero_add] at hlast
     rw [List.getD_eq_getElem (hn := by rw [hrLen]; omega)]
-    convert hlast using 1 <;> simp [r, M]
+    convert hlast using 1; simp [r, M]
   have hrNodup : r.Nodup := by
     dsimp [r]
     exact (pairwise_scanl_lt fine 0 hfpos).nodup
@@ -2569,7 +2566,7 @@ theorem exists_blocks_of_scanRefines (coarse fine : List ℝ)
     rw [show indexedDiffs q = coarse by
       dsimp [q]
       exact indexedDiffs_scanl coarse 0]
-    rw [List.getD_eq_getElem (hn := by simpa [N] using i.isLt)]
+    rw [List.getD_eq_getElem (hn := by simp [N])]
     rfl
   have hbne : ∀ i, b i ≠ [] := by
     intro i hnil
@@ -2694,7 +2691,7 @@ lemma flatMap_sort_halfBlockAt (p : List ℝ) (I : Finset (Fin p.length)) :
   unfold selectedList
   generalize I.sort (· ≤ ·) = idxs
   induction idxs with
-  | nil => simp [halfBlockAt, bisectLengths, pairDup]
+  | nil => simp [bisectLengths, pairDup]
   | cons i tail ih =>
       simp [halfBlockAt, bisectLengths, pairDup, ih]
 
@@ -2810,7 +2807,7 @@ lemma assembleTwoSelectedBlocks_pos (p : List ℝ)
       exact div_pos (hp (p.get i) (List.get_mem p i)) (by norm_num)
 
 lemma assembleTwoSelectedBlocks_sum (p : List ℝ)
-    (I J : Finset (Fin p.length)) (hIJ : Disjoint I J)
+    (I J : Finset (Fin p.length)) (_hIJ : Disjoint I J)
     (bI : Fin (selectedList p I).length → List ℝ)
     (bJ : Fin (selectedList p J).length → List ℝ)
     (hIsum : ∀ k, (bI k).sum = (selectedList p I).get k)
@@ -3166,7 +3163,7 @@ lemma ofFn_appendToLast {n : ℕ} (b : Fin (n + 1) → List ℝ)
   simp [appendToLast]
 
 noncomputable def prefixFlattenBlocks (pre : List ℝ) (x : ℝ)
-    (post : List ℝ) (t rho : ℝ)
+    (post : List ℝ) (_t rho : ℝ)
     (bm : Fin (pre.length + 1) → List ℝ) :
     Fin (pre ++ x :: post).length → List ℝ := fun i =>
   let hlen : (pre ++ x :: post).length = (pre.length + 1) + post.length := by
@@ -3195,7 +3192,7 @@ lemma prefixRefinementBlocks_eq_prefixFlattenBlocks (pre : List ℝ) (x : ℝ)
       · congr 2
     · omega
   · by_cases hcross : i.val = pre.length
-    · simp [prefixRefinementBlocks, prefixFlattenBlocks, appendToLast, hpre,
+    · simp [prefixRefinementBlocks, prefixFlattenBlocks, appendToLast,
         hcross, Fin.append, Fin.addCases]
       split <;> rename_i hlast
       · rw [hlast]
@@ -3894,7 +3891,7 @@ theorem exists_close_refinement (p : List ℝ)
     have hbridge : (∑ i : Fin p.length, p.get i) =
         ((List.finRange p.length).map p.get).sum := by
       symm
-      simpa using List.sum_toFinset p.get (List.nodup_finRange p.length)
+      simp
     rw [hbridge, List.map_get_finRange, hpsum]
   obtain ⟨I, J, hIJ, hnonempty, hdiff0, hdiff⟩ :=
     CodexClosePoints.exists_disjoint_subset_sums_close
@@ -3988,7 +3985,7 @@ theorem exists_hard_reply (n : ℕ) (A : Finset ℝ)
   rw [hplen]
   exact upper_answer_identity n
 
-theorem codex_upper_bound_aux (n : ℕ) (hn : 0 < n) :
+theorem codex_upper_bound_aux (n : ℕ) (_hn : 0 < n) :
     ∀ A : Finset ℝ, AdmissibleMark n A →
       ∃ B : Finset ℝ, AdmissibleMark n B ∧ Disjoint A B ∧
         L A B ≤ (2 : ℝ) ^ n / ((2 : ℝ) ^ (n + 1) - 1) := by

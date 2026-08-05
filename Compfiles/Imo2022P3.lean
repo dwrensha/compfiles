@@ -1116,7 +1116,7 @@ lemma perm_unique {k : ℕ} (n : ℕ) :
 -- snip end
 
 problem imo2023_p3
-    {k : ℕ} (hk : 0 < k) (S : Finset ℕ) (hne : S.Nonempty)
+    {k : ℕ} (_hk : 0 < k) (S : Finset ℕ) (hne : S.Nonempty)
     (hS : ∀ p ∈ S, Odd p ∧ Nat.Prime p)
     {p₁ p₂ : Fin #S ≃ S} (hp₁ : Condition k S p₁) (hp₂ : Condition k S p₂) :
     (∃ i, ∀ j, p₂ j = p₁ (j + i)) ∨ ∃ i, ∀ j, p₂ j = p₁ (Fin.rev j + i) := by

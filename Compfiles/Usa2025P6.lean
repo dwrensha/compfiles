@@ -499,15 +499,18 @@ lemma skipMap_cover [NeZero (m - l)] (hl : l ≤ m) (y : ZMod m) (hy : y ∉ arc
     exact ⟨(y - a₀).val, by have := ZMod.val_lt (y - a₀); omega, huy⟩
 
 
+omit [NeZero m] in
 lemma skipMap_add (i : ZMod (m - l)) (s : ℕ) :
     skipMap a₀ l i + (s : ZMod m) = a₀ + ((l + i.val + s : ℕ) : ZMod m) := by
   rw [skipMap, Nat.cast_add, Nat.cast_add]
   abel
 
+omit [NeZero m] in
 lemma skipMap_eq (j : ZMod (m - l)) :
     skipMap a₀ l j = a₀ + ((l + j.val : ℕ) : ZMod m) := by
   rw [skipMap, Nat.cast_add, add_assoc]
 
+omit [NeZero m] in
 lemma mem_arcSet_iff (hl : l ≤ m) (u s : ℕ) :
     (a₀ + ((l + u + s : ℕ) : ZMod m)) ∈ arcSet a₀ l ↔ (l + u + s) % m < l := by
   rw [mem_arcSet]
@@ -855,8 +858,8 @@ lemma transport_arc {m : ℕ} [NeZero m] {a₀ : ZMod m} {l : ℕ} [NeZero (m - 
 the complement, built by composing `skipMap`s. -/
 lemma surgeryMany {t : ℕ} :
     ∀ {m : ℕ} [NeZero m] (ca : Fin t → ZMod m) (la : Fin t → ℕ)
-    (hla1 : ∀ s, 1 ≤ la s) (hlam : ∀ s, la s ≤ m)
-    (hdij : ∀ s₁ s₂, s₁ ≠ s₂ → Disjoint (arcSet (ca s₁) (la s₁)) (arcSet (ca s₂) (la s₂)))
+    (_hla1 : ∀ s, 1 ≤ la s) (_hlam : ∀ s, la s ≤ m)
+    (_hdij : ∀ s₁ s₂, s₁ ≠ s₂ → Disjoint (arcSet (ca s₁) (la s₁)) (arcSet (ca s₂) (la s₂)))
     (hD : (Finset.univ.biUnion fun s => arcSet (ca s) (la s)) ≠ Finset.univ),
     ∃ (m' : ℕ) (_ : NeZero m') (φ : ZMod m' → ZMod m),
       CircleEmb (Finset.univ.biUnion fun s => arcSet (ca s) (la s)) hD φ ∧
@@ -967,7 +970,7 @@ lemma surgeryMany {t : ℕ} :
 
 lemma off_zero (hk : 0 < k) : P.off ⟨0, hk⟩ = 0 := by
   rw [off, Finset.filter_eq_empty_iff.mpr (fun j _ => by
-    simp only [Fin.lt_def, Fin.val_mk]
+    simp only [Fin.lt_def]
     omega), Finset.sum_empty]
 
 lemma off_succ (i : Fin k) (h : i.val + 1 < k) : P.off ⟨i.val + 1, h⟩ = P.off i + P.len i := by
@@ -975,7 +978,7 @@ lemma off_succ (i : Fin k) (h : i.val + 1 < k) : P.off ⟨i.val + 1, h⟩ = P.of
   have e : (Finset.univ.filter (· < ⟨i.val + 1, h⟩)) = (Finset.univ.filter (· < i)) ∪ {i} := by
     ext x
     simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_union,
-      Finset.mem_singleton, Fin.lt_def, Fin.val_mk]
+      Finset.mem_singleton, Fin.lt_def]
     constructor
     · intro h1
       by_cases h2 : x.val < i.val
@@ -988,7 +991,7 @@ lemma off_succ (i : Fin k) (h : i.val + 1 < k) : P.off ⟨i.val + 1, h⟩ = P.of
     rw [Finset.disjoint_left]
     intro x hx hx2
     simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_singleton,
-      Fin.lt_def, Fin.val_mk] at hx hx2
+      Fin.lt_def] at hx hx2
     rw [hx2] at hx
     omega)]
   simp
@@ -1374,7 +1377,7 @@ lemma mergeOne {m k : ℕ} [NeZero m] (P : CirclePartition m k) (hk : 0 < k) (hk
 
 
 /-- Reindexing a circular partition along an equality of the number of arcs. -/
-def CirclePartition.cast {m a b : ℕ} (h : a = b) (P : CirclePartition m a) :
+def cast {m a b : ℕ} (h : a = b) (P : CirclePartition m a) :
     CirclePartition m b where
   base := P.base
   len := fun i => P.len (Fin.cast h.symm i)
@@ -1406,16 +1409,16 @@ lemma circlePartition_cast_arcOf {m a b : ℕ} (h : a = b) (P : CirclePartition 
 /-- The multi-arc merge lemma: deleting `t` disjoint arcs, each of value `< 1`,
 yields a smaller circle with a partition into `k - t` arcs of value `≥ 1`. -/
 lemma mergeValues {t : ℕ} :
-    ∀ {m k : ℕ} [NeZero m] (P : CirclePartition m k) (hk : 0 < k)
+    ∀ {m k : ℕ} [NeZero m] (P : CirclePartition m k) (_hk : 0 < k)
     (ca : Fin t → ZMod m) (la : Fin t → ℕ) (w : ZMod m → ℝ)
-    (hnn : ∀ x, 0 ≤ w x) (hval : ∀ i, 1 ≤ ∑ x ∈ P.arcOf i, w x)
-    (hla1 : ∀ s, 1 ≤ la s) (hlam : ∀ s, la s ≤ m)
-    (hdij : ∀ s₁ s₂, s₁ ≠ s₂ → Disjoint (arcSet (ca s₁) (la s₁)) (arcSet (ca s₂) (la s₂)))
-    (harcval : ∀ s, ∑ x ∈ arcSet (ca s) (la s), w x < 1)
-    (htk : t < k)
+    (_hnn : ∀ x, 0 ≤ w x) (_hval : ∀ i, 1 ≤ ∑ x ∈ P.arcOf i, w x)
+    (_hla1 : ∀ s, 1 ≤ la s) (_hlam : ∀ s, la s ≤ m)
+    (_hdij : ∀ s₁ s₂, s₁ ≠ s₂ → Disjoint (arcSet (ca s₁) (la s₁)) (arcSet (ca s₂) (la s₂)))
+    (_harcval : ∀ s, ∑ x ∈ arcSet (ca s) (la s), w x < 1)
+    (_htk : t < k)
     {m' : ℕ} [NeZero m'] (φ : ZMod m' → ZMod m)
     {hD : (Finset.univ.biUnion fun s => arcSet (ca s) (la s)) ≠ Finset.univ}
-    (hφ : CircleEmb _ hD φ),
+    (_hφ : CircleEmb _ hD φ),
     ∃ P' : CirclePartition m' (k - t), ∀ i, 1 ≤ ∑ x ∈ P'.arcOf i, (w ∘ φ) x := by
   induction t with
   | zero =>
@@ -1488,7 +1491,7 @@ lemma mergeValues {t : ℕ} :
           = (P.base - φ 0) + (P.off i : ZMod m) + (t : ZMod m) := by
         rw [ZMod.natCast_val, ZMod.cast_id]
       rw [e4, start]
-      abel
+      abel_nf
     rw [hval_i]
     exact hval i
   | succ t ih =>
@@ -1751,9 +1754,9 @@ theorem hall_deficiency {n : ℕ} [NeZero n] (r : Fin n → Fin n → Prop) [Dec
       exact hjY.2 (hsub hjNp)
 
 /-- The main theorem: USAMO 2025 Problem 6. -/
-theorem usa2025_p6_main (N : ℕ) (hN : 0 < N) : ∀ (m : ℕ) [NeZero m] (hmn : N ≤ m)
-    (like : Fin N → ZMod m → ℝ) (hnn : ∀ p c, 0 ≤ like p c)
-    (hpart : ∀ p, ∃ P : CirclePartition m N, ∀ i, 1 ≤ ∑ x ∈ P.arcOf i, like p x),
+theorem usa2025_p6_main (N : ℕ) (hN : 0 < N) : ∀ (m : ℕ) [NeZero m] (_hmn : N ≤ m)
+    (like : Fin N → ZMod m → ℝ) (_hnn : ∀ p c, 0 ≤ like p c)
+    (_hpart : ∀ p, ∃ P : CirclePartition m N, ∀ i, 1 ≤ ∑ x ∈ P.arcOf i, like p x),
     ∃ a : ZMod m → Fin N, ∀ p, 1 ≤ ∑ c ∈ Finset.univ.filter (a · = p), like p c := by
   induction N using Nat.strong_induction_on with
   | h N ih =>
@@ -2050,7 +2053,7 @@ snip end
 
 /-- The USAMO 2025 Problem 6: distributing cupcakes to people so that everybody
 gets total score at least one in their own ranking. -/
-problem usa2025_p6 {m n : ℕ} [NeZero m] (hm : 0 < m) (hn : 0 < n) (hmn : n ≤ m)
+problem usa2025_p6 {m n : ℕ} [NeZero m] (_hm : 0 < m) (hn : 0 < n) (hmn : n ≤ m)
     (like : Fin n → ZMod m → ℝ) (hnn : ∀ p c, 0 ≤ like p c)
     (hpart : ∀ p, ∃ P : CirclePartition m n, ∀ i, 1 ≤ ∑ x ∈ P.arcOf i, like p x) :
     ∃ a : ZMod m → Fin n, ∀ p, 1 ≤ ∑ c ∈ Finset.univ.filter (a · = p), like p c := by

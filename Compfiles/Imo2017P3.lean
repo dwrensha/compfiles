@@ -118,7 +118,7 @@ lemma norm_sq_frame (u w : Pt) (s : ℝ) (hu : ‖u‖ = 1) (hw : ‖w‖ = 1)
 /-- The analytic heart of the phase lemma: with `n ≥ 4d` steps, the
 squared distance grows by at least `1/2`. -/
 lemma core_ineq (n d h₁ h₂ s : ℝ) (hn : 1 ≤ n) (hd : 0 ≤ d) (hnd : 4 * d ≤ n)
-    (hs : n - 1 / n ≤ s) (hs' : s ≤ n) (hH : (h₁ + d) ^ 2 + h₂ ^ 2 ≤ n ^ 2) :
+    (hs : n - 1 / n ≤ s) (_hs' : s ≤ n) (hH : (h₁ + d) ^ 2 + h₂ ^ 2 ≤ n ^ 2) :
     d ^ 2 + 1 / 2 ≤ (h₁ - s) ^ 2 + h₂ ^ 2 + 1 := by
   have hnpos : 0 < n := by linarith
   by_cases hd2 : d ^ 2 ≤ 1 / 2
@@ -353,7 +353,7 @@ phase, produce the state at its end, the rabbit's positions during the
 phase (as a function of the offset `k = 0, ..., phaseLen j`), and the
 reports made (as a function of the offset `k = 1, ..., phaseLen j`). -/
 def phaseStep (σ : Strategy) (s : PState) : PState × (ℕ → Pt) × (ℕ → Pt) :=
-  if h : dist s.a (σ s.L) ≤ 100 ∧ s.j ≤ 20000 then
+  if _h : dist s.a (σ s.L) ≤ 100 ∧ s.j ≤ 20000 then
     -- escape phase
     escStep σ s (Classical.choose (frame_exists s.a (σ s.L)))
       (Classical.choose (Classical.choose_spec (frame_exists s.a (σ s.L))))

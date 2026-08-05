@@ -2411,7 +2411,7 @@ lemma sum_modEq_of_forall {ι : Type*} [DecidableEq ι] (s : Finset ι) (f g : �
 
 /-- USAMO 2018, Problem 6: the number of permutations of `(1, …, n)` whose ratios
 `xₖ/k` are all distinct is odd for every `n ≥ 1`. -/
-problem usa2018_p6 (n : ℕ) (hn : 1 ≤ n) :
+problem usa2018_p6 (n : ℕ) (_hn : 1 ≤ n) :
     Odd (Fintype.card {σ : Equiv.Perm (Fin n) // Valid σ}) := by
   classical
   -- Step 1: inversion is an involution on valid permutations, so the count is

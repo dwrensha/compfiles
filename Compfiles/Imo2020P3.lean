@@ -54,6 +54,7 @@ inductive IsWalk (a b : E → V) : List V → List E → Prop
 def mult (a b : E → V) (e : E) (x : V) : ℕ :=
   (if a e = x then 1 else 0) + (if b e = x then 1 else 0)
 
+omit [Fintype V] [Fintype E] [DecidableEq E] in
 lemma mult_conn {a b : E → V} {e : E} {v w : V} (h : conn a b e v w) (x : V) :
     mult a b e x = (if v = x then 1 else 0) + (if w = x then 1 else 0) := by
   rcases h with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
@@ -64,10 +65,12 @@ lemma mult_conn {a b : E → V} {e : E} {v w : V} (h : conn a b e v w) (x : V) :
 def slotCount (a b : E → V) (es : List E) (x : V) : ℕ :=
   (es.map (fun e => mult a b e x)).sum
 
+omit [Fintype V] [DecidableEq V] [Fintype E] [DecidableEq E] in
 lemma IsWalk.vs_ne_nil {a b : E → V} {vs : List V} {es : List E} (h : IsWalk a b vs es) :
     vs ≠ [] := by
   cases h <;> simp
 
+omit [Fintype V] [Fintype E] [DecidableEq E] in
 /-- In any walk, the slot count at `x` equals twice the number of
 interior occurrences of `x`, plus the endpoint contributions. -/
 lemma slotCount_eq {a b : E → V} {vs : List V} {es : List E} (h : IsWalk a b vs es)
@@ -85,7 +88,7 @@ lemma slotCount_eq {a b : E → V} {vs : List V} {es : List E} (h : IsWalk a b v
       have hd2 : ([w] : List V).dropLast = [] := rfl
       rw [hc0, mult_conn hconn x, hd1, hd2, List.count_nil, List.head?_cons,
         List.getLast?_cons_cons, List.getLast?_singleton]
-      simp only [beq_iff_eq, Option.some.injEq]
+      simp only [Option.some.injEq]
       split_ifs <;> omega
     | @cons w u e' vs' es' hconn' hw' =>
       have ih' := ih (by simp)
@@ -99,6 +102,7 @@ lemma slotCount_eq {a b : E → V} {vs : List V} {es : List E} (h : IsWalk a b v
         Option.some.injEq]
       split_ifs <;> simp_all <;> omega
 
+omit [Fintype V] [Fintype E] [DecidableEq E] in
 /-- In a closed walk, the slot count at `x` is twice the number of occurrences of `x`. -/
 lemma slotCount_closed {a b : E → V} {vs : List V} {es : List E} (h : IsWalk a b vs es)
     (hc : vs.head? = vs.getLast?) (x : V) :
@@ -122,7 +126,7 @@ lemma slotCount_closed {a b : E → V} {vs : List V} {es : List E} (h : IsWalk a
         rw [hd1, hd2, List.count_nil, List.head?_cons, List.getLast?_cons_cons,
           List.getLast?_singleton, hd3, List.count_cons, List.count_nil]
         simp only [beq_iff_eq, Option.some.injEq]
-        split_ifs <;> simp_all <;> omega
+        split_ifs <;> simp_all
       | @cons w u e' vs'' es'' hconn' hw' =>
         have hd : (v :: w :: u :: vs'').dropLast = v :: (w :: u :: vs'').dropLast := rfl
         have hd1 : (v :: w :: u :: vs'').drop 1 = w :: u :: vs'' := rfl
@@ -131,6 +135,7 @@ lemma slotCount_closed {a b : E → V} {vs : List V} {es : List E} (h : IsWalk a
         simp only [List.count_cons, beq_iff_eq, Option.some.injEq]
         split_ifs <;> simp_all <;> omega
 
+omit [Fintype V] [Fintype E] [DecidableEq E] in
 /-- The alternating slot count along a walk, red at positions with parity `s`. -/
 lemma altCount_eq {a b : E → V} {vs : List V} {es : List E} (h : IsWalk a b vs es)
     (hne : es ≠ []) {s : ℕ} (hs : s ≤ 1) (x : V) :
@@ -146,10 +151,10 @@ lemma altCount_eq {a b : E → V} {vs : List V} {es : List E} (h : IsWalk a b vs
       rw [List.mapIdx_cons, List.mapIdx_nil, List.sum_cons, List.sum_nil, mult_conn hconn x]
       simp only [List.drop_succ_cons, List.drop_zero, List.dropLast_singleton, List.count_nil,
         List.head?_cons, List.getLast?_cons_cons, List.getLast?_singleton, List.length_cons,
-        List.length_nil, Nat.reduceSub, Nat.reduceMod, Nat.zero_mod, zero_add, beq_iff_eq,
-        Option.some.injEq, eq_self_iff_true, and_true, and_false]
+        List.length_nil, Nat.reduceSub, Nat.zero_mod, zero_add,
+        Option.some.injEq]
       by_cases hv : v = x <;> by_cases hw : w = x <;> by_cases hs0 : s = 0 <;>
-        simp_all <;> omega
+        simp_all
     | @cons w u e' vs' es' hconn' hw' =>
       have ih' := ih (by simp) (show 1 - s ≤ 1 by omega)
       have hd : (w :: u :: vs').dropLast = w :: (u :: vs').dropLast := rfl
@@ -161,8 +166,8 @@ lemma altCount_eq {a b : E → V} {vs : List V} {es : List E} (h : IsWalk a b vs
       simp_rw [hpar]
       rw [ih']
       simp only [List.drop_succ_cons, List.drop_zero, hd, List.count_cons, List.head?_cons,
-        List.getLast?_cons_cons, List.length_cons, Nat.add_sub_cancel, Nat.zero_mod, zero_add,
-        beq_iff_eq, Option.some.injEq, eq_self_iff_true, and_true, and_false]
+        List.getLast?_cons_cons, List.length_cons, Nat.add_sub_cancel, Nat.zero_mod,
+        beq_iff_eq, Option.some.injEq]
       by_cases hv : v = x <;> by_cases hw : w = x <;> by_cases hs0 : s = 0 <;>
         simp_all <;> omega
 
@@ -175,6 +180,7 @@ lemma mapIdx_congr {α : Type*} (l : List α) (f g : ℕ → α → ℕ) (h : �
     congr 1
     exact ih _ _ (fun i => h (i + 1))
 
+omit [Fintype V] [Fintype E] [DecidableEq E] in
 /-- In a closed walk of even length, the alternating slot count at `x` equals the number of
 occurrences of `x` among the positions. -/
 lemma altCount_closed {a b : E → V} {vs : List V} {es : List E} (h : IsWalk a b vs es)
@@ -205,15 +211,16 @@ lemma altCount_closed {a b : E → V} {vs : List V} {es : List E} (h : IsWalk a 
         | nil => rfl
         | cons _ _ => rfl
       simp only [hd, List.count_cons, List.drop_succ_cons, List.drop_zero, List.head?_cons,
-        eq_self_iff_true, and_true, beq_iff_eq, Option.some.injEq]
-      try (by_cases hv : v = x <;> simp_all <;> omega)
+        and_true, beq_iff_eq, Option.some.injEq]
 
+omit [Fintype V] [DecidableEq V] [Fintype E] [DecidableEq E] in
 lemma IsWalk.length {a b : E → V} {vs : List V} {es : List E} (h : IsWalk a b vs es) :
     vs.length = es.length + 1 := by
   induction h with
   | nil v => rfl
   | cons _ _ ih => simp [List.length_cons, ih]
 
+omit [Fintype V] [DecidableEq V] [Fintype E] [DecidableEq E] in
 lemma IsWalk.append {a b : E → V} {vs ws : List V} {es fs : List E}
     (h₁ : IsWalk a b vs es) (h₂ : IsWalk a b ws fs)
     (h : vs.getLast? = ws.head?) : IsWalk a b (vs ++ ws.tail) (es ++ fs) := by
@@ -234,6 +241,7 @@ lemma IsWalk.append {a b : E → V} {vs ws : List V} {es fs : List E}
       rw [← hh]; exact h
     exact IsWalk.cons hconn (ih h')
 
+omit [Fintype V] [DecidableEq V] [Fintype E] [DecidableEq E] in
 lemma IsWalk.take {a b : E → V} {vs : List V} {es : List E} (h : IsWalk a b vs es) (k : ℕ) :
     IsWalk a b (vs.take (k + 1)) (es.take k) := by
   induction h generalizing k with
@@ -252,6 +260,7 @@ lemma IsWalk.take {a b : E → V} {vs : List V} {es : List E} (h : IsWalk a b vs
       rw [List.take_succ_cons, List.take_succ_cons]
       exact IsWalk.cons hconn (ih k)
 
+omit [Fintype V] [DecidableEq V] [Fintype E] [DecidableEq E] in
 lemma IsWalk.drop {a b : E → V} {vs : List V} {es : List E} (h : IsWalk a b vs es) (k : ℕ)
     (hk : k ≤ es.length) : IsWalk a b (vs.drop k) (es.drop k) := by
   induction h generalizing k with
@@ -274,6 +283,7 @@ structure CTrail (a b : E → V) where
   walk : IsWalk a b vs es
   closed : vs.head? = vs.getLast?
 
+omit [Fintype V] [DecidableEq V] in
 lemma getLast?_drop_of_lt {l : List V} {k : ℕ} (h : k < l.length) :
     (l.drop k).getLast? = l.getLast? := by
   have h1 : l.drop k ≠ [] := by
@@ -283,6 +293,7 @@ lemma getLast?_drop_of_lt {l : List V} {k : ℕ} (h : k < l.length) :
   congr 1
   exact List.getLast_drop h1
 
+omit [Fintype V] in
 lemma head?_take_of_pos {l : List V} {k : ℕ} (h : 0 < k) : (l.take k).head? = l.head? := by
   cases l with
   | nil => simp
@@ -291,6 +302,7 @@ lemma head?_take_of_pos {l : List V} {k : ℕ} (h : 0 < k) : (l.take k).head? = 
     | zero => omega
     | succ k => simp
 
+omit [Fintype V] [DecidableEq V] in
 lemma getLast?_take_succ {l : List V} {k : ℕ} (h : k + 1 ≤ l.length) :
     (l.take (k + 1)).getLast? = l[k]? := by
   have h1 : l.take (k + 1) ≠ [] := by
@@ -303,11 +315,13 @@ lemma getLast?_take_succ {l : List V} {k : ℕ} (h : k + 1 ≤ l.length) :
   rw [h2]
   exact (List.getElem?_eq_getElem (by omega)).symm
 
+omit [Fintype V] [DecidableEq V] in
 lemma head?_drop_of_lt {l : List V} {k : ℕ} (h : k < l.length) : (l.drop k).head? = l[k]? := by
   have h1 : l.drop k ≠ [] := by
     rw [List.ne_nil_iff_length_pos, List.length_drop]; omega
-  rw [List.head?_eq_head h1, List.head_drop, List.getElem?_eq_getElem h]
+  rw [List.head?_eq_some_head h1, List.head_drop, List.getElem?_eq_getElem h]
 
+omit [Fintype V] [DecidableEq V] in
 lemma getLast?_tail_of_ne {l : List V} (h : l.tail ≠ []) : l.tail.getLast? = l.getLast? := by
   cases l with
   | nil => simp at h
@@ -359,6 +373,7 @@ lemma list_sum_eq_toFinset_sum {α : Type*} [DecidableEq α] {l : List α} (hn :
   rw [Finset.sum_eq_multiset_sum, List.toFinset_val, List.dedup_eq_self.mpr hn,
     Multiset.map_coe, Multiset.sum_coe]
 
+omit [Fintype V] [DecidableEq V] [Fintype E] in
 /-- A maximal walk from `v` using only edges of `U`, with distinct edges. -/
 lemma exists_max_walk (a b : E → V) (U : Finset E) (v : V) :
     ∃ vs es y, IsWalk a b vs es ∧ vs.head? = some v ∧ vs.getLast? = some y ∧ es.Nodup ∧
@@ -413,6 +428,7 @@ lemma exists_max_walk (a b : E → V) (U : Finset E) (v : V) :
     have := hmax _ hmem
     omega
 
+omit [Fintype V] [Fintype E] in
 /-- Any edge of `U` lies in a closed trail within `U`, provided all `U`-degrees are even. -/
 lemma exists_closed_trail (a b : E → V) (U : Finset E)
     (hU : ∀ x, Even (∑ e ∈ U, mult a b e x)) (e₀ : E) (he₀ : e₀ ∈ U) :
@@ -457,6 +473,7 @@ lemma exists_closed_trail (a b : E → V) (U : Finset E)
     omega
   exact ⟨⟨vs, es, hnodup, hwalk, by rw [hhead, hlast, hclose]⟩, hsub, hne⟩
 
+omit [Fintype V] [Fintype E] in
 /-- Decompose an even-degree edge set into edge-disjoint closed trails. -/
 lemma decompose (a b : E → V) (U : Finset E) (hU : ∀ x, Even (∑ e ∈ U, mult a b e x)) :
     ∃ F : List (CTrail a b),
@@ -523,6 +540,7 @@ lemma decompose (a b : E → V) (U : Finset E) (hU : ∀ x, Even (∑ e ∈ U, m
         have h1 := hF'U T' hT' e (List.mem_toFinset.mp heT')
         exact Finset.mem_sdiff.mp h1 |>.2 he
 
+omit [Fintype V] [Fintype E] [DecidableEq E] in
 lemma CTrail.rotate_head? {a b : E → V} {v : V} (T : CTrail a b) (k : ℕ) (hk : k < T.es.length)
     (hv : T.vs[k]? = some v) : (T.rotate k hk).vs.head? = some v := by
   have hlen : T.vs.length = T.es.length + 1 := T.walk.length
@@ -531,6 +549,7 @@ lemma CTrail.rotate_head? {a b : E → V} {v : V} (T : CTrail a b) (k : ℕ) (hk
     rw [List.ne_nil_iff_length_pos, List.length_drop]; omega), head?_drop_of_lt (by omega)]
   exact hv
 
+omit [Fintype V] [Fintype E] in
 lemma CTrail.rotate_es_toFinset {a b : E → V} (T : CTrail a b) (k : ℕ) (hk : k < T.es.length) :
     (T.rotate k hk).es.toFinset = T.es.toFinset := by
   show (T.es.rotate k).toFinset = T.es.toFinset
@@ -562,6 +581,7 @@ def CTrail.append {a b : E → V} {v : V} (T₁ T₂ : CTrail a b)
           | cons y u => rfl
       rw [hgl, ← T₂.closed, h₂]
 
+omit [Fintype V] [DecidableEq V] [Fintype E] [DecidableEq E] in
 lemma CTrail.exists_rotate_index {a b : E → V} (T : CTrail a b) (hne : T.es ≠ []) {v : V}
     (hv : v ∈ T.vs) : ∃ k < T.es.length, T.vs[k]? = some v := by
   obtain ⟨⟨k, hkL⟩, hkv⟩ := List.get_of_mem hv
@@ -606,6 +626,7 @@ lemma two_le_length {α : Type*} {l : List α} {a b : α} (ha : a ∈ l) (hb : b
       · have h2 := ih ha hb hne
         omega
 
+omit [Fintype V] [Fintype E] in
 /-- Merge trails sharing vertices until the family is vertex-disjoint. -/
 lemma merge_disjoint (a b : E → V) :
     ∀ n : ℕ, ∀ F : List (CTrail a b), F.length = n →
@@ -729,10 +750,12 @@ lemma merge_disjoint (a b : E → V) :
         exact hneF F[j] (List.getElem_mem hj) hEj
       · exact hshare ⟨F[i], List.getElem_mem hi, F[j], List.getElem_mem hj, hEq, v, hv1, hv2⟩
 
+omit [Fintype E] [DecidableEq E] in
 lemma mult_sum (a b : E → V) (e : E) : ∑ x : V, mult a b e x = 2 := by
   classical
-  simp [mult, Finset.sum_add_distrib, Finset.sum_ite_eq', Finset.sum_ite_eq]
+  simp [mult, Finset.sum_add_distrib, Finset.sum_ite_eq]
 
+omit [Fintype V] [DecidableEq V] [Fintype E] [DecidableEq E] in
 lemma IsWalk.mem_vs_of_mem_es {a b : E → V} {vs : List V} {es : List E}
     (h : IsWalk a b vs es) {e : E} (he : e ∈ es) : a e ∈ vs ∧ b e ∈ vs := by
   induction h with
@@ -776,7 +799,7 @@ lemma even_length_of_mem {a b : E → V} (F : List (CTrail a b))
       have ⟨h2, h3⟩ := T.walk.mem_vs_of_mem_es he
       have hor : a e = x ∨ b e = x := by
         by_contra h'
-        push_neg at h'
+        push Not at h'
         simp [mult, h'.1, h'.2] at hm
       rcases hor with rfl | rfl
       · exact hx h2
@@ -791,7 +814,7 @@ lemma even_length_of_mem {a b : E → V} (F : List (CTrail a b))
       by_contra hm
       have hconn : a e = x ∨ b e = x := by
         by_contra h'
-        push_neg at h'
+        push Not at h'
         simp [mult, h'.1, h'.2] at hm
       obtain ⟨T', hT', heT'⟩ := hcov e
       have hxT' : x ∈ T'.vs := by
@@ -817,6 +840,7 @@ lemma even_length_of_mem {a b : E → V} (F : List (CTrail a b))
     ring
   exact ⟨T.vs.toFinset.card, by omega⟩
 
+omit [Fintype E] in
 lemma mapIdx_eq_map_idxOf {l : List E} (hn : l.Nodup) (g : ℕ → E → ℕ) :
     l.mapIdx g = l.map (fun e => g (l.idxOf e) e) := by
   induction l generalizing g with
@@ -856,7 +880,7 @@ theorem two_factor (a b : E → V) (hdeg : ∀ x, (∑ e : E, mult a b e x) = 4)
   refine ⟨red, fun x => ?_⟩
   have hex : ∃ e₀, mult a b e₀ x ≠ 0 := by
     by_contra h'
-    push_neg at h'
+    push Not at h'
     have h4 : (∑ e : E, mult a b e x) = 0 := Finset.sum_eq_zero fun e _ => h' e
     rw [hdeg x] at h4
     simp at h4
@@ -1043,7 +1067,7 @@ lemma weight_sum (r : Fin (2 * n) → Bool) :
     omega
   rw [Finset.sum_congr rfl (fun k _ => hpair k), Finset.sum_const, nsmul_eq_mul, Nat.cast_id]
 
-lemma red_card (h : ∀ i, #{j | c j = i} = 4) (red : Fin (2 * n) → Bool)
+lemma red_card (_h : ∀ i, #{j | c j = i} = 4) (red : Fin (2 * n) → Bool)
     (hred : ∀ x : Fin n, (∑ e : Fin (2 * n), if red e then mult (pgA c) (pgB c) e x else 0) = 2) :
     (Finset.univ.filter (fun e => red e = true)).card = n := by
   have h1 : ∑ x : Fin n, (∑ e : Fin (2 * n), if red e then mult (pgA c) (pgB c) e x else 0) =
@@ -1067,7 +1091,7 @@ lemma compl_filter_pairOf (red : Fin (2 * n) → Bool) :
     (Finset.univ.filter (fun j => red (pairOf j) = true))ᶜ =
       Finset.univ.filter (fun j => (!red (pairOf j)) = true) := by
   ext j
-  simp [Finset.mem_compl, Finset.mem_filter, Bool.not_eq_true]
+  simp [Finset.mem_filter, Bool.not_eq_true]
 
 end Assembly
 
@@ -1104,7 +1128,7 @@ problem imo2020_p3 {n : ℕ} {c : Fin (4 * n) → Fin n} (h : ∀ i, #{j | c j =
       intro e _
       by_cases hr : red e
       · rw [if_pos hr, mult, pgA, pgB]
-        simp only [hr, true_and, pairOf_apeb, pairOf_bpeb, ite_true,
+        simp only [hr, true_and, pairOf_apeb, pairOf_bpeb,
           Function.Embedding.coeFn_mk]
       · simp only [hr, false_and, if_false, pairOf_apeb, pairOf_bpeb, Bool.false_eq_true,
           Function.Embedding.coeFn_mk]

@@ -136,7 +136,7 @@ lemma sum_subsetSum_sq {n : ℕ} (hn : 2 ≤ n) (x : Fin n → ℝ)
       ring
     · rw [if_neg hij, if_neg hij]
       rw [two_pow_sub n 2 hn]
-      ring
+      ring_nf
   calc ∑ A ∈ univ.powerset, (∑ i ∈ A, x i) ^ 2
       = ∑ A ∈ univ.powerset, ∑ i : Fin n, ∑ j : Fin n,
           if i ∈ A ∧ j ∈ A then x i * x j else 0 :=

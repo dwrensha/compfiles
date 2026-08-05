@@ -57,23 +57,26 @@ inductive Reachable : SimpleGraph V → SimpleGraph V → Prop
 other user. -/
 def Completable (G : SimpleGraph V) : Prop := Reachable G ⊤
 
+omit [DecidableEq V] [Fintype V] in
 lemma reachable_trans {G H J : SimpleGraph V} (h₁ : Reachable G H) (h₂ : Reachable H J) :
     Reachable G J := by
   induction h₂ with
   | refl => exact h₁
   | step _ hc ih => exact ih.step hc
 
+omit [DecidableEq V] [Fintype V] in
 lemma reachable_le {G H : SimpleGraph V} (h : Reachable G H) : G ≤ H := by
   induction h with
   | refl => exact le_refl _
   | step _ _ ih => exact le_trans ih le_sup_left
 
+omit [DecidableEq V] [Fintype V] in
 lemma reachable_sup_left {G H : SimpleGraph V} (h : Reachable G H) (J : SimpleGraph V) :
     Reachable (J ⊔ G) (J ⊔ H) := by
   induction h with
   | refl => exact Reachable.refl _
   | step h hc ih =>
-    rename_i G' H' u v
+    rename_i H' u v
     by_cases hadj : (J ⊔ H').Adj u v
     · have hle : SimpleGraph.edge u v ≤ J ⊔ H' := (SimpleGraph.edge_le_iff ..).mpr (Or.inr hadj)
       rw [← sup_assoc, sup_eq_left.mpr hle]
@@ -85,12 +88,14 @@ lemma reachable_sup_left {G H : SimpleGraph V} (h : Reachable G H) (J : SimpleGr
       rw [← sup_assoc]
       exact ih.step hc'
 
+omit [DecidableEq V] [Fintype V] in
 lemma completable_mono {G H : SimpleGraph V} (hle : G ≤ H) (h : Completable G) :
     Completable H := by
   have h2 := reachable_sup_left h H
   rw [sup_of_le_left hle, sup_of_le_right le_top] at h2
   exact h2
 
+omit [DecidableEq V] [Fintype V] in
 /-- If no legal move is possible from `G`, then any graph reachable from `G` is `G`
 itself. -/
 lemma reachable_eq_of_no_canAdd {G H : SimpleGraph V} (h : Reachable G H)
@@ -101,6 +106,7 @@ lemma reachable_eq_of_no_canAdd {G H : SimpleGraph V} (h : Reachable G H)
     rename_i u v
     exact absurd (ih ▸ hc) (hno u v)
 
+omit [DecidableEq V] [Fintype V] in
 /-- Adding a single friendship between two users with two distinct common friends
 is a legal move (or a no-op if they are already friends). -/
 lemma reachable_add_edge_of_common {G : SimpleGraph V} {u v p q : V} (huv : u ≠ v)
@@ -118,11 +124,14 @@ lemma reachable_add_edge_of_common {G : SimpleGraph V} {u v p q : V} (huv : u �
 def Sym2.toFinsetV (e : Sym2 V) : Finset V :=
   Sym2.lift ⟨fun a b => {a, b}, fun a b => by ext x; simp [or_comm]⟩ e
 
+omit [Fintype V] in
 @[simp] lemma Sym2.toFinsetV_mk (a b : V) : Sym2.toFinsetV s(a, b) = {a, b} := rfl
 
+omit [Fintype V] in
 lemma Sym2.mem_toFinsetV {v : V} {e : Sym2 V} : v ∈ Sym2.toFinsetV e ↔ v ∈ e :=
   Sym2.inductionOn e (fun a b => by simp [Sym2.mem_iff])
 
+omit [Fintype V] in
 lemma Sym2.toFinsetV_eq {e : Sym2 V} {u v : V} (h : Sym2.toFinsetV e = {u, v})
     (huv : u ≠ v) : e = s(u, v) := by
   refine Sym2.inductionOn e ?_ h
@@ -232,6 +241,7 @@ def initialCover (G : SimpleGraph V) [DecidableRel G.Adj] : Cover G G where
     obtain ⟨e, he, rfl⟩ := hK
     exact ⟨e, he, rfl⟩
 
+omit [Fintype V] in
 /-- Any family `F` of at most three of the four edges of the 4-cycle `abcd` has at
 least `|F| + 1` distinct endpoints. -/
 lemma card_biUnion_toFinsetV_ge {G' : SimpleGraph V} {a b c d : V}
@@ -245,12 +255,12 @@ lemma card_biUnion_toFinsetV_ge {G' : SimpleGraph V} {a b c d : V}
   have hcd' : c ≠ d := hcd.ne
   have had : a ≠ d := hda.ne.symm
   -- the four edges are distinct
-  have n12 : s(a, b) ≠ s(b, c) := by simp [Sym2.eq_iff, hab', hbc', hcd', had, hac, hbd, Ne.symm hab', Ne.symm hbc', Ne.symm hcd', Ne.symm had, Ne.symm hac, Ne.symm hbd]
-  have n13 : s(a, b) ≠ s(c, d) := by simp [Sym2.eq_iff, hab', hbc', hcd', had, hac, hbd, Ne.symm hab', Ne.symm hbc', Ne.symm hcd', Ne.symm had, Ne.symm hac, Ne.symm hbd]
-  have n14 : s(a, b) ≠ s(d, a) := by simp [Sym2.eq_iff, hab', hbc', hcd', had, hac, hbd, Ne.symm hab', Ne.symm hbc', Ne.symm hcd', Ne.symm had, Ne.symm hac, Ne.symm hbd]
-  have n23 : s(b, c) ≠ s(c, d) := by simp [Sym2.eq_iff, hab', hbc', hcd', had, hac, hbd, Ne.symm hab', Ne.symm hbc', Ne.symm hcd', Ne.symm had, Ne.symm hac, Ne.symm hbd]
-  have n24 : s(b, c) ≠ s(d, a) := by simp [Sym2.eq_iff, hab', hbc', hcd', had, hac, hbd, Ne.symm hab', Ne.symm hbc', Ne.symm hcd', Ne.symm had, Ne.symm hac, Ne.symm hbd]
-  have n34 : s(c, d) ≠ s(d, a) := by simp [Sym2.eq_iff, hab', hbc', hcd', had, hac, hbd, Ne.symm hab', Ne.symm hbc', Ne.symm hcd', Ne.symm had, Ne.symm hac, Ne.symm hbd]
+  have n12 : s(a, b) ≠ s(b, c) := by simp [hab', hbc', hac]
+  have n13 : s(a, b) ≠ s(c, d) := by simp [hbc', had, hac, hbd]
+  have n14 : s(a, b) ≠ s(d, a) := by simp [had, hbd, Ne.symm hab']
+  have n23 : s(b, c) ≠ s(c, d) := by simp [hbc', hcd', hbd]
+  have n24 : s(b, c) ≠ s(d, a) := by simp [hcd', hbd, Ne.symm hab', Ne.symm hac]
+  have n34 : s(c, d) ≠ s(d, a) := by simp [hcd', Ne.symm had, Ne.symm hac]
   -- so the set of edges has cardinality 4
   have hE4card : ({s(a, b), s(b, c), s(c, d), s(d, a)} : Finset (Sym2 V)).card = 4 := by
     rw [Finset.card_insert_of_notMem (by simp [n12, n13, n14]),
@@ -271,10 +281,10 @@ lemma card_biUnion_toFinsetV_ge {G' : SimpleGraph V} {a b c d : V}
     have hx := hsub (Finset.mem_singleton_self x)
     simp only [Finset.mem_insert, Finset.mem_singleton] at hx
     rcases hx with rfl | rfl | rfl | rfl
-    · simp [hc1, Finset.card_singleton, Finset.card_pair hab']
-    · simp [hc2, Finset.card_singleton, Finset.card_pair hbc']
-    · simp [hc3, Finset.card_singleton, Finset.card_pair hcd']
-    · simp [hc4, Finset.card_singleton, Finset.card_pair (Ne.symm had)]
+    · simp [Finset.card_singleton, Finset.card_pair hab']
+    · simp [Finset.card_singleton, Finset.card_pair hbc']
+    · simp [Finset.card_singleton, Finset.card_pair hcd']
+    · simp [Finset.card_singleton, Finset.card_pair (Ne.symm had)]
   · -- two distinct edges: at least three endpoints
     obtain ⟨x, y, hxy, rfl⟩ := Finset.card_eq_two.mp hFc
     rw [Finset.biUnion_insert, Finset.singleton_biUnion]
@@ -486,7 +496,7 @@ lemma Cover.merge {G G' : SimpleGraph V} [DecidableRel G.Adj] (cov : Cover G G')
   have hScard1 : 1 ≤ S.card := Finset.card_pos.mpr ⟨L1, hL1S⟩
   have hScard2 : 2 ≤ S.card := by
     by_contra hlt
-    push_neg at hlt
+    push Not at hlt
     have h1 : S.card = 1 := by omega
     obtain ⟨x, hx⟩ := Finset.card_eq_one.mp h1
     have hmem : ∀ K ∈ S, K = x := by
@@ -511,23 +521,17 @@ lemma Cover.merge {G G' : SimpleGraph V} [DecidableRel G.Adj] (cov : Cover G G')
   have he4E4 : e4 ∈ E4 := by rw [hE4]; simp
   have hE4card : E4.card = 4 := by
     have n12 : e1 ≠ e2 := by
-      rw [he1, he2]; simp [Sym2.eq_iff, hab', hbc', hcd', had, hac, hbd,
-        Ne.symm hab', Ne.symm hbc', Ne.symm hcd', Ne.symm had, Ne.symm hac, Ne.symm hbd]
+      rw [he1, he2]; simp [hab', hbc', hac]
     have n13 : e1 ≠ e3 := by
-      rw [he1, he3]; simp [Sym2.eq_iff, hab', hbc', hcd', had, hac, hbd,
-        Ne.symm hab', Ne.symm hbc', Ne.symm hcd', Ne.symm had, Ne.symm hac, Ne.symm hbd]
+      rw [he1, he3]; simp [hbc', had, hac, hbd]
     have n14 : e1 ≠ e4 := by
-      rw [he1, he4]; simp [Sym2.eq_iff, hab', hbc', hcd', had, hac, hbd,
-        Ne.symm hab', Ne.symm hbc', Ne.symm hcd', Ne.symm had, Ne.symm hac, Ne.symm hbd]
+      rw [he1, he4]; simp [had, hbd, Ne.symm hab']
     have n23 : e2 ≠ e3 := by
-      rw [he2, he3]; simp [Sym2.eq_iff, hab', hbc', hcd', had, hac, hbd,
-        Ne.symm hab', Ne.symm hbc', Ne.symm hcd', Ne.symm had, Ne.symm hac, Ne.symm hbd]
+      rw [he2, he3]; simp [hbc', hcd', hbd]
     have n24 : e2 ≠ e4 := by
-      rw [he2, he4]; simp [Sym2.eq_iff, hab', hbc', hcd', had, hac, hbd,
-        Ne.symm hab', Ne.symm hbc', Ne.symm hcd', Ne.symm had, Ne.symm hac, Ne.symm hbd]
+      rw [he2, he4]; simp [hcd', hbd, Ne.symm hab', Ne.symm hac]
     have n34 : e3 ≠ e4 := by
-      rw [he3, he4]; simp [Sym2.eq_iff, hab', hbc', hcd', had, hac, hbd,
-        Ne.symm hab', Ne.symm hbc', Ne.symm hcd', Ne.symm had, Ne.symm hac, Ne.symm hbd]
+      rw [he3, he4]; simp [hcd', Ne.symm had, Ne.symm hac]
     rw [hE4, Finset.card_insert_of_notMem (by simp [n12, n13, n14]),
       Finset.card_insert_of_notMem (by simp [n23, n24]),
       Finset.card_insert_of_notMem (by simp [n34]), Finset.card_singleton]
@@ -867,7 +871,7 @@ lemma exists_terminal_cover (G : SimpleGraph V) [DecidableRel G.Adj] :
         cov.ℓ s(a, b) = cov.ℓ s(b, c) ∧ cov.ℓ s(b, c) = cov.ℓ s(c, d) ∧
         cov.ℓ s(c, d) = cov.ℓ s(d, a)
     · exact ⟨G', cov, le_refl _, hterm⟩
-    · push_neg at hterm
+    · push Not at hterm
       obtain ⟨a, b, c, d, hac, hbd, hab, hbc, hcd, hda, hdiff⟩ := hterm
       have hdiff' : ¬ (cov.ℓ s(a, b) = cov.ℓ s(b, c) ∧ cov.ℓ s(b, c) = cov.ℓ s(c, d) ∧
         cov.ℓ s(c, d) = cov.ℓ s(d, a)) := fun h => hdiff h.1 h.2.1 h.2.2
@@ -880,7 +884,7 @@ lemma exists_terminal_cover (G : SimpleGraph V) [DecidableRel G.Adj] :
         cov.ℓ s(a, b) = cov.ℓ s(b, c) ∧ cov.ℓ s(b, c) = cov.ℓ s(c, d) ∧
         cov.ℓ s(c, d) = cov.ℓ s(d, a)
     · exact ⟨G', cov, le_refl _, hterm⟩
-    · push_neg at hterm
+    · push Not at hterm
       obtain ⟨a, b, c, d, hac, hbd, hab, hbc, hcd, hda, hdiff⟩ := hterm
       have hdiff' : ¬ (cov.ℓ s(a, b) = cov.ℓ s(b, c) ∧ cov.ℓ s(b, c) = cov.ℓ s(c, d) ∧
         cov.ℓ s(c, d) = cov.ℓ s(d, a)) := fun h => hdiff h.1 h.2.1 h.2.2
@@ -926,7 +930,7 @@ lemma lower_bound_of_terminal {G G' : SimpleGraph V} [DecidableRel G.Adj]
       rw [Sym2.eq_swap]
     · obtain ⟨w, hw⟩ : ∃ w : V, w ∉ ({x, y, z} : Finset V) := by
         by_contra h
-        push_neg at h
+        push Not at h
         have hsub : (Finset.univ : Finset V) ⊆ {x, y, z} := fun w _ => h w
         have hcle := Finset.card_le_card hsub
         have h3 : ({x, y, z} : Finset V).card ≤ 3 := by
@@ -1211,7 +1215,7 @@ lemma hnb {H₁ : SimpleGraph (Fin 2022)} (hle : constrGraph ≤ H₁)
   obtain ⟨hv0, hv1⟩ := hv
   have hv2 : 2 ≤ v.val := by
     by_contra h
-    push_neg at h
+    push Not at h
     have h01 : v.val = 0 ∨ v.val = 1 := by omega
     rcases h01 with h | h
     · exact hv0 (Fin.eq_of_val_eq (by rw [h, fin0_val]))

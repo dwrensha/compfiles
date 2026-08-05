@@ -1142,7 +1142,7 @@ snip end
 each distinct arrangement corresponds to the same positive number `∏ (multiplicity)!` of
 positional permutations, independently of `A`, `B` and `k`. Note: the positivity
 hypothesis `hm` is actually not needed for the conclusion. -/
-problem usa2017_p2 {n : ℕ} (m : Fin n → ℕ) (hm : ∀ i, 0 < m i) (A B : Fin n → ℤ) (k : ℕ) :
+problem usa2017_p2 {n : ℕ} (m : Fin n → ℕ) (_hm : ∀ i, 0 < m i) (A B : Fin n → ℤ) (k : ℕ) :
     (univ.filter (fun σ : Perm (Fin n) => ainvCount (fun i => (m i : ℤ)) A σ = k)).card =
     (univ.filter (fun σ : Perm (Fin n) => ainvCount (fun i => (m i : ℤ)) B σ = k)).card := by
   have hA := PL (fun i => (m i : ℤ)) A

@@ -177,11 +177,11 @@ lemma mem_window {n k j : ℕ} (h : j + k ≤ 2 * n) {x : Fin (2 * n)} :
   constructor
   · rintro ⟨t, ht, rfl⟩
     have : t < k := mem_range.1 ht
-    simp only [Fin.val_mk]
+    simp only
     omega
   · rintro ⟨h1, h2⟩
     exact ⟨x.val - j, by rw [mem_range]; omega,
-      Fin.ext (by simp only [Fin.val_mk]; omega)⟩
+      Fin.ext (by simp only; omega)⟩
 
 /-- The `k - 1` positions strictly between `i` and `i + k`
 (the empty set if they do not fit). -/
@@ -206,11 +206,11 @@ lemma mem_midWindow {n k i : ℕ} (h : i + k ≤ 2 * n) {x : Fin (2 * n)} :
   constructor
   · rintro ⟨t, ht, rfl⟩
     have : t < k - 1 := mem_range.1 ht
-    simp only [Fin.val_mk]
+    simp only
     omega
   · rintro ⟨h1, h2⟩
     exact ⟨x.val - (i + 1), by rw [mem_range]; omega,
-      Fin.ext (by simp only [Fin.val_mk]; omega)⟩
+      Fin.ext (by simp only; omega)⟩
 
 lemma midWindow_subset_window {n k i : ℕ} (h : i + k ≤ 2 * n) :
     midWindow n k i ⊆ window n k i := by
