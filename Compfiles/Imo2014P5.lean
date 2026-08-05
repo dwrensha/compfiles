@@ -337,12 +337,7 @@ theorem exists_partition_aux : ∀ (N k : ℕ) (c : Multiset ℕ), c.card = N �
       · -- Pull out `2m+1` coins of denomination `2m+1` as a group of value `1`.
         obtain ⟨m, hm⟩ := hodd
         have hle : Multiset.replicate (2 * m + 1) (2 * m + 1) ≤ c := by
-          rw [Multiset.le_iff_count]
-          intro n
-          rw [Multiset.count_replicate]
-          by_cases h : 2 * m + 1 = n
-          · rw [if_pos h]; subst h; exact hm
-          · rw [if_neg h]; exact Nat.zero_le _
+          exact Multiset.le_count_iff_replicate_le.mp hm
         obtain ⟨rest, rfl⟩ := Multiset.le_iff_exists_add.mp hle
         have hvrep : value (Multiset.replicate (2 * m + 1) (2 * m + 1)) = 1 := by
           rw [value_replicate]

@@ -70,17 +70,6 @@ lemma lt_of_dvd_factorial_sub {d t : ℕ} {c : ℤ} (h : (d : ℤ) ∣ (t ! : �
   rw [h3] at h2
   exact hdc h2
 
-/-- From `3` on, the factorial strictly dominates its argument. -/
-lemma factorial_gt_self {t : ℕ} (ht : 3 ≤ t) : t < t ! := by
-  obtain ⟨s, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (by omega : t ≠ 0)
-  rw [Nat.factorial_succ]
-  have hs : 2 ≤ s := by omega
-  have h2 : (2 : ℕ) ≤ s ! := by
-    calc (2 : ℕ) = 2 ! := rfl
-      _ ≤ s ! := Nat.factorial_le hs
-  have h3 : (s + 1) * 2 ≤ (s + 1) * s ! := _root_.mul_le_mul_right h2 (s + 1)
-  omega
-
 /-- Iterated factorials starting at `3`: `iterFac 0 = 3` and
 `iterFac (r + 1) = (iterFac r)!`. These are used to produce arbitrarily large
 fixed points of `f` (Shankar Padmanabhan's argument). -/
@@ -92,7 +81,7 @@ lemma iterFac_ge (r : ℕ) : r + 3 ≤ iterFac r := by
   induction r with
   | zero => exact le_refl _
   | succ r ih =>
-    have hlt : iterFac r < (iterFac r)! := factorial_gt_self (le_trans (by omega) ih)
+    have hlt : iterFac r < (iterFac r)! := Nat.lt_factorial_self (le_trans (by omega) ih)
     show (r + 1) + 3 ≤ (iterFac r)!
     omega
 

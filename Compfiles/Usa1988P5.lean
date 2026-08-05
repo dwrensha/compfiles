@@ -171,18 +171,6 @@ lemma coeff_two_one_sub_X_sq (a : ℕ) :
       rw [Finset.mem_range] at h
       omega
 
-lemma coeff_mul_zero (f g : ℚ[X]) :
-    (f * g).coeff 0 = f.coeff 0 * g.coeff 0 := by
-  rw [coeff_mul]
-  have e : Finset.HasAntidiagonal.antidiagonal 0 = {(0, 0)} := by decide
-  rw [e, Finset.sum_singleton]
-
-lemma coeff_mul_one (f g : ℚ[X]) :
-    (f * g).coeff 1 = f.coeff 0 * g.coeff 1 + f.coeff 1 * g.coeff 0 := by
-  rw [coeff_mul]
-  have e : Finset.HasAntidiagonal.antidiagonal 1 = {(0, 1), (1, 0)} := by decide
-  rw [e, Finset.sum_insert (by decide), Finset.sum_singleton]
-
 lemma coeff_mul_two (f g : ℚ[X]) :
     (f * g).coeff 2 =
       f.coeff 0 * g.coeff 2 + f.coeff 1 * g.coeff 1 + f.coeff 2 * g.coeff 0 := by
@@ -215,7 +203,7 @@ lemma coeff_one_prod (s : Finset ℕ) (f : ℕ → ℚ[X])
         fun i hi => h0 i (Finset.mem_insert_of_mem hi)
       have h1' : ∀ i ∈ s, (f i).coeff 1 = 0 :=
         fun i hi => h1 i (Finset.mem_insert_of_mem hi)
-      rw [Finset.prod_insert ha, coeff_mul_one, ih h0' h1', coeff_zero_prod s f h0',
+      rw [Finset.prod_insert ha, Polynomial.mul_coeff_one, ih h0' h1', coeff_zero_prod s f h0',
         h0 a (Finset.mem_insert_self a s), h1 a (Finset.mem_insert_self a s)]
       simp
 
@@ -357,7 +345,7 @@ lemma good_transport {p q : ℚ[X]} {c : ℚ} {m : ℕ} (hm : 2 ≤ m)
   refine ⟨?_, ?_, ?_⟩
   · have e := coeff_comp_X_sq q 0
     rw [mul_zero] at e
-    rw [← e, ← h, coeff_mul_zero, hpc 0, h0]
+    rw [← e, ← h, Polynomial.mul_coeff_zero, hpc 0, h0]
     simp
   · have e : q.coeff 1 = (q.comp (X ^ 2)).coeff 2 := by
       have h2 := coeff_comp_X_sq q 1
@@ -412,7 +400,8 @@ lemma extract {b : ℕ → ℕ} (h1 : (prodForm b).coeff 1 = -65536)
       apply coeff_one_factor
       rw [Finset.mem_erase, Finset.mem_Icc] at hi
       omega
-  rw [coeff_mul_one, hR10, hR11, coeff_one_one_sub_X, coeff_zero_one_sub_X] at h1
+  rw [Polynomial.mul_coeff_one, hR10, hR11, coeff_one_one_sub_X,
+    coeff_zero_one_sub_X] at h1
   have hb1 : b 1 = 65536 := by
     simp only [mul_zero, mul_one, zero_add, neg_inj] at h1
     exact_mod_cast h1

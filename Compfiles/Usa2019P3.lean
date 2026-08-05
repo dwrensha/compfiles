@@ -471,20 +471,13 @@ theorem coeff_zero_pow_linear (d a b : ℕ) : ((C a * X + C b) ^ d).coeff 0 = b 
     rw [pow_succ, Polynomial.mul_coeff_zero, ih]
     simp [pow_succ]
 
-/-- The coefficient of `x` in a product of two polynomials. -/
-theorem coeff_one_mul' (p q : Polynomial ℕ) :
-    (p * q).coeff 1 = p.coeff 0 * q.coeff 1 + p.coeff 1 * q.coeff 0 := by
-  rw [Polynomial.coeff_mul,
-    Finset.Nat.sum_antidiagonal_eq_sum_range_succ (fun i j => p.coeff i * q.coeff j) 1]
-  simp [Finset.sum_range_succ]
-
 /-- The coefficient of `x` in `(a * x + b) ^ d` is `d * a * b ^ (d - 1)`. -/
 theorem coeff_one_pow_linear (d a b : ℕ) :
     ((C a * X + C b) ^ d).coeff 1 = d * a * b ^ (d - 1) := by
   induction d with
   | zero => simp [Polynomial.coeff_one]
   | succ d ih =>
-    rw [pow_succ, coeff_one_mul', coeff_zero_pow_linear, ih]
+    rw [pow_succ, Polynomial.mul_coeff_one, coeff_zero_pow_linear, ih]
     have hp1 : (C a * X + C b).coeff 1 = a := by simp
     have hp0 : (C a * X + C b).coeff 0 = b := by simp
     rw [hp1, hp0]

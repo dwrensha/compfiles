@@ -120,33 +120,9 @@ lemma eq_of_overdetermined_of_flooded {S : Finset (ℝ × ℝ)} (hS : ¬ Overdet
     have h : p₂ ∈ S \ U₂ := by rw [hp₂]; exact Finset.mem_singleton_self p₂
     exact (Finset.mem_sdiff.mp h).1
   have hU₁eq : U₁ = S \ {p₁} := by
-    ext x
-    simp only [Finset.mem_sdiff, Finset.mem_singleton]
-    constructor
-    · intro hx
-      refine ⟨hU₁ hx, fun h => ?_⟩
-      rw [h] at hx
-      have hp : p₁ ∈ S \ U₁ := by rw [hp₁]; exact Finset.mem_singleton_self p₁
-      exact (Finset.mem_sdiff.mp hp).2 hx
-    · rintro ⟨hxS, hxn⟩
-      by_contra hx
-      have h : x ∈ S \ U₁ := Finset.mem_sdiff.mpr ⟨hxS, hx⟩
-      rw [hp₁, Finset.mem_singleton] at h
-      exact hxn h
+    exact (sdiff_eq_symm hU₁ hp₁).symm
   have hU₂eq : U₂ = S \ {p₂} := by
-    ext x
-    simp only [Finset.mem_sdiff, Finset.mem_singleton]
-    constructor
-    · intro hx
-      refine ⟨hU₂ hx, fun h => ?_⟩
-      rw [h] at hx
-      have hp : p₂ ∈ S \ U₂ := by rw [hp₂]; exact Finset.mem_singleton_self p₂
-      exact (Finset.mem_sdiff.mp hp).2 hx
-    · rintro ⟨hxS, hxn⟩
-      by_contra hx
-      have h : x ∈ S \ U₂ := Finset.mem_sdiff.mpr ⟨hxS, hx⟩
-      rw [hp₂, Finset.mem_singleton] at h
-      exact hxn h
+    exact (sdiff_eq_symm hU₂ hp₂).symm
   by_cases hpp : p₁ = p₂
   · rw [hU₁eq, hU₂eq, hpp]
   · exfalso

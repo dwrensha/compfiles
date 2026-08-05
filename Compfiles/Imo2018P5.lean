@@ -246,11 +246,7 @@ lemma dvd_bound (a : ℕ → ℤ) (apos : ∀ n, 0 < a n) (N : ℕ) (hN : 0 < N)
       exact bound a apos N hN h n hn p hp
     · rw [Nat.factorization_eq_zero_of_not_prime _ hp,
         Nat.factorization_eq_zero_of_not_prime _ hp]
-  have e1 : ((a n).natAbs : ℤ) = a n := Int.natAbs_of_nonneg (apos n).le
-  have e2 : (((a 0 * a (N - 1)).natAbs) : ℤ) = a 0 * a (N - 1) :=
-    Int.natAbs_of_nonneg (mul_pos (apos 0) (apos _)).le
-  rw [← e1, ← e2]
-  exact Int.ofNat_dvd.mpr key
+  exact Int.natAbs_dvd_natAbs.mp key
 
 /- No closed walk. If the sequence returns to the same value (`a n₁ = a n₂` with `n₁ < n₂`,
 `N ≤ n₁`), then it was constant on the whole interval `[n₁, n₂]`. -/

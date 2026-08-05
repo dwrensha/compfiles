@@ -283,14 +283,6 @@ lemma Mval_reachable {B₀ B : Board} (hge : ∀ a ∈ B₀, 1 ≤ a) (hreach : 
     rw [hbe, Mval_move hm hn s hs, ← hbm]
     exact ih
 
-/-- A board whose entries are all `1` has product `1`. -/
-lemma prod_eq_one_of_forall_eq_one (s : Board) (h : ∀ a ∈ s, a = 1) : s.prod = 1 := by
-  induction s using Multiset.induction_on with
-  | empty => rfl
-  | cons a s ih =>
-    rw [Multiset.prod_cons, h a (Multiset.mem_cons_self a s),
-      ih (fun b hb => h b (Multiset.mem_cons_of_mem hb)), mul_one]
-
 /-- On a terminal board with entries `≥ 1`, `Mval` equals the unique large entry. -/
 lemma Mval_terminal {B' : Board} (hge : ∀ a ∈ B', 1 ≤ a) (huniq : HasUniqueLarge B')
     {M : ℕ} (hM : 1 < M) (hMem : M ∈ B') : Mval B' = M := by
@@ -310,7 +302,7 @@ lemma Mval_terminal {B' : Board} (hge : ∀ a ∈ B', 1 ≤ a) (huniq : HasUniqu
   have hprod : B'.prod = M := by
     conv_lhs => rw [hsplit]
     rw [Multiset.prod_add, hfilt, Multiset.prod_singleton,
-      prod_eq_one_of_forall_eq_one _ hnot1, mul_one]
+      Multiset.prod_eq_one hnot1, mul_one]
   have hgexp : ∀ p : ℕ, p.Prime → gExp p B' = padicValNat p M := by
     intro p hp
     have hz : ((B'.filter (fun a => ¬ 1 < a)).map fun a => padicValNat p a).gcd = 0 := by

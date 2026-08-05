@@ -450,12 +450,7 @@ lemma CA_eq : dist cfg.C cfg.A = 2 * cfg.ABC.circumradius * Real.sin (∠ cfg.A 
     · exact A_ne_B cfg
     · exact A_ne_C cfg
     · exact (C_ne_B cfg).symm
-  calc dist cfg.C cfg.A
-      = dist cfg.C cfg.A / |(∡ cfg.A cfg.B cfg.C).sin| * |(∡ cfg.A cfg.B cfg.C).sin| := by
-        rw [div_mul_cancel₀]
-        exact h₁
-    _ = 2 * cfg.ABC.circumradius * |(∡ cfg.A cfg.B cfg.C).sin| := by
-      rw [h₂]
+  exact (div_eq_iff h₁).mp h₂
 
 lemma four_sin_B_cos_A_le_one : 4 * Real.sin (∠ cfg.A cfg.B cfg.C) * Real.cos (∠ cfg.A cfg.C cfg.B) ≤ 1 := by
   have h₁ : Real.cos (∠ cfg.A cfg.C cfg.B) ≤ Real.cos (∠ cfg.A cfg.B cfg.C + Real.pi / 6) := by

@@ -67,24 +67,6 @@ lemma start_or_interior_or_end {u v : V} {w : G.Walk u v} {x : V} (hx : x ∈ w.
     rw [← hx2, hie]
     exact w.getVert_length
 
-omit [Fintype V] [DecidableEq V] [DecidableRel G.Adj] in
-/-- The `i`-th edge of a walk joins its `i`-th and `(i + 1)`-th vertices. -/
-lemma edges_getElem {u v : V} (w : G.Walk u v) (i : ℕ) (hi : i < w.edges.length) :
-    w.edges[i] = s(w.getVert i, w.getVert (i + 1)) := by
-  have hi' : i < w.darts.length := by rwa [w.length_darts, ← w.length_edges]
-  show (w.darts.map Dart.edge)[i]'(by rw [List.length_map]; exact hi') = _
-  rw [List.getElem_map, w.darts_getElem_eq_getVert i hi', Dart.edge_mk]
-
-/-- The number of edges of a trail is at most the number of edges of the graph. -/
-lemma trail_length_le_card {u v : V} (w : G.Walk u v) (hw : w.IsTrail) :
-    w.length ≤ G.edgeFinset.card := by
-  rw [← w.length_edges, ← List.toFinset_card_of_nodup hw.edges_nodup]
-  apply Finset.card_le_card
-  intro e he
-  rw [List.mem_toFinset] at he
-  rw [SimpleGraph.mem_edgeFinset]
-  exact w.edges_subset_edgeSet he
-
 /-- A maximal-length trail starting from `s₀`, which exists whenever `s₀` has an
 incident edge. It ends at a vertex all of whose incident edges are used by the trail. -/
 lemma exists_maximal_trail {s₀ : V} (h : ∃ x, G.Adj s₀ x) :
@@ -126,7 +108,7 @@ lemma exists_maximal_trail {s₀ : V} (h : ∃ x, G.Adj s₀ x) :
       simp [Walk.concat_eq_append, hlen]
     have hmemT : m + 1 ∈ T := by
       simp only [hTdef, mem_filter, mem_range]
-      have hb := trail_length_le_card (w.concat hx) htrail'
+      have hb := htrail'.length_le_card_edgeFinset
       rw [hlen'] at hb
       exact ⟨by omega, x, w.concat hx, htrail', hlen'⟩
     have := hmaxle (m + 1) hmemT
@@ -175,27 +157,7 @@ lemma find_good {s₀ t : V} (w : G.Walk s₀ t)
         have hvv2 : vv ≠ s₀ := fun h => hvv (Or.inr (Or.inl h))
         have hvv3 : vv ∉ interiorVerts w := fun h => hvv (Or.inr (Or.inr h))
         have hvv' : ∃ x, (G.deleteEdges (↑w.edges.toFinset)).Adj vv x := by
-          cases W' with
-          | nil =>
-            obtain (h | h1) := hz
-            · exact absurd h hvv1
-            · obtain (h2 | hi | h2) := start_or_interior_or_end h1
-              · exact absurd h2 hvv2
-              · exact absurd hi hvv3
-              · rw [h2] at huv'
-                rw [SimpleGraph.deleteEdges_adj] at huv'
-                exact absurd (hmax uu huv'.1.symm) (by simpa [Sym2.eq_swap] using huv'.2)
-          | cons hvw W'' =>
-            rename_i vv2
-            by_cases h2 : s(vv, vv2) ∈ w.edges
-            · have hsu' : vv ∈ w.support := w.fst_mem_support_of_mem_edges h2
-              obtain (h3 | hi | h3) := start_or_interior_or_end hsu'
-              · exact absurd h3 hvv2
-              · exact absurd hi hvv3
-              · rw [h3] at huv'
-                rw [SimpleGraph.deleteEdges_adj] at huv'
-                exact absurd (hmax uu huv'.1.symm) (by simpa [Sym2.eq_swap] using huv'.2)
-            · exact ⟨vv2, by rw [SimpleGraph.deleteEdges_adj]; exact ⟨hvw, by simpa using h2⟩⟩
+          exact ⟨uu, huv'.symm⟩
         obtain ⟨s', hs', hr⟩ := ih hz hvv'
         exact ⟨s', hs', huv'.reachable.trans hr⟩
 
@@ -243,16 +205,6 @@ lemma gcd_eq_one_of_eq_one {s : Finset (Sym2 V)} {Φ : Sym2 V → ℕ} {e : Sym2
   exact Nat.dvd_one.mp d
 
 omit [Fintype V] in
-/-- The gcd over a finset only depends on the values of the function on that finset. -/
-lemma gcd_congr_on {s : Finset (Sym2 V)} {Φ Ψ : Sym2 V → ℕ} (h : ∀ e ∈ s, Φ e = Ψ e) :
-    s.gcd Φ = s.gcd Ψ := by
-  induction s using Finset.induction with
-  | empty => simp
-  | @insert a s has ih =>
-    rw [Finset.gcd_insert, Finset.gcd_insert, h a (Finset.mem_insert_self a s),
-      ih (fun e he => h e (Finset.mem_insert_of_mem he))]
-
-omit [Fintype V] in
 /-- The gcd over the `attach`ed finset, with the function applied to the underlying
 values, equals the gcd over the finset itself. -/
 lemma gcd_attach_val {s : Finset (Sym2 V)} {f : Sym2 V → ℕ} :
@@ -271,11 +223,11 @@ lemma gcd_interior {s₀ t : V} {w : G.Walk s₀ t} (htrail : w.IsTrail) {n : �
   have e1inc : w.edges[i] ∈ G.incidenceFinset v := by
     rw [G.mem_incidenceFinset]
     exact ⟨w.edges_subset_edgeSet (List.getElem_mem _),
-      by rw [edges_getElem w i hi1, ← hiv]; exact Sym2.mem_mk_right _ _⟩
+      by rw [Walk.getElem_edges hi1, ← hiv]; exact Sym2.mem_mk_right _ _⟩
   have e2inc : w.edges[i + 1] ∈ G.incidenceFinset v := by
     rw [G.mem_incidenceFinset]
     exact ⟨w.edges_subset_edgeSet (List.getElem_mem _),
-      by rw [edges_getElem w (i + 1) hi2, ← hiv]; exact Sym2.mem_mk_left _ _⟩
+      by rw [Walk.getElem_edges hi2, ← hiv]; exact Sym2.mem_mk_left _ _⟩
   apply gcd_eq_one_of_consecutive e1inc e2inc
   rw [trailLabel_of_mem (List.getElem_mem _), htrail.edges_nodup.idxOf_getElem i hi1,
     trailLabel_of_mem (List.getElem_mem _), htrail.edges_nodup.idxOf_getElem (i + 1) hi2]
@@ -289,7 +241,7 @@ lemma no_trail_edge_at {s₀ t : V} {w : G.Walk s₀ t} {v : V}
   intro hew
   obtain ⟨j, hj, rfl⟩ := List.mem_iff_getElem.mp hew
   have hv2 := (G.mem_incidenceFinset v _).mp he |>.2
-  rw [edges_getElem w j hj, Sym2.mem_iff] at hv2
+  rw [Walk.getElem_edges hj, Sym2.mem_iff] at hv2
   rcases hv2 with h | h
   · rcases Nat.eq_zero_or_pos j with hj0 | hjpos
     · rw [hj0, w.getVert_zero] at h
@@ -316,7 +268,7 @@ lemma degree_endpoint_le_one {s₀ t : V} {w : G.Walk s₀ t}
     obtain ⟨x, rfl⟩ := Sym2.mem_iff_exists.mp hed
     rw [SimpleGraph.mem_edgeSet] at he
     obtain ⟨j, hj, hje⟩ := List.mem_iff_getElem.mp (hmax x he)
-    rw [edges_getElem w j hj, Sym2.eq_iff] at hje
+    rw [Walk.getElem_edges hj, Sym2.eq_iff] at hje
     rcases hje with ⟨h1, h2⟩ | ⟨h1, h2⟩
     · rcases Nat.eq_zero_or_pos j with hj0 | hjpos
       · rw [hj0, w.getVert_zero] at h1
@@ -326,7 +278,7 @@ lemma degree_endpoint_le_one {s₀ t : V} {w : G.Walk s₀ t}
            by rw [Nat.sub_add_cancel hjpos]; exact h1⟩) hti
     · by_cases hjm : j + 1 = w.length
       · have hjl' : j = w.edges.length - 1 := by have hle := w.length_edges; omega
-        exact ⟨j, hj, by rw [edges_getElem w j hj, h1, h2]; exact Sym2.eq_swap, hjl'⟩
+        exact ⟨j, hj, by rw [Walk.getElem_edges hj, h1, h2]; exact Sym2.eq_swap, hjl'⟩
       · exact absurd (mem_interiorVerts.mpr
           ⟨j, by have hle := w.length_edges; omega, h2⟩) hti
   obtain ⟨j₁, hj₁, he₁q, hj₁q⟩ :=
@@ -358,16 +310,9 @@ lemma gcd_transfer {s₀ t : V} {w : G.Walk s₀ t} {n : ℕ} {Φ' : Sym2 V → 
       ((G.deleteEdges (↑w.edges.toFinset)).incidenceFinset v).gcd Φ' := by
   have hfin := incidenceFinset_deleteEdges_of_none hnone
   rw [hfin]
-  apply gcd_congr_on
+  apply Finset.gcd_congr rfl
   intro e he
   exact trailLabel_of_not_mem (hnone e (hfin.symm ▸ he))
-
-/-- The edge finset of a graph with the trail edges deleted. -/
-lemma edgeFinset_deleteEdges_trail {s₀ t : V} {w : G.Walk s₀ t} :
-    (G.deleteEdges (↑w.edges.toFinset)).edgeFinset = G.edgeFinset \ w.edges.toFinset := by
-  ext e
-  simp only [Finset.mem_sdiff, List.mem_toFinset, SimpleGraph.mem_edgeFinset,
-    Finset.mem_coe, mem_edgeSet_deleteEdges]
 
 /-- Main induction: in any graph where every component that contains an edge meets
 the set `S`, the edges can be labeled with `n + 1, …, n + k` in such a way that at
@@ -418,7 +363,7 @@ theorem exists_labeling : ∀ (k : ℕ) (H : SimpleGraph V) [DecidableRel H.Adj]
         · exact ⟨W.snd, W.adj_snd hW⟩
       obtain ⟨t, w, htrail, hmlen, hmax⟩ := exists_maximal_trail hs₀edge
       have hmlek : w.length ≤ k := by
-        have := trail_length_le_card w htrail
+        have := htrail.length_le_card_edgeFinset
         omega
       have hcard' : (H.deleteEdges (↑w.edges.toFinset)).edgeFinset.card = k - w.length := by
         have hsub : w.edges.toFinset ⊆ H.edgeFinset := by
@@ -426,7 +371,8 @@ theorem exists_labeling : ∀ (k : ℕ) (H : SimpleGraph V) [DecidableRel H.Adj]
           rw [List.mem_toFinset] at he
           rw [SimpleGraph.mem_edgeFinset]
           exact w.edges_subset_edgeSet he
-        rw [edgeFinset_deleteEdges_trail, Finset.card_sdiff, Finset.inter_eq_left.mpr hsub,
+        rw [SimpleGraph.edgeFinset_deleteEdges, Finset.card_sdiff,
+          Finset.inter_eq_left.mpr hsub,
           List.toFinset_card_of_nodup htrail.edges_nodup, w.length_edges, hk]
       have hcardlt : (H.deleteEdges (↑w.edges.toFinset)).edgeFinset.card < k := by omega
       have hS' : ∀ u v : V, (H.deleteEdges (↑w.edges.toFinset)).Adj u v →
@@ -552,7 +498,7 @@ problem imo1991_p4 {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V)
       · exact ⟨s', Finset.mem_insert_of_mem h, hr⟩
     obtain ⟨Φ', hΦ'b, hΦ'inj, hΦ'gcd⟩ :=
       exists_labeling (G.deleteEdges (↑w.edges.toFinset)).edgeFinset.card _ _ rfl hS' w.length
-    have hmlek : w.length ≤ G.edgeFinset.card := trail_length_le_card w htrail
+    have hmlek : w.length ≤ G.edgeFinset.card := htrail.length_le_card_edgeFinset
     have hcard' : (G.deleteEdges (↑w.edges.toFinset)).edgeFinset.card =
         G.edgeFinset.card - w.length := by
       have hsub : w.edges.toFinset ⊆ G.edgeFinset := by
@@ -560,7 +506,8 @@ problem imo1991_p4 {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V)
         rw [List.mem_toFinset] at he
         rw [SimpleGraph.mem_edgeFinset]
         exact w.edges_subset_edgeSet he
-      rw [edgeFinset_deleteEdges_trail, Finset.card_sdiff, Finset.inter_eq_left.mpr hsub,
+      rw [SimpleGraph.edgeFinset_deleteEdges, Finset.card_sdiff,
+        Finset.inter_eq_left.mpr hsub,
         List.toFinset_card_of_nodup htrail.edges_nodup, w.length_edges]
     -- Bounds.
     have hb : ∀ e ∈ G.edgeSet,
@@ -616,7 +563,7 @@ problem imo1991_p4 {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V)
         have hmem : w.edges[0]'h0len ∈ G.incidenceFinset v := by
           rw [G.mem_incidenceFinset]
           exact ⟨w.edges_subset_edgeSet (List.getElem_mem _),
-            by rw [edges_getElem w 0 h0len, w.getVert_zero]; exact Sym2.mem_mk_left _ _⟩
+            by rw [Walk.getElem_edges h0len, w.getVert_zero]; exact Sym2.mem_mk_left _ _⟩
         apply gcd_eq_one_of_eq_one hmem
         rw [trailLabel_of_mem (List.getElem_mem _), htrail.edges_nodup.idxOf_getElem 0 h0len]
       · by_cases hvi : v ∈ interiorVerts w

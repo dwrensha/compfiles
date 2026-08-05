@@ -269,10 +269,7 @@ lemma phase_geom (a b H : Pt) (u w : Pt) (n s : ℝ)
     nlinarith [hcore, dH1, dH2, hd1, hd2]
   have hmaxnn : 0 ≤ max (dist H (a + s • u + w)) (dist H (a + s • u - w)) :=
     le_max_of_le_left dist_nonneg
-  calc Real.sqrt (dist a b ^ 2 + 1 / 2)
-      ≤ Real.sqrt ((max (dist H (a + s • u + w)) (dist H (a + s • u - w))) ^ 2) :=
-        Real.sqrt_le_sqrt hmax2
-    _ = max (dist H (a + s • u + w)) (dist H (a + s • u - w)) := Real.sqrt_sq hmaxnn
+  exact (Real.sqrt_le_left hmaxnn).mpr hmax2
 
 /-- Bounds for `√(n² - 1)`. -/
 lemma sqrt_est (n : ℝ) (hn : 1 ≤ n) : n - 1 / n ≤ Real.sqrt (n ^ 2 - 1) ∧

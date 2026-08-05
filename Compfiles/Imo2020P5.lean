@@ -203,11 +203,7 @@ lemma all_equal {α : Type} [Fintype α] [Nonempty α] (f : α → ℕ+)
         exact dvd_mul_of_dvd_right hPdN _
       exact hPprime.dvd_of_dvd_pow h2
     have hfin : P ∣ (g m0 : ℕ) := by
-      obtain ⟨c, hc⟩ := hPdsum
-      obtain ⟨e, he⟩ := hPdvd
-      refine ⟨c - e, ?_⟩
-      have h3 : (g m0 : ℕ) = P * c - P * e := by omega
-      rw [h3, ← Nat.mul_sub_left_distrib]
+      exact (Nat.dvd_add_iff_right hPdvd).mpr hPdsum
     exact absurd hfin hm0mem.2
 snip end
 

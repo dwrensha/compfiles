@@ -393,21 +393,7 @@ theorem ncard_biUnion {α : Type*} (s : Finset ℕ) (f : ℕ → Set α)
         Set.Finite.biUnion (Finset.finite_toSet s)
           (fun j hj ↦ hf j (Finset.mem_insert_of_mem hj))
       have hunion : (⋃ x ∈ insert i s, f x) = f i ∪ ⋃ x ∈ s, f x := by
-        ext x
-        constructor
-        · intro hx
-          rw [Set.mem_iUnion₂] at hx
-          obtain ⟨j, hj, hx⟩ := hx
-          rw [Finset.mem_insert] at hj
-          rcases hj with rfl | hj
-          · exact Or.inl hx
-          · exact Or.inr (Set.mem_iUnion₂.mpr ⟨j, hj, hx⟩)
-        · intro hx
-          rcases hx with hx | hx
-          · exact Set.mem_iUnion₂.mpr ⟨i, hmem, hx⟩
-          · rw [Set.mem_iUnion₂] at hx
-            obtain ⟨j, hj, hx⟩ := hx
-            exact Set.mem_iUnion₂.mpr ⟨j, Finset.mem_insert_of_mem hj, hx⟩
+        exact Finset.set_biUnion_insert i s f
       rw [Finset.sum_insert his, hunion,
         Set.ncard_union_eq _ (hf i hmem) hfin]
       · rw [ih (fun j hj j' hj' ↦ hd j (Finset.mem_insert_of_mem hj) j'

@@ -103,8 +103,7 @@ lemma card_powersetCard_filter_mem₂ {i j : Fin 11} (hij : i ≠ j) :
         hjS
       rw [Finset.mem_filter, Finset.mem_powersetCard]
       refine ⟨⟨?_, ?_⟩, ?_, ?_⟩
-      · exact Finset.insert_subset (Finset.mem_univ i) (Finset.insert_subset (Finset.mem_univ j)
-          (hSsub.trans ((Finset.erase_subset _ _).trans (Finset.erase_subset _ _))))
+      · exact Finset.subset_univ _
       · rw [Finset.card_insert_of_notMem hijS, Finset.card_insert_of_notMem hjS, hScard]
       · exact Finset.mem_insert_self i _
       · exact Finset.mem_insert_of_mem (Finset.mem_insert_self j S)

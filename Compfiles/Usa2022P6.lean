@@ -508,12 +508,8 @@ lemma Cover.merge {G G' : SimpleGraph V} [DecidableRel G.Adj] (cov : Cover G G')
     have h34 : L3 = L4 := by rw [hmem L3 hL3S, hmem L4 hL4S]
     exact hdiff ⟨h12, h23, h34⟩
   have hScard4 : S.card ≤ 4 := by
-    have h1 := Finset.card_insert_le L1 (insert L2 (insert L3 {L4}) : Finset (Finset V))
-    have h2 := Finset.card_insert_le L2 (insert L3 {L4} : Finset (Finset V))
-    have h3 := Finset.card_insert_le L3 ({L4} : Finset (Finset V))
-    have h4 : ({L4} : Finset (Finset V)).card = 1 := Finset.card_singleton L4
     rw [hS]
-    omega
+    exact Finset.card_le_four
   -- the set `E4` of the four edges has cardinality 4
   have he1E4 : e1 ∈ E4 := by rw [hE4]; exact Finset.mem_insert_self _ _
   have he2E4 : e2 ∈ E4 := by rw [hE4]; simp
@@ -563,12 +559,7 @@ lemma Cover.merge {G G' : SimpleGraph V} [DecidableRel G.Adj] (cov : Cover G G')
       have h1 : ∀ K ∈ S, K.card = ∑ v ∈ V', (if v ∈ K then 1 else 0) := by
         intro K hK
         have hKV' : K ⊆ V' := Finset.subset_biUnion_of_mem id hK
-        have h2 : V'.filter (· ∈ K) = K := by
-          ext v
-          rw [Finset.mem_filter]
-          exact ⟨fun h => h.2, fun h => ⟨hKV' h, h⟩⟩
-        conv_lhs => rw [← h2]
-        rw [Finset.card_filter]
+        exact Finset.card_eq_sum_ite hKV'
       calc ∑ K ∈ S, K.card = ∑ K ∈ S, ∑ v ∈ V', (if v ∈ K then 1 else 0) :=
             Finset.sum_congr rfl h1
         _ = ∑ v ∈ V', ∑ K ∈ S, (if v ∈ K then 1 else 0) := Finset.sum_comm
@@ -785,23 +776,7 @@ lemma Cover.merge {G G' : SimpleGraph V} [DecidableRel G.Adj] (cov : Cover G G')
             exact ⟨he, by rw [hℓ'G e he, if_pos hS']⟩
         have hfib2 : (G.edgeFinset.filter (fun e => cov.ℓ e ∈ S)).card
             = ∑ K' ∈ S, (G.edgeFinset.filter (fun e => cov.ℓ e = K')).card := by
-          have h := Finset.card_eq_sum_card_fiberwise (f := cov.ℓ)
-            (s := G.edgeFinset.filter (fun e => cov.ℓ e ∈ S)) (t := S) (by
-              intro e he
-              rw [Finset.mem_coe, Finset.mem_filter] at he
-              exact he.2)
-          rw [h]
-          apply Finset.sum_congr rfl
-          intro K' hK'
-          rw [Finset.filter_filter]
-          congr 1
-          apply Finset.filter_congr
-          intro e _
-          constructor
-          · rintro ⟨-, h2⟩
-            exact h2
-          · intro h2
-            exact ⟨by rw [h2]; exact hK', h2⟩
+          exact (Finset.sum_card_fiberwise_eq_card_filter G.edgeFinset S cov.ℓ).symm
         have hsumθ : 3 * (∑ K' ∈ S, K'.card)
             ≤ 2 * (∑ K' ∈ S, (G.edgeFinset.filter (fun e => cov.ℓ e = K')).card)
               + S.card * 4 := by
@@ -934,10 +909,7 @@ lemma lower_bound_of_terminal {G G' : SimpleGraph V} [DecidableRel G.Adj]
         have hsub : (Finset.univ : Finset V) ⊆ {x, y, z} := fun w _ => h w
         have hcle := Finset.card_le_card hsub
         have h3 : ({x, y, z} : Finset V).card ≤ 3 := by
-          have h1 := Finset.card_insert_le x ({y, z} : Finset V)
-          have h2 := Finset.card_insert_le y ({z} : Finset V)
-          have h4 : ({z} : Finset V).card = 1 := Finset.card_singleton z
-          omega
+          exact Finset.card_le_three
         rw [Finset.card_univ] at hcle
         omega
       simp only [Finset.mem_insert, Finset.mem_singleton, not_or] at hw

@@ -212,16 +212,6 @@ lemma prefix_append_cases {α : Type*} {pre X Y : List α} (h : pre <+: X ++ Y) 
   · exact Or.inl ⟨a, hX.symm⟩
   · exact Or.inr ⟨a, hpre, ⟨s, hY.symm⟩⟩
 
-/-- A prefix of a cons is either empty or starts with the head. -/
-lemma prefix_cons_cases {α : Type*} {pre : List α} {x : α} {Y : List α}
-    (h : pre <+: x :: Y) : pre = [] ∨ ∃ pre', pre = x :: pre' ∧ pre' <+: Y := by
-  obtain ⟨s, hs⟩ := h
-  cases pre with
-  | nil => exact Or.inl rfl
-  | cons y pre' =>
-    rw [List.cons_append, List.cons.injEq] at hs
-    exact Or.inr ⟨pre', hs.1 ▸ rfl, ⟨s, hs.2⟩⟩
-
 lemma map_down_map_up (l : List (ℕ × Bool)) :
     (l.map fun p : ℕ × Bool ↦ (p.1 + 1, p.2)).map (fun p : ℕ × Bool ↦ (p.1 - 1, p.2)) = l := by
   induction l with
@@ -404,7 +394,7 @@ lemma validSeq_insert {lr : List (ℕ × Bool)} (hnd : (lr.map Prod.fst).Nodup)
     rw [hpre_eq, balance_map_succ]
     have h0 := hval _ (List.take_prefix pre.length lr)
     omega
-  · rcases prefix_cons_cases hp' with rfl | ⟨pre'', hpre'_eq, hp''⟩
+  · rcases List.prefix_cons_iff.mp hp' with rfl | ⟨pre'', hpre'_eq, hp''⟩
     · rw [List.append_nil] at hpre_eq
       have hpm : pre <+: (lr.map fun p : ℕ × Bool ↦ (p.1 + 1, p.2)) := by
         rw [hpre_eq]; exact List.take_prefix _ _

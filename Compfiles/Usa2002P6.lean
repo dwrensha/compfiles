@@ -310,10 +310,7 @@ theorem lower_card_filter_le_fourteen {n : ℕ} {s : Finset (ℕ × ℕ)} (hs : 
       rw [Finset.card_product, Nat.card_Icc]
       have hIcc : i + 1 - (i - 2) ≤ 3 := by omega
       have h3 : ({j, j + 1, j + 2} : Finset ℕ).card ≤ 3 := by
-        have h1 := Finset.card_insert_le j ({j + 1, j + 2} : Finset ℕ)
-        have h2 := Finset.card_insert_le (j + 1) ({j + 2} : Finset ℕ)
-        have h4 := Finset.card_singleton (j + 2)
-        omega
+        exact Finset.card_le_three
       exact (Nat.mul_le_mul hIcc h3).trans (by norm_num)
     exact (Finset.card_union_le _ _).trans
       ((add_le_add ((Finset.card_le_card hsub1).trans hcard1)

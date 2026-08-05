@@ -352,13 +352,6 @@ lemma connectedP_succPerm {S : Finset ℕ} (hne : S.Nonempty) (p : Fin #S ≃ S)
   simp only [zmod_add, Fin.val_natCast, ZMod.natCast_mod, ZMod.natCast_zmod_val]
   ring
 
-/-- `i.succ` in `Fin (m+1)` is `i.castSucc + 1`. -/
-lemma fin_succ_eq {m : ℕ} (i : Fin m) : i.succ = i.castSucc + 1 := by
-  have hm : 0 < m := i.pos
-  apply Fin.ext
-  rw [Fin.val_succ, Fin.val_add, Fin.val_one', Fin.val_castSucc,
-    Nat.mod_eq_of_lt (by omega : 1 < m + 1), Nat.mod_eq_of_lt (by omega : i.val + 1 < m + 1)]
-
 /-- A permutation of `Fin n` commuting with `+ 1` is a rotation. -/
 lemma zmod_eq_of_add_key {n : ℕ} [NeZero n] (g : Equiv.Perm (Fin n))
     (key : ∀ j : Fin n, g (j + 1) = g j + 1) (j : Fin n) :
@@ -367,7 +360,7 @@ lemma zmod_eq_of_add_key {n : ℕ} [NeZero n] (g : Equiv.Perm (Fin n))
   induction j using Fin.induction with
   | zero => simp
   | succ i ih =>
-    rw [fin_succ_eq i, key _]
+    rw [← Fin.coeSucc_eq_succ, key _]
     simp only [zmod_add, zmod_one, ih, Fin.val_castSucc]
     ring
 
@@ -386,7 +379,7 @@ lemma zmod_eq_of_sub_key {n : ℕ} [NeZero n] (g : Equiv.Perm (Fin n))
           = ((g i.castSucc).val : ZMod (m + 1)) := by rw [h2]
       rw [zmod_add, zmod_one] at h3
       linear_combination h3
-    rw [fin_succ_eq i, e]
+    rw [← Fin.coeSucc_eq_succ, e]
     simp only [ih, Fin.val_castSucc, zmod_add, zmod_one]
     ring
 
@@ -653,17 +646,7 @@ lemma connectedP_inv {S : Finset ℕ} {σ : Equiv.Perm S} (hc : ConnectedP σ) :
       intro s t
       rw [Function.iterate_succ_apply', Function.iterate_succ_apply']
       have e1 : (σ⁻¹) ((⇑(σ⁻¹))^[m] s) = t ↔ (⇑(σ⁻¹))^[m] s = σ t := by
-        constructor
-        · intro h
-          have h2 := congrArg σ h
-          have h3 : σ (σ⁻¹ ((⇑(σ⁻¹))^[m] s)) = (⇑(σ⁻¹))^[m] s :=
-            Equiv.apply_symm_apply _ _
-          rw [h3] at h2
-          exact h2
-        · intro h
-          rw [h]
-          show (σ⁻¹) (σ t) = t
-          exact Equiv.symm_apply_apply _ _
+        exact Equiv.Perm.inv_eq_iff_eq
       rw [e1, ihm, ← Function.iterate_succ_apply σ m t,
         ← Function.iterate_succ_apply' σ m t]
   intro s t

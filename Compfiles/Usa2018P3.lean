@@ -61,12 +61,6 @@ lemma coprime_mod_left' {m x : ℕ} (h : Nat.Coprime m x) : Nat.Coprime m (x % m
   rw [← hmod] at h
   exact (Nat.coprime_add_mul_left_right m (x % m) (x / m)).mp h
 
-/-- Elements of the form `a + n * h` with `a < n`, `h < q` are `< n * q`. -/
-lemma add_mul_lt {n q a h : ℕ} (ha : a < n) (hh : h < q) : a + n * h < n * q := by
-  calc a + n * h < n + n * h := Nat.add_lt_add_right ha _
-    _ = n * (h + 1) := by ring
-    _ ≤ n * q := Nat.mul_le_mul_left n (Nat.succ_le_of_lt hh)
-
 /-- The map `(a, h) ↦ a + n * h` is injective when `a, a' < n`. -/
 lemma add_mul_inj {n a h a' h' : ℕ} (ha : a < n) (ha' : a' < n)
     (heq : a + n * h = a' + n * h') : a = a' ∧ h = h' := by
@@ -106,7 +100,7 @@ lemma powSum_mul_prime_of_dvd {n q : ℕ} (hn : 2 ≤ n) (hq : q.Prime) (hqd : q
       obtain ⟨⟨halt, hacp⟩, hh⟩ := hmem
       show a + n * h ∈ coprimeSet (n * q)
       rw [mem_coprimeSet]
-      refine ⟨add_mul_lt halt hh, ?_⟩
+      refine ⟨Nat.add_mul_lt_mul_of_lt_of_lt halt hh, ?_⟩
       have hqa : Nat.Coprime q a := hacp.coprime_dvd_left hqd
       obtain ⟨c, hc⟩ := hqd
       have h1 : Nat.Coprime n (a + n * h) := (Nat.coprime_add_mul_left_right n a h).mpr hacp
@@ -156,7 +150,7 @@ lemma powSum_mul_prime_of_not_dvd {n q : ℕ} (hn : 2 ≤ n) (hq : q.Prime) (hqd
         · rw [mem_coprimeSet]
           refine ⟨?_, ?_⟩
           · rw [Nat.div_lt_iff_lt_mul hq0]
-            exact add_mul_lt halt hh
+            exact Nat.add_mul_lt_mul_of_lt_of_lt halt hh
           · exact ((Nat.coprime_add_mul_left_right n a h).mpr hacp).coprime_dvd_right
               ⟨q, by rw [mul_comm ((a + n * h) / q) q]; exact (Nat.mul_div_cancel' hqx).symm⟩
         · show (a + n * h) / q * q = a + n * h
@@ -165,7 +159,7 @@ lemma powSum_mul_prime_of_not_dvd {n q : ℕ} (hn : 2 ≤ n) (hq : q.Prime) (hqd
       · rw [Finset.mem_union]
         left
         rw [mem_coprimeSet]
-        exact ⟨add_mul_lt halt hh,
+        exact ⟨Nat.add_mul_lt_mul_of_lt_of_lt halt hh,
           ((Nat.coprime_add_mul_left_right n a h).mpr hacp).mul_left
             (hq.coprime_iff_not_dvd.mpr hqx)⟩
     · intro hx

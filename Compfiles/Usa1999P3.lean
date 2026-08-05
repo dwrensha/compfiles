@@ -205,11 +205,7 @@ lemma Sw_mul_sub_one {p : ℕ} [NeZero p] (hp : p.Prime) (hp2 : 2 < p) {j : ZMod
       ring
     · rw [if_neg hk]
       have hkval : k.val ≠ 0 := by
-        intro h0
-        apply hk
-        have h1 : (k.val : ZMod p) = k := ZMod.natCast_zmod_val k
-        rw [h0, Nat.cast_zero] at h1
-        exact h1.symm
+        exact (ZMod.val_ne_zero k).mpr hk
       have hval : (k - 1).val = k.val - 1 := by
         have h4 : ((k.val - 1 + 1 : ℕ) : ZMod p) = (k.val : ZMod p) := by
           rw [Nat.sub_add_cancel (by omega : 1 ≤ k.val)]

@@ -109,11 +109,7 @@ lemma bddCond_iff (f : ℤ[X]) : BddCond f ↔ ∃ B, Pbound f B := by
       obtain ⟨hqp, hqd, _⟩ := hqmem
       have h1 : ((f.eval ((n : ℤ) ^ 2)).natAbs.primeFactors.max' he : ℤ) ∣
           f.eval ((n : ℤ) ^ 2) := by
-        have h2 : (((f.eval ((n : ℤ) ^ 2)).natAbs.primeFactors.max' he : ℤ)).natAbs ∣
-            (f.eval ((n : ℤ) ^ 2)).natAbs := by
-          rw [Int.natAbs_natCast]
-          exact hqd
-        exact Int.natAbs_dvd_natAbs.mp h2
+        exact Int.ofNat_dvd_left.mpr hqd
       have hqle := (hB n).2 _ hqp h1
       have h3 : ((gpd (f.eval ((n : ℤ) ^ 2)) : ℕ) : ℤ) =
           ((f.eval ((n : ℤ) ^ 2)).natAbs.primeFactors.max' he : ℕ) := by
@@ -362,9 +358,7 @@ lemma schur (h : ℤ[X]) (hd : h.natDegree ≠ 0) (s : Finset ℕ) (hs : ∀ q �
     set q := p.natAbs with hq
     have hqp : q.Prime := Int.prime_iff_natAbs_prime.mp hpp
     have hqdw : (q : ℤ) ∣ w := by
-      have h1 : p.natAbs ∣ w.natAbs := Int.natAbs_dvd_natAbs.mpr hpd
-      have h2 : ((p.natAbs : ℕ) : ℤ) ∣ (w.natAbs : ℤ) := Int.ofNat_dvd.mpr h1
-      exact dvd_trans h2 Int.natAbs_dvd_self
+      exact Int.natAbs_dvd.mpr hpd
     have hqs : q ∉ s := by
       intro hmem
       have hqP : (q : ℤ) ∣ P := by

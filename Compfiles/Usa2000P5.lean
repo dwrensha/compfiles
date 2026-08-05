@@ -150,17 +150,6 @@ lemma adjacent_vertices_ne {A : ZMod 3 → Point}
     | exact vertex_ne_12 hABC
     | exact vertex_ne_20 hABC
 
-lemma sphere_center_ne_of_mem_of_ne {s : Circle} {p q : Point}
-    (hp : p ∈ s) (hq : q ∈ s) (hpq : p ≠ q) : s.center ≠ p := by
-  intro hcenter
-  have hradius : s.radius = 0 := by
-    have hcenter_mem : s.center ∈ s := by
-      simpa [hcenter] using hp
-    exact EuclideanGeometry.Sphere.center_mem_iff.mp hcenter_mem
-  have hq_dist : dist q p = 0 := by
-    simpa [hcenter, hradius] using EuclideanGeometry.mem_sphere.mp hq
-  exact hpq (dist_eq_zero.mp hq_dist).symm
-
 -- A line intersects a nondegenerate perpendicular bisector at most once.
 lemma collinear_perpBisector_eq {a b p q : Point}
     (hab : a ≠ b)
@@ -186,13 +175,15 @@ lemma centers_eq_of_oangle_eq
     (ω 0).center = (ω 6).center := by
   have hside : A 1 ≠ A 0 := (vertex_ne_01 hABC).symm
   have hcenter0 : (ω 0).center ≠ A 0 :=
-    sphere_center_ne_of_mem_of_ne (hA 0).1 (hA 0).2 (vertex_ne_01 hABC)
+    (EuclideanGeometry.Sphere.ne_center_of_mem_of_mem_of_ne
+      (hA 0).1 (hA 0).2 (vertex_ne_01 hABC)).symm
   have hcenter6 : (ω 6).center ≠ A 0 := by
     have hp : A 0 ∈ ω 6 := by
       exact (hA 6).1
     have hq : A 1 ∈ ω 6 := by
       exact (hA 6).2
-    exact sphere_center_ne_of_mem_of_ne hp hq (vertex_ne_01 hABC)
+    exact (EuclideanGeometry.Sphere.ne_center_of_mem_of_mem_of_ne
+      hp hq (vertex_ne_01 hABC)).symm
   have ho0 : EuclideanGeometry.oangle (ω 0).center (A 0) (ω 6).center = 0 := by
     have hadd := EuclideanGeometry.oangle_add hside hcenter0 hcenter6
     exact add_left_cancel
@@ -215,14 +206,14 @@ lemma shared_vertex_sbtw
     (i : Fin 7) (hi : i < 6) :
     Sbtw ℝ (circleCenter ω i) (rightVertex A i) (circleCenter ω (i + 1)) := by
   refine ⟨(tangent_at_shared_vertex hTangent hA i hi).wbtw, ?_, ?_⟩
-  · exact (sphere_center_ne_of_mem_of_ne
+  · exact EuclideanGeometry.Sphere.ne_center_of_mem_of_mem_of_ne
       (rightVertex_mem_circle hA i) (leftVertex_mem_circle hA i)
-      (adjacent_vertices_ne hABC i).symm).symm
+      (adjacent_vertices_ne hABC i).symm
   · have hpq : rightVertex A i ≠ rightVertex A (i + 1) := by
       rw [rightVertex_eq_leftVertex_succ A i hi]
       exact adjacent_vertices_ne hABC (i + 1)
-    exact (sphere_center_ne_of_mem_of_ne
-      (rightVertex_mem_next_circle hA i hi) (rightVertex_mem_circle hA (i + 1)) hpq).symm
+    exact EuclideanGeometry.Sphere.ne_center_of_mem_of_mem_of_ne
+      (rightVertex_mem_next_circle hA i hi) (rightVertex_mem_circle hA (i + 1)) hpq
 
 -- One straight-center step for directed angles.
 lemma directed_angle_step {a b c u v : Point}

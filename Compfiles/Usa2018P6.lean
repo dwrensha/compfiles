@@ -927,14 +927,6 @@ lemma Perm_mul_self_eq_one_of_involutive {n : ℕ} {ψ : Equiv.Perm (Fin n)}
   simp only [Equiv.Perm.mul_apply, Equiv.Perm.one_apply]
   exact congrArg Fin.val (h x)
 
-/-- Swaps are involutions. -/
-lemma swap_involutive {α : Type*} [DecidableEq α] (a b : α) :
-    Function.Involutive (Equiv.swap a b) := fun x => by
-  have h := Equiv.swap_swap a b
-  have h2 := Equiv.ext_iff.1 h x
-  simp only [Equiv.trans_apply, Equiv.refl_apply] at h2
-  exact h2
-
 /-- A fantastic vertex admits only the trivial switching involution. -/
 theorem card_switch_eq_one_of_fantastic {n : ℕ} {σ : Equiv.Perm (Fin n)}
     (hf : Fantastic σ) : Fintype.card {φ : Equiv.Perm (Fin n) // IsSwitch σ φ} = 1 := by
@@ -969,7 +961,7 @@ lemma conj_isSwitch {n : ℕ} {σ : Equiv.Perm (Fin n)}
   have hc_b : c b = a := Equiv.swap_apply_right a b
   have hc_fix : ∀ x : Fin n, x ≠ a → x ≠ b → c x = x := fun x hxa hxb =>
     Equiv.swap_apply_of_ne_of_ne hxa hxb
-  have hc_invol : Function.Involutive c := swap_involutive a b
+  have hc_invol : Function.Involutive c := Equiv.swap_apply_self a b
   have hc_nums : ∀ x : Fin n, c x ∈ nums σ ↔ x ∈ nums σ := by
     intro x
     by_cases hxa : x = a
@@ -1418,7 +1410,7 @@ lemma isSwitch_mul {n : ℕ} {σ : Equiv.Perm (Fin n)} (hσ : Function.Involutiv
   have h0sq : ψ₀ * ψ₀ = 1 := by
     cases hψ₀ with
     | inl h1 => rw [h1, one_mul]
-    | inr h1 => rw [h1]; exact Perm_mul_self_eq_one_of_involutive (swap_involutive a b)
+    | inr h1 => rw [h1]; exact Perm_mul_self_eq_one_of_involutive (Equiv.swap_apply_self a b)
   have h1sq : ψ₁ * ψ₁ = 1 := Perm_mul_self_eq_one_of_involutive hψ₁.1
   have hsq : (ψ₀ * ψ₁) * (ψ₀ * ψ₁) = 1 := by
     calc (ψ₀ * ψ₁) * (ψ₀ * ψ₁)
@@ -1606,7 +1598,7 @@ theorem even_card_switch_of_not_fantastic {n : ℕ} {σ : Equiv.Perm (Fin n)}
     push Not at hf
     exact hf
   have hc2 : Equiv.swap a b * Equiv.swap a b = 1 :=
-    Perm_mul_self_eq_one_of_involutive (swap_involutive a b)
+    Perm_mul_self_eq_one_of_involutive (Equiv.swap_apply_self a b)
   have hc_ne : (1 : Equiv.Perm (Fin n)) ≠ Equiv.swap a b := by
     intro h
     have h1 := congrArg (fun x => x a) h
@@ -1652,28 +1644,7 @@ theorem even_card_switch_of_not_fantastic {n : ℕ} {σ : Equiv.Perm (Fin n)}
     right_inv := fun ψ => rfl }
   have hequiv := hequiv1.trans (fixedDecompEquiv hσ ha hb hab hne)
   have hcard0 : Fintype.card {ψ₀ : Equiv.Perm (Fin n) // ψ₀ = 1 ∨ ψ₀ = Equiv.swap a b} = 2 := by
-    let e : {ψ₀ : Equiv.Perm (Fin n) // ψ₀ = 1 ∨ ψ₀ = Equiv.swap a b} ≃ Fin 2 := {
-      toFun := fun ψ₀ => if ψ₀.1 = 1 then 0 else 1
-      invFun := fun i => if i = 0 then ⟨1, Or.inl rfl⟩ else ⟨Equiv.swap a b, Or.inr rfl⟩
-      left_inv := fun ψ₀ => by
-        obtain ⟨ψ₀, hψ₀⟩ := ψ₀
-        show (if (if ψ₀ = 1 then (0 : Fin 2) else 1) = 0 then
-            (⟨1, Or.inl rfl⟩ : {ψ₀ : Equiv.Perm (Fin n) // ψ₀ = 1 ∨ ψ₀ = Equiv.swap a b})
-          else ⟨Equiv.swap a b, Or.inr rfl⟩) = ⟨ψ₀, hψ₀⟩
-        by_cases h : ψ₀ = 1
-        · rw [if_pos h, if_pos rfl]
-          exact Subtype.ext h.symm
-        · rw [if_neg h, if_neg (by decide)]
-          exact Subtype.ext (hψ₀.resolve_left h).symm
-      right_inv := fun i => by
-        fin_cases i
-        · show (if ((⟨1, Or.inl rfl⟩ : {ψ₀ : Equiv.Perm (Fin n) // ψ₀ = 1 ∨ ψ₀ = Equiv.swap a b}).1 = 1)
-            then (0 : Fin 2) else 1) = 0
-          rw [if_pos rfl]
-        · show (if ((⟨Equiv.swap a b, Or.inr rfl⟩ : {ψ₀ : Equiv.Perm (Fin n) // ψ₀ = 1 ∨ ψ₀ = Equiv.swap a b}).1 = 1)
-            then (0 : Fin 2) else 1) = 1
-          rw [if_neg hc_ne.symm] }
-    rw [Fintype.card_congr e, Fintype.card_fin]
+    exact Fintype.card_subtype_eq_or_eq_of_ne hc_ne
   have hev : Fintype.card {x // G x = x} % 2 = 0 := by
     rw [Fintype.card_congr hequiv, Fintype.card_prod, hcard0]
     omega
