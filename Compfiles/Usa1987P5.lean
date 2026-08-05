@@ -78,73 +78,6 @@ lemma choose_add_two (x y : ℕ) : (x + y).choose 2 = x.choose 2 + y.choose 2 + 
     ring
   exact_mod_cast key
 
-/-- The number of increasing pairs in a finset of `Fin n`. -/
-lemma card_pairs_lt (s : Finset (Fin n)) :
-    ((s ×ˢ s).filter fun p ↦ p.1 < p.2).card = s.card.choose 2 := by
-  have hA : ((s ×ˢ s).filter fun p ↦ p.1 < p.2) ∪ ((s ×ˢ s).filter fun p ↦ p.2 < p.1) ∪
-      ((s ×ˢ s).filter fun p ↦ p.1 = p.2) = s ×ˢ s := by
-    ext ⟨x, y⟩
-    simp only [Finset.mem_union, Finset.mem_filter, Finset.mem_product]
-    constructor
-    · rintro ((⟨h, _⟩ | ⟨h, _⟩) | ⟨h, _⟩) <;> exact h
-    · intro h
-      rcases lt_trichotomy x y with hxy | hxy | hxy
-      · exact Or.inl (Or.inl ⟨h, hxy⟩)
-      · exact Or.inr ⟨h, hxy⟩
-      · exact Or.inl (Or.inr ⟨h, hxy⟩)
-  have hdisj1 : Disjoint ((s ×ˢ s).filter fun p ↦ p.1 < p.2)
-      ((s ×ˢ s).filter fun p ↦ p.2 < p.1) := by
-    apply Finset.disjoint_left.mpr
-    rintro ⟨x, y⟩ h1 h2
-    simp only [Finset.mem_filter] at h1 h2
-    exact absurd (h1.2.trans h2.2) (lt_irrefl x)
-  have hdisj2 : Disjoint (((s ×ˢ s).filter fun p ↦ p.1 < p.2) ∪
-      ((s ×ˢ s).filter fun p ↦ p.2 < p.1)) ((s ×ˢ s).filter fun p ↦ p.1 = p.2) := by
-    apply Finset.disjoint_left.mpr
-    rintro ⟨x, y⟩ h1 h2
-    simp only [Finset.mem_union, Finset.mem_filter] at h1 h2
-    rcases h1 with h1 | h1 <;> rw [h2.2] at h1 <;> exact absurd h1.2 (lt_irrefl y)
-  have hcard : s.card * s.card =
-      ((s ×ˢ s).filter fun p ↦ p.1 < p.2).card +
-      ((s ×ˢ s).filter fun p ↦ p.2 < p.1).card +
-      ((s ×ˢ s).filter fun p ↦ p.1 = p.2).card := by
-    have h2 : ((s ×ˢ s).filter fun p ↦ p.1 < p.2).card +
-        ((s ×ˢ s).filter fun p ↦ p.2 < p.1).card +
-        ((s ×ˢ s).filter fun p ↦ p.1 = p.2).card = (s ×ˢ s).card := by
-      rw [← Finset.card_union_of_disjoint hdisj1, ← Finset.card_union_of_disjoint hdisj2, hA]
-    rw [Finset.card_product] at h2
-    exact h2.symm
-  have hswap : ((s ×ˢ s).filter fun p ↦ p.2 < p.1).card =
-      ((s ×ˢ s).filter fun p ↦ p.1 < p.2).card := by
-    have hmap : ((s ×ˢ s).filter fun p ↦ p.2 < p.1) =
-        ((s ×ˢ s).filter fun p ↦ p.1 < p.2).map (Equiv.prodComm (Fin n) (Fin n)).toEmbedding := by
-      ext p
-      simp only [Finset.mem_filter, Finset.mem_product, Finset.mem_map, Equiv.coe_toEmbedding]
-      constructor
-      · rintro ⟨⟨hx, hy⟩, hxy⟩
-        exact ⟨p.swap, ⟨⟨hy, hx⟩, hxy⟩, by simp⟩
-      · rintro ⟨w, ⟨⟨hw1, hw2⟩, hw3⟩, heq⟩
-        rw [← heq]
-        exact ⟨⟨hw2, hw1⟩, hw3⟩
-    rw [hmap, Finset.card_map]
-  have hdiag : ((s ×ˢ s).filter fun p ↦ p.1 = p.2).card = s.card := by
-    have himg : ((s ×ˢ s).filter fun p ↦ p.1 = p.2) = s.image fun x ↦ (x, x) := by
-      ext ⟨x, y⟩
-      simp only [Finset.mem_filter, Finset.mem_product, Finset.mem_image, Prod.mk.injEq]
-      constructor
-      · rintro ⟨⟨hx, hy⟩, rfl⟩
-        exact ⟨x, hx, rfl, rfl⟩
-      · rintro ⟨a, ha, rfl, rfl⟩
-        exact ⟨⟨ha, ha⟩, rfl⟩
-    rw [himg]
-    apply Finset.card_image_of_injective
-    intro x y h
-    simpa using h
-  rw [hswap, hdiag] at hcard
-  have hm : s.card * (s.card - 1) = s.card * s.card - s.card := Nat.mul_sub_one _ _
-  rw [Nat.choose_two_right]
-  omega
-
 /-- Triples `i < j < k` with `a i = a j = a k`. -/
 def tripsA (a : Fin n → Bool) : Finset (Fin n × Fin n × Fin n) :=
   Finset.univ.filter fun t ↦ t.1 < t.2.1 ∧ t.2.1 < t.2.2 ∧ a t.1 = a t.2.1 ∧ a t.2.1 = a t.2.2
@@ -202,7 +135,7 @@ lemma card_tripsA (a : Fin n → Bool) :
   rw [Finset.card_eq_sum_card_fiberwise
     (f := fun t : Fin n × Fin n × Fin n ↦ t.2.2) (t := Finset.univ) (by simp)]
   refine Finset.sum_congr rfl fun k _ ↦ ?_
-  rw [← card_pairs_lt (eqBefore a k)]
+  rw [← Finset.card_product_filter_lt]
   apply Finset.card_bij (fun t _ ↦ (t.1, t.2.1))
   · intro t ht
     simp only [Finset.mem_filter, tripsA, Finset.mem_univ, true_and] at ht
@@ -258,7 +191,7 @@ lemma card_tripsC (a : Fin n → Bool) :
   rw [Finset.card_eq_sum_card_fiberwise
     (f := fun t : Fin n × Fin n × Fin n ↦ t.1) (t := Finset.univ) (by simp)]
   refine Finset.sum_congr rfl fun i _ ↦ ?_
-  rw [← card_pairs_lt (neqAfter a i)]
+  rw [← Finset.card_product_filter_lt]
   apply Finset.card_bij (fun t _ ↦ (t.2.1, t.2.2))
   · intro t ht
     simp only [Finset.mem_filter, tripsC, Finset.mem_univ, true_and] at ht
@@ -327,7 +260,7 @@ lemma sum_f (a : Fin n → Bool) :
     rw [← Finset.sum_add_distrib]
     refine Finset.sum_congr rfl fun i _ ↦ ?_
     rw [f_apply]
-  rw [hsplit, sum_eqBefore, sum_neqAfter, ← card_pairs_lt Finset.univ]
+  rw [hsplit, sum_eqBefore, sum_neqAfter, ← Finset.card_product_filter_lt]
   have hdis : Disjoint
       ((Finset.univ ×ˢ Finset.univ).filter fun p : Fin n × Fin n ↦ p.1 < p.2 ∧ a p.1 = a p.2)
       ((Finset.univ ×ˢ Finset.univ).filter fun p : Fin n × Fin n ↦ p.1 < p.2 ∧ a p.1 ≠ a p.2) := by
