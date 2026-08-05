@@ -707,10 +707,8 @@ lemma blocks_semi_inj_helper {a b: List (List Coin)}
         apply And.right at hab
         constructor <;> intro h' <;> rw [h', List.map_nil] at hab
         · symm at hab
-          rw [List.map_eq_nil_iff] at hab
-          exact hab
-        · rw [List.map_eq_nil_iff] at hab
-          exact hab
+          rwa [List.map_eq_nil_iff] at hab
+        · rwa [List.map_eq_nil_iff] at hab
       have hms' : ∀ {h' : ms ≠ []}, (ms.head h').head? = s.flip := by
         intro h'
         rcases ha₃.left (ms.head h') (List.head_mem_head? h') with ⟨hm', hms'', h''⟩
@@ -725,10 +723,8 @@ lemma blocks_semi_inj_helper {a b: List (List Coin)}
         rcases hb₃.left (ns.head h') (List.head_mem_head? h') with ⟨hn', hns'', h''⟩
         rw [beq_eq_false_iff_ne, ← Coin.flip_eq_iff] at h''
         simp only [hnqt] at h''
-        rw [List.getLast_replicate] at h''
         symm at h''
-        rw [List.head_eq_iff_head?_eq_some] at h''
-        exact h''
+        rwa [List.getLast_replicate, List.head_eq_iff_head?_eq_some] at h''
       have hmsns : (ms.head?.bind fun l' ↦ l'.head?) = (ns.head?.bind fun l' ↦ l'.head?) := by
         by_cases! h' : ms = []
         · rw [h']
@@ -1032,7 +1028,7 @@ lemma Row.blocks_eq_iff {n : ℕ} [inst : NeZero n] (c : Row n) :
           symm
           rw [Coin.flip_eq_iff]
           symm
-          rw [ne_eq, (h' ⟨i, hi⟩).not]
+          rw [ne_eq, h' ⟨i, hi⟩]
           lia
       · rw [dif_neg (by lia), if_neg (by lia), if_neg (by lia)]
     have h' : ∀ x ∈ (List.replicate n coin).getLast?, ∀ y ∈ (List.replicate n coin.flip).head?, (x == y) = false := by
@@ -1105,16 +1101,13 @@ lemma List.blocks_drop_take {α : Type u} [DecidableEq α] (l : List α) (p q : 
 
 lemma List.blocks_append {α : Type u} [DecidableEq α] {a b : List α} (hab : ∀ x ∈ a.getLast?, ∀ y ∈ b.head?, (x == y) = false)
   : List.blocks (a ++ b) = List.blocks a ++ List.blocks b := by
-    rw [List.blocks, List.segments, List.splitBy_append hab]
-    rw [List.blocks, List.blocks, List.segments, List.segments, List.map_append]
+    simp_rw [List.blocks, List.segments, List.splitBy_append hab, List.map_append]
 
 lemma List.length_blocks_append_lt_of {α : Type u} [DecidableEq α] {a b : List α} (hab : ∃ x ∈ a.getLast?, ∃ y ∈ b.head?, (x == y) = true)
   : (List.blocks (a ++ b)).length < (List.blocks a).length + (List.blocks b).length := by
-    rw [List.blocks, List.length_map, List.segments, List.splitBy_append' hab]
+    simp_rw [List.blocks, List.length_map, List.segments, List.splitBy_append' hab]
     rw [List.length_append, List.length_append, List.length_singleton]
     rw [List.length_dropLast, List.length_tail]
-    rw [List.blocks, List.length_map, List.segments]
-    rw [List.blocks, List.length_map, List.segments]
     rcases hab with ⟨p, hp, q, hq, hpq⟩
     have ha : a ≠ [] := by
       contrapose! hp
