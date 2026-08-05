@@ -145,18 +145,12 @@ problem imo1994_p5 (f : S → S) :
     exact h4 (op f x x) (h1 x x)
 
   ext x
-  have h6 := h5 x
-  unfold op at h6
+  have h6 := Subtype.mk_eq_mk.mp <| h5 x
   obtain ⟨x, hx⟩ := x
-  set_option backward.isDefEq.respectTransparency false in
-  rw [Subtype.mk_eq_mk] at h6
-  dsimp only at h6
   have h7 : (f ⟨x, hx⟩).val = -x / (1 + x) := by
     have h8 : 0 < 1 + x := by linarith
     field_simp
     linarith
-  rw [←Subtype.val_inj]
-  dsimp only
-  exact h7
+  exact Subtype.val_inj.mp h7
 
 end Imo1994P5
