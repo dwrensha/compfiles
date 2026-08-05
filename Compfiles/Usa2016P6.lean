@@ -1021,7 +1021,7 @@ problem usa2016_p6 (n k : ℕ) (hk : 2 ≤ k) (hkn : k ≤ n) : Winnable n k ↔
     rw [hnot m] at h1
     exact Bool.noConfusion h1
   · intro h
-    haveI : NeZero n := ⟨by omega⟩
+    have : NeZero n := ⟨by omega⟩
     exact ⟨2 * n - k + 2, by omega, slideStrat n k hk h, winStrat_valid n k hk (le_of_lt h),
       fun W hW ↦ slideStrat_wins hk h W hW⟩
 

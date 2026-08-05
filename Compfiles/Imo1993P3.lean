@@ -565,7 +565,7 @@ lemma solvable_of_pos_not_three_dvd (n : ℕ) (_h0 : 0 < n) (h3 : ¬ 3 ∣ n) : 
 -- snip end
 
 problem imo1993_p3 (n : ℕ) : Solvable n ↔ n ∈ SolutionSet := by
-  simp only [SolutionSet, Set.mem_setOf_eq]
+  simp only [SolutionSet, Set.mem_ofPred_eq]
   constructor
   · intro h
     have h3 : ¬ 3 ∣ n := fun hd => not_solvable_of_three_dvd hd h

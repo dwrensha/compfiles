@@ -897,7 +897,7 @@ lemma surgeryMany {t : ℕ} :
         rw [Finset.mem_biUnion]
         exact ⟨0, Finset.mem_univ _, by rw [h2, arcSet_univ]; exact Finset.mem_univ x⟩
       · exact h2
-    haveI : NeZero (m - la 0) := ⟨by omega⟩
+    have : NeZero (m - la 0) := ⟨by omega⟩
     have htr : ∀ s : Fin t, ∃ v : ZMod (m - la 0), la s.succ ≤ m - la 0 ∧
       (arcSet v (la s.succ)).image (skipMap (ca 0) (la 0)) = arcSet (ca s.succ) (la s.succ) ∧
       (∀ w : ZMod m → ℝ, ∑ x ∈ arcSet (ca s.succ) (la s.succ), w x
@@ -1014,7 +1014,7 @@ lemma mergeOne {m k : ℕ} [NeZero m] (P : CirclePartition m k) (hk : 0 < k) (hk
       exact le_trans h1 (Finset.sum_le_sum_of_subset_of_nonneg (Finset.subset_univ _)
         (fun x _ _ => hnn x))
     linarith
-  haveI : NeZero (m - l) := ⟨by omega⟩
+  have : NeZero (m - l) := ⟨by omega⟩
   obtain ⟨j, hj⟩ := P.arcOf_cover hk a₀
   rw [arcOf, mem_arcSet] at hj
   obtain ⟨tj, htj, htj2⟩ := hj
@@ -1512,7 +1512,7 @@ lemma mergeValues {t : ℕ} :
         rw [huniv] at h1
         linarith
       · exact h2
-    haveI : NeZero (m - la 0) := ⟨by omega⟩
+    have : NeZero (m - la 0) := ⟨by omega⟩
     have htr : ∀ s : Fin t, ∃ v : ZMod (m - la 0), la s.succ ≤ m - la 0 ∧
       (arcSet v (la s.succ)).image (skipMap (ca 0) (la 0)) = arcSet (ca s.succ) (la s.succ) ∧
       (∀ w : ZMod m → ℝ, ∑ x ∈ arcSet (ca s.succ) (la s.succ), w x
@@ -1783,7 +1783,7 @@ theorem usa2025_p6_main (N : ℕ) (hN : 0 < N) : ∀ (m : ℕ) [NeZero m] (_hmn 
       exact h1
     · obtain ⟨Pπ, hPπ⟩ := hpart ⟨0, hN⟩
       classical
-      haveI : NeZero N := ⟨(Nat.ne_of_lt hN).symm⟩
+      have : NeZero N := ⟨(Nat.ne_of_lt hN).symm⟩
       have hk : 0 < N := hN
       have hk2 : 2 ≤ N := hN2
       obtain ⟨M, T, f, pipM, cardMT, fprop, finj, hate⟩ :=

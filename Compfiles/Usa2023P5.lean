@@ -280,7 +280,7 @@ lemma ap_k_pos {n : ℕ} (hn : 0 < n) (h2 : 2 ≤ n) {f : Fin n → Fin (n ^ 2)}
 divisible by `n` hits every residue class mod `n` at most once. -/
 lemma ap_res_inj {n : ℕ} (hp : n.Prime) {k : ℕ} (hk : ¬ n ∣ k) (b : ℕ) {m₁ m₂ : Fin n}
     (h : (b + m₁.val * k) % n = (b + m₂.val * k) % n) : m₁ = m₂ := by
-  haveI : Fact n.Prime := ⟨hp⟩
+  have : Fact n.Prime := ⟨hp⟩
   have h' : ((b + m₁.val * k : ℕ) : ZMod n) = ((b + m₂.val * k : ℕ) : ZMod n) := by
     rw [ZMod.natCast_eq_natCast_iff']
     exact h

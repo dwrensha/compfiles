@@ -195,8 +195,7 @@ lemma angle_eq_angle_add_angle_of_mem_interior
   rw [Fin.sum_univ_three] at hsum hsum'
   use ⟨(basis.coord 0) P, le_of_lt (hP 0)⟩
   use ⟨(basis.coord 2) P, le_of_lt (hP 2)⟩
-  rw [NNReal.smul_def, NNReal.smul_def, NNReal.toReal, Subtype.val, Subtype.val]
-  dsimp
+  show (basis.coord 0) P • (A - B) + (basis.coord 2) P • (C - B) = P - B
   nth_rw 3 [← hsum]
   rw [smul_sub, smul_sub]
   rw [← hA, ← hB, ← hC, ← sub_eq_zero]

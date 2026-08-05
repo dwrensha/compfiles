@@ -139,7 +139,7 @@ theorem coprime_aux {n : ℕ} (hn : 3 ≤ n) (h3 : n % 3 ≠ 2) :
 theorem card_le_of_bad {n : ℕ} (hn : 3 ≤ n) {B : Finset (ZMod (2 * n - 1))}
     (hbad : ¬ IsGood n B) : B.card ≤ solution n - 1 := by
   classical
-  haveI : NeZero (2 * n - 1) := ⟨by omega⟩
+  have : NeZero (2 * n - 1) := ⟨by omega⟩
   have key := bad_disjoint_translate hbad
   have hinj : Function.Injective (· + ((n + 1 : ℕ) : ZMod (2 * n - 1))) :=
     fun _ _ h => add_right_cancel h
@@ -206,7 +206,7 @@ theorem card_le_of_bad {n : ℕ} (hn : 3 ≤ n) {B : Finset (ZMod (2 * n - 1))}
 theorem exists_bad {n : ℕ} (hn : 3 ≤ n) :
     ∃ B : Finset (ZMod (2 * n - 1)), B.card = solution n - 1 ∧ ¬ IsGood n B := by
   classical
-  haveI : NeZero (2 * n - 1) := ⟨by omega⟩
+  have : NeZero (2 * n - 1) := ⟨by omega⟩
   by_cases h3 : n % 3 = 2
   · -- The set `{1, 2, ..., n - 2}` is bad and has `n - 2` elements.
     refine ⟨(Finset.Icc 1 (n - 2)).image (Nat.cast : ℕ → ZMod (2 * n - 1)), ?_, ?_⟩

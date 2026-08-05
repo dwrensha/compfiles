@@ -238,13 +238,13 @@ noncomputable def constr_b' (k : ℕ) (b : Fin k → Bool) (d : ℕ) : Fin k →
 /-- Every value of `constr_r` is prime. -/
 theorem constr_r_prime {k : ℕ} (b : Fin k → Bool) (i : Fin k) : Nat.Prime (constr_r k b i) := by
   unfold constr_r
-  split <;> exact Nat.nth_mem_of_infinite Nat.infinite_setOf_prime _
+  split <;> exact Nat.nth_mem_of_infinite Nat.infinite_setOfPred_prime _
 
 /-- The primes in different slots are distinct: `constr_r k b₁ i = constr_r k b₂ j`
 forces `i = j`. -/
 theorem constr_r_inj {k : ℕ} {b₁ b₂ : Fin k → Bool} {i j : Fin k}
     (h : constr_r k b₁ i = constr_r k b₂ j) : i = j := by
-  have hinj := Nat.nth_injective Nat.infinite_setOf_prime
+  have hinj := Nat.nth_injective Nat.infinite_setOfPred_prime
   unfold constr_r at h
   split at h <;> split at h
   · exact Fin.ext (by have h3 := hinj h; omega)
@@ -255,7 +255,7 @@ theorem constr_r_inj {k : ℕ} {b₁ b₂ : Fin k → Bool} {i j : Fin k}
 /-- Equal primes in the same slot force equal Booleans. -/
 theorem constr_r_inj_bool {k : ℕ} {b₁ b₂ : Fin k → Bool} {i : Fin k}
     (h : constr_r k b₁ i = constr_r k b₂ i) : b₁ i = b₂ i := by
-  have hinj := Nat.nth_injective Nat.infinite_setOf_prime
+  have hinj := Nat.nth_injective Nat.infinite_setOfPred_prime
   unfold constr_r at h
   split at h <;> split at h
   · rename_i hb1 hb2

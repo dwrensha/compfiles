@@ -64,7 +64,7 @@ lemma add_eq_of_dvd_of_dvd {k M x y : ℕ} (hM : Nat.Prime M) (hxM : x < M) (hyM
     (hxy : x ≠ y) (hx : M ∣ x ^ 2 + x + k) (hy : M ∣ y ^ 2 + y + k) :
     x + y + 1 = M := by
   have hM0 : 0 < M := hM.pos
-  haveI := Fact.mk hM
+  have := Fact.mk hM
   have hx' : (x : ZMod M) ^ 2 + (x : ZMod M) + (k : ZMod M) = 0 := by
     have h : ((x ^ 2 + x + k : ℕ) : ZMod M) = 0 :=
       (ZMod.natCast_eq_zero_iff (x ^ 2 + x + k) M).mpr hx
@@ -108,7 +108,7 @@ lemma dvd_sub_of_good_of_good {k M q r x y : ℕ} (hM : Nat.Prime M)
     (hx : M * q = x ^ 2 + x + k) (hy : M * r = y ^ 2 + y + k) :
     x + y + 1 = M ∧ (M : ℤ) ∣ (x * y : ℤ) - k := by
   have hM0 : 0 < M := hM.pos
-  haveI := Fact.mk hM
+  have := Fact.mk hM
   have hxM : x < M := lt_of_good_of_lt hM hq hx
   have hyM : y < M := lt_of_good_of_lt hM hr hy
   have hxy : x ≠ y := by
@@ -339,7 +339,7 @@ lemma succPerm_iterate {S : Finset ℕ} [NeZero #S] (p : Fin #S ≃ S)
 
 lemma connectedP_succPerm {S : Finset ℕ} (hne : S.Nonempty) (p : Fin #S ≃ S) :
     ConnectedP (succPerm p) := by
-  haveI : NeZero #S := ⟨(Finset.card_pos.mpr hne).ne'⟩
+  have : NeZero #S := ⟨(Finset.card_pos.mpr hne).ne'⟩
   intro s t
   set a := p.symm s
   set b := p.symm t
@@ -395,7 +395,7 @@ rotation. -/
 lemma rot_of_succPerm_eq {S : Finset ℕ} (hne : S.Nonempty) {p₁ p₂ : Fin #S ≃ S}
     (h : succPerm p₁ = succPerm p₂) :
     ∃ i, ∀ j, p₂ j = p₁ (j + i) := by
-  haveI : NeZero #S := ⟨(Finset.card_pos.mpr hne).ne'⟩
+  have : NeZero #S := ⟨(Finset.card_pos.mpr hne).ne'⟩
   set g : Equiv.Perm (Fin #S) := p₂.trans p₁.symm with hg
   have key : ∀ j : Fin #S, g (j + 1) = g j + 1 := by
     intro j
@@ -419,7 +419,7 @@ they differ by a reflection composed with a rotation. -/
 lemma ref_of_succPerm_eq {S : Finset ℕ} (hne : S.Nonempty) {p₁ p₂ : Fin #S ≃ S}
     (h : succPerm p₁ = (succPerm p₂)⁻¹) :
     ∃ i, ∀ j, p₂ j = p₁ (Fin.rev j + i) := by
-  haveI : NeZero #S := ⟨(Finset.card_pos.mpr hne).ne'⟩
+  have : NeZero #S := ⟨(Finset.card_pos.mpr hne).ne'⟩
   set g : Equiv.Perm (Fin #S) := p₂.trans p₁.symm with hg
   have key : ∀ j : Fin #S, g (j + 1) + 1 = g j := by
     intro j
@@ -1120,7 +1120,7 @@ problem imo2023_p3
     (hS : ∀ p ∈ S, Odd p ∧ Nat.Prime p)
     {p₁ p₂ : Fin #S ≃ S} (hp₁ : Condition k S p₁) (hp₂ : Condition k S p₂) :
     (∃ i, ∀ j, p₂ j = p₁ (j + i)) ∨ ∃ i, ∀ j, p₂ j = p₁ (Fin.rev j + i) := by
-  haveI : NeZero #S := ⟨(Finset.card_pos.mpr hne).ne'⟩
+  have : NeZero #S := ⟨(Finset.card_pos.mpr hne).ne'⟩
   have hp₁' : ∀ j, good k (p₁ j : ℕ) (p₁ (j + 1) : ℕ) := fun j ↦
     let ⟨_, _, h⟩ := hp₁ j; ⟨_, h⟩
   have hp₂' : ∀ j, good k (p₂ j : ℕ) (p₂ (j + 1) : ℕ) := fun j ↦

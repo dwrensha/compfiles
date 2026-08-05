@@ -33,7 +33,11 @@ snip begin
 
 /-- The two letters that can be written in a square. -/
 inductive Piece | S | O
-  deriving DecidableEq, Fintype, Inhabited
+  deriving DecidableEq, Inhabited
+
+instance : Fintype Piece where
+  elems := ⟨↑[Piece.S, Piece.O], by decide⟩
+  complete := fun x => by cases x <;> decide
 
 /-- The board: square `i` contains `b i` for `i < 2000`; anything outside is irrelevant. -/
 abbrev Board := ℕ → Option Piece

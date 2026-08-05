@@ -743,11 +743,11 @@ lemma inv_update_mate {b₀ b₁ b₂ : Cell → Option ℚ} (hinv : Inv b₀)
         rw [Function.update_of_ne hemx, Function.update_of_ne hex2]
     have hx'S : x' ∉ S := by
       intro hcon
-      rw [hS, Set.mem_setOf_eq, hxv] at hcon
+      rw [hS, Set.mem_ofPred_eq, hxv] at hcon
       exact hcon hx
     have hiso : ∀ c ∈ S, ∀ d ∈ S, (A₀ c < A₀ d ↔ B₀ c < B₀ d) := by
       intro c hc d hd
-      rw [hS, Set.mem_setOf_eq] at hc hd
+      rw [hS, Set.mem_ofPred_eq] at hc hd
       obtain ⟨ac, hac⟩ : ∃ v, b₀ c.1 = some v := by
         cases hbo : b₀ c.1 with
         | none => exact absurd hbo hc
@@ -787,7 +787,7 @@ lemma inv_update_mate {b₀ b₁ b₂ : Cell → Option ℚ} (hinv : Inv b₀)
       exact hinv.2 c.1 d.1 ac ad amc amd hrow hc01 hac had hamc hamd
     have hnew : ∀ z ∈ S, (A₀ z < vx → B₀ z < w) ∧ (vx < A₀ z → w < B₀ z) := by
       intro z hz
-      rw [hS, Set.mem_setOf_eq] at hz
+      rw [hS, Set.mem_ofPred_eq] at hz
       obtain ⟨az, haz⟩ : ∃ v, b₀ z.1 = some v := by
         cases hbo : b₀ z.1 with
         | none => exact absurd hbo hz
@@ -826,7 +826,7 @@ lemma inv_update_mate {b₀ b₁ b₂ : Cell → Option ℚ} (hinv : Inv b₀)
       exact ⟨h1, h2⟩
     have hA : ∀ z ∈ S, A₀ z ≠ vx := by
       intro z hz hcon
-      rw [hS, Set.mem_setOf_eq] at hz
+      rw [hS, Set.mem_ofPred_eq] at hz
       obtain ⟨az, haz⟩ : ∃ v, b₀ z.1 = some v := by
         cases hbo : b₀ z.1 with
         | none => exact absurd hbo hz
@@ -849,7 +849,7 @@ lemma inv_update_mate {b₀ b₁ b₂ : Cell → Option ℚ} (hinv : Inv b₀)
         by_cases hccx : c = x
         · exact Or.inr (Subtype.ext hccx)
         · apply Or.inl
-          rw [hS, Set.mem_setOf_eq]
+          rw [hS, Set.mem_ofPred_eq]
           have hcmx : c ≠ mate x := by
             intro hcon
             rw [hcon] at hcx
@@ -864,7 +864,7 @@ lemma inv_update_mate {b₀ b₁ b₂ : Cell → Option ℚ} (hinv : Inv b₀)
         by_cases hddx : d = x
         · exact Or.inr (Subtype.ext hddx)
         · apply Or.inl
-          rw [hS, Set.mem_setOf_eq]
+          rw [hS, Set.mem_ofPred_eq]
           have hdmx : d ≠ mate x := by
             intro hcon
             rw [hcon] at hdx
@@ -911,7 +911,7 @@ lemma inv_update_mate {b₀ b₁ b₂ : Cell → Option ℚ} (hinv : Inv b₀)
         by_cases hccx : mate c = x
         · exact Or.inr (Subtype.ext hccx)
         · apply Or.inl
-          rw [hS, Set.mem_setOf_eq]
+          rw [hS, Set.mem_ofPred_eq]
           have hcmx : mate c ≠ mate x := by
             intro hcon
             exact hcx (congrArg Prod.fst (mate_inj hcon))
@@ -925,7 +925,7 @@ lemma inv_update_mate {b₀ b₁ b₂ : Cell → Option ℚ} (hinv : Inv b₀)
         by_cases hddx : mate d = x
         · exact Or.inr (Subtype.ext hddx)
         · apply Or.inl
-          rw [hS, Set.mem_setOf_eq]
+          rw [hS, Set.mem_ofPred_eq]
           have hdmx : mate d ≠ mate x := by
             intro hcon
             exact absurd (congrArg Prod.fst (mate_inj hcon)) (hcd ▸ hcx)

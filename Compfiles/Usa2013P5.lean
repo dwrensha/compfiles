@@ -269,7 +269,7 @@ problem usa2013_p5 (m n : ℕ) (hm : 0 < m) (hn : 0 < n) :
     show Nat.Coprime D (2 * 5)
     exact h2.mul_right h5
   have hD0 : 0 < D := (lt_of_lt_of_le hm (Nat.le_max_left m n)).trans hDmax
-  haveI : NeZero D := ⟨Nat.ne_of_gt hD0⟩
+  have : NeZero D := ⟨Nat.ne_of_gt hD0⟩
   -- The order of 10 modulo `D`.
   set u := ZMod.unitOfCoprime 10 hD10.symm with hu
   set t := orderOf u with ht

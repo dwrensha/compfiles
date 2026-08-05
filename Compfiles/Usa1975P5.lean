@@ -83,7 +83,7 @@ lemma reflect_mem {n x : ℕ} (hx : x ∈ Icc 1 n) : reflect n x ∈ Icc 1 n := 
 /-- Reflection is injective on positions that are at most `n`. -/
 lemma reflect_injOn (n : ℕ) : Set.InjOn (reflect n) {x | x ≤ n} := by
   intro x hx y hy h
-  simp only [Set.mem_setOf_eq] at hx hy
+  simp only [Set.mem_ofPred_eq] at hx hy
   simp only [reflect] at h
   omega
 

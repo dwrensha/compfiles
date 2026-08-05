@@ -225,7 +225,7 @@ problem imo2020_p5 (n : ℕ) :
     refine ⟨h1, ?_⟩
     intro α hα hcard f hf
     have hpos : 0 < Fintype.card α := by omega
-    haveI : Nonempty α := Fintype.card_pos_iff.mp hpos
+    have : Nonempty α := Fintype.card_pos_iff.mp hpos
     exact all_equal f hf
   · rintro ⟨h1, -⟩
     exact h1

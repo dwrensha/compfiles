@@ -525,14 +525,14 @@ lemma pow_pred_dvd_sum_pow_Icc {p : ℕ} (hp : p.Prime) :
 
 /-- `p ^ padicValNat p m ∣ m` for nonzero `m`. -/
 lemma pow_padicValNat_dvd' {p m : ℕ} (hp : p.Prime) (hm : m ≠ 0) : p ^ padicValNat p m ∣ m := by
-  haveI := Fact.mk hp
+  have := Fact.mk hp
   exact (padicValNat_dvd_iff_le hm).2 le_rfl
 
 lemma padicValNat_totient_mul_prime_of_dvd {p q : ℕ} (hp : p.Prime) (hq : q.Prime)
     (hpq : p ≠ q) {n : ℕ} (hn : n ≠ 0) (hqd : q ∣ n) :
     padicValNat p (Nat.totient (n * q)) = padicValNat p (Nat.totient n) := by
-  haveI : Fact q.Prime := ⟨hq⟩
-  haveI : Fact p.Prime := ⟨hp⟩
+  have : Fact q.Prime := ⟨hq⟩
+  have : Fact p.Prime := ⟨hp⟩
   set f := padicValNat q n with hf
   have hf1 : 1 ≤ f := one_le_padicValNat_of_dvd hn hqd
   have hqfn : q ^ f ∣ n := pow_padicValNat_dvd' hq hn
@@ -583,7 +583,7 @@ lemma padicValNat_totient_mul_prime_of_not_dvd {p q : ℕ} (hp : p.Prime) (hq : 
     {n : ℕ} (hn : n ≠ 0) (hqd : ¬ q ∣ n) :
     padicValNat p (Nat.totient (n * q)) =
       padicValNat p (Nat.totient n) + padicValNat p (q - 1) := by
-  haveI : Fact p.Prime := ⟨hp⟩
+  have : Fact p.Prime := ⟨hp⟩
   have hcop : Nat.Coprime n q := (hq.coprime_iff_not_dvd.2 hqd).symm
   have hq1 : q - 1 ≠ 0 := by
     have := hq.two_le
@@ -594,7 +594,7 @@ lemma padicValNat_totient_mul_prime_of_not_dvd {p q : ℕ} (hp : p.Prime) (hq : 
 /-- The main claim: for `p` prime with `p ∣ n`, `p ^ ν_p (φ n) ∣ powSum n k`. -/
 lemma pow_padicValNat_totient_dvd_powSum {p : ℕ} (hp : p.Prime) :
     ∀ n : ℕ, 2 ≤ n → p ∣ n → ∀ k : ℕ, p ^ padicValNat p (Nat.totient n) ∣ powSum n k := by
-  haveI := Fact.mk hp
+  have := Fact.mk hp
   intro n
   induction n using Nat.strong_induction_on with
   | _ n IH =>
@@ -763,7 +763,7 @@ problem usa2018_p3 (n : ℕ) (hn : 2 ≤ n) (k : ℕ) (_hk : 1 ≤ k)
   show n.totient ∣ powSum n k
   rw [← Nat.factorization_prime_le_iff_dvd htot hS]
   intro q hq
-  haveI := Fact.mk hq
+  have := Fact.mk hq
   rw [Nat.factorization_def _ hq, Nat.factorization_def _ hq]
   by_cases hqd : q ∣ n.totient
   · have hqn : q ∣ n := h q hq hqd

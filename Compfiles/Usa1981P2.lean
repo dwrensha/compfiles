@@ -28,7 +28,11 @@ namespace Usa1981P2
 
 /-- The three possible link types between two towns. -/
 inductive Link | air | bus | train
-  deriving DecidableEq, Fintype
+  deriving DecidableEq
+
+instance : Fintype Link where
+  elems := ⟨↑[Link.air, Link.bus, Link.train], by decide⟩
+  complete := fun x => by cases x <;> decide
 
 /-- The set of link types that town `v` has to other towns. -/
 abbrev colorsAt {n : ℕ} (f : Fin n → Fin n → Link) (v : Fin n) : Finset Link :=

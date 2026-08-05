@@ -301,8 +301,8 @@ so one of them equals `p - 1`: contradiction. -/
 lemma exists_mem_digits_pred {p : ℕ} (hp : p.Prime) {x d : ℕ} (hd : 0 < d) :
     ∃ i < p, p - 1 ∈ Nat.digits p (x + i * d) := by
   have hpp : 1 < p := hp.one_lt
-  haveI : Fact p.Prime := ⟨hp⟩
-  haveI : NeZero p := ⟨by omega⟩
+  have : Fact p.Prime := ⟨hp⟩
+  have : NeZero p := ⟨by omega⟩
   set K := padicValNat p d with hK
   have hdvd : p ^ K ∣ d := pow_padicValNat_dvd
   have hndvd : ¬ p ^ (K + 1) ∣ d := pow_succ_padicValNat_not_dvd (by omega)

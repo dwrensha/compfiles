@@ -2318,7 +2318,7 @@ theorem fcard_zero : fcard 0 = 1 := by
 
 theorem fcard_one : fcard 1 = 0 := by
   unfold fcard
-  haveI : IsEmpty (fpfSubtype 1) := ⟨fun σ => σ.2.2 0 (Fin.eq_zero _)⟩
+  have : IsEmpty (fpfSubtype 1) := ⟨fun σ => σ.2.2 0 (Fin.eq_zero _)⟩
   exact Fintype.card_of_isEmpty
 
 theorem vcard_zero : vcard 0 = 1 := by

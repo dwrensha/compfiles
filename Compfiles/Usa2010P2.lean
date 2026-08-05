@@ -76,12 +76,12 @@ instance {n : ℕ} (e : Fin n ≃ ZMod n) (a b c : Fin n) : Decidable (StateA e 
 /-! ### Elementary facts about `ZMod.val` -/
 
 lemma val_one' {n : ℕ} (hn : 2 ≤ n) : (1 : ZMod n).val = 1 := by
-  haveI : NeZero n := ⟨by omega⟩
+  have : NeZero n := ⟨by omega⟩
   rw [← Nat.cast_one]
   exact ZMod.val_natCast_of_lt (by omega)
 
 lemma val_neg_one' {n : ℕ} (hn : 1 ≤ n) : (-1 : ZMod n).val = n - 1 := by
-  haveI : NeZero n := ⟨by omega⟩
+  have : NeZero n := ⟨by omega⟩
   have h : (-1 : ZMod n) = ((n - 1 : ℕ) : ZMod n) := by
     rw [Nat.cast_sub hn, Nat.cast_one, ZMod.natCast_self, zero_sub]
   rw [h]
@@ -89,7 +89,7 @@ lemma val_neg_one' {n : ℕ} (hn : 1 ≤ n) : (-1 : ZMod n).val = n - 1 := by
 
 lemma val_add_one' {n : ℕ} (hn : 2 ≤ n) (x : ZMod n) (hx : x ≠ -1) :
     (x + 1).val = x.val + 1 := by
-  haveI : NeZero n := ⟨by omega⟩
+  have : NeZero n := ⟨by omega⟩
   have h1 : x.val < n := ZMod.val_lt x
   have h2 : x.val ≠ n - 1 := by
     intro hbad
@@ -98,7 +98,7 @@ lemma val_add_one' {n : ℕ} (hn : 2 ≤ n) (x : ZMod n) (hx : x ≠ -1) :
 
 lemma val_sub_one' {n : ℕ} (hn : 1 ≤ n) (x : ZMod n) (hx : x ≠ 0) :
     (x - 1).val = x.val - 1 := by
-  haveI : NeZero n := ⟨by omega⟩
+  have : NeZero n := ⟨by omega⟩
   have h1 : x.val ≠ 0 := by
     intro hbad
     exact hx ((ZMod.val_eq_zero x).mp hbad)
@@ -130,7 +130,7 @@ lemma eq_of_sub_eq_neg_one {n : ℕ} {q r : ZMod n} (h : q - r = -1) : r = q + 1
 lemma stateA_of_pair {n : ℕ} (hn : 2 ≤ n) {a b c : Fin n} {e : Fin n ≃ ZMod n} {p : ZMod n}
     (hea : e a = p) (heb : e b = p + 1) (hac : a ≠ c) (hbc : b ≠ c) :
     StateA e a b c := by
-  haveI : NeZero n := ⟨by omega⟩
+  have : NeZero n := ⟨by omega⟩
   have h1 : (e b - e a).val = 1 := by
     rw [heb, hea, add_sub_cancel_left]
     exact val_one' hn
@@ -152,7 +152,7 @@ lemma stateA_of_pair {n : ℕ} (hn : 2 ≤ n) {a b c : Fin n} {e : Fin n ≃ ZMo
 lemma not_stateA_of_pair {n : ℕ} (hn : 2 ≤ n) {a b c : Fin n} {e : Fin n ≃ ZMod n} {p : ZMod n}
     (hec : e c = p) (heb : e b = p + 1) (hab : a ≠ b) :
     ¬ StateA e a b c := by
-  haveI : NeZero n := ⟨by omega⟩
+  have : NeZero n := ⟨by omega⟩
   have h : (e c - e a).val < (e b - e a).val := by
     have h1 : e b - e a = (e c - e a) + 1 := by rw [heb, hec]; ring
     have hne : e c - e a ≠ -1 := by
@@ -169,7 +169,7 @@ lemma not_stateA_of_pair {n : ℕ} (hn : 2 ≤ n) {a b c : Fin n} {e : Fin n ≃
 lemma not_stateA_swap {n : ℕ} (hn : 2 ≤ n) {a b c : Fin n} {e : Fin n ≃ ZMod n} {p : ZMod n}
     (hea : e a = p) (heb : e b = p + 1) (hca : c ≠ a) (hcb : c ≠ b) :
     ¬ StateA (e.trans (Equiv.swap p (p + 1))) a b c := by
-  haveI : NeZero n := ⟨by omega⟩
+  have : NeZero n := ⟨by omega⟩
   have h1 : (e.trans (Equiv.swap p (p + 1))) a = p + 1 := by
     rw [Equiv.trans_apply, hea]
     exact Equiv.swap_apply_left _ _
@@ -198,7 +198,7 @@ lemma not_stateA_swap {n : ℕ} (hn : 2 ≤ n) {a b c : Fin n} {e : Fin n ≃ ZM
 lemma stateA_swap {n : ℕ} (hn : 2 ≤ n) {a b c : Fin n} {e : Fin n ≃ ZMod n} {p : ZMod n}
     (hec : e c = p) (heb : e b = p + 1) (hac : a ≠ c) (hab : a ≠ b) :
     StateA (e.trans (Equiv.swap p (p + 1))) a b c := by
-  haveI : NeZero n := ⟨by omega⟩
+  have : NeZero n := ⟨by omega⟩
   have h1 : (e.trans (Equiv.swap p (p + 1))) c = p + 1 := by
     rw [Equiv.trans_apply, hec]
     exact Equiv.swap_apply_left _ _
@@ -227,7 +227,7 @@ lemma stateA_swap_iff {n : ℕ} (hn : 2 ≤ n) {a b c : Fin n} {e : Fin n ≃ ZM
     (hJ : (e.symm p, e.symm (p + 1)) ≠ (a, b))
     (hM : (e.symm p, e.symm (p + 1)) ≠ (c, b)) :
     StateA (e.trans (Equiv.swap p (p + 1))) a b c ↔ StateA e a b c := by
-  haveI : NeZero n := ⟨by omega⟩
+  have : NeZero n := ⟨by omega⟩
   have hbval : b.val < n := b.isLt
   have hac : a ≠ c := by
     intro hbad
@@ -524,7 +524,7 @@ lemma alternation {n : ℕ} (hn : 2 ≤ n) (a b : Fin n) (hab : a.val + 2 ≤ b.
       (¬ StateA e a b (fsucc a ha) →
         (evPairs e ps).count (a, b) ≤ (evPairs e ps).count (fsucc a ha, b) ∧
         (evPairs e ps).count (fsucc a ha, b) ≤ (evPairs e ps).count (a, b) + 1) := by
-  haveI : NeZero n := ⟨by omega⟩
+  have : NeZero n := ⟨by omega⟩
   have hbval : b.val < n := b.isLt
   have hac : a ≠ fsucc a ha := by
     intro hbad

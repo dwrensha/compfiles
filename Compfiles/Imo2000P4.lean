@@ -81,7 +81,9 @@ lemma exists_third (x y : ZMod 3) : ∃ z, z ≠ x ∧ z ≠ y := by
 
 lemma eq_third {x y z w : ZMod 3} (hxy : x ≠ y) (hzx : z ≠ x) (hzy : z ≠ y)
     (hwx : w ≠ x) (hwy : w ≠ y) : w = z := by
-  fin_cases x <;> fin_cases y <;> fin_cases z <;> fin_cases w <;> simp_all
+  have h : ∀ x y z w : ZMod 3, x ≠ y ∧ z ≠ x ∧ z ≠ y ∧ w ≠ x ∧ w ≠ y → w = z := by
+    decide
+  exact h x y z w ⟨hxy, hzx, hzy, hwx, hwy⟩
 
 lemma equiv_of_distinct {x y z : ZMod 3} (hxy : x ≠ y) (hxz : x ≠ z) (hyz : y ≠ z) :
     ∃ σ : Equiv.Perm (ZMod 3), x = σ 0 ∧ y = σ 1 ∧ z = σ 2 := by
@@ -89,7 +91,7 @@ lemma equiv_of_distinct {x y z : ZMod 3} (hxy : x ≠ y) (hxz : x ≠ z) (hyz : 
     intro a b h
     fin_cases a <;> fin_cases b <;> simp_all
   refine ⟨Equiv.ofBijective ![x, y, z] (Finite.injective_iff_bijective.mp hinj),
-    ?_, ?_, ?_⟩ <;> simp
+    ?_, ?_, ?_⟩ <;> rfl
 
 lemma tri (r : ZMod 3) : r = 0 ∨ r = 1 ∨ r = 2 := by
   revert r; decide

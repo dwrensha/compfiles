@@ -246,14 +246,10 @@ problem imo2021_p5 (p : Position) :
     simp
     decide
   have hfinal : blackPairs (coloring p 2021) = 0 := by
-    show (∑ x : Fin 2021, cond (decide (((move^[2021] (p, 0)).1 x).val < 2021)) (0 : ZMod 2) 1 *
-        cond (decide (((move^[2021] (p, 0)).1 (x + 1)).val < 2021)) (0 : ZMod 2) 1) = 0
     apply Finset.sum_eq_zero
     intro x _
-    rw [show decide (((move^[2021] (p, 0)).1 x).val < 2021) = true from by
-        rw [decide_eq_true_eq]; exact Fin.is_lt _,
-      show decide (((move^[2021] (p, 0)).1 (x + 1)).val < 2021) = true from by
-        rw [decide_eq_true_eq]; exact Fin.is_lt _]
+    rw [show coloring p 2021 x = true from decide_eq_true (Fin.is_lt _),
+      show coloring p 2021 (x + 1) = true from decide_eq_true (Fin.is_lt _)]
     simp
   have hind : ∀ j : ℕ, j ≤ 2021 → blackPairs (coloring p j) = 1 := by
     intro j hj

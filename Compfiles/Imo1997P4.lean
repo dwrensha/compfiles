@@ -169,27 +169,29 @@ lemma blockMatrix_row_left {n : ℕ} (A B C D : Fin n → Fin n → ℕ) (i : Fi
     (row (finSumFinEquiv (.inl i))).image ↿(blockMatrix A B C D)
       = (row i).image ↿A ∪ (row i).image ↿B := by
   ext
-  simp [← image_row, finSumFinEquiv.symm.exists_congr_left, blockMatrix]
+  simp [← image_row, finSumFinEquiv.symm.exists_congr_left, blockMatrix,
+    Matrix.fromBlocks]
 
 lemma blockMatrix_row_right {n : ℕ} (A B C D : Fin n → Fin n → ℕ) (i : Fin n) :
     (row (finSumFinEquiv (.inr i))).image ↿(blockMatrix A B C D)
       = (row i).image ↿C ∪ (row i).image ↿D := by
   ext
   simp [← image_row, finSumFinEquiv.symm.exists_congr_left, blockMatrix,
-     -finSumFinEquiv_apply_right]
+    Matrix.fromBlocks, -finSumFinEquiv_apply_right]
 
 lemma blockMatrix_col_left {n : ℕ} (A B C D : Fin n → Fin n → ℕ) (j : Fin n) :
     (col (finSumFinEquiv (.inl j))).image ↿(blockMatrix A B C D)
       = (col j).image ↿A ∪ (col j).image ↿C := by
   ext
-  simp [← image_col, finSumFinEquiv.symm.exists_congr_left, blockMatrix]
+  simp [← image_col, finSumFinEquiv.symm.exists_congr_left, blockMatrix,
+    Matrix.fromBlocks]
 
 lemma blockMatrix_col_right {n : ℕ} (A B C D : Fin n → Fin n → ℕ) (j : Fin n) :
     (col (finSumFinEquiv (.inr j))).image ↿(blockMatrix A B C D)
       = (col j).image ↿B ∪ (col j).image ↿D := by
   ext
   simp [← image_col, finSumFinEquiv.symm.exists_congr_left, blockMatrix,
-    -finSumFinEquiv_apply_right]
+    Matrix.fromBlocks, -finSumFinEquiv_apply_right]
 
 lemma blockMatrix_cross_left {n : ℕ} (A B C D : Fin n → Fin n → ℕ) (i : Fin n) :
     (cross (finSumFinEquiv (.inl i))).image ↿(blockMatrix A B C D) =
@@ -209,13 +211,13 @@ def latinSquare {n : ℕ} (v : Fin n → ℕ) : Fin n → Fin n → ℕ := fun i
 
 lemma latinSquare_row {n : ℕ} (v : Fin n → ℕ) (i : Fin n) :
     (row i).image ↿(latinSquare v) = univ.image v := by
-  haveI : NeZero n := ⟨i.pos.ne'⟩
+  have : NeZero n := ⟨i.pos.ne'⟩
   rw [← image_row, show (fun j ↦ latinSquare v i j) = v ∘ Equiv.subLeft i from rfl,
     ← Finset.image_image, Finset.image_univ_equiv]
 
 lemma latinSquare_col {n : ℕ} (v : Fin n → ℕ) (j : Fin n) :
     (col j).image ↿(latinSquare v) = univ.image v := by
-  haveI : NeZero n := ⟨j.pos.ne'⟩
+  have : NeZero n := ⟨j.pos.ne'⟩
   rw [← image_col, show (fun i ↦ latinSquare v i j) = v ∘ Equiv.subRight j from rfl,
     ← Finset.image_image, Finset.image_univ_equiv]
 

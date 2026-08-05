@@ -598,7 +598,9 @@ def wangPark : Park where
   rot_ne := by decide
   rot_inv := by decide
 
-lemma wang_valid : wangPark.Valid ((2, 0, true) : Fin 10 × Fin 10 × Bool) := by decide
+lemma wang_valid : wangPark.Valid ((2, 0, true) : Fin 10 × Fin 10 × Bool) := by
+  show wangAdj 0 2
+  decide
 
 /-- Starting from junction `C = 2` along the trail to `A = 0`, the visitor's walk
 is `C A H I F G D B A H E F G J B A C`: she gets back to `C` after 16 trails,

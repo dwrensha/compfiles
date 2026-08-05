@@ -474,7 +474,7 @@ lemma insertZero_perm {n : ℕ} {lr : List (ℕ × Bool)}
 `Sum.inl k` (with `k : Fin (n + 1)`) inserts it on the left pan at position
 `k`; `Sum.inr k` (with `k : Fin n`) inserts it on the right pan at position
 `k + 1` (the right pan is forbidden at the very beginning). -/
-def IData (n : ℕ) : Type := Fin (n + 1) ⊕ Fin n
+abbrev IData (n : ℕ) : Type := Fin (n + 1) ⊕ Fin n
 
 /-- The weight `2^0` cannot be the first placement if it goes on the right
 pan. -/

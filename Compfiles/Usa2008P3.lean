@@ -453,13 +453,14 @@ lemma card_B0 (n : ℕ) :
         rw [Int.modEq_iff_dvd, hf1 p hp0]
         omega
   rw [hset, Finset.card_product, Finset.card_singleton, mul_one]
+  have hinj : Function.Injective (fun t : ℤ ↦ (n : ℤ) - 1 - 2 * t) := by
+    intro a b h
+    dsimp only at h
+    omega
   have hmap : (Finset.Icc (-((n : ℤ) - 1)) ((n : ℤ) - 1)).filter
         (fun x ↦ (x + 1 - (n : ℤ)) % 2 = 0)
       = (Finset.Icc (0 : ℤ) ((n : ℤ) - 1)).map
-          ⟨(fun t : ℤ ↦ (n : ℤ) - 1 - 2 * t), by
-            intro a b h
-            dsimp only at h
-            omega⟩ := by
+          ⟨(fun t : ℤ ↦ (n : ℤ) - 1 - 2 * t), hinj⟩ := by
     ext x
     rw [Finset.mem_filter, Finset.mem_map, Finset.mem_Icc]
     simp only [Function.Embedding.coeFn_mk, Finset.mem_Icc]

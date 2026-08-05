@@ -74,7 +74,7 @@ lemma chi_zero (p : ℕ) : chi p (0 : ZMod p) = 1 := by
 
 lemma chi_add {p : ℕ} (hp : p.Prime) (j k : ZMod p) :
     chi p (j + k) = chi p j * chi p k := by
-  haveI : NeZero p := ⟨hp.pos.ne'⟩
+  have : NeZero p := ⟨hp.pos.ne'⟩
   have hpow : rt p ^ p = 1 := (isPrimitiveRoot_rt hp).pow_eq_one
   have hlt : j.val + k.val < 2 * p := by
     have h1 := j.val_lt
@@ -95,7 +95,7 @@ lemma chi_add {p : ℕ} (hp : p.Prime) (j k : ZMod p) :
     exact h2
 
 lemma chi_eq_one_iff {p : ℕ} (hp : p.Prime) (j : ZMod p) : chi p j = 1 ↔ j = 0 := by
-  haveI : NeZero p := ⟨hp.pos.ne'⟩
+  have : NeZero p := ⟨hp.pos.ne'⟩
   have hζ := isPrimitiveRoot_rt hp
   constructor
   · intro h
@@ -132,7 +132,7 @@ lemma sum_chi_self {p : ℕ} [NeZero p] (hp : p.Prime) (hp2 : 2 < p) :
 
 lemma sum_chi {p : ℕ} [NeZero p] (hp : p.Prime) (hp2 : 2 < p) (c : ZMod p) :
     ∑ m : ZMod p, chi p (c * m) = if c = 0 then (p : ℂ) else 0 := by
-  haveI : Fact p.Prime := ⟨hp⟩
+  have : Fact p.Prime := ⟨hp⟩
   by_cases hc : c = 0
   · subst hc
     rw [if_pos rfl]
@@ -272,8 +272,8 @@ problem usa1999_p3 (p : ℕ) (hp : p.Prime) (hp2 : 2 < p) (a b c d : ℤ)
     (p : ℤ) ∣ a + b ∧ (p : ℤ) ∣ c + d ∨
       (p : ℤ) ∣ a + c ∧ (p : ℤ) ∣ b + d ∨
         (p : ℤ) ∣ a + d ∧ (p : ℤ) ∣ b + c := by
-  haveI : NeZero p := ⟨hp.pos.ne'⟩
-  haveI : Fact p.Prime := ⟨hp⟩
+  have : NeZero p := ⟨hp.pos.ne'⟩
+  have : Fact p.Prime := ⟨hp⟩
   -- abbreviations for the residue classes of `a, b, c, d` in `ZMod p`
   set A : ZMod p := (a : ZMod p) with hA
   set B : ZMod p := (b : ZMod p) with hB

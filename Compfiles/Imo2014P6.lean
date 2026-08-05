@@ -195,7 +195,7 @@ lemma exists_param_of_mem_set (ℓ : Line) {p : ℝ × ℝ} (hp : p ∈ ℓ.set)
     ∃ t, ℓ.param t = p := by
   have hp' : ℓ.a * p.1 + ℓ.b * p.2 = -ℓ.c := by
     have h := hp
-    simp only [set, val, Set.mem_setOf_eq] at h
+    simp only [set, val, Set.mem_ofPred_eq] at h
     linarith
   have hbase : ℓ.a * ℓ.base.1 + ℓ.b * ℓ.base.2 = -ℓ.c := by
     have h := ℓ.val_base
@@ -598,7 +598,7 @@ noncomputable def Tmax {L : Finset Line} (E : EdgeCtx L) : ℝ :=
 lemma E_eq_Icc {L : Finset Line} (E : EdgeCtx L) :
     {t : ℝ | ∀ m ∈ L, 0 ≤ sgn (E.σ m) * m.val (E.ℓ.param t)} = Set.Icc E.Tmin E.Tmax := by
   ext t
-  simp only [Set.mem_setOf_eq]
+  simp only [Set.mem_ofPred_eq]
   rw [param_constraint_iff E.hGP E.hℓ E.σ t, Set.mem_Icc]
   constructor
   · intro h
@@ -1971,7 +1971,7 @@ lemma not_frontier_subset_of_validBlue {L : Finset Line} {B : Finset Line}
     exact ⟨mm, hmm, hpm⟩
   choose f hf using hchoice
   set g := fun p : S => f p p.2 with hg
-  haveI : Infinite S := Set.infinite_coe_iff.mpr hSI
+  have : Infinite S := Set.infinite_coe_iff.mpr hSI
   have hSI' : (Set.univ : Set S).Infinite := Set.infinite_univ
   have hMaps : Set.MapsTo g Set.univ (B : Set Line) := fun p _ => (hf p p.2).1
   obtain ⟨p₁, -, p₂, -, hp12, hpeq⟩ :=

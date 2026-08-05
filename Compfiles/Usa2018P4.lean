@@ -104,7 +104,7 @@ lemma cast_ne_of_ne {i j : Fin p} (hij : i ≠ j) :
 /-- The pair `(i, j)` collides for the shift `k` iff `k = phi a (i, j)`. -/
 lemma f_eq_iff_phi_eq (hp : p.Prime) (k : ZMod p) {i j : Fin p} (hij : i ≠ j) :
     f a k i = f a k j ↔ phi a (i, j) = k := by
-  haveI : Fact p.Prime := ⟨hp⟩
+  have : Fact p.Prime := ⟨hp⟩
   have hne : ((j : ℕ) : ZMod p) - ((i : ℕ) : ZMod p) ≠ 0 :=
     sub_ne_zero.mpr (cast_ne_of_ne hij.symm)
   show a i + ((i : ℕ) : ZMod p) * k = a j + ((j : ℕ) : ZMod p) * k ↔
@@ -155,7 +155,7 @@ lemma sum_card_F_add [NeZero p] (hp : p.Prime) :
 
 /-- Pigeonhole: some shift `k` has fewer than `p` colliding ordered pairs. -/
 lemma exists_F_card_lt (hp : p.Prime) : ∃ k : ZMod p, (F a k).card < p := by
-  haveI : NeZero p := ⟨hp.pos.ne'⟩
+  have : NeZero p := ⟨hp.pos.ne'⟩
   by_contra h
   push Not at h
   have h2 : p * p ≤ ∑ k : ZMod p, (F a k).card := by

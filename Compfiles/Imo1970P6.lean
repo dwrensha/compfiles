@@ -574,7 +574,7 @@ problem imo1970_p6
     show Nat.card {s : Finset (Fin 100) | s.card = 3 ∧ AcuteSet P s} = _
     refine Nat.subtype_card _ (fun u => ?_)
     simp only [Finset.mem_filter, Finset.mem_powersetCard, Finset.subset_univ, true_and,
-      Set.mem_setOf_eq]
+      Set.mem_ofPred_eq]
   have hsplit := Finset.card_filter_add_card_filter_not
     (s := (univ : Finset (Fin 100)).powersetCard 3) (p := fun w => AcuteSet P w)
   rw [hPC] at hsplit

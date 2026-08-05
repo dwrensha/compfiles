@@ -95,7 +95,7 @@ lemma val_rule (a : ℕ → ℤ) (apos : ∀ n, 0 < a n) {p : ℕ} (hp : p.Prime
     (padicValInt p (a 0) < padicValInt p k →
         padicValInt p (a n) < padicValInt p (a (n - 1)) ∧
         padicValInt p (a 0) ≤ padicValInt p (a n)) := by
-  haveI : Fact p.Prime := ⟨hp⟩
+  have : Fact p.Prime := ⟨hp⟩
   set α := padicValInt p (a 0) with hα
   set κ := padicValInt p k with hκ
   set V := padicValInt p (a (n - 1)) with hV
@@ -453,10 +453,10 @@ problem imo2018_p5
   obtain ⟨m₁, hm₁, m₂, hm₂, hlt, hpair⟩ :=
     hU.exists_lt_map_eq_of_mapsTo (f := fun m => (a m, a (m + 1)))
       (fun m hm => by
-        rw [Set.mem_setOf_eq] at hm
+        rw [Set.mem_ofPred_eq] at hm
         exact Finset.mem_product.mpr ⟨hmem m (by omega), hmem (m + 1) (by omega)⟩)
       ((Finset.Icc (1 : ℤ) C ×ˢ Finset.Icc (1 : ℤ) C).finite_toSet)
-  rw [Set.mem_setOf_eq] at hm₁ hm₂
+  rw [Set.mem_ofPred_eq] at hm₁ hm₂
   rw [Prod.mk.injEq] at hpair
   obtain ⟨hp1, hp2⟩ := hpair
   -- the walk from `m₁ + 1` to `m₂ + 1` closes, so the sequence is constant there

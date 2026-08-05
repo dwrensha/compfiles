@@ -225,7 +225,7 @@ lemma card_supersets {A U : Finset (ℝ × ℝ)} (hU : U ⊆ A) {m : ℕ} (hUm :
   classical
   have hinj : Set.InjOn (· \ U) (((A.powersetCard (m + 1)).filter (fun T => U ⊆ T)) : Set _) := by
     intro T₁ hT₁ T₂ hT₂ hsd
-    simp only [Finset.coe_filter, Set.mem_setOf_eq, Finset.mem_powersetCard] at hT₁ hT₂
+    simp only [Finset.coe_filter, Set.mem_ofPred_eq, Finset.mem_powersetCard] at hT₁ hT₂
     calc T₁ = U ∪ (T₁ \ U) := (Finset.union_sdiff_of_subset hT₁.2).symm
     _ = U ∪ (T₂ \ U) := by rw [show T₁ \ U = T₂ \ U from hsd]
     _ = T₂ := Finset.union_sdiff_of_subset hT₂.2

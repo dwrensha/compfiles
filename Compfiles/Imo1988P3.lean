@@ -209,7 +209,9 @@ lemma recurrence_unique {f g : ℕ+ → ℕ+}
         cases b
         · let q : ℕ+ := ⟨Nat.bit false m, Nat.pos_of_ne_zero hbit⟩
           have harg : 2 * q + 1 = 4 * p + 1 := by
-            exact PNat.eq (by simp [q, p, Nat.bit_false_apply]; ring)
+            apply PNat.eq
+            show 2 * Nat.bit false m + 1 = 4 * m + 1
+            rw [Nat.bit_false_apply]; ring
           constructor
           · exact hstep.1
           · change f (2 * q + 1) = g (2 * q + 1)
@@ -217,7 +219,9 @@ lemma recurrence_unique {f g : ℕ+ → ℕ+}
             exact hstep.2.1
         · let q : ℕ+ := ⟨Nat.bit true m, Nat.pos_of_ne_zero hbit⟩
           have harg : 2 * q + 1 = 4 * p + 3 := by
-            exact PNat.eq (by simp [q, p, Nat.bit_true_apply]; ring)
+            apply PNat.eq
+            show 2 * Nat.bit true m + 1 = 4 * m + 3
+            rw [Nat.bit_true_apply]; ring
           constructor
           · exact ihp.2
           · change f (2 * q + 1) = g (2 * q + 1)
@@ -261,8 +265,8 @@ lemma fixedPoint_count_from_recurrence (f : ℕ+ → ℕ+) (hf : SatisfiesRecurr
     rcases Finset.mem_Icc.mp hbIcc with ⟨hb1, hb1988⟩
     have hbpos : 0 < b := Nat.lt_of_lt_of_le Nat.zero_lt_one hb1
     refine ⟨⟨b, hbpos⟩, ⟨hb1988, ?_⟩, rfl⟩
-    rw [recurrence_unique_binaryReverse f hf, pnatBinaryReverse_fixed_iff_palindrome]
-    exact hpal
+    exact (recurrence_unique_binaryReverse f hf ⟨b, hbpos⟩).trans
+      ((pnatBinaryReverse_fixed_iff_palindrome ⟨b, hbpos⟩).mpr hpal)
 
 snip end
 

@@ -94,8 +94,8 @@ lemma mod_iff_not_dvd {p s : ℕ} (hp : p.Prime) (hs0 : 0 < s) (hs1 : s < p) :
     ¬ s ∣ p - 1 := by
   have hp0 : 0 < p := hp.pos
   have hp2 : 2 ≤ p := hp.two_le
-  haveI : NeZero p := ⟨hp0.ne'⟩
-  haveI : Fact p.Prime := ⟨hp⟩
+  have : NeZero p := ⟨hp0.ne'⟩
+  have : Fact p.Prime := ⟨hp⟩
   -- Since `p` is prime, `s` is a unit in `ZMod p`; let `t` be the residue of `-s⁻¹`.
   have hsne : (s : ZMod p) ≠ 0 := by
     intro h

@@ -66,7 +66,7 @@ snip end
 problem usa1983_p1 :
     (PMF.uniformOfFintype Ordering).toOuterMeasure {σ | Favorable σ} = solution := by
   rw [PMF.toOuterMeasure_uniformOfFintype_apply, Fintype.card_subtype]
-  simp only [Set.mem_setOf_eq]
+  simp only [Set.mem_ofPred_eq]
   rw [card_favorable, card_orderings, solution]
   rw [ENNReal.div_eq_div_iff (by norm_num) (by norm_num) (by norm_num) (by norm_num)]
   norm_num

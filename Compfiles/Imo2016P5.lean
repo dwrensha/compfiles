@@ -440,7 +440,7 @@ problem imo2016_p5 :
                    ∏ i ∈ Finset.Icc 1 2016 \ R, (x - (i : ℝ)) }
             solution_value := by
   constructor
-  · rw [Set.mem_setOf_eq]
+  · rw [Set.mem_ofPred_eq]
     -- We follow the proof from Evan Chen:
     -- https://web.evanchen.cc/exams/IMO-2016-notes.pdf
     use (Finset.Icc 1 2016).filter (fun n ↦ n % 4 = 2 ∨ n % 4 = 3)
@@ -465,7 +465,7 @@ problem imo2016_p5 :
   · rw [mem_lowerBounds]
     intro j hj
     by_contra! H
-    rw [Set.mem_setOf_eq] at hj
+    rw [Set.mem_ofPred_eq] at hj
     obtain ⟨L, R, hL, hR, hcard, hLR⟩ := hj
     have h1 : ∃ i, i ∈ Finset.Icc 1 2016 ∧ i ∉ L ∧ i ∉ R := by
       by_contra! H2

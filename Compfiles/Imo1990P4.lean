@@ -268,8 +268,20 @@ theorem PNat.mk_mul_hom_fun.inv (g : ℕ → ℚ+) (a : ℕ+) :
 theorem PNat.mk_mul_mk (a b : ℕ) (ha : 0 < a) (hb : 0 < b) : (⟨a, ha⟩ : ℕ+) * ⟨b, hb⟩ = ⟨a * b, Nat.mul_pos ha hb⟩ :=
   Subtype.coe_eq_of_eq_mk rfl
 
+theorem Nat.toPNat_mul_toPNat (a b : ℕ) (ha : 0 < a) (hb : 0 < b) :
+    a.toPNat ha * b.toPNat hb = (a * b).toPNat (Nat.mul_pos ha hb) := rfl
+
+@[simp]
+theorem Nat.toPNat_coe (a : ℕ) (ha : 0 < a) : (a.toPNat ha : ℕ) = a := rfl
+
+@[simp]
+theorem Nat.toPNat_one (h : 0 < 1) : Nat.toPNat 1 h = 1 := rfl
+
+@[simp]
+theorem Nat.Primes.val_toPNat (p : Nat.Primes) (h : _) : p.val.toPNat h = (p : ℕ+) := rfl
+
 def PRat.mk_mul_hom_fun (g : ℕ → ℚ+) : ℚ+ →* ℚ+ := {
-  toFun q := ⟨(PNat.mk_mul_hom_fun g ⟨q.val.num.toNat, by simpa using q.prop⟩) * (PNat.mk_mul_hom_fun g⁻¹ ⟨q.val.den, Rat.den_pos ↑q⟩), by
+  toFun q := ⟨(PNat.mk_mul_hom_fun g (q.val.num.toNat.toPNat (by simpa using q.prop))) * (PNat.mk_mul_hom_fun g⁻¹ (q.val.den.toPNat (Rat.den_pos ↑q))), by
     refine (Rat.mul_pos_iff_of_pos_left ?_).mpr ?_ <;> exact Subtype.prop _
   ⟩
   map_mul' a b := by
@@ -279,17 +291,16 @@ def PRat.mk_mul_hom_fun (g : ℕ → ℚ+) : ℚ+ →* ℚ+ := {
     simp_rw [<-Positive.val_mul, <-map_mul]
     congr 2
     simp only [Positive.val_mul]
-    set_option backward.isDefEq.respectTransparency false in
-     repeat rw [PNat.mk_mul_mk]
+    repeat rw [Nat.toPNat_mul_toPNat]
     rw [← PNat.coe_inj]
-    simp_rw [PNat.mk_coe]
+    simp_rw [Nat.toPNat_coe]
     zify [Int.toNat_of_nonneg <| Rat.num_nonneg.mpr a.2.le,
           Int.toNat_of_nonneg <| Rat.num_nonneg.mpr b.2.le,
           Int.toNat_of_nonneg <| Rat.num_nonneg.mpr <| Rat.mul_nonneg a.2.le b.2.le]
     rw [← Rat.mul_num_den', mul_assoc]
   map_one' := by
     unfold PNat.mk_mul_hom_fun
-    simp only [MulHom.coe_mk, PNat.mk_coe, Positive.val_one, Rat.num_ofNat, Int.toNat_one,
+    simp only [MulHom.coe_mk, Nat.toPNat_coe, Positive.val_one, Rat.num_ofNat, Int.toNat_one,
       Nat.primeFactorsList_one, List.map_nil, List.prod_nil, Rat.den_ofNat, mul_one]
     rfl
 }
@@ -319,7 +330,7 @@ theorem PRat.mk_mul_hom_fun.inv_prime (g : ℕ → ℚ+) : ∀ p : Nat.Primes, P
 
 
 theorem exists_f : ∃ f : ℚ+ → ℚ+, ∀ x y : ℚ+, f (x * f y) = f x / y := by
-  let ⟨S, T, hU, hdU, Sinf, Tinf⟩ := Set.Infinite.exists_union_disjoint_infinite_of_infinite Nat.infinite_setOf_prime
+  let ⟨S, T, hU, hdU, Sinf, Tinf⟩ := Set.Infinite.exists_union_disjoint_infinite_of_infinite Nat.infinite_setOfPred_prime
   have S_equiv_T : S ≃ T := (@nonempty_equiv_of_countable S T _ Sinf.to_subtype _ Tinf.to_subtype).some
 
   have := Classical.dec
@@ -355,7 +366,7 @@ theorem exists_f : ∃ f : ℚ+ → ℚ+, ∀ x y : ℚ+, f (x * f y) = f x / y 
     · let q : Nat.Primes := ⟨S_equiv_T ⟨p, hS⟩, by {
         have : (S_equiv_T ⟨p, hS⟩).val ∈ S ∪ T := by simp
         rw [hU] at this
-        simp only [Set.mem_setOf_eq] at this
+        simp only [Set.mem_ofPred_eq] at this
         exact this
       }⟩
       have : ∀ h, (⟨S_equiv_T ⟨p, hS⟩, h⟩ : ℚ+) = (q : ℚ+) := by
@@ -372,7 +383,7 @@ theorem exists_f : ∃ f : ℚ+ → ℚ+, ∀ x y : ℚ+, f (x * f y) = f x / y 
       let q : Nat.Primes := ⟨S_equiv_T.symm ⟨p, hT⟩, by {
         have : (S_equiv_T.symm ⟨p, hT⟩).val ∈ S ∪ T := by simp
         rw [hU] at this
-        simp only [Set.mem_setOf_eq] at this
+        simp only [Set.mem_ofPred_eq] at this
         exact this
       }⟩
       have : ∀ h, (⟨(S_equiv_T.symm ⟨p, hT⟩)⁻¹, h⟩ : ℚ+) = (q⁻¹ : ℚ+) := by
@@ -388,6 +399,7 @@ theorem exists_f : ∃ f : ℚ+ → ℚ+, ∀ x y : ℚ+, f (x * f y) = f x / y 
         rw [<-hU]
         grind only [= Set.mem_union]
       simp at this
+      exact absurd p.prop this
 
   have f_chain (x : ℚ+) : f (f x) = 1 / x := by
     apply PRat.prime_induction (fun x => f (f x) = 1 / x)

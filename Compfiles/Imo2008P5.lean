@@ -62,10 +62,10 @@ private lemma fiber_ncard_of_mod_n {n k : ℕ} {f g : Fin k → Fin (2 * n)}
     Set.ncard {j | (g j).val = i} =
       Set.ncard {j | (f j).val = i} + Set.ncard {j | (f j).val = n + i} := by
   have hsplit : {j | (g j).val = i} = {j | (f j).val = i} ∪ {j | (f j).val = n + i} := by
-    ext j; simp only [Set.mem_setOf, Set.mem_union, hg]
+    ext j; simp only [Set.mem_ofPred, Set.mem_union, hg]
     split_ifs with h <;> constructor <;> intro hj <;> lia
   have hdisj : Disjoint {j | (f j).val = i} {j | (f j).val = n + i} :=
-    Set.disjoint_left.mpr fun j h1 h2 => by simp only [Set.mem_setOf] at h1 h2; lia
+    Set.disjoint_left.mpr fun j h1 h2 => by simp only [Set.mem_ofPred] at h1 h2; lia
   rw [hsplit, Set.ncard_union_eq hdisj]
 
 def ψ (n k : ℕ) : { f // NSequence n k f } → { f // MSequence n k f } :=
@@ -176,7 +176,7 @@ lemma claim (n k : ℕ) (hn : 0 < n) (hnk : n ≤ k) (_he : Even (k - n))
     let g : Fin k → Fin n := fun j ↦ ⟨(f.val j).val, hM j⟩
     have hceq : ∀ i : Fin n, c i = Nat.card { j | g j = i } := by
       intro i; apply congrArg Nat.card; apply congrArg Subtype
-      funext j; simp only [g, Set.mem_setOf_eq, Fin.ext_iff]
+      funext j; simp only [g, Set.mem_ofPred_eq, Fin.ext_iff]
     simp_rw [hceq, Nat.card_eq_fintype_card]
     conv_lhs =>
       arg 2; ext i; rw [show Fintype.card ↑{j | g j = i} = Fintype.card {j // g j = i} from rfl]
@@ -193,7 +193,6 @@ lemma claim (n k : ℕ) (hn : 0 < n) (hnk : n ≤ k) (_he : Even (k - n))
 
   let selected_eq_fin (cs : S) (i : Fin n) : selected cs i = selected_fin cs i := by
     simp [selected, selected_fin]
-    rfl
 
   let p (cs : S) : {g | ψ n k g = f} :=
     let g1 (j : Fin k) : Fin (2 * n) :=
@@ -213,7 +212,7 @@ lemma claim (n k : ℕ) (hn : 0 < n) (hnk : n ≤ k) (_he : Even (k - n))
         rw [selected_eq_fin, Set.ncard_coe_finset, Finset.card_map]
         exact (cs i).2
       have hhigh : ∀ i : Fin n, {j : Fin k | ↑(g1 j) = n + i} = selected cs i := by
-        intro i; ext j; simp only [Set.mem_setOf]
+        intro i; ext j; simp only [Set.mem_ofPred]
         constructor
         · intro hj
           let y' : Fin n := ⟨(f.val j).val, hM j⟩
@@ -320,7 +319,7 @@ lemma claim (n k : ℕ) (hn : 0 < n) (hnk : n ≤ k) (_he : Even (k - n))
       rcases g with ⟨gfun, hgN⟩
       rcases hgN with ⟨hgN1, hgN2⟩
       have hgψ : ψ n k ⟨gfun, ⟨hgN1, hgN2⟩⟩ = f := by
-        simpa [Set.mem_setOf] using hg
+        simpa [Set.mem_ofPred] using hg
       have hlow_or_high : ∀ j : Fin k,
           (gfun j).val = (f.val j).val ∨ (gfun j).val = (f.val j).val + n := by
         intro j
@@ -360,11 +359,11 @@ lemma claim (n k : ℕ) (hn : 0 < n) (hnk : n ≤ k) (_he : Even (k - n))
         constructor
         · intro hj
           rcases hj with ⟨ji, hji, rfl⟩
-          simp only [a, Finset.coe_filter, Set.mem_setOf_eq, Finset.mem_univ, true_and] at hji
+          simp only [a, Finset.coe_filter, Set.mem_ofPred_eq, Finset.mem_univ, true_and] at hji
           exact hji
         · intro hj
           refine ⟨⟨j, hfi_of_high i j hj⟩, ?_, rfl⟩
-          simp only [a, Finset.coe_filter, Set.mem_setOf_eq, Finset.mem_univ, true_and]
+          simp only [a, Finset.coe_filter, Set.mem_ofPred_eq, Finset.mem_univ, true_and]
           exact hj
       apply Subtype.ext
       apply Subtype.ext

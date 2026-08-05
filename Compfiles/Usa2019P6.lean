@@ -154,7 +154,7 @@ lemma phiPoly_eq_zero (P : Polynomial ℝ)
           linarith
         simp [this]
       have hw : 2 * x * y - 1 ≠ 0 := sub_ne_zero.mpr hxy
-      rw [Set.mem_setOf_eq, IsRoot.def, phiPoly_eval P x y hxy]
+      rw [Set.mem_ofPred_eq, IsRoot.def, phiPoly_eval P x y hxy]
       have hz0 : (x + y) / (2 * x * y - 1) ≠ 0 := by
         apply div_ne_zero _ hw
         intro h
@@ -176,7 +176,7 @@ lemma phiPoly_eq_zero (P : Polynomial ℝ)
         {x | ((PhiPoly P).coeff k).IsRoot x} := by
       intro x hx
       have hx0 : x ≠ 0 := fun h => hx (by simp [h])
-      rw [Set.mem_setOf_eq, IsRoot.def]
+      rw [Set.mem_ofPred_eq, IsRoot.def]
       have h3 := h1 x hx0
       have h4 : ((PhiPoly P).map (evalRingHom x)).coeff k = 0 := by
         rw [h3]
@@ -384,7 +384,7 @@ lemma natDegree_le_two (P : Polynomial ℝ) (hP0 : P ≠ 0) (hPhi : PhiPoly P = 
     have hsub : ((({-h} : Finset ℂ) : Set ℂ)ᶜ) ⊆ {x | D.IsRoot x} := by
       intro x hx
       have hx' : x ≠ -h := fun hb => hx (by simp [hb])
-      rw [Set.mem_setOf_eq, IsRoot.def, hDeval]
+      rw [Set.mem_ofPred_eq, IsRoot.def, hDeval]
       exact hD x hx'
     exact Set.Infinite.mono hsub (Set.Finite.infinite_compl (Finset.finite_toSet _))
   rw [hDdef] at hD0

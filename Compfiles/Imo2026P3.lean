@@ -1933,7 +1933,7 @@ theorem exists_close_pair_of_finite {α : Type*} [Fintype α]
       |f a - f b| ≤ 1 / ((Fintype.card α : ℝ) - 1) := by
   classical
   by_cases hf : Function.Injective f
-  · letI : LinearOrder α := LinearOrder.lift' f hf
+  · let _ : LinearOrder α := LinearOrder.lift' f hf
     let s : List α := Finset.univ.sort (· ≤ ·)
     have hslen : s.length = Fintype.card α := by
       simp [s]
@@ -4028,7 +4028,7 @@ problem V_eq (n : ℕ) (hn : 0 < n) : V n = answer n := by
     constructor
     · simp
     · simp
-  haveI : Nonempty {A : Finset ℝ // AdmissibleMark n A} := ⟨⟨∅, hemptyA⟩⟩
+  have : Nonempty {A : Finset ℝ // AdmissibleMark n A} := ⟨⟨∅, hemptyA⟩⟩
   apply le_antisymm
   · -- For every admissible `A`, Xiang Yu's reply makes the infimum `≤ answer`.
     apply ciSup_le
@@ -4057,7 +4057,7 @@ problem V_eq (n : ℕ) (hn : 0 < n) : V n = answer n := by
       exact (L_mem_Icc A.1 ∅ A.2.1 (by simp)).2
     have h1 : (2 : ℝ) ^ n / ((2 : ℝ) ^ (n + 1) - 1) ≤
         ⨅ B : {B : Finset ℝ // AdmissibleMark n B ∧ Disjoint A₀ B}, L A₀ B.1 := by
-      haveI : Nonempty {B : Finset ℝ // AdmissibleMark n B ∧ Disjoint A₀ B} :=
+      have : Nonempty {B : Finset ℝ // AdmissibleMark n B ∧ Disjoint A₀ B} :=
         ⟨⟨∅, hemptyA, Finset.disjoint_empty_right _⟩⟩
       apply le_ciInf
       intro B

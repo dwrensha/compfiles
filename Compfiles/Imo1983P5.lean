@@ -157,8 +157,8 @@ theorem generalized (n : ℕ+) :
   -- typecast the finset into ℕ+
   use Finset.map ⟨(⟨base_two_to_base_three ·.val, base_two_to_base_three_pos (by grind)⟩),
     fun _ _ h => by
-      simp only [Finset.range_one, ← PNat.coe_inj, PNat.mk_coe] at h
-      exact_mod_cast base_two_to_base_three_inj h⟩ (Finset.range (2 ^ n.val) \ Finset.range 1).attach
+      exact Subtype.ext
+        (base_two_to_base_three_inj (congrArg PNat.val h))⟩ (Finset.range (2 ^ n.val) \ Finset.range 1).attach
   and_intros
   · rw [Finset.card_map, Finset.card_attach, Finset.card_sdiff]
     rw [Finset.range_inter_range, Finset.card_range, Finset.card_range]
@@ -184,7 +184,7 @@ theorem generalized (n : ℕ+) :
     exact hm.left
   · rintro x hx y hy z hz h'
     contrapose! h'
-    simp_rw [Finset.mem_map, DFunLike.coe, ← PNat.coe_inj, PNat.mk_coe] at hx hy hz
+    simp_rw [Finset.mem_map, ← PNat.coe_inj, DFunLike.coe, PNat.mk_coe] at hx hy hz
     rcases hx with ⟨x', -, hx'x⟩
     rcases hy with ⟨y', -, hy'y⟩
     rcases hz with ⟨z', -, hz'z⟩

@@ -337,8 +337,8 @@ theorem card_range_filter_eq_one {p : ℕ} (hp : p.Prime) {A : Finset ℕ}
       {Finset.Icc 1 p, Finset.Icc (p + 1) (2 * p)}) :
     ((Finset.range p).filter (fun i ↦ p ∣ ∑ x ∈ (shiftSet p)^[i] A, x)).card = 1 := by
   have hp0 : 0 < p := hp.pos
-  haveI : NeZero p := ⟨hp0.ne'⟩
-  haveI : Fact p.Prime := ⟨hp⟩
+  have : NeZero p := ⟨hp0.ne'⟩
+  have : Fact p.Prime := ⟨hp⟩
   obtain ⟨hc1, hc2⟩ := low_card_bounds hp0 hA
   have key : ∀ i : ℕ, (p ∣ ∑ x ∈ (shiftSet p)^[i] A, x) ↔
       ((∑ x ∈ A, x : ZMod p) + (i : ZMod p) *

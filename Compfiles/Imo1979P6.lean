@@ -52,7 +52,7 @@ instance instFintypeAnd {α : Type} [DecidableEq α] (p q : α → Prop) [inst :
 instance Set.instFintypeElemOfSubtype {α : Type} (p: α → Prop) [inst : Fintype {x // p x}] : Fintype ({x | p x}) := {
   elems := inst.elems
   complete := by
-    simp only [Set.coe_setOf, Subtype.forall]
+    simp only [Set.coe_ofPred, Subtype.forall]
     intro a h
     apply Fintype.complete
 }
@@ -235,10 +235,9 @@ theorem a_b_recurrence_1 (n : ℕ) (npos : 0 < n) : a (n+2) = 2 * a n + 2 * b n 
       repeat rw [Finset.sum_insert (by decide)]
       rw [Finset.sum_singleton]
       repeat rw [walks_from_A]
-      simp only [Set.ncard_eq_toFinset_card', Set.toFinset_card, Set.coe_setOf]
+      simp only [Set.ncard_eq_toFinset_card', Set.toFinset_card, Set.coe_ofPred]
       rw [<-Fintype.card_eq.mpr (Nonempty.intro (C_G_symm _))]
       ring_nf
-      rfl
 
 theorem a_b_recurrence_2 (n : ℕ) (npos : 0 < n) : b (n+2) = a n + 2 * b n := by
   have walks_from_C (v) : Fintype.card { w : Octagon.Walk C v // E ∉ w.support ∧ w.length = 2 } =
@@ -266,9 +265,8 @@ theorem a_b_recurrence_2 (n : ℕ) (npos : 0 < n) : b (n+2) = a n + 2 * b n := b
       repeat rw [Finset.sum_insert (by decide)]
       rw [Finset.sum_singleton]
       repeat rw [walks_from_C]
-      simp only [Set.ncard_eq_toFinset_card', Set.toFinset_card, Set.coe_setOf]
+      simp only [Set.ncard_eq_toFinset_card', Set.toFinset_card, Set.coe_ofPred]
       ring_nf
-      rfl
 
 
 theorem a_even (n : ℕ) (npos : 0 < n) : a (2*n) = ((2+√2)^(n-1) - (2-√2)^(n-1)) / √2 := by
@@ -310,7 +308,7 @@ theorem a_odd (n : ℕ) (npos : 0 < n) : a (2*n-1) = 0 := by
   apply Finset.eq_empty_of_forall_notMem
   intro w
   have := walk_even w
-  grind only [= Nat.even_iff, = Set.mem_toFinset, usr Set.mem_setOf_eq]
+  grind only [= Nat.even_iff, = Set.mem_toFinset, usr Set.mem_ofPred_eq]
 
 snip end
 

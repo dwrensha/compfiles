@@ -525,8 +525,7 @@ theorem NordicSquare.UphillPath.dropLast_getLast {n : ℕ} {ns : NordicSquare n}
     (p : ns.UphillPath) (h : 2 ≤ p.cells.length) :
     (p.dropLast h).cells.getLast (p.dropLast h).nonempty =
       p.cells[p.cells.length - 2]'(by omega) := by
-  show (p.cells.dropLast).getLast _ = _
-  rw [List.getLast_dropLast]
+  exact List.getLast_dropLast _
 
 /-- The penultimate and last cells of a path of length ≥ 2 are adjacent,
 with the value of the penultimate one smaller. -/
@@ -646,18 +645,18 @@ theorem NordicSquare.cells_eq_pathTo_of_good {n : ℕ} (ns : NordicSquare n) (hg
 theorem NordicSquare.countTo_eq_one_of_not_hill {n : ℕ} (ns : NordicSquare n) (hg : ns.Good)
     (c : Cell n) (hc : ¬ ns.Hill c) :
     Nat.card {p : ns.UphillPath // p.cells.getLast p.nonempty = c} = 1 := by
-  haveI : Subsingleton {p : ns.UphillPath // p.cells.getLast p.nonempty = c} :=
+  have : Subsingleton {p : ns.UphillPath // p.cells.getLast p.nonempty = c} :=
     ⟨fun p q ↦ by
       apply Subtype.ext
       apply NordicSquare.UphillPath.ext
       rw [ns.cells_eq_pathTo_of_good hg c hc p.1 p.2,
         ns.cells_eq_pathTo_of_good hg c hc q.1 q.2]⟩
-  haveI : Nonempty {p : ns.UphillPath // p.cells.getLast p.nonempty = c} := by
+  have : Nonempty {p : ns.UphillPath // p.cells.getLast p.nonempty = c} := by
     refine ⟨⟨ns.uphillPathTo c, ?_⟩⟩
     have h := ns.uphillPathTo_getLast? c
     rw [List.getLast?_eq_some_getLast (ns.uphillPathTo c).nonempty] at h
     exact Option.some.inj h
-  haveI : Unique {p : ns.UphillPath // p.cells.getLast p.nonempty = c} :=
+  have : Unique {p : ns.UphillPath // p.cells.getLast p.nonempty = c} :=
     { default := Classical.choice ‹Nonempty _›,
       uniq := fun a ↦ Subsingleton.elim _ _ }
   exact Nat.card_eq_one_iff_unique.2 ⟨inferInstance, inferInstance⟩
@@ -1073,11 +1072,11 @@ theorem NordicSquare.good_count {n : ℕ} (hn : 2 ≤ n) (ns : NordicSquare n) (
 
 /-- The number of uphill paths on a 1×1 board is 1. -/
 theorem nat_card_uphillPath_one (ns : NordicSquare 1) : Nat.card ns.UphillPath = 1 := by
-  haveI : Subsingleton (Cell 1) := ⟨fun a b ↦ by
+  have : Subsingleton (Cell 1) := ⟨fun a b ↦ by
     obtain ⟨a1, a2⟩ := a
     obtain ⟨b1, b2⟩ := b
     simp [Fin.ext_iff]⟩
-  haveI : Subsingleton ns.UphillPath := ⟨fun p q ↦ by
+  have : Subsingleton ns.UphillPath := ⟨fun p q ↦ by
     apply NordicSquare.UphillPath.ext
     have hp : p.cells.length = 1 := by
       have hnd := ns.isChain_nodup p.cells p.increasing
@@ -1096,7 +1095,7 @@ theorem nat_card_uphillPath_one (ns : NordicSquare 1) : Nat.card ns.UphillPath =
     obtain ⟨a, ha⟩ := List.length_eq_one_iff.1 hp
     obtain ⟨b, hb⟩ := List.length_eq_one_iff.1 hq
     rw [ha, hb, Subsingleton.elim a b]⟩
-  haveI : Nonempty ns.UphillPath := ⟨NordicSquare.trivialPath ns⟩
+  have : Nonempty ns.UphillPath := ⟨NordicSquare.trivialPath ns⟩
   exact Nat.card_eq_one_iff_unique.2 ⟨inferInstance, inferInstance⟩
 
 /-- The column offset of the construction (handles the case `m % 3 = 1`). -/
@@ -1412,7 +1411,7 @@ theorem keyFn_injective' (m : ℕ) : Function.Injective (keyFn m) := by
     · intro x y _
       obtain ⟨x1, x2⟩ := x
       obtain ⟨y1, y2⟩ := y
-      haveI : Subsingleton (Fin 1) := ⟨fun a b ↦ Fin.ext (by omega)⟩
+      have : Subsingleton (Fin 1) := ⟨fun a b ↦ Fin.ext (by omega)⟩
       exact Subsingleton.elim _ _
   · exact keyFn_injective hm
 

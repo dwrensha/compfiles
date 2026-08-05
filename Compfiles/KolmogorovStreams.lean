@@ -74,7 +74,7 @@ lemma break_into_words_closed_form
         = break_into_words lengths.tail (a.drop lengths.head) n := congrFun h1 n
       _ = _ := by
             rw [ih]
-            simp [Stream'.drop_drop, Finset.sum_range_succ', Nat.add_comm]
+            simp [Stream'.drop_drop, Finset.sum_range_succ' (fun j => lengths j), Nat.add_comm]
             rfl
 
 def all_prefixes (p : List α → Prop) (a : Stream' α) : Prop := a.inits.All p

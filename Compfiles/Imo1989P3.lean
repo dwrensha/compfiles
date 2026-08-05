@@ -68,7 +68,7 @@ lemma collinear_of_dist_eq {A B : Pt} (hAB : A ≠ B) {p₁ p₂ p₃ : Pt} (h�
   have hu3mem : p₃ - p₁ ∈ (ℝ ∙ (B - A))ᗮ :=
     Submodule.mem_orthogonal_singleton_iff_inner_right.mpr
       (inner_eq_zero_symm.mp (inner_sub_eq_zero_of_dist_eq h3 h1))
-  haveI : Fact (Module.finrank ℝ Pt = 1 + 1) := ⟨by rw [finrank_euclideanSpace_fin]⟩
+  have : Fact (Module.finrank ℝ Pt = 1 + 1) := ⟨by rw [finrank_euclideanSpace_fin]⟩
   have hfin : Module.finrank ℝ (ℝ ∙ (B - A))ᗮ = 1 :=
     Submodule.finrank_orthogonal_span_singleton hv
   have heq : (ℝ ∙ (B - A))ᗮ = ℝ ∙ (p₂ - p₁) :=

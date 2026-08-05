@@ -49,8 +49,7 @@ problem imo1994_p5 (f : S → S) :
   -- We follow https://prase.cz/kalva/imo/isoln/isoln945.html
   constructor
   · intro hf
-    simp only [Set.mem_singleton_iff] at hf
-    rw [hf]
+    rw [Set.eq_of_mem_singleton hf]
     refine ⟨?_, ?_, ?_⟩ <;> rintro ⟨x, hx⟩ ⟨y, hy⟩
     · grind
     · simp only [Set.mem_Ioo, and_imp]
@@ -80,7 +79,7 @@ problem imo1994_p5 (f : S → S) :
       rw [div_lt_div_iff₀ h2 h1]
       linarith
   rintro ⟨h1, h2, h3⟩
-  simp only [Set.mem_singleton_iff]
+  refine Set.mem_singleton_iff.mpr ?_
   have h4 : ∀ a, f a = a → a = ⟨0, neg_one_lt_zero⟩ := by
     -- Suppose f(a) = a.
     intro a ha
@@ -115,6 +114,7 @@ problem imo1994_p5 (f : S → S) :
     · obtain ⟨a, haa⟩ := a
       dsimp only at haz
       simp_rw [haz]
+      rfl
     · -- Similarly, if a > 0, then b > a, but f(a)/a = f(b)/b. Contradiction.
       have hai : a.val ∈ Set.Ioi 0 := haz
       have hba : a.val < b := by

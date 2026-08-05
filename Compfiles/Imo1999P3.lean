@@ -698,12 +698,12 @@ problem imo1999_p3 (n : ℕ) (h_pos : 0 < n) (h_even : Even n) :
     (solution_value n) := by
   constructor
   -- 1. Membership (Sufficiency): A valid marking of size N exists.
-  · simp only [Set.mem_setOf_eq]
+  · simp only [Set.mem_ofPred_eq]
     use solutionSet n
     exact (imo1999_p3_sufficiency n h_pos h_even).symm
   -- 2. Lower Bound (Necessity): Any valid marking has size at least N.
   · intro k hk
-    simp only [Set.mem_setOf_eq] at hk
+    simp only [Set.mem_ofPred_eq] at hk
     rcases hk with ⟨s, h_valid, h_card_eq⟩
     have h_ge := imo1999_p3_necessity n h_even s h_valid
     rw [← h_card_eq]

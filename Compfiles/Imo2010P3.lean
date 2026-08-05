@@ -88,7 +88,7 @@ lemma injective_of_sq (g : ℤ>0 → ℤ>0)
 lemma padicValInt_eq_of_dvd_not_dvd {p k : ℕ} (hp : Nat.Prime p) {z : ℤ}
     (hk : (p : ℤ) ^ k ∣ z) (hsucc : ¬(p : ℤ) ^ (k + 1) ∣ z) :
     padicValInt p z = k := by
-  contrapose! hsucc; haveI := Fact.mk hp; simp_all +decide [padicValInt_dvd_iff]
+  contrapose! hsucc; have := Fact.mk hp; simp_all +decide [padicValInt_dvd_iff]
   grind
 
 lemma exists_positive_shift_odd_padic {p : ℕ} (hp : Nat.Prime p) {a b : ℤ}
@@ -101,12 +101,12 @@ lemma exists_positive_shift_odd_padic {p : ℕ} (hp : Nat.Prime p) {a b : ℤ}
   · refine ⟨p * (1 + p * a) - a, ?_, ?_, ?_⟩
     · nlinarith [hp.two_le, mul_pos (Nat.cast_pos.mpr hp.pos) ha]
     · simp +zetaDelta at *
-      haveI := Fact.mk hp; rw [padicValInt.mul] <;> norm_num [hp.ne_zero, hp.ne_one, ha.ne', hb.ne']
+      have := Fact.mk hp; rw [padicValInt.mul] <;> norm_num [hp.ne_zero, hp.ne_one, ha.ne', hb.ne']
       · rw [padicValInt.eq_zero_of_not_dvd] <;> norm_num
         exact_mod_cast hp.not_dvd_one
       · nlinarith [hp.two_le]
     · norm_num [show a = b by linarith] at *
-      haveI := Fact.mk hp; rw [padicValInt.mul] <;> norm_num [hp.ne_zero, hp.ne_one, ha.ne']
+      have := Fact.mk hp; rw [padicValInt.mul] <;> norm_num [hp.ne_zero, hp.ne_one, ha.ne']
       · rw [padicValInt.eq_zero_of_not_dvd] <;> norm_num [hp.ne_one, hp.ne_zero, ha.ne']
         exact_mod_cast hp.not_dvd_one
       · finiteness
@@ -168,7 +168,7 @@ lemma exists_positive_shift_odd_padic {p : ℕ} (hp : Nat.Prime p) {a b : ℤ}
       have hM_pos : 0 < M := by
         linarith
       have hM_val : padicValInt p (M + a) = r ∧ padicValInt p (M + b) = r := by
-        haveI := Fact.mk hp; simp_all +decide [padicValInt_dvd_iff]
+        have := Fact.mk hp; simp_all +decide [padicValInt_dvd_iff]
         grind
       have hM_odd : Odd (padicValInt p (M + a)) ∧ Odd (padicValInt p (M + b)) := by
         grind
@@ -185,7 +185,7 @@ lemma prime_dvd_other_factor_of_square {p : ℕ} (hp : Nat.Prime p) {x y : ℤ}
     · exact hx hx0
     · exact hy hy0
   have h_val : padicValInt p x + padicValInt p y = 2 * padicValInt p z := by
-    letI := Fact.mk hp
+    have := Fact.mk hp
     rw [← padicValInt.mul hx hy, hz, padicValInt.mul hz_ne hz_ne]
     omega
   contrapose! hodd

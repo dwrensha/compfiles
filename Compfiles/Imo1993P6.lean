@@ -632,7 +632,7 @@ def cat {n : ℕ} (y z : Fin n → ZMod 2) : Fin (n + n) → ZMod 2 :=
 
 lemma tot_cat {n : ℕ} [NeZero n] (y z : Fin n → ZMod 2) :
     tot (cat y z) = tot y + tot z := by
-  haveI : NeZero (n + n) := ⟨by have := NeZero.ne n; omega⟩
+  have : NeZero (n + n) := ⟨by have := NeZero.ne n; omega⟩
   rw [tot_eq, tot_eq, tot_eq]
   have hsplit : ∀ f : ℕ → ZMod 2,
       (∑ i ∈ Finset.range (n + n), f i)
@@ -686,7 +686,7 @@ lemma tot_cat {n : ℕ} [NeZero n] (y z : Fin n → ZMod 2) :
 lemma catL {n : ℕ} [NeZero n] (y z : Fin n → ZMod 2) :
     L (cat y z) = cat (fun j => L y j + (y (lasti n) + z (lasti n)))
       (fun j => L z j + tot y) := by
-  haveI : NeZero (n + n) := ⟨by have := NeZero.ne n; omega⟩
+  have : NeZero (n + n) := ⟨by have := NeZero.ne n; omega⟩
   funext p
   rw [L_apply]
   have hlast : cat y z (lasti (n + n)) = z (lasti n) := by
@@ -820,7 +820,7 @@ lemma base_case : A 2 ∧ B 2 ∧ C 2 ∧ D 2 := by
 lemma stepLemma (n : ℕ) [NeZero n] (h2 : 2 ≤ n) (hA : A n) (hB : B n) (hC : C n)
     (hD : D n) :
     A (n + n) ∧ B (n + n) ∧ C (n + n) ∧ D (n + n) := by
-  haveI : NeZero (n + n) := ⟨by have := NeZero.ne n; omega⟩
+  have : NeZero (n + n) := ⟨by have := NeZero.ne n; omega⟩
   -- Phase A: the first `n-1` rounds duplicate the `n`-lamp process.
   have hPA : ∀ M, M ≤ n - 1 →
       L^[M] ((fun _ => (1 : ZMod 2)) : Fin (n + n) → ZMod 2) =
@@ -1025,7 +1025,7 @@ theorem core (k : ℕ) (hk : 1 ≤ k) : ∀ (n : ℕ) [NeZero n], n = 2 ^ k → 
       subst hn
       exact base_case
     | succ k' =>
-      haveI : NeZero (2 ^ (k' + 1)) := ⟨pow_ne_zero _ (by decide)⟩
+      have : NeZero (2 ^ (k' + 1)) := ⟨pow_ne_zero _ (by decide)⟩
       have ih2 := ih (by omega : 1 ≤ k' + 1) (2 ^ (k' + 1)) rfl
       have e : n = 2 ^ (k' + 1) + 2 ^ (k' + 1) := by rw [hn, pow_succ, mul_two]
       subst e
@@ -1165,8 +1165,8 @@ lemma invC (k : ℕ) (hk : 1 ≤ k) :
     ∀ m, 1 ≤ m → m ≤ 2 ^ k - 1 →
       L^[m] ((fun _ => (1 : ZMod 2)) : Fin (2 ^ k + 1) → ZMod 2)
         = cStateVec (L^[m] ((fun _ => (1 : ZMod 2)) : Fin (2 ^ k) → ZMod 2)) := by
-  haveI : NeZero (2 ^ k) := ⟨pow_ne_zero _ (by decide)⟩
-  haveI : NeZero (2 ^ k + 1) := ⟨ne_of_gt (by positivity)⟩
+  have : NeZero (2 ^ k) := ⟨pow_ne_zero _ (by decide)⟩
+  have : NeZero (2 ^ k + 1) := ⟨ne_of_gt (by positivity)⟩
   have hcore := core k hk (2 ^ k) rfl
   have h22 : 2 ≤ 2 ^ k := by
     have h : (2 : ℕ) ^ 1 ≤ 2 ^ k := Nat.pow_le_pow_right (by decide) (by omega)
@@ -1214,8 +1214,8 @@ lemma invC (k : ℕ) (hk : 1 ≤ k) :
 /-- The shifted state of `eFn (2^k)` is exactly "only lamp 1 on". -/
 lemma cState_eFn (k : ℕ) (hk : 1 ≤ k) :
     cStateVec (eFn (2 ^ k)) = fun i => if i.val = 1 then (1 : ZMod 2) else 0 := by
-  haveI : NeZero (2 ^ k) := ⟨pow_ne_zero _ (by decide)⟩
-  haveI : NeZero (2 ^ k + 1) := ⟨ne_of_gt (by positivity)⟩
+  have : NeZero (2 ^ k) := ⟨pow_ne_zero _ (by decide)⟩
+  have : NeZero (2 ^ k + 1) := ⟨ne_of_gt (by positivity)⟩
   have h22 : 2 ≤ 2 ^ k := by
     have h : (2 : ℕ) ^ 1 ≤ 2 ^ k := Nat.pow_le_pow_right (by decide) (by omega)
     rwa [pow_one] at h

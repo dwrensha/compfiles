@@ -85,7 +85,7 @@ problem imo1999_p4 (n p : ℕ) :
     0 < n ∧ n ≤ 2 * p ∧ p.Prime ∧ n^(p - 1) ∣ (p - 1)^n + 1 := by
   constructor
   · simp only [Set.mem_union, Set.mem_insert_iff, Prod.mk.injEq, Set.mem_singleton_iff,
-               Set.mem_setOf_eq]
+               Set.mem_ofPred_eq]
     intro h
     casesm* _ ∨ _ <;> rcases h with ⟨hn, hp⟩
     · rw [hn, hp]

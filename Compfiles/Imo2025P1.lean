@@ -52,7 +52,7 @@ def yAxis : AffineSubspace ℝ (EuclideanSpace ℝ (Fin 2)) where
 def linexy0 : AffineSubspace ℝ (EuclideanSpace ℝ (Fin 2)) where
   carrier := {p | p 0 + p 1 = 0}
   smul_vsub_vadd_mem' c p₁ p₂ p₃ hp₁ hp₂ hp₃ := by
-    simp only [Fin.isValue, vsub_eq_sub, vadd_eq_add, Set.mem_setOf_eq, PiLp.add_apply,
+    simp only [Fin.isValue, vsub_eq_sub, vadd_eq_add, Set.mem_ofPred_eq, PiLp.add_apply,
       PiLp.smul_apply, PiLp.sub_apply, smul_eq_mul]
     suffices c * (p₁ 0 + p₁ 1 - (p₂ 0 + p₂ 1)) + (p₃ 0 + p₃ 1) = 0 by
       rw [← this]
@@ -116,9 +116,9 @@ Note: We don't enforce `a ≠ 0 ∨ b ≠ 0`. -/
 noncomputable def line (a b c : ℝ) : AffSubOfPlane where
   carrier := {p | a * p 0 + b * p 1 + c = 0}
   smul_vsub_vadd_mem' r p₁ p₂ p₃ hp₁ hp₂ hp₃ := by
-    simp only [Fin.isValue, vsub_eq_sub, vadd_eq_add, Set.mem_setOf_eq, PiLp.add_apply,
+    simp only [Fin.isValue, vsub_eq_sub, vadd_eq_add, Set.mem_ofPred_eq, PiLp.add_apply,
       PiLp.smul_apply, PiLp.sub_apply, smul_eq_mul]
-    simp_all only [Fin.isValue, Set.mem_setOf_eq]
+    simp_all only [Fin.isValue, Set.mem_ofPred_eq]
     calc
     _ = r * (a * p₁ 0 + b * p₁ 1 + c) -
         r * (a * p₂ 0 + b * p₂ 1 + c) +
@@ -413,15 +413,15 @@ lemma grid_shift (n : ℕ) (d : Fin 3) :
     shiftSet (gridShift d) (grid (n + 1) \ (edgeLine (n + 1) d)) = grid n := by
   ext x
   simp only [shiftSet, AffineEquiv.constVAdd_apply, vadd_eq_add, Set.image_add_left, grid,
-    Fin.isValue, exists_and_left, Set.preimage_sdiff, Set.preimage_setOf_eq, PiLp.add_apply,
-    PiLp.neg_apply, Set.mem_sdiff, Set.mem_setOf_eq, Set.mem_preimage, SetLike.mem_coe]
+    Fin.isValue, exists_and_left, Set.preimage_sdiff, Set.preimage_ofPred_eq, PiLp.add_apply,
+    PiLp.neg_apply, Set.mem_sdiff, Set.mem_ofPred_eq, Set.mem_preimage, SetLike.mem_coe]
   constructor
   · intro ⟨⟨a, ha, b, hb, ha0, hb0, hab⟩, h2⟩
     simp only [edgeLine, line'] at h2
     fin_cases d
     all_goals
       simp only [line, Fin.isValue, edgeCoeffs, one_mul, zero_mul, add_zero, gridShift, ←
-        SetLike.mem_coe, SetLike.coe, Set.mem_setOf_eq, PiLp.add_apply, PiLp.neg_apply,
+        SetLike.mem_coe, SetLike.coe, Set.mem_ofPred_eq, PiLp.add_apply, PiLp.neg_apply,
         Matrix.cons_val_zero, neg_neg, add_neg_cancel_comm, Matrix.cons_val_one,
         Matrix.cons_val_fin_one, zero_add] at h2
       simp only [gridShift, Fin.isValue, PiLp.toLp_apply, Matrix.cons_val_zero, neg_neg, neg_zero,
@@ -467,7 +467,7 @@ lemma grid_shift (n : ℕ) (d : Fin 3) :
         simp only [Fin.isValue, hb, hb0, true_and]
         lia
       · simp only [edgeLine, line', line, Fin.isValue, edgeCoeffs, one_mul, zero_mul, add_zero,
-          gridShift, ← SetLike.mem_coe, SetLike.coe, Set.mem_setOf_eq, PiLp.add_apply,
+          gridShift, ← SetLike.mem_coe, SetLike.coe, Set.mem_ofPred_eq, PiLp.add_apply,
           PiLp.neg_apply, Matrix.cons_val_zero, neg_neg, add_neg_cancel_comm]
         intro hC; rw [hC] at ha; norm_cast at ha; lia
     · constructor
@@ -479,7 +479,7 @@ lemma grid_shift (n : ℕ) (d : Fin 3) :
           hb0, or_self, true_and]
         lia
       · simp only [edgeLine, line', line, Fin.isValue, edgeCoeffs, zero_mul, one_mul, zero_add,
-          gridShift, ← SetLike.mem_coe, SetLike.coe, Set.mem_setOf_eq, PiLp.add_apply,
+          gridShift, ← SetLike.mem_coe, SetLike.coe, Set.mem_ofPred_eq, PiLp.add_apply,
           PiLp.neg_apply, Matrix.cons_val_one, Matrix.cons_val_fin_one, neg_neg,
           add_neg_cancel_comm]
         intro hC; rw [hC] at hb; norm_cast at hb; lia
@@ -491,7 +491,7 @@ lemma grid_shift (n : ℕ) (d : Fin 3) :
         simp only [Fin.isValue, hb, hb0, true_and]
         lia
       · simp only [edgeLine, line', line, Fin.isValue, edgeCoeffs, Nat.cast_add, Nat.cast_one,
-        neg_add_rev, one_mul, gridShift, ← SetLike.mem_coe, SetLike.coe, Set.mem_setOf_eq,
+        neg_add_rev, one_mul, gridShift, ← SetLike.mem_coe, SetLike.coe, Set.mem_ofPred_eq,
         PiLp.add_apply, PiLp.neg_apply, Matrix.cons_val_zero, neg_zero, zero_add,
         Matrix.cons_val_one, Matrix.cons_val_fin_one]
         intro hC; rw [ha, hb] at hC; norm_cast at hC; lia
@@ -965,7 +965,8 @@ lemma coverGridNoEdgeConfig.cover_no_edge_3_lines (C : coverGridNoEdgeConfig)
       !₂[1, 2] ∈ C.findLineCorner 2 ∧ !₂[3, 1] ∈ C.findLineCorner 2 := by
     rw [
       show !₂[1, 1] = C.cornerPoint 0 by
-        simp [coverGridNoEdgeConfig.cornerPoint, coverGridConfig.edgePoint],
+        simp [coverGridNoEdgeConfig.cornerPoint, coverGridConfig.edgePoint,
+          coverGridNoEdgeConfig.edgeEndpointIndex],
       show !₂[2, 2] = C.edgePoint 2 ⟨1, by lia⟩ by simp [coverGridConfig.edgePoint, hn3],
       show !₂[1, 3] = C.cornerPoint 1 by
         simp [coverGridNoEdgeConfig.cornerPoint, coverGridConfig.edgePoint,
@@ -1115,7 +1116,7 @@ def zeroSunny : strongCoverGridConfig where
   g_is_grid := by
     simp only [grid]; ext w
     simp only [Set.mem_empty_iff_false, Fin.isValue, zero_add,
-      exists_and_left, Set.mem_setOf_eq, false_iff, not_exists, not_and, not_le]
+      exists_and_left, Set.mem_ofPred_eq, false_iff, not_exists, not_and, not_le]
     intros
     lia
   lines_used := by simp
@@ -1129,7 +1130,7 @@ noncomputable def oneSunny : strongCoverGridConfig where
   lines_count := by simp
   lines_rank := by simp only [Finset.mem_singleton, forall_eq]; apply line_rank; simp
   lines_cover := by
-    dsimp only [grid, Fin.isValue, Nat.reduceAdd, Set.mem_setOf_eq]
+    dsimp only [grid, Fin.isValue, Nat.reduceAdd, Set.mem_ofPred_eq]
     intro x ⟨a, b, ha, hb, ha0, hb0, hab⟩
     obtain ⟨rfl, rfl⟩ : a = 1 ∧ b = 1 := by lia
     simp only [line, neg_mul, one_mul, add_zero, Finset.mem_singleton, exists_eq_left]
@@ -1147,7 +1148,7 @@ noncomputable def oneSunny : strongCoverGridConfig where
   lines_used := by
     simp only [Finset.mem_singleton, forall_eq]
     use !₂[1, 1]; constructor
-    · simp only [grid, Fin.isValue, Nat.reduceAdd, exists_and_left, Set.mem_setOf_eq,
+    · simp only [grid, Fin.isValue, Nat.reduceAdd, exists_and_left, Set.mem_ofPred_eq,
       Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_fin_one]
       use 1; norm_cast; simp
     · simp [line, ← SetLike.mem_coe, SetLike.coe]
@@ -1190,7 +1191,7 @@ lemma threeSunnyLinesMem (L : AffSubOfPlane) : L ∈ threeSunnyLines ↔
 lemma grid3Points (x : Plane) : x ∈ grid 3 ↔
     (x = !₂[1, 1] ∨ x = !₂[1, 2] ∨ x = !₂[1, 3] ∨
      x = !₂[2, 1] ∨ x = !₂[2, 2] ∨ x = !₂[3, 1]) := by
-  simp only [grid, Fin.isValue, Nat.reduceAdd, exists_and_left, Set.mem_setOf_eq]
+  simp only [grid, Fin.isValue, Nat.reduceAdd, exists_and_left, Set.mem_ofPred_eq]
   constructor
   · intro ⟨a, ha, b, hb, ha0, hb0, hab⟩
     rw [vec_repr x]
@@ -1304,7 +1305,7 @@ noncomputable def strongCoverGridConfig.extend (C : strongCoverGridConfig) :
   where hNew : edgeLine (C.n + 1) 2 ∉ C.lines := by {
     intro hC
     obtain ⟨x, hx1, hx2⟩ := C.lines_used (edgeLine (C.n + 1) 2) hC
-    simp only [C.g_is_grid, grid, Fin.isValue, exists_and_left, Set.mem_setOf_eq] at hx1
+    simp only [C.g_is_grid, grid, Fin.isValue, exists_and_left, Set.mem_ofPred_eq] at hx1
     obtain ⟨a, ha, b, hb, ha0, hb0, hab⟩ := hx1
     have : (a : ℝ) + b ≤ (C.n + 1 : ℕ) := by norm_cast
     rw [vec_repr x, edgeLine, line', point_on_line, edgeCoeffs] at hx2
@@ -1348,7 +1349,7 @@ problem imo2025_p1 (n : Set.Ici 3) :
       #{l ∈ lines | Sunny l} = k} = answer n := by
   dsimp only [Lean.Elab.WF.paramLet, answer]
   ext nS
-  simp only [Set.mem_setOf_eq, Set.mem_insert_iff, Set.mem_singleton_iff]
+  simp only [Set.mem_ofPred_eq, Set.mem_insert_iff, Set.mem_singleton_iff]
   constructor
   · intro ⟨lines, h1, h2, h3, h4⟩
     let C : coverGridConfig := {
@@ -1360,7 +1361,7 @@ problem imo2025_p1 (n : Set.Ici 3) :
       lines_rank := h2
       lines_cover := by
         intro x hx
-        simp only [grid, Fin.isValue, exists_and_left, Set.mem_setOf_eq] at hx
+        simp only [grid, Fin.isValue, exists_and_left, Set.mem_ofPred_eq] at hx
         obtain ⟨a, ha, b, hb, ha0, hb0, hab⟩ := hx
         specialize h3 a b ha0 hb0 hab
         rw [← ha, ← hb, ← vec_repr x] at h3

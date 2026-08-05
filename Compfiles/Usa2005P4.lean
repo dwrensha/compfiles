@@ -194,7 +194,7 @@ problem usa2005_p4 (n : ℕ) :
   have hset : {k : ℕ × ℕ × ℕ × ℕ | k.1 ≤ n ∧ k.2.1 ≤ n ∧ k.2.2.1 ≤ n ∧ k.2.2.2 ≤ n ∧
         k.1 + k.2.2.1 = k.2.1 + k.2.2.2} = ↑(tuples n) := by
     ext ⟨a, b, c, d⟩
-    simp only [Set.mem_setOf_eq, Finset.mem_coe, tuples, Finset.mem_filter,
+    simp only [Set.mem_ofPred_eq, Finset.mem_coe, tuples, Finset.mem_filter,
       Finset.mem_product, Finset.mem_range]
     omega
   rw [hset, Set.ncard_coe_finset, tuples_card_eq_sum n, sum_pairCount_sq n]

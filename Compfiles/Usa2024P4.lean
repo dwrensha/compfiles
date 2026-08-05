@@ -297,7 +297,7 @@ lemma blockCount_shift {m n : ℕ} [NeZero (m * n)] (c : Necklace m n)
 /-- The constructed necklace satisfies the property of the problem. -/
 lemma allCutsDistinct_constr {m n : ℕ} (hm : 0 < m) (hn : 0 < n) (hmn : m ≤ n + 1) :
     AllCutsDistinct (constr m n) := by
-  haveI : NeZero (m * n) := ⟨(Nat.mul_pos hm hn).ne'⟩
+  have : NeZero (m * n) := ⟨(Nat.mul_pos hm hn).ne'⟩
   intro s i₁ i₂ hij
   have hij' : blockCount (constr m n) s i₁.val =
       blockCount (constr m n) s i₂.val := hij

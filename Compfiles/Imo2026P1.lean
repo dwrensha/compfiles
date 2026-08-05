@@ -197,7 +197,7 @@ lemma gcd_min_sub_max (a b : ℕ) : Nat.gcd (min a b) (max a b - min a b) = Nat.
 lemma gExp_move {m n : ℕ} (hm : 1 < m) (hn : 1 < n) (s : Board) {p : ℕ} (hp : p.Prime) :
     gExp p (Nat.gcd m n ::ₘ (Nat.lcm m n / Nat.gcd m n) ::ₘ s) =
       gExp p (m ::ₘ n ::ₘ s) := by
-  haveI : Fact p.Prime := ⟨hp⟩
+  have : Fact p.Prime := ⟨hp⟩
   have hm0 : m ≠ 0 := by omega
   have hn0 : n ≠ 0 := by omega
   have hg0 : Nat.gcd m n ≠ 0 := fun h => by
@@ -530,7 +530,7 @@ problem imo2026_p1_mval_gt_one (B₀ : Board) (hB₀ : IsInitial B₀) : 1 < Mva
     have := hge2 0 h0
     omega
   have hpmem : p ∈ B₀.prod.primeFactors := Nat.mem_primeFactors.mpr ⟨hpp, hpd, hp0⟩
-  haveI : Fact p.Prime := ⟨hpp⟩
+  have : Fact p.Prime := ⟨hpp⟩
   have hva : 1 ≤ padicValNat p a := one_le_padicValNat_of_dvd (by omega) hpdvd
   have hgexp : 1 ≤ gExp p B₀ := by
     have hmem : padicValNat p a ∈ B₀.map (fun a => padicValNat p a) :=

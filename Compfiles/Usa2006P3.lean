@@ -282,16 +282,16 @@ lemma schur (h : ℤ[X]) (hd : h.natDegree ≠ 0) (s : Finset ℕ) (hs : ∀ q �
       mul_left_cancel₀ hcP hab
     have hpre : ∀ (p : ℤ[X]) (hp : p ≠ 0),
         ((fun t : ℤ ↦ c * P * t) ⁻¹' {x : ℤ | p.eval x = 0}).Finite :=
-      fun p hp ↦ Set.Finite.preimage hinj.injOn (finite_setOf_isRoot hp)
+      fun p hp ↦ Set.Finite.preimage hinj.injOn (finite_setOfPred_isRoot hp)
     -- The set of "bad" translations is finite.
     have e1 : {t : ℤ | h.eval (c * P * t) = c} =
         (fun t : ℤ ↦ c * P * t) ⁻¹' {x : ℤ | (h - C c).eval x = 0} := by
       ext t
-      simp only [Set.mem_setOf_eq, Set.mem_preimage, eval_sub, eval_C, sub_eq_zero]
+      simp only [Set.mem_ofPred_eq, Set.mem_preimage, eval_sub, eval_C, sub_eq_zero]
     have e2 : {t : ℤ | h.eval (c * P * t) = -c} =
         (fun t : ℤ ↦ c * P * t) ⁻¹' {x : ℤ | (h + C c).eval x = 0} := by
       ext t
-      simp only [Set.mem_setOf_eq, Set.mem_preimage, eval_add, eval_C,
+      simp only [Set.mem_ofPred_eq, Set.mem_preimage, eval_add, eval_C,
         eq_neg_iff_add_eq_zero]
     have hbfin : {t : ℤ | h.eval (c * P * t) = c ∨ h.eval (c * P * t) = -c ∨
         h.eval (c * P * t) = 0}.Finite := by
@@ -299,7 +299,7 @@ lemma schur (h : ℤ[X]) (hd : h.natDegree ≠ 0) (s : Finset ℕ) (hs : ∀ q �
           h.eval (c * P * t) = 0} = {t : ℤ | h.eval (c * P * t) = c} ∪
           ({t : ℤ | h.eval (c * P * t) = -c} ∪ {t : ℤ | h.eval (c * P * t) = 0}) := by
         ext t
-        simp only [Set.mem_setOf_eq, Set.mem_union]
+        simp only [Set.mem_ofPred_eq, Set.mem_union]
       rw [hunion, e1, e2]
       exact (hpre _ hsub).union ((hpre _ hadd).union (hpre _ h0))
     -- Hence we can pick a large positive translation that is not bad.

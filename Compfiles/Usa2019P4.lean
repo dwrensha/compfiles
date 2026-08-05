@@ -257,7 +257,7 @@ lemma stageA (n : ℕ) : ∀ j, j ≤ n →
     have h0n : (0 : ℕ) < n + 1 := Nat.zero_lt_succ n
     have h0 : colZero n 0 = insert (⟨0, h0n⟩, ⟨0, h0n⟩) (∅ : Set (Cell n)) := by
       ext c
-      simp only [colZero, Set.mem_insert_iff, Set.mem_empty_iff_false, Set.mem_setOf_eq,
+      simp only [colZero, Set.mem_insert_iff, Set.mem_empty_iff_false, Set.mem_ofPred_eq,
         cell_ext, or_false]
       constructor
       · rintro ⟨h1, h2⟩
@@ -285,10 +285,10 @@ lemma stageA (n : ℕ) : ∀ j, j ≤ n →
     have hid : colZero n (j + 1) =
         insert (⟨0, h0n⟩, ⟨j + 1, hjn1⟩) (colZero n j) := by
       ext c
-      simp only [colZero, Set.mem_insert_iff, Set.mem_setOf_eq, cell_ext]
+      simp only [colZero, Set.mem_insert_iff, Set.mem_ofPred_eq, cell_ext]
       constructor <;> intro h <;> omega
     have hs : (⟨0, h0n⟩, ⟨j + 1, hjn1⟩) ∉ colZero n j := by
-      simp only [colZero, Set.mem_setOf_eq]
+      simp only [colZero, Set.mem_ofPred_eq]
       omega
     have ha₀ : (⟨0, h0n⟩, ⟨j, hjn⟩) ∈ colZero n j := ⟨rfl, le_refl _⟩
     have hcount : (2 * n - target (⟨0, h0n⟩, ⟨j, hjn⟩)).choose
@@ -304,12 +304,12 @@ lemma stageA (n : ℕ) : ∀ j, j ≤ n →
       (by
         intro f hf d hd _
         apply hf.2.1 d hd _ ha₀
-        simp only [colZero, Set.mem_setOf_eq] at hd
+        simp only [colZero, Set.mem_ofPred_eq] at hd
         simp only [Prod.le_def, Fin.le_def]
         exact ⟨by omega, by omega⟩)
       (by
         intro f hf d hd hds
-        simp only [colZero, Set.mem_setOf_eq] at hd
+        simp only [colZero, Set.mem_ofPred_eq] at hd
         simp only [Prod.le_def, Fin.le_def] at hds
         omega)
       (by
@@ -342,7 +342,7 @@ lemma stageB (n : ℕ) : ∀ i, i ≤ n →
     intro _
     have h0 : topRow n 0 = (∅ : Set (Cell n)) := by
       ext c
-      simp only [topRow, Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false]
+      simp only [topRow, Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false]
       omega
     rw [h0, Set.union_empty, Finset.prod_range_zero, one_mul, stageA n n (le_refl n)]
   | succ i ih =>
@@ -354,11 +354,11 @@ lemma stageB (n : ℕ) : ∀ i, i ≤ n →
     have hid : colZero n n ∪ topRow n (i + 1) =
         insert (⟨i + 1, hin1⟩, ⟨n, hnn⟩) (colZero n n ∪ topRow n i) := by
       ext c
-      simp only [colZero, topRow, Set.mem_insert_iff, Set.mem_union, Set.mem_setOf_eq,
+      simp only [colZero, topRow, Set.mem_insert_iff, Set.mem_union, Set.mem_ofPred_eq,
         cell_ext]
       constructor <;> intro h <;> omega
     have hs : (⟨i + 1, hin1⟩, ⟨n, hnn⟩) ∉ colZero n n ∪ topRow n i := by
-      simp only [colZero, topRow, Set.mem_union, Set.mem_setOf_eq]
+      simp only [colZero, topRow, Set.mem_union, Set.mem_ofPred_eq]
       omega
     have ha₀ : (⟨i, hin⟩, ⟨n, hnn⟩) ∈ colZero n n ∪ topRow n i := by
       by_cases hi0 : i = 0
@@ -378,13 +378,13 @@ lemma stageB (n : ℕ) : ∀ i, i ≤ n →
       (by
         intro f hf d hd _
         apply hf.2.1 d hd _ ha₀
-        simp only [colZero, topRow, Set.mem_union, Set.mem_setOf_eq] at hd
+        simp only [colZero, topRow, Set.mem_union, Set.mem_ofPred_eq] at hd
         simp only [Prod.le_def, Fin.le_def]
         show d.1.val ≤ i ∧ d.2.val ≤ n
         omega)
       (by
         intro f hf d hd hds
-        simp only [colZero, topRow, Set.mem_union, Set.mem_setOf_eq] at hd
+        simp only [colZero, topRow, Set.mem_union, Set.mem_ofPred_eq] at hd
         simp only [Prod.le_def, Fin.le_def] at hds
         omega)
       (by
@@ -418,7 +418,7 @@ lemma stageC_inner (n : ℕ) : ∀ r, r ≤ n → ∀ k, k < n →
     intro _ k hk
     have h0 : colPart n (k + 1) 0 = (∅ : Set (Cell n)) := by
       ext c
-      simp only [colPart, Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false]
+      simp only [colPart, Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false]
       omega
     rw [h0, Set.union_empty, pow_zero, one_mul]
   | succ r ih =>
@@ -433,11 +433,11 @@ lemma stageC_inner (n : ℕ) : ∀ r, r ≤ n → ∀ k, k < n →
           (colZero n n ∪ topRow n n ∪ intCols n k ∪ colPart n (k + 1) r) := by
       ext c
       simp only [colZero, topRow, intCols, colPart, Set.mem_insert_iff, Set.mem_union,
-        Set.mem_setOf_eq, cell_ext]
+        Set.mem_ofPred_eq, cell_ext]
       constructor <;> intro h <;> omega
     have hs : (⟨k + 1, hkn1⟩, ⟨n - r - 1, hnr1⟩) ∉
         colZero n n ∪ topRow n n ∪ intCols n k ∪ colPart n (k + 1) r := by
-      simp only [colZero, topRow, intCols, colPart, Set.mem_union, Set.mem_setOf_eq]
+      simp only [colZero, topRow, intCols, colPart, Set.mem_union, Set.mem_ofPred_eq]
       omega
     have ha₀ : (⟨k, hkn⟩, ⟨n - r - 1, hnr1⟩) ∈
         colZero n n ∪ topRow n n ∪ intCols n k ∪ colPart n (k + 1) r := by
@@ -472,13 +472,13 @@ lemma stageC_inner (n : ℕ) : ∀ r, r ≤ n → ∀ k, k < n →
       (by
         intro f hf d hd hds
         apply hf.2.1 d hd _ ha₀
-        simp only [colZero, topRow, intCols, colPart, Set.mem_union, Set.mem_setOf_eq] at hd
+        simp only [colZero, topRow, intCols, colPart, Set.mem_union, Set.mem_ofPred_eq] at hd
         simp only [Prod.le_def, Fin.le_def] at hds ⊢
         omega)
       (by
         intro f hf d hd hds
         apply hf.2.1 _ hc₀ d hd
-        simp only [colZero, topRow, intCols, colPart, Set.mem_union, Set.mem_setOf_eq] at hd
+        simp only [colZero, topRow, intCols, colPart, Set.mem_union, Set.mem_ofPred_eq] at hd
         simp only [Prod.le_def, Fin.le_def] at hds ⊢
         omega)
       (by
@@ -521,7 +521,7 @@ lemma stageC (n : ℕ) : ∀ k, k ≤ n →
     intro _
     have h0 : intCols n 0 = (∅ : Set (Cell n)) := by
       ext c
-      simp only [intCols, Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false]
+      simp only [intCols, Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false]
       omega
     rw [h0, Set.union_empty, stageB n n (le_refl n)]
     simp
@@ -531,7 +531,7 @@ lemma stageC (n : ℕ) : ∀ k, k ≤ n →
     have hid : colZero n n ∪ topRow n n ∪ intCols n (k + 1) =
         colZero n n ∪ topRow n n ∪ intCols n k ∪ colPart n (k + 1) n := by
       ext c
-      simp only [colZero, topRow, intCols, colPart, Set.mem_union, Set.mem_setOf_eq]
+      simp only [colZero, topRow, intCols, colPart, Set.mem_union, Set.mem_ofPred_eq]
       constructor <;> intro h <;> omega
     rw [hid, stageC_inner n n (le_refl n) k hk', ih (Nat.le_of_succ_le hk),
       show n * (k + 1) = n * k + n from by ring, pow_add]
@@ -565,7 +565,7 @@ theorem prod_range_two_mul_sub_mul (n : ℕ) :
 lemma main_count (n : ℕ) : (Fillings n Set.univ).ncard = (2 * n)! * 2 ^ (n ^ 2) := by
   have huniv : (Set.univ : Set (Cell n)) = colZero n n ∪ topRow n n ∪ intCols n n := by
     ext c
-    simp only [Set.mem_univ, colZero, topRow, intCols, Set.mem_union, Set.mem_setOf_eq,
+    simp only [Set.mem_univ, colZero, topRow, intCols, Set.mem_union, Set.mem_ofPred_eq,
       true_iff]
     have h1 := c.1.isLt
     have h2 := c.2.isLt

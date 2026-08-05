@@ -64,8 +64,7 @@ theorem cos_θ : Real.cos θ = (4/5:ℚ) := by
 noncomputable def P (n : ℕ) : Circle := Circle.exp (θ * n * 2)
 
 lemma P_cast_eq {n : ℕ} : (P n : ℂ) = ⟨Real.cos (θ*2*n), Real.sin (θ*2*n)⟩ := by
-  simp_rw [P, Circle.exp]
-  rw [Complex.ext_iff]
+  rw [P, Circle.coe_exp, Complex.ext_iff]
   simp [Complex.exp_re, Complex.exp_im]
   ring_nf
   trivial

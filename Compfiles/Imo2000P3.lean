@@ -148,7 +148,7 @@ lemma move_potential_bound (hn : 2 ≤ n) {lam : ℝ} (hlam : 0 < lam)
     {x y : Fin n → ℝ} (h : Move lam x y) :
     (1 / lam - ((n : ℝ) - 1)) * (rightmost y - rightmost x) ≤
       potential x - potential y := by
-  haveI : Nonempty (Fin n) := ⟨⟨0, by omega⟩⟩
+  have : Nonempty (Fin n) := ⟨⟨0, by omega⟩⟩
   obtain ⟨i, j, hij, rfl⟩ := h
   set c := x j + lam * (x j - x i) with hc
   have hci : 0 < c - x i := by
@@ -225,7 +225,7 @@ lemma reachable_potential_bound (hn : 2 ≤ n) {lam : ℝ} (hlam : 0 < lam)
 fleas cannot all be moved arbitrarily far to the right. -/
 lemma not_allRightOf_of_lt (hn : 2 ≤ n) {lam : ℝ} (hlam : 0 < lam)
     (hlt : lam < 1 / ((n : ℝ) - 1)) : ¬ AllRightOf (n := n) lam := by
-  haveI : Nonempty (Fin n) := ⟨⟨0, by omega⟩⟩
+  have : Nonempty (Fin n) := ⟨⟨0, by omega⟩⟩
   have hn1 : (0 : ℝ) < (n : ℝ) - 1 := by
     have h2 : (1 : ℝ) < (n : ℝ) := by exact_mod_cast lt_of_lt_of_le one_lt_two hn
     linarith
@@ -266,7 +266,7 @@ lemma strat_step (hn : 2 ≤ n) {lam : ℝ} (hlam : 1 / ((n : ℝ) - 1) ≤ lam)
     ∃ y, Move lam x y ∧
       rightmost x + lam * potential x / ((n : ℝ) - 1) ≤ rightmost y ∧
       potential x ≤ potential y := by
-  haveI : Nonempty (Fin n) := ⟨⟨0, by omega⟩⟩
+  have : Nonempty (Fin n) := ⟨⟨0, by omega⟩⟩
   have hn1 : (0 : ℝ) < (n : ℝ) - 1 := by
     have h2 : (1 : ℝ) < (n : ℝ) := by exact_mod_cast lt_of_lt_of_le one_lt_two hn
     linarith
@@ -372,7 +372,7 @@ lemma phase2 (hn : 2 ≤ n) {lam : ℝ} (hlam : 0 < lam) (M : ℝ) :
     · obtain ⟨k, hk⟩ := hempty
       rw [mem_filter] at hk
       obtain ⟨-, hkM⟩ := hk
-      haveI : Nonempty (Fin n) := ⟨⟨0, by omega⟩⟩
+      have : Nonempty (Fin n) := ⟨⟨0, by omega⟩⟩
       obtain ⟨j, hj⟩ := exists_eq_rightmost y
       have hkj : y k < y j := by
         rw [hj]
@@ -420,7 +420,7 @@ then jump every other flea over the rightmost flea) takes all fleas to the right
 given point `M`. -/
 lemma allRightOf_of_ge (hn : 2 ≤ n) {lam : ℝ} (hlam : 1 / ((n : ℝ) - 1) ≤ lam) :
     AllRightOf (n := n) lam := by
-  haveI : Nonempty (Fin n) := ⟨⟨0, by omega⟩⟩
+  have : Nonempty (Fin n) := ⟨⟨0, by omega⟩⟩
   have hn1 : (0 : ℝ) < (n : ℝ) - 1 := by
     have h2 : (1 : ℝ) < (n : ℝ) := by exact_mod_cast lt_of_lt_of_le one_lt_two hn
     linarith

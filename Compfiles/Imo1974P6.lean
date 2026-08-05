@@ -36,7 +36,7 @@ snip begin
 theorem setOf_eval_eq_zero {Q : Polynomial ℤ} (hQ : Q ≠ 0) :
     {k : ℤ | Q.eval k = 0} = ↑(Q.roots.toFinset) := by
   ext k
-  simp only [Set.mem_setOf_eq, Finset.mem_coe, Multiset.mem_toFinset]
+  simp only [Set.mem_ofPred_eq, Finset.mem_coe, Multiset.mem_toFinset]
   rw [mem_roots hQ, IsRoot.def]
 
 /-- A nonzero integer polynomial has only finitely many integer roots. -/
@@ -56,13 +56,13 @@ theorem ncard_eval_eq_zero_le {Q : Polynomial ℤ} (hQ : Q ≠ 0) :
 theorem setOf_eval_eq_one (P : Polynomial ℤ) :
     {k : ℤ | P.eval k = 1} = {k : ℤ | (P - 1).eval k = 0} := by
   ext k
-  simp only [Set.mem_setOf_eq, eval_sub, eval_one, sub_eq_zero]
+  simp only [Set.mem_ofPred_eq, eval_sub, eval_one, sub_eq_zero]
 
 /-- `P k = -1` means that `k` is a root of `P + 1`. -/
 theorem setOf_eval_eq_neg_one (P : Polynomial ℤ) :
     {k : ℤ | P.eval k = -1} = {k : ℤ | (P + 1).eval k = 0} := by
   ext k
-  simp only [Set.mem_setOf_eq, eval_add, eval_one, add_eq_zero_iff_eq_neg]
+  simp only [Set.mem_ofPred_eq, eval_add, eval_one, add_eq_zero_iff_eq_neg]
 
 /-- Key divisibility: if `P r = 1` and `P k = -1`, then `k - r ∣ 2`. -/
 theorem sub_dvd_two {P : Polynomial ℤ} {r k : ℤ} (hr : P.eval r = 1)
@@ -93,7 +93,7 @@ theorem ncard_le_of_exists_min {P : Polynomial ℤ} (hP : 0 < P.natDegree) {r : 
   -- At most two integers satisfy `P k = -1`, namely `r + 1` and `r + 2`.
   have hsub : {k : ℤ | P.eval k = -1} ⊆ {r + 1, r + 2} := by
     intro k hk
-    simp only [Set.mem_setOf_eq] at hk
+    simp only [Set.mem_ofPred_eq] at hk
     have hle : r ≤ k := hmin k (Or.inr hk)
     have hne : k ≠ r := by
       rintro rfl
@@ -120,7 +120,7 @@ problem imo1974_p6 (P : Polynomial ℤ) (hP : 0 < P.natDegree) :
   have hset : {k : ℤ | P.eval k ^ 2 = 1}
       = {k : ℤ | P.eval k = 1} ∪ {k : ℤ | P.eval k = -1} := by
     ext k
-    simp only [Set.mem_setOf_eq, Set.mem_union]
+    simp only [Set.mem_ofPred_eq, Set.mem_union]
     exact sq_eq_one_iff
   rw [hset]
   by_cases hne : ({k : ℤ | P.eval k = 1} ∪ {k : ℤ | P.eval k = -1}).Nonempty
@@ -146,13 +146,13 @@ problem imo1974_p6 (P : Polynomial ℤ) (hP : 0 < P.natDegree) :
     have hrmin' : ∀ k : ℤ, P.eval k = 1 ∨ P.eval k = -1 → r ≤ k := by
       intro k hk
       have hmk : k ∈ {k : ℤ | P.eval k = 1} ∪ {k : ℤ | P.eval k = -1} := by
-        simpa only [Set.mem_union, Set.mem_setOf_eq] using hk
+        simpa only [Set.mem_union, Set.mem_ofPred_eq] using hk
       simpa only [id_eq] using hrmin k (hfin.mem_toFinset.mpr hmk)
     rcases hrmem with hr1 | hr1
-    · simp only [Set.mem_setOf_eq] at hr1
+    · simp only [Set.mem_ofPred_eq] at hr1
       exact ncard_le_of_exists_min hP hrmin' hr1
     · -- Symmetric case `P r = -1`: apply the previous case to `-P`.
-      simp only [Set.mem_setOf_eq] at hr1
+      simp only [Set.mem_ofPred_eq] at hr1
       have hmin' : ∀ k : ℤ, (-P).eval k = 1 ∨ (-P).eval k = -1 → r ≤ k := by
         intro k hk
         rw [eval_neg] at hk
@@ -165,7 +165,7 @@ problem imo1974_p6 (P : Polynomial ℤ) (hP : 0 < P.natDegree) :
       have hneg : ({k : ℤ | (-P).eval k = 1} ∪ {k : ℤ | (-P).eval k = -1})
           = {k : ℤ | P.eval k = 1} ∪ {k : ℤ | P.eval k = -1} := by
         ext k
-        simp only [eval_neg, Set.mem_union, Set.mem_setOf_eq, neg_eq_iff_eq_neg, neg_neg]
+        simp only [eval_neg, Set.mem_union, Set.mem_ofPred_eq, neg_eq_iff_eq_neg, neg_neg]
         exact or_comm
       rwa [hneg, natDegree_neg] at hres
   · rw [Set.not_nonempty_iff_eq_empty] at hne

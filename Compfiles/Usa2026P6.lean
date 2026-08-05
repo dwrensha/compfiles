@@ -528,7 +528,7 @@ problem usa2026_p6 {a b : ℕ} (ha : 0 < a) (hb : 0 < b)
         hm_uv.imp (fun hmid => hpm.trans hmid) (fun hmid => hpm.trans hmid)
       -- a root of `x^2 + x + 1` mod `p` forces `p = 3` or `p ≡ 1 (mod 3)`
       have hp3 : p = 3 ∨ 3 ∣ p - 1 := by
-        haveI : Fact p.Prime := ⟨hp⟩
+        have : Fact p.Prime := ⟨hp⟩
         have core : ∀ x : ZMod p, x ^ 2 + x + 1 = 0 → p = 3 ∨ 3 ∣ p - 1 := by
           intro x hx
           by_cases hx1 : x = 1
@@ -556,7 +556,7 @@ problem usa2026_p6 {a b : ℕ} (ha : 0 < a) (hb : 0 < b)
               have h2 := congrArg (fun u : (ZMod p)ˣ => (u : ZMod p)) h1
               rw [Units.val_mk0, Units.val_one] at h2
               exact h2
-            haveI : Fact (Nat.Prime 3) := ⟨Nat.prime_three⟩
+            have : Fact (Nat.Prime 3) := ⟨Nat.prime_three⟩
             have hord : orderOf (Units.mk0 x hx0 : (ZMod p)ˣ) = 3 :=
               orderOf_eq_prime hxu3 hxu1
             have hdvd3 : 3 ∣ Fintype.card (ZMod p)ˣ := hord ▸ orderOf_dvd_card

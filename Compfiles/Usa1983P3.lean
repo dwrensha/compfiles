@@ -87,7 +87,7 @@ problem usa1983_p3 {n : ℕ} (hn : 0 < n) (S : Fin n → Set ℝ)
     (h3 : ∀ i j k : Fin n, (S i ∩ S j ∩ S k).Nonempty) :
     ∃ x : ℝ, n ≤ 2 * {i : Fin n | x ∈ S i}.ncard := by
   choose a b c d hab hbc hcd hSd using hS
-  haveI : Nonempty (Fin n) := ⟨⟨0, hn⟩⟩
+  have : Nonempty (Fin n) := ⟨⟨0, hn⟩⟩
   obtain ⟨h, -, hmax⟩ := Finset.exists_max_image Finset.univ a Finset.univ_nonempty
   obtain ⟨k, -, hmin⟩ := Finset.exists_min_image Finset.univ d Finset.univ_nonempty
   have hmax' : ∀ i, a i ≤ a h := fun i ↦ hmax i (Finset.mem_univ i)

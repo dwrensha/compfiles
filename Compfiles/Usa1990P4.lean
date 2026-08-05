@@ -295,7 +295,7 @@ theorem finite_and_ncard_IVSet : ∀ (k a : ℕ),
       intro a
       have hset : IVSet a (a + 0) = {[a]} := by
         ext l
-        simp only [IVSet, Set.mem_setOf_eq, Set.mem_singleton_iff]
+        simp only [IVSet, Set.mem_ofPred_eq, Set.mem_singleton_iff]
         constructor
         · intro hl
           have h1 := IV.lo_le_hi hl
@@ -319,7 +319,7 @@ theorem finite_and_ncard_IVSet : ∀ (k a : ℕ),
           (fun l ↦ a :: l) '' IVSet (a + 1) (a + 1 + k) ∪
           (fun l ↦ (a + (k + 1)) :: l) '' IVSet a (a + k) := by
         ext l
-        simp only [IVSet, Set.mem_setOf_eq, Set.mem_union, Set.mem_image]
+        simp only [IVSet, Set.mem_ofPred_eq, Set.mem_union, Set.mem_image]
         constructor
         · intro hl
           rcases l with _ | ⟨d, l'⟩
@@ -427,7 +427,7 @@ theorem W_finite (a b : ℕ) : (W a b).Finite := by
     exact fin.subset (fun l hl ↦ hl.1)
   · have hset : W a b = ∅ := by
       ext l
-      simp only [W, Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false]
+      simp only [W, Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false]
       rintro ⟨hIV, -⟩
       have h1 := IV.lo_le_hi hIV
       omega
@@ -450,7 +450,7 @@ theorem ncard_W {a b : ℕ} (hle : a ≤ b) :
   · subst h0
     have hset : W 0 b = IVSet 0 b \ {descend b} := by
       ext l
-      simp only [W, IVSet, Set.mem_setOf_eq, Set.mem_sdiff, Set.mem_singleton_iff]
+      simp only [W, IVSet, Set.mem_ofPred_eq, Set.mem_sdiff, Set.mem_singleton_iff]
       constructor
       · rintro ⟨hIV, hgl⟩
         refine ⟨hIV, fun hle ↦ ?_⟩
@@ -462,7 +462,7 @@ theorem ncard_W {a b : ℕ} (hle : a ≤ b) :
     simp
   · have hset : W a b = IVSet a b := by
       ext l
-      simp only [W, IVSet, Set.mem_setOf_eq]
+      simp only [W, IVSet, Set.mem_ofPred_eq]
       constructor
       · exact fun hl ↦ hl.1
       · intro hIV

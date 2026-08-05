@@ -98,7 +98,7 @@ lemma isInt_of_mul_add_int {n : ℤ} (hn : n ≠ 0) {a b : ℚ}
     by_contra hcon
     push Not at hcon
     exact hb (isInt_of_val_nonneg hcon)
-  haveI := Fact.mk hpp
+  have := Fact.mk hpp
   have hb0 : b ≠ 0 := by
     rintro rfl
     rw [padicValRat.zero] at hpv
@@ -182,7 +182,7 @@ lemma gcd_seq (T : ℕ → ℤ) {b : ℕ} (hb : T b ≠ 0) :
     exact Int.dvd_natAbs.mp (Int.natCast_dvd_natCast.mpr (h1 ▸ h2))
   · -- The valuation of `d` is attained at some nonzero term.
     intro p hpp
-    haveI := Fact.mk hpp
+    have := Fact.mk hpp
     have hd0 : seqGcd T (b + n₀) ≠ 0 := seqGcd_ne_zero T (Nat.le_add_right b n₀) hb
     have hdvdN : ∀ i, seqGcd T (b + n₀) ∣ (T i).natAbs := fun i => by
       have h1 : seqGcd T (b + max n₀ i) = seqGcd T (b + n₀) := hstable _ (le_max_left _ _)
@@ -221,7 +221,7 @@ lemma s_val_ge {p : ℕ} (hp : p.Prime) {e : ℤ} (he : 0 ≤ e) {sj tj si ti : 
     (hstj : IsInt (sj * tj)) (hsti : IsInt (si * ti))
     (hcross : IsInt (si * tj + sj * ti)) (htj : tj ≠ 0) (htjv : padicValRat p tj = e) :
     -e ≤ padicValRat p si := by
-  haveI := Fact.mk hp
+  have := Fact.mk hp
   rcases eq_or_ne si 0 with hsi | hsi
   · simp only [hsi, padicValRat.zero]
     exact neg_nonpos.mpr he
@@ -321,7 +321,7 @@ lemma normalized {s t : ℕ → ℚ} {a b : ℕ} {n : ℤ} (hn : n ≠ 0)
     · exact ⟨0, by simp [hsi]⟩
     apply isInt_of_val_nonneg
     intro p hpp
-    haveI := Fact.mk hpp
+    have := Fact.mk hpp
     obtain ⟨j, hTj0, hTjv⟩ := hmin p hpp
     have htj : t j ≠ 0 := by rw [hT j]; exact_mod_cast hTj0
     have htjv : padicValRat p (t j) = (padicValNat p d : ℤ) := by

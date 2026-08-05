@@ -506,7 +506,7 @@ lemma odd_not_dvd_powsum_zmod {p : ℕ} (hp : p.Prime) (hp2 : p ≠ 2) {x y : �
   have hp3 : 3 ≤ p := by
     have h2 := hp.two_le
     omega
-  haveI : Fact p.Prime := ⟨hp⟩
+  have : Fact p.Prime := ⟨hp⟩
   intro hcast
   push_cast at hcast
   have hab : ¬((x : ZMod p) = 0 ∧ (y : ZMod p) = 0) := by
@@ -627,7 +627,7 @@ lemma exists_g (S : Finset (ℤ × ℤ)) (hS : ∀ s ∈ S, IsCoprime s.1 s.2)
     exact hexE p hp
   have hHpne : ∀ t ∈ TS, ∀ p ∈ Ps, ((Hp p).eval t.1 t.2 : ZMod p) ≠ 0 := by
     intro t ht p hp
-    haveI : Fact p.Prime := ⟨Nat.prime_of_mem_primeFactors hp⟩
+    have : Fact p.Prime := ⟨Nat.prime_of_mem_primeFactors hp⟩
     show (((Gform p).pow (ex p)).eval t.1 t.2 : ZMod p) ≠ 0
     rw [HForm.eval_pow]
     push_cast

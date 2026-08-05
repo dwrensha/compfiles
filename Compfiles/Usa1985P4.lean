@@ -221,12 +221,13 @@ lemma answer_card (n : ℕ) (G : SimpleGraph (Fin n)) [DecidableRel G.Adj] (p : 
       (Finset.univ.filter fun X => X ≠ p.1 ∧ X ≠ p.2 ∧ (G.Adj X p.1 ↔ G.Adj X p.2)) =
         (Finset.univ.filter fun X => X ≠ p.1 ∧ X ≠ p.2) \ badPair n G p := by
     ext X
-    simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_sdiff, badPair,
-      mixedRel]
+    simp only [badPair, Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_sdiff]
+    rw [mixedRel]
     tauto
   have hsub : badPair n G p ⊆ Finset.univ.filter (fun X => X ≠ p.1 ∧ X ≠ p.2) := by
     intro X hX
-    simp only [badPair, mixedRel, Finset.mem_filter, Finset.mem_univ, true_and] at hX ⊢
+    simp only [badPair, Finset.mem_filter, Finset.mem_univ, true_and] at hX ⊢
+    rw [mixedRel] at hX
     exact ⟨hX.1, hX.2.1⟩
   have hcard : (Finset.univ.filter fun X : Fin n => X ≠ p.1 ∧ X ≠ p.2).card = n - 2 := by
     have hne : p.1 ≠ p.2 := (Finset.mem_offDiag.mp hp).2.2

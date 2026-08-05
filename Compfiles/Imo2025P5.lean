@@ -604,7 +604,7 @@ problem imo2025_p5 :
       answer := by
   have h1 : {c : ℝ | ∃ s : Strategy, s.Winning c 0} = {c : ℝ | Real.sqrt 2 / 2 < c} := by
     ext c
-    simp only [Set.mem_setOf_eq]
+    simp only [Set.mem_ofPred_eq]
     constructor
     · intro h
       by_contra hle
@@ -612,7 +612,7 @@ problem imo2025_p5 :
     · exact alice_wins
   have h2 : {c : ℝ | ∃ s : Strategy, s.Winning c 1} = {c : ℝ | c < Real.sqrt 2 / 2} := by
     ext c
-    simp only [Set.mem_setOf_eq]
+    simp only [Set.mem_ofPred_eq]
     constructor
     · intro h
       by_contra hle

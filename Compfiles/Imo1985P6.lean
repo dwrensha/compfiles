@@ -1079,8 +1079,8 @@ lemma imo_1985_p6_nnreal
       rw [← hn₁]
       exact hmo₁ n hn₀ (congrArg (f n) (hmo₇ n hn₀ y))
   let sn : Set ℕ := Set.Ici 1
-  let fb : ↑sn → NNReal := sn.restrict (fun (n:ℕ) => fi n (1 - 1 / (n:NNReal)))
-  let fc : ↑sn → NNReal := sn.restrict (fun (n:ℕ) => fi n 1)
+  let fb : ↑sn → NNReal := sn.domRestrict (fun (n:ℕ) => fi n (1 - 1 / (n:NNReal)))
+  let fc : ↑sn → NNReal := sn.domRestrict (fun (n:ℕ) => fi n 1)
   have hsn₁: ∀ n:↑sn, ↑n ∈ sn ∧ 0 < (↑n:ℕ) := by
     intro n
     have hn₀: ↑n ∈ sn := by exact Subtype.coe_prop n
@@ -1110,7 +1110,7 @@ lemma imo_1985_p6_nnreal
       exact (hsn₁ n).2
     exact (StrictMono.lt_iff_lt (hmo₂ n hn₀)).mp g₀
   have hfb₃: StrictMono fb := by
-    refine StrictMonoOn.restrict ?_
+    refine StrictMonoOn.domRestrict ?_
     refine aux_9 f h₀ h₁ f₀ hf₁ hf₂ hmo₂ fi ?_ hmo₇ hf₇ _ (by rfl) sn (by rfl)
     intro x
     refine (hf₇ 1 x x (by lia)).mp ?_

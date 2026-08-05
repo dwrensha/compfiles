@@ -155,7 +155,7 @@ snip end
 problem usa1997_p1 (x₀ : ℝ) (hx₀ : x₀ ∈ Set.Ioo (0 : ℝ) 1) :
     (∃ k, seq (Nat.nth Nat.Prime) x₀ k = 0) ↔ x₀ ∈ solution_set := by
   have hp : ∀ k, 0 < Nat.nth Nat.Prime k := fun k ↦
-    Nat.Prime.pos (Nat.nth_mem_of_infinite Nat.infinite_setOf_prime k)
+    Nat.Prime.pos (Nat.nth_mem_of_infinite Nat.infinite_setOfPred_prime k)
   obtain ⟨hx0, hx1⟩ := hx₀
   constructor
   · rintro ⟨k, hk⟩
