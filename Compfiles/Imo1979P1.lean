@@ -40,13 +40,12 @@ lemma lemma3 : ∑ i ∈ Finset.range 1319, (-(1:ℚ))^i / (i + 1) =
   have h4 : (Finset.range 659).map g =
         (Finset.range 1319).filter (fun x ↦ ¬Even x) := by
     ext a
-    unfold g
-    rw [Finset.mem_map, Function.Embedding.coeFn_mk,
-        Finset.mem_filter, Finset.mem_range]
+    rw [Finset.mem_map, Finset.mem_filter, Finset.mem_range]
     constructor
     · intro ha
       obtain ⟨b, hb1, hb2⟩ := ha
       rw [Finset.mem_range] at hb1
+      replace hb2 : 2 * b + 1 = a := hb2
       rw [←hb2]
       constructor
       · lia
@@ -62,10 +61,9 @@ lemma lemma3 : ∑ i ∈ Finset.range 1319, (-(1:ℚ))^i / (i + 1) =
        = ∑ i ∈ Finset.range 659, (1 / (((g i):ℚ) + 1)) := by
     apply Finset.sum_congr rfl
     intro x _
-    field_simp
-    simp only [Function.Embedding.coeFn_mk, Nat.cast_add, Nat.cast_mul, Nat.cast_ofNat,
-      Nat.cast_one, g]
-    linarith
+    show (1:ℚ) / (2 * ((x:ℚ) + 1)) = 1 / (((2 * x + 1 : ℕ):ℚ) + 1)
+    push_cast
+    ring_nf
   have h6 := Finset.sum_map (Finset.range 659) g (fun j ↦ 1 / ((j:ℚ) + 1))
 
   have h3 :

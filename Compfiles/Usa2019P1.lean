@@ -61,7 +61,7 @@ lemma f_injective
   obtain ⟨q, hq⟩ := q
   congr
   apply_fun (fun x ↦ x.val) at h4
-  rw [PNat.pow_coe, PNat.pow_coe, PNat.mk_coe, PNat.mk_coe] at h4
+  replace h4 : p ^ 2 = q ^ 2 := h4
   rw [pow_left_inj₀ (le_of_lt hp) (le_of_lt hq) two_ne_zero] at h4
   exact h4
 
@@ -136,7 +136,7 @@ lemma pnat_odd_mul {a b c : ℕ+} (h : a * b = c * c) (hc : Odd c.val) :
   simp only [PNat.mk_coe]
   rw [PNat.mk_coe] at hc
   apply_fun (fun x ↦ x.val) at h
-  dsimp at h
+  replace h : a * b = c * c := h
   have h1 : Odd (c * c) := Odd.mul hc hc
   rw [←h] at h1
   exact Nat.odd_mul.mp h1
@@ -204,7 +204,7 @@ problem usa2019_p1 (m : ℕ+) :
   -- 5. prove that f(1000) can equal any even number.
   constructor
   · intro hm
-    simp only [Set.mem_setOf_eq] at hm
+    simp only [Set.mem_ofPred_eq] at hm
     obtain ⟨f, hf⟩ : ∃ f : ℕ+ → ℕ+, f = fun x ↦ if x = m then 1000 else (if x = 1000 then m else x)
       := exists_eq
     have hmeq : m = f 1000 := by

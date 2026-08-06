@@ -7,8 +7,11 @@ module
 
 public import Mathlib
 
+public import ProblemExtraction
+
 @[expose] public section
 
+problem_file { tags := [.Combinatorics] }
 
 /-!
 # International Mathematical Olympiad 2022, Problem 1
@@ -48,17 +51,17 @@ def Row.valid {n : ℕ} (c : Row n) : Prop := #{i | c i = Coin.A} = n
 
 /-- The first coin in the chain containing coin `k` (zero-based). -/
 def Row.chainLeft {n : ℕ} (c : Row n) (k : Fin (2 * n)) : Fin (2 * n) :=
-  {j ∈ Finset.Iic k | ∀ i, j ≤ i → i ≤ k → c i = c k}.min' ⟨k, by
+  {j ∈ Finset.Iic k | ∀ i, j ≤ i → i ≤ k → c i = c k}.min' (show Finset.Nonempty _ from ⟨k, by
     simp only [Finset.mem_filter, Finset.mem_Iic, le_refl, true_and]
     rintro i hki hik
-    rw [le_antisymm hki hik]⟩
+    rw [le_antisymm hki hik]⟩)
 
 /-- The last coin in the chain containing coin `k` (zero-based). -/
 def Row.chainRight {n : ℕ} (c : Row n) (k : Fin (2 * n)) : Fin (2 * n) :=
-  {j ∈ Finset.Ici k | ∀ i, k ≤ i → i ≤ j → c i = c k}.max' ⟨k, by
+  {j ∈ Finset.Ici k | ∀ i, k ≤ i → i ≤ j → c i = c k}.max' (show Finset.Nonempty _ from ⟨k, by
     simp only [Finset.mem_filter, Finset.mem_Ici, le_refl, true_and]
     rintro i hki hik
-    rw [le_antisymm hki hik]⟩
+    rw [le_antisymm hki hik]⟩)
 
 /-- Move coins `a` through `b` to the left of the row. -/
 def Row.move {n : ℕ} (c : Row n) (a b : Fin (2 * n)) : Row n :=
@@ -261,10 +264,10 @@ lemma Row.valid_iff_isValidRow_ofFn {n : ℕ}  (c : Row n)
     rw [List.count_ofFn]
 
 def List.chainLeft {α : Type u} [DecidableEq α] (l : List α) (k : Fin l.length) : Fin l.length :=
-  {j ∈ Finset.Iic k | ∀ i, j ≤ i → i ≤ k → l.get i = l.get k}.min' ⟨k, by
+  {j ∈ Finset.Iic k | ∀ i, j ≤ i → i ≤ k → l.get i = l.get k}.min' (show Finset.Nonempty _ from ⟨k, by
     simp only [Finset.mem_filter, Finset.mem_Iic, le_refl, true_and]
     rintro i hki hik
-    rw [le_antisymm hki hik]⟩
+    rw [le_antisymm hki hik]⟩)
 
 lemma Row.chainLeft_eq_chainLeft_ofFn {n : ℕ} (c : Row n) (k : Fin (2 * n))
   : c.chainLeft k = (Fin.cast (by rw [List.length_ofFn]) (List.chainLeft (List.ofFn c) (Fin.cast (by rw [List.length_ofFn]) k))) := by
@@ -317,10 +320,10 @@ lemma List.chainLeft_le {α : Type u} [DecidableEq α] (l : List α) (k : Fin l.
     rw [le_antisymm hki hik]
 
 def List.chainRight {α : Type u} [DecidableEq α] (l : List α) (k : Fin l.length) : Fin l.length :=
-  {j ∈ Finset.Ici k | ∀ i, k ≤ i → i ≤ j → l.get i = l.get k}.max' ⟨k, by
+  {j ∈ Finset.Ici k | ∀ i, k ≤ i → i ≤ j → l.get i = l.get k}.max' (show Finset.Nonempty _ from ⟨k, by
     simp only [Finset.mem_filter, Finset.mem_Ici, le_refl, true_and]
     rintro i hki hik
-    rw [le_antisymm hki hik]⟩
+    rw [le_antisymm hki hik]⟩)
 
 lemma Row.chainRight_eq_chainRight_ofFn {n : ℕ} (c : Row n) (k : Fin (2 * n))
   : c.chainRight k = (Fin.cast (by rw [List.length_ofFn]) (List.chainRight (List.ofFn c) (Fin.cast (by rw [List.length_ofFn]) k))) := by
@@ -413,7 +416,7 @@ lemma Row.ofFn_move_eq_move_ofFn {n : ℕ} (c : Row n) {a b : Fin (2 * n)} (hab 
     rw [List.ofFn_congr h_cast]
     rw [List.ofFn_inj]
     ext i
-    simp only [Row.move, List.move]
+    simp only [Row.move]
     have hi := Fin.is_lt i
     have ha := Fin.is_lt a
     have hb := Fin.is_lt b
@@ -421,6 +424,7 @@ lemma Row.ofFn_move_eq_move_ofFn {n : ℕ} (c : Row n) {a b : Fin (2 * n)} (hab 
     symm
     rw [Option.get_of_eq_some]
     rw [Fin.getElem?_fin, Fin.val_cast]
+    simp only [List.move]
     rw [List.getElem?_append, List.getElem?_append]
     rw [List.length_append]
     have h₁ : (List.take (↑a) (List.ofFn c)).length = ↑a := by
@@ -884,6 +888,8 @@ lemma Row.ofBlocks_blocks {n : ℕ} (c : Row n)
   rcases List.listOfBlocks_blocks (List.ofFn c) with ⟨coin, h⟩
   use coin
   simp [Row.ofBlocks, Row.blocks, h]
+  funext i
+  congr 1
 
 lemma ofFn_ofBlocks {n : ℕ} (l : List ℕ) (head : Coin) (hl : l.sum = 2 * n)
   : List.ofFn (Row.ofBlocks l head hl) = listOfBlocks l head := by
@@ -1144,7 +1150,7 @@ lemma List.length_blocks_append_le {α : Type u} [DecidableEq α] {a b : List α
       rw [List.blocks_append h', List.length_append]
 
 def indexInBlock (l : List ℕ) (k : ℕ) :=
-  {i ∈ Finset.Iic l.length | (l.take i).sum ≤ k }.max' ⟨0, by simp⟩
+  {i ∈ Finset.Iic l.length | (l.take i).sum ≤ k }.max' (show Finset.Nonempty _ from ⟨0, by simp⟩)
 
 lemma indexInBlock_eq_length_sub_one_of (l : List ℕ) (hl :l ≠ [])
   (k : ℕ) (hk : l.sum ≤ k + l.getLast hl) (hk' : k < l.sum)

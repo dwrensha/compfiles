@@ -178,8 +178,8 @@ def transform_A_to_B [NeZero n] : (A n) → (B n) := fun x ↦ by
       simp
       grind only [= Finset.mem_Icc]
     · unfold A T at x
-      let := (not_exists.mp $ Set.mem_setOf_eq.mp x.prop) 1
-      simp only [Set.mem_setOf_eq, Nat.reduceAdd, Finset.mem_Icc, le_refl, true_and,
+      let := (not_exists.mp $ Set.mem_ofPred_eq.mp x.prop) 1
+      simp only [Set.mem_ofPred_eq, Nat.reduceAdd, Finset.mem_Icc, le_refl, true_and,
         not_exists] at this
       contrapose! this
       use (by grind)
@@ -221,12 +221,12 @@ def transform_A_to_B [NeZero n] : (A n) → (B n) := fun x ↦ by
     · intro jlt
       nth_rw 1 [partial_cycle.apply_of_lt _ _ _ _ (by rw [<-Subtype.coe_lt_coe]; simp; lia)]
       nth_rw 1 [partial_cycle.apply_of_lt _ _ _ _ (by rw [<-Subtype.coe_lt_coe]; simp; lia)]
-      apply not_exists.mp $ (not_exists.mp $ Set.mem_setOf_eq.mp x.prop) _
+      apply not_exists.mp $ (not_exists.mp $ Set.mem_ofPred_eq.mp x.prop) _
       grind only [= Finset.mem_Icc]
     · intro jgt
       nth_rw 1 [partial_cycle.apply_of_gt _ _ _ _ (by rw [<-Subtype.coe_lt_coe]; simp; lia)]
       nth_rw 1 [partial_cycle.apply_of_gt _ _ _ _ (by rw [<-Subtype.coe_lt_coe]; simp; lia)]
-      apply not_exists.mp $ (not_exists.mp $ Set.mem_setOf_eq.mp x.prop) _
+      apply not_exists.mp $ (not_exists.mp $ Set.mem_ofPred_eq.mp x.prop) _
       grind only [= Finset.mem_Icc]
 
 
@@ -235,13 +235,13 @@ def transform_B_to_A [NeZero n] : (B n) → (A n) := fun ⟨⟨x, k⟩, h⟩ ↦
   let x_k_1 := x ⟨k+1, by grind⟩
   have ndiff : (x_k : ℕ).dist x_k_1 = n := by
     unfold B at h
-    simp only [Subtype.forall, Set.mem_setOf_eq] at h
+    simp only [Subtype.forall, Set.mem_ofPred_eq] at h
     apply (h _ _).mp
     · rfl
     · grind only [= Finset.mem_Icc]
   use (partial_cycle n ⟨k, by grind⟩).symm x
   unfold A T
-  simp only [Finset.mem_Icc, not_exists, forall_and_index, Set.mem_setOf_eq]
+  simp only [Finset.mem_Icc, not_exists, forall_and_index, Set.mem_ofPred_eq]
   intro i ib1 ib2
   by_cases c1 : i = 1
   · subst c1
@@ -273,7 +273,7 @@ def transform_B_to_A [NeZero n] : (B n) → (A n) := fun ⟨⟨x, k⟩, h⟩ ↦
     nth_rw 1 [partial_cycle.symm.apply_of_le _ _ _ _ (by simpa using c2) (by rw [<-Subtype.coe_lt_coe]; exact Nat.lt_add_of_pos_left ib1)]
     simp only [add_tsub_cancel_right]
     unfold B at h
-    simp only [Subtype.forall, Set.mem_setOf_eq] at h
+    simp only [Subtype.forall, Set.mem_ofPred_eq] at h
     have : ∀ h, (⟨i, h⟩ : Finset.Icc 1 (2 * n)) = ⟨i-1+1, by simp only [Finset.mem_Icc]; lia⟩ := by
       intro h; simp only [Subtype.mk.injEq]; lia
     simp_rw [this]
@@ -284,7 +284,7 @@ def transform_B_to_A [NeZero n] : (B n) → (A n) := fun ⟨⟨x, k⟩, h⟩ ↦
     nth_rw 1 [partial_cycle.symm.apply_of_gt _ _ _ _ (by simpa using c2)]
     nth_rw 1 [partial_cycle.symm.apply_of_gt _ _ _ _ (by simp; lia)]
     unfold B at h
-    simp only [Subtype.forall, Set.mem_setOf_eq] at h
+    simp only [Subtype.forall, Set.mem_ofPred_eq] at h
     apply (h _ _).not.mp
     · exact Nat.ne_of_lt c2
     · grind only [= Finset.mem_Icc]
@@ -307,7 +307,7 @@ def A_equiv_B [NeZero n] : Equiv (A n) (B n) := {
       · congr
         simp_rw [partial_cycle.symm.apply_of_eq n _ _ 1 rfl]
         unfold B at h
-        simp only [Subtype.forall, Set.mem_setOf_eq] at h
+        simp only [Subtype.forall, Set.mem_ofPred_eq] at h
         replace h := (h k (by grind)).mp rfl
         rw [unique_ndiff] at h
         simp_rw [<-h]
@@ -320,7 +320,7 @@ def A_equiv_B [NeZero n] : Equiv (A n) (B n) := {
         rw [partial_cycle.symm.apply_of_gt n _ _ _ (by unfold k_add_1; simp)]
     · simp_rw [partial_cycle.symm.apply_of_eq n _ _ 1 rfl]
       unfold B at h
-      simp only [Subtype.forall, Set.mem_setOf_eq] at h
+      simp only [Subtype.forall, Set.mem_ofPred_eq] at h
       replace h := (h k (by grind)).mp rfl
       rw [unique_ndiff] at h
       simp_rw [<-h]
@@ -341,20 +341,20 @@ def embed_B : (B n) ↪ {x | T n x} := {
     unfold T
     use k, ?_
     · unfold B at h
-      simp only [Subtype.forall, Set.mem_setOf_eq] at h
+      simp only [Subtype.forall, Set.mem_ofPred_eq] at h
       apply (h _ _).mp rfl
       grind
     · grind
   inj' x1 x2 e := by
     simp at e
-    have eq_perm : x1.val.1 = x2.val.1 := congrArg Subtype.val e
+    have eq_perm : x1.val.1 = x2.val.1 := e
     apply Subtype.ext
     apply Prod.ext
     · exact eq_perm
     · let p1 := x1.prop
       let p2 := x2.prop
       unfold B at p1 p2
-      simp only [Subtype.forall, Set.mem_setOf_eq] at p1 p2
+      simp only [Subtype.forall, Set.mem_ofPred_eq] at p1 p2
       let := (p1 x2.val.2 (by grind))
       simp only [SetLike.coe_eq_coe] at this
       rw [this]
@@ -391,12 +391,13 @@ theorem embed_B.not_Surjective [NeZero n] : ¬ Function.Surjective (embed_B n) :
     simp [Nat.dist_eq_sub_of_le]
   use ⟨x, by unfold T; exists 1, (by grind)⟩
   by_contra ⟨⟨⟨y, k⟩, h⟩, h'⟩
-  unfold embed_B at h'
-  set_option backward.isDefEq.respectTransparency false in
-  simp at h'
+  replace h' : y = x := by
+    unfold embed_B at h'
+    simp only [Set.mem_ofPred_eq] at h'
+    rwa [← Subtype.mk_eq_mk]
   subst y
   unfold B at h
-  simp only [Subtype.forall, Set.mem_setOf_eq] at h
+  simp only [Subtype.forall, Set.mem_ofPred_eq] at h
   let := (h k (by grind)).mp rfl
   unfold x swap2 at this
   simp only [coe_fn_mk, Nat.reduceEqDiff] at this
@@ -405,7 +406,7 @@ theorem embed_B.not_Surjective [NeZero n] : ¬ Function.Surjective (embed_B n) :
 theorem embed_B.card [NeZero n] : (B n).ncard < {x | T n x}.ncard := by
   rw [<-Set.ncard_coe, <-Set.ncard_image_of_injective Set.univ (embed_B n).injective]
   apply Set.ncard_lt_card
-  simp only [Set.coe_setOf, Set.image_univ, ne_eq]
+  simp only [Set.coe_ofPred, Set.image_univ, ne_eq]
   rw [Set.range_eq_univ]
   apply embed_B.not_Surjective
 

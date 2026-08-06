@@ -1023,7 +1023,7 @@ lemma vitalDiffCells_balanced (k : ℕ) (f : Fin (3 * k) → Fin (3 * k) → Let
     (fun p ↦ ((p.1 : ℕ) : ℤ) - ((p.2 : ℕ) : ℤ))
   · intro p hp
     simp only [vitalDiffCells, Finset.mem_filter, Finset.mem_univ, true_and] at hp
-    simp only [vitalDiffKeys, Finset.mem_filter, Finset.mem_map, Function.Embedding.coeFn_mk]
+    simp only [vitalDiffKeys, Finset.mem_filter, Finset.mem_map, DFunLike.coe]
     refine ⟨?_, (finMod_eq_iff_three_dvd_sub (p.1 : ℕ) (p.2 : ℕ)).mp hp⟩
     let t := (p.1 : ℕ) + 3 * k - (p.2 : ℕ)
     refine ⟨t, ?_, ?_⟩

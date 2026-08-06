@@ -40,7 +40,7 @@ problem imo1996_p3 (f : ℕ → ℕ) :
   -- https://prase.cz/kalva/imo/isoln/isoln963.html
   constructor
   · intro hf m n
-    simp only [Set.mem_setOf_eq] at hf
+    simp only [Set.mem_ofPred_eq] at hf
     obtain ⟨k, n1, hn1, hf1⟩ := hf
 
     obtain hk0 | hkp := Nat.eq_zero_or_pos k
@@ -94,7 +94,7 @@ problem imo1996_p3 (f : ℕ → ℕ) :
 
     grind
   intro hf
-  simp only [Set.mem_setOf_eq]
+  simp only [Set.mem_ofPred_eq]
 
   /- Setting m = n = 0, the given relation becomes:
      f(f(0)) = f(f(0)) + f(0).

@@ -38,13 +38,13 @@ problem usa1978_p1 :
   -- https://artofproblemsolving.com/wiki/index.php/1978_USAMO_Problems/Problem_1
   unfold IsGreatest IsGood max_e upperBounds
   constructor
-  · simp only [Set.mem_setOf_eq]
+  · simp only [Set.mem_ofPred_eq]
     use (6 / 5)
     use (6 / 5)
     use (6 / 5)
     use (6 / 5)
     constructor <;> norm_num
-  · simp only [Set.mem_setOf_eq]
+  · simp only [Set.mem_ofPred_eq]
     intro e
     contrapose!
     intro he a b c d h1 h2

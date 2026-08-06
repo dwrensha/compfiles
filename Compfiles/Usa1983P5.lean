@@ -107,7 +107,7 @@ lemma den_mem_denoms {x : ℝ} {n : ℕ} {q : ℚ} (hq : q ∈ fracs x n) :
     q.den ∈ denoms x n := by
   classical
   rw [denoms]
-  simp only [Finset.mem_filter, Finset.mem_Icc, OccursDen]
+  simp only [Finset.mem_filter, Finset.mem_Icc]
   exact ⟨⟨Rat.den_pos q, hq.1⟩, q, hq, rfl⟩
 
 -- Occurring denominators form a divisibility antichain.
@@ -118,7 +118,8 @@ lemma no_dvd_between_occurring_denoms
   classical
   intro hdiv
   rw [denoms] at hd he
-  simp only [Finset.mem_filter, Finset.mem_Icc, OccursDen] at hd he
+  simp only [Finset.mem_filter, Finset.mem_Icc] at hd he
+  rw [OccursDen] at hd he
   rcases hd.2 with ⟨r, hr, hrd⟩
   rcases he.2 with ⟨s, hs, hse⟩
   have hrs : r ≠ s := by
@@ -147,7 +148,8 @@ lemma den_bijOn (x : ℝ) (n : ℕ) (hn : 0 < n) :
     exact same_den_unique hn hr hs hden
   · intro d hd
     rw [denoms] at hd
-    simp only [Finset.mem_coe, Finset.mem_filter, Finset.mem_Icc, OccursDen] at hd
+    simp only [Finset.mem_coe, Finset.mem_filter, Finset.mem_Icc] at hd
+    rw [OccursDen] at hd
     rcases hd.2 with ⟨q, hq, hqd⟩
     exact ⟨q, hq, hqd⟩
 

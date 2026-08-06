@@ -45,7 +45,7 @@ lemma ncard_set {a : ℕ} {b : ℕ+} : {p : ℕ+ | ∃ i : ℕ+, i ≤ b ∧ p =
   have h : {p : ℕ+ | ∃ i : ℕ+, i ≤ b ∧ p = P (a + i)} =
       (fun i : ℕ+ ↦ (⟨P (a + i), by positivity⟩ : ℕ+)) '' Set.Icc 1 b := by
     ext p
-    simp only [Set.mem_setOf_eq]
+    simp only [Set.mem_ofPred_eq]
     constructor
     · rintro ⟨i, hib, hp⟩
       exact ⟨i, ⟨one_le, hib⟩, PNat.coe_injective hp.symm⟩
@@ -199,7 +199,6 @@ problem imo2016_p4 :
       intro k hk hkb
       have hmem : (⟨P (a + k), by positivity⟩ : ℕ+) ∈ S := by
         refine ⟨⟨k, hk⟩, ?_, rfl⟩
-        rw [← PNat.coe_le_coe]
         exact hkb
       obtain ⟨n, ⟨j, hjb, hj⟩, hne, hncop⟩ := ha _ hmem
       refine ⟨j, j.pos, by exact_mod_cast hjb, ?_, ?_⟩

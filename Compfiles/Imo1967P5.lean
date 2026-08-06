@@ -212,7 +212,7 @@ lemma aux_recursive (I : Finset (Fin 8)) (a : Fin 8 → ℝ)
     · have h_inf_sum_K_zero : Set.Infinite {n | ∑ k ∈ K, a k^n = 0} := by
         have hSame : {n | ∑ i ∈ I, a i^n = 0} = {n | ∑ k ∈ K, a k^n = 0} := by
           ext N
-          simp only [Set.mem_setOf_eq]
+          simp only [Set.mem_ofPred_eq]
           constructor <;> intro hS
           · have hOdd : Odd N := odd_if_sum_eq_zero I a h₂ hS
             rw [h_sum_union_eq_sum_disj, h_sum_J_eq_zero_of_odd N hOdd, add_zero] at hS

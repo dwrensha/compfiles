@@ -163,7 +163,7 @@ theorem induction_step [NeZero N] (h : ∀ (j i k), C i = C j → C j = C k → 
       · grind only [!Finset.min'_mem, = Finset.mem_inter, = Finset.mem_filter]
       · intro x hx
         unfold Δ at hx
-        simp only [Finset.mem_map, Finset.mem_attach, Function.Embedding.coeFn_mk, true_and,
+        simp only [Finset.mem_map, Finset.mem_attach, DFunLike.coe, true_and,
           Subtype.exists, Finset.mem_erase, ne_eq, Finset.mem_inter, Finset.mem_filter,
           Finset.univ_eq_attach] at hx
         let ⟨a, ha1, ha2, ha3⟩ := hx
@@ -183,7 +183,7 @@ theorem induction_step [NeZero N] (h : ∀ (j i k), C i = C j → C j = C k → 
           grind only [!Finset.min'_mem, = Finset.mem_inter]
         · intro x hx
           unfold Δ at hx
-          simp only [Finset.mem_map, Finset.mem_attach, Function.Embedding.coeFn_mk, true_and,
+          simp only [Finset.mem_map, Finset.mem_attach, DFunLike.coe, true_and,
             Subtype.exists, Finset.mem_erase, ne_eq, Finset.mem_inter, Finset.mem_filter,
             Finset.univ_eq_attach, Finset.mem_Icc] at hx
           have hs1 : ∀ (_h), ⟨x.val+xmin.val, _h⟩ ∈ Δ' := by

@@ -260,7 +260,7 @@ lemma cornerSupport_rectColor_card_le (r : Rectangle) :
 
 lemma cornerSupport_zero : cornerSupport (fun _ ↦ 0) = ∅ := by
   ext c
-  rw [mem_cornerSupport]
+  rw [mem_cornerSupport (fun _ ↦ 0) c]
   simp [cornerDelta, maskedCell, cellValue]
 
 lemma cornerSupport_listSum_card_le (rs : List Rectangle) :
@@ -495,7 +495,9 @@ lemma construction_makes_zero (s : chessboard) :
   obtain ⟨x, y⟩ := s
   have hx := x.isLt
   have hy := y.isLt
-  rw [foldl_recolor_apply, List.map_append, List.sum_append,
+  rw [foldl_recolor_apply ((List.range 49).map colRect ++ (List.range 49).map rowRect)
+        start_coloring (x, y),
+      List.map_append, List.sum_append,
       List.map_map, List.map_map]
   have hcol : ((List.range 49).map (fun k ↦ rectColor (colRect k) (x, y))).sum
       = if Even x.val then 1 else 0 := by

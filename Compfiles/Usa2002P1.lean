@@ -38,7 +38,11 @@ namespace Usa2002P1
 inductive Color : Type where
 | red : Color
 | blue : Color
-deriving DecidableEq, Fintype
+deriving DecidableEq
+
+instance : Fintype Color where
+  elems := ⟨↑[Color.red, Color.blue], by decide⟩
+  complete := fun x => by cases x <;> decide
 
 snip begin
 

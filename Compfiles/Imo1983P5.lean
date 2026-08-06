@@ -154,25 +154,21 @@ theorem generalized (n : ℕ+) :
   ∃ S : Finset ℕ+, S.card = 2 ^ n.val - 1 ∧
   (∀ x ∈ S, x.val ≤ (3 ^ n.val - 1) / 2) ∧
   ∀ x ∈ S, ∀ y ∈ S, ∀ z ∈ S, x < y ∧ y < z → x + z ≠ 2 * y := by
-  set S' := Finset.image base_two_to_base_three (Finset.range (2 ^ n.val) \ Finset.range 1) with hS'
-  use Finset.subtype (fun n ↦ 0 < n) S'
-  constructorm* _ ∧ _
-  · set_option backward.isDefEq.respectTransparency false in
-    rw [Finset.card_subtype]
-    have hS'_filter : ∀ n ∈ S', 0 < n := by
-      simp only [hS', Finset.mem_image, Finset.mem_sdiff, Finset.mem_range, Nat.lt_one_iff,
-                 forall_exists_index, and_imp]
-      intro _ m _ hm0 rfl
-      exact base_two_to_base_three_pos (Nat.pos_of_ne_zero hm0)
-    rw [Finset.card_filter_eq_iff.mpr hS'_filter, Finset.card_image_of_injective _ base_two_to_base_three_inj]
-    rw [Finset.card_sdiff, Finset.range_inter_range, Finset.card_range, Finset.card_range]
+  -- typecast the finset into ℕ+
+  use Finset.map ⟨(⟨base_two_to_base_three ·.val, base_two_to_base_three_pos (by grind)⟩),
+    fun _ _ h => by
+      exact Subtype.ext
+        (base_two_to_base_three_inj (congrArg PNat.val h))⟩ (Finset.range (2 ^ n.val) \ Finset.range 1).attach
+  and_intros
+  · rw [Finset.card_map, Finset.card_attach, Finset.card_sdiff]
+    rw [Finset.range_inter_range, Finset.card_range, Finset.card_range]
     congr 1
     exact min_eq_left (Nat.one_le_pow _ _ (by norm_num))
   · intro x hx
-    set_option backward.isDefEq.respectTransparency false in
-    rw [Finset.mem_subtype, hS', Finset.mem_image] at hx
-    rcases hx with ⟨m, hm, hmx⟩
-    rw [PNat.val, ← hmx, base_two_to_base_three, Nat.ofDigits_eq]
+    rw [Finset.mem_map] at hx
+    simp_rw [Finset.mem_attach, true_and, DFunLike.coe] at hx
+    rcases hx with ⟨⟨m, hm⟩, rfl⟩
+    rw [PNat.mk_coe, base_two_to_base_three, Nat.ofDigits_eq]
     have h' : ∀ i ∈ Finset.range (Nat.digits 2 m).length, (Nat.digits 2 m).getI i * 3 ^ i ≤ 3 ^ i := by
       intro i _; nth_rw 2 [← one_mul (3 ^ i)]
       exact Nat.mul_le_mul_right _ (Nat.lt_succ_iff.mp (Nat.getI_digits_lt (b := 2) m i le_rfl))
@@ -188,24 +184,18 @@ theorem generalized (n : ℕ+) :
     exact hm.left
   · rintro x hx y hy z hz h'
     contrapose! h'
-    set_option backward.isDefEq.respectTransparency false in
-    rw [Finset.mem_subtype, hS', Finset.mem_image] at hx hy hz
-    rcases hx with ⟨x', hx', hx'x⟩
-    rcases hy with ⟨y', hy', hy'y⟩
-    rcases hz with ⟨z', hz', hz'z⟩
-    rw [← PNat.coe_inj] at h'
-    rw [← PNat.coe_lt_coe, ← PNat.coe_le_coe]
-    push_cast at h'
-    rw [two_mul] at h'
-    rw [PNat.val] at h' ⊢
+    simp_rw [Finset.mem_map, ← PNat.coe_inj, DFunLike.coe, PNat.mk_coe] at hx hy hz
+    rcases hx with ⟨x', -, hx'x⟩
+    rcases hy with ⟨y', -, hy'y⟩
+    rcases hz with ⟨z', -, hz'z⟩
+    rw [← PNat.coe_lt_coe, ← PNat.coe_le_coe, PNat.val]
     apply zero_or_one_in_base_three_of_eq_base_two_to_base_three at hx'x
     apply zero_or_one_in_base_three_of_eq_base_two_to_base_three at hy'y
     apply zero_or_one_in_base_three_of_eq_base_two_to_base_three at hz'z
-    have hzx : Subtype.val x = Subtype.val z := by
-      rw [← eq_iff_of_zero_or_one_in_base hx'x hz'z, h']
-      rw [eq_iff_of_zero_or_one_in_base hy'y hy'y]
-    rw [hzx]
-    apply le_of_lt
+    suffices h : (x : ℕ) = z by rw [PNat.coe_inj.mp h]; apply le_of_lt
+    rw [← eq_iff_of_zero_or_one_in_base hx'x hz'z]
+    norm_cast; rw [h']; push_cast; rw [two_mul]
+    rw [eq_iff_of_zero_or_one_in_base hy'y hy'y]
 
 snip end
 
@@ -217,7 +207,7 @@ problem imo1983_p5 :
   have h : 1983 ≤ S'.card := by rw [hS'₁]; norm_num
   rcases Finset.exists_subset_card_eq h with ⟨S, hS₁, hS₂⟩
   use S
-  constructorm* _ ∧ _
+  and_intros
   · exact hS₂
   · exact fun x hx ↦ by rw [← PNat.coe_le_coe]; exact le_trans (hS'₂ x (hS₁ hx)) (by norm_num)
   · exact fun x hx y hy z hz ↦ hS'₃ x (hS₁ hx) y (hS₁ hy) z (hS₁ hz)

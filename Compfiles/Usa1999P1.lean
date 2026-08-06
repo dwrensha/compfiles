@@ -120,9 +120,12 @@ lemma pathGraph_degree_le_two {n : ℕ} (x : Fin n) :
 -- A square has at most four side-neighbors.
 lemma gridGraph_degree_le_four {n : ℕ} (x : checkerboard n) :
     (gridGraph n).degree x ≤ 4 := by
-  change (SimpleGraph.pathGraph n □ SimpleGraph.pathGraph n).degree x ≤ 4
-  rw [SimpleGraph.degree_boxProd]
-  exact Nat.add_le_add (pathGraph_degree_le_two x.1) (pathGraph_degree_le_two x.2)
+  have key : ∀ y : Fin n × Fin n,
+      (SimpleGraph.pathGraph n □ SimpleGraph.pathGraph n).degree y ≤ 4 := by
+    intro y
+    rw [SimpleGraph.degree_boxProd]
+    exact Nat.add_le_add (pathGraph_degree_le_two y.1) (pathGraph_degree_le_two y.2)
+  exact key x
 
 -- The path hypothesis makes the checker graph preconnected.
 lemma checkerGraph_preconnected {n : ℕ} {c : Finset (checkerboard n)}
@@ -161,10 +164,8 @@ lemma preconnected_twice_card_le_sum_degrees_add_two
     2 * Fintype.card V ≤ (∑ v, G.degree v) + 2 := by
   cases isEmpty_or_nonempty V with
   | inl hV =>
-      letI := hV
       simp
   | inr hV =>
-      letI := hV
       have h := (show G.Connected from ⟨hG⟩).card_vert_le_card_edgeSet_add_one
       rw [Nat.card_eq_fintype_card, Nat.card_eq_fintype_card, SimpleGraph.card_edgeSet] at h
       rw [SimpleGraph.sum_degrees_eq_twice_card_edges]
@@ -186,7 +187,9 @@ lemma checkerGraph_degree_eq_inter {n : ℕ} (c : Finset (checkerboard n)) (x : 
   have hmap : ((checkerGraph c).neighborFinset x).map emb =
       (gridGraph n).neighborFinset x.1 ∩ c := by
     ext y
-    simp [emb, SimpleGraph.mem_neighborFinset, checkerGraph]
+    simp [emb, SimpleGraph.mem_neighborFinset]
+    simp only [checkerGraph, SimpleGraph.induce_adj]
+    tauto
   rw [← SimpleGraph.card_neighborFinset_eq_degree]
   rw [← hmap, Finset.card_map]
 

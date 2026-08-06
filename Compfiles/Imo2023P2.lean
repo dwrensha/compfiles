@@ -429,12 +429,7 @@ lemma Sphere.IsTangentAt_of_two_zsmul_oangle_eq {s : Sphere Pt} {P P₁ P₂ Q :
   have h' := EuclideanGeometry.Sphere.two_zsmul_oangle_center_add_two_zsmul_oangle_eq_pi
     hP hP₂ hP₁ hPP₂.symm hP₁P₂.symm hPP₁
   have h_OP : s.center ≠ P := by
-    contrapose! hPP₁ with h''
-    rw [← h'']
-    rw [← dist_eq_zero] at h'' ⊢
-    rw [EuclideanGeometry.mem_sphere'.mp hP₁]
-    rw [EuclideanGeometry.mem_sphere'.mp hP] at h''
-    exact h''
+    exact (Sphere.ne_center_of_mem_of_mem_of_ne hP hP₁ hPP₁).symm
   rw [← h, ← smul_add, add_comm, oangle_add hPQ.symm hPP₁.symm h_OP] at h'
   rw [EuclideanGeometry.angle_eq_abs_oangle_toReal hPQ.symm h_OP]
   rw [Real.Angle.abs_toReal_eq_pi_div_two_iff]

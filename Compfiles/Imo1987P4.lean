@@ -62,7 +62,7 @@ problem imo1987_p4 : ¬∃ f : ℕ → ℕ, ∀ n, f (f n) = n + 1987 := by
   have ab_range : A ∪ B = {n | n < 2 * m + 1} := by
     rw [ab_union]
     ext x
-    rw [Set.mem_setOf_eq, ←not_iff_not, ←Set.compl_eq_univ_sdiff]
+    rw [Set.mem_ofPred_eq, ←not_iff_not, ←Set.compl_eq_univ_sdiff]
     rw [Set.notMem_compl_iff, not_lt]
     simp only [Set.mem_image, Set.mem_univ, true_and, exists_exists_eq_and, hf]
     rw [le_iff_exists_add']

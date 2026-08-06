@@ -102,7 +102,7 @@ problem imo1973_p6 (npos : 0 < n) (hq : q ∈ Set.Ioo 0 1) (apos : ∀ i, 0 < a 
     ∧ (∑ k, b k < (1+q) / (1-q) * ∑ k, a k) := by
   by_cases hn : n = 1
   · apply imo1973_p6_of_n_eq_one <;> trivial
-  use (Q n q *ᵥ a)
+  use (Matrix.of (Q n q) *ᵥ a)
   have : 1 < n := Nat.lt_of_le_of_ne npos (Ne.symm hn)
   have nnz : NeZero n := NeZero.of_gt this
   rw [Set.mem_Ioo] at hq
@@ -111,7 +111,8 @@ problem imo1973_p6 (npos : 0 < n) (hq : q ∈ Set.Ioo 0 1) (apos : ∀ i, 0 < a 
   and_intros
   -- (a) --
   · intro k
-    rw [mulVec, dotProduct]
+    rw [mulVec_apply_eq_sum]
+    simp only [of_apply]
     calc
       _ < a k + Q n q k (k+1) * a (k + 1) := by
         simp [apos, Q_pos n q hq]
@@ -183,12 +184,15 @@ problem imo1973_p6 (npos : 0 < n) (hq : q ∈ Set.Ioo 0 1) (apos : ∀ i, 0 < a 
           Int.natAbs_of_isUnit, pow_one, true_and]
         rw [inv_mul_cancel₀]
         exact ne_of_gt hq.left
-    have hk (_t) : (Q n q *ᵥ a) ⟨k, _t⟩ = X + Y := by
+    have hk (_t) : (Matrix.of (Q n q) *ᵥ a) ⟨k, _t⟩ = X + Y := by
       unfold X Y
-      rw [mulVec, dotProduct, <-Finset.sum_union XY_disj, <-XY_union]
-    have hk1 (_t) : (Q n q *ᵥ a) ⟨k+1, _t⟩ = q*X + q⁻¹*Y := by
+      rw [mulVec_apply_eq_sum]
+      simp only [of_apply]
+      rw [<-Finset.sum_union XY_disj, <-XY_union]
+    have hk1 (_t) : (Matrix.of (Q n q) *ᵥ a) ⟨k+1, _t⟩ = q*X + q⁻¹*Y := by
       unfold X Y
-      rw [mulVec, dotProduct]
+      rw [mulVec_apply_eq_sum]
+      simp only [of_apply]
       rw [Finset.mul_sum, Finset.mul_sum]
       rw [<-XY_union, Finset.sum_union XY_disj]
       congr 1 <;> { apply Finset.sum_bij (fun x _ => x) <;> [simp; simp; simp; grind] }

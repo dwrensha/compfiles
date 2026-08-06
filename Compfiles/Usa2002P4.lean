@@ -116,7 +116,7 @@ problem usa2002_p4 (f : ℝ → ℝ) :
   constructor
   · -- trivial direction: show that linear functions work
     unfold FE
-    grind only [usr Set.mem_setOf_eq]
+    grind only [usr Set.mem_ofPred_eq]
   · -- conversely, if f obeys the FE, then choose c = f(1)
     intro hf
     use f 1 -- c = f(1)
