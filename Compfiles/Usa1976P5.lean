@@ -39,28 +39,6 @@ lemma isPrimitiveRoot_ω : IsPrimitiveRoot ω 5 := by
   have h := Complex.isPrimitiveRoot_exp_of_coprime 1 5 (by norm_num) (by decide)
   simpa using h
 
-lemma ω_pow_five : ω ^ 5 = 1 := isPrimitiveRoot_ω.pow_eq_one
-
-lemma ω_ne_zero : ω ≠ 0 := Complex.exp_ne_zero _
-
-/-- Distinct low powers of `ω` are distinct: if `0 ≤ i < j < 5` then `ω^i ≠ ω^j`. -/
-lemma ω_pow_ne_pow {i j : ℕ} (hij : i < j) (hj : j < 5) : ω ^ i ≠ ω ^ j := by
-  intro heq
-  have hmul : ω ^ (j - i) * ω ^ i = 1 * ω ^ i := by
-    rw [← pow_add, Nat.sub_add_cancel hij.le, heq, one_mul]
-  have hpow : ω ^ (j - i) = 1 := mul_right_cancel₀ (pow_ne_zero _ ω_ne_zero) hmul
-  obtain ⟨k, hk⟩ := isPrimitiveRoot_ω.dvd_of_pow_eq_one (j - i) hpow
-  omega
-
-/-- The geometric sum `1 + ζ + ζ² + ζ³ + ζ⁴` vanishes at any nontrivial fifth root of unity. -/
-lemma geom_sum_eq_zero {ζ : ℂ} (h5 : ζ ^ 5 = 1) (hne : ζ ≠ 1) :
-    1 + ζ + ζ ^ 2 + ζ ^ 3 + ζ ^ 4 = 0 := by
-  have h : (1 + ζ + ζ ^ 2 + ζ ^ 3 + ζ ^ 4) * (ζ - 1) = ζ ^ 5 - 1 := by ring
-  rw [h5, sub_self] at h
-  rcases mul_eq_zero.mp h with h' | h''
-  · exact h'
-  · exact absurd (eq_of_sub_eq_zero h'') hne
-
 snip end
 
 problem usa1976_p5 (a b c d : Polynomial ℂ)
@@ -73,14 +51,13 @@ problem usa1976_p5 (a b c d : Polynomial ℂ)
   -- Evaluating the given identity at `x = ω^j` (for `0 < j < 5`) kills the right-hand side.
   have key : ∀ j : ℕ, 0 < j → j < 5 → f.eval (ω ^ j) = 0 := by
     intro j hj0 hj5
-    have hζ5 : (ω ^ j) ^ 5 = 1 := by
-      rw [← pow_mul, Nat.mul_comm j 5, pow_mul, ω_pow_five, one_pow]
-    have hζ1 : ω ^ j ≠ 1 := by
-      intro heq
-      obtain ⟨k, hk⟩ := isPrimitiveRoot_ω.dvd_of_pow_eq_one j heq
-      omega
+    have hcop : j.Coprime 5 :=
+      ((Nat.Prime.coprime_iff_not_dvd Nat.prime_five).mpr
+        (Nat.not_dvd_of_pos_of_lt hj0 hj5)).symm
+    have hζ : IsPrimitiveRoot (ω ^ j) 5 := isPrimitiveRoot_ω.pow_of_coprime j hcop
+    have hζ5 : (ω ^ j) ^ 5 = 1 := hζ.pow_eq_one
     have hgeom : 1 + ω ^ j + (ω ^ j) ^ 2 + (ω ^ j) ^ 3 + (ω ^ j) ^ 4 = 0 :=
-      geom_sum_eq_zero hζ5 hζ1
+      by simpa [Finset.sum_range_succ] using hζ.geom_sum_eq_zero (by norm_num : 1 < 5)
     have heval := congrArg (fun p : Polynomial ℂ => p.eval (ω ^ j)) h
     simp only [eval_add, eval_mul, eval_pow, eval_comp, eval_X, eval_one] at heval
     rw [hζ5, hgeom, zero_mul] at heval
@@ -91,32 +68,31 @@ problem usa1976_p5 (a b c d : Polynomial ℂ)
       ring
     rw [hfe]
     exact heval
-  -- `ω`, `ω²`, `ω³` are three distinct points.
-  have hcard : ({ω ^ 1, ω ^ 2, ω ^ 3} : Finset ℂ).card = 3 := by
-    have d12 : ω ≠ ω ^ 2 := by
-      simpa using ω_pow_ne_pow (show (1 : ℕ) < 2 by norm_num) (by norm_num)
-    have d13 : ω ≠ ω ^ 3 := by
-      simpa using ω_pow_ne_pow (show (1 : ℕ) < 3 by norm_num) (by norm_num)
-    have d23 : ω ^ 2 ≠ ω ^ 3 := ω_pow_ne_pow (by norm_num) (by norm_num)
-    rw [Finset.card_insert_of_notMem (by simp [d12, d13]),
-        Finset.card_insert_of_notMem (by simp [d23]),
-        Finset.card_singleton]
+  -- The powers `ω¹`, `ω²`, `ω³` are distinct because exponentiation by a
+  -- primitive fifth root is injective on exponents below `5`.
+  let roots := (Finset.Icc 1 3).image (ω ^ ·)
+  have hcard : roots.card = 3 := by
+    rw [show roots = (Finset.Icc 1 3).image (ω ^ ·) from rfl,
+      Finset.card_image_iff.mpr (isPrimitiveRoot_ω.injOn_pow.mono (by
+        intro j hj
+        simp only [Finset.coe_Icc, Set.mem_Icc, Finset.coe_range, Set.mem_Iio] at hj ⊢
+        omega)), Nat.card_Icc]
   -- A polynomial of degree at most 2 with three roots is zero.
   have hdeg : f.natDegree ≤ 2 := by
-    rw [hf_def, Polynomial.natDegree_le_iff_coeff_eq_zero]
-    intro N hN
-    have h0 : N ≠ 0 := by omega
-    have h1 : (1 : ℕ) ≠ N := by omega
-    have h2 : N ≠ 2 := by omega
-    simp [coeff_add, coeff_C, coeff_C_mul, coeff_X, coeff_X_pow, h0, h1, h2]
+    rw [hf_def]
+    apply Polynomial.natDegree_add_le_of_degree_le
+    · apply Polynomial.natDegree_add_le_of_degree_le
+      · simp
+      · exact (Polynomial.natDegree_C_mul_le _ _).trans (by simp)
+    · exact Polynomial.natDegree_C_mul_X_pow_le _ _
   have hf0 : f = 0 := by
-    apply Polynomial.eq_zero_of_natDegree_lt_card_of_eval_eq_zero' f {ω ^ 1, ω ^ 2, ω ^ 3}
+    apply Polynomial.eq_zero_of_natDegree_lt_card_of_eval_eq_zero' f roots
     · intro x hx
-      simp only [Finset.mem_insert, Finset.mem_singleton] at hx
-      rcases hx with rfl | rfl | rfl
-      · exact key 1 (by norm_num) (by norm_num)
-      · exact key 2 (by norm_num) (by norm_num)
-      · exact key 3 (by norm_num) (by norm_num)
+      change x ∈ (Finset.Icc 1 3).image (ω ^ ·) at hx
+      rw [Finset.mem_image] at hx
+      obtain ⟨j, hj, rfl⟩ := hx
+      rw [Finset.mem_Icc] at hj
+      exact key j (by omega) (by omega)
     · rw [hcard]
       exact lt_of_le_of_lt hdeg (by norm_num)
   -- In particular its constant coefficient `a(1)` is zero.
