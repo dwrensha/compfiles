@@ -11,13 +11,7 @@ public import Mathlib.Data.Int.ConditionallyCompleteOrder
 public import Mathlib.Data.Int.Star
 public import Mathlib.Data.List.Permutation
 public import Mathlib.Order.ConditionallyCompleteLattice.Basic
-public import Mathlib.Tactic.Cases
-public import Mathlib.Tactic.Linarith
-public import Mathlib.Tactic.Linarith.Lemmas
-public import Mathlib.Tactic.NormNum.Ineq
-public import Mathlib.Tactic.Ring
-public import Mathlib.Tactic.Ring.Basic
-public import Mathlib.Tactic.Zify
+public import Mathlib.Tactic
 public import ProblemExtraction
 
 @[expose] public section
@@ -442,14 +436,13 @@ lemma tight_white (A B C : ℕ) :
       · exact le_min (le_min g1 g2) (le_refl _)
     rw [hL, hmin]; ring
 
-set_option maxHeartbeats 0 in
+set_option maxHeartbeats 400000 in
 lemma fewestWays_rec (A B C : ℕ) (h : 0 < A + B + C) :
     fewestWays A B C =
       (if 0 < A ∧ lowestScore A B C = A * C then fewestWays (A - 1) B C else 0) +
       (if 0 < B ∧ lowestScore A B C = 3 * A * B then fewestWays A (B - 1) C else 0) +
       (if 0 < C ∧ lowestScore A B C = 2 * B * C then fewestWays A B (C - 1) else 0) := by
-  by_cases h1 : A = 0 ∧ B = 0 ∧ C = 0
-  · omega
+  have h1 : ¬ (A = 0 ∧ B = 0 ∧ C = 0) := by omega
   by_cases h2 : C = 3 * B ∧ A = 2 * B
   · -- C = 3B, A = 2B: value A + B + C
     obtain ⟨hC, hA⟩ := h2
@@ -461,8 +454,8 @@ lemma fewestWays_rec (A B C : ℕ) (h : 0 < A + B + C) :
     have hL : lowestScore A B C = A * C := by
       apply le_antisymm
       · exact lowestScore_le_ac A B C
-      · have e1 : A * C ≤ 3 * A * B := by nlinarith [hC, Nat.zero_le A]
-        have e2 : A * C ≤ 2 * B * C := by nlinarith [hA, Nat.zero_le C]
+      · have e1 : A * C ≤ 3 * A * B := by rw [hC]; lia
+        have e2 : A * C ≤ 2 * B * C := by rw [hA]
         exact le_min (le_min (le_refl _) e1) e2
     have c2t : lowestScore A B C = 3 * A * B := by rw [hL, hC]; ring
     have c3t : lowestScore A B C = 2 * B * C := by rw [hL, hA]
@@ -483,25 +476,22 @@ lemma fewestWays_rec (A B C : ℕ) (h : 0 < A + B + C) :
       have hL : lowestScore A B C = 3 * A * B := by
         apply le_antisymm
         · exact lowestScore_le_ab A B C
-        · have e1 : 3 * A * B ≤ A * C := by nlinarith [hC, Nat.zero_le A]
-          have e2 : 3 * A * B ≤ 2 * B * C := by nlinarith [hC, hA2, Nat.zero_le B]
+        · have e1 : 3 * A * B ≤ A * C := by rw [hC]; lia
           exact le_min (le_min e1 (le_refl _)) e2
       have c1t : lowestScore A B C = A * C := by rw [hL, hC]; ring
       have c3f : ¬ (0 < C ∧ lowestScore A B C = 2 * B * C) := by
         intro hh
         have e : 3 * A * B = 2 * B * C := by rw [← hL]; exact hh.2
-        nlinarith [e, hC, hA2, hB]
+        nlinarith only [e, hC, hA2, hB]
       have wB : fewestWays A (B - 1) C = 1 := by
         unfold fewestWays; split_ifs <;> omega
       by_cases hA : A = 0
       · subst hA
         rw [eLHS, if_neg (fun hh => absurd hh.1 (lt_irrefl 0)), if_pos ⟨hB, hL⟩, if_neg c3f, wB]
-        try omega
       · have hA' : 0 < A := Nat.pos_of_ne_zero hA
         have wA : fewestWays (A - 1) B C = A := by
           unfold fewestWays; split_ifs <;> omega
         rw [eLHS, if_pos ⟨hA', c1t⟩, if_pos ⟨hB, hL⟩, if_neg c3f, wA, wB]
-        try omega
     · by_cases h4 : 3 * A = 2 * C ∧ 2 * B < A
       · -- 3A = 2C, 2B < A: value B + 1
         obtain ⟨hAC, hBA⟩ := h4
@@ -513,13 +503,13 @@ lemma fewestWays_rec (A B C : ℕ) (h : 0 < A + B + C) :
         have hL : lowestScore A B C = 3 * A * B := by
           apply le_antisymm
           · exact lowestScore_le_ab A B C
-          · have e1 : 3 * A * B ≤ A * C := by nlinarith [hC3, Nat.zero_le A]
-            have e2 : 3 * A * B ≤ 2 * B * C := by nlinarith [hAC, Nat.zero_le B]
+          · have e1 : 3 * A * B ≤ A * C := by nlinarith only [hC3, Nat.zero_le A]
+            have e2 : 3 * A * B ≤ 2 * B * C := by rw [hAC]; lia
             exact le_min (le_min e1 (le_refl _)) e2
         have c1f : ¬ (0 < A ∧ lowestScore A B C = A * C) := by
           intro hh
           have e : 3 * A * B = A * C := by rw [← hL]; exact hh.2
-          nlinarith [e, hC3, hA']
+          nlinarith only [e, hC3, hA']
         have e23 : 3 * A * B = 2 * B * C := by rw [hAC]; ring
         have c3t : lowestScore A B C = 2 * B * C := by rw [hL]; exact e23
         by_cases hB : B = 0
@@ -545,27 +535,24 @@ lemma fewestWays_rec (A B C : ℕ) (h : 0 < A + B + C) :
           have hL : lowestScore A B C = 2 * B * C := by
             apply le_antisymm
             · exact lowestScore_le_bc A B C
-            · have e1 : 2 * B * C ≤ A * C := by nlinarith [hA, Nat.zero_le C]
-              have e2 : 2 * B * C ≤ 3 * A * B := by nlinarith [hA, hC3, hB]
+            · have e1 : 2 * B * C ≤ A * C := by nlinarith only [hA, Nat.zero_le C]
+              have e2 : 2 * B * C ≤ 3 * A * B := by nlinarith only [hA, hC3, hB]
               exact le_min (le_min e1 e2) (le_refl _)
           have c1t : lowestScore A B C = A * C := by rw [hL, hA]
           have c2f : ¬ (0 < B ∧ lowestScore A B C = 3 * A * B) := by
             intro hh
             have e : 2 * B * C = 3 * A * B := by rw [← hL]; exact hh.2
-            nlinarith [e, hA, hC3, hB]
-          by_cases hC : C = 0
-          · subst hC
-            have wA : fewestWays (A - 1) B 0 = 1 := by
+            nlinarith only [e, hA, hC3, hB]
+          rcases Nat.eq_zero_or_pos C with rfl | hC'
+          · have wA : fewestWays (A - 1) B 0 = 1 := by
               unfold fewestWays; split_ifs <;> omega
             rw [eLHS, if_pos ⟨hA', c1t⟩, if_neg c2f, if_neg (fun hh => absurd hh.1 (lt_irrefl 0)), wA]
-            try omega
-          · have hC' : 0 < C := Nat.pos_of_ne_zero hC
-            have wA : fewestWays (A - 1) B C = 1 := by
+          · have wA : fewestWays (A - 1) B C = 1 := by
               unfold fewestWays; split_ifs <;> omega
             have wC : fewestWays A B (C - 1) = C := by
               unfold fewestWays; split_ifs <;> omega
             rw [eLHS, if_pos ⟨hA', c1t⟩, if_neg c2f, if_pos ⟨hC', hL⟩, wA, wC]
-            try omega
+            omega
         · -- else branch: value 1
           have eLHS : fewestWays A B C = 1 := by
             unfold fewestWays; split_ifs; omega
@@ -580,90 +567,73 @@ lemma fewestWays_rec (A B C : ℕ) (h : 0 < A + B + C) :
                 · calc lowestScore 0 B C ≤ 3 * 0 * B := lowestScore_le_ab 0 B C
                     _ = 0 := by ring
                 · exact Nat.zero_le _
-              by_cases hB : B = 0
-              · subst hB
-                have hC' : 0 < C := by omega
+              rcases Nat.eq_zero_or_pos B with rfl | hB'
+              · have hC' : 0 < C := by omega
                 have wC : fewestWays 0 0 (C - 1) = 1 := by
                   unfold fewestWays; split_ifs <;> omega
                 rw [eLHS, if_neg (fun hh => absurd hh.1 (lt_irrefl 0)),
                   if_neg (fun hh => absurd hh.1 (lt_irrefl 0)),
                   if_pos ⟨hC', by rw [hL0]; ring⟩, wC]
-                try omega
-              · have hB' : 0 < B := Nat.pos_of_ne_zero hB
-                have wB : fewestWays 0 (B - 1) C = 1 := by
+              · have wB : fewestWays 0 (B - 1) C = 1 := by
                   unfold fewestWays; split_ifs <;> omega
                 have c3f : ¬ (0 < C ∧ lowestScore 0 B C = 2 * B * C) := by
                   intro hh
                   rw [hL0] at hh
-                  nlinarith [hh.2, hB', hh.1]
+                  nlinarith only [hh.2, hB', hh.1]
                 rw [eLHS, if_neg (fun hh => absurd hh.1 (lt_irrefl 0)),
                   if_pos ⟨hB', by rw [hL0]; ring⟩, if_neg c3f, wB]
-                try omega
             · have hA' : 0 < A := Nat.pos_of_ne_zero hA
               have c2f : ¬ (0 < B ∧ lowestScore A B C = 3 * A * B) := by
                 intro hh
                 have e : A * C = 3 * A * B := by rw [← hL]; exact hh.2
                 have hC3 : C = 3 * B := by
-                  have g1 : C ≤ 3 * B := by nlinarith [e, hA']
-                  have g2 : 3 * B ≤ C := by nlinarith [e, hA']
+                  have g1 : C ≤ 3 * B := by nlinarith only [e, hA']
+                  have g2 : 3 * B ≤ C := by nlinarith only [e, hA']
                   exact le_antisymm g1 g2
                 have hAne : A ≠ 2 * B := fun hh' => h2 ⟨hC3, hh'⟩
                 have hAnl : ¬ A < 2 * B := fun hh' => h3 ⟨hC3, hh'⟩
                 have hA2 : 2 * B + 1 ≤ A := by omega
                 have hB' : 0 < B := hh.1
-                nlinarith [f3, hC3, hA2, hB']
+                nlinarith only [f3, hC3, hA2, hB']
               have c3f : ¬ (0 < C ∧ lowestScore A B C = 2 * B * C) := by
                 intro hh
                 have e : A * C = 2 * B * C := by rw [← hL]; exact hh.2
+                have hA2 : A = 2 * B := by rwa [Nat.mul_right_cancel_iff hh.1] at e
                 have hC' : 0 < C := hh.1
-                have hA2 : A = 2 * B := by
-                  have g1 : A ≤ 2 * B := by nlinarith [e, hC']
-                  have g2 : 2 * B ≤ A := by nlinarith [e, hC']
-                  exact le_antisymm g1 g2
                 have hCnl : ¬ C < 3 * B := fun hh' => h5 ⟨hA2, hh'⟩
-                have h1' : C ≤ 3 * B := by nlinarith [f2, hA2, hh.1, hA']
+                have h1' : C ≤ 3 * B := by nlinarith only [f2, hA2, hh.1, hA']
                 have hC3 : C = 3 * B := by omega
                 exact h2 ⟨hC3, hA2⟩
               have wA : fewestWays (A - 1) B C = 1 := by
                 unfold fewestWays
                 split_ifs with g1 g2 g3 g4 g5
                 · rfl
-                · exfalso
-                  have hA21 : A = 2 * B + 1 := by omega
-                  by_cases hC0 : C = 0
+                · have hA21 : A = 2 * B + 1 := by omega
+                  rcases Nat.eq_zero_or_pos C with rfl | hC0'
                   · omega
-                  · have hC0' : 0 < C := Nat.pos_of_ne_zero hC0
-                    nlinarith [f3, hA21, hC0']
-                · exfalso
-                  have hC3 : C = 3 * B := g3.1
+                  · nlinarith only [f3, hA21, hC0']
+                · have hC3 : C = 3 * B := g3.1
                   have hAne : A ≠ 2 * B := fun hh => h2 ⟨hC3, hh⟩
                   have hAnl : ¬ A < 2 * B := fun hh => h3 ⟨hC3, hh⟩
                   have hA2 : 2 * B + 1 ≤ A := by omega
-                  by_cases hB0 : B = 0
+                  rcases Nat.eq_zero_or_pos B with rfl | hB0'
                   · omega
-                  · have hB0' : 0 < B := Nat.pos_of_ne_zero hB0
-                    nlinarith [f3, hC3, hA2, hB0']
-                · exfalso
-                  have hA22 : 2 * B + 2 ≤ A := by omega
-                  by_cases hC0 : C = 0
+                  · nlinarith only [f3, hC3, hA2, hB0']
+                · have hA22 : 2 * B + 2 ≤ A := by omega
+                  rcases Nat.eq_zero_or_pos C with rfl | hC0'
                   · omega
-                  · have hC0' : 0 < C := Nat.pos_of_ne_zero hC0
-                    nlinarith [f3, hA22, hC0']
+                  · nlinarith only [f3, hA22, hC0']
                 · have hA21 : A = 2 * B + 1 := by omega
-                  by_cases hC0 : C = 0
+                  rcases Nat.eq_zero_or_pos C with rfl | hC0'
                   · omega
-                  · exfalso
-                    have hC0' : 0 < C := Nat.pos_of_ne_zero hC0
-                    nlinarith [f3, hA21, hC0']
+                  · nlinarith only [f3, hA21, hC0']
                 · rfl
               rw [eLHS, if_pos ⟨hA', hL⟩, if_neg c2f, if_neg c3f, wA]
-              try omega
           · -- L = 3 * A * B
             have f1 : 3 * A * B ≤ A * C := by rw [← hL]; exact lowestScore_le_ac A B C
             have f3 : 3 * A * B ≤ 2 * B * C := by rw [← hL]; exact lowestScore_le_bc A B C
-            by_cases hB : B = 0
-            · subst hB
-              have hL0 : lowestScore A 0 C = 0 := by
+            rcases Nat.eq_zero_or_pos B with rfl | hB'
+            · have hL0 : lowestScore A 0 C = 0 := by
                 apply le_antisymm
                 · calc lowestScore A 0 C ≤ 3 * A * 0 := lowestScore_le_ab A 0 C
                     _ = 0 := by ring
@@ -676,19 +646,16 @@ lemma fewestWays_rec (A B C : ℕ) (h : 0 < A + B + C) :
                 rw [eLHS, if_pos ⟨hA', by rw [hL0]; ring⟩,
                   if_neg (fun hh => absurd hh.1 (lt_irrefl 0)),
                   if_neg (fun hh => absurd hh.1 (lt_irrefl 0)), wA]
-                try omega
               · have hC' : 0 < C := Nat.pos_of_ne_zero hC
                 have c1f : ¬ (0 < A ∧ lowestScore A 0 C = A * C) := by
                   intro hh
                   rw [hL0] at hh
-                  nlinarith [hh.2, hh.1, hC']
+                  nlinarith only [hh.2, hh.1, hC']
                 have wC : fewestWays A 0 (C - 1) = 1 := by
                   unfold fewestWays; split_ifs <;> omega
                 rw [eLHS, if_neg c1f, if_neg (fun hh => absurd hh.1 (lt_irrefl 0)),
                   if_pos ⟨hC', by rw [hL0]; ring⟩, wC]
-                try omega
-            · have hB' : 0 < B := Nat.pos_of_ne_zero hB
-              have c1f : ¬ (0 < A ∧ lowestScore A B C = A * C) := by
+            · have c1f : ¬ (0 < A ∧ lowestScore A B C = A * C) := by
                 intro hh
                 have e : 3 * A * B = A * C := by rw [← hL]; exact hh.2
                 have hA' : 0 < A := hh.1
@@ -720,65 +687,50 @@ lemma fewestWays_rec (A B C : ℕ) (h : 0 < A + B + C) :
                 unfold fewestWays
                 split_ifs with g1 g2 g3 g4 g5
                 · rfl
-                · exfalso
-                  by_cases hA0 : A = 0
+                · rcases Nat.eq_zero_or_pos A with rfl | hA0'
                   · omega
-                  · have hA0' : 0 < A := Nat.pos_of_ne_zero hA0
-                    have hAe : A + 2 = 2 * B := by omega
+                  · have hAe : A + 2 = 2 * B := by omega
                     have hCe : C + 3 = 3 * B := by omega
-                    nlinarith [f1, hAe, hCe, hA0']
-                · by_cases hA0 : A = 0
+                    nlinarith only [f1, hAe, hCe, hA0']
+                · rcases Nat.eq_zero_or_pos A with rfl | hA0'
                   · omega
-                  · exfalso
-                    have hA0' : 0 < A := Nat.pos_of_ne_zero hA0
-                    have hCe : C + 3 = 3 * B := by omega
-                    nlinarith [f1, hCe, hA0']
-                · exfalso
-                  by_cases hA0 : A = 0
+                  · have hCe : C + 3 = 3 * B := by omega
+                    nlinarith only [f1, hCe, hA0']
+                · rcases Nat.eq_zero_or_pos A with rfl | hA0'
                   · omega
-                  · have hA0' : 0 < A := Nat.pos_of_ne_zero hA0
-                    have h31 : 3 * B ≤ C := by nlinarith [f1, hA0']
+                  · have h31 : 3 * B ≤ C := by nlinarith only [f1, hA0']
                     omega
-                · exfalso
-                  by_cases hA0 : A = 0
+                · rcases Nat.eq_zero_or_pos A with rfl | hA0'
                   · omega
-                  · have hA0' : 0 < A := Nat.pos_of_ne_zero hA0
-                    have h31 : 3 * B ≤ C := by nlinarith [f1, hA0']
+                  · have h31 : 3 * B ≤ C := by nlinarith only [f1, hA0']
                     omega
                 · rfl
               rw [eLHS, if_neg c1f, if_pos ⟨hB', hL⟩, if_neg c3f, wB]
-              try omega
           · -- L = 2 * B * C
             have f1 : 2 * B * C ≤ A * C := by rw [← hL]; exact lowestScore_le_ac A B C
             have f2 : 2 * B * C ≤ 3 * A * B := by rw [← hL]; exact lowestScore_le_ab A B C
-            by_cases hC : C = 0
-            · subst hC
-              have hL0 : lowestScore A B 0 = 0 := by
+            rcases Nat.eq_zero_or_pos C with rfl | hC'
+            · have hL0 : lowestScore A B 0 = 0 := by
                 apply le_antisymm
                 · calc lowestScore A B 0 ≤ A * 0 := lowestScore_le_ac A B 0
                     _ = 0 := by ring
                 · exact Nat.zero_le _
-              by_cases hA : A = 0
-              · subst hA
-                have hB' : 0 < B := by omega
+              rcases Nat.eq_zero_or_pos A with rfl | hA'
+              · have hB' : 0 < B := by omega
                 have wB : fewestWays 0 (B - 1) 0 = 1 := by
                   unfold fewestWays; split_ifs <;> omega
                 rw [eLHS, if_neg (fun hh => absurd hh.1 (lt_irrefl 0)),
                   if_pos ⟨hB', by rw [hL0]; ring⟩,
                   if_neg (fun hh => absurd hh.1 (lt_irrefl 0)), wB]
-                try omega
-              · have hA' : 0 < A := Nat.pos_of_ne_zero hA
-                have c2f : ¬ (0 < B ∧ lowestScore A B 0 = 3 * A * B) := by
+              · have c2f : ¬ (0 < B ∧ lowestScore A B 0 = 3 * A * B) := by
                   intro hh
                   rw [hL0] at hh
-                  nlinarith [hh.2, hh.1, hA']
+                  nlinarith only [hh.2, hh.1, hA']
                 have wA : fewestWays (A - 1) B 0 = 1 := by
                   unfold fewestWays; split_ifs <;> omega
                 rw [eLHS, if_pos ⟨hA', by rw [hL0]; ring⟩, if_neg c2f,
                   if_neg (fun hh => absurd hh.1 (lt_irrefl 0)), wA]
-                try omega
-            · have hC' : 0 < C := Nat.pos_of_ne_zero hC
-              have c1f : ¬ (0 < A ∧ lowestScore A B C = A * C) := by
+            · have c1f : ¬ (0 < A ∧ lowestScore A B C = A * C) := by
                 intro hh
                 have e : 2 * B * C = A * C := by rw [← hL]; exact hh.2
                 have hA' : 0 < A := hh.1
@@ -800,7 +752,7 @@ lemma fewestWays_rec (A B C : ℕ) (h : 0 < A + B + C) :
                   have g2 : 3 * A ≤ 2 * C := by nlinarith [e, hB']
                   exact le_antisymm g1 g2
                 have hAnl : ¬ 2 * B < A := fun hh' => h4 ⟨by omega, hh'⟩
-                have h2B : 2 * B ≤ A := by nlinarith [f1, hC']
+                have h2B : 2 * B ≤ A := by nlinarith only [f1, hC']
                 have hA2 : A = 2 * B := by omega
                 have hC3 : C = 3 * B := by omega
                 exact h2 ⟨hC3, hA2⟩
@@ -811,26 +763,22 @@ lemma fewestWays_rec (A B C : ℕ) (h : 0 < A + B + C) :
                 · exfalso
                   have hCe : C = 3 * B + 1 := by omega
                   have hAe : A = 2 * B := g2.2
-                  by_cases hB0 : B = 0
+                  rcases Nat.eq_zero_or_pos B with rfl | hB0'
                   · omega
-                  · have hB0' : 0 < B := Nat.pos_of_ne_zero hB0
-                    nlinarith [f2, hCe, hAe, hB0']
+                  · nlinarith only [f2, hCe, hAe, hB0']
                 · exfalso
                   have hCe : C = 3 * B + 1 := by omega
-                  have h2B : 2 * B ≤ A := by nlinarith [f1, hC']
+                  have h2B : 2 * B ≤ A := by nlinarith only [f1, hC']
                   omega
                 · have hAC2 : 2 * C = 3 * A + 2 := by omega
                   have hB0 : B = 0 := by
                     by_contra hB0
                     have hB0' : 0 < B := Nat.pos_of_ne_zero hB0
-                    nlinarith [f2, hAC2, hB0']
+                    nlinarith only [f2, hAC2, hB0']
                   omega
-                · exfalso
-                  have hAe : A = 2 * B := g5.1
-                  omega
+                · omega
                 · rfl
               rw [eLHS, if_neg c1f, if_neg c2f, if_pos ⟨hC', hL⟩, wC]
-              try omega
 
 
 -- Score computations.
