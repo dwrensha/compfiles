@@ -90,7 +90,7 @@ elab_rules : command
 
 /--
 A synonym for `theorem`. Indicates that a declaration is a problem statement.
-During problem extraction, the proof is replaced by a `sorry`.
+During problem extraction, we strip prefixed underscores for unused hypotheses, and the proof is replaced by a `sorry`.
 -/
 syntax (name := problem) declModifiers "problem " declId ppIndent(declSig) declVal : command
 
@@ -106,6 +106,18 @@ elab_rules : command
 
   modifyEnv fun env => solutionExtractionExtension.addEntry env ⟨mod,
     EntryVariant.replace ⟨pStartPos, pEndPos, "theorem"⟩⟩
+
+  let ⟨binders, typeSpec⟩ := expandDeclSig ds
+  for binder in binders.getArgs do
+    let (Syntax.ident info str val preresolved) := binder[1][0]
+     | continue
+
+    let (.some str') := str.dropPrefix? "_"
+     | continue
+
+    -- removes underscore from problem file to avoid hinting that a hypothesis is unused
+    modifyEnv fun env => problemExtractionExtension.addEntry env ⟨mod,
+      EntryVariant.replace ⟨str.startPos, str.stopPos, str'.toString⟩⟩
 
   let (.some vStartPos, .some vEndPos) := (dv.raw.getPos?, dv.raw.getTailPos?)
    | throwError "failed to get declVal syntax"
