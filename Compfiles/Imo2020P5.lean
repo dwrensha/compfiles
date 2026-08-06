@@ -29,7 +29,7 @@ namespace Imo2020P5
 
 determine SolutionSet : Set ℕ := {n | 1 < n}
 
-noncomputable def geometric_mean {α : Type} (f : α → ℕ+) (s : Finset α) : ℝ :=
+noncomputable def geometric_mean {n : ℕ} (f : Fin n → ℕ+) (s : Finset (Fin n)) : ℝ :=
   (∏ i ∈ s, (f i : ℝ))^((1:ℝ)/s.card)
 
 snip begin
@@ -58,23 +58,23 @@ lemma rpow_inv_eq_iff {x y : ℝ} (hx : 0 ≤ x) (hy : 0 ≤ y) {k : ℕ} (hk : 
     rw [h, ← Real.rpow_natCast, ← Real.rpow_mul hy, mul_inv_cancel₀ (by exact_mod_cast hk),
       Real.rpow_one]
 
-lemma all_equal {α : Type} [Fintype α] [Nonempty α] (f : α → ℕ+)
-    (h : Pairwise fun a b ↦ ∃ s : Finset α, s.Nonempty ∧
+lemma all_equal {n : ℕ} (hn : 1 < n) (f : Fin n → ℕ+)
+    (h : Pairwise fun a b ↦ ∃ s : Finset (Fin n), s.Nonempty ∧
       geometric_mean f s = ((f a : ℝ) + f b) / 2) :
     ∃ y, ∀ a, f a = y := by
   classical
   -- Step 1: divide out the overall gcd; the property is preserved.
   set d := Finset.univ.gcd (fun i => (f i : ℕ)) with hd
   have hd_dvd : ∀ i, d ∣ (f i : ℕ) := fun i => Finset.gcd_dvd (Finset.mem_univ i)
-  obtain ⟨i0⟩ := ‹Nonempty α›
+  have i0 : Fin n := ⟨1, hn⟩
   have hdpos : 0 < d := Nat.pos_of_dvd_of_pos (hd_dvd i0) (f i0).pos
-  set g : α → ℕ+ := fun i => ⟨(f i : ℕ)/d,
+  set g : Fin n → ℕ+ := fun i => ⟨(f i : ℕ)/d,
     Nat.div_pos (Nat.le_of_dvd (f i).pos (hd_dvd i)) hdpos⟩ with hg
   have hfg : ∀ i, (f i : ℕ) = d * (g i : ℕ) := by
     intro i
     rw [hg]
     exact (Nat.mul_div_cancel' (hd_dvd i)).symm
-  have hprop : Pairwise fun a b ↦ ∃ s : Finset α, s.Nonempty ∧
+  have hprop : Pairwise fun a b ↦ ∃ s : Finset (Fin n), s.Nonempty ∧
       geometric_mean g s = ((g a : ℝ) + g b) / 2 := by
     intro a b hab
     obtain ⟨s, hs, hGM⟩ := h hab
@@ -115,7 +115,7 @@ lemma all_equal {α : Type} [Fintype α] [Nonempty α] (f : α → ℕ+)
       Nat.pos_of_dvd_of_pos (Finset.gcd_dvd (Finset.mem_univ i0)) (g i0).pos
     exact le_antisymm h4 h5
   -- Step 3: let i1 be an index where g attains its maximum.
-  have huniv : (Finset.univ : Finset α).Nonempty := Finset.univ_nonempty
+  have huniv : (Finset.univ : Finset (Fin n)).Nonempty := ⟨i0, by simp⟩
   obtain ⟨i1, -, hmax⟩ := Finset.exists_max_image Finset.univ (fun i => (g i : ℕ)) huniv
   have hmax' : ∀ i, (g i : ℕ) ≤ (g i1 : ℕ) := fun i => hmax i (Finset.mem_univ i)
   by_cases hM : (g i1 : ℕ) ≤ 1
@@ -210,20 +210,10 @@ snip end
 problem imo2020_p5 (n : ℕ) :
     n ∈ SolutionSet ↔
     (1 < n ∧
-     (∀ α : Type, [Fintype α] → Fintype.card α = n →
-         ∀ f : α → ℕ+,
-           (Pairwise fun a b ↦ ∃ s : Finset α,
-              s.Nonempty ∧ geometric_mean f s = (((f a):ℝ) + f b) / 2)
-           → ∃ y, ∀ a, f a = y )) := by
-  constructor
-  · intro hn
-    have h1 : 1 < n := hn
-    refine ⟨h1, ?_⟩
-    intro α hα hcard f hf
-    have hpos : 0 < Fintype.card α := by omega
-    have : Nonempty α := Fintype.card_pos_iff.mp hpos
-    exact all_equal f hf
-  · rintro ⟨h1, -⟩
-    exact h1
+     (∀ f : Fin n → ℕ+,
+        (Pairwise fun a b ↦ ∃ s : Finset (Fin n),
+          s.Nonempty ∧ geometric_mean f s = (((f a):ℝ) + f b) / 2)
+        → ∃ y, ∀ a, f a = y )) :=
+  ⟨fun hn => ⟨hn, all_equal hn⟩, And.left⟩
 
 end Imo2020P5
