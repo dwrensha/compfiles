@@ -30,13 +30,9 @@ of them. In his move, B may choose any counter on the board and remove it.
 If at any time there are k consecutive grid cells in a line all of which
 contain a counter, A wins. Find the minimum value of k for which A cannot
 win in a finite number of moves, or prove that no such minimum value exists.
-
-The answer is `k = 6`.
 -/
 
 namespace Usa2014P4
-
-snip begin
 
 /-- A cell of the hexagonal grid, given in axial coordinates. -/
 abbrev Cell := ℤ × ℤ
@@ -79,6 +75,8 @@ inductive AForce (k : ℕ) : Finset Cell → Prop
 
 /-- `A` can win the game with parameter `k` in finitely many moves. -/
 def ACanWin (k : ℕ) : Prop := AForce k ∅
+
+snip begin
 
 /-! ### The defense strategy of `B` for `k = 6` -/
 
