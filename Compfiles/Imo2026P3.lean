@@ -41,7 +41,6 @@ Humanfia's Kimi-K3 solutions (https://github.com/humanfia/imo2026).
 
 namespace Imo2026P3
 
-set_option backward.isDefEq.respectTransparency false
 
 open scoped BigOperators
 

@@ -35,8 +35,6 @@ Humanfia's Kimi-K3 solutions (https://github.com/humanfia/imo2026).
 
 namespace Imo2026P5
 
-set_option backward.isDefEq.respectTransparency false
-
 /-- The subtype of positive real numbers, representing `\mathbb{R}_{>0}`. -/
 abbrev PositiveReal : Type := {x : ℝ // 0 < x}
 
