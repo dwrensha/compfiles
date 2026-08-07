@@ -265,7 +265,7 @@ lemma p4_lin_indep (A F P : EuclideanSpace ℝ (Fin 2))
 
 snip end
 
-problem usamo2025_p4
+problem usa2025_p4
     (A B C H F P X Y : EuclideanSpace ℝ (Fin 2))
     (htri : AffineIndependent ℝ ![A, B, C])
     (hacuteA : ∠ B A C < Real.pi / 2)
