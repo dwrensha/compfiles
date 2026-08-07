@@ -1868,8 +1868,8 @@ lemma exists_bisect_reply (n : ℕ) (A : Finset ℝ)
     have := congrArg List.length h
     rw [pieceLengths_length] at this
     simp at this
-  have hppos : ∀ x ∈ p, 0 < x := by
-    exact pieceLengths_pos A hA.1
+  have hppos : ∀ x ∈ p, 0 < x :=
+    pieceLengths_pos A hA.1
   have hpsum : p.sum = 1 := pieceLengths_sum A hA.1
   have hbne : bisectLengths p ≠ [] := by
     intro hb
@@ -3705,8 +3705,7 @@ theorem exists_positive_close_refinement (p : List ℝ)
   have hlne : l ≠ [] := flattenFinBlocks_ne_nil b hm hbne
   have hlpos : ∀ z ∈ l, 0 < z := flattenFinBlocks_pos b hbpos
   have hlsum : l.sum = 1 := by
-    rw [show l.sum = p.sum by exact flattenFinBlocks_sum p b hbsum]
-    exact hpsum
+    rwa [flattenFinBlocks_sum p b hbsum]
   have hlcuts : cutsOfLengths p ⊆ cutsOfLengths l := by
     exact cutsOfLengths_subset_assembleTwoSelectedBlocks p hpne hppos hpsum
       I J hIJ d.bX d.bY d.bX_ne d.bY_ne d.bX_pos d.bY_pos
@@ -3825,8 +3824,7 @@ theorem exists_singleton_close_refinement (p : List ℝ)
   have hlne : l ≠ [] := flattenFinBlocks_ne_nil b hm hbne
   have hlpos : ∀ z ∈ l, 0 < z := flattenFinBlocks_pos b hbpos
   have hlsum : l.sum = 1 := by
-    rw [show l.sum = p.sum by exact flattenFinBlocks_sum p b hbsum]
-    exact hpsum
+    rwa [flattenFinBlocks_sum p b hbsum]
   have hlcuts : cutsOfLengths p ⊆ cutsOfLengths l := by
     exact cutsOfLengths_subset_assembleTwoSelectedBlocks p hpne hppos hpsum
       I J hIJ bI bJ hbINe hbJNe hbIPos hbJPos hbISum hbJSum
@@ -4024,10 +4022,7 @@ value equals `2^n / (2^(n+1) - 1)`. -/
 problem V_eq (n : ℕ) (hn : 0 < n) : V n = answer n := by
   obtain ⟨A₀, hA₀adm, hA₀⟩ := lower_bound_aux n hn
   have hub := upper_bound_aux n hn
-  have hemptyA : AdmissibleMark n ∅ := by
-    constructor
-    · simp
-    · simp
+  have hemptyA : AdmissibleMark n ∅ := by constructor <;> simp
   have : Nonempty {A : Finset ℝ // AdmissibleMark n A} := ⟨⟨∅, hemptyA⟩⟩
   apply le_antisymm
   · -- For every admissible `A`, Xiang Yu's reply makes the infimum `≤ answer`.
