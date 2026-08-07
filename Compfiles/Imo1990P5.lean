@@ -8,6 +8,7 @@ module
 
 public import Mathlib.Tactic
 public import Mathlib.Algebra.IsPrimePow
+public import Mathlib.Data.Finset.NatDivisors
 public import Mathlib.NumberTheory.Divisors
 public import ProblemExtraction
 
@@ -201,8 +202,11 @@ theorem divisors504 : Nat.divisors 504 =
     {1, 2, 3, 4, 6, 7, 8, 9, 12, 14, 18, 21, 24, 28, 36, 42, 56, 63, 72, 84, 126, 168,
       252, 504} := by
   decide
-set_option maxRecDepth 10000 in
-theorem divisors1991 : Nat.divisors 1991 = {1, 11, 181, 1991} := by decide
+
+theorem divisors1991 : Nat.divisors 1991 = {1, 11, 181, 1991} := by
+  rw [show 1991 = 11 * 181 by rfl, Nat.divisors_mul]
+  rw [Nat.Prime.divisors (by norm_num), Nat.Prime.divisors (by norm_num)]
+  decide
 
 /-! ### A wins from `n₀ ≥ 8`
 

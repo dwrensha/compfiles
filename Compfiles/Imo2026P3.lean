@@ -2239,7 +2239,6 @@ lemma sum_pos_of_all_pos {l : List ℝ} (hne : l ≠ [])
       simp only [List.sum_cons]
       linarith
 
-set_option maxHeartbeats 1000000 in
 theorem commonAtoms_spec (xs ys : List ℝ)
     (hxpos : ∀ x ∈ xs, 0 < x) (hypos : ∀ y ∈ ys, 0 < y)
     (hsum : xs.sum = ys.sum) :
@@ -2331,7 +2330,17 @@ theorem commonAtoms_spec (xs ys : List ℝ)
                 simp only [List.length_cons] at hlen
                 omega
 termination_by xs.length + ys.length
-decreasing_by all_goals simp_all <;> omega
+decreasing_by
+  · rename_i hxs _ hys _ _ _
+    subst hxs hys
+    simp
+    lia
+  · rename_i hxs _ hys
+    subst hxs hys
+    simp
+  · rename_i hxs _ hys
+    subst hxs hys
+    simp
 
 def ScanRefines (coarse fine : List ℝ) : Prop :=
   ∀ a z, z ∈ coarse.scanl (· + ·) a → z ∈ fine.scanl (· + ·) a
@@ -2358,7 +2367,6 @@ lemma ScanRefines.absorb_left {d : ℝ} {coarse fine : List ℝ}
     apply List.mem_cons_of_mem
     simpa only [add_assoc] using hz
 
-set_option maxHeartbeats 1000000 in
 theorem commonAtoms_scanRefines (xs ys : List ℝ)
     (hxpos : ∀ x ∈ xs, 0 < x) (hypos : ∀ y ∈ ys, 0 < y)
     (hsum : xs.sum = ys.sum) :
