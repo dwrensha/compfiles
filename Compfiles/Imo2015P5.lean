@@ -56,7 +56,7 @@ problem imo2015_p5 (f : ℝ → ℝ) :
   obtain h4 | h4 := h2
   · right
     have h7 : ∀ t ∈ S, t = 1 := fun t ht ↦ by
-      simp only [S, Set.mem_setOf_eq] at ht
+      simp only [S, Set.mem_ofPred_eq] at ht
       have h6 := hf 0 t
       simp only [zero_add, zero_mul, ht, h4] at h6
       linarith only [h6]
@@ -90,7 +90,7 @@ problem imo2015_p5 (f : ℝ → ℝ) :
       grind
     have h11 := hf x (-1)
     have h12 := h10 (x + -1)
-    simp only [neg_add_cancel_right, S, Set.mem_setOf_eq] at h12
+    simp only [neg_add_cancel_right, S, Set.mem_ofPred_eq] at h12
     simp only [mul_neg, mul_one, neg_mul, one_mul, h12,
                add_left_cancel_iff] at h11
     exact h11

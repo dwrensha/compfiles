@@ -115,7 +115,7 @@ lemma finite_visits (ha₁ : Rule a) (hx : 1 < x) {i : ℕ} (hi : a x i % 3 = 2)
     (A : ℕ) : {n | a x n = A}.Finite := by
   apply Set.Finite.subset (Set.finite_Icc 0 (i + A))
   intro n hn
-  simp only [Set.mem_setOf_eq] at hn
+  simp only [Set.mem_ofPred_eq] at hn
   obtain h | h : n ≤ i ∨ i < n := by lia
   · exact Set.mem_Icc.mpr ⟨Nat.zero_le n, by lia⟩
   · have h1 := run_linear ha₁ hx hi (n - i)
@@ -247,7 +247,7 @@ problem imo2017_p1
                          else a x (i + 1) = a x i + 3) :
     ∀ x > 1, (∃ A, {n | a x n = A}.Infinite) ↔ x ∈ solution_set := by
   intro x hx₀
-  simp only [solution_set, Set.mem_setOf_eq]
+  simp only [solution_set, Set.mem_ofPred_eq]
   constructor
   · -- If some value recurs infinitely often, the sequence never reaches the
     -- class 2 mod 3, and then its minimum is 3, so 3 ∣ x.

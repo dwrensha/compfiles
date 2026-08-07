@@ -52,8 +52,7 @@ theorem lemma1
   have p2 : Person := Nonempty.some (Fintype.card_pos_iff.mp (by lia))
   let Person' := {p3 // p3 ≠ p2}
   have hfcα : 4 < Fintype.card Person' := by
-    set_option backward.isDefEq.respectTransparency false in
-    rw [Fintype.card_subtype_compl, Fintype.card_ofSubsingleton]
+    rw [Fintype.card_subtype_compl]
     exact lt_tsub_of_add_lt_left card_person
   have h1 : Fintype.card Topic * 2 < Fintype.card Person' := by lia
 
@@ -211,7 +210,7 @@ problem imo1964_p4
       rw [Finset.mem_map] at hp3 hp4
       obtain ⟨⟨⟨p3', p3_mem_person'⟩, p3_mem_α⟩, p3_mem_s, hp3eq⟩ := hp3
       obtain ⟨⟨⟨p4', p4_mem_person'⟩, p4_mem_α⟩, p4_mem_s, hp4eq⟩ := hp4
-      dsimp at hp3eq hp4eq
+      simp only [DFunLike.coe] at hp3eq hp4eq
       rw [←hp3eq, ←hp4eq]
       have hne : p3' ≠ p4' := by rwa[hp3eq, hp4eq]
       have h6 := hs2 ⟨⟨p3', p3_mem_person'⟩, p3_mem_α⟩ p3_mem_s

@@ -251,9 +251,11 @@ def r (n: singularities): NNReal := if h : (n: ℕ) = 70
   else ⟨root_Ioo h |>.choose, (Nat.cast_nonneg' _).trans (Set.mem_Ioo.mp (root_Ioo h |>.choose_spec.1) |>.1).le⟩
 
 lemma r_root : f (r n) = 0 := by
-  simp only [r]; split <;> rename_i h
-  · exact root_Ioi.choose_spec.2
-  · exact root_Ioo h |>.choose_spec.2
+  by_cases h : (n: ℕ) = 70
+  · simp only [r, h, reduceDIte]
+    exact root_Ioi.choose_spec.2
+  · simp only [r, h, reduceDIte]
+    exact root_Ioo h |>.choose_spec.2
 
 lemma r_bounds (h: (n: ℕ) ≠ 70) : (r n: ℝ) ∈ Set.Ioo (n: ℝ) (n+1) := by
   simp [r, h]
@@ -263,10 +265,11 @@ lemma r_bounds₁ (h: (n: ℕ) ≠ 70) : r n < (n+1) :=
   Set.mem_Ioo.mp (r_bounds h) |>.2
 
 lemma r_bounds₂ (n: singularities) : n < r n := by
-  simp only [r]
-  split <;> rename_i h
-  · rw [h]; exact Set.mem_Ioi.mp <| root_Ioi.choose_spec.1
-  · exact Set.mem_Ioo.mp (root_Ioo h |>.choose_spec.1) |>.1
+  by_cases h : (n: ℕ) = 70
+  · simp only [r, h, reduceDIte]
+    exact Set.mem_Ioi.mp <| root_Ioi.choose_spec.1
+  · simp only [r, h, reduceDIte]
+    exact Set.mem_Ioo.mp (root_Ioo h |>.choose_spec.1) |>.1
 
 lemma r_not_singularity (n m : singularities) : n ≠ r m := by
   by_cases! h : n ≤ m
@@ -414,7 +417,7 @@ lemma I_aligned : ⋃ i, I i = S := by
       · norm_cast; exact StrictAntiOn.mono (anti_oo i) (Set.Ioc_subset_Ioo_right (by exact_mod_cast r_bounds₁ (by lia)))
     have h : Set.Ioc (i: ℝ) (r i) ⊆ S := by
       intro y hy; by_cases h2: y = r i
-      · simpa only [h2, ← f_aligned, Set.mem_setOf] using r_root |>.symm.le
+      · simpa only [h2, ← f_aligned, Set.mem_ofPred] using r_root |>.symm.le
       · simpa [← f_aligned, r_root] using anti hy (by simp; exact r_bounds₂ i) (hy.2.lt_of_ne h2) |>.le
     -- deal with edge cases
     unfold I at p; split at p <;> rename_i h2
@@ -426,7 +429,7 @@ lemma I_aligned : ⋃ i, I i = S := by
   · simp_rw [← f_aligned]
     contrapose!
     -- check the components of the complement
-    rw [← Set.mem_compl_iff, I_compl, Set.mem_setOf]
+    rw [← Set.mem_compl_iff, I_compl, Set.mem_ofPred]
     push Not
 
     have hr : (70: ℝ) < r last := r_bounds₂ last

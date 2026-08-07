@@ -34,7 +34,7 @@ def IsProductOfkDistinctMembers (x : ℕ) (k : ℕ) (S : Set ℕ) : Prop :=
 snip begin
 
 def Primes := { p : ℕ | p.Prime }
-instance : Infinite Primes := Nat.infinite_setOf_prime.to_subtype
+instance : Infinite Primes := Nat.infinite_setOfPred_prime.to_subtype
 noncomputable def primes_iso : ℕ ≃o ↑Primes := Nat.Subtype.orderIsoOfNat Primes
 
 -- Number of distinct prime factors of x

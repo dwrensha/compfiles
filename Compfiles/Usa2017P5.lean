@@ -44,7 +44,7 @@ def labelling (c : ℝ) := { l : ℤ × ℤ → ℕ //
       c ^ (l p1) ≤ dist p1 p2 }
 
 instance (c : ℝ) : FunLike (labelling c) (ℤ × ℤ) ℕ :=
-  ⟨(·.1), fun ⟨l, hl⟩ ⟨l', hl'⟩ => by rintro rfl; simp⟩
+  ⟨(·.1), fun _ _ => Subtype.ext⟩
 
 attribute [local simp] DFunLike.coe
 

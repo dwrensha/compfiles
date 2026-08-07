@@ -213,7 +213,7 @@ problem imo2025_p3 :
               exact hp2 y1
             exact Nat.Prime.odd_of_ne_two hp1 hp3
 
-          have r2 := Nat.infinite_setOf_prime_and_eq_mod (a := (2 : ZMod p)) r1
+          have r2 := Nat.infinite_setOfPred_prime_and_eq_mod (a := (2 : ZMod p)) r1
           obtain ⟨x,hx⟩ := h5
           have r3 := Set.Infinite.exists_gt r2 x
           obtain ⟨q2,htq⟩ := r3
@@ -308,10 +308,7 @@ problem imo2025_p3 :
               exact PNat.dvd_iff.mpr hp2
             clear hp1 hp2
             specialize h7 q (And.intro hq1 hq2)
-            unfold q at h7
-            rw [←PNat.coe_inj] at h7
-            simp at h7
-            exact h7
+            exact congrArg PNat.val h7
           have r2 : (f a : ℕ).factorization.support ⊆ {2} := by
             intro q hq
             simp at hq
@@ -389,15 +386,15 @@ problem imo2025_p3 :
               have y4 : 2 = ((2:ℕ):ENat) := by
                 simp
               rw [y3,y4] at g2
-              rw [←ENat.coe_add,←ENat.coe_add,←ENat.coe_add] at g2
-              rw [ENat.coe_inj] at g2
+              rw [←ENat.natCast_add,←ENat.natCast_add,←ENat.natCast_add] at g2
+              rw [ENat.natCast_inj] at g2
               rw [y4]
-              rw [←ENat.coe_add]
-              rw [ENat.coe_inj]
+              rw [←ENat.natCast_add]
+              rw [ENat.natCast_inj]
               grind
             exact le_of_le_of_eq g1 g5
           rw [r1,r2] at r3
-          exact ENat.coe_le_coe.mp r3
+          exact ENat.natCast_le_natCast.mp r3
 
         have h11 : ∀ (a : ℕ+), Even (a:ℕ) → (f a:ℤ) ≤ 4*(a:ℤ) := by
           intro a ha
@@ -545,7 +542,7 @@ problem imo2025_p3 :
                 rw [g1,g2]
                 simp only [PNat.val_ofNat, Nat.cast_ofNat, Nat.cast_one, one_pow]
                 have y1 : Odd (b:ℤ) := (odd_coe_nat _).mpr t2
-                rw [← even_iff_two_dvd, even_sub_one, not_even_iff_odd]
+                rw [← even_iff_two_dvd, Int.even_sub_one, not_even_iff_odd]
                 exact Odd.pow y1
               · have g2 : f b = 2 := by lia
                 rw [g1,g2]

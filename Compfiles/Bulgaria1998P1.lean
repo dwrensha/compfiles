@@ -45,9 +45,11 @@ lemma lemma1 {m n : ℕ} (hmn : m ≤ n) (hm : all_colorings_are_good m) :
   · intro c
     let c' : Set.Icc 1 m → Fin 2 :=
       fun x ↦ c ⟨x.val, by rw [Set.mem_Icc]; exact ⟨x.prop.1, x.prop.2.trans hmn⟩⟩
-    obtain ⟨⟨i, hi1, hi2⟩, ⟨j, hj1, hj2⟩, hij1, hij2, hc1, hc2⟩ := hm.2 c'
-    use ⟨i, hi1, hi2.trans hmn⟩
-    use ⟨j, hj1, hj2.trans hmn⟩
+    obtain ⟨⟨i, hi⟩, ⟨j, hj⟩, hij1, hij2, hc1, hc2⟩ := hm.2 c'
+    obtain ⟨hi1, hi2⟩ := Set.mem_Icc.mp hi
+    obtain ⟨hj1, hj2⟩ := Set.mem_Icc.mp hj
+    use ⟨i, Set.mem_Icc.mpr ⟨hi1, hi2.trans hmn⟩⟩
+    use ⟨j, Set.mem_Icc.mpr ⟨hj1, hj2.trans hmn⟩⟩
     simp only [Subtype.mk_lt_mk, Set.mem_Icc, tsub_le_iff_right, exists_and_left]
     simp only [Subtype.mk_lt_mk] at hij1
     refine ⟨hij1, ?_⟩
@@ -87,7 +89,7 @@ private def check9 (f : Fin 9 → Fin 2) : Bool :=
         else false
 
 private def toFin9 (color : Set.Icc 1 9 → Fin 2) : Fin 9 → Fin 2 :=
-  fun i => color ⟨i.val + 1, by constructor <;> omega⟩
+  fun i => color ⟨i.val + 1, Set.mem_Icc.mpr (by lia)⟩
 
 private lemma of_check9 (color : Set.Icc 1 9 → Fin 2)
     (h : check9 (toFin9 color) = true) : coloring_is_good color := by
@@ -97,6 +99,8 @@ private lemma of_check9 (color : Set.Icc 1 9 → Fin 2)
   case isTrue hk =>
     simp only [Bool.and_eq_true, decide_eq_true_eq] at hrest
     obtain ⟨hij, hcij, hcik⟩ := hrest
+    replace hcij := of_decide_eq_true hcij
+    replace hcik := of_decide_eq_true hcik
     have hmem : 2 * (j.val + 1) - (i.val + 1) ∈ Set.Icc 1 9 := by
       simp only [Set.mem_Icc]; omega
     refine ⟨⟨i.val + 1, by simp only [Set.mem_Icc]; omega⟩,
@@ -111,13 +115,13 @@ private lemma of_check9 (color : Set.Icc 1 9 → Fin 2)
 
 problem bulgaria1998_p1 : IsLeast { m | all_colorings_are_good m } solution_value := by
   constructor
-  · rw [Set.mem_setOf_eq]
+  · rw [Set.mem_ofPred_eq]
     refine ⟨by norm_num, fun color => of_check9 color ?_⟩
     revert color
     decide +kernel
   · rw [mem_lowerBounds]
     intro n hn
-    rw [Set.mem_setOf_eq] at hn
+    rw [Set.mem_ofPred_eq] at hn
     by_contra! H
     have h1 : n ≤ solution_value - 1 := Nat.le_pred_of_lt H
     have ⟨h2, h3⟩ := lemma1 h1 hn

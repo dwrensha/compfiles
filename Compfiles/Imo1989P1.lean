@@ -29,6 +29,10 @@ snip begin
 
 def n : ℕ := 117
 
+lemma fin_n_card : Fintype.card (Fin n) = 117 := by
+  unfold n
+  simp
+
 def row (j : ℕ) (i : Fin n) : ℕ :=
   if j < 14 then
     if j % 2 = 0 then j * n + i.val + 1
@@ -99,9 +103,8 @@ def P : Finpartition S where
     rw [Finset.sup_image, Function.id_comp, Finset.sup_eq_biUnion]
     apply Finset.eq_of_subset_of_card_le
     · exact Finset.biUnion_subset.mpr fun i _ => A_le_S i
-    · set_option backward.isDefEq.respectTransparency false in
-      rw [Finset.card_biUnion fun i _ j _ hij => A_disjoint hij]
-      simp [A_card, S, n]
+    · rw [Finset.card_biUnion fun i _ j _ hij => A_disjoint hij]
+      simp [A_card, S, ↓fin_n_card]
   bot_notMem := by
     simp only [Finset.mem_image, Finset.mem_univ, true_and]
     rintro ⟨i, hi⟩; exact absurd (hi ▸ A_card i) (by norm_num)
@@ -113,8 +116,8 @@ problem imo1989_p1 : ∃ (P : Finpartition S),
     (∀ p ∈ P.parts, p.card = 17) ∧
     (∀ p ∈ P.parts, ∀ q ∈ P.parts, p.sum id = q.sum id) := by
   refine ⟨P, ?_, ?_, ?_⟩
-  · set_option backward.isDefEq.respectTransparency false in
-    simp [P, Finset.card_image_of_injective _ A_injective, n]
+  · rw [P, Finset.card_image_of_injective _ A_injective, n]
+    simp
   · simp only [show P.parts = Finset.univ.image A from rfl, Finset.forall_mem_image]
     exact fun _ _ => A_card _
   · simp only [show P.parts = Finset.univ.image A from rfl, Finset.forall_mem_image]

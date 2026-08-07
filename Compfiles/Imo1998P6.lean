@@ -117,7 +117,7 @@ lemma gf_invol (n : ℕ+) : gf f ⟨gf f n, gf_pos f hf n⟩ = n := by
       convert hf n 1 using 1
       · simp +decide [mul_comm]
         congr! 1
-        exact PNat.eq ( by simp +decide [ gf_spec f hf n ] )
+        exact PNat.eq (gf_spec f hf n).symm
       · ring
     have := f_d_mul f hf ⟨gf f n, gf_pos f hf n⟩
     ( rw [ ← PNat.coe_inj ] at *; simp_all +decide [mul_comm, mul_left_comm] )

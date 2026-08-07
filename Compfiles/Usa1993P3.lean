@@ -201,7 +201,7 @@ problem usa1993_p3 :
     IsLeast {c | ∀ f, valid f → ∀ x, f x ≤ c * x } min_c := by
   simp only [Subtype.forall, Set.mem_Icc]
   constructor
-  · simp only [Set.mem_setOf_eq]
+  · simp only [Set.mem_ofPred_eq]
     intro f hf x hx
     obtain ⟨h1, h2, h3⟩ := hf
     unfold min_c
@@ -222,7 +222,7 @@ problem usa1993_p3 :
     exact lemma2 f x hx h1 h2 h3 h4 h5 h6 h8
   · rw [mem_lowerBounds]
     intro c1 hc1
-    simp only [Set.mem_setOf_eq] at hc1
+    simp only [Set.mem_ofPred_eq] at hc1
     let f : Set.Icc (0 : ℝ) 1 → ℝ := fun x ↦ if x.val ≤ 1/2 then 0 else 1
     have hf : valid f := by
       refine ⟨?_, ?_, ?_⟩

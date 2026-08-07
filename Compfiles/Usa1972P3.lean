@@ -142,7 +142,7 @@ problem usa1972_p3 (n : ℕ) (_hn : 1 < n) :
   classical
   have hcard := card_good_balance n
   rw [unifDistN, PMF.uniformOfFintype, PMF.toOuterMeasure_uniformOfFinset_apply]
-  simp only [good_seqs, Set.mem_setOf_eq, Finset.card_univ, Fintype.card_pi, Fintype.card_fin,
+  simp only [good_seqs, Set.mem_ofPred_eq, Finset.card_univ, Fintype.card_pi, Fintype.card_fin,
     Finset.prod_const, Nat.cast_pow, Nat.cast_ofNat]
   rw [solution]
   have hcard_enn :
@@ -150,7 +150,7 @@ problem usa1972_p3 (n : ℕ) (_hn : 1 < n) :
           ENNReal) =
         (9 ^ n + 4 ^ n : ℕ) := by
     rw [Set.ncard_eq_toFinset_card] at hcard
-    exact_mod_cast (by simpa [Set.toFinset_setOf] using hcard)
+    exact_mod_cast (by simpa [Set.toFinset_ofPred] using hcard)
   have hdiv :
       ↑({x : DigitSeq n | is_good_seq x} : Finset (DigitSeq n)).card / (9 : ENNReal) ^ n +
           8 ^ n / (9 : ENNReal) ^ n + 5 ^ n / (9 : ENNReal) ^ n =

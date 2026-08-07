@@ -167,7 +167,7 @@ theorem collinear_of_subset_line {s : Set Pt} {ℓ : AffineSubspace ℝ Pt}
 def perp (n : Pt) (c : ℝ) : AffineSubspace ℝ Pt where
   carrier := {x | ⟪n, x⟫ = c}
   smul_vsub_vadd_mem' t p₁ p₂ p₃ h₁ h₂ h₃ := by
-    simp only [Set.mem_setOf_eq] at h₁ h₂ h₃ ⊢
+    simp only [Set.mem_ofPred_eq] at h₁ h₂ h₃ ⊢
     rw [vsub_eq_sub, vadd_eq_add, inner_add_right, real_inner_smul_right,
       inner_sub_right, h₁, h₂, h₃]
     ring

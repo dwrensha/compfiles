@@ -141,18 +141,18 @@ problem imo1973_p3
     (hS : S = {(a, b) | ∃ x : ℝ, x ^ 4 + a * x ^ 3 + b * x ^ 2 + a * x + 1 = 0}) :
     IsLeast { x.1 ^ 2 + x.2 ^ 2 | x ∈ S } solution := by
   constructor
-  · simp only [Prod.exists, Set.mem_setOf_eq]
+  · simp only [Prod.exists, Set.mem_ofPred_eq]
     use 4/5, -2/5
     constructor
-    · simp only [hS, Set.mem_setOf_eq]
+    · simp only [hS, Set.mem_ofPred_eq]
       use -1
       norm_num
     · norm_num
   · refine mem_lowerBounds.mpr ?_
-    simp only [Prod.exists, Set.mem_setOf_eq, forall_exists_index, and_imp]
+    simp only [Prod.exists, Set.mem_ofPred_eq, forall_exists_index, and_imp]
     intro x a b h₀ h₁
     rw [←h₁]
     refine aux_1 a b ?_
-    simpa only [hS, Set.mem_setOf_eq] using h₀
+    simpa only [hS, Set.mem_ofPred_eq] using h₀
 
 end Imo1973P3

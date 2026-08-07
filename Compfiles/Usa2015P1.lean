@@ -103,7 +103,7 @@ problem usa2015_p1 (x y : ℤ) :
         linear_combination 1 * ht3
       clear ht3
       rw [sq_eq_sq_iff_eq_or_eq_neg] at ht7
-      simp only [Set.mem_union, Set.mem_setOf_eq]
+      simp only [Set.mem_union, Set.mem_ofPred_eq]
       obtain h | h := ht7
       · left; use n; lia
       · right; use n; lia

@@ -82,7 +82,7 @@ problem imo2013_p1 (n : ℕ+) (k : ℕ) :
         -- porting note: used to work with `norm_cast`
         simp only [t_succ, PNat.mk_coe, Nat.cast_add, Nat.cast_one, pow_succ']
       _ = (∏ i ∈ Finset.range pk, (1 + 1 / (m i : ℚ))) * (1 + 1 / m pk) := by
-        rw [prod_lemma, hpm, ← hmpk, mul_comm]
+        rw [prod_lemma pm pk ⟨2 * t + 2 ^ pk.succ, by positivity⟩, hpm, ← hmpk, mul_comm]
       _ = ∏ i ∈ Finset.range pk.succ, (1 + 1 / (m i : ℚ)) := by rw [← Finset.prod_range_succ _ pk]
   · -- odd case
     let t_succ : ℕ+ := ⟨t + 1, t.succ_pos⟩
@@ -101,7 +101,7 @@ problem imo2013_p1 (n : ℕ+) (k : ℕ) :
         ring
       _ = (1 + 1 / (2 * t + 1)) * (1 + (2 ^ pk - 1) / t_succ) := by norm_cast
       _ = (∏ i ∈ Finset.range pk, (1 + 1 / (m i : ℚ))) * (1 + 1 / ↑(m pk)) := by
-        rw [prod_lemma, hpm, ← hmpk, mul_comm]
+        rw [prod_lemma pm pk ⟨2 * t + 1, Nat.succ_pos _⟩, hpm, ← hmpk, mul_comm]
       _ = ∏ i ∈ Finset.range pk.succ, (1 + 1 / (m i : ℚ)) := by rw [← Finset.prod_range_succ _ pk]
 
 

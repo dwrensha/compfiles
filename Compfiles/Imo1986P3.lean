@@ -71,7 +71,8 @@ def potential (s : State) : ℤ :=
 
 /-- The sum of the integers is invariant under the move operation. -/
 lemma sum_invariant (s : State) (i : Fin 5) : (move s i).sum = s.sum := by
-  simp only [State.sum, Fin.sum_univ_five]
+  simp only [State.sum]
+  rw [Fin.sum_univ_five (f := fun j => move s i j), Fin.sum_univ_five (f := fun j => s j)]
   fin_cases i
   all_goals (
     simp (config := { decide := true }) [move]
@@ -83,7 +84,10 @@ lemma sum_invariant (s : State) (i : Fin 5) : (move s i).sum = s.sum := by
     $V(s') - V(s) = 2 \cdot s_i \cdot S$ where $S$ is the total sum. -/
 lemma potential_diff (s : State) (i : Fin 5) :
     potential (move s i) - potential s = 2 * (s i) * s.sum := by
-  simp only [potential, State.sum, Fin.sum_univ_five]
+  simp only [potential, State.sum]
+  rw [Fin.sum_univ_five (f := fun j => (move s i j - move s i (j + 2))^2),
+    Fin.sum_univ_five (f := fun j => (s j - s (j + 2))^2),
+    Fin.sum_univ_five (f := fun j => s j)]
   fin_cases i
   all_goals (
     simp (config := { decide := true }) [move]

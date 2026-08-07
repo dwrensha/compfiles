@@ -84,7 +84,7 @@ lemma lemma1 (a : ℕ+) (s : State 1) (he : BobCanForceEnd a 1 s) :
     apply EndInevitable.Step
     intro m' hm'
     have hmm : m = m' := by
-      simp only [valid_moves, Set.mem_setOf_eq] at moves hm'
+      simp only [valid_moves, Set.mem_ofPred_eq] at moves hm'
       obtain ⟨i, hie, hi⟩ := moves
       obtain ⟨j, hje, hj⟩ := hm'
       simp_rw [Fin.fin_one_eq_zero] at hi hj
@@ -272,7 +272,7 @@ lemma lemma2' (a : ℕ+) (N : ℕ) (hN : 1 < N) (s0 : State N)
       dsimp [valid_moves]
       rw [Set.eq_empty_iff_forall_notMem]
       intro x hx
-      rw [Set.mem_setOf_eq] at hx
+      rw [Set.mem_ofPred_eq] at hx
       obtain ⟨i, hie, _⟩ := hx
       exact h1 i hie
     | .Alice =>
@@ -290,7 +290,7 @@ lemma lemma2' (a : ℕ+) (N : ℕ) (hN : 1 < N) (s0 : State N)
       dsimp [valid_moves] at hs ⊢
       rw [Set.eq_empty_iff_forall_notMem]
       intro s1' hs1'
-      rw [Set.mem_setOf_eq] at hs1'
+      rw [Set.mem_ofPred_eq] at hs1'
       obtain ⟨i, hie, _⟩ := hs1'
       obtain ⟨j, hje⟩ := hs
       simp only [State.mk.injEq, and_true] at hje
@@ -321,10 +321,14 @@ lemma lemma2' (a : ℕ+) (N : ℕ) (hN : 1 < N) (s0 : State N)
       apply ih
       · intro k
         simp only at hd
+        dsimp only
         by_cases hki : k = i
-        · subst hki; simp [Function.update_self]
+        · subst hki
+          rw [Function.update_self k (⟨↑(b0 k) / 2, halve_even _ hie⟩ : ℕ+) b0]
+          show padicValNat 2 (↑(b0 k) / 2) < padicValNat 2 ↑a
           have hv1 := lemma6 (b0 k).pos hie; have := hd k; omega
-        · simp [Function.update_of_ne hki]; exact hd k
+        · rw [Function.update_of_ne hki (⟨↑(b0 i) / 2, halve_even _ hie⟩ : ℕ+) b0]
+          exact hd k
       · simp only at hd hms ⊢
         have hv := lemma6 (b0 i).pos hie
         have hae : padicValNat 2 ↑(b0 i) + ∑ k ∈ Finset.univ.erase i, padicValNat 2 ↑(b0 k)
@@ -333,10 +337,11 @@ lemma lemma2' (a : ℕ+) (N : ℕ) (hN : 1 < N) (s0 : State N)
         trans (padicValNat 2 (↑(b0 i) / 2) + ∑ k ∈ Finset.univ.erase i, padicValNat 2 ↑(b0 k))
         · rw [← Finset.add_sum_erase _ _ (Finset.mem_univ i)]
           congr 1
-          · simp [Function.update_self]
+          · rw [Function.update_self i (⟨↑(b0 i) / 2, halve_even _ hie⟩ : ℕ+) b0]
+            rfl
           · apply Finset.sum_congr rfl
             intro k hk; rw [Finset.mem_erase] at hk
-            simp [Function.update_of_ne hk.1]
+            rw [Function.update_of_ne hk.1 (⟨↑(b0 i) / 2, halve_even _ hie⟩ : ℕ+) b0]
         · omega
   | .Alice =>
     apply EndInevitableIn.AliceTurn _ ⟨b0, .Alice⟩
@@ -367,12 +372,15 @@ lemma lemma2' (a : ℕ+) (N : ℕ) (hN : 1 < N) (s0 : State N)
         · subst hki; simp only [Function.update_self]; push_cast
           exact lemma5 (b0 k).pos (hd k)
         · simp only [Function.update_of_ne hki]; exact hd k
+      dsimp only
       by_cases hkj : k = j
-      · subst hkj; simp only [Function.update_self]
+      · subst hkj
+        rw [Function.update_self k (⟨↑(b1 k) / 2, halve_even _ hje⟩ : ℕ+) b1]
         show padicValNat 2 (↑(b1 k) / 2) < padicValNat 2 ↑a
         have hv1 := lemma6 (b1 k).pos hje
         have := hd1 k; omega
-      · simp only [Function.update_of_ne hkj]; exact hd1 k
+      · rw [Function.update_of_ne hkj (⟨↑(b1 j) / 2, halve_even _ hje⟩ : ℕ+) b1]
+        exact hd1 k
     · simp only at hms ⊢
       have hv := lemma6 (b1 j).pos hje
       have hae : padicValNat 2 ↑(b1 j) + ∑ k ∈ Finset.univ.erase j, padicValNat 2 ↑(b1 k)
@@ -381,10 +389,11 @@ lemma lemma2' (a : ℕ+) (N : ℕ) (hN : 1 < N) (s0 : State N)
       trans (padicValNat 2 (↑(b1 j) / 2) + ∑ k ∈ Finset.univ.erase j, padicValNat 2 ↑(b1 k))
       · rw [← Finset.add_sum_erase _ _ (Finset.mem_univ j)]
         congr 1
-        · simp [Function.update_self]
+        · rw [Function.update_self j (⟨↑(b1 j) / 2, halve_even _ hje⟩ : ℕ+) b1]
+          rfl
         · apply Finset.sum_congr rfl
           intro k hk; rw [Finset.mem_erase] at hk
-          simp [Function.update_of_ne hk.1]
+          rw [Function.update_of_ne hk.1 (⟨↑(b1 j) / 2, halve_even _ hje⟩ : ℕ+) b1]
       · omega
 
 
@@ -451,7 +460,7 @@ lemma alice_prevents_end (a : ℕ+) (N : ℕ) (hN : 1 < N)
     by_cases hji : j = i₀
     · subst hji
       refine ⟨j, ?_⟩
-      rw [Function.update_self]
+      rw [Function.update_self j (⟨↑(b j) / 2, halve_even _ hje⟩ : ℕ+) b]
       show padicValNat 2 ↑a ≤ padicValNat 2 (↑(b j) / 2)
       have := lemma6 (b j).pos hje; omega
     · refine ⟨i₀, ?_⟩

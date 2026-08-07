@@ -79,8 +79,8 @@ problem imo1977_p2 :
 
     have rneg : ∀ j, (1 ᵥ* A) j < 0 := by
       intro j
-      unfold A
       rw [Matrix.vecMul_eq_sum]
+      unfold A
       simp only [Finset.sum_apply]
       have := (c (j.castLT (by lia))).left (by rw [Fin.val_castLT]; lia)
       unfold sum_successive_terms at this
@@ -91,9 +91,10 @@ problem imo1977_p2 :
 
     have cpos : ∀ j, (A *ᵥ 1) j > 0 := by
       intro j
-      unfold A
       rw [Matrix.mulVec_eq_sum]
-      simp only [ Finset.sum_apply, gt_iff_lt]
+      simp only [Finset.sum_apply, Pi.smul_apply, Matrix.transpose_apply, Pi.one_apply,
+        gt_iff_lt]
+      unfold A
       have := (c (j.castLT (by lia))).right (by rw [Fin.val_castLT]; lia)
       unfold sum_successive_terms at this
       apply this.trans_eq

@@ -188,7 +188,7 @@ lemma padicValNat_eq_zero_of_divisors {k m k': ℕ} (hm₀ : m ≠ 0)
   have : Fact (Nat.Prime (Nat.nth Nat.Prime k')) := Fact.mk (Nat.prime_nth_prime k')
   rw [← dvd_iff_padicValNat_ne_zero hm₀] at hdiv
   have hdiv' := hm (Nat.nth Nat.Prime k') ⟨Nat.prime_nth_prime k', hdiv⟩
-  rw [Nat.nth_le_nth Nat.infinite_setOf_prime] at hdiv'
+  rw [Nat.nth_le_nth Nat.infinite_setOfPred_prime] at hdiv'
   lia
 
 lemma square_of_pow_of_first_k_prime_mod_two_eq {k m n : ℕ}

@@ -67,11 +67,7 @@ lemma p4_reduction (B C O X Y : EuclideanSpace ℝ (Fin 2))
   -- `OZ² = OC² + CZ²` for any `Z` on the line.
   have pyth : ∀ Z : EuclideanSpace ℝ (Fin 2), ⟪O -ᵥ C, Z -ᵥ C⟫ = 0 →
       dist O Z ^ 2 = dist O C ^ 2 + dist C Z ^ 2 := by
-    intro Z hZ
-    simp only [dist_eq_norm_vsub (EuclideanSpace ℝ (Fin 2))]
-    rw [show O -ᵥ Z = (O -ᵥ C) - (Z -ᵥ C) by rw [vsub_sub_vsub_cancel_right],
-      norm_sub_sq_real, hZ, show C -ᵥ Z = -(Z -ᵥ C) by rw [neg_vsub_eq_vsub_rev], norm_neg]
-    ring
+    exact fun _ hZ => dist_sq_of_inner_eq_zero hZ
   have hsq : dist C X ^ 2 = dist C Y ^ 2 := by
     have e1 := pyth X (key X hX)
     have e2 := pyth Y (key Y hY)

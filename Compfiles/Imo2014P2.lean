@@ -205,7 +205,7 @@ lemma covering_restrict {K M N : ℕ} (hNM : N ≤ M)
   refine ⟨⟨i, hiN⟩, hi1, hi2, ?_, ?_⟩ <;>
   · have hval : (σ ⟨i, hiN⟩ : ℕ) = (τ i : ℕ) := by
       have hσf : σ ⟨i, hiN⟩ = f ⟨i, hiN⟩ := by
-        simpa [σ, eUniv] using hg ⟨i, hiN⟩ hi_good
+        exact hg ⟨i, hiN⟩ hi_good
       rw [hσf]
       simp only [hf_def]
       rw [dif_pos (by rw [hcastle]; exact lt_of_lt_of_le hc2 hc)]

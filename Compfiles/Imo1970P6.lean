@@ -115,23 +115,6 @@ lemma hull_case {A B C D : Pt} (hAB : A ≠ B) (hAC : A ≠ C) (hAD : A ≠ D)
 
 /-! ### The case of two crossing segments -/
 
-/-- If `w` lies strictly between `x` and `y`, then the angle subtended by `x` and `y`
-at any point `z` splits as the sum of the angles subtended by `x, w` and by `w, y`. -/
-lemma angle_split {x w y : Pt} (z : Pt) (h : Sbtw ℝ x w y) :
-    ∠ x z y = ∠ x z w + ∠ w z y := by
-  have t1 := angle_add_angle_add_angle_eq_pi z h.ne_left
-  have t2 := angle_add_angle_add_angle_eq_pi z h.ne_right
-  have t3 := angle_add_angle_add_angle_eq_pi z h.left_ne_right.symm
-  have hline := angle_add_angle_eq_pi_of_angle_eq_pi z h.angle₁₂₃_eq_pi
-  have r1 : ∠ z x w = ∠ z x y := h.angle_eq_right z
-  have r2 : ∠ z y w = ∠ z y x := h.symm.angle_eq_right z
-  have c1 : ∠ x w z = ∠ z w x := angle_comm _ _ _
-  have c2 : ∠ y w z = ∠ z w y := angle_comm _ _ _
-  have c3 : ∠ w z x = ∠ x z w := angle_comm _ _ _
-  have c4 : ∠ x y z = ∠ z y x := angle_comm _ _ _
-  have c5 : ∠ y z x = ∠ x z y := angle_comm _ _ _
-  linarith
-
 /-- If the segments `A C` and `B D` cross, then one of the angles of the
 quadrilateral `A B C D` is at least `π / 2`; each of those four angles is an
 angle of one of the four triangles on the points `A`, `B`, `C`, `D`. -/
@@ -141,8 +124,8 @@ lemma quad_case {A B C D Q : Pt} (hAC : Sbtw ℝ A Q C) (hBD : Sbtw ℝ B Q D)
   by_contra hcon
   push Not at hcon
   obtain ⟨h1, h2, h3, h4⟩ := hcon
-  have sA : ∠ B A D = ∠ B A Q + ∠ Q A D := angle_split A hBD
-  have sC : ∠ B C D = ∠ B C Q + ∠ Q C D := angle_split C hBD
+  have sA : ∠ B A D = ∠ B A Q + ∠ Q A D := (angle_add_angle_eq_of_sbtw hBD).symm
+  have sC : ∠ B C D = ∠ B C Q + ∠ Q C D := (angle_add_angle_eq_of_sbtw hBD).symm
   have rA1 : ∠ B A Q = ∠ B A C := hAC.angle_eq_right B
   have rA2 : ∠ Q A D = ∠ C A D := by
     rw [angle_comm Q A D, angle_comm C A D]
@@ -574,7 +557,7 @@ problem imo1970_p6
     show Nat.card {s : Finset (Fin 100) | s.card = 3 ∧ AcuteSet P s} = _
     refine Nat.subtype_card _ (fun u => ?_)
     simp only [Finset.mem_filter, Finset.mem_powersetCard, Finset.subset_univ, true_and,
-      Set.mem_setOf_eq]
+      Set.mem_ofPred_eq]
   have hsplit := Finset.card_filter_add_card_filter_not
     (s := (univ : Finset (Fin 100)).powersetCard 3) (p := fun w => AcuteSet P w)
   rw [hPC] at hsplit
