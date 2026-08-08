@@ -36,8 +36,6 @@ Statement formalization adapted from AxiomMath/IMO2026; proof adapted from Human
 
 namespace Imo2026P6
 
-set_option backward.isDefEq.respectTransparency false
-
 /-- The predicate stating that `a : ℕ → ℕ` (0-indexed) is a sequence satisfying Definition 1:
 each term exceeds `1`, and each subsequent term is the smallest integer strictly larger than the
 previous one that shares a common factor with every earlier term. -/
