@@ -705,32 +705,20 @@ lemma blocks_semi_inj_helper {a b: List (List Coin)}
         rw [hmps, hnqt, h₁, h₂]
       rw [List.isChain_cons] at ha₃ hb₃
       have hmsns' : ms = [] ↔ ns = [] := by
-        apply And.right at hab
-        constructor <;> intro h' <;> rw [h', List.map_nil] at hab
-        · symm at hab
-          rwa [List.map_eq_nil_iff] at hab
-        · rwa [List.map_eq_nil_iff] at hab
+        constructor <;> intro h' <;> simpa [h'] using hab.right
       have hms' : ∀ {h' : ms ≠ []}, (ms.head h').head? = s.flip := by
         intro h'
         rcases ha₃.left (ms.head h') (List.head_mem_head? h') with ⟨hm', hms'', h''⟩
         rw [beq_eq_false_iff_ne, ← Coin.flip_eq_iff] at h''
-        simp only [hmps] at h''
-        rw [List.getLast_replicate] at h''
-        symm at h''
-        rw [List.head_eq_iff_head?_eq_some] at h''
-        exact h''
+        simpa only [hmps, List.getLast_replicate, List.head_eq_iff_head?_eq_some] using h''.symm
       have hns' : ∀ {h' : ns ≠ []}, (ns.head h').head? = t.flip := by
         intro h'
         rcases hb₃.left (ns.head h') (List.head_mem_head? h') with ⟨hn', hns'', h''⟩
         rw [beq_eq_false_iff_ne, ← Coin.flip_eq_iff] at h''
-        simp only [hnqt] at h''
-        symm at h''
-        rwa [List.getLast_replicate, List.head_eq_iff_head?_eq_some] at h''
+        simpa only [hnqt, List.getLast_replicate, List.head_eq_iff_head?_eq_some] using h''.symm
       have hmsns : (ms.head?.bind fun l' ↦ l'.head?) = (ns.head?.bind fun l' ↦ l'.head?) := by
         by_cases! h' : ms = []
-        · rw [h']
-          rw [hmsns'] at h'
-          rw [h']
+        · rw [h', hmsns'.mp h']
         · rw [List.head?_eq_some_head h', List.head?_eq_some_head (hmsns'.ne.mp h')]
           rw [Option.bind_some, Option.bind_some]
           rw [hms', hns', h₁]
