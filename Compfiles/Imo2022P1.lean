@@ -1092,13 +1092,12 @@ lemma List.blocks_drop_take {α : Type u} [DecidableEq α] (l : List α) (p q : 
 
 lemma List.blocks_append {α : Type u} [DecidableEq α] {a b : List α} (hab : ∀ x ∈ a.getLast?, ∀ y ∈ b.head?, (x == y) = false)
   : List.blocks (a ++ b) = List.blocks a ++ List.blocks b := by
-    simp_rw [List.blocks, List.segments, List.splitBy_append hab, List.map_append]
+    simp only [List.blocks, List.segments, List.splitBy_append hab, List.map_append]
 
 lemma List.length_blocks_append_lt_of {α : Type u} [DecidableEq α] {a b : List α} (hab : ∃ x ∈ a.getLast?, ∃ y ∈ b.head?, (x == y) = true)
   : (List.blocks (a ++ b)).length < (List.blocks a).length + (List.blocks b).length := by
-    simp_rw [List.blocks, List.length_map, List.segments, List.splitBy_append' hab]
-    rw [List.length_append, List.length_append, List.length_singleton]
-    rw [List.length_dropLast, List.length_tail]
+    simp only [blocks, segments, List.splitBy_append' hab, List.length_map, List.length_append,
+      List.length_dropLast, List.length_singleton, List.length_tail]
     rcases hab with ⟨p, hp, q, hq, hpq⟩
     have ha : a ≠ [] := by
       contrapose! hp
