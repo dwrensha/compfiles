@@ -126,10 +126,10 @@ theorem a_pairwise_coprime : pairwise_coprime_f (Set.range a) := by
     and_intros
     · exact h1
     · apply dvd_trans h2
-      rw [<-hi1]
+      rw [←hi1]
       exact Nat.gcd_dvd_right _ _
     · apply dvd_trans h2
-      rw [<-hi2]
+      rw [←hi2]
       exact Nat.gcd_dvd_left _ _
   have pOdd : Odd p := by
     apply Odd.of_dvd_nat _ ph1
@@ -143,7 +143,7 @@ theorem a_pairwise_coprime : pairwise_coprime_f (Set.range a) := by
     rw [bh, pow_mul]
     apply Int.prime_dvd_pow_sub_one php
     refine IsCoprime.pow_left ?_
-    rw [<-Nat.cast_ofNat, Nat.isCoprime_iff_coprime]
+    rw [←Nat.cast_ofNat, Nat.isCoprime_iff_coprime]
     apply pOdd.coprime_two_left
   have : ↑p ∣ B - (2 ^ a i2 - 3) := by
     zify at ph2
