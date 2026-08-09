@@ -92,6 +92,9 @@ def Coin.flip : Coin → Coin
 lemma Coin.flip_eq_iff (c c' : Coin) : c.flip = c' ↔ c ≠ c' := by
   cases c <;> cases c' <;> decide
 
+lemma Coin.flip_eq_iff' (c c' : Coin) : c = c'.flip ↔ c ≠ c' := by
+  rw [ne_comm, ← Coin.flip_eq_iff, eq_comm]
+
 def isValidRow (l : List Coin) := 2 * (l.count Coin.A) = l.length
 
 universe u
@@ -995,9 +998,7 @@ lemma Row.blocks_eq_iff {n : ℕ} [inst : NeZero n] (c : Row n) :
     constructor
     · intro h'
       contrapose! h'
-      rw [and_iff_right h']
-      symm
-      rw [← Coin.flip_eq_iff _ _]
+      rw [and_iff_right h',  ← Coin.flip_eq_iff']
     · intro h' h''
       lia
   · rintro ⟨coin, h'⟩
@@ -1016,10 +1017,7 @@ lemma Row.blocks_eq_iff {n : ℕ} [inst : NeZero n] (c : Row n) :
           rw [h' ⟨i, hi⟩]
           lia
         · rw [dif_pos (by lia), if_neg (by lia), if_pos (by lia), Option.some_inj]
-          symm
-          rw [Coin.flip_eq_iff]
-          symm
-          rw [ne_eq, h' ⟨i, hi⟩]
+          rw [Coin.flip_eq_iff', ne_eq, h' ⟨i, hi⟩]
           lia
       · rw [dif_neg (by lia), if_neg (by lia), if_neg (by lia)]
     have h' : ∀ x ∈ (List.replicate n coin).getLast?, ∀ y ∈ (List.replicate n coin.flip).head?, (x == y) = false := by
