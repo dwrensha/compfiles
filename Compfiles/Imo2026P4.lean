@@ -42,8 +42,6 @@ Humanfia's Kimi-K3 solutions (https://github.com/humanfia/imo2026).
 
 namespace Imo2026P4
 
-set_option backward.isDefEq.respectTransparency false
-
 /-- A triangle, viewed as the multiset of its three interior angles (in degrees):
 positive reals summing to `180`. -/
 def IsTriangle (s : Multiset ℝ) : Prop :=

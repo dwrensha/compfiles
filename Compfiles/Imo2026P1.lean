@@ -15,8 +15,6 @@ public import ProblemExtraction
 
 @[expose] public section
 
-set_option backward.isDefEq.respectTransparency false
-
 problem_file {
   tags := [.NumberTheory]
   problemImportedFrom :=

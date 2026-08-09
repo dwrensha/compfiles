@@ -8,6 +8,7 @@ module
 
 public import Mathlib.Tactic
 public import Mathlib.Algebra.IsPrimePow
+public import Mathlib.Data.Finset.NatDivisors
 public import Mathlib.NumberTheory.Divisors
 public import ProblemExtraction
 

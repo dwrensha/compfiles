@@ -150,14 +150,16 @@ def C_G_symm (n : ℕ) : {w : Octagon.Walk C E // isTerminalWalk w ∧ w.length 
     simp only [RelEmbedding.coe_toRelHom, RelIso.coe_toRelEmbedding, Subtype.mk.injEq]
     unfold Octagon.mirror
     apply Walk.ext_support
-    set_option backward.isDefEq.respectTransparency false in
     simp [Walk.copy_rfl_rfl, Walk.map_map]
+    -- deal with defeq
+    simp [Iso.toHom, Iso.toEmbedding, Embedding.toHom, Hom.comp, RelHom.comp]
   right_inv := fun ⟨w, h⟩ => by
     simp only [RelEmbedding.coe_toRelHom, RelIso.coe_toRelEmbedding, Subtype.mk.injEq]
     apply Walk.ext_support
     unfold Octagon.mirror
-    set_option backward.isDefEq.respectTransparency false in
     simp [Walk.copy_rfl_rfl, Walk.map_map]
+    -- deal with defeq
+    simp [Iso.toHom, Iso.toEmbedding, Embedding.toHom, Hom.comp, RelHom.comp]
 }
 
 def isTerminalWalk_length_cons_equiv {V : Type} {G : SimpleGraph V} {u t : V} (m n : ℕ) (npos : 0 < n) :

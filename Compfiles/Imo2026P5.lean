@@ -35,8 +35,6 @@ Humanfia's Kimi-K3 solutions (https://github.com/humanfia/imo2026).
 
 namespace Imo2026P5
 
-set_option backward.isDefEq.respectTransparency false
-
 /-- The subtype of positive real numbers, representing `\mathbb{R}_{>0}`. -/
 abbrev PositiveReal : Type := {x : ℝ // 0 < x}
 
@@ -164,7 +162,6 @@ lemma cross (f : PositiveReal → PositiveReal) (h : IsAdmissible f) (a b : Posi
     ring
   linarith [h1, hid]
 
-set_option maxHeartbeats 800000 in
 /-- Two positive defect values cannot be strictly ordered. -/
 lemma absurd_lt (f : PositiveReal → PositiveReal) (h : IsAdmissible f) (a b : PositiveReal)
     (ha : (0 : ℝ) < (f a : ℝ) - (a : ℝ)) (hb : (0 : ℝ) < (f b : ℝ) - (b : ℝ))
@@ -187,11 +184,11 @@ lemma absurd_lt (f : PositiveReal → PositiveReal) (h : IsAdmissible f) (a b : 
   have hmp_ge : (n : ℝ) * q - p / 2 ≤ (m : ℝ) * p := by
     have h2 := mul_lt_mul_of_pos_right hm2 hb
     rw [add_mul, div_mul_cancel₀ _ (ne_of_gt hb)] at h2
-    nlinarith [h2]
+    linarith [h2]
   have hmp_le : (m : ℝ) * p ≤ (n : ℝ) * q + p / 2 := by
     have h2 := mul_le_mul_of_nonneg_right hm1 (le_of_lt hb)
     rw [add_mul, div_mul_cancel₀ _ (ne_of_gt hb)] at h2
-    nlinarith [h2]
+    linarith [h2]
   have hc := cross f h a b m n
   rw [orbit f h b m, orbit f h a n] at hc
   have hsq : ((b : ℝ) + (m : ℝ) * p - ((a : ℝ) + (n : ℝ) * q) - p) ^ 2 ≤ K ^ 2 := by
@@ -210,13 +207,13 @@ lemma absurd_lt (f : PositiveReal → PositiveReal) (h : IsAdmissible f) (a b : 
   have h4 : 4 * ((b : ℝ) + (n : ℝ) * q - p / 2) * (q - p) ≤
       4 * ((b : ℝ) + (m : ℝ) * p) * (q - p) := by
     have h5 := mul_le_mul_of_nonneg_right hX (le_of_lt hqp)
-    nlinarith [h5]
+    linarith only [h5]
   have h6 : K ^ 2 < 4 * ((b : ℝ) + (n : ℝ) * q - p / 2) * (q - p) := by
     have h7 : K ^ 2 / (4 * (q - p)) < (b : ℝ) + (n : ℝ) * q - p / 2 := by linarith [hnq]
     have h8 := mul_lt_mul_of_pos_right h7 (by linarith [hqp] : (0 : ℝ) < 4 * (q - p))
     rw [div_mul_cancel₀ _ (ne_of_gt (by linarith [hqp] : (0 : ℝ) < 4 * (q - p)))] at h8
-    nlinarith [h8]
-  nlinarith [hc, hsq, h4, h6]
+    linarith only [h8]
+  linarith only [hc, hsq, h4, h6]
 
 /-- All positive values of the defect coincide. -/
 lemma eq_of_pos (f : PositiveReal → PositiveReal) (h : IsAdmissible f) (a b : PositiveReal)

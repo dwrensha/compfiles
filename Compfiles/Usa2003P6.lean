@@ -270,8 +270,6 @@ lemma abs_sub_le_mk2 {x y M : ℤ} (hx0 : 0 ≤ x) (hxM : x ≤ M - 1) (hy0 : 0 
 
 /-! ### Phase 2: reducing the maximum from a single odd entry -/
 
-set_option maxHeartbeats 1000000 in
-set_option linter.unusedSimpArgs false in
 lemma phase2 (g : Conf) (hnn : ∀ i, 0 ≤ g i) (h0 : (g 0 : ZMod 2) = 1)
     (hk : ∀ i, i ≠ 0 → (g i : ZMod 2) = 0) :
     ∃ h : Conf, Moves g h ∧ (h = 0 ∨ (Odd (∑ i, h i) ∧ cmax h < cmax g)) := by
@@ -333,7 +331,7 @@ lemma phase2 (g : Conf) (hnn : ∀ i, 0 ≤ g i) (h0 : (g 0 : ZMod 2) = 1)
           rw [e5, A1, A2, h4, sub_self, abs_zero, sub_zero, abs_zero]
         refine ⟨[1, 5, 3, 0, 5, 1].foldl step g, ⟨[1, 5, 3, 0, 5, 1], rfl⟩, Or.inl ?_⟩
         funext i
-        fin_cases i <;> simp only [Pi.zero_apply] <;> assumption
+        fin_cases i <;> simp only <;> assumption
       · -- Vertex 2 zero, vertex 4 positive.
         have g4ge : 2 ≤ g 4 :=
           two_le_of_even_pos (lt_of_le_of_ne' (hnn 4) h4) ((even_iff_cast _).mpr (hk 4 (by decide)))
@@ -368,7 +366,7 @@ lemma phase2 (g : Conf) (hnn : ∀ i, 0 ≤ g i) (h0 : (g 0 : ZMod 2) = 1)
           have hle : cmax ([5, 1, 0, 1].foldl step g) ≤ cmax g - 1 := by
             apply cmax_le
             intro i
-            fin_cases i <;> simp only [e0, e1, e2, e3, e4, e5]
+            fin_cases i
             · exact b0
             · exact b1
             · exact b2
@@ -423,7 +421,7 @@ lemma phase2 (g : Conf) (hnn : ∀ i, 0 ≤ g i) (h0 : (g 0 : ZMod 2) = 1)
         have hle : cmax ([1, 5, 0, 5].foldl step g) ≤ cmax g - 1 := by
           apply cmax_le
           intro i
-          fin_cases i <;> simp only [e0, e1, e2, e3, e4, e5]
+          fin_cases i
           · exact b0
           · exact b1
           · exact b2
@@ -501,7 +499,7 @@ lemma phase2 (g : Conf) (hnn : ∀ i, 0 ≤ g i) (h0 : (g 0 : ZMod 2) = 1)
       have hle : cmax ([1, 2, 3, 4, 5].foldl step g) ≤ cmax g - 1 := by
         apply cmax_le
         intro i
-        fin_cases i <;> simp only [e0, e1, e2, e3, e4, e5]
+        fin_cases i
         · exact b0
         · exact b1
         · exact b2
