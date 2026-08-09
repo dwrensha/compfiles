@@ -197,7 +197,7 @@ def isTerminalWalk_length_cons_equiv {V : Type} {G : SimpleGraph V} {u t : V} (m
       subst m n
       simp only [Walk.take_append, Walk.drop_append_of_length_eq, Sigma.mk.injEq,
         Walk.append_getVert, true_and]
-      congr! 1
+      congr 1
       · rw [Walk.append_getVert]
       · rw [Walk.append_getVert]
       · congr! 1
@@ -315,9 +315,7 @@ theorem a_odd (n : ℕ) (npos : 0 < n) : a (2*n-1) = 0 := by
 snip end
 
 
-problem imo1979_p6 (n : ℕ) (npos : 0 < n) : a (2*n-1) = 0 ∧ a (2*n) = ((2+√2)^(n-1) - (2-√2)^(n-1)) / √2 := by
-  and_intros
-  · exact a_odd n npos
-  · exact a_even n npos
+problem imo1979_p6 (n : ℕ) (npos : 0 < n) : a (2*n-1) = 0 ∧ a (2*n) = ((2+√2)^(n-1) - (2-√2)^(n-1)) / √2 :=
+  ⟨a_odd n npos, a_even n npos⟩
 
 end Imo1979P6
