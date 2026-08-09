@@ -5,6 +5,7 @@ public import Lean.Elab.Eval
 public import Lean.Meta.Basic
 public import Batteries.Data.String.Basic
 public import Batteries.Lean.NameMapAttribute
+public import Std.Data.Iterators.Combinators
 public import Lean
 
 /-!
@@ -125,45 +126,34 @@ initialize problemMetadataExtension : ProblemMetadataExtension ←
     addEntryFn    := Array.push
   }
 
-def parseAuthors (src : String) : List String := Id.run do
-  let lines := src.splitOn "\n"
-  for l in lines do
-    if l.startsWith "Authors: "
-    then
-      return (l.dropPrefix "Authors: ").toString.splitToList (fun c => c = ',')
-  return []
+def parseAuthors (src : String) : List String :=
+  src.split "\n"
+    |>.findSome? (·.dropPrefix? "Authors: ")
+    |>.map (·.toString.splitToList (· = ','))
+    |>.getD []
 
-def parseCopyrightHeader (src : String) : String := Id.run do
-  let lines := src.splitOn "\n"
-  let mut result := ""
-  for l in lines do
-    if l.startsWith "module" || l.startsWith "import" || l.startsWith "public import"
-    then break
-    else
-      result := result ++ l ++ "\n"
-  return result
+def parseCopyrightHeader (src : String) : String :=
+  src.splitOn "\n"
+    |>.takeWhile (fun l => !(l.startsWith "module" || l.startsWith "import" || l.startsWith "public import"))
+    |>.map (·.append "\n")
+    |> String.join
 
 /--
 Helper function for `extractFromExt`.
 -/
 def findModuleImports
     {m : Type → Type} [Monad m] [MonadError m] (env : Environment) (md : Name) :
-    m (Array Import) := do
-  let moduleNames := env.header.moduleNames
-  let mut idx := 0
-  for m1 in moduleNames do
-    if m1 = md
-    then return (env.header.moduleData[idx]!).imports
-    else idx := 1 + idx
-  throwError s!"module {md} not found"
+    m (Array Import) :=
+  match env.getModuleIdx? md with
+  | .some idx => return env.header.moduleData[idx]!.imports
+  | .none => throwError s!"module {md} not found"
 
 /-- Gets the declarations that originate in modules beneath `package`. -/
 def getDeclsInPackage (package : Name) : CoreM (Array Name) := do
   let env ← getEnv
-  let mut decls := env.constants.map₂.foldl (init := #[]) fun names name _ => names.push name
+  let decls := env.constants.map₂.toArray
   let modules := env.header.moduleNames.map (package.isPrefixOf ·)
-  return env.constants.map₁.fold (init := decls) fun names name _ =>
-    if modules[env.const2ModIdx[name]?.get!]! then names.push name else names
+  return decls ++ (env.constants.map₁.filter fun name _ => modules[env.const2ModIdx[name]!]!).toArray |>.map (·.1)
 
 def extractFromExt {m : Type → Type} [Monad m] [MonadEnv m] [MonadError m]
     (ext : ExtractionExtension) : m (NameMap String) := do
