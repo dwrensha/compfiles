@@ -917,18 +917,13 @@ lemma List.lt_alternateSum_of_nat_mem (l : List ℕ) (x : ℕ) (h : x ∈ l)
         rcases h4 with ⟨a', b, c, d, habcd⟩
         rw [List.cons_eq_cons] at habcd
         rw [habcd.right] at ⊢ h hl
-        repeat rw [List.alternateSum]
-        rw [Bool.not_true, Bool.not_false, Bool.not_true, Bool.not_false]
-        rw [if_pos rfl, if_pos rfl, if_pos rfl, if_pos rfl]
-        repeat rw [if_neg Bool.false_eq_true_eq_False]
-        abel_nf
-        rw [lt_max_iff]
-        simp at h
         have ha := hl a (by simp)
         have hb := hl b (by simp)
         have hc := hl c (by simp)
         have hd := hl d (by simp)
-        rcases h with h|h|h|h <;> lia
+        simp only [alternateSum]
+        simp at h
+        lia
       · rw [List.mem_cons] at h
         rw [List.length_cons] at h4 hl'
         have hl'' : ∀ x ∈ as, 0 < x := by
@@ -1221,8 +1216,7 @@ lemma List.some_get_eq_head?_get?_segments_blockIndex {α : Type u} [DecidableEq
       use (blockIndex l k + 1)
       constructorm* _ ∧ _
       · lia
-      · rw [List.length_flatten, List.map_take] at hi
-        exact hi
+      · rwa [List.length_flatten, List.map_take] at hi
       · lia
     have h_right : (List.take (blockIndex l k) (segments l)).flatten.length ≤ ↑k := by
       set i := blockIndex l k with hi
@@ -1307,8 +1301,7 @@ lemma List.head?_get?_segments_blockIndex_ne_of {α : Type u} [DecidableEq α] (
     rw [List.get_eq_getElem] at hnia hnib
     simp at hnia hnib
     simp [hab] at hnib
-    simp [hnia, hnib] at h'
-    exact h'
+    simpa [hnia, hnib] using h'
 
 lemma List.chainLeft_eq {α : Type u} [DecidableEq α] (l : List α) (k : Fin l.length)
   : List.chainLeft l k = (List.take (List.blockIndex l k) (List.blocks l)).sum := by
@@ -2092,9 +2085,8 @@ theorem imo2022_p1 : {(n, k) | ∃ hk1 : 1 ≤ k, ∃ hkn : k ≤ 2 * n, ∀ c :
       intro i
       have h_blocks'' : ∀ x ∈ blocks, 0 < x := by
         intro x hx
-        rw [h_blocks] at hx
-        simp at hx
-        rcases hx with rfl | rfl | rfl <;> lia
+        simp [h_blocks] at hx
+        lia
       have h_fixed : ((Row.operationOneBased hk1 hkn)^[i] c).blocks = blocks := by
         apply Row.blocks_operationOneBased_iterate_eq_blocks_of hk1 hkn
         · rw [hc]
