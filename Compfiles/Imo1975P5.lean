@@ -12,7 +12,7 @@ public import ProblemExtraction
 @[expose] public section
 
 
-problem_file
+problem_file { tags := [.Combinatorics] }
 
 /-!
 # International Mathematical Olympiad 1975, Problem 5

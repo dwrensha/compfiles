@@ -18,7 +18,7 @@ public import ProblemExtraction
 
 open Finset Function
 
-problem_file
+problem_file { tags := [.Combinatorics] }
 
 /-!
 # International Mathematical Olympiad 2025, Problem 6
