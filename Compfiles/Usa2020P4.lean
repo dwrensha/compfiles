@@ -343,7 +343,7 @@ private lemma card_goodPairs_eq {v : Fin 100 → ℕ × ℕ} (hv : Function.Inje
 snip end
 
 /-- USA Mathematical Olympiad 2020, Problem 4 -/
-problem usamo2020_p4 :
+problem usa2020_p4 :
     IsGreatest {N : ℕ | ∃ v : Fin 100 → ℕ × ℕ, Function.Injective v ∧
       N = (Finset.univ.filter fun p : Fin 100 × Fin 100 =>
         p.1 < p.2 ∧ |det (v p.1) (v p.2)| = 1).card} answer := by

@@ -135,7 +135,7 @@ end
 
 snip end
 
-problem usamo2020_p3 (p : ℕ) [hp : Fact (Nat.Prime p)] (hp2 : p ≠ 2) :
+problem usa2020_p3 (p : ℕ) [hp : Fact (Nat.Prime p)] (hp2 : p ≠ 2) :
     ∏ a ∈ Finset.univ.filter (fun (a : ZMod p) => a ≠ 0 ∧ ¬IsSquare a ∧ ¬IsSquare (4 - a)), a = (solution_val : ZMod p) := by
   apply mul_left_cancel₀ (prod_B_ne_zero p)
   calc (∏ b ∈ setB' p, b) * ∏ a ∈ setA' p, a

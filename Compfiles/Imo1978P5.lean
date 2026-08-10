@@ -119,7 +119,7 @@ lemma abel_compare (n : ℕ) (w g h : ℕ → ℝ)
 
 snip end
 
-problem imo_1978_p5
+problem imo1978_p5
     (n : ℕ)
     (f : ℕ → ℕ)
     (h₀ : ∀ (m : ℕ), 0 < m → 0 < f m)

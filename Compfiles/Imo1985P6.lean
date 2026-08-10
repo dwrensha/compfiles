@@ -1217,7 +1217,7 @@ lemma imo_1985_p6_nnreal
 
 snip end
 
-problem imo_1985_p6
+problem imo1985_p6
   (f : ℕ → ℝ → ℝ)
   (h₀ : ∀ x, f 1 x = x)
   (h₁ : ∀ n x, 0 < n → f (n + 1) x = f n x * (f n x + 1 / n)) :
