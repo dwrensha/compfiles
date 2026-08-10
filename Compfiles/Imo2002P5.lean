@@ -64,7 +64,7 @@ lemma extend_function_mono
     obtain ⟨z, h_z_lt_x, hxz, zpos⟩ := this
     -- then dist (f z) (f x) < ε.
     have hbzb := hδ z hxz
-    rw [←h z] at hbzb
+    rw [← h z] at hbzb
     have huzuy : u x < u z := by
       have hufp : u x - f x < 0 := by linarith
       have hua : ε = -(u x - f x) := abs_of_neg hufp
@@ -88,7 +88,7 @@ lemma extend_function_mono
     obtain ⟨z, h_x_lt_z, hxz⟩ := this
     -- then dist (f z) (f y) < ε.
     have hbzb := hδ z hxz
-    rw [←h z] at hbzb
+    rw [← h z] at hbzb
     have huzuy : u z < u x := by
       have hufp : 0 < u x - f x := by linarith
       have hua : ε = u x - f x := abs_of_pos hufp
@@ -166,14 +166,14 @@ problem imo2002_p5 (f : ℝ → ℝ) :
       · rw [h7, h1]
     have h8 : |x| = (Real.sqrt |x|)^2 := by
       exact (Real.sq_sqrt (by positivity)).symm
-    rw [h6, h8, sq, h4, ←sq]
+    rw [h6, h8, sq, h4, ← sq]
     positivity
   have h6 : ∀ v u, 0 ≤ v → v ≤ u → f v ≤ f u := by
     intro v u hv0 hvu
     have h7 : ∀ x y, (f x + f y)^2 = f (x^2 + y^2) := fun x y ↦ by
       have h8 := hf x y y x
       have h9 : x * y - y * x = 0 := by ring
-      rw [h9, h3, zero_add, ←sq, ←sq] at h8
+      rw [h9, h3, zero_add, ← sq, ← sq] at h8
       linarith only [h8]
     have h8 := h7 (Real.sqrt v) (Real.sqrt (u - v))
     have h9 : 0 ≤ u - v := sub_nonneg_of_le hvu
@@ -183,23 +183,23 @@ problem imo2002_p5 (f : ℝ → ℝ) :
     have h10 : (f √v) ^2 + (f √(u - v))^2 + 2 * f √v * f √(u - v) =
               (f √v + f √(u - v)) ^ 2 := by ring
     have h11 : (f √v) ^2 ≤ (f √v + f √(u - v)) ^ 2 := by
-      rw[←h10]
+      rw[← h10]
       have h12 := h5 (√v)
       have h13 := h5 (√(u - v))
       nlinarith
-    rw [h8, sq, ←h4, ←sq, Real.sq_sqrt (by positivity)] at h11
+    rw [h8, sq, ← h4, ← sq, Real.sq_sqrt (by positivity)] at h11
     exact h11
   ext x
   wlog h7 : 0 ≤ x generalizing x with H
   · have h8 := H (-x) (by linarith)
-    rw [←h1] at h8
+    rw [← h1] at h8
     rw [h8]
     exact neg_pow_two x
   -- For the rest of the proof we follow John Scholes
   -- https://prase.cz/kalva/imo/isoln/isoln025.html
   have h8 : f 1 = 1 := by
     have h9 := hf 0 1 1 1
-    simp [h3, ←h1] at h9
+    simp [h3, ← h1] at h9
     have h10 : f 1 + f 1 ≠ 0 := by
       intro H
       have h11 : f 1 = 0 := by linarith only [H]
@@ -222,17 +222,17 @@ problem imo2002_p5 (f : ℝ → ℝ) :
   have h10 : ∀ z : ℤ, f z = z^2 := fun z ↦ by
     obtain ⟨m, rfl | hm⟩ := Int.eq_nat_or_neg z
     · norm_cast at h9 ⊢; rw [h9]
-    · rw[hm]; push_cast; rw[←h1, h9]; simp only [even_two, Even.neg_pow]
+    · rw[hm]; push_cast; rw[← h1, h9]; simp only [even_two, Even.neg_pow]
   have h11 : ∀ q : ℚ, f q = q^2 := fun q ↦ by
     have h12 := h4 q q.den
     rw [h9] at h12
     have h13 : q * q.den = q.num := Rat.mul_den_eq_num q
     have h14 : (((q * (q.den : ℚ)):ℚ):ℝ) = (q:ℝ) * (q.den:ℝ) := by norm_cast
-    rw [←h14, h13, Rat.cast_intCast] at h12
+    rw [← h14, h13, Rat.cast_intCast] at h12
     rw [h10] at h12
     have h16 : (q.num:ℝ)^2 / (q.den : ℝ)^2 = q^2 := by
       rw [Rat.cast_def q]; field_simp
-    rw [←h16]
+    rw [← h16]
     have h17 : (q.den : ℝ)^2 ≠ 0 := by positivity
     exact eq_div_of_mul_eq h17 h12.symm
   obtain rfl | h7' :=  h7.eq_or_lt

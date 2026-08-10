@@ -89,7 +89,7 @@ problem usa1998_p5 (n : ℕ) (_hn : 2 ≤ n) :
                       ∏ t ∈ Sp.erase a, (a-t)^2 :=
                Finset.mul_prod_erase (Sp.erase a) (fun x ↦ (a-x)^2) hbb
             have Lmod : L % (a - b)^2 = 0 := by
-                 rw [h5, ←h6, mul_assoc, Int.mul_emod, Int.emod_self]
+                 rw [h5, ← h6, mul_assoc, Int.mul_emod, Int.emod_self]
                  norm_num
             have Lmod' : (L + a) * (L + b) % (a-b)^2 = 0 := by
                have h7 : (L + a) * (L + b) = L * (L + a + b) + a * b := by ring

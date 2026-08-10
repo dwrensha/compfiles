@@ -60,7 +60,7 @@ problem usa1996_p1 :
         have h3 : 2 * ((x:ℝ) + 1) + 1 = 2 * (↑x + 1 + 1) - 1 := by ring
         rw [h3]
       rw [h1]; clear h1
-      rw [sub_add_eq_sub_sub, ←Finset.sum_sub_distrib]
+      rw [sub_add_eq_sub_sub, ← Finset.sum_sub_distrib]
       have h4 : ∀ x ∈ Finset.range 90,
          ((↑x + 1) * Real.cos ((2 * (↑x + 1) - 1) * Real.pi / 180) -
            ↑x * Real.cos ((2 * (↑x + 1) - 1) * Real.pi / 180)) =
@@ -74,7 +74,7 @@ problem usa1996_p1 :
         simp only [Finset.range_eq_Ico]
         have h6 : 0 ≤ 45 := by norm_num
         have h7 : 45 ≤ 90 := by norm_num
-        rw [←Finset.sum_Ico_consecutive
+        rw [← Finset.sum_Ico_consecutive
              (f := (fun x ↦ Real.cos ((2 * (↑x + 1) - 1) * Real.pi / 180))) h6 h7]
         have h8 : ∀ i ∈ Finset.Ico (0:ℕ) 45,
              Real.cos ((2 * (↑i + 1) - 1) * Real.pi / 180) =
@@ -89,7 +89,7 @@ problem usa1996_p1 :
           have h15 : 45 = 89 + 1 - 45 := by norm_num
           have h16 : 90 = 89 + 1 - 0 := by norm_num
           nth_rewrite 1 [h15, h16]
-          rw [←Finset.sum_Ico_reflect _ 0 h7]
+          rw [← Finset.sum_Ico_reflect _ 0 h7]
           apply Finset.sum_congr rfl
           intro x hx
           apply congrArg
@@ -101,13 +101,13 @@ problem usa1996_p1 :
           ring
         rw [h9]; clear h9
         exact add_comm _ _
-      rw [←h5]
+      rw [← h5]
       norm_num1
       ring
     · rw [mul_comm]
       rw [Finset.sum_eq_zero]
       · simp only [zero_sub]
-        rw [←neg_mul, ←Real.cos_sub_pi]
+        rw [← neg_mul, ← Real.cos_sub_pi]
         ring_nf
       intro n _
       rw [cos_add]

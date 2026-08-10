@@ -53,7 +53,7 @@ problem usa1993_p1 (n : ℕ) (hn : 2 ≤ n) (a b : ℝ) (ha : 0 < a) (hb : 0 < b
     rw[pow_succ] at han
     have h9 : a < a * a^n := by linarith only [han, ha]
     have h10 : 1 < a^n := (lt_mul_iff_one_lt_right ha).mp h9
-    rw [←one_pow n] at h10
+    rw [← one_pow n] at h10
     exact lt_of_pow_lt_pow_left₀ n h11 h10
   obtain h12 | rfl | h14 := lt_trichotomy a b
   · exfalso

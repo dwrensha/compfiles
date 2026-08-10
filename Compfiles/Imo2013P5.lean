@@ -59,7 +59,7 @@ lemma f_pos_of_pos {f : ℚ → ℝ} {q : ℚ} (hq : 0 < q)
     (H1 : ∀ x y, 0 < x → 0 < y → f (x * y) ≤ f x * f y)
     (H4 : ∀ n : ℕ, 0 < n → (n : ℝ) ≤ f n) :
     0 < f q := by
-  have hfqn := calc f q.num = f (q * q.den) := by rw [←Rat.mul_den_eq_num]
+  have hfqn := calc f q.num = f (q * q.den) := by rw [← Rat.mul_den_eq_num]
                     _ ≤ f q * f q.den := H1 q q.den hq (Nat.cast_pos.mpr q.pos)
 
   -- Now we just need to show that `f q.num` and `f q.denom` are positive.
@@ -115,7 +115,7 @@ lemma fixed_point_of_pos_nat_pow {f : ℚ → ℝ} {n : ℕ} (hn : 0 < n)
     mod_cast H5 (a ^ n) (one_lt_pow₀ ha1 hn.ne')
 
   have hh1 := calc f (a^n) ≤ (f a)^n := pow_f_le_f_pow hn ha1 H1 H4
-                   _ = (a : ℝ)^n     := by rw [←hae]
+                   _ = (a : ℝ)^n     := by rw [← hae]
   exact mod_cast hh1.antisymm hh0
 
 lemma fixed_point_of_gt_1 {f : ℚ → ℝ} {x : ℚ} (hx : 1 < x)
@@ -196,7 +196,7 @@ problem imo2013_p5
       · have hfneq : f n = n := by
           have h := fixed_point_of_gt_1 (x := n) (mod_cast hn2) H1 H2 H4 H5 ha1 hae
           rwa [Rat.cast_natCast] at h
-        rw [←hfneq]
+        rw [← hfneq]
         exact H1 n x (Nat.cast_pos.mpr hn) hx
     exact h2.antisymm (H3 x hx n hn)
 

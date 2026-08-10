@@ -57,7 +57,7 @@ problem imo1968_p5a (f : ℝ → ℝ) (a : ℝ) (hf : P a f) :
   intro x
   obtain ⟨_, ha2⟩ := hf2 (x + a)
   have h4 : f (x + a) - f (x + a) ^ 2 = f (x + a) * (1 - f (x + a)) := by ring
-  rw [two_mul, ←add_assoc, ha2, h4]
+  rw [two_mul, ← add_assoc, ha2, h4]
   rw [h3]
   rw [Real.sqrt_sq_eq_abs]
   have h2' := abs_of_nonneg (h2 (x-a))
@@ -81,9 +81,9 @@ problem imo1968_p5b :
       · norm_num [solution_func, Int.even_add_one.mpr hodd, hodd]
   · rintro ⟨c, hc⟩
     have h1 : Function.const ℝ c 0 = c := rfl
-    rw [←hc] at h1
+    rw [← hc] at h1
     have h1' : Function.const ℝ c 1 = c := rfl
-    rw [←hc] at h1'
+    rw [← hc] at h1'
     have h2 : solution_func 0 = 1 := by simp
     have h3 : c = 1 := h1.symm.trans h2
     have h4 : solution_func 1 = 1/2 := by

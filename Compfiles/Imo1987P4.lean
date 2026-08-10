@@ -62,7 +62,7 @@ problem imo1987_p4 : ¬∃ f : ℕ → ℕ, ∀ n, f (f n) = n + 1987 := by
   have ab_range : A ∪ B = {n | n < 2 * m + 1} := by
     rw [ab_union]
     ext x
-    rw [Set.mem_ofPred_eq, ←not_iff_not, ←Set.compl_eq_univ_sdiff]
+    rw [Set.mem_ofPred_eq, ← not_iff_not, ← Set.compl_eq_univ_sdiff]
     rw [Set.notMem_compl_iff, not_lt]
     simp only [Set.mem_image, Set.mem_univ, true_and, exists_exists_eq_and, hf]
     rw [le_iff_exists_add']
@@ -78,7 +78,7 @@ problem imo1987_p4 : ¬∃ f : ℕ → ℕ, ∀ n, f (f n) = n + 1987 := by
   -- has an odd number of elements.
 
   have ab_card : Set.ncard (A ∪ B) = 2 * m + 1 := by
-    rw [ab_range, Set.Iio_def, ←Finset.coe_range, Set.ncard_coe_finset]
+    rw [ab_range, Set.Iio_def, ← Finset.coe_range, Set.ncard_coe_finset]
     exact Finset.card_range (2 * m + 1)
 
   have ab_finite : (A ∪ B).Finite := by

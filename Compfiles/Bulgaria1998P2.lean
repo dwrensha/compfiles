@@ -39,7 +39,7 @@ problem bulgaria1998_p2
   let x := ∠ D A C
   have : ∠ D A C = ∠ D C A := EuclideanGeometry.angle_eq_angle_of_dist_eq H1
   let y := ∠ C A B
-  have : ∠ A B C = x + y := by rw [←H2]; sorry -- need to switch to oangles?
+  have : ∠ A B C = x + y := by rw [← H2]; sorry -- need to switch to oangles?
   sorry
 
 

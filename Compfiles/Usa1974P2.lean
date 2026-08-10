@@ -36,10 +36,10 @@ lemma usa1974_p2_wlog :
     simp (discharger := positivity) only [Real.rpow_add, Real.mul_rpow]
     ring
   apply le_of_pow_le_pow_left₀ (by decide : 3 ≠ 0) (by positivity)
-  rw [←Real.rpow_natCast]
+  rw [← Real.rpow_natCast]
   rw [←(Real.rpow_mul (le_of_lt habc))]
   norm_num
-  rw [←h]
+  rw [← h]
   rw [pow_three']
   have hab' := Real.log_le_log hb hab
   have hbc' := Real.log_le_log hc hbc
@@ -61,10 +61,10 @@ problem usa1974_p2 :
   -- https://artofproblemsolving.com/wiki/index.php/1974_USAMO_Problems/Problem_2
   intro a b c ha hb hc
   wlog hab : a ≥ b with Hab
-  · move_add [←b]; move_mul [←b^b, ←b]
+  · move_add [← b]; move_mul [← b^b, ← b]
     refine Hab b a c hb ha hc (le_of_lt <| not_le.mp hab)
   · wlog hac : a ≥ c with Hac
-    · move_add [←c]; move_mul [←c^c, ←c]
+    · move_add [← c]; move_mul [← c^c, ← c]
       have hca : c ≥ a := le_of_lt <| not_le.mp hac
       apply Hac c a b <;> try assumption
       trans a <;> assumption

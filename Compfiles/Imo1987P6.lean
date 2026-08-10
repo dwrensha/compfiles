@@ -147,7 +147,7 @@ problem imo1987_p6
       replace ieq5 := Real.lt_sq_of_sqrt_lt ieq5 |> (div_lt_iff₀ (by norm_num)).1
       replace ieq5: (p) < (3*r^2 + 6*r +3) := cast_lt.1 <| by
         have casteq: ((r:ℝ)+1)^2 * 3 = ((3*r^2+6*r+3:ℕ):ℝ) := by simp;ring_nf
-        rw [←casteq]
+        rw [← casteq]
         exact ieq5
       lia
     have hN0 : N = kk^2+kk+p := rfl
@@ -158,13 +158,13 @@ problem imo1987_p6
       _ = 4*r^2 + 2* r*s + s^2 + 7*r+s+2 := by ring_nf
       _ < 4*r^2 +4*s^2 +8*r*s+4*r+4*s+1 := by lia
       _ = _ := by ring
-    rw [←hksr] at hN1
+    rw [← hksr] at hN1
 
     have hP : ∀ i , kk < i → i ≤ 2*(kk) → Coprime N i := by
       by_contra H
       push Not at H
       obtain ⟨j, hj1,hj2,hj3⟩ := H
-      have hj1' : s+r +1 ≤ j := by rw [←hksr]; apply succ_le_of_lt hj1
+      have hj1' : s+r +1 ≤ j := by rw [← hksr]; apply succ_le_of_lt hj1
       let  ss :=  j-(s+r+1)
       have hss0 : j =  ss + (s+r+1) := Nat.eq_add_of_sub_eq hj1' (by rfl)
 
@@ -173,7 +173,7 @@ problem imo1987_p6
 
       have hss1 : ss ≤ k := by
         apply Nat.le_of_add_le_add_right (b :=s+r+1)
-        rw [←hss0,←hksr]
+        rw [← hss0,← hksr]
         calc
         _ ≤ _ := hj2
         _ = _ := by lia
@@ -182,11 +182,11 @@ problem imo1987_p6
         unfold f
         rw [hN0]
         zify
-        rw [Int.natCast_sub hj2,hss0,←hksr]
+        rw [Int.natCast_sub hj2,hss0,← hksr]
         push_cast
         ring_nf
       change ¬N.gcd j = 1 at hj3
-      rw [hfss, ←Nat.coprime_iff_gcd_eq_one, Nat.coprime_add_mul_right_left] at hj3
+      rw [hfss, ← Nat.coprime_iff_gcd_eq_one, Nat.coprime_add_mul_right_left] at hj3
       have hss2 : f ss ∣ j := Nat.Prime.dvd_iff_not_coprime hss1 |>.2 hj3
       have hfss1: p ≤ f ss := Nat.le_add_left p (ss ^ 2 + ss)
       have hp1 : p - 2 < p := sub_le_lemma hp (by lia)
@@ -200,7 +200,7 @@ problem imo1987_p6
         calc
           p ≤ ss^2 + p := Nat.le_add_left _ _
           _ = _ := hfss3
-          _ = _ := by rw [←hksr]
+          _ = _ := by rw [← hksr]
       have hc2: p ≤ p-1 := by
         calc
         _ ≤ _ := hc1

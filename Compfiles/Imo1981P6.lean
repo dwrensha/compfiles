@@ -69,7 +69,7 @@ problem imo1981_p6 (f : ℕ → ℕ → ℕ)
     | succ y ih =>
       rw [h3, h20]
       rw [show 2 * f (2 + 1) y + 3 + 3 = 2 * (f 3 y + 3) by ring]
-      rw [ih, ←Nat.pow_succ']
+      rw [ih, ← Nat.pow_succ']
   have h6 : ∀ y, f 4 (y + 1) + 3 = 2^(f 4 y + 3) := by
     intro y
     induction y with

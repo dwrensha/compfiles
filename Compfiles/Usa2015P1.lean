@@ -49,9 +49,9 @@ problem usa2015_p1 (x y : ℤ) :
   apply iff_comm (c := ∃ t, x + y = 3 * t)
   · simp; intro h; obtain h | h := h
     all_goals obtain ⟨h, hx, hy⟩ := h; rw [hx, hy]; ring_nf; use (h + h ^ 2); ring_nf
-  · intro h; apply_fun (· * 3 ^ 3) at h; rw [←mul_pow, (add_mul _ 1)] at h; simp at h
+  · intro h; apply_fun (· * 3 ^ 3) at h; rw [← mul_pow, (add_mul _ 1)] at h; simp at h
     norm_num at h; norm_cast at h
-    suffices (x + y) % 3 = 0 by rw [←dvd_def]; exact Int.dvd_of_emod_eq_zero this
+    suffices (x + y) % 3 = 0 by rw [← dvd_def]; exact Int.dvd_of_emod_eq_zero this
     have h1 : (x ^ (2 : ℕ) + x * y + y ^ (2 : ℕ)) * (27 : ℤ) % 3 =
               (x + y + (3 : ℤ)) ^ (3 : ℕ) % 3 := by rw [h]
     clear h
@@ -71,14 +71,14 @@ problem usa2015_p1 (x y : ℤ) :
   rw [← Rat.intCast_add, ht]
   rw [(by cancel_denoms : ((3 * t) : ℤ) / (3 : ℚ) = t)]
   norm_cast
-  rw [(by rw [←ht]; linarith only : (x ^ 2 + x * y + y ^ 2) = (3 * t) ^ 2 + x * (x - 3 * t))]
+  rw [(by rw [← ht]; linarith only : (x ^ 2 + x * y + y ^ 2) = (3 * t) ^ 2 + x * (x - 3 * t))]
   trans (2 * x - 3 * t) ^ 2 = (t - 2) ^ 2 * (4 * t + 1)
   swap; constructor <;> intro h <;> linarith only [h]
   constructor
   · intro h
     simp at h
     obtain ⟨n, h1, h2⟩ | ⟨n, h1, h2⟩ := h
-    all_goals have ht : t = n ^ 2 + n := by rw [ht2, h1, h2]; ring_nf; rw [←add_mul]; simp
+    all_goals have ht : t = n ^ 2 + n := by rw [ht2, h1, h2]; ring_nf; rw [← add_mul]; simp
     all_goals rw [ht]; (first | rw [h1] | rw [h2]); ring_nf
   · intro ht3
     by_cases ht4 : (t = 2)
@@ -89,7 +89,7 @@ problem usa2015_p1 (x y : ℤ) :
       simp [*]; use 1; simp
     · obtain ⟨d, hd⟩ := abc (sub_ne_zero_of_ne ht4) ht3
       have Odd_dd : Odd (d ^ 2) := by
-        rw [←hd]; apply Even.add_one; apply Even.mul_right; exact Int.even_iff.mpr rfl
+        rw [← hd]; apply Even.add_one; apply Even.mul_right; exact Int.even_iff.mpr rfl
       have Odd_d  : Odd d := (Int.odd_pow' (by positivity)).mp Odd_dd
       set n := d / 2 with hn
       have nd : d = 2 * n + 1 := by rw [hn]; symm; exact Int.two_mul_ediv_two_add_one_of_odd Odd_d

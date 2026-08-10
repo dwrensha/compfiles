@@ -32,7 +32,7 @@ problem usa1981_p5 (x : ℝ) (n : ℕ) :
   -- We follow the solution from
   -- https://artofproblemsolving.com/wiki/index.php/1981_USAMO_Problems/Problem_5
 
-  simp_rw [←Int.self_sub_fract, sub_div, mul_div_right_comm]
+  simp_rw [← Int.self_sub_fract, sub_div, mul_div_right_comm]
   rw [Finset.sum_sub_distrib]
   have h1 : ∀ x1 ∈ Finset.Icc 1 n, (x1 : ℝ) / (x1 : ℝ) * x = x := fun x1 hx ↦ by
     rw [Finset.mem_Icc] at hx
@@ -79,7 +79,7 @@ problem usa1981_p5 (x : ℝ) (n : ℕ) :
     exact Nat.sub_le n m
   rw [show Finset.Icc 1 n = Finset.Ico 1 (n + 1) by rfl]
   rw [show Finset.Icc 1 (n - m) = Finset.Ico 1 (n - m + 1) by rfl] at h9
-  rw [←Finset.sum_Ico_consecutive _ h12 h13]
+  rw [← Finset.sum_Ico_consecutive _ h12 h13]
   have h14 : a m ≤ ∑ i ∈ Finset.Ico (n - m + 1) (n + 1), a i / ↑i := by
     have h15 : m ≠ 0 := Nat.pos_iff_ne_zero.mp hm3
     have h16 : (m:ℝ) ≠ 0 := Nat.cast_ne_zero.mpr h15
@@ -100,7 +100,7 @@ problem usa1981_p5 (x : ℝ) (n : ℕ) :
     have h20 : n + 1 - (n - m + 1) = m := by
       rw [Nat.add_sub_add_right]
       exact Nat.sub_sub_self hm4
-    rw [h20, ←mul_div_assoc] at h19
+    rw [h20, ← mul_div_assoc] at h19
     exact h19
   calc _ ≤ a (n - m) + a m := h11
        _ ≤ _ := add_le_add h9 h14

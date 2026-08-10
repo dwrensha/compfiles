@@ -63,15 +63,15 @@ problem usa2001_p3 (a b c : ℝ) (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c)
     (h : a^2 + b^2 + c^2 + a * b * c = 4) :
     0 ≤ a * b + b * c + c * a - a * b * c ∧
     a * b + b * c + c * a - a * b * c ≤ 2 := by
-  rw [←feq] at h
-  rw [←geq]
+  rw [← feq] at h
+  rw [← geq]
   wlog ha1 : a≤1 generalizing a b c with Ha
   · by_cases hb1 : b ≤ 1
     · rw [(by ring_nf : g a b c = g b a c)]
-      exact Ha b a c hb ha hc (by rw [←h]; unfold f; ring_nf) hb1
+      exact Ha b a c hb ha hc (by rw [← h]; unfold f; ring_nf) hb1
     by_cases hc1 : c ≤ 1
     · rw [(by ring_nf : g a b c = g c b a)]
-      exact Ha c b a hc hb ha (by rw [←h]; unfold f; ring_nf) hc1
+      exact Ha c b a hc hb ha (by rw [← h]; unfold f; ring_nf) hc1
     apply False.elim (ne_of_not_le _ h)
     unfold f
     rw [not_le]
@@ -87,13 +87,13 @@ problem usa2001_p3 (a b c : ℝ) (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c)
   · wlog hb1 : b ≤ 1 generalizing b c with Hb
     · by_cases hc1 : c ≤ 1
       · rw [(by ring_nf : g a b c = g a c b)]
-        exact Hb c b hc hb (by rw [←h]; unfold f; ring_nf) hc1
+        exact Hb c b hc hb (by rw [← h]; unfold f; ring_nf) hc1
       · apply usa2001_p3_lemma a b c ha h
         have : (b - 1 > 0) := by linarith
         have : (c - 1 > 0) := by linarith
         positivity
     · rw [(by ring_nf : g a b c = g c a b)]
-      apply usa2001_p3_lemma c a b hc (by rw [←h]; unfold f; ring_nf)
+      apply usa2001_p3_lemma c a b hc (by rw [← h]; unfold f; ring_nf)
       rw [(by ring_nf : (a - 1) * (b - 1) = (1 - a) * (1 - b))]
       positivity
 

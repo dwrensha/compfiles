@@ -35,17 +35,17 @@ lemma prod_digits_le {x b : ℕ} (hb : 2 ≤ b) (xpos : 0 < x) :
     List.prod (Nat.digits b x) ≤ x := by
   have h1 : Nat.digits b x ≠ [] :=
     Nat.digits_ne_nil_iff_ne_zero.mpr (Nat.pos_iff_ne_zero.mp xpos)
-  rw [←List.dropLast_append_getLast h1, List.prod_append, List.prod_singleton]
+  rw [← List.dropLast_append_getLast h1, List.prod_append, List.prod_singleton]
 
   have h3 := Nat.ofDigits_digits b x
   rw [Nat.ofDigits_eq_sum_mapIdx] at h3
   have h4 : List.mapIdx (fun i a => a * b ^ i) (Nat.digits b x) ≠ [] :=
     List.mapIdx_ne_nil_iff.mpr h1
 
-  rw [←List.dropLast_append_getLast (List.mapIdx_ne_nil_iff.mpr h1),
+  rw [← List.dropLast_append_getLast (List.mapIdx_ne_nil_iff.mpr h1),
       List.sum_append, List.sum_singleton] at h3
   have h6 : List.getLast (List.mapIdx (fun i a => a * b ^ i) (Nat.digits b x)) h4 ≤ x :=
-     by nth_rewrite 2 [←h3]; exact Nat.le_add_left _ _
+     by nth_rewrite 2 [← h3]; exact Nat.le_add_left _ _
   have h7 : List.getLast (List.mapIdx (fun i a => a * b ^ i) (Nat.digits b x)) h4 =
        b ^ (List.dropLast (Nat.digits b x)).length * List.getLast (Nat.digits b x) h1 := by
     rw [lemma0 _ h1, mul_comm]
