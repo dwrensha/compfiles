@@ -84,12 +84,12 @@ theorem not_irrational_dist_P_P (i j : ℕ) : ¬ Irrational (dist (P i) (P j)) :
   rw [Complex.dist_mk, Real.cos_sub_cos, Real.sin_sub_sin, mul_right_comm]
   repeat rw [mul_pow]
   simp only [even_two, Even.neg_pow]
-  rw [←mul_add]
+  rw [← mul_add]
   simp only [Real.sin_sq_add_cos_sq, mul_one, Nat.ofNat_nonneg, pow_succ_nonneg, Real.sqrt_mul,
     Real.sqrt_sq]
   rw [Real.sqrt_sq_eq_abs]
   apply not_irrational_mul (not_irrational_ofNat _)
-  rw [irrational_abs_iff, mul_right_comm _ 2 _, mul_right_comm _ 2 _, ←sub_mul, mul_div_cancel_right₀ _ (by simp), Real.sin_sub]
+  rw [irrational_abs_iff, mul_right_comm _ 2 _, mul_right_comm _ 2 _, ← sub_mul, mul_div_cancel_right₀ _ (by simp), Real.sin_sub]
   apply not_irrational_sub <;> apply not_irrational_mul <;> simp [not_irrational_sin_θ_mul_and_not_irrational_cos_θ_mul]
 
 

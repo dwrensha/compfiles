@@ -61,7 +61,7 @@ problem imo1996_p3 (f : ℕ → ℕ) :
     have h3 : ∀ x, k ∣ f x := fun x ↦ by
       rw [hf1]
       dsimp only
-      rw [←Nat.add_mul]
+      rw [← Nat.add_mul]
       exact Nat.dvd_mul_left _ _
 
     -- Then f(f(m)) = f(m)
@@ -84,7 +84,7 @@ problem imo1996_p3 (f : ℕ → ℕ) :
                  dvd_refl, Nat.mod_mod_of_dvd]
       have h7 : k ∣ b * k + n1 s * k := by apply Nat.dvd_add <;> simp
       rw [Nat.add_div_of_dvd_left h7]
-      rw [←Nat.add_mul b]
+      rw [← Nat.add_mul b]
       rw [Nat.mul_div_left (b + n1 s) hkp, Nat.add_mul]
       ring
 
@@ -134,7 +134,7 @@ problem imo1996_p3 (f : ℕ → ℕ) :
     | zero => simp only [hf0, zero_mul]
     | succ q ih =>
       rw [Nat.add_mul, one_mul]
-      nth_rw 2 [←hfk]
+      nth_rw 2 [← hfk]
       rw [hf, ih, hfk]
 
   have h4 : ∀ n, f n = n → k ∣ n := fun n hn ↦ by
@@ -172,10 +172,10 @@ problem imo1996_p3 (f : ℕ → ℕ) :
   constructor
   · simp[hf0]
   ext x
-  nth_rw 1 [←Nat.div_add_mod x k]
+  nth_rw 1 [← Nat.div_add_mod x k]
   have h11 := h3 (x / k)
   nth_rw 2 [mul_comm] at h11
-  rw [←h11, add_comm _ (x % k), hf, h3]
+  rw [← h11, add_comm _ (x % k), hf, h3]
   have h12 : f (x % k) / k * k = f (x % k) := Nat.div_mul_cancel (h10 (x % k))
   rw [h12]
   ring

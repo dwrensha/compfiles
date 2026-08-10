@@ -115,11 +115,11 @@ problem imo1996_p6 {p q n : ℕ} (x : ℕ → ℤ)
       intro i hi
       cases' h₇ i hi with hp hq
       · left
-        rwa [hx' i (Nat.le_of_succ_le hi), hx' (i + 1) (Order.add_one_le_iff.mpr hi), hp', ←sub_mul, Nat.cast_mul,
+        rwa [hx' i (Nat.le_of_succ_le hi), hx' (i + 1) (Order.add_one_le_iff.mpr hi), hp', ← sub_mul, Nat.cast_mul,
             mul_right_cancel_iff_of_pos (Int.natCast_pos.mpr h_w_pos)] at hp
       · right
-        rwa [hx' i (Nat.le_of_succ_le hi), hx' (i + 1) (Order.add_one_le_iff.mpr hi), hq', ←sub_mul, Nat.cast_mul,
-            ←neg_mul, mul_right_cancel_iff_of_pos (Int.natCast_pos.mpr h_w_pos)] at hq
+        rwa [hx' i (Nat.le_of_succ_le hi), hx' (i + 1) (Order.add_one_le_iff.mpr hi), hq', ← sub_mul, Nat.cast_mul,
+            ← neg_mul, mul_right_cancel_iff_of_pos (Int.natCast_pos.mpr h_w_pos)] at hq
 
     -- Now use recursion to prove it for the reduced problem
     have h_ind := imo1996_p6 x' h₁' h₂' h₃ h₄' h₅' h₆' h₇'
@@ -174,7 +174,7 @@ problem imo1996_p6 {p q n : ℕ} (x : ℕ → ℤ)
     rw [hk, mul_comm, mul_assoc] at h_rp_eq_sq
     have : r = k * q := Nat.eq_of_mul_eq_mul_left h₁ h_rp_eq_sq
     rw [mul_comm] at this
-    simp [h_eq_add, hk, this, ←add_mul, add_comm]
+    simp [h_eq_add, hk, this, ← add_mul, add_comm]
 
   have h_k_dvd_n : k ∣ n := Dvd.intro_left (p + q) h_p_add_q_mul_k_eq_n
   obtain ⟨h, hh⟩ := h_k_dvd_n
@@ -227,7 +227,7 @@ problem imo1996_p6 {p q n : ℕ} (x : ℕ → ℤ)
       · rw [h_gihp, h_giq]
         simp [h_h_eq_p_add_q]
     · cases' h_gi with h_gip h_giq
-      · rw [h_gihq, h_gip, ←neg_sub]
+      · rw [h_gihq, h_gip, ← neg_sub]
         simp [h_h_eq_p_add_q]
       · rw [h_gihq, h_giq]
         simp
@@ -281,7 +281,7 @@ problem imo1996_p6 {p q n : ℕ} (x : ℕ → ℤ)
     have h_di_delta_t_minus_1 := h_di_delta (t - 1) (Nat.sub_lt_right_of_lt_add h_t_pos h_t_lt_nh)
     simp [Nat.sub_add_cancel h_t_pos] at h_di_delta_t_minus_1
     have : d t - d (t - 1) = (v - w) * ↑h := by
-      rw [hv, hw, ←sub_mul]
+      rw [hv, hw, ← sub_mul]
     repeat rw [this] at h_di_delta_t_minus_1
     have h_h_ne : (h : ℤ) ≠ 0 := Int.natCast_ne_zero_iff_pos.mpr h_pos
     rcases h_di_delta_t_minus_1 with h_zero | h_eq_h | h_eq_neg_h

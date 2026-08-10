@@ -155,7 +155,7 @@ lemma lemma5' {a x : ℕ} (hx : 0 < x)
   have h10 : x + a = 2 ^ padicValNat 2 x * (xx + 2 ^ (1 + c) * aa) := by
     nth_rw 1 [hxx]
     nth_rw 1 [haa]
-    rw [mul_assoc, ←mul_add]
+    rw [mul_assoc, ← mul_add]
 
   have h12 : 2 ^ padicValNat 2 x ∣ x + a := Dvd.intro _ h10.symm
   replace h12 := (Nat.pow_dvd_iff_le_padicValNat (by omega) (by lia)).mp h12
@@ -166,7 +166,7 @@ lemma lemma5' {a x : ℕ} (hx : 0 < x)
 
   have h16 : ¬ 2 ∣ xx := by
     rintro ⟨z, rfl⟩
-    rw [←mul_assoc, ←pow_succ] at hxx
+    rw [← mul_assoc, ← pow_succ] at hxx
     have h17 : 2 ^ (padicValNat 2 x + 1) ∣ x := Dvd.intro z hxx.symm
     replace h17 := (Nat.pow_dvd_iff_le_padicValNat (by omega) (Nat.ne_zero_of_lt hx)).mp h17
     lia
@@ -303,7 +303,7 @@ lemma lemma2' (a : ℕ+) (N : ℕ) (hN : 1 < N) (s0 : State N)
         push_cast at hie
         rw [Nat.not_even_iff_odd] at h3
         have h4 := Even.odd_add h2 h3
-        rw [←Nat.not_even_iff_odd] at h4
+        rw [← Nat.not_even_iff_odd] at h4
         exact h4 hie
       · rw [Function.update_of_ne hij] at hie
         have h3 := h1 i

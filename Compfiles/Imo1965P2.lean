@@ -111,7 +111,7 @@ problem imo1965_p2 (x : Fin 3 → ℝ) (a : Fin 3 → Fin 3 → ℝ)
   have h3' : 0 < a 0 1 + a 0 2 + a 0 0 := by
     have h4 : ∑ j : Fin 3, a 0 j = a 0 1 + a 0 2 + a 0 0 := by
       rw [Fin.sum_univ_three, add_rotate]
-    rw [←h4]
+    rw [← h4]
     exact hc 0
   have h4 : - a 0 1 + - a 0 2 < a 0 0 := by linarith only [h3']
   have h5 : 0 < - a 0 1 := neg_pos.mpr (hab 0 1)

@@ -84,7 +84,7 @@ theorem induction_step [NeZero N] (h : ∀ (j i k), C i = C j → C j = C k → 
       · rw [Finset.disjoint_iff_inter_eq_empty] at ih2
         contrapose! ih2
         use y.val
-        rw [Finset.mem_inter, ←SetLike.mem_coe]
+        rw [Finset.mem_inter, ← SetLike.mem_coe]
         simp only [Finset.coe_image, Subtype.coe_prop, ih2, and_self]
       · calc
           _ ≤ Δ'.card ⌈/⌉ (N - Cdone.card) := by
@@ -97,7 +97,7 @@ theorem induction_step [NeZero N] (h : ∀ (j i k), C i = C j → C j = C k → 
             apply Finset.card_le_card_of_injOn (f:=Subtype.val)
             · unfold C' at *
               intro x hx
-              simp [←Subtype.val_inj] at hx ⊢
+              simp [← Subtype.val_inj] at hx ⊢
               exact hx
             · exact Set.injOn_subtype_val
     · apply lt_of_le_of_lt (b:=(N - Cdone.card) * (Δ'.card ⌈/⌉ (N - Cdone.card) - 1))
@@ -117,10 +117,10 @@ theorem induction_step [NeZero N] (h : ∀ (j i k), C i = C j → C j = C k → 
         apply Nat.lt_of_add_one_le
         rw [Nat.ceilDiv_eq_add_pred_div, Nat.mul_sub, mul_one]
         have := Nat.mul_div_le (Δ'.card + (N - Cdone.card) - 1) (N - Cdone.card)
-        rw [Nat.le_sub_iff_add_le, ←Nat.sub_le_iff_le_add, Nat.sub_add_comm] at this
+        rw [Nat.le_sub_iff_add_le, ← Nat.sub_le_iff_le_add, Nat.sub_add_comm] at this
         · exact this
         · suffices 1 ≤ (Δ'.card + (N - Cdone.card) - 1) / (N - Cdone.card) by exact Nat.le_mul_of_pos_right _ this
-          rw [←Nat.div_self NsCdpos]
+          rw [← Nat.div_self NsCdpos]
           apply Nat.div_le_div_right
           rw [Nat.div_self NsCdpos]
           lia
@@ -129,7 +129,7 @@ theorem induction_step [NeZero N] (h : ∀ (j i k), C i = C j → C j = C k → 
     rw [Finset.union_singleton, Finset.card_insert_of_notMem hy1, cc]
   use Cdone ∪ {y}, cc'
   have Cyne : (Δ' ∩ members_of C y).Nonempty := by
-    rw [←Finset.card_pos, Nat.lt_iff_add_one_le]
+    rw [← Finset.card_pos, Nat.lt_iff_add_one_le]
     trans k ⌈/⌉ (N - Cdone.card)
     · by_contra!
       rw [add_comm, Nat.lt_one_add_iff] at this
@@ -192,12 +192,12 @@ theorem induction_step [NeZero N] (h : ∀ (j i k), C i = C j → C j = C k → 
             grind
           use ?_
           · have := (h2 ⟨x.val+xmin.val, xsx⟩ ?_).snd
-            · simp_rw [←add_assoc, add_comm, add_assoc]
+            · simp_rw [← add_assoc, add_comm, add_assoc]
               simp_rw [add_comm] at this
               apply this
             · apply hs1
           · have := (h2 ⟨x.val+xmin.val, xsx⟩ ?_).snd
-            · simp_rw [←add_assoc, add_comm, add_assoc]
+            · simp_rw [← add_assoc, add_comm, add_assoc]
               simp_rw [add_comm] at this
               grind only
             · apply hs1
@@ -216,13 +216,13 @@ theorem induction_step [NeZero N] (h : ∀ (j i k), C i = C j → C j = C k → 
     by_cases! xvx'v : ¬ x'.val ≤ x.val
     · grind only
     have hb0 : b0.val + 1 < M := by grind only [= Finset.mem_Icc, = Finset.mem_filter]
-    rw [Ne, Subtype.ext_iff, eq_comm, ←add_left_inj b0.val]
+    rw [Ne, Subtype.ext_iff, eq_comm, ← add_left_inj b0.val]
     rw [show x.val + b0.val = (⟨x.val+b0.val, h2⟩ : Name).val by simp]
     apply h <;> grind only [= Finset.mem_filter]
   · unfold Δ
     rw [Finset.card_map, Finset.card_attach, Finset.card_erase_of_mem (by apply Finset.min'_mem)]
     apply Nat.sub_le_sub_right
-    rw [←cc]
+    rw [← cc]
     apply le_trans hy2
     apply Finset.card_le_card
     simp

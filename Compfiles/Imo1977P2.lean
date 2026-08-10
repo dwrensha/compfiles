@@ -64,7 +64,7 @@ problem imo1977_p2 :
     and_intros <;> {
       intro _
       unfold example_16
-      rw [←sum_successive_terms_intCast]
+      rw [← sum_successive_terms_intCast]
       simp only [gt_iff_lt, Int.cast_pos, Int.cast_lt_zero]
       decide +revert
     }
@@ -107,7 +107,7 @@ problem imo1977_p2 :
       apply Fintype.sum_neg
       exact lt_of_strongLT rneg
     have : 0 < (1 ᵥ* A) ⬝ᵥ 1 := by
-      rw [←Matrix.dotProduct_mulVec, one_dotProduct]
+      rw [← Matrix.dotProduct_mulVec, one_dotProduct]
       apply Fintype.sum_pos
       exact lt_of_strongLT cpos
     linarith

@@ -63,14 +63,14 @@ lemma cauchy_schwarz {x1 x2 x3 y1 y2 y3 : ℝ}
   rw [Real.sq_sqrt hy1] at h1
   rw [Real.sq_sqrt hy2] at h1
   rw [Real.sq_sqrt hy3] at h1
-  rw [←Real.sqrt_mul (show 0 ≤ x1 + x2 + x3 by positivity)] at h1
-  rw [←Real.sqrt_mul hx1] at h1
-  rw [←Real.sqrt_mul hx2] at h1
-  rw [←Real.sqrt_mul hx3] at h1
+  rw [← Real.sqrt_mul (show 0 ≤ x1 + x2 + x3 by positivity)] at h1
+  rw [← Real.sqrt_mul hx1] at h1
+  rw [← Real.sqrt_mul hx2] at h1
+  rw [← Real.sqrt_mul hx3] at h1
   have h4 : (√((x1 + x2 + x3) * (y1 + y2 + y3)))^2 = (x1 + x2 + x3) * (y1 + y2 + y3) := by
     refine Real.sq_sqrt ?_
     positivity
-  rw [←h4]
+  rw [← h4]
   exact pow_le_pow_left₀ h2 h1 2
 
 lemma lemma1 (u : ℝ) (hu : u ≠ 1) (hp : 0 < u) : 2 < u + 1/u := by
@@ -235,8 +235,8 @@ theorem imo2023_p4_generalized
                Subtype.mk_le_mk, add_le_iff_nonpos_right,
                nonpos_iff_eq_zero, one_ne_zero, and_false, not_false_eq_true,
                Finset.sum_insert] at h1
-    rw [←add_assoc, add_comm (x ⟨n + 2, hn2⟩)] at h1
-    rw [←add_assoc] at h1
+    rw [← add_assoc, add_comm (x ⟨n + 2, hn2⟩)] at h1
+    rw [← add_assoc] at h1
     have hx1 : 0 ≤ x ⟨n + 1, hn1⟩ := le_of_lt (hxp ⟨n + 1, hn1⟩)
     have hx2 : 0 ≤ x ⟨n + 2, hn2⟩ := le_of_lt (hxp ⟨n + 2, hn2⟩)
     have hx3 : 0 ≤ ∑ x_1 ∈ Finset.filter
@@ -256,7 +256,7 @@ theorem imo2023_p4_generalized
 
     have h9 := cauchy_schwarz hx1 hx2 hx3 hy1 hy2 hy3
     clear hx1 hx2 hx3 hy1 hy2 hy3
-    rw [←h1] at h9; clear h1
+    rw [← h1] at h9; clear h1
     let x' : { a // a ∈ Finset.Icc 1 (2 * m + 1) } → ℝ :=
       fun ⟨z, hz⟩ ↦ x ⟨z, by simp only [Finset.mem_Icc] at hz ⊢; lia⟩
     let e : { x // x ∈ Finset.Icc 1 (2 * m + 1) } →
@@ -307,9 +307,9 @@ theorem imo2023_p4_generalized
         exact Nat.le_add_left 1 (2 * m)
       unfold aa
       congr 2
-      · rw [←h20 hn, Finset.sum_map]
+      · rw [← h20 hn, Finset.sum_map]
         rfl
-      · rw [←h20 hn, Finset.sum_map]
+      · rw [← h20 hn, Finset.sum_map]
         apply Finset.sum_congr rfl
         intro ii hii
         simp [x', e]
@@ -336,13 +336,13 @@ theorem imo2023_p4_generalized
       specialize hxa ⟨y, hy'⟩
       obtain ⟨k, hk⟩ := hxa
       use k
-      rw [←hk]
+      rw [← hk]
       clear h5 h7 h9
       unfold aa
       congr 2
-      · rw [←h20 hy, Finset.sum_map]
+      · rw [← h20 hy, Finset.sum_map]
         rfl
-      · rw [←h20 hy, Finset.sum_map]
+      · rw [← h20 hy, Finset.sum_map]
         rfl
     specialize ih x' hxp' hxi' hxa'
     have hup : 0 < u := by
@@ -358,7 +358,7 @@ theorem imo2023_p4_generalized
       unfold u
       have hp1 : 0 < x ⟨n + 1, hn1⟩ := hxp ⟨n + 1, hn1⟩
       have hp2 : 0 < x ⟨n + 2, hn2⟩ := hxp ⟨n + 2, hn2⟩
-      rw [←Real.sqrt_mul (by positivity)]
+      rw [← Real.sqrt_mul (by positivity)]
       field_simp
       norm_num
     rw [h11] at h9; clear h11

@@ -50,7 +50,7 @@ theorem all_real_roots (P : ℝ[X]) (rs : Finset ℝ) (hrs : ∀ x ∈ rs, IsRoo
     simp only [Finset.image_val, Multiset.mem_dedup, Multiset.mem_map, Finset.mem_val] at hr
     let ⟨x, ⟨hx1, hx2⟩⟩ := hr
     refine mem_aroots.mpr ⟨nontrivial, ?_⟩
-    rw [←hx2, ←Complex.coe_algebraMap, aeval_algebraMap_apply_eq_algebraMap_eval, hrs _ hx1]
+    rw [← hx2, ← Complex.coe_algebraMap, aeval_algebraMap_apply_eq_algebraMap_eval, hrs _ hx1]
     simp
   · rw [IsAlgClosed.card_aroots_eq_natDegree]
     rw [Finset.image_val, Multiset.dedup_eq_self.mpr, Multiset.card_map, Finset.card_val]
@@ -72,7 +72,7 @@ theorem root_of_sign_flip {α : Type} [ConditionallyCompleteLinearOrder α] [Top
           positivity
         · simp at fann
           have := hs fann
-          rw [←neg_mul_neg]
+          rw [← neg_mul_neg]
           apply le_mul_of_le_mul_of_nonneg_right (b:=-f b)
           · exact mul_self_nonneg _
           · simp [le_of_lt fafb]
@@ -89,7 +89,7 @@ theorem root_of_sign_flip {α : Type} [ConditionallyCompleteLinearOrder α] [Top
           positivity
         · simp at fann
           have := hs fann
-          rw [←neg_mul_neg]
+          rw [← neg_mul_neg]
           apply le_mul_of_le_mul_of_nonneg_left (c:=-f a)
           · exact mul_self_nonneg _
           · simp [fafb]
@@ -100,7 +100,7 @@ theorem root_of_sign_flip {α : Type} [ConditionallyCompleteLinearOrder α] [Top
 theorem P_natDegree (n : ℕ) (npos : 0 < n) : (P n).natDegree = 2^n := by
   fun_induction P
   · simp at npos
-  · simp [←C_ofNat]
+  · simp [← C_ofNat]
   · expose_names
     rw [natDegree_comp]
     rw [ih1, ih2, pow_succ _ (j+1)]
@@ -142,7 +142,7 @@ theorem NicePlotOfP.findRoot.spec_gt {n} {npos} (pl : NicePlotOfP n npos) (i:ℕ
   let := Exists.choose_spec (NicePlotOfP.findRoot pl i hi)
   conv =>
     lhs
-    rw [show i' = ⟨i, by lia⟩ by simp_rw [←e]]
+    rw [show i' = ⟨i, by lia⟩ by simp_rw [← e]]
   exact (Set.mem_Ioo.mpr this.left).left
 
 theorem NicePlotOfP.findRoot.spec_lt {n} {npos} (pl : NicePlotOfP n npos) (i:ℕ) (hi : i+1 < pl.k) (i') (e : i'.val = i+1)  :
@@ -150,7 +150,7 @@ theorem NicePlotOfP.findRoot.spec_lt {n} {npos} (pl : NicePlotOfP n npos) (i:ℕ
   let := Exists.choose_spec (NicePlotOfP.findRoot pl i hi)
   conv =>
     rhs
-    rw [show i' = ⟨i+1, hi⟩ by simp_rw [←e]]
+    rw [show i' = ⟨i+1, hi⟩ by simp_rw [← e]]
   exact (Set.mem_Ioo.mpr this.left).right
 
 theorem NicePlotOfP.findRoot.spec_root {n} {npos} (pl : NicePlotOfP n npos) (i:ℕ) (hi : i+1 < pl.k) :
@@ -212,7 +212,7 @@ noncomputable def makePlot (n : ℕ) (npos : 0 < n) : NicePlotOfP n npos :=
         have pa' :Even (i.val+1) := by grind only [= Nat.even_iff]
         simp only [pa, ↓reduceDIte, pa']
         apply NicePlotOfP.findRoot.spec_lt
-        rw [←mul_left_inj' (c:=2) (by simp), add_mul]
+        rw [← mul_left_inj' (c:=2) (by simp), add_mul]
         rw [Nat.div_two_mul_two_of_even, Nat.div_two_mul_two_of_even] <;> grind only [= Nat.even_iff]
     y_eq := by
       intro i
@@ -228,7 +228,7 @@ noncomputable def makePlot (n : ℕ) (npos : 0 < n) : NicePlotOfP n npos :=
         rw [@NicePlotOfP.y_eq (n+1)]
         simp only [eval_sub, eval_pow, eval_X, eval_ofNat]
         rw [(neg_one_pow_eq_one_iff_even (by norm_num)).mpr pa]
-        rw [mul_pow, ←pow_mul]
+        rw [mul_pow, ← pow_mul]
         rw [(neg_one_pow_eq_one_iff_even (by linarith)).mpr _]
         · norm_num
         · simp
@@ -241,7 +241,7 @@ noncomputable def makePlot (n : ℕ) (npos : 0 < n) : NicePlotOfP n npos :=
         rw [eval_comp]
         simp only [eval_sub, eval_pow, eval_X, eval_ofNat]
         rw [show eval _ (P (n + 1)) = 0 by {
-          rw [←IsRoot]
+          rw [← IsRoot]
           apply NicePlotOfP.findRoot.spec_root
         }]
         rw [(neg_one_pow_eq_neg_one_iff_odd (by norm_num)).mpr (Nat.not_even_iff_odd.mp pa)]
@@ -282,7 +282,7 @@ theorem P_intersect_X {n : ℕ} {npos : 0 < n} (pl : NicePlotOfP n npos) (i : �
     · rw [(neg_one_pow_eq_one_iff_even _).mpr _, (neg_one_pow_eq_neg_one_iff_odd _).mpr _] <;> grind
     · rw [(neg_one_pow_eq_neg_one_iff_odd _).mpr _, (neg_one_pow_eq_one_iff_even _).mpr _] <;> grind
   have : -2 ≤ a ∧ a < 2 := by
-    rw [←pl.x_first, ←pl.x_last]
+    rw [← pl.x_first, ← pl.x_last]
     and_intros
     · apply pl.strictMono.monotone
       simp
@@ -290,11 +290,11 @@ theorem P_intersect_X {n : ℕ} {npos : 0 < n} (pl : NicePlotOfP n npos) (i : �
       grind only [= Finset.mem_range, = Lean.Grind.toInt_fin]
   have : 0 < i → -2 < a  := by
     intro ih'
-    rw [←pl.x_first]
+    rw [← pl.x_first]
     apply pl.strictMono
     grind only [= Finset.mem_range, = Lean.Grind.toInt_fin]
   have : -2 < b ∧ b < 2 := by
-    rw [←pl.x_first, ←pl.x_last]
+    rw [← pl.x_first, ← pl.x_last]
     and_intros <;> {
       apply pl.strictMono
       grind only [= Finset.mem_range, = Lean.Grind.toInt_fin, pl.len]
@@ -386,13 +386,13 @@ problem imo1976_p2 (n : ℕ) (npos : 0 < n) :
           apply pl.strictMono.monotone
           grind [NicePlotOfP.len]
         _ = _ := by
-          rw [←pl.x_last]
+          rw [← pl.x_last]
   · simp only [Set.mem_Ioo, Finset.singleton_union,
       Finset.mem_insert, Finset.mem_image, Finset.mem_attach, true_and, Subtype.exists,
       IsRoot.def, forall_eq_or_imp, forall_exists_index]
     and_intros
     · rw [eval_sub, eval_X]
-      nth_rw 1 [←pl.x_last, pl.y_eq]
+      nth_rw 1 [← pl.x_last, pl.y_eq]
       simp [pl.len, P_natDegree _ npos]
       rw [(neg_one_pow_eq_one_iff_even _).mpr (Nat.even_pow.mpr ⟨even_two, by omega⟩)] <;> norm_num
     · intro r i hi er

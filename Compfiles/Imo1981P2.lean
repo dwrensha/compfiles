@@ -97,7 +97,7 @@ instance : DecidableRel (G n r).Adj := fun u v =>
 theorem bipartite_edge {α β : Type} {G : SimpleGraph (α ⊕ β)} (hbip : G ≤ completeBipartiteGraph α β) (e : Sym2 (α ⊕ β)) (he : e ∈ G.edgeSet)
     : ∃ (a : α) (b : β), e = s(Sum.inl a, Sum.inr b) := by
   obtain ⟨u,v,h⟩ : ∃ u v, e = s(u,v) := by
-    rw [←Sym2.exists]
+    rw [← Sym2.exists]
     use e
   subst e
   rw [mem_edgeSet] at he
@@ -118,7 +118,7 @@ theorem G.bipartite : G n r ≤ completeBipartiteGraph _ _ := by
   grind [G, completeBipartiteGraph_adj]
 
 theorem G.card_edgeFinset : #(G n r).edgeFinset = Nat.choose (n+1) (r+1) := by
-  rw [show n+1 = #(Icc 0 n) by simp, ←card_powersetCard, eq_comm]
+  rw [show n+1 = #(Icc 0 n) by simp, ← card_powersetCard, eq_comm]
   apply card_bij (fun s h => s(.inl ⟨s, h⟩, .inr ⟨eraseMin s, by grind only [eraseMin_mem_powersetCard]⟩))
   · intro s hs
     rw [mem_edgeFinset, mem_edgeSet]
@@ -148,7 +148,7 @@ theorem G.degree_b (rpos : 1 ≤ r) (b : powersetCard r (Icc 1 n)) : (G n r).deg
     have h_bd' : m ≤ n := by
       grind only [= mem_powersetCard, = subset_iff, = mem_Icc]
     congr
-    rw [degree, ←Finset.card_range m, eq_comm]
+    rw [degree, ← Finset.card_range m, eq_comm]
     apply card_bij (fun i hi => Sum.inl ⟨insert i b.val, by grind⟩)
     · intro i hi
       rw [mem_neighborFinset, G]
@@ -167,11 +167,11 @@ theorem G.degree_b (rpos : 1 ≤ r) (b : powersetCard r (Icc 1 n)) : (G n r).deg
         have := heq.left
         have := heq.right
         subst b_1 v
-        simp_rw [←hv]
+        simp_rw [← hv]
         have ane : a.val.Nonempty := by
           grind only [= mem_powersetCard, card_ne_zero]
         use a.val.min' ane, ?_
-        · rw [Sum.inl.injEq, ←Subtype.val_inj]
+        · rw [Sum.inl.injEq, ← Subtype.val_inj]
           simp
         · simp only [mem_range]
           apply Finset.min'_lt_of_mem_erase_min'
@@ -192,13 +192,13 @@ problem imo1981_p2 (rpos : 1 ≤ r) (hrn : r ≤ n) : F n r = (n+1)/(r+1) := by
     enter [1, 1]
     norm_cast
     arg 1
-    rw [←Finset.sum_attach]
+    rw [← Finset.sum_attach]
     arg 2
     intro v
-    rw [←G.degree_b _ _ rpos, ←WithTop.coe_natCast, WithTop.some, Option.getD_some, Nat.cast_id, ←Function.Embedding.inr_apply]
+    rw [← G.degree_b _ _ rpos, ← WithTop.coe_natCast, WithTop.some, Option.getD_some, Nat.cast_id, ← Function.Embedding.inr_apply]
   conv =>
     enter [1, 1, 1]
-    rw [←Finset.sum_map _ Function.Embedding.inr (fun v => (G n r).degree v)]
+    rw [← Finset.sum_map _ Function.Embedding.inr (fun v => (G n r).degree v)]
     rw [isBipartiteWith_sum_degrees_eq_card_edges' (s:=Finset.univ.map Function.Embedding.inl) ?bip]
     case bip => tactic =>
       unfold G
@@ -208,7 +208,7 @@ problem imo1981_p2 (rpos : 1 ≤ r) (hrn : r ≤ n) : F n r = (n+1)/(r+1) := by
         simp
         grind
   rw [G.card_edgeFinset]
-  rw [←mul_div_mul_left (c:=↑(n+1)) _ _ (by grind only), ←Nat.cast_mul, ←Nat.cast_mul, Nat.add_one_mul_choose_eq]
+  rw [← mul_div_mul_left (c:=↑(n+1)) _ _ (by grind only), ← Nat.cast_mul, ← Nat.cast_mul, Nat.add_one_mul_choose_eq]
   qify
   have : (n + 1).choose (r + 1) ≠ 0 := by
     rw [Nat.choose_ne_zero_iff]

@@ -472,11 +472,11 @@ problem imo2016_p5 :
       have h2 : Finset.card (L ∪ R) ≤ L.card + R.card := Finset.card_union_le L R
       have h3 : Finset.Icc 1 2016 ⊆ (L ∪ R) := fun a ha ↦ by
         specialize H2 a ha
-        rw [←or_iff_not_imp_left] at H2
+        rw [← or_iff_not_imp_left] at H2
         exact Finset.mem_union.mpr H2
       have h4 : (Finset.Icc 1 2016).card ≤ (L ∪ R).card := Finset.card_le_card h3
       rw [Nat.card_Icc, add_tsub_cancel_right] at h4
-      rw [←hcard] at H
+      rw [← hcard] at H
       exact ((h4.trans h2).trans_lt H).false
     obtain ⟨i, hic, hiL, hiR⟩ := h1
     push Not at hLR
@@ -485,7 +485,7 @@ problem imo2016_p5 :
       rw [Finset.mem_sdiff]; exact ⟨hic, hiL⟩
     have hic2 : i ∈ Finset.Icc 1 2016 \ R := by
       rw [Finset.mem_sdiff]; exact ⟨hic, hiR⟩
-    rw [←Finset.prod_erase_mul _ _ hic1, ←Finset.prod_erase_mul _ _ hic2] at hLR
+    rw [← Finset.prod_erase_mul _ _ hic1, ← Finset.prod_erase_mul _ _ hic2] at hLR
     simp at hLR
 
 

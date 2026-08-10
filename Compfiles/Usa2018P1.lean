@@ -59,7 +59,7 @@ problem usa2018_p1 (a b c : ℝ) :
       · move_add [(b^2)]
         convert (H3 a c b ha hc hb ?_ h2 h1 ?_) using 3
         · linarith
-        · rw [min_comm, ←min_assoc, min_comm (a*a)]
+        · rw [min_comm, ← min_assoc, min_comm (a*a)]
         · linear_combination (norm := (field_simp; ring_nf)) 1 * heq
         · linarith
       · have aabb : a * a ≤ b * b := mul_self_le_mul_self (le_of_lt ha) h1
@@ -72,15 +72,15 @@ problem usa2018_p1 (a b c : ℝ) :
         rw [heq]
         have amgm := am_gm (a * ((4 : ℝ) * (a * b * c) ^ ((1 : ℝ) / 3))) (b * c)
                            (by positivity) (by positivity)
-        rw [←mul_le_mul_iff_right₀ zero_lt_four] at amgm
+        rw [← mul_le_mul_iff_right₀ zero_lt_four] at amgm
         convert! amgm
         ring_nf
         nth_rw 2 [(by simp : a * b * c = (a * b * c) ^ (1 : ℕ))]
-        rw [←Real.rpow_two, ←Real.rpow_mul (by positivity)]
-        rw [mul_comm ((a * b * c) ^ (1 : ℕ)), ←Real.rpow_add_natCast (by positivity)]
+        rw [← Real.rpow_two, ← Real.rpow_mul (by positivity)]
+        rw [mul_comm ((a * b * c) ^ (1 : ℕ)), ← Real.rpow_add_natCast (by positivity)]
         norm_num
         nth_rw 2 [Real.mul_rpow (by positivity) (by positivity)]
-        rw [←Real.rpow_mul (by positivity)]
+        rw [← Real.rpow_mul (by positivity)]
         norm_num
         rw [(mul_assoc _ _ 8)]
         simp only [mul_eq_mul_left_iff]

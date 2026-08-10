@@ -85,17 +85,17 @@ problem usa1987_p1 (m n : ℤ) :
     have hk' : k^2 = k'^2 := (sq_abs _).symm
     have hk0' : 0 ≤ k' := abs_nonneg _
 
-    rw [ ←sq] at h13
+    rw [ ← sq] at h13
     have h20 : k' < 8 := by
       by_contra! H
       rw [hm', hk'] at h13
       have h14 : k' < m' := by
         have h14' : k'^2 < m'^2 := by
-          rw [←h13]; exact Int.lt_add_of_pos_left _ (by norm_num)
+          rw [← h13]; exact Int.lt_add_of_pos_left _ (by norm_num)
         exact lt_of_pow_lt_pow_left₀ 2 hm0' h14'
       have h15 : k' + 1 ≤ m' := h14
       have h16 : (k' + 1)^2 ≤ m'^2 := by gcongr
-      rw [←h13] at h16
+      rw [← h13] at h16
       have h17 : 2 * k' + 1 ≤ 16 := by linarith only [h16]
       have h18 : 2 * 8 + 1 ≤ 2 * k' + 1 := by gcongr
       have h19 := h18.trans h17
@@ -110,15 +110,15 @@ problem usa1987_p1 (m n : ℤ) :
         simp only [Set.mem_insert_iff, true_or, or_true]
       · exact (h1 (sub_eq_neg_self.mp h25)).elim
     · rw [hm'] at h13
-      have h21 : 4^2 < m'^2 := by rw [←h13]; norm_num
+      have h21 : 4^2 < m'^2 := by rw [← h13]; norm_num
       have h23 : 4 < m' := lt_of_pow_lt_pow_left₀ 2 hm0' h21
-      have h22 : m'^2 < 5^2 := by rw [←h13]; norm_num
+      have h22 : m'^2 < 5^2 := by rw [← h13]; norm_num
       have h24 : m' < 5 := lt_of_pow_lt_pow_left₀ 2 (by norm_num) h22
       exact (Int.not_le.mpr h24 h23).elim
     · rw [hm'] at h13
-      have h21 : 4^2 < m'^2 := by rw [←h13]; norm_num
+      have h21 : 4^2 < m'^2 := by rw [← h13]; norm_num
       have h23 : 4 < m' := lt_of_pow_lt_pow_left₀ 2 hm0' h21
-      have h22 : m'^2 < 5^2 := by rw [←h13]; norm_num
+      have h22 : m'^2 < 5^2 := by rw [← h13]; norm_num
       have h24 : m' < 5 := lt_of_pow_lt_pow_left₀ 2 (by norm_num) h22
       exact (Int.not_le.mpr h24 h23).elim
     · rw [hm'] at h13
@@ -135,27 +135,27 @@ problem usa1987_p1 (m n : ℤ) :
           simp only [Set.mem_insert_iff, Set.mem_singleton_iff, or_true]
       · lia
     · rw [hm'] at h13
-      have h21 : 5^2 < m'^2 := by rw [←h13]; norm_num
+      have h21 : 5^2 < m'^2 := by rw [← h13]; norm_num
       have h23 : 5 < m' := lt_of_pow_lt_pow_left₀ 2 hm0' h21
-      have h22 : m'^2 < 6^2 := by rw [←h13]; norm_num
+      have h22 : m'^2 < 6^2 := by rw [← h13]; norm_num
       have h24 : m' < 6 := lt_of_pow_lt_pow_left₀ 2 (by norm_num) h22
       exact (Int.not_le.mpr h24 h23).elim
     · rw [hm'] at h13
-      have h21 : 6^2 < m'^2 := by rw [←h13]; norm_num
+      have h21 : 6^2 < m'^2 := by rw [← h13]; norm_num
       have h23 : 6 < m' := lt_of_pow_lt_pow_left₀ 2 hm0' h21
-      have h22 : m'^2 < 7^2 := by rw [←h13]; norm_num
+      have h22 : m'^2 < 7^2 := by rw [← h13]; norm_num
       have h24 : m' < 7 := lt_of_pow_lt_pow_left₀ 2 (by norm_num) h22
       exact (Int.not_le.mpr h24 h23).elim
     · rw [hm'] at h13
-      have h21 : 7^2 < m'^2 := by rw [←h13]; norm_num
+      have h21 : 7^2 < m'^2 := by rw [← h13]; norm_num
       have h23 : 7 < m' := lt_of_pow_lt_pow_left₀ 2 hm0' h21
-      have h22 : m'^2 < 8^2 := by rw [←h13]; norm_num
+      have h22 : m'^2 < 8^2 := by rw [← h13]; norm_num
       have h24 : m' < 8 := lt_of_pow_lt_pow_left₀ 2 (by norm_num) h22
       exact (Int.not_le.mpr h24 h23).elim
     · rw [hm'] at h13
-      have h21 : 8^2 < m'^2 := by rw [←h13]; norm_num
+      have h21 : 8^2 < m'^2 := by rw [← h13]; norm_num
       have h23 : 8 < m' := lt_of_pow_lt_pow_left₀ 2 hm0' h21
-      have h22 : m'^2 < 9^2 := by rw [←h13]; norm_num
+      have h22 : m'^2 < 9^2 := by rw [← h13]; norm_num
       have h24 : m' < 9 := lt_of_pow_lt_pow_left₀ 2 (by norm_num) h22
       exact (Int.not_le.mpr h24 h23).elim
 

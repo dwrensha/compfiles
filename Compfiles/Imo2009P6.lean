@@ -669,7 +669,7 @@ theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
       have hM' : ∑ i : Fin n', a' i ∉ M' := by
         have h14 : ∑ i : Fin n', a' i = x := by
           simpa [a', x, n'] using sum_init a
-        rw [←h14] at h1
+        rw [← h14] at h1
         rw [Finset.mem_filter]
         push Not
         intro h15
@@ -690,7 +690,7 @@ theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
           simpa [a', p] using (prefix_extendPerm a p' (Nat.sub_le n 1) i h30).symm
         rw [h33] at h31
         have h34 : ∑ j ∈ Finset.filter (· ≤ i) Finset.univ, a (p j) ≤ x := by
-          rw [←h33]
+          rw [← h33]
           have h36 : Finset.filter (· ≤ i') Finset.univ ⊆ Finset.univ := by
             intro j hj
             simp
@@ -993,7 +993,7 @@ problem imo2009_p6 (n : ℕ) (hn : 0 < n)
       intro x
       exact congrArg a (ainj (congrArg a (h3 x)))
     have h1 : Finset.map ⟨ps', h0.1⟩ Finset.univ = Finset.univ := by simp
-    rw [←h1]
+    rw [← h1]
     rw [Finset.sum_map, Function.Embedding.coeFn_mk]
     simp_rw [Function.comp_apply]
     dsimp at h3' ⊢

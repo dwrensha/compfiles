@@ -138,7 +138,7 @@ lemma pnat_odd_mul {a b c : ℕ+} (h : a * b = c * c) (hc : Odd c.val) :
   apply_fun (fun x ↦ x.val) at h
   replace h : a * b = c * c := h
   have h1 : Odd (c * c) := Odd.mul hc hc
-  rw [←h] at h1
+  rw [← h] at h1
   exact Nat.odd_mul.mp h1
 
 lemma lemma_3
@@ -176,11 +176,11 @@ lemma lemma_3
          obtain h9 | h9 := H
          · replace h2 : m2 < f (f m2) := Ne.lt_of_le' h9 h2
            have h10 : m2 * m2 < f^[↑(f m2)] m2 * f (f m2) := mul_lt_mul_of_le_of_lt h4 h2
-           rw [←h1] at h10
+           rw [← h1] at h10
            exact LT.lt.false h10
          · replace h4 : m2 < f^[f m2] m2 := Ne.lt_of_le' h9 h4
            have h10 : m2 * m2 < f^[↑(f m2)] m2 * f (f m2) := mul_lt_mul_of_lt_of_le h4 h2
-           rw [←h1] at h10
+           rw [← h1] at h10
            exact LT.lt.false h10
       obtain ⟨h6, h7⟩ := h5
       have h8 : f^[2] m2 = f^[↑(f m2)] m2 := by rw[h7]; exact h6
@@ -218,9 +218,9 @@ problem usa2019_p1 (m : ℕ+) :
     constructor
     · intro n
       obtain heq | hne := eq_or_ne n 1000
-      · rw [heq, ←hmeq, hmeq1]
+      · rw [heq, ← hmeq, hmeq1]
         obtain ⟨m', hm'⟩ := hm
-        rw [←Nat.two_mul] at hm'
+        rw [← Nat.two_mul] at hm'
         rw [hm', Function.iterate_mul, Function.iterate_fixed hmsq']
         decide
       · obtain heq' | hne' := eq_or_ne n m

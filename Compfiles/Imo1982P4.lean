@@ -56,13 +56,13 @@ problem imo1982_p4 (n : ℕ)
         lia
       replace hxy : (x : ZMod 7) ^ 3 - 3 * (x : ZMod 7) * (y : ZMod 7) ^ 2 +
                       (y : ZMod 7) ^ 3 = 0 := by
-        rw [←ZMod.intCast_eq_intCast_iff] at hxy
+        rw [← ZMod.intCast_eq_intCast_iff] at hxy
         norm_cast
       have ⟨h1, h2⟩ := lemma1 hxy
       constructor
-      · rw [ZMod.intCast_zmod_eq_zero_iff_dvd, ←Int.modEq_zero_iff_dvd] at h1
+      · rw [ZMod.intCast_zmod_eq_zero_iff_dvd, ← Int.modEq_zero_iff_dvd] at h1
         exact h1
-      · rw [ZMod.intCast_zmod_eq_zero_iff_dvd, ←Int.modEq_zero_iff_dvd] at h2
+      · rw [ZMod.intCast_zmod_eq_zero_iff_dvd, ← Int.modEq_zero_iff_dvd] at h2
         exact h2
     have h₄ : (x : ℤ) % 7 = 0 := h₂
     have h₅ : (y : ℤ) % 7 = 0 := h₃

@@ -69,7 +69,7 @@ problem hungary1998_p6 (x y : ℤ) (z : ℕ) (hz : 1 < z) :
     simp [Finset.sum_range_succ]
 
   have h5 : ∑ i ∈ Finset.range 100, (i:ℤ) = 99 * 100 / 2 := by
-    rw [←Nat.cast_sum, Finset.sum_range_id]; decide
+    rw [← Nat.cast_sum, Finset.sum_range_id]; decide
 
   have h6 : ∑ i ∈ Finset.range 99, ((i:ℤ) + 1)^2 = (99 * 100 * 199)/6 := by
     rw [cast_sum_square, sum_range_square]; decide
@@ -88,7 +88,7 @@ problem hungary1998_p6 (x y : ℤ) (z : ℕ) (hz : 1 < z) :
           ∑ i ∈ Finset.range 99, (2 * x * ((i:ℤ) + 1)) +
          ∑ i ∈ Finset.range 99, (((i:ℤ) + 1)^2) := by rw [Finset.sum_add_distrib]
     _ = 99 * x^2 + 2 * x * (99 * 100 / 2) + (99 * 100 * 199)/6
-        := by rw [h2, ←Finset.mul_sum, h4, h5, h6]
+        := by rw [h2, ← Finset.mul_sum, h4, h5, h6]
     _ = 3 * (11 * (3 * x^2 + 300 * x + 50 * 199)) := by rw [hnn1, hnn2]; ring
 
   -- which implies that 3∣y.

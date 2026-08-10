@@ -59,7 +59,7 @@ problem imo_1964_p1b (n : ℕ) : ¬ 7 ∣ (2^n + 1) := by
   intro h
   apply Nat.mod_eq_zero_of_dvd at h
   have h1: 2 ^ 3 % 7 = 1 := by rfl
-  mod_cases h2 : n % 3 <;> rw [←Nat.div_add_mod n 3, h2] at h
+  mod_cases h2 : n % 3 <;> rw [← Nat.div_add_mod n 3, h2] at h
   · rw [Nat.zero_mod, add_zero, Nat.add_mod, Nat.pow_mod, pow_mul,
         Nat.pow_mod, h1, one_pow (M := ℕ)] at h
     contradiction

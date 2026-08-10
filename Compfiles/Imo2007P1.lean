@@ -38,7 +38,7 @@ problem imo2007_p1a {n : ℕ} (hn : 0 < n) (a x : Fin n → ℝ) (h : Monotone x
     have : Nonempty (Fin n) := Fin.pos_iff_nonempty.mp hn
     apply exists_eq_ciSup_of_finite
   rcases h₁ with ⟨i, hi⟩
-  rw [←hi, d]
+  rw [← hi, d]
   have h₂ : ∃ j : {j // j ≤ i}, a j = ⨆ j : {j // j ≤ i}, a j:= by
     have : Nonempty {j // j ≤ i} := by
       rw [nonempty_subtype]

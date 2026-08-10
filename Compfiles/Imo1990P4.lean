@@ -112,7 +112,7 @@ theorem PRat.prime_induction (P : ℚ+ → Prop) (base : P 1)
         let p' : Nat.Primes := ⟨p, p_prime⟩
         let x : ℚ+ := ⟨a, by {
           simp at ⊢ h2
-          rw [←Nat.cast_mul, ←Rat.natCast_ofNat, Nat.cast_lt] at h2
+          rw [← Nat.cast_mul, ← Rat.natCast_ofNat, Nat.cast_lt] at h2
           exact Nat.pos_of_mul_pos_left h2
         }⟩
         simp_rw [show ((p.cast * a.cast) : ℚ) = x * p' by unfold x p'; ring]
@@ -130,7 +130,7 @@ theorem PRat.prime_induction (P : ℚ+ → Prop) (base : P 1)
             subst b
             simp
           · simp only [zero_mul]
-            rw [←Nat.cast_mul, ←Nat.cast_mul, ←Rat.natCast_ofNat] at h2
+            rw [← Nat.cast_mul, ← Nat.cast_mul, ← Rat.natCast_ofNat] at h2
             refine (Rat.mul_pos_iff_of_pos_left ?_).mpr ?_
             · simp
               exact Nat.Prime.pos p_prime
@@ -143,7 +143,7 @@ theorem PRat.prime_induction (P : ℚ+ → Prop) (base : P 1)
         simp_rw [show ((p*a).cast / (q*b).cast : ℚ) = x/q' by unfold x q'; simp only [Nat.cast_mul]; field]
         apply ind_div
         unfold x
-        simp_rw [←Nat.cast_mul]
+        simp_rw [← Nat.cast_mul]
         apply ih2
   intro x
   have := this ⟨x.val.num.toNat, x.val.den⟩ (by {
@@ -181,9 +181,9 @@ theorem f_mul_hom (f : ℚ+ → ℚ+) (h : ∀ x y : ℚ+, f (x * f y) = f x / y
   let z := 1 / f y
   have : f z = y := by
     unfold z
-    rw [one_div, ←div_eq_one, ←h1]
+    rw [one_div, ← div_eq_one, ← h1]
     exact f_one_eq_one f h
-  nth_rw 1 [←this]
+  nth_rw 1 [← this]
   rw [h]
   unfold z
   simp
@@ -203,9 +203,9 @@ theorem Set.Infinite.exists_union_disjoint_infinite_of_infinite {α : Type} {s :
   let ⟨t,u, ⟨h1,h2,h3⟩⟩ := Set.Infinite.exists_union_disjoint_cardinal_eq_of_infinite h
   use t, u
   simp only [h1, h2, true_and]
-  repeat rw [←Set.infinite_coe_iff, Cardinal.infinite_iff]
+  repeat rw [← Set.infinite_coe_iff, Cardinal.infinite_iff]
   rw [h3, and_self]
-  rw [←Set.infinite_coe_iff, Cardinal.infinite_iff, ←h1, Cardinal.mk_union_of_disjoint h2] at h
+  rw [← Set.infinite_coe_iff, Cardinal.infinite_iff, ← h1, Cardinal.mk_union_of_disjoint h2] at h
   contrapose! h
   rw [h3]
   exact Cardinal.add_lt_aleph0 h h
@@ -256,7 +256,7 @@ theorem PNat.mk_mul_hom_fun.cancel {R : Type} [CommMonoid R]
       unfold mk_mul_hom_fun
       simp only [MulHom.coe_mk]
       suffices ((List.map g c.val.primeFactorsList).prod * (List.map g' c.val.primeFactorsList).prod) = 1 by simp [this]
-      rw [←List.prod_map_mul]
+      rw [← List.prod_map_mul]
       apply List.prod_eq_one
       aesop
 
@@ -288,7 +288,7 @@ def PRat.mk_mul_hom_fun (g : ℕ → ℚ+) : ℚ+ →* ℚ+ := {
     simp_rw [PNat.mk_mul_hom_fun.inv, Positive.coe_inv, ← Rat.div_def, PRat.mk_mul_mk, ← Subtype.coe_inj]
     field_simp
     rw [div_eq_div_iff (by simp [@Subtype.coe_eq_iff]) (by simp [@Subtype.coe_eq_iff])]
-    simp_rw [←Positive.val_mul, ←map_mul]
+    simp_rw [← Positive.val_mul, ← map_mul]
     congr 2
     simp only [Positive.val_mul]
     repeat rw [Nat.toPNat_mul_toPNat]
@@ -396,7 +396,7 @@ theorem exists_f : ∃ f : ℚ+ → ℚ+, ∀ x y : ℚ+, f (x * f y) = f x / y 
       unfold q
       simp
     · have : ¬ p.val ∈ {p | Nat.Prime p} := by
-        rw [←hU]
+        rw [← hU]
         grind only [= Set.mem_union]
       simp at this
       exact absurd p.prop this
@@ -409,14 +409,14 @@ theorem exists_f : ∃ f : ℚ+ → ℚ+, ∀ x y : ℚ+, f (x * f y) = f x / y 
       simp only [map_mul]
       rw [ih]
       simp only [one_div, mul_inv_rev]
-      rw [mul_comm, mul_left_inj, ←one_div]
+      rw [mul_comm, mul_left_inj, ← one_div]
       apply this
     · intro x p ih
       simp only [map_div]
       rw [ih]
       simp only [one_div, inv_div]
       rw [div_eq_inv_mul, div_eq_inv_mul, mul_comm, mul_right_inj]
-      rw [inv_eq_iff_eq_inv, ←one_div]
+      rw [inv_eq_iff_eq_inv, ← one_div]
       apply this
 
   use f

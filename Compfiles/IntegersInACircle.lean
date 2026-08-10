@@ -46,7 +46,7 @@ lemma lemma2 {f : ZMod 101 → ℤ} (y : ZMod 101)
     rw [Finset.mem_range] at ha hb
     rwa [Nat.mod_eq_of_lt ha, Nat.mod_eq_of_lt hb] at h8
   replace hg : Set.InjOn g (Finset.range 101) := hg
-  rw [←Finset.sum_image hg]
+  rw [← Finset.sum_image hg]
   have h3 : Finset.image g (Finset.range 101) = Finset.univ := by
      rw [Finset.eq_univ_iff_forall]
      intro a
@@ -106,7 +106,7 @@ problem integers_in_a_circle
       rwa [Nat.mod_eq_of_lt (ha.2.trans y.prop),
            Nat.mod_eq_of_lt (hb.2.trans y.prop)] at h13
     replace h10 : Set.InjOn Nat.cast _ := h10
-    rw [←Finset.sum_image h10, ←ha_sum]
+    rw [← Finset.sum_image h10, ← ha_sum]
     have h9 : (Finset.Ico x.val y.val).image (λ i:ℕ ↦ (i : ZMod 101)) ⊂ Finset.univ := by
       rw [Finset.ssubset_univ_iff]
       intro hn
@@ -155,7 +155,7 @@ problem integers_in_a_circle
     have h18 : Finset.range 101 =
         Finset.range ((y.val - x.val) + (101 - (y.val - x.val))) := by congr
     have h19 := Finset.sum_range_add (λi ↦ a (x + i)) (y.val - x.val) (101 - (y.val - x.val))
-    rw [h100, ←h18, ha_sum] at h19
+    rw [h100, ← h18, ha_sum] at h19
     have h21 : ∀ i ∈ Finset.range (101 - (y.val - x.val)),
           a (x + ↑(y.val - x.val + i)) = a (↑(ZMod.val y) + ↑i) := by
       intro i _
@@ -166,7 +166,7 @@ problem integers_in_a_circle
            norm_cast
       rw [h22]
       norm_cast
-      rw [←Nat.add_assoc, add_comm x.val _, Nat.sub_add_cancel (le_of_lt hxy)]
+      rw [← Nat.add_assoc, add_comm x.val _, Nat.sub_add_cancel (le_of_lt hxy)]
 
     rw [Finset.sum_congr rfl h21] at h19
     lia

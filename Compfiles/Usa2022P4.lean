@@ -59,7 +59,7 @@ problem usa2022_p4 (p q : ℕ) :
 
   -- Subtracting our equations gives (b - a)(b + a) = b² - a² = p(q - 1),
   have h1 : (b + a) * (b - a) = p * (q - 1) := by
-    rw [←Nat.sq_sub_sq, Nat.mul_sub_left_distrib, mul_one]
+    rw [← Nat.sq_sub_sq, Nat.mul_sub_left_distrib, mul_one]
     have h2 : (b^2 + q) - (a^2 + q) = p * q - p := by rw [ha, hb]
     rw [Nat.add_sub_add_right] at h2
     exact h2
@@ -79,7 +79,7 @@ problem usa2022_p4 (p q : ℕ) :
   have h3 : ¬ p ∣ b - a := Nat.not_dvd_of_pos_of_lt hba' h2
 
   have h4 : p ∣ p * (q - 1) := Nat.dvd_mul_right p (q - 1)
-  rw [←h1, mul_comm] at h4
+  rw [← h1, mul_comm] at h4
   have h5 : p ∣ b + a := Or.resolve_left ((Nat.Prime.dvd_mul hpp).mp h4) h3
 
   -- Since and b + a < 2p, we have that a + b must in fact equal p.
@@ -102,11 +102,11 @@ problem usa2022_p4 (p q : ℕ) :
   have h9 : q = 2 := by
     have h10 : (b + a) % 2 = (b - a) % 2 := by
       have h11 : b + a = b - a + 2 * a := by
-        rw [Nat.two_mul, ←add_assoc, add_left_inj]
+        rw [Nat.two_mul, ← add_assoc, add_left_inj]
         exact Nat.eq_add_of_sub_eq (Nat.le_of_lt hba) rfl
       rw [h11, Nat.add_mod]
       simp only [Nat.mul_mod_right, add_zero, Nat.mod_mod]
-    rw [h7, ←h8] at h10
+    rw [h7, ← h8] at h10
     cases h : p % 2 with
     | zero =>
       have h14 : p = 2 := by
@@ -121,7 +121,7 @@ problem usa2022_p4 (p q : ℕ) :
         norm_num at h
         rw [h] at h10
         apply_fun (fun x ↦ (x + (1%2))%2) at h10
-        rw [←Nat.add_mod, Nat.sub_add_cancel hq_pos] at h10
+        rw [← Nat.add_mod, Nat.sub_add_cancel hq_pos] at h10
         norm_num at h10
         have h15 : 2 ∣ q := Nat.modEq_zero_iff_dvd.mp h10.symm
         obtain h16 | h16 := Nat.Prime.eq_one_or_self_of_dvd hpq _ h15
@@ -133,7 +133,7 @@ problem usa2022_p4 (p q : ℕ) :
     have h22 : a ≤ b := Nat.le_of_lt hba
     have h21 : b = 1 + a := Nat.eq_add_of_sub_eq h22 h20
     have h23 : p = 2 * a + 1 := by
-      rw [h21, add_assoc, ←Nat.two_mul, add_comm] at h7
+      rw [h21, add_assoc, ← Nat.two_mul, add_comm] at h7
       exact h7.symm
     rw [h23, h9, Nat.succ_inj] at ha
     have h30 : a = 1 := by

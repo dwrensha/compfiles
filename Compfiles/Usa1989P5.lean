@@ -46,7 +46,7 @@ problem usa1989_p5
   have hU : ∀ x, x ≠ 1 → U x = (x^10 - x) / (x - 1) + 9 * x^9 := fun x hx ↦ by
     convert_to U x = x * ((x^9 - 1) / (x - 1)) + 9 * x^9
     · ring
-    rw [←geom_sum_eq hx 9, Finset.mul_sum]
+    rw [← geom_sum_eq hx 9, Finset.mul_sum]
     have h1 : ∀ i, i ∈ Finset.range 9 → x * x^i = x ^(i + 1) := fun i _ ↦ (pow_succ' x i).symm
     rw [Finset.sum_congr rfl h1, Finset.sum_range_succ]
     ring
@@ -54,7 +54,7 @@ problem usa1989_p5
   have hV : ∀ x, x ≠ 1 → V x = (x^12 - x) / (x - 1) + 9 * x^11 := fun x hx ↦ by
     convert_to V x = x * ((x^11 - 1) / (x - 1)) + 9 * x^11
     · ring
-    rw [←geom_sum_eq hx 11, Finset.mul_sum]
+    rw [← geom_sum_eq hx 11, Finset.mul_sum]
     have h1 : ∀ i, i ∈ Finset.range 11 → x * x^i = x ^(i + 1) := fun i _ ↦ (pow_succ' x i).symm
     rw [Finset.sum_congr rfl h1, Finset.sum_range_succ]
     ring
@@ -78,7 +78,7 @@ problem usa1989_p5
       rw [hV x h6]
       have h8 : (x ^ 12 - x) / (x - 1) ≤ 0 := by
         obtain h7 | h7 : 0 = x^12 - x ∨ 0 < x^12 - x := h3.eq_or_lt
-        · rw [←h7]; simp
+        · rw [← h7]; simp
         · exact (div_neg_of_pos_of_neg h7 h4).le
       have h5 : 9 * x^11 ≤ 0 := by
         suffices H : 0 ≤ (-x)^11 by linarith

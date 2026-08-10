@@ -52,9 +52,9 @@ lemma some_useful_mod_lemma : ∀ (n a b c d : ℕ),
     unfold Nat.ModEq
     unfold Nat.ModEq at h2
     rw [←(Nat.div_add_mod' (a - n) b)]
-    rw [←h1]
+    rw [← h1]
     simp only [Nat.zero_mod, add_zero]
-    rw [mul_comm, pow_mul, Nat.pow_mod, h2, ←Nat.pow_mod, one_pow]
+    rw [mul_comm, pow_mul, Nat.pow_mod, h2, ← Nat.pow_mod, one_pow]
 
 lemma usa1982_p4_lemma (e a b)
     (he :
@@ -87,7 +87,7 @@ lemma usa1982_p4_lemma (e a b)
       gcongr
       focus rfl
       trans 2 ^ a; swap; focus rw [ha]; rfl
-      rw [←he]
+      rw [← he]
       apply some_useful_mod_lemma n a b e 2 hn
       rw [hb, he]; rfl
   }
@@ -97,7 +97,7 @@ lemma usa1982_mod_lemma {n r r' q : ℕ}
     (hm : n % 64 = r') (p : ℕ) (hpq : p * q = 64) (hrr : r' ≡ r [MOD q]) : n ≡ r [MOD q] := by
   trans r'; swap
   · exact hrr
-  rw [Nat.ModEq, ←hm, ←hpq, Nat.mod_mul_left_mod]
+  rw [Nat.ModEq, ← hm, ← hpq, Nat.mod_mul_left_mod]
 
 snip end
 

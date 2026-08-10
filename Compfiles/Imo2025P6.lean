@@ -1894,7 +1894,7 @@ lemma pivot_no_black (cp : CrossingPoints c) :
         rw [h_p_eq_vl1] at h_px_v_lt
         exact (lt_self_iff_false _).mp h_px_v_lt
     · exact c.h_unique_x p hp_blk vl (c.hv_sub mem_vl) h_px_eq.symm
-  have h_eq : uk = vl := by rw [←h_p_eq_uk, h_p_eq_vl]
+  have h_eq : uk = vl := by rw [← h_p_eq_uk, h_p_eq_vl]
   have h_uk_in_v : uk ∈ c.v := by rw [h_eq]; exact mem_vl
   have h_uk_not_in_v : uk ∉ c.v := disjoint_left.mp c.h_disj mem_uk
   contradiction
