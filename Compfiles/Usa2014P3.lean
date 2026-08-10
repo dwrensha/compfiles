@@ -95,7 +95,7 @@ lemma collinear_iff_sum {a b c : ℝ} (hab : a ≠ b) (hbc : b ≠ c) (hca : c �
 
 snip end
 
-problem usamo2014_p3 : ∃ P : ℤ → Pt, ∀ a b c : ℤ,
+problem usa2014_p3 : ∃ P : ℤ → Pt, ∀ a b c : ℤ,
     a ≠ b ∧ b ≠ c ∧ c ≠ a → (Collinear ℝ {P a, P b, P c} ↔ a + b + c = 2014) := by
   use fun n ↦ f (n : ℝ)
   intro a b c

@@ -49,7 +49,7 @@ lemma false_of_zero_eqMod_pos {p a : ℕ} (h₁ : 0 ≡ a [ZMOD p]) (h₂ : 0 < 
 
 snip end
 
-problem imo1996P4 : solution ∈ S ∧ ∀ x ∈ S, solution ≤ x := by
+problem imo1996_p4 : solution ∈ S ∧ ∀ x ∈ S, solution ≤ x := by
   have h_pos : ∀ x ∈ S, 0 < x := by
     intro x hx
     unfold S at hx
