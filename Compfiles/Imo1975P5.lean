@@ -27,13 +27,6 @@ determine constructible : Bool := true
 
 snip begin
 
-
-@[simp]
-theorem Complex.mk_mem_unitSphere_iff (a b : ℝ) : Complex.mk a b ∈ Submonoid.unitSphere ℂ ↔ a^2+b^2=1 := by
-  rw [Submonoid.unitSphere, <-Submonoid.mem_carrier, mem_sphere_iff_norm, sub_zero, <-sq_eq_sq₀,
-    Complex.norm_eq_sqrt_sq_add_sq, Real.sq_sqrt, one_pow] <;> positivity
-
-
 theorem not_irrational_add {b c : ℝ}: ¬Irrational b → ¬Irrational c → ¬Irrational (b + c) := by
   intro h1 h2
   apply not_imp_not.mpr (Irrational.add_cases)
@@ -68,10 +61,13 @@ theorem cos_θ : Real.cos θ = (4/5:ℚ) := by
   rw [Real.cos_arccos] <;> linarith
 
 
-noncomputable def P (n:ℕ) : Circle := {
-  val := ⟨Real.cos (θ*2*n), Real.sin (θ*2*n)⟩
-  property := by simp
-}
+noncomputable def P (n : ℕ) : Circle := Circle.exp (θ * n * 2)
+
+lemma P_cast_eq {n : ℕ} : (P n : ℂ) = ⟨Real.cos (θ*2*n), Real.sin (θ*2*n)⟩ := by
+  rw [P, Circle.coe_exp, Complex.ext_iff]
+  simp [Complex.exp_re, Complex.exp_im]
+  ring_nf
+  trivial
 
 theorem not_irrational_sin_θ_mul_and_not_irrational_cos_θ_mul (n : ℕ)
     : ¬ Irrational (Real.sin (θ*n)) ∧ ¬ Irrational (Real.cos (θ*n)) := by
@@ -81,11 +77,11 @@ theorem not_irrational_sin_θ_mul_and_not_irrational_cos_θ_mul (n : ℕ)
     rw [Nat.cast_add, mul_add, Real.sin_add, Real.cos_add]
     grind only [= cos_θ, = sin_θ, Rat.not_irrational, not_irrational_mul, not_irrational_add, not_irrational_sub]
 
+lemma Circle.dist_eq (x y : Circle) : dist x y = dist (x : ℂ) y := rfl
 
 theorem not_irrational_dist_P_P (i j : ℕ) : ¬ Irrational (dist (P i) (P j)) := by
-  unfold P
-  set_option backward.isDefEq.respectTransparency false in
-  rw [Subtype.dist_eq, Complex.dist_mk, Real.cos_sub_cos, Real.sin_sub_sin, mul_right_comm]
+  simp_rw [Circle.dist_eq, P_cast_eq]
+  rw [Complex.dist_mk, Real.cos_sub_cos, Real.sin_sub_sin, mul_right_comm]
   repeat rw [mul_pow]
   simp only [even_two, Even.neg_pow]
   rw [<-mul_add]
@@ -122,9 +118,7 @@ theorem P_injective : Function.Injective P := by
   · rw [ne_comm]
     have := this e.symm
     grind only
-  unfold P
-  set_option backward.isDefEq.respectTransparency false in
-  rw [Ne, Iff.not (Subtype.ext_iff)]
+  simp_rw [Ne, Circle.ext_iff, P_cast_eq]
   simp only [Complex.mk.injEq, not_and]
   intro _
   suffices Real.sin (θ*2*(i-j)) ≠ 0 by

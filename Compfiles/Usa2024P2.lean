@@ -84,11 +84,11 @@ lemma ncard_preimage_eq_sum_fibers
       change p (g a)
       rw [ha]
       exact b.2)
-  letI := hfin.fintype
-  letI : Fintype ↑({b : β | p b}) := inferInstance
-  letI (b : ↑({b : β | p b})) : Fintype ↑({a : α | g a = b.1}) :=
+  let := hfin.fintype
+  let : Fintype ↑({b : β | p b}) := inferInstance
+  let (b : ↑({b : β | p b})) : Fintype ↑({a : α | g a = b.1}) :=
     (hfiber_fin b).fintype
-  letI : Fintype
+  let : Fintype
       (Sigma (fun b : ↑({b : β | p b}) => ↑({a : α | g a = b.1}))) :=
     inferInstance
   have hAcard :
@@ -1147,7 +1147,8 @@ lemma realized_membership_ncard
   have htoFinset :
       hfin.toFinset = x.1 := by
     ext i
-    simp [mem_realizedFamily_iff]
+    rw [Set.Finite.mem_toFinset]
+    exact mem_realizedFamily_iff
   rw [htoFinset]
 
 lemma realized_objective_ncard

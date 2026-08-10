@@ -32,7 +32,11 @@ namespace Imo2002P1
 inductive Color : Type where
 | red : Color
 | blue : Color
-deriving DecidableEq, Fintype
+deriving DecidableEq
+
+instance : Fintype Color where
+  elems := ⟨↑[Color.red, Color.blue], by decide⟩
+  complete := fun x => by cases x <;> decide
 
 /-- The points (x, y) with nonnegative integer coordinates and x + y < n. -/
 def T (n : ℕ) : Finset (ℕ × ℕ) :=

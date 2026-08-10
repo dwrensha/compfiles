@@ -50,7 +50,7 @@ lemma strictMono_add_right_le {s : ℕ → ℕ} (hs: StrictMono s) {a b : ℕ} :
 
 snip end
 
-problem imo2009_p3 (s : ℕ → ℕ) (hs : StrictMono s)
+problem imo2009_p3 (s : ℕ → ℕ) (hs : StrictMono s) (_hpos : ∀ i, 0 < s i)
     (h1 : IsArithProg (fun n ↦ s (s n)))
     (h2 : IsArithProg (fun n ↦ s (s n + 1))) :
     IsArithProg s := by

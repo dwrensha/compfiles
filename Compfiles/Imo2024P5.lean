@@ -142,9 +142,8 @@ def MonsterData.reflect (m : MonsterData N) : MonsterData N where
   toFun := Fin.rev ∘ m
   inj' := fun i j hij ↦ by simpa using hij
 
-lemma MonsterData.reflect_reflect (m : MonsterData N) : m.reflect.reflect = m := by
-  ext i
-  simp [MonsterData.reflect]
+lemma MonsterData.reflect_reflect (m : MonsterData N) : m.reflect.reflect = m :=
+  Function.Embedding.ext fun i ↦ Fin.rev_rev (m i)
 
 lemma MonsterData.apply_row1_ne_zero_of_apply_row1_eq_N (hN : 2 ≤ N) {m : MonsterData N}
     (h : (m (row1 hN) : ℕ) = N) : m (row1 hN) ≠ 0 := by
@@ -153,9 +152,8 @@ lemma MonsterData.apply_row1_ne_zero_of_apply_row1_eq_N (hN : 2 ≤ N) {m : Mons
 
 lemma MonsterData.reflect_apply_row1_eq_zero_of_apply_row1_eq_N (hN : 2 ≤ N)
     {m : MonsterData N} (h : (m (row1 hN) : ℕ) = N) : m.reflect (row1 hN) = 0 := by
-  simp only [MonsterData.reflect, Function.Embedding.coeFn_mk, Function.comp_apply,
-    ← Fin.rev_last, Fin.rev_inj]
-  rw [Fin.ext_iff]
+  have hr : m.reflect (row1 hN) = (m (row1 hN)).rev := rfl
+  rw [hr, ← Fin.rev_last, Fin.rev_inj, Fin.ext_iff, Fin.val_last]
   exact h
 
 lemma MonsterData.not_mem_monsterCells_of_fst_eq_zero (m : MonsterData N)
@@ -362,16 +360,18 @@ def Path.reflect (p : Path N) : Path N where
 
 lemma Path.firstMonster_reflect (p : Path N) (m : MonsterData N) :
     p.reflect.firstMonster m.reflect = (p.firstMonster m).map Cell.reflect := by
+  have hra : ∀ i, m.reflect i = (m i).rev := fun _ ↦ rfl
   simp_rw [firstMonster, reflect, List.find?_map]
-  convert rfl
-  simp only [Function.comp_apply, decide_eq_decide, MonsterData.monsterCells]
+  refine congrArg _ (congrArg (fun q ↦ List.find? q p.cells) (funext fun x ↦ ?_))
+  simp only [Function.comp_apply, decide_eq_decide]
+  simp only [MonsterData.monsterCells]
   refine ⟨fun h ↦ ?_, fun h ↦ ?_⟩
   · rcases h with ⟨i, hi⟩
     refine ⟨i, ?_⟩
-    simpa [MonsterData.reflect, Cell.reflect, Prod.ext_iff] using hi
+    simpa [hra, Cell.reflect, Prod.ext_iff] using hi
   · rcases h with ⟨i, hi⟩
     refine ⟨i, ?_⟩
-    simpa [MonsterData.reflect, Cell.reflect, Prod.ext_iff] using hi
+    simpa [hra, Cell.reflect, Prod.ext_iff] using hi
 
 /-! ### API definitions and lemmas about `Strategy` -/
 
@@ -442,7 +442,7 @@ def baseMonsterData (N : ℕ) : MonsterData N where
     exact Nat.lt_add_one_of_le hrN⟩
   inj' := fun ⟨⟨x, hx⟩, hx1, hxN⟩ ⟨⟨y, hy⟩, hy1, hyN⟩ h ↦ by
     simp only [Fin.mk.injEq] at h
-    simpa using h
+    exact Subtype.ext (Fin.ext h)
 
 /-- Positions for monsters with specified columns in the second and third rows (rows 1 and 2). -/
 def monsterData12 (hN : 2 ≤ N) (c₁ c₂ : Fin (N + 1)) : MonsterData N :=
@@ -452,8 +452,9 @@ lemma monsterData12_apply_row2 (hN : 2 ≤ N) {c₁ c₂ : Fin (N + 1)} (h : c�
     monsterData12 hN c₁ c₂ (row2 hN) = c₂ := by
   rw [monsterData12, Function.Embedding.setValue_eq_of_ne]
   · exact Function.Embedding.setValue_eq _ _ _
-  · simp only [row1, row2, ne_eq, Subtype.mk.injEq]
-    simp only [Fin.ext_iff, Fin.val_one]
+  · intro heq
+    have h12 : (2 : ℕ) = 1 :=
+      congrArg (fun x : InteriorRow N ↦ ((x : Fin (N + 2)) : ℕ)) heq
     lia
   · rw [Function.Embedding.setValue_eq]
     exact h.symm
@@ -647,11 +648,8 @@ lemma path0_firstMonster_eq_apply_row1 (hN : 2 ≤ N) (m : MonsterData N) :
     split_ifs <;> simp [Prod.ext_iff] at *; lia
   rw [h, List.find?_ofFn_eq_some_of_injective (injective_fn0 N)]
   refine ⟨?_, fun j hj ↦ ?_⟩
-  · rw [fn0]
-    split_ifs
-    · simp [Prod.ext_iff] at *
-    · have hm1 : (1, m (row1 hN)) ∈ m.monsterCells := Set.mem_range_self (row1 hN)
-      simpa [Prod.ext_iff] using hm1
+  · have hm1 : (1, m (row1 hN)) ∈ m.monsterCells := Set.mem_range_self (row1 hN)
+    simpa only [decide_eq_true_eq] using h ▸ hm1
   · rw [fn0]
     split_ifs with h₁
     · simp [h₁, MonsterData.monsterCells]
@@ -892,7 +890,7 @@ snip end
 determine answer : ℕ := 3
 
 problem imo2024_p5 : IsLeast {k | ∃ s : Strategy 2022, s.ForcesWinIn k} answer := by
-  simp_rw [IsLeast, mem_lowerBounds, Set.mem_setOf, forall_exists_index]
+  simp_rw [IsLeast, mem_lowerBounds, Set.mem_ofPred, forall_exists_index]
   exact ⟨⟨winningStrategy (by norm_num), winningStrategy_forcesWinIn_three (by norm_num)⟩,
     fun k s h ↦ h.three_le (by norm_num)⟩
 

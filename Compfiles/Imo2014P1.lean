@@ -43,7 +43,7 @@ lemma lemma1 (s : ℕ → ℤ) (hs : ∀ i, s i < s (i + 1)) (z : ℤ) (hs0 : s 
       · simp
       · grind
     use Int.toNat (z - s 0)
-    rw [Set.mem_setOf_eq]
+    rw [Set.mem_ofPred_eq]
     have h8 := h5 (Int.toNat (z - s 0))
     have h6 : 0 ≤ z - s 0 := by lia
     have h7 : ((Int.toNat (z - s 0)) :ℤ) = z - s 0 := Int.toNat_of_nonneg h6
@@ -60,7 +60,7 @@ lemma lemma1 (s : ℕ → ℤ) (hs : ∀ i, s i < s (i + 1)) (z : ℤ) (hs0 : s 
     · have h6 : Nat.find h3 - 1 < Nat.find h3 :=
         Nat.sub_one_lt_of_le h5 Nat.le.refl
       have h7 := h4 h6
-      rw [Set.mem_setOf_eq] at h7
+      rw [Set.mem_ofPred_eq] at h7
       push Not at h7
       rwa [Nat.sub_add_cancel h5] at h7
   · exact Nat.find_spec h3
@@ -70,7 +70,7 @@ lemma lemma1 (s : ℕ → ℤ) (hs : ∀ i, s i < s (i + 1)) (z : ℤ) (hs0 : s 
     refine ⟨hm2, ?_⟩
     intro k hk hkk
     have h9 : s (k + 1) ≤ s m := (StrictMono.le_iff_le hmono).mpr hk
-    simp only [Set.mem_setOf_eq] at hkk
+    simp only [Set.mem_ofPred_eq] at hkk
     lia
 
 snip end

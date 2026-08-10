@@ -121,8 +121,6 @@ snip end
 
 problem usa2016_p1 :
     Infinite { (x, y) : ℕ × ℕ | condition x y } :=
-  refine Infinite.of_injective build (fun _ => ?_)
-  set_option backward.isDefEq.respectTransparency false in
-  simp [build]
+  Infinite.of_injective build (fun _ _ h => by grind only [Subtype.mk_eq_mk.mp h])
 
 end Usa2017P1

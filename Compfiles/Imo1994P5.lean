@@ -49,8 +49,7 @@ problem imo1994_p5 (f : S → S) :
   -- We follow https://prase.cz/kalva/imo/isoln/isoln945.html
   constructor
   · intro hf
-    simp only [Set.mem_singleton_iff] at hf
-    rw [hf]
+    rw [Set.eq_of_mem_singleton hf]
     refine ⟨?_, ?_, ?_⟩ <;> rintro ⟨x, hx⟩ ⟨y, hy⟩
     · grind
     · simp only [Set.mem_Ioo, and_imp]
@@ -80,7 +79,7 @@ problem imo1994_p5 (f : S → S) :
       rw [div_lt_div_iff₀ h2 h1]
       linarith
   rintro ⟨h1, h2, h3⟩
-  simp only [Set.mem_singleton_iff]
+  refine Set.mem_singleton_iff.mpr ?_
   have h4 : ∀ a, f a = a → a = ⟨0, neg_one_lt_zero⟩ := by
     -- Suppose f(a) = a.
     intro a ha
@@ -115,6 +114,7 @@ problem imo1994_p5 (f : S → S) :
     · obtain ⟨a, haa⟩ := a
       dsimp only at haz
       simp_rw [haz]
+      rfl
     · -- Similarly, if a > 0, then b > a, but f(a)/a = f(b)/b. Contradiction.
       have hai : a.val ∈ Set.Ioi 0 := haz
       have hba : a.val < b := by
@@ -145,18 +145,12 @@ problem imo1994_p5 (f : S → S) :
     exact h4 (op f x x) (h1 x x)
 
   ext x
-  have h6 := h5 x
-  unfold op at h6
+  have h6 := Subtype.mk_eq_mk.mp <| h5 x
   obtain ⟨x, hx⟩ := x
-  set_option backward.isDefEq.respectTransparency false in
-  rw [Subtype.mk_eq_mk] at h6
-  dsimp only at h6
   have h7 : (f ⟨x, hx⟩).val = -x / (1 + x) := by
     have h8 : 0 < 1 + x := by linarith
     field_simp
     linarith
-  rw [←Subtype.val_inj]
-  dsimp only
-  exact h7
+  exact Subtype.val_inj.mp h7
 
 end Imo1994P5

@@ -309,7 +309,7 @@ problem imo2020_p6 : ∃ c : ℝ, 0 < c ∧ ∀ {n : ℕ}, 1 < n → ∀ {S : Fi
       ∀ i ∈ {i | i = 0}, basis i = ‖b -ᵥ a‖⁻¹ • (b -ᵥ a) := by
     refine Orthonormal.exists_orthonormalBasis_extension_of_card_eq ?_ ?_
     · simp [‹Fact (finrank ℝ V = 2)›.1]
-    simp only [Fin.isValue, Set.setOf_eq_eq_singleton, Set.restrict_def]
+    simp only [Fin.isValue, Set.ofPred_eq_eq_singleton, Set.domRestrict_def]
     rw [orthonormal_iff_ite]
     simp only [Fin.isValue, Subtype.forall, Set.mem_singleton_iff, Fin.forall_fin_two, forall_true_left,
       one_ne_zero, IsEmpty.forall_iff, and_true, Subtype.mk.injEq, forall_eq, ↓reduceIte]

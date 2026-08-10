@@ -779,7 +779,11 @@ noncomputable instance : Fintype (Matilda n all_black) :=
 
 inductive LabelType
   | W | N | E | S | X
-  deriving DecidableEq, Repr, Fintype
+  deriving DecidableEq, Repr
+
+instance : Fintype LabelType where
+  elems := ⟨↑[LabelType.W, LabelType.N, LabelType.E, LabelType.S, LabelType.X], by decide⟩
+  complete := fun x => by cases x <;> decide
 
 structure Label (n : ℕ) where
   source : Point n
@@ -844,8 +848,8 @@ lemma matilda_count_ge_label_count
     rw [card_le_one_iff] at h_at_most_one
     apply Subtype.ext
     apply h_at_most_one
-    · simp; exact ⟨hl1, h_cov1⟩
-    · simp; exact ⟨hl2, h_cov2⟩
+    · exact Finset.mem_filter.mpr ⟨hl1, h_cov1⟩
+    · exact Finset.mem_filter.mpr ⟨hl2, h_cov2⟩
   exact card_le_card_of_injective f_inj
 
 end LabelingCore

@@ -70,7 +70,7 @@ lemma sphere_inter_finite
 lemma sphere_eq_sub_norm (o : Pt) (r : ℝ)
   : {p : Pt | ‖p - o‖ = r} = (EuclideanGeometry.Sphere.mk o r : Set Pt) := by
   ext p
-  rw [Set.mem_setOf_eq, mem_sphere_iff_norm]
+  rw [Set.mem_ofPred_eq, mem_sphere_iff_norm]
 
 lemma norm_one_inter_finite {s : Pt} (hs : s ≠ 0)
   : ({p : Pt | ‖p - 0‖ = 1} ∩ {p : Pt | ‖p - s‖ = 1}).Finite := by
@@ -151,14 +151,14 @@ problem imo1971_p5 (m : ℕ) :
     set f := fun p ↦ p + d with hf
     set S'' := {p : Pt | ∃ p' ∈ S', p = p' + d} with hS''
     have h'S'' : S'' = f '' S' := by
-      ext p; rw [Set.mem_image, hS'']; simp only [Set.mem_setOf_eq, hf]
+      ext p; rw [Set.mem_image, hS'']; simp only [Set.mem_ofPred_eq, hf]
       constructor <;> rintro ⟨p', hp'₁, hp'₂⟩ <;> exact ⟨p', hp'₁, hp'₂.symm⟩
     have hS''₁ : S''.Nonempty := by rw [h'S'', Set.image_nonempty]; exact hS'₁
     have hS''₂ : S''.Finite := by rw [h'S'']; exact hS'₂.image _
     have hf' : Function.Injective f := add_left_injective d
     have hf'' : ∀ s ∈ S', {t | t ∈ f '' S' ∧ dist (f s) t = 1} =
         f '' {t | t ∈ S' ∧ dist s t = 1} := by
-      intro s hs; ext t; simp only [Set.mem_setOf_eq, Set.mem_image, hf]
+      intro s hs; ext t; simp only [Set.mem_ofPred_eq, Set.mem_image, hf]
       constructor
       · rintro ⟨⟨t', ht', rfl⟩, hst⟩
         exact ⟨t', ⟨ht', by rwa [dist_add_right] at hst⟩, rfl⟩

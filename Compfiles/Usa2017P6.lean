@@ -73,7 +73,7 @@ noncomputable determine solution : ℝ := 2 / 3
 problem usa2017_p6 : IsLeast (f '' {x | Conditions x}) solution := by
   constructor
   · simp [one_direction]
-  · simp_rw [lowerBounds, Set.mem_image, Set.mem_setOf, forall_exists_index, and_imp,
+  · simp_rw [lowerBounds, Set.mem_image, Set.mem_ofPred, forall_exists_index, and_imp,
       forall_apply_eq_imp_iff₂]
     exact fun x hx ↦ other_direction hx
 

@@ -51,7 +51,7 @@ lemma S_set_Nonempty (n : ℕ+) : Set.Nonempty (S_set n) := by
   simp_all
 
 lemma S_set_bounded (n) : ∀ k ∈ S_set n, k ≤ n^2 := by
-  simp_rw [S_set, is_sum_of_pos_squares, Set.mem_setOf_eq]
+  simp_rw [S_set, is_sum_of_pos_squares, Set.mem_ofPred_eq]
   intro k kh
   let kh := kh k
   simp only [le_refl, forall_const] at kh
@@ -71,14 +71,9 @@ lemma S_set_Finite (n) : Set.Finite (S_set n) := by
   · refine Set.finite_iff_bddAbove.mpr ?_
     refine bddAbove_def.mpr ?_
     use n^2
-    simp only [Set.mem_image, Subtype.exists, exists_and_right, exists_eq_right,
-      forall_exists_index]
-    intro y ypos h
-    norm_cast
-    let := (S_set_bounded n ⟨y, ypos⟩) h
-    simp_all only [PNat.pow_coe, ge_iff_le]
-    exact this
-  · simp
+    rintro y ⟨⟨y', ypos⟩, h, rfl⟩
+    exact mod_cast S_set_bounded n ⟨y', ypos⟩ h
+  · exact Subtype.val_injective.injOn
 
 noncomputable def S (n : ℕ+) := (Set.Finite.exists_maximal (S_set_Finite n) (S_set_Nonempty n)).choose
 
@@ -246,13 +241,17 @@ theorem imo1992_p6_a : ∀ n ≥ 4, S n ≤ n^2-14 := by
       _ = ∑ j ∈ {1,2,3}, Finset.card {i | (s i) = j} * j ^ 2 := by
         apply Finset.sum_bij' (i:=fun (x _) => x.val) (j:= fun (x h) => ⟨x, by grind⟩)
         all_goals simp
-        intro i
-        apply Or.inl
-        unfold s'
-        congr
-        funext j
-        simp only [eq_iff_iff]
-        exact Subtype.mk_eq_mk
+        · intro i
+          apply Or.inl
+          unfold s'
+          congr
+          funext j
+          simp only [eq_iff_iff]
+          exact Subtype.mk_eq_mk
+        · intro x
+          have hx := x.prop
+          rw [Finset.mem_Ioo] at hx
+          lia
       _ = ∑ j ∈ {1,2,3}, Finset.card {i | s i = j} + ∑ j ∈ {1,2,3}, Finset.card {i | s i = j} * (j ^ 2 - 1) := by
         rw [←Finset.sum_add_distrib]
         nth_rw 1 [←Finset.sum_attach]
@@ -272,6 +271,9 @@ theorem imo1992_p6_a : ∀ n ≥ 4, S n ≤ n^2-14 := by
         · intro y _
           use y.val
           simp
+          have hy := y.prop
+          rw [Finset.mem_Ioo] at hy
+          lia
         · intro i ih
           unfold s'
           simp
@@ -974,22 +976,22 @@ theorem complete_mul (n1 n2) (lb1 : 13 ≤ n1) (lb2 : 13 ≤ n2) (n1h : complete
   · rw [complete_iff_sos] at n1h n2h
     · simp at c
       obtain ⟨u,v,hk, ub, vb⟩ : ∃ u v : ℕ+, k = (u.val-1)*k2+v ∧ u ≤ k1 ∧ v ≤ k2 := by
-        use ⟨k.natPred/k2.val+1, by simp⟩
-        use ⟨k - (k.natPred/k2.val)*k2, by {
+        have hv : 0 < (k:ℕ) - (k.natPred/k2.val)*k2 := by
           simp only [tsub_pos_iff_lt]
           apply lt_of_le_of_lt (b:=k.natPred)
           · exact Nat.div_mul_le_self k.natPred ↑k2
           · simp [PNat.natPred]
-        }⟩
+        use ⟨k.natPred/k2.val+1, by simp⟩
+        use ⟨k - (k.natPred/k2.val)*k2, hv⟩
         and_intros
         · simp only [PNat.mk_coe, add_tsub_cancel_right]
           rw [Nat.add_sub_cancel']
           trans k.natPred
           · apply Nat.div_mul_le_self
           · simp [PNat.natPred]
-        · rw [←PNat.coe_le_coe, PNat.mk_coe]
+        · show k.natPred/k2.val+1 ≤ (k1 : ℕ)
           have : k/k2.val < k1 := by
-            apply Nat.lt_of_mul_lt_mul_right (a:=k2)
+            apply Nat.lt_of_mul_lt_mul_right (a := (k2:ℕ))
             apply lt_of_le_of_lt (b:=k.val)
             · exact Nat.div_mul_le_self ↑k ↑k2
             · exact Nat.lt_of_succ_le c
@@ -998,8 +1000,8 @@ theorem complete_mul (n1 n2) (lb1 : 13 ≤ n1) (lb2 : 13 ≤ n2) (n1h : complete
             apply Nat.div_le_div_right
             simp [PNat.natPred]
           · exact Order.add_one_le_iff.mpr this
-        · rw [←PNat.coe_le_coe]
-          simp only [PNat.mk_coe, tsub_le_iff_right, PNat.natPred]
+        · show (k:ℕ) - (k.natPred/k2.val)*k2 ≤ (k2 : ℕ)
+          simp only [tsub_le_iff_right, PNat.natPred]
           rw [Nat.div_mul_self_eq_mod_sub_self]
           rw [←Nat.add_sub_assoc, Nat.sub_add_comm, ←Nat.sub_le_iff_le_add, Nat.sub_sub_self, Nat.le_sub_iff_add_le, Nat.one_add_le_iff]
           · apply Nat.mod_lt

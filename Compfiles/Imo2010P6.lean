@@ -325,6 +325,7 @@ lemma mono_of_mono_succ_rec (h : ∀ x, s < x → f x ≤ f (x + 1)) (z : ℕ+):
       simpa [hz_pred_eq_zero] using (PNat.natPred_add_one z).symm
     have hz_pred_pos := Nat.pos_of_ne_zero hz_pred_ne_zero
     let zpred : ℕ+ := ⟨z.natPred, Nat.zero_lt_of_lt hz_pred_pos⟩
+    have hzpred_lt : zpred < z := (PNat.coe_lt_coe zpred z).mp (Nat.sub_lt z.pos Nat.one_pos)
     have hs : s < x + zpred := lt_trans h_s_lt_x (PNat.lt_add_right x zpred)
     calc
       f x ≤ f (x + zpred) := mono_of_mono_succ_rec h zpred x h_s_lt_x
@@ -332,8 +333,11 @@ lemma mono_of_mono_succ_rec (h : ∀ x, s < x → f x ≤ f (x + 1)) (z : ℕ+):
       _ = f (x + z) := by
         have hzpred_succ : zpred + 1 = z := by
           apply PNat.coe_injective
-          simp [zpred, PNat.natPred_add_one z]
+          rw [PNat.add_coe, PNat.one_coe]
+          exact PNat.natPred_add_one z
         rw [add_assoc, hzpred_succ]
+termination_by z
+decreasing_by exact hzpred_lt
 
 lemma mono_of_mono_succ (h : ∀ x, s < x → f x ≤ f (x + 1)) : ∀ x y, s < x → x < y → f x ≤ f y := by
   intro x y h_s_lt_x h_x_lt_y
@@ -376,11 +380,13 @@ lemma decompose (h : l < n) : ∃ (t k : ℕ+), t ∈ Finset.Icc 1 l ∧ n = t +
       rw [Nat.eq_zero_of_not_pos hk0, Nat.mul_zero, add_zero] at hmod_add_div
       exact_mod_cast hmod_add_div.trans_le (PNat.mod_le n l).2
     exact (not_le_of_gt h hnle)
-  use ⟨k', hk'_pos⟩
+  let k2 : ℕ+ := ⟨k', hk'_pos⟩
+  use k2
   constructor
   · exact Finset.mem_Icc.mpr ⟨one_le, (PNat.mod_le n l).2⟩
   · apply PNat.coe_injective
-    simpa [mul_comm] using hmod_add_div
+    rw [PNat.add_coe, PNat.mul_coe, mul_comm]
+    exact hmod_add_div
 
 lemma res_eventually_step_eq
     (ht : ∀ t ∈ Finset.Icc 1 l, ∃ N : ℕ+, ∀ k, t + k * l > N → res a l (t + k * l) = res a l (t + k * l + l)) :
