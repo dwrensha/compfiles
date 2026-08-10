@@ -106,7 +106,7 @@ lemma gf_one : gf f 1 = 1 := by
 lemma gf_mul (a b : ℕ+) : gf f (a * b) = gf f a * gf f b := by
   unfold gf
   rw [ Nat.div_mul_div_comm ]
-  · rw [ show ( f a : ℕ ) * f b = f 1 * f ( a * b ) by exact congr_arg PNat.val ( f_mul_rel f hf a b ) ]
+  · rw [ ← PNat.mul_coe, f_mul_rel f hf a b ]
     norm_num [ Nat.mul_div_mul_left ]
   · exact f1_dvd f hf a
   · exact f1_dvd f hf b
@@ -162,8 +162,8 @@ theorem f_1998_ge : (120 : ℕ) ≤ (f 1998 : ℕ) := by
     · by_cases hq3 : q = 3
       · rcases p with ( _ | _ | _ | _ | p ) <;> rcases r with ( _ | _ | _ | _ | r ) <;> simp_all +arith +decide
         nlinarith
-      · have hq_ge_5 : 5 ≤ q := by exact le_of_not_gt fun h => by interval_cases q <;> trivial
-        have hq3_ge_125 : 125 ≤ q^3 := by exact Nat.pow_le_pow_left hq_ge_5 3
+      · have hq_ge_5 : 5 ≤ q := le_of_not_gt fun h => by interval_cases q <;> trivial
+        have hq3_ge_125 : 125 ≤ q^3 := Nat.pow_le_pow_left hq_ge_5 3
         nlinarith [ hp.two_le, hr.two_le, mul_pos hp.pos hr.pos ]
   have h_final : (gf f 2 : ℕ) * (gf f 3 : ℕ) ^ 3 * (gf f 37 : ℕ) ≥ 120 := by
     apply h_min

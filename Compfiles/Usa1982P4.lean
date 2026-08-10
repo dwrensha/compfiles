@@ -43,7 +43,7 @@ lemma some_useful_mod_lemma : ∀ (n a b c d : ℕ),
     symm
     apply H a n b c d h1.symm h2 han
   · rw [(by simp : d ^ n = 1 * d ^ n)]
-    have ann : a = (a - n + n) := by exact (Nat.sub_eq_iff_eq_add h).mp rfl
+    have ann : a = (a - n + n) := (Nat.sub_eq_iff_eq_add h).mp rfl
     rw [←(zero_add n : 0 + n = n)] at h1
     rw [ann] at h1
     apply Nat.ModEq.add_right_cancel' at h1

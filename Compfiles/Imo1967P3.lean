@@ -69,7 +69,7 @@ lemma aux_3
   have h₃: ∀ (n m : ℕ), 0 < n → n.factorial ∣ ∏ i ∈ Finset.Icc 1 n, (m + i) := by
     exact fun (n m : ℕ) (a : 0 < n) ↦ aux_2 n m a
   have h₄: (n + (1 : ℕ)).factorial ∣ (k + m + 1) * (∏ i ∈ Finset.Icc (1 : ℕ) n, (m + i + k + (1 : ℕ))) := by
-    have hn₀ : 0 < n + 1 := by exact Nat.zero_lt_succ n
+    have hn₀ : 0 < n + 1 := Nat.zero_lt_succ n
     have h₈₁: ∀ i, m + i + k + (1 : ℕ) = m + k + (1 : ℕ) + i := by bound
     have h₈₂: (k + m + 1) * (∏ i ∈ Finset.Icc (1 : ℕ) n, (m + i + k + (1 : ℕ))) = ∏ i ∈ Finset.Ico (0 : ℕ) (n + 1), (m + i + k + (1 : ℕ)) := by
       simp_rw [h₈₁]
@@ -83,7 +83,7 @@ lemma aux_3
       group
     have h₈₄: ∏ i ∈ Finset.Ico (1 : ℕ) (n + (2 : ℕ)), (m + i + k) = ∏ i ∈ Finset.Icc (1 : ℕ) (n + (1 : ℕ)), (m + i + k) := by rfl
     rw [h₈₃, h₈₄]
-    have h₈₅: ∀ i, m + i + k = m + k + i := by exact fun (i : ℕ) ↦ Nat.add_right_comm m i k
+    have h₈₅: ∀ i, m + i + k = m + k + i := fun (i : ℕ) ↦ Nat.add_right_comm m i k
     simp_rw [h₈₅]
     exact h₃ (n + 1) (m + k) hn₀
   refine Nat.Coprime.dvd_of_dvd_mul_left ?_ h₄

@@ -1196,14 +1196,14 @@ lemma mergeOne {m k : ℕ} [NeZero m] (P : CirclePartition m k) (hk : 0 < k) (hk
       by_cases hn0 : n = 0
       · subst hn0
         have h1 : P'.off ⟨0 + 1, hn2⟩ = P'.off ⟨0, hk'⟩ + P'.len ⟨0, hk'⟩ :=
-          off_succ P' ⟨0, hk'⟩ (by exact hn2)
+          off_succ P' ⟨0, hk'⟩ hn2
         rw [h1, off_zero P' hk', hP'len]
         simp only [hlen'_def, if_pos rfl, zero_add]
         rw [hHT, hoff2, hofj]
         omega
       · have ih' := ih (by omega) (by omega)
         have h1 : P'.off ⟨n + 1, hn2⟩ = P'.off ⟨n, by omega⟩ + P'.len ⟨n, by omega⟩ :=
-          off_succ P' ⟨n, by omega⟩ (by exact hn2)
+          off_succ P' ⟨n, by omega⟩ hn2
         have hge : P.off j + l ≤ P.offExt hk (j.val + 1 + n) := by
           have h2 : P.offExt hk (j.val + 2) ≤ P.offExt hk (j.val + 1 + n) := by
             apply P.offExt_mono hk
@@ -1222,7 +1222,7 @@ lemma mergeOne {m k : ℕ} [NeZero m] (P : CirclePartition m k) (hk : 0 < k) (hk
       simp only [hlen'_def, hi0, if_true]
     have hoff0 : P'.off i = 0 := by
       rw [show i = ⟨0, hk'⟩ from Fin.ext hi0]
-      exact off_zero P' hk' 
+      exact off_zero P' hk'
     rw [sum_arcOf P' hk' i (w ∘ skipMap a₀ l), hoff0, hlen0, zero_add]
     have hsplit : ∑ t ∈ Finset.Ico 0 (H + T), P'.perW (w ∘ skipMap a₀ l) t
         = (∑ t ∈ Finset.Ico 0 H, P'.perW (w ∘ skipMap a₀ l) t)

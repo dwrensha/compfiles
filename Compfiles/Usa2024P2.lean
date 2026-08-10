@@ -861,7 +861,7 @@ lemma SignatureIntersectionCount_eq_self_add_strict
         ∑ w ∈ (Finset.univ : Finset Signature).erase u, B w := by
     rw [strictSupersetContribution]
     rw [← Finset.sum_erase_add (Finset.univ : Finset Signature) B (Finset.mem_univ u)]
-    have hnss : ¬ u ⊂ u := by exact irrefl u
+    have hnss : ¬ u ⊂ u := irrefl u
     simp [B]
   calc
     SignatureIntersectionCount f u =
@@ -1217,7 +1217,7 @@ noncomputable def signatureCount (S : Fin 100 → Set ℤ) (v : Signature) : ℕ
 
 lemma signatureCount_condition_of_good (S : Fin 100 → Set ℤ) (hS : Good S) :
     SignatureCountCondition (signatureCount S) := by
-  -- Partition the intersection by exact signatures.
+  -- Partition the intersection signatures.
   classical
   intro u hu
   rcases hS.card u hu with ⟨k, hk⟩
@@ -1289,7 +1289,7 @@ lemma signatureObjective_eq_original_objective
     (S : Fin 100 → Set ℤ) (hS : Good S) :
     SignatureObjective (signatureCount S) =
       {z : ℤ | InAtLeastKSubsets S 50 z }.ncard := by
-  -- Partition high-membership elements by exact signature.
+  -- Partition high-membership elements signature.
   classical
   have hsig_card :
       ∀ z : ℤ, {i : Fin 100 | z ∈ S i}.ncard = (signatureOf S z).card := by

@@ -2726,7 +2726,7 @@ lemma b_st_props (s t : Int)
                 0 ≤ b.1 ∧ b.1 < n ∧ 0 ≤ b.2 ∧ b.2 < n) :
     BlackPointProps k s t (make_b_point k s t h_bounds) := by
   let p := make_b_point k s t h_bounds
-  have h_pos : 0 < mod_base k := by exact Int.add_pos_of_nonneg_of_pos (sq_nonneg _) (by decide)
+  have h_pos : 0 < mod_base k := Int.add_pos_of_nonneg_of_pos (sq_nonneg _) (by decide)
   have h_coords : (p.1 : ℤ) = (b_st_coords k s t).1 ∧ (p.2 : ℤ) = (b_st_coords k s t).2 := by
     dsimp [p, make_b_point]
     exact ⟨Int.toNat_of_nonneg h_bounds.1, Int.toNat_of_nonneg h_bounds.2.2.1⟩
@@ -3194,7 +3194,7 @@ lemma unique_col_all_black (k : ℕ) (hk : 2 ≤ k) :
   have h_step1 : (p1.1 : ℤ) + k * p2.2 + k + 1 = p1.1 + C := by dsimp [C]; ring
   have h_step2 : (p2.1 : ℤ) + k * p2.2 + k + 1 = p2.1 + C := by dsimp [C]; ring
   rw [h_step1, h_step2] at h_equiv
-  have h_x_equiv : (p1.1 : ℤ) ≡ p2.1 [ZMOD M] := by exact Int.ModEq.add_right_cancel' C h_equiv
+  have h_x_equiv : (p1.1 : ℤ) ≡ p2.1 [ZMOD M] := Int.ModEq.add_right_cancel' C h_equiv
   have h_x_eq : p1.1 = p2.1 := eq_of_modEq_fin hk h_x_equiv
   ext
   · rw [h_x_eq]

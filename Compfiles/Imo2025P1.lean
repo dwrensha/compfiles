@@ -1061,9 +1061,9 @@ end FindLines
 lemma coverGridNoEdgeConfig.cover_edge (C : coverGridNoEdgeConfig) : C.n = 3 ∧ C.nS = 3 := by
   have : C.n ≥ 3 := by
     calc
-    _ = #C.lines := by exact C.lines_count.symm
-    _ ≥ #C.corner_set := by exact Finset.card_le_card C.corner_set_subset_lines
-    _ = 3 := by exact C.corner_set_card
+    _ = #C.lines := C.lines_count.symm
+    _ ≥ #C.corner_set := Finset.card_le_card C.corner_set_subset_lines
+    _ = 3 := C.corner_set_card
   by_cases C.n = 3
   · have := C.cover_no_edge_3_lines; tauto
   · have : C.n ≥ 4 := by lia
@@ -1372,7 +1372,7 @@ problem imo2025_p1 (n : Set.Ici 3) :
     have := C.any_cover
     grind
   · intro hS
-    have : n.val ≥ 3 := by exact n.property
+    have : n.val ≥ 3 := n.property
     have : nS ≤ n.val := by lia
     obtain ⟨C, h⟩ := existsStrongCover n nS this hS
     use C.lines

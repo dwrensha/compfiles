@@ -221,7 +221,7 @@ problem imo1973_p6 (npos : 0 < n) (hq : q ∈ Set.Ioo 0 1) (apos : ∀ i, 0 < a 
           · intro a _ b _ e
             exact Fin.eq_of_val_eq e
           · intro a h
-            use ⟨a, by exact Finset.mem_range.mp h⟩
+            use ⟨a, Finset.mem_range.mp h⟩
             simp
           · simp
         _ = ∑ j ≤ i.val, q ^ (j - i.val : ℤ).natAbs + ∑ j ∈ Finset.Ioo i.val n, q ^ (j - i.val : ℤ).natAbs := by

@@ -272,7 +272,7 @@ theorem a_b_recurrence_2 (n : ℕ) (npos : 0 < n) : b (n+2) = a n + 2 * b n := b
 
 
 theorem a_even (n : ℕ) (npos : 0 < n) : a (2*n) = ((2+√2)^(n-1) - (2-√2)^(n-1)) / √2 := by
-  suffices a (2*n) = ((2+√2)^(n-1) - (2-√2)^(n-1)) / √2 ∧ b (2*n) = ((2+√2)^(n-1) + (2-√2)^(n-1)) / 2 by exact this.left
+  suffices a (2*n) = ((2+√2)^(n-1) - (2-√2)^(n-1)) / √2 ∧ b (2*n) = ((2+√2)^(n-1) + (2-√2)^(n-1)) / 2 from this.left
   revert n
   apply Nat.le_induction
   · unfold a b

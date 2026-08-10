@@ -203,7 +203,7 @@ lemma square_of_pow_of_first_k_prime_mod_two_eq {k m n : ℕ}
     · rw [funext_iff] at hmn
       have hmn'' := hmn k'
       rw [funext_iff] at hmn''
-      have h'k' : k' ∈ Finset.range (k + 1) := by exact Finset.mem_range_succ_iff.mpr hk'
+      have h'k' : k' ∈ Finset.range (k + 1) := Finset.mem_range_succ_iff.mpr hk'
       have hmn''' := hmn'' h'k'
       simp only [pow_of_first_k_prime_mod_two] at hmn'''
       exact hmn'''

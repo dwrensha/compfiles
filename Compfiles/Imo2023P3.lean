@@ -334,7 +334,7 @@ lemma shift_bounds {k : ℕ} (hk : 2 ≤ k) {P : Polynomial ℤ} (hmon : P.Monic
     | succ i ih =>
         calc A (m + (i + 1)) = A ((m + i) + 1) := by ring_nf
           _ ≤ A (m + i) + CN := diff_le hk hmon hdeg hcoef hA hpos hmono (m + i)
-          _ ≤ (A m + i * CN) + CN := by exact Nat.add_le_add_right ih CN
+          _ ≤ (A m + i * CN) + CN := Nat.add_le_add_right ih CN
           _ = A m + (i + 1) * CN := by ring
   constructor
   · have h := hmono (show m ≤ m + i by omega)

@@ -53,9 +53,9 @@ lemma aux₀ {x y : ℝ} (h : ∃ k : ℤ, x = y * k)
       rw [← Int.cast_one, ← Int.cast_abs, Int.cast_le]
       exact Int.one_le_abs hx
     calc y
-        ≤ |y| := by exact le_abs_self y
-      _ = |y| * 1 := by exact (mul_one |y|).symm
-      _ ≤ |y| * |↑k| := by exact mul_le_mul_of_nonneg_left h₁ (abs_nonneg y)
+        ≤ |y| := le_abs_self y
+      _ = |y| * 1 := (mul_one |y|).symm
+      _ ≤ |y| * |↑k| := mul_le_mul_of_nonneg_left h₁ (abs_nonneg y)
 
 lemma aux₁ {x y z : ℝ}
   (hx' : 0 ≤ x) (hy' : y ≤ 0)
@@ -64,13 +64,13 @@ lemma aux₁ {x y z : ℝ}
     rw [abs_lt]
     constructor
     · calc -z
-          _ < y := by exact (abs_lt.mp hy).left
-          _ = 0 + y := by exact (zero_add y).symm
-          _ ≤ x + y := by exact add_le_add_left hx' y
+          _ < y := (abs_lt.mp hy).left
+          _ = 0 + y := (zero_add y).symm
+          _ ≤ x + y := add_le_add_left hx' y
     · calc x + y
-        _ ≤ x + 0 := by exact add_le_add_right hy' x
-        _ = x := by exact add_zero x
-        _ < z := by exact (abs_lt.mp hx).right
+        _ ≤ x + 0 := add_le_add_right hy' x
+        _ = x := add_zero x
+        _ < z := (abs_lt.mp hx).right
 
 lemma aux₂ {x y z : ℝ} (h : |x + y| = z)
   (hx : |x| < z) (hy : |y| < z)
@@ -98,17 +98,17 @@ lemma aux₃ {a b : Real.Angle} (h : 2 • a + 2 • b = Real.pi)
     repeat rw [Real.Angle.angle_eq_iff_two_pi_dvd_sub] at h
     have h₁ : |a' + b'| < Real.pi := by
       calc |a' + b'|
-          ≤ |a'| + |b'| := by exact abs_add_le a' b'
-        _ < Real.pi / 2 + Real.pi / 2 := by exact add_lt_add ha hb
+          ≤ |a'| + |b'| := abs_add_le a' b'
+        _ < Real.pi / 2 + Real.pi / 2 := add_lt_add ha hb
         _ = Real.pi := by ring
     have h₂ : 0 ≤ Real.pi / 2 := by
       apply div_nonneg Real.pi_nonneg
       norm_num
     have h₃ : |a' + b'| + |Real.pi / 2| < 2 * Real.pi := by
       calc |a' + b'| + |Real.pi / 2|
-            < Real.pi + |Real.pi / 2| := by exact add_lt_add_left h₁ _
-          _ = Real.pi + Real.pi / 2 := by exact (add_right_inj _).mpr (abs_eq_self.mpr h₂)
-          _ ≤ Real.pi + Real.pi / 2 + Real.pi / 2 := by exact (le_add_iff_nonneg_right _).mpr h₂
+            < Real.pi + |Real.pi / 2| := add_lt_add_left h₁ _
+          _ = Real.pi + Real.pi / 2 := (add_right_inj _).mpr (abs_eq_self.mpr h₂)
+          _ ≤ Real.pi + Real.pi / 2 + Real.pi / 2 := (le_add_iff_nonneg_right _).mpr h₂
           _ = 2 * Real.pi := by ring
     have h₄ : |a' + b'| = Real.pi / 2 := by
       rw [abs_eq h₂]
@@ -117,16 +117,16 @@ lemma aux₃ {a b : Real.Angle} (h : 2 • a + 2 • b = Real.pi)
         apply eq_of_sub_eq_zero
         apply aux₀ pos
         calc |a' + b' - Real.pi / 2|
-            ≤ |a' + b'| + |Real.pi / 2| := by exact abs_sub _ _
-          _ < 2 * Real.pi := by exact h₃
+            ≤ |a' + b'| + |Real.pi / 2| := abs_sub _ _
+          _ < 2 * Real.pi := h₃
       · right
         apply eq_of_sub_eq_zero
         rw [← neg_div]
         apply aux₀ neg
         rw [neg_div, sub_neg_eq_add]
         calc |a' + b' + Real.pi / 2|
-            ≤ |a' + b'| + |Real.pi / 2| := by exact abs_add_le _ _
-          _ < 2 * Real.pi := by exact h₃
+            ≤ |a' + b'| + |Real.pi / 2| := abs_add_le _ _
+          _ < 2 * Real.pi := h₃
     exact aux₂ h₄ ha hb
 
 lemma aux₄ {a : Real.Angle} (h : 2 • 2 • a = 0) (ha : |a.toReal| < Real.pi / 2)
@@ -258,7 +258,7 @@ lemma A_opposite_BC : {cfg.B, cfg.C} = Set.range (cfg.ABC.faceOpposite 0).points
       rfl
   · simp
     calc (Finset.image cfg.ABC.points {0}ᶜ).card
-        ≤ ({0}ᶜ : Finset (Fin (2 + 1))).card := by exact Finset.card_image_le
+        ≤ ({0}ᶜ : Finset (Fin (2 + 1))).card := Finset.card_image_le
       _ = 2 := by
         rw [Finset.card_compl]
         simp
@@ -503,9 +503,9 @@ lemma PC_lt_PO : dist cfg.P cfg.C < dist cfg.P cfg.O := by
     exact Collinear.subset (by grind:_) (h'.collinear)
   calc dist cfg.P cfg.C
       = 2 * dist cfg.P cfg.C - dist cfg.P cfg.C:= by ring
-    _ ≤ cfg.ABC.circumradius - dist cfg.P cfg.C := by exact sub_le_sub_right (two_mul_PC_le_circumradius cfg) _
+    _ ≤ cfg.ABC.circumradius - dist cfg.P cfg.C := sub_le_sub_right (two_mul_PC_le_circumradius cfg) _
     _ = dist cfg.O cfg.C - dist cfg.P cfg.C := by rw [CO_circumradius]
-    _ < dist cfg.O cfg.P + dist cfg.P cfg.C - dist cfg.P cfg.C := by exact sub_lt_sub_right h₁ _
+    _ < dist cfg.O cfg.P + dist cfg.P cfg.C - dist cfg.P cfg.C := sub_lt_sub_right h₁ _
     _ = dist cfg.O cfg.P := by ring
     _ = dist cfg.P cfg.O := by apply dist_comm
 

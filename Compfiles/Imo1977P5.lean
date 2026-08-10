@@ -72,7 +72,7 @@ lemma aux_2
     (h₁ : q = (a ^ 2 + b ^ 2) / (a + b)) :
     q ^ 2 + r = 1977 → (a, b) ∈ solution_set := by
   intro h₂
-  have hr₀: r = 1977 - q ^ 2 := by exact Nat.eq_sub_of_add_eq' h₂
+  have hr₀: r = 1977 - q ^ 2 := Nat.eq_sub_of_add_eq' h₂
   have h₅₁: 0 < a + b := by linarith
   have h₅₂: a ^ 2 + b ^ 2 = q * (a + b) + r := by
     rw [h₀, h₁,]

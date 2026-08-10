@@ -91,7 +91,7 @@ problem imo2003_p6 (p : ℕ) (hp : p.Prime) :
   have N_mod_p_ne_1 : N % (p ^ 2) ≠ 1 := by
     have : (p + 1) % (p ^ 2) = p + 1 := by
       have : p + 1 < p ^ 2 := by
-        suffices 1 < p ^ 2 - p by exact Nat.add_lt_of_lt_sub' this
+        suffices 1 < p ^ 2 - p from Nat.add_lt_of_lt_sub' this
         calc
           1 < p * (p - 1) := by
             apply Nat.one_lt_mul_iff.mpr

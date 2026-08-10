@@ -112,7 +112,7 @@ lemma imo_1990_p3_forward
       refine lt_trans ?_ hn₀
       exact Nat.one_lt_two
     let p : ℕ := Finset.min' sp hsp₁
-    have hp₀: p ∈ sp := by exact Finset.min'_mem sp hsp₁
+    have hp₀: p ∈ sp := Finset.min'_mem sp hsp₁
     have hp₁: Nat.Prime p := Nat.prime_of_mem_primeFactors hp₀
     have hp₂: ∀ x ∈ sp, x ≠ p → p < x := by
       intro x hx₀ hx₁
@@ -154,7 +154,7 @@ lemma imo_1990_p3_forward
         · exact Nat.zero_lt_two
         · refine le_of_eq ?_
           have hh₀: Nat.gcd n (p - 1) = 1 := by
-            have g₀: n ≠ (0 : ℕ) := by exact Nat.ne_zero_of_lt h₀
+            have g₀: n ≠ (0 : ℕ) := Nat.ne_zero_of_lt h₀
             have g₁: p - (1 : ℕ) ≠ (0 : ℕ) := by
               have g₁₀: 2 ≤ p := Nat.Prime.two_le hp₁
               lia
@@ -170,13 +170,13 @@ lemma imo_1990_p3_forward
                 · exact Nat.le_of_mem_primeFactors hx₀
               refine Finset.disjoint_left.mpr ?_
               intro x hx₀
-              have hx₁: p ≤ x := by exact g₂ x hx₀
+              have hx₁: p ≤ x := g₂ x hx₀
               contrapose! hx₁
               exact g₃ x hx₁
             apply Nat.primeFactors_eq_empty.mp at hh₀₀
             obtain hh₀₀ | hh₀₀ := hh₀₀
             · exfalso
-              have hh₀₁: n.gcd (p - (1 : ℕ)) ≠ (0 : ℕ) := by exact Nat.gcd_ne_zero_left g₀
+              have hh₀₁: n.gcd (p - (1 : ℕ)) ≠ (0 : ℕ) := Nat.gcd_ne_zero_left g₀
               exact hh₀₁ hh₀₀
             · exact hh₀₀
           rw [Nat.gcd_comm]
@@ -197,7 +197,7 @@ lemma imo_1990_p3_forward
     have hp₆: ∃ d:ℕ, n = d * p ^ k ∧ ¬ 3 ∣ d := by
       rw [hp₃]
       use n / 3 ^ k
-      have hp₆₀: (3 : ℕ) ^ k ∣ n := by exact pow_multiplicity_dvd (3 : ℕ) n
+      have hp₆₀: (3 : ℕ) ^ k ∣ n := pow_multiplicity_dvd (3 : ℕ) n
       constructor
       · exact (Nat.div_mul_cancel hp₆₀).symm
       · by_contra! hh₀
@@ -262,7 +262,7 @@ lemma imo_1990_p3_forward
       · let sq : Finset ℕ := d.primeFactors
         have hsq₁: sq.Nonempty := Nat.nonempty_primeFactors.mpr hd₂
         let q : ℕ := Finset.min' sq hsq₁
-        have hq₀: q ∈ sq := by exact Finset.min'_mem sq hsq₁
+        have hq₀: q ∈ sq := Finset.min'_mem sq hsq₁
         have hq₁: Nat.Prime q := Nat.prime_of_mem_primeFactors hq₀
         have hq₂: q ∣ d := Nat.dvd_of_mem_primeFactors hq₀
         have hq₃: q ∣ n := by
@@ -283,13 +283,13 @@ lemma imo_1990_p3_forward
               exact Finset.min'_le sq x hx₀
             have hh₀₃: Nat.gcd (q - 1) d = 1 := by
               have hh₀₃₀: q - (1 : ℕ) ≠ (0 : ℕ) := by lia
-              have hh₀₃₁: d ≠ 0 := by exact Nat.ne_zero_of_lt hd₂
+              have hh₀₃₁: d ≠ 0 := Nat.ne_zero_of_lt hd₂
               have hh₀₃₂: ((q - 1).gcd d).primeFactors = ∅ := by
                 rw [Nat.primeFactors_gcd hh₀₃₀ hh₀₃₁]
                 refine Finset.disjoint_iff_inter_eq_empty.mp ?_
                 refine Finset.disjoint_left.mpr ?_
                 intro x hx₀
-                have hx₁: x ≤ q - (1 : ℕ) := by exact hh₀₁ x hx₀
+                have hx₁: x ≤ q - (1 : ℕ) := hh₀₁ x hx₀
                 contrapose! hx₁
                 refine Nat.lt_of_succ_le ?_
                 rw [Nat.succ_eq_add_one, Nat.sub_add_cancel (by bound)]
@@ -297,7 +297,7 @@ lemma imo_1990_p3_forward
               apply Nat.primeFactors_eq_empty.mp at hh₀₃₂
               obtain hh₀₃₂ | hh₀₃₂ := hh₀₃₂
               · exfalso
-                have hh₀₁: (q - 1).gcd d ≠ (0 : ℕ) := by exact Nat.gcd_ne_zero_left hh₀₃₀
+                have hh₀₁: (q - 1).gcd d ≠ (0 : ℕ) := Nat.gcd_ne_zero_left hh₀₃₀
                 exact hh₀₁ hh₀₃₂
               · exact hh₀₃₂
             have hh₀₄: Nat.Coprime d (p ^ k) := by
@@ -369,7 +369,7 @@ lemma imo_1990_p3_forward
             refine Nat.not_dvd_of_pos_of_lt ?_ ?_
             · exact Nat.zero_lt_succ (2 : ℕ)
             · exact Nat.lt_of_add_left_lt hq₅
-          have hh₇: q ≤ 7 := by exact Nat.le_of_dvd (by lia) hh₆
+          have hh₇: q ≤ 7 := Nat.le_of_dvd (by lia) hh₆
           interval_cases q
           · exfalso
             lia
