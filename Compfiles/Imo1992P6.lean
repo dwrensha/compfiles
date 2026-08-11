@@ -12,7 +12,7 @@ public import ProblemExtraction
 
 @[expose] public section
 
-problem_file
+problem_file { tags := [.NumberTheory] }
 
 /-!
 # International Mathematical Olympiad 1992, Problem 6

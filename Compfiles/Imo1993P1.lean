@@ -12,7 +12,7 @@ public import ProblemExtraction
 
 @[expose] public section
 
-problem_file
+problem_file { tags := [.Algebra] }
 
 /-!
 # International Mathematical Olympiad 1993, Problem 1
