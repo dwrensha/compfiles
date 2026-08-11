@@ -145,7 +145,7 @@ lemma iter_stable_add (a : ℕ → ℕ) {N p : ℕ}
   | zero => exact fun i hi => h i hi
   | succ q IH =>
     intro i hi
-    rw [show p + (q + 1) = p + q + 1 from by omega, iter_succ (p+q) a,
+    rw [← add_assoc, iter_succ (p+q) a,
       iter_succ ((p+q)+1) a, t_def, t_def]
     congr 1
     apply Finset.filter_congr
@@ -279,7 +279,7 @@ lemma comm2 {a : ℕ → ℕ} {n k : ℕ} (hk1 : 1 ≤ k)
       have hp1 := hge (l+k) (by omega) (by omega) m
       have hp2 := hge (j+k) (by omega) hj m
       constructor <;> intro h3 <;> omega
-    rw [hfilter, show m + 1 + 2 = m + 2 + 1 from by omega, iter_succ (m+2) a, t_def]
+    rw [hfilter, add_right_comm, iter_succ (m+2) a, t_def]
     have h0 : ∀ m' < k, t^[m+2] a m' ≠ t^[m+2] a (j+k) := by
       intro m' hm'
       have e1 : t^[m+2] a m' = 0 := hz (m+1) m' hm'
@@ -350,11 +350,11 @@ theorem main_aux (n : ℕ) : 1 ≤ n → ∀ a : ℕ → ℕ, (∀ i ≤ n, a i 
             rwa [show n - 2 + 1 = n - 1 from by omega, show i - 1 + 1 = i from by omega] at e
           have h2 : t^[n-1] (fun j => t a (j+1) - 1) (i-1) + 1 = t^[n] a i := by
             have e := hcomm (n-1) (i-1) (by omega)
-            rwa [show n - 1 + 1 = n from by omega, show i - 1 + 1 = i from by omega] at e
+            rwa [Nat.sub_one_add_one_eq_of_pos hn, Nat.sub_one_add_one_eq_of_pos hi1] at e
           have h3 : t^[n-2] (fun j => t a (j+1) - 1) (i-1)
               = t^[n-1] (fun j => t a (j+1) - 1) (i-1) := by
             have e := IHb (i-1) (by omega)
-            rwa [show n - 1 - 1 = n - 2 from by omega] at e
+            rwa [Nat.sub_succ'] at e
           omega
       · -- Case 2: `a₁ = 0`.
         have ha10 : a 1 = 0 := by omega
@@ -449,10 +449,8 @@ theorem main_aux (n : ℕ) : 1 ≤ n → ∀ a : ℕ → ℕ, (∀ i ≤ n, a i 
             have e1 : t^[n-1] a i = t^[n-2] (t a) i := by
               rw [show n - 1 = n - 2 + 1 from by omega, Function.iterate_add_apply,
                 Function.iterate_one]
-            have e2 : t^[n] a i = t^[n-2] (t^[2] a) i := by
-              rw [← Function.iterate_add_apply, show n - 2 + 2 = n from by omega]
-            rw [e1, e2]
-            exact iter_congr (fun j hj => hstep j (le_trans hj hi)) (n-2) i le_rfl
+            rw [e1, ← Nat.sub_add_cancel hn2, Function.iterate_add_apply]
+            exact iter_congr (hstep · <| ·.trans hi) (n-2) i le_rfl
           · -- Sub-case `k < n`: shift by `k` and apply the induction hypothesis.
             have hklt : k < n := by omega
             have hcomm : ∀ m, ∀ j, j + k ≤ n →
@@ -480,8 +478,7 @@ theorem main_aux (n : ℕ) : 1 ≤ n → ∀ a : ℕ → ℕ, (∀ i ≤ n, a i 
                 have h2 : t^[n-k] (fun j => t^[2] a (j+k) - k) (i'-k) + k
                     = t^[n-k+1+1] a i' := by
                   have e := hcomm (n-k) (i'-k) (by omega)
-                  rwa [show n - k + 2 = n - k + 1 + 1 from by omega,
-                    show i' - k + k = i' from by omega] at e
+                  rwa [Nat.add_succ, Nat.sub_add_cancel hik2] at e
                 have h3 : t^[n-k-1] (fun j => t^[2] a (j+k) - k) (i'-k)
                     = t^[n-k] (fun j => t^[2] a (j+k) - k) (i'-k) := IHc (i'-k) (by omega)
                 omega

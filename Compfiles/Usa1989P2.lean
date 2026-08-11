@@ -116,7 +116,7 @@ problem usa1989_p2
       #(s.biUnion Sym2.toFinset) = 12 := by
   obtain ⟨s, hsub, hcard', hdisj⟩ := exists_pairwise_disjoint_edges G hdeg
   rw [hcard, Fintype.card_fin] at hcard'
-  obtain ⟨t, hts, htc⟩ := Finset.exists_subset_card_eq (show 6 ≤ #s from by omega)
+  obtain ⟨t, hts, htc⟩ := Finset.exists_subset_card_eq (show 6 ≤ #s by omega)
   refine ⟨t, hts.trans hsub, htc, ?_⟩
   have hpair : (t : Set (Sym2 (Fin 20))).PairwiseDisjoint Sym2.toFinset := by
     intro e₁ he₁ e₂ he₂ hne
