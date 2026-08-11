@@ -264,8 +264,7 @@ problem imo2012_p4 (f : ℤ → ℤ) :
               · exact absurd h (by lia)
               · have hx2 : (x : ℤ) = 2 := by lia
                 have h1 : f (↑x + 1) = f 1 := by rw [«f(x+1)=(x-1)²*f1», hx2]; ring
-                have h2 : f (↑x + 1) = 9 * f 1 := by
-                  rw [show (↑x : ℤ) + 1 = 3 from by rw [hx2]; ring]; exact «f3=9*f1»
+                have h2 : f (↑x + 1) = 9 * f 1 := by rw [hx2]; exact «f3=9*f1»
                 have hf0 : f 1 = 0 := by rw [h1] at h2; lia
                 rw [«f(x+1)=(x-1)²*f1», hf0]; ring
               · rw [«f(x+1)=(x-1)²*f1», h]; ring

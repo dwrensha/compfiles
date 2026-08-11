@@ -139,13 +139,14 @@ lemma f_pair_ge (r k : ℕ) (hk : 1 ≤ k) (hkr : k ≤ r) :
     | succ j ih =>
       intro hj
       have step := f_pair_step r (r - (j + 1)) (by omega) (by omega)
-      have ihh := ih (by omega)
-      rw [show r - (j + 1) + 1 = r - j from by omega,
-        show 2 * r - (r - (j + 1)) = 2 * r + 1 - (r - j) from by omega] at step
-      omega
-  have hk1 : r - k ≤ r - 1 := by omega
-  rw [show k = r - (r - k) from by omega]
-  exact key (r - k) hk1
+      have : 1 ≤ r - j := by lia
+      calc
+        2 * f r
+        _ ≤ f (r - j) + f (2 * r + 1 - (r - j)) := ih <| Nat.le_of_succ_le hj
+        _ ≤ f (r - (j + 1)) + f (2 * r + 1 - (r - (j + 1))) := by
+          rwa [Nat.sub_add_eq, Nat.sub_add_cancel this, Nat.sub_sub_right (2 * r) this] at step
+  rw [← Nat.sub_sub_self hkr]
+  exact key (r - k) <| Nat.sub_le_sub_left hk r
 
 /-- The lemma `f 1 + f 2 + ... + f (2r) ≥ 2r * f r` of the official solution. -/
 lemma f_sum_pair (r : ℕ) (hr : 1 ≤ r) :

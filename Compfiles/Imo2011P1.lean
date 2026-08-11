@@ -287,7 +287,7 @@ problem imo2011_p1 (A : Finset ℕ) (hA : A.card = 4) (hApos : ∀ a ∈ A, 0 < 
     exact pairCount_le_four hab hbc hcd
   · intro h
     have hwitness := h {1, 5, 7, 11} (by decide) (by decide)
-    rw [show pairCount {1, 5, 7, 11} = 4 from by decide] at hwitness
+    rw [show pairCount {1, 5, 7, 11} = 4 by decide] at hwitness
     obtain ⟨a, b, c, d, hab, hbc, hcd, rfl⟩ := exists_sorted_four hA
     have ha : 0 < a := hApos a (by simp)
     obtain ⟨h1, h2, h3, h4⟩ := dvds_of_four_le hab hbc hcd hwitness

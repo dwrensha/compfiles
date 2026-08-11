@@ -69,8 +69,7 @@ lemma fwdDiff_iter_zero (m : ℕ) (f : ℕ → ℝ) :
             (-1 : ℝ) ^ (m + 1 - (j + 1)) * ((m + 1).choose (j + 1) : ℝ) * f (j + 1))
           + (-1 : ℝ) ^ (m + 1) * f 0 := by
       simp only [Finset.sum_range_succ']
-      rw [show (-1 : ℝ) ^ (m + 1 - 0) * ((m + 1).choose 0 : ℝ) * f 0
-          = (-1 : ℝ) ^ (m + 1) * f 0 from by simp]
+      rw [Nat.sub_zero, Nat.choose_zero_right, Nat.cast_one, mul_one]
     rw [rhs_eq]
     have key : ∀ j ∈ Finset.range (m + 1),
         (-1 : ℝ) ^ (m + 1 - (j + 1)) * ((m + 1).choose (j + 1) : ℝ) * f (j + 1)
@@ -94,7 +93,7 @@ lemma fwdDiff_iter_zero (m : ℕ) (f : ℕ → ℝ) :
         intro j _
         show (-1 : ℝ) ^ (m - j) * (m.choose (j + 1) : ℝ) * f (j + 1)
           = (-1 : ℝ) ^ (m + 1 - (j + 1)) * (m.choose (j + 1) : ℝ) * f (j + 1)
-        rw [show m + 1 - (j + 1) = m - j from by omega]
+        rw [Nat.succ_sub_succ]
       have hge := Finset.sum_congr rfl g_def
       rw [hge]
       have h1 := Finset.sum_range_succ'
@@ -296,8 +295,7 @@ problem usa1984_p5 (n : ℕ) (hn : 0 < n) (P : ℝ[X])
     calc (-1 : ℂ) ^ (3 * n + 1 - j) = (-1 : ℂ) ^ (3 * n + 1 - j) * (-1) ^ (2 * j) := by
             rw [h2j, mul_one]
       _ = (-1 : ℂ) ^ (3 * n + 1 - j + 2 * j) := by rw [← pow_add]
-      _ = (-1 : ℂ) ^ (3 * n + 1 + j) := by
-            rw [show 3 * n + 1 - j + 2 * j = 3 * n + 1 + j from by omega]
+      _ = (-1 : ℂ) ^ (3 * n + 1 + j) := by congr 1; omega
       _ = (-1 : ℂ) ^ (3 * n + 1) * (-1) ^ j := by rw [pow_add]
   -- truncated binomial sums
   have hS : ∀ x : ℂ, ∑ j ∈ Finset.range (3 * n + 1), ((3 * n + 1).choose j : ℂ) * x ^ j
@@ -343,12 +341,8 @@ problem usa1984_p5 (n : ℕ) (hn : 0 < n) (P : ℝ[X])
   rw [Finset.sum_congr rfl per, Finset.sum_add_distrib, Finset.sum_add_distrib,
     ← Finset.mul_sum, ← Finset.mul_sum, ← Finset.mul_sum, ← Finset.mul_sum, ← Finset.mul_sum,
     hS0, hS1, hS2] at hsumℂ
-  have hpow1 : (1 - ζ) / 3 * (1 - ζ) ^ (3 * n + 1) = (1 - ζ) ^ (3 * n + 2) / 3 := by
-    rw [show 3 * n + 2 = (3 * n + 1) + 1 from by ring, pow_succ]
-    ring
-  have hpow2 : (1 - ζ ^ 2) / 3 * (1 - ζ ^ 2) ^ (3 * n + 1) = (1 - ζ ^ 2) ^ (3 * n + 2) / 3 := by
-    rw [show 3 * n + 2 = (3 * n + 1) + 1 from by ring, pow_succ]
-    ring
+  have hpow1 : (1 - ζ) / 3 * (1 - ζ) ^ (3 * n + 1) = (1 - ζ) ^ (3 * n + 2) / 3 := by ring
+  have hpow2 : (1 - ζ ^ 2) / 3 * (1 - ζ ^ 2) ^ (3 * n + 1) = (1 - ζ ^ 2) ^ (3 * n + 2) / 3 := by ring
   have step1 : (-1 : ℂ) ^ (3 * n + 1)
         * ((1 - ζ) / 3 * ((1 - ζ) ^ (3 * n + 1) - (-1 : ℂ) ^ (3 * n + 1) * ζ))
       = (-1 : ℂ) ^ (3 * n + 1) * ((1 - ζ) ^ (3 * n + 2) / 3)
@@ -371,14 +365,11 @@ problem usa1984_p5 (n : ℕ) (hn : 0 < n) (P : ℝ[X])
   · -- n = s + s even
     subst hs
     have hA : (-1 : ℂ) ^ (3 * (s + s) + 1) = -1 := by
-      rw [show 3 * (s + s) + 1 = 2 * (3 * s) + 1 from by ring, pow_add, pow_mul,
-        show ((-1 : ℂ) ^ 2) = 1 from by norm_num, one_pow, one_mul, pow_one]
+      rw [← two_mul, Nat.mul_left_comm, pow_add, pow_mul, neg_one_pow_two, one_pow, one_mul, pow_one]
     have e1 : (1 - ζ) ^ (3 * (s + s) + 2) = (-27) ^ s * (1 - ζ) ^ 2 := by
-      rw [show 3 * (s + s) + 2 = 3 * (2 * s) + 2 from by ring, pow_add, pow_mul (1 - ζ) 3 (2 * s),
-        h3a, pow_mul (3 * (ζ ^ 2 - ζ)) 2 s, h9]
+      rw [← two_mul, pow_add, pow_mul, h3a, pow_mul, h9]
     have e2 : (1 - ζ ^ 2) ^ (3 * (s + s) + 2) = (-27) ^ s * (1 - ζ ^ 2) ^ 2 := by
-      rw [show 3 * (s + s) + 2 = 3 * (2 * s) + 2 from by ring, pow_add,
-        pow_mul (1 - ζ ^ 2) 3 (2 * s), h3b, pow_mul (-3 * (ζ ^ 2 - ζ)) 2 s, h9']
+      rw [← two_mul, pow_add, pow_mul, h3b, pow_mul, h9']
     rw [e1, e2, hA] at hW
     have hW' : (-27 : ℂ) ^ s * 3 = 2187 := by
       linear_combination -hW + (-(-27 : ℂ) ^ s) * h2sum

@@ -244,8 +244,7 @@ lemma claim (n k : ℕ) (hn : 0 < n) (hnk : n ≤ k) (_he : Even (k - n))
       · intro i hi1 hi2
         let i' : Fin n := ⟨i - n, by lia⟩
         have hi' : n + ↑i' = i := Nat.add_sub_of_le hi1
-        rw [show {j : Fin k | ↑(g1 j) = i} = {j | ↑(g1 j) = n + ↑i'} from by
-          ext j; simp [hi'], Nat.card_coe_set_eq, hhigh i']
+        rw [← hi', Nat.card_coe_set_eq, hhigh i']
         exact hsel_even i'
     let hgg : ψ n k ⟨g1, hg1⟩ = f := by
       rcases hg1 with ⟨hg1a, hg1b⟩
@@ -349,7 +348,7 @@ lemma claim (n k : ℕ) (hn : 0 < n) (hnk : n ≤ k) (_he : Even (k - n))
             · intro y
               exact ⟨⟨⟨y.1, hfi_of_high i y.1 y.2⟩, by simp [s, y.2]⟩, Subtype.ext rfl⟩
           have : s.card = Nat.card {j : Fin k | (gfun j).val = n + i} := by
-            rw [Nat.card_eq_fintype_card, ← show Fintype.card {x // x ∈ s} = s.card from by simp]
+            rw [Nat.card_eq_fintype_card, ← Fintype.card_coe]
             exact Fintype.card_of_bijective hbij
           rw [this]; exact hgN2 (n + i) (by lia) (by lia)
         ⟨s, hsEven⟩

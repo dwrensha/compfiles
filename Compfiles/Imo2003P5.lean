@@ -191,7 +191,7 @@ problem imo2003_p5 (n : ℕ) (hn : 2 < n) (x : ℕ → ℝ) (hx : MonotoneOn x (
           rw [yeq i, yeq j]; congr 1; ring
     _ = (2 * ∑ i ∈ range n, (2 * (i : ℝ) + 1 - (n : ℝ)) * y i) ^ 2 := by rw [habsy]
     _ ≤ 4 * ((n : ℝ) * ((n : ℝ) ^ 2 - 1) / 3 * ∑ i ∈ range n, y i ^ 2) := by
-        rw [mul_pow, show ((2 : ℝ)) ^ 2 = 4 from by norm_num]
+        rw [mul_pow, show (2 : ℝ) ^ 2 = 4 by norm_num]
         exact mul_le_mul_of_nonneg_left hcs (by norm_num)
     _ = 2 / 3 * ((n : ℝ) ^ 2 - 1) * (2 * (n : ℝ) * ∑ i ∈ range n, y i ^ 2) := by ring
     _ = 2 / 3 * ((n : ℝ) ^ 2 - 1) * ∑ i ∈ range n, ∑ j ∈ range n, (y i - y j) ^ 2 := by

@@ -645,10 +645,8 @@ lemma phaseStep_spec_escape (σ : Strategy) (hσ : ValidStrategy σ) (s : PState
     dist s.a (σ s.L) ^ 2 + 1 / 2 ≤ dist ((phaseStep σ s).1.a) (σ (phaseStep σ s).1.L) ^ 2 := by
   obtain ⟨hu1, hw1, huw, hspan, hb⟩ :=
     Classical.choose_spec (Classical.choose_spec (frame_exists s.a (σ s.L)))
-  rw [show phaseStep σ s = escStep σ s (Classical.choose (frame_exists s.a (σ s.L)))
-      (Classical.choose (Classical.choose_spec (frame_exists s.a (σ s.L)))) from by
-    unfold phaseStep
-    rw [dif_pos ⟨hd, hj⟩]]
+  unfold phaseStep
+  rw [dif_pos ⟨hd, hj⟩]
   exact escStep_spec σ hσ s _ _ hd hu1 hw1 huw hspan hb
 
 lemma maintSeq_succ_fst (σ : Strategy) (a : Pt) (L : List Pt) (k : ℕ) :
