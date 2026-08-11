@@ -54,15 +54,13 @@ lemma f_odd (m : ℕ) : f (2 * m + 1) = f (2 * m) := by
 
 /-- The recurrence at even arguments. -/
 lemma f_even (m : ℕ) : f (2 * m + 2) = f (2 * m + 1) + f (m + 1) := by
-  show f (2 * m + 1 + 1) = f (2 * m + 1) + f (m + 1)
-  rw [f_succ, if_pos (by omega), show (2 * m + 1 + 1) / 2 = m + 1 from by omega]
+  rw [f_succ, add_assoc, Nat.add_mod_right, Nat.mul_mod_right, if_pos rfl]
+  congr
+  omega
 
 /-- The recurrence at even arguments, shifted form. -/
 lemma f_even' (m : ℕ) (hm : 1 ≤ m) : f (2 * m) = f (2 * m - 1) + f m := by
-  have h := f_even (m - 1)
-  rwa [show 2 * (m - 1) + 2 = 2 * m from by omega,
-    show 2 * (m - 1) + 1 = 2 * m - 1 from by omega,
-    show m - 1 + 1 = m from by omega] at h
+  convert f_even (m - 1) <;> lia
 
 lemma f_zero : f 0 = 1 := by simp only [f]
 
@@ -99,7 +97,7 @@ lemma f_sum (N : ℕ) : f (2 * N) = ∑ i ∈ Finset.range (N + 1), f i := by
   induction N with
   | zero => simp [f_zero]
   | succ N ih =>
-    rw [show 2 * (N + 1) = 2 * N + 2 from by ring, f_even N, f_odd N, ih]
+    rw [mul_add, mul_one, f_even N, f_odd N, ih]
     conv_rhs => rw [Finset.sum_range_succ]
 
 /-- The upper-bound engine: `f (2m)` is strictly less than `(m + 1) * f m`
@@ -120,14 +118,11 @@ lemma f_two_mul_lt (m : ℕ) (hm : 2 ≤ m) : f (2 * m) < (m + 1) * f m := by
 lemma f_pair_step (r k : ℕ) (hk : 1 ≤ k) (hkr : k < r) :
     f (k + 1) + f (2 * r - k) ≤ f k + f (2 * r + 1 - k) := by
   rcases Nat.even_or_odd k with ⟨t, rfl⟩ | ⟨t, rfl⟩
-  · rw [show t + t = 2 * t from (two_mul t).symm, f_odd t,
-      show 2 * r + 1 - 2 * t = 2 * (r - t) + 1 from by omega,
-      show 2 * r - 2 * t = 2 * (r - t) from by omega, f_odd (r - t)]
-  · rw [show 2 * t + 1 + 1 = 2 * t + 2 from rfl, f_even t,
-      show 2 * r + 1 - (2 * t + 1) = 2 * (r - t) from by omega,
-      show 2 * r - (2 * t + 1) = 2 * (r - t) - 1 from by omega,
-      f_even' (r - t) (by omega)]
-    have hle : f (t + 1) ≤ f (r - t) := f_mono (by omega)
+  · rw [← two_mul t, f_odd t,
+      show 2 * r + 1 - 2 * t = 2 * (r - t) + 1 by lia,
+      ← Nat.mul_sub, f_odd (r - t)]
+  · rw [f_even t, Nat.add_sub_add_right, Nat.sub_add_eq, ← Nat.mul_sub, f_even' (r - t) (by lia)]
+    have hle : f (t + 1) ≤ f (r - t) := f_mono (by lia)
     omega
 
 /-- Every pair in the sum is at least `2 * f r`. -/
@@ -138,9 +133,9 @@ lemma f_pair_ge (r k : ℕ) (hk : 1 ≤ k) (hkr : k ≤ r) :
     induction j with
     | zero =>
       intro _
-      rw [Nat.sub_zero, show 2 * r + 1 - r = r + 1 from by omega]
-      have h := f_mono (show r ≤ r + 1 by omega)
-      omega
+      rw [Nat.sub_zero, Nat.sub_add_comm <| Nat.le_mul_of_pos_left _ zero_lt_two, two_mul r, Nat.add_sub_self_right]
+      rw [two_mul, Nat.add_le_add_iff_left]
+      exact f_mono <| Nat.le_add_right r 1
     | succ j ih =>
       intro hj
       have step := f_pair_step r (r - (j + 1)) (by omega) (by omega)
@@ -157,7 +152,7 @@ lemma f_sum_pair (r : ℕ) (hr : 1 ≤ r) :
     2 * r * f r ≤ ∑ i ∈ Finset.range (2 * r), f (i + 1) := by
   have split : ∑ i ∈ Finset.range (2 * r), f (i + 1)
       = ∑ i ∈ Finset.range r, f (i + 1) + ∑ i ∈ Finset.range r, f (r + i + 1) := by
-    rw [show 2 * r = r + r from by ring, Finset.sum_range_add]
+    rw [two_mul, Finset.sum_range_add]
   have hrefl : ∑ i ∈ Finset.range r, f (r + i + 1) = ∑ i ∈ Finset.range r, f (2 * r - i) := by
     conv_lhs => rw [← Finset.sum_range_reflect (fun j => f (r + j + 1)) r]
     refine Finset.sum_congr rfl fun i hi => ?_
@@ -172,7 +167,7 @@ lemma f_sum_pair (r : ℕ) (hr : 1 ≤ r) :
   refine Finset.sum_le_sum fun i hi => ?_
   have hi' : i < r := Finset.mem_range.mp hi
   have h := f_pair_ge r (i + 1) (by omega) (by omega)
-  rwa [show 2 * r + 1 - (i + 1) = 2 * r - i from by omega] at h
+  rwa [Nat.add_sub_add_right] at h
 
 /-- The two-step lower-bound recurrence: `f (2^(n+1)) > 2^n * f (2^(n-1))`. -/
 lemma f_lower_step (n : ℕ) (hn : 1 ≤ n) :
@@ -199,20 +194,15 @@ lemma f_lower_main (n : ℕ) (hn : 1 ≤ n) : 2 ^ (n ^ 2) < (f (2 ^ n)) ^ 4 := b
     · norm_num [f_two]
     · norm_num [f_four]
     · have ihn := ih (n + 1) (by omega) (by omega)
-      show 2 ^ ((n + 3) ^ 2) < (f (2 ^ (n + 3))) ^ 4
       have step := f_lower_step (n + 2) (by omega)
-      rw [show n + 2 - 1 = n + 1 from by omega, show n + 2 + 1 = n + 3 from by omega] at step
-      have h1 : (2 ^ (n + 2) * f (2 ^ (n + 1))) ^ 4 < (f (2 ^ (n + 3))) ^ 4 :=
-        Nat.pow_lt_pow_left step (by norm_num)
-      have h2 : (2 ^ (n + 2) * f (2 ^ (n + 1))) ^ 4
-          = 2 ^ (4 * (n + 2)) * (f (2 ^ (n + 1))) ^ 4 := by
-        rw [mul_pow, ← pow_mul, show (n + 2) * 4 = 4 * (n + 2) from by ring]
-      have h4 : 2 ^ ((n + 3) ^ 2) < 2 ^ (4 * (n + 2)) * (f (2 ^ (n + 1))) ^ 4 := by
-        calc 2 ^ ((n + 3) ^ 2)
-            = 2 ^ (4 * (n + 2) + (n + 1) ^ 2) := by congr 1; ring
-          _ = 2 ^ (4 * (n + 2)) * 2 ^ ((n + 1) ^ 2) := pow_add 2 _ _
-          _ < 2 ^ (4 * (n + 2)) * (f (2 ^ (n + 1))) ^ 4 := by gcongr
-      omega
+      rw [Nat.add_succ_sub_one, add_assoc] at step
+      calc
+        2 ^ (n + 3) ^ 2
+        _ = 2 ^ (4 * (n + 2) + (n + 1) ^ 2) := by ring
+        _ = 2 ^ (4 * (n + 2)) * 2 ^ ((n + 1) ^ 2) := pow_add 2 _ _
+        _ < 2 ^ (4 * (n + 2)) * (f (2 ^ (n + 1))) ^ 4 := by gcongr
+        _ = (2 ^ (n + 2) * f (2 ^ (n + 1))) ^ 4 := by rw [mul_pow, ← pow_mul, mul_comm _ 4]
+        _ < (f (2 ^ (n + 3))) ^ 4 := Nat.pow_lt_pow_left step (by norm_num)
 
 /-- One step of the upper-bound induction, in squared form. -/
 lemma f_sq_step (n : ℕ) (hn : 2 ≤ n) (ih : (f (2 ^ n)) ^ 2 ≤ 2 ^ (n ^ 2)) :
@@ -256,8 +246,8 @@ lemma f_sq_le (n : ℕ) (hn : 2 ≤ n) : (f (2 ^ n)) ^ 2 ≤ 2 ^ (n ^ 2) := by
 
 /-- The upper bound in integer form, strict for `n ≥ 3`. -/
 lemma f_sq_lt (n : ℕ) (hn : 3 ≤ n) : (f (2 ^ n)) ^ 2 < 2 ^ (n ^ 2) := by
-  have h := f_sq_step (n - 1) (by omega) (f_sq_le (n - 1) (by omega))
-  rwa [show n - 1 + 1 = n from by omega] at h
+  have h := f_sq_step (n - 1) (Nat.le_sub_one_of_lt hn) (f_sq_le (n - 1) (Nat.le_sub_one_of_lt hn))
+  rwa [Nat.sub_add_cancel (by omega)] at h
 
 /-- The lower bound with real powers: `2^(n²/4) < f (2^n)`. -/
 lemma f_gt_lower (n : ℕ) (hn : 3 ≤ n) :

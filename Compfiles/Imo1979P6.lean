@@ -278,9 +278,9 @@ theorem a_even (n : ℕ) (npos : 0 < n) : a (2*n) = ((2+√2)^(n-1) - (2-√2)^(
   · unfold a b
     simp only [Set.ncard_eq_toFinset_card', Set.toFinset_card,
       show Fintype.card ↑{w : Octagon.Walk A E | isTerminalWalk w ∧ w.length = 2 * Nat.succ 0} = 0
-        from by decide,
+        by decide,
       show Fintype.card ↑{w : Octagon.Walk C E | isTerminalWalk w ∧ w.length = 2 * Nat.succ 0} = 1
-        from by decide]
+        by decide]
     norm_num
   · intro n npos ih
     rw [mul_add, mul_one]

@@ -246,9 +246,7 @@ lemma f_ge (m : ℕ) (hm : 0 < m) : m ≤ f (2 ^ (m + 1) + 2) := by
       rw [show m + 1 = m - 1 + 2 by omega, pow_add]; ring
     refine ⟨⟨by omega, by omega⟩, ?_⟩
     have h4 : 2 ^ (m + 1) + 3 * 2 ^ i = 2 ^ i * (2 ^ (m + 1 - i) + 3) := by
-      rw [show 2 ^ (m + 1) = 2 ^ i * 2 ^ (m + 1 - i) from by
-        rw [← pow_add]; congr 1; omega]
-      ring
+      rw [Nat.mul_add, pow_mul_pow_sub _ <| Nat.le_succ_of_le him.le, mul_comm]
     rw [h4, ones_two_mul_pow]
     exact ones_two_pow_add_three' (by omega)
   have hcard := Finset.card_le_card hsub
@@ -305,9 +303,7 @@ lemma card_two_Ico (n : ℕ) :
           omega
         omega
       · have h4 : 2 ^ n + 2 ^ j = 2 ^ j * (2 ^ (n - j) + 1) := by
-          rw [show 2 ^ n = 2 ^ j * 2 ^ (n - j) from by
-            rw [← pow_add]; congr 1; omega]
-          ring
+          rw [mul_add, ← Nat.pow_add, Nat.add_sub_of_le hj.le, mul_one]
         rw [h4, ones_two_mul_pow]
         exact ones_two_pow_add_one' (by omega)
   rw [hset, Finset.card_image_of_injective _ (add_two_pow_injective n), Finset.card_range]

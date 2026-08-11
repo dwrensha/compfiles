@@ -261,8 +261,7 @@ lemma core_pigeonhole {k : ℕ} (hk : 1 ≤ k) {s : Finset ℝ} (hscard : s.card
   have hcoeff : ∀ c : ℝ, ∀ m : ℕ, 1 ≤ m →
       ((X - C c) * R).coeff m = R.coeff (m - 1) - c * R.coeff m := by
     intro c m hm
-    rw [sub_mul, coeff_sub, coeff_C_mul, show m = m - 1 + 1 by omega, coeff_X_mul,
-      show m - 1 + 1 - 1 = m - 1 from by omega]
+    simp [sub_mul, ← coeff_X_mul R (m-1), ← (Nat.sub_eq_iff_eq_add hm).mp rfl]
   have he1 : R.coeff (t - 1) = i2 * R.coeff t := by
     have h := hc1
     rw [hfac1, hcoeff i2 t ht.1] at h
