@@ -227,7 +227,7 @@ theorem a_b_recurrence_1 (n : ℕ) (npos : 0 < n) : a (n+2) = 2 * a n + 2 * b n 
     _ = ∑ v ∈ {A,C,G}, Fintype.card {w : Octagon.Walk A v // E ∉ w.support ∧ w.length = 2} * Fintype.card {w : Octagon.Walk v E // isTerminalWalk w ∧ w.length = n} := by
       rw [Fintype.card_eq.mpr (Nonempty.intro (isTerminalWalk_length_cons_equiv _ _ npos))]
       rw [Fintype.card_sigma]
-      simp_rw [Fintype.card_prod]
+      simp only [Fintype.card_prod]
       rw [eq_comm, Finset.sum_subset]
       · simp
       · intro _ _ _
