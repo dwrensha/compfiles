@@ -67,12 +67,12 @@ problem imo2006_p4 :
                 · lia
             _ < 2 ^ 2 := by norm_num
       have hk2 : k > 1 := by
-        suffices h : ((y.natAbs ^ 2 : ℤ) : ℝ) > (1 : ℝ) ^ 2
+        suffices h : (1 : ℝ) ^ 2 < ((y.natAbs ^ 2 : ℤ) : ℝ)
         · rw [Int.cast_pow] at h
           apply sq_lt_sq.mp at h
           norm_cast at h
         · rw [Int.natAbs_sq, Int.cast_pow, ← h, add_assoc]
-          simp only [one_pow, gt_iff_lt, lt_add_iff_pos_right]
+          simp only [one_pow, lt_add_iff_pos_right]
           positivity
       interval_cases k
     lift x to ℕ using hxnonneg

@@ -143,10 +143,10 @@ theorem sum_decomp (x : ℕ → ℝ) (m : ℕ) :
 /-- The algebraic heart of the proof. -/
 theorem final_algebra {N k x0 xn : ℝ} (hN : 2 ≤ N) (hN1 : 0 < N - 1)
     (hkey : (N ^ 2 - 1) * (x0 * xn) ≤ k * (k + x0 + xn)) :
-    (x0 + k + xn) / (N + 1) * (k / (N - 1)) ≥ (x0 + k) / N * ((k + xn) / N) := by
+    (x0 + k) / N * ((k + xn) / N) ≤ (x0 + k + xn) / (N + 1) * (k / (N - 1)) := by
   have hN0 : (0 : ℝ) < N := by linarith
   have hN10 : (0 : ℝ) < N + 1 := by linarith
-  rw [ge_iff_le, div_mul_div_comm, div_mul_div_comm,
+  rw [div_mul_div_comm, div_mul_div_comm,
     div_le_div_iff₀ (mul_pos hN0 hN0) (mul_pos hN10 hN1)]
   nlinarith [hkey]
 

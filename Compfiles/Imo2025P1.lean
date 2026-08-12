@@ -995,12 +995,11 @@ lemma coverGridNoEdgeConfig.cover_no_edge_3_lines (C : coverGridNoEdgeConfig)
 lemma coverGridNoEdgeConfig.cover_no_edge_4_impossible (C : coverGridNoEdgeConfig)
     (hn4 : C.n ≥ 4) : False := by
   have := eqAffSubOfPlane
-  have : #(C.lines \ C.corner_set) ≥ 1 := by
-    calc
-    _ = #C.lines - #(C.corner_set) := Finset.card_sdiff_of_subset C.corner_set_subset_lines
-    _ ≥ C.n - 3 := by rw [C.lines_count, C.corner_set_card]
-    _ ≥ 1 := by lia
-  simp only [ge_iff_le, Finset.one_le_card] at this
+  have : 1 ≤ #(C.lines \ C.corner_set) := calc 1
+    _ ≤ C.n - 3 := by lia
+    _ ≤ #C.lines - #(C.corner_set) := by rw [C.lines_count, C.corner_set_card]
+    _ = #(C.lines \ C.corner_set) := Finset.card_sdiff_of_subset C.corner_set_subset_lines |>.symm
+  simp only [Finset.one_le_card] at this
   obtain ⟨L', hL'⟩ := Finset.Nonempty.exists_mem this
   simp only [Finset.mem_sdiff] at hL'
   have hL'0 (d : Fin 3) : ∃ i, (C.findLineEdge d i = L' ∧

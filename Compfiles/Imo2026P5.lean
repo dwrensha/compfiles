@@ -41,10 +41,8 @@ abbrev PositiveReal : Type := {x : ℝ // 0 < x}
 /-- The two-sided inequality defining admissible functions on positive real numbers. -/
 def IsAdmissible (f : PositiveReal → PositiveReal) : Prop :=
   ∀ x y : PositiveReal,
-    Real.sqrt (((x : ℝ) ^ 2 + (f y : ℝ) ^ 2) / 2) ≥
-        ((f x : ℝ) + (y : ℝ)) / 2 ∧
-      ((f x : ℝ) + (y : ℝ)) / 2 ≥
-        Real.sqrt ((x : ℝ) * (f y : ℝ))
+    ((f x : ℝ) + (y : ℝ)) / 2 ≤ Real.sqrt (((x : ℝ) ^ 2 + (f y : ℝ) ^ 2) / 2) ∧
+      Real.sqrt ((x : ℝ) * (f y : ℝ)) ≤ ((f x : ℝ) + (y : ℝ)) / 2
 
 snip begin
 
@@ -499,10 +497,10 @@ problem imo2026_p5 (f : PositiveReal → PositiveReal) :
     rw [hfc x, hfc y]
     constructor
     · have hpos : (0 : ℝ) ≤ ((x : ℝ) + c + (y : ℝ)) / 2 := by linarith [hx, hy, hc]
-      rw [ge_iff_le, Real.le_sqrt hpos (by positivity)]
+      rw [Real.le_sqrt hpos (by positivity)]
       nlinarith [sq_nonneg ((x : ℝ) - ((y : ℝ) + c))]
     · have hpos : (0 : ℝ) ≤ ((x : ℝ) + c + (y : ℝ)) / 2 := by linarith [hx, hy, hc]
-      rw [ge_iff_le, Real.sqrt_le_iff]
+      rw [Real.sqrt_le_iff]
       refine ⟨hpos, ?_⟩
       nlinarith [sq_nonneg ((x : ℝ) - ((y : ℝ) + c))]
 

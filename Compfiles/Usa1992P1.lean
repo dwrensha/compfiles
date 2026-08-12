@@ -96,8 +96,8 @@ lemma lemma3 {m : ℕ} (hm : (m % 10) + 1 < 10) :
   rw [show (m + 1) / 10 = m / 10 from by lia, show (m + 1) % 10 = m % 10 + 1 from by lia]
   lia
 
-theorem lemma6 {b : ℕ} {l1 l2 : List ℕ} (hg : List.Forall₂ (· ≥ ·) l1 l2) :
-    Nat.ofDigits b l1 ≥ Nat.ofDigits b l2 := by
+theorem lemma6 {b : ℕ} {l1 l2 : List ℕ} (hg : List.Forall₂ (· ≤ ·) l1 l2) :
+    Nat.ofDigits b l1 ≤ Nat.ofDigits b l2 := by
   induction l1 generalizing l2 with
   | nil => simp_all [Nat.ofDigits]
   | cons hd₁ tl₁ ih₁ =>
@@ -105,17 +105,17 @@ theorem lemma6 {b : ℕ} {l1 l2 : List ℕ} (hg : List.Forall₂ (· ≥ ·) l1 
     | nil => simp_all
     | cons hd₂ tl₂ _ =>
       simp only [Nat.ofDigits_cons]
-      have htl : List.Forall₂ (fun x1 x2 ↦ x1 ≥ x2) tl₁ tl₂ := by
-        simp_all only [ge_iff_le, List.forall₂_cons]
+      have htl : List.Forall₂ (fun x1 x2 ↦ x1 ≤ x2) tl₁ tl₂ := by
+        simp_all only [List.forall₂_cons]
       specialize ih₁ htl
-      have h1 : hd₁ ≥ hd₂ := by simp_all only [ge_iff_le, List.forall₂_cons, and_true]
+      have h1 : hd₁ ≤ hd₂ := by simp_all only [List.forall₂_cons, and_true]
       gcongr
 
 /-- The subtraction of ofDigits of two lists is equal to ofDigits of digit-wise subtraction of them -/
 theorem ofDigits_sub_ofDigits_eq_ofDigits_zipWith {b : ℕ} {l1 l2 : List ℕ}
-    (hg : List.Forall₂ (· ≥ ·) l1 l2) :
-    Nat.ofDigits b l1 - Nat.ofDigits b l2 =
-    Nat.ofDigits b (l1.zipWith (· - ·) l2) := by
+    (hg : List.Forall₂ (· ≤ ·) l1 l2) :
+    Nat.ofDigits b l2 - Nat.ofDigits b l1 =
+    Nat.ofDigits b (l2.zipWith (· - ·) l1) := by
   induction l1 generalizing l2 with
   | nil => simp_all [Nat.ofDigits]
   | cons hd₁ tl₁ ih₁ =>
@@ -123,13 +123,13 @@ theorem ofDigits_sub_ofDigits_eq_ofDigits_zipWith {b : ℕ} {l1 l2 : List ℕ}
     | nil => simp_all
     | cons hd₂ tl₂ ih₂ =>
       simp_all only [Nat.ofDigits_cons, List.zipWith_cons_cons]
-      have htl : List.Forall₂ (fun x1 x2 ↦ x1 ≥ x2) tl₁ tl₂ := by
-        simp_all only [ge_iff_le, List.forall₂_cons]
+      have htl : List.Forall₂ (fun x1 x2 ↦ x1 ≤ x2) tl₁ tl₂ := by
+        simp_all only [List.forall₂_cons]
       specialize ih₁ htl
       rw [← ih₁, Nat.mul_sub]
-      have h1 : hd₁ ≥ hd₂ := by simp_all only [ge_iff_le, List.forall₂_cons, and_true]
-      have h2 : b * Nat.ofDigits b tl₁ ≥ b * Nat.ofDigits b tl₂ := by
-        have : Nat.ofDigits b tl₁ ≥ Nat.ofDigits b tl₂ := lemma6 htl
+      have h1 : hd₂ ≥ hd₁ := by simp_all only [List.forall₂_cons, and_true]
+      have h2 : b * Nat.ofDigits b tl₁ ≤ b * Nat.ofDigits b tl₂ := by
+        have : Nat.ofDigits b tl₁ ≤ Nat.ofDigits b tl₂ := lemma6 htl
         gcongr
       lia
 
@@ -246,16 +246,16 @@ lemma lemma5 {m n : ℕ} (hm : m < 10^n) :
     rw [Nat.ofDigits_append, Nat.ofDigits_digits, Nat.ofDigits_replicate_zero,
         mul_zero, add_zero]
 
-  have h_length2 : (List.replicate n 9).length = m_digits_padded.length := by
+  have h_length2 : m_digits_padded.length = (List.replicate n 9).length := by
     rw [h_length]
-    exact List.length_replicate
+    exact List.length_replicate.symm
 
-  have ha : List.Forall₂ (fun x1 x2 ↦ x1 ≥ x2) (List.replicate n 9) m_digits_padded := by
+  have ha : List.Forall₂ (fun x1 x2 ↦ x1 ≤ x2) m_digits_padded (List.replicate n 9) := by
     unfold m_digits_padded padding
     rw [List.forall₂_iff_get]
     refine ⟨h_length2, ?_⟩
     intro i h1 h2
-    simp only [List.get_eq_getElem, List.getElem_replicate, ge_iff_le]
+    simp only [List.get_eq_getElem, List.getElem_replicate]
     obtain hl | hr := Nat.lt_or_ge i m_digits.length
     · rw [List.getElem_append_left hl]
       unfold m_digits
@@ -293,36 +293,35 @@ lemma lemma5 {m n : ℕ} (hm : m < 10^n) :
   simp [digitsPadded, padList, List.map_append, List.map_replicate, tsub_zero, complement_digits,
         m_digits_padded, padding, m_digits, h16]
 
-lemma List.sum_map_sub_aux (l1 l2 : List ℕ) (h2 : List.Forall₂ (· ≥ ·) l1 l2) :
-    (List.zipWith (fun x1 x2 ↦ x1 - x2) l1 l2).sum = l1.sum - l2.sum ∧ l1.sum ≥ l2.sum := by
+lemma List.sum_map_sub_aux (l1 l2 : List ℕ) (h2 : List.Forall₂ (· ≤ ·) l1 l2) :
+    (List.zipWith (fun x1 x2 ↦ x1 - x2) l2 l1).sum = l2.sum - l1.sum ∧ l1.sum ≤ l2.sum := by
   match l1, l2 with
   | [], [] => simp
   | [], h :: tl => simp_all
   | h :: tl, [] => simp_all
   | hd1 :: tl1, hd2 :: tl2 =>
-    have hp : List.Forall₂ (fun x1 x2 ↦ x1 ≥ x2) tl1 tl2 := by simp_all only [List.forall₂_cons]
+    have hp : List.Forall₂ (fun x1 x2 ↦ x1 ≤ x2) tl1 tl2 := by simp_all only [List.forall₂_cons]
     have ih := List.sum_map_sub_aux tl1 tl2 hp
     simp only [List.zipWith_cons_cons, List.sum_cons]
     rw [ih.1]
-    have h3 : hd1 ≥ hd2 := (List.forall₂_cons.mp h2).1
+    have h3 : hd1 ≤ hd2 := (List.forall₂_cons.mp h2).1
     lia
 
-lemma List.sum_map_sub (l1 l2 : List ℕ) (h2 : List.Forall₂ (· ≥ ·) l1 l2) :
-    (List.zipWith (fun x1 x2 ↦ x1 - x2) l1 l2).sum = l1.sum - l2.sum :=
+lemma List.sum_map_sub (l1 l2 : List ℕ) (h2 : List.Forall₂ (· ≤ ·) l1 l2) :
+    (List.zipWith (fun x1 x2 ↦ x1 - x2) l2 l1).sum = l2.sum - l1.sum :=
   (List.sum_map_sub_aux l1 l2 h2).1
 
 lemma lemma4 {m n : ℕ} (hm : m < 10^n) :
     (Nat.digits 10 (10^n - 1 - m)).sum = 9 * n - (Nat.digits 10 m).sum := by
   rw [← digitsPadded_sum, lemma5 hm]
-  have h2 := List.map_eq_zip 9 (digitsPadded 10 m n) (fun x y ↦ x - y)
+  have h2 := List.map_eq_zip 9 (digitsPadded 10 m n) (· - ·)
   rw [h2]
-  have h5 : List.Forall₂ (· ≥ ·)
-              (List.replicate (digitsPadded 10 m n).length 9) (digitsPadded 10 m n) := by
+  have h5 : List.Forall₂ (· ≤ ·)
+              (digitsPadded 10 m n) (List.replicate (digitsPadded 10 m n).length 9) := by
      rw [List.forall₂_iff_get]
-     refine ⟨List.length_replicate, ?_⟩
-     intro x1 hx1 hx2
-     simp only [List.get_eq_getElem, List.getElem_replicate, ge_iff_le]
-     have h7 := digitsPadded_lt_base (show 1 < 10 by norm_num) (List.getElem_mem hx2)
+     refine ⟨List.length_replicate.symm, fun x1 hx1 hx2 => ?_⟩
+     simp only [List.get_eq_getElem, List.getElem_replicate]
+     have h7 := digitsPadded_lt_base (show 1 < 10 by norm_num) (List.getElem_mem hx1)
      lia
   have h4 := List.sum_map_sub _ _ h5
   simp only [List.sum_replicate, smul_eq_mul] at h4
