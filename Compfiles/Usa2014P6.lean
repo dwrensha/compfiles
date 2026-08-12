@@ -83,7 +83,7 @@ lemma sum_Icc_one_div_le_clog (M : ℕ) :
     omega
   have h1 : ∑ k ∈ Finset.Icc 1 M, (1 : ℚ) / k
       = ∑ j ∈ Finset.range M, (1 : ℚ) / ((1 + j : ℕ) : ℚ) := by
-    rw [hIcc, Finset.sum_Ico_eq_sum_range, show M + 1 - 1 = M from by omega]
+    rw [hIcc, Finset.sum_Ico_eq_sum_range, Nat.add_sub_cancel_right]
   rw [h1]
   have e : ∀ j : ℕ, (1 : ℚ) / ((1 + j : ℕ) : ℚ) = (1 : ℚ) / (j + 1) := by
     intro j

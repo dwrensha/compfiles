@@ -405,7 +405,7 @@ lemma natDegree_le_two (P : Polynomial ℝ) (hP0 : P ≠ 0) (hPhi : PhiPoly P = 
     rw [← Polynomial.C_add, this]
     simp
   have hhalf : h * (-h) = 1 / 2 := by linear_combination -hh
-  rw [show h - (-h) = 2 * h from by ring, hev, hcomp, hhalf] at hD0
+  rw [sub_neg_eq_add, ← two_mul, hev, hcomp, hhalf] at hD0
   -- hD0 : X * Pc + C (h*eh) + C ((-h)*eh) - X * C (1/2) * (comp(X−Ch) + C (eval (2h)) + comp(X+Ch)) = 0
   have hD1 : X * Pc = X * C (1 / 2 : ℂ) *
       (Pc.comp (X - C h) + C (Pc.eval (2 * h)) + Pc.comp (X + C h)) := by

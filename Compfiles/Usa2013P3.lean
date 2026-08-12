@@ -216,7 +216,7 @@ private lemma period_shift (q : ℕ → Bool) (hq : ∀ i, q (i + 4) = q i) (i k
   induction k with
   | zero => simp
   | succ k ih =>
-    rw [show i + 4 * (k + 1) = i + 4 * k + 4 from by omega, hq (i + 4 * k), ih]
+    rw [Nat.mul_add, mul_one, ← add_assoc, hq (i + 4 * k), ih]
 
 private lemma card_filter_range_four_mul (q : ℕ → Bool) (hq : ∀ i, q (i + 4) = q i) (k : ℕ) :
     ((Finset.range (4 * k)).filter fun i => q i = true).card =
@@ -241,7 +241,7 @@ private lemma card_filter_range_four_mul (q : ℕ → Bool) (hq : ∀ i, q (i + 
       intro i _
       simp only [Function.comp_apply, addLeftEmbedding_apply, Nat.add_comm (4 * k) i,
         period_shift q hq i k]
-    rw [show 4 * (k + 1) = 4 * k + 4 from by omega, Finset.range_add, Finset.filter_union,
+    rw [mul_add, mul_one, Finset.range_add, Finset.filter_union,
       Finset.card_union_of_disjoint hdisj, ih, hmap, Nat.succ_mul]
 
 /-- Count of a periodic (period 4) predicate over `Finset.range (4 * k + r)`. -/

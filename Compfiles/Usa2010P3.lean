@@ -231,14 +231,14 @@ problem usa2010_p3 :
       x = ∏ i ∈ Finset.range 2010, a i} answer := by
   constructor
   · refine ⟨constr, fun i _ ↦ constr_pos i, fun i j hij _ ↦ constr_ineq hij, ?_⟩
-    rw [show (2010 : ℕ) = 2 * 1005 from by norm_num, prod_range_pair constr 1005]
+    rw [prod_range_pair constr 1005]
     show (∏ k ∈ Finset.range 1005, (4 * (k : ℝ) + 3))
       = ∏ k ∈ Finset.range 1005, constr (2 * k) * constr (2 * k + 1)
     exact Finset.prod_congr rfl fun k _ ↦ (constr_pair k).symm
   · intro y hy
     obtain ⟨a, hpos, hineq, heq⟩ := hy
     rw [heq]
-    rw [show (2010 : ℕ) = 2 * 1005 from by norm_num, prod_range_pair a 1005]
+    rw [prod_range_pair a 1005]
     show (∏ k ∈ Finset.range 1005, a (2 * k) * a (2 * k + 1))
       ≤ ∏ k ∈ Finset.range 1005, (4 * (k : ℝ) + 3)
     refine Finset.prod_le_prod (fun k hk ↦ ?_) (fun k hk ↦ ?_)

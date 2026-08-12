@@ -534,7 +534,7 @@ lemma stageC (n : ℕ) : ∀ k, k ≤ n →
       simp only [colZero, topRow, intCols, colPart, Set.mem_union, Set.mem_ofPred_eq]
       constructor <;> intro h <;> omega
     rw [hid, stageC_inner n n (le_refl n) k hk', ih (Nat.le_of_succ_le hk),
-      show n * (k + 1) = n * k + n from by ring, pow_add]
+      Nat.mul_succ, pow_add]
     ring
 
 theorem prod_range_self_sub (n : ℕ) :
