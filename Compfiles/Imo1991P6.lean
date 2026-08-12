@@ -39,8 +39,8 @@ We take the sequence construction from https://artofproblemsolving.com/wiki/inde
 -/
 
 
-theorem fract_sqrt_two_mul_gt (k : ℕ) (pk : 0 < k) : Int.fract (√2 * k) > 1 / (2 * (√2 * k + 1)) := by
-  rw [gt_iff_lt, div_lt_iff₀ (by positivity)]
+theorem fract_sqrt_two_mul_gt (k : ℕ) (pk : 0 < k) : 1 / (2 * (√2 * k + 1)) < Int.fract (√2 * k) := by
+  rw [div_lt_iff₀ (by positivity)]
 
   set x : ℝ := √2 * k
   let y := ⌊x⌋
@@ -48,9 +48,9 @@ theorem fract_sqrt_two_mul_gt (k : ℕ) (pk : 0 < k) : Int.fract (√2 * k) > 1 
   have : x > 0 := by positivity
   have : 0 ≤ (y:ℝ) := by positivity
 
-  have fract_pos : Int.fract x > 0 := by
+  have fract_pos : 0 < Int.fract x := by
     have := (irrational_sqrt_two.mul_ratCast (q:=k) (Nat.cast_ne_zero.mpr pk.ne')).ne_rat y
-    rw [gt_iff_lt, Int.fract_pos]
+    rw [Int.fract_pos]
     apply this
 
   have h_diff : (x - y) * (x + y) = 2 * k ^ 2 - y ^ 2 := by
@@ -100,8 +100,8 @@ theorem Int.fract_sub_eq (a b : R) : ∃ z : Fin 2, fract (a - b) = fract a - fr
 end Int.fract
 
 
-theorem one_sub_fract_sqrt_two_mul_gt (k : ℕ) (kpos : 0 < k) : 1 - Int.fract (√2 * k) > 1 / (2*(√2*k + 1)) := by
-  rw [gt_iff_lt, div_lt_iff₀ (by positivity)]
+theorem one_sub_fract_sqrt_two_mul_gt (k : ℕ) (kpos : 0 < k) : 1 / (2*(√2*k + 1)) < 1 - Int.fract (√2 * k) := by
+  rw [div_lt_iff₀ (by positivity)]
   set x : ℝ := √2 * k
   let y := ⌊x⌋
   have fract_eq : Int.fract x = x - y := rfl
@@ -123,8 +123,7 @@ theorem one_sub_fract_sqrt_two_mul_gt (k : ℕ) (kpos : 0 < k) : 1 - Int.fract (
   nlinarith [Int.floor_le x]
 
 
-theorem abs_fract_sqrt_two_mul_sub_fract_sqrt_two_mul (i j : ℕ) (hji : j < i) : |Int.fract (√2 * i) - Int.fract (√2 * j)| > 1 / (2*(√2*(i-j) + 1)) := by
-  rw [gt_iff_lt]
+theorem abs_fract_sqrt_two_mul_sub_fract_sqrt_two_mul (i j : ℕ) (hji : j < i) : 1 / (2*(√2*(i-j) + 1)) < |Int.fract (√2 * i) - Int.fract (√2 * j)| := by
   apply (Int.fract_sub_eq (√2 * i) (√2 * j)).elim
   rw [Fin.forall_fin_two]
   and_intros

@@ -337,7 +337,7 @@ theorem exists_f : ∃ f : ℚ+ → ℚ+, ∀ x y : ℚ+, f (x * f y) = f x / y 
   let g (p : ℕ) : ℚ+ :=
     if hS: p ∈ S then
       ⟨S_equiv_T ⟨p, hS⟩, by {
-        suffices ∀ t ∈ T, t ≠ 0 by simp only [Nat.cast_pos, gt_iff_lt]; grind only
+        suffices ∀ t ∈ T, t ≠ 0 by simp only [Nat.cast_pos]; grind only
         intro t h
         have : t ∈ S ∪ T := Set.mem_union_right S h
         rw [hU] at this
@@ -345,7 +345,7 @@ theorem exists_f : ∃ f : ℚ+ → ℚ+, ∀ x y : ℚ+, f (x * f y) = f x / y 
       }⟩
     else if hT: p ∈ T then
       ⟨1 / S_equiv_T.symm ⟨p, hT⟩, by {
-        suffices ∀ s ∈ S, s ≠ 0 by simp only [one_div, inv_pos, Nat.cast_pos, gt_iff_lt]; grind only
+        suffices ∀ s ∈ S, s ≠ 0 by simp only [one_div, inv_pos, Nat.cast_pos]; grind only
         intro s h
         have : s ∈ S ∪ T := Set.mem_union_left T h
         rw [hU] at this

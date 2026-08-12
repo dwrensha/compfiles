@@ -176,33 +176,29 @@ theorem imo1992_p6_a : ∀ n ≥ 4, S n ≤ n^2-14 := by
   have slt4 : ∀ i, s i < 4 := by
     by_contra! c
     obtain ⟨j, h⟩ := c
-    have : n^2 > n^2 := by
-      calc
-        _ = ∑ i, s i ^ 2 := sh1
-        _ = ∑ i ∈ Finset.univ \ {j}, s i ^ 2 + s j ^ 2 := by
-          rw [Finset.sdiff_singleton_eq_erase,
-              Finset.sum_erase_add _ _ (Finset.mem_univ j)]
-        _ ≥ ∑ i ∈ Finset.univ \ {j}, 1 + s j ^ 2 := by
-          rw [ge_iff_le, add_le_add_iff_right]
-          apply Finset.sum_le_sum
-          intro i _
-          exact Nat.one_le_pow 2 (s i) (sh2 i)
-        _ = n^2 - 14 + s j ^ 2 := by
-          rw [Finset.sum_const, smul_eq_mul, mul_one, Nat.add_right_cancel_iff, Finset.card_sdiff,
+    have := calc (n : ℕ)^2
+      _ < n ^ 2 - 14 + 16 := by
+        rw [← Nat.sub_add_comm]
+        · simp
+        · exact nge'
+      _ ≤ n^2 - 14 + s j ^ 2 := by
+        simp
+        have : 16 = 4^2 := by simp
+        rw [this]
+        apply pow_left_mono 2
+        exact h
+      _ = ∑ i ∈ Finset.univ \ {j}, 1 + s j ^ 2 := by
+        rw [Finset.sum_const, smul_eq_mul, mul_one, Nat.add_right_cancel_iff, Finset.card_sdiff,
               Finset.card_univ, Fintype.card_fin, Finset.inter_univ, Finset.card_singleton]
-          lia
-        _ ≥ n ^ 2 - 14 + 16 := by
-          simp
-          have : 16 = 4^2 := by simp
-          rw [this]
-          apply pow_left_mono 2
-          exact h
-        _ > _ := by
-          rw [← Nat.sub_add_comm]
-          · simp
-            rw [← PNat.pow_coe, PNat.val]
-            simp
-          · exact nge'
+        lia
+      _ ≤ ∑ i ∈ Finset.univ \ {j}, s i ^ 2 + s j ^ 2 := by
+        rw [add_le_add_iff_right]
+        apply Finset.sum_le_sum
+        intro i _
+        exact Nat.one_le_pow 2 (s i) (sh2 i)
+      _ = ∑ i, s i ^ 2 := by rw [Finset.sdiff_singleton_eq_erase,
+          Finset.sum_erase_add _ _ (Finset.mem_univ j)]
+      _ = n^2 := sh1.symm
     simp at this
   let V : Type := Finset.Ioo 0 4
   let s' (i) : V := ⟨s i, by {
@@ -807,7 +803,7 @@ theorem complete_mul (n1 n2) (lb1 : 13 ≤ n1) (lb2 : 13 ≤ n2) (n1h : complete
           simp only [PNat.mul_coe, mul_pow, Nat.cast_mul, Nat.cast_pow, ne_eq, OfNat.ofNat_ne_zero,
             not_false_eq_true, pow_eq_zero_iff, Nat.cast_eq_zero, PNat.ne_zero, mul_div_cancel_left₀,
             isUnit_iff_ne_zero, IsUnit.mul_div_cancel_right] at this
-          simp only [PNat.mul_coe, Nat.cast_pow, Nat.cast_mul, ge_iff_le]
+          simp only [PNat.mul_coe, Nat.cast_pow, Nat.cast_mul]
           linarith
         calc
           _ ≤ ↑N / 13 ^ 2 * 56 + ↑N / 13 ^ 2 * 56 := by
