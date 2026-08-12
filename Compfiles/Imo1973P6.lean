@@ -12,7 +12,7 @@ public import ProblemExtraction
 
 @[expose] public section
 
-problem_file
+problem_file { tags := [.Algebra, .Inequality] }
 
 /-!
 # International Mathematical Olympiad 1973, Problem 6
