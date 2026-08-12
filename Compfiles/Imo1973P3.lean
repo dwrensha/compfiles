@@ -51,7 +51,7 @@ lemma aux_1
     have h₂₀: (x ^ 4 + a * x ^ 3 + b * x ^ 2 + a * x + 1) / (x ^ 2) = 0 / (x ^ 2) := by
       exact congr(HDiv.hDiv $h₁ (x ^ 2))
     ring_nf at h₂₀
-    have hx₁: x ^ 2 ≠ 0 := by exact pow_ne_zero 2 hx
+    have hx₁: x ^ 2 ≠ 0 := pow_ne_zero 2 hx
     rw [mul_comm (x ^ 2), mul_assoc b, inv_pow, mul_inv_cancel₀ hx₁, mul_one] at h₂₀
     rw [mul_comm x a, mul_assoc a, pow_two, mul_inv,
         ← mul_assoc x, mul_inv_cancel₀ hx, one_mul] at h₂₀
@@ -63,7 +63,7 @@ lemma aux_1
       ring_nf
       rw [mul_inv_cancel₀ hx]
       exact sub_eq_zero_of_eq rfl
-    have g₁: discrim 1 (-t) 1 = (-t) ^ 2 - 4 * 1 * 1 := by exact rfl
+    have g₁: discrim 1 (-t) 1 = (-t) ^ 2 - 4 * 1 * 1 := rfl
     simp at g₁
     by_contra hc₀
     push Not at hc₀
@@ -74,7 +74,7 @@ lemma aux_1
     apply sub_neg_of_lt at hc₁
     have hc₂: ∀ (s : ℝ), discrim 1 (-t) 1 ≠ s ^ 2 := by
       intro s
-      have hs: 0 ≤ s ^ 2 := by exact sq_nonneg s
+      have hs: 0 ≤ s ^ 2 := sq_nonneg s
       linarith
     have hc₃: 1 * (x * x) + -t * x + 1 ≠ 0 := by
       exact quadratic_ne_zero_of_discrim_ne_sq hc₂ x

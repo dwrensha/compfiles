@@ -64,7 +64,7 @@ lemma imo_1993_p5_N:
     exact h₁ n
   have hg₀: 2 < √5 := by
     have g₀: 0 ≤ (2:ℝ) := zero_le_two
-    have g₁: 0 ≤ √5 := by exact Real.sqrt_nonneg 5
+    have g₁: 0 ≤ √5 := Real.sqrt_nonneg 5
     rw [← abs_of_nonneg g₀, ← abs_of_nonneg g₁]
     refine sq_lt_sq.mp ?_
     rw [Real.sq_sqrt (by positivity)]
@@ -110,7 +110,7 @@ lemma imo_1993_p5_N:
       have h₂₁: |(fz (fz ↑n) - G * fz ↑n) + (G - 1) * (fz ↑n - G * ↑n)| < 1 := by
         refine lt_of_le_of_lt (abs_add_le ((fz (fz ↑n) - G * fz ↑n)) ((G - 1) * (fz ↑n - G * ↑n))) ?_
         rw [abs_mul]
-        have g₀: |↑(fz (fz ↑n)) - G * ↑(fz ↑n)| ≤ 1 / 2 := by exact h₂₀ (fz ↑n)
+        have g₀: |↑(fz (fz ↑n)) - G * ↑(fz ↑n)| ≤ 1 / 2 := h₂₀ (fz ↑n)
         have g₁: |(G - 1)| * |(↑(fz ↑n) - G * ↑n)| ≤ (G - 1) * (1 / 2) := by
           rw [abs_of_nonneg ?_]
           · refine (mul_le_mul_iff_right₀ hg₁).mpr ?_

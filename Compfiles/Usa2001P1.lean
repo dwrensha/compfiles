@@ -137,7 +137,7 @@ problem usa2001_p1 : IsLeast possible_num_colors min_colors := by
       · use i; simp [count, hii]
     have : (∑ x ∈ f i, count x i) = 6 := by simp [count, *]
     rw [Finset.sum_comm, ← Finset.sum_erase_add (h := a), this]
-    simp only [Nat.reduceLeDiff, ge_iff_le]
+    simp only [Nat.reduceLeDiff]
     have : (∑ x ∈ Finset.univ.erase i, 1) = 7 := by simp
     rw [← this]
     gcongr with j a

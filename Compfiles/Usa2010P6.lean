@@ -92,31 +92,9 @@ lemma cond_weight (n : ℕ) (q : ℚ) (S₀ S₁ : Finset (Fin n)) (hd : Disjoin
       · by_cases h1 : i ∈ S₁
         · simp [h0, h1]
         · simp [h0, h1]
-    rw [Finset.prod_congr rfl (fun i _ => hfg i)]
-    rw [show (∏ i ∈ (Finset.univ : Finset (Fin n)), (if i ∈ S₀ then q else if i ∈ S₁ then 1 - q else 1 : ℚ))
-        = (∏ i ∈ (Finset.univ : Finset (Fin n)) ∩ S₀, q) *
-          (∏ i ∈ (Finset.univ : Finset (Fin n)) \ S₀, (if i ∈ S₁ then 1 - q else 1 : ℚ)) from by
-      rw [← Finset.prod_piecewise]
-      apply Finset.prod_congr rfl
-      intro i _
-      simp only [Finset.piecewise]]
-    rw [Finset.univ_inter, Finset.prod_const]
-    have h2 : ∏ x ∈ (Finset.univ \ S₀), (if x ∈ S₁ then (1:ℚ) - q else 1) = (1 - q) ^ S₁.card := by
-      rw [show (∏ x ∈ (Finset.univ : Finset (Fin n)) \ S₀, (if x ∈ S₁ then (1:ℚ) - q else 1))
-          = (∏ x ∈ (Finset.univ \ S₀) ∩ S₁, (1 - q : ℚ)) *
-            (∏ x ∈ (Finset.univ \ S₀) \ S₁, (1 : ℚ)) from by
-        rw [← Finset.prod_piecewise]
-        apply Finset.prod_congr rfl
-        intro i _
-        simp only [Finset.piecewise]]
-      have hsub : (Finset.univ \ S₀) ∩ S₁ = S₁ := by
-        ext i
-        simp only [Finset.mem_inter, Finset.mem_sdiff, Finset.mem_univ, true_and]
-        constructor
-        · intro h; exact h.2
-        · intro h; exact ⟨fun h0 => (Finset.disjoint_right.mp hd h) h0, h⟩
-      rw [hsub, Finset.prod_const, Finset.prod_const_one, mul_one]
-    rw [h2]
+    rw [Finset.prod_congr rfl (fun i _ => hfg i), Finset.prod_ite, Finset.prod_ite_mem, Finset.prod_const, Finset.prod_const
+      , Finset.inter_comm, Finset.filter_univ_mem, Finset.filter_notMem_eq_sdiff
+      , ← Finset.inter_sdiff_assoc, Finset.inter_univ, Finset.sdiff_eq_self_of_disjoint hd.symm]
   have hterm : ∀ t : Finset (Fin n),
       (∏ i ∈ t, f i) * (∏ i ∈ (Finset.univ : Finset (Fin n)) \ t, g i)
         = if S₀ ⊆ t ∧ Disjoint t S₁ then w n q t else 0 := by

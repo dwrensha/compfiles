@@ -589,8 +589,7 @@ theorem stable_of_form {e k : ℕ} (hlt : k < 10 ^ e) (hk : k = 0 ∨ k ∈ K) :
     · simp
     · exact hkK.2
   have h7 : 7 ∉ Nat.digits 10 (10 ^ e * n + k) := by
-    rw [show 10 ^ e * n + k = n * 10 ^ e + k from by ring,
-      digits_mul_pow_add hnpos hlt]
+    rw [mul_comm, digits_mul_pow_add hnpos hlt]
     intro h
     rcases List.mem_append.mp h with h | h
     · rcases List.mem_append.mp h with h | h

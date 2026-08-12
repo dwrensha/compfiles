@@ -809,7 +809,7 @@ theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
             intro h
             have hv := congrArg Fin.val h
             dsimp [emb, embedFinLE, hitFull] at hv
-            have hvlt : j.val < k.val := by exact hjlt
+            have hvlt : j.val < k.val := hjlt
             omega
           have hne_last : (emb j : Fin n) ≠ lastFull := by
             intro h

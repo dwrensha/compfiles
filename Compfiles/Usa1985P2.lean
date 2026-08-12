@@ -109,19 +109,12 @@ lemma region2_key {x y : ℝ} (hxy : x < y) (C : ℝ)
     (e1 : (x ^ 2 - C) ^ 2 = x + 5 / 4) (e2 : (y ^ 2 - C) ^ 2 = y + 5 / 4) :
     (y + x) * ((y ^ 2 - C) + (x ^ 2 - C)) = 1 := by
   have hyx : (0:ℝ) < y - x := sub_pos.mpr hxy
-  have e3 : (y ^ 2 - C) - (x ^ 2 - C) = (y - x) * (y + x) := by ring
-  have e4 : (y ^ 2 - C) ^ 2 - (x ^ 2 - C) ^ 2 = y - x := by rw [e2, e1]; ring
-  have e5 : (y ^ 2 - C) ^ 2 - (x ^ 2 - C) ^ 2 =
-      ((y - x) * (y + x)) * ((y ^ 2 - C) + (x ^ 2 - C)) := by
-    rw [show (y ^ 2 - C) ^ 2 - (x ^ 2 - C) ^ 2 =
-        ((y ^ 2 - C) - (x ^ 2 - C)) * ((y ^ 2 - C) + (x ^ 2 - C)) by ring, e3]
-  have e4' : ((y - x) * (y + x)) * ((y ^ 2 - C) + (x ^ 2 - C)) = y - x := by
-    rw [← e5]; exact e4
-  have e6 : (y - x) * ((y + x) * ((y ^ 2 - C) + (x ^ 2 - C))) = (y - x) * 1 := by
-    rw [show (y - x) * ((y + x) * ((y ^ 2 - C) + (x ^ 2 - C))) =
-        ((y - x) * (y + x)) * ((y ^ 2 - C) + (x ^ 2 - C)) from by ring, e4']
-    ring
-  exact mul_left_cancel₀ (ne_of_gt hyx) e6
+  have e3 := calc
+    (y - x) * ((y + x) * ((y ^ 2 - C) + (x ^ 2 - C)))
+    _ = ((y - x) * (y + x)) * ((y ^ 2 - C) + (x ^ 2 - C)) := by rw [mul_assoc]
+    _ = (y ^ 2 - C) ^ 2 - (x ^ 2 - C) ^ 2 := by rw [sq_sub_sq, sub_sub_sub_cancel_right, sq_sub_sq, mul_comm, mul_comm (y + x)]
+    _ = (y - x) * 1 := by rw [e2, e1]; ring
+  exact mul_left_cancel₀ (ne_of_gt hyx) e3
 
 /-- But for `N = 10^10` two roots in `{x² ≥ N + 1/2}` are impossible:
 the left side of the identity above exceeds `2 * 10^5 * 316`. -/

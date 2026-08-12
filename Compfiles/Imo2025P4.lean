@@ -68,15 +68,14 @@ lemma mem_divisors_erase_one_of_dvd_ne_one {d n : ℕ}
 lemma reverse_properDivisors_eq_div_divisors_erase_one {n : ℕ} (hn : n ≠ 0) :
     ((Nat.properDivisors n).sort (· ≤ ·)).reverse =
     (smallDivisors n).map (fun d => n / d) := by
-  apply List.SortedGT.eq_of_mem_iff
-  · exact (sortedLT_sort (Nat.properDivisors n)).reverse
-  · rw [List.sortedGT_iff_pairwise, List.pairwise_map]
-    apply List.Pairwise.imp ?_
-      (List.Pairwise.and_mem.mp (sortedLT_sort ((Nat.divisors n).erase 1)).pairwise)
+  rw [List.reverse_eq_iff]
+  apply List.SortedLT.eq_of_mem_iff
+  · exact (sortedLT_sort (Nat.properDivisors n))
+  · rw [List.sortedLT_iff_pairwise, List.pairwise_reverse, List.pairwise_map]
+    apply List.Pairwise.imp ?_ (List.Pairwise.and_mem.mp (sortedLT_sort ((Nat.divisors n).erase 1)).pairwise)
     intro a b h
     rcases h with ⟨ha, hb, hab⟩
-    rw [gt_iff_lt, Nat.div_lt_div_left hn]
-    · exact hab
+    rwa [Nat.div_lt_div_left hn]
     · exact dvd_of_mem_divisors_erase_one ((mem_sort (r := (· ≤ ·))).mp hb)
     · exact dvd_of_mem_divisors_erase_one ((mem_sort (r := (· ≤ ·))).mp ha)
   · intro x
@@ -84,16 +83,15 @@ lemma reverse_properDivisors_eq_div_divisors_erase_one {n : ℕ} (hn : n ≠ 0) 
     constructor
     · intro hx
       refine ⟨n / x, ?_, Nat.div_div_self (Nat.mem_properDivisors.mp hx).1 hn⟩
-      · simp [smallDivisors, mem_erase, Nat.mem_divisors]
-        refine ⟨?_, ⟨Nat.div_dvd_of_dvd (Nat.mem_properDivisors.mp hx).1, hn⟩⟩
-        exact ne_of_gt (Nat.one_lt_div_of_mem_properDivisors hx)
+      simp [smallDivisors, mem_erase, Nat.mem_divisors]
+      refine ⟨?_, ⟨Nat.div_dvd_of_dvd (Nat.mem_properDivisors.mp hx).1, hn⟩⟩
+      exact ne_of_gt (Nat.one_lt_div_of_mem_properDivisors hx)
     · rintro ⟨d, hd, rfl⟩
       simp [smallDivisors] at hd
       rw [Nat.mem_properDivisors]
-      refine ⟨Nat.div_dvd_of_dvd hd.2.1, ?_⟩
-      apply Nat.div_lt_self (Nat.pos_of_ne_zero hn)
-      · have hdpos : 0 < d := Nat.pos_of_mem_divisors (Nat.mem_divisors.mpr hd.2)
-        lia
+      refine ⟨Nat.div_dvd_of_dvd hd.2.1, Nat.div_lt_self (Nat.pos_of_ne_zero hn) ?_⟩
+      have hdpos : 0 < d := Nat.pos_of_mem_divisors (Nat.mem_divisors.mpr hd.2)
+      lia
 
 lemma psi_eq_of_threeSmallestDivisors_eq (hx0 : x ≠ 0)
     (hdiv : threeSmallestDivisors x = [d₁, d₂, d₃]) : ψ x = x / d₁ + x / d₂ + x / d₃ := by
@@ -341,7 +339,7 @@ lemma mem_of_dvd_mem_threeSmallest (hmin : ThreeMinDivisors x d₁ d₂ d₃) (h
   by_cases hcase : d₃ < k
   · by_contra
     simp at hd_mem
-    rcases hd_mem with hd | hd | hd <;> grind [show k ≤ d by exact Nat.le_of_dvd (by lia) hk_dvd]
+    rcases hd_mem with hd | hd | hd <;> grind [Nat.le_of_dvd (by lia) hk_dvd]
   · have hd_dvd_x : d ∣ x := by grind only [List.mem_cons, List.not_mem_nil]
     have hmem := mem_divisors_erase_one_of_dvd_ne_one (dvd_trans hk_dvd hd_dvd_x) hx0 (by lia)
     exact (mem_take_or_gt_of_divisor hx hmem hmin.hdiv).resolve_right hcase

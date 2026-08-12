@@ -272,15 +272,15 @@ theorem a_b_recurrence_2 (n : ℕ) (npos : 0 < n) : b (n+2) = a n + 2 * b n := b
 
 
 theorem a_even (n : ℕ) (npos : 0 < n) : a (2*n) = ((2+√2)^(n-1) - (2-√2)^(n-1)) / √2 := by
-  suffices a (2*n) = ((2+√2)^(n-1) - (2-√2)^(n-1)) / √2 ∧ b (2*n) = ((2+√2)^(n-1) + (2-√2)^(n-1)) / 2 by exact this.left
+  suffices a (2*n) = ((2+√2)^(n-1) - (2-√2)^(n-1)) / √2 ∧ b (2*n) = ((2+√2)^(n-1) + (2-√2)^(n-1)) / 2 from this.left
   revert n
   apply Nat.le_induction
   · unfold a b
     simp only [Set.ncard_eq_toFinset_card', Set.toFinset_card,
       show Fintype.card ↑{w : Octagon.Walk A E | isTerminalWalk w ∧ w.length = 2 * Nat.succ 0} = 0
-        from by decide,
+        by decide,
       show Fintype.card ↑{w : Octagon.Walk C E | isTerminalWalk w ∧ w.length = 2 * Nat.succ 0} = 1
-        from by decide]
+        by decide]
     norm_num
   · intro n npos ih
     rw [mul_add, mul_one]

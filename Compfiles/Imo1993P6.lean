@@ -169,8 +169,7 @@ lemma all_on_of_last_only {n : ℕ} [NeZero n] (hn : 1 < n)
         rw [pos_after, Nat.cast_add, hT0, zero_add]
       have hstep : step^[n * (n - 1) + (j + 1)] (initial n) =
           step (step^[n * (n - 1) + j] (initial n)) := by
-        rw [show n * (n - 1) + (j + 1) = (n * (n - 1) + j) + 1 from by omega,
-          Function.iterate_succ_apply']
+        rw [← add_assoc, Function.iterate_succ_apply']
       intro i
       show (step^[n * (n - 1) + (j + 1)] (initial n)).1 i =
         decide (i.val < j + 1 ∨ i.val = n - 1)
@@ -275,15 +274,12 @@ lemma all_on_of_lamp1_only {n : ℕ} [NeZero n] (hn : 2 < n)
       (step^[n * (n - 2)] (initial n)).1 := by
     have hcond : (step^[n * (n - 2) + 1] (initial n)).1
         ((step^[n * (n - 2) + 1] (initial n)).2 - 1) = false := by
-      rw [hidle1, pos_after,
-        show ((n * (n - 2) + 1 : ℕ) : Fin n) = 1 from by
-          rw [Nat.cast_add_one, hT0, zero_add],
+      rw [hidle1, pos_after, Nat.cast_add_one, hT0, zero_add,
         sub_self, h', decide_eq_false_iff_not]
       have hz : ((0 : Fin n) : ℕ) = 0 := by simp
       rw [hz]
       omega
-    rw [show n * (n - 2) + 2 = (n * (n - 2) + 1) + 1 from by omega,
-      Function.iterate_succ_apply', step_lamps_eq_of_pred_off hcond, hidle1]
+    rw [Function.iterate_succ_apply', step_lamps_eq_of_pred_off hcond, hidle1]
   -- Lamps `1, …, j - 1` are on after `n * (n - 2) + j` steps, for `2 ≤ j ≤ n`.
   have key : ∀ j : ℕ, 2 ≤ j → j ≤ n → ∀ i : Fin n,
       (step^[n * (n - 2) + j] (initial n)).1 i = decide (1 ≤ i.val ∧ i.val < j) := by
@@ -294,8 +290,8 @@ lemma all_on_of_lamp1_only {n : ℕ} [NeZero n] (hn : 2 < n)
       intro hj2 hjN
       by_cases hjbase : j + 1 = 2
       · intro i
-        rw [show n * (n - 2) + (j + 1) = n * (n - 2) + 2 from by omega, hidle2, h']
-        rw [Bool.decide_congr (by omega : (i.val = 1) ↔ (1 ≤ i.val ∧ i.val < j + 1))]
+        rw [hjbase, hidle2, h']
+        rw [Bool.decide_congr (by omega : (i.val = 1) ↔ (1 ≤ i.val ∧ i.val < 2))]
       · have hj2' : 2 ≤ j := by omega
         have ih' := ih hj2' (by omega : j ≤ n)
         have hj1 : j < n := by omega
@@ -312,8 +308,7 @@ lemma all_on_of_lamp1_only {n : ℕ} [NeZero n] (hn : 2 < n)
         intro i
         show (step^[n * (n - 2) + (j + 1)] (initial n)).1 i =
           decide (1 ≤ i.val ∧ i.val < j + 1)
-        rw [show n * (n - 2) + (j + 1) = (n * (n - 2) + j) + 1 from by omega,
-          Function.iterate_succ_apply', step_lamps_toggle hpred, hpos]
+        rw [← add_assoc, Function.iterate_succ_apply', step_lamps_toggle hpred, hpos]
         by_cases hi : i = (j : Fin n)
         · subst hi
           rw [if_pos rfl, ih', Fin.val_natCast, Nat.mod_eq_of_lt hj1]
@@ -343,9 +338,7 @@ lemma all_on_of_lamp1_only {n : ℕ} [NeZero n] (hn : 2 < n)
       · rw [zero_sub, Fin.coe_neg_one]
         omega
     intro i
-    show (step^[n * (n - 2) + (n + 1)] (initial n)).1 i = true
-    rw [show n * (n - 2) + (n + 1) = (n * (n - 2) + n) + 1 from by omega,
-      Function.iterate_succ_apply', step_lamps_toggle hpredN, hposN]
+    rw [← add_assoc, Function.iterate_succ_apply', step_lamps_toggle hpredN, hposN]
     by_cases hi : i = (0 : Fin n)
     · subst hi
       rw [if_pos rfl, key n (by omega) le_rfl]

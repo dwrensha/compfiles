@@ -80,9 +80,9 @@ problem imo2003_p6 (p : ℕ) (hp : p.Prime) :
     · exact fun _ _ ↦ Nat.pow_pos (Nat.Prime.pos hp)
     exact nonempty_range_iff.mpr hp.ne_zero
 
-  have p_ge_3 : p - 1 > 1 := by
+  have p_ge_3 : 1 < p - 1 := by
     by_contra h
-    simp only [gt_iff_lt, not_lt, tsub_le_iff_right, Nat.reduceAdd] at h
+    simp only [not_lt, tsub_le_iff_right, Nat.reduceAdd] at h
     interval_cases p
     · norm_num at hp
     · norm_num at hp
@@ -91,7 +91,7 @@ problem imo2003_p6 (p : ℕ) (hp : p.Prime) :
   have N_mod_p_ne_1 : N % (p ^ 2) ≠ 1 := by
     have : (p + 1) % (p ^ 2) = p + 1 := by
       have : p + 1 < p ^ 2 := by
-        suffices 1 < p ^ 2 - p by exact Nat.add_lt_of_lt_sub' this
+        suffices 1 < p ^ 2 - p from Nat.add_lt_of_lt_sub' this
         calc
           1 < p * (p - 1) := by
             apply Nat.one_lt_mul_iff.mpr

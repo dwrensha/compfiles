@@ -1674,7 +1674,7 @@ theorem codex_lower_bound_complete (n : ℕ) (_hn : 0 < n) :
     exact Set.union_subset hA.1 hB.1
   obtain ⟨l, hlmap, hlweight⟩ := exists_tagged_piece_refinement
     (S := A) (T := T) (Finset.subset_union_left) hA.1 hT
-  have hAcard : A.card = n := by exact codexLowerCuts_card n
+  have hAcard : A.card = n := codexLowerCuts_card n
   let D := codexDenom n
   let ls := l.mergeSort (fun a b : ℝ × Fin (A.card + 1) => a.1 ≥ b.1)
   let scaled := ls.map fun z => (D * z.1, z.2)
@@ -3713,7 +3713,7 @@ theorem exists_positive_close_refinement (p : List ℝ)
   have hlne : l ≠ [] := flattenFinBlocks_ne_nil b hm hbne
   have hlpos : ∀ z ∈ l, 0 < z := flattenFinBlocks_pos b hbpos
   have hlsum : l.sum = 1 := by
-    rw [show l.sum = p.sum by exact flattenFinBlocks_sum p b hbsum]
+    rw [flattenFinBlocks_sum p b hbsum]
     exact hpsum
   have hlcuts : cutsOfLengths p ⊆ cutsOfLengths l := by
     exact cutsOfLengths_subset_assembleTwoSelectedBlocks p hpne hppos hpsum
@@ -3833,7 +3833,7 @@ theorem exists_singleton_close_refinement (p : List ℝ)
   have hlne : l ≠ [] := flattenFinBlocks_ne_nil b hm hbne
   have hlpos : ∀ z ∈ l, 0 < z := flattenFinBlocks_pos b hbpos
   have hlsum : l.sum = 1 := by
-    rw [show l.sum = p.sum by exact flattenFinBlocks_sum p b hbsum]
+    rw [flattenFinBlocks_sum p b hbsum]
     exact hpsum
   have hlcuts : cutsOfLengths p ⊆ cutsOfLengths l := by
     exact cutsOfLengths_subset_assembleTwoSelectedBlocks p hpne hppos hpsum
@@ -3981,7 +3981,7 @@ theorem exists_hard_reply (n : ℕ) (A : Finset ℝ)
   obtain ⟨l, hlne, hlpos, hlsum, hlcuts, hllen, hlshare⟩ :=
     exists_close_refinement p hpne hppos hpsum
   have hplen : p.length = n + 1 := by
-    rw [show p.length = A.card + 1 by exact pieceLengths_length A, hcard]
+    rw [pieceLengths_length A, hcard]
   have hreplyLen : l.length ≤ A.card + n + 1 := by
     rw [hplen] at hllen
     omega

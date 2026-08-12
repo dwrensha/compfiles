@@ -41,7 +41,7 @@ lemma f_injective : Function.Injective f := by
   rw [hab] at ha
   have : (a : ℕ) * ((f 1 : ℕ+) : ℕ) ^ 2 = (b : ℕ) * ((f 1 : ℕ+) : ℕ) ^ 2 := by
     exact_mod_cast ha.symm.trans hb
-  exact PNat.eq (by nlinarith [(show (0 : ℕ) < ((f 1 : ℕ+) : ℕ) ^ 2 from by positivity)])
+  rwa [Nat.mul_left_inj (by positivity), PNat.coe_inj] at this
 
 lemma f_sq_d (n : ℕ+) : f (n ^ 2 * f 1) = (f n) ^ 2 := by
   simpa using hf 1 n
@@ -105,7 +105,7 @@ lemma gf_one : gf f 1 = 1 := by
 lemma gf_mul (a b : ℕ+) : gf f (a * b) = gf f a * gf f b := by
   unfold gf
   rw [ Nat.div_mul_div_comm ]
-  · rw [ show ( f a : ℕ ) * f b = f 1 * f ( a * b ) by exact congr_arg PNat.val ( f_mul_rel f hf a b ) ]
+  · rw [ ← PNat.mul_coe, f_mul_rel f hf a b ]
     norm_num [ Nat.mul_div_mul_left ]
   · exact f1_dvd f hf a
   · exact f1_dvd f hf b
@@ -161,8 +161,8 @@ theorem f_1998_ge : (120 : ℕ) ≤ (f 1998 : ℕ) := by
     · by_cases hq3 : q = 3
       · rcases p with ( _ | _ | _ | _ | p ) <;> rcases r with ( _ | _ | _ | _ | r ) <;> simp_all +arith +decide
         nlinarith
-      · have hq_ge_5 : 5 ≤ q := by exact le_of_not_gt fun h => by interval_cases q <;> trivial
-        have hq3_ge_125 : 125 ≤ q^3 := by exact Nat.pow_le_pow_left hq_ge_5 3
+      · have hq_ge_5 : 5 ≤ q := le_of_not_gt fun h => by interval_cases q <;> trivial
+        have hq3_ge_125 : 125 ≤ q^3 := Nat.pow_le_pow_left hq_ge_5 3
         nlinarith [ hp.two_le, hr.two_le, mul_pos hp.pos hr.pos ]
   have h_final : (gf f 2 : ℕ) * (gf f 3 : ℕ) ^ 3 * (gf f 37 : ℕ) ≥ 120 := by
     apply h_min
@@ -187,10 +187,9 @@ lemma primeSwap_invol (n : ℕ) : primeSwap (primeSwap n) = n := by
   all_goals simp only [primeSwap, *]
 
 lemma primeSwap_prime {p : ℕ} (hp : Nat.Prime p) : Nat.Prime (primeSwap p) := by
-  by_cases h2 : p = 2 <;> by_cases h3 : p = 3 <;> by_cases h5 : p = 5 <;> by_cases h37 : p = 37
-  all_goals (try subst_vars; try decide)
-  all_goals rw [show primeSwap p = p from by simp only [primeSwap, *]]
-  exact hp
+  by_cases! h2 : p = 2 ∨ p = 3 ∨ p = 5 ∨ p = 37
+  · rcases h2 with h | h | h | h <;> (subst h; decide)
+  · simp [primeSwap, h2, hp]
 
 lemma g_mul {a b : ℕ} (ha : a ≠ 0) (hb : b ≠ 0) : g (a * b) = g a * g b := by
   simp only [g]
@@ -223,9 +222,7 @@ lemma g_invol {n : ℕ} (hn : n ≠ 0) : g (g n) = n := by
     exact ih m (by nlinarith [hp.one_lt, Nat.pos_of_ne_zero hm]) hm
 
 lemma g_func_eq {m n : ℕ} (hm : m ≠ 0) (hn : n ≠ 0) : g (n ^ 2 * g m) = m * g n ^ 2 := by
-  rw [g_mul (pow_ne_zero 2 hn) (g_ne_zero m),
-      show g (n ^ 2) = g n ^ 2 from by rw [sq, g_mul hn hn, sq],
-      g_invol hm, mul_comm]
+  rw [g_mul (pow_ne_zero 2 hn) (g_ne_zero m), sq, g_mul hn hn, sq, g_invol hm, mul_comm]
 
 lemma g_1998 : g 1998 = 120 := by decide +kernel
 

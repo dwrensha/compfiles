@@ -304,8 +304,8 @@ lemma eventually_eq_succ_of_mem_finset_of_monotone {S : Finset ℝ} {K : ℕ+} (
   use m
   have heq : ∀ n > m, f n = f m := by
     intro n hm_lt_n
-    have hfn_lt_fm : f n ≤ f m := hm n (gt_trans hm_lt_n hmK)
-    have hfm_lt_fn : f m ≤ f n := h₂ m n hmK (gt_iff_lt.mp hm_lt_n)
+    have hfn_lt_fm : f n ≤ f m := hm n <| hmK.trans hm_lt_n
+    have hfm_lt_fn : f m ≤ f n := h₂ m n hmK hm_lt_n
     exact eq_of_le_of_ge hfn_lt_fm hfm_lt_fn
   intro k hk
   have : k + 1 > m := by
@@ -354,21 +354,18 @@ lemma res_eventually_t_step_eq
   have hf_in_S : ∀ k, f k ∈ S := fun k ↦ Finset.mem_def.mpr (hS (t + k * l))
   have hmono_succ : ∀ x, s < x → f x ≤ f (x + 1) := by
     intro x hx
-    have : t + x * l + l > s := by
-      rw [gt_iff_lt]
-      calc
-        s < x := hx
-        _ ≤ x * l := (le_mul_iff_one_le_right' x).mpr one_le
-        _ < t + x * l := PNat.lt_add_left (x * l) t
-        _ < t + x * l + l := PNat.lt_add_right (t + x * l) l
+    have : s < t + x * l + l := calc
+      s < x := hx
+      _ ≤ x * l := (le_mul_iff_one_le_right' x).mpr one_le
+      _ < t + x * l := PNat.lt_add_left (x * l) t
+      _ < t + x * l + l := PNat.lt_add_right (t + x * l) l
     simpa [f, add_one_mul, add_assoc] using h_step_monotone (t + x * l) this
   have h : ∃ K, ∀ k > K, f k = f (k + 1) := eventually_eq_succ_of_mem_finset_of_monotone hf_in_S (mono_of_mono_succ hmono_succ)
   obtain ⟨K, hK⟩ := h
   use t + K * l
   intro k h₁
   simp at h₁
-  have := hK k (gt_iff_lt.mp h₁)
-  simpa [f, add_one_mul, add_assoc]
+  simpa [f, add_one_mul, add_assoc] using hK k h₁
 
 lemma decompose (h : l < n) : ∃ (t k : ℕ+), t ∈ Finset.Icc 1 l ∧ n = t + k * l := by
   use (PNat.mod n l)
@@ -396,16 +393,14 @@ lemma res_eventually_step_eq
     (Finset.image_nonempty.mpr (Finset.attach_nonempty_iff.mpr (finset_nonempty l)))
   use N + l
   intro n hn
-  obtain ⟨t, k, ht, hn_eq⟩ := decompose (lt_of_lt_of_le (PNat.lt_add_left l N) (ge_iff_le.mp hn))
-  have h : t + k * l > Nt t ht := by
-    rw [← hn_eq]
-    apply gt_iff_lt.mpr
-    calc
-      Nt t ht ≤ N := Finset.le_max' _ _ (by
-        rw [Finset.mem_image]
-        exact ⟨⟨t, ht⟩, Finset.mem_attach _ _, rfl⟩)
-      _ < N + l := PNat.lt_add_right N l
-      _ ≤ n := ge_iff_le.mpr hn
+  obtain ⟨t, k, ht, hn_eq⟩ := decompose (lt_of_lt_of_le (PNat.lt_add_left l N) hn)
+  have h : Nt t ht < t + k * l := calc
+    Nt t ht ≤ N := Finset.le_max' _ _ (by
+      rw [Finset.mem_image]
+      exact ⟨⟨t, ht⟩, Finset.mem_attach _ _, rfl⟩)
+    _ < N + l := PNat.lt_add_right N l
+    _ ≤ n := hn
+    _ = t + k * l := hn_eq
   have := hNt t (Finset.mem_def.mpr ht) k h
   rwa [← hn_eq] at this
 

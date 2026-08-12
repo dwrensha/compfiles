@@ -170,7 +170,7 @@ problem imo1993_p1 : ∀ n > 1, ¬∃ p q : ℤ[X], f n = p*q ∧ ¬ isConstant 
 
   have degc : 1 ≤ c.degree := by
     unfold isConstant at cnc
-    simp only [gt_iff_lt, not_forall] at cnc
+    simp only [not_forall] at cnc
     obtain ⟨i, ih1, ih2⟩ := cnc
     trans ↑i
     · exact Nat.one_le_cast.mpr ih1

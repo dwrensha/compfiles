@@ -40,15 +40,11 @@ lemma sum_range_triple (f : ℕ → ℚ) (t : ℕ) :
   induction t with
   | zero => simp
   | succ t ih =>
-    rw [Finset.sum_range_succ, ih,
-      show (3 * (t + 1) + 1 : ℕ) = 3 * t + 4 from by omega,
-      show (3 * t + 4 : ℕ) = (3 * t + 3) + 1 from by omega,
-      Finset.sum_Icc_succ_top (by omega : (2 : ℕ) ≤ 3 * t + 3 + 1),
-      show (3 * t + 3 : ℕ) = (3 * t + 2) + 1 from by omega,
-      Finset.sum_Icc_succ_top (by omega : (2 : ℕ) ≤ 3 * t + 2 + 1),
-      show (3 * t + 2 : ℕ) = (3 * t + 1) + 1 from by omega,
-      Finset.sum_Icc_succ_top (by omega : (2 : ℕ) ≤ 3 * t + 1 + 1)]
-    ring
+    rw [Finset.sum_range_succ, ih]
+    simp_rw [← add_assoc]
+    repeat rw [← sum_Icc_succ_top ?_ f]
+    · congr 2
+    all_goals omega
 
 /-- A sum of reciprocals as a single fraction with the product
 of all denominators as denominator. -/
@@ -183,7 +179,8 @@ problem usa2010_p5 (p q : ℕ) (hpp : Nat.Prime p) (hpo : Odd p) (hq : q = (3*p-
     rw [h2'] at h1
     have hnz1 : ((2*t+1 : ℕ):ℚ) - ((1:ℚ) + (i:ℚ)) ≠ 0 := ne_of_gt (sub_pos.mpr h1)
     have hnz2 : ((2*t+1 : ℕ):ℚ) + ((1:ℚ) + (i:ℚ)) ≠ 0 := ne_of_gt (by positivity)
-    rw [div_add_div _ _ hnz1 hnz2, show ((1+i : ℕ):ℚ) = (1:ℚ) + (i:ℚ) from by push_cast; ring]
+    rw [div_add_div _ _ hnz1 hnz2]
+    push_cast
     ring
   have h9 : (∑ i ∈ Finset.range t, ((1:ℚ)/((2*t+1 : ℕ)-(1+i)) +
         (1:ℚ)/((2*t+1 : ℕ)+(1+i)))) =
@@ -272,8 +269,7 @@ problem usa2010_p5 (p q : ℕ) (hpp : Nat.Prime p) (hpo : Odd p) (hq : q = (3*p-
     have hP2 : ((2*t+1 : ℕ):ℤ) ∣ ((2*t+1 : ℕ):ℤ)^2 := ⟨_, by ring⟩
     have hi2 : ((2*t+1 : ℕ):ℤ) ∣ ((1+i : ℕ):ℤ)^2 := by
       have hsub := dvd_sub hP2 hdiv
-      rwa [show ((2*t+1 : ℕ):ℤ)^2 - (((2*t+1 : ℕ):ℤ)^2 - ((1+i : ℕ):ℤ)^2) =
-        ((1+i : ℕ):ℤ)^2 from by ring] at hsub
+      rwa [Int.sub_sub_self] at hsub
     have hiP : ((2*t+1 : ℕ):ℤ) ∣ ((1+i : ℕ):ℤ) := hpZ.dvd_of_dvd_pow hi2
     have hPdvdN : (2*t+1) ∣ (1+i) := by exact_mod_cast hiP
     have hle : (2*t+1) ≤ (1+i) := Nat.le_of_dvd (by omega) hPdvdN

@@ -35,14 +35,14 @@ lemma iff_comm {a b c : Prop} : (a → c) → (b → c) → (c → (a ↔ b)) �
 snip end
 
 determine f (p : ℝ) : Set ℝ :=
-  if p ≥ 0 ∧ p ≤ (4 : ℝ) / 3
+  if 0 ≤ p ∧ p ≤ (4 : ℝ) / 3
   then { (4 - p) / (2 * Real.sqrt (4 - 2 * p)) }
   else ∅
 
 problem imo1963_p1 : ∀ (p x : ℝ), (x ^ 2 - p) ≥ 0 → (x ^ 2 - 1) ≥ 0 →
   (Real.sqrt (x ^ 2 - p) + 2 * Real.sqrt (x ^ 2 - 1) = x ↔ (x ∈ f p)) := by
   intro p x h1 h2
-  simp only [f, ge_iff_le, Set.mem_ite_empty_right, Set.mem_singleton_iff]
+  simp only [f, Set.mem_ite_empty_right, Set.mem_singleton_iff]
   apply @iff_comm (c := x ≥ 0)
   · intro h; rw [← h]; positivity
   · rintro ⟨⟨-, hx12⟩, rfl⟩
@@ -64,9 +64,9 @@ problem imo1963_p1 : ∀ (p x : ℝ), (x ^ 2 - p) ≥ 0 → (x ^ 2 - 1) ≥ 0 �
   · constructor
     · intro h; linear_combination (1 / (4 : ℝ)) * h
     · intro h; linear_combination (4 : ℝ) * h
-  apply @iff_comm (c := p + 4 - 4 * x ^ 2 ≥ 0)
-  · intro h; rw [ge_iff_le]
-    apply (div_le_div_iff_of_pos_right (by norm_num : (0 : ℝ) < (4 : ℝ))).mp
+  apply @iff_comm (c := 0 ≤ p + 4 - 4 * x ^ 2)
+  · intro h
+    apply (div_le_div_iff_of_pos_right four_pos).mp
     norm_num; rw [← h]; positivity
   · rintro ⟨hx, rfl⟩
     have tmp : 0 < (4 - 2 * p) := by linarith only [hx]
@@ -113,7 +113,7 @@ problem imo1963_p1 : ∀ (p x : ℝ), (x ^ 2 - p) ≥ 0 → (x ^ 2 - 1) ≥ 0 �
   · intro hx
     refine ⟨?_, hx⟩
     rw [hx, ← tmp2] at xp
-    simp only [ge_iff_le, sub_nonneg] at xp
+    simp only [sub_nonneg] at xp
     rw [← mul_le_mul_iff_left₀ (by positivity : (0 < ((4 : ℝ) * ((4 : ℝ) - (2 : ℝ) * p))))] at xp
     rw [mul_div] at xp
     rw [div_mul_cancel₀ _ (by positivity)] at xp

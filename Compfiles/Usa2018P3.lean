@@ -302,13 +302,12 @@ lemma pow_pred_dvd_powSum_prime_pow {p : ℕ} (hp : p.Prime) :
     have hpd : p ∣ p ^ e := dvd_pow_self p (by omega : e ≠ 0)
     have hid := powSum_mul_prime_of_dvd hpe2 hp hpd k
     rw [sum_add_pow_eq] at hid
-    rw [show p ^ (e + 1) = p ^ e * p from (pow_succ p e).symm, hid,
-      show e + 1 - 1 = e from by omega]
+    rw [pow_succ p e, hid, Nat.add_sub_cancel_right]
     apply dvd_add
     · have h := ih k
       have h1 : p ^ e = p * p ^ (e - 1) := by
-        conv_lhs => rw [show e = e - 1 + 1 from by omega]
-        rw [pow_succ']
+        rw [mul_pow_sub_one ?_ p]
+        omega
       nth_rewrite 1 [h1]
       exact mul_dvd_mul_left _ h
     · apply Finset.dvd_sum

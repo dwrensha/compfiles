@@ -56,7 +56,8 @@ theorem sum_dvd_cong {p a b c d : ℤ} (hpab : p ∣ a + b) (hpcd : p ∣ c + d)
     rw [e]
     exact dvd_neg.mpr hpcd
   have h := (hab.mul_right d).add (hcd.mul_left b)
-  rwa [show -b * d + b * -d = -2 * b * d from by ring] at h
+  ring_nf at h ⊢
+  exact h
 
 /-- If `p ∣ a * d + b * c` and `a * d + b * c ≡ -2 * b * d (mod p)`,
 then `p ∣ 2 * b * d`. -/
@@ -65,7 +66,7 @@ theorem dvd_two_mul_mul_of_dvd {p a b c d : ℤ}
     p ∣ 2 * b * d := by
   rw [Int.modEq_iff_dvd] at hcong
   have h3 := dvd_add h hcong
-  rw [show a * d + b * c + (-2 * b * d - (a * d + b * c)) = -(2 * b * d) from by ring] at h3
+  rw [add_sub_cancel, neg_mul, neg_mul] at h3
   exact dvd_neg.mp h3
 
 /-- An odd prime dividing neither `b` nor `d` does not divide `2 * b * d`. -/

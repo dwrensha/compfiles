@@ -315,11 +315,7 @@ lemma closure_cell {L : Finset Line} {σ : Line → Bool} (hne : (Cell L σ).Non
             (1 - t) * (sgn (σ ℓ) * ℓ.val p) + t * (sgn (σ ℓ) * ℓ.val q) := by ring
         rw [h3]
         nlinarith [ht0, ht1, hp', hq']
-      · have h4 : dist p (p + t • (q - p)) = t * dist q p := by
-          rw [dist_eq_norm, show p - (p + t • (q - p)) = -(t • (q - p)) from by module,
-            norm_neg, norm_smul, Real.norm_eq_abs, abs_of_pos ht0, ← dist_eq_norm]
-        rw [h4]
-        exact htε
+      · rwa [dist_eq_norm, sub_add_cancel_left, norm_neg, norm_smul, Real.norm_eq_abs, abs_of_pos ht0, ← dist_eq_norm]
 
 /-- The frontier of a cell: its closure minus itself. -/
 lemma frontier_cell (L : Finset Line) (σ : Line → Bool) :

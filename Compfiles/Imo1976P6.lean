@@ -46,7 +46,7 @@ problem imo1976_p6 (u : ℕ → ℝ)
     -- We need to show that $(2^n - (-1)^n) / 3$ is an integer.
     have h_int : ∃ k : ℤ, (2^n - (-1)^n) = 3 * k := sub_dvd_pow_sub_pow _ _ _
     simp_all only [pow_zero, sub_self, zero_div, Real.rpow_zero, neg_add_cancel,
-                   pow_one, sub_neg_eq_add, gt_iff_lt, Int.reduceNeg]
+                   pow_one, sub_neg_eq_add, Int.reduceNeg]
     obtain ⟨w, h⟩ := h_int
     use 2 ^ w.natAbs
     obtain a | a := w
@@ -58,7 +58,7 @@ problem imo1976_p6 (u : ℕ → ℝ)
       have : (-1)^n ≤ 1 := by cases neg_one_pow_eq_or ℤ n <;> lia
       lia
   simp_all only [pow_zero, sub_self, zero_div, Real.rpow_zero, neg_add_cancel,
-                 pow_one, sub_neg_eq_add, gt_iff_lt]
+                 pow_one, sub_neg_eq_add]
   obtain ⟨w, h⟩ := h_int
   simp_all only [Int.floor_intCast_add, Int.cast_add, add_eq_left, Int.cast_eq_zero,
                  Int.floor_eq_zero_iff, Set.mem_Ico]

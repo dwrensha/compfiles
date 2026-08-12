@@ -69,13 +69,7 @@ lemma two_not_dvd_P (n : ℕ) : ¬ 2 ∣ P n := by
 lemma nine_not_dvd_P (n : ℕ) : ¬ 9 ∣ P n := by
   intro h
   obtain ⟨m, hm⟩ : ∃ m, n = 3 * m ∨ n = 3 * m + 1 ∨ n = 3 * m + 2 := ⟨n / 3, by lia⟩
-  rcases hm with rfl | rfl | rfl
-  · rw [show P (3 * m) = 9 * m ^ 2 + 3 * m + 1 from by simp only [P]; ring] at h
-    lia
-  · rw [show P (3 * m + 1) = 9 * (m ^ 2 + m) + 3 from by simp only [P]; ring] at h
-    lia
-  · rw [show P (3 * m + 2) = 9 * m ^ 2 + 15 * m + 7 from by simp only [P]; ring] at h
-    lia
+  rcases hm with rfl | rfl | rfl <;> lia
 
 lemma dvd_of_dvd_two_mul {g x : ℕ} (hg : ¬ 2 ∣ g) (h : g ∣ 2 * x) : g ∣ x :=
   ((Nat.Prime.coprime_iff_not_dvd Nat.prime_two).mpr hg).symm.dvd_of_dvd_mul_left h
@@ -96,7 +90,7 @@ lemma coprime_P_succ (b : ℕ) : Nat.Coprime (P (b + 1)) (P b) := by
   rw [Nat.coprime_iff_gcd_eq_one]
   have h1 : (P (b + 1)).gcd (P b) ∣ b + 1 := gcd_P_dvd_of_eq (by ring)
   refine Nat.dvd_one.mp ((Nat.dvd_add_right (h1.mul_left b)).mp ?_)
-  rw [show b * (b + 1) + 1 = P b from by simp only [P]; ring]
+  rw [show b * (b + 1) + 1 = P b by ring]
   exact Nat.gcd_dvd_right _ _
 
 /-- The gcd of values of `P` at distance two divides 7. -/
@@ -109,7 +103,7 @@ lemma gcd_P_add_two_dvd (b : ℕ) : (P (b + 2)).gcd (P b) ∣ 7 := by
     rw [show (2 * b + 3) * (2 * b + 3) = 4 * P b + (8 * b + 5) by ring] at h
     exact (Nat.dvd_add_right (hg2.mul_left 4)).mp h
   have h3 := h1.mul_left 4
-  rw [show 4 * (2 * b + 3) = (8 * b + 5) + 7 from by ring] at h3
+  rw [show 4 * (2 * b + 3) = (8 * b + 5) + 7 by ring] at h3
   exact (Nat.dvd_add_right h2).mp h3
 
 /-- The gcd of values of `P` at distance three divides 3. -/
@@ -123,7 +117,7 @@ lemma gcd_P_add_three_dvd (b : ℕ) : (P (b + 3)).gcd (P b) ∣ 3 := by
     exact (Nat.dvd_add_right (hg2.mul_left 9)).mp h
   have h27 : g ∣ 27 := by
     have h := h1.mul_left 9
-    rw [show 9 * (3 * b + 6) = (27 * b + 27) + 27 from by ring] at h
+    rw [show 9 * (3 * b + 6) = (27 * b + 27) + 27 by ring] at h
     exact (Nat.dvd_add_right h2).mp h
   -- since 9 never divides a value of P, the gcd must divide 3
   have h9 : ¬ 9 ∣ g := fun h ↦ nine_not_dvd_P b (h.trans hg2)

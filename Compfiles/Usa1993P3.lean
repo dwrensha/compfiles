@@ -43,8 +43,7 @@ theorem lemma1 (c1 : ℝ) :
         (∀ (x y : ↑(Set.Icc 0 1)) (h : (x:ℝ) + (y:ℝ) ∈ Set.Icc 0 1), f x + f y ≤ f ⟨↑x + ↑y, h⟩) →
            2 ≤ c1 := by
   intro f h1 h2 h3 h4
-  by_contra h
-  push Not at h
+  by_contra! h
   have hc1 : c1 ≥ 0 := by
     have h1' := h1 (1 / 2 : ℝ) (by norm_num)
     have h5 : f ⟨(1 / 2 : ℝ), by norm_num⟩ = (0 : ℝ) := by
@@ -55,19 +54,18 @@ theorem lemma1 (c1 : ℝ) :
       rw [h5] at h7
       exact h7
     linarith
-  have h9 : ∃ a : ℝ, a > (1 / 2 : ℝ) ∧ a ≤ (1 : ℝ) ∧ 1 > c1 * a := by
+  have h9 : ∃ a : ℝ, (1 / 2 : ℝ) < a ∧ a ≤ (1 : ℝ) ∧ c1 * a < 1 := by
     use (1 + (2 - c1) / 4) / 2
-    constructor
+    and_intros
     · -- Show a > 1/2
       linarith
-    constructor
     · -- Show a ≤ 1
       linarith
     · -- Show 1 > c1 * a
       linarith [sq_nonneg (c1 - 1), sq_nonneg ((1 + (2 - c1) / 4) / 2 - 1 / 2), hc1]
   rcases h9 with ⟨a, ha1, ha2, h10⟩
-  have h1' := h1 a ⟨by linarith, ha2⟩
-  simp only [f, show ¬(a ≤ 1 / 2) from by linarith, ite_false] at h1'
+  replace h1 := h1 a ⟨by linarith, ha2⟩
+  simp only [f, show ¬(a ≤ 1 / 2) by linarith, ite_false] at h1
   linarith
 
 private lemma dyadicBracket

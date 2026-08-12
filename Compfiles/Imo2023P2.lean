@@ -239,9 +239,9 @@ lemma aux₇ {x y : ℝ} (h : ∃ k : ℤ, x = y * k)
       rw [← Int.cast_one, ← Int.cast_abs, Int.cast_le]
       exact Int.one_le_abs hx
     calc y
-        ≤ |y| := by exact le_abs_self y
-      _ = |y| * 1 := by exact (mul_one |y|).symm
-      _ ≤ |y| * |↑k| := by exact mul_le_mul_of_nonneg_left h₁ (abs_nonneg y)
+        ≤ |y| := le_abs_self y
+      _ = |y| * 1 := (mul_one |y|).symm
+      _ ≤ |y| * |↑k| := mul_le_mul_of_nonneg_left h₁ (abs_nonneg y)
 
 lemma aux₈ {x y z : ℝ}
   (hx' : 0 ≤ x) (hy' : y ≤ 0)
@@ -250,13 +250,13 @@ lemma aux₈ {x y z : ℝ}
     rw [abs_lt]
     constructor
     · calc -z
-          _ < y := by exact (abs_lt.mp hy).left
-          _ = 0 + y := by exact (zero_add y).symm
-          _ ≤ x + y := by exact add_le_add_left hx' y
+          _ < y := (abs_lt.mp hy).left
+          _ = 0 + y := (zero_add y).symm
+          _ ≤ x + y := add_le_add_left hx' y
     · calc x + y
-        _ ≤ x + 0 := by exact add_le_add_right hy' x
-        _ = x := by exact add_zero x
-        _ < z := by exact (abs_lt.mp hx).right
+        _ ≤ x + 0 := add_le_add_right hy' x
+        _ = x := add_zero x
+        _ < z := (abs_lt.mp hx).right
 
 lemma aux₉ {x y z : ℝ} (h : |x + y| = z)
   (hx : |x| < z) (hy : |y| < z)
@@ -284,17 +284,17 @@ lemma aux₁₀ {a b : Real.Angle} (h : 2 • a + 2 • b = Real.pi)
     repeat rw [Real.Angle.angle_eq_iff_two_pi_dvd_sub] at h
     have h₁ : |a' + b'| < Real.pi := by
       calc |a' + b'|
-          ≤ |a'| + |b'| := by exact abs_add_le a' b'
-        _ < Real.pi / 2 + Real.pi / 2 := by exact add_lt_add ha hb
+          ≤ |a'| + |b'| := abs_add_le a' b'
+        _ < Real.pi / 2 + Real.pi / 2 := add_lt_add ha hb
         _ = Real.pi := by ring
     have h₂ : 0 ≤ Real.pi / 2 := by
       apply div_nonneg Real.pi_nonneg
       norm_num
     have h₃ : |a' + b'| + |Real.pi / 2| < 2 * Real.pi := by
       calc |a' + b'| + |Real.pi / 2|
-            < Real.pi + |Real.pi / 2| := by exact add_lt_add_left h₁ _
-          _ = Real.pi + Real.pi / 2 := by exact (add_right_inj _).mpr (abs_eq_self.mpr h₂)
-          _ ≤ Real.pi + Real.pi / 2 + Real.pi / 2 := by exact (le_add_iff_nonneg_right _).mpr h₂
+            < Real.pi + |Real.pi / 2| := add_lt_add_left h₁ _
+          _ = Real.pi + Real.pi / 2 := (add_right_inj _).mpr (abs_eq_self.mpr h₂)
+          _ ≤ Real.pi + Real.pi / 2 + Real.pi / 2 := (le_add_iff_nonneg_right _).mpr h₂
           _ = 2 * Real.pi := by ring
     have h₄ : |a' + b'| = Real.pi / 2 := by
       rw [abs_eq h₂]
@@ -303,16 +303,16 @@ lemma aux₁₀ {a b : Real.Angle} (h : 2 • a + 2 • b = Real.pi)
         apply eq_of_sub_eq_zero
         apply aux₇ pos
         calc |a' + b' - Real.pi / 2|
-            ≤ |a' + b'| + |Real.pi / 2| := by exact abs_sub _ _
-          _ < 2 * Real.pi := by exact h₃
+            ≤ |a' + b'| + |Real.pi / 2| := abs_sub _ _
+          _ < 2 * Real.pi := h₃
       · right
         apply eq_of_sub_eq_zero
         rw [← neg_div]
         apply aux₇ neg
         rw [neg_div, sub_neg_eq_add]
         calc |a' + b' + Real.pi / 2|
-            ≤ |a' + b'| + |Real.pi / 2| := by exact abs_add_le _ _
-          _ < 2 * Real.pi := by exact h₃
+            ≤ |a' + b'| + |Real.pi / 2| := abs_add_le _ _
+          _ < 2 * Real.pi := h₃
     exact aux₉ h₄ ha hb
 
 lemma angle_eq_of_oangle_eq {A₁ A₂ A₃ B₁ B₂ B₃ : Pt}

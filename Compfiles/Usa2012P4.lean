@@ -135,13 +135,13 @@ lemma eq_two_const_of_f_one_two_eq_two {f : ℕ → ℕ} (hpos : ∀ n, 0 < n �
     (hdiv : ∀ (m n : ℕ), 0 < m → 0 < n → m ≠ n → (m : ℤ) - n ∣ (f m : ℤ) - f n)
     (hf1 : f 1 = 2) (hf2 : f 2 = 2) (n : ℕ) (hn : 0 < n) : f n = 2 := by
   have hf6 : f 6 = (f 3)! := by
-    have h := hfact 3 (by norm_num)
+    have h := hfact 3 (Nat.zero_lt_succ _)
     rwa [show 3 ! = 6 from rfl] at h
   have hf3 : f 3 = 2 := by
-    have h := hdiv 6 1 (by norm_num) (by norm_num) (by norm_num)
-    rw [hf6, hf1, show ((6 : ℕ) : ℤ) - ((1 : ℕ) : ℤ) = ((5 : ℕ) : ℤ) from by norm_num] at h
+    have h := hdiv 6 1 (Nat.zero_lt_succ _) (Nat.zero_lt_succ _) (by norm_num)
+    rw [hf6, hf1] at h
     have hlt : f 3 < 5 := lt_of_dvd_factorial_sub (d := 5) h (by norm_num) (by decide)
-    have hp : 0 < f 3 := hpos 3 (by norm_num)
+    have hp : 0 < f 3 := hpos 3 (Nat.zero_lt_succ _)
     interval_cases f 3
     · exact absurd h (by decide)
     · rfl
@@ -177,14 +177,12 @@ lemma eq_id_of_f_one_eq_one {f : ℕ → ℕ} (hpos : ∀ n, 0 < n → 0 < f n)
     (hfact : ∀ n, 0 < n → f (n !) = (f n)!)
     (hdiv : ∀ (m n : ℕ), 0 < m → 0 < n → m ≠ n → (m : ℤ) - n ∣ (f m : ℤ) - f n)
     (hf1 : f 1 = 1) (hf2 : f 2 = 2) (n : ℕ) (hn : 0 < n) : f n = n := by
-  have hf6 : f 6 = (f 3)! := by
-    have h := hfact 3 (by norm_num)
-    rwa [show 3 ! = 6 from rfl] at h
+  have hf6 : f 6 = (f 3)! := hfact 3 (Nat.zero_lt_succ _)
   have hf3 : f 3 = 3 := by
-    have h1 := hdiv 6 1 (by norm_num) (by norm_num) (by norm_num)
-    rw [hf6, hf1, show ((6 : ℕ) : ℤ) - ((1 : ℕ) : ℤ) = ((5 : ℕ) : ℤ) from by norm_num] at h1
-    have h2 := hdiv 6 2 (by norm_num) (by norm_num) (by norm_num)
-    rw [hf6, hf2, show ((6 : ℕ) : ℤ) - ((2 : ℕ) : ℤ) = ((4 : ℕ) : ℤ) from by norm_num] at h2
+    have h1 := hdiv 6 1 (Nat.zero_lt_succ _) (Nat.zero_lt_succ _) (by norm_num)
+    rw [hf6, hf1] at h1
+    have h2 := hdiv 6 2 (Nat.zero_lt_succ _) (Nat.zero_lt_succ _) (by norm_num)
+    rw [hf6, hf2] at h2
     have hlt : f 3 < 5 := lt_of_dvd_factorial_sub (d := 5) h1 (by norm_num) (by decide)
     have hp : 0 < f 3 := hpos 3 (by norm_num)
     interval_cases f 3

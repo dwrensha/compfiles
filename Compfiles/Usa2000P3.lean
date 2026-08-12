@@ -504,7 +504,7 @@ lemma fewestWays_rec (A B C : ℕ) (h : 0 < A + B + C) :
         simp_rw [eLHS, hL]
         have c1f : ¬ (0 < A ∧ 3 * A * B = A * C) := by
           intro hh
-          have e : 3 * A * B = A * C := by exact hh.2
+          have e : 3 * A * B = A * C := hh.2
           nlinarith only [e, hC3, hA']
         have c3t : 3 * A * B = 2 * B * C := by rw [hAC]; ring
         rw [if_neg c1f]

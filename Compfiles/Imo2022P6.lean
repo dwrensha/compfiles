@@ -1067,8 +1067,7 @@ theorem NordicSquare.good_count {n : ℕ} (hn : 2 ≤ n) (ns : NordicSquare n) (
         rw [if_neg (show ¬ ns.Valley c from fun hvc ↦ hc.1 (huniq c hvc))]
     rw [h1, if_pos hv]
   rw [NordicSquare.card_eq_sum_countTo, Finset.sum_congr rfl (fun c _ ↦ hcnt c)]
-  rw [show 2 * n * (n - 1) + 1 = 2 * (n * (n - 1)) + 1 from by ring]
-  rw [← hsum, key, Nat.sub_add_cancel hge]
+  rw [mul_assoc, ← hsum, key, Nat.sub_add_cancel hge]
 
 /-- The number of uphill paths on a 1×1 board is 1. -/
 theorem nat_card_uphillPath_one (ns : NordicSquare 1) : Nat.card ns.UphillPath = 1 := by

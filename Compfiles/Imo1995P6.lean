@@ -126,7 +126,7 @@ theorem shift_iterate_mem_Icc {p : ℕ} (hp : 0 < p) {x : ℕ} (hx : x ∈ Finse
       rw [e, Nat.add_mul_mod_self_left]
     rw [h, hmod]
     have hx' : 1 ≤ x := (Finset.mem_Icc.1 hx).1
-    rw [show x - 1 + k + 1 = x - 1 + (k + 1) from by omega]
+    congr 1
 
 theorem shift_iterate_not_mem {p : ℕ} {x : ℕ} (hx : x ∉ Finset.Icc 1 p) (k : ℕ) :
     (shift p)^[k] x = x := by

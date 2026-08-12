@@ -55,6 +55,8 @@ inductive Linked : ℤ → ℤ → Prop where
   | snoc {a b c : ℤ} (hab : Linked a b) (hc : 0 < c) (hbc : b + c ∣ b * c) :
       Linked a c
 
+scoped notation a " ~ " b => Linked a b
+
 namespace Linked
 
 theorem pos_left {a b : ℤ} (h : Linked a b) : 0 < a := by
@@ -67,11 +69,14 @@ theorem pos_right {a b : ℤ} (h : Linked a b) : 0 < b := by
   | refl ha => exact ha
   | snoc _ hc _ _ => exact hc
 
+@[trans]
 theorem trans {a b c : ℤ} (hab : Linked a b) (hbc : Linked b c) : Linked a c := by
   revert hab
   induction hbc with
   | refl _ => exact id
   | snoc _ hd hcd ih => exact fun hab => Linked.snoc (ih hab) hd hcd
+
+instance : Trans Linked Linked Linked := ⟨Linked.trans⟩
 
 theorem symm {a b : ℤ} (h : Linked a b) : Linked b a := by
   induction h with
@@ -106,66 +111,53 @@ theorem link_mul_left {m : ℤ} (hm : 0 < m) {a b : ℤ} (h : Linked a b) :
 
 /-- Doubling: every `2 < t` links to `2 * t`. -/
 theorem link_two_mul {t : ℤ} (ht : 2 < t) : Linked t (2 * t) := by
-  have h1 : 1 < t := by omega
-  -- `t ~ t * (t - 1)`
-  have s1 : Linked t (t * (t - 1)) := link_pred_mul h1
-  -- `t * (t - 1) ~ t * (t - 1) * (t - 2)`
-  have s2 : Linked (t * (t - 1)) (t * (t - 1) * (t - 2)) := by
-    have h := link_mul_left (show (0 : ℤ) < t by omega)
-      (link_pred_mul (show 1 < t - 1 by omega))
-    rwa [show t - 1 - 1 = t - 2 from by ring, ← mul_assoc] at h
-  -- `t * (t - 1) * (t - 2) ~ t * (t - 2)`
-  have s3 : Linked (t * (t - 1) * (t - 2)) (t * (t - 2)) := by
-    have h := (link_mul_left (show (0 : ℤ) < t - 2 by omega) (link_pred_mul h1)).symm
-    rwa [show (t - 2) * t = t * (t - 2) from by ring,
-      show (t - 2) * (t * (t - 1)) = t * (t - 1) * (t - 2) from by ring] at h
-  -- `t * (t - 2) ~ 2 * t`
-  have s4 : Linked (t * (t - 2)) (2 * t) := (link_two_mul_pred ht).symm
-  exact (((s1.trans s2).trans s3).trans s4)
+  have h1 : t ~ t * (t - 1) := link_pred_mul (by omega)
+  calc t
+    _ ~ t * (t - 1) := h1
+    _ ~ t * (t - 1) * (t - 2) := by
+      have h := link_mul_left (show (0 : ℤ) < t by omega)
+        (link_pred_mul (show 1 < t - 1 by omega))
+      rwa [Int.sub_sub, ← mul_assoc] at h
+    _ ~ t * (t - 2) := by
+      have h := (link_mul_left (Int.sub_pos.mpr ht) h1).symm
+      rwa [mul_comm _ t, Int.mul_comm] at h
+    _ ~ 2 * t := (link_two_mul_pred ht).symm
 
 /-- Reduction: every `3 < t` links to `t - 1`. -/
 theorem link_pred {t : ℤ} (ht : 3 < t) : Linked t (t - 1) := by
   have h1 : 1 < t := by omega
   have hpm1 : Linked (t - 1) ((t - 1) * (t - 2)) := by
     have h := link_pred_mul (show 1 < t - 1 by omega)
-    rwa [show t - 1 - 1 = t - 2 from by ring] at h
+    rwa [show t - 1 - 1 = t - 2 by ring] at h
   have hpm2 : Linked (t - 2) ((t - 2) * (t - 3)) := by
     have h := link_pred_mul (show 1 < t - 2 by omega)
-    rwa [show t - 2 - 1 = t - 3 from by ring] at h
+    rwa [show t - 2 - 1 = t - 3 by ring] at h
   have hu2 : 2 < (t - 1) * (t - 2) := by
     have hpos : 0 < t * (t - 3) := mul_pos (by omega) (by omega)
     have heq : (t - 1) * (t - 2) = t * (t - 3) + 2 := by ring
     omega
-  -- `t ~ t * (t - 1)`
-  have e1 : Linked t (t * (t - 1)) := link_pred_mul h1
-  -- `t * (t - 1) ~ t * (t - 1) * (t - 2)`
-  have e2 : Linked (t * (t - 1)) (t * (t - 1) * (t - 2)) := by
-    have h := link_mul_left (show (0 : ℤ) < t by omega) hpm1
-    rwa [← mul_assoc] at h
-  -- `t * (t - 1) * (t - 2) ~ t * (t - 1) * (t - 2) * (t - 3)`
-  have e3 : Linked (t * (t - 1) * (t - 2)) (t * (t - 1) * (t - 2) * (t - 3)) := by
-    have h := link_mul_left (mul_pos (show (0 : ℤ) < t by omega)
-      (show (0 : ℤ) < t - 1 by omega)) hpm2
-    rwa [← mul_assoc] at h
-  -- `t * (t - 1) * (t - 2) * (t - 3) ~ 2 * ((t - 1) * (t - 2))`
-  have e4 : Linked (t * (t - 1) * (t - 2) * (t - 3)) (2 * ((t - 1) * (t - 2))) := by
-    have h := (link_two_mul_pred hu2).symm
-    rwa [show (t - 1) * (t - 2) * ((t - 1) * (t - 2) - 2)
-        = t * (t - 1) * (t - 2) * (t - 3) from by ring] at h
-  -- `2 * ((t - 1) * (t - 2)) ~ (t - 1) * (t - 2)`, a whole sub-chain
-  have e5 : Linked (2 * ((t - 1) * (t - 2))) ((t - 1) * (t - 2)) :=
-    (link_two_mul hu2).symm
-  -- `(t - 1) * (t - 2) ~ (t - 1)`
-  have e6 : Linked ((t - 1) * (t - 2)) (t - 1) := hpm1.symm
-  exact ((((e1.trans e2).trans e3).trans e4).trans e5).trans e6
+  calc t
+    _ ~ t * (t - 1) := link_pred_mul h1
+    _ ~ t * (t - 1) * (t - 2) := by
+      have h := link_mul_left (show (0 : ℤ) < t by omega) hpm1
+      rwa [← mul_assoc] at h
+    _ ~ (t * (t - 1) * (t - 2) * (t - 3)) := by
+      have h := link_mul_left (mul_pos (show (0 : ℤ) < t by omega)
+        (show (0 : ℤ) < t - 1 by omega)) hpm2
+      rwa [← mul_assoc] at h
+    _ ~ (2 * ((t - 1) * (t - 2))) := by
+      have h := (link_two_mul_pred hu2).symm
+      rwa [show (t - 1) * (t - 2) * ((t - 1) * (t - 2) - 2)
+          = t * (t - 1) * (t - 2) * (t - 3) by ring] at h
+    _ ~ ((t - 1) * (t - 2)) := (link_two_mul hu2).symm
+    _ ~ (t - 1) := hpm1.symm
 
 /-- Every integer `≥ 3` links to `3`. -/
 theorem linked_to_three : ∀ n : ℕ, ∀ t : ℤ, t = n + 3 → Linked t 3 := by
   intro n
   induction n with
   | zero =>
-    intro t ht
-    rw [show t = 3 from by omega]
+    rintro t rfl
     exact .refl (by norm_num)
   | succ n ih =>
     intro t ht

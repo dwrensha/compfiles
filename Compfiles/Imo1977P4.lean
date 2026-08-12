@@ -90,8 +90,8 @@ problem imo1977_p4 (f : ℝ → ℝ) (a b A B : ℝ)
         _ = R := by ring
 
     have h₁₁ : A * Real.cos θ + B * Real.sin θ > 1 := by
-      have h₁₂ : R > 1 := by
-        rw [hR_def, gt_iff_lt, ← one_lt_sq_iff₀ (a := √(A^2 + B^2)) (by positivity)]
+      have h₁₂ : 1 < R := by
+        rw [hR_def, ← one_lt_sq_iff₀ (a := √(A^2 + B^2)) (by positivity)]
         rw [Real.sq_sqrt (by positivity)]
         exact h
       linarith only [h₁₀, h₁₂]

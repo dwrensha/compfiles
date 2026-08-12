@@ -239,7 +239,7 @@ problem usa2019_p1 (m : ℕ+) :
     · exact hmeq
   · intro h
     obtain ⟨f, hf1, hf2⟩ := h
-    suffices h : Even m.val by exact h
+    suffices h : Even m.val from h
     by_contra H
     have h1 : Odd m.val := Nat.not_even_iff_odd.mp H
     have h2 := lemma_3 f hf1 m h1

@@ -95,7 +95,7 @@ theorem imo2023_p4_generalized
     simp only [CharP.cast_eq_zero, mul_zero, zero_add, aa, Nat.mul_zero, Nat.reduceAdd,
                one_div, Real.one_le_sqrt]
     have h1 : Finset.filter (fun x ↦ x ≤ ⟨1, by simp⟩)
-                            (Finset.univ (α := {x //x ∈ Finset.Icc 1 1}))
+                            (Finset.univ (α := {x // x ∈ Finset.Icc 1 1}))
            = Finset.univ (α := {x // x ∈ Finset.Icc 1 1}) := by
       refine Finset.filter_true_of_mem ?h
       intro x hx
@@ -105,7 +105,7 @@ theorem imo2023_p4_generalized
       exact Subtype.mk_le_mk.mpr hx3
     rw [h1]
     have h2 : Finset.univ (α := { x // x ∈ Finset.Icc 1 1 }) = { ⟨1, by simp⟩ } := by decide
-    simp only [h2, Finset.sum_singleton, ge_iff_le]
+    simp only [h2, Finset.sum_singleton]
     simp only [Nat.mul_zero, Nat.reduceAdd, Subtype.forall, Finset.Icc_self,
                Finset.mem_singleton] at hxp
     specialize hxp 1 (by simp)

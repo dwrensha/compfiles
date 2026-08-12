@@ -230,8 +230,8 @@ lemma S'_k_card_eq_S_succ_k_card (hm : m ≤ 1) : (S' k m).ncard = (S (k + 1)).n
 lemma S_succ_succ_k_card_eq_two_mul_S_succ_k_card : (S (k + 2)).ncard = (S (k + 1)).ncard * 2 := by
     let S₁ := S' k 0
     let S₂ := S' k 1
-    have h1 : S₁.ncard = (S (k + 1)).ncard := by exact S'_k_card_eq_S_succ_k_card (by norm_num)
-    have h2 : S₂.ncard = (S (k + 1)).ncard := by exact S'_k_card_eq_S_succ_k_card (by norm_num)
+    have h1 : S₁.ncard = (S (k + 1)).ncard := S'_k_card_eq_S_succ_k_card (by norm_num)
+    have h2 : S₂.ncard = (S (k + 1)).ncard := S'_k_card_eq_S_succ_k_card (by norm_num)
     have h3 : Disjoint S₁ S₂ := by {
       rw [Set.disjoint_left]
       rintro f ⟨_, hf⟩

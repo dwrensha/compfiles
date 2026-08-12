@@ -66,7 +66,7 @@ problem imo1975_p2 (a : ℕ → ℤ)
     have g : (a i)∣ a (m+1) - (a (m+1) - (a i)*((a (m+1))/(a i))) := by
       simp
     have h5 := h4 t
-    have h6 : (a i ∣ a (m + 1) - ↑t) → (t ≥ b i) := by
+    have h6 : (a i ∣ a (m + 1) - ↑t) → (b i ≤ t) := by
       contrapose
       intro r
       apply lt_of_not_ge at r
@@ -78,7 +78,7 @@ problem imo1975_p2 (a : ℕ → ℤ)
         lia
     have h7 : ↑(a (m + 1) - a i * (a (m + 1) / a i)).natAbs = (a (m + 1) - a i * (a (m + 1) / a i)) := Int.natAbs_of_nonneg g
     rw [h7] at h6
-    simp only [sub_sub_cancel, dvd_mul_right, ge_iff_le, forall_const] at h6
+    simp only [sub_sub_cancel, dvd_mul_right, forall_const] at h6
     unfold b at h6
     have h8 : a (m + 1) - a i * (a (m + 1) / a i) < (a i):= by
       have h8' : a i * (a (m + 1) / a i) + (a i) > a (m + 1) :=  Int.lt_mul_ediv_self_add (apos i)

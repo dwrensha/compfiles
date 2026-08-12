@@ -67,12 +67,12 @@ problem imo2006_p4 :
                 · lia
             _ < 2 ^ 2 := by norm_num
       have hk2 : k > 1 := by
-        suffices h : ((y.natAbs ^ 2 : ℤ) : ℝ) > (1 : ℝ) ^ 2
+        suffices h : (1 : ℝ) ^ 2 < ((y.natAbs ^ 2 : ℤ) : ℝ)
         · rw [Int.cast_pow] at h
           apply sq_lt_sq.mp at h
           norm_cast at h
         · rw [Int.natAbs_sq, Int.cast_pow, ← h, add_assoc]
-          simp only [one_pow, gt_iff_lt, lt_add_iff_pos_right]
+          simp only [one_pow, lt_add_iff_pos_right]
           positivity
       interval_cases k
     lift x to ℕ using hxnonneg
@@ -151,7 +151,7 @@ problem imo2006_p4 :
         -- So $$ y=2^{x-1} m+\epsilon, \quad m \text { odd }, \quad \epsilon= \pm 1 $$
         obtain ⟨m, hm, ε, hε, hy⟩ : ∃ m : ℕ, Odd m ∧ ∃ (ε : ℤ), (ε = 1 ∨ ε = -1) ∧ (y = 2 ^ (x - 1) * m + ε) := by
           let n₁ := (y - 1).factorization 2
-          obtain ⟨t, ht⟩ : 2 ^ n₁ ∣ y - 1 := by exact Nat.ordProj_dvd (y - 1) 2
+          obtain ⟨t, ht⟩ : 2 ^ n₁ ∣ y - 1 := Nat.ordProj_dvd (y - 1) 2
           have hysub : ¬y - 1 = 0 := by
             by_contra hsub
             simp [hsub] at h
@@ -208,9 +208,9 @@ problem imo2006_p4 :
           · simp at h₁
             interval_cases n₁
             · simp at ht
-              have : Even (y - 1) := by exact (even_iff_exists_two_nsmul (y - 1)).mpr h2dvd
+              have : Even (y - 1) := (even_iff_exists_two_nsmul (y - 1)).mpr h2dvd
               rw [ht] at this
-              have : ¬ Even t := by exact Nat.not_even_iff_odd.mpr ht'
+              have : ¬ Even t := Nat.not_even_iff_odd.mpr ht'
               contradiction
             · simp at ht
               have : y + 1 = 2 * (t + 1) := by
@@ -219,7 +219,7 @@ problem imo2006_p4 :
                 rw [Nat.sub_add_cancel]
                 exact hypos
               let n₂ := (t + 1).factorization 2
-              obtain ⟨s, hs⟩ : 2 ^ n₂ ∣ t + 1 := by exact Nat.ordProj_dvd (t + 1) 2
+              obtain ⟨s, hs⟩ : 2 ^ n₂ ∣ t + 1 := Nat.ordProj_dvd (t + 1) 2
               have hs' : Odd s := by
                 by_contra hs'
                 simp at hs'
@@ -341,7 +341,7 @@ problem imo2006_p4 :
             interval_cases m
             · simp at hm
             · simp
-            · have : ¬ Odd 2 := by exact Nat.not_odd_iff.mpr rfl
+            · have : ¬ Odd 2 := Nat.not_odd_iff.mpr rfl
               exact this.elim hm
             · simp
           -- on the other hand $m$ cannot be 1 by (2).
@@ -365,7 +365,7 @@ problem imo2006_p4 :
             simp [t] at this
             rw [show 4 = 2 ^ 2 by simp] at this
             apply Nat.pow_right_injective (by simp) at this
-            apply Nat.sub_eq_iff_eq_add (by exact Nat.le_of_succ_le hxge3) |>.mp at this
+            apply Nat.sub_eq_iff_eq_add (Nat.le_of_succ_le hxge3) |>.mp at this
             simp [this]
           -- From (1) we get $y=23$.
           simp [hx, hε, this] at hy

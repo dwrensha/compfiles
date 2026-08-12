@@ -114,7 +114,7 @@ snip end
 problem imo1970_p3 :
     (∀ seq : IncreasingSequenceFromOne, ∀ n : ℕ, b_seq seq n ∈ ValidBounds) ∧
     (∀ c ∈ ValidBounds, ∃ seq : IncreasingSequenceFromOne, ∃ N : ℕ,
-      ∀ n ≥ N, b_seq seq n > c) := by
+      ∀ n ≥ N, c < b_seq seq n) := by
   constructor
   /-
   Part (a): All b_n are in [0, 2)
@@ -237,7 +237,7 @@ problem imo1970_p3 :
     intro n hn
 
     dsimp [b_seq, a_seq]
-    simp only [neg_mul, Nat.cast_add, Nat.cast_one, neg_add_rev, gt_iff_lt]
+    simp only [neg_mul, Nat.cast_add, Nat.cast_one, neg_add_rev]
     calc
       c < d * (1 + d) * (1 - d ^ N) := by
         -- divide both sides by d * (1 + d)

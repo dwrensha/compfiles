@@ -68,7 +68,7 @@ theorem cospherical_or_collinear_of_mul_dist_eq_mul_dist_of_sbtw
       change ∀ p ∈ {Δ.circumsphere.secondInter (Δ.points 2) _,
         Δ.points 2, Δ.points 1, Δ.points 0}, p ∈ Δ.circumsphere
       simp [Δ.mem_circumsphere]
-    suffices a' = a by exact this ▸ h'
+    suffices a' = a from this ▸ h'
     have := mul_dist_eq_mul_dist_of_cospherical_of_angle_eq_pi h'
       ha'pb.angle₁₂₃_eq_pi hcpd.angle₁₂₃_eq_pi
     rw [← this] at h
