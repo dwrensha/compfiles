@@ -119,7 +119,7 @@ def build : ℕ → solution_set :=
 
 snip end
 
-problem infinite_solution_set :
+problem usa2016_p1 :
     Infinite { (x, y) : ℕ × ℕ | condition x y } :=
   Infinite.of_injective build (fun _ _ h => by grind only [Subtype.mk_eq_mk.mp h])
 

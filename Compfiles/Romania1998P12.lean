@@ -66,7 +66,7 @@ lemma extend_function_mono
     obtain ⟨z, h_z_lt_y, hyz⟩ := this
     -- then dist (f z) (f y) < ε.
     have hbzb := hδ z hyz
-    rw [←h z] at hbzb
+    rw [← h z] at hbzb
     have huzuy : u y < u z := by
       have hufp : u y - f y < 0 := by linarith
       have hua : ε = -(u y - f y) := abs_of_neg hufp
@@ -92,7 +92,7 @@ lemma extend_function_mono
     obtain ⟨z, h_y_lt_z, hyz⟩ := this
     -- then dist (f z) (f y) < ε.
     have hbzb := hδ z hyz
-    rw [←h z] at hbzb
+    rw [← h z] at hbzb
     have huzuy : u z < u y := by
       have hufp : 0 < u y - f y := by linarith
       have hua : ε = u y - f y := abs_of_pos hufp
@@ -208,7 +208,7 @@ lemma exp_characterization
     intro x
     have := hu x (-x)
     rw [add_neg_cancel] at this
-    rw [←this]
+    rw [← this]
     exact hu0
 
   have hunz : ∀ x, 0 < u x := fun x ↦ by
@@ -232,7 +232,7 @@ lemma exp_characterization
     · have := h1 n x
       norm_cast at this
     · have h10 := h1 n x
-      rw [←hn]
+      rw [← hn]
       have h11: ↑(-((↑n):ℤ)) * x = - (n * x) := by norm_num
       rw [h11, h3 _]
       rw [h10, one_div]
@@ -246,7 +246,7 @@ lemma exp_characterization
   have hnexp : ∀ n : ℕ, u n = Real.exp (k * n) := by
     intro n
     have h10 := h4 n 1
-    rw [←hk, mul_one] at h10
+    rw [← hk, mul_one] at h10
     norm_cast at h10
     rw [h10, mul_comm]
     exact (Real.exp_nat_mul _ _).symm
@@ -261,7 +261,7 @@ lemma exp_characterization
       exact hnexp n
     · have := h4 (-↑n) 1
       rw[mul_one] at this
-      rw[this, ←hk]
+      rw[this, ← hk]
       rw [Real.exp_mul]
       exact (Real.rpow_intCast _ _).symm
 
@@ -287,12 +287,12 @@ lemma exp_characterization
     have h14: u (x / ↑(p.succ)) ^ p.succ = u (x / ↑(p.succ)) ^ (p.succ:ℝ) := by norm_cast
     rw [h14]
     have h15 := le_of_lt (hunz (x / ↑(p.succ)))
-    rw [←Real.rpow_mul h15 _]
+    rw [← Real.rpow_mul h15 _]
     field_simp
     simp
 
   have hq : ∀ q : ℚ, u q = Real.exp (k * q) := fun q ↦ by
-    rw [Rat.cast_def q, hp q.den q.pos q.num, hzexp q.num, ←Real.exp_mul]
+    rw [Rat.cast_def q, hp q.den q.pos q.num, hzexp q.num, ← Real.exp_mul]
     ring_nf
 
   use k
@@ -360,10 +360,10 @@ lemma romania1998_p12_mp (u : ℝ → ℝ) :
     intro x hx
     obtain hm1 | hm2 := hm
     · obtain h1 | h2 | h3 := lt_trichotomy x 0
-      · rw [←hf0];
+      · rw [← hf0];
         exact ne_of_lt (hm1 h1)
       · exfalso; exact hx h2
-      · rw [←hf0]
+      · rw [← hf0]
         exact (ne_of_lt (hm1 h3)).symm
     · obtain h1 | h2 | h3 := lt_trichotomy x 0
       · have := hm2 h1
@@ -378,7 +378,7 @@ lemma romania1998_p12_mp (u : ℝ → ℝ) :
   -- f(x)u(y) + f(y) = f (x + y) = f(x) + f(y)u(x)
   have h1 : ∀ x y : ℝ, f x * u y + f y = f x + f y * u x := by
     intro x y
-    rw [←hf, add_comm]
+    rw [← hf, add_comm]
     linarith[hf y x]
 
   -- so f(x)(u(y) - 1) = f(y)(u(x) - 1) for all x,y ∈ ℝ.

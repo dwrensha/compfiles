@@ -209,7 +209,7 @@ lemma empty_consecutive_apply_ge_M : {i | M a N ≤ a i ∧ M a N ≤ a (i + 1)}
   have t_map_eq_t' : t.map ⟨(· + 1), add_left_injective 1⟩ = t' := by
     refine map_add_one_range (a · = a i) i ?_
     intro H
-    rw [←H, M] at hi1
+    rw [← H, M] at hi1
     have a0_le : a 0 ≤ (Finset.range (N + 1)).sup a := Finset.le_sup (by simp)
     lia
   have card_t_eq_card_t' : #t = #t' := by simp [← t_map_eq_t', t]

@@ -61,10 +61,10 @@ problem usa2000_p1 :
       have h4 : -((n : ℝ) + 1) = - (n : ℝ) - 1 := by ring
       rw [h4, div_eq_mul_one_div]
       have h5 : (1:ℝ) / 2 = 2 ^ (-(1:ℝ)) := by norm_num
-      rw [h5, ←Real.rpow_add h2p]
+      rw [h5, ← Real.rpow_add h2p]
       congr
     rw [h3] at h2
-    rw [←neg_eq_zero_sub, abs_neg] at h2
+    rw [← neg_eq_zero_sub, abs_neg] at h2
     have h6 : 0 < (2:ℝ) ^ (-(n:ℝ)) := Real.rpow_pos_of_pos h2p _
     rw [abs_of_pos h6] at h2
     have h7 : (2:ℝ) ^ (- (n : ℝ)) = 1 / 2^(n:ℝ) := by
@@ -84,10 +84,10 @@ problem usa2000_p1 :
       have h4 : -((n : ℝ) + 1) = - (n : ℝ) - 1 := by ring
       rw [h4, div_eq_mul_one_div]
       have h5 : (1:ℝ) / 2 = 2 ^ (-(1:ℝ)) := by norm_num
-      rw [h5, neg_mul, ←Real.rpow_add h2p]
+      rw [h5, neg_mul, ← Real.rpow_add h2p]
       congr
     rw [h3] at h2; clear h3
-    rw [←neg_eq_zero_sub, abs_neg] at h2
+    rw [← neg_eq_zero_sub, abs_neg] at h2
     have h6 : -(2:ℝ) ^ (-(n:ℝ)) < 0 := neg_lt_zero.mpr (Real.rpow_pos_of_pos h2p _)
     rw [abs_of_neg h6, neg_neg] at h2
     have h7 : (2:ℝ) ^ (- (n : ℝ)) = 1 / 2^(n:ℝ) := by
@@ -121,7 +121,7 @@ problem usa2000_p1 :
       calc _ ≤ _ := le_sub_iff_add_le.mpr (h1 n)
            _ = _ := by rw [hf0, zero_add]
            _ ≤ (A - 2 * (n:ℝ)) / 2 ^ (n.succ:ℝ) - 1 / 2 ^ (n:ℝ) := sub_le_sub_right hpn _
-           _ ≤ _ := by rw [h7, ←sub_div, h8]
+           _ ≤ _ := by rw [h7, ← sub_div, h8]
 
   -- Using a similar line of reasoning as above, f(-2⁻ⁿ) ≤ (B - 2n)/2ⁿ.
 
@@ -147,7 +147,7 @@ problem usa2000_p1 :
       calc _ ≤ _ := le_sub_iff_add_le.mpr (h1' n)
            _ = _ := by rw [hf0, zero_add]
            _ ≤ (B - 2 * (n:ℝ)) / 2 ^ (n.succ:ℝ) - 1 / 2 ^ (n:ℝ) := sub_le_sub_right hpn _
-           _ ≤ _ := by rw [h7, ←sub_div, h8]
+           _ ≤ _ := by rw [h7, ← sub_div, h8]
 
   -- Therefore, for every nonnegative integer n, f(2⁻ⁿ) + f(-2⁻ⁿ) ≤ (A+B-4n)/2ⁿ.
   have h4 : ∀ n : ℕ,
@@ -155,7 +155,7 @@ problem usa2000_p1 :
     intro n
     have h5 := add_le_add (h2 n) (h3 n)
     have h6 : A - 2 * ↑n + (B - 2 * ↑n) = A + B - 4 * ↑n := by ring
-    rwa [←add_div, h6] at h5
+    rwa [← add_div, h6] at h5
 
   -- Now, we choose n large enough such that n > (A+B)/4 - 1.
   let N := Nat.ceil ((A + B) / 4)
@@ -174,14 +174,14 @@ problem usa2000_p1 :
   have h20 := hc (2 ^(-(N:ℝ))) (-2 ^(-(N:ℝ)))
 
   -- This is a contradiction.
-  rw [add_neg_cancel, zero_div, hf0, zero_add, sub_neg_eq_add, ←two_mul] at h20
+  rw [add_neg_cancel, zero_div, hf0, zero_add, sub_neg_eq_add, ← two_mul] at h20
   nth_rewrite 1 [show (2:ℝ) = (2:ℝ) ^ (1:ℝ) by norm_num] at h20
-  rw [←Real.rpow_add (by norm_num)] at h20
+  rw [← Real.rpow_add (by norm_num)] at h20
   have h21 := calc _ ≤ _ := le_abs_self ((2 : ℝ) ^ (1 + -(N : ℝ)))
                _ ≤ _ := h20
   replace h20 : (2:ℝ) * 2^(1 + -(N:ℝ)) ≤ f ((2:ℝ)^(-(N:ℝ))) + f (-(2:ℝ) ^ (-(N:ℝ))) := by linarith
   nth_rewrite 1 [show (2:ℝ) = (2:ℝ) ^ (1:ℝ) by norm_num] at h20
-  rw [←Real.rpow_add (by norm_num)] at h20
+  rw [← Real.rpow_add (by norm_num)] at h20
   have h22 : (1 + (1 + -(N:ℝ))) = -((N : ℝ) - 2) := by ring
   have h23 : (0 :ℝ) ≤ 2 := by norm_num
   rw [h22, Real.rpow_neg h23, inv_eq_one_div] at h20

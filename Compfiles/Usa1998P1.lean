@@ -43,7 +43,7 @@ lemma mod2_abs (a : ℤ) : |a| % 2 = a % 2 := by
 
 -- For integers M,N we have |M-N| ≡ M-N ≡ M+N MOD 2.
 lemma mod2_diff (a b : ℤ) : |a - b| % 2 = (a + b) % 2 := by
-  rw [mod2_abs, Int.sub_eq_add_neg, Int.add_emod, Int.neg_emod_two, ←Int.add_emod]
+  rw [mod2_abs, Int.sub_eq_add_neg, Int.add_emod, Int.neg_emod_two, ← Int.add_emod]
 
 lemma lemma0 (n : ℕ) : (∑ x ∈ Finset.Icc 1 (4 * n + 2), (x:ℤ) % 2) % 2 = 1 := by
   norm_cast
@@ -98,7 +98,7 @@ problem usa1998_p1
       intro i
       rw [mod2_diff, Int.add_emod]
 
-    rw [Fintype.sum_congr _ _ h4, ←Finset.sum_int_mod, Finset.sum_add_distrib]
+    rw [Fintype.sum_congr _ _ h4, ← Finset.sum_int_mod, Finset.sum_add_distrib]
 
     have h9 : ∑ x : Fin 999, ((ab 0 x : ℤ) % 2) + ∑ x : Fin 999, ((ab 1 x : ℤ) % 2) =
          ∑ x : Fin 2 × Fin 999, (↑↑(ab.uncurry x) % 2) := by
@@ -121,7 +121,7 @@ problem usa1998_p1
       ← zmod_eq,
       show (10:ℤ) = 2 * 5 by norm_num]
 
-  rw [←Int.modEq_and_modEq_iff_modEq_mul hmn, zmod_eq, zmod_eq, h3, h2]
+  rw [← Int.modEq_and_modEq_iff_modEq_mul hmn, zmod_eq, zmod_eq, h3, h2]
   decide
 
 end Usa1998P1

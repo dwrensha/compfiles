@@ -74,7 +74,7 @@ lemma two_pow_dvd_or {x y m : ℕ} (hx : Odd x) (hy : Odd y) (hxy : x < y)
 
 snip end
 
-problem imo_1984_p6
+problem imo1984_p6
     (a b c d k m : ℕ)
     (h₀ : 0 < a ∧ 0 < b ∧ 0 < c ∧ 0 < d)
     (h₁ : Odd a ∧ Odd b ∧ Odd c ∧ Odd d)

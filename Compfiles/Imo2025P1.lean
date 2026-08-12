@@ -536,7 +536,7 @@ noncomputable def shiftLines (v : Plane) (lines : Finset AffSubOfPlane) : Finset
 /-- `shiftLine (-v)` is the inverse of `shiftLine v`. -/
 lemma shift_line_inv (v : Plane) (L : AffSubOfPlane) : (shiftLine (-v)) ((shiftLine v) L) = L := by
   dsimp only [shiftLine, Function.Embedding.coeFn_mk, shiftLineMap]
-  rw [AffineSubspace.map_map, ←affine_trans, ←AffineEquiv.constVAdd_add]
+  rw [AffineSubspace.map_map, ← affine_trans, ← AffineEquiv.constVAdd_add]
   simp
 
 /-- If `L` is sunny, then so is its shift. -/

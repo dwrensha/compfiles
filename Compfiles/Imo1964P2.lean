@@ -67,11 +67,11 @@ problem imo1964_p2
   -- The only thing we need to know about a,b,c is that they
   -- are nonnegative.
   have ha' : 0 ≤ dist (T.points 1) (T.points 2) := dist_nonneg
-  rw [←ha] at ha'; clear ha
+  rw [← ha] at ha'; clear ha
   have hb' : 0 ≤ dist (T.points 2) (T.points 0) := dist_nonneg
-  rw [←hb] at hb'; clear hb
+  rw [← hb] at hb'; clear hb
   have hc' : 0 ≤ dist (T.points 0) (T.points 1) := dist_nonneg
-  rw [←hc] at hc'; clear hc
+  rw [← hc] at hc'; clear hc
   clear T
 
   have h1 :

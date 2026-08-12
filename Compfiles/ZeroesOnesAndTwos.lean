@@ -82,7 +82,7 @@ problem zeroes_and_ones
 
   obtain ⟨k, hk⟩ := lemma_3 h8 hab'
   use k
-  rw [←hk]
+  rw [← hk]
   have h4 : ∀ (l : ℕ), l ∈ List.replicate a 0 ++ List.replicate (b - a) 1 → l < 10 := by
     intro l hl
     rw [List.mem_append, List.mem_replicate, List.mem_replicate] at hl
@@ -141,7 +141,7 @@ lemma prepend_one_eq_append (n : ℕ) :
     rw [prepend_one_div _ (Nat.succ_pos n')]
     have hns : n'.succ / 10 < n'.succ := Nat.div_lt_self' n' 8
     rw [ih _ hns]
-    rw [←List.cons_append]
+    rw [← List.cons_append]
     rw [prepend_one_mod _ (Nat.succ_pos _), Nat.digits_def' two_le_ten (Nat.succ_pos n')]
 
 lemma prepend_one_all_one_or_two (n : ℕ) (hn : all_one_or_two (Nat.digits 10 n)) :
@@ -182,8 +182,8 @@ lemma prepend_two_eq_append (n : ℕ) :
     rw [prepend_two_div _ (Nat.succ_pos n')]
     have hns : n'.succ / 10 < n'.succ := Nat.div_lt_self' n' 8
     rw [ih _ hns]
-    rw [←List.cons_append]
-    rw [prepend_two_mod _ (Nat.succ_pos _), ←Nat.digits_def' two_le_ten (Nat.succ_pos n')]
+    rw [← List.cons_append]
+    rw [prepend_two_mod _ (Nat.succ_pos _), ← Nat.digits_def' two_le_ten (Nat.succ_pos n')]
 
 lemma prepend_two_all_one_or_two (n : ℕ) (hn : all_one_or_two (Nat.digits 10 n)) :
     all_one_or_two (Nat.digits 10 (prepend_two n)) := by
@@ -239,7 +239,7 @@ lemma ones_and_twos_aux (n : ℕ) :
         lia
       · exact Nat.succ_pos _
     use ⟨k', hkp'⟩
-    rw [PNat.mk_coe, ←hk']
+    rw [PNat.mk_coe, ← hk']
     constructor
     · rw [prepend_two_eq_append]
       rw [List.length_append, List.length_singleton, hpk1]
@@ -265,7 +265,7 @@ lemma ones_and_twos_aux (n : ℕ) :
         lia
       · exact Nat.succ_pos _
     use ⟨k', hkp'⟩
-    rw [PNat.mk_coe,←hk']
+    rw [PNat.mk_coe,← hk']
     constructor
     · rw [prepend_one_eq_append]
       rw [List.length_append, List.length_singleton, hpk1]

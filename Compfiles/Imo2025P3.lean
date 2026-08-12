@@ -38,7 +38,7 @@ snip begin
 lemma fermat_little_theorem: ∀p:ℕ+, (Nat.Prime (p:ℕ)) → (∀a:ℕ, (a^(p:ℕ)≡a [MOD p])) := by
   intro p hp a
   by_cases h1:(p:ℕ)∣a
-  · rw [←Nat.modEq_zero_iff_dvd] at h1
+  · rw [← Nat.modEq_zero_iff_dvd] at h1
     have h2: a ^ (p:ℕ) ≡ 0 ^ (p:ℕ) [MOD p] := by
       exact Nat.ModEq.pow (p:ℕ) h1
     simp at h2
@@ -56,10 +56,10 @@ lemma fermat_little_theorem: ∀p:ℕ+, (Nat.Prime (p:ℕ)) → (∀a:ℕ, (a^(p
 lemma fermat_little_theorem2: ∀p:ℕ+, (Nat.Prime (p:ℕ)) → (∀a:ℕ, ∀k:ℕ, (a^((p:ℕ)^k)≡a [MOD p])) := by
   intro p hp a k
   induction k with
-  | zero => 
+  | zero =>
     simp
     rfl
-  | succ d hd => 
+  | succ d hd =>
     rw [Nat.pow_add,Nat.mul_comm,Nat.pow_mul]
     simp
     have g1 := fermat_little_theorem p hp a
@@ -158,8 +158,8 @@ problem imo2025_p3 :
             have r3 := dvd_trans r2 hf
 
             have r4 := r3
-            rw [←Nat.cast_pow,←Nat.cast_pow] at r4
-            rw [←Nat.modEq_iff_dvd] at r4
+            rw [← Nat.cast_pow,← Nat.cast_pow] at r4
+            rw [← Nat.modEq_iff_dvd] at r4
 
             have r5 := fermat_little_theorem p hp2 (b:ℕ)
 
@@ -182,10 +182,10 @@ problem imo2025_p3 :
               exact Nat.le_of_lt hb
             have g2: (f b : ℤ) - (b:ℤ) < (p:ℤ) := by
               simp at hp1
-              rw [←PNat.coe_lt_coe] at hp1
+              rw [← PNat.coe_lt_coe] at hp1
               have t : (b:ℕ) ≤ (f b :ℕ) := by
                 linarith
-              rw [←Nat.cast_sub t]
+              rw [← Nat.cast_sub t]
               simp
               have g2' := PNat.sub_coe (f b) b
               rw [if_pos hb] at g2'
@@ -251,8 +251,8 @@ problem imo2025_p3 :
               apply Nat.cast_dvd_cast
               exact PNat.dvd_iff.mp h4
             have r7 := Int.dvd_trans r6 hf
-            rw [←Nat.cast_pow,←Nat.cast_pow] at r7
-            rw [←Nat.modEq_iff_dvd] at r7
+            rw [← Nat.cast_pow,← Nat.cast_pow] at r7
+            rw [← Nat.modEq_iff_dvd] at r7
             rw [r5] at r7
             simp at r7
             have r8 := fermat_little_theorem p hp1 (q:ℕ)
@@ -336,8 +336,8 @@ problem imo2025_p3 :
             simp
           have g2 : (a:ℕ) ≠ 0 := by
             simp
-          rw [←Nat.multiplicity_eq_factorization (by decide) g1]
-          rw [←Nat.multiplicity_eq_factorization (by decide) g2]
+          rw [← Nat.multiplicity_eq_factorization (by decide) g1]
+          rw [← Nat.multiplicity_eq_factorization (by decide) g2]
           clear g1 g2
           have r1 : emultiplicity 2 (f a:ℕ) = multiplicity 2 (f a:ℕ) := by
             apply FiniteMultiplicity.emultiplicity_eq_multiplicity
@@ -386,10 +386,10 @@ problem imo2025_p3 :
               have y4 : 2 = ((2:ℕ):ENat) := by
                 simp
               rw [y3,y4] at g2
-              rw [←ENat.natCast_add,←ENat.natCast_add,←ENat.natCast_add] at g2
+              rw [← ENat.natCast_add,← ENat.natCast_add,← ENat.natCast_add] at g2
               rw [ENat.natCast_inj] at g2
               rw [y4]
-              rw [←ENat.natCast_add]
+              rw [← ENat.natCast_add]
               rw [ENat.natCast_inj]
               grind
             exact le_of_le_of_eq g1 g5
@@ -440,11 +440,11 @@ problem imo2025_p3 :
             have y3 : 2 = ((2:ℕ):ℤ) :=by
               simp
             rw [y2,y3] at hx
-            rw [←Nat.cast_mul] at hx
+            rw [← Nat.cast_mul] at hx
             grind
           apply Nat.Prime.dvd_of_dvd_pow (by decide) at g4
-          rw [←Nat.not_even_iff_odd] at ha
-          rw [←even_iff_two_dvd] at g4
+          rw [← Nat.not_even_iff_odd] at ha
+          rw [← even_iff_two_dvd] at g4
           exact ha g4
 
         have h13 : ∀ (a : ℕ+), Odd (a:ℕ) → (f a:ℝ) ≤4*(a:ℝ) := by
@@ -505,7 +505,7 @@ problem imo2025_p3 :
                 _ = ((b:ℤ)^2-1)*(y+y) := by rw [hx]
                 _ = ((b:ℤ)^2-1)*((y:ℕ)+y:ℕ) := by grind
                 _ = ((b:ℤ)^2-1)*((b:ℤ)^2+1) := by
-                  rw [←hy]
+                  rw [← hy]
                   simp
                 _ = ((b:ℤ)^4-1) := by ring
             · have g2 : f b = 2 := by grind

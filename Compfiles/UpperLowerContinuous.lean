@@ -232,7 +232,7 @@ lemma continuous_of_upper_lower_continuous
        upper_intervals upper_basis).mp h3 c h4
     obtain ⟨t, ⟨a', c', hac'⟩, htc, ht⟩ := h5
     use a'
-    rw [←hac'] at htc
+    rw [← hac'] at htc
     constructor
     · intro x hx
       have h7 : x ∈ Set.Ioc a' c' := ⟨hx.1, hx.2.trans htc.2⟩
@@ -252,7 +252,7 @@ lemma continuous_of_upper_lower_continuous
        lower_intervals lower_basis).mp h3 c h4
     obtain ⟨t, ⟨c', b', hcb'⟩, htc, ht⟩ := h5
     use b'
-    rw [←hcb'] at htc
+    rw [← hcb'] at htc
     constructor
     · intro x hx
       have h7 : x ∈ Set.Ico c' b' := by
@@ -278,7 +278,7 @@ lemma continuous_of_upper_lower_continuous
         have subeq :
           Set.Ioc a' c ∪ Set.Ico c b' ⊆ f ⁻¹' Set.Ioc a (f c) ∪ f ⁻¹' Set.Ico (f c) b
           := Set.union_subset_union ha' hb'
-        rw [ilem1, ←Set.preimage_union, ilem2, hab] at subeq
+        rw [ilem1, ← Set.preimage_union, ilem2, hab] at subeq
         exact subeq
   exact
      (@TopologicalSpace.IsTopologicalBasis.isOpen_iff ℝ tₛ (f ⁻¹' ab)
@@ -343,12 +343,12 @@ theorem monotone_of_upper_lower_continuous
     obtain ⟨t , ⟨ta, tb, htb⟩, xint, tsub⟩ := h2
     use tb
     constructor
-    · rw [←htb] at xint
+    · rw [← htb] at xint
       exact xint.2
     · have auxsub : Set.Ico x tb ⊆ t := by
         intro xx hxx
-        rw[←htb]
-        rw[←htb] at xint
+        rw[← htb]
+        rw[← htb] at xint
         constructor
         · exact xint.1.trans hxx.1
         · exact hxx.2
@@ -383,7 +383,7 @@ theorem monotone_of_upper_lower_continuous
           intro w hw
           constructor
           · exact hw.1
-          · rw [←hiiu'] at hyii
+          · rw [← hiiu'] at hyii
             exact hw.2.trans hyii.2
       rw [hiiu'] at h999
       exact h999.trans hiis

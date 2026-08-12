@@ -453,12 +453,12 @@ problem bulgaria1998_p6
   let b := 2 * x * y
   have h3 : a^2 + b^2  = (2 * z ^ 2 - (x ^ 2 + y ^ 2)) ^ 2 :=
      by linear_combination h2
-  have h4 : IsSquare (a^2 + b^2) := by use 2 * z ^ 2 - (x ^ 2 + y ^ 2); rwa [←sq]
+  have h4 : IsSquare (a^2 + b^2) := by use 2 * z ^ 2 - (x ^ 2 + y ^ 2); rwa [← sq]
   have h5 : IsSquare (a^2 - b^2) := by use (x^2 - y^2); ring
   have h6 : IsSquare ((a^2 + b^2) * (a^2 - b^2)) := IsSquare.mul h4 h5
   rw [show (a^2 + b^2) * (a^2 - b^2) = a^4 - b^4 by ring] at h6
   obtain ⟨c, hc⟩ := h6
-  rw [←sq, ←sq_abs] at hc
+  rw [← sq, ← sq_abs] at hc
   have ha' : 0 < a := by positivity
   have hb' : 0 < b := by positivity
   have hc' : 0 < |c| := by
@@ -472,7 +472,7 @@ problem bulgaria1998_p6
         exact (pow_left_inj₀ hap hbp two_ne_zero).mp hc3
       rw [hab] at h4
       obtain ⟨r, hr⟩ := h4
-      rw [←two_mul, ←sq] at hr
+      rw [← two_mul, ← sq] at hr
       have h10 : b^2 ∣ r^2 := Dvd.intro_left _ hr
       rw [Int.pow_dvd_pow_iff two_ne_zero] at h10
       obtain ⟨e, rfl⟩ := h10
@@ -483,13 +483,13 @@ problem bulgaria1998_p6
       have h13 : e < 2 := by
         by_contra! H
         have h20 : 2^2 ≤ e^2 := by gcongr
-        rw [←h12] at h20
+        rw [← h12] at h20
         norm_num at h20
       have h14 : -2 < e := by
         by_contra! H
         replace H : 2 ≤ -e := Int.le_neg_of_le_neg H
         have h20 : 2^2 ≤ (-e)^2 := by gcongr
-        rw [neg_sq, ←h12] at h20
+        rw [neg_sq, ← h12] at h20
         norm_num at h20
       interval_cases e <;> linarith
     · exact (Int.not_lt.mpr (abs_nonneg c) hc3).elim

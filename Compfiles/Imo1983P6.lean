@@ -41,7 +41,7 @@ lemma cauchy_schwarz_equals {ι: Type*} (s : Finset ι)
       (∑ i ∈ s, f i^2) * (t * t) + ((- 2) * ∑ i ∈ s, f i * g i) * t + ∑ i ∈ s, g i^2 := by
     intro t
     unfold q
-    simp only [Finset.mul_sum, Finset.sum_mul, ←Finset.sum_add_distrib]
+    simp only [Finset.mul_sum, Finset.sum_mul, ← Finset.sum_add_distrib]
     apply Finset.sum_congr rfl
     intro i hi
     ring
@@ -59,7 +59,7 @@ lemma cauchy_schwarz_equals {ι: Type*} (s : Finset ι)
     specialize H ii hii
     contradiction
   obtain ⟨t0, ht0, -⟩ := (discrim_eq_zero_iff h3).mp h2
-  rw [←h1] at ht0
+  rw [← h1] at ht0
   unfold q at ht0
   use t0
   rw [Finset.sum_mul_self_eq_zero_iff] at ht0
@@ -156,17 +156,17 @@ problem imo1983_p6 (T : Affine.Triangle ℝ (EuclideanSpace ℝ (Fin 2))) :
   intro a b c
   have h₁ : c < a + b := by
     have := AffineIndependent.not_wbtw_of_injective (0 : Fin 3) 2 1 (by decide) T.independent
-    rw [←dist_lt_dist_add_dist_iff, dist_comm (T.points 2)] at this
+    rw [← dist_lt_dist_add_dist_iff, dist_comm (T.points 2)] at this
     linarith
 
   have h₂ : b < a + c := by
     have := AffineIndependent.not_wbtw_of_injective (0 : Fin 3) 1 2 (by decide) T.independent
-    rw [←dist_lt_dist_add_dist_iff] at this
+    rw [← dist_lt_dist_add_dist_iff] at this
     linarith
 
   have h₃ : a < b + c := by
     have := AffineIndependent.not_wbtw_of_injective (1 : Fin 3) 0 2 (by decide) T.independent
-    rw [←dist_lt_dist_add_dist_iff, dist_comm (T.points 1) (T.points 0)] at this
+    rw [← dist_lt_dist_add_dist_iff, dist_comm (T.points 1) (T.points 0)] at this
     linarith
 
   -- https://prase.cz/kalva/imo/isoln/isoln836.html
@@ -196,7 +196,7 @@ problem imo1983_p6 (T : Affine.Triangle ℝ (EuclideanSpace ℝ (Fin 2))) :
     rw [h1] at hsum; clear h1
     simp only [mul_pow] at hsum
     simp only [Real.sq_sqrt hx.le, Real.sq_sqrt hy.le, Real.sq_sqrt hz.le] at hsum
-    rw [pow_two (z + x + y), ←mul_assoc] at hsum
+    rw [pow_two (z + x + y), ← mul_assoc] at hsum
     have h2 : 0 < z + x + y := by positivity
     rw [show x^2 * x = x^3 from rfl, show y^2 * y = y^3 from rfl,
         show z^2 * z = z^3 from rfl] at hsum
@@ -216,6 +216,6 @@ problem imo1983_p6 (T : Affine.Triangle ℝ (EuclideanSpace ℝ (Fin 2))) :
       · linarith
     exact lemma1 hx hy hz hxyz
   · rintro ⟨h1, h2⟩
-    simp [←h1, ←h2]
+    simp [← h1, ← h2]
 
 end Imo1983P6

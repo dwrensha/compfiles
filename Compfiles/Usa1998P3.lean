@@ -71,7 +71,7 @@ lemma lemma1 (x : ℝ) (hx : x ∈ Set.Ioo 0 (Real.pi / 2)) :
   · exact hx.2
 
 lemma lemma2' (n : ℕ) : Finset.erase (Finset.range (n + 1)) n = Finset.range n :=
-by rw [←Nat.succ_eq_add_one, Finset.range_add_one]; simp
+by rw [← Nat.succ_eq_add_one, Finset.range_add_one]; simp
 
 lemma lemma2 (n : ℕ) (f : ℕ → ℝ) :
     ∏ i ∈ Finset.range (n + 1), ∏ j ∈ Finset.erase (Finset.range (n + 1)) i, f j =
@@ -219,7 +219,7 @@ problem usa1998_p3
       have h30 : 0 ≤ 1 - y x := sub_nonneg.mpr (le_of_lt (lemma1 (a x) (ha x hx)))
       have h31 : (1:ℝ) / n * n = n / n := by field_simp
       have h32 : (n:ℝ) / n = 1 := by field_simp
-      rw [←Real.rpow_mul h30, h31, h32, Real.rpow_one]
+      rw [← Real.rpow_mul h30, h31, h32, Real.rpow_one]
     rw [h23] at h21; clear h23
     have h24 : ∏ i ∈ Finset.range (n + 1), (1 + y i) / ↑n =
                  (∏ i ∈ Finset.range (n + 1), (1 + y i)) / (↑n)^((n:ℝ) + 1) := by
@@ -245,7 +245,7 @@ problem usa1998_p3
       apply Finset.prod_pos
       intro x hx
       exact sub_pos.mpr (lemma1 (a x) (ha x hx))
-    rw [le_div_iff₀ h26, ←le_div_iff₀' h25]
+    rw [le_div_iff₀ h26, ← le_div_iff₀' h25]
     exact h21
 
   -- by the addition formula for tangents,
@@ -279,7 +279,7 @@ problem usa1998_p3
         · have hk2 : k ≤ -1 := Iff.mp Int.lt_add_one_iff hk'
           have : kk ≤ -1 := by rw [← hkk']; norm_cast
           nlinarith only [Real.pi_pos, ha1, hk2, this, hk]
-        · have hk0 : kk = 0 := by rw [←hkk']; norm_cast
+        · have hk0 : kk = 0 := by rw [← hkk']; norm_cast
           rw [hk0] at hk
           norm_num at hk
         · have hk2 : 1 ≤ k := hk'
@@ -297,7 +297,7 @@ problem usa1998_p3
               ∏ j ∈ Finset.range (n + 1), (1 + y j) / (1 - y j) :=
      Finset.prod_congr rfl (fun x hx ↦ h7 x hx)
   have h9 : (n:ℝ) ^ ((n:ℝ) + 1) = n ^ (n + 1) := by norm_cast
-  rw [h8, ←h9]
+  rw [h8, ← h9]
   exact h6
 
 

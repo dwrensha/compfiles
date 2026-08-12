@@ -65,7 +65,7 @@ lemma usa2001_p1_lemma {α} (s : Finset α) (sz : s.card = 6) (gen : α -> ℕ)
   set aa := (∑ x ∈ s, (gen x : ℝ)) with haa
   set bb := (∑ x ∈ s, (1 / (gen x : ℝ))) with hbb
   rify at sum
-  rw [←haa] at sum
+  rw [← haa] at sum
   norm_num1 at h
   have : aa ≥ 0 := by positivity
   have : bb ≥ 0 := by positivity
@@ -105,7 +105,7 @@ problem usa2001_p1 : IsLeast possible_num_colors min_colors := by
           simp only [Finset.mem_insert, Finset.mem_singleton] at hz
           obtain rfl | rfl := hz <;> assumption
         have h₆ : Finset.card {x, y} = 2 := by grind
-        have h₇ : 2 ≤ (f i ∩ f j).card := by rw [←h₆]; exact Finset.card_le_card h₅
+        have h₇ : 2 ≤ (f i ∩ f j).card := by rw [← h₆]; exact Finset.card_le_card h₅
         lia
       rintro x y i j hij
       fin_cases i <;> fin_cases j <;> dsimp only at hij ⊢ <;> (try contradiction) <;> decide

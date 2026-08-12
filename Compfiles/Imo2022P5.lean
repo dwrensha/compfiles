@@ -93,8 +93,8 @@ lemma mylemma_44
     simp only [add_tsub_cancel_right, Nat.reduceSubDiff] at *
     have hn: n ≠ 0 := Nat.ne_zero_of_lt hn2
     have hn1: 1 ≤ n := Nat.one_le_of_lt hn2
-    rw [←Nat.mul_factorial_pred hn, h₀]
-    rw [←Finset.prod_range_mul_prod_Ico _ hn1]
+    rw [← Nat.mul_factorial_pred hn, h₀]
+    rw [← Finset.prod_range_mul_prod_Ico _ hn1]
     rw [Finset.prod_range_one]
     simp only [tsub_zero, mul_eq_mul_left_iff]
     left

@@ -230,7 +230,7 @@ snip end
 
 determine solution : Bool := true
 
-problem imo2000P5 :
+problem imo2000_p5 :
     ∃ n, 0 < n ∧ n.primeFactors.card = 2000 ∧ n ∣ 2 ^ n + 1
     ↔ solution := by
   obtain ⟨n, hn, hcard, hdvd⟩ := exists_dvd_two_pow_add_one 2000

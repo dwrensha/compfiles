@@ -78,22 +78,22 @@ problem imo1995_p2 (a b c : ℝ) (ha : 0 < a) (hb : 0 < b) (hc : 0 < c)
           _ = √(x * (x * x)) := by rw [naive']
 
       have ha' : √((b + c)⁻¹ * (a ^ 3)⁻¹) * √(a * (b + c)) = 1 / a := by
-        rw [mul_comm, ←mul_inv, Real.sqrt_inv]
+        rw [mul_comm, ← mul_inv, Real.sqrt_inv]
         field_simp
         rw [Real.sqrt_mul (by positivity), Real.sqrt_mul (by positivity),
-            ←mul_assoc, helper a ha]
+            ← mul_assoc, helper a ha]
 
       have hb' : √((c + a)⁻¹ * (b ^ 3)⁻¹) * √(b * (c + a)) = 1 / b := by
-        rw [mul_comm, ←mul_inv, Real.sqrt_inv]
+        rw [mul_comm, ← mul_inv, Real.sqrt_inv]
         field_simp
         rw [Real.sqrt_mul (by positivity), Real.sqrt_mul (by positivity),
-            ←mul_assoc, helper b hb]
+            ← mul_assoc, helper b hb]
 
       have hc' : √((a + b)⁻¹ * (c ^ 3)⁻¹) * √(c * (a + b)) = 1 / c := by
-        rw [mul_comm, ←mul_inv, Real.sqrt_inv]
+        rw [mul_comm, ← mul_inv, Real.sqrt_inv]
         field_simp
         rw [Real.sqrt_mul (by positivity), Real.sqrt_mul (by positivity),
-            ←mul_assoc, helper c hc]
+            ← mul_assoc, helper c hc]
 
       rw [ha', hb', hc']
       ring

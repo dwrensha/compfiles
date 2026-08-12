@@ -33,7 +33,7 @@ lemma lemma3 : ∑ i ∈ Finset.range 1319, (-(1:ℚ))^i / (i + 1) =
          2 * ∑ i ∈ Finset.range 659, (1:ℚ) / (2 * (i + 1)) := by
   have h2 := Finset.sum_filter_add_sum_filter_not
            (Finset.range 1319) (Even ·) (λ i ↦ (1:ℚ) / (i + 1))
-  rw [←h2]
+  rw [← h2]
   let g : ℕ ↪ ℕ :=
     ⟨fun x ↦ 2 * x + 1, by intro a b hab; lia⟩
 
@@ -46,7 +46,7 @@ lemma lemma3 : ∑ i ∈ Finset.range 1319, (-(1:ℚ))^i / (i + 1) =
       obtain ⟨b, hb1, hb2⟩ := ha
       rw [Finset.mem_range] at hb1
       replace hb2 : 2 * b + 1 = a := hb2
-      rw [←hb2]
+      rw [← hb2]
       constructor
       · lia
       · exact Nat.not_even_iff_odd.mpr ⟨b, rfl⟩
@@ -71,9 +71,9 @@ lemma lemma3 : ∑ i ∈ Finset.range 1319, (-(1:ℚ))^i / (i + 1) =
      1 / ((x:ℚ) + 1) =
       ∑ i ∈ Finset.range 659, 1 / (2 * ((i:ℚ) + 1)) := by
     rw [h5]
-    rw [←h6, h4]
+    rw [← h6, h4]
   rw [h3, two_mul, add_sub_add_right_eq_sub]
-  rw [←h3, ←h4, h6, ←h5, ←h3]
+  rw [← h3, ← h4, h6, ← h5, ← h3]
   have h7 :
    ∑ i ∈ Finset.filter (fun x ↦ Even x) (Finset.range 1319), 1 / ((i:ℚ) + 1) =
     ∑ i ∈ Finset.filter (fun x ↦ Even x) (Finset.range 1319),
@@ -84,7 +84,7 @@ lemma lemma3 : ∑ i ∈ Finset.range 1319, (-(1:ℚ))^i / (i + 1) =
     have h9: (-1 : ℚ)^x = 1 := Even.neg_one_pow hx.2
     rw [h9]
   rw [h7]; clear h7
-  rw [Rat.sub_eq_add_neg, ←Finset.sum_neg_distrib]
+  rw [Rat.sub_eq_add_neg, ← Finset.sum_neg_distrib]
   have h10 : ∑ x ∈ Finset.filter (fun x ↦ ¬Even x) (Finset.range 1319),
                -(1 / ((x:ℚ) + 1)) =
               ∑ x ∈ Finset.filter (fun x ↦ ¬Even x) (Finset.range 1319),
@@ -103,7 +103,7 @@ lemma lemma4 (n m : ℕ) (f : ℕ → ℚ) :
   rw [Finset.sum_Ico_eq_sum_range, add_tsub_cancel_left]
   rw [two_mul, Finset.sum_range_add, Finset.sum_add_distrib]
   congr 1
-  rw [←Finset.sum_range_reflect (fun x ↦ f (n + (m + x)))]
+  rw [← Finset.sum_range_reflect (fun x ↦ f (n + (m + x)))]
   refine Finset.sum_congr rfl fun x hx => ?_
   rw [Finset.mem_range] at hx
   congr 1; lia
@@ -112,7 +112,7 @@ lemma lemma9' (i : ℕ) (hi : i ∈ Finset.range 330) :
      (((∏ j ∈ Finset.range 330,
          (660 + j) * (1319 - j)):ℕ):ℚ) / ((660 + (i:ℚ)) * (1319 - (i:ℚ)))
        = ∏ j ∈ (Finset.range 330).erase i, (660 + j) * (1319 - j) := by
-  rw [←Finset.prod_erase_mul _ _ hi]
+  rw [← Finset.prod_erase_mul _ _ hi]
   rw [Finset.mem_range] at hi
   push_cast
   have h1 : (((1319 - i):ℕ):ℚ) = 1319 - (i:ℚ) := by
@@ -194,7 +194,7 @@ problem imo1979_p1 (p q : ℤ) (hp : 0 < p) (hq : 0 < q)
   rw [Finset.sum_congr rfl h4] at h; clear h4
   rw [show (1979 : ℚ) = 1979 * 1 by simp +arith] at h
   simp_rw [mul_div_assoc] at h
-  rw [←Finset.mul_sum] at h
+  rw [← Finset.mul_sum] at h
   let s : ℕ := ∏ i ∈ Finset.range 330, (660 + i) * (1319 - i)
   let sq := (s : ℚ)
   have hpp : Nat.Prime 1979 := by norm_num1

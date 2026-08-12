@@ -412,7 +412,7 @@ lemma BOC_non_collinear : ¬Collinear ℝ {cfg.B, cfg.O, cfg.C} := by
   rw [angle_comm] at h₁
   rw [angle_eq_abs_oangle_toReal (A_ne_B cfg).symm (A_ne_C cfg).symm] at h₁
   have h₂ := aux₄ h h₁
-  rw [←angle_eq_abs_oangle_toReal (A_ne_B cfg).symm (A_ne_C cfg).symm] at h₂
+  rw [← angle_eq_abs_oangle_toReal (A_ne_B cfg).symm (A_ne_C cfg).symm] at h₂
   apply angle_in_ABC_pos cfg (1 : Fin 3) 0 2 (by decide)
   exact h₂
 

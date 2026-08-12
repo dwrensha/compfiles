@@ -13,7 +13,7 @@ public import ProblemExtraction
 
 @[expose] public section
 
-problem_file
+problem_file { tags := [.Combinatorics] }
 
 /-!
 # International Mathematical Olympiad 1986, Problem 3

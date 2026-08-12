@@ -151,7 +151,7 @@ problem imo1973_p3
   · refine mem_lowerBounds.mpr ?_
     simp only [Prod.exists, Set.mem_ofPred_eq, forall_exists_index, and_imp]
     intro x a b h₀ h₁
-    rw [←h₁]
+    rw [← h₁]
     refine aux_1 a b ?_
     simpa only [hS, Set.mem_ofPred_eq] using h₀
 

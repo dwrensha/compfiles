@@ -78,16 +78,19 @@ noncomputable def V (n : ℕ) : ℝ :=
   ⨆ A : {A : Finset ℝ // AdmissibleMark n A},
     ⨅ B : {B : Finset ℝ // AdmissibleMark n B ∧ Disjoint A.1 B}, L A.1 B.1
 
-/-- The claimed answer value `V(n) = 2^n / (2^(n+1) - 1)`. -/
+snip begin
+-- The claimed answer value `V(n) = 2^n / (2^(n+1) - 1)`.
+snip end
 noncomputable determine answer (n : ℕ) : ℝ := (2 : ℝ) ^ n / ((2 : ℝ) ^ (n + 1) - 1)
 
+snip begin
 /-! ## Correctness statements for the definitions
 
 These pin down that the encoded definitions behave as intended. -/
 
 /-- The piece lengths of an admissible cut set sum to `1` (the total stick
 length). -/
-problem pieceLengths_sum (S : Finset ℝ) (_hS : ↑S ⊆ Set.Ioo (0 : ℝ) 1) :
+theorem pieceLengths_sum (S : Finset ℝ) (_hS : ↑S ⊆ Set.Ioo (0 : ℝ) 1) :
     (pieceLengths S).sum = 1 := by
   have tele : ∀ l : List ℝ,
       (List.zipWith (fun a b => b - a) l l.tail).sum = l.getLastD 0 - l.headD 0 := by
@@ -116,7 +119,7 @@ problem pieceLengths_sum (S : Finset ℝ) (_hS : ↑S ⊆ Set.Ioo (0 : ℝ) 1) :
   ring
 
 /-- There are `|S| + 1` pieces. -/
-problem pieceLengths_length (S : Finset ℝ) :
+theorem pieceLengths_length (S : Finset ℝ) :
     (pieceLengths S).length = S.card + 1 := by
   have h : pieceLengths S = List.zipWith (fun a b => b - a)
       ((0 : ℝ) :: (S.sort (· ≤ ·)) ++ [1])
@@ -127,7 +130,7 @@ problem pieceLengths_length (S : Finset ℝ) :
 /-- Basic sanity bound: Liu Bang's share lies in `[0, 1]` for admissible cut
 sets (it is a subset-sum of the piece lengths, which are nonnegative and sum to
 `1`). -/
-problem L_mem_Icc (A B : Finset ℝ)
+theorem L_mem_Icc (A B : Finset ℝ)
     (hA : ↑A ⊆ Set.Ioo (0 : ℝ) 1) (hB : ↑B ⊆ Set.Ioo (0 : ℝ) 1) :
     L A B ∈ Set.Icc (0 : ℝ) 1 := by
   have hS : ↑(A ∪ B) ⊆ Set.Ioo (0 : ℝ) 1 := by
@@ -200,8 +203,6 @@ problem L_mem_Icc (A B : Finset ℝ)
   rw [hL]
   exact ⟨hge0, hle1⟩
 
-
-snip begin
 
 open scoped BigOperators
 
@@ -4027,8 +4028,8 @@ snip end
 /-! ## Main Statements -/
 
 /-- **Main statement.** For every positive integer `n`, Liu Bang's guaranteed
-value equals `2^n / (2^(n+1) - 1)`. -/
-problem V_eq (n : ℕ) (hn : 0 < n) : V n = answer n := by
+value equals `answer`. -/
+problem imo2026_p3 (n : ℕ) (hn : 0 < n) : V n = answer n := by
   obtain ⟨A₀, hA₀adm, hA₀⟩ := lower_bound_aux n hn
   have hub := upper_bound_aux n hn
   have hemptyA : AdmissibleMark n ∅ := by
@@ -4071,10 +4072,12 @@ problem V_eq (n : ℕ) (hn : 0 < n) : V n = answer n := by
       exact hA₀ B.1 B.2.1 B.2.2
     exact le_ciSup_of_le hbddAbove ⟨A₀, hA₀adm⟩ h1
 
+snip begin
+
 /-- **Lower bound.** Liu Bang has an admissible marking `A` such that for every
 admissible marking `B` disjoint from `A`, his guaranteed share is at least
 `2^n / (2^(n+1) - 1)`. -/
-problem lower_bound (n : ℕ) (hn : 0 < n) :
+theorem lower_bound (n : ℕ) (hn : 0 < n) :
     ∃ A : Finset ℝ, AdmissibleMark n A ∧
       ∀ B : Finset ℝ, AdmissibleMark n B → Disjoint A B →
         (2 : ℝ) ^ n / ((2 : ℝ) ^ (n + 1) - 1) ≤ L A B := by
@@ -4083,10 +4086,12 @@ problem lower_bound (n : ℕ) (hn : 0 < n) :
 /-- **Upper bound / optimality.** For every admissible marking `A` of Liu Bang,
 Xiang Yu has an admissible marking `B` disjoint from `A` with
 `L A B ≤ 2^n / (2^(n+1) - 1)`, so Liu Bang cannot guarantee more. -/
-problem upper_bound (n : ℕ) (hn : 0 < n) :
+theorem upper_bound (n : ℕ) (hn : 0 < n) :
     ∀ A : Finset ℝ, AdmissibleMark n A →
       ∃ B : Finset ℝ, AdmissibleMark n B ∧ Disjoint A B ∧
         L A B ≤ (2 : ℝ) ^ n / ((2 : ℝ) ^ (n + 1) - 1) := by
   exact upper_bound_aux n hn
+
+snip end
 
 end Imo2026P3

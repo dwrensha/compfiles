@@ -43,12 +43,12 @@ theorem dvd_factorial {n k : ℕ} (h : last_divides_lcm_remaining n k) : k+n ∣
   have := dvd_trans h (lcm_dvd_prod (Icc (k+1) (k+n-1)) id)
   rw [Nat.dvd_iff_mod_eq_zero, prod_nat_mod] at this
   zify at this
-  rw [prod_bij (t:=Finset.range (n-1)) (g:=fun x => -(x+1:ℤ) % (↑k + ↑n)) (fun i _ => k+n-i-1), <-prod_int_mod, prod_neg] at this
-  · rw [<-Int.dvd_iff_emod_eq_zero] at this
+  rw [prod_bij (t:=Finset.range (n-1)) (g:=fun x => -(x+1:ℤ) % (↑k + ↑n)) (fun i _ => k+n-i-1), ← prod_int_mod, prod_neg] at this
+  · rw [← Int.dvd_iff_emod_eq_zero] at this
     conv at this =>
       lhs
       norm_cast
-    rw [<-ZMod.intCast_zmod_eq_zero_iff_dvd] at this
+    rw [← ZMod.intCast_zmod_eq_zero_iff_dvd] at this
     simp only [Int.reduceNeg, Int.cast_mul, Int.cast_pow, Int.cast_neg, Int.cast_one, neg_one_pow_mul_eq_zero_iff] at this
     rw [ZMod.intCast_zmod_eq_zero_iff_dvd] at this
     rw [Nat.factorial_eq_prod_range_add_one]
@@ -125,7 +125,7 @@ theorem ge_5 (n d : ℕ) (hge : 5 ≤ n) (hd : d = 1 ∨ d = 2) : last_divides_l
           lia
   · zify
     repeat rw [Nat.cast_sub (by lia)]
-    rw [sub_mul, mul_sub, mul_sub, <-sub_nonneg]
+    rw [sub_mul, mul_sub, mul_sub, ← sub_nonneg]
     apply hd.elim <;> {
       intro _
       subst d
@@ -183,12 +183,12 @@ problem imo1981_p4 (n : ℕ) :
           omega
         · zify
           repeat rw [Nat.cast_sub (by lia)]
-          rw [sub_mul, mul_sub, mul_sub, <-sub_nonneg]
+          rw [sub_mul, mul_sub, mul_sub, ← sub_nonneg]
           simp
           nlinarith
         · zify
           repeat rw [Nat.cast_sub (by lia)]
-          rw [sub_mul, mul_sub, mul_sub, <-sub_nonneg]
+          rw [sub_mul, mul_sub, mul_sub, ← sub_nonneg]
           simp
           nlinarith
 

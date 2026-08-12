@@ -29,7 +29,7 @@ namespace Imo1964P1
 
 determine solution_set : Set ℕ := { n | n % 3 = 0 }
 
-problem imo_1964_p1a (n : ℕ) : n ∈ solution_set ↔ 2^n ≡ 1 [MOD 7] := by
+problem imo1964_p1a (n : ℕ) : n ∈ solution_set ↔ 2^n ≡ 1 [MOD 7] := by
   constructor
   · intro hn
     obtain ⟨m, hm⟩ := Nat.dvd_of_mod_eq_zero hn
@@ -46,7 +46,7 @@ problem imo_1964_p1a (n : ℕ) : n ∈ solution_set ↔ 2^n ≡ 1 [MOD 7] := by
     · rw [H] at hn; norm_num at hn
     · rw [H] at hn; norm_num at hn
 
-problem imo_1964_p1b (n : ℕ) : ¬ 7 ∣ (2^n + 1) := by
+problem imo1964_p1b (n : ℕ) : ¬ 7 ∣ (2^n + 1) := by
   /-
   Following https://prase.cz/kalva/imo/isoln/isoln641.html:
   Let n = 3m + k; k = 0, 1, or 2.
@@ -59,7 +59,7 @@ problem imo_1964_p1b (n : ℕ) : ¬ 7 ∣ (2^n + 1) := by
   intro h
   apply Nat.mod_eq_zero_of_dvd at h
   have h1: 2 ^ 3 % 7 = 1 := by rfl
-  mod_cases h2 : n % 3 <;> rw [←Nat.div_add_mod n 3, h2] at h
+  mod_cases h2 : n % 3 <;> rw [← Nat.div_add_mod n 3, h2] at h
   · rw [Nat.zero_mod, add_zero, Nat.add_mod, Nat.pow_mod, pow_mul,
         Nat.pow_mod, h1, one_pow (M := ℕ)] at h
     contradiction

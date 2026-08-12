@@ -32,7 +32,7 @@ namespace Iran1998P3
 snip begin
 
 lemma cube_root_cube (x : ℝ) (h : 0 ≤ x) : (x^(3:ℝ)) ^ ((1:ℝ)/3) = x := by
-  rw [←Real.rpow_mul h, mul_div_cancel₀ (1 : ℝ) three_ne_zero]
+  rw [← Real.rpow_mul h, mul_div_cancel₀ (1 : ℝ) three_ne_zero]
   exact Real.rpow_one x
 
 snip end
@@ -58,7 +58,7 @@ problem iran1998_p3
     have xnonneg : ∀ i ∈ Finset.range 4, 0 ≤ x i := by
       intro i _; exact le_of_lt (x_positive i)
     rw [Real.finsetProd_rpow (Finset.range 4) x xnonneg, h, Real.one_rpow] at amgm'
-    rw [←Finset.mul_sum] at amgm'
+    rw [← Finset.mul_sum] at amgm'
 
     let C := 1/4 * ∑ i ∈ Finset.range 4, x i
     have hcp' : 0 ≤ ∑ i ∈ Finset.range 4, x i := Finset.sum_nonneg xnonneg
@@ -82,7 +82,7 @@ problem iran1998_p3
       intro i hi; have := habs i hi; exact congr_fun (congr_arg _ this) 3
     rw [Finset.sum_congr rfl habs3] at holder
     have hccc: (4:ℝ) * C =  ∑ i ∈ Finset.range 4, x i := by simp [C]
-    rw [←hccc] at holder
+    rw [← hccc] at holder
 
     rw [Real.mul_rpow zero_le_four hcp] at holder
 
@@ -94,9 +94,9 @@ problem iran1998_p3
       -- clear_except holder
       have hknn : (0:ℝ) ≤ (4:ℝ) ^ (-3 : ℝ) := by norm_num1
       have hh := mul_le_mul_of_nonneg_left holder hknn
-      rw [←mul_assoc] at hh
+      rw [← mul_assoc] at hh
       have h4mm: (4:ℝ) ^ (-3: ℝ) * (4:ℝ) ^ (3:ℝ) = 1 := by norm_num1
-      rw [h4mm, one_mul, ←mul_assoc] at hh
+      rw [h4mm, one_mul, ← mul_assoc] at hh
       have h4mm': (4:ℝ) ^ (-3: ℝ) * ((4:ℕ):ℝ) ^ (2:ℝ) = 1/4 := by norm_num1
       rw [h4mm'] at hh
       exact hh
@@ -139,11 +139,11 @@ problem iran1998_p3
       have hs : ∀ i ∈ ((Finset.range 4).erase j),
         (fun (ii : ℕ) ↦ (1:ℝ) / 3) i * (fun (ii : ℕ) ↦ x ii ^ (3:ℝ)) i =
          ((1:ℝ)/3) * x i ^ (3:ℝ) := by simp
-      rw [Finset.sum_congr rfl hs, ←Finset.mul_sum] at amgm
+      rw [Finset.sum_congr rfl hs, ← Finset.mul_sum] at amgm
       exact amgm
     have h3 : ∀ j ∈ (Finset.range 4), ∏ i ∈ (Finset.range 4).erase j, x i = 1 / x j := by
       intro j hj
-      rw [←h, ←Finset.prod_erase_mul _ _ hj]
+      rw [← h, ← Finset.prod_erase_mul _ _ hj]
       have : x j ≠ 0 := ne_of_gt (x_positive j)
       field_simp
     have h4 : ∀ j ∈ Finset.range 4, 1 / x j ≤ 1 / 3 * B j := by
@@ -154,7 +154,7 @@ problem iran1998_p3
     have h5 : ∑ i ∈ Finset.range 4, 1 / x i ≤ A := by
       have h5': ∑ i ∈ Finset.range 4, 1 / x i ≤ ∑ i ∈ Finset.range 4, (1 / 3) * B i :=
         Finset.sum_le_sum h4
-      rw [←Finset.mul_sum] at h5'
+      rw [← Finset.mul_sum] at h5'
       rw [hab]
       exact h5'
     exact h5

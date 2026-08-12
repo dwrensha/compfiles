@@ -39,7 +39,7 @@ determine solution_set : Set (ℝ[X][Y]) := {P | ∃ n : ℕ, P = (C X - 2 * Y)*
 snip begin
 
 lemma mul_pow_eq_pow_succ {n : ℕ} (hn : 0 < n) (t : ℝ) : t * t^(n - 1) = t^n := by
-  rw [←(pow_mul_comm' t (n - 1)), ←pow_succ, Nat.sub_add_cancel hn]
+  rw [←(pow_mul_comm' t (n - 1)), ← pow_succ, Nat.sub_add_cancel hn]
 
 lemma eq_if_continuous_and_eq_almost_everywhere {f g : ℝ → ℝ} (hf : Continuous f) (hg : Continuous g)
     (h : ∀ x : ℚ, f x = g x) : ∀ x, f x = g x := by
@@ -97,7 +97,7 @@ lemma linear_rat {f : ℝ → ℝ} (h : ∀ (n : ℤ) {x : ℝ}, f (n * x) = n *
   have h1 := h x.num (x := 1 / x.den)
   have h2 : ((x.den : ℤ) : ℝ) = (x.den : ℝ) := AddCommGroupWithOne.intCast_ofNat x.den
   have h3 : (x.num : ℝ) * (1 / x.den) = x := by rw [Field.ratCast_def x] ; ring
-  rwa [h3, ←h2, linear_inv h x.den, ←mul_assoc, h2, h3, mul_comm] at h1
+  rwa [h3, ← h2, linear_inv h x.den, ← mul_assoc, h2, h3, mul_comm] at h1
 
 snip end
 

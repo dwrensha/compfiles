@@ -560,7 +560,7 @@ lemma p_eq_X_sub_C_rset_prod : p = ∏ r ∈ rset, (X - C r) := by
   have := @C_leadingCoeff_mul_prod_multiset_X_sub_C _ _ _ p ?_
   · simp [p_leadingCoeff, ← rset_eq_p_roots] at this
     exact this.symm
-  · rw [←rset_eq_p_roots, card_val, rset_card]; exact p_natDegree.symm
+  · rw [← rset_eq_p_roots, card_val, rset_card]; exact p_natDegree.symm
 
 lemma roots_sum : ∑ r ∈ rset, r = 4473 := by
   have : (∏ r ∈ rset, (X - C r)).nextCoeff = -4473 := by rw [← p_eq_X_sub_C_rset_prod]; exact p_nextCoeff

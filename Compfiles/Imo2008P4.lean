@@ -72,7 +72,7 @@ problem imo2008_p4 (f : PosReal → PosReal) :
   · ---- Deduce `f(x^2) = f(x)^2` and `f(x) = x` or `x f(x) = 1`
     have h0 : ∀ x, f (x ^ 2) = f x ^ 2 := fun x ↦ by
       replace h := h x x x x rfl
-      rwa [mul_comm, mul_right_inj, ←PosReal.two_mul, ←PosReal.two_mul,
+      rwa [mul_comm, mul_right_inj, ← PosReal.two_mul, ← PosReal.two_mul,
            mul_right_inj, eq_comm] at h
 
     replace h := λ x y ↦ h (x ^ 2) (y ^ 2) (x * y) (x * y) (by rw [← sq, mul_pow])

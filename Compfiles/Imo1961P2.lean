@@ -14,7 +14,7 @@ public import ProblemExtraction
 
 @[expose] public section
 
-problem_file
+problem_file { tags := [.Algebra, .Inequality] }
 
 /-!
 # International Mathematical Olympiad 1961, Problem 2

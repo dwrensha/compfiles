@@ -362,7 +362,7 @@ snip end
 
 determine solution_set : Set (ℝ → ℝ) := {fun t ↦ 0, fun t ↦ t^2}
 
-problem usa2016p4 (f : ℝ → ℝ) : f ∈ solution_set ↔ f_good f := by
+problem usa2016_p4 (f : ℝ → ℝ) : f ∈ solution_set ↔ f_good f := by
   constructor
   /- Prove solutions in set satisfy requirements-/
   · intro h_mem x y

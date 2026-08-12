@@ -12,7 +12,7 @@ public import ProblemExtraction
 
 @[expose] public section
 
-problem_file
+problem_file { tags := [.Algebra, .Inequality] }
 
 /-!
 # International Mathematical Olympiad 1973, Problem 6
@@ -61,9 +61,9 @@ theorem Q_row_neighbour_quot (k) (_ : k+1<n) (j) (hq : q ∈ Set.Ioo 0 1) : ∃ 
     Q n q ⟨k+1, by lia⟩ j = f * Q n q ⟨k, by lia⟩ j := by
   simp only [Finset.mem_insert, Finset.mem_singleton, exists_eq_or_imp, ↓existsAndEq, true_and]
   unfold Q
-  repeat rw [<-mul_inv_eq_iff_eq_mul₀ (by grind [pow_ne_zero])]
-  rw [<-zpow_natCast, <-zpow_natCast, <-div_eq_mul_inv]
-  rw [<-zpow_sub₀ (by grind only [= Set.mem_Ioo])]
+  repeat rw [← mul_inv_eq_iff_eq_mul₀ (by grind [pow_ne_zero])]
+  rw [← zpow_natCast, ← zpow_natCast, ← div_eq_mul_inv]
+  rw [← zpow_sub₀ (by grind only [= Set.mem_Ioo])]
   nth_rw 2 [show q = q^(1 : ℤ) by simp]
   rw [show q⁻¹ = q^(-1 : ℤ) by simp]
   repeat rw [zpow_right_inj₀ (by grind) (by grind)]
@@ -107,7 +107,7 @@ problem imo1973_p6 (npos : 0 < n) (hq : q ∈ Set.Ioo 0 1) (apos : ∀ i, 0 < a 
   have nnz : NeZero n := NeZero.of_gt this
   rw [Set.mem_Ioo] at hq
   have q_lt_inv_q : q < 1 / q := by
-    rw [lt_div_iff₀, <-sq, sq_lt_one_iff₀] <;> linarith
+    rw [lt_div_iff₀, ← sq, sq_lt_one_iff₀] <;> linarith
   and_intros
   -- (a) --
   · intro k
@@ -188,13 +188,13 @@ problem imo1973_p6 (npos : 0 < n) (hq : q ∈ Set.Ioo 0 1) (apos : ∀ i, 0 < a 
       unfold X Y
       rw [mulVec_apply_eq_sum]
       simp only [of_apply]
-      rw [<-Finset.sum_union XY_disj, <-XY_union]
+      rw [← Finset.sum_union XY_disj, ← XY_union]
     have hk1 (_t) : (Matrix.of (Q n q) *ᵥ a) ⟨k+1, _t⟩ = q*X + q⁻¹*Y := by
       unfold X Y
       rw [mulVec_apply_eq_sum]
       simp only [of_apply]
       rw [Finset.mul_sum, Finset.mul_sum]
-      rw [<-XY_union, Finset.sum_union XY_disj]
+      rw [← XY_union, Finset.sum_union XY_disj]
       congr 1 <;> { apply Finset.sum_bij (fun x _ => x) <;> [simp; simp; simp; grind] }
     constructor
     · rw [lt_div_iff₀ (by grind only)]
@@ -208,7 +208,7 @@ problem imo1973_p6 (npos : 0 < n) (hq : q ∈ Set.Ioo 0 1) (apos : ∀ i, 0 < a 
       field_simp
       exact q_lt_inv_q
   -- (c) --
-  · simp_rw [mulVec, <-sum_dotProduct]
+  · simp_rw [mulVec, ← sum_dotProduct]
     rw [dotProduct, Finset.mul_sum]
     simp_rw [Finset.sum_apply]
     have h (i) : (∑ j, Q n q j i) * a i < (1 + q) / (1 - q) * a i := by
@@ -225,7 +225,7 @@ problem imo1973_p6 (npos : 0 < n) (hq : q ∈ Set.Ioo 0 1) (apos : ∀ i, 0 < a 
             simp
           · simp
         _ = ∑ j ≤ i.val, q ^ (j - i.val : ℤ).natAbs + ∑ j ∈ Finset.Ioo i.val n, q ^ (j - i.val : ℤ).natAbs := by
-          rw [<-Finset.sum_union]
+          rw [← Finset.sum_union]
           · congr
             refine Finset.ext_iff.mpr ?_
             simp only [Finset.mem_range, Finset.mem_union, Finset.mem_Iic, Finset.mem_Ioo]
@@ -291,8 +291,8 @@ problem imo1973_p6 (npos : 0 < n) (hq : q ∈ Set.Ioo 0 1) (apos : ∀ i, 0 < a 
         _ < _ := by
           rw [Nat.Iio_eq_range, geom_sum_eq (ne_of_lt hq.right)]
           apply lt_of_mul_lt_mul_of_nonneg_right (a:=1-q) ?_ (by linarith)
-          rw [IsUnit.div_mul_cancel, <-mul_assoc, mul_div_assoc', <-neg_div_neg_eq, neg_sub,
-            add_mul, <-neg_mul, IsUnit.div_mul_cancel, one_mul]
+          rw [IsUnit.div_mul_cancel, ← mul_assoc, mul_div_assoc', ← neg_div_neg_eq, neg_sub,
+            add_mul, ← neg_mul, IsUnit.div_mul_cancel, one_mul]
           · ring_nf
             simp only [sub_lt_self_iff, Nat.ofNat_pos, mul_pos_iff_of_pos_right]
             rw [mul_pow_sub_one nnz.out]

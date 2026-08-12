@@ -288,7 +288,7 @@ lemma d_of_factorization (t : ℕ) (ps exps : List ℕ)
             exact (Nat.pow_right_inj hp₂prime.two_le).mp heq
           · intro heq
             have hpowdvd : p₁ ∣ p₂ ^ k₂ := by
-              rw [←heq]
+              rw [← heq]
               exact Nat.div_pow_of_pos p₁ k₁ hk₁gt0
             have hdvd : p₁ ∣ p₂ := Nat.Prime.dvd_of_dvd_pow hp₁prime hpowdvd
             have heq2 : p₁ = p₂ := (Nat.prime_dvd_prime_iff_eq hp₁prime hp₂prime).mp hdvd
@@ -409,7 +409,7 @@ theorem odd_k_satisfies (k : ℕ)
             dsimp [C]
             rw [Nat.mul_sub_left_distrib, Nat.mul_one]
             rw [Nat.sub_sub]
-            rw [←hkkeqjt]
+            rw [← hkkeqjt]
             rw [Nat.add_sub_add_right]
             apply Nat.sub_pos_of_lt
             exact hjltkk
@@ -423,7 +423,7 @@ theorem odd_k_satisfies (k : ℕ)
             obtain ⟨p, k, hpk⟩ := hnin
             have hpinps : p ∈ ps := (List.of_mem_zip hpk.left).left
             have hpcoprime : Nat.Coprime p nⱼ := (hps.left p hpinps).right.right
-            rw [←hpk.right]
+            rw [← hpk.right]
             apply Nat.Coprime.pow_left
             exact hpcoprime
           have hxneq0 : x ≠ 0 := by
@@ -459,7 +459,7 @@ theorem odd_k_satisfies (k : ℕ)
             simp
             dsimp [C]
             rw [Nat.mul_sub_right_distrib, Nat.mul_sub_left_distrib, Nat.mul_one]
-            rw [Nat.mul_sub_right_distrib, mul_assoc j, ←pow_add]
+            rw [Nat.mul_sub_right_distrib, mul_assoc j, ← pow_add]
             rw [Nat.mul_add, Nat.mul_one]
             rw [mul_comm (2^i) j]
             grind
@@ -501,7 +501,7 @@ theorem odd_k_satisfies (k : ℕ)
             dsimp [C]
             rw [mul_comm 2, mul_assoc, mul_comm (2 ^ i) 2, (pow_succ' 2 i).symm]
             rw [Nat.mul_sub_right_distrib, Nat.mul_sub_left_distrib, Nat.mul_one]
-            rw [Nat.mul_sub_right_distrib, mul_assoc j, ←pow_add]
+            rw [Nat.mul_sub_right_distrib, mul_assoc j, ← pow_add]
             grind
           have htelescopes : d (x ^ 2) * j = d x * (2 ^ t * j - 1) := by
             have h : d (x ^ 2) * (2 ^ t * j - (j + 1) + 1) =
@@ -520,7 +520,7 @@ theorem odd_k_satisfies (k : ℕ)
                 simp [f, hneqdx]; rw [two_mul]
               rw [h1.symm, h2.symm]
               rw [mul_comm _ (f 0)]
-              rw [←List.prod_cons]
+              rw [← List.prod_cons]
               have hlhs : f 0 :: List.map (f ∘ Nat.succ) (List.range t) =
                         List.map f (List.range (t + 1)) := by
                 rw [List.range_succ_eq_map, List.map_cons, List.map_map]
@@ -546,7 +546,7 @@ theorem odd_k_satisfies (k : ℕ)
               ring
             have hden : 2 ^ t * j - (j + 1) + 1 = j * (2 ^ t - 1) := by grind
             rw [hfactor, hden] at h
-            rw [←mul_assoc, ←mul_assoc] at h
+            rw [← mul_assoc, ← mul_assoc] at h
             apply Nat.eq_of_mul_eq_mul_right _
             · exact h
             · apply Nat.sub_pos_of_lt

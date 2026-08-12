@@ -43,7 +43,7 @@ problem usa2011_p4 :
   refine ⟨by norm_num, ?_⟩
   rw [not_exists]
   intro x hx
-  rw [show 4 = 2^2 by rfl, ←Nat.pow_mul] at hx
+  rw [show 4 = 2^2 by rfl, ← Nat.pow_mul] at hx
 
   -- 2^(2^25) is small enough that we can just normalize it.
   set_option exponentiation.threshold 100000000 in
