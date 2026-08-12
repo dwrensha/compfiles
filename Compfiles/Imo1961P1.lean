@@ -205,8 +205,7 @@ problem imo1961_p1b (a b x y z : ℝ) (h₀ : IsSolution a b x y z) :
     have h₈: 0 < x ∧ 0 < y := by
       have hx₀: 0 < x * y := by rw [h₂]; exact sq_pos_of_pos hz₀
       by_cases hx₁: 0 < x
-      · refine ⟨hx₁, ?_⟩
-        exact (pos_iff_pos_of_mul_pos hx₀).mp hx₁
+      · refine ⟨hx₁, pos_iff_pos_of_mul_pos hx₀ |>.mp hx₁⟩
       · push Not at hx₁
         exfalso
         have h₈₀: (x + y) ^ 2 - z ^ 2 = b ^ 2 := by
@@ -221,27 +220,20 @@ problem imo1961_p1b (a b x y z : ℝ) (h₀ : IsSolution a b x y z) :
           refine add_lt_of_lt_sub_left ?_
           apply sq_lt_sq.mp at h₈₁
           rw [zero_sub]
-          have hx₂ : x + y < 0 := by exact Right.add_neg_of_nonpos_of_neg hx₁ hy₀
-          rw [abs_of_pos hz₀, abs_of_neg hx₂] at h₈₁
-          exact h₈₁
+          have hx₂ : x + y < 0 := Right.add_neg_of_nonpos_of_neg hx₁ hy₀
+          rwa [abs_of_pos hz₀, abs_of_neg hx₂] at h₈₁
         order
-    refine ⟨h₈.1, h₈.2, ?_⟩
-    refine ⟨hz₀, ?_⟩
-    constructor
+    refine ⟨h₈.1, h₈.2, hz₀, ?_, ?_⟩
     · constructor
       · by_contra! hh₀
-        have hh₁: z = y := by
+        have hh₁: y = z := by
           rw [hh₀, ← pow_two] at h₂
-          symm
-          refine (pow_left_inj₀ ?_ ?_ two_ne_zero).mp h₂
-          · exact le_of_lt h₈.2
-          · exact le_of_lt hz₀
+          refine pow_left_inj₀ h₈.right.le hz₀.le two_ne_zero |>.mp h₂
         rw [hh₀, hh₁] at h₇
         linarith
       · by_contra! hh₀
-        have hh₁: y = z := by
+        have hh₁: z = y := by
           rw [hh₀, pow_two] at h₂
-          symm
           apply mul_eq_mul_left_iff.mp at h₂
           bound
         rw [hh₀, hh₁] at h₇
@@ -254,7 +246,7 @@ problem imo1961_p1b (a b x y z : ℝ) (h₀ : IsSolution a b x y z) :
       rw [hh₀, hh₁] at h₇
       linarith
   · intro h₃
-    simp
+    simp only [Set.mem_ofPred_eq]
     refine aux_1 x y z a b ?_ h₃.2.2.2 h₀ h₁ h₂
     bound
 
