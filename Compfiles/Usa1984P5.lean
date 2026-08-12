@@ -163,7 +163,7 @@ lemma poly_fwdDiff (m : ℕ) (P : ℝ[X]) (hP : P.natDegree < m) (k : ℕ) :
           have hd : (P.comp (X + C 1)).degree = P.degree := by
             rw [Polynomial.degree_eq_natDegree hcomp_ne, Polynomial.degree_eq_natDegree hP0,
               hcomp_deg]
-          have hlt := Polynomial.degree_sub_lt hd hcomp_ne hcomp_lc
+          have hlt := Polynomial.degree_sub_lt_left hd hcomp_ne hcomp_lc
           rwa [hd] at hlt
         have hQ : (P.comp (X + C 1) - P).natDegree < m := by
           rcases eq_or_ne (P.comp (X + C 1) - P) 0 with hz0 | hnz

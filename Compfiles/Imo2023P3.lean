@@ -421,7 +421,7 @@ lemma Fpoly_degree_lt {k : ℕ} (_hk : 2 ≤ k) {P : Polynomial ℤ} (hmon : P.M
   have h3 : (∏ i ∈ Finset.range k, (X + C ((A (m + 1 + i) : ℤ) - A m))).leadingCoeff =
       P.leadingCoeff := by
     rw [(monic_prod_linear _).leadingCoeff, hmon.leadingCoeff]
-  have h4 := degree_sub_lt h1 h2 h3
+  have h4 := degree_sub_lt_left h1 h2 h3
   rw [degree_prod_linear, Finset.card_range] at h4
   exact h4
 
