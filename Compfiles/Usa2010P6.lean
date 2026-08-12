@@ -85,12 +85,13 @@ lemma cond_weight (n : ℕ) (q : ℚ) (S₀ S₁ : Finset (Fin n)) (hd : Disjoin
       = q ^ S₀.card * (1 - q) ^ S₁.card := by
     have hfg : ∀ i : Fin n, f i + g i = if i ∈ S₀ then q else (if i ∈ S₁ then 1 - q else 1) := by
       intro i
+      simp only [f, g]
       by_cases h0 : i ∈ S₀
-      · have h1 : i ∉ S₁ := fun h1 => (Finset.disjoint_left.mp hd h0) h1
-        simp [f, g, h0, h1]
+      · have h1 : i ∉ S₁ := Finset.disjoint_left.mp hd h0
+        simp [h0, h1]
       · by_cases h1 : i ∈ S₁
-        · simp [f, g, h0, h1]
-        · simp [f, g, h0, h1]
+        · simp [h0, h1]
+        · simp [h0, h1]
     rw [Finset.prod_congr rfl (fun i _ => hfg i)]
     rw [show (∏ i ∈ (Finset.univ : Finset (Fin n)), (if i ∈ S₀ then q else if i ∈ S₁ then 1 - q else 1 : ℚ))
         = (∏ i ∈ (Finset.univ : Finset (Fin n)) ∩ S₀, q) *

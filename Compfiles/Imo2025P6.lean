@@ -2775,24 +2775,24 @@ lemma M_subset_rect (s t : Int) (p : Point n) (hk : 2 ≤ k) :
         show val_t k p = t * mod_base k by linarith, Int.mul_emod_left])
   refine ⟨⟨?_, ?_⟩, ⟨?_, ?_⟩⟩
   · -- x lower: ds + k*dt > 0 and M > 0, so p.1 - xb ≥ 1
-    by_contra hc; push Not at hc
+    by_contra! hc
     have := Int.lt_add_one_iff.mp hc
     linarith [mul_nonpos_of_nonneg_of_nonpos hM.le (show (p.1 : ℤ) - ((s-1)+(t-1)*k) ≤ 0 from by linarith)]
   · -- x upper: ds + k*dt < M + k*M = M*(k+1)
-    by_contra hc; push Not at hc
+    by_contra! hc
     have h1 := Int.add_one_le_iff.mpr hc
     have h2 : (t : ℤ) * k - (t - 1) * k = k := by ring
     have h3 := mul_le_mul_of_nonneg_left (show (k : ℤ)+1 ≤ (p.1 : ℤ)-((s-1)+(t-1)*k) from by linarith) hM.le
     have h4 : mod_base k + k * mod_base k = mod_base k * (↑k + 1) := by ring
     linarith [hds.2, Int.mul_lt_mul_of_pos_left hdt.2 hk_pos]
   · -- y lower: k*ds - dt > -M
-    by_contra hc; push Not at hc
+    by_contra!
     have h1 := mul_le_mul_of_nonneg_left (show (p.2 : ℤ) - (s * k - t) ≤ -1 from by
       linarith [Int.lt_add_one_iff.mp (show (p.2 : ℤ) < s * k - t + 1 by linarith)]) hM.le
     have h2 : mod_base k * (-1 : ℤ) = -mod_base k := by ring
     linarith [hy, hdt.2]
   · -- y upper: k*ds - dt < k*M
-    by_contra hc; push Not at hc
+    by_contra! hc
     have h1 := Int.add_one_le_iff.mpr hc
     have h2 : (s + 1 : ℤ) * k - s * k = k := by ring
     have h3 := mul_le_mul_of_nonneg_left (show (k : ℤ) ≤ (p.2 : ℤ)-(s*k-t) from by linarith) hM.le
@@ -2871,9 +2871,7 @@ lemma M_st_eq_rect (s t : Int) (hk : 2 ≤ k) :
     M_st k s t = rect_finset k s t := by
   ext p
   simp only [rect_finset, mem_filter, mem_univ, true_and]
-  constructor
-  · exact M_subset_rect k s t p hk
-  · exact rect_subset_M k s t p hk
+  exact ⟨M_subset_rect k s t p hk, rect_subset_M k s t p hk⟩
 
 lemma mem_rect_iff_idx_eq (p : Point (k * k)) (s t : ℤ) (hk : 2 ≤ k) :
     p ∈ rect_finset k s t ↔ (p ∉ all_black_k k ∧ calc_s k p = s ∧ calc_t k p = t) := by

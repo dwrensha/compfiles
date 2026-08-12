@@ -194,10 +194,8 @@ lemma eq_id_of_f_one_eq_one {f : ℕ → ℕ} (hpos : ∀ n, 0 < n → 0 < f n)
     · exact absurd h1 (by decide)
   by_contra hne
   have hd : (n : ℤ) - (f n : ℤ) ≠ 0 := by
-    intro h0
-    have h1 : (n : ℤ) = (f n : ℤ) := sub_eq_zero.mp h0
-    have h2 : n = f n := by exact_mod_cast h1
-    exact hne h2.symm
+    rw [Ne, sub_eq_zero, Int.ofNat_inj]
+    exact Ne.symm hne
   obtain ⟨r, hr⟩ : ∃ r, n + Int.natAbs ((n : ℤ) - (f n : ℤ)) + 1 ≤ iterFac r :=
     ⟨n + Int.natAbs ((n : ℤ) - (f n : ℤ)), by
       have h := iterFac_ge (n + Int.natAbs ((n : ℤ) - (f n : ℤ)))

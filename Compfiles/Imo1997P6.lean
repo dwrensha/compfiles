@@ -67,26 +67,18 @@ lemma f_even' (m : ℕ) (hm : 1 ≤ m) : f (2 * m) = f (2 * m - 1) + f m := by
 lemma f_zero : f 0 = 1 := by simp only [f]
 
 lemma f_one : f 1 = 1 := by
-  show f (2 * 0 + 1) = 1
   rw [f_odd 0]
   exact f_zero
 
 lemma f_two : f 2 = 2 := by
-  show f (2 * 0 + 2) = 2
-  rw [f_even 0]
-  show f 1 + f 1 = 2
-  rw [f_one]
+  rw [f_even 0, f_one]
 
 lemma f_three : f 3 = 2 := by
-  show f (2 * 1 + 1) = 2
   rw [f_odd 1]
   exact f_two
 
 lemma f_four : f 4 = 4 := by
-  show f (2 * 1 + 2) = 4
-  rw [f_even 1]
-  show f 3 + f 2 = 4
-  rw [f_three, f_two]
+  rw [f_even 1, f_three, f_two]
 
 /-- `f` is monotone nondecreasing. -/
 lemma f_mono : Monotone f := by

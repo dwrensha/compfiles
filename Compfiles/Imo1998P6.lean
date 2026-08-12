@@ -44,8 +44,7 @@ lemma f_injective : Function.Injective f := by
   exact PNat.eq (by nlinarith [(show (0 : ℕ) < ((f 1 : ℕ+) : ℕ) ^ 2 from by positivity)])
 
 lemma f_sq_d (n : ℕ+) : f (n ^ 2 * f 1) = (f n) ^ 2 := by
-  have h := hf 1 n
-  simpa using h
+  simpa using hf 1 n
 
 lemma f_prod_eq (a b : ℕ+) : f a * f b = f (f 1 * a * b) := by
   have h_eq : f a ^ 2 * f b ^ 2 = f ((a * b * f 1) ^ 2 * f 1) := by
