@@ -120,12 +120,9 @@ lemma potential_measure_decreases (s : State) (i : Fin 5)
 
 snip end
 
-/--
-Main Theorem: IMO 1986 Problem 3.
-Starting from any state with a positive sum, the process terminates.
--/
 problem imo1986_p3 (s₀ : State) (h_sum : 0 < s₀.sum) :
     Acc Step s₀ := by
+  -- Starting from any state with a positive sum, the process terminates.
   apply measure_termination s₀ h_sum
 where
   measure_termination (current : State) (h_current_sum : 0 < current.sum) : Acc Step current := by
