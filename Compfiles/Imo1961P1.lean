@@ -113,7 +113,7 @@ lemma aux_1
   let s : ℝ := ((3 * a ^ 2 - b ^ 2) * (3 * b ^ 2 - a ^ 2)) / (4 * a ^ 2)
   have hs : s = ((3 * a ^ 2 - b ^ 2) * (3 * b ^ 2 - a ^ 2)) / (4 * a ^ 2) := by rfl
   have h₁₄: discrim aq bq cq = s := by
-    have g₀: aq ≠ 0 := by exact Ne.symm (zero_ne_one' ℝ)
+    have g₀: aq ≠ 0 := Ne.symm (zero_ne_one' ℝ)
     apply (quadratic_eq_zero_iff_discrim_eq_sq g₀ y).mp at h₁₂
     rw [h₁₂, h₁₃]
     rw [haq, hbq, hcq, hs]
@@ -139,12 +139,12 @@ lemma aux_1
       · exact hc₂
       · positivity
     rw [← h₁₄] at hc₃
-    have h₁₅: aq ≠ 0 := by exact Ne.symm (zero_ne_one' ℝ)
+    have h₁₅: aq ≠ 0 := Ne.symm (zero_ne_one' ℝ)
     by_cases hc₄: s < 0
     · have hc₅: ∀ d:ℝ , discrim aq bq cq ≠ d ^ 2 := by
         intro d
         rw [h₁₄]
-        have hc₆: 0 ≤ d ^ 2 := by exact sq_nonneg d
+        have hc₆: 0 ≤ d ^ 2 := sq_nonneg d
         linarith
       exfalso
       exact hc₅ ((2 : ℝ) * (1 : ℝ) * y + -(a ^ (2 : ℕ) + b ^ (2 : ℕ)) / ((2 : ℝ) * a)) h₁₁
@@ -201,7 +201,7 @@ problem imo1961_p1b (a b x y z : ℝ) (h₀ : IsSolution a b x y z) :
     have h₆: 0 < x * y + (x + y) * z := by linarith
     have h₇: x * y + (x + y) * z < (x ^ 2 + y ^ 2 + z ^ 2) := by linarith
     rw [add_comm (x * y), h₂, pow_two, ← add_mul, h₀] at h₆
-    have hz₀: 0 < z := by exact (pos_iff_pos_of_mul_pos h₆).mp h₃
+    have hz₀: 0 < z := (pos_iff_pos_of_mul_pos h₆).mp h₃
     have h₈: 0 < x ∧ 0 < y := by
       have hx₀: 0 < x * y := by rw [h₂]; exact sq_pos_of_pos hz₀
       by_cases hx₁: 0 < x
@@ -212,7 +212,7 @@ problem imo1961_p1b (a b x y z : ℝ) (h₀ : IsSolution a b x y z) :
         have h₈₀: (x + y) ^ 2 - z ^ 2 = b ^ 2 := by
           rw [add_sq, mul_assoc 2, h₂, ← h₁]
           ring
-        have hy₀: y < 0 := by exact neg_of_mul_pos_right hx₀ hx₁
+        have hy₀: y < 0 := neg_of_mul_pos_right hx₀ hx₁
         have h₈₁: z ^ 2 < (x + y) ^ 2 := by
           refine lt_of_sub_pos ?_
           rw [h₈₀, ← h₁]
@@ -221,7 +221,7 @@ problem imo1961_p1b (a b x y z : ℝ) (h₀ : IsSolution a b x y z) :
           refine add_lt_of_lt_sub_left ?_
           apply sq_lt_sq.mp at h₈₁
           rw [zero_sub]
-          have hx₂ : x + y < 0 := by exact Right.add_neg_of_nonpos_of_neg hx₁ hy₀
+          have hx₂ : x + y < 0 := Right.add_neg_of_nonpos_of_neg hx₁ hy₀
           rw [abs_of_pos hz₀, abs_of_neg hx₂] at h₈₁
           exact h₈₁
         order

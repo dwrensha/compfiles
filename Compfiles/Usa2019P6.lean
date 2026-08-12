@@ -77,22 +77,20 @@ lemma phiPoly_eval {K : Type*} [Field K] (P : Polynomial K) (x y : K)
       (2 * x * y - 1) ^ (P.natDegree + 1) *
         Qfun P x y ((x + y) / (2 * x * y - 1)) := by
   have hw : 2 * x * y - 1 ≠ 0 := sub_ne_zero.mpr hxy
-  have hz1 : ∀ k : ℕ, k ≤ P.natDegree →
+  rw [Polynomial.eval_map, PhiPoly, Polynomial.eval₂_finsetSum]
+  rw [qfun_eq_sum, Finset.mul_sum]
+  refine Finset.sum_congr rfl fun k hk => ?_
+  replace hk : k ≤ P.natDegree := Nat.le_of_lt_succ (Finset.mem_range.mp hk)
+  have hz1 :
       (x + y) / (2 * x * y - 1) * ((x + y) / (2 * x * y - 1)) ^ k *
           (2 * x * y - 1) ^ (P.natDegree + 1) =
         (x + y) ^ (k + 1) * (2 * x * y - 1) ^ (P.natDegree - k) := by
-    intro k hk
-    rw [show (x + y) / (2 * x * y - 1) * ((x + y) / (2 * x * y - 1)) ^ k =
-        ((x + y) / (2 * x * y - 1)) ^ (k + 1) from by rw [pow_succ]; ring,
-      div_pow, div_mul_eq_mul_div, div_eq_iff (pow_ne_zero _ hw),
-      show P.natDegree + 1 = P.natDegree - k + (k + 1) from by omega,
-      pow_add _ (P.natDegree - k) (k + 1)]
-    ring
-  have hz2 : ∀ k : ℕ,
-      x * y * ((x + y) / (2 * x * y - 1)) * (x - y) ^ k * (2 * x * y - 1) ^ (P.natDegree + 1) =
-        x * y * (x + y) * (x - y) ^ k * (2 * x * y - 1) ^ P.natDegree := by
-    intro k
-    rw [mul_div_assoc', div_mul_eq_mul_div, div_mul_eq_mul_div, div_eq_iff hw,
+    rw [← pow_succ', div_pow, div_mul_eq_mul_div, div_eq_iff (pow_ne_zero _ hw),
+      mul_assoc (_ ^ _), ← pow_add (2 * x * y - 1), ← Nat.add_assoc, Nat.sub_add_cancel hk]
+  have hz2 :
+      ((x + y) / (2 * x * y - 1)) * (x - y) ^ k * (2 * x * y - 1) ^ (P.natDegree + 1) =
+        (x + y) * (x - y) ^ k * (2 * x * y - 1) ^ P.natDegree := by
+    rw [div_mul_eq_mul_div, div_mul_eq_mul_div, div_eq_iff hw,
       pow_succ]
     ring
   have hyz : y - (x + y) / (2 * x * y - 1) = (2 * x * y ^ 2 - x - 2 * y) / (2 * x * y - 1) := by
@@ -101,35 +99,24 @@ lemma phiPoly_eval {K : Type*} [Field K] (P : Polynomial K) (x y : K)
   have hzx : (x + y) / (2 * x * y - 1) - x = (2 * x + y - 2 * x ^ 2 * y) / (2 * x * y - 1) := by
     rw [eq_div_iff hw, sub_mul, div_mul_cancel₀ _ hw]
     ring
-  have hz3 : ∀ k : ℕ, k ≤ P.natDegree →
-      x * y * ((x + y) / (2 * x * y - 1)) * (y - (x + y) / (2 * x * y - 1)) ^ k *
+  have hz3 :
+      ((x + y) / (2 * x * y - 1)) * (y - (x + y) / (2 * x * y - 1)) ^ k *
           (2 * x * y - 1) ^ (P.natDegree + 1) =
-        x * y * (x + y) * (2 * x * y ^ 2 - x - 2 * y) ^ k * (2 * x * y - 1) ^ (P.natDegree - k) := by
-    intro k hk
+        (x + y) * (2 * x * y ^ 2 - x - 2 * y) ^ k * (2 * x * y - 1) ^ (P.natDegree - k) := by
     rw [hyz, div_pow, mul_div_assoc', div_mul_eq_mul_div, div_eq_iff (pow_ne_zero _ hw),
-      mul_div_assoc', div_mul_eq_mul_div, div_mul_eq_mul_div, div_eq_iff hw,
-      show P.natDegree + 1 = P.natDegree - k + (k + 1) from by omega,
-      pow_add _ (P.natDegree - k) (k + 1)]
-    ring
-  have hz4 : ∀ k : ℕ, k ≤ P.natDegree →
-      x * y * ((x + y) / (2 * x * y - 1)) * ((x + y) / (2 * x * y - 1) - x) ^ k *
+      div_mul_eq_mul_div, div_mul_eq_mul_div, div_eq_iff hw,
+      mul_assoc (_ * _ ^ _), ← pow_succ, mul_assoc (_ * _ ^ _), ← pow_add, ← Nat.add_assoc, Nat.sub_add_cancel hk]
+  have hz4 :
+       ((x + y) / (2 * x * y - 1)) * ((x + y) / (2 * x * y - 1) - x) ^ k *
           (2 * x * y - 1) ^ (P.natDegree + 1) =
-        x * y * (x + y) * (2 * x + y - 2 * x ^ 2 * y) ^ k * (2 * x * y - 1) ^ (P.natDegree - k) := by
-    intro k hk
+         (x + y) * (2 * x + y - 2 * x ^ 2 * y) ^ k * (2 * x * y - 1) ^ (P.natDegree - k) := by
     rw [hzx, div_pow, mul_div_assoc', div_mul_eq_mul_div, div_eq_iff (pow_ne_zero _ hw),
-      mul_div_assoc', div_mul_eq_mul_div, div_mul_eq_mul_div, div_eq_iff hw,
-      show P.natDegree + 1 = P.natDegree - k + (k + 1) from by omega,
-      pow_add _ (P.natDegree - k) (k + 1)]
-    ring
-  rw [Polynomial.eval_map, PhiPoly, Polynomial.eval₂_finsetSum]
-  rw [qfun_eq_sum, Finset.mul_sum]
-  apply Finset.sum_congr rfl
-  intro k hk
-  have hk2 : k ≤ P.natDegree := Nat.le_of_lt_succ (Finset.mem_range.mp hk)
+      div_mul_eq_mul_div, div_mul_eq_mul_div, div_eq_iff hw,
+      mul_assoc (_ * _ ^ _), ← pow_succ, mul_assoc (_ * _ ^ _), ← pow_add, ← Nat.add_assoc, Nat.sub_add_cancel hk]
   simp only [eval₂_mul, eval₂_add, eval₂_sub, eval₂_pow, eval₂_C, eval₂_X, eval₂_one,
     coe_evalRingHom, eval_C, eval_X, eval_mul, eval_pow, eval_ofNat]
   linear_combination
-    (P.coeff k) * (hz2 k + hz3 k hk2 + hz4 k hk2 - hz1 k hk2)
+    (P.coeff k) * (x * y * (hz2 + hz3 + hz4) - hz1)
 
 /-- If `Qfun P` vanishes at every nonzero real triple on the surface `2xyz = x+y+z`,
 then `PhiPoly P` is the zero polynomial. This is the "real dimension two" argument:
@@ -344,7 +331,7 @@ lemma natDegree_le_two (P : Polynomial ℝ) (hP0 : P ≠ 0) (hPhi : PhiPoly P = 
   obtain ⟨h, hh⟩ : ∃ h : ℂ, h ^ 2 = -1 / 2 := by
     refine ⟨Complex.I * (Real.sqrt 2 / 2 : ℝ), ?_⟩
     rw [mul_pow, Complex.I_sq, ← Complex.ofReal_pow, div_pow,
-      Real.sq_sqrt (by norm_num : (0 : ℝ) ≤ 2)]
+      Real.sq_sqrt zero_le_two]
     push_cast
     norm_num
   have hne : h ≠ 0 := fun h0 => by rw [h0] at hh; norm_num at hh
@@ -393,19 +380,13 @@ lemma natDegree_le_two (P : Polynomial ℝ) (hP0 : P ≠ 0) (hPhi : PhiPoly P = 
     simpa [eval_comp] using h1
   have hcomp : Pc.comp (C (-h) - X) = Pc.comp (X + C h) := by
     have h2 : (-X : Polynomial ℂ).comp (X + C h) = -(X + C h) := by
-      rw [show (-X : Polynomial ℂ) = X * C (-1 : ℂ) from by simp, mul_comp, X_comp,
-        C_comp]
-      simp [Polynomial.C_neg]
-    have e1 : C (-h) - X = -(X + C h) := by
-      rw [Polynomial.C_neg]
-      ring
-    rw [e1, ← h2, ← comp_assoc, hEvenC]
+      rw [neg_comp, X_comp]
+    rw [Polynomial.C_neg, neg_sub_left, ← h2, ← comp_assoc, hEvenC]
   have hconst : C (h * Pc.eval h) + C ((-h) * Pc.eval h) = (0 : Polynomial ℂ) := by
-    have : h * Pc.eval h + -h * Pc.eval h = 0 := by ring
-    rw [← Polynomial.C_add, this]
+    rw [← Polynomial.C_add]
     simp
   have hhalf : h * (-h) = 1 / 2 := by linear_combination -hh
-  rw [show h - (-h) = 2 * h from by ring, hev, hcomp, hhalf] at hD0
+  rw [sub_neg_eq_add, ← two_mul, hev, hcomp, hhalf] at hD0
   -- hD0 : X * Pc + C (h*eh) + C ((-h)*eh) - X * C (1/2) * (comp(X−Ch) + C (eval (2h)) + comp(X+Ch)) = 0
   have hD1 : X * Pc = X * C (1 / 2 : ℂ) *
       (Pc.comp (X - C h) + C (Pc.eval (2 * h)) + Pc.comp (X + C h)) := by
@@ -439,7 +420,7 @@ lemma natDegree_le_two (P : Polynomial ℝ) (hP0 : P ≠ 0) (hPhi : PhiPoly P = 
     rw [hPc, hn, natDegree_map_eq_of_injective Complex.ofReal_injective]
   have hcoeff0 : (Pc.comp (X + C h) + Pc.comp (X - C h) - 2 * Pc).coeff (n - 2) = 0 := by
     rw [hE]
-    simp [Polynomial.coeff_C, show n - 2 ≠ 0 from by omega]
+    simp [Polynomial.coeff_C, Nat.sub_ne_zero_iff_lt.mpr hlt]
   have hterm : ∀ k : ℕ,
       (C (Pc.coeff k) * (X + C h) ^ k + C (Pc.coeff k) * (X - C h) ^ k -
         (2 : Polynomial ℂ) * (C (Pc.coeff k) * X ^ k)).coeff (n - 2) =

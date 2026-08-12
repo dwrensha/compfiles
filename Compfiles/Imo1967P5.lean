@@ -173,7 +173,7 @@ lemma aux_recursive (I : Finset (Fin 8)) (a : Fin 8 → ℝ)
           _ = |∑ k ∈ K, a k^N| := by simp [h_sum_I_pow_N_zero]
           _ ≤ ∑ k ∈ K, |a k^N| := Finset.abs_sum_le_sum_abs (fun i ↦ a i ^ N) K
           _ = ∑ k ∈ K, |a k|^N := by simp
-          _ ≤ ∑ k ∈ K, q^N := by exact Finset.sum_le_sum h_pow_ak_le_q
+          _ ≤ ∑ k ∈ K, q^N := Finset.sum_le_sum h_pow_ak_le_q
           _ = K.card * q^N := by simp
           _ ≤ 8 * q^N := by
             gcongr

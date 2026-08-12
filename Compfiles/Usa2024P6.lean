@@ -129,14 +129,11 @@ lemma lhs_eq_sum_v_sq {n k : ℕ} (x : Fin k → ℝ) (A : Fin k → Finset (Fin
             (if p ∈ A i ∧ q ∈ A i then x i / (A i).card else 0) *
               (if p ∈ A j ∧ q ∈ A j then x j / (A j).card else 0) := by
           refine Finset.sum_congr rfl fun p _ => Finset.sum_congr rfl fun q _ => ?_
-          rw [show (e i p * e j p) * (e i q * e j q) =
-              (if p ∈ A i ∧ q ∈ A i then (1 : ℝ) else 0) *
-                (if p ∈ A j ∧ q ∈ A j then (1 : ℝ) else 0) from by
-            by_cases h1 : p ∈ A i <;> by_cases h2 : q ∈ A i <;>
-              by_cases h3 : p ∈ A j <;> by_cases h4 : q ∈ A j <;>
-              simp [he, h1, h2, h3, h4]]
-          by_cases h1 : p ∈ A i ∧ q ∈ A i <;> by_cases h2 : p ∈ A j ∧ q ∈ A j <;>
-            simp [h1, h2, div_mul_div_comm, div_div]
+          simp only [e, ite_zero_mul_ite_zero, one_mul]
+          rw [mul_boole]
+          congr 1
+          · lia
+          · ring
   calc ∑ i : Fin k, ∑ j : Fin k, x i * x j *
         (((A i ∩ A j).card : ℝ) ^ 2 / ((A i).card : ℝ) / ((A j).card : ℝ))
       = ∑ i : Fin k, ∑ j : Fin k, ∑ p : Fin n, ∑ q : Fin n,
@@ -156,16 +153,11 @@ lemma lhs_eq_sum_v_sq {n k : ℕ} (x : Fin k → ℝ) (A : Fin k → Finset (Fin
 lemma sum_diag {n k : ℕ} (x : Fin k → ℝ) (A : Fin k → Finset (Fin n))
     (hA : ∀ i, (A i).card ≠ 0) :
     ∑ p : Fin n, vvv x A p p = ∑ i : Fin k, x i := by
-  classical
   simp only [vvv_def, and_self]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => ?_
-  rw [← Finset.sum_filter]
-  rw [show Finset.univ.filter (· ∈ A i) = A i from by ext p; simp]
-  rw [Finset.sum_const, nsmul_eq_mul]
-  have hAi : ((A i).card : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr (hA i)
-  rw [← mul_div_assoc]
-  exact mul_div_cancel_left₀ _ hAi
+  rw [Fintype.sum_ite_mem, Finset.sum_const, nsmul_eq_mul, ← mul_div_assoc, mul_div_cancel_left₀ _]
+  exact Nat.cast_ne_zero.mpr (hA i)
 
 /-- Sums over the off-diagonal pairs as double sums. -/
 lemma sum_sigma_erase {n : ℕ} (f : Fin n → Fin n → ℝ) :
@@ -285,12 +277,7 @@ lemma solution_works {n ℓ : ℕ} (hn : 2 < n) (hℓ1 : 1 ≤ ℓ) :
 /-- Counting the elements of a finset with a weight of `1` each. -/
 lemma diag_count {n : ℕ} (B : Finset (Fin n)) :
     ∑ p : Fin n, (if p ∈ B then (1 : ℝ) else 0) = (B.card : ℝ) := by
-  classical
-  have h' : Finset.univ.filter (· ∈ B) = B := by
-    ext p
-    simp
-  rw [show (B.card : ℝ) = ((Finset.univ.filter (· ∈ B)).card : ℝ) from by rw [h'],
-    Finset.natCast_card_filter]
+  rw [← Finset.natCast_card_filter, Finset.filter_univ_mem]
 
 /-- The pairs `(p, q)` with `p ≠ q` inside `B × B`, as a sigma finset. -/
 lemma pair_filter_eq {n : ℕ} (B : Finset (Fin n)) :

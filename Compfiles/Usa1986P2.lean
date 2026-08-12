@@ -140,9 +140,8 @@ problem usa1986_p2 (s e : Fin 5 → Fin 2 → ℝ)
   classical
   -- There are ten pairs of professors.
   have hcard_pairs : pairs.card = 10 := by
-    have h1 : pairs = Finset.powersetCard 2 (Finset.univ : Finset (Fin 5)) := rfl
-    rw [h1, Finset.card_powersetCard, Finset.card_univ, Fintype.card_fin,
-      show Nat.choose 5 2 = 10 from by decide]
+    rw [pairs, Finset.card_powersetCard, Finset.card_univ, Fintype.card_fin]
+    decide
   by_cases hinj : ∀ A B : PairSet, F hsleep A = F hsleep B → A = B
   swap
   · -- If two different pairs have the same first common moment, then at that

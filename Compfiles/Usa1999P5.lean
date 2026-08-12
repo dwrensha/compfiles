@@ -917,7 +917,7 @@ lemma exists_second_setup {q p r : ℕ} {lq lr : Piece}
           Function.update b₃ t (some Piece.S) (p + 3) = some Piece.S
         rw [Function.update_of_ne (by omega : p ≠ t),
           Function.update_of_ne (by omega : p + 1 ≠ t),
-          Function.update_of_ne (by omega : p + 2 ≠ t), show p + 3 = t from by omega]
+          Function.update_of_ne (by omega : p + 2 ≠ t), ← ht1]
         exact ⟨hbp, hb₃ _ (by omega) (by omega) (by omega),
           hb₃ _ (by omega) (by omega) (by omega), Function.update_self _ _ _⟩
       · refine ⟨t, Finset.mem_range.mpr (by omega), ?_⟩
@@ -927,7 +927,7 @@ lemma exists_second_setup {q p r : ℕ} {lq lr : Piece}
           Function.update b₃ t (some Piece.S) (t + 3) = some Piece.S
         rw [Function.update_self, Function.update_of_ne (by omega : t + 1 ≠ t),
           Function.update_of_ne (by omega : t + 2 ≠ t),
-          Function.update_of_ne (by omega : t + 3 ≠ t), show t + 3 = p from by omega]
+          Function.update_of_ne (by omega : t + 3 ≠ t), ht1]
         exact ⟨rfl, hb₃ _ (by omega) (by omega) (by omega),
           hb₃ _ (by omega) (by omega) (by omega), hbp⟩
     exact ⟨hte, hnoThr, hnoSOS, htrap⟩

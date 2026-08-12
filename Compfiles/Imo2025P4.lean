@@ -341,7 +341,7 @@ lemma mem_of_dvd_mem_threeSmallest (hmin : ThreeMinDivisors x d₁ d₂ d₃) (h
   by_cases hcase : d₃ < k
   · by_contra
     simp at hd_mem
-    rcases hd_mem with hd | hd | hd <;> grind [show k ≤ d by exact Nat.le_of_dvd (by lia) hk_dvd]
+    rcases hd_mem with hd | hd | hd <;> grind [Nat.le_of_dvd (by lia) hk_dvd]
   · have hd_dvd_x : d ∣ x := by grind only [List.mem_cons, List.not_mem_nil]
     have hmem := mem_divisors_erase_one_of_dvd_ne_one (dvd_trans hk_dvd hd_dvd_x) hx0 (by lia)
     exact (mem_take_or_gt_of_divisor hx hmem hmin.hdiv).resolve_right hcase

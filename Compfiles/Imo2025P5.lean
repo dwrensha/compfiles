@@ -254,8 +254,7 @@ lemma sum_range_two_mul (f : ℕ → ℝ) (k : ℕ) :
   induction k with
   | zero => simp
   | succ k ih =>
-    rw [Finset.sum_range_succ, ← ih, show 2 * (k + 1) = 2 * k + 1 + 1 from by ring,
-      Finset.sum_range_succ, Finset.sum_range_succ]
+    simp [mul_add, Finset.sum_range_succ, ← ih]
     ring
 
 /-- Cauchy-Schwarz bound: if a sequence vanishes at even indices below `2 * k`, is
@@ -450,7 +449,7 @@ lemma zeros_sum_le {c : ℝ} {x : ℕ → ℝ} (t : ℕ)
   | zero => simp
   | succ t' =>
     have h := (hvalid (2 * t' + 1) (by lia)).2.2 (Nat.odd_iff.mpr (by lia))
-    rw [show 2 * t' + 1 + 1 = 2 * (t' + 1) from by ring] at h
+    rw [add_assoc, ← two_mul, ← mul_add 2] at h
     push_cast at h ⊢
     linarith
 

@@ -2726,7 +2726,7 @@ lemma b_st_props (s t : Int)
                 0 ≤ b.1 ∧ b.1 < n ∧ 0 ≤ b.2 ∧ b.2 < n) :
     BlackPointProps k s t (make_b_point k s t h_bounds) := by
   let p := make_b_point k s t h_bounds
-  have h_pos : 0 < mod_base k := by exact Int.add_pos_of_nonneg_of_pos (sq_nonneg _) (by decide)
+  have h_pos : 0 < mod_base k := Int.add_pos_of_nonneg_of_pos (sq_nonneg _) (by decide)
   have h_coords : (p.1 : ℤ) = (b_st_coords k s t).1 ∧ (p.2 : ℤ) = (b_st_coords k s t).2 := by
     dsimp [p, make_b_point]
     exact ⟨Int.toNat_of_nonneg h_bounds.1, Int.toNat_of_nonneg h_bounds.2.2.1⟩
@@ -2777,26 +2777,24 @@ lemma M_subset_rect (s t : Int) (p : Point n) (hk : 2 ≤ k) :
   · -- x lower: ds + k*dt > 0 and M > 0, so p.1 - xb ≥ 1
     by_contra hc; push Not at hc
     have := Int.lt_add_one_iff.mp hc
-    linarith [mul_nonpos_of_nonneg_of_nonpos hM.le (show (p.1 : ℤ) - ((s-1)+(t-1)*k) ≤ 0 from by linarith)]
+    linarith [mul_nonpos_of_nonneg_of_nonpos hM.le (show (p.1 : ℤ) - ((s-1)+(t-1)*k) ≤ 0 by linarith)]
   · -- x upper: ds + k*dt < M + k*M = M*(k+1)
     by_contra hc; push Not at hc
     have h1 := Int.add_one_le_iff.mpr hc
     have h2 : (t : ℤ) * k - (t - 1) * k = k := by ring
-    have h3 := mul_le_mul_of_nonneg_left (show (k : ℤ)+1 ≤ (p.1 : ℤ)-((s-1)+(t-1)*k) from by linarith) hM.le
+    have h3 := mul_le_mul_of_nonneg_left (show (k : ℤ)+1 ≤ (p.1 : ℤ) - ((s - 1) + (t - 1) * k) by linarith) hM.le
     have h4 : mod_base k + k * mod_base k = mod_base k * (↑k + 1) := by ring
     linarith [hds.2, Int.mul_lt_mul_of_pos_left hdt.2 hk_pos]
   · -- y lower: k*ds - dt > -M
     by_contra hc; push Not at hc
-    have h1 := mul_le_mul_of_nonneg_left (show (p.2 : ℤ) - (s * k - t) ≤ -1 from by
-      linarith [Int.lt_add_one_iff.mp (show (p.2 : ℤ) < s * k - t + 1 by linarith)]) hM.le
-    have h2 : mod_base k * (-1 : ℤ) = -mod_base k := by ring
+    have h1 := mul_le_mul_of_nonneg_left (show (p.2 : ℤ) - (s * k - t) ≤ -1 by clear * - hc; omega) hM.le
     linarith [hy, hdt.2]
   · -- y upper: k*ds - dt < k*M
     by_contra hc; push Not at hc
     have h1 := Int.add_one_le_iff.mpr hc
     have h2 : (s + 1 : ℤ) * k - s * k = k := by ring
-    have h3 := mul_le_mul_of_nonneg_left (show (k : ℤ) ≤ (p.2 : ℤ)-(s*k-t) from by linarith) hM.le
-    have h4 : k * mod_base k = mod_base k * k := by ring
+    have h3 := mul_le_mul_of_nonneg_left (show (k : ℤ) ≤ (p.2 : ℤ) - (s * k - t) by linarith) hM.le
+    clear * - h3 hds hdt hk_pos
     linarith [Int.mul_lt_mul_of_pos_left hds.2 hk_pos, hdt.1]
 
 lemma rect_subset_M (s t : Int) (p : Point n)
@@ -3194,7 +3192,7 @@ lemma unique_col_all_black (k : ℕ) (hk : 2 ≤ k) :
   have h_step1 : (p1.1 : ℤ) + k * p2.2 + k + 1 = p1.1 + C := by dsimp [C]; ring
   have h_step2 : (p2.1 : ℤ) + k * p2.2 + k + 1 = p2.1 + C := by dsimp [C]; ring
   rw [h_step1, h_step2] at h_equiv
-  have h_x_equiv : (p1.1 : ℤ) ≡ p2.1 [ZMOD M] := by exact Int.ModEq.add_right_cancel' C h_equiv
+  have h_x_equiv : (p1.1 : ℤ) ≡ p2.1 [ZMOD M] := Int.ModEq.add_right_cancel' C h_equiv
   have h_x_eq : p1.1 = p2.1 := eq_of_modEq_fin hk h_x_equiv
   ext
   · rw [h_x_eq]

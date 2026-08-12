@@ -216,7 +216,7 @@ private lemma period_shift (q : ℕ → Bool) (hq : ∀ i, q (i + 4) = q i) (i k
   induction k with
   | zero => simp
   | succ k ih =>
-    rw [show i + 4 * (k + 1) = i + 4 * k + 4 from by omega, hq (i + 4 * k), ih]
+    rw [Nat.mul_add, mul_one, ← add_assoc, hq (i + 4 * k), ih]
 
 private lemma card_filter_range_four_mul (q : ℕ → Bool) (hq : ∀ i, q (i + 4) = q i) (k : ℕ) :
     ((Finset.range (4 * k)).filter fun i => q i = true).card =
@@ -241,7 +241,7 @@ private lemma card_filter_range_four_mul (q : ℕ → Bool) (hq : ∀ i, q (i + 
       intro i _
       simp only [Function.comp_apply, addLeftEmbedding_apply, Nat.add_comm (4 * k) i,
         period_shift q hq i k]
-    rw [show 4 * (k + 1) = 4 * k + 4 from by omega, Finset.range_add, Finset.filter_union,
+    rw [mul_add, mul_one, Finset.range_add, Finset.filter_union,
       Finset.card_union_of_disjoint hdisj, ih, hmap, Nat.succ_mul]
 
 /-- Count of a periodic (period 4) predicate over `Finset.range (4 * k + r)`. -/
@@ -290,14 +290,11 @@ lemma card_range_modeq (n : ℕ) :
   | zero => decide
   | one => decide
   | more n ih0 _ =>
-    have hmod : (n + 2) % 2 = n % 2 := Nat.add_mod_right n 2
-    have hn1 : ¬ ((n + 1) % 2 = n % 2) := by omega
     have hnin : n ∉ (Finset.range n).filter fun i => i % 2 = n % 2 :=
       fun h => Finset.notMem_range_self (Finset.mem_filter.1 h).1
-    rw [hmod, show n + 2 = (n + 1) + 1 from by omega, Finset.range_add_one, Finset.range_add_one,
-      Finset.filter_insert, Finset.filter_insert, if_neg hn1, if_pos rfl,
-      Finset.card_insert_of_notMem hnin, ih0]
-    omega
+    rw [Nat.add_mod_right, Finset.range_add_one, Finset.range_add_one,
+      Finset.filter_insert, Finset.filter_insert, if_neg (by lia), if_pos rfl,
+      Finset.card_insert_of_notMem hnin, ih0, Nat.add_div_right n (Nat.zero_lt_succ _)]
 
 end Count
 
@@ -830,7 +827,7 @@ lemma kernel_of_reduction {n : ℕ} (hn : 0 < n) (hn2 : 2 ≤ n) (v S : Moves n)
 times is one of the eight span elements. -/
 lemma kernel_eq_span {n : ℕ} (hn : 0 < n) {v : Moves n}
     (hv : applyMoves v = fun _ => false) : ∃ ε : Bool × Bool × Bool, v = sp n ε := by
-  rcases (show n = 1 ∨ 2 ≤ n from by omega) with rfl | hn2
+  rcases (show n = 1 ∨ 2 ≤ n by omega) with rfl | hn2
   · -- n = 1: direct case analysis on the three line-values
     set z : Fin 1 := ⟨0, by omega⟩ with hzdef
     have hzv : z.val = 0 := rfl

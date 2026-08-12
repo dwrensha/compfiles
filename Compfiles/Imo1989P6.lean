@@ -172,7 +172,7 @@ def transform_A_to_B [NeZero n] : (A n) → (B n) := fun x ↦ by
       grind
     and_intros
     · contrapose! ndiff
-      replace ndiff : k = 1 := by exact SetLike.coe_eq_coe.mp ndiff
+      replace ndiff : k = 1 := SetLike.coe_eq_coe.mp ndiff
       rw [show x_1 = (x.val 1) by rfl]
       rw [show x_k = (x.val 1) by rw [← ndiff]; unfold k; simp]
       simp

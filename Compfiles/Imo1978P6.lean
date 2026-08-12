@@ -119,7 +119,7 @@ theorem induction_step [NeZero N] (h : ∀ (j i k), C i = C j → C j = C k → 
         have := Nat.mul_div_le (Δ'.card + (N - Cdone.card) - 1) (N - Cdone.card)
         rw [Nat.le_sub_iff_add_le, ← Nat.sub_le_iff_le_add, Nat.sub_add_comm] at this
         · exact this
-        · suffices 1 ≤ (Δ'.card + (N - Cdone.card) - 1) / (N - Cdone.card) by exact Nat.le_mul_of_pos_right _ this
+        · suffices 1 ≤ (Δ'.card + (N - Cdone.card) - 1) / (N - Cdone.card) from Nat.le_mul_of_pos_right _ this
           rw [← Nat.div_self NsCdpos]
           apply Nat.div_le_div_right
           rw [Nat.div_self NsCdpos]
@@ -247,7 +247,7 @@ theorem compute_finite_induction [NeZero N] (hC : ∀ (j i k), C i = C j → C j
       rw [h]
       simp
     apply induction_end C (compute_k N) hcom
-    suffices ∀ n ≤ N, motive' C n (compute_k n) by exact this N le_rfl
+    suffices ∀ n ≤ N, motive' C n (compute_k n) from this N le_rfl
     intro n
     induction n with
     | zero =>

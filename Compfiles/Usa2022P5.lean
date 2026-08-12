@@ -344,8 +344,7 @@ lemma gval_step_corrector (x : Fin 2022 → ℝ) {j m : ℕ}
     apply testBit_cval_eq_false_of_ge hm1'
     rw [hmlm]
     omega
-  rw [if_testBit_false hbit1, if_testBit_false hbit2, if_pos hjm,
-    if_pos (show j = lvl (m + 1) - 1 from by rw [hmlm]; exact hjm), zero_add, zero_add]
+  rw [if_testBit_false hbit1, if_testBit_false hbit2, hmlm, if_pos hjm, if_pos hjm, zero_add, zero_add]
   have hcv : cval (m + 1) + 1 = cval m := by
     have e : cval (m + 1) = 2 ^ lvl m - 1 - (m + 1) := by
       show 2 ^ lvl (m + 1) - 1 - (m + 1) = 2 ^ lvl m - 1 - (m + 1)

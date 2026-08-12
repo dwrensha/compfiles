@@ -161,14 +161,12 @@ lemma sum_pairCount_sq (n : ℕ) :
     rw [pairCount_eq_of_le (show i ≤ n by omega)]
   have h4 : ∑ r ∈ Finset.Ico (n + 1) (2 * n + 1), (pairCount n r) ^ 2 =
       ∑ i ∈ Finset.range n, (i + 1) ^ 2 := by
-    rw [Finset.sum_Ico_eq_sum_range, show 2 * n + 1 - (n + 1) = n from by omega,
-      ← Finset.sum_range_reflect (fun i => (i + 1) ^ 2) n]
-    refine Finset.sum_congr rfl ?_
-    intro i hi
+    rw [Finset.sum_Ico_eq_sum_range, ← Finset.sum_range_reflect (fun i => (i + 1) ^ 2) n]
+    refine Finset.sum_congr (by rw [two_mul, add_assoc, Nat.add_sub_cancel]) fun i hi => ?_
     simp only [Finset.mem_range] at hi
-    rw [pairCount_symm (r := n + 1 + i) (show n + 1 + i ≤ 2 * n by omega),
-      show 2 * n - (n + 1 + i) = n - 1 - i from by omega,
-      pairCount_eq_of_le (r := n - 1 - i) (show n - 1 - i ≤ n by omega)]
+    rw [pairCount_symm (by omega),
+      Nat.sub_add_eq, Nat.sub_add_eq, two_mul, Nat.add_sub_cancel,
+      pairCount_eq_of_le (by rw [Nat.sub_sub]; exact Nat.sub_le _ _)]
   rw [h1, h2, h3, h4, pairCount_eq_of_le (le_refl n), Finset.sum_range_succ']
   ring
 

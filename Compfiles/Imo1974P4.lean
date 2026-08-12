@@ -118,7 +118,7 @@ lemma Rect.one_le_whiteCount (R : Rect) (hh : 1 ≤ R.h) (hw : 1 ≤ R.w)
     (hbal : R.whiteCount = R.blackCount) : 1 ≤ R.whiteCount := by
   have hcard := R.card_cells hh hw
   have hsum := R.whiteCount_add_blackCount
-  have hm : 1 ≤ R.h * R.w := by exact Nat.mul_le_mul hh hw
+  have hm : 1 ≤ R.h * R.w := Nat.mul_le_mul hh hw
   omega
 
 /-- A finite set of `k` distinct positive integers has sum at least

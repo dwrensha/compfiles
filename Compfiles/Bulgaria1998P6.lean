@@ -429,7 +429,7 @@ lemma lemma_1
   replace hs : 0 < s := Int.natCast_pos.mp hs
   replace ht : 0 < t := Int.natCast_pos.mp ht
   replace hy : 0 < u := Int.natCast_pos.mp hu
-  have h' : s ^ 4 = t ^ 4 + u ^ 2 := by exact Int.ofNat_inj.mp h
+  have h' : s ^ 4 = t ^ 4 + u ^ 2 := Int.ofNat_inj.mp h
   exact lemma_1' s t u hs ht hy h'
 
 snip end

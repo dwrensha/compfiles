@@ -32,15 +32,12 @@ window `c i, c (i+1), …, c (i+m)` collapses to its first term `c i`. -/
 lemma telescope {R : Type*} [CommMonoid R] (c : ℕ → R)
     (hc : ∀ j, c j * c (j + 1) = c j) :
     ∀ m i, ∏ x ∈ Finset.range (m + 1), c (i + x) = c i := by
-  intro m
+  intro m i
   induction m with
-  | zero => intro i; simp
+  | zero => simp
   | succ m ih =>
-    intro i
-    rw [Finset.prod_range_succ, Finset.prod_range_succ, mul_assoc,
-        show i + (m + 1) = (i + m) + 1 from by ring, hc (i + m),
-        ← Finset.prod_range_succ]
-    exact ih i
+    rwa [Finset.prod_range_succ, Finset.prod_range_succ, mul_assoc,
+        ← add_assoc, hc (i + m), ← Finset.prod_range_succ]
 
 /-- If the relation `c j * c (j+1) = c j` holds and `c` is periodic with period
 `k ≥ 1`, then `c` is constant: `c i = c (i+1)` for all `i`. -/

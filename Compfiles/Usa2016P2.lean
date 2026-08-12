@@ -103,7 +103,7 @@ lemma sum_range_period_shift {q : ℕ} {F : ℕ → ℕ} (hF : ∀ j, F (j + q) 
   | succ b ih =>
     have hG : ∀ j, F (j + q + 1) = F (j + 1) := by
       intro j
-      rw [show j + q + 1 = j + 1 + q from by omega, hF (j + 1)]
+      rw [Nat.add_right_comm, hF (j + 1)]
     calc ∑ i ∈ Finset.range q, F (i + (b + 1))
         = ∑ i ∈ Finset.range q, (fun j => F (j + 1)) (i + b) := by
           apply Finset.sum_congr rfl
@@ -185,7 +185,7 @@ lemma sum_mod_le_sum_add_mod (k n q : ℕ) (hq : 0 < q) :
   have hF1 : ∀ j, (j + q) % q = j % q := fun j => Nat.add_mod_right j q
   have hF2 : ∀ j, (j + q + n) % q = (j + n) % q := by
     intro j
-    rw [show j + q + n = j + n + q from by omega, Nat.add_mod_right]
+    rw [Nat.add_right_comm, Nat.add_mod_right]
   have hmod_self : ∀ b : ℕ, b ≤ q →
       ∑ i ∈ Finset.range b, i % q = ∑ i ∈ Finset.range b, i := by
     intro b hb

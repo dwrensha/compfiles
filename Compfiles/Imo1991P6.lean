@@ -109,7 +109,7 @@ theorem one_sub_fract_sqrt_two_mul_gt (k : ℕ) (kpos : 0 < k) : 1 - Int.fract (
   have : 0 ≤ (y:ℝ) := by positivity
 
   have h_diff : ((y:ℝ) + 1 - x) * ((y:ℝ) + 1 + x) = (y + 1) ^ 2 - 2 * k ^ 2 := by
-    rw [show 2 * k ^ 2 = x ^ 2 from by unfold x; simp [mul_pow]]
+    rw [show 2 * k ^ 2 = x ^ 2 by unfold x; simp [mul_pow]]
     rw [mul_comm, sq_sub_sq]
 
   have h_diff_pos : (y + 1) ^ 2 - 2 * (k:ℤ) ^ 2 ≥ 1 := by
