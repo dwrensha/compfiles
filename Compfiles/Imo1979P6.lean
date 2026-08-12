@@ -197,7 +197,7 @@ def isTerminalWalk_length_cons_equiv {V : Type} {G : SimpleGraph V} {u t : V} (m
       subst m n
       simp only [Walk.take_append, Walk.drop_append_of_length_eq, Sigma.mk.injEq,
         Walk.append_getVert, true_and]
-      congr! 1
+      congr 1
       · rw [Walk.append_getVert]
       · rw [Walk.append_getVert]
       · congr! 1
@@ -227,7 +227,7 @@ theorem a_b_recurrence_1 (n : ℕ) (npos : 0 < n) : a (n+2) = 2 * a n + 2 * b n 
     _ = ∑ v ∈ {A,C,G}, Fintype.card {w : Octagon.Walk A v // E ∉ w.support ∧ w.length = 2} * Fintype.card {w : Octagon.Walk v E // isTerminalWalk w ∧ w.length = n} := by
       rw [Fintype.card_eq.mpr (Nonempty.intro (isTerminalWalk_length_cons_equiv _ _ npos))]
       rw [Fintype.card_sigma]
-      simp_rw [Fintype.card_prod]
+      simp only [Fintype.card_prod]
       rw [eq_comm, Finset.sum_subset]
       · simp
       · intro _ _ _
@@ -315,9 +315,7 @@ theorem a_odd (n : ℕ) (npos : 0 < n) : a (2*n-1) = 0 := by
 snip end
 
 
-problem imo1979_p6 (n : ℕ) (npos : 0 < n) : a (2*n-1) = 0 ∧ a (2*n) = ((2+√2)^(n-1) - (2-√2)^(n-1)) / √2 := by
-  and_intros
-  · exact a_odd n npos
-  · exact a_even n npos
+problem imo1979_p6 (n : ℕ) (npos : 0 < n) : a (2*n-1) = 0 ∧ a (2*n) = ((2+√2)^(n-1) - (2-√2)^(n-1)) / √2 :=
+  ⟨a_odd n npos, a_even n npos⟩
 
 end Imo1979P6

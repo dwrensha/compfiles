@@ -24,7 +24,7 @@ Show that ac+bd is a composite number.
 
 namespace Usa2015P5
 
-variable { a b c d e p : ℕ }
+variable { a b c d e : ℕ }
     (ha : 0 < a) (hb : 0 < b) (hc : 0 < c) (hd : 0 < d) (he : 0 < e)
     (habe : a ^ 4 + b ^ 4 = e ^ 5)
     (hcde : c ^ 4 + d ^ 4 = e ^ 5)

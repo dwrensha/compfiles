@@ -120,7 +120,7 @@ problem imo2001_p3
   have key := (card_union_le _ _).trans (add_le_add cB cG) |>.trans_lt
     (show _ < #(@univ (Girl × Boy) _) by simp [← hcard_boy, ← hcard_girl])
   obtain ⟨⟨i, j⟩, -, hij⟩ := exists_mem_notMem_of_card_lt_card key
-  simp_rw [mem_union, mem_map, mem_filter, mem_univ, Function.Embedding.coeFn_mk, Prod.exists,
+  simp only [mem_union, mem_map, mem_filter, mem_univ, Function.Embedding.coeFn_mk, Prod.exists,
     Prod.swap_prod_mk, Prod.mk.injEq, existsAndEq, true_and, and_true, not_or, not_exists,
     not_and', not_not, mem_inter, and_imp] at hij
   obtain ⟨p, pG, pB⟩ := not_disjoint_iff.mp (G_inter_B i j)

@@ -94,6 +94,9 @@ def Coin.flip : Coin → Coin
 lemma Coin.flip_eq_iff (c c' : Coin) : c.flip = c' ↔ c ≠ c' := by
   cases c <;> cases c' <;> decide
 
+lemma Coin.flip_eq_iff' (c c' : Coin) : c = c'.flip ↔ c ≠ c' := by
+  rw [ne_comm, ← Coin.flip_eq_iff, eq_comm]
+
 def isValidRow (l : List Coin) := 2 * (l.count Coin.A) = l.length
 
 universe u
@@ -707,36 +710,20 @@ lemma blocks_semi_inj_helper {a b: List (List Coin)}
         rw [hmps, hnqt, h₁, h₂]
       rw [List.isChain_cons] at ha₃ hb₃
       have hmsns' : ms = [] ↔ ns = [] := by
-        apply And.right at hab
-        constructor <;> intro h' <;> rw [h', List.map_nil] at hab
-        · symm at hab
-          rw [List.map_eq_nil_iff] at hab
-          exact hab
-        · rw [List.map_eq_nil_iff] at hab
-          exact hab
+        constructor <;> intro h' <;> simpa [h'] using hab.right
       have hms' : ∀ {h' : ms ≠ []}, (ms.head h').head? = s.flip := by
         intro h'
         rcases ha₃.left (ms.head h') (List.head_mem_head? h') with ⟨hm', hms'', h''⟩
         rw [beq_eq_false_iff_ne, ← Coin.flip_eq_iff] at h''
-        simp only [hmps] at h''
-        rw [List.getLast_replicate] at h''
-        symm at h''
-        rw [List.head_eq_iff_head?_eq_some] at h''
-        exact h''
+        simpa only [hmps, List.getLast_replicate, List.head_eq_iff_head?_eq_some] using h''.symm
       have hns' : ∀ {h' : ns ≠ []}, (ns.head h').head? = t.flip := by
         intro h'
         rcases hb₃.left (ns.head h') (List.head_mem_head? h') with ⟨hn', hns'', h''⟩
         rw [beq_eq_false_iff_ne, ← Coin.flip_eq_iff] at h''
-        simp only [hnqt] at h''
-        rw [List.getLast_replicate] at h''
-        symm at h''
-        rw [List.head_eq_iff_head?_eq_some] at h''
-        exact h''
+        simpa only [hnqt, List.getLast_replicate, List.head_eq_iff_head?_eq_some] using h''.symm
       have hmsns : (ms.head?.bind fun l' ↦ l'.head?) = (ns.head?.bind fun l' ↦ l'.head?) := by
         by_cases! h' : ms = []
-        · rw [h']
-          rw [hmsns'] at h'
-          rw [h']
+        · rw [h', hmsns'.mp h']
         · rw [List.head?_eq_some_head h', List.head?_eq_some_head (hmsns'.ne.mp h')]
           rw [Option.bind_some, Option.bind_some]
           rw [hms', hns', h₁]
@@ -932,18 +919,13 @@ lemma List.lt_alternateSum_of_nat_mem (l : List ℕ) (x : ℕ) (h : x ∈ l)
         rcases h4 with ⟨a', b, c, d, habcd⟩
         rw [List.cons_eq_cons] at habcd
         rw [habcd.right] at ⊢ h hl
-        repeat rw [List.alternateSum]
-        rw [Bool.not_true, Bool.not_false, Bool.not_true, Bool.not_false]
-        rw [if_pos rfl, if_pos rfl, if_pos rfl, if_pos rfl]
-        repeat rw [if_neg Bool.false_eq_true_eq_False]
-        abel_nf
-        rw [lt_max_iff]
-        simp at h
         have ha := hl a (by simp)
         have hb := hl b (by simp)
         have hc := hl c (by simp)
         have hd := hl d (by simp)
-        rcases h with h|h|h|h <;> lia
+        simp only [alternateSum]
+        simp at h
+        lia
       · rw [List.mem_cons] at h
         rw [List.length_cons] at h4 hl'
         have hl'' : ∀ x ∈ as, 0 < x := by
@@ -1013,9 +995,7 @@ lemma Row.blocks_eq_iff {n : ℕ} [inst : NeZero n] (c : Row n) :
     constructor
     · intro h'
       contrapose! h'
-      rw [and_iff_right h']
-      symm
-      rw [← Coin.flip_eq_iff _ _]
+      rw [and_iff_right h',  ← Coin.flip_eq_iff']
     · intro h' h''
       lia
   · rintro ⟨coin, h'⟩
@@ -1034,10 +1014,7 @@ lemma Row.blocks_eq_iff {n : ℕ} [inst : NeZero n] (c : Row n) :
           rw [h' ⟨i, hi⟩]
           lia
         · rw [dif_pos (by lia), if_neg (by lia), if_pos (by lia), Option.some_inj]
-          symm
-          rw [Coin.flip_eq_iff]
-          symm
-          rw [ne_eq, (h' ⟨i, hi⟩).not]
+          rw [Coin.flip_eq_iff', ne_eq, h' ⟨i, hi⟩]
           lia
       · rw [dif_neg (by lia), if_neg (by lia), if_neg (by lia)]
     have h' : ∀ x ∈ (List.replicate n coin).getLast?, ∀ y ∈ (List.replicate n coin.flip).head?, (x == y) = false := by
@@ -1110,16 +1087,12 @@ lemma List.blocks_drop_take {α : Type u} [DecidableEq α] (l : List α) (p q : 
 
 lemma List.blocks_append {α : Type u} [DecidableEq α] {a b : List α} (hab : ∀ x ∈ a.getLast?, ∀ y ∈ b.head?, (x == y) = false)
   : List.blocks (a ++ b) = List.blocks a ++ List.blocks b := by
-    rw [List.blocks, List.segments, List.splitBy_append hab]
-    rw [List.blocks, List.blocks, List.segments, List.segments, List.map_append]
+    simp only [List.blocks, List.segments, List.splitBy_append hab, List.map_append]
 
 lemma List.length_blocks_append_lt_of {α : Type u} [DecidableEq α] {a b : List α} (hab : ∃ x ∈ a.getLast?, ∃ y ∈ b.head?, (x == y) = true)
   : (List.blocks (a ++ b)).length < (List.blocks a).length + (List.blocks b).length := by
-    rw [List.blocks, List.length_map, List.segments, List.splitBy_append' hab]
-    rw [List.length_append, List.length_append, List.length_singleton]
-    rw [List.length_dropLast, List.length_tail]
-    rw [List.blocks, List.length_map, List.segments]
-    rw [List.blocks, List.length_map, List.segments]
+    simp only [blocks, segments, List.splitBy_append' hab, List.length_map, List.length_append,
+      List.length_dropLast, List.length_singleton, List.length_tail]
     rcases hab with ⟨p, hp, q, hq, hpq⟩
     have ha : a ≠ [] := by
       contrapose! hp
@@ -1245,8 +1218,7 @@ lemma List.some_get_eq_head?_get?_segments_blockIndex {α : Type u} [DecidableEq
       use (blockIndex l k + 1)
       constructorm* _ ∧ _
       · lia
-      · rw [List.length_flatten, List.map_take] at hi
-        exact hi
+      · rwa [List.length_flatten, List.map_take] at hi
       · lia
     have h_right : (List.take (blockIndex l k) (segments l)).flatten.length ≤ ↑k := by
       set i := blockIndex l k with hi
@@ -1331,8 +1303,7 @@ lemma List.head?_get?_segments_blockIndex_ne_of {α : Type u} [DecidableEq α] (
     rw [List.get_eq_getElem] at hnia hnib
     simp at hnia hnib
     simp [hab] at hnib
-    simp [hnia, hnib] at h'
-    exact h'
+    simpa [hnia, hnib] using h'
 
 lemma List.chainLeft_eq {α : Type u} [DecidableEq α] (l : List α) (k : Fin l.length)
   : List.chainLeft l k = (List.take (List.blockIndex l k) (List.blocks l)).sum := by
@@ -2117,9 +2088,8 @@ problem imo2022_p1 : {(n, k) | ∃ hk1 : 1 ≤ k, ∃ hkn : k ≤ 2 * n, ∀ c :
       intro i
       have h_blocks'' : ∀ x ∈ blocks, 0 < x := by
         intro x hx
-        rw [h_blocks] at hx
-        simp at hx
-        rcases hx with rfl | rfl | rfl <;> lia
+        simp [h_blocks] at hx
+        lia
       have h_fixed : ((Row.operationOneBased hk1 hkn)^[i] c).blocks = blocks := by
         apply Row.blocks_operationOneBased_iterate_eq_blocks_of hk1 hkn
         · rw [hc]

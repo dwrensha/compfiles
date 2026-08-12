@@ -243,19 +243,19 @@ lemma core_pigeonhole {k : ℕ} (hk : 1 ≤ k) {s : Finset ℝ} (hscard : s.card
     push Not
     exact fun _ => Finset.notMem_erase i1 _
   have hfac1 : (∏ r ∈ s.erase i1, (X - C r)) = (X - C i2) * R := by
-    have h : s.erase i1 = insert i2 u := by
+    have h : insert i2 u = s.erase i1 := by
       rw [hu]
-      exact (Finset.insert_erase (Finset.mem_erase.mpr ⟨hne.symm, hi2⟩)).symm
-    rw [h, hR, Finset.prod_insert hi2u]
+      exact Finset.insert_erase (Finset.mem_erase.mpr ⟨hne.symm, hi2⟩)
+    rw [← h, hR, Finset.prod_insert hi2u]
   have hfac2 : (∏ r ∈ s.erase i2, (X - C r)) = (X - C i1) * R := by
-    have h1 : s.erase i2 = insert i1 ((s.erase i2).erase i1) :=
-      (Finset.insert_erase (Finset.mem_erase.mpr ⟨hne, hi1⟩)).symm
+    have h1 : insert i1 ((s.erase i2).erase i1) = s.erase i2 :=
+      Finset.insert_erase (Finset.mem_erase.mpr ⟨hne, hi1⟩)
     have h2 : (s.erase i2).erase i1 = u := by
       rw [hu]
       ext x
       simp only [Finset.mem_erase]
       tauto
-    rw [h1, h2, hR, Finset.prod_insert hi1u]
+    rw [← h1, h2, hR, Finset.prod_insert hi1u]
   -- The vanishing-coefficient equations: `coeff t` of `(X - c) * R` is
   -- `R.coeff (t - 1) - c * R.coeff t`.
   have hcoeff : ∀ c : ℝ, ∀ m : ℕ, 1 ≤ m →

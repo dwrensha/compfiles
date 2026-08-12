@@ -52,25 +52,19 @@ lemma solitary_implies_has_one {n : ℕ} (h : is_solitary n) : has_digit_one n :
 
 lemma one_is_solitary : is_solitary 1 := by
   refine ⟨by decide, ?_⟩
-  intro a b hab
-  cases a with
-  | zero =>
-    right
-    have hb : b = 1 := by omega
-    subst hb
+  rintro (_ | _ | a) b hab
+  · right
+    rw [zero_add] at hab
+    subst hab
     unfold has_digit_one
     change 1 ∈ [1]
     simp
-  | succ a' =>
-    cases a' with
-    | zero =>
-      left
-      unfold has_digit_one
-      change 1 ∈ [1]
-      simp
-    | succ =>
-      exfalso
-      omega
+  · left
+    unfold has_digit_one
+    change 1 ∈ [1]
+    simp
+  · exfalso
+    omega
 
 inductive IsSolitaryDigits : List ℕ → Prop
   | one_base (l : List ℕ) (h : ∀ x ∈ l, x = 0 ∨ x = 2) : IsSolitaryDigits (1 :: l)
@@ -208,12 +202,7 @@ snip end
 
 problem usa2026_p4 :
     (Finset.filter is_solitary (Finset.Ico 1 (10^2026))).card = solution := by
-  have h_equiv : Finset.filter is_solitary (Finset.Ico 1 (10^2026)) =
-                 Finset.filter is_solitary_form (Finset.Ico 1 (10^2026)) := by
-    apply Finset.filter_congr
-    intro n _
-    exact solitary_iff_form n
-  rw [h_equiv]
+  simp only [solitary_iff_form]
   exact count_solitary_form
 
 end Usa2026P4

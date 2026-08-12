@@ -42,7 +42,7 @@ lemma telescope {R : Type*} [CommMonoid R] (c : ℕ → R)
 /-- If the relation `c j * c (j+1) = c j` holds and `c` is periodic with period
 `k ≥ 1`, then `c` is constant: `c i = c (i+1)` for all `i`. -/
 lemma const_of_cyclic {R : Type*} [CommMonoid R] (c : ℕ → R) (k : ℕ) (hk : 1 ≤ k)
-    (hc : ∀ j, c j * c (j + 1) = c j) (hper : ∀ i, c (i + k) = c i) :
+    (hc : ∀ j, c j * c (j + 1) = c j) (hper : ∀ i, c i = c (i + k)) :
     ∀ i, c i = c (i + 1) := by
   obtain ⟨k', rfl⟩ : ∃ k', k = k' + 1 := ⟨k - 1, by lia⟩
   intro i
@@ -53,10 +53,9 @@ lemma const_of_cyclic {R : Type*} [CommMonoid R] (c : ℕ → R) (k : ℕ) (hk :
   congr 1
   · apply Finset.prod_congr rfl
     intro x _
-    congr 1
-    ring
-  · rw [Nat.add_zero, show i + 1 + k' = i + (k' + 1) from by ring]
-    exact (hper i).symm
+    rw [add_comm x, add_assoc]
+  · rw [Nat.add_zero, show i + 1 + k' = i + (k' + 1) by ring]
+    exact hper i
 
 snip end
 
@@ -95,11 +94,7 @@ problem imo2009_p1 (n k : ℕ) (_hn : 0 < n) (hk : 2 ≤ k)
     push_cast at hz
     simp only [hc_def]
     linear_combination hz
-  have hper : ∀ i, c (i + k) = c i := by
-    intro i
-    simp only [hc_def]
-    congr 2
-    exact Fin.ext (Nat.add_mod_right i k)
+  have hper (i : ℕ) : c i = c (i + k) := by simp only [hc_def, Nat.add_mod_right]
   -- Hence `c` is constant; in particular the first two terms agree mod `n`.
   have key : c 0 = c 1 := const_of_cyclic c k hk0 hc hper 0
   simp only [hc_def] at key

@@ -346,8 +346,7 @@ lemma natDegree_le_two (P : Polynomial ℝ) (hP0 : P ≠ 0) (hPhi : PhiPoly P = 
   have hD : ∀ x : ℂ, x ≠ -h → Qfun Pc x h (-h) = 0 := by
     intro x hx
     have hxy : 2 * x * h ≠ 1 := by
-      intro hbad
-      apply hx
+      contrapose! hx with hbad
       have h2 : x * (2 * h) = 1 := by linear_combination hbad
       have h3 : (-h) * (2 * h) = 1 := by linear_combination -2 * hh
       rw [eq_inv_of_mul_eq_one_left h2]

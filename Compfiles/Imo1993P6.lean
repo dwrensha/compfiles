@@ -415,7 +415,6 @@ lemma glue {n : ℕ} [NeZero n] (t : ℕ) :
   | zero =>
     apply Prod.ext
     · funext i
-      show true = z2b 1
       rfl
     · rfl
   | succ t ih =>
