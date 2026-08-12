@@ -318,6 +318,7 @@ theorem main_aux (n : ℕ) : 1 ≤ n → ∀ a : ℕ → ℕ, (∀ i ≤ n, a i 
           omega
     · -- Inductive step, `n ≥ 2`.
       have hn2 : 2 ≤ n := by omega
+      have hn3 : n - 1 = n - 2 + 1 := by omega
       have ha1 : a 1 ≤ 1 := ha 1 (by omega)
       by_cases hcase : a 1 = 1
       · -- Case 1: `a₁ = 1`.  Then `t^[m] a i ≥ 1` for all `m ≥ 1`, `1 ≤ i ≤ n`.
@@ -343,11 +344,10 @@ theorem main_aux (n : ℕ) : 1 ≤ n → ∀ a : ℕ → ℕ, (∀ i ≤ n, a i 
         have IHb : ∀ j ≤ n - 1, t^[n-1-1] (fun j => t a (j+1) - 1) j
             = t^[n-1] (fun j => t a (j+1) - 1) j := IH (n-1) (by omega) (by omega) _ hbvalid
         rcases (by omega : i = 0 ∨ 1 ≤ i) with rfl | hi1
-        · rw [show n - 1 = (n - 2) + 1 from by omega, iter_t_zero a (n-2),
-            show n = (n - 1) + 1 from by omega, iter_t_zero a (n-1)]
+        · rw [hn3, iter_t_zero a (n-2), ← Nat.sub_one_add_one_eq_of_pos hn, iter_t_zero a (n-1)]
         · have h1 : t^[n-2] (fun j => t a (j+1) - 1) (i-1) + 1 = t^[n-1] a i := by
             have e := hcomm (n-2) (i-1) (by omega)
-            rwa [show n - 2 + 1 = n - 1 from by omega, show i - 1 + 1 = i from by omega] at e
+            rwa [← hn3, Nat.sub_one_add_one_eq_of_pos hi1] at e
           have h2 : t^[n-1] (fun j => t a (j+1) - 1) (i-1) + 1 = t^[n] a i := by
             have e := hcomm (n-1) (i-1) (by omega)
             rwa [Nat.sub_one_add_one_eq_of_pos hn, Nat.sub_one_add_one_eq_of_pos hi1] at e
@@ -360,10 +360,9 @@ theorem main_aux (n : ℕ) : 1 ≤ n → ∀ a : ℕ → ℕ, (∀ i ≤ n, a i 
         have ha10 : a 1 = 0 := by omega
         by_cases hall : ∀ i ≤ n, a i = 0
         · -- All terms are zero; the sequence is already stable after one step.
-          have hz : ∀ i' < n + 1, a i' = 0 := fun i' hi' => hall i' (by omega)
+          have hz : ∀ i' < n + 1, a i' = 0 := (hall · <| Nat.le_of_succ_le_succ ·)
           have hz' := iter_eq_zero hz
-          rw [show n - 1 = (n - 2) + 1 from by omega, hz' (n-2) i (by omega),
-            show n = (n - 1) + 1 from by omega, hz' (n-1) i (by omega)]
+          rw [hn3, hz' (n-2) i (by omega), ← Nat.sub_one_add_one_eq_of_pos hn, hz' (n-1) i (by omega)]
         · push Not at hall
           obtain ⟨k0, hk0n, hk0⟩ := hall
           -- Let `k` be the first index with `aₖ ≠ 0`; then `2 ≤ k`.
@@ -411,21 +410,15 @@ theorem main_aux (n : ℕ) : 1 ≤ n → ∀ a : ℕ → ℕ, (∀ i ≤ n, a i 
               omega
             rw [← Finset.card_range k]
             exact Finset.card_le_card sub
-          by_cases hkeq : k = n
+          by_cases hkeq : n = k
           · -- Sub-case `k = n`: only `aₙ ≠ 0`; then `t a = t^[2] a` on `{0, …, n}`.
-            have hnk : n = k := hkeq.symm
-            subst hnk
+            subst hkeq
             have hstep : ∀ i' ≤ n, t a i' = t^[2] a i' := by
               intro i' hi'
-              by_cases hi2 : i' < n
-              · have e1 : t a i' = 0 := hz' 0 i' hi2
-                have e2 : t^[2] a i' = 0 := hz' 1 i' hi2
-                rw [e1, e2]
-              · have hii : n = i' := by omega
-                subst hii
-                have e1 : t a n = n := by
+              rcases hi'.eq_or_lt with rfl | hi2
+              · have e1 : t a i' = i' := by
                   rw [t_def]
-                  have hf : (Finset.range n).filter (fun j => a j ≠ a n) = Finset.range n := by
+                  have hf : (Finset.range i').filter (fun j => a j ≠ a i') = Finset.range i' := by
                     apply Finset.filter_true_of_mem
                     intro j hj
                     rw [Finset.mem_range] at hj
@@ -433,11 +426,11 @@ theorem main_aux (n : ℕ) : 1 ≤ n → ∀ a : ℕ → ℕ, (∀ i ≤ n, a i 
                     rw [e3]
                     exact fun hh => hknz hh.symm
                   rw [hf, Finset.card_range]
-                have e2 : t^[2] a n = n := by
-                  show t (t a) n = n
+                have e2 : t^[2] a i' = i' := by
+                  show t (t a) i' = i'
                   rw [t_def]
-                  have hf : (Finset.range n).filter (fun j => t a j ≠ t a n)
-                      = Finset.range n := by
+                  have hf : (Finset.range i').filter (fun j => t a j ≠ t a i')
+                      = Finset.range i' := by
                     apply Finset.filter_true_of_mem
                     intro j hj
                     rw [Finset.mem_range] at hj
@@ -446,9 +439,11 @@ theorem main_aux (n : ℕ) : 1 ≤ n → ∀ a : ℕ → ℕ, (∀ i ≤ n, a i 
                     omega
                   rw [hf, Finset.card_range]
                 rw [e1, e2]
+              · have e1 : t a i' = 0 := hz' 0 i' hi2
+                have e2 : t^[2] a i' = 0 := hz' 1 i' hi2
+                rw [e1, e2]
             have e1 : t^[n-1] a i = t^[n-2] (t a) i := by
-              rw [show n - 1 = n - 2 + 1 from by omega, Function.iterate_add_apply,
-                Function.iterate_one]
+              rw [hn3, Function.iterate_add_apply, Function.iterate_one]
             rw [e1, ← Nat.sub_add_cancel hn2, Function.iterate_add_apply]
             exact iter_congr (hstep · <| ·.trans hi) (n-2) i le_rfl
           · -- Sub-case `k < n`: shift by `k` and apply the induction hypothesis.
@@ -472,9 +467,8 @@ theorem main_aux (n : ℕ) : 1 ≤ n → ∀ a : ℕ → ℕ, (∀ i ≤ n, a i 
               · have hik2 : k ≤ i' := by omega
                 have h1 : t^[n-k-1] (fun j => t^[2] a (j+k) - k) (i'-k) + k
                     = t^[n-k+1] a i' := by
-                  have e := hcomm (n-k-1) (i'-k) (by omega)
-                  rwa [show n - k - 1 + 2 = n - k + 1 from by omega,
-                    show i' - k + k = i' from by omega] at e
+                  have e := hcomm (n-k-1) (i'-k) (by rwa [Nat.sub_add_cancel hik2])
+                  rwa [← Nat.sub_add_comm (by omega), Nat.add_succ_sub_one, Nat.sub_add_cancel hik2] at e
                 have h2 : t^[n-k] (fun j => t^[2] a (j+k) - k) (i'-k) + k
                     = t^[n-k+1+1] a i' := by
                   have e := hcomm (n-k) (i'-k) (by omega)
@@ -484,8 +478,7 @@ theorem main_aux (n : ℕ) : 1 ≤ n → ∀ a : ℕ → ℕ, (∀ i ≤ n, a i 
                 omega
             have hpers : t^[n-k+1+(k-2)] a i = t^[n-k+1+(k-2)+1] a i :=
               iter_stable_add a hstab (k-2) i hi
-            rwa [show n - k + 1 + (k - 2) = n - 1 from by omega,
-              show n - 1 + 1 = n from by omega] at hpers
+            rwa [Nat.add_right_comm, Nat.sub_add_sub_cancel hkn hk2, ← hn3, Nat.sub_one_add_one_eq_of_pos hn] at hpers
 
 snip end
 
@@ -493,7 +486,7 @@ snip end
 problem usa2003_p3 (n : ℕ) (hn : 0 < n) (a : ℕ → ℕ) (ha : ∀ i ≤ n, a i ≤ i) :
     ∃ k, k < n ∧ ∀ i ≤ n, t^[k] a i = t^[k+1] a i := by
   refine ⟨n - 1, by omega, fun i hi => ?_⟩
-  rw [show n - 1 + 1 = n from by omega]
+  rw [Nat.sub_one_add_one_eq_of_pos hn]
   exact main_aux n hn a ha i hi
 
 end Usa2003P3

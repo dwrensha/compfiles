@@ -157,8 +157,7 @@ theorem linked_to_three : ∀ n : ℕ, ∀ t : ℤ, t = n + 3 → Linked t 3 := 
   intro n
   induction n with
   | zero =>
-    intro t ht
-    rw [show t = 3 from by omega]
+    rintro t rfl
     exact .refl (by norm_num)
   | succ n ih =>
     intro t ht
