@@ -62,7 +62,6 @@ lemma all_equal {n : ℕ} (hn : 1 < n) (f : Fin n → ℕ+)
     (h : Pairwise fun a b ↦ ∃ s : Finset (Fin n), s.Nonempty ∧
       geometric_mean f s = ((f a : ℝ) + f b) / 2) :
     ∃ y, ∀ a, f a = y := by
-  classical
   -- Step 1: divide out the overall gcd; the property is preserved.
   set d := Finset.univ.gcd (fun i => (f i : ℕ)) with hd
   have hd_dvd : ∀ i, d ∣ (f i : ℕ) := fun i => Finset.gcd_dvd (Finset.mem_univ i)

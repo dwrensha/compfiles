@@ -193,7 +193,6 @@ snip end
 problem usa1996_p4 (n : ℕ) :
     Fintype.card {y : Fin (n + 1) → Bool // GoodB y} =
       2 * Fintype.card {x : Fin n → Bool // GoodA x} := by
-  classical
   have h := Fintype.card_congr (seqEquiv n)
   rw [Fintype.card_prod, Fintype.card_bool] at h
   omega

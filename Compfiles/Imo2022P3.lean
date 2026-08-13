@@ -223,7 +223,6 @@ inside any set of smaller numbers. -/
 lemma card_good_le_two {k M : ℕ} (hM : Nat.Prime M) (S : Finset ℕ)
     [DecidablePred (good k M)] (hSM : ∀ q ∈ S, q < M) :
     (S.filter (good k M ·)).card ≤ 2 := by
-  classical
   set f : ℕ → ℕ := fun q ↦ if h : good k M q then h.choose else 0 with hf_def
   have hf : ∀ q ∈ S.filter (good k M ·), M * q = (f q) ^ 2 + f q + k := by
     intro q hq
@@ -520,7 +519,6 @@ lemma validPerm_delPerm {k : ℕ} {S : Finset ℕ} {τ : Equiv.Perm S} {M : S}
 lemma connectedP_delPerm {S : Finset ℕ} {τ : Equiv.Perm S} {M : S}
     {hrM : τ M ≠ M} (hc : ConnectedP τ) :
     ConnectedP (delPerm τ M hrM) := by
-  classical
   set del := delPerm τ M hrM with hdeldef
   have seg : ∀ s : (S.erase M), ∀ L : ℕ,
       (∀ j, 1 ≤ j → j < L → τ^[j] ⟨s.1, Finset.mem_of_mem_erase s.2⟩ ≠ M) →

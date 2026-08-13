@@ -109,7 +109,6 @@ lemma color_ne_zero_iff_eq_one (c : Fin 2) : c ≠ 0 ↔ c = 1 := by
 
 lemma colorCount_zero_add_one (color : Cell N → Fin 2) (p : Equiv.Perm (Fin N)) :
     colorCount color 0 p + colorCount color 1 p = N := by
-  classical
   rw [colorCount, colorCount]
   have h :
       (univ.filter fun r : Fin N => color (r, p r) = 1)
@@ -134,7 +133,6 @@ lemma colorCount_one_le_iff (color : Cell N → Fin 2) (p : Equiv.Perm (Fin N))
 lemma colorCount_swap_le_add_two
     (color : Cell N → Fin 2) (p : Equiv.Perm (Fin N)) (x y : Fin N) :
     colorCount color 0 (p * Equiv.swap x y) ≤ colorCount color 0 p + 2 := by
-  classical
   unfold colorCount
   let s : Finset (Fin N) := univ.filter fun r : Fin N => color (r, p r) = 0
   let t : Finset (Fin N) := univ.filter fun r : Fin N => color (r, (p * Equiv.swap x y) r) = 0
@@ -168,7 +166,6 @@ lemma exists_transversal_with_exact_or_succ_color_count
     (hp : a ≤ colorCount color 0 p)
     (hq : colorCount color 0 q ≤ a + 1) :
     ∃ r : Equiv.Perm (Fin N), colorCount color 0 r = a ∨ colorCount color 0 r = a + 1 := by
-  classical
   let τ : Equiv.Perm (Fin N) := p.symm * q
   have hq' : colorCount color 0 (p * τ) ≤ a + 1 := by
     have hpq : p * (p.symm * q) = q := by
@@ -219,7 +216,6 @@ lemma line_count_le_of_hall_failure
     (good : Cell N → Prop) [DecidablePred good] {k : ℕ} {R : Finset (Fin N)}
     (hfail : (R.biUnion (hallTargets good k)).card < R.card) :
     ((univ : Finset (Fin N)) \ R).card + (neighborCols good R).card ≤ k - 1 := by
-  classical
   have hRne : R.Nonempty := by
     exact Finset.card_pos.mp (by omega)
   have hRcard_le : R.card ≤ N := by
@@ -277,7 +273,6 @@ lemma good_cells_card_le_of_neighbor_line_count
     (good : Cell N → Prop) [DecidablePred good] {k : ℕ} (R : Finset (Fin N))
     (hline : ((univ : Finset (Fin N)) \ R).card + (neighborCols good R).card ≤ k - 1) :
     (univ.filter good).card ≤ (k - 1) * N := by
-  classical
   let outside : Finset (Fin N) := univ \ R
   let cover : Finset (Cell N) :=
     (outside ×ˢ (univ : Finset (Fin N))) ∪
@@ -316,7 +311,6 @@ lemma exists_transversal_with_many_good_cells
     (hcard : (k - 1) * N < (univ.filter good).card) :
     ∃ p : Equiv.Perm (Fin N),
       k ≤ (univ.filter fun r : Fin N => good (r, p r)).card := by
-  classical
   let dummy : Finset (Fin N ⊕ Fin (N - k)) := dummyCols N k
   let t (r : Fin N) : Finset (Fin N ⊕ Fin (N - k)) := hallTargets good k r
   -- If Hall failed, the outside rows plus neighbor columns would cover all good cells.
@@ -398,7 +392,6 @@ lemma exists_intermediate_transversal_of_card_bounds
     (c1 : b ^ 2 + a * b - a ≤ Fintype.card {s // color s = 1}) :
     ∃ p : Equiv.Perm (Fin (a + b + 1)),
       colorCount color 0 p = a ∨ colorCount color 0 p = a + 1 := by
-  classical
   let N := a + b + 1
   -- Convert the statement's cardinality hypotheses into filtered finset counts.
   have haN : a ≤ N := by omega
@@ -457,7 +450,6 @@ lemma exists_cells_of_intermediate_transversal
       (∀ x ∈ A, color x = 0) ∧
       (∀ y ∈ B, color y = 1) ∧
       ∀ x ∈ A ∪ B, ∀ y ∈ A ∪ B, x ≠ y → x.fst ≠ y.fst ∧ x.snd ≠ y.snd := by
-  classical
   let rows0 : Finset (Fin (a + b + 1)) := univ.filter fun r => color (r, p r) = 0
   let rows1 : Finset (Fin (a + b + 1)) := univ.filter fun r => color (r, p r) = 1
   have hsum : rows0.card + rows1.card = a + b + 1 := by

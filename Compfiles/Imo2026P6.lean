@@ -182,7 +182,6 @@ problem imo2026_p6 (a : ℕ → ℕ) (ha : IsValidSeq a) :
   have hfin : ∃ F : Finset (Finset ℕ),
       (∀ M ∈ F, ∃ j, M = (a j).primeFactors) ∧
       (∀ i, ∃ M ∈ F, M ⊆ (a i).primeFactors) := by
-    classical
     have ha0 : 1 < a 0 := ha.1 0
     -- Any two term supports share a prime.
     have hpair : ∀ i j : ℕ, ((a i).primeFactors ∩ (a j).primeFactors).Nonempty := by

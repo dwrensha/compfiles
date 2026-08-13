@@ -67,7 +67,6 @@ lemma fin2_eq_of_ne (u v b : Fin 2) (hu : u ≠ b) (hv : v ≠ b) : u = v := by
 complete graph on 6 vertices contains a monochromatic triangle. -/
 lemma ramsey6 (f : Fin 6 → Fin 6 → Fin 2) (hsym : ∀ i j, f i j = f j i) :
     ∃ i j k : Fin 6, i ≠ j ∧ j ≠ k ∧ k ≠ i ∧ f i j = f j k ∧ f j k = f k i := by
-  classical
   -- Among the 5 edges leaving vertex `0`, at least 3 have the same color `b`.
   have hcard : ((Finset.univ : Finset (Fin 6)).erase 0).card = 5 := by
     rw [Finset.card_erase_of_mem (Finset.mem_univ _), Finset.card_univ,

@@ -101,7 +101,6 @@ lemma eq_of_overdetermined_of_flooded {S : Finset (ℝ × ℝ)} (hS : ¬ Overdet
     (hU₁ : U₁ ⊆ S) (hU₁c : U₁.card = m + 1) (hU₁o : Overdetermined U₁)
     (hU₂ : U₂ ⊆ S) (hU₂c : U₂.card = m + 1) (hU₂o : Overdetermined U₂) :
     U₁ = U₂ := by
-  classical
   obtain ⟨hU₁o2, f, hf0, hfd, hfU⟩ := hU₁o
   obtain ⟨hU₂o2, g, hg0, hgd, hgU⟩ := hU₂o
   -- each `Uᵢ` is `S` with a single point `pᵢ` removed
@@ -178,7 +177,6 @@ lemma eq_of_overdetermined_of_flooded {S : Finset (ℝ × ℝ)} (hS : ¬ Overdet
 lemma card_flooded_subsets {S : Finset (ℝ × ℝ)} {t : ℕ} (ht : 3 ≤ t)
     (hScard : S.card = t) (hS : ¬ Overdetermined S) :
     t - 1 ≤ ((S.powersetCard (t - 1)).filter (fun a => ¬ Overdetermined a)).card := by
-  classical
   have hover : ((S.powersetCard (t - 1)).filter Overdetermined).card ≤ 1 := by
     rw [Finset.card_le_one]
     intro U₁ hU₁ U₂ hU₂
@@ -198,7 +196,6 @@ lemma card_flooded_subsets {S : Finset (ℝ × ℝ)} {t : ℕ} (ht : 3 ≤ t)
 of size `m + 1`. -/
 lemma card_supersets {A U : Finset (ℝ × ℝ)} (hU : U ⊆ A) {m : ℕ} (hUm : U.card = m) :
     ((A.powersetCard (m + 1)).filter (fun T => U ⊆ T)).card ≤ A.card - m := by
-  classical
   have hinj : Set.InjOn (· \ U) (((A.powersetCard (m + 1)).filter (fun T => U ⊆ T)) : Set _) := by
     intro T₁ hT₁ T₂ hT₂ hsd
     simp only [Finset.coe_filter, Set.mem_ofPred_eq, Finset.mem_powersetCard] at hT₁ hT₂
@@ -227,7 +224,6 @@ lemma card_supersets {A U : Finset (ℝ × ℝ)} (hU : U ⊆ A) {m : ℕ} (hUm :
 lemma double_count {A : Finset (ℝ × ℝ)} {m : ℕ} (hm : 2 ≤ m) (_hmn : m < A.card) :
     m * ((A.powersetCard (m + 1)).filter (fun a => ¬ Overdetermined a)).card ≤
     (A.card - m) * ((A.powersetCard m).filter (fun a => ¬ Overdetermined a)).card := by
-  classical
   set Fsucc := (A.powersetCard (m + 1)).filter (fun a => ¬ Overdetermined a) with hFsucc
   set Fm := (A.powersetCard m).filter (fun a => ¬ Overdetermined a) with hFm
   have key : ∀ T ∈ Fsucc, m ≤ (Fm.filter (fun U => U ⊆ T)).card := by
@@ -274,7 +270,6 @@ size `m`, for every `2 ≤ m ≤ A.card`. -/
 lemma flooded_count {A : Finset (ℝ × ℝ)} (hA : ¬ Overdetermined A) :
     ∀ m, 2 ≤ m → m ≤ A.card → Nat.choose (A.card - 1) (m - 1) ≤
       ((A.powersetCard m).filter (fun a => ¬ Overdetermined a)).card := by
-  classical
   intro m h2m hmn
   revert h2m
   induction hmn using Nat.decreasingInduction with
@@ -365,7 +360,6 @@ lemma sum_choose_Icc {n : ℕ} (hn : 2 ≤ n) :
 subsets. -/
 lemma overdetermined_bound {A : Finset (ℝ × ℝ)} (h2 : 2 ≤ A.card) (hA : ¬ Overdetermined A) :
     (A.powerset.filter Overdetermined).card ≤ 2 ^ (A.card - 1) - A.card := by
-  classical
   have heq : A.powerset.filter Overdetermined =
       (Finset.Icc 2 A.card).biUnion (fun m => (A.powersetCard m).filter Overdetermined) := by
     ext T
@@ -406,7 +400,6 @@ lemma overdetermined_bound {A : Finset (ℝ × ℝ)} (h2 : 2 ≤ A.card) (hA : �
 least two. -/
 lemma card_powerset_filter_two_le {α : Type*} [DecidableEq α] (s : Finset α) :
     (s.powerset.filter (fun T => 2 ≤ T.card)).card = 2 ^ s.card - s.card - 1 := by
-  classical
   have hge : s.card + 1 ≤ 2 ^ s.card := two_pow_ge_succ s.card
   have hsplit := Finset.card_filter_add_card_filter_not (s := s.powerset) (fun T => 2 ≤ T.card)
   rw [Finset.card_powerset] at hsplit
@@ -564,7 +557,6 @@ lemma overdetermined_subset_constrSet_iff {n : ℕ} {T : Finset (ℝ × ℝ)}
 /-- The extremal construction has exactly `2 ^ (n - 1) - n` overdetermined subsets. -/
 lemma count_constrSet {n : ℕ} (hn : 2 ≤ n) :
     ((constrSet n).powerset.filter Overdetermined).card = 2 ^ (n - 1) - n := by
-  classical
   have heq : (constrSet n).powerset.filter Overdetermined =
       (tail n).powerset.filter (fun T => 2 ≤ T.card) := by
     ext T
@@ -586,7 +578,6 @@ snip end
 problem usa2020_p5 (n : ℕ) (hn : 2 ≤ n) :
     IsGreatest {k : ℕ | ∃ S : Finset (ℝ × ℝ), S.card = n ∧ ¬ Overdetermined S ∧
       (S.powerset.filter Overdetermined).card = k} (solution n) := by
-  classical
   constructor
   · exact ⟨constrSet n, card_constrSet hn, not_overdetermined_constrSet hn,
       count_constrSet hn⟩

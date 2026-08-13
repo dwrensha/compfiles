@@ -49,7 +49,6 @@ variable {n : ℕ} {a : Fin n → ℤ} {S : Set ℤ}
 on a finset `T` is an integer linear combination of them. -/
 lemma bezout (T : Finset (Fin n)) :
     ∃ c : Fin n → ℤ, ∑ i ∈ T, c i * a i = T.gcd a := by
-  classical
   induction T using Finset.induction_on with
   | empty => exact ⟨0, by simp⟩
   | insert b T hbT ih =>
@@ -219,7 +218,6 @@ lemma even_split (h0 : (0 : ℤ) ∈ S) (ha : ∀ i, a i ∈ S)
     (IH : ∀ U : Finset (Fin n), U ⊂ T → ∀ c : Fin n → ℤ, ∑ i ∈ U, c i * a i ∈ S)
     {c : Fin n → ℤ} {p q : Fin n} (hp : p ∈ T) (hq : q ∈ T) (hpq : p ≠ q)
     (hpe : Even (c p)) : ∑ i ∈ T, c i * a i ∈ S := by
-  classical
   obtain ⟨k, hk⟩ := hpe
   have hpT' : p ∈ T.erase q := Finset.mem_erase.mpr ⟨hpq, hp⟩
   have hqT' : q ∈ T.erase p := Finset.mem_erase.mpr ⟨hpq.symm, hq⟩
@@ -271,7 +269,6 @@ lemma all_linear_comb (h0 : (0 : ℤ) ∈ S) (ha : ∀ i, a i ∈ S)
     (hdiff : ∀ i j, a i - a j ∈ S)
     (hcond : ∀ x y : ℤ, x ∈ S → y ∈ S → x + y ∈ S → x - y ∈ S)
     (T : Finset (Fin n)) (c : Fin n → ℤ) : ∑ i ∈ T, c i * a i ∈ S := by
-  classical
   induction T using Finset.strongInduction generalizing c with
   | H T IH =>
     by_cases hz : ∃ p ∈ T, c p = 0

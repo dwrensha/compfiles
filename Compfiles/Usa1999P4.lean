@@ -62,9 +62,7 @@ snip end
 problem usa1999_p4 (n : ℕ) (hn : 3 < n) (a : Fin n → ℝ)
     (hsum : (n : ℝ) ≤ ∑ i, a i) (hsq : (n : ℝ) ^ 2 ≤ ∑ i, (a i) ^ 2) :
     ∃ i, 2 ≤ a i := by
-  classical
-  by_contra hlt2
-  push Not at hlt2
+  by_contra! hlt2
   -- `P` = indices of the nonnegative entries, `N` = indices of the negative ones.
   set P := Finset.univ.filter fun i ↦ 0 ≤ a i with hP
   set N := Finset.univ.filter fun i ↦ ¬ 0 ≤ a i with hN

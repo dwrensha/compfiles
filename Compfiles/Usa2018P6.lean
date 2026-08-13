@@ -130,7 +130,6 @@ modulo two to the cardinality of the fixed-point subtype. -/
 theorem card_modEq_of_involutive {α : Type*} [Fintype α] [DecidableEq α] (f : α → α)
     (hf : Function.Involutive f) :
     Fintype.card α ≡ Fintype.card {x // f x = x} [MOD 2] := by
-  classical
   have hsplit : Fintype.card α =
       Fintype.card {x // f x = x} + Fintype.card {x // f x ≠ x} := by
     rw [Fintype.card_subtype_compl]
@@ -2384,7 +2383,6 @@ lemma sum_modEq_of_forall {ι : Type*} [DecidableEq ι] (s : Finset ι) (f g : �
 `xₖ/k` are all distinct is odd for every `n ≥ 1`. -/
 problem usa2018_p6 (n : ℕ) (_hn : 1 ≤ n) :
     Odd (Fintype.card {σ : Equiv.Perm (Fin n) // Valid σ}) := by
-  classical
   -- Step 1: inversion is an involution on valid permutations, so the count is
   -- congruent modulo two to the number of valid involutions.
   have step1 : Fintype.card {σ : Equiv.Perm (Fin n) // Valid σ} ≡
@@ -2463,6 +2461,7 @@ problem usa2018_p6 (n : ℕ) (_hn : 1 ≤ n) :
     exact e1.symm
   -- Step 4: the flip is an involution on `W` whose fixed points are the pairs `(σ, 1)`.
   have step4 : Fintype.card (WPairs n) ≡ Fintype.card {σ : Equiv.Perm (Fin n) // IsVertex σ} [MOD 2] := by
+    classical
     let f : WPairs n → WPairs n := fun p =>
       ⟨(conjPerm p.1.1 p.1.2 * p.1.1 * conjPerm p.1.1 p.1.2, newSwitch p.1.1 p.1.2),
         flipPair_mem p.2.1 p.2.2⟩

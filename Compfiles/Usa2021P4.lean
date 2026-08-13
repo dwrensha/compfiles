@@ -403,7 +403,6 @@ theorem constr_gcd_unique {k : ℕ} {b b'' : Fin k → Bool} {d : ℕ}
 /-- Construction: for `2k` distinct primes `p₁, q₁, …, pₖ, qₖ`, the set of all products
 `r₁ * … * rₖ` with `rᵢ ∈ {pᵢ, qᵢ}` is valid and has cardinality `2ᵏ`. -/
 theorem exists_isValid (k : ℕ) : ∃ S : Finset ℕ, IsValid S ∧ S.Nonempty ∧ S.card = 2 ^ k := by
-  classical
   refine ⟨Finset.univ.image (fun b : Fin k → Bool => ∏ i : Fin k, constr_r k b i),
     ⟨?_, ?_⟩, ?_, ?_⟩
   · intro s hs

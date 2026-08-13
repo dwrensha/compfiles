@@ -171,7 +171,6 @@ the restriction; the arbitrary completion only adds rooks. -/
 lemma covering_restrict {K M N : ℕ} (hNM : N ≤ M)
     (τ : Equiv.Perm (Fin M)) (hτ : HasRook τ K) :
     ∃ σ : Equiv.Perm (Fin N), HasRook σ K := by
-  classical
   set f : Fin N → Fin N := fun i =>
     if h : ((τ (Fin.castLE hNM i)) : ℕ) < N then ⟨(τ (Fin.castLE hNM i)), h⟩ else i with hf_def
   set good : Set (Fin N) := {i | ((τ (Fin.castLE hNM i)) : ℕ) < N} with hgood_def

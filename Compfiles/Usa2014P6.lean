@@ -430,7 +430,6 @@ which forces `a` to be huge. -/
 lemma row_bound (a b n : ℕ) (ha : 0 < a) (hb : 0 < b) (hn : 2 ^ 15 ≤ n)
     (h : ∀ i ∈ range (n + 1), ∀ j ∈ range (n + 1), 1 < Nat.gcd (a + i) (b + j)) :
     ((n : ℝ) ^ 2 / 1000) ^ ((n + 3) / 2) ≤ (a : ℝ) + n := by
-  classical
   set N := n + 1 with hN
   set M := n ^ 2 / 1000 with hM
   have hn1000 : 1000 ≤ n := le_trans (by norm_num) hn

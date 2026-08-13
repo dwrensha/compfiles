@@ -63,7 +63,6 @@ of those. But then no vertex of `{A, B, C, D}` is joined to the other three,
 a contradiction. -/
 lemma card_universal_ge (G : SimpleGraph (Fin 1982)) (hG : FourPointProperty G) :
     1979 ≤ (Finset.univ.filter (IsUniversal G)).card := by
-  classical
   set NU := Finset.univ.filter (fun v => ¬ IsUniversal G v) with hNU
   have hpartition : (Finset.univ.filter (IsUniversal G)).card + NU.card = 1982 := by
     have h := Finset.card_filter_add_card_filter_not
@@ -194,7 +193,6 @@ lemma extremal_universal_iff (v : Fin 1982) :
 /-- The extremal graph satisfies the four-point condition: any four vertices
 contain one outside `{0, 1, 2}`, and that vertex is joined to all others. -/
 lemma extremal_fourPoint : FourPointProperty extremalGraph := by
-  classical
   intro s hs
   obtain ⟨v, hv, hvnot⟩ : ∃ v ∈ s, v ∉ ({0, 1, 2} : Finset (Fin 1982)) := by
     by_contra hcon
@@ -212,7 +210,6 @@ lemma extremal_fourPoint : FourPointProperty extremalGraph := by
 /-- The extremal graph has exactly 1979 universal vertices. -/
 lemma extremal_count :
     (Finset.univ.filter (IsUniversal extremalGraph)).card = 1979 := by
-  classical
   have h1 : Finset.univ.filter (IsUniversal extremalGraph) =
       Finset.univ \ ({0, 1, 2} : Finset (Fin 1982)) := by
     ext v

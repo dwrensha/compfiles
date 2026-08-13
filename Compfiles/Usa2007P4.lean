@@ -549,7 +549,6 @@ lemma isAnimal_sdiff_subtree {v : ℤ × ℤ} (_hv : v ∈ D) (hvr : v ≠ r) :
 partitioned into two dinosaurs; in particular it is not primitive. -/
 lemma exists_split (hcard : 4 * 2007 - 2 ≤ D.card) :
     ∃ A B : Finset (ℤ × ℤ), IsDinosaur A ∧ IsDinosaur B ∧ Disjoint A B ∧ A ∪ B = D := by
-  classical
   set S := D.filter (fun v => 2007 ≤ (subtree D r hr hpre v).card) with hS
   have hrS : r ∈ S := by
     rw [hS, Finset.mem_filter]

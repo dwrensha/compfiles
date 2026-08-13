@@ -161,7 +161,6 @@ valuation of `d` is attained at some nonzero term of the sequence. -/
 lemma gcd_seq (T : ℕ → ℤ) {b : ℕ} (hb : T b ≠ 0) :
     ∃ d : ℕ, d ≠ 0 ∧ (∀ i, (d : ℤ) ∣ T i) ∧
       ∀ p : ℕ, p.Prime → ∃ j, T j ≠ 0 ∧ padicValInt p (T j) = padicValNat p d := by
-  classical
   -- The sequence `k ↦ seqGcd T (b + k)` is antitone, hence eventually constant.
   have hanti : Antitone (fun k => seqGcd T (b + k)) :=
     antitone_nat_of_succ_le fun k => seqGcd_succ_le T (Nat.le_add_right b k) hb

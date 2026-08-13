@@ -170,7 +170,6 @@ lemma ncard_fillings_insert {n : ℕ} {D : Set (Cell n)} {s : Cell n} (hs : s �
     (hAt : ∀ f ∈ Fillings n D, (A f).card ≤ target s) :
     (Fillings n (insert s D)).ncard =
       (c₀ - a₀).choose (target s - a₀) * (Fillings n D).ncard := by
-  classical
   have hfib : ∀ f : ↥(Fillings n D),
       Nat.card (Fiber A C s f) = (c₀ - a₀).choose (target s - a₀) := by
     intro f
@@ -226,6 +225,7 @@ lemma ncard_fillings_insert {n : ℕ} {D : Set (Cell n)} {s : Cell n} (hs : s �
     subst ef
     subst eX
     rfl
+  classical
   have hcard : Nat.card ↥(Fillings n (insert s D)) =
       Nat.card (Σ f : ↥(Fillings n D), Fiber A C s f) := by
     apply le_antisymm
@@ -582,7 +582,6 @@ problem usa2019_p4 (n : ℕ) :
     Nat.card {S : Fin (n + 1) → Fin (n + 1) → Finset (Fin (2 * n)) //
       (∀ i j, (S i j).card = i.val + j.val) ∧
       (∀ i k j l, i ≤ k → j ≤ l → S i j ⊆ S k l)} = answer n := by
-  classical
   have e : {S : Fin (n + 1) → Fin (n + 1) → Finset (Fin (2 * n)) //
       (∀ i j, (S i j).card = i.val + j.val) ∧
       (∀ i k j l, i ≤ k → j ≤ l → S i j ⊆ S k l)} ≃ ↥(Fillings n Set.univ) := by

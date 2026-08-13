@@ -632,7 +632,6 @@ problem usa2020_p6 {n : ℕ} (hn : 2 ≤ n) (x y : Fin n → ℝ)
     (hxs : ∑ i, x i = 0) (hys : ∑ i, y i = 0)
     (hx2 : ∑ i, x i ^ 2 = 1) (hy2 : ∑ i, y i ^ 2 = 1) :
     ∑ i, (x i * y i - x i * y (Fin.rev i)) ≥ 2 / Real.sqrt ((n : ℝ) - 1) := by
-  classical
   obtain ⟨σM, -, hσM⟩ :=
     Finset.exists_max_image univ (fun σ : Equiv.Perm (Fin n) => ∑ i, x i * y (σ i))
       Finset.univ_nonempty

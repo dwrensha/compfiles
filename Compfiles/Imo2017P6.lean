@@ -79,7 +79,6 @@ lemma cauchy_sum (m n : ℕ) (u v : ℕ → ℤ) (hu : ∀ i, m < i → u i = 0)
     (hv : ∀ j, n < j → v j = 0) :
     (∑ i ∈ Finset.range (m + 1), u i) * (∑ j ∈ Finset.range (n + 1), v j) =
     ∑ k ∈ Finset.range (m + n + 1), ∑ i ∈ Finset.range (k + 1), u i * v (k - i) := by
-  classical
   have h2 : ∀ k : ℕ, ∑ i ∈ Finset.range (k + 1), u i * v (k - i) =
       ∑ p ∈ (Finset.range (m + 1) ×ˢ Finset.range (n + 1)).filter (fun p => p.1 + p.2 = k),
         u p.1 * v p.2 := by
@@ -582,7 +581,6 @@ lemma exists_g (S : Finset (ℤ × ℤ)) (hS : ∀ s ∈ S, IsCoprime s.1 s.2)
       (∀ t ∈ T S, ∀ p : ℕ, p.Prime →
         (p : ℤ) ∣ (∏ t ∈ T S, ∏ t' ∈ (T S).erase t, (t'.2 * t.1 - t'.1 * t.2)) →
         ¬ (p : ℤ) ∣ g.eval t.1 t.2) := by
-  classical
   set TS := T S with hTS
   -- the product of all determinants between distinct classes
   set D : ℤ := ∏ t ∈ TS, ∏ t' ∈ TS.erase t, (t'.2 * t.1 - t'.1 * t.2) with hD
@@ -780,7 +778,6 @@ lemma exists_g (S : Finset (ℤ × ℤ)) (hS : ∀ s ∈ S, IsCoprime s.1 s.2)
 problem imo2017_p6 (S : Finset (ℤ × ℤ)) (hS : ∀ s ∈ S, gcd s.1 s.2 = 1) :
     ∃ n : ℕ, 0 < n ∧ ∃ a : ℕ → ℤ,
       ∀ s ∈ S, ∑ i ∈ Finset.range (n + 1), a i * s.1 ^ i * s.2 ^ (n - i) = 1 := by
-  classical
   have hS' : ∀ s ∈ S, IsCoprime s.1 s.2 := by
     intro s hs
     rw [Int.isCoprime_iff_gcd_eq_one]

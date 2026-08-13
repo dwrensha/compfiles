@@ -169,7 +169,6 @@ private lemma two_mul_sum (n : ℕ) : 2 * (∑ i ∈ Finset.range n, (i + 1)) = 
 /-- The sum of `n` distinct integers each `> m` is at least `n·m + (1 + ⋯ + n)`. -/
 private lemma min_sum_ge (V : Finset ℕ) (m : ℕ) (hpos : ∀ x ∈ V, m < x) :
     V.card * m + ∑ i ∈ Finset.range V.card, (i + 1) ≤ ∑ x ∈ V, x := by
-  classical
   have hinj : Set.InjOn (· - m) ↑V := by
     intro a ha b hb hab
     simp only [] at hab
@@ -195,7 +194,6 @@ include hsurj in
 /-- Every cell value lies in `[1, TN]` and `t.f` is injective on the triangle. -/
 private lemma bijection :
     (∀ x ∈ tri, 1 ≤ t.f x ∧ t.f x ≤ TN) ∧ Set.InjOn t.f ↑tri := by
-  classical
   have key : ∀ v, ∃ x : Coords, (1 ≤ v → v ≤ TN → x ∈ tri ∧ t.f x = v) := by
     intro v
     by_cases h : 1 ≤ v ∧ v ≤ TN

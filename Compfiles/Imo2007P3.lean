@@ -128,7 +128,6 @@ problem imo2007_p3 {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V)
     (hG : Even (maxCliqueCard G Finset.univ)) :
     ∃ A B : Finset V, Disjoint A B ∧ A ∪ B = Finset.univ ∧
       maxCliqueCard G A = maxCliqueCard G B := by
-  classical
   obtain ⟨r, hr⟩ := hG
   rw [← Nat.two_mul] at hr
   obtain ⟨K, -, hKc, hKcard⟩ := exists_isClique_card_eq G (A := Finset.univ)

@@ -79,7 +79,6 @@ problem usa1984_p2a (n : ℕ) :
         ∀ t : Finset ℕ, t ⊆ s → t.Nonempty → ∃ m : ℕ, m ^ t.card = ∏ x ∈ t, x := by
   change ∃ s : Finset ℕ, s.card = n ∧ (∀ x ∈ s, 0 < x) ∧
         ∀ t : Finset ℕ, t ⊆ s → t.Nonempty → ∃ m : ℕ, m ^ t.card = ∏ x ∈ t, x
-  classical
   have hinj : Function.Injective (· ^ n !) := Nat.pow_left_injective (Nat.factorial_ne_zero n)
   refine ⟨(Finset.Icc 1 n).image (· ^ n !), ?_, ?_, ?_⟩
   · rw [Finset.card_image_of_injOn hinj.injOn]

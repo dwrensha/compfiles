@@ -129,7 +129,6 @@ the climb is a square; and the progression does contain a square r² with
 √c < r ≤ √c + 3, where r is chosen with r² ≡ c (mod 3).) -/
 lemma climb (ha₁ : Rule a) (hx : 1 < x) {i c : ℕ} (hi : a x i = c)
     (hc : c % 3 ≠ 2) : ∃ j, a x j ≤ c.sqrt + 3 := by
-  classical
   obtain ⟨r, hr1, hr2, hr3⟩ : ∃ r, c.sqrt < r ∧ r ≤ c.sqrt + 3 ∧
       r * r % 3 = c % 3 := by
     obtain hs | hs | hs : c.sqrt % 3 = 0 ∨ c.sqrt % 3 = 1 ∨ c.sqrt % 3 = 2 := by

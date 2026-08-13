@@ -64,7 +64,6 @@ lemma essentiallyIncreasing_zero : EssentiallyIncreasing (0 : ℝ → ℝ) := by
 /-- If `k` functions suffice, then so do any `m ≥ k` functions,
 by padding with zero functions. -/
 lemma Good.mono {k m : ℕ} (hkm : k ≤ m) (hk : Good k) : Good m := by
-  classical
   intro x
   obtain ⟨f, hf, hsum⟩ := hk x
   refine ⟨fun j => if h : j.val < k then f ⟨j.val, h⟩ else 0, fun j => ?_, fun n => ?_⟩
@@ -103,7 +102,6 @@ support `S(n) = {i | fᵢ(n) ≠ 0}` is nonempty, and there are only
 supports coincide, contradicting the essentially increasing condition
 because `x` is strictly decreasing. -/
 lemma not_good_ten : ¬ Good 10 := by
-  classical
   intro h
   obtain ⟨f, hf, hsum⟩ := h fun n => -((n.val : ℝ) + 1)
   set S : Fin 2022 → Finset (Fin 10) := fun n =>

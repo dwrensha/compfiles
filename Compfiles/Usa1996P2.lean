@@ -103,7 +103,6 @@ smallest element, and twice the sum exceeds the `m + 1` prefix sum. -/
 lemma prefixSum_succ_lt_two_mul_sum (A : Finset ℕ) (hAS : A ⊆ S)
     (m : ℕ) (hm : m < S.card) (hx : prefixSum S m < A.sum id) :
     prefixSum S (m + 1) < 2 * A.sum id := by
-  classical
   have hsum : A.sum id =
       ∑ i ∈ Finset.univ.filter (fun i : Fin S.card ↦ S.orderEmbOfFin rfl i ∈ A),
         S.orderEmbOfFin rfl i := sum_eq_sum_filter S A hAS
@@ -142,7 +141,6 @@ problem usa1996_p2 (S : Finset ℕ) (hS : ∀ s ∈ S, 0 < s) :
       (∀ i, T i ⊆ SubsetSums S) ∧
         (⋃ i, T i = SubsetSums S) ∧
           ∀ i, ∀ a ∈ T i, ∀ b ∈ T i, a ≤ 2 * b := by
-  classical
   refine ⟨fun m ↦ {x ∈ SubsetSums S | prefixSum S m.val < x ∧ x ≤ prefixSum S (m.val + 1)},
     ?_, ?_, ?_⟩
   · rintro m x ⟨hx, -, -⟩

@@ -663,7 +663,6 @@ lemma pow_two_punch {ι : Type} [Fintype ι] [DecidableEq ι]
     (p : ι → ℕ) (hp : Function.Injective p)
     (s : ι → ℝ) (hs : ∀ i, s i = 1 ∨ s i = -1 ∨ s i = 0) (hne : ∃ i, s i ≠ 0) :
     1 ≤ |∑ i, s i * 2 ^ p i| := by
-  classical
   set supp := univ.filter (fun i => s i ≠ 0) with hsupp
   obtain ⟨i₀, hi₀⟩ := hne
   have hsupp_ne : supp.Nonempty := ⟨i₀, mem_filter.mpr ⟨mem_univ _, hi₀⟩⟩
@@ -1126,7 +1125,6 @@ theorem sum_sign_labelWeight {ι : Type*} [Fintype ι] [DecidableEq ι]
     (s : ι → ℝ) : ∀ l : List (ℝ × ι),
     (∑ v, s v * labelWeight l v) =
       (l.map (fun z => s z.2 * z.1)).sum := by
-  classical
   intro l
   induction l with
   | nil => simp [labelWeight]
@@ -1172,7 +1170,6 @@ theorem abstract_even_lower {ι : Type} [Fintype ι] [DecidableEq ι]
     (hlen : l.length < 2 * Fintype.card ι)
     (hweight : ∀ i, labelWeight l i = (2 : ℝ) ^ p i) :
     1 ≤ surplus (l.map Prod.fst) := by
-  classical
   let P := pairUp l
   let src : Fin P.length → ι := fun e => (P.get e).1.2
   let dst : Fin P.length → ι := fun e => (P.get e).2.2
@@ -1243,7 +1240,6 @@ theorem abstract_lower {ι : Type} [Fintype ι] [DecidableEq ι]
     (hlen : l.length < 2 * Fintype.card ι)
     (hweight : ∀ i, labelWeight l i = (2 : ℝ) ^ p i) :
     1 ≤ surplus (l.map Prod.fst) := by
-  classical
   let P := pairUp l
   let src : Fin P.length → ι := fun e => (P.get e).1.2
   let dst : Fin P.length → ι := fun e => (P.get e).2.2
@@ -1931,7 +1927,6 @@ theorem exists_close_pair_of_finite {α : Type*} [Fintype α]
     (h0 : ∀ a, 0 ≤ f a) (h1 : ∀ a, f a ≤ 1) :
     ∃ a b, a ≠ b ∧
       |f a - f b| ≤ 1 / ((Fintype.card α : ℝ) - 1) := by
-  classical
   by_cases hf : Function.Injective f
   · let _ : LinearOrder α := LinearOrder.lift' f hf
     let s : List α := Finset.univ.sort (· ≤ ·)
@@ -2013,7 +2008,6 @@ theorem exists_disjoint_subset_sums_close (m : ℕ) (hm : 0 < m)
     ∃ I J : Finset (Fin m), Disjoint I J ∧ (I ∪ J).Nonempty ∧
       0 ≤ (∑ i ∈ I, a i) - ∑ j ∈ J, a j ∧
       (∑ i ∈ I, a i) - ∑ j ∈ J, a j ≤ 1 / ((2 : ℝ) ^ m - 1) := by
-  classical
   have hcard : 2 ≤ Fintype.card (Finset (Fin m)) := by
     simp only [Fintype.card_finset, Fintype.card_fin]
     have hpow : 2 ^ 1 ≤ 2 ^ m :=

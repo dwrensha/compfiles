@@ -124,7 +124,6 @@ private lemma maxDecSequencesTo_mem : maxDecSequencesTo f i ∈ decSequencesTo f
 
 private lemma maxIncSequencesTo_lt {i j : α} (hij : i < j) (hfij : f i < f j) :
     maxIncSequencesTo f i < maxIncSequencesTo f j := by
-  classical
   rw [Nat.lt_iff_add_one_le]
   refine le_max' _ _ ?_
   have : maxIncSequencesTo f i ∈ incSequencesTo f i := max'_mem _ incSequencesTo_nonempty
@@ -167,7 +166,6 @@ private theorem erdos_szekeres {r s : ℕ} {f : α → β}
     (hn : r * s < Fintype.card α) (hf : Injective f) :
     (∃ t : Finset α, r < #t ∧ StrictMonoOn f t) ∨
       ∃ t : Finset α, s < #t ∧ StrictAntiOn f t := by
-  classical
   rsuffices ⟨i, hi⟩ : ∃ i, r < maxIncSequencesTo f i ∨ s < maxDecSequencesTo f i
   · refine Or.imp ?_ ?_ hi
     on_goal 1 =>
@@ -178,6 +176,7 @@ private theorem erdos_szekeres {r s : ℕ} {f : α → β}
       intro hi
       obtain ⟨t, ht₁, ht₂⟩ := mem_image.1 this
       refine ⟨t, by rwa [ht₂], ?_⟩
+      classical
       rw [mem_filter] at ht₁
       exact ht₁.2.2
   by_contra! q
