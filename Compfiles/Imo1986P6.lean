@@ -365,7 +365,6 @@ lemma pair_sum_zero : ∀ (C : List (ℤ × ℤ)) (f g : ℤ × ℤ → ℤ),
 
 /- The sign function attached to an even-length cycle: `+1` at even positions,
 `-1` at odd positions. -/
-open Classical in
 noncomputable def cycSign (C : List (ℤ × ℤ)) : ℤ × ℤ → ℤ :=
   fun p => if ∃ i : Fin C.length, C.get i = p ∧ Even i.val then 1 else -1
 
