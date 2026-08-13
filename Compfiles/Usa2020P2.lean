@@ -468,7 +468,6 @@ theorem yFull_all {n : ℕ} (hn : 0 < n) {S : Finset (Beam n)} (hS : Supp S)
 theorem card_zLayer (_hn : 0 < n) {S : Finset (Beam n)}
     (_hz : ∀ i j, zBeam i j ∉ S) (k : Fin n) (hk : zFull S k) :
     n ≤ (S.filter fun b => zLayer b = k).card := by
-  classical
   by_cases hJ : ∀ j, xBeam j k ∈ S
   · have hsub : (Finset.univ.image fun j => xBeam j k) ⊆ S.filter (fun b => zLayer b = k) := by
       intro b hb
@@ -500,7 +499,6 @@ theorem card_zLayer (_hn : 0 < n) {S : Finset (Beam n)}
 theorem card_xLayer (_hn : 0 < n) {S : Finset (Beam n)}
     (_hx : ∀ j k, xBeam j k ∉ S) (i : Fin n) (hi : xFull S i) :
     n ≤ (S.filter fun b => xLayer b = i).card := by
-  classical
   by_cases hI : ∀ k, yBeam i k ∈ S
   · have hsub : (Finset.univ.image fun k => yBeam i k) ⊆ S.filter (fun b => xLayer b = i) := by
       intro b hb
@@ -532,7 +530,6 @@ theorem card_xLayer (_hn : 0 < n) {S : Finset (Beam n)}
 theorem card_yLayer (_hn : 0 < n) {S : Finset (Beam n)}
     (_hy : ∀ i k, yBeam i k ∉ S) (j : Fin n) (hj : yFull S j) :
     n ≤ (S.filter fun b => yLayer b = j).card := by
-  classical
   by_cases hJ : ∀ k, xBeam j k ∈ S
   · have hsub : (Finset.univ.image fun k => xBeam j k) ⊆ S.filter (fun b => yLayer b = j) := by
       intro b hb
@@ -564,7 +561,6 @@ theorem card_yLayer (_hn : 0 < n) {S : Finset (Beam n)}
 /-- If there are no `zBeam`s, every layer is filled and `n² ≤ S.card`. -/
 theorem card_ge_sq_of_no_zBeam {n : ℕ} (hn : 0 < n) {S : Finset (Beam n)} (hS : Supp S)
     (hz : ∀ i j, zBeam i j ∉ S) (hne : S.Nonempty) : n * n ≤ S.card := by
-  classical
   have hall : ∀ k : Fin n, zFull S k := zFull_all hn hS hz hne
   rw [Finset.card_eq_sum_card_fiberwise (f := zLayer) (t := Finset.univ)
     (fun _ _ => Finset.mem_univ _)]
@@ -576,7 +572,6 @@ theorem card_ge_sq_of_no_zBeam {n : ℕ} (hn : 0 < n) {S : Finset (Beam n)} (hS 
 /-- If there are no `xBeam`s, every layer is filled and `n² ≤ S.card`. -/
 theorem card_ge_sq_of_no_xBeam {n : ℕ} (hn : 0 < n) {S : Finset (Beam n)} (hS : Supp S)
     (hx : ∀ j k, xBeam j k ∉ S) (hne : S.Nonempty) : n * n ≤ S.card := by
-  classical
   have hall : ∀ i : Fin n, xFull S i := xFull_all hn hS hx hne
   rw [Finset.card_eq_sum_card_fiberwise (f := xLayer) (t := Finset.univ)
     (fun _ _ => Finset.mem_univ _)]
@@ -588,7 +583,6 @@ theorem card_ge_sq_of_no_xBeam {n : ℕ} (hn : 0 < n) {S : Finset (Beam n)} (hS 
 /-- If there are no `yBeam`s, every layer is filled and `n² ≤ S.card`. -/
 theorem card_ge_sq_of_no_yBeam {n : ℕ} (hn : 0 < n) {S : Finset (Beam n)} (hS : Supp S)
     (hy : ∀ i k, yBeam i k ∉ S) (hne : S.Nonempty) : n * n ≤ S.card := by
-  classical
   have hall : ∀ j : Fin n, yFull S j := yFull_all hn hS hy hne
   rw [Finset.card_eq_sum_card_fiberwise (f := yLayer) (t := Finset.univ)
     (fun _ _ => Finset.mem_univ _)]
@@ -600,7 +594,6 @@ theorem card_ge_sq_of_no_yBeam {n : ℕ} (hn : 0 < n) {S : Finset (Beam n)} (hS 
 theorem card_filter_ne_z {n : ℕ} (S : Finset (Beam n)) :
     (S.filter fun b => b.dir ≠ .Z).card =
       (S.filter fun b => b.dir = .X).card + (S.filter fun b => b.dir = .Y).card := by
-  classical
   have disj : Disjoint (S.filter fun b => b.dir = .X) (S.filter fun b => b.dir = .Y) := by
     rw [Finset.disjoint_left]
     intro b hb1 hb2
@@ -617,7 +610,6 @@ theorem card_filter_ne_z {n : ℕ} (S : Finset (Beam n)) :
 theorem card_filter_ne_x {n : ℕ} (S : Finset (Beam n)) :
     (S.filter fun b => b.dir ≠ .X).card =
       (S.filter fun b => b.dir = .Y).card + (S.filter fun b => b.dir = .Z).card := by
-  classical
   have disj : Disjoint (S.filter fun b => b.dir = .Y) (S.filter fun b => b.dir = .Z) := by
     rw [Finset.disjoint_left]
     intro b hb1 hb2
@@ -634,7 +626,6 @@ theorem card_filter_ne_x {n : ℕ} (S : Finset (Beam n)) :
 theorem card_filter_ne_y {n : ℕ} (S : Finset (Beam n)) :
     (S.filter fun b => b.dir ≠ .Y).card =
       (S.filter fun b => b.dir = .Z).card + (S.filter fun b => b.dir = .X).card := by
-  classical
   have disj : Disjoint (S.filter fun b => b.dir = .Z) (S.filter fun b => b.dir = .X) := by
     rw [Finset.disjoint_left]
     intro b hb1 hb2
@@ -653,7 +644,6 @@ theorem card_filter_ne_y {n : ℕ} (S : Finset (Beam n)) :
 theorem n_le_of_mem_nonZ {n : ℕ} (_hn : 0 < n) {S : Finset (Beam n)} (hS : Supp S)
     (hxy : ∃ b ∈ S, b.dir ≠ .Z) :
     n ≤ (S.filter fun b => b.dir = .X).card + (S.filter fun b => b.dir = .Y).card := by
-  classical
   have step : ∀ k : Fin n, (∃ b ∈ S, b.dir ≠ .Z ∧ zLayer b = k) →
       (k.val = 0 ∨ ∃ k', k'.val + 1 = k.val ∧ ∃ b ∈ S, b.dir ≠ .Z ∧ zLayer b = k') ∧
         (k.val + 1 = n ∨ ∃ k', k'.val = k.val + 1 ∧ ∃ b ∈ S, b.dir ≠ .Z ∧ zLayer b = k') := by
@@ -708,7 +698,6 @@ theorem n_le_of_mem_nonZ {n : ℕ} (_hn : 0 < n) {S : Finset (Beam n)} (hS : Sup
 theorem n_le_of_mem_nonX {n : ℕ} (_hn : 0 < n) {S : Finset (Beam n)} (hS : Supp S)
     (hxy : ∃ b ∈ S, b.dir ≠ .X) :
     n ≤ (S.filter fun b => b.dir = .Y).card + (S.filter fun b => b.dir = .Z).card := by
-  classical
   have step : ∀ i : Fin n, (∃ b ∈ S, b.dir ≠ .X ∧ xLayer b = i) →
       (i.val = 0 ∨ ∃ i', i'.val + 1 = i.val ∧ ∃ b ∈ S, b.dir ≠ .X ∧ xLayer b = i') ∧
         (i.val + 1 = n ∨ ∃ i', i'.val = i.val + 1 ∧ ∃ b ∈ S, b.dir ≠ .X ∧ xLayer b = i') := by
@@ -763,7 +752,6 @@ theorem n_le_of_mem_nonX {n : ℕ} (_hn : 0 < n) {S : Finset (Beam n)} (hS : Sup
 theorem n_le_of_mem_nonY {n : ℕ} (_hn : 0 < n) {S : Finset (Beam n)} (hS : Supp S)
     (hxy : ∃ b ∈ S, b.dir ≠ .Y) :
     n ≤ (S.filter fun b => b.dir = .Z).card + (S.filter fun b => b.dir = .X).card := by
-  classical
   have step : ∀ j : Fin n, (∃ b ∈ S, b.dir ≠ .Y ∧ yLayer b = j) →
       (j.val = 0 ∨ ∃ j', j'.val + 1 = j.val ∧ ∃ b ∈ S, b.dir ≠ .Y ∧ yLayer b = j') ∧
         (j.val + 1 = n ∨ ∃ j', j'.val = j.val + 1 ∧ ∃ b ∈ S, b.dir ≠ .Y ∧ yLayer b = j') := by
@@ -816,7 +804,6 @@ theorem n_le_of_mem_nonY {n : ℕ} (_hn : 0 < n) {S : Finset (Beam n)} (hS : Sup
 theorem card_eq_sum_dirs {n : ℕ} (S : Finset (Beam n)) :
     S.card = (S.filter fun b => b.dir = .X).card + (S.filter fun b => b.dir = .Y).card +
       (S.filter fun b => b.dir = .Z).card := by
-  classical
   have disj1 : Disjoint (S.filter fun b => b.dir = .X) (S.filter fun b => b.dir = .Y) := by
     rw [Finset.disjoint_left]
     intro b hb1 hb2
@@ -846,7 +833,6 @@ theorem card_eq_sum_dirs {n : ℕ} (S : Finset (Beam n)) :
 `3 * n ≤ 2 * S.card`. -/
 theorem lower_bound {n : ℕ} (hn : 2 ≤ n) {S : Finset (Beam n)} (hS : Supp S)
     (hne : S.Nonempty) : 3 * n ≤ 2 * S.card := by
-  classical
   have hn0 : 0 < n := by omega
   have hn_sq : 3 * n ≤ 2 * (n * n) := by
     have h2 : 2 * n ≤ n * n := Nat.mul_le_mul hn le_rfl

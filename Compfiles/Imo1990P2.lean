@@ -138,7 +138,6 @@ theorem coprime_aux {n : ℕ} (hn : 3 ≤ n) (h3 : n % 3 ≠ 2) :
 /-- Upper bound: a bad coloring has at most `solution n - 1` black points. -/
 theorem card_le_of_bad {n : ℕ} (hn : 3 ≤ n) {B : Finset (ZMod (2 * n - 1))}
     (hbad : ¬ IsGood n B) : B.card ≤ solution n - 1 := by
-  classical
   have : NeZero (2 * n - 1) := ⟨by omega⟩
   have key := bad_disjoint_translate hbad
   have hinj : Function.Injective (· + ((n + 1 : ℕ) : ZMod (2 * n - 1))) :=
@@ -205,7 +204,6 @@ theorem card_le_of_bad {n : ℕ} (hn : 3 ≤ n) {B : Finset (ZMod (2 * n - 1))}
 /-- Lower bound: there is a bad coloring with `solution n - 1` black points. -/
 theorem exists_bad {n : ℕ} (hn : 3 ≤ n) :
     ∃ B : Finset (ZMod (2 * n - 1)), B.card = solution n - 1 ∧ ¬ IsGood n B := by
-  classical
   have : NeZero (2 * n - 1) := ⟨by omega⟩
   by_cases h3 : n % 3 = 2
   · -- The set `{1, 2, ..., n - 2}` is bad and has `n - 2` elements.
@@ -322,7 +320,6 @@ snip end
 problem imo1990_p2 (n : ℕ) (hn : 3 ≤ n) :
     IsLeast {k : ℕ | ∀ B : Finset (ZMod (2 * n - 1)), B.card = k → IsGood n B}
       (solution n) := by
-  classical
   constructor
   · -- Every coloring of `solution n` points is good, by `card_le_of_bad`.
     intro B hB

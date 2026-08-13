@@ -46,7 +46,6 @@ theorem card_sharedWith_le {L : Type*} (speaks : Fin 9 → Finset L)
     (hnothree : ¬∃ a b c : Fin 9, a ≠ b ∧ a ≠ c ∧ b ≠ c ∧
       ∃ l : L, l ∈ speaks a ∧ l ∈ speaks b ∧ l ∈ speaks c)
     (d : Fin 9) : (SharedWith speaks d).card ≤ 3 := by
-  classical
   by_contra h
   push Not at h
   have hsh : ∀ b : {x // x ∈ SharedWith speaks d}, ∃ l : L, l ∈ speaks d ∧ l ∈ speaks b.1 :=
@@ -71,7 +70,6 @@ problem usa1978_p5 {L : Type*} (speaks : Fin 9 → Finset L)
       Share speaks a b ∨ Share speaks b c ∨ Share speaks a c) :
     ∃ a b c : Fin 9, a ≠ b ∧ a ≠ c ∧ b ≠ c ∧
       ∃ l : L, l ∈ speaks a ∧ l ∈ speaks b ∧ l ∈ speaks c := by
-  classical
   by_contra hnothree
   have h1 : ∀ d : Fin 9, (SharedWith speaks d).card ≤ 3 :=
     card_sharedWith_le speaks hthree hnothree

@@ -45,7 +45,6 @@ with no `1` contribute nothing to the sum. -/
 lemma sum_count_one_succ (n : ℕ) :
     ∑ p : Nat.Partition (n + 1), p.parts.count 1 =
       ∑ p : Nat.Partition n, p.parts.count 1 + numPartitions n := by
-  classical
   have hsplit :
       (∑ p : Nat.Partition (n + 1), p.parts.count 1) =
         (∑ p : { p : Nat.Partition (n + 1) // 1 ∈ p.parts }, p.1.parts.count 1) +
@@ -88,7 +87,6 @@ lemma sum_count_one (n : ℕ) :
 lemma sum_distinct_parts (n : ℕ) :
     ∑ p : Nat.Partition n, p.parts.toFinset.card =
       ∑ k ∈ Finset.range n, numPartitions k := by
-  classical
   -- the number of distinct parts of `p`, as a sum of indicators over all possible parts
   have hcard : ∀ p : Nat.Partition n, p.parts.toFinset.card =
       ∑ m ∈ Finset.Ico 1 (n + 1), if m ∈ p.parts then 1 else 0 := by

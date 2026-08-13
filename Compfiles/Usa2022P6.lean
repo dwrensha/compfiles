@@ -429,7 +429,6 @@ lemma Cover.merge {G G' : SimpleGraph V} [DecidableRel G.Adj] (cov : Cover G G')
     (hdiff : ¬ (cov.ℓ s(a, b) = cov.ℓ s(b, c) ∧ cov.ℓ s(b, c) = cov.ℓ s(c, d) ∧
       cov.ℓ s(c, d) = cov.ℓ s(d, a))) :
     ∃ (G'' : SimpleGraph V) (cov' : Cover G G''), G' ≤ G'' ∧ cov'.C.card < cov.C.card := by
-  classical
   -- the four edges and their labels
   set e1 : Sym2 V := s(a, b) with he1
   set e2 : Sym2 V := s(b, c) with he2
@@ -684,6 +683,7 @@ lemma Cover.merge {G G' : SimpleGraph V} [DecidableRel G.Adj] (cov : Cover G G')
     omega
   -- the new graph and the new cover
   set G'' := G' ⊔ completeOn V' with hG''
+  classical
   set ℓ' : Sym2 V → Finset V :=
     fun e => if e ∈ G'.edgeSet then (if cov.ℓ e ∈ S then V' else cov.ℓ e) else V' with hℓ'
   set C' : Finset (Finset V) := insert V' (cov.C \ S) with hC'

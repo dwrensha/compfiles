@@ -283,7 +283,6 @@ lemma Path.firstMonster_none_or_some {p : Path N} {m : MonsterData N} {target : 
 
 lemma Path.firstMonster_eq_of_findFstEq_mem {p : Path N} {m : MonsterData N}
     (h : p.findFstEq 1 ∈ m.monsterCells) : p.firstMonster m = some (p.findFstEq 1) := by
-  classical
   -- Every cell before `findFstEq 1` on the path lies in row `0`, hence is monster-free, so the
   -- first monster on the path is exactly `findFstEq 1`.
   have hex : ∃ c ∈ p.cells, decide ((1 : Fin (N + 2)) ≤ c.1) = true := by

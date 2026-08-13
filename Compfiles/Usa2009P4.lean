@@ -37,7 +37,6 @@ lemma sum_mul_sum_inv_ge {n : ℕ} {a : Fin n → ℝ} (ha : ∀ i, 0 < a i)
     {p q : Fin n} (hpq : p ≠ q) :
     (√(a p / a q) + √(a q / a p) + ((n : ℝ) - 2)) ^ 2 ≤
       (∑ i, a i) * (∑ i, (a i)⁻¹) := by
-  classical
   have hqmem : q ∈ Finset.univ.erase p :=
     Finset.mem_erase.mpr ⟨hpq.symm, Finset.mem_univ q⟩
   have hn2 : 2 ≤ n := by

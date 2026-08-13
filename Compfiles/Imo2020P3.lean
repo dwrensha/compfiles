@@ -752,7 +752,6 @@ lemma merge_disjoint (a b : E → V) :
 
 omit [Fintype E] [DecidableEq E] in
 lemma mult_sum (a b : E → V) (e : E) : ∑ x : V, mult a b e x = 2 := by
-  classical
   simp [mult, Finset.sum_add_distrib, Finset.sum_ite_eq]
 
 omit [Fintype V] [DecidableEq V] [Fintype E] [DecidableEq E] in
@@ -862,7 +861,6 @@ lemma mapIdx_eq_map_idxOf {l : List E} (hn : l.Nodup) (g : ℕ → E → ℕ) :
 every vertex sees exactly two half-edges of each color. -/
 theorem two_factor (a b : E → V) (hdeg : ∀ x, (∑ e : E, mult a b e x) = 4) :
     ∃ red : E → Bool, ∀ x : V, (∑ e : E, if red e then mult a b e x else 0) = 2 := by
-  classical
   obtain ⟨F, hFU, hFne, hFcov, hFdj⟩ :=
     decompose a b Finset.univ (fun x => by rw [hdeg x]; exact ⟨2, rfl⟩)
   obtain ⟨F', hF'cov, hF'ne, hF'dj, hFvdj⟩ :=
@@ -1100,7 +1098,6 @@ snip end
 problem imo2020_p3 {n : ℕ} {c : Fin (4 * n) → Fin n} (h : ∀ i, #{j | c j = i} = 4) :
     ∃ S : Finset (Fin (4 * n)), ∑ i ∈ S, ((i : ℕ) + 1) = ∑ i ∈ Sᶜ, ((i : ℕ) + 1) ∧
       ∀ i, #{j ∈ S | c j = i} = 2 := by
-  classical
   obtain ⟨red, hred⟩ := two_factor (pgA c) (pgB c) (pg_deg c h)
   have hN : (Finset.univ.filter (fun e => red e = true)).card = n := red_card c h red hred
   refine ⟨Finset.univ.filter (fun j => red (pairOf j) = true), ?_, ?_⟩

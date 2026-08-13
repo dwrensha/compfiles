@@ -700,7 +700,6 @@ theorem assemble (cfg : ColombianConfiguration)
 /-- 2013 lines always suffice. -/
 theorem upper_bound (cfg : ColombianConfiguration) :
     ∃ lines : Fin 2013 → AffineSubspace ℝ Pt, GoodArrangement cfg lines := by
-  classical
   set S := cfg.red ∪ cfg.blue with hS
   have h3 : No3Col S := cfg.not_collinear
   have hScard : S.card = 4027 := by

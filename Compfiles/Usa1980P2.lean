@@ -40,7 +40,6 @@ iff `a i + a k = 2 * a j`, and we count the progressions by their middle index `
 
 snip begin
 
-open Classical in
 /-- For a sequence `a : ℕ → ℝ` and an index `j`, the finset of pairs `(i, k)` with
 `i < j < k < n` such that `a i, a j, a k` forms a three-term arithmetic progression.
 Every three-term arithmetic progression with indices below `n` corresponds to exactly
@@ -48,7 +47,6 @@ one such pair, with `j` its middle index. -/
 noncomputable def apPairs (n : ℕ) (a : ℕ → ℝ) (j : ℕ) : Finset (ℕ × ℕ) :=
   ((range j) ×ˢ (Ioo j n)).filter fun p => a p.1 + a p.2 = 2 * a j
 
-open Classical in
 /-- The number of three-term arithmetic progressions among the first `n` terms of `a`,
 counted by their middle index. -/
 noncomputable def apCount (n : ℕ) (a : ℕ → ℝ) : ℕ :=
@@ -56,7 +54,6 @@ noncomputable def apCount (n : ℕ) (a : ℕ → ℝ) : ℕ :=
 
 theorem mem_apPairs {n : ℕ} {a : ℕ → ℝ} {j : ℕ} {p : ℕ × ℕ} :
     p ∈ apPairs n a j ↔ p.1 < j ∧ j < p.2 ∧ p.2 < n ∧ a p.1 + a p.2 = 2 * a j := by
-  classical
   simp only [apPairs, mem_filter, mem_product, mem_range, mem_Ioo]
   tauto
 
@@ -65,7 +62,6 @@ its other two terms, so the number of progressions with middle index `j` is at m
 `min j (n - 1 - j)`. -/
 theorem card_apPairs_le (n : ℕ) (a : ℕ → ℝ) (ha : StrictMonoOn a (Set.Iio n)) (j : ℕ) :
     (apPairs n a j).card ≤ min j (n - 1 - j) := by
-  classical
   refine le_min ?_ ?_
   · have h1 : (apPairs n a j).card ≤ (range j).card := by
       apply Finset.card_le_card_of_injOn Prod.fst
@@ -138,7 +134,6 @@ theorem strictMonoOn_cast (n : ℕ) : StrictMonoOn (fun i : ℕ => (i : ℝ)) (S
 `apPairs n (fun i => (i : ℝ)) j`. -/
 theorem card_apPairs_cast (n : ℕ) (j : ℕ) :
     (apPairs n (fun i => (i : ℝ)) j).card = min j (n - 1 - j) := by
-  classical
   apply le_antisymm
   · exact card_apPairs_le n _ (strictMonoOn_cast n) j
   · have hinj : (range (min j (n - 1 - j))).card ≤
@@ -162,7 +157,6 @@ theorem card_apPairs_cast (n : ℕ) (j : ℕ) :
 
 /-- The bound is achieved by the sequence `a i = i`. -/
 theorem apCount_cast (n : ℕ) : apCount n (fun i : ℕ => (i : ℝ)) = (n - 1)^2 / 4 := by
-  classical
   unfold apCount
   rw [← sum_min_closed n]
   exact sum_congr rfl fun j _ => card_apPairs_cast n j
@@ -170,7 +164,6 @@ theorem apCount_cast (n : ℕ) : apCount n (fun i : ℕ => (i : ℝ)) = (n - 1)^
 /-- The bound holds for every strictly increasing sequence. -/
 theorem apCount_le (n : ℕ) (a : ℕ → ℝ) (ha : StrictMonoOn a (Set.Iio n)) :
     apCount n a ≤ (n - 1)^2 / 4 := by
-  classical
   unfold apCount
   rw [← sum_min_closed n]
   exact sum_le_sum fun j _ => card_apPairs_le n a ha j

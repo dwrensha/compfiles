@@ -365,7 +365,6 @@ lemma pair_sum_zero : ∀ (C : List (ℤ × ℤ)) (f g : ℤ × ℤ → ℤ),
 
 /- The sign function attached to an even-length cycle: `+1` at even positions,
 `-1` at odd positions. -/
-open Classical in
 noncomputable def cycSign (C : List (ℤ × ℤ)) : ℤ × ℤ → ℤ :=
   fun p => if ∃ i : Fin C.length, C.get i = p ∧ Even i.val then 1 else -1
 
@@ -391,7 +390,6 @@ lemma cycle_balanced (C : List (ℤ × ℤ)) (hnodup : C.Nodup) (hlen : Even C.l
     ∃ ε : ℤ × ℤ → ℤ, (∀ p ∈ C.toFinset, ε p = 1 ∨ ε p = -1) ∧
       (∀ y : ℤ, ∑ p ∈ C.toFinset.filter (fun p => p.2 = y), ε p = 0) ∧
       (∀ x : ℤ, ∑ p ∈ C.toFinset.filter (fun p => p.1 = x), ε p = 0) := by
-  classical
   refine ⟨cycSign C, ?_, ?_, ?_⟩
   · intro p hp
     unfold cycSign
@@ -488,7 +486,6 @@ lemma exists_cycle (S : Finset (ℤ × ℤ)) (hne : S.Nonempty)
         (Even i → (C[i]'(by omega)).2 = (C[i + 1]'h).2) ∧
         (Odd i → (C[i]'(by omega)).1 = (C[i + 1]'h).1)) ∧
       (∀ h : 0 < C.length, (C[C.length - 1]'(by omega)).1 = (C[0]'h).1) := by
-  classical
   obtain ⟨P₀, hP₀⟩ := hne
   obtain ⟨P₁, hP₁, hP₁ne, hP₁row⟩ := hrow P₀ hP₀
   have hbase : AltPath S [P₀, P₁] := by

@@ -475,7 +475,6 @@ lemma length_eq_sum_count {n : ℕ} (L : List (Fin n × Fin n))
     (hL : ∀ pr ∈ L, pr.1 < pr.2) :
     L.length = ∑ pr ∈ (Finset.univ.filter (fun pr : Fin n × Fin n => pr.1 < pr.2)),
       L.count pr := by
-  classical
   induction L with
   | nil => simp
   | cons x xs ih =>

@@ -105,7 +105,6 @@ lemma same_den_unique
 
 lemma den_mem_denoms {x : ℝ} {n : ℕ} {q : ℚ} (hq : q ∈ fracs x n) :
     q.den ∈ denoms x n := by
-  classical
   rw [denoms]
   simp only [Finset.mem_filter, Finset.mem_Icc]
   exact ⟨⟨Rat.den_pos q, hq.1⟩, q, hq, rfl⟩
@@ -115,7 +114,6 @@ lemma no_dvd_between_occurring_denoms
     {x : ℝ} {n d e : ℕ} (hn : 0 < n)
     (hd : d ∈ denoms x n) (he : e ∈ denoms x n) (hne : d ≠ e) :
     ¬ d ∣ e := by
-  classical
   intro hdiv
   rw [denoms] at hd he
   simp only [Finset.mem_filter, Finset.mem_Icc] at hd he
@@ -140,7 +138,6 @@ lemma no_dvd_between_occurring_denoms
 
 lemma den_bijOn (x : ℝ) (n : ℕ) (hn : 0 < n) :
     Set.BijOn (fun q : ℚ => q.den) (fracs x n) (denoms x n : Set ℕ) := by
-  classical
   refine ⟨?maps, ?inj, ?surj⟩
   · intro q hq
     exact den_mem_denoms hq
@@ -248,7 +245,6 @@ lemma card_le_half_of_no_dvd
     (hs : s ⊆ Finset.Icc 1 n)
     (hantichain : ∀ a ∈ s, ∀ b ∈ s, a ≠ b → ¬ a ∣ b) :
     s.card ≤ (n + 1) / 2 := by
-  classical
   let oddIndex : {a // a ∈ s} → Fin ((n + 1) / 2) := fun a =>
     ⟨oddPart a.1 / 2, oddPart_index_lt_half (hs a.2)⟩
   have oddIndex_injective : Function.Injective oddIndex := by
@@ -257,7 +253,6 @@ lemma card_le_half_of_no_dvd
 
 lemma denoms_subset_Icc (x : ℝ) (n : ℕ) :
     denoms x n ⊆ Finset.Icc 1 n := by
-  classical
   intro d hd
   rw [denoms] at hd
   simp only [Finset.mem_filter] at hd

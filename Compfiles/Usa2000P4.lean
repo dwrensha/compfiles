@@ -111,7 +111,6 @@ then `|S| ≤ m`, and if there is no heavy column then `|S| ≤ n`. -/
 lemma card_le_of_good {m n : ℕ} (hm : 2 ≤ m) (hn : 2 ≤ n)
     {S : Finset (Fin m × Fin n)} (hS : Good S) :
     S.card ≤ m + n - 2 := by
-  classical
   set rows : Finset (Fin m) := S.image Prod.fst with hrows
   set cols : Finset (Fin n) := S.image Prod.snd with hcols
   set lightR : Finset (Fin m) := rows.filter fun r ↦ (rowFiber S r).card = 1 with hlightR

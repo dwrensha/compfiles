@@ -200,9 +200,7 @@ lemma map_filter_periodicColor_col (k : Fin n) (c : Letter) :
     exact ⟨⟨i, hi⟩, hc, rfl⟩
 
 lemma diagSum_card_eq (n s : ℕ) :
-    (diagSum (n := n) s).card = min n (s + 1) - (s + 1 - n) := by
-  classical
-  calc
+    (diagSum (n := n) s).card = min n (s + 1) - (s + 1 - n) := calc
     (diagSum (n := n) s).card =
         (Finset.Ico (s + 1 - n) (min n (s + 1))).card := by
       apply Finset.card_bij (fun p _ ↦ (p.2 : ℕ))
@@ -231,7 +229,6 @@ lemma diagSum_color_card_eq (n s : ℕ) (c : Letter) :
         (fun p ↦ periodicColor p.1 p.2 = c)).card =
       ((Finset.Ico (s + 1 - n) (min n (s + 1))).filter
         (fun j ↦ Fin.ofNat 3 ((s - j) + j / 3) = c)).card := by
-  classical
   apply Finset.card_bij (fun p _ ↦ (p.2 : ℕ))
   · intro p hp
     simp only [Finset.mem_filter] at hp ⊢
@@ -424,9 +421,7 @@ lemma periodicColor_diagSum (n : ℕ) (h9 : 9 ∣ n) (s : ℕ)
     _ = (3 * q) / 3 := by omega
 
 lemma diagDiff_card_eq_nonneg (n δ : ℕ) :
-    (diagDiff (n := n) (δ : ℤ)).card = n - δ := by
-  classical
-  calc
+    (diagDiff (n := n) (δ : ℤ)).card = n - δ := calc
     (diagDiff (n := n) (δ : ℤ)).card = (Finset.range (n - δ)).card := by
       apply Finset.card_bij (fun p _ ↦ (p.2 : ℕ))
       · intro p hp
@@ -449,9 +444,7 @@ lemma diagDiff_card_eq_nonneg (n δ : ℕ) :
     _ = n - δ := Finset.card_range _
 
 lemma diagDiff_card_eq_neg (n δ : ℕ) :
-    (diagDiff (n := n) (-(δ : ℤ))).card = n - δ := by
-  classical
-  calc
+    (diagDiff (n := n) (-(δ : ℤ))).card = n - δ := calc
     (diagDiff (n := n) (-(δ : ℤ))).card = (Finset.range (n - δ)).card := by
       apply Finset.card_bij (fun p _ ↦ (p.1 : ℕ))
       · intro p hp
@@ -478,7 +471,6 @@ lemma diagDiff_color_card_eq_nonneg (n δ : ℕ) (c : Letter) :
         (fun p ↦ periodicColor p.1 p.2 = c)).card =
       ((Finset.range (n - δ)).filter
         (fun j ↦ Fin.ofNat 3 (δ + j + j / 3) = c)).card := by
-  classical
   apply Finset.card_bij (fun p _ ↦ (p.2 : ℕ))
   · intro p hp
     simp only [Finset.mem_filter] at hp ⊢
@@ -511,7 +503,6 @@ lemma diagDiff_color_card_eq_neg (n δ : ℕ) (c : Letter) :
         (fun p ↦ periodicColor p.1 p.2 = c)).card =
       ((Finset.range (n - δ)).filter
         (fun i ↦ Fin.ofNat 3 (i + (δ + i) / 3) = c)).card := by
-  classical
   apply Finset.card_bij (fun p _ ↦ (p.1 : ℕ))
   · intro p hp
     simp only [Finset.mem_filter] at hp ⊢
@@ -732,7 +723,6 @@ lemma balanced_of_fibers {κ : Type*} [DecidableEq κ]
     (hmap : ∀ p ∈ cells, g p ∈ keys)
     (hbalanced : ∀ x ∈ keys, Balanced f (cells.filter (fun p ↦ g p = x))) :
     Balanced f cells := by
-  classical
   have htotal : cells.card =
       ∑ x ∈ keys, (cells.filter (fun p ↦ g p = x)).card :=
     Finset.card_eq_sum_card_fiberwise hmap
@@ -808,7 +798,6 @@ def vitalDiffKeys (k : ℕ) : Finset ℤ :=
 lemma card_filter_grid {n : ℕ} (P : Fin n → Fin n → Prop) [DecidableRel P] :
     ((Finset.univ : Finset (Fin n × Fin n)).filter (fun p ↦ P p.1 p.2)).card =
       ∑ i : Fin n, ((Finset.univ : Finset (Fin n)).filter (P i)).card := by
-  classical
   let cells := (Finset.univ : Finset (Fin n × Fin n)).filter (fun p ↦ P p.1 p.2)
   have hmap : ∀ p ∈ cells, p.1 ∈ (Finset.univ : Finset (Fin n)) := by simp
   calc

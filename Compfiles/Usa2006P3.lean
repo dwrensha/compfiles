@@ -229,7 +229,6 @@ lemma pbound_of_classification (f : ℤ[X]) (h : Classification f) :
 takes some value divisible by a prime outside any given finite set of primes. -/
 lemma schur (h : ℤ[X]) (hd : h.natDegree ≠ 0) (s : Finset ℕ) (hs : ∀ q ∈ s, q.Prime) :
     ∃ q : ℕ, q.Prime ∧ q ∉ s ∧ ∃ m : ℕ, (q : ℤ) ∣ h.eval (m : ℤ) := by
-  classical
   by_cases hc0 : h.eval 0 = 0
   · -- If `h(0) = 0` then `X ∣ h`, so every prime `q` divides `h(q)`.
     have hcoeff : h.coeff 0 = 0 := by rw [coeff_zero_eq_eval_zero]; exact hc0

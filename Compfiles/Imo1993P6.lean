@@ -127,7 +127,6 @@ This is because `step` is an injective (hence bijective) self-map of a finite se
 it has finite order as a permutation. -/
 lemma step_periodic (n : ℕ) [NeZero n] (hn : 1 < n) :
     ∃ M : ℕ, 0 < M ∧ step^[M] (initial n) = initial n := by
-  classical
   have hinj : Function.Injective (step : State n → State n) := step_injective hn
   have hbij : Function.Bijective (step : State n → State n) := hinj.bijective_of_finite
   let σ : Equiv.Perm (State n) := Equiv.ofBijective _ hbij

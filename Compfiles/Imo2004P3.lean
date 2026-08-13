@@ -673,7 +673,6 @@ lemma tile_decomposition {m n : ℕ} (h : Tileable (rect m n)) :
       (∀ T₁ ∈ Tiles, ∀ T₂ ∈ Tiles, T₁ ≠ T₂ → Disjoint T₁ T₂) ∧
       rect m n = Tiles.biUnion id := by
   obtain ⟨𝒯, hh, hd, hU⟩ := h
-  classical
   have hcov : ∀ x ∈ rect m n, ∃ H ∈ 𝒯, x ∈ H := by
     intro x hx
     rw [hU, Finset.mem_biUnion] at hx
@@ -931,7 +930,6 @@ lemma card_biUnion' {s : Finset (Finset (ℤ × ℤ))} {t : Finset (ℤ × ℤ) 
 
 lemma four_dvd_of_tileable {m n : ℕ} (h : Tileable (rect m n)) : 4 ∣ m ∨ 4 ∣ n := by
   obtain ⟨Tiles, hT, hd, hU⟩ := tile_decomposition h
-  classical
   by_contra hcon
   obtain ⟨h4m, h4n⟩ := not_or.mp hcon
   have h4mn : 4 ∣ m * n := dvd_trans (by decide : 4 ∣ 12) (twelve_dvd_of_tileable h)

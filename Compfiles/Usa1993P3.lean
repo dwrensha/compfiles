@@ -95,7 +95,6 @@ theorem lemma2 (f : ↑(Set.Icc 0 1) → ℝ) (x : ℝ) (hx : 0 ≤ x ∧ x ≤ 
     (h6 : ∀ (x : ↑(Set.Icc (0 : ℝ) 1)), f x ≤ 1)
     (h8 : ∀ n : ℕ, ∀ x : Set.Icc (0 : ℝ) (1/2^n), 2^n * (x : ℝ) ∈ Set.Icc (0:ℝ) 1)
     : f ⟨x, hx⟩ ≤ 2 * x := by
-  classical
   -- f(0) = 0
   have f0 : f ⟨0, by simp [Set.mem_Icc]⟩ = 0 := by
     have := h5 (1 : ↑(Set.Icc (0 : ℝ) 1))

@@ -327,7 +327,6 @@ The proof passes to complex polynomials and evaluates `Qfun` at the surface poin
 lemma natDegree_le_two (P : Polynomial ℝ) (hP0 : P ≠ 0) (hPhi : PhiPoly P = 0)
     (hEven : P.comp (-X) = P) :
     P.natDegree ≤ 2 := by
-  classical
   obtain ⟨h, hh⟩ : ∃ h : ℂ, h ^ 2 = -1 / 2 := by
     refine ⟨Complex.I * (Real.sqrt 2 / 2 : ℝ), ?_⟩
     rw [mul_pow, Complex.I_sq, ← Complex.ofReal_pow, div_pow,

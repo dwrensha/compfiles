@@ -1601,7 +1601,6 @@ theorem hall_deficiency {n : ℕ} [NeZero n] (r : Fin n → Fin n → Prop) [Dec
       (∀ p ∈ M, f p ∈ T ∧ r p (f p)) ∧
       (∀ p₁ ∈ M, ∀ p₂ ∈ M, f p₁ = f p₂ → p₁ = p₂) ∧
       (∀ p, p ∉ M → ∀ j ∈ T, ¬ r p j) := by
-  classical
   -- neighborhood of a person: the set of jobs they are compatible with
   set N : Fin n → Finset (Fin n) := fun p => Finset.univ.filter (r p) with hN
   -- the deficiency of a set of people
@@ -1782,7 +1781,6 @@ theorem usa2025_p6_main (N : ℕ) (hN : 0 < N) : ∀ (m : ℕ) [NeZero m] (_hmn 
       rw [hfilter]
       exact h1
     · obtain ⟨Pπ, hPπ⟩ := hpart ⟨0, hN⟩
-      classical
       have : NeZero N := ⟨(Nat.ne_of_lt hN).symm⟩
       have hk : 0 < N := hN
       have hk2 : 2 ≤ N := hN2

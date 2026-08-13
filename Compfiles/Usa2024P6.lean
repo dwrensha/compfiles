@@ -63,7 +63,6 @@ lemma vvv_def {n k : ℕ} (x : Fin k → ℝ) (A : Fin k → Finset (Fin n)) (p 
 /-- Intersection cardinality as a sum of indicators. -/
 lemma card_inter_cast {n : ℕ} (A B : Finset (Fin n)) :
     ((A ∩ B).card : ℝ) = ∑ p : Fin n, (if p ∈ A ∧ p ∈ B then (1 : ℝ) else 0) := by
-  classical
   have h1 : A ∩ B = Finset.univ.filter (fun p => p ∈ A ∧ p ∈ B) := by
     ext p
     simp [Finset.mem_inter]
@@ -89,7 +88,6 @@ lemma lhs_eq_sum_v_sq {n k : ℕ} (x : Fin k → ℝ) (A : Fin k → Finset (Fin
     ∑ i : Fin k, ∑ j : Fin k, x i * x j *
         (((A i ∩ A j).card : ℝ) ^ 2 / ((A i).card : ℝ) / ((A j).card : ℝ)) =
       ∑ p : Fin n, ∑ q : Fin n, (vvv x A p q) ^ 2 := by
-  classical
   have per : ∀ i j : Fin k,
       x i * x j *
           (((A i ∩ A j).card : ℝ) ^ 2 / ((A i).card : ℝ) / ((A j).card : ℝ)) =
@@ -170,7 +168,6 @@ lemma sum_offdiag {n k : ℕ} (x : Fin k → ℝ) (A : Fin k → Finset (Fin n))
     (hA : ∀ i, (A i).card ≠ 0) :
     ∑ t ∈ Finset.univ.sigma (fun p : Fin n => Finset.univ.erase p), vvv x A t.1 t.2 =
       ∑ i : Fin k, (((A i).card : ℝ) - 1) * x i := by
-  classical
   simp only [vvv_def]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => ?_
@@ -292,7 +289,6 @@ lemma pair_filter_eq {n : ℕ} (B : Finset (Fin n)) :
 lemma card_pairs {n : ℕ} (B : Finset (Fin n)) :
     ∑ p : Fin n, ∑ q ∈ Finset.univ.erase p, (if p ∈ B ∧ q ∈ B then (1 : ℝ) else 0) =
       (B.card : ℝ) * ((B.card : ℝ) - 1) := by
-  classical
   rw [Finset.sum_sigma']
   rw [← Finset.sum_filter, pair_filter_eq B]
   rw [Finset.sum_const, nsmul_eq_mul, mul_one]
@@ -337,7 +333,6 @@ lemma cntS_single {n ℓ : ℕ} (p q : Fin n) :
         (fun B => p ∈ B)).card =
       ((Finset.powersetCard ℓ (Finset.univ : Finset (Fin n))).filter
         (fun B => q ∈ B)).card := by
-  classical
   refine Finset.card_bij' (fun B _ => (Equiv.swap p q).finsetCongr B)
     (fun B _ => (Equiv.swap p q).finsetCongr B) ?_ ?_ ?_ ?_
   · intro B hB
@@ -370,7 +365,6 @@ lemma cntS_pair {n ℓ : ℕ} (p q p' q' : Fin n) (hpq : p ≠ q) (hpq' : p' ≠
         (fun B => p ∈ B ∧ q ∈ B)).card =
       ((Finset.powersetCard ℓ (Finset.univ : Finset (Fin n))).filter
         (fun B => p' ∈ B ∧ q' ∈ B)).card := by
-  classical
   obtain ⟨π, hπp, hπq⟩ := exists_perm_eq p q p' q' hpq hpq'
   refine Finset.card_bij' (fun B _ => π.finsetCongr B) (fun B _ => π.symm.finsetCongr B)
     ?_ ?_ ?_ ?_
@@ -441,7 +435,6 @@ limit sense of the inequality) by taking all `ℓ`-subsets once with weight `1`
 (second part of `IsGreatest`). -/
 lemma solution_le_of_works {n ℓ : ℕ} (hn : 2 < n) (hℓ1 : 1 ≤ ℓ) (hℓn : ℓ ≤ n) (c : ℝ)
     (hc : Works n ℓ c) : c ≤ solution n ℓ := by
-  classical
   -- The extremal family: all `ℓ`-subsets of `[n]`, each used once, weights `1`.
   set s : Finset (Finset (Fin n)) := Finset.powersetCard ℓ Finset.univ with hs
   have hscard : s.card = Nat.choose n ℓ := by

@@ -325,7 +325,6 @@ many steps, no matter how Shan-Yu plays, if and only if `θ = 180 / n` for some
 integer `n ≥ 2`. -/
 problem imo2026_p4 (θ : ℝ) (hθ0 : 0 < θ) (hθ180 : θ < 180) :
     MulanCanGuarantee θ ↔ θ ∈ answer := by
-  classical
   change MulanCanGuarantee θ ↔ ∃ n : ℕ, 2 ≤ n ∧ θ = 180 / n
   constructor
   · -- (⇒) If Mulan can guarantee victory, then `θ = 180 / n` for some `n ≥ 2`.

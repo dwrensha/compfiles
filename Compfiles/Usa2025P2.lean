@@ -75,7 +75,6 @@ then so does its derivative. -/
 lemma good_derivative {F : ℝ[X]}
     (h : F.roots.Nodup ∧ Multiset.card F.roots = F.natDegree) :
     F.derivative.roots.Nodup ∧ Multiset.card F.derivative.roots = F.derivative.natDegree := by
-  classical
   obtain ⟨hnd, hcard⟩ := h
   by_cases hm : F.natDegree ≤ 1
   · -- `F'` is (at most) a nonzero constant or zero; either way it has no roots.
@@ -182,7 +181,6 @@ lemma dvd_X_pow_two_iterate_derivative (R : ℝ[X]) {t : ℕ} (ht : 1 ≤ t)
 multiset is duplicate-free nowhere. -/
 lemma not_nodup_roots_of_X_pow_two_dvd {F : ℝ[X]} (hF : F ≠ 0)
     (h : (X : ℝ[X]) ^ 2 ∣ F) : ¬ F.roots.Nodup := by
-  classical
   intro hnd
   have h2 : 2 ≤ F.rootMultiplicity 0 := by
     rw [le_rootMultiplicity_iff hF]
@@ -202,7 +200,6 @@ lemma core_pigeonhole {k : ℕ} (hk : 1 ≤ k) {s : Finset ℝ} (hscard : s.card
     (H : ∀ i ∈ s, ∃ t ∈ Finset.Icc 1 (k - 1),
       (∏ r ∈ s.erase i, (X - C r)).coeff t = 0) :
     False := by
-  classical
   have H' : ∀ i : s, ∃ t : ℕ, t ∈ Finset.Icc 1 (k - 1) ∧
       (∏ r ∈ s.erase (i : ℝ), (X - C r)).coeff t = 0 := fun i => H i i.2
   choose f hf using H'
@@ -297,7 +294,6 @@ roots of `P` are distinct and there are `deg P` many of them (i.e. `P` splits ov
 lemma roots_real_aux {P : ℝ[X]} (hP : P ≠ 0) (hsq : Squarefree P)
     (h : ∀ z : ℂ, aeval z P = 0 → z.im = 0) :
     P.roots.Nodup ∧ Multiset.card P.roots = P.natDegree := by
-  classical
   have hsep : P.Separable := PerfectField.separable_iff_squarefree.mpr hsq
   have hnodup : P.roots.Nodup := nodup_roots hsep
   refine ⟨hnodup, ?_⟩
@@ -345,7 +341,6 @@ problem usa2025_p2 (n k : ℕ) (hn : k < n) (hk : 1 ≤ k) (P : ℝ[X])
     (hdeg : P.natDegree = n) (hsq : Squarefree P) (h0 : P.eval 0 ≠ 0)
     (H : ∀ a : Fin (k + 1) → ℝ, (∑ i, C (a i) * X ^ (i : ℕ)) ∣ P → ∏ i, a i = 0) :
     ∃ z : ℂ, aeval z P = 0 ∧ z.im ≠ 0 := by
-  classical
   have hP : P ≠ 0 := by rintro rfl; simp at hdeg; omega
   -- Suppose for contradiction that `P` has no nonreal root.
   by_contra hcon

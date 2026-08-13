@@ -377,7 +377,6 @@ problem imo2005_p6 {n : ℕ} (s : Fin n → Finset (Fin 6))
       2 * n < 5 * (Finset.univ.filter fun i => p ∈ s i ∧ q ∈ s i).card)
     (hall : ∀ i, (s i).card < 6) :
     ∃ i j, i ≠ j ∧ (s i).card = 5 ∧ (s j).card = 5 := by
-  classical
   by_contra hcon
   push Not at hcon
   -- There is at least one contestant.

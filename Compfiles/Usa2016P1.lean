@@ -155,7 +155,6 @@ lemma hasChain_eight : HasChain 8 :=
 /-- Any chain on an `n`-element set uses at most `2 ^ n - 1` nonempty subsets,
 so `n ≤ 6` is impossible since `2 ^ 6 - 1 < 100`. -/
 lemma not_hasChain_of_le_six {n : ℕ} (hn : n ≤ 6) : ¬ HasChain n := by
-  classical
   rintro ⟨X, hne, hinj, -⟩
   have himg : (univ : Finset (Fin 100)).image X ⊆ univ.erase (∅ : Finset (Fin n)) := by
     intro t ht
@@ -177,7 +176,6 @@ Sets of size at least 4 must be preceded by sets of size at most 2, and there
 are only 28 nonempty subsets of size at most 2 and 35 subsets of size 3, so a
 chain on 7 elements has length at most `28 + 35 + (28 + 1) = 92 < 100`. -/
 lemma not_hasChain_seven : ¬ HasChain 7 := by
-  classical
   rintro ⟨X, hne, hinj, hchain⟩
   -- Consecutive sets have total size at most 6.
   have hsum : ∀ i : Fin 99, (X i.castSucc).card + (X i.succ).card ≤ 6 := by

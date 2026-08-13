@@ -109,7 +109,6 @@ lemma balance_map_pred (l : List (ℕ × Bool)) (h : ∀ p ∈ l, 1 ≤ p.1) :
 nonzero. -/
 lemma balance_ne_zero {l : List (ℕ × Bool)} (hne : l ≠ []) (hnd : (l.map Prod.fst).Nodup) :
     Balance l ≠ 0 := by
-  classical
   -- Triangle inequality bound on the signed sum.
   have htri : ∀ m : List (ℕ × Bool),
       |Balance m| ≤ (m.map fun p ↦ (2 : ℤ) ^ p.1).sum := by

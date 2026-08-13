@@ -56,7 +56,6 @@ theorem exists_pairwise_disjoint_edges (G : SimpleGraph V) [DecidableRel G.Adj]
     ∃ s : Finset (Sym2 V), s ⊆ G.edgeFinset ∧
       Fintype.card V - #G.edgeFinset ≤ #s ∧
       ∀ e₁ ∈ s, ∀ e₂ ∈ s, e₁ ≠ e₂ → ∀ v : V, ¬ (v ∈ e₁ ∧ v ∈ e₂) := by
-  classical
   -- For each vertex choose one "first" incident edge.
   have hne : ∀ v : V, (G.incidenceFinset v).Nonempty :=
     fun v ↦ incidenceFinset_nonempty_of_degree_pos G (hdeg v)

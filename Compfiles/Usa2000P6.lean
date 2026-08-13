@@ -59,7 +59,6 @@ theorem key_identity (a b c d : ℝ) (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c
     min (a * d) (c * b) - min (a * c) (b * d) =
       (if b ≤ a then (1 : ℝ) else -1) * (if d ≤ c then (1 : ℝ) else -1) *
         min (min a b * |c - d|) (min c d * |a - b|) := by
-  classical
   by_cases hba : b ≤ a
   · by_cases hdc : d ≤ c
     · -- case b ≤ a, d ≤ c: both signs are +1
@@ -185,7 +184,6 @@ theorem min_kernel_nonneg {ι : Type*} [DecidableEq ι] (z : ι → ℝ) :
 theorem kernel_nonneg {ι : Type*} [DecidableEq ι] (S : Finset ι) (u w z : ι → ℝ)
     (hu : ∀ i ∈ S, 0 ≤ u i) (hw : ∀ i ∈ S, 0 ≤ w i) :
     0 ≤ ∑ i ∈ S, ∑ j ∈ S, z i * z j * min (u i * w j) (u j * w i) := by
-  classical
   have hsub : S.filter (fun i => 0 < w i) ⊆ S := Finset.filter_subset _ _
   have hvan_i : ∀ i ∈ S, i ∉ S.filter (fun i => 0 < w i) → ∀ j ∈ S,
       z i * z j * min (u i * w j) (u j * w i) = 0 := by

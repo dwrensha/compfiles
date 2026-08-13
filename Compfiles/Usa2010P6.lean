@@ -77,7 +77,6 @@ disjoint from `S₁`, when `S₀ ∩ S₁ = ∅`. -/
 lemma cond_weight (n : ℕ) (q : ℚ) (S₀ S₁ : Finset (Fin n)) (hd : Disjoint S₀ S₁) :
     ∑ t : Finset (Fin n), (if S₀ ⊆ t ∧ Disjoint t S₁ then w n q t else 0)
       = q ^ S₀.card * (1 - q) ^ S₁.card := by
-  classical
   set f : Fin n → ℚ := fun i => if i ∈ S₁ then 0 else q
   set g : Fin n → ℚ := fun i => if i ∈ S₀ then 0 else 1 - q
   have key := Finset.prod_add f g (Finset.univ : Finset (Fin n))
@@ -334,7 +333,6 @@ lemma expected_score (L : List (ℤ × ℤ)) :
 lemma W_ge {L : List (ℤ × ℤ)} (hL : ValidBoard L) {p : ℤ × ℤ} (hp : p ∈ L) :
     qProb ≤ ∑ t : Finset (Fin (nV L)),
       (if p.1 ∈ Tof L t ∨ p.2 ∈ Tof L t then w (nV L) qProb t else 0) := by
-  classical
   have hpz := hL.nonzero p hp
   obtain ⟨hpV1, hpV2⟩ := natAbs_mem_V hp
   obtain ⟨i, hi⟩ := kE_cov L p.1.natAbs hpV1
@@ -538,7 +536,6 @@ lemma W_ge {L : List (ℤ × ℤ)} (hL : ValidBoard L) {p : ℤ × ℤ} (hp : p 
 
 lemma lower_bound (L : List (ℤ × ℤ)) (hL : ValidBoard L) :
     ∃ T : Finset ℤ, ValidErase T ∧ 43 ≤ score L T := by
-  classical
   have hsum : (L.map (fun _ => qProb)).sum ≤ (L.map (fun p => ∑ t : Finset (Fin (nV L)),
       (if p.1 ∈ Tof L t ∨ p.2 ∈ Tof L t then w (nV L) qProb t else 0))).sum :=
     List.sum_le_sum (fun p hp => W_ge hL hp)

@@ -58,7 +58,6 @@ lemma ncard_preimage_eq_sum_fibers
     (hfin : {a : α | p (g a)}.Finite) :
     {a : α | p (g a)}.ncard =
       ∑ b : β, if p b then {a : α | g a = b}.ncard else 0 := by
-  classical
   let e : ↑({a : α | p (g a)}) ≃
       Sigma (fun b : ↑({b : β | p b}) => ↑({a : α | g a = b.1})) :=
     { toFun := fun a => ⟨⟨g a.1, a.2⟩, ⟨a.1, rfl⟩⟩
@@ -143,7 +142,6 @@ lemma superset_layer_card (u : Signature) (j : ℕ) :
     ((Finset.univ : Finset Signature).filter
         (fun v : Signature => u ⊆ v ∧ v.card = u.card + j)).card =
       (100 - u.card).choose j := by
-  classical
   have hsubset_top : u ⊆ topSignature := by
     intro a _
     simp [topSignature]
@@ -196,7 +194,6 @@ lemma sum_supersets_by_rank
     (∑ v : Signature, if u ⊆ v then F v.card else 0) =
       ∑ j ∈ Finset.range (100 - u.card + 1),
         F (u.card + j) * (100 - u.card).choose j := by
-  classical
   calc
     (∑ v : Signature, if u ⊆ v then F v.card else 0)
         = ∑ v ∈ (Finset.univ : Finset Signature).filter (fun v : Signature => u ⊆ v),
@@ -354,7 +351,6 @@ lemma immediate_supersets_count {u v : Signature} (huv : u ⊆ v) :
     (∑ w ∈ (Finset.univ : Finset Signature).erase v,
         if u ⊆ w ∧ w ⊆ v ∧ w.card + 1 = v.card then 1 else 0) =
       v.card - u.card := by
-  classical
   rw [← Finset.card_filter
     (fun w : Signature => u ⊆ w ∧ w ⊆ v ∧ w.card + 1 = v.card)
     ((Finset.univ : Finset Signature).erase v)]
@@ -536,7 +532,6 @@ lemma pushDown_preserves_condition {f : Signature → ℕ} {v : Signature}
     (hfv : v.card ≤ f v) (hf : SignatureCountCondition f) :
     SignatureCountCondition (pushDown f v) := by
   -- Only intersections below `v` change.
-  classical
   intro u hu
   by_cases huv : u ⊆ v
   · have hucard_le_vcard : u.card ≤ v.card := Finset.card_le_card huv
@@ -609,7 +604,6 @@ lemma pushDown_preserves_objective_of_large {f : Signature → ℕ} {v : Signatu
     (hv : 50 < v.card) (hfv : v.card ≤ f v) :
     SignatureObjective (pushDown f v) = SignatureObjective f := by
   -- Above rank `50`, push-down preserves the objective.
-  classical
   have hv_le : 50 ≤ v.card := by omega
   have hpush_v : pushDown f v v = f v - v.card := by
     simp [pushDown]
@@ -708,7 +702,6 @@ lemma pushDown_preserves_objective_of_large {f : Signature → ℕ} {v : Signatu
 lemma pushDown_decreases_objective_at_middle {f : Signature → ℕ} {v : Signature}
     (hv : v.card = 50) (hfv : v.card ≤ f v) :
     SignatureObjective (pushDown f v) + 50 = SignatureObjective f := by
-  classical
   have hv_le : 50 ≤ v.card := by omega
   have hfv50 : 50 ≤ f v := by omega
   have hpush_v : pushDown f v v = f v - 50 := by
@@ -842,7 +835,6 @@ lemma strictSupersetContribution_eq_canonical_of_strict
 lemma SignatureIntersectionCount_eq_self_add_strict
     (f : Signature → ℕ) (u : Signature) :
     SignatureIntersectionCount f u = f u + strictSupersetContribution f u := by
-  classical
   let A : Signature → ℕ := fun w ↦ if u ⊆ w then f w else 0
   let B : Signature → ℕ := fun w ↦ if u ⊂ w then f w else 0
   have hsum_erase :
@@ -898,7 +890,6 @@ lemma le_of_modEq_of_lt_modulus {d a b : ℕ}
 lemma SignatureIntersectionCount_fillRank_of_card_gt {k : ℕ} {f : Signature → ℕ}
     {u : Signature} (hu : k < u.card) :
     SignatureIntersectionCount (fillRank k f) u = SignatureIntersectionCount f u := by
-  classical
   rw [SignatureIntersectionCount, SignatureIntersectionCount]
   refine Finset.sum_congr rfl ?_
   intro w _
@@ -1045,7 +1036,6 @@ abbrev RealizedPoint (f : Signature → ℕ) :=
 
 noncomputable def encodePoint (f : Signature → ℕ) :
     RealizedPoint f ↪ ℤ := by
-  classical
   let e := Fintype.equivFin (RealizedPoint f)
   refine
     { toFun := fun x => ((e x).1 : ℤ)
@@ -1062,7 +1052,6 @@ noncomputable def realizedFamily (f : Signature → ℕ)
 
 lemma realizedFamily_finite (f : Signature → ℕ) (i : Fin 100) :
     (realizedFamily f i).Finite := by
-  classical
   exact Set.finite_range fun x : {x : RealizedPoint f // i ∈ x.fst} =>
     encodePoint f x.1
 
@@ -1081,7 +1070,6 @@ lemma realizedPoint_subtype_card
     (f : Signature → ℕ) (p : Signature → Prop) [DecidablePred p] :
     Nat.card {x : RealizedPoint f // p x.fst} =
       ∑ v : Signature, if p v then f v else 0 := by
-  classical
   let e :
       {x : RealizedPoint f // p x.fst} ≃
         Sigma (fun v : {v : Signature // p v} => Fin (f v.1)) :=
@@ -1106,7 +1094,6 @@ lemma realized_intersection_eq
     (⋂ i ∈ u, realizedFamily f i) =
       Set.range fun x : {x : RealizedPoint f // u ⊆ x.fst} =>
         encodePoint f x.1 := by
-  classical
   ext z
   constructor
   · intro hz
@@ -1130,7 +1117,6 @@ lemma realized_intersection_ncard
     {f : Signature → ℕ} (u : Signature) (hu : u.Nonempty) :
     (⋂ i ∈ u, realizedFamily f i).ncard =
       SignatureIntersectionCount f u := by
-  classical
   rw [realized_intersection_eq u hu]
   rw [Set.ncard_range_of_injective]
   · rw [realizedPoint_subtype_card, SignatureIntersectionCount]
@@ -1140,7 +1126,6 @@ lemma realized_intersection_ncard
 lemma realized_membership_ncard
     {f : Signature → ℕ} (x : RealizedPoint f) :
     {i : Fin 100 | encodePoint f x ∈ realizedFamily f i}.ncard = x.fst.card := by
-  classical
   have hfin : {i : Fin 100 | encodePoint f x ∈ realizedFamily f i}.Finite :=
     Set.finite_univ.subset (by intro i _; simp)
   rw [Set.ncard_eq_toFinset_card _ hfin]
@@ -1155,7 +1140,6 @@ lemma realized_objective_ncard
     {f : Signature → ℕ} :
     {z : ℤ | InAtLeastKSubsets (realizedFamily f) 50 z}.ncard =
       SignatureObjective f := by
-  classical
   have hobj_eq :
       {z : ℤ | InAtLeastKSubsets (realizedFamily f) 50 z} =
         Set.range fun x : {x : RealizedPoint f // 50 ≤ x.fst.card} =>
@@ -1195,7 +1179,6 @@ lemma realize_signature_counts
     ∃ S : Fin 100 → Set ℤ,
       Good S ∧
       {z : ℤ | InAtLeastKSubsets S 50 z }.ncard = SignatureObjective f := by
-  classical
   refine ⟨realizedFamily f, ?_, realized_objective_ncard⟩
   refine ⟨realizedFamily_finite f, ?_, ?_⟩
   · let x : RealizedPoint f := ⟨topSignature, ⟨0, htop⟩⟩
@@ -1212,13 +1195,11 @@ lemma realize_signature_counts
 
 /-- Exact signature counts extracted from an actual family. -/
 noncomputable def signatureCount (S : Fin 100 → Set ℤ) (v : Signature) : ℕ := by
-  classical
   exact if v.Nonempty then {z : ℤ | signatureOf S z = v}.ncard else 0
 
 lemma signatureCount_condition_of_good (S : Fin 100 → Set ℤ) (hS : Good S) :
     SignatureCountCondition (signatureCount S) := by
   -- Partition the intersection signatures.
-  classical
   intro u hu
   rcases hS.card u hu with ⟨k, hk⟩
   refine ⟨k, ?_⟩
@@ -1260,7 +1241,6 @@ lemma signatureCount_condition_of_good (S : Fin 100 → Set ℤ) (hS : Good S) :
 
 lemma signatureCount_top_pos_of_good (S : Fin 100 → Set ℤ) (hS : Good S) :
     0 < signatureCount S topSignature := by
-  classical
   have htop : topSignature.Nonempty := by
     exact ⟨0, by simp [topSignature]⟩
   have hnonempty : (⋂ i, S i).Nonempty := by
@@ -1290,13 +1270,13 @@ lemma signatureObjective_eq_original_objective
     SignatureObjective (signatureCount S) =
       {z : ℤ | InAtLeastKSubsets S 50 z }.ncard := by
   -- Partition high-membership elements signature.
-  classical
   have hsig_card :
       ∀ z : ℤ, {i : Fin 100 | z ∈ S i}.ncard = (signatureOf S z).card := by
     intro z
     have hfin : {i : Fin 100 | z ∈ S i}.Finite :=
       Set.finite_univ.subset (by intro i _; simp)
     rw [Set.ncard_eq_toFinset_card _ hfin]
+    classical
     simp [signatureOf]
   have hobj_set :
       {z : ℤ | InAtLeastKSubsets S 50 z}
@@ -1650,7 +1630,6 @@ lemma normalize_rank_subset
       0 < g topSignature ∧
       (∀ w : Signature, k < w.card → g w = canonicalHighCount w) ∧
       (∀ v : Signature, v ∈ A → g v = canonicalHighCount v) := by
-  classical
   revert hA f
   refine Finset.induction_on A ?base ?step
   · intro f _hA hf htop hgt
@@ -1722,7 +1701,6 @@ lemma smooth_high_signatures_from_rank
       SignatureObjective g ≤ SignatureObjective f ∧
       0 < g topSignature ∧
       (∀ w : Signature, 50 ≤ w.card → g w = canonicalHighCount w) := by
-  classical
   revert hk100 f
   refine Nat.le_induction ?base ?step k hk49
   · intro _hk100 f hf htop hgt
@@ -1772,7 +1750,6 @@ lemma signature_model_lower_bound
     (f : Signature → ℕ)
     (hf : SignatureCountCondition f) (htop : 0 < f topSignature) :
     solution ≤ SignatureObjective f := by
-  classical
   rcases smooth_high_signatures_to_canonical f hf htop with
     ⟨g, _hg, hobj_le, hcanonical⟩
   have hgobj : SignatureObjective g = SignatureObjective canonicalHighCount := by

@@ -136,7 +136,6 @@ theorem aux : ∀ (N M : ℕ) (c : Fin M → Fin N),
       · exact ⟨x.castLE hM, y.castLE hM, h, hcxy⟩
       · exact ⟨y.castLE hM, x.castLE hM, h, hcxy.symm⟩
     -- Take the leftmost repeated second element `t₀`, and its partner `s₀`.
-    classical
     let S : Finset (Fin M) := univ.filter fun t ↦ ∃ s, s < t ∧ c s = c t
     have hS : S.Nonempty := by
       obtain ⟨s, t, hst, hct⟩ := key
@@ -391,7 +390,6 @@ theorem main_aux (N : ℕ) (hN : 1 ≤ N) (a : Fin (N * (N + 1)) → ℕ)
       (univ.filter fun t ↦ a (f t) > a (f i)).card = 2 * k.val →
       (univ.filter fun t ↦ a (f t) > a (f j)).card = 2 * k.val + 1 →
       i.val + 1 = j.val ∨ j.val + 1 = i.val := by
-  classical
   -- `ρ i` is the number of players shorter than player `i`.
   let ρ : Fin (N * (N + 1)) → ℕ := fun i ↦ (univ.filter fun t ↦ a t < a i).card
   have hρlt : ∀ i, ρ i < N * (N + 1) := by

@@ -1421,7 +1421,6 @@ noncomputable instance OrderedCell.instLinearOrder {m : ℕ} : LinearOrder (Orde
 /-- The order isomorphism between all cells (with the key order) and `Fin (m ^ 2)`. -/
 noncomputable def nsOfIso {m : ℕ} (_hm : 2 ≤ m) :
     ↥(Finset.univ : Finset (OrderedCell m)) ≃o Fin (m ^ 2) := by
-  classical
   have hcard : (Finset.univ : Finset (OrderedCell m)).card = m ^ 2 := by
     rw [Finset.card_univ]
     show Fintype.card (Fin m × Fin m) = m ^ 2
@@ -1430,7 +1429,6 @@ noncomputable def nsOfIso {m : ℕ} (_hm : 2 ≤ m) :
 
 /-- The constructed Nordic square: values are positions in the key order plus one. -/
 noncomputable def nsOf {m : ℕ} (hm : 2 ≤ m) : NordicSquare m := by
-  classical
   exact {
   toFun := fun c ↦ ⟨((nsOfIso hm) ⟨OrderedCell.of c, Finset.mem_univ _⟩).1 + 1, by
     rw [Finset.mem_Icc]

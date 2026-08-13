@@ -122,7 +122,6 @@ problem imo1999_p2 (n : ℕ) (hn : 2 ≤ n) :
     have hne : (⟨0, h0n⟩ : Fin n) ≠ ⟨1, h1n⟩ := ne_of_lt hlt
     set i0 : Fin n := ⟨0, h0n⟩
     set i1 : Fin n := ⟨1, h1n⟩
-    classical
     let y : Fin n → ℝ := fun i => if i = i0 then 1 else if i = i1 then 1 else 0
     have hy0 : ∀ i, 0 ≤ y i := by
       intro i

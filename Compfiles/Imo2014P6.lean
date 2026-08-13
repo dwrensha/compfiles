@@ -409,14 +409,12 @@ lemma constraint_iff {σ : Line → Bool} {ℓ m : Line} (hdet : ℓ.det m ≠ 0
 end Line
 
 /-- The lines whose constraint is a lower bound on the parameter along `ℓ`. -/
-noncomputable def lows (L : Finset Line) (σ : Line → Bool) (ℓ : Line) : Finset Line := by
-  classical
-  exact L.filter fun m => m ≠ ℓ ∧ 0 < sgn (σ m) * ℓ.det m
+noncomputable def lows (L : Finset Line) (σ : Line → Bool) (ℓ : Line) : Finset Line :=
+  L.filter fun m => m ≠ ℓ ∧ 0 < sgn (σ m) * ℓ.det m
 
 /-- The lines whose constraint is an upper bound on the parameter along `ℓ`. -/
-noncomputable def upps (L : Finset Line) (σ : Line → Bool) (ℓ : Line) : Finset Line := by
-  classical
-  exact L.filter fun m => m ≠ ℓ ∧ sgn (σ m) * ℓ.det m < 0
+noncomputable def upps (L : Finset Line) (σ : Line → Bool) (ℓ : Line) : Finset Line :=
+  L.filter fun m => m ≠ ℓ ∧ sgn (σ m) * ℓ.det m < 0
 
 lemma mem_lows {L : Finset Line} {σ : Line → Bool} {ℓ m : Line} :
     m ∈ lows L σ ℓ ↔ m ∈ L ∧ m ≠ ℓ ∧ 0 < sgn (σ m) * ℓ.det m := by
