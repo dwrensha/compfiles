@@ -178,17 +178,12 @@ lemma div_ten_of_sum_one_carry (a b n : ℕ) (h : a + b = n) (hn : n % 10 = 1)
   have _ := (Nat.div_add_mod n 10).symm
   omega
 
-axiom solitary_implies_form_axiom (n : ℕ) (h : is_solitary n) : is_solitary_form n
-
 lemma solitary_implies_form (n : ℕ) (h : is_solitary n) : is_solitary_form n :=
-  solitary_implies_form_axiom n h
-
-axiom form_implies_solitary_summands_axiom (n : ℕ) (h : is_solitary_form n) :
-    ∀ a b : ℕ, a + b = n → has_digit_one a ∨ has_digit_one b
+  sorry
 
 lemma form_implies_solitary_summands (n : ℕ) (h : is_solitary_form n) :
     ∀ a b : ℕ, a + b = n → has_digit_one a ∨ has_digit_one b :=
-  form_implies_solitary_summands_axiom n h
+  sorry
 
 lemma form_implies_solitary (n : ℕ) (h : is_solitary_form n) : is_solitary n := by
   unfold is_solitary
@@ -197,12 +192,9 @@ lemma form_implies_solitary (n : ℕ) (h : is_solitary_form n) : is_solitary n :
 lemma solitary_iff_form (n : ℕ) : is_solitary n ↔ is_solitary_form n := by
   exact ⟨solitary_implies_form n, form_implies_solitary n⟩
 
-axiom count_solitary_form_axiom :
-    (Finset.filter is_solitary_form (Finset.Ico 1 (10^2026))).card = solution
-
 lemma count_solitary_form :
     (Finset.filter is_solitary_form (Finset.Ico 1 (10^2026))).card = solution :=
-  count_solitary_form_axiom
+  sorry
 
 snip end
 
