@@ -104,16 +104,11 @@ lemma descent_aux {a b p q : ℤ} (ha : 0 < a) (_hb : 0 < b)
         dvd_add (dvd_mul_of_dvd_right h3 u) (dvd_mul_of_dvd_right h4 v)
       have h7 : u * (2 * p) + v * (2 * q) = 2 := by linear_combination 2 * huv
       rwa [h7] at h6
-    have h8 : Int.gcd (p - q) (p + q) ∣ 2 := by exact_mod_cast h5
+    have h8 : Int.gcd (p - q) (p + q) ∣ 2 := mod_cast h5
     have h9 : Int.gcd (p - q) (p + q) ≤ 2 := Nat.le_of_dvd (by norm_num) h8
     have hodd : (p + q) % 2 = 1 := by
       rcases hpar with ⟨hp1, hq1⟩ | ⟨hp1, hq1⟩ <;> omega
-    have hpos : 0 < Int.gcd (p - q) (p + q) := by
-      rcases Nat.eq_zero_or_pos (Int.gcd (p - q) (p + q)) with h | h
-      · exfalso
-        rw [Int.gcd_eq_zero_iff] at h
-        linarith [h.1]
-      · exact h
+    have hpos : 0 < Int.gcd (p - q) (p + q) := by positivity
     rcases (by omega : Int.gcd (p - q) (p + q) = 1 ∨ Int.gcd (p - q) (p + q) = 2) with h | h
     · exact h
     · exfalso

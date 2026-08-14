@@ -125,10 +125,7 @@ lemma entry_le_four_mul_entry {n : ℕ} {a : Fin n → ℝ} (ha : ∀ i, 0 < a i
     have ht1 : 1 < t := by
       rw [ht, Real.lt_sqrt zero_le_one, one_pow, one_lt_div (ha q)]
       exact hpq
-    have hbase : 0 ≤ t + t⁻¹ + ((n : ℝ) - 2) := by
-      have h1 : (0 : ℝ) ≤ t⁻¹ := inv_nonneg.mpr ht0.le
-      have h2 : (0 : ℝ) ≤ (n : ℝ) - 2 := by linarith
-      linarith [ht0.le]
+    have hbase : 0 ≤ t + t⁻¹ + ((n : ℝ) - 2) := by positivity
     have h4 : t + t⁻¹ + ((n : ℝ) - 2) ≤ (n : ℝ) + 1 / 2 :=
       (pow_le_pow_iff_left₀ hbase (by positivity) two_ne_zero).mp h3
     have h5 : t + t⁻¹ ≤ 5 / 2 := by linarith

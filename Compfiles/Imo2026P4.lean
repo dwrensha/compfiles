@@ -354,10 +354,7 @@ problem imo2026_p4 (θ : ℝ) (hθ0 : 0 < θ) (hθ180 : θ < 180) :
       have hm2n : 2 ≤ m.toNat := by
         have h2 : ((m.toNat : ℕ) : ℤ) = m := Int.toNat_of_nonneg (by omega)
         omega
-      have hne : ((m.toNat : ℕ) : ℝ) ≠ 0 := by
-        rw [hmn]
-        have h3 : (0 : ℝ) < ((m : ℤ) : ℝ) := by exact_mod_cast (by omega : 0 < m)
-        exact ne_of_gt h3
+      have hne : ((m.toNat : ℕ) : ℝ) ≠ 0 := by positivity
       exact hθ m.toNat hm2n ((eq_div_iff hne).mpr (by rw [hmn, mul_comm]; exact hm.symm))
     -- The equilateral triangle is a valid starting triangle.
     have hsum60 : ({60, 60, 60} : Multiset ℝ).sum = 180 := by
@@ -393,10 +390,7 @@ problem imo2026_p4 (θ : ℝ) (hθ0 : 0 < θ) (hθ180 : θ < 180) :
       have h2n : 2 ≤ 3 * k.toNat := by
         have h2 : ((k.toNat : ℕ) : ℤ) = k := Int.toNat_of_nonneg (by omega)
         omega
-      have hne : ((3 * k.toNat : ℕ) : ℝ) ≠ 0 := by
-        rw [hkn]
-        have h3 : (0 : ℝ) < ((k : ℤ) : ℝ) := by exact_mod_cast (by omega : 0 < k)
-        exact ne_of_gt (mul_pos (by norm_num) h3)
+      have hne : ((3 * k.toNat : ℕ) : ℝ) ≠ 0 := by positivity
       exact hθ (3 * k.toNat) h2n ((eq_div_iff hne).mpr (by
         rw [hkn, show θ * (3 * ((k : ℤ) : ℝ)) = 3 * (((k : ℤ) : ℝ) * θ) by ring, ← hky]
         norm_num))

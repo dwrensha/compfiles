@@ -699,11 +699,7 @@ lemma maintSeq_spec (σ : Strategy) (hσ : ValidStrategy σ) (a : Pt) (L : List 
             ((maintSeq σ a L k).1 - σ ((maintSeq σ a L k).2)) := by
         rw [add_sub_right_comm, add_smul, one_smul]
       rw [dist_eq_norm, e, norm_smul, Real.norm_eq_abs,
-        abs_of_pos (by
-          have hi : (0:ℝ) ≤
-              (dist ((maintSeq σ a L k).1) (σ ((maintSeq σ a L k).2)))⁻¹ :=
-            le_of_lt (inv_pos.mpr hdk)
-          linarith),
+        abs_of_pos (by positivity),
         ← dist_eq_norm, add_mul, one_mul, inv_mul_cancel₀ (ne_of_gt hdk)]
     refine ⟨?_, ?_, ?_⟩
     · rw [maintSeq_succ_snd, ihL, List.append_assoc]

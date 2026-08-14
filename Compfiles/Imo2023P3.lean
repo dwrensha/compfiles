@@ -892,8 +892,7 @@ lemma backward_unbounded {k : ℕ} (hk : 2 ≤ k) {P : Polynomial ℤ} (hmon : P
                 ∏ i ∈ Finset.range k, ((A m' : ℤ) + (i + 1) * c) := by
               apply Finset.prod_lt_prod_of_nonempty
               · intro i _
-                have hi0 : (0 : ℤ) ≤ (i : ℤ) * c := mul_nonneg (Int.natCast_nonneg _) hc0
-                linarith [ht0, hpos']
+                positivity
               · intro i hi
                 linarith [htc]
               · exact Finset.nonempty_range_iff.2 (by omega)
@@ -905,8 +904,7 @@ lemma backward_unbounded {k : ℕ} (hk : 2 ≤ k) {P : Polynomial ℤ} (hmon : P
                 ∏ i ∈ Finset.range k, ((A m' : ℤ) + (i + 1) * c) := by
               apply Finset.prod_lt_prod_of_nonempty
               · intro i _
-                have hi0 : (0 : ℤ) ≤ (i : ℤ) * c := mul_nonneg (Int.natCast_nonneg _) hc0
-                linarith [ht0, hpos']
+                positivity
               · intro i hi
                 have hi' : i < k := Finset.mem_range.1 hi
                 have h1i : (1 : ℤ) ≤ (i : ℤ) + 1 := by

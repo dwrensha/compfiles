@@ -71,10 +71,7 @@ lemma value_pos (x : ℕ → ℕ) {c n : ℕ} (hc : 1 < c) (hn : 1 ≤ n) (hxn :
     simp only [value]
     exact Finset.sum_nonneg
       fun i _ => mul_nonneg (Nat.cast_nonneg _) (pow_nonneg (Nat.cast_nonneg _) _)
-  have h2 : (0 : ℝ) < (x n : ℝ) * (c : ℝ) ^ n :=
-    mul_pos (Nat.cast_pos.mpr (Nat.pos_of_ne_zero hxn))
-      (pow_pos (Nat.cast_pos.mpr (by omega)) n)
-  linarith
+  positivity
 
 /-- The crux: `bⁿ · B' < aⁿ · A'`, where `A'` and `B'` are the numbers obtained
 by stripping the leading digit. Each term of `bⁿ · A'` is at most the matching

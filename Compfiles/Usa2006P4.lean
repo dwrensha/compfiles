@@ -164,9 +164,7 @@ problem usa2006_p4 (n : ℕ) (hn : 0 < n) :
             simp only [List.mem_append, List.mem_cons, List.not_mem_nil, or_false,
               List.mem_replicate] at hx
             rcases hx with (rfl | rfl | rfl) | ⟨_, rfl⟩
-            · have h1 : (0 : ℚ) < ((2 * m + 1 : ℕ) : ℚ) := by
-                exact_mod_cast (by omega : 0 < 2 * m + 1)
-              linarith
+            · positivity
             · norm_num
             · norm_num
             · norm_num
