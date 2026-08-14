@@ -39,6 +39,27 @@ def is_solitary (n : ℕ) : Prop :=
 snip begin
 -- We follow Solution 1 by sillybone and Hpenguin from Art of Problem Solving.
 
+lemma not_solitary_zero : ¬ is_solitary 0 := by simp [is_solitary]
+
+lemma not_solitary_two_zeros {k : ℕ} : ¬ is_solitary (2 * 10 ^ k) := by
+  rw [is_solitary]
+  push Not
+  intro _
+  use (2 * 10 ^ k), 0
+  constructor
+  rfl
+  constructor
+  induction k with
+  | zero => simp [has_digit_one]
+  | succ k ih =>
+    specialize ih (by omega)
+    simp [has_digit_one, Nat.mul_mod, Nat.pow_mod]
+    rw [Nat.pow_add_one 10 k]
+    rw [Nat.mul_div_assoc 2 (Nat.dvd_mul_left _ _)]
+    rw [Nat.mul_div_left (10 ^ k) (by decide)]
+    rwa [has_digit_one] at ih
+  simp [has_digit_one]
+
 lemma digit_squeeze {m k : ℕ} (hm : m ∈ Set.Ico (10 ^ k) (2 * 10 ^ k)) : 1 ∈ Nat.digits 10 m := by
   induction k generalizing m with
   | zero =>
@@ -65,62 +86,62 @@ lemma digits_last_mem {m k : ℕ} (h1 : 0 < m) (h2 : 10 ^ k ≤ m) (h3 : m / 10 
     exact @ih (m / 10) (by grind) (by omega)
       (by rwa [Nat.div_div_eq_div_mul, ← pow_succ'])
 
-lemma digits_last_mem₃ {a k : ℕ} : Nat.digits 10 (a % 10 ^ k) ++ [a / 10 ^ k % 10] = Nat.digits 10 (a % 10 ^ (k + 1)) := by
-  induction k with
-  | zero =>
-    wlog! w : a % 10 ≠ 0
-    simp
-    simp [Nat.mod_one]
-    rw [Nat.digits_of_lt 10 (a % 10) ?_ (show a % 10 < 10 by omega)]
-    sorry
-  | succ => sorry
+-- lemma digits_last_mem₃ {a k : ℕ} : Nat.digits 10 (a % 10 ^ k) ++ [a / 10 ^ k % 10] = Nat.digits 10 (a % 10 ^ (k + 1)) := by
+--   induction k with
+--   | zero =>
+--     wlog! w : a % 10 ≠ 0
+--     simp
+--     simp [Nat.mod_one]
+--     rw [Nat.digits_of_lt 10 (a % 10) ?_ (show a % 10 < 10 by omega)]
+--     sorry
+--   | succ => sorry
 
-lemma digits_div_subset' (a k : ℕ) : Nat.digits 10 (a % 10 ^ (k + 1)) <+: Nat.digits 10 a := by
-  wlog! h : a % 10 ^ (k + 1) ≠ 0
-  · simp [h]
-  induction k with
-  | zero =>
-    rw [Nat.digits_def']
-    simp [Nat.mod_one]
-  | succ k ih =>
-    rw [ih]
+-- lemma digits_div_subset' (a k : ℕ) : Nat.digits 10 (a % 10 ^ (k + 1)) <+: Nat.digits 10 a := by
+--   wlog! h : a % 10 ^ (k + 1) ≠ 0
+--   · simp [h]
+--   induction k with
+--   | zero =>
+--     rw [Nat.digits_def']
+--     simp [Nat.mod_one]
+--   | succ k ih =>
+--     rw [ih]
 
-    nth_rw 2 [Nat.digits_def' (by decide)]
-    rw [List.append_cons]
-    rw [Nat.div_div_eq_div_mul, ← pow_succ]
-    rw [List.append_left_inj]
-    sorry
+--     nth_rw 2 [Nat.digits_def' (by decide)]
+--     rw [List.append_cons]
+--     rw [Nat.div_div_eq_div_mul, ← pow_succ]
+--     rw [List.append_left_inj]
+--     sorry
 
-lemma digits_div_subset (a k : ℕ) : Nat.digits 10 (a % 10 ^ (k + 1)) ⊆ Nat.digits 10 a := by
-  wlog! h : a % 10 ^ (k + 1) ≠ 0
-  · simp [h]
-  induction k with
-  | zero =>
-    rw [Nat.digits_def' (by decide) (by omega)]
-    simp
-    rw [Nat.digits_def' (by decide) (by omega)]
-    exact List.mem_cons_self
-  | succ k ih =>
-    specialize ih sorry
-    rw [Nat.digits_def' (by decide)]
-    refine List.cons_subset.mpr ⟨?_, ?_⟩
-    rw [Nat.mod_mod_of_dvd]
+-- lemma digits_div_subset (a k : ℕ) : Nat.digits 10 (a % 10 ^ (k + 1)) ⊆ Nat.digits 10 a := by
+--   wlog! h : a % 10 ^ (k + 1) ≠ 0
+--   · simp [h]
+--   induction k with
+--   | zero =>
+--     rw [Nat.digits_def' (by decide) (by omega)]
+--     simp
+--     rw [Nat.digits_def' (by decide) (by omega)]
+--     exact List.mem_cons_self
+--   | succ k ih =>
+--     specialize ih sorry
+--     rw [Nat.digits_def' (by decide)]
+--     refine List.cons_subset.mpr ⟨?_, ?_⟩
+--     rw [Nat.mod_mod_of_dvd]
 
-    rw [Nat.digits_def' (by decide)]
-    · exact List.mem_cons_self
-    · rw [Nat.ne_zero_iff_zero_lt] at h
-      cases a
-      · simp at h
-      · simp
-    · exact dvd_of_mul_left_eq _ rfl
+--     rw [Nat.digits_def' (by decide)]
+--     · exact List.mem_cons_self
+--     · rw [Nat.ne_zero_iff_zero_lt] at h
+--       cases a
+--       · simp at h
+--       · simp
+--     · exact dvd_of_mul_left_eq _ rfl
 
-    nth_rw 2 [Nat.digits_def' (by decide)]
-    refine List.subset_cons_of_subset (a % 10) ?_
+--     nth_rw 2 [Nat.digits_def' (by decide)]
+--     refine List.subset_cons_of_subset (a % 10) ?_
 
-    convert ih
-    rw [@Nat.mod_pow_succ]
-    rw [Nat.digits_def' (by decide)] at ih
-    all_goals sorry
+--     convert ih
+--     rw [@Nat.mod_pow_succ]
+--     rw [Nat.digits_def' (by decide)] at ih
+--     all_goals sorry
 
 lemma solitary_form (k : ℕ) : is_solitary (2 * 10 ^ k - 1) := by
   refine ⟨by grind, fun a b h => ?_⟩
@@ -133,7 +154,7 @@ lemma solitary_form (k : ℕ) : is_solitary (2 * 10 ^ k - 1) := by
 
 lemma solitary_one : is_solitary 1 := solitary_form 0
 
-lemma solitary_iff (n k : ℕ) (hn1 : 0 < n) (hn2 : n < 10 ^ k) : is_solitary n ↔ is_solitary (2 * 10 ^ k + n) := by
+lemma solitary_extend (n k : ℕ) (hn1 : 0 < n) (hn2 : n < 10 ^ k) : is_solitary n ↔ is_solitary (2 * 10 ^ k + n) := by
   contrapose!
   constructor
   · intro hn hm
@@ -172,7 +193,7 @@ lemma solitary_iff (n k : ℕ) (hn1 : 0 < n) (hn2 : n < 10 ^ k) : is_solitary n 
       _ = (2 * 10 ^ k + n) / 10 ^ k := by rw [h]
       _ = _ := by simp [Nat.add_div, Nat.div_eq_of_lt, Nat.mod_eq_of_lt, hn2]
 
-    interval_cases hx: x
+    interval_cases hx : x
     · have hy : y = 2 := by omega
       have := calc a' + b'
         _ = 2 * 10 ^ k + n - x * (10 ^ k) - y * (10 ^ k) := by
@@ -213,14 +234,8 @@ lemma nines (k a : ℕ) : a ∈ Nat.digits 10 ((10 ^ (k + 1)) - 1) ↔ a = 9 := 
     · rintro rfl
       refine List.mem_cons.mpr <| Or.inl <| this _
 
-lemma solitary_range {m k : ℕ} (hm : m ∈ Finset.Ico (10 ^ k) (10 ^ (k + 1))) :
+lemma solitary_iff {m k : ℕ} (hm : m ∈ Finset.Ico (10 ^ k) (10 ^ (k + 1))) :
     is_solitary m ↔ m = 2 * 10 ^ k - 1 ∨ (∃ n ∈ Finset.Ico 1 (10 ^ k), is_solitary n ∧ m = 2 * 10 ^ k + n) := by
-  wlog! w : k ≠ 0
-  · subst w
-    simp [is_solitary] at hm ⊢
-
-    sorry
-
   constructor
   · contrapose!
     rintro ⟨hm1, hm2⟩
@@ -229,48 +244,48 @@ lemma solitary_range {m k : ℕ} (hm : m ∈ Finset.Ico (10 ^ k) (10 ^ (k + 1)))
     push_cast [Int.natCast_pred_of_pos, Nat.pos_of_neZero] at hm1
     -- by lemma 2, we know that 2 is not the leading digit of m
     intro solitary
+    have m_ne : (m : ℤ) ≠ 2 * 10 ^ k := by
+      norm_cast
+      contrapose solitary with h
+      rw [h]
+      exact not_solitary_two_zeros
     have : m < 2 * 10 ^ k ∨ (3 * 10 ^ k) ≤ m := by
       contrapose! hm2
       have h2 : 1 ≤ 2 * 10 ^ k := by omega
-      zify [h2] at hm2
       use m - 2 * 10 ^ k
-      rw [@solitary_iff _ k, Finset.mem_Ico]
-      zify [hm2.left, h2]
-      rw [Nat.add_sub_of_le (by exact_mod_cast hm2.left)]
-      simp [solitary]
-      constructor
-
-      sorry
-      omega
-      rw [@Nat.sub_pos_iff_lt]
-      zify
-      have : (m : ℤ) ≠ 2 * 10 ^ k := by
-        norm_cast
-        -- nicer to have k + 1 here
-        rintro rfl
-        absurd solitary
-        unfold is_solitary
-        push Not
-        intro h
-        use 0, (2 * 10 ^ k)
-        simp [has_digit_one, Nat.mul_mod, Nat.pow_mod, Nat.zero_mod, Nat.zero_pow (Nat.ne_zero_iff_zero_lt.mp w)]
-
-        all_goals sorry
-      exact hm2.left.lt_of_ne this.symm
-      zify [hm2.left]; omega
-
+      rw [@solitary_extend _ k, Finset.mem_Ico]
+      · zify [h2] at hm2
+        zify [hm2.left, h2]
+        rw [Nat.add_sub_of_le (by exact_mod_cast hm2.left)]
+        simp [solitary]
+        omega
+      · rw [@Nat.sub_pos_iff_lt]
+        zify at hm2 ⊢
+        exact hm2.left.lt_of_ne m_ne.symm
+      · zify [hm2.left] at hm2 ⊢; omega
     -- move inequalities to b
-
-    have (n m : ℤ) : n ≠ m ↔ n - ((10 ^ k : ℤ) - 1) ≠ m - ((10 ^ k : ℤ) - 1) := by simp
-    rw [this, sub_sub_sub_cancel_right, two_mul, Int.add_sub_cancel] at hm1
-    conv at hm2 => enter [2, 2, 2]; rw [this]
-
-
+    replace : m - (10 ^ k - 1) < 10 ^ k ∨ 2 * 10 ^ k < m - (10 ^ k - 1) := by
+      contrapose! this
+      constructor
+      · have h1 : 10 ^ k - 1 ≤ m := by omega
+        have h2 : 1 ≤ 10 ^ k := by omega
+        zify [h1, h2] at this ⊢
+        omega
+      · omega
+    set correction := Nat.digits 10 (m - (10 ^ k - 1)) |>.map (if · = 1 then 1 else 0) |> Nat.ofDigits 10 with hc
+    absurd solitary
+    unfold is_solitary
+    push Not
+    intro _
+    use 10 ^ k - 1 - correction, m - (10 ^ k - 1) + correction
+    constructor
+    rw [Nat.add_left_comm, Nat.sub_add_cancel ?_, Nat.sub_add_cancel (by omega)]
+    sorry
     sorry
   · simp only [Finset.mem_Ico]
     rintro (rfl | ⟨n, ⟨npos, hnk⟩, hn, rfl⟩)
     · exact solitary_form k
-    · exact solitary_iff n k npos hnk |>.mp hn
+    · exact solitary_extend n k npos hnk |>.mp hn
 
 lemma solitary_count (k : ℕ) : Finset.card { x ∈ (Finset.Ico 1 (10^k)) | is_solitary x } = 2 ^ k - 1 := by
   -- #count_heartbeats! 1 in -- 10333
@@ -291,11 +306,11 @@ lemma solitary_count (k : ℕ) : Finset.card { x ∈ (Finset.Ico 1 (10^k)) | is_
       simp only [Finset.mem_filter, Finset.singleton_union, Finset.mem_insert]
       constructor
       · rintro ⟨hm, hm2⟩
-        rw [solitary_range hm] at hm2
+        rw [solitary_iff hm] at hm2
         simpa [hm] using hm2
       · rintro (rfl | ⟨hm, hm2⟩)
         · grind [solitary_form]
-        · simp [solitary_range hm, ↓hm2, hm]
+        · simp [solitary_iff hm, ↓hm2, hm]
     rw [this, Finset.card_union_of_disjoint (by simp; omega)]
     have : { x ∈ (Finset.Ico 1 (10^k)) | is_solitary x }.card
         = {m ∈ Finset.Ico (10 ^ k) (10 ^ (k + 1)) | ∃ n ∈ Finset.Ico 1 (10 ^ k), is_solitary n ∧ m = 2 * 10 ^ k + n}.card := by
