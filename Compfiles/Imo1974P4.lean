@@ -166,13 +166,7 @@ lemma sum_whiteCount (T : Finset Rect) (hT : ValidDecomp T) :
   have hunion : T.biUnion (fun R ↦ R.cells.filter isWhite) =
       board.filter isWhite := by
     rw [← hcover]
-    ext x
-    simp only [Finset.mem_biUnion, Finset.mem_filter]
-    constructor
-    · rintro ⟨R, hR, hxcell, hxw⟩
-      exact ⟨⟨R, hR, hxcell⟩, hxw⟩
-    · rintro ⟨⟨R, hR, hxcell⟩, hxw⟩
-      exact ⟨R, hR, hxcell, hxw⟩
+    exact Eq.symm (Finset.filter_biUnion T Rect.cells isWhite)
   have hcard : (board.filter isWhite).card = 32 := by decide
   have key := Finset.card_biUnion hpd
   rw [hunion, hcard] at key

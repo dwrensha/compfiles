@@ -380,31 +380,6 @@ lemma isCycle_transfer {G H : SimpleGraph V} {u : V} {p : G.Walk u u}
   rw [Walk.isCycle_def, Walk.isCycle_def, Walk.isTrail_def, Walk.isTrail_def,
     Walk.edges_transfer, Walk.support_transfer, ne_eq, ne_eq, hnil]
 
-omit [Fintype V] in
-/-- Taking a cycle at `x` until a different vertex `y` gives a path. -/
-lemma isPath_takeUntil_of_isCycle {G : SimpleGraph V} {x : V} {C : G.Walk x x} (hC : C.IsCycle)
-    {y : V} (hy : y ∈ C.support) (hxy : y ≠ x) :
-    (C.takeUntil y hy).IsPath := by
-  rw [Walk.isPath_def]
-  have hspec := congr_arg Walk.support (C.take_spec hy)
-  rw [Walk.support_append] at hspec
-  have hT : (C.dropUntil y hy).support.tail ≠ [] := by
-    have hnn : ¬ (C.dropUntil y hy).Nil := Walk.not_nil_of_ne hxy
-    have hlen := (C.dropUntil y hy).length_support
-    have hlen' : (C.dropUntil y hy).length ≠ 0 :=
-      fun hz => hnn (Walk.length_eq_zero_iff.mp hz)
-    intro ht
-    have h1 := congr_arg List.length ht
-    rw [List.length_tail, List.length_nil] at h1
-    omega
-  have hdrop : C.support.dropLast =
-      (C.takeUntil y hy).support ++ (C.dropUntil y hy).support.tail.dropLast := by
-    conv_lhs => rw [← hspec]
-    rw [List.dropLast_append_of_ne_nil hT]
-  have hpre : (C.takeUntil y hy).support <+: C.support.dropLast :=
-    ⟨(C.dropUntil y hy).support.tail.dropLast, hdrop.symm⟩
-  exact (hC.nodup_dropLast_support).sublist hpre.sublist
-
 omit [Fintype V] [DecidableEq V] in
 /-- If the second vertex of a cycle `C` at `x` is `y`, then deleting the first edge
 leaves a path from `x` to `y` avoiding it. -/
@@ -489,7 +464,7 @@ lemma IsCycle.mem_edges_of_adj {G : SimpleGraph V} {v : V} {C : G.Walk v v}
   have hγ₁ : (C.rotate x hx).IsCycle := hC.rotate hx
   have hy₁ : y ∈ (C.rotate x hx).support := by
     rwa [Walk.mem_support_rotate_iff]
-  have hpath := isPath_takeUntil_of_isCycle hγ₁ hy₁ hxy'.symm
+  have hpath := hγ₁.isPath_takeUntil hy₁
   set q := (C.rotate x hx).takeUntil y hy₁ with hq
   set r := (C.rotate x hx).dropUntil y hy₁ with hr
   have hspec := (C.rotate x hx).take_spec hy₁
@@ -646,20 +621,7 @@ lemma exists_toggle_connected (G : SimpleGraph V) (hconn : G.Connected) (htree :
     set y := C.tail.snd with hy
     have he1 : G.Adj v₀ x := Walk.adj_snd hnnil
     have he2 : G.Adj x y := Walk.adj_snd hnnil2
-    have he3 : G.Adj y v₀ := by
-      have h31 : C.tail.tail.tail.length = 0 := by
-        have hnnil3 : ¬ C.tail.tail.Nil := by
-          intro hnil
-          have := Walk.length_eq_zero_iff.mpr hnil
-          omega
-        have h := Walk.length_tail_add_one hnnil3
-        omega
-      have hsnd : C.tail.tail.snd = v₀ := Walk.exists_length_eq_zero_iff.mp ⟨C.tail.tail.tail, h31⟩
-      have h := C.tail.tail.adj_snd (by
-        intro hnil
-        have := Walk.length_eq_zero_iff.mpr hnil
-        omega)
-      rwa [hsnd] at h
+    have he3 : G.Adj y v₀ := Walk.adj_of_length_eq_one h2
     have hne1 : v₀ ≠ x := G.ne_of_adj he1
     have hne2 : x ≠ y := G.ne_of_adj he2
     have hne3 : y ≠ v₀ := G.ne_of_adj he3
@@ -818,17 +780,6 @@ lemma exists_isTree_of_connected (G : SimpleGraph V) (hconn : G.Connected)
   exact aux _ G (Nat.le_refl _) hconn hodd hne
 
 omit [Fintype V] in
-/-- Taking a path until a vertex gives a path. -/
-lemma IsPath.takeUntil {G : SimpleGraph V} {u v : V} {p : G.Walk u v} (hp : p.IsPath)
-    {w : V} (hw : w ∈ p.support) : (p.takeUntil w hw).IsPath := by
-  rw [Walk.isPath_def] at hp ⊢
-  have hspec := congr_arg Walk.support (p.take_spec hw)
-  rw [Walk.support_append] at hspec
-  have hpre : (p.takeUntil w hw).support <+: p.support :=
-    ⟨(p.dropUntil w hw).support.tail, hspec⟩
-  exact hp.sublist hpre.sublist
-
-omit [Fintype V] in
 /-- A toggle preserves acyclicity. -/
 lemma isAcyclic_toggle {G G' : SimpleGraph V} (hT : Toggle G G') (hacyc : G.IsAcyclic) :
     G'.IsAcyclic := by
@@ -855,7 +806,7 @@ lemma isAcyclic_toggle {G G' : SimpleGraph V} (hT : Toggle G G') (hacyc : G.IsAc
           (((q.transfer G hqG').takeUntil a ha_mem).reverse)).IsCycle := by
         rw [Walk.cons_isCycle_iff]
         constructor
-        · exact (IsPath.takeUntil hqG_path ha_mem).reverse
+        · exact (hqG_path.takeUntil ha_mem).reverse
         · rw [Walk.edges_reverse, List.mem_reverse]
           intro hmem'
           have h1 : s(b, a) ∈ (q.transfer G hqG').edges := by

@@ -553,13 +553,8 @@ lemma goodCircle_prime_pow {p : ℕ} (hp : p.Prime) {a : ℕ} (ha : 2 ≤ a) :
     intro x hx y hy
     have hxl : x ∈ ((p ^ a).divisors.filter (fun d => 1 < d)).sort (· ≤ ·) :=
       List.mem_of_getLast? hx
-    have hyl : y ∈ ((p ^ a).divisors.filter (fun d => 1 < d)).sort (· ≤ ·) := by
-      cases l : ((p ^ a).divisors.filter (fun d => 1 < d)).sort (· ≤ ·) with
-      | nil => simp [l] at hy
-      | cons b t =>
-        rw [l, List.head?_cons, Option.mem_def, Option.some.injEq] at hy
-        subst hy
-        simp
+    have hyl : y ∈ ((p ^ a).divisors.filter (fun d => 1 < d)).sort (· ≤ ·) :=
+      List.mem_of_mem_head? hy
     obtain ⟨hxdvd, hx1⟩ := (hl x).mp hxl
     obtain ⟨hydvd, hy1⟩ := (hl y).mp hyl
     have hxp : p ∣ x := by
@@ -882,15 +877,8 @@ lemma goodCircle_of_not_pq : ∀ (k : ℕ) (n : ℕ), n.primeFactors.card = k �
       · -- circle of `p ^ a`, then adjoin `q ^ b`
         obtain ⟨l, hnodup, hlne, hmem, hchain, hwrap⟩ := goodCircle_prime_pow hp h2
         have hlt : 1 < p ^ n.factorization p := Nat.one_lt_pow (by omega) hp.one_lt
-        have hpa_prime : ¬ (p ^ n.factorization p).Prime := by
-          intro hppa
-          have hd : p ∣ p ^ n.factorization p := dvd_pow_self p (by omega)
-          rcases hppa.eq_one_or_self_of_dvd p hd with h1 | h1
-          · exact hp.ne_one h1
-          · have h3 : n.factorization p = 1 := by
-              have h4 : p ^ 1 = p ^ n.factorization p := by rw [pow_one]; exact h1
-              exact (Nat.pow_right_injective hp.two_le h4).symm
-            omega
+        have hpa_prime : ¬ (p ^ n.factorization p).Prime :=
+          Nat.Prime.not_prime_pow h2
         have hl2 : 2 ≤ l.length :=
           two_le_length_of_composite_circle hlt hpa_prime hnodup hmem
         have hqnpa : ¬ q ∣ p ^ n.factorization p := fun hqq =>
@@ -901,15 +889,8 @@ lemma goodCircle_of_not_pq : ∀ (k : ℕ) (n : ℕ), n.primeFactors.card = k �
       · -- circle of `q ^ b`, then adjoin `p ^ a`
         obtain ⟨l, hnodup, hlne, hmem, hchain, hwrap⟩ := goodCircle_prime_pow hq h2
         have hlt : 1 < q ^ n.factorization q := Nat.one_lt_pow (by omega) hq.one_lt
-        have hqb_prime : ¬ (q ^ n.factorization q).Prime := by
-          intro hqqa
-          have hd : q ∣ q ^ n.factorization q := dvd_pow_self q (by omega)
-          rcases hqqa.eq_one_or_self_of_dvd q hd with h1 | h1
-          · exact hq.ne_one h1
-          · have h3 : n.factorization q = 1 := by
-              have h4 : q ^ 1 = q ^ n.factorization q := by rw [pow_one]; exact h1
-              exact (Nat.pow_right_injective hq.two_le h4).symm
-            omega
+        have hqb_prime : ¬ (q ^ n.factorization q).Prime :=
+          Nat.Prime.not_prime_pow h2
         have hl2 : 2 ≤ l.length :=
           two_le_length_of_composite_circle hlt hqb_prime hnodup hmem
         have hpnqb : ¬ p ∣ q ^ n.factorization q := fun hpp =>

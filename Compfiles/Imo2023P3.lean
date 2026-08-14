@@ -962,13 +962,8 @@ lemma backward_main {k : ℕ} (hk : 2 ≤ k) {P : Polynomial ℤ} (hmon : P.Moni
     have hN₀ : ∀ m, m ≥ n₀ → (k * ((1 + k * Csum P k) ^ k + Csum P k) : ℤ) < A m := by
       intro m hm
       have h1 : A n₀ ≤ A m := hmono hm
-      have h2 : (k * ((1 + k * Csum P k) ^ k + Csum P k) : ℤ) < (A n₀ : ℤ) := by
-        have h3 : (k * ((1 + k * Csum P k) ^ k + Csum P k)).toNat < A n₀ := hn₀
-        have h4 : ((k * ((1 + k * Csum P k) ^ k + Csum P k)).toNat : ℤ) =
-            k * ((1 + k * Csum P k) ^ k + Csum P k) :=
-          Int.toNat_of_nonneg (by positivity)
-        rw [← h4]
-        exact_mod_cast h3
+      have h2 : (k * ((1 + k * Csum P k) ^ k + Csum P k) : ℤ) < (A n₀ : ℤ) :=
+        (Int.toNat_lt' (hpos n₀)).mp hn₀
       have h5 : (A n₀ : ℤ) ≤ (A m : ℤ) := by exact_mod_cast h1
       linarith [h2, h5]
     exact backward_unbounded hk hmon hdeg hcoef hA hpos hmono hN₀

@@ -537,12 +537,8 @@ lemma connectedP_delPerm {S : Finset ℕ} {τ : Equiv.Perm S} {M : S}
         obtain ⟨pf, hpf⟩ := ihm (by omega)
         have hne : τ ⟨(τ^[m] ⟨s.1, Finset.mem_of_mem_erase s.2⟩).1,
             Finset.mem_of_mem_erase pf⟩
-            = τ^[m+1] ⟨s.1, Finset.mem_of_mem_erase s.2⟩ := by
-          have he : (⟨(τ^[m] ⟨s.1, Finset.mem_of_mem_erase s.2⟩).1,
-              Finset.mem_of_mem_erase pf⟩ : S)
-              = τ^[m] ⟨s.1, Finset.mem_of_mem_erase s.2⟩ := Subtype.ext rfl
-          rw [he]
-          exact (Function.iterate_succ_apply' _ _ _).symm
+            = τ^[m+1] ⟨s.1, Finset.mem_of_mem_erase s.2⟩ :=
+          (Function.iterate_succ_apply' (⇑τ) m ⟨s.1, Finset.mem_of_mem_erase s.2⟩).symm
         have hneM : τ^[m+1] ⟨s.1, Finset.mem_of_mem_erase s.2⟩ ≠ M :=
           hmin (m+1) (by omega) hm
         have hmem : (τ^[m+1] ⟨s.1, Finset.mem_of_mem_erase s.2⟩).1 ∈ S.erase M :=
@@ -957,10 +953,7 @@ lemma perm_unique {k : ℕ} (n : ℕ) :
                   τ₁.injective (h1'.trans hr.symm)
                 exact hsM (heta.symm.trans h3'')
               · rw [ite_eq_right h1, ite_eq_right h2] at hvals
-                have e : (τ₁ ⟨s.1, Finset.mem_of_mem_erase hs1⟩ : S)
-                    = τ₂ ⟨s.1, Finset.mem_of_mem_erase hs1⟩ := Subtype.ext hvals
-                rw [heta] at e
-                exact congrArg Subtype.val e
+                exact hvals
         · -- `del₁ = del₂⁻¹` is impossible for `#S ≥ 4`
           exfalso
           have hqS : q.1 ∈ S.erase M :=

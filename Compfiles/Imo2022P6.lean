@@ -656,10 +656,7 @@ theorem NordicSquare.countTo_eq_one_of_not_hill {n : ℕ} (ns : NordicSquare n) 
     have h := ns.uphillPathTo_getLast? c
     rw [List.getLast?_eq_some_getLast (ns.uphillPathTo c).nonempty] at h
     exact Option.some.inj h
-  have : Unique {p : ns.UphillPath // p.cells.getLast p.nonempty = c} :=
-    { default := Classical.choice ‹Nonempty _›,
-      uniq := fun a ↦ Subsingleton.elim _ _ }
-  exact Nat.card_eq_one_iff_unique.2 ⟨inferInstance, inferInstance⟩
+  exact Nat.card_unique
 
 /-- The degree of a cell: the number of cells adjacent to it. -/
 def cellDegree {n : ℕ} (c : Cell n) : ℕ := (Finset.univ.filter fun c' ↦ Adjacent c' c).card
@@ -2368,30 +2365,15 @@ theorem tree_not_hill {m : ℕ} (hm : 2 ≤ m) (x : Cell m)
   have hcsp2 : cspos 2 = 2 := by simp [cspos]
   -- a hill cell has a larger key than the tree cell `x`
   have hill_lt : ∀ y : Cell m, isTree m y = false → keyFn m (a, b) < keyFn m y := by
-    intro y hy
-    have hy' : ¬ isTree m y = true := by rw [hy]; simp
-    have h1 := keyFn_tree_lt hm (a, b) hx
-    have h2 : keyFn m y = m * m + 3 * m + (y.2.1 * m + y.1.1) := by
-      unfold keyFn
-      rw [ite_eq_right hy']
-    rw [h2]
-    omega
+    exact fun y hy => tree_key_lt_hill hm (a, b) y hx hy
   -- a tree cell in the same strip with a larger subKey has a larger key
   have tree_lt : ∀ y : Cell m, isTree m y = true →
       (y.2.1 + pOffset m) / 3 = (b.1 + pOffset m) / 3 →
       subKey m (b.1 + pOffset m) a.1 < subKey m (y.2.1 + pOffset m) y.1.1 →
       keyFn m (a, b) < keyFn m y := by
-    intro y hy hs hsk
-    have h1 : keyFn m (a, b) = (3 * m) * ((b.1 + pOffset m) / 3) +
-        subKey m (b.1 + pOffset m) a.1 := by
-      unfold keyFn
-      rw [ite_eq_left hx]
-    have h2 : keyFn m y = (3 * m) * ((y.2.1 + pOffset m) / 3) +
-        subKey m (y.2.1 + pOffset m) y.1.1 := by
-      unfold keyFn
-      rw [ite_eq_left hy]
-    rw [h1, h2, hs]
-    omega
+    exact fun y hy hs hsk =>
+      keyFn_lt_of_same_strip (a, b) y (b.1 + pOffset m) (y.2.1 + pOffset m) hx hy rfl rfl
+        hs.symm hsk
   have hx' : isTreeJ ((b.1 + pOffset m) % 6) a.1 = true := hx
   have h6lt : (b.1 + pOffset m) % 6 < 6 := Nat.mod_lt _ (by omega)
   have h6cases : (b.1 + pOffset m) % 6 = 0 ∨ (b.1 + pOffset m) % 6 = 1 ∨

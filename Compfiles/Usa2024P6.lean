@@ -78,9 +78,7 @@ lemma sum_swap4 {n k : ℕ} (F : Fin k → Fin k → Fin n → Fin n → ℝ) :
       rw [show (∑ j : Fin k, ∑ p : Fin n, ∑ q : Fin n, F i j p q) =
           ∑ p : Fin n, ∑ j : Fin k, ∑ q : Fin n, F i j p q from Finset.sum_comm]
       exact Finset.sum_congr rfl fun p _ => Finset.sum_comm]
-  rw [show (∑ i : Fin k, ∑ p : Fin n, ∑ q : Fin n, ∑ j : Fin k, F i j p q) =
-      ∑ p : Fin n, ∑ q : Fin n, ∑ i : Fin k, ∑ j : Fin k, F i j p q from
-    by rw [Finset.sum_comm]; exact Finset.sum_congr rfl fun p _ => Finset.sum_comm]
+  exact Eq.symm Finset.sum_comm_cycle
 
 /-- The key rewriting step: the left-hand side of the inequality equals the
 sum of the squares of the `v_{p,q}`. -/

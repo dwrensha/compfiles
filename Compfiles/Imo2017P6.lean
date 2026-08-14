@@ -880,12 +880,7 @@ problem imo2017_p6 (S : Finset (ℤ × ℤ)) (hS : ∀ s ∈ S, gcd s.1 s.2 = 1)
           rw [h2]
           ring
         exact (ZMod.intCast_zmod_eq_zero_iff_dvd _ _).mp h3
-      have hΔΔ : Δ t ∣ ((Δ t).natAbs : ℤ) := by
-        rcases Int.natAbs_eq (Δ t) with h | h
-        · conv_lhs => rw [h]
-        · conv_lhs => rw [h]
-          exact neg_dvd.mpr dvd_rfl
-      exact dvd_trans hΔΔ hmain
+      exact Int.natAbs_dvd.mp hmain
     -- correction constants
     set c : ℤ × ℤ → ℤ := fun t => (v t ^ K - 1) / Δ t with hc
     have hct : ∀ t ∈ TS, c t * Δ t = v t ^ K - 1 := by

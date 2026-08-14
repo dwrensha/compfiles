@@ -126,14 +126,6 @@ lemma skipEmb_ne {n : ℕ} (p : Fin (n + 1)) (i : Fin n) : skipEmb p i ≠ p := 
     fun hh => Fin.succ_ne_zero i ((Equiv.swap 0 p).injective hh)
   rwa [Equiv.swap_apply_left] at h
 
-lemma swap_swap {n : ℕ} (p : Fin (n + 1)) (x : Fin (n + 1)) :
-    Equiv.swap 0 p (Equiv.swap 0 p x) = x := by
-  rcases eq_or_ne x 0 with rfl | h0
-  · rw [Equiv.swap_apply_left, Equiv.swap_apply_right]
-  · rcases eq_or_ne x p with rfl | hp
-    · rw [Equiv.swap_apply_right, Equiv.swap_apply_left]
-    · rw [Equiv.swap_apply_of_ne_of_ne h0 hp, Equiv.swap_apply_of_ne_of_ne h0 hp]
-
 /-- Splitting a sum over `Fin (n+1)` into the term at `p` and the rest. -/
 lemma sum_univ_add_skipEmb {n : ℕ} {M : Type*} [AddCommMonoid M] (p : Fin (n + 1))
     (g : Fin (n + 1) → M) : ∑ i, g i = g p + ∑ i : Fin n, g (skipEmb p i) := by
@@ -151,7 +143,7 @@ lemma sum_univ_add_skipEmb {n : ℕ} {M : Type*} [AddCommMonoid M] (p : Fin (n +
       obtain ⟨i, hi⟩ := Fin.eq_succ_of_ne_zero h1
       refine mem_image.mpr ⟨i, mem_univ _, ?_⟩
       show Equiv.swap 0 p i.succ = x
-      rw [← hi]; exact swap_swap p x
+      rw [← hi]; exact swap_apply_self 0 p x
   rw [← Finset.add_sum_erase univ g (mem_univ p), ← himg, Finset.sum_image]
   intro i _ j _ h
   exact (skipEmb p).injective h
@@ -811,21 +803,8 @@ lemma pureId_value {n : ℕ} (m : Fin (n + 1) → ℤ) (c : ℤ) :
 lemma sum_eq_sum_image_card {n : ℕ} (m : Fin (n + 1) → ℤ) (H : Fin (n + 1) → ℤ[X])
     (K : ℤ → ℤ[X]) (hHK : ∀ q, H q = K (m q)) :
     ∑ q, H q = ∑ v ∈ univ.image m, (eCnt m v : ℤ[X]) * K v := by
-  have hpart : (univ : Finset (Fin (n + 1))) =
-      (univ.image m).biUnion (fun v => univ.filter (fun q => m q = v)) := by
-    ext q
-    constructor
-    · intro _
-      exact mem_biUnion.mpr ⟨m q, mem_image.mpr ⟨q, mem_univ q, rfl⟩, mem_filter.mpr ⟨mem_univ q, rfl⟩⟩
-    · intro _
-      exact mem_univ q
-  have key : ∑ q, K (m q) = ∑ v ∈ univ.image m, ∑ q ∈ univ.filter (fun q => m q = v), K (m q) := by
-    conv_lhs => rw [hpart]
-    rw [Finset.sum_biUnion]
-    intro v _ v' _ hvv
-    apply Finset.disjoint_left.mpr
-    intro q hq hq'
-    exact hvv ((Finset.mem_filter.mp hq).2.symm.trans (Finset.mem_filter.mp hq').2)
+  have key : ∑ q, K (m q) = ∑ v ∈ univ.image m, ∑ q ∈ univ.filter (fun q => m q = v), K (m q) :=
+    Eq.symm (sum_image' (fun i => K (m i)) fun i => congrFun rfl)
   rw [Finset.sum_congr rfl (fun q _ => hHK q), key]
   apply Finset.sum_congr rfl; intro v _
   rw [Finset.sum_congr rfl (fun q hq => by rw [(Finset.mem_filter.mp hq).2])]
@@ -865,7 +844,7 @@ lemma image_skipEmb {n : ℕ} (p : Fin (n + 1)) : univ.image (skipEmb p) = univ.
     obtain ⟨i, hi⟩ := Fin.eq_succ_of_ne_zero h1
     refine mem_image.mpr ⟨i, mem_univ _, ?_⟩
     show Equiv.swap 0 p i.succ = x
-    rw [← hi]; exact swap_swap p x
+    rw [← hi]; exact swap_apply_self 0 p x
 
 lemma exists_skipEmb_eq {n : ℕ} {p q : Fin (n + 1)} (h : p ≠ q) :
     ∃ i : Fin n, skipEmb q i = p := by

@@ -66,23 +66,6 @@ lemma seq_shift (p : ℕ → ℕ) (x₀ : ℝ) :
     rw [seq_succ (fun n ↦ p (n + 1)) (seq p x₀ 1) k, seq_shift p x₀ k,
       seq_succ p x₀ (k + 1)]
 
-/-- The fractional part of a fraction with natural numerator and denominator
-is again such a fraction, with numerator given by the remainder. -/
-lemma fract_natCast_mul_div (n m c : ℕ) (hc : 0 < c) :
-    Int.fract (((n * m : ℕ) : ℝ) / c) = (((n * m) % c : ℕ) : ℝ) / c := by
-  have hc' : (c : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr hc.ne'
-  rw [← Int.self_sub_floor]
-  have hfloor : (⌊((n * m : ℕ) : ℝ) / c⌋ : ℝ) = (((n * m) / c : ℕ) : ℝ) := by
-    rw [Int.floor_div_natCast, Int.floor_natCast, ← Int.natCast_div]
-    exact Int.cast_natCast _
-  rw [hfloor]
-  have hmod : ((n * m : ℕ) : ℝ) =
-      (c : ℝ) * (((n * m) / c : ℕ) : ℝ) + (((n * m) % c : ℕ) : ℝ) := by
-    exact_mod_cast (Nat.div_add_mod (n * m) c).symm
-  rw [hmod]
-  field_simp
-  ring
-
 /-- First direction: starting from a positive rational `a / b`, the sequence
 reaches zero, because the numerator strictly decreases at each nonzero step.
 (The values `p k` only need to be positive integers; primality is irrelevant
@@ -103,7 +86,7 @@ lemma terminates_of_rat :
         rw [Nat.cast_mul]
         field_simp
       rw [e1]
-      exact fract_natCast_mul_div (p 0) b a ha
+      exact Int.fract_div_natCast_eq_div_natCast_mod
     by_cases hr : (p 0 * b) % a = 0
     · exact ⟨1, by rw [h1, hr]; simp⟩
     · have hrpos : 0 < (p 0 * b) % a := Nat.pos_of_ne_zero hr

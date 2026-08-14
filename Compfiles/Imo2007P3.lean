@@ -90,13 +90,7 @@ lemma maxCliqueCard_insert_le [DecidableEq V] {A : Finset V} (x : V) :
   apply maxCliqueCard_le G
   intro s hsA hsc
   by_cases hx : x ∈ s
-  · have h1 : s.erase x ⊆ A := by
-      intro y hy
-      have hyx : y ≠ x := (Finset.mem_erase.mp hy).1
-      have hy2 : y ∈ insert x A := hsA (Finset.mem_of_mem_erase hy)
-      rcases Finset.mem_insert.mp hy2 with h | h
-      · exact absurd h hyx
-      · exact h
+  · have h1 : s.erase x ⊆ A := Finset.subset_insert_iff.mp hsA
     have h2 := card_le_maxCliqueCard G h1 (isClique_of_subset G (Finset.erase_subset x s) hsc)
     have h3 : s.card = (s.erase x).card + 1 := (Finset.card_erase_add_one hx).symm
     omega

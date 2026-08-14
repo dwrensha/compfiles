@@ -52,13 +52,8 @@ lemma sum_range_period_mul {q : ℕ} {F : ℕ → ℕ} (hF : ∀ j, F (j + q) = 
     have h1 : (a + 1) * q = a * q + q := by ring
     rw [h1]
     have hsplit : ∑ j ∈ Finset.range (a * q + q), F j =
-        ∑ j ∈ Finset.range (a * q), F j + ∑ i ∈ Finset.range q, F (a * q + i) := by
-      rw [Finset.range_eq_Ico,
-        ← Finset.sum_Ico_consecutive F (by omega : (0 : ℕ) ≤ a * q)
-          (by omega : a * q ≤ a * q + q),
-        ← Finset.range_eq_Ico, Finset.sum_Ico_eq_sum_range]
-      have h2 : a * q + q - a * q = q := by omega
-      rw [h2]
+        ∑ j ∈ Finset.range (a * q), F j + ∑ i ∈ Finset.range q, F (a * q + i) :=
+      sum_range_add F (a * q) q
     rw [hsplit, ih]
     have h3 : ∑ i ∈ Finset.range q, F (a * q + i) = ∑ i ∈ Finset.range q, F i := by
       apply Finset.sum_congr rfl
@@ -73,13 +68,8 @@ lemma sum_range_period {q : ℕ} {F : ℕ → ℕ} (hF : ∀ j, F (j + q) = F j)
     ∑ j ∈ Finset.range (a * q + b), F j =
       a * (∑ i ∈ Finset.range q, F i) + ∑ i ∈ Finset.range b, F i := by
   have hsplit : ∑ j ∈ Finset.range (a * q + b), F j =
-      ∑ j ∈ Finset.range (a * q), F j + ∑ i ∈ Finset.range b, F (a * q + i) := by
-    rw [Finset.range_eq_Ico,
-      ← Finset.sum_Ico_consecutive F (by omega : (0 : ℕ) ≤ a * q)
-        (by omega : a * q ≤ a * q + b),
-      ← Finset.range_eq_Ico, Finset.sum_Ico_eq_sum_range]
-    have h2 : a * q + b - a * q = b := by omega
-    rw [h2]
+      ∑ j ∈ Finset.range (a * q), F j + ∑ i ∈ Finset.range b, F (a * q + i) :=
+    sum_range_add F (a * q) b
   rw [hsplit, sum_range_period_mul hF a]
   have h3 : ∑ i ∈ Finset.range b, F (a * q + i) = ∑ i ∈ Finset.range b, F i := by
     apply Finset.sum_congr rfl

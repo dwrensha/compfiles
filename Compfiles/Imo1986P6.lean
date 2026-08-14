@@ -669,13 +669,7 @@ lemma exists_cycle (S : Finset (ℤ × ℤ)) (hne : S.Nonempty)
               List.getElem_append_left (show t + 1 < (L.drop (i + 2)).length by
               rw [List.length_drop]; omega)]
             have hie2 : Even (i + 2) := hie.add ⟨1, rfl⟩
-            rw [List.getElem_drop, List.getElem_drop]
-            have h1 := hL.step (i + 2 + t) (by omega)
-            constructor
-            · intro hev
-              exact h1.1 (hie2.add hev)
-            · intro hodd
-              exact h1.2 (hie2.add_odd hodd)
+            exact AltPath.drop_step hL hie2 t (by simpa using hin)
           · have ht2 : t = k - i - 2 := by omega
             have e1 : ((L.drop (i + 2)) ++ [L[i + 1]'hi1])[t]'(by omega) = L[k]'hkn := by
               rw [List.getElem_append_left (show t < (L.drop (i + 2)).length by
@@ -758,13 +752,7 @@ lemma exists_cycle (S : Finset (ℤ × ℤ)) (hne : S.Nonempty)
               List.getElem_append_left (show t + 1 < (L.drop (i + 1)).length by
               rw [List.length_drop]; omega)]
             have hie2 : Even (i + 1) := hio.add_odd ⟨0, rfl⟩
-            rw [List.getElem_drop, List.getElem_drop]
-            have h1 := hL.step (i + 1 + t) (by omega)
-            constructor
-            · intro hev
-              exact h1.1 (hie2.add hev)
-            · intro hodd
-              exact h1.2 (hie2.add_odd hodd)
+            exact AltPath.drop_step hL hie2 t (by simpa using hin)
           · have ht2 : t = k - i - 1 := by omega
             have e1 : ((L.drop (i + 1)) ++ [L[i]'hi])[t]'(by omega) = L[k]'hkn := by
               rw [List.getElem_append_left (show t < (L.drop (i + 1)).length by

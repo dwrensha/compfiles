@@ -295,19 +295,7 @@ theorem card_le_of_good {α : Type*} [DecidableEq α] :
         rw [h4, hcard u huS] at hle4
         omega
       -- `M` has at least three members.
-      have hM3 : 3 ≤ M.card := by
-        have hsub3 : ({s₀, t₁, t₂} : Finset (Finset α)) ⊆ M := by
-          intro z hz
-          simp only [mem_insert, mem_singleton] at hz
-          rcases hz with rfl | rfl | rfl
-          · exact hs₀M
-          · exact ht₁M
-          · exact ht₂M
-        have h3 : ({s₀, t₁, t₂} : Finset (Finset α)).card = 3 := by
-          rw [card_insert_of_notMem (by simp [ht₁s₀.symm, ht₂s₀.symm]),
-            card_insert_of_notMem (by simp [ht₁t₂]), card_singleton]
-        rw [← h3]
-        exact card_le_card hsub3
+      have hM3 : 3 ≤ M.card := Nat.le_of_lt hA4
       -- The third elements `K` of the sets `{A, P, K} ∈ M`.
       set Ks := M.biUnion (fun s ↦ (s.erase A).erase P) with hKs
       have mem_Ks : ∀ x : α, x ∈ Ks ↔ ∃ s ∈ M, x ∈ (s.erase A).erase P := by

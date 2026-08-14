@@ -654,15 +654,7 @@ lemma merge_disjoint (a b : E → V) :
         exact disj.forall hT₁ hT₂ hne12
       set T := (T₁.rotate k₁ hk₁).append (T₂.rotate k₂ hk₂) hh1 hh2 hdj12 with hT
       have hTe : T.es = (T₁.rotate k₁ hk₁).es ++ (T₂.rotate k₂ hk₂).es := rfl
-      have hFl : 2 ≤ F.length := by
-        rcases F with _ | ⟨A, F⟩
-        · simp at hT₁
-        · cases F with
-          | nil =>
-            simp only [List.mem_singleton] at hT₁ hT₂
-            rw [hT₁, hT₂] at hne12
-            exact absurd rfl hne12
-          | cons B F => simp
+      have hFl : 2 ≤ F.length := two_le_length hT₁ hT₂ hne12
       set F'' := T :: F.filter (fun T' => T' ≠ T₁ ∧ T' ≠ T₂) with hF''
       have hF''len : F''.length ≤ F.length - 1 := by
         rw [hF'', List.length_cons]

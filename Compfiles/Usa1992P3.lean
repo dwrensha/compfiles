@@ -198,14 +198,7 @@ problem usa1992_p3 : IsLeast {x : ℕ | ∃ a : ℕ → ℕ, Good a ∧ x = a 9}
       have cover11 : ∀ m : ℕ, m ≤ 1500 → ∃ t : Finset ℕ, t ⊆ Finset.range 11 ∧
           ∑ i ∈ t, List.getD [1, 2, 4, 8, 16, 32, 64, 128, 247, 248, 750] i 0 = m :=
         fun m hm ↦ extend 750 750 10 (by norm_num) rfl cover10 m hm
-      have key : ∀ m ∈ Finset.Icc 1 1500, ∃ t ∈ (Finset.range 11).powerset,
-          ∑ i ∈ t, List.getD [1, 2, 4, 8, 16, 32, 64, 128, 247, 248, 750] i 0 = m := by
-        intro m hm
-        rw [Finset.mem_Icc] at hm
-        obtain ⟨t, ht, htsum⟩ := cover11 m hm.2
-        exact ⟨t, Finset.mem_powerset.mpr ht, htsum⟩
-      obtain ⟨t, ht, htsum⟩ := key n (Finset.mem_Icc.mpr ⟨hn1, hn2⟩)
-      exact ⟨t, Finset.mem_powerset.mp ht, htsum⟩
+      exact cover11 n hn2
   · -- No smaller value of the second largest element is possible.
     intro x hx
     obtain ⟨a, ⟨_hpos, hinc, hsub⟩, rfl⟩ := hx

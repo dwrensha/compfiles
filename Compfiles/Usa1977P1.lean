@@ -107,25 +107,6 @@ lemma dvd_iff_map_dvd (m n : ℕ+) :
       (geomSum m).map (Int.castRingHom ℂ) ∣ (geomSumStep m n).map (Int.castRingHom ℂ) :=
   (Polynomial.map_dvd_map _ Int.cast_injective (geomSum_monic m)).symm
 
-/-- Powers of a primitive `A`-th root of unity are injective below `A`. -/
-lemma pow_inj_of_lt {A : ℕ} {ω : ℂ} (hζ : IsPrimitiveRoot ω A) (hω0 : ω ≠ 0) {i j : ℕ}
-    (hi : i < A) (hj : j < A) (h : ω ^ i = ω ^ j) : i = j := by
-  rcases le_total i j with hle | hle
-  · obtain ⟨d, rfl⟩ := Nat.exists_eq_add_of_le hle
-    rw [pow_add] at h
-    have h1 : ω ^ i * 1 = ω ^ i * ω ^ d := by rw [mul_one]; exact h
-    have hd1 : ω ^ d = 1 := (mul_left_cancel₀ (pow_ne_zero i hω0) h1).symm
-    have hdvd : A ∣ d := (hζ.pow_eq_one_iff_dvd d).mp hd1
-    have hd0 : d = 0 := Nat.eq_zero_of_dvd_of_lt hdvd (by omega)
-    omega
-  · obtain ⟨d, rfl⟩ := Nat.exists_eq_add_of_le hle
-    rw [pow_add] at h
-    have h1 : ω ^ j * ω ^ d = ω ^ j * 1 := by rw [mul_one]; exact h
-    have hd1 : ω ^ d = 1 := mul_left_cancel₀ (pow_ne_zero j hω0) h1
-    have hdvd : A ∣ d := (hζ.pow_eq_one_iff_dvd d).mp hd1
-    have hd0 : d = 0 := Nat.eq_zero_of_dvd_of_lt hdvd (by omega)
-    omega
-
 /-- If `gcd (m+1) n ≠ 1`, divisibility fails: the `(m+1)/gcd`-th power of a primitive
 `(m+1)`-th root of unity is a root of the divisor but not of the dividend. -/
 lemma not_dvd_of_gcd_ne_one {m n : ℕ+} (hgcd : Nat.gcd ((m : ℕ) + 1) (n : ℕ) ≠ 1) :
@@ -187,7 +168,6 @@ lemma dvd_of_gcd_eq_one {m n : ℕ+} (hgcd : Nat.gcd ((m : ℕ) + 1) (n : ℕ) =
   set ω := Complex.exp (2 * (Real.pi : ℂ) * Complex.I / ((((m : ℕ) + 1 : ℕ)) : ℂ)) with hωdef
   have hζ : IsPrimitiveRoot ω ((m : ℕ) + 1) := Complex.isPrimitiveRoot_exp _ (by omega)
   have hωA : ω ^ ((m : ℕ) + 1) = 1 := hζ.pow_eq_one
-  have hω0 : ω ≠ 0 := by rw [hωdef]; exact Complex.exp_ne_zero _
   -- every `ω ^ j` with `1 ≤ j ≤ m` is a root of the remainder
   have hroot : ∀ j ∈ Finset.Icc 1 (m : ℕ),
       (((geomSumStep m n).map (Int.castRingHom ℂ)) %
@@ -222,7 +202,7 @@ lemma dvd_of_gcd_eq_one {m n : ℕ+} (hgcd : Nat.gcd ((m : ℕ) + 1) (n : ℕ) =
   have hinj : Set.InjOn (fun j => ω ^ j) (Finset.Icc 1 (m : ℕ)) := by
     intro a ha b hb hab
     simp only [Finset.mem_coe, Finset.mem_Icc] at ha hb
-    exact pow_inj_of_lt hζ hω0 (by omega) (by omega) hab
+    exact hζ.pow_inj (by omega) (by omega) hab
   have hcard : ((Finset.Icc 1 (m : ℕ)).image (fun j => ω ^ j)).card = (m : ℕ) := by
     rw [Finset.card_image_of_injOn hinj, Nat.card_Icc]
     omega

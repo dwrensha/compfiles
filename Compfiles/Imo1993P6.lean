@@ -628,14 +628,7 @@ lemma tot_cat {n : ℕ} [NeZero n] (y z : Fin n → ZMod 2) :
   have hsplit : ∀ f : ℕ → ZMod 2,
       (∑ i ∈ Finset.range (n + n), f i)
         = (∑ i ∈ Finset.range n, f i) + ∑ i ∈ Finset.range n, f (n + i) := by
-    intro f
-    have h1 : Finset.range (n + n) = Finset.Ico 0 (n + n) := Finset.range_eq_Ico (n + n)
-    rw [h1, ← Finset.sum_Ico_consecutive f (Nat.zero_le n) (Nat.le_add_right n n),
-      ← Finset.range_eq_Ico]
-    congr 1
-    rw [Finset.sum_Ico_eq_sum_range]
-    have h2 : n + n - n = n := by omega
-    rw [h2]
+    exact fun f => Finset.sum_range_add f n n
   rw [hsplit]
   have hleft : (∑ i ∈ Finset.range n,
       cat y z ⟨i % (n + n), Nat.mod_lt i (NeZero.pos _)⟩)

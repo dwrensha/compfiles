@@ -172,18 +172,10 @@ theorem L_mem_Icc (A B : Finset ℝ)
   -- The first-player share is the sum of a sublist of the sorted pieces.
   have hsub : ∀ (l : List ℝ),
       List.Sublist ((l.zipIdx.filter (fun p => p.2 % 2 = 0)).map (fun p => p.1)) l := by
-    have h2 : ∀ (l : List ℝ) (n : ℕ), (l.zipIdx n).map Prod.fst = l := by
-      intro l n
-      induction l generalizing n with
-      | nil => rfl
-      | cons a l ih =>
-        rw [List.zipIdx_cons, List.map_cons]
-        have : Prod.fst (a, n) = a := rfl
-        rw [this, ih (n + 1)]
     intro l
     have h1 := List.Sublist.map Prod.fst
       (List.filter_sublist (l := l.zipIdx) (p := fun p => p.2 % 2 = 0))
-    rw [h2 l 0] at h1
+    rw [List.zipIdx_map_fst 0 l] at h1
     exact h1
   set P := pieceLengths (A ∪ B) with hP
   set M := P.mergeSort (· ≥ ·) with hM
@@ -1103,24 +1095,6 @@ theorem surplus_scale (D : ℝ) : ∀ l : List ℝ,
   | case2 x => simp [surplus]
   | case3 x y t ih => simp [surplus, ih]; ring
 
-theorem map_fst_mergeSort_tagged (l : List (ℝ × ι)) :
-    (l.mergeSort (fun a b => a.1 ≥ b.1)).map Prod.fst =
-      (l.map Prod.fst).mergeSort (· ≥ ·) := by
-  have hperm :
-      List.Perm ((l.mergeSort (fun a b => a.1 ≥ b.1)).map Prod.fst)
-        ((l.map Prod.fst).mergeSort (· ≥ ·)) :=
-    ((List.mergeSort_perm _ _).map _).trans
-      ((List.mergeSort_perm (l.map Prod.fst) (· ≥ ·)).symm)
-  have htag :
-      (l.mergeSort (fun a b : ℝ × ι => a.1 ≥ b.1)).Pairwise
-        (fun a b : ℝ × ι => a.1 ≥ b.1) :=
-    List.pairwise_mergeSort' _ _
-  have hleft : ((l.mergeSort (fun a b => a.1 ≥ b.1)).map Prod.fst).Pairwise (· ≥ ·) :=
-    htag.map Prod.fst (fun _ _ h => h)
-  have hright : ((l.map Prod.fst).mergeSort (· ≥ ·)).Pairwise (· ≥ ·) :=
-    List.pairwise_mergeSort' _ _
-  exact hperm.eq_of_pairwise' hleft hright
-
 theorem sum_sign_labelWeight {ι : Type*} [Fintype ι] [DecidableEq ι]
     (s : ι → ℝ) : ∀ l : List (ℝ × ι),
     (∑ v, s v * labelWeight l v) =
@@ -1722,7 +1696,7 @@ theorem codex_lower_bound_complete (n : ℕ) (_hn : 0 < n) :
       (pieceLengths T).mergeSort (· ≥ ·) := by
     calc
       ls.map Prod.fst = (l.map Prod.fst).mergeSort (· ≥ ·) := by
-        exact map_fst_mergeSort_tagged l
+        exact List.map_mergeSort fun _ _ _ => congrFun rfl
       _ = (pieceLengths T).mergeSort (· ≥ ·) := by rw [hlmap]
   have hscaledMap : scaled.map Prod.fst =
       ((pieceLengths T).mergeSort (· ≥ ·)).map (fun x => D * x) := by
@@ -2222,17 +2196,6 @@ noncomputable def commonAtoms : List ℝ → List ℝ → List ℝ
 termination_by xs ys => xs.length + ys.length
 decreasing_by all_goals simp_all <;> omega
 
-lemma sum_pos_of_all_pos {l : List ℝ} (hne : l ≠ [])
-    (hpos : ∀ x ∈ l, 0 < x) : 0 < l.sum := by
-  cases l with
-  | nil => contradiction
-  | cons x xs =>
-      have hx : 0 < x := hpos x List.mem_cons_self
-      have hxs : 0 ≤ xs.sum := List.sum_nonneg fun z hz =>
-        (hpos z (List.mem_cons_of_mem _ hz)).le
-      simp only [List.sum_cons]
-      linarith
-
 theorem commonAtoms_spec (xs ys : List ℝ)
     (hxpos : ∀ x ∈ xs, 0 < x) (hypos : ∀ y ∈ ys, 0 < y)
     (hsum : xs.sum = ys.sum) :
@@ -2243,7 +2206,7 @@ theorem commonAtoms_spec (xs ys : List ℝ)
   | nil =>
       have hys : ys = [] := by
         by_contra hne
-        have hp := sum_pos_of_all_pos hne hypos
+        have hp := List.sum_pos ys hypos hne
         simp at hsum
         linarith
       subst ys
@@ -2252,7 +2215,7 @@ theorem commonAtoms_spec (xs ys : List ℝ)
       cases ys with
       | nil =>
           have hxs : (x :: xt).sum > 0 :=
-            sum_pos_of_all_pos (by simp) hxpos
+            List.sum_pos (x :: xt) hxpos (by simp)
           have hz : (x :: xt).sum = 0 := by simpa using hsum
           exact (ne_of_gt hxs hz).elim
       | cons y yt =>
@@ -2370,7 +2333,7 @@ theorem commonAtoms_scanRefines (xs ys : List ℝ)
   | nil =>
       have hys : ys = [] := by
         by_contra hne
-        have hp := sum_pos_of_all_pos hne hypos
+        have hp := List.sum_pos ys hypos hne
         simp at hsum
         linarith
       subst ys
@@ -2379,7 +2342,7 @@ theorem commonAtoms_scanRefines (xs ys : List ℝ)
       cases ys with
       | nil =>
           have hxs : (x :: xt).sum > 0 :=
-            sum_pos_of_all_pos (by simp) hxpos
+            List.sum_pos (x :: xt) hxpos (by simp)
           have hz : (x :: xt).sum = 0 := by simpa using hsum
           exact (ne_of_gt hxs hz).elim
       | cons y yt =>

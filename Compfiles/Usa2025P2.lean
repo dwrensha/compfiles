@@ -46,19 +46,6 @@ lemma coeff_iterate_derivative_factor (F : ℝ[X]) (j m : ℕ) :
     push_cast
     ring
 
-/-- Over the reals (characteristic zero), differentiation lowers the degree of a
-nonconstant polynomial by exactly one. -/
-lemma natDegree_derivative_sub_one (F : ℝ[X]) (hF : F.natDegree ≠ 0) :
-    F.derivative.natDegree = F.natDegree - 1 := by
-  refine le_antisymm (natDegree_derivative_le F) (le_natDegree_of_ne_zero ?_)
-  have hF0 : F ≠ 0 := by rintro rfl; simp at hF
-  rw [coeff_derivative, show F.natDegree - 1 + 1 = F.natDegree by omega]
-  have e2 : (↑(F.natDegree - 1) : ℝ) + 1 = F.natDegree := by
-    rw [Nat.cast_sub (by omega), Nat.cast_one]; ring
-  rw [e2]
-  exact mul_ne_zero (by rw [coeff_natDegree]; exact leadingCoeff_ne_zero.mpr hF0)
-    (Nat.cast_ne_zero.mpr hF)
-
 /-- The degree of an iterated formal derivative, as long as it is nonzero. -/
 lemma natDegree_iterate_derivative_eq (F : ℝ[X]) (j : ℕ) (hj : j ≤ F.natDegree) :
     (derivative^[j] F).natDegree = F.natDegree - j := by
@@ -66,8 +53,7 @@ lemma natDegree_iterate_derivative_eq (F : ℝ[X]) (j : ℕ) (hj : j ≤ F.natDe
   | zero => simp [Function.iterate_zero_apply]
   | succ j ih =>
     have hjj : j ≤ F.natDegree := by omega
-    rw [Function.iterate_succ_apply',
-      natDegree_derivative_sub_one _ (by rw [ih hjj]; omega), ih hjj]
+    rw [Function.iterate_succ_apply', natDegree_derivative, ih hjj]
     omega
 
 /-- **Rolle's theorem**: if a real polynomial has all of its roots real and distinct,
@@ -86,8 +72,7 @@ lemma good_derivative {F : ℝ[X]}
     exact ⟨Multiset.nodup_zero, by rw [Multiset.card_zero]; exact hdeg.symm⟩
   · push Not at hm
     have hF0 : F ≠ 0 := by rintro rfl; simp at hm
-    have hdeg : F.derivative.natDegree = F.natDegree - 1 :=
-      natDegree_derivative_sub_one F (by omega)
+    have hdeg : F.derivative.natDegree = F.natDegree - 1 := natDegree_derivative F
     have hF'0 : F.derivative ≠ 0 := by
       intro hz; rw [hz, natDegree_zero] at hdeg; omega
     set l := F.roots.sort (· ≤ ·) with hl

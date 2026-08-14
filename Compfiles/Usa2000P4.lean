@@ -203,23 +203,7 @@ lemma card_le_of_good {m n : ℕ} (hm : 2 ≤ m) (hn : 2 ≤ n)
       rw [hx, Finset.mem_singleton] at ha_mem hb_mem
       rw [ha_mem, hb_mem]
     have him : S₁.image Prod.fst = lightR := by
-      ext r
-      constructor
-      · intro hr
-        rw [Finset.mem_image] at hr
-        obtain ⟨s, hs, rfl⟩ := hr
-        rw [hS₁, Finset.mem_filter] at hs
-        rw [hlightR, Finset.mem_filter]
-        exact ⟨by rw [hrows, Finset.mem_image]; exact ⟨s, hs.1, rfl⟩, hs.2⟩
-      · intro hr
-        rw [hlightR, Finset.mem_filter] at hr
-        obtain ⟨x, hx⟩ := Finset.card_eq_one.mp hr.2
-        have hx_mem : x ∈ rowFiber S r := by rw [hx]; exact Finset.mem_singleton_self x
-        rw [mem_rowFiber] at hx_mem
-        rw [Finset.mem_image]
-        refine ⟨x, ?_, hx_mem.2⟩
-        rw [hS₁, Finset.mem_filter]
-        exact ⟨hx_mem.1, by rw [hx_mem.2]; exact hr.2⟩
+      exact Eq.symm Finset.filter_image
     rw [← him]
     exact (Finset.card_image_of_injOn hinj).symm
   have hS₂card : S₂.card ≤ lightC.card := by

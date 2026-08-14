@@ -324,18 +324,8 @@ lemma pairSum_lt (n : ℕ) (hn : 1 < n) : pairSum n < n ^ 2 := by
       _ < (n : ℚ) ^ 2 := hsum5
   exact_mod_cast hQ
 
-lemma divisors_eq_of_prime {n : ℕ} (hp : n.Prime) : n.divisors = {1, n} := by
-  ext x
-  simp only [Nat.mem_divisors, Finset.mem_insert, Finset.mem_singleton]
-  constructor
-  · rintro ⟨hx, -⟩
-    exact hp.eq_one_or_self_of_dvd x hx
-  · rintro (rfl | h)
-    · exact ⟨one_dvd n, hp.pos.ne'⟩
-    · rw [h]; exact ⟨dvd_refl n, hp.pos.ne'⟩
-
 lemma pairSum_eq_of_prime (n : ℕ) (hn : 1 < n) (hp : n.Prime) : pairSum n = n := by
-  have hdiv : n.divisors = {1, n} := divisors_eq_of_prime hp
+  have hdiv : n.divisors = {1, n} := hp.divisors
   rw [pairSum_eq, hdiv, Finset.card_pair (show (1 : ℕ) ≠ n by omega),
     show (2 : ℕ) - 1 = 1 from rfl, Finset.sum_range_one]
   show nthDiv n 0 * nthDiv n 1 = n

@@ -268,18 +268,6 @@ lemma tileable_translate {R : Finset (ℤ × ℤ)} (hR : Tileable R) (u : ℤ ×
     exact hd12 ha (hab' ▸ hb)
   · rw [biUnion_image_translate, hU]
 
-lemma biUnion_union' {α : Type*} [DecidableEq α] (s t : Finset (Finset α)) :
-    (s ∪ t).biUnion id = s.biUnion id ∪ t.biUnion id := by
-  ext x
-  simp only [Finset.mem_biUnion, Finset.mem_union, id]
-  constructor
-  · rintro ⟨y, (hy | hy), hx⟩
-    · exact Or.inl ⟨y, hy, hx⟩
-    · exact Or.inr ⟨y, hy, hx⟩
-  · rintro (⟨y, hy, hx⟩ | ⟨y, hy, hx⟩)
-    · exact ⟨y, Or.inl hy, hx⟩
-    · exact ⟨y, Or.inr hy, hx⟩
-
 lemma tileable_union {R₁ R₂ : Finset (ℤ × ℤ)} (hd : Disjoint R₁ R₂)
     (h1 : Tileable R₁) (h2 : Tileable R₂) : Tileable (R₁ ∪ R₂) := by
   obtain ⟨𝒯₁, hh1, hd1, hU1⟩ := h1
@@ -299,7 +287,7 @@ lemma tileable_union {R₁ R₂ : Finset (ℤ × ℤ)} (hd : Disjoint R₁ R₂)
       have s2 : H₂ ⊆ R₁ := by rw [hU1]; exact Finset.subset_biUnion_of_mem id h2'
       exact Disjoint.mono s1 s2 hd.symm
     · exact hd2 H₁ h1' H₂ h2' hne
-  · rw [biUnion_union', ← hU1, ← hU2]
+  · rw [Finset.union_biUnion, ← hU1, ← hU2]
 
 lemma rect_zero_left (n : ℕ) : rect 0 n = ∅ := by simp [rect]
 

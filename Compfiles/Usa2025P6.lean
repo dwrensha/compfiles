@@ -1842,14 +1842,8 @@ theorem usa2025_p6_main (N : ℕ) (hN : 0 < N) : ∀ (m : ℕ) [NeZero m] (_hmn 
           omega
         set e := M.orderEmbOfFin rfl with he_def
         have heM : ∀ s : Fin t, e s ∈ M := fun s => M.orderEmbOfFin_mem rfl s
-        have himageM : Finset.univ.image e = M := by
-          apply Finset.eq_of_subset_of_card_le
-          · intro y hy
-            rw [Finset.mem_image] at hy
-            obtain ⟨s, _, rfl⟩ := hy
-            exact heM s
-          · rw [Finset.card_image_of_injective _ e.injective]
-            simp
+        have himageM : Finset.univ.image e = M :=
+          Finset.image_orderEmbOfFin_univ M rfl
         have hesurj : ∀ q ∈ M, ∃ s : Fin t, e s = q := by
           intro q hq
           rw [← himageM, Finset.mem_image] at hq
@@ -1930,14 +1924,8 @@ theorem usa2025_p6_main (N : ℕ) (hN : 0 < N) : ∀ (m : ℕ) [NeZero m] (_hmn 
           have h2 : g p ∈ Finset.univ \ M := hB_def ▸ h1
           rw [Finset.mem_sdiff] at h2
           exact h2.2
-        have hgimage : Finset.univ.image g = B := by
-          apply Finset.eq_of_subset_of_card_le
-          · intro y hy
-            rw [Finset.mem_image] at hy
-            obtain ⟨s, _, rfl⟩ := hy
-            exact hgM s
-          · rw [Finset.card_image_of_injective _ g.injective]
-            simp
+        have hgimage : Finset.univ.image g = B :=
+          Finset.image_orderEmbOfFin_univ B rfl
         have gsurj : ∀ q ∈ B, ∃ p : Fin B.card, g p = q := by
           intro q hq
           rw [← hgimage, Finset.mem_image] at hq
