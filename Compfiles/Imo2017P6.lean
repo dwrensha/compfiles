@@ -98,8 +98,8 @@ lemma cauchy_sum (m n : ℕ) (u v : ℕ → ℤ) (hu : ∀ i, m < i → u i = 0)
             hpant⟩)
       by_cases hp1 : p.1 < m + 1
       · have hp2 : ¬ p.2 < n + 1 := fun h => hmem ⟨hp1, h⟩
-        rw [hv p.2 (by omega), mul_zero]
-      · rw [hu p.1 (by omega), zero_mul]
+        rw [hv p.2 (by lia), mul_zero]
+      · rw [hu p.1 (by lia), zero_mul]
   have h1 : (∑ i ∈ Finset.range (m + 1), ∑ j ∈ Finset.range (n + 1), u i * v j) =
       ∑ k ∈ Finset.range (m + n + 1),
         ∑ p ∈ (Finset.range (m + 1) ×ˢ Finset.range (n + 1)).filter (fun p => p.1 + p.2 = k),
@@ -112,7 +112,7 @@ lemma cauchy_sum (m n : ℕ) (u v : ℕ → ℤ) (hu : ∀ i, m < i → u i = 0)
         intro p hp
         rw [Finset.mem_product, Finset.mem_range, Finset.mem_range] at hp
         rw [Finset.mem_range]
-        omega)).symm
+        lia)).symm
   rw [Finset.sum_mul_sum, h1]
   exact Finset.sum_congr rfl (fun k _ => (h2 k).symm)
 
@@ -138,15 +138,15 @@ lemma eval_mul (f g : HForm) (x y : ℤ) :
   rw [Finset.mem_range, Nat.lt_succ_iff] at hi
   by_cases hi1 : i ≤ f.deg
   · by_cases hi2 : k - i ≤ g.deg
-    · have hexp : f.deg - i + (g.deg - (k - i)) = f.deg + g.deg - k := by omega
+    · have hexp : f.deg - i + (g.deg - (k - i)) = f.deg + g.deg - k := by lia
       calc f.trunc i * g.trunc (k - i) * x ^ k * y ^ (f.deg + g.deg - k)
           = f.trunc i * g.trunc (k - i) * (x ^ i * x ^ (k - i)) *
               (y ^ (f.deg - i) * y ^ (g.deg - (k - i))) := by
             rw [← pow_add, ← pow_add, Nat.add_sub_cancel' hi, hexp]
         _ = f.trunc i * x ^ i * y ^ (f.deg - i) *
               (g.trunc (k - i) * x ^ (k - i) * y ^ (g.deg - (k - i))) := by ring
-    · rw [trunc_of_lt g (by omega : g.deg < k - i)]; simp
-  · rw [trunc_of_lt f (by omega : f.deg < i)]; simp
+    · rw [trunc_of_lt g (by lia : g.deg < k - i)]; simp
+  · rw [trunc_of_lt f (by lia : f.deg < i)]; simp
 
 /-- Powers of a homogeneous form. -/
 def pow (f : HForm) : ℕ → HForm
@@ -276,7 +276,7 @@ lemma canon_iff_not_neg {s : ℤ × ℤ} (hs : s ≠ (0, 0)) : canon s ↔ ¬ ca
   unfold canon
   rw [hf, hd]
   constructor
-  · rintro (h | ⟨e, h⟩) (h' | ⟨e', h'⟩) <;> omega
+  · rintro (h | ⟨e, h⟩) (h' | ⟨e', h'⟩) <;> lia
   · intro h
     by_cases e1 : s.1 = 0
     · by_cases e2 : 0 < s.2
@@ -284,14 +284,14 @@ lemma canon_iff_not_neg {s : ℤ × ℤ} (hs : s ≠ (0, 0)) : canon s ↔ ¬ ca
       · exfalso
         have e2' : s.2 < 0 := by
           have hz : s.2 ≠ 0 := fun hz => hs12 ⟨e1, hz⟩
-          omega
+          lia
         apply h
-        exact Or.inr ⟨by omega, by omega⟩
+        exact Or.inr ⟨by lia, by lia⟩
     · by_cases h1 : 0 < s.1
       · exact Or.inl h1
       · exfalso
         apply h
-        exact Or.inl (by omega)
+        exact Or.inl (by lia)
 
 /-- Representative of the antipodal class of `s`, chosen inside `S`
 whenever possible. -/
@@ -504,7 +504,7 @@ lemma odd_not_dvd_powsum_zmod {p : ℕ} (hp : p.Prime) (hp2 : p ≠ 2) {x y : �
     (h : IsCoprime x y) : ((x ^ (p - 1) + y ^ (p - 1) : ℤ) : ZMod p) ≠ 0 := by
   have hp3 : 3 ≤ p := by
     have h2 := hp.two_le
-    omega
+    lia
   have : Fact p.Prime := ⟨hp⟩
   intro hcast
   push_cast at hcast
@@ -515,14 +515,14 @@ lemma odd_not_dvd_powsum_zmod {p : ℕ} (hp : p.Prime) (hp2 : p ≠ 2) {x y : �
     have hp1 := not_coprime_of_both_dvd h hpx hpy
     rw [show (1 : ℤ) = ((1 : ℕ) : ℤ) by norm_cast, Int.natCast_dvd_natCast] at hp1
     have := Nat.le_of_dvd one_pos hp1
-    omega
+    lia
   by_cases hx0 : (x : ZMod p) = 0
   · have hy0 : (y : ZMod p) ≠ 0 := fun h' => hab ⟨hx0, h'⟩
-    rw [hx0, zero_pow (by omega : p - 1 ≠ 0), zero_add] at hcast
+    rw [hx0, zero_pow (by lia : p - 1 ≠ 0), zero_add] at hcast
     rw [ZMod.pow_card_sub_one_eq_one hy0] at hcast
     exact one_ne_zero hcast
   · by_cases hy0 : (y : ZMod p) = 0
-    · rw [hy0, zero_pow (by omega : p - 1 ≠ 0), add_zero] at hcast
+    · rw [hy0, zero_pow (by lia : p - 1 ≠ 0), add_zero] at hcast
       rw [ZMod.pow_card_sub_one_eq_one hx0] at hcast
       exact one_ne_zero hcast
     · rw [ZMod.pow_card_sub_one_eq_one hx0, ZMod.pow_card_sub_one_eq_one hy0] at hcast
@@ -530,7 +530,7 @@ lemma odd_not_dvd_powsum_zmod {p : ℕ} (hp : p.Prime) (hp2 : p ≠ 2) {x y : �
         have h2i : ¬ (p ∣ 2) := by
           intro hd2
           have := Nat.le_of_dvd (by norm_num) hd2
-          omega
+          lia
         intro h20
         apply h2i
         have h' : (((2 : ℕ) : ℤ) : ZMod p) = 0 := by
@@ -603,7 +603,7 @@ lemma exists_g (S : Finset (ℤ × ℤ)) (hS : ∀ s ∈ S, IsCoprime s.1 s.2)
     apply Nat.mul_pos (by norm_num)
     exact Finset.prod_pos (fun p hp => by
       have := (Nat.prime_of_mem_primeFactors hp).two_le
-      omega)
+      lia)
   -- divisibility of the degree by the local degrees
   have hdegE : ∀ p ∈ Ps, (Gform p).deg ∣ E := by
     intro p hp
@@ -729,9 +729,9 @@ lemma exists_g (S : Finset (ℤ × ℤ)) (hS : ∀ s ∈ S, IsCoprime s.1 s.2)
       have h2 : 0 ≤ t.2 ^ E := hEe.pow_nonneg _
       by_contra hsum
       have hsum2 : t.1 ^ E + t.2 ^ E ≤ 0 := not_lt.mp hsum
-      have h10 : t.1 ^ E = 0 := by omega
-      have h20 : t.2 ^ E = 0 := by omega
-      have hEne : E ≠ 0 := by omega
+      have h10 : t.1 ^ E = 0 := by lia
+      have h20 : t.2 ^ E = 0 := by lia
+      have hEne : E ≠ 0 := by lia
       have ht1 : t.1 = 0 := (pow_eq_zero_iff hEne).mp h10
       have ht2 : t.2 = 0 := (pow_eq_zero_iff hEne).mp h20
       exact ht0 (Prod.ext ht1 ht2)
@@ -885,7 +885,7 @@ problem imo2017_p6 (S : Finset (ℤ × ℤ)) (hS : ∀ s ∈ S, gcd s.1 s.2 = 1)
     have hmle : (TS.card - 1) * E ≤ E * K := by
       rw [Nat.mul_comm E K]
       have h1 := hKge
-      have h2 : TS.card - 1 ≤ K := by omega
+      have h2 : TS.card - 1 ≤ K := by lia
       exact Nat.mul_le_mul_right _ h2
     -- the product of the `ℓ`-powers over the other classes
     have hprod : ∀ t ∈ TS, ∃ P : HForm, P.deg = (TS.card - 1) * E ∧
@@ -962,7 +962,7 @@ problem imo2017_p6 (S : Finset (ℤ × ℤ)) (hS : ∀ s ∈ S, gcd s.1 s.2 = 1)
               rw [hell_eval]
               have h1 : t.2 * t.1 - t.1 * t.2 = 0 := by ring
               rw [h1]
-              exact zero_pow (by omega : E ≠ 0)
+              exact zero_pow (by lia : E ≠ 0)
             rw [Finset.prod_eq_zero hmem h0, mul_zero]
           · intro hnotin
             exact (hnotin htT).elim

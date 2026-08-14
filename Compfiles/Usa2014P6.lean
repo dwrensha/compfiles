@@ -46,7 +46,7 @@ lemma sum_range_one_div_le_aux (m : ℕ) :
   | succ m ih =>
     have hpow : (2 : ℕ) ^ (m + 1) = 2 ^ m * 2 := pow_succ 2 m
     have h2m : 1 ≤ 2 ^ m := Nat.one_le_pow m 2 (by norm_num)
-    have hab : 2 ^ m - 1 ≤ 2 ^ (m + 1) - 1 := by omega
+    have hab : 2 ^ m - 1 ≤ 2 ^ (m + 1) - 1 := by lia
     have hsplit : ∑ k ∈ Finset.range (2 ^ (m + 1) - 1), (1 : ℚ) / (k + 1)
         = ∑ k ∈ Finset.range (2 ^ m - 1), (1 : ℚ) / (k + 1)
           + ∑ k ∈ Finset.Ico (2 ^ m - 1 : ℕ) (2 ^ (m + 1) - 1 : ℕ), (1 : ℚ) / (k + 1) := by
@@ -54,14 +54,14 @@ lemma sum_range_one_div_le_aux (m : ℕ) :
       exact (Finset.sum_Ico_consecutive _ (Nat.zero_le _) hab).symm
     rw [hsplit]
     have hcard : (Finset.Ico (2 ^ m - 1 : ℕ) (2 ^ (m + 1) - 1 : ℕ)).card = 2 ^ m := by
-      rw [Nat.card_Ico]; omega
+      rw [Nat.card_Ico]; lia
     have hblock : ∑ k ∈ Finset.Ico (2 ^ m - 1 : ℕ) (2 ^ (m + 1) - 1 : ℕ), (1 : ℚ) / (k + 1) ≤ 1 := by
       calc ∑ k ∈ Finset.Ico (2 ^ m - 1 : ℕ) (2 ^ (m + 1) - 1 : ℕ), (1 : ℚ) / (k + 1)
           ≤ (Finset.Ico (2 ^ m - 1 : ℕ) (2 ^ (m + 1) - 1 : ℕ)).card • ((1 : ℚ) / 2 ^ m) := by
             apply Finset.sum_le_card_nsmul
             intro k hk
             rw [Finset.mem_Ico] at hk
-            have h1 : 2 ^ m ≤ k + 1 := by omega
+            have h1 : 2 ^ m ≤ k + 1 := by lia
             have hkle : (2 : ℚ) ^ m ≤ (k : ℚ) + 1 := by exact_mod_cast h1
             exact one_div_le_one_div_of_le (by positivity) hkle
         _ = 1 := by
@@ -76,11 +76,11 @@ lemma sum_range_one_div_le_aux (m : ℕ) :
 lemma sum_Icc_one_div_le_clog (M : ℕ) :
     ∑ k ∈ Finset.Icc 1 M, (1 : ℚ) / k ≤ Nat.clog 2 (M + 1) := by
   have hle : M + 1 ≤ 2 ^ Nat.clog 2 (M + 1) := Nat.le_pow_clog (by norm_num) (M + 1)
-  have hM : M ≤ 2 ^ Nat.clog 2 (M + 1) - 1 := by omega
+  have hM : M ≤ 2 ^ Nat.clog 2 (M + 1) - 1 := by lia
   have hIcc : Finset.Icc 1 M = Finset.Ico 1 (M + 1) := by
     ext x
     simp only [Finset.mem_Icc, Finset.mem_Ico]
-    omega
+    lia
   have h1 : ∑ k ∈ Finset.Icc 1 M, (1 : ℚ) / k
       = ∑ j ∈ Finset.range M, (1 : ℚ) / ((1 + j : ℕ) : ℚ) := by
     rw [hIcc, Finset.sum_Ico_eq_sum_range, Nat.add_sub_cancel_right]
@@ -134,8 +134,8 @@ lemma primesum_inv_sq_le (M : ℕ) (hM : 50 ≤ M) :
   have htail : ∑ k ∈ Finset.Ico 50 (M + 1), (1 : ℚ) / k ^ 2 ≤ 1 / 49 := by
     have hpt : ∀ k : ℕ, 50 ≤ k → (1 : ℚ) / k ^ 2 ≤ (1 : ℚ) / (k - 1) - 1 / k := by
       intro k hk
-      have hk1q : (1 : ℚ) ≤ k := by exact_mod_cast (by omega : 1 ≤ k)
-      have h2q : (2 : ℚ) ≤ k := by exact_mod_cast (by omega : 2 ≤ k)
+      have hk1q : (1 : ℚ) ≤ k := by exact_mod_cast (by lia : 1 ≤ k)
+      have h2q : (2 : ℚ) ≤ k := by exact_mod_cast (by lia : 2 ≤ k)
       have hknz : (k : ℚ) ≠ 0 := by linarith
       have hk1nz : (k : ℚ) - 1 ≠ 0 := by linarith
       have hid : (1 : ℚ) / (k - 1) - 1 / k = 1 / ((k - 1) * k) := by
@@ -164,15 +164,15 @@ lemma primesum_inv_sq_le (M : ℕ) (hM : 50 ≤ M) :
               = (1 : ℚ) / (49 + ((0 : ℕ) : ℚ)) - (1 : ℚ) / (49 + ((M + 1 - 50 : ℕ) : ℚ)) :=
             Finset.sum_range_sub' _ _
           rw [e1]
-          have hM' : (M + 1 - 50 : ℕ) = M - 49 := by omega
+          have hM' : (M + 1 - 50 : ℕ) = M - 49 := by lia
           rw [hM', Nat.cast_zero, add_zero]
           have hc : ((M - 49 : ℕ) : ℚ) = (M : ℚ) - 49 := by
-            rw [Nat.cast_sub (by omega : 49 ≤ M)]
+            rw [Nat.cast_sub (by lia : 49 ≤ M)]
             norm_num
           rw [hc]
           ring_nf
       _ ≤ 1 / 49 := by
-          have hMpos : (0 : ℚ) < M := by exact_mod_cast (by omega : 0 < M)
+          have hMpos : (0 : ℚ) < M := by exact_mod_cast (by lia : 0 < M)
           have h1M : (0 : ℚ) ≤ 1 / (M : ℚ) := by positivity
           linarith
   linarith [hP1, hL, hP2, htail]
@@ -187,16 +187,16 @@ lemma card_filter_dvd_le (a N p : ℕ) (ha : 0 < a) (hp : 0 < p) :
     · intro i hi
       rw [Finset.mem_filter, Finset.mem_range] at hi
       simp only [Finset.mem_filter, Finset.mem_Ioc]
-      exact ⟨⟨by omega, by omega⟩, hi.2⟩
+      exact ⟨⟨by lia, by lia⟩, hi.2⟩
     · intro i₁ _ i₂ _ h
       exact Nat.add_left_cancel h
     · intro x hx
       rw [Finset.mem_filter, Finset.mem_Ioc] at hx
-      refine ⟨x - a, ?_, by omega⟩
+      refine ⟨x - a, ?_, by lia⟩
       rw [Finset.mem_filter, Finset.mem_range]
-      have h1 : x - a < N := by omega
+      have h1 : x - a < N := by lia
       have h2 : p ∣ a + (x - a) := by
-        have e : a + (x - a) = x := by omega
+        have e : a + (x - a) = x := by lia
         rw [e]
         exact hx.2
       exact ⟨h1, h2⟩
@@ -206,23 +206,23 @@ lemma card_filter_dvd_le (a N p : ℕ) (ha : 0 < a) (hp : 0 < p) :
       ((Ioc 0 (a - 1)).filter (fun x => p ∣ x)).card +
       ((Ioc (a - 1) (a + N - 1)).filter (fun x => p ∣ x)).card := by
     have hunion : Ioc 0 (a - 1) ∪ Ioc (a - 1) (a + N - 1) = Ioc 0 (a + N - 1) :=
-      Finset.Ioc_union_Ioc_eq_Ioc (Nat.zero_le _) (by omega)
+      Finset.Ioc_union_Ioc_eq_Ioc (Nat.zero_le _) (by lia)
     have hdisj : Disjoint (Ioc 0 (a - 1)) (Ioc (a - 1) (a + N - 1)) :=
       Finset.Ioc_disjoint_Ioc_of_le (le_refl _)
     rw [← hunion, Finset.filter_union,
       Finset.card_union_of_disjoint (Finset.disjoint_filter_filter hdisj)]
   have hcard : ((Ioc (a - 1) (a + N - 1)).filter (fun x => p ∣ x)).card =
-      (a + N - 1) / p - (a - 1) / p := by omega
+      (a + N - 1) / p - (a - 1) / p := by lia
   rw [hbij, hcard]
-  have hsub : (a - 1) / p ≤ (a + N - 1) / p := Nat.div_le_div_right (by omega)
+  have hsub : (a - 1) / p ≤ (a + N - 1) / p := Nat.div_le_div_right (by lia)
   rw [Nat.cast_sub hsub]
   have hpQ : (0 : ℚ) < (p : ℚ) := by exact_mod_cast hp
   have e1 : ((a + N - 1 : ℕ) : ℚ) = (a : ℚ) + N - 1 := by
-    rw [Nat.cast_sub (by omega : 1 ≤ a + N)]
+    rw [Nat.cast_sub (by lia : 1 ≤ a + N)]
     push_cast
     ring
   have e2 : ((a - 1 : ℕ) : ℚ) = (a : ℚ) - 1 := by
-    rw [Nat.cast_sub (by omega : 1 ≤ a), Nat.cast_one]
+    rw [Nat.cast_sub (by lia : 1 ≤ a), Nat.cast_one]
   have hA : (((a + N - 1) / p : ℕ) : ℚ) ≤ ((a + N - 1 : ℕ) : ℚ) / (p : ℚ) := Nat.cast_div_le
   rw [e1] at hA
   have hB : ((a : ℚ) - 1) / p < (((a - 1) / p : ℕ) : ℚ) + 1 := by
@@ -231,7 +231,7 @@ lemma card_filter_dvd_le (a N p : ℕ) (ha : 0 < a) (hp : 0 < p) :
       have h2 := Nat.mod_lt (a - 1) hp
       have e : ((a - 1) / p + 1) * p = p * ((a - 1) / p) + p := by ring
       rw [e]
-      omega
+      lia
     have keyQ : (a : ℚ) - 1 < (((a - 1) / p : ℕ) : ℚ) * (p : ℚ) + p := by
       have h1 : ((a - 1 : ℕ) : ℚ) < (((a - 1) / p + 1 : ℕ) : ℚ) * p := by exact_mod_cast keyN
       rw [e2] at h1
@@ -255,7 +255,7 @@ lemma two_hundred_mul_succ_le_pow (k : ℕ) (hk : 15 ≤ k) : 200 * (k + 1) ≤ 
   | succ k hk ih =>
     have h2 : (2 : ℕ) ^ (k + 1) = 2 * 2 ^ k := by ring
     have h200 : 200 ≤ 2 ^ k := le_trans (by norm_num) ih
-    omega
+    lia
 
 /-- For `n ≥ 2^15` and `M + 1 ≤ n^2` we have `100 * Nat.clog 2 (M + 1) ≤ n`. -/
 lemma hundred_clog_le (n M : ℕ) (hn : 2 ^ 15 ≤ n) (hM : M + 1 ≤ n ^ 2) :
@@ -277,8 +277,8 @@ lemma hundred_clog_le (n M : ℕ) (hn : 2 ^ 15 ≤ n) (hM : M + 1 ≤ n ^ 2) :
       exact Nat.clog_mono_right 2 hsq
     exact h1.trans h2'
   have h200 := two_hundred_mul_succ_le_pow (Nat.log 2 n) hk15
-  have hkn : 2 ^ Nat.log 2 n ≤ n := Nat.pow_log_le_self 2 (by omega)
-  omega
+  have hkn : 2 ^ Nat.log 2 n ≤ n := Nat.pow_log_le_self 2 (by lia)
+  lia
 
 /-- The final numerical inequality: for `n ≥ 2^15`,
 `(n^2/1000)^((n+3)/2) > (n/65536)^n + n`. -/
@@ -288,7 +288,7 @@ lemma pow_gt_final (n : ℕ) (hn : 2 ^ 15 ≤ n) :
   have hnpos : (0 : ℝ) < (n : ℝ) := by
     have h' : (0 : ℝ) < (2 : ℝ) ^ 15 := by positivity
     linarith
-  have hn1ℕ : 1 ≤ n := by omega
+  have hn1ℕ : 1 ≤ n := by lia
   set X : ℝ := (n : ℝ) ^ 2 / 1000 with hXdef
   set e : ℕ := (n + 3) / 2 with he
   set u : ℝ := (1 / 65536 * (n : ℝ)) ^ n with hu
@@ -303,7 +303,7 @@ lemma pow_gt_final (n : ℕ) (hn : 2 ^ 15 ≤ n) :
     rw [hXdef, le_div_iff₀ (by norm_num : (0 : ℝ) < 1000)]
     linarith
   have hX0 : (0 : ℝ) ≤ X := by linarith
-  have h2e : n + 2 ≤ 2 * e := by omega
+  have h2e : n + 2 ≤ 2 * e := by lia
   have hpow : X ^ (n + 2) ≤ X ^ (2 * e) := pow_le_pow_right₀ hX h2e
   -- `X ^ (n+2)` dwarfs `4 * u ^ 2`
   have keyA : (n : ℝ) ^ 4 * (2 : ℝ) ^ (32 * n) > 4 * 1000 ^ (n + 2) := by
@@ -346,13 +346,13 @@ lemma pow_gt_final (n : ℕ) (hn : 2 ^ 15 ≤ n) :
       rw [← pow_mul]
       rw [show 15 * (2 * n + 2) = 30 * n + 30 by ring]
     have h2 : (2 : ℝ) ^ (12 * n + 22) ≤ (2 : ℝ) ^ (30 * n + 30) :=
-      pow_le_pow_right₀ (by norm_num) (by omega)
+      pow_le_pow_right₀ (by norm_num) (by lia)
     have h3 : (2 : ℝ) ^ (12 * n + 22) = (2 : ℝ) ^ (2 * n + 2) * (2 : ℝ) ^ (10 * n + 20) := by
       rw [← pow_add]
       rw [show 12 * n + 22 = (2 * n + 2) + (10 * n + 20) by ring]
     have h4 : 4 * 1000 ^ (n + 2) < (2 : ℝ) ^ (2 * n + 2) * (2 : ℝ) ^ (10 * n + 20) := by
       have h5 : (4 : ℝ) ≤ (2 : ℝ) ^ (2 * n + 2) := by
-        have h := pow_le_pow_right₀ (by norm_num : (1 : ℝ) ≤ 2) (show 2 ≤ 2 * n + 2 by omega)
+        have h := pow_le_pow_right₀ (by norm_num : (1 : ℝ) ≤ 2) (show 2 ≤ 2 * n + 2 by lia)
         norm_num at h
         exact h
       have h6 : (1000 : ℝ) ^ (n + 2) < (2 : ℝ) ^ (10 * n + 20) := by
@@ -362,7 +362,7 @@ lemma pow_gt_final (n : ℕ) (hn : 2 ^ 15 ≤ n) :
         have e2 : (2 : ℝ) ^ (10 * (n + 2)) = (2 : ℝ) ^ (10 * n + 20) := by
           rw [show 10 * (n + 2) = 10 * n + 20 by ring]
         have h8 : (1000 : ℝ) ^ (n + 2) < (1024 : ℝ) ^ (n + 2) :=
-          pow_lt_pow_left₀ (by norm_num) (by norm_num) (by omega : n + 2 ≠ 0)
+          pow_lt_pow_left₀ (by norm_num) (by norm_num) (by lia : n + 2 ≠ 0)
         rw [e, e2] at h8
         exact h8
       have h9 : 4 * 1000 ^ (n + 2) < 4 * (2 : ℝ) ^ (10 * n + 20) :=
@@ -437,20 +437,20 @@ lemma row_bound (a b n : ℕ) (ha : 0 < a) (hb : 0 < b) (hn : 2 ^ 15 ≤ n)
     rw [hM, Nat.le_div_iff_mul_le (by norm_num : (0:ℕ) < 1000)]
     have h1 : n * 1000 ≤ n * n := by gcongr
     have e : n ^ 2 = n * n := by ring
-    omega
+    lia
   have hM50 : 50 ≤ M := by
     have h1 : (2 ^ 15 : ℕ) ^ 2 ≤ n ^ 2 := by gcongr
     have h2 : (2 ^ 15) ^ 2 / 1000 ≤ n ^ 2 / 1000 := Nat.div_le_div_right h1
     have e : (2 ^ 15) ^ 2 / 1000 = 1073741 := by norm_num
-    omega
+    lia
   have hM1n2 : M + 1 ≤ n ^ 2 := by
     have h1 : n ^ 2 / 1000 < n ^ 2 :=
-      Nat.div_lt_self (pow_pos (by omega : 0 < n) 2) (by norm_num)
-    omega
+      Nat.div_lt_self (pow_pos (by lia : 0 < n) 2) (by norm_num)
+    lia
   have hMlt : n ^ 2 < 1000 * (M + 1) := by
     have h1 := Nat.div_add_mod (n ^ 2) 1000
     have h2 := Nat.mod_lt (n ^ 2) (by norm_num : (0:ℕ) < 1000)
-    omega
+    lia
   have hNQ : (N : ℚ) = (n : ℚ) + 1 := by rw [hN]; push_cast; ring
   have hMQ : (n : ℝ) ^ 2 / 1000 ≤ (M : ℝ) + 1 := by
     rw [div_le_iff₀ (by norm_num : (0 : ℝ) < 1000)]
@@ -518,7 +518,7 @@ lemma row_bound (a b n : ℕ) (ha : 0 < a) (hb : 0 < b) (hn : 2 ^ 15 ≤ n)
       intro p hp
       rw [hP, Finset.mem_filter, Finset.mem_range] at hp
       rw [Finset.mem_Icc]
-      exact ⟨hp.2.one_le, by omega⟩
+      exact ⟨hp.2.one_le, by lia⟩
     calc ∑ p ∈ P, (1 : ℚ) / p ≤ ∑ k ∈ Icc 1 M, (1 : ℚ) / k :=
           Finset.sum_le_sum_of_subset_of_nonneg hsub2 (fun i _ _ => by positivity)
       _ ≤ Nat.clog 2 (M + 1) := sum_Icc_one_div_le_clog M
@@ -527,10 +527,10 @@ lemma row_bound (a b n : ℕ) (ha : 0 < a) (hb : 0 < b) (hn : 2 ^ 15 ≤ n)
       intro p hp
       rw [hP, Finset.mem_filter, Finset.mem_range] at hp
       rw [Finset.mem_Icc]
-      exact ⟨hp.2.two_le, by omega⟩
+      exact ⟨hp.2.two_le, by lia⟩
     have h1 : #P ≤ #(Icc 2 M) := Finset.card_le_card hsub3
     rw [Nat.card_Icc] at h1
-    have h2 : #P ≤ M := by omega
+    have h2 : #P ≤ M := by lia
     exact_mod_cast h2
   have hclog : (Nat.clog 2 (M + 1) : ℚ) ≤ (n : ℚ) / 100 := by
     have h := hundred_clog_le n M hn hM1n2
@@ -543,7 +543,7 @@ lemma row_bound (a b n : ℕ) (ha : 0 < a) (hb : 0 < b) (hn : 2 ^ 15 ≤ n)
       push_cast at h
       exact h
     have h2 : (n : ℚ) ^ 2 / 1000 < ((n : ℚ) + 1) ^ 2 / 100 := by
-      have hnpos : (0 : ℚ) < (n : ℚ) := by exact_mod_cast (by omega : 0 < n)
+      have hnpos : (0 : ℚ) < (n : ℚ) := by exact_mod_cast (by lia : 0 < n)
       have h3 : (n : ℚ) ^ 2 < 10 * ((n : ℚ) + 1) ^ 2 := by nlinarith [sq_nonneg (n : ℚ), hnpos]
       nlinarith [h3, hnpos]
     rw [hNQ]
@@ -634,7 +634,7 @@ lemma row_bound (a b n : ℕ) (ha : 0 < a) (hb : 0 < b) (hn : 2 ^ 15 ≤ n)
     simp only [hR, Finset.mem_filter, Finset.mem_range] at hj
     obtain ⟨hjN, hjS⟩ := hj
     have hgcd : 1 < Nat.gcd (a + i₀) (b + j) := h i₀ hi₀ j (Finset.mem_range.2 hjN)
-    have hne : Nat.gcd (a + i₀) (b + j) ≠ 1 := by omega
+    have hne : Nat.gcd (a + i₀) (b + j) ≠ 1 := by lia
     obtain ⟨q, hqP, hqd⟩ := Nat.exists_prime_and_dvd hne
     have hqa : q ∣ a + i₀ := dvd_trans hqd (Nat.gcd_dvd_left _ _)
     have hqb : q ∣ b + j := dvd_trans hqd (Nat.gcd_dvd_right _ _)
@@ -665,17 +665,17 @@ lemma row_bound (a b n : ℕ) (ha : 0 < a) (hb : 0 < b) (hn : 2 ^ 15 ≤ n)
     · have hdvd : q j₁ ∣ j₂ - j₁ := by
         have h2 : q j₁ ∣ b + j₂ := by rw [heq]; exact hd2b
         have h3 := Nat.dvd_sub h2 hd1b
-        rwa [show (b + j₂) - (b + j₁) = j₂ - j₁ by omega] at h3
-      have hlt : j₂ - j₁ < q j₁ := by omega
+        rwa [show (b + j₂) - (b + j₁) = j₂ - j₁ by lia] at h3
+      have hlt : j₂ - j₁ < q j₁ := by lia
       have hz : j₂ - j₁ = 0 := Nat.eq_zero_of_dvd_of_lt hdvd hlt
-      omega
+      lia
     · have hdvd : q j₂ ∣ j₁ - j₂ := by
         have h2 : q j₂ ∣ b + j₁ := by rw [← heq]; exact hd1b
         have h3 := Nat.dvd_sub h2 hd2b
-        rwa [show (b + j₁) - (b + j₂) = j₁ - j₂ by omega] at h3
-      have hlt : j₁ - j₂ < q j₂ := by omega
+        rwa [show (b + j₁) - (b + j₂) = j₁ - j₂ by lia] at h3
+      have hlt : j₁ - j₂ < q j₂ := by lia
       have hz : j₁ - j₂ = 0 := Nat.eq_zero_of_dvd_of_lt hdvd hlt
-      omega
+      lia
   -- the product of these primes divides `a + i₀`
   set I := R.image q with hI
   have hcardI : #I = #R := Finset.card_image_of_injOn hinj
@@ -699,15 +699,15 @@ lemma row_bound (a b n : ℕ) (ha : 0 < a) (hb : 0 < b) (hn : 2 ^ 15 ≤ n)
       obtain ⟨j, hj, rfl⟩ := hp
       exact (hq j hj).2.1
   have hbig : (M + 1) ^ #I ≤ a + i₀ :=
-    le_trans hprod_ge (Nat.le_of_dvd (by omega) hprod_dvd)
+    le_trans hprod_ge (Nat.le_of_dvd (by lia) hprod_dvd)
   -- wrap up
   have h2s : n + 2 ≤ 2 * #R := by
     have e : (n : ℚ) + 1 < 2 * (#R : ℚ) := by
       rw [hNQ] at hrow
       linarith
     have h' : n + 1 < 2 * #R := by exact_mod_cast e
-    omega
-  have hes : (n + 3) / 2 ≤ #R := by omega
+    lia
+  have hes : (n + 3) / 2 ≤ #R := by lia
   have hbig' : ((M : ℝ) + 1) ^ #R ≤ (a : ℝ) + i₀ := by
     have h1 : (M + 1 : ℕ) ^ #R ≤ a + i₀ := by rwa [hcardI] at hbig
     calc ((M : ℝ) + 1) ^ #R = (((M + 1 : ℕ) ^ #R : ℕ) : ℝ) := by push_cast; ring
@@ -716,7 +716,7 @@ lemma row_bound (a b n : ℕ) (ha : 0 < a) (hb : 0 < b) (hn : 2 ^ 15 ≤ n)
   have hi0n : (i₀ : ℝ) ≤ (n : ℝ) := by
     have h1 : i₀ ≤ n := by
       rw [hN, Finset.mem_range] at hi₀
-      omega
+      lia
     exact_mod_cast h1
   have hchain1 : ((n : ℝ) ^ 2 / 1000) ^ ((n + 3) / 2) ≤ ((M : ℝ) + 1) ^ ((n + 3) / 2) :=
     pow_le_pow_left₀ (by positivity) hMQ _
@@ -754,10 +754,10 @@ problem usa2014_p6 :
       have hn65 : (n : ℝ) < 65536 := by
         have h' : n < 65536 := by
           have e : 2 ^ 15 = 32768 := by norm_num
-          omega
+          lia
         exact_mod_cast h'
       have h1lt : 1 / 65536 * (n : ℝ) < 1 := by linarith [hn65]
-      exact pow_lt_one₀ (by positivity) h1lt (by omega)
+      exact pow_lt_one₀ (by positivity) h1lt (by lia)
     have hmin1 : (1 : ℝ) < ((min a b : ℕ) : ℝ) := by linarith [hmin]
     linarith [hpow, hmin1]
   · -- large `n`: the counting argument

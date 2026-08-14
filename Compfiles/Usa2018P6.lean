@@ -147,7 +147,7 @@ theorem card_modEq_of_involutive {α : Type*} [Fintype α] [DecidableEq α] (f :
   obtain ⟨k, hk⟩ := heven
   rw [hsplit, hk]
   have : (Fintype.card {x // f x = x} + (k + k)) % 2 = (Fintype.card {x // f x = x}) % 2 := by
-    omega
+    lia
   exact this
 
 /-! ### Small arithmetic helpers -/
@@ -183,8 +183,8 @@ lemma label_order_transfer {n : ℕ} {σ : Equiv.Perm (Fin n)} {x y : Fin n}
     x.val < y.val → (σ x).val < (σ y).val := by
   intro hxy
   have h1 := nat_mul_eq_of_label_eq h
-  have h2 : (σ x).val + 1 < (σ y).val + 1 := lt_of_mul_eq_mul_lt h1 (by omega) (by omega)
-  omega
+  have h2 : (σ x).val + 1 < (σ y).val + 1 := lt_of_mul_eq_mul_lt h1 (by lia) (by lia)
+  lia
 
 /-! ### Validity and inversion -/
 
@@ -225,9 +225,9 @@ lemma one_lt_ratio_iff {n : ℕ} {σ : Equiv.Perm (Fin n)} {k : Fin n} :
   constructor
   · intro h
     have : k.val + 1 < (σ k).val + 1 := by exact_mod_cast h
-    omega
+    lia
   · intro h
-    have : k.val + 1 < (σ k).val + 1 := by omega
+    have : k.val + 1 < (σ k).val + 1 := by lia
     exact_mod_cast this
 
 lemma ratio_lt_one_iff {n : ℕ} {σ : Equiv.Perm (Fin n)} {k : Fin n} :
@@ -237,9 +237,9 @@ lemma ratio_lt_one_iff {n : ℕ} {σ : Equiv.Perm (Fin n)} {k : Fin n} :
   constructor
   · intro h
     have : (σ k).val + 1 < k.val + 1 := by exact_mod_cast h
-    omega
+    lia
   · intro h
-    have : (σ k).val + 1 < k.val + 1 := by omega
+    have : (σ k).val + 1 < k.val + 1 := by lia
     exact_mod_cast this
 
 lemma label_eq_ratio {n : ℕ} {σ : Equiv.Perm (Fin n)} (hinv : Function.Involutive σ)
@@ -947,7 +947,7 @@ theorem card_switch_eq_one_of_fantastic {n : ℕ} {σ : Equiv.Perm (Fin n)}
       Subtype.ext ((hall φ.1 φ.2).trans (hall ψ.1 ψ.2).symm)
   have hpos : 0 < Fintype.card {φ : Equiv.Perm (Fin n) // IsSwitch σ φ} :=
     Fintype.card_pos_iff.2 ⟨⟨1, isSwitch_id⟩⟩
-  omega
+  lia
 
 /-- Conjugating a switching involution by the swap of two equal-labelled numerators
 yields a switching involution. -/
@@ -1646,7 +1646,7 @@ theorem even_card_switch_of_not_fantastic {n : ℕ} {σ : Equiv.Perm (Fin n)}
     exact Fintype.card_subtype_eq_or_eq_of_ne hc_ne
   have hev : Fintype.card {x // G x = x} % 2 = 0 := by
     rw [Fintype.card_congr hequiv, Fintype.card_prod, hcard0]
-    omega
+    lia
   rw [Nat.even_iff, hmod, hev]
 
 /-! ### Counting involutions with at most one fixed point -/
@@ -1923,7 +1923,7 @@ theorem card_le_one_symm_zero_iff {n : ℕ} (e : Equiv.Perm (Fin (n + 1))) :
         Equiv.Perm.decomposeFin.symm (0, e) y = y).card :=
       calc 2 = ({0, x.succ} : Finset (Fin (n + 2))).card := (Finset.card_pair hne).symm
         _ ≤ _ := Finset.card_le_card hsub
-    omega
+    lia
   · intro h
     have hset : (Finset.univ.filter fun y : Fin (n + 2) =>
         Equiv.Perm.decomposeFin.symm (0, e) y = y) = {0} := by
@@ -2327,16 +2327,16 @@ theorem fcard_parity (n : ℕ) : (Even n → Odd (fcard n)) ∧ (Odd n → fcard
       rw [fcard_succ_succ]
       have hn' : Even n := by
         rw [Nat.even_iff] at hn ⊢
-        omega
+        lia
       have ho : Odd (n + 1) := by
         rw [Nat.odd_iff]
         rw [Nat.even_iff] at hn'
-        omega
+        lia
       exact ho.mul (ihn.1 hn')
     · intro hn
       rw [fcard_succ_succ, ihn.2 (by
         rw [Nat.odd_iff] at hn ⊢
-        omega), Nat.mul_zero]
+        lia), Nat.mul_zero]
 
 theorem vcard_odd (n : ℕ) : Odd (vcard n) := by
   induction n using Nat.twoStepInduction with
@@ -2348,14 +2348,14 @@ theorem vcard_odd (n : ℕ) : Odd (vcard n) := by
     · have ho : Odd (n + 1) := by
         rw [Nat.odd_iff]
         rw [Nat.even_iff] at hn
-        omega
+        lia
       have h1 : fcard (n + 1) = 0 := (fcard_parity (n + 1)).2 ho
       rw [h1, Nat.zero_add]
       exact ho.mul ihn
     · have he : Even (n + 1) := by
         rw [Nat.even_iff]
         rw [Nat.odd_iff] at hn
-        omega
+        lia
       have h2 : Odd (fcard (n + 1)) := (fcard_parity (n + 1)).1 he
       exact h2.add_even (he.mul_right (vcard n))
 
@@ -2435,7 +2435,7 @@ problem usa2018_p6 (n : ℕ) (_hn : 1 ≤ n) :
     · rw [ite_eq_right hf]
       obtain ⟨k, hk⟩ := even_card_switch_of_not_fantastic v.2.1 hf
       rw [hk]
-      have : (k + k) % 2 = 0 := by omega
+      have : (k + k) % 2 = 0 := by lia
       exact this
   have heW : WPairs n ≃ Σ v : {σ : Equiv.Perm (Fin n) // IsVertex σ},
       {φ : Equiv.Perm (Fin n) // IsSwitch v.1 φ} := {

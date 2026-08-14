@@ -91,13 +91,13 @@ lemma o_add_X_pow_mul {m : ℕ} {p q : (ZMod 2)[X]} (hp : p.natDegree < m) :
     rcases Finset.mem_union.mp hj with hj | hj
     · have hjm : j < m := lt_of_le_of_lt (le_natDegree_of_mem_supp j hj) hp
       rw [mem_support_iff] at hj
-      rwa [coeff_add, coeff_X_pow_mul', ite_eq_right (show ¬ m ≤ j by omega), add_zero]
+      rwa [coeff_add, coeff_X_pow_mul', ite_eq_right (show ¬ m ≤ j by lia), add_zero]
     · rw [support_X_pow_mul] at hj
       obtain ⟨k, hk, rfl⟩ := Finset.mem_image.mp hj
       rw [mem_support_iff] at hk
       have hpk : p.coeff (k + m) = 0 :=
-        coeff_eq_zero_of_natDegree_lt (show p.natDegree < k + m by omega)
-      rwa [coeff_add, hpk, zero_add, coeff_X_pow_mul', ite_eq_left (show m ≤ k + m by omega),
+        coeff_eq_zero_of_natDegree_lt (show p.natDegree < k + m by lia)
+      rwa [coeff_add, hpk, zero_add, coeff_X_pow_mul', ite_eq_left (show m ≤ k + m by lia),
         Nat.add_sub_cancel]
   have hdisj : Disjoint p.support (X ^ m * q).support := by
     rw [Finset.disjoint_left]
@@ -105,7 +105,7 @@ lemma o_add_X_pow_mul {m : ℕ} {p q : (ZMod 2)[X]} (hp : p.natDegree < m) :
     have hjm : j < m := lt_of_le_of_lt (le_natDegree_of_mem_supp j hj) hp
     rw [support_X_pow_mul] at hj2
     obtain ⟨k, hk, rfl⟩ := Finset.mem_image.mp hj2
-    omega
+    lia
   unfold o
   rw [hsupp, Finset.card_union_of_disjoint hdisj, support_X_pow_mul,
     Finset.card_image_of_injective _ (fun _ _ h ↦ Nat.add_right_cancel h)]
@@ -152,7 +152,7 @@ lemma oddCount_eq_o (P : ℤ[X]) :
     intro hz
     rw [hz] at hodd
     obtain ⟨k, hk⟩ := hodd
-    omega
+    lia
 
 /-- The image of a single power of `1 + X` in `(ZMod 2)[X]`. -/
 lemma map_one_add_X_pow (i : ℕ) :
@@ -179,7 +179,7 @@ lemma key : ∀ N : ℕ, ∀ (S : Finset ℕ) (hS : S.Nonempty), S.max' hS = N �
         apply Finset.eq_singleton_iff_nonempty_unique_mem.mpr
         exact ⟨hS, fun x hx ↦ by
           have hx0 := le_trans (Finset.le_max' S x hx) (le_of_eq hN)
-          omega⟩
+          lia⟩
       subst hS0
       rw [Finset.min'_singleton, Finset.sum_singleton]
     · obtain ⟨k, hkN, hNk⟩ : ∃ k, 2 ^ k ≤ N ∧ N < 2 ^ (k + 1) :=
@@ -211,17 +211,17 @@ lemma key : ∀ N : ℕ, ∀ (S : Finset ℕ) (hS : S.Nonempty), S.max' hS = N �
           exact Finset.le_max' A i hi
         have hTdeg : (∑ i ∈ B, (1 + X : (ZMod 2)[X]) ^ (i - m)).natDegree < m := by
           refine lt_of_le_of_lt (natDegree_sum_le_of_forall_le B _ fun i hi ↦ ?_)
-            (show N - m < m by omega)
+            (show N - m < m by lia)
           rw [natDegree_one_add_X_pow]
           have hiS : i ∈ S := Finset.mem_of_mem_filter i hi
           have hiN : i ≤ N := le_trans (Finset.le_max' S i hiS) (le_of_eq hN)
-          omega
+          lia
         have hBsum : ∑ i ∈ B, (1 + X : (ZMod 2)[X]) ^ i =
             (1 + X ^ m) * ∑ i ∈ B, (1 + X : (ZMod 2)[X]) ^ (i - m) := by
           rw [Finset.mul_sum]
           refine Finset.sum_congr rfl fun i hi ↦ ?_
           have him : m ≤ i := not_lt.mp (Finset.mem_filter.mp hi).2
-          rw [← hfrob, ← pow_add, show m + (i - m) = i by omega]
+          rw [← hfrob, ← pow_add, show m + (i - m) = i by lia]
         have hdecomp : ∑ i ∈ S, (1 + X : (ZMod 2)[X]) ^ i =
             (∑ i ∈ A, (1 + X : (ZMod 2)[X]) ^ i +
               ∑ i ∈ B, (1 + X : (ZMod 2)[X]) ^ (i - m)) +
@@ -233,7 +233,7 @@ lemma key : ∀ N : ℕ, ∀ (S : Finset ℕ) (hS : S.Nonempty), S.max' hS = N �
           rw [hsum, hBsum, add_mul, one_mul, ← add_assoc]
         have hRTdeg : (∑ i ∈ A, (1 + X : (ZMod 2)[X]) ^ i +
             ∑ i ∈ B, (1 + X : (ZMod 2)[X]) ^ (i - m)).natDegree < m :=
-          lt_of_le_of_lt (natDegree_add_le _ _) (by omega)
+          lt_of_le_of_lt (natDegree_add_le _ _) (by lia)
         rw [hdecomp, o_add_X_pow_mul hRTdeg]
         have hminA : A.min' hAne = S.min' hS := by
           apply le_antisymm
@@ -241,7 +241,7 @@ lemma key : ∀ N : ℕ, ∀ (S : Finset ℕ) (hS : S.Nonempty), S.max' hS = N �
               (Finset.mem_filter.mpr ⟨Finset.min'_mem S hS, hcase⟩)
           · exact Finset.min'_le S (A.min' hAne)
               (Finset.mem_of_mem_filter _ (Finset.min'_mem A hAne))
-        have ihA := IH (A.max' hAne) (by omega) A hAne rfl
+        have ihA := IH (A.max' hAne) (by lia) A hAne rfl
         rw [hminA] at ihA
         exact le_trans ihA (o_le_o_add_add _ _)
       · -- Every index is at least `m`: everything factors through `(1 + X) ^ m`.
@@ -252,40 +252,40 @@ lemma key : ∀ N : ℕ, ∀ (S : Finset ℕ) (hS : S.Nonempty), S.max' hS = N �
           rw [Finset.mul_sum]
           refine Finset.sum_congr rfl fun i hi ↦ ?_
           have him : m ≤ i := hmi i hi
-          rw [← hfrob, ← pow_add, show m + (i - m) = i by omega]
+          rw [← hfrob, ← pow_add, show m + (i - m) = i by lia]
         have hTdeg : (∑ i ∈ S, (1 + X : (ZMod 2)[X]) ^ (i - m)).natDegree < m := by
           refine lt_of_le_of_lt (natDegree_sum_le_of_forall_le S _ fun i hi ↦ ?_)
-            (show N - m < m by omega)
+            (show N - m < m by lia)
           rw [natDegree_one_add_X_pow]
           have hiN : i ≤ N := le_trans (Finset.le_max' S i hi) (le_of_eq hN)
-          omega
+          lia
         have hS'ne : (S.image (· - m)).Nonempty := hS.image _
         have hsub_inj : ∀ x ∈ S, ∀ y ∈ S, x - m = y - m → x = y := by
           intro x hx y hy hxy
           have h1 := hmi x hx
           have h2 := hmi y hy
-          omega
+          lia
         have hT' : (∑ i ∈ S, (1 + X : (ZMod 2)[X]) ^ (i - m)) =
             ∑ j ∈ S.image (· - m), (1 + X : (ZMod 2)[X]) ^ j :=
           (Finset.sum_image hsub_inj).symm
         have hmaxS' : (S.image (· - m)).max' hS'ne = N - m := by
-          rw [Finset.max'_image (fun _ _ hab ↦ by omega) S hS'ne]
+          rw [Finset.max'_image (fun _ _ hab ↦ by lia) S hS'ne]
           exact congrArg (· - m) hN
         have hminS' : (S.image (· - m)).min' hS'ne = S.min' hS - m := by
-          rw [Finset.min'_image (fun _ _ hab ↦ by omega) S hS'ne]
-        have ihS' := IH (N - m) (by omega) (S.image (· - m)) hS'ne hmaxS'
+          rw [Finset.min'_image (fun _ _ hab ↦ by lia) S hS'ne]
+        have ihS' := IH (N - m) (by lia) (S.image (· - m)) hS'ne hmaxS'
         rw [hminS', ← hT'] at ihS'
         have hmindeg : ((1 + X : (ZMod 2)[X]) ^ (S.min' hS - m)).natDegree < m := by
           rw [natDegree_one_add_X_pow]
           have hle : S.min' hS ≤ N :=
             le_trans (Finset.min'_le S _ (Finset.max'_mem S hS)) (le_of_eq hN)
-          omega
+          lia
         have hmin : (1 + X : (ZMod 2)[X]) ^ S.min' hS =
             (1 + X ^ m) * (1 + X : (ZMod 2)[X]) ^ (S.min' hS - m) := by
-          rw [← hfrob, ← pow_add, show m + (S.min' hS - m) = S.min' hS by omega]
+          rw [← hfrob, ← pow_add, show m + (S.min' hS - m) = S.min' hS by lia]
         rw [hsplit, add_mul, one_mul, o_add_X_pow_mul hTdeg, hmin, add_mul, one_mul,
           o_add_X_pow_mul hmindeg]
-        omega
+        lia
 
 snip end
 

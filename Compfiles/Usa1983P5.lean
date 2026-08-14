@@ -198,7 +198,7 @@ lemma oddPart_index_lt_half {a n : ℕ} (ha : a ∈ Finset.Icc 1 n) :
   have hle : oddPart a ≤ n := (oddPart_le_self a).trans han
   have hdecomp : 2 * (oddPart a / 2) + 1 = oddPart a :=
     Nat.two_mul_div_two_add_one_of_odd hodd
-  omega
+  lia
 
 lemma dvd_or_dvd_of_oddPart_eq {a b : ℕ} (h : oddPart a = oddPart b) :
     a ∣ b ∨ b ∣ a := by

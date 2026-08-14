@@ -54,7 +54,7 @@ def prepend (N M : ℕ) (s₀ t₀ : Fin M) (g : Fin (2 * N) ↪o Fin M) (x : Fi
     Fin M :=
   if h₀ : x.val = 0 then s₀
   else if h₁ : x.val = 1 then t₀
-  else g ⟨x.val - 2, by omega⟩
+  else g ⟨x.val - 2, by lia⟩
 
 theorem prepend_zero (N M : ℕ) (s₀ t₀ : Fin M) (g : Fin (2 * N) ↪o Fin M)
     (h : 0 < 2 * N + 2) : prepend N M s₀ t₀ g ⟨0, h⟩ = s₀ := by
@@ -68,9 +68,9 @@ theorem prepend_one (N M : ℕ) (s₀ t₀ : Fin M) (g : Fin (2 * N) ↪o Fin M)
 
 theorem prepend_two (N M : ℕ) (s₀ t₀ : Fin M) (g : Fin (2 * N) ↪o Fin M)
     (x : Fin (2 * N + 2)) (hx : 2 ≤ x.val) :
-    prepend N M s₀ t₀ g x = g ⟨x.val - 2, by omega⟩ := by
+    prepend N M s₀ t₀ g x = g ⟨x.val - 2, by lia⟩ := by
   unfold prepend
-  rw [dite_eq_right (show ¬x.val = 0 by omega), dite_eq_right (show ¬x.val = 1 by omega)]
+  rw [dite_eq_right (show ¬x.val = 0 by lia), dite_eq_right (show ¬x.val = 1 by lia)]
 
 theorem prepend_strictMono (N M : ℕ) {s₀ t₀ : Fin M} (hst : s₀ < t₀)
     (g : Fin (2 * N) ↪o Fin M) (hg : ∀ j, t₀ < g j) :
@@ -85,22 +85,22 @@ theorem prepend_strictMono (N M : ℕ) {s₀ t₀ : Fin M} (hst : s₀ < t₀)
     · subst hy1
       rw [prepend_zero, prepend_one]
       exact hst
-    · have hy2 : 2 ≤ y := by omega
+    · have hy2 : 2 ≤ y := by lia
       rw [prepend_zero, prepend_two _ _ _ _ _ _ hy2]
       exact lt_trans hst (hg _)
   · by_cases hx1 : x = 1
     · subst hx1
-      have hy2 : 2 ≤ y := by omega
+      have hy2 : 2 ≤ y := by lia
       rw [prepend_one, prepend_two _ _ _ _ _ _ hy2]
       exact hg _
-    · have hx2 : 2 ≤ x := by omega
+    · have hx2 : 2 ≤ x := by lia
       by_cases hy1 : y = 1
-      · exfalso; omega
-      · have hy2 : 2 ≤ y := by omega
+      · exfalso; lia
+      · have hy2 : 2 ≤ y := by lia
         rw [prepend_two _ _ _ _ _ _ hx2, prepend_two _ _ _ _ _ _ hy2]
         apply g.strictMono
         show x - 2 < y - 2
-        omega
+        lia
 
 /-- Evan Chen's scan argument, by induction on the number of colours.
 
@@ -240,7 +240,7 @@ theorem aux : ∀ (N M : ℕ) (c : Fin M → Fin N),
           _ ≤ (univ.filter fun i ↦ t₀ < i ∧ c i = q).card + 1 :=
               Nat.add_le_add_left hsmall _
       rw [h3]
-      omega
+      lia
     -- Apply the induction hypothesis to the remaining row.
     obtain ⟨f', hfcard, hfadj⟩ := ih R.card c' hcard'
     let g : Fin (2 * N) ↪o Fin M := f'.trans e
@@ -255,7 +255,7 @@ theorem aux : ∀ (N M : ℕ) (c : Fin M → Fin N),
       intro k
       by_cases hkp : k = p
       · subst hkp
-        have hset : univ.filter (fun i ↦ c (femb i) = p) = {⟨0, by omega⟩, ⟨1, by omega⟩} := by
+        have hset : univ.filter (fun i ↦ c (femb i) = p) = {⟨0, by lia⟩, ⟨1, by lia⟩} := by
           ext i
           rcases i with ⟨i, hi⟩
           rw [mem_filter, mem_insert, mem_singleton]
@@ -269,23 +269,23 @@ theorem aux : ∀ (N M : ℕ) (c : Fin M → Fin N),
               refine ⟨fun _ ↦ Or.inr rfl, fun _ ↦ ?_⟩
               rw [hfe, prepend_one, hpt₀]
               exact ⟨mem_univ _, rfl⟩
-            · have hi2 : 2 ≤ i := by omega
+            · have hi2 : 2 ≤ i := by lia
               rw [hfe, prepend_two _ _ _ _ _ _ hi2, hgc]
               constructor
               · intro h
                 exact absurd h.2 (Fin.succAbove_ne _ _)
               · rintro (h | h)
                 · have : i = 0 := congrArg Fin.val h
-                  omega
+                  lia
                 · have : i = 1 := congrArg Fin.val h
-                  omega
+                  lia
         rw [hset]
         exact card_pair_eq_two_iff.2 (by simp)
       · obtain ⟨k', hk'⟩ := Fin.exists_succAbove_eq hkp
         let emb2 : Fin (2 * N) ↪ Fin (2 * (N + 1)) :=
-          ⟨fun j ↦ ⟨j.val + 2, by omega⟩, fun a b h ↦ by
+          ⟨fun j ↦ ⟨j.val + 2, by lia⟩, fun a b h ↦ by
             have hv : a.val + 2 = b.val + 2 := congrArg Fin.val h
-            exact Fin.ext (by omega)⟩
+            exact Fin.ext (by lia)⟩
         have hset : univ.filter (fun i ↦ c (femb i) = k) =
             (univ.filter fun j ↦ c' (f' j) = k').map emb2 := by
           ext i
@@ -299,7 +299,7 @@ theorem aux : ∀ (N M : ℕ) (c : Fin M → Fin N),
               exact absurd h.symm hkp
             · rintro ⟨j, -, hj⟩
               have hv : j.val + 2 = 0 := congrArg Fin.val hj
-              omega
+              lia
           · by_cases hi1 : i = 1
             · subst hi1
               constructor
@@ -308,19 +308,19 @@ theorem aux : ∀ (N M : ℕ) (c : Fin M → Fin N),
                 exact absurd h.symm hkp
               · rintro ⟨j, -, hj⟩
                 have hv : j.val + 2 = 1 := congrArg Fin.val hj
-                omega
-            · have hi2 : 2 ≤ i := by omega
+                lia
+            · have hi2 : 2 ≤ i := by lia
               constructor
               · intro h
                 rw [hfe, prepend_two _ _ _ _ _ ⟨i, hi⟩ hi2, hgc] at h
-                refine ⟨⟨i - 2, by omega⟩, ?_, Fin.ext (show (i - 2) + 2 = i by omega)⟩
+                refine ⟨⟨i - 2, by lia⟩, ?_, Fin.ext (show (i - 2) + 2 = i by lia)⟩
                 rw [← hk'] at h
                 exact Fin.succAbove_right_injective h
               · rintro ⟨j, hj, hji⟩
                 have hjv : j.val + 2 = i := congrArg Fin.val hji
                 rw [hfe, prepend_two _ _ _ _ _ ⟨i, hi⟩ hi2, hgc]
-                have hjeq : (⟨i - 2, by omega⟩ : Fin (2 * N)) = j :=
-                  Fin.ext (show i - 2 = j.val by omega)
+                have hjeq : (⟨i - 2, by lia⟩ : Fin (2 * N)) = j :=
+                  Fin.ext (show i - 2 = j.val by lia)
                 rw [hjeq, hj, hk']
         rw [hset, card_map]
         exact hfcard k'
@@ -337,7 +337,7 @@ theorem aux : ∀ (N M : ℕ) (c : Fin M → Fin N),
           · subst hj1
             right; left; rfl
           · exfalso
-            have hj2 : 2 ≤ j := by omega
+            have hj2 : 2 ≤ j := by lia
             rw [hfe, hfe, prepend_zero, prepend_two _ _ _ _ _ ⟨j, hj⟩ hj2, hpc, hgc] at hij
             exact absurd hij (Fin.ne_succAbove _ _)
       · by_cases hi1 : i = 1
@@ -349,10 +349,10 @@ theorem aux : ∀ (N M : ℕ) (c : Fin M → Fin N),
             · subst hj1
               left; rfl
             · exfalso
-              have hj2 : 2 ≤ j := by omega
+              have hj2 : 2 ≤ j := by lia
               rw [hfe, hfe, prepend_one, prepend_two _ _ _ _ _ ⟨j, hj⟩ hj2, hpt₀, hgc] at hij
               exact absurd hij (Fin.ne_succAbove _ _)
-        · have hi2 : 2 ≤ i := by omega
+        · have hi2 : 2 ≤ i := by lia
           by_cases hj0 : j = 0
           · subst hj0
             exfalso
@@ -363,24 +363,24 @@ theorem aux : ∀ (N M : ℕ) (c : Fin M → Fin N),
               exfalso
               rw [hfe, hfe, prepend_two _ _ _ _ _ ⟨i, hi⟩ hi2, prepend_one, hgc, hpt₀] at hij
               exact absurd hij (Fin.succAbove_ne _ _)
-            · have hj2 : 2 ≤ j := by omega
+            · have hj2 : 2 ≤ j := by lia
               rw [hfe, hfe, prepend_two _ _ _ _ _ ⟨i, hi⟩ hi2, prepend_two _ _ _ _ _ ⟨j, hj⟩ hj2,
                 hgc, hgc] at hij
               have hci := Fin.succAbove_right_injective hij
               obtain h | h | h := hfadj _ _ hci
               · left
                 have hv : i - 2 = j - 2 := congrArg Fin.val h
-                have heq : i = j := by omega
+                have heq : i = j := by lia
                 subst heq
                 rfl
               · right; left
                 have hv : i - 2 + 1 = j - 2 := h
                 show i + 1 = j
-                omega
+                lia
               · right; right
                 have hv : j - 2 + 1 = i - 2 := h
                 show j + 1 = i
-                omega
+                lia
 
 /-- Colouring by height: `c i` is the index of the block of `N + 1`
 consecutive height ranks containing the player at position `i`. -/
@@ -423,15 +423,15 @@ theorem main_aux (N : ℕ) (hN : 1 ≤ N) (a : Fin (N * (N + 1)) → ℕ)
     by_contra hne
     rcases lt_or_gt_of_ne (fun h ↦ hne (ha h)) with h | h
     · have := hρlt' i j h
-      omega
+      lia
     · have := hρlt' j i h
-      omega
+      lia
   have hρbij : Function.Bijective fun i : Fin (N * (N + 1)) ↦ (⟨ρ i, hρlt i⟩ : Fin (N * (N + 1))) :=
     Finite.injective_iff_bijective.1 (fun i j h ↦ hρinj (congrArg Fin.val h))
   -- The colouring: block of `N + 1` consecutive ranks.
   let c : Fin (N * (N + 1)) → Fin N := fun i ↦
     ⟨ρ i / (N + 1), by
-      rw [Nat.div_lt_iff_lt_mul (by omega)]
+      rw [Nat.div_lt_iff_lt_mul (by lia)]
       exact hρlt i⟩
   have hc_le : ∀ i j, a i < a j → c i ≤ c j := by
     intro i j hij
@@ -486,20 +486,20 @@ theorem main_aux (N : ℕ) (hN : 1 ≤ N) (a : Fin (N * (N + 1)) → ℕ)
               calc r.val = (N + 1) * (r.val / (N + 1)) + r.val % (N + 1) :=
                     (Nat.div_add_mod _ _).symm
                 _ < (N + 1) * (r.val / (N + 1)) + (N + 1) := by
-                  have := Nat.mod_lt r.val (show 0 < N + 1 by omega)
-                  omega
+                  have := Nat.mod_lt r.val (show 0 < N + 1 by lia)
+                  lia
                 _ = (r.val / (N + 1) + 1) * (N + 1) := by ring
             rw [hr.2] at h2
             exact h2
         · intro hr
           refine ⟨mem_univ _, ?_⟩
           have h1 : k.val ≤ r.val / (N + 1) := by
-            rw [Nat.le_div_iff_mul_le (by omega)]
+            rw [Nat.le_div_iff_mul_le (by lia)]
             exact hr.1
           have h2 : r.val / (N + 1) < k.val + 1 := by
-            rw [Nat.div_lt_iff_lt_mul (by omega)]
+            rw [Nat.div_lt_iff_lt_mul (by lia)]
             exact hr.2
-          omega
+          lia
       rw [hset2, card_attachFin, Nat.card_Ico]
       have : (k.val + 1) * (N + 1) = k.val * (N + 1) + (N + 1) := by ring
       rw [this, Nat.add_sub_cancel_left]
@@ -563,7 +563,7 @@ theorem main_aux (N : ℕ) (hN : 1 ≤ N) (a : Fin (N * (N + 1)) → ℕ)
           · intro hr
             exact ⟨mem_univ _, Nat.succ_le_iff.1 hr.1⟩
         rw [hsetT, card_attachFin, Nat.card_Ico]
-        omega
+        lia
       calc (univ.filter fun t ↦ c (f l) < c (f t) ∧ a (f t) > a (f l)).card
           = (univ.filter fun t ↦ c (f l) < c (f t)).card := by rw [hset]
         _ = ∑ k' ∈ univ.filter (fun k' : Fin N ↦ c (f l) < k'),
@@ -603,18 +603,18 @@ theorem main_aux (N : ℕ) (hN : 1 ≤ N) (a : Fin (N * (N + 1)) → ℕ)
     have h1 : N - 1 - (c (f i)).val = k.val := by
       have hci := (c (f i)).isLt
       have hkv := k.isLt
-      omega
+      lia
     have h2 : N - 1 - (c (f j)).val = k.val := by
       have hcj := (c (f j)).isLt
       have hkv := k.isLt
-      omega
+      lia
     apply Fin.ext
     have hci := (c (f i)).isLt
     have hcj := (c (f j)).isLt
-    omega
+    lia
   obtain h | h | h := hfadj i j hcij
   · subst h
-    omega
+    lia
   · exact Or.inl h
   · exact Or.inr h
 

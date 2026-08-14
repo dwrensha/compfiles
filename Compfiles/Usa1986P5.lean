@@ -97,7 +97,7 @@ lemma sum_distinct_parts (n : ℕ) :
       rw [Finset.mem_Ico]
       have hpos := p.parts_pos hm
       have hle := Nat.Partition.le_of_mem_parts (p := p) hm
-      omega
+      lia
     rw [Finset.card_eq_sum_ite hsub]
     refine Finset.sum_congr rfl fun m _ => ?_
     simp only [Multiset.mem_toFinset]

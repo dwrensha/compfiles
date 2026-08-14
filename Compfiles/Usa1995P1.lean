@@ -81,9 +81,9 @@ lemma phi_pos {p : ℕ} (hp : 2 ≤ p) {m : ℕ} (hm : 0 < m) : 0 < phi p m := b
   intro h
   apply hm
   have hall : ∀ d ∈ Nat.digits p m, d = 0 :=
-    (ofDigits_eq_zero_iff (by omega : p - 1 ≠ 0) _).mp h
+    (ofDigits_eq_zero_iff (by lia : p - 1 ≠ 0) _).mp h
   have h0 : Nat.ofDigits p (Nat.digits p m) = 0 :=
-    (ofDigits_eq_zero_iff (by omega : p ≠ 0) _).mpr hall
+    (ofDigits_eq_zero_iff (by lia : p ≠ 0) _).mpr hall
   rwa [Nat.ofDigits_digits] at h0
 
 /-- If every entry of `l` is `< b` and different from `c`, then every base-`b`
@@ -106,7 +106,7 @@ lemma digits_ofDigits_ne {b c : ℕ} (hb : 1 < b) :
         have hmod : Nat.ofDigits b (a :: l) % b = a := by
           rw [ofDigits_cons_nat, Nat.add_mul_mod_self_left, Nat.mod_eq_of_lt ha]
         have hdiv : Nat.ofDigits b (a :: l) / b = Nat.ofDigits b l := by
-          rw [ofDigits_cons_nat, Nat.add_mul_div_left _ _ (by omega : 0 < b),
+          rw [ofDigits_cons_nat, Nat.add_mul_div_left _ _ (by lia : 0 < b),
             Nat.div_eq_of_lt ha, Nat.zero_add]
         have hdig : Nat.digits b (Nat.ofDigits b (a :: l)) =
             a :: Nat.digits b (Nat.ofDigits b l) := by
@@ -147,7 +147,7 @@ base-`p` digit through `c` (no carries into that digit from below). -/
 lemma digit_add_mul_eq {p : ℕ} (hp : 1 < p) {x d k c e : ℕ} (i : ℕ)
     (hd : d = e * p ^ (k + 1) + c * p ^ k) :
     (x + i * d) / p ^ k % p = (x / p ^ k % p + i * c) % p := by
-  have hp0 : 0 < p := by omega
+  have hp0 : 0 < p := by lia
   have hpk : 0 < p ^ k := pow_pos hp0 k
   have hpk1 : p ^ (k + 1) = p * p ^ k := pow_succ' p k
   set X := x / p ^ (k + 1) with hX
@@ -207,9 +207,9 @@ lemma phi_strictMono_on_digitFree {p : ℕ} (hp : 2 ≤ p) (x : ℕ) :
     exact phi_pos hp hypos
   · have hypos : 0 < y := hxpos.trans hxy
     have hdx : Nat.digits p x' = x' % p :: Nat.digits p (x' / p) :=
-      Nat.digits_def' (by omega) hxpos
+      Nat.digits_def' (by lia) hxpos
     have hdy : Nat.digits p y = y % p :: Nat.digits p (y / p) :=
-      Nat.digits_def' (by omega) hypos
+      Nat.digits_def' (by lia) hypos
     have hpx : phi p x' = x' % p + (p - 1) * phi p (x' / p) := by
       rw [phi_def, hdx, ofDigits_cons_nat, ← phi_def]
     have hpy : phi p y = y % p + (p - 1) * phi p (y / p) := by
@@ -220,31 +220,31 @@ lemma phi_strictMono_on_digitFree {p : ℕ} (hp : 2 ≤ p) (x : ℕ) :
       rw [hdy]; exact List.mem_cons_of_mem _ hd)
     have hrx : x' % p ≠ p - 1 := hx _ (by
       rw [hdx]; exact List.mem_cons_self)
-    have hrlt : x' % p < p := Nat.mod_lt _ (by omega)
+    have hrlt : x' % p < p := Nat.mod_lt _ (by lia)
     have hxy' : x' / p ≤ y / p := Nat.div_le_div_right hxy.le
     rcases lt_or_eq_of_le hxy' with h | h
-    · have hlt : x' / p < x' := Nat.div_lt_self hxpos (by omega)
+    · have hlt : x' / p < x' := Nat.div_lt_self hxpos (by lia)
       have hphi := IH _ hlt _ hxf hyf h
       rw [hpx, hpy]
       have h1 : (p - 1) * phi p (x' / p) + (p - 1) ≤ (p - 1) * phi p (y / p) := by
         have h2 := Nat.mul_le_mul_left (p - 1) (Nat.succ_le_of_lt hphi)
         rwa [Nat.succ_eq_add_one, mul_add, mul_one] at h2
-      omega
+      lia
     · have hrs : x' % p < y % p := by
         have hx' := Nat.div_add_mod x' p
         have hy' := Nat.div_add_mod y p
         rw [h] at hx'
-        omega
+        lia
       rw [hpx, hpy, h]
-      omega
+      lia
 
 /-- The base-`p` digits of `bSeq p n` are exactly the base-`(p-1)` digits of `n`. -/
 lemma digits_bSeq {p : ℕ} (hp : 3 ≤ p) (n : ℕ) :
     Nat.digits p (bSeq p n) = Nat.digits (p - 1) n := by
   rw [bSeq_def]
-  apply Nat.digits_ofDigits p (by omega)
+  apply Nat.digits_ofDigits p (by lia)
   · intro d hd
-    exact (Nat.digits_lt_base (by omega : 1 < p - 1) hd).trans (by omega)
+    exact (Nat.digits_lt_base (by lia : 1 < p - 1) hd).trans (by lia)
   · intro hne
     rcases eq_or_ne n 0 with rfl | hn
     · rw [Nat.digits_zero] at hne
@@ -257,16 +257,16 @@ lemma phi_bSeq {p : ℕ} (hp : 3 ≤ p) (n : ℕ) : phi p (bSeq p n) = n := by
 lemma digitFree_bSeq {p : ℕ} (hp : 3 ≤ p) (n : ℕ) : DigitFree p (bSeq p n) := by
   intro d hd
   rw [digits_bSeq hp n] at hd
-  have h := Nat.digits_lt_base (by omega : 1 < p - 1) hd
-  omega
+  have h := Nat.digits_lt_base (by lia : 1 < p - 1) hd
+  lia
 
 lemma bSeq_phi {p : ℕ} (hp : 3 ≤ p) {m : ℕ} (hm : DigitFree p m) : bSeq p (phi p m) = m := by
   rw [bSeq_def, phi_def,
-    Nat.digits_ofDigits (p - 1) (by omega : 1 < p - 1) (Nat.digits p m)
+    Nat.digits_ofDigits (p - 1) (by lia : 1 < p - 1) (Nat.digits p m)
       (fun d hd => by
-        have hlt := Nat.digits_lt_base (by omega : 1 < p) hd
+        have hlt := Nat.digits_lt_base (by lia : 1 < p) hd
         have hne := hm d hd
-        omega)
+        lia)
       (fun hne => by
         rcases eq_or_ne m 0 with rfl | h0
         · rw [Nat.digits_zero] at hne
@@ -281,16 +281,16 @@ lemma bSeq_strictMono {p : ℕ} (hp : 3 ≤ p) : StrictMono (bSeq p) := by
   · have h2 := congrArg (phi p) h
     rw [phi_bSeq hp, phi_bSeq hp] at h2
     exact absurd h2 (ne_of_lt hmn)
-  · have h2 := phi_strictMono_on_digitFree (by omega) _ _ (digitFree_bSeq hp n)
+  · have h2 := phi_strictMono_on_digitFree (by lia) _ _ (digitFree_bSeq hp n)
       (digitFree_bSeq hp m) h
     rw [phi_bSeq hp, phi_bSeq hp] at h2
-    omega
+    lia
 
 lemma bSeq_eq_self_of_lt {p : ℕ} (_hp : 3 ≤ p) {n : ℕ} (hn : n < p - 1) : bSeq p n = n := by
   rw [bSeq_def]
   rcases Nat.eq_zero_or_pos n with rfl | h0
   · rw [Nat.digits_zero, Nat.ofDigits_nil]
-  · rw [Nat.digits_of_lt (p - 1) n (by omega) hn, Nat.ofDigits_cons, Nat.ofDigits_nil]
+  · rw [Nat.digits_of_lt (p - 1) n (by lia) hn, Nat.ofDigits_cons, Nat.ofDigits_nil]
     simp
 
 /-- The non-existence part: among the values `bSeq p i` there is no arithmetic
@@ -302,10 +302,10 @@ lemma exists_mem_digits_pred {p : ℕ} (hp : p.Prime) {x d : ℕ} (hd : 0 < d) :
     ∃ i < p, p - 1 ∈ Nat.digits p (x + i * d) := by
   have hpp : 1 < p := hp.one_lt
   have : Fact p.Prime := ⟨hp⟩
-  have : NeZero p := ⟨by omega⟩
+  have : NeZero p := ⟨by lia⟩
   set K := padicValNat p d with hK
   have hdvd : p ^ K ∣ d := pow_padicValNat_dvd
-  have hndvd : ¬ p ^ (K + 1) ∣ d := pow_succ_padicValNat_not_dvd (by omega)
+  have hndvd : ¬ p ^ (K + 1) ∣ d := pow_succ_padicValNat_not_dvd (by lia)
   obtain ⟨e, he⟩ := hdvd
   have hpe : ¬ p ∣ e := by
     rintro ⟨f, hf⟩
@@ -314,7 +314,7 @@ lemma exists_mem_digits_pred {p : ℕ} (hp : p.Prime) {x d : ℕ} (hd : 0 < d) :
   have hc0 : e % p ≠ 0 := fun hz => hpe (Nat.dvd_of_mod_eq_zero hz)
   have hcnz : (((e % p : ℕ) : ZMod p)) ≠ 0 := by
     rw [ne_eq, ZMod.natCast_eq_zero_iff]
-    exact fun hdiv => hc0 (Nat.eq_zero_of_dvd_of_lt hdiv (Nat.mod_lt e (by omega)))
+    exact fun hdiv => hc0 (Nat.eq_zero_of_dvd_of_lt hdiv (Nat.mod_lt e (by lia)))
   obtain ⟨j, hj⟩ : ∃ j : ZMod p,
       ((x / p ^ K % p : ℕ) : ZMod p) + j * ((e % p : ℕ) : ZMod p) =
         ((p - 1 : ℕ) : ZMod p) := by
@@ -327,7 +327,7 @@ lemma exists_mem_digits_pred {p : ℕ} (hp : p.Prime) {x d : ℕ} (hd : 0 < d) :
       rw [Nat.cast_add, Nat.cast_mul, ZMod.natCast_zmod_val j]
       exact hj
     have h3 := (ZMod.natCast_eq_natCast_iff' _ _ _).mp h2
-    rwa [Nat.mod_eq_of_lt (by omega : p - 1 < p)] at h3
+    rwa [Nat.mod_eq_of_lt (by lia : p - 1 < p)] at h3
   refine ⟨j.val, ZMod.val_lt j, ?_⟩
   have hdecomp : d = (e / p) * p ^ (K + 1) + e % p * p ^ K := by
     have h1 : e = e / p * p + e % p := by rw [mul_comm, Nat.div_add_mod]
@@ -338,7 +338,7 @@ lemma exists_mem_digits_pred {p : ℕ} (hp : p.Prime) {x d : ℕ} (hd : 0 < d) :
   have hgetD : (Nat.digits p (x + j.val * d)).getD K 0 = p - 1 := by
     rw [digits_getD hpp, hdig]
     exact hmod
-  exact mem_digits_of_getD_ne_zero hgetD (by omega)
+  exact mem_digits_of_getD_ne_zero hgetD (by lia)
 
 /-- If all candidate values are digit-free (here: values of `bSeq p`), there is
 no arithmetic progression of length `p`. -/
@@ -350,7 +350,7 @@ lemma not_hasAp {p : ℕ} (hp : p.Prime) (hp3 : 3 ≤ p) {a : ℕ → ℕ} {n m 
     by_cases hi : v i < n
     · rw [ite_eq_left hi]
       exact (hval i).1 hi
-    · have hni : v i = n := by have hvi := hvle i; omega
+    · have hni : v i = n := by have hvi := hvle i; lia
       rw [ite_eq_right hi]
       exact (hval i).2 hni
   have hw : ∀ i : Fin p, DigitFree p (x + i.val * d) := by
@@ -359,17 +359,17 @@ lemma not_hasAp {p : ℕ} (hp : p.Prime) (hp3 : 3 ≤ p) {a : ℕ → ℕ} {n m 
     exact digitFree_bSeq hp3 _
   have hd0 : d ≠ 0 := by
     intro hz
-    have hv01 : v ⟨0, by omega⟩ < v ⟨1, by omega⟩ :=
+    have hv01 : v ⟨0, by lia⟩ < v ⟨1, by lia⟩ :=
       hvmono (Fin.mk_lt_mk.mpr Nat.one_pos)
-    have e0 := hval' ⟨0, by omega⟩
-    have e1 := hval' ⟨1, by omega⟩
+    have e0 := hval' ⟨0, by lia⟩
+    have e1 := hval' ⟨1, by lia⟩
     rw [hz] at e0 e1
     simp only [mul_zero, add_zero] at e0 e1
-    rw [h _ (hvle ⟨0, by omega⟩)] at e0
-    rw [h _ (hvle ⟨1, by omega⟩)] at e1
-    have hinj : v ⟨0, by omega⟩ = v ⟨1, by omega⟩ :=
+    rw [h _ (hvle ⟨0, by lia⟩)] at e0
+    rw [h _ (hvle ⟨1, by lia⟩)] at e1
+    have hinj : v ⟨0, by lia⟩ = v ⟨1, by lia⟩ :=
       (bSeq_strictMono hp3).injective (e0.trans e1.symm)
-    omega
+    lia
   obtain ⟨i, hi, hmem⟩ := exists_mem_digits_pred hp (x := x) (d := d)
     (Nat.pos_of_ne_zero hd0)
   have hcon := hw ⟨i, hi⟩
@@ -401,14 +401,14 @@ lemma hasAp_of_mem_digits_pred {p : ℕ} (hp : 3 ≤ p) {a : ℕ → ℕ} {n m :
     rw [Nat.pos_iff_ne_zero]
     intro hz
     have hall : ∀ d ∈ L.map (fun d => if d = p - 1 then 1 else 0), d = 0 :=
-      (ofDigits_eq_zero_iff (by omega : p ≠ 0) _).mp hz
+      (ofDigits_eq_zero_iff (by lia : p ≠ 0) _).mp hz
     have h1 : (1 : ℕ) ∈ L.map (fun d => if d = p - 1 then 1 else 0) := by
       apply List.mem_map.mpr
       exact ⟨p - 1, hmem, ite_eq_left rfl⟩
     have h10 := hall 1 h1
-    omega
+    lia
   have hm_eq : m = m₀ + (p - 1) * E := by
-    have h0 := hlin 0 (by omega)
+    have h0 := hlin 0 (by lia)
     have hid : L.map (fun d => if d = p - 1 then p - 1 - 0 else d) = L := by
       have hfun : (fun d => if d = p - 1 then p - 1 - 0 else d) = fun d => d := by
         funext d
@@ -427,34 +427,34 @@ lemma hasAp_of_mem_digits_pred {p : ℕ} (hp : 3 ≤ p) {a : ℕ → ℕ} {n m :
     intro i hi
     have hti : m₀ + i * E =
         Nat.ofDigits p (L.map fun d => if d = p - 1 then p - 1 - (p - 1 - i) else d) := by
-      rw [hlin (p - 1 - i) (by omega), show p - 1 - (p - 1 - i) = i by omega]
+      rw [hlin (p - 1 - i) (by lia), show p - 1 - (p - 1 - i) = i by lia]
     rw [hti]
     intro d hd
     have hlt : ∀ e ∈ L.map (fun d => if d = p - 1 then p - 1 - (p - 1 - i) else d),
         e < p := by
       intro e he
       obtain ⟨d', hd', rfl⟩ := List.mem_map.mp he
-      have hd'' := Nat.digits_lt_base (by omega : 1 < p) hd'
+      have hd'' := Nat.digits_lt_base (by lia : 1 < p) hd'
       by_cases h2 : d' = p - 1
-      · rw [ite_eq_left h2]; omega
+      · rw [ite_eq_left h2]; lia
       · rw [ite_eq_right h2]; exact hd''
     have hne : ∀ e ∈ L.map (fun d => if d = p - 1 then p - 1 - (p - 1 - i) else d),
         e ≠ p - 1 := by
       intro e he
       obtain ⟨d', hd', rfl⟩ := List.mem_map.mp he
       by_cases h2 : d' = p - 1
-      · rw [ite_eq_left h2]; omega
+      · rw [ite_eq_left h2]; lia
       · rw [ite_eq_right h2]; exact h2
-    exact digits_ofDigits_ne (by omega : 1 < p) hlt hne d hd
+    exact digits_ofDigits_ne (by lia : 1 < p) hlt hne d hd
   have htlt : ∀ i < p - 1, m₀ + i * E < m := by
     intro i hi
     rw [hm_eq]
     have h1 : i * E < (p - 1) * E := Nat.mul_lt_mul_of_pos_right hi hEpos
-    omega
+    lia
   have hphi : ∀ i < p - 1, phi p (m₀ + i * E) < n := by
     intro i hi
     have h1 : m₀ + i * E < bSeq p n := (htlt i hi).trans hhi
-    have h2 := phi_strictMono_on_digitFree (by omega) _ _ (htfree i hi)
+    have h2 := phi_strictMono_on_digitFree (by lia) _ _ (htfree i hi)
       (digitFree_bSeq hp n) h1
     rwa [phi_bSeq hp] at h2
   refine ⟨fun i => if i.val = p - 1 then n else phi p (m₀ + i.val * E), ?_, ?_,
@@ -466,16 +466,16 @@ lemma hasAp_of_mem_digits_pred {p : ℕ} (hp : 3 ≤ p) {a : ℕ → ℕ} {n m :
     dsimp only
     by_cases hj : j = p - 1
     · subst hj
-      have hi2 : i ≠ p - 1 := by omega
+      have hi2 : i ≠ p - 1 := by lia
       rw [ite_eq_left rfl, ite_eq_right hi2]
-      exact hphi i (by omega)
-    · have hi2 : i ≠ p - 1 := by omega
+      exact hphi i (by lia)
+    · have hi2 : i ≠ p - 1 := by lia
       rw [ite_eq_right hj, ite_eq_right hi2]
       have hlt2 : m₀ + i * E < m₀ + j * E := by
         have := Nat.mul_lt_mul_of_pos_right hji hEpos
-        omega
-      exact phi_strictMono_on_digitFree (by omega) _ _ (htfree _ (by omega))
-        (htfree _ (by omega)) hlt2
+        lia
+      exact phi_strictMono_on_digitFree (by lia) _ _ (htfree _ (by lia))
+        (htfree _ (by lia)) hlt2
   · intro i
     obtain ⟨i, hi'⟩ := i
     dsimp only
@@ -483,7 +483,7 @@ lemma hasAp_of_mem_digits_pred {p : ℕ} (hp : 3 ≤ p) {a : ℕ → ℕ} {n m :
     · subst hi
       rw [ite_eq_left rfl]
     · rw [ite_eq_right hi]
-      exact (hphi i (by omega)).le
+      exact (hphi i (by lia)).le
   · intro i
     obtain ⟨i, hi'⟩ := i
     refine ⟨?_, ?_⟩
@@ -494,15 +494,15 @@ lemma hasAp_of_mem_digits_pred {p : ℕ} (hp : 3 ≤ p) {a : ℕ → ℕ} {n m :
         rw [ite_eq_left rfl] at hvi
         exact absurd hvi (lt_irrefl n)
       · rw [ite_eq_right hi] at hvi ⊢
-        rw [IH _ hvi, bSeq_phi hp (htfree i (by omega))]
+        rw [IH _ hvi, bSeq_phi hp (htfree i (by lia))]
     · intro hvi
       dsimp only at hvi
       by_cases hi : i = p - 1
       · subst hi
         exact hm_eq
       · rw [ite_eq_right hi] at hvi
-        have := hphi i (by omega)
-        omega
+        have := hphi i (by lia)
+        lia
 
 snip end
 
@@ -514,23 +514,23 @@ problem usa1995_p1 (p : ℕ) (hp : p.Prime) (ho : Odd p) (a : ℕ → ℕ)
   have hp3 : 3 ≤ p := by
     have h2 := hp.two_le
     obtain ⟨k, hk⟩ := ho
-    omega
+    lia
   have key : ∀ n, a n = bSeq p n := by
     intro n
     induction n using Nat.strong_induction_on with
     | _ n IH =>
     rcases lt_or_ge n (p - 1) with hn | hn
     · rw [ha₀ n hn, bSeq_eq_self_of_lt hp3 hn]
-    · have hn1 : 1 ≤ n := by omega
-      have hprev : a (n - 1) = bSeq p (n - 1) := IH (n - 1) (by omega)
+    · have hn1 : 1 ≤ n := by lia
+      have hprev : a (n - 1) = bSeq p (n - 1) := IH (n - 1) (by lia)
       have hbn_mem : a (n - 1) < bSeq p n ∧ ¬ HasAp a p n (bSeq p n) := by
         refine ⟨?_, ?_⟩
         · rw [hprev]
-          exact bSeq_strictMono hp3 (by omega)
+          exact bSeq_strictMono hp3 (by lia)
         · exact not_hasAp hp hp3 (fun i hi => by
             by_cases h'i : i < n
             · rw [ite_eq_left h'i, IH i h'i]
-            · have h'n : i = n := by omega
+            · have h'n : i = n := by lia
               rw [ite_eq_right h'i, h'n])
       have hbn_le : ∀ m, a (n - 1) < m → ¬ HasAp a p n m → bSeq p n ≤ m := by
         intro m hmlo hmno
@@ -539,12 +539,12 @@ problem usa1995_p1 (p : ℕ) (hp : p.Prime) (ho : Odd p) (a : ℕ → ℕ)
         rw [hprev] at hmlo
         have hndf : ¬ DigitFree p m := by
           intro hdf
-          have h1 := phi_strictMono_on_digitFree (by omega) _ _ (digitFree_bSeq hp3 _)
+          have h1 := phi_strictMono_on_digitFree (by lia) _ _ (digitFree_bSeq hp3 _)
             hdf hmlo
-          have h2 := phi_strictMono_on_digitFree (by omega) _ _ hdf
+          have h2 := phi_strictMono_on_digitFree (by lia) _ _ hdf
             (digitFree_bSeq hp3 _) hmlt'
           rw [phi_bSeq hp3] at h1 h2
-          omega
+          lia
         have hmem : p - 1 ∈ Nat.digits p m := by
           by_contra hc
           apply hndf

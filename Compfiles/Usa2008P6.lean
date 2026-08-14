@@ -251,7 +251,7 @@ lemma range_lap_eq_ker_Tmap : LinearMap.range (lap G) = LinearMap.ker (Tmap G) :
       = Module.finrank (ZMod 2) ↥(LinearMap.ker (lap G)) := by
     rw [htop, finrank_top]
     exact Subspace.dual_finrank_eq
-  omega
+  lia
 
 /-- There is at least one valid room assignment. -/
 lemma exists_solution : ∃ x0, lap G x0 = degVec G := by

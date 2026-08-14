@@ -63,15 +63,15 @@ theorem card_range_filter_mod_eq (t j : ℕ) (hj : j < 3) :
     · intro v hv
       rw [Finset.mem_filter, Finset.mem_range] at hv
       rw [Finset.mem_range]
-      omega
+      lia
     · intro v hv w hw hvw
       rw [Finset.mem_filter, Finset.mem_range] at hv hw
-      omega
+      lia
     · intro q hq
       rw [Finset.mem_range] at hq
-      refine ⟨3 * q + j, ?_, by omega⟩
+      refine ⟨3 * q + j, ?_, by lia⟩
       rw [Finset.mem_filter, Finset.mem_range]
-      omega
+      lia
   rwa [Finset.card_range] at h
 
 /-- When `3 ∣ N`, exactly `N / 3` elements of `ZMod N` have a given
@@ -92,7 +92,7 @@ theorem card_univ_filter_val_mod_eq {N : ℕ} [NeZero N] (hN : 3 ∣ N) (j : ℕ
   rw [himg, Finset.card_image_of_injOn]
   · obtain ⟨t, rfl⟩ := hN
     rw [card_range_filter_mod_eq t j hj]
-    omega
+    lia
   · intro a ha b hb hab
     rw [Finset.mem_coe, Finset.mem_filter, Finset.mem_range] at ha hb
     have hmod : a ≡ b [MOD N] := (ZMod.natCast_eq_natCast_iff a b N).1 hab
@@ -114,7 +114,7 @@ theorem val_mod_translate {n : ℕ} [NeZero (2 * n - 1)] (h3n : 3 ∣ n + 1)
     have h2 : x.val + (n + 1) ≡ x.val [MOD 3] := by
       obtain ⟨c, hc⟩ := h3n
       show (x.val + (n + 1)) % 3 = x.val % 3
-      omega
+      lia
     exact h1.trans h2
   exact hmod3
 
@@ -127,29 +127,29 @@ theorem coprime_aux {n : ℕ} (hn : 3 ≤ n) (h3 : n % 3 ≠ 2) :
       dvd_trans (Nat.gcd_dvd_right _ _) (dvd_mul_left (n + 1) 2)
     have h2 : Nat.gcd (2 * n - 1) (n + 1) ∣ 2 * n - 1 := Nat.gcd_dvd_left _ _
     have h3' := Nat.dvd_sub h1 h2
-    rwa [show 2 * (n + 1) - (2 * n - 1) = 3 by omega] at h3'
+    rwa [show 2 * (n + 1) - (2 * n - 1) = 3 by lia] at h3'
   rcases (Nat.dvd_prime (by norm_num : Nat.Prime 3)).1 hdvd with h | h
   · exact h
   · exfalso
     have h31 : 3 ∣ n + 1 := h ▸ Nat.gcd_dvd_right _ _
     have h4 : (n + 1) % 3 = 0 := Nat.mod_eq_zero_of_dvd h31
-    omega
+    lia
 
 /-- Upper bound: a bad coloring has at most `solution n - 1` black points. -/
 theorem card_le_of_bad {n : ℕ} (hn : 3 ≤ n) {B : Finset (ZMod (2 * n - 1))}
     (hbad : ¬ IsGood n B) : B.card ≤ solution n - 1 := by
-  have : NeZero (2 * n - 1) := ⟨by omega⟩
+  have : NeZero (2 * n - 1) := ⟨by lia⟩
   have key := bad_disjoint_translate hbad
   have hinj : Function.Injective (· + ((n + 1 : ℕ) : ZMod (2 * n - 1))) :=
     fun _ _ h => add_right_cancel h
   by_cases h3 : n % 3 = 2
   · -- Case `n = 3 * m + 2`: the graph splits into three cycles of length
     -- `2 * m + 1`, given by the residue classes of `val` mod 3.
-    obtain ⟨m, rfl⟩ : ∃ m, n = 3 * m + 2 := ⟨n / 3, by omega⟩
+    obtain ⟨m, rfl⟩ : ∃ m, n = 3 * m + 2 := ⟨n / 3, by lia⟩
     simp only [solution]
     rw [ite_eq_left h3]
     have h3dvd : 3 ∣ (3 * m + 2) + 1 := ⟨m + 1, by ring⟩
-    have hN3 : 3 ∣ 2 * (3 * m + 2) - 1 := ⟨2 * m + 1, by omega⟩
+    have hN3 : 3 ∣ 2 * (3 * m + 2) - 1 := ⟨2 * m + 1, by lia⟩
     have hfib : ∀ j ∈ Finset.range 3,
         (B.filter (fun x => x.val % 3 = j)).card ≤ m := by
       intro j hj
@@ -157,7 +157,7 @@ theorem card_le_of_bad {n : ℕ} (hn : 3 ≤ n) {B : Finset (ZMod (2 * n - 1))}
       have hT : ((Finset.univ : Finset (ZMod (2 * (3 * m + 2) - 1))).filter
           (fun x => x.val % 3 = j)).card = 2 * m + 1 := by
         rw [card_univ_filter_val_mod_eq hN3 j hj]
-        omega
+        lia
       have hsub1 : B.filter (fun x => x.val % 3 = j) ⊆
           Finset.univ.filter (fun x => x.val % 3 = j) :=
         Finset.filter_subset_filter _ (Finset.subset_univ _)
@@ -178,8 +178,8 @@ theorem card_le_of_bad {n : ℕ} (hn : 3 ≤ n) {B : Finset (ZMod (2 * n - 1))}
         have hcu := Finset.card_union_of_disjoint hdisj
         have hle := Finset.card_le_card (Finset.union_subset hsub1 hsub2)
         rw [Finset.card_image_of_injective _ hinj] at hcu
-        omega
-      omega
+        lia
+      lia
     have hsum : B.card = ∑ j ∈ Finset.range 3,
         (B.filter (fun x => x.val % 3 = j)).card :=
       Finset.card_eq_sum_card_fiberwise fun x _ =>
@@ -187,7 +187,7 @@ theorem card_le_of_bad {n : ℕ} (hn : 3 ≤ n) {B : Finset (ZMod (2 * n - 1))}
     rw [hsum]
     refine (Finset.sum_le_sum hfib).trans ?_
     rw [Finset.sum_const, Finset.card_range, nsmul_eq_mul]
-    omega
+    lia
   · -- Case `n % 3 ≠ 2`: `2 * n - 1` and `n + 1` are coprime, so the graph is a
     -- single cycle of length `2 * n - 1` and `B`, `B + (n + 1)` are disjoint.
     simp only [solution]
@@ -198,25 +198,25 @@ theorem card_le_of_bad {n : ℕ} (hn : 3 ≤ n) {B : Finset (ZMod (2 * n - 1))}
         (B ∪ B.image (· + ((n + 1 : ℕ) : ZMod (2 * n - 1)))))
       rw [Finset.card_image_of_injective _ hinj] at hcu
       rw [Finset.card_univ, ZMod.card] at hle
-      omega
-    omega
+      lia
+    lia
 
 /-- Lower bound: there is a bad coloring with `solution n - 1` black points. -/
 theorem exists_bad {n : ℕ} (hn : 3 ≤ n) :
     ∃ B : Finset (ZMod (2 * n - 1)), B.card = solution n - 1 ∧ ¬ IsGood n B := by
-  have : NeZero (2 * n - 1) := ⟨by omega⟩
+  have : NeZero (2 * n - 1) := ⟨by lia⟩
   by_cases h3 : n % 3 = 2
   · -- The set `{1, 2, ..., n - 2}` is bad and has `n - 2` elements.
     refine ⟨(Finset.Icc 1 (n - 2)).image (Nat.cast : ℕ → ZMod (2 * n - 1)), ?_, ?_⟩
     · simp only [solution]
       rw [ite_eq_left h3, Finset.card_image_of_injOn, Nat.card_Icc]
-      · omega
+      · lia
       · intro a ha b hb hab
         rw [Finset.mem_coe, Finset.mem_Icc] at ha hb
         have hmod : a ≡ b [MOD 2 * n - 1] := (ZMod.natCast_eq_natCast_iff a b _).1 hab
         have hmod' : a % (2 * n - 1) = b % (2 * n - 1) := hmod
-        rwa [Nat.mod_eq_of_lt (by omega : a < 2 * n - 1),
-          Nat.mod_eq_of_lt (by omega : b < 2 * n - 1)] at hmod'
+        rwa [Nat.mod_eq_of_lt (by lia : a < 2 * n - 1),
+          Nat.mod_eq_of_lt (by lia : b < 2 * n - 1)] at hmod'
     · rintro ⟨x, hx, y, hy, hxy⟩
       rw [Finset.mem_image] at hx hy
       obtain ⟨a, ha, rfl⟩ := hx
@@ -229,26 +229,26 @@ theorem exists_bad {n : ℕ} (hn : 3 ≤ n) :
         have hmod : b ≡ a + (n + 1) [MOD 2 * n - 1] :=
           (ZMod.natCast_eq_natCast_iff _ _ _).1 hb'
         have hmod' : b % (2 * n - 1) = (a + (n + 1)) % (2 * n - 1) := hmod
-        rw [Nat.mod_eq_of_lt (by omega : b < 2 * n - 1)] at hmod'
+        rw [Nat.mod_eq_of_lt (by lia : b < 2 * n - 1)] at hmod'
         by_cases hle : a + (n + 1) < 2 * n - 1
         · rw [Nat.mod_eq_of_lt hle] at hmod'
-          omega
-        · have heq : a + (n + 1) = 2 * n - 1 := by omega
+          lia
+        · have heq : a + (n + 1) = 2 * n - 1 := by lia
           rw [heq, Nat.mod_self] at hmod'
-          omega
+          lia
       · have ha' : (a : ZMod (2 * n - 1)) = ((b + (n + 1) : ℕ) : ZMod (2 * n - 1)) := by
           rw [Nat.cast_add]
           rw [sub_eq_iff_eq_add.1 hxy, add_comm]
         have hmod : a ≡ b + (n + 1) [MOD 2 * n - 1] :=
           (ZMod.natCast_eq_natCast_iff _ _ _).1 ha'
         have hmod' : a % (2 * n - 1) = (b + (n + 1)) % (2 * n - 1) := hmod
-        rw [Nat.mod_eq_of_lt (by omega : a < 2 * n - 1)] at hmod'
+        rw [Nat.mod_eq_of_lt (by lia : a < 2 * n - 1)] at hmod'
         by_cases hle : b + (n + 1) < 2 * n - 1
         · rw [Nat.mod_eq_of_lt hle] at hmod'
-          omega
-        · have heq : b + (n + 1) = 2 * n - 1 := by omega
+          lia
+        · have heq : b + (n + 1) = 2 * n - 1 := by lia
           rw [heq, Nat.mod_self] at hmod'
-          omega
+          lia
   · -- The set `{2 * j * (n + 1) mod (2 * n - 1) : 0 ≤ j ≤ n - 2}` is bad and
     -- has `n - 1` elements: these are every other vertex of the cycle.
     have hcop : Nat.Coprime (2 * n - 1) (n + 1) := coprime_aux hn h3
@@ -266,15 +266,15 @@ theorem exists_bad {n : ℕ} (hn : 3 ≤ n) :
             (Nat.modEq_iff_dvd' hle').1 hmod
           rw [← Nat.sub_mul] at hdvd
           have hdvd2 := hcop.dvd_of_dvd_mul_right hdvd
-          have hz : 2 * j - 2 * i = 0 := Nat.eq_zero_of_dvd_of_lt hdvd2 (by omega)
-          omega
+          have hz : 2 * j - 2 * i = 0 := Nat.eq_zero_of_dvd_of_lt hdvd2 (by lia)
+          lia
         · have hle' : 2 * j * (n + 1) ≤ 2 * i * (n + 1) := by nlinarith [hle]
           have hdvd : (2 * n - 1) ∣ 2 * i * (n + 1) - 2 * j * (n + 1) :=
             (Nat.modEq_iff_dvd' hle').1 hmod.symm
           rw [← Nat.sub_mul] at hdvd
           have hdvd2 := hcop.dvd_of_dvd_mul_right hdvd
-          have hz : 2 * i - 2 * j = 0 := Nat.eq_zero_of_dvd_of_lt hdvd2 (by omega)
-          omega
+          have hz : 2 * i - 2 * j = 0 := Nat.eq_zero_of_dvd_of_lt hdvd2 (by lia)
+          lia
     · rintro ⟨x, hx, y, hy, hxy⟩
       rw [Finset.mem_image] at hx hy
       obtain ⟨a, ha, rfl⟩ := hx
@@ -298,8 +298,8 @@ theorem exists_bad {n : ℕ} (hn : 3 ≤ n) :
           rw [h1, ← Nat.sub_mul] at hdvd
           have hdvd2 := hcop.dvd_of_dvd_mul_right hdvd
           have hz : 2 * d - (2 * c + 1) = 0 :=
-            Nat.eq_zero_of_dvd_of_lt hdvd2 (by omega)
-          omega
+            Nat.eq_zero_of_dvd_of_lt hdvd2 (by lia)
+          lia
         · have hle' : 2 * d * (n + 1) ≤ 2 * c * (n + 1) + (n + 1) := by
             nlinarith [hle]
           have hdvd : (2 * n - 1) ∣ (2 * c * (n + 1) + (n + 1)) - 2 * d * (n + 1) :=
@@ -309,8 +309,8 @@ theorem exists_bad {n : ℕ} (hn : 3 ≤ n) :
           rw [h1, ← Nat.sub_mul] at hdvd
           have hdvd2 := hcop.dvd_of_dvd_mul_right hdvd
           have hz : (2 * c + 1) - 2 * d = 0 :=
-            Nat.eq_zero_of_dvd_of_lt hdvd2 (by omega)
-          omega
+            Nat.eq_zero_of_dvd_of_lt hdvd2 (by lia)
+          lia
       rcases hxy with hxy | hxy
       · exact key a b ha hb hxy
       · exact key b a hb ha hxy
@@ -328,17 +328,17 @@ problem imo1990_p2 (n : ℕ) (hn : 3 ≤ n) :
     by_cases h3 : n % 3 = 2
     · simp only [solution] at hB hle
       rw [ite_eq_left h3] at hB hle
-      omega
+      lia
     · simp only [solution] at hB hle
       rw [ite_eq_right h3] at hB hle
-      omega
+      lia
   · -- No smaller `k` works, by the bad coloring from `exists_bad`.
     intro k hk
     obtain ⟨B, hBcard, hBbad⟩ := exists_bad hn
     by_contra hlt
     push Not at hlt
     have hsol : 1 ≤ solution n := Nat.one_le_of_lt hlt
-    have hkle : k ≤ B.card := by omega
+    have hkle : k ≤ B.card := by lia
     obtain ⟨B', hsub, hB'card⟩ := Finset.exists_subset_card_eq hkle
     exact hBbad (IsGood.mono hsub (hk B' hB'card))
 

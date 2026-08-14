@@ -122,22 +122,22 @@ lemma filter_boxes_add_pile (k : ℕ) (c : Multiset ℕ) (hpos : ∀ n ∈ c, 0 
   by_cases hn0 : n = 0
   · subst hn0
     have hcount0 : Multiset.count 0 c = 0 :=
-      Multiset.count_eq_zero.mpr (fun h ↦ absurd (hpos 0 h) (by omega))
-    rw [Finset.sum_eq_zero (fun m _ ↦ ite_eq_right (by omega)), ite_eq_right (by omega), hcount0]
+      Multiset.count_eq_zero.mpr (fun h ↦ absurd (hpos 0 h) (by lia))
+    rw [Finset.sum_eq_zero (fun m _ ↦ ite_eq_right (by lia)), ite_eq_right (by lia), hcount0]
   · have hn1 : 1 ≤ n := Nat.pos_of_ne_zero hn0
     by_cases hn2k : n ≤ 2 * k
-    · have hm0k : (n - 1) / 2 < k := by omega
-      have hPm0 : n = 2 * ((n - 1) / 2) + 1 ∨ n = 2 * ((n - 1) / 2) + 2 := by omega
+    · have hm0k : (n - 1) / 2 < k := by lia
+      have hPm0 : n = 2 * ((n - 1) / 2) + 1 ∨ n = 2 * ((n - 1) / 2) + 2 := by lia
       rw [Finset.sum_eq_single_of_mem ((n - 1) / 2) (Finset.mem_range.mpr hm0k)
         (f := fun m ↦ if (n = 2 * m + 1 ∨ n = 2 * m + 2) then Multiset.count n c else 0)]
-      · rw [ite_eq_left hPm0, ite_eq_right (by omega), add_zero]
+      · rw [ite_eq_left hPm0, ite_eq_right (by lia), add_zero]
       · intro b hb hbne
         rw [Finset.mem_range] at hb
-        exact ite_eq_right (by rintro (h | h) <;> omega)
-    · have hn2k' : 2 * k + 1 ≤ n := by omega
+        exact ite_eq_right (by rintro (h | h) <;> lia)
+    · have hn2k' : 2 * k + 1 ≤ n := by lia
       rw [Finset.sum_eq_zero (fun m hm ↦ ite_eq_right (by
           have hm' := Finset.mem_range.mp hm
-          rintro (h | h) <;> omega)), ite_eq_left hn2k', zero_add]
+          rintro (h | h) <;> lia)), ite_eq_left hn2k', zero_add]
 
 lemma value_filter_box_le (c : Multiset ℕ)
     (heven : ∀ m, 1 ≤ m → c.count (2 * m) ≤ 1)
@@ -149,7 +149,7 @@ lemma value_filter_box_le (c : Multiset ℕ)
     ext n
     rw [Multiset.count_add, Multiset.count_filter, Multiset.count_filter, Multiset.count_filter]
     by_cases h1 : n = 2 * m + 1
-    · rw [ite_eq_left (Or.inl h1), ite_eq_left h1, ite_eq_right (by omega), add_zero]
+    · rw [ite_eq_left (Or.inl h1), ite_eq_left h1, ite_eq_right (by lia), add_zero]
     · by_cases h2 : n = 2 * m + 2
       · rw [ite_eq_left (Or.inr h2), ite_eq_right h1, ite_eq_left h2, zero_add]
       · rw [ite_eq_right (not_or.mpr ⟨h1, h2⟩), ite_eq_right h1, ite_eq_right h2, add_zero]
@@ -196,7 +196,7 @@ lemma greedy (k : ℕ) (pile : Multiset ℕ) :
     have hrest : ∀ m ∈ rest, 2 * k + 1 ≤ m :=
       fun m hm ↦ hpile m (Multiset.mem_cons_of_mem hm)
     have hnpos : (0 : ℚ) < (n : ℚ)⁻¹ :=
-      inv_pos.mpr (by exact_mod_cast (by omega : 0 < n))
+      inv_pos.mpr (by exact_mod_cast (by lia : 0 < n))
     have hrest_nonneg : 0 ≤ value rest := value_nonneg rest
     obtain ⟨m0, hm0⟩ : ∃ m0 : Fin k, w m0 + (n : ℚ)⁻¹ ≤ 1 := by
       by_contra hcon
@@ -307,7 +307,7 @@ theorem exists_partition_aux : ∀ (N k : ℕ) (c : Multiset ℕ), c.card = N �
       have hcardlt : (m ::ₘ rest).card < ({2 * m, 2 * m} + rest).card := by
         rw [Multiset.card_cons, Multiset.card_add]
         have hc2 : Multiset.card ({2 * m, 2 * m} : Multiset ℕ) = 2 := rfl
-        omega
+        lia
       obtain ⟨gs', hsum', hcard', hval''⟩ := IH _ hcardlt k (m ::ₘ rest) rfl hpos' hval'
       have hmgs : m ∈ gs'.sum := hsum' ▸ Multiset.mem_cons_self m rest
       obtain ⟨g', hg'mem, hmg'⟩ := exists_mem_of_mem_sum hmgs
@@ -360,12 +360,12 @@ theorem exists_partition_aux : ∀ (N k : ℕ) (c : Multiset ℕ), c.card = N �
           linarith
         have hcardlt : rest.card < (Multiset.replicate (2 * m + 1) (2 * m + 1) + rest).card := by
           rw [Multiset.card_add, Multiset.card_replicate]
-          omega
+          lia
         obtain ⟨gs', hsum', hcard', hval''⟩ := IH _ hcardlt (k - 1) rest rfl hpos' hval'
         refine ⟨Multiset.replicate (2 * m + 1) (2 * m + 1) ::ₘ gs', ?_, ?_, ?_⟩
         · rw [Multiset.sum_cons, hsum']
         · rw [Multiset.card_cons]
-          omega
+          lia
         · intro g hg
           rw [Multiset.mem_cons] at hg
           rcases hg with rfl | hg

@@ -354,14 +354,14 @@ lemma alice_consistent (σ : Strategy N) {k : ℕ}
     | zero => simp
     | succ m ihm =>
       intro hm
-      have h1 := hcon (t + m) (by omega) (by omega)
+      have h1 := hcon (t + m) (by lia) (by lia)
       have h2 := alice_lie_streak h1
-      have h3 := ihm (by omega)
-      rw [show t + (m + 1) = t + m + 1 by omega, h2]
-      omega
+      have h3 := ihm (by lia)
+      rw [show t + (m + 1) = t + m + 1 by lia, h2]
+      lia
   have hbig := hgrow (k + 1) le_rfl
   have hbound := aliceStreak_le σ hWt x (t + (k + 1))
-  omega
+  lia
 
 /-- The weight bound needed at `N = n + 1` where `n = ⌈(1.99) ^ k⌉`. -/
 lemma aliceWeightBase_bound {k n : ℕ} (hn : n = ⌈(1.99 : ℝ) ^ k⌉₊)
@@ -392,7 +392,7 @@ lemma not_bobWins {k n : ℕ} (hWt : 1000 * ((n + 1 : ℕ) : ℝ) < weightBase ^
   have hcardX : X.card ≤ n := (hwin ⟨0, hN⟩ (aliceAns σ) T X hT (hcons _ T)).2
   have hcard := Finset.card_le_card hsub
   rw [Finset.card_univ, Fintype.card_fin] at hcard
-  omega
+  lia
 
 /-- Helper: `1 ≤ (1.99) ^ k`. -/
 lemma one_le_pow_199 (k : ℕ) : (1 : ℝ) ≤ 1.99 ^ k := by
@@ -492,14 +492,14 @@ lemma bobEmbedding_mem (P : Finset (Fin N)) (h : 2 ^ k ≤ P.card) (p : Fin k �
 
 /-- There is an element of the pool outside the image of the bit patterns. -/
 lemma exists_special (P : Finset (Fin N)) (h : 2 ^ k + 1 ≤ P.card) :
-    ∃ s ∈ P, ∀ p : Fin k → Bool, (bobEmbedding P (by omega) p : Fin N) ≠ s := by
-  have h1 : 2 ^ k ≤ P.card := by omega
+    ∃ s ∈ P, ∀ p : Fin k → Bool, (bobEmbedding P (by lia) p : Fin N) ≠ s := by
+  have h1 : 2 ^ k ≤ P.card := by lia
   have hcard : (Finset.univ.image (fun p : Fin k → Bool =>
       (bobEmbedding P h1 p : Fin N))).card < P.card := by
     rw [Finset.card_image_of_injective _
       (fun a b hab => (bobEmbedding P h1).injective (Subtype.coe_injective hab)),
       Finset.card_univ, Fintype.card_fun, Fintype.card_bool, Fintype.card_fin]
-    omega
+    lia
   by_contra hcon
   push Not at hcon
   have hsub : P ⊆ Finset.univ.image (fun p : Fin k → Bool =>
@@ -508,7 +508,7 @@ lemma exists_special (P : Finset (Fin N)) (h : 2 ^ k + 1 ≤ P.card) :
     obtain ⟨p, hp⟩ := hcon s hs
     exact Finset.mem_image.mpr ⟨p, Finset.mem_univ p, hp⟩
   have hle := Finset.card_le_card hsub
-  omega
+  lia
 
 /-- The distinguished candidate asked about in the probe phase: an element of
 the pool outside the image of the bit patterns. -/
@@ -520,7 +520,7 @@ lemma bobSpecial_mem (P : Finset (Fin N)) (h : 2 ^ k + 1 ≤ P.card) : bobSpecia
 
 lemma bobSpecial_ne_embedding (P : Finset (Fin N)) (h : 2 ^ k + 1 ≤ P.card)
     (p : Fin k → Bool) :
-    (bobEmbedding P (by omega) p : Fin N) ≠ bobSpecial P h :=
+    (bobEmbedding P (by lia) p : Fin N) ≠ bobSpecial P h :=
   (exists_special P h).choose_spec.2 p
 
 lemma bobSpecial_congr {P Q : Finset (Fin N)} (hPQ : P = Q) (hP : 2 ^ k + 1 ≤ P.card) :
@@ -561,14 +561,14 @@ noncomputable def bobQuestion (P : Finset (Fin N)) (h : 2 ^ k + 1 ≤ P.card) :
     BobPhase → Finset (Fin N)
   | BobPhase.probe _ => {bobSpecial P h}
   | BobPhase.bits _ bs =>
-    if hb : bs.length < k then bitQuestion P (by omega) ⟨bs.length, hb⟩ else ∅
+    if hb : bs.length < k then bitQuestion P (by lia) ⟨bs.length, hb⟩ else ∅
 
 lemma bobQuestion_probe (P : Finset (Fin N)) (h : 2 ^ k + 1 ≤ P.card) (j : ℕ) :
     bobQuestion P h (BobPhase.probe j) = {bobSpecial P h} := rfl
 
 lemma bobQuestion_bits (P : Finset (Fin N)) (h : 2 ^ k + 1 ≤ P.card) (j : ℕ)
     (bs : List Bool) (hb : bs.length < k) :
-    bobQuestion P h (BobPhase.bits j bs) = bitQuestion P (by omega) ⟨bs.length, hb⟩ := by
+    bobQuestion P h (BobPhase.bits j bs) = bitQuestion P (by lia) ⟨bs.length, hb⟩ := by
   unfold bobQuestion
   exact dite_eq_left hb
 
@@ -585,7 +585,7 @@ noncomputable def bobStepPhase (P : Finset (Fin N)) (h : 2 ^ k + 1 ≤ P.card)
   | BobPhase.bits j bs =>
     let bs' := bs ++ [a]
     if hb : bs'.length = k then
-      ⟨P.erase (bobEmbedding P (by omega)
+      ⟨P.erase (bobEmbedding P (by lia)
         (fun i : Fin k => !(bs'.get ⟨i, hb ▸ i.2⟩)) : Fin N), BobPhase.probe 0⟩
     else ⟨P, BobPhase.bits j bs'⟩
 
@@ -593,14 +593,14 @@ noncomputable def bobStepPhase (P : Finset (Fin N)) (h : 2 ^ k + 1 ≤ P.card)
 state is frozen. -/
 noncomputable def bobStep (k : ℕ) (s : BobState N) (a : Bool) : BobState N :=
   if h : s.pool.card ≤ 2 ^ k then s
-  else bobStepPhase (k := k) s.pool (by omega) s.phase a
+  else bobStepPhase (k := k) s.pool (by lia) s.phase a
 
 /-- Bob's winning strategy for part (a). -/
 noncomputable def bobStrategy (k : ℕ) : Strategy N where
   move hist :=
     let s := hist.foldl (bobStep k) ⟨Finset.univ, BobPhase.probe 0⟩
     if h : s.pool.card ≤ 2 ^ k then Move.guess s.pool
-    else Move.ask (bobQuestion (k := k) s.pool (by omega) s.phase)
+    else Move.ask (bobQuestion (k := k) s.pool (by lia) s.phase)
 
 /-- Bob's state after processing the first `t` answers. -/
 def bobStateOf (N k : ℕ) (ans : ℕ → Bool) (t : ℕ) : BobState N :=
@@ -621,7 +621,7 @@ lemma bobStep_frozen (s : BobState N) (h : s.pool.card ≤ 2 ^ k) (a : Bool) :
   exact dite_eq_left h
 
 lemma bobStep_active (s : BobState N) (h : ¬ s.pool.card ≤ 2 ^ k) (a : Bool) :
-    bobStep k s a = bobStepPhase (k := k) s.pool (by omega) s.phase a := by
+    bobStep k s a = bobStepPhase (k := k) s.pool (by lia) s.phase a := by
   unfold bobStep
   exact dite_eq_right h
 
@@ -646,7 +646,7 @@ lemma bobStepPhase_probe_false_lt (P : Finset (Fin N)) (h : 2 ^ k + 1 ≤ P.card
 lemma bobStepPhase_bits_complete (P : Finset (Fin N)) (h : 2 ^ k + 1 ≤ P.card) (j : ℕ)
     (bs : List Bool) (a : Bool) (hb : (bs ++ [a]).length = k) :
     bobStepPhase P h (BobPhase.bits j bs) a =
-      ⟨P.erase (bobEmbedding P (by omega)
+      ⟨P.erase (bobEmbedding P (by lia)
         (fun i : Fin k => !((bs ++ [a]).get ⟨i, hb ▸ i.2⟩)) : Fin N), BobPhase.probe 0⟩ := by
   unfold bobStepPhase
   dsimp only
@@ -673,7 +673,7 @@ lemma bobStrategy_move_guess {ans : ℕ → Bool} {t : ℕ}
 lemma bobStrategy_move_ask {ans : ℕ → Bool} {t : ℕ}
     (h : ¬ (bobStateOf N k ans t).pool.card ≤ 2 ^ k) :
     (bobStrategy k).move (hist ans t) =
-      Move.ask (bobQuestion (k := k) (bobStateOf N k ans t).pool (by omega)
+      Move.ask (bobQuestion (k := k) (bobStateOf N k ans t).pool (by lia)
         (bobStateOf N k ans t).phase) := by
   have h' : ¬ ((hist ans t).foldl (bobStep k) ⟨Finset.univ, BobPhase.probe 0⟩).pool.card
       ≤ 2 ^ k := h
@@ -721,14 +721,14 @@ lemma bob_answers_le (ans : ℕ → Bool) (t : ℕ) :
         | true =>
           rw [bobStepPhase_probe_true]
           show j + 1 ≤ t + 1
-          omega
+          lia
         | false =>
           by_cases hjk : j = k
           · rw [bobStepPhase_probe_false_eq _ _ _ hjk]
             exact Nat.zero_le _
           · rw [bobStepPhase_probe_false_lt _ _ _ hjk]
             show j + 1 ≤ t + 1
-            omega
+            lia
       | bits j bs =>
         rw [hph] at ih
         change j + bs.length ≤ t at ih
@@ -739,7 +739,7 @@ lemma bob_answers_le (ans : ℕ → Bool) (t : ℕ) :
           show j + (bs ++ [ans t]).length ≤ t + 1
           rw [List.length_append]
           simp
-          omega
+          lia
 
 lemma bob_phase_inv (hk : 1 ≤ k) (ans : ℕ → Bool) (t : ℕ) :
     (match (bobStateOf N k ans t).phase with
@@ -760,7 +760,7 @@ lemma bob_phase_inv (hk : 1 ≤ k) (ans : ℕ → Bool) (t : ℕ) :
         | true =>
           rw [bobStepPhase_probe_true]
           show 1 ≤ j + 1 ∧ j + 1 ≤ k + 1 ∧ ([] : List Bool).length < k
-          exact ⟨by omega, by omega, by simp; omega⟩
+          exact ⟨by lia, by lia, by simp; lia⟩
         | false =>
           by_cases hjk : j = k
           · rw [bobStepPhase_probe_false_eq _ _ _ hjk]
@@ -768,7 +768,7 @@ lemma bob_phase_inv (hk : 1 ≤ k) (ans : ℕ → Bool) (t : ℕ) :
             exact Nat.zero_le k
           · rw [bobStepPhase_probe_false_lt _ _ _ hjk]
             show j + 1 ≤ k
-            omega
+            lia
       | bits j bs =>
         rw [hph] at ih
         obtain ⟨hj1, hj2, hbl⟩ := ih
@@ -781,7 +781,7 @@ lemma bob_phase_inv (hk : 1 ≤ k) (ans : ℕ → Bool) (t : ℕ) :
           refine ⟨hj1, hj2, ?_⟩
           rw [List.length_append] at hlen ⊢
           simp at hlen ⊢
-          omega
+          lia
 
 /-- Backward step, probe phase with `j ≥ 1`. -/
 lemma bob_backward_probe {ans : ℕ → Bool} {t : ℕ} {P : Finset (Fin N)} {j : ℕ}
@@ -808,7 +808,7 @@ lemma bob_backward_probe {ans : ℕ → Bool} {t : ℕ} {P : Finset (Fin N)} {j 
         by_cases hjk : j' = k
         · rw [bobStepPhase_probe_false_eq _ _ _ hjk] at hstep
           cases hstep
-          omega
+          lia
         · rw [bobStepPhase_probe_false_lt _ _ _ hjk] at hstep
           cases hstep
           refine ⟨?_, rfl⟩
@@ -820,7 +820,7 @@ lemma bob_backward_probe {ans : ℕ → Bool} {t : ℕ} {P : Finset (Fin N)} {j 
       by_cases hlen : (bs' ++ [ans t]).length = k
       · rw [bobStepPhase_bits_complete _ _ _ _ _ hlen] at hstep
         cases hstep
-        omega
+        lia
       · rw [bobStepPhase_bits_cont _ _ _ _ _ hlen] at hstep
         cases hstep
 
@@ -909,7 +909,7 @@ lemma bob_backward_bits_snoc {ans : ℕ → Bool} {t : ℕ} {P : Finset (Fin N)}
         have hlen2 : bs'.length = bs.length := by
           have hl := congrArg List.length hbs
           simp [List.length_append] at hl
-          omega
+          lia
         obtain ⟨hbs', hans⟩ := List.append_inj hbs hlen2
         subst hbs'
         refine ⟨?_, by simpa using hans⟩
@@ -923,12 +923,12 @@ lemma bob_backward_probe_chain {ans : ℕ → Bool} {t : ℕ} {P : Finset (Fin N
     bobStateOf N k ans (t - i) = ⟨P, BobPhase.probe (j - i)⟩ ∧
       (1 ≤ i → ans (t - i) = false) := by
   induction i with
-  | zero => exact ⟨by simpa using h, fun hi0 => absurd hi0 (by omega)⟩
+  | zero => exact ⟨by simpa using h, fun hi0 => absurd hi0 (by lia)⟩
   | succ i ih =>
-    have h1 := ih (by omega)
-    have ht1 : t - i = t - (i + 1) + 1 := by omega
-    have h2 := bob_backward_probe (t := t - (i + 1)) (by rw [← ht1]; exact h1.1) hcard (by omega)
-    have e : j - (i + 1) = j - i - 1 := by omega
+    have h1 := ih (by lia)
+    have ht1 : t - i = t - (i + 1) + 1 := by lia
+    have h2 := bob_backward_probe (t := t - (i + 1)) (by rw [← ht1]; exact h1.1) hcard (by lia)
+    have e : j - (i + 1) = j - i - 1 := by lia
     rw [e]
     exact ⟨h2.1, fun _ => h2.2⟩
 
@@ -938,22 +938,22 @@ lemma bob_backward_bits_chain {ans : ℕ → Bool} {t : ℕ} {P : Finset (Fin N)
     (h : bobStateOf N k ans t = ⟨P, BobPhase.bits j bs⟩)
     (hcard : ¬ P.card ≤ 2 ^ k) (hi : i ≤ bs.length) (ht : bs.length + 1 ≤ t + 1) :
     bobStateOf N k ans (t - i) = ⟨P, BobPhase.bits j (bs.take (bs.length - i))⟩ ∧
-      ((hi1 : 1 ≤ i) → ans (t - i) = bs[bs.length - i]'(by omega)) := by
+      ((hi1 : 1 ≤ i) → ans (t - i) = bs[bs.length - i]'(by lia)) := by
   induction i with
   | zero =>
-    refine ⟨?_, fun hi0 => absurd hi0 (by omega)⟩
+    refine ⟨?_, fun hi0 => absurd hi0 (by lia)⟩
     simpa using h
   | succ i ih =>
-    have h1 := ih (by omega)
+    have h1 := ih (by lia)
     set m := bs.length - (i + 1) with hm
-    have hm1 : bs.length - i = m + 1 := by omega
-    have htake : bs.take (bs.length - i) = bs.take m ++ [bs[m]'(by omega)] := by
+    have hm1 : bs.length - i = m + 1 := by lia
+    have htake : bs.take (bs.length - i) = bs.take m ++ [bs[m]'(by lia)] := by
       rw [hm1, List.take_add_one]
-      rw [List.getElem?_eq_getElem (show m < bs.length by omega)]
+      rw [List.getElem?_eq_getElem (show m < bs.length by lia)]
       rfl
-    have ht1 : t - i = t - (i + 1) + 1 := by omega
+    have ht1 : t - i = t - (i + 1) + 1 := by lia
     have h2 := bob_backward_bits_snoc (t := t - (i + 1)) (bs := bs.take m)
-      (b := bs[m]'(by omega)) (by rw [← ht1, h1.1, htake]) hcard
+      (b := bs[m]'(by lia)) (by rw [← ht1, h1.1, htake]) hcard
     exact ⟨h2.1, fun _ => h2.2⟩
 
 
@@ -981,11 +981,11 @@ lemma bob_measure (hk : 1 ≤ k) (ans : ℕ → Bool) (t : ℕ)
         | true =>
           rw [bobStepPhase_probe_true]
           show t + 1 ≤ (2 * k + 1) * (N - (bobStateOf N k ans t).pool.card) + (j + 1)
-          omega
+          lia
         | false =>
           by_cases hjk : j = k
           · rw [bobStepPhase_probe_false_eq _ _ _ hjk]
-            have hmem := bobSpecial_mem (k := k) (bobStateOf N k ans t).pool (by omega)
+            have hmem := bobSpecial_mem (k := k) (bobStateOf N k ans t).pool (by lia)
             have hce : ((bobStateOf N k ans t).pool.erase (bobSpecial _ _)).card =
                 (bobStateOf N k ans t).pool.card - 1 := Finset.card_erase_of_mem hmem
             rw [hce]
@@ -995,16 +995,16 @@ lemma bob_measure (hk : 1 ≤ k) (ans : ℕ → Bool) (t : ℕ)
             have hc1 : 1 ≤ (bobStateOf N k ans t).pool.card :=
               Finset.card_pos.mpr ⟨_, hmem⟩
             have e1 : N - ((bobStateOf N k ans t).pool.card - 1) =
-                N - (bobStateOf N k ans t).pool.card + 1 := by omega
+                N - (bobStateOf N k ans t).pool.card + 1 := by lia
             have e2 : (2 * k + 1) * (N - (bobStateOf N k ans t).pool.card + 1) =
                 (2 * k + 1) * (N - (bobStateOf N k ans t).pool.card) + (2 * k + 1) := by
               rw [Nat.mul_add, Nat.mul_one]
             rw [e1, e2]
             show t + 1 ≤ (2 * k + 1) * (N - (bobStateOf N k ans t).pool.card) + (2 * k + 1) + 0
-            omega
+            lia
           · rw [bobStepPhase_probe_false_lt _ _ _ hjk]
             show t + 1 ≤ (2 * k + 1) * (N - (bobStateOf N k ans t).pool.card) + (j + 1)
-            omega
+            lia
       | bits j bs =>
         rw [hph] at hih
         change t ≤ (2 * k + 1) * (N - (bobStateOf N k ans t).pool.card) + (j + bs.length) at hih
@@ -1013,7 +1013,7 @@ lemma bob_measure (hk : 1 ≤ k) (ans : ℕ → Bool) (t : ℕ)
         obtain ⟨hj1, hj2, hbl⟩ := hinv
         by_cases hlen : (bs ++ [ans t]).length = k
         · rw [bobStepPhase_bits_complete _ _ _ _ _ hlen]
-          have hmem : ((bobEmbedding (k := k) (bobStateOf N k ans t).pool (by omega)
+          have hmem : ((bobEmbedding (k := k) (bobStateOf N k ans t).pool (by lia)
               (fun i : Fin k => !((bs ++ [ans t]).get ⟨i, hlen ▸ i.2⟩)) : Fin N)) ∈
               (bobStateOf N k ans t).pool := bobEmbedding_mem _ _ _
           have hce : ((bobStateOf N k ans t).pool.erase _).card =
@@ -1024,7 +1024,7 @@ lemma bob_measure (hk : 1 ≤ k) (ans : ℕ → Bool) (t : ℕ)
             rwa [Finset.card_univ, Fintype.card_fin] at h2
           have hc1 : 1 ≤ (bobStateOf N k ans t).pool.card := Finset.card_pos.mpr ⟨_, hmem⟩
           have e1 : N - ((bobStateOf N k ans t).pool.card - 1) =
-              N - (bobStateOf N k ans t).pool.card + 1 := by omega
+              N - (bobStateOf N k ans t).pool.card + 1 := by lia
           have e2 : (2 * k + 1) * (N - (bobStateOf N k ans t).pool.card + 1) =
               (2 * k + 1) * (N - (bobStateOf N k ans t).pool.card) + (2 * k + 1) := by
             rw [Nat.mul_add, Nat.mul_one]
@@ -1032,15 +1032,15 @@ lemma bob_measure (hk : 1 ≤ k) (ans : ℕ → Bool) (t : ℕ)
           have hblen : bs.length = k - 1 := by
             rw [List.length_append] at hlen
             simp at hlen
-            omega
+            lia
           show t + 1 ≤ (2 * k + 1) * (N - (bobStateOf N k ans t).pool.card) + (2 * k + 1) + 0
-          omega
+          lia
         · rw [bobStepPhase_bits_cont _ _ _ _ _ hlen]
           show t + 1 ≤ (2 * k + 1) * (N - (bobStateOf N k ans t).pool.card) +
             (j + (bs ++ [ans t]).length)
           rw [List.length_append]
           simp
-          omega
+          lia
 
 /-- B's strategy always stops: the pool shrinks by one every `2k + 1` answers. -/
 lemma bob_terminates (hk : 1 ≤ k) (ans : ℕ → Bool) :
@@ -1062,21 +1062,21 @@ lemma bob_terminates (hk : 1 ≤ k) (ans : ℕ → Bool) :
       | probe j =>
         have hj : j ≤ k := by rw [hph] at hinv; exact hinv
         show j ≤ 2 * k
-        omega
+        lia
       | bits j bs =>
         rw [hph] at hinv
         obtain ⟨hj1, hj2, hbl⟩ := hinv
         show j + bs.length ≤ 2 * k
-        omega
+        lia
     have h1 : (2 * k + 1) * (N - (bobStateOf N k ans t).pool.card) ≤
         (2 * k + 1) * (N - 2 ^ k - 1) := by
       have h2 : N - (bobStateOf N k ans t).pool.card ≤ N - 2 ^ k - 1 := by
         have h3 := hcard t
-        omega
+        lia
       gcongr
-    omega
+    lia
   have hcontra := hbound ((2 * k + 1) * (N - 2 ^ k - 1) + 2 * k + 1)
-  omega
+  lia
 
 
 /-- The pool invariant: if the answers are consistent with `x` up to time `t`,
@@ -1088,7 +1088,7 @@ lemma bob_mem_pool (hk : 1 ≤ k) {x : Fin N} {ans : ℕ → Bool} {t : ℕ}
   | zero => exact Finset.mem_univ x
   | succ t ih =>
     have hcons' : ConsistentUpTo k (bobStrategy k) x ans t :=
-      fun s hs => hcons s (by omega)
+      fun s hs => hcons s (by lia)
     have hx := ih hcons'
     rw [bobStateOf_succ]
     by_cases hfr : (bobStateOf N k ans t).pool.card ≤ 2 ^ k
@@ -1113,12 +1113,12 @@ lemma bob_mem_pool (hk : 1 ≤ k) {x : Fin N} {ans : ℕ → Bool} {t : ℕ}
               rw [hph] at h1
               change j ≤ t at h1
               exact h1
-            obtain ⟨i, hi1, hi2, hti⟩ := hcons (t - k) (by omega)
+            obtain ⟨i, hi1, hi2, hti⟩ := hcons (t - k) (by lia)
             obtain ⟨j', hj'⟩ : ∃ j', j' = t - i := ⟨t - i, rfl⟩
-            have hij : i = t - j' := by omega
-            have hj'b : j' ≤ k := by omega
+            have hij : i = t - j' := by lia
+            have hj'b : j' ≤ k := by lia
             have hchain := bob_backward_probe_chain (bobState_ext_iff.mpr ⟨rfl, hph⟩)
-              hfr (i := j') (by omega) htk
+              hfr (i := j') (by lia) htk
             obtain ⟨hstate, hans⟩ := hchain
             have hpool : (bobStateOf N k ans (t - j')).pool = (bobStateOf N k ans t).pool :=
               (bobState_ext_iff.mp hstate).1
@@ -1127,7 +1127,7 @@ lemma bob_mem_pool (hk : 1 ≤ k) {x : Fin N} {ans : ℕ → Bool} {t : ℕ}
             have hfr' : ¬ (bobStateOf N k ans (t - j')).pool.card ≤ 2 ^ k := by
               rw [hpool]
               exact hfr
-            have hcardP : 2 ^ k + 1 ≤ (bobStateOf N k ans (t - j')).pool.card := by omega
+            have hcardP : 2 ^ k + 1 ≤ (bobStateOf N k ans (t - j')).pool.card := by lia
             have hmi : (bobStrategy k).move (hist ans i) =
                 Move.ask {bobSpecial (k := k) (bobStateOf N k ans (t - j')).pool hcardP} := by
               rw [hij]
@@ -1141,7 +1141,7 @@ lemma bob_mem_pool (hk : 1 ≤ k) {x : Fin N} {ans : ℕ → Bool} {t : ℕ}
                 simp only [Nat.sub_zero]
                 exact hat
               · rw [hij]
-                exact hans (by omega)
+                exact hans (by lia)
             have hxs' : x = bobSpecial (k := k) (bobStateOf N k ans t).pool (hpool ▸ hcardP) :=
               hxs
             rw [hxs', hansi] at htf
@@ -1165,20 +1165,20 @@ lemma bob_mem_pool (hk : 1 ≤ k) {x : Fin N} {ans : ℕ → Bool} {t : ℕ}
             have h2 := bob_phase_inv (N := N) (k := k) hk ans t
             rw [hph] at h2
             obtain ⟨hj1, -, -⟩ := h2
-            omega
+            lia
           have hchain : ∀ i (hii : i ≤ bs.length),
               bobStateOf N k ans (t - i) = ⟨(bobStateOf N k ans t).pool,
                 BobPhase.bits j (bs.take (bs.length - i))⟩ ∧
-              ((hi1 : 1 ≤ i) → ans (t - i) = bs[bs.length - i]'(by omega)) :=
+              ((hi1 : 1 ≤ i) → ans (t - i) = bs[bs.length - i]'(by lia)) :=
             fun i hii => bob_backward_bits_chain (bobState_ext_iff.mpr ⟨rfl, hph⟩)
-              hfr hii (by omega)
-          obtain ⟨i, hi1, hi2, hti⟩ := hcons (t - k) (by omega)
+              hfr hii (by lia)
+          obtain ⟨i, hi1, hi2, hti⟩ := hcons (t - k) (by lia)
           obtain ⟨j', hj'⟩ : ∃ j', j' = t - i := ⟨t - i, rfl⟩
-          have hij : i = t - j' := by omega
-          have hj'b : j' ≤ k := by omega
-          rcases (by omega : j' ≤ k - 1 ∨ j' = k) with hjb | hjk
+          have hij : i = t - j' := by lia
+          have hj'b : j' ≤ k := by lia
+          rcases (by lia : j' ≤ k - 1 ∨ j' = k) with hjb | hjk
           · -- a bit position (this also covers `j' = 0`, i.e. the last question)
-            obtain ⟨hstate, hans⟩ := hchain j' (by omega)
+            obtain ⟨hstate, hans⟩ := hchain j' (by lia)
             have hpool : (bobStateOf N k ans (t - j')).pool = (bobStateOf N k ans t).pool :=
               (bobState_ext_iff.mp hstate).1
             have hphase : (bobStateOf N k ans (t - j')).phase =
@@ -1186,10 +1186,10 @@ lemma bob_mem_pool (hk : 1 ≤ k) {x : Fin N} {ans : ℕ → Bool} {t : ℕ}
             have hfr' : ¬ (bobStateOf N k ans (t - j')).pool.card ≤ 2 ^ k := by
               rw [hpool]
               exact hfr
-            have hcardP : 2 ^ k ≤ (bobStateOf N k ans (t - j')).pool.card := by omega
-            have hbsl' : bs.length - j' < k := by omega
+            have hcardP : 2 ^ k ≤ (bobStateOf N k ans (t - j')).pool.card := by lia
+            have hbsl' : bs.length - j' < k := by lia
             have hlen' : (bs.take (bs.length - j')).length = bs.length - j' := by
-              rw [List.length_take, min_eq_left (by omega)]
+              rw [List.length_take, min_eq_left (by lia)]
             have hmi : (bobStrategy k).move (hist ans i) =
                 Move.ask (bitQuestion (k := k) (bobStateOf N k ans (t - j')).pool hcardP
                   ⟨bs.length - j', hbsl'⟩) := by
@@ -1205,13 +1205,13 @@ lemma bob_mem_pool (hk : 1 ≤ k) {x : Fin N} {ans : ℕ → Bool} {t : ℕ}
               rw [List.get_eq_getElem]
               by_cases hj0 : j' = 0
               · subst hj0
-                have e : (bs ++ [ans t])[bs.length]'(by omega) = ans t := by
+                have e : (bs ++ [ans t])[bs.length]'(by lia) = ans t := by
                   rw [List.getElem_append_right (le_refl _)]
-                  exact List.getElem_singleton (by omega)
+                  exact List.getElem_singleton (by lia)
                 have ei : ans t = ans i := by rw [hij]; rfl
                 exact e.trans ei
-              · rw [List.getElem_append_left (show bs.length - j' < bs.length by omega)]
-                have hans' := hans (by omega)
+              · rw [List.getElem_append_left (show bs.length - j' < bs.length by lia)]
+                have hans' := hans (by lia)
                 have ei : ans (t - j') = ans i := by rw [hij]
                 exact hans'.symm.trans ei
             change (Bool.not ((bs ++ [ans t]).get ⟨bs.length - j', hlen ▸ hbsl'⟩) = true ↔
@@ -1220,12 +1220,12 @@ lemma bob_mem_pool (hk : 1 ≤ k) {x : Fin N} {ans : ℕ → Bool} {t : ℕ}
             cases ha : ans i <;> simp [ha] at htf
           · -- the probe "yes" position
             rw [hjk] at hij
-            have hchn := hchain (k - 1) (by omega)
+            have hchn := hchain (k - 1) (by lia)
             have hnil : bobStateOf N k ans (t - k + 1) =
                 ⟨(bobStateOf N k ans t).pool, BobPhase.bits j []⟩ := by
-              have h1 : t - (k - 1) = t - k + 1 := by omega
+              have h1 : t - (k - 1) = t - k + 1 := by lia
               have h2 : bs.take (bs.length - (k - 1)) = ([] : List Bool) := by
-                have hz : bs.length - (k - 1) = 0 := by omega
+                have hz : bs.length - (k - 1) = 0 := by lia
                 rw [hz]
                 simp
               rw [← h1, hchn.1, h2]
@@ -1237,8 +1237,8 @@ lemma bob_mem_pool (hk : 1 ≤ k) {x : Fin N} {ans : ℕ → Bool} {t : ℕ}
             have hfr' : ¬ (bobStateOf N k ans (t - k)).pool.card ≤ 2 ^ k := by
               rw [hpool]
               exact hfr
-            have hcardP : 2 ^ k + 1 ≤ (bobStateOf N k ans (t - k)).pool.card := by omega
-            have hcardP₂ : 2 ^ k ≤ (bobStateOf N k ans (t - k)).pool.card := by omega
+            have hcardP : 2 ^ k + 1 ≤ (bobStateOf N k ans (t - k)).pool.card := by lia
+            have hcardP₂ : 2 ^ k ≤ (bobStateOf N k ans (t - k)).pool.card := by lia
             have hmi : (bobStrategy k).move (hist ans i) =
                 Move.ask {bobSpecial (k := k) (bobStateOf N k ans (t - k)).pool hcardP} := by
               rw [hij]
@@ -1292,6 +1292,6 @@ problem imo2012_p3_part_b :
   obtain ⟨k₀, hk₀⟩ := exists_eventually_large
   refine ⟨k₀, fun k hk => ⟨⌈(1.99 : ℝ) ^ k⌉₊, Nat.le_ceil _, not_bobWins ?_ ?_⟩⟩
   · exact aliceWeightBase_bound rfl (hk₀ k hk)
-  · omega
+  · lia
 
 end Imo2012P3

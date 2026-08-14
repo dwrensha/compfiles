@@ -42,18 +42,18 @@ theorem injOn_range_of_step {n : ℕ} {ξ : ℕ → ℝ}
       exact h i (by simpa using hi)
     | succ k ih =>
       intro i hi
-      have h1 : i + (k + 1) < n := by omega
-      exact (ih i h1).trans (h (i + (k + 1)) (by omega))
+      have h1 : i + (k + 1) < n := by lia
+      exact (ih i h1).trans (h (i + (k + 1)) (by lia))
   intro i hi j hj hij
   rw [Finset.coe_range, Set.mem_Iio] at hi hj
   rcases lt_trichotomy i j with hlt | heq | hgt
-  · have hji : j = i + (j - i - 1 + 1) := by omega
-    have hlt' := key (j - i - 1) i (by omega)
+  · have hji : j = i + (j - i - 1 + 1) := by lia
+    have hlt' := key (j - i - 1) i (by lia)
     rw [← hji] at hlt'
     exact absurd hij (ne_of_lt hlt')
   · exact heq
-  · have hji : i = j + (i - j - 1 + 1) := by omega
-    have hlt' := key (i - j - 1) j (by omega)
+  · have hji : i = j + (i - j - 1 + 1) := by lia
+    have hlt' := key (i - j - 1) j (by lia)
     rw [← hji] at hlt'
     exact absurd hij (ne_of_gt hlt')
 
@@ -91,7 +91,7 @@ theorem card_roots_eq_n_of_intervals {p : ℝ[X]} {n : ℕ} (hp0 : p ≠ 0) (hn 
     exact Classical.choose_spec (hex i hi)
   have hmono : ∀ i, i + 1 < n → ξ i < ξ (i + 1) := by
     intro i hi
-    have h1 := ((hξ i (by omega)).1).2
+    have h1 := ((hξ i (by lia)).1).2
     have h2 := ((hξ (i + 1) hi).1).1
     exact lt_trans (lt_of_lt_of_le h1 (hstep i hi)) h2
   exact card_roots_eq_n hp0 hn (injOn_range_of_step hmono)
@@ -122,7 +122,7 @@ theorem card_roots_and_splits {p : ℝ[X]} {n : ℕ} (hp0 : p ≠ 0) (hn : p.nat
     refine card_roots_eq_n_of_intervals hp0 hn (L := fun i : ℕ => if i = 0 then a₁ else (i : ℝ))
       (R := fun i : ℕ => ((i + 1 : ℕ) : ℝ)) ?_ ?_
     · intro i _
-      rw [ite_eq_right (by omega : i + 1 ≠ 0)]
+      rw [ite_eq_right (by lia : i + 1 ≠ 0)]
     · intro i hi
       by_cases hi0 : i = 0
       · subst hi0
@@ -134,20 +134,20 @@ theorem card_roots_and_splits {p : ℝ[X]} {n : ℕ} (hp0 : p ≠ 0) (hn : p.nat
       · rw [ite_eq_right hi0]
         exact exists_root_of_eval_mul_neg
           (show (i : ℝ) < ((i + 1 : ℕ) : ℝ) by exact_mod_cast Nat.lt_add_one i)
-          (hmul i (by omega) (by omega))
+          (hmul i (by lia) (by lia))
   · -- The extra root lies in `(n, a₂)`, to the right of all the integer points.
     refine card_roots_eq_n_of_intervals hp0 hn (L := fun i : ℕ => ((i + 1 : ℕ) : ℝ))
       (R := fun i : ℕ => if i < n - 1 then ((i + 2 : ℕ) : ℝ) else a₂) ?_ ?_
     · intro i hi
-      rw [ite_eq_left (by omega : i < n - 1)]
+      rw [ite_eq_left (by lia : i < n - 1)]
     · intro i hi
       by_cases hi' : i < n - 1
       · rw [ite_eq_left hi']
         exact exists_root_of_eval_mul_neg
           (show ((i + 1 : ℕ) : ℝ) < ((i + 2 : ℕ) : ℝ) by exact_mod_cast Nat.lt_add_one (i + 1))
-          (hmul (i + 1) (by omega) (by omega))
+          (hmul (i + 1) (by lia) (by lia))
       · rw [ite_eq_right hi']
-        have hieq : i + 1 = n := by omega
+        have hieq : i + 1 = n := by lia
         obtain ⟨c, hc, hce⟩ := exists_root_of_eval_mul_neg ha₂ hmul₂
         refine ⟨c, ?_, hce⟩
         rw [hieq]
@@ -157,7 +157,7 @@ theorem card_roots_and_splits {p : ℝ[X]} {n : ℕ} (hp0 : p ≠ 0) (hn : p.nat
 positive values. -/
 theorem exists_eval_pos {p : ℝ[X]} (hm : p.Monic) (hd : 1 ≤ p.natDegree) (B : ℝ) :
     ∃ c : ℝ, B < c ∧ 0 < p.eval c := by
-  have hdeg : 0 < p.degree := natDegree_pos_iff_degree_pos.mp (by omega)
+  have hdeg : 0 < p.degree := natDegree_pos_iff_degree_pos.mp (by lia)
   have hnn : 0 ≤ p.leadingCoeff := by
     have hlc : p.leadingCoeff = 1 := hm
     rw [hlc]
@@ -171,7 +171,7 @@ theorem exists_eval_pos {p : ℝ[X]} (hm : p.Monic) (hd : 1 ≤ p.natDegree) (B 
 arbitrarily large positive values at large negative arguments. -/
 theorem exists_eval_neg_one_pow_pos {p : ℝ[X]} (hm : p.Monic) (hd : 1 ≤ p.natDegree) (B : ℝ) :
     ∃ a : ℝ, a < B ∧ 0 < (-1 : ℝ) ^ p.natDegree * p.eval a := by
-  have hn0 : p.natDegree ≠ 0 := by omega
+  have hn0 : p.natDegree ≠ 0 := by lia
   have hlc : p.leadingCoeff = 1 := hm
   have hE : (fun x : ℝ => p.eval x) ~[atBot] fun x : ℝ => x ^ p.natDegree := by
     have h := p.isEquivalent_atBot_lead
@@ -288,8 +288,8 @@ problem usa2002_p3 (n : ℕ) (p : ℝ[X]) (hpm : p.Monic) (hpn : p.natDegree = n
     have hqmul : ∀ i : ℕ, 1 ≤ i → i + 1 ≤ n →
         q.eval (i : ℝ) * q.eval ((i + 1 : ℕ) : ℝ) < 0 := by
       intro i hi1 hi2
-      have h1 := hqsign i (Finset.mem_Icc.mpr ⟨hi1, by omega⟩)
-      have h2 := hqsign (i + 1) (Finset.mem_Icc.mpr ⟨by omega, hi2⟩)
+      have h1 := hqsign i (Finset.mem_Icc.mpr ⟨hi1, by lia⟩)
+      have h2 := hqsign (i + 1) (Finset.mem_Icc.mpr ⟨by lia, hi2⟩)
       rcases Nat.even_or_odd i with hev | hodd
       · have hs1 : (-1 : ℝ) ^ (i + 1) = -1 := hev.add_one.neg_one_pow
         have hs2 : (-1 : ℝ) ^ (i + 1 + 1) = 1 := hev.add_one.add_one.neg_one_pow
@@ -304,8 +304,8 @@ problem usa2002_p3 (n : ℕ) (p : ℝ[X]) (hpm : p.Monic) (hpn : p.natDegree = n
     have hrmul : ∀ i : ℕ, 1 ≤ i → i + 1 ≤ n →
         r.eval (i : ℝ) * r.eval ((i + 1 : ℕ) : ℝ) < 0 := by
       intro i hi1 hi2
-      have h1 := hrsign i (Finset.mem_Icc.mpr ⟨hi1, by omega⟩)
-      have h2 := hrsign (i + 1) (Finset.mem_Icc.mpr ⟨by omega, hi2⟩)
+      have h1 := hrsign i (Finset.mem_Icc.mpr ⟨hi1, by lia⟩)
+      have h2 := hrsign (i + 1) (Finset.mem_Icc.mpr ⟨by lia, hi2⟩)
       rcases Nat.even_or_odd i with hev | hodd
       · have hs1 : (-1 : ℝ) ^ i = 1 := hev.neg_one_pow
         have hs2 : (-1 : ℝ) ^ (i + 1) = -1 := hev.add_one.neg_one_pow

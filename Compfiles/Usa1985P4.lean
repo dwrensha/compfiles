@@ -195,8 +195,8 @@ lemma exists_pair_le (n : ℕ) (hn : 2 < n) (G : SimpleGraph (Fin n)) [Decidable
   -- The average would exceed `n * (n - 1)^2`, contradicting `two_mul_sum_badPair_le`.
   have key : n * (n - 1)^2 < 2 * ((n * n - n) * ((n - 1)/2 + 1)) := by
     have hpos : 0 < n * n - n := by
-      have h1 : (0 : ℕ) < n := by omega
-      have h2 : (0 : ℕ) < n - 1 := by omega
+      have h1 : (0 : ℕ) < n := by lia
+      have h2 : (0 : ℕ) < n - 1 := by lia
       have hm := Nat.mul_pos h1 h2
       have h4 : n * (n - 1) = n * n - n := by rw [mul_tsub, mul_one]
       rwa [h4] at hm
@@ -206,7 +206,7 @@ lemma exists_pair_le (n : ℕ) (hn : 2 < n) (G : SimpleGraph (Fin n)) [Decidable
     have e2 : 2 * ((n * n - n) * ((n - 1)/2 + 1)) =
         (n * n - n) * (2 * ((n - 1)/2 + 1)) := by ring
     rw [e1, e2]
-    exact Nat.mul_lt_mul_of_pos_left (by omega) hpos
+    exact Nat.mul_lt_mul_of_pos_left (by lia) hpos
   have chain : 2 * ((n * n - n) * ((n - 1)/2 + 1)) ≤ n * (n - 1)^2 :=
     le_trans (by gcongr) (two_mul_sum_badPair_le n G)
   exact absurd chain (not_le_of_gt key)
@@ -240,7 +240,7 @@ lemma answer_card (n : ℕ) (G : SimpleGraph (Fin n)) [DecidableRel G.Adj] (p : 
       Finset.mem_erase.mpr ⟨hne.symm, Finset.mem_univ _⟩
     rw [hset, Finset.card_erase_of_mem hmem, Finset.card_erase_of_mem (Finset.mem_univ p.1),
       Finset.card_univ, Fintype.card_fin]
-    omega
+    lia
   rw [hsplit, Finset.card_sdiff_of_subset hsub, hcard]
 
 snip end
@@ -252,6 +252,6 @@ problem usa1985_p4 (n : ℕ) (hn : 2 < n) (G : SimpleGraph (Fin n)) [DecidableRe
   obtain ⟨p, hp, hple⟩ := exists_pair_le n hn G
   refine ⟨p.1, p.2, (Finset.mem_offDiag.mp hp).2.2, ?_⟩
   rw [answer_card n G p hp]
-  omega
+  lia
 
 end Usa1985P4

@@ -201,7 +201,7 @@ lemma Toggle.degree_parity {G G' : SimpleGraph V} (hT : Toggle G G') (v : V) :
       rw [hN, Finset.card_erase_of_mem (show c ∈ (Finset.univ.filter (G.Adj a)).erase b by
           simp [Finset.mem_erase, hbc.symm, hc_mem]),
         Finset.card_erase_of_mem hb_mem]
-      omega
+      lia
     · by_cases hvb : v = b
       · rw [hvb]
         have hN : Finset.univ.filter
@@ -218,7 +218,7 @@ lemma Toggle.degree_parity {G G' : SimpleGraph V} (hT : Toggle G G') (v : V) :
         rw [hN, Finset.card_insert_of_notMem (by
             simp [Finset.mem_erase, Finset.mem_filter, hnbc]),
           Finset.card_erase_of_mem ha_mem]
-        omega
+        lia
       · by_cases hvc : v = c
         · rw [hvc]
           have hN : Finset.univ.filter
@@ -235,7 +235,7 @@ lemma Toggle.degree_parity {G G' : SimpleGraph V} (hT : Toggle G G') (v : V) :
           rw [hN, Finset.card_insert_of_notMem (by
               simp [Finset.mem_erase, Finset.mem_filter, show ¬ G.Adj c b from fun h => hnbc h.symm]),
             Finset.card_erase_of_mem ha_mem]
-          omega
+          lia
         · have hN : Finset.univ.filter
                 ((G.deleteEdges {s(a, b), s(a, c)} ⊔ fromEdgeSet {s(b, c)}).Adj v)
               = Finset.univ.filter (G.Adj v) := by
@@ -293,7 +293,7 @@ lemma Toggle.edgeFinset_card {G G' : SimpleGraph V} (hT : Toggle G G') :
   have hcard2 : 2 ≤ G.edgeSet.ncard := by
     have hle := Set.ncard_le_ncard hsub
     rwa [Set.ncard_pair h12] at hle
-  omega
+  lia
 
 omit [Fintype V] [DecidableEq V] in
 /-- A graph obtained by a toggle is never complete: `a` and `b` are no longer friends. -/
@@ -447,7 +447,7 @@ lemma mem_edges_of_length_eq_one {G : SimpleGraph V} {x y : V} {q : G.Walk x y}
   have hnnil : ¬ q.Nil := Walk.not_nil_of_ne hxy
   have htail : q.tail.length = 0 := by
     have h1 := Walk.length_tail_add_one hnnil
-    omega
+    lia
   have hsnd : q.snd = y := Walk.exists_length_eq_zero_iff.mp ⟨q.tail, htail⟩
   have h := q.mk_start_snd_mem_edges hnnil
   rwa [hsnd] at h
@@ -491,7 +491,7 @@ lemma IsCycle.mem_edges_of_adj {G : SimpleGraph V} {v : V} {C : G.Walk v v}
     · have hq1 : q.length = 1 := by
         have hqne : q.length ≠ 0 :=
           fun hz => (Walk.not_nil_of_ne hxy') (Walk.length_eq_zero_iff.mp hz)
-        omega
+        lia
       exact absurd (hq_edges _ (mem_edges_of_length_eq_one hxy' hq1)) hcontra
     · exact hge
   have hr2 : 2 ≤ r.length := by
@@ -499,7 +499,7 @@ lemma IsCycle.mem_edges_of_adj {G : SimpleGraph V} {v : V} {C : G.Walk v v}
     · have hr1 : r.length = 1 := by
         have hrne : r.length ≠ 0 :=
           fun hz => (Walk.not_nil_of_ne hxy'.symm) (Walk.length_eq_zero_iff.mp hz)
-        omega
+        lia
       exact absurd (hr_edges _ (Sym2.eq_swap ▸ mem_edges_of_length_eq_one hxy'.symm hr1))
         hcontra
     · exact hge
@@ -510,7 +510,7 @@ lemma IsCycle.mem_edges_of_adj {G : SimpleGraph V} {v : V} {C : G.Walk v v}
     exact hcontra (hq_edges _ (Sym2.eq_swap ▸ hmem))
   have hle := SimpleGraph.girth_le_length hnew
   rw [Walk.length_cons] at hle
-  omega
+  lia
 
 /-- On a chordless cycle that spans all vertices, every vertex has degree `2`. -/
 lemma degree_eq_two_of_forall_mem_support {G : SimpleGraph V} {v : V} {C : G.Walk v v}
@@ -603,19 +603,19 @@ lemma exists_toggle_connected (G : SimpleGraph V) (hconn : G.Connected) (htree :
   have h3 : 3 ≤ C.length := hC.three_le_length
   rcases Nat.lt_or_ge C.length 4 with hl | h4
   · -- `C` is a triangle: use a maximal clique.
-    have hC3 : C.length = 3 := by omega
+    have hC3 : C.length = 3 := by lia
     -- decompose `C` into three edges
     have hnnil : ¬ C.Nil := hC.not_nil
     have h1 : C.tail.length = 2 := by
       have h := Walk.length_tail_add_one hnnil
-      omega
+      lia
     have hnnil2 : ¬ C.tail.Nil := by
       intro hnil
       have := Walk.length_eq_zero_iff.mpr hnil
-      omega
+      lia
     have h2 : C.tail.tail.length = 1 := by
       have h := Walk.length_tail_add_one hnnil2
-      omega
+      lia
     -- the three relevant vertices
     set x := C.snd with hx
     set y := C.tail.snd with hy
@@ -651,7 +651,7 @@ lemma exists_toggle_connected (G : SimpleGraph V) (hconn : G.Connected) (htree :
     have hK_clique : G.IsClique ↑K := (Finset.mem_filter.mp hK_mem).2
     have hK3 : 3 ≤ K.card := by
       have h1 := hK_max _ (Finset.mem_filter.mpr ⟨Finset.mem_univ _, htri⟩)
-      omega
+      lia
     have hK_ne : K ≠ Finset.univ := by
       intro hKu
       apply hne
@@ -663,7 +663,7 @@ lemma exists_toggle_connected (G : SimpleGraph V) (hconn : G.Connected) (htree :
       push Not at hzall
       exact hK_ne (Finset.eq_univ_of_forall hzall)
     obtain ⟨k₀, hk₀⟩ : ∃ k₀, k₀ ∈ K :=
-      Finset.card_pos.mp (by omega)
+      Finset.card_pos.mp (by lia)
     obtain ⟨p⟩ := hconn.preconnected z k₀
     obtain ⟨b, a, hb, ha, hba⟩ := exists_adj_crossing (↑K) p hz hk₀
     obtain ⟨c, hcK, hbc'⟩ : ∃ c ∈ K, ¬ G.Adj b c := by
@@ -674,7 +674,7 @@ lemma exists_toggle_connected (G : SimpleGraph V) (hconn : G.Connected) (htree :
         exact ⟨hK_clique, fun c hc _ => hcc c hc⟩
       have hle := hK_max (insert b K) (Finset.mem_filter.mpr ⟨Finset.mem_univ _, hcl⟩)
       rw [Finset.card_insert_of_notMem hb] at hle
-      omega
+      lia
     have hac' : a ≠ c := fun h => hbc' (h ▸ hba)
     obtain ⟨d, hdK, hd⟩ : ∃ d ∈ K, d ∉ ({a, c} : Finset V) := by
       by_contra hd'
@@ -683,7 +683,7 @@ lemma exists_toggle_connected (G : SimpleGraph V) (hconn : G.Connected) (htree :
         exact hd' ⟨x, hx, hx'⟩
       have hcle := Finset.card_le_card hsub
       rw [Finset.card_pair hac'] at hcle
-      omega
+      lia
     rw [Finset.mem_insert, Finset.mem_singleton] at hd
     push Not at hd
     obtain ⟨hda, hdc⟩ := hd
@@ -714,7 +714,7 @@ lemma exists_toggle_connected (G : SimpleGraph V) (hconn : G.Connected) (htree :
       obtain ⟨hc3, hlen3⟩ := isCycle_triangle hxy hyz hzx
       have hle := SimpleGraph.girth_le_length hc3
       rw [hlen3, hg] at hle
-      omega
+      lia
     obtain ⟨z₀, hz₀⟩ := exists_notMem_support_of_isCycle hC hg hodd
     obtain ⟨p⟩ := hconn.preconnected z₀ v₀
     obtain ⟨b, a, hb, ha, hba⟩ :=
@@ -763,7 +763,7 @@ lemma exists_isTree_of_connected (G : SimpleGraph V) (hconn : G.Connected)
       obtain ⟨v, hv⟩ := hodd
       have h0 : G.degree v = 0 := by
         have hle := G.degree_le_card_edgeFinset (v := v)
-        omega
+        lia
       rw [h0] at hv
       exact absurd hv (by decide)
     | succ n ih =>
@@ -773,7 +773,7 @@ lemma exists_isTree_of_connected (G : SimpleGraph V) (hconn : G.Connected)
       · obtain ⟨G', hT, hconn'⟩ := exists_toggle_connected G hconn htree hodd hne
         have hcard' : G'.edgeFinset.card ≤ n := by
           have h := hT.edgeFinset_card
-          omega
+          lia
         obtain ⟨G'', hseq, htree''⟩ :=
           ih G' hcard' hconn' (hT.exists_odd_degree hodd) hT.ne_top
         exact ⟨G'', .head hT hseq, htree''⟩
@@ -858,7 +858,7 @@ lemma exists_matching_of_isAcyclic (G : SimpleGraph V) (hacyc : G.IsAcyclic) :
       intro G hcard hacyc
       refine ⟨G, .refl, fun v => ?_⟩
       have hle := G.degree_le_card_edgeFinset (v := v)
-      omega
+      lia
     | succ n ih =>
       intro G hcard hacyc
       by_cases hmax : ∀ v, G.degree v ≤ 1
@@ -876,7 +876,7 @@ lemma exists_matching_of_isAcyclic (G : SimpleGraph V) (hacyc : G.IsAcyclic) :
         have hacyc' : G'.IsAcyclic := isAcyclic_toggle hT hacyc
         have hcard' : G'.edgeFinset.card ≤ n := by
           have h := hT.edgeFinset_card
-          omega
+          lia
         obtain ⟨G'', hseq, hmatch⟩ := ih G' hcard' hacyc'
         exact ⟨G'', .head hT hseq, hmatch⟩
   exact aux _ G (Nat.le_refl _) hacyc
@@ -898,7 +898,7 @@ problem imo2019_p3 (G : SimpleGraph (Fin 2019))
       rw [Finset.mem_filter] at hx
       rw [Finset.mem_filter]
       rintro ⟨_, h⟩
-      omega
+      lia
     have hunion : Finset.univ.filter (fun v => G.degree v = 1009) ∪
         Finset.univ.filter (fun v => G.degree v = 1010) = Finset.univ := by
       apply Finset.eq_univ_of_card
@@ -911,7 +911,7 @@ problem imo2019_p3 (G : SimpleGraph (Fin 2019))
     · exact Or.inl h
     · exact Or.inr h
   have hdeg_le : ∀ v : Fin 2019, 1009 ≤ G.degree v := by
-    intro v; rcases hdeg v with h | h <;> omega
+    intro v; rcases hdeg v with h | h <;> lia
   -- there is a vertex of odd degree
   obtain ⟨z, hz⟩ : ∃ z, Odd (G.degree z) := by
     have hne1009 : (Finset.univ.filter (fun v => G.degree v = 1009)).Nonempty :=
@@ -934,7 +934,7 @@ problem imo2019_p3 (G : SimpleGraph (Fin 2019))
         simp [mem_neighborFinset, SimpleGraph.top_adj, Finset.mem_erase, ne_comm]
       rw [hN, Finset.card_erase_of_mem (Finset.mem_univ z), Finset.card_univ,
         Fintype.card_fin]
-    omega
+    lia
   -- `G` is connected: any two non-adjacent vertices have a common neighbor
   have hconn : G.Connected := by
     rw [SimpleGraph.connected_iff]
@@ -965,7 +965,7 @@ problem imo2019_p3 (G : SimpleGraph (Fin 2019))
         have hv : 1009 ≤ (G.neighborFinset v).card := by
           rw [SimpleGraph.card_neighborFinset_eq_degree]; exact hdeg_le v
         have hpos : 0 < (G.neighborFinset u ∩ G.neighborFinset v).card := by
-          omega
+          lia
         obtain ⟨w, hw⟩ := Finset.card_pos.mp hpos
         rw [Finset.mem_inter, mem_neighborFinset, mem_neighborFinset] at hw
         exact ⟨Walk.cons hw.1 (Walk.cons hw.2.symm Walk.nil)⟩

@@ -72,18 +72,18 @@ lemma auxPoly_coeff_self {k : ℕ} (hk : 1 ≤ k) :
     (auxPoly k).coeff k = 1 + (-1 : ℝ) ^ k := by
   rw [auxPoly_eq, coeff_add, coeff_add, coeff_one, coeff_X_pow, coeff_C_mul,
     coeff_one_add_X_pow]
-  have h1 : k ≠ 0 := by omega
+  have h1 : k ≠ 0 := by lia
   simp [h1, Nat.choose_self]
 
 lemma auxPoly_coeff_pred {k : ℕ} (hk : 2 ≤ k) :
     (auxPoly k).coeff (k - 1) = (-1 : ℝ) ^ k * k := by
   rw [auxPoly_eq, coeff_add, coeff_add, coeff_one, coeff_X_pow, coeff_C_mul,
     coeff_one_add_X_pow]
-  have h1 : k - 1 ≠ 0 := by omega
-  have h2 : k - 1 ≠ k := by omega
+  have h1 : k - 1 ≠ 0 := by lia
+  have h2 : k - 1 ≠ k := by lia
   have h3 : (k.choose (k - 1) : ℝ) = k := by
     have h4 : k.choose (k - 1) = k := by
-      rw [Nat.choose_symm (by omega : 1 ≤ k), Nat.choose_one_right]
+      rw [Nat.choose_symm (by lia : 1 ≤ k), Nat.choose_one_right]
     rw [h4]
   simp [h1, h2, h3]
 
@@ -133,8 +133,8 @@ lemma coeff_eq (m n : ℕ) (hm : 0 < m) (hn : 0 < n)
         Finset.HasAntidiagonal.antidiagonal (m + n - 1) := by
       rw [Finset.insert_subset_iff, Finset.singleton_subset_iff]
       constructor
-      · rw [Finset.HasAntidiagonal.mem_antidiagonal]; show m - 1 + n = m + n - 1; omega
-      · rw [Finset.HasAntidiagonal.mem_antidiagonal]; show m + (n - 1) = m + n - 1; omega
+      · rw [Finset.HasAntidiagonal.mem_antidiagonal]; show m - 1 + n = m + n - 1; lia
+      · rw [Finset.HasAntidiagonal.mem_antidiagonal]; show m + (n - 1) = m + n - 1; lia
     have hzero : ∀ ij ∈ Finset.HasAntidiagonal.antidiagonal (m + n - 1),
         ij ∉ ({(m - 1, n), (m, n - 1)} : Finset (ℕ × ℕ)) →
         (auxPoly m).coeff ij.1 * (auxPoly n).coeff ij.2 = 0 := by
@@ -150,18 +150,18 @@ lemma coeff_eq (m n : ℕ) (hm : 0 < m) (hn : 0 < n)
         · rw [coeff_eq_zero_of_natDegree_lt (lt_of_le_of_lt (natDegree_auxPoly_le n) hj),
             mul_zero]
         · push Not at hi hj
-          have hcon : (i = m - 1 ∧ j = n) ∨ (i = m ∧ j = n - 1) := by omega
+          have hcon : (i = m - 1 ∧ j = n) ∨ (i = m ∧ j = n - 1) := by lia
           rcases hcon with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
           · exact absurd rfl hij2.1
           · exact absurd rfl hij2.2
     rw [← Finset.sum_subset hsub hzero]
     have hne : (m - 1, n) ∉ ({(m, n - 1)} : Finset (ℕ × ℕ)) := by
       simp only [Finset.mem_singleton, Prod.ext_iff]
-      omega
+      lia
     rw [Finset.sum_insert hne, Finset.sum_singleton]
   have hc : (auxPoly (m + n) * C ((m : ℝ) * n)).coeff (m + n - 1) =
       (auxPoly m * auxPoly n * C ((m : ℝ) + n)).coeff (m + n - 1) := by rw [hid]
-  rw [coeff_mul_C, auxPoly_coeff_pred (by omega : 2 ≤ m + n)] at hc
+  rw [coeff_mul_C, auxPoly_coeff_pred (by lia : 2 ≤ m + n)] at hc
   rw [coeff_mul_C, coeff_mul, hsum] at hc
   push_cast at hc
   linear_combination hc
@@ -243,10 +243,10 @@ problem usa1982_p2 (m n : ℕ) (hm : 0 < m) (hn : 0 < n)
         (mul_ne_zero hmR one_ne_zero)
     push_cast at eqB
     exact hne eqB
-  have hm2 : 2 ≤ m := by omega
-  have hn2 : 2 ≤ n := by omega
+  have hm2 : 2 ≤ m := by lia
+  have hn2 : 2 ≤ n := by lia
   rw [auxPoly_coeff_pred hm2, auxPoly_coeff_pred hn2,
-    auxPoly_coeff_self (by omega : 1 ≤ m), auxPoly_coeff_self (by omega : 1 ≤ n)] at eqB
+    auxPoly_coeff_self (by lia : 1 ≤ m), auxPoly_coeff_self (by lia : 1 ≤ n)] at eqB
   rcases Nat.even_or_odd m with hme | hmo
   · rcases Nat.even_or_odd n with hne | hno
     · -- `m, n` both even: the equation at `(1, -1, 0)` forces `m = n = 4`,
@@ -262,15 +262,15 @@ problem usa1982_p2 (m n : ℕ) (hm : 0 < m) (hn : 0 < n)
       have hmnN : m * n = 2 * (m + n) := by exact_mod_cast hmnR2
       obtain ⟨M, rfl⟩ := hme
       obtain ⟨N, rfl⟩ := hne
-      have hM : 1 ≤ M := by omega
-      have hN : 1 ≤ N := by omega
+      have hM : 1 ≤ M := by lia
+      have hN : 1 ≤ N := by lia
       have h2 : ((M + M) * (N + N) : ℤ) = 2 * ((M + M) + (N + N)) := by exact_mod_cast hmnN
       have h3 : (M : ℤ) * N = M + N := by nlinarith [h2]
       have hMNz : ((M : ℤ) - 1) * ((N : ℤ) - 1) = 1 := by linear_combination h3
       have hM2 : (M : ℤ) - 1 = 1 :=
-        Int.eq_one_of_dvd_one (by omega) ⟨(N : ℤ) - 1, hMNz.symm⟩
+        Int.eq_one_of_dvd_one (by lia) ⟨(N : ℤ) - 1, hMNz.symm⟩
       have hN2 : (N : ℤ) - 1 = 1 :=
-        Int.eq_one_of_dvd_one (by omega) ⟨(M : ℤ) - 1, by rw [mul_comm]; exact hMNz.symm⟩
+        Int.eq_one_of_dvd_one (by lia) ⟨(M : ℤ) - 1, by rw [mul_comm]; exact hMNz.symm⟩
       have hMe : M = 2 := by
         have h4 : (M : ℤ) = 2 := by linarith
         exact_mod_cast h4

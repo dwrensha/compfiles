@@ -87,7 +87,7 @@ lemma sum_range_period_shift {q : ℕ} {F : ℕ → ℕ} (hF : ∀ j, F (j + q) 
     have h2 := Finset.sum_range_succ G q
     have h3 : G q = G 0 := by simpa using hG 0
     rw [h3] at h2
-    omega
+    lia
   induction b generalizing F with
   | zero => simp
   | succ b ih =>
@@ -98,7 +98,7 @@ lemma sum_range_period_shift {q : ℕ} {F : ℕ → ℕ} (hF : ∀ j, F (j + q) 
         = ∑ i ∈ Finset.range q, (fun j => F (j + 1)) (i + b) := by
           apply Finset.sum_congr rfl
           intro i _
-          exact congrArg F (by omega : i + (b + 1) = i + b + 1)
+          exact congrArg F (by lia : i + (b + 1) = i + b + 1)
       _ = ∑ i ∈ Finset.range q, F (i + 1) := ih (F := fun j => F (j + 1)) hG
       _ = ∑ i ∈ Finset.range q, F i := step hF
 
@@ -113,11 +113,11 @@ lemma sum_range_mod_add_ge {q b m : ℕ} (hb : b ≤ q) (hm : m ≤ q) :
     · rw [ite_eq_left h]
       have h1 : (i + m) % q = i + m - q := by
         rw [Nat.mod_eq_sub_mod h]
-        exact Nat.mod_eq_of_lt (by omega)
+        exact Nat.mod_eq_of_lt (by lia)
       rw [h1, Nat.cast_sub h, Nat.cast_add]
       ring
     · rw [ite_eq_right h]
-      have h1 : (i + m) % q = i + m := Nat.mod_eq_of_lt (by omega)
+      have h1 : (i + m) % q = i + m := Nat.mod_eq_of_lt (by lia)
       rw [h1, Nat.cast_add]
       ring
   have hsum : ∑ i ∈ Finset.range b, (((i + m) % q : ℕ) : ℤ) =
@@ -126,7 +126,7 @@ lemma sum_range_mod_add_ge {q b m : ℕ} (hb : b ≤ q) (hm : m ≤ q) :
     apply Finset.sum_congr rfl
     intro i hi
     rw [Finset.mem_range] at hi
-    exact key i (by omega)
+    exact key i (by lia)
   have hℤ : ∑ i ∈ Finset.range b, (i : ℤ) ≤
       ∑ i ∈ Finset.range b, (((i + m) % q : ℕ) : ℤ) := by
     rw [hsum, Finset.sum_sub_distrib, Finset.sum_add_distrib]
@@ -137,7 +137,7 @@ lemma sum_range_mod_add_ge {q b m : ℕ} (hb : b ≤ q) (hm : m ≤ q) :
         apply Finset.eq_empty_iff_forall_notMem.mpr
         intro i hi
         rw [Finset.mem_filter, Finset.mem_range] at hi
-        omega
+        lia
       rw [hempty, Finset.card_empty, Nat.cast_zero, mul_zero, sub_zero]
       have hnonneg : (0 : ℤ) ≤ (b : ℤ) * m := by positivity
       linarith
@@ -147,10 +147,10 @@ lemma sum_range_mod_add_ge {q b m : ℕ} (hb : b ≤ q) (hm : m ≤ q) :
         simp only [Finset.mem_filter, Finset.mem_range, Finset.mem_Ico]
         constructor
         · rintro ⟨hi, hqi⟩
-          exact ⟨by omega, hi⟩
+          exact ⟨by lia, hi⟩
         · rintro ⟨h1, h2⟩
-          exact ⟨h2, by omega⟩
-      have hle : q - m ≤ b := by omega
+          exact ⟨h2, by lia⟩
+      have hle : q - m ≤ b := by lia
       rw [hfilter, Nat.card_Ico, Nat.cast_sub hle, Nat.cast_sub hm]
       have h1 : (0 : ℤ) ≤ (q : ℤ) - b := sub_nonneg.mpr (Nat.cast_le.mpr hb)
       have h2 : (0 : ℤ) ≤ (q : ℤ) - m := sub_nonneg.mpr (Nat.cast_le.mpr hm)
@@ -182,7 +182,7 @@ lemma sum_mod_le_sum_add_mod (k n q : ℕ) (hq : 0 < q) :
     apply Finset.sum_congr rfl
     intro i hi
     rw [Finset.mem_range] at hi
-    exact Nat.mod_eq_of_lt (by omega)
+    exact Nat.mod_eq_of_lt (by lia)
   have hshift : ∑ i ∈ Finset.range q, (i + n) % q = ∑ i ∈ Finset.range q, i := by
     have h1 : ∑ i ∈ Finset.range q, (i + n) % q = ∑ i ∈ Finset.range q, i % q :=
       sum_range_period_shift (F := fun j => j % q) hF1 n
@@ -230,7 +230,7 @@ lemma sum_add_div_le (k q : ℕ) (hq : 0 < q) :
     rwa [Nat.cast_sum, Nat.cast_sum] at h
   have hmod : ((k ^ 2 % q : ℕ) : ℤ) ≤ (q : ℤ) - 1 := by
     have hlt : k ^ 2 % q < q := Nat.mod_lt _ hq
-    omega
+    lia
   have hsumk : (∑ j ∈ Finset.range k, (((j + k) : ℕ) : ℤ))
       = (∑ j ∈ Finset.range k, (j : ℤ)) + (k : ℤ) ^ 2 := by
     have hs : (∑ j ∈ Finset.range k, (((j + k) : ℕ) : ℤ))
@@ -264,7 +264,7 @@ lemma sum_add_div_le (k q : ℕ) (hq : 0 < q) :
     by_contra hneg
     push Not at hneg
     have hle : (((k ^ 2 / q : ℕ) : ℤ) + ∑ j ∈ Finset.range k, ((j / q : ℕ) : ℤ))
-        - ∑ j ∈ Finset.range k, (((j + k) / q : ℕ) : ℤ) ≤ -1 := by omega
+        - ∑ j ∈ Finset.range k, (((j + k) / q : ℕ) : ℤ) ≤ -1 := by lia
     have hq0 : (0 : ℤ) ≤ (q : ℤ) := by exact_mod_cast hq.le
     have h3 : (q : ℤ) * ((((k ^ 2 / q : ℕ) : ℤ) + ∑ j ∈ Finset.range k, ((j / q : ℕ) : ℤ))
           - ∑ j ∈ Finset.range k, (((j + k) / q : ℕ) : ℤ)) ≤ -(q : ℤ) := by
@@ -277,7 +277,7 @@ lemma sum_add_div_le (k q : ℕ) (hq : 0 < q) :
     linarith
   rw [← Nat.cast_le (α := ℤ)]
   rw [Nat.cast_sum, Nat.cast_add, Nat.cast_sum]
-  omega
+  lia
 
 snip end
 
@@ -309,7 +309,7 @@ problem usa2016_p2 (k : ℕ) (hk : 0 < k) :
       rw [Finsupp.finsetSum_apply]
       refine Finset.sum_congr rfl fun j hj => hB (j + k) ?_
       have hjlt : j < k := Finset.mem_range.mp hj
-      omega
+      lia
     have eRHS : (∑ j ∈ Finset.range k, (j !).factorization) p
         = ∑ j ∈ Finset.range k, ∑ i ∈ Finset.Ico 1 B, j / p ^ i := by
       rw [Finsupp.finsetSum_apply]
@@ -319,7 +319,7 @@ problem usa2016_p2 (k : ℕ) (hk : 0 < k) :
         calc k = k * 1 := (mul_one k).symm
           _ ≤ k * k := Nat.mul_le_mul_left k hk
           _ = k ^ 2 := (pow_two k).symm
-      omega
+      lia
     rw [eLHS, eRHS, hB _ le_rfl, Finset.sum_comm,
       show (∑ j ∈ Finset.range k, ∑ i ∈ Finset.Ico 1 B, j / p ^ i)
         = ∑ i ∈ Finset.Ico 1 B, ∑ j ∈ Finset.range k, j / p ^ i from Finset.sum_comm,

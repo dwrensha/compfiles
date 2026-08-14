@@ -89,7 +89,7 @@ lemma slotCount_eq {a b : E → V} {vs : List V} {es : List E} (h : IsWalk a b v
       rw [hc0, mult_conn hconn x, hd1, hd2, List.count_nil, List.head?_cons,
         List.getLast?_cons_cons, List.getLast?_singleton]
       simp only [Option.some.injEq]
-      split_ifs <;> omega
+      split_ifs <;> lia
     | @cons w u e' vs' es' hconn' hw' =>
       have ih' := ih (by simp)
       have hd : (w :: u :: vs').dropLast = w :: (u :: vs').dropLast := rfl
@@ -100,7 +100,7 @@ lemma slotCount_eq {a b : E → V} {vs : List V} {es : List E} (h : IsWalk a b v
       rw [hc0, ih', mult_conn hconn x, hd1, hd', hd]
       simp only [List.count_cons, List.head?_cons, List.getLast?_cons_cons, beq_iff_eq,
         Option.some.injEq]
-      split_ifs <;> simp_all <;> omega
+      split_ifs <;> simp_all <;> lia
 
 omit [Fintype V] [Fintype E] [DecidableEq E] in
 /-- In a closed walk, the slot count at `x` is twice the number of occurrences of `x`. -/
@@ -133,7 +133,7 @@ lemma slotCount_closed {a b : E → V} {vs : List V} {es : List E} (h : IsWalk a
         have hd2 : (w :: u :: vs'').dropLast = w :: (u :: vs'').dropLast := rfl
         rw [hd, hd1, hd2, ← hc, List.head?_cons]
         simp only [List.count_cons, beq_iff_eq, Option.some.injEq]
-        split_ifs <;> simp_all <;> omega
+        split_ifs <;> simp_all <;> lia
 
 omit [Fintype V] [Fintype E] [DecidableEq E] in
 /-- The alternating slot count along a walk, red at positions with parity `s`. -/
@@ -156,12 +156,12 @@ lemma altCount_eq {a b : E → V} {vs : List V} {es : List E} (h : IsWalk a b vs
       by_cases hv : v = x <;> by_cases hw : w = x <;> by_cases hs0 : s = 0 <;>
         simp_all
     | @cons w u e' vs' es' hconn' hw' =>
-      have ih' := ih (by simp) (show 1 - s ≤ 1 by omega)
+      have ih' := ih (by simp) (show 1 - s ≤ 1 by lia)
       have hd : (w :: u :: vs').dropLast = w :: (u :: vs').dropLast := rfl
       have hpar : ∀ i : ℕ, (s = (i + 1) % 2) ↔ (1 - s = i % 2) := by
-        intro i; omega
+        intro i; lia
       have hlast : ∀ m : ℕ, (s = (m + 1) % 2) ↔ (1 - s = m % 2) := by
-        intro m; omega
+        intro m; lia
       rw [List.mapIdx_cons, List.sum_cons, mult_conn hconn x]
       simp_rw [hpar]
       rw [ih']
@@ -169,7 +169,7 @@ lemma altCount_eq {a b : E → V} {vs : List V} {es : List E} (h : IsWalk a b vs
         List.getLast?_cons_cons, List.length_cons, Nat.add_sub_cancel, Nat.zero_mod,
         beq_iff_eq, Option.some.injEq]
       by_cases hv : v = x <;> by_cases hw : w = x <;> by_cases hs0 : s = 0 <;>
-        simp_all <;> omega
+        simp_all <;> lia
 
 omit [Fintype V] [Fintype E] [DecidableEq E] in
 /-- In a closed walk of even length, the alternating slot count at `x` equals the number of
@@ -185,13 +185,13 @@ lemma altCount_closed {a b : E → V} {vs : List V} {es : List E} (h : IsWalk a 
   · obtain ⟨k, hk⟩ := hL
     have hlen : 0 < es.length := Nat.pos_of_ne_zero (fun hh => hne
       (List.eq_nil_of_length_eq_zero hh))
-    have hm : ∃ m, es.length = 2 * m + 2 := ⟨k - 1, by omega⟩
+    have hm : ∃ m, es.length = 2 * m + 2 := ⟨k - 1, by lia⟩
     obtain ⟨m, hm⟩ := hm
     have glue2 : (es.mapIdx fun i e => if i % 2 = 0 then mult a b e x else 0) =
         es.mapIdx fun i e => if 0 = i % 2 then mult a b e x else 0 :=
-      List.mapIdx_eq_mapIdx_iff.mpr fun i _ => if_congr (by omega) rfl rfl
-    rw [glue2, altCount_eq h hne (by omega : 0 ≤ 1) x]
-    have hmod : (es.length - 1) % 2 = 1 := by rw [hm]; omega
+      List.mapIdx_eq_mapIdx_iff.mpr fun i _ => if_congr (by lia) rfl rfl
+    rw [glue2, altCount_eq h hne (by lia : 0 ≤ 1) x]
+    have hmod : (es.length - 1) % 2 = 1 := by rw [hm]; lia
     have hlast : (0 = (es.length - 1) % 2) ↔ False := by rw [hmod]; simp
     simp only [hlast, and_false, ite_false, add_zero]
     cases h with
@@ -278,9 +278,9 @@ omit [Fintype V] [DecidableEq V] in
 lemma getLast?_drop_of_lt {l : List V} {k : ℕ} (h : k < l.length) :
     (l.drop k).getLast? = l.getLast? := by
   have h1 : l.drop k ≠ [] := by
-    rw [List.ne_nil_iff_length_pos, List.length_drop]; omega
+    rw [List.ne_nil_iff_length_pos, List.length_drop]; lia
   rw [List.getLast?_eq_getLast_of_ne_nil h1, List.getLast?_eq_getLast_of_ne_nil (by
-    rw [List.ne_nil_iff_length_pos]; omega)]
+    rw [List.ne_nil_iff_length_pos]; lia)]
   congr 1
   exact List.getLast_drop h1
 
@@ -290,21 +290,21 @@ lemma head?_take_of_pos {l : List V} {k : ℕ} (h : 0 < k) : (l.take k).head? = 
   | nil => simp
   | cons a t =>
     cases k with
-    | zero => omega
+    | zero => lia
     | succ k => simp
 
 omit [Fintype V] [DecidableEq V] in
 lemma getLast?_take_succ {l : List V} {k : ℕ} (h : k + 1 ≤ l.length) :
     (l.take (k + 1)).getLast? = l[k]? := by
   have h1 : l.take (k + 1) ≠ [] := by
-    rw [List.ne_nil_iff_length_pos, List.length_take]; omega
+    rw [List.ne_nil_iff_length_pos, List.length_take]; lia
   rw [List.getLast?_eq_getLast_of_ne_nil h1]
   have h2 : (l.take (k + 1)).getLast h1 = l[k] := by
     rw [List.getLast_eq_getElem h1, List.getElem_take]
     · congr 1
-      rw [List.length_take]; omega
+      rw [List.length_take]; lia
   rw [h2]
-  exact (List.getElem?_eq_getElem (by omega)).symm
+  exact (List.getElem?_eq_getElem (by lia)).symm
 
 omit [Fintype V] [DecidableEq V] in
 lemma getLast?_tail_of_ne {l : List V} (h : l.tail ≠ []) : l.tail.getLast? = l.getLast? := by
@@ -325,7 +325,7 @@ def CTrail.rotate {a b : E → V} (T : CTrail a b) (k : ℕ) (hk : k < T.es.leng
     have hlen : T.vs.length = T.es.length + 1 := T.walk.length
     have hk' : k ≤ T.es.length := le_of_lt hk
     have h1 : (T.vs.drop k).getLast? = (T.vs.take (k + 1)).head? := by
-      rw [getLast?_drop_of_lt (by omega), head?_take_of_pos (by omega), T.closed]
+      rw [getLast?_drop_of_lt (by lia), head?_take_of_pos (by lia), T.closed]
     have happ := (T.walk.drop k hk').append (T.walk.take k) h1
     rw [List.rotate_eq_drop_append_take hk']
     exact happ
@@ -334,9 +334,9 @@ def CTrail.rotate {a b : E → V} (T : CTrail a b) (k : ℕ) (hk : k < T.es.leng
     by_cases ht : (T.vs.take (k + 1)).tail = []
     · have hk0 : k = 0 := by
         have hh := congrArg List.length ht
-        rw [List.length_tail, List.length_take, Nat.min_eq_left (by omega),
+        rw [List.length_tail, List.length_take, Nat.min_eq_left (by lia),
           List.length_nil] at hh
-        omega
+        lia
       subst hk0
       have ht1 : (T.vs.take 1).tail = [] := by
         rw [List.take_one]
@@ -346,11 +346,11 @@ def CTrail.rotate {a b : E → V} (T : CTrail a b) (k : ℕ) (hk : k < T.es.leng
       rw [List.drop_zero, ht1, List.append_nil]
       exact T.closed
     · have hne1 : T.vs.drop k ≠ [] := by
-        rw [List.ne_nil_iff_length_pos, List.length_drop]; omega
+        rw [List.ne_nil_iff_length_pos, List.length_drop]; lia
       have hne2 : (T.vs.take (k + 1)).tail ≠ [] := ht
       rw [List.head?_append_of_ne_nil _ hne1, List.head?_drop,
         List.getLast?_append_of_ne_nil _ hne2]
-      rw [getLast?_tail_of_ne hne2, getLast?_take_succ (by omega)]
+      rw [getLast?_tail_of_ne hne2, getLast?_take_succ (by lia)]
 
 lemma list_sum_eq_toFinset_sum {α : Type*} [DecidableEq α] {l : List α} (hn : l.Nodup)
     {f : α → ℕ} : (l.map f).sum = ∑ e ∈ l.toFinset, f e := by
@@ -402,7 +402,7 @@ lemma exists_max_walk (a b : E → V) (U : Finset E) (v : V) :
       rwa [List.toFinset_card_of_nodup hnodup', List.length_append, List.length_singleton] at h1
     have hmem : es.length + 1 ∈ S := by
       rw [hS, Finset.mem_filter]
-      refine ⟨by rw [Finset.mem_range]; omega, vs ++ [w], es ++ [e], happ, ?_, hnodup', ?_, by simp⟩
+      refine ⟨by rw [Finset.mem_range]; lia, vs ++ [w], es ++ [e], happ, ?_, hnodup', ?_, by simp⟩
       · rw [List.head?_append_of_ne_nil _ hne, hhead]
       · intro x hx
         rw [List.mem_append, List.mem_singleton] at hx
@@ -410,7 +410,7 @@ lemma exists_max_walk (a b : E → V) (U : Finset E) (v : V) :
         · exact hsub x hx
         · rw [hx]; exact heU
     have := hmax _ hmem
-    omega
+    lia
 
 omit [Fintype V] [Fintype E] in
 /-- Any edge of `U` lies in a closed trail within `U`, provided all `U`-degrees are even. -/
@@ -454,7 +454,7 @@ lemma exists_closed_trail (a b : E → V) (U : Finset E)
     by_contra hy
     have hay : a e₀ ≠ y := fun h => hy h.symm
     simp [hay] at hsc
-    omega
+    lia
   exact ⟨⟨vs, es, hnodup, hwalk, by rw [hhead, hlast, hclose]⟩, hsub, hne⟩
 
 omit [Fintype V] [Fintype E] in
@@ -485,9 +485,9 @@ lemma decompose (a b : E → V) (U : Finset E) (hU : ∀ x, Even (∑ e ∈ U, m
         obtain ⟨k, hk⟩ := hU x
         obtain ⟨k2, hk2⟩ : Even (slotCount a b T.es x) := by
           rw [slotCount_closed T.walk T.closed x]
-          exact ⟨T.vs.dropLast.count x, by omega⟩
+          exact ⟨T.vs.dropLast.count x, by lia⟩
         rw [hsub, hk, hk2]
-        exact ⟨k - k2, by omega⟩
+        exact ⟨k - k2, by lia⟩
       obtain ⟨e1, he1⟩ := List.exists_mem_of_ne_nil T.es hTne
       have hss : U \ T.es.toFinset ⊂ U := by
         rw [Finset.ssubset_iff_subset_ne]
@@ -496,7 +496,7 @@ lemma decompose (a b : E → V) (U : Finset E) (hU : ∀ x, Even (∑ e ∈ U, m
         have h2 : (U \ T.es.toFinset).card = U.card := by rw [hcon]
         rw [Finset.card_sdiff, Finset.inter_eq_left.mpr hsU] at h2
         have hle : T.es.toFinset.card ≤ U.card := Finset.card_le_card hsU
-        omega
+        lia
       obtain ⟨F', hF'U, hF'ne, hF'cov, hF'dj⟩ := ih (U \ T.es.toFinset) hss hU'
       refine ⟨T :: F', ?_, ?_, ?_, ?_⟩
       · intro T' hT' e he
@@ -530,7 +530,7 @@ lemma CTrail.rotate_head? {a b : E → V} {v : V} (T : CTrail a b) (k : ℕ) (hk
   have hlen : T.vs.length = T.es.length + 1 := T.walk.length
   show (T.vs.drop k ++ (T.vs.take (k + 1)).tail).head? = some v
   rw [List.head?_append_of_ne_nil _ (by
-    rw [List.ne_nil_iff_length_pos, List.length_drop]; omega), List.head?_drop]
+    rw [List.ne_nil_iff_length_pos, List.length_drop]; lia), List.head?_drop]
   exact hv
 
 omit [Fintype V] [Fintype E] in
@@ -564,16 +564,16 @@ lemma CTrail.exists_rotate_index {a b : E → V} (T : CTrail a b) (hne : T.es �
   have hlen : T.vs.length = T.es.length + 1 := T.walk.length
   by_cases hk2 : k < T.es.length
   · refine ⟨k, hk2, ?_⟩
-    rw [List.getElem?_eq_getElem (by omega : k < T.vs.length)]
+    rw [List.getElem?_eq_getElem (by lia : k < T.vs.length)]
     have hkv' : T.vs[k] = v := hkv
     rw [hkv']
-  · have hk3 : k = T.es.length := by omega
+  · have hk3 : k = T.es.length := by lia
     subst hk3
     refine ⟨0, Nat.pos_of_ne_zero (fun hh => hne (List.eq_nil_of_length_eq_zero hh)), ?_⟩
     have hgl : T.vs.getLast? = some v := by
       rw [List.getLast?_eq_getElem?]
-      have hll : T.vs.length - 1 = T.es.length := by omega
-      rw [hll, List.getElem?_eq_getElem (by omega)]
+      have hll : T.vs.length - 1 = T.es.length := by lia
+      rw [hll, List.getElem?_eq_getElem (by lia)]
       have hkv' : T.vs[T.es.length] = v := hkv
       rw [hkv']
     rw [← T.closed] at hgl
@@ -595,12 +595,12 @@ lemma two_le_length {α : Type*} {l : List α} {a b : α} (ha : a ∈ l) (hb : b
     · rcases hb with rfl | hb
       · exact absurd rfl hne
       · have h1 : 0 < l.length := List.length_pos_of_mem hb
-        omega
+        lia
     · rcases hb with rfl | hb
       · have h1 : 0 < l.length := List.length_pos_of_mem ha
-        omega
+        lia
       · have h2 := ih ha hb hne
-        omega
+        lia
 
 omit [Fintype V] [Fintype E] in
 /-- Merge trails sharing vertices until the family is vertex-disjoint. -/
@@ -642,8 +642,8 @@ lemma merge_disjoint (a b : E → V) :
               exact ⟨hT₁, by simp⟩
             · rw [List.mem_filter]
               exact ⟨hT₂, by simp⟩
-          omega
-        omega
+          lia
+        lia
       have hF''cov : ∀ e, ∃ T' ∈ F'', e ∈ T'.es := by
         intro e
         obtain ⟨T', hT', heT'⟩ := cov e
@@ -680,7 +680,7 @@ lemma merge_disjoint (a b : E → V) :
             rw [hnil, List.length_nil]
           rw [List.length_append] at hlen0
           have hz : (T₁.rotate k₁ hk₁).es = [] :=
-            List.length_eq_zero_iff.mp (by omega)
+            List.length_eq_zero_iff.mp (by lia)
           exact hr1 hz
         · exact hneF T' (List.mem_filter.mp hT' |>.1)
       have hF''dj : F''.Pairwise (fun S₁ S₂ => Disjoint S₁.es.toFinset S₂.es.toFinset) := by
@@ -698,7 +698,7 @@ lemma merge_disjoint (a b : E → V) :
           exact disj.forall hT₂ hT'F hne2.symm
         rw [hTe, List.toFinset_append, Finset.disjoint_union_left]
         exact ⟨d1, d2⟩
-      obtain ⟨F', h1, h2, h3, h4⟩ := ih (F''.length) (by omega) F'' rfl hF''cov hF''ne hF''dj
+      obtain ⟨F', h1, h2, h3, h4⟩ := ih (F''.length) (by lia) F'' rfl hF''cov hF''ne hF''dj
       exact ⟨F', h1, h2, h3, h4⟩
     · refine ⟨F, cov, hneF, disj, ?_⟩
       rw [List.pairwise_iff_getElem]
@@ -805,7 +805,7 @@ lemma even_length_of_mem {a b : E → V} (F : List (CTrail a b))
     rw [← key1, key2]
     simp only [hdeg, Finset.sum_const, nsmul_eq_mul, Nat.cast_id]
     ring
-  exact ⟨T.vs.toFinset.card, by omega⟩
+  exact ⟨T.vs.toFinset.card, by lia⟩
 
 omit [Fintype E] in
 lemma mapIdx_eq_map_idxOf {l : List E} (hn : l.Nodup) (g : ℕ → E → ℕ) :
@@ -907,7 +907,7 @@ theorem two_factor (a b : E → V) (hdeg : ∀ x, (∑ e : E, mult a b e x) = 4)
     by_contra hm
     exact hnin (hedges e hm)
   rw [slotCount_closed Tx.walk Tx.closed x] at hsc
-  omega
+  lia
 
 end TwoFactor
 
@@ -916,10 +916,10 @@ section Assembly
 variable {n : ℕ} (c : Fin (4 * n) → Fin n)
 
 /-- The lighter pebble of pair `k`. -/
-def apeb : Fin (2 * n) → Fin (4 * n) := fun k => ⟨k.val, by omega⟩
+def apeb : Fin (2 * n) → Fin (4 * n) := fun k => ⟨k.val, by lia⟩
 
 /-- The heavier pebble of pair `k`. -/
-def bpeb : Fin (2 * n) → Fin (4 * n) := fun k => ⟨4 * n - 1 - k.val, by omega⟩
+def bpeb : Fin (2 * n) → Fin (4 * n) := fun k => ⟨4 * n - 1 - k.val, by lia⟩
 
 lemma apeb_inj : Function.Injective (@apeb n) := fun k₁ k₂ h => by
   have h2 : (apeb k₁).val = (apeb k₂).val := Fin.ext_iff.mp h
@@ -929,17 +929,17 @@ lemma bpeb_inj : Function.Injective (@bpeb n) := fun k₁ k₂ h => by
   have h3 : k₁.val = k₂.val := by
     have h4 := h2
     simp [bpeb] at h4
-    omega
+    lia
   exact Fin.ext h3
 lemma apeb_ne_bpeb (k₁ k₂ : Fin (2 * n)) : apeb k₁ ≠ bpeb k₂ := by
   intro h
   have := Fin.ext_iff.mp h
   simp [apeb, bpeb] at this
-  omega
+  lia
 
 /-- The pair (one of the `2n` complementary pairs) that pebble `j` belongs to. -/
 def pairOf : Fin (4 * n) → Fin (2 * n) := fun j =>
-  if h : j.val < 2 * n then ⟨j.val, h⟩ else ⟨4 * n - 1 - j.val, by omega⟩
+  if h : j.val < 2 * n then ⟨j.val, h⟩ else ⟨4 * n - 1 - j.val, by lia⟩
 
 lemma pairOf_apeb (k : Fin (2 * n)) : pairOf (apeb k) = k := by
   show pairOf ⟨k.val, _⟩ = k
@@ -947,8 +947,8 @@ lemma pairOf_apeb (k : Fin (2 * n)) : pairOf (apeb k) = k := by
 
 lemma pairOf_bpeb (k : Fin (2 * n)) : pairOf (bpeb k) = k := by
   show pairOf ⟨4 * n - 1 - k.val, _⟩ = k
-  rw [pairOf, dite_eq_right (by omega : ¬ (4 * n - 1 - k.val) < 2 * n)]
-  exact Fin.ext (by simp; omega)
+  rw [pairOf, dite_eq_right (by lia : ¬ (4 * n - 1 - k.val) < 2 * n)]
+  exact Fin.ext (by simp; lia)
 
 lemma pairOf_mem_pair (j : Fin (4 * n)) : j = apeb (pairOf j) ∨ j = bpeb (pairOf j) := by
   by_cases hj : j.val < 2 * n
@@ -957,7 +957,7 @@ lemma pairOf_mem_pair (j : Fin (4 * n)) : j = apeb (pairOf j) ∨ j = bpeb (pair
     exact Fin.ext rfl
   · right
     rw [pairOf, dite_eq_right hj]
-    exact Fin.ext (by simp [bpeb]; omega)
+    exact Fin.ext (by simp [bpeb]; lia)
 
 /-- The pseudograph on colors whose edges are the complementary pairs. -/
 def pgA : Fin (2 * n) → Fin n := fun k => c (apeb k)
@@ -974,8 +974,8 @@ lemma univ_eq_map_union :
     · left
       refine ⟨⟨j.val, hj⟩, trivial, Fin.ext rfl⟩
     · right
-      refine ⟨⟨4 * n - 1 - j.val, by omega⟩, trivial, ?_⟩
-      exact Fin.ext (by show 4 * n - 1 - (4 * n - 1 - j.val) = j.val; omega)
+      refine ⟨⟨4 * n - 1 - j.val, by lia⟩, trivial, ?_⟩
+      exact Fin.ext (by show 4 * n - 1 - (4 * n - 1 - j.val) = j.val; lia)
   · rintro (⟨k, -, rfl⟩ | ⟨k, -, rfl⟩) <;> simp
 
 lemma disjoint_map_map :
@@ -1030,7 +1030,7 @@ lemma weight_sum (r : Fin (2 * n) → Bool) :
     have hv1 : (apeb k).val = k.val := rfl
     have hv2 : (bpeb k).val = 4 * n - 1 - k.val := rfl
     rw [hv1, hv2]
-    omega
+    lia
   rw [Finset.sum_congr rfl (fun k _ => hpair k), Finset.sum_const, nsmul_eq_mul, Nat.cast_id]
 
 lemma red_card (_h : ∀ i, #{j | c j = i} = 4) (red : Fin (2 * n) → Bool)
@@ -1051,7 +1051,7 @@ lemma red_card (_h : ∀ i, #{j | c j = i} = 4) (red : Fin (2 * n) → Bool)
     rw [Finset.sum_congr rfl (fun e _ => h3 e)]
     simp only [Finset.sum_ite, Finset.sum_const, nsmul_eq_mul, Nat.cast_id, mul_zero,
       add_zero]
-  omega
+  lia
 
 lemma compl_filter_pairOf (red : Fin (2 * n) → Bool) :
     (Finset.univ.filter (fun j => red (pairOf j) = true))ᶜ =
@@ -1081,8 +1081,8 @@ problem imo2020_p3 {n : ℕ} {c : Fin (4 * n) → Fin n} (h : ∀ i, #{j | c j =
         ext e
         by_cases hr : red e <;> simp [hr]
       rw [h3, Finset.card_univ, Fintype.card_fin] at h2
-      omega
-    omega
+      lia
+    lia
   · intro i
     have hcol : ((Finset.univ.filter (fun j => red (pairOf j) = true)).filter
         (fun j => c j = i)).card = 2 := by

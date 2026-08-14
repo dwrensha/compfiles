@@ -93,7 +93,7 @@ def skipEmb {n : ℕ} (p : Fin (n + 1)) : Fin n ↪ Fin (n + 1) where
 "`c` lies in the half-open interval between the entries" and "`x > y`" differ. -/
 lemma invPair_iff (c x y : ℤ) :
     invPair c x y ↔ (y < x ∧ (x ≤ c ∨ c < y)) ∨ (x ≤ y ∧ x ≤ c ∧ c < y) := by
-  unfold invPair; omega
+  unfold invPair; lia
 
 lemma frontContrib_le {t : ℕ} (c x : ℤ) (w : Fin t → ℤ) (h : x ≤ c) :
     frontContrib c x w =
@@ -102,10 +102,10 @@ lemma frontContrib_le {t : ℕ} (c x : ℤ) (w : Fin t → ℤ) (h : x ≤ c) :
   rw [← Finset.sum_add_distrib]
   apply Finset.sum_congr rfl; intro ℓ _
   have hiff : invPair c x (w ℓ) ↔ (w ℓ < x ∨ c < w ℓ) := by
-    rw [invPair_iff]; omega
+    rw [invPair_iff]; lia
   by_cases h1 : w ℓ < x
   · by_cases h2 : c < w ℓ
-    · exfalso; omega
+    · exfalso; lia
     · rw [ite_eq_left (hiff.mpr (Or.inl h1)), ite_eq_left h1, ite_eq_right h2]
   · by_cases h2 : c < w ℓ
     · rw [ite_eq_left (hiff.mpr (Or.inr h2)), ite_eq_right h1, ite_eq_left h2]
@@ -116,7 +116,7 @@ lemma frontContrib_gt {t : ℕ} (c x : ℤ) (w : Fin t → ℤ) (h : c < x) :
   unfold frontContrib
   apply Finset.sum_congr rfl; intro ℓ _
   have hiff : invPair c x (w ℓ) ↔ (c < w ℓ ∧ w ℓ < x) := by
-    rw [invPair_iff]; omega
+    rw [invPair_iff]; lia
   by_cases h1 : c < w ℓ ∧ w ℓ < x
   · rw [ite_eq_left (hiff.mpr h1), ite_eq_left h1]
   · rw [ite_eq_right (fun hp => h1 (hiff.mp hp)), ite_eq_right h1]
@@ -258,10 +258,10 @@ lemma valMul_comp_skipEmb {n : ℕ} (m : Fin (n + 1) → ℤ) (p : Fin (n + 1)) 
   · subst hy
     rw [ite_eq_left rfl] at keyy
     rw [Multiset.count_erase_self]
-    omega
+    lia
   · rw [ite_eq_right hy] at keyy
     rw [Multiset.count_erase_of_ne (Ne.symm hy)]
-    omega
+    lia
 
 /-- Two entry functions with the same multiset of values differ by a permutation of the
 indices. -/
@@ -481,8 +481,8 @@ lemma list_sum_take_eq_sum_range (l : List ℕ) {j : ℕ} (hj : j ≤ l.length) 
   rw [Finset.mem_range] at ht
   have h1 : t < (l.take j).length := by
     rw [List.length_take]
-    omega
-  have h2 : t < l.length := by omega
+    lia
+  have h2 : t < l.length := by lia
   have g1 : (l.take j)[t]! = (l.take j)[t]'h1 := by
     rw [List.getElem!_eq_getElem?_getD, List.getElem?_eq_getElem h1, Option.getD_some]
   have g2 : l[t]! = l[t]'h2 := by
@@ -561,16 +561,16 @@ lemma sorted_getElem!_le_iff {l : List ℤ} (hp : l.Pairwise (· ≤ ·)) (hn : 
       · exact decide_eq_true h
     rw [hB1, List.mem_take_iff_getElem] at hmem1
     obtain ⟨j, hj, hjt⟩ := hmem1
-    have hjl : j < l.length := by omega
+    have hjl : j < l.length := by lia
     rw [hget t ht] at hjt
     have heq : l.get ⟨j, hjl⟩ = l.get ⟨t, ht⟩ := hjt
     have hFinEq : (⟨j, hjl⟩ : Fin l.length) = ⟨t, ht⟩ := (hn.get_inj_iff).mp heq
     have hjet : j = t := congrArg Fin.val hFinEq
-    omega
+    lia
   · intro htk
     have hmem1 : l[t]! ∈ l.take (l.filter (· ≤ c)).length := by
       rw [List.mem_take_iff_getElem]
-      exact ⟨t, by omega, (hget t ht).symm⟩
+      exact ⟨t, by lia, (hget t ht).symm⟩
     rw [← hB1, List.mem_filter] at hmem1
     exact of_decide_eq_true hmem1.2
 
@@ -635,10 +635,10 @@ lemma pureId_value {n : ℕ} (m : Fin (n + 1) → ℤ) (c : ℤ) :
   have hvsval : (vs : Multiset ℤ) = (univ.image m).val := Finset.sort_eq _ _
   have hlen : es.length = vs.length := by simp [hes]
   have hkvs : k ≤ vs.length := List.length_filter_le _ _
-  have hkes : k ≤ es.length := by omega
+  have hkes : k ≤ es.length := by lia
   have hesget : ∀ t : ℕ, t < vs.length → es[t]! = eCnt m (vs[t]!) := by
     intro t ht
-    have ht' : t < es.length := by omega
+    have ht' : t < es.length := by lia
     have g1 : es[t]! = es[t]'ht' := by
       rw [List.getElem!_eq_getElem?_getD, List.getElem?_eq_getElem ht', Option.getD_some]
     have g2 : vs[t]! = vs[t]'ht := by
@@ -655,7 +655,7 @@ lemma pureId_value {n : ℕ} (m : Fin (n + 1) → ℤ) (c : ℤ) :
     have h3 : (valMul m).card = n + 1 := by
       unfold valMul
       rw [Multiset.card_map, ← Finset.card_def, Finset.card_univ, Fintype.card_fin]
-    omega
+    lia
   have hE1 : ∀ t : ℕ, t < vs.length → cntP m (· < vs[t]!) = (es.take t).sum := by
     intro t ht
     rw [cntP_eq_sum_eCnt, sum_image_eq_sort_map_sum, ← hvs, list_map_sum_eq_sum_range]
@@ -669,13 +669,13 @@ lemma pureId_value {n : ℕ} (m : Fin (n + 1) → ℤ) (c : ℤ) :
       · rintro ⟨hs, hst⟩
         exact (sorted_getElem!_lt_iff hp hn hs ht).mp hst
       · intro hst
-        have hs : s < vs.length := by omega
+        have hs : s < vs.length := by lia
         exact ⟨hs, (sorted_getElem!_lt_iff hp hn hs ht).mpr hst⟩
-    rw [hset, list_sum_take_eq_sum_range es (by omega)]
+    rw [hset, list_sum_take_eq_sum_range es (by lia)]
     apply Finset.sum_congr rfl
     intro s hs
     rw [Finset.mem_range] at hs
-    rw [hesget s (by omega)]
+    rw [hesget s (by lia)]
   have hE2 : cntP m (c < ·) = es.sum - (es.take k).sum := by
     rw [cntP_eq_sum_eCnt, sum_image_eq_sort_map_sum, ← hvs, list_map_sum_eq_sum_range]
     show ∑ s ∈ range vs.length, (if c < vs[s]! then eCnt m (vs[s]!) else 0) =
@@ -698,7 +698,7 @@ lemma pureId_value {n : ℕ} (m : Fin (n + 1) → ℤ) (c : ℤ) :
         by_contra hcs
         rw [not_lt] at hcs
         rw [hb3] at hcs
-        omega
+        lia
     rw [hset]
     have h1 : es.sum = ∑ t ∈ range es.length, es[t]! := list_sum_eq_sum_range es
     have h2 : ∑ t ∈ range k, es[t]! = (es.take k).sum :=
@@ -708,7 +708,7 @@ lemma pureId_value {n : ℕ} (m : Fin (n + 1) → ℤ) (c : ℤ) :
       apply Finset.sum_congr rfl
       intro t ht
       rw [hesget t (Finset.mem_Ico.mp ht).2]
-    omega
+    lia
   have hE3 : ∀ t : ℕ, k ≤ t → t < vs.length →
       cntP m (fun y => c < y ∧ y < vs[t]!) = (es.take t).sum - (es.take k).sum := by
     intro t hkt ht
@@ -729,17 +729,17 @@ lemma pureId_value {n : ℕ} (m : Fin (n + 1) → ℤ) (c : ℤ) :
           exact absurd hcs (not_lt.mpr (hb3.mpr hsk))
         exact ⟨hks, (sorted_getElem!_lt_iff hp hn hs ht).mp hst⟩
       · rintro ⟨hks, hst⟩
-        have hs : s < vs.length := by omega
+        have hs : s < vs.length := by lia
         have hb3 : vs[s]! ≤ c ↔ s < k := sorted_getElem!_le_iff hp hn c hs
         have hcs : c < vs[s]! := by
           by_contra h
           rw [not_lt] at h
           rw [hb3] at h
-          omega
+          lia
         exact ⟨hs, hcs, (sorted_getElem!_lt_iff hp hn hs ht).mpr hst⟩
     rw [hset]
     have h1 : (es.take t).sum = ∑ s ∈ range t, es[s]! :=
-      list_sum_take_eq_sum_range es (by omega)
+      list_sum_take_eq_sum_range es (by lia)
     have h2 : ∑ s ∈ range k, es[s]! = (es.take k).sum :=
       (list_sum_take_eq_sum_range es hkes).symm
     rw [← Finset.sum_range_add_sum_Ico (fun s => es[s]!) hkt, h2] at h1
@@ -747,8 +747,8 @@ lemma pureId_value {n : ℕ} (m : Fin (n + 1) → ℤ) (c : ℤ) :
       apply Finset.sum_congr rfl
       intro s hs
       rw [Finset.mem_Ico] at hs
-      rw [hesget s (by omega)]
-    omega
+      rw [hesget s (by lia)]
+    lia
   have hreindex : ∑ v ∈ univ.image m, X ^ gc m c v * qq (eCnt m v) =
       ∑ t ∈ range vs.length, X ^ gc m c (vs[t]!) * qq es[t]! := by
     rw [sum_image_eq_sort_map_sum, ← hvs, list_map_sum_eq_sum_range]
@@ -763,7 +763,7 @@ lemma pureId_value {n : ℕ} (m : Fin (n + 1) → ℤ) (c : ℤ) :
     apply Finset.sum_congr rfl
     intro t ht
     rw [Finset.mem_range] at ht
-    have htl : t < vs.length := by omega
+    have htl : t < vs.length := by lia
     have hle : vs[t]! ≤ c := (sorted_getElem!_le_iff hp hn c htl).mpr ht
     have hgc : gc m c (vs[t]!) = cntP m (· < vs[t]!) + cntP m (c < ·) := by
       unfold gc
@@ -776,12 +776,12 @@ lemma pureId_value {n : ℕ} (m : Fin (n + 1) → ℤ) (c : ℤ) :
     apply Finset.sum_congr rfl
     intro t ht
     rw [Finset.mem_Ico] at ht
-    have htl : t < vs.length := by omega
+    have htl : t < vs.length := by lia
     have hle : ¬ vs[t]! ≤ c := by
       have hb3 : vs[t]! ≤ c ↔ t < k := sorted_getElem!_le_iff hp hn c htl
       intro h
       rw [hb3] at h
-      omega
+      lia
     have hgc : gc m c (vs[t]!) = cntP m (fun y => c < y ∧ y < vs[t]!) := by
       unfold gc
       rw [ite_eq_right hle]
@@ -904,7 +904,7 @@ lemma QL {n : ℕ} : ∀ (m : Fin (n + 1) → ℤ) (p : Fin (n + 1)),
       have hlt := i.is_lt
       ext
       simp only [Fin.val_zero]
-      omega
+      lia
     have hp : p = 0 := h1 p
     subst hp
     have he : eCnt m (m 0) = 1 := by

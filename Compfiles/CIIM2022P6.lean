@@ -33,11 +33,11 @@ snip begin
 lemma mul_le_self_pow {p v : ℕ} (hp : 2 ≤ p) (hv : 1 ≤ v) : v * p ≤ p ^ v := by
   have h1 : v ≤ 2 ^ (v - 1) := by
     have h := Nat.lt_two_pow_self (n := v - 1)
-    omega
+    lia
   have h2 : (2 : ℕ) ^ (v - 1) ≤ p ^ (v - 1) := Nat.pow_le_pow_left hp _
   have h3 : v ≤ p ^ (v - 1) := h1.trans h2
   calc v * p ≤ p ^ (v - 1) * p := Nat.mul_le_mul h3 le_rfl
-    _ = p ^ v := by rw [← pow_succ]; congr 1; omega
+    _ = p ^ v := by rw [← pow_succ]; congr 1; lia
 
 /-- Key combinatorial estimate. Let `P` be a finset of primes with multiplicities
 `v p ≥ 1`, and set `N = ∏ p ∈ P, p ^ v p`. Then the sum of `(∏ p ∈ S, p ^ v p) / N ^ |S|`
@@ -80,7 +80,7 @@ lemma sum_div_pow_le_one (P : Finset ℕ) (v : ℕ → ℕ) :
   have hqqpos' : (0 : ℚ) < qq := by exact_mod_cast hqqpos
   have hqq2 : 2 ≤ qq := by
     rw [hqqdef]
-    exact hp₀P.two_le.trans (Nat.le_self_pow (by omega : v p₀ ≠ 0) p₀)
+    exact hp₀P.two_le.trans (Nat.le_self_pow (by lia : v p₀ ≠ 0) p₀)
   have ihP' : AM ≤ 1 := ih P' hP'ss hP'prime hP'v
   -- The per-term bound for `A` in terms of `AM`.
   have hA_le : A ≤ AM / (qq : ℚ) := by
@@ -93,7 +93,7 @@ lemma sum_div_pow_le_one (P : Finset ℕ) (v : ℕ → ℕ) :
     have hden : (M : ℚ) ^ S.card * qq ≤ (N : ℚ) ^ S.card := by
       have hdenN : M ^ S.card * qq ≤ N ^ S.card := by
         rw [hNeq, mul_pow]
-        have h1 : qq ≤ qq ^ S.card := Nat.le_self_pow (by omega : S.card ≠ 0) qq
+        have h1 : qq ≤ qq ^ S.card := Nat.le_self_pow (by lia : S.card ≠ 0) qq
         exact Nat.mul_le_mul le_rfl h1
       exact_mod_cast hdenN
     rw [div_div]
@@ -173,7 +173,7 @@ lemma sum_div_pow_le_one (P : Finset ℕ) (v : ℕ → ℕ) :
         rw [hMdef]
         exact Finset.single_le_prod' (fun i hi => Nat.one_le_pow _ _ (hP'prime i hi).pos) hp
       have hvp : 1 ≤ v p := hP'v p hp
-      have h2 : 2 ≤ p ^ v p := (hP'prime p hp).two_le.trans (Nat.le_self_pow (by omega : v p ≠ 0) p)
+      have h2 : 2 ≤ p ^ v p := (hP'prime p hp).two_le.trans (Nat.le_self_pow (by lia : v p ≠ 0) p)
       exact h2.trans h1
     have hsum5 : 5 ≤ qq + M := by
       rcases eq_or_lt_of_le hM2 with hM2eq | hM3
@@ -183,10 +183,10 @@ lemma sum_div_pow_le_one (P : Finset ℕ) (v : ℕ → ℕ) :
             rw [hMdef]
             exact Finset.single_le_prod' (fun i hi => Nat.one_le_pow _ _ (hP'prime i hi).pos) hp
           have hvp : 1 ≤ v p := hP'v p hp
-          have h2 : p ≤ p ^ v p := Nat.le_self_pow (by omega : v p ≠ 0) p
+          have h2 : p ≤ p ^ v p := Nat.le_self_pow (by lia : v p ≠ 0) p
           have h3 : 2 ≤ p := (hP'prime p hp).two_le
           rw [Finset.mem_singleton]
-          omega
+          lia
         have hP'2 : P' = {2} := by
           rcases Finset.subset_singleton_iff.1 hsub with h | h
           · exact absurd h hP'ne0
@@ -196,12 +196,12 @@ lemma sum_div_pow_le_one (P : Finset ℕ) (v : ℕ → ℕ) :
           exact Finset.notMem_singleton.1 h
         have hp₀3 : 3 ≤ p₀ := by
           have h := hp₀P.two_le
-          omega
+          lia
         have hqq3 : 3 ≤ qq := by
           rw [hqqdef]
-          exact hp₀3.trans (Nat.le_self_pow (by omega : v p₀ ≠ 0) p₀)
-        omega
-      · omega
+          exact hp₀3.trans (Nat.le_self_pow (by lia : v p₀ ≠ 0) p₀)
+        lia
+      · lia
     have h1 : (1 + A) * (1 + 1 / (M : ℚ)) ≤ (1 + 1 / (qq : ℚ)) * (1 + 1 / (M : ℚ)) := by
       have h2 : (0 : ℚ) ≤ 1 + 1 / (M : ℚ) := by positivity
       gcongr
@@ -231,7 +231,7 @@ lemma prod_factorization_le (n : ℕ) (hn : 0 < n) :
     ∏ p ∈ (n + 1).primeFactors, ((Nat.factorial n).factorization p + (n + 1).factorization p + 1)
       ≤ 2 * ∏ p ∈ (n + 1).primeFactors, ((Nat.factorial n).factorization p + 1) := by
   set P : Finset ℕ := (n + 1).primeFactors with hPdef
-  have hn1 : n + 1 ≠ 0 := by omega
+  have hn1 : n + 1 ≠ 0 := by lia
   have hpP : ∀ p ∈ P, p.Prime := fun p hp => (Nat.mem_primeFactors.1 hp).1
   have hwP : ∀ p ∈ P, 1 ≤ (n + 1).factorization p := fun p hp =>
     (hpP p hp).factorization_pos_of_dvd hn1 (Nat.mem_primeFactors.1 hp).2.1
@@ -243,29 +243,29 @@ lemma prod_factorization_le (n : ℕ) (hn : 0 < n) :
     have hpp : p.Prime := hpP p hp
     rcases le_or_gt p n with hpn | hpn
     · have hlog : Nat.log p n < n + 1 := by
-        refine (Nat.log_lt_iff_lt_pow hpp.one_lt (x := n + 1) (y := n) (by omega : n ≠ 0)).2 ?_
+        refine (Nat.log_lt_iff_lt_pow hpp.one_lt (x := n + 1) (y := n) (by lia : n ≠ 0)).2 ?_
         calc n < 2 ^ n := Nat.lt_two_pow_self
-          _ ≤ 2 ^ (n + 1) := pow_le_pow_right' (by omega : 1 ≤ 2) (by omega : n ≤ n + 1)
+          _ ≤ 2 ^ (n + 1) := pow_le_pow_right' (by lia : 1 ≤ 2) (by lia : n ≤ n + 1)
           _ ≤ p ^ (n + 1) := Nat.pow_le_pow_left hpp.two_le _
       have h1 : n / p ≤ (Nat.factorial n).factorization p := by
         rw [Nat.factorization_factorial hpp hlog]
         have hmem : (1 : ℕ) ∈ Finset.Ico 1 (n + 1) := by
           rw [Finset.mem_Ico]
-          exact ⟨le_refl 1, by omega⟩
+          exact ⟨le_refl 1, by lia⟩
         have h2 := Finset.single_le_sum (f := fun i => n / p ^ i) (fun i _ => Nat.zero_le _) hmem
         rwa [pow_one] at h2
       have h2 : n % p + p * (n / p) = n := Nat.mod_add_div n p
       have h3 : n % p < p := Nat.mod_lt n hpp.pos
-      have h4 : n + 1 - p ≤ p * (n / p) := by omega
+      have h4 : n + 1 - p ≤ p * (n / p) := by lia
       have h5 : p * (n / p) ≤ p * (Nat.factorial n).factorization p := Nat.mul_le_mul le_rfl h1
-      calc n + 1 = (n + 1 - p) + p := by omega
+      calc n + 1 = (n + 1 - p) + p := by lia
         _ ≤ p * (n / p) + p := Nat.add_le_add_right h4 _
         _ ≤ p * (Nat.factorial n).factorization p + p := Nat.add_le_add_right h5 _
         _ = p * ((Nat.factorial n).factorization p + 1) := by ring
     · calc n + 1 ≤ p := hpn
         _ ≤ p * ((Nat.factorial n).factorization p + 1) := by
           have h2 : p * 1 ≤ p * ((Nat.factorial n).factorization p + 1) :=
-            Nat.mul_le_mul le_rfl (by omega)
+            Nat.mul_le_mul le_rfl (by lia)
           simpa using h2
   -- Now prove the inequality in `ℚ` and cast back.
   have key : ((∏ p ∈ P, (((Nat.factorial n).factorization p + (n + 1).factorization p + 1 : ℕ) : ℚ))
@@ -274,7 +274,7 @@ lemma prod_factorization_le (n : ℕ) (hn : 0 < n) :
     have hNpos : (0 : ℚ) < (N : ℚ) := by
       have h : 0 < N := by
         rw [hNN]
-        omega
+        lia
       exact_mod_cast h
     -- Per-factor estimate: `b + w + 1 ≤ (b + 1) * (1 + w * p / N)`.
     have h1 : ∀ p ∈ P, (((Nat.factorial n).factorization p + (n + 1).factorization p + 1 : ℕ) : ℚ)
@@ -354,7 +354,7 @@ snip end
 
 problem ciim2022_p6 (n : ℕ) (hn : 0 < n) :
     d (Nat.factorial (n + 1)) ≤ 2 * d (Nat.factorial n) := by
-  have hn1 : n + 1 ≠ 0 := by omega
+  have hn1 : n + 1 ≠ 0 := by lia
   have hfn : (Nat.factorial n) ≠ 0 := Nat.factorial_ne_zero n
   have hfn1 : (Nat.factorial (n + 1)) ≠ 0 := Nat.factorial_ne_zero (n + 1)
   have hfact : ∀ p : ℕ, (Nat.factorial (n + 1)).factorization p

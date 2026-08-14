@@ -159,14 +159,14 @@ lemma obsValues_eq_image {n : ℕ} {a : Arrangement n} {Q s : Finset (Fin (2 * n
 (the empty set if it does not fit). -/
 def window (n k j : ℕ) : Finset (Fin (2 * n)) :=
   if h : j + k ≤ 2 * n then
-    (range k).attach.image fun ⟨t, ht⟩ ↦ ⟨j + t, by have : t < k := mem_range.1 ht; omega⟩
+    (range k).attach.image fun ⟨t, ht⟩ ↦ ⟨j + t, by have : t < k := mem_range.1 ht; lia⟩
   else ∅
 
 lemma card_window {n k j : ℕ} (h : j + k ≤ 2 * n) : (window n k j).card = k := by
   rw [window, dite_eq_left h, card_image_of_injOn, card_attach, card_range]
   intro ⟨a, ha⟩ _ ⟨b, hb⟩ _ hab
   simp only [Fin.mk.injEq] at hab
-  have : a = b := by omega
+  have : a = b := by lia
   subst this
   rfl
 
@@ -178,24 +178,24 @@ lemma mem_window {n k j : ℕ} (h : j + k ≤ 2 * n) {x : Fin (2 * n)} :
   · rintro ⟨t, ht, rfl⟩
     have : t < k := mem_range.1 ht
     simp only
-    omega
+    lia
   · rintro ⟨h1, h2⟩
-    exact ⟨x.val - j, by rw [mem_range]; omega,
-      Fin.ext (by simp only; omega)⟩
+    exact ⟨x.val - j, by rw [mem_range]; lia,
+      Fin.ext (by simp only; lia)⟩
 
 /-- The `k - 1` positions strictly between `i` and `i + k`
 (the empty set if they do not fit). -/
 def midWindow (n k i : ℕ) : Finset (Fin (2 * n)) :=
   if h : i + k ≤ 2 * n then
     (range (k - 1)).attach.image fun ⟨t, ht⟩ ↦ ⟨i + 1 + t, by
-      have : t < k - 1 := mem_range.1 ht; omega⟩
+      have : t < k - 1 := mem_range.1 ht; lia⟩
   else ∅
 
 lemma card_midWindow {n k i : ℕ} (h : i + k ≤ 2 * n) : (midWindow n k i).card = k - 1 := by
   rw [midWindow, dite_eq_left h, card_image_of_injOn, card_attach, card_range]
   intro ⟨a, ha⟩ _ ⟨b, hb⟩ _ hab
   simp only [Fin.mk.injEq] at hab
-  have : a = b := by omega
+  have : a = b := by lia
   subst this
   rfl
 
@@ -207,24 +207,24 @@ lemma mem_midWindow {n k i : ℕ} (h : i + k ≤ 2 * n) {x : Fin (2 * n)} :
   · rintro ⟨t, ht, rfl⟩
     have : t < k - 1 := mem_range.1 ht
     simp only
-    omega
+    lia
   · rintro ⟨h1, h2⟩
-    exact ⟨x.val - (i + 1), by rw [mem_range]; omega,
-      Fin.ext (by simp only; omega)⟩
+    exact ⟨x.val - (i + 1), by rw [mem_range]; lia,
+      Fin.ext (by simp only; lia)⟩
 
 lemma midWindow_subset_window {n k i : ℕ} (h : i + k ≤ 2 * n) :
     midWindow n k i ⊆ window n k i := by
   intro x hx
   rw [mem_midWindow h] at hx
   rw [mem_window h]
-  omega
+  lia
 
 lemma midWindow_subset_window_succ {n k i : ℕ} (h : i + k ≤ 2 * n) (h' : i + 1 + k ≤ 2 * n) :
     midWindow n k i ⊆ window n k (i + 1) := by
   intro x hx
   rw [mem_midWindow h] at hx
   rw [mem_window h']
-  omega
+  lia
 
 /-- The label the player can deduce at position `i`, computed from observations
 `i` and `i + 1` (junk value `0` when those observations are not available). -/
@@ -258,7 +258,7 @@ lemma pairSet_exists {n k : ℕ} (hk : 2 ≤ k) (hkn : k ≤ n)
       rw [card_sdiff, card_univ, Fintype.card_fin, inter_univ,
         card_insert_of_notMem (by simp only [mem_singleton]; exact posOf_ne hpq),
         card_singleton]
-      omega)
+      lia)
   have hdis : Disjoint ({posOf n k p, posOf n k q} : Finset (Fin (2 * n))) u := by
     rw [Finset.disjoint_left]
     intro x hxP hxu
@@ -268,7 +268,7 @@ lemma pairSet_exists {n k : ℕ} (hk : 2 ≤ k) (hkn : k ≤ n)
   rw [card_union_of_disjoint hdis,
     card_insert_of_notMem (by simp only [mem_singleton]; exact posOf_ne hpq),
     card_singleton, hu2]
-  omega
+  lia
 
 /-- A set of `k` positions containing the two given (distinct) positions. -/
 noncomputable def pairSet (n k : ℕ) (hk : 2 ≤ k) (hkn : k ≤ n)
@@ -307,7 +307,7 @@ lemma winStrat_valid (n k : ℕ) [NeZero n] (hk : 2 ≤ k) (hkn : k ≤ n) :
   · next h => exact card_window h
   · split
     · exact pairSet_card hk hkn _
-    · exact card_window (by omega)
+    · exact card_window (by lia)
 
 /-- The winning strategy specialized to `k < n`. -/
 noncomputable abbrev slideStrat (n k : ℕ) [NeZero n] (hk : 2 ≤ k) (hkn : k < n) : Strategy n :=
@@ -337,7 +337,7 @@ lemma slideStrat_of_ge {n k : ℕ} [NeZero n] (hk : 2 ≤ k) (hkn : k < n)
       pairSet n k hk (le_of_lt hkn) h₂.choose h₂.choose_spec.choose
         h₂.choose_spec.choose_spec.1 := by
   simp only [slideStrat, winStrat]
-  rw [ite_eq_right (by omega), dite_eq_left h₂]
+  rw [ite_eq_right (by lia), dite_eq_left h₂]
 
 /-- Facts about the play of the sliding strategy, while no win has occurred. -/
 lemma slide_play_facts {n k : ℕ} [NeZero n] (hk : 2 ≤ k) (hkn : k < n)
@@ -351,16 +351,16 @@ lemma slide_play_facts {n k : ℕ} [NeZero n] (hk : 2 ≤ k) (hkn : k < n)
     (∀ j' (_hj' : j' < j),
       ((window n k j').image (play (slideStrat n k hk hkn) W j').arr).card = k) := by
   induction j with
-  | zero => exact ⟨rfl, rfl, fun i hi => by omega, fun j' hj' => by omega⟩
+  | zero => exact ⟨rfl, rfl, fun i hi => by lia, fun j' hj' => by lia⟩
   | succ j ih =>
-    have hjM : j ≤ 2 * n - k + 1 := by omega
+    have hjM : j ≤ 2 * n - k + 1 := by lia
     obtain ⟨won_j, len_j, hist_j, inj_j⟩ := ih hjM
     have nwonj : ¬ (play (slideStrat n k hk hkn) W j).won := Bool.eq_false_iff.1 won_j
-    have hbj : j + k ≤ 2 * n := by omega
+    have hbj : j + k ≤ 2 * n := by lia
     have hQ : (slideStrat n k hk hkn) (play (slideStrat n k hk hkn) W j).hist =
         window n k j := by
       have e := slideStrat_of_lt hk hkn (hist := (play (slideStrat n k hk hkn) W j).hist)
-        (by rw [len_j]; omega)
+        (by rw [len_j]; lia)
       rw [len_j] at e
       exact e
     have hinj : ((window n k j).image (play (slideStrat n k hk hkn) W j).arr).card = k := by
@@ -371,7 +371,7 @@ lemma slide_play_facts {n k : ℕ} [NeZero n] (hk : 2 ≤ k) (hkn : k < n)
         exact hne
       have hwon : (play (slideStrat n k hk hkn) W (j + 1)).won = true := by
         rw [play_succ, step_apply_of_not_won nwonj, hQ, ite_eq_right hcond]
-      exact hM (won_mono hwon (by omega))
+      exact hM (won_mono hwon (by lia))
     have heq : play (slideStrat n k hk hkn) W (j + 1) =
         { arr := (play (slideStrat n k hk hkn) W j).arr ∘
             W.perm (play (slideStrat n k hk hkn) W j).hist (window n k j)
@@ -384,10 +384,10 @@ lemma slide_play_facts {n k : ℕ} [NeZero n] (hk : 2 ≤ k) (hkn : k < n)
     · intro i hi
       rw [heq]
       rcases lt_or_eq_of_le (Nat.lt_succ_iff.1 hi) with hi' | hi''
-      · rw [List.getElem?_append_left (by omega)]
+      · rw [List.getElem?_append_left (by lia)]
         exact hist_j i hi'
       · subst hi''
-        rw [List.getElem?_append_right (by omega), len_j, Nat.sub_self,
+        rw [List.getElem?_append_right (by lia), len_j, Nat.sub_self,
           List.getElem?_cons_zero]
     · intro j' hj'
       rcases lt_or_eq_of_le (Nat.lt_succ_iff.1 hj') with hj'' | hj''
@@ -403,15 +403,15 @@ lemma slide_arr_step {n k : ℕ} [NeZero n] (hk : 2 ≤ k) (hkn : k < n)
     (play (slideStrat n k hk hkn) W (j + 1)).arr =
       (play (slideStrat n k hk hkn) W j).arr ∘
         W.perm (play (slideStrat n k hk hkn) W j).hist (window n k j) := by
-  have won_j := (slide_play_facts hk hkn W hW hM j (by omega)).1
-  have len_j := (slide_play_facts hk hkn W hW hM j (by omega)).2.1
-  have inj_j := (slide_play_facts hk hkn W hW hM (j + 1) (by omega)).2.2.2 j
+  have won_j := (slide_play_facts hk hkn W hW hM j (by lia)).1
+  have len_j := (slide_play_facts hk hkn W hW hM j (by lia)).2.1
+  have inj_j := (slide_play_facts hk hkn W hW hM (j + 1) (by lia)).2.2.2 j
     (Nat.lt_succ_self j)
-  have hbj : j + k ≤ 2 * n := by omega
+  have hbj : j + k ≤ 2 * n := by lia
   have hQ : (slideStrat n k hk hkn) (play (slideStrat n k hk hkn) W j).hist =
       window n k j := by
     have e := slideStrat_of_lt hk hkn (hist := (play (slideStrat n k hk hkn) W j).hist)
-      (by rw [len_j]; omega)
+      (by rw [len_j]; lia)
     rw [len_j] at e
     exact e
   rw [play_succ, step_apply_of_not_won (Bool.eq_false_iff.1 won_j), hQ,
@@ -430,17 +430,17 @@ lemma slide_arr_frozen {n k : ℕ} [NeZero n] (hk : 2 ≤ k) (hkn : k < n)
   | step hle ih =>
     rename_i m
     rw [Nat.succ_eq_add_one] at hj2 ⊢
-    have hstep := slide_arr_step hk hkn W hW hM m (by omega)
+    have hstep := slide_arr_step hk hkn W hW hM m (by lia)
     have e1 : (play (slideStrat n k hk hkn) W (m + 1)).arr x =
         (play (slideStrat n k hk hkn) W m).arr x := by
       rw [hstep]
       have hfix : W.perm (play (slideStrat n k hk hkn) W m).hist (window n k m) x = x := by
         apply hW.2
-        rw [mem_window (by omega : m + k ≤ 2 * n)]
+        rw [mem_window (by lia : m + k ≤ 2 * n)]
         have hle2 : x.val + 1 ≤ m := hle
-        omega
+        lia
       rw [Function.comp_apply, hfix]
-    rw [e1, ih (by omega)]
+    rw [e1, ih (by lia)]
 
 /-- The label computed from the observations is the actual label. -/
 lemma slide_labelAt_eq {n k : ℕ} [NeZero n] (hk : 2 ≤ k) (hkn : k < n)
@@ -452,28 +452,28 @@ lemma slide_labelAt_eq {n k : ℕ} [NeZero n] (hk : 2 ≤ k) (hkn : k < n)
   obtain ⟨won_M, len_M, hist_M, inj_M⟩ :=
     slide_play_facts hk hkn W hW hM (2 * n - k + 1) (le_refl _)
   set i := x.val with hi_def
-  have hbi : i + k ≤ 2 * n := by omega
-  have hbi1 : i + 1 + k ≤ 2 * n := by omega
+  have hbi : i + k ≤ 2 * n := by lia
+  have hbi1 : i + 1 + k ≤ 2 * n := by lia
   have hcond : i + 1 < ((play (slideStrat n k hk hkn) W (2 * n - k + 1)).hist).length ∧
       i + k ≤ 2 * n := by
     rw [len_M]
-    omega
+    lia
   have get_i : ((play (slideStrat n k hk hkn) W (2 * n - k + 1)).hist).get
       ⟨i, Nat.lt_of_succ_lt hcond.1⟩ =
       (window n k i, reveal ((play (slideStrat n k hk hkn) W i).arr) (window n k i)) := by
-    have h := hist_M i (by omega)
+    have h := hist_M i (by lia)
     rw [List.getElem?_eq_getElem (Nat.lt_of_succ_lt hcond.1)] at h
     exact Option.some.inj h
   have get_i1 : ((play (slideStrat n k hk hkn) W (2 * n - k + 1)).hist).get
       ⟨i + 1, hcond.1⟩ =
       (window n k (i + 1), reveal ((play (slideStrat n k hk hkn) W (i + 1)).arr)
         (window n k (i + 1))) := by
-    have h := hist_M (i + 1) (by omega)
+    have h := hist_M (i + 1) (by lia)
     rw [List.getElem?_eq_getElem hcond.1] at h
     exact Option.some.inj h
-  have hinj_i := inj_M i (by omega)
-  have hinj_i1 := inj_M (i + 1) (by omega)
-  have harr := slide_arr_step hk hkn W hW hM i (by omega)
+  have hinj_i := inj_M i (by lia)
+  have hinj_i1 := inj_M (i + 1) (by lia)
+  have harr := slide_arr_step hk hkn W hW hM i (by lia)
   have hS : (window n k i).image (play (slideStrat n k hk hkn) W (i + 1)).arr =
       (window n k i).image (play (slideStrat n k hk hkn) W i).arr := by
     rw [harr, ← image_image, image_eq_of_perm_fix (hW.2 _ _)]
@@ -507,23 +507,23 @@ lemma slide_labelAt_eq {n k : ℕ} [NeZero n] (hk : 2 ≤ k) (hkn : k < n)
   have hcard1 : (((window n k i).image (play (slideStrat n k hk hkn) W i).arr) \
       ((midWindow n k i).image (play (slideStrat n k hk hkn) W (i + 1)).arr)).card = 1 := by
     rw [card_sdiff, inter_eq_left.2 hTsub, hinj_i, hTcard]
-    omega
+    lia
   obtain ⟨a, ha⟩ := card_eq_one.1 hcard1
   have hmem_S : (play (slideStrat n k hk hkn) W (i + 1)).arr x ∈
       (window n k i).image (play (slideStrat n k hk hkn) W i).arr := by
     rw [← hS]
     apply mem_image_of_mem
     rw [mem_window hbi]
-    omega
+    lia
   have hnmem_T : ¬ (play (slideStrat n k hk hkn) W (i + 1)).arr x ∈
       (midWindow n k i).image (play (slideStrat n k hk hkn) W (i + 1)).arr := by
     intro hmem
     obtain ⟨y, hy, hyv⟩ := mem_image.1 hmem
     have hyw : y ∈ window n k i := midWindow_subset_window hbi hy
-    have hxw : x ∈ window n k i := by rw [mem_window hbi]; omega
+    have hxw : x ∈ window n k i := by rw [mem_window hbi]; lia
     have heq : y = x := hinjOn_succ hyw hxw hyv
     rw [heq, mem_midWindow hbi] at hy
-    omega
+    lia
   have hmem_diff : (play (slideStrat n k hk hkn) W (i + 1)).arr x ∈
       (window n k i).image (play (slideStrat n k hk hkn) W i).arr \
       (midWindow n k i).image (play (slideStrat n k hk hkn) W (i + 1)).arr :=
@@ -544,14 +544,14 @@ lemma slideStrat_wins {n k : ℕ} [NeZero n] (hk : 2 ≤ k) (hkn : k < n)
     (W : Wizard n) (hW : W.Valid) :
     (play (slideStrat n k hk hkn) W (2 * n - k + 2)).won := by
   by_cases hM : (play (slideStrat n k hk hkn) W (2 * n - k + 1)).won
-  · exact won_mono hM (by omega)
+  · exact won_mono hM (by lia)
   · have histMlen := (slide_play_facts hk hkn W hW hM (2 * n - k + 1) (le_refl _)).2.1
     have hpg : ∃ p q : Fin (2 * n - k), p ≠ q ∧
         labelAt n k ((play (slideStrat n k hk hkn) W (2 * n - k + 1)).hist) p.val =
         labelAt n k ((play (slideStrat n k hk hkn) W (2 * n - k + 1)).hist) q.val := by
       have hcard : Fintype.card (Fin n) < Fintype.card (Fin (2 * n - k)) := by
         rw [Fintype.card_fin, Fintype.card_fin]
-        omega
+        lia
       obtain ⟨x, y, hxy, hlab⟩ := Fintype.exists_ne_map_eq_of_card_lt
         (fun i : Fin (2 * n - k) ↦
           labelAt n k ((play (slideStrat n k hk hkn) W (2 * n - k + 1)).hist) i.val)
@@ -565,14 +565,14 @@ lemma slideStrat_wins {n k : ℕ} [NeZero n] (hk : 2 ≤ k) (hkn : k < n)
       hpg.choose_spec.choose_spec.2
     have hQ : (slideStrat n k hk hkn) (play (slideStrat n k hk hkn) W (2 * n - k + 1)).hist =
         pairSet n k hk (le_of_lt hkn) p q hpq :=
-      slideStrat_of_ge hk hkn (by rw [histMlen]; omega) hpg
+      slideStrat_of_ge hk hkn (by rw [histMlen]; lia) hpg
     have harrp : (play (slideStrat n k hk hkn) W (2 * n - k + 1)).arr (posOf n k p) =
         labelAt n k ((play (slideStrat n k hk hkn) W (2 * n - k + 1)).hist) p.val := by
       have h1 := slide_labelAt_eq hk hkn W hW hM (posOf n k p) (by
         rw [posOf_val]; exact p.isLt)
       have h2 := slide_arr_frozen hk hkn W hW hM (posOf n k p) (by
         rw [posOf_val]; exact p.isLt) (2 * n - k + 1) (by
-        rw [posOf_val]; have := p.isLt; omega) (le_refl _)
+        rw [posOf_val]; have := p.isLt; lia) (le_refl _)
       exact h2.trans h1.symm
     have harrq : (play (slideStrat n k hk hkn) W (2 * n - k + 1)).arr (posOf n k q) =
         labelAt n k ((play (slideStrat n k hk hkn) W (2 * n - k + 1)).hist) q.val := by
@@ -580,7 +580,7 @@ lemma slideStrat_wins {n k : ℕ} [NeZero n] (hk : 2 ≤ k) (hkn : k < n)
         rw [posOf_val]; exact q.isLt)
       have h2 := slide_arr_frozen hk hkn W hW hM (posOf n k q) (by
         rw [posOf_val]; exact q.isLt) (2 * n - k + 1) (by
-        rw [posOf_val]; have := q.isLt; omega) (le_refl _)
+        rw [posOf_val]; have := q.isLt; lia) (le_refl _)
       exact h2.trans h1.symm
     have hcond : ¬ ((pairSet n k hk (le_of_lt hkn) p q hpq).image
         (play (slideStrat n k hk hkn) W (2 * n - k + 1)).arr).card =
@@ -627,12 +627,12 @@ lemma exists_perm_injOn {n : ℕ} (a : Fin (2 * n) → Fin n)
     obtain ⟨i, hiS, hi⟩ := Finset.mem_image.mp hℓS
     have h2card : 1 < (univ.filter fun i ↦ a i = ℓ).card := by
       have hv := hvalid ℓ
-      omega
+      lia
     obtain ⟨j, hjf, hji⟩ := Finset.exists_mem_ne h2card i
     have hj : a j = ℓ := (Finset.mem_filter.mp hjf).2
     have hjS : j ∉ S := fun hjS' => hji ((hSa hiS hjS' (hi.trans hj.symm)).symm)
     exact Finset.mem_image.mpr ⟨j, Finset.mem_compl.mpr hjS, hj⟩
-  have hSc : Sᶜ.card = n := by rw [Finset.card_compl, hcard2n, hS]; omega
+  have hSc : Sᶜ.card = n := by rw [Finset.card_compl, hcard2n, hS]; lia
   have hScInj : Set.InjOn a ↑Sᶜ :=
     Finset.card_image_iff.mp (by rw [hScimg, huniv]; exact hSc.symm)
   -- Step 3: `a` maps `Qᶜ` onto `univ`, and is injective on it.
@@ -660,7 +660,7 @@ lemma exists_perm_injOn {n : ℕ} (a : Fin (2 * n) → Fin n)
         exact absurd hA2 (Finset.disjoint_left.mp hdisj hA1)
       · exact Finset.mem_image.mpr ⟨i, Finset.mem_compl.mpr hiq, hi⟩
     · exact Finset.mem_image.mpr ⟨j, Finset.mem_compl.mpr hjq, hj⟩
-  have hQc : Qᶜ.card = n := by rw [Finset.card_compl, hcard2n, hQ]; omega
+  have hQc : Qᶜ.card = n := by rw [Finset.card_compl, hcard2n, hQ]; lia
   have hQcInj : Set.InjOn a ↑Qᶜ :=
     Finset.card_image_iff.mp (by rw [hQcimg, huniv]; exact hQc.symm)
   -- Step 4: the set `T` of labels already hit by `Qn \ Q`, and card computations.
@@ -677,10 +677,10 @@ lemma exists_perm_injOn {n : ℕ} (a : Fin (2 * n) → Fin n)
   have hQQnT : (Q \ Qn).card = T.card := h1.trans hTcard2.symm
   have hcle : (Q ∩ Qn).card ≤ n := by
     have hle := Finset.card_le_card (Finset.inter_subset_left : Q ∩ Qn ⊆ Q)
-    omega
+    lia
   have hcunivT : (Q ∩ Qn).card = (univ \ T).card := by
     rw [Finset.card_univ_sdiff, hcardn, hTcard2]
-    omega
+    lia
   -- Step 5: the "target labeling" `d`, which is bijective on `Q`.
   have e1 : ↥(Q ∩ Qn) ≃ ↥(univ \ T) :=
     Fintype.equivOfCardEq (by rw [Fintype.card_coe, Fintype.card_coe]; exact hcunivT)
@@ -809,7 +809,7 @@ noncomputable def initEquiv₁ {n : ℕ} (σ : Strategy n) (hσ : σ.Valid n) : 
 /-- The equivalence between the complement of the first query and the labels. -/
 noncomputable def initEquiv₂ {n : ℕ} (σ : Strategy n) (hσ : σ.Valid n) : ↥(σ [])ᶜ ≃ Fin n :=
   Fintype.equivOfCardEq (by
-    rw [Fintype.card_coe, card_compl, hσ, Fintype.card_fin (2 * n), Fintype.card_fin n]; omega)
+    rw [Fintype.card_coe, card_compl, hσ, Fintype.card_fin (2 * n), Fintype.card_fin n]; lia)
 
 /-- The wizard's initial arrangement: a bijection of each of `σ []` and its
 complement onto the labels. -/
@@ -1012,15 +1012,15 @@ problem usa2016_p6 (n k : ℕ) (hk : 2 ≤ k) (hkn : k ≤ n) : Winnable n k ↔
   constructor
   · rintro ⟨m, hm, σ, hσ, hwin⟩
     by_contra hnk
-    have hkn' : k = n := by omega
+    have hkn' : k = n := by lia
     subst hkn'
     obtain ⟨W, hW, hnot⟩ := not_winnable_of_eq σ hσ
     have h1 := hwin W hW
     rw [hnot m] at h1
     exact Bool.noConfusion h1
   · intro h
-    have : NeZero n := ⟨by omega⟩
-    exact ⟨2 * n - k + 2, by omega, slideStrat n k hk h, winStrat_valid n k hk (le_of_lt h),
+    have : NeZero n := ⟨by lia⟩
+    exact ⟨2 * n - k + 2, by lia, slideStrat n k hk h, winStrat_valid n k hk (le_of_lt h),
       fun W hW ↦ slideStrat_wins hk h W hW⟩
 
 end Usa2016P6

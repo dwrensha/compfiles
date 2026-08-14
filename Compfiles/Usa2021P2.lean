@@ -195,11 +195,11 @@ lemma stepInv_iterate {σ₀ : P.V × P.V × Bool} (h₀ : P.Valid σ₀) :
   | succ i ih =>
     intro j hij
     have h1 : P.stepInv (P.step^[j] σ₀) = P.step^[j - 1] σ₀ := by
-      conv_lhs => rw [show j = j - 1 + 1 by omega, Function.iterate_succ_apply']
+      conv_lhs => rw [show j = j - 1 + 1 by lia, Function.iterate_succ_apply']
       rw [P.stepInv_step (P.valid_walk h₀ _)]
-    rw [Function.iterate_succ_apply, h1, ih (by omega : i ≤ j - 1)]
+    rw [Function.iterate_succ_apply, h1, ih (by lia : i ≤ j - 1)]
     congr 1
-    omega
+    lia
 
 /-- If two iterates of the walk agree, the orbit has closed up with period
 `j - i`. -/
@@ -221,12 +221,12 @@ lemma exists_period {σ₀ : P.V × P.V × Bool} (h₀ : P.Valid σ₀) :
       (t := (Finset.univ : Finset {σ : P.V × P.V × Bool // P.Valid σ}))
       (f := fun k ↦ (⟨P.step^[k] σ₀, P.valid_walk h₀ k⟩ :
         {σ : P.V × P.V × Bool // P.Valid σ}))
-      (by simp only [Finset.card_univ, Finset.card_range]; omega)
+      (by simp only [Finset.card_univ, Finset.card_range]; lia)
       (fun _ _ ↦ Finset.mem_univ _)
   have heq' : P.step^[i] σ₀ = P.step^[j] σ₀ := congrArg Subtype.val heq
   rcases le_total i j with hij | hji
-  · exact ⟨j - i, by omega, P.eq_of_walk_eq h₀ hij heq'⟩
-  · exact ⟨i - j, by omega, P.eq_of_walk_eq h₀ hji heq'.symm⟩
+  · exact ⟨j - i, by lia, P.eq_of_walk_eq h₀ hij heq'⟩
+  · exact ⟨i - j, by lia, P.eq_of_walk_eq h₀ hji heq'.symm⟩
 
 /-- The (minimal) period of the walk from `σ₀`. -/
 noncomputable def period {σ₀ : P.V × P.V × Bool} (h₀ : P.Valid σ₀) : ℕ :=
@@ -243,7 +243,7 @@ lemma period_ne_of_lt {σ₀ : P.V × P.V × Bool} (h₀ : P.Valid σ₀) {k : �
     (hk : k < P.period h₀) : P.step^[k] σ₀ ≠ σ₀ := by
   intro h'
   have hle : P.period h₀ ≤ k := Nat.find_min' (P.exists_period h₀) ⟨hk0, h'⟩
-  omega
+  lia
 
 /-- The iterates of the walk within one period are pairwise distinct. -/
 lemma walk_inj_of_lt_period {σ₀ : P.V × P.V × Bool} (h₀ : P.Valid σ₀) {i j : ℕ}
@@ -252,17 +252,17 @@ lemma walk_inj_of_lt_period {σ₀ : P.V × P.V × Bool} (h₀ : P.Valid σ₀) 
   rcases le_total i j with hij | hji
   · rcases eq_or_lt_of_le hij with rfl | hlt
     · rfl
-    · exact absurd (P.eq_of_walk_eq h₀ hij h) (P.period_ne_of_lt h₀ (by omega) (by omega))
+    · exact absurd (P.eq_of_walk_eq h₀ hij h) (P.period_ne_of_lt h₀ (by lia) (by lia))
   · rcases eq_or_lt_of_le hji with rfl | hlt
     · rfl
-    · exact absurd (P.eq_of_walk_eq h₀ hji h.symm) (P.period_ne_of_lt h₀ (by omega) (by omega))
+    · exact absurd (P.eq_of_walk_eq h₀ hji h.symm) (P.period_ne_of_lt h₀ (by lia) (by lia))
 
 /-- The period is at least two: one step never returns to the initial state. -/
 lemma one_lt_period {σ₀ : P.V × P.V × Bool} (h₀ : P.Valid σ₀) : 1 < P.period h₀ := by
   have hpos := P.period_pos h₀
   by_contra h
   push Not at h
-  have h1 : P.period h₀ = 1 := by omega
+  have h1 : P.period h₀ = 1 := by lia
   have heq := P.period_eq h₀
   rw [h1] at heq
   obtain ⟨u, v, p⟩ := σ₀
@@ -273,10 +273,10 @@ lemma one_lt_period {σ₀ : P.V × P.V × Bool} (h₀ : P.Valid σ₀) : 1 < P.
 lemma return_at_period_sub_one {σ₀ : P.V × P.V × Bool} (h₀ : P.Valid σ₀) :
     0 < P.period h₀ - 1 ∧ (P.step^[P.period h₀ - 1] σ₀).2.1 = σ₀.1 := by
   have h2 := P.one_lt_period h₀
-  refine ⟨by omega, ?_⟩
+  refine ⟨by lia, ?_⟩
   have hstep : P.step (P.step^[P.period h₀ - 1] σ₀) = σ₀ := by
     have h := P.period_eq h₀
-    rw [show P.period h₀ = P.period h₀ - 1 + 1 by omega,
+    rw [show P.period h₀ = P.period h₀ - 1 + 1 by lia,
       Function.iterate_succ_apply'] at h
     exact h
   have hInv : P.step^[P.period h₀ - 1] σ₀ = P.stepInv σ₀ :=
@@ -305,7 +305,7 @@ lemma retTime_min {σ₀ : P.V × P.V × Bool} (h₀ : P.Valid σ₀) {k : ℕ} 
     (hk : k < P.retTime h₀) : (P.step^[k] σ₀).2.1 ≠ σ₀.1 := by
   intro h
   have hle : P.retTime h₀ ≤ k := Nat.find_min' (P.exists_return h₀) ⟨hk0, h⟩
-  omega
+  lia
 
 lemma retTime_le_period_sub_one {σ₀ : P.V × P.V × Bool} (h₀ : P.Valid σ₀) :
     P.retTime h₀ ≤ P.period h₀ - 1 :=
@@ -335,7 +335,7 @@ theorem no_mirror {σ₀ : P.V × P.V × Bool} (h₀ : P.Valid σ₀) :
   have hcb : P.G.Adj b c := habc ▸ P.turn_adj hab p
   rcases Nat.lt_or_ge n 2 with hsmall | hbig
   · -- `n = 1`: consecutive states would force `b = c`, contradicting adjacency.
-    have hn1 : n = 1 := by omega
+    have hn1 : n = 1 := by lia
     rw [hn1, Function.iterate_succ_apply', hi] at hin
     have hbc : b = c := congrArg Prod.fst hin
     exact hcb.ne hbc
@@ -346,7 +346,7 @@ theorem no_mirror {σ₀ : P.V × P.V × Bool} (h₀ : P.Valid σ₀) :
         exact (P.turn_not_two_cycle hab p habc hcba).elim
       · cases q <;> cases p <;> simp_all
     have hpar : (P.step^[i + n] σ₀).2.2 = if Even n then p else !p := by
-      rw [show i + n = n + i by omega, Function.iterate_add_apply, P.parity_walk, hi]
+      rw [show i + n = n + i by lia, Function.iterate_add_apply, P.parity_walk, hi]
     have hq2 : (P.step^[i + n] σ₀).2.2 = q := by rw [hin]
     rw [hpar, hqp] at hq2
     have hnodd : ¬ Even n := by
@@ -355,7 +355,7 @@ theorem no_mirror {σ₀ : P.V × P.V × Bool} (h₀ : P.Valid σ₀) :
       cases p <;> simp at hq2
     have hn3 : 3 ≤ n := by
       rw [Nat.even_iff] at hnodd
-      omega
+      lia
     -- the mirror pair at `c`, with the strictly smaller gap `n - 2`
     set u := P.turn c b (!p) with hu
     have hcb' : P.G.Adj c b := hcb.symm
@@ -368,7 +368,7 @@ theorem no_mirror {σ₀ : P.V × P.V × Bool} (h₀ : P.Valid σ₀) :
       rw [Function.iterate_succ_apply', hi]
       exact Prod.ext rfl (Prod.ext habc rfl)
     have hin1 : P.step^[i + n - 1] σ₀ = (u, (c, p)) := by
-      have hnm1 : i + n - 1 + 1 = i + n := by omega
+      have hnm1 : i + n - 1 + 1 = i + n := by lia
       have hstep : P.step (P.step^[i + n - 1] σ₀) = (c, (b, q)) := by
         rw [← hnm1, Function.iterate_succ_apply'] at hin
         exact hin
@@ -381,8 +381,8 @@ theorem no_mirror {σ₀ : P.V × P.V × Bool} (h₀ : P.Valid σ₀) :
         rw [hu]
         exact P.turn_adj hcb' (!p)
       exact P.step_injective (P.valid_walk h₀ _) hvalid hstep2
-    exact IH (n - 2) (by omega) (i + 1) b c u (!p) p (by omega) hi1
-      (by rw [show i + 1 + (n - 2) = i + n - 1 by omega]; exact hin1) hu.symm hu_eq
+    exact IH (n - 2) (by lia) (i + 1) b c u (!p) p (by lia) hi1
+      (by rw [show i + 1 + (n - 2) = i + n - 1 by lia]; exact hin1) hu.symm hu_eq
 
 /-- In one period of the walk, any junction is entered at most three times: the
 (at most six) turns at `v` pair up into three mirror pairs, of which at most one
@@ -501,13 +501,13 @@ theorem arrivals_le_three {σ₀ : P.V × P.V × Bool} (h₀ : P.Valid σ₀) (v
       rcases Bool.eq_false_or_eq_true (P.step^[k₂] σ₀).2.2 with hbb | hbb <;>
         exact absurd hpa (by rw [hbb]; decide)
     rcases lt_or_gt_of_ne hne with hlt | hgt
-    · exact P.no_mirror h₀ (k₂ - k₁) k₁ _ v _ _ _ (by omega) htri1
-        (by rw [show k₁ + (k₂ - k₁) = k₂ by omega]; exact htri2) htp ha
+    · exact P.no_mirror h₀ (k₂ - k₁) k₁ _ v _ _ _ (by lia) htri1
+        (by rw [show k₁ + (k₂ - k₁) = k₂ by lia]; exact htri2) htp ha
     · have hk1lt : k₁ < P.period h₀ := hk₁.1
       have hwrap : P.step^[k₁ + (P.period h₀ - k₁ + k₂)] σ₀ = P.step^[k₂] σ₀ := by
-        have h1 : k₁ + (P.period h₀ - k₁ + k₂) = k₂ + P.period h₀ := by omega
+        have h1 : k₁ + (P.period h₀ - k₁ + k₂) = k₂ + P.period h₀ := by lia
         rw [h1, Function.iterate_add_apply, P.period_eq h₀]
-      exact P.no_mirror h₀ (P.period h₀ - k₁ + k₂) k₁ _ v _ _ _ (by omega) htri1
+      exact P.no_mirror h₀ (P.period h₀ - k₁ + k₂) k₁ _ v _ _ _ (by lia) htri1
         (by rw [hwrap]; exact htri2) htp ha
   have hmMcard : (M.image m).card = M.card :=
     Finset.card_image_of_injOn (Set.InjOn.mono (fun x hx ↦ hMT hx) hm_inj)
@@ -516,8 +516,8 @@ theorem arrivals_le_three {σ₀ : P.V × P.V × Bool} (h₀ : P.Valid σ₀) (v
       Finset.card_union_of_disjoint hdisj
     have hsub : M ∪ M.image m ⊆ T := Finset.union_subset hMT hmM_T
     have hle := Finset.card_le_card hsub
-    omega
-  have hFM : F.card ≤ 3 := by omega
+    lia
+  have hFM : F.card ≤ 3 := by lia
   exact hFM
 
 /-- The visitor enters any junction at most three times during her walk. -/
@@ -536,7 +536,7 @@ theorem entries_le_three {σ₀ : P.V × P.V × Bool} (h₀ : P.Valid σ₀) (v 
         exact h₀.ne hk.2
       · exact P.retTime_min h₀ (Nat.pos_of_ne_zero hk0) hk.1 (hk.2.trans hv)
     rw [hempty, Finset.card_empty]
-    omega
+    lia
   · rw [ite_eq_right hv]
     have hle : P.retTime h₀ ≤ P.period h₀ :=
       le_trans (P.retTime_le_period_sub_one h₀) (Nat.sub_le _ _)
@@ -584,7 +584,7 @@ def wangRotN : ℕ → ℕ → ℕ
   | _, _ => 0
 
 def wangRot (a b : Fin 10) : Fin 10 :=
-  ⟨wangRotN a.val b.val % 10, Nat.mod_lt _ (by omega)⟩
+  ⟨wangRotN a.val b.val % 10, Nat.mod_lt _ (by lia)⟩
 
 def wangPark : Park where
   V := Fin 10

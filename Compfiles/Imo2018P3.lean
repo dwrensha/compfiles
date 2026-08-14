@@ -125,10 +125,10 @@ private lemma min_sum : ∀ (V : Finset ℕ), (∀ x ∈ V, 1 ≤ x) →
         Finset.sum_erase_add V _ hMmem
       have hrange : ∑ i ∈ Finset.range V.card, (i + 1)
           = ∑ i ∈ Finset.range (V.card - 1), (i + 1) + V.card := by
-        conv_lhs => rw [show V.card = (V.card - 1) + 1 by omega, Finset.sum_range_succ]
-        omega
+        conv_lhs => rw [show V.card = (V.card - 1) + 1 by lia, Finset.sum_range_succ]
+        lia
       rw [herase] at key
-      omega
+      lia
 
 /-- `n` distinct positive integers with sum at most `1 + 2 + ⋯ + n` are exactly `{1, …, n}`. -/
 private lemma min_sum_eq (V : Finset ℕ) (hpos : ∀ x ∈ V, 1 ≤ x) :
@@ -150,12 +150,12 @@ private lemma min_sum_eq (V : Finset ℕ) (hpos : ∀ x ∈ V, 1 ≤ x) :
         Finset.sum_erase_add V _ hMmem
       have hrange : ∑ i ∈ Finset.range V.card, (i + 1)
           = ∑ i ∈ Finset.range (V.card - 1), (i + 1) + V.card := by
-        conv_lhs => rw [show V.card = (V.card - 1) + 1 by omega, Finset.sum_range_succ]
-        omega
+        conv_lhs => rw [show V.card = (V.card - 1) + 1 by lia, Finset.sum_range_succ]
+        lia
       have htoo_big : ∑ i ∈ Finset.range (V.card - 1), (i + 1) + M ≤ ∑ x ∈ V, x := by
         rw [← hsplit]
         exact Nat.add_le_add_right hkey M
-      omega
+      lia
     apply Finset.eq_of_subset_of_card_le
     · intro x hx
       exact Finset.mem_Icc.mpr ⟨hpos x hx, (V.le_max' x hx).trans hMle⟩
@@ -172,18 +172,18 @@ private lemma min_sum_ge (V : Finset ℕ) (m : ℕ) (hpos : ∀ x ∈ V, m < x) 
   have hinj : Set.InjOn (· - m) ↑V := by
     intro a ha b hb hab
     simp only [] at hab
-    have h1 := hpos a ha; have h2 := hpos b hb; omega
+    have h1 := hpos a ha; have h2 := hpos b hb; lia
   have hWcard : (V.image (· - m)).card = V.card := Finset.card_image_of_injOn hinj
   have hWpos : ∀ x ∈ V.image (· - m), 1 ≤ x := by
     intro x hx; rw [Finset.mem_image] at hx; obtain ⟨a, ha, rfl⟩ := hx
-    have := hpos a ha; omega
+    have := hpos a ha; lia
   have hmin := min_sum (V.image (· - m)) hWpos
   rw [hWcard, Finset.sum_image hinj] at hmin
   have hsplit : ∑ x ∈ V, x = (∑ a ∈ V, (a - m)) + V.card * m := by
     have hc : ∑ x ∈ V, x = ∑ a ∈ V, ((a - m) + m) := by
-      apply Finset.sum_congr rfl; intro a ha; have := hpos a ha; omega
+      apply Finset.sum_congr rfl; intro a ha; have := hpos a ha; lia
     rw [hc, Finset.sum_add_distrib, Finset.sum_const, smul_eq_mul]
-  omega
+  lia
 
 section
 variable (t : antipascal_triangle NR)
@@ -270,8 +270,8 @@ private lemma winner_val (x : Coords) (hx : x ∈ tri) (hb : x.row + 1 < NR) :
   have hd := t.antipascal x ⟨hb, (mem_tri.mp hx).2⟩
   unfold Nat.dist at hd
   by_cases hle : t.f (left_child x) ≤ t.f (right_child x)
-  · rw [winner, loser, ite_eq_left hle, ite_eq_left hle]; omega
-  · rw [winner, loser, ite_eq_right hle, ite_eq_right hle]; omega
+  · rw [winner, loser, ite_eq_left hle, ite_eq_left hle]; lia
+  · rw [winner, loser, ite_eq_right hle, ite_eq_right hle]; lia
 
 /-- Children of a valid parent lie in the triangle. -/
 private lemma left_child_mem {x : Coords} (hx : x ∈ tri) (hb : x.row + 1 < NR) :
@@ -317,12 +317,12 @@ private lemma chain_mem (i : ℕ) (hi : i < NR) : chain t i ∈ tri := by
   | zero => rw [chain_zero, mem_tri]; exact ⟨hi, le_refl _⟩
   | succ k ih =>
       rw [chain_succ]
-      exact winner_mem t (ih (by omega)) (by rw [chain_row]; exact hi)
+      exact winner_mem t (ih (by lia)) (by rw [chain_row]; exact hi)
 
 private lemma chain_step_val (k : ℕ) (hk : k + 1 < NR) :
     t.f (chain t (k + 1)) = t.f (chain t k) + t.f (loser t (chain t k)) := by
   rw [chain_succ]
-  exact winner_val t (chain t k) (chain_mem t k (by omega)) (by rw [chain_row]; exact hk)
+  exact winner_val t (chain t k) (chain_mem t k (by lia)) (by rw [chain_row]; exact hk)
 
 private lemma chain_sum : ∀ k, k < NR →
     t.f (chain t k) = t.f (chain t 0) + ∑ i ∈ Finset.range k, t.f (loser t (chain t i)) := by
@@ -331,7 +331,7 @@ private lemma chain_sum : ∀ k, k < NR →
   | zero => intro _; simp
   | succ m ih =>
       intro hk
-      rw [chain_step_val t m hk, ih (by omega), Finset.sum_range_succ]
+      rw [chain_step_val t m hk, ih (by lia), Finset.sum_range_succ]
       ring
 
 /-- The smaller children dropped along the apex path (the "losers"). -/
@@ -350,21 +350,21 @@ private lemma losers_inj :
   simp only [] at hab
   have h : (loser t (chain t a)).row = (loser t (chain t b)).row := by rw [hab]
   rw [loser_chain_row, loser_chain_row] at h
-  omega
+  lia
 
 private lemma chain_zero_not_losers : chain t 0 ∉ losers t := by
   rw [losers, Finset.mem_image]
   rintro ⟨i, _, hi⟩
   have h : (chain t 0).row = (loser t (chain t i)).row := by rw [hi]
   rw [chain_row, loser_chain_row] at h
-  omega
+  lia
 
 private lemma losers_card : (losers t).card = NR - 1 := by
   rw [losers, Finset.card_image_of_injOn (losers_inj t), Finset.card_range]
 
 private lemma smallCells_card : (smallCells t).card = NR := by
   rw [smallCells, Finset.card_insert_of_notMem (chain_zero_not_losers t), losers_card]
-  have := NR_val; omega
+  have := NR_val; lia
 
 private lemma smallCells_subset : smallCells t ⊆ tri := by
   have hNR := NR_val
@@ -372,18 +372,18 @@ private lemma smallCells_subset : smallCells t ⊆ tri := by
   intro x hx
   rw [Finset.mem_insert] at hx
   rcases hx with h | h
-  · rw [h]; exact chain_mem t 0 (by omega)
+  · rw [h]; exact chain_mem t 0 (by lia)
   · rw [losers, Finset.mem_image] at h
     obtain ⟨i, hi, rfl⟩ := h
     rw [Finset.mem_range] at hi
-    exact loser_mem t (chain_mem t i (by omega)) (by rw [chain_row]; omega)
+    exact loser_mem t (chain_mem t i (by lia)) (by rw [chain_row]; lia)
 
 private lemma smallCells_sum :
     ∑ x ∈ smallCells t, t.f x = t.f (chain t (NR - 1)) := by
   rw [smallCells, Finset.sum_insert (chain_zero_not_losers t), losers,
       Finset.sum_image (losers_inj t)]
   have hNR := NR_val
-  exact (chain_sum t (NR - 1) (by omega)).symm
+  exact (chain_sum t (NR - 1) (by lia)).symm
 
 include hsurj in
 private lemma smallCells_injOn : Set.InjOn t.f ↑(smallCells t) :=
@@ -403,10 +403,10 @@ private lemma chain_bottom : t.f (chain t (NR - 1)) = TN := by
   have hcard : ((smallCells t).image t.f).card = NR := by
     rw [Finset.card_image_of_injOn (smallCells_injOn t hsurj), smallCells_card]
   have hle : t.f (chain t (NR - 1)) ≤ TN :=
-    ((bijection t hsurj).1 _ (chain_mem t (NR - 1) (by omega))).2
+    ((bijection t hsurj).1 _ (chain_mem t (NR - 1) (by lia))).2
   have hmin := min_sum ((smallCells t).image t.f) hpos
   rw [hcard, TN_def, hsumV] at hmin
-  omega
+  lia
 
 include hsurj in
 private lemma smallCells_image : (smallCells t).image t.f = Finset.Icc 1 NR := by
@@ -443,10 +443,10 @@ private lemma not_small (x : Coords) (hx : x ∈ tri) (hxs : x ∉ smallCells t)
 /-! ### Column monotonicity of the apex path -/
 
 private lemma chain_col_le_succ (r : ℕ) : (chain t r).col ≤ (chain t (r + 1)).col := by
-  rw [chain_succ]; rcases winner_col t (chain t r) with h | h <;> omega
+  rw [chain_succ]; rcases winner_col t (chain t r) with h | h <;> lia
 
 private lemma chain_col_succ_le (r : ℕ) : (chain t (r + 1)).col ≤ (chain t r).col + 1 := by
-  rw [chain_succ]; rcases winner_col t (chain t r) with h | h <;> omega
+  rw [chain_succ]; rcases winner_col t (chain t r) with h | h <;> lia
 
 private lemma chain_col_mono {a b : ℕ} (hab : a ≤ b) :
     (chain t a).col ≤ (chain t b).col := by
@@ -460,7 +460,7 @@ private lemma chain_col_le_add {a b : ℕ} (hab : a ≤ b) :
   | base => simp
   | succ n hn ih =>
       have := chain_col_succ_le t n
-      omega
+      lia
 
 /-! ### Locations of small cells (the band) -/
 
@@ -470,14 +470,14 @@ private lemma smallCells_col (r j : ℕ) (hr : 1 ≤ r)
   rw [smallCells, Finset.mem_insert] at hmem
   rcases hmem with hzero | hloser
   · rw [chain_zero, Coords.mk.injEq] at hzero
-    omega
+    lia
   · rw [losers, Finset.mem_image] at hloser
     obtain ⟨i, _, hi⟩ := hloser
     have hrow : i + 1 = r := by
       have h := congrArg Coords.row hi
       rw [loser_chain_row] at h
       exact h
-    have hri : r - 1 = i := by omega
+    have hri : r - 1 = i := by lia
     have hcol : (loser t (chain t i)).col = j := by rw [hi]
     rcases loser_col t (chain t i) with h | h
     · left
@@ -490,12 +490,12 @@ private lemma smallCells_col (r j : ℕ) (hr : 1 ≤ r)
 private lemma notMem_small_left (r j : ℕ) (hr : 1 ≤ r) (hj : j < (chain t (r - 1)).col) :
     (⟨r, j⟩ : Coords) ∉ smallCells t := by
   intro hmem
-  rcases smallCells_col t r j hr hmem with h | h <;> omega
+  rcases smallCells_col t r j hr hmem with h | h <;> lia
 
 private lemma notMem_small_right (r j : ℕ) (hr : 1 ≤ r)
     (hj : (chain t (r - 1)).col + 1 < j) : (⟨r, j⟩ : Coords) ∉ smallCells t := by
   intro hmem
-  rcases smallCells_col t r j hr hmem with h | h <;> omega
+  rcases smallCells_col t r j hr hmem with h | h <;> lia
 
 /-! ### A downward sub-triangle and the second path -/
 
@@ -511,7 +511,7 @@ private lemma walk_succ (s : Coords) (k : ℕ) : walk t s (k + 1) = winner t (wa
 private lemma walk_row (s : Coords) (k : ℕ) : (walk t s k).row = s.row + k := by
   induction k with
   | zero => rfl
-  | succ m ih => rw [walk_succ, winner_row, ih]; omega
+  | succ m ih => rw [walk_succ, winner_row, ih]; lia
 
 private lemma walk_sum (s : Coords) (L : ℕ)
     (hmem : ∀ k, k < L → walk t s k ∈ tri ∧ (walk t s k).row + 1 < NR) :
@@ -520,8 +520,8 @@ private lemma walk_sum (s : Coords) (L : ℕ)
   | zero => simp [walk_zero]
   | succ m ih =>
       rw [walk_succ,
-          winner_val t (walk t s m) (hmem m (by omega)).1 (hmem m (by omega)).2,
-          ih (fun k hk => hmem k (by omega)), Finset.sum_range_succ]
+          winner_val t (walk t s m) (hmem m (by lia)).1 (hmem m (by lia)).2,
+          ih (fun k hk => hmem k (by lia)), Finset.sum_range_succ]
       ring
 
 /-- Membership in the downward sub-triangle with apex `(p, q)`. -/
@@ -531,12 +531,12 @@ private def inSub (p q : ℕ) (x : Coords) : Prop :=
 private lemma inSub_left {p q : ℕ} {x : Coords} (h : inSub p q x) (hx : x.row < NR - 1) :
     inSub p q (left_child x) := by
   simp only [inSub, left_child] at h ⊢
-  omega
+  lia
 
 private lemma inSub_right {p q : ℕ} {x : Coords} (h : inSub p q x) (hx : x.row < NR - 1) :
     inSub p q (right_child x) := by
   simp only [inSub, right_child] at h ⊢
-  omega
+  lia
 
 private lemma inSub_winner {p q : ℕ} {x : Coords} (h : inSub p q x) (hx : x.row < NR - 1) :
     inSub p q (winner t x) := by
@@ -556,13 +556,13 @@ private lemma walk_inSub (p q : ℕ) (hp : p ≤ NR - 1) :
   induction k with
   | zero =>
       intro _
-      refine ⟨?_, ?_, ?_, ?_⟩ <;> simp only [walk_zero] <;> omega
+      refine ⟨?_, ?_, ?_, ?_⟩ <;> simp only [walk_zero] <;> lia
   | succ m ih =>
       intro hk
       rw [walk_succ]
-      refine inSub_winner t (ih (by omega)) ?_
+      refine inSub_winner t (ih (by lia)) ?_
       have hr : (walk t ⟨p, q⟩ m).row = p + m := walk_row t ⟨p, q⟩ m
-      rw [hr]; omega
+      rw [hr]; lia
 
 include hsurj in
 /-- A downward sub-triangle disjoint from the small cells, reaching `≥ 1007` rows down,
@@ -576,25 +576,25 @@ private lemma corner_contra (p q : ℕ) (hp : p ≤ NR - 1)
   set L := NR - 1 - p with hLdef
   have hmemv : ∀ k, k < L → walk t ⟨p, q⟩ k ∈ tri ∧ (walk t ⟨p, q⟩ k).row + 1 < NR := by
     intro k hk
-    exact ⟨(hsub _ (hin k (by omega))).1, by rw [hwr]; omega⟩
+    exact ⟨(hsub _ (hin k (by lia))).1, by rw [hwr]; lia⟩
   have hsum := walk_sum t ⟨p, q⟩ L hmemv
   have hbig : ∀ k, k < L → NR < t.f (loser t (walk t ⟨p, q⟩ k)) := by
     intro k hk
     refine not_small t hsurj _ ?_ ?_
-    · exact loser_mem t (hsub _ (hin k (by omega))).1 (by rw [hwr]; omega)
-    · exact (hsub _ (inSub_loser t (hin k (by omega)) (by rw [hwr]; omega))).2
+    · exact loser_mem t (hsub _ (hin k (by lia))).1 (by rw [hwr]; lia)
+    · exact (hsub _ (inSub_loser t (hin k (by lia)) (by rw [hwr]; lia))).2
   have hvinj : Set.InjOn (fun k => t.f (loser t (walk t ⟨p, q⟩ k))) ↑(Finset.range L) := by
     intro a ha b hb hab
     rw [Finset.coe_range, Set.mem_Iio] at ha hb
     simp only [] at hab
     have hla : loser t (walk t ⟨p, q⟩ a) ∈ tri :=
-      loser_mem t (hsub _ (hin a (by omega))).1 (by rw [hwr]; omega)
+      loser_mem t (hsub _ (hin a (by lia))).1 (by rw [hwr]; lia)
     have hlb : loser t (walk t ⟨p, q⟩ b) ∈ tri :=
-      loser_mem t (hsub _ (hin b (by omega))).1 (by rw [hwr]; omega)
+      loser_mem t (hsub _ (hin b (by lia))).1 (by rw [hwr]; lia)
     have hcell := (bijection t hsurj).2 (Finset.mem_coe.mpr hla) (Finset.mem_coe.mpr hlb) hab
     have hrows : (loser t (walk t ⟨p, q⟩ a)).row = (loser t (walk t ⟨p, q⟩ b)).row := by rw [hcell]
     rw [loser_row, loser_row, hwr, hwr] at hrows
-    omega
+    lia
   set V0 := (Finset.range L).image (fun k => t.f (loser t (walk t ⟨p, q⟩ k))) with hV0
   have hV0card : V0.card = L := by rw [hV0, Finset.card_image_of_injOn hvinj, Finset.card_range]
   have hV0pos : ∀ x ∈ V0, NR < x := by
@@ -607,15 +607,15 @@ private lemma corner_contra (p q : ℕ) (hp : p ≤ NR - 1)
   have hwalkL : walk t ⟨p, q⟩ L ∈ tri := (hsub _ (hin L (le_refl _))).1
   have hub : t.f (walk t ⟨p, q⟩ L) ≤ TN := ((bijection t hsurj).1 _ hwalkL).2
   have hmono : ∑ i ∈ Finset.range 1007, (i + 1) ≤ ∑ i ∈ Finset.range L, (i + 1) :=
-    Finset.sum_le_sum_of_subset (by intro x hx; rw [Finset.mem_range] at hx ⊢; omega)
+    Finset.sum_le_sum_of_subset (by intro x hx; rw [Finset.mem_range] at hx ⊢; lia)
   have h1007 := two_mul_sum 1007
   have hTNval : TN = 2037171 := by
-    have h := two_mul_sum NR; rw [TN_def, NR_val] at h; omega
+    have h := two_mul_sum NR; rw [TN_def, NR_val] at h; lia
   have hlb' : L * 2018 + ∑ i ∈ Finset.range L, (i + 1) ≤
       ∑ k ∈ Finset.range L, t.f (loser t (walk t ⟨p, q⟩ k)) := by
     have he : L * NR = L * 2018 := by rw [NR_val]
     rw [← he]; exact hlb
-  omega
+  lia
 
 include hsurj in
 private lemma not_exists_desired : False := by
@@ -623,30 +623,30 @@ private lemma not_exists_desired : False := by
   set c := (chain t (NR - 2)).col with hc
   have hcle : c ≤ NR - 2 := by
     rw [hc]
-    have h := (mem_tri.mp (chain_mem t (NR - 2) (by omega))).2
+    have h := (mem_tri.mp (chain_mem t (NR - 2) (by lia))).2
     rw [chain_row] at h; exact h
   by_cases hcase : 1008 ≤ c
   · -- Left corner: apex `(NR - c, 0)`.
-    refine corner_contra t hsurj (NR - c) 0 (by omega) ?_ (by omega)
+    refine corner_contra t hsurj (NR - c) 0 (by lia) ?_ (by lia)
     intro x hx
     simp only [inSub] at hx
     obtain ⟨hr1, hr2, _, hc4⟩ := hx
-    have hxcol : x.col ≤ x.row := by omega
-    refine ⟨mem_tri.mpr ⟨by omega, hxcol⟩, ?_⟩
+    have hxcol : x.col ≤ x.row := by lia
+    refine ⟨mem_tri.mpr ⟨by lia, hxcol⟩, ?_⟩
     have hadd : c ≤ (chain t (x.row - 1)).col + ((NR - 2) - (x.row - 1)) := by
-      rw [hc]; exact chain_col_le_add t (by omega)
-    exact notMem_small_left t x.row x.col (by omega) (by omega)
+      rw [hc]; exact chain_col_le_add t (by lia)
+    exact notMem_small_left t x.row x.col (by lia) (by lia)
   · -- Right corner: apex `(c + 2, c + 2)`.
     push Not at hcase
-    refine corner_contra t hsurj (c + 2) (c + 2) (by omega) ?_ (by omega)
+    refine corner_contra t hsurj (c + 2) (c + 2) (by lia) ?_ (by lia)
     intro x hx
     simp only [inSub] at hx
     obtain ⟨hr1, hr2, hc3, hc4⟩ := hx
-    have hxcol : x.col ≤ x.row := by omega
-    refine ⟨mem_tri.mpr ⟨by omega, hxcol⟩, ?_⟩
+    have hxcol : x.col ≤ x.row := by lia
+    refine ⟨mem_tri.mpr ⟨by lia, hxcol⟩, ?_⟩
     have hmono : (chain t (x.row - 1)).col ≤ c := by
-      rw [hc]; exact chain_col_mono t (by omega)
-    exact notMem_small_right t x.row x.col (by omega) (by omega)
+      rw [hc]; exact chain_col_mono t (by lia)
+    exact notMem_small_right t x.row x.col (by lia) (by lia)
 
 end
 

@@ -169,7 +169,7 @@ lemma not_hasChain_of_le_six {n : ℕ} (hn : n ≤ 6) : ¬ HasChain n := by
   have hle := card_le_card himg
   rw [hcard_image, hcard_erase] at hle
   have hpow : 2 ^ n ≤ 2 ^ 6 := Nat.pow_le_pow_right (by norm_num) hn
-  omega
+  lia
 
 /-- The main combinatorial estimate: no chain exists on a 7-element set.
 Sets of size at least 4 must be preceded by sets of size at most 2, and there
@@ -186,7 +186,7 @@ lemma not_hasChain_seven : ¬ HasChain 7 := by
       have h2 := card_lt_card hss
       simpa using h2
     rw [card_union_of_disjoint hdisj] at hlt
-    omega
+    lia
   -- The indices, split by the size of the corresponding set.
   let A : Finset (Fin 100) := univ.filter fun i => (X i).card ≤ 2
   let B : Finset (Fin 100) := univ.filter fun i => (X i).card = 3
@@ -194,25 +194,25 @@ lemma not_hasChain_seven : ¬ HasChain 7 := by
   have hdisj_AB : Disjoint A B := by
     simp only [A, B, disjoint_filter]
     intro i _ h1 h2
-    omega
+    lia
   have hdisj_AC : Disjoint A C := by
     simp only [A, C, disjoint_filter]
     intro i _ h1 h2
-    omega
+    lia
   have hdisj_BC : Disjoint B C := by
     simp only [B, C, disjoint_filter]
     intro i _ h1 h2
-    omega
+    lia
   have hunion : A ∪ B ∪ C = univ := by
     ext i
     simp only [A, B, C, mem_union, mem_filter, mem_univ, true_and, iff_true]
-    omega
+    lia
   have hpart : A.card + B.card + C.card = 100 := by
     have h1 : (A ∪ B ∪ C).card = A.card + B.card + C.card := by
       rw [card_union_of_disjoint (disjoint_union_left.mpr ⟨hdisj_AC, hdisj_BC⟩),
         card_union_of_disjoint hdisj_AB]
     rw [hunion, card_univ, Fintype.card_fin] at h1
-    omega
+    lia
   -- There are only 28 nonempty subsets of size at most 2.
   have hA : A.card ≤ 28 := by
     have himg : A.image X ⊆ powersetCard 1 univ ∪ powersetCard 2 univ := by
@@ -221,7 +221,7 @@ lemma not_hasChain_seven : ¬ HasChain 7 := by
       obtain ⟨i, hi, rfl⟩ := ht
       simp only [A, mem_filter, mem_univ, true_and] at hi
       have hpos : 0 < (X i).card := card_pos.mpr (hne i)
-      have h12 : (X i).card = 1 ∨ (X i).card = 2 := by omega
+      have h12 : (X i).card = 1 ∨ (X i).card = 2 := by lia
       rw [mem_union, mem_powersetCard, mem_powersetCard]
       rcases h12 with h | h
       · exact Or.inl ⟨subset_univ _, h⟩
@@ -231,7 +231,7 @@ lemma not_hasChain_seven : ¬ HasChain 7 := by
       rw [disjoint_left]
       intro x hx1 hx2
       rw [mem_powersetCard] at hx1 hx2
-      omega
+      lia
     have hcard : (powersetCard 1 (univ : Finset (Fin 7)) ∪ powersetCard 2 univ).card = 28 := by
       rw [card_union_of_disjoint hdisj12, card_powersetCard, card_powersetCard, card_univ,
         Fintype.card_fin]
@@ -270,19 +270,19 @@ lemma not_hasChain_seven : ¬ HasChain 7 := by
         rw [mem_coe, mem_filter]
         refine ⟨mem_univ _, ?_⟩
         show (X k.castSucc).card ≤ 2
-        omega
+        lia
       · intro i hi j hj hij
         rw [mem_coe, mem_erase] at hi hj
         have h2 : i.val - 1 = j.val - 1 := congrArg Fin.val hij
         have hi1 : 1 ≤ i.val := Nat.one_le_iff_ne_zero.mpr fun h => hi.1 (Fin.ext h)
         have hj1 : 1 ≤ j.val := Nat.one_le_iff_ne_zero.mpr fun h => hj.1 (Fin.ext h)
-        exact Fin.ext (by omega)
+        exact Fin.ext (by lia)
     by_cases h0 : (0 : Fin 100) ∈ C
     · rw [card_erase_of_mem h0] at hpred
-      omega
+      lia
     · rw [erase_eq_of_notMem h0] at hpred
-      omega
-  omega
+      lia
+  lia
 
 snip end
 
@@ -296,8 +296,8 @@ problem usa2016_p1 : IsLeast {n | HasChain n} solution_value := by
   by_contra hlt
   push Not at hlt
   rcases lt_or_ge n 7 with h | h
-  · exact not_hasChain_of_le_six (by omega) hn
-  · obtain rfl : n = 7 := by omega
+  · exact not_hasChain_of_le_six (by lia) hn
+  · obtain rfl : n = 7 := by lia
     exact not_hasChain_seven hn
 
 end Usa2016P1

@@ -92,11 +92,11 @@ lemma s_concat (e a c : ℕ) (hc : c < 10 ^ e) : s (10 ^ e * a + c) = s a + s c 
     · rw [s_eq]
       have h10a : 10 ^ (e + 1) * a = 10 * (10 ^ e * a) := by ring
       rw [h10a]
-      have hmod : (10 * (10 ^ e * a) + c) % 10 = c % 10 := by omega
-      have hdiv : (10 * (10 ^ e * a) + c) / 10 = 10 ^ e * a + c / 10 := by omega
-      have hc' : c / 10 < 10 ^ e := by omega
+      have hmod : (10 * (10 ^ e * a) + c) % 10 = c % 10 := by lia
+      have hdiv : (10 * (10 ^ e * a) + c) / 10 = 10 ^ e * a + c / 10 := by lia
+      have hc' : c / 10 < 10 ^ e := by lia
       rw [hmod, hdiv, ih a (c / 10) hc', s_eq c]
-      omega
+      lia
 
 /-- If `a + b = 10 ^ e - 1` then the digits of `a` and `b` are complementary,
 so `s a + s b = 9 * e`. -/
@@ -104,17 +104,17 @@ lemma s_complement (e a b : ℕ) (h : a + b = 10 ^ e - 1) : s a + s b = 9 * e :=
   induction e generalizing a b with
   | zero =>
     simp only [pow_zero, Nat.sub_self] at h
-    obtain rfl : a = 0 := by omega
-    obtain rfl : b = 0 := by omega
+    obtain rfl : a = 0 := by lia
+    obtain rfl : b = 0 := by lia
     simp [s_zero]
   | succ e ih =>
     have h10 : 10 ^ (e + 1) = 10 * 10 ^ e := by ring
     have hpos : 1 ≤ 10 ^ e := Nat.one_le_pow _ _ (by norm_num)
-    have key1 : a % 10 + b % 10 = 9 := by omega
-    have key2 : a / 10 + b / 10 = 10 ^ e - 1 := by omega
+    have key1 : a % 10 + b % 10 = 9 := by lia
+    have key2 : a / 10 + b / 10 = 10 ^ e - 1 := by lia
     have := ih (a / 10) (b / 10) key2
     rw [s_eq a, s_eq b]
-    omega
+    lia
 
 lemma s_pow_ten_sub_one (e : ℕ) : s (10 ^ e - 1) = 9 * e := by
   have h := s_complement e (10 ^ e - 1) 0 (by rw [add_zero])
@@ -127,8 +127,8 @@ lemma s_add_le (a b : ℕ) : s (a + b) ≤ s a + s b := by
   induction N with
   | zero =>
     intro a b hab
-    obtain rfl : a = 0 := by omega
-    obtain rfl : b = 0 := by omega
+    obtain rfl : a = 0 := by lia
+    obtain rfl : b = 0 := by lia
     simp [s_zero]
   | succ N ih =>
     intro a b hab
@@ -138,20 +138,20 @@ lemma s_add_le (a b : ℕ) : s (a + b) ≤ s a + s b := by
     · simp [s_zero]
     rw [s_eq (a + b)]
     by_cases hcarry : a % 10 + b % 10 < 10
-    · have h1 : (a + b) % 10 = a % 10 + b % 10 := by omega
-      have h2 : (a + b) / 10 = a / 10 + b / 10 := by omega
-      have h3 : s (a / 10 + b / 10) ≤ s (a / 10) + s (b / 10) := ih _ _ (by omega)
+    · have h1 : (a + b) % 10 = a % 10 + b % 10 := by lia
+      have h2 : (a + b) / 10 = a / 10 + b / 10 := by lia
+      have h3 : s (a / 10 + b / 10) ≤ s (a / 10) + s (b / 10) := ih _ _ (by lia)
       rw [h1, h2, s_eq a, s_eq b]
-      omega
-    · have h1 : (a + b) % 10 = a % 10 + b % 10 - 10 := by omega
-      have h2 : (a + b) / 10 = a / 10 + b / 10 + 1 := by omega
-      have h3 : s (a / 10 + b / 10 + 1) ≤ s (a / 10 + b / 10) + s 1 := ih _ _ (by omega)
-      have h4 : s (a / 10 + b / 10) ≤ s (a / 10) + s (b / 10) := ih _ _ (by omega)
+      lia
+    · have h1 : (a + b) % 10 = a % 10 + b % 10 - 10 := by lia
+      have h2 : (a + b) / 10 = a / 10 + b / 10 + 1 := by lia
+      have h3 : s (a / 10 + b / 10 + 1) ≤ s (a / 10 + b / 10) + s 1 := ih _ _ (by lia)
+      have h4 : s (a / 10 + b / 10) ≤ s (a / 10) + s (b / 10) := ih _ _ (by lia)
       have h5 : s 1 = 1 := by
         rw [s_eq]
         norm_num [s_zero]
       rw [h1, h2, s_eq a, s_eq b]
-      omega
+      lia
 
 /-- The digit sum of a positive integer is positive. -/
 lemma s_pos_of_pos (m : ℕ) (hm : 0 < m) : 1 ≤ s m := by
@@ -182,34 +182,34 @@ lemma nine_le_s_of_dvd (e : ℕ) (he : 1 ≤ e) :
         rcases q with _ | q'
         · simp at hm
         · by_contra hq
-          have hq2 : 2 ≤ q' + 1 := by omega
+          have hq2 : 2 ≤ q' + 1 := by lia
           have hle : (10 ^ e - 1) * 2 ≤ (10 ^ e - 1) * (q' + 1) := Nat.mul_le_mul le_rfl hq2
-          omega
+          lia
       rw [hq, mul_one]
       exact le_of_eq (s_pow_ten_sub_one e).symm
     · push Not at hlt
       -- recurse on `m' = m % 10 ^ e + m / 10 ^ e`
       have hdiv : 10 ^ e * (m / 10 ^ e) + m % 10 ^ e = m := Nat.div_add_mod m _
-      have hq : 1 ≤ m / 10 ^ e := Nat.div_pos hlt (by omega)
-      have hm'pos : 0 < m % 10 ^ e + m / 10 ^ e := by omega
+      have hq : 1 ≤ m / 10 ^ e := Nat.div_pos hlt (by lia)
+      have hm'pos : 0 < m % 10 ^ e + m / 10 ^ e := by lia
       have hm'lt : m % 10 ^ e + m / 10 ^ e < m := by
         have hmul : 2 * (m / 10 ^ e) ≤ 10 ^ e * (m / 10 ^ e) := Nat.mul_le_mul hP2 le_rfl
-        omega
+        lia
       have hdvd' : 10 ^ e - 1 ∣ m % 10 ^ e + m / 10 ^ e := by
         obtain ⟨q, hqeq⟩ := hdvd
         have key : (10 ^ e - 1) * (m / 10 ^ e) = 10 ^ e * (m / 10 ^ e) - m / 10 ^ e := by
           rw [Nat.sub_mul, one_mul]
         refine ⟨q - m / 10 ^ e, ?_⟩
         rw [Nat.mul_sub]
-        omega
+        lia
       have ih' := ih _ hm'lt hm'pos hdvd'
       have hsm : s (m % 10 ^ e + m / 10 ^ e) ≤ s m := by
         have h1 := s_add_le (m % 10 ^ e) (m / 10 ^ e)
         have h2 : s m = s (m / 10 ^ e) + s (m % 10 ^ e) := by
           conv_lhs => rw [← Nat.div_add_mod m (10 ^ e)]
-          rw [s_concat e (m / 10 ^ e) (m % 10 ^ e) (Nat.mod_lt _ (by omega))]
-        omega
-      omega
+          rw [s_concat e (m / 10 ^ e) (m % 10 ^ e) (Nat.mod_lt _ (by lia))]
+        lia
+      lia
 
 /-- The Gauss sum `1 + 2 + ... + n`. -/
 lemma sum_Icc_id (n : ℕ) : ∑ i ∈ Finset.Icc 1 n, i = n * (n + 1) / 2 := by
@@ -220,10 +220,10 @@ lemma sum_Icc_id (n : ℕ) : ∑ i ∈ Finset.Icc 1 n, i = n * (n + 1) / 2 := by
       have hinsert : Finset.Icc 1 (n + 1) = insert (n + 1) (Finset.Icc 1 n) := by
         ext x
         simp only [Finset.mem_Icc, Finset.mem_insert]
-        omega
+        lia
       rw [hinsert, Finset.sum_insert (by simp), add_mul, ih]
       ring
-  omega
+  lia
 
 /-- *Upper bound (construction).* If `n * (n + 1) / 2 < 10 ^ e` then
 `{10^e - 1, 2 * (10^e - 1), ..., n * (10^e - 1)}` is a `9 * e`-stable set of
@@ -235,7 +235,7 @@ lemma construction (n e : ℕ) (he : 1 ≤ e) (h : n * (n + 1) / 2 < 10 ^ e) :
   have hP10 : 10 ≤ 10 ^ e := by
     calc 10 = 10 ^ 1 := by norm_num
       _ ≤ 10 ^ e := Nat.pow_le_pow_right (by norm_num) he
-  have hM : 0 < 10 ^ e - 1 := by omega
+  have hM : 0 < 10 ^ e - 1 := by lia
   have hinj : Function.Injective (· * (10 ^ e - 1)) :=
     fun _ _ hab => Nat.mul_right_cancel hM hab
   constructor
@@ -276,11 +276,11 @@ lemma construction (n e : ℕ) (he : 1 ≤ e) (h : n * (n + 1) / 2 < 10 ^ e) :
           calc 10 ^ e = 1 * 10 ^ e := by ring
             _ ≤ (∑ i ∈ I, i) * 10 ^ e := Nat.mul_le_mul ht1 le_rfl
         rw [e1, e2]
-        omega
-      rw [hsplit, s_concat e ((∑ i ∈ I, i) - 1) (10 ^ e - (∑ i ∈ I, i)) (by omega)]
-      exact s_complement e _ _ (by omega)
+        lia
+      rw [hsplit, s_concat e ((∑ i ∈ I, i) - 1) (10 ^ e - (∑ i ∈ I, i)) (by lia)]
+      exact s_complement e _ _ (by lia)
   · rw [Finset.card_image_of_injective _ hinj, Nat.card_Icc]
-    omega
+    lia
 
 /-- *Lower bound.* If `S` is `k`-stable and `10 ^ e ≤ S.card + 1`, then
 `9 * e ≤ k`: among the `S.card + 1 ≥ 10 ^ e` prefix sums of an arbitrary
@@ -294,7 +294,7 @@ lemma stable_lower (k e : ℕ) (he : 1 ≤ e) (S : Finset ℕ) (hS : IsStable k 
     have h10 : 10 ≤ 10 ^ e := by
       calc 10 = 10 ^ 1 := by norm_num
         _ ≤ 10 ^ e := Nat.pow_le_pow_right (by norm_num) he
-    omega
+    lia
   -- work with the sorted list of `S`
   set l := S.sort (· ≤ ·) with hl
   have hln : l.Nodup := S.sort_nodup _
@@ -308,7 +308,7 @@ lemma stable_lower (k e : ℕ) (he : 1 ≤ e) (S : Finset ℕ) (hS : IsStable k 
     exact Finset.mem_range.mpr (Nat.mod_lt _ hM)
   have hcardlt : (Finset.range (10 ^ e - 1)).card < (Finset.range (S.card + 1)).card := by
     rw [Finset.card_range, Finset.card_range]
-    omega
+    lia
   obtain ⟨i, hi, j, hj, hij, hpij⟩ :=
     Finset.exists_ne_map_eq_of_card_lt_of_maps_to hcardlt hmaps
   rw [Finset.mem_range] at hi hj
@@ -331,18 +331,18 @@ lemma stable_lower (k e : ℕ) (he : 1 ≤ e) (S : Finset ℕ) (hS : IsStable k 
       show (l.take j).sum = (l.take i).sum + u.sum
       rw [htake, List.sum_append]
     have hulen : u.length = j - i := by
-      rw [hu, List.length_take, List.length_drop, hll, min_eq_left (by omega)]
+      rw [hu, List.length_take, List.length_drop, hll, min_eq_left (by lia)]
     have hune : u ≠ [] := by
       intro hz
       rw [hz, List.length_nil] at hulen
-      omega
+      lia
     have huS : ∀ x ∈ u, x ∈ S := fun x hx => (hmem x).mp (hsub.subset hx)
     have husum_pos : 0 < u.sum := List.sum_pos u (fun x hx => hpos x (huS x hx)) hune
     -- divisibility of the slice sum
     have hdvd : 10 ^ e - 1 ∣ u.sum := by
       have h1 : p i ≤ p j := by rw [hsum_split]; exact Nat.le_add_right _ _
       have h2 := (Nat.modEq_iff_dvd' h1).mp hmod
-      rwa [show p j - p i = u.sum by omega] at h2
+      rwa [show p j - p i = u.sum by lia] at h2
     -- the finset given by the slice
     have hXmem : u.toFinset ∈ S.powerset := by
       rw [Finset.mem_powerset]
@@ -359,18 +359,18 @@ lemma stable_lower (k e : ℕ) (he : 1 ≤ e) (S : Finset ℕ) (hS : IsStable k 
     have hA := nine_le_s_of_dvd e he u.sum husum_pos hdvd
     have hstab' := hstab u.toFinset hXmem hXne
     rw [hsum_toFinset] at hstab'
-    omega
+    lia
   -- resolve the trichotomy on `i` and `j`
   rcases lt_trichotomy i j with hlt | heq | hgt
-  · exact key i j (by omega) (by omega) hlt hpij
+  · exact key i j (by lia) (by lia) hlt hpij
   · exact absurd heq hij
-  · exact key j i (by omega) (by omega) hgt hpij.symm
+  · exact key j i (by lia) (by lia) hgt hpij.symm
 
 /-- The set defining `f n` is nonempty: the construction with
 `e = Nat.log 10 (n * (n + 1) / 2) + 1` works. -/
 lemma stable_exists (n : ℕ) :
     ∃ S : Finset ℕ, IsStable (9 * (Nat.log 10 (n * (n + 1) / 2) + 1)) S ∧ S.card = n := by
-  refine ⟨_, construction n _ (by omega) ?_⟩
+  refine ⟨_, construction n _ (by lia) ?_⟩
   have h := Nat.lt_pow_succ_log_self (by norm_num : 1 < 10) (n * (n + 1) / 2)
   rwa [Nat.succ_eq_add_one] at h
 
@@ -388,11 +388,11 @@ lemma one_le_f (n : ℕ) (hn : 1 ≤ n) : 1 ≤ f n := by
   obtain ⟨S, ⟨hpos, hstab⟩, hcard⟩ := f_spec n
   have hne : S.Nonempty := by
     rw [← Finset.card_pos, hcard]
-    omega
+    lia
   have h1 := hstab S (Finset.mem_powerset.mpr (Finset.Subset.refl S)) hne
   have hsum : 0 < ∑ x ∈ S, x := Finset.sum_pos hpos hne
   have h2 : 1 ≤ s (∑ x ∈ S, x) := s_pos_of_pos _ hsum
-  omega
+  lia
 
 /-- The lower bound for `f n` coming from the pigeonhole argument. -/
 lemma f_lower (n e : ℕ) (he : 1 ≤ e) (hn : 10 ^ e ≤ n + 1) : 9 * e ≤ f n := by
@@ -425,14 +425,14 @@ problem usa2005_p6 : ∃ C₁ C₂ : ℝ, 0 < C₁ ∧ C₁ < C₂ ∧
     norm_num
   refine ⟨1 / 2, 48, by norm_num, by norm_num, fun n hn => ?_⟩
   have hn2 : (2 : ℝ) ≤ (n : ℝ) := by exact_mod_cast hn
-  have hn0 : (0 : ℝ) < (n : ℝ) := by exact_mod_cast (by omega : 0 < n)
+  have hn0 : (0 : ℝ) < (n : ℝ) := by exact_mod_cast (by lia : 0 < n)
   have hLn2 : (3 : ℝ) / 10 ≤ Real.logb 10 n :=
     le_trans hlog10_2 (Real.logb_le_logb_of_le (by norm_num) (by norm_num) hn2)
   refine ⟨?_, ?_⟩
   · -- lower bound: `(1/2) * log₁₀ n ≤ f n`
     by_cases hn100 : n < 100
     · -- small `n`: `log₁₀ n ≤ 2` and `1 ≤ f n`
-      have h1 : (1 : ℝ) ≤ (f n : ℝ) := by exact_mod_cast one_le_f n (by omega)
+      have h1 : (1 : ℝ) ≤ (f n : ℝ) := by exact_mod_cast one_le_f n (by lia)
       have h2 : Real.logb 10 n ≤ 2 := by
         have hle : Real.logb 10 n ≤ Real.logb 10 100 :=
           Real.logb_le_logb_of_le (by norm_num) hn0 (by exact_mod_cast le_of_lt hn100)
@@ -448,9 +448,9 @@ problem usa2005_p6 : ∃ C₁ C₂ : ℝ, 0 < C₁ ∧ C₁ < C₂ ∧
         rw [hlogb_100] at hle
         exact hle
       have he1 : 1 ≤ Nat.log 10 (n + 1) :=
-        Nat.le_log_of_pow_le (by norm_num) (by omega)
+        Nat.le_log_of_pow_le (by norm_num) (by lia)
       have hnat : 9 * Nat.log 10 (n + 1) ≤ f n :=
-        f_lower n _ he1 (Nat.pow_log_le_self 10 (by omega))
+        f_lower n _ he1 (Nat.pow_log_le_self 10 (by lia))
       have hr1 : (9 : ℝ) * (Nat.log 10 (n + 1) : ℝ) ≤ (f n : ℝ) := by exact_mod_cast hnat
       -- `Nat.log 10 (n+1) + 1 > log₁₀ (n+1) ≥ log₁₀ n`
       have hlt : ((n + 1 : ℕ) : ℝ) < ((10 ^ (Nat.log 10 (n + 1) + 1) : ℕ) : ℝ) := by
@@ -474,8 +474,8 @@ problem usa2005_p6 : ∃ C₁ C₂ : ℝ, 0 < C₁ ∧ C₁ < C₂ ∧
     have hr1 : (f n : ℝ) ≤ 9 * ((Nat.log 10 (n * (n + 1) / 2) : ℝ) + 1) := by
       exact_mod_cast hnat
     have hm0 : n * (n + 1) / 2 ≠ 0 := by
-      have h6 : 2 * 3 ≤ n * (n + 1) := Nat.mul_le_mul hn (show 3 ≤ n + 1 by omega)
-      omega
+      have h6 : 2 * 3 ≤ n * (n + 1) := Nat.mul_le_mul hn (show 3 ≤ n + 1 by lia)
+      lia
     -- `Nat.log 10 m ≤ log₁₀ m` for `m = n * (n+1)/2`
     have hlog1 : (Nat.log 10 (n * (n + 1) / 2) : ℝ) ≤ Real.logb 10 (↑(n * (n + 1) / 2)) := by
       have h1 : (10 : ℝ) ^ (Nat.log 10 (n * (n + 1) / 2)) ≤ ((n * (n + 1) / 2 : ℕ) : ℝ) := by

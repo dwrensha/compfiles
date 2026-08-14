@@ -69,27 +69,27 @@ theorem arith_core (n : ℕ)
   have hdm := Nat.div_add_mod (2 * n + 1) 5
   set k := (2 * n + 1) / 5 with hkD
   have hr : (2 * n + 1) % 5 = 0 ∨ (2 * n + 1) % 5 = 1 ∨ (2 * n + 1) % 5 = 2 ∨
-      (2 * n + 1) % 5 = 3 ∨ (2 * n + 1) % 5 = 4 := by omega
+      (2 * n + 1) % 5 = 3 ∨ (2 * n + 1) % 5 = 4 := by lia
   rcases hr with h0 | h1 | h2 | h3 | h4
   swap
-  · exfalso; rw [h1] at hdm; omega
+  · exfalso; rw [h1] at hdm; lia
   swap
-  · exfalso; rw [h2] at hdm; omega
+  · exfalso; rw [h2] at hdm; lia
   swap
-  · exfalso; rw [h3] at hdm; omega
+  · exfalso; rw [h3] at hdm; lia
   swap
-  · exfalso; rw [h4] at hdm; omega
+  · exfalso; rw [h4] at hdm; lia
   rw [h0] at hdm
-  have hk : 2 * n + 1 = 5 * k := by omega
+  have hk : 2 * n + 1 = 5 * k := by lia
   -- Every pair count is at least `k`, and the sum is `15 * k + 1`, so exactly one of them
   -- is `k + 1`; we check all fifteen possibilities, each contradicting two congruences.
   have hge : k ≤ t01 ∧ k ≤ t02 ∧ k ≤ t03 ∧ k ≤ t04 ∧ k ≤ t05 ∧ k ≤ t12 ∧ k ≤ t13 ∧ k ≤ t14 ∧
       k ≤ t15 ∧ k ≤ t23 ∧ k ≤ t24 ∧ k ≤ t25 ∧ k ≤ t34 ∧ k ≤ t35 ∧ k ≤ t45 := by omega
   have hsumk : t01 + t02 + t03 + t04 + t05 + t12 + t13 + t14 + t15 + t23 + t24 + t25 + t34 +
-      t35 + t45 = 15 * k + 1 := by omega
+      t35 + t45 = 15 * k + 1 := by lia
   have clash (x y : ℤ) (r r' : ℤ) (hxy : y = x + 1) (hr : x = 3 * r) (hr' : y = 3 * r') :
       False := by
-    omega
+    lia
   by_cases e01 : t01 = k + 1
   · obtain ⟨h2, h3, h4, h5, h12, h13, h14, h15, h23, h24, h25, h34, h35, h45⟩ :
         t02 = k ∧ t03 = k ∧ t04 = k ∧ t05 = k ∧ t12 = k ∧ t13 = k ∧ t14 = k ∧ t15 = k ∧
@@ -253,10 +253,10 @@ theorem exists_superset_card {s : Finset (Fin 6)} {k : ℕ} (h1 : s.card ≤ k) 
     ∃ t : Finset (Fin 6), s ⊆ t ∧ t.card = k := by
   obtain ⟨u, hus, huc⟩ := Finset.exists_subset_card_eq (s := sᶜ) (n := k - s.card) (by
     rw [Finset.card_compl, Fintype.card_fin]
-    omega)
+    lia)
   refine ⟨s ∪ u, Finset.subset_union_left, ?_⟩
   rw [Finset.card_union_of_disjoint ?_, huc]
-  · omega
+  · lia
   · rw [Finset.disjoint_left]
     intro x hxs hxu
     exact Finset.mem_compl.mp (hus hxu) hxs
@@ -382,7 +382,7 @@ problem imo2005_p6 {n : ℕ} (s : Fin n → Finset (Fin 6))
   -- There is at least one contestant.
   have hn : 0 < n := by
     by_contra hz
-    have hz0 : n = 0 := by omega
+    have hz0 : n = 0 := by lia
     subst hz0
     have h := pair 0 1 (by decide)
     rw [Finset.univ_eq_empty, Finset.filter_empty, Finset.card_empty, mul_zero] at h
@@ -405,7 +405,7 @@ problem imo2005_p6 {n : ℕ} (s : Fin n → Finset (Fin 6))
         intro i
         by_contra h'
         push Not at h'
-        have h5 : (s i).card = 5 := by have h6 := hall i; omega
+        have h5 : (s i).card = 5 := by have h6 := hall i; lia
         have hmem : i ∈ Finset.univ.filter (fun i => (s i).card = 5) :=
           Finset.mem_filter.mpr ⟨Finset.mem_univ i, h5⟩
         rw [hFempty] at hmem
@@ -415,7 +415,7 @@ problem imo2005_p6 {n : ℕ} (s : Fin n → Finset (Fin 6))
         by_cases hci : i = ⟨0, hn⟩
         · subst hci
           rw [ite_eq_left rfl]
-          exact exists_superset_card (by have h := hle ⟨0, hn⟩; omega) (by norm_num)
+          exact exists_superset_card (by have h := hle ⟨0, hn⟩; lia) (by norm_num)
         · rw [ite_eq_right hci]
           exact exists_superset_card (hle i) (by norm_num)
       choose s' hsub hcard using ext
@@ -432,7 +432,7 @@ problem imo2005_p6 {n : ℕ} (s : Fin n → Finset (Fin 6))
         intro i hi
         by_contra h'
         push Not at h'
-        have h5 : (s i).card = 5 := by have h6 := hall i; omega
+        have h5 : (s i).card = 5 := by have h6 := hall i; lia
         exact hcon i c0 hi h5 hc0card
       have ext : ∀ i, ∃ t : Finset (Fin 6), s i ⊆ t ∧ t.card = if i = c0 then 5 else 4 := by
         intro i
@@ -525,7 +525,7 @@ problem imo2005_p6 {n : ℕ} (s : Fin n → Finset (Fin 6))
       ring
     have h5c : (5).choose 2 = 10 := by decide
     rw [hs''c0card, e, h5c]
-    omega
+    lia
   have hsum2 : pairCount s'' {0, 1} + pairCount s'' {0, 2} + pairCount s'' {0, 3}
       + pairCount s'' {0, 4} + pairCount s'' {0, 5} + pairCount s'' {1, 2}
       + pairCount s'' {1, 3} + pairCount s'' {1, 4} + pairCount s'' {1, 5}
@@ -534,7 +534,7 @@ problem imo2005_p6 {n : ℕ} (s : Fin n → Finset (Fin 6))
     rw [pc2_univ] at hsum1
     repeat rw [Finset.sum_insert (by decide)] at hsum1
     rw [Finset.sum_singleton] at hsum1
-    omega
+    lia
   -- Each pair count is at least `(2 * n + 1) / 5`.
   have hb : ∀ p q : Fin 6, p ≠ q → 2 * n + 1 ≤ 5 * pairCount s'' {p, q} := by
     intro p q hpq

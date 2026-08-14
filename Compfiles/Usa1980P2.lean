@@ -91,7 +91,7 @@ theorem card_apPairs_le (n : ℕ) (a : ℕ → ℝ) (ha : StrictMonoOn a (Set.Ii
           ha.injOn (Set.mem_Iio.mpr (hp.1.trans (hp.2.1.trans hp.2.2.1)))
             (Set.mem_Iio.mpr (hq.1.trans (hq.2.1.trans hq.2.2.1))) (by linarith)
         exact Prod.ext h1 h
-    rwa [Nat.card_Ioo, show n - j - 1 = n - 1 - j by omega] at h2
+    rwa [Nat.card_Ioo, show n - j - 1 = n - 1 - j by lia] at h2
 
 /-- The per-index bounds telescope in steps of two:
 `∑ j < n + 2, min j (n + 1 - j) = ∑ j < n, min j (n - 1 - j) + n`. -/
@@ -102,7 +102,7 @@ theorem sum_min_step (n : ℕ) :
   have term : ∀ j ∈ range n, min (j + 1) (n + 1 - (j + 1)) = min j (n - 1 - j) + 1 := by
     intro j hj
     rw [mem_range] at hj
-    have e : n + 1 - (j + 1) = n - 1 - j + 1 := by omega
+    have e : n + 1 - (j + 1) = n - 1 - j + 1 := by lia
     rw [e, min_add_add_right]
   rw [sum_congr rfl term, sum_add_distrib]
   simp
@@ -123,7 +123,7 @@ theorem sum_min_closed (n : ℕ) : (∑ j ∈ range n, min j (n - 1 - j)) = (n -
     · simp only [Nat.add_sub_cancel]
       have e : (k + 1 + 1)^2 = k^2 + 4 * k + 4 := by ring
       rw [e]
-      omega
+      lia
 
 /-- The sequence `a i = i` is strictly increasing on `Set.Iio n`. -/
 theorem strictMonoOn_cast (n : ℕ) : StrictMonoOn (fun i : ℕ => (i : ℝ)) (Set.Iio n) :=
@@ -144,15 +144,15 @@ theorem card_apPairs_cast (n : ℕ) (j : ℕ) :
         rw [Finset.mem_coe, mem_apPairs]
         have hd1 : d < j := lt_of_lt_of_le hd (min_le_left _ _)
         have hd2 : d < n - 1 - j := lt_of_lt_of_le hd (min_le_right _ _)
-        have hnat : j - 1 - d + (j + 1 + d) = 2 * j := by omega
+        have hnat : j - 1 - d + (j + 1 + d) = 2 * j := by lia
         have e4 : ((j - 1 - d : ℕ) : ℝ) + ((j + 1 + d : ℕ) : ℝ) = 2 * (j : ℝ) := by
           exact_mod_cast hnat
         show j - 1 - d < j ∧ j < j + 1 + d ∧ j + 1 + d < n ∧
           ((j - 1 - d : ℕ) : ℝ) + ((j + 1 + d : ℕ) : ℝ) = 2 * (j : ℝ)
-        exact ⟨by omega, by omega, by omega, e4⟩
+        exact ⟨by lia, by lia, by lia, e4⟩
       · intro d _ e _ h
         have h2 : j + 1 + d = j + 1 + e := congrArg Prod.snd h
-        omega
+        lia
     rwa [card_range] at hinj
 
 /-- The bound is achieved by the sequence `a i = i`. -/

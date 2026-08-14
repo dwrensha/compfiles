@@ -149,7 +149,7 @@ lemma gains_single {n i j : ℕ} (hi : i + 1 < n) (hj : j + 1 < n) (r c : ℕ) :
       by_cases h2 : 1 ≤ r ∧ c + 1 < n
       · rw [ite_eq_left h2, ite_eq_right]
         rintro ⟨h3, h4⟩
-        exact h ⟨by omega, h4⟩
+        exact h ⟨by lia, h4⟩
       · rw [ite_eq_right h2]
   have t3 : (if 1 ≤ r ∧ 1 ≤ c then (if r - 1 = i ∧ c - 1 = j then (1 : ℕ) else 0) else 0) =
       if r = i + 1 ∧ c = j + 1 then 1 else 0 := by
@@ -159,12 +159,12 @@ lemma gains_single {n i j : ℕ} (hi : i + 1 < n) (hj : j + 1 < n) (r c : ℕ) :
       by_cases h2 : 1 ≤ r ∧ 1 ≤ c
       · rw [ite_eq_left h2, ite_eq_right]
         rintro ⟨h3, h4⟩
-        exact h ⟨by omega, by omega⟩
+        exact h ⟨by lia, by lia⟩
       · rw [ite_eq_right h2]
   simp only [gains]
   rw [t1, t2, t3]
   simp only [trominoCells, Finset.mem_insert, Finset.mem_singleton, Prod.mk.injEq]
-  split_ifs <;> omega
+  split_ifs <;> lia
 
 /-- A single move, seen through the counting functions: the gains and losses of
 every cell can be expressed with suitable counts. -/
@@ -180,7 +180,7 @@ lemma extract_step {n : ℕ} {b b' : Board} (h : Step n b b') :
       show (if x = i ∧ y = j then (1 : ℕ) else 0) = 0
       split_ifs with h2
       · obtain ⟨rfl, rfl⟩ := h2
-        rcases hxy with h | h <;> omega
+        rcases hxy with h | h <;> lia
       · rfl
     · intro r c hr hc
       rw [gains_single hi hj r c]
@@ -260,7 +260,7 @@ lemma extract {n : ℕ} {b b' : Board} (h : Reach n b b') :
     have e₂ := he₂ r c hr hc
     rw [gains_add]
     dsimp only
-    omega
+    lia
 
 /-- In particular, a successful game yields the cell equations together with at
 least one tromino that was actually placed. -/
@@ -278,7 +278,7 @@ lemma extract_solvable {n : ℕ} (hn : 1 ≤ n) (h : Solvable n) :
       show (if x = i ∧ y = j then (1 : ℕ) else 0) = 0
       split_ifs with h2
       · obtain ⟨rfl, rfl⟩ := h2
-        rcases hxy with h | h <;> omega
+        rcases hxy with h | h <;> lia
       · rfl
     · intro r c hr hc
       have e := he₂ r c hr hc
@@ -290,13 +290,13 @@ lemma extract_solvable {n : ℕ} (hn : 1 ≤ n) (h : Solvable n) :
     exfalso
     have hmem : (0, r) ∈ Finset.range n ×ˢ {r} := by
       rw [Finset.mem_product]
-      exact ⟨Finset.mem_range.2 (by omega), Finset.mem_singleton_self r⟩
+      exact ⟨Finset.mem_range.2 (by lia), Finset.mem_singleton_self r⟩
     exact Finset.notMem_empty _ (hfull hmem)
   | clearCol c hfull =>
     exfalso
     have hmem : (c, 0) ∈ {c} ×ˢ Finset.range n := by
       rw [Finset.mem_product]
-      exact ⟨Finset.mem_singleton_self c, Finset.mem_range.2 (by omega)⟩
+      exact ⟨Finset.mem_singleton_self c, Finset.mem_range.2 (by lia)⟩
     exact Finset.notMem_empty _ (hfull hmem)
 
 /-!
@@ -371,7 +371,7 @@ lemma key_identity {n : ℕ} (hn : 2 ≤ n) {a : ℕ → ℕ → ℕ} {ρ γ : �
     by_cases hcond : r + 1 < n ∧ c + 1 < n
     · rw [ite_eq_left hcond]
     · rw [ite_eq_right hcond, zero_mul, zero_mul]
-      have hz : a r c = 0 := hsupp r c (by omega)
+      have hz : a r c = 0 := hsupp r c (by lia)
       simp [hz]
   have s2 : ∑ i ∈ Finset.range n, ∑ j ∈ Finset.range n, (a i j : ℂ) * ζ ^ (i + 1) * η ^ j =
       ∑ r ∈ Finset.range n, ∑ c ∈ Finset.range n,
@@ -385,7 +385,7 @@ lemma key_identity {n : ℕ} (hn : 2 ≤ n) {a : ℕ → ℕ → ℕ} {ρ γ : �
       · rw [ite_eq_right hn0]
         apply Finset.sum_eq_zero
         intro j _
-        have hz : a (n - 1) j = 0 := hsupp _ _ (Or.inl (by omega))
+        have hz : a (n - 1) j = 0 := hsupp _ _ (Or.inl (by lia))
         simp [hz]
     have hshift := sum_range_shift
       (fun r ↦ if r = 0 then (0 : ℂ)
@@ -406,9 +406,9 @@ lemma key_identity {n : ℕ} (hn : 2 ≤ n) {a : ℕ → ℕ → ℕ} {ρ γ : �
       apply Finset.sum_congr rfl
       intro c _
       by_cases hcond : c + 1 < n
-      · rw [ite_eq_left ⟨by omega, hcond⟩]
-      · rw [ite_eq_right (by omega : ¬(1 ≤ r ∧ c + 1 < n)), zero_mul, zero_mul]
-        have hz : a (r - 1) c = 0 := hsupp _ _ (Or.inr (by omega))
+      · rw [ite_eq_left ⟨by lia, hcond⟩]
+      · rw [ite_eq_right (by lia : ¬(1 ≤ r ∧ c + 1 < n)), zero_mul, zero_mul]
+        have hz : a (r - 1) c = 0 := hsupp _ _ (Or.inr (by lia))
         simp [hz]
   have s3 : ∑ i ∈ Finset.range n, ∑ j ∈ Finset.range n,
         (a i j : ℂ) * ζ ^ (i + 1) * η ^ (j + 1) =
@@ -424,7 +424,7 @@ lemma key_identity {n : ℕ} (hn : 2 ≤ n) {a : ℕ → ℕ → ℕ} {ρ γ : �
         by_cases hn0 : n = 0
         · rw [ite_eq_left hn0]
         · rw [ite_eq_right hn0]
-          have hz : a i (n - 1) = 0 := hsupp _ _ (Or.inr (by omega))
+          have hz : a i (n - 1) = 0 := hsupp _ _ (Or.inr (by lia))
           simp [hz]
       have hshift := sum_range_shift
         (fun c ↦ if c = 0 then (0 : ℂ) else (a i (c - 1) : ℂ) * ζ ^ (i + 1) * η ^ c) n
@@ -441,7 +441,7 @@ lemma key_identity {n : ℕ} (hn : 2 ≤ n) {a : ℕ → ℕ → ℕ} {ρ γ : �
       by_cases hc0 : c = 0
       · subst hc0
         simp
-      · rw [ite_eq_right hc0, ite_eq_left (by omega : 1 ≤ c)]
+      · rw [ite_eq_right hc0, ite_eq_left (by lia : 1 ≤ c)]
     have outer : ∑ i ∈ Finset.range n, ∑ c ∈ Finset.range n,
           (if 1 ≤ c then (a i (c - 1) : ℂ) * ζ ^ (i + 1) * η ^ c else 0) =
         ∑ r ∈ Finset.range n, ∑ c ∈ Finset.range n,
@@ -460,9 +460,9 @@ lemma key_identity {n : ℕ} (hn : 2 ≤ n) {a : ℕ → ℕ → ℕ} {ρ γ : �
         intro c _
         by_cases hc : 1 ≤ c
         · rw [ite_eq_left hc]
-          have hn0 : n ≠ 0 := by omega
+          have hn0 : n ≠ 0 := by lia
           rw [ite_eq_right hn0]
-          have hz : a (n - 1) (c - 1) = 0 := hsupp _ _ (Or.inl (by omega))
+          have hz : a (n - 1) (c - 1) = 0 := hsupp _ _ (Or.inl (by lia))
           simp [hz]
         · rw [ite_eq_right hc]
       have hshift := sum_range_shift
@@ -479,7 +479,7 @@ lemma key_identity {n : ℕ} (hn : 2 ≤ n) {a : ℕ → ℕ → ℕ} {ρ γ : �
         apply Finset.sum_congr rfl
         intro c _
         by_cases hc : 1 ≤ c
-        · rw [ite_eq_left hc, ite_eq_left hc, ite_eq_right (by omega : i + 1 ≠ 0), Nat.add_sub_cancel]
+        · rw [ite_eq_left hc, ite_eq_left hc, ite_eq_right (by lia : i + 1 ≠ 0), Nat.add_sub_cancel]
         · rw [ite_eq_right hc, ite_eq_right hc]
       rw [e1, hshift]
       apply Finset.sum_congr rfl
@@ -490,8 +490,8 @@ lemma key_identity {n : ℕ} (hn : 2 ≤ n) {a : ℕ → ℕ → ℕ} {ρ γ : �
       · apply Finset.sum_congr rfl
         intro c _
         by_cases hc : 1 ≤ c
-        · rw [ite_eq_left hc, ite_eq_right hr0, ite_eq_left ⟨by omega, hc⟩]
-        · rw [ite_eq_right hc, ite_eq_right (by omega : ¬(1 ≤ r ∧ 1 ≤ c)), zero_mul, zero_mul]
+        · rw [ite_eq_left hc, ite_eq_right hr0, ite_eq_left ⟨by lia, hc⟩]
+        · rw [ite_eq_right hc, ite_eq_right (by lia : ¬(1 ≤ r ∧ 1 ≤ c)), zero_mul, zero_mul]
     calc ∑ i ∈ Finset.range n, ∑ j ∈ Finset.range n, (a i j : ℂ) * ζ ^ (i + 1) * η ^ (j + 1)
         = ∑ i ∈ Finset.range n, ∑ c ∈ Finset.range n,
             (if 1 ≤ c then (a i (c - 1) : ℂ) * ζ ^ (i + 1) * η ^ c else 0) :=
@@ -551,7 +551,7 @@ lemma one_add_ne_zero {n : ℕ} (hn : 2 ≤ n) (h3 : ¬ 3 ∣ n) {ζ η : ℂ}
     (hζ : ζ ^ n = 1) (hζ1 : ζ ≠ 1) (hη : η ^ n = 1) :
     1 + ζ + ζ * η ≠ 0 := by
   intro h
-  have hn0 : n ≠ 0 := by omega
+  have hn0 : n ≠ 0 := by lia
   have hζ0 : ζ ≠ 0 := by
     intro h0
     rw [h0] at hζ
@@ -623,8 +623,8 @@ lemma count_eq_zero {n : ℕ} (hn : 2 ≤ n) {a : ℕ → ℕ → ℕ}
     (hP : ∀ ζ η : ℂ, ζ ^ n = 1 → ζ ≠ 1 → η ^ n = 1 → η ≠ 1 →
       ∑ i ∈ Finset.range n, ∑ j ∈ Finset.range n, (a i j : ℂ) * ζ ^ i * η ^ j = 0) :
     ∀ i j, a i j = 0 := by
-  obtain ⟨m, rfl⟩ : ∃ m, n = m + 1 := ⟨n - 1, by omega⟩
-  have hm : 1 ≤ m := by omega
+  obtain ⟨m, rfl⟩ : ∃ m, n = m + 1 := ⟨n - 1, by lia⟩
+  have hm : 1 ≤ m := by lia
   set ω : ℂ := Complex.exp (2 * Real.pi * Complex.I / (↑(m + 1) : ℂ)) with hωdef
   have hω : IsPrimitiveRoot ω (m + 1) := by
     rw [hωdef]
@@ -635,10 +635,10 @@ lemma count_eq_zero {n : ℕ} (hn : 2 ≤ n) {a : ℕ → ℕ → ℕ}
     intro x hx y hy hxy
     simp only [Finset.coe_range, Set.mem_Iio] at hx hy
     simp only at hxy
-    have h1 : x + 1 < m + 1 := by omega
-    have h2 : y + 1 < m + 1 := by omega
+    have h1 : x + 1 < m + 1 := by lia
+    have h2 : y + 1 < m + 1 := by lia
     have h3 := hω.pow_inj h1 h2 hxy
-    omega
+    lia
   have hScard : S.card = m := by
     rw [hSdef]
     exact (Finset.card_image_iff.2 hinj).trans (Finset.card_range m)
@@ -653,8 +653,8 @@ lemma count_eq_zero {n : ℕ} (hn : 2 ≤ n) {a : ℕ → ℕ → ℕ}
     · show ω ^ (k + 1) ≠ 1
       intro h1
       rw [hω.pow_eq_one_iff_dvd] at h1
-      have h2 := Nat.le_of_dvd (by omega) h1
-      omega
+      have h2 := Nat.le_of_dvd (by lia) h1
+      lia
   have hcut : ∀ ζ η : ℂ,
       ∑ i ∈ Finset.range (m + 1), ∑ j ∈ Finset.range (m + 1),
           (a i j : ℂ) * ζ ^ i * η ^ j =
@@ -664,14 +664,14 @@ lemma count_eq_zero {n : ℕ} (hn : 2 ≤ n) {a : ℕ → ℕ → ℕ}
     have hzero : ∑ j ∈ Finset.range (m + 1), (a m j : ℂ) * ζ ^ m * η ^ j = 0 := by
       apply Finset.sum_eq_zero
       intro j _
-      have hz : a m j = 0 := hsupp _ _ (Or.inl (by omega))
+      have hz : a m j = 0 := hsupp _ _ (Or.inl (by lia))
       simp [hz]
     rw [hzero, add_zero]
     apply Finset.sum_congr rfl
     intro i _
     rw [Finset.sum_range_succ]
     have hzero2 : (a i m : ℂ) * ζ ^ i * η ^ m = 0 := by
-      have hz : a i m = 0 := hsupp _ _ (Or.inr (by omega))
+      have hz : a i m = 0 := hsupp _ _ (Or.inr (by lia))
       simp [hz]
     rw [hzero2, add_zero, Finset.sum_mul]
     apply Finset.sum_congr rfl
@@ -695,9 +695,9 @@ lemma count_eq_zero {n : ℕ} (hn : 2 ≤ n) {a : ℕ → ℕ → ℕ}
       apply Polynomial.natDegree_sum_le_of_forall_le
       intro i hi
       rw [Finset.mem_range] at hi
-      exact (Polynomial.natDegree_C_mul_X_pow_le _ _).trans (by omega)
+      exact (Polynomial.natDegree_C_mul_X_pow_le _ _).trans (by lia)
     have hF0 : F = 0 :=
-      Polynomial.eq_zero_of_natDegree_lt_card_of_eval_eq_zero' F S heval (by rw [hScard]; omega)
+      Polynomial.eq_zero_of_natDegree_lt_card_of_eval_eq_zero' F S heval (by rw [hScard]; lia)
     intro i hi
     have hc : F.coeff i = 0 := by rw [hF0]; simp
     rw [hFdef, Polynomial.finsetSum_coeff] at hc
@@ -719,20 +719,20 @@ lemma count_eq_zero {n : ℕ} (hn : 2 ≤ n) {a : ℕ → ℕ → ℕ}
       apply Polynomial.natDegree_sum_le_of_forall_le
       intro j' hj'
       rw [Finset.mem_range] at hj'
-      exact (Polynomial.natDegree_C_mul_X_pow_le _ _).trans (by omega)
+      exact (Polynomial.natDegree_C_mul_X_pow_le _ _).trans (by lia)
     have hQ0 : Q = 0 :=
-      Polynomial.eq_zero_of_natDegree_lt_card_of_eval_eq_zero' Q S heval (by rw [hScard]; omega)
+      Polynomial.eq_zero_of_natDegree_lt_card_of_eval_eq_zero' Q S heval (by rw [hScard]; lia)
     have hc : Q.coeff j = 0 := by rw [hQ0]; simp
     rw [hQdef, Polynomial.finsetSum_coeff] at hc
     simp only [Polynomial.coeff_C_mul_X_pow] at hc
     rw [Finset.sum_ite_eq, ite_eq_left (Finset.mem_range.2 hj)] at hc
     exact Nat.cast_eq_zero.1 hc
-  · exact hsupp i j (by omega)
+  · exact hsupp i j (by lia)
 
 /-- The obstruction: the board cannot be emptied when `3 ∤ n`. -/
 lemma not_solvable_of_not_three_dvd {n : ℕ} (hn : 2 ≤ n) (h3 : ¬ 3 ∣ n) (h : Solvable n) :
     False := by
-  obtain ⟨a, ρ, γ, hsupp, hcell, i₀, j₀, hpos⟩ := extract_solvable (by omega) h
+  obtain ⟨a, ρ, γ, hsupp, hcell, i₀, j₀, hpos⟩ := extract_solvable (by lia) h
   have hP : ∀ ζ η : ℂ, ζ ^ n = 1 → ζ ≠ 1 → η ^ n = 1 → η ≠ 1 →
       ∑ i ∈ Finset.range n, ∑ j ∈ Finset.range n, (a i j : ℂ) * ζ ^ i * η ^ j = 0 := by
     intro ζ η hζ hζ1 hη hη1
@@ -742,7 +742,7 @@ lemma not_solvable_of_not_three_dvd {n : ℕ} (hn : 2 ≤ n) (h3 : ¬ 3 ∣ n) (
     · exact hzero
   have hzero := count_eq_zero hn hsupp hP
   have h00 := hzero i₀ j₀
-  omega
+  lia
 
 /-!
 ## The construction for `3 ∣ n`
@@ -871,7 +871,7 @@ lemma reach_clearCols {n : ℕ} (s : Finset ℕ) :
 /-- The construction: the board can be emptied whenever `3 ∣ n`. -/
 lemma solvable_of_three_dvd {n : ℕ} (hn : 2 ≤ n) (h3 : 3 ∣ n) : Solvable n := by
   obtain ⟨k, rfl⟩ := h3
-  have hk : 1 ≤ k := by omega
+  have hk : 1 ≤ k := by lia
   set idx : Finset (ℕ × ℕ) := Finset.range k ×ˢ Finset.range k with hidx
   have mem_idx : ∀ p : ℕ × ℕ, p ∈ idx ↔ p.1 < k ∧ p.2 < k := by
     intro p
@@ -895,7 +895,7 @@ lemma solvable_of_three_dvd {n : ℕ} (hn : 2 ≤ n) (h3 : 3 ∣ n) : Solvable n
     intro c hc
     simp only [trominoCells, Finset.mem_insert, Finset.mem_singleton] at hc ⊢
     rcases hc with rfl | rfl | rfl <;> rintro (h | h | h) <;> simp only [Prod.mk.injEq] at h <;>
-      omega
+      lia
   have disjBB : ∀ p ∈ idx, ∀ q ∈ idx, p ≠ q →
       Disjoint (trominoCells (3 * p.1 + 1) (3 * p.2))
         (trominoCells (3 * q.1 + 1) (3 * q.2)) := by
@@ -906,7 +906,7 @@ lemma solvable_of_three_dvd {n : ℕ} (hn : 2 ≤ n) (h3 : 3 ∣ n) : Solvable n
     intro c hc
     simp only [trominoCells, Finset.mem_insert, Finset.mem_singleton] at hc ⊢
     rcases hc with rfl | rfl | rfl <;> rintro (h | h | h) <;> simp only [Prod.mk.injEq] at h <;>
-      omega
+      lia
   have disjCC : ∀ p ∈ idx, ∀ q ∈ idx, p ≠ q →
       Disjoint (trominoCells (3 * p.1) (3 * p.2))
         (trominoCells (3 * q.1) (3 * q.2)) := by
@@ -917,7 +917,7 @@ lemma solvable_of_three_dvd {n : ℕ} (hn : 2 ≤ n) (h3 : 3 ∣ n) : Solvable n
     intro c hc
     simp only [trominoCells, Finset.mem_insert, Finset.mem_singleton] at hc ⊢
     rcases hc with rfl | rfl | rfl <;> rintro (h | h | h) <;> simp only [Prod.mk.injEq] at h <;>
-      omega
+      lia
   have freshB : ∀ p ∈ idx, ∀ c ∈ trominoCells (3 * p.1 + 1) (3 * p.2), c ∉ B1 := by
     intro p hp c hc h
     rw [mem_idx] at hp
@@ -926,7 +926,7 @@ lemma solvable_of_three_dvd {n : ℕ} (hn : 2 ≤ n) (h3 : 3 ∣ n) : Solvable n
     rw [mem_idx] at hq
     simp only [trominoCells, Finset.mem_insert, Finset.mem_singleton] at hc hq2
     rcases hc with rfl | rfl | rfl <;> rcases hq2 with h | h | h <;>
-      simp only [Prod.mk.injEq] at h <;> omega
+      simp only [Prod.mk.injEq] at h <;> lia
   have freshC : ∀ p ∈ idx, ∀ c ∈ trominoCells (3 * p.1) (3 * p.2), c ∉ B3 := by
     intro p hp c hc h
     rw [mem_idx] at hp
@@ -940,18 +940,18 @@ lemma solvable_of_three_dvd {n : ℕ} (hn : 2 ≤ n) (h3 : 3 ∣ n) : Solvable n
         obtain ⟨q, hq, hq2⟩ := hcB2
         rw [mem_idx] at hq
         simp only [trominoCells, Finset.mem_insert, Finset.mem_singleton] at hq2
-        rcases hq2 with h | h | h <;> simp only [Prod.mk.injEq] at h <;> omega
+        rcases hq2 with h | h | h <;> simp only [Prod.mk.injEq] at h <;> lia
       · rw [Finset.mem_biUnion] at hcB2
         obtain ⟨q, hq, hq2⟩ := hcB2
         rw [mem_idx] at hq
         simp only [trominoCells, Finset.mem_insert, Finset.mem_singleton] at hq2
-        rcases hq2 with h | h | h <;> simp only [Prod.mk.injEq] at h <;> omega
+        rcases hq2 with h | h | h <;> simp only [Prod.mk.injEq] at h <;> lia
     · exact hcD (Finset.mem_product.2 ⟨by
           rw [hCols, Finset.mem_image]
-          exact ⟨p.1, Finset.mem_range.2 hp.1, rfl⟩, Finset.mem_range.2 (by omega)⟩)
+          exact ⟨p.1, Finset.mem_range.2 hp.1, rfl⟩, Finset.mem_range.2 (by lia)⟩)
     · exact hcD (Finset.mem_product.2 ⟨by
           rw [hCols, Finset.mem_image]
-          exact ⟨p.1, Finset.mem_range.2 hp.1, rfl⟩, Finset.mem_range.2 (by omega)⟩)
+          exact ⟨p.1, Finset.mem_range.2 hp.1, rfl⟩, Finset.mem_range.2 (by lia)⟩)
   have fullCols : ∀ c ∈ Cols, {c} ×ˢ Finset.range (3 * k) ⊆ B2 := by
     intro c hc x hx
     rw [hCols, Finset.mem_image] at hc
@@ -963,12 +963,12 @@ lemma solvable_of_three_dvd {n : ℕ} (hn : 2 ≤ n) (h3 : 3 ∣ n) : Solvable n
     have hx1 : x.1 = 3 * t + 1 := hxc
     set s := x.2 / 3 with hs
     set m := x.2 % 3 with hm
-    have hsk : s < k := by omega
+    have hsk : s < k := by lia
     have hx2 : x = (3 * t + 1, 3 * s + m) := by
-      have h2 : x.2 = 3 * s + m := by omega
+      have h2 : x.2 = 3 * s + m := by lia
       exact Prod.ext_iff.2 ⟨hx1, h2⟩
     rw [hx2]
-    rcases (by omega : m = 0 ∨ m = 1 ∨ m = 2) with h | h | h <;> rw [h]
+    rcases (by lia : m = 0 ∨ m = 1 ∨ m = 2) with h | h | h <;> rw [h]
     · rw [hB2]
       apply Finset.mem_union_right
       rw [Finset.mem_biUnion]
@@ -992,12 +992,12 @@ lemma solvable_of_three_dvd {n : ℕ} (hn : 2 ≤ n) (h3 : 3 ∣ n) : Solvable n
     have hxlt : x.1 < 3 * k := Finset.mem_range.1 hxr
     set t := x.1 / 3 with ht
     set m := x.1 % 3 with hm
-    have htk : t < k := by omega
+    have htk : t < k := by lia
     have hx2 : x = (3 * t + m, 3 * s) := by
-      have h2 : x.1 = 3 * t + m := by omega
+      have h2 : x.1 = 3 * t + m := by lia
       exact Prod.ext_iff.2 ⟨h2, h1⟩
     rw [hx2]
-    rcases (by omega : m = 0 ∨ m = 1 ∨ m = 2) with h | h | h <;> rw [h]
+    rcases (by lia : m = 0 ∨ m = 1 ∨ m = 2) with h | h | h <;> rw [h]
     · rw [hB4]
       apply Finset.mem_union_right
       rw [Finset.mem_biUnion]
@@ -1020,7 +1020,7 @@ lemma solvable_of_three_dvd {n : ℕ} (hn : 2 ≤ n) (h3 : 3 ∣ n) : Solvable n
         rw [hCols, Finset.mem_image] at h1'
         obtain ⟨t', ht', hteq⟩ := h1'
         rw [Finset.mem_range] at ht'
-        omega
+        lia
   have fullRows1 : ∀ r ∈ Rows1, Finset.range (3 * k) ×ˢ {r} ⊆ B5 := by
     intro r hr x hx
     rw [hRows1, Finset.mem_image] at hr
@@ -1032,14 +1032,14 @@ lemma solvable_of_three_dvd {n : ℕ} (hn : 2 ≤ n) (h3 : 3 ∣ n) : Solvable n
     have hxlt : x.1 < 3 * k := Finset.mem_range.1 hxr
     set t := x.1 / 3 with ht
     set m := x.1 % 3 with hm
-    have htk : t < k := by omega
+    have htk : t < k := by lia
     have hx2 : x = (3 * t + m, 3 * s + 1) := by
-      have h2 : x.1 = 3 * t + m := by omega
+      have h2 : x.1 = 3 * t + m := by lia
       exact Prod.ext_iff.2 ⟨h2, h1⟩
     rw [hx2]
     rw [hB5, Finset.mem_sdiff]
     refine ⟨?_, ?_⟩
-    · rcases (by omega : m = 0 ∨ m = 1 ∨ m = 2) with h | h | h <;> rw [h]
+    · rcases (by lia : m = 0 ∨ m = 1 ∨ m = 2) with h | h | h <;> rw [h]
       · rw [hB4]
         apply Finset.mem_union_left
         rw [hB3, Finset.mem_sdiff]
@@ -1054,7 +1054,7 @@ lemma solvable_of_three_dvd {n : ℕ} (hn : 2 ≤ n) (h3 : 3 ∣ n) : Solvable n
           rw [hCols, Finset.mem_image] at h1'
           obtain ⟨t', ht', hteq⟩ := h1'
           rw [Finset.mem_range] at ht'
-          omega
+          lia
       · rw [hB4]
         apply Finset.mem_union_right
         rw [Finset.mem_biUnion]
@@ -1073,13 +1073,13 @@ lemma solvable_of_three_dvd {n : ℕ} (hn : 2 ≤ n) (h3 : 3 ∣ n) : Solvable n
           rw [hCols, Finset.mem_image] at h1'
           obtain ⟨t', ht', hteq⟩ := h1'
           rw [Finset.mem_range] at ht'
-          omega
+          lia
     · rw [Finset.mem_product]
       rintro ⟨-, h1'⟩
       have h1'' : 3 * s + 1 ∈ Rows0 := h1'
       rw [hRows0, Finset.mem_image] at h1''
       obtain ⟨s', hs', hseq⟩ := h1''
-      omega
+      lia
   have hB6empty : B6 = ∅ := by
     have cell_check : ∀ c : ℕ × ℕ, c ∈ B4 → c.1 < 3 * k ∧ (c.2 ∈ Rows0 ∨ c.2 ∈ Rows1) := by
       intro c hc
@@ -1095,21 +1095,21 @@ lemma solvable_of_three_dvd {n : ℕ} (hn : 2 ≤ n) (h3 : 3 ∣ n) : Solvable n
           simp only [trominoCells, Finset.mem_insert, Finset.mem_singleton] at hq2
           rcases hq2 with h | h | h
           · subst h
-            refine ⟨by omega, Or.inr ?_⟩
+            refine ⟨by lia, Or.inr ?_⟩
             rw [hRows1, Finset.mem_image]
             exact ⟨q.2, Finset.mem_range.2 hq.2, rfl⟩
           · subst h
             exfalso
             apply hcD
             rw [Finset.mem_product]
-            refine ⟨?_, Finset.mem_range.2 (by omega)⟩
+            refine ⟨?_, Finset.mem_range.2 (by lia)⟩
             rw [hCols, Finset.mem_image]
             exact ⟨q.1, Finset.mem_range.2 hq.1, rfl⟩
           · subst h
             exfalso
             apply hcD
             rw [Finset.mem_product]
-            refine ⟨?_, Finset.mem_range.2 (by omega)⟩
+            refine ⟨?_, Finset.mem_range.2 (by lia)⟩
             rw [hCols, Finset.mem_image]
             exact ⟨q.1, Finset.mem_range.2 hq.1, rfl⟩
         · rw [Finset.mem_biUnion] at hcB2
@@ -1121,15 +1121,15 @@ lemma solvable_of_three_dvd {n : ℕ} (hn : 2 ≤ n) (h3 : 3 ∣ n) : Solvable n
             exfalso
             apply hcD
             rw [Finset.mem_product]
-            refine ⟨?_, Finset.mem_range.2 (by omega)⟩
+            refine ⟨?_, Finset.mem_range.2 (by lia)⟩
             rw [hCols, Finset.mem_image]
             exact ⟨q.1, Finset.mem_range.2 hq.1, rfl⟩
           · subst h
-            refine ⟨by omega, Or.inl ?_⟩
+            refine ⟨by lia, Or.inl ?_⟩
             rw [hRows0, Finset.mem_image]
             exact ⟨q.2, Finset.mem_range.2 hq.2, rfl⟩
           · subst h
-            refine ⟨by omega, Or.inr ?_⟩
+            refine ⟨by lia, Or.inr ?_⟩
             rw [hRows1, Finset.mem_image]
             exact ⟨q.2, Finset.mem_range.2 hq.2, rfl⟩
       · rw [Finset.mem_biUnion] at hc
@@ -1138,15 +1138,15 @@ lemma solvable_of_three_dvd {n : ℕ} (hn : 2 ≤ n) (h3 : 3 ∣ n) : Solvable n
         simp only [trominoCells, Finset.mem_insert, Finset.mem_singleton] at hq2
         rcases hq2 with h | h | h
         · subst h
-          refine ⟨by omega, Or.inl ?_⟩
+          refine ⟨by lia, Or.inl ?_⟩
           rw [hRows0, Finset.mem_image]
           exact ⟨q.2, Finset.mem_range.2 hq.2, rfl⟩
         · subst h
-          refine ⟨by omega, Or.inl ?_⟩
+          refine ⟨by lia, Or.inl ?_⟩
           rw [hRows0, Finset.mem_image]
           exact ⟨q.2, Finset.mem_range.2 hq.2, rfl⟩
         · subst h
-          refine ⟨by omega, Or.inr ?_⟩
+          refine ⟨by lia, Or.inr ?_⟩
           rw [hRows1, Finset.mem_image]
           exact ⟨q.2, Finset.mem_range.2 hq.2, rfl⟩
     rw [hB6, hB5]
@@ -1160,7 +1160,7 @@ lemma solvable_of_three_dvd {n : ℕ} (hn : 2 ≤ n) (h3 : 3 ∣ n) : Solvable n
     · exact hc1 (Finset.mem_product.2 ⟨Finset.mem_range.2 hx, hy⟩)
   -- now run the six phases
   have hstep0 : Step (3 * k) ∅ (∅ ∪ trominoCells 0 1) := by
-    apply Step.tromino (by omega) (by omega) <;> simp
+    apply Step.tromino (by lia) (by lia) <;> simp
   refine ⟨∅ ∪ trominoCells 0 1, hstep0, ?_⟩
   have r1 : Reach (3 * k) (∅ ∪ trominoCells 0 1) B1 := by
     have hmem : (0, 0) ∈ idx := by
@@ -1178,7 +1178,7 @@ lemma solvable_of_three_dvd {n : ℕ} (hn : 2 ≤ n) (h3 : 3 ∣ n) : Solvable n
     · intro p hp
       rw [Finset.mem_erase] at hp
       rw [mem_idx] at hp
-      exact ⟨by omega, by omega⟩
+      exact ⟨by lia, by lia⟩
     · intro p hp q hq hpq
       rw [Finset.mem_erase] at hp hq
       exact disjAA p hp.2 q hq.2 hpq
@@ -1196,7 +1196,7 @@ lemma solvable_of_three_dvd {n : ℕ} (hn : 2 ≤ n) (h3 : 3 ∣ n) : Solvable n
     apply reach_place idx (fun p ↦ (3 * p.1 + 1, 3 * p.2)) B1
     · intro p hp
       rw [mem_idx] at hp
-      exact ⟨by omega, by omega⟩
+      exact ⟨by lia, by lia⟩
     · intro p hp q hq hpq
       exact disjBB p hp q hq hpq
     · exact freshB
@@ -1208,7 +1208,7 @@ lemma solvable_of_three_dvd {n : ℕ} (hn : 2 ≤ n) (h3 : 3 ∣ n) : Solvable n
     apply reach_place idx (fun p ↦ (3 * p.1, 3 * p.2)) B3
     · intro p hp
       rw [mem_idx] at hp
-      exact ⟨by omega, by omega⟩
+      exact ⟨by lia, by lia⟩
     · intro p hp q hq hpq
       exact disjCC p hp q hq hpq
     · exact freshC

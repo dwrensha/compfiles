@@ -214,8 +214,8 @@ theorem finrank_direction_perp {n : Pt} (hn : n ≠ 0) (c : ℝ) :
       push Not at hc
       rw [Nat.le_zero] at hc
       exact hne (Submodule.finrank_eq_zero.mp hc)
-    omega
-  omega
+    lia
+  lia
 
 /-- The fundamental characterization: `x` and `y` are strictly on opposite sides
 of the line `{z | ⟪n, z⟫ = c}` iff their inner products with `n` strictly
@@ -304,7 +304,7 @@ theorem exists_normal {ℓ : AffineSubspace ℝ Pt}
   have horth : Module.finrank ℝ Dᗮ = 1 := by
     have := Submodule.finrank_add_finrank_orthogonal D
     rw [hl, finrank_euclideanSpace_fin] at this
-    omega
+    lia
   have hbot' : Dᗮ ≠ ⊥ := by
     intro h
     rw [h] at horth
@@ -447,11 +447,11 @@ theorem pair_strips {S : Finset Pt} (h3 : No3Col S) (hcard : 4 ≤ S.card) :
     exact absurd hp (Finset.notMem_empty p)
   | succ m ih =>
     intro C hCS hC
-    have h1 : 0 < C.card := by omega
+    have h1 : 0 < C.card := by lia
     obtain ⟨A, hA⟩ := Finset.card_pos.mp h1
     have h2 : 0 < (C.erase A).card := by
       rw [Finset.card_erase_of_mem hA]
-      omega
+      lia
     obtain ⟨B, hB⟩ := Finset.card_pos.mp h2
     have hBA : B ≠ A := Finset.ne_of_mem_erase hB
     have hBC : B ∈ C := Finset.mem_of_mem_erase hB
@@ -460,7 +460,7 @@ theorem pair_strips {S : Finset Pt} (h3 : No3Col S) (hcard : 4 ≤ S.card) :
       have hsub := Finset.le_card_sdiff ({A, B} : Finset Pt) S
       have hABcard : ({A, B} : Finset Pt).card ≤ 2 :=
         le_trans (Finset.card_insert_le A {B}) (by rw [Finset.card_singleton])
-      omega
+      lia
     obtain ⟨ℓ₁, ℓ₂, hr₁, hr₂, havoid, hsep⟩ :=
       exists_strip h3 (hCS hA) (hCS hBC) hBA.symm hne
     set C' := (C.erase A).erase B with hC'
@@ -468,7 +468,7 @@ theorem pair_strips {S : Finset Pt} (h3 : No3Col S) (hcard : 4 ≤ S.card) :
       (Finset.erase_subset _ _).trans (Finset.erase_subset _ _)
     have hC'card : C'.card = 2 * m := by
       rw [hC', Finset.card_erase_of_mem hB, Finset.card_erase_of_mem hA, hC]
-      omega
+      lia
     obtain ⟨L', hlen, hline, havoid', hsep'⟩ := ih C' (hC'sub.trans hCS) hC'card
     refine ⟨ℓ₁ :: ℓ₂ :: L', by rw [List.length_cons, List.length_cons, hlen]; ring, ?_, ?_, ?_⟩
     · intro ℓ hℓ
@@ -646,7 +646,7 @@ theorem assemble (cfg : ColombianConfiguration)
     · exact Finset.subset_union_left
     · exact Finset.subset_union_right
   obtain ⟨L', hlen, hline, havoid', hsep'⟩ :=
-    pair_strips h3 (by omega) 1006 (C \ Z)
+    pair_strips h3 (by lia) 1006 (C \ Z)
       ((Finset.sdiff_subset).trans hCS) (by rw [hcards])
   have hmain : ∀ p ∈ C, ∀ x ∈ S \ C, ∃ ℓ ∈ ℓ₀ :: L', ℓ.SOppSide p x := by
     intro p hp x hx
@@ -766,7 +766,7 @@ theorem upper_bound (cfg : ColombianConfiguration) :
         apply hnotA x hx
         intro hxA
         exact absurd (Finset.two_lt_card.mpr
-          ⟨z, hzA, w, hwA, x, hxA, hzw, Ne.symm hxz, Ne.symm hxw⟩) (by omega)
+          ⟨z, hzA, w, hwA, x, hxA, hzw, Ne.symm hxz, Ne.symm hxw⟩) (by lia)
       have hinner : ⟪rot90 (w - z), x - z⟫ = -(w 1 - z 1) * (x 0 - m₀) := by
         rw [inner_pt, rot90_apply0, rot90_apply1]
         simp only [PiLp.sub_apply]
@@ -787,7 +787,7 @@ theorem upper_bound (cfg : ColombianConfiguration) :
       rw [← Finset.card_pos]
       have hd := Finset.le_card_sdiff ({r} : Finset Pt) S
       rw [Finset.card_singleton] at hd
-      omega
+      lia
     apply exists_cut hne hn (t := ⟪n, r⟫)
     · intro p hp
       rw [Finset.mem_singleton] at hp
@@ -806,7 +806,7 @@ theorem upper_bound (cfg : ColombianConfiguration) :
         ∀ p ∈ ({r} : Finset Pt), ∀ x ∈ S \ ({r} : Finset Pt),
           ℓ₀.SOppSide p x := by
       apply hsingle r hrS
-      rcases (by omega : A.card = 1 ∨ A.card = 2) with h1 | h2
+      rcases (by lia : A.card = 1 ∨ A.card = 2) with h1 | h2
       · -- unique leftmost point: vertical cut
         refine ⟨e₁, e₁_ne_zero, ?_⟩
         intro x hx hxr
@@ -829,7 +829,7 @@ theorem upper_bound (cfg : ColombianConfiguration) :
           have hd := Finset.le_card_sdiff ({b', r} : Finset Pt) S
           have hc2 : ({b', r} : Finset Pt).card ≤ 2 :=
             le_trans (Finset.card_insert_le _ _) (by rw [Finset.card_singleton])
-          omega
+          lia
         exact mtrick hb'r horth hpos hne2
     obtain ⟨ℓ₀, hr₀, havoid₀, hsep₀⟩ := hone
     refine assemble cfg (Or.inl rfl)
@@ -845,7 +845,7 @@ theorem upper_bound (cfg : ColombianConfiguration) :
       rcases hpS with h | h
       · exact absurd h (hred p hp)
       · exact h
-    rcases (by omega : A.card = 1 ∨ A.card = 2) with h1 | h2
+    rcases (by lia : A.card = 1 ∨ A.card = 2) with h1 | h2
     · -- unique leftmost point z', blue: find a supporting hull edge at z'
       have hAz : A = {z'} := by
         obtain ⟨e, he⟩ := Finset.card_eq_one.mp h1
@@ -858,7 +858,7 @@ theorem upper_bound (cfg : ColombianConfiguration) :
         exact hxz
       have hneerase : (S.erase z').Nonempty := by
         rw [← Finset.card_pos, Finset.card_erase_of_mem hz'S]
-        omega
+        lia
       obtain ⟨w, hwS, hwz, n₀, hn₀, horth, hpos⟩ :=
         exists_hull_edge h3 hz'S hminz hneerase
       have hzblue : z' ∈ cfg.blue := hAblue z' hz'A
@@ -867,7 +867,7 @@ theorem upper_bound (cfg : ColombianConfiguration) :
         have hd := Finset.le_card_sdiff ({z', w} : Finset Pt) S
         have hc2 : ({z', w} : Finset Pt).card ≤ 2 :=
           le_trans (Finset.card_insert_le _ _) (by rw [Finset.card_singleton])
-        omega
+        lia
       have hwSu := Finset.mem_union.mp (hS ▸ hwS)
       rcases hwSu with hwred | hwblue
       · -- w is red: tilt to cut w off alone
@@ -915,7 +915,7 @@ theorem upper_bound (cfg : ColombianConfiguration) :
       have hne2 : (S \ A).Nonempty := by
         rw [← Finset.card_pos]
         have hd := Finset.le_card_sdiff A S
-        omega
+        lia
       have hcut : ∃ ℓ₀ : AffineSubspace ℝ Pt,
           Module.finrank ℝ ℓ₀.direction = 1 ∧ (∀ p ∈ S, p ∉ ℓ₀) ∧
           ∀ p ∈ A, ∀ x ∈ S \ A, ℓ₀.SOppSide p x := by
@@ -1006,15 +1006,15 @@ theorem redPts_card : redPts.card = 2013 := by
   rw [redPts, Finset.card_image_of_injOn, Finset.card_range]
   intro a ha b hb hab
   rw [Finset.coe_range, Set.mem_Iio] at ha hb
-  have := pt_inj (by omega) (by omega) hab
-  omega
+  have := pt_inj (by lia) (by lia) hab
+  lia
 
 theorem bluePts_card : bluePts.card = 2014 := by
   rw [bluePts, Finset.card_image_of_injOn, Finset.card_range]
   intro a ha b hb hab
   rw [Finset.coe_range, Set.mem_Iio] at ha hb
-  have := pt_inj (by omega) (by omega) hab
-  omega
+  have := pt_inj (by lia) (by lia) hab
+  lia
 
 theorem red_blue_disjoint : Disjoint redPts bluePts := by
   rw [Finset.disjoint_left]
@@ -1024,8 +1024,8 @@ theorem red_blue_disjoint : Disjoint redPts bluePts := by
   obtain ⟨a, ha, rfl⟩ := hp
   obtain ⟨b, hb, hba⟩ := hq
   rw [Finset.mem_range] at ha hb
-  have := pt_inj (by omega) (by omega) hba
-  omega
+  have := pt_inj (by lia) (by lia) hba
+  lia
 
 theorem mem_pts {p : Pt} (hp : p ∈ redPts ∪ bluePts) : ∃ j < 4027, p = pt j := by
   rw [Finset.mem_union] at hp
@@ -1033,11 +1033,11 @@ theorem mem_pts {p : Pt} (hp : p ∈ redPts ∪ bluePts) : ∃ j < 4027, p = pt 
   · rw [redPts, Finset.mem_image] at hp
     obtain ⟨i, hi, rfl⟩ := hp
     rw [Finset.mem_range] at hi
-    exact ⟨2 * i + 1, by omega, rfl⟩
+    exact ⟨2 * i + 1, by lia, rfl⟩
   · rw [bluePts, Finset.mem_image] at hp
     obtain ⟨i, hi, rfl⟩ := hp
     rw [Finset.mem_range] at hi
-    exact ⟨2 * i, by omega, rfl⟩
+    exact ⟨2 * i, by lia, rfl⟩
 
 /-- The Colombian configuration witnessing the lower bound: the vertices of a
 regular 4027-gon, colored red at odd indices and blue at even indices. -/
@@ -1137,13 +1137,13 @@ theorem seps_card_le_two {n : Pt} (hn : n ≠ 0) {c : ℝ} {s : Finset ℕ}
     obtain ⟨r₃, hr₃, he₃⟩ := exists_root_pair (hsep z hz)
     rw [Set.mem_Ioo] at hr₁ hr₂ hr₃
     have h12 : r₁ < r₂ :=
-      (hr₁.2.trans_le (ang_le_ang (by omega : x + 1 ≤ y))).trans hr₂.1
+      (hr₁.2.trans_le (ang_le_ang (by lia : x + 1 ≤ y))).trans hr₂.1
     have h23 : r₂ < r₃ :=
-      (hr₂.2.trans_le (ang_le_ang (by omega : y + 1 ≤ z))).trans hr₃.1
+      (hr₂.2.trans_le (ang_le_ang (by lia : y + 1 ≤ z))).trans hr₃.1
     have hspan : r₃ - r₁ < 2 * Real.pi := by
       have hz' : z < 4026 := hs z hz
       have h1 : r₃ < ang (z + 1) := hr₃.2
-      have h2 : ang (z + 1) < 2 * Real.pi := ang_lt_two_pi (by omega)
+      have h2 : ang (z + 1) < 2 * Real.pi := ang_lt_two_pi (by lia)
       have h3 : 0 ≤ ang x := ang_nonneg x
       have h4 : ang x < r₁ := hr₁.1
       linarith
@@ -1152,10 +1152,10 @@ theorem seps_card_le_two {n : Pt} (hn : n ≠ 0) {c : ℝ} {s : Finset ℕ}
       rcases hbd.lt_or_gt with h3 | h3
   · exact key a ha b hb d hd h1 h3
   · exact key a ha d hd b hb h2 h3
-  · omega
+  · lia
   · exact key d hd a ha b hb h2 h1
   · exact key b hb a ha d hd h1 h2
-  · omega
+  · lia
   · exact key b hb d hd a ha h3 h2
   · exact key d hd b hb a ha h3 h1
 
@@ -1180,15 +1180,15 @@ theorem lower_bound {k : ℕ} (lines : Fin k → AffineSubspace ℝ Pt)
     intro j hj
     rcases Nat.even_or_odd j with ⟨m, hm⟩ | ⟨m, hm⟩
     · -- `j` even: `pt j` is blue and `pt (j+1)` is red
-      have hjm : j = 2 * m := by omega
-      have hj1 : j + 1 = 2 * m + 1 := by omega
-      obtain ⟨i, hi⟩ := hsep (pt (j + 1)) (by rw [hj1]; exact hred m (by omega))
-        (pt j) (by rw [hjm]; exact hblue m (by omega))
+      have hjm : j = 2 * m := by lia
+      have hj1 : j + 1 = 2 * m + 1 := by lia
+      obtain ⟨i, hi⟩ := hsep (pt (j + 1)) (by rw [hj1]; exact hred m (by lia))
+        (pt j) (by rw [hjm]; exact hblue m (by lia))
       exact ⟨i, hi.symm⟩
     · -- `j` odd: `pt j` is red and `pt (j+1)` is blue
-      have hj1 : j + 1 = 2 * (m + 1) := by omega
-      obtain ⟨i, hi⟩ := hsep (pt j) (by rw [hm]; exact hred m (by omega))
-        (pt (j + 1)) (by rw [hj1]; exact hblue (m + 1) (by omega))
+      have hj1 : j + 1 = 2 * (m + 1) := by lia
+      obtain ⟨i, hi⟩ := hsep (pt j) (by rw [hm]; exact hred m (by lia))
+        (pt (j + 1)) (by rw [hj1]; exact hblue (m + 1) (by lia))
       exact ⟨i, hi⟩
   rcases Nat.eq_zero_or_pos k with rfl | hk
   · obtain ⟨i, -⟩ := hsep' 0 (by norm_num)
@@ -1223,7 +1223,7 @@ theorem lower_bound {k : ℕ} (lines : Fin k → AffineSubspace ℝ Pt)
       ∑ _i : Fin k, 2 := Finset.sum_le_sum fun i _ => hbound i
   rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin, smul_eq_mul] at hsum
   rw [← hcard] at hsum
-  omega
+  lia
 
 snip end
 

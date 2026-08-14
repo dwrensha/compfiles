@@ -50,7 +50,7 @@ snip begin
 
 /-- The pairing of columns: each column is paired with the column three places away. -/
 def colMate (j : Fin 6) : Fin 6 :=
-  ⟨if j.1 < 3 then j.1 + 3 else j.1 - 3, by split <;> omega⟩
+  ⟨if j.1 < 3 then j.1 + 3 else j.1 - 3, by split <;> lia⟩
 
 /-- The pairing of the cells of the first two rows: the cell `(0, j)` is paired with
 `(1, colMate j)` and vice versa; all other cells are paired with themselves.
@@ -130,7 +130,7 @@ lemma not_aliceWins (f : Cell → ℚ) (hinj : Function.Injective f)
     (c : Cell) (hc0 : c.1.1 = 0) (hc : IsBlack f c) (hm : IsBlack f (mate c)) :
     ¬ AliceWins f := by
   rintro ⟨a, b, ha0, hb5, haB, hbB, hpath⟩
-  suffices key : b.1.1 = 0 by omega
+  suffices key : b.1.1 = 0 by lia
   have hgen : ∀ z : Cell,
       Relation.ReflTransGen (fun x y => Adj x y ∧ IsBlack f x ∧ IsBlack f y) a z →
       z.1.1 = 0 := by
@@ -155,8 +155,8 @@ lemma not_aliceWins (f : Cell → ℚ) (hinj : Function.Injective f)
         have hm0 : prev.1 = c.1 := Fin.ext (by rw [ih, hc0])
         have hprev : prev = c := IsBlack.unique hinj hmB hc hm0
         have h2 := hadj.2
-        rw [hn, hprev, mate_snd_dist c (by omega)] at h2
-        omega
+        rw [hn, hprev, mate_snd_dist c (by lia)] at h2
+        lia
   exact hgen b hpath
 
 /-! ### Rational numbers: fresh choices avoiding a finite set -/
@@ -303,7 +303,7 @@ lemma prefBoard_apply_self (p : Play) {n : ℕ} (hn : n < 36) :
   intro i hi hic
   have hie : i = ⟨n, hn⟩ := p.cell_inj hic
   have hiv : (i : ℕ) = n := Fin.ext_iff.mp hie
-  omega
+  lia
 
 lemma prefBoard_inj {p : Play} {n m : ℕ} {c d : Cell} {v : ℚ} :
     prefBoard p n c = some v → prefBoard p m d = some v → c = d := by
@@ -381,7 +381,7 @@ lemma even_card_of_mate_closed (S : Finset Cell)
     constructor
     · intro hc
       have hc1 := hsub c hc
-      rcases (by omega : c.1.1 = 0 ∨ c.1.1 = 1) with h | h
+      rcases (by lia : c.1.1 = 0 ∨ c.1.1 = 1) with h | h
       · exact Or.inl ⟨hc, h⟩
       · exact Or.inr ⟨mate c, ⟨hclosed c hc, mate_val_eq_of1 c h⟩, mate_mate c⟩
     · rintro (⟨hc, -⟩ | ⟨d, ⟨hd, -⟩, rfl⟩)
@@ -397,7 +397,7 @@ lemma even_card_of_mate_closed (S : Finset Cell)
     obtain ⟨hdS, hd0⟩ := Finset.mem_filter.mp hdT
     rw [← hdc] at hc0
     have := mate_val_eq_of0 d hd0
-    omega
+    lia
   rw [hunion, Finset.card_union_of_disjoint hdisj,
     Finset.card_image_of_injOn mate_inj.injOn]
   exact ⟨T.card, rfl⟩
@@ -640,8 +640,8 @@ lemma inv_update_rows2 {b₀ b₁ b₂ : Cell → Option ℚ} (hinv : Inv b₀)
   have hn : ∀ e : Cell, e.1.1 ≤ 1 → e ≠ x ∧ e ≠ c₂ ∧ mate e ≠ x ∧ mate e ≠ c₂ := by
     intro e he
     have hme := mate_val_le e he
-    exact ⟨by rintro rfl; omega, by rintro rfl; omega,
-      by intro h; rw [h] at hme; omega, by intro h; rw [h] at hme; omega⟩
+    exact ⟨by rintro rfl; lia, by rintro rfl; lia,
+      by intro h; rw [h] at hme; lia, by intro h; rw [h] at hme; lia⟩
   constructor
   · intro c hc
     obtain ⟨h1, h2, h3, h4⟩ := hn c hc
@@ -979,9 +979,9 @@ lemma inv_prefBoard (p : Play) (hp : FollowsStrategy bobMove p) :
       nomatch hC
   | succ m ih =>
     intro hm
-    have hih := ih (by omega)
-    have h0 : 2 * m < 36 := by omega
-    have h1 : 2 * m + 1 < 36 := by omega
+    have hih := ih (by lia)
+    have h0 : 2 * m < 36 := by lia
+    have h1 : 2 * m + 1 < 36 := by lia
     set b₀ := prefBoard p (2 * m) with hb₀
     set b₁ := prefBoard p (2 * m + 1) with hb₁
     set x := (p.moves ⟨2 * m, h0⟩).1 with hx
@@ -1031,25 +1031,25 @@ lemma inv_prefBoard (p : Play) (hp : FollowsStrategy bobMove p) :
       show Inv (Function.update b₁ (mate x) (some (bobMateValue b₁ x)))
       exact inv_update_mate hih hx01 hb₀x hb₁eq rfl hb₁inj hgood
     · -- Alice played in rows 3 to 6: Bob answers in rows 3 to 6.
-      have hx2 : 2 ≤ x.1.1 := by omega
+      have hx2 : 2 ≤ x.1.1 := by lia
       have hnowit : ¬ ∃ y : Cell, y.1.1 ≤ 1 ∧ b₁ y ≠ none ∧ b₁ (mate y) = none := by
         rintro ⟨y, hy01, hys, hym⟩
         have hyx : y ≠ x := by
           intro h
           rw [h] at hy01
-          omega
+          lia
         rw [hb₁eq, Function.update_of_ne hyx] at hys
         have hmyx : mate y ≠ x := by
           intro h
           have h2 := mate_val_le y hy01
           rw [h] at h2
-          omega
+          lia
         rw [hb₁eq, Function.update_of_ne hmyx] at hym
         exact hys ((hih.1 y hy01).mpr hym)
       have hbm := bobMove_eq_rows2 hnowit
       rw [hbm]
       have hex2 : ∃ c : Cell, 2 ≤ c.1.1 ∧ b₁ c = none := by
-        have hn36 : 2 * m + 1 ≤ 36 := by omega
+        have hn36 : 2 * m + 1 ≤ 36 := by lia
         set F := filled p (2 * m + 1) hn36 with hF
         have hcardF : F.card = 2 * m + 1 := card_filled p _ hn36
         have hmemF : ∀ c : Cell, c ∈ F ↔ b₁ c ≠ none := fun c => mem_filled
@@ -1060,34 +1060,34 @@ lemma inv_prefBoard (p : Play) (hp : FollowsStrategy bobMove p) :
             have hcx : c ≠ x := by
               intro h
               rw [h] at hc
-              omega
+              lia
             have hmcx : mate c ≠ x := by
               intro h
               have h2 := mate_val_le c hc
               rw [h] at h2
-              omega
+              lia
             rw [hb₁eq, Function.update_of_ne hcx, Function.update_of_ne hmcx]
             exact hih.1 c hc
           · intro c d vc vd vmc vmd hcd hc01 hvC hvD hvMC hvMD
             have hcx : c ≠ x := by
               intro h
               rw [h] at hc01
-              omega
+              lia
             have hd01 : d.1.1 ≤ 1 := by rw [← hcd]; exact hc01
             have hdx : d ≠ x := by
               intro h
               rw [h] at hd01
-              omega
+              lia
             have hmcx : mate c ≠ x := by
               intro h
               have h2 := mate_val_le c hc01
               rw [h] at h2
-              omega
+              lia
             have hmdx : mate d ≠ x := by
               intro h
               have h2 := mate_val_le d hd01
               rw [h] at h2
-              omega
+              lia
             rw [hb₁eq, Function.update_of_ne hcx] at hvC
             rw [hb₁eq, Function.update_of_ne hdx] at hvD
             rw [hb₁eq, Function.update_of_ne hmcx] at hvMC
@@ -1114,7 +1114,7 @@ lemma inv_prefBoard (p : Play) (hp : FollowsStrategy bobMove p) :
         have hOddT : Odd T.card := by
           obtain ⟨k, hk⟩ := hEvenS
           rw [hcardF] at hcardST
-          exact ⟨m - k, by omega⟩
+          exact ⟨m - k, by lia⟩
         have hcardR : (Finset.univ.filter fun c : Cell => ¬ c.1.1 ≤ 1).card = 24 := by
           decide
         have hTR : T ⊆ Finset.univ.filter (fun c : Cell => ¬ c.1.1 ≤ 1) := by
@@ -1127,12 +1127,12 @@ lemma inv_prefBoard (p : Play) (hp : FollowsStrategy bobMove p) :
             rw [hcon]
             exact hcardR
           obtain ⟨k, hk⟩ := hOddT
-          omega
+          lia
         have hss : T ⊂ Finset.univ.filter (fun c : Cell => ¬ c.1.1 ≤ 1) :=
           Finset.ssubset_iff_subset_ne.mpr ⟨hTR, hTneR⟩
         obtain ⟨c, hcR, hcT⟩ := Finset.exists_of_ssubset hss
         obtain ⟨-, hc2⟩ := Finset.mem_filter.mp hcR
-        refine ⟨c, by omega, ?_⟩
+        refine ⟨c, by lia, ?_⟩
         by_contra hcon
         apply hcT
         exact Finset.mem_filter.mpr ⟨(hmemF c).mpr hcon, hc2⟩
@@ -1170,7 +1170,7 @@ problem usa2004_p4 :
       rw [hd']
     · have hlt : finalBoard p (mate d) < finalBoard p c₀ :=
         lt_of_le_of_ne hle (fun h => heq (hinj h))
-      have h01 : (mate d).1.1 ≤ 1 := by rw [hmdv]; omega
+      have h01 : (mate d).1.1 ≤ 1 := by rw [hmdv]; lia
       have hiso := hinv.2 (mate d) c₀ (finalBoard p (mate d)) (finalBoard p c₀)
         (finalBoard p d) (finalBoard p (mate c₀)) hmdr h01
         (prefBoard_finalBoard p (mate d)) (prefBoard_finalBoard p c₀) ?_ ?_

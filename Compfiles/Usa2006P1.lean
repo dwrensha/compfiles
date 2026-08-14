@@ -101,7 +101,7 @@ lemma mod_iff_not_dvd {p s : ℕ} (hp : p.Prime) (hs0 : 0 < s) (hs1 : s < p) :
     intro h
     have h2 := congrArg ZMod.val h
     rw [ZMod.val_natCast, Nat.mod_eq_of_lt hs1, ZMod.val_zero] at h2
-    omega
+    lia
   obtain ⟨t, htz, ht1⟩ : ∃ t : ℕ, (t : ZMod p) = -(s : ZMod p)⁻¹ ∧ t < p :=
     ⟨_, ZMod.natCast_zmod_val _, ZMod.val_lt _⟩
   -- Then `s * t ≡ -1 (mod p)`.
@@ -126,14 +126,14 @@ lemma mod_iff_not_dvd {p s : ℕ} (hp : p.Prime) (hs0 : 0 < s) (hs1 : s < p) :
           _ = (s : ZMod p) - (k : ZMod p) := by rw [hst]; ring
       rw [Nat.cast_mul, e1, e2, Nat.cast_sub hk]
     have h2 : (s * g p t k) % p = (s - k) % p := (ZMod.natCast_eq_natCast_iff' _ _ _).mp h1
-    rwa [Nat.mod_eq_of_lt (by omega : s - k < p)] at h2
+    rwa [Nat.mod_eq_of_lt (by lia : s - k < p)] at h2
   -- `g k` lies in `[1, p)` for `1 ≤ k ≤ s - 1`.
   have hgpos : ∀ k : ℕ, 1 ≤ k → k ≤ s - 1 → 0 < g p t k := by
     intro k hk1 hks
     rcases Nat.eq_zero_or_pos (g p t k) with h | h
     · have h2 := hcong k (le_trans hks (Nat.sub_le s 1))
       rw [h, mul_zero, Nat.zero_mod] at h2
-      omega
+      lia
     · exact h
   have hglt : ∀ k : ℕ, g p t k < p := fun k => Nat.mod_lt _ hp0
   -- Suitable `m, n` exist iff `g` has an inversion `g l < g k` with `k < l`.
@@ -144,11 +144,11 @@ lemma mod_iff_not_dvd {p s : ℕ} (hp : p.Prime) (hs0 : 0 < s) (hs1 : s < p) :
     · rintro ⟨m, n, hm0, hmn, hnp, hrm, hrn⟩
       have hmp : m < p := lt_trans hmn hnp
       have hrm0 : (s * m) % p ≠ 0 := residue_ne_zero hp hs0 hs1 hm0 hmp
-      have hrn0 : (s * n) % p ≠ 0 := residue_ne_zero hp hs0 hs1 (by omega) hnp
+      have hrn0 : (s * n) % p ≠ 0 := residue_ne_zero hp hs0 hs1 (by lia) hnp
       have hmeq : m = g p t (s - (s * m) % p) := by
         have hc : (s * g p t (s - (s * m) % p)) % p = (s * m) % p := by
-          have h1 := hcong (s - (s * m) % p) (by omega)
-          rwa [Nat.sub_sub_self (by omega : (s * m) % p ≤ s)] at h1
+          have h1 := hcong (s - (s * m) % p) (by lia)
+          rwa [Nat.sub_sub_self (by lia : (s * m) % p ≤ s)] at h1
         have h2 : ((s * g p t (s - (s * m) % p) : ℕ) : ZMod p) = ((s * m : ℕ) : ZMod p) :=
           (ZMod.natCast_eq_natCast_iff' _ _ _).mpr hc
         rw [Nat.cast_mul, Nat.cast_mul] at h2
@@ -159,8 +159,8 @@ lemma mod_iff_not_dvd {p s : ℕ} (hp : p.Prime) (hs0 : 0 < s) (hs1 : s < p) :
         exact h4.symm
       have hneq : n = g p t (s - (s * n) % p) := by
         have hc : (s * g p t (s - (s * n) % p)) % p = (s * n) % p := by
-          have h1 := hcong (s - (s * n) % p) (by omega)
-          rwa [Nat.sub_sub_self (by omega : (s * n) % p ≤ s)] at h1
+          have h1 := hcong (s - (s * n) % p) (by lia)
+          rwa [Nat.sub_sub_self (by lia : (s * n) % p ≤ s)] at h1
         have h2 : ((s * g p t (s - (s * n) % p) : ℕ) : ZMod p) = ((s * n : ℕ) : ZMod p) :=
           (ZMod.natCast_eq_natCast_iff' _ _ _).mpr hc
         rw [Nat.cast_mul, Nat.cast_mul] at h2
@@ -169,14 +169,14 @@ lemma mod_iff_not_dvd {p s : ℕ} (hp : p.Prime) (hs0 : 0 < s) (hs1 : s < p) :
         rw [ZMod.val_natCast, ZMod.val_natCast, Nat.mod_eq_of_lt hnp,
           Nat.mod_eq_of_lt (hglt _)] at h4
         exact h4.symm
-      exact ⟨s - (s * n) % p, s - (s * m) % p, by omega, by omega, by omega,
+      exact ⟨s - (s * n) % p, s - (s * m) % p, by lia, by lia, by lia,
         hmeq ▸ hneq ▸ hmn⟩
     · rintro ⟨k, l, hk1, hkl, hls, hglk⟩
-      refine ⟨g p t l, g p t k, hgpos l (by omega) hls, hglk, hglt _, ?_, ?_⟩
-      · rw [hcong l (by omega), hcong k (by omega)]
-        omega
-      · rw [hcong k (by omega)]
-        omega
+      refine ⟨g p t l, g p t k, hgpos l (by lia) hls, hglk, hglt _, ?_, ?_⟩
+      · rw [hcong l (by lia), hcong k (by lia)]
+        lia
+      · rw [hcong k (by lia)]
+        lia
   rw [key]
   constructor
   · -- If an inversion exists then `s ∤ p - 1`: otherwise `g` is strictly increasing.
@@ -184,15 +184,15 @@ lemma mod_iff_not_dvd {p s : ℕ} (hp : p.Prime) (hs0 : 0 < s) (hs1 : s < p) :
     have ht'0 : 0 < t' := by
       rcases Nat.eq_zero_or_pos t' with h | h
       · rw [h, mul_zero] at ht'
-        omega
+        lia
       · exact h
     have ht'1 : t' < p := by
       have h2 : t' ≤ s * t' := Nat.le_mul_of_pos_left t' hs0
-      omega
+      lia
     -- `t` and `t'` coincide, as both are residues of `-s⁻¹` modulo `p`.
     have htt' : t = t' := by
       have e1 : ((s * t' : ℕ) : ZMod p) = -1 := by
-        rw [← ht', Nat.cast_sub (show 1 ≤ p by omega), Nat.cast_one, ZMod.natCast_self,
+        rw [← ht', Nat.cast_sub (show 1 ≤ p by lia), Nat.cast_one, ZMod.natCast_self,
           zero_sub]
       have e2 : ((s * t : ℕ) : ZMod p) = -1 := by
         rw [Nat.cast_mul]; exact hst
@@ -203,7 +203,7 @@ lemma mod_iff_not_dvd {p s : ℕ} (hp : p.Prime) (hs0 : 0 < s) (hs1 : s < p) :
       rw [ZMod.val_natCast, ZMod.val_natCast, Nat.mod_eq_of_lt ht'1,
         Nat.mod_eq_of_lt ht1] at h3
       exact h3.symm
-    have hstt : s * t = p - 1 := by rw [htt']; omega
+    have hstt : s * t = p - 1 := by rw [htt']; lia
     -- Then `1 + j * t < p` for `j ≤ s - 1`, so `g j = 1 + j * t` is strictly increasing.
     have hval : ∀ j : ℕ, 1 ≤ j → j ≤ s - 1 → g p t j = 1 + j * t := by
       intro j hj1 hj2
@@ -211,16 +211,16 @@ lemma mod_iff_not_dvd {p s : ℕ} (hp : p.Prime) (hs0 : 0 < s) (hs1 : s < p) :
         have h1 : j * t ≤ (s - 1) * t := Nat.mul_le_mul_right t hj2
         have e : 1 + (s - 1) * t = p - t := by
           have e2 : (s - 1) * t = s * t - t := by rw [Nat.sub_mul, one_mul]
-          omega
-        omega
+          lia
+        lia
       exact Nat.mod_eq_of_lt hub
-    have ek : g p t k = 1 + k * t := hval k hk1 (by omega)
-    have el : g p t l = 1 + l * t := hval l (by omega) hls
+    have ek : g p t k = 1 + k * t := hval k hk1 (by lia)
+    have el : g p t l = 1 + l * t := hval l (by lia) hls
     have hlt : g p t k < g p t l := by
       rw [ek, el]
       have h2 : k * t < l * t := mul_lt_mul_of_pos_right hkl ht0
-      omega
-    omega
+      lia
+    lia
   · -- Conversely, if there is no inversion then `g` is nondecreasing, which
     -- forces `1 + s * t = p`, i.e. `s ∣ p - 1`.
     intro hndvd
@@ -232,31 +232,31 @@ lemma mod_iff_not_dvd {p s : ℕ} (hp : p.Prime) (hs0 : 0 < s) (hs1 : s < p) :
     by_cases hs1' : s = 1
     · subst hs1'
       exact hndvd (one_dvd _)
-    · have hs2 : 2 ≤ s := by omega
+    · have hs2 : 2 ≤ s := by lia
       -- `t ≠ p - 1` because `s ≥ 2`.
       have ht2 : t ≤ p - 2 := by
         by_contra h
-        have htp : t = p - 1 := by omega
+        have htp : t = p - 1 := by lia
         have e : (s : ZMod p) = ((1 : ℕ) : ZMod p) := by
           have ett : (t : ZMod p) = -1 := by
-            rw [htp, Nat.cast_sub (show 1 ≤ p by omega), Nat.cast_one, ZMod.natCast_self,
+            rw [htp, Nat.cast_sub (show 1 ≤ p by lia), Nat.cast_one, ZMod.natCast_self,
               zero_sub]
           rw [ett, mul_neg, mul_one] at hst
           rw [Nat.cast_one]
           exact neg_inj.mp hst
         have hsmod : s % p = 1 % p := (ZMod.natCast_eq_natCast_iff' _ _ _).mp e
-        rw [Nat.mod_eq_of_lt hs1, Nat.mod_eq_of_lt (show 1 < p by omega)] at hsmod
-        omega
+        rw [Nat.mod_eq_of_lt hs1, Nat.mod_eq_of_lt (show 1 < p by lia)] at hsmod
+        lia
       -- No wrap-around: `g j = 1 + j * t` for all `1 ≤ j ≤ s - 1`.
       have hval : ∀ j : ℕ, 1 ≤ j → j ≤ s - 1 → g p t j = 1 + j * t := by
         intro j hj1
         induction j, hj1 using Nat.le_induction with
         | base =>
             intro _
-            exact Nat.mod_eq_of_lt (by omega)
+            exact Nat.mod_eq_of_lt (by lia)
         | succ j hj1 ih =>
             intro hj2
-            have ihj : g p t j = 1 + j * t := ih (by omega)
+            have ihj : g p t j = 1 + j * t := ih (by lia)
             have hle : g p t j ≤ g p t (j + 1) := hmono j (j + 1) hj1 (Nat.lt_succ_self j) hj2
             have heq : g p t (j + 1) = (g p t j + t) % p := by
               show (1 + (j + 1) * t) % p = ((1 + j * t) % p + t) % p
@@ -269,13 +269,13 @@ lemma mod_iff_not_dvd {p s : ℕ} (hp : p.Prime) (hs0 : 0 < s) (hs1 : s < p) :
               have hge : p ≤ g p t j + t := Nat.le_of_not_lt hbig
               have hsub : (g p t j + t) % p = g p t j + t - p := by
                 rw [Nat.mod_eq_sub_mod hge,
-                  Nat.mod_eq_of_lt (by have h1 := hglt j; omega)]
-              omega
+                  Nat.mod_eq_of_lt (by have h1 := hglt j; lia)]
+              lia
       -- In particular `1 + (s - 1) * t ≤ p - 1`.
-      have hfin : g p t (s - 1) = 1 + (s - 1) * t := hval (s - 1) (by omega) (le_refl _)
+      have hfin : g p t (s - 1) = 1 + (s - 1) * t := hval (s - 1) (by lia) (le_refl _)
       have hbound : 1 + (s - 1) * t ≤ p - 1 := by
         have h2 := hglt (s - 1)
-        omega
+        lia
       -- But `p ∣ 1 + s * t` and `0 < 1 + s * t < 2 * p`, so `1 + s * t = p`.
       have hdvd : p ∣ 1 + s * t := by
         have e : ((1 + s * t : ℕ) : ZMod p) = 0 := by
@@ -287,21 +287,21 @@ lemma mod_iff_not_dvd {p s : ℕ} (hp : p.Prime) (hs0 : 0 < s) (hs1 : s < p) :
         obtain ⟨c, hc⟩ := hdvd
         have hub : 1 + s * t < 2 * p := by
           have es : s * t = (s - 1) * t + t := by
-            conv_lhs => rw [← Nat.sub_add_cancel (show 1 ≤ s by omega)]
+            conv_lhs => rw [← Nat.sub_add_cancel (show 1 ≤ s by lia)]
             rw [add_mul, one_mul]
-          omega
+          lia
         have hc0 : 0 < c := by
           rcases Nat.eq_zero_or_pos c with h | h
           · rw [h, mul_zero] at hc
-            omega
+            lia
           · exact h
         have hc2 : c = 1 := by
-          have h3 : p * c < p * 2 := by omega
+          have h3 : p * c < p * 2 := by lia
           have h4 := Nat.lt_of_mul_lt_mul_left h3
-          omega
+          lia
         rw [hc2, mul_one] at hc
         exact hc
-      exact hndvd ⟨t, by omega⟩
+      exact hndvd ⟨t, by lia⟩
 
 snip end
 

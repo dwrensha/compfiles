@@ -125,7 +125,7 @@ lemma card_good_balance (n : ℕ) :
   rw [hgood]
   rw [hAcard, hBcard, hABcard] at hunion
   rw [hUcard] at hcompl
-  omega
+  lia
 
 lemma ennreal_eq_sub_sub_of_add_add_eq {a b c d : ENNReal}
     (hb : b ≠ ⊤) (hc : c ≠ ⊤) (h : (a + c) + b = d) : a = d - b - c := by

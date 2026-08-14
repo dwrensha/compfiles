@@ -124,10 +124,10 @@ lemma colorCount_one_le_iff (color : Cell N → Fin 2) (p : Equiv.Perm (Fin N))
   constructor
   · intro h
     have hsum := colorCount_zero_add_one color p
-    omega
+    lia
   · intro h
     have hsum := colorCount_zero_add_one color p
-    omega
+    lia
 
 -- Adjacent permutations in the transposition graph differ in at most two rows.
 lemma colorCount_swap_le_add_two
@@ -181,7 +181,7 @@ lemma exists_transversal_with_exact_or_succ_color_count
     · intro hstart hend
       refine ⟨p, ?_⟩
       simp only [mul_one] at hend
-      omega
+      lia
     · intro τ x y hxy ih hstart hend
       by_cases hmid : colorCount color 0 (p * τ) ≤ a + 1
       · exact ih hstart hmid
@@ -189,9 +189,9 @@ lemma exists_transversal_with_exact_or_succ_color_count
         have hge : a ≤ colorCount color 0 (p * (τ * Equiv.swap x y)) := by
           have hdrop := colorCount_swap_ge_sub_two color (p * τ) x y
           rw [mul_assoc] at hdrop
-          have hmid' : a + 2 ≤ colorCount color 0 (p * τ) := by omega
-          omega
-        omega
+          have hmid' : a + 2 ≤ colorCount color 0 (p * τ) := by lia
+          lia
+        lia
   exact main τ hp hq'
 
 /-- Columns containing a good cell in one of the rows in `R`. -/
@@ -217,7 +217,7 @@ lemma line_count_le_of_hall_failure
     (hfail : (R.biUnion (hallTargets good k)).card < R.card) :
     ((univ : Finset (Fin N)) \ R).card + (neighborCols good R).card ≤ k - 1 := by
   have hRne : R.Nonempty := by
-    exact Finset.card_pos.mp (by omega)
+    exact Finset.card_pos.mp (by lia)
   have hRcard_le : R.card ≤ N := by
     simpa using card_le_univ R
   have hdummy_subset : dummyCols N k ⊆ R.biUnion (hallTargets good k) := by
@@ -265,8 +265,8 @@ lemma line_count_le_of_hall_failure
     simp [card_sdiff_of_subset, Fintype.card_fin]
   have hlt' : ((univ : Finset (Fin N)) \ R).card + (neighborCols good R).card < k := by
     rw [houtside_card]
-    omega
-  omega
+    lia
+  lia
 
 /-- Any good cells covered by at most `k - 1` rows/columns number at most `(k - 1) * N`. -/
 lemma good_cells_card_le_of_neighbor_line_count
@@ -353,7 +353,7 @@ lemma exists_transversal_with_many_good_cells
       _ ≤ dummy.card := card_le_card himage_subset
       _ = N - k := by simp [dummy, dummyCols, Fintype.card_fin]
   have hreal_card_ge : k ≤ realRows.card := by
-    omega
+    lia
   have hreal_exists : ∀ r : {r // r ∈ realRows}, ∃ c : Fin N, f r = Sum.inl c := by
     intro r
     have hr := r.2
@@ -394,8 +394,8 @@ lemma exists_intermediate_transversal_of_card_bounds
       colorCount color 0 p = a ∨ colorCount color 0 p = a + 1 := by
   let N := a + b + 1
   -- Convert the statement's cardinality hypotheses into filtered finset counts.
-  have haN : a ≤ N := by omega
-  have hbN : b ≤ N := by omega
+  have haN : a ≤ N := by lia
+  have hbN : b ≤ N := by lia
   have hc0' :
       a ^ 2 + a * b - b ≤ (univ.filter fun s : Cell N => color s = 0).card := by
     simpa [N, Fintype.card_subtype] using c0
@@ -434,7 +434,7 @@ lemma exists_intermediate_transversal_of_card_bounds
   have hp1_zero : colorCount color 0 p1 ≤ a + 1 := by
     have h := (colorCount_one_le_iff color p1 hbN).mp hp1
     have hNb : a + b + 1 - b = a + 1 := by
-      omega
+      lia
     simpa [N, hNb] using h
   -- Interpolate between those transversals until the amber count is a or a+1.
   simpa [N] using exists_transversal_with_exact_or_succ_color_count color a p0 p1 hp0 hp1_zero
@@ -459,7 +459,7 @@ lemma exists_cells_of_intermediate_transversal
   · have hrows0 : rows0.card = a := by
       simpa [rows0, colorCount] using hp
     have hb_le_rows1 : b ≤ rows1.card := by
-      omega
+      lia
     rcases Finset.exists_subset_card_eq hb_le_rows1 with ⟨brows, hbsub, hbcard⟩
     refine ⟨rowsToCells p rows0, rowsToCells p brows, ?_, ?_, ?_, ?_, ?_⟩
     · simp [rowsToCells_card, hrows0]
@@ -474,9 +474,9 @@ lemma exists_cells_of_intermediate_transversal
     · exact rowsToCells_no_conflict p rows0 brows
   · have hrows0 : rows0.card = a + 1 := by
       simpa [rows0, colorCount] using hp
-    have ha_le_rows0 : a ≤ rows0.card := by omega
+    have ha_le_rows0 : a ≤ rows0.card := by lia
     rcases Finset.exists_subset_card_eq ha_le_rows0 with ⟨arows, hasub, hacard⟩
-    have hrows1 : rows1.card = b := by omega
+    have hrows1 : rows1.card = b := by lia
     refine ⟨rowsToCells p arows, rowsToCells p rows1, ?_, ?_, ?_, ?_, ?_⟩
     · simp [rowsToCells_card, hacard]
     · simp [rowsToCells_card, hrows1]

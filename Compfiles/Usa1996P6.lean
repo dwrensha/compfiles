@@ -58,7 +58,7 @@ def highBit (d : Fin 4) : Fin 2 :=
 lemma lowBit_add_two_mul_highBit (d : Fin 4) :
     (d.val : ℤ) = (lowBit d).val + 2 * (highBit d).val := by
   obtain ⟨d, hd⟩ := d
-  have : d = 0 ∨ d = 1 ∨ d = 2 ∨ d = 3 := by omega
+  have : d = 0 ∨ d = 1 ∨ d = 2 ∨ d = 3 := by lia
   rcases this with rfl | rfl | rfl | rfl <;> rfl
 
 lemma negFourQuotient_natAbs_lt (n : ℤ) (hn₀ : n ≠ 0) (hn₁ : n ≠ -1) :
@@ -67,22 +67,22 @@ lemma negFourQuotient_natAbs_lt (n : ℤ) (hn₀ : n ≠ 0) (hn₁ : n ≠ -1) :
   have hrem4 : n % (-4) < 4 := Int.emod_lt_abs n (by decide)
   have hdecomp := Int.emod_add_mul_ediv n (-4)
   by_cases hn : 0 ≤ n
-  · have hnpos : 0 < n := by omega
-    have hqnonpos : n / (-4) ≤ 0 := by omega
+  · have hnpos : 0 < n := by lia
+    have hqnonpos : n / (-4) ≤ 0 := by lia
     have hqabs : ((n / (-4)).natAbs : ℤ) = -(n / (-4)) := by
       rw [← Int.natAbs_neg]
-      exact Int.natAbs_of_nonneg (by omega)
+      exact Int.natAbs_of_nonneg (by lia)
     have hnabs : (n.natAbs : ℤ) = n := Int.natAbs_of_nonneg hn
-    have hcast : ((n / (-4)).natAbs : ℤ) < (n.natAbs : ℤ) := by omega
+    have hcast : ((n / (-4)).natAbs : ℤ) < (n.natAbs : ℤ) := by lia
     exact Int.ofNat_lt.mp hcast
   · have hnneg : n < 0 := lt_of_not_ge hn
-    have hqpos : 0 ≤ n / (-4) := by omega
+    have hqpos : 0 ≤ n / (-4) := by lia
     have hqabs : ((n / (-4)).natAbs : ℤ) = n / (-4) :=
       Int.natAbs_of_nonneg hqpos
     have hnabs : (n.natAbs : ℤ) = -n := by
       rw [← Int.natAbs_neg]
-      exact Int.natAbs_of_nonneg (by omega)
-    have hcast : ((n / (-4)).natAbs : ℤ) < (n.natAbs : ℤ) := by omega
+      exact Int.natAbs_of_nonneg (by lia)
+    have hcast : ((n / (-4)).natAbs : ℤ) < (n.natAbs : ℤ) := by lia
     exact Int.ofNat_lt.mp hcast
 
 lemma exists_negFourExpansion (n : ℤ) :
@@ -101,7 +101,7 @@ lemma exists_negFourExpansion (n : ℤ) :
       obtain ⟨digits, hdigits⟩ := ih (x / (-4)) hmeasure
       have hrem0 : 0 ≤ x % (-4) := Int.emod_nonneg x (by decide)
       have hrem4 : x % (-4) < 4 := Int.emod_lt_abs x (by decide)
-      have hdigit : (x % (-4)).toNat < 4 := by omega
+      have hdigit : (x % (-4)).toNat < 4 := by lia
       refine ⟨⟨(x % (-4)).toNat, hdigit⟩ :: digits, ?_⟩
       simp only [negFourValue, List.map_cons, Nat.ofDigits]
       change ((x % (-4)).toNat : ℤ) + (-4) * negFourValue digits = x
@@ -132,10 +132,10 @@ lemma binary_pair_unique_aux (n : ℕ) (as bs cs ds : List (Fin 2))
     negFourValue as = negFourValue cs ∧ negFourValue bs = negFourValue ds := by
   induction n generalizing as bs cs ds with
   | zero =>
-    have has : as = [] := List.length_eq_zero_iff.mp (by omega)
-    have hbs : bs = [] := List.length_eq_zero_iff.mp (by omega)
-    have hcs : cs = [] := List.length_eq_zero_iff.mp (by omega)
-    have hds : ds = [] := List.length_eq_zero_iff.mp (by omega)
+    have has : as = [] := List.length_eq_zero_iff.mp (by lia)
+    have hbs : bs = [] := List.length_eq_zero_iff.mp (by lia)
+    have hcs : cs = [] := List.length_eq_zero_iff.mp (by lia)
+    have hds : ds = [] := List.length_eq_zero_iff.mp (by lia)
     subst as
     subst bs
     subst cs
@@ -144,7 +144,7 @@ lemma binary_pair_unique_aux (n : ℕ) (as bs cs ds : List (Fin 2))
   | succ n ih =>
     have htailLen : as.tail.length + bs.tail.length + cs.tail.length + ds.tail.length ≤ n := by
       simp only [List.length_tail]
-      omega
+      lia
     rw [negFourValue_eq_headBit_add_tail as, negFourValue_eq_headBit_add_tail bs,
       negFourValue_eq_headBit_add_tail cs, negFourValue_eq_headBit_add_tail ds] at h
     have hheads : ((headBit as).val : ℤ) + 2 * (headBit bs).val =
@@ -154,9 +154,9 @@ lemma binary_pair_unique_aux (n : ℕ) (as bs cs ds : List (Fin 2))
       omega
     have hbd : headBit bs = headBit ds := by
       apply Fin.ext
-      omega
+      lia
     have htails : negFourValue as.tail + 2 * negFourValue bs.tail =
-        negFourValue cs.tail + 2 * negFourValue ds.tail := by omega
+        negFourValue cs.tail + 2 * negFourValue ds.tail := by lia
     obtain ⟨hacTail, hbdTail⟩ := ih as.tail bs.tail cs.tail ds.tail htailLen htails
     constructor
     · rw [negFourValue_eq_headBit_add_tail as, negFourValue_eq_headBit_add_tail cs,

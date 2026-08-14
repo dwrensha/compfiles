@@ -69,40 +69,40 @@ lemma trygub_lt {n q r c : ℕ} (hr : r < n) (hc : c < n) (hq : 2 ≤ q) (hqn : 
     trygub n q r c < n ^ 2 := by
   unfold trygub
   split_ifs with h0 hle
-  · have hn1 : 1 ≤ n := by omega
+  · have hn1 : 1 ≤ n := by lia
     calc c < n := hc
-      _ ≤ n ^ 2 := by rw [pow_two]; exact Nat.le_mul_of_pos_left n (by omega)
+      _ ≤ n ^ 2 := by rw [pow_two]; exact Nat.le_mul_of_pos_left n (by lia)
   · have hqc : q * c + q ≤ n * q := by
       calc q * c + q = q * (c + 1) := by rw [← Nat.mul_succ]
         _ ≤ q * n := Nat.mul_le_mul_left q hc
         _ = n * q := Nat.mul_comm q n
     have hkey : n + (r - 1) + q * c < n * (q + 1) := by
       rw [Nat.mul_succ]
-      omega
+      lia
     calc n + (r - 1) + q * c < n * (q + 1) := hkey
       _ ≤ n * n := Nat.mul_le_mul_left n hqn
       _ = n ^ 2 := (pow_two n).symm
   · have hle : q < r := not_le.mp hle
-    have hqn2 : q + 2 ≤ n := by omega
+    have hqn2 : q + 2 ≤ n := by lia
     have h3 : (r - q - 1) * n + (n * q + 2 * n) ≤ n * n := by
-      have h31 : (r - q - 1) * n ≤ (n - (q + 2)) * n := Nat.mul_le_mul_right n (by omega)
+      have h31 : (r - q - 1) * n ≤ (n - (q + 2)) * n := Nat.mul_le_mul_right n (by lia)
       have h32 : (n - (q + 2)) * n + (n * q + 2 * n) = n * n := by
         rw [Nat.mul_comm n q, ← add_mul, ← Nat.add_mul, Nat.sub_add_cancel hqn2]
-      omega
+      lia
     have hle2 : n * q + 2 * n ≤ n * n := by
       have := Nat.mul_le_mul_right n hqn2
       rw [add_mul, Nat.mul_comm q n] at this
       exact this
     rw [pow_two]
-    omega
+    lia
 
 lemma trygub_eq_zero {n q r c : ℕ} (hn : 2 ≤ n) :
     trygub n q r c = 0 → r = 0 ∧ c = 0 := by
   unfold trygub
   split_ifs with h0 hle
   · exact fun h ↦ ⟨h0, h⟩
-  · omega
-  · omega
+  · lia
+  · lia
 
 /-- Rows `1 ≤ r ≤ q` contain values in `[n, n*q+n)`. -/
 lemma trygub_mid_bounds {n q r c : ℕ} (h0 : r ≠ 0) (hle : r ≤ q) (hc : c < n) :
@@ -113,28 +113,28 @@ lemma trygub_mid_bounds {n q r c : ℕ} (h0 : r ≠ 0) (hle : r ≤ q) (hc : c <
     calc q * c + q = q * (c + 1) := by rw [← Nat.mul_succ]
       _ ≤ q * n := Nat.mul_le_mul_left q hc
       _ = n * q := Nat.mul_comm q n
-  omega
+  lia
 
 /-- Rows `r > q` contain values in `[n*q+n, n^2)`. -/
 lemma trygub_top_bound (n q : ℕ) {r : ℕ} (c : ℕ) (hle : ¬ r ≤ q) :
     n * q + n ≤ trygub n q r c := by
   unfold trygub
-  rw [ite_eq_right (by omega : r ≠ 0), ite_eq_right hle]
-  omega
+  rw [ite_eq_right (by lia : r ≠ 0), ite_eq_right hle]
+  lia
 
 lemma trygub_last_ge {n q c : ℕ} (hq : 2 ≤ q) (hqn : q + 2 ≤ n) :
     n ^ 2 - n ≤ trygub n q (n - 1) c := by
   unfold trygub
   split_ifs with h0 hle
-  · omega
-  · omega
+  · lia
+  · lia
   · have e2 : (n - 1 - q - 1) * n + (q + 2) * n = n * n := by
-      have e1 : n - 1 - q - 1 = n - (q + 2) := by omega
+      have e1 : n - 1 - q - 1 = n - (q + 2) := by lia
       rw [e1, ← Nat.add_mul, Nat.sub_add_cancel hqn]
     have e3 : (q + 2) * n = n * q + 2 * n := by rw [add_mul, Nat.mul_comm q n]
     rw [e3] at e2
     rw [pow_two]
-    omega
+    lia
 
 lemma trygub_inj {n q r₁ r₂ c₁ c₂ : ℕ} (hn : 4 ≤ n) (hq : 2 ≤ q) (_hqn : q + 1 ≤ n)
     (hr₁ : r₁ < n) (hr₂ : r₂ < n) (hc₁ : c₁ < n) (hc₂ : c₂ < n)
@@ -147,44 +147,44 @@ lemma trygub_inj {n q r₁ r₂ c₁ c₂ : ℕ} (hn : 4 ≤ n) (hq : 2 ≤ q) (
     · by_cases h2q : r₂ ≤ q
       · rw [h10, trygub_row_zero] at h
         have hb := (trygub_mid_bounds h20 h2q hc₂).1
-        omega
+        lia
       · rw [h10, trygub_row_zero] at h
         have hb := trygub_top_bound n q c₂ h2q
-        omega
+        lia
   · by_cases h20 : r₂ = 0
     · by_cases h1q : r₁ ≤ q
       · rw [h20, trygub_row_zero] at h
         have hb := (trygub_mid_bounds h10 h1q hc₁).1
-        omega
+        lia
       · rw [h20, trygub_row_zero] at h
         have hb := trygub_top_bound n q c₁ h1q
-        omega
+        lia
     · by_cases h1q : r₁ ≤ q
       · by_cases h2q : r₂ ≤ q
         · unfold trygub at h
           rw [ite_eq_right h10, ite_eq_left h1q, ite_eq_right h20, ite_eq_left h2q] at h
-          have h' : r₁ - 1 + q * c₁ = r₂ - 1 + q * c₂ := by omega
+          have h' : r₁ - 1 + q * c₁ = r₂ - 1 + q * c₂ := by lia
           have m1 : (r₁ - 1 + q * c₁) % q = r₁ - 1 := by
             rw [Nat.add_mul_mod_self_left]
-            exact Nat.mod_eq_of_lt (by omega)
+            exact Nat.mod_eq_of_lt (by lia)
           have m2 : (r₂ - 1 + q * c₂) % q = r₂ - 1 := by
             rw [Nat.add_mul_mod_self_left]
-            exact Nat.mod_eq_of_lt (by omega)
+            exact Nat.mod_eq_of_lt (by lia)
           have hr1 : r₁ - 1 = r₂ - 1 := by rw [h'] at m1; exact m1.symm.trans m2
-          have hr : r₁ = r₂ := by omega
+          have hr : r₁ = r₂ := by lia
           subst hr
-          have hm : q * c₁ = q * c₂ := by omega
-          exact ⟨rfl, mul_left_cancel₀ (by omega : q ≠ 0) hm⟩
+          have hm : q * c₁ = q * c₂ := by lia
+          exact ⟨rfl, mul_left_cancel₀ (by lia : q ≠ 0) hm⟩
         · have h1b := (trygub_mid_bounds h10 h1q hc₁).2
           have h2b := trygub_top_bound n q c₂ h2q
-          omega
+          lia
       · by_cases h2q : r₂ ≤ q
         · have h1b := trygub_top_bound n q c₁ h1q
           have h2b := (trygub_mid_bounds h20 h2q hc₂).2
-          omega
+          lia
         · unfold trygub at h
           rw [ite_eq_right h10, ite_eq_right h1q, ite_eq_right h20, ite_eq_right h2q] at h
-          have h' : (r₁ - q - 1) * n + c₁ = (r₂ - q - 1) * n + c₂ := by omega
+          have h' : (r₁ - q - 1) * n + c₁ = (r₂ - q - 1) * n + c₂ := by lia
           have hc : c₁ = c₂ := by
             have m1 : ((r₁ - q - 1) * n + c₁) % n = c₁ := by
               rw [Nat.add_comm, Nat.add_mul_mod_self_right]
@@ -197,50 +197,50 @@ lemma trygub_inj {n q r₁ r₂ c₁ c₂ : ℕ} (hn : 4 ≤ n) (hq : 2 ≤ q) (
           subst hc
           have hr : r₁ - q - 1 = r₂ - q - 1 := by
             have m1 : ((r₁ - q - 1) * n + c₁) / n = r₁ - q - 1 := by
-              rw [Nat.add_comm, Nat.add_mul_div_right _ _ (by omega : 0 < n)]
+              rw [Nat.add_comm, Nat.add_mul_div_right _ _ (by lia : 0 < n)]
               rw [Nat.div_eq_of_lt hc₁]
-              omega
+              lia
             have m2 : ((r₂ - q - 1) * n + c₁) / n = r₂ - q - 1 := by
-              rw [Nat.add_comm, Nat.add_mul_div_right _ _ (by omega : 0 < n)]
+              rw [Nat.add_comm, Nat.add_mul_div_right _ _ (by lia : 0 < n)]
               rw [Nat.div_eq_of_lt hc₁]
-              omega
+              lia
             rw [h'] at m1
             exact m1.symm.trans m2
-          have : r₁ = r₂ := by omega
+          have : r₁ = r₂ := by lia
           exact ⟨this, rfl⟩
 
 lemma trygub_eq_add_one {n q r c : ℕ} (_hn : 4 ≤ n) (hq : 2 ≤ q)
     (_hr : r < n) (hc : c < n) (h : trygub n q r c = n + 1) : r = 2 := by
   unfold trygub at h
   split_ifs at h with h0 hle
-  · omega
+  · lia
   · by_cases hc0 : c = 0
     · subst hc0
       rw [Nat.mul_zero, Nat.add_zero] at h
-      omega
-    · have hqc : q ≤ q * c := Nat.le_mul_of_pos_right q (by omega)
-      omega
+      lia
+    · have hqc : q ≤ q * c := Nat.le_mul_of_pos_right q (by lia)
+      lia
   · have hnq : n * 2 ≤ n * q := Nat.mul_le_mul_left n hq
-    omega
+    lia
 
 lemma trygub_eq_two_mul_add_one {n q r c : ℕ} (hn : 4 ≤ n) (hq : 2 ≤ q) (hdvd : q ∣ n)
     (_hr : r < n) (hc : c < n) (h : trygub n q r c = 2 * n + 1) : r = 2 := by
   unfold trygub at h
   split_ifs at h with h0 hle
-  · omega
-  · have h1 : r - 1 + q * c = n + 1 := by omega
+  · lia
+  · have h1 : r - 1 + q * c = n + 1 := by lia
     have h2 : (r - 1 + q * c) % q = r - 1 := by
       rw [Nat.add_mul_mod_self_left]
-      exact Nat.mod_eq_of_lt (by omega)
+      exact Nat.mod_eq_of_lt (by lia)
     have h3 : (n + 1) % q = 1 := by
       obtain ⟨t, ht⟩ := hdvd
       rw [ht, Nat.add_comm (q * t) 1, Nat.add_mul_mod_self_left]
       exact Nat.mod_eq_of_lt hq
     rw [h1] at h2
     have h4 : r - 1 = 1 := h2.symm.trans h3
-    omega
+    lia
   · have hnq : n * 2 ≤ n * q := Nat.mul_le_mul_left n hq
-    omega
+    lia
 
 lemma trygub_mid (n q r c : ℕ) (h0 : r ≠ 0) (hle : r ≤ q) :
     trygub n q r c = n + (r - 1) + q * c := by
@@ -250,7 +250,7 @@ lemma trygub_mid (n q r c : ℕ) (h0 : r ≠ 0) (hle : r ≤ q) :
 lemma trygub_top (n q r c : ℕ) (hle : ¬ r ≤ q) :
     trygub n q r c = n * q + n + (r - q - 1) * n + c := by
   unfold trygub
-  rw [ite_eq_right (by omega : r ≠ 0), ite_eq_right hle]
+  rw [ite_eq_right (by lia : r ≠ 0), ite_eq_right hle]
 
 /-- Two naturals with the same quotient and remainder mod `m` are equal. -/
 lemma eq_of_div_mod_eq {v₁ v₂ m : ℕ} (hdiv : v₁ / m = v₂ / m) (hmod : v₁ % m = v₂ % m) :
@@ -267,14 +267,14 @@ lemma ap_k_pos {n : ℕ} (hn : 0 < n) (h2 : 2 ≤ n) {f : Fin n → Fin (n ^ 2)}
     {p : Fin n → Fin n} (hp : p.Injective) {k : ℕ}
     (hk : ∀ m : Fin n, (f (p m)).val = (f (p ⟨0, hn⟩)).val + m.val * k) : 1 ≤ k := by
   by_contra h0
-  have h0 : k = 0 := by omega
+  have h0 : k = 0 := by lia
   subst h0
-  have heq : f (p ⟨1, by omega⟩) = f (p ⟨0, hn⟩) := by
+  have heq : f (p ⟨1, by lia⟩) = f (p ⟨0, hn⟩) := by
     apply Fin.ext
-    rw [hk ⟨1, by omega⟩, Nat.mul_zero, Nat.add_zero]
+    rw [hk ⟨1, by lia⟩, Nat.mul_zero, Nat.add_zero]
   have h10 := hp (hf heq)
   have h13 : (1 : ℕ) = 0 := congrArg Fin.val h10
-  omega
+  lia
 
 /-- For prime `n`, an arithmetic progression of length `n` whose common difference is not
 divisible by `n` hits every residue class mod `n` at most once. -/
@@ -321,19 +321,19 @@ lemma trygubArr_row_valid {n q : ℕ} (hn0 : 0 < n) (_hq : 2 ≤ q)
     show (trygubArr n q hbound r m).val = (trygubArr n q hbound r ⟨0, hn0⟩).val + m.val * 1
     show trygub n q r.val m.val = trygub n q r.val 0 + m.val * 1
     rw [h0, trygub_row_zero, trygub_row_zero]
-    omega
+    lia
   · by_cases hq_le : r.val ≤ q
     · refine ⟨id, Function.bijective_id, q, fun m ↦ ?_⟩
       show (trygubArr n q hbound r m).val = (trygubArr n q hbound r ⟨0, hn0⟩).val + m.val * q
       show trygub n q r.val m.val = trygub n q r.val 0 + m.val * q
       rw [trygub_mid n q r.val m.val h0 hq_le, trygub_mid n q r.val 0 h0 hq_le,
         Nat.mul_comm q m.val]
-      omega
+      lia
     · refine ⟨id, Function.bijective_id, 1, fun m ↦ ?_⟩
       show (trygubArr n q hbound r m).val = (trygubArr n q hbound r ⟨0, hn0⟩).val + m.val * 1
       show trygub n q r.val m.val = trygub n q r.val 0 + m.val * 1
       rw [trygub_top n q r.val m.val hq_le, trygub_top n q r.val 0 hq_le]
-      omega
+      lia
 
 snip end
 
@@ -351,7 +351,7 @@ problem usa2023_p5 (n : ℕ) (hn : 2 < n) :
     intro hnp
     have hnp' : n.Prime := hnp
     intro a ha hrow
-    have hn2 : 2 ≤ n := by omega
+    have hn2 : 2 ≤ n := by lia
     -- Extract the arithmetic progression data of every row.
     have ext : ∀ r : Fin n, ∃ p : Fin n → Fin n, p.Bijective ∧ ∃ k : ℕ,
         ∀ m : Fin n, (a r (p m)).val = (a r (p ⟨0, hn0⟩)).val + m.val * k := by
@@ -452,7 +452,7 @@ problem usa2023_p5 (n : ℕ) (hn : 2 < n) :
           (a (S.symm ⟨0, hn0⟩) (π (S.symm ⟨0, hn0⟩) c)).val + m.val * 1
       rw [keyS m, keyS ⟨0, hn0⟩]
       show c.val * n + m.val = c.val * n + 0 + m.val * 1
-      omega
+      lia
     · -- Case B: every row has difference not divisible by `n`; hence every row
       -- contains every residue class mod `n` exactly once.
       have hnr : ∀ r : Fin n, ¬ n ∣ k r := fun r hd ↦ hcase ⟨r, hd⟩
@@ -501,20 +501,20 @@ problem usa2023_p5 (n : ℕ) (hn : 2 < n) :
         have hmod : (a (G.symm m) (π (G.symm m) c)).val % n = c.val := key (G.symm m)
         rw [← Nat.div_add_mod (a (G.symm m) (π (G.symm m) c)).val n, hdiv, hmod,
           Nat.mul_comm n m.val]
-        omega
+        lia
       refine ⟨⇑G.symm, (G.symm).bijective, n, fun m ↦ ?_⟩
       show (a (G.symm m) (π (G.symm m) c)).val =
           (a (G.symm ⟨0, hn0⟩) (π (G.symm ⟨0, hn0⟩) c)).val + m.val * n
       rw [keyG m, keyG ⟨0, hn0⟩]
       show c.val + m.val * n = c.val + 0 * n + m.val * n
-      omega
+      lia
   · -- If the transformation property holds then `n` is prime: we prove the
     -- contrapositive using the Trygub counterexample arrangement.
     intro htrans
     by_contra hnot
     have hnp : ¬ n.Prime := hnot
-    have hn2 : 2 ≤ n := by omega
-    have hn1 : n ≠ 1 := by omega
+    have hn2 : 2 ≤ n := by lia
+    have hn1 : n ≠ 1 := by lia
     set q := n.minFac with hqdef
     have hqprime : q.Prime := Nat.minFac_prime hn1
     have hq2 : 2 ≤ q := hqprime.two_le
@@ -524,7 +524,7 @@ problem usa2023_p5 (n : ℕ) (hn : 2 < n) :
       have hne : q ≠ n := by
         intro hqq
         exact hnp (hqq ▸ hqprime)
-      omega
+      lia
     have hn4 : 4 ≤ n := by
       rcases lt_or_ge n 4 with h | h
       · interval_cases n
@@ -536,13 +536,13 @@ problem usa2023_p5 (n : ℕ) (hn : 2 < n) :
         rcases Nat.eq_zero_or_pos t with h0 | h0
         · subst h0
           rw [Nat.mul_zero] at ht
-          omega
+          lia
         · rcases eq_or_ne t 1 with h1 | h1
           · subst h1
             rw [Nat.mul_one] at ht
-            exact absurd ht.symm (by omega : q ≠ n)
-          · omega
-      calc q + 2 ≤ q * 2 := by omega
+            exact absurd ht.symm (by lia : q ≠ n)
+          · lia
+      calc q + 2 ≤ q * 2 := by lia
         _ ≤ q * t := Nat.mul_le_mul_left q ht2
         _ = n := ht.symm
     -- The Trygub arrangement and its basic properties.
@@ -560,8 +560,8 @@ problem usa2023_p5 (n : ℕ) (hn : 2 < n) :
       obtain ⟨ρ, hρ, kk, hkk⟩ := hcol c
       exact ⟨ρ, hρ, kk, hkk⟩
     choose ρ hρ kk hkk using ext
-    have h1n : 1 < n := by omega
-    have hnm1 : n - 1 < n := by omega
+    have h1n : 1 < n := by lia
+    have hnm1 : n - 1 < n := by lia
     have kkpos : ∀ c : Fin n, 1 ≤ kk c := by
       intro c
       exact ap_k_pos hn0 hn2 ((injective_of_permuted_rows ha_inj hπ).left c) (hρ c).1 (hkk c)
@@ -588,7 +588,7 @@ problem usa2023_p5 (n : ℕ) (hn : 2 < n) :
         trygub_last_ge hq2 hq2n
       have e3 : m.val * kk c ≤ (n - 1) * kk c :=
         Nat.mul_le_mul_right (kk c) (Nat.le_pred_of_lt m.isLt)
-      omega
+      lia
     -- Hence every common difference is `n - 1`, `n` or `n + 1`.
     have kk_bounds : ∀ c : Fin n, n - 1 ≤ kk c ∧ kk c ≤ n + 1 := by
       intro c
@@ -602,7 +602,7 @@ problem usa2023_p5 (n : ℕ) (hn : 2 < n) :
           rwa [show ((⟨n - 1, hnm1⟩ : Fin n).val) = n - 1 from rfl] at e1
         have e2 : (a (ρ c ⟨n - 1, hnm1⟩) (π (ρ c ⟨n - 1, hnm1⟩) c)).val < n ^ 2 :=
           (a _ _).isLt
-        omega
+        lia
       have hsq : (n - 1) * (n - 1) = n * n - n - (n - 1) := by
         rw [Nat.mul_sub, Nat.mul_one, Nat.sub_mul, Nat.one_mul]
       have h1 : (n - 1) * (n - 1) ≤ (n - 1) * kk c := by
@@ -610,8 +610,8 @@ problem usa2023_p5 (n : ℕ) (hn : 2 < n) :
             (a (ρ c ⟨0, hn0⟩) (π (ρ c ⟨0, hn0⟩) c)).val + (n - 1) * kk c := by
           rw [← pow_two]
           exact hm
-        omega
-      have hkle1 : n - 1 ≤ kk c := Nat.le_of_mul_le_mul_left h1 (by omega)
+        lia
+      have hkle1 : n - 1 ≤ kk c := Nat.le_of_mul_le_mul_left h1 (by lia)
       have hsq2 : (n - 1) * (n + 1) = n * n - 1 := by
         rw [Nat.mul_comm, ← Nat.sq_sub_sq, one_pow, pow_two]
       have h2 : (n - 1) * kk c ≤ (n - 1) * (n + 1) := by
@@ -620,8 +620,8 @@ problem usa2023_p5 (n : ℕ) (hn : 2 < n) :
             n * n - 1 := by
           rw [← pow_two]
           exact hmaxle
-        omega
-      have hkle2 : kk c ≤ n + 1 := Nat.le_of_mul_le_mul_left h2 (by omega)
+        lia
+      have hkle2 : kk c ≤ n + 1 := Nat.le_of_mul_le_mul_left h2 (by lia)
       exact ⟨hkle1, hkle2⟩
     -- The column `c₀` containing the value `1`.
     have hπ0b : Function.Bijective (π ⟨0, hn0⟩) :=
@@ -639,10 +639,10 @@ problem usa2023_p5 (n : ℕ) (hn : 2 < n) :
     have base_ne : (a (ρ c₀ ⟨0, hn0⟩) (π (ρ c₀ ⟨0, hn0⟩) c₀)).val ≠ 0 := by
       intro hzero
       have h2 : trygub n q (ρ c₀ ⟨0, hn0⟩).val (π (ρ c₀ ⟨0, hn0⟩) c₀).val = 0 := hzero
-      obtain ⟨hr0, -⟩ := trygub_eq_zero (by omega : 2 ≤ n) h2
+      obtain ⟨hr0, -⟩ := trygub_eq_zero (by lia : 2 ≤ n) h2
       have h3 : ρ c₀ ⟨0, hn0⟩ = ⟨0, hn0⟩ := Fin.ext hr0
       rw [← h3] at one_val
-      omega
+      lia
     have base1 : (a (ρ c₀ ⟨0, hn0⟩) (π (ρ c₀ ⟨0, hn0⟩) c₀)).val = 1 := by omega
     -- The common difference of column `c₀` must be exactly `n`.
     have hkc0 : kk c₀ = n := by
@@ -654,7 +654,7 @@ problem usa2023_p5 (n : ℕ) (hn : 2 < n) :
         rw [base1, show ((⟨n - 1, hnm1⟩ : Fin n).val) = n - 1 from rfl] at e
         have e2 : (a (ρ c₀ ⟨n - 1, hnm1⟩) (π (ρ c₀ ⟨n - 1, hnm1⟩) c₀)).val < n ^ 2 :=
           (a _ _).isLt
-        omega
+        lia
       have hsq : (n - 1) * (n - 1) = n * n - n - (n - 1) := by
         rw [Nat.mul_sub, Nat.mul_one, Nat.sub_mul, Nat.one_mul]
       have hsq2 : (n - 1) * (n + 1) = n * n - 1 := by
@@ -666,26 +666,26 @@ problem usa2023_p5 (n : ℕ) (hn : 2 < n) :
       have hmaxle' : 1 + (n - 1) * kk c₀ ≤ n * n - 1 := by
         rw [← pow_two]
         exact hmaxle
-      have h3 : kk c₀ = n - 1 ∨ kk c₀ = n ∨ kk c₀ = n + 1 := by omega
+      have h3 : kk c₀ = n - 1 ∨ kk c₀ = n ∨ kk c₀ = n + 1 := by lia
       rcases h3 with h | h | h
       · rw [h, hsq] at hmax'
-        omega
+        lia
       · exact h
       · rw [h, hsq2] at hmaxle'
-        omega
+        lia
     -- So column `c₀` is `{1, n+1, 2n+1, …}`, but both `n+1` and `2n+1` lie in row `2`.
     have ev1 := hkk c₀ ⟨1, h1n⟩
     rw [base1, hkc0, show ((⟨1, h1n⟩ : Fin n).val) = 1 from rfl] at ev1
     have loc1 : (ρ c₀ ⟨1, h1n⟩).val = 2 := by
       have h2 : trygub n q (ρ c₀ ⟨1, h1n⟩).val (π (ρ c₀ ⟨1, h1n⟩) c₀).val = n + 1 := by
-        have h3 : (a (ρ c₀ ⟨1, h1n⟩) (π (ρ c₀ ⟨1, h1n⟩) c₀)).val = n + 1 := by omega
+        have h3 : (a (ρ c₀ ⟨1, h1n⟩) (π (ρ c₀ ⟨1, h1n⟩) c₀)).val = n + 1 := by lia
         exact h3
       exact trygub_eq_add_one hn4 hq2 (ρ c₀ ⟨1, h1n⟩).isLt (π (ρ c₀ ⟨1, h1n⟩) c₀).isLt h2
     have ev2 := hkk c₀ ⟨2, hn⟩
     rw [base1, hkc0, show ((⟨2, hn⟩ : Fin n).val) = 2 from rfl] at ev2
     have loc2 : (ρ c₀ ⟨2, hn⟩).val = 2 := by
       have h2 : trygub n q (ρ c₀ ⟨2, hn⟩).val (π (ρ c₀ ⟨2, hn⟩) c₀).val = 2 * n + 1 := by
-        have h3 : (a (ρ c₀ ⟨2, hn⟩) (π (ρ c₀ ⟨2, hn⟩) c₀)).val = 2 * n + 1 := by omega
+        have h3 : (a (ρ c₀ ⟨2, hn⟩) (π (ρ c₀ ⟨2, hn⟩) c₀)).val = 2 * n + 1 := by lia
         exact h3
       exact trygub_eq_two_mul_add_one hn4 hq2 hqdvd (ρ c₀ ⟨2, hn⟩).isLt
         (π (ρ c₀ ⟨2, hn⟩) c₀).isLt h2
@@ -694,7 +694,7 @@ problem usa2023_p5 (n : ℕ) (hn : 2 < n) :
       apply Fin.ext
       rw [loc1, loc2]
     have h13 : (1 : ℕ) = 2 := congrArg Fin.val h12
-    omega
+    lia
 
 
 end Usa2023P5

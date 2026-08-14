@@ -68,7 +68,7 @@ lemma exists_empty_square (hn : 2 ≤ n) (σ : Equiv.Perm (Fin n)) :
   have hk2 : k * k < n := by rw [hk_def]; exact (sqrt_bounds hn).1
   have hk1 : 1 ≤ k := by rw [hk_def]; exact Nat.le_sqrt.mpr (by lia)
   have h0 : 0 < n := by lia
-  have hkn : k < n := by have h := Nat.mul_le_mul_left k hk1; omega
+  have hkn : k < n := by have h := Nat.mul_le_mul_left k hk1; lia
   -- `R` is the rook in the top row, at column `col₀`.
   set col0 : ℕ := (σ ⟨0, h0⟩ : ℕ) with hcol0
   have hcol0_lt : col0 < n := (σ ⟨0, h0⟩).isLt
@@ -102,7 +102,7 @@ lemma exists_empty_square (hn : 2 ≤ n) (σ : Equiv.Perm (Fin n)) :
     intro t
     have hrk : 1 + t.val * k + k ≤ n := by
       have h : (t.val + 1) * k ≤ k * k := Nat.mul_le_mul_right k (Nat.succ_le_of_lt t.isLt)
-      rw [add_one_mul] at h; omega
+      rw [add_one_mul] at h; lia
     by_contra hno
     exact hcontra ⟨1 + t.val * k, c0, hrk, hc0k,
       fun i hi1 hi2 hcc => hno ⟨i, ⟨hi1, hi2⟩, hcc⟩⟩
@@ -140,7 +140,7 @@ lemma exists_empty_square (hn : 2 ≤ n) (σ : Equiv.Perm (Fin n)) :
     have h1 : 1 + t.val * k ≤ (g t : ℕ) := (hg t).1.1
     have h2 : (g t : ℕ) = 0 := by rw [ht]
     rw [h2] at h1
-    omega
+    lia
   have hsub : insert z (Finset.image g Finset.univ) ⊆ P := by
     intro x hx
     rw [Finset.mem_insert] at hx
@@ -200,7 +200,7 @@ lemma covering_restrict {K M N : ℕ} (hNM : N ≤ M)
     rw [hgood_def]
     change ((τ (Fin.castLE hNM ⟨i, hiN⟩)) : ℕ) < N
     rw [hcastle]
-    omega
+    lia
   refine ⟨⟨i, hiN⟩, hi1, hi2, ?_, ?_⟩ <;>
   · have hval : (σ ⟨i, hiN⟩ : ℕ) = (τ i : ℕ) := by
       have hσf : σ ⟨i, hiN⟩ = f ⟨i, hiN⟩ := by
@@ -240,11 +240,11 @@ lemma transpose_covering (K : ℕ) (hK : 1 ≤ K) :
   obtain ⟨ca, cb, hc_eq, hcb⟩ : ∃ ca cb, c = K * ca + cb ∧ cb < K :=
     ⟨c / K, c % K, (Nat.div_add_mod c K).symm, Nat.mod_lt _ hKpos⟩
   have hra : ra < K := by
-    have h : K * (ra + 1) ≤ K * K := by rw [Nat.mul_succ]; omega
-    have := Nat.le_of_mul_le_mul_left h hKpos; omega
+    have h : K * (ra + 1) ≤ K * K := by rw [Nat.mul_succ]; lia
+    have := Nat.le_of_mul_le_mul_left h hKpos; lia
   have hca : ca < K := by
-    have h : K * (ca + 1) ≤ K * K := by rw [Nat.mul_succ]; omega
-    have := Nat.le_of_mul_le_mul_left h hKpos; omega
+    have h : K * (ca + 1) ≤ K * K := by rw [Nat.mul_succ]; lia
+    have := Nat.le_of_mul_le_mul_left h hKpos; lia
   have hexpR : K * (ra + 1) = K * ra + K := by ring
   have hexpC : K * (ca + 1) = K * ca + K := by ring
   -- it suffices to find the row/column offsets `a, b` of a rook in the square
@@ -263,28 +263,28 @@ lemma transpose_covering (K : ℕ) (hK : 1 ≤ K) :
   -- choose `(a,b)` by how the column window straddles the residue blocks
   by_cases h1 : cb ≤ ra
   · by_cases h2 : rb ≤ ca
-    · exact ⟨ra, ca, ⟨by omega, by omega⟩, ⟨by omega, by omega⟩, hca⟩
-    · have hrow2 : K * (ra + 1) + ca < r + K := by rw [hexpR]; omega
-      have hh : K * (ra + 1) < K * K := by have := lt_of_lt_of_le hrow2 hr; omega
+    · exact ⟨ra, ca, ⟨by lia, by lia⟩, ⟨by lia, by lia⟩, hca⟩
+    · have hrow2 : K * (ra + 1) + ca < r + K := by rw [hexpR]; lia
+      have hh : K * (ra + 1) < K * K := by have := lt_of_lt_of_le hrow2 hr; lia
       have haK : ra + 1 < K := Nat.lt_of_mul_lt_mul_left hh
-      exact ⟨ra + 1, ca, ⟨by omega, hrow2⟩, ⟨by omega, by omega⟩, hca⟩
+      exact ⟨ra + 1, ca, ⟨by lia, hrow2⟩, ⟨by lia, by lia⟩, hca⟩
   · by_cases h2 : rb ≤ ca
-    · have hcol2 : K * (ca + 1) + ra < c + K := by rw [hexpC]; omega
-      have hh : K * (ca + 1) < K * K := by have := lt_of_lt_of_le hcol2 hc; omega
+    · have hcol2 : K * (ca + 1) + ra < c + K := by rw [hexpC]; lia
+      have hh : K * (ca + 1) < K * K := by have := lt_of_lt_of_le hcol2 hc; lia
       have hbK : ca + 1 < K := Nat.lt_of_mul_lt_mul_left hh
-      exact ⟨ra, ca + 1, ⟨by omega, by omega⟩, ⟨by omega, hcol2⟩, hbK⟩
+      exact ⟨ra, ca + 1, ⟨by lia, by lia⟩, ⟨by lia, hcol2⟩, hbK⟩
     · by_cases h3 : rb ≤ ca + 1
-      · exact ⟨ra, ca + 1, ⟨by omega, by omega⟩, ⟨by omega, by omega⟩, by omega⟩
+      · exact ⟨ra, ca + 1, ⟨by lia, by lia⟩, ⟨by lia, by lia⟩, by lia⟩
       · by_cases h4 : cb ≤ ra + 1
-        · exact ⟨ra + 1, ca, ⟨by omega, by omega⟩, ⟨by omega, by omega⟩, hca⟩
-        · exact ⟨ra + 1, ca + 1, ⟨by omega, by omega⟩, ⟨by omega, by omega⟩, by omega⟩
+        · exact ⟨ra + 1, ca, ⟨by lia, by lia⟩, ⟨by lia, by lia⟩, hca⟩
+        · exact ⟨ra + 1, ca + 1, ⟨by lia, by lia⟩, ⟨by lia, by lia⟩, by lia⟩
 
 /-- Optimality (upper bound): some peaceful configuration has no empty
 `(⌊√(n-1)⌋+1) × (⌊√(n-1)⌋+1)` square. -/
 lemma exists_config_no_square (hn : 2 ≤ n) :
     ∃ σ : Equiv.Perm (Fin n), ¬ HasEmptySquare σ (Nat.sqrt (n - 1) + 1) := by
   set K := Nat.sqrt (n - 1) + 1 with hK_def
-  have hK1 : 1 ≤ K := by rw [hK_def]; omega
+  have hK1 : 1 ≤ K := by rw [hK_def]; lia
   have hnKK : n ≤ K * K := by rw [hK_def]; exact (sqrt_bounds hn).2
   obtain ⟨τ, hτ⟩ := transpose_covering K hK1
   obtain ⟨σ, hσ⟩ := covering_restrict hnKK τ hτ

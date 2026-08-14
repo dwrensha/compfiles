@@ -64,26 +64,26 @@ lemma card_divisors_ge_two (n : ℕ) (hn : 1 < n) : 2 ≤ n.divisors.card := by
     intro x hx
     simp only [Finset.mem_insert, Finset.mem_singleton] at hx
     rcases hx with h | h
-    · rw [h]; exact Nat.mem_divisors.mpr ⟨one_dvd n, by omega⟩
-    · rw [h]; exact Nat.mem_divisors.mpr ⟨dvd_refl n, by omega⟩
+    · rw [h]; exact Nat.mem_divisors.mpr ⟨one_dvd n, by lia⟩
+    · rw [h]; exact Nat.mem_divisors.mpr ⟨dvd_refl n, by lia⟩
   have hle := Finset.card_le_card hsub
-  rw [Finset.card_pair (show (1 : ℕ) ≠ n by omega)] at hle
+  rw [Finset.card_pair (show (1 : ℕ) ≠ n by lia)] at hle
   exact hle
 
 lemma nthDiv_zero (n : ℕ) (hn : 1 < n) : nthDiv n 0 = 1 := by
-  have hk : 0 < n.divisors.card := by have h2 := card_divisors_ge_two n hn; omega
+  have hk : 0 < n.divisors.card := by have h2 := card_divisors_ge_two n hn; lia
   rw [nthDiv_eq n 0 hk, Finset.orderEmbOfFin_zero rfl hk]
   apply le_antisymm
-  · exact Finset.min'_le _ 1 (Nat.mem_divisors.mpr ⟨one_dvd n, by omega⟩)
+  · exact Finset.min'_le _ 1 (Nat.mem_divisors.mpr ⟨one_dvd n, by lia⟩)
   · exact Finset.le_min' _ _ 1 (fun y hy ↦ Nat.pos_of_mem_divisors hy)
 
 lemma nthDiv_last (n : ℕ) (hn : 1 < n) (h : n.divisors.card - 1 < n.divisors.card) :
     nthDiv n (n.divisors.card - 1) = n := by
-  have hk : 0 < n.divisors.card := by omega
+  have hk : 0 < n.divisors.card := by lia
   rw [nthDiv_eq n _ h, Finset.orderEmbOfFin_last rfl hk]
   apply le_antisymm
-  · exact Finset.max'_le _ _ _ (fun y hy ↦ Nat.le_of_dvd (by omega) (Nat.mem_divisors.mp hy).1)
-  · exact Finset.le_max' _ n (Nat.mem_divisors.mpr ⟨dvd_refl n, by omega⟩)
+  · exact Finset.max'_le _ _ _ (fun y hy ↦ Nat.le_of_dvd (by lia) (Nat.mem_divisors.mp hy).1)
+  · exact Finset.le_max' _ n (Nat.mem_divisors.mpr ⟨dvd_refl n, by lia⟩)
 
 lemma nthDiv_ge (n : ℕ) (_hn : 1 < n) : ∀ i, i < n.divisors.card → i + 1 ≤ nthDiv n i := by
   intro i
@@ -94,7 +94,7 @@ lemma nthDiv_ge (n : ℕ) (_hn : 1 < n) : ∀ i, i < n.divisors.card → i + 1 �
     exact Nat.pos_of_mem_divisors (Finset.orderEmbOfFin_mem n.divisors rfl ⟨0, h⟩)
   | succ m ih =>
     intro h
-    have hm : m < n.divisors.card := by omega
+    have hm : m < n.divisors.card := by lia
     have h1 := ih hm
     rw [nthDiv_eq n (m + 1) h]
     have h2 : n.divisors.orderEmbOfFin rfl ⟨m, hm⟩ < n.divisors.orderEmbOfFin rfl ⟨m + 1, h⟩ :=
@@ -113,17 +113,17 @@ lemma div_lt_div_of_dvd_of_lt {a b n : ℕ} (hn0 : 0 < n) (ha : a ∣ n) (hb : b
   push Not at hcon
   have h3 : a * (n / a) ≤ a * (n / b) := mul_le_mul_right hcon a
   have h4 : a * (n / b) < b * (n / b) := mul_lt_mul_of_pos_right hab hpos
-  omega
+  lia
 
 /-- Pairing of divisors: the `i`-th smallest times the `i`-th largest equals `n`. -/
 lemma nthDiv_pair (n : ℕ) (hn : 1 < n) (i : ℕ) (hi : i < n.divisors.card) :
     nthDiv n i * nthDiv n (n.divisors.card - 1 - i) = n := by
-  have hn0 : 0 < n := by omega
+  have hn0 : 0 < n := by lia
   have hk2 := card_divisors_ge_two n hn
   have hrev : ∀ j : Fin n.divisors.card, n.divisors.card - 1 - j.val < n.divisors.card := by
     intro j
     have hj := j.2
-    omega
+    lia
   have hfs : ∀ j : Fin n.divisors.card,
       n / n.divisors.orderEmbOfFin rfl ⟨n.divisors.card - 1 - j.val, hrev j⟩ ∈ n.divisors := by
     intro j
@@ -139,7 +139,7 @@ lemma nthDiv_pair (n : ℕ) (hn : 1 < n) (i : ℕ) (hi : i < n.divisors.card) :
       have ha2 := a.2
       have hb2 := b.2
       have habv : a.val < b.val := Fin.lt_def.mp hab
-      omega
+      lia
     have hlt : n.divisors.orderEmbOfFin rfl ⟨n.divisors.card - 1 - b.val, hrev b⟩ <
         n.divisors.orderEmbOfFin rfl ⟨n.divisors.card - 1 - a.val, hrev a⟩ :=
       (n.divisors.orderEmbOfFin rfl).strictMono (Fin.lt_def.mpr hval)
@@ -149,7 +149,7 @@ lemma nthDiv_pair (n : ℕ) (hn : 1 < n) (i : ℕ) (hi : i < n.divisors.card) :
       (Nat.pos_of_mem_divisors (Finset.orderEmbOfFin_mem n.divisors rfl _))
       hlt
   have hu := Finset.orderEmbOfFin_unique (rfl : n.divisors.card = n.divisors.card) hfs hmono
-  have hi2 : n.divisors.card - 1 - i < n.divisors.card := by omega
+  have hi2 : n.divisors.card - 1 - i < n.divisors.card := by lia
   have happ : n / n.divisors.orderEmbOfFin rfl
         ⟨n.divisors.card - 1 - (n.divisors.card - 1 - i), hrev ⟨n.divisors.card - 1 - i, hi2⟩⟩ =
       n.divisors.orderEmbOfFin rfl ⟨n.divisors.card - 1 - i, hi2⟩ :=
@@ -158,17 +158,17 @@ lemma nthDiv_pair (n : ℕ) (hn : 1 < n) (i : ℕ) (hi : i < n.divisors.card) :
         hrev ⟨n.divisors.card - 1 - i, hi2⟩⟩ : Fin n.divisors.card) = ⟨i, hi⟩ := by
     apply Fin.ext
     show n.divisors.card - 1 - (n.divisors.card - 1 - i) = i
-    omega
+    lia
   rw [hval] at happ
   rw [nthDiv_eq n i hi, nthDiv_eq n (n.divisors.card - 1 - i) hi2, ← happ]
   exact Nat.mul_div_cancel' (Nat.mem_divisors.mp (Finset.orderEmbOfFin_mem n.divisors rfl ⟨i, hi⟩)).1
 
 /-- The second smallest divisor of `n > 1` is its least prime factor. -/
 lemma nthDiv_one (n : ℕ) (hn : 1 < n) : nthDiv n 1 = n.minFac := by
-  have hn0 : 0 < n := by omega
+  have hn0 : 0 < n := by lia
   have hk2 := card_divisors_ge_two n hn
-  have h1k : 1 < n.divisors.card := by omega
-  have h0k : 0 < n.divisors.card := by omega
+  have h1k : 1 < n.divisors.card := by lia
+  have h0k : 0 < n.divisors.card := by lia
   rw [nthDiv_eq n 1 h1k]
   apply le_antisymm
   · -- `e ⟨1⟩ ≤ n.minFac`: `n.minFac` is a divisor `≥ 2`, hence has index `≥ 1`.
@@ -183,13 +183,13 @@ lemma nthDiv_one (n : ℕ) (hn : 1 < n) : nthDiv n 1 = n.minFac := by
     have hj0 : j ≠ ⟨0, h0k⟩ := by
       intro hcon
       rw [hcon, he0] at hj
-      have hmf2 : 2 ≤ n.minFac := (Nat.minFac_prime (show n ≠ 1 by omega)).two_le
-      omega
+      have hmf2 : 2 ≤ n.minFac := (Nat.minFac_prime (show n ≠ 1 by lia)).two_le
+      lia
     have hle : (⟨1, h1k⟩ : Fin n.divisors.card) ≤ j := by
       by_contra hc
       push Not at hc
       have hc' : j.val < 1 := Fin.lt_def.mp hc
-      have hz : j.val = 0 := by omega
+      have hz : j.val = 0 := by lia
       exact hj0 (Fin.ext hz)
     have hmono : n.divisors.orderEmbOfFin rfl ⟨1, h1k⟩ ≤ n.divisors.orderEmbOfFin rfl j := by
       rcases eq_or_lt_of_le hle with h | h
@@ -217,7 +217,7 @@ lemma tele (m : ℕ) :
 
 /-- Part (a): the sum is less than `n ^ 2`. -/
 lemma pairSum_lt (n : ℕ) (hn : 1 < n) : pairSum n < n ^ 2 := by
-  have hn0 : 0 < n := by omega
+  have hn0 : 0 < n := by lia
   have hk2 := card_divisors_ge_two n hn
   have hQ : (pairSum n : ℚ) < (n : ℚ) ^ 2 := by
     have h1 : (pairSum n : ℚ) = ∑ i ∈ Finset.range (n.divisors.card - 1),
@@ -230,16 +230,16 @@ lemma pairSum_lt (n : ℕ) (hn : 1 < n) : pairSum n < n ^ 2 := by
           (n : ℚ) ^ 2 / (((n.divisors.card - i) * (n.divisors.card - 1 - i) : ℕ) : ℚ) := by
       intro i hi
       rw [Finset.mem_range] at hi
-      have hsub : n.divisors.card - 1 - (i + 1) = n.divisors.card - 2 - i := by omega
+      have hsub : n.divisors.card - 1 - (i + 1) = n.divisors.card - 2 - i := by lia
       have hnat : nthDiv n i * nthDiv n (i + 1) *
           ((n.divisors.card - i) * (n.divisors.card - 1 - i)) ≤ n ^ 2 := by
-        have hp1 := nthDiv_pair n hn i (by omega)
-        have hp2 := nthDiv_pair n hn (i + 1) (by omega)
+        have hp1 := nthDiv_pair n hn i (by lia)
+        have hp2 := nthDiv_pair n hn (i + 1) (by lia)
         rw [hsub] at hp2
-        have hg1 := nthDiv_ge n hn (n.divisors.card - 1 - i) (by omega)
-        have hg2 := nthDiv_ge n hn (n.divisors.card - 2 - i) (by omega)
-        have h1a : n.divisors.card - 1 - i + 1 = n.divisors.card - i := by omega
-        have h2a : n.divisors.card - 2 - i + 1 = n.divisors.card - 1 - i := by omega
+        have hg1 := nthDiv_ge n hn (n.divisors.card - 1 - i) (by lia)
+        have hg2 := nthDiv_ge n hn (n.divisors.card - 2 - i) (by lia)
+        have h1a : n.divisors.card - 1 - i + 1 = n.divisors.card - i := by lia
+        have h2a : n.divisors.card - 2 - i + 1 = n.divisors.card - 1 - i := by lia
         rw [h1a] at hg1
         rw [h2a] at hg2
         calc nthDiv n i * nthDiv n (i + 1) * ((n.divisors.card - i) * (n.divisors.card - 1 - i))
@@ -252,7 +252,7 @@ lemma pairSum_lt (n : ℕ) (hn : 1 < n) : pairSum n < n ^ 2 := by
           _ = n ^ 2 := by rw [pow_two]
       have hM : (0 : ℚ) < (((n.divisors.card - i) * (n.divisors.card - 1 - i) : ℕ) : ℚ) := by
         have hM0 : 0 < (n.divisors.card - i) * (n.divisors.card - 1 - i) :=
-          Nat.mul_pos (by omega) (by omega)
+          Nat.mul_pos (by lia) (by lia)
         exact_mod_cast hM0
       rw [le_div_iff₀ hM]
       exact_mod_cast hnat
@@ -273,8 +273,8 @@ lemma pairSum_lt (n : ℕ) (hn : 1 < n) : pairSum n < n ^ 2 := by
       show (n : ℚ) ^ 2 / (((n.divisors.card - i) * (n.divisors.card - 1 - i) : ℕ) : ℚ) =
         (n : ℚ) ^ 2 /
           ((((n.divisors.card - 1 - 1 - i) + 2) * ((n.divisors.card - 1 - 1 - i) + 1) : ℕ) : ℚ)
-      have e1 : n.divisors.card - 1 - 1 - i + 2 = n.divisors.card - i := by omega
-      have e2 : n.divisors.card - 1 - 1 - i + 1 = n.divisors.card - 1 - i := by omega
+      have e1 : n.divisors.card - 1 - 1 - i + 2 = n.divisors.card - i := by lia
+      have e2 : n.divisors.card - 1 - 1 - i + 1 = n.divisors.card - 1 - i := by lia
       rw [e1, e2]
     have hsum3 : (∑ j ∈ Finset.range (n.divisors.card - 1),
           (n : ℚ) ^ 2 / (((j + 2) * (j + 1) : ℕ) : ℚ)) =
@@ -296,13 +296,13 @@ lemma pairSum_lt (n : ℕ) (hn : 1 < n) : pairSum n < n ^ 2 := by
       have htele := tele (n.divisors.card - 1)
       rw [htele]
       have hkc : ((n.divisors.card - 1 : ℕ) : ℚ) + 1 = (n.divisors.card : ℚ) := by
-        rw [Nat.cast_sub (show 1 ≤ n.divisors.card by omega)]
+        rw [Nat.cast_sub (show 1 ≤ n.divisors.card by lia)]
         push_cast
         ring
       rw [hkc]
     have hsum5 : (n : ℚ) ^ 2 * (1 - 1 / (n.divisors.card : ℚ)) < (n : ℚ) ^ 2 := by
       have hkn : (0 : ℚ) < (n.divisors.card : ℚ) := by
-        exact_mod_cast (by omega : 0 < n.divisors.card)
+        exact_mod_cast (by lia : 0 < n.divisors.card)
       have hn2 : (0 : ℚ) < (n : ℚ) ^ 2 := by
         have hn0' : (0 : ℚ) < (n : ℚ) := by exact_mod_cast hn0
         positivity
@@ -326,26 +326,26 @@ lemma pairSum_lt (n : ℕ) (hn : 1 < n) : pairSum n < n ^ 2 := by
 
 lemma pairSum_eq_of_prime (n : ℕ) (hn : 1 < n) (hp : n.Prime) : pairSum n = n := by
   have hdiv : n.divisors = {1, n} := hp.divisors
-  rw [pairSum_eq, hdiv, Finset.card_pair (show (1 : ℕ) ≠ n by omega),
+  rw [pairSum_eq, hdiv, Finset.card_pair (show (1 : ℕ) ≠ n by lia),
     show (2 : ℕ) - 1 = 1 from rfl, Finset.sum_range_one]
   show nthDiv n 0 * nthDiv n 1 = n
   rw [nthDiv_zero n hn]
   have h1 : nthDiv n 1 = n := by
     have hlast := nthDiv_last n hn (by
-      rw [hdiv, Finset.card_pair (show (1 : ℕ) ≠ n by omega)]
+      rw [hdiv, Finset.card_pair (show (1 : ℕ) ≠ n by lia)]
       norm_num)
-    rw [hdiv, Finset.card_pair (show (1 : ℕ) ≠ n by omega)] at hlast
+    rw [hdiv, Finset.card_pair (show (1 : ℕ) ≠ n by lia)] at hlast
     exact hlast
   rw [h1, one_mul]
 
 /-- Composite `n` does not work: `n ^ 2 / n.minFac < d ≤ n ^ 2 / n.minFac`. -/
 lemma pairSum_not_dvd_of_not_prime (n : ℕ) (hn : 1 < n) (hnp : ¬ n.Prime)
     (ha : pairSum n < n ^ 2) (hdvd : pairSum n ∣ n ^ 2) : False := by
-  have hn0 : 0 < n := by omega
-  have hmf2 : 2 ≤ n.minFac := (Nat.minFac_prime (show n ≠ 1 by omega)).two_le
+  have hn0 : 0 < n := by lia
+  have hmf2 : 2 ≤ n.minFac := (Nat.minFac_prime (show n ≠ 1 by lia)).two_le
   have hpn : n.minFac < n := by
     rcases eq_or_lt_of_le (Nat.minFac_le hn0) with h | h
-    · exact absurd (h ▸ Nat.minFac_prime (show n ≠ 1 by omega)) hnp
+    · exact absurd (h ▸ Nat.minFac_prime (show n ≠ 1 by lia)) hnp
     · exact h
   have hk3 : 3 ≤ n.divisors.card := by
     have hsub : ({1, n.minFac, n} : Finset ℕ) ⊆ n.divisors := by
@@ -358,28 +358,28 @@ lemma pairSum_not_dvd_of_not_prime (n : ℕ) (hn : 1 < n) (hnp : ¬ n.Prime)
     have hcard : ({1, n.minFac, n} : Finset ℕ).card = 3 := by
       rw [Finset.card_insert_of_notMem (by
           simp only [Finset.mem_insert, Finset.mem_singleton]
-          omega),
+          lia),
         Finset.card_insert_of_notMem (by
           simp only [Finset.mem_singleton]
-          omega),
+          lia),
         Finset.card_singleton]
     have hle := Finset.card_le_card hsub
-    omega
+    lia
   have hfirst : nthDiv n 0 * nthDiv n 1 = n.minFac := by
     rw [nthDiv_zero n hn, one_mul, nthDiv_one n hn]
   have hpair1 : n.minFac * nthDiv n (n.divisors.card - 2) = n := by
-    have h := nthDiv_pair n hn 1 (by omega)
-    have esub : n.divisors.card - 1 - 1 = n.divisors.card - 2 := by omega
+    have h := nthDiv_pair n hn 1 (by lia)
+    have esub : n.divisors.card - 1 - 1 = n.divisors.card - 2 := by lia
     rw [nthDiv_one n hn, esub] at h
     exact h
   have hk2v : nthDiv n (n.divisors.card - 2) = n / n.minFac := by
     symm
     calc n / n.minFac = n.minFac * nthDiv n (n.divisors.card - 2) / n.minFac := by rw [hpair1]
       _ = nthDiv n (n.divisors.card - 2) :=
-        Nat.mul_div_cancel_left _ (by omega : 0 < n.minFac)
+        Nat.mul_div_cancel_left _ (by lia : 0 < n.minFac)
   have hlast : nthDiv n (n.divisors.card - 2) * nthDiv n (n.divisors.card - 1) =
       n ^ 2 / n.minFac := by
-    rw [hk2v, nthDiv_last n hn (by omega), pow_two, Nat.mul_div_assoc n (Nat.minFac_dvd n),
+    rw [hk2v, nthDiv_last n hn (by lia), pow_two, Nat.mul_div_assoc n (Nat.minFac_dvd n),
       Nat.mul_comm]
   have hlb : nthDiv n 0 * nthDiv n 1 +
       nthDiv n (n.divisors.card - 2) * nthDiv n (n.divisors.card - 1) ≤ pairSum n := by
@@ -387,34 +387,34 @@ lemma pairSum_not_dvd_of_not_prime (n : ℕ) (hn : 1 < n) (hnp : ¬ n.Prime)
     have hsub : ({0, n.divisors.card - 2} : Finset ℕ) ⊆ Finset.range (n.divisors.card - 1) := by
       intro x hx
       simp only [Finset.mem_insert, Finset.mem_singleton] at hx
-      rcases hx with rfl | rfl <;> rw [Finset.mem_range] <;> omega
+      rcases hx with rfl | rfl <;> rw [Finset.mem_range] <;> lia
     have hle := Finset.sum_le_sum_of_subset (f := fun i ↦ nthDiv n i * nthDiv n (i + 1)) hsub
     rw [Finset.sum_insert (show (0 : ℕ) ∉ ({n.divisors.card - 2} : Finset ℕ) by
         simp only [Finset.mem_singleton]
-        omega),
+        lia),
       Finset.sum_singleton] at hle
-    have e2 : n.divisors.card - 2 + 1 = n.divisors.card - 1 := by omega
+    have e2 : n.divisors.card - 2 + 1 = n.divisors.card - 1 := by lia
     rw [e2] at hle
     exact hle
-  have hd_pos : 0 < nthDiv n 0 * nthDiv n 1 := by rw [hfirst]; omega
-  have hd0 : 0 < pairSum n := by omega
+  have hd_pos : 0 < nthDiv n 0 * nthDiv n 1 := by rw [hfirst]; lia
+  have hd0 : 0 < pairSum n := by lia
   have hgt : n ^ 2 / n.minFac < pairSum n := by
     rw [← hlast]
-    omega
+    lia
   have hq1 : 1 ≤ n ^ 2 / pairSum n :=
     (Nat.one_le_div_iff hd0).mpr (Nat.le_of_dvd (Nat.pow_pos hn0) hdvd)
   have hqne1 : n ^ 2 / pairSum n ≠ 1 := by
     intro hcon
     have h2 := Nat.div_mul_cancel hdvd
     rw [hcon, one_mul] at h2
-    omega
-  have hq : 2 ≤ n ^ 2 / pairSum n := by omega
+    lia
+  have hq : 2 ≤ n ^ 2 / pairSum n := by lia
   have hn2ne1 : n ^ 2 ≠ 1 := by
     have h4 : 4 ≤ n ^ 2 := by
       rw [pow_two]
-      exact mul_le_mul (by omega : (2 : ℕ) ≤ n) (by omega : (2 : ℕ) ≤ n)
+      exact mul_le_mul (by lia : (2 : ℕ) ≤ n) (by lia : (2 : ℕ) ≤ n)
         (Nat.zero_le _) (Nat.zero_le _)
-    omega
+    lia
   have hmf : (n ^ 2).minFac = n.minFac := by
     apply le_antisymm
     · exact Nat.minFac_le_of_dvd hmf2
@@ -429,7 +429,7 @@ lemma pairSum_not_dvd_of_not_prime (n : ℕ) (hn : 1 < n) (hnp : ¬ n.Prime)
       (Nat.div_div_self hdvd (Nat.pow_pos hn0).ne').symm
     rw [h2, ← hmf]
     exact Nat.div_le_div_left h1 (Nat.minFac_pos _)
-  omega
+  lia
 
 snip end
 

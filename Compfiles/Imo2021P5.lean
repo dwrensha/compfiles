@@ -65,25 +65,25 @@ theorem fin_val_one : (1 : Fin 2021).val = 1 := rfl
 theorem fin_sub_one_add_one (h : Fin 2021) : h - 1 + 1 = h := by
   apply Fin.ext
   rw [Fin.val_add, Fin.val_sub, fin_val_one]
-  omega
+  lia
 
 theorem fin_sub_one_ne_self (h : Fin 2021) : h - 1 ≠ h := by
   intro hc
   have hv := congrArg Fin.val hc
   rw [Fin.val_sub, fin_val_one] at hv
-  omega
+  lia
 
 theorem fin_add_one_ne_self (h : Fin 2021) : h + 1 ≠ h := by
   intro hc
   have hv := congrArg Fin.val hc
   rw [Fin.val_add, fin_val_one] at hv
-  omega
+  lia
 
 theorem fin_sub_one_ne_add_one (h : Fin 2021) : h - 1 ≠ h + 1 := by
   intro hc
   have hv := congrArg Fin.val hc
   rw [Fin.val_sub, Fin.val_add, fin_val_one] at hv
-  omega
+  lia
 
 /-- The second component of the iterated move state is the move number. -/
 theorem iterate_snd (p : Position) (j : ℕ) : ((move^[j] (p, 0)).2).val = j % 2021 := by
@@ -92,7 +92,7 @@ theorem iterate_snd (p : Position) (j : ℕ) : ((move^[j] (p, 0)).2).val = j % 2
   · rw [Function.iterate_succ_apply']
     change ((move^[j] (p, 0)).2 + 1 : Fin 2021).val = (j + 1) % 2021
     rw [Fin.val_add, ih, fin_val_one]
-    omega
+    lia
 
 /-- One step of the move process on the position component. -/
 theorem iterate_fst_succ (p : Position) (j : ℕ) (hj : j < 2021) :
@@ -182,7 +182,7 @@ theorem coloring_succ (p : Position) (j : ℕ) (hj : j < 2021)
     have hbv : b.val ≠ j := fun hc => hbk (Fin.ext (hc.trans hkv.symm))
     simp only [Fin.lt_def] at Hk0
     rw [hkv] at Hk0
-    omega
+    lia
   refine ⟨?_, ?_, ?_⟩
   · intro x
     by_cases hxh : x = h
@@ -213,7 +213,7 @@ theorem coloring_succ (p : Position) (j : ℕ) (hj : j < 2021)
             have hqk : Q x = k := Fin.ext (hc.trans hkv.symm)
             rw [← hQh] at hqk
             exact Q.injective hqk
-          omega
+          lia
   · show coloring p j h = false
     simp only [coloring]
     rw [hQ, hQh, hkv, decide_eq_false_iff_not]
@@ -255,8 +255,8 @@ problem imo2021_p5 (p : Position) :
     intro j hj
     induction' j with j ih
     · exact hbase
-    · rw [hpre j (by omega)]
-      exact ih (by omega)
+    · rw [hpre j (by lia)]
+      exact ih (by lia)
   have hfinal1 : blackPairs (coloring p 2021) = 1 := hind 2021 (le_refl _)
   rw [hfinal] at hfinal1
   exact (show (0 : ZMod 2) ≠ 1 by decide) hfinal1

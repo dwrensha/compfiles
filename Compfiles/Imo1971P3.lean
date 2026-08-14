@@ -106,7 +106,7 @@ theorem a_prime_lemma (n1 n2 p : ℕ) (h1 : n1 < n2) (h2 : p ∣ 2 ^ (a n1) - 3)
       apply Finset.dvd_prod_of_mem
       simp [h3, h2]
       grind only [= Nat.odd_iff, a_ge_and_A_odd n1]
-    · replace ih1 := ih1 (by omega)
+    · replace ih1 := ih1 (by lia)
       exact Nat.dvd_mul_right_of_dvd ih1 _
 
 

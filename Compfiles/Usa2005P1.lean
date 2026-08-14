@@ -59,7 +59,7 @@ lemma R_of_dvd_of_dvd {d a b : ℕ} (hd : 2 ≤ d) (ha : d ∣ a) (hb : d ∣ b)
   intro hc
   have h1 : d ∣ 1 := hc ▸ Nat.dvd_gcd ha hb
   have := Nat.le_of_dvd one_pos h1
-  omega
+  lia
 
 /-- If `2 ≤ a` and `a ∣ b`, then `a` and `b` are not coprime. -/
 lemma R_of_dvd {a b : ℕ} (ha : 2 ≤ a) (hb : a ∣ b) : R a b :=
@@ -148,7 +148,7 @@ lemma nodup_powChain {d q : ℕ} (hd : 1 ≤ d) (hq : 2 ≤ q) (e : ℕ) :
     (powChain d q e).Nodup := by
   have key : ∀ j j' : ℕ, d * q ^ j = d * q ^ j' → j = j' := by
     intro j j' h
-    have h' : q ^ j = q ^ j' := Nat.mul_left_cancel (by omega) h
+    have h' : q ^ j = q ^ j' := Nat.mul_left_cancel (by lia) h
     exact Nat.pow_right_injective hq h'
   induction e with
   | zero => simp [powChain]
@@ -161,7 +161,7 @@ lemma nodup_powChain {d q : ℕ} (hd : 1 ≤ d) (hq : 2 ≤ q) (e : ℕ) :
     intro b hb
     rw [List.eq_of_mem_singleton hb]
     intro h
-    exact absurd (key _ _ h) (by omega)
+    exact absurd (key _ _ h) (by lia)
 
 /-- If `d * q^j = d' * q^j'` with `d, d'` dividing `m` and `q ∤ m` prime,
 then `d = d'` and `j = j'`. -/
@@ -286,7 +286,7 @@ lemma goodCircle_mul_prime_pow {m q : ℕ} (hq : q.Prime) (hqm : ¬ q ∣ m)
     rw [getLast?_powChain] at ha; simp at ha; subst ha
     rw [List.head?_append, head?_powChain] at hb; simp at hb; subst hb
     exact R_of_dvd_of_dvd hq.two_le
-      (dvd_mul_of_dvd_right (dvd_pow_self q (by omega)) d₁) dvd_rfl
+      (dvd_mul_of_dvd_right (dvd_pow_self q (by lia)) d₁) dvd_rfl
   have hb4 : ∀ a ∈ (powChain q q (e - 1)).getLast?,
       ∀ b ∈ (powChain (d₂ * q) q (e - 1)).head?, R a b := by
     intro a ha b hb
@@ -301,7 +301,7 @@ lemma goodCircle_mul_prime_pow {m q : ℕ} (hq : q.Prime) (hqm : ¬ q ∣ m)
     have hnq : 1 ≤ q := hq.one_lt.le
     have hFnodup : (mid.flatMap (fun d => powChain d q e)).Nodup := by
       rw [List.nodup_flatMap]
-      refine ⟨fun d hd => nodup_powChain (by have := hmid2 d hd; omega) hq.two_le e, ?_⟩
+      refine ⟨fun d hd => nodup_powChain (by have := hmid2 d hd; lia) hq.two_le e, ?_⟩
       apply hnodup_mid.pairwise_of_forall_ne
       intro d hd d' hd' hne x hx
       rw [mem_powChain] at hx
@@ -310,14 +310,14 @@ lemma goodCircle_mul_prime_pow {m q : ℕ} (hq : q.Prime) (hqm : ¬ q ∣ m)
       rw [mem_powChain] at hb
       obtain ⟨j', hj', hbj⟩ := hb
       obtain ⟨h1, -⟩ := eq_of_mul_pow_eq hq hqm (hmidm d hd) (hmidm d' hd')
-        (by have := hmid2 d hd; omega) (by have := hmid2 d' hd'; omega) hbj
+        (by have := hmid2 d hd; lia) (by have := hmid2 d' hd'; lia) hbj
       exact hne h1
     have hAnodup : (powChain d₁ q e).Nodup :=
-      nodup_powChain (by omega) hq.two_le e
+      nodup_powChain (by lia) hq.two_le e
     have hBnodup : (powChain q q (e - 1)).Nodup :=
       nodup_powChain hnq hq.two_le (e - 1)
     have hCnodup : (powChain (d₂ * q) q (e - 1)).Nodup :=
-      nodup_powChain (by omega) hq.two_le (e - 1)
+      nodup_powChain (by lia) hq.two_le (e - 1)
     rw [List.nodup_cons]
     refine ⟨?_, ?_⟩
     · -- `d₂` is not in the other blocks
@@ -330,28 +330,28 @@ lemma goodCircle_mul_prime_pow {m q : ℕ} (hq : q.Prime) (hqm : ¬ q ∣ m)
         obtain ⟨j, hj, hdy⟩ := hdy
         have h2 : d₂ * q ^ 0 = d * q ^ j := by simpa using hdy
         obtain ⟨h3, -⟩ := eq_of_mul_pow_eq hq hqm hd₂m (hmidm d hd)
-          (by omega) (by have := hmid2 d hd; omega) h2
+          (by lia) (by have := hmid2 d hd; lia) h2
         exact hd₂_notin (h3 ▸ hd)
       · rw [mem_powChain] at hy
         obtain ⟨j, hj, hdy⟩ := hy
         have h2 : d₂ * q ^ 0 = d₁ * q ^ j := by simpa using hdy
-        obtain ⟨h3, -⟩ := eq_of_mul_pow_eq hq hqm hd₂m hd₁m (by omega) (by omega) h2
+        obtain ⟨h3, -⟩ := eq_of_mul_pow_eq hq hqm hd₂m hd₁m (by lia) (by lia) h2
         exact hd₁_ne_d₂ h3.symm
       · rw [mem_powChain] at hy
         obtain ⟨j, hj, hdy⟩ := hy
         have e1 : (1 : ℕ) * q ^ (j + 1) = q * q ^ j := by rw [one_mul, pow_succ']
         have h2 : d₂ * q ^ 0 = 1 * q ^ (j + 1) := by
           rw [pow_zero, mul_one, e1]; exact hdy
-        obtain ⟨h3, -⟩ := eq_of_mul_pow_eq hq hqm hd₂m (one_dvd m) (by omega)
+        obtain ⟨h3, -⟩ := eq_of_mul_pow_eq hq hqm hd₂m (one_dvd m) (by lia)
           one_ne_zero h2
-        omega
+        lia
       · rw [mem_powChain] at hy
         obtain ⟨j, hj, hdy⟩ := hy
         have e2 : d₂ * q ^ (j + 1) = d₂ * q * q ^ j := by rw [pow_succ', mul_assoc]
         have h2 : d₂ * q ^ 0 = d₂ * q ^ (j + 1) := by
           rw [pow_zero, mul_one, e2]; exact hdy
-        obtain ⟨-, h3⟩ := eq_of_mul_pow_eq hq hqm hd₂m hd₂m (by omega) (by omega) h2
-        omega
+        obtain ⟨-, h3⟩ := eq_of_mul_pow_eq hq hqm hd₂m hd₂m (by lia) (by lia) h2
+        lia
     · rw [List.nodup_append]
       refine ⟨hFnodup, ?_, ?_⟩
       · rw [List.nodup_append]
@@ -367,8 +367,8 @@ lemma goodCircle_mul_prime_pow {m q : ℕ} (hq : q.Prime) (hqm : ¬ q ∣ m)
           have e1 : (1 : ℕ) * q ^ (j + 1) = q * q ^ j := by rw [one_mul, pow_succ']
           have e2 : d₂ * q ^ (i + 1) = d₂ * q * q ^ i := by rw [pow_succ', mul_assoc]
           obtain ⟨h3, -⟩ := eq_of_mul_pow_eq hq hqm (one_dvd m) hd₂m one_ne_zero
-            (by omega) (e1.trans (hdx.symm.trans (h.trans (hdy.trans e2.symm))))
-          omega
+            (by lia) (e1.trans (hdx.symm.trans (h.trans (hdy.trans e2.symm))))
+          lia
         · intro x hx y hy
           rw [mem_powChain] at hx
           obtain ⟨j, hj, hdx⟩ := hx
@@ -378,14 +378,14 @@ lemma goodCircle_mul_prime_pow {m q : ℕ} (hq : q.Prime) (hqm : ¬ q ∣ m)
             obtain ⟨i, hi, hdy⟩ := hy
             intro h
             have e1 : (1 : ℕ) * q ^ (i + 1) = q * q ^ i := by rw [one_mul, pow_succ']
-            obtain ⟨h3, -⟩ := eq_of_mul_pow_eq hq hqm hd₁m (one_dvd m) (by omega)
+            obtain ⟨h3, -⟩ := eq_of_mul_pow_eq hq hqm hd₁m (one_dvd m) (by lia)
               one_ne_zero ((hdx.symm.trans (h.trans hdy)).trans e1.symm)
-            omega
+            lia
           · rw [mem_powChain] at hy
             obtain ⟨i, hi, hdy⟩ := hy
             intro h
             have e2 : d₂ * q ^ (i + 1) = d₂ * q * q ^ i := by rw [pow_succ', mul_assoc]
-            obtain ⟨h3, -⟩ := eq_of_mul_pow_eq hq hqm hd₁m hd₂m (by omega) (by omega)
+            obtain ⟨h3, -⟩ := eq_of_mul_pow_eq hq hqm hd₁m hd₂m (by lia) (by lia)
               ((hdx.symm.trans (h.trans hdy)).trans e2.symm)
             exact hd₁_ne_d₂ h3
       · intro x hx y hy
@@ -399,22 +399,22 @@ lemma goodCircle_mul_prime_pow {m q : ℕ} (hq : q.Prime) (hqm : ¬ q ∣ m)
           obtain ⟨i, hi, hdy⟩ := hy
           intro h
           obtain ⟨h3, -⟩ := eq_of_mul_pow_eq hq hqm (hmidm d hd) hd₁m
-            (by have := hmid2 d hd; omega) (by omega) (hdx.symm.trans (h.trans hdy))
+            (by have := hmid2 d hd; lia) (by lia) (hdx.symm.trans (h.trans hdy))
           exact hd₁_notin_mid (h3 ▸ hd)
         · rw [mem_powChain] at hy
           obtain ⟨i, hi, hdy⟩ := hy
           intro h
           have e1 : (1 : ℕ) * q ^ (i + 1) = q * q ^ i := by rw [one_mul, pow_succ']
           obtain ⟨h3, -⟩ := eq_of_mul_pow_eq hq hqm (hmidm d hd) (one_dvd m)
-            (by have := hmid2 d hd; omega) one_ne_zero
+            (by have := hmid2 d hd; lia) one_ne_zero
             ((hdx.symm.trans (h.trans hdy)).trans e1.symm)
-          have := hmid2 d hd; omega
+          have := hmid2 d hd; lia
         · rw [mem_powChain] at hy
           obtain ⟨i, hi, hdy⟩ := hy
           intro h
           have e2 : d₂ * q ^ (i + 1) = d₂ * q * q ^ i := by rw [pow_succ', mul_assoc]
           obtain ⟨h3, -⟩ := eq_of_mul_pow_eq hq hqm (hmidm d hd) hd₂m
-            (by have := hmid2 d hd; omega) (by omega)
+            (by have := hmid2 d hd; lia) (by lia)
             ((hdx.symm.trans (h.trans hdy)).trans e2.symm)
           exact hd₂_notin (h3.symm ▸ hd)
   · -- nonempty
@@ -438,17 +438,17 @@ lemma goodCircle_mul_prime_pow {m q : ℕ} (hq : q.Prime) (hqm : ¬ q ∣ m)
       · rw [mem_powChain] at hB
         obtain ⟨j, hj, rfl⟩ := hB
         have h1 : q * q ^ j = q ^ (j + 1) := (pow_succ' q j).symm
-        have h2 : q ^ (j + 1) ∣ q ^ e := pow_dvd_pow q (by omega)
+        have h2 : q ^ (j + 1) ∣ q ^ e := pow_dvd_pow q (by lia)
         exact ⟨h1 ▸ (mul_comm (q ^ e) m ▸ dvd_trans h2 (dvd_mul_right (q ^ e) m)),
           lt_of_lt_of_le hq.one_lt (Nat.le_mul_of_pos_right _ (pow_pos hq.pos j))⟩
       · rw [mem_powChain] at hC
         obtain ⟨j, hj, rfl⟩ := hC
         have h1 : d₂ * q * q ^ j = d₂ * q ^ (j + 1) := by rw [mul_assoc, pow_succ']
-        have h2 : q ^ (j + 1) ∣ q ^ e := pow_dvd_pow q (by omega)
+        have h2 : q ^ (j + 1) ∣ q ^ e := pow_dvd_pow q (by lia)
         exact ⟨h1 ▸ Nat.mul_dvd_mul hd₂m h2,
           lt_of_lt_of_le hd₂q (Nat.le_mul_of_pos_right _ (pow_pos hq.pos j))⟩
     · rintro ⟨hxdvd, hx1⟩
-      have hx0 : x ≠ 0 := by omega
+      have hx0 : x ≠ 0 := by lia
       have hdecomp : ∃ j d : ℕ, q ^ j * d = x ∧ d ≠ 0 ∧ ¬ q ∣ d :=
         ⟨x.factorization q, ordCompl[q] x, Nat.ordProj_mul_ordCompl_eq_self x q,
           (Nat.ordCompl_pos q hx0).ne', Nat.not_dvd_ordCompl hq hx0⟩
@@ -486,7 +486,7 @@ lemma goodCircle_mul_prime_pow {m q : ℕ} (hq : q.Prime) (hqm : ¬ q ∣ m)
         subst hx_eq
         by_cases hd1 : d = 1
         · subst hd1
-          refine Or.inr (Or.inr (Or.inr (Or.inl (mem_powChain.mpr ⟨j - 1, by omega, ?_⟩))))
+          refine Or.inr (Or.inr (Or.inr (Or.inl (mem_powChain.mpr ⟨j - 1, by lia, ?_⟩))))
           rw [← pow_succ', Nat.sub_add_cancel hj1]
           simp
         · have hd1' : 1 < d := by
@@ -497,7 +497,7 @@ lemma goodCircle_mul_prime_pow {m q : ℕ} (hq : q.Prime) (hqm : ¬ q ∣ m)
           rcases List.mem_cons.mp hxl with rfl | hmid₁
           · exact Or.inr (Or.inr (Or.inl (mem_powChain.mpr ⟨j, hje, rfl⟩)))
           rcases List.mem_cons.mp hmid₁ with rfl | hmid
-          · refine Or.inr (Or.inr (Or.inr (Or.inr (mem_powChain.mpr ⟨j - 1, by omega, ?_⟩))))
+          · refine Or.inr (Or.inr (Or.inr (Or.inr (mem_powChain.mpr ⟨j - 1, by lia, ?_⟩))))
             rw [mul_assoc _ q _, ← pow_succ', Nat.sub_add_cancel hj1]
           · exact Or.inr (Or.inl (List.mem_flatMap.mpr ⟨_, hmid, mem_powChain.mpr ⟨j, hje, rfl⟩⟩))
   · -- chain
@@ -536,7 +536,7 @@ lemma goodCircle_prime_pow {p : ℕ} (hp : p.Prime) {a : ℕ} (ha : 2 ≤ a) :
     Finset.sort_nodup _ _, ?_, hl, ?_, ?_⟩
   · -- nonempty: `p` is in the list
     have hp_mem : p ∈ ((p ^ a).divisors.filter (fun d => 1 < d)).sort (· ≤ ·) :=
-      (hl p).mpr ⟨dvd_pow_self p (by omega), hp.one_lt⟩
+      (hl p).mpr ⟨dvd_pow_self p (by lia), hp.one_lt⟩
     intro hnil
     rw [hnil] at hp_mem
     simp at hp_mem
@@ -544,7 +544,7 @@ lemma goodCircle_prime_pow {p : ℕ} (hp : p.Prime) {a : ℕ} (ha : 2 ≤ a) :
     apply isChain_of_forall_dvd hp.two_le
     intro x hx
     obtain ⟨hxdvd, hx1⟩ := (hl x).mp hx
-    obtain ⟨r, hrp, hrd⟩ := Nat.exists_prime_and_dvd (by omega : x ≠ 1)
+    obtain ⟨r, hrp, hrd⟩ := Nat.exists_prime_and_dvd (by lia : x ≠ 1)
     have hrp' : r = p := by
       have h1 : r ∣ p := hrp.dvd_of_dvd_pow (dvd_trans hrd hxdvd)
       exact (Nat.prime_dvd_prime_iff_eq hrp hp).mp h1
@@ -558,12 +558,12 @@ lemma goodCircle_prime_pow {p : ℕ} (hp : p.Prime) {a : ℕ} (ha : 2 ≤ a) :
     obtain ⟨hxdvd, hx1⟩ := (hl x).mp hxl
     obtain ⟨hydvd, hy1⟩ := (hl y).mp hyl
     have hxp : p ∣ x := by
-      obtain ⟨r, hrp, hrd⟩ := Nat.exists_prime_and_dvd (by omega : x ≠ 1)
+      obtain ⟨r, hrp, hrd⟩ := Nat.exists_prime_and_dvd (by lia : x ≠ 1)
       have hrp' : r = p :=
         (Nat.prime_dvd_prime_iff_eq hrp hp).mp (hrp.dvd_of_dvd_pow (dvd_trans hrd hxdvd))
       exact hrp' ▸ hrd
     have hyp : p ∣ y := by
-      obtain ⟨r, hrp, hrd⟩ := Nat.exists_prime_and_dvd (by omega : y ≠ 1)
+      obtain ⟨r, hrp, hrd⟩ := Nat.exists_prime_and_dvd (by lia : y ≠ 1)
       have hrp' : r = p :=
         (Nat.prime_dvd_prime_iff_eq hrp hp).mp (hrp.dvd_of_dvd_pow (dvd_trans hrd hydvd))
       exact hrp' ▸ hrd
@@ -573,7 +573,7 @@ lemma goodCircle_prime_pow {p : ℕ} (hp : p.Prime) {a : ℕ} (ha : 2 ≤ a) :
 lemma two_le_length_of_composite_circle {n : ℕ} (hn : 1 < n) (hnp : ¬ n.Prime)
     {l : List ℕ} (hnodup : l.Nodup) (hmem : ∀ d : ℕ, d ∈ l ↔ d ∣ n ∧ 1 < d) :
     2 ≤ l.length := by
-  obtain ⟨r, hrp, hrd⟩ := Nat.exists_prime_and_dvd (by omega : n ≠ 1)
+  obtain ⟨r, hrp, hrd⟩ := Nat.exists_prime_and_dvd (by lia : n ≠ 1)
   have hr : r ∈ l := (hmem r).mpr ⟨hrd, hrp.one_lt⟩
   have hnl : n ∈ l := (hmem n).mpr ⟨dvd_refl n, hn⟩
   have hrn : r ≠ n := by rintro rfl; exact hnp hrp
@@ -599,15 +599,15 @@ lemma not_pq_of_factorization_ge_two {m p : ℕ} (_hp : p.Prime)
     rw [h1]
     by_cases h2 : p = r
     · rw [h2, Finsupp.add_apply, Finsupp.single_eq_same, Finsupp.single_eq_of_ne hrs]
-      try omega
+      try lia
     · by_cases h3 : p = s
       · rw [h3, Finsupp.add_apply, Finsupp.single_eq_same,
           Finsupp.single_eq_of_ne hrs.symm]
-        try omega
+        try lia
       · rw [Finsupp.add_apply, Finsupp.single_eq_of_ne h2,
           Finsupp.single_eq_of_ne h3]
-        try omega
-  omega
+        try lia
+  lia
 
 /-- If `m` has at least three distinct prime factors, then `m` is not a
 product of two distinct primes. -/
@@ -622,7 +622,7 @@ lemma not_pq_of_three_le_card {m : ℕ} (h3 : 3 ≤ m.primeFactors.card) :
     by_cases h2 : s = r
     · subst h2; simp
     · simp [Finset.card_pair h2]
-  omega
+  lia
 
 /-- For `a` non-zero and `b ≥ 2`, neither `a * b` nor `b * a` equals `a`. -/
 lemma mul_ne_self {a b : ℕ} (ha : 0 < a) (hb : 2 ≤ b) : a * b ≠ a ∧ b * a ≠ a := by
@@ -630,11 +630,11 @@ lemma mul_ne_self {a b : ℕ} (ha : 0 < a) (hb : 2 ≤ b) : a * b ≠ a ∧ b * 
   · intro h
     have h2 : a * 1 = a * b := by rw [mul_one]; exact h.symm
     have h3 : 1 = b := Nat.mul_left_cancel ha h2
-    omega
+    lia
   · intro h
     have h2 : 1 * a = b * a := by rw [one_mul]; exact h.symm
     have h3 : 1 = b := Nat.mul_right_cancel ha h2
-    omega
+    lia
 
 /-- Cancelling a common positive factor on the right preserves inequality. -/
 lemma mul_ne_mul_of_ne {a b c : ℕ} (ha : 0 < a) (h : b ≠ c) : b * a ≠ c * a := by
@@ -839,7 +839,7 @@ lemma goodCircle_of_not_pq : ∀ (k : ℕ) (n : ℕ), n.primeFactors.card = k �
     rcases hk with rfl | rfl <;> simp at hn
   | succ k ih =>
     intro n hk hn hnp h
-    have hn0 : n ≠ 0 := by omega
+    have hn0 : n ≠ 0 := by lia
     have key : ∏ p ∈ n.primeFactors, p ^ n.factorization p = n := by
       have h1 := Nat.prod_factorization_pow_eq_self hn0
       show ∏ p ∈ n.factorization.support, p ^ n.factorization p = n
@@ -855,7 +855,7 @@ lemma goodCircle_of_not_pq : ∀ (k : ℕ) (n : ℕ), n.primeFactors.card = k �
       have ha2 : 2 ≤ n.factorization p := by
         by_contra hc
         push Not at hc
-        have h1 : n.factorization p = 1 := by omega
+        have h1 : n.factorization p = 1 := by lia
         rw [hne, h1, pow_one] at hnp
         exact hnp hpp
       rw [hne]
@@ -873,10 +873,10 @@ lemma goodCircle_of_not_pq : ∀ (k : ℕ) (n : ℕ), n.primeFactors.card = k �
       have hab : ¬ (n.factorization p = 1 ∧ n.factorization q = 1) := by
         rintro ⟨ha1, hb1⟩
         exact h ⟨p, q, hp, hq, hpq, by rw [hne, ha1, hb1, pow_one, pow_one]⟩
-      rcases (by omega : 2 ≤ n.factorization p ∨ 2 ≤ n.factorization q) with h2 | h2
+      rcases (by lia : 2 ≤ n.factorization p ∨ 2 ≤ n.factorization q) with h2 | h2
       · -- circle of `p ^ a`, then adjoin `q ^ b`
         obtain ⟨l, hnodup, hlne, hmem, hchain, hwrap⟩ := goodCircle_prime_pow hp h2
-        have hlt : 1 < p ^ n.factorization p := Nat.one_lt_pow (by omega) hp.one_lt
+        have hlt : 1 < p ^ n.factorization p := Nat.one_lt_pow (by lia) hp.one_lt
         have hpa_prime : ¬ (p ^ n.factorization p).Prime :=
           Nat.Prime.not_prime_pow h2
         have hl2 : 2 ≤ l.length :=
@@ -888,7 +888,7 @@ lemma goodCircle_of_not_pq : ∀ (k : ℕ) (n : ℕ), n.primeFactors.card = k �
         rwa [hne]
       · -- circle of `q ^ b`, then adjoin `p ^ a`
         obtain ⟨l, hnodup, hlne, hmem, hchain, hwrap⟩ := goodCircle_prime_pow hq h2
-        have hlt : 1 < q ^ n.factorization q := Nat.one_lt_pow (by omega) hq.one_lt
+        have hlt : 1 < q ^ n.factorization q := Nat.one_lt_pow (by lia) hq.one_lt
         have hqb_prime : ¬ (q ^ n.factorization q).Prime :=
           Nat.Prime.not_prime_pow h2
         have hl2 : 2 ≤ l.length :=
@@ -900,14 +900,14 @@ lemma goodCircle_of_not_pq : ∀ (k : ℕ) (n : ℕ), n.primeFactors.card = k �
         rw [hne, mul_comm (p ^ n.factorization p) (q ^ n.factorization q)]
         exact hgc
     · -- three or more prime factors
-      have hk3 : 3 ≤ n.primeFactors.card := by omega
+      have hk3 : 3 ≤ n.primeFactors.card := by lia
       by_cases hsq : ∃ p ∈ n.primeFactors, 2 ≤ n.factorization p
       · -- some prime factor `ps` has exponent `≥ 2`; peel off a different prime
         obtain ⟨ps, hps_mem, hps2⟩ := hsq
         obtain ⟨hps, -, -⟩ := Nat.mem_primeFactors.mp hps_mem
         have hcard' : 2 ≤ (n.primeFactors \ {ps}).card := by
-          rw [Finset.sdiff_singleton_eq_erase, Finset.card_erase_of_mem hps_mem]; omega
-        obtain ⟨q, hq_mem⟩ := Finset.card_pos.mp (by omega : 0 < (n.primeFactors \ {ps}).card)
+          rw [Finset.sdiff_singleton_eq_erase, Finset.card_erase_of_mem hps_mem]; lia
+        obtain ⟨q, hq_mem⟩ := Finset.card_pos.mp (by lia : 0 < (n.primeFactors \ {ps}).card)
         rw [Finset.mem_sdiff] at hq_mem
         obtain ⟨hqm, hqne⟩ := hq_mem
         have hqps : q ≠ ps := by
@@ -924,7 +924,7 @@ lemma goodCircle_of_not_pq : ∀ (k : ℕ) (n : ℕ), n.primeFactors.card = k �
             Finsupp.support_erase, Nat.support_factorization,
             Finset.sdiff_singleton_eq_erase]
         have hcard_m : m.primeFactors.card = k + 2 := by
-          rw [hpf_m, Finset.sdiff_singleton_eq_erase, Finset.card_erase_of_mem hqm]; omega
+          rw [hpf_m, Finset.sdiff_singleton_eq_erase, Finset.card_erase_of_mem hqm]; lia
         have hps_m : 2 ≤ m.factorization ps := by
           have h1 : m.factorization ps = n.factorization ps := by
             rw [hm_def, Nat.factorization_ordCompl, Finsupp.erase_ne hqps.symm]
@@ -939,9 +939,9 @@ lemma goodCircle_of_not_pq : ∀ (k : ℕ) (n : ℕ), n.primeFactors.card = k �
           have h1 : m.factorization ps ≤ 1 := by
             rw [hmp.factorization]
             by_cases h2 : ps = m
-            · subst h2; rw [Finsupp.single_eq_same]; try omega
-            · rw [Finsupp.single_eq_of_ne h2]; try omega
-          omega
+            · subst h2; rw [Finsupp.single_eq_same]; try lia
+            · rw [Finsupp.single_eq_of_ne h2]; try lia
+          lia
         have hmnpq : ¬ ∃ r s : ℕ, r.Prime ∧ s.Prime ∧ r ≠ s ∧ m = r * s :=
           not_pq_of_factorization_ge_two hps hps_m
         obtain ⟨l, hnodup, hlne, hmem, hchain, hwrap⟩ := ih m hcard_m h1m hnpm hmnpq
@@ -959,7 +959,7 @@ lemma goodCircle_of_not_pq : ∀ (k : ℕ) (n : ℕ), n.primeFactors.card = k �
             exact ⟨this.2.1, this.1⟩
           have h2 : 1 ≤ n.factorization x := h1.2.factorization_pos_of_dvd hn0 h1.1
           have h3 := hsq x hx
-          omega
+          lia
         by_cases hk3' : n.primeFactors.card = 3
         · -- `n = p * q * r`, a product of three distinct primes
           obtain ⟨p, q, r, hpq, hpr, hqr, h3⟩ := Finset.card_eq_three.mp hk3'
@@ -977,7 +977,7 @@ lemma goodCircle_of_not_pq : ∀ (k : ℕ) (n : ℕ), n.primeFactors.card = k �
           rw [hne]
           exact goodCircle_three_primes hp hq hr hpq hqr hpr
         · -- at least four prime factors; peel off any of them
-          obtain ⟨q, hq_mem⟩ := Finset.card_pos.mp (by omega : 0 < n.primeFactors.card)
+          obtain ⟨q, hq_mem⟩ := Finset.card_pos.mp (by lia : 0 < n.primeFactors.card)
           obtain ⟨hq, hqd, -⟩ := Nat.mem_primeFactors.mp hq_mem
           set m := ordCompl[q] n with hm_def
           have hqe : ordProj[q] n * m = n := Nat.ordProj_mul_ordCompl_eq_self n q
@@ -989,11 +989,11 @@ lemma goodCircle_of_not_pq : ∀ (k : ℕ) (n : ℕ), n.primeFactors.card = k �
               Finsupp.support_erase, Nat.support_factorization,
               Finset.sdiff_singleton_eq_erase]
           have hcard_m : m.primeFactors.card = k + 2 := by
-            rw [hpf_m, Finset.sdiff_singleton_eq_erase, Finset.card_erase_of_mem hq_mem]; omega
+            rw [hpf_m, Finset.sdiff_singleton_eq_erase, Finset.card_erase_of_mem hq_mem]; lia
           have hcard3 : 3 ≤ m.primeFactors.card := by
-            rw [hpf_m, Finset.sdiff_singleton_eq_erase, Finset.card_erase_of_mem hq_mem]; omega
+            rw [hpf_m, Finset.sdiff_singleton_eq_erase, Finset.card_erase_of_mem hq_mem]; lia
           have h1m : 1 < m :=
-            Nat.nonempty_primeFactors.mp (Finset.card_pos.mp (by omega))
+            Nat.nonempty_primeFactors.mp (Finset.card_pos.mp (by lia))
           have hnpm : ¬ m.Prime := by
             intro hmp
             rw [hmp.primeFactors] at hcard3

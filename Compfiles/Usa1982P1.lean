@@ -69,11 +69,11 @@ lemma card_universal_ge (G : SimpleGraph (Fin 1982)) (hG : FourPointProperty G) 
       (s := (Finset.univ : Finset (Fin 1982))) (p := IsUniversal G)
     rw [Finset.card_univ, Fintype.card_fin] at h
     exact h
-  suffices h : NU.card ≤ 3 by omega
+  suffices h : NU.card ≤ 3 by lia
   by_contra hcon
   push Not at hcon
   -- Pick a non-universal vertex `A` and a vertex `B` not joined to `A`.
-  obtain ⟨A, hA⟩ := Finset.card_pos.mp (show 0 < NU.card by omega)
+  obtain ⟨A, hA⟩ := Finset.card_pos.mp (show 0 < NU.card by lia)
   have hA' : ¬ IsUniversal G A := (Finset.mem_filter.mp hA).2
   obtain ⟨B, hBA, hAB⟩ : ∃ w, w ≠ A ∧ ¬ G.Adj A w := by
     by_contra hB
@@ -97,10 +97,10 @@ lemma card_universal_ge (G : SimpleGraph (Fin 1982)) (hG : FourPointProperty G) 
   have hCD2 : 1 < ((NU.erase A).erase B).card := by
     by_cases hB : B ∈ NU.erase A
     · have hBe := Finset.card_erase_of_mem hB
-      omega
+      lia
     · have hBe : ((NU.erase A).erase B).card = (NU.erase A).card := by
         rw [Finset.erase_eq_of_notMem hB]
-      omega
+      lia
   obtain ⟨C, hC, D, hD, hCD⟩ := Finset.one_lt_card.mp hCD2
   obtain ⟨hCB, hC⟩ := Finset.mem_erase.mp hC
   obtain ⟨hCA, hC⟩ := Finset.mem_erase.mp hC

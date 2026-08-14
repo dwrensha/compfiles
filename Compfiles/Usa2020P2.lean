@@ -194,38 +194,38 @@ theorem fill1d {n : ℕ} (P : Fin n → Prop)
     | zero => intro h; simpa using hi₀
     | succ d ih =>
       intro h
-      have h1 : i₀.val + d < n := by omega
+      have h1 : i₀.val + d < n := by lia
       obtain ⟨-, hsucc⟩ := hP _ (ih h1)
       rcases hsucc with habs | ⟨i', hi'1, hi'2⟩
       · have habs' : i₀.val + d + 1 = n := habs
-        omega
+        lia
       · have hi'' : i'.val = i₀.val + d + 1 := hi'1
         have e : i' = ⟨i₀.val + (d + 1), h⟩ :=
-          Fin.ext (show i'.val = i₀.val + (d + 1) by omega)
+          Fin.ext (show i'.val = i₀.val + (d + 1) by lia)
         rwa [e] at hi'2
-  have left : ∀ d : ℕ, ∀ (h : d ≤ i₀.val), P ⟨i₀.val - d, by omega⟩ := by
+  have left : ∀ d : ℕ, ∀ (h : d ≤ i₀.val), P ⟨i₀.val - d, by lia⟩ := by
     intro d
     induction d with
     | zero => intro h; simpa using hi₀
     | succ d ih =>
       intro h
-      have h1 : d ≤ i₀.val := by omega
+      have h1 : d ≤ i₀.val := by lia
       obtain ⟨hpred, -⟩ := hP _ (ih h1)
       rcases hpred with habs | ⟨i', hi'1, hi'2⟩
       · have habs' : i₀.val - d = 0 := habs
-        omega
+        lia
       · have hi'' : i'.val + 1 = i₀.val - d := hi'1
-        have e : i' = ⟨i₀.val - (d + 1), by omega⟩ :=
-          Fin.ext (show i'.val = i₀.val - (d + 1) by omega)
+        have e : i' = ⟨i₀.val - (d + 1), by lia⟩ :=
+          Fin.ext (show i'.val = i₀.val - (d + 1) by lia)
         rwa [e] at hi'2
   rcases le_total i₀.val i.val with hle | hle
-  · have h2 := right (i.val - i₀.val) (by omega)
-    have e : ⟨i₀.val + (i.val - i₀.val), by omega⟩ = i :=
-      Fin.ext (show i₀.val + (i.val - i₀.val) = i.val by omega)
+  · have h2 := right (i.val - i₀.val) (by lia)
+    have e : ⟨i₀.val + (i.val - i₀.val), by lia⟩ = i :=
+      Fin.ext (show i₀.val + (i.val - i₀.val) = i.val by lia)
     rwa [e] at h2
-  · have h2 := left (i₀.val - i.val) (by omega)
-    have e : ⟨i₀.val - (i₀.val - i.val), by omega⟩ = i :=
-      Fin.ext (show i₀.val - (i₀.val - i.val) = i.val by omega)
+  · have h2 := left (i₀.val - i.val) (by lia)
+    have e : ⟨i₀.val - (i₀.val - i.val), by lia⟩ = i :=
+      Fin.ext (show i₀.val - (i₀.val - i.val) = i.val by lia)
     rwa [e] at h2
 
 /-- An `xBeam` in a cube without `zBeam`s fills its whole row along `y`. -/
@@ -833,7 +833,7 @@ theorem card_eq_sum_dirs {n : ℕ} (S : Finset (Beam n)) :
 `3 * n ≤ 2 * S.card`. -/
 theorem lower_bound {n : ℕ} (hn : 2 ≤ n) {S : Finset (Beam n)} (hS : Supp S)
     (hne : S.Nonempty) : 3 * n ≤ 2 * S.card := by
-  have hn0 : 0 < n := by omega
+  have hn0 : 0 < n := by lia
   have hn_sq : 3 * n ≤ 2 * (n * n) := by
     have h2 : 2 * n ≤ n * n := Nat.mul_le_mul hn le_rfl
     nlinarith [h2]
@@ -847,7 +847,7 @@ theorem lower_bound {n : ℕ} (hn : 2 ≤ n) {S : Finset (Beam n)} (hS : Supp S)
         have h2 := n_le_of_mem_nonX hn0 hS ⟨zBeam i j, hzi, by simp [Beam.dir]⟩
         have h3 := n_le_of_mem_nonY hn0 hS ⟨zBeam i j, hzi, by simp [Beam.dir]⟩
         have hcard := card_eq_sum_dirs S
-        omega
+        lia
       · push Not at hy
         have h := card_ge_sq_of_no_yBeam hn0 hS hy hne
         nlinarith [h, hn_sq]
@@ -863,20 +863,20 @@ theorem lower_bound {n : ℕ} (hn : 2 ≤ n) {S : Finset (Beam n)} (hS : Supp S)
 /-- The `zBeam`s of the construction: `(2t, 2t)` for `t = 0, …, 1009`. -/
 def zPart : Finset (Beam 2020) :=
   (Finset.range 1010).attach.image fun t =>
-    zBeam ⟨2 * t.val, by have := Finset.mem_range.mp t.property; omega⟩
-      ⟨2 * t.val, by have := Finset.mem_range.mp t.property; omega⟩
+    zBeam ⟨2 * t.val, by have := Finset.mem_range.mp t.property; lia⟩
+      ⟨2 * t.val, by have := Finset.mem_range.mp t.property; lia⟩
 
 /-- The `yBeam`s of the construction: `(2t+1, 2t)` for `t = 0, …, 1009`. -/
 def yPart : Finset (Beam 2020) :=
   (Finset.range 1010).attach.image fun t =>
-    yBeam ⟨2 * t.val + 1, by have := Finset.mem_range.mp t.property; omega⟩
-      ⟨2 * t.val, by have := Finset.mem_range.mp t.property; omega⟩
+    yBeam ⟨2 * t.val + 1, by have := Finset.mem_range.mp t.property; lia⟩
+      ⟨2 * t.val, by have := Finset.mem_range.mp t.property; lia⟩
 
 /-- The `xBeam`s of the construction: `(2t+1, 2t+1)` for `t = 0, …, 1009`. -/
 def xPart : Finset (Beam 2020) :=
   (Finset.range 1010).attach.image fun t =>
-    xBeam ⟨2 * t.val + 1, by have := Finset.mem_range.mp t.property; omega⟩
-      ⟨2 * t.val + 1, by have := Finset.mem_range.mp t.property; omega⟩
+    xBeam ⟨2 * t.val + 1, by have := Finset.mem_range.mp t.property; lia⟩
+      ⟨2 * t.val + 1, by have := Finset.mem_range.mp t.property; lia⟩
 
 /-- The construction: 3030 beams forming a staircase. -/
 def halfBeams : Finset (Beam 2020) := zPart ∪ yPart ∪ xPart
@@ -884,36 +884,36 @@ def halfBeams : Finset (Beam 2020) := zPart ∪ yPart ∪ xPart
 /-! ### Membership helpers -/
 
 theorem mem_zPart (t : ℕ) (ht : t < 1010) :
-    zBeam ⟨2 * t, by omega⟩ ⟨2 * t, by omega⟩ ∈ zPart := by
+    zBeam ⟨2 * t, by lia⟩ ⟨2 * t, by lia⟩ ∈ zPart := by
   rw [zPart, Finset.mem_image]
   exact ⟨⟨t, Finset.mem_range.mpr ht⟩, by simp, rfl⟩
 
 theorem mem_yPart (t : ℕ) (ht : t < 1010) :
-    yBeam ⟨2 * t + 1, by omega⟩ ⟨2 * t, by omega⟩ ∈ yPart := by
+    yBeam ⟨2 * t + 1, by lia⟩ ⟨2 * t, by lia⟩ ∈ yPart := by
   rw [yPart, Finset.mem_image]
   exact ⟨⟨t, Finset.mem_range.mpr ht⟩, by simp, rfl⟩
 
 theorem mem_xPart (t : ℕ) (ht : t < 1010) :
-    xBeam ⟨2 * t + 1, by omega⟩ ⟨2 * t + 1, by omega⟩ ∈ xPart := by
+    xBeam ⟨2 * t + 1, by lia⟩ ⟨2 * t + 1, by lia⟩ ∈ xPart := by
   rw [xPart, Finset.mem_image]
   exact ⟨⟨t, Finset.mem_range.mpr ht⟩, by simp, rfl⟩
 
 theorem mem_halfBeams_z (t : ℕ) (ht : t < 1010) :
-    zBeam ⟨2 * t, by omega⟩ ⟨2 * t, by omega⟩ ∈ halfBeams := by
+    zBeam ⟨2 * t, by lia⟩ ⟨2 * t, by lia⟩ ∈ halfBeams := by
   rw [halfBeams]
   apply Finset.mem_union_left
   apply Finset.mem_union_left
   exact mem_zPart t ht
 
 theorem mem_halfBeams_y (t : ℕ) (ht : t < 1010) :
-    yBeam ⟨2 * t + 1, by omega⟩ ⟨2 * t, by omega⟩ ∈ halfBeams := by
+    yBeam ⟨2 * t + 1, by lia⟩ ⟨2 * t, by lia⟩ ∈ halfBeams := by
   rw [halfBeams]
   apply Finset.mem_union_left
   apply Finset.mem_union_right
   exact mem_yPart t ht
 
 theorem mem_halfBeams_x (t : ℕ) (ht : t < 1010) :
-    xBeam ⟨2 * t + 1, by omega⟩ ⟨2 * t + 1, by omega⟩ ∈ halfBeams := by
+    xBeam ⟨2 * t + 1, by lia⟩ ⟨2 * t + 1, by lia⟩ ∈ halfBeams := by
   rw [halfBeams]
   apply Finset.mem_union_right
   exact mem_xPart t ht
@@ -973,21 +973,21 @@ theorem zPart_card : zPart.card = 1010 := by
   intro a _ b _ h
   injection h with h1 h2
   have h3 : 2 * a.val = 2 * b.val := congrArg Fin.val h1
-  exact Subtype.ext (by omega)
+  exact Subtype.ext (by lia)
 
 theorem yPart_card : yPart.card = 1010 := by
   rw [yPart, Finset.card_image_of_injOn ?_, Finset.card_attach, Finset.card_range]
   intro a _ b _ h
   injection h with h1 h2
   have h3 : 2 * a.val + 1 = 2 * b.val + 1 := congrArg Fin.val h1
-  exact Subtype.ext (by omega)
+  exact Subtype.ext (by lia)
 
 theorem xPart_card : xPart.card = 1010 := by
   rw [xPart, Finset.card_image_of_injOn ?_, Finset.card_attach, Finset.card_range]
   intro a _ b _ h
   injection h with h1 h2
   have h3 : 2 * a.val + 1 = 2 * b.val + 1 := congrArg Fin.val h1
-  exact Subtype.ext (by omega)
+  exact Subtype.ext (by lia)
 
 theorem halfBeams_card : halfBeams.card = 3030 := by
   have dzy : Disjoint zPart yPart := by
@@ -1035,7 +1035,7 @@ theorem halfBeams_disjoint : DisjointBeams halfBeams := by
     obtain ⟨hx, -⟩ := h1
     obtain ⟨hx2, -⟩ := h2
     have e2 : 2 * a₁.val = 2 * a₂.val := congrArg Fin.val (hx.symm.trans hx2)
-    have e : a₁ = a₂ := Subtype.ext (by omega)
+    have e : a₁ = a₂ := Subtype.ext (by lia)
     rw [e]
   · -- `zPart` vs `yPart`: shared `x`-coordinate, `2t = 2s+1`
     rw [zPart, Finset.mem_image] at hb₁
@@ -1045,7 +1045,7 @@ theorem halfBeams_disjoint : DisjointBeams halfBeams := by
     obtain ⟨hx, -⟩ := h1
     obtain ⟨hx2, -⟩ := h2
     have e2 : 2 * a₁.val = 2 * a₂.val + 1 := congrArg Fin.val (hx.symm.trans hx2)
-    omega
+    lia
   · -- `zPart` vs `xPart`: shared `y`-coordinate, `2t = 2s+1`
     rw [zPart, Finset.mem_image] at hb₁
     rw [xPart, Finset.mem_image] at hb₂
@@ -1054,7 +1054,7 @@ theorem halfBeams_disjoint : DisjointBeams halfBeams := by
     obtain ⟨-, hy⟩ := h1
     obtain ⟨hy2, -⟩ := h2
     have e2 : 2 * a₁.val = 2 * a₂.val + 1 := congrArg Fin.val (hy.symm.trans hy2)
-    omega
+    lia
   · -- `yPart` vs `zPart`: shared `x`-coordinate, `2t+1 = 2s`
     rw [yPart, Finset.mem_image] at hb₁
     rw [zPart, Finset.mem_image] at hb₂
@@ -1063,7 +1063,7 @@ theorem halfBeams_disjoint : DisjointBeams halfBeams := by
     obtain ⟨hx, -⟩ := h1
     obtain ⟨hx2, -⟩ := h2
     have e2 : 2 * a₁.val + 1 = 2 * a₂.val := congrArg Fin.val (hx.symm.trans hx2)
-    omega
+    lia
   · -- b₁, b₂ both from `yPart`
     rw [yPart, Finset.mem_image] at hb₁ hb₂
     obtain ⟨a₁, -, rfl⟩ := hb₁
@@ -1071,7 +1071,7 @@ theorem halfBeams_disjoint : DisjointBeams halfBeams := by
     obtain ⟨-, hz⟩ := h1
     obtain ⟨-, hz2⟩ := h2
     have e2 : 2 * a₁.val = 2 * a₂.val := congrArg Fin.val (hz.symm.trans hz2)
-    have e : a₁ = a₂ := Subtype.ext (by omega)
+    have e : a₁ = a₂ := Subtype.ext (by lia)
     rw [e]
   · -- `yPart` vs `xPart`: shared `z`-coordinate, `2t = 2s+1`
     rw [yPart, Finset.mem_image] at hb₁
@@ -1081,7 +1081,7 @@ theorem halfBeams_disjoint : DisjointBeams halfBeams := by
     obtain ⟨-, hz⟩ := h1
     obtain ⟨-, hz2⟩ := h2
     have e2 : 2 * a₁.val = 2 * a₂.val + 1 := congrArg Fin.val (hz.symm.trans hz2)
-    omega
+    lia
   · -- `xPart` vs `zPart`: shared `y`-coordinate, `2t+1 = 2s`
     rw [xPart, Finset.mem_image] at hb₁
     rw [zPart, Finset.mem_image] at hb₂
@@ -1090,7 +1090,7 @@ theorem halfBeams_disjoint : DisjointBeams halfBeams := by
     obtain ⟨hy, -⟩ := h1
     obtain ⟨-, hy2⟩ := h2
     have e2 : 2 * a₁.val + 1 = 2 * a₂.val := congrArg Fin.val (hy.symm.trans hy2)
-    omega
+    lia
   · -- `xPart` vs `yPart`: shared `z`-coordinate, `2t+1 = 2s`
     rw [xPart, Finset.mem_image] at hb₁
     rw [yPart, Finset.mem_image] at hb₂
@@ -1099,7 +1099,7 @@ theorem halfBeams_disjoint : DisjointBeams halfBeams := by
     obtain ⟨-, hz⟩ := h1
     obtain ⟨-, hz2⟩ := h2
     have e2 : 2 * a₁.val + 1 = 2 * a₂.val := congrArg Fin.val (hz.symm.trans hz2)
-    omega
+    lia
   · -- b₁, b₂ both from `xPart`
     rw [xPart, Finset.mem_image] at hb₁ hb₂
     obtain ⟨a₁, -, rfl⟩ := hb₁
@@ -1107,7 +1107,7 @@ theorem halfBeams_disjoint : DisjointBeams halfBeams := by
     obtain ⟨hy, -⟩ := h1
     obtain ⟨hy2, -⟩ := h2
     have e2 : 2 * a₁.val + 1 = 2 * a₂.val + 1 := congrArg Fin.val (hy.symm.trans hy2)
-    have e : a₁ = a₂ := Subtype.ext (by omega)
+    have e : a₁ = a₂ := Subtype.ext (by lia)
     rw [e]
 
 /-! ### The support conditions -/
@@ -1119,45 +1119,45 @@ theorem halfBeams_supp : Supp halfBeams := by
     obtain ⟨t, ht, hvj, hvk⟩ := of_mem_halfBeams_x hj
     refine ⟨?_, ?_, ?_, ?_⟩
     · -- face `y = 2t+1` rests on `zBeam (2t, 2t)`
-      exact Or.inr (Or.inr ⟨⟨2 * t, by omega⟩, ⟨2 * t, by omega⟩,
-        by show 2 * t + 1 = j.val; omega, mem_halfBeams_z t ht⟩)
+      exact Or.inr (Or.inr ⟨⟨2 * t, by lia⟩, ⟨2 * t, by lia⟩,
+        by show 2 * t + 1 = j.val; lia, mem_halfBeams_z t ht⟩)
     · -- face `y = 2t+2`: boundary if `t = 1009`, else `zBeam (2t+2, 2t+2)`
       by_cases htop : t = 1009
       · subst htop
-        exact Or.inl (by omega)
-      · exact Or.inr (Or.inr ⟨⟨2 * (t + 1), by omega⟩, ⟨2 * (t + 1), by omega⟩,
-          by show 2 * (t + 1) = j.val + 1; omega, mem_halfBeams_z (t + 1) (by omega)⟩)
+        exact Or.inl (by lia)
+      · exact Or.inr (Or.inr ⟨⟨2 * (t + 1), by lia⟩, ⟨2 * (t + 1), by lia⟩,
+          by show 2 * (t + 1) = j.val + 1; lia, mem_halfBeams_z (t + 1) (by lia)⟩)
     · -- face `z = 2t+1` rests on `yBeam (2t+1, 2t)`
-      exact Or.inr (Or.inr ⟨⟨2 * t + 1, by omega⟩, ⟨2 * t, by omega⟩,
-        by show 2 * t + 1 = k.val; omega, mem_halfBeams_y t ht⟩)
+      exact Or.inr (Or.inr ⟨⟨2 * t + 1, by lia⟩, ⟨2 * t, by lia⟩,
+        by show 2 * t + 1 = k.val; lia, mem_halfBeams_y t ht⟩)
     · -- face `z = 2t+2`: boundary if `t = 1009`, else `yBeam (2t+3, 2t+2)`
       by_cases htop : t = 1009
       · subst htop
-        exact Or.inl (by omega)
-      · exact Or.inr (Or.inr ⟨⟨2 * (t + 1) + 1, by omega⟩, ⟨2 * (t + 1), by omega⟩,
-          by show 2 * (t + 1) = k.val + 1; omega, mem_halfBeams_y (t + 1) (by omega)⟩)
+        exact Or.inl (by lia)
+      · exact Or.inr (Or.inr ⟨⟨2 * (t + 1) + 1, by lia⟩, ⟨2 * (t + 1), by lia⟩,
+          by show 2 * (t + 1) = k.val + 1; lia, mem_halfBeams_y (t + 1) (by lia)⟩)
   · -- `yBeam (2t+1, 2t)`
     intro i k hj
     obtain ⟨t, ht, hvi, hvk⟩ := of_mem_halfBeams_y hj
     refine ⟨?_, ?_, ?_, ?_⟩
     · -- face `x = 2t+1` rests on `zBeam (2t, 2t)`
-      exact Or.inr (Or.inr ⟨⟨2 * t, by omega⟩, ⟨2 * t, by omega⟩,
-        by show 2 * t + 1 = i.val; omega, mem_halfBeams_z t ht⟩)
+      exact Or.inr (Or.inr ⟨⟨2 * t, by lia⟩, ⟨2 * t, by lia⟩,
+        by show 2 * t + 1 = i.val; lia, mem_halfBeams_z t ht⟩)
     · -- face `x = 2t+2`: boundary if `t = 1009`, else `zBeam (2t+2, 2t+2)`
       by_cases htop : t = 1009
       · subst htop
-        exact Or.inl (by omega)
-      · exact Or.inr (Or.inr ⟨⟨2 * (t + 1), by omega⟩, ⟨2 * (t + 1), by omega⟩,
-          by show 2 * (t + 1) = i.val + 1; omega, mem_halfBeams_z (t + 1) (by omega)⟩)
+        exact Or.inl (by lia)
+      · exact Or.inr (Or.inr ⟨⟨2 * (t + 1), by lia⟩, ⟨2 * (t + 1), by lia⟩,
+          by show 2 * (t + 1) = i.val + 1; lia, mem_halfBeams_z (t + 1) (by lia)⟩)
     · -- face `z = 2t`: boundary if `t = 0`, else `xBeam (2t-1, 2t-1)`
       by_cases hbot : t = 0
       · subst hbot
-        exact Or.inl (by omega)
-      · exact Or.inr (Or.inr ⟨⟨2 * (t - 1) + 1, by omega⟩, ⟨2 * (t - 1) + 1, by omega⟩,
-          by show 2 * (t - 1) + 1 + 1 = k.val; omega, mem_halfBeams_x (t - 1) (by omega)⟩)
+        exact Or.inl (by lia)
+      · exact Or.inr (Or.inr ⟨⟨2 * (t - 1) + 1, by lia⟩, ⟨2 * (t - 1) + 1, by lia⟩,
+          by show 2 * (t - 1) + 1 + 1 = k.val; lia, mem_halfBeams_x (t - 1) (by lia)⟩)
     · -- face `z = 2t+1` rests on `xBeam (2t+1, 2t+1)`
-      exact Or.inr (Or.inr ⟨⟨2 * t + 1, by omega⟩, ⟨2 * t + 1, by omega⟩,
-        by show 2 * t + 1 = k.val + 1; omega, mem_halfBeams_x t ht⟩)
+      exact Or.inr (Or.inr ⟨⟨2 * t + 1, by lia⟩, ⟨2 * t + 1, by lia⟩,
+        by show 2 * t + 1 = k.val + 1; lia, mem_halfBeams_x t ht⟩)
   · -- `zBeam (2t, 2t)`
     intro i j hj
     obtain ⟨t, ht, hvi, hvj⟩ := of_mem_halfBeams_z hj
@@ -1165,21 +1165,21 @@ theorem halfBeams_supp : Supp halfBeams := by
     · -- face `x = 2t`: boundary if `t = 0`, else `yBeam (2t-1, 2t-2)`
       by_cases hbot : t = 0
       · subst hbot
-        exact Or.inl (by omega)
-      · exact Or.inr (Or.inr ⟨⟨2 * (t - 1) + 1, by omega⟩, ⟨2 * (t - 1), by omega⟩,
-          by show 2 * (t - 1) + 1 + 1 = i.val; omega, mem_halfBeams_y (t - 1) (by omega)⟩)
+        exact Or.inl (by lia)
+      · exact Or.inr (Or.inr ⟨⟨2 * (t - 1) + 1, by lia⟩, ⟨2 * (t - 1), by lia⟩,
+          by show 2 * (t - 1) + 1 + 1 = i.val; lia, mem_halfBeams_y (t - 1) (by lia)⟩)
     · -- face `x = 2t+1` rests on `yBeam (2t+1, 2t)`
-      exact Or.inr (Or.inr ⟨⟨2 * t + 1, by omega⟩, ⟨2 * t, by omega⟩,
-        by show 2 * t + 1 = i.val + 1; omega, mem_halfBeams_y t ht⟩)
+      exact Or.inr (Or.inr ⟨⟨2 * t + 1, by lia⟩, ⟨2 * t, by lia⟩,
+        by show 2 * t + 1 = i.val + 1; lia, mem_halfBeams_y t ht⟩)
     · -- face `y = 2t`: boundary if `t = 0`, else `xBeam (2t-1, 2t-1)`
       by_cases hbot : t = 0
       · subst hbot
-        exact Or.inl (by omega)
-      · exact Or.inr (Or.inr ⟨⟨2 * (t - 1) + 1, by omega⟩, ⟨2 * (t - 1) + 1, by omega⟩,
-          by show 2 * (t - 1) + 1 + 1 = j.val; omega, mem_halfBeams_x (t - 1) (by omega)⟩)
+        exact Or.inl (by lia)
+      · exact Or.inr (Or.inr ⟨⟨2 * (t - 1) + 1, by lia⟩, ⟨2 * (t - 1) + 1, by lia⟩,
+          by show 2 * (t - 1) + 1 + 1 = j.val; lia, mem_halfBeams_x (t - 1) (by lia)⟩)
     · -- face `y = 2t+1` rests on `xBeam (2t+1, 2t+1)`
-      exact Or.inr (Or.inr ⟨⟨2 * t + 1, by omega⟩, ⟨2 * t + 1, by omega⟩,
-        by show 2 * t + 1 = j.val + 1; omega, mem_halfBeams_x t ht⟩)
+      exact Or.inr (Or.inr ⟨⟨2 * t + 1, by lia⟩, ⟨2 * t + 1, by lia⟩,
+        by show 2 * t + 1 = j.val + 1; lia, mem_halfBeams_x t ht⟩)
 
 snip end
 
@@ -1196,6 +1196,6 @@ problem usa2020_p2 :
     show solution ≤ m
     rw [← hm]
     have : solution = 3030 := rfl
-    omega
+    lia
 
 end Usa2020P2

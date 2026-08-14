@@ -66,16 +66,16 @@ lemma digitCount_mul_ten_mod (t x d : ℕ) (ht : 0 < t) (hx : x < 10^t - 1) :
     have hx2 : x < 10 ^ (t' + 1) := Nat.lt_of_lt_of_le hx (Nat.sub_le _ _)
     have h3 : x < 10 * P := by rwa [h10t, Nat.mul_comm P 10] at hx2
     have h4 : b < 10 := (Nat.div_lt_iff_lt_mul hPpos).mpr h3
-    omega
+    lia
   have hkey : b + 10 * w < P * 10 - 1 := by
     have hx' : x < P * 10 - 1 := by rw [← h10t]; exact hx
     by_contra hcon
     push Not at hcon
-    have hb9 : b = 9 := by omega
-    have hw9 : w = P - 1 := by omega
+    have hb9 : b = 9 := by lia
+    have hw9 : w = P - 1 := by lia
     have hxe : x = 9 * P + (P - 1) := by rw [hxbw, hb9, hw9]
-    have h5 : 9 * P + (P - 1) = P * 10 - 1 := by omega
-    omega
+    have h5 : 9 * P + (P - 1) = P * 10 - 1 := by lia
+    lia
   have h10x : 10 * x = (b + 10 * w) + (10 ^ (t' + 1) - 1) * b := by
     have h1 : (10 : ℕ) ^ (t' + 1) = 10 ^ (t' + 1) - 1 + 1 :=
       (Nat.sub_add_cancel (Nat.one_le_pow _ _ (by norm_num))).symm
@@ -89,14 +89,14 @@ lemma digitCount_mul_ten_mod (t x d : ℕ) (ht : 0 < t) (hx : x < 10^t - 1) :
       Nat.mod_eq_of_lt (show b + 10 * w < 10 ^ (t' + 1) - 1 by rw [h10t]; exact hkey)]
   have hdiv10 : (b + 10 * w) / 10 = w := by
     rw [Nat.add_mul_div_left b w (by norm_num : 0 < 10),
-      Nat.div_eq_of_lt (by omega : b < 10), zero_add]
+      Nat.div_eq_of_lt (by lia : b < 10), zero_add]
   have hmod0term : (if ((b + 10 * w) / 10 ^ 0) % 10 = d then 1 else 0)
       = (if b = d then 1 else 0) := by
     rw [pow_zero, Nat.div_one, Nat.add_mul_mod_self_left,
-      Nat.mod_eq_of_lt (by omega : b < 10)]
+      Nat.mod_eq_of_lt (by lia : b < 10)]
   have hblastterm : (if (x / 10 ^ t') % 10 = d then 1 else 0)
       = (if b = d then 1 else 0) := by
-    rw [← hP, ← hb, Nat.mod_eq_of_lt (by omega : b < 10)]
+    rw [← hP, ← hb, Nat.mod_eq_of_lt (by lia : b < 10)]
   have hcongsum :
       (∑ i ∈ Finset.range t', (if ((b + 10 * w) / 10 ^ (i + 1)) % 10 = d then 1 else 0))
         = ∑ i ∈ Finset.range t', (if (x / 10 ^ i) % 10 = d then 1 else 0) := by
@@ -167,7 +167,7 @@ lemma two_pow_ge_add_one (n : ℕ) : n + 1 ≤ 2 ^ n := by
   | succ n ih =>
     have h1 : 1 ≤ 2 ^ n := Nat.one_le_pow _ _ (by norm_num)
     rw [pow_succ]
-    omega
+    lia
 
 snip end
 
@@ -203,35 +203,35 @@ problem usa2013_p5 (m n : ℕ) (hm : 0 < m) (hn : 0 < n) :
   have hre : r + 1 ≤ e := by
     have h1 : r + 1 ≤ 2 ^ r := two_pow_ge_add_one r
     have h2 : 2 ^ r ≤ m := Nat.le_of_dvd hm h2r
-    have h3 : m ≤ e := by rw [he]; omega
+    have h3 : m ≤ e := by rw [he]; lia
     exact (h1.trans h2).trans h3
   have hse : s + 1 ≤ e := by
     have h1 : s + 1 ≤ 2 ^ s := two_pow_ge_add_one s
     have h2 : 2 ^ s ≤ 5 ^ s := Nat.pow_le_pow_left (by norm_num) s
     have h3 : 5 ^ s ≤ m := Nat.le_of_dvd hm h5s
-    have h4 : m ≤ e := by rw [he]; omega
+    have h4 : m ≤ e := by rw [he]; lia
     exact ((h1.trans h2).trans h3).trans h4
   have hbig : m + 2 ^ r * 5 ^ s * max m n < 10 ^ e * n := by
     have h25m : 2 ^ r * 5 ^ s ≤ m := Nat.le_of_dvd hm h25
     have h10e : m + m * max m n + 1 < 10 ^ e := by
       have h1 : e + 1 ≤ 2 ^ e := two_pow_ge_add_one e
       have h2 : 2 ^ e ≤ 10 ^ e := Nat.pow_le_pow_left (by norm_num) e
-      have h3 : m + m * max m n + 1 < e + 1 := by rw [he]; omega
+      have h3 : m + m * max m n + 1 < e + 1 := by rw [he]; lia
       exact (h3.trans_le h1).trans_le h2
     have h3 : m + 2 ^ r * 5 ^ s * max m n ≤ m + m * max m n := by
       have h4 : 2 ^ r * 5 ^ s * max m n ≤ m * max m n := mul_le_mul_left h25m _
-      omega
+      lia
     have h5 : 10 ^ e ≤ 10 ^ e * n := Nat.le_mul_of_pos_right _ hn
-    omega
+    lia
   have hmn : m ≤ 10 ^ e * n := (Nat.le_add_right _ _).trans (le_of_lt hbig)
   -- The modulus `D`.
   have hA2 : 2 ^ r ∣ 10 ^ e * n - m := by
     apply Nat.dvd_sub _ h2r
-    exact ((pow_dvd_pow 2 (by omega : r ≤ e)).trans
+    exact ((pow_dvd_pow 2 (by lia : r ≤ e)).trans
       ⟨5 ^ e, by rw [← mul_pow]; norm_num⟩).trans (dvd_mul_right _ _)
   have hA5 : 5 ^ s ∣ 10 ^ e * n - m := by
     apply Nat.dvd_sub _ h5s
-    exact ((pow_dvd_pow 5 (by omega : s ≤ e)).trans
+    exact ((pow_dvd_pow 5 (by lia : s ≤ e)).trans
       ⟨2 ^ e, by rw [← mul_pow]; norm_num⟩).trans (dvd_mul_right _ _)
   have hA25 : 2 ^ r * 5 ^ s ∣ 10 ^ e * n - m :=
     (Nat.Coprime.pow r s (by norm_num : Nat.Coprime 2 5)).mul_dvd_of_dvd_of_dvd hA2 hA5
@@ -240,7 +240,7 @@ problem usa2013_p5 (m n : ℕ) (hm : 0 < m) (hn : 0 < n) :
     rw [hD, Nat.mul_comm (2 ^ r * 5 ^ s) ((10 ^ e * n - m) / (2 ^ r * 5 ^ s))]
     exact (Nat.div_mul_cancel hA25).symm
   have hDmax : max m n < D := by
-    have h1 : 2 ^ r * 5 ^ s * max m n < 10 ^ e * n - m := by omega
+    have h1 : 2 ^ r * 5 ^ s * max m n < 10 ^ e * n - m := by lia
     rw [hAD] at h1
     exact lt_of_mul_lt_mul_left h1 (Nat.zero_le _)
   have hD2 : ¬ 2 ∣ D := by
@@ -295,7 +295,7 @@ problem usa2013_p5 (m n : ℕ) (hm : 0 < m) (hn : 0 < n) :
     exact (Nat.le_div_iff_mul_le hD0).mpr (by simpa using hDT)
   refine ⟨c, hc0, fun d hd => ?_⟩
   rw [Finset.mem_Icc] at hd
-  have hd0 : d ≠ 0 := by omega
+  have hd0 : d ≠ 0 := by lia
   have hcmT : c * m < 10 ^ t - 1 := by
     have h1 : m < D := lt_of_le_of_lt (Nat.le_max_left m n) hDmax
     have h2 : c * m < c * D := mul_lt_mul_of_pos_left h1 hc0

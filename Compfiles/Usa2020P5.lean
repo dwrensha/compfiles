@@ -58,7 +58,7 @@ lemma two_pow_ge_succ (k : ℕ) : k + 1 ≤ 2 ^ k := by
   | zero => decide
   | succ k ih =>
     rw [pow_succ]
-    omega
+    lia
 
 /-- A nonzero polynomial that vanishes on every element of a finite set of reals has
 degree at least the cardinality of that set. -/
@@ -88,7 +88,7 @@ lemma poly_unique {T : Finset (ℝ × ℝ)} (hT : T.Nonempty) {f g : ℝ[X]}
   have hdeg : (f - g).natDegree ≤ T.card - 1 :=
     (Polynomial.natDegree_sub_le f g).trans (max_le hf hg)
   have hpos : 0 < T.card := Finset.card_pos.mpr hT
-  have hlt : (T.image Prod.fst).card < T.card := by omega
+  have hlt : (T.image Prod.fst).card < T.card := by lia
   rcases Finset.exists_ne_map_eq_of_card_image_lt hlt with ⟨p, hpT, q, hqT, hpq, h1⟩
   apply hpq
   have h2 : p.2 = q.2 := by rw [← hfT p hpT, ← hfT q hqT, h1]
@@ -106,11 +106,11 @@ lemma eq_of_overdetermined_of_flooded {S : Finset (ℝ × ℝ)} (hS : ¬ Overdet
   -- each `Uᵢ` is `S` with a single point `pᵢ` removed
   have hsd1 : (S \ U₁).card = 1 := by
     have h := Finset.card_sdiff_of_subset hU₁
-    omega
+    lia
   obtain ⟨p₁, hp₁⟩ := Finset.card_eq_one.mp hsd1
   have hsd2 : (S \ U₂).card = 1 := by
     have h := Finset.card_sdiff_of_subset hU₂
-    omega
+    lia
   obtain ⟨p₂, hp₂⟩ := Finset.card_eq_one.mp hsd2
   have hmem1 : p₁ ∈ S := by
     have h : p₁ ∈ S \ U₁ := by rw [hp₁]; exact Finset.mem_singleton_self p₁
@@ -148,12 +148,12 @@ lemma eq_of_overdetermined_of_flooded {S : Finset (ℝ × ℝ)} (hS : ¬ Overdet
       have h1 := Finset.card_sdiff_of_subset hsub12
       have h2 : ({p₁, p₂} : Finset (ℝ × ℝ)).card = 2 := Finset.card_pair_eq_two_iff.mpr hpp
       rw [hT]
-      omega
+      lia
     have hTn : (U₁ ∩ U₂).Nonempty := by
       rw [← Finset.card_pos]
-      omega
-    have hfd' : f.natDegree ≤ (U₁ ∩ U₂).card - 1 := by omega
-    have hgd' : g.natDegree ≤ (U₁ ∩ U₂).card - 1 := by omega
+      lia
+    have hfd' : f.natDegree ≤ (U₁ ∩ U₂).card - 1 := by lia
+    have hgd' : g.natDegree ≤ (U₁ ∩ U₂).card - 1 := by lia
     have hfg : f = g := poly_unique hTn hfd' hgd'
       (fun p hp => hfU p (Finset.mem_inter.mp hp).1)
       (fun p hp => hgU p (Finset.mem_inter.mp hp).2)
@@ -170,7 +170,7 @@ lemma eq_of_overdetermined_of_flooded {S : Finset (ℝ × ℝ)} (hS : ¬ Overdet
           rw [hU₁eq, Finset.mem_sdiff, Finset.mem_singleton]
           exact ⟨hp, hp1⟩
         exact hfU p hpU₁
-    exact hS ⟨by omega, f, hf0, by omega, hfS⟩
+    exact hS ⟨by lia, f, hf0, by lia, hfS⟩
 
 /-- A flooded set of `t ≥ 3` points has at least `t - 1` flooded subsets of size
 `t - 1`. -/
@@ -183,14 +183,14 @@ lemma card_flooded_subsets {S : Finset (ℝ × ℝ)} {t : ℕ} (ht : 3 ≤ t)
     simp only [Finset.mem_filter, Finset.mem_powersetCard] at hU₁ hU₂
     obtain ⟨⟨hU₁S, hU₁c⟩, hU₁o⟩ := hU₁
     obtain ⟨⟨hU₂S, hU₂c⟩, hU₂o⟩ := hU₂
-    exact eq_of_overdetermined_of_flooded hS (m := t - 2) (by omega)
-      hU₁S (by omega) hU₁o hU₂S (by omega) hU₂o
+    exact eq_of_overdetermined_of_flooded hS (m := t - 2) (by lia)
+      hU₁S (by lia) hU₁o hU₂S (by lia) hU₂o
   have htotal : (S.powersetCard (t - 1)).card = t := by
-    rw [Finset.card_powersetCard, hScard, ← Nat.choose_symm (show t - 1 ≤ t by omega),
-      show t - (t - 1) = 1 by omega, Nat.choose_one_right]
+    rw [Finset.card_powersetCard, hScard, ← Nat.choose_symm (show t - 1 ≤ t by lia),
+      show t - (t - 1) = 1 by lia, Nat.choose_one_right]
   have hsplit := Finset.card_filter_add_card_filter_not (s := S.powersetCard (t - 1)) Overdetermined
   rw [htotal] at hsplit
-  omega
+  lia
 
 /-- A set `U` of `m` points of `A` is contained in at most `A.card - m` subsets of `A`
 of size `m + 1`. -/
@@ -209,7 +209,7 @@ lemma card_supersets {A U : Finset (ℝ × ℝ)} (hU : U ⊆ A) {m : ℕ} (hUm :
     simp only [Finset.mem_filter, Finset.mem_powersetCard] at hT
     have hc : (T \ U).card = 1 := by
       have h := Finset.card_sdiff_of_subset hT.2
-      omega
+      lia
     simp only [Finset.mem_powersetCard]
     exact ⟨Finset.sdiff_subset_sdiff hT.1.1 (Finset.Subset.refl U), hc⟩
   calc ((A.powersetCard (m + 1)).filter (fun T => U ⊆ T)).card
@@ -236,8 +236,8 @@ lemma double_count {A : Finset (ℝ × ℝ)} {m : ℕ} (hm : 2 ≤ m) (_hmn : m 
       simp only [Finset.mem_filter, Finset.mem_powersetCard] at hU
       rw [hFm, Finset.mem_filter, Finset.mem_filter, Finset.mem_powersetCard]
       exact ⟨⟨⟨hU.1.1.trans hTA, hU.1.2⟩, hU.2⟩, hU.1.1⟩
-    have h := card_flooded_subsets (S := T) (t := m + 1) (by omega) hTcard hTf
-    rw [show m + 1 - 1 = m by omega] at h
+    have h := card_flooded_subsets (S := T) (t := m + 1) (by lia) hTcard hTf
+    rw [show m + 1 - 1 = m by lia] at h
     exact h.trans (Finset.card_le_card hsub)
   have upper : ∀ U ∈ Fm, (Fsucc.filter (fun T => U ⊆ T)).card ≤ A.card - m := by
     intro U hU
@@ -280,25 +280,25 @@ lemma flooded_count {A : Finset (ℝ × ℝ)} (hA : ¬ Overdetermined A) :
       simp only [Finset.mem_filter, Finset.mem_powersetCard, Finset.mem_singleton]
       constructor
       · rintro ⟨⟨hTA, hTc⟩, -⟩
-        exact Finset.eq_of_subset_of_card_le hTA (by omega)
+        exact Finset.eq_of_subset_of_card_le hTA (by lia)
       · rintro rfl
         exact ⟨⟨Finset.Subset.refl _, rfl⟩, hA⟩
     have h1 : ((A.powersetCard A.card).filter (fun a => ¬ Overdetermined a)).card = 1 := by
       rw [hF, Finset.card_singleton]
     have h2 : Nat.choose (A.card - 1) (A.card - 1) = 1 := Nat.choose_self _
-    omega
+    lia
   | @of_succ k hkn ih =>
     intro h2k
-    have ih' := ih (by omega : 2 ≤ k + 1)
+    have ih' := ih (by lia : 2 ≤ k + 1)
     simp only [Nat.add_sub_cancel] at ih'
     have hdc := double_count (A := A) (m := k) h2k hkn
     have hid : k * Nat.choose (A.card - 1) k =
         (A.card - k) * Nat.choose (A.card - 1) (k - 1) := by
       have h := Nat.choose_succ_right_eq (A.card - 1) (k - 1)
-      rw [show k - 1 + 1 = k by omega, show A.card - 1 - (k - 1) = A.card - k by omega] at h
+      rw [show k - 1 + 1 = k by lia, show A.card - 1 - (k - 1) = A.card - k by lia] at h
       rw [mul_comm k, mul_comm (A.card - k)]
       exact h
-    have hpos : 0 < A.card - k := by omega
+    have hpos : 0 < A.card - k := by lia
     have hle : (A.card - k) * Nat.choose (A.card - 1) (k - 1) ≤
         (A.card - k) * ((A.powersetCard k).filter (fun a => ¬ Overdetermined a)).card := by
       calc (A.card - k) * Nat.choose (A.card - 1) (k - 1)
@@ -314,18 +314,18 @@ lemma sum_choose_Icc {n : ℕ} (hn : 2 ≤ n) :
     ∑ m ∈ Finset.Icc 2 n, Nat.choose (n - 1) m = 2 ^ (n - 1) - n := by
   have hge : n ≤ 2 ^ (n - 1) := by
     have h := two_pow_ge_succ (n - 1)
-    omega
+    lia
   have h1 : ∑ m ∈ Finset.range n, Nat.choose (n - 1) m = 2 ^ (n - 1) := by
     have h := Nat.sum_range_choose (n - 1)
-    rwa [Nat.sub_add_cancel (by omega : 1 ≤ n)] at h
+    rwa [Nat.sub_add_cancel (by lia : 1 ≤ n)] at h
   have hIcc : Finset.Icc 2 n = (Finset.range (n - 1)).image (· + 2) := by
     ext m
     simp only [Finset.mem_Icc, Finset.mem_image, Finset.mem_range]
     constructor
     · rintro ⟨h2m, hmn⟩
-      exact ⟨m - 2, by omega, by omega⟩
+      exact ⟨m - 2, by lia, by lia⟩
     · rintro ⟨i, hi, rfl⟩
-      omega
+      lia
   have hr : Finset.range (n + 1) =
       insert 0 (insert 1 ((Finset.range (n - 1)).image (· + 2))) := by
     ext m
@@ -336,24 +336,24 @@ lemma sum_choose_Icc {n : ℕ} (hn : 2 ≤ n) :
       · exact Or.inl h0
       · by_cases h1' : m = 1
         · exact Or.inr (Or.inl h1')
-        · exact Or.inr (Or.inr ⟨m - 2, by omega, by omega⟩)
-    · rintro (rfl | rfl | ⟨i, hi, rfl⟩) <;> omega
+        · exact Or.inr (Or.inr ⟨m - 2, by lia, by lia⟩)
+    · rintro (rfl | rfl | ⟨i, hi, rfl⟩) <;> lia
   have h2 : Nat.choose (n - 1) 0 + (Nat.choose (n - 1) 1 +
       ∑ i ∈ Finset.range (n - 1), Nat.choose (n - 1) (i + 2)) = 2 ^ (n - 1) := by
     have h2' : ∑ m ∈ Finset.range (n + 1), Nat.choose (n - 1) m = 2 ^ (n - 1) := by
-      rw [Finset.sum_range_succ, h1, Nat.choose_eq_zero_of_lt (by omega : n - 1 < n), add_zero]
+      rw [Finset.sum_range_succ, h1, Nat.choose_eq_zero_of_lt (by lia : n - 1 < n), add_zero]
     rw [hr, Finset.sum_insert (by
         simp only [Finset.mem_insert, Finset.mem_image, Finset.mem_range]
-        rintro (h | ⟨i, -, h⟩) <;> omega),
+        rintro (h | ⟨i, -, h⟩) <;> lia),
       Finset.sum_insert (by
         simp only [Finset.mem_image, Finset.mem_range]
-        rintro ⟨i, -, h⟩; omega),
-      Finset.sum_image (fun i _ j _ h => by omega)] at h2'
+        rintro ⟨i, -, h⟩; lia),
+      Finset.sum_image (fun i _ j _ h => by lia)] at h2'
     exact h2'
   have h3 : ∑ i ∈ Finset.range (n - 1), Nat.choose (n - 1) (i + 2) = 2 ^ (n - 1) - n := by
     rw [Nat.choose_zero_right, Nat.choose_one_right] at h2
-    omega
-  rw [hIcc, Finset.sum_image (fun i _ j _ h => by omega)]
+    lia
+  rw [hIcc, Finset.sum_image (fun i _ j _ h => by lia)]
   exact h3
 
 /-- An `n`-element flooded set of points has at most `2 ^ (n - 1) - n` overdetermined
@@ -390,10 +390,10 @@ lemma overdetermined_bound {A : Finset (ℝ × ℝ)} (h2 : 2 ≤ A.card) (hA : �
         have hpascal : Nat.choose A.card m =
             Nat.choose (A.card - 1) m + Nat.choose (A.card - 1) (m - 1) := by
           have h := Nat.choose_succ_succ' (A.card - 1) (m - 1)
-          rw [Nat.sub_add_cancel (show 1 ≤ A.card by omega),
-            Nat.sub_add_cancel (show 1 ≤ m by omega)] at h
-          omega
-        omega
+          rw [Nat.sub_add_cancel (show 1 ≤ A.card by lia),
+            Nat.sub_add_cancel (show 1 ≤ m by lia)] at h
+          lia
+        lia
     _ = 2 ^ (A.card - 1) - A.card := sum_choose_Icc h2
 
 /-- A finite set `s` has exactly `2 ^ s.card - s.card - 1` subsets of cardinality at
@@ -416,17 +416,17 @@ lemma card_powerset_filter_two_le {α : Type*} [DecidableEq α] (s : Finset α) 
       · rintro ⟨hT, hc⟩
         by_cases h0 : T.card = 0
         · exact Or.inl ⟨hT, h0⟩
-        · exact Or.inr ⟨hT, by omega⟩
+        · exact Or.inr ⟨hT, by lia⟩
       · rintro (⟨hT, h0⟩ | ⟨hT, h1⟩)
-        · exact ⟨hT, by omega⟩
-        · exact ⟨hT, by omega⟩
+        · exact ⟨hT, by lia⟩
+        · exact ⟨hT, by lia⟩
     rw [heq, Finset.card_union_of_disjoint (by
       rw [Finset.disjoint_left]
       intro T hT0 hT1
       simp only [Finset.mem_powersetCard] at hT0 hT1
-      omega), Finset.card_powersetCard, Finset.card_powersetCard, Nat.choose_zero_right,
+      lia), Finset.card_powersetCard, Finset.card_powersetCard, Nat.choose_zero_right,
       Nat.choose_one_right, Nat.add_comm]
-  omega
+  lia
 
 /-- The "tail" of the extremal construction: the points `(i, 2)` for `2 ≤ i ≤ n`. -/
 noncomputable def tail (n : ℕ) : Finset (ℝ × ℝ) :=
@@ -442,7 +442,7 @@ lemma card_tail (n : ℕ) : (tail n).card = n - 1 := by
     have h1 : (i : ℝ) = (j : ℝ) := congrArg Prod.fst h
     exact Nat.cast_injective h1
   rw [tail, Finset.card_image_of_injOn hinj, Nat.card_Icc]
-  omega
+  lia
 
 lemma one_one_not_mem_tail {n : ℕ} : ((1 : ℝ), (1 : ℝ)) ∉ tail n := by
   simp only [tail, Finset.mem_image, Finset.mem_Icc]
@@ -452,7 +452,7 @@ lemma one_one_not_mem_tail {n : ℕ} : ((1 : ℝ), (1 : ℝ)) ∉ tail n := by
 
 lemma card_constrSet {n : ℕ} (hn : 2 ≤ n) : (constrSet n).card = n := by
   rw [constrSet, Finset.card_insert_of_notMem one_one_not_mem_tail, card_tail]
-  omega
+  lia
 
 lemma not_overdetermined_constrSet {n : ℕ} (hn : 2 ≤ n) : ¬ Overdetermined (constrSet n) := by
   rintro ⟨-, P, hP0, hPd, hPS⟩
@@ -468,7 +468,7 @@ lemma not_overdetermined_constrSet {n : ℕ} (hn : 2 ≤ n) : ¬ Overdetermined 
     exact sub_self 2
   have hXcard : ((Finset.Icc 2 n).image (fun i : ℕ => (i : ℝ))).card = n - 1 := by
     rw [Finset.card_image_of_injOn (fun i _ j _ h => Nat.cast_injective h), Nat.card_Icc]
-    omega
+    lia
   by_cases hPC : P - Polynomial.C 2 = 0
   · have hP2 : P = Polynomial.C 2 := sub_eq_zero.mp hPC
     have hmem : ((1 : ℝ), (1 : ℝ)) ∈ constrSet n := Finset.mem_insert_self _ _
@@ -481,7 +481,7 @@ lemma not_overdetermined_constrSet {n : ℕ} (hn : 2 ≤ n) : ¬ Overdetermined 
           Polynomial.natDegree_sub_le P (Polynomial.C 2)
       _ = P.natDegree := by rw [Polynomial.natDegree_C, max_eq_left (Nat.zero_le _)]
       _ ≤ n - 2 := hPd
-    omega
+    lia
 
 /-- The overdetermined subsets of the extremal construction are exactly the subsets of
 its tail with at least two elements. -/
@@ -535,7 +535,7 @@ lemma overdetermined_subset_constrSet_iff {n : ℕ} {T : Finset (ℝ × ℝ)}
               Polynomial.natDegree_sub_le P (Polynomial.C 2)
           _ = P.natDegree := by rw [Polynomial.natDegree_C, max_eq_left (Nat.zero_le _)]
           _ ≤ T.card - 2 := hPd
-        omega
+        lia
     have hTtail : T ⊆ tail n := by
       intro p hp
       have hp1 := hT hp
@@ -569,9 +569,9 @@ lemma count_constrSet {n : ℕ} (hn : 2 ≤ n) :
       exact ⟨hT, (overdetermined_subset_constrSet_iff hT).mpr ⟨hTtail, h2T⟩⟩
   have hge : n ≤ 2 ^ (n - 1) := by
     have h := two_pow_ge_succ (n - 1)
-    omega
+    lia
   rw [heq, card_powerset_filter_two_le, card_tail]
-  omega
+  lia
 
 snip end
 
@@ -584,7 +584,7 @@ problem usa2020_p5 (n : ℕ) (hn : 2 ≤ n) :
   · intro k hk
     obtain ⟨S, hScard, hS, hk⟩ := hk
     rw [← hk]
-    have hb := overdetermined_bound (A := S) (by omega) hS
+    have hb := overdetermined_bound (A := S) (by lia) hS
     rw [hScard] at hb
     exact hb
 

@@ -94,11 +94,11 @@ lemma odd_sum_iff (f : Conf) : Odd (∑ i, f i) ↔ (∑ i, (f i : ZMod 2)) = 1 
 
 lemma one_le_of_odd {n : ℤ} (h0 : 0 ≤ n) (ho : Odd n) : 1 ≤ n := by
   rcases ho with ⟨k, rfl⟩
-  omega
+  lia
 
 lemma two_le_of_even_pos {n : ℤ} (h0 : 0 < n) (he : Even n) : 2 ≤ n := by
   rcases he with ⟨k, rfl⟩
-  omega
+  lia
 
 /-- The move on parity vectors: in `ZMod 2` the absolute difference becomes a sum. -/
 def step2 (v : ZMod 6 → ZMod 2) (j : ZMod 6) : ZMod 6 → ZMod 2 :=
@@ -146,7 +146,7 @@ lemma foldl_nonneg (f : Conf) (hnn : ∀ i, 0 ≤ f i) : ∀ l : List (ZMod 6), 
 
 lemma abs_sub_le_of {x y B : ℤ} (hx0 : 0 ≤ x) (hy0 : 0 ≤ y) (hxB : x ≤ B) (hyB : y ≤ B) :
     |x - y| ≤ B :=
-  abs_le.mpr ⟨by omega, by omega⟩
+  abs_le.mpr ⟨by lia, by lia⟩
 
 lemma cmax_step_le (f : Conf) (hnn : ∀ i, 0 ≤ f i) (j : ZMod 6) : cmax (step f j) ≤ cmax f := by
   apply cmax_le
@@ -262,11 +262,11 @@ macro "eval_step" : tactic =>
 
 lemma abs_sub_le_mk1 {x y M : ℤ} (hx1 : 1 ≤ x) (hxM : x ≤ M - 1) (hy0 : 0 ≤ y) (hyM : y ≤ M) :
     |x - y| ≤ M - 1 :=
-  abs_le.mpr ⟨by omega, by omega⟩
+  abs_le.mpr ⟨by lia, by lia⟩
 
 lemma abs_sub_le_mk2 {x y M : ℤ} (hx0 : 0 ≤ x) (hxM : x ≤ M - 1) (hy0 : 0 ≤ y) (hyM : y ≤ M - 1) :
     |x - y| ≤ M - 1 :=
-  abs_le.mpr ⟨by omega, by omega⟩
+  abs_le.mpr ⟨by lia, by lia⟩
 
 /-! ### Phase 2: reducing the maximum from a single odd entry -/
 
@@ -298,7 +298,7 @@ lemma phase2 (g : Conf) (hnn : ∀ i, 0 ≤ g i) (h0 : (g 0 : ZMod 2) = 1)
         have t1 := hk i hi
         rw [heq, Mpar] at t1
         exact (by decide : (1 : ZMod 2) ≠ 0) t1
-      omega
+      lia
     by_cases h2 : g 2 = 0
     · by_cases h4 : g 4 = 0
       · -- Vertices 2 and 4 both zero: six moves finish the job.
@@ -307,7 +307,7 @@ lemma phase2 (g : Conf) (hnn : ∀ i, 0 ≤ g i) (h0 : (g 0 : ZMod 2) = 1)
           exact abs_of_nonneg (hnn 0)
         have A2 : |g 4 - g 0| = cmax g := by
           rw [h4, zero_sub, ← hq, abs_neg]
-          exact abs_of_nonneg (by have := le_cmax g 0; omega)
+          exact abs_of_nonneg (by have := le_cmax g 0; lia)
         have e0 : ([1, 5, 3, 0, 5, 1].foldl step g) 0 =
             abs (abs (g 4 - g 0) - abs (g 0 - g 2)) := by eval_step
         have e1 : ([1, 5, 3, 0, 5, 1].foldl step g) 1 =
@@ -339,7 +339,7 @@ lemma phase2 (g : Conf) (hnn : ∀ i, 0 ≤ g i) (h0 : (g 0 : ZMod 2) = 1)
           rw [h2, sub_zero, ← hq]
           exact abs_of_nonneg (hnn 0)
         have A2 : |g 4 - g 0| = cmax g - g 4 := by
-          rw [abs_of_nonpos (by have := le_cmax g 4; omega), ← hq]
+          rw [abs_of_nonpos (by have := le_cmax g 4; lia), ← hq]
           ring
         have e0 : ([5, 1, 0, 1].foldl step g) 0 =
             abs (abs (g 4 - g 0) - abs (g 0 - g 2)) := by eval_step
@@ -356,12 +356,12 @@ lemma phase2 (g : Conf) (hnn : ∀ i, 0 ≤ g i) (h0 : (g 0 : ZMod 2) = 1)
           rw [A1, A2, h2, sub_zero, show cmax g - g 4 - cmax g = -g 4 by ring, abs_neg,
             abs_of_nonneg (hnn 4), abs_of_nonneg (hnn 4)]
           exact glt 4 (by decide)
-        have b2 : g 2 ≤ cmax g - 1 := by omega
+        have b2 : g 2 ≤ cmax g - 1 := by lia
         have b3 : g 3 ≤ cmax g - 1 := glt 3 (by decide)
         have b4 : g 4 ≤ cmax g - 1 := glt 4 (by decide)
         have b5 : abs (g 4 - g 0) ≤ cmax g - 1 := by
           rw [A2]
-          omega
+          lia
         have hcm : cmax ([5, 1, 0, 1].foldl step g) < cmax g := by
           have hle : cmax ([5, 1, 0, 1].foldl step g) ≤ cmax g - 1 := by
             apply cmax_le
@@ -373,7 +373,7 @@ lemma phase2 (g : Conf) (hnn : ∀ i, 0 ≤ g i) (h0 : (g 0 : ZMod 2) = 1)
             · exact b3
             · exact b4
             · exact b5
-          exact lt_of_le_of_lt hle (by omega)
+          exact lt_of_le_of_lt hle (by lia)
         have pc : ∀ i, (([5, 1, 0, 1].foldl step g) i : ZMod 2) = (if i = 5 then 1 else 0) := by
           intro i
           have hf2 : (([5, 1, 0, 1].foldl step g) i : ZMod 2) =
@@ -391,9 +391,9 @@ lemma phase2 (g : Conf) (hnn : ∀ i, 0 ≤ g i) (h0 : (g 0 : ZMod 2) = 1)
         two_le_of_even_pos (lt_of_le_of_ne' (hnn 2) h2) ((even_iff_cast _).mpr (hk 2 (by decide)))
       have A1 : |g 0 - g 2| = cmax g - g 2 := by
         rw [← hq]
-        exact abs_of_nonneg (by have := le_cmax g 2; omega)
+        exact abs_of_nonneg (by have := le_cmax g 2; lia)
       have A2 : |g 4 - g 0| = cmax g - g 4 := by
-        rw [abs_of_nonpos (by have := le_cmax g 4; omega), ← hq]
+        rw [abs_of_nonpos (by have := le_cmax g 4; lia), ← hq]
         ring
       have e0 : ([1, 5, 0, 5].foldl step g) 0 =
           abs (abs (g 4 - g 0) - abs (g 0 - g 2)) := by eval_step
@@ -408,7 +408,7 @@ lemma phase2 (g : Conf) (hnn : ∀ i, 0 ≤ g i) (h0 : (g 0 : ZMod 2) = 1)
         exact abs_sub_le_of (hnn 2) (hnn 4) (glt 2 (by decide)) (glt 4 (by decide))
       have b1 : abs (g 0 - g 2) ≤ cmax g - 1 := by
         rw [A1]
-        omega
+        lia
       have b2 : g 2 ≤ cmax g - 1 := glt 2 (by decide)
       have b3 : g 3 ≤ cmax g - 1 := glt 3 (by decide)
       have b4 : g 4 ≤ cmax g - 1 := glt 4 (by decide)
@@ -428,7 +428,7 @@ lemma phase2 (g : Conf) (hnn : ∀ i, 0 ≤ g i) (h0 : (g 0 : ZMod 2) = 1)
           · exact b3
           · exact b4
           · exact b5
-        exact lt_of_le_of_lt hle (by omega)
+        exact lt_of_le_of_lt hle (by lia)
       have pc : ∀ i, (([1, 5, 0, 5].foldl step g) i : ZMod 2) = (if i = 1 then 1 else 0) := by
         intro i
         have hf2 : (([1, 5, 0, 5].foldl step g) i : ZMod 2) =
@@ -452,7 +452,7 @@ lemma phase2 (g : Conf) (hnn : ∀ i, 0 ≤ g i) (h0 : (g 0 : ZMod 2) = 1)
         intro heq
         rw [heq, Mpar] at h0
         exact (by decide : (0 : ZMod 2) ≠ 1) h0
-      omega
+      lia
     have e0 : ([1, 2, 3, 4, 5].foldl step g) 0 = g 0 := by eval_step
     have e1 : ([1, 2, 3, 4, 5].foldl step g) 1 = abs (g 0 - g 2) := by eval_step
     have e2 : ([1, 2, 3, 4, 5].foldl step g) 2 = abs (abs (g 0 - g 2) - g 3) := by eval_step
@@ -469,7 +469,7 @@ lemma phase2 (g : Conf) (hnn : ∀ i, 0 ≤ g i) (h0 : (g 0 : ZMod 2) = 1)
         congr_fun (par_foldl g [1, 2, 3, 4, 5]) i
       rw [hf2, hparinit]
       fin_cases i <;> decide
-    have b0 : g 0 ≤ cmax g - 1 := by omega
+    have b0 : g 0 ≤ cmax g - 1 := by lia
     have u1odd : Odd |g 0 - g 2| := by
       rw [odd_iff_cast, ← e1]
       have t := pc 1
@@ -506,7 +506,7 @@ lemma phase2 (g : Conf) (hnn : ∀ i, 0 ≤ g i) (h0 : (g 0 : ZMod 2) = 1)
         · exact b3
         · exact b4
         · exact b5
-      exact lt_of_le_of_lt hle (by omega)
+      exact lt_of_le_of_lt hle (by lia)
     have osum : Odd (∑ i, ([1, 2, 3, 4, 5].foldl step g) i) := by
       rw [odd_sum_iff]
       simp only [pc]
@@ -575,8 +575,8 @@ lemma winnable_aux (f : Conf) (hnn : ∀ i, 0 ≤ f i) (hodd : Odd (∑ i, f i))
       have hlt' : (cmax h).toNat < m := by
         rw [← hm]
         have h1 : cmax h < cmax f := lt_of_lt_of_le (by rwa [g'cmax] at hlt) gcmax
-        have h2 : 0 < cmax f := lt_of_lt_of_le (by omega : (0 : ℤ) < 1) (le_trans h1c gcmax)
-        omega
+        have h2 : 0 < cmax f := lt_of_lt_of_le (by lia : (0 : ℤ) < 1) (le_trans h1c gcmax)
+        lia
       exact Moves.trans ⟨l1, hfl⟩
         (back (Moves.trans ⟨l2, hl2⟩ (ihm (cmax h).toNat hlt' h hnn' hodd' rfl)))
 
@@ -590,10 +590,10 @@ lemma dist_cast (x y : ℕ) : ((Nat.dist x y : ℤ)) = |(x : ℤ) - (y : ℤ)| :
   unfold Nat.dist
   rcases le_total x y with h | h
   · rw [Nat.sub_eq_zero_of_le h, zero_add, Nat.cast_sub h,
-      abs_of_nonpos (by omega : (x : ℤ) - (y : ℤ) ≤ 0)]
+      abs_of_nonpos (by lia : (x : ℤ) - (y : ℤ) ≤ 0)]
     ring
   · rw [Nat.sub_eq_zero_of_le h, add_zero, Nat.cast_sub h,
-      abs_of_nonneg (by omega : (0 : ℤ) ≤ (x : ℤ) - (y : ℤ))]
+      abs_of_nonneg (by lia : (0 : ℤ) ≤ (x : ℤ) - (y : ℤ))]
 
 lemma stepN_cast (f : ZMod 6 → ℕ) (j : ZMod 6) :
     (fun i => ((stepN f j) i : ℤ)) = step (fun i => ((f i : ℤ))) j := by

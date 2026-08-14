@@ -91,7 +91,7 @@ theorem altSum_sub_one (s : Finset ℕ) (k m : ℕ) (h : ∑ i ∈ s, i < m) :
   have hσ : ∑ i ∈ U, i < m := lt_of_le_of_lt hsub h
   have hx1 : 0 < m - ∑ i ∈ U, i := Nat.sub_pos_of_lt hσ
   obtain ⟨x, hxx⟩ := Nat.exists_eq_succ_of_ne_zero (Nat.ne_zero_of_lt hx1)
-  have h2 : m - 1 - ∑ i ∈ U, i = x := by omega
+  have h2 : m - 1 - ∑ i ∈ U, i = x := by lia
   rw [h2, hxx]
   have hc : ((x + 1).choose (k + 1) : ℤ) = (x.choose k : ℤ) + (x.choose (k + 1) : ℤ) := by
     exact_mod_cast Nat.choose_succ_succ x k
@@ -123,8 +123,8 @@ theorem altSum_card (s : Finset ℕ) :
     · apply Finset.sum_congr rfl
       intro j hj
       rw [Finset.mem_range] at hj
-      rw [altSum_sub_one s s.card (m - j) (by omega),
-        ih (m - j - 1) (by omega)]
+      rw [altSum_sub_one s s.card (m - j) (by lia),
+        ih (m - j - 1) (by lia)]
     · rw [Finset.sum_const, Finset.card_range, nsmul_eq_mul]
 
 snip end

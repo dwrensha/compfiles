@@ -80,14 +80,14 @@ problem usa1978_p5 {L : Type*} (speaks : Fin 9 → Finset L)
     have h2 := Finset.card_union_le (SharedWith speaks A) {A}
     have hA3 := h1 A
     simp only [Finset.card_singleton] at h2
-    omega
+    lia
   obtain ⟨B, hB⟩ : ∃ B : Fin 9, B ∉ SharedWith speaks A ∪ {A} := by
     by_contra hB
     push Not at hB
     have hle := Finset.card_le_card (s := (Finset.univ : Finset (Fin 9)))
       (t := SharedWith speaks A ∪ {A}) (fun x _ => hB x)
     simp only [Finset.card_univ, Fintype.card_fin] at hle
-    omega
+    lia
   have hBA : B ≠ A :=
     fun h => hB (Finset.mem_union_right _ (Finset.mem_singleton.mpr h))
   have hnAB : ¬Share speaks A B :=
@@ -104,7 +104,7 @@ problem usa1978_p5 {L : Type*} (speaks : Fin 9 → Finset L)
       calc ({A, B} : Finset (Fin 9)).card
           ≤ ({B} : Finset (Fin 9)).card + 1 := Finset.card_insert_le _ _
         _ = 2 := by simp
-    omega
+    lia
   obtain ⟨C, hC⟩ :
       ∃ C : Fin 9, C ∉ SharedWith speaks A ∪ SharedWith speaks B ∪ {A, B} := by
     by_contra hC
@@ -112,7 +112,7 @@ problem usa1978_p5 {L : Type*} (speaks : Fin 9 → Finset L)
     have hle := Finset.card_le_card (s := (Finset.univ : Finset (Fin 9)))
       (t := SharedWith speaks A ∪ SharedWith speaks B ∪ {A, B}) (fun x _ => hC x)
     simp only [Finset.card_univ, Fintype.card_fin] at hle
-    omega
+    lia
   have hCA : C ≠ A :=
     fun h => hC (Finset.mem_union_right _ (Finset.mem_insert.mpr (Or.inl h)))
   have hCB : C ≠ B :=

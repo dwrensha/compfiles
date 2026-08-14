@@ -107,7 +107,7 @@ problem imo1975_p6 {P : ℝ[X][Y]} : P ∈ solution_set ↔
     (P.evalEval 1 0 = 1) := by
   constructor
   · rintro ⟨m, hp⟩
-    refine ⟨⟨⟨m + 1, by omega⟩, ?_⟩, ?_, ?_⟩
+    refine ⟨⟨⟨m + 1, by lia⟩, ?_⟩, ?_, ?_⟩
     · intro t x y
       simp [hp, eval_X, evalEval, ← mul_add, mul_pow]
       ring

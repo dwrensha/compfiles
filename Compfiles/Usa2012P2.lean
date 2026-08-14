@@ -159,7 +159,7 @@ problem usa2012_p2 (color : ZMod 432 → Fin 4)
             (disjoint_color (show (0 : Fin 4) ≠ 2 by decide)) (hS₁R hx)
         · exact Finset.disjoint_left.mp
             (disjoint_color (show (1 : Fin 4) ≠ 2 by decide)) (hS₁G x hx))
-      (by rw [hcolor 2, Finset.card_pair ht₁0.symm]; omega)
+      (by rw [hcolor 2, Finset.card_pair ht₁0.symm]; lia)
   have ht₂0 : t₂ ≠ 0 := by
     intro h
     subst h
@@ -188,7 +188,7 @@ problem usa2012_p2 (color : ZMod 432 → Fin 4)
             (disjoint_color (show (1 : Fin 4) ≠ 3 by decide)) (hS₁G x (hS₂S₁ hx))
         · exact Finset.disjoint_left.mp
             (disjoint_color (show (2 : Fin 4) ≠ 3 by decide)) (hS₂B x hx))
-      (by rw [hcolor 3, hcard012]; omega)
+      (by rw [hcolor 3, hcard012]; lia)
   -- keep exactly 3 of the at-least-3 points
   obtain ⟨U, hUS₃, hUcard⟩ :=
     Finset.exists_subset_card_eq (Nat.succ_le_of_lt hS₃card)

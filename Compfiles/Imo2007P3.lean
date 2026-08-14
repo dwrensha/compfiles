@@ -93,13 +93,13 @@ lemma maxCliqueCard_insert_le [DecidableEq V] {A : Finset V} (x : V) :
   · have h1 : s.erase x ⊆ A := Finset.subset_insert_iff.mp hsA
     have h2 := card_le_maxCliqueCard G h1 (isClique_of_subset G (Finset.erase_subset x s) hsc)
     have h3 : s.card = (s.erase x).card + 1 := (Finset.card_erase_add_one hx).symm
-    omega
+    lia
   · have h1 : s ⊆ A := by
       intro y hy
       rcases Finset.mem_insert.mp (hsA hy) with h | h
       · exact absurd (h ▸ hy) hx
       · exact h
-    exact (card_le_maxCliqueCard G h1 hsc).trans (by omega)
+    exact (card_le_maxCliqueCard G h1 hsc).trans (by lia)
 
 lemma maxCliqueCard_erase_le [DecidableEq V] {A : Finset V} (x : V) :
     maxCliqueCard G A ≤ maxCliqueCard G (A.erase x) + 1 := by
@@ -107,7 +107,7 @@ lemma maxCliqueCard_erase_le [DecidableEq V] {A : Finset V} (x : V) :
   · have h := maxCliqueCard_insert_le G x (A := A.erase x)
     rwa [Finset.insert_erase hx] at h
   · rw [Finset.erase_eq_of_notMem hx]
-    omega
+    lia
 
 lemma exists_isClique_card_eq {A : Finset V} :
     ∃ s : Finset V, s ⊆ A ∧ G.IsClique s ∧ s.card = maxCliqueCard G A := by
@@ -130,7 +130,7 @@ problem imo2007_p3 {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V)
   -- time, and stop at the first moment the second room is at least as good.
   have hr_mem : ∃ T : Finset V, T ⊆ K ∧ T.card = r ∧
       maxCliqueCard G (K \ T) ≤ maxCliqueCard G (K \ T)ᶜ := by
-    obtain ⟨T, hTK, hTcard⟩ := Finset.exists_subset_card_eq (s := K) (n := r) (by omega)
+    obtain ⟨T, hTK, hTcard⟩ := Finset.exists_subset_card_eq (s := K) (n := r) (by lia)
     refine ⟨T, hTK, hTcard, ?_⟩
     have h1 : maxCliqueCard G (K \ T) = (K \ T).card :=
       maxCliqueCard_eq_card_of_isClique G (isClique_of_subset G Finset.sdiff_subset hKc)
@@ -141,7 +141,7 @@ problem imo2007_p3 {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V)
       push Not
       exact fun _ ↦ hx
     have hle := card_le_maxCliqueCard G hTsub (isClique_of_subset G hTK hKc)
-    omega
+    lia
   have hex : ∃ j : ℕ, ∃ T : Finset V, T ⊆ K ∧ T.card = j ∧
       maxCliqueCard G (K \ T) ≤ maxCliqueCard G (K \ T)ᶜ := ⟨r, hr_mem⟩
   obtain ⟨T, hTK, hTcard, hTineq⟩ := Nat.find_spec hex
@@ -155,12 +155,12 @@ problem imo2007_p3 {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V)
       rw [Finset.sdiff_empty]
       have h1 : maxCliqueCard G K = K.card := maxCliqueCard_eq_card_of_isClique G hKc
       have h2 := maxCliqueCard_mono G (Finset.subset_univ Kᶜ)
-      omega
-    · obtain ⟨x, hxT⟩ := Finset.card_pos.mp (by omega : 0 < T.card)
+      lia
+    · obtain ⟨x, hxT⟩ := Finset.card_pos.mp (by lia : 0 < T.card)
       have hT'K : T.erase x ⊆ K := (Finset.erase_subset x T).trans hTK
       have hT'card : (T.erase x).card = Nat.find hex - 1 := by
         rw [Finset.card_erase_of_mem hxT, hTcard]
-      have hlt : Nat.find hex - 1 < Nat.find hex := by omega
+      have hlt : Nat.find hex - 1 < Nat.find hex := by lia
       have hnot := Nat.find_min hex hlt
       push Not at hnot
       specialize hnot (T.erase x) hT'K hT'card
@@ -178,9 +178,9 @@ problem imo2007_p3 {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V)
       rw [hKT', Finset.compl_insert] at hnot
       have hA := maxCliqueCard_insert_le G x (A := K \ T)
       have hB := maxCliqueCard_erase_le G x (A := (K \ T)ᶜ)
-      omega
+      lia
   have hcases : maxCliqueCard G (K \ T)ᶜ = maxCliqueCard G (K \ T) ∨
-      maxCliqueCard G (K \ T)ᶜ = maxCliqueCard G (K \ T) + 1 := by omega
+      maxCliqueCard G (K \ T)ᶜ = maxCliqueCard G (K \ T) + 1 := by lia
   rcases hcases with hEq | hLt
   · -- The two rooms already have equal clique numbers.
     refine ⟨K \ T, (K \ T)ᶜ, ?_, Finset.union_compl _, hEq.symm⟩
@@ -226,7 +226,7 @@ problem imo2007_p3 {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V)
         intro x hx
         have h1 := maxCliqueCard_mono G (Finset.erase_subset x Aᶜ)
         have h2 := h2a x hx
-        omega
+        lia
       classical
       set 𝒞 := Aᶜ.powerset.filter (fun C : Finset V ↦ G.IsClique C ∧ C.card = A.card + 1)
         with h𝒞def
@@ -264,7 +264,7 @@ problem imo2007_p3 {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V)
           exact Finset.notMem_empty x (hne ▸ Finset.mem_sdiff.mpr ⟨hx, hxK⟩)
         have h2 := Finset.card_le_card (Finset.subset_inter hCB hCK)
         rw [hBK, hCcard] at h2
-        omega
+        lia
       -- A minimal hitting set of `𝒞` consisting of vertices outside `K`.
       set HS := (Aᶜ \ K).powerset.filter
         (fun Blue : Finset V ↦ ∀ C ∈ 𝒞, (C ∩ Blue).Nonempty) with hHSdef
@@ -292,7 +292,7 @@ problem imo2007_p3 {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V)
         have hle := hBlueMin (Blue.erase b) hmem
         have hpos : 0 < Blue.card := Finset.card_pos.mpr ⟨b, hb⟩
         rw [Finset.card_erase_of_mem hb] at hle
-        omega
+        lia
       -- In particular `Blue` is nonempty, since `𝒞` is nonempty.
       have hBlueNe : Blue.Nonempty := by
         obtain ⟨C₀, hC₀sub, hC₀c, hC₀card⟩ := exists_isClique_card_eq G (A := Aᶜ)
@@ -323,7 +323,7 @@ problem imo2007_p3 {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V)
           have h2 := card_le_maxCliqueCard G h1 (h𝒞c C hC)
           have h3 := h2b y hy
           have h4 := h𝒞card C hC
-          omega
+          lia
       -- Hence every blue vertex is adjacent to all of `Aᶜ ∩ K`.
       have hBlueAdj : ∀ b ∈ Blue, ∀ y ∈ Aᶜ ∩ K, b ≠ y → G.Adj b y := by
         intro b hb y hy hby
@@ -337,7 +337,7 @@ problem imo2007_p3 {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V)
           by_contra hDcard
           rw [not_le] at hDcard
           obtain ⟨D', hD'D, hD'card⟩ :=
-            Finset.exists_subset_card_eq (n := A.card + 1) (s := D) (by omega)
+            Finset.exists_subset_card_eq (n := A.card + 1) (s := D) (by lia)
           have hD'c : G.IsClique D' := isClique_of_subset G hD'D hDc
           have hD'AB : D' ⊆ A ∪ Blue := hD'D.trans hD
           -- Otherwise `D' ∪ (Aᶜ ∩ K)` would be a clique of size `2 * r + 1`.
@@ -358,7 +358,7 @@ problem imo2007_p3 {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V)
             · exact (Finset.mem_sdiff.mp (hBlueSub hxB)).2 (Finset.mem_inter.mp hx2).2
           have hle := card_le_maxCliqueCard G (Finset.subset_univ (D' ∪ (Aᶜ ∩ K))) hbig
           rw [Finset.card_union_of_disjoint hdisj, hD'card, hBK] at hle
-          omega
+          lia
         · rw [← hωA]
           exact maxCliqueCard_mono G Finset.subset_union_left
       -- The second room `Aᶜ \ Blue` has clique number exactly `A.card`.
@@ -369,7 +369,7 @@ problem imo2007_p3 {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V)
           by_contra hDcard
           rw [not_le] at hDcard
           obtain ⟨D', hD'D, hD'card⟩ :=
-            Finset.exists_subset_card_eq (n := A.card + 1) (s := D) (by omega)
+            Finset.exists_subset_card_eq (n := A.card + 1) (s := D) (by lia)
           have hD'c : G.IsClique D' := isClique_of_subset G hD'D hDc
           have hD'mem : D' ∈ 𝒞 := by
             rw [h𝒞def, Finset.mem_filter, Finset.mem_powerset]
@@ -392,7 +392,7 @@ problem imo2007_p3 {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V)
           have h1 := card_le_maxCliqueCard G hCsub (h𝒞c C hC)
           have h2 := maxCliqueCard_insert_le G b (A := Aᶜ \ Blue)
           have h3 := h𝒞card C hC
-          omega
+          lia
       exact ⟨A ∪ Blue, Aᶜ \ Blue, by
         rw [Finset.disjoint_left]
         intro x hx hx2

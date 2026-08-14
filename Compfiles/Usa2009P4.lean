@@ -62,7 +62,7 @@ lemma sum_mul_sum_inv_ge {n : ℕ} {a : Fin n → ℝ} (ha : ∀ i, 0 < a i)
     have hcard : ((Finset.univ.erase p).erase q).card = n - 2 := by
       rw [Finset.card_erase_of_mem hqmem, Finset.card_erase_of_mem (Finset.mem_univ p),
         Finset.card_univ, Fintype.card_fin]
-      omega
+      lia
     calc ∑ i ∈ (Finset.univ.erase p).erase q, √(a i) * √((a (Equiv.swap p q i))⁻¹)
         = ∑ i ∈ (Finset.univ.erase p).erase q, (1 : ℝ) := Finset.sum_congr rfl h1
       _ = (((Finset.univ.erase p).erase q).card : ℝ) := by
@@ -158,9 +158,9 @@ snip end
 
 problem usa2009_p4 {n : ℕ} (hn : 2 ≤ n) (a : Fin n → ℝ) (ha : ∀ i, 0 < a i)
     (h : (∑ i, a i) * (∑ i, 1 / a i) ≤ ((n : ℝ) + 1 / 2) ^ 2) :
-    (Finset.univ.image a).max' (Finset.image_nonempty.mpr ⟨⟨0, by omega⟩, Finset.mem_univ _⟩)
+    (Finset.univ.image a).max' (Finset.image_nonempty.mpr ⟨⟨0, by lia⟩, Finset.mem_univ _⟩)
       ≤ 4 * (Finset.univ.image a).min'
-          (Finset.image_nonempty.mpr ⟨⟨0, by omega⟩, Finset.mem_univ _⟩) := by
+          (Finset.image_nonempty.mpr ⟨⟨0, by lia⟩, Finset.mem_univ _⟩) := by
   obtain ⟨p, -, hp⟩ := Finset.mem_image.mp (Finset.max'_mem (Finset.univ.image a) _)
   obtain ⟨q, -, hq⟩ := Finset.mem_image.mp (Finset.min'_mem (Finset.univ.image a) _)
   rw [← hp, ← hq]

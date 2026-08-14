@@ -389,7 +389,7 @@ lemma zero_contra (f : PositiveReal → PositiveReal) (h : IsAdmissible f) (a : 
           | succ j ih =>
             intro hjk hj
             have hjk' : j ≤ k := Nat.le_of_succ_le hjk
-            have hjfloor : j ≤ ⌊((b : ℝ) - 2 * d) / d⌋₊ := by omega
+            have hjfloor : j ≤ ⌊((b : ℝ) - 2 * d) / d⌋₊ := by lia
             have h1 : (j : ℝ) ≤ ((b : ℝ) - 2 * d) / d :=
               (Nat.le_floor_iff hu).mp hjfloor
             have hbd : (2 : ℝ) * d ≤ (b : ℝ) - (j : ℝ) * d := by

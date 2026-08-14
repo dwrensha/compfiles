@@ -180,7 +180,7 @@ problem imo1981_p4 (n : ℕ) :
         zify
         rw [Nat.cast_sub, Nat.cast_sub, mul_comm]
         · simp
-          omega
+          lia
         · zify
           repeat rw [Nat.cast_sub (by lia)]
           rw [sub_mul, mul_sub, mul_sub, ← sub_nonneg]

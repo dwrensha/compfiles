@@ -44,12 +44,12 @@ lemma exists_disjoint_family {n : ℕ} (hn : 1 ≤ n) :
     intro S hS
     have hnS : n ≤ S.card := by
       have e : (k + 1) * n = k * n + n := by ring
-      omega
+      lia
     obtain ⟨A, hAS, hAcard⟩ := Finset.exists_subset_card_eq hnS
     have hS' : k * n ≤ (S \ A).card := by
       rw [Finset.card_sdiff_of_subset hAS, hAcard]
       have e : (k + 1) * n = k * n + n := by ring
-      omega
+      lia
     obtain ⟨F, hFcard, hFsub, hFdisj⟩ := ih (S \ A) hS'
     have hAnF : A ∉ F := by
       intro hA
@@ -59,7 +59,7 @@ lemma exists_disjoint_family {n : ℕ} (hn : 1 ≤ n) :
       rw [hempty] at hsub
       have hAe : A = ∅ := Finset.subset_empty.mp hsub
       rw [hAe, Finset.card_empty] at hAcard
-      omega
+      lia
     refine ⟨insert A F, by rw [Finset.card_insert_of_notMem hAnF, hFcard], ?_, ?_⟩
     · intro D hD
       rw [Finset.mem_insert] at hD
@@ -88,13 +88,13 @@ lemma color_eq (col : Finset α → Bool) {n : ℕ} {S : Finset α}
     have hAsubB : A ⊆ B := by
       rw [← Finset.sdiff_eq_empty_iff_subset, ← Finset.card_eq_zero]
       exact Nat.eq_zero_of_le_zero hm
-    have hAeqB : A = B := Finset.eq_of_subset_of_card_le hAsubB (by omega)
+    have hAeqB : A = B := Finset.eq_of_subset_of_card_le hAsubB (by lia)
     rw [hAeqB]
   | succ m ih =>
     intro A B hAS hBS hAcard hBcard hm
     by_cases hle : (A \ B).card ≤ m
     · exact ih A B hAS hBS hAcard hBcard hle
-    · have hcard : (A \ B).card = m + 1 := by omega
+    · have hcard : (A \ B).card = m + 1 := by lia
       obtain ⟨a, ha⟩ : (A \ B).Nonempty := by
         rw [← Finset.card_pos, hcard]
         exact Nat.succ_pos m
@@ -111,10 +111,10 @@ lemma color_eq (col : Finset α → Bool) {n : ℕ} {S : Finset α}
         exact fun h => hb.2 h.2
       have hn1 : 1 ≤ n := by
         have h0 : 0 < A.card := Finset.card_pos.mpr ⟨a, ha.1⟩
-        omega
+        lia
       have hA'card : (insert b (A.erase a)).card = n := by
         rw [Finset.card_insert_of_notMem hb', Finset.card_erase_of_mem ha.1]
-        omega
+        lia
       have hA'S : insert b (A.erase a) ⊆ S :=
         Finset.insert_subset (hBS hb.1) ((Finset.erase_subset a A).trans hAS)
       have hcol : col A = col (insert b (A.erase a)) := by
@@ -157,7 +157,7 @@ lemma main (col : Finset α → Bool) {n : ℕ} (hn : 1 ≤ n) :
       have hTcard : (S \ U).card = k * (n + 1) - 1 := by
         rw [Finset.card_sdiff_of_subset hUS, hS, hUcard]
         have e : (k + 1) * (n + 1) = k * (n + 1) + (n + 1) := by ring
-        omega
+        lia
       obtain ⟨F, hFcard, hFsub, hFdisj, c, hFmono⟩ := ih (S \ U) hTcard
       -- No `n`-element subset of `U` can have color `c`.
       have key : ∀ D : Finset α, D ⊆ U → D.card = n → col D = !c := by
@@ -175,11 +175,11 @@ lemma main (col : Finset α → Bool) {n : ℕ} (hn : 1 ≤ n) :
           rw [hempty] at hsub
           have hDe : D = ∅ := Finset.subset_empty.mp hsub
           rw [hDe, Finset.card_empty] at hDcard
-          omega
+          lia
         apply h
         refine ⟨insert D F, ?_, ?_, ?_, c, ?_⟩
         · rw [Finset.card_insert_of_notMem hDnF]
-          omega
+          lia
         · intro E hE
           rw [Finset.mem_insert] at hE
           rcases hE with rfl | hE
@@ -202,11 +202,11 @@ lemma main (col : Finset α → Bool) {n : ℕ} (hn : 1 ≤ n) :
     have hcardS : (k + 1) * n ≤ S.card := by
       rw [hS]
       have e : (k + 1) * (n + 1) = (k + 1) * n + (k + 1) := by ring
-      omega
+      lia
     obtain ⟨F, hFcard, hFsub, hFdisj⟩ := exists_disjoint_family hn (k + 1) S hcardS
     obtain ⟨A₀, hA₀⟩ : F.Nonempty := by
       rw [← Finset.card_pos, hFcard]
-      omega
+      lia
     have hA₀S : A₀ ⊆ S := (hFsub A₀ hA₀).1
     have hA₀card : A₀.card = n := (hFsub A₀ hA₀).2
     apply h
@@ -221,7 +221,7 @@ problem usa2007_p3 (n : ℕ) (hn : 0 < n) {α : Type*} [DecidableEq α] (S : Fin
       (F : Set (Finset α)).PairwiseDisjoint id ∧ ∃ b : Bool, ∀ A ∈ F, col A = b := by
   have hS' : S.card = n * (n + 1) - 1 := by
     have e : n * (n + 1) = n ^ 2 + n := by ring
-    omega
+    lia
   exact main col hn n S hS'
 
 end Usa2007P3

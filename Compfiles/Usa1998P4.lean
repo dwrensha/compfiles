@@ -193,7 +193,7 @@ lemma cornerDelta_rectColor_eq_zero_x (r : Rectangle) (p : Corner)
          j.val - 1 < r.y + r.height)) ↔
       ((i.val < 98 ∧ 0 < j.val) ∧ i.val < 98 ∧ j.val - 1 < 98 ∧
         (r.x ≤ i.val ∧ r.y ≤ j.val - 1 ∧ i.val < r.x + r.width ∧
-         j.val - 1 < r.y + r.height))) := by omega
+         j.val - 1 < r.y + r.height))) := by lia
   have hCD : (((0 < i.val ∧ j.val < 98) ∧ i.val - 1 < 98 ∧ j.val < 98 ∧
         (r.x ≤ i.val - 1 ∧ r.y ≤ j.val ∧ i.val - 1 < r.x + r.width ∧
          j.val < r.y + r.height)) ↔
@@ -220,7 +220,7 @@ lemma cornerDelta_rectColor_eq_zero_y (r : Rectangle) (p : Corner)
          j.val - 1 < r.y + r.height)) ↔
       ((0 < i.val ∧ j.val < 98) ∧ i.val - 1 < 98 ∧ j.val < 98 ∧
         (r.x ≤ i.val - 1 ∧ r.y ≤ j.val ∧ i.val - 1 < r.x + r.width ∧
-         j.val < r.y + r.height))) := by omega
+         j.val < r.y + r.height))) := by lia
   have hBD : (((i.val < 98 ∧ 0 < j.val) ∧ i.val < 98 ∧ j.val - 1 < 98 ∧
         (r.x ≤ i.val ∧ r.y ≤ j.val - 1 ∧ i.val < r.x + r.width ∧
          j.val - 1 < r.y + r.height)) ↔
@@ -337,7 +337,7 @@ lemma quiet_subset (c : ZMod 2) :
   split_ifs at hp with hA hB hC hD
   -- 16 sign patterns for the four masked cells; each determines the
   -- position of the corner on the board.
-  all_goals try (exfalso; omega)
+  all_goals try (exfalso; lia)
   -- interior: 0 < i < 98, 0 < j < 98
   · exact Or.inl ⟨⟨hA.1.1, hB.1.1⟩, hA.1.2, hC.1.2⟩
   -- top edge: 0 < i < 98, j = 98
@@ -357,8 +357,8 @@ lemma quiet_subset (c : ZMod 2) :
     rw [ZMod.natCast_eq_zero_iff_even, Nat.even_iff] at hodd
     omega
   -- corner (98, 98)
-  · have hi98 : i.val = 98 := by omega
-    have hj98 : j.val = 98 := by omega
+  · have hi98 : i.val = 98 := by lia
+    have hj98 : j.val = 98 := by lia
     rw [hi98, hj98] at hp
     right
     rw [show i = ⟨98, by norm_num⟩ from Fin.ext hi98,
@@ -376,8 +376,8 @@ lemma quiet_subset (c : ZMod 2) :
     rw [ZMod.natCast_eq_zero_iff_even, Nat.even_iff] at hodd
     omega
   -- corner (0, 98)
-  · have hi0 : i.val = 0 := by omega
-    have hj98 : j.val = 98 := by omega
+  · have hi0 : i.val = 0 := by lia
+    have hj98 : j.val = 98 := by lia
     rw [hi0, hj98] at hp
     right
     rw [show i = ⟨0, by norm_num⟩ from Fin.ext hi0,
@@ -395,8 +395,8 @@ lemma quiet_subset (c : ZMod 2) :
     rw [ZMod.natCast_eq_zero_iff_even, Nat.even_iff] at hodd
     omega
   -- corner (98, 0)
-  · have hi98 : i.val = 98 := by omega
-    have hj0 : j.val = 0 := by omega
+  · have hi98 : i.val = 98 := by lia
+    have hj0 : j.val = 0 := by lia
     rw [hi98, hj0] at hp
     right
     rw [show i = ⟨98, by norm_num⟩ from Fin.ext hi98,
@@ -406,8 +406,8 @@ lemma quiet_subset (c : ZMod 2) :
     · rw [quietCorners, ite_eq_right (by decide)]
       exact Finset.mem_insert_of_mem (Finset.mem_singleton_self _)
   -- corner (0, 0)
-  · have hi0 : i.val = 0 := by omega
-    have hj0 : j.val = 0 := by omega
+  · have hi0 : i.val = 0 := by lia
+    have hj0 : j.val = 0 := by lia
     rw [hi0, hj0] at hp
     right
     rw [show i = ⟨0, by norm_num⟩ from Fin.ext hi0,

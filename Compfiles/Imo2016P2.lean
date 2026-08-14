@@ -95,7 +95,7 @@ lemma map_filter_periodicColor (r : Fin n) (c : Letter) :
 
 lemma row_block_count (a : ℕ) (c : Letter) :
     ((Finset.range 9).filter (fun j ↦ Fin.ofNat 3 (a + j / 3) = c)).card = 3 := by
-  have ha : a % 3 < 3 := Nat.mod_lt _ (by omega)
+  have ha : a % 3 < 3 := Nat.mod_lt _ (by lia)
   interval_cases h : a % 3 <;> fin_cases c <;>
     norm_num [Fin.ofNat, Nat.add_mod, h] <;> decide
 
@@ -105,7 +105,7 @@ lemma row_periodic_count (a : ℕ) (c : Letter) (k : ℕ) :
   induction k with
   | zero => simp
   | succ k ih =>
-      rw [show 9 * (k + 1) = 9 * k + 9 by omega, Finset.range_add_eq_union,
+      rw [show 9 * (k + 1) = 9 * k + 9 by lia, Finset.range_add_eq_union,
         Finset.filter_union]
       rw [Finset.card_union_of_disjoint
         ((Finset.disjoint_range_addLeftEmbedding (9 * k) (Finset.range 9)).mono
@@ -128,16 +128,16 @@ lemma row_periodic_count (a : ℕ) (c : Letter) (k : ℕ) :
                 Fin.ofNat 3 (a + (9 * k + j) / 3) =
                   Fin.ofNat 3 (a + j / 3) := by
               apply Fin.ext
-              have hdiv : (9 * k + j) / 3 = 3 * k + j / 3 := by omega
+              have hdiv : (9 * k + j) / 3 = 3 * k + j / 3 := by lia
               simp [Fin.ofNat, hdiv, Nat.add_mod]
             rw [hcolor]
           _ = 3 := row_block_count a c
       rw [hblock]
-      omega
+      lia
 
 lemma add_block_count (a : ℕ) (c : Letter) :
     ((Finset.range 3).filter (fun j ↦ Fin.ofNat 3 (a + j) = c)).card = 1 := by
-  have ha : a % 3 < 3 := Nat.mod_lt _ (by omega)
+  have ha : a % 3 < 3 := Nat.mod_lt _ (by lia)
   interval_cases h : a % 3 <;> fin_cases c <;>
     norm_num [Fin.ofNat, Nat.add_mod, h] <;> decide
 
@@ -147,7 +147,7 @@ lemma add_periodic_count (a : ℕ) (c : Letter) (k : ℕ) :
   induction k with
   | zero => simp
   | succ k ih =>
-      rw [show 3 * (k + 1) = 3 * k + 3 by omega, Finset.range_add_eq_union,
+      rw [show 3 * (k + 1) = 3 * k + 3 by lia, Finset.range_add_eq_union,
         Finset.filter_union]
       rw [Finset.card_union_of_disjoint
         ((Finset.disjoint_range_addLeftEmbedding (3 * k) (Finset.range 3)).mono
@@ -199,21 +199,21 @@ lemma diagSum_card_eq (n s : ℕ) :
       · intro p hp
         simp only [diagSum, Finset.mem_filter, Finset.mem_univ, true_and] at hp
         simp only [Finset.mem_Ico]
-        constructor <;> omega
+        constructor <;> lia
       · intro p hp q hq hpq
         simp only [diagSum, Finset.mem_filter, Finset.mem_univ, true_and] at hp hq
         apply Prod.ext
         · apply Fin.ext
-          omega
+          lia
         · apply Fin.ext
           exact hpq
       · intro j hj
         simp only [Finset.mem_Ico] at hj
         let p : Fin n × Fin n :=
-          (⟨s - j, by omega⟩, ⟨j, by omega⟩)
+          (⟨s - j, by lia⟩, ⟨j, by lia⟩)
         refine ⟨p, ?_, rfl⟩
         simp [diagSum, p]
-        omega
+        lia
     _ = min n (s + 1) - (s + 1 - n) := Nat.card_Ico _ _
 
 lemma diagSum_color_card_eq (n s : ℕ) (c : Letter) :
@@ -227,26 +227,26 @@ lemma diagSum_color_card_eq (n s : ℕ) (c : Letter) :
     simp only [diagSum, Finset.mem_filter, Finset.mem_univ, true_and] at hp
     refine ⟨?_, ?_⟩
     · simp only [Finset.mem_Ico]
-      constructor <;> omega
-    · have hsub : s - (p.2 : ℕ) = (p.1 : ℕ) := by omega
+      constructor <;> lia
+    · have hsub : s - (p.2 : ℕ) = (p.1 : ℕ) := by lia
       simpa [periodicColor, hsub] using hp.2
   · intro p hp q hq hpq
     simp only [Finset.mem_filter] at hp hq
     simp only [diagSum, Finset.mem_filter, Finset.mem_univ, true_and] at hp hq
     apply Prod.ext
     · apply Fin.ext
-      omega
+      lia
     · apply Fin.ext
       exact hpq
   · intro j hj
     simp only [Finset.mem_filter, Finset.mem_Ico] at hj
     let p : Fin n × Fin n :=
-      (⟨s - j, by omega⟩, ⟨j, by omega⟩)
+      (⟨s - j, by lia⟩, ⟨j, by lia⟩)
     refine ⟨p, ?_, rfl⟩
     simp only [Finset.mem_filter]
     constructor
     · simp [diagSum, p]
-      omega
+      lia
     · simpa [periodicColor, p] using hj.2
 
 lemma desc_block_count (a : ℕ) (c : Letter) :
@@ -266,17 +266,17 @@ lemma desc_block_count (a : ℕ) (c : Letter) :
         rw [← hc]
         apply Fin.ext
         have ha := Nat.div_add_mod a 3
-        have hsub : a + 3 - j = 3 * (a / 3) + (a % 3 + 3 - j) := by omega
+        have hsub : a + 3 - j = 3 * (a / 3) + (a % 3 + 3 - j) := by lia
         simp [Fin.ofNat, hsub, Nat.add_mod]
       · rintro ⟨hj, hc⟩
         refine ⟨hj, ?_⟩
         rw [← hc]
         apply Fin.ext
         have ha := Nat.div_add_mod a 3
-        have hsub : a + 3 - j = 3 * (a / 3) + (a % 3 + 3 - j) := by omega
+        have hsub : a + 3 - j = 3 * (a / 3) + (a % 3 + 3 - j) := by lia
         simp [Fin.ofNat, hsub, Nat.add_mod]
     _ = 1 := by
-      have ha : a % 3 < 3 := Nat.mod_lt _ (by omega)
+      have ha : a % 3 < 3 := Nat.mod_lt _ (by lia)
       interval_cases h : a % 3 <;> fin_cases c <;>
         norm_num [Fin.ofNat, h] <;> decide
 
@@ -294,7 +294,7 @@ lemma desc_block_count' (a : ℕ) (ha : 2 ≤ a) (c : Letter) :
       have hcolor (hj : j < 3) :
           Fin.ofNat 3 (a - j) = Fin.ofNat 3 (a + 3 - j) := by
         apply Fin.ext
-        have hsub : a + 3 - j = (a - j) + 3 := by omega
+        have hsub : a + 3 - j = (a - j) + 3 := by lia
         simp [Fin.ofNat, hsub]
       constructor
       · rintro ⟨hj, hc⟩
@@ -309,14 +309,14 @@ lemma desc_periodic_count (A B : ℕ) (c : Letter) (k : ℕ) (hA : 3 * k ≤ A +
   induction k with
   | zero => simp
   | succ k ih =>
-      have hAk : 3 * k ≤ A + 1 := by omega
-      rw [show 3 * (k + 1) = 3 * k + 3 by omega, Finset.range_add_eq_union,
+      have hAk : 3 * k ≤ A + 1 := by lia
+      rw [show 3 * (k + 1) = 3 * k + 3 by lia, Finset.range_add_eq_union,
         Finset.filter_union]
       rw [Finset.card_union_of_disjoint
         ((Finset.disjoint_range_addLeftEmbedding (3 * k) (Finset.range 3)).mono
           (Finset.filter_subset _ _) (Finset.filter_subset _ _))]
       rw [ih hAk]
-      have hconst : 2 ≤ A - 3 * k + B + k := by omega
+      have hconst : 2 ≤ A - 3 * k + B + k := by lia
       have hblock :
           (((Finset.range 3).map (addLeftEmbedding (3 * k))).filter
             (fun j ↦ Fin.ofNat 3 (A - j + B + j / 3) = c)).card = 1 := by
@@ -334,9 +334,9 @@ lemma desc_periodic_count (A B : ℕ) (c : Letter) (k : ℕ) (hA : 3 * k ≤ A +
             have hcolor (hj : j < 3) :
                 Fin.ofNat 3 (A - (3 * k + j) + B + (3 * k + j) / 3) =
                   Fin.ofNat 3 (A - 3 * k + B + k - j) := by
-              have hdiv : (3 * k + j) / 3 = k := by omega
+              have hdiv : (3 * k + j) / 3 = k := by lia
               have heq : A - (3 * k + j) + B + (3 * k + j) / 3 =
-                  A - 3 * k + B + k - j := by omega
+                  A - 3 * k + B + k - j := by lia
               rw [heq]
             constructor
             · rintro ⟨hj, hc⟩
@@ -353,9 +353,9 @@ lemma Ico_eq_map_range (a b : ℕ) :
     addLeftEmbedding_apply]
   constructor
   · intro hx
-    exact ⟨x - a, by omega, by omega⟩
+    exact ⟨x - a, by lia, by lia⟩
   · rintro ⟨y, hy, rfl⟩
-    omega
+    lia
 
 lemma periodicColor_diagSum (n : ℕ) (h9 : 9 ∣ n) (s : ℕ)
     (hs : 3 ∣ (diagSum (n := n) s).card) :
@@ -373,7 +373,7 @@ lemma periodicColor_diagSum (n : ℕ) (h9 : 9 ∣ n) (s : ℕ)
   · rw [Ico_eq_map_range, hlen]
     simp
   obtain ⟨q, hq⟩ := hlen3
-  have hlohi : lo < hi := by omega
+  have hlohi : lo < hi := by lia
   have hn3 : 3 ∣ n := dvd_trans (by norm_num) h9
   obtain ⟨m, hm⟩ := hn3
   have hlo3 : 3 ∣ lo := by
@@ -383,9 +383,9 @@ lemma periodicColor_diagSum (n : ℕ) (h9 : 9 ∣ n) (s : ℕ)
     · have hns : n ≤ s + 1 := (Nat.lt_of_not_ge hsn).le
       have hhi : hi = n := by simp [hi, Nat.min_eq_left hns]
       refine ⟨m - q, ?_⟩
-      omega
+      lia
   obtain ⟨u, hu⟩ := hlo3
-  have hbound : 3 * q ≤ (s - lo) + 1 := by omega
+  have hbound : 3 * q ≤ (s - lo) + 1 := by lia
   rw [Ico_eq_map_range, Finset.filter_map, Finset.card_map, hq]
   calc
     ((Finset.range (3 * q)).filter
@@ -400,8 +400,8 @@ lemma periodicColor_diagSum (n : ℕ) (h9 : 9 ∣ n) (s : ℕ)
       have hcolor (ht : t < 3 * q) :
           Fin.ofNat 3 (s - (lo + t) + (lo + t) / 3) =
             Fin.ofNat 3 ((s - lo) - t + lo / 3 + t / 3) := by
-        have hsub : s - (lo + t) = (s - lo) - t := by omega
-        have hdiv : (lo + t) / 3 = lo / 3 + t / 3 := by omega
+        have hsub : s - (lo + t) = (s - lo) - t := by lia
+        have hdiv : (lo + t) / 3 = lo / 3 + t / 3 := by lia
         rw [hsub, hdiv]
         simp [Nat.add_assoc]
       constructor
@@ -410,7 +410,7 @@ lemma periodicColor_diagSum (n : ℕ) (h9 : 9 ∣ n) (s : ℕ)
       · rintro ⟨ht, hc⟩
         exact ⟨ht, by rw [hcolor ht]; exact hc⟩
     _ = q := desc_periodic_count (s - lo) (lo / 3) c q hbound
-    _ = (3 * q) / 3 := by omega
+    _ = (3 * q) / 3 := by lia
 
 lemma diagDiff_card_eq_nonneg (n δ : ℕ) :
     (diagDiff (n := n) (δ : ℤ)).card = n - δ := calc
@@ -424,13 +424,13 @@ lemma diagDiff_card_eq_nonneg (n δ : ℕ) :
         simp only [diagDiff, Finset.mem_filter, Finset.mem_univ, true_and] at hp hq
         apply Prod.ext
         · apply Fin.ext
-          omega
+          lia
         · apply Fin.ext
           exact hpq
       · intro j hj
         simp only [Finset.mem_range] at hj
         let p : Fin n × Fin n :=
-          (⟨δ + j, by omega⟩, ⟨j, by omega⟩)
+          (⟨δ + j, by lia⟩, ⟨j, by lia⟩)
         refine ⟨p, ?_, rfl⟩
         simp [diagDiff, p]
     _ = n - δ := Finset.card_range _
@@ -449,11 +449,11 @@ lemma diagDiff_card_eq_neg (n δ : ℕ) :
         · apply Fin.ext
           exact hpq
         · apply Fin.ext
-          omega
+          lia
       · intro i hi
         simp only [Finset.mem_range] at hi
         let p : Fin n × Fin n :=
-          (⟨i, by omega⟩, ⟨δ + i, by omega⟩)
+          (⟨i, by lia⟩, ⟨δ + i, by lia⟩)
         refine ⟨p, ?_, rfl⟩
         simp [diagDiff, p]
     _ = n - δ := Finset.card_range _
@@ -477,13 +477,13 @@ lemma diagDiff_color_card_eq_nonneg (n δ : ℕ) (c : Letter) :
     simp only [diagDiff, Finset.mem_filter, Finset.mem_univ, true_and] at hp hq
     apply Prod.ext
     · apply Fin.ext
-      omega
+      lia
     · apply Fin.ext
       exact hpq
   · intro j hj
     simp only [Finset.mem_filter, Finset.mem_range] at hj
     let p : Fin n × Fin n :=
-      (⟨δ + j, by omega⟩, ⟨j, by omega⟩)
+      (⟨δ + j, by lia⟩, ⟨j, by lia⟩)
     refine ⟨p, ?_, rfl⟩
     simp only [Finset.mem_filter]
     constructor
@@ -511,11 +511,11 @@ lemma diagDiff_color_card_eq_neg (n δ : ℕ) (c : Letter) :
     · apply Fin.ext
       exact hpq
     · apply Fin.ext
-      omega
+      lia
   · intro i hi
     simp only [Finset.mem_filter, Finset.mem_range] at hi
     let p : Fin n × Fin n :=
-      (⟨i, by omega⟩, ⟨δ + i, by omega⟩)
+      (⟨i, by lia⟩, ⟨δ + i, by lia⟩)
     refine ⟨p, ?_, rfl⟩
     simp only [Finset.mem_filter]
     constructor
@@ -528,7 +528,7 @@ lemma asc_periodic_count (A : ℕ) (c : Letter) (k : ℕ) :
   induction k with
   | zero => simp
   | succ k ih =>
-      rw [show 3 * (k + 1) = 3 * k + 3 by omega, Finset.range_add_eq_union,
+      rw [show 3 * (k + 1) = 3 * k + 3 by lia, Finset.range_add_eq_union,
         Finset.filter_union]
       rw [Finset.card_union_of_disjoint
         ((Finset.disjoint_range_addLeftEmbedding (3 * k) (Finset.range 3)).mono
@@ -551,9 +551,9 @@ lemma asc_periodic_count (A : ℕ) (c : Letter) (k : ℕ) :
             have hcolor (hj : j < 3) :
                 Fin.ofNat 3 (A + (3 * k + j) + (3 * k + j) / 3) =
                   Fin.ofNat 3 (A + 4 * k + j) := by
-              have hdiv : (3 * k + j) / 3 = k := by omega
+              have hdiv : (3 * k + j) / 3 = k := by lia
               congr 1
-              omega
+              lia
             constructor
             · rintro ⟨hj, hc⟩
               exact ⟨hj, by rw [← hcolor hj]; exact hc⟩
@@ -579,11 +579,11 @@ lemma periodicColor_diagDiff (n : ℕ) (h9 : 9 ∣ n) (d : ℤ)
       ((Finset.range (3 * q)).filter
           (fun j ↦ Fin.ofNat 3 (δ + j + j / 3) = c)).card = q :=
         asc_periodic_count δ c q
-      _ = 3 * q / 3 := by omega
+      _ = 3 * q / 3 := by lia
   · let δ := (-d).toNat
-    have hneg : 0 ≤ -d := by omega
+    have hneg : 0 ≤ -d := by lia
     have hδpos : (δ : ℤ) = -d := Int.toNat_of_nonneg hneg
-    have hδ : -(δ : ℤ) = d := by omega
+    have hδ : -(δ : ℤ) = d := by lia
     have hlen3 : 3 ∣ n - δ := by
       rw [← diagDiff_card_eq_neg n δ]
       simpa [hδ] using hdcard
@@ -595,7 +595,7 @@ lemma periodicColor_diagDiff (n : ℕ) (h9 : 9 ∣ n) (d : ℤ)
     obtain ⟨m, hm⟩ := hn3
     have hδ3 : 3 ∣ δ := by
       refine ⟨m - q, ?_⟩
-      omega
+      lia
     obtain ⟨u, hu⟩ := hδ3
     rw [← hδ, diagDiff_color_card_eq_neg, diagDiff_card_eq_neg, hq]
     calc
@@ -608,13 +608,13 @@ lemma periodicColor_diagDiff (n : ℕ) (h9 : 9 ∣ n) (d : ℤ)
         simp only [Finset.mem_filter, Finset.mem_range]
         have hcolor :
             Fin.ofNat 3 (i + (δ + i) / 3) = Fin.ofNat 3 (u + i + i / 3) := by
-          have hdiv : (δ + i) / 3 = u + i / 3 := by omega
+          have hdiv : (δ + i) / 3 = u + i / 3 := by lia
           rw [hdiv]
           congr 1
-          omega
+          lia
         rw [hcolor]
       _ = q := asc_periodic_count u c q
-      _ = 3 * q / 3 := by omega
+      _ = 3 * q / 3 := by lia
 
 lemma periodicColor_row {n : ℕ} (r : Fin n) (h9 : 9 ∣ n) :
     Balanced periodicColor (row r) := by
@@ -642,7 +642,7 @@ lemma periodicColor_row {n : ℕ} (r : Fin n) (h9 : 9 ∣ n) :
   rw [← Finset.card_map Fin.valEmbedding,
     map_filter_periodicColor]
   obtain ⟨k, rfl⟩ := h9
-  have hdiv : 9 * k / 3 = 3 * k := by omega
+  have hdiv : 9 * k / 3 = 3 * k := by lia
   rw [hdiv]
   exact row_periodic_count (r : ℕ) c k
 
@@ -673,13 +673,13 @@ lemma periodicColor_col {n : ℕ} (k : Fin n) (h9 : 9 ∣ n) :
     map_filter_periodicColor_col]
   obtain ⟨q, rfl⟩ := h9
   have hcount := add_periodic_count ((k : ℕ) / 3) c (3 * q)
-  have hlen : 3 * (3 * q) = 9 * q := by omega
+  have hlen : 3 * (3 * q) = 9 * q := by lia
   rw [hlen] at hcount
   calc
     ((Finset.range (9 * q)).filter
         (fun i ↦ Fin.ofNat 3 (i + (k : ℕ) / 3) = c)).card = 3 * q := by
       simpa [Nat.add_comm] using hcount
-    _ = 9 * q / 3 := by omega
+    _ = 9 * q / 3 := by lia
 
 lemma exists_modTable_of_nine_dvd (n : ℕ) (h9 : 9 ∣ n) :
     ∃ f : Fin n → Fin n → Letter, MODTable f := by
@@ -718,7 +718,7 @@ lemma balanced_of_fibers {κ : Type*} [DecidableEq κ]
       (cells.filter (fun p ↦ g p = x)).card =
         3 * ((cells.filter (fun p ↦ g p = x)).card / 3) := by
     obtain ⟨q, hq⟩ := (hbalanced x hx).three_dvd_card
-    omega
+    lia
   have htotal' : cells.card =
       3 * ∑ x ∈ keys, (cells.filter (fun p ↦ g p = x)).card / 3 := by
     calc
@@ -750,7 +750,7 @@ lemma balanced_of_fibers {κ : Type*} [DecidableEq κ]
       apply Finset.sum_congr rfl
       intro x hx
       exact hbalanced x hx c
-    _ = cells.card / 3 := by omega
+    _ = cells.card / 3 := by lia
 
 def vitalIndices (k : ℕ) : Finset (Fin (3 * k)) :=
   Finset.univ.filter (fun i ↦ Fin.ofNat 3 (i : ℕ) = 1)
@@ -869,20 +869,20 @@ lemma three_dvd_diagSum_card (k s : ℕ) (hs : Fin.ofNat 3 s = 2) :
   have hsmod : s % 3 = 2 := by
     simpa [Fin.ofNat] using congrArg Fin.val hs
   have hsdiv := Nat.div_add_mod s 3
-  have hsucc : s + 1 = 3 * (s / 3 + 1) := by omega
+  have hsucc : s + 1 = 3 * (s / 3 + 1) := by lia
   rw [diagSum_card_eq]
   by_cases hsmall : s + 1 ≤ 3 * k
   · refine ⟨s / 3 + 1, ?_⟩
     rw [Nat.min_eq_right hsmall]
     have hsub : s + 1 - 3 * k = 0 := Nat.sub_eq_zero_of_le hsmall
-    omega
+    lia
   by_cases hlarge : 2 * (3 * k) ≤ s + 1
   · refine ⟨0, ?_⟩
-    rw [Nat.min_eq_left (by omega)]
-    omega
+    rw [Nat.min_eq_left (by lia)]
+    lia
   · refine ⟨2 * k - (s / 3 + 1), ?_⟩
-    rw [Nat.min_eq_left (by omega)]
-    omega
+    rw [Nat.min_eq_left (by lia)]
+    lia
 
 lemma three_dvd_diagDiff_card (k : ℕ) (d : ℤ) (hd : (3 : ℤ) ∣ d) :
     3 ∣ (diagDiff (n := 3 * k) d).card := by
@@ -890,22 +890,22 @@ lemma three_dvd_diagDiff_card (k : ℕ) (d : ℤ) (hd : (3 : ℤ) ∣ d) :
   by_cases hdz : 0 ≤ d
   · let δ := d.toNat
     have hδ : (δ : ℤ) = d := Int.toNat_of_nonneg hdz
-    have hz0 : 0 ≤ z := by omega
+    have hz0 : 0 ≤ z := by lia
     let u := z.toNat
     have hu : (u : ℤ) = z := Int.toNat_of_nonneg hz0
-    have hδu : δ = 3 * u := by omega
+    have hδu : δ = 3 * u := by lia
     rw [← hδ, diagDiff_card_eq_nonneg, hδu]
-    exact ⟨k - u, by omega⟩
+    exact ⟨k - u, by lia⟩
   · let δ := (-d).toNat
-    have hneg : 0 ≤ -d := by omega
+    have hneg : 0 ≤ -d := by lia
     have hδ : (δ : ℤ) = -d := Int.toNat_of_nonneg hneg
-    have hz0 : 0 ≤ -z := by omega
+    have hz0 : 0 ≤ -z := by lia
     let u := (-z).toNat
     have hu : (u : ℤ) = -z := Int.toNat_of_nonneg hz0
-    have hδu : δ = 3 * u := by omega
-    have hdneg : d = -(δ : ℤ) := by omega
+    have hδu : δ = 3 * u := by lia
+    have hdneg : d = -(δ : ℤ) := by lia
     rw [hdneg, diagDiff_card_eq_neg, hδu]
-    exact ⟨k - u, by omega⟩
+    exact ⟨k - u, by lia⟩
 
 lemma finMod_eq_iff_three_dvd_sub (i j : ℕ) :
     Fin.ofNat 3 i = Fin.ofNat 3 j ↔ (3 : ℤ) ∣ (i : ℤ) - (j : ℤ) := by
@@ -916,15 +916,15 @@ lemma finMod_eq_iff_three_dvd_sub (i j : ℕ) :
     have hi := Nat.div_add_mod i 3
     have hj := Nat.div_add_mod j 3
     refine ⟨(i / 3 : ℤ) - (j / 3 : ℤ), ?_⟩
-    omega
+    lia
   · rintro ⟨z, hz⟩
     apply Fin.ext
     simp only [Fin.val_ofNat]
     have hi := Nat.div_add_mod i 3
     have hj := Nat.div_add_mod j 3
-    have himod := Nat.mod_lt i (by omega : 0 < 3)
-    have hjmod := Nat.mod_lt j (by omega : 0 < 3)
-    omega
+    have himod := Nat.mod_lt i (by lia : 0 < 3)
+    have hjmod := Nat.mod_lt j (by lia : 0 < 3)
+    lia
 
 lemma univ_balanced_of_rows {n : ℕ} (f : Fin n → Fin n → Letter)
     (hrows : ∀ r, Balanced f (row r)) :
@@ -978,7 +978,7 @@ lemma vitalSumCells_balanced (k : ℕ) (f : Fin (3 * k) → Fin (3 * k) → Lett
   · intro p hp
     simp only [vitalSumCells, Finset.mem_filter, Finset.mem_univ, true_and] at hp
     simp only [vitalSumKeys, Finset.mem_filter, Finset.mem_range]
-    exact ⟨by omega, hp⟩
+    exact ⟨by lia, hp⟩
   · intro s hs
     simp only [vitalSumKeys, Finset.mem_filter, Finset.mem_range] at hs
     have h := hsums s (three_dvd_diagSum_card k s hs.2)
@@ -1005,9 +1005,9 @@ lemma vitalDiffCells_balanced (k : ℕ) (f : Fin (3 * k) → Fin (3 * k) → Let
     let t := (p.1 : ℕ) + 3 * k - (p.2 : ℕ)
     refine ⟨t, ?_, ?_⟩
     · simp only [Finset.mem_range]
-      omega
+      lia
     · dsimp [t]
-      omega
+      lia
   · intro d hd
     simp only [vitalDiffKeys, Finset.mem_filter] at hd
     have h := hdiffs d (three_dvd_diagDiff_card k d hd.2)
@@ -1076,7 +1076,7 @@ lemma colorCount_eq_of_balanced_card {n q : ℕ} (f : Fin n → Fin n → Letter
     (hcard : cells.card = 3 * q) : colorCount f cells c = q := by
   unfold colorCount
   rw [hbalanced c, hcard]
-  omega
+  lia
 
 lemma nine_dvd_of_modTable (n : ℕ) (hn : 0 < n)
     (f : Fin n → Fin n → Letter) (hf : MODTable f) : 9 ∣ n := by
@@ -1107,10 +1107,10 @@ lemma nine_dvd_of_modTable (n : ℕ) (hn : 0 < n)
   rw [hrowCount, hcolCount, hsumCount, hdiffCount, hunivCount] at hcount
   have hk2 : 3 ∣ k ^ 2 := by
     refine ⟨colorCount f (centerCells k) c, ?_⟩
-    omega
+    lia
   have hk : 3 ∣ k := Nat.prime_three.dvd_of_dvd_pow hk2
   obtain ⟨q, hq⟩ := hk
-  exact ⟨q, by omega⟩
+  exact ⟨q, by lia⟩
 
 snip end
 

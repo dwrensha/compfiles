@@ -101,16 +101,16 @@ lemma fib_mul_sq_le {n : ℕ} {b : Fin n → ℝ} (hn : 0 < n)
     intro h
     show (Nat.fib 2 : ℝ) * b ⟨0, hn⟩ ^ 2 ≤ b ⟨1, h⟩ ^ 2
     rw [Nat.fib_two, Nat.cast_one, one_mul]
-    exact pow_le_pow_left₀ (le_of_lt (hb_pos ⟨0, hn⟩)) (hb_mono (by show (0 : ℕ) ≤ 1; omega)) 2
+    exact pow_le_pow_left₀ (le_of_lt (hb_pos ⟨0, hn⟩)) (hb_mono (by show (0 : ℕ) ≤ 1; lia)) 2
   | more i ih0 ih1 =>
     intro h
-    have hi : i < n := by omega
-    have hi1 : i + 1 < n := by omega
+    have hi : i < n := by lia
+    have hi1 : i + 1 < n := by lia
     have hf : (Nat.fib (i + 2 + 1) : ℝ) = (Nat.fib (i + 1) : ℝ) + (Nat.fib (i + 2) : ℝ) := by
       norm_cast
       exact Nat.fib_add_two
     have hs : b ⟨i, hi⟩ ^ 2 + b ⟨i + 1, hi1⟩ ^ 2 ≤ b ⟨i + 2, h⟩ ^ 2 :=
-      hsq ⟨i, hi⟩ ⟨i + 1, hi1⟩ ⟨i + 2, h⟩ (by show i < i + 1; omega) (by show i + 1 < i + 2; omega)
+      hsq ⟨i, hi⟩ ⟨i + 1, hi1⟩ ⟨i + 2, h⟩ (by show i < i + 1; lia) (by show i + 1 < i + 2; lia)
     have e0 : (Nat.fib (i + 1) : ℝ) * b ⟨0, hn⟩ ^ 2 ≤ b ⟨i, hi⟩ ^ 2 := ih0 hi
     have e1 : (Nat.fib (i + 2) : ℝ) * b ⟨0, hn⟩ ^ 2 ≤ b ⟨i + 1, hi1⟩ ^ 2 := ih1 hi1
     rw [hf, add_mul]
@@ -134,12 +134,12 @@ lemma isGood_of_thirteen_le {n : ℕ} (hn : 13 ≤ n) : IsGood n := by
       (hb_mono hij.le) (hb_mono hjk.le)
     exact h (σ i) (σ j) (σ k) (hσ_inj.ne (ne_of_lt hij)) (hσ_inj.ne (ne_of_lt hjk))
       (hσ_inj.ne (ne_of_lt (hij.trans hjk)).symm)
-  have hn0' : 0 < n := by omega
-  have hnl' : n - 1 < n := by omega
+  have hn0' : 0 < n := by lia
+  have hnl' : n - 1 < n := by lia
   have key := fib_mul_sq_le hn0' hb_pos hb_mono hsq
   have hlast : (Nat.fib (n - 1 + 1) : ℝ) * b ⟨0, hn0'⟩ ^ 2 ≤ b ⟨n - 1, hnl'⟩ ^ 2 :=
     key (n - 1) hnl'
-  rw [Nat.sub_add_cancel (by omega : 1 ≤ n)] at hlast
+  rw [Nat.sub_add_cancel (by lia : 1 ≤ n)] at hlast
   -- The `max ≤ n * min` condition, applied to the last and first sorted terms.
   have hmax' : b ⟨n - 1, hnl'⟩ ≤ (n : ℝ) * b ⟨0, hn0'⟩ := hmax _ _
   have h1 : b ⟨n - 1, hnl'⟩ ^ 2 ≤ ((n : ℝ) * b ⟨0, hn0'⟩) ^ 2 :=
@@ -163,9 +163,9 @@ lemma not_isGood_of_le_twelve {n : ℕ} (h3 : 3 ≤ n) (h12 : n ≤ 12) : ¬ IsG
   have hfib12 : Nat.fib n ≤ n ^ 2 := by
     interval_cases n <;> decide
   intro hg
-  have hn0' : 0 < n := by omega
+  have hn0' : 0 < n := by lia
   have hn0 : (0 : ℝ) < (n : ℝ) := by exact_mod_cast hn0'
-  have hnl' : n - 1 < n := by omega
+  have hnl' : n - 1 < n := by lia
   -- The terms are positive and monotone in the index.
   have ha_pos : ∀ i, 0 < counterexSeq n i := by
     intro i
@@ -174,7 +174,7 @@ lemma not_isGood_of_le_twelve {n : ℕ} (h3 : 3 ≤ n) (h12 : n ≤ 12) : ¬ IsG
   have ha_mono : ∀ i j : Fin n, i.val ≤ j.val → counterexSeq n i ≤ counterexSeq n j := by
     intro i j hij
     apply Real.sqrt_le_sqrt
-    have h1 : Nat.fib (i.val + 1) ≤ Nat.fib (j.val + 1) := Nat.fib_mono (by omega)
+    have h1 : Nat.fib (i.val + 1) ≤ Nat.fib (j.val + 1) := Nat.fib_mono (by lia)
     exact_mod_cast h1
   -- The first term is `1` and the last one is at most `n`, since `F_n ≤ n ^ 2`.
   have h0 : counterexSeq n ⟨0, hn0'⟩ = 1 := by
@@ -182,7 +182,7 @@ lemma not_isGood_of_le_twelve {n : ℕ} (h3 : 3 ≤ n) (h12 : n ≤ 12) : ¬ IsG
     simp [Nat.fib_one]
   have hlast : counterexSeq n ⟨n - 1, hnl'⟩ ≤ (n : ℝ) := by
     show √(Nat.fib (n - 1 + 1) : ℝ) ≤ (n : ℝ)
-    rw [Nat.sub_add_cancel (by omega : 1 ≤ n)]
+    rw [Nat.sub_add_cancel (by lia : 1 ≤ n)]
     calc √(Nat.fib n : ℝ) ≤ √((n : ℝ) ^ 2) := by
           apply Real.sqrt_le_sqrt
           exact_mod_cast hfib12
@@ -191,22 +191,22 @@ lemma not_isGood_of_le_twelve {n : ℕ} (h3 : 3 ≤ n) (h12 : n ≤ 12) : ¬ IsG
   have ha_max : ∀ i j : Fin n, counterexSeq n i ≤ (n : ℝ) * counterexSeq n j := by
     intro i j
     calc counterexSeq n i ≤ counterexSeq n ⟨n - 1, hnl'⟩ :=
-          ha_mono i _ (by show i.val ≤ n - 1; have := i.isLt; omega)
+          ha_mono i _ (by show i.val ≤ n - 1; have := i.isLt; lia)
       _ ≤ (n : ℝ) := hlast
       _ = (n : ℝ) * 1 := by rw [mul_one]
       _ = (n : ℝ) * counterexSeq n ⟨0, hn0'⟩ := by rw [h0]
       _ ≤ (n : ℝ) * counterexSeq n j :=
-          mul_le_mul_of_nonneg_left (ha_mono _ _ (by show (0 : ℕ) ≤ j.val; omega)) (le_of_lt hn0)
+          mul_le_mul_of_nonneg_left (ha_mono _ _ (by show (0 : ℕ) ≤ j.val; lia)) (le_of_lt hn0)
   -- But no three terms form an acute triangle: for `p < q < r` we have
   -- `a p ^ 2 + a q ^ 2 = F_{p+1} + F_{q+1} ≤ F_q + F_{q+1} = F_{q+2} ≤ F_{r+1} = a r ^ 2`.
   have key : ∀ p q r : Fin n, p < q → q < r →
       counterexSeq n p ^ 2 + counterexSeq n q ^ 2 ≤ counterexSeq n r ^ 2 := by
     intro p q r hpq hqr
     have hf : Nat.fib (p.val + 1) + Nat.fib (q.val + 1) ≤ Nat.fib (r.val + 1) := by
-      have h1 : Nat.fib (p.val + 1) ≤ Nat.fib q.val := Nat.fib_mono (by omega)
-      have h2 : Nat.fib (q.val + 2) ≤ Nat.fib (r.val + 1) := Nat.fib_mono (by omega)
+      have h1 : Nat.fib (p.val + 1) ≤ Nat.fib q.val := Nat.fib_mono (by lia)
+      have h2 : Nat.fib (q.val + 2) ≤ Nat.fib (r.val + 1) := Nat.fib_mono (by lia)
       have h3 : Nat.fib (q.val + 2) = Nat.fib q.val + Nat.fib (q.val + 1) := Nat.fib_add_two
-      omega
+      lia
     have e1 : counterexSeq n p ^ 2 = (Nat.fib (p.val + 1) : ℝ) :=
       Real.sq_sqrt (by positivity)
     have e2 : counterexSeq n q ^ 2 = (Nat.fib (q.val + 1) : ℝ) :=
@@ -246,10 +246,10 @@ problem usa2012_p1 (n : ℕ) : 3 ≤ n ∧ IsGood n ↔ n ∈ solution_set := by
   · rintro ⟨h3, hg⟩
     by_contra h
     have h13 : ¬ 13 ≤ n := h
-    have h12 : n ≤ 12 := by omega
+    have h12 : n ≤ 12 := by lia
     exact not_isGood_of_le_twelve h3 h12 hg
   · intro h
     have h13 : 13 ≤ n := h
-    exact ⟨by omega, isGood_of_thirteen_le h13⟩
+    exact ⟨by lia, isGood_of_thirteen_le h13⟩
 
 end Usa2012P1

@@ -147,25 +147,25 @@ lemma offB1a_injective : Function.Injective offB1a := by
   intro i j h
   simp only [offB1a] at h
   apply Fin.ext
-  (repeat' split at h) <;> omega
+  (repeat' split at h) <;> lia
 
 lemma offB1b_injective : Function.Injective offB1b := by
   intro i j h
   simp only [offB1b] at h
   apply Fin.ext
-  (repeat' split at h) <;> omega
+  (repeat' split at h) <;> lia
 
 lemma offB2a_injective : Function.Injective offB2a := by
   intro i j h
   simp only [offB2a] at h
   apply Fin.ext
-  (repeat' split at h) <;> omega
+  (repeat' split at h) <;> lia
 
 lemma offB2b_injective : Function.Injective offB2b := by
   intro i j h
   simp only [offB2b] at h
   apply Fin.ext
-  (repeat' split at h) <;> omega
+  (repeat' split at h) <;> lia
 
 /-- Adding the same constant preserves injectivity. -/
 lemma injective_n_add {k : ℕ} {off : Fin k → ℕ} (h : Function.Injective off) (n : ℕ) :
@@ -175,48 +175,48 @@ lemma injective_n_add {k : ℕ} {off : Fin k → ℕ} (h : Function.Injective of
 lemma offA1_le (i : Fin 14) : offA1 i ≤ 13 := by
   have := i.isLt
   simp only [offA1]
-  omega
+  lia
 
 lemma offA1_le32 (i : Fin 14) : offA1 i ≤ 32 := (offA1_le i).trans (by norm_num)
 
 lemma offA2_ge (i : Fin 14) : 19 ≤ offA2 i := by
   simp only [offA2]
-  omega
+  lia
 
 lemma offA2_le32 (i : Fin 14) : offA2 i ≤ 32 := by
   have := i.isLt
   simp only [offA2]
-  omega
+  lia
 
 lemma offB1a_ge (i : Fin 19) : 14 ≤ offB1a i := by
   simp only [offB1a]
-  (repeat' split) <;> omega
+  (repeat' split) <;> lia
 
 lemma offB1a_le32 (i : Fin 19) : offB1a i ≤ 32 := by
   have := i.isLt
   simp only [offB1a]
-  (repeat' split) <;> omega
+  (repeat' split) <;> lia
 
 lemma offB1b_ge (i : Fin 19) : 14 ≤ offB1b i := by
   simp only [offB1b]
-  (repeat' split) <;> omega
+  (repeat' split) <;> lia
 
 lemma offB1b_le32 (i : Fin 19) : offB1b i ≤ 32 := by
   have := i.isLt
   simp only [offB1b]
-  (repeat' split) <;> omega
+  (repeat' split) <;> lia
 
 lemma offB2a_le18 (i : Fin 19) : offB2a i ≤ 18 := by
   have := i.isLt
   simp only [offB2a]
-  (repeat' split) <;> omega
+  (repeat' split) <;> lia
 
 lemma offB2a_le32 (i : Fin 19) : offB2a i ≤ 32 := (offB2a_le18 i).trans (by norm_num)
 
 lemma offB2b_le18 (i : Fin 19) : offB2b i ≤ 18 := by
   have := i.isLt
   simp only [offB2b]
-  (repeat' split) <;> omega
+  (repeat' split) <;> lia
 
 lemma offB2b_le32 (i : Fin 19) : offB2b i ≤ 32 := (offB2b_le18 i).trans (by norm_num)
 
@@ -234,7 +234,7 @@ lemma image_add_off_subset_Icc {k : ℕ} (off : Fin k → ℕ) (h : ∀ i, off i
   simp only [Finset.mem_Icc]
   refine ⟨Nat.le_add_right _ _, ?_⟩
   have := h i
-  omega
+  lia
 
 /-- If the offsets of two families are separated by a constant `c`, their images
 (after shifting by `n`) are disjoint. -/
@@ -250,7 +250,7 @@ lemma disjoint_add_off {k l : ℕ} {off₁ : Fin k → ℕ} {off₂ : Fin l → 
   have h3 := h₁ i
   have h4 := h₂ j
   have h5 : off₂ j = off₁ i := Nat.add_left_cancel hj
-  omega
+  lia
 
 /-- Two disjoint injective families of `14` and `19` elements inside the `33`-element
 set `Finset.Icc n (n + 32)` must cover it. -/
@@ -264,7 +264,7 @@ lemma image_union_eq_Icc {n : ℕ} {a : Fin 14 → ℕ} {b : Fin 19 → ℕ}
   rw [Finset.card_union_of_disjoint hdisj, Finset.card_image_of_injective _ ha,
     Finset.card_image_of_injective _ hb, Finset.card_univ, Finset.card_univ,
     Fintype.card_fin, Fintype.card_fin, Nat.card_Icc]
-  omega
+  lia
 
 end Partition
 
@@ -277,7 +277,7 @@ lemma validCircle_a1 (n : ℕ) (h13 : ¬ 13 ∣ n) : ValidCircle (a1 n) := by
   · -- wrap-around seam: `n + 13` next to `n`; their difference is `13`
     subst hlast
     show Nat.Coprime (n + 13) (n + 0)
-    exact coprime_add_prime_left (p := 13) (by norm_num) (c := 0) (by omega)
+    exact coprime_add_prime_left (p := 13) (by norm_num) (c := 0) (by lia)
   · have hv : ((i + 1 : Fin 14) : ℕ) = i.val + 1 := Fin.val_add_one_of_lt hlt
     show Nat.Coprime (n + i.val) (n + ((i + 1 : Fin 14)).val)
     rw [hv]
@@ -291,25 +291,25 @@ lemma validCircle_b1a (n : ℕ) (hn : Odd n) (h17 : n % 17 ≠ 2) :
   · -- wrap-around seam: `n + 32` next to `n + 15`; their difference is `17`
     subst hlast
     show Nat.Coprime (n + 32) (n + 15)
-    exact coprime_add_prime_left (p := 17) (by norm_num) (c := 15) (by omega)
+    exact coprime_add_prime_left (p := 17) (by norm_num) (c := 15) (by lia)
   · have hv : ((i + 1 : Fin 19) : ℕ) = i.val + 1 := Fin.val_add_one_of_lt hlt
     show Nat.Coprime (n + offB1a i) (n + offB1a (i + 1))
     simp only [offB1a, hv]
     by_cases hi0 : i.val = 0
     · -- seam: `n + 15` next to `n + 14`
-      rw [ite_eq_left hi0, ite_eq_right (by omega : ¬ i.val + 1 = 0),
-        ite_eq_left (by omega : i.val + 1 = 1)]
+      rw [ite_eq_left hi0, ite_eq_right (by lia : ¬ i.val + 1 = 0),
+        ite_eq_left (by lia : i.val + 1 = 1)]
       exact (coprime_succ_gen n 14).symm
     · by_cases hi1 : i.val = 1
       · -- seam: `n + 14` next to `n + 16`; both odd since `n` is odd
-        rw [ite_eq_right hi0, ite_eq_left hi1, ite_eq_right (by omega : ¬ i.val + 1 = 0),
-          ite_eq_right (by omega : ¬ i.val + 1 = 1), hi1]
+        rw [ite_eq_right hi0, ite_eq_left hi1, ite_eq_right (by lia : ¬ i.val + 1 = 0),
+          ite_eq_right (by lia : ¬ i.val + 1 = 1), hi1]
         obtain ⟨k, hk⟩ := hn
-        exact coprime_add_two (c := 14) (by omega)
+        exact coprime_add_two (c := 14) (by lia)
       · -- generic seam: consecutive integers
-        have h2 : 2 ≤ i.val := by omega
-        rw [ite_eq_right hi0, ite_eq_right hi1, ite_eq_right (by omega : ¬ i.val + 1 = 0),
-          ite_eq_right (by omega : ¬ i.val + 1 = 1)]
+        have h2 : 2 ≤ i.val := by lia
+        rw [ite_eq_right hi0, ite_eq_right hi1, ite_eq_right (by lia : ¬ i.val + 1 = 0),
+          ite_eq_right (by lia : ¬ i.val + 1 = 1)]
         exact coprime_succ_gen n (i.val + 14)
 
 lemma validCircle_b1b (n : ℕ) (hn : Odd n) (h17 : n % 17 = 2) :
@@ -320,24 +320,24 @@ lemma validCircle_b1b (n : ℕ) (hn : Odd n) (h17 : n % 17 = 2) :
   · -- wrap-around seam: `n + 31` next to `n + 14`; their difference is `17`
     subst hlast
     show Nat.Coprime (n + 31) (n + 14)
-    exact coprime_add_prime_left (p := 17) (by norm_num) (c := 14) (by omega)
+    exact coprime_add_prime_left (p := 17) (by norm_num) (c := 14) (by lia)
   · have hv : ((i + 1 : Fin 19) : ℕ) = i.val + 1 := Fin.val_add_one_of_lt hlt
     show Nat.Coprime (n + offB1b i) (n + offB1b (i + 1))
     simp only [offB1b, hv]
     rcases Nat.lt_trichotomy i.val 16 with h | h | h
     · -- generic seam: consecutive integers
-      rw [ite_eq_right (by omega : ¬ i.val = 17), ite_eq_right (by omega : ¬ i.val = 18),
-        ite_eq_right (by omega : ¬ i.val + 1 = 17), ite_eq_right (by omega : ¬ i.val + 1 = 18)]
+      rw [ite_eq_right (by lia : ¬ i.val = 17), ite_eq_right (by lia : ¬ i.val = 18),
+        ite_eq_right (by lia : ¬ i.val + 1 = 17), ite_eq_right (by lia : ¬ i.val + 1 = 18)]
       exact coprime_succ_gen n (i.val + 14)
     · -- seam: `n + 30` next to `n + 32`; both odd
-      rw [ite_eq_right (by omega : ¬ i.val = 17), ite_eq_right (by omega : ¬ i.val = 18),
-        ite_eq_left (by omega : i.val + 1 = 17), h]
+      rw [ite_eq_right (by lia : ¬ i.val = 17), ite_eq_right (by lia : ¬ i.val = 18),
+        ite_eq_left (by lia : i.val + 1 = 17), h]
       obtain ⟨k, hk⟩ := hn
-      exact coprime_add_two (c := 30) (by omega)
+      exact coprime_add_two (c := 30) (by lia)
     · -- seam: `n + 32` next to `n + 31`
-      have h17' : i.val = 17 := by omega
-      rw [ite_eq_left h17', ite_eq_right (by omega : ¬ i.val + 1 = 17),
-        ite_eq_left (by omega : i.val + 1 = 18)]
+      have h17' : i.val = 17 := by lia
+      rw [ite_eq_left h17', ite_eq_right (by lia : ¬ i.val + 1 = 17),
+        ite_eq_left (by lia : i.val + 1 = 18)]
       exact (coprime_succ_gen n 31).symm
 
 lemma validCircle_a2 (n : ℕ) (h13 : 13 ∣ n) : ValidCircle (a2 n) := by
@@ -347,7 +347,7 @@ lemma validCircle_a2 (n : ℕ) (h13 : 13 ∣ n) : ValidCircle (a2 n) := by
   · -- wrap-around seam: `n + 32` next to `n + 19`; their difference is `13`
     subst hlast
     show Nat.Coprime (n + 32) (n + 19)
-    exact coprime_add_prime_left (p := 13) (by norm_num) (c := 19) (by omega)
+    exact coprime_add_prime_left (p := 13) (by norm_num) (c := 19) (by lia)
   · have hv : ((i + 1 : Fin 14) : ℕ) = i.val + 1 := Fin.val_add_one_of_lt hlt
     show Nat.Coprime (n + (i.val + 19)) (n + (((i + 1 : Fin 14)).val + 19))
     rw [hv]
@@ -361,26 +361,26 @@ lemma validCircle_b2a (n : ℕ) (hn : Odd n) (h17 : n % 17 ≠ 16) :
   · -- wrap-around seam: `n + 18` next to `n + 1`; their difference is `17`
     subst hlast
     show Nat.Coprime (n + 18) (n + 1)
-    exact coprime_add_prime_left (p := 17) (by norm_num) (c := 1) (by omega)
+    exact coprime_add_prime_left (p := 17) (by norm_num) (c := 1) (by lia)
   · have hv : ((i + 1 : Fin 19) : ℕ) = i.val + 1 := Fin.val_add_one_of_lt hlt
     show Nat.Coprime (n + offB2a i) (n + offB2a (i + 1))
     simp only [offB2a, hv]
     by_cases hi0 : i.val = 0
     · -- seam: `n + 1` next to `n`
-      rw [ite_eq_left hi0, ite_eq_right (by omega : ¬ i.val + 1 = 0),
-        ite_eq_left (by omega : i.val + 1 = 1)]
+      rw [ite_eq_left hi0, ite_eq_right (by lia : ¬ i.val + 1 = 0),
+        ite_eq_left (by lia : i.val + 1 = 1)]
       show Nat.Coprime (n + 1) n
       exact (coprime_succ_gen n 0).symm
     · by_cases hi1 : i.val = 1
       · -- seam: `n` next to `n + 2`; both odd
-        rw [ite_eq_right hi0, ite_eq_left hi1, ite_eq_right (by omega : ¬ i.val + 1 = 0),
-          ite_eq_right (by omega : ¬ i.val + 1 = 1), hi1]
+        rw [ite_eq_right hi0, ite_eq_left hi1, ite_eq_right (by lia : ¬ i.val + 1 = 0),
+          ite_eq_right (by lia : ¬ i.val + 1 = 1), hi1]
         obtain ⟨k, hk⟩ := hn
-        exact coprime_add_two (c := 0) (by omega)
+        exact coprime_add_two (c := 0) (by lia)
       · -- generic seam: consecutive integers
-        have h2 : 2 ≤ i.val := by omega
-        rw [ite_eq_right hi0, ite_eq_right hi1, ite_eq_right (by omega : ¬ i.val + 1 = 0),
-          ite_eq_right (by omega : ¬ i.val + 1 = 1)]
+        have h2 : 2 ≤ i.val := by lia
+        rw [ite_eq_right hi0, ite_eq_right hi1, ite_eq_right (by lia : ¬ i.val + 1 = 0),
+          ite_eq_right (by lia : ¬ i.val + 1 = 1)]
         exact coprime_succ_gen n i.val
 
 lemma validCircle_b2b (n : ℕ) (hn : Odd n) (h17 : n % 17 = 16) :
@@ -392,24 +392,24 @@ lemma validCircle_b2b (n : ℕ) (hn : Odd n) (h17 : n % 17 = 16) :
     subst hlast
     show Nat.Coprime (n + 17) (n + 0)
     rw [Nat.coprime_comm]
-    exact coprime_add_prime_right (p := 17) (by norm_num) (c := 0) (by omega)
+    exact coprime_add_prime_right (p := 17) (by norm_num) (c := 0) (by lia)
   · have hv : ((i + 1 : Fin 19) : ℕ) = i.val + 1 := Fin.val_add_one_of_lt hlt
     show Nat.Coprime (n + offB2b i) (n + offB2b (i + 1))
     simp only [offB2b, hv]
     rcases Nat.lt_trichotomy i.val 16 with h | h | h
     · -- generic seam: consecutive integers
-      rw [ite_eq_right (by omega : ¬ i.val = 17), ite_eq_right (by omega : ¬ i.val = 18),
-        ite_eq_right (by omega : ¬ i.val + 1 = 17), ite_eq_right (by omega : ¬ i.val + 1 = 18)]
+      rw [ite_eq_right (by lia : ¬ i.val = 17), ite_eq_right (by lia : ¬ i.val = 18),
+        ite_eq_right (by lia : ¬ i.val + 1 = 17), ite_eq_right (by lia : ¬ i.val + 1 = 18)]
       exact coprime_succ_gen n i.val
     · -- seam: `n + 16` next to `n + 18`; both odd
-      rw [ite_eq_right (by omega : ¬ i.val = 17), ite_eq_right (by omega : ¬ i.val = 18),
-        ite_eq_left (by omega : i.val + 1 = 17), h]
+      rw [ite_eq_right (by lia : ¬ i.val = 17), ite_eq_right (by lia : ¬ i.val = 18),
+        ite_eq_left (by lia : i.val + 1 = 17), h]
       obtain ⟨k, hk⟩ := hn
-      exact coprime_add_two (c := 16) (by omega)
+      exact coprime_add_two (c := 16) (by lia)
     · -- seam: `n + 18` next to `n + 17`
-      have h17' : i.val = 17 := by omega
-      rw [ite_eq_left h17', ite_eq_right (by omega : ¬ i.val + 1 = 17),
-        ite_eq_left (by omega : i.val + 1 = 18)]
+      have h17' : i.val = 17 := by lia
+      rw [ite_eq_left h17', ite_eq_right (by lia : ¬ i.val + 1 = 17),
+        ite_eq_left (by lia : i.val + 1 = 18)]
       exact (coprime_succ_gen n 17).symm
 
 end ValidCircles

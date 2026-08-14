@@ -113,7 +113,7 @@ problem usa1976_p1_first (c : Fin 4 → Fin 7 → Bool) : HasMonoRectangle c := 
       apply Finset.sum_le_sum
       intro j _
       exact two_le_card_monoTriples c j
-  omega
+  lia
 
 problem usa1976_p1_second : ¬ HasMonoRectangle counterexample := by
   unfold HasMonoRectangle

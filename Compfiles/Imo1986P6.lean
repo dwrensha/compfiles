@@ -125,7 +125,7 @@ lemma balanced_of_alone_col {S : Finset (ℤ × ℤ)} {P : ℤ × ℤ} (hP : P �
       rw [hsum, add_comm]
       rw [abs_le] at hd_abs ⊢
       obtain ⟨hd1, hd2⟩ := hd_abs
-      split_ifs with h <;> constructor <;> omega
+      split_ifs with h <;> constructor <;> lia
     · have hnotmem : P ∉ S.filter (fun p => p.2 = y) := by
         rw [Finset.mem_filter]
         exact fun h => hy h.2.symm
@@ -154,7 +154,7 @@ lemma balanced_of_alone_row {S : Finset (ℤ × ℤ)} {P : ℤ × ℤ} (hP : P �
     rw [hrow R hR h2]
   have herase : ((S.image Prod.swap).erase (Prod.swap P)).card ≤ n := by
     rw [Finset.card_erase_of_mem hP', Finset.card_image_of_injective S Prod.swap_injective]
-    omega
+    lia
   obtain ⟨ε', hε'⟩ := IH _ herase
   obtain ⟨ε₃, hε₃⟩ := balanced_of_alone_col hP' hcol' hε'
   have him : (S.image Prod.swap).image Prod.swap = S := by
@@ -179,8 +179,8 @@ structure AltPath (S : Finset (ℤ × ℤ)) (L : List (ℤ × ℤ)) : Prop where
   mem : ∀ p ∈ L, p ∈ S
   len : 2 ≤ L.length
   step : ∀ i : ℕ, (h : i + 1 < L.length) →
-    (Even i → (L[i]'(by omega)).2 = (L[i + 1]'h).2) ∧
-    (Odd i → (L[i]'(by omega)).1 = (L[i + 1]'h).1)
+    (Even i → (L[i]'(by lia)).2 = (L[i + 1]'h).2) ∧
+    (Odd i → (L[i]'(by lia)).1 = (L[i + 1]'h).1)
 
 /-- An alternating path can be extended by appending a fresh point, provided the
 new last step has the required direction. -/
@@ -204,23 +204,23 @@ lemma AltPath.snoc {S : Finset (ℤ × ℤ)} {L : List (ℤ × ℤ)} (hL : AltPa
   len := by
     have h2 := hL.len
     rw [List.length_append, List.length_singleton]
-    omega
+    lia
   step := by
     intro i h
     rw [List.length_append, List.length_singleton] at h
     by_cases hi : i + 1 < L.length
-    · rw [List.getElem_append_left (show i < L.length by omega),
+    · rw [List.getElem_append_left (show i < L.length by lia),
         List.getElem_append_left hi]
       exact hL.step i hi
-    · have hi2 : i = L.length - 1 := by omega
+    · have hi2 : i = L.length - 1 := by lia
       subst hi2
       have hlen := hL.len
-      rw [List.getElem_append_left (show L.length - 1 < L.length by omega)]
+      rw [List.getElem_append_left (show L.length - 1 < L.length by lia)]
       have h2 : ∀ hh : L.length - 1 + 1 < (L ++ [Q]).length,
           (L ++ [Q])[L.length - 1 + 1]'hh = Q := by
         intro hh
-        rw [List.getElem_append_right (show L.length ≤ L.length - 1 + 1 by omega)]
-        have e0 : L.length - 1 + 1 - L.length = 0 := by omega
+        rw [List.getElem_append_right (show L.length ≤ L.length - 1 + 1 by lia)]
+        have e0 : L.length - 1 + 1 - L.length = 0 := by lia
         simp only [e0]
         rfl
       rw [h2]
@@ -234,8 +234,8 @@ lemma AltPath.snoc {S : Finset (ℤ × ℤ)} {L : List (ℤ × ℤ)} (hL : AltPa
 separately (useful when it is not literally `i + 1`). -/
 lemma AltPath.step_at {S : Finset (ℤ × ℤ)} {L : List (ℤ × ℤ)} (hL : AltPath S L)
     (i j : ℕ) (hij : j = i + 1) (h : i + 1 < L.length) :
-    (Even i → (L[i]'(by omega)).2 = (L[j]'(by omega)).2) ∧
-    (Odd i → (L[i]'(by omega)).1 = (L[j]'(by omega)).1) := by
+    (Even i → (L[i]'(by lia)).2 = (L[j]'(by lia)).2) ∧
+    (Odd i → (L[i]'(by lia)).1 = (L[j]'(by lia)).1) := by
   subst hij
   exact hL.step i h
 
@@ -244,11 +244,11 @@ path, provided the tail starts at an even index. -/
 lemma AltPath.drop_step {S : Finset (ℤ × ℤ)} {L : List (ℤ × ℤ)} (hL : AltPath S L)
     {j : ℕ} (hj : Even j) :
     ∀ t : ℕ, (h : t + 1 < (L.drop j).length) →
-      (Even t → ((L.drop j)[t]'(by omega)).2 = ((L.drop j)[t + 1]'h).2) ∧
-      (Odd t → ((L.drop j)[t]'(by omega)).1 = ((L.drop j)[t + 1]'h).1) := by
+      (Even t → ((L.drop j)[t]'(by lia)).2 = ((L.drop j)[t + 1]'h).2) ∧
+      (Odd t → ((L.drop j)[t]'(by lia)).1 = ((L.drop j)[t + 1]'h).1) := by
   intro t ht
   rw [List.getElem_drop, List.getElem_drop]
-  have h1 := hL.step (j + t) (by rw [List.length_drop] at ht; omega)
+  have h1 := hL.step (j + t) (by rw [List.length_drop] at ht; lia)
   constructor
   · intro hev
     exact h1.1 (hj.add hev)
@@ -274,7 +274,7 @@ lemma AltPath.exists_max {S : Finset (ℤ × ℤ)} (hbase : ∃ L₀, AltPath S 
   refine ⟨L, hL, fun L' hL' => ?_⟩
   have hP' : P L'.length := ⟨L', hL', rfl⟩
   have hle := Nat.le_findGreatest (hb L' hL') hP'
-  omega
+  lia
 
 /-- Helper: two elements of the same list at equal indices are equal. -/
 lemma getElem_congr {α : Type*} (l : List α) {i j : ℕ} (hi : i < l.length) (hj : j < l.length)
@@ -320,14 +320,14 @@ lemma pair_sum_zero : ∀ (C : List (ℤ × ℤ)) (f g : ℤ × ℤ → ℤ),
           exact absurd heven (by decide)
         | cons b rest =>
           have hfa : f a + f b = 0 :=
-            (hcond 0 (by simp only [List.length_cons]; omega)).1
+            (hcond 0 (by simp only [List.length_cons]; lia)).1
           have hga : g a = g b :=
-            (hcond 0 (by simp only [List.length_cons]; omega)).2
+            (hcond 0 (by simp only [List.length_cons]; lia)).2
           have hrest : ∀ t : ℕ, 2 * t + 1 < rest.length →
               f (rest.getD (2 * t) (0, 0)) + f (rest.getD (2 * t + 1) (0, 0)) = 0 ∧
               g (rest.getD (2 * t) (0, 0)) = g (rest.getD (2 * t + 1) (0, 0)) := by
             intro t ht
-            exact hcond (t + 1) (by simp only [List.length_cons]; omega)
+            exact hcond (t + 1) (by simp only [List.length_cons]; lia)
           have h1 : a ∉ b :: rest := (List.nodup_cons.mp hnodup).1
           have h2 : rest.Nodup :=
             (List.nodup_cons.mp (List.nodup_cons.mp hnodup).2).2
@@ -336,10 +336,10 @@ lemma pair_sum_zero : ∀ (C : List (ℤ × ℤ)) (f g : ℤ × ℤ → ℤ),
           obtain ⟨hane_b, harest⟩ := h1
           obtain ⟨k, hk⟩ := heven
           have hrest_even : Even rest.length := by
-            refine ⟨k - 1, by simp only [List.length_cons] at hk; omega⟩
+            refine ⟨k - 1, by simp only [List.length_cons] at hk; lia⟩
           have hrest_len : rest.length ≤ n := by
             simp only [List.length_cons] at hlen
-            omega
+            lia
           have IHres := IH rest f g hrest_len h2 hrest_even hrest c
           rw [List.toFinset_cons, List.toFinset_cons, Finset.filter_insert]
           by_cases hca : g a = c
@@ -355,7 +355,7 @@ lemma pair_sum_zero : ∀ (C : List (ℤ × ℤ)) (f g : ℤ × ℤ → ℤ),
               rw [Finset.mem_filter, List.mem_toFinset]
               exact fun hr => h3 hr.1
             rw [Finset.sum_insert hanot, Finset.sum_insert hbnot, IHres]
-            omega
+            lia
           · rw [ite_eq_right hca]
             have hcb : g b ≠ c := hga ▸ hca
             rw [Finset.filter_insert, ite_eq_right hcb]
@@ -384,9 +384,9 @@ lemma cycSign_apply' (C : List (ℤ × ℤ)) (hn : C.Nodup) (i : ℕ) (h : i < C
 by a vertical step, admits a signing that is balanced on every row and column. -/
 lemma cycle_balanced (C : List (ℤ × ℤ)) (hnodup : C.Nodup) (hlen : Even C.length)
     (hstep : ∀ i : ℕ, (h : i + 1 < C.length) →
-      (Even i → (C[i]'(by omega)).2 = (C[i + 1]'h).2) ∧
-      (Odd i → (C[i]'(by omega)).1 = (C[i + 1]'h).1))
-    (hclose : ∀ h : 0 < C.length, (C[C.length - 1]'(by omega)).1 = (C[0]'h).1) :
+      (Even i → (C[i]'(by lia)).2 = (C[i + 1]'h).2) ∧
+      (Odd i → (C[i]'(by lia)).1 = (C[i + 1]'h).1))
+    (hclose : ∀ h : 0 < C.length, (C[C.length - 1]'(by lia)).1 = (C[0]'h).1) :
     ∃ ε : ℤ × ℤ → ℤ, (∀ p ∈ C.toFinset, ε p = 1 ∨ ε p = -1) ∧
       (∀ y : ℤ, ∑ p ∈ C.toFinset.filter (fun p => p.2 = y), ε p = 0) ∧
       (∀ x : ℤ, ∑ p ∈ C.toFinset.filter (fun p => p.1 = x), ε p = 0) := by
@@ -397,25 +397,25 @@ lemma cycle_balanced (C : List (ℤ × ℤ)) (hnodup : C.Nodup) (hlen : Even C.l
   · intro y
     apply pair_sum_zero C (cycSign C) Prod.snd hnodup hlen _ y
     intro t ht
-    have e0 : C.getD (2 * t) (0, 0) = C[2 * t]'(by omega) :=
+    have e0 : C.getD (2 * t) (0, 0) = C[2 * t]'(by lia) :=
       (List.getElem_eq_getD (0, 0)).symm
     have e0' : C.getD (2 * t + 1) (0, 0) = C[2 * t + 1]'ht :=
       (List.getElem_eq_getD (0, 0)).symm
     rw [e0, e0']
     constructor
-    · rw [cycSign_apply' C hnodup (2 * t) (by omega),
+    · rw [cycSign_apply' C hnodup (2 * t) (by lia),
         cycSign_apply' C hnodup (2 * t + 1) ht,
-        ite_eq_left ⟨t, by omega⟩,
+        ite_eq_left ⟨t, by lia⟩,
         ite_eq_right (Nat.not_even_iff_odd.mpr ⟨t, rfl⟩)]
       norm_num
-    · exact (hstep (2 * t) ht).1 ⟨t, by omega⟩
+    · exact (hstep (2 * t) ht).1 ⟨t, by lia⟩
   · intro x
     have hClen : (C.drop 1 ++ C.take 1).length = C.length := by
       rw [List.length_append, List.length_drop, List.length_take]
       by_cases h0 : C.length = 0
       · simp [h0]
-      · rw [Nat.min_eq_left (by omega : 1 ≤ C.length)]
-        omega
+      · rw [Nat.min_eq_left (by lia : 1 ≤ C.length)]
+        lia
     have hnodup' : (C.drop 1 ++ C.take 1).Nodup := by
       rw [List.nodup_append]
       refine ⟨(List.drop_sublist 1 C).nodup hnodup, (List.take_sublist 1 C).nodup hnodup, ?_⟩
@@ -431,45 +431,45 @@ lemma cycle_balanced (C : List (ℤ × ℤ)) (hnodup : C.Nodup) (hlen : Even C.l
     intro t ht
     rw [hClen] at ht
     have e0 : (C.drop 1 ++ C.take 1).getD (2 * t) (0, 0) =
-        (C.drop 1 ++ C.take 1)[2 * t]'(by omega) :=
+        (C.drop 1 ++ C.take 1)[2 * t]'(by lia) :=
       (List.getElem_eq_getD (0, 0)).symm
     have e0' : (C.drop 1 ++ C.take 1).getD (2 * t + 1) (0, 0) =
-        (C.drop 1 ++ C.take 1)[2 * t + 1]'(by omega) :=
+        (C.drop 1 ++ C.take 1)[2 * t + 1]'(by lia) :=
       (List.getElem_eq_getD (0, 0)).symm
     rw [e0, e0']
     by_cases hcase : 2 * t + 1 < C.length - 1
-    · have e1 : (C.drop 1 ++ C.take 1)[2 * t]'(by omega) = C[2 * t + 1]'(by omega) := by
+    · have e1 : (C.drop 1 ++ C.take 1)[2 * t]'(by lia) = C[2 * t + 1]'(by lia) := by
         rw [List.getElem_append_left (show 2 * t < (C.drop 1).length by
-          rw [List.length_drop]; omega), List.getElem_drop]
-        exact getElem_congr C _ _ (by omega)
-      have e2 : (C.drop 1 ++ C.take 1)[2 * t + 1]'(by omega) = C[2 * t + 2]'(by omega) := by
+          rw [List.length_drop]; lia), List.getElem_drop]
+        exact getElem_congr C _ _ (by lia)
+      have e2 : (C.drop 1 ++ C.take 1)[2 * t + 1]'(by lia) = C[2 * t + 2]'(by lia) := by
         rw [List.getElem_append_left (show 2 * t + 1 < (C.drop 1).length by
-          rw [List.length_drop]; omega), List.getElem_drop]
-        exact getElem_congr C _ _ (by omega)
+          rw [List.length_drop]; lia), List.getElem_drop]
+        exact getElem_congr C _ _ (by lia)
       rw [e1, e2]
       constructor
-      · rw [cycSign_apply' C hnodup (2 * t + 1) (by omega),
-          cycSign_apply' C hnodup (2 * t + 2) (by omega),
-          ite_eq_right (Nat.not_even_iff_odd.mpr ⟨t, rfl⟩), ite_eq_left ⟨t + 1, by omega⟩]
+      · rw [cycSign_apply' C hnodup (2 * t + 1) (by lia),
+          cycSign_apply' C hnodup (2 * t + 2) (by lia),
+          ite_eq_right (Nat.not_even_iff_odd.mpr ⟨t, rfl⟩), ite_eq_left ⟨t + 1, by lia⟩]
         norm_num
-      · exact (hstep (2 * t + 1) (by omega)).2 ⟨t, rfl⟩
-    · have hb : 2 * t + 1 = C.length - 1 := by omega
-      have hCpos : 0 < C.length := by omega
-      have hC2 : C.length = 2 * t + 2 := by omega
-      have e1 : (C.drop 1 ++ C.take 1)[2 * t]'(by omega) = C[C.length - 1]'(by omega) := by
+      · exact (hstep (2 * t + 1) (by lia)).2 ⟨t, rfl⟩
+    · have hb : 2 * t + 1 = C.length - 1 := by lia
+      have hCpos : 0 < C.length := by lia
+      have hC2 : C.length = 2 * t + 2 := by lia
+      have e1 : (C.drop 1 ++ C.take 1)[2 * t]'(by lia) = C[C.length - 1]'(by lia) := by
         rw [List.getElem_append_left (show 2 * t < (C.drop 1).length by
-          rw [List.length_drop]; omega), List.getElem_drop]
-        exact getElem_congr C _ _ (by omega)
-      have e2 : (C.drop 1 ++ C.take 1)[2 * t + 1]'(by omega) = C[0]'(by omega) := by
+          rw [List.length_drop]; lia), List.getElem_drop]
+        exact getElem_congr C _ _ (by lia)
+      have e2 : (C.drop 1 ++ C.take 1)[2 * t + 1]'(by lia) = C[0]'(by lia) := by
         rw [List.getElem_append_right (show (C.drop 1).length ≤ 2 * t + 1 by
-          rw [List.length_drop]; omega), List.getElem_take]
-        exact getElem_congr C _ _ (by rw [List.length_drop]; omega)
+          rw [List.length_drop]; lia), List.getElem_take]
+        exact getElem_congr C _ _ (by rw [List.length_drop]; lia)
       rw [e1, e2]
       constructor
       · have hodd : Odd (C.length - 1) := by
           rcases hlen with ⟨k, hk⟩
-          exact ⟨k - 1, by omega⟩
-        rw [cycSign_apply' C hnodup (C.length - 1) (by omega),
+          exact ⟨k - 1, by lia⟩
+        rw [cycSign_apply' C hnodup (C.length - 1) (by lia),
           cycSign_apply' C hnodup 0 hCpos,
           ite_eq_right (Nat.not_even_iff_odd.mpr hodd), ite_eq_left ⟨0, rfl⟩]
         norm_num
@@ -483,9 +483,9 @@ lemma exists_cycle (S : Finset (ℤ × ℤ)) (hne : S.Nonempty)
     (hcol : ∀ P ∈ S, ∃ Q ∈ S, Q ≠ P ∧ Q.1 = P.1) :
     ∃ C : List (ℤ × ℤ), C.Nodup ∧ (∀ p ∈ C, p ∈ S) ∧ 4 ≤ C.length ∧ Even C.length ∧
       (∀ i : ℕ, (h : i + 1 < C.length) →
-        (Even i → (C[i]'(by omega)).2 = (C[i + 1]'h).2) ∧
-        (Odd i → (C[i]'(by omega)).1 = (C[i + 1]'h).1)) ∧
-      (∀ h : 0 < C.length, (C[C.length - 1]'(by omega)).1 = (C[0]'h).1) := by
+        (Even i → (C[i]'(by lia)).2 = (C[i + 1]'h).2) ∧
+        (Odd i → (C[i]'(by lia)).1 = (C[i + 1]'h).1)) ∧
+      (∀ h : 0 < C.length, (C[C.length - 1]'(by lia)).1 = (C[0]'h).1) := by
   obtain ⟨P₀, hP₀⟩ := hne
   obtain ⟨P₁, hP₁, hP₁ne, hP₁row⟩ := hrow P₀ hP₀
   have hbase : AltPath S [P₀, P₁] := by
@@ -501,7 +501,7 @@ lemma exists_cycle (S : Finset (ℤ × ℤ)) (hne : S.Nonempty)
     · intro i h
       have hi : i = 0 := by
         simp only [List.length_cons, List.length_nil] at h
-        omega
+        lia
       subst hi
       constructor
       · intro _
@@ -511,7 +511,7 @@ lemma exists_cycle (S : Finset (ℤ × ℤ)) (hne : S.Nonempty)
   obtain ⟨L, hL, hLmax⟩ := AltPath.exists_max ⟨[P₀, P₁], hbase⟩
   set k := L.length - 1 with hk
   have hLlen : 2 ≤ L.length := hL.len
-  have hkn : k < L.length := by omega
+  have hkn : k < L.length := by lia
   by_cases hke : Even k
   swap
   · -- CASE `k` ODD: the last step of `L` is a row step.
@@ -526,7 +526,7 @@ lemma exists_cycle (S : Finset (ℤ × ℤ)) (hne : S.Nonempty)
       have hik : i ≠ k := by
         rintro rfl
         exact hQne (by rw [← hQi'])
-      have hik2 : i < k := by omega
+      have hik2 : i < k := by lia
       by_cases hie : Even i
       · -- sub-case: `i` even; the cycle is `L.drop i`
         refine ⟨L.drop i, (List.drop_sublist i L).nodup hL.nodup, ?_, ?_, ?_, ?_, ?_⟩
@@ -536,28 +536,28 @@ lemma exists_cycle (S : Finset (ℤ × ℤ)) (hne : S.Nonempty)
           obtain ⟨a, ha⟩ := hko
           obtain ⟨b, hb⟩ := hie
           by_contra hlt
-          have hik1 : i = k - 1 := by omega
+          have hik1 : i = k - 1 := by lia
           subst hik1
-          have h1 : (L[k - 1]'(by omega)).1 = (L[k]'hkn).1 := by
+          have h1 : (L[k - 1]'(by lia)).1 = (L[k]'hkn).1 := by
             rw [hQi']
             exact hQ1
-          have h2 : (L[k - 1]'(by omega)).2 = (L[k]'hkn).2 :=
-            (hL.step_at (k - 1) k (by omega) (by omega)).1 ⟨a, by omega⟩
-          have heq : (L[k - 1]'(by omega)) = (L[k]'hkn) := Prod.ext_iff.mpr ⟨h1, h2⟩
+          have h2 : (L[k - 1]'(by lia)).2 = (L[k]'hkn).2 :=
+            (hL.step_at (k - 1) k (by lia) (by lia)).1 ⟨a, by lia⟩
+          have heq : (L[k - 1]'(by lia)) = (L[k]'hkn) := Prod.ext_iff.mpr ⟨h1, h2⟩
           have := hL.nodup.getElem_inj_iff.mp heq
-          omega
+          lia
         · rw [List.length_drop]
           obtain ⟨a, ha⟩ := hko
           obtain ⟨b, hb⟩ := hie
-          exact ⟨a + 1 - b, by omega⟩
+          exact ⟨a + 1 - b, by lia⟩
         · exact hL.drop_step hie
         · intro h0
-          have e1 : (L.drop i)[(L.drop i).length - 1]'(by omega) = L[k]'hkn := by
+          have e1 : (L.drop i)[(L.drop i).length - 1]'(by lia) = L[k]'hkn := by
             rw [List.getElem_drop]
-            exact getElem_congr L _ _ (by rw [List.length_drop] at *; omega)
-          have e2 : (L.drop i)[0]'(by omega) = L[i]'hi := by
+            exact getElem_congr L _ _ (by rw [List.length_drop] at *; lia)
+          have e2 : (L.drop i)[0]'(by lia) = L[i]'hi := by
             rw [List.getElem_drop]
-            exact getElem_congr L _ _ (by omega)
+            exact getElem_congr L _ _ (by lia)
           rw [e1, e2, hQi']
           exact hQ1.symm
       · -- sub-case: `i` odd; the cycle is `L.drop (i + 1)`
@@ -570,31 +570,31 @@ lemma exists_cycle (S : Finset (ℤ × ℤ)) (hne : S.Nonempty)
           obtain ⟨a, ha⟩ := hko
           obtain ⟨b, hb⟩ := hio
           by_contra hlt
-          have hik1 : i = k - 2 := by omega
+          have hik1 : i = k - 2 := by lia
           subst hik1
-          have h2 : (L[k - 1]'(by omega)).2 = (L[k]'hkn).2 :=
-            (hL.step_at (k - 1) k (by omega) (by omega)).1 ⟨a, by omega⟩
-          have h1 : (L[k - 1]'(by omega)).1 = (L[k]'hkn).1 := by
-            have hs : (L[k - 2]'(by omega)).1 = (L[k - 1]'(by omega)).1 :=
-              (hL.step_at (k - 2) (k - 1) (by omega) (by omega)).2 ⟨a - 1, by omega⟩
+          have h2 : (L[k - 1]'(by lia)).2 = (L[k]'hkn).2 :=
+            (hL.step_at (k - 1) k (by lia) (by lia)).1 ⟨a, by lia⟩
+          have h1 : (L[k - 1]'(by lia)).1 = (L[k]'hkn).1 := by
+            have hs : (L[k - 2]'(by lia)).1 = (L[k - 1]'(by lia)).1 :=
+              (hL.step_at (k - 2) (k - 1) (by lia) (by lia)).2 ⟨a - 1, by lia⟩
             rw [← hs, hQi']
             exact hQ1
-          have heq : (L[k - 1]'(by omega)) = (L[k]'hkn) := Prod.ext_iff.mpr ⟨h1, h2⟩
+          have heq : (L[k - 1]'(by lia)) = (L[k]'hkn) := Prod.ext_iff.mpr ⟨h1, h2⟩
           have := hL.nodup.getElem_inj_iff.mp heq
-          omega
+          lia
         · rw [List.length_drop]
           obtain ⟨a, ha⟩ := hko
           obtain ⟨b, hb⟩ := hio
-          exact ⟨a - b, by omega⟩
+          exact ⟨a - b, by lia⟩
         · exact hL.drop_step hie2
         · intro h0
-          have e1 : (L.drop (i + 1))[(L.drop (i + 1)).length - 1]'(by omega) = L[k]'hkn := by
+          have e1 : (L.drop (i + 1))[(L.drop (i + 1)).length - 1]'(by lia) = L[k]'hkn := by
             rw [List.getElem_drop]
-            exact getElem_congr L _ _ (by rw [List.length_drop] at *; omega)
-          have e2 : (L.drop (i + 1))[0]'(by omega) = L[i + 1]'(by omega) := by
+            exact getElem_congr L _ _ (by rw [List.length_drop] at *; lia)
+          have e2 : (L.drop (i + 1))[0]'(by lia) = L[i + 1]'(by lia) := by
             rw [List.getElem_drop]
           rw [e1, e2]
-          have hs : (L[i]'hi).1 = (L[i + 1]'(by omega)).1 := (hL.step i (by omega)).2 hio
+          have hs : (L[i]'hi).1 = (L[i + 1]'(by lia)).1 := (hL.step i (by lia)).2 hio
           rw [← hs, hQi']
           exact hQ1.symm
     · -- The column of the last point contains a fresh point: extend the path,
@@ -607,7 +607,7 @@ lemma exists_cycle (S : Finset (ℤ × ℤ)) (hne : S.Nonempty)
       have hsnoc := hL.snoc hQS hQin hlast
       have := hLmax (L ++ [Q]) hsnoc
       rw [List.length_append, List.length_singleton] at this
-      omega
+      lia
   · -- CASE `k` EVEN: the last step of `L` is a column step.
     obtain ⟨Q, hQS, hQne, hQ2⟩ := hrow (L[k]'hkn) (hL.mem _ (List.getElem_mem hkn))
     by_cases hQin : Q ∈ L
@@ -619,17 +619,17 @@ lemma exists_cycle (S : Finset (ℤ × ℤ)) (hne : S.Nonempty)
       have hik : i ≠ k := by
         rintro rfl
         exact hQne (by rw [← hQi'])
-      have hik2 : i < k := by omega
+      have hik2 : i < k := by lia
       by_cases hie : Even i
       · -- sub-case: `i` even; the cycle is `(L.drop (i + 2)) ++ [L[i + 1]]`
-        have hi1 : i + 1 < L.length := by omega
+        have hi1 : i + 1 < L.length := by lia
         have hnotin : L[i + 1]'hi1 ∉ L.drop (i + 2) := by
           intro hin
           rw [List.mem_iff_get] at hin
           obtain ⟨⟨j, hj⟩, hje⟩ := hin
           rw [List.get_eq_getElem, List.getElem_drop] at hje
           have := hL.nodup.getElem_inj_iff.mp hje
-          omega
+          lia
         refine ⟨(L.drop (i + 2)) ++ [L[i + 1]'hi1], ?_, ?_, ?_, ?_, ?_, ?_⟩
         · rw [List.nodup_append]
           refine ⟨(List.drop_sublist (i + 2) L).nodup hL.nodup, List.nodup_singleton _,
@@ -645,67 +645,67 @@ lemma exists_cycle (S : Finset (ℤ × ℤ)) (hne : S.Nonempty)
           obtain ⟨a, ha⟩ := hke
           obtain ⟨b, hb⟩ := hie
           by_contra hlt
-          have hik1 : i = k - 2 := by omega
+          have hik1 : i = k - 2 := by lia
           subst hik1
-          have h1 : (L[k - 1]'(by omega)).1 = (L[k]'hkn).1 :=
-            (hL.step_at (k - 1) k (by omega) (by omega)).2 ⟨a - 1, by omega⟩
-          have h2 : (L[k - 1]'(by omega)).2 = (L[k]'hkn).2 := by
-            have hs : (L[k - 2]'(by omega)).2 = (L[k - 1]'(by omega)).2 :=
-              (hL.step_at (k - 2) (k - 1) (by omega) (by omega)).1 ⟨a - 1, by omega⟩
+          have h1 : (L[k - 1]'(by lia)).1 = (L[k]'hkn).1 :=
+            (hL.step_at (k - 1) k (by lia) (by lia)).2 ⟨a - 1, by lia⟩
+          have h2 : (L[k - 1]'(by lia)).2 = (L[k]'hkn).2 := by
+            have hs : (L[k - 2]'(by lia)).2 = (L[k - 1]'(by lia)).2 :=
+              (hL.step_at (k - 2) (k - 1) (by lia) (by lia)).1 ⟨a - 1, by lia⟩
             rw [← hs, hQi']
             exact hQ2
-          have heq : (L[k - 1]'(by omega)) = (L[k]'hkn) := Prod.ext_iff.mpr ⟨h1, h2⟩
+          have heq : (L[k - 1]'(by lia)) = (L[k]'hkn) := Prod.ext_iff.mpr ⟨h1, h2⟩
           have := hL.nodup.getElem_inj_iff.mp heq
-          omega
+          lia
         · rw [List.length_append, List.length_drop, List.length_singleton]
           obtain ⟨a, ha⟩ := hke
           obtain ⟨b, hb⟩ := hie
-          exact ⟨a - b, by omega⟩
+          exact ⟨a - b, by lia⟩
         · intro t ht
           rw [List.length_append, List.length_drop, List.length_singleton] at ht
           by_cases hin : t + 1 < L.length - (i + 2)
           · rw [List.getElem_append_left (show t < (L.drop (i + 2)).length by
-              rw [List.length_drop]; omega),
+              rw [List.length_drop]; lia),
               List.getElem_append_left (show t + 1 < (L.drop (i + 2)).length by
-              rw [List.length_drop]; omega)]
+              rw [List.length_drop]; lia)]
             have hie2 : Even (i + 2) := hie.add ⟨1, rfl⟩
             exact AltPath.drop_step hL hie2 t (by simpa using hin)
-          · have ht2 : t = k - i - 2 := by omega
-            have e1 : ((L.drop (i + 2)) ++ [L[i + 1]'hi1])[t]'(by omega) = L[k]'hkn := by
+          · have ht2 : t = k - i - 2 := by lia
+            have e1 : ((L.drop (i + 2)) ++ [L[i + 1]'hi1])[t]'(by lia) = L[k]'hkn := by
               rw [List.getElem_append_left (show t < (L.drop (i + 2)).length by
-                rw [List.length_drop]; omega), List.getElem_drop]
-              exact getElem_congr L _ _ (by omega)
-            have e2 : ((L.drop (i + 2)) ++ [L[i + 1]'hi1])[t + 1]'(by omega) =
+                rw [List.length_drop]; lia), List.getElem_drop]
+              exact getElem_congr L _ _ (by lia)
+            have e2 : ((L.drop (i + 2)) ++ [L[i + 1]'hi1])[t + 1]'(by lia) =
                 L[i + 1]'hi1 := by
               rw [List.getElem_append_right (show (L.drop (i + 2)).length ≤ t + 1 by
-                rw [List.length_drop]; omega)]
-              exact List.getElem_singleton (by rw [List.length_drop]; omega)
+                rw [List.length_drop]; lia)]
+              exact List.getElem_singleton (by rw [List.length_drop]; lia)
             rw [e1, e2]
             constructor
             · intro hev
-              have hs : (L[i]'hi).2 = (L[i + 1]'hi1).2 := (hL.step i (by omega)).1 hie
+              have hs : (L[i]'hi).2 = (L[i + 1]'hi1).2 := (hL.step i (by lia)).1 hie
               rw [← hs, hQi']
               exact hQ2.symm
             · intro hodd
               obtain ⟨a, ha⟩ := hke
               obtain ⟨b, hb⟩ := hie
               obtain ⟨c, hc⟩ := hodd
-              omega
+              lia
         · intro h0
           obtain ⟨a, ha⟩ := hke
           obtain ⟨b, hb⟩ := hie
           have e1 : ((L.drop (i + 2)) ++ [L[i + 1]'hi1])[
-              ((L.drop (i + 2)) ++ [L[i + 1]'hi1]).length - 1]'(by omega) = L[i + 1]'hi1 := by
+              ((L.drop (i + 2)) ++ [L[i + 1]'hi1]).length - 1]'(by lia) = L[i + 1]'hi1 := by
             rw [List.getElem_append_right (show (L.drop (i + 2)).length ≤ _ by
-              rw [List.length_append, List.length_drop, List.length_singleton]; omega)]
+              rw [List.length_append, List.length_drop, List.length_singleton]; lia)]
             exact List.getElem_singleton (by
-              rw [List.length_append, List.length_drop, List.length_singleton]; omega)
-          have e2 : ((L.drop (i + 2)) ++ [L[i + 1]'hi1])[0]'(by omega) =
-              L[i + 2]'(by omega) := by
+              rw [List.length_append, List.length_drop, List.length_singleton]; lia)
+          have e2 : ((L.drop (i + 2)) ++ [L[i + 1]'hi1])[0]'(by lia) =
+              L[i + 2]'(by lia) := by
             rw [List.getElem_append_left (show 0 < (L.drop (i + 2)).length by
-              rw [List.length_drop]; omega), List.getElem_drop]
+              rw [List.length_drop]; lia), List.getElem_drop]
           rw [e1, e2]
-          exact (hL.step (i + 1) (by omega)).2 ⟨b, by omega⟩
+          exact (hL.step (i + 1) (by lia)).2 ⟨b, by lia⟩
       · -- sub-case: `i` odd; the cycle is `(L.drop (i + 1)) ++ [L[i]]`
         have hio : Odd i := Nat.not_even_iff_odd.mp hie
         have hnotin : L[i]'hi ∉ L.drop (i + 1) := by
@@ -714,7 +714,7 @@ lemma exists_cycle (S : Finset (ℤ × ℤ)) (hne : S.Nonempty)
           obtain ⟨⟨j, hj⟩, hje⟩ := hin
           rw [List.get_eq_getElem, List.getElem_drop] at hje
           have := hL.nodup.getElem_inj_iff.mp hje
-          omega
+          lia
         refine ⟨(L.drop (i + 1)) ++ [L[i]'hi], ?_, ?_, ?_, ?_, ?_, ?_⟩
         · rw [List.nodup_append]
           refine ⟨(List.drop_sublist (i + 1) L).nodup hL.nodup, List.nodup_singleton _,
@@ -730,38 +730,38 @@ lemma exists_cycle (S : Finset (ℤ × ℤ)) (hne : S.Nonempty)
           obtain ⟨a, ha⟩ := hke
           obtain ⟨b, hb⟩ := hio
           by_contra hlt
-          have hik1 : i = k - 1 := by omega
+          have hik1 : i = k - 1 := by lia
           subst hik1
-          have h1 : (L[k - 1]'(by omega)).1 = (L[k]'hkn).1 :=
-            (hL.step_at (k - 1) k (by omega) (by omega)).2 ⟨a - 1, by omega⟩
-          have h2 : (L[k - 1]'(by omega)).2 = (L[k]'hkn).2 := by
+          have h1 : (L[k - 1]'(by lia)).1 = (L[k]'hkn).1 :=
+            (hL.step_at (k - 1) k (by lia) (by lia)).2 ⟨a - 1, by lia⟩
+          have h2 : (L[k - 1]'(by lia)).2 = (L[k]'hkn).2 := by
             rw [hQi']
             exact hQ2
-          have heq : (L[k - 1]'(by omega)) = (L[k]'hkn) := Prod.ext_iff.mpr ⟨h1, h2⟩
+          have heq : (L[k - 1]'(by lia)) = (L[k]'hkn) := Prod.ext_iff.mpr ⟨h1, h2⟩
           have := hL.nodup.getElem_inj_iff.mp heq
-          omega
+          lia
         · rw [List.length_append, List.length_drop, List.length_singleton]
           obtain ⟨a, ha⟩ := hke
           obtain ⟨b, hb⟩ := hio
-          exact ⟨a - b, by omega⟩
+          exact ⟨a - b, by lia⟩
         · intro t ht
           rw [List.length_append, List.length_drop, List.length_singleton] at ht
           by_cases hin : t + 1 < L.length - (i + 1)
           · rw [List.getElem_append_left (show t < (L.drop (i + 1)).length by
-              rw [List.length_drop]; omega),
+              rw [List.length_drop]; lia),
               List.getElem_append_left (show t + 1 < (L.drop (i + 1)).length by
-              rw [List.length_drop]; omega)]
+              rw [List.length_drop]; lia)]
             have hie2 : Even (i + 1) := hio.add_odd ⟨0, rfl⟩
             exact AltPath.drop_step hL hie2 t (by simpa using hin)
-          · have ht2 : t = k - i - 1 := by omega
-            have e1 : ((L.drop (i + 1)) ++ [L[i]'hi])[t]'(by omega) = L[k]'hkn := by
+          · have ht2 : t = k - i - 1 := by lia
+            have e1 : ((L.drop (i + 1)) ++ [L[i]'hi])[t]'(by lia) = L[k]'hkn := by
               rw [List.getElem_append_left (show t < (L.drop (i + 1)).length by
-                rw [List.length_drop]; omega), List.getElem_drop]
-              exact getElem_congr L _ _ (by omega)
-            have e2 : ((L.drop (i + 1)) ++ [L[i]'hi])[t + 1]'(by omega) = L[i]'hi := by
+                rw [List.length_drop]; lia), List.getElem_drop]
+              exact getElem_congr L _ _ (by lia)
+            have e2 : ((L.drop (i + 1)) ++ [L[i]'hi])[t + 1]'(by lia) = L[i]'hi := by
               rw [List.getElem_append_right (show (L.drop (i + 1)).length ≤ t + 1 by
-                rw [List.length_drop]; omega)]
-              exact List.getElem_singleton (by rw [List.length_drop]; omega)
+                rw [List.length_drop]; lia)]
+              exact List.getElem_singleton (by rw [List.length_drop]; lia)
             rw [e1, e2]
             constructor
             · intro hev
@@ -771,21 +771,21 @@ lemma exists_cycle (S : Finset (ℤ × ℤ)) (hne : S.Nonempty)
               obtain ⟨a, ha⟩ := hke
               obtain ⟨b, hb⟩ := hio
               obtain ⟨c, hc⟩ := hodd
-              omega
+              lia
         · intro h0
           obtain ⟨a, ha⟩ := hke
           obtain ⟨b, hb⟩ := hio
           have e1 : ((L.drop (i + 1)) ++ [L[i]'hi])[
-              ((L.drop (i + 1)) ++ [L[i]'hi]).length - 1]'(by omega) = L[i]'hi := by
+              ((L.drop (i + 1)) ++ [L[i]'hi]).length - 1]'(by lia) = L[i]'hi := by
             rw [List.getElem_append_right (show (L.drop (i + 1)).length ≤ _ by
-              rw [List.length_append, List.length_drop, List.length_singleton]; omega)]
+              rw [List.length_append, List.length_drop, List.length_singleton]; lia)]
             exact List.getElem_singleton (by
-              rw [List.length_append, List.length_drop, List.length_singleton]; omega)
-          have e2 : ((L.drop (i + 1)) ++ [L[i]'hi])[0]'(by omega) = L[i + 1]'(by omega) := by
+              rw [List.length_append, List.length_drop, List.length_singleton]; lia)
+          have e2 : ((L.drop (i + 1)) ++ [L[i]'hi])[0]'(by lia) = L[i + 1]'(by lia) := by
             rw [List.getElem_append_left (show 0 < (L.drop (i + 1)).length by
-              rw [List.length_drop]; omega), List.getElem_drop]
+              rw [List.length_drop]; lia), List.getElem_drop]
           rw [e1, e2]
-          exact (hL.step i (by omega)).2 ⟨b, hb⟩
+          exact (hL.step i (by lia)).2 ⟨b, hb⟩
     · -- The row of the last point contains a fresh point: extend the path,
       -- contradicting maximality.
       have hlast : (Even (L.length - 1) → ∀ h : L.length - 1 < L.length,
@@ -796,7 +796,7 @@ lemma exists_cycle (S : Finset (ℤ × ℤ)) (hne : S.Nonempty)
       have hsnoc := hL.snoc hQS hQin hlast
       have := hLmax (L ++ [Q]) hsnoc
       rw [List.length_append, List.length_singleton] at this
-      omega
+      lia
 
 /-- Main induction: every finite set of points with integer coordinates admits a
 balanced signing. -/
@@ -821,7 +821,7 @@ lemma main_lemma : ∀ n : ℕ, ∀ S : Finset (ℤ × ℤ), S.card ≤ n → �
       rcases hs with hsc | hsr
       · have herase : (S.erase P).card ≤ n := by
           rw [Finset.card_erase_of_mem hP]
-          omega
+          lia
         obtain ⟨ε', hε'⟩ := IH _ herase
         exact balanced_of_alone_col hP hsc hε'
       · exact balanced_of_alone_row hP hsr n IH hS
@@ -857,7 +857,7 @@ lemma main_lemma : ∀ n : ℕ, ∀ S : Finset (ℤ × ℤ), S.card ≤ n → �
         have hCle : C.length ≤ S.card := by
           rw [← List.toFinset_card_of_nodup hCnodup]
           exact Finset.card_le_card hsub
-        omega
+        lia
       obtain ⟨ε', hε'1, hε'2, hε'3⟩ := IH _ hcard
       obtain ⟨εC, hεC1, hεCrow, hεCcol⟩ := cycle_balanced C hCnodup hCleneven hCstep hCclose
       refine ⟨fun p => if p ∈ C.toFinset then εC p else ε' p, ?_, ?_, ?_⟩

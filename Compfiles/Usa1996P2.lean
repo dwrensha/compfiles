@@ -123,7 +123,7 @@ lemma prefixSum_succ_lt_two_mul_sum (A : Finset ℕ) (hAS : A ⊆ S)
         ∑ i ∈ Finset.univ.filter (fun i : Fin S.card ↦ i.val < m),
           S.orderEmbOfFin rfl i := rfl
     rw [hsum] at hx
-    omega
+    lia
   obtain ⟨i, hiB, him⟩ := hex
   have hci : S.orderEmbOfFin rfl i ≤ A.sum id := by
     rw [hsum]
@@ -132,7 +132,7 @@ lemma prefixSum_succ_lt_two_mul_sum (A : Finset ℕ) (hAS : A ⊆ S)
   have hcm : S.orderEmbOfFin rfl ⟨m, hm⟩ ≤ S.orderEmbOfFin rfl i :=
     (S.orderEmbOfFin rfl).strictMono.monotone hle'
   rw [prefixSum_succ S m hm]
-  omega
+  lia
 
 snip end
 
@@ -161,19 +161,19 @@ problem usa1996_p2 (S : Finset ℕ) (hS : ∀ s ∈ S, 0 < s) :
       have hk₀pos : Nat.find H ≠ 0 := by
         intro h
         rw [h, prefixSum_zero] at hk₀x
-        omega
+        lia
       obtain ⟨m, hm⟩ := Nat.exists_eq_succ_of_ne_zero hk₀pos
       rw [hm] at hk₀le hk₀x
-      have hmlt : m < S.card := by omega
+      have hmlt : m < S.card := by lia
       have hmin : prefixSum S m < A.sum id := by
         by_contra hcon
         push Not at hcon
-        exact Nat.find_min H (by omega) ⟨by omega, hcon⟩
+        exact Nat.find_min H (by lia) ⟨by lia, hcon⟩
       exact ⟨⟨m, hmlt⟩, ⟨A, hAS, hAne, rfl⟩, hmin, hk₀x⟩
   · rintro m a ⟨haP, -, hale⟩ b ⟨hbP, hblt, -⟩
     obtain ⟨A, hAS, hAne, rfl⟩ := hbP
     obtain ⟨B, hBS, hBne, rfl⟩ := haP
     have hkey := prefixSum_succ_lt_two_mul_sum S A hAS m.val m.isLt hblt
-    omega
+    lia
 
 end Usa1996P2

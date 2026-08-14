@@ -96,19 +96,19 @@ problem usa1978_p3 (h : ∀ n, 33 ≤ n → n ≤ 73 → Expressible n) :
     intro hn
     rcases Nat.even_or_odd n with ⟨k, hk⟩ | ⟨k, hk⟩
     · -- `n` even, so `n = 2 * (k - 4) + 8` with `33 ≤ k - 4 < n`.
-      have hk2 : n = 2 * (k - 4) + 8 := by omega
+      have hk2 : n = 2 * (k - 4) + 8 := by lia
       have hm : Expressible (k - 4) := by
         by_cases hle : k - 4 ≤ 73
-        · exact h (k - 4) (by omega) hle
-        · exact ih (k - 4) (by omega) (by omega)
+        · exact h (k - 4) (by lia) hle
+        · exact ih (k - 4) (by lia) (by lia)
       rw [hk2]
       exact expressible_two_mul_add_eight hm
     · -- `n` odd, so `n = 2 * (k - 4) + 9` with `33 ≤ k - 4 < n`.
-      have hk2 : n = 2 * (k - 4) + 9 := by omega
+      have hk2 : n = 2 * (k - 4) + 9 := by lia
       have hm : Expressible (k - 4) := by
         by_cases hle : k - 4 ≤ 73
-        · exact h (k - 4) (by omega) hle
-        · exact ih (k - 4) (by omega) (by omega)
+        · exact h (k - 4) (by lia) hle
+        · exact ih (k - 4) (by lia) (by lia)
       rw [hk2]
       exact expressible_two_mul_add_nine hm
 

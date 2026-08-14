@@ -631,7 +631,7 @@ def disjointPairEquiv (n : ℕ) : DisjointPairs n ≃ (Fin n → Fin 3) where
         else if i ∈ Finset.univ.filter (fun j => g j = 1) then 1 else 2) = g i
     simp only [Finset.mem_filter, Finset.mem_univ, true_and]
     have hlt := (g i).isLt
-    have h3 : (g i).val = 0 ∨ (g i).val = 1 ∨ (g i).val = 2 := by omega
+    have h3 : (g i).val = 0 ∨ (g i).val = 1 ∨ (g i).val = 2 := by lia
     rcases h3 with h | h | h
     · have e : g i = 0 := Fin.ext h
       rw [ite_eq_left e]

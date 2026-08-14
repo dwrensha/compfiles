@@ -138,7 +138,7 @@ problem usa1994_p4 (x : ℕ → ℝ) (_hx : ∀ i, 0 < x i)
     (n : ℕ) (hn : 1 ≤ n) :
     (∑ i ∈ Finset.range n, (1 : ℝ) / (i + 1)) / 4 < ∑ i ∈ Finset.range n, (x i) ^ 2 := by
   rw [Finset.sum_div]
-  have hn0 : n ≠ 0 := by omega
+  have hn0 : n ≠ 0 := by lia
   have hA : ∑ i ∈ Finset.range n, (1 : ℝ) / (i + 1) / 4 < ∑ i ∈ Finset.range n, (y i) ^ 2 :=
     Finset.sum_lt_sum_of_nonempty (Finset.nonempty_range_iff.mpr hn0)
       (fun i _ => one_div_four_lt i)

@@ -81,9 +81,9 @@ problem usa1984_p1 (a : ℝ) (P : ℝ[X])
       intro m hm
       rw [hQ]
       simp only [coeff_add, coeff_C, coeff_C_mul_X, coeff_C_mul_X_pow, coeff_X_pow]
-      rw [ite_eq_right (show m ≠ 4 by omega), ite_eq_right (show m ≠ 3 by omega),
-        ite_eq_right (show m ≠ 2 by omega), ite_eq_right (show m ≠ 1 by omega),
-        ite_eq_right (show m ≠ 0 by omega)]
+      rw [ite_eq_right (show m ≠ 4 by lia), ite_eq_right (show m ≠ 3 by lia),
+        ite_eq_right (show m ≠ 2 by lia), ite_eq_right (show m ≠ 1 by lia),
+        ite_eq_right (show m ≠ 0 by lia)]
       simp
     · exact le_natDegree_of_ne_zero (hcoeff4 ▸ one_ne_zero)
   have hQmonic : Q.Monic := by
@@ -100,7 +100,7 @@ problem usa1984_p1 (a : ℝ) (P : ℝ[X])
         natDegree_X_sub_C, natDegree_X_sub_C]
     have h := hQdeg
     rw [hq, natDegree_mul hfmonic.ne_zero hqmonic.ne_zero, hfdeg] at h
-    omega
+    lia
   -- The factorization in standard form.
   have hfac : (X - C x₁) * (X - C x₂) = X ^ 2 - C (x₁ + x₂) * X + C (x₁ * x₂) := by
     simp [map_add, map_mul]

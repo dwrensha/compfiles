@@ -154,13 +154,13 @@ lemma key (x : ℝ) :
           · right; linarith
         rcases e1 with rfl | rfl <;> rcases e2 with e2 | e2
         · have e' : 4 * k + 1 = 4 * j + 2 := by exact_mod_cast e2
-          omega
+          lia
         · have e' : 4 * k + 1 = 4 * j + 3 := by exact_mod_cast e2
-          omega
+          lia
         · have e' : 4 * k + 4 = 4 * j + 2 := by exact_mod_cast e2
-          omega
+          lia
         · have e' : 4 * k + 4 = 4 * j + 3 := by exact_mod_cast e2
-          omega
+          lia
       intro h
       rw [hP0] at h
       exact hQ0 h.symm
@@ -180,13 +180,13 @@ lemma key (x : ℝ) :
           · right; linarith
         rcases e1 with rfl | rfl <;> rcases e2 with e2 | e2
         · have e' : 4 * k + 2 = 4 * j + 1 := by exact_mod_cast e2
-          omega
+          lia
         · have e' : 4 * k + 2 = 4 * j + 4 := by exact_mod_cast e2
-          omega
+          lia
         · have e' : 4 * k + 3 = 4 * j + 1 := by exact_mod_cast e2
-          omega
+          lia
         · have e' : 4 * k + 3 = 4 * j + 4 := by exact_mod_cast e2
-          omega
+          lia
       intro h
       rw [hQ0] at h
       exact hP0 h
@@ -213,7 +213,7 @@ lemma key (x : ℝ) :
               have e2 : (4 : ℝ) * m + 1 < 4 * j + 4 := by linarith
               have e1' : 4 * j + 1 < 4 * m + 2 := by exact_mod_cast e1
               have e2' : 4 * m + 1 < 4 * j + 4 := by exact_mod_cast e2
-              exact hjm (by omega)
+              exact hjm (by lia)
             exact lt_of_le_of_ne' (not_lt.mp hn) (hzu j hj504)
           exact mul_neg_of_neg_of_pos hmul hpos
         have hQpos : 0 < ∏ k ∈ Finset.range 504, ((x - (4 * (k : ℝ) + 2)) * (x - (4 * (k : ℝ) + 3))) := by
@@ -226,7 +226,7 @@ lemma key (x : ℝ) :
             have e2 : (4 : ℝ) * m + 1 < 4 * j + 3 := by linarith
             have e1' : 4 * j + 2 < 4 * m + 2 := by exact_mod_cast e1
             have e2' : 4 * m + 1 < 4 * j + 3 := by exact_mod_cast e2
-            omega
+            lia
           exact lt_of_le_of_ne' (not_lt.mp hn) (hzv j hj)
         exact ne_of_lt (lt_trans hPneg hQpos)
       · -- Case `x = 4m+2`: a right-hand factor vanishes, contradicting `hzv`.
@@ -243,7 +243,7 @@ lemma key (x : ℝ) :
               linarith
             have g2 : x - 2015 < 0 := by
               have h3le : (4 : ℝ) * m + 3 ≤ 2015 := by
-                have hh : 4 * m + 3 ≤ 2015 := by omega
+                have hh : 4 * m + 3 ≤ 2015 := by lia
                 exact_mod_cast hh
               linarith
             exact mul_neg_of_pos_of_neg g1 g2
@@ -258,9 +258,9 @@ lemma key (x : ℝ) :
               have hjm : j < m := by
                 have e : (4 : ℝ) * j + 3 < 4 * m + 3 := by linarith
                 have e' : 4 * j + 3 < 4 * m + 3 := by exact_mod_cast e
-                omega
+                lia
               have hx6 : 4 * (j : ℝ) + 6 < x := by
-                have e : 4 * j + 6 ≤ 4 * m + 2 := by omega
+                have e : 4 * j + 6 ≤ 4 * m + 2 := by lia
                 have e' : (4 : ℝ) * j + 6 ≤ 4 * m + 2 := by exact_mod_cast e
                 linarith
               constructor <;> linarith
@@ -313,7 +313,7 @@ lemma key (x : ℝ) :
                 have e2 : (4 : ℝ) * m + 3 < 4 * j + 4 := by linarith
                 have e1' : 4 * j + 1 < 4 * m + 4 := by exact_mod_cast e1
                 have e2' : 4 * m + 3 < 4 * j + 4 := by exact_mod_cast e2
-                exact hjm (by omega)
+                exact hjm (by lia)
               exact lt_of_le_of_ne' (not_lt.mp hn) (hzu j hj504)
             exact mul_neg_of_neg_of_pos hmul hpos
           have hQpos : 0 < ∏ k ∈ Finset.range 504, ((x - (4 * (k : ℝ) + 2)) * (x - (4 * (k : ℝ) + 3))) := by
@@ -326,7 +326,7 @@ lemma key (x : ℝ) :
               have e2 : (4 : ℝ) * m + 3 < 4 * j + 3 := by linarith
               have e1' : 4 * j + 2 < 4 * m + 4 := by exact_mod_cast e1
               have e2' : 4 * m + 3 < 4 * j + 3 := by exact_mod_cast e2
-              omega
+              lia
             exact lt_of_le_of_ne' (not_lt.mp hn) (hzv j hj)
           exact ne_of_lt (lt_trans hPneg hQpos)
     · -- Every pair on the left is positive, hence smaller than the corresponding
@@ -354,15 +354,15 @@ lemma setL : Finset.Icc 1 2016 \ ((Finset.Icc 1 2016).filter (fun n ↦ n % 4 = 
     Finset.mem_image, Finset.mem_range]
   constructor
   · rintro ⟨⟨h1, h2⟩, h3⟩
-    have h4 : n % 4 = 0 ∨ n % 4 = 1 := by omega
+    have h4 : n % 4 = 0 ∨ n % 4 = 1 := by lia
     rcases h4 with h | h
     · right
-      exact ⟨n / 4 - 1, by omega⟩
+      exact ⟨n / 4 - 1, by lia⟩
     · left
-      exact ⟨n / 4, by omega⟩
+      exact ⟨n / 4, by lia⟩
   · rintro (⟨k, hk, rfl⟩ | ⟨k, hk, rfl⟩)
-    · exact ⟨⟨by omega, by omega⟩, by omega⟩
-    · exact ⟨⟨by omega, by omega⟩, by omega⟩
+    · exact ⟨⟨by lia, by lia⟩, by lia⟩
+    · exact ⟨⟨by lia, by lia⟩, by lia⟩
 
 lemma setR : Finset.Icc 1 2016 \ ((Finset.Icc 1 2016).filter (fun n ↦ n % 4 = 0 ∨ n % 4 = 1))
     = ((Finset.range 504).image (fun k ↦ 4 * k + 2))
@@ -372,15 +372,15 @@ lemma setR : Finset.Icc 1 2016 \ ((Finset.Icc 1 2016).filter (fun n ↦ n % 4 = 
     Finset.mem_image, Finset.mem_range]
   constructor
   · rintro ⟨⟨h1, h2⟩, h3⟩
-    have h4 : n % 4 = 2 ∨ n % 4 = 3 := by omega
+    have h4 : n % 4 = 2 ∨ n % 4 = 3 := by lia
     rcases h4 with h | h
     · left
-      exact ⟨n / 4, by omega⟩
+      exact ⟨n / 4, by lia⟩
     · right
-      exact ⟨n / 4, by omega⟩
+      exact ⟨n / 4, by lia⟩
   · rintro (⟨k, hk, rfl⟩ | ⟨k, hk, rfl⟩)
-    · exact ⟨⟨by omega, by omega⟩, by omega⟩
-    · exact ⟨⟨by omega, by omega⟩, by omega⟩
+    · exact ⟨⟨by lia, by lia⟩, by lia⟩
+    · exact ⟨⟨by lia, by lia⟩, by lia⟩
 
 lemma disjL : Disjoint ((Finset.range 504).image (fun k ↦ 4 * k + 1))
     ((Finset.range 504).image (fun k ↦ 4 * k + 4)) := by
@@ -389,7 +389,7 @@ lemma disjL : Disjoint ((Finset.range 504).image (fun k ↦ 4 * k + 1))
   simp only [Finset.mem_image, Finset.mem_range] at hm1 hm2
   obtain ⟨a, -, ha⟩ := hm1
   obtain ⟨b, -, hb⟩ := hm2
-  omega
+  lia
 
 lemma disjR : Disjoint ((Finset.range 504).image (fun k ↦ 4 * k + 2))
     ((Finset.range 504).image (fun k ↦ 4 * k + 3)) := by
@@ -398,7 +398,7 @@ lemma disjR : Disjoint ((Finset.range 504).image (fun k ↦ 4 * k + 2))
   simp only [Finset.mem_image, Finset.mem_range] at hm1 hm2
   obtain ⟨a, -, ha⟩ := hm1
   obtain ⟨b, -, hb⟩ := hm2
-  omega
+  lia
 
 /-- After erasing the factors indexed by `n % 4 = 2, 3` on the left and by
 `n % 4 = 0, 1` on the right, the resulting equation has no real solution. -/
@@ -411,16 +411,16 @@ lemma prod_erase_aux (x : ℝ) :
         (x - (i : ℝ)))
       = ∏ k ∈ Finset.range 504, ((x - (4 * (k : ℝ) + 1)) * (x - (4 * (k : ℝ) + 4))) := by
     rw [setL, Finset.prod_union disjL,
-      Finset.prod_image (fun a _ b _ h ↦ by omega),
-      Finset.prod_image (fun a _ b _ h ↦ by omega),
+      Finset.prod_image (fun a _ b _ h ↦ by lia),
+      Finset.prod_image (fun a _ b _ h ↦ by lia),
       ← Finset.prod_mul_distrib]
     exact Finset.prod_congr rfl (fun k _ ↦ by push_cast; ring)
   have hQfull : (∏ i ∈ Finset.Icc (1 : ℕ) 2016 \ ((Finset.Icc (1 : ℕ) 2016).filter (fun n ↦ n % 4 = 0 ∨ n % 4 = 1)),
         (x - (i : ℝ)))
       = ∏ k ∈ Finset.range 504, ((x - (4 * (k : ℝ) + 2)) * (x - (4 * (k : ℝ) + 3))) := by
     rw [setR, Finset.prod_union disjR,
-      Finset.prod_image (fun a _ b _ h ↦ by omega),
-      Finset.prod_image (fun a _ b _ h ↦ by omega),
+      Finset.prod_image (fun a _ b _ h ↦ by lia),
+      Finset.prod_image (fun a _ b _ h ↦ by lia),
       ← Finset.prod_mul_distrib]
     exact Finset.prod_congr rfl (fun k _ ↦ by push_cast; ring)
   rw [hPfull, hQfull]

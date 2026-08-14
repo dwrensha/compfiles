@@ -823,7 +823,7 @@ lemma coverGridNoEdgeConfig.cover_no_edge_line_surj (C : coverGridNoEdgeConfig) 
     simp [C.find_line_edge_correct]
   apply Finset.eq_of_subset_of_card_le <;> try (first | assumption | lia)
   have := C.lines_count
-  omega
+  lia
 
 def edgeEndpointCornerId (d : Fin 3) (r : Fin 2) : Fin 3 := match d, r with
   | 0, 0 => 0   -- edge 0 left corner is 0

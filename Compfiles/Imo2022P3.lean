@@ -85,8 +85,8 @@ lemma add_eq_of_dvd_of_dvd {k M x y : ℕ} (hM : Nat.Prime M) (hxM : x < M) (hyM
       push_cast
       linear_combination h4
     obtain ⟨t, ht⟩ := (ZMod.natCast_eq_zero_iff (x + y + 1) M).mp h5
-    have hpos : 0 < x + y + 1 := by omega
-    have hlt : x + y + 1 < 2 * M := by omega
+    have hpos : 0 < x + y + 1 := by lia
+    have hlt : x + y + 1 < 2 * M := by lia
     have ht1 : 1 ≤ t := by
       rcases t with _ | t
       · simp at ht
@@ -96,9 +96,9 @@ lemma add_eq_of_dvd_of_dvd {k M x y : ℕ} (hM : Nat.Prime M) (hxM : x < M) (hyM
       have h' : 2 ≤ t := Nat.lt_of_not_le h
       have h4 : 2 * M ≤ x + y + 1 := by
         have h5' := Nat.mul_le_mul (le_refl M) h'
-        omega
-      omega
-    have ht3 : t = 1 := by omega
+        lia
+      lia
+    have ht3 : t = 1 := by lia
     subst ht3
     simpa using ht
 
@@ -162,11 +162,11 @@ lemma good_of_good_of_good {k M q r : ℕ} (hM : Nat.Prime M) (hq : q < M) (hr :
   have hw0 : 0 ≤ max z (-1 - z) := by
     by_cases h : 0 ≤ z
     · exact le_max_of_le_left h
-    · exact le_max_of_le_right (by omega)
+    · exact le_max_of_le_right (by lia)
   have hww : max z (-1 - z) ^ 2 + max z (-1 - z) = z ^ 2 + z := by
     by_cases h : 0 ≤ z
-    · rw [max_eq_left (by omega : -1 - z ≤ z)]
-    · rw [max_eq_right (by omega : z ≤ -1 - z)]
+    · rw [max_eq_left (by lia : -1 - z ≤ z)]
+    · rw [max_eq_right (by lia : z ≤ -1 - z)]
       ring
   refine ⟨(max z (-1 - z)).toNat, ?_⟩
   have h4 : ((max z (-1 - z)).toNat : ℤ) ^ 2 + (max z (-1 - z)).toNat + k
@@ -201,7 +201,7 @@ lemma card_roots_le_two {k M : ℕ} (hM : Nat.Prime M) (T : Finset ℕ)
         have h2 : m₁ + m₂ + 1 = M :=
           add_eq_of_dvd_of_dvd hM (hT1 m₁ hm₁T) (hT1 m₂ hm₂T) hm₂ne.symm
             (hT2 m₁ hm₁T) (hT2 m₂ hm₂T)
-        exact hmx (by omega)
+        exact hmx (by lia)
       calc T.card ≤ ({m₁, m₂} : Finset ℕ).card := Finset.card_le_card hsub
         _ ≤ 2 := by simpa using Finset.card_insert_le m₁ ({m₂} : Finset ℕ)
     · have hsub : T ⊆ {T.min' hT} := by
@@ -534,13 +534,13 @@ lemma connectedP_delPerm {S : Finset ℕ} {τ : Equiv.Perm S} {M : S}
         exact ⟨s.2, rfl⟩
       | succ m ihm =>
         intro hm
-        obtain ⟨pf, hpf⟩ := ihm (by omega)
+        obtain ⟨pf, hpf⟩ := ihm (by lia)
         have hne : τ ⟨(τ^[m] ⟨s.1, Finset.mem_of_mem_erase s.2⟩).1,
             Finset.mem_of_mem_erase pf⟩
             = τ^[m+1] ⟨s.1, Finset.mem_of_mem_erase s.2⟩ :=
           (Function.iterate_succ_apply' (⇑τ) m ⟨s.1, Finset.mem_of_mem_erase s.2⟩).symm
         have hneM : τ^[m+1] ⟨s.1, Finset.mem_of_mem_erase s.2⟩ ≠ M :=
-          hmin (m+1) (by omega) hm
+          hmin (m+1) (by lia) hm
         have hmem : (τ^[m+1] ⟨s.1, Finset.mem_of_mem_erase s.2⟩).1 ∈ S.erase M :=
           Finset.mem_erase.mpr ⟨fun hval => hneM (Subtype.ext hval), (τ^[m+1] _).2⟩
         refine ⟨hmem, ?_⟩
@@ -655,7 +655,7 @@ lemma ne_of_connectedP {S : Finset ℕ} {σ : Equiv.Perm S} (hc : ConnectedP σ)
     have hne : (S.erase s.1).Nonempty := by
       apply Finset.card_pos.mp
       rw [Finset.card_erase_of_mem s.2]
-      omega
+      lia
     obtain ⟨x, hx⟩ := hne
     exact ⟨⟨x, Finset.mem_of_mem_erase hx⟩,
       fun he => (Finset.mem_erase.mp hx).1 (Subtype.mk_eq_mk.mp he)⟩
@@ -731,8 +731,8 @@ lemma perm_unique {k : ℕ} (n : ℕ) :
         show (σ₁ ⟨b, hmem_b⟩).1 = (σ₂ ⟨b, hmem_b⟩).1
         rw [val_b σ₁ hc1, val_b σ₂ hc2]
     -- #S ≥ 3
-    have h3 : 3 ≤ #S := by omega
-    have hne : S.Nonempty := Finset.card_pos.mp (by omega)
+    have h3 : 3 ≤ #S := by lia
+    have hne : S.Nonempty := Finset.card_pos.mp (by lia)
     set M := S.max' hne with hMdef
     have hMmem : M ∈ S := S.max'_mem hne
     have hMprime : Nat.Prime M := (hS2 M hMmem).2
@@ -741,7 +741,7 @@ lemma perm_unique {k : ℕ} (n : ℕ) :
         σ M' ≠ M' ∧ σ⁻¹ M' ≠ M' ∧ σ⁻¹ M' ≠ σ M' ∧
         good k M (σ M').1 ∧ good k M (σ⁻¹ M').1 ∧ (σ M').1 < M ∧ (σ⁻¹ M').1 < M := by
       intro σ hc hv
-      have hne1 : σ M' ≠ M' := ne_of_connectedP hc (by omega) M'
+      have hne1 : σ M' ≠ M' := ne_of_connectedP hc (by lia) M'
       have hne2 : σ⁻¹ M' ≠ M' := by
         intro h
         have h2 : σ (σ⁻¹ M') = M' := Equiv.apply_symm_apply σ M'
@@ -770,7 +770,7 @@ lemma perm_unique {k : ℕ} (n : ℕ) :
             have h1e : (σ M').1 ∈ S.erase M :=
               Finset.mem_erase.mpr ⟨fun hval => hne1 (Subtype.ext hval), (σ M').2⟩
             rw [Finset.card_erase_of_mem h1e, Finset.card_erase_of_mem hMmem]
-            omega
+            lia
           obtain ⟨x, hx⟩ := hne'
           have hx1 := (Finset.mem_erase.mp hx).1
           have hx2 := (Finset.mem_erase.mp (Finset.mem_of_mem_erase hx)).1
@@ -890,7 +890,7 @@ lemma perm_unique {k : ℕ} (n : ℕ) :
         · have hs : s = r := Subtype.ext h
           rw [hs, hτ1r, hτ2r]
       · -- #S ≥ 4: delete `M'` and apply the induction hypothesis
-        have h4 : 4 ≤ #S := by omega
+        have h4 : 4 ≤ #S := by lia
         have hrM2 : τ₂ M' ≠ M' := by
           rw [← hr]
           exact hrM
@@ -907,11 +907,11 @@ lemma perm_unique {k : ℕ} (n : ℕ) :
         have hc2' : ConnectedP del₂ := connectedP_delPerm hc2
         have hcard' : #(S.erase M) = n - 1 := by
           rw [Finset.card_erase_of_mem hMmem, hcard]
-        have hS1' : 1 ≤ #(S.erase M) := by rw [hcard']; omega
+        have hS1' : 1 ≤ #(S.erase M) := by rw [hcard']; lia
         have hS2' : ∀ p ∈ S.erase M, Odd p ∧ Nat.Prime p := by
           intro p hp
           exact hS2 p (Finset.mem_of_mem_erase hp)
-        rcases ih (n - 1) (by omega) (S.erase M) hcard' hS1' hS2' del₁ del₂
+        rcases ih (n - 1) (by lia) (S.erase M) hcard' hS1' hS2' del₁ del₂
           hv1' hv2' hc1' hc2' with hdel | hdel
         · -- `del₁ = del₂` lifts to `τ₁ = τ₂`
           left
@@ -1032,7 +1032,7 @@ lemma perm_unique {k : ℕ} (n : ℕ) :
               rw [Finset.card_erase_of_mem
                 (Finset.mem_erase.mpr ⟨(fun hval => hqr (Subtype.ext hval)), hqS⟩),
                 Finset.card_erase_of_mem hrS, Finset.card_erase_of_mem hMmem]
-              omega
+              lia
             obtain ⟨x, hx⟩ := hne'
             have hx1 := (Finset.mem_erase.mp hx).1
             have hx2 := (Finset.mem_erase.mp (Finset.mem_of_mem_erase hx)).1

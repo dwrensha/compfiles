@@ -195,7 +195,7 @@ lemma lvl_pos (n : ℕ) : 1 ≤ lvl n := Nat.le_add_left 1 _
 lemma pow_lvl_sub_one_le {n : ℕ} (hn : 1 ≤ n) : 2 ^ (lvl n - 1) ≤ n := by
   have e : lvl n - 1 = Nat.log 2 n := Nat.add_sub_cancel _ _
   rw [e]
-  exact Nat.pow_log_le_self 2 (by omega)
+  exact Nat.pow_log_le_self 2 (by lia)
 
 lemma lt_pow_lvl (n : ℕ) : n < 2 ^ lvl n :=
   Nat.lt_pow_succ_log_self (by norm_num) n
@@ -205,16 +205,16 @@ lemma lvl_le_of_le {n : ℕ} (h1 : 1 ≤ n) (h2 : n ≤ 2047) : lvl n ≤ 11 := 
   push Not at hc
   have h3 : 11 ≤ Nat.log 2 n := by
     have h12 : 12 ≤ Nat.log 2 n + 1 := hc
-    omega
+    lia
   have h4 : (2:ℕ) ^ 11 ≤ n :=
-    le_trans (Nat.pow_le_pow_right (by norm_num) h3) (Nat.pow_log_le_self 2 (by omega))
+    le_trans (Nat.pow_le_pow_right (by norm_num) h3) (Nat.pow_log_le_self 2 (by lia))
   norm_num at h4
-  omega
+  lia
 
 lemma lvl_mono {m n : ℕ} (h : m ≤ n) : lvl m ≤ lvl n := by
   have h' := Nat.log_mono_right (b := 2) h
   show Nat.log 2 m + 1 ≤ Nat.log 2 n + 1
-  omega
+  lia
 
 lemma lvl_eq_of_mem {m ℓ : ℕ} (h1 : 2 ^ (ℓ - 1) ≤ m) (h2 : m < 2 ^ ℓ) : lvl m = ℓ := by
   have hℓ : 1 ≤ ℓ := by
@@ -222,14 +222,14 @@ lemma lvl_eq_of_mem {m ℓ : ℕ} (h1 : 2 ^ (ℓ - 1) ≤ m) (h2 : m < 2 ^ ℓ) 
     push Not at hc
     interval_cases ℓ
     simp at h1 h2
-    omega
+    lia
   have hm : m ≠ 0 := by
     have hpos : 0 < (2:ℕ) ^ (ℓ - 1) := pow_pos (by norm_num) _
-    omega
+    lia
   have hlo : ℓ - 1 ≤ Nat.log 2 m := Nat.le_log_of_pow_le (by norm_num) h1
   have hhi : Nat.log 2 m < ℓ := Nat.log_lt_of_lt_pow hm h2
   show Nat.log 2 m + 1 = ℓ
-  omega
+  lia
 
 /-- The complement of `n` inside its level. -/
 def cval (n : ℕ) : ℕ := 2 ^ lvl n - 1 - n
@@ -242,12 +242,12 @@ lemma cval_lt {n : ℕ} (hn : 1 ≤ n) : cval n < 2 ^ (lvl n - 1) := by
     nth_rewrite 1 [← Nat.sub_add_cancel h3]
     rw [pow_succ, mul_comm]
   show 2 ^ lvl n - 1 - n < _
-  omega
+  lia
 
 /-- Extension of the target tuple to all naturals
 (zero outside `[1, 2022]`). -/
 def xe (x : Fin 2022 → ℝ) (m : ℕ) : ℝ :=
-  if h : 1 ≤ m ∧ m ≤ 2022 then x ⟨m - 1, by omega⟩ else 0
+  if h : 1 ≤ m ∧ m ≤ 2022 then x ⟨m - 1, by lia⟩ else 0
 
 lemma xe_apply (x : Fin 2022 → ℝ) (n : Fin 2022) : xe x (n.val + 1) = x n := by
   have h : 1 ≤ n.val + 1 ∧ n.val + 1 ≤ 2022 :=
@@ -272,7 +272,7 @@ lemma abs_xe_le (x : Fin 2022 → ℝ) {m : ℕ} (hm : m ≤ 2047) : |xe x m| �
     (f := fun m => |xe x m| + |xe x (m + 1) - xe x m|)
     (fun (i : ℕ) (_ : i ∈ Finset.range 2050) =>
       add_nonneg (abs_nonneg (xe x i)) (abs_nonneg (xe x (i + 1) - xe x i)))
-    (Finset.mem_range.mpr (by omega : m < 2050))
+    (Finset.mem_range.mpr (by lia : m < 2050))
   have h1 : |xe x m| ≤ |xe x m| + |xe x (m + 1) - xe x m| :=
     le_add_of_nonneg_right (abs_nonneg _)
   have h2 : Bnd x = 1 + ∑ m ∈ Finset.range 2050, (|xe x m| + |xe x (m + 1) - xe x m|) := rfl
@@ -284,7 +284,7 @@ lemma abs_gap_le (x : Fin 2022 → ℝ) {m : ℕ} (hm : m ≤ 2047) :
     (f := fun m => |xe x m| + |xe x (m + 1) - xe x m|)
     (fun (i : ℕ) (_ : i ∈ Finset.range 2050) =>
       add_nonneg (abs_nonneg (xe x i)) (abs_nonneg (xe x (i + 1) - xe x i)))
-    (Finset.mem_range.mpr (by omega : m < 2050))
+    (Finset.mem_range.mpr (by lia : m < 2050))
   have h1 : |xe x (m + 1) - xe x m| ≤ |xe x m| + |xe x (m + 1) - xe x m| :=
     le_add_of_nonneg_left (abs_nonneg _)
   have h2 : Bnd x = 1 + ∑ m ∈ Finset.range 2050, (|xe x m| + |xe x (m + 1) - xe x m|) := rfl
@@ -330,18 +330,18 @@ lemma gval_step_corrector (x : Fin 2022 → ℝ) {j m : ℕ}
     (hm : 1 ≤ m) (hjm : j = lvl m - 1) (hm1 : m + 1 ≤ 2 ^ lvl m - 1)
     (hm2 : m + 1 ≤ 2047) :
     gval x j m ≤ gval x j (m + 1) := by
-  have hm1' : 1 ≤ m + 1 := by omega
+  have hm1' : 1 ≤ m + 1 := by lia
   have hmlm : lvl (m + 1) = lvl m := by
     apply lvl_eq_of_mem
     · exact le_trans (pow_lvl_sub_one_le hm) (Nat.le_add_right m 1)
     · exact lt_of_le_of_lt hm1
         (Nat.sub_lt (pow_pos (by norm_num : (0:ℕ) < 2) _) (by norm_num))
-  rw [gval_of_mem x ⟨hm, by omega⟩, gval_of_mem x ⟨hm1', hm2⟩]
-  have hbit1 : (cval m).testBit j = false := testBit_cval_eq_false_of_ge hm (by omega)
+  rw [gval_of_mem x ⟨hm, by lia⟩, gval_of_mem x ⟨hm1', hm2⟩]
+  have hbit1 : (cval m).testBit j = false := testBit_cval_eq_false_of_ge hm (by lia)
   have hbit2 : (cval (m + 1)).testBit j = false := by
     apply testBit_cval_eq_false_of_ge hm1'
     rw [hmlm]
-    omega
+    lia
   rw [if_testBit_false hbit1, if_testBit_false hbit2, hmlm, ite_eq_left hjm, ite_eq_left hjm, zero_add, zero_add]
   have hcv : cval (m + 1) + 1 = cval m := by
     have e : cval (m + 1) = 2 ^ lvl m - 1 - (m + 1) := by
@@ -349,9 +349,9 @@ lemma gval_step_corrector (x : Fin 2022 → ℝ) {j m : ℕ}
       rw [hmlm]
     show cval (m + 1) + 1 = 2 ^ lvl m - 1 - m
     rw [e]
-    omega
+    lia
   have hcvr : (cval (m + 1) : ℝ) + 1 = (cval m : ℝ) := by exact_mod_cast hcv
-  have hgap := abs_gap_le x (by omega : m ≤ 2047)
+  have hgap := abs_gap_le x (by lia : m ≤ 2047)
   have hB := Bnd_pos x
   have h2 : -(xe x (m + 1) - xe x m) ≤ Bnd x - 1 := le_trans (neg_le_abs _) hgap
   have h3 : (cval m : ℝ) * Bnd x = (cval (m + 1) : ℝ) * Bnd x + Bnd x := by
@@ -373,23 +373,23 @@ lemma gval_mono (x : Fin 2022 → ℝ) {j ns nt : ℕ}
   have hj_s : j ≤ lvl ns - 1 := by
     by_contra hj
     push Not at hj
-    have hbit : (cval ns).testBit j = false := testBit_cval_eq_false_of_ge hns (by omega)
-    have hcorr : j ≠ lvl ns - 1 := by omega
+    have hbit : (cval ns).testBit j = false := testBit_cval_eq_false_of_ge hns (by lia)
+    have hcorr : j ≠ lvl ns - 1 := by lia
     rw [gval_of_mem x ⟨hns, hnts⟩] at hs
     rw [if_testBit_false hbit, ite_eq_right hcorr] at hs
     exact hs (add_zero _)
   have hj_t : j ≤ lvl nt - 1 := by
     by_contra hj
     push Not at hj
-    have hbit : (cval nt).testBit j = false := testBit_cval_eq_false_of_ge hnt1 (by omega)
-    have hcorr : j ≠ lvl nt - 1 := by omega
+    have hbit : (cval nt).testBit j = false := testBit_cval_eq_false_of_ge hnt1 (by lia)
+    have hcorr : j ≠ lvl nt - 1 := by lia
     rw [gval_of_mem x ⟨hnt1, htt⟩] at ht
     rw [if_testBit_false hbit, ite_eq_right hcorr] at ht
     exact ht (add_zero _)
   rcases eq_or_lt_of_le hj_s with hjs | hjs
   · rcases eq_or_lt_of_le hj_t with hjt | hjt
     · -- both points lie in the level where `j` is the corrector
-      have hℓeq : lvl ns = lvl nt := by omega
+      have hℓeq : lvl ns = lvl nt := by lia
       have hlvl : ∀ d : ℕ, ns + d ≤ nt → lvl (ns + d) = lvl ns := by
         intro d hd
         apply lvl_eq_of_mem
@@ -403,33 +403,33 @@ lemma gval_mono (x : Fin 2022 → ℝ) {j ns nt : ℕ}
         | zero => intro _; exact le_refl _
         | succ d ih =>
             intro hd
-            have hd' : ns + d ≤ nt := by omega
+            have hd' : ns + d ≤ nt := by lia
             have hstep : gval x j (ns + d) ≤ gval x j (ns + d + 1) := by
-              apply gval_step_corrector x (by omega)
+              apply gval_step_corrector x (by lia)
               · rw [hlvl d hd']
                 exact hjs
               · rw [hlvl d hd']
                 have e1 := lt_pow_lvl nt
                 rw [← hℓeq] at e1
-                omega
-              · omega
+                lia
+              · lia
             exact le_trans (ih hd') hstep
-      have hfinal := chain (nt - ns) (by omega)
+      have hfinal := chain (nt - ns) (by lia)
       rw [Nat.add_sub_cancel' hle] at hfinal
       exact hfinal
     · -- corrector at `ns`, bit contribution at `nt`
-      have hbits : (cval ns).testBit j = false := testBit_cval_eq_false_of_ge hns (by omega)
+      have hbits : (cval ns).testBit j = false := testBit_cval_eq_false_of_ge hns (by lia)
       have hbitt : (cval nt).testBit j = true := by
         by_contra hc
         rw [Bool.not_eq_true] at hc
         rw [gval_of_mem x ⟨hnt1, htt⟩] at ht
-        rw [if_testBit_false hc, ite_eq_right (by omega : j ≠ lvl nt - 1)] at ht
+        rw [if_testBit_false hc, ite_eq_right (by lia : j ≠ lvl nt - 1)] at ht
         exact ht (add_zero _)
       have eL : gval x j ns = xe x ns - (cval ns : ℝ) * Bnd x := by
         rw [gval_of_mem x ⟨hns, hnts⟩, if_testBit_false hbits, ite_eq_left hjs, zero_add]
       have eR : gval x j nt = (2:ℝ) ^ j * Bnd x := by
         rw [gval_of_mem x ⟨hnt1, htt⟩, if_testBit_true hbitt,
-          ite_eq_right (by omega : j ≠ lvl nt - 1), add_zero]
+          ite_eq_right (by lia : j ≠ lvl nt - 1), add_zero]
       rw [eL, eR]
       have hB := Bnd_pos x
       have hxe := abs_xe_le x hnts
@@ -441,26 +441,26 @@ lemma gval_mono (x : Fin 2022 → ℝ) {j ns nt : ℕ}
         exact mul_le_mul_of_nonneg_right h2j (le_of_lt hB)
       linarith
   · rcases eq_or_lt_of_le hj_t with hjt | hjt
-    · omega
+    · lia
     · -- bit contributions at both points
       have hbitst : (cval ns).testBit j = true := by
         by_contra hc
         rw [Bool.not_eq_true] at hc
         rw [gval_of_mem x ⟨hns, hnts⟩] at hs
-        rw [if_testBit_false hc, ite_eq_right (by omega : j ≠ lvl ns - 1)] at hs
+        rw [if_testBit_false hc, ite_eq_right (by lia : j ≠ lvl ns - 1)] at hs
         exact hs (add_zero _)
       have hbittt : (cval nt).testBit j = true := by
         by_contra hc
         rw [Bool.not_eq_true] at hc
         rw [gval_of_mem x ⟨hnt1, htt⟩] at ht
-        rw [if_testBit_false hc, ite_eq_right (by omega : j ≠ lvl nt - 1)] at ht
+        rw [if_testBit_false hc, ite_eq_right (by lia : j ≠ lvl nt - 1)] at ht
         exact ht (add_zero _)
       have eL : gval x j ns = (2:ℝ) ^ j * Bnd x := by
         rw [gval_of_mem x ⟨hns, hnts⟩, if_testBit_true hbitst,
-          ite_eq_right (by omega : j ≠ lvl ns - 1), add_zero]
+          ite_eq_right (by lia : j ≠ lvl ns - 1), add_zero]
       have eR : gval x j nt = (2:ℝ) ^ j * Bnd x := by
         rw [gval_of_mem x ⟨hnt1, htt⟩, if_testBit_true hbittt,
-          ite_eq_right (by omega : j ≠ lvl nt - 1), add_zero]
+          ite_eq_right (by lia : j ≠ lvl nt - 1), add_zero]
       rw [eL, eR]
 
 /-- Binary expansion: a natural number is the sum of its bit values. -/
@@ -470,7 +470,7 @@ lemma sum_range_testBit (c : ℕ) {L : ℕ} (h : c < 2 ^ L) :
   | zero =>
       have hc : c = 0 := by
         have h' : c < 1 := by simpa using h
-        omega
+        lia
       simp [hc]
   | succ L ih =>
       rw [Finset.sum_range_succ']
@@ -562,7 +562,7 @@ lemma sum_ffun (x : Fin 2022 → ℝ) {n : ℕ} (h1 : 1 ≤ n) (h2 : n ≤ 2047)
       have h1' := cval_lt h1
       have h2' := lvl_le_of_le h1 h2
       calc cval n < 2 ^ (lvl n - 1) := h1'
-      _ ≤ 2 ^ 10 := Nat.pow_le_pow_right (by norm_num) (by omega)
+      _ ≤ 2 ^ 10 := Nat.pow_le_pow_right (by norm_num) (by lia)
       _ < 2 ^ 11 := by norm_num
     have hfact : (∑ v ∈ Finset.range 11,
         if (cval n).testBit v = true then (2:ℝ) ^ v * Bnd x else 0)
@@ -582,7 +582,7 @@ lemma sum_ffun (x : Fin 2022 → ℝ) {n : ℕ} (h1 : 1 ≤ n) (h2 : n ≤ 2047)
       rw [Finset.mem_range]
       have h2' := lvl_le_of_le h1 h2
       have h1' := lvl_pos n
-      omega
+      lia
     rw [Finset.sum_ite_eq', ite_eq_left hmem]
   rw [hbit, hcorr]
   ring
@@ -608,7 +608,7 @@ problem usa2022_p5 : IsLeast {k | Good k} solution := by
     push Not at hc
     have h10 : k ≤ 10 := by
       have h' : k < 11 := hc
-      omega
+      lia
     exact not_good_ten (Good.mono h10 hk)
 
 end Usa2022P5

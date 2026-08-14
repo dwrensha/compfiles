@@ -53,8 +53,8 @@ problem imo2026_p6 (a : ℕ → ℕ) (ha : IsValidSeq a) :
   -- Any later term shares a common factor with every earlier term.
   have hgcd : ∀ i j : ℕ, i < j → 1 < Nat.gcd (a j) (a i) := by
     intro i j hij
-    have hj : 1 ≤ j := by omega
-    have h := (ha.2 (j - 1)).2.1 i (by omega : i ≤ j - 1)
+    have hj : 1 ≤ j := by lia
+    have h := (ha.2 (j - 1)).2.1 i (by lia : i ≤ j - 1)
     rwa [Nat.sub_add_cancel hj] at h
   -- The sequence is strictly increasing.
   have hmono : StrictMono a := strictMono_nat_of_lt_succ fun n => (ha.2 n).1
@@ -65,7 +65,7 @@ problem imo2026_p6 (a : ℕ → ℕ) (ha : IsValidSeq a) :
     | zero => simp
     | succ n ih =>
       have h := (ha.2 n).1
-      omega
+      lia
   -- Every term belongs to `V = {b > 1 | ∀ i, 1 < gcd b (a i)}`.
   have haV : ∀ n : ℕ, 1 < a n ∧ ∀ i : ℕ, 1 < Nat.gcd (a n) (a i) := by
     intro n
@@ -81,7 +81,7 @@ problem imo2026_p6 (a : ℕ → ℕ) (ha : IsValidSeq a) :
   -- increasing enumeration of `V ∩ [a 0, ∞)`.
   have hVenum : ∀ b : ℕ, 1 < b → (∀ i : ℕ, 1 < Nat.gcd b (a i)) → a 0 ≤ b → ∃ n, a n = b := by
     intro b hb1 hbgcd hb0
-    have hex : ∃ n, b ≤ a n := ⟨b, le_trans (by omega : b ≤ a 0 + b) (hge b)⟩
+    have hex : ∃ n, b ≤ a n := ⟨b, le_trans (by lia : b ≤ a 0 + b) (hge b)⟩
     generalize hn_def : Nat.find hex = n
     have hn : b ≤ a n := by
       rw [← hn_def]
@@ -92,18 +92,18 @@ problem imo2026_p6 (a : ℕ → ℕ) (ha : IsValidSeq a) :
       exact Nat.find_min hex hm
     by_cases h0 : n = 0
     · subst h0
-      exact ⟨0, by omega⟩
-    · have h1 : 1 ≤ n := by omega
+      exact ⟨0, by lia⟩
+    · have h1 : 1 ≤ n := by lia
       have hlt : a (n - 1) < b := by
-        have h2 := hmin' (n - 1) (by omega : n - 1 < n)
-        omega
+        have h2 := hmin' (n - 1) (by lia : n - 1 < n)
+        lia
       have hmin := (ha.2 (n - 1)).2.2
       rw [Nat.sub_add_cancel h1] at hmin
       by_contra hne
       have hblt : b < a n := lt_of_le_of_ne hn fun h => hne ⟨n, h.symm⟩
       obtain ⟨i, hi, hgcdi⟩ := hmin b hlt hblt
       have hgi := hbgcd i
-      omega
+      lia
   -- Key lemma: if a prime `p` divides `a n` but no earlier term, then writing
   -- `a n = p * m` we have `m ≥ 2`, `m` shares a common factor with every earlier term,
   -- and `(p - 1) * m ≤ a (n - 1)` (every multiple `k * m` with `k < p` still meets all
@@ -119,20 +119,20 @@ problem imo2026_p6 (a : ℕ → ℕ) (ha : IsValidSeq a) :
     have hm1 : 1 ≤ m := by
       by_contra h
       push Not at h
-      have h0 : m = 0 := by omega
+      have h0 : m = 0 := by lia
       rw [h0, mul_zero] at hm
-      omega
+      lia
     have hm2 : 2 ≤ m := by
       by_contra h
       push Not at h
-      have hm_eq : m = 1 := by omega
+      have hm_eq : m = 1 := by lia
       rw [hm_eq, mul_one] at hm
-      have h0 : (0 : ℕ) < n := by omega
+      have h0 : (0 : ℕ) < n := by lia
       have hg : 1 < Nat.gcd (a n) (a 0) := hgcd 0 n h0
       rw [hm] at hg
       have hg2 : Nat.gcd p (a 0) ∣ p := Nat.gcd_dvd_left _ _
       rcases (Nat.dvd_prime hp).mp hg2 with h3 | h3
-      · omega
+      · lia
       · have hpdiv : p ∣ a 0 := by
           rw [← h3]
           exact Nat.gcd_dvd_right _ _
@@ -141,7 +141,7 @@ problem imo2026_p6 (a : ℕ → ℕ) (ha : IsValidSeq a) :
       intro i hi
       have hg : 1 < Nat.gcd (a n) (a i) := hgcd i n hi
       rw [hm] at hg
-      obtain ⟨q, hq, hqdiv⟩ := Nat.exists_prime_and_dvd (by omega : Nat.gcd (p * m) (a i) ≠ 1)
+      obtain ⟨q, hq, hqdiv⟩ := Nat.exists_prime_and_dvd (by lia : Nat.gcd (p * m) (a i) ≠ 1)
       have hqp : q ∣ p * m := dvd_trans hqdiv (Nat.gcd_dvd_left _ _)
       have hqai : q ∣ a i := dvd_trans hqdiv (Nat.gcd_dvd_right _ _)
       rcases (hq.dvd_mul).mp hqp with h3 | h3
@@ -152,16 +152,16 @@ problem imo2026_p6 (a : ℕ → ℕ) (ha : IsValidSeq a) :
         rw [hqeq] at hqai
         exact absurd hqai (hnew i hi)
       · have h4 : q ∣ Nat.gcd m (a i) := Nat.dvd_gcd h3 hqai
-        have hpos : 0 < Nat.gcd m (a i) := Nat.gcd_pos_of_pos_left _ (by omega : 0 < m)
+        have hpos : 0 < Nat.gcd m (a i) := Nat.gcd_pos_of_pos_left _ (by lia : 0 < m)
         exact lt_of_lt_of_le hq.one_lt (Nat.le_of_dvd hpos h4)
     have hfinal : (p - 1) * m ≤ a (n - 1) := by
       by_contra h
       push Not at h
       have hlt2 : (p - 1) * m < a n := by
         have hpm : p * m = (p - 1) * m + m := by
-          nth_rewrite 1 [← Nat.sub_add_cancel (show 1 ≤ p by omega)]
+          nth_rewrite 1 [← Nat.sub_add_cancel (show 1 ≤ p by lia)]
           rw [Nat.add_mul, Nat.one_mul]
-        omega
+        lia
       have hmin := (ha.2 (n - 1)).2.2
       rw [Nat.sub_add_cancel hn] at hmin
       obtain ⟨i, hi, hgcdi⟩ := hmin _ h hlt2
@@ -170,8 +170,8 @@ problem imo2026_p6 (a : ℕ → ℕ) (ha : IsValidSeq a) :
           (Nat.gcd_dvd_right _ _)
       rw [hgcdi] at hdvd
       have h6 : Nat.gcd m (a i) = 1 := Nat.dvd_one.mp hdvd
-      have h7 := hmgcd i (by omega : i < n)
-      omega
+      have h7 := hmgcd i (by lia : i < n)
+      lia
     exact ⟨m, hm, hm2, hmgcd, hfinal⟩
   -- **Finiteness of minimal supports.**  Write `S i = (a i).primeFactors`; call index
   -- `i` *minimal* when no actual support is a strict subset of `S i`.  Every prime `p`
@@ -189,15 +189,15 @@ problem imo2026_p6 (a : ℕ → ℕ) (ha : IsValidSeq a) :
       intro i j
       have hne : Nat.gcd (a i) (a j) ≠ 1 := by
         rcases lt_trichotomy i j with h | h | h
-        · rw [Nat.gcd_comm]; have hg := hgcd i j h; omega
-        · subst h; rw [Nat.gcd_self]; have h1 := ha.1 i; omega
-        · have hg := hgcd j i h; omega
+        · rw [Nat.gcd_comm]; have hg := hgcd i j h; lia
+        · subst h; rw [Nat.gcd_self]; have h1 := ha.1 i; lia
+        · have hg := hgcd j i h; lia
       obtain ⟨p, hp, hpdvd⟩ := Nat.exists_prime_and_dvd hne
       refine ⟨p, Finset.mem_inter.mpr ⟨?_, ?_⟩⟩
       · exact Nat.mem_primeFactors.mpr
-          ⟨hp, hpdvd.trans (Nat.gcd_dvd_left _ _), by have h1 := ha.1 i; omega⟩
+          ⟨hp, hpdvd.trans (Nat.gcd_dvd_left _ _), by have h1 := ha.1 i; lia⟩
       · exact Nat.mem_primeFactors.mpr
-          ⟨hp, hpdvd.trans (Nat.gcd_dvd_right _ _), by have h1 := ha.1 j; omega⟩
+          ⟨hp, hpdvd.trans (Nat.gcd_dvd_right _ _), by have h1 := ha.1 j; lia⟩
     -- Prefix enumeration: a prefix-admissible `b < a n` is an earlier term.
     have hPrefix : ∀ n b : ℕ, a 0 ≤ b → b < a n →
         (∀ i : ℕ, i < n → 1 < Nat.gcd b (a i)) → ∃ k : ℕ, k < n ∧ a k = b := by
@@ -207,20 +207,20 @@ problem imo2026_p6 (a : ℕ → ℕ) (ha : IsValidSeq a) :
       have hkn : Nat.find hex ≤ n := Nat.find_min' hex hbn.le
       have heq : a (Nat.find hex) = b := by
         by_cases hk0 : Nat.find hex = 0
-        · rw [hk0] at hbk ⊢; omega
-        · have hkpos : 1 ≤ Nat.find hex := by omega
+        · rw [hk0] at hbk ⊢; lia
+        · have hkpos : 1 ≤ Nat.find hex := by lia
           have hprev : a (Nat.find hex - 1) < b := by
-            have hnot := Nat.find_min hex (show Nat.find hex - 1 < Nat.find hex by omega)
-            omega
+            have hnot := Nat.find_min hex (show Nat.find hex - 1 < Nat.find hex by lia)
+            lia
           by_contra hne
           have hlt : b < a (Nat.find hex) := lt_of_le_of_ne hbk fun h => hne h.symm
           have hmin := (ha.2 (Nat.find hex - 1)).2.2
           rw [Nat.sub_add_cancel hkpos] at hmin
           obtain ⟨i, hi, hcop⟩ := hmin b hprev hlt
-          have hig : 1 < Nat.gcd b (a i) := hbgcd i (by omega)
-          omega
+          have hig : 1 < Nat.gcd b (a i) := hbgcd i (by lia)
+          lia
       refine ⟨Nat.find hex, ?_, heq⟩
-      have haklt : a (Nat.find hex) < a n := by omega
+      have haklt : a (Nat.find hex) < a n := by lia
       exact (hmono.lt_iff_lt).mp haklt
     -- Every actual support contains a minimal actual support.
     have hminSupport : ∀ i : ℕ, ∃ j, (a j).primeFactors ⊆ (a i).primeFactors ∧
@@ -242,9 +242,9 @@ problem imo2026_p6 (a : ℕ → ℕ) (ha : IsValidSeq a) :
           by_contra hlt
           have hlt' : ((a k).primeFactors).card < Nat.find hex := lt_of_not_ge hlt
           exact Nat.find_min hex hlt' ⟨k, hki, rfl⟩
-        omega
+        lia
       have heq : (a k).primeFactors = (a j).primeFactors :=
-        Finset.eq_of_subset_of_card_le hkj (by omega)
+        Finset.eq_of_subset_of_card_le hkj (by lia)
       exact heq.symm.subset
     -- The finite universe of primes, and a disjoint-support selector.
     let W : Finset ℕ → Finset ℕ := fun M =>
@@ -275,7 +275,7 @@ problem imo2026_p6 (a : ℕ → ℕ) (ha : IsValidSeq a) :
           have hkP : P (∏ q ∈ (a k).primeFactors, q) := ⟨k, hMink, hpk, rfl⟩
           have hrle : Nat.find hex ≤ ∏ q ∈ (a k).primeFactors, q :=
             Nat.find_min' hex hkP
-          omega
+          lia
         have hprime_j : ∀ q ∈ (a j).primeFactors, q.Prime :=
           fun q hq => (Nat.mem_primeFactors.mp hq).1
         have hMprime : ∀ q ∈ (a j).primeFactors.erase p, q.Prime :=
@@ -288,8 +288,8 @@ problem imo2026_p6 (a : ℕ → ℕ) (ha : IsValidSeq a) :
         have hrad_ge : a 0 ≤ ∏ q ∈ (a j).primeFactors, q := by
           have hpdvd : p ∣ ∏ q ∈ (a j).primeFactors, q := Finset.dvd_prod_of_mem _ hpj
           have hple : p ≤ ∏ q ∈ (a j).primeFactors, q := Nat.le_of_dvd hrad_pos hpdvd
-          omega
-        have hrad_gt1 : 1 < ∏ q ∈ (a j).primeFactors, q := by omega
+          lia
+        have hrad_gt1 : 1 < ∏ q ∈ (a j).primeFactors, q := by lia
         have hrad_gcd : ∀ l : ℕ, 1 < Nat.gcd (∏ q ∈ (a j).primeFactors, q) (a l) := by
           intro l
           obtain ⟨q, hq⟩ := hpair j l
@@ -310,8 +310,8 @@ problem imo2026_p6 (a : ℕ → ℕ) (ha : IsValidSeq a) :
           by_contra hcon
           have hgcd1 : Nat.gcd (∏ q ∈ (a j).primeFactors.erase p, q) (a l) = 1 := by
             have hpos : 0 < Nat.gcd (∏ q ∈ (a j).primeFactors.erase p, q) (a l) :=
-              Nat.gcd_pos_of_pos_right _ (by have h1 := ha.1 l; omega)
-            omega
+              Nat.gcd_pos_of_pos_right _ (by have h1 := ha.1 l; lia)
+            lia
           have hdisj : Disjoint ((a j).primeFactors.erase p) (a l).primeFactors := by
             rw [Finset.disjoint_left]
             intro q hqM hql
@@ -344,13 +344,13 @@ problem imo2026_p6 (a : ℕ → ℕ) (ha : IsValidSeq a) :
               ∏ q ∈ (a l).primeFactors, q :=
             Finset.prod_dvd_prod_of_subset _ _ (fun q => q) hkl
           have hkle : (∏ q ∈ (a k).primeFactors, q) ≤ a l :=
-            Nat.le_of_dvd (by have h1 := ha.1 l; omega)
+            Nat.le_of_dvd (by have h1 := ha.1 l; lia)
               (hsubdvd.trans (Nat.prod_primeFactors_dvd _))
           have hlt : a l < ∏ q ∈ (a j).primeFactors, q := by
             have h1 : a l < a n := (hmono.lt_iff_lt).mpr hl
             rw [hn] at h1
             exact h1
-          omega
+          lia
         -- Hence `∏ q ∈ M, q < a 0`.
         have hMlt : (∏ q ∈ (a j).primeFactors.erase p, q) < a 0 := by
           by_contra hcon
@@ -382,7 +382,7 @@ problem imo2026_p6 (a : ℕ → ℕ) (ha : IsValidSeq a) :
             Finset.dvd_prod_of_mem _ hq
           have hqle : q ≤ ∏ r ∈ (a j).primeFactors.erase p, r :=
             Nat.le_of_dvd hMpos hqdvd
-          exact Finset.mem_range.mpr (by omega)
+          exact Finset.mem_range.mpr (by lia)
         -- Some term support is disjoint from `M`.
         have hexdisj : ∃ k, Disjoint ((a j).primeFactors.erase p) (a k).primeFactors := by
           by_contra hcon
@@ -415,28 +415,28 @@ problem imo2026_p6 (a : ℕ → ℕ) (ha : IsValidSeq a) :
             have hbge : a 0 ≤ (∏ q ∈ (a j).primeFactors.erase p, q) ^ a 0 := by
               calc a 0 = 1 * a 0 := by simp
                 _ ≤ (∏ q ∈ (a j).primeFactors.erase p, q) * a 0 :=
-                    Nat.mul_le_mul_right _ (by omega)
+                    Nat.mul_le_mul_right _ (by lia)
                 _ ≤ (∏ q ∈ (a j).primeFactors.erase p, q) ^ a 0 :=
-                    Nat.mul_le_pow (by omega) _
-            have hbgt1 : 1 < (∏ q ∈ (a j).primeFactors.erase p, q) ^ a 0 := by omega
+                    Nat.mul_le_pow (by lia) _
+            have hbgt1 : 1 < (∏ q ∈ (a j).primeFactors.erase p, q) ^ a 0 := by lia
             have hbgcd : ∀ l : ℕ, 1 < Nat.gcd
                 ((∏ q ∈ (a j).primeFactors.erase p, q) ^ a 0) (a l) := by
               intro l
               obtain ⟨q, hqM, hql⟩ := hmeet l
               have hqprime := hMprime q hqM
               have hqdvd1 : q ∣ (∏ r ∈ (a j).primeFactors.erase p, r) ^ a 0 :=
-                (Finset.dvd_prod_of_mem _ hqM).trans (dvd_pow_self _ (by omega))
+                (Finset.dvd_prod_of_mem _ hqM).trans (dvd_pow_self _ (by lia))
               have hqdvd2 : q ∣ a l := Nat.dvd_of_mem_primeFactors hql
               have hqdvdg : q ∣ Nat.gcd ((∏ r ∈ (a j).primeFactors.erase p, r) ^ a 0)
                   (a l) := Nat.dvd_gcd hqdvd1 hqdvd2
               have hbpos : 0 < (∏ r ∈ (a j).primeFactors.erase p, r) ^ a 0 :=
-                pow_pos (by omega) _
+                pow_pos (by lia) _
               have hgpos : 0 < Nat.gcd ((∏ r ∈ (a j).primeFactors.erase p, r) ^ a 0)
                   (a l) := Nat.gcd_pos_of_pos_left _ hbpos
               exact hqprime.one_lt.trans_le (Nat.le_of_dvd hgpos hqdvdg)
             obtain ⟨m, hm⟩ := hVenum _ hbgt1 hbgcd hbge
             have hsm : (a m).primeFactors = (a j).primeFactors.erase p := by
-              rw [hm, Nat.primeFactors_pow _ (by omega : a 0 ≠ 0)]
+              rw [hm, Nat.primeFactors_pow _ (by lia : a 0 ≠ 0)]
               exact Nat.primeFactors_prod hMprime
             have hsub : (a m).primeFactors ⊆ (a j).primeFactors := by
               rw [hsm]
@@ -493,16 +493,16 @@ problem imo2026_p6 (a : ℕ → ℕ) (ha : IsValidSeq a) :
           obtain ⟨j, rfl⟩ := hFreal M hM
           have hg := hc j
           have haj := (haV j).1
-          obtain ⟨q, hq, hqdvd⟩ := Nat.exists_prime_and_dvd (by omega : Nat.gcd c (a j) ≠ 1)
+          obtain ⟨q, hq, hqdvd⟩ := Nat.exists_prime_and_dvd (by lia : Nat.gcd c (a j) ≠ 1)
           exact ⟨q, Nat.mem_primeFactors.mpr ⟨hq, dvd_trans hqdvd (Nat.gcd_dvd_right _ _),
-            by omega⟩, dvd_trans hqdvd (Nat.gcd_dvd_left _ _)⟩
+            by lia⟩, dvd_trans hqdvd (Nat.gcd_dvd_left _ _)⟩
         · intro hc i
           obtain ⟨M, hMF, hMsub⟩ := hFcover i
           obtain ⟨p, hpM, hpc⟩ := hc M hMF
           have hp' := Nat.mem_primeFactors.mp (hMsub hpM)
           have hpdvd : p ∣ Nat.gcd c (a i) := Nat.dvd_gcd hpc hp'.2.1
           have hpos : 0 < Nat.gcd c (a i) :=
-            Nat.gcd_pos_of_pos_right _ (by have := (haV i).1; omega)
+            Nat.gcd_pos_of_pos_right _ (by have := (haV i).1; lia)
           exact lt_of_lt_of_le hp'.1.one_lt (Nat.le_of_dvd hpos hpdvd)
       -- Both sides only depend on divisibility by primes dividing `L`.
       have hshift : ∀ c : ℕ, (∀ M ∈ F, ∃ p ∈ M, p ∣ c) →
@@ -523,13 +523,13 @@ problem imo2026_p6 (a : ℕ → ℕ) (ha : IsValidSeq a) :
       exact ⟨hshift b, hshift' b⟩
   -- Step B: `a 0 + L` is itself a term, say `a T₀`; then shifting by `L` commutes with
   -- the enumeration, giving `a (n + T₀) = a n + L` for all `n`.
-  obtain ⟨T₀, hT₀⟩ := hVenum (a 0 + L) (by have h1 := (haV 0).1; omega)
-      ((hper (a 0)).mp (haV 0).2) (by omega)
+  obtain ⟨T₀, hT₀⟩ := hVenum (a 0 + L) (by have h1 := (haV 0).1; lia)
+      ((hper (a 0)).mp (haV 0).2) (by lia)
   have hT₀pos : 0 < T₀ := by
     rcases Nat.eq_zero_or_pos T₀ with h | h
     · exfalso
       rw [h] at hT₀
-      omega
+      lia
     · exact h
   have hmain : ∀ n : ℕ, a (n + T₀) = a n + L := by
     intro n
@@ -540,50 +540,50 @@ problem imo2026_p6 (a : ℕ → ℕ) (ha : IsValidSeq a) :
     | succ n ih =>
       -- Forward: `a (n+1) + L` is a term, so it is at least the next term after
       -- `a (n + T₀) = a n + L`.
-      have h1 : 1 < a (n + 1) + L := by have := (haV (n + 1)).1; omega
+      have h1 : 1 < a (n + 1) + L := by have := (haV (n + 1)).1; lia
       have h2 : ∀ i, 1 < Nat.gcd (a (n + 1) + L) (a i) := (hper (a (n + 1))).mp (haV (n + 1)).2
-      have h3 : a 0 ≤ a (n + 1) + L := by have := hge (n + 1); omega
+      have h3 : a 0 ≤ a (n + 1) + L := by have := hge (n + 1); lia
       obtain ⟨k, hk⟩ := hVenum _ h1 h2 h3
       have hlt1 : a (n + T₀) < a k := by
         rw [hk, ih]
         have h := (ha.2 n).1
-        omega
+        lia
       have hkg : n + T₀ + 1 ≤ k := by
         have h := (hmono.lt_iff_lt).mp hlt1
-        omega
+        lia
       have hle1 : a (n + T₀ + 1) ≤ a (n + 1) + L := by
         have h := hmono.monotone hkg
         rw [hk] at h
         exact h
       -- Backward: `a (n + T₀ + 1) - L` is a term strictly above `a n`.
       have hy : a n + L < a (n + T₀ + 1) := by
-        have h : a (n + T₀) < a (n + T₀ + 1) := hmono (by omega)
-        omega
-      have hLle : L ≤ a (n + T₀ + 1) := by omega
+        have h : a (n + T₀) < a (n + T₀ + 1) := hmono (by lia)
+        lia
+      have hLle : L ≤ a (n + T₀ + 1) := by lia
       have h1' : 1 < a (n + T₀ + 1) - L := by
         have h0 := (haV 0).1
         have hn := hge n
-        omega
+        lia
       have h2' : ∀ i, 1 < Nat.gcd (a (n + T₀ + 1) - L) (a i) := by
         apply (hper (a (n + T₀ + 1) - L)).mpr
         rw [Nat.sub_add_cancel hLle]
         exact (haV (n + T₀ + 1)).2
       have h3' : a 0 ≤ a (n + T₀ + 1) - L := by
         have hn := hge n
-        omega
+        lia
       obtain ⟨m, hm⟩ := hVenum _ h1' h2' h3'
       have hmg : n + 1 ≤ m := by
         have hlt2 : a n < a m := by
           rw [hm]
-          omega
+          lia
         have h := (hmono.lt_iff_lt).mp hlt2
-        omega
+        lia
       have hle2 : a (n + 1) + L ≤ a (n + T₀ + 1) := by
         have h := hmono.monotone hmg
         rw [hm] at h
-        omega
+        lia
       have heq : a (n + T₀ + 1) = a (n + 1) + L := le_antisymm hle1 hle2
-      rw [show n + 1 + T₀ = n + T₀ + 1 by omega]
+      rw [show n + 1 + T₀ = n + T₀ + 1 by lia]
       exact heq
   exact ⟨T₀, L, hT₀pos, hLpos, hmain⟩
 

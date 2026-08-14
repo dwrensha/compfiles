@@ -86,11 +86,11 @@ lemma card_fiber {n : ℕ} (hn : 1 ≤ n) (i a : Fin n) :
   rw [Finset.sum_congr rfl (fun b _ => key b), Finset.sum_const, smul_eq_mul,
     Finset.card_univ, Fintype.card_fin] at hsum
   have hfact : n ! = n * (n - 1)! := by
-    have h1 : n = n - 1 + 1 := by omega
+    have h1 : n = n - 1 + 1 := by lia
     conv_lhs => rw [h1]
     rw [Nat.factorial_succ, Nat.sub_add_cancel hn]
   rw [hfact] at hsum
-  exact Nat.mul_left_cancel (by omega) hsum
+  exact Nat.mul_left_cancel (by lia) hsum
 
 /-- Summing `f (σ i)` over all permutations gives `(n-1)!` times the sum of `f`. -/
 lemma sum_perm_apply {n : ℕ} (hn : 1 ≤ n) (i : Fin n) (f : Fin n → ℝ) :
@@ -161,7 +161,7 @@ lemma card_fiber₂ {n : ℕ} (hn : 2 ≤ n) (i j : Fin n) (hij : i ≠ j) (a b 
       #(univ.filter fun σ : Equiv.Perm (Fin n) => σ i = a ∧ σ j = b) :=
     fun a' ha' => card_fiber₂_eq i j b a' a ha' hab
   have hFib : #(univ.filter fun σ : Equiv.Perm (Fin n) => σ j = b) = (n - 1)! :=
-    card_fiber (by omega) j b
+    card_fiber (by lia) j b
   rw [hFib] at htotal
   have hsum : ∑ a' : Fin n, #(univ.filter fun σ : Equiv.Perm (Fin n) => σ i = a' ∧ σ j = b) =
       (n - 1) * #(univ.filter fun σ : Equiv.Perm (Fin n) => σ i = a ∧ σ j = b) := by
@@ -171,10 +171,10 @@ lemma card_fiber₂ {n : ℕ} (hn : 2 ≤ n) (i j : Fin n) (hij : i ≠ j) (a b 
       Finset.card_univ, Fintype.card_fin]
   rw [hsum] at htotal
   have hfact : (n - 1)! = (n - 1) * (n - 2)! := by
-    have h1 : n - 1 = n - 2 + 1 := by omega
+    have h1 : n - 1 = n - 2 + 1 := by lia
     rw [h1, Nat.factorial_succ]
   rw [hfact] at htotal
-  exact (Nat.mul_left_cancel (by omega) htotal).symm
+  exact (Nat.mul_left_cancel (by lia) htotal).symm
 
 /-- Summing `g (σ i) (σ j)` over all permutations, for `i ≠ j`. -/
 lemma sum_perm_apply₂ {n : ℕ} (hn : 2 ≤ n) (i j : Fin n) (hij : i ≠ j) (g : Fin n → Fin n → ℝ) :
@@ -265,7 +265,7 @@ lemma sum_S_sq {n : ℕ} (hn : 2 ≤ n) (x y : Fin n → ℝ)
   rw [Finset.sum_congr rfl (fun i _ => Finset.sum_congr rfl (fun j _ => hin i j))]
   have hCii : ∀ i : Fin n, ∑ σ : Equiv.Perm (Fin n), y (σ i) * y (σ i) = ((n - 1)! : ℝ) := by
     intro i
-    have h := sum_perm_apply (by omega : 1 ≤ n) i (fun a => y a ^ 2)
+    have h := sum_perm_apply (by lia : 1 ≤ n) i (fun a => y a ^ 2)
     change (∑ σ : Equiv.Perm (Fin n), y (σ i) ^ 2) = ((n - 1)! : ℝ) * ∑ a, y a ^ 2 at h
     rw [hy2, mul_one] at h
     rw [← h]
@@ -306,7 +306,7 @@ lemma variance_bound {n : ℕ} (hn : 2 ≤ n) (x y : Fin n → ℝ)
     (hM : ∀ σ : Equiv.Perm (Fin n), ∑ i, x i * y (σ i) ≤ M) :
     2 / Real.sqrt ((n : ℝ) - 1) ≤ M - m := by
   have hS0 : ∑ σ : Equiv.Perm (Fin n), ∑ i, x i * y (σ i) = 0 :=
-    sum_S_eq_zero (by omega) x y hys
+    sum_S_eq_zero (by lia) x y hys
   have hS2 : ∑ σ : Equiv.Perm (Fin n), (∑ i, x i * y (σ i)) ^ 2 = ((n - 1)! : ℝ) + ((n - 2)! : ℝ) :=
     sum_S_sq hn x y hxs hys hx2 hy2
   have hpt : ∀ σ : Equiv.Perm (Fin n), (∑ i, x i * y (σ i)) ^ 2 ≤
@@ -335,28 +335,28 @@ lemma variance_bound {n : ℕ} (hn : 2 ≤ n) (x y : Fin n → ℝ)
   have hfact1 : ((n - 1)! : ℝ) + ((n - 2)! : ℝ) = (n : ℝ) * ((n - 2)! : ℝ) := by
     have h1 : (n - 1)! + (n - 2)! = n * (n - 2)! := by
       have e1 : (n - 1)! = (n - 1) * (n - 2)! := by
-        have h1' : n - 1 = n - 2 + 1 := by omega
+        have h1' : n - 1 = n - 2 + 1 := by lia
         rw [h1', Nat.factorial_succ]
       rw [e1]
       have e2 : (n - 1) * (n - 2)! + (n - 2)! = (n - 1 + 1) * (n - 2)! := by ring
-      rw [e2, Nat.sub_add_cancel (by omega : 1 ≤ n)]
+      rw [e2, Nat.sub_add_cancel (by lia : 1 ≤ n)]
     exact_mod_cast h1
   have hfact2 : ((n)! : ℝ) = (n : ℝ) * ((n : ℝ) - 1) * ((n - 2)! : ℝ) := by
     have h2 : n ! = n * (n - 1) * (n - 2)! := by
       have e1 : n ! = n * (n - 1)! := by
-        have h1' : n = n - 1 + 1 := by omega
+        have h1' : n = n - 1 + 1 := by lia
         conv_lhs => rw [h1']
-        rw [Nat.factorial_succ, Nat.sub_add_cancel (by omega : 1 ≤ n)]
+        rw [Nat.factorial_succ, Nat.sub_add_cancel (by lia : 1 ≤ n)]
       have e2 : (n - 1)! = (n - 1) * (n - 2)! := by
-        have h1' : n - 1 = n - 2 + 1 := by omega
+        have h1' : n - 1 = n - 2 + 1 := by lia
         rw [h1', Nat.factorial_succ]
       rw [e1, e2, mul_assoc]
     have h3 : (↑(n - 1) : ℝ) = (n : ℝ) - 1 := by
-      rw [Nat.cast_sub (by omega : 1 ≤ n), Nat.cast_one]
+      rw [Nat.cast_sub (by lia : 1 ≤ n), Nat.cast_one]
     rw [h2, Nat.cast_mul, Nat.cast_mul, h3]
   rw [hfact1, hfact2] at h4
   have hc : (0:ℝ) < (n : ℝ) * ((n - 2)! : ℝ) :=
-    mul_pos (Nat.cast_pos.2 (by omega)) (Nat.cast_pos.2 (Nat.factorial_pos _))
+    mul_pos (Nat.cast_pos.2 (by lia)) (Nat.cast_pos.2 (Nat.factorial_pos _))
   have h5 : 4 ≤ ((n : ℝ) - 1) * (M - m) ^ 2 := by
     have h4'' : (4 : ℝ) * ((n : ℝ) * ((n - 2)! : ℝ)) ≤
         (((n : ℝ) - 1) * (M - m) ^ 2) * ((n : ℝ) * ((n - 2)! : ℝ)) := by
@@ -365,7 +365,7 @@ lemma variance_bound {n : ℕ} (hn : 2 ≤ n) (x y : Fin n → ℝ)
         _ = (((n : ℝ) - 1) * (M - m) ^ 2) * ((n : ℝ) * ((n - 2)! : ℝ)) := by ring
     exact le_of_mul_le_mul_right h4'' hc
   have hn1 : (0:ℝ) < (n : ℝ) - 1 := by
-    have h : (1:ℝ) < (n : ℝ) := by exact_mod_cast (by omega : 1 < n)
+    have h : (1:ℝ) < (n : ℝ) := by exact_mod_cast (by lia : 1 < n)
     linarith
   have h6 : (2 / Real.sqrt ((n : ℝ) - 1)) ^ 2 ≤ (M - m) ^ 2 := by
     rw [div_pow, Real.sq_sqrt (le_of_lt hn1), div_le_iff₀ hn1,
@@ -391,7 +391,7 @@ lemma fin_strictMono_ge {m : ℕ} {g : Fin m → ℕ} (hg : StrictMono g) (j : F
       have hvm : v < m := Nat.lt_of_succ_lt hv
       have h1 : v ≤ g ⟨v, hvm⟩ := ih hvm
       have h2 : g ⟨v, hvm⟩ < g ⟨v + 1, hv⟩ := hg (by rw [Fin.mk_lt_mk]; exact Nat.lt_succ_self v)
-      omega
+      lia
   have h3 := h j.val j.isLt
   rwa [Fin.eta j j.isLt] at h3
 
@@ -447,7 +447,7 @@ lemma abel_nonneg {n : ℕ} (x z : ℕ → ℝ)
       x i = x (n - 1) + ∑ k ∈ Finset.Ico i (n - 1), (x k - x (k + 1)) := by
     intro i hi
     have h1 : ∑ k ∈ Finset.Ico i (n - 1), (x (k + 1) - x k) = x (n - 1) - x i := by
-      rw [Finset.sum_Ico_eq_sub _ (show i ≤ n - 1 by omega), Finset.sum_range_sub,
+      rw [Finset.sum_Ico_eq_sub _ (show i ≤ n - 1 by lia), Finset.sum_range_sub,
         Finset.sum_range_sub]
       ring
     have h2 : ∑ k ∈ Finset.Ico i (n - 1), (x k - x (k + 1)) = x i - x (n - 1) := by
@@ -473,7 +473,7 @@ lemma abel_nonneg {n : ℕ} (x z : ℕ → ℝ)
       show (⟨k, i⟩ : Σ _ : ℕ, ℕ) ∈ (Finset.range (n - 1)).sigma (fun k => Finset.range (k + 1))
       simp only [Finset.mem_sigma, Finset.mem_range, Finset.mem_Ico] at hp
       simp only [Finset.mem_sigma, Finset.mem_range, Finset.mem_range]
-      omega
+      lia
     · intro ⟨i, k⟩ _ ⟨i', k'⟩ _ h
       simp only [Sigma.mk.injEq, heq_iff_eq] at h
       obtain ⟨rfl, rfl⟩ := h
@@ -483,14 +483,14 @@ lemma abel_nonneg {n : ℕ} (x z : ℕ → ℝ)
       refine ⟨⟨i, k⟩, ?_, rfl⟩
       show (⟨i, k⟩ : Σ _ : ℕ, ℕ) ∈ (Finset.range n).sigma (fun i => Finset.Ico i (n - 1))
       simp only [Finset.mem_sigma, Finset.mem_range, Finset.mem_Ico]
-      omega
+      lia
     · intro ⟨i, k⟩ _
       rfl
   calc (0:ℝ) ≤ ∑ k ∈ Finset.range (n - 1), (x k - x (k + 1)) * (∑ i ∈ Finset.range (k + 1), z i) := by
         apply Finset.sum_nonneg
         intro k hk
         rw [Finset.mem_range] at hk
-        exact mul_nonneg (hx k (by omega)) (hZ k (by omega))
+        exact mul_nonneg (hx k (by lia)) (hZ k (by lia))
     _ = ∑ i ∈ Finset.range n, x i * z i := by
         have e1 : (∑ i ∈ Finset.range n, x i * z i) =
             ∑ i ∈ Finset.range n,
@@ -524,7 +524,7 @@ lemma rearr_upper {n : ℕ} (x y : Fin n → ℝ) (hx : Antitone x) (hy : Antito
   have hxd : ∀ k : ℕ, k + 1 < n → 0 ≤ (if h : k < n then x ⟨k, h⟩ else 0) -
       (if h : k + 1 < n then x ⟨k + 1, h⟩ else 0) := by
     intro k hk
-    rw [dite_eq_left (by omega : k < n), dite_eq_left hk]
+    rw [dite_eq_left (by lia : k < n), dite_eq_left hk]
     exact sub_nonneg.2 (hx (by rw [Fin.le_def]; exact Nat.le_succ k))
   have hZ : ∀ k : ℕ, k < n → 0 ≤ ∑ i ∈ Finset.range (k + 1),
       (if h : i < n then (y ⟨i, h⟩ - y (σ ⟨i, h⟩)) else 0) := by
@@ -547,7 +547,7 @@ lemma rearr_upper {n : ℕ} (x y : Fin n → ℝ) (hx : Antitone x) (hy : Antito
       (Finset.sum_map Finset.univ e y).symm
     rw [h1]
     exact topsum y hy (Finset.map e Finset.univ)
-      (by rw [Finset.card_map, Finset.card_univ, Fintype.card_fin]) (by omega)
+      (by rw [Finset.card_map, Finset.card_univ, Fintype.card_fin]) (by lia)
   have hab : 0 ≤ ∑ i ∈ Finset.range n, (fun i => if h : i < n then x ⟨i, h⟩ else 0) i *
       (fun i => if h : i < n then (y ⟨i, h⟩ - y (σ ⟨i, h⟩)) else 0) i :=
     abel_nonneg _ _ hz hxd hZ
@@ -583,7 +583,7 @@ lemma rearr_lower {n : ℕ} (x y : Fin n → ℝ) (hx : Antitone x) (hy : Antito
   have hxd : ∀ k : ℕ, k + 1 < n → 0 ≤ (if h : k < n then x ⟨k, h⟩ else 0) -
       (if h : k + 1 < n then x ⟨k + 1, h⟩ else 0) := by
     intro k hk
-    rw [dite_eq_left (by omega : k < n), dite_eq_left hk]
+    rw [dite_eq_left (by lia : k < n), dite_eq_left hk]
     exact sub_nonneg.2 (hx (by rw [Fin.le_def]; exact Nat.le_succ k))
   have hZ : ∀ k : ℕ, k < n → 0 ≤ ∑ i ∈ Finset.range (k + 1),
       (if h : i < n then (y (σ ⟨i, h⟩) - y (Fin.rev ⟨i, h⟩)) else 0) := by
@@ -606,7 +606,7 @@ lemma rearr_lower {n : ℕ} (x y : Fin n → ℝ) (hx : Antitone x) (hy : Antito
       (Finset.sum_map Finset.univ e y).symm
     rw [h1]
     exact bottomsum y hy (Finset.map e Finset.univ)
-      (by rw [Finset.card_map, Finset.card_univ, Fintype.card_fin]) (by omega)
+      (by rw [Finset.card_map, Finset.card_univ, Fintype.card_fin]) (by lia)
   have hab : 0 ≤ ∑ i ∈ Finset.range n, (fun i => if h : i < n then x ⟨i, h⟩ else 0) i *
       (fun i => if h : i < n then (y (σ ⟨i, h⟩) - y (Fin.rev ⟨i, h⟩)) else 0) i :=
     abel_nonneg _ _ hz hxd hZ

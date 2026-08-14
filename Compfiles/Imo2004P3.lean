@@ -88,8 +88,8 @@ lemma mem_rect {m n : ℕ} {c : ℤ × ℤ} :
   · rintro ⟨h1, h2, h3, h4⟩
     simp only [rect, Finset.mem_image, Finset.mem_product, Finset.mem_range]
     refine ⟨(c.1.toNat, c.2.toNat), ⟨?_, ?_⟩, ?_⟩
-    · exact Int.toNat_lt (by omega) |>.mpr (by exact_mod_cast h2)
-    · exact Int.toNat_lt (by omega) |>.mpr (by exact_mod_cast h4)
+    · exact Int.toNat_lt (by lia) |>.mpr (by exact_mod_cast h2)
+    · exact Int.toNat_lt (by lia) |>.mpr (by exact_mod_cast h4)
     · ext <;> simp [h1, h3]
 
 lemma card_rect (m n : ℕ) : (rect m n).card = m * n := by
@@ -301,15 +301,15 @@ lemma rect_add_rows (m₁ m₂ n : ℕ) :
   · rintro ⟨h0, h1, h2, h3⟩
     by_cases hc : c.1 < (m₁ : ℤ)
     · exact Or.inl ⟨h0, hc, h2, h3⟩
-    · refine Or.inr ⟨(c.1 - m₁, c.2), ⟨by omega, by omega, by omega, by omega⟩, ?_⟩
+    · refine Or.inr ⟨(c.1 - m₁, c.2), ⟨by lia, by lia, by lia, by lia⟩, ?_⟩
       ext <;> simp
   · rintro (⟨h0, h1, h2, h3⟩ | ⟨x, hx, rfl⟩)
-    · exact ⟨h0, by omega, h2, h3⟩
+    · exact ⟨h0, by lia, h2, h3⟩
     · obtain ⟨hx0, hx1, hx2, hx3⟩ := hx
       have g1 : (x + ((m₁ : ℤ), 0)).1 = x.1 + (m₁ : ℤ) := rfl
       have g2 : (x + ((m₁ : ℤ), 0)).2 = x.2 := add_zero _
       rw [g1, g2]
-      exact ⟨by omega, by omega, by omega, by omega⟩
+      exact ⟨by lia, by lia, by lia, by lia⟩
 
 lemma rect_add_rows_disjoint (m₁ m₂ n : ℕ) :
     Disjoint (rect m₁ n) ((rect m₂ n).image (· + ((m₁ : ℤ), 0))) := by
@@ -321,7 +321,7 @@ lemma rect_add_rows_disjoint (m₁ m₂ n : ℕ) :
   rw [mem_rect] at hab
   have key : a + (m₁ : ℤ) < (m₁ : ℤ) := hc1.2.1
   have ha0 : 0 ≤ a := hab.1
-  omega
+  lia
 
 lemma rect_add_cols (m n₁ n₂ : ℕ) :
     rect m (n₁ + n₂) = rect m n₁ ∪ (rect m n₂).image (· + (0, (n₁ : ℤ))) := by
@@ -331,15 +331,15 @@ lemma rect_add_cols (m n₁ n₂ : ℕ) :
   · rintro ⟨h0, h1, h2, h3⟩
     by_cases hc : c.2 < (n₁ : ℤ)
     · exact Or.inl ⟨h0, h1, h2, hc⟩
-    · refine Or.inr ⟨(c.1, c.2 - n₁), ⟨by omega, by omega, by omega, by omega⟩, ?_⟩
+    · refine Or.inr ⟨(c.1, c.2 - n₁), ⟨by lia, by lia, by lia, by lia⟩, ?_⟩
       ext <;> simp
   · rintro (⟨h0, h1, h2, h3⟩ | ⟨x, hx, rfl⟩)
-    · exact ⟨h0, h1, h2, by omega⟩
+    · exact ⟨h0, h1, h2, by lia⟩
     · obtain ⟨hx0, hx1, hx2, hx3⟩ := hx
       have g1 : (x + (0, (n₁ : ℤ))).1 = x.1 := add_zero _
       have g2 : (x + (0, (n₁ : ℤ))).2 = x.2 + (n₁ : ℤ) := rfl
       rw [g1, g2]
-      exact ⟨by omega, by omega, by omega, by omega⟩
+      exact ⟨by lia, by lia, by lia, by lia⟩
 
 lemma rect_add_cols_disjoint (m n₁ n₂ : ℕ) :
     Disjoint (rect m n₁) ((rect m n₂).image (· + (0, (n₁ : ℤ)))) := by
@@ -351,7 +351,7 @@ lemma rect_add_cols_disjoint (m n₁ n₂ : ℕ) :
   rw [mem_rect] at hab
   have key : b + (n₁ : ℤ) < (n₁ : ℤ) := hc1.2.2.2
   have hb0 : 0 ≤ b := hab.2.2.1
-  omega
+  lia
 
 lemma tileable_mul_rows {a n : ℕ} (h : Tileable (rect a n)) : ∀ k, Tileable (rect (k * a) n) := by
   intro k
@@ -426,11 +426,11 @@ lemma tileable_3_4 : Tileable (rect 3 4) := by
 
 /-- Every natural number other than `1, 2, 5` is a sum of `3`s and `4`s. -/
 lemma nat_3_4 {n : ℕ} (h : n ≠ 1 ∧ n ≠ 2 ∧ n ≠ 5) : ∃ a b, n = 3 * a + 4 * b := by
-  have h3 : n % 3 = 0 ∨ n % 3 = 1 ∨ n % 3 = 2 := by omega
+  have h3 : n % 3 = 0 ∨ n % 3 = 1 ∨ n % 3 = 2 := by lia
   rcases h3 with h3 | h3 | h3
-  · exact ⟨n / 3, 0, by omega⟩
-  · exact ⟨n / 3 - 1, 1, by omega⟩
-  · exact ⟨n / 3 - 2, 2, by omega⟩
+  · exact ⟨n / 3, 0, by lia⟩
+  · exact ⟨n / 3 - 1, 1, by lia⟩
+  · exact ⟨n / 3 - 2, 2, by lia⟩
 
 /-- A `12 × n` rectangle with `n ∉ {1, 2, 5}` is tileable. -/
 lemma tileable_12j (j : ℕ) {n : ℕ} (h2 : n ≠ 1 ∧ n ≠ 2 ∧ n ≠ 5) :
@@ -552,7 +552,7 @@ lemma hole_mem_rect_of_hook {m n : ℕ} {s : Finset (ℤ × ℤ)} (h : IsHook s)
   have mc2 := hsub (Finset.mem_image.mpr ⟨cc2, hcc2, rfl⟩)
   rw [mem_rect] at m00 m02 mc0 mc2
   simp only [Prod.fst_add, Prod.snd_add] at m00 m02 mc0 mc2 ⊢
-  refine ⟨by omega, by omega, by omega, by omega⟩
+  refine ⟨by lia, by lia, by lia, by lia⟩
 
 /-- The pairing lemma in its general form: in any tiling, the partner of a
 hook (the hook covering its hole) has its hole covered by the first hook,
@@ -571,7 +571,7 @@ lemma pair_general {H₁ H₂ : Finset (ℤ × ℤ)} (h1 : IsHook H₁) (h2 : Is
     refine Finset.mem_image.mpr ⟨c₂, hc₂, ?_⟩
     have e1 : c₂.1 + t₂.1 = 1 + t₁.1 := by have := congrArg Prod.fst hct; simpa using this
     have e2 : c₂.2 + t₂.2 = 1 + t₁.2 := by have := congrArg Prod.snd hct; simpa using this
-    ext <;> simp <;> omega
+    ext <;> simp <;> lia
   have hdisj : Disjoint σ₁ (σ₂.image (· + (t₂ - t₁))) := by
     have e : σ₂.image (· + t₂) = (σ₂.image (· + (t₂ - t₁))).image (· + t₁) := by
       rw [image_add_image]
@@ -593,7 +593,7 @@ lemma pair_general {H₁ H₂ : Finset (ℤ × ℤ)} (h1 : IsHook H₁) (h2 : Is
       have hc₁' : c₁ = (1, 1) + (t₂ - t₁) := by
         have e1 : c₁.1 + t₁.1 = 1 + t₂.1 := by have := congrArg Prod.fst hct; simpa using this
         have e2 : c₁.2 + t₁.2 = 1 + t₂.2 := by have := congrArg Prod.snd hct; simpa using this
-        ext <;> simp <;> omega
+        ext <;> simp <;> lia
       rw [hc₁'] at hc₁
       exact hc₁
     · right
@@ -605,7 +605,7 @@ lemma pair_general {H₁ H₂ : Finset (ℤ × ℤ)} (h1 : IsHook H₁) (h2 : Is
         refine Finset.mem_image.mpr ⟨c₃, hc₃, ?_⟩
         have e1 : c₃.1 + t₃.1 = 1 + t₂.1 := by have := congrArg Prod.fst hct; simpa using this
         have e2 : c₃.2 + t₃.2 = 1 + t₂.2 := by have := congrArg Prod.snd hct; simpa using this
-        ext <;> simp <;> omega
+        ext <;> simp <;> lia
       have hdisj3 : Disjoint (σ₃.image (· + (t₃ - t₁)))
           (σ₁ ∪ σ₂.image (· + (t₂ - t₁))) := by
         have e3 : σ₃.image (· + t₃) = (σ₃.image (· + (t₃ - t₁))).image (· + t₁) := by
@@ -634,7 +634,7 @@ lemma pair_general {H₁ H₂ : Finset (ℤ × ℤ)} (h1 : IsHook H₁) (h2 : Is
   · rw [hole_image σ₂ hσ₂ t₂, Finset.mem_image]
     refine ⟨(1, 1) + (t₂ - t₁), g1, ?_⟩
     show (1, 1) + (t₂ - t₁) + t₁ = (1, 1) + t₂
-    ext <;> simp <;> omega
+    ext <;> simp <;> lia
   · rw [Finset.card_pos] at g2
     obtain ⟨τ, hτ⟩ := g2
     rw [Finset.mem_filter] at hτ
@@ -778,8 +778,8 @@ lemma tile_parities : ∀ τ ∈ tileShapes, ∀ t : ℤ × ℤ,
     ((τ.image (· + t)).filter fun c => 4 ∣ c.2).card % 2 +
     ((τ.image (· + t)).filter fun c => 4 ∣ c.1).card % 2 = 1 := by
   intro τ hτ t
-  have hk2 : t.2 % 4 = 0 ∨ t.2 % 4 = 1 ∨ t.2 % 4 = 2 ∨ t.2 % 4 = 3 := by omega
-  have hk1 : t.1 % 4 = 0 ∨ t.1 % 4 = 1 ∨ t.1 % 4 = 2 ∨ t.1 % 4 = 3 := by omega
+  have hk2 : t.2 % 4 = 0 ∨ t.2 % 4 = 1 ∨ t.2 % 4 = 2 ∨ t.2 % 4 = 3 := by lia
+  have hk1 : t.1 % 4 = 0 ∨ t.1 % 4 = 1 ∨ t.1 % 4 = 2 ∨ t.1 % 4 = 3 := by lia
   have e2 : ((τ.image (· + t)).filter fun c => 4 ∣ c.2) =
       (τ.filter fun c => 4 ∣ c.2 + t.2 % 4).image (· + t) := by
     rw [Finset.filter_image]
@@ -788,7 +788,7 @@ lemma tile_parities : ∀ τ ∈ tileShapes, ∀ t : ℤ × ℤ,
     intro c _
     have hcr : (c + t).2 = c.2 + t.2 := rfl
     rw [hcr]
-    constructor <;> intro hdiv <;> omega
+    constructor <;> intro hdiv <;> lia
   have e1 : ((τ.image (· + t)).filter fun c => 4 ∣ c.1) =
       (τ.filter fun c => 4 ∣ c.1 + t.1 % 4).image (· + t) := by
     rw [Finset.filter_image]
@@ -797,7 +797,7 @@ lemma tile_parities : ∀ τ ∈ tileShapes, ∀ t : ℤ × ℤ,
     intro c _
     have hcr : (c + t).1 = c.1 + t.1 := rfl
     rw [hcr]
-    constructor <;> intro hdiv <;> omega
+    constructor <;> intro hdiv <;> lia
   rw [e2, e1, Finset.card_image_of_injective _ (fun _ _ h => add_right_cancel h),
     Finset.card_image_of_injective _ (fun _ _ h => add_right_cancel h)]
   fin_cases hτ <;>
@@ -850,10 +850,10 @@ lemma mod4_eq_two_of {a b : ℕ} (h4ab : 4 ∣ a * b) (h4a : ¬ 4 ∣ a) (h4b : 
   have h2ab : 2 ∣ a * b := dvd_trans (by decide : 2 ∣ 4) h4ab
   have ha : a % 2 = 0 := by
     by_contra hao
-    have hao1 : a % 2 = 1 := by omega
+    have hao1 : a % 2 = 1 := by lia
     have h2b : 2 ∣ b := by
       rcases (Nat.Prime.dvd_mul (by decide : Nat.Prime 2)).mp h2ab with h2a | h2b
-      · exact absurd h2a (by omega)
+      · exact absurd h2a (by lia)
       · exact h2b
     obtain ⟨b', rfl⟩ := h2b
     have h2ab' : 2 ∣ a * b' := by
@@ -865,18 +865,18 @@ lemma mod4_eq_two_of {a b : ℕ} (h4ab : 4 ∣ a * b) (h4a : ¬ 4 ∣ a) (h4b : 
         ring
       exact ⟨k, Nat.mul_left_cancel (by norm_num) hk2⟩
     rcases (Nat.Prime.dvd_mul (by decide : Nat.Prime 2)).mp h2ab' with h2a | h2b'
-    · exact absurd h2a (by omega)
+    · exact absurd h2a (by lia)
     · obtain ⟨q, hq⟩ := h2b'
       apply h4b
       rw [hq]
       exact ⟨q, by ring⟩
   have hb : b % 2 = 0 := by
     by_contra hbo
-    have hbo1 : b % 2 = 1 := by omega
+    have hbo1 : b % 2 = 1 := by lia
     have h2a : 2 ∣ a := by
       rcases (Nat.Prime.dvd_mul (by decide : Nat.Prime 2)).mp h2ab with h2a | h2b
       · exact h2a
-      · exact absurd h2b (by omega)
+      · exact absurd h2b (by lia)
     obtain ⟨a', rfl⟩ := h2a
     have h2ab' : 2 ∣ a' * b := by
       obtain ⟨k, hk⟩ := h4ab
@@ -891,24 +891,24 @@ lemma mod4_eq_two_of {a b : ℕ} (h4ab : 4 ∣ a * b) (h4a : ¬ 4 ∣ a) (h4b : 
       apply h4a
       rw [hq]
       exact ⟨q, by ring⟩
-    · exact absurd h2b (by omega)
+    · exact absurd h2b (by lia)
   obtain ⟨a', rfl⟩ := Nat.dvd_of_mod_eq_zero ha
   obtain ⟨b', rfl⟩ := Nat.dvd_of_mod_eq_zero hb
   have ha' : a' % 2 = 1 := by
     by_contra hc
-    have hc0 : a' % 2 = 0 := by omega
+    have hc0 : a' % 2 = 0 := by lia
     obtain ⟨q, hq⟩ := Nat.dvd_of_mod_eq_zero hc0
     apply h4a
     rw [hq]
     exact ⟨q, by ring⟩
   have hb' : b' % 2 = 1 := by
     by_contra hc
-    have hc0 : b' % 2 = 0 := by omega
+    have hc0 : b' % 2 = 0 := by lia
     obtain ⟨q, hq⟩ := Nat.dvd_of_mod_eq_zero hc0
     apply h4b
     rw [hq]
     exact ⟨q, by ring⟩
-  constructor <;> omega
+  constructor <;> lia
 
 /-- Necessity of the divisibility condition on `4`. -/
 lemma card_biUnion' {s : Finset (Finset (ℤ × ℤ))} {t : Finset (ℤ × ℤ) → Finset (ℤ × ℤ)}
@@ -961,26 +961,26 @@ lemma four_dvd_of_tileable {m n : ℕ} (h : Tileable (rect m n)) : 4 ∣ m ∨ 4
     exact (card_biUnion' hdisj).symm
   have hevencol : Even (∑ T ∈ Tiles, ((T.filter fun c => 4 ∣ c.2)).card) := by
     rw [hsumc, rect_filter_snd_card]
-    obtain ⟨q, hq : m = 2 * q⟩ := show ∃ q, m = 2 * q from ⟨m / 2, by omega⟩
+    obtain ⟨q, hq : m = 2 * q⟩ := show ∃ q, m = 2 * q from ⟨m / 2, by lia⟩
     exact ⟨q * ((Finset.range n).filter fun j : ℕ => 4 ∣ (j : ℤ)).card, by rw [hq]; ring⟩
   have hevenrow : Even (∑ T ∈ Tiles, ((T.filter fun c => 4 ∣ c.1)).card) := by
     rw [hsumr, rect_filter_fst_card]
-    obtain ⟨q, hq : n = 2 * q⟩ := show ∃ q, n = 2 * q from ⟨n / 2, by omega⟩
+    obtain ⟨q, hq : n = 2 * q⟩ := show ∃ q, n = 2 * q from ⟨n / 2, by lia⟩
     exact ⟨q * ((Finset.range m).filter fun j : ℕ => 4 ∣ (j : ℤ)).card, by rw [hq]; ring⟩
   have hcol2 : Even (∑ T ∈ Tiles, ((T.filter fun c => 4 ∣ c.2)).card % 2) := by
     have decomp : ∀ T ∈ Tiles, ((T.filter fun c => 4 ∣ c.2)).card =
         2 * (((T.filter fun c => 4 ∣ c.2)).card / 2) +
-          ((T.filter fun c => 4 ∣ c.2)).card % 2 := fun T _ => by omega
+          ((T.filter fun c => 4 ∣ c.2)).card % 2 := fun T _ => by lia
     rw [Finset.sum_congr rfl decomp, Finset.sum_add_distrib, ← Finset.mul_sum] at hevencol
     obtain ⟨q, hq⟩ := hevencol
-    exact ⟨q - ∑ T ∈ Tiles, ((T.filter fun c => 4 ∣ c.2)).card / 2, by omega⟩
+    exact ⟨q - ∑ T ∈ Tiles, ((T.filter fun c => 4 ∣ c.2)).card / 2, by lia⟩
   have hrow2 : Even (∑ T ∈ Tiles, ((T.filter fun c => 4 ∣ c.1)).card % 2) := by
     have decomp : ∀ T ∈ Tiles, ((T.filter fun c => 4 ∣ c.1)).card =
         2 * (((T.filter fun c => 4 ∣ c.1)).card / 2) +
-          ((T.filter fun c => 4 ∣ c.1)).card % 2 := fun T _ => by omega
+          ((T.filter fun c => 4 ∣ c.1)).card % 2 := fun T _ => by lia
     rw [Finset.sum_congr rfl decomp, Finset.sum_add_distrib, ← Finset.mul_sum] at hevenrow
     obtain ⟨q, hq⟩ := hevenrow
-    exact ⟨q - ∑ T ∈ Tiles, ((T.filter fun c => 4 ∣ c.1)).card / 2, by omega⟩
+    exact ⟨q - ∑ T ∈ Tiles, ((T.filter fun c => 4 ∣ c.1)).card / 2, by lia⟩
   have hcard : Even Tiles.card := by
     have hcs : Tiles.card = ∑ T ∈ Tiles, 1 := by
       rw [Finset.sum_const, nsmul_eq_mul, Nat.cast_id, mul_one]
@@ -989,16 +989,16 @@ lemma four_dvd_of_tileable {m n : ℕ} (h : Tileable (rect m n)) : 4 ∣ m ∨ 4
     rw [hcs, Finset.sum_congr rfl decomp, Finset.sum_add_distrib]
     obtain ⟨q1, hq1⟩ := hcol2
     obtain ⟨q2, hq2⟩ := hrow2
-    exact ⟨q1 + q2, by omega⟩
+    exact ⟨q1 + q2, by lia⟩
   -- final contradiction modulo 8
   obtain ⟨s, hs⟩ := hcard
-  have em : m = 4 * (m / 4) + 2 := by omega
-  have en : n = 4 * (n / 4) + 2 := by omega
+  have em : m = 4 * (m / 4) + 2 := by lia
+  have en : n = 4 * (n / 4) + 2 := by lia
   have emn : m * n = 24 * s := by rw [hmn, hs]; ring
   have key : (4 * (m / 4) + 2) * (4 * (n / 4) + 2) =
       8 * (2 * (m / 4) * (n / 4) + (m / 4) + (n / 4)) + 4 := by ring
   rw [← em, ← en, emn] at key
-  omega
+  lia
 
 /-- A rectangle with a side of length at most `2` cannot be tiled (a hook
 spans three consecutive rows and three consecutive columns). -/
@@ -1006,7 +1006,7 @@ lemma not_tileable_of_n_le_two {m n : ℕ} (hm : 0 < m) (hn : 0 < n) (hnle : n �
     ¬ Tileable (rect m n) := by
   intro h
   obtain ⟨𝒯, hh, hd, hU⟩ := h
-  have hne : (rect m n).Nonempty := ⟨(0, 0), by rw [mem_rect]; omega⟩
+  have hne : (rect m n).Nonempty := ⟨(0, 0), by rw [mem_rect]; lia⟩
   by_cases h𝒯 : 𝒯 = ∅
   · rw [h𝒯, Finset.biUnion_empty] at hU
     rw [hU] at hne
@@ -1032,7 +1032,7 @@ lemma not_tileable_of_n_le_two {m n : ℕ} (hm : 0 < m) (hn : 0 < n) (hnle : n �
     have e2 : ((r, 2) + t).2 = t.2 + 2 := add_comm _ _
     rw [e1] at m1
     rw [e2] at m2
-    omega
+    lia
 
 /-- The second cell used in the corner propagation argument for the `5 × n`
 case: it is the cell just next to a tile placed in the corner which cannot
@@ -1074,7 +1074,7 @@ lemma not_tileable_5 (n : ℕ) (hn : 0 < n) : ¬ Tileable (rect 5 n) := by
     Nat.Coprime.dvd_of_dvd_mul_left (by decide : Nat.Coprime 12 5) (twelve_dvd_of_tileable h)
   have hn12 : 12 ≤ n := Nat.le_of_dvd hn h12n
   obtain ⟨Tiles, hT, hd, hU⟩ := tile_decomposition h
-  have h00 : (0, 0) ∈ rect 5 n := by rw [mem_rect]; omega
+  have h00 : (0, 0) ∈ rect 5 n := by rw [mem_rect]; lia
   rw [hU, Finset.mem_biUnion] at h00
   obtain ⟨T, hT', h00T⟩ := h00
   obtain ⟨τ, hτ, t, rfl⟩ := (hT T hT').1
@@ -1100,11 +1100,11 @@ lemma not_tileable_5 (n : ℕ) (hn : 0 < n) : ¬ Tileable (rect 5 n) := by
     have t1 : t.1 = 0 := by
       have e0f := congrArg Prod.fst e0
       simp at e0f
-      omega
+      lia
     have t2 : t.2 = 0 := by
       have e0s := congrArg Prod.snd e0
       simp at e0s
-      omega
+      lia
     exact Prod.ext t1 t2
   rw [ht0] at h00T hsubT hT'
   have hTτ : τ.image (· + (0, 0)) = τ := by
@@ -1116,7 +1116,7 @@ lemma not_tileable_5 (n : ℕ) (hn : 0 < n) : ¬ Tileable (rect 5 n) := by
   have hxmem : cornerCell τ ∈ rect 5 n := by
     have hx4 := cornerCell_val τ hτ
     simp only [Finset.mem_insert, Finset.mem_singleton] at hx4
-    rcases hx4 with h | h | h | h <;> rw [h] <;> (rw [mem_rect]; omega)
+    rcases hx4 with h | h | h | h <;> rw [h] <;> (rw [mem_rect]; lia)
   rw [hU, Finset.mem_biUnion] at hxmem
   obtain ⟨U, hU', hxU⟩ := hxmem
   obtain ⟨τ', hτ'', v, rfl⟩ := (hT U hU').1
@@ -1134,7 +1134,7 @@ lemma not_tileable_5 (n : ℕ) (hn : 0 < n) : ¬ Tileable (rect 5 n) := by
     have e1 := congrArg Prod.fst hcv
     have e2 := congrArg Prod.snd hcv
     simp only [Prod.fst_add, Prod.snd_add] at e1 e2
-    ext <;> simp <;> omega
+    ext <;> simp <;> lia
   have hbounds : ∀ cell ∈ τ'.image (· + v), 0 ≤ cell.1 ∧ cell.1 < 5 ∧ 0 ≤ cell.2 ∧ cell.2 < 6 := by
     intro cell hcell
     rw [Finset.mem_image] at hcell
@@ -1150,10 +1150,10 @@ lemma not_tileable_5 (n : ℕ) (hn : 0 < n) : ¬ Tileable (rect 5 n) := by
     have hv2 : v.2 = (cornerCell τ).2 - c'.2 := by
       have hcv2 := congrArg Prod.snd hcv
       simp only [Prod.snd_add] at hcv2
-      omega
+      lia
     have hx2 : (cornerCell τ).2 ≤ 2 := cornerCell_snd τ hτ
     have e2 : (c + v).2 = c.2 + v.2 := rfl
-    exact ⟨hm.1, hm.2.1, hm.2.2.1, by omega⟩
+    exact ⟨hm.1, hm.2.1, hm.2.2.1, by lia⟩
   exact corner_check τ hτ h00T τ' hτ'' v hv_mem hbounds hdisj
 
 snip end

@@ -127,7 +127,7 @@ lemma sum_subsetSum_sq {n : ℕ} (hn : 2 ≤ n) (x : Fin n → ℝ)
     by_cases hij : i = j
     · subst hij
       rw [ite_eq_left rfl, ite_eq_left rfl]
-      rw [two_pow_sub n 1 (by omega)]
+      rw [two_pow_sub n 1 (by lia)]
       push_cast
       have h : (2 : ℝ) ^ ((n : ℤ) - 1) = (2 : ℝ) ^ ((n : ℤ) - 2) * 2 := by
         have h1 := zpow_add_one₀ (two_ne_zero : (2 : ℝ) ≠ 0) ((n : ℤ) - 2)
@@ -551,7 +551,7 @@ lemma card_eq_of_equality_case {n : ℕ} (hn : 2 ≤ n) (x : Fin n → ℝ) (lam
           intro hiB
           have h2 := hB hiB
           exact (mem_erase.mp (erase_subset j _ h2)).1 rfl
-    have h2 : (n - 1) - 1 = n - 2 := by omega
+    have h2 : (n - 1) - 1 = n - 2 := by lia
     rw [h1, card_powerset, card_erase_of_mem (mem_erase.mpr ⟨Ne.symm hij, mem_univ j⟩),
       card_erase_of_mem (mem_univ i), card_univ, Fintype.card_fin, h2]
   rw [hT, hcard, two_pow_sub n 2 hn, hlam, hr_sq]

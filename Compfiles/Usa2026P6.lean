@@ -78,11 +78,11 @@ lemma quotient_eq_three_aux {s : ℕ}
     rw [Nat.mul_sub_left_distrib]
     have h2 : b * (k * a) = a * b * k := by ring
     rw [h2, ← hk, pow_two b]
-    omega
+    lia
   have hb'pos : 0 < k * a - b := by
     rcases Nat.eq_zero_or_pos (k * a - b) with h0 | hpos
     · rw [h0, mul_zero] at hbb'
-      omega
+      lia
     · exact hpos
   -- the descended pair `(a, b')` satisfies the same equation with the same `k`
   have hveq : a ^ 2 + (k * a - b) ^ 2 + 1 = a * (k * a - b) * k := by
@@ -90,7 +90,7 @@ lemma quotient_eq_three_aux {s : ℕ}
     have h1 : a ^ 2 + (k * a - b) ^ 2 + 1 =
         b * (k * a - b) + (k * a - b) * (k * a - b) := by
       rw [pow_two (k * a - b)]
-      omega
+      lia
     rw [h1]
     calc b * (k * a - b) + (k * a - b) * (k * a - b)
         = (k * a - b) * (b + (k * a - b)) := by ring
@@ -111,18 +111,18 @@ lemma quotient_eq_three_aux {s : ℕ}
       have haa : a * a ∣ 2 * (a * a) + 1 := by
         refine ⟨k, ?_⟩
         rw [pow_two a] at hk
-        omega
+        lia
       have hd2 : a * a ∣ 2 * (a * a) := dvd_mul_left (a * a) 2
       exact (Nat.dvd_add_iff_right hd2).mpr haa
     have ha1 : a = 1 := Nat.eq_one_of_mul_eq_one_right (Nat.dvd_one.mp hdv1)
     subst ha1
-    omega
+    lia
   · -- `b' < b`: descend and use the induction hypothesis
-    have hsum' : a + (k * a - b) < s := by rw [← hsum]; omega
+    have hsum' : a + (k * a - b) < s := by rw [← hsum]; lia
     have hIH := IH (a + (k * a - b)) hsum' a (k * a - b) rfl ha hb'pos ⟨k, hveq⟩
     have hkq2 : (a ^ 2 + (k * a - b) ^ 2 + 1) / (a * (k * a - b)) = k := by
       rw [hveq, Nat.mul_div_right _ (mul_pos ha hb'pos)]
-    omega
+    lia
 
 /-- If `a * b ∣ a^2 + b^2 + 1` for positive naturals `a, b`, then the quotient is `3`. -/
 lemma quotient_eq_three {a b : ℕ} (ha : 0 < a) (hb : 0 < b)
@@ -138,7 +138,7 @@ lemma quotient_eq_three {a b : ℕ} (ha : 0 < a) (hb : 0 < b)
       · have hdvd' : b * a ∣ b ^ 2 + a ^ 2 + 1 := by
           rw [mul_comm b a, add_comm (b ^ 2) (a ^ 2)]
           exact hdvd
-        have h := quotient_eq_three_aux IH hb ha (by omega) (le_of_lt hlt) hdvd'
+        have h := quotient_eq_three_aux IH hb ha (by lia) (le_of_lt hlt) hdvd'
         rwa [mul_comm b a, add_comm (b ^ 2) (a ^ 2)] at h
   exact key (a + b) a b rfl ha hb hdvd
 
@@ -146,12 +146,12 @@ lemma quotient_eq_three {a b : ℕ} (ha : 0 < a) (hb : 0 < b)
 lemma fib_add_four (n : ℕ) : Nat.fib (n + 4) + Nat.fib n = 3 * Nat.fib (n + 2) := by
   have h1 : Nat.fib (n + 4) = Nat.fib (n + 2) + Nat.fib (n + 3) := by
     have h := @Nat.fib_add_two (n + 2)
-    rwa [show n + 2 + 2 = n + 4 by omega, show n + 2 + 1 = n + 3 by omega] at h
+    rwa [show n + 2 + 2 = n + 4 by lia, show n + 2 + 1 = n + 3 by lia] at h
   have h2 : Nat.fib (n + 3) = Nat.fib (n + 1) + Nat.fib (n + 2) := by
     have h := @Nat.fib_add_two (n + 1)
-    rwa [show n + 1 + 2 = n + 3 by omega, show n + 1 + 1 = n + 2 by omega] at h
+    rwa [show n + 1 + 2 = n + 3 by lia, show n + 1 + 1 = n + 2 by lia] at h
   have h3 : Nat.fib (n + 2) = Nat.fib n + Nat.fib (n + 1) := Nat.fib_add_two
-  omega
+  lia
 
 /-- Vieta jumping for the equation `a^2 + b^2 + 1 = 3 * a * b` with `0 < a ≤ b`:
 the pair is a `FibPair`. -/
@@ -167,7 +167,7 @@ lemma fib_pair_aux {s : ℕ}
     have h1 : a * a = 1 := by
       have h2 : a * a + a * a + 1 = 3 * (a * a) := by
         rw [← mul_assoc 3 a a, ← h, pow_two a]
-      omega
+      lia
     have ha1 : a = 1 := Nat.eq_one_of_mul_eq_one_right h1
     exact ⟨ha1, ha1⟩
   · -- `a < b`: jump down to `(b', a)` with `b' = 3a - b ≤ a`
@@ -183,11 +183,11 @@ lemma fib_pair_aux {s : ℕ}
       rw [Nat.mul_sub_left_distrib]
       have h2 : b * (3 * a) = 3 * a * b := by ring
       rw [h2, ← h, pow_two b]
-      omega
+      lia
     have hb'pos : 0 < 3 * a - b := by
       rcases Nat.eq_zero_or_pos (3 * a - b) with h0 | hpos
       · rw [h0, mul_zero] at hbb'
-        omega
+        lia
       · exact hpos
     have hb'le : 3 * a - b ≤ a := by
       by_contra hcon
@@ -200,19 +200,19 @@ lemma fib_pair_aux {s : ℕ}
       have h1 : a ^ 2 + (3 * a - b) ^ 2 + 1 =
           b * (3 * a - b) + (3 * a - b) * (3 * a - b) := by
         rw [pow_two (3 * a - b)]
-        omega
+        lia
       rw [h1]
       calc b * (3 * a - b) + (3 * a - b) * (3 * a - b)
           = (3 * a - b) * (b + (3 * a - b)) := by ring
         _ = (3 * a - b) * (3 * a) := by rw [add_comm b (3 * a - b), hbb]
         _ = 3 * a * (3 * a - b) := by ring
-    have hsum' : (3 * a - b) + a < s := by rw [← hsum]; omega
+    have hsum' : (3 * a - b) + a < s := by rw [← hsum]; lia
     have hIH := IH ((3 * a - b) + a) hsum' (3 * a - b) a rfl hb'pos ha (by
       rw [add_comm ((3 * a - b) ^ 2) (a ^ 2), hveq]; ring)
     rcases hIH with h11 | ⟨k, hk1, hcase⟩
     · -- `b' = 1`, `a = 1`, so `b = 2 = F_3`
       obtain ⟨hb'1, ha1⟩ := h11
-      have hb2 : b = 2 := by omega
+      have hb2 : b = 2 := by lia
       right
       refine ⟨1, le_rfl, Or.inl ⟨ha1, ?_⟩⟩
       show b = Nat.fib (2 * 1 + 1)
@@ -221,23 +221,23 @@ lemma fib_pair_aux {s : ℕ}
     · rcases hcase with ⟨hb'e, hae⟩ | ⟨hb'e, hae⟩
       · -- `b' = F_{2k-1}`, `a = F_{2k+1}`: then `b = 3a - b' = F_{2k+3}`
         have hfb := fib_add_four (2 * k - 1)
-        rw [show 2 * k - 1 + 4 = 2 * k + 3 by omega,
-          show 2 * k - 1 + 2 = 2 * k + 1 by omega] at hfb
-        have hb_eq : b = Nat.fib (2 * k + 3) := by omega
+        rw [show 2 * k - 1 + 4 = 2 * k + 3 by lia,
+          show 2 * k - 1 + 2 = 2 * k + 1 by lia] at hfb
+        have hb_eq : b = Nat.fib (2 * k + 3) := by lia
         right
-        refine ⟨k + 1, by omega, Or.inl ⟨?_, ?_⟩⟩
-        · rw [show 2 * (k + 1) - 1 = 2 * k + 1 by omega]
+        refine ⟨k + 1, by lia, Or.inl ⟨?_, ?_⟩⟩
+        · rw [show 2 * (k + 1) - 1 = 2 * k + 1 by lia]
           exact hae
-        · rw [show 2 * (k + 1) + 1 = 2 * k + 3 by omega]
+        · rw [show 2 * (k + 1) + 1 = 2 * k + 3 by lia]
           exact hb_eq
       · -- `b' = F_{2k+1}`, `a = F_{2k-1}` contradicts `b' ≤ a`
         exfalso
         have h1 : Nat.fib (2 * k + 1) = Nat.fib (2 * k - 1) + Nat.fib (2 * k) := by
           have h2 := @Nat.fib_add_two (2 * k - 1)
-          rwa [show 2 * k - 1 + 2 = 2 * k + 1 by omega,
-            show 2 * k - 1 + 1 = 2 * k by omega] at h2
-        have hpos : 0 < Nat.fib (2 * k) := Nat.fib_pos.mpr (by omega)
-        omega
+          rwa [show 2 * k - 1 + 2 = 2 * k + 1 by lia,
+            show 2 * k - 1 + 1 = 2 * k by lia] at h2
+        have hpos : 0 < Nat.fib (2 * k) := Nat.fib_pos.mpr (by lia)
+        lia
 
 /-- The solutions of `a^2 + b^2 + 1 = 3 * a * b` in positive integers are exactly
 the pairs `{F_{2k-1}, F_{2k+1}}` (and `(1, 1)`). -/
@@ -254,7 +254,7 @@ lemma fib_pair {a b : ℕ} (ha : 0 < a) (hb : 0 < b)
       · have h' : b ^ 2 + a ^ 2 + 1 = 3 * b * a := by
           rw [add_comm (b ^ 2) (a ^ 2), h]
           ring
-        have h2 := fib_pair_aux IH hb ha (by omega) (le_of_lt hlt) h'
+        have h2 := fib_pair_aux IH hb ha (by lia) (le_of_lt hlt) h'
         rcases h2 with h11 | ⟨k, hk1, hcase⟩
         · exact Or.inl ⟨h11.2, h11.1⟩
         · right
@@ -322,9 +322,9 @@ problem usa2026_p6 {a b : ℕ} (ha : 0 < a) (hb : 0 < b)
       have h2 : a * b = 1 := le_antisymm (Nat.le_of_lt_succ hcon) h1
       exact h11 ⟨Nat.eq_one_of_mul_eq_one_right h2, Nat.eq_one_of_mul_eq_one_left h2⟩
     set n := a * b + 1 with hn
-    have hn3 : 3 ≤ n := by omega
+    have hn3 : 3 ≤ n := by lia
     -- `φ(n)` is even, so `a^2 + b^2 + 1` is even, so exactly one of `a, b` is odd
-    have hneven : 2 ∣ Nat.totient n := (Nat.totient_even (by omega)).two_dvd
+    have hneven : 2 ∣ Nat.totient n := (Nat.totient_even (by lia)).two_dvd
     have hS2 : 2 ∣ a ^ 2 + b ^ 2 + 1 := hneven.trans h
     have hpar : (a % 2 = 1 ∧ b % 2 = 0) ∨ (a % 2 = 0 ∧ b % 2 = 1) := by
       have ha2 := sq_mod_two a
@@ -332,14 +332,14 @@ problem usa2026_p6 {a b : ℕ} (ha : 0 < a) (hb : 0 < b)
       have halt : a % 2 < 2 := Nat.mod_lt a two_pos
       have hblt : b % 2 < 2 := Nat.mod_lt b two_pos
       obtain ⟨t, ht⟩ := hS2
-      omega
+      lia
     -- hence `a * b` is even and `n` is odd
     have hnodd : n % 2 = 1 := by
       rcases hpar with ⟨h1, h2⟩ | ⟨h1, h2⟩
       · have h3 : (a * b) % 2 = 0 := by rw [Nat.mul_mod, h2]; simp
-        omega
+        lia
       · have h3 : (a * b) % 2 = 0 := by rw [Nat.mul_mod, h1]; simp
-        omega
+        lia
     -- `a^2 + b^2 + 1 ≡ 2 (mod 4)`, so `4 ∤ φ(n)`
     have hS4 : ¬ 4 ∣ a ^ 2 + b ^ 2 + 1 := by
       intro h4
@@ -347,10 +347,10 @@ problem usa2026_p6 {a b : ℕ} (ha : 0 < a) (hb : 0 < b)
       rcases hpar with ⟨h1, h2⟩ | ⟨h1, h2⟩
       · have ha4 := sq_mod_four_of_odd h1
         have hb4 := sq_mod_four_of_even h2
-        omega
+        lia
       · have ha4 := sq_mod_four_of_even h1
         have hb4 := sq_mod_four_of_odd h2
-        omega
+        lia
     have hφ4 : ¬ 4 ∣ Nat.totient n := fun h4 => hS4 (h4.trans h)
     -- `n` has at most one prime factor: two distinct (odd) prime factors
     -- would force `4 ∣ φ(n)`
@@ -361,15 +361,15 @@ problem usa2026_p6 {a b : ℕ} (ha : 0 < a) (hb : 0 < b)
         intro h2
         subst h2
         have hmod : n % 2 = 0 := Nat.mod_eq_zero_of_dvd hpn
-        omega
+        lia
       have hnq : q ≠ 2 := by
         intro h2
         subst h2
         have hmod : n % 2 = 0 := Nat.mod_eq_zero_of_dvd hqn
-        omega
+        lia
       have hpo : p % 2 = 1 := Nat.odd_iff.mp (hp.odd_of_ne_two hnp)
       have hqo : q % 2 = 1 := Nat.odd_iff.mp (hq.odd_of_ne_two hnq)
-      have hn0 : n ≠ 0 := by omega
+      have hn0 : n ≠ 0 := by lia
       have hfp : 0 < n.factorization p := hp.factorization_pos_of_dvd hn0 hpn
       have hfq : 0 < n.factorization q := hq.factorization_pos_of_dvd hn0 hqn
       have hpf : p ^ n.factorization p ∣ n := Nat.ordProj_dvd n p
@@ -382,10 +382,10 @@ problem usa2026_p6 {a b : ℕ} (ha : 0 < a) (hb : 0 < b)
       rw [Nat.totient_mul hcop, Nat.totient_prime_pow hp hfp,
         Nat.totient_prime_pow hq hfq] at hφ
       have h2p : 2 ∣ p - 1 := by
-        have hmod : (p - 1) % 2 = 0 := by omega
+        have hmod : (p - 1) % 2 = 0 := by lia
         exact Nat.dvd_of_mod_eq_zero hmod
       have h2q : 2 ∣ q - 1 := by
-        have hmod : (q - 1) % 2 = 0 := by omega
+        have hmod : (q - 1) % 2 = 0 := by lia
         exact Nat.dvd_of_mod_eq_zero hmod
       obtain ⟨u, hu⟩ := h2p
       obtain ⟨v, hv⟩ := h2q
@@ -398,7 +398,7 @@ problem usa2026_p6 {a b : ℕ} (ha : 0 < a) (hb : 0 < b)
     have hpp : IsPrimePow n := by
       rw [isPrimePow_iff_card_primeFactors_eq_one]
       by_contra hcard
-      have hnonempty : n.primeFactors.Nonempty := Nat.nonempty_primeFactors.mpr (by omega)
+      have hnonempty : n.primeFactors.Nonempty := Nat.nonempty_primeFactors.mpr (by lia)
       obtain ⟨p, hpm⟩ := hnonempty
       have hex : ∃ q ∈ n.primeFactors, q ≠ p := by
         by_contra hall
@@ -415,12 +415,12 @@ problem usa2026_p6 {a b : ℕ} (ha : 0 < a) (hb : 0 < b)
     have hp : p.Prime := Nat.prime_iff.mpr hp'
     rcases lt_or_ge e 2 with he2 | he2
     · -- the case `e = 1`: then `φ(n) = p - 1 = a * b ∣ a^2 + b^2 + 1`
-      have he1 : e = 1 := by omega
+      have he1 : e = 1 := by lia
       subst he1
       rw [pow_one] at hpe
       have hφ : Nat.totient n = a * b := by
         rw [← hpe, Nat.totient_prime hp]
-        omega
+        lia
       rw [hφ] at h
       have hq3 := quotient_eq_three ha hb h
       have h3 : a ^ 2 + b ^ 2 + 1 = 3 * a * b := by
@@ -435,7 +435,7 @@ problem usa2026_p6 {a b : ℕ} (ha : 0 < a) (hb : 0 < b)
           rw [← hpe, Nat.totient_prime_pow hp he, hm]
         rwa [h1] at h
       have hmdvd : m ∣ a ^ 2 + b ^ 2 + 1 := (dvd_mul_right m (p - 1)).trans hφ
-      have hab : a * b = p ^ e - 1 := by omega
+      have hab : a * b = p ^ e - 1 := by lia
       -- reduce the divisibility modulo `m = p^(e-1)`:
       -- `a^2 + b^2 + 1 ≡ 0` and `a * b ≡ -1`
       have hS_z : (a : ZMod m) ^ 2 + (b : ZMod m) ^ 2 + 1 = 0 := by
@@ -445,7 +445,7 @@ problem usa2026_p6 {a b : ℕ} (ha : 0 < a) (hb : 0 < b)
         exact h1
       have hpe_z : (p : ZMod m) ^ e = 0 := by
         have h1 : p ^ e = m * p := by
-          conv_lhs => rw [show e = e - 1 + 1 by omega, pow_succ, ← hm]
+          conv_lhs => rw [show e = e - 1 + 1 by lia, pow_succ, ← hm]
         have h2 : ((p ^ e : ℕ) : ZMod m) = 0 := by
           rw [h1, Nat.cast_mul, ZMod.natCast_self, zero_mul]
         rw [← Nat.cast_pow]
@@ -468,7 +468,7 @@ problem usa2026_p6 {a b : ℕ} (ha : 0 < a) (hb : 0 < b)
       have hle_a : a ≤ a ^ 2 + 1 := by
         have h1 : a ≤ a * a := Nat.le_mul_of_pos_right a ha
         rw [pow_two a]
-        omega
+        lia
       have huv_z : ((u * v : ℕ) : ZMod m) = 0 := by
         have hu_z : ((u : ℕ) : ZMod m) = (a : ZMod m) ^ 2 + a + 1 := by
           rw [hu, Nat.cast_add, Nat.cast_add, Nat.cast_pow, Nat.cast_one]
@@ -485,7 +485,7 @@ problem usa2026_p6 {a b : ℕ} (ha : 0 < a) (hb : 0 < b)
         have hruv : r ∣ u - v := Nat.dvd_sub hru hrv
         have huv2 : u - v = 2 * a := by
           rw [hu, hv]
-          omega
+          lia
         rw [huv2] at hruv
         rcases hr.dvd_mul.mp hruv with h2 | hra
         · rcases (Nat.dvd_prime Nat.prime_two).mp h2 with hr1 | hr2
@@ -495,15 +495,15 @@ problem usa2026_p6 {a b : ℕ} (ha : 0 < a) (hb : 0 < b)
               rw [hu]
               have hev : 2 ∣ a * (a + 1) := (Nat.even_mul_succ_self a).two_dvd
               have h1 : a ^ 2 + a = a * (a + 1) := by rw [pow_two a]; ring
-              omega
+              lia
             have h0 : u % 2 = 0 := Nat.mod_eq_zero_of_dvd hru
-            omega
+            lia
         · have hra' : r ∣ a * (a + 1) := dvd_mul_of_dvd_left hra (a + 1)
           have hr1 : r ∣ u - a * (a + 1) := Nat.dvd_sub hru hra'
           have h1 : u - a * (a + 1) = 1 := by
             rw [hu, pow_two a]
             have h2 : a * (a + 1) = a * a + a := by ring
-            omega
+            lia
           rw [h1] at hr1
           exact hr.not_dvd_one hr1
       -- a prime power dividing a product of coprime factors divides one of them
@@ -517,7 +517,7 @@ problem usa2026_p6 {a b : ℕ} (ha : 0 < a) (hb : 0 < b)
           exact Prime.pow_dvd_of_dvd_mul_right hp' (e - 1) hpv hmuv
         · right
           exact Prime.pow_dvd_of_dvd_mul_left hp' (e - 1) hpu hmuv
-      have hpm : p ∣ m := hm ▸ dvd_pow_self p (show e - 1 ≠ 0 by omega)
+      have hpm : p ∣ m := hm ▸ dvd_pow_self p (show e - 1 ≠ 0 by lia)
       have hp_uv : p ∣ u ∨ p ∣ v :=
         hm_uv.imp (fun hmid => hpm.trans hmid) (fun hmid => hpm.trans hmid)
       -- a root of `x^2 + x + 1` mod `p` forces `p = 3` or `p ≡ 1 (mod 3)`
@@ -584,41 +584,41 @@ problem usa2026_p6 {a b : ℕ} (ha : 0 < a) (hb : 0 < b)
           have h9m : (9 : ℕ) ∣ m := by
             have h1 : (3 : ℕ) ^ 2 ∣ m := by
               rw [hm]
-              exact pow_dvd_pow 3 (by omega)
+              exact pow_dvd_pow 3 (by lia)
             norm_num at h1
             exact h1
           rcases hm_uv with hmu | hmv
           · exact h9u (h9m.trans hmu)
           · exact h9v (h9m.trans hmv)
-        have he2'' : e = 2 := by omega
+        have he2'' : e = 2 := by lia
         have hab8 : a * b = 8 := by
           rw [he2''] at hpe
           norm_num at hpe
-          omega
+          lia
         have ha8 : a ≤ 8 := by
           have h1 : a ≤ a * b := Nat.le_mul_of_pos_right a hb
-          omega
+          lia
         interval_cases a
         · -- `(a, b) = (1, 8)`
-          have hb8 : b = 8 := by omega
+          have hb8 : b = 8 := by lia
           subst hb8
           exact ⟨⟨1, Nat.fib_one.symm⟩, ⟨6, by decide⟩⟩
         · -- `(a, b) = (2, 4)`: `φ(9) = 6 ∤ 21`
-          have hb4 : b = 4 := by omega
+          have hb4 : b = 4 := by lia
           subst hb4
           rw [hn] at h
           exact absurd h (by decide)
-        · omega
+        · lia
         · -- `(a, b) = (4, 2)`: `φ(9) = 6 ∤ 21`
-          have hb2 : b = 2 := by omega
+          have hb2 : b = 2 := by lia
           subst hb2
           rw [hn] at h
           exact absurd h (by decide)
-        · omega
-        · omega
-        · omega
+        · lia
+        · lia
+        · lia
         · -- `(a, b) = (8, 1)`
-          have hb1 : b = 1 := by omega
+          have hb1 : b = 1 := by lia
           subst hb1
           exact ⟨⟨6, by decide⟩, ⟨1, Nat.fib_one.symm⟩⟩
       · -- `3 ∣ p - 1`: then `3 ∣ φ(n) ∣ a^2 + b^2 + 1`, so `3 ∤ a` and `3 ∤ b`,

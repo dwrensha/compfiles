@@ -64,7 +64,7 @@ lemma one_is_solitary : is_solitary 1 := by
     change 1 ∈ [1]
     simp
   · exfalso
-    omega
+    lia
 
 inductive IsSolitaryDigits : List ℕ → Prop
   | one_base (l : List ℕ) (h : ∀ x ∈ l, x = 0 ∨ x = 2) : IsSolitaryDigits (1 :: l)
@@ -110,7 +110,7 @@ lemma solitary_digits_head {l : List ℕ} (h : IsSolitaryDigits l) :
 
 lemma solitary_form_pos (n : ℕ) (h : is_solitary_form n) : n > 0 := by
   by_contra hc
-  have h0 : n = 0 := by omega
+  have h0 : n = 0 := by lia
   subst h0
   unfold is_solitary_form at h
   rw [Nat.digits_zero] at h
@@ -122,7 +122,7 @@ lemma solitary_digits_exactly_one_one {l : List ℕ} (h : IsSolitaryDigits l) : 
     have h_not_mem : 1 ∉ lst := by
       intro h1
       have h_or := hlst 1 h1
-      omega
+      lia
     have h_count_zero : lst.count 1 = 0 := List.count_eq_zero.mpr h_not_mem
     simp [h_count_zero]
   | nine_step lst hlst ih =>
@@ -130,25 +130,25 @@ lemma solitary_digits_exactly_one_one {l : List ℕ} (h : IsSolitaryDigits l) : 
 
 lemma add_mod_ten (a b n : ℕ) (h : a + b = n) :
     a % 10 + b % 10 = n % 10 ∨ a % 10 + b % 10 = n % 10 + 10 := by
-  omega
+  lia
 
 lemma sum_ends_in_nine_no_carry (a b n : ℕ) (h : a + b = n) (hn : n % 10 = 9) :
     a % 10 + b % 10 = 9 := by
   have h1 : a % 10 < 10 := Nat.mod_lt a (by decide)
   have h2 : b % 10 < 10 := Nat.mod_lt b (by decide)
   have h3 : a % 10 + b % 10 = n % 10 ∨ a % 10 + b % 10 = n % 10 + 10 := add_mod_ten a b n h
-  omega
+  lia
 
 lemma sum_ends_in_one (a b n : ℕ) (h : a + b = n) (hn : n % 10 = 1) :
     (a % 10 = 1 ∧ b % 10 = 0) ∨ (a % 10 = 0 ∧ b % 10 = 1) ∨ (a % 10 + b % 10 = 11) := by
   have h1 : a % 10 < 10 := Nat.mod_lt a (by decide)
   have h2 : b % 10 < 10 := Nat.mod_lt b (by decide)
   have h3 : a % 10 + b % 10 = n % 10 ∨ a % 10 + b % 10 = n % 10 + 10 := add_mod_ten a b n h
-  omega
+  lia
 
 lemma sum_eq_two_no_ones (a b : ℕ) (h : a + b = 2) (_ha : a ≠ 1) (_hb : b ≠ 1) :
     (a = 2 ∧ b = 0) ∨ (a = 0 ∧ b = 2) := by
-  omega
+  lia
 
 lemma div_ten_of_sum_nine (a b n : ℕ) (h : a + b = n) (hn : n % 10 = 9) :
     a / 10 + b / 10 = n / 10 := by
@@ -156,21 +156,21 @@ lemma div_ten_of_sum_nine (a b n : ℕ) (h : a + b = n) (hn : n % 10 = 9) :
   have _ := (Nat.div_add_mod a 10).symm
   have _ := (Nat.div_add_mod b 10).symm
   have _ := (Nat.div_add_mod n 10).symm
-  omega
+  lia
 
 lemma div_ten_of_sum_one_no_carry (a b n : ℕ) (h : a + b = n) (hn : n % 10 = 1)
     (h_sum : a % 10 + b % 10 = 1) : a / 10 + b / 10 = n / 10 := by
   have _ := (Nat.div_add_mod a 10).symm
   have _ := (Nat.div_add_mod b 10).symm
   have _ := (Nat.div_add_mod n 10).symm
-  omega
+  lia
 
 lemma div_ten_of_sum_one_carry (a b n : ℕ) (h : a + b = n) (hn : n % 10 = 1)
     (h_sum : a % 10 + b % 10 = 11) : a / 10 + b / 10 + 1 = n / 10 := by
   have _ := (Nat.div_add_mod a 10).symm
   have _ := (Nat.div_add_mod b 10).symm
   have _ := (Nat.div_add_mod n 10).symm
-  omega
+  lia
 
 lemma solitary_implies_form (n : ℕ) (h : is_solitary n) : is_solitary_form n :=
   sorry

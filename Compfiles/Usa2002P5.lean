@@ -89,14 +89,14 @@ end Linked
 
 /-- Basic link: `t ~ t * (t - 1)` for `1 < t`, as `t + t * (t - 1) = t ^ 2`. -/
 theorem link_pred_mul {t : ℤ} (ht : 1 < t) : Linked t (t * (t - 1)) := by
-  have h0 : (0 : ℤ) < t := by omega
-  have h1 : (0 : ℤ) < t * (t - 1) := mul_pos h0 (by omega)
+  have h0 : (0 : ℤ) < t := by lia
+  have h1 : (0 : ℤ) < t * (t - 1) := mul_pos h0 (by lia)
   exact .snoc (.refl h0) h1 ⟨t - 1, by ring⟩
 
 /-- Basic link: `2 * t ~ t * (t - 2)` for `2 < t`, as `2 * t + t * (t - 2) = t ^ 2`. -/
 theorem link_two_mul_pred {t : ℤ} (ht : 2 < t) : Linked (2 * t) (t * (t - 2)) := by
-  have h0 : (0 : ℤ) < 2 * t := by omega
-  have h1 : (0 : ℤ) < t * (t - 2) := mul_pos (by omega) (by omega)
+  have h0 : (0 : ℤ) < 2 * t := by lia
+  have h1 : (0 : ℤ) < t * (t - 2) := mul_pos (by lia) (by lia)
   exact .snoc (.refl h0) h1 ⟨2 * (t - 2), by ring⟩
 
 /-- Scaling: `a ~ b` implies `m * a ~ m * b` for `0 < m`. -/
@@ -111,12 +111,12 @@ theorem link_mul_left {m : ℤ} (hm : 0 < m) {a b : ℤ} (h : Linked a b) :
 
 /-- Doubling: every `2 < t` links to `2 * t`. -/
 theorem link_two_mul {t : ℤ} (ht : 2 < t) : Linked t (2 * t) := by
-  have h1 : t ~ t * (t - 1) := link_pred_mul (by omega)
+  have h1 : t ~ t * (t - 1) := link_pred_mul (by lia)
   calc t
     _ ~ t * (t - 1) := h1
     _ ~ t * (t - 1) * (t - 2) := by
-      have h := link_mul_left (show (0 : ℤ) < t by omega)
-        (link_pred_mul (show 1 < t - 1 by omega))
+      have h := link_mul_left (show (0 : ℤ) < t by lia)
+        (link_pred_mul (show 1 < t - 1 by lia))
       rwa [Int.sub_sub, ← mul_assoc] at h
     _ ~ t * (t - 2) := by
       have h := (link_mul_left (Int.sub_pos.mpr ht) h1).symm
@@ -125,25 +125,25 @@ theorem link_two_mul {t : ℤ} (ht : 2 < t) : Linked t (2 * t) := by
 
 /-- Reduction: every `3 < t` links to `t - 1`. -/
 theorem link_pred {t : ℤ} (ht : 3 < t) : Linked t (t - 1) := by
-  have h1 : 1 < t := by omega
+  have h1 : 1 < t := by lia
   have hpm1 : Linked (t - 1) ((t - 1) * (t - 2)) := by
-    have h := link_pred_mul (show 1 < t - 1 by omega)
+    have h := link_pred_mul (show 1 < t - 1 by lia)
     rwa [show t - 1 - 1 = t - 2 by ring] at h
   have hpm2 : Linked (t - 2) ((t - 2) * (t - 3)) := by
-    have h := link_pred_mul (show 1 < t - 2 by omega)
+    have h := link_pred_mul (show 1 < t - 2 by lia)
     rwa [show t - 2 - 1 = t - 3 by ring] at h
   have hu2 : 2 < (t - 1) * (t - 2) := by
-    have hpos : 0 < t * (t - 3) := mul_pos (by omega) (by omega)
+    have hpos : 0 < t * (t - 3) := mul_pos (by lia) (by lia)
     have heq : (t - 1) * (t - 2) = t * (t - 3) + 2 := by ring
-    omega
+    lia
   calc t
     _ ~ t * (t - 1) := link_pred_mul h1
     _ ~ t * (t - 1) * (t - 2) := by
-      have h := link_mul_left (show (0 : ℤ) < t by omega) hpm1
+      have h := link_mul_left (show (0 : ℤ) < t by lia) hpm1
       rwa [← mul_assoc] at h
     _ ~ (t * (t - 1) * (t - 2) * (t - 3)) := by
-      have h := link_mul_left (mul_pos (show (0 : ℤ) < t by omega)
-        (show (0 : ℤ) < t - 1 by omega)) hpm2
+      have h := link_mul_left (mul_pos (show (0 : ℤ) < t by lia)
+        (show (0 : ℤ) < t - 1 by lia)) hpm2
       rwa [← mul_assoc] at h
     _ ~ (2 * ((t - 1) * (t - 2))) := by
       have h := (link_two_mul_pred hu2).symm
@@ -161,12 +161,12 @@ theorem linked_to_three : ∀ n : ℕ, ∀ t : ℤ, t = n + 3 → Linked t 3 := 
     exact .refl (by norm_num)
   | succ n ih =>
     intro t ht
-    exact (link_pred (t := t) (by omega)).trans (ih (t - 1) (by omega))
+    exact (link_pred (t := t) (by lia)).trans (ih (t - 1) (by lia))
 
 theorem linked_of_two_lt {t : ℤ} (ht : 2 < t) : Linked t 3 := by
   refine linked_to_three (t - 3).toNat t ?_
-  have h : ((t - 3).toNat : ℤ) = t - 3 := Int.toNat_of_nonneg (by omega)
-  omega
+  have h : ((t - 3).toNat : ℤ) = t - 3 := Int.toNat_of_nonneg (by lia)
+  lia
 
 /-- Any two integers greater than `2` are linked (via `3`). -/
 theorem linked_any {a b : ℤ} (ha : 2 < a) (hb : 2 < b) : Linked a b :=
@@ -185,7 +185,7 @@ theorem exists_seq_of_linked {a b : ℤ} (h : Linked a b) :
     rename_i _ c _
     obtain ⟨k, n, hn0, hnk, hpos, hlink⟩ := ih
     refine ⟨k + 1, Function.update n (k + 1) c, ?_, ?_, ?_, ?_⟩
-    · rw [Function.update_of_ne (by omega)]
+    · rw [Function.update_of_ne (by lia)]
       exact hn0
     · rw [Function.update_self]
     · intro i hi
@@ -193,15 +193,15 @@ theorem exists_seq_of_linked {a b : ℤ} (h : Linked a b) :
       · subst hik
         rw [Function.update_self]
         exact hc
-      · rw [Function.update_of_ne (by omega)]
-        exact hpos i (by omega)
+      · rw [Function.update_of_ne (by lia)]
+        exact hpos i (by lia)
     · intro i hi
       by_cases hik : i = k
       · subst hik
-        rw [Function.update_of_ne (by omega), Function.update_self, hnk]
+        rw [Function.update_of_ne (by lia), Function.update_self, hnk]
         exact hbc
-      · rw [Function.update_of_ne (by omega), Function.update_of_ne (by omega)]
-        exact hlink i (by omega)
+      · rw [Function.update_of_ne (by lia), Function.update_of_ne (by lia)]
+        exact hlink i (by lia)
 
 snip end
 

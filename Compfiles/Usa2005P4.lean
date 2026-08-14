@@ -66,7 +66,7 @@ lemma pairCount_eq_of_le {n r : ℕ} (hr : r ≤ n) : pairCount n r = r + 1 := b
   ext ⟨a, b⟩
   simp only [Finset.mem_filter, Finset.mem_product, Finset.mem_range,
     Finset.mem_antidiagonal]
-  omega
+  lia
 
 /-- The symmetry `(a, b) ↦ (n - a, n - b)` shows `pairCount n r = pairCount n (2 * n - r)`. -/
 lemma pairCount_symm {n r : ℕ} (hr : r ≤ 2 * n) : pairCount n r = pairCount n (2 * n - r) := by
@@ -74,20 +74,20 @@ lemma pairCount_symm {n r : ℕ} (hr : r ≤ 2 * n) : pairCount n r = pairCount 
   apply Finset.card_bij' (fun p _ => (n - p.1, n - p.2)) (fun p _ => (n - p.1, n - p.2))
   · rintro ⟨a, b⟩ h
     simp only [Finset.mem_filter, Finset.mem_product, Finset.mem_range] at h ⊢
-    omega
+    lia
   · rintro ⟨a, b⟩ h
     simp only [Finset.mem_filter, Finset.mem_product, Finset.mem_range] at h ⊢
-    omega
+    lia
   · rintro ⟨a, b⟩ h
     simp only [Finset.mem_filter, Finset.mem_product, Finset.mem_range] at h
     show (n - (n - a), n - (n - b)) = (a, b)
     rw [Prod.mk.injEq]
-    exact ⟨by omega, by omega⟩
+    exact ⟨by lia, by lia⟩
   · rintro ⟨a, b⟩ h
     simp only [Finset.mem_filter, Finset.mem_product, Finset.mem_range] at h
     show (n - (n - a), n - (n - b)) = (a, b)
     rw [Prod.mk.injEq]
-    exact ⟨by omega, by omega⟩
+    exact ⟨by lia, by lia⟩
 
 /-- The number of admissible 4-tuples is `∑ r, (pairCount n r)^2`: group the
 4-tuples according to the common value `r` of `k₁ + k₃ = k₂ + k₄`. -/
@@ -124,7 +124,7 @@ lemma tuples_card_eq_sum (n : ℕ) :
     simp only [hF, Finset.mem_coe, Finset.mem_filter, Finset.mem_product,
       Finset.mem_range] at h
     simp only [Finset.coe_range, Set.mem_Iio]
-    omega
+    lia
   rw [Finset.card_eq_sum_card_fiberwise hmaps]
   refine Finset.sum_congr rfl ?_
   intro r _
@@ -135,7 +135,7 @@ lemma tuples_card_eq_sum (n : ℕ) :
         fun p => p.1 + p.2 = r) := by
     ext ⟨⟨a, b⟩, ⟨c, d⟩⟩
     simp only [hF, Finset.mem_filter, Finset.mem_product, Finset.mem_range]
-    omega
+    lia
   rw [hfib, Finset.card_product, pow_two]
   rfl
 
@@ -147,24 +147,24 @@ lemma sum_pairCount_sq (n : ℕ) :
   have h1 : ∑ r ∈ Finset.range (2 * n + 1), (pairCount n r) ^ 2 =
       ∑ r ∈ Finset.range n, (pairCount n r) ^ 2 +
         ∑ r ∈ Finset.Ico n (2 * n + 1), (pairCount n r) ^ 2 := by
-    rw [← Finset.sum_range_add_sum_Ico _ (show n ≤ 2 * n + 1 by omega)]
+    rw [← Finset.sum_range_add_sum_Ico _ (show n ≤ 2 * n + 1 by lia)]
   have h2 : ∑ r ∈ Finset.Ico n (2 * n + 1), (pairCount n r) ^ 2 =
       (pairCount n n) ^ 2 + ∑ r ∈ Finset.Ico (n + 1) (2 * n + 1), (pairCount n r) ^ 2 := by
-    rw [← Finset.sum_Ico_consecutive _ (show n ≤ n + 1 by omega)
-        (show n + 1 ≤ 2 * n + 1 by omega),
+    rw [← Finset.sum_Ico_consecutive _ (show n ≤ n + 1 by lia)
+        (show n + 1 ≤ 2 * n + 1 by lia),
       Nat.Ico_succ_singleton, Finset.sum_singleton]
   have h3 : ∑ r ∈ Finset.range n, (pairCount n r) ^ 2 =
       ∑ i ∈ Finset.range n, (i + 1) ^ 2 := by
     refine Finset.sum_congr rfl ?_
     intro i hi
     simp only [Finset.mem_range] at hi
-    rw [pairCount_eq_of_le (show i ≤ n by omega)]
+    rw [pairCount_eq_of_le (show i ≤ n by lia)]
   have h4 : ∑ r ∈ Finset.Ico (n + 1) (2 * n + 1), (pairCount n r) ^ 2 =
       ∑ i ∈ Finset.range n, (i + 1) ^ 2 := by
     rw [Finset.sum_Ico_eq_sum_range, ← Finset.sum_range_reflect (fun i => (i + 1) ^ 2) n]
     refine Finset.sum_congr (by rw [two_mul, add_assoc, Nat.add_sub_cancel]) fun i hi => ?_
     simp only [Finset.mem_range] at hi
-    rw [pairCount_symm (by omega),
+    rw [pairCount_symm (by lia),
       Nat.sub_add_eq, Nat.sub_add_eq, two_mul, Nat.add_sub_cancel,
       pairCount_eq_of_le (by rw [Nat.sub_sub]; exact Nat.sub_le _ _)]
   rw [h1, h2, h3, h4, pairCount_eq_of_le (le_refl n), Finset.sum_range_succ']
@@ -194,11 +194,11 @@ problem usa2005_p4 (n : ℕ) :
     ext ⟨a, b, c, d⟩
     simp only [Set.mem_ofPred_eq, Finset.mem_coe, tuples, Finset.mem_filter,
       Finset.mem_product, Finset.mem_range]
-    omega
+    lia
   rw [hset, Set.ncard_coe_finset, tuples_card_eq_sum n, sum_pairCount_sq n]
   show 2 * (∑ i ∈ Finset.range (n + 1), i ^ 2) + (n + 1) ^ 2 =
     (n + 1) * (2 * n ^ 2 + 4 * n + 3) / 3
   have h3 := key_arith n
-  omega
+  lia
 
 end Usa2005P4

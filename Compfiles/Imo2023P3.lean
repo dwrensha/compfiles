@@ -127,7 +127,7 @@ lemma eval_strictMono {k : ℕ} (hk : 2 ≤ k) {P : Polynomial ℤ} (hmon : P.Mo
     P.eval x < P.eval y := by
   rw [eval_eq hk hmon hdeg x, eval_eq hk hmon hdeg y]
   apply add_lt_add_of_lt_of_le
-  · exact pow_lt_pow_left₀ hxy hx.le (by omega)
+  · exact pow_lt_pow_left₀ hxy hx.le (by lia)
   · apply Finset.sum_le_sum
     intro j hj
     exact mul_le_mul_of_nonneg_left (pow_le_pow_left₀ hx.le hxy.le j)
@@ -184,7 +184,7 @@ lemma eval_lower {k : ℕ} (hk : 2 ≤ k) {P : Polynomial ℤ} (hmon : P.Monic)
   apply le_add_of_nonneg_right
   apply Finset.sum_nonneg
   intro j hj
-  exact mul_nonneg (hcoef j (Nat.le_of_lt (Finset.mem_range.1 hj))) (pow_nonneg (by omega) j)
+  exact mul_nonneg (hcoef j (Nat.le_of_lt (Finset.mem_range.1 hj))) (pow_nonneg (by lia) j)
 
 /-- Upper bound: `P.eval x ≤ x ^ k + C·x ^ (k-1)` for `x ≥ 1`. -/
 lemma eval_upper {k : ℕ} (hk : 2 ≤ k) {P : Polynomial ℤ} (hmon : P.Monic)
@@ -207,8 +207,8 @@ lemma chain_le_nat {B : ℕ → ℕ} {a b : ℕ} (h : ∀ j, a ≤ j → j < b �
   induction t with
   | zero => simp
   | succ t ih =>
-      have := h (a + t) (by omega) (by omega)
-      exact (ih (by omega)).trans this
+      have := h (a + t) (by lia) (by lia)
+      exact (ih (by lia)).trans this
 
 /-- The sequence is non-decreasing. Proof: among all descent indices `n`
 (with `A (n+1) < A n`), take one with `A (n+1)` minimal; the key recurrence
@@ -246,7 +246,7 @@ lemma seq_monotone {k : ℕ} (hk : 2 ≤ k) {P : Polynomial ℤ} (hmon : P.Monic
     induction t with
     | zero =>
         intro _ j hj1 hj2
-        have hj : j = k := by omega
+        have hj : j = k := by lia
         rw [hj]
         by_contra hlt
         have hlt' : A (n₀ + k + 1) < A (n₀ + k) := Nat.lt_of_not_ge hlt
@@ -263,7 +263,7 @@ lemma seq_monotone {k : ℕ} (hk : 2 ≤ k) {P : Polynomial ℤ} (hmon : P.Monic
             have hstep : ∀ j', (k - (t + 1)) + 1 ≤ j' → j' < k + 1 →
                 A (n₀ + j') ≤ A (n₀ + j' + 1) := by
               intro j' hj'1 hj'2
-              exact iht (by omega) j' (by omega) (by omega)
+              exact iht (by lia) j' (by lia) (by lia)
             have h : k - (t + 1) + 1 + (t + 1) = k + 1 := by
               rw [Nat.add_right_comm, Nat.sub_add_cancel ht]
             have hc := chain_le_nat hstep (t := t + 1) h.le
@@ -271,12 +271,12 @@ lemma seq_monotone {k : ℕ} (hk : 2 ≤ k) {P : Polynomial ℤ} (hmon : P.Monic
           have hle := hmin (n₀ + (k - (t + 1))) hlt'
           rw [← hv₀] at hle
           exact absurd ((hge.trans_lt hestep).trans_le hle) (lt_irrefl _)
-        · exact iht (by omega) j (by omega) hj2
+        · exact iht (by lia) j (by lia) hj2
   have hchain : A (n₀ + 1) ≤ A (n₀ + (k + 1)) := by
     have hstep : ∀ j, 1 ≤ j → j < k + 1 → A (n₀ + j) ≤ A (n₀ + j + 1) := by
       intro j hj1 hj2
-      exact key k (le_refl k) j (by omega) (by omega)
-    have hc := chain_le_nat hstep (t := k) (by omega)
+      exact key k (le_refl k) j (by lia) (by lia)
+    have hc := chain_le_nat hstep (t := k) (by lia)
     rwa [add_comm 1] at hc
   rw [← add_assoc] at hchain
   exact absurd (hchain.trans_lt hestep) (lt_irrefl _)
@@ -296,10 +296,10 @@ lemma diff_le {k : ℕ} (hk : 2 ≤ k) {P : Polynomial ℤ} (hmon : P.Monic)
     apply Finset.prod_le_prod
     · intro i _; exact Nat.zero_le _
     · intro i _
-      exact hmono (by omega)
+      exact hmono (by lia)
   have h6 : (A m) ^ k + CN * (A m) ^ (k - 1) ≤ (A m + CN) ^ k := by
     have h7 := pow_ge_add_mul (A m) CN (k - 1)
-    rw [Nat.sub_add_cancel (by omega)] at h7
+    rw [Nat.sub_add_cancel (by lia)] at h7
     calc (A m) ^ k + CN * (A m) ^ (k - 1)
         ≤ (A m) ^ k + k * (A m) ^ (k - 1) * CN := by
           apply Nat.add_le_add_left
@@ -318,7 +318,7 @@ lemma diff_le {k : ℕ} (hk : 2 ≤ k) {P : Polynomial ℤ} (hmon : P.Monic)
             rw [← hC]; push_cast; ring
         _ ≤ (((A m + CN) ^ k : ℕ) : ℤ) := by exact_mod_cast h6
     exact_mod_cast h9
-  exact le_of_pow_le (by omega : 0 < k) (h1.trans h8)
+  exact le_of_pow_le (by lia : 0 < k) (h1.trans h8)
 
 /-- The shifts `A (m+i) - A m` lie in `[0, i·C]`. -/
 lemma shift_bounds {k : ℕ} (hk : 2 ≤ k) {P : Polynomial ℤ} (hmon : P.Monic)
@@ -337,7 +337,7 @@ lemma shift_bounds {k : ℕ} (hk : 2 ≤ k) {P : Polynomial ℤ} (hmon : P.Monic
           _ ≤ (A m + i * CN) + CN := Nat.add_le_add_right ih CN
           _ = A m + (i + 1) * CN := by ring
   constructor
-  · have h := hmono (show m ≤ m + i by omega)
+  · have h := hmono (show m ≤ m + i by lia)
     have h' : (A m : ℤ) ≤ (A (m + i) : ℤ) := by exact_mod_cast h
     linarith
   · have h : (A (m + i) : ℤ) ≤ (A m + i * CN : ℕ) := by exact_mod_cast hub
@@ -442,7 +442,7 @@ lemma Fpoly_coeff_bound {k : ℕ} (hk : 2 ≤ k) {P : Polynomial ℤ} (hmon : P.
       calc (A (m + 1 + i) : ℤ) - A m ≤ (1 + i) * Csum P k := hb.2
         _ ≤ k * Csum P k := by
             have hi' : i < k := Finset.mem_range.1 hi
-            exact mul_le_mul_of_nonneg_right (by omega) hC0
+            exact mul_le_mul_of_nonneg_right (by lia) hC0
     rw [Finset.card_range] at hcb
     rw [Fpoly, coeff_sub]
     calc |(∏ i ∈ Finset.range k, (X + C ((A (m + 1 + i) : ℤ) - A m))).coeff j - P.coeff j|
@@ -454,7 +454,7 @@ lemma Fpoly_coeff_bound {k : ℕ} (hk : 2 ≤ k) {P : Polynomial ℤ} (hmon : P.
           |P.coeff j| := by rw [abs_neg]
       _ ≤ (1 + k * Csum P k) ^ k + Csum P k := by
           apply add_le_add hcb _
-          rw [abs_of_nonneg (hcoef j (by omega))]
+          rw [abs_of_nonneg (hcoef j (by lia))]
           exact Finset.single_le_sum
             (fun i hi => hcoef i (Nat.le_of_lt (Finset.mem_range.1 hi)))
             (Finset.mem_range.2 hj)
@@ -494,13 +494,13 @@ lemma root_bound {F : Polynomial ℤ} {B : ℤ} (hF : F ≠ 0) (hB : ∀ j, |F.c
         _ = ∑ i ∈ Finset.range F.natDegree, |F.coeff i| * x ^ i := by
             apply Finset.sum_congr rfl
             intro i _
-            rw [abs_mul, abs_pow, abs_of_nonneg (by omega : 0 ≤ x)]
+            rw [abs_mul, abs_pow, abs_of_nonneg (by lia : 0 ≤ x)]
         _ ≤ ∑ i ∈ Finset.range F.natDegree, B * x ^ (F.natDegree - 1) := by
             apply Finset.sum_le_sum
             intro i hi
             have hi' : i ≤ F.natDegree - 1 := Nat.le_pred_of_lt (Finset.mem_range.1 hi)
             calc |F.coeff i| * x ^ i ≤ B * x ^ i :=
-                  mul_le_mul_of_nonneg_right (hB i) (pow_nonneg (by omega) i)
+                  mul_le_mul_of_nonneg_right (hB i) (pow_nonneg (by lia) i)
               _ ≤ B * x ^ (F.natDegree - 1) :=
                   mul_le_mul_of_nonneg_left (pow_le_pow_right₀ hx hi') hB0
         _ = B * F.natDegree * x ^ (F.natDegree - 1) := by
@@ -510,23 +510,23 @@ lemma root_bound {F : Polynomial ℤ} {B : ℤ} (hF : F ≠ 0) (hB : ∀ j, |F.c
         B * F.natDegree * x ^ (F.natDegree - 1) := by
       have e : |F.coeff F.natDegree * x ^ F.natDegree| =
           |F.coeff F.natDegree| * x ^ F.natDegree := by
-        rw [abs_mul, abs_pow, abs_of_nonneg (by omega : 0 ≤ x)]
+        rw [abs_mul, abs_pow, abs_of_nonneg (by lia : 0 ≤ x)]
       rw [← e]
       exact habs
     have hbn : 1 ≤ |F.coeff F.natDegree| := by
       have hne : F.coeff F.natDegree ≠ 0 := Polynomial.leadingCoeff_ne_zero.2 hF
       have hpos : 0 < |F.coeff F.natDegree| := abs_pos.2 hne
-      omega
+      lia
     have h5 : x ^ F.natDegree ≤ B * F.natDegree * x ^ (F.natDegree - 1) := by
       calc x ^ F.natDegree = 1 * x ^ F.natDegree := by ring
         _ ≤ |F.coeff F.natDegree| * x ^ F.natDegree :=
-            mul_le_mul_of_nonneg_right hbn (pow_nonneg (by omega) _)
+            mul_le_mul_of_nonneg_right hbn (pow_nonneg (by lia) _)
         _ ≤ B * F.natDegree * x ^ (F.natDegree - 1) := h4
     have h6 : x ^ F.natDegree = x * x ^ (F.natDegree - 1) := by
-      rw [← pow_succ', Nat.sub_add_cancel (by omega)]
+      rw [← pow_succ', Nat.sub_add_cancel (by lia)]
     rw [h6] at h5
     have h7 : x ≤ B * F.natDegree :=
-      le_of_mul_le_mul_right h5 (pow_pos (by omega : 0 < x) _)
+      le_of_mul_le_mul_right h5 (pow_pos (by lia : 0 < x) _)
     rw [mul_comm]
     exact h7
 
@@ -560,7 +560,7 @@ lemma eval_sum_eq {k : ℕ} (hk : 2 ≤ k) {P : Polynomial ℤ} (hmon : P.Monic)
       linarith
     have hlt2 : ((k : ℤ) - 1) * ((1 + k * Csum P k) ^ k + Csum P k) <
         k * ((1 + k * Csum P k) ^ k + Csum P k) :=
-      mul_lt_mul_of_pos_right (by omega) hBpos
+      mul_lt_mul_of_pos_right (by lia) hBpos
     have := hN₀ m hm
     linarith [hroot]
   have hprod : (∏ i ∈ Finset.range k, (X + C ((A (m + 1 + i) : ℤ) - A m))) = P :=
@@ -568,7 +568,7 @@ lemma eval_sum_eq {k : ℕ} (hk : 2 ≤ k) {P : Polynomial ℤ} (hmon : P.Monic)
   have hcoeff : P.coeff (k - 1) = ∑ i ∈ Finset.range k, ((A (m + 1 + i) : ℤ) - A m) := by
     conv_lhs => rw [← hprod]
     rw [Finset.prod_X_add_C_coeff (Finset.range k) _ (by rw [Finset.card_range]; exact Nat.sub_le _ _)]
-    rw [Finset.card_range, Nat.sub_sub_self (by omega), Finset.powersetCard_one,
+    rw [Finset.card_range, Nat.sub_sub_self (by lia), Finset.powersetCard_one,
       Finset.sum_map]
     exact Finset.sum_congr rfl fun i _ => by simp
   have hsum : ∑ i ∈ Finset.range k, ((A (m + 1 + i) : ℤ) - A m) =
@@ -595,7 +595,7 @@ lemma diff_eventually_const {k : ℕ} (hk : 2 ≤ k) {P : Polynomial ℤ} (hmon 
     fun m hm => eval_sum_eq hk hmon hdeg hcoef hA hpos hmono hN₀ m hm
   have hd0 : ∀ j, 0 ≤ Dif A j := by
     intro j
-    have h := hmono (show j ≤ j + 1 by omega)
+    have h := hmono (show j ≤ j + 1 by lia)
     have h' : (A j : ℤ) ≤ (A (j + 1) : ℤ) := by exact_mod_cast h
     rw [Dif]
     linarith
@@ -611,7 +611,7 @@ lemma diff_eventually_const {k : ℕ} (hk : 2 ≤ k) {P : Polynomial ℤ} (hmon 
   have hsumD : ∀ j ≥ N₀, ∑ l ∈ Finset.range k, Dif A (j + 1 + l) = k * Dif A j := by
     intro j hj
     have e1 := hE j hj
-    have e2 := hE (j + 1) (by omega)
+    have e2 := hE (j + 1) (by lia)
     simp only [Nat.add_right_comm (j+1), Nat.add_assoc (j+1)] at e2
     simp only [Dif, add_assoc (j+1), Finset.sum_sub_distrib]
     linarith only [e1, e2]
@@ -638,11 +638,11 @@ lemma diff_eventually_const {k : ℕ} (hk : 2 ≤ k) {P : Polynomial ℤ} (hmon 
     rw [hdj] at hsum
     by_contra hlt
     have hlt' : Dif A (j + 1 + l) < (M : ℤ) :=
-      lt_of_le_of_ne (hdM (j + 1 + l) (by omega)) hlt
+      lt_of_le_of_ne (hdM (j + 1 + l) (by lia)) hlt
     have hsumlt : ∑ l' ∈ Finset.range k, Dif A (j + 1 + l') < ∑ l' ∈ Finset.range k, (M : ℤ) := by
       apply Finset.sum_lt_sum
       · intro l' hl'
-        exact hdM (j + 1 + l') (by omega)
+        exact hdM (j + 1 + l') (by lia)
       · exact ⟨l, hl, hlt'⟩
     rw [Finset.sum_const, Finset.card_range, nsmul_eq_mul] at hsumlt
     linarith [hsum]
@@ -651,7 +651,7 @@ lemma diff_eventually_const {k : ℕ} (hk : 2 ≤ k) {P : Polynomial ℤ} (hmon 
     induction t with
     | zero => exact hdm
     | succ t iht =>
-        exact hkey (m + t) (by omega) iht 0 (Finset.mem_range.2 (by omega))
+        exact hkey (m + t) (by lia) iht 0 (Finset.mem_range.2 (by lia))
   exact ⟨m, M, fun j hj => by
     rw [← Nat.add_sub_of_le hj]
     exact hconst (j - m)⟩
@@ -692,7 +692,7 @@ lemma backward_bounded {k : ℕ} (hk : 2 ≤ k) {P : Polynomial ℤ} (hmon : P.M
     rw [hN N (le_refl N)] at h1
     have h2 : ∏ i ∈ Finset.range k, (A (N + 1 + i) : ℤ) = (V : ℤ) ^ k := by
       rw [show (∏ i ∈ Finset.range k, (A (N + 1 + i) : ℤ)) = ∏ i ∈ Finset.range k, (V : ℤ) from
-        Finset.prod_congr rfl fun i _ => by rw [hN (N + 1 + i) (by omega)]]
+        Finset.prod_congr rfl fun i _ => by rw [hN (N + 1 + i) (by lia)]]
       rw [Finset.prod_const, Finset.card_range]
     rw [h2] at h1
     exact h1
@@ -703,22 +703,22 @@ lemma backward_bounded {k : ℕ} (hk : 2 ≤ k) {P : Polynomial ℤ} (hmon : P.M
     have h4 : ∑ j ∈ Finset.range k, P.coeff j * (V : ℤ) ^ j = 0 := by linarith [h3]
     rw [Finset.sum_eq_zero_iff_of_nonneg (fun j hj => by
       exact mul_nonneg (hcoef j (Nat.le_of_lt (Finset.mem_range.1 hj)))
-        (pow_nonneg (by exact_mod_cast (by omega : (0 : ℤ) ≤ V)) j))] at h4
+        (pow_nonneg (by exact_mod_cast (by lia : (0 : ℤ) ≤ V)) j))] at h4
     intro j hj
     have h5 := h4 j (Finset.mem_range.2 hj)
     have h6 : (0 : ℤ) < (V : ℤ) := by exact_mod_cast hV1
-    have hVpos : (V : ℤ) ^ j ≠ 0 := pow_ne_zero j (by omega)
+    have hVpos : (V : ℤ) ^ j ≠ 0 := pow_ne_zero j (by lia)
     exact (mul_eq_zero.1 h5).resolve_right hVpos
   have hP_eq : P = X ^ k := by
     have hnd : P.natDegree = k := natDegree_eq_of_degree_eq_some hdeg
     apply Polynomial.ext
     intro n
     by_cases hn : n < k
-    · rw [hcoef0 n hn, coeff_X_pow, ite_eq_right (by omega)]
+    · rw [hcoef0 n hn, coeff_X_pow, ite_eq_right (by lia)]
     · by_cases hn' : k < n
-      · rw [show P.coeff n = 0 from coeff_eq_zero_of_natDegree_lt (by omega), coeff_X_pow,
-          ite_eq_right (by omega)]
-      · have h : n = k := by omega
+      · rw [show P.coeff n = 0 from coeff_eq_zero_of_natDegree_lt (by lia), coeff_X_pow,
+          ite_eq_right (by lia)]
+      · have h : n = k := by lia
         rw [h, coeff_X_pow, ite_eq_left rfl, ← hnd]
         exact hmon.leadingCoeff
   -- downward induction: every value is `V`
@@ -731,8 +731,8 @@ lemma backward_bounded {k : ℕ} (hk : 2 ≤ k) {P : Polynomial ℤ} (hmon : P.M
       · subst hj0
         simpa using hN N (le_refl N)
       · set m' := N - j with hm'
-        have hm'1 : m' + 1 = N - (j - 1) := by omega
-        have hjm1 := ih (j - 1) (by omega) (by omega)
+        have hm'1 : m' + 1 = N - (j - 1) := by lia
+        have hjm1 := ih (j - 1) (by lia) (by lia)
         rw [← hm'1] at hjm1
         have hval : ∀ i ∈ Finset.range k, A (m' + 1 + i) = V := by
           intro i hi
@@ -740,8 +740,8 @@ lemma backward_bounded {k : ℕ} (hk : 2 ≤ k) {P : Polynomial ℤ} (hmon : P.M
           by_cases hcase : N ≤ m' + 1 + i
           · exact hN (m' + 1 + i) hcase
           · push Not at hcase
-            have hji : m' + 1 + i = N - (j - 1 - i) := by omega
-            have hih := ih (j - 1 - i) (by omega) (by omega)
+            have hji : m' + 1 + i = N - (j - 1 - i) := by lia
+            have hih := ih (j - 1 - i) (by lia) (by lia)
             rw [hji, hih]
         have h1 := hA m'
         have h2 : ∏ i ∈ Finset.range k, (A (m' + 1 + i) : ℤ) = (V : ℤ) ^ k := by
@@ -750,15 +750,15 @@ lemma backward_bounded {k : ℕ} (hk : 2 ≤ k) {P : Polynomial ℤ} (hmon : P.M
           rw [Finset.prod_const, Finset.card_range]
         rw [h2, hP_eq, eval_pow, eval_X] at h1
         have h4 : (A m') ^ k = V ^ k := by exact_mod_cast h1
-        exact le_antisymm (le_of_pow_le (by omega : 0 < k) (le_of_eq h4))
-          (le_of_pow_le (by omega : 0 < k) (le_of_eq h4.symm))
+        exact le_antisymm (le_of_pow_le (by lia : 0 < k) (le_of_eq h4))
+          (le_of_pow_le (by lia : 0 < k) (le_of_eq h4.symm))
   -- conclusion
   have hfin : ∀ n, A n = V := by
     intro n
     by_cases! hn : n ≤ N
-    · have h := hdown (N - n) (by omega)
+    · have h := hdown (N - n) (by lia)
       rwa [Nat.sub_sub_self hn] at h
-    · exact hN n (by omega)
+    · exact hN n (by lia)
   exact ⟨V, 0, fun n => by rw [hfin n]; simp⟩
 
 /-- The unbounded case: once the sequence exceeds the root bound, it is an
@@ -771,11 +771,11 @@ lemma backward_unbounded {k : ℕ} (hk : 2 ≤ k) {P : Polynomial ℤ} (hmon : P
     ∃ a₀ d : ℕ, ∀ m, A m = a₀ + d * m := by
   obtain ⟨m, c, hconst⟩ := diff_eventually_const hk hmon hdeg hcoef hA hpos hmono hN₀
   set m₂ := max m N₀ with hm₂
-  have hconst2 : ∀ j ≥ m₂, Dif A j = c := fun j hj => hconst j (by omega)
+  have hconst2 : ∀ j ≥ m₂, Dif A j = c := fun j hj => hconst j (by lia)
   have hc0 : 0 ≤ c := by
     have h := hconst2 m₂ (le_refl m₂)
     have h0 : (0 : ℤ) ≤ Dif A m₂ := by
-      have hm := hmono (show m₂ ≤ m₂ + 1 by omega)
+      have hm := hmono (show m₂ ≤ m₂ + 1 by lia)
       have h' : (A m₂ : ℤ) ≤ (A (m₂ + 1) : ℤ) := by exact_mod_cast hm
       rw [Dif]
       linarith
@@ -788,7 +788,7 @@ lemma backward_unbounded {k : ℕ} (hk : 2 ≤ k) {P : Polynomial ℤ} (hmon : P
     induction t with
     | zero => simp
     | succ t iht =>
-        have h : Dif A (m₂ + t) = c := hconst2 (m₂ + t) (by omega)
+        have h : Dif A (m₂ + t) = c := hconst2 (m₂ + t) (by lia)
         rw [Dif] at h
         have e : (A (m₂ + (t + 1)) : ℤ) = (A (m₂ + t) : ℤ) + c := by
           rw [← add_assoc]
@@ -818,7 +818,7 @@ lemma backward_unbounded {k : ℕ} (hk : 2 ≤ k) {P : Polynomial ℤ} (hmon : P
         linarith
       have hlt2 : ((k : ℤ) - 1) * ((1 + k * Csum P k) ^ k + Csum P k) <
           k * ((1 + k * Csum P k) ^ k + Csum P k) :=
-        mul_lt_mul_of_pos_right (by omega) hBpos
+        mul_lt_mul_of_pos_right (by lia) hBpos
       have hm2N : m₂ ≥ N₀ := le_max_right _ _
       have := hN₀ m₂ hm2N
       linarith [hroot]
@@ -841,9 +841,9 @@ lemma backward_unbounded {k : ℕ} (hk : 2 ≤ k) {P : Polynomial ℤ} (hmon : P
       by_cases hj0 : j = 0
       · subst hj0; simp
       · set m' := m₂ - j with hm'
-        have hm'1 : m' + 1 = m₂ - (j - 1) := by omega
-        have hcast1 : ((j - 1 : ℕ) : ℤ) = (j : ℤ) - 1 := Nat.cast_sub (by omega)
-        have hjm1 := ih (j - 1) (by omega) (by omega)
+        have hm'1 : m' + 1 = m₂ - (j - 1) := by lia
+        have hcast1 : ((j - 1 : ℕ) : ℤ) = (j : ℤ) - 1 := Nat.cast_sub (by lia)
+        have hjm1 := ih (j - 1) (by lia) (by lia)
         rw [← hm'1] at hjm1
         have hval : ∀ i ∈ Finset.range k, (A (m' + 1 + i) : ℤ) = (A (m' + 1) : ℤ) + (i : ℤ) * c := by
           intro i hi
@@ -852,16 +852,16 @@ lemma backward_unbounded {k : ℕ} (hk : 2 ≤ k) {P : Polynomial ℤ} (hmon : P
           · have ht := htail (m' + 1 + i - m₂)
             rw [Nat.add_sub_of_le hcase] at ht
             have hcast2 : ((m' + 1 + i - m₂ : ℕ) : ℤ) = (m' : ℤ) + 1 + (i : ℤ) - (m₂ : ℤ) := by
-              omega
-            have hm'' : (m' : ℤ) = (m₂ : ℤ) - (j : ℤ) := by omega
+              lia
+            have hm'' : (m' : ℤ) = (m₂ : ℤ) - (j : ℤ) := by lia
             rw [hcast2] at ht
             rw [hm''] at ht
             rw [hjm1, hcast1]
             linarith [ht]
           · push Not at hcase
-            have hji : m' + 1 + i = m₂ - (j - 1 - i) := by omega
-            have hih := ih (j - 1 - i) (by omega) (by omega)
-            have hcast : ((j - 1 - i : ℕ) : ℤ) = (j : ℤ) - 1 - (i : ℤ) := by omega
+            have hji : m' + 1 + i = m₂ - (j - 1 - i) := by lia
+            have hih := ih (j - 1 - i) (by lia) (by lia)
+            have hcast : ((j - 1 - i : ℕ) : ℤ) = (j : ℤ) - 1 - (i : ℤ) := by lia
             rw [hji, hih, hjm1, hcast, hcast1]
             linarith
         -- the product comparison forcing `Dif A m' = c`
@@ -882,7 +882,7 @@ lemma backward_unbounded {k : ℕ} (hk : 2 ≤ k) {P : Polynomial ℤ} (hmon : P
           rw [h2] at h1
           set t := (A (m' + 1) : ℤ) - A m' with ht
           have ht0 : 0 ≤ t := by
-            have hm'' := hmono (show m' ≤ m' + 1 by omega)
+            have hm'' := hmono (show m' ≤ m' + 1 by lia)
             have h'' : (A m' : ℤ) ≤ (A (m' + 1) : ℤ) := by exact_mod_cast hm''
             rw [ht]
             linarith
@@ -895,7 +895,7 @@ lemma backward_unbounded {k : ℕ} (hk : 2 ≤ k) {P : Polynomial ℤ} (hmon : P
                 positivity
               · intro i hi
                 linarith [htc]
-              · exact Finset.nonempty_range_iff.2 (by omega)
+              · exact Finset.nonempty_range_iff.2 (by lia)
             rw [ht] at hlt
             linarith [h1, hlt]
           · rw [ht] at htc
@@ -911,7 +911,7 @@ lemma backward_unbounded {k : ℕ} (hk : 2 ≤ k) {P : Polynomial ℤ} (hmon : P
                   have : (0 : ℤ) ≤ (i : ℤ) := Int.natCast_nonneg _
                   linarith
                 nlinarith [htc, hc0]
-              · exact Finset.nonempty_range_iff.2 (by omega)
+              · exact Finset.nonempty_range_iff.2 (by lia)
             rw [ht] at hgt
             linarith [h1, hgt]
         rw [hstep, hjm1, hcast1]
@@ -922,14 +922,14 @@ lemma backward_unbounded {k : ℕ} (hk : 2 ≤ k) {P : Polynomial ℤ} (hmon : P
     have h0 := hback m₂ (le_refl m₂)
     rw [Nat.sub_self] at h0
     by_cases! hn : n ≤ m₂
-    · have h := hback (m₂ - n) (by omega)
+    · have h := hback (m₂ - n) (by lia)
       rw [Nat.sub_sub_self hn] at h
       have hcast : ((m₂ - n : ℕ) : ℤ) = (m₂ : ℤ) - (n : ℤ) := Nat.cast_sub hn
       rw [hcast] at h
       linarith [h, h0]
     · have ht := htail (n - m₂)
       rw [Nat.add_sub_of_le hn.le] at ht
-      have hcast : ((n - m₂ : ℕ) : ℤ) = (n : ℤ) - (m₂ : ℤ) := Nat.cast_sub (by omega)
+      have hcast : ((n - m₂ : ℕ) : ℤ) = (n : ℤ) - (m₂ : ℤ) := Nat.cast_sub (by lia)
       rw [hcast] at ht
       linarith [ht, h0]
   exact ⟨A 0, dN, fun n => by

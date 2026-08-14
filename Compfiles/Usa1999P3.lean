@@ -79,15 +79,15 @@ lemma chi_add {p : ℕ} (hp : p.Prime) (j k : ZMod p) :
   have hlt : j.val + k.val < 2 * p := by
     have h1 := j.val_lt
     have h2 := k.val_lt
-    omega
+    lia
   show rt p ^ (j + k).val = rt p ^ j.val * rt p ^ k.val
   rw [ZMod.val_add]
   rcases lt_or_ge (j.val + k.val) p with h | h
   · rw [Nat.mod_eq_of_lt h, pow_add]
   · have hmod : (j.val + k.val) % p = j.val + k.val - p := by
-      have h1 : j.val + k.val = j.val + k.val - p + p := by omega
+      have h1 : j.val + k.val = j.val + k.val - p + p := by lia
       conv_lhs => rw [h1]
-      rw [Nat.add_mod_right, Nat.mod_eq_of_lt (by omega : j.val + k.val - p < p)]
+      rw [Nat.add_mod_right, Nat.mod_eq_of_lt (by lia : j.val + k.val - p < p)]
     rw [hmod]
     have h2 : rt p ^ (j.val + k.val - p) * rt p ^ p = rt p ^ j.val * rt p ^ k.val := by
       rw [← pow_add, Nat.sub_add_cancel h, pow_add]
@@ -128,7 +128,7 @@ lemma sum_chi_self {p : ℕ} [NeZero p] (hp : p.Prime) (hp2 : 2 < p) :
   have hζ := isPrimitiveRoot_rt hp
   show ∑ j : ZMod p, (fun k : ℕ => rt p ^ k) j.val = 0
   rw [sum_zmod_val]
-  exact hζ.geom_sum_eq_zero (by omega)
+  exact hζ.geom_sum_eq_zero (by lia)
 
 lemma sum_chi {p : ℕ} [NeZero p] (hp : p.Prime) (hp2 : 2 < p) (c : ZMod p) :
     ∑ m : ZMod p, chi p (c * m) = if c = 0 then (p : ℂ) else 0 := by
@@ -197,10 +197,10 @@ lemma Sw_mul_sub_one {p : ℕ} [NeZero p] (hp : p.Prime) (hp2 : 2 < p) {j : ZMod
         rw [h1]
         have h2 := ZMod.val_neg_one (p - 1)
         rw [show (p - 1).succ = p from
-          (Nat.succ_eq_add_one (p - 1)).trans (Nat.sub_add_cancel (by omega : 1 ≤ p))] at h2
+          (Nat.succ_eq_add_one (p - 1)).trans (Nat.sub_add_cancel (by lia : 1 ≤ p))] at h2
         exact h2
       have hcast : (((p - 1 : ℕ) : ℂ)) = (p : ℂ) - 1 := by
-        rw [Nat.cast_sub (by omega : 1 ≤ p), Nat.cast_one]
+        rw [Nat.cast_sub (by lia : 1 ≤ p), Nat.cast_one]
       rw [hval, ZMod.val_zero, Nat.cast_zero, hcast]
       ring
     · rw [ite_eq_right hk]
@@ -208,13 +208,13 @@ lemma Sw_mul_sub_one {p : ℕ} [NeZero p] (hp : p.Prime) (hp2 : 2 < p) {j : ZMod
         exact (ZMod.val_ne_zero k).mpr hk
       have hval : (k - 1).val = k.val - 1 := by
         have h4 : ((k.val - 1 + 1 : ℕ) : ZMod p) = (k.val : ZMod p) := by
-          rw [Nat.sub_add_cancel (by omega : 1 ≤ k.val)]
+          rw [Nat.sub_add_cancel (by lia : 1 ≤ k.val)]
         rw [Nat.cast_add, Nat.cast_one, ZMod.natCast_zmod_val] at h4
         have h2 : ((k.val - 1 : ℕ) : ZMod p) = k - 1 := by
           rw [eq_sub_iff_add_eq]
           exact h4
-        rw [← h2, ZMod.val_natCast_of_lt (by have := k.val_lt; omega : k.val - 1 < p)]
-      rw [hval, Nat.cast_sub (by omega : 1 ≤ k.val), Nat.cast_one]
+        rw [← h2, ZMod.val_natCast_of_lt (by have := k.val_lt; lia : k.val - 1 < p)]
+      rw [hval, Nat.cast_sub (by lia : 1 ≤ k.val), Nat.cast_one]
       ring
   have h6 : (∑ k : ZMod p, (((k - 1).val : ℂ) - (k.val : ℂ)) * chi p (j * k))
       = (∑ k : ZMod p, (-1 : ℂ) * chi p (j * k))
@@ -647,7 +647,7 @@ problem usa1999_p3 (p : ℕ) (hp : p.Prime) (hp2 : 2 < p) (a b c d : ℤ)
       have hz : ((2 : ℕ) : ZMod p) ≠ 0 := by
         intro h0
         rw [h0, ZMod.val_zero] at hv
-        omega
+        lia
       exact_mod_cast hz
     have h3 : A' + A' = 2 * A' := by ring
     rw [h3]

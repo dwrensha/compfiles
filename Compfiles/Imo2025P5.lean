@@ -49,7 +49,7 @@ def ValidSeq (c : ℝ) {n : ℕ} (x : Fin n → ℝ) : Prop := (∀ i : Fin n, 0
 /-- Whether a sequence of numbers chosen is a win for the given player (expressed as the 0-based
 numbers of that player's moves, mod 2): the other player makes the first invalid move. -/
 def Wins (c : ℝ) (p : ℕ) {n : ℕ} (x : Fin n → ℝ) : Prop := ∃ i : Fin n, (i : ℕ) % 2 ≠ p ∧
-  IsLeast {j : Fin n | ¬ ValidSeq c (Fin.take ((j : ℕ) + 1) (by omega) x)} i
+  IsLeast {j : Fin n | ¬ ValidSeq c (Fin.take ((j : ℕ) + 1) (by lia) x)} i
 
 /-- A strategy for a given player gives a choice of number in every position, with the convention
 that invalid moves lose and the strategy's choices are ignored in cases where it is not that

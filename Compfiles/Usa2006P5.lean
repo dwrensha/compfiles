@@ -93,25 +93,25 @@ lemma nu_eq_of {x : ℤ} {a : ℕ} (hx : x ≠ 0) (h1 : (2 : ℤ) ^ a ∣ x)
     (h2 : ¬ (2 : ℤ) ^ (a + 1) ∣ x) : nu x = a := by
   rcases lt_trichotomy a (nu x) with h | h | h
   · exfalso
-    exact h2 (dvd_trans (pow_dvd_pow (2 : ℤ) (by omega : a + 1 ≤ nu x)) (two_pow_nu_dvd x))
+    exact h2 (dvd_trans (pow_dvd_pow (2 : ℤ) (by lia : a + 1 ≤ nu x)) (two_pow_nu_dvd x))
   · exact h.symm
   · exfalso
     exact not_two_pow_succ_nu_dvd hx
-      (dvd_trans (pow_dvd_pow (2 : ℤ) (by omega : nu x + 1 ≤ a)) h1)
+      (dvd_trans (pow_dvd_pow (2 : ℤ) (by lia : nu x + 1 ≤ a)) h1)
 
 /-- Shifting by a multiple of `2 ^ e` does not change the 2-adic valuation,
 as long as the valuation is smaller than `e`. -/
 lemma nu_congr {y y' : ℤ} {e : ℕ} (hy : y ≠ 0) (hy' : y' ≠ 0)
     (hd : (2 : ℤ) ^ e ∣ y - y') (hlt : nu y < e) : nu y' = nu y := by
   refine nu_eq_of hy' ?_ ?_
-  · have h1 : (2 : ℤ) ^ nu y ∣ y - y' := dvd_trans (pow_dvd_pow _ (by omega : nu y ≤ e)) hd
+  · have h1 : (2 : ℤ) ^ nu y ∣ y - y' := dvd_trans (pow_dvd_pow _ (by lia : nu y ≤ e)) hd
     have h2 : (2 : ℤ) ^ nu y ∣ y := two_pow_nu_dvd y
     have h3 : y' = y - (y - y') := by ring
     rw [h3]
     exact dvd_sub h2 h1
   · intro h
     have h1 : (2 : ℤ) ^ (nu y + 1) ∣ y - y' :=
-      dvd_trans (pow_dvd_pow _ (by omega : nu y + 1 ≤ e)) hd
+      dvd_trans (pow_dvd_pow _ (by lia : nu y + 1 ≤ e)) hd
     have h2 : (2 : ℤ) ^ (nu y + 1) ∣ y := by
       have h3 : y = y' + (y - y') := by ring
       have h4 := dvd_add h h1
@@ -181,7 +181,7 @@ lemma eq_two_pow_of {e : ℕ} {c y y' : ℤ} {s : ℕ}
     rw [← Int.natCast_dvd_natCast]
     push_cast
     exact hdvd
-  have h3 : 2 ^ (e + 1) ≤ s := Nat.le_of_dvd (by omega) h2
+  have h3 : 2 ^ (e + 1) ≤ s := Nat.le_of_dvd (by lia) h2
   exact le_antisymm h1 h3
 
 lemma filt_cons_delete {e : ℕ} {c y : ℤ} {s : ℕ} {ss : List ℕ}
@@ -212,7 +212,7 @@ lemma filt_valid {e : ℕ} {c y y' : ℤ} {ss : List ℕ}
     obtain ⟨hbb1, hbb2⟩ := bigBound_cons.mp hbb
     have hsge : 1 ≤ s := by
       rcases hs1 with h | h
-      · omega
+      · lia
       · rw [h]; exact Nat.one_le_two_pow
     have hsgez : (0 : ℤ) ≤ (s : ℤ) := Nat.cast_nonneg s
     by_cases hdel : (2 : ℤ) ^ (e + 1) ∣ (s : ℤ) ∧ c < y' + (s : ℤ)
@@ -248,7 +248,7 @@ lemma filt_valid {e : ℕ} {c y y' : ℤ} {ss : List ℕ}
               push Not at hcon
               apply hd
               rw [h, Nat.cast_pow, Nat.cast_ofNat]
-              exact pow_dvd_pow _ (by omega : e + 1 ≤ nu y + 1)
+              exact pow_dvd_pow _ (by lia : e + 1 ≤ nu y + 1)
             rw [nu_congr (by linarith) (by linarith) hdvd hlt]
             exact h
       · refine ih hs2 (by linarith) (by linarith) (by linarith) ?_ ?_ hbb2
@@ -282,7 +282,7 @@ lemma filt_count {e : ℕ} {c y y' : ℤ} {ss : List ℕ}
           Nat.cast_one]
         linarith [hr1]
       · rw [List.length_cons, hr2]
-        omega
+        lia
     · rw [filt_cons_keep hdel]
       obtain ⟨r, hr1, hr2⟩ := ih (fun t ht => hp2 t (List.mem_cons_of_mem s ht))
         (by linarith [((Nat.cast_nonneg s) : (0 : ℤ) ≤ (s : ℤ))] : y' + (s : ℤ) ≤ y + (s : ℤ)) hbb2
@@ -290,7 +290,7 @@ lemma filt_count {e : ℕ} {c y y' : ℤ} {ss : List ℕ}
       · rw [List.sum_cons, List.sum_cons, Nat.cast_add, Nat.cast_add]
         linarith [hr1]
       · rw [List.length_cons, List.length_cons, hr2]
-        omega
+        lia
 
 /-- Lower bound lemma: if `filt` deletes at least one jump, then the last
 deleted jump starts at a position `p'` whose 2-adic valuation is exactly `e`,
@@ -308,7 +308,7 @@ lemma filt_lower {e : ℕ} {c y y' : ℤ} {ss : List ℕ}
     obtain ⟨hbb1, hbb2⟩ := bigBound_cons.mp hbb
     have hsge : 1 ≤ s := by
       rcases hs1 with h | h
-      · omega
+      · lia
       · rw [h]; exact Nat.one_le_two_pow
     by_cases hdel : (2 : ℤ) ^ (e + 1) ∣ (s : ℤ) ∧ c < y' + (s : ℤ)
     · rw [filt_cons_delete hdel.1 hdel.2] at hlen ⊢
@@ -323,13 +323,13 @@ lemma filt_lower {e : ℕ} {c y y' : ℤ} {ss : List ℕ}
         · have hnuy : nu y = e := by
             rcases hs1 with h | h
             · rw [h] at hseq
-              have h2 : (1 : ℕ) < 2 ^ (e + 1) := one_lt_pow₀ (by norm_num : (1 : ℕ) < 2) (by omega : e + 1 ≠ 0)
-              omega
+              have h2 : (1 : ℕ) < 2 ^ (e + 1) := one_lt_pow₀ (by norm_num : (1 : ℕ) < 2) (by lia : e + 1 ≠ 0)
+              lia
             · rw [h] at hseq
               have h2 := Nat.pow_right_injective (by norm_num : 2 ≤ 2) hseq
-              omega
+              lia
           rw [← hnuy]
-          exact nu_congr (by linarith) (by linarith) hdvd (by omega)
+          exact nu_congr (by linarith) (by linarith) hdvd (by lia)
         · have h2 := hdel.2
           rw [hseq, Nat.cast_pow, Nat.cast_ofNat] at h2
           exact h2
@@ -345,7 +345,7 @@ lemma filt_lower {e : ℕ} {c y y' : ℤ} {ss : List ℕ}
           have h1 : (y + (s : ℤ)) - (y' + (s : ℤ)) = y - y' := by ring
           rw [h1]
           exact hdvd)
-        hbb2 (by omega)
+        hbb2 (by lia)
       exact ⟨p', hp1, hpnu, hpc, by
         rw [List.sum_cons, Nat.cast_add]
         have h4 : (0 : ℤ) ≤ (s : ℤ) := Nat.cast_nonneg _
@@ -375,7 +375,7 @@ lemma filt_bigbound {e : ℕ} {c y y' : ℤ} {ss : List ℕ}
           push Not at hcon
           apply hndvd
           rw [Nat.cast_pow, Nat.cast_ofNat]
-          exact pow_dvd_pow _ (by omega : e + 1 ≤ t)
+          exact pow_dvd_pow _ (by lia : e + 1 ≤ t)
         exact Nat.pow_le_pow_right (by norm_num) ht
       · exact ih (fun t ht => hp2 t (List.mem_cons_of_mem s ht))
           (by linarith [((Nat.cast_nonneg s) : (0 : ℤ) ≤ (s : ℤ))] : y' + (s : ℤ) ≤ y + (s : ℤ)) hbb2
@@ -397,7 +397,7 @@ lemma base_prefix {x : ℤ} {i : ℕ} {ss : List ℕ} (hx1 : 1 ≤ x) (hx2 : x �
     obtain ⟨hbb1, hbb2⟩ := bigBound_cons.mp hbb
     have hsge : 1 ≤ s := by
       rcases hs1 with h | h
-      · omega
+      · lia
       · rw [h]; exact Nat.one_le_two_pow
     by_cases hcase : x + (s : ℤ) ≤ (2 : ℤ) ^ i
     · have hge' : (2 : ℤ) ^ i ≤ (x + (s : ℤ)) + (ss.sum : ℤ) := by
@@ -412,7 +412,7 @@ lemma base_prefix {x : ℤ} {i : ℕ} {ss : List ℕ} (hx1 : 1 ≤ x) (hx2 : x �
     · push Not at hcase
       have hsle : s ≤ 2 ^ 0 := hbb1 hcase
       simp at hsle
-      have hs1' : s = 1 := by omega
+      have hs1' : s = 1 := by lia
       refine ⟨[], ⟨s :: ss, rfl⟩, ?_⟩
       simp only [List.sum_nil, Nat.cast_zero, add_zero]
       have h2 : (s : ℤ) = 1 := by exact_mod_cast hs1'
@@ -437,7 +437,7 @@ lemma key_lemma (i : ℕ) (e : ℕ) (ss : List ℕ)
     · rw [← ht] at hv
       exact (ValidPath.append.mp hv).1
     · rw [← ht, List.length_append]
-      omega
+      lia
     · intro hT
       rw [← ht, List.length_append]
       by_cases ht' : t = []
@@ -450,7 +450,7 @@ lemma key_lemma (i : ℕ) (e : ℕ) (ss : List ℕ)
           cases t with
           | nil => contradiction
           | cons => simp
-        omega
+        lia
   | succ e ih =>
     have hp2 : ∀ s ∈ ss, ∃ t, s = 2 ^ t := hv.pow_two
     have hF1 : ValidPath 1 (filt e ((2 : ℤ) ^ i) 1 ss) :=
@@ -460,9 +460,9 @@ lemma key_lemma (i : ℕ) (e : ℕ) (ss : List ℕ)
       filt_bigbound hp2 le_rfl hbb
     have hdiv₁ : (2 : ℤ) ^ min i e ∣ (1 : ℤ) + ((filt e ((2 : ℤ) ^ i) 1 ss).sum : ℤ) := by
       have h1 : (2 : ℤ) ^ min i e ∣ (1 : ℤ) + (ss.sum : ℤ) :=
-        dvd_trans (pow_dvd_pow _ (by omega : min i e ≤ min i (e + 1))) hdiv
+        dvd_trans (pow_dvd_pow _ (by lia : min i e ≤ min i (e + 1))) hdiv
       have h2 : (2 : ℤ) ^ min i e ∣ (r : ℤ) * 2 ^ (e + 1) :=
-        dvd_trans (pow_dvd_pow _ (by omega : min i e ≤ e + 1)) (dvd_mul_left _ _)
+        dvd_trans (pow_dvd_pow _ (by lia : min i e ≤ e + 1)) (dvd_mul_left _ _)
       have h3 : (1 : ℤ) + ((filt e ((2 : ℤ) ^ i) 1 ss).sum : ℤ) =
           ((1 : ℤ) + (ss.sum : ℤ)) - (r : ℤ) * 2 ^ (e + 1) := by
         linarith [hr1]
@@ -475,7 +475,7 @@ lemma key_lemma (i : ℕ) (e : ℕ) (ss : List ℕ)
           simp only [Nat.cast_zero, zero_mul] at hr1
           linarith [hr1]
         linarith [hge, hr1']
-      · have hrlen : (filt e ((2 : ℤ) ^ i) 1 ss).length < ss.length := by omega
+      · have hrlen : (filt e ((2 : ℤ) ^ i) 1 ss).length < ss.length := by lia
         obtain ⟨p', hp1, hpnu, hpc, hpT⟩ :=
           filt_lower hv le_rfl le_rfl le_rfl (dvd_zero _) hbb hrlen
         by_cases hei : i ≤ e
@@ -488,7 +488,7 @@ lemma key_lemma (i : ℕ) (e : ℕ) (ss : List ℕ)
         · push Not at hei
           by_contra hlt
           push Not at hlt
-          have hmin : min i e = e := by omega
+          have hmin : min i e = e := by lia
           rw [hmin] at hdiv₁
           obtain ⟨u, hu⟩ : (2 : ℤ) ^ e ∣ p' := by
             rw [← hpnu]
@@ -496,7 +496,7 @@ lemma key_lemma (i : ℕ) (e : ℕ) (ss : List ℕ)
           have hpow : (2 : ℤ) ^ i = (2 : ℤ) ^ e * (2 : ℤ) ^ (i - e) := by
             rw [← pow_add]
             congr 1
-            omega
+            lia
           have hpow2 : (2 : ℤ) ^ (e + 1) = (2 : ℤ) ^ e * 2 := pow_succ _ _
           have hub : (2 : ℤ) ^ (i - e) ≤ u + 1 := by
             rw [hpow, hu, hpow2] at hpc
@@ -504,7 +504,7 @@ lemma key_lemma (i : ℕ) (e : ℕ) (ss : List ℕ)
             rw [h7] at hpc
             have hpos : (0 : ℤ) < (2 : ℤ) ^ e := by positivity
             have h6 := lt_of_mul_lt_mul_left hpc (le_of_lt hpos)
-            omega
+            lia
           obtain ⟨v, hv⟩ := hdiv₁
           have huv : u ≤ v := by
             rw [hv, hu] at hpT
@@ -514,8 +514,8 @@ lemma key_lemma (i : ℕ) (e : ℕ) (ss : List ℕ)
             rw [hv, hpow] at hlt
             have hpos : (0 : ℤ) < (2 : ℤ) ^ e := by positivity
             exact lt_of_mul_lt_mul_left hlt (le_of_lt hpos)
-          have hveq : v = (2 : ℤ) ^ (i - e) - 1 := by omega
-          have hmin2 : min i (e + 1) = e + 1 := by omega
+          have hveq : v = (2 : ℤ) ^ (i - e) - 1 := by lia
+          have hmin2 : min i (e + 1) = e + 1 := by lia
           rw [hmin2] at hdiv
           have hT_eq : (1 : ℤ) + (ss.sum : ℤ) = (2 : ℤ) ^ e * v + (r : ℤ) * 2 ^ (e + 1) := by
             linarith [hr1, hv]
@@ -533,15 +533,15 @@ lemma key_lemma (i : ℕ) (e : ℕ) (ss : List ℕ)
           have hodd : ¬ (2 : ℤ) ∣ v := by
             intro h2v'
             have h10 : (2 : ℤ) ∣ (2 : ℤ) ^ (i - e) := by
-              have h14 : (2 : ℤ) ^ (1 : ℕ) ∣ (2 : ℤ) ^ (i - e) := pow_dvd_pow _ (by omega : 1 ≤ i - e)
+              have h14 : (2 : ℤ) ^ (1 : ℕ) ∣ (2 : ℤ) ^ (i - e) := pow_dvd_pow _ (by lia : 1 ≤ i - e)
               rwa [pow_one] at h14
             have h11 := dvd_sub h10 h2v'
-            have h12 : (2 : ℤ) ^ (i - e) - v = 1 := by omega
+            have h12 : (2 : ℤ) ^ (i - e) - v = 1 := by lia
             rw [h12] at h11
             norm_num at h11
           exact hodd h2v
     obtain ⟨ss', hv', hend', hlen', hstrict'⟩ := ih _ hF1 hF4 hdiv₁ hge₁
-    refine ⟨ss', hv', hend', le_trans hlen' (by omega), ?_⟩
+    refine ⟨ss', hv', hend', le_trans hlen' (by lia), ?_⟩
     intro hT
     by_cases hr0 : r = 0
     · have hr1' : (ss.sum : ℤ) = ((filt e ((2 : ℤ) ^ i) 1 ss).sum : ℤ) := by
@@ -550,10 +550,10 @@ lemma key_lemma (i : ℕ) (e : ℕ) (ss : List ℕ)
         linarith [hr1]
       have h2 : (2 : ℤ) ^ i < (1 : ℤ) + ((filt e ((2 : ℤ) ^ i) 1 ss).sum : ℤ) := by
         linarith [hT, hr1']
-      have h3 : (filt e ((2 : ℤ) ^ i) 1 ss).length = ss.length := by omega
+      have h3 : (filt e ((2 : ℤ) ^ i) 1 ss).length = ss.length := by lia
       calc ss'.length < (filt e ((2 : ℤ) ^ i) 1 ss).length := hstrict' h2
         _ = ss.length := h3
-    · have h4 : (filt e ((2 : ℤ) ^ i) 1 ss).length < ss.length := by omega
+    · have h4 : (filt e ((2 : ℤ) ^ i) 1 ss).length < ss.length := by lia
       exact lt_of_le_of_lt hlen' h4
 
 lemma validPath_replicate_one (x : ℤ) (n : ℕ) : ValidPath x (List.replicate n 1) := by
@@ -590,10 +590,10 @@ problem usa2006_p5 (k : ℕ) (hk : 2 ≤ k) (i : ℕ) :
     have h1 : s ≤ ss.sum := List.single_le_sum (fun x _ => Nat.zero_le x) s hs
     have h2 : ss.sum ≤ 2 ^ (i + ss.sum) := by
       calc ss.sum ≤ 2 ^ ss.sum := (Nat.lt_two_pow_self).le
-        _ ≤ 2 ^ (i + ss.sum) := Nat.pow_le_pow_right (by norm_num) (by omega)
-    omega
+        _ ≤ 2 ^ (i + ss.sum) := Nat.pow_le_pow_right (by norm_num) (by lia)
+    lia
   have hdiv : (2 : ℤ) ^ min i (i + ss.sum) ∣ (1 : ℤ) + (ss.sum : ℤ) := by
-    rw [Nat.min_eq_left (by omega : i ≤ i + ss.sum), hend]
+    rw [Nat.min_eq_left (by lia : i ≤ i + ss.sum), hend]
     exact dvd_mul_right _ _
   have hge : (2 : ℤ) ^ i ≤ (1 : ℤ) + (ss.sum : ℤ) := by
     rw [hend]
@@ -606,4 +606,4 @@ problem usa2006_p5 (k : ℕ) (hk : 2 ≤ k) (i : ℕ) :
   have hlt : ss'.length < ss.length := hstrict' hT
   have hle : minJumps ((2 : ℤ) ^ i) ≤ ss'.length := Nat.sInf_le ⟨ss', hv', hend', rfl⟩
   rw [← hlen]
-  omega
+  lia

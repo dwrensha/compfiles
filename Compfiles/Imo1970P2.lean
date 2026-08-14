@@ -42,10 +42,10 @@ snip begin
 /-- For `i < n` and `b < a` we have `bⁿ aⁱ < aⁿ bⁱ`. -/
 lemma pow_cross_lt {a b : ℕ} (hb : 1 < b) (hab : b < a) {i n : ℕ} (hin : i < n) :
     (b : ℝ) ^ n * (a : ℝ) ^ i < (a : ℝ) ^ n * (b : ℝ) ^ i := by
-  have hb0 : (0 : ℝ) < (b : ℝ) := Nat.cast_pos.mpr (by omega)
-  have ha0 : (0 : ℝ) < (a : ℝ) := Nat.cast_pos.mpr (by omega)
+  have hb0 : (0 : ℝ) < (b : ℝ) := Nat.cast_pos.mpr (by lia)
+  have ha0 : (0 : ℝ) < (a : ℝ) := Nat.cast_pos.mpr (by lia)
   have hpow : (b : ℝ) ^ (n - i) < (a : ℝ) ^ (n - i) :=
-    pow_lt_pow_left₀ (by exact_mod_cast hab) hb0.le (by omega)
+    pow_lt_pow_left₀ (by exact_mod_cast hab) hb0.le (by lia)
   have hsplit : ∀ {c : ℕ}, (c : ℝ) ^ n = (c : ℝ) ^ (n - i) * (c : ℝ) ^ i := by
     intro c
     rw [← pow_add, Nat.sub_add_cancel hin.le]
@@ -79,7 +79,7 @@ term of `aⁿ · B'`, and the `i = n-1` term is strict since `x_{n-1} ≠ 0`. -/
 lemma pow_mul_value_lt (x : ℕ → ℕ) {a b n : ℕ} (hb : 1 < b) (hab : b < a)
     (hn : 1 ≤ n) (hxn1 : x (n - 1) ≠ 0) :
     (b : ℝ) ^ n * value x a (n - 1) < (a : ℝ) ^ n * value x b (n - 1) := by
-  have hnn : n - 1 < n := by omega
+  have hnn : n - 1 < n := by lia
   simp only [value, Finset.mul_sum, Nat.sub_add_cancel hn]
   apply Finset.sum_lt_sum
   · intro i hi

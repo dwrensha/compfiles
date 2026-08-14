@@ -51,7 +51,7 @@ theorem rec_eq {r : ℕ → ℤ} {k : ℕ} (h7 : 7 ∣ r (k - 1) - ↑k)
     (hk : r k = r (k - 1) - (↑k + (r (k - 1) - ↑k) / 7)) :
     7 * r k = 6 * (r (k - 1) - ↑k) := by
   obtain ⟨c, hc⟩ := h7
-  have hdiv : (r (k - 1) - ↑k) / 7 = c := by omega
+  have hdiv : (r (k - 1) - ↑k) / 7 = c := by lia
   rw [hdiv] at hk
   linarith
 
@@ -69,8 +69,8 @@ theorem closed_form {m n : ℕ} {r : ℕ → ℤ} (h0 : r 0 = ↑m)
     ring
   | succ k ih =>
     intro hk
-    have ih' := ih (by omega : k ≤ n - 1)
-    have h2z := hrec (k + 1) (by omega) hk
+    have ih' := ih (by lia : k ≤ n - 1)
+    have h2z := hrec (k + 1) (by lia) hk
     rw [Nat.add_sub_cancel] at h2z
     have h2q : (7 : ℚ) * (r (k + 1) : ℚ) = 6 * ((r k : ℚ) - (↑k + 1)) := by
       exact_mod_cast h2z
@@ -86,7 +86,7 @@ theorem key_eq {m n : ℕ} (hn : 1 < n) {r : ℕ → ℤ} (h0 : r 0 = ↑m)
     (hn1 : r (n - 1) = ↑n)
     (hrec : ∀ k, 1 ≤ k → k ≤ n - 1 → 7 * r k = 6 * (r (k - 1) - ↑k)) :
     (6 : ℤ) ^ (n - 1) * (↑m - 36) = 7 ^ n * (↑n - 6) := by
-  obtain ⟨N, rfl⟩ : ∃ N, n = N + 1 := ⟨n - 1, by omega⟩
+  obtain ⟨N, rfl⟩ : ∃ N, n = N + 1 := ⟨n - 1, by lia⟩
   have hcf := closed_form h0 hrec N le_rfl
   simp only [Nat.add_sub_cancel] at hn1 ⊢
   rw [hn1] at hcf
@@ -100,7 +100,7 @@ theorem key_eq {m n : ℕ} (hn : 1 < n) {r : ℕ → ℤ} (h0 : r 0 = ↑m)
   rw [← mul_assoc, e1] at h4
   have hQ : (6 : ℚ) ^ N * (↑m - 36) = 7 ^ (N + 1) * (↑N - 5) := by
     rw [h4, pow_succ, mul_assoc]
-  have hN5z : (↑(N + 1) : ℤ) - 6 = ↑N - 5 := by omega
+  have hN5z : (↑(N + 1) : ℤ) - 6 = ↑N - 5 := by lia
   rw [hN5z]
   exact_mod_cast hQ
 
@@ -112,10 +112,10 @@ theorem forward {m n : ℕ} (hn : 1 < n) (h : ∃ r : ℕ → ℤ, MedalsProcess
   have hrec7 : ∀ k, 1 ≤ k → k ≤ n - 1 → 7 * r k = 6 * (r (k - 1) - ↑k) :=
     fun k h1 h2 => rec_eq (hrec k h1 h2).1 (hrec k h1 h2).2
   have hkey := key_eq hn h0 hn1 hrec7
-  obtain ⟨N, rfl⟩ : ∃ N, n = N + 1 := ⟨n - 1, by omega⟩
-  have hN : 1 ≤ N := by omega
+  obtain ⟨N, rfl⟩ : ∃ N, n = N + 1 := ⟨n - 1, by lia⟩
+  have hN : 1 ≤ N := by lia
   simp only [Nat.add_sub_cancel] at hkey
-  have hN5z : (↑(N + 1) : ℤ) - 6 = ↑N - 5 := by omega
+  have hN5z : (↑(N + 1) : ℤ) - 6 = ↑N - 5 := by lia
   rw [hN5z] at hkey
   -- `6 ^ N` divides `N - 5`, since it is coprime to `7 ^ (N + 1)`.
   have hdvd : (6 : ℤ) ^ N ∣ (↑N - 5) := by
@@ -130,15 +130,15 @@ theorem forward {m n : ℕ} (hn : 1 < n) (h : ∃ r : ℕ → ℤ, MedalsProcess
     · have h2 : (↑N : ℤ) < (6 : ℤ) ^ N := by
         have h3 : N < 6 ^ N := Nat.lt_pow_self (by norm_num)
         exact_mod_cast h3
-      rw [abs_of_nonneg (by omega)]
-      omega
+      rw [abs_of_nonneg (by lia)]
+      lia
   have hN5 : (↑N : ℤ) - 5 = 0 := Int.eq_zero_of_abs_lt_dvd hdvd hbound
   have hNeq : N = 5 := by
     have h4 : (↑N : ℤ) = 5 := by linarith
     exact_mod_cast h4
   subst hNeq
   have hm : (↑m : ℤ) = 36 := by
-    have e : (↑(5 : ℕ) : ℤ) - 5 = 0 := by omega
+    have e : (↑(5 : ℕ) : ℤ) - 5 = 0 := by lia
     rw [e, mul_zero] at hkey
     rcases mul_eq_zero.mp hkey with h5 | h5
     · norm_num at h5

@@ -158,7 +158,7 @@ lemma factor_eq (a n : ℤ) : 4 * n ^ 2 - a ^ 2 = (2 * n - a) * (2 * n + a) := b
 lemma odd_ne_even {a : ℤ} (ho : Odd a) (he : Even a) : False := by
   obtain ⟨k, hk⟩ := ho
   obtain ⟨m, hm⟩ := he
-  omega
+  lia
 
 lemma odd_sq_sub_four_mul_ne_zero {a : ℤ} (ha : Odd a) (n : ℤ) :
     4 * n ^ 2 - a ^ 2 ≠ 0 := by
@@ -190,7 +190,7 @@ lemma pbound_of_classification (f : ℤ[X]) (h : Classification f) :
       rwa [Int.natAbs_natCast, Int.natAbs_mul, natAbs_list_prod] at h2
     rcases (Nat.Prime.dvd_mul hq).mp h1 with hcase | hcase
     · have hle : q ≤ c.natAbs := Nat.le_of_dvd (Int.natAbs_pos.mpr hc) hcase
-      omega
+      lia
     · rw [List.map_map] at hcase
       obtain ⟨b, hb, hqb⟩ := prime_dvd_list_prod hq _ hcase
       rw [List.mem_map] at hb
@@ -214,7 +214,7 @@ lemma pbound_of_classification (f : ℤ[X]) (h : Classification f) :
             rw [h4]
             exact Int.natAbs_add_le _ _
           rwa [Int.natAbs_neg, hnat] at h3
-        omega
+        lia
       · have hne : (2 * (n : ℤ) + a) ≠ 0 := by
           intro hz
           exact odd_ne_even (ho a ha) ⟨-n, by linarith⟩
@@ -223,7 +223,7 @@ lemma pbound_of_classification (f : ℤ[X]) (h : Classification f) :
         have hle2 : (2 * (n : ℤ) + a).natAbs ≤ 2 * n + a.natAbs := by
           have h3 := Int.natAbs_add_le (2 * (n : ℤ)) a
           rwa [hnat] at h3
-        omega
+        lia
 
 /-- **Schur's theorem**: a nonconstant polynomial with integer coefficients
 takes some value divisible by a prime outside any given finite set of primes. -/
@@ -237,7 +237,7 @@ lemma schur (h : ℤ[X]) (hd : h.natDegree ≠ 0) (s : Finset ℕ) (hs : ∀ q �
     refine ⟨q, hq, ?_, q, ?_⟩
     · intro hmem
       have hle : q ≤ s.sup id := Finset.le_sup (f := id) hmem
-      omega
+      lia
     · have hev : h.eval (q : ℤ) = (q : ℤ) * g.eval (q : ℤ) := by
         rw [hg]
         simp [eval_mul, eval_X]
@@ -303,7 +303,7 @@ lemma schur (h : ℤ[X]) (hd : h.natDegree ≠ 0) (s : Finset ℕ) (hs : ∀ q �
       refine ⟨hbfin.toFinset.sup Int.natAbs, fun t ht ↦ ?_⟩
       exact Finset.le_sup (f := Int.natAbs) (hbfin.mem_toFinset.mpr ht)
     set t₀ : ℤ := (N : ℤ) + 1 with ht₀
-    have ht₀pos : 0 < t₀ := by omega
+    have ht₀pos : 0 < t₀ := by lia
     have ht₀abs : t₀.natAbs = N + 1 := by
       rw [ht₀, show ((N : ℤ) + 1) = ((N + 1 : ℕ) : ℤ) by push_cast; ring]
       exact Int.natAbs_natCast _
@@ -311,13 +311,13 @@ lemma schur (h : ℤ[X]) (hd : h.natDegree ≠ 0) (s : Finset ℕ) (hs : ∀ q �
         h.eval (c * P * t₀) = 0) := by
       intro ht
       have := hN t₀ ht
-      omega
+      lia
     have hneg_nb : ¬ (h.eval (c * P * (-t₀)) = c ∨ h.eval (c * P * (-t₀)) = -c ∨
         h.eval (c * P * (-t₀)) = 0) := by
       intro ht
       have := hN (-t₀) ht
       rw [Int.natAbs_neg, ht₀abs] at this
-      omega
+      lia
     -- Choose the sign so that the argument of `h` becomes nonnegative.
     have hpos₀ : 0 ≤ c.natAbs * P * t₀ :=
       mul_nonneg (mul_nonneg (Int.natCast_nonneg c.natAbs) hPnn) ht₀pos.le
@@ -512,12 +512,12 @@ lemma exists_root_of_pbound (f : ℤ[X]) (hd : f.natDegree ≠ 0) (B : ℕ) (hB 
     · exact ⟨m % q, hcase, hqn₀⟩
     · push Not at hcase
       refine ⟨q - m % q, ?_, ?_⟩
-      · have h1 : 2 * (q - m % q) ≤ q := by omega
+      · have h1 : 2 * (q - m % q) ≤ q := by lia
         have h2 : 2 * (q - m % q) ≠ q := by
           intro h3
           rcases hqodd with ⟨k, hk⟩
-          omega
-        omega
+          lia
+        lia
       · have hmod : ((q - m % q : ℕ) : ℤ) ≡ -((m % q : ℕ) : ℤ) [ZMOD (q : ℤ)] := by
           rw [Int.modEq_iff_dvd]
           have e : ((q - m % q : ℕ) : ℤ) = (q : ℤ) - ((m % q : ℕ) : ℤ) :=
@@ -537,12 +537,12 @@ lemma exists_root_of_pbound (f : ℤ[X]) (hd : f.natDegree ≠ 0) (B : ℕ) (hB 
   -- Apply the bound: `q ≤ 2n + B`, so `q = 2n + 2k + 1` for some `k ≤ B`.
   have hqB := (hB n).2 q hq hqn
   obtain ⟨j, hj1, hjB, hjodd⟩ : ∃ j : ℕ, q = 2 * n + j ∧ j ≤ B ∧ Odd j := by
-    refine ⟨q - 2 * n, by omega, by omega, ?_⟩
+    refine ⟨q - 2 * n, by lia, by lia, ?_⟩
     rcases hqodd with ⟨k, hk⟩
-    exact ⟨k - n, by omega⟩
+    exact ⟨k - n, by lia⟩
   obtain ⟨k, hk⟩ := hjodd
   subst hk
-  have hkB : k ≤ B := by omega
+  have hkB : k ≤ B := by lia
   -- Then `q` divides `Fs f (2k+1)`.
   have hqFs : (q : ℤ) ∣ Fs f ((2 * k + 1 : ℕ) : ℤ) := by
     have h1 : ((2 * k + 1 : ℕ) : ℤ) ≡ -((2 * n : ℕ) : ℤ) [ZMOD (q : ℤ)] := by
@@ -566,7 +566,7 @@ lemma exists_root_of_pbound (f : ℤ[X]) (hd : f.natDegree ≠ 0) (B : ℕ) (hB 
   have hqM : (q : ℤ) ∣ M := by
     rw [hM]
     exact dvd_trans hqFs
-      (Finset.dvd_prod_of_mem _ (Finset.mem_range.mpr (by omega)))
+      (Finset.dvd_prod_of_mem _ (Finset.mem_range.mpr (by lia)))
   have hqmem : q ∈ M.natAbs.primeFactors := by
     rw [Nat.mem_primeFactors]
     refine ⟨hq, ?_, Int.natAbs_ne_zero.mpr hM0⟩
@@ -578,7 +578,7 @@ lemma odd_nat_coprime_two {m : ℕ} (h : Odd m) : Nat.Coprime 2 m := by
   rw [Nat.prime_two.coprime_iff_not_dvd]
   rintro ⟨l, hl⟩
   obtain ⟨k, hk⟩ := h
-  omega
+  lia
 
 lemma coeff_factor_one (a : ℤ) : (C 4 * X - C (a ^ 2) : ℤ[X]).coeff 1 = 4 := by
   rw [coeff_sub, coeff_C_mul, coeff_X_one, coeff_C_succ, mul_one, sub_zero]
@@ -700,7 +700,7 @@ lemma classification_of_pbound : ∀ d : ℕ, ∀ f : ℤ[X], f.natDegree = d �
     have hdeg : f.natDegree = (C 4 * X - C (a ^ 2)).natDegree + f₁.natDegree := by
       conv_lhs => rw [hf₁]
       exact natDegree_mul hfac0 hf₁0
-    have hdf₁ : f₁.natDegree < d := by omega
+    have hdf₁ : f₁.natDegree < d := by lia
     have hPf₁ : Pbound f₁ B := pbound_of_mul_factor B hf₁ hB
     obtain ⟨c, L, hc, ho, hL⟩ := IH f₁.natDegree hdf₁ f₁ rfl ⟨B, hPf₁⟩
     refine ⟨c, a :: L, hc, ?_, ?_⟩

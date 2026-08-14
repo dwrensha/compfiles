@@ -286,15 +286,15 @@ lemma all_linear_comb (h0 : (0 : ℤ) ∈ S) (ha : ∀ i, a i ∈ S)
           rw [Finset.sum_singleton]
           simpa using two_term_mem h0 ha hdiff hcond p p (c p) 0
       · push Not at hT
-        obtain ⟨p, hpT⟩ := Finset.card_pos.mp (by omega : 0 < T.card)
+        obtain ⟨p, hpT⟩ := Finset.card_pos.mp (by lia : 0 < T.card)
         obtain ⟨q, hqT'⟩ := Finset.card_pos.mp (by
-          rw [Finset.card_erase_of_mem hpT]; omega : 0 < (T.erase p).card)
+          rw [Finset.card_erase_of_mem hpT]; lia : 0 < (T.erase p).card)
         have hqT : q ∈ T := (Finset.mem_erase.mp hqT').2
         have hqp : q ≠ p := (Finset.mem_erase.mp hqT').1
         by_cases he : ∃ r ∈ T, Even (c r)
         · obtain ⟨r, hrT, hre⟩ := he
           obtain ⟨r', hr'T'⟩ := Finset.card_pos.mp (by
-            rw [Finset.card_erase_of_mem hrT]; omega : 0 < (T.erase r).card)
+            rw [Finset.card_erase_of_mem hrT]; lia : 0 < (T.erase r).card)
           exact even_split h0 ha hdiff hcond IH hrT (Finset.mem_erase.mp hr'T').2
             (fun h => (Finset.mem_erase.mp hr'T').1 h.symm) hre
         · push Not at he

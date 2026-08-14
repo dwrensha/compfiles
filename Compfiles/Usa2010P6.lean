@@ -270,7 +270,7 @@ lemma list_filter_length {α : Type*} (l : List α) (p : α → Bool) :
     by_cases h : p x
     · rw [List.filter_cons_of_pos h, List.map_cons, List.sum_cons, List.length_cons, ih]
       simp [h]
-      omega
+      lia
     · rw [List.filter_cons_of_neg h, List.map_cons, List.sum_cons, ih]
       simp [h]
 
@@ -555,7 +555,7 @@ lemma lower_bound (L : List (ℤ × ℤ)) (hL : ValidBoard L) :
   have hsc : (42 : ℚ) < (score L (Tof L t) : ℚ) := (Rat.mul_lt_mul_left hwq).mp ht
   have hsc43 : 43 ≤ score L (Tof L t) := by
     have h' : 42 < score L (Tof L t) := by exact_mod_cast hsc
-    omega
+    lia
   exact ⟨Tof L t, validErase_Tof hL t, hsc43⟩
 
 /-! ### The extremal construction (upper bound) -/
@@ -615,8 +615,8 @@ lemma upper_not_mem_negList_diag (k : ℤ) : (k, k) ∉ upperNegList := by
   simp only [upperNegList_def, List.mem_flatMap, List.mem_range, List.mem_map] at h
   obtain ⟨i, -, j, hji, heq⟩ := h
   simp only [Prod.mk.injEq] at heq
-  have : i = j := by omega
-  omega
+  have : i = j := by lia
+  lia
 
 /-- The combinatorial heart of the upper bound: for any `A : Finset ℕ`,
 `a choose 2 ≤ ∑ i ∈ A, #(A ∩ range i)`, proved by enumerating `A` in
@@ -671,12 +671,12 @@ lemma validBoard_L0 : ValidBoard L0 := by
       rcases List.mem_append.mp hk with h | h
       · obtain ⟨i, -, heq⟩ := upper_mem_loopList h
         simp only [Prod.mk.injEq] at heq
-        omega
+        lia
       · exact absurd h (upper_not_mem_negList_diag k)
     rcases List.mem_append.mp hneg with h | h
     · obtain ⟨i, -, heq⟩ := upper_mem_loopList h
       simp only [Prod.mk.injEq] at heq
-      omega
+      lia
     · exact upper_not_mem_negList_diag (-k) h
 
 /-- The loop part contributes exactly `5 * a`, where `a` counts the indices
@@ -774,7 +774,7 @@ lemma upper_score (T : Finset ℤ) (hT : ValidErase T) : score L0 T ≤ 43 := by
   rw [upper_L0_eq]
   show ((upperLoopList ++ upperNegList).filter (fun p => decide (p.1 ∈ T ∨ p.2 ∈ T))).length ≤ 43
   rw [List.filter_append, List.length_append]
-  omega
+  lia
 
 
 snip end

@@ -44,7 +44,7 @@ lemma sum_range_triple (f : ℕ → ℚ) (t : ℕ) :
     simp_rw [← add_assoc]
     repeat rw [← sum_Icc_succ_top ?_ f]
     · congr 2
-    all_goals omega
+    all_goals lia
 
 /-- A sum of reciprocals as a single fraction with the product
 of all denominators as denominator. -/
@@ -70,8 +70,8 @@ problem usa2010_p5 (p q : ℕ) (hpp : Nat.Prime p) (hpo : Odd p) (hq : q = (3*p-
   subst ht
   have ht1 : 1 ≤ t := by
     have h2 := hpp.two_le
-    omega
-  have hq1 : q + 1 = 3 * t := by omega
+    lia
+  have hq1 : q + 1 = 3 * t := by lia
   -- The indices `2, 5, 8, …, q` are exactly `3i+2` for `i ∈ range t`.
   have hgrid : (Finset.Icc 2 q).filter (fun k ↦ k % 3 = 2) =
       (Finset.range t).image (fun i ↦ 3 * i + 2) := by
@@ -79,13 +79,13 @@ problem usa2010_p5 (p q : ℕ) (hpp : Nat.Prime p) (hpo : Odd p) (hq : q = (3*p-
     simp only [Finset.mem_filter, Finset.mem_Icc, Finset.mem_image, Finset.mem_range]
     constructor
     · rintro ⟨⟨h2k, hkq⟩, hkm⟩
-      exact ⟨(k - 2) / 3, by omega, by omega⟩
+      exact ⟨(k - 2) / 3, by lia, by lia⟩
     · rintro ⟨i, hi, rfl⟩
-      exact ⟨⟨by omega, by omega⟩, by omega⟩
+      exact ⟨⟨by lia, by lia⟩, by lia⟩
   have hinj : Set.InjOn (fun i ↦ 3 * i + 2) (Finset.range t) := by
     intro a _ b _ h
     have h' : 3 * a + 2 = 3 * b + 2 := h
-    omega
+    lia
   -- Partial fractions: `2/(k(k+1)(k+2)) = 1/k - 2/(k+1) + 1/(k+2)`,
   -- rewritten as `(1/k + 1/(k+1) + 1/(k+2)) - 1/(i+1)` for `k = 3i+2`.
   have key : ∀ i : ℕ, 2 * ((1:ℚ)/((3*i+2 : ℕ)*((3*i+2 : ℕ)+1)*((3*i+2 : ℕ)+2))) =
@@ -115,8 +115,8 @@ problem usa2010_p5 (p q : ℕ) (hpp : Nat.Prime p) (hpo : Odd p) (hq : q = (3*p-
       1 + ∑ j ∈ Finset.Icc 2 (3*t+1), (1:ℚ)/(j:ℚ) := by
     rw [← Finset.Ico_add_one_right_eq_Icc (a := 1) (b := 3*t+1),
       ← Finset.Ico_add_one_right_eq_Icc (a := 2) (b := 3*t+1),
-      ← Finset.sum_Ico_consecutive _ (show (1:ℕ) ≤ 2 by omega)
-        (show 2 ≤ 3*t+1+1 by omega),
+      ← Finset.sum_Ico_consecutive _ (show (1:ℕ) ≤ 2 by lia)
+        (show 2 ≤ 3*t+1+1 by lia),
       Nat.Ico_succ_singleton, Finset.sum_singleton]
     norm_num
   -- `H = R + M`: split the harmonic sum at `t`.
@@ -125,31 +125,31 @@ problem usa2010_p5 (p q : ℕ) (hpp : Nat.Prime p) (hpo : Odd p) (hq : q = (3*p-
         ∑ j ∈ Finset.Icc (t+1) (3*t+1), (1:ℚ)/(j:ℚ) := by
     rw [← Finset.Ico_add_one_right_eq_Icc (a := 1) (b := 3*t+1),
       ← Finset.Ico_add_one_right_eq_Icc (a := t+1) (b := 3*t+1),
-      ← Finset.sum_Ico_consecutive _ (show (1:ℕ) ≤ t+1 by omega)
-        (show t+1 ≤ 3*t+1+1 by omega)]
+      ← Finset.sum_Ico_consecutive _ (show (1:ℕ) ≤ t+1 by lia)
+        (show t+1 ≤ 3*t+1+1 by lia)]
     congr 1
     rw [Finset.sum_Ico_eq_sum_range (fun j ↦ (1:ℚ)/(j:ℚ)) 1 (t+1),
-      show t+1-1 = t by omega]
+      show t+1-1 = t by lia]
   -- Pairing: the middle harmonic sum, symmetrically around `2t+1`.
   have h7 : (∑ j ∈ Finset.Icc (t+1) (3*t+1), (1:ℚ)/(j:ℚ)) =
       (1:ℚ)/((2*t+1 : ℕ)) + ∑ i ∈ Finset.range t, ((1:ℚ)/((2*t+1 : ℕ)-(1+i)) +
         (1:ℚ)/((2*t+1 : ℕ)+(1+i))) := by
     rw [← Finset.Ico_add_one_right_eq_Icc (a := t+1) (b := 3*t+1),
-      ← Finset.sum_Ico_consecutive _ (show t+1 ≤ 2*t+1 by omega)
-        (show 2*t+1 ≤ 3*t+1+1 by omega),
-      ← Finset.sum_Ico_consecutive _ (show 2*t+1 ≤ 2*t+1+1 by omega)
-        (show 2*t+1+1 ≤ 3*t+1+1 by omega),
+      ← Finset.sum_Ico_consecutive _ (show t+1 ≤ 2*t+1 by lia)
+        (show 2*t+1 ≤ 3*t+1+1 by lia),
+      ← Finset.sum_Ico_consecutive _ (show 2*t+1 ≤ 2*t+1+1 by lia)
+        (show 2*t+1+1 ≤ 3*t+1+1 by lia),
       Nat.Ico_succ_singleton, Finset.sum_singleton]
     rw [Finset.sum_Ico_eq_sum_range (fun j ↦ (1:ℚ)/(j:ℚ)) (t+1) (2*t+1),
       Finset.sum_Ico_eq_sum_range (fun j ↦ (1:ℚ)/(j:ℚ)) (2*t+1+1) (3*t+1+1),
-      show 2*t+1-(t+1) = t by omega, show 3*t+1+1-(2*t+1+1) = t by omega]
+      show 2*t+1-(t+1) = t by lia, show 3*t+1+1-(2*t+1+1) = t by lia]
     have hrefl : (∑ i ∈ Finset.range t, (1:ℚ)/((t+1+i : ℕ))) =
         ∑ i ∈ Finset.range t, (1:ℚ)/((2*t - i : ℕ)) := by
       have h1 : (∑ i ∈ Finset.range t, (1:ℚ)/((2*t - i : ℕ))) =
           ∑ i ∈ Finset.range t, (1:ℚ)/((t+1+(t-1-i) : ℕ)) := by
         refine Finset.sum_congr rfl (fun i hi ↦ ?_)
         rw [Finset.mem_range] at hi
-        rw [show (2*t - i : ℕ) = t+1+(t-1-i) by omega]
+        rw [show (2*t - i : ℕ) = t+1+(t-1-i) by lia]
       rw [h1]
       exact (Finset.sum_range_reflect (fun i ↦ (1:ℚ)/((t+1+i : ℕ))) t).symm
     have hpair : (∑ i ∈ Finset.range t, ((1:ℚ)/((2*t+1 : ℕ)-(1+i)) +
@@ -158,8 +158,8 @@ problem usa2010_p5 (p q : ℕ) (hpp : Nat.Prime p) (hpo : Odd p) (hq : q = (3*p-
       refine Finset.sum_congr rfl (fun i hi ↦ ?_)
       rw [Finset.mem_range] at hi
       have e1 : ((2*t - i : ℕ):ℚ) = ((2*t+1 : ℕ):ℚ) - ((1:ℚ) + (i:ℚ)) := by
-        have h : (2*t - i : ℕ) = 2*t+1-(1+i) := by omega
-        rw [h, Nat.cast_sub (show 1+i ≤ 2*t+1 by omega)]
+        have h : (2*t - i : ℕ) = 2*t+1-(1+i) := by lia
+        rw [h, Nat.cast_sub (show 1+i ≤ 2*t+1 by lia)]
         push_cast
         ring
       have e2 : ((2*t+1+1+i : ℕ):ℚ) = ((2*t+1 : ℕ):ℚ) + ((1:ℚ) + (i:ℚ)) := by
@@ -174,7 +174,7 @@ problem usa2010_p5 (p q : ℕ) (hpp : Nat.Prime p) (hpo : Odd p) (hq : q = (3*p-
     intro i hi
     rw [Finset.mem_range] at hi
     have h1 : ((1+i : ℕ):ℚ) < ((2*t+1 : ℕ):ℚ) := by
-      exact_mod_cast (show (1:ℕ)+i < 2*t+1 by omega)
+      exact_mod_cast (show (1:ℕ)+i < 2*t+1 by lia)
     have h2' : ((1+i : ℕ):ℚ) = (1:ℚ) + (i:ℚ) := by push_cast; ring
     rw [h2'] at h1
     have hnz1 : ((2*t+1 : ℕ):ℚ) - ((1:ℚ) + (i:ℚ)) ≠ 0 := ne_of_gt (sub_pos.mpr h1)
@@ -207,7 +207,7 @@ problem usa2010_p5 (p q : ℕ) (hpp : Nat.Prime p) (hpo : Odd p) (hq : q = (3*p-
     rw [Finset.mem_range] at hi
     have h1i : (0:ℚ) < ((1+i : ℕ):ℚ) := by positivity
     have hpi : ((1+i : ℕ):ℚ) < ((2*t+1 : ℕ):ℚ) := by
-      exact_mod_cast (show (1:ℕ)+i < 2*t+1 by omega)
+      exact_mod_cast (show (1:ℕ)+i < 2*t+1 by lia)
     have hp0 : (0:ℚ) < ((2*t+1 : ℕ):ℚ) := by positivity
     have m1 := mul_lt_mul_of_pos_left hpi h1i
     have m2 := mul_lt_mul_of_pos_right hpi hp0
@@ -238,10 +238,10 @@ problem usa2010_p5 (p q : ℕ) (hpp : Nat.Prime p) (hpo : Odd p) (hq : q = (3*p-
   have hcpos : ∀ i ∈ Finset.range t, (0:ℤ) < ((2*t+1 : ℕ):ℤ)^2 - ((1+i : ℕ):ℤ)^2 := by
     intro i hi
     rw [Finset.mem_range] at hi
-    have h1i : (0:ℤ) < ((1+i : ℕ):ℤ) := by exact_mod_cast (show 0 < 1+i by omega)
+    have h1i : (0:ℤ) < ((1+i : ℕ):ℤ) := by exact_mod_cast (show 0 < 1+i by lia)
     have hpi : ((1+i : ℕ):ℤ) < ((2*t+1 : ℕ):ℤ) := by
-      exact_mod_cast (show (1:ℕ)+i < 2*t+1 by omega)
-    have hp0 : (0:ℤ) < ((2*t+1 : ℕ):ℤ) := by exact_mod_cast (show 0 < 2*t+1 by omega)
+      exact_mod_cast (show (1:ℕ)+i < 2*t+1 by lia)
+    have hp0 : (0:ℤ) < ((2*t+1 : ℕ):ℤ) := by exact_mod_cast (show 0 < 2*t+1 by lia)
     have m1 := mul_lt_mul_of_pos_left hpi h1i
     have m2 := mul_lt_mul_of_pos_right hpi hp0
     have hsq : ((1+i : ℕ):ℤ)^2 < ((2*t+1 : ℕ):ℤ)^2 := by
@@ -272,8 +272,8 @@ problem usa2010_p5 (p q : ℕ) (hpp : Nat.Prime p) (hpo : Odd p) (hq : q = (3*p-
       rwa [Int.sub_sub_self] at hsub
     have hiP : ((2*t+1 : ℕ):ℤ) ∣ ((1+i : ℕ):ℤ) := hpZ.dvd_of_dvd_pow hi2
     have hPdvdN : (2*t+1) ∣ (1+i) := by exact_mod_cast hiP
-    have hle : (2*t+1) ≤ (1+i) := Nat.le_of_dvd (by omega) hPdvdN
-    omega
+    have hle : (2*t+1) ≤ (1+i) := Nat.le_of_dvd (by lia) hPdvdN
+    lia
   -- Transfer to an arbitrary representation `m/n`.
   intro m n hn hmn
   rw [haform] at hmn

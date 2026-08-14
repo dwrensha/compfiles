@@ -83,11 +83,11 @@ snip begin
 
 theorem mem_hblock {i j a b : ℕ} :
     (a, b) ∈ hblock i j ↔ a = i ∧ j ≤ b ∧ b ≤ j + 2 := by
-  simp [hblock]; omega
+  simp [hblock]; lia
 
 theorem mem_vblock {i j a b : ℕ} :
     (a, b) ∈ vblock i j ↔ i ≤ a ∧ a ≤ i + 2 ∧ b = j := by
-  simp [vblock]; omega
+  simp [vblock]; lia
 
 theorem trivialTearing_isMaximalTearing (n : ℕ) :
     IsMaximalTearing n (trivialTearing n) := by
@@ -97,8 +97,8 @@ theorem trivialTearing_isMaximalTearing (n : ℕ) :
     simp only [trivialTearing, Finset.mem_union, Finset.mem_image,
       Finset.mem_product, Finset.mem_range] at hs
     rcases hs with (⟨p, ⟨hk, hj⟩, rfl⟩ | ⟨p, ⟨hr, hk⟩, rfl⟩)
-    · exact Or.inr ⟨3 * p.1, p.2, by omega, hj, rfl⟩
-    · exact Or.inl ⟨3 * (n / 3) + p.1, 3 * p.2, by omega, by omega, rfl⟩
+    · exact Or.inr ⟨3 * p.1, p.2, by lia, hj, rfl⟩
+    · exact Or.inl ⟨3 * (n / 3) + p.1, 3 * p.2, by lia, by lia, rfl⟩
   · -- the blocks are pairwise disjoint
     intro s hs t ht hst
     simp only [trivialTearing, Finset.mem_union, Finset.mem_image,
@@ -109,22 +109,22 @@ theorem trivialTearing_isMaximalTearing (n : ℕ) :
       rcases ht with (⟨q, ⟨hk', hj'⟩, rfl⟩ | ⟨q, ⟨hr', hk'⟩, rfl⟩)
     · -- two vertical blocks
       rw [mem_vblock] at hxs hxt
-      have hp2 : p.2 = q.2 := by omega
+      have hp2 : p.2 = q.2 := by lia
       have hp1 : p.1 ≠ q.1 := fun h => hst (by rw [h, hp2])
-      omega
+      lia
     · -- vertical block meets horizontal block: impossible, the rows differ
       rw [mem_vblock] at hxs
       rw [mem_hblock] at hxt
-      omega
+      lia
     · -- horizontal block meets vertical block: impossible, the rows differ
       rw [mem_hblock] at hxs
       rw [mem_vblock] at hxt
-      omega
+      lia
     · -- two horizontal blocks
       rw [mem_hblock] at hxs hxt
-      have hp1 : p.1 = q.1 := by omega
+      have hp1 : p.1 = q.1 := by lia
       have hp2 : p.2 ≠ q.2 := fun h => hst (by rw [hp1, h])
-      omega
+      lia
   · -- no further block can be torn out
     intro s hs
     rcases hs with ⟨i, j, hi, hj, rfl⟩ | ⟨i, j, hi, hj, rfl⟩
@@ -135,26 +135,26 @@ theorem trivialTearing_isMaximalTearing (n : ℕ) :
         · refine Finset.mem_union.mpr (Or.inl (Finset.mem_image.mpr
             ⟨(i / 3, j), ?_, rfl⟩))
           rw [Finset.mem_product]
-          exact ⟨Finset.mem_range.mpr (by omega), Finset.mem_range.mpr (by omega)⟩
+          exact ⟨Finset.mem_range.mpr (by lia), Finset.mem_range.mpr (by lia)⟩
         · exact Finset.not_disjoint_iff.mpr
-            ⟨(i, j), by simp [hblock], by rw [mem_vblock]; omega⟩
+            ⟨(i, j), by simp [hblock], by rw [mem_vblock]; lia⟩
       · -- cell (i, j) belongs to a torn-out horizontal block
         refine ⟨hblock (3 * (n / 3) + (i - 3 * (n / 3))) (3 * (j / 3)), ?_, ?_⟩
         · refine Finset.mem_union.mpr (Or.inr (Finset.mem_image.mpr
             ⟨(i - 3 * (n / 3), j / 3), ?_, rfl⟩))
           rw [Finset.mem_product]
-          exact ⟨Finset.mem_range.mpr (by omega), Finset.mem_range.mpr (by omega)⟩
+          exact ⟨Finset.mem_range.mpr (by lia), Finset.mem_range.mpr (by lia)⟩
         · exact Finset.not_disjoint_iff.mpr
-            ⟨(i, j), by simp [hblock], by rw [mem_hblock]; omega⟩
+            ⟨(i, j), by simp [hblock], by rw [mem_hblock]; lia⟩
     · -- a vertical block at column `j`, rows `i .. i+2`
-      have hi' : i < 3 * (n / 3) := by omega
+      have hi' : i < 3 * (n / 3) := by lia
       refine ⟨vblock (3 * (i / 3)) j, ?_, ?_⟩
       · refine Finset.mem_union.mpr (Or.inl (Finset.mem_image.mpr
           ⟨(i / 3, j), ?_, rfl⟩))
         rw [Finset.mem_product]
-        exact ⟨Finset.mem_range.mpr (by omega), Finset.mem_range.mpr hj⟩
+        exact ⟨Finset.mem_range.mpr (by lia), Finset.mem_range.mpr hj⟩
       · exact Finset.not_disjoint_iff.mpr
-          ⟨(i, j), by simp [vblock], by rw [mem_vblock]; omega⟩
+          ⟨(i, j), by simp [vblock], by rw [mem_vblock]; lia⟩
 
 theorem trivialTearing_card_le (n : ℕ) :
     (trivialTearing n).card ≤ (n / 3) * n + (n % 3) * (n / 3) := by
@@ -194,29 +194,29 @@ def segsV (n : ℕ) : Finset (Finset (ℕ × ℕ)) :=
 
 theorem lower_hblock_inj {i j i' j' : ℕ} (h : hblock i j = hblock i' j') :
     i = i' ∧ j = j' := by
-  have key1 : (i, j) ∈ hblock i j := mem_hblock.mpr ⟨rfl, le_rfl, by omega⟩
-  have key2 : (i', j') ∈ hblock i' j' := mem_hblock.mpr ⟨rfl, le_rfl, by omega⟩
+  have key1 : (i, j) ∈ hblock i j := mem_hblock.mpr ⟨rfl, le_rfl, by lia⟩
+  have key2 : (i', j') ∈ hblock i' j' := mem_hblock.mpr ⟨rfl, le_rfl, by lia⟩
   rw [h] at key1
   rw [← h] at key2
   rw [mem_hblock] at key1 key2
-  omega
+  lia
 
 theorem lower_vblock_inj {i j i' j' : ℕ} (h : vblock i j = vblock i' j') :
     i = i' ∧ j = j' := by
-  have key1 : (i, j) ∈ vblock i j := mem_vblock.mpr ⟨le_rfl, by omega, rfl⟩
-  have key2 : (i', j') ∈ vblock i' j' := mem_vblock.mpr ⟨le_rfl, by omega, rfl⟩
+  have key1 : (i, j) ∈ vblock i j := mem_vblock.mpr ⟨le_rfl, by lia, rfl⟩
+  have key2 : (i', j') ∈ vblock i' j' := mem_vblock.mpr ⟨le_rfl, by lia, rfl⟩
   rw [h] at key1
   rw [← h] at key2
   rw [mem_vblock] at key1 key2
-  omega
+  lia
 
 theorem lower_hblock_ne_vblock {i j i' j' : ℕ} : hblock i j ≠ vblock i' j' := by
   intro h
-  have key1 : (i', j') ∈ vblock i' j' := mem_vblock.mpr ⟨le_rfl, by omega, rfl⟩
-  have key2 : (i' + 1, j') ∈ vblock i' j' := mem_vblock.mpr ⟨by omega, by omega, rfl⟩
+  have key1 : (i', j') ∈ vblock i' j' := mem_vblock.mpr ⟨le_rfl, by lia, rfl⟩
+  have key2 : (i' + 1, j') ∈ vblock i' j' := mem_vblock.mpr ⟨by lia, by lia, rfl⟩
   rw [← h] at key1 key2
   rw [mem_hblock] at key1 key2
-  omega
+  lia
 
 theorem lower_card_segsH (n : ℕ) : (segsH n).card = n * (n - 2) := by
   rw [segsH, Finset.card_image_of_injOn, Finset.card_product, Finset.card_range,
@@ -252,11 +252,11 @@ theorem lower_isBlock_of_mem_segs {n : ℕ} {s : Finset (ℕ × ℕ)}
   · rw [segsH, Finset.mem_image] at hs
     obtain ⟨p, hp, rfl⟩ := hs
     rw [Finset.mem_product, Finset.mem_range, Finset.mem_range] at hp
-    exact Or.inl ⟨p.1, p.2, hp.1, by omega, rfl⟩
+    exact Or.inl ⟨p.1, p.2, hp.1, by lia, rfl⟩
   · rw [segsV, Finset.mem_image] at hs
     obtain ⟨p, hp, rfl⟩ := hs
     rw [Finset.mem_product, Finset.mem_range, Finset.mem_range] at hp
-    exact Or.inr ⟨p.1, p.2, by omega, hp.2, rfl⟩
+    exact Or.inr ⟨p.1, p.2, by lia, hp.2, rfl⟩
 
 /-- Every block meets at most `14` of the possible block positions. -/
 theorem lower_card_filter_le_fourteen {n : ℕ} {s : Finset (ℕ × ℕ)} (hs : IsBlock n s) :
@@ -277,15 +277,15 @@ theorem lower_card_filter_le_fourteen {n : ℕ} {s : Finset (ℕ × ℕ)} (hs : 
       rw [Finset.mem_image]
       refine ⟨p.2, ?_, ?_⟩
       · rw [Finset.mem_Icc]
-        omega
-      · have hpi : p.1 = i := by omega
+        lia
+      · have hpi : p.1 = i := by lia
         show hblock i p.2 = hblock p.1 p.2
         rw [← hpi]
     have hcard1 :
         ((Finset.Icc (j - 2) (j + 2)).image fun j' => hblock i j').card ≤ 5 := by
       refine Finset.card_image_le.trans ?_
       rw [Nat.card_Icc]
-      omega
+      lia
     have hsub2 : ((segsV n).filter fun u => ¬ Disjoint u (hblock i j)) ⊆
         ((Finset.Icc (i - 2) i ×ˢ {j, j + 1, j + 2}) : Finset (ℕ × ℕ)).image
           fun p => vblock p.1 p.2 := by
@@ -301,14 +301,14 @@ theorem lower_card_filter_le_fourteen {n : ℕ} {s : Finset (ℕ × ℕ)} (hs : 
       rw [Finset.mem_image]
       refine ⟨p, ?_, rfl⟩
       rw [Finset.mem_product, Finset.mem_Icc]
-      refine ⟨by omega, ?_⟩
+      refine ⟨by lia, ?_⟩
       simp only [Finset.mem_insert, Finset.mem_singleton]
-      omega
+      lia
     have hcard2 : (((Finset.Icc (i - 2) i ×ˢ {j, j + 1, j + 2}) : Finset (ℕ × ℕ)).image
           fun p => vblock p.1 p.2).card ≤ 9 := by
       refine Finset.card_image_le.trans ?_
       rw [Finset.card_product, Nat.card_Icc]
-      have hIcc : i + 1 - (i - 2) ≤ 3 := by omega
+      have hIcc : i + 1 - (i - 2) ≤ 3 := by lia
       have h3 : ({j, j + 1, j + 2} : Finset ℕ).card ≤ 3 := by
         exact Finset.card_le_three
       exact (Nat.mul_le_mul hIcc h3).trans (by norm_num)
@@ -332,13 +332,13 @@ theorem lower_card_filter_le_fourteen {n : ℕ} {s : Finset (ℕ × ℕ)} (hs : 
       rw [Finset.mem_image]
       refine ⟨p, ?_, rfl⟩
       rw [Finset.mem_product, Finset.mem_Icc, Finset.mem_Icc]
-      omega
+      lia
     have hcard1 : (((Finset.Icc i (i + 2) ×ˢ Finset.Icc (j - 2) j) : Finset (ℕ × ℕ)).image
           fun p => hblock p.1 p.2).card ≤ 9 := by
       refine Finset.card_image_le.trans ?_
       rw [Finset.card_product, Nat.card_Icc, Nat.card_Icc]
-      have hIcc1 : i + 2 + 1 - i ≤ 3 := by omega
-      have hIcc2 : j + 1 - (j - 2) ≤ 3 := by omega
+      have hIcc1 : i + 2 + 1 - i ≤ 3 := by lia
+      have hIcc2 : j + 1 - (j - 2) ≤ 3 := by lia
       exact (Nat.mul_le_mul hIcc1 hIcc2).trans (by norm_num)
     have hsub2 : ((segsV n).filter fun u => ¬ Disjoint u (vblock i j)) ⊆
         (Finset.Icc (i - 2) (i + 2)).image fun i' => vblock i' j := by
@@ -353,15 +353,15 @@ theorem lower_card_filter_le_fourteen {n : ℕ} {s : Finset (ℕ × ℕ)} (hs : 
       rw [Finset.mem_image]
       refine ⟨p.1, ?_, ?_⟩
       · rw [Finset.mem_Icc]
-        omega
-      · have hpj : p.2 = j := by omega
+        lia
+      · have hpj : p.2 = j := by lia
         show vblock p.1 j = vblock p.1 p.2
         rw [← hpj]
     have hcard2 :
         ((Finset.Icc (i - 2) (i + 2)).image fun i' => vblock i' j).card ≤ 5 := by
       refine Finset.card_image_le.trans ?_
       rw [Nat.card_Icc]
-      omega
+      lia
     exact (Finset.card_union_le _ _).trans
       ((add_le_add ((Finset.card_le_card hsub1).trans hcard1)
         ((Finset.card_le_card hsub2).trans hcard2)).trans (by norm_num))
@@ -441,7 +441,7 @@ theorem mem_patRowTearing {n i : ℕ} {s : Finset (ℕ × ℕ)} (hs : s ∈ patR
 theorem fst_eq_of_mem_patRowTearing {n i a b : ℕ} {s : Finset (ℕ × ℕ)}
     (hs : s ∈ patRowTearing n i) (hx : (a, b) ∈ s) : a = i := by
   rcases mem_patRowTearing hs with ⟨k, _, _, rfl⟩ | ⟨_, rfl⟩ | ⟨_, rfl⟩ <;>
-    rw [mem_hblock] at hx <;> omega
+    rw [mem_hblock] at hx <;> lia
 
 theorem patTearing_isBlock {n : ℕ} (hn : 6 ≤ n) {s : Finset (ℕ × ℕ)}
     (hs : s ∈ patTearing n) : IsBlock n s := by
@@ -450,8 +450,8 @@ theorem patTearing_isBlock {n : ℕ} (hn : 6 ≤ n) {s : Finset (ℕ × ℕ)}
   rw [Finset.mem_range] at hi
   rcases mem_patRowTearing hs with ⟨k, _, hk2, rfl⟩ | ⟨_, rfl⟩ | ⟨_, rfl⟩
   · exact Or.inl ⟨i, phase i + 5 * k, hi, hk2, rfl⟩
-  · exact Or.inl ⟨i, 0, hi, by omega, rfl⟩
-  · exact Or.inl ⟨i, n - 3, hi, by omega, rfl⟩
+  · exact Or.inl ⟨i, 0, hi, by lia, rfl⟩
+  · exact Or.inl ⟨i, n - 3, hi, by lia, rfl⟩
 
 theorem patTearing_disjoint {n : ℕ} (hn : 6 ≤ n) {s t : Finset (ℕ × ℕ)}
     (hs : s ∈ patTearing n) (ht : t ∈ patTearing n) (hst : s ≠ t) : Disjoint s t := by
@@ -470,21 +470,21 @@ theorem patTearing_disjoint {n : ℕ} (hn : 6 ≤ n) {s t : Finset (ℕ × ℕ)}
     subst hs_eq <;> subst ht_eq <;> rw [mem_hblock] at hxs hxt
   · -- two pattern blocks of the same row: the column ranges are 5 apart
     have hkl : k ≠ l := fun h => hst (by rw [h])
-    omega
+    lia
   · -- pattern block vs. extra left block
-    omega
+    lia
   · -- pattern block vs. extra right block
-    omega
+    lia
   · -- extra left block vs. pattern block
-    omega
+    lia
   · -- same block
     exact hst rfl
   · -- extra left block vs. extra right block: n ≥ 6
-    omega
+    lia
   · -- extra right block vs. pattern block
-    omega
+    lia
   · -- extra right block vs. extra left block: n ≥ 6
-    omega
+    lia
   · -- same block
     exact hst rfl
 
@@ -493,18 +493,18 @@ theorem cov_covered {n i j : ℕ} (hn : 6 ≤ n) (hi : i < n) (hj : j < n) (h : 
     ∃ s ∈ patRowTearing n i, (i, j) ∈ s := by
   rcases h with ⟨h3, hj2⟩ | ⟨h1, h2, h3⟩ | ⟨h3, hj3⟩
   · -- the extra left block covers the cell
-    refine ⟨hblock i 0, ?_, by rw [mem_hblock]; omega⟩
+    refine ⟨hblock i 0, ?_, by rw [mem_hblock]; lia⟩
     refine Finset.mem_union.mpr (Or.inl (Finset.mem_union.mpr (Or.inr ?_)))
     rw [ite_eq_left h3]
     exact Finset.mem_singleton_self _
   · -- a pattern block covers the cell
-    refine ⟨hblock i (phase i + 5 * ((j - phase i) / 5)), ?_, by rw [mem_hblock]; omega⟩
+    refine ⟨hblock i (phase i + 5 * ((j - phase i) / 5)), ?_, by rw [mem_hblock]; lia⟩
     refine Finset.mem_union.mpr (Or.inl (Finset.mem_union.mpr (Or.inl ?_)))
     refine Finset.mem_image.mpr ⟨(j - phase i) / 5, ?_, rfl⟩
     rw [Finset.mem_filter, Finset.mem_range]
-    exact ⟨by omega, by omega⟩
+    exact ⟨by lia, by lia⟩
   · -- the extra right block covers the cell
-    refine ⟨hblock i (n - 3), ?_, by rw [mem_hblock]; omega⟩
+    refine ⟨hblock i (n - 3), ?_, by rw [mem_hblock]; lia⟩
     refine Finset.mem_union.mpr (Or.inr ?_)
     rw [ite_eq_left h3]
     exact Finset.mem_singleton_self _
@@ -513,39 +513,39 @@ theorem cov_covered {n i j : ℕ} (hn : 6 ≤ n) (hi : i < n) (hj : j < n) (h : 
 theorem row_cov {n i j : ℕ} (hn : 6 ≤ n) (hi : i < n) (hj : j + 2 < n) :
     cov n i j ∨ cov n i (j + 1) ∨ cov n i (j + 2) := by
   simp only [cov, phase]
-  omega
+  lia
 
 /-- Every three consecutive cells of a column of the sheet contain a torn-out
 cell. -/
 theorem col_cov {n i j : ℕ} (hn : 6 ≤ n) (hi : i + 2 < n) (hj : j < n) :
     cov n i j ∨ cov n (i + 1) j ∨ cov n (i + 2) j := by
   simp only [cov, phase]
-  omega
+  lia
 
 theorem patTearing_maximal {n : ℕ} (hn : 6 ≤ n) {s : Finset (ℕ × ℕ)} (hs : IsBlock n s) :
     ∃ t ∈ patTearing n, ¬ Disjoint s t := by
   rcases hs with ⟨i, j, hi, hj, rfl⟩ | ⟨i, j, hi, hj, rfl⟩
   · -- a horizontal block at row `i`, columns `j .. j+2`
     rcases row_cov hn hi hj with h | h | h
-    · obtain ⟨t, ht, hcell⟩ := cov_covered hn hi (by omega) h
+    · obtain ⟨t, ht, hcell⟩ := cov_covered hn hi (by lia) h
       exact ⟨t, Finset.mem_biUnion.mpr ⟨i, Finset.mem_range.mpr hi, ht⟩,
         Finset.not_disjoint_iff.mpr ⟨(i, j), by simp [hblock], hcell⟩⟩
-    · obtain ⟨t, ht, hcell⟩ := cov_covered hn hi (by omega) h
+    · obtain ⟨t, ht, hcell⟩ := cov_covered hn hi (by lia) h
       exact ⟨t, Finset.mem_biUnion.mpr ⟨i, Finset.mem_range.mpr hi, ht⟩,
         Finset.not_disjoint_iff.mpr ⟨(i, j + 1), by simp [hblock], hcell⟩⟩
-    · obtain ⟨t, ht, hcell⟩ := cov_covered hn hi (by omega) h
+    · obtain ⟨t, ht, hcell⟩ := cov_covered hn hi (by lia) h
       exact ⟨t, Finset.mem_biUnion.mpr ⟨i, Finset.mem_range.mpr hi, ht⟩,
         Finset.not_disjoint_iff.mpr ⟨(i, j + 2), by simp [hblock], hcell⟩⟩
   · -- a vertical block at column `j`, rows `i .. i+2`
     rcases col_cov hn hi hj with h | h | h
-    · obtain ⟨t, ht, hcell⟩ := cov_covered hn (by omega) hj h
-      exact ⟨t, Finset.mem_biUnion.mpr ⟨i, Finset.mem_range.mpr (by omega), ht⟩,
+    · obtain ⟨t, ht, hcell⟩ := cov_covered hn (by lia) hj h
+      exact ⟨t, Finset.mem_biUnion.mpr ⟨i, Finset.mem_range.mpr (by lia), ht⟩,
         Finset.not_disjoint_iff.mpr ⟨(i, j), by simp [vblock], hcell⟩⟩
-    · obtain ⟨t, ht, hcell⟩ := cov_covered hn (by omega) hj h
-      exact ⟨t, Finset.mem_biUnion.mpr ⟨i + 1, Finset.mem_range.mpr (by omega), ht⟩,
+    · obtain ⟨t, ht, hcell⟩ := cov_covered hn (by lia) hj h
+      exact ⟨t, Finset.mem_biUnion.mpr ⟨i + 1, Finset.mem_range.mpr (by lia), ht⟩,
         Finset.not_disjoint_iff.mpr ⟨(i + 1, j), by simp [vblock], hcell⟩⟩
-    · obtain ⟨t, ht, hcell⟩ := cov_covered hn (by omega) hj h
-      exact ⟨t, Finset.mem_biUnion.mpr ⟨i + 2, Finset.mem_range.mpr (by omega), ht⟩,
+    · obtain ⟨t, ht, hcell⟩ := cov_covered hn (by lia) hj h
+      exact ⟨t, Finset.mem_biUnion.mpr ⟨i + 2, Finset.mem_range.mpr (by lia), ht⟩,
         Finset.not_disjoint_iff.mpr ⟨(i + 2, j), by simp [vblock], hcell⟩⟩
 
 theorem patRowTearing_card_le (n i : ℕ) : (patRowTearing n i).card ≤ n / 5 + 3 := by
@@ -599,7 +599,7 @@ problem usa2002_p6 :
     · have h2 : 2 * (n * (n - 2)) ≤ 14 * T.card := counting_lower_bound hT
       rw [hcard] at h2
       have h : ((2 * (n * (n - 2)) : ℕ) : ℝ) ≤ ((14 * b n : ℕ) : ℝ) := Nat.cast_le.mpr h2
-      rw [Nat.cast_mul, Nat.cast_mul, Nat.cast_sub (by omega : 2 ≤ n)] at h
+      rw [Nat.cast_mul, Nat.cast_mul, Nat.cast_sub (by lia : 2 ≤ n)] at h
       push_cast at h
       nlinarith [h]
   · -- the upper bound: there is a maximal tearing with at most `n²/5 + 3n` blocks
@@ -612,7 +612,7 @@ problem usa2002_p6 :
       have h2 : (((n / 3) * n + (n % 3) * (n / 3) : ℕ) : ℝ) ≤ (n : ℝ) ^ 2 / 5 + 3 * n := by
         have hdiv : ((n / 3 : ℕ) : ℝ) ≤ (n : ℝ) / 3 := Nat.cast_div_le
         have hmod : ((n % 3 : ℕ) : ℝ) ≤ 2 := by
-          have hmod3 : n % 3 ≤ 2 := by omega
+          have hmod3 : n % 3 ≤ 2 := by lia
           exact_mod_cast hmod3
         have hn' : (0 : ℝ) ≤ (n : ℝ) := Nat.cast_nonneg _
         have hn'' : (n : ℝ) ≤ 5 := by exact_mod_cast hn5
@@ -629,7 +629,7 @@ problem usa2002_p6 :
         nlinarith [e1, e2, hn', hn'', mul_le_mul_of_nonneg_left hn'' hn']
       nlinarith [h1, h2]
     · -- large `n`: the efficient pattern tearing
-      have hb := b_le (patTearing_isMaximalTearing (by omega : 6 ≤ n))
+      have hb := b_le (patTearing_isMaximalTearing (by lia : 6 ≤ n))
       have hc := patTearing_card_le n
       have h1 : (b n : ℝ) ≤ ((n * (n / 5 + 3) : ℕ) : ℝ) := Nat.cast_le.mpr (hb.trans hc)
       have h2 : ((n * (n / 5 + 3) : ℕ) : ℝ) ≤ (n : ℝ) ^ 2 / 5 + 3 * n := by

@@ -151,7 +151,7 @@ lemma balance_ne_zero {l : List (ℕ × Bool)} (hne : l ≠ []) (hnd : (l.map Pr
       _ = (2 : ℤ) ^ M - 1 := h3
       _ < (2 : ℤ) ^ M := by
         have hpos : (0 : ℤ) < (2 : ℤ) ^ M := pow_pos (by norm_num) M
-        omega
+        lia
   -- The largest weight `2^M` dominates the sum of all the others.
   have hSne0 : (l.map Prod.fst).toFinset.Nonempty := by
     cases l with
@@ -201,7 +201,7 @@ lemma balance_ne_zero {l : List (ℕ × Bool)} (hne : l ≠ []) (hnd : (l.map Pr
   rw [abs_lt] at hbal
   simp only [balance_append, balance_cons]
   intro hzero
-  split at hzero <;> omega
+  split at hzero <;> lia
 
 /-- A prefix of an append either lies in the first part or extends it. -/
 lemma prefix_append_cases {α : Type*} {pre X Y : List α} (h : pre <+: X ++ Y) :
@@ -227,7 +227,7 @@ lemma map_up_map_down (l : List (ℕ × Bool)) (h : ∀ p ∈ l, 1 ≤ p.1) :
     simp only [List.map_cons, List.cons.injEq]
     refine ⟨?_, ih hpl⟩
     show (p.1 - 1 + 1, p.2) = p
-    have h1 : p.1 - 1 + 1 = p.1 := by omega
+    have h1 : p.1 - 1 + 1 = p.1 := by lia
     rw [h1]
 
 lemma ways_length {n : ℕ} (w : Ways n) : w.1.length = n := by
@@ -316,7 +316,7 @@ lemma validSeq_remove {b : Bool} {l₁ l₂ : List (ℕ × Bool)}
       apply hval
       rw [hqeq]
       exact (List.take_prefix _ _).trans (List.prefix_append _ _)
-    omega
+    lia
   · push Not at hlen
     have hqeq : q = l₁ ++ l₂.take (pre.length - l₁.length) := by
       rw [hq, List.take_append, List.take_of_length_le (le_of_lt hlen)]
@@ -334,7 +334,7 @@ lemma validSeq_remove {b : Bool} {l₁ l₂ : List (ℕ × Bool)}
     have hε : (if b then (2 : ℤ) ^ 0 else -((2 : ℤ) ^ 0)) = 1 ∨
         (if b then (2 : ℤ) ^ 0 else -((2 : ℤ) ^ 0)) = -1 := by
       cases b <;> simp
-    omega
+    lia
 
 lemma removeList_perm {n : ℕ} (w : Ways (n + 1)) :
     (removeList w).map Prod.fst ~ List.range n := by
@@ -347,11 +347,11 @@ lemma removeList_perm {n : ℕ} (w : Ways (n + 1)) :
     have h0₁ : (0 : ℕ) ∉ (w.1.take (removeIdx w)).map Prod.fst := by
       rintro hmem
       obtain ⟨p, hp, hp0⟩ := List.mem_map.mp hmem
-      have := hfst.1 p hp; omega
+      have := hfst.1 p hp; lia
     have h0₂ : (0 : ℕ) ∉ (w.1.drop (removeIdx w + 1)).map Prod.fst := by
       rintro hmem
       obtain ⟨p, hp, hp0⟩ := List.mem_map.mp hmem
-      have := hfst.2 p hp; omega
+      have := hfst.2 p hp; lia
     rw [List.erase_append_right _ h0₁, List.erase_cons_head] at hperme
     rw [List.map_append]
     exact hperme
@@ -392,7 +392,7 @@ lemma validSeq_insert {lr : List (ℕ × Bool)} (hnd : (lr.map Prod.fst).Nodup)
       rw [← List.map_take]
     rw [hpre_eq, balance_map_succ]
     have h0 := hval _ (List.take_prefix pre.length lr)
-    omega
+    lia
   · rcases List.prefix_cons_iff.mp hp' with rfl | ⟨pre'', hpre'_eq, hp''⟩
     · rw [List.append_nil] at hpre_eq
       have hpm : pre <+: (lr.map fun p : ℕ × Bool ↦ (p.1 + 1, p.2)) := by
@@ -403,7 +403,7 @@ lemma validSeq_insert {lr : List (ℕ × Bool)} (hnd : (lr.map Prod.fst).Nodup)
         rw [← List.map_take]
       rw [hpre_eq2, balance_map_succ]
       have h0 := hval _ (List.take_prefix pre.length lr)
-      omega
+      lia
     · have hpre''_eq : pre'' = ((lr.drop k).take pre''.length).map (fun p : ℕ × Bool ↦ (p.1 + 1, p.2)) := by
         have h1 := (List.prefix_iff_eq_take).mp hp''
         nth_rewrite 1 [h1]
@@ -425,7 +425,7 @@ lemma validSeq_insert {lr : List (ℕ × Bool)} (hnd : (lr.map Prod.fst).Nodup)
       cases b with
       | true =>
         simp at hpreB
-        omega
+        lia
       | false =>
         have hk1 : 1 ≤ k := hb rfl
         have hqnz : Balance (lr.take (k + pre''.length)) ≠ 0 := by
@@ -433,10 +433,10 @@ lemma validSeq_insert {lr : List (ℕ × Bool)} (hnd : (lr.map Prod.fst).Nodup)
           · intro h
             have hl := congrArg List.length h
             rw [List.length_take, List.length_nil] at hl
-            omega
+            lia
           · exact List.Sublist.nodup ((List.take_prefix _ _).sublist.map _) hnd
         simp at hpreB
-        omega
+        lia
 
 lemma insertZero_perm {n : ℕ} {lr : List (ℕ × Bool)}
     (hperm : lr.map Prod.fst ~ List.range n) {k : ℕ} (b : Bool) :
@@ -471,7 +471,7 @@ lemma removePan_false_idx {n : ℕ} (w : Ways (n + 1)) (hp : removePan w = false
     1 ≤ removeIdx w := by
   by_contra h
   push Not at h
-  have hk0 : removeIdx w = 0 := by omega
+  have hk0 : removeIdx w = 0 := by lia
   have hsplit := ways_split w
   rw [hk0, hp, List.take_zero, List.nil_append] at hsplit
   have hpre : [(0, false)] <+: w.1 := ⟨w.1.drop 1, hsplit.symm⟩
@@ -489,7 +489,7 @@ def removeZeroData {n : ℕ} (w : Ways (n + 1)) : IData n :=
     Sum.inl ⟨removeIdx w, by
       have h1 := ways_findIdx_lt w; have h2 := ways_length w
       show w.1.findIdx (fun p ↦ p.1 == 0) < n + 1
-      omega⟩
+      lia⟩
   else
     Sum.inr ⟨removeIdx w - 1, by
       have h1 := ways_findIdx_lt w
@@ -497,7 +497,7 @@ def removeZeroData {n : ℕ} (w : Ways (n + 1)) : IData n :=
       have h3 : 1 ≤ w.1.findIdx (fun p ↦ p.1 == 0) :=
         removePan_false_idx w (Eq.mp (Bool.not_eq_true _) hp)
       show w.1.findIdx (fun p ↦ p.1 == 0) - 1 < n
-      omega⟩
+      lia⟩
 
 /-- The valid sequence obtained by inserting the weight `2^0` according to
 the given insertion data. -/
@@ -505,10 +505,10 @@ def insertZeroWays {n : ℕ} (w : Ways n) (d : IData n) : Ways (n + 1) :=
   d.rec (motive := fun _ ↦ Ways (n + 1))
     (fun k ↦ ⟨insertList w.1 k.1 true,
       insertZero_perm w.2.1 true,
-      validSeq_insert (ways_nodup w) w.2.2 (by have h := ways_length w; have := k.2; omega) (by simp)⟩)
+      validSeq_insert (ways_nodup w) w.2.2 (by have h := ways_length w; have := k.2; lia) (by simp)⟩)
     (fun k ↦ ⟨insertList w.1 (k.1 + 1) false,
       insertZero_perm w.2.1 false,
-      validSeq_insert (ways_nodup w) w.2.2 (by have h := ways_length w; have := k.2; omega) (by simp)⟩)
+      validSeq_insert (ways_nodup w) w.2.2 (by have h := ways_length w; have := k.2; lia) (by simp)⟩)
 
 @[simp] lemma insertZeroWays_inl_val {n : ℕ} (w : Ways n) (k : Fin (n + 1)) :
     (insertZeroWays w (Sum.inl k)).1 = insertList w.1 k.1 true := rfl
@@ -528,12 +528,12 @@ lemma insertList_removeList {n : ℕ} (w : Ways (n + 1)) :
     exact hp.elim (hfst.1 p) (hfst.2 p))]
   have htake : (w.1.take (removeIdx w) ++ w.1.drop (removeIdx w + 1)).take (removeIdx w) =
       w.1.take (removeIdx w) := by
-    rw [List.take_append_of_le_length (by omega)]
-    exact List.take_of_length_le (by omega)
+    rw [List.take_append_of_le_length (by lia)]
+    exact List.take_of_length_le (by lia)
   have hdrop : (w.1.take (removeIdx w) ++ w.1.drop (removeIdx w + 1)).drop (removeIdx w) =
       w.1.drop (removeIdx w + 1) := by
-    rw [List.drop_append_of_le_length (by omega)]
-    rw [List.drop_eq_nil_of_le (by omega), List.nil_append]
+    rw [List.drop_append_of_le_length (by lia)]
+    rw [List.drop_eq_nil_of_le (by lia), List.nil_append]
   rw [htake, hdrop]
   exact (ways_split w).symm
 
@@ -542,9 +542,9 @@ lemma insertList_removeList {n : ℕ} (w : Ways (n + 1)) :
 lemma insertList_getElem {n : ℕ} (w : Ways n) {k : ℕ} (hk : k ≤ w.1.length) (b : Bool)
     (h : k < (insertList w.1 k b).length) : (insertList w.1 k b)[k]'h = (0, b) := by
   unfold insertList
-  rw [List.getElem_append_right (by simp only [List.length_take, List.length_map]; omega)]
+  rw [List.getElem_append_right (by simp only [List.length_take, List.length_map]; lia)]
   have h2 : k - ((w.1.map fun p : ℕ × Bool ↦ (p.1 + 1, p.2)).take k).length = 0 := by
-    simp only [List.length_take, List.length_map]; omega
+    simp only [List.length_take, List.length_map]; lia
   simp only [h2, List.getElem_cons_zero]
 
 /-- The position of the `2^0` weight in an inserted list is exactly the
@@ -554,22 +554,22 @@ lemma insertList_findIdx {n : ℕ} (w : Ways n) {k : ℕ} (hk : k ≤ w.1.length
   have hlen : (insertList w.1 k b).length = w.1.length + 1 := by
     unfold insertList
     rw [List.length_append, List.length_cons, List.length_take, List.length_drop, List.length_map]
-    omega
-  have hk' : k < (insertList w.1 k b).length := by rw [hlen]; omega
+    lia
+  have hk' : k < (insertList w.1 k b).length := by rw [hlen]; lia
   apply (List.findIdx_eq hk').mpr
   refine ⟨?_, ?_⟩
   · rw [insertList_getElem w hk b]
     rfl
   · intro j hj
     have he : (insertList w.1 k b)[j]'(Nat.lt_trans hj hk') =
-        (w.1.map fun p : ℕ × Bool ↦ (p.1 + 1, p.2))[j]'(by simp only [List.length_map]; omega) := by
+        (w.1.map fun p : ℕ × Bool ↦ (p.1 + 1, p.2))[j]'(by simp only [List.length_map]; lia) := by
       unfold insertList
-      rw [List.getElem_append_left (by simp only [List.length_take, List.length_map]; omega)]
+      rw [List.getElem_append_left (by simp only [List.length_take, List.length_map]; lia)]
       rw [List.getElem_take]
     rw [he, List.getElem_map]
-    show ((w.1[j]'(by omega)).1 + 1 == 0) = false
+    show ((w.1[j]'(by lia)).1 + 1 == 0) = false
     rw [beq_eq_false_iff_ne]
-    omega
+    lia
 
 /-- The key bijection: valid sequences for `n + 1` weights correspond to
 valid sequences for `n` weights together with insertion data for the
@@ -593,7 +593,7 @@ def stepEquiv (n : ℕ) : Ways (n + 1) ≃ Ways n × IData n where
       rw [hd, insertZeroWays_inr_val]
       show insertList (removeList w) (removeIdx w - 1 + 1) false = w.1
       have h1 := removePan_false_idx w hp
-      have h2 : removeIdx w - 1 + 1 = removeIdx w := by omega
+      have h2 : removeIdx w - 1 + 1 = removeIdx w := by lia
       rw [h2]
       have hrl := insertList_removeList w
       rw [hp] at hrl
@@ -602,7 +602,7 @@ def stepEquiv (n : ℕ) : Ways (n + 1) ≃ Ways n × IData n where
     obtain ⟨w', d⟩ := p
     show (removeZeroWays (insertZeroWays w' d), removeZeroData (insertZeroWays w' d)) = (w', d)
     rcases d with k | k
-    · have hk : k.1 ≤ w'.1.length := by have h := ways_length w'; have := k.2; omega
+    · have hk : k.1 ≤ w'.1.length := by have h := ways_length w'; have := k.2; lia
       have hidx : removeIdx (insertZeroWays w' (Sum.inl k)) = k.1 := by
         show (insertZeroWays w' (Sum.inl k)).1.findIdx (fun p ↦ p.1 == 0) = k.1
         rw [insertZeroWays_inl_val]
@@ -620,15 +620,15 @@ def stepEquiv (n : ℕ) : Ways (n + 1) ≃ Ways n × IData n where
         have htake : (insertList w'.1 k.1 true).take k.1 =
             (w'.1.map fun p : ℕ × Bool ↦ (p.1 + 1, p.2)).take k.1 := by
           unfold insertList
-          rw [List.take_append_of_le_length (by rw [List.length_take, List.length_map]; omega)]
-          exact List.take_of_length_le (by rw [List.length_take, List.length_map]; omega)
+          rw [List.take_append_of_le_length (by rw [List.length_take, List.length_map]; lia)]
+          exact List.take_of_length_le (by rw [List.length_take, List.length_map]; lia)
         have hdrop : (insertList w'.1 k.1 true).drop (k.1 + 1) =
             (w'.1.map fun p : ℕ × Bool ↦ (p.1 + 1, p.2)).drop k.1 := by
           unfold insertList
           have h1 : (((w'.1.map fun p : ℕ × Bool ↦ (p.1 + 1, p.2)).take k.1) ++ [(0, true)]).length = k.1 + 1 := by
             rw [List.length_append, List.length_take, List.length_map]
             simp
-            omega
+            lia
           conv_lhs => rw [show (w'.1.map fun p : ℕ × Bool ↦ (p.1 + 1, p.2)).take k.1 ++ (0, true) ::
               (w'.1.map fun p : ℕ × Bool ↦ (p.1 + 1, p.2)).drop k.1 =
               ((w'.1.map fun p : ℕ × Bool ↦ (p.1 + 1, p.2)).take k.1 ++ [(0, true)]) ++
@@ -640,7 +640,7 @@ def stepEquiv (n : ℕ) : Ways (n + 1) ≃ Ways n × IData n where
         unfold removeZeroData
         rw [dite_eq_left hpan]
         simp only [hidx]
-    · have hk : k.1 + 1 ≤ w'.1.length := by have h := ways_length w'; have := k.2; omega
+    · have hk : k.1 + 1 ≤ w'.1.length := by have h := ways_length w'; have := k.2; lia
       have hidx : removeIdx (insertZeroWays w' (Sum.inr k)) = k.1 + 1 := by
         show (insertZeroWays w' (Sum.inr k)).1.findIdx (fun p ↦ p.1 == 0) = k.1 + 1
         rw [insertZeroWays_inr_val]
@@ -658,8 +658,8 @@ def stepEquiv (n : ℕ) : Ways (n + 1) ≃ Ways n × IData n where
         have htake : (insertList w'.1 (k.1 + 1) false).take (k.1 + 1) =
             (w'.1.map fun p : ℕ × Bool ↦ (p.1 + 1, p.2)).take (k.1 + 1) := by
           unfold insertList
-          rw [List.take_append_of_le_length (by rw [List.length_take, List.length_map]; omega)]
-          exact List.take_of_length_le (by rw [List.length_take, List.length_map]; omega)
+          rw [List.take_append_of_le_length (by rw [List.length_take, List.length_map]; lia)]
+          exact List.take_of_length_le (by rw [List.length_take, List.length_map]; lia)
         have hdrop : (insertList w'.1 (k.1 + 1) false).drop (k.1 + 1 + 1) =
             (w'.1.map fun p : ℕ × Bool ↦ (p.1 + 1, p.2)).drop (k.1 + 1) := by
           unfold insertList
@@ -667,7 +667,7 @@ def stepEquiv (n : ℕ) : Ways (n + 1) ≃ Ways n × IData n where
               k.1 + 1 + 1 := by
             rw [List.length_append, List.length_take, List.length_map]
             simp
-            omega
+            lia
           conv_lhs => rw [show (w'.1.map fun p : ℕ × Bool ↦ (p.1 + 1, p.2)).take (k.1 + 1) ++ (0, false) ::
               (w'.1.map fun p : ℕ × Bool ↦ (p.1 + 1, p.2)).drop (k.1 + 1) =
               ((w'.1.map fun p : ℕ × Bool ↦ (p.1 + 1, p.2)).take (k.1 + 1) ++ [(0, false)]) ++
@@ -726,7 +726,7 @@ problem imo2011_p4 (n : ℕ) (hn : 0 < n) :
     Nat.card (Ways n) = solution_value n := by
   obtain ⟨m, rfl⟩ := Nat.exists_eq_succ_of_ne_zero hn.ne'
   show Nat.card (Ways (m + 1)) = (2 * (m + 1) - 1)‼
-  have h : 2 * (m + 1) - 1 = 2 * m + 1 := by omega
+  have h : 2 * (m + 1) - 1 = 2 * m + 1 := by lia
   rw [h]
   exact card_ways m
 

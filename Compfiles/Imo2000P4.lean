@@ -125,17 +125,17 @@ lemma good_mono {n : ℕ} {f : ℕ → ZMod 3} (hf : Good (n + 1) f)
     obtain ⟨a, ha1, ha2, hfa⟩ := hf.1 b
     by_cases han : a ≤ n
     · exact ⟨a, ha1, han, hfa⟩
-    · have haeq : a = n + 1 := by omega
+    · have haeq : a = n + 1 := by lia
       exact ⟨m, hm1, hmn, by rw [hfm, ← haeq]; exact hfa⟩
   · intro a b c d ha1 ha2 hb1 hb2 hc1 hc2 hd1 hd2 hab hcd hsum
-    exact hf.2 a b c d ha1 (by omega) hb1 (by omega) hc1 (by omega) hd1 (by omega)
+    exact hf.2 a b c d ha1 (by lia) hb1 (by lia) hc1 (by lia) hd1 (by lia)
       hab hcd hsum
 
 /-- Case 1 of the induction step: `n + 1` is alone in its box. Then `1` is also
 alone, and we get an `Ends` placement. -/
 lemma case_alone {n : ℕ} (hn : 3 ≤ n) {f : ℕ → ZMod 3} (hf : Good (n + 1) f)
     (halone : ∀ a, 1 ≤ a → a ≤ n → f a ≠ f (n + 1)) : Ends (n + 1) f := by
-  have hn1 : 1 ≤ n := by omega
+  have hn1 : 1 ≤ n := by lia
   have h1n : f 1 ≠ f (n + 1) := halone 1 le_rfl hn1
   -- `1` is also alone in its box.
   have claimA : ∀ a, 2 ≤ a → a ≤ n + 1 → f a ≠ f 1 := by
@@ -144,7 +144,7 @@ lemma case_alone {n : ℕ} (hn : 3 ≤ n) {f : ℕ → ZMod 3} (hf : Good (n + 1
     obtain ⟨m, hm1, hm2, hfm⟩ := hcon
     have hmn : m ≤ n := by
       by_contra h
-      have hmeq : m = n + 1 := by omega
+      have hmeq : m = n + 1 := by lia
       rw [hmeq] at hfm
       exact h1n hfm.symm
     -- Find a card `y ≥ 2` in a different box than `n`.
@@ -153,7 +153,7 @@ lemma case_alone {n : ℕ} (hn : 3 ≤ n) {f : ℕ → ZMod 3} (hf : Good (n + 1
     obtain ⟨a, ha1, ha2, hfa⟩ := hf.1 z
     have han : a ≤ n := by
       by_contra h
-      have haeq : a = n + 1 := by omega
+      have haeq : a = n + 1 := by lia
       rw [haeq] at hfa
       exact hz1 hfa.symm
     have hann : a ≠ n := by
@@ -162,31 +162,31 @@ lemma case_alone {n : ℕ} (hn : 3 ≤ n) {f : ℕ → ZMod 3} (hf : Good (n + 1
       exact hz2 hfa.symm
     obtain ⟨y, hy2, hyn, hfy⟩ : ∃ y, 2 ≤ y ∧ y ≤ n - 1 ∧ f y ≠ f n := by
       by_cases ha : 2 ≤ a
-      · exact ⟨a, ha, by omega, by rw [hfa]; exact hz2⟩
-      · have ha1' : a = 1 := by omega
+      · exact ⟨a, ha, by lia, by rw [hfa]; exact hz2⟩
+      · have ha1' : a = 1 := by lia
         have hf1 : f 1 = z := ha1' ▸ hfa
         have hmn' : m ≤ n - 1 := by
           by_contra h
-          have hm : m = n := by omega
+          have hm : m = n := by lia
           exact hz2 (hm ▸ (hfm.trans hf1)).symm
         exact ⟨m, hm1, hmn', fun h ↦ hz2 ((hfm.trans hf1).symm.trans h)⟩
     -- The pairs `(n, y)` and `(n + 1, y - 1)` have equal sums but their boxes
     -- do not match: contradiction.
-    have hy1 : 1 ≤ y - 1 := by omega
-    have hyn2 : y - 1 ≤ n := by omega
-    have hsum : n + y = (n + 1) + (y - 1) := by omega
+    have hy1 : 1 ≤ y - 1 := by lia
+    have hyn2 : y - 1 ≤ n := by lia
+    have hsum : n + y = (n + 1) + (y - 1) := by lia
     have hcd : f (n + 1) ≠ f (y - 1) := (halone (y - 1) hy1 hyn2).symm
-    rcases hf.2 n y (n + 1) (y - 1) hn1 (by omega) (by omega) (by omega)
-        (by omega) le_rfl (by omega) (by omega) hfy.symm hcd hsum with
+    rcases hf.2 n y (n + 1) (y - 1) hn1 (by lia) (by lia) (by lia)
+        (by lia) le_rfl (by lia) (by lia) hfy.symm hcd hsum with
       ⟨hA1, -⟩ | ⟨-, hB2⟩
     · exact hfn hA1
-    · exact halone y (by omega) (by omega) hB2
+    · exact halone y (by lia) (by lia) hB2
   obtain ⟨z, hz1, hz2⟩ := exists_third (f 1) (f (n + 1))
   obtain ⟨σ, hσ0, hσ1, hσ2⟩ := equiv_of_distinct h1n hz1.symm hz2.symm
   refine ⟨σ, hσ0, hσ1, fun a h2a h3a ↦ ?_⟩
-  have han : a ≤ n := by omega
-  have hfa1 : f a ≠ f 1 := claimA a h2a (by omega)
-  have hfa2 : f a ≠ f (n + 1) := halone a (by omega) han
+  have han : a ≤ n := by lia
+  have hfa1 : f a ≠ f 1 := claimA a h2a (by lia)
+  have hfa2 : f a ≠ f (n + 1) := halone a (by lia) han
   have haz : f a = z := eq_third h1n hz1 hz2 hfa1 hfa2
   rw [← hσ2]; exact haz
 
@@ -194,8 +194,8 @@ lemma case_alone {n : ℕ} (hn : 3 ≤ n) {f : ℕ → ZMod 3} (hf : Good (n + 1
 placement; then `n + 1` must go into the box of its own residue. -/
 lemma case_mod3 {n : ℕ} (hn : 3 ≤ n) {f : ℕ → ZMod 3} (hf : Good (n + 1) f)
     (hm : Mod3 n f) : Mod3 (n + 1) f := by
-  obtain ⟨k, rfl⟩ : ∃ k, n = k + 2 := ⟨n - 2, by omega⟩
-  have hk : 1 ≤ k := by omega
+  obtain ⟨k, rfl⟩ : ∃ k, n = k + 2 := ⟨n - 2, by lia⟩
+  have hk : 1 ≤ k := by lia
   obtain ⟨σ, hσ⟩ := hm
   have hf' : Good (k + 3) f := hf
   have r01 : (k : ZMod 3) ≠ ((k + 1 : ℕ) : ZMod 3) :=
@@ -204,9 +204,9 @@ lemma case_mod3 {n : ℕ} (hn : 3 ≤ n) {f : ℕ → ZMod 3} (hf : Good (n + 1)
     cast_ne_add_one_two k (Or.inr rfl)
   have r12 : ((k + 1 : ℕ) : ZMod 3) ≠ ((k + 2 : ℕ) : ZMod 3) :=
     cast_ne_add_one_two (k + 1) (Or.inl rfl)
-  have fk : f k = σ (k : ZMod 3) := hσ k hk (by omega)
-  have fk1 : f (k + 1) = σ ((k + 1 : ℕ) : ZMod 3) := hσ (k + 1) (by omega) (by omega)
-  have fk2 : f (k + 2) = σ ((k + 2 : ℕ) : ZMod 3) := hσ (k + 2) (by omega) (by omega)
+  have fk : f k = σ (k : ZMod 3) := hσ k hk (by lia)
+  have fk1 : f (k + 1) = σ ((k + 1 : ℕ) : ZMod 3) := hσ (k + 1) (by lia) (by lia)
+  have fk2 : f (k + 2) = σ ((k + 2 : ℕ) : ZMod 3) := hσ (k + 2) (by lia) (by lia)
   have d01 : f k ≠ f (k + 1) := by rw [fk, fk1]; exact σ.injective.ne_iff.mpr r01
   have d02 : f k ≠ f (k + 2) := by rw [fk, fk2]; exact σ.injective.ne_iff.mpr r02
   have d12 : f (k + 1) ≠ f (k + 2) := by rw [fk1, fk2]; exact σ.injective.ne_iff.mpr r12
@@ -214,9 +214,9 @@ lemma case_mod3 {n : ℕ} (hn : 3 ≤ n) {f : ℕ → ZMod 3} (hf : Good (n + 1)
   -- shares its box with `k`.
   have key : f (k + 3) = f k := by
     by_contra hne
-    have hsum : (k + 3) + k = (k + 2) + (k + 1) := by omega
-    rcases hf'.2 (k + 3) k (k + 2) (k + 1) (by omega) le_rfl (by omega) (by omega)
-        (by omega) (by omega) (by omega) (by omega) hne d12.symm hsum with
+    have hsum : (k + 3) + k = (k + 2) + (k + 1) := by lia
+    rcases hf'.2 (k + 3) k (k + 2) (k + 1) (by lia) le_rfl (by lia) (by lia)
+        (by lia) (by lia) (by lia) (by lia) hne d12.symm hsum with
       ⟨-, h2⟩ | ⟨-, h2⟩
     · exact d01 h2
     · exact d02 h2
@@ -225,7 +225,7 @@ lemma case_mod3 {n : ℕ} (hn : 3 ≤ n) {f : ℕ → ZMod 3} (hf : Good (n + 1)
   refine ⟨σ, fun a h1a h2a ↦ ?_⟩
   by_cases ha : a ≤ k + 2
   · exact hσ a h1a ha
-  · have ha' : a = k + 3 := by omega
+  · have ha' : a = k + 3 := by lia
     rw [ha', hcast]
     exact key.trans fk
 
@@ -234,8 +234,8 @@ placement with `4 ≤ n`; then there is no room for the card `n + 1`. -/
 lemma case_ends {n : ℕ} (hn : 4 ≤ n) {f : ℕ → ZMod 3} (hf : Good (n + 1) f)
     (he : Ends n f) : False := by
   obtain ⟨σ, h0, h1, h2⟩ := he
-  have hf2 : f 2 = σ 2 := h2 2 le_rfl (by omega)
-  have hf3 : f 3 = σ 2 := h2 3 (by norm_num) (by omega)
+  have hf2 : f 2 = σ 2 := h2 2 le_rfl (by lia)
+  have hf3 : f 3 = σ 2 := h2 3 (by norm_num) (by lia)
   have s01 : σ 0 ≠ σ 1 := σ.injective.ne_iff.mpr (by decide)
   have s02 : σ 0 ≠ σ 2 := σ.injective.ne_iff.mpr (by decide)
   have s12 : σ 1 ≠ σ 2 := σ.injective.ne_iff.mpr (by decide)
@@ -244,22 +244,22 @@ lemma case_ends {n : ℕ} (hn : 4 ≤ n) {f : ℕ → ZMod 3} (hf : Good (n + 1)
   · -- `f (n + 1) = σ 0 = f 1`: use the pairs `(n + 1, 2)` and `(n, 3)`.
     have hab : f (n + 1) ≠ f 2 := by rw [← hi, hf2]; exact s02
     have hcd : f n ≠ f 3 := by rw [h1, hf3]; exact s12
-    rcases hf.2 (n + 1) 2 n 3 (by omega) le_rfl (by omega) (by omega) (by omega)
-        (by omega) (by omega) (by omega) hab hcd (by omega) with ⟨hA1, -⟩ | ⟨hB1, -⟩
+    rcases hf.2 (n + 1) 2 n 3 (by lia) le_rfl (by lia) (by lia) (by lia)
+        (by lia) (by lia) (by lia) hab hcd (by lia) with ⟨hA1, -⟩ | ⟨hB1, -⟩
     · rw [← hi, h1] at hA1; exact s01 hA1
     · rw [← hi, hf3] at hB1; exact s02 hB1
   · -- `f (n + 1) = σ 1 = f n`: use the pairs `(n + 1, 1)` and `(n, 2)`.
     have hab : f (n + 1) ≠ f 1 := by rw [← hi, h0]; exact s01.symm
     have hcd : f n ≠ f 2 := by rw [h1, hf2]; exact s12
-    rcases hf.2 (n + 1) 1 n 2 (by omega) le_rfl (by omega) (by omega) (by omega)
-        (by omega) (by omega) (by omega) hab hcd (by omega) with ⟨-, hA2⟩ | ⟨hB1, -⟩
+    rcases hf.2 (n + 1) 1 n 2 (by lia) le_rfl (by lia) (by lia) (by lia)
+        (by lia) (by lia) (by lia) hab hcd (by lia) with ⟨-, hA2⟩ | ⟨hB1, -⟩
     · rw [h0, hf2] at hA2; exact s02 hA2
     · rw [← hi, hf2] at hB1; exact s12 hB1
   · -- `f (n + 1) = σ 2`: use the pairs `(n + 1, 1)` and `(n, 2)`.
     have hab : f (n + 1) ≠ f 1 := by rw [← hi, h0]; exact s02.symm
     have hcd : f n ≠ f 2 := by rw [h1, hf2]; exact s12
-    rcases hf.2 (n + 1) 1 n 2 (by omega) le_rfl (by omega) (by omega) (by omega)
-        (by omega) (by omega) (by omega) hab hcd (by omega) with ⟨hA1, -⟩ | ⟨-, hB2⟩
+    rcases hf.2 (n + 1) 1 n 2 (by lia) le_rfl (by lia) (by lia) (by lia)
+        (by lia) (by lia) (by lia) hab hcd (by lia) with ⟨hA1, -⟩ | ⟨-, hB2⟩
     · rw [← hi, h1] at hA1; exact s12.symm hA1
     · rw [h0, h1] at hB2; exact s01 hB2
 
@@ -292,7 +292,7 @@ lemma base_case {f : ℕ → ZMod 3} (hf : Good 3 f) : Ends 3 f := by
     · rw [← h] at hfa; exact hz1 hfa.symm
   obtain ⟨σ, h0, h1, h2⟩ := equiv_of_distinct d13 d12 d23.symm
   exact ⟨σ, h0, h1, fun a h2a h3a ↦ by
-    have ha : a = 2 := by omega
+    have ha : a = 2 := by lia
     rw [ha]; exact h2⟩
 
 /-- For `n = 3` the two families coincide. -/
@@ -371,35 +371,35 @@ lemma valid_iff_good (f : Fin 100 → ZMod 3) :
     ValidPlacement f ↔ GoodPlacement f := by
   constructor <;> rintro ⟨hsurj, h⟩ <;> refine ⟨hsurj, fun i j k l hij hkl hsum ↦ ?_⟩
   · exact (third_box_iff_pair hij hkl).mp
-      (h i j k l hij hkl (by omega : (i : ℕ) + 1 + ((j : ℕ) + 1) =
+      (h i j k l hij hkl (by lia : (i : ℕ) + 1 + ((j : ℕ) + 1) =
         (k : ℕ) + 1 + ((l : ℕ) + 1)))
   · exact (third_box_iff_pair hij hkl).mpr
-      (h i j k l hij hkl (by omega : (i : ℕ) + j = (k : ℕ) + l))
+      (h i j k l hij hkl (by lia : (i : ℕ) + j = (k : ℕ) + l))
 
 /-- Extend a placement `g : Fin 100 → ZMod 3` to all of `ℕ` (by `0` outside
 `[1, 100]`); card `a` corresponds to index `a - 1`. -/
 def lift (g : Fin 100 → ZMod 3) (a : ℕ) : ZMod 3 :=
-  if h : 1 ≤ a ∧ a ≤ 100 then g ⟨a - 1, by omega⟩ else 0
+  if h : 1 ≤ a ∧ a ≤ 100 then g ⟨a - 1, by lia⟩ else 0
 
 lemma lift_apply (g : Fin 100 → ZMod 3) {a : ℕ} (h1 : 1 ≤ a) (h2 : a ≤ 100) :
-    lift g a = g ⟨a - 1, by omega⟩ := dite_eq_left ⟨h1, h2⟩
+    lift g a = g ⟨a - 1, by lia⟩ := dite_eq_left ⟨h1, h2⟩
 
 lemma lift_apply_fin (g : Fin 100 → ZMod 3) (i : Fin 100) : lift g (↑i + 1) = g i := by
-  rw [lift_apply g (a := ↑i + 1) (by omega) (by omega)]
-  exact congrArg g (Fin.ext (show (↑i : ℕ) + 1 - 1 = (i : ℕ) by omega))
+  rw [lift_apply g (a := ↑i + 1) (by lia) (by lia)]
+  exact congrArg g (Fin.ext (show (↑i : ℕ) + 1 - 1 = (i : ℕ) by lia))
 
 lemma lift_good {g : Fin 100 → ZMod 3} (hg : GoodPlacement g) : Good 100 (lift g) := by
   constructor
   · intro b
     obtain ⟨i, hi⟩ := hg.1 b
-    exact ⟨↑i + 1, by omega, by omega, by rw [lift_apply_fin]; exact hi⟩
+    exact ⟨↑i + 1, by lia, by lia, by rw [lift_apply_fin]; exact hi⟩
   · intro a b c d ha1 ha2 hb1 hb2 hc1 hc2 hd1 hd2 hab hcd hsum
     rw [lift_apply g ha1 ha2, lift_apply g hb1 hb2, lift_apply g hc1 hc2,
       lift_apply g hd1 hd2] at *
-    refine hg.2 ⟨a - 1, by omega⟩ ⟨b - 1, by omega⟩ ⟨c - 1, by omega⟩
-      ⟨d - 1, by omega⟩ hab hcd ?_
+    refine hg.2 ⟨a - 1, by lia⟩ ⟨b - 1, by lia⟩ ⟨c - 1, by lia⟩
+      ⟨d - 1, by lia⟩ hab hcd ?_
     show (a - 1) + (b - 1) = (c - 1) + (d - 1)
-    omega
+    lia
 
 /-- The box of card `i` in an "ends" placement. -/
 def T (i : Fin 100) : ZMod 3 := if (i : ℕ) = 0 then 0 else if (i : ℕ) = 99 then 1 else 2
@@ -408,7 +408,7 @@ lemma T_of_zero (i : Fin 100) (h : (i : ℕ) = 0) : T i = 0 := by
   unfold T; rw [ite_eq_left h]
 
 lemma T_of_99 (i : Fin 100) (h : (i : ℕ) = 99) : T i = 1 := by
-  unfold T; rw [ite_eq_right (by omega), ite_eq_left h]
+  unfold T; rw [ite_eq_right (by lia), ite_eq_left h]
 
 lemma T_of_other (i : Fin 100) (h0 : (i : ℕ) ≠ 0) (h99 : (i : ℕ) ≠ 99) : T i = 2 := by
   unfold T; rw [ite_eq_right h0, ite_eq_right h99]
@@ -477,7 +477,7 @@ lemma mod3fun_valid (σ : Equiv.Perm (ZMod 3)) : GoodPlacement (mod3fun σ) := b
     have hcast : (Nat.cast ((i : ℕ) + 1) : ZMod 3) + Nat.cast ((j : ℕ) + 1) =
         Nat.cast ((k : ℕ) + 1) + Nat.cast ((l : ℕ) + 1) := by
       have h2 : ((i : ℕ) + 1) + ((j : ℕ) + 1) = ((k : ℕ) + 1) + ((l : ℕ) + 1) := by
-        omega
+        lia
       rw [← Nat.cast_add, ← Nat.cast_add, h2, Nat.cast_add]
     rcases pair_eq_of_sum hij' hkl' hcast with ⟨h1, h2⟩ | ⟨h1, h2⟩
     · exact Or.inl ⟨congrArg σ h1, congrArg σ h2⟩
@@ -492,18 +492,18 @@ lemma bucket_of_ne {i j : Fin 100} (hij : T i ≠ T j) :
   obtain h0 | h1 | h2 := tri (T i) <;> obtain k0 | k1 | k2 := tri (T j)
   · exact absurd (h0.trans k0.symm) hij
   · refine Or.inl ⟨Or.inl ⟨h0, k1⟩, ?_⟩
-    have hi := eq_zero_of_T h0; have hj := eq_99_of_T k1; omega
+    have hi := eq_zero_of_T h0; have hj := eq_99_of_T k1; lia
   · refine Or.inr <| Or.inl ⟨Or.inl ⟨h0, k2⟩, ?_⟩
-    have hi := eq_zero_of_T h0; obtain ⟨hj1, hj2⟩ := ne_of_T2 k2; omega
+    have hi := eq_zero_of_T h0; obtain ⟨hj1, hj2⟩ := ne_of_T2 k2; lia
   · refine Or.inl ⟨Or.inr ⟨h1, k0⟩, ?_⟩
-    have hi := eq_99_of_T h1; have hj := eq_zero_of_T k0; omega
+    have hi := eq_99_of_T h1; have hj := eq_zero_of_T k0; lia
   · exact absurd (h1.trans k1.symm) hij
   · refine Or.inr <| Or.inr ⟨Or.inl ⟨h1, k2⟩, ?_⟩
-    have hi := eq_99_of_T h1; obtain ⟨hj1, hj2⟩ := ne_of_T2 k2; omega
+    have hi := eq_99_of_T h1; obtain ⟨hj1, hj2⟩ := ne_of_T2 k2; lia
   · refine Or.inr <| Or.inl ⟨Or.inr ⟨h2, k0⟩, ?_⟩
-    obtain ⟨hi1, hi2⟩ := ne_of_T2 h2; have hj := eq_zero_of_T k0; omega
+    obtain ⟨hi1, hi2⟩ := ne_of_T2 h2; have hj := eq_zero_of_T k0; lia
   · refine Or.inr <| Or.inr ⟨Or.inr ⟨h2, k1⟩, ?_⟩
-    obtain ⟨hi1, hi2⟩ := ne_of_T2 h2; have hj := eq_99_of_T k1; omega
+    obtain ⟨hi1, hi2⟩ := ne_of_T2 h2; have hj := eq_99_of_T k1; lia
   · exact absurd (h2.trans k2.symm) hij
 
 lemma ends_pair {i j k l : Fin 100} (hij : T i ≠ T j) (hkl : T k ≠ T l)
@@ -512,7 +512,7 @@ lemma ends_pair {i j k l : Fin 100} (hij : T i ≠ T j) (hkl : T k ≠ T l)
   obtain ⟨hp, hs⟩ | ⟨hp, hs⟩ | ⟨hp, hs⟩ := bucket_of_ne hij <;>
   obtain ⟨hq, ht⟩ | ⟨hq, ht⟩ | ⟨hq, ht⟩ := bucket_of_ne hkl <;>
   first
-    | (exfalso; omega)
+    | (exfalso; lia)
     | (rcases hp with ⟨h1, h2⟩ | ⟨h1, h2⟩ <;>
        rcases hq with ⟨h3, h4⟩ | ⟨h3, h4⟩ <;> simp_all)
 
@@ -537,8 +537,8 @@ lemma mem_solutions {g : Fin 100 → ZMod 3} (hg : GoodPlacement g) :
   rcases classify 100 (by norm_num) (lift g) (lift_good hg) with hmod | hends
   · obtain ⟨σ, hσ⟩ := hmod
     refine Or.inl ⟨σ, funext fun i ↦ ?_⟩
-    have h1 : 1 ≤ (i : ℕ) + 1 := by omega
-    have h2b : (i : ℕ) + 1 ≤ 100 := by omega
+    have h1 : 1 ≤ (i : ℕ) + 1 := by lia
+    have h2b : (i : ℕ) + 1 ≤ 100 := by lia
     have this := hσ (↑i + 1) h1 h2b
     rw [lift_apply_fin] at this
     exact this.symm
@@ -548,20 +548,20 @@ lemma mem_solutions {g : Fin 100 → ZMod 3} (hg : GoodPlacement g) :
     · have hTi : T i = 0 := T_of_zero i hi0
       have hg0 : g i = σ 0 := by
         rw [← lift_apply_fin g i]
-        have h10 : (i : ℕ) + 1 = 1 := by omega
+        have h10 : (i : ℕ) + 1 = 1 := by lia
         rw [h10]; exact h0
       rw [hg0]; show σ (T i) = σ 0; rw [hTi]
     · by_cases hi99 : (i : ℕ) = 99
       · have hTi : T i = 1 := T_of_99 i hi99
         have hg1 : g i = σ 1 := by
           rw [← lift_apply_fin g i]
-          have h100 : (i : ℕ) + 1 = 100 := by omega
+          have h100 : (i : ℕ) + 1 = 100 := by lia
           rw [h100]; exact h1
         rw [hg1]; show σ (T i) = σ 1; rw [hTi]
       · have hTi : T i = 2 := T_of_other i hi0 hi99
         have hg2 : g i = σ 2 := by
           rw [← lift_apply_fin g i]
-          exact h2 (↑i + 1) (by omega) (by omega)
+          exact h2 (↑i + 1) (by lia) (by lia)
         rw [hg2]; show σ (T i) = σ 2; rw [hTi]
 
 lemma mod3fun_injective : Function.Injective mod3fun := by

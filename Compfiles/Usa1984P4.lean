@@ -145,7 +145,7 @@ lemma card_pupils {Pupil : Type} [Fintype Pupil] (attempt : Pupil → Finset (Fi
     rw [Finset.sum_congr rfl (fun q1 _ ↦ sum_two_distinct q1)]
     rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin, smul_eq_mul]
   rw [step2, step3] at step1
-  omega
+  lia
 
 /-- Double counting the pairs `(p, q₂)` with `q` and `q₂` both attempted by
 `p` shows every question was attempted by exactly `9` pupils. -/
@@ -174,7 +174,7 @@ lemma card_attempters {Pupil : Type} [Fintype Pupil] (attempt : Pupil → Finset
     rw [Finset.sum_congr rfl (fun q2 _ ↦ sum_pupils_pair attempt hpair q q2)]
     exact sum_two_distinct q
   rw [w2, w3] at w1
-  omega
+  lia
 
 snip end
 
@@ -193,7 +193,7 @@ problem usa1984_p4 {Pupil : Type} [Fintype Pupil] (attempt : Pupil → Finset (F
   have hk3 : ∀ p : Pupil, (attempt p ∩ paper1).card ≤ 3 := by
     intro p
     have h := (hcon p).2
-    omega
+    lia
   have N36 : Fintype.card Pupil = 36 := card_pupils attempt hattempt hpair
   have hm : 1 ≤ paper1.card := Finset.card_pos.mpr hpaper1
   -- Counting attempted first-paper questions in two ways.

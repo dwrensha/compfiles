@@ -1557,10 +1557,10 @@ lemma fiber_card_le_two (L B : Finset Line) (W : ∀ m ∈ L \ B, Witness L B m)
   by_contra h
   have h3 : 2 < ((L \ B).filter fun ℓ => assocB L B W hGP ℓ = q).card := Nat.lt_of_not_le h
   set S := (L \ B).filter (fun ℓ => assocB L B W hGP ℓ = q) with hS
-  obtain ⟨ℓ₁, h1⟩ : S.Nonempty := Finset.card_pos.mp (by omega : 0 < S.card)
+  obtain ⟨ℓ₁, h1⟩ : S.Nonempty := Finset.card_pos.mp (by lia : 0 < S.card)
   have hS1 : 1 < (S.erase ℓ₁).card := by
     rw [Finset.card_erase_of_mem h1]
-    omega
+    lia
   obtain ⟨ℓ₂, h2, ℓ₃, h3', h23⟩ := Finset.one_lt_card.mp hS1
   rw [Finset.mem_erase] at h2 h3'
   obtain ⟨d21, h2S⟩ := h2
@@ -1816,7 +1816,7 @@ lemma exists_maximal_valid (L : Finset Line) :
   have hcard : (insert m B).card ≤ K := Finset.le_max' _ _ (Finset.mem_image_of_mem _ hm)
   rw [hK, ← hBK] at hcard
   have hgt : B.card < (insert m B).card := Finset.card_lt_card (Finset.ssubset_insert hmB)
-  omega
+  lia
 
 /-- Every red line has a witness region. -/
 lemma exists_witness (L : Finset Line) {B : Finset Line} (hBV : ValidBlue L B)
@@ -1931,7 +1931,7 @@ lemma main_counting {L : Finset Line} {B : Finset Line} (hGP : GeneralPosition L
   have h5 : B.card * B.card - B.card + B.card = B.card * B.card :=
     Nat.sub_add_cancel (Nat.le_mul_self B.card)
   have h6 : B.card * B.card = B.card ^ 2 := (sq B.card).symm
-  omega
+  lia
 
 /-- If no finite region has a completely blue boundary in the working sense,
 then no finite region has a completely blue boundary in the geometric sense. -/

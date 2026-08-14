@@ -78,7 +78,7 @@ lemma fwdDiff_iter_zero (m : ℕ) (f : ℕ → ℝ) :
       intro j hj
       rw [Finset.mem_range] at hj
       rw [Nat.choose_succ_succ]
-      have e : m + 1 - (j + 1) = m - j := by omega
+      have e : m + 1 - (j + 1) = m - j := by lia
       rw [e]
       push_cast
       ring
@@ -144,15 +144,15 @@ lemma poly_fwdDiff (m : ℕ) (P : ℝ[X]) (hP : P.natDegree < m) (k : ℕ) :
         rw [hPc]
         simp only [eval_C]
         exact hz m
-      · have hPm : P.natDegree ≤ m := by omega
-        have hP1 : 1 ≤ P.natDegree := by omega
-        have hm : 1 ≤ m := by omega
+      · have hPm : P.natDegree ≤ m := by lia
+        have hP1 : 1 ≤ P.natDegree := by lia
+        have hm : 1 ≤ m := by lia
         have hcomp_deg : (P.comp (X + C 1)).natDegree = P.natDegree := by
           rw [Polynomial.natDegree_comp, Polynomial.natDegree_X_add_C, mul_one]
         have hcomp_ne : P.comp (X + C 1) ≠ 0 := by
           intro hzero
           rw [hzero, Polynomial.natDegree_zero] at hcomp_deg
-          omega
+          lia
         have hcomp_lc : (P.comp (X + C 1)).leadingCoeff = P.leadingCoeff := by
           have hnd : (X + C (1 : ℝ)).natDegree ≠ 0 := by
             rw [Polynomial.natDegree_X_add_C]; norm_num
@@ -167,9 +167,9 @@ lemma poly_fwdDiff (m : ℕ) (P : ℝ[X]) (hP : P.natDegree < m) (k : ℕ) :
           rwa [hd] at hlt
         have hQ : (P.comp (X + C 1) - P).natDegree < m := by
           rcases eq_or_ne (P.comp (X + C 1) - P) 0 with hz0 | hnz
-          · rw [hz0, Polynomial.natDegree_zero]; omega
+          · rw [hz0, Polynomial.natDegree_zero]; lia
           · have h2 := (Polynomial.natDegree_lt_natDegree_iff hnz).mpr hdeg_lt
-            omega
+            lia
         rw [Function.iterate_succ_apply]
         convert ih _ hQ with j
         simp [fwdDiff]
@@ -217,7 +217,7 @@ problem usa1984_p5 (n : ℕ) (hn : 0 < n) (P : ℝ[X])
   -- Step 1: the (3n+1)-th finite difference vanishes
   have hfd : ∑ j ∈ Finset.range (3 * n + 1 + 1),
       (-1 : ℝ) ^ (3 * n + 1 - j) * ((3 * n + 1).choose j : ℝ) * P.eval (j : ℝ) = 0 := by
-    have h := poly_fwdDiff (3 * n + 1) P (by rw [hdeg]; omega) 0
+    have h := poly_fwdDiff (3 * n + 1) P (by rw [hdeg]; lia) 0
     rw [fwdDiff_iter_zero] at h
     exact h
   -- peel off the last term (which is P(3n+1) = 730)
@@ -239,11 +239,11 @@ problem usa1984_p5 (n : ℕ) (hn : 0 < n) (P : ℝ[X])
     intro j hj
     rw [Finset.mem_range] at hj
     set k := j / 3 with hk
-    have hjk : j = 3 * k + j % 3 := by omega
-    have hmod : j % 3 = 0 ∨ j % 3 = 1 ∨ j % 3 = 2 := by omega
+    have hjk : j = 3 * k + j % 3 := by lia
+    have hmod : j % 3 = 0 ∨ j % 3 = 1 ∨ j % 3 = 2 := by lia
     rcases hmod with h | h | h
-    · have hjk0 : j = 3 * k := by omega
-      have hk2 : k ∈ Finset.range (n + 1) := by rw [Finset.mem_range]; omega
+    · have hjk0 : j = 3 * k := by lia
+      have hk2 : k ∈ Finset.range (n + 1) := by rw [Finset.mem_range]; lia
       have hvc : (↑(P.eval (j : ℝ)) : ℂ) = 2 := by
         rw [hjk0, h0 k hk2]
         simp
@@ -252,8 +252,8 @@ problem usa1984_p5 (n : ℕ) (hn : 0 < n) (P : ℝ[X])
         rw [hjk0, Nat.mul_left_comm, pow_mul, h3, one_pow]
       rw [hvc, hzj, hz2j]
       linear_combination (1 / 3) * hsum
-    · have hjk1 : j = 3 * k + 1 := by omega
-      have hk2 : k ∈ Finset.range n := by rw [Finset.mem_range]; omega
+    · have hjk1 : j = 3 * k + 1 := by lia
+      have hk2 : k ∈ Finset.range n := by rw [Finset.mem_range]; lia
       have hvc : (↑(P.eval (j : ℝ)) : ℂ) = 1 := by
         rw [hjk1, h1 k hk2]
         simp
@@ -264,8 +264,8 @@ problem usa1984_p5 (n : ℕ) (hn : 0 < n) (P : ℝ[X])
           one_pow, one_mul]
       rw [hvc, hzj, hz2j]
       linear_combination (ζ / 3) * h3
-    · have hjk2 : j = 3 * k + 2 := by omega
-      have hk2 : k ∈ Finset.range n := by rw [Finset.mem_range]; omega
+    · have hjk2 : j = 3 * k + 2 := by lia
+      have hk2 : k ∈ Finset.range n := by rw [Finset.mem_range]; lia
       have hvc : (↑(P.eval (j : ℝ)) : ℂ) = 0 := by
         rw [hjk2, h2 k hk2]
         simp
@@ -286,7 +286,7 @@ problem usa1984_p5 (n : ℕ) (hn : 0 < n) (P : ℝ[X])
     nth_rw 2 [← h2j]
     rw [← pow_add, ← pow_add]
     congr 1
-    omega
+    lia
   -- truncated binomial sums
   have hS : ∀ x : ℂ, ∑ j ∈ Finset.range (3 * n + 1), ((3 * n + 1).choose j : ℂ) * x ^ j
       = (x + 1) ^ (3 * n + 1) - x ^ (3 * n + 1) := by
@@ -301,7 +301,7 @@ problem usa1984_p5 (n : ℕ) (hn : 0 < n) (P : ℝ[X])
   have hS0 : ∑ j ∈ Finset.range (3 * n + 1), ((3 * n + 1).choose j : ℂ) * (-1) ^ j
       = -(-1 : ℂ) ^ (3 * n + 1) := by
     have h := hS (-1)
-    rwa [neg_add_cancel, zero_pow (by omega : 3 * n + 1 ≠ 0), zero_sub] at h
+    rwa [neg_add_cancel, zero_pow (by lia : 3 * n + 1 ≠ 0), zero_sub] at h
   have hzpow : ζ ^ (3 * n + 1) = ζ := by
     rw [pow_succ, pow_mul, h3, one_pow, one_mul]
   have hzpow2 : (ζ ^ 2) ^ (3 * n + 1) = ζ ^ 2 := by
@@ -400,9 +400,9 @@ problem usa1984_p5 (n : ℕ) (hn : 0 < n) (P : ℝ[X])
     exfalso
     clear * - s habs
     rcases Nat.lt_or_ge s 2 with hlt | hge
-    · have h4 : 27 ^ (s + 1) ≤ 27 ^ 2 := pow_le_pow_right₀ (by decide) (by omega)
-      omega
-    · have h4 : 27 ^ 3 ≤ 27 ^ (s + 1) := pow_le_pow_right₀ (by decide) (by omega)
-      omega
+    · have h4 : 27 ^ (s + 1) ≤ 27 ^ 2 := pow_le_pow_right₀ (by decide) (by lia)
+      lia
+    · have h4 : 27 ^ 3 ≤ 27 ^ (s + 1) := pow_le_pow_right₀ (by decide) (by lia)
+      lia
 
 end Usa1984P5

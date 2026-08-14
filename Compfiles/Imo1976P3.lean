@@ -370,9 +370,9 @@ theorem det_of {n x c : ℕ} (hc1 : 2 * c ^ 3 ≤ n ^ 3) (hc2 : n ^ 3 < 2 * (c +
   have hx2 : c ≤ x := by
     by_contra h'
     push Not at h'
-    have g : (x + 1) ^ 3 ≤ c ^ 3 := Nat.pow_le_pow_left (by omega : x + 1 ≤ c) 3
+    have g : (x + 1) ^ 3 ≤ c ^ 3 := Nat.pow_le_pow_left (by lia : x + 1 ≤ c) 3
     nlinarith [hc1, h2, g]
-  omega
+  lia
 
 /-- If `1 ≤ n'` and `2 * n'^3 ≤ n^3` then `2 ≤ n`. -/
 theorem two_le_of {n n' : ℕ} (hn' : 1 ≤ n') (h1 : 2 * n' ^ 3 ≤ n ^ 3) : 2 ≤ n := by
@@ -407,7 +407,7 @@ theorem five_cubed {n n' : ℕ} (hn : 3 ≤ n) (h1 : 2 * n' ^ 3 ≤ n ^ 3)
   · have hn' : 6 ≤ n' := by
       by_contra h'
       push Not at h'
-      have g1 : (n' + 1) ^ 3 ≤ 6 ^ 3 := Nat.pow_le_pow_left (by omega : n' + 1 ≤ 6) 3
+      have g1 : (n' + 1) ^ 3 ≤ 6 ^ 3 := Nat.pow_le_pow_left (by lia : n' + 1 ≤ 6) 3
       have g2 : 8 ^ 3 ≤ n ^ 3 := Nat.pow_le_pow_left h8 3
       nlinarith [h2, g1, g2]
     by_contra hc
@@ -417,13 +417,13 @@ theorem five_cubed {n n' : ℕ} (hn : 3 ≤ n) (h1 : 2 * n' ^ 3 ≤ n ^ 3)
       _ = n' ^ 3 := by ring
     have g4 : n' ≤ n' ^ 2 := by
       calc n' = n' * 1 := by ring
-      _ ≤ n' * n' := mul_le_mul_right (by omega : 1 ≤ n') n'
+      _ ≤ n' * n' := mul_le_mul_right (by lia : 1 ≤ n') n'
       _ = n' ^ 2 := by ring
     nlinarith [hc, h2, g3, g4, hn']
 
 /-- Auxiliary estimate: `343 * (m + 1)^3 ≤ 500 * m^3` for `m ≥ 8`. -/
 theorem key500 {m : ℕ} (hm : 8 ≤ m) : 343 * (m + 1) ^ 3 ≤ 500 * m ^ 3 := by
-  obtain ⟨t, rfl⟩ : ∃ t, m = 8 + t := ⟨m - 8, by omega⟩
+  obtain ⟨t, rfl⟩ : ∃ t, m = 8 + t := ⟨m - 8, by lia⟩
   nlinarith [Nat.zero_le t, Nat.zero_le (t ^ 2), Nat.zero_le (t ^ 3)]
 
 /-- The second ratio bound: for `n ≥ 11`, `7 * n < 10 * n'`. -/
@@ -432,7 +432,7 @@ theorem seven_lt_ten {n n' : ℕ} (hn : 11 ≤ n) (_h1 : 2 * n' ^ 3 ≤ n ^ 3)
   have hn' : 8 ≤ n' := by
     by_contra h'
     push Not at h'
-    have g1 : (n' + 1) ^ 3 ≤ 8 ^ 3 := Nat.pow_le_pow_left (by omega : n' + 1 ≤ 8) 3
+    have g1 : (n' + 1) ^ 3 ≤ 8 ^ 3 := Nat.pow_le_pow_left (by lia : n' + 1 ≤ 8) 3
     have g2 : 11 ^ 3 ≤ n ^ 3 := Nat.pow_le_pow_left hn 3
     nlinarith [h2, g1, g2]
   have key := key500 hn'
@@ -452,7 +452,7 @@ theorem main_nat {a b c a' b' c' : ℕ} (ha : 0 < a) (hb : 0 < b) (hc : 0 < c)
     (a = 2 ∧ b = 3 ∧ c = 5) ∨ (a = 2 ∧ b = 5 ∧ c = 6) := by
   have hpos : 0 < a' * b' * c' := by
     have habc : 0 < a * b * c := by positivity
-    omega
+    lia
   have ha' : 1 ≤ a' := by
     by_contra h'
     push Not at h'
@@ -474,7 +474,7 @@ theorem main_nat {a b c a' b' c' : ℕ} (ha : 0 < a) (hb : 0 < b) (hc : 0 < c)
   -- The smallest dimension must be 2.
   have hav : a = 2 := by
     by_contra h'
-    have ha3 : 3 ≤ a := by omega
+    have ha3 : 3 ≤ a := by lia
     have e1 := five_cubed ha3 ha1 ha2
     have e2 := five_cubed (le_trans ha3 hab) hb1 hb2
     have e3 := five_cubed (le_trans ha3 (le_trans hab hbc)) hc1 hc2
@@ -504,23 +504,23 @@ theorem main_nat {a b c a' b' c' : ℕ} (ha : 0 < a) (hb : 0 < b) (hc : 0 < c)
   · -- b = 2, b' = 1: `4 * c = 5 * c'`, impossible since `128 * m^3 ≤ 125 * m^3`.
     have hb'v : b' = 1 := det_of (by norm_num) (by norm_num) hb1 hb2
     subst hb'v
-    obtain ⟨m, rfl⟩ : 5 ∣ c := by omega
-    have hc'v : c' = 4 * m := by omega
+    obtain ⟨m, rfl⟩ : 5 ∣ c := by lia
+    have hc'v : c' = 4 * m := by lia
     rw [hc'v] at hc1
-    have hm1 : 1 ≤ m := by omega
-    have e3 : 1 ≤ m ^ 3 := Nat.one_le_pow _ _ (by omega : 0 < m)
+    have hm1 : 1 ≤ m := by lia
+    have e3 : 1 ≤ m ^ 3 := Nat.one_le_pow _ _ (by lia : 0 < m)
     exfalso
     nlinarith [hc1, e3]
   · -- b = 3, b' = 2: `3 * c = 5 * c'` gives `c = 5`, the first solution.
     have hb'v : b' = 2 := det_of (by norm_num) (by norm_num) hb1 hb2
     subst hb'v
-    obtain ⟨m, rfl⟩ : 5 ∣ c := by omega
-    have hc'v : c' = 3 * m := by omega
+    obtain ⟨m, rfl⟩ : 5 ∣ c := by lia
+    have hc'v : c' = 3 * m := by lia
     rw [hc'v] at hc2
-    have hm1 : 1 ≤ m := by omega
+    have hm1 : 1 ≤ m := by lia
     have hmv : m = 1 := by
       rcases Nat.lt_or_ge m 2 with h1 | h1
-      · omega
+      · lia
       · exfalso
         have g1 : 2 * m ^ 2 ≤ m ^ 3 := by
           calc 2 * m ^ 2 ≤ m * m ^ 2 := mul_le_mul_left h1 _
@@ -533,22 +533,22 @@ theorem main_nat {a b c a' b' c' : ℕ} (ha : 0 < a) (hb : 0 < b) (hc : 0 < c)
   · -- b = 4, b' = 3: `8 * c = 15 * c'`, no solution.
     have hb'v : b' = 3 := det_of (by norm_num) (by norm_num) hb1 hb2
     subst hb'v
-    obtain ⟨m, rfl⟩ : 15 ∣ c := by omega
-    have hc'v : c' = 8 * m := by omega
+    obtain ⟨m, rfl⟩ : 15 ∣ c := by lia
+    have hc'v : c' = 8 * m := by lia
     rw [hc'v] at hc2
-    have hm1 : 1 ≤ m := by omega
+    have hm1 : 1 ≤ m := by lia
     have e1 : m ≤ m ^ 3 := Nat.le_self_pow three_ne_zero m
-    have e2 : m ^ 2 ≤ m ^ 3 := Nat.pow_le_pow_right (by omega : 0 < m) (by norm_num)
-    have e3 : 1 ≤ m ^ 3 := Nat.one_le_pow _ _ (by omega : 0 < m)
+    have e2 : m ^ 2 ≤ m ^ 3 := Nat.pow_le_pow_right (by lia : 0 < m) (by norm_num)
+    have e3 : 1 ≤ m ^ 3 := Nat.one_le_pow _ _ (by lia : 0 < m)
     exfalso
     nlinarith [hc2, e1, e2, e3]
   · -- b = 5, b' = 3: `2 * c = 3 * c'` gives `c ∈ {3, 6}`; only `c = 6 ≥ 5`.
     have hb'v : b' = 3 := det_of (by norm_num) (by norm_num) hb1 hb2
     subst hb'v
-    obtain ⟨m, rfl⟩ : 3 ∣ c := by omega
-    have hc'v : c' = 2 * m := by omega
+    obtain ⟨m, rfl⟩ : 3 ∣ c := by lia
+    have hc'v : c' = 2 * m := by lia
     rw [hc'v] at hc1 hc2
-    have hm1 : 1 ≤ m := by omega
+    have hm1 : 1 ≤ m := by lia
     have hm2 : m ≤ 2 := by
       by_contra h'
       push Not at h'
@@ -561,19 +561,19 @@ theorem main_nat {a b c a' b' c' : ℕ} (ha : 0 < a) (hb : 0 < b) (hc : 0 < c)
       nlinarith [hc2, g1, g2]
     interval_cases m
     · exfalso
-      omega
+      lia
     · right
       exact ⟨rfl, rfl, rfl⟩
   · -- b = 6, b' = 4: `3 * c = 5 * c'` forces `c = 5 < 6`.
     have hb'v : b' = 4 := det_of (by norm_num) (by norm_num) hb1 hb2
     subst hb'v
-    obtain ⟨m, rfl⟩ : 5 ∣ c := by omega
-    have hc'v : c' = 3 * m := by omega
+    obtain ⟨m, rfl⟩ : 5 ∣ c := by lia
+    have hc'v : c' = 3 * m := by lia
     rw [hc'v] at hc2
-    have hm1 : 1 ≤ m := by omega
+    have hm1 : 1 ≤ m := by lia
     have hmv : m = 1 := by
       rcases Nat.lt_or_ge m 2 with h1 | h1
-      · omega
+      · lia
       · exfalso
         have g1 : 2 * m ^ 2 ≤ m ^ 3 := by
           calc 2 * m ^ 2 ≤ m * m ^ 2 := mul_le_mul_left h1 _
@@ -581,53 +581,53 @@ theorem main_nat {a b c a' b' c' : ℕ} (ha : 0 < a) (hb : 0 < b) (hc : 0 < c)
         have e2 : m ≤ m ^ 2 := Nat.le_self_pow two_ne_zero m
         nlinarith [hc2, g1, e2, h1]
     exfalso
-    omega
+    lia
   · -- b = 7, b' = 5: `14 * c = 25 * c'`, no solution.
     have hb'v : b' = 5 := det_of (by norm_num) (by norm_num) hb1 hb2
     subst hb'v
-    obtain ⟨m, rfl⟩ : 25 ∣ c := by omega
-    have hc'v : c' = 14 * m := by omega
+    obtain ⟨m, rfl⟩ : 25 ∣ c := by lia
+    have hc'v : c' = 14 * m := by lia
     rw [hc'v] at hc2
-    have hm1 : 1 ≤ m := by omega
+    have hm1 : 1 ≤ m := by lia
     have e1 : m ≤ m ^ 3 := Nat.le_self_pow three_ne_zero m
-    have e2 : m ^ 2 ≤ m ^ 3 := Nat.pow_le_pow_right (by omega : 0 < m) (by norm_num)
-    have e3 : 1 ≤ m ^ 3 := Nat.one_le_pow _ _ (by omega : 0 < m)
+    have e2 : m ^ 2 ≤ m ^ 3 := Nat.pow_le_pow_right (by lia : 0 < m) (by norm_num)
+    have e3 : 1 ≤ m ^ 3 := Nat.one_le_pow _ _ (by lia : 0 < m)
     exfalso
     nlinarith [hc2, e1, e2, e3]
   · -- b = 8, b' = 6: `8 * c = 15 * c'`, no solution.
     have hb'v : b' = 6 := det_of (by norm_num) (by norm_num) hb1 hb2
     subst hb'v
-    obtain ⟨m, rfl⟩ : 15 ∣ c := by omega
-    have hc'v : c' = 8 * m := by omega
+    obtain ⟨m, rfl⟩ : 15 ∣ c := by lia
+    have hc'v : c' = 8 * m := by lia
     rw [hc'v] at hc2
-    have hm1 : 1 ≤ m := by omega
+    have hm1 : 1 ≤ m := by lia
     have e1 : m ≤ m ^ 3 := Nat.le_self_pow three_ne_zero m
-    have e2 : m ^ 2 ≤ m ^ 3 := Nat.pow_le_pow_right (by omega : 0 < m) (by norm_num)
-    have e3 : 1 ≤ m ^ 3 := Nat.one_le_pow _ _ (by omega : 0 < m)
+    have e2 : m ^ 2 ≤ m ^ 3 := Nat.pow_le_pow_right (by lia : 0 < m) (by norm_num)
+    have e3 : 1 ≤ m ^ 3 := Nat.one_le_pow _ _ (by lia : 0 < m)
     exfalso
     nlinarith [hc2, e1, e2, e3]
   · -- b = 9, b' = 7: `18 * c = 35 * c'`, no solution.
     have hb'v : b' = 7 := det_of (by norm_num) (by norm_num) hb1 hb2
     subst hb'v
-    obtain ⟨m, rfl⟩ : 35 ∣ c := by omega
-    have hc'v : c' = 18 * m := by omega
+    obtain ⟨m, rfl⟩ : 35 ∣ c := by lia
+    have hc'v : c' = 18 * m := by lia
     rw [hc'v] at hc2
-    have hm1 : 1 ≤ m := by omega
+    have hm1 : 1 ≤ m := by lia
     have e1 : m ≤ m ^ 3 := Nat.le_self_pow three_ne_zero m
-    have e2 : m ^ 2 ≤ m ^ 3 := Nat.pow_le_pow_right (by omega : 0 < m) (by norm_num)
-    have e3 : 1 ≤ m ^ 3 := Nat.one_le_pow _ _ (by omega : 0 < m)
+    have e2 : m ^ 2 ≤ m ^ 3 := Nat.pow_le_pow_right (by lia : 0 < m) (by norm_num)
+    have e3 : 1 ≤ m ^ 3 := Nat.one_le_pow _ _ (by lia : 0 < m)
     exfalso
     nlinarith [hc2, e1, e2, e3]
   · -- b = 10, b' = 7: `4 * c = 7 * c'`, no solution.
     have hb'v : b' = 7 := det_of (by norm_num) (by norm_num) hb1 hb2
     subst hb'v
-    obtain ⟨m, rfl⟩ : 7 ∣ c := by omega
-    have hc'v : c' = 4 * m := by omega
+    obtain ⟨m, rfl⟩ : 7 ∣ c := by lia
+    have hc'v : c' = 4 * m := by lia
     rw [hc'v] at hc2
-    have hm1 : 1 ≤ m := by omega
+    have hm1 : 1 ≤ m := by lia
     have e1 : m ≤ m ^ 3 := Nat.le_self_pow three_ne_zero m
-    have e2 : m ^ 2 ≤ m ^ 3 := Nat.pow_le_pow_right (by omega : 0 < m) (by norm_num)
-    have e3 : 1 ≤ m ^ 3 := Nat.one_le_pow _ _ (by omega : 0 < m)
+    have e2 : m ^ 2 ≤ m ^ 3 := Nat.pow_le_pow_right (by lia : 0 < m) (by norm_num)
+    have e3 : 1 ≤ m ^ 3 := Nat.one_le_pow _ _ (by lia : 0 < m)
     exfalso
     nlinarith [hc2, e1, e2, e3]
 

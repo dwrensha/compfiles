@@ -168,7 +168,7 @@ theorem aw_45_1990 {n : ℕ} (h₁ : 45 ≤ n) (h₂ : n ≤ 1990) : AWins n := 
 
 theorem aw_23_44 {n : ℕ} (h₁ : 23 ≤ n) (h₂ : n ≤ 44) : AWins n := by
   apply AWins.move (m := 504)
-  · exact ⟨by omega, by nlinarith [h₁]⟩
+  · exact ⟨by lia, by nlinarith [h₁]⟩
   · exact not_bmove_one_of_not_mem (by decide) (by simp [bResponses_504])
   · intro m' hm'
     have hm' := (bmove_iff_mem_bResponses (m := 504) (by decide)).mp hm'
@@ -177,7 +177,7 @@ theorem aw_23_44 {n : ℕ} (h₁ : 23 ≤ n) (h₂ : n ≤ 44) : AWins n := by
 
 theorem aw_17_22 {n : ℕ} (h₁ : 17 ≤ n) (h₂ : n ≤ 22) : AWins n := by
   apply AWins.move (m := 280)
-  · exact ⟨by omega, by nlinarith [h₁]⟩
+  · exact ⟨by lia, by nlinarith [h₁]⟩
   · exact not_bmove_one_of_not_mem (by decide) (by simp [bResponses_280])
   · intro m' hm'
     have hm' := (bmove_iff_mem_bResponses (m := 280) (by decide)).mp hm'
@@ -188,7 +188,7 @@ theorem aw_17_22 {n : ℕ} (h₁ : 17 ≤ n) (h₂ : n ≤ 22) : AWins n := by
 
 theorem aw_12_16 {n : ℕ} (h₁ : 12 ≤ n) (h₂ : n ≤ 16) : AWins n := by
   apply AWins.move (m := 140)
-  · exact ⟨by omega, by nlinarith [h₁]⟩
+  · exact ⟨by lia, by nlinarith [h₁]⟩
   · exact not_bmove_one_of_not_mem (by decide) (by simp [bResponses_140])
   · intro m' hm'
     have hm' := (bmove_iff_mem_bResponses (m := 140) (by decide)).mp hm'
@@ -200,7 +200,7 @@ theorem aw_12_16 {n : ℕ} (h₁ : 12 ≤ n) (h₂ : n ≤ 16) : AWins n := by
 
 theorem aw_8_11 {n : ℕ} (h₁ : 8 ≤ n) (h₂ : n ≤ 11) : AWins n := by
   apply AWins.move (m := 60)
-  · exact ⟨by omega, by nlinarith [h₁]⟩
+  · exact ⟨by lia, by nlinarith [h₁]⟩
   · exact not_bmove_one_of_not_mem (by decide) (by simp [bResponses_60])
   · intro m' hm'
     have hm' := (bmove_iff_mem_bResponses (m := 60) (by decide)).mp hm'
@@ -227,21 +227,21 @@ theorem exists_interval {n : ℕ} (h : 1992 ≤ n) :
     ∃ r, 1 ≤ r ∧ 11 ^ r * 181 < n ∧ n ≤ 11 ^ (r + 1) * 181 := by
   have hne : ∃ r, n ≤ 11 ^ (r + 1) * 181 := by
     refine ⟨n, le_trans (Nat.lt_pow_self (by decide : (1 : ℕ) < 11)).le ?_⟩
-    exact le_trans (Nat.pow_le_pow_right (by decide) (by omega))
+    exact le_trans (Nat.pow_le_pow_right (by decide) (by lia))
       (Nat.le_mul_of_pos_right _ (by decide))
   have hr1 : 1 ≤ Nat.find hne := by
     by_contra hc
-    have h0 : Nat.find hne = 0 := by omega
+    have h0 : Nat.find hne = 0 := by lia
     have hr3 := Nat.find_spec hne
     rw [h0] at hr3
     norm_num at hr3
-    omega
+    lia
   have hr2 : 11 ^ Nat.find hne * 181 < n := by
     by_contra hc
-    have hrlt : Nat.find hne - 1 < Nat.find hne := by omega
+    have hrlt : Nat.find hne - 1 < Nat.find hne := by lia
     have hmin := Nat.find_min hne hrlt
     rw [Nat.sub_add_cancel hr1] at hmin
-    exact hmin (by omega)
+    exact hmin (by lia)
   exact ⟨Nat.find hne, hr1, hr2, Nat.find_spec hne⟩
 
 theorem aw_big {n : ℕ} (h : 1992 ≤ n) (IH : ∀ m', m' < n → 8 ≤ m' → AWins m') :
@@ -271,7 +271,7 @@ theorem aw_big {n : ℕ} (h : 1992 ≤ n) (IH : ∀ m', m' < n → 8 ≤ m' → 
     intro m' hm'
     obtain ⟨p, k, hp, hk, h⟩ := hm'
     have hpm : p ∣ 11 ^ (r + 1) * 181 := by
-      have h1 : p ∣ p ^ k := dvd_pow_self p (by omega)
+      have h1 : p ∣ p ^ k := dvd_pow_self p (by lia)
       have h2 : p ^ k ∣ 11 ^ (r + 1) * 181 := ⟨m', h.trans (mul_comm m' (p ^ k))⟩
       exact dvd_trans h1 h2
     rcases (hp.dvd_mul.mp hpm) with hp11 | hp181
@@ -288,11 +288,11 @@ theorem aw_big {n : ℕ} (h : 1992 ≤ n) (IH : ∀ m', m' < n → 8 ≤ m' → 
           have h3 :=
             (Nat.prime_dvd_prime_iff_eq (by norm_num : Nat.Prime 181)
               (by norm_num : Nat.Prime 11)).mp h2
-          omega
+          lia
       obtain ⟨c, rfl⟩ := h181
       have hc : 0 < c := by
         by_contra hc0
-        have h0 : c = 0 := by omega
+        have h0 : c = 0 := by lia
         rw [h0] at h
         simp only [mul_zero, zero_mul] at h
         exact absurd h (ne_of_gt (by positivity : 0 < 11 ^ (r + 1) * 181))
@@ -322,11 +322,11 @@ theorem aw_big {n : ℕ} (h : 1992 ≤ n) (IH : ∀ m', m' < n → 8 ≤ m' → 
           have h3 :=
             (Nat.prime_dvd_prime_iff_eq (by norm_num : Nat.Prime 11)
               (by norm_num : Nat.Prime 181)).mp h2
-          omega
+          lia
       obtain ⟨c, rfl⟩ := h11
       have hc : 0 < c := by
         by_contra hc0
-        have h0 : c = 0 := by omega
+        have h0 : c = 0 := by lia
         rw [h0] at h
         simp only [mul_zero, zero_mul] at h
         exact absurd h (ne_of_gt (by positivity : 0 < 11 ^ (r + 1) * 181))
@@ -355,7 +355,7 @@ theorem awins_of_ge_8 (n : ℕ) : 8 ≤ n → AWins n := by
     by_cases hbig : 1992 ≤ n
     · exact aw_big hbig IH
     · have h' : n ≤ 11 ∨ (12 ≤ n ∧ n ≤ 16) ∨ (17 ≤ n ∧ n ≤ 22) ∨
-        (23 ≤ n ∧ n ≤ 44) ∨ (45 ≤ n ∧ n ≤ 1990) ∨ n = 1991 := by omega
+        (23 ≤ n ∧ n ≤ 44) ∨ (45 ≤ n ∧ n ≤ 1990) ∨ n = 1991 := by lia
       rcases h' with h' | h' | h' | h' | h' | h'
       · exact aw_8_11 h h'
       · exact aw_12_16 h'.1 h'.2
@@ -425,11 +425,11 @@ theorem awins_ge {n : ℕ} (h : AWins n) : n = 1 ∨ 8 ≤ n := by
       obtain ⟨-, h₂⟩ := h
       right
       by_contra hc
-      have h44 : n ≤ 44 := by omega
+      have h44 : n ≤ 44 := by lia
       have h3 : n ^ 2 ≤ 1936 := by
         calc n ^ 2 ≤ 44 ^ 2 := Nat.pow_le_pow_left h44 2
           _ = 1936 := by decide
-      omega
+      lia
   | move n m h₁ h₂ h₃ IH =>
       by_cases hn : 8 ≤ n
       · exact Or.inr hn
@@ -438,16 +438,16 @@ theorem awins_ge {n : ℕ} (h : AWins n) : n = 1 ∨ 8 ≤ n := by
         · by_cases hn0 : n = 0
           · subst hn0
             have h₂' : m ≤ 0 := by simpa using h₁.2
-            have hm0 : m = 0 := by omega
+            have hm0 : m = 0 := by lia
             subst hm0
             exact IH 0 ⟨2, 1, by norm_num, by decide, by decide⟩
-          · have h2n : 2 ≤ n := by omega
-            have h7n : n ≤ 7 := by omega
+          · have h2n : 2 ≤ n := by lia
+            have h7n : n ≤ 7 := by lia
             obtain ⟨m', hbm, h2', h7'⟩ := escape_le49 (le_trans h2n h₁.1)
               (le_trans h₁.2 (le_trans (Nat.pow_le_pow_left h7n 2) (by decide)))
               (mt bmove_one_iff_isPrimePow.mpr h₂)
             have hIH := IH m' hbm
-            omega
+            lia
 
 /-! ### Determinism: A and B cannot both have a winning strategy -/
 
@@ -481,7 +481,7 @@ theorem bw_le_11 {m : ℕ} (h₁ : 2 ≤ m) (h₂ : m ≤ 11) : BWins m := by
   · apply BWins.move (m := 6) (m' := 2) (⟨3, 1, by norm_num, by decide, by decide⟩ : BMove 6 2) (by decide)
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 4 := le_trans h₂ (by decide)
-      omega
+      lia
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 4 := le_trans h₂ (by decide)
       interval_cases m''
@@ -494,7 +494,7 @@ theorem bw_le_11 {m : ℕ} (h₁ : 2 ≤ m) (h₂ : m ≤ 11) : BWins m := by
   · apply BWins.move (m := 10) (m' := 2) (⟨5, 1, by norm_num, by decide, by decide⟩ : BMove 10 2) (by decide)
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 4 := le_trans h₂ (by decide)
-      omega
+      lia
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 4 := le_trans h₂ (by decide)
       interval_cases m''
@@ -512,7 +512,7 @@ theorem bw_le_19 {m : ℕ} (h₁ : 2 ≤ m) (h₂ : m ≤ 19) : BWins m := by
   · apply BWins.move (m := 6) (m' := 2) (⟨3, 1, by norm_num, by decide, by decide⟩ : BMove 6 2) (by decide)
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 4 := le_trans h₂ (by decide)
-      omega
+      lia
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 4 := le_trans h₂ (by decide)
       interval_cases m'' <;> exact bw_le_11 (by decide) (by decide)
@@ -522,7 +522,7 @@ theorem bw_le_19 {m : ℕ} (h₁ : 2 ≤ m) (h₂ : m ≤ 19) : BWins m := by
   · apply BWins.move (m := 10) (m' := 2) (⟨5, 1, by norm_num, by decide, by decide⟩ : BMove 10 2) (by decide)
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 4 := le_trans h₂ (by decide)
-      omega
+      lia
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 4 := le_trans h₂ (by decide)
       interval_cases m'' <;> exact bw_le_11 (by decide) (by decide)
@@ -530,7 +530,7 @@ theorem bw_le_19 {m : ℕ} (h₁ : 2 ≤ m) (h₂ : m ≤ 19) : BWins m := by
   · apply BWins.move (m := 12) (m' := 3) (⟨2, 2, by norm_num, by decide, by decide⟩ : BMove 12 3) (by decide)
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 9 := le_trans h₂ (by decide)
-      omega
+      lia
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 9 := le_trans h₂ (by decide)
       interval_cases m'' <;> exact bw_le_11 (by decide) (by decide)
@@ -538,14 +538,14 @@ theorem bw_le_19 {m : ℕ} (h₁ : 2 ≤ m) (h₂ : m ≤ 19) : BWins m := by
   · apply BWins.move (m := 14) (m' := 2) (⟨7, 1, by norm_num, by decide, by decide⟩ : BMove 14 2) (by decide)
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 4 := le_trans h₂ (by decide)
-      omega
+      lia
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 4 := le_trans h₂ (by decide)
       interval_cases m'' <;> exact bw_le_11 (by decide) (by decide)
   · apply BWins.move (m := 15) (m' := 3) (⟨5, 1, by norm_num, by decide, by decide⟩ : BMove 15 3) (by decide)
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 9 := le_trans h₂ (by decide)
-      omega
+      lia
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 9 := le_trans h₂ (by decide)
       interval_cases m'' <;> exact bw_le_11 (by decide) (by decide)
@@ -554,7 +554,7 @@ theorem bw_le_19 {m : ℕ} (h₁ : 2 ≤ m) (h₂ : m ≤ 19) : BWins m := by
   · apply BWins.move (m := 18) (m' := 2) (⟨3, 2, by norm_num, by decide, by decide⟩ : BMove 18 2) (by decide)
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 4 := le_trans h₂ (by decide)
-      omega
+      lia
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 4 := le_trans h₂ (by decide)
       interval_cases m'' <;> exact bw_le_11 (by decide) (by decide)
@@ -569,7 +569,7 @@ theorem bw_le_29 {m : ℕ} (h₁ : 2 ≤ m) (h₂ : m ≤ 29) : BWins m := by
   · apply BWins.move (m := 6) (m' := 2) (⟨3, 1, by norm_num, by decide, by decide⟩ : BMove 6 2) (by decide)
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 4 := le_trans h₂ (by decide)
-      omega
+      lia
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 4 := le_trans h₂ (by decide)
       interval_cases m'' <;> exact bw_le_11 (by decide) (by decide)
@@ -579,7 +579,7 @@ theorem bw_le_29 {m : ℕ} (h₁ : 2 ≤ m) (h₂ : m ≤ 29) : BWins m := by
   · apply BWins.move (m := 10) (m' := 2) (⟨5, 1, by norm_num, by decide, by decide⟩ : BMove 10 2) (by decide)
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 4 := le_trans h₂ (by decide)
-      omega
+      lia
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 4 := le_trans h₂ (by decide)
       interval_cases m'' <;> exact bw_le_11 (by decide) (by decide)
@@ -587,7 +587,7 @@ theorem bw_le_29 {m : ℕ} (h₁ : 2 ≤ m) (h₂ : m ≤ 29) : BWins m := by
   · apply BWins.move (m := 12) (m' := 3) (⟨2, 2, by norm_num, by decide, by decide⟩ : BMove 12 3) (by decide)
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 9 := le_trans h₂ (by decide)
-      omega
+      lia
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 9 := le_trans h₂ (by decide)
       interval_cases m'' <;> exact bw_le_11 (by decide) (by decide)
@@ -595,14 +595,14 @@ theorem bw_le_29 {m : ℕ} (h₁ : 2 ≤ m) (h₂ : m ≤ 29) : BWins m := by
   · apply BWins.move (m := 14) (m' := 2) (⟨7, 1, by norm_num, by decide, by decide⟩ : BMove 14 2) (by decide)
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 4 := le_trans h₂ (by decide)
-      omega
+      lia
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 4 := le_trans h₂ (by decide)
       interval_cases m'' <;> exact bw_le_11 (by decide) (by decide)
   · apply BWins.move (m := 15) (m' := 3) (⟨5, 1, by norm_num, by decide, by decide⟩ : BMove 15 3) (by decide)
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 9 := le_trans h₂ (by decide)
-      omega
+      lia
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 9 := le_trans h₂ (by decide)
       interval_cases m'' <;> exact bw_le_11 (by decide) (by decide)
@@ -611,7 +611,7 @@ theorem bw_le_29 {m : ℕ} (h₁ : 2 ≤ m) (h₂ : m ≤ 29) : BWins m := by
   · apply BWins.move (m := 18) (m' := 2) (⟨3, 2, by norm_num, by decide, by decide⟩ : BMove 18 2) (by decide)
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 4 := le_trans h₂ (by decide)
-      omega
+      lia
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 4 := le_trans h₂ (by decide)
       interval_cases m'' <;> exact bw_le_11 (by decide) (by decide)
@@ -619,21 +619,21 @@ theorem bw_le_29 {m : ℕ} (h₁ : 2 ≤ m) (h₂ : m ≤ 29) : BWins m := by
   · apply BWins.move (m := 20) (m' := 4) (⟨5, 1, by norm_num, by decide, by decide⟩ : BMove 20 4) (by decide)
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 16 := le_trans h₂ (by decide)
-      omega
+      lia
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 16 := le_trans h₂ (by decide)
       interval_cases m'' <;> exact bw_le_19 (by decide) (by decide)
   · apply BWins.move (m := 21) (m' := 3) (⟨7, 1, by norm_num, by decide, by decide⟩ : BMove 21 3) (by decide)
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 9 := le_trans h₂ (by decide)
-      omega
+      lia
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 9 := le_trans h₂ (by decide)
       interval_cases m'' <;> exact bw_le_11 (by decide) (by decide)
   · apply BWins.move (m := 22) (m' := 2) (⟨11, 1, by norm_num, by decide, by decide⟩ : BMove 22 2) (by decide)
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 4 := le_trans h₂ (by decide)
-      omega
+      lia
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 4 := le_trans h₂ (by decide)
       interval_cases m'' <;> exact bw_le_11 (by decide) (by decide)
@@ -641,7 +641,7 @@ theorem bw_le_29 {m : ℕ} (h₁ : 2 ≤ m) (h₂ : m ≤ 29) : BWins m := by
   · apply BWins.move (m := 24) (m' := 3) (⟨2, 3, by norm_num, by decide, by decide⟩ : BMove 24 3) (by decide)
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 9 := le_trans h₂ (by decide)
-      omega
+      lia
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 9 := le_trans h₂ (by decide)
       interval_cases m'' <;> exact bw_le_11 (by decide) (by decide)
@@ -649,7 +649,7 @@ theorem bw_le_29 {m : ℕ} (h₁ : 2 ≤ m) (h₂ : m ≤ 29) : BWins m := by
   · apply BWins.move (m := 26) (m' := 2) (⟨13, 1, by norm_num, by decide, by decide⟩ : BMove 26 2) (by decide)
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 4 := le_trans h₂ (by decide)
-      omega
+      lia
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 4 := le_trans h₂ (by decide)
       interval_cases m'' <;> exact bw_le_11 (by decide) (by decide)
@@ -657,7 +657,7 @@ theorem bw_le_29 {m : ℕ} (h₁ : 2 ≤ m) (h₂ : m ≤ 29) : BWins m := by
   · apply BWins.move (m := 28) (m' := 4) (⟨7, 1, by norm_num, by decide, by decide⟩ : BMove 28 4) (by decide)
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 16 := le_trans h₂ (by decide)
-      omega
+      lia
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 16 := le_trans h₂ (by decide)
       interval_cases m'' <;> exact bw_le_19 (by decide) (by decide)
@@ -666,22 +666,22 @@ theorem bw_le_29 {m : ℕ} (h₁ : 2 ≤ m) (h₂ : m ≤ 29) : BWins m := by
 theorem bwinsstart_2 : BWinsStart 2 := by
   intro m ⟨h₁, h₂⟩
   have h4 : m ≤ 4 := le_trans h₂ (by decide)
-  exact ⟨by omega, bw_le_11 (by omega) (by omega)⟩
+  exact ⟨by lia, bw_le_11 (by lia) (by lia)⟩
 
 theorem bwinsstart_3 : BWinsStart 3 := by
   intro m ⟨h₁, h₂⟩
   have h9 : m ≤ 9 := le_trans h₂ (by decide)
-  exact ⟨by omega, bw_le_11 (by omega) (by omega)⟩
+  exact ⟨by lia, bw_le_11 (by lia) (by lia)⟩
 
 theorem bwinsstart_4 : BWinsStart 4 := by
   intro m ⟨h₁, h₂⟩
   have h16 : m ≤ 16 := le_trans h₂ (by decide)
-  exact ⟨by omega, bw_le_19 (by omega) (by omega)⟩
+  exact ⟨by lia, bw_le_19 (by lia) (by lia)⟩
 
 theorem bwinsstart_5 : BWinsStart 5 := by
   intro m ⟨h₁, h₂⟩
   have h25 : m ≤ 25 := le_trans h₂ (by decide)
-  exact ⟨by omega, bw_le_29 (by omega) (by omega)⟩
+  exact ⟨by lia, bw_le_29 (by lia) (by lia)⟩
 
 /-! ### B does not win from 30, hence not from `n₀ ∈ {6, 7}` -/
 
@@ -722,7 +722,7 @@ problem imo1990_p5 (n : ℕ) (hn : 2 ≤ n) :
   · constructor
     · intro h
       rcases awins_ge h with h1 | h1
-      · exfalso; omega
+      · exfalso; lia
       · exact h1
     · intro h
       exact awins_of_ge_8 n h
@@ -756,7 +756,7 @@ problem imo1990_p5 (n : ℕ) (hn : 2 ≤ n) :
         · decide
     · intro h
       fin_cases h
-      · exact ⟨fun hA => by rcases awins_ge hA with h1 | h1 <;> omega, not_bwinsstart_6⟩
-      · exact ⟨fun hA => by rcases awins_ge hA with h1 | h1 <;> omega, not_bwinsstart_7⟩
+      · exact ⟨fun hA => by rcases awins_ge hA with h1 | h1 <;> lia, not_bwinsstart_6⟩
+      · exact ⟨fun hA => by rcases awins_ge hA with h1 | h1 <;> lia, not_bwinsstart_7⟩
 
 end Imo1990P5

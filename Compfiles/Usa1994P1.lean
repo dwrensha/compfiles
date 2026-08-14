@@ -43,7 +43,7 @@ lemma gap_lemma {a : ℕ → ℕ} (h : ∀ i, a i + 1 < a (i + 1)) (i k : ℕ) :
       have h1 := h (i + k)
       calc a i + 2 * (k + 1) = a i + 2 * k + 2 := by ring
         _ ≤ a (i + k) + 2 := Nat.add_le_add_right ih 2
-        _ ≤ a (i + k + 1) := by omega
+        _ ≤ a (i + k + 1) := by lia
         _ = a (i + (k + 1)) := by rw [Nat.add_assoc]
 
 /-- The sum of the first `n + 1` terms is at most
@@ -74,7 +74,7 @@ problem usa1994_p1 (a : ℕ → ℕ) (ha : ∀ i, 0 < a i)
       m ^ 2 < ∑ i ∈ Finset.range (n + 1), a i := by
   -- We follow the informal proof from
   -- https://prase.cz/kalva/usa/usoln/usol941.html
-  obtain ⟨k, rfl⟩ : ∃ k, n = k + 1 := ⟨n - 1, by omega⟩
+  obtain ⟨k, rfl⟩ : ∃ k, n = k + 1 := ⟨n - 1, by lia⟩
   -- Take `m₀` to be the integer square root of `b (k + 1)`.
   set m₀ := Nat.sqrt (∑ i ∈ Finset.range (k + 1), a i) with hm₀
   have hm₀le : m₀ ^ 2 ≤ ∑ i ∈ Finset.range (k + 1), a i := Nat.sqrt_le' _
@@ -95,7 +95,7 @@ problem usa1994_p1 (a : ℕ → ℕ) (ha : ∀ i, 0 < a i)
     have h2m₀ : 2 * m₀ ≤ a k + 1 := by
       by_contra! hcon
       have hsq : (a k + 2) ^ 2 ≤ (2 * m₀) ^ 2 :=
-        Nat.pow_le_pow_left (by omega) 2
+        Nat.pow_le_pow_left (by lia) 2
       nlinarith [h4, hsq, hcon]
     have hk : a k + 2 ≤ a (k + 1) := h k
     nlinarith [hlt]

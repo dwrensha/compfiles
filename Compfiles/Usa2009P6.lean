@@ -212,7 +212,7 @@ lemma gcd_seq (T : ℕ → ℤ) {b : ℕ} (hb : T b ≠ 0) :
       · simp [hTi]
       · exact (padicValNat_dvd_iff_le (Int.natAbs_ne_zero.mpr hTi)).mpr (hge i hTi)
     have := (padicValNat_dvd_iff_le hd0).mp hfinal
-    omega
+    lia
 
 /-- The key valuation bound: if `tⱼ` is a nonzero integer of `p`-adic valuation `e` (the
 minimum among the `t`'s), then every `sᵢ` has `p`-adic valuation at least `-e`. -/

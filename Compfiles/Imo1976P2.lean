@@ -394,7 +394,7 @@ problem imo1976_p2 (n : ℕ) (npos : 0 < n) :
     · rw [eval_sub, eval_X]
       nth_rw 1 [← pl.x_last, pl.y_eq]
       simp [pl.len, P_natDegree _ npos]
-      rw [(neg_one_pow_eq_one_iff_even _).mpr (Nat.even_pow.mpr ⟨even_two, by omega⟩)] <;> norm_num
+      rw [(neg_one_pow_eq_one_iff_even _).mpr (Nat.even_pow.mpr ⟨even_two, by lia⟩)] <;> norm_num
     · intro r i hi er
       subst r
       apply P_intersect_X.spec_root _ _ hi

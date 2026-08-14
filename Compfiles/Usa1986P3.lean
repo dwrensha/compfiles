@@ -64,7 +64,7 @@ lemma no_small_solution :
 lemma ge_337 {n m : ℕ} (hn : 1 < n) (h : (n+1) * (2*n+1) = 6 * m^2) :
     337 ≤ n := by
   by_contra hlt
-  have hlt' : n < 337 := by omega
+  have hlt' : n < 337 := by lia
   clear hlt
   have cop : Nat.Coprime (n+1) (2*n+1) := by
     rw [← Nat.isCoprime_iff_coprime]
@@ -80,7 +80,7 @@ lemma ge_337 {n m : ℕ} (hn : 1 < n) (h : (n+1) * (2*n+1) = 6 * m^2) :
       have h2dvd : 2 ∣ a * (2*n+1) := ⟨m^2, h1⟩
       rcases Nat.prime_two.dvd_mul.mp h2dvd with hA | hB
       · exact hA
-      · omega
+      · lia
     obtain ⟨b, hb⟩ := h2a
     rw [hb] at h1
     have h2 : b * (2*n+1) = m^2 := by
@@ -92,7 +92,7 @@ lemma ge_337 {n m : ℕ} (hn : 1 < n) (h : (n+1) * (2*n+1) = 6 * m^2) :
     obtain ⟨w, hw⟩ := eq_sq_of_coprime_mul_eq_sq cop2.symm (by rwa [mul_comm])
     have hnA : n + 1 = 6 * u^2 := by
       rw [ha, hb, hu]; ring
-    have hw2 : w^2 + 1 = 12 * u^2 := by omega
+    have hw2 : w^2 + 1 = 12 * u^2 := by lia
     have hcast : (w : ZMod 4)^2 + 1 = 0 := by
       have h' : ((w^2 + 1 : ℕ) : ZMod 4) = ((12 * u^2 : ℕ) : ZMod 4) := by
         rw [hw2]
@@ -120,7 +120,7 @@ lemma ge_337 {n m : ℕ} (hn : 1 < n) (h : (n+1) * (2*n+1) = 6 * m^2) :
       rcases Nat.prime_two.dvd_mul.mp h2dvd with hA | hB
       · exact hA
       · have h2B₁ : 2 ∣ 2*n+1 := dvd_trans hB hdvd3
-        omega
+        lia
     obtain ⟨a₁, ha₁⟩ := h2a
     rw [ha₁] at h1
     have h2 : a₁ * b₁ = m^2 := by
@@ -137,21 +137,21 @@ lemma ge_337 {n m : ℕ} (hn : 1 < n) (h : (n+1) * (2*n+1) = 6 * m^2) :
       rw [hb₁, hw]
     have hu2 : 2 ≤ u := by
       by_contra hc
-      have hult : u < 2 := by omega
-      interval_cases u <;> omega
-    have hrel : 4 * u^2 = 3 * w^2 + 1 := by omega
+      have hult : u < 2 := by lia
+      interval_cases u <;> lia
+    have hrel : 4 * u^2 = 3 * w^2 + 1 := by lia
     have hu12 : u ≤ 12 := by
       by_contra hc
-      have h13 : 13 ≤ u := by omega
+      have h13 : 13 ≤ u := by lia
       have h169 : 13^2 ≤ u^2 := Nat.pow_le_pow_left h13 2
-      omega
+      lia
     have hw13 : w ≤ 13 := by
       by_contra hc
-      have h14 : 14 ≤ w := by omega
+      have h14 : 14 ≤ w := by lia
       have h196 : 14^2 ≤ w^2 := Nat.pow_le_pow_left h14 2
       have hu144 : u^2 ≤ 12^2 := Nat.pow_le_pow_left hu12 2
-      omega
-    exact no_small_solution u (by omega) w (by omega) hu2 hrel
+      lia
+    exact no_small_solution u (by lia) w (by lia) hu2 hrel
 
 snip end
 
@@ -173,7 +173,7 @@ problem usa1986_p3 :
     have h : (n+1) * (2*n+1) = 6 * m^2 := by
       have h6' : n * (6 * m^2) = n * ((n+1) * (2*n+1)) := by
         linear_combination h6
-      exact (mul_left_cancel₀ (by omega : n ≠ 0) h6').symm
+      exact (mul_left_cancel₀ (by lia : n ≠ 0) h6').symm
     exact ge_337 hn1 h
 
 end Usa1986P3

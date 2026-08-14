@@ -162,17 +162,17 @@ lemma lowestScore_le_add_blue :
       calc lowestScore (0 + 1) B C ≤ (0 + 1) * C :=
             le_trans (min_le_left _ _) (min_le_left _ _)
         _ = C := by ring
-        _ ≤ C + 0 := by omega
+        _ ≤ C + 0 := by lia
     · have hA' : 0 < A := Nat.pos_of_ne_zero hA
       have h3 : 3 * B ≤ C := by nlinarith [b1, hA']
       calc lowestScore (A + 1) B C ≤ 3 * (A + 1) * B :=
             le_trans (min_le_left _ _) (min_le_right _ _)
         _ = 3 * A * B + 3 * B := by ring
-        _ ≤ 3 * A * B + C := by omega
+        _ ≤ 3 * A * B + C := by lia
         _ = C + 3 * A * B := by ring
         _ = C + lowestScore A B C := by rw [h]
   · calc lowestScore (A + 1) B C ≤ 2 * B * C := min_le_right _ _
-      _ ≤ C + 2 * B * C := by omega
+      _ ≤ C + 2 * B * C := by lia
       _ = C + lowestScore A B C := by rw [h]
 
 lemma lowestScore_le_add_red (A B C : ℕ) :
@@ -180,7 +180,7 @@ lemma lowestScore_le_add_red (A B C : ℕ) :
   rcases lowestScore_cases A B C with h | h | h
   · calc lowestScore A (B + 1) C ≤ A * C :=
           le_trans (min_le_left _ _) (min_le_left _ _)
-      _ ≤ 3 * A + A * C := by omega
+      _ ≤ 3 * A + A * C := by lia
       _ = 3 * A + lowestScore A B C := by rw [h]
   · calc lowestScore A (B + 1) C ≤ 3 * A * (B + 1) :=
           le_trans (min_le_left _ _) (min_le_right _ _)
@@ -191,7 +191,7 @@ lemma lowestScore_le_add_red (A B C : ℕ) :
     by_cases h32 : 2 * C ≤ 3 * A
     · calc lowestScore A (B + 1) C ≤ 2 * (B + 1) * C := min_le_right _ _
         _ = 2 * B * C + 2 * C := by ring
-        _ ≤ 2 * B * C + 3 * A := by omega
+        _ ≤ 2 * B * C + 3 * A := by lia
         _ = 3 * A + 2 * B * C := by ring
         _ = 3 * A + lowestScore A B C := by rw [h]
     · push Not at h32
@@ -209,7 +209,7 @@ lemma lowestScore_le_add_red (A B C : ℕ) :
       calc lowestScore A (0 + 1) C ≤ 3 * A * (0 + 1) :=
             le_trans (min_le_left _ _) (min_le_right _ _)
         _ = 3 * A := by ring
-        _ ≤ 3 * A + 0 := by omega
+        _ ≤ 3 * A + 0 := by lia
 
 lemma lowestScore_le_add_white (A B C : ℕ) :
     lowestScore A B (C + 1) ≤ 2 * B + lowestScore A B C := by
@@ -219,7 +219,7 @@ lemma lowestScore_le_add_white (A B C : ℕ) :
     · calc lowestScore A B (C + 1) ≤ A * (C + 1) :=
             le_trans (min_le_left _ _) (min_le_left _ _)
         _ = A * C + A := by ring
-        _ ≤ A * C + 2 * B := by omega
+        _ ≤ A * C + 2 * B := by lia
         _ = 2 * B + A * C := by ring
         _ = 2 * B + lowestScore A B C := by rw [h]
     · push Not at hA2
@@ -236,10 +236,10 @@ lemma lowestScore_le_add_white (A B C : ℕ) :
       rw [hL0]
       calc lowestScore A B (0 + 1) ≤ 2 * B * (0 + 1) := min_le_right _ _
         _ = 2 * B := by ring
-        _ ≤ 2 * B + 0 := by omega
+        _ ≤ 2 * B + 0 := by lia
   · calc lowestScore A B (C + 1) ≤ 3 * A * B :=
           le_trans (min_le_left _ _) (min_le_right _ _)
-      _ ≤ 2 * B + 3 * A * B := by omega
+      _ ≤ 2 * B + 3 * A * B := by lia
       _ = 2 * B + lowestScore A B C := by rw [h]
   · calc lowestScore A B (C + 1) ≤ 2 * B * (C + 1) := min_le_right _ _
       _ = 2 * B + 2 * B * C := by ring
@@ -316,7 +316,7 @@ lemma tight_red (A B C : ℕ) :
           · exact Nat.zero_le _
         have hL0' : lowestScore A (B + 1) 0 = 0 := lowestScore_a_b_zero A (B + 1)
         rw [hL0, hL0'] at he
-        have hAz : A = 0 := by omega
+        have hAz : A = 0 := by lia
         exact absurd hAz hA
       · have hA' : 0 < A := Nat.pos_of_ne_zero hA
         have b1 : 3 * A + lowestScore A B C ≤ A * C := by
@@ -343,7 +343,7 @@ lemma tight_red (A B C : ℕ) :
             · rw [← he, h, heq]; ring
             · have hlt : 2 * B * C < 3 * A * B := lt_of_le_of_ne b2L heq
               have h23 : 2 * C < 3 * A := by nlinarith [hlt, hB']
-              omega
+              lia
   · intro hmin
     have le1 : 3 * A * (B + 1) ≤ A * C := by
       rw [← hmin]; exact le_trans (min_le_left _ _) (min_le_left _ _)
@@ -373,7 +373,7 @@ lemma tight_white (A B C : ℕ) :
         have hL0 : lowestScore 0 B C = 0 := lowestScore_zero_b_c B C
         have hL0' : lowestScore 0 B (C + 1) = 0 := lowestScore_zero_b_c B (C + 1)
         rw [hL0, hL0'] at he
-        have hBz : B = 0 := by omega
+        have hBz : B = 0 := by lia
         exact absurd hBz hB
       · have hA' : 0 < A := Nat.pos_of_ne_zero hA
         have hB' : 0 < B := Nat.pos_of_ne_zero hB
@@ -796,7 +796,7 @@ lemma card_optPlays_head_blue (A B C : ℕ) :
     rw [hempty, Finset.card_empty, ite_eq_right]
     rintro ⟨h, -⟩
     exact (Nat.lt_irrefl 0) h
-  · obtain ⟨A', rfl⟩ : ∃ k, A = k + 1 := ⟨A - 1, by omega⟩
+  · obtain ⟨A', rfl⟩ : ∃ k, A = k + 1 := ⟨A - 1, by lia⟩
     by_cases htight : C + lowestScore A' B C = lowestScore (A' + 1) B C
     · have himg : (optPlays (A' + 1) B C).filter (fun l ↦ l.head? = some .blue) =
           (optPlays A' B C).image (fun t ↦ .blue :: t) := by
@@ -811,11 +811,11 @@ lemma card_optPlays_head_blue (A B C : ℕ) :
           rw [List.count_cons_of_ne (by decide : Card.blue ≠ Card.white)] at hw
           have hsc := hl.1.2
           rw [score_cons_blue, hw] at hsc
-          have hst : score t = lowestScore A' B C := by omega
+          have hst : score t = lowestScore A' B C := by lia
           rw [Finset.mem_image]
           refine ⟨t, ?_, rfl⟩
           rw [optPlays, Finset.mem_filter]
-          exact ⟨mem_plays.mpr ⟨by omega, hr, hw⟩, hst⟩
+          exact ⟨mem_plays.mpr ⟨by lia, hr, hw⟩, hst⟩
         · intro hl
           rw [Finset.mem_image] at hl
           obtain ⟨t, ht, rfl⟩ := hl
@@ -838,14 +838,14 @@ lemma card_optPlays_head_blue (A B C : ℕ) :
         rw [List.count_cons_self] at hb
         rw [List.count_cons_of_ne (by decide : Card.blue ≠ Card.red)] at hr
         rw [List.count_cons_of_ne (by decide : Card.blue ≠ Card.white)] at hw
-        have hbc : t.count .blue = A' := by omega
+        have hbc : t.count .blue = A' := by lia
         have hge := score_ge t
         rw [hbc, hr, hw] at hge
         have hlt : lowestScore (A' + 1) B C < C + lowestScore A' B C :=
           lt_of_le_of_ne (lowestScore_le_add_blue A' B C) (fun h ↦ htight h.symm)
         have e := hl.1.2
         rw [score_cons_blue, hw] at e
-        omega
+        lia
       rw [hempty, Finset.card_empty, ite_eq_right]
       rintro ⟨-, h2⟩
       exact htight ((tight_blue A' B C).mpr h2)
@@ -865,7 +865,7 @@ lemma card_optPlays_head_red (A B C : ℕ) :
     rw [hempty, Finset.card_empty, ite_eq_right]
     rintro ⟨h, -⟩
     exact (Nat.lt_irrefl 0) h
-  · obtain ⟨B', rfl⟩ : ∃ k, B = k + 1 := ⟨B - 1, by omega⟩
+  · obtain ⟨B', rfl⟩ : ∃ k, B = k + 1 := ⟨B - 1, by lia⟩
     by_cases htight : 3 * A + lowestScore A B' C = lowestScore A (B' + 1) C
     · have himg : (optPlays A (B' + 1) C).filter (fun l ↦ l.head? = some .red) =
           (optPlays A B' C).image (fun t ↦ .red :: t) := by
@@ -880,11 +880,11 @@ lemma card_optPlays_head_red (A B C : ℕ) :
           rw [List.count_cons_of_ne (by decide : Card.red ≠ Card.white)] at hw
           have hsc := hl.1.2
           rw [score_cons_red, hb] at hsc
-          have hst : score t = lowestScore A B' C := by omega
+          have hst : score t = lowestScore A B' C := by lia
           rw [Finset.mem_image]
           refine ⟨t, ?_, rfl⟩
           rw [optPlays, Finset.mem_filter]
-          exact ⟨mem_plays.mpr ⟨hb, by omega, hw⟩, hst⟩
+          exact ⟨mem_plays.mpr ⟨hb, by lia, hw⟩, hst⟩
         · intro hl
           rw [Finset.mem_image] at hl
           obtain ⟨t, ht, rfl⟩ := hl
@@ -907,14 +907,14 @@ lemma card_optPlays_head_red (A B C : ℕ) :
         rw [List.count_cons_of_ne (by decide : Card.red ≠ Card.blue)] at hb
         rw [List.count_cons_self] at hr
         rw [List.count_cons_of_ne (by decide : Card.red ≠ Card.white)] at hw
-        have hrc : t.count .red = B' := by omega
+        have hrc : t.count .red = B' := by lia
         have hge := score_ge t
         rw [hb, hrc, hw] at hge
         have hlt : lowestScore A (B' + 1) C < 3 * A + lowestScore A B' C :=
           lt_of_le_of_ne (lowestScore_le_add_red A B' C) (fun h ↦ htight h.symm)
         have e := hl.1.2
         rw [score_cons_red, hb] at e
-        omega
+        lia
       rw [hempty, Finset.card_empty, ite_eq_right]
       rintro ⟨-, h2⟩
       exact htight ((tight_red A B' C).mpr h2)
@@ -934,7 +934,7 @@ lemma card_optPlays_head_white (A B C : ℕ) :
     rw [hempty, Finset.card_empty, ite_eq_right]
     rintro ⟨h, -⟩
     exact (Nat.lt_irrefl 0) h
-  · obtain ⟨C', rfl⟩ : ∃ k, C = k + 1 := ⟨C - 1, by omega⟩
+  · obtain ⟨C', rfl⟩ : ∃ k, C = k + 1 := ⟨C - 1, by lia⟩
     by_cases htight : 2 * B + lowestScore A B C' = lowestScore A B (C' + 1)
     · have himg : (optPlays A B (C' + 1)).filter (fun l ↦ l.head? = some .white) =
           (optPlays A B C').image (fun t ↦ .white :: t) := by
@@ -949,11 +949,11 @@ lemma card_optPlays_head_white (A B C : ℕ) :
           rw [List.count_cons_self] at hw
           have hsc := hl.1.2
           rw [score_cons_white, hr] at hsc
-          have hst : score t = lowestScore A B C' := by omega
+          have hst : score t = lowestScore A B C' := by lia
           rw [Finset.mem_image]
           refine ⟨t, ?_, rfl⟩
           rw [optPlays, Finset.mem_filter]
-          exact ⟨mem_plays.mpr ⟨hb, hr, by omega⟩, hst⟩
+          exact ⟨mem_plays.mpr ⟨hb, hr, by lia⟩, hst⟩
         · intro hl
           rw [Finset.mem_image] at hl
           obtain ⟨t, ht, rfl⟩ := hl
@@ -976,14 +976,14 @@ lemma card_optPlays_head_white (A B C : ℕ) :
         rw [List.count_cons_of_ne (by decide : Card.white ≠ Card.blue)] at hb
         rw [List.count_cons_of_ne (by decide : Card.white ≠ Card.red)] at hr
         rw [List.count_cons_self] at hw
-        have hwc : t.count .white = C' := by omega
+        have hwc : t.count .white = C' := by lia
         have hge := score_ge t
         rw [hb, hr, hwc] at hge
         have hlt : lowestScore A B (C' + 1) < 2 * B + lowestScore A B C' :=
           lt_of_le_of_ne (lowestScore_le_add_white A B C') (fun h ↦ htight h.symm)
         have e := hl.1.2
         rw [score_cons_white, hr] at e
-        omega
+        lia
       rw [hempty, Finset.card_empty, ite_eq_right]
       rintro ⟨-, h2⟩
       exact htight ((tight_white A B C').mpr h2)
@@ -999,7 +999,7 @@ lemma optPlays_card_rec (A B C : ℕ) (h : 0 < A + B + C) :
     obtain ⟨hb, hr, hw⟩ := mem_plays.mp hl.1
     rw [hl0] at hb hr hw
     simp at hb hr hw
-    omega
+    lia
   have hpart : optPlays A B C =
       (optPlays A B C).filter (fun l ↦ l.head? = some .blue) ∪
       ((optPlays A B C).filter (fun l ↦ l.head? = some .red) ∪
@@ -1077,10 +1077,10 @@ lemma optPlays_card (A B C : ℕ) : (optPlays A B C).card = fewestWays A B C := 
   intro n
   induction' n with n IH
   · intro a b c h
-    omega
+    lia
   · intro a b c hlt
     by_cases h0 : a + b + c = 0
-    · obtain ⟨rfl, rfl, rfl⟩ : a = 0 ∧ b = 0 ∧ c = 0 := by omega
+    · obtain ⟨rfl, rfl, rfl⟩ : a = 0 ∧ b = 0 ∧ c = 0 := by lia
       rw [optPlays_zero]
       simp [fewestWays]
     · have hpos : 0 < a + b + c := Nat.pos_of_ne_zero h0
@@ -1090,7 +1090,7 @@ lemma optPlays_card (A B C : ℕ) : (optPlays A B C).card = fewestWays A B C := 
           (if 0 < a ∧ lowestScore a b c = a * c then fewestWays (a - 1) b c else 0) := by
         by_cases h : 0 < a ∧ lowestScore a b c = a * c
         · rw [ite_eq_left h, ite_eq_left h]
-          exact IH (a - 1) b c (by omega)
+          exact IH (a - 1) b c (by lia)
         · rw [ite_eq_right h, ite_eq_right h]
       have e2 : (if 0 < b ∧ lowestScore a b c = 3 * a * b then (optPlays a (b - 1) c).card
           else 0) =
@@ -1098,7 +1098,7 @@ lemma optPlays_card (A B C : ℕ) : (optPlays A B C).card = fewestWays A B C := 
           else 0) := by
         by_cases h : 0 < b ∧ lowestScore a b c = 3 * a * b
         · rw [ite_eq_left h, ite_eq_left h]
-          exact IH a (b - 1) c (by omega)
+          exact IH a (b - 1) c (by lia)
         · rw [ite_eq_right h, ite_eq_right h]
       have e3 : (if 0 < c ∧ lowestScore a b c = 2 * b * c then (optPlays a b (c - 1)).card
           else 0) =
@@ -1106,7 +1106,7 @@ lemma optPlays_card (A B C : ℕ) : (optPlays A B C).card = fewestWays A B C := 
           else 0) := by
         by_cases h : 0 < c ∧ lowestScore a b c = 2 * b * c
         · rw [ite_eq_left h, ite_eq_left h]
-          exact IH a b (c - 1) (by omega)
+          exact IH a b (c - 1) (by lia)
         · rw [ite_eq_right h, ite_eq_right h]
       rw [e1, e2, e3]
 

@@ -199,9 +199,9 @@ lemma sum_sq_split {n k : ℕ} (x : Fin k → ℝ) (A : Fin k → Finset (Fin n)
 lemma solution_eq {n ℓ : ℕ} (hn : 2 < n) (S : ℝ) :
     solution n ℓ * S ^ 2 =
       S ^ 2 / (n : ℝ) + ((ℓ : ℝ) - 1) ^ 2 * S ^ 2 / ((n : ℝ) * ((n : ℝ) - 1)) := by
-  have hn0 : (n : ℝ) ≠ 0 := by exact_mod_cast (by omega : n ≠ 0)
+  have hn0 : (n : ℝ) ≠ 0 := by exact_mod_cast (by lia : n ≠ 0)
   have hn1 : (n : ℝ) - 1 ≠ 0 := by
-    have h1 : (1 : ℝ) < (n : ℝ) := by exact_mod_cast (by omega : 1 < n)
+    have h1 : (1 : ℝ) < (n : ℝ) := by exact_mod_cast (by lia : 1 < n)
     exact sub_ne_zero.mpr (ne_of_gt h1)
   unfold solution
   field_simp
@@ -213,7 +213,7 @@ lemma solution_works {n ℓ : ℕ} (hn : 2 < n) (hℓ1 : 1 ≤ ℓ) :
   intro k _hk x hx A hA
   have hA0 : ∀ i, (A i).card ≠ 0 := fun i => by
     have h1 := hA i
-    omega
+    lia
   rw [lhs_eq_sum_v_sq, sum_sq_split, ← sum_sigma_erase]
   rw [solution_eq hn (∑ i, x i)]
   refine add_le_add ?_ ?_
@@ -223,7 +223,7 @@ lemma solution_works {n ℓ : ℕ} (hn : 2 < n) (hℓ1 : 1 ≤ ℓ) :
       (f := fun p => vvv x A p p)
     rw [Finset.card_univ, Fintype.card_fin] at hQM
     rw [hsum] at hQM
-    rw [div_le_iff₀ (show (0 : ℝ) < (n : ℝ) by exact_mod_cast (by omega : 0 < n))]
+    rw [div_le_iff₀ (show (0 : ℝ) < (n : ℝ) by exact_mod_cast (by lia : 0 < n))]
     exact le_trans hQM (le_of_eq (mul_comm _ _))
   · -- Off-diagonal part: `(ℓ-1)²S²/(n(n-1)) ≤ ∑ p≠q, (v_{p,q})²`.
     have hsum := sum_offdiag x A hA0
@@ -235,9 +235,9 @@ lemma solution_works {n ℓ : ℕ} (hn : 2 < n) (hℓ1 : 1 ≤ ℓ) :
     have hS : (0 : ℝ) ≤ ∑ i, x i := Finset.sum_nonneg fun i _ => hx i
     have hℓ1' : (0 : ℝ) ≤ (ℓ : ℝ) - 1 := sub_nonneg.mpr (by exact_mod_cast hℓ1)
     have hnn : (0 : ℝ) < (n : ℝ) * ((n : ℝ) - 1) := by
-      have h1 : (0 : ℝ) < (n : ℝ) := by exact_mod_cast (by omega : 0 < n)
+      have h1 : (0 : ℝ) < (n : ℝ) := by exact_mod_cast (by lia : 0 < n)
       have h2 : (0 : ℝ) < (n : ℝ) - 1 := by
-        have h3 : (1 : ℝ) < (n : ℝ) := by exact_mod_cast (by omega : 1 < n)
+        have h3 : (1 : ℝ) < (n : ℝ) := by exact_mod_cast (by lia : 1 < n)
         linarith
       exact mul_pos h1 h2
     have hle : (((ℓ : ℝ) - 1) * ∑ i, x i) ^ 2 ≤
@@ -248,7 +248,7 @@ lemma solution_works {n ℓ : ℕ} (hn : 2 < n) (hℓ1 : 1 ≤ ℓ) :
         (n : ℝ) * ((n : ℝ) - 1) := by
       have h1 : ∀ p : Fin n, ((Finset.univ.erase p).card : ℝ) = (n : ℝ) - 1 := fun p => by
         rw [Finset.card_erase_of_mem (Finset.mem_univ p), Finset.card_univ, Fintype.card_fin]
-        rw [Nat.cast_sub (by omega : 1 ≤ n), Nat.cast_one]
+        rw [Nat.cast_sub (by lia : 1 ≤ n), Nat.cast_one]
       rw [Finset.card_sigma, Nat.cast_sum, Finset.sum_congr rfl (fun p _ => h1 p)]
       rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
     have hQM := sq_sum_le_card_mul_sum_sq
@@ -443,10 +443,10 @@ lemma solution_le_of_works {n ℓ : ℕ} (hn : 2 < n) (hℓ1 : 1 ≤ ℓ) (hℓn
   have hAinj : Function.Injective A := fun i₁ i₂ h => e.symm.injective (Subtype.ext h)
   have hAsurj : ∀ B ∈ s, ∃ i, A i = B := fun B hB =>
     ⟨e ⟨B, hB⟩, congrArg Subtype.val (Equiv.symm_apply_apply e ⟨B, hB⟩)⟩
-  have hℓ0 : (ℓ : ℝ) ≠ 0 := by exact_mod_cast (by omega : ℓ ≠ 0)
-  have hn0 : (n : ℝ) ≠ 0 := by exact_mod_cast (by omega : n ≠ 0)
+  have hℓ0 : (ℓ : ℝ) ≠ 0 := by exact_mod_cast (by lia : ℓ ≠ 0)
+  have hn0 : (n : ℝ) ≠ 0 := by exact_mod_cast (by lia : n ≠ 0)
   have hn1 : (n : ℝ) - 1 ≠ 0 := by
-    have h1 : (1 : ℝ) < (n : ℝ) := by exact_mod_cast (by omega : 1 < n)
+    have h1 : (1 : ℝ) < (n : ℝ) := by exact_mod_cast (by lia : 1 < n)
     exact sub_ne_zero.mpr (ne_of_gt h1)
   have hnn : (n : ℝ) * ((n : ℝ) - 1) ≠ 0 := mul_ne_zero hn0 hn1
   -- Each `v_{p,q}` is `1/ℓ` times the number of sets containing `p, q`.
@@ -532,7 +532,7 @@ lemma solution_le_of_works {n ℓ : ℕ} (hn : 2 < n) (hℓ1 : 1 ≤ ℓ) (hℓn
       rw [Finset.sum_congr rfl (fun p' _ => by
         rw [Finset.card_erase_of_mem (Finset.mem_univ p'), Finset.card_univ, Fintype.card_fin])]
       rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin]
-      rw [nsmul_eq_mul, nsmul_eq_mul, Nat.cast_sub (show 1 ≤ n by omega), Nat.cast_one]
+      rw [nsmul_eq_mul, nsmul_eq_mul, Nat.cast_sub (show 1 ≤ n by lia), Nat.cast_one]
       ring
     rw [eq_div_iff hnn]
     exact h2
@@ -564,7 +564,7 @@ lemma solution_le_of_works {n ℓ : ℕ} (hn : 2 < n) (hℓ1 : 1 ≤ ℓ) (hℓn
     rw [Finset.sum_congr rfl (fun p _ => by
       rw [Finset.card_erase_of_mem (Finset.mem_univ p), Finset.card_univ, Fintype.card_fin])]
     rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin]
-    rw [nsmul_eq_mul, nsmul_eq_mul, Nat.cast_sub (show 1 ≤ n by omega), Nat.cast_one]
+    rw [nsmul_eq_mul, nsmul_eq_mul, Nat.cast_sub (show 1 ≤ n by lia), Nat.cast_one]
     field_simp
   have hLHS : ∑ i : Fin k, ∑ j : Fin k, (1 : Fin k → ℝ) i * (1 : Fin k → ℝ) j *
         (((A i ∩ A j).card : ℝ) ^ 2 / ((A i).card : ℝ) / ((A j).card : ℝ)) =

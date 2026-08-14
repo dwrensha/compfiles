@@ -159,12 +159,12 @@ lemma superset_layer_card (u : Signature) (j : ℕ) :
       rw [Finset.mem_filter] at hv ⊢
       exact ⟨Finset.mem_univ v, hv.2, (Finset.mem_powersetCard.mp hv.1).2⟩
   rw [hfilter]
-  rw [Finset.card_filter_powersetCard_subset u topSignature (u.card + j) hsubset_top (by omega)]
+  rw [Finset.card_filter_powersetCard_subset u topSignature (u.card + j) hsubset_top (by lia)]
   have hcard_top : topSignature.card = 100 := by
     simp [topSignature]
   rw [hcard_top]
   congr 1
-  omega
+  lia
 
 def supersetLayer (u : Signature) (j : ℕ) : Finset Signature :=
   (Finset.univ : Finset Signature).filter
@@ -187,7 +187,7 @@ lemma canonicalHighCount_of_superset_high
 lemma canonicalHighCount_grouped_summand
     {a m j : ℕ} (ham : a + m = 100) (_ha : 50 ≤ a) (_hj : j ≤ m) :
     2 * (a + j) - 100 = (a - m) + 2 * j := by
-  omega
+  lia
 
 lemma sum_supersets_by_rank
     (u : Signature) (F : ℕ → ℕ) :
@@ -212,7 +212,7 @@ lemma sum_supersets_by_rank
             simpa using h
           have hjmem : v.card - u.card ∈ Finset.range (100 - u.card + 1) := by
             simp
-            omega
+            lia
           calc
             F v.card =
                 (if v.card = u.card + (v.card - u.card) then F v.card else 0) := by
@@ -225,7 +225,7 @@ lemma sum_supersets_by_rank
                   · intro j hj hjne
                     have hneq : v.card ≠ u.card + j := by
                       intro h
-                      have : j = v.card - u.card := by omega
+                      have : j = v.card - u.card := by lia
                       exact hjne this
                     simp [hneq]
                   · intro hnot
@@ -288,7 +288,7 @@ lemma canonicalHighCount_grouped_sum_eq {a m : ℕ}
     (∑ j ∈ Finset.range (m + 1),
         (2 * (a + j) - 100) * m.choose j) =
       a * 2 ^ m := by
-  have hm_le_a : m ≤ a := by omega
+  have hm_le_a : m ≤ a := by lia
   have hchoose := Nat.sum_range_choose m
   have hmulchoose := Nat.sum_range_mul_choose m
   calc
@@ -338,7 +338,7 @@ lemma SignatureIntersectionCount_canonicalHighCount_closed_form
   have hcard_le : u.card ≤ 100 := by
     have h := Finset.card_le_univ u
     simpa using h
-  exact canonicalHighCount_grouped_sum_eq (by omega) hu
+  exact canonicalHighCount_grouped_sum_eq (by lia) hu
 
 /-- Move one full block from `v` to its immediate sub-signatures. -/
 def pushDown (f : Signature → ℕ) (v : Signature) : Signature → ℕ :=
@@ -380,21 +380,21 @@ lemma immediate_supersets_count {u v : Signature} (huv : u ⊆ v) :
       constructor
       · intro hw
         rw [Finset.mem_filter] at hw ⊢
-        exact ⟨Finset.mem_powersetCard.mpr ⟨hw.2.2.1, by omega⟩, hw.2.1⟩
+        exact ⟨Finset.mem_powersetCard.mpr ⟨hw.2.2.1, by lia⟩, hw.2.1⟩
       · intro hw
         rw [Finset.mem_filter] at hw ⊢
         have hw' := Finset.mem_powersetCard.mp hw.1
-        refine ⟨?_, hw.2, hw'.1, by omega⟩
+        refine ⟨?_, hw.2, hw'.1, by lia⟩
         refine Finset.mem_erase.mpr ⟨?_, Finset.mem_univ w⟩
         intro hwv
         have : w.card = v.card := by rw [hwv]
-        omega
+        lia
     rw [hfilter]
-    rw [Finset.card_filter_powersetCard_subset u v (v.card - 1) huv (by omega)]
-    have hidx : v.card - 1 - u.card = v.card - u.card - 1 := by omega
+    rw [Finset.card_filter_powersetCard_subset u v (v.card - 1) huv (by lia)]
+    have hidx : v.card - 1 - u.card = v.card - u.card - 1 := by lia
     rw [hidx]
     cases hdiff : v.card - u.card with
-    | zero => omega
+    | zero => lia
     | succ n => simp [Nat.choose_succ_self_right]
 
 lemma canonicalHighCount_valid_on_high :
@@ -433,7 +433,7 @@ lemma high_rank_objective_summand_int {r : ℕ}
     (hr50 : 50 ≤ r) (hr100 : r ≤ 100) :
     (((2 * r - 100) * Nat.choose 100 r : ℕ) : ℤ) =
       100 * ((Nat.choose 99 (r - 1) : ℤ) - Nat.choose 99 r) := by
-  have hrpos : 0 < r := by omega
+  have hrpos : 0 < r := by lia
   have hmul_left_nat : 100 * Nat.choose 99 (r - 1) = r * Nat.choose 100 r := by
     have h := Nat.add_one_mul_choose_eq 99 (r - 1)
     have hr : r - 1 + 1 = r := Nat.sub_add_cancel hrpos
@@ -451,7 +451,7 @@ lemma high_rank_objective_summand_int {r : ℕ}
         = ((2 * r - 100 : ℕ) : ℤ) * Nat.choose 100 r := by simp
     _ = (((r : ℤ) - (100 - r : ℕ)) * Nat.choose 100 r) := by
           have hcoef : ((2 * r - 100 : ℕ) : ℤ) = (r : ℤ) - (100 - r : ℕ) := by
-            omega
+            lia
           rw [hcoef]
     _ = (r * Nat.choose 100 r : ℤ) - ((100 - r : ℕ) * Nat.choose 100 r : ℤ) := by
           ring
@@ -490,9 +490,9 @@ lemma high_rank_weighted_choose_sum :
               refine Finset.sum_congr rfl ?_
               intro j hj
               have hjlt : j < 51 := Finset.mem_range.mp hj
-              have h49 : 50 + j - 1 = 49 + j := by omega
+              have h49 : 50 + j - 1 = 49 + j := by lia
               rw [high_rank_objective_summand_int
-                (by omega : 50 ≤ 50 + j) (by omega : 50 + j ≤ 100), h49]
+                (by lia : 50 ≤ 50 + j) (by lia : 50 + j ≤ 100), h49]
       _ = 100 * ((Nat.choose 99 49 : ℤ) - Nat.choose 99 (50 + 50)) := by
               simpa using high_rank_choose_telescope_int 50
       _ = ((50 * Nat.choose 100 50 : ℕ) : ℤ) := by
@@ -579,7 +579,7 @@ lemma pushDown_preserves_condition {f : Signature → ℕ} {v : Signature}
       have hpush_v : pushDown f v v = f v - v.card := by simp [pushDown]
       rw [ite_eq_left huv, ite_eq_left huv, hpush_v]
       rw [herase]
-      omega
+      lia
     have hold : u.card ∣ SignatureIntersectionCount f u := hf u hu
     rw [← hchange] at hold
     exact (Nat.dvd_add_self_right).mp hold
@@ -604,7 +604,7 @@ lemma pushDown_preserves_objective_of_large {f : Signature → ℕ} {v : Signatu
     (hv : 50 < v.card) (hfv : v.card ≤ f v) :
     SignatureObjective (pushDown f v) = SignatureObjective f := by
   -- Above rank `50`, push-down preserves the objective.
-  have hv_le : 50 ≤ v.card := by omega
+  have hv_le : 50 ≤ v.card := by lia
   have hpush_v : pushDown f v v = f v - v.card := by
     simp [pushDown]
   have hterm_v_new :
@@ -615,7 +615,7 @@ lemma pushDown_preserves_objective_of_large {f : Signature → ℕ} {v : Signatu
     simp [hv_le]
   have hchoose_pred : v.card.choose (v.card - 1) = v.card := by
     cases hcard : v.card with
-    | zero => omega
+    | zero => lia
     | succ n =>
         simp [Nat.choose_succ_self_right]
   have himmediate_sum :
@@ -632,14 +632,14 @@ lemma pushDown_preserves_objective_of_large {f : Signature → ℕ} {v : Signatu
       constructor
       · intro h
         have h' := Finset.mem_filter.mp h
-        exact Finset.mem_powersetCard.mpr ⟨h'.2.1, by omega⟩
+        exact Finset.mem_powersetCard.mpr ⟨h'.2.1, by lia⟩
       · intro h
         have h' := Finset.mem_powersetCard.mp h
-        refine Finset.mem_filter.mpr ⟨?_, h'.1, by omega⟩
+        refine Finset.mem_filter.mpr ⟨?_, h'.1, by lia⟩
         refine Finset.mem_erase.mpr ⟨?_, Finset.mem_univ w⟩
         intro hwv
         have hwcard : w.card = v.card := by rw [hwv]
-        omega
+        lia
     rw [hfilter, Finset.card_powersetCard, hchoose_pred]
   have hsum_erase :
       (∑ w ∈ (Finset.univ : Finset Signature).erase v,
@@ -658,7 +658,7 @@ lemma pushDown_preserves_objective_of_large {f : Signature → ℕ} {v : Signatu
             intro w hw
             have hwne : w ≠ v := (Finset.mem_erase.mp hw).1
             by_cases himmediate : w ⊆ v ∧ w.card + 1 = v.card
-            · have hwcard : 50 ≤ w.card := by omega
+            · have hwcard : 50 ≤ w.card := by lia
               simp [pushDown, hwne, himmediate, hwcard]
             · by_cases hwcard : 50 ≤ w.card
               · simp [pushDown, hwne, himmediate, hwcard]
@@ -688,7 +688,7 @@ lemma pushDown_preserves_objective_of_large {f : Signature → ℕ} {v : Signatu
           rw [hsum_erase, hterm_v_new]
     _ = (∑ w ∈ (Finset.univ : Finset Signature).erase v,
               if 50 ≤ w.card then f w else 0) + f v := by
-          omega
+          lia
     _ = (∑ w ∈ (Finset.univ : Finset Signature).erase v,
               if 50 ≤ w.card then f w else 0)
           + (if 50 ≤ v.card then f v else 0) := by
@@ -702,8 +702,8 @@ lemma pushDown_preserves_objective_of_large {f : Signature → ℕ} {v : Signatu
 lemma pushDown_decreases_objective_at_middle {f : Signature → ℕ} {v : Signature}
     (hv : v.card = 50) (hfv : v.card ≤ f v) :
     SignatureObjective (pushDown f v) + 50 = SignatureObjective f := by
-  have hv_le : 50 ≤ v.card := by omega
-  have hfv50 : 50 ≤ f v := by omega
+  have hv_le : 50 ≤ v.card := by lia
+  have hfv50 : 50 ≤ f v := by lia
   have hpush_v : pushDown f v v = f v - 50 := by
     simp [pushDown, hv]
   have hterm_v_new :
@@ -724,7 +724,7 @@ lemma pushDown_decreases_objective_at_middle {f : Signature → ℕ} {v : Signat
     by_cases hwcard : 50 ≤ w.card
     · have hnot_immediate : ¬(w ⊆ v ∧ w.card + 1 = v.card) := by
         intro h
-        omega
+        lia
       simp [hwcard, pushDown, hwne, hnot_immediate]
     · simp [hwcard]
   calc
@@ -741,7 +741,7 @@ lemma pushDown_decreases_objective_at_middle {f : Signature → ℕ} {v : Signat
           rw [hother, hterm_v_new]
     _ = (∑ w ∈ (Finset.univ : Finset Signature).erase v,
               if 50 ≤ w.card then f w else 0) + f v := by
-          omega
+          lia
     _ = (∑ w ∈ (Finset.univ : Finset Signature).erase v,
               if 50 ≤ w.card then f w else 0)
           + (if 50 ≤ v.card then f v else 0) := by
@@ -773,14 +773,14 @@ lemma dvd_complement_mod_add {d s : ℕ} (hd : 0 < d) :
   · have hsmod : s % d = 0 := by simpa [r] using hr0
     rw [Nat.dvd_iff_mod_eq_zero]
     simp [hsmod]
-  · have hres : (d - r) % d = d - r := Nat.mod_eq_of_lt (by omega)
+  · have hres : (d - r) % d = d - r := Nat.mod_eq_of_lt (by lia)
     refine ⟨s / d + 1, ?_⟩
     calc
       ((d - s % d) % d) + s = (d - r) + s := by simp [r, hres]
       _ = (d - r) + (d * (s / d) + r) := by rw [Nat.div_add_mod s d]
       _ = d * (s / d + 1) := by
         rw [show (d - r) + (d * (s / d) + r) =
-            ((d - r) + r) + d * (s / d) by omega]
+            ((d - r) + r) + d * (s / d) by lia]
         rw [Nat.sub_add_cancel (le_of_lt hrlt)]
         ring
 
@@ -797,15 +797,15 @@ lemma fillRank_eq_self_of_card_ne {k : ℕ} {f : Signature → ℕ} {v : Signatu
 
 lemma fillRank_eq_self_of_card_gt {k : ℕ} {f : Signature → ℕ} {v : Signature}
     (hv : k < v.card) : fillRank k f v = f v := by
-  exact fillRank_eq_self_of_card_ne (by omega)
+  exact fillRank_eq_self_of_card_ne (by lia)
 
 lemma fillRank_eq_self_of_card_lt {k : ℕ} {f : Signature → ℕ} {v : Signature}
     (hv : v.card < k) : fillRank k f v = f v := by
-  exact fillRank_eq_self_of_card_ne (by omega)
+  exact fillRank_eq_self_of_card_ne (by lia)
 
 lemma fillRank_eq_self_of_high {k : ℕ} {f : Signature → ℕ} {v : Signature}
     (hk : k < 50) (hv : 50 ≤ v.card) : fillRank k f v = f v := by
-  exact fillRank_eq_self_of_card_gt (by omega)
+  exact fillRank_eq_self_of_card_gt (by lia)
 
 lemma fillRank_eq_self_on_supersets_of_card_lt {k : ℕ} {f : Signature → ℕ}
     {u w : Signature} (hu : k < u.card) (huw : u ⊆ w) :
@@ -915,7 +915,7 @@ lemma fillRank_satisfies_rank {k : ℕ} {f : Signature → ℕ} {u : Signature}
     intro w huw
     exact fillRank_eq_self_of_card_gt (by
       have hcard := Finset.card_lt_card huw
-      omega)
+      lia)
   rw [hcongr]
   exact fillRank_self_add_strictSupersetContribution_dvd hu hupos
 
@@ -940,7 +940,7 @@ lemma fillRank_extends_completed_ranks {k : ℕ} {f : Signature → ℕ}
   · exact fillRank_satisfies_rank huk (Finset.card_pos.mpr hu)
   · apply fillRank_preserves_completed_ranks hf
     · exact hu
-    · omega
+    · lia
 
 /-- Low-rank filling does not change the high-rank objective. -/
 lemma SignatureObjective_fillRank_of_low {k : ℕ} {f : Signature → ℕ}
@@ -972,11 +972,11 @@ lemma lowerFill_valid
       apply fillRank_extends_completed_ranks
       · intro w hw hkw
         apply ih
-        · omega
+        · lia
         · exact hw
-        · omega
+        · lia
       · exact hu
-      · omega
+      · lia
 
 lemma lowerFill_preserves_high
     (n : ℕ) :
@@ -989,7 +989,7 @@ lemma lowerFill_preserves_high
   | succ n ih =>
       intro v hv
       change fillRank (49 - n) (lowerFill n) v = canonicalHighCount v
-      rw [fillRank_eq_self_of_high (by omega) hv, ih v hv]
+      rw [fillRank_eq_self_of_high (by lia) hv, ih v hv]
 
 lemma lowerFill_objective
     (n : ℕ) :
@@ -1001,7 +1001,7 @@ lemma lowerFill_objective
   | succ n ih =>
       change SignatureObjective (fillRank (49 - n) (lowerFill n)) =
         SignatureObjective canonicalHighCount
-      rw [SignatureObjective_fillRank_of_low (by omega), ih]
+      rw [SignatureObjective_fillRank_of_low (by lia), ih]
 
 /-- Fill ranks `49, ..., 1`. -/
 lemma lower_rank_filling_exists :
@@ -1014,7 +1014,7 @@ lemma lower_rank_filling_exists :
   · intro u hu
     apply lowerFill_valid 49 (by norm_num) u hu
     have hpos : 0 < u.card := Finset.card_pos.mpr hu
-    omega
+    lia
   · exact lowerFill_preserves_high 49
   · exact lowerFill_objective 49
 
@@ -1332,7 +1332,7 @@ lemma card_lt_100_of_ne_topSignature {v : Signature} (hvt : v ≠ topSignature) 
     have h := Finset.card_le_univ v
     simpa using h
   by_contra hnot
-  have hv : v.card = 100 := by omega
+  have hv : v.card = 100 := by lia
   exact hvt (eq_topSignature_of_card_eq_100 hv)
 
 lemma canonicalHighCount_top : canonicalHighCount topSignature = 100 := by
@@ -1343,7 +1343,7 @@ lemma canonicalHighCount_lt_card_of_high_ne_top {v : Signature}
     canonicalHighCount v < v.card := by
   have hlt : v.card < 100 := card_lt_100_of_ne_topSignature hvt
   simp [canonicalHighCount, hv]
-  omega
+  lia
 
 lemma canonicalHighCount_le_card_of_high {v : Signature} (hv : 50 ≤ v.card) :
     canonicalHighCount v ≤ v.card := by
@@ -1379,11 +1379,11 @@ lemma iterate_pushDown_condition {f : Signature → ℕ} {v : Signature} (n : �
       apply pushDown_preserves_condition
       · rw [iterate_pushDown_self]
         have hn : (n + 1) * v.card = n * v.card + v.card := by ring
-        omega
+        lia
       · apply ih
         have : n * v.card ≤ (n + 1) * v.card :=
           Nat.mul_le_mul_right v.card (Nat.le_succ n)
-        omega
+        lia
 
 lemma iterate_pushDown_objective_le {f : Signature → ℕ} {v : Signature} (n : ℕ)
     (hv : 50 ≤ v.card) (hsteps : n * v.card ≤ f v) :
@@ -1400,22 +1400,22 @@ lemma iterate_pushDown_objective_le {f : Signature → ℕ} {v : Signature} (n :
       have hprev : n * v.card ≤ f v := by
         have : n * v.card ≤ (n + 1) * v.card :=
           Nat.mul_le_mul_right v.card (Nat.le_succ n)
-        omega
+        lia
       have henough : v.card ≤
           (Nat.iterate (fun g : Signature → ℕ => pushDown g v) n f) v := by
         rw [iterate_pushDown_self]
         have hn : (n + 1) * v.card = n * v.card + v.card := by ring
-        omega
+        lia
       by_cases hlarge : 50 < v.card
       · rw [pushDown_preserves_objective_of_large hlarge henough]
         exact ih hprev
-      · have hmid : v.card = 50 := by omega
+      · have hmid : v.card = 50 := by lia
         have hdrop := pushDown_decreases_objective_at_middle hmid henough
         have hle_step : SignatureObjective (pushDown
             (Nat.iterate (fun g : Signature → ℕ => pushDown g v) n f) v) ≤
             SignatureObjective
               (Nat.iterate (fun g : Signature → ℕ => pushDown g v) n f) := by
-          omega
+          lia
         exact le_trans hle_step (ih hprev)
 
 lemma pushDown_to_canonical_count {f : Signature → ℕ} {v : Signature}
@@ -1431,10 +1431,10 @@ lemma pushDown_to_canonical_count {f : Signature → ℕ} {v : Signature}
   have hmul : n * v.card = f v - canonicalHighCount v := by
     dsimp [n]
     exact Nat.div_mul_cancel hdiv
-  have hsteps : n * v.card ≤ f v := by omega
+  have hsteps : n * v.card ≤ f v := by lia
   refine ⟨iterate_pushDown_condition n hsteps hf, iterate_pushDown_objective_le n hv hsteps, ?_⟩
   rw [iterate_pushDown_self, hmul]
-  omega
+  lia
 
 /-- Signatures of rank `k`. -/
 def rankSignatures (k : ℕ) : Finset Signature :=
@@ -1455,7 +1455,7 @@ lemma pushDown_eq_self_of_card_ge_ne {f : Signature → ℕ} {v w : Signature}
     pushDown f v w = f w := by
   apply pushDown_eq_self_of_not_affected hneq
   intro h
-  omega
+  lia
 
 lemma pushDown_eq_self_of_card_gt {f : Signature → ℕ} {v w : Signature}
     (hcard : v.card < w.card) :
@@ -1463,7 +1463,7 @@ lemma pushDown_eq_self_of_card_gt {f : Signature → ℕ} {v w : Signature}
   apply pushDown_eq_self_of_card_ge_ne (le_of_lt hcard)
   intro h
   subst h
-  omega
+  lia
 
 lemma iterate_pushDown_eq_self_of_not_affected
     (f : Signature → ℕ) (v w : Signature) (n : ℕ)
@@ -1484,7 +1484,7 @@ lemma iterate_pushDown_eq_self_of_card_ge_ne
     (Nat.iterate (fun g : Signature → ℕ => pushDown g v) n f) w = f w := by
   apply iterate_pushDown_eq_self_of_not_affected f v w n hneq
   intro h
-  omega
+  lia
 
 lemma iterate_pushDown_eq_self_of_card_gt
     (f : Signature → ℕ) (v w : Signature) (n : ℕ)
@@ -1493,7 +1493,7 @@ lemma iterate_pushDown_eq_self_of_card_gt
   apply iterate_pushDown_eq_self_of_card_ge_ne f v w n (le_of_lt hcard)
   intro h
   subst h
-  omega
+  lia
 
 lemma iterate_pushDown_preserves_canonical_of_card_gt
     {f : Signature → ℕ} {v w : Signature} {n : ℕ}
@@ -1509,7 +1509,7 @@ lemma iterate_pushDown_preserves_canonical_of_same_rank_ne
     (hw : f w = canonicalHighCount w) :
     (Nat.iterate (fun g : Signature → ℕ => pushDown g v) n f) w =
       canonicalHighCount w := by
-  rw [iterate_pushDown_eq_self_of_card_ge_ne f v w n (by omega) hneq, hw]
+  rw [iterate_pushDown_eq_self_of_card_ge_ne f v w n (by lia) hneq, hw]
 
 /-- Push `v` down to its canonical high-rank residue. -/
 def normalizeSignature (f : Signature → ℕ) (v : Signature) : Signature → ℕ :=
@@ -1545,7 +1545,7 @@ lemma high_signature_count_forced_after_supersets_normalized
     (hstrict : ∀ w : Signature, v ⊂ w → f w = canonicalHighCount w) :
     canonicalHighCount v ≤ f v ∧ v.card ∣ f v - canonicalHighCount v := by
   -- Normalized strict supersets force the residue at `v`.
-  have hvpos : 0 < v.card := by omega
+  have hvpos : 0 < v.card := by lia
   have hvnonempty : v.Nonempty := Finset.card_pos.mp hvpos
   have htail :
       strictSupersetContribution f v =
@@ -1578,7 +1578,7 @@ lemma high_signature_count_forced_after_supersets_normalized
         have hmzero : m = 0 := Nat.eq_zero_of_not_pos hnot
         subst hmzero
         simp at hm
-        omega
+        lia
       have hle_top : topSignature.card ≤ f topSignature := by
         calc
           topSignature.card = topSignature.card * 1 := by rw [mul_one]
@@ -1643,20 +1643,20 @@ lemma normalize_rank_subset
     have hv_card : v.card = k := hA v (by simp [hv_not_mem])
     rcases ih f hA0 hf htop hgt with
       ⟨g0, hg0, hobj0, htop0, hgt0, hA0canon⟩
-    have hv_high : 50 ≤ v.card := by omega
+    have hv_high : 50 ≤ v.card := by lia
     have hstrict : ∀ w : Signature, v ⊂ w →
         g0 w = canonicalHighCount w := by
       intro w hvw
       apply hgt0
       have hcard := Finset.card_lt_card hvw
-      omega
+      lia
     rcases normalizeSignature_spec hg0 htop0 hv_high hstrict with
       ⟨hg1, hobj1, hcanonv⟩
     refine ⟨normalizeSignature g0 v, hg1, le_trans hobj1 hobj0,
       normalizeSignature_top_pos htop0 hcanonv, ?_, ?_⟩
     · intro w hkw
       apply normalizeSignature_preserves_canonical_of_card_gt
-      · omega
+      · lia
       · exact hgt0 w hkw
     · intro w hw
       rw [Finset.mem_insert] at hw
@@ -1688,7 +1688,7 @@ lemma normalize_rank
   intro w hkw
   by_cases hgtw : k < w.card
   · exact hgtg w hgtw
-  · have hw : w.card = k := by omega
+  · have hw : w.card = k := by lia
     exact hrank w (mem_rankSignatures.mpr hw)
 
 lemma smooth_high_signatures_from_rank
@@ -1706,14 +1706,14 @@ lemma smooth_high_signatures_from_rank
   · intro _hk100 f hf htop hgt
     refine ⟨f, hf, le_rfl, htop, ?_⟩
     intro w hw
-    exact hgt w (by omega)
+    exact hgt w (by lia)
   · intro k hk49 ih hk_succ_100 f hf htop hgt
-    rcases normalize_rank (k + 1) f (by omega) hf htop hgt with
+    rcases normalize_rank (k + 1) f (by lia) hf htop hgt with
       ⟨g1, hg1, hobj1, htop1, hge1⟩
     have hgt1 : ∀ w : Signature, k < w.card → g1 w = canonicalHighCount w := by
       intro w hw
-      exact hge1 w (by omega)
-    rcases ih (by omega) g1 hg1 htop1 hgt1 with
+      exact hge1 w (by lia)
+    rcases ih (by lia) g1 hg1 htop1 hgt1 with
       ⟨g, hg, hobj, htopg, hcanon⟩
     exact ⟨g, hg, le_trans hobj hobj1, htopg, hcanon⟩
 
@@ -1731,7 +1731,7 @@ lemma smooth_high_signatures_by_ranks
     have hle : w.card ≤ 100 := by
       have h := Finset.card_le_univ w
       simpa using h
-    omega
+    lia
   exact smooth_high_signatures_from_rank 100 (by norm_num) (by norm_num) f hf htop hgt0
 
 lemma smooth_high_signatures_to_canonical
