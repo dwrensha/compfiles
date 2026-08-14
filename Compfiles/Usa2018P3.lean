@@ -550,12 +550,8 @@ lemma padicValNat_totient_mul_prime_of_dvd {p q : ℕ} (hp : p.Prime) (hq : q.Pr
     omega
   have htv : Nat.totient v ≠ 0 := (Nat.totient_pos.2 (Nat.pos_of_ne_zero hvnz)).ne'
   have hqnz : q ≠ 0 := hq.ne_zero
-  have hvpow : ∀ e : ℕ, padicValNat p (q ^ e) = 0 := by
-    intro e
-    rw [padicValNat.eq_zero_iff]
-    refine Or.inr (Or.inr ?_)
-    intro hd
-    exact hpq ((Nat.prime_dvd_prime_iff_eq hp hq).1 (hp.dvd_of_dvd_pow hd))
+  have hvpow : ∀ e : ℕ, padicValNat p (q ^ e) = 0 := fun e =>
+    padicValNat_prime_prime_pow e hpq
   have htn : Nat.totient n = q ^ (f - 1) * (q - 1) * Nat.totient v := by
     rw [hnv, Nat.totient_mul (hcv f (by omega)), Nat.totient_prime_pow hq (by omega : 0 < f)]
   have htnq : Nat.totient (n * q) = q ^ f * (q - 1) * Nat.totient v := by

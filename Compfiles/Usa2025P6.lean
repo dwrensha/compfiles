@@ -1631,12 +1631,8 @@ theorem hall_deficiency {n : ℕ} [NeZero n] (r : Fin n → Fin n → Prop) [Dec
     -- pip cannot lie in B, since N pip = univ would force the deficiency of B to be ≤ 0
     have hpipB : pip ∉ B := by
       intro hmem
-      have hNp : N pip = Finset.univ := by
-        apply Finset.eq_univ_of_forall
-        intro j
-        have hj : j ∈ Finset.univ.filter (r pip) :=
-          Finset.mem_filter.mpr ⟨Finset.mem_univ j, hpip j⟩
-        exact hj
+      have hNp : N pip = Finset.univ :=
+        Finset.filter_eq_self.mpr fun x _ => hpip x
       have hsub : (Finset.univ : Finset (Fin n)) ⊆ B.biUnion N := by
         rw [← hNp]
         exact Finset.subset_biUnion_of_mem N hmem

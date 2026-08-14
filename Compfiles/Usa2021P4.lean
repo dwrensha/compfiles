@@ -122,12 +122,7 @@ theorem card_divisors_div_mul {s p : ℕ} (hp : p.Prime) (hs0 : s ≠ 0) (hps : 
   set m := s / p ^ e with hm
   have hpow : p ^ e ∣ s := (hp.pow_dvd_iff_le_factorization hs0).mpr le_rfl
   have hsm : s = p ^ e * m := (Nat.mul_div_cancel' hpow).symm
-  have hpm : ¬ p ∣ m := by
-    intro hpm
-    have h1 : p ^ e * p ∣ p ^ e * m := mul_dvd_mul_left (p ^ e) hpm
-    rw [← hsm, ← pow_succ] at h1
-    have h2 := (hp.pow_dvd_iff_le_factorization hs0).mp h1
-    omega
+  have hpm : ¬ p ∣ m := Nat.not_dvd_ordCompl hp hs0
   have hcard : ∀ k : ℕ, (p ^ k * m).divisors.card = (k + 1) * m.divisors.card := by
     intro k
     have hcop : Nat.Coprime (p ^ k) m := (hp.coprime_pow_of_not_dvd hpm).symm

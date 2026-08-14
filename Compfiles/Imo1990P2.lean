@@ -337,14 +337,7 @@ problem imo1990_p2 (n : ℕ) (hn : 3 ≤ n) :
     obtain ⟨B, hBcard, hBbad⟩ := exists_bad hn
     by_contra hlt
     push Not at hlt
-    have hsol : 1 ≤ solution n := by
-      by_cases h3 : n % 3 = 2
-      · simp only [solution]
-        rw [ite_eq_left h3]
-        omega
-      · simp only [solution]
-        rw [ite_eq_right h3]
-        omega
+    have hsol : 1 ≤ solution n := Nat.one_le_of_lt hlt
     have hkle : k ≤ B.card := by omega
     obtain ⟨B', hsub, hB'card⟩ := Finset.exists_subset_card_eq hkle
     exact hBbad (IsGood.mono hsub (hk B' hB'card))

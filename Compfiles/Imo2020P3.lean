@@ -171,15 +171,6 @@ lemma altCount_eq {a b : E → V} {vs : List V} {es : List E} (h : IsWalk a b vs
       by_cases hv : v = x <;> by_cases hw : w = x <;> by_cases hs0 : s = 0 <;>
         simp_all <;> omega
 
-lemma mapIdx_congr {α : Type*} (l : List α) (f g : ℕ → α → ℕ) (h : ∀ i, f i = g i) :
-    l.mapIdx f = l.mapIdx g := by
-  induction l generalizing f g with
-  | nil => rfl
-  | cons a l ih =>
-    rw [List.mapIdx_cons, List.mapIdx_cons, h 0]
-    congr 1
-    exact ih _ _ (fun i => h (i + 1))
-
 omit [Fintype V] [Fintype E] [DecidableEq E] in
 /-- In a closed walk of even length, the alternating slot count at `x` equals the number of
 occurrences of `x` among the positions. -/
@@ -198,7 +189,7 @@ lemma altCount_closed {a b : E → V} {vs : List V} {es : List E} (h : IsWalk a 
     obtain ⟨m, hm⟩ := hm
     have glue2 : (es.mapIdx fun i e => if i % 2 = 0 then mult a b e x else 0) =
         es.mapIdx fun i e => if 0 = i % 2 then mult a b e x else 0 :=
-      mapIdx_congr es _ _ fun i => funext fun e => if_congr (by omega) rfl rfl
+      List.mapIdx_eq_mapIdx_iff.mpr fun i _ => if_congr (by omega) rfl rfl
     rw [glue2, altCount_eq h hne (by omega : 0 ≤ 1) x]
     have hmod : (es.length - 1) % 2 = 1 := by rw [hm]; omega
     have hlast : (0 = (es.length - 1) % 2) ↔ False := by rw [hmod]; simp
@@ -316,12 +307,6 @@ lemma getLast?_take_succ {l : List V} {k : ℕ} (h : k + 1 ≤ l.length) :
   exact (List.getElem?_eq_getElem (by omega)).symm
 
 omit [Fintype V] [DecidableEq V] in
-lemma head?_drop_of_lt {l : List V} {k : ℕ} (h : k < l.length) : (l.drop k).head? = l[k]? := by
-  have h1 : l.drop k ≠ [] := by
-    rw [List.ne_nil_iff_length_pos, List.length_drop]; omega
-  rw [List.head?_eq_some_head h1, List.head_drop, List.getElem?_eq_getElem h]
-
-omit [Fintype V] [DecidableEq V] in
 lemma getLast?_tail_of_ne {l : List V} (h : l.tail ≠ []) : l.tail.getLast? = l.getLast? := by
   cases l with
   | nil => simp at h
@@ -346,7 +331,6 @@ def CTrail.rotate {a b : E → V} (T : CTrail a b) (k : ℕ) (hk : k < T.es.leng
     exact happ
   closed := by
     have hlen : T.vs.length = T.es.length + 1 := T.walk.length
-    have hkV : k < T.vs.length := by omega
     by_cases ht : (T.vs.take (k + 1)).tail = []
     · have hk0 : k = 0 := by
         have hh := congrArg List.length ht
@@ -364,7 +348,7 @@ def CTrail.rotate {a b : E → V} (T : CTrail a b) (k : ℕ) (hk : k < T.es.leng
     · have hne1 : T.vs.drop k ≠ [] := by
         rw [List.ne_nil_iff_length_pos, List.length_drop]; omega
       have hne2 : (T.vs.take (k + 1)).tail ≠ [] := ht
-      rw [List.head?_append_of_ne_nil _ hne1, head?_drop_of_lt hkV,
+      rw [List.head?_append_of_ne_nil _ hne1, List.head?_drop,
         List.getLast?_append_of_ne_nil _ hne2]
       rw [getLast?_tail_of_ne hne2, getLast?_take_succ (by omega)]
 
@@ -546,7 +530,7 @@ lemma CTrail.rotate_head? {a b : E → V} {v : V} (T : CTrail a b) (k : ℕ) (hk
   have hlen : T.vs.length = T.es.length + 1 := T.walk.length
   show (T.vs.drop k ++ (T.vs.take (k + 1)).tail).head? = some v
   rw [List.head?_append_of_ne_nil _ (by
-    rw [List.ne_nil_iff_length_pos, List.length_drop]; omega), head?_drop_of_lt (by omega)]
+    rw [List.ne_nil_iff_length_pos, List.length_drop]; omega), List.head?_drop]
   exact hv
 
 omit [Fintype V] [Fintype E] in
@@ -571,15 +555,7 @@ def CTrail.append {a b : E → V} {v : V} (T₁ T₂ : CTrail a b)
     rw [List.head?_append_of_ne_nil _ T₁.walk.vs_ne_nil, h₁]
     by_cases ht : T₂.vs.tail = []
     · rw [ht, List.append_nil, ← T₁.closed, h₁]
-    · rw [List.getLast?_append_of_ne_nil _ ht]
-      have hgl : T₂.vs.tail.getLast? = T₂.vs.getLast? := by
-        cases htl : T₂.vs with
-        | nil => exact absurd htl T₂.walk.vs_ne_nil
-        | cons x t =>
-          cases t with
-          | nil => rw [htl] at ht; exact (ht rfl).elim
-          | cons y u => rfl
-      rw [hgl, ← T₂.closed, h₂]
+    · rw [List.getLast?_append_of_ne_nil _ ht, getLast?_tail_of_ne ht, ← T₂.closed, h₂]
 
 omit [Fintype V] [DecidableEq V] [Fintype E] [DecidableEq E] in
 lemma CTrail.exists_rotate_index {a b : E → V} (T : CTrail a b) (hne : T.es ≠ []) {v : V}

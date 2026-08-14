@@ -315,15 +315,8 @@ lemma purge {s : Finset (ℤ × ℤ)} {p u w : ℤ × ℤ}
       ((s.erase ((px, py) + w)).erase (px, py))).erase ((px, py) + u + u)).erase
       ((px, py) + u))).erase ((px, py) - w)).erase (px, py)) =
       s \ {(px, py), (px, py) + u, (px, py) + u + u} := by
-    have ec : ∀ (t : Finset (ℤ × ℤ)) (a b : ℤ × ℤ), (t.erase a).erase b = (t.erase b).erase a := by
-      intro t a b
-      ext x
-      simp only [Finset.mem_erase]
-      constructor
-      · rintro ⟨h1, h2, h3⟩
-        exact ⟨h2, h1, h3⟩
-      · rintro ⟨h1, h2, h3⟩
-        exact ⟨h2, h1, h3⟩
+    have ec : ∀ (t : Finset (ℤ × ℤ)) (a b : ℤ × ℤ), (t.erase a).erase b = (t.erase b).erase a :=
+      fun _ _ _ => erase_right_comm
     have hn1 : (px, py) ∉ (((insert ((px, py) - w) ((s.erase ((px, py) + w)).erase (px, py))).erase
         ((px, py) + u + u)).erase ((px, py) + u)).erase ((px, py) - w) := by
       intro h

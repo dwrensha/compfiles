@@ -621,10 +621,7 @@ lemma diff_eventually_const {k : ℕ} (hk : 2 ≤ k) {P : Polynomial ℤ} (hmon 
   have hSbd : BddAbove S := by
     refine ⟨(Csum P k).toNat, ?_⟩
     rintro v ⟨j, hj, rfl⟩
-    have h3 : ((Dif A j).toNat : ℤ) ≤ ((Csum P k).toNat : ℤ) := by
-      rw [Int.toNat_of_nonneg (hd0 j), Int.toNat_of_nonneg (Csum_nonneg hcoef)]
-      exact hdC j
-    exact_mod_cast h3
+    exact Int.toNat_le_toNat (hdC j)
   set M : ℕ := sSup S with hM
   obtain ⟨m, hm, hMm⟩ := Nat.sSup_mem hSne hSbd
   rw [← hM] at hMm

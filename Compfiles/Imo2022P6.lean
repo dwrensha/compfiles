@@ -1404,11 +1404,7 @@ theorem keyFn_injective' (m : ℕ) : Function.Injective (keyFn m) := by
       obtain ⟨x1, x2⟩ := x
       obtain ⟨y1, y2⟩ := y
       exact Subsingleton.elim _ _
-    · intro x y _
-      obtain ⟨x1, x2⟩ := x
-      obtain ⟨y1, y2⟩ := y
-      have : Subsingleton (Fin 1) := ⟨fun a b ↦ Fin.ext (by omega)⟩
-      exact Subsingleton.elim _ _
+    · exact Function.injective_of_subsingleton (keyFn 1)
   · exact keyFn_injective hm
 
 /-- The linear order on ordered cells given by the key function. -/

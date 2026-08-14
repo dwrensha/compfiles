@@ -200,12 +200,7 @@ problem usa2002_p3 (n : ℕ) (p : ℝ[X]) (hpm : p.Monic) (hpn : p.natDegree = n
       q.Splits ∧ r.Splits ∧ p = (q + r) / 2 := by
   rcases eq_or_ne n 0 with rfl | hn0
   · -- If `n = 0`, then `p = 1` and we may take `q = r = 1`.
-    have hp1 : p = 1 := by
-      have h0 : p.natDegree = 0 := hpn
-      have h1 : p.coeff p.natDegree = 1 := hpm
-      rw [h0] at h1
-      rw [eq_C_of_natDegree_eq_zero h0, h1]
-      exact C_1
+    have hp1 : p = 1 := (Monic.natDegree_eq_zero hpm).mp hpn
     subst hp1
     have h2 : (2 : ℝ[X]) ≠ 0 := two_ne_zero
     refine ⟨1, 1, monic_one, monic_one, ?_, ?_, ?_, ?_, Splits.one, Splits.one, ?_⟩

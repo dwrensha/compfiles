@@ -433,10 +433,7 @@ problem imo2005_p6 {n : ℕ} (s : Fin n → Finset (Fin 6))
         by_contra h'
         push Not at h'
         have h5 : (s i).card = 5 := by have h6 := hall i; omega
-        have hmem : i ∈ Finset.univ.filter (fun i => (s i).card = 5) :=
-          Finset.mem_filter.mpr ⟨Finset.mem_univ i, h5⟩
-        rw [hFc0, Finset.mem_singleton] at hmem
-        exact hi hmem
+        exact hcon i c0 hi h5 hc0card
       have ext : ∀ i, ∃ t : Finset (Fin 6), s i ⊆ t ∧ t.card = if i = c0 then 5 else 4 := by
         intro i
         by_cases hci : i = c0

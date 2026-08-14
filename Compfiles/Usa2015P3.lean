@@ -115,12 +115,7 @@ lemma blueCard_ne_zero_inter_all (F : Finset (Finset (Fin n))) :
         ext i
         simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_inter,
           Finset.mem_cons]
-        constructor
-        · intro h
-          exact ⟨h a (Or.inl rfl), fun T hT => h T (Or.inr hT)⟩
-        · rintro ⟨ha', hs'⟩ T (rfl | hT)
-          · exact ha'
-          · exact hs' T hT
+        exact forall_eq_or_imp
       rw [h3]
       exact blueCard_ne_zero_inter hv h1 h2
 

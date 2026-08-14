@@ -705,12 +705,7 @@ lemma exists_g (S : Finset (ℤ × ℤ)) (hS : ∀ s ∈ S, IsCoprime s.1 s.2)
   -- shift to make all values nonzero
   set bad : Finset ℤ := TS.image (fun t => -(G.eval t.1 t.2) / ((M : ℤ) * (t.1 ^ E + t.2 ^ E)))
     with hbad
-  obtain ⟨t₀, ht₀⟩ : ∃ a : ℤ, a ∉ bad := by
-    by_cases hbn : bad.Nonempty
-    · refine ⟨bad.max' hbn + 1, fun h => ?_⟩
-      have hle := Finset.le_max' bad _ h
-      omega
-    · exact ⟨0, fun h0 => hbn ⟨0, h0⟩⟩
+  obtain ⟨t₀, ht₀⟩ : ∃ a : ℤ, a ∉ bad := Infinite.exists_notMem_finset bad
   set g : HForm := G.add (HForm.cmul ((M : ℤ) * t₀) ((Xf.pow E).add (Yf.pow E)
     (by show (Xf.pow E).deg = (Yf.pow E).deg
         rw [HForm.pow_deg, HForm.pow_deg, Xf_deg, Yf_deg])))
@@ -827,10 +822,8 @@ problem imo2017_p6 (S : Finset (ℤ × ℤ)) (hS : ∀ s ∈ S, gcd s.1 s.2 = 1)
       have hpv : (p : ℤ) ∣ v t := dvd_trans (Int.natCast_dvd_natCast.mpr hpdvd) (Int.gcd_dvd_left (v t) (Δ t))
       have hpΔ : (p : ℤ) ∣ Δ t := dvd_trans (Int.natCast_dvd_natCast.mpr hpdvd) (Int.gcd_dvd_right (v t) (Δ t))
       have hpP : Prime (p : ℤ) := Nat.prime_iff_prime_int.mp hpp
-      have h2 : ∃ t' ∈ TS.erase t, (p : ℤ) ∣ ((ell t').eval t.1 t.2) ^ E := by
-        apply (hpP.dvd_finsetProd_iff (fun t' => ((ell t').eval t.1 t.2) ^ E)).mp
-        show (p : ℤ) ∣ ∏ t' ∈ TS.erase t, ((ell t').eval t.1 t.2) ^ E
-        exact hpΔ
+      have h2 : ∃ t' ∈ TS.erase t, (p : ℤ) ∣ ((ell t').eval t.1 t.2) ^ E :=
+        Prime.exists_mem_finset_dvd hpP hpΔ
       obtain ⟨t', ht', hp3⟩ := h2
       have hp4 : (p : ℤ) ∣ (ell t').eval t.1 t.2 := hpP.dvd_of_dvd_pow hp3
       rw [hell_eval] at hp4

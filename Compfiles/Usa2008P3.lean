@@ -579,12 +579,6 @@ lemma path_bound {n : ℕ} (P : List (ℤ × ℤ)) (hchain : P.IsChain Adj) (hno
 
 /-! ## List/Finset bridges -/
 
-lemma sum_toFinset_of_nodup {l : List (ℤ × ℤ)} (hl : l.Nodup) (g : ℤ × ℤ → ℤ) :
-    (∑ x ∈ l.toFinset, g x) = (l.map g).sum := by
-  have h1 : l.toFinset.1 = (l : Multiset (ℤ × ℤ)) := by
-    rw [List.toFinset_val, List.Nodup.dedup hl]
-  rw [Finset.sum, h1, Multiset.map_coe, Multiset.sum_coe]
-
 lemma sum_map_flatten (L : List (List (ℤ × ℤ))) (g : ℤ × ℤ → ℤ) :
     (L.map (fun P ↦ (P.map g).sum)).sum = (L.flatten.map g).sum := by
   induction L with
@@ -636,7 +630,7 @@ problem usa2008_p3 (n : ℕ) (_hn : 0 < n) (paths : List (List (ℤ × ℤ)))
     have h1 : (paths.map (sig n)).sum = (paths.flatten.map (chi n)).sum := by
       show (paths.map (fun P ↦ (P.map (chi n)).sum)).sum = _
       exact sum_map_flatten paths (chi n)
-    rw [h1, ← sum_toFinset_of_nodup hjoinN (chi n), hjoin, sum_chi]
+    rw [h1, ← List.sum_toFinset (chi n) hjoinN, hjoin, sum_chi]
   -- the total number of blue axial points over all paths equals `n`
   have hb0 : (paths.map (b0 n)).sum = (((S n).filter (fun p ↦ blue n p ∧ p.2 = 0)).card : ℤ) := by
     have hN1 : (paths.flatten.filter (fun p ↦ decide (blue n p ∧ p.2 = 0))).Nodup :=

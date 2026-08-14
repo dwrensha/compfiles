@@ -189,12 +189,8 @@ lemma sum_mod_le_sum_add_mod (k n q : ℕ) (hq : 0 < q) :
     rw [h1]
     exact hmod_self q le_rfl
   have hrem : ∑ i ∈ Finset.range (k % q), (i + n) % q =
-      ∑ i ∈ Finset.range (k % q), (i + n % q) % q := by
-    apply Finset.sum_congr rfl
-    intro i hi
-    rw [Finset.mem_range] at hi
-    have h1 : i % q = i := Nat.mod_eq_of_lt (by have := Nat.mod_lt k hq; omega)
-    conv_lhs => rw [Nat.add_mod, h1]
+      ∑ i ∈ Finset.range (k % q), (i + n % q) % q :=
+    Finset.sum_congr rfl fun x _ => (Nat.add_mod_mod x n q).symm
   have LHS : ∑ j ∈ Finset.range k, j % q =
       k / q * (∑ i ∈ Finset.range q, i % q) + ∑ i ∈ Finset.range (k % q), i % q := by
     conv_lhs => rw [hk]

@@ -2004,12 +2004,7 @@ theorem exists_disjoint_subset_sums_close (m : ℕ) (hm : 0 < m)
       Nat.cast_ofNat] using hABclose
   let I₀ := A \ B
   let J₀ := B \ A
-  have hdisj : Disjoint I₀ J₀ := by
-    rw [Finset.disjoint_left]
-    intro x hxI hxJ
-    simp only [I₀, Finset.mem_sdiff] at hxI
-    simp only [J₀, Finset.mem_sdiff] at hxJ
-    exact hxI.2 hxJ.1
+  have hdisj : Disjoint I₀ J₀ := disjoint_sdiff_sdiff
   have hnonempty : (I₀ ∪ J₀).Nonempty := by
     by_contra h
     rw [Finset.not_nonempty_iff_eq_empty, Finset.union_eq_empty] at h
@@ -2019,12 +2014,8 @@ theorem exists_disjoint_subset_sums_close (m : ℕ) (hm : 0 < m)
     · exact Finset.sdiff_eq_empty_iff_subset.mp (by simpa [J₀] using h.2)
   have hdiff :
       (∑ i ∈ I₀, a i) - ∑ j ∈ J₀, a j =
-        (∑ i ∈ A, a i) - ∑ j ∈ B, a j := by
-    have hA := Finset.sum_inter_add_sum_sdiff A B a
-    have hB := Finset.sum_inter_add_sum_sdiff B A a
-    rw [Finset.inter_comm B A] at hB
-    dsimp [I₀, J₀]
-    linarith
+        (∑ i ∈ A, a i) - ∑ j ∈ B, a j :=
+    Finset.sum_sdiff_sub_sum_sdiff
   by_cases horient : (∑ j ∈ B, a j) ≤ ∑ i ∈ A, a i
   · refine ⟨I₀, J₀, hdisj, hnonempty, ?_, ?_⟩
     · rw [hdiff]

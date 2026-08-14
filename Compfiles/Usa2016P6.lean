@@ -855,9 +855,7 @@ lemma initArr_valid {n : ℕ} (σ : Strategy n) (hσ : σ.Valid n) : (initArr σ
       · rintro (rfl | rfl)
         · exfalso
           exact hi ((initEquiv₁ σ hσ).symm ℓ).2
-        · rw [show (⟨_, mem_compl.2 hi⟩ : ↥(σ [])ᶜ) = (initEquiv₂ σ hσ).symm ℓ from
-            Subtype.ext rfl]
-          exact (initEquiv₂ σ hσ).apply_symm_apply ℓ
+        · exact (Equiv.eq_symm_apply (initEquiv₂ σ hσ)).mp rfl
   rw [hfiber, card_insert_of_notMem (by
     simp only [mem_singleton]
     intro heq

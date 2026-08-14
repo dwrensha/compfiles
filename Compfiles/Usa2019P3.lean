@@ -175,10 +175,7 @@ theorem digits_ofDigits_eq_dropTrailingZeros (L : List ℕ) (hL : ∀ l ∈ L, l
         simp [List.reverse_cons, ha]
       have h2 : Nat.digits 10 (Nat.ofDigits 10 (l ++ [a])) = l ++ [a] := by
         apply Nat.digits_ofDigits 10 (by norm_num) (l ++ [a])
-        · intro x hx
-          rcases List.mem_append.mp hx with hx | hx
-          · exact hL x (List.mem_append_left [a] hx)
-          · exact hL x (List.mem_append_right l hx)
+        · exact hL
         · intro hne
           rw [List.getLast_append_of_right_ne_nil l [a] (by simp)]
           simp only [List.getLast_singleton]

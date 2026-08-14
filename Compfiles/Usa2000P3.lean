@@ -260,11 +260,7 @@ lemma tight_blue (A B C : ℕ) :
       rw [hz]; ring
     · by_cases hA : A = 0
       · subst hA
-        have hL0 : lowestScore 0 B C = 0 := by
-          apply le_antisymm
-          · calc lowestScore 0 B C ≤ 3 * 0 * B := lowestScore_le_ab 0 B C
-              _ = 0 := by ring
-          · exact Nat.zero_le _
+        have hL0 : lowestScore 0 B C = 0 := lowestScore_zero_b_c B C
         rw [hL0] at he
         rw [← he]; ring
       · have hA' : 0 < A := Nat.pos_of_ne_zero hA
@@ -309,11 +305,7 @@ lemma tight_red (A B C : ℕ) :
   · intro he
     by_cases hA : A = 0
     · subst hA
-      have hz : lowestScore 0 (B + 1) C = 0 := by
-        apply le_antisymm
-        · calc lowestScore 0 (B + 1) C ≤ 3 * 0 * (B + 1) := lowestScore_le_ab 0 (B + 1) C
-            _ = 0 := by ring
-        · exact Nat.zero_le _
+      have hz : lowestScore 0 (B + 1) C = 0 := lowestScore_zero_b_c (B + 1) C
       rw [hz]; ring
     · by_cases hC : C = 0
       · subst hC
@@ -322,11 +314,7 @@ lemma tight_red (A B C : ℕ) :
           · calc lowestScore A B 0 ≤ A * 0 := lowestScore_le_ac A B 0
               _ = 0 := by ring
           · exact Nat.zero_le _
-        have hL0' : lowestScore A (B + 1) 0 = 0 := by
-          apply le_antisymm
-          · calc lowestScore A (B + 1) 0 ≤ A * 0 := lowestScore_le_ac A (B + 1) 0
-              _ = 0 := by ring
-          · exact Nat.zero_le _
+        have hL0' : lowestScore A (B + 1) 0 = 0 := lowestScore_a_b_zero A (B + 1)
         rw [hL0, hL0'] at he
         have hAz : A = 0 := by omega
         exact absurd hAz hA
@@ -342,11 +330,7 @@ lemma tight_red (A B C : ℕ) :
         · rw [← he, h]; ring
         · by_cases hB : B = 0
           · subst hB
-            have hL0 : lowestScore A 0 C = 0 := by
-              apply le_antisymm
-              · calc lowestScore A 0 C ≤ 3 * A * 0 := lowestScore_le_ab A 0 C
-                  _ = 0 := by ring
-              · exact Nat.zero_le _
+            have hL0 : lowestScore A 0 C = 0 := lowestScore_a_zero_c A C
             rw [← he, hL0]; ring
           · have hB' : 0 < B := Nat.pos_of_ne_zero hB
             have b3 : 3 * A + 2 * B * C ≤ 2 * (B + 1) * C := by
@@ -382,24 +366,12 @@ lemma tight_white (A B C : ℕ) :
   · intro he
     by_cases hB : B = 0
     · subst hB
-      have hz : lowestScore A 0 (C + 1) = 0 := by
-        apply le_antisymm
-        · calc lowestScore A 0 (C + 1) ≤ 3 * A * 0 := lowestScore_le_ab A 0 (C + 1)
-            _ = 0 := by ring
-        · exact Nat.zero_le _
+      have hz : lowestScore A 0 (C + 1) = 0 := lowestScore_a_zero_c A (C + 1)
       rw [hz]; ring
     · by_cases hA : A = 0
       · subst hA
-        have hL0 : lowestScore 0 B C = 0 := by
-          apply le_antisymm
-          · calc lowestScore 0 B C ≤ 3 * 0 * B := lowestScore_le_ab 0 B C
-              _ = 0 := by ring
-          · exact Nat.zero_le _
-        have hL0' : lowestScore 0 B (C + 1) = 0 := by
-          apply le_antisymm
-          · calc lowestScore 0 B (C + 1) ≤ 0 * (C + 1) := lowestScore_le_ac 0 B (C + 1)
-              _ = 0 := by ring
-          · exact Nat.zero_le _
+        have hL0 : lowestScore 0 B C = 0 := lowestScore_zero_b_c B C
+        have hL0' : lowestScore 0 B (C + 1) = 0 := lowestScore_zero_b_c B (C + 1)
         rw [hL0, hL0'] at he
         have hBz : B = 0 := by omega
         exact absurd hBz hB
@@ -414,11 +386,7 @@ lemma tight_white (A B C : ℕ) :
         rcases lowestScore_cases A B C with h | h | h
         · by_cases hC : C = 0
           · subst hC
-            have hL0 : lowestScore A B 0 = 0 := by
-              apply le_antisymm
-              · calc lowestScore A B 0 ≤ A * 0 := lowestScore_le_ac A B 0
-                  _ = 0 := by ring
-              · exact Nat.zero_le _
+            have hL0 : lowestScore A B 0 = 0 := lowestScore_a_b_zero A B
             rw [← he, hL0]; ring
           · have hC' : 0 < C := Nat.pos_of_ne_zero hC
             have b1 : 2 * B + A * C ≤ A * (C + 1) := by

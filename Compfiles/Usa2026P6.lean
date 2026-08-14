@@ -514,15 +514,9 @@ problem usa2026_p6 {a b : ℕ} (ha : 0 < a) (hb : 0 < b)
             hp.not_dvd_one (by
               have h1 : p ∣ u.gcd v := Nat.dvd_gcd hpu hpv
               rwa [hcop.gcd_eq_one] at h1)
-          have hmv : m.Coprime v := by
-            rw [hm, Nat.coprime_pow_left_iff (by omega : 0 < e - 1)]
-            exact hp.coprime_iff_not_dvd.mpr hpv
-          exact hmv.dvd_of_dvd_mul_right hmuv
+          exact Prime.pow_dvd_of_dvd_mul_right hp' (e - 1) hpv hmuv
         · right
-          have hmu : m.Coprime u := by
-            rw [hm, Nat.coprime_pow_left_iff (by omega : 0 < e - 1)]
-            exact hp.coprime_iff_not_dvd.mpr hpu
-          exact hmu.dvd_of_dvd_mul_left hmuv
+          exact Prime.pow_dvd_of_dvd_mul_left hp' (e - 1) hpu hmuv
       have hpm : p ∣ m := hm ▸ dvd_pow_self p (show e - 1 ≠ 0 by omega)
       have hp_uv : p ∣ u ∨ p ∣ v :=
         hm_uv.imp (fun hmid => hpm.trans hmid) (fun hmid => hpm.trans hmid)

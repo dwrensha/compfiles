@@ -130,11 +130,7 @@ lemma row_periodic_count (a : ℕ) (c : Letter) (k : ℕ) :
               apply Fin.ext
               have hdiv : (9 * k + j) / 3 = 3 * k + j / 3 := by omega
               simp [Fin.ofNat, hdiv, Nat.add_mod]
-            constructor
-            · rintro ⟨hj, hc⟩
-              exact ⟨hj, by rw [← hcolor]; exact hc⟩
-            · rintro ⟨hj, hc⟩
-              exact ⟨hj, by rw [hcolor]; exact hc⟩
+            rw [hcolor]
           _ = 3 := row_block_count a c
       rw [hblock]
       omega
@@ -174,11 +170,7 @@ lemma add_periodic_count (a : ℕ) (c : Letter) (k : ℕ) :
                 Fin.ofNat 3 (a + (3 * k + j)) = Fin.ofNat 3 (a + j) := by
               apply Fin.ext
               simp [Fin.ofNat, Nat.add_mod]
-            constructor
-            · rintro ⟨hj, hc⟩
-              exact ⟨hj, by rw [← hcolor]; exact hc⟩
-            · rintro ⟨hj, hc⟩
-              exact ⟨hj, by rw [hcolor]; exact hc⟩
+            rw [hcolor]
           _ = 1 := add_block_count a c
       rw [hblock]
 
@@ -620,11 +612,7 @@ lemma periodicColor_diagDiff (n : ℕ) (h9 : 9 ∣ n) (d : ℤ)
           rw [hdiv]
           congr 1
           omega
-        constructor
-        · rintro ⟨hi, hc⟩
-          exact ⟨hi, by rw [← hcolor]; exact hc⟩
-        · rintro ⟨hi, hc⟩
-          exact ⟨hi, by rw [hcolor]; exact hc⟩
+        rw [hcolor]
       _ = q := asc_periodic_count u c q
       _ = 3 * q / 3 := by omega
 

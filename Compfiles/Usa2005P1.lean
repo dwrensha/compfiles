@@ -992,11 +992,8 @@ lemma goodCircle_of_not_pq : ∀ (k : ℕ) (n : ℕ), n.primeFactors.card = k �
             rw [hpf_m, Finset.sdiff_singleton_eq_erase, Finset.card_erase_of_mem hq_mem]; omega
           have hcard3 : 3 ≤ m.primeFactors.card := by
             rw [hpf_m, Finset.sdiff_singleton_eq_erase, Finset.card_erase_of_mem hq_mem]; omega
-          have h1m : 1 < m := by
-            have hne2 : m.primeFactors.Nonempty := Finset.card_pos.mp (by omega)
-            obtain ⟨r, hrm⟩ := hne2
-            obtain ⟨hrp, hrd, -⟩ := Nat.mem_primeFactors.mp hrm
-            exact lt_of_lt_of_le hrp.one_lt (Nat.le_of_dvd hm0.bot_lt hrd)
+          have h1m : 1 < m :=
+            Nat.nonempty_primeFactors.mp (Finset.card_pos.mp (by omega))
           have hnpm : ¬ m.Prime := by
             intro hmp
             rw [hmp.primeFactors] at hcard3

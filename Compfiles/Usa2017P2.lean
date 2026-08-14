@@ -424,15 +424,6 @@ lemma pureId (es : List ℕ) (k : ℕ) (hk : k ≤ es.length) :
 
 -- ==== helpers ====
 
-/-- Counting a finite sum of multisets pointwise. -/
-lemma multiset_count_finset_sum {ι : Type*} [DecidableEq ι] (s : Finset ι)
-    (f : ι → Multiset ℤ) (w : ℤ) :
-    Multiset.count w (∑ v ∈ s, f v) = ∑ v ∈ s, Multiset.count w (f v) := by
-  induction s using Finset.induction with
-  | empty => simp
-  | @insert a s ha ih =>
-    rw [Finset.sum_insert ha, Multiset.count_add, ih, Finset.sum_insert ha]
-
 /-- The cardinality of a filter of a finite sum of multisets. -/
 lemma multiset_card_filter_finset_sum {ι : Type*} [DecidableEq ι] (s : Finset ι)
     (f : ι → Multiset ℤ) (p : ℤ → Prop) [DecidablePred p] :
@@ -600,7 +591,7 @@ lemma valMul_eq_sum_eCnt {n : ℕ} (m : Fin n → ℤ) :
     intro w
     simp [valMul, Finset.mem_image]
   refine Multiset.ext.mpr fun w => ?_
-  rw [multiset_count_finset_sum]
+  rw [Multiset.count_sum']
   have hcnt : ∀ v : ℤ, Multiset.count w (eCnt m v • {v}) = if w = v then eCnt m v else 0 := by
     intro v
     rw [Multiset.nsmul_singleton, Multiset.count_replicate]

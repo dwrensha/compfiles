@@ -118,12 +118,8 @@ theorem shift_iterate_mem_Icc {p : ℕ} (hp : 0 < p) {x : ℕ} (hx : x ∈ Finse
       omega
     rw [Function.iterate_succ_apply', ih]
     have h : shift p ((x - 1 + k) % p + 1) = ((x - 1 + k) % p + 1) % p + 1 := ite_eq_left hmem
-    have hmod : ∀ a : ℕ, (a % p + 1) % p = (a + 1) % p := by
-      intro a
-      have e : a + 1 = a % p + 1 + p * (a / p) := by
-        have hd := Nat.div_add_mod a p
-        omega
-      rw [e, Nat.add_mul_mod_self_left]
+    have hmod : ∀ a : ℕ, (a % p + 1) % p = (a + 1) % p :=
+      fun a => Nat.mod_add_mod a p 1
     rw [h, hmod]
     have hx' : 1 ≤ x := (Finset.mem_Icc.1 hx).1
     congr 1
