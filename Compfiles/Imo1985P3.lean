@@ -66,14 +66,14 @@ lemma support_X_pow_mul (m : ℕ) (p : (ZMod 2)[X]) :
   ext j
   simp only [mem_support_iff, coeff_X_pow_mul', ne_eq, Finset.mem_image]
   by_cases hjm : m ≤ j
-  · rw [if_pos hjm]
+  · rw [ite_eq_left hjm]
     constructor
     · intro h
       exact ⟨j - m, h, Nat.sub_add_cancel hjm⟩
     · rintro ⟨a, ha, rfl⟩
       rw [Nat.add_sub_cancel]
       exact ha
-  · rw [if_neg hjm]
+  · rw [ite_eq_right hjm]
     constructor
     · intro h
       exact absurd rfl h
@@ -91,13 +91,13 @@ lemma o_add_X_pow_mul {m : ℕ} {p q : (ZMod 2)[X]} (hp : p.natDegree < m) :
     rcases Finset.mem_union.mp hj with hj | hj
     · have hjm : j < m := lt_of_le_of_lt (le_natDegree_of_mem_supp j hj) hp
       rw [mem_support_iff] at hj
-      rwa [coeff_add, coeff_X_pow_mul', if_neg (show ¬ m ≤ j by omega), add_zero]
+      rwa [coeff_add, coeff_X_pow_mul', ite_eq_right (show ¬ m ≤ j by omega), add_zero]
     · rw [support_X_pow_mul] at hj
       obtain ⟨k, hk, rfl⟩ := Finset.mem_image.mp hj
       rw [mem_support_iff] at hk
       have hpk : p.coeff (k + m) = 0 :=
         coeff_eq_zero_of_natDegree_lt (show p.natDegree < k + m by omega)
-      rwa [coeff_add, hpk, zero_add, coeff_X_pow_mul', if_pos (show m ≤ k + m by omega),
+      rwa [coeff_add, hpk, zero_add, coeff_X_pow_mul', ite_eq_left (show m ≤ k + m by omega),
         Nat.add_sub_cancel]
   have hdisj : Disjoint p.support (X ^ m * q).support := by
     rw [Finset.disjoint_left]

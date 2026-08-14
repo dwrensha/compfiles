@@ -246,7 +246,7 @@ lemma sum_mulSeq_cfun_sub_one {n p q : ℕ} {x y : ℤ} (hp : p.Prime) (hq : q.P
   by_cases h2 : 2 * p ≤ n
   · by_cases h3 : 3 * p ≤ n
     · -- case `3 * p ≤ n`: multiples of `p` in `[1, n]` are `p, 2p, 3p`
-      rw [if_pos h2, if_pos h3]
+      rw [ite_eq_left h2, ite_eq_left h3]
       have hss : ({p, 2 * p, 3 * p, q} : Finset ℕ) ⊆ Finset.Icc 1 n := by
         intro j hj
         simp only [Finset.mem_insert, Finset.mem_singleton] at hj
@@ -270,7 +270,7 @@ lemma sum_mulSeq_cfun_sub_one {n p q : ℕ} {x y : ℤ} (hp : p.Prime) (hq : q.P
         mulSeq_cfun_3p hp hq hp5 hq7 hplt, mulSeq_cfun_q hp hq hplt]
       ring
     · -- case `2 * p ≤ n < 3 * p`: multiples of `p` in `[1, n]` are `p, 2p`
-      rw [if_pos h2, if_neg h3]
+      rw [ite_eq_left h2, ite_eq_right h3]
       have hss : ({p, 2 * p, q} : Finset ℕ) ⊆ Finset.Icc 1 n := by
         intro j hj
         simp only [Finset.mem_insert, Finset.mem_singleton] at hj
@@ -295,7 +295,7 @@ lemma sum_mulSeq_cfun_sub_one {n p q : ℕ} {x y : ℤ} (hp : p.Prime) (hq : q.P
   · by_cases h3 : 3 * p ≤ n
     · omega
     · -- case `n < 2 * p`: the only multiple of `p` in `[1, n]` is `p`
-      rw [if_neg h2, if_neg h3]
+      rw [ite_eq_right h2, ite_eq_right h3]
       have hss : ({p, q} : Finset ℕ) ⊆ Finset.Icc 1 n := by
         intro j hj
         simp only [Finset.mem_insert, Finset.mem_singleton] at hj
@@ -372,11 +372,11 @@ lemma exists_good_seq_of_nine_le {n : ℕ} (hn : 9 ≤ n) :
       rcases hr with hrp | hrq
       · rw [hrp]
         show (if p = p then x else if p = q then y else 1) ≠ 0
-        rw [if_pos rfl]
+        rw [ite_eq_left rfl]
         exact hx
       · rw [hrq]
         show (if q = p then x else if q = q then y else 1) ≠ 0
-        rw [if_neg (ne_of_lt hplt).symm, if_pos rfl]
+        rw [ite_eq_right (ne_of_lt hplt).symm, ite_eq_left rfl]
         exact hy
     · intro k hk
       apply condition_of_sum_eq_zero _ k hk
@@ -388,14 +388,14 @@ lemma exists_good_seq_of_nine_le {n : ℕ} (hn : 9 ≤ n) :
       rw [hsplit, sum_mulSeq_cfun_sub_one hp hq hp5 hq7 hplt h2q h4p hpn hq_le_n]
       by_cases h3 : 3 * p ≤ n
       · have h2 : 2 * p ≤ n := by omega
-        simp only [if_pos h2, if_pos h3] at hm_eq hbez ⊢
+        simp only [ite_eq_left h2, ite_eq_left h3] at hm_eq hbez ⊢
         rw [hm_eq] at hbez
         linear_combination hbez
       · by_cases h2 : 2 * p ≤ n
-        · simp only [if_neg h3, if_pos h2] at hm_eq hbez ⊢
+        · simp only [ite_eq_right h3, ite_eq_left h2] at hm_eq hbez ⊢
           rw [hm_eq] at hbez
           linear_combination hbez
-        · simp only [if_neg h3, if_neg h2] at hm_eq hbez ⊢
+        · simp only [ite_eq_right h3, ite_eq_right h2] at hm_eq hbez ⊢
           rw [hm_eq] at hbez
           linear_combination hbez
   rcases lt_or_ge n (3 * p) with h3 | h3
@@ -406,7 +406,7 @@ lemma exists_good_seq_of_nine_le {n : ℕ} (hn : 9 ≤ n) :
         rw [hq.coprime_iff_not_dvd]
         exact Nat.not_dvd_of_pos_of_lt hp.pos hplt
       exact build p (by omega) hcop (by
-        rw [if_neg (by omega : ¬ 2 * p ≤ n), if_neg (by omega : ¬ 3 * p ≤ n)]
+        rw [ite_eq_right (by omega : ¬ 2 * p ≤ n), ite_eq_right (by omega : ¬ 3 * p ≤ n)]
         ring)
     · -- here the multiples of `p` in `[1, n]` are `p, 2p`, and `3 * p` is coprime to `q`
       have hcop : Nat.Coprime (3 * p) q := by
@@ -417,7 +417,7 @@ lemma exists_good_seq_of_nine_le {n : ℕ} (hn : 9 ≤ n) :
         · exact Nat.not_dvd_of_pos_of_lt (by norm_num) (by omega) h3'
         · exact Nat.not_dvd_of_pos_of_lt hp.pos hplt hp'
       exact build (3 * p) (by omega) hcop (by
-        rw [if_pos h2, if_neg (by omega : ¬ 3 * p ≤ n)]
+        rw [ite_eq_left h2, ite_eq_right (by omega : ¬ 3 * p ≤ n)]
         push_cast
         ring)
   · -- here the multiples of `p` in `[1, n]` are `p, 2p, 3p`, and `6 * p` is coprime to `q`
@@ -430,7 +430,7 @@ lemma exists_good_seq_of_nine_le {n : ℕ} (hn : 9 ≤ n) :
       · exact Nat.not_dvd_of_pos_of_lt hp.pos hplt hp'
     exact build (6 * p) (by omega) hcop (by
       have h2 : 2 * p ≤ n := by omega
-      rw [if_pos h2, if_pos h3]
+      rw [ite_eq_left h2, ite_eq_left h3]
       push_cast
       ring)
 

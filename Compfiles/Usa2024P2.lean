@@ -276,7 +276,7 @@ lemma SignatureIntersectionCount_canonicalHighCount_grouped
           refine Finset.sum_congr rfl ?_
           intro v _
           by_cases huv : u ⊆ v
-          · rw [if_pos huv, if_pos huv, canonicalHighCount_of_superset_high hu huv]
+          · rw [ite_eq_left huv, ite_eq_left huv, canonicalHighCount_of_superset_high hu huv]
           · simp [huv]
     _ = ∑ j ∈ Finset.range (100 - u.card + 1),
           (2 * (u.card + j) - 100) * (100 - u.card).choose j := by
@@ -577,7 +577,7 @@ lemma pushDown_preserves_condition {f : Signature → ℕ} {v : Signature}
               if u ⊆ w then f w else 0) + (v.card - u.card) := by
               rw [immediate_supersets_count huv]
       have hpush_v : pushDown f v v = f v - v.card := by simp [pushDown]
-      rw [if_pos huv, if_pos huv, hpush_v]
+      rw [ite_eq_left huv, ite_eq_left huv, hpush_v]
       rw [herase]
       omega
     have hold : u.card ∣ SignatureIntersectionCount f u := hf u hu
@@ -894,7 +894,7 @@ lemma SignatureIntersectionCount_fillRank_of_card_gt {k : ℕ} {f : Signature �
   refine Finset.sum_congr rfl ?_
   intro w _
   by_cases huw : u ⊆ w
-  · rw [if_pos huw, if_pos huw, fillRank_eq_self_on_supersets_of_card_lt hu huw]
+  · rw [ite_eq_left huw, ite_eq_left huw, fillRank_eq_self_on_supersets_of_card_lt hu huw]
   · simp [huw]
 
 lemma fillRank_self_add_strictSupersetContribution_dvd {k : ℕ} {f : Signature → ℕ}

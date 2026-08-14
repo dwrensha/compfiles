@@ -147,7 +147,7 @@ theorem card_le_of_bad {n : ℕ} (hn : 3 ≤ n) {B : Finset (ZMod (2 * n - 1))}
     -- `2 * m + 1`, given by the residue classes of `val` mod 3.
     obtain ⟨m, rfl⟩ : ∃ m, n = 3 * m + 2 := ⟨n / 3, by omega⟩
     simp only [solution]
-    rw [if_pos h3]
+    rw [ite_eq_left h3]
     have h3dvd : 3 ∣ (3 * m + 2) + 1 := ⟨m + 1, by ring⟩
     have hN3 : 3 ∣ 2 * (3 * m + 2) - 1 := ⟨2 * m + 1, by omega⟩
     have hfib : ∀ j ∈ Finset.range 3,
@@ -191,7 +191,7 @@ theorem card_le_of_bad {n : ℕ} (hn : 3 ≤ n) {B : Finset (ZMod (2 * n - 1))}
   · -- Case `n % 3 ≠ 2`: `2 * n - 1` and `n + 1` are coprime, so the graph is a
     -- single cycle of length `2 * n - 1` and `B`, `B + (n + 1)` are disjoint.
     simp only [solution]
-    rw [if_neg h3]
+    rw [ite_eq_right h3]
     have h2 : 2 * B.card ≤ 2 * n - 1 := by
       have hcu := Finset.card_union_of_disjoint key
       have hle := Finset.card_le_card (Finset.subset_univ
@@ -209,7 +209,7 @@ theorem exists_bad {n : ℕ} (hn : 3 ≤ n) :
   · -- The set `{1, 2, ..., n - 2}` is bad and has `n - 2` elements.
     refine ⟨(Finset.Icc 1 (n - 2)).image (Nat.cast : ℕ → ZMod (2 * n - 1)), ?_, ?_⟩
     · simp only [solution]
-      rw [if_pos h3, Finset.card_image_of_injOn, Nat.card_Icc]
+      rw [ite_eq_left h3, Finset.card_image_of_injOn, Nat.card_Icc]
       · omega
       · intro a ha b hb hab
         rw [Finset.mem_coe, Finset.mem_Icc] at ha hb
@@ -255,7 +255,7 @@ theorem exists_bad {n : ℕ} (hn : 3 ≤ n) :
     refine ⟨(Finset.range (n - 1)).image
       (fun j => ((2 * j * (n + 1) : ℕ) : ZMod (2 * n - 1))), ?_, ?_⟩
     · simp only [solution]
-      rw [if_neg h3, Finset.card_image_of_injOn, Finset.card_range]
+      rw [ite_eq_right h3, Finset.card_image_of_injOn, Finset.card_range]
       · intro i hi j hj hij
         rw [Finset.mem_coe, Finset.mem_range] at hi hj
         have hmod : 2 * i * (n + 1) ≡ 2 * j * (n + 1) [MOD 2 * n - 1] :=
@@ -327,10 +327,10 @@ problem imo1990_p2 (n : ℕ) (hn : 3 ≤ n) :
     have hle := card_le_of_bad hn hbad
     by_cases h3 : n % 3 = 2
     · simp only [solution] at hB hle
-      rw [if_pos h3] at hB hle
+      rw [ite_eq_left h3] at hB hle
       omega
     · simp only [solution] at hB hle
-      rw [if_neg h3] at hB hle
+      rw [ite_eq_right h3] at hB hle
       omega
   · -- No smaller `k` works, by the bad coloring from `exists_bad`.
     intro k hk
@@ -340,10 +340,10 @@ problem imo1990_p2 (n : ℕ) (hn : 3 ≤ n) :
     have hsol : 1 ≤ solution n := by
       by_cases h3 : n % 3 = 2
       · simp only [solution]
-        rw [if_pos h3]
+        rw [ite_eq_left h3]
         omega
       · simp only [solution]
-        rw [if_neg h3]
+        rw [ite_eq_right h3]
         omega
     have hkle : k ≤ B.card := by omega
     obtain ⟨B', hsub, hB'card⟩ := Finset.exists_subset_card_eq hkle

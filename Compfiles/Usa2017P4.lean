@@ -159,7 +159,7 @@ lemma mem_avail {used : Finset (Fin m)} {b : Fin m} :
 
 lemma nb_eq_choose {used : Finset (Fin m)} {r : Fin m} (h : (avail c used).Nonempty) :
     nb c used r = Classical.choose (Finset.exists_min_image (avail c used) (cdist r) h) :=
-  dif_pos h
+  dite_eq_left h
 
 lemma nb_mem {used : Finset (Fin m)} {r : Fin m} (h : (avail c used).Nonempty) :
     nb c used r ∈ avail c used := by

@@ -228,7 +228,7 @@ lemma card_good_le_two {k M : ℕ} (hM : Nat.Prime M) (S : Finset ℕ)
     intro q hq
     rw [Finset.mem_filter] at hq
     have h := hq.2.choose_spec
-    simp only [hf_def, dif_pos hq.2]
+    simp only [hf_def, dite_eq_left hq.2]
     exact h
   have hinj : Set.InjOn f (S.filter (good k M ·)) := by
     intro q₁ h1 q₂ h2 heq
@@ -443,9 +443,9 @@ noncomputable def delPerm {S : Finset ℕ} (τ : Equiv.Perm S) (M : S) (hrM : τ
        else (τ ⟨s.1, Finset.mem_of_mem_erase s.2⟩).1) ∈ S.erase M := by
     intro s
     by_cases h : τ ⟨s.1, Finset.mem_of_mem_erase s.2⟩ = M
-    · rw [if_pos h]
+    · rw [ite_eq_left h]
       exact Finset.mem_erase.mpr ⟨fun hval => hrM (Subtype.ext hval), (τ M).2⟩
-    · rw [if_neg h]
+    · rw [ite_eq_right h]
       exact Finset.mem_erase.mpr ⟨fun hval => h (Subtype.ext hval), (τ _).2⟩
   have hinj : Function.Injective
       (fun s : (S.erase M) =>
@@ -461,17 +461,17 @@ noncomputable def delPerm {S : Finset ℕ} (τ : Equiv.Perm S) (M : S) (hrM : τ
           τ.injective (hs.trans ht.symm)
         exact Subtype.ext (Subtype.mk_eq_mk.mp hsteq)
       · exfalso
-        rw [if_pos hs, if_neg ht] at hst'
+        rw [ite_eq_left hs, ite_eq_right ht] at hst'
         have h2 : (⟨t.1, Finset.mem_of_mem_erase t.2⟩ : S) = M :=
           τ.injective (Subtype.ext hst'.symm)
         exact (Finset.mem_erase.mp t.2).1 (Subtype.mk_eq_mk.mp h2)
     · by_cases ht : τ ⟨t.1, Finset.mem_of_mem_erase t.2⟩ = M
       · exfalso
-        rw [if_neg hs, if_pos ht] at hst'
+        rw [ite_eq_right hs, ite_eq_left ht] at hst'
         have h2 : (⟨s.1, Finset.mem_of_mem_erase s.2⟩ : S) = M :=
           τ.injective (Subtype.ext hst')
         exact (Finset.mem_erase.mp s.2).1 (Subtype.mk_eq_mk.mp h2)
-      · rw [if_neg hs, if_neg ht] at hst'
+      · rw [ite_eq_right hs, ite_eq_right ht] at hst'
         have hsteq : (⟨s.1, Finset.mem_of_mem_erase s.2⟩ : S)
             = ⟨t.1, Finset.mem_of_mem_erase t.2⟩ :=
           τ.injective (Subtype.ext hst')
@@ -502,7 +502,7 @@ lemma validPerm_delPerm {k : ℕ} {S : Finset ℕ} {τ : Equiv.Perm S} {M : S}
   intro s
   rw [delPerm_val]
   by_cases h : τ ⟨s.1, Finset.mem_of_mem_erase s.2⟩ = M
-  · rw [if_pos h]
+  · rw [ite_eq_left h]
     have hs : s.1 = (τ⁻¹ M).1 := by
       have h2 : (⟨s.1, Finset.mem_of_mem_erase s.2⟩ : S) = τ⁻¹ M := by
         have h3 : τ ⟨s.1, Finset.mem_of_mem_erase s.2⟩ = τ (τ⁻¹ M) := by
@@ -512,7 +512,7 @@ lemma validPerm_delPerm {k : ℕ} {S : Finset ℕ} {τ : Equiv.Perm S} {M : S}
       exact Subtype.mk_eq_mk.mp h2
     rw [hs]
     exact good_of_good_of_good hMprime hq hr (fun hval => hqr (Subtype.ext hval)) hgq hgr
-  · rw [if_neg h]
+  · rw [ite_eq_right h]
     exact hv ⟨s.1, Finset.mem_of_mem_erase s.2⟩
 
 /-- The deleted permutation stays connected (the "skip `M`" argument). -/
@@ -552,7 +552,7 @@ lemma connectedP_delPerm {S : Finset ℕ} {τ : Equiv.Perm S} {M : S}
         apply Subtype.ext
         show (del ⟨(τ^[m] ⟨s.1, Finset.mem_of_mem_erase s.2⟩).1, pf⟩).1
           = (τ^[m+1] ⟨s.1, Finset.mem_of_mem_erase s.2⟩).1
-        rw [delPerm_val, hne, if_neg hneM]
+        rw [delPerm_val, hne, ite_eq_right hneM]
     have hL0 : L ≠ 0 := by
       rintro rfl
       exact (Finset.mem_erase.mp s.2).1 (Subtype.mk_eq_mk.mp hL)
@@ -569,7 +569,7 @@ lemma connectedP_delPerm {S : Finset ℕ} {τ : Equiv.Perm S} {M : S}
     rw [Function.iterate_succ_apply', hpf]
     apply Subtype.ext
     show (del ⟨(τ^[l] ⟨s.1, Finset.mem_of_mem_erase s.2⟩).1, pf⟩).1 = (τ M).1
-    rw [delPerm_val, hif, if_pos rfl]
+    rw [delPerm_val, hif, ite_eq_left rfl]
   have P : ∀ T : ℕ, ∀ s t : (S.erase M),
       τ^[T] ⟨s.1, Finset.mem_of_mem_erase s.2⟩
         = ⟨t.1, Finset.mem_of_mem_erase t.2⟩ →
@@ -611,7 +611,7 @@ lemma connectedP_delPerm {S : Finset ℕ} {τ : Equiv.Perm S} {M : S}
         apply Subtype.ext
         show (del ⟨u.1, huS⟩).1 = t.1
         rw [delPerm_val, hτ,
-          if_neg (fun hM => (Finset.mem_erase.mp t.2).1 (Subtype.mk_eq_mk.mp hM))]
+          ite_eq_right (fun hM => (Finset.mem_erase.mp t.2).1 (Subtype.mk_eq_mk.mp hM))]
   intro s t
   obtain ⟨m0, hm0⟩ := hc ⟨s.1, Finset.mem_of_mem_erase s.2⟩
     ⟨t.1, Finset.mem_of_mem_erase t.2⟩
@@ -942,7 +942,7 @@ lemma perm_unique {k : ℕ} (n : ℕ) :
                 have e2 : τ₂ s = M' := by rwa [heta] at h2
                 rw [e1, e2]
               · exfalso
-                rw [if_pos h1, if_neg h2] at hvals
+                rw [ite_eq_left h1, ite_eq_right h2] at hvals
                 have h2' : (τ₂ ⟨s.1, Finset.mem_of_mem_erase hs1⟩ : S) = τ₁ M' :=
                   Subtype.ext hvals.symm
                 have h3'' : (⟨s.1, Finset.mem_of_mem_erase hs1⟩ : S) = M' :=
@@ -950,13 +950,13 @@ lemma perm_unique {k : ℕ} (n : ℕ) :
                 exact hsM (heta.symm.trans h3'')
             · by_cases h2 : τ₂ ⟨s.1, Finset.mem_of_mem_erase hs1⟩ = M'
               · exfalso
-                rw [if_neg h1, if_pos h2] at hvals
+                rw [ite_eq_right h1, ite_eq_left h2] at hvals
                 have h1' : (τ₁ ⟨s.1, Finset.mem_of_mem_erase hs1⟩ : S) = τ₂ M' :=
                   Subtype.ext hvals
                 have h3'' : (⟨s.1, Finset.mem_of_mem_erase hs1⟩ : S) = M' :=
                   τ₁.injective (h1'.trans hr.symm)
                 exact hsM (heta.symm.trans h3'')
-              · rw [if_neg h1, if_neg h2] at hvals
+              · rw [ite_eq_right h1, ite_eq_right h2] at hvals
                 have e : (τ₁ ⟨s.1, Finset.mem_of_mem_erase hs1⟩ : S)
                     = τ₂ ⟨s.1, Finset.mem_of_mem_erase hs1⟩ := Subtype.ext hvals
                 rw [heta] at e
@@ -973,7 +973,7 @@ lemma perm_unique {k : ℕ} (n : ℕ) :
           have hd1 : del₁ ⟨q.1, hqS⟩ = ⟨r.1, hrS⟩ := by
             apply Subtype.ext
             show (del₁ ⟨q.1, hqS⟩).1 = r.1
-            rw [delPerm_val, if_pos _, hrdef]
+            rw [delPerm_val, ite_eq_left _, hrdef]
             have he : (⟨q.1, Finset.mem_of_mem_erase hqS⟩ : S) = q := Subtype.ext rfl
             rw [he]
             exact hτ1q
@@ -1002,7 +1002,7 @@ lemma perm_unique {k : ℕ} (n : ℕ) :
                 have h3 : τ₂ (τ₂⁻¹ q) = q := Equiv.apply_symm_apply τ₂ q
                 rw [h2] at h3
                 exact hqM h3.symm
-              rw [if_neg hne2]
+              rw [ite_eq_right hne2]
               have he : (⟨(τ₂⁻¹ q).1, Finset.mem_of_mem_erase hpf2⟩ : S) = τ₂⁻¹ q :=
                 Subtype.ext rfl
               rw [he]

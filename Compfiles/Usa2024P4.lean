@@ -193,7 +193,7 @@ lemma sum_rowRed_last {m n : ℕ} (hm : 0 < m) (hn : 0 < n) (hmn : m ≤ n + 1) 
       have h' := add_lt_add_left hsj ((m - 1) * n)
       omega
     rw [Nat.mod_eq_of_lt hlt, show s' + (m - 1) * n + j = (m - 1) * n + (s' + j) by ring,
-      rowRed_eq hn (m - 1) (s' + j) (by omega), if_neg (by omega)]
+      rowRed_eq hn (m - 1) (s' + j) (by omega), ite_eq_right (by omega)]
   -- the last `s'` beads wrap around into row `0`, columns `0` to `s' - 1`
   have h2 : (∑ j ∈ Finset.range s',
       rowRed m n ((s' + (m - 1) * n + (n - s' + j)) % (m * n))) = s' - (n + 1 - m) := by
@@ -230,9 +230,9 @@ lemma blockCount_constr {m n : ℕ} (hm : 0 < m) (hn : 0 < n) (hmn : m ≤ n + 1
   rw [blockCount_constr_eq s' t]
   by_cases hlast : t = m - 1
   · subst hlast
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
     exact sum_rowRed_last hm hn hmn hs
-  · rw [if_neg hlast]
+  · rw [ite_eq_right hlast]
     have hlt : ∀ j ∈ Finset.range n, s' + t * n + j < m * n := by
       intro j hj
       rw [Finset.mem_range] at hj

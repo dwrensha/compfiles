@@ -192,14 +192,14 @@ lemma phase1 (f : Conf) (hnn : ∀ i, 0 ≤ f i) (hodd : Odd (∑ i, f i)) :
       congr_fun (par_foldl f l) p
     rw [hf2]
     have hpp := hp p
-    rw [if_pos rfl] at hpp
+    rw [ite_eq_left rfl] at hpp
     exact hpp
   · intro i hi
     have hf2 : ((l.foldl step f) i : ZMod 2) = (l.foldl step2 (fun i => (f i : ZMod 2))) i :=
       congr_fun (par_foldl f l) i
     rw [hf2]
     have hpi := hp i
-    rw [if_neg hi] at hpi
+    rw [ite_eq_right hi] at hpi
     exact hpi
 
 /-! ### Rotation symmetry -/
@@ -280,9 +280,9 @@ lemma phase2 (g : Conf) (hnn : ∀ i, 0 ≤ g i) (h0 : (g 0 : ZMod 2) = 1)
     funext i
     by_cases hi : i = 0
     · subst hi
-      rw [if_pos rfl]
+      rw [ite_eq_left rfl]
       exact h0
-    · rw [if_neg hi]
+    · rw [ite_eq_right hi]
       exact hk i hi
   by_cases hq0 : q = 0
   · -- The maximum is odd, hence attained exactly at vertex 0.
@@ -473,21 +473,21 @@ lemma phase2 (g : Conf) (hnn : ∀ i, 0 ≤ g i) (h0 : (g 0 : ZMod 2) = 1)
     have u1odd : Odd |g 0 - g 2| := by
       rw [odd_iff_cast, ← e1]
       have t := pc 1
-      rwa [if_neg (by decide : ¬((1 : ZMod 6) = 5))] at t
+      rwa [ite_eq_right (by decide : ¬((1 : ZMod 6) = 5))] at t
     have u1ge : 1 ≤ |g 0 - g 2| := one_le_of_odd (abs_nonneg _) u1odd
     have b1 : abs (g 0 - g 2) ≤ cmax g - 1 :=
       abs_sub_le_mk1 g0ge b0 (hnn 2) (le_cmax g 2)
     have u2odd : Odd (abs (abs (g 0 - g 2) - g 3)) := by
       rw [odd_iff_cast, ← e2]
       have t := pc 2
-      rwa [if_neg (by decide : ¬((2 : ZMod 6) = 5))] at t
+      rwa [ite_eq_right (by decide : ¬((2 : ZMod 6) = 5))] at t
     have u2ge : 1 ≤ abs (abs (g 0 - g 2) - g 3) := one_le_of_odd (abs_nonneg _) u2odd
     have b2 : abs (abs (g 0 - g 2) - g 3) ≤ cmax g - 1 :=
       abs_sub_le_mk1 u1ge b1 (hnn 3) (le_cmax g 3)
     have u3odd : Odd (abs (abs (abs (g 0 - g 2) - g 3) - g 4)) := by
       rw [odd_iff_cast, ← e3]
       have t := pc 3
-      rwa [if_neg (by decide : ¬((3 : ZMod 6) = 5))] at t
+      rwa [ite_eq_right (by decide : ¬((3 : ZMod 6) = 5))] at t
     have u3ge : 1 ≤ abs (abs (abs (g 0 - g 2) - g 3) - g 4) := one_le_of_odd (abs_nonneg _) u3odd
     have b3 : abs (abs (abs (g 0 - g 2) - g 3) - g 4) ≤ cmax g - 1 :=
       abs_sub_le_mk1 u2ge b2 (hnn 4) (le_cmax g 4)

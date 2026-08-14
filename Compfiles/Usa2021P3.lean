@@ -145,22 +145,22 @@ lemma gains_single {n i j : ℕ} (hi : i + 1 < n) (hj : j + 1 < n) (r c : ℕ) :
       if r = i + 1 ∧ c = j then 1 else 0 := by
     by_cases h : r = i + 1 ∧ c = j
     · obtain ⟨rfl, rfl⟩ := h; simp [hj]
-    · rw [if_neg h]
+    · rw [ite_eq_right h]
       by_cases h2 : 1 ≤ r ∧ c + 1 < n
-      · rw [if_pos h2, if_neg]
+      · rw [ite_eq_left h2, ite_eq_right]
         rintro ⟨h3, h4⟩
         exact h ⟨by omega, h4⟩
-      · rw [if_neg h2]
+      · rw [ite_eq_right h2]
   have t3 : (if 1 ≤ r ∧ 1 ≤ c then (if r - 1 = i ∧ c - 1 = j then (1 : ℕ) else 0) else 0) =
       if r = i + 1 ∧ c = j + 1 then 1 else 0 := by
     by_cases h : r = i + 1 ∧ c = j + 1
     · obtain ⟨rfl, rfl⟩ := h; simp
-    · rw [if_neg h]
+    · rw [ite_eq_right h]
       by_cases h2 : 1 ≤ r ∧ 1 ≤ c
-      · rw [if_pos h2, if_neg]
+      · rw [ite_eq_left h2, ite_eq_right]
         rintro ⟨h3, h4⟩
         exact h ⟨by omega, by omega⟩
-      · rw [if_neg h2]
+      · rw [ite_eq_right h2]
   simp only [gains]
   rw [t1, t2, t3]
   simp only [trominoCells, Finset.mem_insert, Finset.mem_singleton, Prod.mk.injEq]
@@ -195,12 +195,12 @@ lemma extract_step {n : ℕ} {b b' : Board} (h : Step n b b') :
         · exact h₂
         · exact h₃
       by_cases hb : (r, c) ∈ b
-      · rw [if_pos hb, if_neg (Finset.disjoint_left.1 hdisj hb), zero_add,
-          if_pos (Finset.mem_union_left _ hb)]
-      · rw [if_neg hb]
+      · rw [ite_eq_left hb, ite_eq_right (Finset.disjoint_left.1 hdisj hb), zero_add,
+          ite_eq_left (Finset.mem_union_left _ hb)]
+      · rw [ite_eq_right hb]
         by_cases hT : (r, c) ∈ trominoCells i j
-        · rw [if_pos hT, if_pos (Finset.mem_union_right _ hT)]
-        · rw [if_neg hT, if_neg]
+        · rw [ite_eq_left hT, ite_eq_left (Finset.mem_union_right _ hT)]
+        · rw [ite_eq_right hT, ite_eq_right]
           intro hmem
           rcases Finset.mem_union.1 hmem with h4 | h4
           · exact hb h4
@@ -214,14 +214,14 @@ lemma extract_step {n : ℕ} {b b' : Board} (h : Step n b b') :
       have hmem : (r', r) ∈ Finset.range n ×ˢ {r} := by
         rw [Finset.mem_product]
         exact ⟨Finset.mem_range.2 hr, Finset.mem_singleton_self r⟩
-      rw [if_pos rfl, if_pos (hfull hmem), if_neg]
+      rw [ite_eq_left rfl, ite_eq_left (hfull hmem), ite_eq_right]
       exact fun h ↦ (Finset.mem_sdiff.1 h).2 hmem
-    · rw [if_neg hcr, zero_add]
+    · rw [ite_eq_right hcr, zero_add]
       by_cases hb : (r', c) ∈ b
-      · rw [if_pos hb, if_pos]
+      · rw [ite_eq_left hb, ite_eq_left]
         exact Finset.mem_sdiff.2 ⟨hb, fun hmem ↦
           hcr (Finset.mem_singleton.1 (Finset.mem_product.1 hmem).2)⟩
-      · rw [if_neg hb, if_neg]
+      · rw [ite_eq_right hb, ite_eq_right]
         exact fun h ↦ hb (Finset.mem_sdiff.1 h).1
   | clearCol c hfull =>
     refine ⟨fun _ _ ↦ 0, fun x ↦ if x = c then 1 else 0, fun _ ↦ 0, by simp [Support], ?_⟩
@@ -232,14 +232,14 @@ lemma extract_step {n : ℕ} {b b' : Board} (h : Step n b b') :
       have hmem : (c, c') ∈ {c} ×ˢ Finset.range n := by
         rw [Finset.mem_product]
         exact ⟨Finset.mem_singleton_self c, Finset.mem_range.2 hc⟩
-      rw [if_pos rfl, if_pos (hfull hmem), if_neg]
+      rw [ite_eq_left rfl, ite_eq_left (hfull hmem), ite_eq_right]
       exact fun h ↦ (Finset.mem_sdiff.1 h).2 hmem
-    · rw [if_neg hcr, zero_add]
+    · rw [ite_eq_right hcr, zero_add]
       by_cases hb : (r, c') ∈ b
-      · rw [if_pos hb, if_pos]
+      · rw [ite_eq_left hb, ite_eq_left]
         exact Finset.mem_sdiff.2 ⟨hb, fun hmem ↦
           hcr (Finset.mem_singleton.1 (Finset.mem_product.1 hmem).1)⟩
-      · rw [if_neg hb, if_neg]
+      · rw [ite_eq_right hb, ite_eq_right]
         exact fun h ↦ hb (Finset.mem_sdiff.1 h).1
 
 /-- A whole sequence of moves, seen through the counting functions. -/
@@ -282,7 +282,7 @@ lemma extract_solvable {n : ℕ} (hn : 1 ≤ n) (h : Solvable n) :
       · rfl
     · intro r c hr hc
       have e := he₂ r c hr hc
-      simp only [Finset.empty_union, Finset.notMem_empty, if_false, add_zero] at e
+      simp only [Finset.empty_union, Finset.notMem_empty, ite_false, add_zero] at e
       rw [gains_add, gains_single hi hj r c]
       exact e
     · simp
@@ -369,8 +369,8 @@ lemma key_identity {n : ℕ} (hn : 2 ≤ n) {a : ℕ → ℕ → ℕ} {ρ γ : �
     apply Finset.sum_congr rfl
     intro c _
     by_cases hcond : r + 1 < n ∧ c + 1 < n
-    · rw [if_pos hcond]
-    · rw [if_neg hcond, zero_mul, zero_mul]
+    · rw [ite_eq_left hcond]
+    · rw [ite_eq_right hcond, zero_mul, zero_mul]
       have hz : a r c = 0 := hsupp r c (by omega)
       simp [hz]
   have s2 : ∑ i ∈ Finset.range n, ∑ j ∈ Finset.range n, (a i j : ℂ) * ζ ^ (i + 1) * η ^ j =
@@ -381,8 +381,8 @@ lemma key_identity {n : ℕ} (hn : 2 ≤ n) {a : ℕ → ℕ → ℕ} {ρ γ : �
       show (if n = 0 then (0 : ℂ)
         else ∑ j ∈ Finset.range n, (a (n - 1) j : ℂ) * ζ ^ n * η ^ j) = 0
       by_cases hn0 : n = 0
-      · rw [if_pos hn0]
-      · rw [if_neg hn0]
+      · rw [ite_eq_left hn0]
+      · rw [ite_eq_right hn0]
         apply Finset.sum_eq_zero
         intro j _
         have hz : a (n - 1) j = 0 := hsupp _ _ (Or.inl (by omega))
@@ -402,12 +402,12 @@ lemma key_identity {n : ℕ} (hn : 2 ≤ n) {a : ℕ → ℕ → ℕ} {ρ γ : �
     by_cases hr0 : r = 0
     · subst hr0
       simp
-    · rw [if_neg hr0]
+    · rw [ite_eq_right hr0]
       apply Finset.sum_congr rfl
       intro c _
       by_cases hcond : c + 1 < n
-      · rw [if_pos ⟨by omega, hcond⟩]
-      · rw [if_neg (by omega : ¬(1 ≤ r ∧ c + 1 < n)), zero_mul, zero_mul]
+      · rw [ite_eq_left ⟨by omega, hcond⟩]
+      · rw [ite_eq_right (by omega : ¬(1 ≤ r ∧ c + 1 < n)), zero_mul, zero_mul]
         have hz : a (r - 1) c = 0 := hsupp _ _ (Or.inr (by omega))
         simp [hz]
   have s3 : ∑ i ∈ Finset.range n, ∑ j ∈ Finset.range n,
@@ -422,8 +422,8 @@ lemma key_identity {n : ℕ} (hn : 2 ≤ n) {a : ℕ → ℕ → ℕ} {ρ γ : �
           else (a i (c - 1) : ℂ) * ζ ^ (i + 1) * η ^ c) n = 0 := by
         show (if n = 0 then (0 : ℂ) else (a i (n - 1) : ℂ) * ζ ^ (i + 1) * η ^ n) = 0
         by_cases hn0 : n = 0
-        · rw [if_pos hn0]
-        · rw [if_neg hn0]
+        · rw [ite_eq_left hn0]
+        · rw [ite_eq_right hn0]
           have hz : a i (n - 1) = 0 := hsupp _ _ (Or.inr (by omega))
           simp [hz]
       have hshift := sum_range_shift
@@ -441,7 +441,7 @@ lemma key_identity {n : ℕ} (hn : 2 ≤ n) {a : ℕ → ℕ → ℕ} {ρ γ : �
       by_cases hc0 : c = 0
       · subst hc0
         simp
-      · rw [if_neg hc0, if_pos (by omega : 1 ≤ c)]
+      · rw [ite_eq_right hc0, ite_eq_left (by omega : 1 ≤ c)]
     have outer : ∑ i ∈ Finset.range n, ∑ c ∈ Finset.range n,
           (if 1 ≤ c then (a i (c - 1) : ℂ) * ζ ^ (i + 1) * η ^ c else 0) =
         ∑ r ∈ Finset.range n, ∑ c ∈ Finset.range n,
@@ -459,12 +459,12 @@ lemma key_identity {n : ℕ} (hn : 2 ≤ n) {a : ℕ → ℕ → ℕ} {ρ γ : �
         apply Finset.sum_eq_zero
         intro c _
         by_cases hc : 1 ≤ c
-        · rw [if_pos hc]
+        · rw [ite_eq_left hc]
           have hn0 : n ≠ 0 := by omega
-          rw [if_neg hn0]
+          rw [ite_eq_right hn0]
           have hz : a (n - 1) (c - 1) = 0 := hsupp _ _ (Or.inl (by omega))
           simp [hz]
-        · rw [if_neg hc]
+        · rw [ite_eq_right hc]
       have hshift := sum_range_shift
         (fun r ↦ ∑ c ∈ Finset.range n,
           (if 1 ≤ c then (if r = 0 then (0 : ℂ) else (a (r - 1) (c - 1) : ℂ)) * ζ ^ r * η ^ c
@@ -479,8 +479,8 @@ lemma key_identity {n : ℕ} (hn : 2 ≤ n) {a : ℕ → ℕ → ℕ} {ρ γ : �
         apply Finset.sum_congr rfl
         intro c _
         by_cases hc : 1 ≤ c
-        · rw [if_pos hc, if_pos hc, if_neg (by omega : i + 1 ≠ 0), Nat.add_sub_cancel]
-        · rw [if_neg hc, if_neg hc]
+        · rw [ite_eq_left hc, ite_eq_left hc, ite_eq_right (by omega : i + 1 ≠ 0), Nat.add_sub_cancel]
+        · rw [ite_eq_right hc, ite_eq_right hc]
       rw [e1, hshift]
       apply Finset.sum_congr rfl
       intro r _
@@ -490,8 +490,8 @@ lemma key_identity {n : ℕ} (hn : 2 ≤ n) {a : ℕ → ℕ → ℕ} {ρ γ : �
       · apply Finset.sum_congr rfl
         intro c _
         by_cases hc : 1 ≤ c
-        · rw [if_pos hc, if_neg hr0, if_pos ⟨by omega, hc⟩]
-        · rw [if_neg hc, if_neg (by omega : ¬(1 ≤ r ∧ 1 ≤ c)), zero_mul, zero_mul]
+        · rw [ite_eq_left hc, ite_eq_right hr0, ite_eq_left ⟨by omega, hc⟩]
+        · rw [ite_eq_right hc, ite_eq_right (by omega : ¬(1 ≤ r ∧ 1 ≤ c)), zero_mul, zero_mul]
     calc ∑ i ∈ Finset.range n, ∑ j ∈ Finset.range n, (a i j : ℂ) * ζ ^ (i + 1) * η ^ (j + 1)
         = ∑ i ∈ Finset.range n, ∑ c ∈ Finset.range n,
             (if 1 ≤ c then (a i (c - 1) : ℂ) * ζ ^ (i + 1) * η ^ c else 0) :=
@@ -702,7 +702,7 @@ lemma count_eq_zero {n : ℕ} (hn : 2 ≤ n) {a : ℕ → ℕ → ℕ}
     have hc : F.coeff i = 0 := by rw [hF0]; simp
     rw [hFdef, Polynomial.finsetSum_coeff] at hc
     simp only [Polynomial.coeff_C_mul_X_pow] at hc
-    rw [Finset.sum_ite_eq, if_pos (Finset.mem_range.2 hi)] at hc
+    rw [Finset.sum_ite_eq, ite_eq_left (Finset.mem_range.2 hi)] at hc
     exact hc
   intro i j
   by_cases hij : i < m ∧ j < m
@@ -725,7 +725,7 @@ lemma count_eq_zero {n : ℕ} (hn : 2 ≤ n) {a : ℕ → ℕ → ℕ}
     have hc : Q.coeff j = 0 := by rw [hQ0]; simp
     rw [hQdef, Polynomial.finsetSum_coeff] at hc
     simp only [Polynomial.coeff_C_mul_X_pow] at hc
-    rw [Finset.sum_ite_eq, if_pos (Finset.mem_range.2 hj)] at hc
+    rw [Finset.sum_ite_eq, ite_eq_left (Finset.mem_range.2 hj)] at hc
     exact Nat.cast_eq_zero.1 hc
   · exact hsupp i j (by omega)
 

@@ -88,12 +88,12 @@ lemma coeff_polyOfDigits_cons (d : ℤ) (ds : List ℤ) (i : ℕ) :
     (polyOfDigits (d :: ds)).coeff i = if i = 0 then d else (polyOfDigits ds).coeff (i - 1) := by
   cases i with
   | zero =>
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
     simp only [polyOfDigits, coeff_add, coeff_C_zero, mul_coeff_zero, coeff_X_zero,
       zero_mul, add_zero]
   | succ j =>
     have hj : j + 1 ≠ 0 := by omega
-    rw [if_neg hj, Nat.add_sub_cancel]
+    rw [ite_eq_right hj, Nat.add_sub_cancel]
     simp only [polyOfDigits, coeff_add, coeff_C_succ, coeff_X_mul, zero_add]
 
 lemma coeff_polyOfDigits (ds : List ℤ) (h : ∀ d ∈ ds, 0 ≤ d ∧ d ≤ 9) (i : ℕ) :
@@ -129,20 +129,20 @@ lemma build_correct (fuel : ℕ) (u v : ℤ) (ds : List ℤ) (h : build fuel u v
   | zero =>
     simp only [build] at h
     by_cases huv : u = 0 ∧ v = 0
-    · rw [if_pos huv] at h
+    · rw [ite_eq_left huv] at h
       obtain ⟨rfl, rfl⟩ := huv
       obtain rfl := Option.some.inj h
       exact ⟨by simp [polyOfDigits], by simp [polyOfDigits], fun d hd ↦ by simp at hd⟩
-    · rw [if_neg huv] at h
+    · rw [ite_eq_right huv] at h
       simp at h
   | succ fuel ih =>
     simp only [build] at h
     by_cases huv : u = 0 ∧ v = 0
-    · rw [if_pos huv] at h
+    · rw [ite_eq_left huv] at h
       obtain ⟨rfl, rfl⟩ := huv
       obtain rfl := Option.some.inj h
       exact ⟨by simp [polyOfDigits], by simp [polyOfDigits], fun d hd ↦ by simp at hd⟩
-    · rw [if_neg huv] at h
+    · rw [ite_eq_right huv] at h
       obtain ⟨hd0, hd9, h2, h5, h3', -, -, -⟩ := step_props u v h3
       cases hb : build fuel ((digit u v - u) / 2) ((digit u v - v) / 5) with
       | none => rw [hb] at h; simp at h

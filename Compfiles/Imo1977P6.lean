@@ -57,7 +57,7 @@ problem imo1977_p6 (f : ℕ+ → ℕ+) (h : ∀ n, f (f n) < f (n + 1)) : ∀ n,
     refine imo1977_p6_nat (fun m => if 0 < m then f m.toPNat' else 0) ?_ n
     intro x; cases x
     · simp
-    · simp only [Nat.succ_pos, if_true, PNat.pos, PNat.coe_toPNat', PNat.coe_lt_coe]
+    · simp only [Nat.succ_pos, ite_true, PNat.pos, PNat.coe_toPNat', PNat.coe_lt_coe]
       exact h _
   simpa
 

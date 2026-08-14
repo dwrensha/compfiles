@@ -121,12 +121,12 @@ lemma sum_subsetSum_sq {n : ℕ} (hn : 2 ≤ n) (x : Fin n → ℝ)
     have hcard2 : ({i, j} : Finset (Fin n)).card = if i = j then 1 else 2 := by
       by_cases hij : i = j
       · subst hij
-        rw [if_pos rfl, insert_eq_of_mem (mem_singleton_self i), card_singleton]
-      · rw [if_neg hij, card_pair hij]
+        rw [ite_eq_left rfl, insert_eq_of_mem (mem_singleton_self i), card_singleton]
+      · rw [ite_eq_right hij, card_pair hij]
     rw [← sum_filter, sum_const, nsmul_eq_mul, hcard, hcard2]
     by_cases hij : i = j
     · subst hij
-      rw [if_pos rfl, if_pos rfl]
+      rw [ite_eq_left rfl, ite_eq_left rfl]
       rw [two_pow_sub n 1 (by omega)]
       push_cast
       have h : (2 : ℝ) ^ ((n : ℤ) - 1) = (2 : ℝ) ^ ((n : ℤ) - 2) * 2 := by
@@ -134,7 +134,7 @@ lemma sum_subsetSum_sq {n : ℕ} (hn : 2 ≤ n) (x : Fin n → ℝ)
         rwa [show ((n : ℤ) - 2) + 1 = (n : ℤ) - 1 by ring] at h1
       rw [h]
       ring
-    · rw [if_neg hij, if_neg hij]
+    · rw [ite_eq_right hij, ite_eq_right hij]
       rw [two_pow_sub n 2 hn]
       ring_nf
   calc ∑ A ∈ univ.powerset, (∑ i ∈ A, x i) ^ 2
@@ -158,7 +158,7 @@ lemma sum_subsetSum_sq {n : ℕ} (hn : 2 ≤ n) (x : Fin n → ℝ)
           add_sum_erase univ
             (fun j => (2 : ℝ) ^ ((n : ℤ) - 2) * (x i * x j) *
               (if i = j then (2 : ℝ) else 1)) (mem_univ i)
-        rw [← he, if_pos rfl]
+        rw [← he, ite_eq_left rfl]
         have hsumj : (∑ j ∈ univ.erase i,
             (2 : ℝ) ^ ((n : ℤ) - 2) * (x i * x j) * (if i = j then (2 : ℝ) else 1)) =
             (2 : ℝ) ^ ((n : ℤ) - 2) * (x i * (∑ j ∈ univ.erase i, x j)) := by
@@ -167,7 +167,7 @@ lemma sum_subsetSum_sq {n : ℕ} (hn : 2 ≤ n) (x : Fin n → ℝ)
               (2 : ℝ) ^ ((n : ℤ) - 2) * (x i * x j) := by
             intro j hj
             have hne : i ≠ j := fun hh => (mem_erase.mp hj).1 hh.symm
-            rw [if_neg hne]
+            rw [ite_eq_right hne]
             ring
           rw [sum_congr rfl hw, ← mul_sum, ← mul_sum]
         rw [hsumj]
@@ -483,13 +483,13 @@ lemma card_eq_of_equality_case {n : ℕ} (hn : 2 ≤ n) (x : Fin n → ℝ) (lam
       intro k
       by_cases hki : k = i
       · subst hki
-        rw [if_pos rfl, if_neg hij, hxi]
+        rw [ite_eq_left rfl, ite_eq_right hij, hxi]
         ring
       · by_cases hkj : k = j
         · subst hkj
-          rw [if_neg (Ne.symm hij), if_pos rfl, hxj]
+          rw [ite_eq_right (Ne.symm hij), ite_eq_left rfl, hxj]
           ring
-        · rw [hrest k hki hkj, if_neg hki, if_neg hkj]
+        · rw [hrest k hki hkj, ite_eq_right hki, ite_eq_right hkj]
           ring
     calc ∑ k ∈ A, x k
         = ∑ k ∈ A, ((if k = i then r else 0) + (if k = j then -r else 0)) :=
@@ -508,19 +508,19 @@ lemma card_eq_of_equality_case {n : ℕ} (hn : 2 ≤ n) (x : Fin n → ℝ) (lam
       have h2 := h.2
       rw [hsumA A, hlam] at h2
       by_cases hiA : i ∈ A <;> by_cases hjA : j ∈ A
-      · rw [if_pos hiA, if_pos hjA] at h2
+      · rw [ite_eq_left hiA, ite_eq_left hjA] at h2
         exfalso
         linarith [h2, hr_pos]
       · exact ⟨hiA, hjA⟩
-      · rw [if_neg hiA, if_pos hjA] at h2
+      · rw [ite_eq_right hiA, ite_eq_left hjA] at h2
         exfalso
         linarith [h2, hr_pos]
-      · rw [if_neg hiA, if_neg hjA] at h2
+      · rw [ite_eq_right hiA, ite_eq_right hjA] at h2
         exfalso
         linarith [h2, hr_pos]
     · intro h
       refine ⟨h.1, ?_⟩
-      rw [hsumA A, if_pos h.2.1, if_neg h.2.2, hlam]
+      rw [hsumA A, ite_eq_left h.2.1, ite_eq_right h.2.2, hlam]
       linarith [hr_pos]
   have hcard : (univ.powerset.filter (fun A => i ∈ A ∧ j ∉ A)).card = 2 ^ (n - 2) := by
     have h1 : (univ.powerset.filter (fun A => i ∈ A ∧ j ∉ A)).card =

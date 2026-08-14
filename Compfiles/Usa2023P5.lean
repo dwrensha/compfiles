@@ -108,7 +108,7 @@ lemma trygub_eq_zero {n q r c : ℕ} (hn : 2 ≤ n) :
 lemma trygub_mid_bounds {n q r c : ℕ} (h0 : r ≠ 0) (hle : r ≤ q) (hc : c < n) :
     n ≤ trygub n q r c ∧ trygub n q r c < n * q + n := by
   unfold trygub
-  rw [if_neg h0, if_pos hle]
+  rw [ite_eq_right h0, ite_eq_left hle]
   have hqc : q * c + q ≤ n * q := by
     calc q * c + q = q * (c + 1) := by rw [← Nat.mul_succ]
       _ ≤ q * n := Nat.mul_le_mul_left q hc
@@ -119,7 +119,7 @@ lemma trygub_mid_bounds {n q r c : ℕ} (h0 : r ≠ 0) (hle : r ≤ q) (hc : c <
 lemma trygub_top_bound (n q : ℕ) {r : ℕ} (c : ℕ) (hle : ¬ r ≤ q) :
     n * q + n ≤ trygub n q r c := by
   unfold trygub
-  rw [if_neg (by omega : r ≠ 0), if_neg hle]
+  rw [ite_eq_right (by omega : r ≠ 0), ite_eq_right hle]
   omega
 
 lemma trygub_last_ge {n q c : ℕ} (hq : 2 ≤ q) (hqn : q + 2 ≤ n) :
@@ -162,7 +162,7 @@ lemma trygub_inj {n q r₁ r₂ c₁ c₂ : ℕ} (hn : 4 ≤ n) (hq : 2 ≤ q) (
     · by_cases h1q : r₁ ≤ q
       · by_cases h2q : r₂ ≤ q
         · unfold trygub at h
-          rw [if_neg h10, if_pos h1q, if_neg h20, if_pos h2q] at h
+          rw [ite_eq_right h10, ite_eq_left h1q, ite_eq_right h20, ite_eq_left h2q] at h
           have h' : r₁ - 1 + q * c₁ = r₂ - 1 + q * c₂ := by omega
           have m1 : (r₁ - 1 + q * c₁) % q = r₁ - 1 := by
             rw [Nat.add_mul_mod_self_left]
@@ -183,7 +183,7 @@ lemma trygub_inj {n q r₁ r₂ c₁ c₂ : ℕ} (hn : 4 ≤ n) (hq : 2 ≤ q) (
           have h2b := (trygub_mid_bounds h20 h2q hc₂).2
           omega
         · unfold trygub at h
-          rw [if_neg h10, if_neg h1q, if_neg h20, if_neg h2q] at h
+          rw [ite_eq_right h10, ite_eq_right h1q, ite_eq_right h20, ite_eq_right h2q] at h
           have h' : (r₁ - q - 1) * n + c₁ = (r₂ - q - 1) * n + c₂ := by omega
           have hc : c₁ = c₂ := by
             have m1 : ((r₁ - q - 1) * n + c₁) % n = c₁ := by
@@ -245,12 +245,12 @@ lemma trygub_eq_two_mul_add_one {n q r c : ℕ} (hn : 4 ≤ n) (hq : 2 ≤ q) (h
 lemma trygub_mid (n q r c : ℕ) (h0 : r ≠ 0) (hle : r ≤ q) :
     trygub n q r c = n + (r - 1) + q * c := by
   unfold trygub
-  rw [if_neg h0, if_pos hle]
+  rw [ite_eq_right h0, ite_eq_left hle]
 
 lemma trygub_top (n q r c : ℕ) (hle : ¬ r ≤ q) :
     trygub n q r c = n * q + n + (r - q - 1) * n + c := by
   unfold trygub
-  rw [if_neg (by omega : r ≠ 0), if_neg hle]
+  rw [ite_eq_right (by omega : r ≠ 0), ite_eq_right hle]
 
 /-- Two naturals with the same quotient and remainder mod `m` are equal. -/
 lemma eq_of_div_mod_eq {v₁ v₂ m : ℕ} (hdiv : v₁ / m = v₂ / m) (hmod : v₁ % m = v₂ % m) :

@@ -848,7 +848,7 @@ theorem sign3_cases (z : ZMod 3) : sign3 z = 0 ∨ sign3 z = 1 ∨ sign3 z = -1 
     · simp [sign3, h0, h1]
 
 theorem sign3_ne_zero {z : ZMod 3} (hz : z ≠ 0) : sign3 z ≠ 0 := by
-  simp only [sign3, hz, if_false]
+  simp only [sign3, hz, ite_false]
   split <;> norm_num
 
 theorem zmod3_cases (z : ZMod 3) : z = 0 ∨ z = 1 ∨ z = -1 := by
@@ -1141,7 +1141,7 @@ theorem sum_sign_labelWeight {ι : Type*} [Fintype ι] [DecidableEq ι]
               exact Finset.sum_add_distrib
         _ = s z.2 * z.1 + ∑ v, s v * labelWeight t v := by
               congr 1
-              simpa only [mul_ite, mul_zero, Finset.mem_univ, if_true] using
+              simpa only [mul_ite, mul_zero, Finset.mem_univ, ite_true] using
                 (Finset.sum_ite_eq (Finset.univ : Finset ι) z.2
                   (fun v => s v * z.1))
         _ = s z.2 * z.1 + (t.map (fun z => s z.2 * z.1)).sum := by rw [ih]
@@ -3096,7 +3096,7 @@ lemma prefixRefinementBlocks_ne_nil (pre : List ℝ) (x : ℝ)
   by_cases hpre : i.val < pre.length
   · simpa [prefixRefinementBlocks, hpre] using hbm ⟨i.val, by simp; omega⟩
   · by_cases hcross : i.val = pre.length
-    · rw [prefixRefinementBlocks, dif_neg hpre, dif_pos hcross]
+    · rw [prefixRefinementBlocks, dite_eq_right hpre, dite_eq_left hcross]
       exact List.append_ne_nil_of_left_ne_nil (hbm ⟨pre.length, by simp⟩)
         (residualList rho)
     · simp [prefixRefinementBlocks, hpre, hcross]
@@ -3112,7 +3112,7 @@ lemma prefixRefinementBlocks_pos (pre : List ℝ) (x : ℝ)
   · exact hbm ⟨i.val, by simp; omega⟩ z (by
       simpa [prefixRefinementBlocks, hpre] using hz)
   · by_cases hcross : i.val = pre.length
-    · rw [prefixRefinementBlocks, dif_neg hpre, dif_pos hcross] at hz
+    · rw [prefixRefinementBlocks, dite_eq_right hpre, dite_eq_left hcross] at hz
       rw [List.mem_append] at hz
       rcases hz with hz | hz
       · exact hbm ⟨pre.length, by simp⟩ z hz
@@ -3135,7 +3135,7 @@ lemma prefixRefinementBlocks_sum (pre : List ℝ) (x : ℝ)
     rw [List.get_eq_getElem, List.get_eq_getElem,
       List.getElem_append_left hpre, List.getElem_append_left hpre]
   · by_cases hcross : i.val = pre.length
-    · rw [prefixRefinementBlocks, dif_neg hpre, dif_pos hcross,
+    · rw [prefixRefinementBlocks, dite_eq_right hpre, dite_eq_left hcross,
         List.sum_append, residualList_sum, hbmsum]
       have hiEq : i = ⟨pre.length, by simp⟩ := Fin.ext hcross
       subst i

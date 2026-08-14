@@ -461,7 +461,7 @@ problem imo1994_p3b : {m : ℕ | 0 < m ∧ ∃! k : ℕ, 0 < k ∧ f k = m} = an
       hkf] at hs1
     have hone1 : ones (2 * k - 1) = 3 := by
       by_contra hc
-      rw [if_neg hc] at hs1
+      rw [ite_eq_right hc] at hs1
       omega
     have hkp1 : m < f (k + 1) := by
       have hle : f k ≤ f (k + 1) := f_mono (by omega)
@@ -474,7 +474,7 @@ problem imo1994_p3b : {m : ℕ | 0 < m ∧ ∃! k : ℕ, 0 < k ∧ f k = m} = an
     rw [hkf] at hs2
     have hone2 : ones (2 * k + 1) = 3 := by
       by_contra hc
-      rw [if_neg hc] at hs2
+      rw [ite_eq_right hc] at hs2
       omega
     -- Hence both `k-1` and `k` have exactly two `1`s.
     have honk1 : ones (k - 1) = 2 := by
@@ -523,9 +523,9 @@ problem imo1994_p3b : {m : ℕ | 0 < m ∧ ∃! k : ℕ, 0 < k ∧ f k = m} = an
     have hs1 := step (2 ^ n + 2 - 1)
     rw [Nat.sub_one_add_one_eq_of_pos (by omega : 0 < 2 ^ n + 2),
       show 2 * (2 ^ n + 2 - 1) + 1 = 2 ^ (n + 1) + 3 by rw [pow_succ']; omega,
-      if_pos hone1, f_two_pow_add_two n hn] at hs1
+      ite_eq_left hone1, f_two_pow_add_two n hn] at hs1
     have hs2 := step (2 ^ n + 2)
-    rw [show 2 * (2 ^ n + 2) + 1 = 2 ^ (n + 1) + 5 by rw [pow_succ']; omega, if_pos hone2,
+    rw [show 2 * (2 ^ n + 2) + 1 = 2 ^ (n + 1) + 5 by rw [pow_succ']; omega, ite_eq_left hone2,
       f_two_pow_add_two n hn] at hs2
     rcases lt_trichotomy y (2 ^ n + 2) with h | h | h
     · have h1 : f y ≤ f (2 ^ n + 2 - 1) := f_mono (by omega)

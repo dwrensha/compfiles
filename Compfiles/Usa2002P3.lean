@@ -87,7 +87,7 @@ theorem card_roots_eq_n_of_intervals {p : ℝ[X]} {n : ℕ} (hp0 : p ≠ 0) (hn 
   obtain ⟨ξ, hξ⟩ : ∃ ξ : ℕ → ℝ, ∀ i (hi : i < n),
       ξ i ∈ Set.Ioo (L i) (R i) ∧ p.eval (ξ i) = 0 := by
     refine ⟨fun i => if h : i < n then Classical.choose (hex i h) else 0, fun i hi => ?_⟩
-    simp only [dif_pos hi]
+    simp only [dite_eq_left hi]
     exact Classical.choose_spec (hex i hi)
   have hmono : ∀ i, i + 1 < n → ξ i < ξ (i + 1) := by
     intro i hi
@@ -122,16 +122,16 @@ theorem card_roots_and_splits {p : ℝ[X]} {n : ℕ} (hp0 : p ≠ 0) (hn : p.nat
     refine card_roots_eq_n_of_intervals hp0 hn (L := fun i : ℕ => if i = 0 then a₁ else (i : ℝ))
       (R := fun i : ℕ => ((i + 1 : ℕ) : ℝ)) ?_ ?_
     · intro i _
-      rw [if_neg (by omega : i + 1 ≠ 0)]
+      rw [ite_eq_right (by omega : i + 1 ≠ 0)]
     · intro i hi
       by_cases hi0 : i = 0
       · subst hi0
-        rw [if_pos rfl]
+        rw [ite_eq_left rfl]
         obtain ⟨c, hc, hce⟩ := exists_root_of_eval_mul_neg ha₁ hmul₁
         refine ⟨c, ?_, hce⟩
         rw [show ((0 + 1 : ℕ) : ℝ) = 1 by simp]
         exact hc
-      · rw [if_neg hi0]
+      · rw [ite_eq_right hi0]
         exact exists_root_of_eval_mul_neg
           (show (i : ℝ) < ((i + 1 : ℕ) : ℝ) by exact_mod_cast Nat.lt_add_one i)
           (hmul i (by omega) (by omega))
@@ -139,14 +139,14 @@ theorem card_roots_and_splits {p : ℝ[X]} {n : ℕ} (hp0 : p ≠ 0) (hn : p.nat
     refine card_roots_eq_n_of_intervals hp0 hn (L := fun i : ℕ => ((i + 1 : ℕ) : ℝ))
       (R := fun i : ℕ => if i < n - 1 then ((i + 2 : ℕ) : ℝ) else a₂) ?_ ?_
     · intro i hi
-      rw [if_pos (by omega : i < n - 1)]
+      rw [ite_eq_left (by omega : i < n - 1)]
     · intro i hi
       by_cases hi' : i < n - 1
-      · rw [if_pos hi']
+      · rw [ite_eq_left hi']
         exact exists_root_of_eval_mul_neg
           (show ((i + 1 : ℕ) : ℝ) < ((i + 2 : ℕ) : ℝ) by exact_mod_cast Nat.lt_add_one (i + 1))
           (hmul (i + 1) (by omega) (by omega))
-      · rw [if_neg hi']
+      · rw [ite_eq_right hi']
         have hieq : i + 1 = n := by omega
         obtain ⟨c, hc, hce⟩ := exists_root_of_eval_mul_neg ha₂ hmul₂
         refine ⟨c, ?_, hce⟩

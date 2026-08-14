@@ -50,11 +50,11 @@ lemma f_succ (n : ℕ) :
 
 /-- A representation of an odd number must contain a `1`. -/
 lemma f_odd (m : ℕ) : f (2 * m + 1) = f (2 * m) := by
-  rw [f_succ (2 * m), if_neg (by omega), add_zero]
+  rw [f_succ (2 * m), ite_eq_right (by omega), add_zero]
 
 /-- The recurrence at even arguments. -/
 lemma f_even (m : ℕ) : f (2 * m + 2) = f (2 * m + 1) + f (m + 1) := by
-  rw [f_succ, add_assoc, Nat.add_mod_right, Nat.mul_mod_right, if_pos rfl]
+  rw [f_succ, add_assoc, Nat.add_mod_right, Nat.mul_mod_right, ite_eq_left rfl]
   congr
   omega
 

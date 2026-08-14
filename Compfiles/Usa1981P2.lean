@@ -181,7 +181,7 @@ theorem pair_edgeIdx :
 theorem mkColor_eq {f : Fin 5 → Fin 5 → Link} (hsymm : ∀ i j, f i j = f j i)
     {i j : Fin 5} (hij : i ≠ j) :
     mkColor (fun k ↦ f (pair k).1 (pair k).2) i j = f i j := by
-  simp only [mkColor, if_neg hij]
+  simp only [mkColor, ite_eq_right hij]
   rcases pair_edgeIdx i j hij with e | e
   · rw [e]
   · rw [e]
@@ -269,7 +269,7 @@ theorem edgeIdx_symm : ∀ i j : Fin 5, edgeIdx i j = edgeIdx j i := by
 
 theorem mkColor_apply (u : Fin 10 → Link) {i j : Fin 5} (hij : i ≠ j) :
     mkColor u i j = u (edgeIdx i j) :=
-  if_neg hij
+  ite_eq_right hij
 
 theorem mkColor_symm (u : Fin 10 → Link) (i j : Fin 5) :
     mkColor u i j = mkColor u j i := by

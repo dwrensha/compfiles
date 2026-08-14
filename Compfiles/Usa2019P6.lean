@@ -293,7 +293,7 @@ lemma Fk_coeff (h : ℂ) (k : ℕ) :
     · have hmem : m + 1 - 2 ∈ Finset.range m := by
         rw [Finset.mem_range]
         omega
-      rw [if_pos hmem]
+      rw [ite_eq_left hmem]
       have hexp : m + 1 - (m + 1 - 2) = 2 := by omega
       rw [hexp]
       have hch : (m + 1).choose (m + 1 - 2) = (m + 1).choose 2 := Nat.choose_symm (by omega)

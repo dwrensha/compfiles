@@ -207,7 +207,7 @@ lemma covering_restrict {K M N : ℕ} (hNM : N ≤ M)
         exact hg ⟨i, hiN⟩ hi_good
       rw [hσf]
       simp only [hf_def]
-      rw [dif_pos (by rw [hcastle]; exact lt_of_lt_of_le hc2 hc)]
+      rw [dite_eq_left (by rw [hcastle]; exact lt_of_lt_of_le hc2 hc)]
       simp [hcastle]
     rw [hval]
     first | exact hc1 | exact hc2

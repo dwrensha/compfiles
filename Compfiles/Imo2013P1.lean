@@ -69,7 +69,7 @@ problem imo2013_p1 (n : ℕ+) (k : ℕ) :
     let m i := if i < pk then pm i else ⟨2 * t + 2 ^ pk.succ, by positivity⟩
     use m
     have hmpk : (m pk : ℚ) = 2 * t + 2 ^ pk.succ := by
-      have : m pk = ⟨2 * t + 2 ^ pk.succ, _⟩ := if_neg (irrefl pk); simp [this]
+      have : m pk = ⟨2 * t + 2 ^ pk.succ, _⟩ := ite_eq_right (irrefl pk); simp [this]
     have denom_ne_zero : (2 * (t : ℚ) + 2 * 2 ^ pk) ≠ 0 := by positivity
     calc
       ((1 : ℚ) + (2 ^ pk.succ - 1) / (n : ℚ) : ℚ)= 1 + (2 * 2 ^ pk - 1) / (2 * (t + 1) : ℕ) := by
@@ -90,7 +90,7 @@ problem imo2013_p1 (n : ℕ+) (k : ℕ) :
     let m i := if i < pk then pm i else ⟨2 * t + 1, Nat.succ_pos _⟩
     use m
     have hmpk : (m pk : ℚ) = 2 * t + 1 := by
-      have : m pk = ⟨2 * t + 1, _⟩ := if_neg (irrefl pk)
+      have : m pk = ⟨2 * t + 1, _⟩ := ite_eq_right (irrefl pk)
       simp [this]
     have denom_ne_zero : 2 * (t : ℚ) + 1 ≠ 0 := by positivity
     calc

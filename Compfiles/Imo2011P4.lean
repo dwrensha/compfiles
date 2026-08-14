@@ -120,9 +120,9 @@ lemma balance_ne_zero {l : List (ℕ × Bool)} (hne : l ≠ []) (hnd : (l.map Pr
       refine (abs_add_le ..).trans (add_le_add ?_ ihm)
       have hpow : (0 : ℤ) ≤ (2 : ℤ) ^ p.1 := pow_nonneg (by norm_num) _
       by_cases hp2 : p.2 = true
-      · rw [if_pos hp2]
+      · rw [ite_eq_left hp2]
         exact (abs_of_nonneg hpow).le
-      · rw [if_neg hp2, abs_neg]
+      · rw [ite_eq_right hp2, abs_neg]
         exact (abs_of_nonneg hpow).le
   -- A nodup list of weights all `< M` has total weight `< 2^M`.
   have hgeom : ∀ (m : List (ℕ × Bool)) (M : ℕ),
@@ -582,14 +582,14 @@ def stepEquiv (n : ℕ) : Ways (n + 1) ≃ Ways n × IData n where
     show (insertZeroWays (removeZeroWays w) (removeZeroData w)).1 = w.1
     cases hp : removePan w with
     | true =>
-      obtain ⟨h, hd⟩ : ∃ h, removeZeroData w = Sum.inl ⟨removeIdx w, h⟩ := ⟨_, dif_pos hp⟩
+      obtain ⟨h, hd⟩ : ∃ h, removeZeroData w = Sum.inl ⟨removeIdx w, h⟩ := ⟨_, dite_eq_left hp⟩
       rw [hd, insertZeroWays_inl_val]
       show insertList (removeList w) (removeIdx w) true = w.1
       have hrl := insertList_removeList w
       rw [hp] at hrl
       exact hrl
     | false =>
-      obtain ⟨h, hd⟩ : ∃ h, removeZeroData w = Sum.inr ⟨removeIdx w - 1, h⟩ := ⟨_, dif_neg (by simp [hp])⟩
+      obtain ⟨h, hd⟩ : ∃ h, removeZeroData w = Sum.inr ⟨removeIdx w - 1, h⟩ := ⟨_, dite_eq_right (by simp [hp])⟩
       rw [hd, insertZeroWays_inr_val]
       show insertList (removeList w) (removeIdx w - 1 + 1) false = w.1
       have h1 := removePan_false_idx w hp
@@ -638,7 +638,7 @@ def stepEquiv (n : ℕ) : Ways (n + 1) ≃ Ways n × IData n where
         rw [htake, hdrop, List.take_append_drop, map_down_map_up]
       · show removeZeroData (insertZeroWays w' (Sum.inl k)) = Sum.inl k
         unfold removeZeroData
-        rw [dif_pos hpan]
+        rw [dite_eq_left hpan]
         simp only [hidx]
     · have hk : k.1 + 1 ≤ w'.1.length := by have h := ways_length w'; have := k.2; omega
       have hidx : removeIdx (insertZeroWays w' (Sum.inr k)) = k.1 + 1 := by
@@ -678,7 +678,7 @@ def stepEquiv (n : ℕ) : Ways (n + 1) ≃ Ways n × IData n where
       · show removeZeroData (insertZeroWays w' (Sum.inr k)) = Sum.inr k
         have hnt : ¬ removePan (insertZeroWays w' (Sum.inr k)) = true := by rw [hpan]; decide
         unfold removeZeroData
-        rw [dif_neg hnt]
+        rw [dite_eq_right hnt]
         simp only [hidx]
         congr 1
 

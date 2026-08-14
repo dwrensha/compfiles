@@ -768,7 +768,7 @@ lemma path2OfEdge0_firstMonster_eq_none_of_path1OfEdge0_firstMonster_eq_some (hN
     split_ifs at hix <;> simp [Prod.ext_iff, Fin.ext_iff] at hix <;> lia
   have hi' : (i : ℕ) ≠ 2 * N := by
     intro h
-    rw [← hix, fn1OfEdge0, dif_pos h] at hx
+    rw [← hix, fn1OfEdge0, dite_eq_left h] at hx
     have h' := MonsterData.le_N_of_mem_monsterCells hx
     simp at h'
   intro j
@@ -778,7 +778,7 @@ lemma path2OfEdge0_firstMonster_eq_none_of_path1OfEdge0_firstMonster_eq_some (hN
     refine hnm _ ?_
     simp only
     lia
-  · rw [fn2OfEdge0, dif_neg h]
+  · rw [fn2OfEdge0, dite_eq_right h]
     split_ifs with h'
     · have hx1 : 1 ≤ x.1 := by
         rw [Fin.le_def, Fin.val_one]
@@ -806,7 +806,7 @@ lemma winningStrategy_play_one_eq_none_or_play_two_eq_none_of_edge_zero (hN : 2 
   rcases h with ⟨x, hx⟩
   rw [winningStrategy_play_one] at hx
   rw [winningStrategy_play_two, ← hx, Option.getD_some]
-  rw [path1, dif_pos hc₁0] at hx
+  rw [path1, dite_eq_left hc₁0] at hx
   have h1 := Path.mem_of_firstMonster_eq_some (hx.symm)
   -- Every cell of the zigzag path has column at least `1`, while the row-1 monster is in
   -- column `0`; so the monster `x` found on the zigzag lies in rows `2` through `N`.
@@ -831,7 +831,7 @@ lemma winningStrategy_play_one_eq_none_or_play_two_eq_none_of_edge_zero (hN : 2 
       exact hx1'
     rw [hrow, hc₁0] at hmx
     exact hcol (by simp [← hmx])
-  rw [path2, if_pos hc₁0, path2OfEdge0Def, dif_pos hx2N]
+  rw [path2, ite_eq_left hc₁0, path2OfEdge0Def, dite_eq_left hx2N]
   exact path2OfEdge0_firstMonster_eq_none_of_path1OfEdge0_firstMonster_eq_some hN hx2N.1
     hx2N.2 hc₁0 hx.symm
 
@@ -845,10 +845,10 @@ lemma winningStrategy_play_one_two_of_edge_N (hN : 2 ≤ N) {m : MonsterData N}
   have hc₁r0 : m.reflect (row1 hN) = 0 :=
     m.reflect_apply_row1_eq_zero_of_apply_row1_eq_N hN hc₁N
   refine ⟨?_, ?_⟩
-  · simp_rw [winningStrategy_play_one hN, path1, path1OfEdgeN, dif_neg hc₁0, if_pos hc₁N,
-      dif_pos hc₁r0, ← Path.firstMonster_reflect, MonsterData.reflect_reflect]
+  · simp_rw [winningStrategy_play_one hN, path1, path1OfEdgeN, dite_eq_right hc₁0, ite_eq_left hc₁N,
+      dite_eq_left hc₁r0, ← Path.firstMonster_reflect, MonsterData.reflect_reflect]
   · simp_rw [winningStrategy_play_two hN, path1, path1OfEdgeN, path2, path2OfEdgeNDef,
-      if_neg hc₁0, dif_neg hc₁0, if_pos hc₁N, dif_pos hc₁N, if_pos hc₁r0, dif_pos hc₁r0,
+      ite_eq_right hc₁0, dite_eq_right hc₁0, ite_eq_left hc₁N, dite_eq_left hc₁N, ite_eq_left hc₁r0, dite_eq_left hc₁r0,
       ← Path.firstMonster_reflect, MonsterData.reflect_reflect]
     convert rfl using 4
     nth_rw 2 [← m.reflect_reflect]

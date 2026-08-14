@@ -155,22 +155,22 @@ noncomputable def dw (c : ℤ × ℤ) : ℕ :=
 lemma dw_spec {c : ℤ × ℤ} (hc : c ∈ D) :
     ∃ w : (gridGraph.induce (D : Set (ℤ × ℤ))).Walk ⟨r, hr⟩ ⟨c, hc⟩,
       w.length = dw D r hr hpre c := by
-  simp only [dw, dif_pos hc]
+  simp only [dw, dite_eq_left hc]
   exact Nat.find_spec (exists_walk_length D r hr hpre c hc)
 
 lemma dw_le {c : ℤ × ℤ} (hc : c ∈ D)
     (w : (gridGraph.induce (D : Set (ℤ × ℤ))).Walk ⟨r, hr⟩ ⟨c, hc⟩) :
     dw D r hr hpre c ≤ w.length := by
-  simp only [dw, dif_pos hc]
+  simp only [dw, dite_eq_left hc]
   exact Nat.find_le ⟨w, rfl⟩
 
 lemma dw_root : dw D r hr hpre r = 0 := by
-  simp only [dw, dif_pos hr]
+  simp only [dw, dite_eq_left hr]
   exact Nat.eq_zero_of_le_zero (Nat.find_le ⟨.nil, rfl⟩)
 
 lemma eq_of_dw_eq_zero {c : ℤ × ℤ} (hc : c ∈ D) (h : dw D r hr hpre c = 0) :
     c = r := by
-  simp only [dw, dif_pos hc] at h
+  simp only [dw, dite_eq_left hc] at h
   obtain ⟨w, hw⟩ := Nat.find_spec (exists_walk_length D r hr hpre c hc)
   rw [h] at hw
   have he := SimpleGraph.Walk.exists_length_eq_zero_iff.mp ⟨w, hw⟩
@@ -205,26 +205,26 @@ noncomputable def parent (c : ℤ × ℤ) : ℤ × ℤ :=
 lemma parent_mem {c : ℤ × ℤ} (hc : c ∈ D) : parent D r hr hpre c ∈ D := by
   simp only [parent]
   by_cases h : c ∈ D ∧ c ≠ r
-  · rw [dif_pos h]
+  · rw [dite_eq_left h]
     exact (parent_exists D r hr hpre h.1 h.2).choose_spec.1
-  · rw [dif_neg h]
+  · rw [dite_eq_right h]
     exact hc
 
 lemma gridAdj_parent {c : ℤ × ℤ} (hc : c ∈ D) (hcr : c ≠ r) :
     gridAdj c (parent D r hr hpre c) := by
   simp only [parent]
-  rw [dif_pos ⟨hc, hcr⟩]
+  rw [dite_eq_left ⟨hc, hcr⟩]
   exact (parent_exists D r hr hpre hc hcr).choose_spec.2.1
 
 lemma dw_parent_lt {c : ℤ × ℤ} (hc : c ∈ D) (hcr : c ≠ r) :
     dw D r hr hpre (parent D r hr hpre c) < dw D r hr hpre c := by
   simp only [parent]
-  rw [dif_pos ⟨hc, hcr⟩]
+  rw [dite_eq_left ⟨hc, hcr⟩]
   exact (parent_exists D r hr hpre hc hcr).choose_spec.2.2
 
 lemma parent_root : parent D r hr hpre r = r := by
   simp only [parent]
-  rw [dif_neg (fun h => h.2 rfl)]
+  rw [dite_eq_right (fun h => h.2 rfl)]
 
 lemma parent_ne_self {c : ℤ × ℤ} (hc : c ∈ D) (hcr : c ≠ r) :
     parent D r hr hpre c ≠ c :=

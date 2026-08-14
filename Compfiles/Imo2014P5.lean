@@ -123,21 +123,21 @@ lemma filter_boxes_add_pile (k : ℕ) (c : Multiset ℕ) (hpos : ∀ n ∈ c, 0 
   · subst hn0
     have hcount0 : Multiset.count 0 c = 0 :=
       Multiset.count_eq_zero.mpr (fun h ↦ absurd (hpos 0 h) (by omega))
-    rw [Finset.sum_eq_zero (fun m _ ↦ if_neg (by omega)), if_neg (by omega), hcount0]
+    rw [Finset.sum_eq_zero (fun m _ ↦ ite_eq_right (by omega)), ite_eq_right (by omega), hcount0]
   · have hn1 : 1 ≤ n := Nat.pos_of_ne_zero hn0
     by_cases hn2k : n ≤ 2 * k
     · have hm0k : (n - 1) / 2 < k := by omega
       have hPm0 : n = 2 * ((n - 1) / 2) + 1 ∨ n = 2 * ((n - 1) / 2) + 2 := by omega
       rw [Finset.sum_eq_single_of_mem ((n - 1) / 2) (Finset.mem_range.mpr hm0k)
         (f := fun m ↦ if (n = 2 * m + 1 ∨ n = 2 * m + 2) then Multiset.count n c else 0)]
-      · rw [if_pos hPm0, if_neg (by omega), add_zero]
+      · rw [ite_eq_left hPm0, ite_eq_right (by omega), add_zero]
       · intro b hb hbne
         rw [Finset.mem_range] at hb
-        exact if_neg (by rintro (h | h) <;> omega)
+        exact ite_eq_right (by rintro (h | h) <;> omega)
     · have hn2k' : 2 * k + 1 ≤ n := by omega
-      rw [Finset.sum_eq_zero (fun m hm ↦ if_neg (by
+      rw [Finset.sum_eq_zero (fun m hm ↦ ite_eq_right (by
           have hm' := Finset.mem_range.mp hm
-          rintro (h | h) <;> omega)), if_pos hn2k', zero_add]
+          rintro (h | h) <;> omega)), ite_eq_left hn2k', zero_add]
 
 lemma value_filter_box_le (c : Multiset ℕ)
     (heven : ∀ m, 1 ≤ m → c.count (2 * m) ≤ 1)
@@ -149,10 +149,10 @@ lemma value_filter_box_le (c : Multiset ℕ)
     ext n
     rw [Multiset.count_add, Multiset.count_filter, Multiset.count_filter, Multiset.count_filter]
     by_cases h1 : n = 2 * m + 1
-    · rw [if_pos (Or.inl h1), if_pos h1, if_neg (by omega), add_zero]
+    · rw [ite_eq_left (Or.inl h1), ite_eq_left h1, ite_eq_right (by omega), add_zero]
     · by_cases h2 : n = 2 * m + 2
-      · rw [if_pos (Or.inr h2), if_neg h1, if_pos h2, zero_add]
-      · rw [if_neg (not_or.mpr ⟨h1, h2⟩), if_neg h1, if_neg h2, add_zero]
+      · rw [ite_eq_left (Or.inr h2), ite_eq_right h1, ite_eq_left h2, zero_add]
+      · rw [ite_eq_right (not_or.mpr ⟨h1, h2⟩), ite_eq_right h1, ite_eq_right h2, add_zero]
   rw [hPQ, Multiset.filter_eq', Multiset.filter_eq', value_add, value_replicate, value_replicate]
   have h1 : (c.count (2 * m + 1) : ℚ) ≤ (2 * m : ℚ) := by exact_mod_cast hodd m
   have h2 : (c.count (2 * m + 2) : ℚ) ≤ (1 : ℚ) := by
@@ -286,7 +286,7 @@ theorem exists_partition_aux : ∀ (N k : ℕ) (c : Multiset ℕ), c.card = N �
             Multiset.count_cons_self, Multiset.count_singleton_self]
           exact hm2
         · rw [show ({2 * m, 2 * m} : Multiset ℕ) = 2 * m ::ₘ {2 * m} from rfl,
-            Multiset.count_cons_of_ne h, Multiset.count_singleton, if_neg h]
+            Multiset.count_cons_of_ne h, Multiset.count_singleton, ite_eq_right h]
           exact Nat.zero_le _
       obtain ⟨rest, rfl⟩ := Multiset.le_iff_exists_add.mp hle
       have hpair : value ({2 * m, 2 * m} : Multiset ℕ) = (m : ℚ)⁻¹ := by

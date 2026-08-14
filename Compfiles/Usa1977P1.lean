@@ -54,7 +54,7 @@ lemma geomSum_natDegree (m : ℕ+) : (geomSum m).natDegree = (m : ℕ) := by
   apply le_antisymm
   · rw [natDegree_le_iff_coeff_eq_zero]
     intro j hj
-    rw [coeff_geomSum, if_neg (by omega)]
+    rw [coeff_geomSum, ite_eq_right (by omega)]
   · exact le_natDegree_of_ne_zero (by simp [coeff_geomSum])
 
 lemma geomSum_monic (m : ℕ+) : (geomSum m).Monic := by

@@ -297,19 +297,19 @@ lemma validCircle_b1a (n : ℕ) (hn : Odd n) (h17 : n % 17 ≠ 2) :
     simp only [offB1a, hv]
     by_cases hi0 : i.val = 0
     · -- seam: `n + 15` next to `n + 14`
-      rw [if_pos hi0, if_neg (by omega : ¬ i.val + 1 = 0),
-        if_pos (by omega : i.val + 1 = 1)]
+      rw [ite_eq_left hi0, ite_eq_right (by omega : ¬ i.val + 1 = 0),
+        ite_eq_left (by omega : i.val + 1 = 1)]
       exact (coprime_succ_gen n 14).symm
     · by_cases hi1 : i.val = 1
       · -- seam: `n + 14` next to `n + 16`; both odd since `n` is odd
-        rw [if_neg hi0, if_pos hi1, if_neg (by omega : ¬ i.val + 1 = 0),
-          if_neg (by omega : ¬ i.val + 1 = 1), hi1]
+        rw [ite_eq_right hi0, ite_eq_left hi1, ite_eq_right (by omega : ¬ i.val + 1 = 0),
+          ite_eq_right (by omega : ¬ i.val + 1 = 1), hi1]
         obtain ⟨k, hk⟩ := hn
         exact coprime_add_two (c := 14) (by omega)
       · -- generic seam: consecutive integers
         have h2 : 2 ≤ i.val := by omega
-        rw [if_neg hi0, if_neg hi1, if_neg (by omega : ¬ i.val + 1 = 0),
-          if_neg (by omega : ¬ i.val + 1 = 1)]
+        rw [ite_eq_right hi0, ite_eq_right hi1, ite_eq_right (by omega : ¬ i.val + 1 = 0),
+          ite_eq_right (by omega : ¬ i.val + 1 = 1)]
         exact coprime_succ_gen n (i.val + 14)
 
 lemma validCircle_b1b (n : ℕ) (hn : Odd n) (h17 : n % 17 = 2) :
@@ -326,18 +326,18 @@ lemma validCircle_b1b (n : ℕ) (hn : Odd n) (h17 : n % 17 = 2) :
     simp only [offB1b, hv]
     rcases Nat.lt_trichotomy i.val 16 with h | h | h
     · -- generic seam: consecutive integers
-      rw [if_neg (by omega : ¬ i.val = 17), if_neg (by omega : ¬ i.val = 18),
-        if_neg (by omega : ¬ i.val + 1 = 17), if_neg (by omega : ¬ i.val + 1 = 18)]
+      rw [ite_eq_right (by omega : ¬ i.val = 17), ite_eq_right (by omega : ¬ i.val = 18),
+        ite_eq_right (by omega : ¬ i.val + 1 = 17), ite_eq_right (by omega : ¬ i.val + 1 = 18)]
       exact coprime_succ_gen n (i.val + 14)
     · -- seam: `n + 30` next to `n + 32`; both odd
-      rw [if_neg (by omega : ¬ i.val = 17), if_neg (by omega : ¬ i.val = 18),
-        if_pos (by omega : i.val + 1 = 17), h]
+      rw [ite_eq_right (by omega : ¬ i.val = 17), ite_eq_right (by omega : ¬ i.val = 18),
+        ite_eq_left (by omega : i.val + 1 = 17), h]
       obtain ⟨k, hk⟩ := hn
       exact coprime_add_two (c := 30) (by omega)
     · -- seam: `n + 32` next to `n + 31`
       have h17' : i.val = 17 := by omega
-      rw [if_pos h17', if_neg (by omega : ¬ i.val + 1 = 17),
-        if_pos (by omega : i.val + 1 = 18)]
+      rw [ite_eq_left h17', ite_eq_right (by omega : ¬ i.val + 1 = 17),
+        ite_eq_left (by omega : i.val + 1 = 18)]
       exact (coprime_succ_gen n 31).symm
 
 lemma validCircle_a2 (n : ℕ) (h13 : 13 ∣ n) : ValidCircle (a2 n) := by
@@ -367,20 +367,20 @@ lemma validCircle_b2a (n : ℕ) (hn : Odd n) (h17 : n % 17 ≠ 16) :
     simp only [offB2a, hv]
     by_cases hi0 : i.val = 0
     · -- seam: `n + 1` next to `n`
-      rw [if_pos hi0, if_neg (by omega : ¬ i.val + 1 = 0),
-        if_pos (by omega : i.val + 1 = 1)]
+      rw [ite_eq_left hi0, ite_eq_right (by omega : ¬ i.val + 1 = 0),
+        ite_eq_left (by omega : i.val + 1 = 1)]
       show Nat.Coprime (n + 1) n
       exact (coprime_succ_gen n 0).symm
     · by_cases hi1 : i.val = 1
       · -- seam: `n` next to `n + 2`; both odd
-        rw [if_neg hi0, if_pos hi1, if_neg (by omega : ¬ i.val + 1 = 0),
-          if_neg (by omega : ¬ i.val + 1 = 1), hi1]
+        rw [ite_eq_right hi0, ite_eq_left hi1, ite_eq_right (by omega : ¬ i.val + 1 = 0),
+          ite_eq_right (by omega : ¬ i.val + 1 = 1), hi1]
         obtain ⟨k, hk⟩ := hn
         exact coprime_add_two (c := 0) (by omega)
       · -- generic seam: consecutive integers
         have h2 : 2 ≤ i.val := by omega
-        rw [if_neg hi0, if_neg hi1, if_neg (by omega : ¬ i.val + 1 = 0),
-          if_neg (by omega : ¬ i.val + 1 = 1)]
+        rw [ite_eq_right hi0, ite_eq_right hi1, ite_eq_right (by omega : ¬ i.val + 1 = 0),
+          ite_eq_right (by omega : ¬ i.val + 1 = 1)]
         exact coprime_succ_gen n i.val
 
 lemma validCircle_b2b (n : ℕ) (hn : Odd n) (h17 : n % 17 = 16) :
@@ -398,18 +398,18 @@ lemma validCircle_b2b (n : ℕ) (hn : Odd n) (h17 : n % 17 = 16) :
     simp only [offB2b, hv]
     rcases Nat.lt_trichotomy i.val 16 with h | h | h
     · -- generic seam: consecutive integers
-      rw [if_neg (by omega : ¬ i.val = 17), if_neg (by omega : ¬ i.val = 18),
-        if_neg (by omega : ¬ i.val + 1 = 17), if_neg (by omega : ¬ i.val + 1 = 18)]
+      rw [ite_eq_right (by omega : ¬ i.val = 17), ite_eq_right (by omega : ¬ i.val = 18),
+        ite_eq_right (by omega : ¬ i.val + 1 = 17), ite_eq_right (by omega : ¬ i.val + 1 = 18)]
       exact coprime_succ_gen n i.val
     · -- seam: `n + 16` next to `n + 18`; both odd
-      rw [if_neg (by omega : ¬ i.val = 17), if_neg (by omega : ¬ i.val = 18),
-        if_pos (by omega : i.val + 1 = 17), h]
+      rw [ite_eq_right (by omega : ¬ i.val = 17), ite_eq_right (by omega : ¬ i.val = 18),
+        ite_eq_left (by omega : i.val + 1 = 17), h]
       obtain ⟨k, hk⟩ := hn
       exact coprime_add_two (c := 16) (by omega)
     · -- seam: `n + 18` next to `n + 17`
       have h17' : i.val = 17 := by omega
-      rw [if_pos h17', if_neg (by omega : ¬ i.val + 1 = 17),
-        if_pos (by omega : i.val + 1 = 18)]
+      rw [ite_eq_left h17', ite_eq_right (by omega : ¬ i.val + 1 = 17),
+        ite_eq_left (by omega : i.val + 1 = 18)]
       exact (coprime_succ_gen n 17).symm
 
 end ValidCircles

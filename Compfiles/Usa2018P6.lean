@@ -1183,8 +1183,8 @@ def restrictAb {n : ℕ} {ψ : Equiv.Perm (Fin n)} (hψ : Function.Involutive ψ
       then ψ (if x ∈ ({a, b} : Finset (Fin n)) then ψ x else x)
       else (if x ∈ ({a, b} : Finset (Fin n)) then ψ x else x)) = x
     by_cases hx : x ∈ ({a, b} : Finset (Fin n))
-    · rw [if_pos hx, if_pos (h x hx), hψ x]
-    · rw [if_neg hx, if_neg hx])
+    · rw [ite_eq_left hx, ite_eq_left (h x hx), hψ x]
+    · rw [ite_eq_right hx, ite_eq_right hx])
 
 lemma restrictAb_apply_of_mem {n : ℕ} {ψ : Equiv.Perm (Fin n)}
     (hψ : Function.Involutive ψ) {a b : Fin n}
@@ -1192,7 +1192,7 @@ lemma restrictAb_apply_of_mem {n : ℕ} {ψ : Equiv.Perm (Fin n)}
     {x : Fin n} (hx : x ∈ ({a, b} : Finset (Fin n))) :
     restrictAb hψ h x = ψ x := by
   unfold restrictAb
-  rw [permOfInvolutive_apply, if_pos hx]
+  rw [permOfInvolutive_apply, ite_eq_left hx]
 
 lemma restrictAb_apply_of_not_mem {n : ℕ} {ψ : Equiv.Perm (Fin n)}
     (hψ : Function.Involutive ψ) {a b : Fin n}
@@ -1200,7 +1200,7 @@ lemma restrictAb_apply_of_not_mem {n : ℕ} {ψ : Equiv.Perm (Fin n)}
     {x : Fin n} (hx : x ∉ ({a, b} : Finset (Fin n))) :
     restrictAb hψ h x = x := by
   unfold restrictAb
-  rw [permOfInvolutive_apply, if_neg hx]
+  rw [permOfInvolutive_apply, ite_eq_right hx]
 
 lemma restrictAb_involutive {n : ℕ} {ψ : Equiv.Perm (Fin n)}
     (hψ : Function.Involutive ψ) {a b : Fin n}
@@ -1221,8 +1221,8 @@ def restrictCompl {n : ℕ} {ψ : Equiv.Perm (Fin n)} (hψ : Function.Involutive
       then (if x ∈ ({a, b} : Finset (Fin n)) then x else ψ x)
       else ψ (if x ∈ ({a, b} : Finset (Fin n)) then x else ψ x)) = x
     by_cases hx : x ∈ ({a, b} : Finset (Fin n))
-    · rw [if_pos hx, if_pos hx]
-    · rw [if_neg hx, if_neg (perm_compl_of_perm_ab h x hx), hψ x])
+    · rw [ite_eq_left hx, ite_eq_left hx]
+    · rw [ite_eq_right hx, ite_eq_right (perm_compl_of_perm_ab h x hx), hψ x])
 
 lemma restrictCompl_apply_of_mem {n : ℕ} {ψ : Equiv.Perm (Fin n)}
     (hψ : Function.Involutive ψ) {a b : Fin n}
@@ -1230,7 +1230,7 @@ lemma restrictCompl_apply_of_mem {n : ℕ} {ψ : Equiv.Perm (Fin n)}
     {x : Fin n} (hx : x ∈ ({a, b} : Finset (Fin n))) :
     restrictCompl hψ h x = x := by
   unfold restrictCompl
-  rw [permOfInvolutive_apply, if_pos hx]
+  rw [permOfInvolutive_apply, ite_eq_left hx]
 
 lemma restrictCompl_apply_of_not_mem {n : ℕ} {ψ : Equiv.Perm (Fin n)}
     (hψ : Function.Involutive ψ) {a b : Fin n}
@@ -1238,7 +1238,7 @@ lemma restrictCompl_apply_of_not_mem {n : ℕ} {ψ : Equiv.Perm (Fin n)}
     {x : Fin n} (hx : x ∉ ({a, b} : Finset (Fin n))) :
     restrictCompl hψ h x = ψ x := by
   unfold restrictCompl
-  rw [permOfInvolutive_apply, if_neg hx]
+  rw [permOfInvolutive_apply, ite_eq_right hx]
 
 lemma restrictCompl_involutive {n : ℕ} {ψ : Equiv.Perm (Fin n)}
     (hψ : Function.Involutive ψ) {a b : Fin n}
@@ -2199,10 +2199,10 @@ noncomputable def splitZeroEquiv (n : ℕ) :
     rcases s with (⟨σ, hp, h0⟩ | ⟨σ, hp, h0⟩)
     · show ((if h : σ 0 = 0 then Sum.inl ⟨σ, hp, h⟩ else Sum.inr ⟨σ, hp, h⟩) : vtxSplitType n) =
         Sum.inl ⟨σ, hp, h0⟩
-      rw [dif_pos h0]
+      rw [dite_eq_left h0]
     · show ((if h : σ 0 = 0 then Sum.inl ⟨σ, hp, h⟩ else Sum.inr ⟨σ, hp, h⟩) : vtxSplitType n) =
         Sum.inr ⟨σ, hp, h0⟩
-      rw [dif_neg h0]
+      rw [dite_eq_right h0]
 
 /-- Involutions of `Fin (n + 2)` with at most one fixed point that fix `0` are in
 bijection with fixed-point-free involutions of `Fin (n + 1)`. -/
@@ -2431,8 +2431,8 @@ problem usa2018_p6 (n : ℕ) (_hn : 1 ≤ n) :
         (if Fantastic v.1 then 1 else 0) [MOD 2] := by
     intro v
     by_cases hf : Fantastic v.1
-    · rw [if_pos hf, card_switch_eq_one_of_fantastic hf]
-    · rw [if_neg hf]
+    · rw [ite_eq_left hf, card_switch_eq_one_of_fantastic hf]
+    · rw [ite_eq_right hf]
       obtain ⟨k, hk⟩ := even_card_switch_of_not_fantastic v.2.1 hf
       rw [hk]
       have : (k + k) % 2 = 0 := by omega

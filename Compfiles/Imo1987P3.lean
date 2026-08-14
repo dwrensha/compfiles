@@ -122,10 +122,10 @@ lemma coef_cast_mul {n : ℕ} {x : Fin n → ℝ} {k : ℕ} (b b' : Fin n → Fi
     (coef x b b' i : ℝ) * x i = (((b i : ℕ) : ℝ) - ((b' i : ℕ) : ℝ)) * |x i| := by
   unfold coef
   by_cases h : 0 ≤ x i
-  · rw [if_pos h, abs_of_nonneg h]
+  · rw [ite_eq_left h, abs_of_nonneg h]
     push_cast
     ring
-  · rw [if_neg h, abs_of_neg (lt_of_not_ge h)]
+  · rw [ite_eq_right h, abs_of_neg (lt_of_not_ge h)]
     push_cast
     ring
 

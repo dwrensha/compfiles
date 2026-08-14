@@ -208,9 +208,9 @@ lemma core_pigeonhole {k : ℕ} (hk : 1 ≤ k) {s : Finset ℝ} (hscard : s.card
     rw [Nat.card_Icc, hscard]; omega
   obtain ⟨i1, hi1, i2, hi2, hne, heq⟩ :=
     Finset.exists_ne_map_eq_of_card_lt_of_maps_to hgc (f := g) fun i hi => by
-      rw [show g i = f ⟨i, hi⟩ from dif_pos hi]; exact (hf ⟨i, hi⟩).1
-  have hg1 : g i1 = f ⟨i1, hi1⟩ := dif_pos hi1
-  have hg2 : g i2 = f ⟨i2, hi2⟩ := dif_pos hi2
+      rw [show g i = f ⟨i, hi⟩ from dite_eq_left hi]; exact (hf ⟨i, hi⟩).1
+  have hg1 : g i1 = f ⟨i1, hi1⟩ := dite_eq_left hi1
+  have hg2 : g i2 = f ⟨i2, hi2⟩ := dite_eq_left hi2
   have hft : f ⟨i1, hi1⟩ = f ⟨i2, hi2⟩ := by rw [← hg1, ← hg2]; exact heq
   set t := f ⟨i1, hi1⟩ with ht_def
   have ht : t ∈ Finset.Icc 1 (k - 1) := (hf ⟨i1, hi1⟩).1

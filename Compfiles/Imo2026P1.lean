@@ -404,13 +404,13 @@ problem imo2026_p1a_termination (B₀ : Board) (hB₀ : IsInitial B₀) :
         have hg1' : ¬ (1 < Nat.gcd m n) := by omega
         have cfB : ((m ::ₘ n ::ₘ s).filter fun a => 1 < a).card =
             (s.filter fun a => 1 < a).card + 2 := by
-          rw [Multiset.filter_cons, Multiset.filter_cons, if_pos hm, if_pos hn,
+          rw [Multiset.filter_cons, Multiset.filter_cons, ite_eq_left hm, ite_eq_left hn,
             Multiset.card_add, Multiset.card_add, Multiset.card_singleton,
             Multiset.card_singleton]
           omega
         have cfB' : ((Nat.gcd m n ::ₘ (Nat.lcm m n / Nat.gcd m n) ::ₘ s).filter
               fun a => 1 < a).card = (s.filter fun a => 1 < a).card + 1 := by
-          rw [Multiset.filter_cons, Multiset.filter_cons, if_neg hg1', if_pos hl1,
+          rw [Multiset.filter_cons, Multiset.filter_cons, ite_eq_right hg1', ite_eq_left hl1,
             Multiset.card_add, Multiset.card_add, Multiset.card_singleton,
             Multiset.card_zero]
           omega

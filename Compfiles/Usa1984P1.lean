@@ -81,9 +81,9 @@ problem usa1984_p1 (a : ℝ) (P : ℝ[X])
       intro m hm
       rw [hQ]
       simp only [coeff_add, coeff_C, coeff_C_mul_X, coeff_C_mul_X_pow, coeff_X_pow]
-      rw [if_neg (show m ≠ 4 by omega), if_neg (show m ≠ 3 by omega),
-        if_neg (show m ≠ 2 by omega), if_neg (show m ≠ 1 by omega),
-        if_neg (show m ≠ 0 by omega)]
+      rw [ite_eq_right (show m ≠ 4 by omega), ite_eq_right (show m ≠ 3 by omega),
+        ite_eq_right (show m ≠ 2 by omega), ite_eq_right (show m ≠ 1 by omega),
+        ite_eq_right (show m ≠ 0 by omega)]
       simp
     · exact le_natDegree_of_ne_zero (hcoeff4 ▸ one_ne_zero)
   have hQmonic : Q.Monic := by

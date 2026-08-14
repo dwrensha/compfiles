@@ -717,12 +717,12 @@ lemma backward_bounded {k : ℕ} (hk : 2 ≤ k) {P : Polynomial ℤ} (hmon : P.M
     apply Polynomial.ext
     intro n
     by_cases hn : n < k
-    · rw [hcoef0 n hn, coeff_X_pow, if_neg (by omega)]
+    · rw [hcoef0 n hn, coeff_X_pow, ite_eq_right (by omega)]
     · by_cases hn' : k < n
       · rw [show P.coeff n = 0 from coeff_eq_zero_of_natDegree_lt (by omega), coeff_X_pow,
-          if_neg (by omega)]
+          ite_eq_right (by omega)]
       · have h : n = k := by omega
-        rw [h, coeff_X_pow, if_pos rfl, ← hnd]
+        rw [h, coeff_X_pow, ite_eq_left rfl, ← hnd]
         exact hmon.leadingCoeff
   -- downward induction: every value is `V`
   have hdown : ∀ j, j ≤ N → A (N - j) = V := by

@@ -55,10 +55,10 @@ def linear (α β : ℤ) : HForm := ⟨1, fun i => if i = 0 then β else α⟩
 def trunc (f : HForm) : ℕ → ℤ := fun i => if i ≤ f.deg then f.coeff i else 0
 
 lemma trunc_of_le (f : HForm) {i : ℕ} (h : i ≤ f.deg) : f.trunc i = f.coeff i :=
-  if_pos h
+  ite_eq_left h
 
 lemma trunc_of_lt (f : HForm) {i : ℕ} (h : f.deg < i) : f.trunc i = 0 :=
-  if_neg (not_le.mpr h)
+  ite_eq_right (not_le.mpr h)
 
 lemma eval_const (c : ℤ) (x y : ℤ) : (const c).eval x y = c := by
   simp [eval, const]
@@ -301,32 +301,32 @@ def rep (S : Finset (ℤ × ℤ)) (s : ℤ × ℤ) : ℤ × ℤ :=
 lemma rep_mem {S : Finset (ℤ × ℤ)} {s : ℤ × ℤ} (hs : s ∈ S) : rep S s ∈ S := by
   unfold rep
   by_cases h1 : canon s ∧ s ∈ S
-  · rw [if_pos h1]; exact hs
-  · rw [if_neg h1]
+  · rw [ite_eq_left h1]; exact hs
+  · rw [ite_eq_right h1]
     by_cases h2 : canon (-s) ∧ (-s) ∈ S
-    · rw [if_pos h2]; exact h2.2
-    · rw [if_neg h2]; exact hs
+    · rw [ite_eq_left h2]; exact h2.2
+    · rw [ite_eq_right h2]; exact hs
 
 lemma rep_eq_self_or_neg {S : Finset (ℤ × ℤ)} {s : ℤ × ℤ} :
     rep S s = s ∨ rep S s = -s := by
   unfold rep
   by_cases h1 : canon s ∧ s ∈ S
-  · rw [if_pos h1]; exact Or.inl rfl
-  · rw [if_neg h1]
+  · rw [ite_eq_left h1]; exact Or.inl rfl
+  · rw [ite_eq_right h1]
     by_cases h2 : canon (-s) ∧ (-s) ∈ S
-    · rw [if_pos h2]; exact Or.inr rfl
-    · rw [if_neg h2]; exact Or.inl rfl
+    · rw [ite_eq_left h2]; exact Or.inr rfl
+    · rw [ite_eq_right h2]; exact Or.inl rfl
 
 lemma rep_neg {S : Finset (ℤ × ℤ)} {s : ℤ × ℤ} (hs : s ∈ S) (hns : -s ∈ S)
     (hs0 : s ≠ (0, 0)) : rep S (-s) = rep S s := by
   have hcan := canon_iff_not_neg hs0
   by_cases hA : canon s
   · have hB : ¬ canon (-s) := hcan.mp hA
-    have hrep_s : rep S s = s := by unfold rep; rw [if_pos ⟨hA, hs⟩]
+    have hrep_s : rep S s = s := by unfold rep; rw [ite_eq_left ⟨hA, hs⟩]
     have hrep_ns : rep S (-s) = s := by
       unfold rep
-      rw [if_neg (fun h => hB h.1)]
-      rw [if_pos (by rw [neg_neg]; exact ⟨hA, hs⟩ : canon (-(-s)) ∧ (-(-s)) ∈ S)]
+      rw [ite_eq_right (fun h => hB h.1)]
+      rw [ite_eq_left (by rw [neg_neg]; exact ⟨hA, hs⟩ : canon (-(-s)) ∧ (-(-s)) ∈ S)]
       exact neg_neg s
     rw [hrep_s, hrep_ns]
   · have hB : canon (-s) := by
@@ -334,10 +334,10 @@ lemma rep_neg {S : Finset (ℤ × ℤ)} {s : ℤ × ℤ} (hs : s ∈ S) (hns : -
       exact hA (hcan.mpr hB)
     have hrep_s : rep S s = -s := by
       unfold rep
-      rw [if_neg (fun h => hA h.1), if_pos ⟨hB, hns⟩]
+      rw [ite_eq_right (fun h => hA h.1), ite_eq_left ⟨hB, hns⟩]
     have hrep_ns : rep S (-s) = -s := by
       unfold rep
-      rw [if_pos ⟨hB, hns⟩]
+      rw [ite_eq_left ⟨hB, hns⟩]
     rw [hrep_s, hrep_ns]
 
 lemma rep_idem {S : Finset (ℤ × ℤ)} {s : ℤ × ℤ} (hs : s ∈ S) (hs0 : s ≠ (0, 0)) :
@@ -565,10 +565,10 @@ lemma Gform_eval_zmod (p : ℕ) [Fact p.Prime] {x y : ℤ} (hcop : IsCoprime x y
   rw [Gform]
   by_cases hp2 : p = 2
   · subst hp2
-    rw [if_pos rfl, HForm.eval_add, HForm.eval_add, HForm.eval_pow, HForm.eval_mul,
+    rw [ite_eq_left rfl, HForm.eval_add, HForm.eval_add, HForm.eval_pow, HForm.eval_mul,
       HForm.eval_pow, Xf_eval, Yf_eval]
     exact two_not_dvd_quad_zmod hcop
-  · rw [if_neg hp2, HForm.eval_add, HForm.eval_pow, HForm.eval_pow, Xf_eval, Yf_eval]
+  · rw [ite_eq_right hp2, HForm.eval_add, HForm.eval_pow, HForm.eval_pow, Xf_eval, Yf_eval]
     exact odd_not_dvd_powsum_zmod Fact.out hp2 hcop
 
 /-- The key construction: a homogeneous form `g` of positive even degree whose
@@ -609,9 +609,9 @@ lemma exists_g (S : Finset (ℤ × ℤ)) (hS : ∀ s ∈ S, IsCoprime s.1 s.2)
     intro p hp
     rw [Gform_deg, hE]
     by_cases hp2 : p = 2
-    · rw [if_pos hp2]
+    · rw [ite_eq_left hp2]
       exact dvd_mul_right 2 _
-    · rw [if_neg hp2]
+    · rw [ite_eq_right hp2]
       exact dvd_mul_of_dvd_right (Finset.dvd_prod_of_mem (fun q => q - 1) hp) 2
   -- powers of the local forms
   set ex : ℕ → ℕ := fun p => E / (Gform p).deg with hex

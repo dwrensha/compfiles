@@ -118,8 +118,8 @@ lemma sum_neighbor_mul_comm (x y : Fin n → ZMod 2) :
     rw [key]
     exact Finset.sum_congr rfl fun v _ => Finset.sum_congr rfl fun u _ => by
       by_cases h : G.Adj v u
-      · rw [if_pos h, if_pos h.symm]
-      · rw [if_neg h, if_neg fun h' => h h'.symm]
+      · rw [ite_eq_left h, ite_eq_left h.symm]
+      · rw [ite_eq_right h, ite_eq_right fun h' => h h'.symm]
   · exact Finset.sum_congr rfl fun v _ => (e v (fun u => x v * y u)).symm
 
 /-- The Laplacian is symmetric with respect to the dot product. -/

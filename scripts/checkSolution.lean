@@ -119,7 +119,7 @@ unsafe def replayFromImports (module : Name) : IO Unit := do
   for (part, _) in parts do
     for name in part.constNames, ci in part.constants do
       newConstants := newConstants.insert name ci
-  let env' ← env.replay newConstants
+  let env' := Environment.ofKernelEnv (← env.toKernelEnv.replay newConstants)
   env'.freeRegions
 
 unsafe def printDetermineVals (determineDecls : List Name) (solution_mod : Name)

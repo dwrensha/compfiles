@@ -183,8 +183,8 @@ lemma parity_walk (σ₀ : P.V × P.V × Bool) (k : ℕ) :
     show (!(P.step^[k] σ₀).2.2) = _
     rw [ih]
     by_cases hk : Even k
-    · rw [if_pos hk, if_neg (by simp [Nat.even_add_one, hk])]
-    · rw [if_neg hk, Bool.not_not, if_pos (by simp [Nat.even_add_one, hk])]
+    · rw [ite_eq_left hk, ite_eq_right (by simp [Nat.even_add_one, hk])]
+    · rw [ite_eq_right hk, Bool.not_not, ite_eq_left (by simp [Nat.even_add_one, hk])]
 
 lemma stepInv_iterate {σ₀ : P.V × P.V × Bool} (h₀ : P.Valid σ₀) :
     ∀ {i j : ℕ}, i ≤ j → P.stepInv^[i] (P.step^[j] σ₀) = P.step^[j - i] σ₀ := by
@@ -351,7 +351,7 @@ theorem no_mirror {σ₀ : P.V × P.V × Bool} (h₀ : P.Valid σ₀) :
     rw [hpar, hqp] at hq2
     have hnodd : ¬ Even n := by
       intro he
-      rw [if_pos he] at hq2
+      rw [ite_eq_left he] at hq2
       cases p <;> simp at hq2
     have hn3 : 3 ≤ n := by
       rw [Nat.even_iff] at hnodd
@@ -525,7 +525,7 @@ theorem entries_le_three {σ₀ : P.V × P.V × Bool} (h₀ : P.Valid σ₀) (v 
     P.entries σ₀ h₀ v ≤ 3 := by
   unfold Park.entries
   by_cases hv : v = σ₀.1
-  · rw [if_pos hv]
+  · rw [ite_eq_left hv]
     have hempty : ((Finset.range (P.retTime h₀)).filter
         fun k ↦ (P.step^[k] σ₀).2.1 = v) = ∅ := by
       rw [Finset.eq_empty_iff_forall_notMem]
@@ -537,7 +537,7 @@ theorem entries_le_three {σ₀ : P.V × P.V × Bool} (h₀ : P.Valid σ₀) (v 
       · exact P.retTime_min h₀ (Nat.pos_of_ne_zero hk0) hk.1 (hk.2.trans hv)
     rw [hempty, Finset.card_empty]
     omega
-  · rw [if_neg hv]
+  · rw [ite_eq_right hv]
     have hle : P.retTime h₀ ≤ P.period h₀ :=
       le_trans (P.retTime_le_period_sub_one h₀) (Nat.sub_le _ _)
     exact le_trans

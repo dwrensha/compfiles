@@ -237,14 +237,14 @@ lemma prefBoard_eq_some {p : Play} {n : ℕ} {c : Cell} {v : ℚ} :
     prefBoard p n c = some v ↔ ∃ i : Fin 36, (i : ℕ) < n ∧ p.moves i = (c, v) := by
   unfold prefBoard
   by_cases h : ∃ i : Fin 36, (i : ℕ) < n ∧ (p.moves i).1 = c
-  · rw [dif_pos h]
+  · rw [dite_eq_left h]
     constructor
     · intro hv
       exact ⟨h.choose, h.choose_spec.1, Prod.ext h.choose_spec.2 (Option.some.inj hv)⟩
     · rintro ⟨i, hin, hi⟩
       have hce : h.choose = i := p.cell_inj (by simp [h.choose_spec.2, hi])
       rw [hce, hi]
-  · rw [dif_neg h]
+  · rw [dite_eq_right h]
     constructor
     · intro hv
       nomatch hv
@@ -602,7 +602,7 @@ lemma bobMove_eq_mate {b : Cell → Option ℚ} {x : Cell} (hx01 : x.1.1 ≤ 1)
   have hP : ∃ y : Cell, y.1.1 ≤ 1 ∧ b y ≠ none ∧ b (mate y) = none :=
     ⟨x, hx01, hxs, hxm⟩
   unfold bobMove
-  rw [dif_pos hP]
+  rw [dite_eq_left hP]
   have hce : hP.choose = x :=
     huniq _ hP.choose_spec.1 hP.choose_spec.2.1 hP.choose_spec.2.2
   rw [hce]
@@ -611,13 +611,13 @@ lemma bobMove_eq_rows2 {b : Cell → Option ℚ}
     (h : ¬ ∃ y : Cell, y.1.1 ≤ 1 ∧ b y ≠ none ∧ b (mate y) = none) :
     bobMove b = (bobCell2 b, bobFreshValue b) := by
   unfold bobMove
-  rw [dif_neg h]
+  rw [dite_eq_right h]
 
 lemma bobCell2_spec {b : Cell → Option ℚ}
     (h : ∃ c : Cell, 2 ≤ c.1.1 ∧ b c = none) :
     2 ≤ (bobCell2 b).1.1 ∧ b (bobCell2 b) = none := by
   unfold bobCell2
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   exact h.choose_spec
 
 lemma goodMateValue_bobMateValue {b : Cell → Option ℚ} {x : Cell} {vx : ℚ}
@@ -625,7 +625,7 @@ lemma goodMateValue_bobMateValue {b : Cell → Option ℚ} {x : Cell} {vx : ℚ}
     GoodMateValue b x vx (bobMateValue b x) := by
   have hdx : (b x).getD 0 = vx := by rw [hx]; rfl
   unfold bobMateValue
-  rw [hdx, dif_pos h]
+  rw [hdx, dite_eq_left h]
   exact h.choose_spec
 
 /-- The invariant is preserved when Alice plays in rows 3 to 6 and Bob answers in

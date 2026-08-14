@@ -690,13 +690,13 @@ lemma tile_decomposition {m n : ℕ} (h : Tileable (rect m n)) :
     intro H hH
     have hex : ∃ H' ∈ 𝒯, hole H ∈ H' := hcov (hole H) (hhole H hH)
     rw [hφ]
-    simp only [hex, dif_pos]
+    simp only [hex, dite_eq_left]
     exact (Classical.choose_spec hex).1
   have hφ2 : ∀ H ∈ 𝒯, hole H ∈ φ H := by
     intro H hH
     have hex : ∃ H' ∈ 𝒯, hole H ∈ H' := hcov (hole H) (hhole H hH)
     rw [hφ]
-    simp only [hex, dif_pos]
+    simp only [hex, dite_eq_left]
     exact (Classical.choose_spec hex).2
   have hφne : ∀ H ∈ 𝒯, φ H ≠ H := by
     intro H hH hne

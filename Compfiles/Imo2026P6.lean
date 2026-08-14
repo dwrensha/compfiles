@@ -450,7 +450,7 @@ problem imo2026_p6 (a : ℕ → ℕ) (ha : IsValidSeq a) :
         have hWmem : p ∈ W ((a j).primeFactors.erase p) := by
           show p ∈ if h : ∃ k, Disjoint ((a j).primeFactors.erase p) (a k).primeFactors
             then (a h.choose).primeFactors else ∅
-          rw [dif_pos hexdisj]
+          rw [dite_eq_left hexdisj]
           obtain ⟨q, hq⟩ := hpair j hexdisj.choose
           obtain ⟨hqj, hqk⟩ := Finset.mem_inter.mp hq
           by_cases hqp : q = p

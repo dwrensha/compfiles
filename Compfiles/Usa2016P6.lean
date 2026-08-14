@@ -111,7 +111,7 @@ lemma play_succ {n : ℕ} (σ : Strategy n) (W : Wizard n) (m : ℕ) :
 lemma step_of_won {n : ℕ} {σ : Strategy n} {W : Wizard n} {s : PlayState n}
     (h : s.won) : step σ W s = s := by
   unfold step
-  rw [if_pos h]
+  rw [ite_eq_left h]
 
 lemma won_mono {n : ℕ} {σ : Strategy n} {W : Wizard n} {t u : ℕ}
     (h : (play σ W t).won) (hu : t ≤ u) : (play σ W u).won := by
@@ -148,10 +148,10 @@ lemma obsValues_eq_image {n : ℕ} {a : Arrangement n} {Q s : Finset (Fin (2 * n
   simp only [obsValues, mem_biUnion, Option.mem_toFinset, Option.mem_def, mem_image]
   constructor
   · rintro ⟨i, hi, hri⟩
-    rw [reveal, if_pos (hs hi)] at hri
+    rw [reveal, ite_eq_left (hs hi)] at hri
     exact ⟨i, hi, Option.some.inj hri⟩
   · rintro ⟨i, hi, rfl⟩
-    exact ⟨i, hi, by rw [reveal, if_pos (hs hi)]⟩
+    exact ⟨i, hi, by rw [reveal, ite_eq_left (hs hi)]⟩
 
 /-! ## The winning strategy for `k < n` -/
 
@@ -163,7 +163,7 @@ def window (n k j : ℕ) : Finset (Fin (2 * n)) :=
   else ∅
 
 lemma card_window {n k j : ℕ} (h : j + k ≤ 2 * n) : (window n k j).card = k := by
-  rw [window, dif_pos h, card_image_of_injOn, card_attach, card_range]
+  rw [window, dite_eq_left h, card_image_of_injOn, card_attach, card_range]
   intro ⟨a, ha⟩ _ ⟨b, hb⟩ _ hab
   simp only [Fin.mk.injEq] at hab
   have : a = b := by omega
@@ -172,7 +172,7 @@ lemma card_window {n k j : ℕ} (h : j + k ≤ 2 * n) : (window n k j).card = k 
 
 lemma mem_window {n k j : ℕ} (h : j + k ≤ 2 * n) {x : Fin (2 * n)} :
     x ∈ window n k j ↔ j ≤ x.val ∧ x.val < j + k := by
-  rw [window, dif_pos h]
+  rw [window, dite_eq_left h]
   simp only [mem_image, mem_attach, true_and, Subtype.exists]
   constructor
   · rintro ⟨t, ht, rfl⟩
@@ -192,7 +192,7 @@ def midWindow (n k i : ℕ) : Finset (Fin (2 * n)) :=
   else ∅
 
 lemma card_midWindow {n k i : ℕ} (h : i + k ≤ 2 * n) : (midWindow n k i).card = k - 1 := by
-  rw [midWindow, dif_pos h, card_image_of_injOn, card_attach, card_range]
+  rw [midWindow, dite_eq_left h, card_image_of_injOn, card_attach, card_range]
   intro ⟨a, ha⟩ _ ⟨b, hb⟩ _ hab
   simp only [Fin.mk.injEq] at hab
   have : a = b := by omega
@@ -201,7 +201,7 @@ lemma card_midWindow {n k i : ℕ} (h : i + k ≤ 2 * n) : (midWindow n k i).car
 
 lemma mem_midWindow {n k i : ℕ} (h : i + k ≤ 2 * n) {x : Fin (2 * n)} :
     x ∈ midWindow n k i ↔ i < x.val ∧ x.val < i + k := by
-  rw [midWindow, dif_pos h]
+  rw [midWindow, dite_eq_left h]
   simp only [mem_image, mem_attach, true_and, Subtype.exists]
   constructor
   · rintro ⟨t, ht, rfl⟩
@@ -321,13 +321,13 @@ lemma step_apply_of_not_won {n : ℕ} {σ : Strategy n} {W : Wizard n} {s : Play
       , won := false }
     else { s with won := true } := by
   unfold step
-  rw [if_neg hw]
+  rw [ite_eq_right hw]
 
 lemma slideStrat_of_lt {n k : ℕ} [NeZero n] (hk : 2 ≤ k) (hkn : k < n)
     {hist : List (Observation n)} (h : hist.length + k ≤ 2 * n) :
     slideStrat n k hk hkn hist = window n k hist.length := by
   simp only [slideStrat, winStrat]
-  rw [if_pos h]
+  rw [ite_eq_left h]
 
 lemma slideStrat_of_ge {n k : ℕ} [NeZero n] (hk : 2 ≤ k) (hkn : k < n)
     {hist : List (Observation n)} (h : 2 * n < hist.length + k)
@@ -337,7 +337,7 @@ lemma slideStrat_of_ge {n k : ℕ} [NeZero n] (hk : 2 ≤ k) (hkn : k < n)
       pairSet n k hk (le_of_lt hkn) h₂.choose h₂.choose_spec.choose
         h₂.choose_spec.choose_spec.1 := by
   simp only [slideStrat, winStrat]
-  rw [if_neg (by omega), dif_pos h₂]
+  rw [ite_eq_right (by omega), dite_eq_left h₂]
 
 /-- Facts about the play of the sliding strategy, while no win has occurred. -/
 lemma slide_play_facts {n k : ℕ} [NeZero n] (hk : 2 ≤ k) (hkn : k < n)
@@ -370,7 +370,7 @@ lemma slide_play_facts {n k : ℕ} [NeZero n] (hk : 2 ≤ k) (hkn : k < n)
         rw [card_window hbj]
         exact hne
       have hwon : (play (slideStrat n k hk hkn) W (j + 1)).won = true := by
-        rw [play_succ, step_apply_of_not_won nwonj, hQ, if_neg hcond]
+        rw [play_succ, step_apply_of_not_won nwonj, hQ, ite_eq_right hcond]
       exact hM (won_mono hwon (by omega))
     have heq : play (slideStrat n k hk hkn) W (j + 1) =
         { arr := (play (slideStrat n k hk hkn) W j).arr ∘
@@ -379,7 +379,7 @@ lemma slide_play_facts {n k : ℕ} [NeZero n] (hk : 2 ≤ k) (hkn : k < n)
             [(window n k j, reveal (play (slideStrat n k hk hkn) W j).arr (window n k j))]
         , won := false } := by
       rw [play_succ, step_apply_of_not_won nwonj, hQ]
-      rw [if_pos (by rw [card_window hbj]; exact hinj)]
+      rw [ite_eq_left (by rw [card_window hbj]; exact hinj)]
     refine ⟨by rw [heq], (by rw [heq]; simp [len_j]), ?_, ?_⟩
     · intro i hi
       rw [heq]
@@ -415,7 +415,7 @@ lemma slide_arr_step {n k : ℕ} [NeZero n] (hk : 2 ≤ k) (hkn : k < n)
     rw [len_j] at e
     exact e
   rw [play_succ, step_apply_of_not_won (Bool.eq_false_iff.1 won_j), hQ,
-    if_pos (by rw [card_window hbj]; exact inj_j)]
+    ite_eq_left (by rw [card_window hbj]; exact inj_j)]
 
 /-- Once determined, the label at position `x` never changes again. -/
 lemma slide_arr_frozen {n k : ℕ} [NeZero n] (hk : 2 ≤ k) (hkn : k < n)
@@ -531,9 +531,9 @@ lemma slide_labelAt_eq {n k : ℕ} [NeZero n] (hk : 2 ≤ k) (hkn : k < n)
   rw [ha] at hmem_diff
   have hax : (play (slideStrat n k hk hkn) W (i + 1)).arr x = a := mem_singleton.1 hmem_diff
   unfold labelAt
-  rw [dif_pos hcond]
+  rw [dite_eq_left hcond]
   dsimp only
-  rw [hSeq, hTeq, ha, dif_pos (singleton_nonempty a)]
+  rw [hSeq, hTeq, ha, dite_eq_left (singleton_nonempty a)]
   have hspec := (singleton_nonempty a).choose_spec
   rw [mem_singleton] at hspec
   rw [hspec]
@@ -599,7 +599,7 @@ lemma slideStrat_wins {n k : ℕ} [NeZero n] (hk : 2 ≤ k) (hkn : k < n)
         step_apply_of_not_won
           (Bool.eq_false_iff.1 (slide_play_facts hk hkn W hW hM (2 * n - k + 1)
             (le_refl _)).1),
-        hQ, if_neg hcond]
+        hQ, ite_eq_right hcond]
     exact hwin
 
 
@@ -694,34 +694,34 @@ lemma exists_perm_injOn {n : ℕ} (a : Fin (2 * n) → Fin n)
     rintro ⟨i, hiQ⟩ ⟨j, hjQ⟩ hij
     have hij' : d i = d j := hij
     by_cases hic : i ∈ Q ∩ Qn
-    · have hdi : d i = (e1 ⟨i, hic⟩ : Fin n) := dif_pos hic
+    · have hdi : d i = (e1 ⟨i, hic⟩ : Fin n) := dite_eq_left hic
       by_cases hjc : j ∈ Q ∩ Qn
-      · have hdj : d j = (e1 ⟨j, hjc⟩ : Fin n) := dif_pos hjc
+      · have hdj : d j = (e1 ⟨j, hjc⟩ : Fin n) := dite_eq_left hjc
         rw [hdi, hdj] at hij'
         have hval : i = j := congrArg Subtype.val (e1.injective (Subtype.ext hij'))
         exact Subtype.ext hval
       · have hj2 : j ∈ Q \ Qn := Finset.mem_sdiff.mpr ⟨hjQ, fun hjn => hjc (Finset.mem_inter.mpr ⟨hjQ, hjn⟩)⟩
         have hdj : d j = (e2 ⟨j, hj2⟩ : Fin n) := by
-          calc d j = (if h' : j ∈ Q \ Qn then (e2 ⟨j, h'⟩ : Fin n) else a j) := dif_neg hjc
-            _ = (e2 ⟨j, hj2⟩ : Fin n) := dif_pos hj2
+          calc d j = (if h' : j ∈ Q \ Qn then (e2 ⟨j, h'⟩ : Fin n) else a j) := dite_eq_right hjc
+            _ = (e2 ⟨j, hj2⟩ : Fin n) := dite_eq_left hj2
         rw [hdi, hdj] at hij'
         have hA : (e1 ⟨i, hic⟩ : Fin n) ∈ univ \ T := (e1 ⟨i, hic⟩).property
         rw [hij'] at hA
         exact absurd (e2 ⟨j, hj2⟩).property (Finset.mem_sdiff.mp hA).2
     · have hi2 : i ∈ Q \ Qn := Finset.mem_sdiff.mpr ⟨hiQ, fun hin => hic (Finset.mem_inter.mpr ⟨hiQ, hin⟩)⟩
       have hdi : d i = (e2 ⟨i, hi2⟩ : Fin n) := by
-        calc d i = (if h' : i ∈ Q \ Qn then (e2 ⟨i, h'⟩ : Fin n) else a i) := dif_neg hic
-          _ = (e2 ⟨i, hi2⟩ : Fin n) := dif_pos hi2
+        calc d i = (if h' : i ∈ Q \ Qn then (e2 ⟨i, h'⟩ : Fin n) else a i) := dite_eq_right hic
+          _ = (e2 ⟨i, hi2⟩ : Fin n) := dite_eq_left hi2
       by_cases hjc : j ∈ Q ∩ Qn
-      · have hdj : d j = (e1 ⟨j, hjc⟩ : Fin n) := dif_pos hjc
+      · have hdj : d j = (e1 ⟨j, hjc⟩ : Fin n) := dite_eq_left hjc
         rw [hdi, hdj] at hij'
         have hA : (e1 ⟨j, hjc⟩ : Fin n) ∈ univ \ T := (e1 ⟨j, hjc⟩).property
         rw [← hij'] at hA
         exact absurd (e2 ⟨i, hi2⟩).property (Finset.mem_sdiff.mp hA).2
       · have hj2 : j ∈ Q \ Qn := Finset.mem_sdiff.mpr ⟨hjQ, fun hjn => hjc (Finset.mem_inter.mpr ⟨hjQ, hjn⟩)⟩
         have hdj : d j = (e2 ⟨j, hj2⟩ : Fin n) := by
-          calc d j = (if h' : j ∈ Q \ Qn then (e2 ⟨j, h'⟩ : Fin n) else a j) := dif_neg hjc
-            _ = (e2 ⟨j, hj2⟩ : Fin n) := dif_pos hj2
+          calc d j = (if h' : j ∈ Q \ Qn then (e2 ⟨j, h'⟩ : Fin n) else a j) := dite_eq_right hjc
+            _ = (e2 ⟨j, hj2⟩ : Fin n) := dite_eq_left hj2
         rw [hdi, hdj] at hij'
         have hval : i = j := congrArg Subtype.val (e2.injective (Subtype.ext hij'))
         exact Subtype.ext hval
@@ -732,8 +732,8 @@ lemma exists_perm_injOn {n : ℕ} (a : Fin (2 * n) → Fin n)
       have hiQ : i ∈ Q := (Finset.mem_sdiff.mp hi2).1
       have hic : i ∉ Q ∩ Qn := fun h => (Finset.mem_sdiff.mp hi2).2 (Finset.mem_inter.mp h).2
       have hdi : d i = (e2 ⟨i, hi2⟩ : Fin n) := by
-        calc d i = (if h' : i ∈ Q \ Qn then (e2 ⟨i, h'⟩ : Fin n) else a i) := dif_neg hic
-          _ = (e2 ⟨i, hi2⟩ : Fin n) := dif_pos hi2
+        calc d i = (if h' : i ∈ Q \ Qn then (e2 ⟨i, h'⟩ : Fin n) else a i) := dite_eq_right hic
+          _ = (e2 ⟨i, hi2⟩ : Fin n) := dite_eq_left hi2
       refine ⟨⟨i, hiQ⟩, ?_⟩
       show d i = ℓ
       rw [hdi]
@@ -741,7 +741,7 @@ lemma exists_perm_injOn {n : ℕ} (a : Fin (2 * n) → Fin n)
     · have hℓ' : ℓ ∈ univ \ T := Finset.mem_sdiff.mpr ⟨Finset.mem_univ ℓ, hℓ⟩
       obtain ⟨⟨i, hic⟩, hie⟩ := e1.surjective ⟨ℓ, hℓ'⟩
       have hiQ : i ∈ Q := (Finset.mem_inter.mp hic).1
-      have hdi : d i = (e1 ⟨i, hic⟩ : Fin n) := dif_pos hic
+      have hdi : d i = (e1 ⟨i, hic⟩ : Fin n) := dite_eq_left hic
       refine ⟨⟨i, hiQ⟩, ?_⟩
       show d i = ℓ
       rw [hdi]
@@ -795,7 +795,7 @@ lemma exists_perm_injOn {n : ℕ} (a : Fin (2 * n) → Fin n)
       obtain ⟨⟨i, hic⟩, hie⟩ := e1.surjective ⟨ℓ, hℓ'⟩
       refine Finset.mem_image.mpr ⟨i, (Finset.mem_inter.mp hic).2, ?_⟩
       rw [Function.comp_apply, hτQ i (Finset.mem_inter.mp hic).1]
-      have hdi : d i = (e1 ⟨i, hic⟩ : Fin n) := dif_pos hic
+      have hdi : d i = (e1 ⟨i, hic⟩ : Fin n) := dite_eq_left hic
       rw [hdi]
       exact congrArg Subtype.val hie
   rw [himg]
@@ -817,10 +817,10 @@ noncomputable def initArr {n : ℕ} (σ : Strategy n) (hσ : σ.Valid n) : Arran
   fun i ↦ if h : i ∈ σ [] then initEquiv₁ σ hσ ⟨i, h⟩ else initEquiv₂ σ hσ ⟨i, mem_compl.2 h⟩
 
 lemma initArr_apply_of_mem {n : ℕ} {σ : Strategy n} {hσ : σ.Valid n} {i : Fin (2 * n)}
-    (hi : i ∈ σ []) : initArr σ hσ i = initEquiv₁ σ hσ ⟨i, hi⟩ := dif_pos hi
+    (hi : i ∈ σ []) : initArr σ hσ i = initEquiv₁ σ hσ ⟨i, hi⟩ := dite_eq_left hi
 
 lemma initArr_apply_of_notMem {n : ℕ} {σ : Strategy n} {hσ : σ.Valid n} {i : Fin (2 * n)}
-    (hi : i ∉ σ []) : initArr σ hσ i = initEquiv₂ σ hσ ⟨i, mem_compl.2 hi⟩ := dif_neg hi
+    (hi : i ∉ σ []) : initArr σ hσ i = initEquiv₂ σ hσ ⟨i, mem_compl.2 hi⟩ := dite_eq_right hi
 
 lemma initArr_valid {n : ℕ} (σ : Strategy n) (hσ : σ.Valid n) : (initArr σ hσ).Valid := by
   intro ℓ
@@ -955,7 +955,7 @@ lemma evasive_inv {n : ℕ} (σ : Strategy n) (hσ : σ.Valid n) (j : ℕ) :
     have hex : ∃ τ : Equiv.Perm (Fin (2 * n)), (∀ i, i ∉ σ l → τ i = i) ∧
         Set.InjOn (a ∘ τ) ↑(σ (l ++ [(σ l, reveal a (σ l))])) :=
       exists_perm_injOn a hvalid (hσ l.dropLast) (hσ l) hinjS hinjQ _ (hσ _)
-    have hτ : permOf σ hσ l a = hex.choose := dif_pos hex
+    have hτ : permOf σ hσ l a = hex.choose := dite_eq_left hex
     rw [harr, hτ]
     refine ⟨?_, ?_, ?_⟩
     · intro ℓ
@@ -991,9 +991,9 @@ lemma evasive_play {n : ℕ} (σ : Strategy n) (hσ : σ.Valid n) (m : ℕ) :
     have hinj : Set.InjOn (wizArr σ hσ (evasiveHist σ hσ m)) ↑(σ (evasiveHist σ hσ m)) :=
       (evasive_inv σ hσ m).2.2
     rw [play_succ, ih, step_apply_of_not_won (by simp),
-      if_pos (card_image_iff.mpr hinj)]
+      ite_eq_left (card_image_iff.mpr hinj)]
     have hperm : (evasiveWizard σ hσ).perm (evasiveHist σ hσ m) (σ (evasiveHist σ hσ m)) =
-        permOf σ hσ (evasiveHist σ hσ m) (wizArr σ hσ (evasiveHist σ hσ m)) := if_pos rfl
+        permOf σ hσ (evasiveHist σ hσ m) (wizArr σ hσ (evasiveHist σ hσ m)) := ite_eq_left rfl
     have hhist : evasiveHist σ hσ (m + 1) = evasiveHist σ hσ m ++
         [(σ (evasiveHist σ hσ m), reveal (wizArr σ hσ (evasiveHist σ hσ m))
           (σ (evasiveHist σ hσ m)))] := rfl

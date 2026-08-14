@@ -628,13 +628,13 @@ lemma skipMap_nextD [NeZero (m - l)] (hl : l ≤ m)
   set G := (if l + x.val + g < m then g else g + l) with hG_def
   have hGL : skipMap a₀ l x + (G : ZMod m) = skipMap a₀ l (nextD D₂ hD₂ x) := by
     by_cases hc : l + x.val + g < m
-    · rw [hG_def, if_pos hc]
+    · rw [hG_def, ite_eq_left hc]
       have h1 : (x + ((g : ℕ) : ZMod (m - l))).val = x.val + g := by
         rw [ZMod.val_add, ZMod.val_natCast, Nat.add_mod_mod,
           Nat.mod_eq_of_lt (by omega)]
       rw [skipMap_add, nextD, ← hg_def, skipMap_eq, h1, add_left_cancel_iff,
         ZMod.natCast_eq_natCast_iff, show l + x.val + g = l + (x.val + g) by omega]
-    · rw [hG_def, if_neg hc]
+    · rw [hG_def, ite_eq_right hc]
       have h1 : (x + ((g : ℕ) : ZMod (m - l))).val = x.val + g - (m - l) := by
         rw [ZMod.val_add, ZMod.val_natCast, Nat.add_mod_mod,
           Nat.mod_eq_sub_mod (by omega : m - l ≤ x.val + g),
@@ -645,17 +645,17 @@ lemma skipMap_nextD [NeZero (m - l)] (hl : l ≤ m)
       rw [e, Nat.ModEq, Nat.add_mod_right]
   have hG1 : 1 ≤ G := by
     by_cases hc : l + x.val + g < m
-    · rw [hG_def, if_pos hc]; omega
-    · rw [hG_def, if_neg hc]; omega
+    · rw [hG_def, ite_eq_left hc]; omega
+    · rw [hG_def, ite_eq_right hc]; omega
   have hGm : G ≤ m := by
     by_cases hc : l + x.val + g < m
-    · rw [hG_def, if_pos hc]; omega
-    · rw [hG_def, if_neg hc]; omega
+    · rw [hG_def, ite_eq_left hc]; omega
+    · rw [hG_def, ite_eq_right hc]; omega
   have hmem_walk : ∀ s : ℕ, 1 ≤ s → s < G →
       skipMap a₀ l x + (s : ZMod m) ∈ arcSet a₀ l ∪ D₂.image (skipMap a₀ l) := by
     intro s hs1 hsG
     by_cases hc : l + x.val + g < m
-    · rw [hG_def, if_pos hc] at hsG
+    · rw [hG_def, ite_eq_left hc] at hsG
       have h1 : skipMap a₀ l x + (s : ZMod m) = skipMap a₀ l (x + (s : ZMod (m - l))) := by
         rw [skipMap_add, skipMap, ZMod.val_add, ZMod.val_natCast, Nat.add_mod_mod,
           Nat.mod_eq_of_lt (by omega : x.val + s < m - l),
@@ -665,7 +665,7 @@ lemma skipMap_nextD [NeZero (m - l)] (hl : l ≤ m)
       right
       rw [mem_image_skipMap D₂ hl]
       exact gapSize_mem D₂ hD₂ x hs1 hsG
-    · rw [hG_def, if_neg hc] at hsG
+    · rw [hG_def, ite_eq_right hc] at hsG
       set s₀ := m - l - x.val with hs₀_def
       by_cases hs2 : s < s₀
       · have h1 : skipMap a₀ l x + (s : ZMod m) = skipMap a₀ l (x + (s : ZMod (m - l))) := by
@@ -1107,9 +1107,9 @@ lemma mergeOne {m k : ℕ} [NeZero m] (P : CirclePartition m k) (hk : 0 < k) (hk
   have hlen'_pos : ∀ i : Fin (k - 1), 1 ≤ len' i := by
     intro i
     by_cases hi : i.val = 0
-    · simp only [hlen'_def, hi, if_true]
+    · simp only [hlen'_def, hi, ite_true]
       exact hHT1
-    · simp only [hlen'_def, hi, if_false]
+    · simp only [hlen'_def, hi, ite_false]
       exact P.len_pos _
   have hk' : 0 < k - 1 := Nat.sub_pos_of_lt hk2
   have hofj : P.off j = P.offExt hk j.val := off_eq_offExt P hk j
@@ -1131,7 +1131,7 @@ lemma mergeOne {m k : ℕ} [NeZero m] (P : CirclePartition m k) (hk : 0 < k) (hk
         apply Finset.sum_congr rfl
         intro i hi
         simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hi
-        simp only [hlen'_def, hi, if_false]
+        simp only [hlen'_def, hi, ite_false]
       rw [e3]
       rw [show (∑ i ∈ Finset.univ.filter (fun i : Fin (k - 1) => i.val ≠ 0),
           P.len ⟨(j.val + 1 + i.val) % k, Nat.mod_lt _ hk⟩)
@@ -1168,7 +1168,7 @@ lemma mergeOne {m k : ℕ} [NeZero m] (P : CirclePartition m k) (hk : 0 < k) (hk
         (p := fun i => i.val = 0) (f := len')]
       congr 1
       rw [hz, Finset.sum_singleton]
-      simp only [hlen'_def, if_pos rfl]
+      simp only [hlen'_def, ite_eq_left rfl]
     rw [e1, e2, hHT]
     omega
   set P' : CirclePartition (m - l) (k - 1) :=
@@ -1198,7 +1198,7 @@ lemma mergeOne {m k : ℕ} [NeZero m] (P : CirclePartition m k) (hk : 0 < k) (hk
         have h1 : P'.off ⟨0 + 1, hn2⟩ = P'.off ⟨0, hk'⟩ + P'.len ⟨0, hk'⟩ :=
           off_succ P' ⟨0, hk'⟩ hn2
         rw [h1, off_zero P' hk', hP'len]
-        simp only [hlen'_def, if_pos rfl, zero_add]
+        simp only [hlen'_def, ite_eq_left rfl, zero_add]
         rw [hHT, hoff2, hofj]
         omega
       · have ih' := ih (by omega) (by omega)
@@ -1211,7 +1211,7 @@ lemma mergeOne {m k : ℕ} [NeZero m] (P : CirclePartition m k) (hk : 0 < k) (hk
           rw [hoff2, hofj] at h2
           omega
         rw [h1, ih', hP'len]
-        simp only [hlen'_def, hn0, if_false]
+        simp only [hlen'_def, hn0, ite_false]
         rw [show j.val + 1 + (n + 1) = j.val + 1 + n + 1 by omega, offExt_succ]
         omega
   refine ⟨P', ?_⟩
@@ -1219,7 +1219,7 @@ lemma mergeOne {m k : ℕ} [NeZero m] (P : CirclePartition m k) (hk : 0 < k) (hk
   by_cases hi0 : i.val = 0
   · have hlen0 : P'.len i = H + T := by
       rw [hP'len]
-      simp only [hlen'_def, hi0, if_true]
+      simp only [hlen'_def, hi0, ite_true]
     have hoff0 : P'.off i = 0 := by
       rw [show i = ⟨0, hk'⟩ from Fin.ext hi0]
       exact off_zero P' hk'
@@ -1298,7 +1298,7 @@ lemma mergeOne {m k : ℕ} [NeZero m] (P : CirclePartition m k) (hk : 0 < k) (hk
     linarith
   · have hleni : P'.len i = P.len ⟨(j.val + 1 + i.val) % k, Nat.mod_lt _ hk⟩ := by
       rw [hP'len]
-      simp only [hlen'_def, hi0, if_false]
+      simp only [hlen'_def, hi0, ite_false]
     have hoffi : P'.off i = P.offExt hk (j.val + 1 + i.val) - P.off j - l := by
       have h3 := off'_eq i.val (by omega) i.isLt
       rw [show i = ⟨i.val, i.isLt⟩ from Fin.eta i _]
@@ -1714,7 +1714,7 @@ theorem hall_deficiency {n : ℕ} [NeZero n] (r : Fin n → Fin n → Prop) [Dec
         (fun p : {x // x ∈ M} => N p.val ∩ Y)).mp hHallSub
     -- extend f' to all of Fin n by the identity outside M
     set f : Fin n → Fin n := fun p => if h : p ∈ M then f' ⟨p, h⟩ else p with hf
-    have hfM : ∀ (p : Fin n) (hp : p ∈ M), f p = f' ⟨p, hp⟩ := fun p hp => dif_pos hp
+    have hfM : ∀ (p : Fin n) (hp : p ∈ M), f p = f' ⟨p, hp⟩ := fun p hp => dite_eq_left hp
     set T : Finset (Fin n) := M.image f with hT
     have hinjM : Set.InjOn f M := by
       intro p₁ hp₁ p₂ hp₂ h
@@ -1982,10 +1982,10 @@ theorem usa2025_p6_main (N : ℕ) (hN : 0 < N) : ∀ (m : ℕ) [NeZero m] (_hmn 
             constructor
             · intro hxq
               by_cases hx : x ∈ D
-              · rw [dif_pos hx] at hxq
+              · rw [dite_eq_left hx] at hxq
                 rw [← hxq]
                 exact (Classical.choose_spec (hDM x hx)).2
-              · rw [dif_neg hx] at hxq
+              · rw [dite_eq_right hx] at hxq
                 exfalso
                 have h2 : g (a' (Classical.choose (hφ.cover x hx))) ∈ B := hgM _
                 have h3 : g (a' (Classical.choose (hφ.cover x hx))) ∈ Finset.univ \ M :=
@@ -1994,7 +1994,7 @@ theorem usa2025_p6_main (N : ℕ) (hN : 0 < N) : ∀ (m : ℕ) [NeZero m] (_hmn 
                 exact h3.2 (hxq ▸ hqM)
             · intro hx
               by_cases hxD : x ∈ D
-              · rw [dif_pos hxD]
+              · rw [dite_eq_left hxD]
                 have h1 := (Classical.choose_spec (hDM x hxD)).2
                 by_cases hff : f (Classical.choose (hDM x hxD)) = f q
                 · exact finj _ (Classical.choose_spec (hDM x hxD)).1 _ hqM hff
@@ -2023,20 +2023,20 @@ theorem usa2025_p6_main (N : ℕ) (hN : 0 < N) : ∀ (m : ℕ) [NeZero m] (_hmn 
             constructor
             · intro hxq
               by_cases hx : x ∈ D
-              · rw [dif_pos hx] at hxq
+              · rw [dite_eq_left hx] at hxq
                 exfalso
                 have h1 := (Classical.choose_spec (hDM x hx)).1
                 have h2 : q ∈ Finset.univ \ M := hB_def ▸ hqB
                 rw [Finset.mem_sdiff] at h2
                 exact h2.2 (hxq ▸ h1)
-              · rw [dif_neg hx] at hxq
+              · rw [dite_eq_right hx] at hxq
                 refine ⟨Classical.choose (hφ.cover x hx), ?_, ?_⟩
                 · apply g.injective
                   rw [hxq, hp]
                 · exact Classical.choose_spec (hφ.cover x hx)
             · rintro ⟨y, hy, rfl⟩
               have hynot : φ y ∉ D := hφ.notMem y
-              rw [dif_neg hynot]
+              rw [dite_eq_right hynot]
               have hy2 : Classical.choose (hφ.cover (φ y) hynot) = y := by
                 have h1 := Classical.choose_spec (hφ.cover (φ y) hynot)
                 exact hφ.inj h1

@@ -382,7 +382,7 @@ def lift (g : Fin 100 → ZMod 3) (a : ℕ) : ZMod 3 :=
   if h : 1 ≤ a ∧ a ≤ 100 then g ⟨a - 1, by omega⟩ else 0
 
 lemma lift_apply (g : Fin 100 → ZMod 3) {a : ℕ} (h1 : 1 ≤ a) (h2 : a ≤ 100) :
-    lift g a = g ⟨a - 1, by omega⟩ := dif_pos ⟨h1, h2⟩
+    lift g a = g ⟨a - 1, by omega⟩ := dite_eq_left ⟨h1, h2⟩
 
 lemma lift_apply_fin (g : Fin 100 → ZMod 3) (i : Fin 100) : lift g (↑i + 1) = g i := by
   rw [lift_apply g (a := ↑i + 1) (by omega) (by omega)]
@@ -405,13 +405,13 @@ lemma lift_good {g : Fin 100 → ZMod 3} (hg : GoodPlacement g) : Good 100 (lift
 def T (i : Fin 100) : ZMod 3 := if (i : ℕ) = 0 then 0 else if (i : ℕ) = 99 then 1 else 2
 
 lemma T_of_zero (i : Fin 100) (h : (i : ℕ) = 0) : T i = 0 := by
-  unfold T; rw [if_pos h]
+  unfold T; rw [ite_eq_left h]
 
 lemma T_of_99 (i : Fin 100) (h : (i : ℕ) = 99) : T i = 1 := by
-  unfold T; rw [if_neg (by omega), if_pos h]
+  unfold T; rw [ite_eq_right (by omega), ite_eq_left h]
 
 lemma T_of_other (i : Fin 100) (h0 : (i : ℕ) ≠ 0) (h99 : (i : ℕ) ≠ 99) : T i = 2 := by
-  unfold T; rw [if_neg h0, if_neg h99]
+  unfold T; rw [ite_eq_right h0, ite_eq_right h99]
 
 lemma eq_zero_of_T {i : Fin 100} (h : T i = 0) : (i : ℕ) = 0 := by
   by_contra h0

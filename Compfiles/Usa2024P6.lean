@@ -100,11 +100,11 @@ lemma lhs_eq_sum_v_sq {n k : ℕ} (x : Fin k → ℝ) (A : Fin k → Finset (Fin
       rw [card_inter_cast]
       refine Finset.sum_congr rfl fun p _ => ?_
       by_cases hp : p ∈ A i ∧ p ∈ A j
-      · rw [if_pos hp]
+      · rw [ite_eq_left hp]
         have h1 : e i p = 1 := by simp [he, hp.1]
         have h2 : e j p = 1 := by simp [he, hp.2]
         rw [h1, h2, mul_one]
-      · rw [if_neg hp]
+      · rw [ite_eq_right hp]
         rcases not_and_or.mp hp with hpi | hpj
         · have h1 : e i p = 0 := by simp [he, hpi]
           rw [h1, zero_mul]
@@ -322,9 +322,9 @@ lemma exists_perm_eq {n : ℕ} (p q p' q' : Fin n) (hpq : p ≠ q) (hpq' : p' �
 /-- The image of an `ℓ`-subset under a permutation is still an `ℓ`-subset. -/
 lemma finsetCongr_mem_powersetCard {n ℓ : ℕ} (π : Equiv.Perm (Fin n)) (B : Finset (Fin n))
     (hB : B ∈ Finset.powersetCard ℓ (Finset.univ : Finset (Fin n))) :
-    π.finsetCongr B ∈ Finset.powersetCard ℓ (Finset.univ : Finset (Fin n)) := by
+    (Equiv.Finset.congr π) B ∈ Finset.powersetCard ℓ (Finset.univ : Finset (Fin n)) := by
   rw [Finset.mem_powersetCard] at hB ⊢
-  exact ⟨Finset.subset_univ _, by rw [Equiv.finsetCongr_apply, Finset.card_map, hB.2]⟩
+  exact ⟨Finset.subset_univ _, by rw [Equiv.Finset.congr_apply, Finset.card_map, hB.2]⟩
 
 /-- The number of `ℓ`-subsets containing a given point does not depend on the
 point. -/
@@ -333,29 +333,29 @@ lemma cntS_single {n ℓ : ℕ} (p q : Fin n) :
         (fun B => p ∈ B)).card =
       ((Finset.powersetCard ℓ (Finset.univ : Finset (Fin n))).filter
         (fun B => q ∈ B)).card := by
-  refine Finset.card_bij' (fun B _ => (Equiv.swap p q).finsetCongr B)
-    (fun B _ => (Equiv.swap p q).finsetCongr B) ?_ ?_ ?_ ?_
+  refine Finset.card_bij' (fun B _ => (Equiv.Finset.congr (Equiv.swap p q)) B)
+    (fun B _ => (Equiv.Finset.congr (Equiv.swap p q)) B) ?_ ?_ ?_ ?_
   · intro B hB
     rw [Finset.mem_filter] at hB ⊢
     exact ⟨finsetCongr_mem_powersetCard _ _ hB.1, by
-      rw [Equiv.finsetCongr_apply, Finset.mem_map]
+      rw [Equiv.Finset.congr_apply, Finset.mem_map]
       exact ⟨p, hB.2, Equiv.swap_apply_left p q⟩⟩
   · intro B hB
     rw [Finset.mem_filter] at hB ⊢
     exact ⟨finsetCongr_mem_powersetCard _ _ hB.1, by
-      rw [Equiv.finsetCongr_apply, Finset.mem_map]
+      rw [Equiv.Finset.congr_apply, Finset.mem_map]
       exact ⟨q, hB.2, Equiv.swap_apply_right p q⟩⟩
   · intro B _
-    show (Equiv.swap p q).finsetCongr ((Equiv.swap p q).finsetCongr B) = B
-    rw [show (Equiv.swap p q).finsetCongr ((Equiv.swap p q).finsetCongr B) =
-        ((Equiv.swap p q).finsetCongr.trans (Equiv.swap p q).finsetCongr) B from rfl]
-    rw [Equiv.finsetCongr_trans, Equiv.swap_swap, Equiv.finsetCongr_refl]
+    show (Equiv.Finset.congr (Equiv.swap p q)) ((Equiv.Finset.congr (Equiv.swap p q)) B) = B
+    rw [show (Equiv.Finset.congr (Equiv.swap p q)) ((Equiv.Finset.congr (Equiv.swap p q)) B) =
+        ((Equiv.Finset.congr (Equiv.swap p q)).trans (Equiv.Finset.congr (Equiv.swap p q))) B from rfl]
+    rw [Equiv.Finset.congr_trans, Equiv.swap_swap, Equiv.Finset.congr_refl]
     rfl
   · intro B _
-    show (Equiv.swap p q).finsetCongr ((Equiv.swap p q).finsetCongr B) = B
-    rw [show (Equiv.swap p q).finsetCongr ((Equiv.swap p q).finsetCongr B) =
-        ((Equiv.swap p q).finsetCongr.trans (Equiv.swap p q).finsetCongr) B from rfl]
-    rw [Equiv.finsetCongr_trans, Equiv.swap_swap, Equiv.finsetCongr_refl]
+    show (Equiv.Finset.congr (Equiv.swap p q)) ((Equiv.Finset.congr (Equiv.swap p q)) B) = B
+    rw [show (Equiv.Finset.congr (Equiv.swap p q)) ((Equiv.Finset.congr (Equiv.swap p q)) B) =
+        ((Equiv.Finset.congr (Equiv.swap p q)).trans (Equiv.Finset.congr (Equiv.swap p q))) B from rfl]
+    rw [Equiv.Finset.congr_trans, Equiv.swap_swap, Equiv.Finset.congr_refl]
     rfl
 
 /-- The number of `ℓ`-subsets containing two given distinct points does not
@@ -366,33 +366,33 @@ lemma cntS_pair {n ℓ : ℕ} (p q p' q' : Fin n) (hpq : p ≠ q) (hpq' : p' ≠
       ((Finset.powersetCard ℓ (Finset.univ : Finset (Fin n))).filter
         (fun B => p' ∈ B ∧ q' ∈ B)).card := by
   obtain ⟨π, hπp, hπq⟩ := exists_perm_eq p q p' q' hpq hpq'
-  refine Finset.card_bij' (fun B _ => π.finsetCongr B) (fun B _ => π.symm.finsetCongr B)
+  refine Finset.card_bij' (fun B _ => (Equiv.Finset.congr π) B) (fun B _ => (Equiv.Finset.congr π.symm) B)
     ?_ ?_ ?_ ?_
   · intro B hB
     rw [Finset.mem_filter] at hB ⊢
     refine ⟨finsetCongr_mem_powersetCard _ _ hB.1, ?_, ?_⟩
-    · rw [← hπp, Equiv.finsetCongr_apply, Finset.mem_map]
+    · rw [← hπp, Equiv.Finset.congr_apply, Finset.mem_map]
       exact ⟨p, hB.2.1, rfl⟩
-    · rw [← hπq, Equiv.finsetCongr_apply, Finset.mem_map]
+    · rw [← hπq, Equiv.Finset.congr_apply, Finset.mem_map]
       exact ⟨q, hB.2.2, rfl⟩
   · intro B hB
     rw [Finset.mem_filter] at hB ⊢
     refine ⟨finsetCongr_mem_powersetCard π.symm _ hB.1, ?_, ?_⟩
-    · rw [Equiv.finsetCongr_apply, Finset.mem_map]
+    · rw [Equiv.Finset.congr_apply, Finset.mem_map]
       exact ⟨p', hB.2.1, by rw [← hπp]; exact Equiv.symm_apply_apply π p⟩
-    · rw [Equiv.finsetCongr_apply, Finset.mem_map]
+    · rw [Equiv.Finset.congr_apply, Finset.mem_map]
       exact ⟨q', hB.2.2, by rw [← hπq]; exact Equiv.symm_apply_apply π q⟩
   · intro B _
-    show π.symm.finsetCongr (π.finsetCongr B) = B
-    rw [show π.symm.finsetCongr (π.finsetCongr B) =
-        (π.finsetCongr.trans π.symm.finsetCongr) B from rfl]
-    rw [Equiv.finsetCongr_trans, Equiv.self_trans_symm, Equiv.finsetCongr_refl]
+    show (Equiv.Finset.congr π.symm) ((Equiv.Finset.congr π) B) = B
+    rw [show (Equiv.Finset.congr π.symm) ((Equiv.Finset.congr π) B) =
+        ((Equiv.Finset.congr π).trans (Equiv.Finset.congr π.symm)) B from rfl]
+    rw [Equiv.Finset.congr_trans, Equiv.self_trans_symm, Equiv.Finset.congr_refl]
     rfl
   · intro B _
-    show π.finsetCongr (π.symm.finsetCongr B) = B
-    rw [show π.finsetCongr (π.symm.finsetCongr B) =
-        (π.symm.finsetCongr.trans π.finsetCongr) B from rfl]
-    rw [Equiv.finsetCongr_trans, Equiv.symm_trans_self, Equiv.finsetCongr_refl]
+    show (Equiv.Finset.congr π) ((Equiv.Finset.congr π.symm) B) = B
+    rw [show (Equiv.Finset.congr π) ((Equiv.Finset.congr π.symm) B) =
+        ((Equiv.Finset.congr π.symm).trans (Equiv.Finset.congr π)) B from rfl]
+    rw [Equiv.Finset.congr_trans, Equiv.symm_trans_self, Equiv.Finset.congr_refl]
     rfl
 
 /-- Reindexing: counting indices `i` with `p, q ∈ A i` equals counting sets of

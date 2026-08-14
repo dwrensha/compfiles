@@ -122,8 +122,8 @@ lemma sum_eq (a : ℕ → ℕ) (hm : Monotone a) (hu : ∀ n, ∃ i, n ≤ a i)
     apply Finset.sum_congr rfl
     intro j _
     by_cases h : j < a i
-    · rw [if_pos h, if_neg (fun hc => Nat.not_le.mpr h ((key i j).mp hc))]
-    · rw [if_neg h, if_pos ((key i j).mpr (Nat.le_of_not_lt h))]
+    · rw [ite_eq_left h, ite_eq_right (fun hc => Nat.not_le.mpr h ((key i j).mp hc))]
+    · rw [ite_eq_right h, ite_eq_left ((key i j).mpr (Nat.le_of_not_lt h))]
   have hsum : (∑ i ∈ Finset.range 19, ∑ j ∈ Finset.range 85, (if j < a i then 1 else 0)) +
         (∑ i ∈ Finset.range 19, ∑ j ∈ Finset.range 85,
           (if i < c a hu (j + 1) then 1 else 0)) = 1615 := by

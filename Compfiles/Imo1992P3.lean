@@ -258,8 +258,8 @@ lemma shrinkColor_diag (P : Finset (Sym2 (Fin 9))) :
   intro i
   rw [shrinkColor_apply]
   by_cases h : s(i, i) ∈ P
-  · rw [if_pos h]
-  · rw [if_neg h]
+  · rw [ite_eq_left h]
+  · rw [ite_eq_right h]
     exact auxColor_diag i
 
 /-- The shrunk coloring, packaged as an `EdgeColoring`. -/
@@ -271,9 +271,9 @@ lemma shrinkColor_some_of {P : Finset (Sym2 (Fin 9))} {e : Sym2 (Fin 9)} {b : Fi
     (h : shrinkColor P e = some b) : auxColor e = some b := by
   rw [shrinkColor_apply] at h
   by_cases hc : e ∈ P
-  · rw [if_pos hc] at h
+  · rw [ite_eq_left hc] at h
     simp at h
-  · rw [if_neg hc] at h
+  · rw [ite_eq_right hc] at h
     exact h
 
 lemma shrink_coloredEdges (P : Finset (Sym2 (Fin 9))) :
@@ -287,12 +287,12 @@ lemma shrink_coloredEdges (P : Finset (Sym2 (Fin 9))) :
   constructor
   · intro hsome
     by_cases hc : e ∈ P
-    · rw [shrinkColor_apply, if_pos hc] at hsome
+    · rw [shrinkColor_apply, ite_eq_left hc] at hsome
       simp at hsome
-    · rw [shrinkColor_apply, if_neg hc] at hsome
+    · rw [shrinkColor_apply, ite_eq_right hc] at hsome
       exact ⟨hsome, hc⟩
   · intro ⟨hsome, hnotP⟩
-    rw [shrinkColor_apply, if_neg hnotP]
+    rw [shrinkColor_apply, ite_eq_right hnotP]
     exact hsome
 
 /-- Second part: for every `m ≤ 32` there is a coloring with exactly `m`

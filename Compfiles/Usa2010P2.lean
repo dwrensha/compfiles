@@ -501,7 +501,7 @@ lemma length_eq_sum_count {n : ℕ} (L : List (Fin n × Fin n))
         by_cases h : pr = x
         · subst h
           simp
-        · rw [if_neg h]
+        · rw [ite_eq_right h]
           have h2 : (x == pr) = false := beq_eq_false_iff_ne.mpr (fun h3 => h h3.symm)
           simp [h2]
       rw [e1, Finset.sum_ite_eq']

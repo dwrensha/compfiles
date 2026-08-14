@@ -519,12 +519,12 @@ lemma rearr_upper {n : ℕ} (x y : Fin n → ℝ) (hx : Antitone x) (hy : Antito
       rw [Finset.sum_range]
       apply Finset.sum_congr rfl
       intro i _
-      simp only [dif_pos i.isLt, Fin.eta i i.isLt]
+      simp only [dite_eq_left i.isLt, Fin.eta i i.isLt]
     rw [e1, Finset.sum_sub_distrib, Equiv.sum_comp σ y, sub_self]
   have hxd : ∀ k : ℕ, k + 1 < n → 0 ≤ (if h : k < n then x ⟨k, h⟩ else 0) -
       (if h : k + 1 < n then x ⟨k + 1, h⟩ else 0) := by
     intro k hk
-    rw [dif_pos (by omega : k < n), dif_pos hk]
+    rw [dite_eq_left (by omega : k < n), dite_eq_left hk]
     exact sub_nonneg.2 (hx (by rw [Fin.le_def]; exact Nat.le_succ k))
   have hZ : ∀ k : ℕ, k < n → 0 ≤ ∑ i ∈ Finset.range (k + 1),
       (if h : i < n then (y ⟨i, h⟩ - y (σ ⟨i, h⟩)) else 0) := by
@@ -535,7 +535,7 @@ lemma rearr_upper {n : ℕ} (x y : Fin n → ℝ) (hx : Antitone x) (hy : Antito
       rw [Finset.sum_range]
       apply Finset.sum_congr rfl
       intro i _
-      simp only [dif_pos (lt_of_lt_of_le i.isLt hk)]
+      simp only [dite_eq_left (lt_of_lt_of_le i.isLt hk)]
     rw [e1, Finset.sum_sub_distrib, sub_nonneg]
     let e : Fin (k + 1) ↪ Fin n := ⟨fun i => σ ⟨i.val, lt_of_lt_of_le i.isLt hk⟩, by
       intro a b hab
@@ -557,7 +557,7 @@ lemma rearr_upper {n : ℕ} (x y : Fin n → ℝ) (hx : Antitone x) (hy : Antito
     rw [Finset.sum_range]
     apply Finset.sum_congr rfl
     intro i _
-    simp only [dif_pos i.isLt, Fin.eta i i.isLt]
+    simp only [dite_eq_left i.isLt, Fin.eta i i.isLt]
   have hab2 : 0 ≤ ∑ i : Fin n, x i * (y i - y (σ i)) := by
     rw [← hconv]
     exact hab
@@ -576,14 +576,14 @@ lemma rearr_lower {n : ℕ} (x y : Fin n → ℝ) (hx : Antitone x) (hy : Antito
       rw [Finset.sum_range]
       apply Finset.sum_congr rfl
       intro i _
-      simp only [dif_pos i.isLt, Fin.eta i i.isLt]
+      simp only [dite_eq_left i.isLt, Fin.eta i i.isLt]
     rw [e1, Finset.sum_sub_distrib, Equiv.sum_comp σ y]
     have hrev : (∑ i : Fin n, y (Fin.rev i)) = ∑ i : Fin n, y i := Equiv.sum_comp Fin.revPerm y
     rw [hrev, sub_self]
   have hxd : ∀ k : ℕ, k + 1 < n → 0 ≤ (if h : k < n then x ⟨k, h⟩ else 0) -
       (if h : k + 1 < n then x ⟨k + 1, h⟩ else 0) := by
     intro k hk
-    rw [dif_pos (by omega : k < n), dif_pos hk]
+    rw [dite_eq_left (by omega : k < n), dite_eq_left hk]
     exact sub_nonneg.2 (hx (by rw [Fin.le_def]; exact Nat.le_succ k))
   have hZ : ∀ k : ℕ, k < n → 0 ≤ ∑ i ∈ Finset.range (k + 1),
       (if h : i < n then (y (σ ⟨i, h⟩) - y (Fin.rev ⟨i, h⟩)) else 0) := by
@@ -594,7 +594,7 @@ lemma rearr_lower {n : ℕ} (x y : Fin n → ℝ) (hx : Antitone x) (hy : Antito
       rw [Finset.sum_range]
       apply Finset.sum_congr rfl
       intro i _
-      simp only [dif_pos (lt_of_lt_of_le i.isLt hk)]
+      simp only [dite_eq_left (lt_of_lt_of_le i.isLt hk)]
     rw [e1, Finset.sum_sub_distrib, sub_nonneg]
     let e : Fin (k + 1) ↪ Fin n := ⟨fun i => σ ⟨i.val, lt_of_lt_of_le i.isLt hk⟩, by
       intro a b hab
@@ -616,7 +616,7 @@ lemma rearr_lower {n : ℕ} (x y : Fin n → ℝ) (hx : Antitone x) (hy : Antito
     rw [Finset.sum_range]
     apply Finset.sum_congr rfl
     intro i _
-    simp only [dif_pos i.isLt, Fin.eta i i.isLt]
+    simp only [dite_eq_left i.isLt, Fin.eta i i.isLt]
   have hab2 : 0 ≤ ∑ i : Fin n, x i * (y (σ i) - y (Fin.rev i)) := by
     rw [← hconv]
     exact hab

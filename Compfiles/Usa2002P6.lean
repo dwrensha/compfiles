@@ -427,14 +427,14 @@ theorem mem_patRowTearing {n i : ℕ} {s : Finset (ℕ × ℕ)} (hs : s ∈ patR
   rcases hs with (⟨k, ⟨hk1, hk2⟩, rfl⟩ | hs) | hs
   · exact Or.inl ⟨k, hk1, hk2, rfl⟩
   · by_cases h3 : 3 ≤ phase i
-    · rw [if_pos h3] at hs
+    · rw [ite_eq_left h3] at hs
       exact Or.inr (Or.inl ⟨h3, Finset.mem_singleton.mp hs⟩)
-    · rw [if_neg h3] at hs
+    · rw [ite_eq_right h3] at hs
       exact absurd hs (Finset.notMem_empty _)
   · by_cases h3 : 3 ≤ (n + 2 - phase i) % 5
-    · rw [if_pos h3] at hs
+    · rw [ite_eq_left h3] at hs
       exact Or.inr (Or.inr ⟨h3, Finset.mem_singleton.mp hs⟩)
-    · rw [if_neg h3] at hs
+    · rw [ite_eq_right h3] at hs
       exact absurd hs (Finset.notMem_empty _)
 
 /-- Every block of row `i` of the pattern lies entirely within row `i`. -/
@@ -495,7 +495,7 @@ theorem cov_covered {n i j : ℕ} (hn : 6 ≤ n) (hi : i < n) (hj : j < n) (h : 
   · -- the extra left block covers the cell
     refine ⟨hblock i 0, ?_, by rw [mem_hblock]; omega⟩
     refine Finset.mem_union.mpr (Or.inl (Finset.mem_union.mpr (Or.inr ?_)))
-    rw [if_pos h3]
+    rw [ite_eq_left h3]
     exact Finset.mem_singleton_self _
   · -- a pattern block covers the cell
     refine ⟨hblock i (phase i + 5 * ((j - phase i) / 5)), ?_, by rw [mem_hblock]; omega⟩
@@ -506,7 +506,7 @@ theorem cov_covered {n i j : ℕ} (hn : 6 ≤ n) (hi : i < n) (hj : j < n) (h : 
   · -- the extra right block covers the cell
     refine ⟨hblock i (n - 3), ?_, by rw [mem_hblock]; omega⟩
     refine Finset.mem_union.mpr (Or.inr ?_)
-    rw [if_pos h3]
+    rw [ite_eq_left h3]
     exact Finset.mem_singleton_self _
 
 /-- Every three consecutive cells of a row of the sheet contain a torn-out cell. -/

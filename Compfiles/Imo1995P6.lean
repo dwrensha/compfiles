@@ -39,13 +39,13 @@ def shiftSet (p : ℕ) (A : Finset ℕ) : Finset ℕ := A.image (shift p)
 
 theorem shiftSet_eq (p : ℕ) (A : Finset ℕ) : shiftSet p A = A.image (shift p) := rfl
 
-theorem shift_of_mem {p x : ℕ} (hx : x ∈ Finset.Icc 1 p) : shift p x = x % p + 1 := if_pos hx
+theorem shift_of_mem {p x : ℕ} (hx : x ∈ Finset.Icc 1 p) : shift p x = x % p + 1 := ite_eq_left hx
 
-theorem shift_of_not_mem {p x : ℕ} (hx : x ∉ Finset.Icc 1 p) : shift p x = x := if_neg hx
+theorem shift_of_not_mem {p x : ℕ} (hx : x ∉ Finset.Icc 1 p) : shift p x = x := ite_eq_right hx
 
 theorem shift_mem_Icc {p x : ℕ} (hp : 0 < p) (hx : x ∈ Finset.Icc 1 p) :
     shift p x ∈ Finset.Icc 1 p := by
-  have h : shift p x = x % p + 1 := if_pos hx
+  have h : shift p x = x % p + 1 := ite_eq_left hx
   rw [Finset.mem_Icc] at hx ⊢
   rw [h]
   have hlt := Nat.mod_lt x hp
@@ -63,8 +63,8 @@ theorem shift_mem_iff {p x : ℕ} (hp : 0 < p) :
 theorem shift_injective {p : ℕ} (hp : 0 < p) : Function.Injective (shift p) := by
   intro x y hxy
   by_cases hx : x ∈ Finset.Icc 1 p <;> by_cases hy : y ∈ Finset.Icc 1 p
-  · have hxp : shift p x = x % p + 1 := if_pos hx
-    have hyp : shift p y = y % p + 1 := if_pos hy
+  · have hxp : shift p x = x % p + 1 := ite_eq_left hx
+    have hyp : shift p y = y % p + 1 := ite_eq_left hy
     rw [hxp, hyp] at hxy
     have hmod : x % p = y % p := by omega
     rw [Finset.mem_Icc] at hx hy
@@ -81,8 +81,8 @@ theorem shift_injective {p : ℕ} (hp : 0 < p) : Function.Injective (shift p) :=
       · have hxm : x % p = x := Nat.mod_eq_of_lt (by omega)
         have hym : y % p = y := Nat.mod_eq_of_lt (by omega)
         omega
-  · have hxp : shift p x = x % p + 1 := if_pos hx
-    have hyp : shift p y = y := if_neg hy
+  · have hxp : shift p x = x % p + 1 := ite_eq_left hx
+    have hyp : shift p y = y := ite_eq_right hy
     rw [hxp, hyp] at hxy
     have hxI : x % p + 1 ∈ Finset.Icc 1 p := by
       rw [Finset.mem_Icc] at hx ⊢
@@ -90,8 +90,8 @@ theorem shift_injective {p : ℕ} (hp : 0 < p) : Function.Injective (shift p) :=
       omega
     rw [hxy] at hxI
     exact absurd hxI hy
-  · have hxp : shift p x = x := if_neg hx
-    have hyp : shift p y = y % p + 1 := if_pos hy
+  · have hxp : shift p x = x := ite_eq_right hx
+    have hyp : shift p y = y % p + 1 := ite_eq_left hy
     rw [hxp, hyp] at hxy
     have hyI : y % p + 1 ∈ Finset.Icc 1 p := by
       rw [Finset.mem_Icc] at hy ⊢
@@ -99,8 +99,8 @@ theorem shift_injective {p : ℕ} (hp : 0 < p) : Function.Injective (shift p) :=
       omega
     rw [← hxy] at hyI
     exact absurd hyI hx
-  · have hxp : shift p x = x := if_neg hx
-    have hyp : shift p y = y := if_neg hy
+  · have hxp : shift p x = x := ite_eq_right hx
+    have hyp : shift p y = y := ite_eq_right hy
     rw [hxp, hyp] at hxy
     exact hxy
 
@@ -117,7 +117,7 @@ theorem shift_iterate_mem_Icc {p : ℕ} (hp : 0 < p) {x : ℕ} (hx : x ∈ Finse
       have hlt := Nat.mod_lt (x - 1 + k) hp
       omega
     rw [Function.iterate_succ_apply', ih]
-    have h : shift p ((x - 1 + k) % p + 1) = ((x - 1 + k) % p + 1) % p + 1 := if_pos hmem
+    have h : shift p ((x - 1 + k) % p + 1) = ((x - 1 + k) % p + 1) % p + 1 := ite_eq_left hmem
     have hmod : ∀ a : ℕ, (a % p + 1) % p = (a + 1) % p := by
       intro a
       have e : a + 1 = a % p + 1 + p * (a / p) := by
@@ -132,7 +132,7 @@ theorem shift_iterate_not_mem {p : ℕ} {x : ℕ} (hx : x ∉ Finset.Icc 1 p) (k
     (shift p)^[k] x = x := by
   induction k with
   | zero => rfl
-  | succ k ih => rw [Function.iterate_succ_apply', ih]; exact if_neg hx
+  | succ k ih => rw [Function.iterate_succ_apply', ih]; exact ite_eq_right hx
 
 theorem shift_iterate_mem_Icc' {p : ℕ} (hp : 0 < p) {x : ℕ} (hx : x ∈ Finset.Icc 1 p) (k : ℕ) :
     (shift p)^[k] x ∈ Finset.Icc 1 p := by
@@ -170,9 +170,9 @@ theorem sum_shiftSet {p : ℕ} (hp : 0 < p) (A : Finset ℕ) :
   rw [shiftSet_eq, Finset.sum_image (fun x _ y _ h ↦ shift_injective hp h),
     ← Finset.sum_filter_add_sum_filter_not A (· ∈ Finset.Icc 1 p) (shift p)]
   have hL : ∀ x ∈ A.filter (· ∈ Finset.Icc 1 p), shift p x = x % p + 1 :=
-    fun x hx ↦ if_pos (Finset.mem_filter.1 hx).2
+    fun x hx ↦ ite_eq_left (Finset.mem_filter.1 hx).2
   have hH : ∀ x ∈ A.filter (· ∉ Finset.Icc 1 p), shift p x = x :=
-    fun x hx ↦ if_neg (Finset.mem_filter.1 hx).2
+    fun x hx ↦ ite_eq_right (Finset.mem_filter.1 hx).2
   rw [Finset.sum_congr rfl hL, Finset.sum_congr rfl hH]
   have h1 : (∑ x ∈ A.filter (· ∈ Finset.Icc 1 p), (x % p + 1)) ≡
       ∑ x ∈ A.filter (· ∈ Finset.Icc 1 p), x + (A.filter (· ∈ Finset.Icc 1 p)).card [MOD p] := by

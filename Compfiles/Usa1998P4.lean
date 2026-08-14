@@ -364,7 +364,7 @@ lemma quiet_subset (c : ZMod 2) :
     rw [show i = ⟨98, by norm_num⟩ from Fin.ext hi98,
         show j = ⟨98, by norm_num⟩ from Fin.ext hj98]
     rcases hc01 c with hc | hc <;> subst hc
-    · rw [quietCorners, if_pos rfl]
+    · rw [quietCorners, ite_eq_left rfl]
       exact Finset.mem_insert_of_mem (Finset.mem_singleton_self _)
     · exact absurd hp (by decide)
   -- left edge: i = 0, 0 < j < 98
@@ -384,7 +384,7 @@ lemma quiet_subset (c : ZMod 2) :
         show j = ⟨98, by norm_num⟩ from Fin.ext hj98]
     rcases hc01 c with hc | hc <;> subst hc
     · exact absurd hp (by decide)
-    · rw [quietCorners, if_neg (by decide)]
+    · rw [quietCorners, ite_eq_right (by decide)]
       exact Finset.mem_insert_self _ _
   -- bottom edge: 0 < i < 98, j = 0
   · exfalso
@@ -403,7 +403,7 @@ lemma quiet_subset (c : ZMod 2) :
         show j = ⟨0, by norm_num⟩ from Fin.ext hj0]
     rcases hc01 c with hc | hc <;> subst hc
     · exact absurd hp (by decide)
-    · rw [quietCorners, if_neg (by decide)]
+    · rw [quietCorners, ite_eq_right (by decide)]
       exact Finset.mem_insert_of_mem (Finset.mem_singleton_self _)
   -- corner (0, 0)
   · have hi0 : i.val = 0 := by omega
@@ -413,7 +413,7 @@ lemma quiet_subset (c : ZMod 2) :
     rw [show i = ⟨0, by norm_num⟩ from Fin.ext hi0,
         show j = ⟨0, by norm_num⟩ from Fin.ext hj0]
     rcases hc01 c with hc | hc <;> subst hc
-    · rw [quietCorners, if_pos rfl]
+    · rw [quietCorners, ite_eq_left rfl]
       exact Finset.mem_insert_self _ _
     · exact absurd hp (by decide)
 
@@ -473,21 +473,21 @@ lemma sum_ite_eq_double (x n : ℕ) (hx : x < 2 * n) :
       = if Even x then 1 else 0 := by
   by_cases hev : Even x
   · obtain ⟨m, hm⟩ := hev
-    rw [if_pos ⟨m, hm⟩, Finset.sum_eq_single m]
-    · rw [if_pos (by lia)]
+    rw [ite_eq_left ⟨m, hm⟩, Finset.sum_eq_single m]
+    · rw [ite_eq_left (by lia)]
     · intro b _ hb
-      rw [if_neg (by lia)]
+      rw [ite_eq_right (by lia)]
     · intro hm'
       exact absurd (Finset.mem_range.mpr (by lia)) hm'
-  · rw [if_neg hev, Finset.sum_eq_zero]
+  · rw [ite_eq_right hev, Finset.sum_eq_zero]
     intro k _
-    rw [if_neg (fun h ↦ hev ⟨k, by lia⟩)]
+    rw [ite_eq_right (fun h ↦ hev ⟨k, by lia⟩)]
 
 lemma natCast_add_ite_even (m : ℕ) :
     ((m : ZMod 2) + if Even m then 1 else 0) = 1 := by
   by_cases h : Even m
-  · rw [if_pos h, ZMod.natCast_eq_zero_iff_even.mpr h, zero_add]
-  · rw [if_neg h, ZMod.natCast_eq_one_iff_odd.mpr (Nat.not_even_iff_odd.mp h), add_zero]
+  · rw [ite_eq_left h, ZMod.natCast_eq_zero_iff_even.mpr h, zero_add]
+  · rw [ite_eq_right h, ZMod.natCast_eq_one_iff_odd.mpr (Nat.not_even_iff_odd.mp h), add_zero]
 
 lemma construction_makes_zero (s : chessboard) :
     (((List.range 49).map colRect ++ (List.range 49).map rowRect).foldl

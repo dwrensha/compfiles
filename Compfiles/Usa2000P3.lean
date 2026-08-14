@@ -483,7 +483,7 @@ lemma fewestWays_rec (A B C : ℕ) (h : 0 < A + B + C) :
         have e : 3 * A * B = 2 * B * (3 * B) := by rw [← hL]; exact hh.2
         have hB : 0 < B := by lia
         nlinarith only [e, hA2, hB]
-      rw [eLHS, if_neg c3f]
+      rw [eLHS, ite_eq_right c3f]
       lia
     · replace h3 : ¬ (C = 3 * B ∧ A ≤ 2 * B) := by lia
       clear h2
@@ -507,10 +507,10 @@ lemma fewestWays_rec (A B C : ℕ) (h : 0 < A + B + C) :
           have e : 3 * A * B = A * C := hh.2
           nlinarith only [e, hC3, hA']
         have c3t : 3 * A * B = 2 * B * C := by rw [hAC]; ring
-        rw [if_neg c1f]
+        rw [ite_eq_right c1f]
         rcases Nat.eq_zero_or_pos B with rfl | hB'
-        · rw [if_neg (fun hh => absurd hh.1 (lt_irrefl 0)), if_pos ⟨hC', c3t⟩, fewestWays_a_zero_c]
-        · rw [if_pos ⟨hB', True.intro⟩, if_pos ⟨hC', c3t⟩]
+        · rw [ite_eq_right (fun hh => absurd hh.1 (lt_irrefl 0)), ite_eq_left ⟨hC', c3t⟩, fewestWays_a_zero_c]
+        · rw [ite_eq_left ⟨hB', True.intro⟩, ite_eq_left ⟨hC', c3t⟩]
           lia
       · by_cases h5 : A = 2 * B ∧ C < 3 * B
         · -- A = 2B, C < 3B: value C + 1
@@ -529,10 +529,10 @@ lemma fewestWays_rec (A B C : ℕ) (h : 0 < A + B + C) :
             intro hh
             have e : 2 * B * C = 3 * A * B := by rw [← hL]; exact hh.2
             nlinarith only [e, hA, hC3, hB]
-          rw [eLHS, if_pos ⟨hA', c1t⟩, if_neg c2f]
+          rw [eLHS, ite_eq_left ⟨hA', c1t⟩, ite_eq_right c2f]
           rcases Nat.eq_zero_or_pos C with rfl | hC'
-          · rw [if_neg (fun hh => absurd hh.1 (lt_irrefl 0)), fewestWays_a_b_zero]
-          · rw [if_pos ⟨hC', hL⟩]
+          · rw [ite_eq_right (fun hh => absurd hh.1 (lt_irrefl 0)), fewestWays_a_b_zero]
+          · rw [ite_eq_left ⟨hC', hL⟩]
             lia
         · -- else branch: value 1
           have eLHS : fewestWays A B C = 1 := by lia
@@ -544,16 +544,16 @@ lemma fewestWays_rec (A B C : ℕ) (h : 0 < A + B + C) :
             · have hL0 : lowestScore 0 B C = 0 := lowestScore_zero_b_c _ _
               rcases Nat.eq_zero_or_pos B with rfl | hB'
               · have hC' : 0 < C := by lia
-                rw [eLHS, if_neg (fun hh => absurd hh.1 (lt_irrefl 0)),
-                  if_neg (fun hh => absurd hh.1 (lt_irrefl 0)),
-                  if_pos ⟨hC', by rw [hL0]; ring⟩,
+                rw [eLHS, ite_eq_right (fun hh => absurd hh.1 (lt_irrefl 0)),
+                  ite_eq_right (fun hh => absurd hh.1 (lt_irrefl 0)),
+                  ite_eq_left ⟨hC', by rw [hL0]; ring⟩,
                   fewestWays_a_zero_c]
               · have c3f : ¬ (0 < C ∧ lowestScore 0 B C = 2 * B * C) := by
                   intro hh
                   rw [hL0] at hh
                   nlinarith only [hh.2, hB', hh.1]
-                rw [eLHS, if_neg (fun hh => absurd hh.1 (lt_irrefl 0)),
-                  if_pos ⟨hB', by rw [hL0]; ring⟩, if_neg c3f, fewestWays_zero_b_c]
+                rw [eLHS, ite_eq_right (fun hh => absurd hh.1 (lt_irrefl 0)),
+                  ite_eq_left ⟨hB', by rw [hL0]; ring⟩, ite_eq_right c3f, fewestWays_zero_b_c]
             · have c2f : ¬ (0 < B ∧ lowestScore A B C = 3 * A * B) := by
                 intro hh
                 have e : A * C = 3 * A * B := by rw [← hL]; exact hh.2
@@ -588,7 +588,7 @@ lemma fewestWays_rec (A B C : ℕ) (h : 0 < A + B + C) :
                   nlinarith only [f3, hA22, hC0']
                 · have hA21 : A = 2 * B + 1 := by lia
                   nlinarith only [f3, hA21, hC0']
-              rw [eLHS, if_pos ⟨hA', hL⟩, if_neg c2f, if_neg c3f, wA]
+              rw [eLHS, ite_eq_left ⟨hA', hL⟩, ite_eq_right c2f, ite_eq_right c3f, wA]
           · -- L = 3 * A * B
             have f1 : 3 * A * B ≤ A * C := by rw [← hL]; exact lowestScore_le_ac A B C
             have f3 : 3 * A * B ≤ 2 * B * C := by rw [← hL]; exact lowestScore_le_bc A B C
@@ -597,16 +597,16 @@ lemma fewestWays_rec (A B C : ℕ) (h : 0 < A + B + C) :
               rcases Nat.eq_zero_or_pos C with rfl | hC'
               · have hA' : 0 < A := by lia
                 have wA : fewestWays (A - 1) 0 0 = 1 := fewestWays_a_zero_c _ _
-                rw [eLHS, if_pos ⟨hA', by rw [hL0]; ring⟩,
-                  if_neg (fun hh => absurd hh.1 (lt_irrefl 0)),
-                  if_neg (fun hh => absurd hh.1 (lt_irrefl 0)), wA]
+                rw [eLHS, ite_eq_left ⟨hA', by rw [hL0]; ring⟩,
+                  ite_eq_right (fun hh => absurd hh.1 (lt_irrefl 0)),
+                  ite_eq_right (fun hh => absurd hh.1 (lt_irrefl 0)), wA]
               · have c1f : ¬ (0 < A ∧ lowestScore A 0 C = A * C) := by
                   intro hh
                   rw [hL0] at hh
                   nlinarith only [hh.2, hh.1, hC']
                 have wC : fewestWays A 0 (C - 1) = 1 := fewestWays_a_zero_c _ _
-                rw [eLHS, if_neg c1f, if_neg (fun hh => absurd hh.1 (lt_irrefl 0)),
-                  if_pos ⟨hC', by rw [hL0]; ring⟩, wC]
+                rw [eLHS, ite_eq_right c1f, ite_eq_right (fun hh => absurd hh.1 (lt_irrefl 0)),
+                  ite_eq_left ⟨hC', by rw [hL0]; ring⟩, wC]
             · have c1f : ¬ (0 < A ∧ lowestScore A B C = A * C) := by
                 intro hh
                 have e : 3 * A * B = A * C := by rw [← hL]; exact hh.2
@@ -646,7 +646,7 @@ lemma fewestWays_rec (A B C : ℕ) (h : 0 < A + B + C) :
                   lia
                 · have h31 : 3 * B ≤ C := by nlinarith only [f1, hA0']
                   lia
-              rw [eLHS, if_neg c1f, if_pos ⟨hB', hL⟩, if_neg c3f, wB]
+              rw [eLHS, ite_eq_right c1f, ite_eq_left ⟨hB', hL⟩, ite_eq_right c3f, wB]
           · -- L = 2 * B * C
             have f1 : 2 * B * C ≤ A * C := by rw [← hL]; exact lowestScore_le_ac A B C
             have f2 : 2 * B * C ≤ 3 * A * B := by rw [← hL]; exact lowestScore_le_ab A B C
@@ -654,17 +654,17 @@ lemma fewestWays_rec (A B C : ℕ) (h : 0 < A + B + C) :
             · have hL0 : lowestScore A B 0 = 0 := lowestScore_a_b_zero _ _
               rcases Nat.eq_zero_or_pos A with rfl | hA'
               · have hB' : 0 < B := by lia
-                rw [eLHS, if_neg (fun hh => absurd hh.1 (lt_irrefl 0)),
-                  if_pos ⟨hB', by rw [hL0]; ring⟩,
-                  if_neg (fun hh => absurd hh.1 (lt_irrefl 0)),
+                rw [eLHS, ite_eq_right (fun hh => absurd hh.1 (lt_irrefl 0)),
+                  ite_eq_left ⟨hB', by rw [hL0]; ring⟩,
+                  ite_eq_right (fun hh => absurd hh.1 (lt_irrefl 0)),
                   fewestWays_zero_b_c]
               · have c2f : ¬ (0 < B ∧ lowestScore A B 0 = 3 * A * B) := by
                   intro hh
                   rw [hL0] at hh
                   nlinarith only [hh.2, hh.1, hA']
                 have wA : fewestWays (A - 1) B 0 = 1 := by lia
-                rw [eLHS, if_pos ⟨hA', by rw [hL0]; ring⟩, if_neg c2f,
-                  if_neg (fun hh => absurd hh.1 (lt_irrefl 0)), wA]
+                rw [eLHS, ite_eq_left ⟨hA', by rw [hL0]; ring⟩, ite_eq_right c2f,
+                  ite_eq_right (fun hh => absurd hh.1 (lt_irrefl 0)), wA]
             · have c1f : ¬ (0 < A ∧ lowestScore A B C = A * C) := by
                 intro hh
                 have e : 2 * B * C = A * C := by rw [← hL]; exact hh.2
@@ -709,7 +709,7 @@ lemma fewestWays_rec (A B C : ℕ) (h : 0 < A + B + C) :
                     nlinarith only [f2, hAC2, hB0']
                   lia
                 · lia
-              rw [eLHS, if_neg c1f, if_neg c2f, if_pos ⟨hC', hL⟩, wC]
+              rw [eLHS, ite_eq_right c1f, ite_eq_right c2f, ite_eq_left ⟨hC', hL⟩, wC]
 
 
 -- Score computations.
@@ -825,7 +825,7 @@ lemma card_optPlays_head_blue (A B C : ℕ) :
       obtain ⟨t, rfl⟩ := eq_cons_of_head?_eq_some hl.2
       have hc := (mem_plays.mp hl.1.1).1
       simp at hc
-    rw [hempty, Finset.card_empty, if_neg]
+    rw [hempty, Finset.card_empty, ite_eq_right]
     rintro ⟨h, -⟩
     exact (Nat.lt_irrefl 0) h
   · obtain ⟨A', rfl⟩ : ∃ k, A = k + 1 := ⟨A - 1, by omega⟩
@@ -860,7 +860,7 @@ lemma card_optPlays_head_blue (A B C : ℕ) :
           · rw [List.count_cons_of_ne (by decide : Card.blue ≠ Card.white), hw]
           · rw [score_cons_blue, hw, ht.2, htight]
       rw [himg, Finset.card_image_of_injective _ (fun x y hxy ↦ (List.cons.inj hxy).2),
-        if_pos ⟨Nat.succ_pos A', (tight_blue A' B C).mp htight⟩, Nat.add_sub_cancel]
+        ite_eq_left ⟨Nat.succ_pos A', (tight_blue A' B C).mp htight⟩, Nat.add_sub_cancel]
     · have hempty : (optPlays (A' + 1) B C).filter (fun l ↦ l.head? = some .blue) = ∅ := by
         rw [Finset.eq_empty_iff_forall_notMem]
         intro l hl
@@ -878,7 +878,7 @@ lemma card_optPlays_head_blue (A B C : ℕ) :
         have e := hl.1.2
         rw [score_cons_blue, hw] at e
         omega
-      rw [hempty, Finset.card_empty, if_neg]
+      rw [hempty, Finset.card_empty, ite_eq_right]
       rintro ⟨-, h2⟩
       exact htight ((tight_blue A' B C).mpr h2)
 
@@ -894,7 +894,7 @@ lemma card_optPlays_head_red (A B C : ℕ) :
       obtain ⟨t, rfl⟩ := eq_cons_of_head?_eq_some hl.2
       have hc := (mem_plays.mp hl.1.1).2.1
       simp at hc
-    rw [hempty, Finset.card_empty, if_neg]
+    rw [hempty, Finset.card_empty, ite_eq_right]
     rintro ⟨h, -⟩
     exact (Nat.lt_irrefl 0) h
   · obtain ⟨B', rfl⟩ : ∃ k, B = k + 1 := ⟨B - 1, by omega⟩
@@ -929,7 +929,7 @@ lemma card_optPlays_head_red (A B C : ℕ) :
           · rw [List.count_cons_of_ne (by decide : Card.red ≠ Card.white), hw]
           · rw [score_cons_red, hb, ht.2, htight]
       rw [himg, Finset.card_image_of_injective _ (fun x y hxy ↦ (List.cons.inj hxy).2),
-        if_pos ⟨Nat.succ_pos B', (tight_red A B' C).mp htight⟩, Nat.add_sub_cancel]
+        ite_eq_left ⟨Nat.succ_pos B', (tight_red A B' C).mp htight⟩, Nat.add_sub_cancel]
     · have hempty : (optPlays A (B' + 1) C).filter (fun l ↦ l.head? = some .red) = ∅ := by
         rw [Finset.eq_empty_iff_forall_notMem]
         intro l hl
@@ -947,7 +947,7 @@ lemma card_optPlays_head_red (A B C : ℕ) :
         have e := hl.1.2
         rw [score_cons_red, hb] at e
         omega
-      rw [hempty, Finset.card_empty, if_neg]
+      rw [hempty, Finset.card_empty, ite_eq_right]
       rintro ⟨-, h2⟩
       exact htight ((tight_red A B' C).mpr h2)
 
@@ -963,7 +963,7 @@ lemma card_optPlays_head_white (A B C : ℕ) :
       obtain ⟨t, rfl⟩ := eq_cons_of_head?_eq_some hl.2
       have hc := (mem_plays.mp hl.1.1).2.2
       simp at hc
-    rw [hempty, Finset.card_empty, if_neg]
+    rw [hempty, Finset.card_empty, ite_eq_right]
     rintro ⟨h, -⟩
     exact (Nat.lt_irrefl 0) h
   · obtain ⟨C', rfl⟩ : ∃ k, C = k + 1 := ⟨C - 1, by omega⟩
@@ -998,7 +998,7 @@ lemma card_optPlays_head_white (A B C : ℕ) :
           · rw [List.count_cons_self, hw]
           · rw [score_cons_white, hr, ht.2, htight]
       rw [himg, Finset.card_image_of_injective _ (fun x y hxy ↦ (List.cons.inj hxy).2),
-        if_pos ⟨Nat.succ_pos C', (tight_white A B C').mp htight⟩, Nat.add_sub_cancel]
+        ite_eq_left ⟨Nat.succ_pos C', (tight_white A B C').mp htight⟩, Nat.add_sub_cancel]
     · have hempty : (optPlays A B (C' + 1)).filter (fun l ↦ l.head? = some .white) = ∅ := by
         rw [Finset.eq_empty_iff_forall_notMem]
         intro l hl
@@ -1016,7 +1016,7 @@ lemma card_optPlays_head_white (A B C : ℕ) :
         have e := hl.1.2
         rw [score_cons_white, hr] at e
         omega
-      rw [hempty, Finset.card_empty, if_neg]
+      rw [hempty, Finset.card_empty, ite_eq_right]
       rintro ⟨-, h2⟩
       exact htight ((tight_white A B C').mpr h2)
 
@@ -1121,25 +1121,25 @@ lemma optPlays_card (A B C : ℕ) : (optPlays A B C).card = fewestWays A B C := 
           else 0) =
           (if 0 < a ∧ lowestScore a b c = a * c then fewestWays (a - 1) b c else 0) := by
         by_cases h : 0 < a ∧ lowestScore a b c = a * c
-        · rw [if_pos h, if_pos h]
+        · rw [ite_eq_left h, ite_eq_left h]
           exact IH (a - 1) b c (by omega)
-        · rw [if_neg h, if_neg h]
+        · rw [ite_eq_right h, ite_eq_right h]
       have e2 : (if 0 < b ∧ lowestScore a b c = 3 * a * b then (optPlays a (b - 1) c).card
           else 0) =
           (if 0 < b ∧ lowestScore a b c = 3 * a * b then fewestWays a (b - 1) c
           else 0) := by
         by_cases h : 0 < b ∧ lowestScore a b c = 3 * a * b
-        · rw [if_pos h, if_pos h]
+        · rw [ite_eq_left h, ite_eq_left h]
           exact IH a (b - 1) c (by omega)
-        · rw [if_neg h, if_neg h]
+        · rw [ite_eq_right h, ite_eq_right h]
       have e3 : (if 0 < c ∧ lowestScore a b c = 2 * b * c then (optPlays a b (c - 1)).card
           else 0) =
           (if 0 < c ∧ lowestScore a b c = 2 * b * c then fewestWays a b (c - 1)
           else 0) := by
         by_cases h : 0 < c ∧ lowestScore a b c = 2 * b * c
-        · rw [if_pos h, if_pos h]
+        · rw [ite_eq_left h, ite_eq_left h]
           exact IH a b (c - 1) (by omega)
-        · rw [if_neg h, if_neg h]
+        · rw [ite_eq_right h, ite_eq_right h]
       rw [e1, e2, e3]
 
 lemma canonicalPlay_mem_plays (A B C : ℕ) : canonicalPlay A B C ∈ plays A B C :=

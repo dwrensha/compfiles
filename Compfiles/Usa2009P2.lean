@@ -386,10 +386,10 @@ problem usa2009_p2 (n : ℕ) (hn : 0 < n) :
       rw [Finset.card_union_of_disjoint hdisj, Int.card_Icc, Int.card_Icc]
       simp only [answer]
       by_cases hev : Even n
-      · rw [if_pos hev]
+      · rw [ite_eq_left hev]
         obtain ⟨t, ht⟩ := hev
         omega
-      · rw [if_neg hev]
+      · rw [ite_eq_right hev]
         have hoddn : n % 2 = 1 := by
           rcases Nat.even_or_odd n with h | h
           · exact absurd h hev
@@ -404,7 +404,7 @@ problem usa2009_p2 (n : ℕ) (hn : 0 < n) :
       rw [hn2] at hsub
       have hle := card_le_even m A hsub hgood
       simp only [answer]
-      rw [if_pos (show Even (m + m) from ⟨m, rfl⟩)]
+      rw [ite_eq_left (show Even (m + m) from ⟨m, rfl⟩)]
       omega
     · obtain ⟨m, hm⟩ := hodd
       subst hm
@@ -417,7 +417,7 @@ problem usa2009_p2 (n : ℕ) (hn : 0 < n) :
         omega
       have hle := card_le_even (m + 1) A hsub' hgood
       simp only [answer]
-      rw [if_neg (show ¬Even (2 * m + 1) by
+      rw [ite_eq_right (show ¬Even (2 * m + 1) by
         rw [Nat.not_even_iff_odd]; exact ⟨m, rfl⟩)]
       omega
 

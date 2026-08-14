@@ -53,7 +53,7 @@ snip begin
 lemma nthDiv_eq (n i : ℕ) (h : i < n.divisors.card) :
     nthDiv n i = n.divisors.orderEmbOfFin rfl ⟨i, h⟩ := by
   unfold nthDiv
-  rw [dif_pos h]
+  rw [dite_eq_left h]
 
 lemma pairSum_eq (n : ℕ) :
     pairSum n = ∑ i ∈ Finset.range (n.divisors.card - 1), nthDiv n i * nthDiv n (i + 1) :=

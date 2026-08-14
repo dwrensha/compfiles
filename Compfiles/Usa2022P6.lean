@@ -713,9 +713,9 @@ lemma Cover.merge {G G' : SimpleGraph V} [DecidableRel G.Adj] (cov : Cover G G')
     · rw [hℓ']
       simp only [heG', ↓reduceIte]
       by_cases hS' : cov.ℓ e ∈ S
-      · rw [if_pos hS', hC']
+      · rw [ite_eq_left hS', hC']
         exact Finset.mem_insert_self _ _
-      · rw [if_neg hS', hC']
+      · rw [ite_eq_right hS', hC']
         exact Finset.mem_insert_of_mem (Finset.mem_sdiff.mpr ⟨cov.label_mem e heG', hS'⟩)
     · rw [hℓ']
       simp only [heG', ↓reduceIte, hC']
@@ -727,9 +727,9 @@ lemma Cover.merge {G G' : SimpleGraph V} [DecidableRel G.Adj] (cov : Cover G G')
       simp only [heG', ↓reduceIte]
       have hv2 := cov.label_sub e heG' v hv
       by_cases hS' : cov.ℓ e ∈ S
-      · rw [if_pos hS']
+      · rw [ite_eq_left hS']
         exact Finset.subset_biUnion_of_mem id hS' hv2
-      · rw [if_neg hS']
+      · rw [ite_eq_right hS']
         exact hv2
     · rw [hℓ']
       simp only [heG', ↓reduceIte]
@@ -754,8 +754,8 @@ lemma Cover.merge {G G' : SimpleGraph V} [DecidableRel G.Adj] (cov : Cover G G')
           refine ⟨he.1, ?_⟩
           rw [hℓ'G e he.1]
           by_cases hS' : cov.ℓ e ∈ S
-          · rw [if_pos hS']
-          · rw [if_neg hS', he.2]
+          · rw [ite_eq_left hS']
+          · rw [ite_eq_right hS', he.2]
         have hle := Finset.card_le_card hsub
         have hθ := cov.theta_bound V' hV'C
         omega
@@ -769,11 +769,11 @@ lemma Cover.merge {G G' : SimpleGraph V} [DecidableRel G.Adj] (cov : Cover G G')
             rw [hℓ'G e he] at hℓe
             by_cases hS' : cov.ℓ e ∈ S
             · exact ⟨he, hS'⟩
-            · rw [if_neg hS'] at hℓe
+            · rw [ite_eq_right hS'] at hℓe
               exact absurd (hℓe ▸ cov.label_mem e (hedge_mono e
                 (by rwa [SimpleGraph.mem_edgeFinset] at he))) hV'C
           · rintro ⟨he, hS'⟩
-            exact ⟨he, by rw [hℓ'G e he, if_pos hS']⟩
+            exact ⟨he, by rw [hℓ'G e he, ite_eq_left hS']⟩
         have hfib2 : (G.edgeFinset.filter (fun e => cov.ℓ e ∈ S)).card
             = ∑ K' ∈ S, (G.edgeFinset.filter (fun e => cov.ℓ e = K')).card := by
           exact (Finset.sum_card_fiberwise_eq_card_filter G.edgeFinset S cov.ℓ).symm
@@ -805,14 +805,14 @@ lemma Cover.merge {G G' : SimpleGraph V} [DecidableRel G.Adj] (cov : Cover G G')
         intro e he
         rw [hℓ'G e he]
         by_cases hS' : cov.ℓ e ∈ S
-        · rw [if_pos hS']
+        · rw [ite_eq_left hS']
           constructor
           · intro hKK
             exact absurd hKK (Ne.symm hKV')
           · intro hKK
             rw [hKK] at hS'
             exact absurd hS' hKS
-        · rw [if_neg hS']
+        · rw [ite_eq_right hS']
       rw [hfilter_eq]
       exact cov.theta_bound K hKC
   · -- every clique of the new cover labels some edge
@@ -820,10 +820,10 @@ lemma Cover.merge {G G' : SimpleGraph V} [DecidableRel G.Adj] (cov : Cover G G')
     rw [hC', Finset.mem_insert, Finset.mem_sdiff] at hK
     rcases hK with rfl | ⟨hK, hKS'⟩
     · exact ⟨e1, hedge_sup e1 he1E,
-        by simp only [hℓ']; rw [if_pos he1E, ← hL1, if_pos hL1S]⟩
+        by simp only [hℓ']; rw [ite_eq_left he1E, ← hL1, ite_eq_left hL1S]⟩
     · obtain ⟨e, he, hℓe⟩ := cov.assigned K hK
       exact ⟨e, hedge_sup e he,
-        by simp only [hℓ']; rw [if_pos he, if_neg (by rw [hℓe]; exact hKS'), hℓe]⟩
+        by simp only [hℓ']; rw [ite_eq_left he, ite_eq_right (by rw [hℓe]; exact hKS'), hℓe]⟩
   · -- `G' ≤ G''`
     exact le_sup_left
 

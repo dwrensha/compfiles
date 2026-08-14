@@ -152,7 +152,7 @@ problem imo1968_p3 {n : ℕ} (a b c : ℝ) (a_ne_zero : a ≠ 0) :
       ext i
       unfold x
       by_cases hh : i ∈ range (n+1)
-      · rw [if_pos hh]
+      · rw [ite_eq_left hh]
         apply claim1
         by_contra!
         have claim3 := sum_sol a b c z hz
@@ -167,7 +167,7 @@ problem imo1968_p3 {n : ℕ} (a b c : ℝ) (a_ne_zero : a ≠ 0) :
           apply (sum_neg_iff_of_nonpos fun x a ↦ claim2 (z x)).mpr
           use i
         linarith
-      rw [if_neg hh]
+      rw [ite_eq_right hh]
       apply hz.2.2 i
       by_contra!
       apply hh

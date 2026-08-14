@@ -51,7 +51,7 @@ snip begin
 
 theorem sget_lt {n : ℕ} (x : Fin n → Bool) {i : ℕ} (h : i < n) :
     sget x i = x ⟨i, h⟩ :=
-  dif_pos h
+  dite_eq_left h
 
 /-- The sequence of successive differences (XORs) of `y`. -/
 def diff {n : ℕ} (y : Fin (n + 1) → Bool) : Fin n → Bool :=
@@ -79,7 +79,7 @@ theorem buildAux_succ {n : ℕ} (x : Fin n → Bool) (c : Bool) (k : ℕ) :
 
 theorem sget_build {n : ℕ} (x : Fin n → Bool) (c : Bool) {i : ℕ} (h : i < n + 1) :
     sget (build x c) i = buildAux x c i :=
-  dif_pos h
+  dite_eq_left h
 
 theorem sget_diff_build {n : ℕ} (x : Fin n → Bool) (c : Bool) :
     ∀ i : ℕ, i < n →

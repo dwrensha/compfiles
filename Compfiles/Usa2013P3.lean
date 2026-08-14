@@ -293,7 +293,7 @@ lemma card_range_modeq (n : ℕ) :
     have hnin : n ∉ (Finset.range n).filter fun i => i % 2 = n % 2 :=
       fun h => Finset.notMem_range_self (Finset.mem_filter.1 h).1
     rw [Nat.add_mod_right, Finset.range_add_one, Finset.range_add_one,
-      Finset.filter_insert, Finset.filter_insert, if_neg (by lia), if_pos rfl,
+      Finset.filter_insert, Finset.filter_insert, ite_eq_right (by lia), ite_eq_left rfl,
       Finset.card_insert_of_notMem hnin, ih0, Nat.add_div_right n (Nat.zero_lt_succ _)]
 
 end Count
@@ -355,7 +355,7 @@ lemma card_e_true {n : ℕ} (α : Fin n → Bool) (c : Bool) :
     ((Finset.univ.filter fun i => e n i = true).filter fun i => (α i ^^ c) = true).card =
       cond c (Ecard n - qon α) (qon α) := by
   cases c
-  · simp only [cond_false]
+  · simp only [Bool.cond_false]
     rw [show (Finset.univ.filter fun i => e n i = true).filter (fun i => (α i ^^ false) = true) =
         (Finset.univ.filter fun i => e n i = true).filter (fun i => α i = true) from
       Finset.filter_congr (fun i _ => by simp)]
@@ -364,7 +364,7 @@ lemma card_e_true {n : ℕ} (α : Fin n → Bool) (c : Bool) :
         (Finset.univ.filter fun i => (α i = true) ∧ (e n i = true)) from
       Finset.filter_congr (fun i _ => and_comm)]
     rfl
-  · simp only [cond_true]
+  · simp only [Bool.cond_true]
     rw [show (Finset.univ.filter fun i => e n i = true).filter (fun i => (α i ^^ true) = true) =
         (Finset.univ.filter fun i => e n i = true).filter (fun i => α i = false) from
       Finset.filter_congr (fun i _ => by cases (α i) <;> simp)]
@@ -387,7 +387,7 @@ lemma card_e_false {n : ℕ} (α : Fin n → Bool) (c : Bool) :
     ((Finset.univ.filter fun i => e n i = false).filter fun i => (α i ^^ c) = true).card =
       cond c (Ocard n - pon α) (pon α) := by
   cases c
-  · simp only [cond_false]
+  · simp only [Bool.cond_false]
     rw [show (Finset.univ.filter fun i => e n i = false).filter (fun i => (α i ^^ false) = true) =
         (Finset.univ.filter fun i => e n i = false).filter (fun i => α i = true) from
       Finset.filter_congr (fun i _ => by simp)]
@@ -396,7 +396,7 @@ lemma card_e_false {n : ℕ} (α : Fin n → Bool) (c : Bool) :
         (Finset.univ.filter fun i => (α i = true) ∧ (e n i = false)) from
       Finset.filter_congr (fun i _ => and_comm)]
     rfl
-  · simp only [cond_true]
+  · simp only [Bool.cond_true]
     rw [show (Finset.univ.filter fun i => e n i = false).filter (fun i => (α i ^^ true) = true) =
         (Finset.univ.filter fun i => e n i = false).filter (fun i => α i = false) from
       Finset.filter_congr (fun i _ => by cases (α i) <;> simp)]

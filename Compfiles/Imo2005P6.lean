@@ -342,7 +342,7 @@ theorem pairCount_modEq {n : ℕ} {s : Fin n → Finset (Fin 6)} {c0 : Fin n}
   have hu0 : ∑ u ∈ D, (if ({u, 5} : Finset (Fin 6)) ⊆ s c0 then (1 : ℤ) else 0) = 0 := by
     apply Finset.sum_eq_zero
     intro u _
-    apply if_neg
+    apply ite_eq_right
     intro hsub
     have h5 : (5 : Fin 6) ∈ s c0 :=
       hsub (Finset.mem_insert.mpr (Or.inr (Finset.mem_singleton_self 5)))
@@ -351,7 +351,7 @@ theorem pairCount_modEq {n : ℕ} {s : Fin n → Finset (Fin 6)} {c0 : Fin n}
   have hQ1 : ∑ Q ∈ E, (if Q ⊆ s c0 then (1 : ℤ) else 0) = 3 := by
     have hQ : ∀ Q ∈ E, (if Q ⊆ s c0 then (1 : ℤ) else 0) = 1 := by
       intro Q hQm
-      apply if_pos
+      apply ite_eq_left
       rw [hc0]
       exact (Finset.mem_powersetCard.mp hQm).1.trans Finset.sdiff_subset
     rw [Finset.sum_congr rfl hQ, Finset.sum_const, hEcard]
@@ -359,7 +359,7 @@ theorem pairCount_modEq {n : ℕ} {s : Fin n → Finset (Fin 6)} {c0 : Fin n}
   have hc0' : (if P ⊆ s c0 then (1 : ℤ) else 0)
       - ∑ u ∈ D, (if ({u, 5} : Finset (Fin 6)) ⊆ s c0 then (1 : ℤ) else 0)
       - ∑ Q ∈ E, (if Q ⊆ s c0 then (1 : ℤ) else 0) = -2 := by
-    rw [if_pos (by rw [hc0]; exact hPsub), hu0, hQ1]
+    rw [ite_eq_left (by rw [hc0]; exact hPsub), hu0, hQ1]
     norm_num
   have key : (pairCount s P : ℤ)
       - ∑ u ∈ D, (pairCount s {u, 5} : ℤ) - ∑ Q ∈ E, (pairCount s Q : ℤ) ≡ 1 [ZMOD 3] := by
@@ -414,13 +414,13 @@ problem imo2005_p6 {n : ℕ} (s : Fin n → Finset (Fin 6))
         intro i
         by_cases hci : i = ⟨0, hn⟩
         · subst hci
-          rw [if_pos rfl]
+          rw [ite_eq_left rfl]
           exact exists_superset_card (by have h := hle ⟨0, hn⟩; omega) (by norm_num)
-        · rw [if_neg hci]
+        · rw [ite_eq_right hci]
           exact exists_superset_card (hle i) (by norm_num)
       choose s' hsub hcard using ext
-      exact ⟨⟨0, hn⟩, s', hsub, by rw [hcard ⟨0, hn⟩, if_pos rfl],
-        fun i hi => by rw [hcard i, if_neg hi]⟩
+      exact ⟨⟨0, hn⟩, s', hsub, by rw [hcard ⟨0, hn⟩, ite_eq_left rfl],
+        fun i hi => by rw [hcard i, ite_eq_right hi]⟩
     · -- Somebody solved five problems: everyone else gets promoted to four.
       obtain ⟨c0, hFc0⟩ := Finset.card_eq_one.mp hF1
       have hc0card : (s c0).card = 5 := by
@@ -441,11 +441,11 @@ problem imo2005_p6 {n : ℕ} (s : Fin n → Finset (Fin 6))
         intro i
         by_cases hci : i = c0
         · subst i
-          exact ⟨s c0, Finset.Subset.refl _, by rw [if_pos rfl]; exact hc0card⟩
-        · rw [if_neg hci]
+          exact ⟨s c0, Finset.Subset.refl _, by rw [ite_eq_left rfl]; exact hc0card⟩
+        · rw [ite_eq_right hci]
           exact exists_superset_card (hle i hci) (by norm_num)
       choose s' hsub hcard using ext
-      exact ⟨c0, s', hsub, by rw [hcard c0, if_pos rfl], fun i hi => by rw [hcard i, if_neg hi]⟩
+      exact ⟨c0, s', hsub, by rw [hcard c0, ite_eq_left rfl], fun i hi => by rw [hcard i, ite_eq_right hi]⟩
   -- The pair condition is preserved (and only strengthened) by the promotion.
   have pair' : ∀ p q : Fin 6, p ≠ q →
       2 * n < 5 * (Finset.univ.filter fun i => p ∈ s' i ∧ q ∈ s' i).card := by

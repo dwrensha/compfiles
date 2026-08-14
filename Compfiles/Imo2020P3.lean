@@ -202,7 +202,7 @@ lemma altCount_closed {a b : E → V} {vs : List V} {es : List E} (h : IsWalk a 
     rw [glue2, altCount_eq h hne (by omega : 0 ≤ 1) x]
     have hmod : (es.length - 1) % 2 = 1 := by rw [hm]; omega
     have hlast : (0 = (es.length - 1) % 2) ↔ False := by rw [hmod]; simp
-    simp only [hlast, and_false, if_false, add_zero]
+    simp only [hlast, and_false, ite_false, add_zero]
     cases h with
     | nil v => simp at hne
     | @cons v w e vs es hconn hw =>
@@ -457,8 +457,8 @@ lemma exists_closed_trail (a b : E → V) (U : Finset E)
         rw [mult] at hm
         have hconn : conn a b e y (if a e = y then b e else a e) := by
           by_cases hay : a e = y
-          · rw [if_pos hay]; exact Or.inl ⟨hay, rfl⟩
-          · rw [if_neg hay]
+          · rw [ite_eq_left hay]; exact Or.inl ⟨hay, rfl⟩
+          · rw [ite_eq_right hay]
             have hby : b e = y := by
               by_contra hb
               simp [hay, hb] at hm
@@ -917,10 +917,10 @@ theorem two_factor (a b : E → V) (hdeg : ∀ x, (∑ e : E, mult a b e x) = 4)
     intro e heU hnin
     rw [List.mem_toFinset] at hnin
     by_cases hre : red e
-    · rw [if_pos hre]
+    · rw [ite_eq_left hre]
       by_contra hm
       exact hnin (hedges e hm)
-    · rw [if_neg hre]
+    · rw [ite_eq_right hre]
   rw [hs1]
   have hs2 : (Tx.es.map (fun e => if red e then mult a b e x else 0)).sum =
       (Tx.es.mapIdx (fun i e => if i % 2 = 0 then mult a b e x else 0)).sum := by
@@ -975,20 +975,20 @@ def pairOf : Fin (4 * n) → Fin (2 * n) := fun j =>
 
 lemma pairOf_apeb (k : Fin (2 * n)) : pairOf (apeb k) = k := by
   show pairOf ⟨k.val, _⟩ = k
-  rw [pairOf, dif_pos k.isLt]
+  rw [pairOf, dite_eq_left k.isLt]
 
 lemma pairOf_bpeb (k : Fin (2 * n)) : pairOf (bpeb k) = k := by
   show pairOf ⟨4 * n - 1 - k.val, _⟩ = k
-  rw [pairOf, dif_neg (by omega : ¬ (4 * n - 1 - k.val) < 2 * n)]
+  rw [pairOf, dite_eq_right (by omega : ¬ (4 * n - 1 - k.val) < 2 * n)]
   exact Fin.ext (by simp; omega)
 
 lemma pairOf_mem_pair (j : Fin (4 * n)) : j = apeb (pairOf j) ∨ j = bpeb (pairOf j) := by
   by_cases hj : j.val < 2 * n
   · left
-    rw [pairOf, dif_pos hj]
+    rw [pairOf, dite_eq_left hj]
     exact Fin.ext rfl
   · right
-    rw [pairOf, dif_neg hj]
+    rw [pairOf, dite_eq_right hj]
     exact Fin.ext (by simp [bpeb]; omega)
 
 /-- The pseudograph on colors whose edges are the complementary pairs. -/
@@ -1124,10 +1124,10 @@ problem imo2020_p3 {n : ℕ} {c : Fin (4 * n) → Fin n} (h : ∀ i, #{j | c j =
       apply Finset.sum_congr rfl
       intro e _
       by_cases hr : red e
-      · rw [if_pos hr, mult, pgA, pgB]
+      · rw [ite_eq_left hr, mult, pgA, pgB]
         simp only [hr, true_and, pairOf_apeb, pairOf_bpeb,
           Function.Embedding.coeFn_mk]
-      · simp only [hr, false_and, if_false, pairOf_apeb, pairOf_bpeb, Bool.false_eq_true,
+      · simp only [hr, false_and, ite_false, pairOf_apeb, pairOf_bpeb, Bool.false_eq_true,
           Function.Embedding.coeFn_mk]
     exact hcol
 

@@ -510,7 +510,7 @@ theorem ncard_inner (b : ℕ) :
     have h3 : ∀ a ∈ Finset.range b, (W (a + 1) b).ncard = 2 ^ (b - 1 - a) := by
       intro a hlo
       rw [Finset.mem_range] at hlo
-      rw [ncard_W (show a + 1 ≤ b by omega), if_neg (by simp), tsub_zero]
+      rw [ncard_W (show a + 1 ≤ b by omega), ite_eq_right (by simp), tsub_zero]
       congr 1
       omega
     rw [Finset.sum_congr rfl h3]

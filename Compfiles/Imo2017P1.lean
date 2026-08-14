@@ -49,12 +49,12 @@ variable {a : ℕ → ℕ → ℕ} {x : ℕ}
 lemma step_sq (ha₁ : Rule a) (hx : 1 < x) {i : ℕ} (h : IsSquare (a x i)) :
     a x (i + 1) = (a x i).sqrt := by
   have := ha₁ x i hx
-  rwa [if_pos h] at this
+  rwa [ite_eq_left h] at this
 
 lemma step_nonsq (ha₁ : Rule a) (hx : 1 < x) {i : ℕ} (h : ¬IsSquare (a x i)) :
     a x (i + 1) = a x i + 3 := by
   have := ha₁ x i hx
-  rwa [if_neg h] at this
+  rwa [ite_eq_right h] at this
 
 lemma not_isSquare_of_mod_three {y : ℕ} (hy : y % 3 = 2) : ¬IsSquare y := by
   rintro ⟨r, rfl⟩

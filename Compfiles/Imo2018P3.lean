@@ -270,8 +270,8 @@ private lemma winner_val (x : Coords) (hx : x ∈ tri) (hb : x.row + 1 < NR) :
   have hd := t.antipascal x ⟨hb, (mem_tri.mp hx).2⟩
   unfold Nat.dist at hd
   by_cases hle : t.f (left_child x) ≤ t.f (right_child x)
-  · rw [winner, loser, if_pos hle, if_pos hle]; omega
-  · rw [winner, loser, if_neg hle, if_neg hle]; omega
+  · rw [winner, loser, ite_eq_left hle, ite_eq_left hle]; omega
+  · rw [winner, loser, ite_eq_right hle, ite_eq_right hle]; omega
 
 /-- Children of a valid parent lie in the triangle. -/
 private lemma left_child_mem {x : Coords} (hx : x ∈ tri) (hb : x.row + 1 < NR) :

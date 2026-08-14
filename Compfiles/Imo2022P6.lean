@@ -141,7 +141,7 @@ theorem NordicSquare.pathTo_props {n : ℕ} (ns : NordicSquare n) (c : Cell n) :
   | case1 c h c' ih =>
     have hc'spec := Classical.choose_spec h
     obtain ⟨ih1, ih2, ih3, ih4⟩ := ih
-    rw [pathTo.eq_1, dif_pos h]
+    rw [pathTo.eq_1, dite_eq_left h]
     dsimp only
     refine ⟨?_, ?_, ?_, ?_⟩
     · intro v hv
@@ -167,7 +167,7 @@ theorem NordicSquare.pathTo_props {n : ℕ} (ns : NordicSquare n) (c : Cell n) :
     · rw [List.getLast?_append]
       simp
   | case2 c h =>
-    rw [pathTo.eq_1, dif_neg h]
+    rw [pathTo.eq_1, dite_eq_right h]
     refine ⟨?_, List.isChain_singleton _, List.isChain_singleton _, ?_⟩
     · intro v hv
       rw [List.head?_singleton, Option.some.injEq] at hv
@@ -607,7 +607,7 @@ theorem NordicSquare.cells_eq_pathTo_of_good {n : ℕ} (ns : NordicSquare n) (hg
           exact hfv
         have : pathTo ns c = [c] := by
           rw [NordicSquare.pathTo.eq_1]
-          rw [dif_neg (ns.no_smaller_of_valley hval)]
+          rw [dite_eq_right (ns.no_smaller_of_valley hval)]
         rw [ha, this]
       · -- path of length ≥ 2
         have h2 : 2 ≤ p.cells.length := by
@@ -631,7 +631,7 @@ theorem NordicSquare.cells_eq_pathTo_of_good {n : ℕ} (ns : NordicSquare n) (hg
         -- pathTo c = pathTo c' ++ [c]
         have hpt : pathTo ns c = pathTo ns c' ++ [c] := by
           have hex : ∃ x : Cell n, Adjacent c x ∧ (ns x : ℕ) < (ns c : ℕ) := ⟨c', hadj.symm, hlt⟩
-          rw [NordicSquare.pathTo.eq_1, dif_pos hex]
+          rw [NordicSquare.pathTo.eq_1, dite_eq_left hex]
           have hch := Classical.choose_spec hex
           have hce : Classical.choose hex = c' :=
             huniq.unique hch ⟨hadj.symm, hlt⟩
@@ -703,7 +703,7 @@ noncomputable def NordicSquare.hillFiberEquiv {n : ℕ} (ns : NordicSquare n) (h
       by
         have hlt : (ns c'.1 : ℕ) < (ns h : ℕ) := hh c'.1 (c'.2).symm
         have hc := NordicSquare.gapPath_cells ns c'.1 h c'.2
-        rw [if_pos hlt] at hc
+        rw [ite_eq_left hlt] at hc
         simp only [hc]
         exact List.getLast_append_singleton _⟩
   left_inv := by
@@ -718,7 +718,7 @@ noncomputable def NordicSquare.hillFiberEquiv {n : ℕ} (ns : NordicSquare n) (h
       exact hp
     have hlt : (ns c' : ℕ) < (ns h : ℕ) := hh c' hadj.symm
     have hc := NordicSquare.gapPath_cells ns c' h hadj
-    rw [if_pos hlt] at hc
+    rw [ite_eq_left hlt] at hc
     show (NordicSquare.gapPath ns c' h hadj).cells = p.1.cells
     rw [hc]
     -- p.cells = pathTo c' ++ [h]
@@ -736,7 +736,7 @@ noncomputable def NordicSquare.hillFiberEquiv {n : ℕ} (ns : NordicSquare n) (h
     apply Subtype.ext
     have hlt : (ns c'.1 : ℕ) < (ns h : ℕ) := hh c'.1 (c'.2).symm
     have hc := NordicSquare.gapPath_cells ns c'.1 h c'.2
-    rw [if_pos hlt] at hc
+    rw [ite_eq_left hlt] at hc
     have hgl : ((NordicSquare.gapPath ns c'.1 h c'.2).cells.dropLast).getLast? = some c'.1 := by
       rw [hc, List.dropLast_concat]
       exact (NordicSquare.pathTo_props ns c'.1).2.2.2
@@ -797,7 +797,7 @@ theorem gapOfPair_swap {n : ℕ} (cc : Cell n × Cell n) (h : Adjacent cc.1 cc.2
     gapOfPair cc.swap h.symm = gapOfPair cc h := by
   unfold gapOfPair
   by_cases h1 : cc.1.1 = cc.2.1
-  · rw [dif_pos h1, dif_pos (by simpa only [Prod.fst_swap, Prod.snd_swap] using h1.symm)]
+  · rw [dite_eq_left h1, dite_eq_left (by simpa only [Prod.fst_swap, Prod.snd_swap] using h1.symm)]
     simp only [Prod.fst_swap, Prod.snd_swap, Prod.mk.injEq]
     exact ⟨trivial, h1.symm, by simp [min_comm]⟩
   · have hdist := h.dist
@@ -808,7 +808,7 @@ theorem gapOfPair_swap {n : ℕ} (cc : Cell n × Cell n) (h : Adjacent cc.1 cc.2
       have h22 := cc.1.2.2
       have h24 := cc.2.2.2
       omega
-    rw [dif_neg h1, dif_neg (by simpa only [Prod.fst_swap, Prod.snd_swap] using fun hh ↦ h1 hh.symm)]
+    rw [dite_eq_right h1, dite_eq_right (by simpa only [Prod.fst_swap, Prod.snd_swap] using fun hh ↦ h1 hh.symm)]
     simp only [Prod.fst_swap, Prod.snd_swap, Prod.mk.injEq]
     exact ⟨trivial, ha2.symm, by simp [min_comm]⟩
 
@@ -822,7 +822,7 @@ theorem gapOfPair_eq_horiz {n : ℕ} (cc : Cell n × Cell n) (h : Adjacent cc.1 
       have h3 := cc.2.2.2
       omega⟩)) := by
   unfold gapOfPair
-  rw [dif_pos h1]
+  rw [dite_eq_left h1]
 
 /-- In the vertical case, `gapOfPair` is the vertical gap of the two cells. -/
 theorem gapOfPair_eq_vert {n : ℕ} (cc : Cell n × Cell n) (h : Adjacent cc.1 cc.2)
@@ -834,7 +834,7 @@ theorem gapOfPair_eq_vert {n : ℕ} (cc : Cell n × Cell n) (h : Adjacent cc.1 c
       have h3 := cc.2.1.2
       omega⟩)) := by
   unfold gapOfPair
-  rw [dif_neg h1]
+  rw [dite_eq_right h1]
 
 /-- The two cells of `gapOfPair cc` are exactly the two cells of `cc` (in some order). -/
 theorem gapCells_gapOfPair {n : ℕ} (cc : Cell n × Cell n) (h : Adjacent cc.1 cc.2) :
@@ -930,21 +930,21 @@ noncomputable def decPairEquivGaps {n : ℕ} (ns : NordicSquare n) :
     rw [decPairOfGap]
     rcases hcells with hcells | hcells
     · simp only [hcells]
-      rw [dif_neg (by omega : ¬ (ns a : ℕ) < (ns b : ℕ))]
+      rw [dite_eq_right (by omega : ¬ (ns a : ℕ) < (ns b : ℕ))]
     · simp only [hcells, Prod.swap_prod_mk]
-      rw [dif_pos hlt']
+      rw [dite_eq_left hlt']
   right_inv := by
     intro g
     have hgo := gapOfPair_gapCells g.1 g.2
     show gapOfPair (decPairOfGap ns g.1 g.2).1 (decPairOfGap ns g.1 g.2).2.1 = g
     rw [decPairOfGap]
     by_cases hif : (ns (gapCells g.1 g.2).1 : ℕ) < (ns (gapCells g.1 g.2).2 : ℕ)
-    · rw [dif_pos hif]
+    · rw [dite_eq_left hif]
       have hs := gapOfPair_swap (gapCells g.1 g.2) (gapCells_adjacent g.1 g.2)
       show gapOfPair (gapCells g.1 g.2).swap _ = g
       rw [hs]
       exact hgo
-    · rw [dif_neg hif]
+    · rw [dite_eq_right hif]
       show gapOfPair (gapCells g.1 g.2) _ = g
       exact hgo
 
@@ -1014,17 +1014,17 @@ theorem NordicSquare.good_count {n : ℕ} (hn : 2 ≤ n) (ns : NordicSquare n) (
       if ns.Valley c then 0 else if ns.Hill c then cellDegree c else 1 := by
     intro c
     by_cases hvc : ns.Valley c
-    · rw [if_pos hvc, Finset.card_eq_zero, Finset.filter_eq_empty_iff]
+    · rw [ite_eq_left hvc, Finset.card_eq_zero, Finset.filter_eq_empty_iff]
       intro c' _ ⟨hadj, hlt⟩
       have := hvc c' hadj
       omega
     · by_cases hh : ns.Hill c
-      · rw [if_neg hvc, if_pos hh]
+      · rw [ite_eq_right hvc, ite_eq_left hh]
         apply congrArg Finset.card
         apply Finset.filter_congr
         intro c' _
         exact ⟨fun h ↦ h.1.symm, fun hadj ↦ ⟨hadj.symm, hh c' hadj.symm⟩⟩
-      · rw [if_neg hvc, if_neg hh]
+      · rw [ite_eq_right hvc, ite_eq_right hh]
         obtain ⟨c', hc', hu⟩ := hg.one_smaller c hvc hh
         rw [Finset.card_eq_one]
         refine ⟨c', Finset.ext fun x ↦ ?_⟩
@@ -1035,9 +1035,9 @@ theorem NordicSquare.good_count {n : ℕ} (hn : 2 ≤ n) (ns : NordicSquare n) (
       if ns.Hill c then cellDegree c else 1 := by
     intro c
     by_cases hh : ns.Hill c
-    · rw [if_pos hh]
+    · rw [ite_eq_left hh]
       exact ns.countTo_eq_degree_of_hill hg c hh (exists_adjacent hn c)
-    · rw [if_neg hh]
+    · rw [ite_eq_right hh]
       exact ns.countTo_eq_one_of_not_hill hg c hh
   -- assemble
   have hsum : (∑ c : Cell n, (if ns.Valley c then (0 : ℕ) else if ns.Hill c then cellDegree c else 1)) =
@@ -1047,7 +1047,7 @@ theorem NordicSquare.good_count {n : ℕ} (hn : 2 ≤ n) (ns : NordicSquare n) (
   have hge : 1 ≤ ∑ c : Cell n, (if ns.Hill c then cellDegree c else 1) := by
     have hle := Finset.single_le_sum (f := fun c ↦ if ns.Hill c then cellDegree c else 1)
       (fun c _ ↦ by split <;> exact Nat.zero_le _) (Finset.mem_univ v)
-    rw [if_neg hvnot] at hle
+    rw [ite_eq_right hvnot] at hle
     exact hle
   have key : (∑ c : Cell n, (if ns.Valley c then (0 : ℕ) else if ns.Hill c then cellDegree c else 1)) =
       (∑ c : Cell n, (if ns.Hill c then cellDegree c else 1)) - 1 := by
@@ -1056,16 +1056,16 @@ theorem NordicSquare.good_count {n : ℕ} (hn : 2 ≤ n) (ns : NordicSquare n) (
       rw [← Finset.add_sum_erase Finset.univ
         (fun c ↦ if ns.Valley c then (0 : ℕ) else if ns.Hill c then cellDegree c else 1)
         (Finset.mem_univ v)]
-      rw [if_pos hv, zero_add]
+      rw [ite_eq_left hv, zero_add]
       rw [Finset.sum_congr rfl (g := fun c ↦ if ns.Hill c then cellDegree c else 1)
         (fun c hc ↦ ?_)]
       · rw [← Finset.add_sum_erase Finset.univ
           (fun c ↦ if ns.Hill c then cellDegree c else 1) (Finset.mem_univ v)]
-        rw [if_neg hvnot, if_pos hv]
+        rw [ite_eq_right hvnot, ite_eq_left hv]
         omega
       · rw [Finset.mem_erase] at hc
-        rw [if_neg (show ¬ ns.Valley c from fun hvc ↦ hc.1 (huniq c hvc))]
-    rw [h1, if_pos hv]
+        rw [ite_eq_right (show ¬ ns.Valley c from fun hvc ↦ hc.1 (huniq c hvc))]
+    rw [h1, ite_eq_left hv]
   rw [NordicSquare.card_eq_sum_countTo, Finset.sum_congr rfl (fun c _ ↦ hcnt c)]
   rw [mul_assoc, ← hsum, key, Nat.sub_add_cancel hge]
 
@@ -1138,24 +1138,24 @@ def subKey (_m : ℕ) (j : ℕ) (r : ℕ) : ℕ :=
 theorem subKey_lt {m j r : ℕ} (hr : r < m) (hm : 2 ≤ m) : subKey m j r < 3 * m := by
   unfold subKey
   by_cases hs : (j / 3) % 2 = 0
-  · rw [if_pos hs]
+  · rw [ite_eq_left hs]
     by_cases hr0 : r = 0
-    · rw [if_pos hr0]
+    · rw [ite_eq_left hr0]
       have : j % 3 < 3 := Nat.mod_lt _ (by omega)
       omega
-    · rw [if_neg hr0]
+    · rw [ite_eq_right hr0]
       have := cspos_le (j % 3)
       omega
-  · rw [if_neg hs]
+  · rw [ite_eq_right hs]
     by_cases hr0 : r = 0
-    · rw [if_pos hr0]
+    · rw [ite_eq_left hr0]
       split <;> omega
-    · rw [if_neg hr0]
+    · rw [ite_eq_right hr0]
       by_cases hr1 : r = 1
-      · rw [if_pos hr1]
+      · rw [ite_eq_left hr1]
         have : j % 3 < 3 := Nat.mod_lt _ (by omega)
         omega
-      · rw [if_neg hr1]
+      · rw [ite_eq_right hr1]
         have := cspos_le (j % 3)
         omega
 
@@ -1169,7 +1169,7 @@ def keyFn (m : ℕ) (x : Fin m × Fin m) : ℕ :=
 theorem keyFn_tree_lt {m : ℕ} (hm : 2 ≤ m) (x : Fin m × Fin m) (hT : isTree m x = true) :
     keyFn m x < m * m + 3 * m := by
   unfold keyFn
-  rw [if_pos hT]
+  rw [ite_eq_left hT]
   have hsub := subKey_lt (j := x.2.1 + pOffset m) x.1.2 hm
   have hj : (x.2.1 + pOffset m) / 3 ≤ m / 3 := by
     apply Nat.div_le_div_right
@@ -1188,71 +1188,71 @@ theorem keyFn_tree_lt {m : ℕ} (hm : 2 ≤ m) (x : Fin m × Fin m) (hT : isTree
 theorem subKey_inj {m j r₁ r₂ : ℕ} (h : subKey m j r₁ = subKey m j r₂) : r₁ = r₂ := by
   unfold subKey at h
   by_cases hs : (j / 3) % 2 = 0
-  · simp only [if_pos hs] at h
+  · simp only [ite_eq_left hs] at h
     by_cases hr1 : r₁ = 0
-    · simp only [if_pos hr1] at h
+    · simp only [ite_eq_left hr1] at h
       by_cases hr2 : r₂ = 0
-      · simp only [if_pos hr2] at h
+      · simp only [ite_eq_left hr2] at h
         exact hr1.trans hr2.symm
-      · simp only [if_neg hr2] at h
+      · simp only [ite_eq_right hr2] at h
         have hc := cspos_le (j % 3)
         have hmod : j % 3 < 3 := Nat.mod_lt _ (by omega)
         omega
-    · simp only [if_neg hr1] at h
+    · simp only [ite_eq_right hr1] at h
       by_cases hr2 : r₂ = 0
-      · simp only [if_pos hr2] at h
+      · simp only [ite_eq_left hr2] at h
         have hc := cspos_le (j % 3)
         have hmod : j % 3 < 3 := Nat.mod_lt _ (by omega)
         omega
-      · simp only [if_neg hr2] at h
+      · simp only [ite_eq_right hr2] at h
         have hc := cspos_le (j % 3)
         have hd : 3 * (r₁ - 1) = 3 * (r₂ - 1) := by omega
         have := Nat.mul_left_cancel (by omega : 0 < 3) hd
         omega
-  · simp only [if_neg hs] at h
+  · simp only [ite_eq_right hs] at h
     by_cases hr1 : r₁ = 0
-    · simp only [if_pos hr1] at h
+    · simp only [ite_eq_left hr1] at h
       by_cases hr2 : r₂ = 0
-      · simp only [if_pos hr2] at h
+      · simp only [ite_eq_left hr2] at h
         exact hr1.trans hr2.symm
-      · simp only [if_neg hr2] at h
+      · simp only [ite_eq_right hr2] at h
         by_cases hr2' : r₂ = 1
-        · simp only [if_pos hr2'] at h
+        · simp only [ite_eq_left hr2'] at h
           have hmod : j % 3 < 3 := Nat.mod_lt _ (by omega)
           have hc := cspos_le (j % 3)
           split at h <;> omega
-        · simp only [if_neg hr2'] at h
+        · simp only [ite_eq_right hr2'] at h
           have hmod : j % 3 < 3 := Nat.mod_lt _ (by omega)
           have hc := cspos_le (j % 3)
           split at h <;> omega
-    · simp only [if_neg hr1] at h
+    · simp only [ite_eq_right hr1] at h
       by_cases hr1' : r₁ = 1
-      · simp only [if_pos hr1'] at h
+      · simp only [ite_eq_left hr1'] at h
         by_cases hr2 : r₂ = 0
-        · simp only [if_pos hr2] at h
+        · simp only [ite_eq_left hr2] at h
           have hmod : j % 3 < 3 := Nat.mod_lt _ (by omega)
           split at h <;> omega
-        · simp only [if_neg hr2] at h
+        · simp only [ite_eq_right hr2] at h
           by_cases hr2' : r₂ = 1
-          · simp only [if_pos hr2'] at h
+          · simp only [ite_eq_left hr2'] at h
             exact hr1'.trans hr2'.symm
-          · simp only [if_neg hr2'] at h
+          · simp only [ite_eq_right hr2'] at h
             have hmod : j % 3 < 3 := Nat.mod_lt _ (by omega)
             have hc := cspos_le (j % 3)
             omega
-      · simp only [if_neg hr1'] at h
+      · simp only [ite_eq_right hr1'] at h
         by_cases hr2 : r₂ = 0
-        · simp only [if_pos hr2] at h
+        · simp only [ite_eq_left hr2] at h
           have hmod : j % 3 < 3 := Nat.mod_lt _ (by omega)
           have hc := cspos_le (j % 3)
           split at h <;> omega
-        · simp only [if_neg hr2] at h
+        · simp only [ite_eq_right hr2] at h
           by_cases hr2' : r₂ = 1
-          · simp only [if_pos hr2'] at h
+          · simp only [ite_eq_left hr2'] at h
             have hmod : j % 3 < 3 := Nat.mod_lt _ (by omega)
             have hc := cspos_le (j % 3)
             omega
-          · simp only [if_neg hr2'] at h
+          · simp only [ite_eq_right hr2'] at h
             have hc := cspos_le (j % 3)
             have hd : 3 * (r₁ - 2) = 3 * (r₂ - 2) := by omega
             have := Nat.mul_left_cancel (by omega : 0 < 3) hd
@@ -1270,29 +1270,29 @@ theorem subKey_inj_both {m j₁ j₂ r₁ r₂ : ℕ} (hs : j₁ / 3 = j₂ / 3)
   by_cases hp : (j₁ / 3) % 2 = 0
   · -- even strip: subKey < 3 iff r = 0, otherwise cspos determines the column
     have hp2 : (j₂ / 3) % 2 = 0 := by omega
-    simp only [if_pos hp, if_pos hp2] at h
+    simp only [ite_eq_left hp, ite_eq_left hp2] at h
     by_cases hr1 : r₁ = 0
-    · simp only [if_pos hr1] at h
+    · simp only [ite_eq_left hr1] at h
       by_cases hr2 : r₂ = 0
-      · simp only [if_pos hr2] at h
+      · simp only [ite_eq_left hr2] at h
         exact ⟨hr1.trans hr2.symm, h⟩
-      · simp only [if_neg hr2] at h
+      · simp only [ite_eq_right hr2] at h
         omega
-    · simp only [if_neg hr1] at h
+    · simp only [ite_eq_right hr1] at h
       by_cases hr2 : r₂ = 0
-      · simp only [if_pos hr2] at h
+      · simp only [ite_eq_left hr2] at h
         omega
-      · simp only [if_neg hr2] at h
+      · simp only [ite_eq_right hr2] at h
         have hr : r₁ = r₂ := by omega
         have hcp : cspos (j₁ % 3) = cspos (j₂ % 3) := by omega
         exact ⟨hr, cspos_injective (by omega) (by omega) hcp⟩
   · -- odd strip: the ranges {0, 4}, {1, 2, 3}, [5, ∞) separate r = 0, r = 1, r ≥ 2
     have hp2 : ¬(j₂ / 3) % 2 = 0 := by omega
-    simp only [if_neg hp, if_neg hp2] at h
+    simp only [ite_eq_right hp, ite_eq_right hp2] at h
     by_cases hr1 : r₁ = 0
-    · simp only [if_pos hr1] at h
+    · simp only [ite_eq_left hr1] at h
       by_cases hr2 : r₂ = 0
-      · simp only [if_pos hr2] at h
+      · simp only [ite_eq_left hr2] at h
         refine ⟨hr1.trans hr2.symm, ?_⟩
         have hj16 : j₁ % 6 = j₁ % 3 + 3 := by omega
         have hj26 : j₂ % 6 = j₂ % 3 + 3 := by omega
@@ -1305,33 +1305,33 @@ theorem subKey_inj_both {m j₁ j₂ r₁ r₂ : ℕ} (hs : j₁ / 3 = j₂ / 3)
           rw [hr2, hj26, hc] at hT2
           simp [isTreeJ] at hT2
         split at h <;> split at h <;> omega
-      · simp only [if_neg hr2] at h
+      · simp only [ite_eq_right hr2] at h
         by_cases hr2' : r₂ = 1
-        · simp only [if_pos hr2'] at h
+        · simp only [ite_eq_left hr2'] at h
           split at h <;> omega
-        · simp only [if_neg hr2'] at h
+        · simp only [ite_eq_right hr2'] at h
           split at h <;> omega
-    · simp only [if_neg hr1] at h
+    · simp only [ite_eq_right hr1] at h
       by_cases hr1' : r₁ = 1
-      · simp only [if_pos hr1'] at h
+      · simp only [ite_eq_left hr1'] at h
         by_cases hr2 : r₂ = 0
-        · simp only [if_pos hr2] at h
+        · simp only [ite_eq_left hr2] at h
           split at h <;> omega
-        · simp only [if_neg hr2] at h
+        · simp only [ite_eq_right hr2] at h
           by_cases hr2' : r₂ = 1
-          · simp only [if_pos hr2'] at h
+          · simp only [ite_eq_left hr2'] at h
             exact ⟨hr1'.trans hr2'.symm, by omega⟩
-          · simp only [if_neg hr2'] at h
+          · simp only [ite_eq_right hr2'] at h
             omega
-      · simp only [if_neg hr1'] at h
+      · simp only [ite_eq_right hr1'] at h
         by_cases hr2 : r₂ = 0
-        · simp only [if_pos hr2] at h
+        · simp only [ite_eq_left hr2] at h
           split at h <;> omega
-        · simp only [if_neg hr2] at h
+        · simp only [ite_eq_right hr2] at h
           by_cases hr2' : r₂ = 1
-          · simp only [if_pos hr2'] at h
+          · simp only [ite_eq_left hr2'] at h
             omega
-          · simp only [if_neg hr2'] at h
+          · simp only [ite_eq_right hr2'] at h
             have hr : r₁ = r₂ := by omega
             have hcp : cspos (j₁ % 3) = cspos (j₂ % 3) := by omega
             exact ⟨hr, cspos_injective (by omega) (by omega) hcp⟩
@@ -1342,7 +1342,7 @@ theorem keyFn_injective {m : ℕ} (hm : 2 ≤ m) : Function.Injective (keyFn m) 
   unfold keyFn at hxy
   by_cases ht1 : isTree m x = true <;> by_cases ht2 : isTree m y = true
   · -- both tree
-    rw [if_pos ht1, if_pos ht2] at hxy
+    rw [ite_eq_left ht1, ite_eq_left ht2] at hxy
     have hK : 0 < 3 * m := by omega
     have hsub1 := subKey_lt (j := x.2.1 + pOffset m) x.1.2 hm
     have hsub2 := subKey_lt (j := y.2.1 + pOffset m) y.1.2 hm
@@ -1363,18 +1363,18 @@ theorem keyFn_injective {m : ℕ} (hm : 2 ≤ m) : Function.Injective (keyFn m) 
     have hx1 : x.1.1 = y.1.1 := hr
     exact Prod.ext (Fin.ext hx1) (Fin.ext hx2)
   · -- tree vs hill: key x < BIG ≤ key y
-    rw [if_pos ht1] at hxy
+    rw [ite_eq_left ht1] at hxy
     have hlt := keyFn_tree_lt hm x ht1
-    rw [if_neg ht2] at hxy
-    rw [keyFn, if_pos ht1] at hlt
+    rw [ite_eq_right ht2] at hxy
+    rw [keyFn, ite_eq_left ht1] at hlt
     omega
-  · rw [if_pos ht2] at hxy
+  · rw [ite_eq_left ht2] at hxy
     have hlt := keyFn_tree_lt hm y ht2
-    rw [if_neg ht1] at hxy
-    rw [keyFn, if_pos ht2] at hlt
+    rw [ite_eq_right ht1] at hxy
+    rw [keyFn, ite_eq_left ht2] at hlt
     omega
   · -- both hill
-    rw [if_neg ht1, if_neg ht2] at hxy
+    rw [ite_eq_right ht1, ite_eq_right ht2] at hxy
     have h1 : x.2.1 * m + x.1.1 = y.2.1 * m + y.1.1 := by omega
     have hdiv : (x.2.1 * m + x.1.1) / m = (y.2.1 * m + y.1.1) / m := by rw [h1]
     rw [Nat.mul_comm x.2.1 m, Nat.mul_comm y.2.1 m] at hdiv
@@ -1475,11 +1475,11 @@ lemma isTreeJ_true_iff {c r : ℕ} (hc : c < 6) :
         ((c = 3 ∨ c = 5) ∧ (r % 2 = 1 ∨ r = 0)) := by
   unfold isTreeJ
   by_cases h1 : c = 1
-  · rw [if_pos h1]
+  · rw [ite_eq_left h1]
     exact iff_of_true rfl (Or.inl h1)
-  · rw [if_neg h1]
+  · rw [ite_eq_right h1]
     by_cases h4 : c = 4
-    · rw [if_pos h4, decide_eq_true_eq]
+    · rw [ite_eq_left h4, decide_eq_true_eq]
       constructor
       · intro hr
         exact Or.inr (Or.inl ⟨h4, hr⟩)
@@ -1490,9 +1490,9 @@ lemma isTreeJ_true_iff {c r : ℕ} (hc : c < 6) :
         · omega
         · omega
         · omega
-    · rw [if_neg h4]
+    · rw [ite_eq_right h4]
       by_cases h02 : c = 0 ∨ c = 2
-      · rw [if_pos h02, decide_eq_true_eq]
+      · rw [ite_eq_left h02, decide_eq_true_eq]
         constructor
         · intro hr
           exact Or.inr (Or.inr (Or.inl ⟨h02, hr⟩))
@@ -1502,7 +1502,7 @@ lemma isTreeJ_true_iff {c r : ℕ} (hc : c < 6) :
           · exact hr
           · omega
           · omega
-      · rw [if_neg h02, decide_eq_true_eq]
+      · rw [ite_eq_right h02, decide_eq_true_eq]
         constructor
         · intro hr
           exact Or.inr (Or.inr (Or.inr ⟨by omega, hr⟩))
@@ -1535,26 +1535,26 @@ theorem rootCell_key_min (m : ℕ) (hm : 2 ≤ m) (x : Cell m) (hx : x ≠ rootC
       rw [Nat.zero_add]
       exact Nat.mod_eq_of_lt (by omega)
     unfold keyFn subKey
-    rw [if_pos hrootT, e1, e2, h3, if_pos (Nat.zero_mod 2), if_pos rfl, hmod]
+    rw [ite_eq_left hrootT, e1, e2, h3, ite_eq_left (Nat.zero_mod 2), ite_eq_left rfl, hmod]
     simp
   rw [hrootkey]
   by_cases hT : isTree m x = true
   · unfold keyFn
-    rw [if_pos hT]
+    rw [ite_eq_left hT]
     by_cases hj : (x.2.1 + pOffset m) / 3 = 0
     · have hj3 : x.2.1 + pOffset m < 3 := by omega
       unfold subKey
       have hs : ((x.2.1 + pOffset m) / 3) % 2 = 0 := by omega
-      rw [if_pos hs]
+      rw [ite_eq_left hs]
       by_cases hr : x.1.1 = 0
-      · rw [if_pos hr]
+      · rw [ite_eq_left hr]
         by_cases hx2 : x.2.1 = 0
         · exact absurd (by
             rw [Prod.ext_iff]
             exact ⟨Fin.ext hr, Fin.ext hx2⟩) hx
         · rw [hj, Nat.mod_eq_of_lt hj3]
           omega
-      · rw [if_neg hr, hj]
+      · rw [ite_eq_right hr, hj]
         omega
     · have h1 : 1 ≤ (x.2.1 + pOffset m) / 3 := by omega
       have hge : 3 * m ≤ (3 * m) * ((x.2.1 + pOffset m) / 3) := by
@@ -1565,7 +1565,7 @@ theorem rootCell_key_min (m : ℕ) (hm : 2 ≤ m) (x : Cell m) (hx : x ≠ rootC
         omega
       omega
   · unfold keyFn
-    rw [if_neg hT]
+    rw [ite_eq_right hT]
     have h4 : 4 ≤ m * m := by
       have := Nat.mul_le_mul hm hm
       omega
@@ -1581,8 +1581,8 @@ theorem tree_key_lt_hill {m : ℕ} (hm : 2 ≤ m) (x y : Cell m)
     rw [hy]
     simp
   unfold keyFn at hlt ⊢
-  rw [if_pos hx] at hlt
-  rw [if_pos hx, if_neg hy']
+  rw [ite_eq_left hx] at hlt
+  rw [ite_eq_left hx, ite_eq_right hy']
   omega
 
 /-- A tree cell in an earlier strip has a smaller key. -/
@@ -1592,7 +1592,7 @@ lemma keyFn_lt_of_strip_lt {m : ℕ} (hm : 2 ≤ m) (y x : Cell m) (jy jx : ℕ)
     (hst : jy / 3 < jx / 3) (hry : y.1.1 < m) :
     keyFn m y < keyFn m x := by
   unfold keyFn
-  rw [if_pos hyT, if_pos hxT, hjy, hjx]
+  rw [ite_eq_left hyT, ite_eq_left hxT, hjy, hjx]
   have hsub := subKey_lt (m := m) (j := jy) hry hm
   have e1 : (3 * m) * (jy / 3) + 3 * m = (3 * m) * (jy / 3 + 1) := by ring
   have e2 : (3 * m) * (jy / 3 + 1) ≤ (3 * m) * (jx / 3) :=
@@ -1611,7 +1611,7 @@ lemma isTreeJ_zero_zero : isTreeJ 0 0 = true := by decide
 
 lemma isTreeJ_one (r : ℕ) : isTreeJ 1 r = true := by
   unfold isTreeJ
-  rw [if_pos rfl]
+  rw [ite_eq_left rfl]
 
 lemma isTreeJ_two_zero : isTreeJ 2 0 = true := by decide
 
@@ -1621,7 +1621,7 @@ lemma isTreeJ_three_one : isTreeJ 3 1 = true := by decide
 
 lemma isTreeJ_four {r : ℕ} (hr : 1 ≤ r) : isTreeJ 4 r = true := by
   unfold isTreeJ
-  rw [if_neg (by norm_num : ¬((4 : ℕ) = 1)), if_pos rfl, decide_eq_true_eq]
+  rw [ite_eq_right (by norm_num : ¬((4 : ℕ) = 1)), ite_eq_left rfl, decide_eq_true_eq]
   exact hr
 
 lemma isTreeJ_five_zero : isTreeJ 5 0 = true := by decide
@@ -1631,31 +1631,31 @@ lemma isTreeJ_five_one : isTreeJ 5 1 = true := by decide
 /-- `subKey` at row `0` of an even strip. -/
 lemma subKey_even_zero {m j : ℕ} (hj : (j / 3) % 2 = 0) : subKey m j 0 = j % 3 := by
   unfold subKey
-  rw [if_pos hj, if_pos rfl]
+  rw [ite_eq_left hj, ite_eq_left rfl]
 
 /-- `subKey` at a positive row of an even strip. -/
 lemma subKey_even_of_ne_zero {m j r : ℕ} (hj : (j / 3) % 2 = 0) (hr : r ≠ 0) :
     subKey m j r = 3 + 3 * (r - 1) + cspos (j % 3) := by
   unfold subKey
-  rw [if_pos hj, if_neg hr]
+  rw [ite_eq_left hj, ite_eq_right hr]
 
 /-- `subKey` at row `0` of an odd strip. -/
 lemma subKey_odd_zero {m j : ℕ} (hj : (j / 3) % 2 ≠ 0) :
     subKey m j 0 = (if j % 3 = 0 then 0 else 4) := by
   unfold subKey
-  rw [if_neg hj, if_pos rfl]
+  rw [ite_eq_right hj, ite_eq_left rfl]
 
 /-- `subKey` at row `1` of an odd strip. -/
 lemma subKey_odd_one {m j : ℕ} (hj : (j / 3) % 2 ≠ 0) :
     subKey m j 1 = 1 + j % 3 := by
   unfold subKey
-  rw [if_neg hj, if_neg (by norm_num : ¬((1 : ℕ) = 0)), if_pos rfl]
+  rw [ite_eq_right hj, ite_eq_right (by norm_num : ¬((1 : ℕ) = 0)), ite_eq_left rfl]
 
 /-- `subKey` at a row `≥ 2` of an odd strip. -/
 lemma subKey_odd_of_ge_two {m j r : ℕ} (hj : (j / 3) % 2 ≠ 0) (hr : 2 ≤ r) :
     subKey m j r = 5 + 3 * (r - 2) + cspos (j % 3) := by
   unfold subKey
-  rw [if_neg hj, if_neg (by omega : r ≠ 0), if_neg (by omega : r ≠ 1)]
+  rw [ite_eq_right hj, ite_eq_right (by omega : r ≠ 0), ite_eq_right (by omega : r ≠ 1)]
 
 /-- Between two tree cells in the same strip, the key order is the `subKey` order. -/
 lemma keyFn_lt_of_same_strip {m : ℕ} (y x : Cell m) (jy jx : ℕ)
@@ -1664,7 +1664,7 @@ lemma keyFn_lt_of_same_strip {m : ℕ} (y x : Cell m) (jy jx : ℕ)
     (hst : jy / 3 = jx / 3) (hsub : subKey m jy y.1.1 < subKey m jx x.1.1) :
     keyFn m y < keyFn m x := by
   unfold keyFn
-  rw [if_pos hyT, if_pos hxT, hjy, hjx, hst]
+  rw [ite_eq_left hyT, ite_eq_left hxT, hjy, hjx, hst]
   omega
 
 /-- A tree cell in an earlier strip has a smaller key. -/
@@ -1691,8 +1691,8 @@ theorem parent_exists {m : ℕ} (hm : 2 ≤ m) (x : Cell m)
     rw [h6] at hT
     have hcond : x.1.1 % 2 = 0 := by
       unfold isTreeJ at hT
-      rw [if_neg (by norm_num : ¬((0 : ℕ) = 1)), if_neg (by norm_num : ¬((0 : ℕ) = 4)),
-        if_pos (by norm_num : (0 : ℕ) = 0 ∨ (0 : ℕ) = 2), decide_eq_true_eq] at hT
+      rw [ite_eq_right (by norm_num : ¬((0 : ℕ) = 1)), ite_eq_right (by norm_num : ¬((0 : ℕ) = 4)),
+        ite_eq_left (by norm_num : (0 : ℕ) = 0 ∨ (0 : ℕ) = 2), decide_eq_true_eq] at hT
       exact hT
     rcases Nat.eq_zero_or_pos x.1.1 with h0 | h0
     · -- `x = (0, c)`: the parent is the last row-0 cell of the previous strip
@@ -1715,9 +1715,9 @@ theorem parent_exists {m : ℕ} (hm : 2 ≤ m) (x : Cell m)
       have hr2 : 2 ≤ x.1.1 := by omega
       have hc1 : x.2.1 + 1 < m := by
         by_cases hm3 : m % 3 = 1
-        · have h1 : pOffset m = 1 := by unfold pOffset; rw [if_pos hm3]
+        · have h1 : pOffset m = 1 := by unfold pOffset; rw [ite_eq_left hm3]
           omega
-        · have h0' : pOffset m = 0 := by unfold pOffset; rw [if_neg hm3]
+        · have h0' : pOffset m = 0 := by unfold pOffset; rw [ite_eq_right hm3]
           omega
       have hyT : isTree m (x.1, ⟨x.2.1 + 1, by omega⟩) = true := by
         show isTreeJ ((x.2.1 + 1 + pOffset m) % 6) x.1.1 = true
@@ -1779,8 +1779,8 @@ theorem parent_exists {m : ℕ} (hm : 2 ≤ m) (x : Cell m)
     rw [h6] at hT
     have hcond : x.1.1 % 2 = 0 := by
       unfold isTreeJ at hT
-      rw [if_neg (by norm_num : ¬((2 : ℕ) = 1)), if_neg (by norm_num : ¬((2 : ℕ) = 4)),
-        if_pos (by norm_num : (2 : ℕ) = 0 ∨ (2 : ℕ) = 2), decide_eq_true_eq] at hT
+      rw [ite_eq_right (by norm_num : ¬((2 : ℕ) = 1)), ite_eq_right (by norm_num : ¬((2 : ℕ) = 4)),
+        ite_eq_left (by norm_num : (2 : ℕ) = 0 ∨ (2 : ℕ) = 2), decide_eq_true_eq] at hT
       exact hT
     rcases Nat.eq_zero_or_pos x.1.1 with h0 | h0
     · -- `x = (0, c)`: the parent is `(0, c-1)`, the middle cell of row `0` in this strip
@@ -1819,8 +1819,8 @@ theorem parent_exists {m : ℕ} (hm : 2 ≤ m) (x : Cell m)
     rw [h6] at hT
     have hcond : x.1.1 % 2 = 1 ∨ x.1.1 = 0 := by
       unfold isTreeJ at hT
-      rw [if_neg (by norm_num : ¬((3 : ℕ) = 1)), if_neg (by norm_num : ¬((3 : ℕ) = 4)),
-        if_neg (by norm_num : ¬((3 : ℕ) = 0 ∨ (3 : ℕ) = 2)), decide_eq_true_eq] at hT
+      rw [ite_eq_right (by norm_num : ¬((3 : ℕ) = 1)), ite_eq_right (by norm_num : ¬((3 : ℕ) = 4)),
+        ite_eq_right (by norm_num : ¬((3 : ℕ) = 0 ∨ (3 : ℕ) = 2)), decide_eq_true_eq] at hT
       exact hT
     rcases Nat.eq_zero_or_pos x.1.1 with h0 | h0
     · -- `x = (0, c)`: the parent is the last row-0 cell of the previous strip
@@ -1849,16 +1849,16 @@ theorem parent_exists {m : ℕ} (hm : 2 ≤ m) (x : Cell m)
           omega
         · have hsub : subKey m j 0 < subKey m j x.1.1 := by
             rw [h1, subKey_odd_zero (by omega : (j / 3) % 2 ≠ 0),
-              subKey_odd_one (by omega : (j / 3) % 2 ≠ 0), show j % 3 = 0 by omega, if_pos rfl]
+              subKey_odd_one (by omega : (j / 3) % 2 ≠ 0), show j % 3 = 0 by omega, ite_eq_left rfl]
             omega
           exact keyFn_lt_of_same_strip _ x j j hyT hx hj.symm hj.symm rfl hsub
       · -- `x = (r, c)` with `r ≥ 3` odd: the parent is `(r, c+1)`
         have hr3 : 3 ≤ x.1.1 := by omega
         have hc1 : x.2.1 + 1 < m := by
           by_cases hm3 : m % 3 = 1
-          · have h1' : pOffset m = 1 := by unfold pOffset; rw [if_pos hm3]
+          · have h1' : pOffset m = 1 := by unfold pOffset; rw [ite_eq_left hm3]
             omega
-          · have h0' : pOffset m = 0 := by unfold pOffset; rw [if_neg hm3]
+          · have h0' : pOffset m = 0 := by unfold pOffset; rw [ite_eq_right hm3]
             omega
         have hyT : isTree m (x.1, ⟨x.2.1 + 1, by omega⟩) = true := by
           show isTreeJ ((x.2.1 + 1 + pOffset m) % 6) x.1.1 = true
@@ -1878,7 +1878,7 @@ theorem parent_exists {m : ℕ} (hm : 2 ≤ m) (x : Cell m)
     rw [h6] at hT
     have hr1 : 1 ≤ x.1.1 := by
       unfold isTreeJ at hT
-      rw [if_neg (by norm_num : ¬((4 : ℕ) = 1)), if_pos rfl, decide_eq_true_eq] at hT
+      rw [ite_eq_right (by norm_num : ¬((4 : ℕ) = 1)), ite_eq_left rfl, decide_eq_true_eq] at hT
       exact hT
     by_cases h1 : x.1.1 = 1
     · -- `x = (1, c)`: the parent is `(1, c-1)`
@@ -1924,8 +1924,8 @@ theorem parent_exists {m : ℕ} (hm : 2 ≤ m) (x : Cell m)
     rw [h6] at hT
     have hcond : x.1.1 % 2 = 1 ∨ x.1.1 = 0 := by
       unfold isTreeJ at hT
-      rw [if_neg (by norm_num : ¬((5 : ℕ) = 1)), if_neg (by norm_num : ¬((5 : ℕ) = 4)),
-        if_neg (by norm_num : ¬((5 : ℕ) = 0 ∨ (5 : ℕ) = 2)), decide_eq_true_eq] at hT
+      rw [ite_eq_right (by norm_num : ¬((5 : ℕ) = 1)), ite_eq_right (by norm_num : ¬((5 : ℕ) = 4)),
+        ite_eq_right (by norm_num : ¬((5 : ℕ) = 0 ∨ (5 : ℕ) = 2)), decide_eq_true_eq] at hT
       exact hT
     rcases Nat.eq_zero_or_pos x.1.1 with h0 | h0
     · -- `x = (0, c)`: the parent is `(1, c)` directly below
@@ -1939,7 +1939,7 @@ theorem parent_exists {m : ℕ} (hm : 2 ≤ m) (x : Cell m)
       · have hsub : subKey m j 1 < subKey m j x.1.1 := by
           rw [h0, subKey_odd_one (by omega : (j / 3) % 2 ≠ 0),
             subKey_odd_zero (by omega : (j / 3) % 2 ≠ 0), show j % 3 = 2 by omega,
-            if_neg (by norm_num : ¬((2 : ℕ) = 0))]
+            ite_eq_right (by norm_num : ¬((2 : ℕ) = 0))]
           omega
         exact keyFn_lt_of_same_strip _ x j j hyT hx hj.symm hj.symm rfl hsub
     · have hcond1 : x.1.1 % 2 = 1 := by
@@ -1985,21 +1985,21 @@ theorem parent_exists {m : ℕ} (hm : 2 ≤ m) (x : Cell m)
 theorem keyFn_tree_eq {m : ℕ} (x : Cell m) (hx : isTree m x = true) :
     keyFn m x = 3 * m * ((x.2.1 + pOffset m) / 3) + subKey m (x.2.1 + pOffset m) x.1.1 := by
   unfold keyFn
-  rw [if_pos hx]
+  rw [ite_eq_left hx]
 
 /-- `subKey` in an even strip, row `0`. -/
 
 theorem subKey_even_pos {m j r : ℕ} (hs : (j / 3) % 2 = 0) (hr : 1 ≤ r) :
     subKey m j r = 3 + 3 * (r - 1) + cspos (j % 3) := by
   unfold subKey
-  rw [if_pos hs, if_neg (by omega : ¬ r = 0)]
+  rw [ite_eq_left hs, ite_eq_right (by omega : ¬ r = 0)]
 
 /-- `subKey` in an odd strip, row `0`. -/
 
 theorem subKey_odd_ge2 {m j r : ℕ} (hs : ¬ (j / 3) % 2 = 0) (hr : 2 ≤ r) :
     subKey m j r = 5 + 3 * (r - 2) + cspos (j % 3) := by
   unfold subKey
-  rw [if_neg hs, if_neg (by omega : ¬ r = 0), if_neg (by omega : ¬ r = 1)]
+  rw [ite_eq_right hs, ite_eq_right (by omega : ¬ r = 0), ite_eq_right (by omega : ¬ r = 1)]
 
 /-- If the tree cell `y` directly below the tree cell `x` has smaller key, then `x`
 has pattern column `5` (mod 6) and row `0`. -/
@@ -2029,9 +2029,9 @@ theorem rule_down {m : ℕ} (_hm : 2 ≤ m) (x y : Cell m)
     · subst hr
       rw [show (0 : ℕ) + 1 = 1 from rfl, subKey_odd_one hs, subKey_odd_zero hs] at hsub
       by_cases hc0 : j % 3 = 0
-      · rw [if_pos hc0] at hsub
+      · rw [ite_eq_left hc0] at hsub
         omega
-      · rw [if_neg hc0] at hsub
+      · rw [ite_eq_right hc0] at hsub
         have hj6 : j % 6 = j % 3 + 3 := by omega
         by_cases hc1 : j % 3 = 1
         · rw [hj6, hc1] at hx
@@ -2085,7 +2085,7 @@ theorem rule_up {m : ℕ} (_hm : 2 ≤ m) (x y : Cell m)
       rw [show (1 : ℕ) - 1 = 0 from rfl, subKey_odd_zero hs, subKey_odd_one hs] at hsub
       by_cases hc0 : j % 3 = 0
       · exact Or.inr (Or.inl ⟨by omega, rfl⟩)
-      · rw [if_neg hc0] at hsub
+      · rw [ite_eq_right hc0] at hsub
         have hmod : j % 3 < 3 := Nat.mod_lt _ (by omega)
         omega
     · have hr2 : 2 ≤ r := by omega
@@ -2373,7 +2373,7 @@ theorem tree_not_hill {m : ℕ} (hm : 2 ≤ m) (x : Cell m)
     have h1 := keyFn_tree_lt hm (a, b) hx
     have h2 : keyFn m y = m * m + 3 * m + (y.2.1 * m + y.1.1) := by
       unfold keyFn
-      rw [if_neg hy']
+      rw [ite_eq_right hy']
     rw [h2]
     omega
   -- a tree cell in the same strip with a larger subKey has a larger key
@@ -2385,11 +2385,11 @@ theorem tree_not_hill {m : ℕ} (hm : 2 ≤ m) (x : Cell m)
     have h1 : keyFn m (a, b) = (3 * m) * ((b.1 + pOffset m) / 3) +
         subKey m (b.1 + pOffset m) a.1 := by
       unfold keyFn
-      rw [if_pos hx]
+      rw [ite_eq_left hx]
     have h2 : keyFn m y = (3 * m) * ((y.2.1 + pOffset m) / 3) +
         subKey m (y.2.1 + pOffset m) y.1.1 := by
       unfold keyFn
-      rw [if_pos hy]
+      rw [ite_eq_left hy]
     rw [h1, h2, hs]
     omega
   have hx' : isTreeJ ((b.1 + pOffset m) % 6) a.1 = true := hx
@@ -2420,7 +2420,7 @@ theorem tree_not_hill {m : ℕ} (hm : 2 ≤ m) (x : Cell m)
           unfold subKey
           have hp : ((b.1 + pOffset m) / 3) % 2 = 0 := by omega
           have hp' : ((b.1 + 1 + pOffset m) / 3) % 2 = 0 := by omega
-          simp only [if_pos hp, if_pos hp', if_true]
+          simp only [ite_eq_left hp, ite_eq_left hp', ite_true]
           have hJ3 : (b.1 + pOffset m) % 3 = 0 := by omega
           have hJ'3 : (b.1 + 1 + pOffset m) % 3 = 1 := by omega
           rw [hJ3, hJ'3]
@@ -2451,14 +2451,14 @@ theorem tree_not_hill {m : ℕ} (hm : 2 ≤ m) (x : Cell m)
         · show subKey m (b.1 + pOffset m) a.1 < subKey m (b.1 + pOffset m) (a.1 + 1)
           unfold subKey
           have hp : ((b.1 + pOffset m) / 3) % 2 = 0 := by omega
-          simp only [if_pos hp]
+          simp only [ite_eq_left hp]
           have hR' : ¬ a.1 + 1 = 0 := by omega
           have hJ3 : (b.1 + pOffset m) % 3 = 1 := by omega
           by_cases hr0 : a.1 = 0
-          · simp only [if_pos hr0, if_neg hR']
+          · simp only [ite_eq_left hr0, ite_eq_right hR']
             rw [hJ3, hcsp1]
             omega
-          · simp only [if_neg hr0, if_neg hR']
+          · simp only [ite_eq_right hr0, ite_eq_right hR']
             rw [hJ3, hcsp1]
             omega
     · -- bottom row: use a horizontal neighbor
@@ -2481,9 +2481,9 @@ theorem tree_not_hill {m : ℕ} (hm : 2 ≤ m) (x : Cell m)
               unfold subKey
               have hp : ((b.1 + pOffset m) / 3) % 2 = 0 := by omega
               have hp' : ((1 + pOffset m) / 3) % 2 = 0 := by omega
-              simp only [if_pos hp, if_pos hp']
+              simp only [ite_eq_left hp, ite_eq_left hp']
               have hL0 : ¬ a.1 = 0 := by omega
-              simp only [if_neg hL0]
+              simp only [ite_eq_right hL0]
               have hJ3 : (b.1 + pOffset m) % 3 = 1 := by omega
               have hJ'3 : (1 + pOffset m) % 3 = 2 := by omega
               rw [hJ3, hJ'3, hcsp1, hcsp2]
@@ -2505,9 +2505,9 @@ theorem tree_not_hill {m : ℕ} (hm : 2 ≤ m) (x : Cell m)
               unfold subKey
               have hp : ((b.1 + pOffset m) / 3) % 2 = 0 := by omega
               have hp' : ((b.1 - 1 + pOffset m) / 3) % 2 = 0 := by omega
-              simp only [if_pos hp, if_pos hp']
+              simp only [ite_eq_left hp, ite_eq_left hp']
               have hL0 : ¬ a.1 = 0 := by omega
-              simp only [if_neg hL0]
+              simp only [ite_eq_right hL0]
               have hJ3 : (b.1 + pOffset m) % 3 = 1 := by omega
               have hJ'3 : (b.1 - 1 + pOffset m) % 3 = 0 := by omega
               rw [hJ3, hJ'3, hcsp1, hcsp0]
@@ -2609,17 +2609,17 @@ theorem tree_not_hill {m : ℕ} (hm : 2 ≤ m) (x : Cell m)
         · show subKey m (b.1 + pOffset m) a.1 < subKey m (b.1 + pOffset m) (a.1 + 1)
           unfold subKey
           have hp : ¬ ((b.1 + pOffset m) / 3) % 2 = 0 := by omega
-          simp only [if_neg hp]
+          simp only [ite_eq_right hp]
           have hR0' : ¬ a.1 + 1 = 0 := by omega
           have hR1' : ¬ a.1 + 1 = 1 := by omega
           have hJ3 : (b.1 + pOffset m) % 3 = 1 := by omega
           by_cases hr1 : a.1 = 1
           · have hL0 : ¬ a.1 = 0 := by omega
-            simp only [if_neg hL0, if_pos hr1, if_neg hR0', if_neg hR1']
+            simp only [ite_eq_right hL0, ite_eq_left hr1, ite_eq_right hR0', ite_eq_right hR1']
             rw [hJ3, hcsp1]
             omega
           · have hL0 : ¬ a.1 = 0 := by omega
-            simp only [if_neg hL0, if_neg hr1, if_neg hR0', if_neg hR1']
+            simp only [ite_eq_right hL0, ite_eq_right hr1, ite_eq_right hR0', ite_eq_right hR1']
             rw [hJ3, hcsp1]
             omega
     · -- bottom row: use the left neighbor (pattern 3)
@@ -2654,10 +2654,10 @@ theorem tree_not_hill {m : ℕ} (hm : 2 ≤ m) (x : Cell m)
             unfold subKey
             have hp : ¬ ((b.1 + pOffset m) / 3) % 2 = 0 := by omega
             have hp' : ¬ ((b.1 - 1 + pOffset m) / 3) % 2 = 0 := by omega
-            simp only [if_neg hp, if_neg hp']
+            simp only [ite_eq_right hp, ite_eq_right hp']
             have hL0 : ¬ a.1 = 0 := by omega
             have hL1 : ¬ a.1 = 1 := by omega
-            simp only [if_neg hL0, if_neg hL1]
+            simp only [ite_eq_right hL0, ite_eq_right hL1]
             have hJ3 : (b.1 + pOffset m) % 3 = 1 := by omega
             have hJ'3 : (b.1 - 1 + pOffset m) % 3 = 0 := by omega
             rw [hJ3, hJ'3, hcsp1, hcsp0]
@@ -2694,11 +2694,11 @@ theorem tree_not_hill {m : ℕ} (hm : 2 ≤ m) (x : Cell m)
             rw [hr1]
             unfold subKey
             have hp : ¬ ((b.1 + pOffset m) / 3) % 2 = 0 := by omega
-            simp only [if_neg hp]
+            simp only [ite_eq_right hp]
             have hL0 : ¬ (1 : ℕ) = 0 := by omega
             have hJ3 : (b.1 + pOffset m) % 3 = 2 := by omega
             have hJ3ne : ¬ (b.1 + pOffset m) % 3 = 0 := by omega
-            simp only [if_neg hL0, if_neg hJ3ne, if_true]
+            simp only [ite_eq_right hL0, ite_eq_right hJ3ne, ite_true]
             rw [hJ3]
             omega
       · -- odd row ≥ 3: the cell above is a hill

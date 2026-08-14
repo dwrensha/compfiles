@@ -397,8 +397,8 @@ lemma constraint_iff {σ : Line → Bool} {ℓ m : Line} (hdet : ℓ.det m ≠ 0
     ring
   rw [key]
   by_cases h : 0 < sgn (σ m) * ℓ.det m
-  · rw [if_pos h, mul_nonneg_iff_right_nonneg_of_pos h, sub_nonneg]
-  · rw [if_neg h]
+  · rw [ite_eq_left h, mul_nonneg_iff_right_nonneg_of_pos h, sub_nonneg]
+  · rw [ite_eq_right h]
     have h2 : sgn (σ m) * ℓ.det m < 0 := by
       have h3 : sgn (σ m) * ℓ.det m ≠ 0 := mul_ne_zero (sgn_ne_zero _) hdet
       exact lt_of_le_of_ne' (le_of_not_gt h) h3.symm
@@ -443,12 +443,12 @@ lemma param_constraint_iff {L : Finset Line} {ℓ : Line} (hGP : GeneralPosition
     · intro m hm
       obtain ⟨hmL, hmℓ, hpos⟩ := mem_lows.mp hm
       have h1 := h m hmL
-      rw [Line.constraint_iff (GP.det_ne hGP hℓ hmL (Ne.symm hmℓ)) t, if_pos hpos] at h1
+      rw [Line.constraint_iff (GP.det_ne hGP hℓ hmL (Ne.symm hmℓ)) t, ite_eq_left hpos] at h1
       exact h1
     · intro m hm
       obtain ⟨hmL, hmℓ, hneg⟩ := mem_upps.mp hm
       have h1 := h m hmL
-      rw [Line.constraint_iff (GP.det_ne hGP hℓ hmL (Ne.symm hmℓ)) t, if_neg (not_lt.mpr hneg.le)] at h1
+      rw [Line.constraint_iff (GP.det_ne hGP hℓ hmL (Ne.symm hmℓ)) t, ite_eq_right (not_lt.mpr hneg.le)] at h1
       exact h1
   · intro h m hm
     by_cases hml : m = ℓ
@@ -456,11 +456,11 @@ lemma param_constraint_iff {L : Finset Line} {ℓ : Line} (hGP : GeneralPosition
     · rcases lows_or_upps hGP hℓ hm hml with hl | hu
       · have h1 := h.1 m hl
         rw [Line.constraint_iff (GP.det_ne hGP hℓ hm (Ne.symm hml)) t,
-          if_pos (mem_lows.mp hl).2.2]
+          ite_eq_left (mem_lows.mp hl).2.2]
         exact h1
       · have h1 := h.2 m hu
         rw [Line.constraint_iff (GP.det_ne hGP hℓ hm (Ne.symm hml)) t,
-          if_neg (not_lt.mpr (mem_upps.mp hu).2.2.le)]
+          ite_eq_right (not_lt.mpr (mem_upps.mp hu).2.2.le)]
         exact h1
 
 lemma abs_fst_sub_le_dist (p q : ℝ × ℝ) : |p.1 - q.1| ≤ dist p q := by
@@ -1315,17 +1315,17 @@ lemma turn_at_blue_pt {L B : Finset Line} (hGP : GeneralPosition L)
   have hwne : w ≠ s := by
     rw [hw]
     rcases hend with h5 | h5
-    · rw [if_pos h5, h5]
+    · rw [ite_eq_left h5, h5]
       exact ne_of_gt hU
     · have h6 : ¬ (s = (W.g2ctx hGP hkL).Tmin) := by
         rw [h5]
         exact ne_of_gt hU
-      rw [if_neg h6, h5]
+      rw [ite_eq_right h6, h5]
       exact ne_of_lt hU
   have hline : ∃ h ∈ L, h ≠ v' ∧ h.val (v'.param w) = 0 := by
     rw [hw]
     rcases hend with h5 | h5
-    · rw [if_pos h5]
+    · rw [ite_eq_left h5]
       have e := (W.g2ctx hGP hkL).exists_line_at_Tmax
       simp only [Witness.g2ctx_ℓ] at e
       rw [← hv'2] at e
@@ -1333,7 +1333,7 @@ lemma turn_at_blue_pt {L B : Finset Line} (hGP : GeneralPosition L)
     · have h6 : ¬ (s = (W.g2ctx hGP hkL).Tmin) := by
         rw [h5]
         exact ne_of_gt hU
-      rw [if_neg h6]
+      rw [ite_eq_right h6]
       have e := (W.g2ctx hGP hkL).exists_line_at_Tmin
       simp only [Witness.g2ctx_ℓ] at e
       rw [← hv'2] at e
@@ -1375,10 +1375,10 @@ lemma turn_at_blue_pt {L B : Finset Line} (hGP : GeneralPosition L)
           intro hbet
           have hIoo : Wr.s_r hGP hrL ∈ Set.Ioo (W.g2ctx hGP hkL).Tmin (W.g2ctx hGP hkL).Tmax := by
             rcases hend with h5 | h5
-            · rw [hw, if_pos h5] at hbet
+            · rw [hw, ite_eq_left h5] at hbet
               simp only [Set.mem_Ioo]
               constructor <;> nlinarith [hbet]
-            · rw [hw, if_neg (by rw [h5]; exact ne_of_gt hU)] at hbet
+            · rw [hw, ite_eq_right (by rw [h5]; exact ne_of_gt hU)] at hbet
               simp only [Set.mem_Ioo]
               constructor <;> nlinarith [hbet]
           have hvr : ℓr.val (v'.param (Wr.s_r hGP hrL)) = 0 := by
@@ -1571,9 +1571,9 @@ lemma fiber_card_le_two (L B : Finset Line) (W : ∀ m ∈ L \ B, Witness L B m)
   obtain ⟨h1L, hq1⟩ := h1
   obtain ⟨h2L, hq2⟩ := h2S
   obtain ⟨h3L, hq3⟩ := h3S
-  rw [assocB, dif_pos h1L] at hq1
-  rw [assocB, dif_pos h2L] at hq2
-  rw [assocB, dif_pos h3L] at hq3
+  rw [assocB, dite_eq_left h1L] at hq1
+  rw [assocB, dite_eq_left h2L] at hq2
+  rw [assocB, dite_eq_left h3L] at hq3
   have h1L' := (Finset.mem_sdiff.mp h1L).1
   have h2L' := (Finset.mem_sdiff.mp h2L).1
   have h3L' := (Finset.mem_sdiff.mp h3L).1
@@ -1893,7 +1893,7 @@ lemma assocB_mem_bluePts (L : Finset Line) {B : Finset Line} (hBL : B ⊆ L)
     (W : ∀ m ∈ L \ B, Witness L B m)
     (hGP : GeneralPosition L) {ℓ : Line} (hℓ : ℓ ∈ L \ B) :
     assocB L B W hGP ℓ ∈ bluePts B := by
-  rw [assocB, dif_pos hℓ]
+  rw [assocB, dite_eq_left hℓ]
   have hℓL := (Finset.mem_sdiff.mp hℓ).1
   set W' := W ℓ hℓ with hW'
   have h1 : (W'.g1 hGP hℓL).val (W'.b hGP hℓL) = 0 := (W'.b_mem_closure hGP hℓL).2

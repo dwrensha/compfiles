@@ -177,12 +177,12 @@ def trailLabel {s₀ t : V} (w : G.Walk s₀ t) (n : ℕ) (Φ' : Sym2 V → ℕ)
 omit [Fintype V] [DecidableRel G.Adj] in
 lemma trailLabel_of_mem {s₀ t : V} {w : G.Walk s₀ t} {n : ℕ} {Φ' : Sym2 V → ℕ} {e : Sym2 V}
     (h : e ∈ w.edges) : trailLabel w n Φ' e = n + 1 + w.edges.idxOf e := by
-  rw [trailLabel, if_pos h]
+  rw [trailLabel, ite_eq_left h]
 
 omit [Fintype V] [DecidableRel G.Adj] in
 lemma trailLabel_of_not_mem {s₀ t : V} {w : G.Walk s₀ t} {n : ℕ} {Φ' : Sym2 V → ℕ} {e : Sym2 V}
     (h : e ∉ w.edges) : trailLabel w n Φ' e = Φ' e := by
-  rw [trailLabel, if_neg h]
+  rw [trailLabel, ite_eq_right h]
 
 omit [Fintype V] [DecidableEq V] in
 /-- If two elements of a finset have consecutive labels, the gcd of all labels is 1. -/

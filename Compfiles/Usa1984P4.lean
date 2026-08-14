@@ -56,7 +56,7 @@ lemma sum_ite_erase (s : Finset (Fin 28)) (q1 : Fin 28) :
     ∑ q2 : Fin 28, (if q1 ∈ s ∧ q2 ∈ s ∧ q1 ≠ q2 then (1 : ℕ) else 0)
       = if q1 ∈ s then s.card - 1 else 0 := by
   by_cases h1 : q1 ∈ s
-  · rw [if_pos h1]
+  · rw [ite_eq_left h1]
     have hset : (Finset.univ.filter fun q2 : Fin 28 ↦ q1 ∈ s ∧ q2 ∈ s ∧ q1 ≠ q2)
         = s.erase q1 := by
       ext q2
@@ -65,10 +65,10 @@ lemma sum_ite_erase (s : Finset (Fin 28)) (q1 : Fin 28) :
       · exact fun h ↦ ⟨h.2.2.symm, h.2.1⟩
       · exact fun h ↦ ⟨h1, h.2, h.1.symm⟩
     rw [← Finset.card_filter, hset, Finset.card_erase_of_mem h1]
-  · rw [if_neg h1]
+  · rw [ite_eq_right h1]
     apply Finset.sum_eq_zero
     intro q2 _
-    rw [if_neg]
+    rw [ite_eq_right]
     exact fun h ↦ h1 h.1
 
 /-- The number of ordered pairs of distinct questions in `s`, written as a
@@ -88,7 +88,7 @@ lemma sum_pupils_pair {Pupil : Type} [Fintype Pupil] (attempt : Pupil → Finset
     (∑ p : Pupil, if q1 ∈ attempt p ∧ q2 ∈ attempt p ∧ q1 ≠ q2 then (1 : ℕ) else 0)
       = if q1 ≠ q2 then 2 else 0 := by
   by_cases h : q1 ≠ q2
-  · rw [if_pos h]
+  · rw [ite_eq_left h]
     have hset : (Finset.univ.filter fun p : Pupil ↦
           q1 ∈ attempt p ∧ q2 ∈ attempt p ∧ q1 ≠ q2)
         = Finset.univ.filter fun p : Pupil ↦ q1 ∈ attempt p ∧ q2 ∈ attempt p := by
@@ -98,12 +98,12 @@ lemma sum_pupils_pair {Pupil : Type} [Fintype Pupil] (attempt : Pupil → Finset
       · exact fun hh ↦ ⟨hh.1, hh.2.1⟩
       · exact fun hh ↦ ⟨hh.1, hh.2, h⟩
     rw [← Finset.card_filter, hset, hpair q1 q2 h]
-  · rw [if_neg h]
+  · rw [ite_eq_right h]
     push Not at h
     subst h
     apply Finset.sum_eq_zero
     intro p _
-    rw [if_neg (fun hh ↦ hh.2.2 rfl)]
+    rw [ite_eq_right (fun hh ↦ hh.2.2 rfl)]
 
 /-- For a fixed question `q₁`, the number of questions `q₂ ≠ q₁` is `27`,
 so summing the constant `2` over them gives `54`. -/
@@ -224,7 +224,7 @@ problem usa1984_p4 {Pupil : Type} [Fintype Pupil] (attempt : Pupil → Finset (F
           = if q1 ∈ paper1 ∧ q2 ∈ paper1 ∧ q1 ≠ q2 then 2 else 0 := by
       intro q1 q2
       by_cases h : q1 ∈ paper1 ∧ q2 ∈ paper1 ∧ q1 ≠ q2
-      · rw [if_pos h]
+      · rw [ite_eq_left h]
         obtain ⟨h1p, h2p, h12⟩ := h
         have hset : (Finset.univ.filter fun p : Pupil ↦
               q1 ∈ attempt p ∩ paper1 ∧ q2 ∈ attempt p ∩ paper1 ∧ q1 ≠ q2)
@@ -235,10 +235,10 @@ problem usa1984_p4 {Pupil : Type} [Fintype Pupil] (attempt : Pupil → Finset (F
           · exact fun hh ↦ ⟨hh.1.1, hh.2.1.1⟩
           · exact fun hh ↦ ⟨⟨hh.1, h1p⟩, ⟨hh.2, h2p⟩, h12⟩
         rw [← Finset.card_filter, hset, hpair q1 q2 h12]
-      · rw [if_neg h]
+      · rw [ite_eq_right h]
         apply Finset.sum_eq_zero
         intro p _
-        rw [if_neg]
+        rw [ite_eq_right]
         simp only [Finset.mem_inter]
         exact fun hh ↦ h ⟨hh.1.2, hh.2.1.2, hh.2.2⟩
     rw [Finset.sum_congr rfl (fun q1 _ ↦ Finset.sum_congr rfl (fun q2 _ ↦ inner q1 q2))]

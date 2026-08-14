@@ -114,19 +114,19 @@ lemma constr_even (k : ℕ) :
     constr (2 * k) = (4 * (k : ℝ) + 3) / (2 * Real.sqrt ((k : ℝ) + 1)) := by
   have h1 : Even (2 * k) := ⟨k, two_mul k⟩
   have h2 : (2 * k) / 2 = k := by omega
-  simp only [constr, if_pos h1, h2]
+  simp only [constr, ite_eq_left h1, h2]
 
 lemma constr_odd (k : ℕ) :
     constr (2 * k + 1) = 2 * Real.sqrt ((k : ℝ) + 1) := by
   have h1 : ¬ Even (2 * k + 1) := Nat.not_even_iff_odd.mpr ⟨k, rfl⟩
   have h2 : (2 * k + 1) / 2 = k := by omega
-  simp only [constr, if_neg h1, h2]
+  simp only [constr, ite_eq_right h1, h2]
 
 lemma constr_pos (i : ℕ) : 0 < constr i := by
   by_cases h : Even i
-  · simp only [constr, if_pos h]
+  · simp only [constr, ite_eq_left h]
     positivity
-  · simp only [constr, if_neg h]
+  · simp only [constr, ite_eq_right h]
     positivity
 
 /-- The product of two consecutive terms is exactly `4k + 3`. -/

@@ -94,7 +94,7 @@ lemma f_left_inv (g : Equiv.Perm (Fin (k + 2))) (hg : g ∈ (S' k m)) :
     replace hg' := lt_iff_le_and_ne.2 ⟨hg', g_nonzero_ne_m hg n.succ (Fin.succ_ne_zero n)⟩
     simp [hg']
   · simp only [hg', reduceDIte, Fin.succ_pred, Equiv.symm_apply_apply, Fin.pred_succ]
-    apply dif_neg
+    apply dite_eq_right
     intro hg''
     apply hg'
     push Not at hg'
@@ -109,7 +109,7 @@ lemma f_right_inv (g : Equiv.Perm (Fin (k + 2))) (hg : g ∈ (S' k m)) :
     replace hg' := le_of_lt hg'
     simp [hg']
   · simp only [hg', reduceDIte, Fin.succ_pred, Equiv.apply_symm_apply, Fin.pred_succ]
-    apply dif_neg
+    apply dite_eq_right
     intro hg''
     apply hg'
     exact hg''
@@ -157,7 +157,7 @@ lemma f'_right_inv (g : Equiv.Perm (Fin (k + 1))) :
                Fin.succ_ne_zero, reduceIte]
   · simp_rw [hg, reduceDIte, Fin.succ_ne_zero, reduceDIte, Fin.pred_succ,
              Equiv.apply_symm_apply, Fin.succ_pred]
-    apply dif_neg
+    apply dite_eq_right
     push Not at *
     rw [Fin.le_castSucc_pred_iff]
     exact lt_iff_le_and_ne.2 ⟨hg, Ne.symm hn⟩
@@ -189,9 +189,9 @@ lemma f_f'_left_inv {g : Equiv.Perm (Fin (k + 2))} (hg : g ∈ S' k m) : f' m (f
   obtain hx | hx := em (x = 0) <;> simp [hx, hg.2]
   obtain hx' | hx' := em (g x ≤ m)
   · simp only [hx', reduceDIte, Fin.castSucc_castPred]
-    exact dif_pos (lt_iff_le_and_ne.2 ⟨hx', g_nonzero_ne_m hg x hx⟩)
+    exact dite_eq_left (lt_iff_le_and_ne.2 ⟨hx', g_nonzero_ne_m hg x hx⟩)
   · simp only [hx', reduceDIte, Fin.succ_pred]
-    apply dif_neg
+    apply dite_eq_right
     push Not at *
     rwa [Fin.le_castSucc_pred_iff]
 
@@ -202,9 +202,9 @@ lemma f_f'_right_inv (hm : m ≤ 1) {g : Equiv.Perm (Fin (k + 1))} (hg : g ∈ S
   simp [f, f_toFun, f', f'_toFun, Fin.succ_ne_zero]
   obtain hx | hx := em ((g x).castSucc < m)
   · simp only [hx, reduceIte, Fin.castPred_castSucc]
-    exact dif_pos (le_of_lt hx)
+    exact dite_eq_left (le_of_lt hx)
   · simp_rw [hx, reduceIte, Fin.pred_succ]
-    apply dif_neg
+    apply dite_eq_right
     contrapose! hx
     rwa [Fin.castSucc_lt_iff_succ_le]
 

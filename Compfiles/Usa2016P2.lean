@@ -120,13 +120,13 @@ lemma sum_range_mod_add_ge {q b m : ℕ} (hb : b ≤ q) (hm : m ≤ q) :
       (i : ℤ) + (m : ℤ) - (q : ℤ) * (if q ≤ i + m then 1 else 0) := by
     intro i hi
     by_cases h : q ≤ i + m
-    · rw [if_pos h]
+    · rw [ite_eq_left h]
       have h1 : (i + m) % q = i + m - q := by
         rw [Nat.mod_eq_sub_mod h]
         exact Nat.mod_eq_of_lt (by omega)
       rw [h1, Nat.cast_sub h, Nat.cast_add]
       ring
-    · rw [if_neg h]
+    · rw [ite_eq_right h]
       have h1 : (i + m) % q = i + m := Nat.mod_eq_of_lt (by omega)
       rw [h1, Nat.cast_add]
       ring

@@ -415,7 +415,7 @@ lemma startRound_eq_of_le (j : ℕ) (hj : j ≤ 20000) : startRound j = 400 * j 
   | succ k ih =>
     have hk : k ≠ 20000 := by omega
     rw [startRound_succ, ih (by omega)]
-    simp only [phaseLen, if_neg hk]
+    simp only [phaseLen, ite_eq_right hk]
     ring
 
 lemma startRound_two : startRound (20000 + 1) = 8003600 := by
@@ -429,7 +429,7 @@ lemma startRound_eq_of_ge (j : ℕ) (hj : 20001 ≤ j) :
   | succ k hk ih =>
     have hkn : k ≠ 20000 := by omega
     rw [startRound_succ, ih]
-    simp only [phaseLen, if_neg hkn]
+    simp only [phaseLen, ite_eq_right hkn]
     omega
 
 lemma startRound_total : startRound totalPhases = totalRounds := by
@@ -595,7 +595,7 @@ lemma escStep_spec (σ : Strategy) (hσ : ValidStrategy σ) (s : PState) (u w : 
       linarith [hd])
     hs hs' hHreach
   by_cases hc : dist H (s.a + t • u - w) ≤ dist H (s.a + t • u + w)
-  · rw [if_pos hc]
+  · rw [ite_eq_left hc]
     refine ⟨escPath_zero _ _ _ _ _, rfl, ?_, ?_, rfl, ?_⟩
     · intro k _
       exact escPath_step _ _ _ _ _ hnpos hvnX k
@@ -613,7 +613,7 @@ lemma escStep_spec (σ : Strategy) (hσ : ValidStrategy σ) (s : PState) (u w : 
           Real.sqrt_nonneg (dist s.a (σ s.L) ^ 2 + 1 / 2)]
       rw [hend, dist_comm (s.a + (t • u + w)) H]
       exact hsq
-  · rw [if_neg hc]
+  · rw [ite_eq_right hc]
     push Not at hc
     refine ⟨escPathY_zero _ _ _ _ _, rfl, ?_, ?_, rfl, ?_⟩
     · intro k _
@@ -646,7 +646,7 @@ lemma phaseStep_spec_escape (σ : Strategy) (hσ : ValidStrategy σ) (s : PState
   obtain ⟨hu1, hw1, huw, hspan, hb⟩ :=
     Classical.choose_spec (Classical.choose_spec (frame_exists s.a (σ s.L)))
   unfold phaseStep
-  rw [dif_pos ⟨hd, hj⟩]
+  rw [dite_eq_left ⟨hd, hj⟩]
   exact escStep_spec σ hσ s _ _ hd hu1 hw1 huw hspan hb
 
 lemma maintSeq_succ_fst (σ : Strategy) (a : Pt) (L : List Pt) (k : ℕ) :
@@ -756,7 +756,7 @@ lemma phaseStep_spec_maint (σ : Strategy) (hσ : ValidStrategy σ) (s : PState)
   have hd100 : 100 ≤ dist ((maintSeq σ s.a s.L (phaseLen s.j)).1)
       (σ ((maintSeq σ s.a s.L (phaseLen s.j)).2)) := le_trans hd hdist
   unfold phaseStep
-  rw [dif_neg hbr]
+  rw [dite_eq_right hbr]
   dsimp only
   refine ⟨rfl, rfl, hstep, ?_, hL, hd100, hdist⟩
   intro k _ _
@@ -767,7 +767,7 @@ lemma phaseStep_escape_eq (σ : Strategy) (s : PState)
     phaseStep σ s = escStep σ s (Classical.choose (frame_exists s.a (σ s.L)))
       (Classical.choose (Classical.choose_spec (frame_exists s.a (σ s.L)))) := by
   unfold phaseStep
-  rw [dif_pos hbr]
+  rw [dite_eq_left hbr]
 
 lemma states_j (σ : Strategy) (j : ℕ) : (States σ j).j = j := by
   induction j with
@@ -780,7 +780,7 @@ lemma states_j (σ : Strategy) (j : ℕ) : (States σ j).j = j := by
       dsimp only
       rw [ih]
     · unfold phaseStep
-      rw [dif_neg hbr]
+      rw [dite_eq_right hbr]
       dsimp only
       rw [ih]
 
@@ -908,7 +908,7 @@ lemma reportList_eq (σ : Strategy) (hσ : ValidStrategy σ) (j : ℕ) :
         omega
     have harg : startRound k + ↑i + 1 - startRound k = ↑i + 1 := by omega
     unfold reports
-    rw [if_neg hne, hpk, harg]
+    rw [ite_eq_right hne, hpk, harg]
     rfl
 
 lemma rabbit_valid (σ : Strategy) (hσ : ValidStrategy σ) : ValidRabbit (rabbit σ) := by
@@ -981,7 +981,7 @@ lemma reports_valid (σ : Strategy) (hσ : ValidStrategy σ) :
     omega
   have erep : reports σ n = (phaseStep σ (States σ j)).2.2 (k + 1) := by
     unfold reports
-    rw [if_neg hne, hoff]
+    rw [ite_eq_right hne, hoff]
     rfl
   have hk1 : 1 ≤ k + 1 := by omega
   rcases eq_or_lt_of_le (Nat.succ_le_of_lt hk) with hke | hkl

@@ -209,8 +209,8 @@ theorem headsZ_update {n : ℕ} (c : Fin n → Bool) (p : Fin n) :
   rw [h1, sum_update_of_mem (mem_univ p), sdiff_singleton_eq_erase,
     ← add_sum_erase univ _ (mem_univ p)]
   by_cases hc : c p
-  · simp only [if_pos hc]; ring
-  · simp only [if_neg hc]; ring
+  · simp only [ite_eq_left hc]; ring
+  · simp only [ite_eq_right hc]; ring
 
 /-- How the weighted sum changes when coin `p` is flipped. -/
 theorem weightedZ_update {n : ℕ} (c : Fin n → Bool) (p : Fin n) :
@@ -229,15 +229,15 @@ theorem weightedZ_update {n : ℕ} (c : Fin n → Bool) (p : Fin n) :
   rw [h1, sum_update_of_mem (mem_univ p), sdiff_singleton_eq_erase,
     ← add_sum_erase univ _ (mem_univ p)]
   by_cases hc : c p
-  · simp only [if_pos hc]; ring
-  · simp only [if_neg hc]; ring
+  · simp only [ite_eq_left hc]; ring
+  · simp only [ite_eq_right hc]; ring
 
 /-- The measure drops by exactly one at each step. -/
 theorem step_meas {n : ℕ} (c : Fin n → Bool) (h : numHeads c ≠ 0) :
     meas (step c) = meas c - 1 := by
   have hstep : step c = Function.update c (flipIx c h) (!c (flipIx c h)) := by
     unfold step
-    rw [dif_neg h]
+    rw [dite_eq_right h]
   rw [hstep]
   set p := flipIx c h with hp
   have hp2 : (p : ℕ) + 1 = numHeads c := by

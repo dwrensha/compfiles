@@ -655,7 +655,7 @@ lemma p2strat_threat {b : Board} (h : HasThreat b) :
     ∃ x l, (p2strat b).1 = x ∧ (p2strat b).2 = l ∧ x < 2000 ∧ b x = none ∧
       HasSOS (Function.update b x (some l)) := by
   simp only [p2strat]
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   refine ⟨_, _, rfl, rfl, ?_⟩
   have hs := Classical.choose_spec h
   have hs2 := Classical.choose_spec hs.2
@@ -666,7 +666,7 @@ lemma p2strat_safe {b : Board} (hTF : ThreatFree b) (hT : HasTrap b)
     (h : ∃ x ∈ Finset.range 2000, ∃ l : Piece, SafeMove b x l) :
     ∃ x l, (p2strat b).1 = x ∧ (p2strat b).2 = l ∧ SafeMove b x l := by
   simp only [p2strat]
-  rw [dif_neg hTF, dif_pos hT, dif_pos h]
+  rw [dite_eq_right hTF, dite_eq_left hT, dite_eq_left h]
   refine ⟨_, _, rfl, rfl, ?_⟩
   have hs := Classical.choose_spec h
   exact Classical.choose_spec hs.2
@@ -676,14 +676,14 @@ lemma p2strat_setup1 {b : Board} (hTF : ThreatFree b) (hNT : ¬ HasTrap b)
     ∃ a, letters b = {a} ∧ (p2strat b).1 = (if a < 1000 then 1500 else 500) ∧
       (p2strat b).2 = Piece.S := by
   simp only [p2strat]
-  rw [dif_neg hTF, dif_neg hNT, dif_pos h1]
+  rw [dite_eq_right hTF, dite_eq_right hNT, dite_eq_left h1]
   exact ⟨_, Classical.choose_spec (Finset.card_eq_one.mp h1), rfl, rfl⟩
 
 lemma p2strat_setup2 {b : Board} (hTF : ThreatFree b) (hNT : ¬ HasTrap b)
     (h1 : (letters b).card ≠ 1) (h : ∃ t ∈ Finset.range 2000, SecondSetupOk b t) :
     ∃ t, (p2strat b).1 = t ∧ (p2strat b).2 = Piece.S ∧ t < 2000 ∧ SecondSetupOk b t := by
   simp only [p2strat]
-  rw [dif_neg hTF, dif_neg hNT, dif_neg h1, dif_pos h]
+  rw [dite_eq_right hTF, dite_eq_right hNT, dite_eq_right h1, dite_eq_left h]
   refine ⟨_, rfl, rfl, ?_⟩
   have hs := Classical.choose_spec h
   rw [Finset.mem_range] at hs
@@ -737,10 +737,10 @@ lemma main_induction (τ : Strategy) :
       have hne : empties b ≠ ∅ := by
         rcases hodd with ⟨k, hk⟩
         exact empties_ne_empty (by omega)
-      rw [play, if_neg hSOS, if_neg hne]
+      rw [play, ite_eq_right hSOS, ite_eq_right hne]
       obtain ⟨x, l, hf, hs, hx, hxe, hnl, hlT, hlSOS⟩ :=
         p2strat_safe hTF hT (exists_safe_move hBOK hTF hodd)
-      rw [hf, hs, if_pos ⟨hx, hxe⟩]
+      rw [hf, hs, ite_eq_left ⟨hx, hxe⟩]
       have hcard := empties_update_card hx hxe l
       rcases hodd with ⟨k, hk⟩
       have hn3 : 3 ≤ (empties b).card := by
@@ -771,9 +771,9 @@ lemma main_induction (τ : Strategy) :
       have hev2 : Even (empties b).card ∧ 2 ≤ (empties b).card := hpar
       obtain ⟨hev, h2⟩ := hev2
       have hne : empties b ≠ ∅ := empties_ne_empty (by omega)
-      rw [play, if_neg hSOS, if_neg hne]
+      rw [play, ite_eq_right hSOS, ite_eq_right hne]
       by_cases hlegal : (τ b).1 < 2000 ∧ b (τ b).1 = none
-      · rw [if_pos hlegal]
+      · rw [ite_eq_left hlegal]
         set m := τ b with hm
         have hcard := empties_update_card hlegal.1 hlegal.2 m.2
         have hSOS' : ¬ HasSOS (Function.update b m.1 (some m.2)) :=
@@ -785,13 +785,13 @@ lemma main_induction (τ : Strategy) :
           cases fuel with
           | zero => omega
           | succ fuel =>
-            rw [play, if_neg hSOS']
+            rw [play, ite_eq_right hSOS']
             have hne' : empties (Function.update b m.1 (some m.2)) ≠ ∅ :=
               empties_ne_empty (by rw [hcard]; omega)
-            rw [if_neg hne', hf, hs, if_pos ⟨hx, hxe⟩]
+            rw [ite_eq_right hne', hf, hs, ite_eq_left ⟨hx, hxe⟩]
             cases fuel with
             | zero => omega
-            | succ fuel => rw [play, if_pos hSOSx]
+            | succ fuel => rw [play, ite_eq_left hSOSx]
         · -- a safe move: the invariant is preserved
           have hnl : ¬ IsLosing b m.1 := fun hL => hThr (hL.2 m.2)
           refine ih _ false (by omega) ⟨hBOK', hThr, hSOS',
@@ -799,7 +799,7 @@ lemma main_induction (τ : Strategy) :
           rw [hcard]
           rcases hev with ⟨k, hk⟩
           exact ⟨k - 1, by omega⟩
-      · rw [if_neg hlegal]
+      · rw [ite_eq_right hlegal]
 
 /-- A good second setup move exists after the second player's first move,
     whatever the first player does (that is not immediately losing). -/
@@ -946,13 +946,13 @@ problem usa1999_p5 :
     simp at h0
   have hcard0 : (empties (fun _ => none : Board)).card = 2000 := by simp [empties]
   have hne0 : empties (fun _ => none : Board) ≠ ∅ := empties_ne_empty (by omega)
-  rw [play, if_neg hSOS0, if_neg hne0]
+  rw [play, ite_eq_right hSOS0, ite_eq_right hne0]
   -- first player's first move
   set m₀ := τ (fun _ => none) with hm₀
   by_cases hlegal0 : m₀.1 < 2000 ∧ ((fun _ => none : Board) m₀.1) = none
   swap
-  · rw [if_neg hlegal0]
-  rw [if_pos hlegal0]
+  · rw [ite_eq_right hlegal0]
+  rw [ite_eq_left hlegal0]
   set b₁ := Function.update (fun _ => none) m₀.1 (some m₀.2) with hb₁def
   have hBOK1 : BOK b₁ := bOK_update hBOK0 hlegal0.1 m₀.2
   have hlet1 : letters b₁ = {m₀.1} := by
@@ -992,8 +992,8 @@ problem usa1999_p5 :
   have hpne : p ≠ m₀.1 := by rw [hpdef]; split <;> omega
   have hbp1 : b₁ p = none := by
     rw [hb₁def, Function.update_of_ne hpne]
-  rw [play, if_neg hSOS1, if_neg hne1]
-  rw [hf1, hs1, if_pos ⟨hp2000, hbp1⟩]
+  rw [play, ite_eq_right hSOS1, ite_eq_right hne1]
+  rw [hf1, hs1, ite_eq_left ⟨hp2000, hbp1⟩]
   -- first player's second move
   set b₂ := Function.update b₁ p (some Piece.S) with hb₂def
   have hBOK2 : BOK b₂ := bOK_update hBOK1 hp2000 Piece.S
@@ -1006,12 +1006,12 @@ problem usa1999_p5 :
   have hcard2 : (empties b₂).card = 1998 := by
     rw [hb₂def, empties_update_card hp2000 hbp1 Piece.S, hcard1]
   have hne2 : empties b₂ ≠ ∅ := empties_ne_empty (by omega)
-  rw [play, if_neg hSOS2, if_neg hne2]
+  rw [play, ite_eq_right hSOS2, ite_eq_right hne2]
   set m₂ := τ b₂ with hm₂
   by_cases hlegal2 : m₂.1 < 2000 ∧ b₂ m₂.1 = none
   swap
-  · rw [if_neg hlegal2]
-  rw [if_pos hlegal2]
+  · rw [ite_eq_right hlegal2]
+  rw [ite_eq_left hlegal2]
   set b₃ := Function.update b₂ m₂.1 (some m₂.2) with hb₃def
   have hBOK3 : BOK b₃ := bOK_update hBOK2 hlegal2.1 m₂.2
   have hb₂q : b₂ m₀.1 = some m₀.2 := by
@@ -1054,14 +1054,14 @@ problem usa1999_p5 :
   by_cases hThr3 : HasThreat b₃
   · -- the first player allows an immediate win
     obtain ⟨x, l, hf, hs, hx, hxe, hSOSx⟩ := p2strat_threat hThr3
-    rw [play, if_neg hSOS3, if_neg hne3, hf, hs, if_pos ⟨hx, hxe⟩]
-    rw [play, if_pos hSOSx]
+    rw [play, ite_eq_right hSOS3, ite_eq_right hne3, hf, hs, ite_eq_left ⟨hx, hxe⟩]
+    rw [play, ite_eq_left hSOSx]
   by_cases hT3 : HasTrap b₃
   · -- the first player has already built a trap: play a safe move
     have hodd3 : Odd (empties b₃).card := ⟨998, by omega⟩
     obtain ⟨x, l, hf, hs, hx, hxe, hnl, hlT, hlSOS⟩ :=
       p2strat_safe hThr3 hT3 (exists_safe_move hBOK3 hThr3 hodd3)
-    rw [play, if_neg hSOS3, if_neg hne3, hf, hs, if_pos ⟨hx, hxe⟩]
+    rw [play, ite_eq_right hSOS3, ite_eq_right hne3, hf, hs, ite_eq_left ⟨hx, hxe⟩]
     have hcard4 := empties_update_card hx hxe l
     have hInv4 : Inv (Function.update b₃ x (some l)) true :=
       ⟨bOK_update hBOK3 hx l, hlT, hlSOS, hasTrap_update hT3 hx hxe hnl l,
@@ -1078,7 +1078,7 @@ problem usa1999_p5 :
     rw [← hexp] at hOk
     obtain ⟨t, hf, hs, ht2000, hOk2⟩ :=
       p2strat_setup2 hThr3 hT3 hcardl3ne ⟨t, Finset.mem_range.mpr htr, hOk⟩
-    rw [play, if_neg hSOS3, if_neg hne3, hf, hs, if_pos ⟨ht2000, hOk2.1⟩]
+    rw [play, ite_eq_right hSOS3, ite_eq_right hne3, hf, hs, ite_eq_left ⟨ht2000, hOk2.1⟩]
     obtain ⟨hte, hnoThr, hnoSOS, htrap⟩ := hOk2
     have hcard4 := empties_update_card ht2000 hte Piece.S
     exact main_induction τ 1997 _ true (by omega)

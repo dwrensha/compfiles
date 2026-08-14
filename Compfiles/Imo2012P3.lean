@@ -225,7 +225,7 @@ lemma aliceWeight_step_ask {σ : Strategy N} {t : ℕ} {S : Finset (Fin N)}
     have hW : ∑ x ∈ S, weightBase ^ (e x) ≤ W / 2 := by linarith
     have hstreak : aliceStreak σ (t + 1) = fun x => if x ∈ S then e x + 1 else 0 := by
       have hp := alicePlay_ask h
-      rw [if_pos hC] at hp
+      rw [ite_eq_left hC] at hp
       exact congrArg Prod.fst hp
     have hsum : aliceWeight σ (t + 1) =
         ∑ x ∈ S, weightBase ^ (if x ∈ S then e x + 1 else 0) +
@@ -234,10 +234,10 @@ lemma aliceWeight_step_ask {σ : Strategy N} {t : ℕ} {S : Finset (Fin N)}
     have h1 : ∑ x ∈ S, weightBase ^ (if x ∈ S then e x + 1 else 0)
         = (∑ x ∈ S, weightBase ^ (e x)) * weightBase := by
       rw [Finset.sum_mul]
-      exact Finset.sum_congr rfl fun x hx => by rw [if_pos hx, pow_succ]
+      exact Finset.sum_congr rfl fun x hx => by rw [ite_eq_left hx, pow_succ]
     have h2 : ∑ x ∈ Sᶜ, weightBase ^ (if x ∈ S then e x + 1 else 0) = (Sᶜ.card : ℝ) := by
       have hc : ∀ x ∈ Sᶜ, weightBase ^ (if x ∈ S then e x + 1 else 0) = (1 : ℝ) :=
-        fun x hx => by rw [if_neg (Finset.mem_compl.mp hx), pow_zero]
+        fun x hx => by rw [ite_eq_right (Finset.mem_compl.mp hx), pow_zero]
       rw [Finset.sum_congr rfl hc, Finset.sum_const, nsmul_eq_mul, mul_one]
     rw [hsum, h1, h2]
     have h3 := mul_le_mul_of_nonneg_right hW hq
@@ -247,7 +247,7 @@ lemma aliceWeight_step_ask {σ : Strategy N} {t : ℕ} {S : Finset (Fin N)}
     have hW : ∑ x ∈ Sᶜ, weightBase ^ (e x) ≤ W / 2 := by linarith
     have hstreak : aliceStreak σ (t + 1) = fun x => if x ∉ S then e x + 1 else 0 := by
       have hp := alicePlay_ask h
-      rw [if_neg hC] at hp
+      rw [ite_eq_right hC] at hp
       exact congrArg Prod.fst hp
     have hsum : aliceWeight σ (t + 1) =
         ∑ x ∈ Sᶜ, weightBase ^ (if x ∉ S then e x + 1 else 0) +
@@ -257,10 +257,10 @@ lemma aliceWeight_step_ask {σ : Strategy N} {t : ℕ} {S : Finset (Fin N)}
         = (∑ x ∈ Sᶜ, weightBase ^ (e x)) * weightBase := by
       rw [Finset.sum_mul]
       exact Finset.sum_congr rfl fun x hx => by
-        rw [if_pos (Finset.mem_compl.mp hx), pow_succ]
+        rw [ite_eq_left (Finset.mem_compl.mp hx), pow_succ]
     have h2 : ∑ x ∈ S, weightBase ^ (if x ∉ S then e x + 1 else 0) = (S.card : ℝ) := by
       have hc : ∀ x ∈ S, weightBase ^ (if x ∉ S then e x + 1 else 0) = (1 : ℝ) :=
-        fun x hx => by rw [if_neg (not_not_intro hx), pow_zero]
+        fun x hx => by rw [ite_eq_right (not_not_intro hx), pow_zero]
       rw [Finset.sum_congr rfl hc, Finset.sum_const, nsmul_eq_mul, mul_one]
     rw [hsum, h1, h2]
     have h3 := mul_le_mul_of_nonneg_right hW hq
@@ -325,13 +325,13 @@ lemma alice_lie_streak {σ : Strategy N} {x : Fin N} {i : ℕ}
         (∑ x ∈ Sᶜ, weightBase ^ (aliceStreak σ i x)) <;> simp [hC]
   by_cases hC : (∑ x ∈ S, weightBase ^ (aliceStreak σ i x)) ≤
       (∑ x ∈ Sᶜ, weightBase ^ (aliceStreak σ i x))
-  · rw [if_pos hC] at hans hstr
+  · rw [ite_eq_left hC] at hans hstr
     rw [hstr]
     rcases htruth with ⟨hx1, hx2⟩ | ⟨hx1, hx2⟩
     · simp [hx1]
     · rw [hans] at hx2
       exact Bool.noConfusion hx2
-  · rw [if_neg hC] at hans hstr
+  · rw [ite_eq_right hC] at hans hstr
     rw [hstr]
     rcases htruth with ⟨hx1, hx2⟩ | ⟨hx1, hx2⟩
     · rw [hans] at hx2
@@ -570,7 +570,7 @@ lemma bobQuestion_bits (P : Finset (Fin N)) (h : 2 ^ k + 1 ≤ P.card) (j : ℕ)
     (bs : List Bool) (hb : bs.length < k) :
     bobQuestion P h (BobPhase.bits j bs) = bitQuestion P (by omega) ⟨bs.length, hb⟩ := by
   unfold bobQuestion
-  exact dif_pos hb
+  exact dite_eq_left hb
 
 /-- One round-step of Bob's state machine, in the case `2 ^ k < P.card`. -/
 noncomputable def bobStepPhase (P : Finset (Fin N)) (h : 2 ^ k + 1 ≤ P.card)
@@ -618,12 +618,12 @@ lemma bobStateOf_succ (ans : ℕ → Bool) (t : ℕ) :
 lemma bobStep_frozen (s : BobState N) (h : s.pool.card ≤ 2 ^ k) (a : Bool) :
     bobStep k s a = s := by
   unfold bobStep
-  exact dif_pos h
+  exact dite_eq_left h
 
 lemma bobStep_active (s : BobState N) (h : ¬ s.pool.card ≤ 2 ^ k) (a : Bool) :
     bobStep k s a = bobStepPhase (k := k) s.pool (by omega) s.phase a := by
   unfold bobStep
-  exact dif_neg h
+  exact dite_eq_right h
 
 lemma bobStepPhase_probe_true (P : Finset (Fin N)) (h : 2 ^ k + 1 ≤ P.card) (j : ℕ) :
     bobStepPhase P h (BobPhase.probe j) true = ⟨P, BobPhase.bits (j + 1) []⟩ := rfl
@@ -634,14 +634,14 @@ lemma bobStepPhase_probe_false_eq (P : Finset (Fin N)) (h : 2 ^ k + 1 ≤ P.card
       ⟨P.erase (bobSpecial P h), BobPhase.probe 0⟩ := by
   show ((if j = k then ⟨P.erase (bobSpecial P h), BobPhase.probe 0⟩
     else ⟨P, BobPhase.probe (j + 1)⟩) : BobState N) = _
-  rw [if_pos hj]
+  rw [ite_eq_left hj]
 
 lemma bobStepPhase_probe_false_lt (P : Finset (Fin N)) (h : 2 ^ k + 1 ≤ P.card) (j : ℕ)
     (hj : j ≠ k) :
     bobStepPhase P h (BobPhase.probe j) false = ⟨P, BobPhase.probe (j + 1)⟩ := by
   show ((if j = k then ⟨P.erase (bobSpecial P h), BobPhase.probe 0⟩
     else ⟨P, BobPhase.probe (j + 1)⟩) : BobState N) = _
-  rw [if_neg hj]
+  rw [ite_eq_right hj]
 
 lemma bobStepPhase_bits_complete (P : Finset (Fin N)) (h : 2 ^ k + 1 ≤ P.card) (j : ℕ)
     (bs : List Bool) (a : Bool) (hb : (bs ++ [a]).length = k) :
@@ -650,14 +650,14 @@ lemma bobStepPhase_bits_complete (P : Finset (Fin N)) (h : 2 ^ k + 1 ≤ P.card)
         (fun i : Fin k => !((bs ++ [a]).get ⟨i, hb ▸ i.2⟩)) : Fin N), BobPhase.probe 0⟩ := by
   unfold bobStepPhase
   dsimp only
-  rw [dif_pos hb]
+  rw [dite_eq_left hb]
 
 lemma bobStepPhase_bits_cont (P : Finset (Fin N)) (h : 2 ^ k + 1 ≤ P.card) (j : ℕ)
     (bs : List Bool) (a : Bool) (hb : (bs ++ [a]).length ≠ k) :
     bobStepPhase P h (BobPhase.bits j bs) a = ⟨P, BobPhase.bits j (bs ++ [a])⟩ := by
   unfold bobStepPhase
   dsimp only
-  rw [dif_neg hb]
+  rw [dite_eq_right hb]
 
 lemma bobStrategy_move_guess {ans : ℕ → Bool} {t : ℕ}
     (h : (bobStateOf N k ans t).pool.card ≤ 2 ^ k) :
@@ -668,7 +668,7 @@ lemma bobStrategy_move_guess {ans : ℕ → Bool} {t : ℕ}
     if h' : s.pool.card ≤ 2 ^ k then Move.guess s.pool
     else Move.ask (bobQuestion s.pool _ s.phase)) = _
   dsimp only
-  exact dif_pos h'
+  exact dite_eq_left h'
 
 lemma bobStrategy_move_ask {ans : ℕ → Bool} {t : ℕ}
     (h : ¬ (bobStateOf N k ans t).pool.card ≤ 2 ^ k) :
@@ -681,7 +681,7 @@ lemma bobStrategy_move_ask {ans : ℕ → Bool} {t : ℕ}
     if h' : s.pool.card ≤ 2 ^ k then Move.guess s.pool
     else Move.ask (bobQuestion s.pool _ s.phase)) = _
   dsimp only
-  exact dif_neg h'
+  exact dite_eq_right h'
 
 lemma bobStrategy_move_ask_probe {ans : ℕ → Bool} {t : ℕ} {j : ℕ}
     (hstate : (bobStateOf N k ans t).phase = BobPhase.probe j)

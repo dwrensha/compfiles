@@ -98,7 +98,7 @@ lemma terminates_of_rat :
     have hb' : (b : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr hb.ne'
     have hx : (a : ℝ) / b ≠ 0 := div_ne_zero ha' hb'
     have h1 : seq p ((a : ℝ) / b) 1 = (((p 0 * b) % a : ℕ) : ℝ) / a := by
-      rw [seq_succ, seq_zero, if_neg hx]
+      rw [seq_succ, seq_zero, ite_eq_right hx]
       have e1 : (p 0 : ℝ) / ((a : ℝ) / b) = (((p 0 * b : ℕ) : ℝ)) / a := by
         rw [Nat.cast_mul]
         field_simp
@@ -122,7 +122,7 @@ lemma rat_cast_of_seq_succ (p : ℕ → ℕ) (hp : ∀ k, 0 < p k) (x₀ : ℝ) 
   by_cases hk : seq p x₀ k = 0
   · exact ⟨0, by simp [hk]⟩
   · obtain ⟨q, hq⟩ := h
-    rw [seq_succ, if_neg hk] at hq
+    rw [seq_succ, ite_eq_right hk] at hq
     have hpa : (p k : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr (hp k).ne'
     have ha0 : (p k : ℝ) / seq p x₀ k ≠ 0 := div_ne_zero hpa hk
     have hfloor : (p k : ℝ) / seq p x₀ k =

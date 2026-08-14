@@ -348,10 +348,10 @@ lemma not_hasAp {p : ℕ} (hp : p.Prime) (hp3 : 3 ≤ p) {a : ℕ → ℕ} {n m 
   have hval' : ∀ i : Fin p, (if v i < n then a (v i) else m) = x + i.val * d := by
     intro i
     by_cases hi : v i < n
-    · rw [if_pos hi]
+    · rw [ite_eq_left hi]
       exact (hval i).1 hi
     · have hni : v i = n := by have hvi := hvle i; omega
-      rw [if_neg hi]
+      rw [ite_eq_right hi]
       exact (hval i).2 hni
   have hw : ∀ i : Fin p, DigitFree p (x + i.val * d) := by
     intro i
@@ -404,7 +404,7 @@ lemma hasAp_of_mem_digits_pred {p : ℕ} (hp : 3 ≤ p) {a : ℕ → ℕ} {n m :
       (ofDigits_eq_zero_iff (by omega : p ≠ 0) _).mp hz
     have h1 : (1 : ℕ) ∈ L.map (fun d => if d = p - 1 then 1 else 0) := by
       apply List.mem_map.mpr
-      exact ⟨p - 1, hmem, if_pos rfl⟩
+      exact ⟨p - 1, hmem, ite_eq_left rfl⟩
     have h10 := hall 1 h1
     omega
   have hm_eq : m = m₀ + (p - 1) * E := by
@@ -436,15 +436,15 @@ lemma hasAp_of_mem_digits_pred {p : ℕ} (hp : 3 ≤ p) {a : ℕ → ℕ} {n m :
       obtain ⟨d', hd', rfl⟩ := List.mem_map.mp he
       have hd'' := Nat.digits_lt_base (by omega : 1 < p) hd'
       by_cases h2 : d' = p - 1
-      · rw [if_pos h2]; omega
-      · rw [if_neg h2]; exact hd''
+      · rw [ite_eq_left h2]; omega
+      · rw [ite_eq_right h2]; exact hd''
     have hne : ∀ e ∈ L.map (fun d => if d = p - 1 then p - 1 - (p - 1 - i) else d),
         e ≠ p - 1 := by
       intro e he
       obtain ⟨d', hd', rfl⟩ := List.mem_map.mp he
       by_cases h2 : d' = p - 1
-      · rw [if_pos h2]; omega
-      · rw [if_neg h2]; exact h2
+      · rw [ite_eq_left h2]; omega
+      · rw [ite_eq_right h2]; exact h2
     exact digits_ofDigits_ne (by omega : 1 < p) hlt hne d hd
   have htlt : ∀ i < p - 1, m₀ + i * E < m := by
     intro i hi
@@ -467,10 +467,10 @@ lemma hasAp_of_mem_digits_pred {p : ℕ} (hp : 3 ≤ p) {a : ℕ → ℕ} {n m :
     by_cases hj : j = p - 1
     · subst hj
       have hi2 : i ≠ p - 1 := by omega
-      rw [if_pos rfl, if_neg hi2]
+      rw [ite_eq_left rfl, ite_eq_right hi2]
       exact hphi i (by omega)
     · have hi2 : i ≠ p - 1 := by omega
-      rw [if_neg hj, if_neg hi2]
+      rw [ite_eq_right hj, ite_eq_right hi2]
       have hlt2 : m₀ + i * E < m₀ + j * E := by
         have := Nat.mul_lt_mul_of_pos_right hji hEpos
         omega
@@ -481,8 +481,8 @@ lemma hasAp_of_mem_digits_pred {p : ℕ} (hp : 3 ≤ p) {a : ℕ → ℕ} {n m :
     dsimp only
     by_cases hi : i = p - 1
     · subst hi
-      rw [if_pos rfl]
-    · rw [if_neg hi]
+      rw [ite_eq_left rfl]
+    · rw [ite_eq_right hi]
       exact (hphi i (by omega)).le
   · intro i
     obtain ⟨i, hi'⟩ := i
@@ -491,16 +491,16 @@ lemma hasAp_of_mem_digits_pred {p : ℕ} (hp : 3 ≤ p) {a : ℕ → ℕ} {n m :
       dsimp only at hvi ⊢
       by_cases hi : i = p - 1
       · subst hi
-        rw [if_pos rfl] at hvi
+        rw [ite_eq_left rfl] at hvi
         exact absurd hvi (lt_irrefl n)
-      · rw [if_neg hi] at hvi ⊢
+      · rw [ite_eq_right hi] at hvi ⊢
         rw [IH _ hvi, bSeq_phi hp (htfree i (by omega))]
     · intro hvi
       dsimp only at hvi
       by_cases hi : i = p - 1
       · subst hi
         exact hm_eq
-      · rw [if_neg hi] at hvi
+      · rw [ite_eq_right hi] at hvi
         have := hphi i (by omega)
         omega
 
@@ -529,9 +529,9 @@ problem usa1995_p1 (p : ℕ) (hp : p.Prime) (ho : Odd p) (a : ℕ → ℕ)
           exact bSeq_strictMono hp3 (by omega)
         · exact not_hasAp hp hp3 (fun i hi => by
             by_cases h'i : i < n
-            · rw [if_pos h'i, IH i h'i]
+            · rw [ite_eq_left h'i, IH i h'i]
             · have h'n : i = n := by omega
-              rw [if_neg h'i, h'n])
+              rw [ite_eq_right h'i, h'n])
       have hbn_le : ∀ m, a (n - 1) < m → ¬ HasAp a p n m → bSeq p n ≤ m := by
         intro m hmlo hmno
         by_contra hmlt

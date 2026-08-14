@@ -290,12 +290,12 @@ theorem constr_r_flip {k : ℕ} {b : Fin k → Bool} {d : ℕ} {i : Fin k} :
   constructor
   · intro h
     by_contra hnd
-    have hb : constr_b' k b d i = !(b i) := if_neg hnd
+    have hb : constr_b' k b d i = !(b i) := ite_eq_right hnd
     have h2 := constr_r_inj_bool h
     rw [hb] at h2
     exact constr_bool_not_ne _ h2
   · intro hdvd
-    have hb : constr_b' k b d i = b i := if_pos hdvd
+    have hb : constr_b' k b d i = b i := ite_eq_left hdvd
     unfold constr_r
     rw [hb]
 
@@ -390,10 +390,10 @@ theorem constr_gcd_unique {k : ℕ} {b b'' : Fin k → Bool} {d : ℕ}
     have hC : constr_r k b i ∣ d ↔ constr_b' k b d i = b i := by
       constructor
       · intro hdvd
-        exact if_pos hdvd
+        exact ite_eq_left hdvd
       · intro hbi
         by_contra hnd
-        have h1 : constr_b' k b d i = !(b i) := if_neg hnd
+        have h1 : constr_b' k b d i = !(b i) := ite_eq_right hnd
         rw [h1] at hbi
         exact constr_bool_not_ne _ hbi
     have hQS : b'' i = b i ↔ constr_b' k b d i = b i := hA.symm.trans (hB.symm.trans hC)

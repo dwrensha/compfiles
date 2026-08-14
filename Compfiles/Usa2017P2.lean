@@ -106,10 +106,10 @@ lemma frontContrib_le {t : ℕ} (c x : ℤ) (w : Fin t → ℤ) (h : x ≤ c) :
   by_cases h1 : w ℓ < x
   · by_cases h2 : c < w ℓ
     · exfalso; omega
-    · rw [if_pos (hiff.mpr (Or.inl h1)), if_pos h1, if_neg h2]
+    · rw [ite_eq_left (hiff.mpr (Or.inl h1)), ite_eq_left h1, ite_eq_right h2]
   · by_cases h2 : c < w ℓ
-    · rw [if_pos (hiff.mpr (Or.inr h2)), if_neg h1, if_pos h2]
-    · rw [if_neg (fun hp => (hiff.mp hp).elim h1 h2), if_neg h1, if_neg h2]
+    · rw [ite_eq_left (hiff.mpr (Or.inr h2)), ite_eq_right h1, ite_eq_left h2]
+    · rw [ite_eq_right (fun hp => (hiff.mp hp).elim h1 h2), ite_eq_right h1, ite_eq_right h2]
 
 lemma frontContrib_gt {t : ℕ} (c x : ℤ) (w : Fin t → ℤ) (h : c < x) :
     frontContrib c x w = ∑ ℓ : Fin t, if c < w ℓ ∧ w ℓ < x then 1 else 0 := by
@@ -118,8 +118,8 @@ lemma frontContrib_gt {t : ℕ} (c x : ℤ) (w : Fin t → ℤ) (h : c < x) :
   have hiff : invPair c x (w ℓ) ↔ (c < w ℓ ∧ w ℓ < x) := by
     rw [invPair_iff]; omega
   by_cases h1 : c < w ℓ ∧ w ℓ < x
-  · rw [if_pos (hiff.mpr h1), if_pos h1]
-  · rw [if_neg (fun hp => h1 (hiff.mp hp)), if_neg h1]
+  · rw [ite_eq_left (hiff.mpr h1), ite_eq_left h1]
+  · rw [ite_eq_right (fun hp => h1 (hiff.mp hp)), ite_eq_right h1]
 
 lemma skipEmb_ne {n : ℕ} (p : Fin (n + 1)) (i : Fin n) : skipEmb p i ≠ p := by
   have h : Equiv.swap 0 p i.succ ≠ Equiv.swap 0 p 0 :=
@@ -186,7 +186,7 @@ lemma ainvCount_decompose {n : ℕ} (m : Fin (n + 1) → ℤ) (A : Fin (n + 1) �
     have hz : (if (0 : Fin (n + 1)) < 0 ∧ invPair (A 0)
         (m (Equiv.Perm.decomposeFin.symm (p, π) 0))
         (m (Equiv.Perm.decomposeFin.symm (p, π) 0)) then (1 : ℕ) else 0) = 0 :=
-      if_neg (fun h => lt_irrefl _ h.1)
+      ite_eq_right (fun h => lt_irrefl _ h.1)
     rw [hz, zero_add]
     rw [← Equiv.sum_comp π (fun ℓ => if invPair (A 0) (m p) ((m ∘ skipEmb p) ℓ) then (1 : ℕ) else 0)]
     apply Finset.sum_congr rfl; intro j _
@@ -202,7 +202,7 @@ lemma ainvCount_decompose {n : ℕ} (m : Fin (n + 1) → ℤ) (A : Fin (n + 1) �
     have hz : (if i.succ < (0 : Fin (n + 1)) ∧ invPair (A i.succ)
         (m (Equiv.Perm.decomposeFin.symm (p, π) i.succ))
         (m (Equiv.Perm.decomposeFin.symm (p, π) 0)) then (1 : ℕ) else 0) = 0 :=
-      if_neg (fun h => Fin.not_lt_zero _ h.1)
+      ite_eq_right (fun h => Fin.not_lt_zero _ h.1)
     rw [hz, zero_add]
     apply Finset.sum_congr rfl; intro j _
     refine if_congr ?_ rfl rfl
@@ -264,10 +264,10 @@ lemma valMul_comp_skipEmb {n : ℕ} (m : Fin (n + 1) → ℤ) (p : Fin (n + 1)) 
   have keyy := key y
   by_cases hy : m p = y
   · subst hy
-    rw [if_pos rfl] at keyy
+    rw [ite_eq_left rfl] at keyy
     rw [Multiset.count_erase_self]
     omega
-  · rw [if_neg hy] at keyy
+  · rw [ite_eq_right hy] at keyy
     rw [Multiset.count_erase_of_ne (Ne.symm hy)]
     omega
 
@@ -314,25 +314,25 @@ lemma frontContrib_eval {n : ℕ} (m : Fin (n + 1) → ℤ) (c : ℤ) (p : Fin (
       if m p ≤ c then cntP m (· < m p) + cntP m (c < ·)
       else cntP m (fun y => c < y ∧ y < m p) := by
   by_cases h : m p ≤ c
-  · rw [if_pos h, frontContrib_le c (m p) (m ∘ skipEmb p) h]
+  · rw [ite_eq_left h, frontContrib_le c (m p) (m ∘ skipEmb p) h]
     congr 1
     · have h2 := sum_univ_add_skipEmb p (fun i => if m i < m p then (1 : ℕ) else 0)
-      rw [if_neg (lt_irrefl _), zero_add] at h2
+      rw [ite_eq_right (lt_irrefl _), zero_add] at h2
       have h3 : (∑ i : Fin (n + 1), if m i < m p then (1 : ℕ) else 0) = cntP m (· < m p) :=
         sum_if_eq_cntP m (· < m p)
       rw [h3] at h2
       simp only [Function.comp_apply]
       exact h2.symm
     · have h2 := sum_univ_add_skipEmb p (fun i => if c < m i then (1 : ℕ) else 0)
-      rw [if_neg (not_lt.mpr h), zero_add] at h2
+      rw [ite_eq_right (not_lt.mpr h), zero_add] at h2
       have h3 : (∑ i : Fin (n + 1), if c < m i then (1 : ℕ) else 0) = cntP m (c < ·) :=
         sum_if_eq_cntP m (c < ·)
       rw [h3] at h2
       simp only [Function.comp_apply]
       exact h2.symm
-  · rw [if_neg h, frontContrib_gt c (m p) (m ∘ skipEmb p) (not_le.mp h)]
+  · rw [ite_eq_right h, frontContrib_gt c (m p) (m ∘ skipEmb p) (not_le.mp h)]
     have h2 := sum_univ_add_skipEmb p (fun i => if c < m i ∧ m i < m p then (1 : ℕ) else 0)
-    rw [if_neg (fun hc => lt_irrefl _ hc.2), zero_add] at h2
+    rw [ite_eq_right (fun hc => lt_irrefl _ hc.2), zero_add] at h2
     have h3 : (∑ i : Fin (n + 1), if c < m i ∧ m i < m p then (1 : ℕ) else 0) =
         cntP m (fun y => c < y ∧ y < m p) := sum_if_eq_cntP m (fun y => c < y ∧ y < m p)
     rw [h3] at h2
@@ -460,9 +460,9 @@ lemma multiset_filter_replicate (p : ℤ → Prop) [DecidablePred p] (k : ℕ) (
   | succ k ih =>
     rw [Multiset.replicate_succ, Multiset.filter_cons, ih]
     by_cases hv : p v
-    · simp only [if_pos hv]
+    · simp only [ite_eq_left hv]
       rw [Multiset.singleton_add]
-    · simp only [if_neg hv]
+    · simp only [ite_eq_right hv]
       rw [Multiset.zero_add]
 
 /-- Reindexing the sum of a mapped list as a sum over `range`. -/
@@ -621,9 +621,9 @@ lemma valMul_eq_sum_eCnt {n : ℕ} (m : Fin n → ℤ) :
     Finset.sum_congr rfl fun v _ => hcnt v]
   rw [Finset.sum_ite_eq]
   by_cases hw : w ∈ univ.image m
-  · rw [if_pos hw]
+  · rw [ite_eq_left hw]
     rfl
-  · rw [if_neg hw]
+  · rw [ite_eq_right hw]
     exact Multiset.count_eq_zero_of_notMem (mt (hmem w).mp hw)
 
 lemma cntP_eq_sum_eCnt {n : ℕ} (m : Fin n → ℤ) (q : ℤ → Prop) [DecidablePred q] :
@@ -634,8 +634,8 @@ lemma cntP_eq_sum_eCnt {n : ℕ} (m : Fin n → ℤ) (q : ℤ → Prop) [Decidab
   intro v _
   rw [Multiset.nsmul_singleton, multiset_filter_replicate]
   by_cases hv : q v
-  · simp only [if_pos hv, Multiset.card_replicate]
-  · simp only [if_neg hv, Multiset.card_zero]
+  · simp only [ite_eq_left hv, Multiset.card_replicate]
+  · simp only [ite_eq_right hv, Multiset.card_zero]
 
 /-- The pure polynomial identity in value form: the key combinatorial input behind both
 the ratio identity and the main induction. Proven by writing the value multiset as a
@@ -784,7 +784,7 @@ lemma pureId_value {n : ℕ} (m : Fin (n + 1) → ℤ) (c : ℤ) :
     have hle : vs[t]! ≤ c := (sorted_getElem!_le_iff hp hn c htl).mpr ht
     have hgc : gc m c (vs[t]!) = cntP m (· < vs[t]!) + cntP m (c < ·) := by
       unfold gc
-      rw [if_pos hle]
+      rw [ite_eq_left hle]
     rw [hgc, hE1 t htl, hE2, pow_add]
     ring
   have hB : ∑ t ∈ Ico k vs.length, X ^ gc m c (vs[t]!) * qq es[t]! =
@@ -801,7 +801,7 @@ lemma pureId_value {n : ℕ} (m : Fin (n + 1) → ℤ) (c : ℤ) :
       omega
     have hgc : gc m c (vs[t]!) = cntP m (fun y => c < y ∧ y < vs[t]!) := by
       unfold gc
-      rw [if_neg hle]
+      rw [ite_eq_right hle]
     rw [hgc, hE3 t ht.1 htl]
   rw [hreindex]
   rw [← Finset.sum_range_add_sum_Ico (fun t => X ^ gc m c (vs[t]!) * qq es[t]!) hkvs]
@@ -846,7 +846,7 @@ lemma genFun_one (m : Fin 1 → ℤ) (A : Fin 1 → ℤ) : genFun m A = 1 := by
     apply Finset.sum_eq_zero; intro i _
     apply Finset.sum_eq_zero; intro j _
     have hij : i = j := Subsingleton.elim i j
-    exact if_neg (fun hh => lt_irrefl _ (hij ▸ hh.1))
+    exact ite_eq_right (fun hh => lt_irrefl _ (hij ▸ hh.1))
   rw [Finset.sum_congr rfl (fun σ _ => by rw [h0 σ, pow_zero])]
   simp
 
@@ -882,7 +882,7 @@ noncomputable def repr {n : ℕ} (m : Fin (n + 1) → ℤ) (v : ℤ) : Fin (n + 
 lemma repr_spec {n : ℕ} (m : Fin (n + 1) → ℤ) {v : ℤ} (h : ∃ i, m i = v) :
     m (repr m v) = v := by
   unfold repr
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   exact Classical.choose_spec h
 
 /-- Deleting an index whose value `w` does not match does not change the count of `w`. -/
@@ -893,7 +893,7 @@ lemma eCnt_comp_skipEmb_of_ne {n : ℕ} (m : Fin (n + 1) → ℤ) (q : Fin (n + 
   have hcomp : (∑ i : Fin n, if m ((skipEmb q) i) = w then (1 : ℕ) else 0) =
       ∑ i : Fin n, if (m ∘ skipEmb q) i = w then (1 : ℕ) else 0 := rfl
   rw [hcomp, sum_if_eq_count] at h2
-  rw [if_neg h, zero_add] at h2
+  rw [ite_eq_right h, zero_add] at h2
   exact h2.symm
 
 /-- Deleting two different indices with the same value gives the same generating

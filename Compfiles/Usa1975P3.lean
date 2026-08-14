@@ -115,7 +115,7 @@ problem usa1975_p3 (n : ℕ) (p : ℝ[X]) (hp : p.natDegree = n)
     have hcoeff : q.coeff (n + 1) = p.leadingCoeff := by
       have hexp : (X + 1 : ℝ[X]) * p = X * p + p := by ring
       rw [hq, hexp, coeff_sub, coeff_add, coeff_X_mul, hpn, coeff_X,
-        if_neg (by omega : (1 : ℕ) ≠ n + 1), add_zero, sub_zero, ← coeff_natDegree, hp]
+        ite_eq_right (by omega : (1 : ℕ) ≠ n + 1), add_zero, sub_zero, ← coeff_natDegree, hp]
     have hne : q.coeff (n + 1) ≠ 0 := by
       rw [hcoeff]
       exact leadingCoeff_ne_zero.mpr hp_ne
@@ -209,14 +209,14 @@ problem usa1975_p3 (n : ℕ) (p : ℝ[X]) (hp : p.natDegree = n)
       have h1 : (-1 : ℝ) ^ (n + 1) = -1 := heven.add_one.neg_one_pow
       rw [h1]
       show ((n : ℝ) + 1 + -1) / ((n : ℝ) + 2) = if Odd n then (1 : ℝ) else (n : ℝ) / (n + 2)
-      rw [if_neg (Nat.not_odd_iff_even.mpr heven)]
+      rw [ite_eq_right (Nat.not_odd_iff_even.mpr heven)]
       congr 1
       ring
     · -- `n` odd: `(-1)^(n+1) = 1` and `p (n+1) = 1`.
       have h1 : (-1 : ℝ) ^ (n + 1) = 1 := hodd.add_one.neg_one_pow
       rw [h1]
       show ((n : ℝ) + 1 + 1) / ((n : ℝ) + 2) = if Odd n then (1 : ℝ) else (n : ℝ) / (n + 2)
-      rw [if_pos hodd, div_eq_one_iff_eq (ne_of_gt hn2)]
+      rw [ite_eq_left hodd, div_eq_one_iff_eq (ne_of_gt hn2)]
       ring
 
 end Usa1975P3

@@ -343,9 +343,9 @@ lemma pair_sum_zero : ∀ (C : List (ℤ × ℤ)) (f g : ℤ × ℤ → ℤ),
           have IHres := IH rest f g hrest_len h2 hrest_even hrest c
           rw [List.toFinset_cons, List.toFinset_cons, Finset.filter_insert]
           by_cases hca : g a = c
-          · rw [if_pos hca]
+          · rw [ite_eq_left hca]
             have hcb : g b = c := hga ▸ hca
-            rw [Finset.filter_insert, if_pos hcb]
+            rw [Finset.filter_insert, ite_eq_left hcb]
             have hanot : a ∉ insert b (rest.toFinset.filter fun p => g p = c) := by
               rw [Finset.mem_insert, Finset.mem_filter, List.mem_toFinset]
               rintro (rfl | ⟨hr, -⟩)
@@ -356,9 +356,9 @@ lemma pair_sum_zero : ∀ (C : List (ℤ × ℤ)) (f g : ℤ × ℤ → ℤ),
               exact fun hr => h3 hr.1
             rw [Finset.sum_insert hanot, Finset.sum_insert hbnot, IHres]
             omega
-          · rw [if_neg hca]
+          · rw [ite_eq_right hca]
             have hcb : g b ≠ c := hga ▸ hca
-            rw [Finset.filter_insert, if_neg hcb]
+            rw [Finset.filter_insert, ite_eq_right hcb]
             exact IHres
   intro C f g hnodup heven hcond c
   exact aux C.length C f g le_rfl hnodup heven hcond c
@@ -372,8 +372,8 @@ lemma cycSign_apply (C : List (ℤ × ℤ)) (hn : C.Nodup) (i : Fin C.length) :
     cycSign C (C.get i) = if Even i.val then (1 : ℤ) else -1 := by
   unfold cycSign
   by_cases h : Even i.val
-  · rw [if_pos h, if_pos ⟨i, rfl, h⟩]
-  · rw [if_neg h, if_neg (fun ⟨j, hji, hj⟩ => h (hn.get_inj_iff.mp hji ▸ hj))]
+  · rw [ite_eq_left h, ite_eq_left ⟨i, rfl, h⟩]
+  · rw [ite_eq_right h, ite_eq_right (fun ⟨j, hji, hj⟩ => h (hn.get_inj_iff.mp hji ▸ hj))]
 
 lemma cycSign_apply' (C : List (ℤ × ℤ)) (hn : C.Nodup) (i : ℕ) (h : i < C.length) :
     cycSign C (C[i]'h) = if Even i then (1 : ℤ) else -1 :=
@@ -405,8 +405,8 @@ lemma cycle_balanced (C : List (ℤ × ℤ)) (hnodup : C.Nodup) (hlen : Even C.l
     constructor
     · rw [cycSign_apply' C hnodup (2 * t) (by omega),
         cycSign_apply' C hnodup (2 * t + 1) ht,
-        if_pos ⟨t, by omega⟩,
-        if_neg (Nat.not_even_iff_odd.mpr ⟨t, rfl⟩)]
+        ite_eq_left ⟨t, by omega⟩,
+        ite_eq_right (Nat.not_even_iff_odd.mpr ⟨t, rfl⟩)]
       norm_num
     · exact (hstep (2 * t) ht).1 ⟨t, by omega⟩
   · intro x
@@ -450,7 +450,7 @@ lemma cycle_balanced (C : List (ℤ × ℤ)) (hnodup : C.Nodup) (hlen : Even C.l
       constructor
       · rw [cycSign_apply' C hnodup (2 * t + 1) (by omega),
           cycSign_apply' C hnodup (2 * t + 2) (by omega),
-          if_neg (Nat.not_even_iff_odd.mpr ⟨t, rfl⟩), if_pos ⟨t + 1, by omega⟩]
+          ite_eq_right (Nat.not_even_iff_odd.mpr ⟨t, rfl⟩), ite_eq_left ⟨t + 1, by omega⟩]
         norm_num
       · exact (hstep (2 * t + 1) (by omega)).2 ⟨t, rfl⟩
     · have hb : 2 * t + 1 = C.length - 1 := by omega
@@ -471,7 +471,7 @@ lemma cycle_balanced (C : List (ℤ × ℤ)) (hnodup : C.Nodup) (hlen : Even C.l
           exact ⟨k - 1, by omega⟩
         rw [cycSign_apply' C hnodup (C.length - 1) (by omega),
           cycSign_apply' C hnodup 0 hCpos,
-          if_neg (Nat.not_even_iff_odd.mpr hodd), if_pos ⟨0, rfl⟩]
+          ite_eq_right (Nat.not_even_iff_odd.mpr hodd), ite_eq_left ⟨0, rfl⟩]
         norm_num
       · exact hclose hCpos
 
@@ -876,9 +876,9 @@ lemma main_lemma : ∀ n : ℕ, ∀ S : Finset (ℤ × ℤ), S.card ≤ n → �
       · intro p hp
         dsimp only
         by_cases hpc : p ∈ C.toFinset
-        · rw [if_pos hpc]
+        · rw [ite_eq_left hpc]
           exact hεC1 p hpc
-        · rw [if_neg hpc]
+        · rw [ite_eq_right hpc]
           exact hε'1 p (Finset.mem_sdiff.mpr ⟨hp, hpc⟩)
       · intro x
         have hsplit : S.filter (fun p => p.1 = x) =
@@ -893,14 +893,14 @@ lemma main_lemma : ∀ n : ℕ, ∀ S : Finset (ℤ × ℤ), S.card ≤ n → �
             apply Finset.sum_congr rfl
             intro p hp
             rw [Finset.mem_filter] at hp
-            exact if_neg (Finset.mem_sdiff.mp hp.1).2
+            exact ite_eq_right (Finset.mem_sdiff.mp hp.1).2
           have h2 : ∑ p ∈ C.toFinset.filter (fun p => p.1 = x),
                 (if p ∈ C.toFinset then εC p else ε' p)
               = ∑ p ∈ C.toFinset.filter (fun p => p.1 = x), εC p := by
             apply Finset.sum_congr rfl
             intro p hp
             rw [Finset.mem_filter] at hp
-            exact if_pos hp.1
+            exact ite_eq_left hp.1
           rw [h1, h2, hεCcol x, add_zero]
           exact hε'2 x
         · rw [Finset.disjoint_left]
@@ -921,14 +921,14 @@ lemma main_lemma : ∀ n : ℕ, ∀ S : Finset (ℤ × ℤ), S.card ≤ n → �
             apply Finset.sum_congr rfl
             intro p hp
             rw [Finset.mem_filter] at hp
-            exact if_neg (Finset.mem_sdiff.mp hp.1).2
+            exact ite_eq_right (Finset.mem_sdiff.mp hp.1).2
           have h2 : ∑ p ∈ C.toFinset.filter (fun p => p.2 = y),
                 (if p ∈ C.toFinset then εC p else ε' p)
               = ∑ p ∈ C.toFinset.filter (fun p => p.2 = y), εC p := by
             apply Finset.sum_congr rfl
             intro p hp
             rw [Finset.mem_filter] at hp
-            exact if_pos hp.1
+            exact ite_eq_left hp.1
           rw [h1, h2, hεCrow y, add_zero]
           exact hε'3 y
         · rw [Finset.disjoint_left]

@@ -59,18 +59,18 @@ def prepend (N M : ℕ) (s₀ t₀ : Fin M) (g : Fin (2 * N) ↪o Fin M) (x : Fi
 theorem prepend_zero (N M : ℕ) (s₀ t₀ : Fin M) (g : Fin (2 * N) ↪o Fin M)
     (h : 0 < 2 * N + 2) : prepend N M s₀ t₀ g ⟨0, h⟩ = s₀ := by
   unfold prepend
-  exact dif_pos rfl
+  exact dite_eq_left rfl
 
 theorem prepend_one (N M : ℕ) (s₀ t₀ : Fin M) (g : Fin (2 * N) ↪o Fin M)
     (h : 1 < 2 * N + 2) : prepend N M s₀ t₀ g ⟨1, h⟩ = t₀ := by
   unfold prepend
-  rw [dif_neg (show ¬(1 : ℕ) = 0 by norm_num), dif_pos rfl]
+  rw [dite_eq_right (show ¬(1 : ℕ) = 0 by norm_num), dite_eq_left rfl]
 
 theorem prepend_two (N M : ℕ) (s₀ t₀ : Fin M) (g : Fin (2 * N) ↪o Fin M)
     (x : Fin (2 * N + 2)) (hx : 2 ≤ x.val) :
     prepend N M s₀ t₀ g x = g ⟨x.val - 2, by omega⟩ := by
   unfold prepend
-  rw [dif_neg (show ¬x.val = 0 by omega), dif_neg (show ¬x.val = 1 by omega)]
+  rw [dite_eq_right (show ¬x.val = 0 by omega), dite_eq_right (show ¬x.val = 1 by omega)]
 
 theorem prepend_strictMono (N M : ℕ) {s₀ t₀ : Fin M} (hst : s₀ < t₀)
     (g : Fin (2 * N) ↪o Fin M) (hg : ∀ j, t₀ < g j) :

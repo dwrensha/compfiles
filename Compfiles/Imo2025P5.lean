@@ -231,10 +231,10 @@ lemma play_respSeq (s : Strategy) (p : ℕ) (r : Strategy) (k : ℕ) :
     refine Fin.lastCases ?_ ?_ i
     · rw [Fin.snoc_last]
       by_cases hk : k % 2 = p
-      · rw [if_pos hk]
+      · rw [ite_eq_left hk]
         conv_rhs => rw [Fin.val_last, respSeq]
-        rw [if_pos hk]
-      · rw [if_neg hk]
+        rw [ite_eq_left hk]
+      · rw [ite_eq_right hk]
         rw [Fin.val_last]
     · intro i
       rw [Fin.snoc_castSucc, Fin.val_castSucc]
@@ -394,7 +394,7 @@ lemma alice_not_wins {c : ℝ} (hc : c ≤ Real.sqrt 2 / 2) :
   have hgreedy : ∀ j', Odd j' → respSeq s 0 bazzaStrategy j' =
       Real.sqrt ((j' : ℝ) + 1 - ∑ i ∈ range j', respSeq s 0 bazzaStrategy i ^ 2) := by
     intro j' hj'
-    rw [respSeq, if_neg (by rw [Nat.odd_iff] at hj'; lia)]
+    rw [respSeq, ite_eq_right (by rw [Nat.odd_iff] at hj'; lia)]
     show Real.sqrt _ = _
     rw [Fin.sum_univ_eq_sum_range (fun i => respSeq s 0 bazzaStrategy i ^ 2) j']
   exact hjbad (bazza_validAt_odd hc hgreedy j (Nat.odd_iff.mpr (by lia)) hjmin)
@@ -406,7 +406,7 @@ lemma bazza_wins {c : ℝ} (hc : c < Real.sqrt 2 / 2) : ∃ s : Strategy, s.Winn
   have hgreedy : ∀ j, Odd j → x j =
       Real.sqrt ((j : ℝ) + 1 - ∑ i ∈ range j, x i ^ 2) := by
     intro j hj
-    rw [hx, playSeq_apply, if_pos (Nat.odd_iff.mp hj)]
+    rw [hx, playSeq_apply, ite_eq_left (Nat.odd_iff.mp hj)]
     show Real.sqrt _ = _
     rw [Fin.sum_univ_eq_sum_range (fun i => bazzaStrategy.playSeq 1 om i ^ 2) j]
   -- Choose k₀ with √2 * k₀ > c * (2 * k₀ + 1).
@@ -483,7 +483,7 @@ lemma bazza_not_wins {c : ℝ} (hc : Real.sqrt 2 / 2 ≤ c) :
   obtain ⟨j, _, hjp, hjmin, hjbad⟩ := hk
   have h0 : ∀ i, Even i → respSeq s 1 zeroStrategy i = 0 := by
     intro i hi
-    rw [respSeq, if_neg (by rw [Nat.even_iff] at hi; lia)]
+    rw [respSeq, ite_eq_right (by rw [Nat.even_iff] at hi; lia)]
     rfl
   obtain ⟨t, rfl⟩ : ∃ t, j = 2 * t := ⟨j / 2, by lia⟩
   exact hjbad (zeros_validAt_even hc t (fun i _ hi => h0 i hi) hjmin)
@@ -518,15 +518,15 @@ lemma alice_wins {c : ℝ} (hc : Real.sqrt 2 / 2 < c) : ∃ s : Strategy, s.Winn
   have hplay : ∀ j, j % 2 = 0 →
       x j = if j = N then c * ((N : ℝ) + 1) - ∑ i ∈ range j, x i else 0 := by
     intro j hj
-    rw [hx, playSeq_apply, if_pos hj]
+    rw [hx, playSeq_apply, ite_eq_left hj]
     show (if j = N then c * ((N : ℝ) + 1) - ∑ i : Fin j, s.playSeq 0 om (i : ℕ) else 0) = _
     rw [Fin.sum_univ_eq_sum_range (fun i => s.playSeq 0 om i) j]
   have hxeven : ∀ j, Even j → j ≠ N → x j = 0 := by
     intro j hj hjN
-    rw [hplay j (Nat.even_iff.mp hj), if_neg hjN]
+    rw [hplay j (Nat.even_iff.mp hj), ite_eq_right hjN]
   have hNeven : Even N := ⟨M, by lia⟩
   have hxN : x N = c * ((N : ℝ) + 1) - ∑ i ∈ range N, x i := by
-    rw [hplay N (Nat.even_iff.mp hNeven), if_pos rfl]
+    rw [hplay N (Nat.even_iff.mp hNeven), ite_eq_left rfl]
   -- Validity of Alice's moves below N.
   have hvalid_lt : ∀ t, 2 * t < N → (∀ m < 2 * t, ValidAt c x m) → ValidAt c x (2 * t) := by
     intro t ht hvalid
