@@ -239,8 +239,8 @@ lemma nines' (k : ℕ) : 10 ^ k - 1 = Nat.ofDigits 10 (List.replicate k 9) := by
     simp [← ih]
     grind
 
-lemma chop_off_leading (m k : ℕ) (hm : m ∈ Finset.Ico (10 ^ k) (10 ^ (k + 1)))
-    : m = Nat.ofDigits 10 ((Nat.digits 10 m).dropLast ++ [m / 10 ^ k]) := by
+lemma chop_off_leading {m k : ℕ} (hm : m ∈ Finset.Ico (10 ^ k) (10 ^ (k + 1)))
+    : m = Nat.ofDigits 10 ((Nat.digits 10 m).take k ++ [m / 10 ^ k]) := by
   rw [Finset.mem_Ico] at hm
   induction k generalizing m with
   | zero =>
@@ -248,17 +248,15 @@ lemma chop_off_leading (m k : ℕ) (hm : m ∈ Finset.Ico (10 ^ k) (10 ^ (k + 1)
     simp
   | succ k ih =>
     rw [Nat.digits_def' (by decide) (by omega)]
-    rw [List.dropLast_cons_of_ne_nil ?_]
-    on_goal 2 =>
-      refine Nat.digits_ne_nil_iff_ne_zero.mpr ?_
-      omega
+    rw [List.take_succ_cons]
     rw [List.cons_append]
     rw [Nat.ofDigits_cons]
-    specialize ih (m / 10) (by omega)
+    specialize @ih (m / 10) (by omega)
     rw [Nat.div_div_eq_div_mul, ← Nat.pow_add_one'] at ih
     rw [← ih]
     omega
 
+-- TODO: there seems to be an extra List.map_take that we can inline here
 abbrev correction (m k : ℕ) :=
   Nat.digits 10 (m - (10 ^ k - 1)) |>.take k |>.map (if · = 1 then 1 else 0) |> Nat.ofDigits 10
 
@@ -299,8 +297,70 @@ lemma nines_sub_correction_not_has_digit_one (m k : ℕ) : ¬has_digit_one (10 ^
     rw [List.getLast_take h]
     simp [ite_eq_iff]
 
-lemma add_correction_not_has_digit_one (m k : ℕ) : ¬has_digit_one (m - (10 ^ k - 1) + correction m k) := by
+lemma mem_digits_split (a b k : ℕ) (h : a < 10 ^ k) (ha : 1 ∉ Nat.digits 10 a) (hb : 1 ∉ Nat.digits 10 b)
+    : 1 ∉ Nat.digits 10 (a + 10 ^ k * b) := by
+
   sorry
+
+lemma add_correction_not_has_digit_one (m k : ℕ) (hm : m ∈ Finset.Ico (10 ^ k) (10 ^ (k + 1)))
+  (h : ((m - (10 ^ k - 1)) / 10 ^ k) ≠ 1)
+    : ¬has_digit_one (m - (10 ^ k - 1) + correction m k) := by
+  rw [has_digit_one, correction]
+  by_cases h_mem : m - (10 ^ k - 1) ∈ Finset.Ico (10 ^ k) (10 ^ (k + 1))
+  · nth_rw 1 [chop_off_leading h_mem]
+    rw [Nat.ofDigits_append]
+    nth_rw 2 [add_comm]
+    rw [add_assoc]
+    rw [Nat.ofDigits_add_ofDigits_eq_ofDigits_zipWith_of_length_eq (by simp)]
+    rw [List.map_take]
+    rw [← List.take_zipWith]
+    rw [List.zipWith_map_right]
+    rw [List.zipWith_self]
+    simp_rw [add_ite, add_zero]
+    rw [add_comm]
+    apply mem_digits_split
+    · -- we need to account for when m - (10 ^ k - 1) a length < k.
+      -- so rewriting Nat.digits_ofDigits is wrong, we need the end of the list to be nonzero if we do so, but this may not be true,
+      -- for example for k = 4 we have 10xxx -> 0xxx then the leading digit will be zero.
+      apply Nat.digits_length_le_iff (by decide) _ |>.mp
+      rw [Nat.digits_ofDigits _ (by decide)]
+      · simp
+      · intro x hx
+        apply List.mem_of_mem_take at hx
+        rw [List.mem_map] at hx
+        obtain ⟨a, mem, rfl⟩ := hx
+        have := Nat.digits_lt_base (by decide) mem
+        split_ifs <;> omega
+      · intro h
+        rw [List.getLast_take]
+        rw [List.getLast_map]
+        rw??
+        simp
+        split_ifs
+        tauto
+        sorry
+    · rw [Nat.digits_ofDigits _ (by decide)]
+      · grind
+      · intro x hx
+        apply List.mem_of_mem_take at hx
+        rw [List.mem_map] at hx
+        obtain ⟨a, mem, rfl⟩ := hx
+        have := Nat.digits_lt_base (by decide) mem
+        split_ifs <;> omega
+      · intro h
+        sorry
+    · rw [Nat.digits_ofDigits _ (by decide) _ ?_ ?_]
+      · simp [h.symm]
+      · intro l mem
+        rw [List.mem_singleton] at mem
+        subst mem
+        rw [Finset.mem_Ico] at h_mem
+        obtain ⟨_, h_mem⟩ := h_mem
+        rw [Nat.div_lt_iff_lt_mul (Nat.pos_of_neZero _), ← pow_succ']
+        exact h_mem
+      · simp at h_mem ⊢
+        exact h_mem.1
+  · sorry
 
 lemma solitary_iff {m k : ℕ} (hm : m ∈ Finset.Ico (10 ^ k) (10 ^ (k + 1))) :
     is_solitary m ↔ m = 2 * 10 ^ k - 1 ∨ (∃ n ∈ Finset.Ico 1 (10 ^ k), is_solitary n ∧ m = 2 * 10 ^ k + n) := by
@@ -352,7 +412,14 @@ lemma solitary_iff {m k : ℕ} (hm : m ∈ Finset.Ico (10 ^ k) (10 ^ (k + 1))) :
       rw [← Finset.mem_Ico] at hm
       exact correction_le hm
     · exact nines_sub_correction_not_has_digit_one m k
-    · exact add_correction_not_has_digit_one m k
+    · rw [← Finset.mem_Ico] at hm
+      refine add_correction_not_has_digit_one m k hm ?_
+      rcases this with this | this
+      · rw [← Nat.div_lt_one_iff (Nat.pos_of_neZero _)] at this
+        exact Ne.symm (Nat.ne_of_lt' this)
+      · suffices h : 2 ≤ (m - (10 ^ k - 1)) / 10 ^ k from Nat.ne_of_lt' h
+        rw [Nat.le_div_iff_mul_le (Nat.pos_of_neZero _)]
+        exact this.le
   · simp only [Finset.mem_Ico]
     rintro (rfl | ⟨n, ⟨npos, hnk⟩, hn, rfl⟩)
     · exact solitary_form k
