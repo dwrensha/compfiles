@@ -57,7 +57,7 @@ problem usa2007_p5 (n : ℕ) : 2*n + 3 ≤ (primeFactorsList (7^7^n+1)).length :
   rw [List.Perm.length_eq hfacs, List.length_append]
 
   change 2 * d + 3 ≤ (x + 1).primeFactorsList.length at hd
-  suffices _ : p.primeFactorsList.length ≥ 2 by omega
+  suffices _ : p.primeFactorsList.length ≥ 2 by lia
 
   unfold p
   rw [factor_poly_bn x]
@@ -86,7 +86,7 @@ problem usa2007_p5 (n : ℕ) : 2*n + 3 ≤ (primeFactorsList (7^7^n+1)).length :
 
   rw [List.Perm.length_eq hfac_second, List.length_append]
   rw [← Nat.primeFactorsList_ne_nil, ← List.length_pos_iff] at tr3 tr4
-  omega
+  lia
 
 
 end USA2007P5

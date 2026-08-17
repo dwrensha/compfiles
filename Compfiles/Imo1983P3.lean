@@ -57,11 +57,11 @@ lemma two_var {b c : ℕ} (hb : 0 < b) (hc : 0 < c) (hbc : Nat.Coprime b c)
   have hz0 : 0 ≤ M * s + q * (c : ℤ) := by
     have e2 : (M * s + q * (c : ℤ)) * (b : ℤ) = M - y * (c : ℤ) := by linarith [hMz]
     have hyc : y * (c : ℤ) ≤ ((b : ℤ) - 1) * c :=
-      mul_le_mul_of_nonneg_right (by omega) (le_of_lt hcz)
+      mul_le_mul_of_nonneg_right (by lia) (le_of_lt hcz)
     have e3 : M - y * (c : ℤ) > -(b : ℤ) := by linarith [hM, hyc]
     by_contra hneg
     push Not at hneg
-    have hzle : M * s + q * (c : ℤ) ≤ -1 := by omega
+    have hzle : M * s + q * (c : ℤ) ≤ -1 := by lia
     have hle : (M * s + q * (c : ℤ)) * (b : ℤ) ≤ -1 * (b : ℤ) :=
       mul_le_mul_of_nonneg_right hzle (le_of_lt hbz)
     linarith [e2, e3, hle]
@@ -100,7 +100,7 @@ lemma rep {a b c : ℕ} (ha : 0 < a) (hb : 0 < b) (hc : 0 < c)
   -- The bound on `n` yields `M > b*c - b - c`.
   have hMgt : n * s + q * ((b : ℤ) * c) > (b : ℤ) * c - b - c := by
     have hxbc : x * ((b : ℤ) * c) ≤ ((a : ℤ) - 1) * (b * c) :=
-      mul_le_mul_of_nonneg_right (by omega) (by positivity)
+      mul_le_mul_of_nonneg_right (by lia) (by positivity)
     have e2 : (a : ℤ) * (n * s + q * ((b : ℤ) * c)) = n - x * ((b : ℤ) * c) := by
       linarith [hn_eq]
     have e3 : (a : ℤ) * (n * s + q * ((b : ℤ) * c)) >
@@ -141,7 +141,7 @@ problem imo1983_p3 (a b c : ℕ) (ha : 0 < a) (hb : 0 < b) (hc : 0 < c)
       have h4 : a ∣ b * c * (x + 1) + c * a * (y + 1) := (Nat.dvd_add_iff_left hd2).mpr hsum
       exact (Nat.dvd_add_iff_left hd1).mpr h4
     have hdx : a ∣ x + 1 := (hab.mul_right hca.symm).dvd_of_dvd_mul_left hd3
-    have hx1 : a ≤ x + 1 := Nat.le_of_dvd (by omega) hdx
+    have hx1 : a ≤ x + 1 := Nat.le_of_dvd (by lia) hdx
     have hd1' : b ∣ b * c * (x + 1) := dvd_mul_of_dvd_left (dvd_mul_right b c) (x + 1)
     have hd2' : b ∣ a * b * (z + 1) := dvd_mul_of_dvd_left (dvd_mul_left b a) (z + 1)
     have hdy : b ∣ y + 1 := by
@@ -149,7 +149,7 @@ problem imo1983_p3 (a b c : ℕ) (ha : 0 < a) (hb : 0 < b) (hc : 0 < c)
       rw [h2] at hsum
       have h4 : b ∣ b * c * (x + 1) + c * a * (y + 1) := (Nat.dvd_add_iff_left hd2').mpr hsum
       exact (hbc.mul_right hab.symm).dvd_of_dvd_mul_left ((Nat.dvd_add_iff_right hd1').mpr h4)
-    have hy1 : b ≤ y + 1 := Nat.le_of_dvd (by omega) hdy
+    have hy1 : b ≤ y + 1 := Nat.le_of_dvd (by lia) hdy
     have hd1'' : c ∣ b * c * (x + 1) := dvd_mul_of_dvd_left (dvd_mul_left c b) (x + 1)
     have hd2'' : c ∣ c * a * (y + 1) := dvd_mul_of_dvd_left (dvd_mul_right c a) (y + 1)
     have hdz : c ∣ z + 1 := by
@@ -157,7 +157,7 @@ problem imo1983_p3 (a b c : ℕ) (ha : 0 < a) (hb : 0 < b) (hc : 0 < c)
       rw [h2] at hsum
       exact (hca.mul_right hbc.symm).dvd_of_dvd_mul_left
         ((Nat.dvd_add_iff_right (dvd_add hd1'' hd2'')).mpr hsum)
-    have hz1 : c ≤ z + 1 := Nat.le_of_dvd (by omega) hdz
+    have hz1 : c ≤ z + 1 := Nat.le_of_dvd (by lia) hdz
     -- Now `2abc ≥ 3abc`, contradiction.
     have hpos : 0 < a * b * c := by positivity
     have g1 : a * b * c ≤ b * c * (x + 1) := by
@@ -167,7 +167,7 @@ problem imo1983_p3 (a b c : ℕ) (ha : 0 < a) (hb : 0 < b) (hc : 0 < c)
       calc a * b * c = c * a * b := by ring
         _ ≤ c * a * (y + 1) := mul_le_mul_of_nonneg_left hy1 (Nat.zero_le _)
     have g3 : a * b * c ≤ a * b * (z + 1) := mul_le_mul_of_nonneg_left hz1 (Nat.zero_le _)
-    omega
+    lia
   · -- Every larger integer is representable.
     intro n hn
     by_contra hle

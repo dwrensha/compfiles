@@ -77,7 +77,7 @@ theorem card_lhs_lt_card_value (n : ℕ) (hn : 0 < n) :
     show (2 * n + 1) ^ (2 * n) = ((2 * n + 1) ^ 2) ^ n by rw [← pow_mul]]
   have h2 : 4 * n ^ 2 + 1 < (2 * n + 1) ^ 2 := by
     have hsq : (2 * n + 1) ^ 2 = 4 * n ^ 2 + 4 * n + 1 := by ring
-    omega
+    lia
   exact Nat.pow_lt_pow_left h2 hn.ne'
 
 /-- Each left-hand side is bounded by `2n²` when every |xⱼ| ≤ n. -/

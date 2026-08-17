@@ -49,12 +49,12 @@ variable {a : ℕ → ℕ → ℕ} {x : ℕ}
 lemma step_sq (ha₁ : Rule a) (hx : 1 < x) {i : ℕ} (h : IsSquare (a x i)) :
     a x (i + 1) = (a x i).sqrt := by
   have := ha₁ x i hx
-  rwa [if_pos h] at this
+  rwa [ite_eq_left h] at this
 
 lemma step_nonsq (ha₁ : Rule a) (hx : 1 < x) {i : ℕ} (h : ¬IsSquare (a x i)) :
     a x (i + 1) = a x i + 3 := by
   have := ha₁ x i hx
-  rwa [if_neg h] at this
+  rwa [ite_eq_right h] at this
 
 lemma not_isSquare_of_mod_three {y : ℕ} (hy : y % 3 = 2) : ¬IsSquare y := by
   rintro ⟨r, rfl⟩
@@ -129,7 +129,6 @@ the climb is a square; and the progression does contain a square r² with
 √c < r ≤ √c + 3, where r is chosen with r² ≡ c (mod 3).) -/
 lemma climb (ha₁ : Rule a) (hx : 1 < x) {i c : ℕ} (hi : a x i = c)
     (hc : c % 3 ≠ 2) : ∃ j, a x j ≤ c.sqrt + 3 := by
-  classical
   obtain ⟨r, hr1, hr2, hr3⟩ : ∃ r, c.sqrt < r ∧ r ≤ c.sqrt + 3 ∧
       r * r % 3 = c % 3 := by
     obtain hs | hs | hs : c.sqrt % 3 = 0 ∨ c.sqrt % 3 = 1 ∨ c.sqrt % 3 = 2 := by

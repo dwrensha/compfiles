@@ -273,7 +273,7 @@ lemma card_biUnion_toFinsetV_ge {G' : SimpleGraph V} {a b c d : V}
   have hc3 : (Sym2.toFinsetV s(c, d)).card = 2 := Finset.card_pair hcd'
   have hc4 : (Sym2.toFinsetV s(d, a)).card = 2 := Finset.card_pair (Ne.symm had)
   have hpos : 0 < F.card := Finset.card_pos.mpr hne
-  have h123 : F.card = 1 ∨ F.card = 2 ∨ F.card = 3 := by omega
+  have h123 : F.card = 1 ∨ F.card = 2 ∨ F.card = 3 := by lia
   rcases h123 with hFc | hFc | hFc
   · -- one edge: two endpoints
     obtain ⟨x, rfl⟩ := Finset.card_eq_one.mp hFc
@@ -323,7 +323,7 @@ lemma card_biUnion_toFinsetV_ge {G' : SimpleGraph V} {a b c d : V}
       have hsub' : Sym2.toFinsetV y ⊆ Sym2.toFinsetV x := h ▸ Finset.subset_union_right
       exact hne2 ((Finset.eq_of_subset_of_card_le hsub' (hcardx.trans hcardy.symm).le).symm)
     have hlt := Finset.card_lt_card hss
-    omega
+    lia
   · -- three edges: contain a pair of opposite (disjoint) edges, hence four endpoints
     have hcardcompl : (({s(a, b), s(b, c), s(c, d), s(d, a)} : Finset (Sym2 V)) \ F).card = 1 := by
       rw [Finset.card_sdiff_of_subset hsub, hE4card, hFc]
@@ -416,7 +416,7 @@ lemma card_biUnion_toFinsetV_ge {G' : SimpleGraph V} {a b c d : V}
             · exact hbc'
             · exact hbd)
           hc1 hc3
-    omega
+    lia
 
 /-- One merge step of the clique-cover algorithm: if the four edges of some
 4-cycle `abcd` in `G'` do not all carry the same label, we may add all missing edges
@@ -429,7 +429,6 @@ lemma Cover.merge {G G' : SimpleGraph V} [DecidableRel G.Adj] (cov : Cover G G')
     (hdiff : ¬ (cov.ℓ s(a, b) = cov.ℓ s(b, c) ∧ cov.ℓ s(b, c) = cov.ℓ s(c, d) ∧
       cov.ℓ s(c, d) = cov.ℓ s(d, a))) :
     ∃ (G'' : SimpleGraph V) (cov' : Cover G G''), G' ≤ G'' ∧ cov'.C.card < cov.C.card := by
-  classical
   -- the four edges and their labels
   set e1 : Sym2 V := s(a, b) with he1
   set e2 : Sym2 V := s(b, c) with he2
@@ -497,7 +496,7 @@ lemma Cover.merge {G G' : SimpleGraph V} [DecidableRel G.Adj] (cov : Cover G G')
   have hScard2 : 2 ≤ S.card := by
     by_contra hlt
     push Not at hlt
-    have h1 : S.card = 1 := by omega
+    have h1 : S.card = 1 := by lia
     obtain ⟨x, hx⟩ := Finset.card_eq_one.mp h1
     have hmem : ∀ K ∈ S, K = x := by
       intro K hK
@@ -618,7 +617,7 @@ lemma Cover.merge {G G' : SimpleGraph V} [DecidableRel G.Adj] (cov : Cover G G')
           rwa [Finset.sum_const, smul_eq_mul, Nat.mul_one] at h2
         have herase : (S.erase K).card = S.card - 1 := Finset.card_erase_of_mem hK
         rw [hE4card] at hsplit
-        omega
+        lia
       -- the endpoints of the edges of `I` lie in `K ∩ D`
       have hIsub : I.biUnion Sym2.toFinsetV ⊆ D.filter (· ∈ K) := by
         intro v hv
@@ -681,9 +680,10 @@ lemma Cover.merge {G G' : SimpleGraph V} [DecidableRel G.Adj] (cov : Cover G G')
       rw [Finset.card_sdiff_of_subset hDV', hDcard]
     have hDleV' : D.card ≤ V'.card := Finset.card_le_card hDV'
     rw [hswap, hsplit]
-    omega
+    lia
   -- the new graph and the new cover
   set G'' := G' ⊔ completeOn V' with hG''
+  classical
   set ℓ' : Sym2 V → Finset V :=
     fun e => if e ∈ G'.edgeSet then (if cov.ℓ e ∈ S then V' else cov.ℓ e) else V' with hℓ'
   set C' : Finset (Finset V) := insert V' (cov.C \ S) with hC'
@@ -691,7 +691,7 @@ lemma Cover.merge {G G' : SimpleGraph V} [DecidableRel G.Adj] (cov : Cover G G')
     have h1 : C'.card ≤ (cov.C \ S).card + 1 := Finset.card_insert_le _ _
     have h2 : (cov.C \ S).card = cov.C.card - S.card := Finset.card_sdiff_of_subset hSC
     have h3 : S.card ≤ cov.C.card := Finset.card_le_card hSC
-    omega
+    lia
   -- labels of original edges
   have hℓ'G : ∀ e ∈ G.edgeFinset, ℓ' e = if cov.ℓ e ∈ S then V' else cov.ℓ e := by
     intro e he
@@ -713,9 +713,9 @@ lemma Cover.merge {G G' : SimpleGraph V} [DecidableRel G.Adj] (cov : Cover G G')
     · rw [hℓ']
       simp only [heG', ↓reduceIte]
       by_cases hS' : cov.ℓ e ∈ S
-      · rw [if_pos hS', hC']
+      · rw [ite_eq_left hS', hC']
         exact Finset.mem_insert_self _ _
-      · rw [if_neg hS', hC']
+      · rw [ite_eq_right hS', hC']
         exact Finset.mem_insert_of_mem (Finset.mem_sdiff.mpr ⟨cov.label_mem e heG', hS'⟩)
     · rw [hℓ']
       simp only [heG', ↓reduceIte, hC']
@@ -727,9 +727,9 @@ lemma Cover.merge {G G' : SimpleGraph V} [DecidableRel G.Adj] (cov : Cover G G')
       simp only [heG', ↓reduceIte]
       have hv2 := cov.label_sub e heG' v hv
       by_cases hS' : cov.ℓ e ∈ S
-      · rw [if_pos hS']
+      · rw [ite_eq_left hS']
         exact Finset.subset_biUnion_of_mem id hS' hv2
-      · rw [if_neg hS']
+      · rw [ite_eq_right hS']
         exact hv2
     · rw [hℓ']
       simp only [heG', ↓reduceIte]
@@ -754,11 +754,11 @@ lemma Cover.merge {G G' : SimpleGraph V} [DecidableRel G.Adj] (cov : Cover G G')
           refine ⟨he.1, ?_⟩
           rw [hℓ'G e he.1]
           by_cases hS' : cov.ℓ e ∈ S
-          · rw [if_pos hS']
-          · rw [if_neg hS', he.2]
+          · rw [ite_eq_left hS']
+          · rw [ite_eq_right hS', he.2]
         have hle := Finset.card_le_card hsub
         have hθ := cov.theta_bound V' hV'C
-        omega
+        lia
       · -- `V'` is new: its original edges are exactly those labeled by cliques of `S`
         have hfilter_eq : G.edgeFinset.filter (fun e => ℓ' e = V') =
             G.edgeFinset.filter (fun e => cov.ℓ e ∈ S) := by
@@ -769,11 +769,11 @@ lemma Cover.merge {G G' : SimpleGraph V} [DecidableRel G.Adj] (cov : Cover G G')
             rw [hℓ'G e he] at hℓe
             by_cases hS' : cov.ℓ e ∈ S
             · exact ⟨he, hS'⟩
-            · rw [if_neg hS'] at hℓe
+            · rw [ite_eq_right hS'] at hℓe
               exact absurd (hℓe ▸ cov.label_mem e (hedge_mono e
                 (by rwa [SimpleGraph.mem_edgeFinset] at he))) hV'C
           · rintro ⟨he, hS'⟩
-            exact ⟨he, by rw [hℓ'G e he, if_pos hS']⟩
+            exact ⟨he, by rw [hℓ'G e he, ite_eq_left hS']⟩
         have hfib2 : (G.edgeFinset.filter (fun e => cov.ℓ e ∈ S)).card
             = ∑ K' ∈ S, (G.edgeFinset.filter (fun e => cov.ℓ e = K')).card := by
           exact (Finset.sum_card_fiberwise_eq_card_filter G.edgeFinset S cov.ℓ).symm
@@ -787,7 +787,7 @@ lemma Cover.merge {G G' : SimpleGraph V} [DecidableRel G.Adj] (cov : Cover G G')
             Finset.sum_const, smul_eq_mul] at h
           exact h
         rw [hfilter_eq, hfib2]
-        omega
+        lia
     · -- an old clique: its label set is unchanged
       have hKC : K ∈ cov.C := by
         rw [hC', Finset.mem_insert, Finset.mem_sdiff] at hK
@@ -805,14 +805,14 @@ lemma Cover.merge {G G' : SimpleGraph V} [DecidableRel G.Adj] (cov : Cover G G')
         intro e he
         rw [hℓ'G e he]
         by_cases hS' : cov.ℓ e ∈ S
-        · rw [if_pos hS']
+        · rw [ite_eq_left hS']
           constructor
           · intro hKK
             exact absurd hKK (Ne.symm hKV')
           · intro hKK
             rw [hKK] at hS'
             exact absurd hS' hKS
-        · rw [if_neg hS']
+        · rw [ite_eq_right hS']
       rw [hfilter_eq]
       exact cov.theta_bound K hKC
   · -- every clique of the new cover labels some edge
@@ -820,10 +820,10 @@ lemma Cover.merge {G G' : SimpleGraph V} [DecidableRel G.Adj] (cov : Cover G G')
     rw [hC', Finset.mem_insert, Finset.mem_sdiff] at hK
     rcases hK with rfl | ⟨hK, hKS'⟩
     · exact ⟨e1, hedge_sup e1 he1E,
-        by simp only [hℓ']; rw [if_pos he1E, ← hL1, if_pos hL1S]⟩
+        by simp only [hℓ']; rw [ite_eq_left he1E, ← hL1, ite_eq_left hL1S]⟩
     · obtain ⟨e, he, hℓe⟩ := cov.assigned K hK
       exact ⟨e, hedge_sup e he,
-        by simp only [hℓ']; rw [if_pos he, if_neg (by rw [hℓe]; exact hKS'), hℓe]⟩
+        by simp only [hℓ']; rw [ite_eq_left he, ite_eq_right (by rw [hℓe]; exact hKS'), hℓe]⟩
   · -- `G' ≤ G''`
     exact le_sup_left
 
@@ -851,7 +851,7 @@ lemma exists_terminal_cover (G : SimpleGraph V) [DecidableRel G.Adj] :
       have hdiff' : ¬ (cov.ℓ s(a, b) = cov.ℓ s(b, c) ∧ cov.ℓ s(b, c) = cov.ℓ s(c, d) ∧
         cov.ℓ s(c, d) = cov.ℓ s(d, a)) := fun h => hdiff h.1 h.2.1 h.2.2
       obtain ⟨G₁, cov₁, hle₁, hcard₁⟩ := cov.merge hac hbd hab hbc hcd hda hdiff'
-      omega
+      lia
   | succ n ih =>
     intro G' cov hn
     by_cases hterm : ∀ (a b c d : V), a ≠ c → b ≠ d →
@@ -864,7 +864,7 @@ lemma exists_terminal_cover (G : SimpleGraph V) [DecidableRel G.Adj] :
       have hdiff' : ¬ (cov.ℓ s(a, b) = cov.ℓ s(b, c) ∧ cov.ℓ s(b, c) = cov.ℓ s(c, d) ∧
         cov.ℓ s(c, d) = cov.ℓ s(d, a)) := fun h => hdiff h.1 h.2.1 h.2.2
       obtain ⟨G₁, cov₁, hle₁, hcard₁⟩ := cov.merge hac hbd hab hbc hcd hda hdiff'
-      obtain ⟨G'', cov', hle₂, hterm'⟩ := ih G₁ cov₁ (by omega)
+      obtain ⟨G'', cov', hle₂, hterm'⟩ := ih G₁ cov₁ (by lia)
       exact ⟨G'', cov', le_trans hle₁ hle₂, hterm'⟩
 
 /-- If a cover of `G'` relative to `G` assigns the same label to the four edges of
@@ -894,7 +894,7 @@ lemma lower_bound_of_terminal {G G' : SimpleGraph V} [DecidableRel G.Adj]
     exact hnadj (cov.clique _ (cov.label_mem s(u, p) hupE) u huL v hvL huv)
   -- so `G' = ⊤`
   have htop : G' = ⊤ := (reachable_eq_of_no_canAdd hcomp hno).symm
-  have hnontriv : Nontrivial V := Fintype.one_lt_card_iff_nontrivial.1 (by omega)
+  have hnontriv : Nontrivial V := Fintype.one_lt_card_iff_nontrivial.1 (by lia)
   obtain ⟨u₀, v₀, huv₀⟩ := exists_pair_ne V
   set Kstar := cov.ℓ s(u₀, v₀) with hKstar
   -- two friendships sharing a user have the same label
@@ -911,7 +911,7 @@ lemma lower_bound_of_terminal {G G' : SimpleGraph V} [DecidableRel G.Adj]
         have h3 : ({x, y, z} : Finset V).card ≤ 3 := by
           exact Finset.card_le_three
         rw [Finset.card_univ] at hcle
-        omega
+        lia
       simp only [Finset.mem_insert, Finset.mem_singleton, not_or] at hw
       obtain ⟨hwx, hwy, hwz⟩ := hw
       have hab : G'.Adj x y := by rw [htop]; exact (SimpleGraph.top_adj x y).mpr hxy
@@ -994,15 +994,15 @@ theorem lower_bound (G : SimpleGraph (Fin 2022)) (hcomp : Completable G) :
     lower_bound_of_terminal cov' (by rw [Fintype.card_fin]; norm_num) hterm
       (completable_mono hle hcomp)
   have hfin : Fintype.card (Fin 2022) = 2022 := Fintype.card_fin 2022
-  omega
+  lia
 
 /-! ### The construction -/
 
 /-- The `i`-th "even" vertex `2i + 2` of the construction. -/
-def xi (i : Fin 1010) : Fin 2022 := ⟨2 * i.val + 2, by omega⟩
+def xi (i : Fin 1010) : Fin 2022 := ⟨2 * i.val + 2, by lia⟩
 
 /-- The `i`-th "odd" vertex `2i + 3` of the construction. -/
-def yi (i : Fin 1010) : Fin 2022 := ⟨2 * i.val + 3, by omega⟩
+def yi (i : Fin 1010) : Fin 2022 := ⟨2 * i.val + 3, by lia⟩
 
 lemma xi_val (i : Fin 1010) : (xi i).val = 2 * i.val + 2 := rfl
 
@@ -1016,49 +1016,49 @@ lemma ne0x (i : Fin 1010) : (0 : Fin 2022) ≠ xi i := by
   intro h
   have hv := congr_arg Fin.val h
   rw [fin0_val, xi_val] at hv
-  omega
+  lia
 
 lemma ne1x (i : Fin 1010) : (1 : Fin 2022) ≠ xi i := by
   intro h
   have hv := congr_arg Fin.val h
   rw [fin1_val, xi_val] at hv
-  omega
+  lia
 
 lemma ne0y (i : Fin 1010) : (0 : Fin 2022) ≠ yi i := by
   intro h
   have hv := congr_arg Fin.val h
   rw [fin0_val, yi_val] at hv
-  omega
+  lia
 
 lemma ne1y (i : Fin 1010) : (1 : Fin 2022) ≠ yi i := by
   intro h
   have hv := congr_arg Fin.val h
   rw [fin1_val, yi_val] at hv
-  omega
+  lia
 
 lemma nexy (i : Fin 1010) : xi i ≠ yi i := by
   intro h
   have hv := congr_arg Fin.val h
   rw [xi_val, yi_val] at hv
-  omega
+  lia
 
 lemma xex (i j : Fin 1010) (h : i ≠ j) : xi i ≠ xi j := by
   intro hh
   have hv := congr_arg Fin.val hh
   rw [xi_val, xi_val] at hv
-  exact h (Fin.eq_of_val_eq (by omega))
+  exact h (Fin.eq_of_val_eq (by lia))
 
 lemma yey (i j : Fin 1010) (h : i ≠ j) : yi i ≠ yi j := by
   intro hh
   have hv := congr_arg Fin.val hh
   rw [yi_val, yi_val] at hv
-  exact h (Fin.eq_of_val_eq (by omega))
+  exact h (Fin.eq_of_val_eq (by lia))
 
 lemma xey (i j : Fin 1010) : xi i ≠ yi j := by
   intro hh
   have hv := congr_arg Fin.val hh
   rw [xi_val, yi_val] at hv
-  omega
+  lia
 
 /-- The edge set of the construction: the edge `0-1` together with, for each
 `i < 1010`, the three further edges `1-xᵢ`, `xᵢ-yᵢ`, `yᵢ-0` of a 4-cycle
@@ -1188,13 +1188,13 @@ lemma hnb {H₁ : SimpleGraph (Fin 2022)} (hle : constrGraph ≤ H₁)
   have hv2 : 2 ≤ v.val := by
     by_contra h
     push Not at h
-    have h01 : v.val = 0 ∨ v.val = 1 := by omega
+    have h01 : v.val = 0 ∨ v.val = 1 := by lia
     rcases h01 with h | h
     · exact hv0 (Fin.eq_of_val_eq (by rw [h, fin0_val]))
     · exact hv1 (Fin.eq_of_val_eq (by rw [h, fin1_val]))
   set i := (v.val - 2) / 2 with hi
-  have hilt : i < 1010 := by omega
-  have hvi : v.val = 2 * i + 2 ∨ v.val = 2 * i + 3 := by omega
+  have hilt : i < 1010 := by lia
+  have hvi : v.val = 2 * i + 2 ∨ v.val = 2 * i + 3 := by lia
   rcases hvi with h | h
   · have hvx : v = xi (⟨i, hilt⟩ : Fin 1010) := Fin.eq_of_val_eq (by rw [h, xi_val])
     rw [hvx]
@@ -1358,6 +1358,6 @@ problem usa2022_p6 :
     obtain ⟨G, hcomp, hm⟩ := hm
     have h := lower_bound G hcomp
     show 3031 ≤ m
-    omega
+    lia
 
 end Usa2022P6

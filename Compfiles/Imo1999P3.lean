@@ -86,11 +86,11 @@ def transform (n k : ℕ) (h_n : n = 2 * k) (p : Square n) : Fin k × Fin k :=
   let x := p.1.val; let y := p.2.val
   if _ : x % 2 = 0 then
     -- Lower part map
-    let u : Fin k := ⟨x / 2, by omega⟩; let v : Fin k := ⟨y / 2, by omega⟩
+    let u : Fin k := ⟨x / 2, by lia⟩; let v : Fin k := ⟨y / 2, by lia⟩
     (u, v)
   else
     -- Upper part map
-    let u : Fin k := ⟨k - 1 - x / 2, by omega⟩; let v : Fin k := ⟨k - 1 - y / 2, by omega⟩
+    let u : Fin k := ⟨k - 1 - x / 2, by lia⟩; let v : Fin k := ⟨k - 1 - y / 2, by lia⟩
     (u, v)
 
 /-- Helper lemma for triangular number summation. -/
@@ -123,25 +123,25 @@ lemma transform_inj_on_sw (n k : ℕ) (h_n : n = 2 * k) :
     apply Fin.mk.inj at h_u <;> apply Fin.mk.inj at h_v
   -- Case 1: Both in Lower
   · ext
-    · omega
-    · have : a.2.val % 2 = 0 := by rcases ha.2 with h | h <;> omega
-      omega
+    · lia
+    · have : a.2.val % 2 = 0 := by rcases ha.2 with h | h <;> lia
+      lia
   -- Case 2: a in Lower, b in Upper -> Parity contradiction
   · exfalso
     have : (a.1.val / 2 + a.2.val / 2) % 2 = 0 := by
-      rcases ha.2 with h | h <;> omega
-    omega
+      rcases ha.2 with h | h <;> lia
+    lia
   -- Case 3: a in Upper, b in Lower -> Parity contradiction
   · exfalso
     have : ((k - 1 - a.2.val / 2) + (k - 1 - a.1.val / 2)) % 2 = 1 := by
-      rcases ha.2 with h | h <;> omega
-    omega
+      rcases ha.2 with h | h <;> lia
+    lia
   -- Case 4: Both in Upper
   · have : a.1.val % 2 = 1 ∧ a.2.val % 2 = 1 := by
       rcases ha.2 with h | h
       · have := h.1; contradiction
       · exact ⟨h.1, h.2.1⟩
-    ext <;> omega
+    ext <;> lia
 
 /--
 Lemma: The transformation maps sw onto t (Surjectivity).
@@ -158,30 +158,30 @@ lemma transform_surjective_on_t (n k : ℕ) (h_n : n = 2 * k) :
   -- Inverse construction logic
   if _ : (u + v) % 2 = 0 then
     -- Inverse to Lower
-    let p : Square n := (⟨2 * u ,by omega⟩, ⟨2 * v , by omega⟩)
+    let p : Square n := (⟨2 * u ,by lia⟩, ⟨2 * v , by lia⟩)
     use p
     constructor
     · -- p ∈ sw
       unfold sw; rw [mem_filter]; simp only [Finset.mem_univ, true_and]; unfold isSw
-      left; simp only [p]; refine ⟨?_, ?_, ?_, ?_⟩ <;> omega
+      left; simp only [p]; refine ⟨?_, ?_, ?_, ?_⟩ <;> lia
     · -- transform p = x
       simp only [transform, p]
       split_ifs with h_p_even
-      · ext <;> dsimp <;> omega
-      · omega
+      · ext <;> dsimp <;> lia
+      · lia
   else
     -- Inverse to Upper
-    let p : Square n := (⟨2 * (k - 1 - u) + 1, by omega⟩, ⟨2 * (k - 1 - v) + 1, by omega⟩)
+    let p : Square n := (⟨2 * (k - 1 - u) + 1, by lia⟩, ⟨2 * (k - 1 - v) + 1, by lia⟩)
     use p
     constructor
     · -- p ∈ sw
       unfold sw; rw [mem_filter]; simp only [Finset.mem_univ, true_and]; unfold isSw
-      right; simp only [p]; rw [h_n]; refine ⟨?_, ?_, ?_, ?_⟩ <;> omega
+      right; simp only [p]; rw [h_n]; refine ⟨?_, ?_, ?_, ?_⟩ <;> lia
     · -- transform p = x
       simp only [transform, p]
       split_ifs with h_p_even
-      · omega
-      · ext <;> dsimp <;> omega
+      · lia
+      · ext <;> dsimp <;> lia
 
 /-- Calculate the cardinality of the 'sw' set (White squares in the construction).
     It corresponds to a triangular number. -/
@@ -197,7 +197,7 @@ lemma card_sw_eq_triangular (n k : ℕ) (h_n : n = 2 * k) :
       apply Finset.card_bij (λ p _ => ⟨p.1.val, p.2.val⟩)
       · intro p hp
         rw [mem_filter] at hp; simp only [s, mem_sigma, mem_range]
-        constructor <;> omega
+        constructor <;> lia
       · intro _ _ _ _ h
         simp at h
         ext
@@ -205,8 +205,8 @@ lemma card_sw_eq_triangular (n k : ℕ) (h_n : n = 2 * k) :
         · exact h.2
       · intro ⟨i, j⟩ h
         simp only [s, mem_sigma, mem_range] at h
-        refine ⟨(⟨i, by omega⟩, ⟨j, by omega⟩), ?_, ?_⟩
-        · rw [mem_filter]; simp; omega
+        refine ⟨(⟨i, by lia⟩, ⟨j, by lia⟩), ?_, ?_⟩
+        · rw [mem_filter]; simp; lia
         · simp
     rw [h_bij, Finset.card_sigma]; simp only [Finset.card_range]
     exact sum_range_sub_eq_triangular k
@@ -228,16 +228,16 @@ lemma card_sw_eq_triangular (n k : ℕ) (h_n : n = 2 * k) :
       simp [t, mem_filter]; unfold isSw at hp
       rcases hp.2 with h|h
       · -- Valid case
-        omega
+        lia
       · -- Contradiction case (x is odd)
-        omega
+        lia
     · -- Case: sw_upper
       simp [t, mem_filter]; unfold isSw at hp
       rcases hp.2 with h|h
       · -- Contradiction case (x is even)
-        omega
+        lia
       · -- Valid case
-        omega
+        lia
 
   -- [Goal B] Injectivity
   · apply transform_inj_on_sw n k h_n
@@ -259,7 +259,7 @@ lemma adjacent_parity_ne {n : ℕ} {p m : Square n} (h : Adjacent p m) :
   let r2 := (m.1.val : ℤ); let c2 := (m.2.val : ℤ)
   -- Since the sum of absolute differences is 1, (Δr, Δc) is (±1, 0) or (0, ±1)
   have h_cases : (r1 - r2).natAbs = 1 ∧ (c1 - c2).natAbs = 0 ∨
-                 (r1 - r2).natAbs = 0 ∧ (c1 - c2).natAbs = 1 := by omega
+                 (r1 - r2).natAbs = 0 ∧ (c1 - c2).natAbs = 1 := by lia
   rcases h_cases with ⟨_, _⟩ | ⟨_, _⟩ <;> omega
 
 -- 4. Lower Bound Lemma (Key Logic)
@@ -291,7 +291,7 @@ lemma independent_points_cant_share_neighbor (n : ℕ) (p1 p2 m : Square n)
   simp only at h1 h2 h_adj1 h_adj2
 
   -- Check all parity combinations (Lower/Upper) for contradiction
-  rcases h1 with h1 | h1 <;> rcases h2 with h2 | h2 <;> omega
+  rcases h1 with h1 | h1 <;> rcases h2 with h2 | h2 <;> lia
 
 /--
 Helper: A parity-dependent transformation.
@@ -302,7 +302,7 @@ def parityTransform (n : ℕ) (target_parity : ℕ) (p : Square n) : Square n :=
   if target_parity = 0 then
     p
   else
-    (⟨n - 1 - p.1.val, by omega⟩, p.2)
+    (⟨n - 1 - p.1.val, by lia⟩, p.2)
 
 /--
 Lemma: parityTransform is injective.
@@ -310,7 +310,7 @@ Lemma: parityTransform is injective.
 lemma parity_transform_injective (n target_parity : ℕ) :
     Function.Injective (parityTransform n target_parity) := by
   intro p1 p2 h
-  simp [parityTransform] at h; split_ifs at h <;> simp_all; ext <;> omega
+  simp [parityTransform] at h; split_ifs at h <;> simp_all; ext <;> lia
 
 /--
   **Lower Bound Lemma (Revised):**
@@ -345,7 +345,7 @@ lemma card_lower_bound_of_cover (n k : ℕ) (h_n : n = 2 * k)
     · -- target_parity = 0 (Identity)
       subst h_tp_zero
       unfold sw at ha_sw; rw [mem_filter] at ha_sw; unfold isSw at ha_sw
-      rcases ha_sw.2 with h|h <;> omega
+      rcases ha_sw.2 with h|h <;> lia
     · -- target_parity = 1 (Reflection)
       unfold sw at ha_sw; rw [mem_filter] at ha_sw; unfold isSw at ha_sw
       rcases ha_sw with ⟨_, h_sw⟩
@@ -401,7 +401,7 @@ lemma card_lower_bound_of_cover (n k : ℕ) (h_n : n = 2 * k)
       unfold Adjacent at h_adj1 h_adj2
       simp [trans, parityTransform, h_par] at h_eq1 h_eq2
       unfold sw at h_mem1 h_mem2; rw [mem_filter] at h_mem1 h_mem2
-      let m_inv : Square n := (⟨n - 1 - m.1.val, by omega⟩, m.2)
+      let m_inv : Square n := (⟨n - 1 - m.1.val, by lia⟩, m.2)
       have h_adj_b1 : Adjacent (p1x, p1y) m_inv := by
         dsimp at h_adj1; rw [← h_eq1] at h_adj1; simp at h_adj1
         unfold Adjacent; dsimp [m_inv]; omega
@@ -420,7 +420,7 @@ lemma card_lower_bound_of_cover (n k : ℕ) (h_n : n = 2 * k)
   simp only [Fintype.card_coe, card_map, i] at h_card
   rw [h_card_sw] at h_card
   have h_mul : n * (n + 2) = 4 * (k * (k + 1)) := by rw [h_n]; ring
-  rw [h_mul]; omega
+  rw [h_mul]; lia
 
 
 /--
@@ -441,46 +441,46 @@ lemma exists_adjacent_in_sw_of_odd_sum (n : ℕ) (h_pos : 0 < n) (h_even : Even 
     if _ : (qx + qy) % 4 = 1 then
       if _ : qy % 2 = 1 then
         -- Neighbor below
-        let my : Fin n := ⟨qy - 1, by omega⟩
+        let my : Fin n := ⟨qy - 1, by lia⟩
         use (q.1, my); have : my.val = qy - 1 := rfl; dsimp; omega
       else
         -- Neighbor left
-        let mx : Fin n := ⟨qx - 1, by omega⟩
+        let mx : Fin n := ⟨qx - 1, by lia⟩
         use (mx, q.2); have : mx.val = qx - 1 := rfl; dsimp; omega
     else
         -- Case: Sum % 4 = 3 (Implied by odd sum and != 1)
         by_cases h_boundary : qx + qy = n - 1
         · -- Boundary case: requires care to stay within bounds
           if _ : qy % 2 = 1 then
-            let mx : Fin n := ⟨qx + 1, by omega⟩
-            use (mx, q.2); have : mx.val = qx + 1 := rfl; dsimp; omega
+            let mx : Fin n := ⟨qx + 1, by lia⟩
+            use (mx, q.2); have : mx.val = qx + 1 := rfl; dsimp; lia
           else
-            let my : Fin n := ⟨qy + 1, by omega⟩
-            use (q.1, my); have : my.val = qy + 1 := rfl; dsimp; omega
+            let my : Fin n := ⟨qy + 1, by lia⟩
+            use (q.1, my); have : my.val = qy + 1 := rfl; dsimp; lia
         · -- Normal Lower case (Sum % 4 = 3, not boundary)
           if _ : qy % 2 = 1 then
-            let my : Fin n := ⟨qy + 1, by omega⟩
-            use (q.1, my); have : my.val = qy + 1 := rfl; dsimp; omega
+            let my : Fin n := ⟨qy + 1, by lia⟩
+            use (q.1, my); have : my.val = qy + 1 := rfl; dsimp; lia
           else
-            let mx : Fin n := ⟨qx + 1, by omega⟩
-            use (mx, q.2); have : mx.val = qx + 1 := rfl; dsimp; omega
+            let mx : Fin n := ⟨qx + 1, by lia⟩
+            use (mx, q.2); have : mx.val = qx + 1 := rfl; dsimp; lia
   else
     -- Case: Upper Triangle region (qx + qy ≥ n)
     if _ : (qx + qy) % 4 = 1 then
         if _ : qy % 2 = 1 then
-          let mx : Fin n := ⟨qx - 1, by omega⟩
+          let mx : Fin n := ⟨qx - 1, by lia⟩
           use (mx, q.2); have : mx.val = qx - 1 := rfl; dsimp; omega
         else
-          let my : Fin n := ⟨qy - 1, by omega⟩
+          let my : Fin n := ⟨qy - 1, by lia⟩
           use (q.1, my); have : my.val = qy - 1 := rfl; dsimp; omega
     else
         -- Case Sum % 4 = 3 in Upper
         if _ : qy % 2 = 1 then
-          let mx : Fin n := ⟨qx + 1, by omega⟩
-          use (mx, q.2); have : mx.val = qx + 1 := rfl; dsimp; omega
+          let mx : Fin n := ⟨qx + 1, by lia⟩
+          use (mx, q.2); have : mx.val = qx + 1 := rfl; dsimp; lia
         else
-          let my : Fin n := ⟨qy + 1, by omega⟩
-          use (q.1, my); have : my.val = qy + 1 := rfl; dsimp; omega
+          let my : Fin n := ⟨qy + 1, by lia⟩
+          use (q.1, my); have : my.val = qy + 1 := rfl; dsimp; lia
 
 /--
 Lemma: The sets sw and sb are disjoint.
@@ -496,14 +496,14 @@ lemma disjoint_sw_sb (n : ℕ) (h_pos : 0 < n) (h_even : Even n) :
 
   -- Extract parity facts from predicates
   have h_sw_mod2 : (x + y) % 2 = 0 := by
-    rcases hp_sw.2 with h | h <;> { have := h.2.2.1; omega }
+    rcases hp_sw.2 with h | h <;> { have := h.2.2.1; lia }
   have h_sb_mod2 : (n - 1 - x + y) % 2 = 0 := by
     rcases hp_sb.2 with h | h <;> { have := h.2.2.1; omega }
 
   -- Derive contradiction
   have h_contra : (n - 1) % 2 = 0 := by omega
   have h_n_mod2 : n % 2 = 0 := (Nat.even_iff).mp h_even
-  omega
+  lia
 
 /--
 Lemma: Symmetry implies |sw| = |sb|.
@@ -512,11 +512,11 @@ The map x ↦ n - 1 - x is a bijection swapping the two sets.
 lemma card_sw_eq_card_sb (n : ℕ) :
   (sw n).card = (sb n).card := by
   let f : Square n → Square n := λ p =>
-    (⟨n - 1 - p.1.val, by omega⟩, p.2)
+    (⟨n - 1 - p.1.val, by lia⟩, p.2)
   apply Finset.card_bijective f
   · -- Bijective
     rw [Function.Bijective]; constructor
-    · intro a b h; simp [f] at h; ext <;> omega
+    · intro a b h; simp [f] at h; ext <;> lia
     · intro b; use f b; simp [f]
       ext
       · have h_le : b.1.val ≤ n - 1 := Nat.le_pred_of_lt b.1.isLt
@@ -525,7 +525,7 @@ lemma card_sw_eq_card_sb (n : ℕ) :
   · -- Maps sw to sb (and vice versa logic implies bijection on domains)
     intro p
     simp only [f]; unfold sw sb; simp only [mem_filter, Finset.mem_univ, true_and]
-    have h_rev : n - 1 - (n - 1 - p.1.val) = p.1.val := by omega
+    have h_rev : n - 1 - (n - 1 - p.1.val) = p.1.val := by lia
     simp_rw [h_rev]
 
 -- 5. Sufficiency Proof (Size and Validity)
@@ -549,17 +549,17 @@ theorem imo1999_p3_sufficiency (n : ℕ) (h_pos : 0 < n) (h_even : Even n) :
     -- Calculate |sw|
     have h_card_sw : (sw n).card = n * (n + 2) / 8 := by
       let k := n / 2
-      have hk : n = 2 * k := by omega
+      have hk : n = 2 * k := by lia
       rw [card_sw_eq_triangular n k hk, hk]
-      rw [← Nat.mul_add 2 k 1, Nat.mul_assoc, Nat.mul_left_comm k 2]; omega
+      rw [← Nat.mul_add 2 k 1, Nat.mul_assoc, Nat.mul_left_comm k 2]; lia
 
     rw [h_union, Finset.card_union_of_disjoint h_disjoint, ← h_sym, h_card_sw]
     have h_arith : 2 * (n * (n + 2) / 8) = n * (n + 2) / 4 := by
       rcases h_even with ⟨k, rfl⟩
       simp only [← two_mul]
       rw [← Nat.mul_add 2 k 1, Nat.mul_assoc, Nat.mul_left_comm k 2]
-      rcases Nat.even_mul_succ_self k with ⟨m, hm⟩; omega
-    omega
+      rcases Nat.even_mul_succ_self k with ⟨m, hm⟩; lia
+    lia
 
   · -- Part 2: Validity
     intro p
@@ -567,12 +567,12 @@ theorem imo1999_p3_sufficiency (n : ℕ) (h_pos : 0 < n) (h_even : Even n) :
     rcases Nat.mod_two_eq_zero_or_one (p.1.val + p.2.val) with h_even_sum | h_odd_sum
     · -- Case: Even sum (Use Reflection + Lemma)
       -- 1. Reflect point p to p'
-      let p' : Square n := (⟨n - 1 - p.1.val, by omega⟩, p.2)
+      let p' : Square n := (⟨n - 1 - p.1.val, by lia⟩, p.2)
 
       -- 2. p' has odd sum
       have h_p'_odd : (p'.1.val + p'.2.val) % 2 = 1 := by
          have h_x_sum : p'.1.val + p.1.val = n - 1 := by
-            have : p'.1.val = n - 1 - p.1.val := rfl; omega
+            have : p'.1.val = n - 1 - p.1.val := rfl; lia
          have h_y_eq : p'.2.val = p.2.val := rfl
          omega
 
@@ -580,7 +580,7 @@ theorem imo1999_p3_sufficiency (n : ℕ) (h_pos : 0 < n) (h_even : Even n) :
       rcases exists_adjacent_in_sw_of_odd_sum n h_pos h_even p' h_p'_odd with ⟨m', hm'_sw, h_adj'⟩
 
       -- 4. Reflect m' back to m to find neighbor in sb
-      let m : Square n := (⟨n - 1 - m'.1.val, by omega⟩, m'.2)
+      let m : Square n := (⟨n - 1 - m'.1.val, by lia⟩, m'.2)
       use m
       constructor
       · -- m ∈ sb implies m ∈ s
@@ -588,14 +588,14 @@ theorem imo1999_p3_sufficiency (n : ℕ) (h_pos : 0 < n) (h_even : Even n) :
         right
         unfold sb; rw [mem_filter]; simp only [Finset.mem_univ, true_and]
         have h_coord : n - 1 - m.1.val = m'.1.val := by
-            have : m.1.val = n - 1 - m'.1.val := rfl; omega
+            have : m.1.val = n - 1 - m'.1.val := rfl; lia
         rw [h_coord]; unfold sw at hm'_sw; rw [mem_filter] at hm'_sw; exact hm'_sw.2
       · -- Adjacency is preserved under reflection
         unfold Adjacent; simp
         have h_dist : ((p.1.val : ℤ) - m.1.val).natAbs = ((p'.1.val : ℤ) - m'.1.val).natAbs := by
            have : p'.1.val = n - 1 - p.1.val := rfl
            have : m.1.val = n - 1 - m'.1.val := rfl
-           omega
+           lia
         rw [h_dist]; exact h_adj'
 
     · -- Case: Odd sum (Directly apply Lemma)
@@ -627,7 +627,7 @@ theorem imo1999_p3_necessity (n : ℕ) (h_even : Even n) (s : Finset (Square n))
   have h_union : s = sw ∪ sb := by
     ext p; rw [mem_union, mem_filter, mem_filter]
     constructor <;> intro h
-    · simp [h]; omega
+    · simp [h]; lia
     · rcases h with ⟨h, _⟩ | ⟨h, _⟩ <;> exact h
 
   have h_card_s : s.card = sw.card + sb.card := by
@@ -644,7 +644,7 @@ theorem imo1999_p3_necessity (n : ℕ) (h_even : Even n) (s : Finset (Square n))
       use hm_in_s
       dsimp [even_sum_squares] at hp; unfold squaresEvenSum at hp; rw [mem_filter] at hp
       have h_ne := adjacent_parity_ne h_adj
-      omega
+      lia
     · exact h_adj
 
   have h_cover_odd : ∀ p ∈ odd_sum_squares, ∃ m ∈ sw, Adjacent p m := by
@@ -655,7 +655,7 @@ theorem imo1999_p3_necessity (n : ℕ) (h_even : Even n) (s : Finset (Square n))
       use hm_in_s
       dsimp [odd_sum_squares] at hp; unfold squaresOddSum at hp; rw [mem_filter] at hp
       have h_ne := adjacent_parity_ne h_adj
-      omega
+      lia
     · exact h_adj
 
   -- Apply Lower Bound Lemma
@@ -684,7 +684,7 @@ theorem imo1999_p3_necessity (n : ℕ) (h_even : Even n) (s : Finset (Square n))
     rcases Nat.even_mul_succ_self k with ⟨m, hm⟩
     have h_eq : 2 * k * (2 * k + 2) = 8 * m := by
       rw [← Nat.mul_add 2 k 1, Nat.mul_assoc, Nat.mul_left_comm k 2, hm]; ring
-    simp only [← two_mul]; rw [h_eq]; omega
+    simp only [← two_mul]; rw [h_eq]; lia
   rw [h_mul] at h_sum_ge
   exact h_sum_ge
 

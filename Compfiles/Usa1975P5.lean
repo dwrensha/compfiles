@@ -72,25 +72,25 @@ lemma card_aceSets (n : ℕ) : (aceSets n).card = n.choose 3 := by
 lemma nonempty_of_mem_aceSets {n : ℕ} {S : Finset ℕ} (hS : S ∈ aceSets n) :
     S.Nonempty := by
   have h3 : S.card = 3 := (mem_powersetCard.mp hS).2
-  exact card_pos.mp (by omega)
+  exact card_pos.mp (by lia)
 
 /-- A card in position `x ∈ {1, ..., n}` reflects to a position in `{1, ..., n}`. -/
 lemma reflect_mem {n x : ℕ} (hx : x ∈ Icc 1 n) : reflect n x ∈ Icc 1 n := by
   rw [mem_Icc] at hx ⊢
   simp only [reflect]
-  omega
+  lia
 
 /-- Reflection is injective on positions that are at most `n`. -/
 lemma reflect_injOn (n : ℕ) : Set.InjOn (reflect n) {x | x ≤ n} := by
   intro x hx y hy h
   simp only [Set.mem_ofPred_eq] at hx hy
   simp only [reflect] at h
-  omega
+  lia
 
 /-- Reflection is an involution on positions that are at most `n`. -/
 lemma reflect_reflect {n x : ℕ} (hx : x ≤ n) : reflect n (reflect n x) = x := by
   simp only [reflect]
-  omega
+  lia
 
 /-- The minimum of the reflected set is the reflection of the maximum. -/
 lemma min_image_reflect {n : ℕ} {S : Finset ℕ} (hsub : S ⊆ Icc 1 n) (hne : S.Nonempty) :
@@ -108,10 +108,10 @@ lemma min_image_reflect {n : ℕ} {S : Finset ℕ} (hsub : S ⊆ Icc 1 n) (hne :
       have ha' : 1 ≤ a ∧ a ≤ n := mem_Icc.mp (hsub ha)
       have hle : a ≤ S.max' hne := le_max' _ _ ha
       simp only [reflect]
-      omega
+      lia
   unfold minD maxD
   rw [← coe_min' him, WithTop.untopD_coe, key, ← coe_max' hne, WithBot.unbotD_coe,
-    Nat.cast_sub (show S.max' hne ≤ n + 1 by omega)]
+    Nat.cast_sub (show S.max' hne ≤ n + 1 by lia)]
   push_cast
   ring
 
@@ -129,12 +129,12 @@ lemma max_image_reflect {n : ℕ} {S : Finset ℕ} (hsub : S ⊆ Icc 1 n) (hne :
       have ha' : 1 ≤ a ∧ a ≤ n := mem_Icc.mp (hsub ha)
       have hge : S.min' hne ≤ a := min'_le _ _ ha
       simp only [reflect]
-      omega
+      lia
     · apply le_max'
       exact mem_image.mpr ⟨S.min' hne, hmin_mem, rfl⟩
   unfold minD maxD
   rw [← coe_max' him, WithBot.unbotD_coe, key, ← coe_min' hne, WithTop.untopD_coe,
-    Nat.cast_sub (show S.min' hne ≤ n + 1 by omega)]
+    Nat.cast_sub (show S.min' hne ≤ n + 1 by lia)]
   push_cast
   ring
 
@@ -147,7 +147,7 @@ lemma sum_image_reflect {n : ℕ} {S : Finset ℕ} (hsub : S ⊆ Icc 1 n) (hcard
     intro x hx
     have hx' : x ≤ n := (mem_Icc.mp (hsub hx)).2
     show ((n + 1 - x : ℕ) : ℤ) = (n : ℤ) + 1 - (x : ℤ)
-    rw [Nat.cast_sub (show x ≤ n + 1 by omega)]
+    rw [Nat.cast_sub (show x ≤ n + 1 by lia)]
     push_cast
     ring
   rw [sum_image hinj]

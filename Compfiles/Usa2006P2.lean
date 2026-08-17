@@ -64,10 +64,10 @@ lemma two_mul_sum_ge (J : Finset ℕ) (a : ℕ) (hJ : ∀ j ∈ J, a ≤ j) :
         rw [Finset.mem_erase] at hj
         have hj3 : j ≤ M := J.le_max' j hj.2
         rw [Finset.mem_Ico]
-        exact ⟨hJ j hj.2, by omega⟩
+        exact ⟨hJ j hj.2, by lia⟩
       rw [Nat.card_Ico] at hcardle
       have haM : a ≤ M := hJ M hMmem
-      have h2M : 2 * (J.erase M).card + 2 * a ≤ 2 * M := by omega
+      have h2M : 2 * (J.erase M).card + 2 * a ≤ 2 * M := by lia
       rw [← hcard, ← hsum]
       linarith [ih', h2M]
     · rw [Finset.not_nonempty_iff_eq_empty.mp hne]
@@ -96,10 +96,10 @@ lemma two_mul_sum_le (J : Finset ℕ) (b : ℕ) (hJ : ∀ j ∈ J, j ≤ b) :
         rw [Finset.mem_erase] at hj
         have hj3 : m₀ ≤ j := J.min'_le j hj.2
         rw [Finset.mem_Ioc]
-        exact ⟨by omega, hJ j hj.2⟩
+        exact ⟨by lia, hJ j hj.2⟩
       rw [Nat.card_Ioc] at hcardle
       have hm₀b : m₀ ≤ b := hJ m₀ hm₀mem
-      have h2m : 2 * m₀ + 2 * (J.erase m₀).card ≤ 2 * b := by omega
+      have h2m : 2 * m₀ + 2 * (J.erase m₀).card ≤ 2 * b := by lia
       rw [← hcard, ← hsum]
       linarith [ih', h2m]
     · rw [Finset.not_nonempty_iff_eq_empty.mp hne]
@@ -110,10 +110,10 @@ lemma two_mul_sum_Icc_one (n : ℕ) :
     2 * ∑ i ∈ Finset.Icc 1 n, i = n * (n + 1) := by
   induction n with
   | zero =>
-    rw [Finset.Icc_eq_empty (by omega : ¬ (1 : ℕ) ≤ 0), Finset.sum_empty]
+    rw [Finset.Icc_eq_empty (by lia : ¬ (1 : ℕ) ≤ 0), Finset.sum_empty]
     rfl
   | succ n ih =>
-    rw [Finset.sum_Icc_succ_top (by omega : (1 : ℕ) ≤ n + 1)]
+    rw [Finset.sum_Icc_succ_top (by lia : (1 : ℕ) ≤ n + 1)]
     linear_combination ih
 
 snip end
@@ -130,38 +130,38 @@ problem usa2006_p2 (k : ℕ) (hk : 0 < k) :
     refine ⟨(Finset.Icc 1 (2 * k + 1)).image (· + k ^ 2), ?_, ?_, ?_, ?_⟩
     · -- it has `2 * k + 1` elements
       rw [Finset.card_image_of_injOn, Nat.card_Icc]
-      · omega
+      · lia
       · intro x _ y _ h
         dsimp only at h
-        omega
+        lia
     · -- its elements are positive
       intro x hx
       obtain ⟨i, hi, rfl⟩ := Finset.mem_image.mp hx
       rw [Finset.mem_Icc] at hi
-      omega
+      lia
     · -- its sum `(2 * k + 1) * (k ^ 2 + k + 1) = 2 * k ^ 3 + 3 * k ^ 2 + 3 * k + 1`
       -- is greater than `N`
       have hsum : ∑ x ∈ (Finset.Icc 1 (2 * k + 1)).image (· + k ^ 2), x
           = ∑ i ∈ Finset.Icc 1 (2 * k + 1), (i + k ^ 2) :=
-        Finset.sum_image fun x _ y _ h ↦ by omega
+        Finset.sum_image fun x _ y _ h ↦ by lia
       have h2 : 2 * ∑ x ∈ (Finset.Icc 1 (2 * k + 1)).image (· + k ^ 2), x
           = 2 * (2 * k ^ 3 + 3 * k ^ 2 + 3 * k + 1) := by
         rw [hsum, Finset.sum_add_distrib, Finset.sum_const, Nat.card_Icc, smul_eq_mul,
-          show 2 * k + 1 + 1 - 1 = 2 * k + 1 by omega]
+          show 2 * k + 1 + 1 - 1 = 2 * k + 1 by lia]
         linear_combination two_mul_sum_Icc_one (2 * k + 1)
-      omega
+      lia
     · -- every subset of size `k` has sum at most `N / 2`
       intro t hts htcard
       have hlb : ∀ x ∈ t, k ^ 2 ≤ x := by
         intro x hx
         obtain ⟨i, hi, rfl⟩ := Finset.mem_image.mp (hts hx)
         rw [Finset.mem_Icc] at hi
-        omega
+        lia
       have hinj : Set.InjOn (· - k ^ 2) t := fun x hx y hy h ↦ by
         have h1 := hlb x hx
         have h2 := hlb y hy
         dsimp only at h
-        omega
+        lia
       have hcardJ : (t.image (· - k ^ 2)).card = k := by
         rw [Finset.card_image_of_injOn hinj, htcard]
       have hJb : ∀ j ∈ t.image (· - k ^ 2), j ≤ 2 * k + 1 := by
@@ -169,7 +169,7 @@ problem usa2006_p2 (k : ℕ) (hk : 0 < k) :
         obtain ⟨x, hx, rfl⟩ := Finset.mem_image.mp hj
         obtain ⟨i, hi, rfl⟩ := Finset.mem_image.mp (hts hx)
         rw [Finset.mem_Icc] at hi
-        omega
+        lia
       have h2 := two_mul_sum_le (t.image (· - k ^ 2)) (2 * k + 1) hJb
       rw [hcardJ] at h2
       have hsumJ : ∑ j ∈ t.image (· - k ^ 2), j = ∑ x ∈ t, (x - k ^ 2) :=
@@ -182,7 +182,7 @@ problem usa2006_p2 (k : ℕ) (hk : 0 < k) :
   · -- Optimality: any admissible `N` satisfies `2 * k ^ 3 + 3 * k ^ 2 + 3 * k ≤ N`.
     obtain ⟨s, hcard, _hpos, hsumgt, hsub⟩ := hN
     obtain ⟨t₀, ht₀sub, ht₀card⟩ :=
-      Finset.le_card_iff_exists_subset_card.mp (show k ≤ s.card by omega)
+      Finset.le_card_iff_exists_subset_card.mp (show k ≤ s.card by lia)
     have hPne : (s.powersetCard k).Nonempty :=
       ⟨t₀, Finset.mem_powersetCard.mpr ⟨ht₀sub, ht₀card⟩⟩
     obtain ⟨T, hTmem, hmax⟩ :=
@@ -195,8 +195,8 @@ problem usa2006_p2 (k : ℕ) (hk : 0 < k) :
       exact Finset.inter_eq_right.mpr hTsub
     have hcardu : (s \ T).card = k + 1 := by
       rw [Finset.card_sdiff, hTs, hcard, hTcard]
-      omega
-    have hu₀ne : (s \ T).Nonempty := Finset.card_pos.mp (by omega)
+      lia
+    have hu₀ne : (s \ T).Nonempty := Finset.card_pos.mp (by lia)
     -- Every element of `s \ T` is at most every element of `T`:
     -- otherwise swapping increases the sum, contradicting maximality.
     have hswap : ∀ x ∈ s \ T, ∀ y ∈ T, x ≤ y := by
@@ -207,13 +207,13 @@ problem usa2006_p2 (k : ℕ) (hk : 0 < k) :
       have hxne : x ∉ T.erase y := fun h ↦ hxnT (Finset.mem_of_mem_erase h)
       have hcard₁ : (insert x (T.erase y)).card = k := by
         rw [Finset.card_insert_of_notMem hxne, Finset.card_erase_of_mem hy, hTcard]
-        omega
+        lia
       have hsub₁ : insert x (T.erase y) ⊆ s :=
         Finset.insert_subset hxs ((Finset.erase_subset _ _).trans hTsub)
       have hle := hmax (insert x (T.erase y)) (Finset.mem_powersetCard.mpr ⟨hsub₁, hcard₁⟩)
       rw [Finset.sum_insert hxne] at hle
       have h2 : y + ∑ z ∈ T.erase y, z = ∑ z ∈ T, z := T.add_sum_erase (fun z => z) hy
-      omega
+      lia
     -- The median `min' (s \ T)` is at least `k ^ 2 + 1`.
     have hMumem : (s \ T).max' hu₀ne ∈ s \ T := (s \ T).max'_mem hu₀ne
     have hTlb : ∀ y ∈ T, (s \ T).max' hu₀ne + 1 ≤ y := by
@@ -221,13 +221,13 @@ problem usa2006_p2 (k : ℕ) (hk : 0 < k) :
       have h1 := hswap _ hMumem y hy
       have h2 : (s \ T).max' hu₀ne ∉ T := (Finset.mem_sdiff.mp hMumem).2
       have h3 : (s \ T).max' hu₀ne ≠ y := fun h ↦ h2 (h ▸ hy)
-      omega
+      lia
     have hL1 := two_mul_sum_ge T ((s \ T).max' hu₀ne + 1) hTlb
     rw [hTcard] at hL1
     have hminmem : (s \ T).min' hu₀ne ∈ s \ T := (s \ T).min'_mem hu₀ne
     have hcardJ : ((s \ T).erase ((s \ T).min' hu₀ne)).card = k := by
       rw [Finset.card_erase_of_mem hminmem, hcardu]
-      omega
+      lia
     have hJb : ∀ j ∈ (s \ T).erase ((s \ T).min' hu₀ne), j ≤ (s \ T).max' hu₀ne :=
       fun j hj ↦ (s \ T).le_max' j (Finset.mem_of_mem_erase hj)
     have hL2 := two_mul_sum_le ((s \ T).erase ((s \ T).min' hu₀ne)) ((s \ T).max' hu₀ne) hJb
@@ -237,7 +237,7 @@ problem usa2006_p2 (k : ℕ) (hk : 0 < k) :
     have h4 : ∑ x ∈ s \ T, x + ∑ x ∈ T, x = ∑ x ∈ s, x := Finset.sum_sdiff hTsub
     have e1 : ∑ x ∈ T, x + 1
         ≤ (s \ T).min' hu₀ne + ∑ j ∈ (s \ T).erase ((s \ T).min' hu₀ne), j := by
-      omega
+      lia
     have ha₀ : k * k + 1 ≤ (s \ T).min' hu₀ne := by
       linarith [hL1, hL2, e1]
     -- Moreover the largest element of `s \ T` is at least `min' (s \ T) + k`.
@@ -248,7 +248,7 @@ problem usa2006_p2 (k : ℕ) (hk : 0 < k) :
     have hMu : (s \ T).min' hu₀ne + k ≤ (s \ T).max' hu₀ne := by
       have h5 := Finset.card_le_card hsubIcc
       rw [Nat.card_Icc, hcardu] at h5
-      omega
+      lia
     have g1 : k * ((s \ T).min' hu₀ne + k) ≤ k * (s \ T).max' hu₀ne :=
       mul_le_mul_of_nonneg_left hMu (Nat.zero_le k)
     have g2 : k * (k * k + 1) ≤ k * (s \ T).min' hu₀ne :=

@@ -74,7 +74,7 @@ lemma rat_cube_ne_two (q : ℚ) : q ^ 3 ≠ 2 := by
       rw [h2] at hO3
       obtain ⟨r, hr⟩ := hO3
       obtain ⟨s, hs⟩ := (⟨(q.den : ℤ) ^ 3, by ring⟩ : Even (2 * (q.den : ℤ) ^ 3))
-      omega
+      lia
   have h2dvdnum : (2 : ℤ) ∣ q.num := even_iff_two_dvd.mp hEvenNum
   obtain ⟨m, hm⟩ := hEvenNum
   -- Hence the denominator is even as well.
@@ -91,7 +91,7 @@ lemma rat_cube_ne_two (q : ℚ) : q ^ 3 ≠ 2 := by
       rw [h8] at hO3
       obtain ⟨r, hr⟩ := hO3
       obtain ⟨s, hs⟩ := (⟨2 * m ^ 3, by ring⟩ : Even (4 * m ^ 3))
-      omega
+      lia
   have hEvenDen : Even q.den := by exact_mod_cast hEvenDenZ
   -- But the numerator and denominator of a rational number are coprime.
   have hdvd : (2 : ℕ) ∣ Nat.gcd q.num.natAbs q.den := by

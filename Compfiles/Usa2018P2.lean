@@ -60,7 +60,7 @@ theorem jensen_bounded_eq_zero {h : ℝ → ℝ}
         rw [hjj]
         apply ih
         rw [pow_succ] at hk
-        omega
+        lia
       · have hjj : (((2 * j + 1 : ℕ) : ℝ)) / 2 ^ (n + 1)
             = (((j : ℝ) / 2 ^ n) + (((j + 1 : ℕ) : ℝ) / 2 ^ n)) / 2 := by
           push_cast
@@ -69,7 +69,7 @@ theorem jensen_bounded_eq_zero {h : ℝ → ℝ}
         rw [hjj]
         have hj1 : j + 1 ≤ 2 ^ n := by
           rw [pow_succ] at hk
-          omega
+          lia
         have hj : j ≤ 2 ^ n := le_trans (Nat.le_succ j) hj1
         have h2n : (0 : ℝ) < 2 ^ n := by positivity
         have hja : (0 : ℝ) ≤ (j : ℝ) / 2 ^ n := by positivity

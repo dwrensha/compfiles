@@ -86,11 +86,15 @@ lemma Finset.prod_odd {α : Type} [DecidableEq α] {f : α → ℕ} {s : Finset 
     specialize ih hs'.2
     exact ⟨hs'.1, ih⟩
 
+example (m : ℕ) (h : ¬m = 0) : (m % 10 :: Nat.digits 10 (m / 10)).sum = (Nat.digits 10 m).sum := by
+  rw [Nat.digits_eq_cons_digits_div (by norm_num) (h)]
+
 lemma lemma3 {m : ℕ} (hm : (m % 10) + 1 < 10) :
     (Nat.digits 10 (m + 1)).sum = (Nat.digits 10 m).sum + 1 := by
   rw [Nat.digits_eq_cons_digits_div (by norm_num) (by lia)]
   by_cases h : m = 0
   · simp [h]
+  -- strangely `h` cannot be used in place of `by exact h` here.
   nth_rw 2 [Nat.digits_eq_cons_digits_div (by norm_num) (by exact h)]
   simp only [List.sum_cons]
   rw [Nat.add_div_eq_of_add_mod_lt hm, Nat.add_mod_of_add_mod_lt hm]

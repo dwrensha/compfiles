@@ -193,7 +193,7 @@ lemma cornerDelta_rectColor_eq_zero_x (r : Rectangle) (p : Corner)
          j.val - 1 < r.y + r.height)) ↔
       ((i.val < 98 ∧ 0 < j.val) ∧ i.val < 98 ∧ j.val - 1 < 98 ∧
         (r.x ≤ i.val ∧ r.y ≤ j.val - 1 ∧ i.val < r.x + r.width ∧
-         j.val - 1 < r.y + r.height))) := by omega
+         j.val - 1 < r.y + r.height))) := by lia
   have hCD : (((0 < i.val ∧ j.val < 98) ∧ i.val - 1 < 98 ∧ j.val < 98 ∧
         (r.x ≤ i.val - 1 ∧ r.y ≤ j.val ∧ i.val - 1 < r.x + r.width ∧
          j.val < r.y + r.height)) ↔
@@ -220,7 +220,7 @@ lemma cornerDelta_rectColor_eq_zero_y (r : Rectangle) (p : Corner)
          j.val - 1 < r.y + r.height)) ↔
       ((0 < i.val ∧ j.val < 98) ∧ i.val - 1 < 98 ∧ j.val < 98 ∧
         (r.x ≤ i.val - 1 ∧ r.y ≤ j.val ∧ i.val - 1 < r.x + r.width ∧
-         j.val < r.y + r.height))) := by omega
+         j.val < r.y + r.height))) := by lia
   have hBD : (((i.val < 98 ∧ 0 < j.val) ∧ i.val < 98 ∧ j.val - 1 < 98 ∧
         (r.x ≤ i.val ∧ r.y ≤ j.val - 1 ∧ i.val < r.x + r.width ∧
          j.val - 1 < r.y + r.height)) ↔
@@ -337,7 +337,7 @@ lemma quiet_subset (c : ZMod 2) :
   split_ifs at hp with hA hB hC hD
   -- 16 sign patterns for the four masked cells; each determines the
   -- position of the corner on the board.
-  all_goals try (exfalso; omega)
+  all_goals try (exfalso; lia)
   -- interior: 0 < i < 98, 0 < j < 98
   · exact Or.inl ⟨⟨hA.1.1, hB.1.1⟩, hA.1.2, hC.1.2⟩
   -- top edge: 0 < i < 98, j = 98
@@ -357,14 +357,14 @@ lemma quiet_subset (c : ZMod 2) :
     rw [ZMod.natCast_eq_zero_iff_even, Nat.even_iff] at hodd
     omega
   -- corner (98, 98)
-  · have hi98 : i.val = 98 := by omega
-    have hj98 : j.val = 98 := by omega
+  · have hi98 : i.val = 98 := by lia
+    have hj98 : j.val = 98 := by lia
     rw [hi98, hj98] at hp
     right
     rw [show i = ⟨98, by norm_num⟩ from Fin.ext hi98,
         show j = ⟨98, by norm_num⟩ from Fin.ext hj98]
     rcases hc01 c with hc | hc <;> subst hc
-    · rw [quietCorners, if_pos rfl]
+    · rw [quietCorners, ite_eq_left rfl]
       exact Finset.mem_insert_of_mem (Finset.mem_singleton_self _)
     · exact absurd hp (by decide)
   -- left edge: i = 0, 0 < j < 98
@@ -376,15 +376,15 @@ lemma quiet_subset (c : ZMod 2) :
     rw [ZMod.natCast_eq_zero_iff_even, Nat.even_iff] at hodd
     omega
   -- corner (0, 98)
-  · have hi0 : i.val = 0 := by omega
-    have hj98 : j.val = 98 := by omega
+  · have hi0 : i.val = 0 := by lia
+    have hj98 : j.val = 98 := by lia
     rw [hi0, hj98] at hp
     right
     rw [show i = ⟨0, by norm_num⟩ from Fin.ext hi0,
         show j = ⟨98, by norm_num⟩ from Fin.ext hj98]
     rcases hc01 c with hc | hc <;> subst hc
     · exact absurd hp (by decide)
-    · rw [quietCorners, if_neg (by decide)]
+    · rw [quietCorners, ite_eq_right (by decide)]
       exact Finset.mem_insert_self _ _
   -- bottom edge: 0 < i < 98, j = 0
   · exfalso
@@ -395,25 +395,25 @@ lemma quiet_subset (c : ZMod 2) :
     rw [ZMod.natCast_eq_zero_iff_even, Nat.even_iff] at hodd
     omega
   -- corner (98, 0)
-  · have hi98 : i.val = 98 := by omega
-    have hj0 : j.val = 0 := by omega
+  · have hi98 : i.val = 98 := by lia
+    have hj0 : j.val = 0 := by lia
     rw [hi98, hj0] at hp
     right
     rw [show i = ⟨98, by norm_num⟩ from Fin.ext hi98,
         show j = ⟨0, by norm_num⟩ from Fin.ext hj0]
     rcases hc01 c with hc | hc <;> subst hc
     · exact absurd hp (by decide)
-    · rw [quietCorners, if_neg (by decide)]
+    · rw [quietCorners, ite_eq_right (by decide)]
       exact Finset.mem_insert_of_mem (Finset.mem_singleton_self _)
   -- corner (0, 0)
-  · have hi0 : i.val = 0 := by omega
-    have hj0 : j.val = 0 := by omega
+  · have hi0 : i.val = 0 := by lia
+    have hj0 : j.val = 0 := by lia
     rw [hi0, hj0] at hp
     right
     rw [show i = ⟨0, by norm_num⟩ from Fin.ext hi0,
         show j = ⟨0, by norm_num⟩ from Fin.ext hj0]
     rcases hc01 c with hc | hc <;> subst hc
-    · rw [quietCorners, if_pos rfl]
+    · rw [quietCorners, ite_eq_left rfl]
       exact Finset.mem_insert_self _ _
     · exact absurd hp (by decide)
 
@@ -473,21 +473,21 @@ lemma sum_ite_eq_double (x n : ℕ) (hx : x < 2 * n) :
       = if Even x then 1 else 0 := by
   by_cases hev : Even x
   · obtain ⟨m, hm⟩ := hev
-    rw [if_pos ⟨m, hm⟩, Finset.sum_eq_single m]
-    · rw [if_pos (by lia)]
+    rw [ite_eq_left ⟨m, hm⟩, Finset.sum_eq_single m]
+    · rw [ite_eq_left (by lia)]
     · intro b _ hb
-      rw [if_neg (by lia)]
+      rw [ite_eq_right (by lia)]
     · intro hm'
       exact absurd (Finset.mem_range.mpr (by lia)) hm'
-  · rw [if_neg hev, Finset.sum_eq_zero]
+  · rw [ite_eq_right hev, Finset.sum_eq_zero]
     intro k _
-    rw [if_neg (fun h ↦ hev ⟨k, by lia⟩)]
+    rw [ite_eq_right (fun h ↦ hev ⟨k, by lia⟩)]
 
 lemma natCast_add_ite_even (m : ℕ) :
     ((m : ZMod 2) + if Even m then 1 else 0) = 1 := by
   by_cases h : Even m
-  · rw [if_pos h, ZMod.natCast_eq_zero_iff_even.mpr h, zero_add]
-  · rw [if_neg h, ZMod.natCast_eq_one_iff_odd.mpr (Nat.not_even_iff_odd.mp h), add_zero]
+  · rw [ite_eq_left h, ZMod.natCast_eq_zero_iff_even.mpr h, zero_add]
+  · rw [ite_eq_right h, ZMod.natCast_eq_one_iff_odd.mpr (Nat.not_even_iff_odd.mp h), add_zero]
 
 lemma construction_makes_zero (s : chessboard) :
     (((List.range 49).map colRect ++ (List.range 49).map rowRect).foldl

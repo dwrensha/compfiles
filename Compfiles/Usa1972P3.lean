@@ -99,7 +99,6 @@ lemma card_all_noFive_noEven (n : ℕ) :
 -- Inclusion-exclusion on the bad events.
 lemma card_good_balance (n : ℕ) :
     {s : DigitSeq n | is_good_seq s}.ncard + 8 ^ n + 5 ^ n = 9 ^ n + 4 ^ n := by
-  classical
   let A : Set (DigitSeq n) := {s | NoFive s}
   let B : Set (DigitSeq n) := {s | NoEven s}
   have hgood : {s : DigitSeq n | is_good_seq s} = (A ∪ B)ᶜ := by
@@ -126,7 +125,7 @@ lemma card_good_balance (n : ℕ) :
   rw [hgood]
   rw [hAcard, hBcard, hABcard] at hunion
   rw [hUcard] at hcompl
-  omega
+  lia
 
 lemma ennreal_eq_sub_sub_of_add_add_eq {a b c d : ENNReal}
     (hb : b ≠ ⊤) (hc : c ≠ ⊤) (h : (a + c) + b = d) : a = d - b - c := by

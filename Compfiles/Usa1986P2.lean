@@ -65,7 +65,6 @@ then some nap-start time `u ≤ t` of a member of `A` is already a moment when
 all members of `A` are asleep. -/
 lemma exists_mem_cands_le {A : Finset (Fin 5)} (hA : A.Nonempty) {t : ℝ}
     (ht : ∀ p ∈ A, Asleep s e p t) : ∃ u ∈ cands s e A, u ≤ t := by
-  classical
   have ht' : ∀ p : A, ∃ k : Fin 2, s p.1 k ≤ t ∧ t ≤ e p.1 k := fun p ↦ ht p.1 p.2
   choose k hk₁ hk₂ using ht'
   obtain ⟨p₀, -, hmax⟩ :=
@@ -137,7 +136,6 @@ problem usa1986_p2 (s e : Fin 5 → Fin 2 → ℝ)
     (hsleep : ∀ p q : Fin 5, p ≠ q → ∃ t, Asleep s e p t ∧ Asleep s e q t) :
     ∃ t : ℝ, ∃ p q r : Fin 5, p ≠ q ∧ p ≠ r ∧ q ≠ r ∧
       Asleep s e p t ∧ Asleep s e q t ∧ Asleep s e r t := by
-  classical
   -- There are ten pairs of professors.
   have hcard_pairs : pairs.card = 10 := by
     rw [pairs, Finset.card_powersetCard, Finset.card_univ, Fintype.card_fin]
@@ -204,7 +202,7 @@ problem usa1986_p2 (s e : Fin 5 → Fin 2 → ℝ)
       rw [Finset.card_attach, hcard_pairs] at h2
       have h3 := Finset.card_image_of_injOn hg_inj
       rw [hTdef, h3]
-      omega
+      lia
     -- All nine happen strictly after the earliest moment.
     have hT_gt : ∀ pk : Fin 5 × Fin 2, pk ∈ T → S.min' hS_ne < s pk.1 pk.2 := by
       intro pk hpk
@@ -229,11 +227,11 @@ problem usa1986_p2 (s e : Fin 5 → Fin 2 → ℝ)
         exact ⟨fun h ↦ hp₀q₀ (Prod.ext_iff.mp h).1, hnotT p₀ k₀ hk₀le⟩
       have h1 := Finset.card_insert_of_notMem hn2
       have h2 := Finset.card_insert_of_notMem hn1
-      omega
+      lia
     have hle := Finset.card_le_card
       (Finset.subset_univ (insert (p₀, k₀) (insert (q₀, l₀) T)))
     rw [hcardU, Finset.card_univ, Fintype.card_prod, Fintype.card_fin,
       Fintype.card_fin] at hle
-    omega
+    lia
 
 end Usa1986P2

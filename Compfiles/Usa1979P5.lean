@@ -42,12 +42,12 @@ theorem card_inter_eq_two_of_good {α : Type*} [DecidableEq α] {S : Finset (Fin
       _ = 3 := ht3
   have hne3 : (s ∩ t).card ≠ 3 := by
     intro h3
-    have h1 : s ∩ t = t := eq_of_subset_of_card_le inter_subset_right (by omega)
+    have h1 : s ∩ t = t := eq_of_subset_of_card_le inter_subset_right (by lia)
     have h2 : t ⊆ s := h1 ▸ inter_subset_left
-    have h3' : t = s := eq_of_subset_of_card_le h2 (by omega)
+    have h3' : t = s := eq_of_subset_of_card_le h2 (by lia)
     exact hne h3'.symm
   have hne1 := hgood s hs t ht hne
-  omega
+  lia
 
 /-- If `u`, `v = {w, x, y}` are members of a "good" family, `w ∈ u ∩ v` and `x ∉ u`,
 then `y ∈ u`: otherwise `u ∩ v = {w}` would be a singleton intersection. -/
@@ -110,7 +110,7 @@ theorem card_le_of_good {α : Type*} [DecidableEq α] :
       intro s; rw [hM]; exact mem_filter
     have hM4 : 3 < M.card := by rw [hM]; exact hA4
     -- Pick `s₀ ∈ M` and write it as `{A, B, C}`.
-    have hMpos : M.Nonempty := card_pos.mp (by omega)
+    have hMpos : M.Nonempty := card_pos.mp (by lia)
     obtain ⟨s₀, hs₀M⟩ := hMpos
     have hs₀S : s₀ ∈ S := ((mem_M _).mp hs₀M).1
     have hAs₀ : A ∈ s₀ := ((mem_M _).mp hs₀M).2
@@ -156,7 +156,7 @@ theorem card_le_of_good {α : Type*} [DecidableEq α] :
       · exact Or.inr hxt
     -- Hence one of `B`, `C` (say `P`, the other being `Q`) belongs to at least
     -- two sets of `M` different from `s₀`.
-    have he3 : 3 ≤ (M.erase s₀).card := by rw [card_erase_of_mem hs₀M]; omega
+    have he3 : 3 ≤ (M.erase s₀).card := by rw [card_erase_of_mem hs₀M]; lia
     have hsub2 : M.erase s₀ ⊆ ((M.filter (fun s ↦ B ∈ s)).erase s₀)
         ∪ ((M.filter (fun s ↦ C ∈ s)).erase s₀) := by
       intro t ht
@@ -169,13 +169,13 @@ theorem card_le_of_good {α : Type*} [DecidableEq α] :
         + ((M.filter (fun s ↦ C ∈ s)).erase s₀).card :=
       le_trans (le_trans he3 (card_le_card hsub2)) (card_union_le _ _)
     have hcases : 2 ≤ ((M.filter (fun s ↦ B ∈ s)).erase s₀).card
-        ∨ 2 ≤ ((M.filter (fun s ↦ C ∈ s)).erase s₀).card := by omega
+        ∨ 2 ≤ ((M.filter (fun s ↦ C ∈ s)).erase s₀).card := by lia
     -- The rest of the argument only uses the popular element `P`, the spare
     -- element `Q` of `s₀ = {A, P, Q}`, and two sets containing `A` and `P`.
     have extract : ∀ P Q : α, A ≠ P → A ≠ Q → P ≠ Q → s₀ = {A, P, Q} →
         2 ≤ ((M.filter (fun s ↦ P ∈ s)).erase s₀).card → S.card ≤ n := by
       intro P Q hAP hAQ hPQ hs₀PQ h2
-      obtain ⟨t₁, ht₁, t₂, ht₂, ht₁t₂⟩ := one_lt_card.mp (by omega :
+      obtain ⟨t₁, ht₁, t₂, ht₂, ht₁t₂⟩ := one_lt_card.mp (by lia :
         1 < ((M.filter (fun s ↦ P ∈ s)).erase s₀).card)
       -- Unpack `t₁` and `t₂`.
       have ht₁s₀ : t₁ ≠ s₀ := (mem_erase.mp ht₁).1
@@ -232,7 +232,7 @@ theorem card_le_of_good {α : Type*} [DecidableEq α] :
             card_insert_of_notMem (by simp [hPQ]), card_singleton]
         have hle3 : 3 ≤ (t₁ ∩ s₀).card := h3 ▸ card_le_card hsub3
         have h2' := hinter2 t₁ ht₁Me
-        omega
+        lia
       have hEQ : E ≠ Q := by
         intro h
         have hAint : A ∈ t₂ ∩ s₀ := mem_inter.mpr ⟨hAt₂, hAs₀⟩
@@ -249,7 +249,7 @@ theorem card_le_of_good {α : Type*} [DecidableEq α] :
             card_insert_of_notMem (by simp [hPQ]), card_singleton]
         have hle3 : 3 ≤ (t₂ ∩ s₀).card := h3 ▸ card_le_card hsub3
         have h2' := hinter2 t₂ ht₂Me
-        omega
+        lia
       have hDE : D ≠ E := fun h ↦ ht₁t₂ (by rw [ht₁eq, ht₂eq, h])
       -- Key claim 1: every set of the family containing `A` contains `P`.
       have hstep1 : ∀ u ∈ S, A ∈ u → P ∈ u := by
@@ -271,7 +271,7 @@ theorem card_le_of_good {α : Type*} [DecidableEq α] :
             card_insert_of_notMem (by simp [hDE]), card_singleton]
         have hle4 := card_le_card hsub4
         rw [h4, hcard u huS] at hle4
-        omega
+        lia
       -- Key claim 2: every set of the family containing `P` contains `A`.
       have hstep2 : ∀ u ∈ S, P ∈ u → A ∈ u := by
         intro u huS hPu
@@ -293,21 +293,9 @@ theorem card_le_of_good {α : Type*} [DecidableEq α] :
             card_insert_of_notMem (by simp [hDE]), card_singleton]
         have hle4 := card_le_card hsub4
         rw [h4, hcard u huS] at hle4
-        omega
+        lia
       -- `M` has at least three members.
-      have hM3 : 3 ≤ M.card := by
-        have hsub3 : ({s₀, t₁, t₂} : Finset (Finset α)) ⊆ M := by
-          intro z hz
-          simp only [mem_insert, mem_singleton] at hz
-          rcases hz with rfl | rfl | rfl
-          · exact hs₀M
-          · exact ht₁M
-          · exact ht₂M
-        have h3 : ({s₀, t₁, t₂} : Finset (Finset α)).card = 3 := by
-          rw [card_insert_of_notMem (by simp [ht₁s₀.symm, ht₂s₀.symm]),
-            card_insert_of_notMem (by simp [ht₁t₂]), card_singleton]
-        rw [← h3]
-        exact card_le_card hsub3
+      have hM3 : 3 ≤ M.card := Nat.le_of_lt hA4
       -- The third elements `K` of the sets `{A, P, K} ∈ M`.
       set Ks := M.biUnion (fun s ↦ (s.erase A).erase P) with hKs
       have mem_Ks : ∀ x : α, x ∈ Ks ↔ ∃ s ∈ M, x ∈ (s.erase A).erase P := by
@@ -346,9 +334,9 @@ theorem card_le_of_good {α : Type*} [DecidableEq α] :
         have hle3 : 3 ≤ (s₁ ∩ s₂).card := hcard3 ▸ card_le_card hsub3
         have hs₁3 : s₁.card = 3 := hcard s₁ ((mem_M _).mp hs₁).1
         have hs₂3 : s₂.card = 3 := hcard s₂ ((mem_M _).mp hs₂).1
-        have heq1 : s₁ ∩ s₂ = s₁ := eq_of_subset_of_card_le inter_subset_left (by omega)
+        have heq1 : s₁ ∩ s₂ = s₁ := eq_of_subset_of_card_le inter_subset_left (by lia)
         have hs₁s₂ : s₁ ⊆ s₂ := by rw [← heq1]; exact inter_subset_right
-        exact hne12 (eq_of_subset_of_card_le hs₁s₂ (by omega))
+        exact hne12 (eq_of_subset_of_card_le hs₁s₂ (by lia))
       have hKsM : Ks.card = M.card := by
         rw [hKs, card_biUnion hdisj, sum_congr rfl hK1, sum_const, smul_eq_mul,
           mul_one]
@@ -417,9 +405,9 @@ theorem card_le_of_good {α : Type*} [DecidableEq α] :
       have hTcard : T.card = n - avoid.card := by
         rw [hT, card_sdiff, inter_eq_left.mpr havoidX, hX]
       have hTlt : T.card < n := by
-        have h1 : 0 < avoid.card := by omega
+        have h1 : 0 < avoid.card := by lia
         have h2 : avoid.card ≤ n := hX ▸ card_le_card havoidX
-        omega
+        lia
       -- Every set of the family avoiding `A` is a 3-subset of `T`.
       set S' := S.filter (fun s ↦ A ∉ s) with hS'
       have hS'sub : ∀ s ∈ S', s ⊆ T := by
@@ -445,7 +433,7 @@ theorem card_le_of_good {α : Type*} [DecidableEq α] :
         rw [hM, hS']
         exact (card_filter_add_card_filter_not (fun s ↦ A ∈ s) (s := S)).symm
       have h2n : avoid.card ≤ n := hX ▸ card_le_card havoidX
-      omega
+      lia
     rcases hcases with hB2 | hC2
     · exact extract B C hBA.symm hCA.symm hBC hs₀eq hB2
     · exact extract C B hCA.symm hBA.symm hBC.symm (by rw [hs₀eq, pair_comm]) hC2
@@ -455,7 +443,7 @@ theorem card_le_of_good {α : Type*} [DecidableEq α] :
     have hle : ∑ x ∈ X, (S.filter (fun s ↦ x ∈ s)).card ≤ ∑ _x ∈ X, 3 :=
       sum_le_sum hA
     rw [sum_card_filter_eq_three_mul hsub hcard, sum_const, smul_eq_mul, hX] at hle
-    omega
+    lia
 
 snip end
 
@@ -466,6 +454,6 @@ problem usa1979_p5 {α : Type*} [DecidableEq α] (n : ℕ) (X : Finset α) (hX :
   by_contra h
   push Not at h
   have hle := card_le_of_good n X S hX hsub hcard h
-  omega
+  lia
 
 end Usa1979P5

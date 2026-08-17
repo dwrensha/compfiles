@@ -120,7 +120,7 @@ lemma P_more (k : ℕ) : P (k + 4) = S 1 * P (k + 3) - S 2 * P (k + 2) + S 3 * P
     all_goals
       absurd hx
       simp [s₁, s₂]
-    all_goals omega
+    all_goals lia
   have := sum_subset_zero_on_sdiff this h (fun x h => rfl)
   dsimp [s₂, g] at this
   simp [S_more, ← this] at newton

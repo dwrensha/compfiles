@@ -230,7 +230,7 @@ lemma Fk_natDegree_le (h : ℂ) (k : ℕ) :
       simp only [Finset.sum_range_succ]
       have hm : C ((h ^ (m + 1 - m) + (-h) ^ (m + 1 - m)) * ((m + 1).choose m : ℂ)) * X ^ m
           = 0 := by
-        have e : m + 1 - m = 1 := by omega
+        have e : m + 1 - m = 1 := by lia
         rw [e, pow_one, pow_one, add_neg_cancel, zero_mul, map_zero, zero_mul]
       have hm1 : C ((h ^ (m + 1 - (m + 1)) + (-h) ^ (m + 1 - (m + 1)))
             * ((m + 1).choose (m + 1) : ℂ)) * X ^ (m + 1)
@@ -244,7 +244,7 @@ lemma Fk_natDegree_le (h : ℂ) (k : ℕ) :
     apply Polynomial.natDegree_sum_le_of_forall_le
     intro i hi
     have h2 : i < m := Finset.mem_range.mp hi
-    exact le_trans (Polynomial.natDegree_C_mul_X_pow_le _ _) (by omega)
+    exact le_trans (Polynomial.natDegree_C_mul_X_pow_le _ _) (by lia)
 
 /-- The leading coefficient of the second finite difference `(X+h)^k + (X−h)^k − 2X^k`
 at degree `k−2` is `k * (k−1) * h²`. -/
@@ -275,7 +275,7 @@ lemma Fk_coeff (h : ℂ) (k : ℕ) :
       simp only [Finset.sum_range_succ]
       have hm : C ((h ^ (m + 1 - m) + (-h) ^ (m + 1 - m)) * ((m + 1).choose m : ℂ)) * X ^ m
           = 0 := by
-        have e : m + 1 - m = 1 := by omega
+        have e : m + 1 - m = 1 := by lia
         rw [e, pow_one, pow_one, add_neg_cancel, zero_mul, map_zero, zero_mul]
       have hm1 : C ((h ^ (m + 1 - (m + 1)) + (-h) ^ (m + 1 - (m + 1)))
             * ((m + 1).choose (m + 1) : ℂ)) * X ^ (m + 1)
@@ -292,11 +292,11 @@ lemma Fk_coeff (h : ℂ) (k : ℕ) :
       simp
     · have hmem : m + 1 - 2 ∈ Finset.range m := by
         rw [Finset.mem_range]
-        omega
-      rw [if_pos hmem]
-      have hexp : m + 1 - (m + 1 - 2) = 2 := by omega
+        lia
+      rw [ite_eq_left hmem]
+      have hexp : m + 1 - (m + 1 - 2) = 2 := by lia
       rw [hexp]
-      have hch : (m + 1).choose (m + 1 - 2) = (m + 1).choose 2 := Nat.choose_symm (by omega)
+      have hch : (m + 1).choose (m + 1 - 2) = (m + 1).choose 2 := Nat.choose_symm (by lia)
       rw [hch]
       have hchoose : ((m + 1).choose 2 : ℂ) = ((m + 1 : ℕ) : ℂ) * ((m : ℕ) : ℂ) / 2 := by
         rw [Nat.choose_two_right,
@@ -327,7 +327,6 @@ The proof passes to complex polynomials and evaluates `Qfun` at the surface poin
 lemma natDegree_le_two (P : Polynomial ℝ) (hP0 : P ≠ 0) (hPhi : PhiPoly P = 0)
     (hEven : P.comp (-X) = P) :
     P.natDegree ≤ 2 := by
-  classical
   obtain ⟨h, hh⟩ : ∃ h : ℂ, h ^ 2 = -1 / 2 := by
     refine ⟨Complex.I * (Real.sqrt 2 / 2 : ℝ), ?_⟩
     rw [mul_pow, Complex.I_sq, ← Complex.ofReal_pow, div_pow,
@@ -346,8 +345,7 @@ lemma natDegree_le_two (P : Polynomial ℝ) (hP0 : P ≠ 0) (hPhi : PhiPoly P = 
   have hD : ∀ x : ℂ, x ≠ -h → Qfun Pc x h (-h) = 0 := by
     intro x hx
     have hxy : 2 * x * h ≠ 1 := by
-      intro hbad
-      apply hx
+      contrapose! hx with hbad
       have h2 : x * (2 * h) = 1 := by linear_combination hbad
       have h3 : (-h) * (2 * h) = 1 := by linear_combination -2 * hh
       rw [eq_inv_of_mul_eq_one_left h2]
@@ -457,8 +455,8 @@ lemma natDegree_le_two (P : Polynomial ℝ) (hP0 : P ≠ 0) (hPhi : PhiPoly P = 
       have hF0 : ((X + C h) ^ k + (X - C h) ^ k - 2 * X ^ k : Polynomial ℂ).coeff (n - 2) = 0 := by
         apply Polynomial.coeff_eq_zero_of_natDegree_lt
         have h1 := Fk_natDegree_le h k
-        have h2 : k ≤ n - 1 := by omega
-        omega
+        have h2 : k ≤ n - 1 := by lia
+        lia
       rw [hF0]
       ring
   rw [hcoeff] at hcoeff0
@@ -466,11 +464,11 @@ lemma natDegree_le_two (P : Polynomial ℝ) (hP0 : P ≠ 0) (hPhi : PhiPoly P = 
     Complex.ofReal_ne_zero.mpr (Polynomial.leadingCoeff_ne_zero.mpr hP0)
   have hn0 : (n : ℂ) ≠ 0 := by
     norm_cast
-    omega
+    lia
   have hn1 : (n : ℂ) - 1 ≠ 0 := by
     apply sub_ne_zero.mpr
     norm_cast
-    omega
+    lia
   have hh0 : h ^ 2 ≠ 0 := by
     rw [hh]
     norm_num

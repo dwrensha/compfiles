@@ -34,9 +34,9 @@ lemma two_pow_sub_two_gt (n : ℕ) (hn : 5 ≤ n) : n + 1 < 2 ^ (n - 2) := by
   induction n, hn using Nat.le_induction with
   | base => decide
   | succ k hk ih =>
-    have h : k + 1 - 2 = (k - 2) + 1 := by omega
+    have h : k + 1 - 2 = (k - 2) + 1 := by lia
     rw [h, pow_succ]
-    omega
+    lia
 
 /-- Key inequality (*): if n·2ⁿ + 1 is a perfect square and n ≥ 2, then
     2^(n-1) ≤ 2n + 2.
@@ -52,7 +52,7 @@ lemma sq_bound (n : ℕ) (hn : 2 ≤ n) (h : IsSquare (n * 2 ^ n + 1)) :
   -- k is odd (since n·2ⁿ is even, k² = n·2ⁿ + 1 is odd).
   have h_k_odd : Odd k := by
     have h_even : Even (n * 2 ^ n) :=
-      (Even.pow_of_ne_zero (even_two_mul 1) (by omega : n ≠ 0)).mul_left _
+      (Even.pow_of_ne_zero (even_two_mul 1) (by lia : n ≠ 0)).mul_left _
     have h_odd : Odd (k * k) := by
       rw [h_kk]; exact Even.add_one h_even
     exact Nat.Odd.of_mul_left h_odd
@@ -60,7 +60,7 @@ lemma sq_bound (n : ℕ) (hn : 2 ≤ n) (h : IsSquare (n * 2 ^ n + 1)) :
   obtain ⟨a, rfl⟩ := h_k_odd
   -- Factorization: n·2ⁿ = (k-1)(k+1) = 4a(a+1), hence a(a+1) = n·2^(n-2).
   have h_pow : 2 ^ n = 4 * 2 ^ (n - 2) := by
-    rw [show n = (n - 2) + 2 by omega]; grind
+    rw [show n = (n - 2) + 2 by lia]; grind
   have hab : a * (a + 1) = n * 2 ^ (n - 2) := by
     have h1 : 4 * (a * (a + 1)) + 1 = n * 2 ^ n + 1 := by linarith [h_kk]
     have h2 : 4 * (a * (a + 1)) = 4 * (n * 2 ^ (n - 2)) := by
@@ -74,7 +74,7 @@ lemma sq_bound (n : ℕ) (hn : 2 ≤ n) (h : IsSquare (n * 2 ^ n + 1)) :
     norm_num at hab
     grind
   have h_pow_expand : 2 ^ (n - 1) = 2 * 2 ^ (n - 2) := by
-    rw [show n - 1 = (n - 2) + 1 by omega]; grind
+    rw [show n - 1 = (n - 2) + 1 by lia]; grind
   /- We now case on which factor 2^(n-2) lands on, or equivalently, whether a is even or odd. -/
   rcases Nat.even_or_odd a with he | ho
   · obtain ⟨ t, rfl ⟩ := he
@@ -90,18 +90,18 @@ lemma sq_bound (n : ℕ) (hn : 2 ≤ n) (h : IsSquare (n * 2 ^ n + 1)) :
       (Nat.coprime_two_left.mpr h_a_odd).pow_left _
     have h_dvd_a1 : 2 ^ (n - 2) ∣ (2 * t + 1 + 1) :=
       h_cop_p.dvd_of_dvd_mul_right (by rw [mul_comm]; grind)
-    have h_a1_ge : 2 ^ (n - 2) ≤ 2 * t + 1 + 1 := Nat.le_of_dvd (by omega) h_dvd_a1
+    have h_a1_ge : 2 ^ (n - 2) ≤ 2 * t + 1 + 1 := Nat.le_of_dvd (by lia) h_dvd_a1
     nlinarith
 
 /-- For n ≥ 5, n·2ⁿ + 1 is not a perfect square: the bound (*) combined
     with `two_pow_sub_two_gt` is immediately contradictory. -/
 lemma not_square_ge_five (n : ℕ) (hn : 5 ≤ n) : ¬ IsSquare (n * 2 ^ n + 1) := by
   intro h
-  have h1 := sq_bound n (by omega) h
+  have h1 := sq_bound n (by lia) h
   have h2 := two_pow_sub_two_gt n hn
   have : 2 ^ (n - 1) = 2 * 2 ^ (n - 2) := by
-    rw [show n - 1 = (n - 2) + 1 by omega]; grind
-  omega
+    rw [show n - 1 = (n - 2) + 1 by lia]; grind
+  lia
 
 snip end
 

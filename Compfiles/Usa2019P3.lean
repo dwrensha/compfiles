@@ -93,8 +93,8 @@ theorem digits_mul_pow_add {m a k : ℕ} (hm : 0 < m) (ha : a < 10 ^ k) :
 (in fact, as its leading digit). -/
 theorem seven_mem_digits_of_le_lt {y E : ℕ} (h1 : 7 * 10 ^ E ≤ y)
     (h2 : y < 8 * 10 ^ E) : 7 ∈ Nat.digits 10 y := by
-  have h3 : y - 7 * 10 ^ E < 10 ^ E := by omega
-  have h4 : y = 7 * 10 ^ E + (y - 7 * 10 ^ E) := by omega
+  have h3 : y - 7 * 10 ^ E < 10 ^ E := by lia
+  have h4 : y = 7 * 10 ^ E + (y - 7 * 10 ^ E) := by lia
   rw [h4, digits_mul_pow_add (by norm_num : (0 : ℕ) < 7) h3]
   have h7 : Nat.digits 10 7 = [7] := Nat.digits_of_lt 10 7 (by norm_num) (by norm_num)
   rw [h7]
@@ -109,7 +109,7 @@ theorem digits_ten_pow_sub_one (s : ℕ) :
     have hpos : 0 < 10 ^ s := pow_pos (by norm_num) s
     have h1 : 10 ^ (s + 1) - 1 = 9 * 10 ^ s + (10 ^ s - 1) := by
       have h2 : 10 ^ (s + 1) = 10 ^ s * 10 := pow_succ 10 s
-      omega
+      lia
     have h2 : 10 ^ s - 1 < 10 ^ s := Nat.sub_lt hpos (by norm_num)
     rw [h1, digits_mul_pow_add (by norm_num : (0 : ℕ) < 9) h2, ih, List.length_replicate,
       Nat.sub_self, List.replicate_zero, List.append_nil]
@@ -121,8 +121,8 @@ theorem digits_ten_pow_sub_one (s : ℕ) :
 theorem seven_pow_sub_one_mem_K (s : ℕ) : 7 * 10 ^ s - 1 ∈ K := by
   have hpos : 0 < 10 ^ s := pow_pos (by norm_num) s
   constructor
-  · omega
-  · have h1 : 7 * 10 ^ s - 1 = 6 * 10 ^ s + (10 ^ s - 1) := by omega
+  · lia
+  · have h1 : 7 * 10 ^ s - 1 = 6 * 10 ^ s + (10 ^ s - 1) := by lia
     have h2 : 10 ^ s - 1 < 10 ^ s := Nat.sub_lt hpos (by norm_num)
     rw [h1, digits_mul_pow_add (by norm_num : (0 : ℕ) < 6) h2, digits_ten_pow_sub_one,
       List.length_replicate, Nat.sub_self, List.replicate_zero, List.append_nil]
@@ -175,10 +175,7 @@ theorem digits_ofDigits_eq_dropTrailingZeros (L : List ℕ) (hL : ∀ l ∈ L, l
         simp [List.reverse_cons, ha]
       have h2 : Nat.digits 10 (Nat.ofDigits 10 (l ++ [a])) = l ++ [a] := by
         apply Nat.digits_ofDigits 10 (by norm_num) (l ++ [a])
-        · intro x hx
-          rcases List.mem_append.mp hx with hx | hx
-          · exact hL x (List.mem_append_left [a] hx)
-          · exact hL x (List.mem_append_right l hx)
+        · exact hL
         · intro hne
           rw [List.getLast_append_of_right_ne_nil l [a] (by simp)]
           simp only [List.getLast_singleton]
@@ -249,8 +246,8 @@ theorem coeff_stable {f : Polynomial ℕ} (hf : ∀ n ∈ K, f.eval n ∈ K)
       have h2 : S + 1 ≤ 10 ^ (S + 1) := by
         have h3 : S + 1 < 2 ^ (S + 1) := Nat.lt_pow_self (by norm_num : 1 < 2)
         have h4 : 2 ^ (S + 1) ≤ 10 ^ (S + 1) := Nat.pow_le_pow_left (by norm_num) (S + 1)
-        omega
-      omega
+        lia
+      lia
     · push Not at hj
       have h5 : f.coeff j = 0 := Polynomial.coeff_eq_zero_of_natDegree_lt hj
       have h6 : b j = 0 := by
@@ -318,13 +315,13 @@ theorem eq_ten_pow_of_stable {c : ℕ} (hc : c ≠ 0) (hstab : ∀ m ∈ K, c * 
   set e := (Nat.digits 10 c).length - 1 with he
   have hP0 : 0 < 10 ^ e := pow_pos (by norm_num) e
   have hle : 10 ^ e ≤ c := by
-    have h1 : e < (Nat.digits 10 c).length := by rw [he]; omega
+    have h1 : e < (Nat.digits 10 c).length := by rw [he]; lia
     exact (Nat.lt_digits_length_iff (by norm_num : 1 < 10) c).mp h1
   have hge : c < 10 * 10 ^ e := by
-    have h1 : (Nat.digits 10 c).length ≤ e + 1 := by rw [he]; omega
+    have h1 : (Nat.digits 10 c).length ≤ e + 1 := by rw [he]; lia
     have h2 := (Nat.digits_length_le_iff (by norm_num : 1 < 10) c).mp h1
     rw [pow_succ] at h2
-    omega
+    lia
   set d := c / 10 ^ e with hd
   have hd_pos : 0 < d := Nat.div_pos hle hP0
   have hd_lt : d < 10 := (Nat.div_lt_iff_lt_mul hP0).mpr hge
@@ -361,107 +358,107 @@ theorem eq_ten_pow_of_stable {c : ℕ} (hc : c ≠ 0) (hstab : ∀ m ∈ K, c * 
     · -- the multiplier `x = 7 * 10 ^ (e + 2) - 1 = 699…9`
       have hctop : c < 10 ^ (e + 2) := by
         rw [hE2]
-        omega
-      have h7c1 : 7 * 10 ^ e ≤ 7 * c - 1 := by omega
-      have h7c2 : 7 * c - 1 < 8 * 10 ^ e := by omega
+        lia
+      have h7c1 : 7 * 10 ^ e ≤ 7 * c - 1 := by lia
+      have h7c2 : 7 * c - 1 < 8 * 10 ^ e := by lia
       have h7mem : 7 ∈ Nat.digits 10 (7 * c - 1) := seven_mem_digits_of_le_lt h7c1 h7c2
       have hxK : 7 * 10 ^ (e + 2) - 1 ∈ K := seven_pow_sub_one_mem_K (e + 2)
       have hcx : c * (7 * 10 ^ (e + 2) - 1)
           = (7 * c - 1) * 10 ^ (e + 2) + (10 ^ (e + 2) - c) := by
         have h2 : c ≤ 10 ^ (e + 2) := le_of_lt hctop
-        have h3 : (1 : ℕ) ≤ 7 * c := by omega
+        have h3 : (1 : ℕ) ≤ 7 * c := by lia
         rw [Nat.mul_sub, Nat.sub_mul]
         have h4 : c * (7 * 10 ^ (e + 2)) = 7 * c * 10 ^ (e + 2) := by ring
         rw [h4]
         have h5 : 10 ^ (e + 2) ≤ 7 * c * 10 ^ (e + 2) := by
-          have h6 : 7 * c = 1 + (7 * c - 1) := by omega
+          have h6 : 7 * c = 1 + (7 * c - 1) := by lia
           rw [h6, add_mul, one_mul]
           exact Nat.le_add_right _ _
-        omega
+        lia
       have h7x : 7 ∈ Nat.digits 10 (c * (7 * 10 ^ (e + 2) - 1)) := by
-        rw [hcx, digits_mul_pow_add (by omega : 0 < 7 * c - 1)
-          (Nat.sub_lt (pow_pos (by norm_num) _) (by omega : 0 < c))]
+        rw [hcx, digits_mul_pow_add (by lia : 0 < 7 * c - 1)
+          (Nat.sub_lt (pow_pos (by norm_num) _) (by lia : 0 < c))]
         exact List.mem_append_right _ h7mem
       exact (hstab _ hxK).2 h7x
     · by_cases g2 : 4 * c < 5 * 10 ^ e
       · have hxK : (64 : ℕ) ∈ K := mem_K.mpr (by decide)
         exact (hstab 64 hxK).2 (seven_mem_digits_of_le_lt (E := e + 1)
-          (by rw [hE1]; omega) (by rw [hE1]; omega))
+          (by rw [hE1]; lia) (by rw [hE1]; lia))
       · by_cases g3 : 5 * c < 7 * 10 ^ e
         · have hxK : (56 : ℕ) ∈ K := mem_K.mpr (by decide)
           exact (hstab 56 hxK).2 (seven_mem_digits_of_le_lt (E := e + 1)
-            (by rw [hE1]; omega) (by rw [hE1]; omega))
+            (by rw [hE1]; lia) (by rw [hE1]; lia))
         · by_cases g4 : 5 * c < 8 * 10 ^ e
           · have hxK : (5 : ℕ) ∈ K := mem_K.mpr (by decide)
-            exact (hstab 5 hxK).2 (seven_mem_digits_of_le_lt (E := e) (by omega) (by omega))
+            exact (hstab 5 hxK).2 (seven_mem_digits_of_le_lt (E := e) (by lia) (by lia))
           · by_cases g5 : 11 * c < 20 * 10 ^ e
             · have hxK : (44 : ℕ) ∈ K := mem_K.mpr (by decide)
               exact (hstab 44 hxK).2 (seven_mem_digits_of_le_lt (E := e + 1)
-                (by rw [hE1]; omega) (by rw [hE1]; omega))
+                (by rw [hE1]; lia) (by rw [hE1]; lia))
             · have hxK : (39 : ℕ) ∈ K := mem_K.mpr (by decide)
               exact (hstab 39 hxK).2 (seven_mem_digits_of_le_lt (E := e + 1)
-                (by rw [hE1]; omega) (by rw [hE1]; omega))
+                (by rw [hE1]; lia) (by rw [hE1]; lia))
   · -- leading digit 2
     by_cases g1 : 7 * c < 16 * 10 ^ e
     · have hxK : (35 : ℕ) ∈ K := mem_K.mpr (by decide)
       exact (hstab 35 hxK).2 (seven_mem_digits_of_le_lt (E := e + 1)
-        (by rw [hE1]; omega) (by rw [hE1]; omega))
+        (by rw [hE1]; lia) (by rw [hE1]; lia))
     · by_cases g2 : 4 * c < 10 * 10 ^ e
       · have hxK : (31 : ℕ) ∈ K := mem_K.mpr (by decide)
         exact (hstab 31 hxK).2 (seven_mem_digits_of_le_lt (E := e + 1)
-          (by rw [hE1]; omega) (by rw [hE1]; omega))
+          (by rw [hE1]; lia) (by rw [hE1]; lia))
       · by_cases g3 : 13 * c < 35 * 10 ^ e
         · have hxK : (28 : ℕ) ∈ K := mem_K.mpr (by decide)
           exact (hstab 28 hxK).2 (seven_mem_digits_of_le_lt (E := e + 1)
-            (by rw [hE1]; omega) (by rw [hE1]; omega))
+            (by rw [hE1]; lia) (by rw [hE1]; lia))
         · have hxK : (26 : ℕ) ∈ K := mem_K.mpr (by decide)
           exact (hstab 26 hxK).2 (seven_mem_digits_of_le_lt (E := e + 1)
-            (by rw [hE1]; omega) (by rw [hE1]; omega))
+            (by rw [hE1]; lia) (by rw [hE1]; lia))
   · -- leading digit 3
     by_cases g1 : 3 * c < 10 * 10 ^ e
     · have hxK : (24 : ℕ) ∈ K := mem_K.mpr (by decide)
       exact (hstab 24 hxK).2 (seven_mem_digits_of_le_lt (E := e + 1)
-        (by rw [hE1]; omega) (by rw [hE1]; omega))
+        (by rw [hE1]; lia) (by rw [hE1]; lia))
     · by_cases g2 : 11 * c < 40 * 10 ^ e
       · have hxK : (22 : ℕ) ∈ K := mem_K.mpr (by decide)
         exact (hstab 22 hxK).2 (seven_mem_digits_of_le_lt (E := e + 1)
-          (by rw [hE1]; omega) (by rw [hE1]; omega))
+          (by rw [hE1]; lia) (by rw [hE1]; lia))
       · have hxK : (20 : ℕ) ∈ K := mem_K.mpr (by decide)
         exact (hstab 20 hxK).2 (seven_mem_digits_of_le_lt (E := e + 1)
-          (by rw [hE1]; omega) (by rw [hE1]; omega))
+          (by rw [hE1]; lia) (by rw [hE1]; lia))
   · -- leading digit 4
     by_cases g1 : 35 * 10 ^ e ≤ 8 * c
     · have hxK : (16 : ℕ) ∈ K := mem_K.mpr (by decide)
       exact (hstab 16 hxK).2 (seven_mem_digits_of_le_lt (E := e + 1)
-        (by rw [hE1]; omega) (by rw [hE1]; omega))
+        (by rw [hE1]; lia) (by rw [hE1]; lia))
     · have hxK : (18 : ℕ) ∈ K := mem_K.mpr (by decide)
       exact (hstab 18 hxK).2 (seven_mem_digits_of_le_lt (E := e + 1)
-        (by rw [hE1]; omega) (by rw [hE1]; omega))
+        (by rw [hE1]; lia) (by rw [hE1]; lia))
   · -- leading digit 5
     by_cases g1 : 14 * c < 80 * 10 ^ e
     · have hxK : (14 : ℕ) ∈ K := mem_K.mpr (by decide)
       exact (hstab 14 hxK).2 (seven_mem_digits_of_le_lt (E := e + 1)
-        (by rw [hE1]; omega) (by rw [hE1]; omega))
+        (by rw [hE1]; lia) (by rw [hE1]; lia))
     · have hxK : (13 : ℕ) ∈ K := mem_K.mpr (by decide)
       exact (hstab 13 hxK).2 (seven_mem_digits_of_le_lt (E := e + 1)
-        (by rw [hE1]; omega) (by rw [hE1]; omega))
+        (by rw [hE1]; lia) (by rw [hE1]; lia))
   · -- leading digit 6
     by_cases g1 : 3 * c < 20 * 10 ^ e
     · have hxK : (12 : ℕ) ∈ K := mem_K.mpr (by decide)
       exact (hstab 12 hxK).2 (seven_mem_digits_of_le_lt (E := e + 1)
-        (by rw [hE1]; omega) (by rw [hE1]; omega))
+        (by rw [hE1]; lia) (by rw [hE1]; lia))
     · have hxK : (11 : ℕ) ∈ K := mem_K.mpr (by decide)
       exact (hstab 11 hxK).2 (seven_mem_digits_of_le_lt (E := e + 1)
-        (by rw [hE1]; omega) (by rw [hE1]; omega))
+        (by rw [hE1]; lia) (by rw [hE1]; lia))
   · exact absurd rfl hd7
   · -- leading digit 8
     have hxK : (88 : ℕ) ∈ K := mem_K.mpr (by decide)
     exact (hstab 88 hxK).2 (seven_mem_digits_of_le_lt (E := e + 2)
-      (by rw [hE2]; omega) (by rw [hE2]; omega))
+      (by rw [hE2]; lia) (by rw [hE2]; lia))
   · -- leading digit 9
     have hxK : (8 : ℕ) ∈ K := mem_K.mpr (by decide)
     exact (hstab 8 hxK).2 (seven_mem_digits_of_le_lt (E := e + 1)
-      (by rw [hE1]; omega) (by rw [hE1]; omega))
+      (by rw [hE1]; lia) (by rw [hE1]; lia))
 
 /-- The constant coefficient of `(a * x + b) ^ d` is `b ^ d`. -/
 theorem coeff_zero_pow_linear (d a b : ℕ) : ((C a * X + C b) ^ d).coeff 0 = b ^ d := by
@@ -499,7 +496,7 @@ theorem not_stable_of_degree_two_le {c d : ℕ} (hc : c ≠ 0) (hd : 2 ≤ d)
   have h10m3 : ∀ m ∈ K, 10 * m + 3 ∈ K := by
     intro m hm
     obtain ⟨hmpos, hm7⟩ := hm
-    refine ⟨by omega, ?_⟩
+    refine ⟨by lia, ?_⟩
     have h1 := digits_mul_pow_add (m := m) (a := 3) (k := 1) hmpos (by norm_num : 3 < 10 ^ 1)
     rw [pow_one, mul_comm m 10] at h1
     have h3 : Nat.digits 10 3 = [3] := Nat.digits_of_lt 10 3 (by norm_num) (by norm_num)
@@ -518,17 +515,17 @@ theorem not_stable_of_degree_two_le {c d : ℕ} (hc : c ≠ 0) (hd : 2 ≤ d)
       Polynomial.coeff_C_mul, coeff_one_pow_linear]
   have hne : g.coeff 1 ≠ 0 := by
     rw [hcoeff]
-    exact mul_ne_zero hc (mul_ne_zero (mul_ne_zero (by omega) (by norm_num))
+    exact mul_ne_zero hc (mul_ne_zero (mul_ne_zero (by lia) (by norm_num))
       (pow_ne_zero _ (by norm_num)))
   have hlin : ∀ m ∈ K, c * (d * 10 * 3 ^ (d - 1)) * m ∈ K := by
     intro m hm
     have h2 := coeff_stable hg_stable hm hne
     rwa [hcoeff, pow_one] at h2
   obtain ⟨t, ht⟩ := eq_ten_pow_of_stable
-    (mul_ne_zero hc (mul_ne_zero (mul_ne_zero (by omega) (by norm_num)) (pow_ne_zero _ (by norm_num))))
+    (mul_ne_zero hc (mul_ne_zero (mul_ne_zero (by lia) (by norm_num)) (pow_ne_zero _ (by norm_num))))
     hlin
   have h3d : 3 ∣ 3 ^ (d - 1) := by
-    have h1 : d - 1 = (d - 2) + 1 := by omega
+    have h1 : d - 1 = (d - 2) + 1 := by lia
     rw [h1]
     exact dvd_pow_self 3 (by norm_num)
   have h3a : 3 ∣ c * (d * 10 * 3 ^ (d - 1)) := by
@@ -557,17 +554,17 @@ theorem const_lt_of_linear_stable {e k : ℕ}
       rw [hkr]
       ring
     have h2 := (hstab n hn).2
-    rw [h1, digits_mul_pow_add (by omega : 0 < n + q) hr] at h2
+    rw [h1, digits_mul_pow_add (by lia : 0 < n + q) hr] at h2
     exact h2 (List.mem_append_right _ h7mem)
   have hn : 7 * 10 ^ q - 1 ∈ K := seven_pow_sub_one_mem_K q
   have h3 : 7 ∈ Nat.digits 10 (7 * 10 ^ q - 1 + q) := by
     have h4 : 7 * 10 ^ q - 1 + q = 7 * 10 ^ q + (q - 1) := by
       have h5 : 0 < 10 ^ q := pow_pos (by norm_num) q
-      omega
+      lia
     have h5 : q - 1 < 10 ^ q := by
       have h6 : q < 2 ^ q := Nat.lt_pow_self (by norm_num : 1 < 2)
       have h7' : 2 ^ q ≤ 10 ^ q := Nat.pow_le_pow_left (by norm_num) q
-      omega
+      lia
     rw [h4, digits_mul_pow_add (by norm_num : (0 : ℕ) < 7) h5]
     have h77 : Nat.digits 10 7 = [7] := Nat.digits_of_lt 10 7 (by norm_num) (by norm_num)
     rw [h77]
@@ -599,7 +596,7 @@ theorem stable_of_form {e k : ℕ} (hlt : k < 10 ^ e) (hk : k = 0 ∨ k ∈ K) :
     · exact hn7 h
   exact ⟨by
     have hpos : 0 < 10 ^ e * n := Nat.mul_pos (pow_pos (by norm_num) e) hnpos
-    omega, h7⟩
+    lia, h7⟩
 
 snip end
 
@@ -656,7 +653,7 @@ problem usa2019_p3 (f : Polynomial ℕ) :
             rwa [h3] at h2
           exact ⟨e, b, hlt, Or.inr hbK, by rw [← hfab, he]⟩
       · -- degrees `≥ 2` are impossible
-        have hdeg3 : 2 ≤ f.natDegree := by omega
+        have hdeg3 : 2 ≤ f.natDegree := by lia
         have hlead : f.coeff f.natDegree ≠ 0 := by
           rw [Polynomial.coeff_natDegree]
           exact Polynomial.leadingCoeff_ne_zero.mpr hfne

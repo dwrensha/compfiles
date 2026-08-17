@@ -178,7 +178,6 @@ problem imo1992_p5 (S: Finset (ℝ × ℝ × ℝ)) : S.card^2 ≤
     (Finset.image (fun p => ((0: ℝ) , p.2.1, p.2.2)) S).card *
     (Finset.image (fun p => (p.1, ((0: ℝ) , p.2.2))) S).card *
     (Finset.image (fun p => (p.1, p.2.1, (0: ℝ) )) S).card := by
-  have h := main S
-  exact_mod_cast h
+  exact_mod_cast main S
 
 end Imo1992P5

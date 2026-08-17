@@ -55,11 +55,11 @@ lemma key_ineq (a : ℕ → ℕ)
     intro m n hsum hm hn hmN hnN
     rcases lt_trichotomy m n with hmn | rfl | hmn
     · -- Case `m < n`: write `n = m + s` and apply the IH to the pair `(m, s)`.
-      obtain ⟨s, rfl⟩ : ∃ s, n = m + s := ⟨n - m, by omega⟩
-      have hs : 1 ≤ s := by omega
-      have hsN : s ≤ 1997 := by omega
+      obtain ⟨s, rfl⟩ : ∃ s, n = m + s := ⟨n - m, by lia⟩
+      have hs : 1 ≤ s := by lia
+      have hsN : s ≤ 1997 := by lia
       have h1 : a m + a s ≤ a (m + s) := hlo m s hm hs hnN
-      have ih' : s * a m + 1 ≤ m * a s + m := ih (m + s) (by omega) m s rfl hm hs hmN hsN
+      have ih' : s * a m + 1 ≤ m * a s + m := ih (m + s) (by lia) m s rfl hm hs hmN hsN
       calc (m + s) * a m + 1 = m * a m + (s * a m + 1) := by ring
         _ ≤ m * a m + (m * a s + m) := Nat.add_le_add_left ih' _
         _ = m * (a m + a s) + m := by ring
@@ -67,11 +67,11 @@ lemma key_ineq (a : ℕ → ℕ)
     · -- Case `m = n`: trivial since `n ≥ 1`.
       exact Nat.add_le_add_left (by assumption) _
     · -- Case `m > n`: write `m = n + r` and apply the IH to the pair `(r, n)`.
-      obtain ⟨r, rfl⟩ : ∃ r, m = n + r := ⟨m - n, by omega⟩
-      have hr : 1 ≤ r := by omega
-      have hrN : r ≤ 1997 := by omega
+      obtain ⟨r, rfl⟩ : ∃ r, m = n + r := ⟨m - n, by lia⟩
+      have hr : 1 ≤ r := by lia
+      have hrN : r ≤ 1997 := by lia
       have h2 : a (n + r) ≤ a n + a r + 1 := hhi n r hn hr hmN
-      have ih' : n * a r + 1 ≤ r * a n + r := ih (n + r) (by omega) r n (by omega) hr hn hrN hnN
+      have ih' : n * a r + 1 ≤ r * a n + r := ih (n + r) (by lia) r n (by lia) hr hn hrN hnN
       calc n * a (n + r) + 1 ≤ n * (a n + a r + 1) + 1 :=
             Nat.add_le_add_right (Nat.mul_le_mul_left n h2) 1
         _ = n * a n + (n * a r + 1) + n := by ring

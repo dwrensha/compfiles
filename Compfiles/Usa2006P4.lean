@@ -50,9 +50,9 @@ lemma not_isSquare_five_nat : ¬ IsSquare (5 : ℕ) := by
   rintro ⟨m, hm⟩
   have hm2 : m ≤ 2 := by
     by_contra h
-    have h3 : 3 ≤ m := by omega
+    have h3 : 3 ≤ m := by lia
     have h9 : 3 * 3 ≤ m * m := Nat.mul_le_mul h3 h3
-    omega
+    lia
   interval_cases m <;> norm_num at hm
 
 /-- `5` is not the square of a rational number. -/
@@ -122,22 +122,22 @@ problem usa2006_p4 (n : ℕ) (hn : 0 < n) :
       · norm_num [List.prod_cons, List.prod_nil]
     · rcases Nat.even_or_odd n with ⟨m, rfl⟩ | ⟨m, rfl⟩
       · -- even `n = m + m ≥ 6`: take `(m, 2, 1, …, 1)` with `m - 2` ones.
-        have hm : 3 ≤ m := by omega
+        have hm : 3 ≤ m := by lia
         refine ⟨[(m : ℚ), 2] ++ List.replicate (m - 2) 1, ?_, ?_, ?_, ?_⟩
         · simp only [List.length_append, List.length_cons, List.length_nil,
             List.length_replicate]
-          omega
+          lia
         · intro x hx
           simp only [List.mem_append, List.mem_cons, List.not_mem_nil, or_false,
             List.mem_replicate] at hx
           rcases hx with (rfl | rfl) | ⟨_, rfl⟩
-          · exact_mod_cast (by omega : 0 < m)
+          · exact_mod_cast (by lia : 0 < m)
           · norm_num
           · norm_num
         · have hrs : (List.replicate (m - 2) (1 : ℚ)).sum = ((m - 2 : ℕ) : ℚ) := by
             rw [List.sum_replicate, nsmul_eq_mul, mul_one]
           simp only [List.sum_append, List.sum_cons, List.sum_nil, add_zero, hrs]
-          rw [Nat.cast_sub (by omega : 2 ≤ m)]
+          rw [Nat.cast_sub (by lia : 2 ≤ m)]
           push_cast
           ring
         · simp only [List.prod_append, List.prod_cons, List.prod_nil, mul_one,
@@ -145,8 +145,8 @@ problem usa2006_p4 (n : ℕ) (hn : 0 < n) :
           push_cast
           ring
       · -- odd `n = 2m + 1 ≥ 7`.
-        have hm : 3 ≤ m := by omega
-        rcases (by omega : m = 3 ∨ 4 ≤ m) with rfl | hm4
+        have hm : 3 ≤ m := by lia
+        rcases (by lia : m = 3 ∨ 4 ≤ m) with rfl | hm4
         · -- `n = 7`: take `(4/3, 7/6, 9/2)`.
           refine ⟨[4/3, 7/6, 9/2], by decide, ?_, ?_, ?_⟩
           · intro x hx
@@ -159,21 +159,19 @@ problem usa2006_p4 (n : ℕ) (hn : 0 < n) :
             ?_, ?_, ?_, ?_⟩
           · simp only [List.length_append, List.length_cons, List.length_nil,
               List.length_replicate]
-            omega
+            lia
           · intro x hx
             simp only [List.mem_append, List.mem_cons, List.not_mem_nil, or_false,
               List.mem_replicate] at hx
             rcases hx with (rfl | rfl | rfl) | ⟨_, rfl⟩
-            · have h1 : (0 : ℚ) < ((2 * m + 1 : ℕ) : ℚ) := by
-                exact_mod_cast (by omega : 0 < 2 * m + 1)
-              linarith
+            · positivity
             · norm_num
             · norm_num
             · norm_num
           · have hrs : (List.replicate (m - 4) (1 : ℚ)).sum = ((m - 4 : ℕ) : ℚ) := by
               rw [List.sum_replicate, nsmul_eq_mul, mul_one]
             simp only [List.sum_append, List.sum_cons, List.sum_nil, add_zero, hrs]
-            rw [Nat.cast_sub (by omega : 4 ≤ m)]
+            rw [Nat.cast_sub (by lia : 4 ≤ m)]
             push_cast
             ring
           · simp only [List.prod_append, List.prod_cons, List.prod_nil, mul_one,
@@ -193,27 +191,27 @@ problem usa2006_p4 (n : ℕ) (hn : 0 < n) :
       have h1 : (0 : ℚ) ≤ (n : ℚ) ^ 2 - 4 * n := hsq ▸ sq_nonneg (a - b)
       have hn4 : 4 ≤ n := by
         by_contra h
-        have hlt : n < 4 := by omega
+        have hlt : n < 4 := by lia
         interval_cases n <;> norm_num at h1
       have hn5 : n ≠ 5 := by
         rintro rfl
         norm_num at hsq
         exact rat_mul_self_ne_five (a - b) (by rw [← hsq]; ring)
-      omega
+      lia
     · -- `k ≥ 3`: AM–GM gives `k ^ k ≤ n ^ (k - 1)`, forcing `n ≥ 6`.
-      have hk3 : 3 ≤ l.length := by omega
-      have hB := prod_le_sum_div_pow (k := l.length) (by omega) l.get
+      have hk3 : 3 ≤ l.length := by lia
+      have hB := prod_le_sum_div_pow (k := l.length) (by lia) l.get
         (fun i ↦ hpos _ (List.get_mem l i))
       rw [sum_eq_sum_get, prod_eq_prod_get, hsum, hprod] at hB
       push_cast at hB
       rw [div_pow] at hB
       -- from `n ≤ n ^ k / k ^ k` deduce `k ^ k ≤ n ^ (k - 1)`
-      have hkR : (0 : ℝ) < l.length := by exact_mod_cast (by omega : 0 < l.length)
+      have hkR : (0 : ℝ) < l.length := by exact_mod_cast (by lia : 0 < l.length)
       have hnR : (0 : ℝ) < n := by exact_mod_cast hn
       have e1 : (n : ℝ) * (l.length : ℝ) ^ l.length ≤ (n : ℝ) ^ l.length :=
         (le_div_iff₀ (pow_pos hkR _)).mp hB
       have e2 : (n : ℝ) ^ l.length = (n : ℝ) ^ (l.length - 1) * n := by
-        rw [← pow_succ, Nat.sub_add_cancel (by omega : 1 ≤ l.length)]
+        rw [← pow_succ, Nat.sub_add_cancel (by lia : 1 ≤ l.length)]
       rw [e2] at e1
       have e3 : (l.length : ℝ) ^ l.length ≤ (n : ℝ) ^ (l.length - 1) := by
         rw [mul_comm ((n : ℝ)) ((l.length : ℝ) ^ l.length)] at e1
@@ -221,14 +219,14 @@ problem usa2006_p4 (n : ℕ) (hn : 0 < n) :
       have e4 : l.length ^ l.length ≤ n ^ (l.length - 1) := by exact_mod_cast e3
       suffices hnn : 6 ≤ n from Or.inr hnn
       by_contra hlt
-      have hn5 : n ≤ 5 := by omega
+      have hn5 : n ≤ 5 := by lia
       have e5 : n ^ (l.length - 1) ≤ 5 ^ (l.length - 1) := pow_le_pow_left' hn5 _
       have e6 : l.length ^ l.length ≤ 5 ^ (l.length - 1) := le_trans e4 e5
       have hk5 : l.length ≤ 5 := by
         have e7 : l.length ^ l.length ≤ 5 ^ l.length :=
           le_trans e6 (Nat.pow_le_pow_right (by norm_num) (Nat.sub_le l.length 1))
-        exact (Nat.pow_le_pow_iff_left (by omega : l.length ≠ 0)).mp e7
-      have hk35 : l.length = 3 ∨ l.length = 4 ∨ l.length = 5 := by omega
+        exact (Nat.pow_le_pow_iff_left (by lia : l.length ≠ 0)).mp e7
+      have hk35 : l.length = 3 ∨ l.length = 4 ∨ l.length = 5 := by lia
       rcases hk35 with h | h | h <;> rw [h] at e6 <;> norm_num at e6
 
 end Usa2006P4

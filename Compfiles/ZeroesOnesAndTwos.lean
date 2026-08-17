@@ -157,10 +157,7 @@ lemma prepend_one_all_one_or_two (n : ℕ) (hn : all_one_or_two (Nat.digits 10 n
 
 def prepend_two (n : ℕ) := 2 * (10 ^ (List.length (Nat.digits 10 n))) + n
 
-lemma prepend_two_pos (n : ℕ) : 0 < prepend_two n := by
-  cases n
-  · norm_num [prepend_two]
-  · rw [prepend_two]; norm_num
+lemma prepend_two_pos (n : ℕ) : 0 < prepend_two n := by norm_num [prepend_two]
 
 lemma prepend_two_div (n : ℕ) (hn : 0 < n) : prepend_two n / 10 = prepend_two (n / 10) := by
   rw [prepend_two, prepend_two]

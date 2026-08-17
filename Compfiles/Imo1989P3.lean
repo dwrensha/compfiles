@@ -104,14 +104,14 @@ problem imo1989_p3 (n k : ℕ) (hn : 0 < n) (hk : 0 < k)
     intro A B hAB
     by_contra hcon
     push Not at hcon
-    have h1lt : 1 < (S.filter (fun P => dist P A = dist P B)).card := by omega
+    have h1lt : 1 < (S.filter (fun P => dist P A = dist P B)).card := by lia
     obtain ⟨p₁, p₂, hp₁, hp₂, h₁₂⟩ := Finset.one_lt_card_iff.mp h1lt
     have hp₂e : p₂ ∈ (S.filter (fun P => dist P A = dist P B)).erase p₁ :=
       Finset.mem_erase.mpr ⟨h₁₂.symm, hp₂⟩
     have hpos :
         0 < (((S.filter (fun P => dist P A = dist P B)).erase p₁).erase p₂).card := by
       rw [Finset.card_erase_of_mem hp₂e, Finset.card_erase_of_mem hp₁]
-      omega
+      lia
     obtain ⟨p₃, hp₃⟩ := Finset.card_pos.mp hpos
     simp only [Finset.mem_erase] at hp₃
     obtain ⟨h₃₂, h₃₁, hp₃F⟩ := hp₃
@@ -193,7 +193,7 @@ problem imo1989_p3 (n k : ℕ) (hn : 0 < n) (hk : 0 < k)
     have h : 2 * m.choose 2 = m * (m - 1) := by
       have h2 := Nat.div_two_mul_two_of_even (Nat.even_mul_pred_self m)
       rw [Nat.choose_two_right]
-      omega
+      lia
     calc (2 : ℝ) * (m.choose 2 : ℝ) = ((2 * m.choose 2 : ℕ) : ℝ) := by norm_cast
       _ = ((m * (m - 1) : ℕ) : ℝ) := by rw [h]
       _ = m * (m - 1) := by rw [Nat.cast_mul, Nat.cast_sub hm, Nat.cast_one]

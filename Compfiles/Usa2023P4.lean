@@ -120,7 +120,7 @@ lemma lemma3 (N : ℕ) (b : Blackboard N)
   have h1 : 0 < padicValNat 2 (b i).val := by
      have h2 : 2 ∣ (b i : ℕ) := even_iff_two_dvd.mp hei
      replace h2 : 2^1 ∣ (b i : ℕ) := h2
-     exact (Nat.pow_dvd_iff_le_padicValNat (by omega) (PNat.ne_zero (b i))).mp h2
+     exact (Nat.pow_dvd_iff_le_padicValNat (by lia) (PNat.ne_zero (b i))).mp h2
   rw [Finset.sum_eq_zero_iff] at hd
   have h2 := hd i (Finset.mem_univ i)
   lia
@@ -134,7 +134,7 @@ lemma lemma5 {a x : ℕ} (hx : 0 < x)
   have h4 : 2 ^ (padicValNat 2 a) ∣ x + a :=
     Nat.pow_dvd_of_le_of_pow_dvd H h1
   have h5 : 2 ^ (padicValNat 2 a) ∣ x := (Nat.dvd_add_iff_left h2).mpr h4
-  have h6 := (Nat.pow_dvd_iff_le_padicValNat (by omega) (Nat.ne_zero_of_lt hx)).mp h5
+  have h6 := (Nat.pow_dvd_iff_le_padicValNat (by lia) (Nat.ne_zero_of_lt hx)).mp h5
   lia
 
 lemma lemma5' {a x : ℕ} (hx : 0 < x)
@@ -158,7 +158,7 @@ lemma lemma5' {a x : ℕ} (hx : 0 < x)
     rw [mul_assoc, ← mul_add]
 
   have h12 : 2 ^ padicValNat 2 x ∣ x + a := Dvd.intro _ h10.symm
-  replace h12 := (Nat.pow_dvd_iff_le_padicValNat (by omega) (by lia)).mp h12
+  replace h12 := (Nat.pow_dvd_iff_le_padicValNat (by lia) (by lia)).mp h12
   suffices H : padicValNat 2 (x + a) ≤ padicValNat 2 x from Nat.le_antisymm H h12
   by_contra! H
 
@@ -168,7 +168,7 @@ lemma lemma5' {a x : ℕ} (hx : 0 < x)
     rintro ⟨z, rfl⟩
     rw [← mul_assoc, ← pow_succ] at hxx
     have h17 : 2 ^ (padicValNat 2 x + 1) ∣ x := Dvd.intro z hxx.symm
-    replace h17 := (Nat.pow_dvd_iff_le_padicValNat (by omega) (Nat.ne_zero_of_lt hx)).mp h17
+    replace h17 := (Nat.pow_dvd_iff_le_padicValNat (by lia) (Nat.ne_zero_of_lt hx)).mp h17
     lia
 
   have h15 : ¬ 2 ∣ xx + 2 ^ (1 + c) * aa := by
@@ -251,9 +251,9 @@ lemma lemma6 {x : ℕ} (hp : 0 < x) (hx : Even x)
     : padicValNat 2 (x / 2) + 1 = padicValNat 2 x := by
   have h2 : (2 : ℕ) ∣ x := even_iff_two_dvd.mp hx
   have hv : 1 ≤ padicValNat 2 x := by
-    rwa [← Nat.pow_dvd_iff_le_padicValNat (by omega) (by omega), pow_one]
+    rwa [← Nat.pow_dvd_iff_le_padicValNat (by lia) (by lia), pow_one]
   rw [padicValNat.div h2]
-  omega
+  lia
 
 -- When N ≥ 2, if ν2(x) < ν2(a) for all x ∈ S, the game must terminate
 -- in ∑_{x∈S} ν2(x) moves, no matter what either player does.
@@ -326,7 +326,7 @@ lemma lemma2' (a : ℕ+) (N : ℕ) (hN : 1 < N) (s0 : State N)
         · subst hki
           rw [Function.update_self k (⟨↑(b0 k) / 2, halve_even _ hie⟩ : ℕ+) b0]
           show padicValNat 2 (↑(b0 k) / 2) < padicValNat 2 ↑a
-          have hv1 := lemma6 (b0 k).pos hie; have := hd k; omega
+          have hv1 := lemma6 (b0 k).pos hie; have := hd k; lia
         · rw [Function.update_of_ne hki (⟨↑(b0 i) / 2, halve_even _ hie⟩ : ℕ+) b0]
           exact hd k
       · simp only at hd hms ⊢
@@ -342,7 +342,7 @@ lemma lemma2' (a : ℕ+) (N : ℕ) (hN : 1 < N) (s0 : State N)
           · apply Finset.sum_congr rfl
             intro k hk; rw [Finset.mem_erase] at hk
             rw [Function.update_of_ne hk.1 (⟨↑(b0 i) / 2, halve_even _ hie⟩ : ℕ+) b0]
-        · omega
+        · lia
   | .Alice =>
     apply EndInevitableIn.AliceTurn _ ⟨b0, .Alice⟩
     intro s hs
@@ -378,7 +378,7 @@ lemma lemma2' (a : ℕ+) (N : ℕ) (hN : 1 < N) (s0 : State N)
         rw [Function.update_self k (⟨↑(b1 k) / 2, halve_even _ hje⟩ : ℕ+) b1]
         show padicValNat 2 (↑(b1 k) / 2) < padicValNat 2 ↑a
         have hv1 := lemma6 (b1 k).pos hje
-        have := hd1 k; omega
+        have := hd1 k; lia
       · rw [Function.update_of_ne hkj (⟨↑(b1 j) / 2, halve_even _ hje⟩ : ℕ+) b1]
         exact hd1 k
     · simp only at hms ⊢
@@ -394,7 +394,7 @@ lemma lemma2' (a : ℕ+) (N : ℕ) (hN : 1 < N) (s0 : State N)
         · apply Finset.sum_congr rfl
           intro k hk; rw [Finset.mem_erase] at hk
           rw [Function.update_of_ne hk.1 (⟨↑(b1 j) / 2, halve_even _ hje⟩ : ℕ+) b1]
-      · omega
+      · lia
 
 
 -- When N ≥ 2, if ν2(x) < ν2(a) for all x ∈ S, the game must terminate no
@@ -410,7 +410,7 @@ lemma lemma7 {x a : ℕ} (hx : 0 < x) (ha : 0 < a)
     padicValNat 2 a + 1 ≤ padicValNat 2 (x + a) := by
   set k := padicValNat 2 a with hk_def
   suffices h : 2 ^ (k + 1) ∣ (x + a) from
-    (Nat.pow_dvd_iff_le_padicValNat (by omega) (by omega)).mp h
+    (Nat.pow_dvd_iff_le_padicValNat (by lia) (by lia)).mp h
   have hkx : 2 ^ k ∣ x := by rw [← heq]; exact pow_padicValNat_dvd
   have hka : 2 ^ k ∣ a := pow_padicValNat_dvd
   obtain ⟨x', hx'⟩ := hkx
@@ -419,19 +419,19 @@ lemma lemma7 {x a : ℕ} (hx : 0 < x) (ha : 0 < a)
     intro ⟨z, hz⟩
     have h1 : 2 ^ (k + 1) ∣ x := by
       rw [hx', hz, pow_succ]; exact mul_dvd_mul_left _ (dvd_mul_right (2 : ℕ) z)
-    have h2 := (Nat.pow_dvd_iff_le_padicValNat (by omega) (by omega)).mp h1
-    omega
+    have h2 := (Nat.pow_dvd_iff_le_padicValNat (by lia) (by lia)).mp h1
+    lia
   have ha'_odd : ¬ 2 ∣ a' := by
     intro ⟨z, hz⟩
     have h1 : 2 ^ (k + 1) ∣ a := by
       rw [ha', hz, pow_succ]; exact mul_dvd_mul_left _ (dvd_mul_right (2 : ℕ) z)
-    have h2 := (Nat.pow_dvd_iff_le_padicValNat (by omega) (by omega)).mp h1
-    omega
+    have h2 := (Nat.pow_dvd_iff_le_padicValNat (by lia) (by lia)).mp h1
+    lia
   have hse : 2 ∣ (x' + a') := by
     rw [Nat.dvd_iff_mod_eq_zero]
     have h1 := mt (Nat.dvd_iff_mod_eq_zero (m := 2) (n := x')).mpr hx'_odd
     have h2 := mt (Nat.dvd_iff_mod_eq_zero (m := 2) (n := a')).mpr ha'_odd
-    omega
+    lia
   rw [hx', ha', ← mul_add, pow_succ]
   exact mul_dvd_mul_left _ hse
 
@@ -448,7 +448,7 @@ lemma alice_prevents_end (a : ℕ+) (N : ℕ) (hN : 1 < N)
     simp only at hi
     have heven : Even (↑(b i) : ℕ) := by
       rw [even_iff_two_dvd]
-      exact Nat.dvd_of_pow_dvd (by omega : 1 ≤ padicValNat 2 ↑(b i)) pow_padicValNat_dvd
+      exact Nat.dvd_of_pow_dvd (by lia : 1 ≤ padicValNat 2 ↑(b i)) pow_padicValNat_dvd
     rw [Set.eq_empty_iff_forall_notMem] at hnm
     exact hnm ⟨Function.update b i ⟨↑(b i) / 2, halve_even _ heven⟩, .Alice⟩ ⟨i, heven, rfl⟩
   | BobTurn b m hm he' ih =>
@@ -462,11 +462,11 @@ lemma alice_prevents_end (a : ℕ+) (N : ℕ) (hN : 1 < N)
       refine ⟨j, ?_⟩
       rw [Function.update_self j (⟨↑(b j) / 2, halve_even _ hje⟩ : ℕ+) b]
       show padicValNat 2 ↑a ≤ padicValNat 2 (↑(b j) / 2)
-      have := lemma6 (b j).pos hje; omega
+      have := lemma6 (b j).pos hje; lia
     · refine ⟨i₀, ?_⟩
       have hboard : (Function.update b j ⟨↑(b j) / 2, halve_even _ hje⟩ : Blackboard N) i₀ = b i₀ := by
         apply Function.update_of_ne; exact Ne.symm hji
-      rw [hboard]; omega
+      rw [hboard]; lia
   | AliceTurn b hall ih =>
     obtain ⟨i, hi⟩ := hinv
     dsimp at hi
@@ -475,10 +475,10 @@ lemma alice_prevents_end (a : ℕ+) (N : ℕ) (hN : 1 < N)
       dsimp
       refine ⟨i, ?_⟩; simp only [Function.update_self]
       push_cast; exact lemma7 (b i).pos a.pos heq
-    · have hi_gt : padicValNat 2 ↑a + 1 ≤ padicValNat 2 ↑(b i) := by omega
+    · have hi_gt : padicValNat 2 ↑a + 1 ≤ padicValNat 2 ↑(b i) := by lia
       obtain ⟨j, hji⟩ : ∃ j : Fin N, j ≠ i := by
-        exact ⟨if i = ⟨0, by omega⟩ then ⟨1, by omega⟩ else ⟨0, by omega⟩,
-               by split_ifs with h <;> (simp_all [Fin.ext_iff]; try omega)⟩
+        exact ⟨if i = ⟨0, by lia⟩ then ⟨1, by lia⟩ else ⟨0, by lia⟩,
+               by split_ifs with h <;> (simp_all [Fin.ext_iff]; try lia)⟩
       apply ih ⟨Function.update b j (b j + a), .Bob⟩ ⟨j, rfl⟩
       dsimp
       refine ⟨i, ?_⟩

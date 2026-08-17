@@ -35,7 +35,7 @@ snip begin
 lemma sq_mod_four_of_odd {z : ℤ} (hz : z % 2 = 1) : z ^ 2 % 4 = 1 := by
   obtain ⟨k, rfl⟩ : Odd z := Int.odd_iff.mpr hz
   have h : (2 * k + 1) ^ 2 = 1 + 4 * (k ^ 2 + k) := by ring
-  omega
+  lia
 
 /-- The descent step for the case where the even leg is a square: from coprime `p`, `q`
 of opposite parity with `a = p ^ 2 + q ^ 2` and `b ^ 2 = 4 * p * q * (p ^ 2 - q ^ 2)` we
@@ -104,22 +104,17 @@ lemma descent_aux {a b p q : ℤ} (ha : 0 < a) (_hb : 0 < b)
         dvd_add (dvd_mul_of_dvd_right h3 u) (dvd_mul_of_dvd_right h4 v)
       have h7 : u * (2 * p) + v * (2 * q) = 2 := by linear_combination 2 * huv
       rwa [h7] at h6
-    have h8 : Int.gcd (p - q) (p + q) ∣ 2 := by exact_mod_cast h5
+    have h8 : Int.gcd (p - q) (p + q) ∣ 2 := mod_cast h5
     have h9 : Int.gcd (p - q) (p + q) ≤ 2 := Nat.le_of_dvd (by norm_num) h8
     have hodd : (p + q) % 2 = 1 := by
-      rcases hpar with ⟨hp1, hq1⟩ | ⟨hp1, hq1⟩ <;> omega
-    have hpos : 0 < Int.gcd (p - q) (p + q) := by
-      rcases Nat.eq_zero_or_pos (Int.gcd (p - q) (p + q)) with h | h
-      · exfalso
-        rw [Int.gcd_eq_zero_iff] at h
-        linarith [h.1]
-      · exact h
-    rcases (by omega : Int.gcd (p - q) (p + q) = 1 ∨ Int.gcd (p - q) (p + q) = 2) with h | h
+      rcases hpar with ⟨hp1, hq1⟩ | ⟨hp1, hq1⟩ <;> lia
+    have hpos : 0 < Int.gcd (p - q) (p + q) := by positivity
+    rcases (by lia : Int.gcd (p - q) (p + q) = 1 ∨ Int.gcd (p - q) (p + q) = 2) with h | h
     · exact h
     · exfalso
       rw [h] at h2
       have h2' : (2 : ℤ) ∣ p + q := by exact_mod_cast h2
-      omega
+      lia
   -- extracting the squares from `(b / 2) ^ 2 = p * q * (p - q) * (p + q)`
   have hs1 : p * (q * ((p - q) * (p + q))) = b' ^ 2 := by linear_combination -hb'2
   have gA : Int.gcd p (q * ((p - q) * (p + q))) = 1 := by
@@ -286,7 +281,7 @@ lemma lemma_1'
         have hc4 : (c : ℤ) ^ 2 % 4 = 1 := sq_mod_four_of_odd hco2
         have ha4 : (a : ℤ) ^ 4 % 4 = 2 := by
           rw [hz, Int.add_emod, hb4, hc4]
-          omega
+          lia
         have h44 : (a : ℤ) ^ 4 = (a : ℤ) ^ 2 * (a : ℤ) ^ 2 := by ring
         rw [h44] at ha4
         exact Int.sq_ne_two_mod_four ((a : ℤ) ^ 2) ha4
@@ -317,7 +312,7 @@ lemma lemma_1'
       obtain ⟨b0, hb0⟩ := hbe
       have hb2 : 2 ∣ (b : ℤ) := by
         use (b0 : ℤ)
-        have hb20 : b = 2 * b0 := by omega
+        have hb20 : b = 2 * b0 := by lia
         exact_mod_cast hb20
       rcases ht5 with ⟨hm0, hn1⟩ | ⟨hm1, hn0⟩
       · -- `m` even, `n` odd: classify the triple `(n, m, a)`

@@ -79,15 +79,15 @@ lemma chi_add {p : ℕ} (hp : p.Prime) (j k : ZMod p) :
   have hlt : j.val + k.val < 2 * p := by
     have h1 := j.val_lt
     have h2 := k.val_lt
-    omega
+    lia
   show rt p ^ (j + k).val = rt p ^ j.val * rt p ^ k.val
   rw [ZMod.val_add]
   rcases lt_or_ge (j.val + k.val) p with h | h
   · rw [Nat.mod_eq_of_lt h, pow_add]
   · have hmod : (j.val + k.val) % p = j.val + k.val - p := by
-      have h1 : j.val + k.val = j.val + k.val - p + p := by omega
+      have h1 : j.val + k.val = j.val + k.val - p + p := by lia
       conv_lhs => rw [h1]
-      rw [Nat.add_mod_right, Nat.mod_eq_of_lt (by omega : j.val + k.val - p < p)]
+      rw [Nat.add_mod_right, Nat.mod_eq_of_lt (by lia : j.val + k.val - p < p)]
     rw [hmod]
     have h2 : rt p ^ (j.val + k.val - p) * rt p ^ p = rt p ^ j.val * rt p ^ k.val := by
       rw [← pow_add, Nat.sub_add_cancel h, pow_add]
@@ -128,21 +128,21 @@ lemma sum_chi_self {p : ℕ} [NeZero p] (hp : p.Prime) (hp2 : 2 < p) :
   have hζ := isPrimitiveRoot_rt hp
   show ∑ j : ZMod p, (fun k : ℕ => rt p ^ k) j.val = 0
   rw [sum_zmod_val]
-  exact hζ.geom_sum_eq_zero (by omega)
+  exact hζ.geom_sum_eq_zero (by lia)
 
 lemma sum_chi {p : ℕ} [NeZero p] (hp : p.Prime) (hp2 : 2 < p) (c : ZMod p) :
     ∑ m : ZMod p, chi p (c * m) = if c = 0 then (p : ℂ) else 0 := by
   have : Fact p.Prime := ⟨hp⟩
   by_cases hc : c = 0
   · subst hc
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
     have h1 : (∑ m : ZMod p, chi p ((0 : ZMod p) * m)) = ∑ _m : ZMod p, (1 : ℂ) := by
       apply Finset.sum_congr rfl
       intro m _
       rw [zero_mul]
       exact chi_zero p
     rw [h1, Finset.sum_const, Finset.card_univ, ZMod.card p, nsmul_eq_mul, mul_one]
-  · rw [if_neg hc]
+  · rw [ite_eq_right hc]
     have h2 : (∑ m : ZMod p, chi p (c * m)) = ∑ m : ZMod p, chi p m := by
       have e := Equiv.sum_comp (Units.mulLeft (Units.mk0 c hc)) (chi p)
       rw [← e]
@@ -191,30 +191,30 @@ lemma Sw_mul_sub_one {p : ℕ} [NeZero p] (hp : p.Prime) (hp2 : 2 < p) {j : ZMod
     intro k
     by_cases hk : k = 0
     · subst hk
-      rw [if_pos rfl]
+      rw [ite_eq_left rfl]
       have hval : ((0 : ZMod p) - 1).val = p - 1 := by
         have h1 : (0 : ZMod p) - 1 = -1 := zero_sub 1
         rw [h1]
         have h2 := ZMod.val_neg_one (p - 1)
         rw [show (p - 1).succ = p from
-          (Nat.succ_eq_add_one (p - 1)).trans (Nat.sub_add_cancel (by omega : 1 ≤ p))] at h2
+          (Nat.succ_eq_add_one (p - 1)).trans (Nat.sub_add_cancel (by lia : 1 ≤ p))] at h2
         exact h2
       have hcast : (((p - 1 : ℕ) : ℂ)) = (p : ℂ) - 1 := by
-        rw [Nat.cast_sub (by omega : 1 ≤ p), Nat.cast_one]
+        rw [Nat.cast_sub (by lia : 1 ≤ p), Nat.cast_one]
       rw [hval, ZMod.val_zero, Nat.cast_zero, hcast]
       ring
-    · rw [if_neg hk]
+    · rw [ite_eq_right hk]
       have hkval : k.val ≠ 0 := by
         exact (ZMod.val_ne_zero k).mpr hk
       have hval : (k - 1).val = k.val - 1 := by
         have h4 : ((k.val - 1 + 1 : ℕ) : ZMod p) = (k.val : ZMod p) := by
-          rw [Nat.sub_add_cancel (by omega : 1 ≤ k.val)]
+          rw [Nat.sub_add_cancel (by lia : 1 ≤ k.val)]
         rw [Nat.cast_add, Nat.cast_one, ZMod.natCast_zmod_val] at h4
         have h2 : ((k.val - 1 : ℕ) : ZMod p) = k - 1 := by
           rw [eq_sub_iff_add_eq]
           exact h4
-        rw [← h2, ZMod.val_natCast_of_lt (by have := k.val_lt; omega : k.val - 1 < p)]
-      rw [hval, Nat.cast_sub (by omega : 1 ≤ k.val), Nat.cast_one]
+        rw [← h2, ZMod.val_natCast_of_lt (by have := k.val_lt; lia : k.val - 1 < p)]
+      rw [hval, Nat.cast_sub (by lia : 1 ≤ k.val), Nat.cast_one]
       ring
   have h6 : (∑ k : ZMod p, (((k - 1).val : ℂ) - (k.val : ℂ)) * chi p (j * k))
       = (∑ k : ZMod p, (-1 : ℂ) * chi p (j * k))
@@ -227,7 +227,7 @@ lemma Sw_mul_sub_one {p : ℕ} [NeZero p] (hp : p.Prime) (hp2 : 2 < p) {j : ZMod
   have h7 : (∑ k : ZMod p, (-1 : ℂ) * chi p (j * k)) = 0 := by
     rw [← Finset.mul_sum]
     have h8 : (∑ k : ZMod p, chi p (j * k)) = 0 := by
-      rw [sum_chi hp hp2 j, if_neg hj]
+      rw [sum_chi hp hp2 j, ite_eq_right hj]
     rw [h8, mul_zero]
   rw [h7, zero_add]
   have h9 : (∑ k : ZMod p, (if k = 0 then (p : ℂ) else 0) * chi p (j * k))
@@ -237,8 +237,8 @@ lemma Sw_mul_sub_one {p : ℕ} [NeZero p] (hp : p.Prime) (hp2 : 2 < p) {j : ZMod
       apply Finset.sum_congr rfl
       intro k _
       by_cases hk : k = 0
-      · rw [if_pos hk, if_pos hk]
-      · rw [if_neg hk, if_neg hk, zero_mul]
+      · rw [ite_eq_left hk, ite_eq_left hk]
+      · rw [ite_eq_right hk, ite_eq_right hk, zero_mul]
     rw [h10, Finset.sum_ite_eq']
     simp [chi_zero]
   exact h9
@@ -360,7 +360,7 @@ problem usa1999_p3 (p : ℕ) (hp : p.Prime) (hp2 : 2 < p) (a b c d : ℤ)
         have h2 : ((n * A).val : ℂ) + ((n * B).val : ℂ) + ((n * C).val : ℂ) +
             ((n * D).val : ℂ) = 2 * (p : ℂ) := by exact_mod_cast h1
         have h3 := congrArg (· * chi p (-(m * n))) h2
-        rw [if_neg hn, sub_zero]
+        rw [ite_eq_right hn, sub_zero]
         linear_combination h3
     have summed : (∑ n : ZMod p, (((n * A).val : ℂ) * chi p (-(m * n)) +
         ((n * B).val : ℂ) * chi p (-(m * n)) + ((n * C).val : ℂ) * chi p (-(m * n)) +
@@ -378,7 +378,7 @@ problem usa1999_p3 (p : ℕ) (hp : p.Prime) (hp2 : 2 < p) (a b c d : ℤ)
         have h2 : (∑ n : ZMod p, chi p (-(m * n))) = 0 := by
           have h2' : (∑ n : ZMod p, chi p (-(m * n))) = ∑ n : ZMod p, chi p ((-m) * n) :=
             Finset.sum_congr rfl (fun n _ => by congr 1; ring)
-          rw [h2', sum_chi hp hp2 (-m), if_neg (neg_ne_zero.mpr hm)]
+          rw [h2', sum_chi hp hp2 (-m), ite_eq_right (neg_ne_zero.mpr hm)]
         have h3 : (∑ n : ZMod p, (if n = 0 then (1 : ℂ) else 0)) = 1 := by
           rw [Finset.sum_ite_eq']
           simp
@@ -484,26 +484,26 @@ problem usa1999_p3 (p : ℕ) (hp : p.Prime) (hp2 : 2 < p) (a b c d : ℤ)
         = if A' + B' + C' = 0 then (p : ℂ) else 0 := by
       rw [sum_chi hp hp2 (-(A' + B' + C'))]
       by_cases h : A' + B' + C' = 0
-      · rw [if_pos h, if_pos (by rw [h, neg_zero])]
-      · rw [if_neg h, if_neg (neg_eq_zero.not.mpr h)]
+      · rw [ite_eq_left h, ite_eq_left (by rw [h, neg_zero])]
+      · rw [ite_eq_right h, ite_eq_right (neg_eq_zero.not.mpr h)]
     have e2 : (∑ m : ZMod p, chi p ((-(A' + B' + D')) * m))
         = if A' + B' + D' = 0 then (p : ℂ) else 0 := by
       rw [sum_chi hp hp2 (-(A' + B' + D'))]
       by_cases h : A' + B' + D' = 0
-      · rw [if_pos h, if_pos (by rw [h, neg_zero])]
-      · rw [if_neg h, if_neg (neg_eq_zero.not.mpr h)]
+      · rw [ite_eq_left h, ite_eq_left (by rw [h, neg_zero])]
+      · rw [ite_eq_right h, ite_eq_right (neg_eq_zero.not.mpr h)]
     have e3 : (∑ m : ZMod p, chi p ((-(A' + C' + D')) * m))
         = if A' + C' + D' = 0 then (p : ℂ) else 0 := by
       rw [sum_chi hp hp2 (-(A' + C' + D'))]
       by_cases h : A' + C' + D' = 0
-      · rw [if_pos h, if_pos (by rw [h, neg_zero])]
-      · rw [if_neg h, if_neg (neg_eq_zero.not.mpr h)]
+      · rw [ite_eq_left h, ite_eq_left (by rw [h, neg_zero])]
+      · rw [ite_eq_right h, ite_eq_right (neg_eq_zero.not.mpr h)]
     have e4 : (∑ m : ZMod p, chi p ((-(B' + C' + D')) * m))
         = if B' + C' + D' = 0 then (p : ℂ) else 0 := by
       rw [sum_chi hp hp2 (-(B' + C' + D'))]
       by_cases h : B' + C' + D' = 0
-      · rw [if_pos h, if_pos (by rw [h, neg_zero])]
-      · rw [if_neg h, if_neg (neg_eq_zero.not.mpr h)]
+      · rw [ite_eq_left h, ite_eq_left (by rw [h, neg_zero])]
+      · rw [ite_eq_right h, ite_eq_right (neg_eq_zero.not.mpr h)]
     rw [e1, e2, e3, e4]
   have evalR : (∑ m : ZMod p, ((chi p ((-A') * m) + chi p ((-B') * m) + chi p ((-C') * m) +
       chi p ((-D') * m)) + 2 * chi p ((-(A' + B' + C' + D')) * m)))
@@ -513,13 +513,13 @@ problem usa1999_p3 (p : ℕ) (hp : p.Prime) (hp2 : 2 < p) (a b c d : ℤ)
         chi p ((-D') * m))) = 0 := by
       rw [Finset.sum_add_distrib, Finset.sum_add_distrib, Finset.sum_add_distrib]
       have s1 : (∑ m : ZMod p, chi p ((-A') * m)) = 0 := by
-        rw [sum_chi hp hp2 (-A'), if_neg (neg_ne_zero.mpr hA'0)]
+        rw [sum_chi hp hp2 (-A'), ite_eq_right (neg_ne_zero.mpr hA'0)]
       have s2 : (∑ m : ZMod p, chi p ((-B') * m)) = 0 := by
-        rw [sum_chi hp hp2 (-B'), if_neg (neg_ne_zero.mpr hB'0)]
+        rw [sum_chi hp hp2 (-B'), ite_eq_right (neg_ne_zero.mpr hB'0)]
       have s3 : (∑ m : ZMod p, chi p ((-C') * m)) = 0 := by
-        rw [sum_chi hp hp2 (-C'), if_neg (neg_ne_zero.mpr hC'0)]
+        rw [sum_chi hp hp2 (-C'), ite_eq_right (neg_ne_zero.mpr hC'0)]
       have s4 : (∑ m : ZMod p, chi p ((-D') * m)) = 0 := by
-        rw [sum_chi hp hp2 (-D'), if_neg (neg_ne_zero.mpr hD'0)]
+        rw [sum_chi hp hp2 (-D'), ite_eq_right (neg_ne_zero.mpr hD'0)]
       rw [s1, s2, s3, s4]
       ring
     rw [hs, zero_add]
@@ -527,8 +527,8 @@ problem usa1999_p3 (p : ℕ) (hp : p.Prime) (hp2 : 2 < p) (a b c d : ℤ)
         = 2 * (if A' + B' + C' + D' = 0 then (p : ℂ) else 0) := by
       rw [← Finset.mul_sum, sum_chi hp hp2 (-(A' + B' + C' + D'))]
       by_cases h : A' + B' + C' + D' = 0
-      · rw [if_pos h, if_pos (by rw [h, neg_zero])]
-      · rw [if_neg h, if_neg (neg_eq_zero.not.mpr h)]
+      · rw [ite_eq_left h, ite_eq_left (by rw [h, neg_zero])]
+      · rw [ite_eq_right h, ite_eq_right (neg_eq_zero.not.mpr h)]
     rw [htot]
   rw [evalL, evalR] at bigSum
   -- counting: the total sum of the inverses must vanish
@@ -537,8 +537,8 @@ problem usa1999_p3 (p : ℕ) (hp : p.Prime) (hp2 : 2 < p) (a b c d : ℤ)
         = (p : ℂ) * (if c = 0 then (1 : ℂ) else 0) := by
       intro c
       by_cases hc : c = 0
-      · rw [if_pos hc, if_pos hc, mul_one]
-      · rw [if_neg hc, if_neg hc, mul_zero]
+      · rw [ite_eq_left hc, ite_eq_left hc, mul_one]
+      · rw [ite_eq_right hc, ite_eq_right hc, mul_zero]
     rw [bit (A' + B' + C'), bit (A' + B' + D'), bit (A' + C' + D'), bit (B' + C' + D'),
       bit (A' + B' + C' + D')] at bigSum
     have h5 : (2 : ℂ) + ((if A' + B' + C' = 0 then (1 : ℂ) else 0) +
@@ -553,7 +553,7 @@ problem usa1999_p3 (p : ℕ) (hp : p.Prime) (hp2 : 2 < p) (a b c d : ℤ)
       exact mul_left_cancel₀ (by exact_mod_cast hp.pos.ne' : (p : ℂ) ≠ 0) h6
     by_cases hT : A' + B' + C' + D' = 0
     · exact hT
-    · rw [if_neg hT, mul_zero] at h5
+    · rw [ite_eq_right hT, mul_zero] at h5
       split_ifs at h5 <;> norm_num at h5
   -- the relation now reads: the character sum is "odd"
   have oddEq : ∀ m : ZMod p,
@@ -617,8 +617,8 @@ problem usa1999_p3 (p : ℕ) (hp : p.Prime) (hp2 : 2 < p) (a b c d : ℤ)
         ring
       rw [h1, sum_chi hp hp2 (-(A' + X))]
       by_cases h : A' + X = 0
-      · rw [if_pos h, if_pos (by rw [h, neg_zero])]
-      · rw [if_neg h, if_neg (neg_eq_zero.not.mpr h)]
+      · rw [ite_eq_left h, ite_eq_left (by rw [h, neg_zero])]
+      · rw [ite_eq_right h, ite_eq_right (neg_eq_zero.not.mpr h)]
     have h0 : (∑ m : ZMod p, chi p ((-A') * m) * (chi p (-(m * A')) + chi p (-(m * B')) +
         chi p (-(m * C')) + chi p (-(m * D'))))
         = ∑ m : ZMod p, (chi p ((-A') * m) * chi p (-(m * A')) + chi p ((-A') * m) * chi p (-(m * B')) +
@@ -647,23 +647,23 @@ problem usa1999_p3 (p : ℕ) (hp : p.Prime) (hp2 : 2 < p) (a b c d : ℤ)
       have hz : ((2 : ℕ) : ZMod p) ≠ 0 := by
         intro h0
         rw [h0, ZMod.val_zero] at hv
-        omega
+        lia
       exact_mod_cast hz
     have h3 : A' + A' = 2 * A' := by ring
     rw [h3]
     exact mul_ne_zero h2 hA'0
   -- at least one of `A' + B'`, `A' + C'`, `A' + D'` vanishes
   have hone : A' + B' = 0 ∨ A' + C' = 0 ∨ A' + D' = 0 := by
-    rw [if_pos (sub_self A'), if_neg h2A] at hFinal
+    rw [ite_eq_left (sub_self A'), ite_eq_right h2A] at hFinal
     by_contra hcon
     push Not at hcon
-    rw [if_neg hcon.1, if_neg hcon.2.1, if_neg hcon.2.2] at hFinal
+    rw [ite_eq_right hcon.1, ite_eq_right hcon.2.1, ite_eq_right hcon.2.2] at hFinal
     have bit : ∀ c : ZMod p, (if c = 0 then (p : ℂ) else 0)
         = (p : ℂ) * (if c = 0 then (1 : ℂ) else 0) := by
       intro c
       by_cases hc : c = 0
-      · rw [if_pos hc, if_pos hc, mul_one]
-      · rw [if_neg hc, if_neg hc, mul_zero]
+      · rw [ite_eq_left hc, ite_eq_left hc, mul_one]
+      · rw [ite_eq_right hc, ite_eq_right hc, mul_zero]
     rw [bit (B' - A'), bit (C' - A'), bit (D' - A')] at hFinal
     have h5 : (1 : ℂ) + ((if B' - A' = 0 then (1 : ℂ) else 0) +
         ((if C' - A' = 0 then (1 : ℂ) else 0) + (if D' - A' = 0 then (1 : ℂ) else 0))) = 0 := by

@@ -111,7 +111,6 @@ then `|S| ≤ m`, and if there is no heavy column then `|S| ≤ n`. -/
 lemma card_le_of_good {m n : ℕ} (hm : 2 ≤ m) (hn : 2 ≤ n)
     {S : Finset (Fin m × Fin n)} (hS : Good S) :
     S.card ≤ m + n - 2 := by
-  classical
   set rows : Finset (Fin m) := S.image Prod.fst with hrows
   set cols : Finset (Fin n) := S.image Prod.snd with hcols
   set lightR : Finset (Fin m) := rows.filter fun r ↦ (rowFiber S r).card = 1 with hlightR
@@ -138,9 +137,9 @@ lemma card_le_of_good {m n : ℕ} (hm : 2 ≤ m) (hn : 2 ≤ n)
       apply Finset.filter_congr
       intro r hr
       have := row_card_pos r hr
-      omega
+      lia
     rw [h2, ← hlightR] at h
-    omega
+    lia
   have hC : cols.card = lightC.card + heavyC.card := by
     have h := Finset.card_filter_add_card_filter_not (s := cols)
       (p := fun c ↦ (colFiber S c).card = 1)
@@ -149,9 +148,9 @@ lemma card_le_of_good {m n : ℕ} (hm : 2 ≤ m) (hn : 2 ≤ n)
       apply Finset.filter_congr
       intro c hc
       have := col_card_pos c hc
-      omega
+      lia
     rw [h2, ← hlightC] at h
-    omega
+    lia
   have rows_le : rows.card ≤ m := by
     rw [hrows]
     calc (S.image Prod.fst).card ≤ Fintype.card (Fin m) := Finset.card_le_univ _
@@ -178,7 +177,7 @@ lemma card_le_of_good {m n : ℕ} (hm : 2 ≤ m) (hn : 2 ≤ n)
       have hle : (colFiber S s.2).card ≤ 1 := Finset.card_le_one.mpr fun a ha b hb ↦ by
         rw [mem_colFiber] at ha hb
         rw [hcol a ha.1 ha.2, hcol b hb.1 hb.2]
-      omega
+      lia
   -- Split `S` into squares in light rows and squares in heavy rows.
   set S₁ : Finset (Fin m × Fin n) := S.filter fun s ↦ (rowFiber S s.1).card = 1 with hS₁
   set S₂ : Finset (Fin m × Fin n) := S.filter fun s ↦ 2 ≤ (rowFiber S s.1).card with hS₂
@@ -191,9 +190,9 @@ lemma card_le_of_good {m n : ℕ} (hm : 2 ≤ m) (hn : 2 ≤ n)
       intro x hx
       have hx1 : 1 ≤ (rowFiber S x.1).card :=
         Finset.card_pos.mpr ⟨x, mem_rowFiber.mpr ⟨hx, rfl⟩⟩
-      omega
+      lia
     rw [h2, ← hS₁] at h
-    omega
+    lia
   have hS₁card : S₁.card = lightR.card := by
     have hinj : Set.InjOn Prod.fst (S₁ : Set (Fin m × Fin n)) := by
       intro a ha b hb hab
@@ -204,23 +203,7 @@ lemma card_le_of_good {m n : ℕ} (hm : 2 ≤ m) (hn : 2 ≤ n)
       rw [hx, Finset.mem_singleton] at ha_mem hb_mem
       rw [ha_mem, hb_mem]
     have him : S₁.image Prod.fst = lightR := by
-      ext r
-      constructor
-      · intro hr
-        rw [Finset.mem_image] at hr
-        obtain ⟨s, hs, rfl⟩ := hr
-        rw [hS₁, Finset.mem_filter] at hs
-        rw [hlightR, Finset.mem_filter]
-        exact ⟨by rw [hrows, Finset.mem_image]; exact ⟨s, hs.1, rfl⟩, hs.2⟩
-      · intro hr
-        rw [hlightR, Finset.mem_filter] at hr
-        obtain ⟨x, hx⟩ := Finset.card_eq_one.mp hr.2
-        have hx_mem : x ∈ rowFiber S r := by rw [hx]; exact Finset.mem_singleton_self x
-        rw [mem_rowFiber] at hx_mem
-        rw [Finset.mem_image]
-        refine ⟨x, ?_, hx_mem.2⟩
-        rw [hS₁, Finset.mem_filter]
-        exact ⟨hx_mem.1, by rw [hx_mem.2]; exact hr.2⟩
+      exact Eq.symm Finset.filter_image
     rw [← him]
     exact (Finset.card_image_of_injOn hinj).symm
   have hS₂card : S₂.card ≤ lightC.card := by
@@ -263,7 +246,7 @@ lemma card_le_of_good {m n : ℕ} (hm : 2 ≤ m) (hn : 2 ≤ n)
           rw [Finset.card_eq_zero.mp hR0] at hmem
           exact Finset.notMem_empty _ hmem
         have hpos := row_card_pos a.1 ha1
-        omega
+        lia
       obtain ⟨x, hx⟩ := Finset.card_eq_one.mp h1
       have ha_mem : a ∈ rowFiber S a.1 := mem_rowFiber.mpr ⟨ha, rfl⟩
       have hb_mem : b ∈ rowFiber S a.1 := mem_rowFiber.mpr ⟨hb, hab.symm⟩
@@ -271,7 +254,7 @@ lemma card_le_of_good {m n : ℕ} (hm : 2 ≤ m) (hn : 2 ≤ n)
       rw [ha_mem, hb_mem]
     have hScard : S.card = rows.card := by
       rw [hrows]; exact (Finset.card_image_of_injOn hinj).symm
-    omega
+    lia
   · by_cases hC0 : heavyC.card = 0
     · -- No heavy column: distinct squares lie in distinct columns, so `|S| ≤ n`.
       have hinj : Set.InjOn Prod.snd (S : Set (Fin m × Fin n)) := by
@@ -287,7 +270,7 @@ lemma card_le_of_good {m n : ℕ} (hm : 2 ≤ m) (hn : 2 ≤ n)
             rw [Finset.card_eq_zero.mp hC0] at hmem
             exact Finset.notMem_empty _ hmem
           have hpos := col_card_pos a.2 ha1
-          omega
+          lia
         obtain ⟨x, hx⟩ := Finset.card_eq_one.mp h1
         have ha_mem : a ∈ colFiber S a.2 := mem_colFiber.mpr ⟨ha, rfl⟩
         have hb_mem : b ∈ colFiber S a.2 := mem_colFiber.mpr ⟨hb, hab.symm⟩
@@ -295,9 +278,9 @@ lemma card_le_of_good {m n : ℕ} (hm : 2 ≤ m) (hn : 2 ≤ n)
         rw [ha_mem, hb_mem]
       have hScard : S.card = cols.card := by
         rw [hcols]; exact (Finset.card_image_of_injOn hinj).symm
-      omega
+      lia
     · -- One heavy row and one heavy column: the main estimate applies.
-      omega
+      lia
 
 /-- The extremal configuration: every square of row `0` or of column `0`,
 except the corner square `(0, 0)`. -/
@@ -376,14 +359,14 @@ problem usa2000_p4 :
     intro S hcard hS
     have h := card_le_of_good (by norm_num) (by norm_num) hS
     have hcard' : S.card = 1999 := hcard
-    omega
+    lia
   · -- Any smaller `n` admits a counterexample: a subset of size `n` of the
     -- extremal configuration (which has 1998 squares).
     intro k hk
     by_contra hlt
     have hk' : k ≤ 1998 := by
       have hlt' : k < 1999 := Nat.lt_of_not_le hlt
-      omega
+      lia
     obtain ⟨T, hTsub, hTcard⟩ :=
       Finset.exists_subset_card_eq (s := construction) (n := k)
         (by rw [card_construction]; exact hk')

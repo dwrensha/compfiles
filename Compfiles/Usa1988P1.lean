@@ -79,7 +79,7 @@ problem usa1988_p1 {r s : ℕ} (hr : 1 ≤ r) (hs : 1 ≤ s) {a b : ℕ}
     have hle : (10 : ℕ) ≤ 10 ^ s := by
       calc (10 : ℕ) = 10 ^ 1 := (pow_one 10).symm
       _ ≤ 10 ^ s := Nat.pow_le_pow_right (by norm_num) hs
-    omega
+    lia
   have hDpos : 0 < 10 ^ r * (10 ^ s - 1) :=
     Nat.mul_pos (pow_pos (by norm_num) r) h10s
   -- Cross-multiply to get an equation over ℕ.

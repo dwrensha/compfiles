@@ -42,9 +42,9 @@ namespace Usa2013P3
 `a + b + c = n - 1`, so that `c = n - 1 - a - b` is determined. -/
 def Token (n : ℕ) := { p : ℕ × ℕ // p.1 + p.2 < n }
 
-lemma lt_left {n a b : ℕ} (h : a + b < n) : a < n := by omega
-lemma lt_right {n a b : ℕ} (h : a + b < n) : b < n := by omega
-lemma lt_third {n a b : ℕ} (h : a + b < n) : n - 1 - a - b < n := by omega
+lemma lt_left {n a b : ℕ} (h : a + b < n) : a < n := by lia
+lemma lt_right {n a b : ℕ} (h : a + b < n) : b < n := by lia
+lemma lt_third {n a b : ℕ} (h : a + b < n) : n - 1 - a - b < n := by lia
 
 /-- A choice of lines to flip: for each of the three directions and each
 `i < n`, whether the `i`-th line in that direction is flipped. The three
@@ -120,11 +120,11 @@ lemma theta_aux (n a b : ℕ) (h : a + b < n) :
     (decide (a % 2 = n % 2) ^^ decide (b % 2 = n % 2) ^^
       decide ((n - 1 - a - b) % 2 = n % 2)) = false := by
   have key : (a % 2 + b % 2 + (n - 1 - a - b) % 2) % 2 = (n % 2 + 1) % 2 := by
-    omega
-  have ha : a % 2 < 2 := by omega
-  have hb : b % 2 < 2 := by omega
-  have hz : (n - 1 - a - b) % 2 < 2 := by omega
-  have hn : n % 2 < 2 := by omega
+    lia
+  have ha : a % 2 < 2 := by lia
+  have hb : b % 2 < 2 := by lia
+  have hz : (n - 1 - a - b) % 2 < 2 := by lia
+  have hn : n % 2 < 2 := by lia
   interval_cases (a % 2) <;> interval_cases (b % 2) <;>
     interval_cases ((n - 1 - a - b) % 2) <;> interval_cases (n % 2) <;>
     first
@@ -231,7 +231,7 @@ private lemma card_filter_range_four_mul (q : ℕ → Bool) (hq : ∀ i, q (i + 
       have ha' : a < 4 * k := Finset.mem_range.1 (Finset.mem_filter.1 ha).1
       obtain ⟨i, -, hia⟩ := Finset.mem_map.1 (Finset.mem_filter.1 hb).1
       rw [addLeftEmbedding_apply] at hia
-      omega
+      lia
     have hmap :
         (((Finset.range 4).map (addLeftEmbedding (4 * k))).filter fun i => q i = true).card =
           ((Finset.range 4).filter fun i => q i = true).card := by
@@ -256,7 +256,7 @@ lemma card_filter_range_periodic (q : ℕ → Bool) (hq : ∀ i, q (i + 4) = q i
     have ha' : a < 4 * k := Finset.mem_range.1 (Finset.mem_filter.1 ha).1
     obtain ⟨i, -, hia⟩ := Finset.mem_map.1 (Finset.mem_filter.1 hb).1
     rw [addLeftEmbedding_apply] at hia
-    omega
+    lia
   have hmap : (((Finset.range r).map (addLeftEmbedding (4 * k))).filter fun i => q i = true).card =
       ((Finset.range r).filter fun i => q i = true).card := by
     rw [Finset.filter_map, Finset.card_map]
@@ -293,7 +293,7 @@ lemma card_range_modeq (n : ℕ) :
     have hnin : n ∉ (Finset.range n).filter fun i => i % 2 = n % 2 :=
       fun h => Finset.notMem_range_self (Finset.mem_filter.1 h).1
     rw [Nat.add_mod_right, Finset.range_add_one, Finset.range_add_one,
-      Finset.filter_insert, Finset.filter_insert, if_neg (by lia), if_pos rfl,
+      Finset.filter_insert, Finset.filter_insert, ite_eq_right (by lia), ite_eq_left rfl,
       Finset.card_insert_of_notMem hnin, ih0, Nat.add_div_right n (Nat.zero_lt_succ _)]
 
 end Count
@@ -355,7 +355,7 @@ lemma card_e_true {n : ℕ} (α : Fin n → Bool) (c : Bool) :
     ((Finset.univ.filter fun i => e n i = true).filter fun i => (α i ^^ c) = true).card =
       cond c (Ecard n - qon α) (qon α) := by
   cases c
-  · simp only [cond_false]
+  · simp only [Bool.cond_false]
     rw [show (Finset.univ.filter fun i => e n i = true).filter (fun i => (α i ^^ false) = true) =
         (Finset.univ.filter fun i => e n i = true).filter (fun i => α i = true) from
       Finset.filter_congr (fun i _ => by simp)]
@@ -364,7 +364,7 @@ lemma card_e_true {n : ℕ} (α : Fin n → Bool) (c : Bool) :
         (Finset.univ.filter fun i => (α i = true) ∧ (e n i = true)) from
       Finset.filter_congr (fun i _ => and_comm)]
     rfl
-  · simp only [cond_true]
+  · simp only [Bool.cond_true]
     rw [show (Finset.univ.filter fun i => e n i = true).filter (fun i => (α i ^^ true) = true) =
         (Finset.univ.filter fun i => e n i = true).filter (fun i => α i = false) from
       Finset.filter_congr (fun i _ => by cases (α i) <;> simp)]
@@ -380,14 +380,14 @@ lemma card_e_true {n : ℕ} (α : Fin n → Bool) (c : Bool) :
       Finset.filter_congr (fun i _ => by cases (α i) <;> simp)] at h2
     have hQ : (Finset.univ.filter fun i => (α i = true) ∧ (e n i = true)).card = qon α := rfl
     have hE : (Finset.univ.filter fun i => e n i = true).card = Ecard n := rfl
-    omega
+    lia
 
 /-- Counting ones of `α ^^ c` on the odd-length lines. -/
 lemma card_e_false {n : ℕ} (α : Fin n → Bool) (c : Bool) :
     ((Finset.univ.filter fun i => e n i = false).filter fun i => (α i ^^ c) = true).card =
       cond c (Ocard n - pon α) (pon α) := by
   cases c
-  · simp only [cond_false]
+  · simp only [Bool.cond_false]
     rw [show (Finset.univ.filter fun i => e n i = false).filter (fun i => (α i ^^ false) = true) =
         (Finset.univ.filter fun i => e n i = false).filter (fun i => α i = true) from
       Finset.filter_congr (fun i _ => by simp)]
@@ -396,7 +396,7 @@ lemma card_e_false {n : ℕ} (α : Fin n → Bool) (c : Bool) :
         (Finset.univ.filter fun i => (α i = true) ∧ (e n i = false)) from
       Finset.filter_congr (fun i _ => and_comm)]
     rfl
-  · simp only [cond_true]
+  · simp only [Bool.cond_true]
     rw [show (Finset.univ.filter fun i => e n i = false).filter (fun i => (α i ^^ true) = true) =
         (Finset.univ.filter fun i => e n i = false).filter (fun i => α i = false) from
       Finset.filter_congr (fun i _ => by cases (α i) <;> simp)]
@@ -412,7 +412,7 @@ lemma card_e_false {n : ℕ} (α : Fin n → Bool) (c : Bool) :
       Finset.filter_congr (fun i _ => by cases (α i) <;> simp)] at h2
     have hP : (Finset.univ.filter fun i => (α i = true) ∧ (e n i = false)).card = pon α := rfl
     have hO : (Finset.univ.filter fun i => e n i = false).card = Ocard n := rfl
-    omega
+    lia
 
 /-- Master formula for the block values. -/
 lemma bv_eq {n : ℕ} (α : Fin n → Bool) (δ τ : Bool) :
@@ -462,25 +462,25 @@ lemma bv_eq {n : ℕ} (α : Fin n → Bool) (δ τ : Bool) :
 lemma bv_ff {n : ℕ} (α : Fin n → Bool) : bv α false false = pon α + qon α := by
   rw [bv_eq]
   simp
-  omega
+  lia
 
 lemma bv_tf {n : ℕ} (α : Fin n → Bool) :
     bv α true false = (Ocard n - pon α) + (Ecard n - qon α) := by
   rw [bv_eq]
   simp
-  omega
+  lia
 
 lemma bv_ft {n : ℕ} (α : Fin n → Bool) :
     bv α false true = pon α + (Ecard n - qon α) := by
   rw [bv_eq]
   simp
-  omega
+  lia
 
 lemma bv_tt {n : ℕ} (α : Fin n → Bool) :
     bv α true true = (Ocard n - pon α) + qon α := by
   rw [bv_eq]
   simp
-  omega
+  lia
 
 /-- Pair identity: the two values obtained by flipping a whole direction
 sum to `n`. -/
@@ -490,7 +490,7 @@ lemma pair_id {n : ℕ} (α : Fin n → Bool) (τ : Bool) :
   have hp := pon_le α
   have hq := qon_le α
   have hO := OE_sum n
-  cases τ <;> simp <;> omega
+  cases τ <;> simp <;> lia
 /-- The weight of a coset element splits into the three block values. -/
 lemma weight_vxor_sp {n : ℕ} (v : Moves n) (ε1 ε2 ε3 : Bool) :
     weight (Moves.vxor v (sp n (ε1, ε2, ε3))) =
@@ -515,7 +515,7 @@ lemma sum_weights {n : ℕ} (v : Moves n) :
   have pzf := pair_id v.z false
   have pzt := pair_id v.z true
   simp only [Bool.xor_false, Bool.xor_true, Bool.not_true, Bool.not_false]
-  omega
+  lia
 lemma pair_weight {n : ℕ} (v : Moves n) (ε1 τ : Bool) :
     weight (Moves.vxor v (sp n (ε1, false, τ))) +
       weight (Moves.vxor v (sp n (ε1, true, τ))) = 2 * bv v.x ε1 τ + 2 * n := by
@@ -524,9 +524,9 @@ lemma pair_weight {n : ℕ} (v : Moves n) (ε1 τ : Bool) :
   rw [weight_vxor_sp, weight_vxor_sp]
   cases ε1
   · simp only [Bool.false_xor]
-    omega
+    lia
   · simp only [Bool.xor_false, Bool.xor_true, Bool.not_true]
-    omega
+    lia
 
 /-- Pairing to isolate the `y`-block. -/
 lemma pair_weight_y {n : ℕ} (v : Moves n) (ε2 τ : Bool) :
@@ -535,7 +535,7 @@ lemma pair_weight_y {n : ℕ} (v : Moves n) (ε2 τ : Bool) :
   have px := pair_id v.x τ
   have pz := pair_id v.z τ
   rw [weight_vxor_sp, weight_vxor_sp]
-  cases ε2 <;> simp <;> omega
+  cases ε2 <;> simp <;> lia
 
 /-- Pairing to isolate the `z`-block. -/
 lemma pair_weight_z {n : ℕ} (v : Moves n) (ε2 τ : Bool) :
@@ -544,7 +544,7 @@ lemma pair_weight_z {n : ℕ} (v : Moves n) (ε2 τ : Bool) :
   have px := pair_id v.x τ
   have py := pair_id v.y τ
   rw [weight_vxor_sp, weight_vxor_sp]
-  cases ε2 <;> simp <;> omega
+  cases ε2 <;> simp <;> lia
 
 /-- In the case `n = 4k + 3`, if all eight coset weights are at least `6k+4`,
 then for each block the two values where the block contributes `2k+1` form the
@@ -556,11 +556,11 @@ lemma graph_of {n : ℕ} (α : Fin n → Bool) (k : ℕ)
   have hp1 : bv α false false + bv α true true = Ocard n + 2 * qon α := by
     rw [bv_ff, bv_tt]
     have hp := pon_le α
-    omega
+    lia
   have hp2 : bv α false false + bv α false true = 2 * pon α + Ecard n := by
     rw [bv_ff, bv_ft]
     have hq := qon_le α
-    omega
+    lia
   have hp3 := pair_id α false
   have hp4 := pair_id α true
   by_cases h0 : bv α false false = 2 * k + 1
@@ -569,9 +569,9 @@ lemma graph_of {n : ℕ} (α : Fin n → Bool) (k : ℕ)
     have hbft := hb false true
     have hbtf := hb true false
     have hbtt := hb true true
-    have g1 : bv α true true = 2 * k + 1 := by omega
-    have g2 : bv α false true = 2 * k + 2 := by omega
-    have g3 : bv α true false = 2 * k + 2 := by omega
+    have g1 : bv α true true = 2 * k + 1 := by lia
+    have g2 : bv α false true = 2 * k + 2 := by lia
+    have g3 : bv α true false = 2 * k + 2 := by lia
     intro δ τ
     cases δ <;> cases τ <;> simp_all
   · refine ⟨true, ?_⟩
@@ -579,10 +579,10 @@ lemma graph_of {n : ℕ} (α : Fin n → Bool) (k : ℕ)
     have hbft := hb false true
     have hbtf := hb true false
     have hbtt := hb true true
-    have g0 : bv α false false = 2 * k + 2 := by omega
-    have g1 : bv α true true = 2 * k + 2 := by omega
-    have g2 : bv α false true = 2 * k + 1 := by omega
-    have g3 : bv α true false = 2 * k + 1 := by omega
+    have g0 : bv α false false = 2 * k + 2 := by lia
+    have g1 : bv α true true = 2 * k + 2 := by lia
+    have g2 : bv α false true = 2 * k + 1 := by lia
+    have g3 : bv α true false = 2 * k + 1 := by lia
     intro δ τ
     cases δ <;> cases τ <;> simp_all
 
@@ -595,7 +595,7 @@ lemma upper_bound {n : ℕ} (v : Moves n) :
   push Not at hnc
   have hsum := sum_weights v
   obtain ⟨k, r, hk, hr⟩ : ∃ k r, n = 4 * k + r ∧ r < 4 :=
-    ⟨n / 4, n % 4, by omega, by omega⟩
+    ⟨n / 4, n % 4, by lia, by lia⟩
   have h000 := hnc (false, false, false)
   have h001 := hnc (false, false, true)
   have h010 := hnc (false, true, false)
@@ -605,29 +605,29 @@ lemma upper_bound {n : ℕ} (v : Moves n) :
   have h110 := hnc (true, true, false)
   have h111 := hnc (true, true, true)
   interval_cases r
-  · have hans : answer n = 6 * k := by simp only [answer]; omega
-    omega
-  · have hans : answer n = 6 * k + 1 := by simp only [answer]; omega
-    omega
-  · have hans : answer n = 6 * k + 2 := by simp only [answer]; omega
+  · have hans : answer n = 6 * k := by simp only [answer]; lia
+    lia
+  · have hans : answer n = 6 * k + 1 := by simp only [answer]; lia
+    lia
+  · have hans : answer n = 6 * k + 2 := by simp only [answer]; lia
     have hW : ∀ ε : Bool × Bool × Bool, weight (Moves.vxor v (sp n ε)) = 6 * k + 3 := by
       intro ε
       obtain ⟨a, b, c⟩ := ε
-      cases a <;> cases b <;> cases c <;> omega
+      cases a <;> cases b <;> cases c <;> lia
     have hbvx : ∀ δ τ : Bool, bv v.x δ τ = 2 * k + 1 := by
       intro δ τ
       have h1 := hW (δ, false, τ)
       have h2 := hW (δ, true, τ)
       have h3 := pair_weight v δ τ
-      omega
+      lia
     have hff := bv_ff v.x
     have hft := bv_ft v.x
     have hE := Ecard_eq n
     have hq := qon_le v.x
     have h1 := hbvx false false
     have h2 := hbvx false true
-    omega
-  · have hans : answer n = 6 * k + 3 := by simp only [answer]; omega
+    lia
+  · have hans : answer n = 6 * k + 3 := by simp only [answer]; lia
     have hbx : ∀ δ τ : Bool, 2 * k + 1 ≤ bv v.x δ τ ∧ bv v.x δ τ ≤ 2 * k + 2 := by
       intro δ τ
       have lower : ∀ δ' τ' : Bool, 2 * k + 1 ≤ bv v.x δ' τ' := by
@@ -635,12 +635,12 @@ lemma upper_bound {n : ℕ} (v : Moves n) :
         have h1 := hnc (δ', false, τ')
         have h2 := hnc (δ', true, τ')
         have h3 := pair_weight v δ' τ'
-        omega
+        lia
       have h4 := pair_id v.x τ
       have h5 := lower false τ
       have h6 := lower true τ
       refine ⟨lower δ τ, ?_⟩
-      cases δ <;> omega
+      cases δ <;> lia
     have hby : ∀ δ τ : Bool, 2 * k + 1 ≤ bv v.y δ τ ∧ bv v.y δ τ ≤ 2 * k + 2 := by
       intro δ τ
       have lower : ∀ δ' τ' : Bool, 2 * k + 1 ≤ bv v.y δ' τ' := by
@@ -648,12 +648,12 @@ lemma upper_bound {n : ℕ} (v : Moves n) :
         have h1 := hnc (false, δ', τ')
         have h2 := hnc (true, !δ', τ')
         have h3 := pair_weight_y v δ' τ'
-        omega
+        lia
       have h4 := pair_id v.y τ
       have h5 := lower false τ
       have h6 := lower true τ
       refine ⟨lower δ τ, ?_⟩
-      cases δ <;> omega
+      cases δ <;> lia
     have hbz : ∀ δ τ : Bool, 2 * k + 1 ≤ bv v.z δ τ ∧ bv v.z δ τ ≤ 2 * k + 2 := by
       intro δ τ
       have lower : ∀ δ' τ' : Bool, 2 * k + 1 ≤ bv v.z δ' τ' := by
@@ -661,14 +661,14 @@ lemma upper_bound {n : ℕ} (v : Moves n) :
         have h1 := hnc (false, δ', τ')
         have h2 := hnc (true, δ', τ')
         have h3 := pair_weight_z v δ' τ'
-        omega
+        lia
       have h4 := pair_id v.z τ
       have h5 := lower false τ
       have h6 := lower true τ
       refine ⟨lower δ τ, ?_⟩
-      cases δ <;> omega
-    have hE2 : Ecard n = 2 * k + 1 := by have hE := Ecard_eq n; omega
-    have hO2 : Ocard n = 2 * k + 2 := by have hE := Ecard_eq n; have hO := OE_sum n; omega
+      cases δ <;> lia
+    have hE2 : Ecard n = 2 * k + 1 := by have hE := Ecard_eq n; lia
+    have hO2 : Ocard n = 2 * k + 2 := by have hE := Ecard_eq n; have hO := OE_sum n; lia
     obtain ⟨cX, hcX⟩ := graph_of v.x k hO2 hE2 hbx
     obtain ⟨cY, hcY⟩ := graph_of v.y k hO2 hE2 hby
     obtain ⟨cZ, hcZ⟩ := graph_of v.z k hO2 hE2 hbz
@@ -679,7 +679,7 @@ lemma upper_bound {n : ℕ} (v : Moves n) :
       have g2 : bv v.z cZ false = 2 * k + 1 := (hcZ cZ false).2 (by cases cZ <;> simp)
       have g3 : bv v.y (cX ^^ cZ) false = 2 * k + 1 :=
         (hcY (cX ^^ cZ) false).2 (by rw [hcc]; simp)
-      omega
+      lia
     · have hW := hnc (cX ^^ true, cZ ^^ true, true)
       rw [weight_vxor_sp, hans] at hW
       have g1 : bv v.x (cX ^^ true) true = 2 * k + 1 :=
@@ -689,18 +689,18 @@ lemma upper_bound {n : ℕ} (v : Moves n) :
       have g3 : bv v.y ((cX ^^ true) ^^ (cZ ^^ true)) true = 2 * k + 1 := by
         apply (hcY ((cX ^^ true) ^^ (cZ ^^ true)) true).2
         cases cX <;> cases cY <;> cases cZ <;> simp_all
-      omega
+      lia
 
 /-- Proof-producing helpers for token indices (kept as term-mode applications
 so that indices are syntactically reproducible). -/
-lemma lt_n2 {n : ℕ} (hn : 2 ≤ n) : n - 2 < n := by omega
-lemma lt_n1 {n : ℕ} (hn : 2 ≤ n) : n - 1 < n := by omega
-lemma lt_n1j {n j : ℕ} (hj : j < n) : n - 1 - j < n := by omega
-lemma lt_n2m {n m : ℕ} (hm : m + 1 < n) : n - 2 - m < n := by omega
-lemma tp_y {n j : ℕ} (hj : j < n) : (n - 1 - j) + j < n := by omega
-lemma tp_z {n j : ℕ} (hj : j < n) : (n - 1 - j) + 0 < n := by omega
-lemma tp_y1 {n : ℕ} (hn : 2 ≤ n) : (n - 2) + 1 < n := by omega
-lemma tp_last {n : ℕ} (hn : 0 < n) : (n - 1) + 0 < n := by omega
+lemma lt_n2 {n : ℕ} (hn : 2 ≤ n) : n - 2 < n := by lia
+lemma lt_n1 {n : ℕ} (hn : 2 ≤ n) : n - 1 < n := by lia
+lemma lt_n1j {n j : ℕ} (hj : j < n) : n - 1 - j < n := by lia
+lemma lt_n2m {n m : ℕ} (hm : m + 1 < n) : n - 2 - m < n := by lia
+lemma tp_y {n j : ℕ} (hj : j < n) : (n - 1 - j) + j < n := by lia
+lemma tp_z {n j : ℕ} (hj : j < n) : (n - 1 - j) + 0 < n := by lia
+lemma tp_y1 {n : ℕ} (hn : 2 ≤ n) : (n - 2) + 1 < n := by lia
+lemma tp_last {n : ℕ} (hn : 0 < n) : (n - 1) + 0 < n := by lia
 
 /-- Converting between `Fin n` indices with equal values. -/
 lemma convFin {n : ℕ} (f : Fin n → Bool) (a b : ℕ) (ha : a < n) (hb : b < n)
@@ -746,7 +746,7 @@ lemma kernel_of_reduction {n : ℕ} (hn : 0 < n) (hn2 : 2 ≤ n) (v S : Moves n)
   have h_y : ∀ j (hj : j < n), v3.y ⟨j, hj⟩ = v3.x ⟨n - 1 - j, lt_n1j hj⟩ := by
     intro j hj
     have hk := key (n - 1 - j) j (tp_y hj)
-    rw [convFin v3.z (n - 1 - (n - 1 - j) - j) 0 (lt_third (tp_y hj)) hn (by omega)] at hk
+    rw [convFin v3.z (n - 1 - (n - 1 - j) - j) 0 (lt_third (tp_y hj)) hn (by lia)] at hk
     rw [hz0] at hk
     rw [convFin v3.y j j (lt_right (tp_y hj)) hj rfl] at hk
     simp only [Bool.xor_false] at hk
@@ -756,7 +756,7 @@ lemma kernel_of_reduction {n : ℕ} (hn : 0 < n) (hn2 : 2 ≤ n) (v S : Moves n)
     intro j hj
     have hk := key (n - 1 - j) 0 (tp_z hj)
     rw [convFin v3.y 0 0 (lt_right (tp_z hj)) hn rfl, hy0] at hk
-    rw [convFin v3.z (n - 1 - (n - 1 - j) - 0) j (lt_third (tp_z hj)) hj (by omega)] at hk
+    rw [convFin v3.z (n - 1 - (n - 1 - j) - 0) j (lt_third (tp_z hj)) hj (by lia)] at hk
     simp only [Bool.xor_false] at hk
     rw [xor_eq_false_iff] at hk
     rw [← hk]
@@ -765,7 +765,7 @@ lemma kernel_of_reduction {n : ℕ} (hn : 0 < n) (hn2 : 2 ≤ n) (v S : Moves n)
     intro h1
     have hk := key (n - 2) 1 (tp_y1 hn2)
     rw [convFin v3.x (n - 2) (n - 2) (lt_left (tp_y1 hn2)) (lt_n2 hn2) rfl, hx2] at hk
-    rw [convFin v3.z (n - 1 - (n - 2) - 1) 0 (lt_third (tp_y1 hn2)) hn (by omega)] at hk
+    rw [convFin v3.z (n - 1 - (n - 2) - 1) 0 (lt_third (tp_y1 hn2)) hn (by lia)] at hk
     rw [hz0] at hk
     rw [convFin v3.y 1 1 (lt_right (tp_y1 hn2)) h1 rfl] at hk
     simp only [Bool.xor_false, Bool.false_xor] at hk
@@ -774,9 +774,9 @@ lemma kernel_of_reduction {n : ℕ} (hn : 0 < n) (hn2 : 2 ≤ n) (v S : Moves n)
   have hchain : ∀ m (hm : m + 1 < n), v3.x ⟨m, lt_left hm⟩ = v3.x ⟨m + 1, hm⟩ := by
     intro m hm
     have hk := key m 1 hm
-    rw [convFin v3.z (n - 1 - m - 1) (n - 2 - m) (lt_third hm) (lt_n2m hm) (by omega)] at hk
+    rw [convFin v3.z (n - 1 - m - 1) (n - 2 - m) (lt_third hm) (lt_n2m hm) (by lia)] at hk
     rw [h_z (n - 2 - m) (lt_n2m hm)] at hk
-    rw [convFin v3.x (n - 1 - (n - 2 - m)) (m + 1) (lt_n1j (lt_n2m hm)) hm (by omega)] at hk
+    rw [convFin v3.x (n - 1 - (n - 2 - m)) (m + 1) (lt_n1j (lt_n2m hm)) hm (by lia)] at hk
     rw [h_y1 (lt_right hm)] at hk
     simp only [Bool.xor_false] at hk
     exact (xor_eq_false_iff).1 hk
@@ -784,7 +784,7 @@ lemma kernel_of_reduction {n : ℕ} (hn : 0 < n) (hn2 : 2 ≤ n) (v S : Moves n)
     intro h
     have hk := key (n - 1) 0 (tp_last hn)
     rw [convFin v3.y 0 0 (lt_right (tp_last hn)) hn rfl, hy0] at hk
-    rw [convFin v3.z (n - 1 - (n - 1) - 0) 0 (lt_third (tp_last hn)) hn (by omega)] at hk
+    rw [convFin v3.z (n - 1 - (n - 1) - 0) 0 (lt_third (tp_last hn)) hn (by lia)] at hk
     rw [hz0] at hk
     rw [convFin v3.x (n - 1) (n - 1) (lt_left (tp_last hn)) h rfl] at hk
     simp only [Bool.xor_false] at hk
@@ -795,7 +795,7 @@ lemma kernel_of_reduction {n : ℕ} (hn : 0 < n) (hn2 : 2 ≤ n) (v S : Moves n)
     | zero => intro hj; exact convFin v3.x 0 0 hj hn rfl
     | succ j ih =>
       intro hj1
-      have hj : j < n := by omega
+      have hj : j < n := by lia
       rw [← hchain j hj1, convFin v3.x j j (lt_left hj1) hj rfl]
       exact ih hj
   have hx0 : v3.x ⟨0, hn⟩ = false := by
@@ -827,25 +827,25 @@ lemma kernel_of_reduction {n : ℕ} (hn : 0 < n) (hn2 : 2 ≤ n) (v S : Moves n)
 times is one of the eight span elements. -/
 lemma kernel_eq_span {n : ℕ} (hn : 0 < n) {v : Moves n}
     (hv : applyMoves v = fun _ => false) : ∃ ε : Bool × Bool × Bool, v = sp n ε := by
-  rcases (show n = 1 ∨ 2 ≤ n by omega) with rfl | hn2
+  rcases (show n = 1 ∨ 2 ≤ n by lia) with rfl | hn2
   · -- n = 1: direct case analysis on the three line-values
-    set z : Fin 1 := ⟨0, by omega⟩ with hzdef
+    set z : Fin 1 := ⟨0, by lia⟩ with hzdef
     have hzv : z.val = 0 := rfl
     have key : (v.x z ^^ v.y z ^^ v.z z) = false := by
-      have h00 : (0 : ℕ) + 0 < 1 := by omega
+      have h00 : (0 : ℕ) + 0 < 1 := by lia
       exact congrFun hv ⟨(0, 0), h00⟩
     have cx : v.x = fun _ => v.x z := by
       funext i
       congr 1
-      exact Fin.ext (by omega)
+      exact Fin.ext (by lia)
     have cy : v.y = fun _ => v.y z := by
       funext i
       congr 1
-      exact Fin.ext (by omega)
+      exact Fin.ext (by lia)
     have cz : v.z = fun _ => v.z z := by
       funext i
       congr 1
-      exact Fin.ext (by omega)
+      exact Fin.ext (by lia)
     generalize hA : v.x z = A
     generalize hB : v.y z = B
     generalize hC : v.z z = C
@@ -870,10 +870,10 @@ lemma kernel_eq_span {n : ℕ} (hn : 0 < n) {v : Moves n}
     generalize hX : v.x ⟨n - 2, lt_n2 hn2⟩ = X
     by_cases hnodd : n % 2 = 1
     · have he0 : e n ⟨0, hn⟩ = false := by
-        have h2 : ¬ (0 : ℕ) % 2 = n % 2 := by omega
+        have h2 : ¬ (0 : ℕ) % 2 = n % 2 := by lia
         simp [e, h2]
       have hex2 : e n ⟨n - 2, lt_n2 hn2⟩ = true := by
-        have h2 : (n - 2) % 2 = n % 2 := by omega
+        have h2 : (n - 2) % 2 = n % 2 := by lia
         simp [e, h2]
       refine ⟨(A ^^ B, B, X ^^ A ^^ B), ?_⟩
       apply kernel_of_reduction hn hn2 v (sp n (A ^^ B, B, X ^^ A ^^ B)) hv
@@ -890,12 +890,12 @@ lemma kernel_eq_span {n : ℕ} (hn : 0 < n) {v : Moves n}
         dsimp only [sp]
         rw [hex2]
         cases A <;> cases B <;> cases X <;> simp
-    · have hnodd2 : n % 2 = 0 := by omega
+    · have hnodd2 : n % 2 = 0 := by lia
       have he0 : e n ⟨0, hn⟩ = true := by
-        have h2 : (0 : ℕ) % 2 = n % 2 := by omega
+        have h2 : (0 : ℕ) % 2 = n % 2 := by lia
         simp [e, h2]
       have hex2 : e n ⟨n - 2, lt_n2 hn2⟩ = true := by
-        have h2 : (n - 2) % 2 = n % 2 := by omega
+        have h2 : (n - 2) % 2 = n % 2 := by lia
         simp [e, h2]
       refine ⟨(A ^^ B, B ^^ (X ^^ A ^^ B), X ^^ A ^^ B), ?_⟩
       apply kernel_of_reduction hn hn2 v (sp n (A ^^ B, B ^^ (X ^^ A ^^ B), X ^^ A ^^ B)) hv
@@ -1005,13 +1005,13 @@ at least `6 * (n / 4) + n % 4`. -/
 lemma lower_bound {n : ℕ} :
     ∃ v : Moves n, ∀ ε : Bool × Bool × Bool, answer n ≤ weight (Moves.vxor v (sp n ε)) := by
   obtain ⟨k, r, hk, hr⟩ : ∃ k r, n = 4 * k + r ∧ r < 4 :=
-    ⟨n / 4, n % 4, by omega, by omega⟩
+    ⟨n / 4, n % 4, by lia, by lia⟩
   interval_cases r
   · refine ⟨v0of n P12 P12 P12, ?_⟩
-    have hans : answer n = 6 * k := by simp only [answer]; omega
-    have hn2 : n % 2 = 0 := by omega
-    have hE : Ecard n = 2 * k := by have h1 := Ecard_eq n; omega
-    have hO : Ocard n = 2 * k := by have h1 := Ecard_eq n; have h2 := OE_sum n; omega
+    have hans : answer n = 6 * k := by simp only [answer]; lia
+    have hn2 : n % 2 = 0 := by lia
+    have hE : Ecard n = 2 * k := by have h1 := Ecard_eq n; lia
+    have hO : Ocard n = 2 * k := by have h1 := Ecard_eq n; have h2 := OE_sum n; lia
     have c1 : pon (v0of n P12 P12 P12).x = k := by
       rw [pon_eval (v0of n P12 P12 P12).x P12 (fun i => rfl) P12_per hk hn2, card_range4, card_range0]
       simp [P12]
@@ -1024,12 +1024,12 @@ lemma lower_bound {n : ℕ} :
     have c6 : qon (v0of n P12 P12 P12).z = k := c2
     intro ε
     obtain ⟨ε1, ε2, ε3⟩ := ε
-    cases ε1 <;> cases ε2 <;> cases ε3 <;> rw [weight_vxor_sp] <;> simp [bv_eq] <;> omega
+    cases ε1 <;> cases ε2 <;> cases ε3 <;> rw [weight_vxor_sp] <;> simp [bv_eq] <;> lia
   · refine ⟨v0of n P03 P12 P12, ?_⟩
-    have hans : answer n = 6 * k + 1 := by simp only [answer]; omega
-    have hn2 : n % 2 = 1 := by omega
-    have hE : Ecard n = 2 * k := by have h1 := Ecard_eq n; omega
-    have hO : Ocard n = 2 * k + 1 := by have h1 := Ecard_eq n; have h2 := OE_sum n; omega
+    have hans : answer n = 6 * k + 1 := by simp only [answer]; lia
+    have hn2 : n % 2 = 1 := by lia
+    have hE : Ecard n = 2 * k := by have h1 := Ecard_eq n; lia
+    have hO : Ocard n = 2 * k + 1 := by have h1 := Ecard_eq n; have h2 := OE_sum n; lia
     have c1 : pon (v0of n P03 P12 P12).x = k + 1 := by
       rw [pon_eval (v0of n P03 P12 P12).x P03 (fun i => rfl) P03_per hk hn2, card_range4, card_range1]
       simp [P03]
@@ -1046,12 +1046,12 @@ lemma lower_bound {n : ℕ} :
     have c6 : qon (v0of n P03 P12 P12).z = k := c4
     intro ε
     obtain ⟨ε1, ε2, ε3⟩ := ε
-    cases ε1 <;> cases ε2 <;> cases ε3 <;> rw [weight_vxor_sp] <;> simp [bv_eq] <;> omega
+    cases ε1 <;> cases ε2 <;> cases ε3 <;> rw [weight_vxor_sp] <;> simp [bv_eq] <;> lia
   · refine ⟨v0of n P23 P23 P01, ?_⟩
-    have hans : answer n = 6 * k + 2 := by simp only [answer]; omega
-    have hn2 : n % 2 = 0 := by omega
-    have hE : Ecard n = 2 * k + 1 := by have h1 := Ecard_eq n; omega
-    have hO : Ocard n = 2 * k + 1 := by have h1 := Ecard_eq n; have h2 := OE_sum n; omega
+    have hans : answer n = 6 * k + 2 := by simp only [answer]; lia
+    have hn2 : n % 2 = 0 := by lia
+    have hE : Ecard n = 2 * k + 1 := by have h1 := Ecard_eq n; lia
+    have hO : Ocard n = 2 * k + 1 := by have h1 := Ecard_eq n; have h2 := OE_sum n; lia
     have c1 : pon (v0of n P23 P23 P01).x = k := by
       rw [pon_eval (v0of n P23 P23 P01).x P23 (fun i => rfl) P23_per hk hn2, card_range4, card_range2]
       simp [P23]
@@ -1068,12 +1068,12 @@ lemma lower_bound {n : ℕ} :
       simp [P01]
     intro ε
     obtain ⟨ε1, ε2, ε3⟩ := ε
-    cases ε1 <;> cases ε2 <;> cases ε3 <;> rw [weight_vxor_sp] <;> simp [bv_eq] <;> omega
+    cases ε1 <;> cases ε2 <;> cases ε3 <;> rw [weight_vxor_sp] <;> simp [bv_eq] <;> lia
   · refine ⟨v0of n P01 P01 P01, ?_⟩
-    have hans : answer n = 6 * k + 3 := by simp only [answer]; omega
-    have hn2 : n % 2 = 1 := by omega
-    have hE : Ecard n = 2 * k + 1 := by have h1 := Ecard_eq n; omega
-    have hO : Ocard n = 2 * k + 2 := by have h1 := Ecard_eq n; have h2 := OE_sum n; omega
+    have hans : answer n = 6 * k + 3 := by simp only [answer]; lia
+    have hn2 : n % 2 = 1 := by lia
+    have hE : Ecard n = 2 * k + 1 := by have h1 := Ecard_eq n; lia
+    have hO : Ocard n = 2 * k + 2 := by have h1 := Ecard_eq n; have h2 := OE_sum n; lia
     have c1 : pon (v0of n P01 P01 P01).x = k + 1 := by
       rw [pon_eval (v0of n P01 P01 P01).x P01 (fun i => rfl) P01_per hk hn2, card_range4, card_range3]
       simp [P01]
@@ -1086,7 +1086,7 @@ lemma lower_bound {n : ℕ} :
     have c6 : qon (v0of n P01 P01 P01).z = k + 1 := c2
     intro ε
     obtain ⟨ε1, ε2, ε3⟩ := ε
-    cases ε1 <;> cases ε2 <;> cases ε3 <;> rw [weight_vxor_sp] <;> simp [bv_eq] <;> omega
+    cases ε1 <;> cases ε2 <;> cases ε3 <;> rw [weight_vxor_sp] <;> simp [bv_eq] <;> lia
 
 /-- `f C` is at most the weight of any move producing `C`. -/
 lemma f_le {n : ℕ} {C : Token n → Bool} {v : Moves n} (h : applyMoves v = C) :

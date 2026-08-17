@@ -164,9 +164,9 @@ lemma empties_card_pos {b : Board} (h : empties b ≠ ∅) : 0 < (empties b).car
 lemma three_le_card_letters_of_hasSOS {b : Board} (h : HasSOS b) : 3 ≤ (letters b).card := by
   rcases h with ⟨i, hi, h0, h1, h2⟩
   rw [Finset.mem_range] at hi
-  have s0 : i ∈ letters b := mem_letters.mpr ⟨by omega, by simp [h0]⟩
-  have s1 : i + 1 ∈ letters b := mem_letters.mpr ⟨by omega, by simp [h1]⟩
-  have s2 : i + 2 ∈ letters b := mem_letters.mpr ⟨by omega, by simp [h2]⟩
+  have s0 : i ∈ letters b := mem_letters.mpr ⟨by lia, by simp [h0]⟩
+  have s1 : i + 1 ∈ letters b := mem_letters.mpr ⟨by lia, by simp [h1]⟩
+  have s2 : i + 2 ∈ letters b := mem_letters.mpr ⟨by lia, by simp [h2]⟩
   have sub : {i, i + 1, i + 2} ⊆ letters b := by
     intro y hy
     simp only [Finset.mem_insert, Finset.mem_singleton] at hy
@@ -180,8 +180,8 @@ lemma three_le_card_letters_of_hasSOS {b : Board} (h : HasSOS b) : 3 ≤ (letter
 lemma two_le_card_letters_of_hasTrap {b : Board} (h : HasTrap b) : 2 ≤ (letters b).card := by
   rcases h with ⟨a, ha, h0, -, -, h3⟩
   rw [Finset.mem_range] at ha
-  have s0 : a ∈ letters b := mem_letters.mpr ⟨by omega, by simp [h0]⟩
-  have s3 : a + 3 ∈ letters b := mem_letters.mpr ⟨by omega, by simp [h3]⟩
+  have s0 : a ∈ letters b := mem_letters.mpr ⟨by lia, by simp [h0]⟩
+  have s3 : a + 3 ∈ letters b := mem_letters.mpr ⟨by lia, by simp [h3]⟩
   have sub : {a, a + 3} ⊆ letters b := by
     intro y hy
     simp only [Finset.mem_insert, Finset.mem_singleton] at hy
@@ -199,7 +199,7 @@ lemma not_hasSOS_update_of_threatFree {b : Board} (hTF : ThreatFree b) {x : ℕ}
 lemma bOK_update {b : Board} (hBOK : BOK b) {x : ℕ} (hx : x < 2000) (l : Piece) :
     BOK (Function.update b x (some l)) := by
   intro i hi
-  have hix : i ≠ x := by omega
+  have hix : i ≠ x := by lia
   rw [Function.update_of_ne hix]
   exact hBOK i hi
 
@@ -236,85 +236,85 @@ lemma threat_shapes {b : Board} (hTF : ThreatFree b) {x : ℕ}
     rw [Function.update_self] at h0
     have hl : l = Piece.S := Option.some.inj h0
     subst l
-    rw [Function.update_of_ne (show i + 1 ≠ i by omega)] at h1
-    rw [Function.update_of_ne (show i + 2 ≠ i by omega)] at h2
+    rw [Function.update_of_ne (show i + 1 ≠ i by lia)] at h1
+    rw [Function.update_of_ne (show i + 2 ≠ i by lia)] at h2
     by_cases hx1 : x = i + 1
     · -- x = i + 1 forces l₀ = O: first shape.
       have hl₀ : l₀ = Piece.O := by
         rw [← hx1] at h1
         rw [Function.update_self] at h1
         exact Option.some.inj h1
-      have e1 : x - 1 = i := by omega
-      have e2 : x + 1 = i + 2 := by omega
+      have e1 : x - 1 = i := by lia
+      have e2 : x + 1 = i + 2 := by lia
       have hb1 : b (x - 1) = none := by
         rw [e1]
-        rw [Function.update_of_ne (show i ≠ x by omega)] at hye
+        rw [Function.update_of_ne (show i ≠ x by lia)] at hye
         exact hye
       have hb2 : b (x + 1) = some Piece.S := by
         rw [e2]
-        rw [Function.update_of_ne (show i + 2 ≠ x by omega)] at h2
+        rw [Function.update_of_ne (show i + 2 ≠ x by lia)] at h2
         exact h2
-      exact Or.inl ⟨hl₀, by omega, hb1, hb2⟩
+      exact Or.inl ⟨hl₀, by lia, hb1, hb2⟩
     · by_cases hx2 : x = i + 2
       · -- x = i + 2 forces l₀ = S: fifth shape.
         have hl₀ : l₀ = Piece.S := by
           rw [← hx2] at h2
           rw [Function.update_self] at h2
           exact Option.some.inj h2
-        have e1 : x - 1 = i + 1 := by omega
-        have e2 : x - 2 = i := by omega
+        have e1 : x - 1 = i + 1 := by lia
+        have e2 : x - 2 = i := by lia
         have hb1 : b (x - 1) = some Piece.O := by
           rw [e1]
-          rw [Function.update_of_ne (show i + 1 ≠ x by omega)] at h1
+          rw [Function.update_of_ne (show i + 1 ≠ x by lia)] at h1
           exact h1
         have hb2 : b (x - 2) = none := by
           rw [e2]
-          rw [Function.update_of_ne (show i ≠ x by omega)] at hye
+          rw [Function.update_of_ne (show i ≠ x by lia)] at hye
           exact hye
-        exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inl ⟨hl₀, by omega, hb1, hb2⟩))))
+        exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inl ⟨hl₀, by lia, hb1, hb2⟩))))
       · -- x outside the triple: `y = i` was already a winning move on `b`.
         have hxi : x ≠ i := by
           rintro rfl
           rw [Function.update_self] at hye
           cases hye
         have hbi : b i = none := by
-          rw [Function.update_of_ne (show i ≠ x by omega)] at hye
+          rw [Function.update_of_ne (show i ≠ x by lia)] at hye
           exact hye
         have hb1 : b (i + 1) = some Piece.O := by
-          rw [Function.update_of_ne (show i + 1 ≠ x by omega)] at h1
+          rw [Function.update_of_ne (show i + 1 ≠ x by lia)] at h1
           exact h1
         have hb2 : b (i + 2) = some Piece.S := by
-          rw [Function.update_of_ne (show i + 2 ≠ x by omega)] at h2
+          rw [Function.update_of_ne (show i + 2 ≠ x by lia)] at h2
           exact h2
         refine absurd ?_ hTF
         refine ⟨i, Finset.mem_range.mpr hyr, Piece.S, hbi, i,
           Finset.mem_range.mpr hir, ?_, ?_, ?_⟩
         · rw [Function.update_self]
-        · rw [Function.update_of_ne (show i + 1 ≠ i by omega)]
+        · rw [Function.update_of_ne (show i + 1 ≠ i by lia)]
           exact hb1
-        · rw [Function.update_of_ne (show i + 2 ≠ i by omega)]
+        · rw [Function.update_of_ne (show i + 2 ≠ i by lia)]
           exact hb2
   · -- y = i + 1: the letter played at `y` is O.
     rw [Function.update_self] at h1
     have hl : l = Piece.O := Option.some.inj h1
     subst l
-    rw [Function.update_of_ne (show i ≠ i + 1 by omega)] at h0
-    rw [Function.update_of_ne (show i + 2 ≠ i + 1 by omega)] at h2
+    rw [Function.update_of_ne (show i ≠ i + 1 by lia)] at h0
+    rw [Function.update_of_ne (show i + 2 ≠ i + 1 by lia)] at h2
     by_cases hx0 : x = i
     · -- x = i forces l₀ = S: third shape.
       have hl₀ : l₀ = Piece.S := by
         rw [← hx0] at h0
         rw [Function.update_self] at h0
         exact Option.some.inj h0
-      have e1 : x + 2 = i + 2 := by omega
-      have e2 : x + 1 = i + 1 := by omega
+      have e1 : x + 2 = i + 2 := by lia
+      have e2 : x + 1 = i + 1 := by lia
       have hb1 : b (x + 2) = some Piece.S := by
         rw [e1]
-        rw [Function.update_of_ne (show i + 2 ≠ x by omega)] at h2
+        rw [Function.update_of_ne (show i + 2 ≠ x by lia)] at h2
         exact h2
       have hb2 : b (x + 1) = none := by
         rw [e2]
-        rw [Function.update_of_ne (show i + 1 ≠ x by omega)] at hye
+        rw [Function.update_of_ne (show i + 1 ≠ x by lia)] at hye
         exact hye
       exact Or.inr (Or.inr (Or.inl ⟨hl₀, hb1, hb2⟩))
     · by_cases hx2 : x = i + 2
@@ -323,60 +323,60 @@ lemma threat_shapes {b : Board} (hTF : ThreatFree b) {x : ℕ}
           rw [← hx2] at h2
           rw [Function.update_self] at h2
           exact Option.some.inj h2
-        have e1 : x - 2 = i := by omega
-        have e2 : x - 1 = i + 1 := by omega
+        have e1 : x - 2 = i := by lia
+        have e2 : x - 1 = i + 1 := by lia
         have hb1 : b (x - 2) = some Piece.S := by
           rw [e1]
-          rw [Function.update_of_ne (show i ≠ x by omega)] at h0
+          rw [Function.update_of_ne (show i ≠ x by lia)] at h0
           exact h0
         have hb2 : b (x - 1) = none := by
           rw [e2]
-          rw [Function.update_of_ne (show i + 1 ≠ x by omega)] at hye
+          rw [Function.update_of_ne (show i + 1 ≠ x by lia)] at hye
           exact hye
-        exact Or.inr (Or.inr (Or.inr (Or.inl ⟨hl₀, by omega, hb1, hb2⟩)))
+        exact Or.inr (Or.inr (Or.inr (Or.inl ⟨hl₀, by lia, hb1, hb2⟩)))
       · -- x outside the triple: `y = i + 1` was already a winning move on `b`.
         have hxi : x ≠ i + 1 := by
           rintro rfl
           rw [Function.update_self] at hye
           cases hye
         have hbi : b (i + 1) = none := by
-          rw [Function.update_of_ne (show i + 1 ≠ x by omega)] at hye
+          rw [Function.update_of_ne (show i + 1 ≠ x by lia)] at hye
           exact hye
         have hb0 : b i = some Piece.S := by
-          rw [Function.update_of_ne (show i ≠ x by omega)] at h0
+          rw [Function.update_of_ne (show i ≠ x by lia)] at h0
           exact h0
         have hb2 : b (i + 2) = some Piece.S := by
-          rw [Function.update_of_ne (show i + 2 ≠ x by omega)] at h2
+          rw [Function.update_of_ne (show i + 2 ≠ x by lia)] at h2
           exact h2
         refine absurd ?_ hTF
         refine ⟨i + 1, Finset.mem_range.mpr hyr, Piece.O, hbi, i,
           Finset.mem_range.mpr hir, ?_, ?_, ?_⟩
-        · rw [Function.update_of_ne (show i ≠ i + 1 by omega)]
+        · rw [Function.update_of_ne (show i ≠ i + 1 by lia)]
           exact hb0
         · rw [Function.update_self]
-        · rw [Function.update_of_ne (show i + 2 ≠ i + 1 by omega)]
+        · rw [Function.update_of_ne (show i + 2 ≠ i + 1 by lia)]
           exact hb2
   · -- y = i + 2: the letter played at `y` is S.
     rw [Function.update_self] at h2
     have hl : l = Piece.S := Option.some.inj h2
     subst l
-    rw [Function.update_of_ne (show i ≠ i + 2 by omega)] at h0
-    rw [Function.update_of_ne (show i + 1 ≠ i + 2 by omega)] at h1
+    rw [Function.update_of_ne (show i ≠ i + 2 by lia)] at h0
+    rw [Function.update_of_ne (show i + 1 ≠ i + 2 by lia)] at h1
     by_cases hx0 : x = i
     · -- x = i forces l₀ = S: sixth shape.
       have hl₀ : l₀ = Piece.S := by
         rw [← hx0] at h0
         rw [Function.update_self] at h0
         exact Option.some.inj h0
-      have e1 : x + 1 = i + 1 := by omega
-      have e2 : x + 2 = i + 2 := by omega
+      have e1 : x + 1 = i + 1 := by lia
+      have e2 : x + 2 = i + 2 := by lia
       have hb1 : b (x + 1) = some Piece.O := by
         rw [e1]
-        rw [Function.update_of_ne (show i + 1 ≠ x by omega)] at h1
+        rw [Function.update_of_ne (show i + 1 ≠ x by lia)] at h1
         exact h1
       have hb2 : b (x + 2) = none := by
         rw [e2]
-        rw [Function.update_of_ne (show i + 2 ≠ x by omega)] at hye
+        rw [Function.update_of_ne (show i + 2 ≠ x by lia)] at hye
         exact hye
       exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ⟨hl₀, hb1, hb2⟩))))
     · by_cases hx1 : x = i + 1
@@ -385,37 +385,37 @@ lemma threat_shapes {b : Board} (hTF : ThreatFree b) {x : ℕ}
           rw [← hx1] at h1
           rw [Function.update_self] at h1
           exact Option.some.inj h1
-        have e1 : x + 1 = i + 2 := by omega
-        have e2 : x - 1 = i := by omega
+        have e1 : x + 1 = i + 2 := by lia
+        have e2 : x - 1 = i := by lia
         have hb1 : b (x + 1) = none := by
           rw [e1]
-          rw [Function.update_of_ne (show i + 2 ≠ x by omega)] at hye
+          rw [Function.update_of_ne (show i + 2 ≠ x by lia)] at hye
           exact hye
         have hb2 : b (x - 1) = some Piece.S := by
           rw [e2]
-          rw [Function.update_of_ne (show i ≠ x by omega)] at h0
+          rw [Function.update_of_ne (show i ≠ x by lia)] at h0
           exact h0
-        exact Or.inr (Or.inl ⟨hl₀, by omega, hb1, hb2⟩)
+        exact Or.inr (Or.inl ⟨hl₀, by lia, hb1, hb2⟩)
       · -- x outside the triple: `y = i + 2` was already a winning move on `b`.
         have hxi : x ≠ i + 2 := by
           rintro rfl
           rw [Function.update_self] at hye
           cases hye
         have hbi : b (i + 2) = none := by
-          rw [Function.update_of_ne (show i + 2 ≠ x by omega)] at hye
+          rw [Function.update_of_ne (show i + 2 ≠ x by lia)] at hye
           exact hye
         have hb0 : b i = some Piece.S := by
-          rw [Function.update_of_ne (show i ≠ x by omega)] at h0
+          rw [Function.update_of_ne (show i ≠ x by lia)] at h0
           exact h0
         have hb1 : b (i + 1) = some Piece.O := by
-          rw [Function.update_of_ne (show i + 1 ≠ x by omega)] at h1
+          rw [Function.update_of_ne (show i + 1 ≠ x by lia)] at h1
           exact h1
         refine absurd ?_ hTF
         refine ⟨i + 2, Finset.mem_range.mpr hyr, Piece.S, hbi, i,
           Finset.mem_range.mpr hir, ?_, ?_, ?_⟩
-        · rw [Function.update_of_ne (show i ≠ i + 2 by omega)]
+        · rw [Function.update_of_ne (show i ≠ i + 2 by lia)]
           exact hb0
-        · rw [Function.update_of_ne (show i + 1 ≠ i + 2 by omega)]
+        · rw [Function.update_of_ne (show i + 1 ≠ i + 2 by lia)]
           exact hb1
         · rw [Function.update_self]
 
@@ -429,44 +429,44 @@ lemma trap_middle {b : Board} {a : ℕ} (ha : a < 1997) (h : TrapAt b a) :
     refine ⟨h1, fun l => ?_⟩
     cases l with
     | S =>
-      refine ⟨a + 2, Finset.mem_range.mpr (by omega), Piece.O, ?_, ?_⟩
-      · rw [Function.update_of_ne (by omega : a + 2 ≠ a + 1)]; exact h2
-      · refine ⟨a + 1, Finset.mem_range.mpr (by omega), ?_, ?_, ?_⟩
-        · rw [Function.update_of_ne (by omega : a + 1 ≠ a + 2), Function.update_self]
+      refine ⟨a + 2, Finset.mem_range.mpr (by lia), Piece.O, ?_, ?_⟩
+      · rw [Function.update_of_ne (by lia : a + 2 ≠ a + 1)]; exact h2
+      · refine ⟨a + 1, Finset.mem_range.mpr (by lia), ?_, ?_, ?_⟩
+        · rw [Function.update_of_ne (by lia : a + 1 ≠ a + 2), Function.update_self]
         · rw [Function.update_self]
-        · rw [Function.update_of_ne (by omega : a + 3 ≠ a + 2),
-            Function.update_of_ne (by omega : a + 3 ≠ a + 1)]
+        · rw [Function.update_of_ne (by lia : a + 3 ≠ a + 2),
+            Function.update_of_ne (by lia : a + 3 ≠ a + 1)]
           exact h3
     | O =>
-      refine ⟨a + 2, Finset.mem_range.mpr (by omega), Piece.S, ?_, ?_⟩
-      · rw [Function.update_of_ne (by omega : a + 2 ≠ a + 1)]; exact h2
-      · refine ⟨a, Finset.mem_range.mpr (by omega), ?_, ?_, ?_⟩
-        · rw [Function.update_of_ne (by omega : a ≠ a + 2),
-            Function.update_of_ne (by omega : a ≠ a + 1)]
+      refine ⟨a + 2, Finset.mem_range.mpr (by lia), Piece.S, ?_, ?_⟩
+      · rw [Function.update_of_ne (by lia : a + 2 ≠ a + 1)]; exact h2
+      · refine ⟨a, Finset.mem_range.mpr (by lia), ?_, ?_, ?_⟩
+        · rw [Function.update_of_ne (by lia : a ≠ a + 2),
+            Function.update_of_ne (by lia : a ≠ a + 1)]
           exact h0
-        · rw [Function.update_of_ne (by omega : a + 1 ≠ a + 2), Function.update_self]
+        · rw [Function.update_of_ne (by lia : a + 1 ≠ a + 2), Function.update_self]
         · rw [Function.update_self]
   · -- IsLosing b (a + 2): play S, opponent plays O at a + 1 (triple a..a+2);
     -- play O, opponent plays S at a + 1 (triple a+1..a+3).
     refine ⟨h2, fun l => ?_⟩
     cases l with
     | S =>
-      refine ⟨a + 1, Finset.mem_range.mpr (by omega), Piece.O, ?_, ?_⟩
-      · rw [Function.update_of_ne (by omega : a + 1 ≠ a + 2)]; exact h1
-      · refine ⟨a, Finset.mem_range.mpr (by omega), ?_, ?_, ?_⟩
-        · rw [Function.update_of_ne (by omega : a ≠ a + 1),
-            Function.update_of_ne (by omega : a ≠ a + 2)]
+      refine ⟨a + 1, Finset.mem_range.mpr (by lia), Piece.O, ?_, ?_⟩
+      · rw [Function.update_of_ne (by lia : a + 1 ≠ a + 2)]; exact h1
+      · refine ⟨a, Finset.mem_range.mpr (by lia), ?_, ?_, ?_⟩
+        · rw [Function.update_of_ne (by lia : a ≠ a + 1),
+            Function.update_of_ne (by lia : a ≠ a + 2)]
           exact h0
         · rw [Function.update_self]
-        · rw [Function.update_of_ne (by omega : a + 2 ≠ a + 1), Function.update_self]
+        · rw [Function.update_of_ne (by lia : a + 2 ≠ a + 1), Function.update_self]
     | O =>
-      refine ⟨a + 1, Finset.mem_range.mpr (by omega), Piece.S, ?_, ?_⟩
-      · rw [Function.update_of_ne (by omega : a + 1 ≠ a + 2)]; exact h1
-      · refine ⟨a + 1, Finset.mem_range.mpr (by omega), ?_, ?_, ?_⟩
+      refine ⟨a + 1, Finset.mem_range.mpr (by lia), Piece.S, ?_, ?_⟩
+      · rw [Function.update_of_ne (by lia : a + 1 ≠ a + 2)]; exact h1
+      · refine ⟨a + 1, Finset.mem_range.mpr (by lia), ?_, ?_, ?_⟩
         · rw [Function.update_self]
-        · rw [Function.update_of_ne (by omega : a + 2 ≠ a + 1), Function.update_self]
-        · rw [Function.update_of_ne (by omega : a + 3 ≠ a + 1),
-            Function.update_of_ne (by omega : a + 3 ≠ a + 2)]
+        · rw [Function.update_of_ne (by lia : a + 2 ≠ a + 1), Function.update_self]
+        · rw [Function.update_of_ne (by lia : a + 3 ≠ a + 1),
+            Function.update_of_ne (by lia : a + 3 ≠ a + 2)]
           exact h3
 
 /-- A losing square of a threat-free board is the middle of a trap. -/
@@ -501,11 +501,11 @@ lemma losing_char {b : Board} (hBOK : BOK b) (hTF : ThreatFree b) {x : ℕ}
     · rw [hA2] at hB2; simp at hB2
     · have hx1998 : x ≤ 1998 := by
         by_contra hc
-        have h2000 : 2000 ≤ x + 1 := by omega
+        have h2000 : 2000 ≤ x + 1 := by lia
         rw [hBOK (x + 1) h2000] at hA2; simp at hA2
-      have e1 : x - 2 + 1 = x - 1 := by omega
-      have e2 : x - 2 + 2 = x := by omega
-      have e3 : x - 2 + 3 = x + 1 := by omega
+      have e1 : x - 2 + 1 = x - 1 := by lia
+      have e2 : x - 2 + 2 = x := by lia
+      have e3 : x - 2 + 3 = x + 1 := by lia
       refine Or.inl ⟨hx2, hx1998, ?_⟩
       show b (x - 2) = some Piece.S ∧ b (x - 2 + 1) = none ∧ b (x - 2 + 2) = none ∧
         b (x - 2 + 3) = some Piece.S
@@ -516,11 +516,11 @@ lemma losing_char {b : Board} (hBOK : BOK b) (hTF : ThreatFree b) {x : ℕ}
   · rcases hB with ⟨hB1, hB2⟩ | ⟨hx2, hB1, hB2⟩ | ⟨hx2, hB1, hB2⟩ | ⟨hB1, hB2⟩
     · have hx1997 : x ≤ 1997 := by
         by_contra hc
-        have h2000 : 2000 ≤ x + 2 := by omega
+        have h2000 : 2000 ≤ x + 2 := by lia
         rw [hBOK (x + 2) h2000] at hB1; simp at hB1
-      have e1 : x - 1 + 1 = x := by omega
-      have e2 : x - 1 + 2 = x + 1 := by omega
-      have e3 : x - 1 + 3 = x + 2 := by omega
+      have e1 : x - 1 + 1 = x := by lia
+      have e2 : x - 1 + 2 = x + 1 := by lia
+      have e3 : x - 1 + 3 = x + 2 := by lia
       refine Or.inr ⟨hx1, hx1997, ?_⟩
       show b (x - 1) = some Piece.S ∧ b (x - 1 + 1) = none ∧ b (x - 1 + 2) = none ∧
         b (x - 1 + 3) = some Piece.S
@@ -540,12 +540,12 @@ lemma trap_disjoint {b : Board} {a c : ℕ}
   obtain ⟨h0, h1, h2, -⟩ := haT
   obtain ⟨g0, -, -, g3⟩ := hcT
   rcases hx with rfl | rfl <;> rcases hx' with hx' | hx'
-  · exact hne (by omega)
-  · have e : c + 3 = a + 2 := by omega
+  · exact hne (by lia)
+  · have e : c + 3 = a + 2 := by lia
     rw [e] at g3; rw [h2] at g3; simp at g3
-  · have e : c = a + 1 := by omega
+  · have e : c = a + 1 := by lia
     rw [e] at g0; rw [h1] at g0; simp at g0
-  · exact hne (by omega)
+  · exact hne (by lia)
 
 lemma mem_losing {b : Board} {x : ℕ} : x ∈ losing b ↔ x < 2000 ∧ IsLosing b x := by
   simp [losing]
@@ -562,13 +562,13 @@ lemma losing_eq_biUnion {b : Board} (hBOK : BOK b) (hTF : ThreatFree b) :
   constructor
   · intro ⟨hx, hL⟩
     rcases losing_char hBOK hTF hx hL with ⟨hx2, hx1998, hT⟩ | ⟨hx1, hx1997, hT⟩
-    · exact ⟨x - 2, ⟨by omega, hT⟩, by omega⟩
-    · exact ⟨x - 1, ⟨by omega, hT⟩, by omega⟩
+    · exact ⟨x - 2, ⟨by lia, hT⟩, by lia⟩
+    · exact ⟨x - 1, ⟨by lia, hT⟩, by lia⟩
   · intro ⟨a, ⟨ha, hT⟩, hxm⟩
     have hmid := trap_middle ha hT
     rcases hxm with rfl | rfl
-    · exact ⟨by omega, hmid.1⟩
-    · exact ⟨by omega, hmid.2⟩
+    · exact ⟨by lia, hmid.1⟩
+    · exact ⟨by lia, hmid.2⟩
 
 /-- Losing squares come in pairs, hence there is an even number of them. -/
 lemma even_card_losing {b : Board} (hBOK : BOK b) (hTF : ThreatFree b) :
@@ -607,13 +607,13 @@ lemma exists_safe_move {b : Board} (hBOK : BOK b) (hTF : ThreatFree b)
     have hle := Finset.card_le_card hsub
     rcases even_card_losing hBOK hTF with ⟨r, hr⟩
     rcases hodd with ⟨k, hk⟩
-    omega
+    lia
   obtain ⟨x, hxe, hxnl⟩ : ∃ x ∈ empties b, x ∉ losing b := by
     by_contra hcon
     push Not at hcon
     have hsub2 : empties b ⊆ losing b := hcon
     have := Finset.card_le_card hsub2
-    omega
+    lia
   rw [mem_empties] at hxe
   obtain ⟨hx, hxe'⟩ := hxe
   have hnl : ¬ IsLosing b x := fun hL => hxnl (mem_losing.mpr ⟨hx, hL⟩)
@@ -655,7 +655,7 @@ lemma p2strat_threat {b : Board} (h : HasThreat b) :
     ∃ x l, (p2strat b).1 = x ∧ (p2strat b).2 = l ∧ x < 2000 ∧ b x = none ∧
       HasSOS (Function.update b x (some l)) := by
   simp only [p2strat]
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   refine ⟨_, _, rfl, rfl, ?_⟩
   have hs := Classical.choose_spec h
   have hs2 := Classical.choose_spec hs.2
@@ -666,7 +666,7 @@ lemma p2strat_safe {b : Board} (hTF : ThreatFree b) (hT : HasTrap b)
     (h : ∃ x ∈ Finset.range 2000, ∃ l : Piece, SafeMove b x l) :
     ∃ x l, (p2strat b).1 = x ∧ (p2strat b).2 = l ∧ SafeMove b x l := by
   simp only [p2strat]
-  rw [dif_neg hTF, dif_pos hT, dif_pos h]
+  rw [dite_eq_right hTF, dite_eq_left hT, dite_eq_left h]
   refine ⟨_, _, rfl, rfl, ?_⟩
   have hs := Classical.choose_spec h
   exact Classical.choose_spec hs.2
@@ -676,14 +676,14 @@ lemma p2strat_setup1 {b : Board} (hTF : ThreatFree b) (hNT : ¬ HasTrap b)
     ∃ a, letters b = {a} ∧ (p2strat b).1 = (if a < 1000 then 1500 else 500) ∧
       (p2strat b).2 = Piece.S := by
   simp only [p2strat]
-  rw [dif_neg hTF, dif_neg hNT, dif_pos h1]
+  rw [dite_eq_right hTF, dite_eq_right hNT, dite_eq_left h1]
   exact ⟨_, Classical.choose_spec (Finset.card_eq_one.mp h1), rfl, rfl⟩
 
 lemma p2strat_setup2 {b : Board} (hTF : ThreatFree b) (hNT : ¬ HasTrap b)
     (h1 : (letters b).card ≠ 1) (h : ∃ t ∈ Finset.range 2000, SecondSetupOk b t) :
     ∃ t, (p2strat b).1 = t ∧ (p2strat b).2 = Piece.S ∧ t < 2000 ∧ SecondSetupOk b t := by
   simp only [p2strat]
-  rw [dif_neg hTF, dif_neg hNT, dif_neg h1, dif_pos h]
+  rw [dite_eq_right hTF, dite_eq_right hNT, dite_eq_right h1, dite_eq_left h]
   refine ⟨_, rfl, rfl, ?_⟩
   have hs := Classical.choose_spec h
   rw [Finset.mem_range] at hs
@@ -726,7 +726,7 @@ lemma main_induction (τ : Strategy) :
       (empties b).card + 1 ≤ fuel → Inv b t → play fuel τ p2strat b t = Outcome.p2 := by
   intro fuel
   induction fuel with
-  | zero => intro b t hfuel hInv; omega
+  | zero => intro b t hfuel hInv; lia
   | succ fuel ih =>
     intro b t hfuel hInv
     cases t with
@@ -736,11 +736,11 @@ lemma main_induction (τ : Strategy) :
       have hodd : Odd (empties b).card := hpar
       have hne : empties b ≠ ∅ := by
         rcases hodd with ⟨k, hk⟩
-        exact empties_ne_empty (by omega)
-      rw [play, if_neg hSOS, if_neg hne]
+        exact empties_ne_empty (by lia)
+      rw [play, ite_eq_right hSOS, ite_eq_right hne]
       obtain ⟨x, l, hf, hs, hx, hxe, hnl, hlT, hlSOS⟩ :=
         p2strat_safe hTF hT (exists_safe_move hBOK hTF hodd)
-      rw [hf, hs, if_pos ⟨hx, hxe⟩]
+      rw [hf, hs, ite_eq_left ⟨hx, hxe⟩]
       have hcard := empties_update_card hx hxe l
       rcases hodd with ⟨k, hk⟩
       have hn3 : 3 ≤ (empties b).card := by
@@ -751,8 +751,8 @@ lemma main_induction (τ : Strategy) :
           intro y hy
           simp only [Finset.mem_insert, Finset.mem_singleton] at hy
           rcases hy with rfl | rfl
-          · exact mem_losing.mpr ⟨by omega, hmid.1⟩
-          · exact mem_losing.mpr ⟨by omega, hmid.2⟩
+          · exact mem_losing.mpr ⟨by lia, hmid.1⟩
+          · exact mem_losing.mpr ⟨by lia, hmid.2⟩
         have h2 := Finset.card_le_card sub
         rw [Finset.card_insert_of_notMem (by simp), Finset.card_singleton] at h2
         have hle : losing b ⊆ empties b := by
@@ -760,20 +760,20 @@ lemma main_induction (τ : Strategy) :
           rw [mem_losing] at hy
           exact mem_empties.mpr ⟨hy.1, hy.2.1⟩
         have := Finset.card_le_card hle
-        omega
-      refine ih _ true (by omega) ⟨bOK_update hBOK hx l, hlT, hlSOS,
+        lia
+      refine ih _ true (by lia) ⟨bOK_update hBOK hx l, hlT, hlSOS,
         hasTrap_update hT hx hxe hnl l, ?_⟩
       rw [hcard, hk]
-      exact ⟨⟨k, by omega⟩, by omega⟩
+      exact ⟨⟨k, by lia⟩, by lia⟩
     | true =>
       -- first player to move: even number of empty squares, at least 2
       obtain ⟨hBOK, hTF, hSOS, hT, hpar⟩ := hInv
       have hev2 : Even (empties b).card ∧ 2 ≤ (empties b).card := hpar
       obtain ⟨hev, h2⟩ := hev2
-      have hne : empties b ≠ ∅ := empties_ne_empty (by omega)
-      rw [play, if_neg hSOS, if_neg hne]
+      have hne : empties b ≠ ∅ := empties_ne_empty (by lia)
+      rw [play, ite_eq_right hSOS, ite_eq_right hne]
       by_cases hlegal : (τ b).1 < 2000 ∧ b (τ b).1 = none
-      · rw [if_pos hlegal]
+      · rw [ite_eq_left hlegal]
         set m := τ b with hm
         have hcard := empties_update_card hlegal.1 hlegal.2 m.2
         have hSOS' : ¬ HasSOS (Function.update b m.1 (some m.2)) :=
@@ -783,23 +783,23 @@ lemma main_induction (τ : Strategy) :
         · -- the first player blundered: second player wins immediately
           obtain ⟨x, l, hf, hs, hx, hxe, hSOSx⟩ := p2strat_threat hThr
           cases fuel with
-          | zero => omega
+          | zero => lia
           | succ fuel =>
-            rw [play, if_neg hSOS']
+            rw [play, ite_eq_right hSOS']
             have hne' : empties (Function.update b m.1 (some m.2)) ≠ ∅ :=
-              empties_ne_empty (by rw [hcard]; omega)
-            rw [if_neg hne', hf, hs, if_pos ⟨hx, hxe⟩]
+              empties_ne_empty (by rw [hcard]; lia)
+            rw [ite_eq_right hne', hf, hs, ite_eq_left ⟨hx, hxe⟩]
             cases fuel with
-            | zero => omega
-            | succ fuel => rw [play, if_pos hSOSx]
+            | zero => lia
+            | succ fuel => rw [play, ite_eq_left hSOSx]
         · -- a safe move: the invariant is preserved
           have hnl : ¬ IsLosing b m.1 := fun hL => hThr (hL.2 m.2)
-          refine ih _ false (by omega) ⟨hBOK', hThr, hSOS',
+          refine ih _ false (by lia) ⟨hBOK', hThr, hSOS',
             hasTrap_update hT hlegal.1 hlegal.2 hnl m.2, ?_⟩
           rw [hcard]
           rcases hev with ⟨k, hk⟩
-          exact ⟨k - 1, by omega⟩
-      · rw [if_neg hlegal]
+          exact ⟨k - 1, by lia⟩
+      · rw [ite_eq_right hlegal]
 
 /-- A good second setup move exists after the second player's first move,
     whatever the first player does (that is not immediately losing). -/
@@ -815,7 +815,7 @@ lemma exists_second_setup {q p r : ℕ} {lq lr : Piece}
   set b₃ := Function.update (Function.update
     (Function.update (fun _ => none) q (some lq)) p (some Piece.S)) r (some lr) with hb₃def
   have hbq : b₃ q = some lq := by
-    rw [hb₃def, Function.update_of_ne hqr, Function.update_of_ne (by omega),
+    rw [hb₃def, Function.update_of_ne hqr, Function.update_of_ne (by lia),
       Function.update_self]
   have hbp : b₃ p = some Piece.S := by
     rw [hb₃def, Function.update_of_ne hpr, Function.update_self]
@@ -826,7 +826,7 @@ lemma exists_second_setup {q p r : ℕ} {lq lr : Piece}
       SecondSetupOk b₃ t := by
     intro t ht htr
     -- The square `t` is empty.
-    have hte : b₃ t = none := hb₃ t (by omega) (by omega) (by omega)
+    have hte : b₃ t = none := hb₃ t (by lia) (by lia) (by lia)
     -- Playing S at `t` does not produce SOS: among `t, q, p, r`, the only pairs at
     -- distance ≤ 2 involve `r`, and no three of them are consecutive.
     have hnoSOS : ¬ HasSOS (Function.update b₃ t (some Piece.S)) := by
@@ -851,7 +851,7 @@ lemma exists_second_setup {q p r : ℕ} {lq lr : Piece}
       have hi2 := mem4 (i + 2) (by rw [h2]; simp)
       rcases hi0 with hi0 | hi0 | hi0 | hi0 <;>
         rcases hi1 with hi1 | hi1 | hi1 | hi1 <;>
-        rcases hi2 with hi2 | hi2 | hi2 | hi2 <;> omega
+        rcases hi2 with hi2 | hi2 | hi2 | hi2 <;> lia
     -- Playing S at `t` does not give the opponent an immediate win: such a win would
     -- involve `t` and another letter at distance ≤ 2, but `q, p` are far and `r` is
     -- kept away by the choice of `t`.
@@ -898,42 +898,42 @@ lemma exists_second_setup {q p r : ℕ} {lq lr : Piece}
             · exact Or.inr (Or.inr hr2)
             · rw [hb₃ _ hq2 hp2 hr2] at hnn; simp at hnn
       rcases htT with ht1 | ht1 | ht1 <;> rcases hzT with hz1 | hz1 | hz1
-      · omega
-      · rcases mem3 (i + 2) (by omega) (by omega) (by rw [h2]; simp) with h | h | h <;> omega
-      · rcases mem3 (i + 1) (by omega) (by omega) (by rw [h1]; simp) with h | h | h <;> omega
-      · rcases mem3 (i + 2) (by omega) (by omega) (by rw [h2]; simp) with h | h | h <;> omega
-      · omega
-      · rcases mem3 i (by omega) (by omega) (by rw [h0]; simp) with h | h | h <;> omega
-      · rcases mem3 (i + 1) (by omega) (by omega) (by rw [h1]; simp) with h | h | h <;> omega
-      · rcases mem3 i (by omega) (by omega) (by rw [h0]; simp) with h | h | h <;> omega
-      · omega
+      · lia
+      · rcases mem3 (i + 2) (by lia) (by lia) (by rw [h2]; simp) with h | h | h <;> lia
+      · rcases mem3 (i + 1) (by lia) (by lia) (by rw [h1]; simp) with h | h | h <;> lia
+      · rcases mem3 (i + 2) (by lia) (by lia) (by rw [h2]; simp) with h | h | h <;> lia
+      · lia
+      · rcases mem3 i (by lia) (by lia) (by rw [h0]; simp) with h | h | h <;> lia
+      · rcases mem3 (i + 1) (by lia) (by lia) (by rw [h1]; simp) with h | h | h <;> lia
+      · rcases mem3 i (by lia) (by lia) (by rw [h0]; simp) with h | h | h <;> lia
+      · lia
     -- The trap is created between `p` and `t`.
     have htrap : HasTrap (Function.update b₃ t (some Piece.S)) := by
       rcases ht with ht1 | ht1
-      · refine ⟨p, Finset.mem_range.mpr (by omega), ?_⟩
+      · refine ⟨p, Finset.mem_range.mpr (by lia), ?_⟩
         show Function.update b₃ t (some Piece.S) p = some Piece.S ∧
           Function.update b₃ t (some Piece.S) (p + 1) = none ∧
           Function.update b₃ t (some Piece.S) (p + 2) = none ∧
           Function.update b₃ t (some Piece.S) (p + 3) = some Piece.S
-        rw [Function.update_of_ne (by omega : p ≠ t),
-          Function.update_of_ne (by omega : p + 1 ≠ t),
-          Function.update_of_ne (by omega : p + 2 ≠ t), ← ht1]
-        exact ⟨hbp, hb₃ _ (by omega) (by omega) (by omega),
-          hb₃ _ (by omega) (by omega) (by omega), Function.update_self _ _ _⟩
-      · refine ⟨t, Finset.mem_range.mpr (by omega), ?_⟩
+        rw [Function.update_of_ne (by lia : p ≠ t),
+          Function.update_of_ne (by lia : p + 1 ≠ t),
+          Function.update_of_ne (by lia : p + 2 ≠ t), ← ht1]
+        exact ⟨hbp, hb₃ _ (by lia) (by lia) (by lia),
+          hb₃ _ (by lia) (by lia) (by lia), Function.update_self _ _ _⟩
+      · refine ⟨t, Finset.mem_range.mpr (by lia), ?_⟩
         show Function.update b₃ t (some Piece.S) t = some Piece.S ∧
           Function.update b₃ t (some Piece.S) (t + 1) = none ∧
           Function.update b₃ t (some Piece.S) (t + 2) = none ∧
           Function.update b₃ t (some Piece.S) (t + 3) = some Piece.S
-        rw [Function.update_self, Function.update_of_ne (by omega : t + 1 ≠ t),
-          Function.update_of_ne (by omega : t + 2 ≠ t),
-          Function.update_of_ne (by omega : t + 3 ≠ t), ht1]
-        exact ⟨rfl, hb₃ _ (by omega) (by omega) (by omega),
-          hb₃ _ (by omega) (by omega) (by omega), hbp⟩
+        rw [Function.update_self, Function.update_of_ne (by lia : t + 1 ≠ t),
+          Function.update_of_ne (by lia : t + 2 ≠ t),
+          Function.update_of_ne (by lia : t + 3 ≠ t), ht1]
+        exact ⟨rfl, hb₃ _ (by lia) (by lia) (by lia),
+          hb₃ _ (by lia) (by lia) (by lia), hbp⟩
     exact ⟨hte, hnoThr, hnoSOS, htrap⟩
   by_cases hbr : p + 1 ≤ r ∧ r ≤ p + 5
-  · exact ⟨p - 3, Finset.mem_range.mpr (by omega), core (p - 3) (by omega) (by omega)⟩
-  · exact ⟨p + 3, Finset.mem_range.mpr (by omega), core (p + 3) (by omega) (by omega)⟩
+  · exact ⟨p - 3, Finset.mem_range.mpr (by lia), core (p - 3) (by lia) (by lia)⟩
+  · exact ⟨p + 3, Finset.mem_range.mpr (by lia), core (p + 3) (by lia) (by lia)⟩
 
 snip end
 
@@ -945,14 +945,14 @@ problem usa1999_p5 :
     rintro ⟨i, -, h0, -, -⟩
     simp at h0
   have hcard0 : (empties (fun _ => none : Board)).card = 2000 := by simp [empties]
-  have hne0 : empties (fun _ => none : Board) ≠ ∅ := empties_ne_empty (by omega)
-  rw [play, if_neg hSOS0, if_neg hne0]
+  have hne0 : empties (fun _ => none : Board) ≠ ∅ := empties_ne_empty (by lia)
+  rw [play, ite_eq_right hSOS0, ite_eq_right hne0]
   -- first player's first move
   set m₀ := τ (fun _ => none) with hm₀
   by_cases hlegal0 : m₀.1 < 2000 ∧ ((fun _ => none : Board) m₀.1) = none
   swap
-  · rw [if_neg hlegal0]
-  rw [if_pos hlegal0]
+  · rw [ite_eq_right hlegal0]
+  rw [ite_eq_left hlegal0]
   set b₁ := Function.update (fun _ => none) m₀.1 (some m₀.2) with hb₁def
   have hBOK1 : BOK b₁ := bOK_update hBOK0 hlegal0.1 m₀.2
   have hlet1 : letters b₁ = {m₀.1} := by
@@ -965,7 +965,7 @@ problem usa1999_p5 :
   have hSOS1 : ¬ HasSOS b₁ := by
     intro hS
     have h3 := three_le_card_letters_of_hasSOS hS
-    omega
+    lia
   have hTF1 : ThreatFree b₁ := by
     intro hT
     rcases hT with ⟨x, hx, l, hxe, hS⟩
@@ -973,27 +973,27 @@ problem usa1999_p5 :
     have h3 := three_le_card_letters_of_hasSOS hS
     have hc := letters_update_card hx hxe l
     rw [hlet1, Finset.card_singleton] at hc
-    omega
+    lia
   have hNT1 : ¬ HasTrap b₁ := by
     intro hT
     have h2 := two_le_card_letters_of_hasTrap hT
-    omega
+    lia
   have hcard1 : (empties b₁).card = 1999 := by
     rw [hb₁def, empties_update_card hlegal0.1 hlegal0.2 m₀.2, hcard0]
-  have hne1 : empties b₁ ≠ ∅ := empties_ne_empty (by omega)
+  have hne1 : empties b₁ ≠ ∅ := empties_ne_empty (by lia)
   -- second player's first move: an S far away from the first player's move
   obtain ⟨a, hleta, hf1, hs1⟩ := p2strat_setup1 hTF1 hNT1 hcardl1
   have haq : a = m₀.1 := Finset.singleton_inj.mp (hleta.symm.trans hlet1)
   rw [haq] at hf1
   set p := if m₀.1 < 1000 then 1500 else 500 with hpdef
-  have hp2000 : p < 2000 := by rw [hpdef]; split <;> omega
-  have hpq : m₀.1 + 500 ≤ p ∨ p + 500 ≤ m₀.1 := by rw [hpdef]; split <;> omega
+  have hp2000 : p < 2000 := by rw [hpdef]; split <;> lia
+  have hpq : m₀.1 + 500 ≤ p ∨ p + 500 ≤ m₀.1 := by rw [hpdef]; split <;> lia
   have hp5 : p = 500 ∨ p = 1500 := by rw [hpdef]; split <;> simp
-  have hpne : p ≠ m₀.1 := by rw [hpdef]; split <;> omega
+  have hpne : p ≠ m₀.1 := by rw [hpdef]; split <;> lia
   have hbp1 : b₁ p = none := by
     rw [hb₁def, Function.update_of_ne hpne]
-  rw [play, if_neg hSOS1, if_neg hne1]
-  rw [hf1, hs1, if_pos ⟨hp2000, hbp1⟩]
+  rw [play, ite_eq_right hSOS1, ite_eq_right hne1]
+  rw [hf1, hs1, ite_eq_left ⟨hp2000, hbp1⟩]
   -- first player's second move
   set b₂ := Function.update b₁ p (some Piece.S) with hb₂def
   have hBOK2 : BOK b₂ := bOK_update hBOK1 hp2000 Piece.S
@@ -1002,16 +1002,16 @@ problem usa1999_p5 :
   have hSOS2 : ¬ HasSOS b₂ := by
     intro hS
     have h3 := three_le_card_letters_of_hasSOS hS
-    omega
+    lia
   have hcard2 : (empties b₂).card = 1998 := by
     rw [hb₂def, empties_update_card hp2000 hbp1 Piece.S, hcard1]
-  have hne2 : empties b₂ ≠ ∅ := empties_ne_empty (by omega)
-  rw [play, if_neg hSOS2, if_neg hne2]
+  have hne2 : empties b₂ ≠ ∅ := empties_ne_empty (by lia)
+  rw [play, ite_eq_right hSOS2, ite_eq_right hne2]
   set m₂ := τ b₂ with hm₂
   by_cases hlegal2 : m₂.1 < 2000 ∧ b₂ m₂.1 = none
   swap
-  · rw [if_neg hlegal2]
-  rw [if_pos hlegal2]
+  · rw [ite_eq_right hlegal2]
+  rw [ite_eq_left hlegal2]
   set b₃ := Function.update b₂ m₂.1 (some m₂.2) with hb₃def
   have hBOK3 : BOK b₃ := bOK_update hBOK2 hlegal2.1 m₂.2
   have hb₂q : b₂ m₀.1 = some m₀.2 := by
@@ -1026,7 +1026,7 @@ problem usa1999_p5 :
     rw [hb₃def, letters_update_card hlegal2.1 hlegal2.2 m₂.2, hlet2]
   have hcard3 : (empties b₃).card = 1997 := by
     rw [hb₃def, empties_update_card hlegal2.1 hlegal2.2 m₂.2, hcard2]
-  have hne3 : empties b₃ ≠ ∅ := empties_ne_empty (by omega)
+  have hne3 : empties b₃ ≠ ∅ := empties_ne_empty (by lia)
   have hSOS3 : ¬ HasSOS b₃ := by
     rintro ⟨i, hir, h0, h1, h2⟩
     rw [Finset.mem_range] at hir
@@ -1047,26 +1047,26 @@ problem usa1999_p5 :
     have hi1 := mem3 (i + 1) (by rw [h1]; simp)
     have hi2 := mem3 (i + 2) (by rw [h2]; simp)
     rcases hi0 with hi0 | hi0 | hi0 <;> rcases hi1 with hi1 | hi1 | hi1 <;>
-      rcases hi2 with hi2 | hi2 | hi2 <;> omega
+      rcases hi2 with hi2 | hi2 | hi2 <;> lia
   have hexp : b₃ = Function.update (Function.update
       (Function.update (fun _ => none) m₀.1 (some m₀.2)) p (some Piece.S)) m₂.1 (some m₂.2) := by
     rw [hb₃def, hb₂def, hb₁def]
   by_cases hThr3 : HasThreat b₃
   · -- the first player allows an immediate win
     obtain ⟨x, l, hf, hs, hx, hxe, hSOSx⟩ := p2strat_threat hThr3
-    rw [play, if_neg hSOS3, if_neg hne3, hf, hs, if_pos ⟨hx, hxe⟩]
-    rw [play, if_pos hSOSx]
+    rw [play, ite_eq_right hSOS3, ite_eq_right hne3, hf, hs, ite_eq_left ⟨hx, hxe⟩]
+    rw [play, ite_eq_left hSOSx]
   by_cases hT3 : HasTrap b₃
   · -- the first player has already built a trap: play a safe move
-    have hodd3 : Odd (empties b₃).card := ⟨998, by omega⟩
+    have hodd3 : Odd (empties b₃).card := ⟨998, by lia⟩
     obtain ⟨x, l, hf, hs, hx, hxe, hnl, hlT, hlSOS⟩ :=
       p2strat_safe hThr3 hT3 (exists_safe_move hBOK3 hThr3 hodd3)
-    rw [play, if_neg hSOS3, if_neg hne3, hf, hs, if_pos ⟨hx, hxe⟩]
+    rw [play, ite_eq_right hSOS3, ite_eq_right hne3, hf, hs, ite_eq_left ⟨hx, hxe⟩]
     have hcard4 := empties_update_card hx hxe l
     have hInv4 : Inv (Function.update b₃ x (some l)) true :=
       ⟨bOK_update hBOK3 hx l, hlT, hlSOS, hasTrap_update hT3 hx hxe hnl l,
-        ⟨⟨998, by omega⟩, by omega⟩⟩
-    exact main_induction τ 1997 _ true (by omega) hInv4
+        ⟨⟨998, by lia⟩, by lia⟩⟩
+    exact main_induction τ 1997 _ true (by lia) hInv4
   · -- the second player builds the trap
     have hcardl3ne : (letters b₃).card ≠ 1 := by rw [hlet3]; simp
     have hTF3exp : ThreatFree (Function.update (Function.update
@@ -1078,10 +1078,10 @@ problem usa1999_p5 :
     rw [← hexp] at hOk
     obtain ⟨t, hf, hs, ht2000, hOk2⟩ :=
       p2strat_setup2 hThr3 hT3 hcardl3ne ⟨t, Finset.mem_range.mpr htr, hOk⟩
-    rw [play, if_neg hSOS3, if_neg hne3, hf, hs, if_pos ⟨ht2000, hOk2.1⟩]
+    rw [play, ite_eq_right hSOS3, ite_eq_right hne3, hf, hs, ite_eq_left ⟨ht2000, hOk2.1⟩]
     obtain ⟨hte, hnoThr, hnoSOS, htrap⟩ := hOk2
     have hcard4 := empties_update_card ht2000 hte Piece.S
-    exact main_induction τ 1997 _ true (by omega)
-      ⟨bOK_update hBOK3 ht2000 Piece.S, hnoThr, hnoSOS, htrap, ⟨⟨998, by omega⟩, by omega⟩⟩
+    exact main_induction τ 1997 _ true (by lia)
+      ⟨bOK_update hBOK3 ht2000 Piece.S, hnoThr, hnoSOS, htrap, ⟨⟨998, by lia⟩, by lia⟩⟩
 
 end Usa1999P5

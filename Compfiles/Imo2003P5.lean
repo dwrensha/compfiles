@@ -159,7 +159,7 @@ snip end
 problem imo2003_p5 (n : ℕ) (hn : 2 < n) (x : ℕ → ℝ) (hx : MonotoneOn x (range n)) :
     (∑ i ∈ range n, ∑ j ∈ range n, |x i - x j|) ^ 2 ≤
       2 / 3 * ((n : ℝ) ^ 2 - 1) * ∑ i ∈ range n, ∑ j ∈ range n, (x i - x j) ^ 2 := by
-  have hn0 : (n : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr (by omega)
+  have hn0 : (n : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr (by lia)
   set S : ℝ := ∑ i ∈ range n, x i with hS
   set m : ℝ := S / (n : ℝ) with hm
   let y : ℕ → ℝ := fun i => x i - m
@@ -213,7 +213,7 @@ problem imo2003_p5_equality (n : ℕ) (hn : 2 < n) (x : ℕ → ℝ) (hx : Monot
     ∃ a d : ℝ, ∀ i ∈ range n, x i = a + d * (i : ℝ) := by
   constructor
   · intro heq
-    have hn0 : (n : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr (by omega)
+    have hn0 : (n : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr (by lia)
     set S : ℝ := ∑ i ∈ range n, x i with hS
     set m : ℝ := S / (n : ℝ) with hm
     let y : ℕ → ℝ := fun i => x i - m
@@ -252,7 +252,7 @@ problem imo2003_p5_equality (n : ℕ) (hn : 2 < n) (x : ℕ → ℝ) (hx : Monot
       rw [hDval]
       have h1 : (0 : ℝ) < (n : ℝ) ^ 2 - 1 := by
         rw [sub_pos, one_lt_sq_iff₀ (Nat.cast_nonneg n)]
-        exact_mod_cast (show 1 < n by omega)
+        exact_mod_cast (show 1 < n by lia)
       have h2 : (0 : ℝ) < (n : ℝ) := three_pos.trans_le hn3
       exact div_pos (mul_pos h2 h1) three_pos
     have hDne : D ≠ 0 := ne_of_gt hDpos

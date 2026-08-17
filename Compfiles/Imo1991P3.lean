@@ -136,7 +136,7 @@ problem imo1991_p3 :
         intro x hx
         rw [Finset.mem_sdiff] at hx ⊢
         exact ⟨bigUnion_subset _ hx.1, hx.2⟩
-      omega
+      lia
     have hsplit : (coprimeSet1 ∩ T) ∪ (coprimeSet2 ∩ T) ∪ (coprimeSet3 ∩ T) ∪
         (coprimeSet4 ∩ T) ∪ (coprimeSet5 ∩ T) ∪ (coprimeSet6 ∩ T) = bigUnion ∩ T := by
       change _ = (coprimeSet1 ∪ coprimeSet2 ∪ coprimeSet3 ∪ coprimeSet4 ∪ coprimeSet5 ∪
@@ -155,7 +155,7 @@ problem imo1991_p3 :
     rw [← hsplit] at hBT
     have hge : 5 ≤ (coprimeSet1 ∩ T).card ∨ 5 ≤ (coprimeSet2 ∩ T).card ∨
         5 ≤ (coprimeSet3 ∩ T).card ∨ 5 ≤ (coprimeSet4 ∩ T).card ∨
-        5 ≤ (coprimeSet5 ∩ T).card ∨ 5 ≤ (coprimeSet6 ∩ T).card := by omega
+        5 ≤ (coprimeSet5 ∩ T).card ∨ 5 ≤ (coprimeSet6 ∩ T).card := by lia
     rcases hge with h | h | h | h | h | h
     · exact five_of_subset h coprimeSet1_pairwise
     · exact five_of_subset h coprimeSet2_pairwise
@@ -168,7 +168,7 @@ problem imo1991_p3 :
     by_contra hcon
     push Not at hcon
     have hbadcard : badSet.card = 216 := by decide +kernel
-    obtain ⟨T, hTsub, hTcard⟩ := Finset.exists_subset_card_eq (show n ≤ badSet.card by omega)
+    obtain ⟨T, hTsub, hTcard⟩ := Finset.exists_subset_card_eq (show n ≤ badSet.card by lia)
     have hTIcc : T ⊆ Finset.Icc 1 280 := fun x hx => (Finset.mem_filter.mp (hTsub hx)).1
     obtain ⟨U, hUT, hUcard, hUpair⟩ := hn T hTIcc hTcard
     have hUbad : U ⊆ badSet := fun x hx => hTsub (hUT hx)
@@ -189,7 +189,7 @@ problem imo1991_p3 :
     have hge2 : 2 ≤ smallPrimeFactor a := by
       have h := smallPrimeFactor_mem a
       simp only [Finset.mem_insert, Finset.mem_singleton] at h
-      rcases h with h | h | h | h <;> omega
-    omega
+      rcases h with h | h | h | h <;> lia
+    lia
 
 end Imo1991P3

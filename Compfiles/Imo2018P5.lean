@@ -44,7 +44,7 @@ lemma S_sub (a : ℕ → ℤ) (n : ℕ) (hn : 1 ≤ n) :
     · apply Finset.sum_congr rfl
       intro i hi
       rw [Finset.mem_range] at hi
-      rw [Nat.mod_eq_of_lt (by omega : i + 1 < n + 1)]
+      rw [Nat.mod_eq_of_lt (by lia : i + 1 < n + 1)]
     · rw [Nat.mod_self]
   have h2 : S a n = (∑ i ∈ Finset.range (n - 1), (a i : ℚ) / a (i + 1)) + (a (n - 1) : ℚ) / a 0 := by
     unfold S
@@ -54,7 +54,7 @@ lemma S_sub (a : ℕ → ℤ) (n : ℕ) (hn : 1 ≤ n) :
     · apply Finset.sum_congr rfl
       intro i hi
       rw [Finset.mem_range] at hi
-      rw [Nat.mod_eq_of_lt (by omega : i + 1 < n - 1 + 1)]
+      rw [Nat.mod_eq_of_lt (by lia : i + 1 < n - 1 + 1)]
     · rw [Nat.mod_self]
   have h3 : ∑ i ∈ Finset.range n, (a i : ℚ) / a (i + 1) =
       (∑ i ∈ Finset.range (n - 1), (a i : ℚ) / a (i + 1)) + (a (n - 1) : ℚ) / a n := by
@@ -69,7 +69,7 @@ lemma step (a : ℕ → ℤ) (apos : ∀ n, 0 < a n) (N : ℕ)
     (h : ∀ n, N ≤ n → ∃ z : ℤ, z = S a n) {n : ℕ} (hn : N ≤ n) (hn1 : 1 ≤ n) :
     ∃ k : ℤ, a n * k = a 0 * a (n - 1) ∧ a 0 ∣ k + a n - a (n - 1) := by
   obtain ⟨z₁, hz₁⟩ := h n hn
-  obtain ⟨z₂, hz₂⟩ := h (n + 1) (by omega)
+  obtain ⟨z₂, hz₂⟩ := h (n + 1) (by lia)
   have hsum := S_sub a n hn1
   rw [← hz₁, ← hz₂] at hsum
   refine ⟨a 0 * (z₂ - z₁) - (a n - a (n - 1)), ?_, ?_⟩
@@ -143,12 +143,12 @@ lemma val_rule (a : ℕ → ℤ) (apos : ∀ n, 0 < a n) {p : ℕ} (hp : p.Prime
   refine ⟨?_, ?_, ?_⟩
   · -- case `κ < α`
     intro hlt
-    have hVV : V < V' := by omega
-    have hne : V ≠ V' := by omega
-    rw [min_eq_left (by omega)] at hdiff_int
+    have hVV : V < V' := by lia
+    have hne : V ≠ V' := by lia
+    rw [min_eq_left (by lia)] at hdiff_int
     have hkV : κ = V := by
       by_cases hD0 : k + a n - a (n - 1) = 0
-      · have hke : k = a (n - 1) - a n := by omega
+      · have hke : k = a (n - 1) - a n := by lia
         rw [hκ, hke]
         exact hdiff_int hne
       · have hvD' := hvD hD0
@@ -163,29 +163,29 @@ lemma val_rule (a : ℕ → ℤ) (apos : ∀ n, 0 < a n) {p : ℕ} (hp : p.Prime
         by_cases hcase : padicValInt p (k + a n - a (n - 1)) = V
         · have hge := padicValRat.min_le_padicValRat_add (p := p) hkne
           rw [hqD, hqE, hcase, ← hkDE, padicValRat.of_int, ← hκ] at hge
-          omega
+          lia
         · have heq := padicValRat.add_eq_min (p := p) hkne (by exact_mod_cast hD0)
             (by exact_mod_cast sub_ne_zero.mpr (by
               intro he
               apply hne
               rw [hV, hV', he])) (by rw [hqD, hqE]; exact_mod_cast hcase)
           rw [hqD, hqE, ← hkDE, padicValRat.of_int, ← hκ] at heq
-          omega
-    exact ⟨hkV.symm, by omega⟩
+          lia
+    exact ⟨hkV.symm, by lia⟩
   · -- case `κ = α`
     intro heq
-    omega
+    lia
   · -- case `α < κ`
     intro hgt
-    have hVV : V' < V := by omega
-    have hne : V ≠ V' := by omega
-    rw [min_eq_right (by omega)] at hdiff_int
+    have hVV : V' < V := by lia
+    have hne : V ≠ V' := by lia
+    rw [min_eq_right (by lia)] at hdiff_int
     have hV'α : α ≤ V' := by
       by_cases hD0 : k + a n - a (n - 1) = 0
-      · have hke : a (n - 1) - a n = k := by omega
+      · have hke : a (n - 1) - a n = k := by lia
         have : padicValInt p (a (n - 1) - a n) = κ := by rw [hke, hκ]
         rw [hdiff_int hne] at this
-        omega
+        lia
       · have hvD' := hvD hD0
         have hDE : ((a (n - 1) - a n : ℤ) : ℚ) =
             (k : ℚ) - ((k + a n - a (n - 1) : ℤ) : ℚ) := by push_cast; ring
@@ -204,9 +204,9 @@ lemma val_rule (a : ℕ → ℤ) (apos : ∀ n, 0 < a n) {p : ℕ} (hp : p.Prime
         nth_rw 2 [Int.add_sub_assoc] at hge
         rw [Rat.intCast_add, Rat.neg_add, add_neg_cancel_left, ← Rat.intCast_neg, Int.neg_sub] at hge
         rw [padicValRat.of_int, hdiff_int hne] at hge
-        have hmin : α ≤ min κ (padicValInt p (k + a n - a (n - 1))) := le_min (by omega) hvD'
+        have hmin : α ≤ min κ (padicValInt p (k + a n - a (n - 1))) := le_min (by lia) hvD'
         exact hmin.trans (by exact_mod_cast hge)
-    exact ⟨by omega, hV'α⟩
+    exact ⟨by lia, hV'α⟩
 
 /- Boundedness: for `n ≥ N - 1` and every prime `p`,
 `v_p(aₙ) ≤ v_p(a₀) + v_p(a_{N-1})`, proved by induction using `val_rule`. -/
@@ -217,7 +217,7 @@ lemma bound (a : ℕ → ℤ) (apos : ∀ n, 0 < a n) (N : ℕ) (hN : 0 < N)
   induction n, hn using Nat.le_induction with
   | base => exact Nat.le_add_left _ _
   | succ n hn ih =>
-    obtain ⟨k, hk1, hk2⟩ := step a apos N h (n := n + 1) (by omega) (by omega)
+    obtain ⟨k, hk1, hk2⟩ := step a apos N h (n := n + 1) (by lia) (by lia)
     obtain ⟨c1, c2, c3⟩ := val_rule a apos hp hk1 hk2
     rw [Nat.add_sub_cancel] at c1 c2 c3
     rcases lt_trichotomy (padicValInt p k) (padicValInt p (a 0)) with hlt | heq | hgt
@@ -227,7 +227,7 @@ lemma bound (a : ℕ → ℤ) (apos : ∀ n, 0 < a n) (N : ℕ) (hN : 0 < N)
     · rw [c2 heq]
       exact ih
     · obtain ⟨g1, -⟩ := c3 hgt
-      omega
+      lia
 
 /- Divisibility form of the bound: `aₙ ∣ a₀ · a_{N-1}` for `n ≥ N - 1`. -/
 lemma dvd_bound (a : ℕ → ℤ) (apos : ∀ n, 0 < a n) (N : ℕ) (hN : 0 < N)
@@ -259,7 +259,7 @@ lemma walk_const (a : ℕ → ℤ) (apos : ∀ n, 0 < a n) (N : ℕ) (hN : 0 < N
     intro i
     by_cases hi : i ∈ Finset.Ioc n₁ n₂
     · have hi' := Finset.mem_Ioc.mp hi
-      obtain ⟨k, hk1, hk2⟩ := step a apos N h (n := i) (by omega) (by omega)
+      obtain ⟨k, hk1, hk2⟩ := step a apos N h (n := i) (by lia) (by lia)
       exact ⟨k, fun _ => ⟨hk1, hk2⟩⟩
     · exact ⟨1, fun h' => absurd h' hi⟩
   choose! kk hkk using hkk
@@ -275,7 +275,7 @@ lemma walk_const (a : ℕ → ℤ) (apos : ∀ n, 0 < a n) (N : ℕ) (hN : 0 < N
       obtain ⟨c1, c2, c3⟩ := val_rule a apos hp hk1 hk2
       rcases lt_trichotomy (padicValInt p (kk i)) (padicValInt p (a 0)) with hlt | heq | hgt
       · obtain ⟨e1, -⟩ := c1 hlt
-        omega
+        lia
       · rw [c2 heq]; exact hprev
       · exact (c3 hgt).2
     have Fgen : ∀ s ∈ Finset.Icc n₁ n₂, padicValInt p (a 0) ≤ padicValInt p (a s) →
@@ -288,10 +288,10 @@ lemma walk_const (a : ℕ → ℤ) (apos : ∀ n, 0 < a n) (N : ℕ) (hN : 0 < N
         have hmem : s + (m + 1) ∈ Finset.Ioc n₁ n₂ := by
           have := Finset.mem_Icc.mp hs
           rw [Finset.mem_Ioc]
-          omega
+          lia
         have hprev : padicValInt p (a 0) ≤ padicValInt p (a (s + (m + 1) - 1)) := by
           rw [Nat.add_succ_sub_one]
-          exact ihm (by omega)
+          exact ihm (by lia)
         exact F (s + (m + 1)) hmem hprev
     -- dichotomy: either all valuations are `≥ α`, or all are `< α`
     have hsplit : (∀ i ∈ Finset.Icc n₁ n₂, padicValInt p (a 0) ≤ padicValInt p (a i)) ∨
@@ -304,14 +304,14 @@ lemma walk_const (a : ℕ → ℤ) (apos : ∀ n, 0 < a n) (N : ℕ) (hN : 0 < N
         intro i himem
         by_contra! hcon
         have h1 : padicValInt p (a 0) ≤ padicValInt p (a n₂) := by
-          have hgi := Fgen i himem hcon (n₂ - i) (by have := Finset.mem_Icc.mp himem; omega)
+          have hgi := Fgen i himem hcon (n₂ - i) (by have := Finset.mem_Icc.mp himem; lia)
           rwa [Nat.add_sub_of_le <| Finset.mem_Icc.mp himem |>.right] at hgi
         have h2 : padicValInt p (a 0) ≤ padicValInt p (a n₁) := by rwa [← heq] at h1
         have h3 : padicValInt p (a 0) ≤ padicValInt p (a j₁) := by
-          have hgi := Fgen n₁ (by rw [Finset.mem_Icc]; omega) h2 (j₁ - n₁)
-            (by have := Finset.mem_Icc.mp hj₁mem; omega)
+          have hgi := Fgen n₁ (by rw [Finset.mem_Icc]; lia) h2 (j₁ - n₁)
+            (by have := Finset.mem_Icc.mp hj₁mem; lia)
           rwa [Nat.add_sub_of_le <| Finset.mem_Icc.mp hj₁mem |>.left] at hgi
-        omega
+        lia
     rcases hsplit with hall | hall
     · -- all `≥ α`: the valuations are all equal, hence `κᵢ = α`
       have T : ∀ i ∈ Finset.Ioc n₁ n₂, padicValInt p (a i) ≤ padicValInt p (a (i - 1)) := by
@@ -320,8 +320,8 @@ lemma walk_const (a : ℕ → ℤ) (apos : ∀ n, 0 < a n) (N : ℕ) (hN : 0 < N
         obtain ⟨c1, c2, c3⟩ := val_rule a apos hp hk1 hk2
         rcases lt_trichotomy (padicValInt p (kk i)) (padicValInt p (a 0)) with hlt | heq | hgt
         · obtain ⟨e1, -⟩ := c1 hlt
-          have := hall (i - 1) (by have := Finset.mem_Ioc.mp hi; rw [Finset.mem_Icc]; omega)
-          omega
+          have := hall (i - 1) (by have := Finset.mem_Ioc.mp hi; rw [Finset.mem_Icc]; lia)
+          lia
         · rw [c2 heq]
         · exact (c3 hgt).1.le
       have hupper : ∀ m, n₁ + m ≤ n₂ → padicValInt p (a (n₁ + m)) ≤ padicValInt p (a n₁) := by
@@ -330,26 +330,26 @@ lemma walk_const (a : ℕ → ℤ) (apos : ∀ n, 0 < a n) (N : ℕ) (hN : 0 < N
         | zero => intro _; exact le_rfl
         | succ m ihm =>
           intro hm
-          have hmem : n₁ + (m + 1) ∈ Finset.Ioc n₁ n₂ := by rw [Finset.mem_Ioc]; omega
+          have hmem : n₁ + (m + 1) ∈ Finset.Ioc n₁ n₂ := by rw [Finset.mem_Ioc]; lia
           have hle := T (n₁ + (m + 1)) hmem
           rw [Nat.add_succ_sub_one] at hle
-          exact le_trans hle (ihm (by omega))
+          exact le_trans hle (ihm (by lia))
       have hlower : ∀ m, n₁ ≤ n₂ - m → padicValInt p (a n₂) ≤ padicValInt p (a (n₂ - m)) := by
         intro m
         induction m with
         | zero => intro _; exact le_rfl
         | succ m ihm =>
           intro hm
-          have hmem : n₂ - m ∈ Finset.Ioc n₁ n₂ := by rw [Finset.mem_Ioc]; omega
+          have hmem : n₂ - m ∈ Finset.Ioc n₁ n₂ := by rw [Finset.mem_Ioc]; lia
           have hle := T (n₂ - m) hmem
           rw [Nat.sub_sub] at hle
-          exact le_trans (ihm (by omega)) hle
+          exact le_trans (ihm (by lia)) hle
       have hVeq : ∀ i ∈ Finset.Icc n₁ n₂, padicValInt p (a i) = padicValInt p (a n₁) := by
         intro i hi
         rw [Finset.mem_Icc] at hi
-        have hu := hupper (i - n₁) (by omega)
+        have hu := hupper (i - n₁) (by lia)
         rw [Nat.add_sub_of_le <| hi.left] at hu
-        have hl := hlower (n₂ - i) (by omega)
+        have hl := hlower (n₂ - i) (by lia)
         rw [Nat.sub_sub_self <| hi.right, ← heq] at hl
         exact le_antisymm hu hl
       intro i hi
@@ -357,25 +357,25 @@ lemma walk_const (a : ℕ → ℤ) (apos : ∀ n, 0 < a n) (N : ℕ) (hN : 0 < N
       obtain ⟨c1, c2, c3⟩ := val_rule a apos hp hk1 hk2
       rcases lt_trichotomy (padicValInt p (kk i)) (padicValInt p (a 0)) with hlt | heq | hgt
       · obtain ⟨e1, -⟩ := c1 hlt
-        have hge := hall (i - 1) (by have := Finset.mem_Ioc.mp hi; rw [Finset.mem_Icc]; omega)
-        omega
+        have hge := hall (i - 1) (by have := Finset.mem_Ioc.mp hi; rw [Finset.mem_Icc]; lia)
+        lia
       · exact heq
       · obtain ⟨g1, -⟩ := c3 hgt
-        have e1 := hVeq i (by have := Finset.mem_Ioc.mp hi; rw [Finset.mem_Icc]; omega)
-        have e2 := hVeq (i - 1) (by have := Finset.mem_Ioc.mp hi; rw [Finset.mem_Icc]; omega)
-        omega
+        have e1 := hVeq i (by have := Finset.mem_Ioc.mp hi; rw [Finset.mem_Icc]; lia)
+        have e2 := hVeq (i - 1) (by have := Finset.mem_Ioc.mp hi; rw [Finset.mem_Icc]; lia)
+        lia
     · -- all `< α`: the rule immediately forces `κᵢ = α`
       intro i hi
       obtain ⟨hk1, hk2⟩ := hkk i hi
       obtain ⟨c1, c2, c3⟩ := val_rule a apos hp hk1 hk2
       rcases lt_trichotomy (padicValInt p (kk i)) (padicValInt p (a 0)) with hlt | heq | hgt
       · obtain ⟨-, e2⟩ := c1 hlt
-        have hlt' := hall i (by have := Finset.mem_Ioc.mp hi; rw [Finset.mem_Icc]; omega)
-        omega
+        have hlt' := hall i (by have := Finset.mem_Ioc.mp hi; rw [Finset.mem_Icc]; lia)
+        lia
       · exact heq
       · obtain ⟨-, g2⟩ := c3 hgt
-        have hlt' := hall i (by have := Finset.mem_Ioc.mp hi; rw [Finset.mem_Icc]; omega)
-        omega
+        have hlt' := hall i (by have := Finset.mem_Ioc.mp hi; rw [Finset.mem_Icc]; lia)
+        lia
   -- hence every multiplier equals `a 0`
   have hkk_eq : ∀ i ∈ Finset.Ioc n₁ n₂, kk i = a 0 := by
     intro i hi
@@ -406,10 +406,10 @@ lemma walk_const (a : ℕ → ℤ) (apos : ∀ n, 0 < a n) (N : ℕ) (hN : 0 < N
     | zero => intro _; rfl
     | succ m ihm =>
       intro hm
-      have hmem : n₁ + (m + 1) ∈ Finset.Ioc n₁ n₂ := by rw [Finset.mem_Ioc]; omega
+      have hmem : n₁ + (m + 1) ∈ Finset.Ioc n₁ n₂ := by rw [Finset.mem_Ioc]; lia
       rw [hstay (n₁ + (m + 1)) hmem, Nat.add_succ_sub_one]
-      exact ihm (by omega)
-  have := hfinal (j - n₁) (by omega)
+      exact ihm (by lia)
+  have := hfinal (j - n₁) (by lia)
   rwa [Nat.add_sub_of_le hj1] at this
 
 snip end
@@ -439,23 +439,23 @@ problem imo2018_p5
     apply Set.infinite_of_forall_exists_gt
     intro M
     obtain ⟨m, hm, hne⟩ := hnc (max (M + 1) N)
-    exact ⟨m, ⟨by omega, hne⟩, by omega⟩
+    exact ⟨m, ⟨by lia, hne⟩, by lia⟩
   -- pigeonhole: two indices with the same pair `(a m, a (m+1))`
   obtain ⟨m₁, hm₁, m₂, hm₂, hlt, hpair⟩ :=
     hU.exists_lt_map_eq_of_mapsTo (f := fun m => (a m, a (m + 1)))
       (fun m hm => by
         rw [Set.mem_ofPred_eq] at hm
-        exact Finset.mem_product.mpr ⟨hmem m (by omega), hmem (m + 1) (by omega)⟩)
+        exact Finset.mem_product.mpr ⟨hmem m (by lia), hmem (m + 1) (by lia)⟩)
       ((Finset.Icc (1 : ℤ) C ×ˢ Finset.Icc (1 : ℤ) C).finite_toSet)
   rw [Set.mem_ofPred_eq] at hm₁ hm₂
   rw [Prod.mk.injEq] at hpair
   obtain ⟨hp1, hp2⟩ := hpair
   -- the walk from `m₁ + 1` to `m₂ + 1` closes, so the sequence is constant there
   have hconst := walk_const a apos N hN hS (n₁ := m₁ + 1) (n₂ := m₂ + 1)
-    (by omega) (by omega) hp2 m₂ (by omega) (by omega)
+    (by lia) (by lia) hp2 m₂ (by lia) (by lia)
   have hconst2 := walk_const a apos N hN hS (n₁ := m₁ + 1) (n₂ := m₂ + 1)
-    (by omega) (by omega) hp2 (m₂ + 1) (by omega) (by omega)
+    (by lia) (by lia) hp2 (m₂ + 1) (by lia) (by lia)
   -- but the step at `m₂` is a non-stay, contradiction
-  omega
+  lia
 
 end Imo2018P5

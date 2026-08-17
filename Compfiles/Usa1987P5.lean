@@ -298,9 +298,9 @@ lemma key_div (k : ℕ) :
   have hk2 : 2 * k.choose 2 = k * (k - 1) := by
     rw [Nat.choose_two_right]
     have hev := Nat.div_two_mul_two_of_even (Nat.even_mul_pred_self k)
-    omega
-  have e1 : (2 * k + 1 - 1 : ℕ) = 2 * k := by omega
-  have e2 : (2 * k + 1 - 3 : ℕ) = 2 * (k - 1) := by omega
+    lia
+  have e1 : (2 * k + 1 - 1 : ℕ) = 2 * k := by lia
+  have e2 : (2 * k + 1 - 3 : ℕ) = 2 * (k - 1) := by lia
   rw [e1, e2]
   have h3 : (2 * k) * (2 * (k - 1)) = 8 * k.choose 2 := by
     have h4 : (2 * k) * (2 * (k - 1)) = 4 * (k * (k - 1)) := by
@@ -319,8 +319,8 @@ lemma cast_key (k : ℕ) :
       ((2 * k + 1 : ℕ) : ℤ) * (((2 * k + 1 : ℕ) : ℤ) - 1) * (((2 * k + 1 : ℕ) : ℤ) - 3) := by
   rcases k with _ | k
   · norm_num
-  · have e1 : (2 * (k + 1) + 1 - 1 : ℕ) = 2 * (k + 1) := by omega
-    have e2 : (2 * (k + 1) + 1 - 3 : ℕ) = 2 * k := by omega
+  · have e1 : (2 * (k + 1) + 1 - 1 : ℕ) = 2 * (k + 1) := by lia
+    have e2 : (2 * (k + 1) + 1 - 3 : ℕ) = 2 * k := by lia
     rw [e1, e2]
     push_cast
     ring
@@ -337,7 +337,7 @@ lemma lower_bound (k : ℕ) (a : Fin (2 * k + 1) → Bool) :
       refine Finset.sum_congr rfl fun i _ ↦ ?_
       rw [Nat.choose_two_right]
       have hev := Nat.div_two_mul_two_of_even (Nat.even_mul_pred_self (f a i))
-      omega
+      lia
     have hcast : ((2 * numGoodTriples a : ℕ) : ℤ) = 2 * (numGoodTriples a : ℤ) := by
       push_cast; ring
     rw [← hcast, h, Nat.cast_sum, ← Finset.sum_sub_distrib]
@@ -355,11 +355,11 @@ lemma lower_bound (k : ℕ) (a : Fin (2 * k + 1) → Bool) :
     have h : (2 : ℕ) * ∑ i : Fin (2 * k + 1), f a i = (2 * k + 1) * ((2 * k + 1) - 1) := by
       rw [hsf, Nat.choose_two_right]
       have hev := Nat.div_two_mul_two_of_even (Nat.even_mul_pred_self (2 * k + 1))
-      omega
+      lia
     have hcast : ((2 * ∑ i : Fin (2 * k + 1), f a i : ℕ) : ℤ) =
         2 * ∑ i : Fin (2 * k + 1), (f a i : ℤ) := by
       push_cast; ring
-    rw [← hcast, h, Nat.cast_mul, Nat.cast_sub (by omega : 1 ≤ 2 * k + 1)]
+    rw [← hcast, h, Nat.cast_mul, Nat.cast_sub (by lia : 1 ≤ 2 * k + 1)]
     push_cast
     ring
   have hcs : (∑ i : Fin (2 * k + 1), (f a i : ℤ)) ^ 2 ≤
@@ -394,7 +394,7 @@ lemma altSeq_eq_iff {i j : Fin n} : altSeq n i = altSeq n j ↔ (i : ℕ) % 2 = 
   have hj := Nat.mod_lt (j : ℕ) (show 0 < 2 by norm_num)
   simp only [altSeq]
   rw [Bool.eq_iff_iff, beq_iff_eq, beq_iff_eq]
-  constructor <;> omega
+  constructor <;> lia
 
 lemma card_eqBefore_alt (k : ℕ) (i : Fin (2 * k + 1)) :
     (eqBefore (altSeq (2 * k + 1)) i).card = (i : ℕ) / 2 := by
@@ -406,24 +406,24 @@ lemma card_eqBefore_alt (k : ℕ) (i : Fin (2 * k + 1)) :
     have hpar : (j : ℕ) % 2 = (i : ℕ) % 2 := altSeq_eq_iff.mp hj.2
     have hlt : (j : ℕ) < (i : ℕ) := hj.1
     simp only [Finset.mem_range]
-    omega
+    lia
   · intro j₁ hj₁ j₂ hj₂ heq
     simp only [eqBefore, Finset.mem_filter, Finset.mem_univ, true_and] at hj₁ hj₂
     have hpar1 : (j₁ : ℕ) % 2 = (i : ℕ) % 2 := altSeq_eq_iff.mp hj₁.2
     have hpar2 : (j₂ : ℕ) % 2 = (i : ℕ) % 2 := altSeq_eq_iff.mp hj₂.2
     have heq2 : (j₁ : ℕ) / 2 = (j₂ : ℕ) / 2 := heq
     apply Fin.ext
-    omega
+    lia
   · intro m hm
     simp only [Finset.mem_range] at hm
-    refine ⟨⟨2 * m + (i : ℕ) % 2, by omega⟩, ?_, ?_⟩
+    refine ⟨⟨2 * m + (i : ℕ) % 2, by lia⟩, ?_, ?_⟩
     · simp only [eqBefore, Finset.mem_filter, Finset.mem_univ, true_and]
-      refine ⟨by show 2 * m + (i : ℕ) % 2 < (i : ℕ); omega, ?_⟩
+      refine ⟨by show 2 * m + (i : ℕ) % 2 < (i : ℕ); lia, ?_⟩
       rw [altSeq_eq_iff]
       show (2 * m + (i : ℕ) % 2) % 2 = (i : ℕ) % 2
-      omega
+      lia
     · show (2 * m + (i : ℕ) % 2) / 2 = m
-      omega
+      lia
 
 lemma card_neqAfter_alt (k : ℕ) (i : Fin (2 * k + 1)) :
     (neqAfter (altSeq (2 * k + 1)) i).card = k - (i : ℕ) / 2 := by
@@ -436,7 +436,7 @@ lemma card_neqAfter_alt (k : ℕ) (i : Fin (2 * k + 1)) :
     have hlt : (i : ℕ) < (j : ℕ) := hj.1
     have hj2 := Nat.mod_lt (j : ℕ) (show 0 < 2 by norm_num)
     simp only [Finset.mem_range]
-    omega
+    lia
   · intro j₁ hj₁ j₂ hj₂ heq
     simp only [neqAfter, Finset.mem_filter, Finset.mem_univ, true_and] at hj₁ hj₂
     have hpar1 : ¬ ((j₁ : ℕ) % 2 = (i : ℕ) % 2) := altSeq_eq_iff.not.mp hj₁.2
@@ -447,21 +447,21 @@ lemma card_neqAfter_alt (k : ℕ) (i : Fin (2 * k + 1)) :
     have hj2m := Nat.mod_lt (j₂ : ℕ) (show 0 < 2 by norm_num)
     have heq2 : ((j₁ : ℕ) - (i : ℕ) - 1) / 2 = ((j₂ : ℕ) - (i : ℕ) - 1) / 2 := heq
     apply Fin.ext
-    omega
+    lia
   · intro m hm
     simp only [Finset.mem_range] at hm
-    refine ⟨⟨(i : ℕ) + 1 + 2 * m, by omega⟩, ?_, ?_⟩
+    refine ⟨⟨(i : ℕ) + 1 + 2 * m, by lia⟩, ?_, ?_⟩
     · simp only [neqAfter, Finset.mem_filter, Finset.mem_univ, true_and]
-      refine ⟨by show (i : ℕ) < (i : ℕ) + 1 + 2 * m; omega, ?_⟩
-      have hne : ¬ (((i : ℕ) + 1 + 2 * m) % 2 = (i : ℕ) % 2) := by omega
+      refine ⟨by show (i : ℕ) < (i : ℕ) + 1 + 2 * m; lia, ?_⟩
+      have hne : ¬ (((i : ℕ) + 1 + 2 * m) % 2 = (i : ℕ) % 2) := by lia
       exact altSeq_eq_iff.not.mpr hne
     · show ((i : ℕ) + 1 + 2 * m - (i : ℕ) - 1) / 2 = m
-      omega
+      lia
 
 lemma f_alt (k : ℕ) (i : Fin (2 * k + 1)) : f (altSeq (2 * k + 1)) i = k := by
   rw [f_apply, card_eqBefore_alt, card_neqAfter_alt]
   have hilt := i.isLt
-  omega
+  lia
 
 /-- The alternating sequence attains the bound. -/
 lemma T_alt (k : ℕ) : numGoodTriples (altSeq (2 * k + 1)) = (2 * k + 1) * k.choose 2 := by
@@ -479,7 +479,7 @@ problem usa1987_p5_part2 (hn : Odd n) :
   have hmin : minT (2 * k + 1) = (2 * k + 1) * k.choose 2 := by
     have h8 := key_div k
     unfold minT
-    omega
+    lia
   constructor
   · exact ⟨altSeq (2 * k + 1), by
       show numGoodTriples (altSeq (2 * k + 1)) = minT (2 * k + 1)

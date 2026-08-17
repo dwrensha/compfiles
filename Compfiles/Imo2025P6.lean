@@ -124,7 +124,6 @@ private lemma maxDecSequencesTo_mem : maxDecSequencesTo f i ∈ decSequencesTo f
 
 private lemma maxIncSequencesTo_lt {i j : α} (hij : i < j) (hfij : f i < f j) :
     maxIncSequencesTo f i < maxIncSequencesTo f j := by
-  classical
   rw [Nat.lt_iff_add_one_le]
   refine le_max' _ _ ?_
   have : maxIncSequencesTo f i ∈ incSequencesTo f i := max'_mem _ incSequencesTo_nonempty
@@ -167,7 +166,6 @@ private theorem erdos_szekeres {r s : ℕ} {f : α → β}
     (hn : r * s < Fintype.card α) (hf : Injective f) :
     (∃ t : Finset α, r < #t ∧ StrictMonoOn f t) ∨
       ∃ t : Finset α, s < #t ∧ StrictAntiOn f t := by
-  classical
   rsuffices ⟨i, hi⟩ : ∃ i, r < maxIncSequencesTo f i ∨ s < maxDecSequencesTo f i
   · refine Or.imp ?_ ?_ hi
     on_goal 1 =>
@@ -178,6 +176,7 @@ private theorem erdos_szekeres {r s : ℕ} {f : α → β}
       intro hi
       obtain ⟨t, ht₁, ht₂⟩ := mem_image.1 this
       refine ⟨t, by rwa [ht₂], ?_⟩
+      classical
       rw [mem_filter] at ht₁
       exact ht₁.2.2
   by_contra! q
@@ -351,7 +350,7 @@ lemma card_filter_ge_sub_one {α : Type*} [DecidableEq α]
     (S.filter P).card ≥ S.card - 1 := by
   have h_card_split : S.card = (S.filter P).card + (S.filter (fun x => ¬ P x)).card := by
     rw [← card_union_of_disjoint (disjoint_filter_filter_not S S P), filter_union_filter_not_eq]
-  omega
+  lia
 
 macro "solve_boundary_count" S:term "," P:term "," h_unique:term "," mem_thm:term : tactic =>
   `(tactic| (
@@ -367,7 +366,7 @@ macro "solve_boundary_count" S:term "," P:term "," h_unique:term "," mem_thm:ter
     have hpxq : px q < n := q.1.isLt
     have hpyq : py q < n := q.2.isLt
     apply ($h_unique) p hp_blk q hq_blk
-    omega
+    lia
   ))
 
 theorem targetsWin_inequality
@@ -689,7 +688,7 @@ lemma fin_val_sub_one_eq {i : Fin n} (h : 0 < i.val) :
 
 lemma fin_val_add_one_eq {i : Fin n} (h : i.val < n - 1) :
     (i + 1).val = i.val + 1 := by
-  rw [Fin.val_add]; simp; rw [Nat.mod_eq_of_lt]; omega
+  rw [Fin.val_add]; simp; rw [Nat.mod_eq_of_lt]; lia
 
 lemma source_on_face_W (m : Matilda n all_black) (bw : Point n)
     (hbw : bw ∈ all_black) (hbw_pos : 0 < py bw)
@@ -699,8 +698,8 @@ lemma source_on_face_W (m : Matilda n all_black) (bw : Point n)
   have hsub := fin_val_sub_one_eq hbw_pos
   simp only [px, py] at hbw_pos hsub ⊢
   have h_not := m.h_disjoint bw hbw; simp only [px, py] at h_not; push Not at h_not
-  have hlt := h_not (by omega) (by omega) (by omega)
-  exact ⟨by omega, by omega, by omega⟩
+  have hlt := h_not (by lia) (by lia) (by lia)
+  exact ⟨by lia, by lia, by lia⟩
 
 lemma source_on_face_E (m : Matilda n all_black) (be : Point n)
     (hbe : be ∈ all_black) (hbe_bound : py be < n - 1)
@@ -713,8 +712,8 @@ lemma source_on_face_E (m : Matilda n all_black) (be : Point n)
   -- source is below tile: py be < m.y_min, since py be + 1 ≥ m.y_min and py be ≤ m.y_max would put source in tile
   by_contra h_neg; push Not at h_neg
   by_cases h_ymin : m.y_min ≤ ↑be.2
-  · exact absurd (h_not (by omega) (by omega) h_ymin) (by omega)
-  · push Not at h_ymin; omega
+  · exact absurd (h_not (by lia) (by lia) h_ymin) (by lia)
+  · push Not at h_ymin; lia
 
 lemma source_on_face_N (m : Matilda n all_black) (bn : Point n)
     (hbn : bn ∈ all_black) (hbn_pos : 0 < px bn)
@@ -726,8 +725,8 @@ lemma source_on_face_N (m : Matilda n all_black) (bn : Point n)
   have h_not := m.h_disjoint bn hbn; simp only [px, py] at h_not; push Not at h_not
   by_contra h_neg; push Not at h_neg
   by_cases h_xmax : ↑bn.1 ≤ m.x_max
-  · exact absurd (h_not (by omega) h_xmax (by omega)) (by omega)
-  · push Not at h_xmax; omega
+  · exact absurd (h_not (by lia) h_xmax (by lia)) (by lia)
+  · push Not at h_xmax; lia
 
 lemma source_on_face_S (m : Matilda n all_black) (bs : Point n)
     (hbs : bs ∈ all_black) (hbs_bound : px bs < n - 1)
@@ -739,8 +738,8 @@ lemma source_on_face_S (m : Matilda n all_black) (bs : Point n)
   have h_not := m.h_disjoint bs hbs; simp only [px, py] at h_not; push Not at h_not
   by_contra h_neg; push Not at h_neg
   by_cases h_xmin : m.x_min ≤ ↑bs.1
-  · exact absurd (h_not h_xmin (by omega) (by omega)) (by omega)
-  · push Not at h_xmin; omega
+  · exact absurd (h_not h_xmin (by lia) (by lia)) (by lia)
+  · push Not at h_xmin; lia
 
 end LabelingConsistency
 
@@ -858,18 +857,18 @@ private lemma fin_ne_sub_one {n : ℕ} [NeZero n] (h_n : 2 ≤ n) (a : Fin n)
     (h : 0 < a.val) : a ≠ a - 1 := by
   intro h_eq; apply Fin.ext_iff.mp at h_eq
   have h_le : (1 : Fin n) ≤ a := by
-    rw [Fin.le_def]; show 1 % n ≤ a.val; rw [Nat.mod_eq_of_lt h_n]; omega
+    rw [Fin.le_def]; show 1 % n ≤ a.val; rw [Nat.mod_eq_of_lt h_n]; lia
   rw [Fin.sub_val_of_le h_le] at h_eq
   have : (1 : Fin n).val = 1 := by show 1 % n = 1; rw [Nat.mod_eq_of_lt h_n]
-  omega
+  lia
 
 private lemma fin_ne_add_one {n : ℕ} [NeZero n] (a : Fin n)
     (h : a.val < n - 1) : a ≠ a + 1 := by
   intro h_eq; apply Fin.ext_iff.mp at h_eq
   rw [Fin.val_add] at h_eq
   have h1v : (1 : Fin n).val = 1 % n := rfl
-  rw [Nat.mod_eq_of_lt (by omega : 1 < n)] at h1v; rw [h1v] at h_eq
-  rw [Nat.mod_eq_of_lt (by omega)] at h_eq; omega
+  rw [Nat.mod_eq_of_lt (by lia : 1 < n)] at h1v; rw [h1v] at h_eq
+  rw [Nat.mod_eq_of_lt (by lia)] at h_eq; lia
 
 private lemma label_pos_W_absurd {n : ℕ} [NeZero n] (h_n : 2 ≤ n)
     {all_black : Finset (Point n)}
@@ -989,7 +988,7 @@ lemma matilda_covers_at_most_one_core {n : ℕ} [NeZero n]
     have f1 := source_on_face_W m p1 hp1.1.1 hp1.2 h_cov1
     have f2 := source_on_face_W m p2 hp2.1.1 hp2.2 h_cov2
     exact Label.source_ne_of_ne h_ne (by rw [h1, h2])
-      (h_uniq_y p1 hp1.1.1 p2 hp2.1.1 (by omega))
+      (h_uniq_y p1 hp1.1.1 p2 hp2.1.1 (by lia))
   · -- W.N: bw on top face, bn on right face → chain contradiction
     have hW := props1.1 h1; have hN := props2.2.1 h2
     simp only [mem_targetsWin, mem_targetsW] at hW
@@ -1003,7 +1002,7 @@ lemma matilda_covers_at_most_one_core {n : ℕ} [NeZero n]
     simp only [mem_regionWExtend] at hW; simp only [mem_regionNExtend] at hN
     rcases (mem_u_lower u p1).mp hW.1.2.1 with ⟨u1, hu1_mem, hu1_x, hu1_y⟩
     rcases (mem_u_upper u p2).mp hN.1.2.1 with ⟨u2, hu2_mem, hu2_x, hu2_y⟩
-    have : py u1 ≤ py u2 := h_u_mono u1 hu1_mem u2 hu2_mem (by omega)
+    have : py u1 ≤ py u2 := h_u_mono u1 hu1_mem u2 hu2_mem (by lia)
     linarith
   · -- W.E: opposite faces (top/bottom) → chain contradiction
     have hW := props1.1 h1; have hE := props2.2.2.1 h2
@@ -1039,7 +1038,7 @@ lemma matilda_covers_at_most_one_core {n : ℕ} [NeZero n]
     -- From x: px u2 < px u1 ≤ px p1 ≤ px v1, and px v2 ≤ px p2 ≤ px u2
     -- So px v2 ≤ px u2 < px u1 ≤ px v1, hence px v2 < px v1
     -- v_mono: px v2 ≤ px v1 → py v1 ≤ py v2
-    have h_v_mono := h_v_mono v2 hv2_mem v1 hv1_mem (by omega)
+    have h_v_mono := h_v_mono v2 hv2_mem v1 hv1_mem (by lia)
     -- py v1 ≤ py v2. But py p1 ≤ py v1 and py v2 ≤ py p2, so py p1 ≤ py p2. Contradiction.
     linarith
   · -- W.S: bw on top face, bs on left face → chain contradiction (via v)
@@ -1054,7 +1053,7 @@ lemma matilda_covers_at_most_one_core {n : ℕ} [NeZero n]
     simp only [mem_regionWExtend] at hW; simp only [mem_regionSExtend] at hS
     rcases (mem_v_lower v p1).mp hW.1.2.2 with ⟨v1, hv1_mem, hv1_x, hv1_y⟩
     rcases (mem_v_upper v p2).mp hS.1.2.2 with ⟨v2, hv2_mem, hv2_x, hv2_y⟩
-    have : py v1 ≤ py v2 := h_v_mono v2 hv2_mem v1 hv1_mem (by omega)
+    have : py v1 ≤ py v2 := h_v_mono v2 hv2_mem v1 hv1_mem (by lia)
     linarith
   · exact absurd h2 h_not_X2
   · -- N.W: symmetric to W.N
@@ -1067,7 +1066,7 @@ lemma matilda_covers_at_most_one_core {n : ℕ} [NeZero n]
     simp only [mem_regionWExtend] at hW; simp only [mem_regionNExtend] at hN
     rcases (mem_u_lower u p2).mp hW.1.2.1 with ⟨u1, hu1_mem, hu1_x, hu1_y⟩
     rcases (mem_u_upper u p1).mp hN.1.2.1 with ⟨u2, hu2_mem, hu2_x, hu2_y⟩
-    have : py u1 ≤ py u2 := h_u_mono u1 hu1_mem u2 hu2_mem (by omega)
+    have : py u1 ≤ py u2 := h_u_mono u1 hu1_mem u2 hu2_mem (by lia)
     linarith
   · -- N.N: both on right face → px equal → same source, contradiction
     have hp1 := props1.2.1 h1; have hp2 := props2.2.1 h2
@@ -1076,7 +1075,7 @@ lemma matilda_covers_at_most_one_core {n : ℕ} [NeZero n]
     have f1 := source_on_face_N m p1 hp1.1.1 hp1.2 h_cov1
     have f2 := source_on_face_N m p2 hp2.1.1 hp2.2 h_cov2
     exact Label.source_ne_of_ne h_ne (by rw [h1, h2])
-      (h_uniq_x p1 hp1.1.1 p2 hp2.1.1 (by omega))
+      (h_uniq_x p1 hp1.1.1 p2 hp2.1.1 (by lia))
   · -- N.E: bn on right face, be on bottom face → chain contradiction (via v)
     have hN := props1.2.1 h1; have hE := props2.2.2.1 h2
     simp only [mem_targetsNin, mem_targetsN] at hN
@@ -1090,7 +1089,7 @@ lemma matilda_covers_at_most_one_core {n : ℕ} [NeZero n]
     simp only [mem_regionEExtend] at hE; simp only [mem_regionNExtend] at hN
     rcases (mem_v_upper v p2).mp hE.1.2.2 with ⟨v1, hv1_mem, hv1_x, hv1_y⟩
     rcases (mem_v_lower v p1).mp hN.1.2.2 with ⟨v2, hv2_mem, hv2_x, hv2_y⟩
-    have : py v2 ≤ py v1 := h_v_mono v1 hv1_mem v2 hv2_mem (by omega)
+    have : py v2 ≤ py v1 := h_v_mono v1 hv1_mem v2 hv2_mem (by lia)
     linarith
   · -- N.S: opposite faces (right/left) → chain contradiction
     have hN := props1.2.1 h1; have hS := props2.2.2.2 h2
@@ -1107,7 +1106,7 @@ lemma matilda_covers_at_most_one_core {n : ℕ} [NeZero n]
     rcases (mem_v_lower v p1).mp h_bn_v with ⟨v1, hv1_mem, hv1_x, hv1_y⟩
     rcases (mem_v_upper v p2).mp h_bs_v with ⟨v2, hv2_mem, hv2_x, hv2_y⟩
     -- u-chain: px u2 ≤ px p2 < px p1 ≤ px u1 → px u2 ≤ px u1
-    have h_u_x : px u2 ≤ px u1 := by omega
+    have h_u_x : px u2 ≤ px u1 := by lia
     have h_u_y : py u2 ≤ py u1 := h_u_mono u2 hu2_mem u1 hu1_mem h_u_x
     -- v-chain: py v2 ≤ py p2 and py p1 ≤ py v1
     -- From u: py u1 ≤ py p1 and py p2 ≤ py u2, combined with h_u_y: py p2 ≤ py u2 ≤ py u1 ≤ py p1
@@ -1120,11 +1119,11 @@ lemma matilda_covers_at_most_one_core {n : ℕ} [NeZero n]
     -- px v2 ≤ px p2 ≤ x_max - 1 and px p1 ≤ px v1
     -- So px v2 < px v1 → v_mono: py v1 ≤ py v2 → combined with py v2 ≤ py v1: py v1 = py v2
     -- Then v_inj: v1 = v2, so px v1 = px v2, contradicting px v2 < px v1
-    have h_v_x : px v2 ≤ px v1 := by omega
+    have h_v_x : px v2 ≤ px v1 := by lia
     have h_v_anti : py v1 ≤ py v2 := h_v_mono v2 hv2_mem v1 hv1_mem h_v_x
-    have h_v_y_eq : py v1 = py v2 := by omega
+    have h_v_y_eq : py v1 = py v2 := by lia
     have h_v_eq : v1 = v2 := h_v_inj v1 hv1_mem v2 hv2_mem h_v_y_eq
-    rw [h_v_eq] at hv1_x; omega
+    rw [h_v_eq] at hv1_x; lia
   · exact absurd h2 h_not_X2
   · -- E.W: symmetric to W.E
     have hE := props1.2.2.1 h1; have hW := props2.1 h2
@@ -1142,7 +1141,7 @@ lemma matilda_covers_at_most_one_core {n : ℕ} [NeZero n]
     have h_u_y : py u2 < py u1 := by linarith
     have h_u_x : px u2 < px u1 :=
       lt_imp_lt_of_le_imp_le (h_u_mono u1 hu1_mem u2 hu2_mem) h_u_y
-    have h_v_mono := h_v_mono v2 hv2_mem v1 hv1_mem (by omega)
+    have h_v_mono := h_v_mono v2 hv2_mem v1 hv1_mem (by lia)
     linarith
   · -- E.N: symmetric to N.E
     have hE := props1.2.2.1 h1; have hN := props2.2.1 h2
@@ -1154,7 +1153,7 @@ lemma matilda_covers_at_most_one_core {n : ℕ} [NeZero n]
     simp only [mem_regionEExtend] at hE; simp only [mem_regionNExtend] at hN
     rcases (mem_v_upper v p1).mp hE.1.2.2 with ⟨v1, hv1_mem, hv1_x, hv1_y⟩
     rcases (mem_v_lower v p2).mp hN.1.2.2 with ⟨v2, hv2_mem, hv2_x, hv2_y⟩
-    have : py v2 ≤ py v1 := h_v_mono v1 hv1_mem v2 hv2_mem (by omega)
+    have : py v2 ≤ py v1 := h_v_mono v1 hv1_mem v2 hv2_mem (by lia)
     linarith
   · -- E.E: both on bottom face → py equal → same source, contradiction
     have hp1 := props1.2.2.1 h1; have hp2 := props2.2.2.1 h2
@@ -1163,7 +1162,7 @@ lemma matilda_covers_at_most_one_core {n : ℕ} [NeZero n]
     have f1 := source_on_face_E m p1 hp1.1.1 hp1.2 h_cov1
     have f2 := source_on_face_E m p2 hp2.1.1 hp2.2 h_cov2
     exact Label.source_ne_of_ne h_ne (by rw [h1, h2])
-      (h_uniq_y p1 hp1.1.1 p2 hp2.1.1 (by omega))
+      (h_uniq_y p1 hp1.1.1 p2 hp2.1.1 (by lia))
   · -- E.S: be on bottom face, bs on left face → chain contradiction (via u)
     have hE := props1.2.2.1 h1; have hS := props2.2.2.2 h2
     simp only [mem_targetsEin, mem_targetsE] at hE
@@ -1177,7 +1176,7 @@ lemma matilda_covers_at_most_one_core {n : ℕ} [NeZero n]
     simp only [mem_regionEExtend] at hE; simp only [mem_regionSExtend] at hS
     rcases (mem_u_upper u p1).mp hE.1.2.1 with ⟨u1, hu1_mem, hu1_x, hu1_y⟩
     rcases (mem_u_lower u p2).mp hS.1.2.1 with ⟨u2, hu2_mem, hu2_x, hu2_y⟩
-    have : py u2 ≤ py u1 := h_u_mono u2 hu2_mem u1 hu1_mem (by omega)
+    have : py u2 ≤ py u1 := h_u_mono u2 hu2_mem u1 hu1_mem (by lia)
     linarith
   · exact absurd h2 h_not_X2
   · -- S.W: symmetric to W.S
@@ -1190,7 +1189,7 @@ lemma matilda_covers_at_most_one_core {n : ℕ} [NeZero n]
     simp only [mem_regionSExtend] at hS; simp only [mem_regionWExtend] at hW
     rcases (mem_v_upper v p1).mp hS.1.2.2 with ⟨v2, hv2_mem, hv2_x, hv2_y⟩
     rcases (mem_v_lower v p2).mp hW.1.2.2 with ⟨v1, hv1_mem, hv1_x, hv1_y⟩
-    have : py v1 ≤ py v2 := h_v_mono v2 hv2_mem v1 hv1_mem (by omega)
+    have : py v1 ≤ py v2 := h_v_mono v2 hv2_mem v1 hv1_mem (by lia)
     linarith
   · -- S.N: symmetric to N.S
     have hS := props1.2.2.2 h1; have hN := props2.2.1 h2
@@ -1205,13 +1204,13 @@ lemma matilda_covers_at_most_one_core {n : ℕ} [NeZero n]
     rcases (mem_u_lower u p1).mp h_bs_u with ⟨u2, hu2_mem, hu2_x, hu2_y⟩
     rcases (mem_v_lower v p2).mp h_bn_v with ⟨v1, hv1_mem, hv1_x, hv1_y⟩
     rcases (mem_v_upper v p1).mp h_bs_v with ⟨v2, hv2_mem, hv2_x, hv2_y⟩
-    have h_u_x : px u2 ≤ px u1 := by omega
+    have h_u_x : px u2 ≤ px u1 := by lia
     have h_u_y : py u2 ≤ py u1 := h_u_mono u2 hu2_mem u1 hu1_mem h_u_x
-    have h_v_x : px v2 ≤ px v1 := by omega
+    have h_v_x : px v2 ≤ px v1 := by lia
     have h_v_anti : py v1 ≤ py v2 := h_v_mono v2 hv2_mem v1 hv1_mem h_v_x
-    have h_v_y_eq : py v1 = py v2 := by omega
+    have h_v_y_eq : py v1 = py v2 := by lia
     have h_v_eq : v1 = v2 := h_v_inj v1 hv1_mem v2 hv2_mem h_v_y_eq
-    rw [h_v_eq] at hv1_x; omega
+    rw [h_v_eq] at hv1_x; lia
   · -- S.E: symmetric to E.S
     have hS := props1.2.2.2 h1; have hE := props2.2.2.1 h2
     simp only [mem_targetsSin, mem_targetsS] at hS
@@ -1222,7 +1221,7 @@ lemma matilda_covers_at_most_one_core {n : ℕ} [NeZero n]
     simp only [mem_regionEExtend] at hE; simp only [mem_regionSExtend] at hS
     rcases (mem_u_upper u p2).mp hE.1.2.1 with ⟨u1, hu1_mem, hu1_x, hu1_y⟩
     rcases (mem_u_lower u p1).mp hS.1.2.1 with ⟨u2, hu2_mem, hu2_x, hu2_y⟩
-    have : py u2 ≤ py u1 := h_u_mono u2 hu2_mem u1 hu1_mem (by omega)
+    have : py u2 ≤ py u1 := h_u_mono u2 hu2_mem u1 hu1_mem (by lia)
     linarith
   · -- S.S: both on left face → px equal → same source, contradiction
     have hp1 := props1.2.2.2 h1; have hp2 := props2.2.2.2 h2
@@ -1231,7 +1230,7 @@ lemma matilda_covers_at_most_one_core {n : ℕ} [NeZero n]
     have f1 := source_on_face_S m p1 hp1.1.1 hp1.2 h_cov1
     have f2 := source_on_face_S m p2 hp2.1.1 hp2.2 h_cov2
     exact Label.source_ne_of_ne h_ne (by rw [h1, h2])
-      (h_uniq_x p1 hp1.1.1 p2 hp2.1.1 (by omega))
+      (h_uniq_x p1 hp1.1.1 p2 hp2.1.1 (by lia))
   · exact absurd h2 h_not_X2
   case X.W | X.N | X.E | X.S | X.X =>
     exact absurd h1 h_not_X1
@@ -1350,7 +1349,7 @@ theorem total_labels_eq_sum :
   have hb := c.b_pos
 
   zify [ha, hb, h_le]
-  omega
+  lia
 
 theorem labels_total_intersection :
     (targetsWin c.u c.v c.all_black).card + (targetsNin c.u c.v c.all_black).card +
@@ -1434,7 +1433,7 @@ lemma grid_size_ge_two_of_label {source : Point n} {lbl : LabelType}
   { simp only [validLabels, mem_targetsWin, mem_targetsW,
                mem_union, mem_map] at hl
     simp_all
-    try omega
+    try lia
   }
 
 lemma valid_label_pos_not_black {n : ℕ} [NeZero n] (c : IntersectionSetup n)
@@ -1454,13 +1453,13 @@ lemma valid_label_pos_not_black {n : ℕ} [NeZero n] (c : IntersectionSetup n)
   · have h_pos : 0 < source.2.val := by
       simp only [validLabels, mem_union, mem_map] at hl
       rcases hl with h | h
-      · simp at h; omega
+      · simp at h; lia
       · simp at h
     exact label_pos_W_absurd h_n_ge_2 c.h_unique_x h_src_black h_pos h_pos_black
   · have h_pos : 0 < source.1.val := by
       simp only [validLabels, mem_union, mem_map] at hl
       rcases hl with h | h
-      · simp at h; omega
+      · simp at h; lia
       · simp at h
     exact label_pos_N_absurd h_n_ge_2 c.h_unique_y h_src_black h_pos h_pos_black
   · have h_lt : source.2.val < n - 1 := by
@@ -1753,7 +1752,7 @@ lemma pivot_nonempty : (Pivot c cp).Nonempty := by
       by_contra h_not_or; push Not at h_not_or
       push Not at  h_x_empty
       simp only [min_le_iff, le_max_iff] at h_x_empty
-      omega
+      lia
     rcases h_split with h_le1 | h_le2
     · by_cases h_y : py uk1 ≤ py vl
       · have : uk1 ∈ v_lower c.v := by
@@ -1790,7 +1789,7 @@ lemma pivot_nonempty : (Pivot c cp).Nonempty := by
     have h_split : py uk1 ≤ py vl1 ∨ py vl ≤ py uk := by
       by_contra h_not_or; push Not at h_not_or h_y_empty
       simp only [min_le_iff, le_max_iff] at h_y_empty
-      omega
+      lia
     rcases h_split with h_le1 | h_le2
     · by_cases h_x : px uk1 ≤ px vl1
       · have : uk1 ∈ v_lower c.v := by rw [mem_v_lower]; use vl1
@@ -1982,7 +1981,7 @@ theorem total_labels_eq_sum_disjoint :
     _         = (c.u ∪ c.v).card    := by rw [card_union_of_disjoint c.h_disj]
     _         ≤ c.all_black.card    := card_le_card c.union_sub
     _         = n                   := c.h_n
-  omega
+  lia
 
 theorem labels_total_disjoint (ha_pos : 0 < c.a) (hb_pos : 0 < c.b) :
     (targetsWin c.u c.v c.all_black).card + (targetsNin c.u c.v c.all_black).card +
@@ -2277,17 +2276,17 @@ lemma grid_size_ge_two_of_label {source : Point n} {lbl : LabelType}
     (hl : { source := source, type := lbl } ∈ c.validLabels cp) : 2 ≤ n := by
   simp only [validLabels, mem_union, mem_map, or_assoc] at hl
   rcases hl with h | h | h | h | h
-  · simp at h; omega
-  · simp at h; omega
-  · simp at h; omega
-  · simp at h; omega
+  · simp at h; lia
+  · simp at h; lia
+  · simp at h; lia
+  · simp at h; lia
   · have ha := c.a_ge_two ha_pos; have hb := c.b_ge_two hb_pos
     have h_card : c.u.card + c.v.card ≤ c.all_black.card := by
       rw [← card_union_of_disjoint c.h_disj]
       apply card_le_card
       exact c.union_sub
     rw [c.hu, c.hv, c.h_n] at h_card
-    omega
+    lia
 
 lemma valid_label_pos_not_black (ha_pos : 0 < c.a) (hb_pos : 0 < c.b)
     (l : Label n) (hl : l ∈ c.validLabels cp) :
@@ -2404,7 +2403,7 @@ lemma exists_y_for_x [NeZero n] (h_card_n : all_black.card = n)
   rw [h_card_n] at h_card_le
   simp [other_rows , card_univ] at h_card_le
   have h_pos : 0 < n := NeZero.pos n
-  omega
+  lia
 
 noncomputable def blackPerm [NeZero n] : Fin n → Fin n := fun x =>
   (exists_y_for_x h_card_n h_unique_x x).choose
@@ -2747,7 +2746,7 @@ lemma M_subset_rect (s t : Int) (p : Point n) (hk : 2 ≤ k) :
   rw [M_st, mem_filter] at h_mem
   obtain ⟨_, hp_white, hs_eq, ht_eq⟩ := h_mem
   have hM : (0 : ℤ) < mod_base k := mod_base_pos k
-  have hk_pos : (0 : ℤ) < k := by omega
+  have hk_pos : (0 : ℤ) < k := by lia
   unfold calc_s at hs_eq; rw [Int.ediv_eq_iff_of_pos hM] at hs_eq
   rw [calc_t, Int.ediv_eq_iff_of_pos hM] at ht_eq
   -- ds, dt are the "remainders": 0 ≤ ds, dt < M
@@ -2769,28 +2768,28 @@ lemma M_subset_rect (s t : Int) (p : Point n) (hk : 2 ≤ k) :
     · exfalso
       have hds0 : ds = 0 := by linarith
       have hkdt0 : k * dt = 0 := by linarith
-      have hdt0 : dt = 0 := (mul_eq_zero.mp hkdt0).resolve_left (by omega)
+      have hdt0 : dt = 0 := (mul_eq_zero.mp hkdt0).resolve_left (by lia)
       simp only [ds] at hds0; simp only [dt] at hdt0
       exact hp_white (by simp [all_black_k, beq_iff_eq, show val_s k p = s * mod_base k by linarith,
         show val_t k p = t * mod_base k by linarith, Int.mul_emod_left])
   refine ⟨⟨?_, ?_⟩, ⟨?_, ?_⟩⟩
   · -- x lower: ds + k*dt > 0 and M > 0, so p.1 - xb ≥ 1
-    by_contra hc; push Not at hc
+    by_contra! hc
     have := Int.lt_add_one_iff.mp hc
     linarith [mul_nonpos_of_nonneg_of_nonpos hM.le (show (p.1 : ℤ) - ((s-1)+(t-1)*k) ≤ 0 by linarith)]
   · -- x upper: ds + k*dt < M + k*M = M*(k+1)
-    by_contra hc; push Not at hc
+    by_contra! hc
     have h1 := Int.add_one_le_iff.mpr hc
     have h2 : (t : ℤ) * k - (t - 1) * k = k := by ring
     have h3 := mul_le_mul_of_nonneg_left (show (k : ℤ)+1 ≤ (p.1 : ℤ) - ((s - 1) + (t - 1) * k) by linarith) hM.le
     have h4 : mod_base k + k * mod_base k = mod_base k * (↑k + 1) := by ring
     linarith [hds.2, Int.mul_lt_mul_of_pos_left hdt.2 hk_pos]
   · -- y lower: k*ds - dt > -M
-    by_contra hc; push Not at hc
-    have h1 := mul_le_mul_of_nonneg_left (show (p.2 : ℤ) - (s * k - t) ≤ -1 by clear * - hc; omega) hM.le
+    by_contra! hc
+    have h1 := mul_le_mul_of_nonneg_left (show (p.2 : ℤ) - (s * k - t) ≤ -1 by clear * - hc; lia) hM.le
     linarith [hy, hdt.2]
   · -- y upper: k*ds - dt < k*M
-    by_contra hc; push Not at hc
+    by_contra! hc
     have h1 := Int.add_one_le_iff.mpr hc
     have h2 : (s + 1 : ℤ) * k - s * k = k := by ring
     have h3 := mul_le_mul_of_nonneg_left (show (k : ℤ) ≤ (p.2 : ℤ) - (s * k - t) by linarith) hM.le
@@ -2869,9 +2868,7 @@ lemma M_st_eq_rect (s t : Int) (hk : 2 ≤ k) :
     M_st k s t = rect_finset k s t := by
   ext p
   simp only [rect_finset, mem_filter, mem_univ, true_and]
-  constructor
-  · exact M_subset_rect k s t p hk
-  · exact rect_subset_M k s t p hk
+  exact ⟨M_subset_rect k s t p hk, rect_subset_M k s t p hk⟩
 
 lemma mem_rect_iff_idx_eq (p : Point (k * k)) (s t : ℤ) (hk : 2 ≤ k) :
     p ∈ rect_finset k s t ↔ (p ∉ all_black_k k ∧ calc_s k p = s ∧ calc_t k p = t) := by
@@ -2883,7 +2880,7 @@ lemma s_t_range (hk : 2 ≤ k) (p : Point n) :
     0 ≤ calc_t k p ∧ calc_t k p ≤ k := by
   let M := mod_base k
   have h_pos : 0 < M := mod_base_pos k
-  have hk_pos : 0 < (k : ℤ) := by omega
+  have hk_pos : 0 < (k : ℤ) := by lia
   have hx : 0 ≤ (p.1 : ℤ) ∧ (p.1 : ℤ) ≤ k^2 - 1 := by
     constructor
     · exact Int.natCast_nonneg _
@@ -2933,7 +2930,7 @@ lemma M_00_empty (hk : 2 ≤ k) : M_st k 0 0 = ∅ := by
   obtain ⟨_, _, hs, ht⟩ := hp
   let M := mod_base k
   have h_pos : 0 < M := mod_base_pos k
-  have hk_pos : 0 < (k : ℤ) := by omega
+  have hk_pos : 0 < (k : ℤ) := by lia
   rw [calc_s, Int.ediv_eq_iff_of_pos h_pos] at hs
   rw [calc_t, Int.ediv_eq_iff_of_pos h_pos] at ht
   simp only [Int.zero_mul, Int.zero_add] at hs ht
@@ -2949,7 +2946,7 @@ lemma M_00_empty (hk : 2 ≤ k) : M_st k 0 0 = ∅ := by
       _ = k^2 + k + 1 := by ring
       _ > k^2 + k := Int.lt_succ _
   dsimp [M] at hs
-  linarith [hs.2, h_contra, (by omega : 0 < (k : ℤ))]
+  linarith [hs.2, h_contra, (by lia : 0 < (k : ℤ))]
 
 lemma M_k0_empty : M_st k k 0 = ∅ := by
   rw [eq_empty_iff_forall_notMem]
@@ -3019,7 +3016,7 @@ lemma M_kk_empty (_ : 2 ≤ k) : M_st k k k = ∅ := by
     have h_rhs: (k : ℤ) * (k * (k^2 + 1)) + k * (k^2 + 1)
          = (k^2 + 1) * (k^2 + k) := by ring
     rw [h_rhs] at h_combine
-    nlinarith [h_x_bound, h_combine, (by omega : 0 < (k : ℤ))]
+    nlinarith [h_x_bound, h_combine, (by lia : 0 < (k : ℤ))]
   have h_y_eq : (p.2 : ℤ) = k^2 - k := by
     rw [h_x_eq] at h_s_ge h_t_ge
     dsimp [M, mod_base] at h_s_ge h_t_ge
@@ -3060,9 +3057,9 @@ def clipped_rect [NeZero k] (hk : 2 ≤ k) (s t : Int) : Option (Matilda (k * k)
       h_x_le := Int.toNat_le_toNat h_valid.1
       h_y_le := Int.toNat_le_toNat h_valid.2
       h_x_bound := by
-        zify; simp; exact ⟨lt_of_le_of_lt (min_le_left _ _) (by omega), by omega⟩
+        zify; simp; exact ⟨lt_of_le_of_lt (min_le_left _ _) (by lia), by lia⟩
       h_y_bound := by
-        zify; simp; exact ⟨lt_of_le_of_lt (min_le_left _ _) (by omega), by omega⟩
+        zify; simp; exact ⟨lt_of_le_of_lt (min_le_left _ _) (by lia), by lia⟩
       h_disjoint := by
         intro p hp h_in_rect
         zify at h_in_rect
@@ -3107,8 +3104,8 @@ lemma matilda_upper_bound_sum (k : ℕ) (hk : 2 ≤ k) :
     rw [this]
   have h_corners : corners.card = 4 := by
     dsimp [corners]
-    have h_ne : kz ≠ 0 := by dsimp [kz]; omega
-    repeat rw [card_insert_of_notMem] <;> try (simp [Prod.mk.injEq]; omega)
+    have h_ne : kz ≠ 0 := by dsimp [kz]; lia
+    repeat rw [card_insert_of_notMem] <;> try (simp [Prod.mk.injEq]; lia)
     rw [card_singleton]
   have h_subset : corners ⊆ range_sq := by
     intro p hp
@@ -3116,13 +3113,13 @@ lemma matilda_upper_bound_sum (k : ℕ) (hk : 2 ≤ k) :
     rcases hp with rfl | rfl | rfl | rfl
     all_goals (
       simp only [range_sq, mem_product, mem_Icc]
-      constructor <;> constructor <;> omega
+      constructor <;> constructor <;> lia
     )
   rw [card_sdiff, inter_eq_left.mpr h_subset]
   rw [h_total, h_corners]
   have h_eq: (k + 1) * (k + 1) = k^2 + 2 * k + 1 := by ring
   rw [h_eq]
-  omega
+  lia
 
 lemma eq_of_modEq_fin {k : ℕ} (_ : 2 ≤ k) {a b : Fin (k * k)}
     (h_equiv : (a : ℤ) ≡ b [ZMOD mod_base k]) : a = b := by
@@ -3218,14 +3215,14 @@ lemma b_st_bounds_valid (k : ℕ) (hk : 2 ≤ k) (s t : ℕ)
     · linarith
     · apply mul_nonneg <;> linarith
   · calc ((s : ℤ) - 1) + ((t : ℤ) - 1) * k
-      _ ≤ (k - 1) + (k - 1) * k := by gcongr <;> omega
+      _ ≤ (k - 1) + (k - 1) * k := by gcongr <;> lia
       _ = k^2 - 1 := by ring
       _ < k * k := by linarith
   · calc (s : ℤ) * k - t
-      _ ≥ 1 * k - k := by gcongr <;> omega
+      _ ≥ 1 * k - k := by gcongr <;> lia
       _ = 0 := by ring
   · calc (s : ℤ) * k - t
-      _ ≤ k * k - 1 := by gcongr <;> omega
+      _ ≤ k * k - 1 := by gcongr <;> lia
       _ < k * k := by linarith
 
 theorem card_all_black_ge (k : ℕ) (hk : 2 ≤ k) :

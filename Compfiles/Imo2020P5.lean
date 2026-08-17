@@ -62,7 +62,6 @@ lemma all_equal {n : ℕ} (hn : 1 < n) (f : Fin n → ℕ+)
     (h : Pairwise fun a b ↦ ∃ s : Finset (Fin n), s.Nonempty ∧
       geometric_mean f s = ((f a : ℝ) + f b) / 2) :
     ∃ y, ∀ a, f a = y := by
-  classical
   -- Step 1: divide out the overall gcd; the property is preserved.
   set d := Finset.univ.gcd (fun i => (f i : ℕ)) with hd
   have hd_dvd : ∀ i, d ∣ (f i : ℕ) := fun i => Finset.gcd_dvd (Finset.mem_univ i)
@@ -151,7 +150,7 @@ lemma all_equal {n : ℕ} (hn : 1 < n) (f : Fin n → ℕ+)
         rw [Finset.mem_filter]
         exact ⟨Finset.mem_univ i, hndiv⟩
       have hle : (g i : ℕ) ≤ (g m0 : ℕ) := hm0max i himem
-      omega
+      lia
     have hne : i1 ≠ m0 := by
       intro heq
       rw [heq] at hPdvd
@@ -178,7 +177,7 @@ lemma all_equal {n : ℕ} (hn : 1 < n) (f : Fin n → ℕ+)
     have h1lt : (g m0 : ℕ) < (g i1 : ℕ) := by
       have hle1 := hmax' m0
       have hneq : (g m0 : ℕ) ≠ (g i1 : ℕ) := fun heq => hm0mem.2 (heq ▸ hPdvd)
-      omega
+      lia
     -- the collection contains a value larger than g m0
     have hgt2 : ∃ i ∈ s, (g m0 : ℕ) < (g i : ℕ) := by
       by_contra hall

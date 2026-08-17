@@ -77,7 +77,6 @@ disjoint from `S₁`, when `S₀ ∩ S₁ = ∅`. -/
 lemma cond_weight (n : ℕ) (q : ℚ) (S₀ S₁ : Finset (Fin n)) (hd : Disjoint S₀ S₁) :
     ∑ t : Finset (Fin n), (if S₀ ⊆ t ∧ Disjoint t S₁ then w n q t else 0)
       = q ^ S₀.card * (1 - q) ^ S₁.card := by
-  classical
   set f : Fin n → ℚ := fun i => if i ∈ S₁ then 0 else q
   set g : Fin n → ℚ := fun i => if i ∈ S₀ then 0 else 1 - q
   have key := Finset.prod_add f g (Finset.univ : Finset (Fin n))
@@ -85,12 +84,13 @@ lemma cond_weight (n : ℕ) (q : ℚ) (S₀ S₁ : Finset (Fin n)) (hd : Disjoin
       = q ^ S₀.card * (1 - q) ^ S₁.card := by
     have hfg : ∀ i : Fin n, f i + g i = if i ∈ S₀ then q else (if i ∈ S₁ then 1 - q else 1) := by
       intro i
+      simp only [f, g]
       by_cases h0 : i ∈ S₀
-      · have h1 : i ∉ S₁ := fun h1 => (Finset.disjoint_left.mp hd h0) h1
-        simp [f, g, h0, h1]
+      · have h1 : i ∉ S₁ := Finset.disjoint_left.mp hd h0
+        simp [h0, h1]
       · by_cases h1 : i ∈ S₁
-        · simp [f, g, h0, h1]
-        · simp [f, g, h0, h1]
+        · simp [h0, h1]
+        · simp [h0, h1]
     rw [Finset.prod_congr rfl (fun i _ => hfg i), Finset.prod_ite, Finset.prod_ite_mem, Finset.prod_const, Finset.prod_const
       , Finset.inter_comm, Finset.filter_univ_mem, Finset.filter_notMem_eq_sdiff
       , ← Finset.inter_sdiff_assoc, Finset.inter_univ, Finset.sdiff_eq_self_of_disjoint hd.symm]
@@ -100,18 +100,18 @@ lemma cond_weight (n : ℕ) (q : ℚ) (S₀ S₁ : Finset (Fin n)) (hd : Disjoin
     intro t
     have h1 : ∏ i ∈ t, f i = if Disjoint t S₁ then q ^ t.card else 0 := by
       by_cases hd1 : Disjoint t S₁
-      · rw [if_pos hd1, ← Finset.prod_const]
+      · rw [ite_eq_left hd1, ← Finset.prod_const]
         apply Finset.prod_congr rfl
         intro i hi
         simp [f, Finset.disjoint_left.mp hd1 hi]
-      · rw [if_neg hd1]
+      · rw [ite_eq_right hd1]
         rw [Finset.not_disjoint_iff] at hd1
         obtain ⟨i, hi, hi1⟩ := hd1
         exact Finset.prod_eq_zero hi (by simp [f, hi1])
     have h2 : ∏ i ∈ (Finset.univ : Finset (Fin n)) \ t, g i
         = if S₀ ⊆ t then (1 - q) ^ (n - t.card) else 0 := by
       by_cases hsub : S₀ ⊆ t
-      · rw [if_pos hsub]
+      · rw [ite_eq_left hsub]
         have hcard : ((Finset.univ : Finset (Fin n)) \ t).card = n - t.card := by
           rw [Finset.card_sdiff, Finset.card_univ, Fintype.card_fin, Finset.inter_univ]
         rw [← hcard, ← Finset.prod_const]
@@ -119,19 +119,19 @@ lemma cond_weight (n : ℕ) (q : ℚ) (S₀ S₁ : Finset (Fin n)) (hd : Disjoin
         intro i hi
         simp only [Finset.mem_sdiff, Finset.mem_univ, true_and] at hi
         have hi0 : i ∉ S₀ := fun h0 => hi (hsub h0)
-        simp only [g, if_neg hi0]
-      · rw [if_neg hsub]
+        simp only [g, ite_eq_right hi0]
+      · rw [ite_eq_right hsub]
         rw [Finset.not_subset] at hsub
         obtain ⟨i, hi0, hit⟩ := hsub
         exact Finset.prod_eq_zero (Finset.mem_sdiff.mpr ⟨Finset.mem_univ i, hit⟩) (by simp [g, hi0])
     rw [h1, h2]
     by_cases hc : S₀ ⊆ t ∧ Disjoint t S₁
-    · rw [if_pos hc, if_pos hc.2, if_pos hc.1]
+    · rw [ite_eq_left hc, ite_eq_left hc.2, ite_eq_left hc.1]
       rfl
-    · rw [if_neg hc]
+    · rw [ite_eq_right hc]
       rcases not_and_or.mp hc with h | h
-      · rw [if_neg h, mul_zero]
-      · rw [if_neg h, zero_mul]
+      · rw [ite_eq_right h, mul_zero]
+      · rw [ite_eq_right h, zero_mul]
   rw [Finset.powerset_univ] at key
   rw [hLHS] at key
   rw [key]
@@ -270,7 +270,7 @@ lemma list_filter_length {α : Type*} (l : List α) (p : α → Bool) :
     by_cases h : p x
     · rw [List.filter_cons_of_pos h, List.map_cons, List.sum_cons, List.length_cons, ih]
       simp [h]
-      omega
+      lia
     · rw [List.filter_cons_of_neg h, List.map_cons, List.sum_cons, ih]
       simp [h]
 
@@ -333,7 +333,6 @@ lemma expected_score (L : List (ℤ × ℤ)) :
 lemma W_ge {L : List (ℤ × ℤ)} (hL : ValidBoard L) {p : ℤ × ℤ} (hp : p ∈ L) :
     qProb ≤ ∑ t : Finset (Fin (nV L)),
       (if p.1 ∈ Tof L t ∨ p.2 ∈ Tof L t then w (nV L) qProb t else 0) := by
-  classical
   have hpz := hL.nonzero p hp
   obtain ⟨hpV1, hpV2⟩ := natAbs_mem_V hp
   obtain ⟨i, hi⟩ := kE_cov L p.1.natAbs hpV1
@@ -442,7 +441,7 @@ lemma W_ge {L : List (ℤ × ℤ)} (hL : ValidBoard L) {p : ℤ × ℤ} (hp : p 
           (if ¬(p.1 ∈ Tof L t ∨ p.2 ∈ Tof L t) then w (nV L) qProb t else (0:ℚ)) = 0 := by
         apply Finset.sum_eq_zero
         intro t _
-        apply if_neg
+        apply ite_eq_right
         rw [hnot t]
         simp [h1, h2, aE_ne_ne i, (aE_ne_ne i).symm]
       rw [hsum]
@@ -452,7 +451,7 @@ lemma W_ge {L : List (ℤ × ℤ)} (hL : ValidBoard L) {p : ℤ × ℤ} (hp : p 
           (if ¬(p.1 ∈ Tof L t ∨ p.2 ∈ Tof L t) then w (nV L) qProb t else (0:ℚ)) = 0 := by
         apply Finset.sum_eq_zero
         intro t _
-        apply if_neg
+        apply ite_eq_right
         rw [hnot t]
         simp [h1, h2, aE_ne_ne i, (aE_ne_ne i).symm]
       rw [hsum]
@@ -537,7 +536,6 @@ lemma W_ge {L : List (ℤ × ℤ)} (hL : ValidBoard L) {p : ℤ × ℤ} (hp : p 
 
 lemma lower_bound (L : List (ℤ × ℤ)) (hL : ValidBoard L) :
     ∃ T : Finset ℤ, ValidErase T ∧ 43 ≤ score L T := by
-  classical
   have hsum : (L.map (fun _ => qProb)).sum ≤ (L.map (fun p => ∑ t : Finset (Fin (nV L)),
       (if p.1 ∈ Tof L t ∨ p.2 ∈ Tof L t then w (nV L) qProb t else 0))).sum :=
     List.sum_le_sum (fun p hp => W_ge hL hp)
@@ -557,7 +555,7 @@ lemma lower_bound (L : List (ℤ × ℤ)) (hL : ValidBoard L) :
   have hsc : (42 : ℚ) < (score L (Tof L t) : ℚ) := (Rat.mul_lt_mul_left hwq).mp ht
   have hsc43 : 43 ≤ score L (Tof L t) := by
     have h' : 42 < score L (Tof L t) := by exact_mod_cast hsc
-    omega
+    lia
   exact ⟨Tof L t, validErase_Tof hL t, hsc43⟩
 
 /-! ### The extremal construction (upper bound) -/
@@ -617,8 +615,8 @@ lemma upper_not_mem_negList_diag (k : ℤ) : (k, k) ∉ upperNegList := by
   simp only [upperNegList_def, List.mem_flatMap, List.mem_range, List.mem_map] at h
   obtain ⟨i, -, j, hji, heq⟩ := h
   simp only [Prod.mk.injEq] at heq
-  have : i = j := by omega
-  omega
+  have : i = j := by lia
+  lia
 
 /-- The combinatorial heart of the upper bound: for any `A : Finset ℕ`,
 `a choose 2 ≤ ∑ i ∈ A, #(A ∩ range i)`, proved by enumerating `A` in
@@ -673,12 +671,12 @@ lemma validBoard_L0 : ValidBoard L0 := by
       rcases List.mem_append.mp hk with h | h
       · obtain ⟨i, -, heq⟩ := upper_mem_loopList h
         simp only [Prod.mk.injEq] at heq
-        omega
+        lia
       · exact absurd h (upper_not_mem_negList_diag k)
     rcases List.mem_append.mp hneg with h | h
     · obtain ⟨i, -, heq⟩ := upper_mem_loopList h
       simp only [Prod.mk.injEq] at heq
-      omega
+      lia
     · exact upper_not_mem_negList_diag (-k) h
 
 /-- The loop part contributes exactly `5 * a`, where `a` counts the indices
@@ -717,7 +715,7 @@ lemma upper_negUnscored (T : Finset ℤ) (hT : ValidErase T) :
   apply Finset.sum_le_sum
   intro i _
   by_cases hiA : i ∈ A
-  · rw [if_pos hiA]
+  · rw [ite_eq_left hiA]
     have hiT : (i : ℤ) + 1 ∈ T := by
       have h2 := hiA
       rw [hA] at h2
@@ -744,7 +742,7 @@ lemma upper_negUnscored (T : Finset ℤ) (hT : ValidErase T) :
       rw [hA] at h2
       exact (Finset.mem_filter.mp h2).2
     exact hT _ hjT
-  · rw [if_neg hiA]
+  · rw [ite_eq_right hiA]
     exact Nat.zero_le _
 
 /-- Case check: for a ≤ 8, `5a + 28 - a(a-1)/2 ≤ 43`. -/
@@ -776,7 +774,7 @@ lemma upper_score (T : Finset ℤ) (hT : ValidErase T) : score L0 T ≤ 43 := by
   rw [upper_L0_eq]
   show ((upperLoopList ++ upperNegList).filter (fun p => decide (p.1 ∈ T ∨ p.2 ∈ T))).length ≤ 43
   rw [List.filter_append, List.length_append]
-  omega
+  lia
 
 
 snip end

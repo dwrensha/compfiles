@@ -59,33 +59,33 @@ snip begin
 lemma sq_mod_two (n : ℤ) : n ^ 2 % 2 = n % 2 := by
   rcases Int.even_or_odd n with ⟨k, rfl⟩ | ⟨k, rfl⟩
   · have h : (k + k) ^ 2 = 2 * (2 * k ^ 2) := by ring
-    omega
+    lia
   · have h : (2 * k + 1) ^ 2 = 2 * (2 * k ^ 2 + 2 * k) + 1 := by ring
-    omega
+    lia
 
 lemma sq_mod_three (n : ℤ) : n ^ 2 % 3 = 0 ∨ n ^ 2 % 3 = 1 := by
-  have hr : n % 3 = 0 ∨ n % 3 = 1 ∨ n % 3 = 2 := by omega
-  obtain ⟨k, hk⟩ : ∃ k : ℤ, n = 3 * k + n % 3 := ⟨n / 3, by omega⟩
+  have hr : n % 3 = 0 ∨ n % 3 = 1 ∨ n % 3 = 2 := by lia
+  obtain ⟨k, hk⟩ : ∃ k : ℤ, n = 3 * k + n % 3 := ⟨n / 3, by lia⟩
   rcases hr with h | h | h
   · left
     have e : n ^ 2 = 3 * (3 * k ^ 2) := by rw [hk, h]; ring
-    omega
+    lia
   · right
     have e : n ^ 2 = 3 * (3 * k ^ 2 + 2 * k) + 1 := by rw [hk, h]; ring
-    omega
+    lia
   · right
     have e : n ^ 2 = 3 * (3 * k ^ 2 + 4 * k + 1) + 1 := by rw [hk, h]; ring
-    omega
+    lia
 
 lemma sq_mod_three_eq_zero {n : ℤ} (h : n ^ 2 % 3 = 0) : n % 3 = 0 := by
-  have hr : n % 3 = 0 ∨ n % 3 = 1 ∨ n % 3 = 2 := by omega
-  obtain ⟨k, hk⟩ : ∃ k : ℤ, n = 3 * k + n % 3 := ⟨n / 3, by omega⟩
+  have hr : n % 3 = 0 ∨ n % 3 = 1 ∨ n % 3 = 2 := by lia
+  obtain ⟨k, hk⟩ : ∃ k : ℤ, n = 3 * k + n % 3 := ⟨n / 3, by lia⟩
   rcases hr with h0 | h0 | h0
   · exact h0
   · have e : n ^ 2 = 3 * (3 * k ^ 2 + 2 * k) + 1 := by rw [hk, h0]; ring
-    omega
+    lia
   · have e : n ^ 2 = 3 * (3 * k ^ 2 + 4 * k + 1) + 1 := by rw [hk, h0]; ring
-    omega
+    lia
 
 /-! ### Invariants for part (a) -/
 
@@ -97,7 +97,7 @@ lemma step_two {r : ℤ} (hr : 2 ∣ r) {p q : ℤ × ℤ} (h : Move r p q) :
   obtain ⟨c, hc⟩ := hr
   have e1 := sq_mod_two (p.1 - q.1)
   have e2 := sq_mod_two (p.2 - q.2)
-  omega
+  lia
 
 /-- If `3 ∣ r` and `a² + b² = r`, then `3 ∣ a` and `3 ∣ b`, so a move
 preserves `p.1 mod 3`. -/
@@ -105,12 +105,12 @@ lemma step_three {r : ℤ} (hr : 3 ∣ r) {p q : ℤ × ℤ} (h : Move r p q) :
     p.1 % 3 = 1 → q.1 % 3 = 1 := by
   obtain ⟨-, -, hdist⟩ := h
   obtain ⟨c, hc⟩ := hr
-  have h0 : ((p.1 - q.1) ^ 2 + (p.2 - q.2) ^ 2) % 3 = 0 := by omega
+  have h0 : ((p.1 - q.1) ^ 2 + (p.2 - q.2) ^ 2) % 3 = 0 := by lia
   have h1 := sq_mod_three (p.1 - q.1)
   have h2 := sq_mod_three (p.2 - q.2)
-  have ha : (p.1 - q.1) ^ 2 % 3 = 0 := by omega
+  have ha : (p.1 - q.1) ^ 2 % 3 = 0 := by lia
   have ha' := sq_mod_three_eq_zero ha
-  omega
+  lia
 
 lemma reach_two {r : ℤ} (hr : 2 ∣ r) {p q : ℤ × ℤ}
     (h : Relation.ReflTransGen (Move r) p q) :
@@ -141,7 +141,7 @@ lemma abs_le_nine {a b : ℤ} (h : a ^ 2 + b ^ 2 = 97) : |a| ≤ 9 := by
 
 lemma sq97_aux (A B : ℤ) (hA0 : 0 ≤ A) (hA9 : A ≤ 9) (hB0 : 0 ≤ B) (hB9 : B ≤ 9)
     (h : A ^ 2 + B ^ 2 = 97) : (A = 9 ∧ B = 4) ∨ (A = 4 ∧ B = 9) := by
-  interval_cases A <;> interval_cases B <;> omega
+  interval_cases A <;> interval_cases B <;> lia
 
 /-- The only ways to write `97` as a sum of two squares are `81 + 16` and
 `16 + 81`, so each permitted move for `r = 97` is of the form `(±9, ±4)` or
@@ -167,7 +167,7 @@ lemma step97 {p q : ℤ × ℤ} (h : Move 97 p q) :
   rcases hclass with ⟨ha, hb⟩ | ⟨ha, hb⟩ <;>
     rcases eq_or_eq_neg_of_abs_eq ha with hdx | hdx <;>
     rcases eq_or_eq_neg_of_abs_eq hb with hdy | hdy <;>
-    omega
+    lia
 
 lemma reach97 {p q : ℤ × ℤ} (h : Relation.ReflTransGen (Move 97) p q) :
     (p.1 % 2 = 0 ↔ 5 ≤ p.2 ∧ p.2 ≤ 8) → (q.1 % 2 = 0 ↔ 5 ≤ q.2 ∧ q.2 ≤ 8) := by

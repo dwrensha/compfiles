@@ -228,9 +228,9 @@ theorem imo1966_p5_generalized
         = (a ⟨↑i + 1, by lia⟩ - a i) * (if j ≤ i then -1 else 1) := by
         intro i j hi
         by_cases! hij : j ≤ i
-        · rw [h_abs hij, h_abs (by rw [Fin.le_def]; lia), if_pos hij]
+        · rw [h_abs hij, h_abs (by rw [Fin.le_def]; lia), ite_eq_left hij]
           ring
-        · rw [h_abs' (by rw [Fin.le_def]; lia), h_abs' (Fin.mk_le_of_le_val hij), if_neg (by rw [Fin.le_def]; lia)]
+        · rw [h_abs' (by rw [Fin.le_def]; lia), h_abs' (Fin.mk_le_of_le_val hij), ite_eq_right (by rw [Fin.le_def]; lia)]
           ring
       have h₃ : ∀ (i : Fin n) (hi : i < ⟨n - 1, by lia⟩),
         ∑ j, (a ⟨↑i + 1, by lia⟩ - a i) * ((if j ≤ i then -1 else 1) * x j)
@@ -253,12 +253,12 @@ theorem imo1966_p5_generalized
         apply Finset.sum_congr rfl
         intro j _
         by_cases! hij : j = i
-        · rw [hij, if_neg (by rw [Fin.le_def]; lia), if_pos (by rfl), if_pos (by rfl)]
+        · rw [hij, ite_eq_right (by rw [Fin.le_def]; lia), ite_eq_left (by rfl), ite_eq_left (by rfl)]
           ring
         · by_cases! hij' : j < i
-          · rw [if_pos (by rw [Fin.le_def]; lia), if_pos (Fin.le_of_lt hij'), if_neg (by lia)]
+          · rw [ite_eq_left (by rw [Fin.le_def]; lia), ite_eq_left (Fin.le_of_lt hij'), ite_eq_right (by lia)]
             ring
-          · rw [if_neg (by rw [Fin.le_def]; lia), if_neg (by rw [Fin.le_def]; lia), if_neg (by lia)]
+          · rw [ite_eq_right (by rw [Fin.le_def]; lia), ite_eq_right (by rw [Fin.le_def]; lia), ite_eq_right (by lia)]
             ring
       have h_mid : ∀ (i : Fin n) (hi_min : ⟨0, by lia⟩ < i) (hi_max : i < ⟨n - 1, by lia⟩),
         x i = 0 := by
@@ -274,15 +274,15 @@ theorem imo1966_p5_generalized
         apply Finset.sum_congr rfl
         intro j _
         by_cases hj : j = ⟨0, by lia⟩ ∨ j = ⟨n - 1, by lia⟩
-        · rw [if_pos hj]
-        · rw [if_neg hj]
+        · rw [ite_eq_left hj]
+        · rw [ite_eq_right hj]
           symm
           apply mul_eq_zero_of_right
           rw [not_or, Fin.eq_mk_iff_val_eq, Fin.eq_mk_iff_val_eq] at hj
           apply h_mid <;> rw [Fin.lt_def] <;> lia
       ext i
       by_cases hi : i = ⟨0, by lia⟩ ∨ i = ⟨n - 1, by lia⟩
-      · rw [if_pos hi]
+      · rw [ite_eq_left hi]
         rcases hi with hi|hi
         · have h' := h₆ ⟨n - 1, by lia⟩
           rw [Finset.sum_ite, Finset.sum_const_zero, add_zero] at h'
@@ -299,7 +299,7 @@ theorem imo1966_p5_generalized
       · have hi' : ⟨0, by lia⟩ < i ∧ i < ⟨n - 1, by lia⟩ := by
           rw [not_or, Fin.eq_mk_iff_val_eq, Fin.eq_mk_iff_val_eq] at hi
           constructor <;> rw [Fin.lt_def] <;> lia
-        rw [h_mid i hi'.left hi'.right, if_neg hi]
+        rw [h_mid i hi'.left hi'.right, ite_eq_right hi]
     · intro h i
       rw [h]
       dsimp

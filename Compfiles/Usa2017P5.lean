@@ -184,7 +184,7 @@ lemma square_squeeze' (n : ℕ) (l : labelling √2)
       -- A touches p₁, so A annot use the label of p₂
       have p₁_ne_p₂ : l p₁ ≠ l p₂ := by
         simp only [Finset.mem_range] at hx₂ hy₁ hy₂
-        have dist_lt := dist_lt p₁_lb (⟨x₂ + 1, by simp; norm_cast; omega⟩, ⟨y₂ - y₁, by simp; constructor <;> linarith⟩) ?_
+        have dist_lt := dist_lt p₁_lb (⟨x₂ + 1, by simp; norm_cast; lia⟩, ⟨y₂ - y₁, by simp; constructor <;> linarith⟩) ?_
         · have := exclusion l_dist dist_lt (not_eq_of_beq_eq_false rfl)
           simpa [p₁, p₂, add_assoc, add_rotate'] using this.symm
         · right; simp [abs_sub_lt_iff]; constructor <;> linarith

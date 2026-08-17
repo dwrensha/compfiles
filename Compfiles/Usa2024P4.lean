@@ -136,7 +136,7 @@ lemma sum_rowRed {m n : ℕ} (hn : 0 < n) (hmn : m ≤ n + 1) {s' t : ℕ}
       intro j hj
       rw [Finset.mem_range] at hj
       rw [show s' + t * n + j = t * n + (s' + j) by ring,
-        rowRed_eq hn t (s' + j) (by omega)]
+        rowRed_eq hn t (s' + j) (by lia)]
     rw [step]
     have hico := Finset.sum_Ico_eq_sum_range
       (f := fun u ↦ if n + 1 - m ≤ u ∧ u + t < n then 1 else 0) s' n
@@ -145,7 +145,7 @@ lemma sum_rowRed {m n : ℕ} (hn : 0 < n) (hmn : m ≤ n + 1) {s' t : ℕ}
         Finset.Ico (max s' (n + 1 - m)) (n - t) := by
       ext u
       simp only [Finset.mem_filter, Finset.mem_Ico]
-      omega
+      lia
     rw [hfilter, Nat.card_Ico]
   -- the last `s'` beads lie in row `t + 1`, columns `0` to `s' - 1`
   have h2 : (∑ j ∈ Finset.range s', rowRed m n (s' + t * n + (n - s' + j))) =
@@ -157,16 +157,16 @@ lemma sum_rowRed {m n : ℕ} (hn : 0 < n) (hmn : m ≤ n + 1) {s' t : ℕ}
       intro j hj
       rw [Finset.mem_range] at hj
       rw [show s' + t * n + (n - s' + j) = (t + 1) * n + j by
-        rw [add_mul, one_mul]; omega, rowRed_eq hn (t + 1) j (by omega)]
+        rw [add_mul, one_mul]; lia, rowRed_eq hn (t + 1) j (by lia)]
     rw [step, ← Finset.card_filter]
     have hfilter : (Finset.range s').filter (fun j ↦ n + 1 - m ≤ j ∧ j + (t + 1) < n) =
         Finset.Ico (n + 1 - m) (min s' (n - t - 1)) := by
       ext u
       simp only [Finset.mem_filter, Finset.mem_range, Finset.mem_Ico]
-      omega
+      lia
     rw [hfilter, Nat.card_Ico]
   rw [h1, h2]
-  split_ifs with h <;> omega
+  split_ifs with h <;> lia
 
 /-- The last block (which wraps around the end of the necklace) contains
 exactly `s' - (n + 1 - m)` red beads: its first `n - s'` beads lie in row
@@ -176,7 +176,7 @@ lemma sum_rowRed_last {m n : ℕ} (hm : 0 < m) (hn : 0 < n) (hmn : m ≤ n + 1) 
     (∑ j ∈ Finset.range n, rowRed m n ((s' + (m - 1) * n + j) % (m * n))) =
       s' - (n + 1 - m) := by
   have hmn' : (m - 1) * n + n = m * n := by
-    obtain ⟨k, rfl⟩ : ∃ k, m = k + 1 := ⟨m - 1, by omega⟩
+    obtain ⟨k, rfl⟩ : ∃ k, m = k + 1 := ⟨m - 1, by lia⟩
     rw [Nat.add_sub_cancel, Nat.succ_mul]
   have e := Finset.sum_range_add
     (fun j ↦ rowRed m n ((s' + (m - 1) * n + j) % (m * n))) (n - s') s'
@@ -189,11 +189,11 @@ lemma sum_rowRed_last {m n : ℕ} (hm : 0 < m) (hn : 0 < n) (hmn : m ≤ n + 1) 
     intro j hj
     rw [Finset.mem_range] at hj
     have hlt : s' + (m - 1) * n + j < m * n := by
-      have hsj : s' + j < n := by omega
+      have hsj : s' + j < n := by lia
       have h' := add_lt_add_left hsj ((m - 1) * n)
-      omega
+      lia
     rw [Nat.mod_eq_of_lt hlt, show s' + (m - 1) * n + j = (m - 1) * n + (s' + j) by ring,
-      rowRed_eq hn (m - 1) (s' + j) (by omega), if_neg (by omega)]
+      rowRed_eq hn (m - 1) (s' + j) (by lia), ite_eq_right (by lia)]
   -- the last `s'` beads wrap around into row `0`, columns `0` to `s' - 1`
   have h2 : (∑ j ∈ Finset.range s',
       rowRed m n ((s' + (m - 1) * n + (n - s' + j)) % (m * n))) = s' - (n + 1 - m) := by
@@ -204,19 +204,19 @@ lemma sum_rowRed_last {m n : ℕ} (hm : 0 < m) (hn : 0 < n) (hmn : m ≤ n + 1) 
       rw [Finset.mem_range] at hj
       have e1 : s' + (m - 1) * n + (n - s' + j) = m * n + j := by
         have hle : s' ≤ n := Nat.le_of_lt hs
-        calc s' + (m - 1) * n + (n - s' + j) = (m - 1) * n + n + j := by omega
+        calc s' + (m - 1) * n + (n - s' + j) = (m - 1) * n + n + j := by lia
           _ = m * n + j := by rw [hmn']
       rw [e1, Nat.add_comm (m * n) j, Nat.add_mod_right,
         Nat.mod_eq_of_lt (by
           have hle : n ≤ m * n := Nat.le_mul_of_pos_left n hm
-          omega),
-        rowRed_self (by omega : j < n)]
+          lia),
+        rowRed_self (by lia : j < n)]
     rw [Finset.sum_congr rfl step, ← Finset.card_filter]
     have hfilter : (Finset.range s').filter (fun j ↦ n + 1 - m ≤ j) =
         Finset.Ico (n + 1 - m) s' := by
       ext u
       simp only [Finset.mem_filter, Finset.mem_range, Finset.mem_Ico]
-      omega
+      lia
     rw [hfilter, Nat.card_Ico]
   rw [h1, h2, Nat.zero_add]
 
@@ -230,16 +230,16 @@ lemma blockCount_constr {m n : ℕ} (hm : 0 < m) (hn : 0 < n) (hmn : m ≤ n + 1
   rw [blockCount_constr_eq s' t]
   by_cases hlast : t = m - 1
   · subst hlast
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
     exact sum_rowRed_last hm hn hmn hs
-  · rw [if_neg hlast]
+  · rw [ite_eq_right hlast]
     have hlt : ∀ j ∈ Finset.range n, s' + t * n + j < m * n := by
       intro j hj
       rw [Finset.mem_range] at hj
       have hle : (t + 2) * n ≤ m * n := by
-        have h : t + 2 ≤ m := by omega
+        have h : t + 2 ≤ m := by lia
         exact mul_le_mul_of_nonneg_right h (Nat.zero_le n)
-      calc s' + t * n + j < t * n + 2 * n := by omega
+      calc s' + t * n + j < t * n + 2 * n := by lia
         _ = (t + 2) * n := by rw [add_mul]
         _ ≤ m * n := hle
     have step : (∑ j ∈ Finset.range n, rowRed m n ((s' + t * n + j) % (m * n))) =

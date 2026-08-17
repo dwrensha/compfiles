@@ -45,7 +45,7 @@ lemma eq_of_dvd (j₁ j₂ : ℕ) (a : ℕ) (h₁ : j₁ < 7) (h₂ : j₂ < 7)
     (h : (7 ∣ a + 2 * j₁ ∧ 7 ∣ a + 2 * j₂) ∨
          (11 ∣ a + 2 * j₁ ∧ 11 ∣ a + 2 * j₂)) :
     j₁ = j₂ := by
-  rcases h with ⟨⟨k₁, hk₁⟩, ⟨k₂, hk₂⟩⟩ | ⟨⟨k₁, hk₁⟩, ⟨k₂, hk₂⟩⟩ <;> omega
+  rcases h with ⟨⟨k₁, hk₁⟩, ⟨k₂, hk₂⟩⟩ | ⟨⟨k₁, hk₁⟩, ⟨k₂, hk₂⟩⟩ <;> lia
 
 /--
 Pigeonhole principle: among three pairwise distinct indices `t₁, t₂, t₃ < 7`,
@@ -97,49 +97,49 @@ lemma not_all_divisible (a : ℕ) :
   interval_cases hc3 : a % 3 <;> interval_cases hc5 : a % 5
   · exact not_all_divisible_of_three 1 2 4 a (by norm_num) (by norm_num) (by norm_num)
       (by norm_num) (by norm_num) (by norm_num)
-      ⟨by omega, by omega⟩ ⟨by omega, by omega⟩ ⟨by omega, by omega⟩
+      ⟨by lia, by lia⟩ ⟨by lia, by lia⟩ ⟨by lia, by lia⟩
   · exact not_all_divisible_of_three 1 4 5 a (by norm_num) (by norm_num) (by norm_num)
       (by norm_num) (by norm_num) (by norm_num)
-      ⟨by omega, by omega⟩ ⟨by omega, by omega⟩ ⟨by omega, by omega⟩
+      ⟨by lia, by lia⟩ ⟨by lia, by lia⟩ ⟨by lia, by lia⟩
   · exact not_all_divisible_of_three 1 2 5 a (by norm_num) (by norm_num) (by norm_num)
       (by norm_num) (by norm_num) (by norm_num)
-      ⟨by omega, by omega⟩ ⟨by omega, by omega⟩ ⟨by omega, by omega⟩
+      ⟨by lia, by lia⟩ ⟨by lia, by lia⟩ ⟨by lia, by lia⟩
   · exact not_all_divisible_of_three 2 4 5 a (by norm_num) (by norm_num) (by norm_num)
       (by norm_num) (by norm_num) (by norm_num)
-      ⟨by omega, by omega⟩ ⟨by omega, by omega⟩ ⟨by omega, by omega⟩
+      ⟨by lia, by lia⟩ ⟨by lia, by lia⟩ ⟨by lia, by lia⟩
   · exact not_all_divisible_of_three 1 2 4 a (by norm_num) (by norm_num) (by norm_num)
       (by norm_num) (by norm_num) (by norm_num)
-      ⟨by omega, by omega⟩ ⟨by omega, by omega⟩ ⟨by omega, by omega⟩
+      ⟨by lia, by lia⟩ ⟨by lia, by lia⟩ ⟨by lia, by lia⟩
   · exact not_all_divisible_of_three 2 3 6 a (by norm_num) (by norm_num) (by norm_num)
       (by norm_num) (by norm_num) (by norm_num)
-      ⟨by omega, by omega⟩ ⟨by omega, by omega⟩ ⟨by omega, by omega⟩
+      ⟨by lia, by lia⟩ ⟨by lia, by lia⟩ ⟨by lia, by lia⟩
   · exact not_all_divisible_of_three 0 3 5 a (by norm_num) (by norm_num) (by norm_num)
       (by norm_num) (by norm_num) (by norm_num)
-      ⟨by omega, by omega⟩ ⟨by omega, by omega⟩ ⟨by omega, by omega⟩
+      ⟨by lia, by lia⟩ ⟨by lia, by lia⟩ ⟨by lia, by lia⟩
   · exact not_all_divisible_of_three 0 3 5 a (by norm_num) (by norm_num) (by norm_num)
       (by norm_num) (by norm_num) (by norm_num)
-      ⟨by omega, by omega⟩ ⟨by omega, by omega⟩ ⟨by omega, by omega⟩
+      ⟨by lia, by lia⟩ ⟨by lia, by lia⟩ ⟨by lia, by lia⟩
   · exact not_all_divisible_of_three 0 3 5 a (by norm_num) (by norm_num) (by norm_num)
       (by norm_num) (by norm_num) (by norm_num)
-      ⟨by omega, by omega⟩ ⟨by omega, by omega⟩ ⟨by omega, by omega⟩
+      ⟨by lia, by lia⟩ ⟨by lia, by lia⟩ ⟨by lia, by lia⟩
   · exact not_all_divisible_of_three 0 2 5 a (by norm_num) (by norm_num) (by norm_num)
       (by norm_num) (by norm_num) (by norm_num)
-      ⟨by omega, by omega⟩ ⟨by omega, by omega⟩ ⟨by omega, by omega⟩
+      ⟨by lia, by lia⟩ ⟨by lia, by lia⟩ ⟨by lia, by lia⟩
   · exact not_all_divisible_of_three 1 3 4 a (by norm_num) (by norm_num) (by norm_num)
       (by norm_num) (by norm_num) (by norm_num)
-      ⟨by omega, by omega⟩ ⟨by omega, by omega⟩ ⟨by omega, by omega⟩
+      ⟨by lia, by lia⟩ ⟨by lia, by lia⟩ ⟨by lia, by lia⟩
   · exact not_all_divisible_of_three 0 1 3 a (by norm_num) (by norm_num) (by norm_num)
       (by norm_num) (by norm_num) (by norm_num)
-      ⟨by omega, by omega⟩ ⟨by omega, by omega⟩ ⟨by omega, by omega⟩
+      ⟨by lia, by lia⟩ ⟨by lia, by lia⟩ ⟨by lia, by lia⟩
   · exact not_all_divisible_of_three 0 1 3 a (by norm_num) (by norm_num) (by norm_num)
       (by norm_num) (by norm_num) (by norm_num)
-      ⟨by omega, by omega⟩ ⟨by omega, by omega⟩ ⟨by omega, by omega⟩
+      ⟨by lia, by lia⟩ ⟨by lia, by lia⟩ ⟨by lia, by lia⟩
   · exact not_all_divisible_of_three 0 3 4 a (by norm_num) (by norm_num) (by norm_num)
       (by norm_num) (by norm_num) (by norm_num)
-      ⟨by omega, by omega⟩ ⟨by omega, by omega⟩ ⟨by omega, by omega⟩
+      ⟨by lia, by lia⟩ ⟨by lia, by lia⟩ ⟨by lia, by lia⟩
   · exact not_all_divisible_of_three 0 1 4 a (by norm_num) (by norm_num) (by norm_num)
       (by norm_num) (by norm_num) (by norm_num)
-      ⟨by omega, by omega⟩ ⟨by omega, by omega⟩ ⟨by omega, by omega⟩
+      ⟨by lia, by lia⟩ ⟨by lia, by lia⟩ ⟨by lia, by lia⟩
 
 snip end
 
@@ -160,10 +160,10 @@ problem usa1986_p1a :
   -- Among `n, …, n + 13` there are seven odd numbers; writing the smallest of
   -- them as `a = n + 1 - n % 2`, they are `a + 2 * j` for `j < 7`.
   obtain ⟨j, hj, h3, h5, h7, h11⟩ := not_all_divisible (n + 1 - n % 2)
-  have hi : 1 - n % 2 + 2 * j < 14 := by omega
+  have hi : 1 - n % 2 + 2 * j < 14 := by lia
   obtain ⟨p, hp, h13, hdiv⟩ := h (1 - n % 2 + 2 * j) (Finset.mem_range.mpr hi)
-  rw [show n + (1 - n % 2 + 2 * j) = n + 1 - n % 2 + 2 * j by omega] at hdiv
-  have hodd : ¬ 2 ∣ n + 1 - n % 2 + 2 * j := by omega
+  rw [show n + (1 - n % 2 + 2 * j) = n + 1 - n % 2 + 2 * j by lia] at hdiv
+  have hodd : ¬ 2 ∣ n + 1 - n % 2 + 2 * j := by lia
   have hp2 : p ≠ 2 := fun h2 ↦ hodd (h2 ▸ hdiv)
   rcases prime_lt_thirteen_ne_two hp h13 hp2 with rfl | rfl | rfl | rfl
   · exact h3 hdiv

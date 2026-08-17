@@ -159,7 +159,7 @@ problem imo1973_p6 (npos : 0 < n) (hq : q ∈ Set.Ioo 0 1) (apos : ∀ i, 0 < a 
       have h (_t) := Q_pos n q hq ⟨k, _t⟩ b
       rcases h1 with hq_eq | hb0
       · have := q_lt_inv_q; rw [one_div, hq_eq] at this; exact absurd this (lt_irrefl q)
-      · linarith [h (show k < n by omega)]
+      · linarith [h (show k < n by lia)]
     let X := ∑ i ∈ Xi, Q n q ⟨k, by lia⟩ i * a i
     let Y := ∑ i ∈ Yi, Q n q ⟨k, by lia⟩ i * a i
     have Xpos : 0 < X := by
@@ -285,8 +285,8 @@ problem imo1973_p6 (npos : 0 < n) (hq : q ∈ Set.Ioo 0 1) (apos : ∀ i, 0 < a 
           · simp
           · intro y yh
             use y-1, ?_
-            · simp only [Finset.mem_Ioo] at yh; omega
-            · simp only [Finset.mem_Ioo] at yh; simp only [Finset.mem_Iio]; omega
+            · simp only [Finset.mem_Ioo] at yh; lia
+            · simp only [Finset.mem_Ioo] at yh; simp only [Finset.mem_Iio]; lia
           · simp [pow_succ']
         _ < _ := by
           rw [Nat.Iio_eq_range, geom_sum_eq (ne_of_lt hq.right)]

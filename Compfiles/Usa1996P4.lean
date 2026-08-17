@@ -51,7 +51,7 @@ snip begin
 
 theorem sget_lt {n : ℕ} (x : Fin n → Bool) {i : ℕ} (h : i < n) :
     sget x i = x ⟨i, h⟩ :=
-  dif_pos h
+  dite_eq_left h
 
 /-- The sequence of successive differences (XORs) of `y`. -/
 def diff {n : ℕ} (y : Fin (n + 1) → Bool) : Fin n → Bool :=
@@ -79,14 +79,14 @@ theorem buildAux_succ {n : ℕ} (x : Fin n → Bool) (c : Bool) (k : ℕ) :
 
 theorem sget_build {n : ℕ} (x : Fin n → Bool) (c : Bool) {i : ℕ} (h : i < n + 1) :
     sget (build x c) i = buildAux x c i :=
-  dif_pos h
+  dite_eq_left h
 
 theorem sget_diff_build {n : ℕ} (x : Fin n → Bool) (c : Bool) :
     ∀ i : ℕ, i < n →
       xor (sget (build x c) i) (sget (build x c) (i + 1)) = sget x i := by
   intro i hi
-  have hi' : i < n + 1 := by omega
-  have hi1 : i + 1 < n + 1 := by omega
+  have hi' : i < n + 1 := by lia
+  have hi1 : i + 1 < n + 1 := by lia
   rw [sget_build x c hi', sget_build x c hi1, buildAux_succ]
   generalize buildAux x c i = u
   generalize sget x i = v
@@ -109,9 +109,9 @@ theorem pattern_transfer {n : ℕ} {y : Fin (n + 1) → Bool} {x : Fin n → Boo
       (sget y i = true ∧ sget y (i + 1) = true ∧ sget y (i + 2) = false ∧
         sget y (i + 3) = false)) ↔
     (sget x i = false ∧ sget x (i + 1) = true ∧ sget x (i + 2) = false) := by
-  have e0 : xor (sget y i) (sget y (i + 1)) = sget x i := hxe i (by omega)
-  have e1 : xor (sget y (i + 1)) (sget y (i + 2)) = sget x (i + 1) := hxe (i + 1) (by omega)
-  have e2 : xor (sget y (i + 2)) (sget y (i + 3)) = sget x (i + 2) := hxe (i + 2) (by omega)
+  have e0 : xor (sget y i) (sget y (i + 1)) = sget x i := hxe i (by lia)
+  have e1 : xor (sget y (i + 1)) (sget y (i + 2)) = sget x (i + 1) := hxe (i + 1) (by lia)
+  have e2 : xor (sget y (i + 2)) (sget y (i + 3)) = sget x (i + 2) := hxe (i + 2) (by lia)
   revert e0 e1 e2
   generalize sget y i = a
   generalize sget y (i + 1) = b
@@ -130,20 +130,20 @@ theorem goodB_build {n : ℕ} {x : Fin n → Bool} {c : Bool} (hx : GoodA x) :
   have key : sget x (i : ℕ) = false ∧ sget x ((i : ℕ) + 1) = true ∧
       sget x ((i : ℕ) + 2) = false :=
     (pattern_transfer (sget_diff_build x c) (i := (i : ℕ)) hi').mp hpat
-  have hn : (i : ℕ) < n := by omega
-  exact hx ⟨(i : ℕ), hn⟩ (by show (i : ℕ) + 2 < n; omega) key
+  have hn : (i : ℕ) < n := by lia
+  exact hx ⟨(i : ℕ), hn⟩ (by show (i : ℕ) + 2 < n; lia) key
 
 theorem goodA_diff {n : ℕ} {y : Fin (n + 1) → Bool} (hy : GoodB y) :
     GoodA (diff y) := by
   intro i hi hpat
-  have hi' : (i : ℕ) + 3 < n + 1 := by omega
+  have hi' : (i : ℕ) + 3 < n + 1 := by lia
   have key : (sget y (i : ℕ) = false ∧ sget y ((i : ℕ) + 1) = false ∧
       sget y ((i : ℕ) + 2) = true ∧ sget y ((i : ℕ) + 3) = true) ∨
     (sget y (i : ℕ) = true ∧ sget y ((i : ℕ) + 1) = true ∧
       sget y ((i : ℕ) + 2) = false ∧ sget y ((i : ℕ) + 3) = false) :=
     (pattern_transfer (sget_diff y) (i := (i : ℕ)) hi').mpr hpat
-  have hn : (i : ℕ) < n + 1 := by omega
-  exact hy ⟨(i : ℕ), hn⟩ (by show (i : ℕ) + 3 < n + 1; omega) key
+  have hn : (i : ℕ) < n + 1 := by lia
+  exact hy ⟨(i : ℕ), hn⟩ (by show (i : ℕ) + 3 < n + 1; lia) key
 
 theorem diff_build {n : ℕ} (x : Fin n → Bool) (c : Bool) :
     diff (build x c) = x := by
@@ -164,8 +164,8 @@ theorem build_diff {n : ℕ} (y : Fin (n + 1) → Bool) :
     rw [h0, Fin.zero_eta]
   | succ k ih =>
     intro hk
-    have hkn : k < n + 1 := by omega
-    have hkn' : k < n := by omega
+    have hkn : k < n + 1 := by lia
+    have hkn' : k < n := by lia
     rw [buildAux_succ, ← sget_diff y k hkn', ih hkn, sget_lt y hkn, sget_lt y hk]
     generalize y ⟨k, hkn⟩ = u
     generalize y ⟨k + 1, hk⟩ = v
@@ -193,9 +193,8 @@ snip end
 problem usa1996_p4 (n : ℕ) :
     Fintype.card {y : Fin (n + 1) → Bool // GoodB y} =
       2 * Fintype.card {x : Fin n → Bool // GoodA x} := by
-  classical
   have h := Fintype.card_congr (seqEquiv n)
   rw [Fintype.card_prod, Fintype.card_bool] at h
-  omega
+  lia
 
 end Usa1996P4

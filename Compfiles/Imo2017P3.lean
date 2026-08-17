@@ -407,15 +407,15 @@ lemma startRound_strictMono : StrictMono startRound := by
   intro j
   rw [startRound_succ]
   have := phaseLen_pos j
-  omega
+  lia
 
 lemma startRound_eq_of_le (j : ℕ) (hj : j ≤ 20000) : startRound j = 400 * j := by
   induction j with
   | zero => rfl
   | succ k ih =>
-    have hk : k ≠ 20000 := by omega
-    rw [startRound_succ, ih (by omega)]
-    simp only [phaseLen, if_neg hk]
+    have hk : k ≠ 20000 := by lia
+    rw [startRound_succ, ih (by lia)]
+    simp only [phaseLen, ite_eq_right hk]
     ring
 
 lemma startRound_two : startRound (20000 + 1) = 8003600 := by
@@ -427,10 +427,10 @@ lemma startRound_eq_of_ge (j : ℕ) (hj : 20001 ≤ j) :
   induction j, hj using Nat.le_induction with
   | base => rw [startRound_two]
   | succ k hk ih =>
-    have hkn : k ≠ 20000 := by omega
+    have hkn : k ≠ 20000 := by lia
     rw [startRound_succ, ih]
-    simp only [phaseLen, if_neg hkn]
-    omega
+    simp only [phaseLen, ite_eq_right hkn]
+    lia
 
 lemma startRound_total : startRound totalPhases = totalRounds := by
   rw [startRound_eq_of_ge totalPhases (by norm_num [totalPhases])]
@@ -454,19 +454,19 @@ lemma phaseOf_spec (n : ℕ) :
         le_antisymm (Nat.succ_le_of_lt ih.2) hc
       have hpos := phaseLen_pos (phaseOf k + 1)
       rw [startRound_succ]
-      omega
+      lia
 
 lemma phaseOf_unique (j n : ℕ) (h₁ : startRound j ≤ n) (h₂ : n < startRound (j + 1)) :
     phaseOf n = j := by
   rcases phaseOf_spec n with ⟨g₁, g₂⟩
   rcases lt_trichotomy j (phaseOf n) with h | h | h
   · exfalso
-    have h3 := startRound_strictMono.le_iff_le.mpr (show j + 1 ≤ phaseOf n by omega)
-    omega
+    have h3 := startRound_strictMono.le_iff_le.mpr (show j + 1 ≤ phaseOf n by lia)
+    lia
   · exact h.symm
   · exfalso
-    have h3 := startRound_strictMono.le_iff_le.mpr (show phaseOf n + 1 ≤ j by omega)
-    omega
+    have h3 := startRound_strictMono.le_iff_le.mpr (show phaseOf n + 1 ≤ j by lia)
+    lia
 
 /-- The hunter moves at most one list-element per round: chaining the
 validity condition over an appended list of reports. -/
@@ -595,7 +595,7 @@ lemma escStep_spec (σ : Strategy) (hσ : ValidStrategy σ) (s : PState) (u w : 
       linarith [hd])
     hs hs' hHreach
   by_cases hc : dist H (s.a + t • u - w) ≤ dist H (s.a + t • u + w)
-  · rw [if_pos hc]
+  · rw [ite_eq_left hc]
     refine ⟨escPath_zero _ _ _ _ _, rfl, ?_, ?_, rfl, ?_⟩
     · intro k _
       exact escPath_step _ _ _ _ _ hnpos hvnX k
@@ -613,7 +613,7 @@ lemma escStep_spec (σ : Strategy) (hσ : ValidStrategy σ) (s : PState) (u w : 
           Real.sqrt_nonneg (dist s.a (σ s.L) ^ 2 + 1 / 2)]
       rw [hend, dist_comm (s.a + (t • u + w)) H]
       exact hsq
-  · rw [if_neg hc]
+  · rw [ite_eq_right hc]
     push Not at hc
     refine ⟨escPathY_zero _ _ _ _ _, rfl, ?_, ?_, rfl, ?_⟩
     · intro k _
@@ -646,7 +646,7 @@ lemma phaseStep_spec_escape (σ : Strategy) (hσ : ValidStrategy σ) (s : PState
   obtain ⟨hu1, hw1, huw, hspan, hb⟩ :=
     Classical.choose_spec (Classical.choose_spec (frame_exists s.a (σ s.L)))
   unfold phaseStep
-  rw [dif_pos ⟨hd, hj⟩]
+  rw [dite_eq_left ⟨hd, hj⟩]
   exact escStep_spec σ hσ s _ _ hd hu1 hw1 huw hspan hb
 
 lemma maintSeq_succ_fst (σ : Strategy) (a : Pt) (L : List Pt) (k : ℕ) :
@@ -699,11 +699,7 @@ lemma maintSeq_spec (σ : Strategy) (hσ : ValidStrategy σ) (a : Pt) (L : List 
             ((maintSeq σ a L k).1 - σ ((maintSeq σ a L k).2)) := by
         rw [add_sub_right_comm, add_smul, one_smul]
       rw [dist_eq_norm, e, norm_smul, Real.norm_eq_abs,
-        abs_of_pos (by
-          have hi : (0:ℝ) ≤
-              (dist ((maintSeq σ a L k).1) (σ ((maintSeq σ a L k).2)))⁻¹ :=
-            le_of_lt (inv_pos.mpr hdk)
-          linarith),
+        abs_of_pos (by positivity),
         ← dist_eq_norm, add_mul, one_mul, inv_mul_cancel₀ (ne_of_gt hdk)]
     refine ⟨?_, ?_, ?_⟩
     · rw [maintSeq_succ_snd, ihL, List.append_assoc]
@@ -756,7 +752,7 @@ lemma phaseStep_spec_maint (σ : Strategy) (hσ : ValidStrategy σ) (s : PState)
   have hd100 : 100 ≤ dist ((maintSeq σ s.a s.L (phaseLen s.j)).1)
       (σ ((maintSeq σ s.a s.L (phaseLen s.j)).2)) := le_trans hd hdist
   unfold phaseStep
-  rw [dif_neg hbr]
+  rw [dite_eq_right hbr]
   dsimp only
   refine ⟨rfl, rfl, hstep, ?_, hL, hd100, hdist⟩
   intro k _ _
@@ -767,7 +763,7 @@ lemma phaseStep_escape_eq (σ : Strategy) (s : PState)
     phaseStep σ s = escStep σ s (Classical.choose (frame_exists s.a (σ s.L)))
       (Classical.choose (Classical.choose_spec (frame_exists s.a (σ s.L)))) := by
   unfold phaseStep
-  rw [dif_pos hbr]
+  rw [dite_eq_left hbr]
 
 lemma states_j (σ : Strategy) (j : ℕ) : (States σ j).j = j := by
   induction j with
@@ -780,7 +776,7 @@ lemma states_j (σ : Strategy) (j : ℕ) : (States σ j).j = j := by
       dsimp only
       rw [ih]
     · unfold phaseStep
-      rw [dif_neg hbr]
+      rw [dite_eq_right hbr]
       dsimp only
       rw [ih]
 
@@ -827,7 +823,7 @@ lemma invariant (σ : Strategy) (hσ : ValidStrategy σ) (j : ℕ) :
         rw [hsucc]
         linarith [ih.1, hgrow, e2]
       · intro hk20
-        have hk : k = 20000 := by rw [hjk] at hbr; omega
+        have hk : k = 20000 := by rw [hjk] at hbr; lia
         have hd2 : (10000 : ℝ) + 1 / 2 ≤
             dist ((phaseStep σ (States σ k)).1.a) (σ (phaseStep σ (States σ k)).1.L) ^ 2 := by
           have htmp : (10000:ℝ) ≤ min 10000 ((k : ℝ) / 2) := by
@@ -845,7 +841,7 @@ lemma invariant (σ : Strategy) (hσ : ValidStrategy σ) (j : ℕ) :
         rcases hbr with h | h
         · exact not_le.mp h
         · rw [hjk] at h
-          exact ih.2 (by omega)
+          exact ih.2 (by lia)
       obtain ⟨h0, hend, hstep, hreps, hL, hd100, hmono⟩ :=
         phaseStep_spec_maint σ hσ (States σ k) (le_of_lt hd') hbr
       refine ⟨?_, ?_⟩
@@ -865,7 +861,7 @@ lemma hdm_of (σ : Strategy) (hσ : ValidStrategy σ) (j : ℕ)
   rw [not_and_or] at hbr
   rcases hbr with h | h
   · exact le_of_lt (not_le.mp h)
-  · have hj : 20000 < j := by have := states_j σ j; omega
+  · have hj : 20000 < j := by have := states_j σ j; lia
     exact le_of_lt ((invariant σ hσ j).2 hj)
 
 lemma reportList_succ (p : ℕ → Pt) (n : ℕ) :
@@ -877,7 +873,7 @@ lemma reportList_add (p : ℕ → Pt) (m c : ℕ) :
   induction c with
   | zero => simp
   | succ c ih =>
-    have h1 : m + (c + 1) = m + c + 1 := by omega
+    have h1 : m + (c + 1) = m + c + 1 := by lia
     rw [h1, reportList_succ, ih, List.append_assoc]
     congr 1
     rw [List.ofFn_succ', List.concat_eq_append]
@@ -897,18 +893,18 @@ lemma reportList_eq (σ : Strategy) (hσ : ValidStrategy σ) (j : ℕ) :
     congr 1
     apply List.ofFn_inj.mpr
     funext i
-    have hne : startRound k + ↑i + 1 ≠ 0 := by omega
+    have hne : startRound k + ↑i + 1 ≠ 0 := by lia
     have hpk : phaseOf (startRound k + ↑i + 1 - 1) = k := by
-      have e : startRound k + ↑i + 1 - 1 = startRound k + ↑i := by omega
+      have e : startRound k + ↑i + 1 - 1 = startRound k + ↑i := by lia
       rw [e]
       apply phaseOf_unique
       · exact Nat.le_add_right _ _
       · rw [startRound_succ]
         have hi := i.isLt
-        omega
-    have harg : startRound k + ↑i + 1 - startRound k = ↑i + 1 := by omega
+        lia
+    have harg : startRound k + ↑i + 1 - startRound k = ↑i + 1 := by lia
     unfold reports
-    rw [if_neg hne, hpk, harg]
+    rw [ite_eq_right hne, hpk, harg]
     rfl
 
 lemma rabbit_valid (σ : Strategy) (hσ : ValidStrategy σ) : ValidRabbit (rabbit σ) := by
@@ -928,16 +924,16 @@ lemma rabbit_valid (σ : Strategy) (hσ : ValidStrategy σ) : ValidRabbit (rabbi
     set k := n - startRound j with hk_def
     have hk : k < phaseLen j := by
       rw [startRound_succ] at g2
-      omega
+      lia
     rcases eq_or_lt_of_le (Nat.succ_le_of_lt hk) with hke | hkl
     · have hn1 : phaseOf (n + 1) = j + 1 := by
         apply phaseOf_unique
-        · rw [startRound_succ]; omega
+        · rw [startRound_succ]; lia
         · rw [startRound_succ, startRound_succ]
           have hp := phaseLen_pos (j + 1)
-          omega
+          lia
       have e0 : n + 1 - startRound (phaseOf (n + 1)) = 0 := by
-        rw [hn1, startRound_succ]; omega
+        rw [hn1, startRound_succ]; lia
       have e5 : rabbit σ n = (phaseStep σ (States σ j)).2.1 k := rfl
       have e1 : rabbit σ (n + 1) = (phaseStep σ (States σ (j + 1))).2.1 0 := by
         show Paths σ (phaseOf (n + 1)) (n + 1 - startRound (phaseOf (n + 1))) = _
@@ -951,9 +947,9 @@ lemma rabbit_valid (σ : Strategy) (hσ : ValidStrategy σ) : ValidRabbit (rabbi
       exact hstep k hk
     · have hn1 : phaseOf (n + 1) = j := by
         apply phaseOf_unique
-        · omega
-        · rw [startRound_succ]; omega
-      have e0 : n + 1 - startRound (phaseOf (n + 1)) = k + 1 := by rw [hn1]; omega
+        · lia
+        · rw [startRound_succ]; lia
+      have e0 : n + 1 - startRound (phaseOf (n + 1)) = k + 1 := by rw [hn1]; lia
       have e5 : rabbit σ n = (phaseStep σ (States σ j)).2.1 k := rfl
       have e1 : rabbit σ (n + 1) = (phaseStep σ (States σ j)).2.1 (k + 1) := by
         show Paths σ (phaseOf (n + 1)) (n + 1 - startRound (phaseOf (n + 1))) = _
@@ -974,25 +970,25 @@ lemma reports_valid (σ : Strategy) (hσ : ValidStrategy σ) :
   set k := n - 1 - startRound j with hk_def
   have hk : k < phaseLen j := by
     rw [startRound_succ] at g2
-    omega
-  have hne : n ≠ 0 := by omega
+    lia
+  have hne : n ≠ 0 := by lia
   have hoff : n - startRound (phaseOf (n - 1)) = k + 1 := by
     show n - startRound j = k + 1
-    omega
+    lia
   have erep : reports σ n = (phaseStep σ (States σ j)).2.2 (k + 1) := by
     unfold reports
-    rw [if_neg hne, hoff]
+    rw [ite_eq_right hne, hoff]
     rfl
-  have hk1 : 1 ≤ k + 1 := by omega
+  have hk1 : 1 ≤ k + 1 := by lia
   rcases eq_or_lt_of_le (Nat.succ_le_of_lt hk) with hke | hkl
   · have hn1 : phaseOf n = j + 1 := by
       apply phaseOf_unique
-      · rw [startRound_succ]; omega
+      · rw [startRound_succ]; lia
       · rw [startRound_succ, startRound_succ]
         have hp := phaseLen_pos (j + 1)
-        omega
+        lia
     have e0 : n - startRound (phaseOf n) = 0 := by
-      rw [hn1, startRound_succ]; omega
+      rw [hn1, startRound_succ]; lia
     have erab : rabbit σ n = (phaseStep σ (States σ (j + 1))).2.1 0 := by
       show Paths σ (phaseOf n) (n - startRound (phaseOf n)) = _
       rw [e0, hn1]
@@ -1002,18 +998,18 @@ lemma reports_valid (σ : Strategy) (hσ : ValidStrategy σ) :
       (phaseStep_spec σ hσ (States σ (j + 1)) (hdm_of σ hσ (j + 1))).1
     have e3 : (States σ (j + 1)).a = (phaseStep σ (States σ j)).1.a := rfl
     rw [e2, e3, ← hend, ← hke]
-    exact hreps (k + 1) hk1 (by omega)
+    exact hreps (k + 1) hk1 (by lia)
   · have hn1 : phaseOf n = j := by
       apply phaseOf_unique
-      · omega
-      · rw [startRound_succ]; omega
-    have e0 : n - startRound (phaseOf n) = k + 1 := by rw [hn1]; omega
+      · lia
+      · rw [startRound_succ]; lia
+    have e0 : n - startRound (phaseOf n) = k + 1 := by rw [hn1]; lia
     have erab : rabbit σ n = (phaseStep σ (States σ j)).2.1 (k + 1) := by
       show Paths σ (phaseOf n) (n - startRound (phaseOf n)) = _
       rw [e0, hn1]
       rfl
     rw [erep, erab]
-    exact hreps (k + 1) hk1 (by omega)
+    exact hreps (k + 1) hk1 (by lia)
 
 /-- The adversary wins: for every valid hunter strategy, the rabbit and
 the tracking device can force the distance after `10⁹` rounds to exceed
@@ -1027,7 +1023,7 @@ lemma adversary (σ : Strategy) (hσ : ValidStrategy σ) :
     · rw [startRound_total]
     · rw [startRound_succ, startRound_total]
       have hp := phaseLen_pos totalPhases
-      omega
+      lia
   have hoff : totalRounds - startRound (phaseOf totalRounds) = 0 := by
     rw [hpo, startRound_total, Nat.sub_self]
   have hr : rabbit σ totalRounds = (States σ totalPhases).a := by
