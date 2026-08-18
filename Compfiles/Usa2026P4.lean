@@ -82,8 +82,7 @@ lemma digit_squeeze {m k : ℕ} (hm : m ∈ Set.Ico (10 ^ k) (2 * 10 ^ k)) : 1 �
   | zero =>
     have ⟨_, _⟩ := hm
     interval_cases m
-    rw [digits_of_lt 10 1 one_ne_zero (by decide)]
-    exact mem_singleton_self _
+    exact mem_of_elem_eq_true rfl
   | succ k ih =>
     rw [Set.mem_Ico] at hm
     rw [digits_def' (by omega)]
@@ -109,9 +108,8 @@ lemma digits_last_mem {m k : ℕ} (h2 : 10 ^ k ≤ m) (h3 : m / 10 ^ k < 10) : m
 
 lemma zero_lt_mod_ne_zero {a k : ℕ} (ha: a % k ≠ 0) : 0 < a := by
   rw [pos_iff_ne_zero]
-  contrapose! ha
-  subst ha
-  rw [zero_mod]
+  apply_fun (· % k)
+  exact ha
 
 lemma digits_div_subset (a k : ℕ) : digits 10 (a % 10 ^ (k + 1)) ⊆ digits 10 a := by
   induction k generalizing a with
@@ -154,7 +152,7 @@ lemma solitary_form (k : ℕ) : is_solitary (2 * 10 ^ k - 1) := by
   refine ⟨by grind, fun a b h => ?_⟩
   wlog! w : b ≤ a
   · exact this k b a (by rwa [add_comm]) w.le |>.symm
-  have : a ≤ 2 * 10 ^ k - 1 := by omega
+  have : a ≤ 2 * 10 ^ k - 1 := le.intro h
   exact Or.inl <| digit_squeeze ⟨by omega, (Nat.le_sub_one_iff_lt <| pos_of_neZero _).mp this⟩
 
 -- lemma solitary_one : is_solitary 1 := solitary_form 0
@@ -236,7 +234,7 @@ lemma solitary_extend {n : ℕ} (hn1 : 0 < n) {k : ℕ} (hn2 : n < 10 ^ k) : is_
 
 lemma nines (k : ℕ) : 10 ^ k - 1 = ofDigits 10 (replicate k 9) := by
   induction k with
-  | zero => simp
+  | zero => rfl
   | succ k ih =>
     rw [add_comm, replicate_add, replicate_one, ofDigits_append]
     simp [← ih]
@@ -248,12 +246,7 @@ abbrev correction (m k : ℕ) :=
 
 lemma correction_le {m k : ℕ} (hm : m ∈ Finset.Ico (10 ^ k) (10 ^ (k + 1))) : correction m k ≤ ofDigits 10 (replicate k 9) := by
   cases k with
-  | zero =>
-    rw [Finset.mem_Ico] at hm
-    rw [correction, digits_of_lt]
-    · simp
-    · omega
-    · omega
+  | zero => rfl
   | succ k =>
     rw [← nines, Nat.le_sub_one_iff_lt <| pos_of_neZero _]
     calc correction m (k + 1)
@@ -329,7 +322,7 @@ lemma add_correction_not_has_digit_one {m k : ℕ} (hm : m ∈ Finset.Ico (10 ^ 
     rw [Finset.mem_Ico] at h_mem
     rw [ofDigits_append]
     nth_rw 2 [add_comm]
-    rw [add_assoc, ofDigits_add_ofDigits_eq_ofDigits_zipWith_of_length_eq (by simp),
+    rw [add_assoc, ofDigits_add_ofDigits_eq_ofDigits_zipWith_of_length_eq (length_map _ |>.symm),
       map_take, ← take_zipWith, zipWith_map_right, zipWith_self]
     rw [add_comm, ← mem_digits_split]
     constructor
@@ -421,7 +414,7 @@ lemma solitary_count (k : ℕ) : Finset.card { x ∈ Finset.Ico 1 (10^k) | is_so
     have : { x ∈ (Finset.Ico 1 (10^(k + 1))) | is_solitary x }
         = { x ∈ (Finset.Ico 1 (10^k)) | is_solitary x } ∪ { x ∈ (Finset.Ico (10^k) (10^(k+1))) | is_solitary x } := by
       rw [← Finset.filter_union, Finset.Ico_union_Ico_eq_Ico]
-      · grind
+      · exact one_le_pow' _ _
       · exact Nat.pow_le_pow_right (by decide) (Nat.le_succ _)
     rw [this, Finset.card_union_of_disjoint <| Finset.disjoint_filter_filter <| Finset.Ico_disjoint_Ico_consecutive ..]
     clear this
