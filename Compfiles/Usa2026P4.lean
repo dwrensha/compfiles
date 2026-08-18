@@ -208,9 +208,7 @@ lemma solitary_extend {n : ℕ} (hn1 : 0 < n) {k : ℕ} (hn2 : n < 10 ^ k) : is_
         _ = a + b := h.symm
         _ = 10 ^ k * (a / 10 ^ k) + a % 10 ^ k + 10 ^ k * (b / 10 ^ k) + b % 10 ^ k := by
           simp [div_add_mod, add_assoc]
-        _ = 2 * 10 ^ k + (a' + b') := by
-          simp [← hxdef, ← hydef, hy, a', b']
-          ring
+        _ = 2 * 10 ^ k + (a' + b') := by lia
       rw [add_right_inj] at h
       have hab := hn.2 a' b' h.symm
       clear * - ha hb hab hk
