@@ -114,18 +114,11 @@ lemma lemma9' (i : ℕ) (hi : i ∈ Finset.range 330) :
        = ∏ j ∈ (Finset.range 330).erase i, (660 + j) * (1319 - j) := by
   rw [← Finset.prod_erase_mul _ _ hi]
   rw [Finset.mem_range] at hi
-  push_cast
-  have h1 : (((1319 - i):ℕ):ℚ) = 1319 - (i:ℚ) := by
-    have : i ≤ 1319 := by lia
-    simp_all only [Nat.cast_sub, Nat.cast_ofNat]
-  rw [h1, mul_div_assoc]
-  have h2 : ((660 + (i:ℚ)) * (1319 - (i:ℚ))) /
-              ((660 + (i:ℚ)) * (1319 - (i:ℚ))) = 1 := by
-    have h3 : (660 + (i:ℚ)) * (1319 - (i:ℚ)) ≠ 0 := by
-      have h5 : (i: ℚ) < 330 := by norm_cast
-      nlinarith
-    exact div_self h3
-  rw [h2, mul_one]
+  have : i ≤ 1319 := by lia
+  push_cast [this]
+  rw [Rat.mul_div_cancel]
+  have : (i: ℚ) < 330 := by norm_cast
+  nlinarith
 
 lemma lemma9 :
     (∑ i ∈ Finset.range 330, 1 / ((660 + (i:ℚ)) * (1319 - (i:ℚ)))) *
@@ -137,6 +130,30 @@ lemma lemma9 :
   push_cast
   rfl
 
+lemma h4 (i : ℕ) (hi : i ∈ Finset.range 330) :
+    1 / ((((659 + i):ℕ):ℚ) + 1) + 1 / ((((659 + (2 * 330 - 1 - i)):ℕ):ℚ) + 1) =
+    1979 / ((660 + (i:ℚ)) * (1319 - (i:ℚ))) := by
+  rw [Finset.mem_range] at hi
+  have h5 : (((659 + i) : ℕ) : ℚ) + 1 = 660 + (i : ℚ) := by zify; ring
+  have h6 : (((659 + (2 * 330 - 1 - i)):ℕ):ℚ) + 1 = 1319 - (i:ℚ) := by
+    rw [show 2 * 330 - 1 - i = 659 - i by lia]
+    rw [show 659 + (659 - i) = 1318 - i by lia]
+    have h10 : (((1318 - i):ℕ):ℚ) = 1318 - ↑i := by
+      have : i ≤ 1318 := by lia
+      rw [Nat.cast_sub this]
+      rfl
+    rw [h10]
+    ring
+  rw [h5, h6]; clear h5 h6
+  have : (1319 : ℚ) - i ≠ 0 := by
+    have h8 : 1319 ≠ i := by lia
+    intro H
+    have h9 : 1319 = (i : ℚ) := by linarith
+    norm_cast at h9
+  field_simp; norm_num
+
+lemma prime_1979 : Nat.Prime 1979 := by norm_num1
+
 snip end
 
 problem imo1979_p1 (p q : ℤ) (hp : 0 < p) (hq : 0 < q)
@@ -144,92 +161,48 @@ problem imo1979_p1 (p q : ℤ) (hp : 0 < p) (hq : 0 < q)
     1979 ∣ p := by
   -- we follow the solution from
   -- https://artofproblemsolving.com/wiki/index.php/1979_IMO_Problems/Problem_1
-
-  rw [lemma3] at h
-  have h1 : 2 * ∑ i ∈ Finset.range 659, 1 / (2 * ((i:ℚ) + 1)) =
-              ∑ i ∈ Finset.range 659, 1 / ((i:ℚ) + 1) := by
-    rw [Finset.mul_sum, Finset.sum_congr rfl]
-    intro x _
-    field_simp
-  rw [h1] at h; clear h1
-  have h2 : Disjoint (Finset.range 659) (Finset.Ico 659 1319) := by
-    rw [Finset.disjoint_left]
-    intro a ha ha1
-    rw [Finset.mem_range] at ha
-    rw [Finset.mem_Ico] at ha1
-    lia
-  have h3 : Finset.range 1319 =
-      Finset.disjUnion (Finset.range 659) (Finset.Ico 659 1319) h2 := by
-    ext a
-    rw [Finset.mem_range, Finset.disjUnion_eq_union, Finset.mem_union,
-        Finset.mem_range, Finset.mem_Ico]
-    lia
-  rw [h3] at h; clear h3
-  rw [Finset.sum_disjUnion, add_sub_cancel_left] at h; clear h2
-  rw [lemma4 659 330] at h
-  have h4 :
-    ∀ i ∈ Finset.range 330,
-      1 / ((((659 + i):ℕ):ℚ) + 1) + 1 / ((((659 + (2 * 330 - 1 - i)):ℕ):ℚ) + 1) =
-      1979 / ((660 + (i:ℚ)) * (1319 - (i:ℚ))) := by
-    intro i hi
-    rw [Finset.mem_range] at hi
-    have h5 : (((659 + i) : ℕ) : ℚ) + 1 = 660 + (i : ℚ) := by grind
-    have h6 : (((659 + (2 * 330 - 1 - i)):ℕ):ℚ) + 1 = 1319 - (i:ℚ) := by
-      rw [show 2 * 330 - 1 - i = 659 - i by lia]
-      rw [show 659 + (659 - i) = 1318 - i by lia]
-      have h10 : (((1318 - i):ℕ):ℚ) = 1318 - ↑i := by
-        have : i ≤ 1318 := by lia
-        rw [Nat.cast_sub this]
-        rfl
-      rw [h10]
-      ring
-    rw [h5, h6]; clear h5 h6
-    have : (1319 : ℚ) - i ≠ 0 := by
-      have h8 : 1319 ≠ i := by lia
-      intro H
-      have h9 : 1319 = (i : ℚ) := by linarith
-      norm_cast at h9
-    field_simp; norm_num
-
-  rw [Finset.sum_congr rfl h4] at h; clear h4
-  rw [show (1979 : ℚ) = 1979 * 1 by simp +arith] at h
-  simp_rw [mul_div_assoc] at h
-  rw [← Finset.mul_sum] at h
+  replace h := calc p / (q : ℚ)
+    _ = ∑ i ∈ Finset.range 1319, (-1 : ℚ)^i / (i + 1) := h
+    _ = ∑ i ∈ Finset.range 1319, (1:ℚ) / (i + 1) -
+         2 * ∑ i ∈ Finset.range 659, (1:ℚ) / (2 * (i + 1)) := lemma3
+    _ = _ - ∑ i ∈ Finset.range 659, 1 / ((i:ℚ) + 1) := by
+      simp_rw [← one_div_mul_one_div]
+      rw [← Finset.mul_sum, ← Rat.mul_assoc, mul_one_div_cancel (by decide), one_mul]
+    _ = ∑ i ∈ Finset.range 659, (1:ℚ) / (i + 1) + ∑ i ∈ Finset.Ico (659 : ℕ) 1319, (1:ℚ) / (i + 1) - _ := by
+      rw [Finset.sum_range_add_sum_Ico]
+      decide
+    _ = _ + ∑ i ∈ Finset.range 330, (1 / (↑(659 + i) + 1) + 1 / (↑(659 + (2 * 330 - 1 - i)) + 1)) - _ := by
+      rw [lemma4 659 330]
+    _ = _ + ∑ i ∈ Finset.range 330, 1979 / ((660 + (i:ℚ)) * (1319 - (i:ℚ))) - _ := by
+      rw [Finset.sum_congr rfl h4]
+    _ = 1979 * ∑ i ∈ Finset.range 330, 1 / ((660 + ↑i) * (1319 - ↑i) : ℚ) := by
+      rw [Finset.mul_sum, add_sub_cancel_left]
+      simp_rw [mul_one_div]
   let s : ℕ := ∏ i ∈ Finset.range 330, (660 + i) * (1319 - i)
   let sq := (s : ℚ)
-  have hpp : Nat.Prime 1979 := by norm_num1
-
   have hsqp : ¬ 1979 ∣ s := by
-    have h30 : ∀ i ∈ Finset.range 330, ¬ 1979 ∣ (660 + i) * (1319 - i) := fun i hi ↦ by
-      rw [Finset.mem_range] at hi
-      intro H
-      have := (Nat.Prime.dvd_mul hpp).mp H
-      lia
-    exact Prime.not_dvd_finsetProd (Nat.prime_iff.mp hpp) h30
+    refine Prime.not_dvd_finsetProd (Nat.prime_iff.mp prime_1979) fun i hi ↦ ?_
+    rw [Finset.mem_range] at hi
+    intro H
+    have := (Nat.Prime.dvd_mul prime_1979).mp H
+    lia
   obtain ⟨p', rfl⟩ := Int.eq_ofNat_of_zero_le (le_of_lt hp)
   obtain ⟨q', rfl⟩ := Int.eq_ofNat_of_zero_le (le_of_lt hq)
   simp only [Int.cast_natCast] at h
-  suffices H : 1979 ∣ p' from Int.ofNat_dvd.mpr H
   have hqq0 : (q':ℚ) ≠ 0 :=
     Nat.cast_ne_zero.mpr (Nat.pos_iff_ne_zero.mp (Int.natCast_pos.mp hq))
   rw [div_eq_iff hqq0] at h
   apply_fun (· * sq) at h
-  have h41 :
-     (1979 * ∑ i ∈ Finset.range 330, 1 / ((660 + (i:ℚ)) * (1319 - (i:ℚ)))) * (q':ℚ) * sq
-     = 1979 * (q':ℚ) *
-        ((∑ i ∈ Finset.range 330, 1 / ((660 + (i:ℚ)) * (1319 - (i:ℚ)))) * sq) := by
-   ring
+  have h41 {w x y z : ℚ} : (y * x) * w * z = y * w * (x * z) := by ring
   rw [h41] at h; clear h41
   rw [lemma9] at h
   rw [← Nat.cast_mul, show (1979:ℚ) = ((1979:ℕ):ℚ) by rfl,
       ← Nat.cast_mul, ← Nat.cast_mul] at h
   replace h := Nat.cast_inj.mp h
   rw [Nat.mul_assoc] at h
-  have h20 : 1979 ∣ p' * s :=
-    ⟨(q' * ∑ i ∈ Finset.range 330,
-       ∏ j ∈ Finset.erase (Finset.range 330) i, (660 + j) * (1319 - j)),
-     h⟩
-  have : Nat.Coprime 1979 s := (Nat.Prime.coprime_iff_not_dvd hpp).mpr hsqp
+  suffices H : 1979 ∣ p' from Int.ofNat_dvd.mpr H
+  have h20 : 1979 ∣ p' * s := Dvd.intro _ h.symm
+  have : Nat.Coprime 1979 s := (Nat.Prime.coprime_iff_not_dvd prime_1979).mpr hsqp
   exact (Nat.Coprime.dvd_mul_right this).mp h20
 
 
