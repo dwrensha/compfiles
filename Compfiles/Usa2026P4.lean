@@ -91,14 +91,14 @@ lemma digit_squeeze {m k : ℕ} (hm : m ∈ Set.Ico (10 ^ k) (2 * 10 ^ k)) : 1 �
 lemma digits_last_mem {m k : ℕ} (h2 : 10 ^ k ≤ m) (h3 : m / 10 ^ k < 10) : m / (10 ^ k) ∈ digits 10 m := by
   induction k generalizing m with
   | zero =>
-    have h1 : 0 < m := calc
+    have h1 := calc
       0 < 10 ^ 0 := pos_of_neZero _
       _ ≤ m := h2
     simp only [pow_zero, Nat.div_one]
     rw [digits_def' h1, mod_eq_of_lt (by omega)]
     exact mem_cons_self
   | succ k ih =>
-    have h1 : 0 < m := calc
+    have h1 := calc
       0 < 10 ^ (k + 1) := pos_of_neZero _
       _ ≤ m := h2
     rw [digits_def' h1]
@@ -129,10 +129,8 @@ lemma digits_div_subset (a k : ℕ) : digits 10 (a % 10 ^ (k + 1)) ⊆ digits 10
       · rw [digits_def' (zero_lt_mod_ne_zero h)]
         exact mem_cons_self
       · exact dvd_of_mul_left_eq _ rfl
-    · rw [pow_succ, mod_mul_left_div_self]
-      nth_rw 2 [digits_def']
-      · exact subset_cons_of_subset (a % 10) <| ih (a / 10)
-      · exact zero_lt_mod_ne_zero h
+    · rw [pow_succ, mod_mul_left_div_self, digits_def' (zero_lt_mod_ne_zero h)]
+      exact subset_cons_of_subset _ <| ih (a / 10)
 
 lemma chop_off_leading {m k : ℕ} (hm : m ∈ Finset.Ico (10 ^ k) (10 ^ (k + 1)))
     : m = ofDigits 10 ((digits 10 m).take k ++ [m / 10 ^ k]) := by
@@ -154,8 +152,6 @@ lemma solitary_form (k : ℕ) : is_solitary (2 * 10 ^ k - 1) := by
   · exact this k b a (by rwa [add_comm]) w.le |>.symm
   have : a ≤ 2 * 10 ^ k - 1 := le.intro h
   exact Or.inl <| digit_squeeze ⟨by omega, (Nat.le_sub_one_iff_lt <| pos_of_neZero _).mp this⟩
-
--- lemma solitary_one : is_solitary 1 := solitary_form 0
 
 lemma solitary_extend {n : ℕ} (hn1 : 0 < n) {k : ℕ} (hn2 : n < 10 ^ k) : is_solitary n ↔ is_solitary (2 * 10 ^ k + n) := by
   contrapose!
@@ -183,7 +179,7 @@ lemma solitary_extend {n : ℕ} (hn1 : 0 < n) {k : ℕ} (hn2 : n < 10 ^ k) : is_
     let b' := b % (10 ^ k)
     set x := a / (10 ^ k) with hxdef
     set y := b / (10 ^ k) with hydef
-    -- In this step, AoPS claims a, b ≠ 1, but we actually want x, y ≠ 1.
+    -- In this step, AoPS claims `a, b ≠ 1`, but we actually want `x, y ≠ 1`, which we know from a and b not having the digit `1`.
     wlog! w : x ≤ y generalizing a b
     · apply this b a (by rwa [add_comm]) hb ha hydef hxdef w.le
     have sum_le : x + y ≤ 2 := calc
@@ -193,6 +189,7 @@ lemma solitary_extend {n : ℕ} (hn1 : 0 < n) {k : ℕ} (hn2 : n < 10 ^ k) : is_
     have : x ≤ 2 := calc
       _ ≤ a / 10 ^ k + b / 10 ^ k := Nat.le_add_right _ _
       _ ≤ 2 := sum_le
+    -- with the constraints above, we can assume the the case of `x = 0, y = 2`.
     interval_cases hx : x
     · have hy : y = 2 := by
         rw [zero_add] at sum_le
@@ -240,9 +237,8 @@ lemma nines (k : ℕ) : 10 ^ k - 1 = ofDigits 10 (replicate k 9) := by
     simp [← ih]
     grind
 
--- TODO: there seems to be an extra List.map_take that we can inline here
 abbrev correction (m k : ℕ) :=
-  digits 10 (m - (10 ^ k - 1)) |>.take k |>.map (if · = 1 then 1 else 0) |> ofDigits 10
+  digits 10 (m - (10 ^ k - 1)) |>.map (if · = 1 then 1 else 0) |>.take k |> ofDigits 10
 
 lemma correction_le {m k : ℕ} (hm : m ∈ Finset.Ico (10 ^ k) (10 ^ (k + 1))) : correction m k ≤ ofDigits 10 (replicate k 9) := by
   cases k with
@@ -253,21 +249,13 @@ lemma correction_le {m k : ℕ} (hm : m ∈ Finset.Ico (10 ^ k) (10 ^ (k + 1))) 
       _ < 10 ^ _ :=
         ofDigits_lt_base_pow_length (by decide) (by grind)
       _ ≤ 10 ^ (k + 1) := by
-        rw [Nat.pow_le_pow_iff_right (by decide), length_map]
+        rw [Nat.pow_le_pow_iff_right (by decide)]
         apply length_take_le
 
 lemma nines_sub_correction {m k : ℕ} (hm : m ∈ Finset.Ico (10 ^ k) (10 ^ (k + 1))) : ofDigits 10 (replicate k 9) - correction m k =
     ((take k (digits 10 (m - (10 ^ k - 1))) |>.map (if · = 1 then 8 else 9)) ++ replicate (k - (digits 10 (m - (10 ^ k - 1))).length) 9 |> ofDigits 10) := by
   rw [Nat.sub_eq_iff_eq_add (correction_le hm), correction]
-  have := calc
-    ofDigits 10 (map (fun x ↦ if x = 1 then 1 else 0) (take k (digits 10 (m - (10 ^ k - 1)))))
-    _ = ofDigits 10 (map (fun x ↦ if x = 1 then 1 else 0) (take k (digits 10 (m - (10 ^ k - 1)) ++ replicate (k - (digits 10 (m - (10 ^ k - 1))).length) 0))) := by
-      by_cases h : k ≤ (digits 10 (m - (10 ^ k - 1))).length
-      · simp [h]
-      · simp [take_append]
-    _ = ofDigits 10 (take k (map (fun x ↦ if x = 1 then 1 else 0) (digits 10 (m - (10 ^ k - 1)))) ++ replicate (k - (digits 10 (m - (10 ^ k - 1))).length) 0) := by
-      simp [take_append]
-  rw [this]
+  nth_rw 3 [← @ofDigits_append_replicate_zero _ (k - (digits 10 (m - (10 ^ k - 1))).length)]
   rw [ofDigits_add_ofDigits_eq_ofDigits_zipWith_of_length_eq (by simp)]
   simp [zipWith_append, ← take_zipWith, ite_add_ite]
   congr
@@ -322,8 +310,8 @@ lemma add_correction_not_has_digit_one {m k : ℕ} (hm : m ∈ Finset.Ico (10 ^ 
     rw [Finset.mem_Ico] at h_mem
     rw [ofDigits_append]
     nth_rw 2 [add_comm]
-    rw [add_assoc, ofDigits_add_ofDigits_eq_ofDigits_zipWith_of_length_eq (length_map _ |>.symm),
-      map_take, ← take_zipWith, zipWith_map_right, zipWith_self]
+    rw [add_assoc, ofDigits_add_ofDigits_eq_ofDigits_zipWith_of_length_eq (by simp),
+      ← take_zipWith, zipWith_map_right, zipWith_self]
     rw [add_comm, ← mem_digits_split]
     constructor
     · exact one_not_mem_bumped m k
@@ -351,7 +339,7 @@ lemma add_correction_not_has_digit_one {m k : ℕ} (hm : m ∈ Finset.Ico (10 ^ 
       omega
     have length := digits_length_le_iff (by decide) _ |>.mpr h_mem
     nth_rw 1 [← ofDigits_digits 10 (m - _)]
-    rw [ofDigits_add_ofDigits_eq_ofDigits_zipWith_of_length_eq (by simp [length]), map_take]
+    rw [ofDigits_add_ofDigits_eq_ofDigits_zipWith_of_length_eq (by simp [length])]
     nth_rw 1 [take_self_eq_iff _ |>.mpr length]
     rw [← take_zipWith, zipWith_map_right, zipWith_self]
     exact one_not_mem_bumped m k
