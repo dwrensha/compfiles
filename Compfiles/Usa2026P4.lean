@@ -158,45 +158,59 @@ lemma solitary_extend (n k : ℕ) (hn1 : 0 < n) (hn2 : n < 10 ^ k) : is_solitary
       simpa [has_digit_one] using ha
     have := hm.2 (a + 2 * 10 ^ k) b (by omega)
     lia
-  · intro hm hn
+  · wlog! hk : k ≠ 0
+    · rw [hk] at hn2
+      interval_cases n
+    intro hm hn
     unfold is_solitary at hm
     push Not at hm
     rcases hm <| Nat.add_pos_right _ hn1 with ⟨a, b, h, ha, hb⟩
     clear hm
-    let a' := a % (10 ^ (k+1))
-    let b' := b % (10 ^ (k+1))
+    let a' := a % (10 ^ k)
+    let b' := b % (10 ^ k)
     set x := a / (10 ^ k) with hxdef
     set y := b / (10 ^ k) with hydef
     -- In this step, AoPS claims a, b ≠ 1, but we actually want x, y ≠ 1.
     wlog! w : x ≤ y generalizing a b
     · apply this b a (by rwa [add_comm]) hb ha hydef hxdef w.le
-    have : a ≤ 2 * 10 ^ k + n := by omega
-    have : x ≤ 2 := calc
-      _ ≤ a / 10 ^ k + b / 10 ^ k := Nat.le_add_right _ _
+    have sum_le : x + y ≤ 2 := calc
       _ ≤ (a + b) / 10 ^ k := Nat.div_add_div_le_add_div
       _ = (2 * 10 ^ k + n) / 10 ^ k := by rw [h]
       _ = _ := by simp [Nat.add_div, Nat.div_eq_of_lt, Nat.mod_eq_of_lt, hn2]
-    have : x + y = 2 := calc a / 10 ^ k + b / 10 ^ k
-      _ = (a + b) / 10 ^ k := by
-        refine Eq.symm (Nat.add_div_eq_of_add_mod_lt ?_)
-        sorry
-      _ = (2 * 10 ^ k + n) / 10 ^ k := by rw [h]
-      _ = _ := by simp [Nat.add_div, Nat.div_eq_of_lt, Nat.mod_eq_of_lt, hn2]
-
+    have : x ≤ 2 := calc
+      _ ≤ a / 10 ^ k + b / 10 ^ k := Nat.le_add_right _ _
+      _ ≤ 2 := sum_le
+    -- have : a < 3 * 10 ^ k := by omega
     interval_cases hx : x
-    · have hy : y = 2 := by omega
-      have := calc a' + b'
-        _ = 2 * 10 ^ k + n - x * (10 ^ k) - y * (10 ^ k) := by
-          simp [hx, hy]
-
-          sorry
-        _ = n := by simp [hx, hy]
-      have hab := hn.2 a' b' this
-      clear * - ha hb hab
+    · have hy : y = 2 := by
+        rw [zero_add] at sum_le
+        interval_cases hy : y
+        · apply_fun (· / 10 ^ k) at h
+          rw [Nat.add_comm (2 * 10 ^ k) n, Nat.add_mul_div_right n 2 (Nat.pos_of_neZero _)] at h
+          simp [Nat.add_div (Nat.pos_of_neZero _), ← hxdef, ← hydef, ite_eq_iff] at h
+        · absurd hb
+          unfold has_digit_one
+          rw [hydef]
+          refine @digits_last_mem b k ?_ (by rw [← hydef]; decide)
+          rw [Nat.div_eq_sub_mod_div, Nat.eq_div_iff_mul_eq_left (Nat.ne_zero_of_lt hn2) (Nat.dvd_sub_mod a)] at hxdef
+          omega
+        · rfl
+      replace h := calc 2 * 10 ^ k + n
+        _ = a + b := h.symm
+        _ = 10 ^ k * (a / 10 ^ k) + a % 10 ^ k + 10 ^ k * (b / 10 ^ k) + b % 10 ^ k := by
+          simp [Nat.div_add_mod, add_assoc]
+        _ = 2 * 10 ^ k + (a' + b') := by
+          simp [← hxdef, ← hydef, hy, a', b']
+          ring
+      rw [Nat.add_right_inj] at h
+      have hab := hn.2 a' b' h.symm
+      clear * - ha hb hab hk
       wlog ha' : has_digit_one a' generalizing a b
       · exact this b a hb ha hab.symm <| hab.resolve_left ha'
-      clear * - ha' ha
-      exact ha <| digits_div_subset a k ha'
+      clear * - ha' ha hk
+      cases k with
+      | zero => contradiction
+      | succ k => exact ha <| digits_div_subset a k ha'
     · clear hx
       absurd ha
       unfold has_digit_one
@@ -206,7 +220,7 @@ lemma solitary_extend (n k : ℕ) (hn1 : 0 < n) (hn2 : n < 10 ^ k) : is_solitary
       omega
     · omega
 
-lemma nines' (k : ℕ) : 10 ^ k - 1 = Nat.ofDigits 10 (List.replicate k 9) := by
+lemma nines (k : ℕ) : 10 ^ k - 1 = Nat.ofDigits 10 (List.replicate k 9) := by
   induction k with
   | zero => simp
   | succ k ih =>
@@ -256,14 +270,14 @@ lemma nines_sub_correction {m k : ℕ} (hm : m ∈ Finset.Ico (10 ^ k) (10 ^ (k 
     congr
     omega
   · -- TODO: re-write correction_le to streamline here
-    rw [← nines']
+    rw [← nines]
     refine correction_le hm
 
 lemma nines_sub_correction_not_has_digit_one (m k : ℕ) (hm : m ∈ Finset.Ico (10 ^ k) (10 ^ (k + 1))) : ¬has_digit_one (10 ^ k - 1 - correction m k) := by
   cases k with
   | zero => simp [has_digit_one]
   | succ k =>
-    rw [nines', nines_sub_correction hm]
+    rw [nines, nines_sub_correction hm]
     simp [has_digit_one]
     rw [Nat.digits_ofDigits _ (by decide)]
     · refine List.not_mem_append ?_ (by simp)
