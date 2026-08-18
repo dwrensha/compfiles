@@ -1199,7 +1199,7 @@ noncomputable def signatureCount (S : Fin 100 → Set ℤ) (v : Signature) : ℕ
 
 lemma signatureCount_condition_of_good (S : Fin 100 → Set ℤ) (hS : Good S) :
     SignatureCountCondition (signatureCount S) := by
-  -- Partition the intersection signatures.
+  -- Partition the intersection by exact signatures.
   intro u hu
   rcases hS.card u hu with ⟨k, hk⟩
   refine ⟨k, ?_⟩
@@ -1269,7 +1269,7 @@ lemma signatureObjective_eq_original_objective
     (S : Fin 100 → Set ℤ) (hS : Good S) :
     SignatureObjective (signatureCount S) =
       {z : ℤ | InAtLeastKSubsets S 50 z }.ncard := by
-  -- Partition high-membership elements signature.
+  -- Partition high-membership elements by exact signature.
   have hsig_card :
       ∀ z : ℤ, {i : Fin 100 | z ∈ S i}.ncard = (signatureOf S z).card := by
     intro z
