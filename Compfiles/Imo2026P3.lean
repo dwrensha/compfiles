@@ -34,13 +34,11 @@ length of their own pieces.
 
 For each n, determine the largest value c such that Liu may guarantee a total
 length of at least c, regardless of Xiang's play.
-
-Statement formalization adapted from AxiomMath/IMO2026; proof adapted from
-Humanfia's Kimi-K3 solutions (https://github.com/humanfia/imo2026).
 -/
 
 namespace Imo2026P3
 
+noncomputable section
 
 open scoped BigOperators
 
@@ -48,7 +46,7 @@ open scoped BigOperators
 finite set `S ⊆ (0,1)`.  We sort `S` ascending, prepend `0` and append `1`, and
 take consecutive differences.  The result is a list of `|S| + 1` positive reals
 summing to `1` (when `S ⊆ (0,1)`). -/
-noncomputable def pieceLengths (S : Finset ℝ) : List ℝ :=
+def pieceLengths (S : Finset ℝ) : List ℝ :=
   let l : List ℝ := (0 : ℝ) :: (S.sort (· ≤ ·)) ++ [1]
   List.zipWith (fun a b => b - a) l l.tail
 
@@ -56,13 +54,13 @@ noncomputable def pieceLengths (S : Finset ℝ) : List ℝ :=
 sorting `L` in non-increasing order.  These are the entries in the `1`st, `3`rd,
 `5`th, … positions of the sorted (decreasing) list, i.e. the pieces claimed by
 the first mover under the greedy claiming rule. -/
-noncomputable def firstPlayerShare (L : List ℝ) : ℝ :=
+def firstPlayerShare (L : List ℝ) : ℝ :=
   let sorted := L.mergeSort (· ≥ ·)
   ((sorted.zipIdx.filter (fun p => p.2 % 2 = 0)).map (fun p => p.1)).sum
 
 /-- `L(A,B)`: Liu Bang's total length, given Liu Bang's marks `A` and Xiang Yu's
 marks `B`. -/
-noncomputable def L (A B : Finset ℝ) : ℝ :=
+def L (A B : Finset ℝ) : ℝ :=
   firstPlayerShare (pieceLengths (A ∪ B))
 
 /-- The set of admissible markings for a player: a finite subset of `(0,1)` of
@@ -74,14 +72,16 @@ def AdmissibleMark (n : ℕ) (X : Finset ℝ) : Prop :=
 
 `V n` is the supremum over Liu Bang's admissible markings `A` of the infimum,
 over Xiang Yu's admissible markings `B` disjoint from `A`, of `L A B`. -/
-noncomputable def V (n : ℕ) : ℝ :=
+def V (n : ℕ) : ℝ :=
   ⨆ A : {A : Finset ℝ // AdmissibleMark n A},
     ⨅ B : {B : Finset ℝ // AdmissibleMark n B ∧ Disjoint A.1 B}, L A.1 B.1
 
 snip begin
--- The claimed answer value `V(n) = 2^n / (2^(n+1) - 1)`.
+/-! The claimed answer value `V(n) = 2^n / (2^(n+1) - 1)`. -/
 snip end
-noncomputable determine answer (n : ℕ) : ℝ := (2 : ℝ) ^ n / ((2 : ℝ) ^ (n + 1) - 1)
+determine answer (n : ℕ) : ℝ := (2 : ℝ) ^ n / ((2 : ℝ) ^ (n + 1) - 1)
+
+end
 
 snip begin
 /-! ## Correctness statements for the definitions
@@ -1838,8 +1838,8 @@ lemma exists_bisect_reply (n : ℕ) (A : Finset ℝ)
     have := congrArg List.length h
     rw [pieceLengths_length] at this
     simp at this
-  have hppos : ∀ x ∈ p, 0 < x := by
-    exact pieceLengths_pos A hA.1
+  have hppos : ∀ x ∈ p, 0 < x :=
+    pieceLengths_pos A hA.1
   have hpsum : p.sum = 1 := pieceLengths_sum A hA.1
   have hbne : bisectLengths p ≠ [] := by
     intro hb
@@ -3971,19 +3971,31 @@ theorem upper_bound_aux (n : ℕ) (hn : 0 < n) :
         L A B ≤ (2 : ℝ) ^ n / ((2 : ℝ) ^ (n + 1) - 1) := by
   exact codex_upper_bound_aux n hn
 
+/-- **Lower bound.** Liu Bang has an admissible marking `A` such that for every
+admissible marking `B` disjoint from `A`, his guaranteed share is at least
+`2^n / (2^(n+1) - 1)`. -/
+theorem lower_bound (n : ℕ) (hn : 0 < n) :
+    ∃ A : Finset ℝ, AdmissibleMark n A ∧
+      ∀ B : Finset ℝ, AdmissibleMark n B → Disjoint A B →
+        (2 : ℝ) ^ n / ((2 : ℝ) ^ (n + 1) - 1) ≤ L A B := by
+  exact lower_bound_aux n hn
+
+/-- **Upper bound / optimality.** For every admissible marking `A` of Liu Bang,
+Xiang Yu has an admissible marking `B` disjoint from `A` with
+`L A B ≤ 2^n / (2^(n+1) - 1)`, so Liu Bang cannot guarantee more. -/
+theorem upper_bound (n : ℕ) (hn : 0 < n) :
+    ∀ A : Finset ℝ, AdmissibleMark n A →
+      ∃ B : Finset ℝ, AdmissibleMark n B ∧ Disjoint A B ∧
+        L A B ≤ (2 : ℝ) ^ n / ((2 : ℝ) ^ (n + 1) - 1) := by
+  exact upper_bound_aux n hn
+
+/-! **Main statement.** For every positive integer `n`, Liu Bang's guaranteed value equals `2^n / (2^(n+1) - 1)`. -/
 snip end
 
-/-! ## Main Statements -/
-
-/-- **Main statement.** For every positive integer `n`, Liu Bang's guaranteed
-value equals `answer`. -/
 problem imo2026_p3 (n : ℕ) (hn : 0 < n) : V n = answer n := by
   obtain ⟨A₀, hA₀adm, hA₀⟩ := lower_bound_aux n hn
   have hub := upper_bound_aux n hn
-  have hemptyA : AdmissibleMark n ∅ := by
-    constructor
-    · simp
-    · simp
+  have hemptyA : AdmissibleMark n ∅ := by constructor <;> simp
   have : Nonempty {A : Finset ℝ // AdmissibleMark n A} := ⟨⟨∅, hemptyA⟩⟩
   apply le_antisymm
   · -- For every admissible `A`, Xiang Yu's reply makes the infimum `≤ answer`.
@@ -4019,27 +4031,5 @@ problem imo2026_p3 (n : ℕ) (hn : 0 < n) : V n = answer n := by
       intro B
       exact hA₀ B.1 B.2.1 B.2.2
     exact le_ciSup_of_le hbddAbove ⟨A₀, hA₀adm⟩ h1
-
-snip begin
-
-/-- **Lower bound.** Liu Bang has an admissible marking `A` such that for every
-admissible marking `B` disjoint from `A`, his guaranteed share is at least
-`2^n / (2^(n+1) - 1)`. -/
-theorem lower_bound (n : ℕ) (hn : 0 < n) :
-    ∃ A : Finset ℝ, AdmissibleMark n A ∧
-      ∀ B : Finset ℝ, AdmissibleMark n B → Disjoint A B →
-        (2 : ℝ) ^ n / ((2 : ℝ) ^ (n + 1) - 1) ≤ L A B := by
-  exact lower_bound_aux n hn
-
-/-- **Upper bound / optimality.** For every admissible marking `A` of Liu Bang,
-Xiang Yu has an admissible marking `B` disjoint from `A` with
-`L A B ≤ 2^n / (2^(n+1) - 1)`, so Liu Bang cannot guarantee more. -/
-theorem upper_bound (n : ℕ) (hn : 0 < n) :
-    ∀ A : Finset ℝ, AdmissibleMark n A →
-      ∃ B : Finset ℝ, AdmissibleMark n B ∧ Disjoint A B ∧
-        L A B ≤ (2 : ℝ) ^ n / ((2 : ℝ) ^ (n + 1) - 1) := by
-  exact upper_bound_aux n hn
-
-snip end
 
 end Imo2026P3

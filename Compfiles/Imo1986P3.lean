@@ -118,32 +118,24 @@ lemma potential_measure_decreases (s : State) (i : Fin 5)
   rw [Int.toNat_lt_toNat h_pos_s]
   exact potential_decreasing s i h_neg h_sum
 
+/-! Starting from any state with a positive sum, the process terminates. -/
 snip end
 
-/--
-Main Theorem: IMO 1986 Problem 3.
-Starting from any state with a positive sum, the process terminates.
--/
+determine terminates : Bool := true
+
 problem imo1986_p3 (s₀ : State) (h_sum : 0 < s₀.sum) :
-    Acc Step s₀ := by
-  apply measure_termination s₀ h_sum
-where
-  measure_termination (current : State) (h_current_sum : 0 < current.sum) : Acc Step current := by
-    generalize h_n : (potential current).toNat = n
-    revert current h_current_sum h_n
-    induction n using Nat.strong_induction_on with
-    | h n ih =>
-      intro current h_current_sum h_n_eq
-      subst h_n_eq
-      apply Acc.intro
-      intro next_state h_step
-      rcases h_step with ⟨i, h_neg, rfl⟩
-      have h_next_sum : 0 < (move current i).sum := by
-        rw [sum_invariant]
-        exact h_current_sum
-      apply ih ((potential (move current i)).toNat)
-      · apply potential_measure_decreases current i h_neg h_current_sum
-      · exact h_next_sum
-      · rfl
+    if terminates then Acc Step s₀ else ¬ Acc Step s₀ := by
+  induction hn : (potential s₀).toNat using Nat.strong_induction_on generalizing s₀ with
+  | h n ih =>
+    subst hn
+    apply Acc.intro
+    rintro next_state ⟨i, h_neg, rfl⟩
+    have h_next_sum : 0 < (move s₀ i).sum := by
+      rw [sum_invariant]
+      exact h_sum
+    apply ih ((potential (move s₀ i)).toNat)
+    · apply potential_measure_decreases s₀ i h_neg h_sum
+    · exact h_next_sum
+    · rfl
 
 end Imo1986P3

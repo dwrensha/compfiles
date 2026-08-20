@@ -30,7 +30,7 @@ for each (x,y) ∈ S.
 
 namespace Imo2017P6
 
--- snip begin
+snip begin
 
 /-- A homogeneous polynomial in two variables with integer coefficients,
 represented by its degree and coefficient function. Evaluation is
@@ -768,7 +768,7 @@ lemma exists_g (S : Finset (ℤ × ℤ)) (hS : ∀ s ∈ S, IsCoprime s.1 s.2)
     · exact Int.natAbs_ne_zero.mpr hDne
 
 
--- snip end
+snip end
 
 problem imo2017_p6 (S : Finset (ℤ × ℤ)) (hS : ∀ s ∈ S, gcd s.1 s.2 = 1) :
     ∃ n : ℕ, 0 < n ∧ ∃ a : ℕ → ℤ,

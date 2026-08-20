@@ -320,9 +320,11 @@ snip end
 
 determine answer : Set ℝ := {θ : ℝ | ∃ n : ℕ, 2 ≤ n ∧ θ = 180 / n}
 
-/-- **Main theorem.** For `0 < θ < 180`, Mulan can guarantee her victory in finitely
+snip begin
+/-! **Main theorem.** For `0 < θ < 180`, Mulan can guarantee her victory in finitely
 many steps, no matter how Shan-Yu plays, if and only if `θ = 180 / n` for some
 integer `n ≥ 2`. -/
+snip end
 problem imo2026_p4 (θ : ℝ) (hθ0 : 0 < θ) (hθ180 : θ < 180) :
     MulanCanGuarantee θ ↔ θ ∈ answer := by
   change MulanCanGuarantee θ ↔ ∃ n : ℕ, 2 ≤ n ∧ θ = 180 / n
