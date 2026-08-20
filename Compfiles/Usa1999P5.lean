@@ -222,10 +222,7 @@ lemma threat_shapes {b : Board} (hTF : ThreatFree b) {x : ℕ}
   -- triple would already be an SOS after playing `l₀` at `x`, contradicting
   -- threat-freeness.
   have hyT : i = y ∨ i + 1 = y ∨ i + 2 = y := by
-    by_contra hcon
-    have c0 : i ≠ y := fun hh => hcon (Or.inl hh)
-    have c1 : i + 1 ≠ y := fun hh => hcon (Or.inr (Or.inl hh))
-    have c2 : i + 2 ≠ y := fun hh => hcon (Or.inr (Or.inr hh))
+    by_contra! ⟨c0, c1, c2⟩
     rw [Function.update_of_ne c0] at h0
     rw [Function.update_of_ne c1] at h1
     rw [Function.update_of_ne c2] at h2

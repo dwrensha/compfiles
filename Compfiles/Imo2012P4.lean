@@ -65,8 +65,7 @@ theorem myInduction
           exact ih r h
     intro x
     have e : x % 4 + 4 * (x / 4) = x := by lia
-    rcases (by lia : x % 4 = 0 ∨ x % 4 = 1 ∨ x % 4 = 2 ∨ x % 4 = 3) with h | h | h | h <;>
-      rw [← e, h]
+    mod_cases h : x % 4 <;> rw [← e, h]
     · exact shift _ _ P0
     · exact shift _ _ P1
     · exact shift _ _ P2

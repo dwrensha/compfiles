@@ -135,7 +135,7 @@ problem imo1965_p4 : { S | S.card = 4 ∧ ∀ x ∈ S, x + (S.erase x).prod = 2 
         · exact ht_eq_1_sol (by grind)
         · have h_either : (x₁ = -1 ∧ x₂ = 3) ∨ (x₁ = 3 ∧ x₂ = -1) := by grind
           have h_S_eq : S = {-1, -1, -1, 3} := by
-            rcases h_either with ⟨h1, h2⟩ | ⟨h1, h2⟩ <;> rw [hS, h_eq, h₄_eq_neg1, h1, h2]
+            rcases h_either with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;> rw [hS, h_eq, h₄_eq_neg1]
             · exact multiset_order₂
             · exact multiset_order₁
           grind
@@ -143,7 +143,6 @@ problem imo1965_p4 : { S | S.card = 4 ∧ ∀ x ∈ S, x + (S.erase x).prod = 2 
         exact ht_eq_1_sol (by grind)
 
   --- Proof that all sets in the solution satisfy the condition
-  · intro hS
-    rcases hS with heq | heq <;> rw [heq] <;> norm_num [Multiset.mem_cons, Multiset.mem_singleton, Multiset.erase_cons_head]
+  · rintro (rfl | rfl) <;> norm_num [Multiset.mem_cons, Multiset.mem_singleton, Multiset.erase_cons_head]
 
 end Imo1965P4

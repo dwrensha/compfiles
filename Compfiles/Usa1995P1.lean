@@ -409,19 +409,10 @@ lemma hasAp_of_mem_digits_pred {p : ℕ} (hp : 3 ≤ p) {a : ℕ → ℕ} {n m :
     lia
   have hm_eq : m = m₀ + (p - 1) * E := by
     have h0 := hlin 0 (by lia)
-    have hid : L.map (fun d => if d = p - 1 then p - 1 - 0 else d) = L := by
-      have hfun : (fun d => if d = p - 1 then p - 1 - 0 else d) = fun d => d := by
-        funext d
-        by_cases hd : d = p - 1 <;> simp [hd]
-      rw [hfun]
-      exact List.map_id' L
-    rw [hid] at h0
-    have hsub : p - 1 - 0 = p - 1 := Nat.sub_zero _
-    rw [hsub] at h0
-    have hmm : m = Nat.ofDigits p L := by
-      rw [hL]
-      exact (Nat.ofDigits_digits p m).symm
-    rw [hmm]
+    have hfun : (fun d => if d = p - 1 then p - 1 - 0 else d) = fun d => d := by
+      funext d
+      split_ifs with hd <;> simp [hd]
+    rw [hfun, List.map_id', Nat.sub_zero, hL, Nat.ofDigits_digits p m] at h0
     exact h0
   have htfree : ∀ i < p - 1, DigitFree p (m₀ + i * E) := by
     intro i hi

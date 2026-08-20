@@ -179,7 +179,7 @@ lemma p4_not_collinear (A B C H F P O : EuclideanSpace ℝ (Fin 2)) (r : ℝ)
       · linarith
       · exact h
     have hneg : ⟪A -ᵥ B, C -ᵥ B⟫ = - ⟪B -ᵥ A, C -ᵥ B⟫ := by
-      rw [← inner_neg_left]; congr 1; rw [neg_vsub_eq_vsub_rev]
+      rw [← inner_neg_left, neg_vsub_eq_vsub_rev]
     rw [hzero, neg_zero] at hneg
     linarith [posB]
   have hAP : A ≠ P := by
@@ -211,13 +211,11 @@ lemma p4_not_collinear (A B C H F P O : EuclideanSpace ℝ (Fin 2)) (r : ℝ)
     have hpBneg : ⟪B -ᵥ A, C -ᵥ B⟫ = - ⟪A -ᵥ B, C -ᵥ B⟫ := by
       rw [← inner_neg_left]; congr 1; rw [neg_vsub_eq_vsub_rev]
     have hE1 : u * (⟪A -ᵥ B, C -ᵥ B⟫ + ⟪A -ᵥ C, B -ᵥ C⟫) = ⟪A -ᵥ B, C -ᵥ B⟫ := by
-      have h := hH1
-      rw [hHA, inner_add_left, real_inner_smul_left, real_inner_smul_left, hD, hpBneg] at h
-      linear_combination h / 2
+      rw [hHA, inner_add_left, real_inner_smul_left, real_inner_smul_left, hD, hpBneg] at hH1
+      linear_combination hH1 / 2
     have hE2 : 2 * u * ⟪A -ᵥ C, B -ᵥ C⟫ = - ⟪B -ᵥ A, C -ᵥ A⟫ := by
-      have h := hH2
-      rw [hHB, inner_add_left, real_inner_smul_left, hm] at h
-      linear_combination h
+      rw [hHB, inner_add_left, real_inner_smul_left, hm, add_eq_zero_iff_eq_neg] at hH2
+      exact hH2
     nlinarith [hE1, hE2, posA, posB, posC, mul_pos posB posC]
   have hcosph : Cospherical ({A, F, P} : Set (EuclideanSpace ℝ (Fin 2))) := by
     refine ⟨O, r, ?_⟩

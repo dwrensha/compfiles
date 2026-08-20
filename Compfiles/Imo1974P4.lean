@@ -126,8 +126,7 @@ lemma Rect.one_le_whiteCount (R : Rect) (hh : 1 ≤ R.h) (hw : 1 ≤ R.w)
 lemma card_mul_succ_le_two_mul_sum (S : Finset ℕ) :
     (∀ x ∈ S, 1 ≤ x) → S.card * (S.card + 1) ≤ 2 * ∑ x ∈ S, x := by
   refine Finset.strongInduction (p := fun S ↦ (∀ x ∈ S, 1 ≤ x) →
-    S.card * (S.card + 1) ≤ 2 * ∑ x ∈ S, x) (fun S ih ↦ ?_) S
-  intro h
+    S.card * (S.card + 1) ≤ 2 * ∑ x ∈ S, x) (fun S ih h ↦ ?_) S
   rcases S.eq_empty_or_nonempty with rfl | hne
   · simp
   obtain ⟨m, hm, hmax⟩ := S.exists_max_image id hne

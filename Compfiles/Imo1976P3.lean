@@ -152,11 +152,9 @@ theorem sub_lt_k_of_floor_eq {x y : ℝ} (hx : 0 ≤ x) (hy : 0 ≤ y)
     linarith
   constructor
   · have g : (x - y) / k < 1 := by rw [sub_div]; linarith
-    have g' := (div_lt_iff₀ k_pos).mp g
-    linarith
+    exact div_lt_one k_pos |>.mp g
   · have g : (y - x) / k < 1 := by rw [sub_div]; linarith
-    have g' := (div_lt_iff₀ k_pos).mp g
-    linarith
+    exact div_lt_one k_pos |>.mp g
 
 /-- The code of a cube position: the integer parts of its coordinates divided
 by `k`. Two positions sharing all three codes have left faces strictly within
@@ -181,25 +179,25 @@ theorem packing_card_le (a b c : ℕ) (P : Finset (ℝ × ℝ × ℝ)) (hP : IsP
             Finset.mem_range.mpr (floor_lt_floor_of_add_k_le hb.2.2.2.2.1 hb.2.2.2.2.2)⟩⟩
   have hinj : Set.InjOn cubeCode P := by
     intro p hp q hq hcode
-    have hbp := hP.inBox p (Finset.mem_coe.mp hp)
-    have hbq := hP.inBox q (Finset.mem_coe.mp hq)
+    have ⟨hbp1, hbp2, hbp3, hbp4, hbp5, hbp6⟩ := hP.inBox p (Finset.mem_coe.mp hp)
+    have ⟨hbq1, hbq2, hbq3, hbq4, hbq5, hbq6⟩ := hP.inBox q (Finset.mem_coe.mp hq)
     have e1 : ⌊p.1 / k⌋₊ = ⌊q.1 / k⌋₊ := congrArg (·.1) hcode
     have e2 : ⌊p.2.1 / k⌋₊ = ⌊q.2.1 / k⌋₊ := congrArg (·.2.1) hcode
     have e3 : ⌊p.2.2 / k⌋₊ = ⌊q.2.2 / k⌋₊ := congrArg (·.2.2) hcode
     by_contra hne
     obtain hs | hs | hs | hs | hs | hs :=
       hP.nonOverlapping p (Finset.mem_coe.mp hp) q (Finset.mem_coe.mp hq) hne
-    · obtain ⟨l1, l2⟩ := sub_lt_k_of_floor_eq hbp.1 hbq.1 e1
+    · obtain ⟨l1, l2⟩ := sub_lt_k_of_floor_eq hbp1 hbq1 e1
       linarith
-    · obtain ⟨l1, l2⟩ := sub_lt_k_of_floor_eq hbp.1 hbq.1 e1
+    · obtain ⟨l1, l2⟩ := sub_lt_k_of_floor_eq hbp1 hbq1 e1
       linarith
-    · obtain ⟨l1, l2⟩ := sub_lt_k_of_floor_eq hbp.2.2.1 hbq.2.2.1 e2
+    · obtain ⟨l1, l2⟩ := sub_lt_k_of_floor_eq hbp3 hbq3 e2
       linarith
-    · obtain ⟨l1, l2⟩ := sub_lt_k_of_floor_eq hbp.2.2.1 hbq.2.2.1 e2
+    · obtain ⟨l1, l2⟩ := sub_lt_k_of_floor_eq hbp3 hbq3 e2
       linarith
-    · obtain ⟨l1, l2⟩ := sub_lt_k_of_floor_eq hbp.2.2.2.2.1 hbq.2.2.2.2.1 e3
+    · obtain ⟨l1, l2⟩ := sub_lt_k_of_floor_eq hbp5 hbq5 e3
       linarith
-    · obtain ⟨l1, l2⟩ := sub_lt_k_of_floor_eq hbp.2.2.2.2.1 hbq.2.2.2.2.1 e3
+    · obtain ⟨l1, l2⟩ := sub_lt_k_of_floor_eq hbp5 hbq5 e3
       linarith
   calc P.card ≤ (Finset.range ⌊(a : ℝ) / k⌋₊ ×ˢ
         (Finset.range ⌊(b : ℝ) / k⌋₊ ×ˢ Finset.range ⌊(c : ℝ) / k⌋₊)).card :=
