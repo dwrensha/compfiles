@@ -38,6 +38,7 @@ length of at least c, regardless of Xiang's play.
 
 namespace Imo2026P3
 
+noncomputable section
 
 open scoped BigOperators
 
@@ -78,7 +79,9 @@ def V (n : ℕ) : ℝ :=
 snip begin
 /-! The claimed answer value `V(n) = 2^n / (2^(n+1) - 1)`. -/
 snip end
-noncomputable determine answer (n : ℕ) : ℝ := (2 : ℝ) ^ n / ((2 : ℝ) ^ (n + 1) - 1)
+determine answer (n : ℕ) : ℝ := (2 : ℝ) ^ n / ((2 : ℝ) ^ (n + 1) - 1)
+
+end
 
 snip begin
 /-! ## Correctness statements for the definitions
