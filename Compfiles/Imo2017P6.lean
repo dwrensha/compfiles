@@ -509,8 +509,8 @@ lemma odd_not_dvd_powsum_zmod {p : ℕ} (hp : p.Prime) (hp2 : p ≠ 2) {x y : �
   have : Fact p.Prime := ⟨hp⟩
   intro hcast
   push_cast at hcast
-  have hab : ¬((x : ZMod p) = 0 ∧ (y : ZMod p) = 0) := by
-    rintro ⟨hx0, hy0⟩
+  have hab : (x : ZMod p) = 0 → ¬(y : ZMod p) = 0 := by
+    intro hx0 hy0
     have hpx : (p : ℤ) ∣ x := (ZMod.intCast_zmod_eq_zero_iff_dvd _ _).mp hx0
     have hpy : (p : ℤ) ∣ y := (ZMod.intCast_zmod_eq_zero_iff_dvd _ _).mp hy0
     have hp1 := not_coprime_of_both_dvd h hpx hpy
@@ -518,8 +518,8 @@ lemma odd_not_dvd_powsum_zmod {p : ℕ} (hp : p.Prime) (hp2 : p ≠ 2) {x y : �
     have := Nat.le_of_dvd one_pos hp1
     omega
   by_cases hx0 : (x : ZMod p) = 0
-  · have hy0 : (y : ZMod p) ≠ 0 := fun h' => hab ⟨hx0, h'⟩
-    rw [hx0, zero_pow (by omega : p - 1 ≠ 0), zero_add] at hcast
+  · have hy0 : (y : ZMod p) ≠ 0 := hab hx0
+    rw [hx0, zero_pow (by lia : p - 1 ≠ 0), zero_add] at hcast
     rw [ZMod.pow_card_sub_one_eq_one hy0] at hcast
     exact one_ne_zero hcast
   · by_cases hy0 : (y : ZMod p) = 0

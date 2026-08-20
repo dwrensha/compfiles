@@ -143,10 +143,9 @@ lemma gsum_interval {g : ℤ → ZMod 2} (hg : ∀ t : ℤ, g t + g (t + 1) + g 
     have hsplit : Finset.Ico a (a + 3 * (m : ℤ) + 3) =
         Finset.Ico a (a + 3 * (m : ℤ)) ∪ Finset.Ico (a + 3 * (m : ℤ)) (a + 3 * (m : ℤ) + 3) :=
       (Finset.Ico_union_Ico_eq_Ico
-        (show a ≤ a + 3 * (m : ℤ) by have := Int.natCast_nonneg m; linarith)
-        (show a + 3 * (m : ℤ) ≤ a + 3 * (m : ℤ) + 3 by linarith)).symm
-    rw [hcast, show a + (3 * (m : ℤ) + 3) = a + 3 * (m : ℤ) + 3 by ring, hsplit,
-      Finset.sum_union ?hdisj, ih, zero_add]
+        (show a ≤ a + 3 * (m : ℤ) by have := Int.natCast_nonneg m; lia)
+        (show a + 3 * (m : ℤ) ≤ a + 3 * (m : ℤ) + 3 by lia)).symm
+    rw [hcast, ← add_assoc, hsplit, Finset.sum_union ?hdisj, ih, zero_add]
     · have hset : Finset.Ico (a + 3 * (m : ℤ)) (a + 3 * (m : ℤ) + 3) =
           {a + 3 * (m : ℤ), a + 3 * (m : ℤ) + 1, a + 3 * (m : ℤ) + 2} := by
         ext x

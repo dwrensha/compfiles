@@ -112,6 +112,6 @@ problem imo1974_p3
     ⟨_, hnorm⟩
   rw [pow_succ, pow_mul, show ((-7 : ZMod 5)) ^ 2 = -1 by decide] at hx
   obtain h | h := neg_one_pow_eq_or (ZMod 5) n <;> rw [h] at hx <;>
-    revert hx <;> revert x <;> decide
+    revert hx x <;> decide
 
 end Imo1974P3
