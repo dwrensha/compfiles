@@ -78,15 +78,11 @@ lemma cast_abs2 (n : ℤ) : ((|n| : ℤ) : ZMod 2) = (n : ZMod 2) := by
     have h2 : ∀ x : ZMod 2, -x = x := by decide
     rw [h2]
 
-lemma odd_iff_cast (n : ℤ) : Odd n ↔ (n : ZMod 2) = 1 := by
-  have h1 : (1 : ZMod 2) = ((1 : ℤ) : ZMod 2) := by norm_num
-  rw [h1, ZMod.intCast_eq_intCast_iff, Int.odd_iff]
-  exact ⟨id, id⟩
+lemma odd_iff_cast (n : ℤ) : Odd n ↔ (n : ZMod 2) = 1 :=
+  ZMod.intCast_eq_one_iff_odd.symm
 
-lemma even_iff_cast (n : ℤ) : Even n ↔ (n : ZMod 2) = 0 := by
-  have h1 : (0 : ZMod 2) = ((0 : ℤ) : ZMod 2) := by norm_num
-  rw [h1, ZMod.intCast_eq_intCast_iff, Int.even_iff]
-  exact ⟨id, id⟩
+lemma even_iff_cast (n : ℤ) : Even n ↔ (n : ZMod 2) = 0 :=
+  ZMod.intCast_eq_zero_iff_even.symm
 
 lemma odd_sum_iff (f : Conf) : Odd (∑ i, f i) ↔ (∑ i, (f i : ZMod 2)) = 1 := by
   rw [← Int.cast_sum]
@@ -242,24 +238,6 @@ lemma moves_comp_add (f g : Conf) (c : ZMod 6) (h : Moves f g) :
 
 /-! ### Concrete move computations -/
 
-lemma step0 (f : Conf) : step f 0 = Function.update f 0 (abs (f 5 - f 1)) := by
-  simp only [step, show (0 : ZMod 6) - 1 = 5 by decide, show (0 : ZMod 6) + 1 = 1 by decide]
-lemma step1 (f : Conf) : step f 1 = Function.update f 1 (abs (f 0 - f 2)) := by
-  simp only [step, show (1 : ZMod 6) - 1 = 0 by decide, show (1 : ZMod 6) + 1 = 2 by decide]
-lemma step2' (f : Conf) : step f 2 = Function.update f 2 (abs (f 1 - f 3)) := by
-  simp only [step, show (2 : ZMod 6) - 1 = 1 by decide, show (2 : ZMod 6) + 1 = 3 by decide]
-lemma step3 (f : Conf) : step f 3 = Function.update f 3 (abs (f 2 - f 4)) := by
-  simp only [step, show (3 : ZMod 6) - 1 = 2 by decide, show (3 : ZMod 6) + 1 = 4 by decide]
-lemma step4 (f : Conf) : step f 4 = Function.update f 4 (abs (f 3 - f 5)) := by
-  simp only [step, show (4 : ZMod 6) - 1 = 3 by decide, show (4 : ZMod 6) + 1 = 5 by decide]
-lemma step5 (f : Conf) : step f 5 = Function.update f 5 (abs (f 4 - f 0)) := by
-  simp only [step, show (5 : ZMod 6) - 1 = 4 by decide, show (5 : ZMod 6) + 1 = 0 by decide]
-
-/-- Evaluate a concrete sequence of moves at a concrete vertex. -/
-macro "eval_step" : tactic =>
-  `(tactic| (simp only [List.foldl_cons, List.foldl_nil, step0, step1, step2', step3, step4, step5];
-             repeat (first | rw [Function.update_self] | rw [Function.update_of_ne (by decide)])))
-
 lemma abs_sub_le_mk1 {x y M : ℤ} (hx1 : 1 ≤ x) (hxM : x ≤ M - 1) (hy0 : 0 ≤ y) (hyM : y ≤ M) :
     |x - y| ≤ M - 1 :=
   abs_le.mpr ⟨by lia, by lia⟩
@@ -308,30 +286,26 @@ lemma phase2 (g : Conf) (hnn : ∀ i, 0 ≤ g i) (h0 : (g 0 : ZMod 2) = 1)
         have A2 : |g 4 - g 0| = cmax g := by
           rw [h4, zero_sub, ← hq, abs_neg]
           exact abs_of_nonneg (by have := le_cmax g 0; lia)
-        have e0 : ([1, 5, 3, 0, 5, 1].foldl step g) 0 =
-            abs (abs (g 4 - g 0) - abs (g 0 - g 2)) := by eval_step
-        have e1 : ([1, 5, 3, 0, 5, 1].foldl step g) 1 =
-            abs (abs (abs (g 4 - g 0) - abs (g 0 - g 2)) - g 2) := by eval_step
-        have e2 : ([1, 5, 3, 0, 5, 1].foldl step g) 2 = g 2 := by eval_step
-        have e3 : ([1, 5, 3, 0, 5, 1].foldl step g) 3 = abs (g 2 - g 4) := by eval_step
-        have e4 : ([1, 5, 3, 0, 5, 1].foldl step g) 4 = g 4 := by eval_step
-        have e5 : ([1, 5, 3, 0, 5, 1].foldl step g) 5 =
-            abs (g 4 - abs (abs (g 4 - g 0) - abs (g 0 - g 2))) := by eval_step
-        have z0 : ([1, 5, 3, 0, 5, 1].foldl step g) 0 = 0 := by
-          rw [e0, A1, A2, sub_self, abs_zero]
-        have z1 : ([1, 5, 3, 0, 5, 1].foldl step g) 1 = 0 := by
-          rw [e1, A1, A2, h2, sub_self, abs_zero, sub_zero, abs_zero]
-        have z2 : ([1, 5, 3, 0, 5, 1].foldl step g) 2 = 0 := by
-          rw [e2, h2]
-        have z3 : ([1, 5, 3, 0, 5, 1].foldl step g) 3 = 0 := by
-          rw [e3, h2, h4, sub_self, abs_zero]
-        have z4 : ([1, 5, 3, 0, 5, 1].foldl step g) 4 = 0 := by
-          rw [e4, h4]
-        have z5 : ([1, 5, 3, 0, 5, 1].foldl step g) 5 = 0 := by
-          rw [e5, A1, A2, h4, sub_self, abs_zero, sub_zero, abs_zero]
+        have z0 : abs (abs (g 4 - g 0) - abs (g 0 - g 2)) = 0 := by
+          rw [A1, A2, sub_self, abs_zero]
+        have z1 : abs (abs (abs (g 4 - g 0) - abs (g 0 - g 2)) - g 2) = 0 := by
+          rw [A1, A2, h2, sub_self, abs_zero, sub_zero, abs_zero]
+        have z2 : g 2 = 0 := by rw [h2]
+        have z3 : abs (g 2 - g 4) = 0 := by rw [h2, h4, sub_self, abs_zero]
+        have z4 : g 4 = 0 := by rw [h4]
+        have z5 : abs (g 4 - abs (abs (g 4 - g 0) - abs (g 0 - g 2))) = 0 := by
+          rw [A1, A2, h4, sub_self, abs_zero, sub_zero, abs_zero]
         refine ⟨[1, 5, 3, 0, 5, 1].foldl step g, ⟨[1, 5, 3, 0, 5, 1], rfl⟩, Or.inl ?_⟩
         funext i
-        fin_cases i <;> simp only <;> assumption
+        fin_cases i
+        -- It seems that `exact` and `rfl` deals with simplifying the left hand side
+        -- faster than we can, so we don't bother proving it ourselves.
+        · exact z0
+        · exact z1
+        · exact z2
+        · exact z3
+        · exact z4
+        · exact z5
       · -- Vertex 2 zero, vertex 4 positive.
         have g4ge : 2 ≤ g 4 :=
           two_le_of_even_pos (lt_of_le_of_ne' (hnn 4) h4) ((even_iff_cast _).mpr (hk 4 (by decide)))
@@ -341,19 +315,11 @@ lemma phase2 (g : Conf) (hnn : ∀ i, 0 ≤ g i) (h0 : (g 0 : ZMod 2) = 1)
         have A2 : |g 4 - g 0| = cmax g - g 4 := by
           rw [abs_of_nonpos (by have := le_cmax g 4; lia), ← hq]
           ring
-        have e0 : ([5, 1, 0, 1].foldl step g) 0 =
-            abs (abs (g 4 - g 0) - abs (g 0 - g 2)) := by eval_step
-        have e1 : ([5, 1, 0, 1].foldl step g) 1 =
-            abs (abs (abs (g 4 - g 0) - abs (g 0 - g 2)) - g 2) := by eval_step
-        have e2 : ([5, 1, 0, 1].foldl step g) 2 = g 2 := by eval_step
-        have e3 : ([5, 1, 0, 1].foldl step g) 3 = g 3 := by eval_step
-        have e4 : ([5, 1, 0, 1].foldl step g) 4 = g 4 := by eval_step
-        have e5 : ([5, 1, 0, 1].foldl step g) 5 = abs (g 4 - g 0) := by eval_step
         have b0 : abs (abs (g 4 - g 0) - abs (g 0 - g 2)) ≤ cmax g - 1 := by
-          rw [A1, A2, show cmax g - g 4 - cmax g = -g 4 by ring, abs_neg, abs_of_nonneg (hnn 4)]
+          rw [A1, A2, sub_sub_cancel_left, abs_neg, abs_of_nonneg (hnn 4)]
           exact glt 4 (by decide)
         have b1 : abs (abs (abs (g 4 - g 0) - abs (g 0 - g 2)) - g 2) ≤ cmax g - 1 := by
-          rw [A1, A2, h2, sub_zero, show cmax g - g 4 - cmax g = -g 4 by ring, abs_neg,
+          rw [A1, A2, h2, sub_zero, sub_sub_cancel_left, abs_neg,
             abs_of_nonneg (hnn 4), abs_of_nonneg (hnn 4)]
           exact glt 4 (by decide)
         have b2 : g 2 ≤ cmax g - 1 := by lia
@@ -395,16 +361,10 @@ lemma phase2 (g : Conf) (hnn : ∀ i, 0 ≤ g i) (h0 : (g 0 : ZMod 2) = 1)
       have A2 : |g 4 - g 0| = cmax g - g 4 := by
         rw [abs_of_nonpos (by have := le_cmax g 4; lia), ← hq]
         ring
-      have e0 : ([1, 5, 0, 5].foldl step g) 0 =
-          abs (abs (g 4 - g 0) - abs (g 0 - g 2)) := by eval_step
-      have e1 : ([1, 5, 0, 5].foldl step g) 1 = abs (g 0 - g 2) := by eval_step
-      have e2 : ([1, 5, 0, 5].foldl step g) 2 = g 2 := by eval_step
-      have e3 : ([1, 5, 0, 5].foldl step g) 3 = g 3 := by eval_step
-      have e4 : ([1, 5, 0, 5].foldl step g) 4 = g 4 := by eval_step
       have e5 : ([1, 5, 0, 5].foldl step g) 5 =
-          abs (g 4 - abs (abs (g 4 - g 0) - abs (g 0 - g 2))) := by eval_step
+          abs (g 4 - abs (abs (g 4 - g 0) - abs (g 0 - g 2))) := by rfl
       have b0 : abs (abs (g 4 - g 0) - abs (g 0 - g 2)) ≤ cmax g - 1 := by
-        rw [A1, A2, show cmax g - g 4 - (cmax g - g 2) = g 2 - g 4 by ring]
+        rw [A1, A2, sub_sub_sub_cancel_left]
         exact abs_sub_le_of (hnn 2) (hnn 4) (glt 2 (by decide)) (glt 4 (by decide))
       have b1 : abs (g 0 - g 2) ≤ cmax g - 1 := by
         rw [A1]
@@ -413,7 +373,7 @@ lemma phase2 (g : Conf) (hnn : ∀ i, 0 ≤ g i) (h0 : (g 0 : ZMod 2) = 1)
       have b3 : g 3 ≤ cmax g - 1 := glt 3 (by decide)
       have b4 : g 4 ≤ cmax g - 1 := glt 4 (by decide)
       have b5 : abs (g 4 - abs (abs (g 4 - g 0) - abs (g 0 - g 2))) ≤ cmax g - 1 := by
-        rw [A1, A2, show cmax g - g 4 - (cmax g - g 2) = g 2 - g 4 by ring]
+        rw [A1, A2, sub_sub_sub_cancel_left]
         have inner : abs (g 2 - g 4) ≤ cmax g - 1 :=
           abs_sub_le_of (hnn 2) (hnn 4) (glt 2 (by decide)) (glt 4 (by decide))
         exact abs_sub_le_of (hnn 4) (abs_nonneg _) (glt 4 (by decide)) inner
@@ -453,15 +413,9 @@ lemma phase2 (g : Conf) (hnn : ∀ i, 0 ≤ g i) (h0 : (g 0 : ZMod 2) = 1)
         rw [heq, Mpar] at h0
         exact (by decide : (0 : ZMod 2) ≠ 1) h0
       lia
-    have e0 : ([1, 2, 3, 4, 5].foldl step g) 0 = g 0 := by eval_step
-    have e1 : ([1, 2, 3, 4, 5].foldl step g) 1 = abs (g 0 - g 2) := by eval_step
-    have e2 : ([1, 2, 3, 4, 5].foldl step g) 2 = abs (abs (g 0 - g 2) - g 3) := by eval_step
-    have e3 : ([1, 2, 3, 4, 5].foldl step g) 3 =
-        abs (abs (abs (g 0 - g 2) - g 3) - g 4) := by eval_step
-    have e4 : ([1, 2, 3, 4, 5].foldl step g) 4 =
-        abs (abs (abs (abs (g 0 - g 2) - g 3) - g 4) - g 5) := by eval_step
-    have e5 : ([1, 2, 3, 4, 5].foldl step g) 5 =
-        abs (abs (abs (abs (abs (g 0 - g 2) - g 3) - g 4) - g 5) - g 0) := by eval_step
+    have e1 : ([1, 2, 3, 4, 5].foldl step g) 1 = abs (g 0 - g 2) := by rfl
+    have e2 : ([1, 2, 3, 4, 5].foldl step g) 2 = abs (abs (g 0 - g 2) - g 3) := by rfl
+    have e3 : ([1, 2, 3, 4, 5].foldl step g) 3 = abs (abs (abs (g 0 - g 2) - g 3) - g 4) := by rfl
     have pc : ∀ i, (([1, 2, 3, 4, 5].foldl step g) i : ZMod 2) = (if i = 5 then 0 else 1) := by
       intro i
       have hf2 : (([1, 2, 3, 4, 5].foldl step g) i : ZMod 2) =
@@ -596,7 +550,7 @@ lemma dist_cast (x y : ℕ) : ((Nat.dist x y : ℤ)) = |(x : ℤ) - (y : ℤ)| :
       abs_of_nonneg (by lia : (0 : ℤ) ≤ (x : ℤ) - (y : ℤ))]
 
 lemma stepN_cast (f : ZMod 6 → ℕ) (j : ZMod 6) :
-    (fun i => ((stepN f j) i : ℤ)) = step (fun i => ((f i : ℤ))) j := by
+    (fun i => ((stepN f j) i : ℤ)) = step (fun i => (f i : ℤ)) j := by
   funext i
   by_cases hij : i = j
   · subst hij
