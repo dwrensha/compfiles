@@ -45,16 +45,6 @@ points are reported by the tracking device, for the hunter to choose her
 moves so that after 10⁹ rounds she can ensure that the distance between
 her and the rabbit is at most 100?
 
-The answer is **no**: we show that for every valid hunter strategy there
-is a rabbit path and a sequence of reported points such that after `10⁹`
-rounds the distance between the hunter and the rabbit exceeds `100`.
-The construction formalized here follows Evan Chen's notes
-(https://web.evanchen.cc/exams/IMO-2017-notes.pdf): the rabbit repeatedly
-increases the square of its distance from the hunter by `1/2` per "phase"
-of `400` rounds, using a two-worlds trick (it runs to one of two points
-`X`, `Y` symmetric about the line through the current positions, while the
-tracking device reports points on that line, so the hunter cannot tell
-which point the rabbit went to).
 -/
 
 namespace Imo2017P3
@@ -98,6 +88,18 @@ def ValidReports (A p : ℕ → Pt) : Prop :=
   ∀ n, 1 ≤ n → dist (p n) (A n) ≤ 1
 
 snip begin
+
+/-!
+The answer is **no**: we show that for every valid hunter strategy there
+is a rabbit path and a sequence of reported points such that after `10⁹`
+rounds the distance between the hunter and the rabbit exceeds `100`.
+The construction formalized here follows Evan Chen's notes
+(https://web.evanchen.cc/exams/IMO-2017-notes.pdf): the rabbit repeatedly
+increases the square of its distance from the hunter by `1/2` per "phase"
+of `400` rounds, using a two-worlds trick (it runs to one of two points
+`X`, `Y` symmetric about the line through the current positions, while the
+tracking device reports points on that line, so the hunter cannot tell
+which point the rabbit went to). --/
 
 noncomputable section
 
