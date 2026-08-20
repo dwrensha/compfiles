@@ -53,7 +53,7 @@ lemma le_f (n : ℕ) : n + 2 ≤ f n := by
     have h1 : 2 ^ (k + 2) ≤ 2 ^ f k := Nat.pow_le_pow_right (by norm_num) ih
     have h2 : k + 3 ≤ 2 ^ (k + 2) := by
       have h : k + 2 < 2 ^ (k + 2) := Nat.lt_two_pow_self
-      omega
+      lia
     calc k + 1 + 2 = k + 3 := rfl
     _ ≤ 2 ^ (k + 2) := h2
     _ ≤ 2 ^ f k := h1
@@ -68,8 +68,8 @@ lemma f_monotone : Monotone f := by
 
 /-- Eventually `f n` is divisible by any prescribed power of two. -/
 lemma two_pow_dvd_f (a n : ℕ) (ha : 1 ≤ a) (hn : a ≤ n) : 2 ^ a ∣ f n := by
-  obtain ⟨k, rfl⟩ : ∃ k, n = k + 1 := ⟨n - 1, by omega⟩
-  have h : a ≤ f k := by have := le_f k; omega
+  obtain ⟨k, rfl⟩ : ∃ k, n = k + 1 := ⟨n - 1, by lia⟩
+  have h : a ≤ f k := by have := le_f k; lia
   exact Nat.pow_dvd_pow 2 h
 
 /-- Main step: strong induction on the modulus. -/
@@ -83,14 +83,14 @@ lemma eventually_constant_mod (m : ℕ) (hm : 1 ≤ m) :
       exact ⟨0, fun n _ => by simp only [Nat.ModEq, Nat.mod_one]⟩
     · by_cases hev : Even m
       · -- even modulus: split `m = 2 ^ a * b` with `b` odd
-        obtain ⟨a, b, hb_odd, rfl⟩ := Nat.exists_eq_two_pow_mul_odd (n := m) (by omega)
+        obtain ⟨a, b, hb_odd, rfl⟩ := Nat.exists_eq_two_pow_mul_odd (n := m) (by lia)
         have ha : 1 ≤ a := by
           rcases Nat.eq_zero_or_pos a with h | h
           · subst h
             rw [pow_zero, one_mul] at hev
             exact absurd hev (Nat.not_even_iff_odd.mpr hb_odd)
           · exact h
-        have hb1 : 1 ≤ b := by obtain ⟨k, hk⟩ := hb_odd; omega
+        have hb1 : 1 ≤ b := by obtain ⟨k, hk⟩ := hb_odd; lia
         have h2a : 2 ≤ 2 ^ a := by
           calc 2 = 2 ^ 1 := rfl
           _ ≤ 2 ^ a := Nat.pow_le_pow_right (by norm_num) ha
@@ -112,15 +112,15 @@ lemma eventually_constant_mod (m : ℕ) (hm : 1 ≤ m) :
       · -- odd modulus: Euler's theorem
         have hodd : Odd m := Nat.not_even_iff_odd.mp hev
         obtain ⟨N₁, hN₁⟩ := IH (Nat.totient m) (Nat.totient_lt m h2)
-          (Nat.totient_pos.mpr (by omega : 0 < m))
+          (Nat.totient_pos.mpr (by lia : 0 < m))
         have heuler : 2 ^ Nat.totient m ≡ 1 [MOD m] :=
           Nat.ModEq.pow_totient (Nat.coprime_two_left.mpr hodd)
         refine ⟨N₁ + 1, fun n hn => ?_⟩
-        obtain ⟨k, rfl⟩ : ∃ k, n = k + 1 := ⟨n - 1, by omega⟩
-        have hk : N₁ ≤ k := by omega
+        obtain ⟨k, rfl⟩ : ∃ k, n = k + 1 := ⟨n - 1, by lia⟩
+        have hk : N₁ ≤ k := by lia
         have hle : f N₁ ≤ f k := f_monotone hk
         obtain ⟨t, ht⟩ := (Nat.modEq_iff_dvd' hle).mp (hN₁ k hk).symm
-        have hfk : f k = f N₁ + Nat.totient m * t := by omega
+        have hfk : f k = f N₁ + Nat.totient m * t := by lia
         have hfn : f (k + 1) = 2 ^ f N₁ * (2 ^ Nat.totient m) ^ t := by
           rw [f_succ, hfk, pow_add, pow_mul]
         have h : 2 ^ f N₁ * (2 ^ Nat.totient m) ^ t ≡ 2 ^ f N₁ [MOD m] := by

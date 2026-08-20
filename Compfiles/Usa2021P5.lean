@@ -60,7 +60,7 @@ problem usa2021_p5 (n : ℕ) (hn : 4 ≤ n) (a b : ZMod n → ℝ)
     (ha : ∀ k, 0 < a k) (_hb : ∀ k, 0 < b k) :
     ((∀ k, a k = b k + b (k + 1)) ∧
      (∀ k, b k = 1 / a (k - 1) + 1 / a k)) ↔ (a, b) = solution n := by
-  have : NeZero n := ⟨by omega⟩
+  have : NeZero n := ⟨by lia⟩
   constructor
   · -- Suppose that `(a, b)` is a positive solution of the system.
     rintro ⟨h1, h2⟩

@@ -41,12 +41,12 @@ problem imo1992_p2 (f : ℝ → ℝ) :
     have ht2 : ∀ x, f (x^2 + t) = (f x)^2 := fun x ↦ by
       simp only [hf, zero_add, t]
     have ht3 : ∀ x, f (f x) = x + t^2 := fun x ↦ by
-      simp only [←hf, zero_pow two_ne_zero, zero_add, t]
+      simp only [← hf, zero_pow two_ne_zero, zero_add, t]
     have ht4 :=
       calc 1 + t + 2 * t^2 + t^4
          = t + (1 + t^2)^2 := by ring
        _ = t + (f (f 1))^2 := by rw [ht3 1]
-       _ = f (t^2 + (f 1)^2) := by rw [←ht1, ←hf, add_comm]
+       _ = f (t^2 + (f 1)^2) := by rw [← ht1, ← hf, add_comm]
        _ = f (t^2 + f (1 + t)) := by rw [← ht2 1, one_pow]
        _ = 1 + t + (f t)^2 := hf t (1 + t)
        _ = 1 + t + t^4 := by rw[ht1]; ring

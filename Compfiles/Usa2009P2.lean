@@ -45,9 +45,9 @@ lemma injOn_min_sub {B : Finset ℤ} {c : ℤ} (hB : ∀ x ∈ B, ∀ y ∈ B, x
     rcases min_choice y (c - y) with hy' | hy' <;>
     rw [hx', hy'] at hxy
   · exact hxy
-  · exact absurd (by omega : x + y = c) (hB x hx y hy)
-  · exact absurd (by omega : x + y = c) (hB x hx y hy)
-  · omega
+  · exact absurd (by lia : x + y = c) (hB x hx y hy)
+  · exact absurd (by lia : x + y = c) (hB x hx y hy)
+  · lia
 
 /-- Pairing counting lemma. If `B ⊆ [lo, hi]` contains no two elements (not necessarily
 distinct) summing to `c = lo + hi`, then pairing `x` with `c - x` shows that `B` has at
@@ -61,12 +61,12 @@ lemma card_le_of_pair {B : Finset ℤ} {lo hi c : ℤ} (hsub : B ⊆ Finset.Icc 
     have hhi : x ≤ hi := (Finset.mem_Icc.mp (hsub hx)).2
     have hxx : x + x ≠ c := hB x hx x hx
     rw [Finset.mem_Icc]
-    refine ⟨le_min_iff.mpr ⟨hlo, by omega⟩, ?_⟩
+    refine ⟨le_min_iff.mpr ⟨hlo, by lia⟩, ?_⟩
     by_contra hcon
     push Not at hcon
     have h1 : (c - 1) / 2 < x := lt_of_lt_of_le hcon (min_le_left _ _)
     have h2 : (c - 1) / 2 < c - x := lt_of_lt_of_le hcon (min_le_right _ _)
-    omega
+    lia
   calc B.card ≤ (Finset.Icc lo ((c - 1) / 2)).card :=
         Finset.card_le_card_of_injOn _ hmem (injOn_min_sub hB)
     _ = ((c - 1) / 2 + 1 - lo).toNat := Int.card_Icc _ _
@@ -85,8 +85,8 @@ lemma card_le_case2 {m : ℕ} (hm : 1 ≤ m) {A : Finset ℤ}
     have h := card_le_of_pair (lo := 1) (hi := 2 * (m : ℤ) - 1) (c := 2 * (m : ℤ))
       Finset.inter_subset_right (by ring)
       (fun x hx y hy hxy ↦ hgood _ hnegN _ (Finset.mem_inter.mp hx).1 _
-        (Finset.mem_inter.mp hy).1 (by omega))
-    have hnum : ((2 * (m : ℤ) - 1) / 2 + 1 - 1).toNat = m - 1 := by omega
+        (Finset.mem_inter.mp hy).1 (by lia))
+    have hnum : ((2 * (m : ℤ) - 1) / 2 + 1 - 1).toNat = m - 1 := by lia
     rwa [hnum] at h
   -- Negative part: same bound, after negation.
   have hnegsub : Bm ⊆ Finset.Icc 1 (2 * (m : ℤ) - 1) := by
@@ -95,13 +95,13 @@ lemma card_le_case2 {m : ℕ} (hm : 1 ≤ m) {A : Finset ℤ}
     obtain ⟨y, hy, rfl⟩ := hx
     have hy' := Finset.mem_Icc.mp (Finset.mem_inter.mp hy).2
     rw [Finset.mem_Icc]
-    omega
+    lia
   have hneggood : ∀ x ∈ Bm, ∀ y ∈ Bm, x + y ≠ 2 * (m : ℤ) := by
     intro x hx y hy hxy
     rw [hBm, Finset.mem_image] at hx hy
     obtain ⟨x', hx', rfl⟩ := hx
     obtain ⟨y', hy', rfl⟩ := hy
-    exact hgood _ hN _ (Finset.mem_inter.mp hx').1 _ (Finset.mem_inter.mp hy').1 (by omega)
+    exact hgood _ hN _ (Finset.mem_inter.mp hx').1 _ (Finset.mem_inter.mp hy').1 (by lia)
   have hneg : (A ∩ Finset.Icc (-(2 * (m : ℤ)) + 1) (-1)).card ≤ m - 1 := by
     have h1 : (A ∩ Finset.Icc (-(2 * (m : ℤ)) + 1) (-1)).card = Bm.card := by
       rw [hBm]
@@ -109,7 +109,7 @@ lemma card_le_case2 {m : ℕ} (hm : 1 ≤ m) {A : Finset ℤ}
     rw [h1]
     have h := card_le_of_pair (lo := 1) (hi := 2 * (m : ℤ) - 1) (c := 2 * (m : ℤ))
       hnegsub (by ring) hneggood
-    have hnum : ((2 * (m : ℤ) - 1) / 2 + 1 - 1).toNat = m - 1 := by omega
+    have hnum : ((2 * (m : ℤ) - 1) / 2 + 1 - 1).toNat = m - 1 := by lia
     rwa [hnum] at h
   -- Now `A ⊆ {-2m, 2m} ∪ (positive part) ∪ (negative part)`.
   have hsplit : A ⊆ {-(2 * (m : ℤ)), 2 * (m : ℤ)} ∪
@@ -129,15 +129,15 @@ lemma card_le_case2 {m : ℕ} (hm : 1 ≤ m) {A : Finset ℤ}
         have hxb : x ∉ Finset.Icc (-(2 * (m : ℤ)) + 1) (-1) :=
           fun h ↦ hxn (Finset.mem_inter.mpr ⟨hx, h⟩)
         rw [Finset.mem_Icc] at hxa hxb
-        omega
+        lia
   have h2 : ({-(2 * (m : ℤ)), 2 * (m : ℤ)} : Finset ℤ).card ≤ 2 :=
     le_trans (Finset.card_insert_le _ _) (by simp)
   have h3 : ((A ∩ Finset.Icc 1 (2 * (m : ℤ) - 1)) ∪
         (A ∩ Finset.Icc (-(2 * (m : ℤ)) + 1) (-1))).card ≤ (m - 1) + (m - 1) :=
-    le_trans (Finset.card_union_le _ _) (by omega)
+    le_trans (Finset.card_union_le _ _) (by lia)
   refine le_trans (Finset.card_le_card hsplit) ?_
   refine le_trans (Finset.card_union_le _ _) ?_
-  omega
+  lia
 
 /-- Case (iii) of the induction step: if `2m`, `2m-1` and `-(2m-1)` lie in `A` but
 `-(2m)` does not (with `m ≥ 1`), then `A` has at most `2m` elements. -/
@@ -153,7 +153,7 @@ lemma card_le_case3 {m : ℕ} (hm : 1 ≤ m) {A : Finset ℤ}
     have h2 : (2 : ℤ) ∈ A := by norm_num at hN ⊢; exact hN
     have h1 : (-1 : ℤ) ∈ A := by norm_num at hnegN1 ⊢; exact hnegN1
     exact hgood 2 h2 (-1) h1 (-1) h1 (by norm_num)
-  · have hm2 : 2 ≤ m := by omega
+  · have hm2 : 2 ≤ m := by lia
     have h0 : (0 : ℤ) ∉ A := fun h0 ↦ hgood _ hN1 _ hnegN1 _ h0 (by ring)
     have hneg1 : (-1 : ℤ) ∉ A := fun h ↦ hgood _ hN _ hnegN1 _ h (by ring)
     -- Positive part: at most one element from each pair `{i, 2m-1-i}` of `[1, 2m-2]`.
@@ -161,8 +161,8 @@ lemma card_le_case3 {m : ℕ} (hm : 1 ≤ m) {A : Finset ℤ}
       have h := card_le_of_pair (lo := 1) (hi := 2 * (m : ℤ) - 2) (c := 2 * (m : ℤ) - 1)
         Finset.inter_subset_right (by ring)
         (fun x hx y hy hxy ↦ hgood _ hnegN1 _ (Finset.mem_inter.mp hx).1 _
-          (Finset.mem_inter.mp hy).1 (by omega))
-      have hnum : ((2 * (m : ℤ) - 1 - 1) / 2 + 1 - 1).toNat = m - 1 := by omega
+          (Finset.mem_inter.mp hy).1 (by lia))
+      have hnum : ((2 * (m : ℤ) - 1 - 1) / 2 + 1 - 1).toNat = m - 1 := by lia
       rwa [hnum] at h
     -- Negative part: the images under negation land in `[2, 2m-2]`, with pairs summing
     -- to `2m`.
@@ -173,14 +173,14 @@ lemma card_le_case3 {m : ℕ} (hm : 1 ≤ m) {A : Finset ℤ}
       obtain ⟨y, hy, rfl⟩ := hx
       have hy' := Finset.mem_Icc.mp (Finset.mem_inter.mp hy).2
       rw [Finset.mem_Icc]
-      omega
+      lia
     have hneggood : ∀ x ∈ Bm, ∀ y ∈ Bm, x + y ≠ 2 * (m : ℤ) := by
       intro x hx y hy hxy
       rw [hBm, Finset.mem_image] at hx hy
       obtain ⟨x', hx', rfl⟩ := hx
       obtain ⟨y', hy', rfl⟩ := hy
       exact hgood _ hN _ (Finset.mem_inter.mp hx').1 _ (Finset.mem_inter.mp hy').1
-        (by omega)
+        (by lia)
     have hneg : (A ∩ Finset.Icc (-(2 * (m : ℤ)) + 2) (-2)).card ≤ m - 2 := by
       have h1 : (A ∩ Finset.Icc (-(2 * (m : ℤ)) + 2) (-2)).card = Bm.card := by
         rw [hBm]
@@ -188,7 +188,7 @@ lemma card_le_case3 {m : ℕ} (hm : 1 ≤ m) {A : Finset ℤ}
       rw [h1]
       have h := card_le_of_pair (lo := 2) (hi := 2 * (m : ℤ) - 2) (c := 2 * (m : ℤ))
         hnegsub (by ring) hneggood
-      have hnum : ((2 * (m : ℤ) - 1) / 2 + 1 - 2).toNat = m - 2 := by omega
+      have hnum : ((2 * (m : ℤ) - 1) / 2 + 1 - 2).toNat = m - 2 := by lia
       rwa [hnum] at h
     -- Now `A ⊆ {2m, 2m-1, -(2m-1)} ∪ (positive part) ∪ (negative part)`.
     have hsplit : A ⊆ {2 * (m : ℤ), 2 * (m : ℤ) - 1, -((2 * (m : ℤ)) - 1)} ∪
@@ -211,17 +211,17 @@ lemma card_le_case3 {m : ℕ} (hm : 1 ≤ m) {A : Finset ℤ}
             fun h ↦ hxn (Finset.mem_inter.mpr ⟨hx, h⟩)
           rw [Finset.mem_Icc] at hxa hxb
           simp only [Finset.mem_insert, Finset.mem_singleton]
-          omega
+          lia
     have htri : ({2 * (m : ℤ), 2 * (m : ℤ) - 1, -((2 * (m : ℤ)) - 1)} : Finset ℤ).card ≤ 3 := by
       refine le_trans (Finset.card_insert_le _ _) ?_
       refine le_trans (Nat.add_le_add_right (Finset.card_insert_le _ _) 1) ?_
       simp
     have h3 : ((A ∩ Finset.Icc 1 (2 * (m : ℤ) - 2)) ∪
           (A ∩ Finset.Icc (-(2 * (m : ℤ)) + 2) (-2))).card ≤ (m - 1) + (m - 2) :=
-      le_trans (Finset.card_union_le _ _) (by omega)
+      le_trans (Finset.card_union_le _ _) (by lia)
     refine le_trans (Finset.card_le_card hsplit) ?_
     refine le_trans (Finset.card_union_le _ _) ?_
-    omega
+    lia
 
 /-- The upper bound for even `n`: any good subset of `[-2m, 2m]` has at most `2m`
 elements, by strong induction on `m`. -/
@@ -256,12 +256,12 @@ lemma card_le_even (m : ℕ) (A : Finset ℤ) :
           · exact Or.inr (hmem x hx hx2)
         have hcard : (A ∩ Finset.Icc (-(2 * (m : ℤ) - 2)) (2 * (m : ℤ) - 2)).card ≤
             2 * (m - 1) := by
-          apply ih (m - 1) (by omega)
+          apply ih (m - 1) (by lia)
           · intro x hx
             have hx' := Finset.mem_Icc.mp (Finset.mem_inter.mp hx).2
-            have hm1 : ((m - 1 : ℕ) : ℤ) = (m : ℤ) - 1 := by omega
+            have hm1 : ((m - 1 : ℕ) : ℤ) = (m : ℤ) - 1 := by lia
             rw [Finset.mem_Icc, hm1]
-            omega
+            lia
           · intro a ha b hb c hc
             exact hgood a (Finset.mem_inter.mp ha).1 b (Finset.mem_inter.mp hb).1
               c (Finset.mem_inter.mp hc).1
@@ -269,7 +269,7 @@ lemma card_le_even (m : ℕ) (A : Finset ℤ) :
               Finset.card_le_card hAu
           _ ≤ (A ∩ Finset.Icc (-(2 * (m : ℤ) - 2)) (2 * (m : ℤ) - 2)).card + S.card :=
               Finset.card_union_le _ _
-          _ ≤ 2 * m := by omega
+          _ ≤ 2 * m := by lia
       by_cases hN : (2 * (m : ℤ)) ∈ A
       · by_cases hnegN : -(2 * (m : ℤ)) ∈ A
         · exact card_le_case2 hm hsub hgood hN hnegN
@@ -284,7 +284,7 @@ lemma card_le_even (m : ℕ) (A : Finset ℤ) :
               have hx2 : x ≠ -((2 * (m : ℤ)) - 1) := fun h ↦ hnegN1 (h ▸ hx)
               rw [Finset.mem_Icc] at hxout
               simp only [Finset.mem_insert, Finset.mem_singleton]
-              omega
+              lia
           · refine endpoint {2 * (m : ℤ), -((2 * (m : ℤ)) - 1)}
               (le_trans (Finset.card_insert_le _ _) (by simp)) ?_
             intro x hx hxout
@@ -293,7 +293,7 @@ lemma card_le_even (m : ℕ) (A : Finset ℤ) :
             have hx2 : x ≠ (2 * (m : ℤ)) - 1 := fun h ↦ hN1 (h ▸ hx)
             rw [Finset.mem_Icc] at hxout
             simp only [Finset.mem_insert, Finset.mem_singleton]
-            omega
+            lia
       · by_cases hnegN : -(2 * (m : ℤ)) ∈ A
         · by_cases hN1 : (2 * (m : ℤ)) - 1 ∈ A
           · by_cases hnegN1 : -((2 * (m : ℤ)) - 1) ∈ A
@@ -304,7 +304,7 @@ lemma card_le_even (m : ℕ) (A : Finset ℤ) :
                 obtain ⟨y, hy, rfl⟩ := hx
                 have hyy := Finset.mem_Icc.mp (hsub hy)
                 rw [Finset.mem_Icc]
-                omega
+                lia
               have hgood' : IsGood (A.image (fun x ↦ -x)) := by
                 intro a ha b hb c hc
                 rw [Finset.mem_image] at ha hb hc
@@ -312,7 +312,7 @@ lemma card_le_even (m : ℕ) (A : Finset ℤ) :
                 obtain ⟨b', hb', rfl⟩ := hb
                 obtain ⟨c', hc', rfl⟩ := hc
                 have h := hgood a' ha' b' hb' c' hc'
-                omega
+                lia
               have hN' : (2 * (m : ℤ)) ∈ A.image (fun x ↦ -x) :=
                 Finset.mem_image.mpr ⟨_, hnegN, by simp⟩
               have hN1' : (2 * (m : ℤ)) - 1 ∈ A.image (fun x ↦ -x) :=
@@ -328,7 +328,7 @@ lemma card_le_even (m : ℕ) (A : Finset ℤ) :
               have hle := card_le_case3 hm hsub' hgood' hN' hN1' hnegN1' hnegN'
               have hcard : (A.image (fun x ↦ -x)).card = A.card :=
                 Finset.card_image_of_injective _ neg_injective
-              omega
+              lia
             · refine endpoint {-(2 * (m : ℤ)), 2 * (m : ℤ) - 1}
                 (le_trans (Finset.card_insert_le _ _) (by simp)) ?_
               intro x hx hxout
@@ -337,7 +337,7 @@ lemma card_le_even (m : ℕ) (A : Finset ℤ) :
               have hx2 : x ≠ -((2 * (m : ℤ)) - 1) := fun h ↦ hnegN1 (h ▸ hx)
               rw [Finset.mem_Icc] at hxout
               simp only [Finset.mem_insert, Finset.mem_singleton]
-              omega
+              lia
           · refine endpoint {-(2 * (m : ℤ)), -((2 * (m : ℤ)) - 1)}
               (le_trans (Finset.card_insert_le _ _) (by simp)) ?_
             intro x hx hxout
@@ -346,7 +346,7 @@ lemma card_le_even (m : ℕ) (A : Finset ℤ) :
             have hx2 : x ≠ (2 * (m : ℤ)) - 1 := fun h ↦ hN1 (h ▸ hx)
             rw [Finset.mem_Icc] at hxout
             simp only [Finset.mem_insert, Finset.mem_singleton]
-            omega
+            lia
         · refine endpoint {2 * (m : ℤ) - 1, -((2 * (m : ℤ)) - 1)}
             (le_trans (Finset.card_insert_le _ _) (by simp)) ?_
           intro x hx hxout
@@ -355,7 +355,7 @@ lemma card_le_even (m : ℕ) (A : Finset ℤ) :
           have hx2 : x ≠ -(2 * (m : ℤ)) := fun h ↦ hnegN (h ▸ hx)
           rw [Finset.mem_Icc] at hxout
           simp only [Finset.mem_insert, Finset.mem_singleton]
-          omega
+          lia
 
 snip end
 
@@ -370,31 +370,31 @@ problem usa2009_p2 (n : ℕ) (hn : 0 < n) :
       Finset.Icc ((n / 2 + 1 : ℕ) : ℤ) (n : ℤ), ?_, ?_, ?_⟩
     · intro x hx
       rw [Finset.mem_union] at hx
-      rcases hx with hx | hx <;> rw [Finset.mem_Icc] at hx ⊢ <;> omega
+      rcases hx with hx | hx <;> rw [Finset.mem_Icc] at hx ⊢ <;> lia
     · intro a ha b hb c hc hsum
-      have hK : 2 * (((n / 2 + 1 : ℕ)) : ℤ) ≥ (n : ℤ) + 1 := by omega
+      have hK : 2 * (((n / 2 + 1 : ℕ)) : ℤ) ≥ (n : ℤ) + 1 := by lia
       rw [Finset.mem_union] at ha hb hc
       rcases ha with ha | ha <;> rcases hb with hb | hb <;> rcases hc with hc | hc <;>
         · rw [Finset.mem_Icc] at ha hb hc
-          omega
+          lia
     · have hdisj : Disjoint (Finset.Icc (-(n : ℤ)) (-((n / 2 + 1 : ℕ) : ℤ)))
           (Finset.Icc ((n / 2 + 1 : ℕ) : ℤ) (n : ℤ)) := by
         rw [Finset.disjoint_left]
         intro x hx1 hx2
         rw [Finset.mem_Icc] at hx1 hx2
-        omega
+        lia
       rw [Finset.card_union_of_disjoint hdisj, Int.card_Icc, Int.card_Icc]
       simp only [answer]
       by_cases hev : Even n
-      · rw [if_pos hev]
+      · rw [ite_eq_left hev]
         obtain ⟨t, ht⟩ := hev
-        omega
-      · rw [if_neg hev]
+        lia
+      · rw [ite_eq_right hev]
         have hoddn : n % 2 = 1 := by
           rcases Nat.even_or_odd n with h | h
           · exact absurd h hev
           · exact Nat.odd_iff.mp h
-        omega
+        lia
   · -- Upper bound: the odd case reduces to the even case applied to `[-(n+1), n+1]`.
     intro k hk
     obtain ⟨A, hsub, hgood, rfl⟩ := hk
@@ -404,8 +404,8 @@ problem usa2009_p2 (n : ℕ) (hn : 0 < n) :
       rw [hn2] at hsub
       have hle := card_le_even m A hsub hgood
       simp only [answer]
-      rw [if_pos (show Even (m + m) from ⟨m, rfl⟩)]
-      omega
+      rw [ite_eq_left (show Even (m + m) from ⟨m, rfl⟩)]
+      lia
     · obtain ⟨m, hm⟩ := hodd
       subst hm
       have hsub' : A ⊆ Finset.Icc (-(2 * ((m + 1 : ℕ) : ℤ))) (2 * ((m + 1 : ℕ) : ℤ)) := by
@@ -414,11 +414,11 @@ problem usa2009_p2 (n : ℕ) (hn : 0 < n) :
         rw [Finset.mem_Icc]
         have hcast : ((m + 1 : ℕ) : ℤ) = (m : ℤ) + 1 := by push_cast; ring
         rw [hcast]
-        omega
+        lia
       have hle := card_le_even (m + 1) A hsub' hgood
       simp only [answer]
-      rw [if_neg (show ¬Even (2 * m + 1) by
+      rw [ite_eq_right (show ¬Even (2 * m + 1) by
         rw [Nat.not_even_iff_odd]; exact ⟨m, rfl⟩)]
-      omega
+      lia
 
 end Usa2009P2

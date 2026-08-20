@@ -306,13 +306,13 @@ theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
             simp only [Bad, Finset.mem_filter, Finset.mem_univ, true_and] at hi
             dsimp [badVal]
             by_cases hb : x - a (small i) ∈ M
-            · rw [if_pos hb]
+            · rw [ite_eq_left hb]
               rw [Finset.mem_erase]
               constructor
               · have hpos := hsmall_pos i
                 omega
               · exact hb
-            · rw [if_neg hb]
+            · rw [ite_eq_right hb]
               rw [Finset.mem_erase]
               constructor
               · have hgt := hlast_gt_small i
@@ -323,22 +323,22 @@ theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
             intro i hi j hj hij
             dsimp [badVal] at hij
             by_cases hiL : x - a (small i) ∈ M <;> by_cases hjL : x - a (small j) ∈ M
-            · rw [if_pos hiL, if_pos hjL] at hij
+            · rw [ite_eq_left hiL, ite_eq_left hjL] at hij
               have haeq : a (small i) = a (small j) := by omega
               exact Fin.eq_of_val_eq (by
                 have hsmall_eq := congrArg Fin.val (ainj haeq)
                 simpa [small] using hsmall_eq)
-            · rw [if_pos hiL, if_neg hjL] at hij
+            · rw [ite_eq_left hiL, ite_eq_right hjL] at hij
               have hposi := hsmall_pos i
               have hgtj := hlast_gt_small j
               rw [hs_eq] at hij
               omega
-            · rw [if_neg hiL, if_pos hjL] at hij
+            · rw [ite_eq_right hiL, ite_eq_left hjL] at hij
               have hgti := hlast_gt_small i
               have hposj := hsmall_pos j
               rw [hs_eq] at hij
               omega
-            · rw [if_neg hiL, if_neg hjL] at hij
+            · rw [ite_eq_right hiL, ite_eq_right hjL] at hij
               have haeq : a (small i) = a (small j) := by omega
               exact Fin.eq_of_val_eq (by
                 have hsmall_eq := congrArg Fin.val (ainj haeq)
@@ -669,7 +669,7 @@ theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
       have hM' : ∑ i : Fin n', a' i ∉ M' := by
         have h14 : ∑ i : Fin n', a' i = x := by
           simpa [a', x, n'] using sum_init a
-        rw [←h14] at h1
+        rw [← h14] at h1
         rw [Finset.mem_filter]
         push Not
         intro h15
@@ -690,7 +690,7 @@ theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
           simpa [a', p] using (prefix_extendPerm a p' (Nat.sub_le n 1) i h30).symm
         rw [h33] at h31
         have h34 : ∑ j ∈ Finset.filter (· ≤ i) Finset.univ, a (p j) ≤ x := by
-          rw [←h33]
+          rw [← h33]
           have h36 : Finset.filter (· ≤ i') Finset.univ ⊆ Finset.univ := by
             intro j hj
             simp
@@ -809,7 +809,7 @@ theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
             intro h
             have hv := congrArg Fin.val h
             dsimp [emb, embedFinLE, hitFull] at hv
-            have hvlt : j.val < k.val := by exact hjlt
+            have hvlt : j.val < k.val := hjlt
             omega
           have hne_last : (emb j : Fin n) ≠ lastFull := by
             intro h
@@ -993,7 +993,7 @@ problem imo2009_p6 (n : ℕ) (hn : 0 < n)
       intro x
       exact congrArg a (ainj (congrArg a (h3 x)))
     have h1 : Finset.map ⟨ps', h0.1⟩ Finset.univ = Finset.univ := by simp
-    rw [←h1]
+    rw [← h1]
     rw [Finset.sum_map, Function.Embedding.coeFn_mk]
     simp_rw [Function.comp_apply]
     dsimp at h3' ⊢

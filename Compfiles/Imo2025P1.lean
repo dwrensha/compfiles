@@ -536,7 +536,7 @@ noncomputable def shiftLines (v : Plane) (lines : Finset AffSubOfPlane) : Finset
 /-- `shiftLine (-v)` is the inverse of `shiftLine v`. -/
 lemma shift_line_inv (v : Plane) (L : AffSubOfPlane) : (shiftLine (-v)) ((shiftLine v) L) = L := by
   dsimp only [shiftLine, Function.Embedding.coeFn_mk, shiftLineMap]
-  rw [AffineSubspace.map_map, ←affine_trans, ←AffineEquiv.constVAdd_add]
+  rw [AffineSubspace.map_map, ← affine_trans, ← AffineEquiv.constVAdd_add]
   simp
 
 /-- If `L` is sunny, then so is its shift. -/
@@ -823,7 +823,7 @@ lemma coverGridNoEdgeConfig.cover_no_edge_line_surj (C : coverGridNoEdgeConfig) 
     simp [C.find_line_edge_correct]
   apply Finset.eq_of_subset_of_card_le <;> try (first | assumption | lia)
   have := C.lines_count
-  omega
+  lia
 
 def edgeEndpointCornerId (d : Fin 3) (r : Fin 2) : Fin 3 := match d, r with
   | 0, 0 => 0   -- edge 0 left corner is 0
@@ -995,12 +995,11 @@ lemma coverGridNoEdgeConfig.cover_no_edge_3_lines (C : coverGridNoEdgeConfig)
 lemma coverGridNoEdgeConfig.cover_no_edge_4_impossible (C : coverGridNoEdgeConfig)
     (hn4 : C.n ≥ 4) : False := by
   have := eqAffSubOfPlane
-  have : #(C.lines \ C.corner_set) ≥ 1 := by
-    calc
-    _ = #C.lines - #(C.corner_set) := Finset.card_sdiff_of_subset C.corner_set_subset_lines
-    _ ≥ C.n - 3 := by rw [C.lines_count, C.corner_set_card]
-    _ ≥ 1 := by lia
-  simp only [ge_iff_le, Finset.one_le_card] at this
+  have : 1 ≤ #(C.lines \ C.corner_set) := calc 1
+    _ ≤ C.n - 3 := by lia
+    _ ≤ #C.lines - #(C.corner_set) := by rw [C.lines_count, C.corner_set_card]
+    _ = #(C.lines \ C.corner_set) := Finset.card_sdiff_of_subset C.corner_set_subset_lines |>.symm
+  simp only [Finset.one_le_card] at this
   obtain ⟨L', hL'⟩ := Finset.Nonempty.exists_mem this
   simp only [Finset.mem_sdiff] at hL'
   have hL'0 (d : Fin 3) : ∃ i, (C.findLineEdge d i = L' ∧
@@ -1061,9 +1060,9 @@ end FindLines
 lemma coverGridNoEdgeConfig.cover_edge (C : coverGridNoEdgeConfig) : C.n = 3 ∧ C.nS = 3 := by
   have : C.n ≥ 3 := by
     calc
-    _ = #C.lines := by exact C.lines_count.symm
-    _ ≥ #C.corner_set := by exact Finset.card_le_card C.corner_set_subset_lines
-    _ = 3 := by exact C.corner_set_card
+    _ = #C.lines := C.lines_count.symm
+    _ ≥ #C.corner_set := Finset.card_le_card C.corner_set_subset_lines
+    _ = 3 := C.corner_set_card
   by_cases C.n = 3
   · have := C.cover_no_edge_3_lines; tauto
   · have : C.n ≥ 4 := by lia
@@ -1372,7 +1371,7 @@ problem imo2025_p1 (n : Set.Ici 3) :
     have := C.any_cover
     grind
   · intro hS
-    have : n.val ≥ 3 := by exact n.property
+    have : n.val ≥ 3 := n.property
     have : nS ≤ n.val := by lia
     obtain ⟨C, h⟩ := existsStrongCover n nS this hS
     use C.lines

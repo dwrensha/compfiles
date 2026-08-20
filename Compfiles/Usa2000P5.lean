@@ -94,7 +94,7 @@ lemma side_oangle_add_eq_zero {p q C : Point}
 lemma fin_succ_cast_zmod3 (i : Fin 7) (hi : i < 6) :
     ((i : ZMod 3) + 1) = (((i + 1 : Fin 7) : ZMod 3)) := by
   rw [← Nat.cast_one, ← Nat.cast_add, ZMod.natCast_eq_natCast_iff']
-  omega
+  lia
 
 lemma rightVertex_eq_leftVertex_succ
     (A : ZMod 3 → Point) (i : Fin 7) (hi : i < 6) :

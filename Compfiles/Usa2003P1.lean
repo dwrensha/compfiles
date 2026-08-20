@@ -37,7 +37,7 @@ lemma lemma2 (a b c : ℕ) (hb : 0 < b) (h : Nat.Coprime a b) : ∃ k, k < b ∧
   · exact Nat.mod_lt _ hb
   · change N % b = c % b at HN2
     change (a * (x % b)) % b = c % b
-    rw [← HN2, hx, Nat.mul_mod, Nat.mod_mod, ←Nat.mul_mod]
+    rw [← HN2, hx, Nat.mul_mod, Nat.mod_mod, ← Nat.mul_mod]
 
 snip end
 
@@ -73,7 +73,7 @@ problem usa2003_p1 (n : ℕ) :
     suffices h : ∃ k, Odd k ∧ k < 10 ∧ 5 ∣ (2^n * k + a) by
       obtain ⟨k, hk1, hk2, kk, hkk⟩ := h
       refine ⟨k, hk1, hk2, kk, ?_⟩
-      rw [Nat.pow_succ, Nat.mul_assoc, ←hkk, Nat.mul_pow 5 2 n]
+      rw [Nat.pow_succ, Nat.mul_assoc, ← hkk, Nat.mul_pow 5 2 n]
       ring
 
     -- ...which is true when k ≡ -3ⁿ⬝a MOD 5.

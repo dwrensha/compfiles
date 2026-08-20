@@ -122,18 +122,13 @@ theorem card_divisors_div_mul {s p : ℕ} (hp : p.Prime) (hs0 : s ≠ 0) (hps : 
   set m := s / p ^ e with hm
   have hpow : p ^ e ∣ s := (hp.pow_dvd_iff_le_factorization hs0).mpr le_rfl
   have hsm : s = p ^ e * m := (Nat.mul_div_cancel' hpow).symm
-  have hpm : ¬ p ∣ m := by
-    intro hpm
-    have h1 : p ^ e * p ∣ p ^ e * m := mul_dvd_mul_left (p ^ e) hpm
-    rw [← hsm, ← pow_succ] at h1
-    have h2 := (hp.pow_dvd_iff_le_factorization hs0).mp h1
-    omega
+  have hpm : ¬ p ∣ m := Nat.not_dvd_ordCompl hp hs0
   have hcard : ∀ k : ℕ, (p ^ k * m).divisors.card = (k + 1) * m.divisors.card := by
     intro k
     have hcop : Nat.Coprime (p ^ k) m := (hp.coprime_pow_of_not_dvd hpm).symm
     rw [Nat.Coprime.card_divisors_mul hcop, Nat.divisors_prime_pow hp k, Finset.card_map,
       Finset.card_range]
-  obtain ⟨e', he'⟩ : ∃ e', e = e' + 1 := ⟨e - 1, by omega⟩
+  obtain ⟨e', he'⟩ : ∃ e', e = e' + 1 := ⟨e - 1, by lia⟩
   have hsp : s / p = p ^ e' * m := by
     rw [hsm, he', pow_succ]
     have hrw : p ^ e' * p * m = p * (p ^ e' * m) := by ring
@@ -159,7 +154,7 @@ theorem factorization_le_one {S : Finset ℕ} (hS : IsValid S) {x : ℕ} (hx : x
   have he2 : 2 ≤ x.factorization p := lt_of_not_ge h
   set e := x.factorization p with he
   have hpx : p ∣ x := by
-    have h1 : p ^ 1 ∣ x := (hp.pow_dvd_iff_le_factorization hx0).mpr (by omega)
+    have h1 : p ^ 1 ∣ x := (hp.pow_dvd_iff_le_factorization hx0).mpr (by lia)
     rwa [pow_one] at h1
   -- Counting the multiples of `p` in `S` via `x`: `(e + 1) * A = e * #S`.
   have hA1 := card_filter_dvd hS hx hpx
@@ -185,7 +180,7 @@ theorem factorization_le_one {S : Finset ℕ} (hS : IsValid S) {x : ℕ} (hx : x
     have hle : p ^ 2 ≤ p := Nat.le_of_dvd hp.pos hp2g
     have hle' : p ^ 2 ≤ p ^ 1 := by rwa [pow_one]
     have h21 : 2 ≤ 1 := (Nat.pow_le_pow_iff_right hp.one_lt).mp hle'
-    omega
+    lia
   -- Counting via `y` instead gives `2 * A = #S`.
   have hA2 := card_filter_dvd hS hyS hpy
   have hB2 := card_divisors_filter_dvd hp hy0 hpy
@@ -199,14 +194,14 @@ theorem factorization_le_one {S : Finset ℕ} (hS : IsValid S) {x : ℕ} (hx : x
     exact hC1
   have hE2 : 2 * A = S.card := by
     rw [← hB2, ← hA2, ← hN2, hfy] at hC2
-    omega
+    lia
   rw [← hE2] at hE1
   have heq : e + 1 = 2 * e := by
     have h' : (e + 1) * A = (2 * e) * A := by
       rw [hE1]
       ring
     exact Nat.mul_right_cancel hApos h'
-  omega
+  lia
 
 /-- Any valid nonempty set has cardinality a power of two: `#S = τ(x) = 2^{ω(x)}`
 for any `x ∈ S`. -/
@@ -247,10 +242,10 @@ theorem constr_r_inj {k : ℕ} {b₁ b₂ : Fin k → Bool} {i j : Fin k}
   have hinj := Nat.nth_injective Nat.infinite_setOfPred_prime
   unfold constr_r at h
   split at h <;> split at h
-  · exact Fin.ext (by have h3 := hinj h; omega)
-  · exact absurd (hinj h) (by omega)
-  · exact absurd (hinj h) (by omega)
-  · exact Fin.ext (by have h3 := hinj h; omega)
+  · exact Fin.ext (by have h3 := hinj h; lia)
+  · exact absurd (hinj h) (by lia)
+  · exact absurd (hinj h) (by lia)
+  · exact Fin.ext (by have h3 := hinj h; lia)
 
 /-- Equal primes in the same slot force equal Booleans. -/
 theorem constr_r_inj_bool {k : ℕ} {b₁ b₂ : Fin k → Bool} {i : Fin k}
@@ -260,8 +255,8 @@ theorem constr_r_inj_bool {k : ℕ} {b₁ b₂ : Fin k → Bool} {i : Fin k}
   split at h <;> split at h
   · rename_i hb1 hb2
     rw [hb1, hb2]
-  · exact absurd (hinj h) (by omega)
-  · exact absurd (hinj h) (by omega)
+  · exact absurd (hinj h) (by lia)
+  · exact absurd (hinj h) (by lia)
   · rename_i hb1 hb2
     rw [Bool.not_eq_true _] at hb1 hb2
     rw [hb1, hb2]
@@ -290,12 +285,12 @@ theorem constr_r_flip {k : ℕ} {b : Fin k → Bool} {d : ℕ} {i : Fin k} :
   constructor
   · intro h
     by_contra hnd
-    have hb : constr_b' k b d i = !(b i) := if_neg hnd
+    have hb : constr_b' k b d i = !(b i) := ite_eq_right hnd
     have h2 := constr_r_inj_bool h
     rw [hb] at h2
     exact constr_bool_not_ne _ h2
   · intro hdvd
-    have hb : constr_b' k b d i = b i := if_pos hdvd
+    have hb : constr_b' k b d i = b i := ite_eq_left hdvd
     unfold constr_r
     rw [hb]
 
@@ -390,10 +385,10 @@ theorem constr_gcd_unique {k : ℕ} {b b'' : Fin k → Bool} {d : ℕ}
     have hC : constr_r k b i ∣ d ↔ constr_b' k b d i = b i := by
       constructor
       · intro hdvd
-        exact if_pos hdvd
+        exact ite_eq_left hdvd
       · intro hbi
         by_contra hnd
-        have h1 : constr_b' k b d i = !(b i) := if_neg hnd
+        have h1 : constr_b' k b d i = !(b i) := ite_eq_right hnd
         rw [h1] at hbi
         exact constr_bool_not_ne _ hbi
     have hQS : b'' i = b i ↔ constr_b' k b d i = b i := hA.symm.trans (hB.symm.trans hC)
@@ -403,7 +398,6 @@ theorem constr_gcd_unique {k : ℕ} {b b'' : Fin k → Bool} {d : ℕ}
 /-- Construction: for `2k` distinct primes `p₁, q₁, …, pₖ, qₖ`, the set of all products
 `r₁ * … * rₖ` with `rᵢ ∈ {pᵢ, qᵢ}` is valid and has cardinality `2ᵏ`. -/
 theorem exists_isValid (k : ℕ) : ∃ S : Finset ℕ, IsValid S ∧ S.Nonempty ∧ S.card = 2 ^ k := by
-  classical
   refine ⟨Finset.univ.image (fun b : Fin k → Bool => ∏ i : Fin k, constr_r k b i),
     ⟨?_, ?_⟩, ?_, ?_⟩
   · intro s hs

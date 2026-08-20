@@ -143,7 +143,7 @@ lemma exists_diag_count_zero {n : ℕ} (hn : 1 < n) (M : Fin n → Fin n → ℕ
   have hcard : D.toFinset.card < (Icc 1 (2 * n - 1)).card := by
     have : D.toFinset.card ≤ n := by simpa [hD] using Multiset.toFinset_card_le D
     rw [Nat.card_Icc]
-    omega
+    lia
   obtain ⟨v, hv, hv'⟩ := exists_mem_notMem_of_card_lt_card hcard
   exact ⟨v, hv, by simpa using hv'⟩
 
@@ -222,22 +222,22 @@ lemma latinSquare_col {n : ℕ} (v : Fin n → ℕ) (j : Fin n) :
     ← Finset.image_image, Finset.image_univ_equiv]
 
 lemma Icc_union' {a b c : ℕ} (h : a ≤ b ∧ b ≤ c) : Icc a (b - 1) ∪ Icc b c = Icc a c := by
-  ext _; simp only [mem_union, mem_Icc]; omega
+  ext _; simp only [mem_union, mem_Icc]; lia
 
 lemma silver_double {n : ℕ} (hn : 1 ≤ n) (h : ∃ M, SilverMatrix n M) :
     ∃ M, SilverMatrix (n + n) M := by
   obtain ⟨M, hM⟩ := h
   refine ⟨blockMatrix M
-    (latinSquare ((Icc (2 * n) (3 * n - 1)).orderEmbOfFin (by rw [Nat.card_Icc]; omega)))
-    (latinSquare ((Icc (3 * n) (4 * n - 1)).orderEmbOfFin (by rw [Nat.card_Icc]; omega)))
+    (latinSquare ((Icc (2 * n) (3 * n - 1)).orderEmbOfFin (by rw [Nat.card_Icc]; lia)))
+    (latinSquare ((Icc (3 * n) (4 * n - 1)).orderEmbOfFin (by rw [Nat.card_Icc]; lia)))
     M, (silver_iff_cross _).2 fun a ↦ ?_⟩
   obtain ⟨_ | _, rfl⟩ := finSumFinEquiv.surjective a
   · rw [blockMatrix_cross_left, image_cross hM, latinSquare_row, latinSquare_col,
-      image_orderEmbOfFin_univ, image_orderEmbOfFin_univ, Icc_union' (by omega),
-      Icc_union' (by omega), (by ring : 2 * (n + n) = 4 * n)]
+      image_orderEmbOfFin_univ, image_orderEmbOfFin_univ, Icc_union' (by lia),
+      Icc_union' (by lia), (by ring : 2 * (n + n) = 4 * n)]
   · rw [blockMatrix_cross_right, image_cross hM, latinSquare_row, latinSquare_col,
       image_orderEmbOfFin_univ, image_orderEmbOfFin_univ, union_right_comm,
-      Icc_union' (by omega), Icc_union' (by omega), (by ring : 2 * (n + n) = 4 * n)]
+      Icc_union' (by lia), Icc_union' (by lia), (by ring : 2 * (n + n) = 4 * n)]
 
 lemma silver_two_pow : ∀ k, ∃ M, SilverMatrix (2 ^ k) M
   | .zero   => ⟨1, by simp, by simp⟩

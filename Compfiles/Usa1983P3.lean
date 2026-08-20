@@ -107,7 +107,7 @@ problem usa1983_p3 {n : ℕ} (hn : 0 < n) (S : Fin n → Set ℝ)
     exact h1.trans (Set.ncard_union_le _ _)
   rcases le_or_gt {i : Fin n | d k ∈ S i}.ncard {i : Fin n | a h ∈ S i}.ncard
     with hle | hgt
-  · exact ⟨a h, by omega⟩
-  · exact ⟨d k, by omega⟩
+  · exact ⟨a h, by lia⟩
+  · exact ⟨d k, by lia⟩
 
 end Usa1983P3

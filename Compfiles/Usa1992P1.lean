@@ -67,9 +67,9 @@ lemma digits_sum (m x y : ℕ)
     exact Nat.le_of_lt_succ h4
   have ⟨k, hk⟩ : ∃ k, (Nat.digits 10 y).length + k = m := Nat.le.dest h3
   nth_rewrite 1 [add_comm, mul_comm]
-  nth_rewrite 1 [←hk]
+  nth_rewrite 1 [← hk]
   have one_lt_ten : 1 < 10 := by norm_num
-  rw [←Nat.digits_append_zeroes_append_digits one_lt_ten (Nat.zero_lt_succ x)]
+  rw [← Nat.digits_append_zeroes_append_digits one_lt_ten (Nat.zero_lt_succ x)]
   simp only [List.sum_append, List.sum_replicate, smul_eq_mul, mul_zero, add_zero]
   rw [digits_sum_mul_pow]
   ring
@@ -86,18 +86,22 @@ lemma Finset.prod_odd {α : Type} [DecidableEq α] {f : α → ℕ} {s : Finset 
     specialize ih hs'.2
     exact ⟨hs'.1, ih⟩
 
+example (m : ℕ) (h : ¬m = 0) : (m % 10 :: Nat.digits 10 (m / 10)).sum = (Nat.digits 10 m).sum := by
+  rw [Nat.digits_eq_cons_digits_div (by norm_num) (h)]
+
 lemma lemma3 {m : ℕ} (hm : (m % 10) + 1 < 10) :
     (Nat.digits 10 (m + 1)).sum = (Nat.digits 10 m).sum + 1 := by
   rw [Nat.digits_eq_cons_digits_div (by norm_num) (by lia)]
   by_cases h : m = 0
   · simp [h]
+  -- strangely `h` cannot be used in place of `by exact h` here.
   nth_rw 2 [Nat.digits_eq_cons_digits_div (by norm_num) (by exact h)]
   simp only [List.sum_cons]
-  rw [show (m + 1) / 10 = m / 10 from by lia, show (m + 1) % 10 = m % 10 + 1 from by lia]
+  rw [Nat.add_div_eq_of_add_mod_lt hm, Nat.add_mod_of_add_mod_lt hm]
   lia
 
-theorem lemma6 {b : ℕ} {l1 l2 : List ℕ} (hg : List.Forall₂ (· ≥ ·) l1 l2) :
-    Nat.ofDigits b l1 ≥ Nat.ofDigits b l2 := by
+theorem lemma6 {b : ℕ} {l1 l2 : List ℕ} (hg : List.Forall₂ (· ≤ ·) l1 l2) :
+    Nat.ofDigits b l1 ≤ Nat.ofDigits b l2 := by
   induction l1 generalizing l2 with
   | nil => simp_all [Nat.ofDigits]
   | cons hd₁ tl₁ ih₁ =>
@@ -105,17 +109,17 @@ theorem lemma6 {b : ℕ} {l1 l2 : List ℕ} (hg : List.Forall₂ (· ≥ ·) l1 
     | nil => simp_all
     | cons hd₂ tl₂ _ =>
       simp only [Nat.ofDigits_cons]
-      have htl : List.Forall₂ (fun x1 x2 ↦ x1 ≥ x2) tl₁ tl₂ := by
-        simp_all only [ge_iff_le, List.forall₂_cons]
+      have htl : List.Forall₂ (fun x1 x2 ↦ x1 ≤ x2) tl₁ tl₂ := by
+        simp_all only [List.forall₂_cons]
       specialize ih₁ htl
-      have h1 : hd₁ ≥ hd₂ := by simp_all only [ge_iff_le, List.forall₂_cons, and_true]
+      have h1 : hd₁ ≤ hd₂ := by simp_all only [List.forall₂_cons, and_true]
       gcongr
 
 /-- The subtraction of ofDigits of two lists is equal to ofDigits of digit-wise subtraction of them -/
 theorem ofDigits_sub_ofDigits_eq_ofDigits_zipWith {b : ℕ} {l1 l2 : List ℕ}
-    (hg : List.Forall₂ (· ≥ ·) l1 l2) :
-    Nat.ofDigits b l1 - Nat.ofDigits b l2 =
-    Nat.ofDigits b (l1.zipWith (· - ·) l2) := by
+    (hg : List.Forall₂ (· ≤ ·) l1 l2) :
+    Nat.ofDigits b l2 - Nat.ofDigits b l1 =
+    Nat.ofDigits b (l2.zipWith (· - ·) l1) := by
   induction l1 generalizing l2 with
   | nil => simp_all [Nat.ofDigits]
   | cons hd₁ tl₁ ih₁ =>
@@ -123,13 +127,13 @@ theorem ofDigits_sub_ofDigits_eq_ofDigits_zipWith {b : ℕ} {l1 l2 : List ℕ}
     | nil => simp_all
     | cons hd₂ tl₂ ih₂ =>
       simp_all only [Nat.ofDigits_cons, List.zipWith_cons_cons]
-      have htl : List.Forall₂ (fun x1 x2 ↦ x1 ≥ x2) tl₁ tl₂ := by
-        simp_all only [ge_iff_le, List.forall₂_cons]
+      have htl : List.Forall₂ (fun x1 x2 ↦ x1 ≤ x2) tl₁ tl₂ := by
+        simp_all only [List.forall₂_cons]
       specialize ih₁ htl
       rw [← ih₁, Nat.mul_sub]
-      have h1 : hd₁ ≥ hd₂ := by simp_all only [ge_iff_le, List.forall₂_cons, and_true]
-      have h2 : b * Nat.ofDigits b tl₁ ≥ b * Nat.ofDigits b tl₂ := by
-        have : Nat.ofDigits b tl₁ ≥ Nat.ofDigits b tl₂ := lemma6 htl
+      have h1 : hd₂ ≥ hd₁ := by simp_all only [List.forall₂_cons, and_true]
+      have h2 : b * Nat.ofDigits b tl₁ ≤ b * Nat.ofDigits b tl₂ := by
+        have : Nat.ofDigits b tl₁ ≤ Nat.ofDigits b tl₂ := lemma6 htl
         gcongr
       lia
 
@@ -246,16 +250,16 @@ lemma lemma5 {m n : ℕ} (hm : m < 10^n) :
     rw [Nat.ofDigits_append, Nat.ofDigits_digits, Nat.ofDigits_replicate_zero,
         mul_zero, add_zero]
 
-  have h_length2 : (List.replicate n 9).length = m_digits_padded.length := by
+  have h_length2 : m_digits_padded.length = (List.replicate n 9).length := by
     rw [h_length]
-    exact List.length_replicate
+    exact List.length_replicate.symm
 
-  have ha : List.Forall₂ (fun x1 x2 ↦ x1 ≥ x2) (List.replicate n 9) m_digits_padded := by
+  have ha : List.Forall₂ (fun x1 x2 ↦ x1 ≤ x2) m_digits_padded (List.replicate n 9) := by
     unfold m_digits_padded padding
     rw [List.forall₂_iff_get]
     refine ⟨h_length2, ?_⟩
     intro i h1 h2
-    simp only [List.get_eq_getElem, List.getElem_replicate, ge_iff_le]
+    simp only [List.get_eq_getElem, List.getElem_replicate]
     obtain hl | hr := Nat.lt_or_ge i m_digits.length
     · rw [List.getElem_append_left hl]
       unfold m_digits
@@ -274,7 +278,7 @@ lemma lemma5 {m n : ℕ} (hm : m < 10^n) :
       rw [h_length]
     rw [h2] at h1
     unfold complement_digits
-    rw [←h1, ←lemma8, h_sub2]
+    rw [← h1, ← lemma8, h_sub2]
   rw [h_sub]
   have h12 : ∀ l ∈ complement_digits, l < 10 := by
     intro x hx
@@ -293,36 +297,35 @@ lemma lemma5 {m n : ℕ} (hm : m < 10^n) :
   simp [digitsPadded, padList, List.map_append, List.map_replicate, tsub_zero, complement_digits,
         m_digits_padded, padding, m_digits, h16]
 
-lemma List.sum_map_sub_aux (l1 l2 : List ℕ) (h2 : List.Forall₂ (· ≥ ·) l1 l2) :
-    (List.zipWith (fun x1 x2 ↦ x1 - x2) l1 l2).sum = l1.sum - l2.sum ∧ l1.sum ≥ l2.sum := by
+lemma List.sum_map_sub_aux (l1 l2 : List ℕ) (h2 : List.Forall₂ (· ≤ ·) l1 l2) :
+    (List.zipWith (fun x1 x2 ↦ x1 - x2) l2 l1).sum = l2.sum - l1.sum ∧ l1.sum ≤ l2.sum := by
   match l1, l2 with
   | [], [] => simp
   | [], h :: tl => simp_all
   | h :: tl, [] => simp_all
   | hd1 :: tl1, hd2 :: tl2 =>
-    have hp : List.Forall₂ (fun x1 x2 ↦ x1 ≥ x2) tl1 tl2 := by simp_all only [List.forall₂_cons]
+    have hp : List.Forall₂ (fun x1 x2 ↦ x1 ≤ x2) tl1 tl2 := by simp_all only [List.forall₂_cons]
     have ih := List.sum_map_sub_aux tl1 tl2 hp
     simp only [List.zipWith_cons_cons, List.sum_cons]
     rw [ih.1]
-    have h3 : hd1 ≥ hd2 := (List.forall₂_cons.mp h2).1
+    have h3 : hd1 ≤ hd2 := (List.forall₂_cons.mp h2).1
     lia
 
-lemma List.sum_map_sub (l1 l2 : List ℕ) (h2 : List.Forall₂ (· ≥ ·) l1 l2) :
-    (List.zipWith (fun x1 x2 ↦ x1 - x2) l1 l2).sum = l1.sum - l2.sum :=
+lemma List.sum_map_sub (l1 l2 : List ℕ) (h2 : List.Forall₂ (· ≤ ·) l1 l2) :
+    (List.zipWith (fun x1 x2 ↦ x1 - x2) l2 l1).sum = l2.sum - l1.sum :=
   (List.sum_map_sub_aux l1 l2 h2).1
 
 lemma lemma4 {m n : ℕ} (hm : m < 10^n) :
     (Nat.digits 10 (10^n - 1 - m)).sum = 9 * n - (Nat.digits 10 m).sum := by
-  rw [←digitsPadded_sum, lemma5 hm]
-  have h2 := List.map_eq_zip 9 (digitsPadded 10 m n) (fun x y ↦ x - y)
+  rw [← digitsPadded_sum, lemma5 hm]
+  have h2 := List.map_eq_zip 9 (digitsPadded 10 m n) (· - ·)
   rw [h2]
-  have h5 : List.Forall₂ (· ≥ ·)
-              (List.replicate (digitsPadded 10 m n).length 9) (digitsPadded 10 m n) := by
+  have h5 : List.Forall₂ (· ≤ ·)
+              (digitsPadded 10 m n) (List.replicate (digitsPadded 10 m n).length 9) := by
      rw [List.forall₂_iff_get]
-     refine ⟨List.length_replicate, ?_⟩
-     intro x1 hx1 hx2
-     simp only [List.get_eq_getElem, List.getElem_replicate, ge_iff_le]
-     have h7 := digitsPadded_lt_base (show 1 < 10 by norm_num) (List.getElem_mem hx2)
+     refine ⟨List.length_replicate.symm, fun x1 hx1 hx2 => ?_⟩
+     simp only [List.get_eq_getElem, List.getElem_replicate]
+     have h7 := digitsPadded_lt_base (show 1 < 10 by norm_num) (List.getElem_mem hx1)
      lia
   have h4 := List.sum_map_sub _ _ h5
   simp only [List.sum_replicate, smul_eq_mul] at h4
@@ -366,7 +369,7 @@ problem usa1992_p1 (n : ℕ) :
   -- So, for all m, `b m < 10^(1 + 2 + 2^2 + ... + 2^m)`.
   have h2 : ∀ m, b m < 10^(∑ i ∈ Finset.range (m + 1), 2^i) := fun m ↦ by
     dsimp [b]
-    rw [←Finset.prod_pow_eq_pow_sum]
+    rw [← Finset.prod_pow_eq_pow_sum]
     refine Finset.prod_lt_prod_of_nonempty ?_ ?_ Finset.nonempty_range_add_one
     · intro i hi
       exact ha1 i
@@ -390,8 +393,8 @@ problem usa1992_p1 (n : ℕ) :
 
   -- Now b (n + 1) = (b n) * 10^N - b n, where N = 2^(n + 1).
   have h4 : b (n + 1) = b n * 10^(2^(n+1)) - b n := by
-    nth_rewrite 2 [←mul_one (b n)]
-    rw [←Nat.mul_sub_left_distrib]
+    nth_rewrite 2 [← mul_one (b n)]
+    rw [← Nat.mul_sub_left_distrib]
     dsimp [b]
     rw [Finset.prod_range_succ]
 
@@ -411,7 +414,7 @@ problem usa1992_p1 (n : ℕ) :
     have h5' := h5.le
     have h8 : 10 ^ 2 ^ (n + 1) ≤ b n * 10 ^ 2 ^ (n + 1) :=
       Nat.le_mul_of_pos_left (10 ^ 2 ^ (n + 1)) h7
-    rw [←Nat.add_sub_assoc h5']
+    rw [← Nat.add_sub_assoc h5']
     nth_rewrite 2 [add_comm]
     rw [Nat.mul_sub_right_distrib, one_mul, Nat.add_sub_of_le h8]
 
@@ -423,7 +426,7 @@ problem usa1992_p1 (n : ℕ) :
    have h9 : 0 < b n := h7
    have h10 := digits_sum (2^(n+1)) (b n - 1) (10^2^(n+1) - b n)
              (Nat.sub_lt_self h9 h5.le) -- ..
-   rw [←h10, h4]
+   rw [← h10, h4]
    congr 2
    lia
 
@@ -438,8 +441,8 @@ problem usa1992_p1 (n : ℕ) :
       rw [show 10 = 5 * 2 by rfl]
       rw [mul_pow, Nat.mul_mod, Nat.pow_mod]
       simp
-    rw [←Nat.even_iff] at h32
-    rw [←Nat.odd_iff]
+    rw [← Nat.even_iff] at h32
+    rw [← Nat.odd_iff]
     have h33 : Odd 1 := Nat.odd_iff.mpr rfl
     have h34 : 1 ≤ 10 ^ 2 ^ i := Nat.one_le_pow' (2 ^ i) 9
     exact Nat.Even.sub_odd h34 h32 h33
@@ -494,17 +497,17 @@ problem usa1992_p1 (n : ℕ) :
       change _ ≡ _ [MOD 10] at H
       rw [show 10 = 2 * 5 by rfl] at H
       have h40 : Nat.Coprime 2 5 := by norm_num
-      rw [←Nat.modEq_and_modEq_iff_modEq_mul h40] at H
+      rw [← Nat.modEq_and_modEq_iff_modEq_mul h40] at H
       obtain ⟨H1, -⟩ := H
       change _ % _ = _ % _ at H1
       simp only [Nat.reduceMod, Nat.reduceMul] at H1
       symm at H1
-      rw [←Nat.odd_iff] at H1
+      rw [← Nat.odd_iff] at H1
       have h42 : (10 ^ 2 ^ (n+1)) % 2 = 0 := by
         rw [show 10 = 5 * 2 by rfl]
         rw [mul_pow, Nat.mul_mod, Nat.pow_mod]
         simp
-      rw [←Nat.even_iff] at h42
+      rw [← Nat.even_iff] at h42
       have h43 : Odd 1 := Nat.odd_iff.mpr rfl
       have h44 : 1 ≤ 10 ^ 2 ^ (n+1) := Nat.one_le_pow' _ _
       have h45 : Odd (10 ^ 2 ^ (n + 1) - 1) := Nat.Even.sub_odd h44 h42 h43
@@ -513,9 +516,9 @@ problem usa1992_p1 (n : ℕ) :
       rw [Nat.odd_iff] at H1
       simp [H1] at h47
     apply_fun (· + 1) at h12
-    rw [←lemma3 h15] at h12
+    rw [← lemma3 h15] at h12
     have h17 : 10 ^ 2 ^ (n + 1) - 1 - b n + 1 = 10 ^ 2 ^ (n + 1) - b n := by lia
-    rw [←h17]
+    rw [← h17]
     exact h12
 
   rw [h13] at h8

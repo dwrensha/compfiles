@@ -139,7 +139,7 @@ problem imo2022_p2 (f : ℝ+ → ℝ+) :
     have hf' : ∀ x, f x ≤ 1 / x := fun x ↦ by
       have h12 := h11 x
       rw [h1] at h12
-      suffices H : x * f x ≤ 1 by exact le_div_iff_mul_le'.mpr H
+      suffices H : x * f x ≤ 1 from le_div_iff_mul_le'.mpr H
       have h14 : (⟨2, two_pos⟩ : ℝ+) = ⟨2, two_pos⟩ * 1 := left_eq_mul.mpr rfl
       have h13 : x * f x + x * f x = ⟨2, two_pos⟩ * (x * f x) := lemma1 _
       rw [h14, h13] at h12

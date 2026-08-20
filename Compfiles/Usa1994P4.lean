@@ -42,9 +42,7 @@ so `∑ i, (y i)^2 > ∑ i, 1 / (4 (i+1))`.
 noncomputable def y (i : ℕ) : ℝ := Real.sqrt (i + 1) - Real.sqrt i
 
 lemma hden_pos (i : ℕ) : 0 < Real.sqrt ((i : ℝ) + 1) + Real.sqrt (i : ℝ) := by
-  have h1 : 0 < Real.sqrt ((i : ℝ) + 1) := Real.sqrt_pos.mpr (by positivity)
-  have h2 : 0 ≤ Real.sqrt (i : ℝ) := Real.sqrt_nonneg _
-  linarith
+  positivity
 
 lemma hy_pos (i : ℕ) : 0 < y i := by
   have h : Real.sqrt (i : ℝ) < Real.sqrt ((i : ℝ) + 1) :=
@@ -140,7 +138,7 @@ problem usa1994_p4 (x : ℕ → ℝ) (_hx : ∀ i, 0 < x i)
     (n : ℕ) (hn : 1 ≤ n) :
     (∑ i ∈ Finset.range n, (1 : ℝ) / (i + 1)) / 4 < ∑ i ∈ Finset.range n, (x i) ^ 2 := by
   rw [Finset.sum_div]
-  have hn0 : n ≠ 0 := by omega
+  have hn0 : n ≠ 0 := by lia
   have hA : ∑ i ∈ Finset.range n, (1 : ℝ) / (i + 1) / 4 < ∑ i ∈ Finset.range n, (y i) ^ 2 :=
     Finset.sum_lt_sum_of_nonempty (Finset.nonempty_range_iff.mpr hn0)
       (fun i _ => one_div_four_lt i)

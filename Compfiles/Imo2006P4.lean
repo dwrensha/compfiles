@@ -54,7 +54,7 @@ problem imo2006_p4 :
         · rw [Int.cast_pow] at h
           apply sq_lt_sq.mp at h
           norm_cast at h
-        · rw [Int.natAbs_sq, Int.cast_pow, ←h]
+        · rw [Int.natAbs_sq, Int.cast_pow, ← h]
           calc
             _ < (1 : ℝ) + 1 + 1 := by
               apply add_lt_add
@@ -67,12 +67,12 @@ problem imo2006_p4 :
                 · lia
             _ < 2 ^ 2 := by norm_num
       have hk2 : k > 1 := by
-        suffices h : ((y.natAbs ^ 2 : ℤ) : ℝ) > (1 : ℝ) ^ 2
+        suffices h : (1 : ℝ) ^ 2 < ((y.natAbs ^ 2 : ℤ) : ℝ)
         · rw [Int.cast_pow] at h
           apply sq_lt_sq.mp at h
           norm_cast at h
-        · rw [Int.natAbs_sq, Int.cast_pow, ←h, add_assoc]
-          simp only [one_pow, gt_iff_lt, lt_add_iff_pos_right]
+        · rw [Int.natAbs_sq, Int.cast_pow, ← h, add_assoc]
+          simp only [one_pow, lt_add_iff_pos_right]
           positivity
       interval_cases k
     lift x to ℕ using hxnonneg
@@ -85,7 +85,7 @@ problem imo2006_p4 :
       apply H (-y) x this at hy
       simp at hy
       rcases hy with ⟨hx, hy⟩ | ⟨hx, hy⟩ | ⟨hx, hy⟩ | ⟨hx, hy⟩
-      all_goals simp [hx, ←hy]
+      all_goals simp [hx, ← hy]
     · lift y to ℕ using hynonneg
       norm_cast at h
       by_cases hx : x = 0
@@ -93,19 +93,19 @@ problem imo2006_p4 :
         simp [hx] at h
         rw [show 4 = 2 ^ 2 by norm_num] at h
         apply sq_eq_sq₀ (by simp) (by simp) |>.mp at h
-        simp [hx, ←h]
+        simp [hx, ← h]
       · -- Now let $(x, y)$ be a solution with $x&gt;0$;
         -- without loss of generality confine attention to $y&gt;0$.
         have hxpos : x > 0 := by apply Nat.ne_zero_iff_zero_lt.mp hx
         have hypos : y > 0 := by by_contra hy; simp at hy; simp [hy] at h
         -- The equation rewritten as $$ 2^{x}\left(1+2^{x+1}\right)=(y-1)(y+1) $$
         have h : 2 ^ x * (2 ^ (x + 1) + 1) = (y - 1) * (y + 1) := by
-          rw [Nat.sub_mul, Nat.mul_add, Nat.one_mul, Nat.mul_add, Nat.mul_one, Nat.mul_one, Nat.add_comm y 1, Nat.add_sub_add_right, ←sq, ←h]
+          rw [Nat.sub_mul, Nat.mul_add, Nat.one_mul, Nat.mul_add, Nat.mul_one, Nat.mul_one, Nat.add_comm y 1, Nat.add_sub_add_right, ← sq, ← h]
           apply Nat.eq_sub_of_add_eq
           ring_nf
         -- shows that the factors $y-1$ and $y+1$ are even, exactly one of them divisible by 4 .
         have h2dvd : 2 ∣ y - 1 := by
-          have : 2 ^ x ∣ (y - 1) * (y + 1) := by simp [←h]
+          have : 2 ^ x ∣ (y - 1) * (y + 1) := by simp [← h]
           have : 2 ∣ y - 1 ∨ 2 ∣ (y + 1) := by
             refine (Nat.Prime.dvd_mul ?pp).mp ?_
             · norm_num
@@ -138,7 +138,7 @@ problem imo2006_p4 :
             ring
         -- Hence $x \geq 3$ and one of these factors is divisible by $2^{x-1}$ but not by $2^{x}$.
         have hxge3 : x ≥ 3 := by
-          rw [←h] at h8div
+          rw [← h] at h8div
           have hco : (2 ^ 3).Coprime (2 ^ (x + 1) + 1) := by
             refine Nat.Coprime.pow_left 3 ?_
             refine Odd.coprime_two_left ?_
@@ -151,7 +151,7 @@ problem imo2006_p4 :
         -- So $$ y=2^{x-1} m+\epsilon, \quad m \text { odd }, \quad \epsilon= \pm 1 $$
         obtain ⟨m, hm, ε, hε, hy⟩ : ∃ m : ℕ, Odd m ∧ ∃ (ε : ℤ), (ε = 1 ∨ ε = -1) ∧ (y = 2 ^ (x - 1) * m + ε) := by
           let n₁ := (y - 1).factorization 2
-          obtain ⟨t, ht⟩ : 2 ^ n₁ ∣ y - 1 := by exact Nat.ordProj_dvd (y - 1) 2
+          obtain ⟨t, ht⟩ : 2 ^ n₁ ∣ y - 1 := Nat.ordProj_dvd (y - 1) 2
           have hysub : ¬y - 1 = 0 := by
             by_contra hsub
             simp [hsub] at h
@@ -176,9 +176,9 @@ problem imo2006_p4 :
           · have : y + 1 = 2 * (2 ^ (n₁ - 1) * t + 1) := by
               apply Nat.eq_add_of_sub_eq at ht
               · rw [ht, mul_add]
-                simp [←Nat.mul_assoc]
+                simp [← Nat.mul_assoc]
                 left
-                rw [←Nat.pow_add_one', Nat.sub_add_cancel]
+                rw [← Nat.pow_add_one', Nat.sub_add_cancel]
                 exact Nat.one_le_of_lt h₁
               exact hypos
             have h' : 2 ^ x * (2 ^ (x + 1) + 1) = 2 ^ (n₁ + 1) * (t * (2 ^ (n₁ - 1) * t + 1)) := by
@@ -208,18 +208,18 @@ problem imo2006_p4 :
           · simp at h₁
             interval_cases n₁
             · simp at ht
-              have : Even (y - 1) := by exact (even_iff_exists_two_nsmul (y - 1)).mpr h2dvd
+              have : Even (y - 1) := (even_iff_exists_two_nsmul (y - 1)).mpr h2dvd
               rw [ht] at this
-              have : ¬ Even t := by exact Nat.not_even_iff_odd.mpr ht'
+              have : ¬ Even t := Nat.not_even_iff_odd.mpr ht'
               contradiction
             · simp at ht
               have : y + 1 = 2 * (t + 1) := by
-                rw [mul_add, ←ht]
+                rw [mul_add, ← ht]
                 simp
                 rw [Nat.sub_add_cancel]
                 exact hypos
               let n₂ := (t + 1).factorization 2
-              obtain ⟨s, hs⟩ : 2 ^ n₂ ∣ t + 1 := by exact Nat.ordProj_dvd (t + 1) 2
+              obtain ⟨s, hs⟩ : 2 ^ n₂ ∣ t + 1 := Nat.ordProj_dvd (t + 1) 2
               have hs' : Odd s := by
                 by_contra hs'
                 simp at hs'
@@ -255,7 +255,7 @@ problem imo2006_p4 :
         -- $$ 2^{x}\left(1+2^{x+1}\right)=\left(2^{x-1} m+\epsilon\right)^{2}-1=2^{2 x-2} m^{2}+2^{x} m \epsilon, $$
         have h : 2 ^ x * (1 + 2 ^ (x + 1)) = 2 ^ (2 * x - 2) * m ^ 2 + 2 ^ x * m * ε := by
           trans (((y - 1) * (y + 1) : ℕ) : ℤ)
-          · rw [←h]
+          · rw [← h]
             simp [add_comm]
           · rw [Nat.cast_mul, Nat.cast_sub]
             · simp [hy]
@@ -280,18 +280,18 @@ problem imo2006_p4 :
             _ = (2 ^ x * 2 ^ (x - 2) * m ^ 2 + 2 ^ x * m * ε) / 2 ^ x := by
                 rw [h]
                 congr
-                rw [←pow_add, ←Nat.add_sub_assoc]
+                rw [← pow_add, ← Nat.add_sub_assoc]
                 · simp; ring_nf
                 exact Nat.le_of_succ_le hxge3
-            _ = 2 ^ x * (2 ^ (x - 2) * m ^ 2 + m * ε) / 2 ^ x := by rw [mul_add, ←mul_assoc, ←mul_assoc]
+            _ = 2 ^ x * (2 ^ (x - 2) * m ^ 2 + m * ε) / 2 ^ x := by rw [mul_add, ← mul_assoc, ← mul_assoc]
             _ = _ := by simp
         -- $$ Therefore $$ 1-\epsilon m=2^{x-2}\left(m^{2}-8\right).
         have : 1 - m * ε = 2 ^ (x - 2) * (m ^ 2 - 8) := by
           rw [mul_sub]
           apply sub_eq_of_eq_add'
-          rw [←add_sub_assoc]
+          rw [← add_sub_assoc]
           apply eq_sub_of_add_eq
-          rw [add_comm (m * ε), ←h, show (8 : ℤ) = 2 ^ 3 by simp, ←pow_add]
+          rw [add_comm (m * ε), ← h, show (8 : ℤ) = 2 ^ 3 by simp, ← pow_add]
           congr 2
           simp only [Nat.reduceEqDiff]
           rw [Nat.sub_add_cancel]
@@ -331,7 +331,7 @@ problem imo2006_p4 :
               · exact Nat.le_sub_of_add_le hxge3
             · simp
             · apply nonneg_of_mul_nonneg_right (a := 2 ^ (x - 2))
-              · rw [←this]; exact Int.le.intro_sub (1 + m + 0) rfl
+              · rw [← this]; exact Int.le.intro_sub (1 + m + 0) rfl
               · positivity
             · positivity
           -- $$ implying $2 m^{2}-m-17 \leq 0$. Hence $m \leq 3$;
@@ -341,7 +341,7 @@ problem imo2006_p4 :
             interval_cases m
             · simp at hm
             · simp
-            · have : ¬ Odd 2 := by exact Nat.not_odd_iff.mpr rfl
+            · have : ¬ Odd 2 := Nat.not_odd_iff.mpr rfl
               exact this.elim hm
             · simp
           -- on the other hand $m$ cannot be 1 by (2).
@@ -353,11 +353,11 @@ problem imo2006_p4 :
             let t := 2 ^ (x - 2)
             have : (1 : ℤ) + 8 * t = t * 9 + (-3) := by
               simp [t]
-              rw [←h]
+              rw [← h]
               simp
-              rw [show (8 : ℤ) = 2 ^ 3 by simp, ←pow_add]
-              rw [←Nat.add_sub_assoc]
-              · rw [show 3 = 1 + 2 by simp, Nat.add_comm, ←Nat.add_assoc]
+              rw [show (8 : ℤ) = 2 ^ 3 by simp, ← pow_add]
+              rw [← Nat.add_sub_assoc]
+              · rw [show 3 = 1 + 2 by simp, Nat.add_comm, ← Nat.add_assoc]
                 simp
               · exact Nat.le_of_succ_le hxge3
             have : (t : ℤ) = 4 := by linarith only [this]
@@ -365,7 +365,7 @@ problem imo2006_p4 :
             simp [t] at this
             rw [show 4 = 2 ^ 2 by simp] at this
             apply Nat.pow_right_injective (by simp) at this
-            apply Nat.sub_eq_iff_eq_add (by exact Nat.le_of_succ_le hxge3) |>.mp at this
+            apply Nat.sub_eq_iff_eq_add (Nat.le_of_succ_le hxge3) |>.mp at this
             simp [this]
           -- From (1) we get $y=23$.
           simp [hx, hε, this] at hy

@@ -60,7 +60,7 @@ problem imo1982_p1 (f : ℕ → ℕ)
     · have h10 := h6 (k + l) (Nat.add_pos_left hk l)
       have h11 : 3 * (k + l) + 3 = 3 * (k + Nat.succ l) := by lia
       have h12 : f (3 * k) + Nat.succ l = f (3 * k) + l + 1 := by lia
-      rw [←h11, h12]
+      rw [← h11, h12]
       lia
   have h8 : ∀ k, 0 < k → k ≤ 3333 → f (3 * k) = k := by
      intro k hk0 hk1
@@ -85,16 +85,16 @@ problem imo1982_p1 (f : ℕ → ℕ)
       have h12 : 2 * k + 2 ≤ f (6 * k + 4) := by
         have h14 : 3 * k + 2 + (3 * k + 2) = 6 * k + 4 := by ring
         have h15 : k + 1 + (k + 1) = 2 * k + 2 := by ring
-        rw [←h14, ←h15]
+        rw [← h14, ← h15]
         exact h30 _ _ (Nat.succ_pos _) (Nat.le_of_eq h11.symm)
       have h13 : 4 * k + 4 ≤ f (12 * k + 8) := by
         have h14 : 6 * k + 4 + (6 * k + 4) = 12 * k + 8 := by ring
         have h15 : 2 * k + 2 + (2 * k + 2) = 4 * k + 4 := by ring
-        rw [←h14, ←h15]
+        rw [← h14, ← h15]
         exact h30 _ _ (Nat.succ_pos _) h12
       have h14 : f (12 * k + 8) ≤ f (12 * k + 9) := by
         have h15 : 12 * k + 8 + 1 = 12 * k + 9 := by ring
-        rw [←h15]
+        rw [← h15]
         exact h20 _ (Nat.succ_pos _)
       have h15 : f (12 * k + 9) = 4 * k + 3 := by
          have h16 : 3 * (4 * k + 3) = 12 * k + 9 := by ring

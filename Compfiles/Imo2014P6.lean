@@ -315,11 +315,7 @@ lemma closure_cell {L : Finset Line} {σ : Line → Bool} (hne : (Cell L σ).Non
             (1 - t) * (sgn (σ ℓ) * ℓ.val p) + t * (sgn (σ ℓ) * ℓ.val q) := by ring
         rw [h3]
         nlinarith [ht0, ht1, hp', hq']
-      · have h4 : dist p (p + t • (q - p)) = t * dist q p := by
-          rw [dist_eq_norm, show p - (p + t • (q - p)) = -(t • (q - p)) from by module,
-            norm_neg, norm_smul, Real.norm_eq_abs, abs_of_pos ht0, ← dist_eq_norm]
-        rw [h4]
-        exact htε
+      · rwa [dist_eq_norm, sub_add_cancel_left, norm_neg, norm_smul, Real.norm_eq_abs, abs_of_pos ht0, ← dist_eq_norm]
 
 /-- The frontier of a cell: its closure minus itself. -/
 lemma frontier_cell (L : Finset Line) (σ : Line → Bool) :
@@ -401,8 +397,8 @@ lemma constraint_iff {σ : Line → Bool} {ℓ m : Line} (hdet : ℓ.det m ≠ 0
     ring
   rw [key]
   by_cases h : 0 < sgn (σ m) * ℓ.det m
-  · rw [if_pos h, mul_nonneg_iff_right_nonneg_of_pos h, sub_nonneg]
-  · rw [if_neg h]
+  · rw [ite_eq_left h, mul_nonneg_iff_right_nonneg_of_pos h, sub_nonneg]
+  · rw [ite_eq_right h]
     have h2 : sgn (σ m) * ℓ.det m < 0 := by
       have h3 : sgn (σ m) * ℓ.det m ≠ 0 := mul_ne_zero (sgn_ne_zero _) hdet
       exact lt_of_le_of_ne' (le_of_not_gt h) h3.symm
@@ -413,14 +409,12 @@ lemma constraint_iff {σ : Line → Bool} {ℓ m : Line} (hdet : ℓ.det m ≠ 0
 end Line
 
 /-- The lines whose constraint is a lower bound on the parameter along `ℓ`. -/
-noncomputable def lows (L : Finset Line) (σ : Line → Bool) (ℓ : Line) : Finset Line := by
-  classical
-  exact L.filter fun m => m ≠ ℓ ∧ 0 < sgn (σ m) * ℓ.det m
+noncomputable def lows (L : Finset Line) (σ : Line → Bool) (ℓ : Line) : Finset Line :=
+  L.filter fun m => m ≠ ℓ ∧ 0 < sgn (σ m) * ℓ.det m
 
 /-- The lines whose constraint is an upper bound on the parameter along `ℓ`. -/
-noncomputable def upps (L : Finset Line) (σ : Line → Bool) (ℓ : Line) : Finset Line := by
-  classical
-  exact L.filter fun m => m ≠ ℓ ∧ sgn (σ m) * ℓ.det m < 0
+noncomputable def upps (L : Finset Line) (σ : Line → Bool) (ℓ : Line) : Finset Line :=
+  L.filter fun m => m ≠ ℓ ∧ sgn (σ m) * ℓ.det m < 0
 
 lemma mem_lows {L : Finset Line} {σ : Line → Bool} {ℓ m : Line} :
     m ∈ lows L σ ℓ ↔ m ∈ L ∧ m ≠ ℓ ∧ 0 < sgn (σ m) * ℓ.det m := by
@@ -449,12 +443,12 @@ lemma param_constraint_iff {L : Finset Line} {ℓ : Line} (hGP : GeneralPosition
     · intro m hm
       obtain ⟨hmL, hmℓ, hpos⟩ := mem_lows.mp hm
       have h1 := h m hmL
-      rw [Line.constraint_iff (GP.det_ne hGP hℓ hmL (Ne.symm hmℓ)) t, if_pos hpos] at h1
+      rw [Line.constraint_iff (GP.det_ne hGP hℓ hmL (Ne.symm hmℓ)) t, ite_eq_left hpos] at h1
       exact h1
     · intro m hm
       obtain ⟨hmL, hmℓ, hneg⟩ := mem_upps.mp hm
       have h1 := h m hmL
-      rw [Line.constraint_iff (GP.det_ne hGP hℓ hmL (Ne.symm hmℓ)) t, if_neg (not_lt.mpr hneg.le)] at h1
+      rw [Line.constraint_iff (GP.det_ne hGP hℓ hmL (Ne.symm hmℓ)) t, ite_eq_right (not_lt.mpr hneg.le)] at h1
       exact h1
   · intro h m hm
     by_cases hml : m = ℓ
@@ -462,11 +456,11 @@ lemma param_constraint_iff {L : Finset Line} {ℓ : Line} (hGP : GeneralPosition
     · rcases lows_or_upps hGP hℓ hm hml with hl | hu
       · have h1 := h.1 m hl
         rw [Line.constraint_iff (GP.det_ne hGP hℓ hm (Ne.symm hml)) t,
-          if_pos (mem_lows.mp hl).2.2]
+          ite_eq_left (mem_lows.mp hl).2.2]
         exact h1
       · have h1 := h.2 m hu
         rw [Line.constraint_iff (GP.det_ne hGP hℓ hm (Ne.symm hml)) t,
-          if_neg (not_lt.mpr (mem_upps.mp hu).2.2.le)]
+          ite_eq_right (not_lt.mpr (mem_upps.mp hu).2.2.le)]
         exact h1
 
 lemma abs_fst_sub_le_dist (p q : ℝ × ℝ) : |p.1 - q.1| ≤ dist p q := by
@@ -1321,17 +1315,17 @@ lemma turn_at_blue_pt {L B : Finset Line} (hGP : GeneralPosition L)
   have hwne : w ≠ s := by
     rw [hw]
     rcases hend with h5 | h5
-    · rw [if_pos h5, h5]
+    · rw [ite_eq_left h5, h5]
       exact ne_of_gt hU
     · have h6 : ¬ (s = (W.g2ctx hGP hkL).Tmin) := by
         rw [h5]
         exact ne_of_gt hU
-      rw [if_neg h6, h5]
+      rw [ite_eq_right h6, h5]
       exact ne_of_lt hU
   have hline : ∃ h ∈ L, h ≠ v' ∧ h.val (v'.param w) = 0 := by
     rw [hw]
     rcases hend with h5 | h5
-    · rw [if_pos h5]
+    · rw [ite_eq_left h5]
       have e := (W.g2ctx hGP hkL).exists_line_at_Tmax
       simp only [Witness.g2ctx_ℓ] at e
       rw [← hv'2] at e
@@ -1339,7 +1333,7 @@ lemma turn_at_blue_pt {L B : Finset Line} (hGP : GeneralPosition L)
     · have h6 : ¬ (s = (W.g2ctx hGP hkL).Tmin) := by
         rw [h5]
         exact ne_of_gt hU
-      rw [if_neg h6]
+      rw [ite_eq_right h6]
       have e := (W.g2ctx hGP hkL).exists_line_at_Tmin
       simp only [Witness.g2ctx_ℓ] at e
       rw [← hv'2] at e
@@ -1381,10 +1375,10 @@ lemma turn_at_blue_pt {L B : Finset Line} (hGP : GeneralPosition L)
           intro hbet
           have hIoo : Wr.s_r hGP hrL ∈ Set.Ioo (W.g2ctx hGP hkL).Tmin (W.g2ctx hGP hkL).Tmax := by
             rcases hend with h5 | h5
-            · rw [hw, if_pos h5] at hbet
+            · rw [hw, ite_eq_left h5] at hbet
               simp only [Set.mem_Ioo]
               constructor <;> nlinarith [hbet]
-            · rw [hw, if_neg (by rw [h5]; exact ne_of_gt hU)] at hbet
+            · rw [hw, ite_eq_right (by rw [h5]; exact ne_of_gt hU)] at hbet
               simp only [Set.mem_Ioo]
               constructor <;> nlinarith [hbet]
           have hvr : ℓr.val (v'.param (Wr.s_r hGP hrL)) = 0 := by
@@ -1563,10 +1557,10 @@ lemma fiber_card_le_two (L B : Finset Line) (W : ∀ m ∈ L \ B, Witness L B m)
   by_contra h
   have h3 : 2 < ((L \ B).filter fun ℓ => assocB L B W hGP ℓ = q).card := Nat.lt_of_not_le h
   set S := (L \ B).filter (fun ℓ => assocB L B W hGP ℓ = q) with hS
-  obtain ⟨ℓ₁, h1⟩ : S.Nonempty := Finset.card_pos.mp (by omega : 0 < S.card)
+  obtain ⟨ℓ₁, h1⟩ : S.Nonempty := Finset.card_pos.mp (by lia : 0 < S.card)
   have hS1 : 1 < (S.erase ℓ₁).card := by
     rw [Finset.card_erase_of_mem h1]
-    omega
+    lia
   obtain ⟨ℓ₂, h2, ℓ₃, h3', h23⟩ := Finset.one_lt_card.mp hS1
   rw [Finset.mem_erase] at h2 h3'
   obtain ⟨d21, h2S⟩ := h2
@@ -1577,9 +1571,9 @@ lemma fiber_card_le_two (L B : Finset Line) (W : ∀ m ∈ L \ B, Witness L B m)
   obtain ⟨h1L, hq1⟩ := h1
   obtain ⟨h2L, hq2⟩ := h2S
   obtain ⟨h3L, hq3⟩ := h3S
-  rw [assocB, dif_pos h1L] at hq1
-  rw [assocB, dif_pos h2L] at hq2
-  rw [assocB, dif_pos h3L] at hq3
+  rw [assocB, dite_eq_left h1L] at hq1
+  rw [assocB, dite_eq_left h2L] at hq2
+  rw [assocB, dite_eq_left h3L] at hq3
   have h1L' := (Finset.mem_sdiff.mp h1L).1
   have h2L' := (Finset.mem_sdiff.mp h2L).1
   have h3L' := (Finset.mem_sdiff.mp h3L).1
@@ -1822,7 +1816,7 @@ lemma exists_maximal_valid (L : Finset Line) :
   have hcard : (insert m B).card ≤ K := Finset.le_max' _ _ (Finset.mem_image_of_mem _ hm)
   rw [hK, ← hBK] at hcard
   have hgt : B.card < (insert m B).card := Finset.card_lt_card (Finset.ssubset_insert hmB)
-  omega
+  lia
 
 /-- Every red line has a witness region. -/
 lemma exists_witness (L : Finset Line) {B : Finset Line} (hBV : ValidBlue L B)
@@ -1899,7 +1893,7 @@ lemma assocB_mem_bluePts (L : Finset Line) {B : Finset Line} (hBL : B ⊆ L)
     (W : ∀ m ∈ L \ B, Witness L B m)
     (hGP : GeneralPosition L) {ℓ : Line} (hℓ : ℓ ∈ L \ B) :
     assocB L B W hGP ℓ ∈ bluePts B := by
-  rw [assocB, dif_pos hℓ]
+  rw [assocB, dite_eq_left hℓ]
   have hℓL := (Finset.mem_sdiff.mp hℓ).1
   set W' := W ℓ hℓ with hW'
   have h1 : (W'.g1 hGP hℓL).val (W'.b hGP hℓL) = 0 := (W'.b_mem_closure hGP hℓL).2
@@ -1937,7 +1931,7 @@ lemma main_counting {L : Finset Line} {B : Finset Line} (hGP : GeneralPosition L
   have h5 : B.card * B.card - B.card + B.card = B.card * B.card :=
     Nat.sub_add_cancel (Nat.le_mul_self B.card)
   have h6 : B.card * B.card = B.card ^ 2 := (sq B.card).symm
-  omega
+  lia
 
 /-- If no finite region has a completely blue boundary in the working sense,
 then no finite region has a completely blue boundary in the geometric sense. -/

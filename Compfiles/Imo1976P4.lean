@@ -55,7 +55,7 @@ lemma prod_le_sum_pow_sum (s : Multiset ℕ) : s.prod ≤ s.sum ^ s.sum := by
         _ ≤ (i + s'.sum) * s'.sum ^ s'.sum := mul_le_mul_left (Nat.le_add_right _ _) _
         _ ≤ (i + s'.sum) * (i + s'.sum) ^ s'.sum :=
             mul_le_mul_right (pow_le_pow_left' (Nat.le_add_left _ _) _) _
-        _ = (i + s'.sum) ^ (s'.sum + 1) := by exact Nat.pow_add_one'.symm
+        _ = (i + s'.sum) ^ (s'.sum + 1) := Nat.pow_add_one'.symm
         _ ≤ (i + s'.sum) ^ (i + s'.sum) := by
           apply pow_le_pow_right'
           · exact Nat.le_add_right_of_le hi

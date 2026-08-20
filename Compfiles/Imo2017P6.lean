@@ -55,10 +55,10 @@ def linear (α β : ℤ) : HForm := ⟨1, fun i => if i = 0 then β else α⟩
 def trunc (f : HForm) : ℕ → ℤ := fun i => if i ≤ f.deg then f.coeff i else 0
 
 lemma trunc_of_le (f : HForm) {i : ℕ} (h : i ≤ f.deg) : f.trunc i = f.coeff i :=
-  if_pos h
+  ite_eq_left h
 
 lemma trunc_of_lt (f : HForm) {i : ℕ} (h : f.deg < i) : f.trunc i = 0 :=
-  if_neg (not_le.mpr h)
+  ite_eq_right (not_le.mpr h)
 
 lemma eval_const (c : ℤ) (x y : ℤ) : (const c).eval x y = c := by
   simp [eval, const]
@@ -79,7 +79,6 @@ lemma cauchy_sum (m n : ℕ) (u v : ℕ → ℤ) (hu : ∀ i, m < i → u i = 0)
     (hv : ∀ j, n < j → v j = 0) :
     (∑ i ∈ Finset.range (m + 1), u i) * (∑ j ∈ Finset.range (n + 1), v j) =
     ∑ k ∈ Finset.range (m + n + 1), ∑ i ∈ Finset.range (k + 1), u i * v (k - i) := by
-  classical
   have h2 : ∀ k : ℕ, ∑ i ∈ Finset.range (k + 1), u i * v (k - i) =
       ∑ p ∈ (Finset.range (m + 1) ×ˢ Finset.range (n + 1)).filter (fun p => p.1 + p.2 = k),
         u p.1 * v p.2 := by
@@ -99,8 +98,8 @@ lemma cauchy_sum (m n : ℕ) (u v : ℕ → ℤ) (hu : ∀ i, m < i → u i = 0)
             hpant⟩)
       by_cases hp1 : p.1 < m + 1
       · have hp2 : ¬ p.2 < n + 1 := fun h => hmem ⟨hp1, h⟩
-        rw [hv p.2 (by omega), mul_zero]
-      · rw [hu p.1 (by omega), zero_mul]
+        rw [hv p.2 (by lia), mul_zero]
+      · rw [hu p.1 (by lia), zero_mul]
   have h1 : (∑ i ∈ Finset.range (m + 1), ∑ j ∈ Finset.range (n + 1), u i * v j) =
       ∑ k ∈ Finset.range (m + n + 1),
         ∑ p ∈ (Finset.range (m + 1) ×ˢ Finset.range (n + 1)).filter (fun p => p.1 + p.2 = k),
@@ -113,7 +112,7 @@ lemma cauchy_sum (m n : ℕ) (u v : ℕ → ℤ) (hu : ∀ i, m < i → u i = 0)
         intro p hp
         rw [Finset.mem_product, Finset.mem_range, Finset.mem_range] at hp
         rw [Finset.mem_range]
-        omega)).symm
+        lia)).symm
   rw [Finset.sum_mul_sum, h1]
   exact Finset.sum_congr rfl (fun k _ => (h2 k).symm)
 
@@ -139,15 +138,15 @@ lemma eval_mul (f g : HForm) (x y : ℤ) :
   rw [Finset.mem_range, Nat.lt_succ_iff] at hi
   by_cases hi1 : i ≤ f.deg
   · by_cases hi2 : k - i ≤ g.deg
-    · have hexp : f.deg - i + (g.deg - (k - i)) = f.deg + g.deg - k := by omega
+    · have hexp : f.deg - i + (g.deg - (k - i)) = f.deg + g.deg - k := by lia
       calc f.trunc i * g.trunc (k - i) * x ^ k * y ^ (f.deg + g.deg - k)
           = f.trunc i * g.trunc (k - i) * (x ^ i * x ^ (k - i)) *
               (y ^ (f.deg - i) * y ^ (g.deg - (k - i))) := by
             rw [← pow_add, ← pow_add, Nat.add_sub_cancel' hi, hexp]
         _ = f.trunc i * x ^ i * y ^ (f.deg - i) *
               (g.trunc (k - i) * x ^ (k - i) * y ^ (g.deg - (k - i))) := by ring
-    · rw [trunc_of_lt g (by omega : g.deg < k - i)]; simp
-  · rw [trunc_of_lt f (by omega : f.deg < i)]; simp
+    · rw [trunc_of_lt g (by lia : g.deg < k - i)]; simp
+  · rw [trunc_of_lt f (by lia : f.deg < i)]; simp
 
 /-- Powers of a homogeneous form. -/
 def pow (f : HForm) : ℕ → HForm
@@ -277,7 +276,7 @@ lemma canon_iff_not_neg {s : ℤ × ℤ} (hs : s ≠ (0, 0)) : canon s ↔ ¬ ca
   unfold canon
   rw [hf, hd]
   constructor
-  · rintro (h | ⟨e, h⟩) (h' | ⟨e', h'⟩) <;> omega
+  · rintro (h | ⟨e, h⟩) (h' | ⟨e', h'⟩) <;> lia
   · intro h
     by_cases e1 : s.1 = 0
     · by_cases e2 : 0 < s.2
@@ -285,14 +284,14 @@ lemma canon_iff_not_neg {s : ℤ × ℤ} (hs : s ≠ (0, 0)) : canon s ↔ ¬ ca
       · exfalso
         have e2' : s.2 < 0 := by
           have hz : s.2 ≠ 0 := fun hz => hs12 ⟨e1, hz⟩
-          omega
+          lia
         apply h
-        exact Or.inr ⟨by omega, by omega⟩
+        exact Or.inr ⟨by lia, by lia⟩
     · by_cases h1 : 0 < s.1
       · exact Or.inl h1
       · exfalso
         apply h
-        exact Or.inl (by omega)
+        exact Or.inl (by lia)
 
 /-- Representative of the antipodal class of `s`, chosen inside `S`
 whenever possible. -/
@@ -302,32 +301,32 @@ def rep (S : Finset (ℤ × ℤ)) (s : ℤ × ℤ) : ℤ × ℤ :=
 lemma rep_mem {S : Finset (ℤ × ℤ)} {s : ℤ × ℤ} (hs : s ∈ S) : rep S s ∈ S := by
   unfold rep
   by_cases h1 : canon s ∧ s ∈ S
-  · rw [if_pos h1]; exact hs
-  · rw [if_neg h1]
+  · rw [ite_eq_left h1]; exact hs
+  · rw [ite_eq_right h1]
     by_cases h2 : canon (-s) ∧ (-s) ∈ S
-    · rw [if_pos h2]; exact h2.2
-    · rw [if_neg h2]; exact hs
+    · rw [ite_eq_left h2]; exact h2.2
+    · rw [ite_eq_right h2]; exact hs
 
 lemma rep_eq_self_or_neg {S : Finset (ℤ × ℤ)} {s : ℤ × ℤ} :
     rep S s = s ∨ rep S s = -s := by
   unfold rep
   by_cases h1 : canon s ∧ s ∈ S
-  · rw [if_pos h1]; exact Or.inl rfl
-  · rw [if_neg h1]
+  · rw [ite_eq_left h1]; exact Or.inl rfl
+  · rw [ite_eq_right h1]
     by_cases h2 : canon (-s) ∧ (-s) ∈ S
-    · rw [if_pos h2]; exact Or.inr rfl
-    · rw [if_neg h2]; exact Or.inl rfl
+    · rw [ite_eq_left h2]; exact Or.inr rfl
+    · rw [ite_eq_right h2]; exact Or.inl rfl
 
 lemma rep_neg {S : Finset (ℤ × ℤ)} {s : ℤ × ℤ} (hs : s ∈ S) (hns : -s ∈ S)
     (hs0 : s ≠ (0, 0)) : rep S (-s) = rep S s := by
   have hcan := canon_iff_not_neg hs0
   by_cases hA : canon s
   · have hB : ¬ canon (-s) := hcan.mp hA
-    have hrep_s : rep S s = s := by unfold rep; rw [if_pos ⟨hA, hs⟩]
+    have hrep_s : rep S s = s := by unfold rep; rw [ite_eq_left ⟨hA, hs⟩]
     have hrep_ns : rep S (-s) = s := by
       unfold rep
-      rw [if_neg (fun h => hB h.1)]
-      rw [if_pos (by rw [neg_neg]; exact ⟨hA, hs⟩ : canon (-(-s)) ∧ (-(-s)) ∈ S)]
+      rw [ite_eq_right (fun h => hB h.1)]
+      rw [ite_eq_left (by rw [neg_neg]; exact ⟨hA, hs⟩ : canon (-(-s)) ∧ (-(-s)) ∈ S)]
       exact neg_neg s
     rw [hrep_s, hrep_ns]
   · have hB : canon (-s) := by
@@ -335,10 +334,10 @@ lemma rep_neg {S : Finset (ℤ × ℤ)} {s : ℤ × ℤ} (hs : s ∈ S) (hns : -
       exact hA (hcan.mpr hB)
     have hrep_s : rep S s = -s := by
       unfold rep
-      rw [if_neg (fun h => hA h.1), if_pos ⟨hB, hns⟩]
+      rw [ite_eq_right (fun h => hA h.1), ite_eq_left ⟨hB, hns⟩]
     have hrep_ns : rep S (-s) = -s := by
       unfold rep
-      rw [if_pos ⟨hB, hns⟩]
+      rw [ite_eq_left ⟨hB, hns⟩]
     rw [hrep_s, hrep_ns]
 
 lemma rep_idem {S : Finset (ℤ × ℤ)} {s : ℤ × ℤ} (hs : s ∈ S) (hs0 : s ≠ (0, 0)) :
@@ -505,7 +504,7 @@ lemma odd_not_dvd_powsum_zmod {p : ℕ} (hp : p.Prime) (hp2 : p ≠ 2) {x y : �
     (h : IsCoprime x y) : ((x ^ (p - 1) + y ^ (p - 1) : ℤ) : ZMod p) ≠ 0 := by
   have hp3 : 3 ≤ p := by
     have h2 := hp.two_le
-    omega
+    lia
   have : Fact p.Prime := ⟨hp⟩
   intro hcast
   push_cast at hcast
@@ -516,14 +515,14 @@ lemma odd_not_dvd_powsum_zmod {p : ℕ} (hp : p.Prime) (hp2 : p ≠ 2) {x y : �
     have hp1 := not_coprime_of_both_dvd h hpx hpy
     rw [show (1 : ℤ) = ((1 : ℕ) : ℤ) by norm_cast, Int.natCast_dvd_natCast] at hp1
     have := Nat.le_of_dvd one_pos hp1
-    omega
+    lia
   by_cases hx0 : (x : ZMod p) = 0
   · have hy0 : (y : ZMod p) ≠ 0 := fun h' => hab ⟨hx0, h'⟩
-    rw [hx0, zero_pow (by omega : p - 1 ≠ 0), zero_add] at hcast
+    rw [hx0, zero_pow (by lia : p - 1 ≠ 0), zero_add] at hcast
     rw [ZMod.pow_card_sub_one_eq_one hy0] at hcast
     exact one_ne_zero hcast
   · by_cases hy0 : (y : ZMod p) = 0
-    · rw [hy0, zero_pow (by omega : p - 1 ≠ 0), add_zero] at hcast
+    · rw [hy0, zero_pow (by lia : p - 1 ≠ 0), add_zero] at hcast
       rw [ZMod.pow_card_sub_one_eq_one hx0] at hcast
       exact one_ne_zero hcast
     · rw [ZMod.pow_card_sub_one_eq_one hx0, ZMod.pow_card_sub_one_eq_one hy0] at hcast
@@ -531,7 +530,7 @@ lemma odd_not_dvd_powsum_zmod {p : ℕ} (hp : p.Prime) (hp2 : p ≠ 2) {x y : �
         have h2i : ¬ (p ∣ 2) := by
           intro hd2
           have := Nat.le_of_dvd (by norm_num) hd2
-          omega
+          lia
         intro h20
         apply h2i
         have h' : (((2 : ℕ) : ℤ) : ZMod p) = 0 := by
@@ -566,10 +565,10 @@ lemma Gform_eval_zmod (p : ℕ) [Fact p.Prime] {x y : ℤ} (hcop : IsCoprime x y
   rw [Gform]
   by_cases hp2 : p = 2
   · subst hp2
-    rw [if_pos rfl, HForm.eval_add, HForm.eval_add, HForm.eval_pow, HForm.eval_mul,
+    rw [ite_eq_left rfl, HForm.eval_add, HForm.eval_add, HForm.eval_pow, HForm.eval_mul,
       HForm.eval_pow, Xf_eval, Yf_eval]
     exact two_not_dvd_quad_zmod hcop
-  · rw [if_neg hp2, HForm.eval_add, HForm.eval_pow, HForm.eval_pow, Xf_eval, Yf_eval]
+  · rw [ite_eq_right hp2, HForm.eval_add, HForm.eval_pow, HForm.eval_pow, Xf_eval, Yf_eval]
     exact odd_not_dvd_powsum_zmod Fact.out hp2 hcop
 
 /-- The key construction: a homogeneous form `g` of positive even degree whose
@@ -582,7 +581,6 @@ lemma exists_g (S : Finset (ℤ × ℤ)) (hS : ∀ s ∈ S, IsCoprime s.1 s.2)
       (∀ t ∈ T S, ∀ p : ℕ, p.Prime →
         (p : ℤ) ∣ (∏ t ∈ T S, ∏ t' ∈ (T S).erase t, (t'.2 * t.1 - t'.1 * t.2)) →
         ¬ (p : ℤ) ∣ g.eval t.1 t.2) := by
-  classical
   set TS := T S with hTS
   -- the product of all determinants between distinct classes
   set D : ℤ := ∏ t ∈ TS, ∏ t' ∈ TS.erase t, (t'.2 * t.1 - t'.1 * t.2) with hD
@@ -605,15 +603,15 @@ lemma exists_g (S : Finset (ℤ × ℤ)) (hS : ∀ s ∈ S, IsCoprime s.1 s.2)
     apply Nat.mul_pos (by norm_num)
     exact Finset.prod_pos (fun p hp => by
       have := (Nat.prime_of_mem_primeFactors hp).two_le
-      omega)
+      lia)
   -- divisibility of the degree by the local degrees
   have hdegE : ∀ p ∈ Ps, (Gform p).deg ∣ E := by
     intro p hp
     rw [Gform_deg, hE]
     by_cases hp2 : p = 2
-    · rw [if_pos hp2]
+    · rw [ite_eq_left hp2]
       exact dvd_mul_right 2 _
-    · rw [if_neg hp2]
+    · rw [ite_eq_right hp2]
       exact dvd_mul_of_dvd_right (Finset.dvd_prod_of_mem (fun q => q - 1) hp) 2
   -- powers of the local forms
   set ex : ℕ → ℕ := fun p => E / (Gform p).deg with hex
@@ -707,12 +705,7 @@ lemma exists_g (S : Finset (ℤ × ℤ)) (hS : ∀ s ∈ S, IsCoprime s.1 s.2)
   -- shift to make all values nonzero
   set bad : Finset ℤ := TS.image (fun t => -(G.eval t.1 t.2) / ((M : ℤ) * (t.1 ^ E + t.2 ^ E)))
     with hbad
-  obtain ⟨t₀, ht₀⟩ : ∃ a : ℤ, a ∉ bad := by
-    by_cases hbn : bad.Nonempty
-    · refine ⟨bad.max' hbn + 1, fun h => ?_⟩
-      have hle := Finset.le_max' bad _ h
-      omega
-    · exact ⟨0, fun h0 => hbn ⟨0, h0⟩⟩
+  obtain ⟨t₀, ht₀⟩ : ∃ a : ℤ, a ∉ bad := Infinite.exists_notMem_finset bad
   set g : HForm := G.add (HForm.cmul ((M : ℤ) * t₀) ((Xf.pow E).add (Yf.pow E)
     (by show (Xf.pow E).deg = (Yf.pow E).deg
         rw [HForm.pow_deg, HForm.pow_deg, Xf_deg, Yf_deg])))
@@ -736,9 +729,9 @@ lemma exists_g (S : Finset (ℤ × ℤ)) (hS : ∀ s ∈ S, IsCoprime s.1 s.2)
       have h2 : 0 ≤ t.2 ^ E := hEe.pow_nonneg _
       by_contra hsum
       have hsum2 : t.1 ^ E + t.2 ^ E ≤ 0 := not_lt.mp hsum
-      have h10 : t.1 ^ E = 0 := by omega
-      have h20 : t.2 ^ E = 0 := by omega
-      have hEne : E ≠ 0 := by omega
+      have h10 : t.1 ^ E = 0 := by lia
+      have h20 : t.2 ^ E = 0 := by lia
+      have hEne : E ≠ 0 := by lia
       have ht1 : t.1 = 0 := (pow_eq_zero_iff hEne).mp h10
       have ht2 : t.2 = 0 := (pow_eq_zero_iff hEne).mp h20
       exact ht0 (Prod.ext ht1 ht2)
@@ -780,7 +773,6 @@ snip end
 problem imo2017_p6 (S : Finset (ℤ × ℤ)) (hS : ∀ s ∈ S, gcd s.1 s.2 = 1) :
     ∃ n : ℕ, 0 < n ∧ ∃ a : ℕ → ℤ,
       ∀ s ∈ S, ∑ i ∈ Finset.range (n + 1), a i * s.1 ^ i * s.2 ^ (n - i) = 1 := by
-  classical
   have hS' : ∀ s ∈ S, IsCoprime s.1 s.2 := by
     intro s hs
     rw [Int.isCoprime_iff_gcd_eq_one]
@@ -830,10 +822,8 @@ problem imo2017_p6 (S : Finset (ℤ × ℤ)) (hS : ∀ s ∈ S, gcd s.1 s.2 = 1)
       have hpv : (p : ℤ) ∣ v t := dvd_trans (Int.natCast_dvd_natCast.mpr hpdvd) (Int.gcd_dvd_left (v t) (Δ t))
       have hpΔ : (p : ℤ) ∣ Δ t := dvd_trans (Int.natCast_dvd_natCast.mpr hpdvd) (Int.gcd_dvd_right (v t) (Δ t))
       have hpP : Prime (p : ℤ) := Nat.prime_iff_prime_int.mp hpp
-      have h2 : ∃ t' ∈ TS.erase t, (p : ℤ) ∣ ((ell t').eval t.1 t.2) ^ E := by
-        apply (hpP.dvd_finsetProd_iff (fun t' => ((ell t').eval t.1 t.2) ^ E)).mp
-        show (p : ℤ) ∣ ∏ t' ∈ TS.erase t, ((ell t').eval t.1 t.2) ^ E
-        exact hpΔ
+      have h2 : ∃ t' ∈ TS.erase t, (p : ℤ) ∣ ((ell t').eval t.1 t.2) ^ E :=
+        Prime.exists_mem_finset_dvd hpP hpΔ
       obtain ⟨t', ht', hp3⟩ := h2
       have hp4 : (p : ℤ) ∣ (ell t').eval t.1 t.2 := hpP.dvd_of_dvd_pow hp3
       rw [hell_eval] at hp4
@@ -883,12 +873,7 @@ problem imo2017_p6 (S : Finset (ℤ × ℤ)) (hS : ∀ s ∈ S, gcd s.1 s.2 = 1)
           rw [h2]
           ring
         exact (ZMod.intCast_zmod_eq_zero_iff_dvd _ _).mp h3
-      have hΔΔ : Δ t ∣ ((Δ t).natAbs : ℤ) := by
-        rcases Int.natAbs_eq (Δ t) with h | h
-        · conv_lhs => rw [h]
-        · conv_lhs => rw [h]
-          exact neg_dvd.mpr dvd_rfl
-      exact dvd_trans hΔΔ hmain
+      exact Int.natAbs_dvd.mp hmain
     -- correction constants
     set c : ℤ × ℤ → ℤ := fun t => (v t ^ K - 1) / Δ t with hc
     have hct : ∀ t ∈ TS, c t * Δ t = v t ^ K - 1 := by
@@ -900,7 +885,7 @@ problem imo2017_p6 (S : Finset (ℤ × ℤ)) (hS : ∀ s ∈ S, gcd s.1 s.2 = 1)
     have hmle : (TS.card - 1) * E ≤ E * K := by
       rw [Nat.mul_comm E K]
       have h1 := hKge
-      have h2 : TS.card - 1 ≤ K := by omega
+      have h2 : TS.card - 1 ≤ K := by lia
       exact Nat.mul_le_mul_right _ h2
     -- the product of the `ℓ`-powers over the other classes
     have hprod : ∀ t ∈ TS, ∃ P : HForm, P.deg = (TS.card - 1) * E ∧
@@ -977,7 +962,7 @@ problem imo2017_p6 (S : Finset (ℤ × ℤ)) (hS : ∀ s ∈ S, gcd s.1 s.2 = 1)
               rw [hell_eval]
               have h1 : t.2 * t.1 - t.1 * t.2 = 0 := by ring
               rw [h1]
-              exact zero_pow (by omega : E ≠ 0)
+              exact zero_pow (by lia : E ≠ 0)
             rw [Finset.prod_eq_zero hmem h0, mul_zero]
           · intro hnotin
             exact (hnotin htT).elim

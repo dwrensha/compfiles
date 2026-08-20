@@ -69,27 +69,27 @@ theorem arith_core (n : ℕ)
   have hdm := Nat.div_add_mod (2 * n + 1) 5
   set k := (2 * n + 1) / 5 with hkD
   have hr : (2 * n + 1) % 5 = 0 ∨ (2 * n + 1) % 5 = 1 ∨ (2 * n + 1) % 5 = 2 ∨
-      (2 * n + 1) % 5 = 3 ∨ (2 * n + 1) % 5 = 4 := by omega
+      (2 * n + 1) % 5 = 3 ∨ (2 * n + 1) % 5 = 4 := by lia
   rcases hr with h0 | h1 | h2 | h3 | h4
   swap
-  · exfalso; rw [h1] at hdm; omega
+  · exfalso; rw [h1] at hdm; lia
   swap
-  · exfalso; rw [h2] at hdm; omega
+  · exfalso; rw [h2] at hdm; lia
   swap
-  · exfalso; rw [h3] at hdm; omega
+  · exfalso; rw [h3] at hdm; lia
   swap
-  · exfalso; rw [h4] at hdm; omega
+  · exfalso; rw [h4] at hdm; lia
   rw [h0] at hdm
-  have hk : 2 * n + 1 = 5 * k := by omega
+  have hk : 2 * n + 1 = 5 * k := by lia
   -- Every pair count is at least `k`, and the sum is `15 * k + 1`, so exactly one of them
   -- is `k + 1`; we check all fifteen possibilities, each contradicting two congruences.
   have hge : k ≤ t01 ∧ k ≤ t02 ∧ k ≤ t03 ∧ k ≤ t04 ∧ k ≤ t05 ∧ k ≤ t12 ∧ k ≤ t13 ∧ k ≤ t14 ∧
       k ≤ t15 ∧ k ≤ t23 ∧ k ≤ t24 ∧ k ≤ t25 ∧ k ≤ t34 ∧ k ≤ t35 ∧ k ≤ t45 := by omega
   have hsumk : t01 + t02 + t03 + t04 + t05 + t12 + t13 + t14 + t15 + t23 + t24 + t25 + t34 +
-      t35 + t45 = 15 * k + 1 := by omega
+      t35 + t45 = 15 * k + 1 := by lia
   have clash (x y : ℤ) (r r' : ℤ) (hxy : y = x + 1) (hr : x = 3 * r) (hr' : y = 3 * r') :
       False := by
-    omega
+    lia
   by_cases e01 : t01 = k + 1
   · obtain ⟨h2, h3, h4, h5, h12, h13, h14, h15, h23, h24, h25, h34, h35, h45⟩ :
         t02 = k ∧ t03 = k ∧ t04 = k ∧ t05 = k ∧ t12 = k ∧ t13 = k ∧ t14 = k ∧ t15 = k ∧
@@ -253,10 +253,10 @@ theorem exists_superset_card {s : Finset (Fin 6)} {k : ℕ} (h1 : s.card ≤ k) 
     ∃ t : Finset (Fin 6), s ⊆ t ∧ t.card = k := by
   obtain ⟨u, hus, huc⟩ := Finset.exists_subset_card_eq (s := sᶜ) (n := k - s.card) (by
     rw [Finset.card_compl, Fintype.card_fin]
-    omega)
+    lia)
   refine ⟨s ∪ u, Finset.subset_union_left, ?_⟩
   rw [Finset.card_union_of_disjoint ?_, huc]
-  · omega
+  · lia
   · rw [Finset.disjoint_left]
     intro x hxs hxu
     exact Finset.mem_compl.mp (hus hxu) hxs
@@ -342,7 +342,7 @@ theorem pairCount_modEq {n : ℕ} {s : Fin n → Finset (Fin 6)} {c0 : Fin n}
   have hu0 : ∑ u ∈ D, (if ({u, 5} : Finset (Fin 6)) ⊆ s c0 then (1 : ℤ) else 0) = 0 := by
     apply Finset.sum_eq_zero
     intro u _
-    apply if_neg
+    apply ite_eq_right
     intro hsub
     have h5 : (5 : Fin 6) ∈ s c0 :=
       hsub (Finset.mem_insert.mpr (Or.inr (Finset.mem_singleton_self 5)))
@@ -351,7 +351,7 @@ theorem pairCount_modEq {n : ℕ} {s : Fin n → Finset (Fin 6)} {c0 : Fin n}
   have hQ1 : ∑ Q ∈ E, (if Q ⊆ s c0 then (1 : ℤ) else 0) = 3 := by
     have hQ : ∀ Q ∈ E, (if Q ⊆ s c0 then (1 : ℤ) else 0) = 1 := by
       intro Q hQm
-      apply if_pos
+      apply ite_eq_left
       rw [hc0]
       exact (Finset.mem_powersetCard.mp hQm).1.trans Finset.sdiff_subset
     rw [Finset.sum_congr rfl hQ, Finset.sum_const, hEcard]
@@ -359,7 +359,7 @@ theorem pairCount_modEq {n : ℕ} {s : Fin n → Finset (Fin 6)} {c0 : Fin n}
   have hc0' : (if P ⊆ s c0 then (1 : ℤ) else 0)
       - ∑ u ∈ D, (if ({u, 5} : Finset (Fin 6)) ⊆ s c0 then (1 : ℤ) else 0)
       - ∑ Q ∈ E, (if Q ⊆ s c0 then (1 : ℤ) else 0) = -2 := by
-    rw [if_pos (by rw [hc0]; exact hPsub), hu0, hQ1]
+    rw [ite_eq_left (by rw [hc0]; exact hPsub), hu0, hQ1]
     norm_num
   have key : (pairCount s P : ℤ)
       - ∑ u ∈ D, (pairCount s {u, 5} : ℤ) - ∑ Q ∈ E, (pairCount s Q : ℤ) ≡ 1 [ZMOD 3] := by
@@ -377,13 +377,12 @@ problem imo2005_p6 {n : ℕ} (s : Fin n → Finset (Fin 6))
       2 * n < 5 * (Finset.univ.filter fun i => p ∈ s i ∧ q ∈ s i).card)
     (hall : ∀ i, (s i).card < 6) :
     ∃ i j, i ≠ j ∧ (s i).card = 5 ∧ (s j).card = 5 := by
-  classical
   by_contra hcon
   push Not at hcon
   -- There is at least one contestant.
   have hn : 0 < n := by
     by_contra hz
-    have hz0 : n = 0 := by omega
+    have hz0 : n = 0 := by lia
     subst hz0
     have h := pair 0 1 (by decide)
     rw [Finset.univ_eq_empty, Finset.filter_empty, Finset.card_empty, mul_zero] at h
@@ -406,7 +405,7 @@ problem imo2005_p6 {n : ℕ} (s : Fin n → Finset (Fin 6))
         intro i
         by_contra h'
         push Not at h'
-        have h5 : (s i).card = 5 := by have h6 := hall i; omega
+        have h5 : (s i).card = 5 := by have h6 := hall i; lia
         have hmem : i ∈ Finset.univ.filter (fun i => (s i).card = 5) :=
           Finset.mem_filter.mpr ⟨Finset.mem_univ i, h5⟩
         rw [hFempty] at hmem
@@ -415,13 +414,13 @@ problem imo2005_p6 {n : ℕ} (s : Fin n → Finset (Fin 6))
         intro i
         by_cases hci : i = ⟨0, hn⟩
         · subst hci
-          rw [if_pos rfl]
-          exact exists_superset_card (by have h := hle ⟨0, hn⟩; omega) (by norm_num)
-        · rw [if_neg hci]
+          rw [ite_eq_left rfl]
+          exact exists_superset_card (by have h := hle ⟨0, hn⟩; lia) (by norm_num)
+        · rw [ite_eq_right hci]
           exact exists_superset_card (hle i) (by norm_num)
       choose s' hsub hcard using ext
-      exact ⟨⟨0, hn⟩, s', hsub, by rw [hcard ⟨0, hn⟩, if_pos rfl],
-        fun i hi => by rw [hcard i, if_neg hi]⟩
+      exact ⟨⟨0, hn⟩, s', hsub, by rw [hcard ⟨0, hn⟩, ite_eq_left rfl],
+        fun i hi => by rw [hcard i, ite_eq_right hi]⟩
     · -- Somebody solved five problems: everyone else gets promoted to four.
       obtain ⟨c0, hFc0⟩ := Finset.card_eq_one.mp hF1
       have hc0card : (s c0).card = 5 := by
@@ -433,20 +432,17 @@ problem imo2005_p6 {n : ℕ} (s : Fin n → Finset (Fin 6))
         intro i hi
         by_contra h'
         push Not at h'
-        have h5 : (s i).card = 5 := by have h6 := hall i; omega
-        have hmem : i ∈ Finset.univ.filter (fun i => (s i).card = 5) :=
-          Finset.mem_filter.mpr ⟨Finset.mem_univ i, h5⟩
-        rw [hFc0, Finset.mem_singleton] at hmem
-        exact hi hmem
+        have h5 : (s i).card = 5 := by have h6 := hall i; lia
+        exact hcon i c0 hi h5 hc0card
       have ext : ∀ i, ∃ t : Finset (Fin 6), s i ⊆ t ∧ t.card = if i = c0 then 5 else 4 := by
         intro i
         by_cases hci : i = c0
         · subst i
-          exact ⟨s c0, Finset.Subset.refl _, by rw [if_pos rfl]; exact hc0card⟩
-        · rw [if_neg hci]
+          exact ⟨s c0, Finset.Subset.refl _, by rw [ite_eq_left rfl]; exact hc0card⟩
+        · rw [ite_eq_right hci]
           exact exists_superset_card (hle i hci) (by norm_num)
       choose s' hsub hcard using ext
-      exact ⟨c0, s', hsub, by rw [hcard c0, if_pos rfl], fun i hi => by rw [hcard i, if_neg hi]⟩
+      exact ⟨c0, s', hsub, by rw [hcard c0, ite_eq_left rfl], fun i hi => by rw [hcard i, ite_eq_right hi]⟩
   -- The pair condition is preserved (and only strengthened) by the promotion.
   have pair' : ∀ p q : Fin 6, p ≠ q →
       2 * n < 5 * (Finset.univ.filter fun i => p ∈ s' i ∧ q ∈ s' i).card := by
@@ -529,7 +525,7 @@ problem imo2005_p6 {n : ℕ} (s : Fin n → Finset (Fin 6))
       ring
     have h5c : (5).choose 2 = 10 := by decide
     rw [hs''c0card, e, h5c]
-    omega
+    lia
   have hsum2 : pairCount s'' {0, 1} + pairCount s'' {0, 2} + pairCount s'' {0, 3}
       + pairCount s'' {0, 4} + pairCount s'' {0, 5} + pairCount s'' {1, 2}
       + pairCount s'' {1, 3} + pairCount s'' {1, 4} + pairCount s'' {1, 5}
@@ -538,7 +534,7 @@ problem imo2005_p6 {n : ℕ} (s : Fin n → Finset (Fin 6))
     rw [pc2_univ] at hsum1
     repeat rw [Finset.sum_insert (by decide)] at hsum1
     rw [Finset.sum_singleton] at hsum1
-    omega
+    lia
   -- Each pair count is at least `(2 * n + 1) / 5`.
   have hb : ∀ p q : Fin 6, p ≠ q → 2 * n + 1 ≤ 5 * pairCount s'' {p, q} := by
     intro p q hpq
@@ -549,9 +545,9 @@ problem imo2005_p6 {n : ℕ} (s : Fin n → Finset (Fin 6))
       ≡ 1 + pairCount s'' {2, 5} + pairCount s'' {3, 5} + pairCount s'' {4, 5}
         + pairCount s'' {2, 3} + pairCount s'' {2, 4} + pairCount s'' {3, 4} [ZMOD 3] := by
     have h := pairCount_modEq hs''c0 hs''4 (P := {0, 1}) (by decide)
-    rw [show (Finset.univ.erase 5 \ {0, 1} : Finset (Fin 6)) = {2, 3, 4} from by decide] at h
+    rw [show (Finset.univ.erase 5 \ {0, 1} : Finset (Fin 6)) = {2, 3, 4} by decide] at h
     rw [show ({2, 3, 4} : Finset (Fin 6)).powersetCard 2 = {{2, 3}, {2, 4}, {3, 4}}
-      from by decide] at h
+      by decide] at h
     repeat rw [Finset.sum_insert (by decide)] at h
     repeat rw [Finset.sum_singleton] at h
     obtain ⟨r, hr⟩ := Int.modEq_iff_add_fac.mp h
@@ -560,9 +556,9 @@ problem imo2005_p6 {n : ℕ} (s : Fin n → Finset (Fin 6))
       ≡ 1 + pairCount s'' {1, 5} + pairCount s'' {3, 5} + pairCount s'' {4, 5}
         + pairCount s'' {1, 3} + pairCount s'' {1, 4} + pairCount s'' {3, 4} [ZMOD 3] := by
     have h := pairCount_modEq hs''c0 hs''4 (P := {0, 2}) (by decide)
-    rw [show (Finset.univ.erase 5 \ {0, 2} : Finset (Fin 6)) = {1, 3, 4} from by decide] at h
+    rw [show (Finset.univ.erase 5 \ {0, 2} : Finset (Fin 6)) = {1, 3, 4} by decide] at h
     rw [show ({1, 3, 4} : Finset (Fin 6)).powersetCard 2 = {{1, 3}, {1, 4}, {3, 4}}
-      from by decide] at h
+      by decide] at h
     repeat rw [Finset.sum_insert (by decide)] at h
     repeat rw [Finset.sum_singleton] at h
     obtain ⟨r, hr⟩ := Int.modEq_iff_add_fac.mp h
@@ -571,9 +567,9 @@ problem imo2005_p6 {n : ℕ} (s : Fin n → Finset (Fin 6))
       ≡ 1 + pairCount s'' {1, 5} + pairCount s'' {2, 5} + pairCount s'' {4, 5}
         + pairCount s'' {1, 2} + pairCount s'' {1, 4} + pairCount s'' {2, 4} [ZMOD 3] := by
     have h := pairCount_modEq hs''c0 hs''4 (P := {0, 3}) (by decide)
-    rw [show (Finset.univ.erase 5 \ {0, 3} : Finset (Fin 6)) = {1, 2, 4} from by decide] at h
+    rw [show (Finset.univ.erase 5 \ {0, 3} : Finset (Fin 6)) = {1, 2, 4} by decide] at h
     rw [show ({1, 2, 4} : Finset (Fin 6)).powersetCard 2 = {{1, 2}, {1, 4}, {2, 4}}
-      from by decide] at h
+      by decide] at h
     repeat rw [Finset.sum_insert (by decide)] at h
     repeat rw [Finset.sum_singleton] at h
     obtain ⟨r, hr⟩ := Int.modEq_iff_add_fac.mp h
@@ -582,9 +578,9 @@ problem imo2005_p6 {n : ℕ} (s : Fin n → Finset (Fin 6))
       ≡ 1 + pairCount s'' {1, 5} + pairCount s'' {2, 5} + pairCount s'' {3, 5}
         + pairCount s'' {1, 2} + pairCount s'' {1, 3} + pairCount s'' {2, 3} [ZMOD 3] := by
     have h := pairCount_modEq hs''c0 hs''4 (P := {0, 4}) (by decide)
-    rw [show (Finset.univ.erase 5 \ {0, 4} : Finset (Fin 6)) = {1, 2, 3} from by decide] at h
+    rw [show (Finset.univ.erase 5 \ {0, 4} : Finset (Fin 6)) = {1, 2, 3} by decide] at h
     rw [show ({1, 2, 3} : Finset (Fin 6)).powersetCard 2 = {{1, 2}, {1, 3}, {2, 3}}
-      from by decide] at h
+      by decide] at h
     repeat rw [Finset.sum_insert (by decide)] at h
     repeat rw [Finset.sum_singleton] at h
     obtain ⟨r, hr⟩ := Int.modEq_iff_add_fac.mp h
@@ -593,9 +589,9 @@ problem imo2005_p6 {n : ℕ} (s : Fin n → Finset (Fin 6))
       ≡ 1 + pairCount s'' {0, 5} + pairCount s'' {3, 5} + pairCount s'' {4, 5}
         + pairCount s'' {0, 3} + pairCount s'' {0, 4} + pairCount s'' {3, 4} [ZMOD 3] := by
     have h := pairCount_modEq hs''c0 hs''4 (P := {1, 2}) (by decide)
-    rw [show (Finset.univ.erase 5 \ {1, 2} : Finset (Fin 6)) = {0, 3, 4} from by decide] at h
+    rw [show (Finset.univ.erase 5 \ {1, 2} : Finset (Fin 6)) = {0, 3, 4} by decide] at h
     rw [show ({0, 3, 4} : Finset (Fin 6)).powersetCard 2 = {{0, 3}, {0, 4}, {3, 4}}
-      from by decide] at h
+      by decide] at h
     repeat rw [Finset.sum_insert (by decide)] at h
     repeat rw [Finset.sum_singleton] at h
     obtain ⟨r, hr⟩ := Int.modEq_iff_add_fac.mp h
@@ -604,9 +600,9 @@ problem imo2005_p6 {n : ℕ} (s : Fin n → Finset (Fin 6))
       ≡ 1 + pairCount s'' {0, 5} + pairCount s'' {2, 5} + pairCount s'' {4, 5}
         + pairCount s'' {0, 2} + pairCount s'' {0, 4} + pairCount s'' {2, 4} [ZMOD 3] := by
     have h := pairCount_modEq hs''c0 hs''4 (P := {1, 3}) (by decide)
-    rw [show (Finset.univ.erase 5 \ {1, 3} : Finset (Fin 6)) = {0, 2, 4} from by decide] at h
+    rw [show (Finset.univ.erase 5 \ {1, 3} : Finset (Fin 6)) = {0, 2, 4} by decide] at h
     rw [show ({0, 2, 4} : Finset (Fin 6)).powersetCard 2 = {{0, 2}, {0, 4}, {2, 4}}
-      from by decide] at h
+      by decide] at h
     repeat rw [Finset.sum_insert (by decide)] at h
     repeat rw [Finset.sum_singleton] at h
     obtain ⟨r, hr⟩ := Int.modEq_iff_add_fac.mp h
@@ -615,9 +611,9 @@ problem imo2005_p6 {n : ℕ} (s : Fin n → Finset (Fin 6))
       ≡ 1 + pairCount s'' {0, 5} + pairCount s'' {2, 5} + pairCount s'' {3, 5}
         + pairCount s'' {0, 2} + pairCount s'' {0, 3} + pairCount s'' {2, 3} [ZMOD 3] := by
     have h := pairCount_modEq hs''c0 hs''4 (P := {1, 4}) (by decide)
-    rw [show (Finset.univ.erase 5 \ {1, 4} : Finset (Fin 6)) = {0, 2, 3} from by decide] at h
+    rw [show (Finset.univ.erase 5 \ {1, 4} : Finset (Fin 6)) = {0, 2, 3} by decide] at h
     rw [show ({0, 2, 3} : Finset (Fin 6)).powersetCard 2 = {{0, 2}, {0, 3}, {2, 3}}
-      from by decide] at h
+      by decide] at h
     repeat rw [Finset.sum_insert (by decide)] at h
     repeat rw [Finset.sum_singleton] at h
     obtain ⟨r, hr⟩ := Int.modEq_iff_add_fac.mp h
@@ -626,9 +622,9 @@ problem imo2005_p6 {n : ℕ} (s : Fin n → Finset (Fin 6))
       ≡ 1 + pairCount s'' {0, 5} + pairCount s'' {1, 5} + pairCount s'' {4, 5}
         + pairCount s'' {0, 1} + pairCount s'' {0, 4} + pairCount s'' {1, 4} [ZMOD 3] := by
     have h := pairCount_modEq hs''c0 hs''4 (P := {2, 3}) (by decide)
-    rw [show (Finset.univ.erase 5 \ {2, 3} : Finset (Fin 6)) = {0, 1, 4} from by decide] at h
+    rw [show (Finset.univ.erase 5 \ {2, 3} : Finset (Fin 6)) = {0, 1, 4} by decide] at h
     rw [show ({0, 1, 4} : Finset (Fin 6)).powersetCard 2 = {{0, 1}, {0, 4}, {1, 4}}
-      from by decide] at h
+      by decide] at h
     repeat rw [Finset.sum_insert (by decide)] at h
     repeat rw [Finset.sum_singleton] at h
     obtain ⟨r, hr⟩ := Int.modEq_iff_add_fac.mp h
@@ -637,9 +633,9 @@ problem imo2005_p6 {n : ℕ} (s : Fin n → Finset (Fin 6))
       ≡ 1 + pairCount s'' {0, 5} + pairCount s'' {1, 5} + pairCount s'' {3, 5}
         + pairCount s'' {0, 1} + pairCount s'' {0, 3} + pairCount s'' {1, 3} [ZMOD 3] := by
     have h := pairCount_modEq hs''c0 hs''4 (P := {2, 4}) (by decide)
-    rw [show (Finset.univ.erase 5 \ {2, 4} : Finset (Fin 6)) = {0, 1, 3} from by decide] at h
+    rw [show (Finset.univ.erase 5 \ {2, 4} : Finset (Fin 6)) = {0, 1, 3} by decide] at h
     rw [show ({0, 1, 3} : Finset (Fin 6)).powersetCard 2 = {{0, 1}, {0, 3}, {1, 3}}
-      from by decide] at h
+      by decide] at h
     repeat rw [Finset.sum_insert (by decide)] at h
     repeat rw [Finset.sum_singleton] at h
     obtain ⟨r, hr⟩ := Int.modEq_iff_add_fac.mp h
@@ -648,9 +644,9 @@ problem imo2005_p6 {n : ℕ} (s : Fin n → Finset (Fin 6))
       ≡ 1 + pairCount s'' {0, 5} + pairCount s'' {1, 5} + pairCount s'' {2, 5}
         + pairCount s'' {0, 1} + pairCount s'' {0, 2} + pairCount s'' {1, 2} [ZMOD 3] := by
     have h := pairCount_modEq hs''c0 hs''4 (P := {3, 4}) (by decide)
-    rw [show (Finset.univ.erase 5 \ {3, 4} : Finset (Fin 6)) = {0, 1, 2} from by decide] at h
+    rw [show (Finset.univ.erase 5 \ {3, 4} : Finset (Fin 6)) = {0, 1, 2} by decide] at h
     rw [show ({0, 1, 2} : Finset (Fin 6)).powersetCard 2 = {{0, 1}, {0, 2}, {1, 2}}
-      from by decide] at h
+      by decide] at h
     repeat rw [Finset.sum_insert (by decide)] at h
     repeat rw [Finset.sum_singleton] at h
     obtain ⟨r, hr⟩ := Int.modEq_iff_add_fac.mp h

@@ -34,28 +34,6 @@ open Polynomial
 
 snip begin
 
-/-- Auxiliary divisibility: `gcd (u * v) x ∣ gcd u x * gcd v x` when `u` is positive. -/
-lemma gcd_mul_dvd_gcd_mul {u v x : ℕ} (hu : 0 < u) :
-    Nat.gcd (u * v) x ∣ Nat.gcd u x * Nat.gcd v x := by
-  have hg1 : 0 < Nat.gcd u x := Nat.gcd_pos_of_pos_left x hu
-  have hg1d : Nat.gcd u x ∣ Nat.gcd (u * v) x :=
-    Nat.dvd_gcd ((Nat.gcd_dvd_left u x).trans (Nat.dvd_mul_right u v)) (Nat.gcd_dvd_right u x)
-  have hdvd : Nat.gcd (u * v) x ∣ Nat.gcd u x * v := by
-    have h := Nat.dvd_gcd (Nat.gcd_dvd_left (u * v) x)
-      ((Nat.gcd_dvd_right (u * v) x).trans (Nat.dvd_mul_right x v))
-    rwa [Nat.gcd_mul_right] at h
-  obtain ⟨c, hc⟩ := hg1d
-  have hcv : c ∣ v := by
-    have hgc : Nat.gcd u x * c ∣ Nat.gcd u x * v := by
-      rw [← hc]
-      exact hdvd
-    exact (Nat.mul_dvd_mul_iff_left hg1).mp hgc
-  have hcx : c ∣ x := by
-    have hcd : c ∣ Nat.gcd (u * v) x := ⟨Nat.gcd u x, by rw [hc, mul_comm]⟩
-    exact hcd.trans (Nat.gcd_dvd_right _ _)
-  rw [hc]
-  exact Nat.mul_dvd_mul_left _ (Nat.dvd_gcd hcv hcx)
-
 /-- `gcd (lcm over s) x` divides the product of the individual gcds. -/
 lemma gcd_lcm_dvd_prod_gcd (t : ℕ → ℕ) (x : ℕ) (s : Finset ℕ) :
     (∀ i ∈ s, 0 < t i) → Nat.gcd (s.lcm t) x ∣ ∏ i ∈ s, Nat.gcd (t i) x := by
@@ -69,7 +47,7 @@ lemma gcd_lcm_dvd_prod_gcd (t : ℕ → ℕ) (x : ℕ) (s : Finset ℕ) :
     have h1 : Nat.gcd (lcm (t a) (s.lcm t)) x ∣ Nat.gcd (t a * s.lcm t) x :=
       Nat.dvd_gcd ((Nat.gcd_dvd_left _ _).trans (lcm_dvd_mul _ _)) (Nat.gcd_dvd_right _ _)
     have h2 : Nat.gcd (t a * s.lcm t) x ∣ Nat.gcd (t a) x * Nat.gcd (s.lcm t) x :=
-      gcd_mul_dvd_gcd_mul (hpos a (Finset.mem_insert_self a s))
+      Nat.gcd_mul_left_dvd_mul_gcd x (t a) (s.lcm t)
     have h3 : Nat.gcd (s.lcm t) x ∣ ∏ i ∈ s, Nat.gcd (t i) x :=
       ih (fun i hi => hpos i (Finset.mem_insert_of_mem hi))
     exact h1.trans (h2.trans (Nat.mul_dvd_mul_left _ h3))
@@ -115,18 +93,18 @@ lemma gcd_lcm_le_pow (m N j : ℕ) (hm : N < m) (hj : j ∈ Finset.range N) :
   have hpos : ∀ i ∈ Finset.range (j + 1), 0 < m - i := by
     intro i hi
     have _hi' : i < j + 1 := Finset.mem_range.mp hi
-    omega
+    lia
   have hdvd := gcd_lcm_dvd_prod_gcd (fun i => m - i) (m - (j + 1)) (Finset.range (j + 1)) hpos
   have hprod_pos : 0 < ∏ i ∈ Finset.range (j + 1), Nat.gcd (m - i) (m - (j + 1)) :=
     Finset.prod_pos (fun i hi => Nat.gcd_pos_of_pos_left _ (hpos i hi))
   have hbound : ∀ i ∈ Finset.range (j + 1), Nat.gcd (m - i) (m - (j + 1)) ≤ N := by
     intro i hi
     have _hi' : i < j + 1 := Finset.mem_range.mp hi
-    have hsub : (m - i) - (m - (j + 1)) = (j + 1) - i := by omega
+    have hsub : (m - i) - (m - (j + 1)) = (j + 1) - i := by lia
     have hd : Nat.gcd (m - i) (m - (j + 1)) ∣ (j + 1) - i := by
       rw [← hsub]
       exact Nat.dvd_sub (Nat.gcd_dvd_left _ _) (Nat.gcd_dvd_right _ _)
-    exact (Nat.le_of_dvd (by omega) hd).trans (by omega)
+    exact (Nat.le_of_dvd (by lia) hd).trans (by lia)
   calc Nat.gcd ((Finset.range (j + 1)).lcm (fun i => m - i)) (m - (j + 1))
       ≤ ∏ i ∈ Finset.range (j + 1), Nat.gcd (m - i) (m - (j + 1)) :=
         Nat.le_of_dvd hprod_pos hdvd
@@ -161,7 +139,7 @@ lemma prod_le_lcm_mul_pow (N m : ℕ) (hm : N < m) :
             ∏ j ∈ Finset.range N,
               Nat.gcd ((Finset.range (j + 1)).lcm (fun i => m - i)) (m - (j + 1)) := hid
       _ ≤ (Finset.range (N + 1)).lcm (fun i => m - i) * N ^ (N * (N + 1)) :=
-            Nat.mul_le_mul_left _ (hG.trans (pow_le_pow_right' (by omega) hexp))
+            Nat.mul_le_mul_left _ (hG.trans (pow_le_pow_right' (by lia) hexp))
 
 
 /-- Lagrange interpolation (over ℚ): the first `N + 1` values of an integer
@@ -285,7 +263,7 @@ lemma sum_pow_abs_le (c : ℕ → ℤ) (N : ℕ) (m : ℕ) (hm : 1 ≤ m) :
     _ ≤ ∑ i ∈ Finset.range (N + 1), |c i| * (m : ℤ) ^ N := by
         refine Finset.sum_le_sum fun i hi => mul_le_mul_of_nonneg_left ?_ (abs_nonneg _)
         have h : m ^ i ≤ m ^ N :=
-          pow_le_pow_right' (by omega) (Nat.lt_succ_iff.mp (Finset.mem_range.mp hi))
+          pow_le_pow_right' (by lia) (Nat.lt_succ_iff.mp (Finset.mem_range.mp hi))
         exact_mod_cast h
     _ = ((∑ i ∈ Finset.range (N + 1), (c i).natAbs : ℕ) : ℤ) * (m : ℤ) ^ N := by
         simp only [Int.abs_eq_natAbs]
@@ -297,22 +275,8 @@ lemma abs_eval_le (p : ℤ[X]) (m : ℕ) (hm : 1 ≤ m) :
     |p.eval (m : ℤ)| ≤
       ((∑ i ∈ Finset.range (p.natDegree + 1), (p.coeff i).natAbs : ℕ) : ℤ) *
         (m : ℤ) ^ p.natDegree := by
-  have hm0 : (0 : ℤ) ≤ (m : ℤ) := by positivity
   rw [Polynomial.eval_eq_sum_range]
-  calc |∑ i ∈ Finset.range (p.natDegree + 1), p.coeff i * (m : ℤ) ^ i|
-      ≤ ∑ i ∈ Finset.range (p.natDegree + 1), |p.coeff i * (m : ℤ) ^ i| :=
-        Finset.abs_sum_le_sum_abs _ _
-    _ = ∑ i ∈ Finset.range (p.natDegree + 1), |p.coeff i| * (m : ℤ) ^ i := by
-        refine Finset.sum_congr rfl fun i _ => ?_
-        rw [abs_mul, abs_pow, abs_of_nonneg hm0]
-    _ ≤ ∑ i ∈ Finset.range (p.natDegree + 1), |p.coeff i| * (m : ℤ) ^ p.natDegree := by
-        refine Finset.sum_le_sum fun i hi => mul_le_mul_of_nonneg_left ?_ (abs_nonneg _)
-        have h : m ^ i ≤ m ^ p.natDegree :=
-          pow_le_pow_right' (by omega) (Nat.lt_succ_iff.mp (Finset.mem_range.mp hi))
-        exact_mod_cast h
-    _ = _ := by
-        simp only [Int.abs_eq_natAbs]
-        rw [← Finset.sum_mul, ← Nat.cast_sum]
+  exact sum_pow_abs_le p.coeff p.natDegree m hm
 
 /-- Key step: for large `m`, the cleared polynomial agrees with
 `denomProd q N * a m`. The difference is divisible by the lcm of
@@ -328,8 +292,8 @@ lemma clearPoly_eq_of_large (a : ℕ → ℤ)
     (m : ℕ) (hm : 2 * N < m)
     (hmB : 2 ^ (N + 1) * N ^ (N * (N + 1)) * (C + denomProd q N * C₁) < m) :
     (clearPoly q N).eval (m : ℤ) = (denomProd q N : ℤ) * a m := by
-  have hmN : N < m := by omega
-  have hm1 : 1 ≤ m := by omega
+  have hmN : N < m := by lia
+  have hm1 : 1 ≤ m := by lia
   set Z : ℤ := (clearPoly q N).eval (m : ℤ) - (denomProd q N : ℤ) * a m with hZ
   by_contra hne
   have hZne : Z ≠ 0 := by rw [hZ]; exact sub_ne_zero.mpr hne
@@ -338,7 +302,7 @@ lemma clearPoly_eq_of_large (a : ℕ → ℤ)
     intro i hi
     have h1 := clearPoly_dvd a hdiv hqN hqval m hi
     have h2 : ((m - i : ℕ) : ℤ) = (m : ℤ) - (i : ℤ) :=
-      Nat.cast_sub (by have hi' : i < N + 1 := Finset.mem_range.mp hi; omega)
+      Nat.cast_sub (by have hi' : i < N + 1 := Finset.mem_range.mp hi; lia)
     rw [← h2] at h1
     have h3 := (Int.natAbs_dvd_natAbs).mpr h1
     rwa [Int.natAbs_natCast] at h3
@@ -354,10 +318,10 @@ lemma clearPoly_eq_of_large (a : ℕ → ℤ)
     rw [h1]
     refine Finset.prod_le_prod (fun i _ => Nat.zero_le _) (fun i hi => ?_)
     have hi' : i < N + 1 := Finset.mem_range.mp hi
-    exact Nat.sub_le_sub_left (by omega) m
+    exact Nat.sub_le_sub_left (by lia) m
   have hkey : m ^ (N + 1) ≤ 2 ^ (N + 1) * (m - N) ^ (N + 1) := by
     rw [← mul_pow]
-    exact pow_le_pow_left₀ (Nat.zero_le _) (by omega) (N + 1)
+    exact pow_le_pow_left₀ (Nat.zero_le _) (by lia) (N + 1)
   have hcomb : m ^ (N + 1) ≤
       2 ^ (N + 1) * (((Finset.range (N + 1)).lcm fun i => m - i) * N ^ (N * (N + 1))) :=
     le_trans hkey (le_trans (mul_le_mul_right hconsec _) (mul_le_mul_right hprod _))
@@ -411,7 +375,7 @@ lemma clearPoly_eq_of_large (a : ℕ → ℤ)
     rwa [h'] at h
   rw [pow_succ (m : ℤ) N, mul_comm (((2 ^ (N + 1) * N ^ (N * (N + 1)) *
       (C + denomProd q N * C₁) : ℕ) : ℤ)) ((m : ℤ) ^ N)] at hfinal
-  have hmpos : (0 : ℤ) < (m : ℤ) ^ N := pow_pos (by exact_mod_cast (by omega : 0 < m)) N
+  have hmpos : (0 : ℤ) < (m : ℤ) ^ N := pow_pos (by exact_mod_cast (by lia : 0 < m)) N
   have hmle : (m : ℤ) ≤
       ((2 ^ (N + 1) * N ^ (N * (N + 1)) * (C + denomProd q N * C₁) : ℕ) : ℤ) :=
     (mul_le_mul_iff_right₀ hmpos).mp hfinal
@@ -436,7 +400,7 @@ lemma clearPoly_eq_all (a : ℕ → ℤ)
   have hM : ∃ M : ℕ, 2 * N < M ∧
       2 ^ (N + 1) * N ^ (N * (N + 1)) * (C + denomProd q N * C₁) < M ∧ z < M - n :=
     ⟨n + z + 2 ^ (N + 1) * N ^ (N * (N + 1)) * (C + denomProd q N * C₁) + 2 * N + 1,
-      by omega⟩
+      by lia⟩
   obtain ⟨M, hM2N, hMB, hMlt⟩ := hM
   have hMeq := clearPoly_eq_of_large a hdiv hqN hqval hC hC₁ M hM2N hMB
   have h1 : ((M : ℤ) - (n : ℤ)) ∣
@@ -452,7 +416,7 @@ lemma clearPoly_eq_all (a : ℕ → ℤ)
     rw [hMeq, hZn]; ring
   rw [heq] at h3
   have h5 : ((M : ℤ) - (n : ℤ)) ∣ Zn := dvd_neg.mp h3
-  have hMn : ((M - n : ℕ) : ℤ) = (M : ℤ) - (n : ℤ) := Nat.cast_sub (by omega : n ≤ M)
+  have hMn : ((M - n : ℕ) : ℤ) = (M : ℤ) - (n : ℤ) := Nat.cast_sub (by lia : n ≤ M)
   rw [← hMn] at h5
   have h6 : (M - n) ∣ z := by
     have h := (Int.natAbs_dvd_natAbs).mpr h5

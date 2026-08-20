@@ -103,13 +103,13 @@ theorem fiber_card_le_two {n : ℕ} {f : Fin n → Fin n → Link} (hf : Valid f
       ((hsymm w₂ v).trans hw₂.2) (hsymm w₂ w₁) rfl
       (Ne.symm e12) (Ne.symm e23) (Ne.symm e23')
     have := hmax w₂
-    omega
+    lia
   · -- Then `w₁` has all three link types.
     have hle := three_le_card_colorsAt (Ne.symm hw₁.1) (Ne.symm d12) (Ne.symm d13)
       ((hsymm w₁ v).trans hw₁.2) rfl rfl
       (Ne.symm e12) (Ne.symm e13) hxy
     have := hmax w₁
-    omega
+    lia
 
 /-- Every town is directly linked to at most four other towns:
 at most two link types, at most two links of each type. -/
@@ -181,7 +181,7 @@ theorem pair_edgeIdx :
 theorem mkColor_eq {f : Fin 5 → Fin 5 → Link} (hsymm : ∀ i j, f i j = f j i)
     {i j : Fin 5} (hij : i ≠ j) :
     mkColor (fun k ↦ f (pair k).1 (pair k).2) i j = f i j := by
-  simp only [mkColor, if_neg hij]
+  simp only [mkColor, ite_eq_right hij]
   rcases pair_edgeIdx i j hij with e | e
   · rw [e]
   · rw [e]
@@ -269,7 +269,7 @@ theorem edgeIdx_symm : ∀ i j : Fin 5, edgeIdx i j = edgeIdx j i := by
 
 theorem mkColor_apply (u : Fin 10 → Link) {i j : Fin 5} (hij : i ≠ j) :
     mkColor u i j = u (edgeIdx i j) :=
-  if_neg hij
+  ite_eq_right hij
 
 theorem mkColor_symm (u : Fin 10 → Link) (i j : Fin 5) :
     mkColor u i j = mkColor u j i := by
@@ -297,7 +297,7 @@ theorem card_le_two_iff {n : ℕ} {f : Fin n → Fin n → Link} {v : Fin n} :
     obtain ⟨wt, hwt, et⟩ := ht
     have h3 := three_le_card_colorsAt hwa hwb hwt ea eb et
       (by decide) (by decide) (by decide)
-    omega
+    lia
   · intro h
     by_contra hc
     rw [not_le] at hc
@@ -305,7 +305,7 @@ theorem card_le_two_iff {n : ℕ} {f : Fin n → Fin n → Link} {v : Fin n} :
       calc (colorsAt f v).card ≤ Finset.univ.card :=
             Finset.card_le_card (Finset.subset_univ _)
         _ = 3 := by decide
-    have heq3 : (colorsAt f v).card = 3 := by omega
+    have heq3 : (colorsAt f v).card = 3 := by lia
     have huniv : colorsAt f v = Finset.univ := by
       apply Finset.eq_univ_of_card
       rw [heq3]
@@ -580,13 +580,13 @@ problem usa1981_p2 :
   by_contra h
   rw [not_le, show answer = 4 from rfl] at h
   -- `4 < n`; we derive a contradiction.
-  rcases (show n = 5 ∨ 6 ≤ n by omega) with h5 | h6
+  rcases (show n = 5 ∨ 6 ≤ n by lia) with h5 | h6
   · subst h5
     exact not_valid_five hf
-  · have v : Fin n := ⟨0, by omega⟩
+  · have v : Fin n := ⟨0, by lia⟩
     have h4 := card_neighbors_le_four hf v
     rw [card_filter_ne v] at h4
-    omega
+    lia
 
 end Usa1981P2
 

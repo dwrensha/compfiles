@@ -59,11 +59,10 @@ theorem key_identity (a b c d : ℝ) (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c
     min (a * d) (c * b) - min (a * c) (b * d) =
       (if b ≤ a then (1 : ℝ) else -1) * (if d ≤ c then (1 : ℝ) else -1) *
         min (min a b * |c - d|) (min c d * |a - b|) := by
-  classical
   by_cases hba : b ≤ a
   · by_cases hdc : d ≤ c
     · -- case b ≤ a, d ≤ c: both signs are +1
-      rw [if_pos hba, if_pos hdc, min_eq_right (mul_le_mul hba hdc hd ha),
+      rw [ite_eq_left hba, ite_eq_left hdc, min_eq_right (mul_le_mul hba hdc hd ha),
         min_eq_right hba, min_eq_right hdc, abs_of_nonneg (sub_nonneg.mpr hdc),
         abs_of_nonneg (sub_nonneg.mpr hba), ← min_sub_sub_right]
       have e : min (a * d - b * d) (c * b - b * d) = min (b * (c - d)) (d * (a - b)) := by
@@ -71,7 +70,7 @@ theorem key_identity (a b c d : ℝ) (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c
       rw [e]; ring
     · -- case b ≤ a, c < d: the signs multiply to −1
       have hcd : c < d := not_le.mp hdc
-      rw [if_pos hba, if_neg hdc]
+      rw [ite_eq_left hba, ite_eq_right hdc]
       have h1 : min (a * d) (c * b) = c * b := by
         apply min_eq_right
         rw [mul_comm a d]
@@ -84,7 +83,7 @@ theorem key_identity (a b c d : ℝ) (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c
   · have hab : a < b := not_le.mp hba
     by_cases hdc : d ≤ c
     · -- case a < b, d ≤ c: the signs multiply to −1
-      rw [if_neg hba, if_pos hdc]
+      rw [ite_eq_right hba, ite_eq_left hdc]
       have h1 : min (a * d) (c * b) = a * d := by
         apply min_eq_left
         rw [mul_comm c b]
@@ -96,7 +95,7 @@ theorem key_identity (a b c d : ℝ) (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c
       rw [e, min_sub_sub_right]; ring
     · -- case a < b, c < d: both signs are −1
       have hcd : c < d := not_le.mp hdc
-      rw [if_neg hba, if_neg hdc]
+      rw [ite_eq_right hba, ite_eq_right hdc]
       have h1 : min (a * c) (b * d) = a * c := min_eq_left (mul_le_mul hab.le hcd.le hc hb)
       rw [h1, min_eq_left hab.le, min_eq_left hcd.le, abs_of_nonpos (sub_nonpos.mpr hcd.le),
         abs_of_nonpos (sub_nonpos.mpr hab.le), ← min_sub_sub_right]
@@ -185,7 +184,6 @@ theorem min_kernel_nonneg {ι : Type*} [DecidableEq ι] (z : ι → ℝ) :
 theorem kernel_nonneg {ι : Type*} [DecidableEq ι] (S : Finset ι) (u w z : ι → ℝ)
     (hu : ∀ i ∈ S, 0 ≤ u i) (hw : ∀ i ∈ S, 0 ≤ w i) :
     0 ≤ ∑ i ∈ S, ∑ j ∈ S, z i * z j * min (u i * w j) (u j * w i) := by
-  classical
   have hsub : S.filter (fun i => 0 < w i) ⊆ S := Finset.filter_subset _ _
   have hvan_i : ∀ i ∈ S, i ∉ S.filter (fun i => 0 < w i) → ∀ j ∈ S,
       z i * z j * min (u i * w j) (u j * w i) = 0 := by

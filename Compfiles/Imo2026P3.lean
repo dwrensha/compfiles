@@ -38,7 +38,6 @@ length of at least c, regardless of Xiang's play.
 
 namespace Imo2026P3
 
-noncomputable section Setup
 
 open scoped BigOperators
 
@@ -77,19 +76,11 @@ def V (n : ℕ) : ℝ :=
     ⨅ B : {B : Finset ℝ // AdmissibleMark n B ∧ Disjoint A.1 B}, L A.1 B.1
 
 snip begin
--- The claimed answer value `V(n) = 2^n / (2^(n+1) - 1)`.
+/-! The claimed answer value `V(n) = 2^n / (2^(n+1) - 1)`. -/
 snip end
-determine answer (n : ℕ) : ℝ := 2 ^ n / (2 ^ (n + 1) - 1)
-
-end Setup
+noncomputable determine answer (n : ℕ) : ℝ := (2 : ℝ) ^ n / ((2 : ℝ) ^ (n + 1) - 1)
 
 snip begin
-
-set_option backward.isDefEq.respectTransparency false
-
-/- Statement formalization adapted from AxiomMath/IMO2026; proof adapted from
-Humanfia's Kimi-K3 solutions (https://github.com/humanfia/imo2026). -/
-
 /-! ## Correctness statements for the definitions
 
 These pin down that the encoded definitions behave as intended. -/
@@ -178,18 +169,10 @@ theorem L_mem_Icc (A B : Finset ℝ)
   -- The first-player share is the sum of a sublist of the sorted pieces.
   have hsub : ∀ (l : List ℝ),
       List.Sublist ((l.zipIdx.filter (fun p => p.2 % 2 = 0)).map (fun p => p.1)) l := by
-    have h2 : ∀ (l : List ℝ) (n : ℕ), (l.zipIdx n).map Prod.fst = l := by
-      intro l n
-      induction l generalizing n with
-      | nil => rfl
-      | cons a l ih =>
-        rw [List.zipIdx_cons, List.map_cons]
-        have : Prod.fst (a, n) = a := rfl
-        rw [this, ih (n + 1)]
     intro l
     have h1 := List.Sublist.map Prod.fst
       (List.filter_sublist (l := l.zipIdx) (p := fun p => p.2 % 2 = 0))
-    rw [h2 l 0] at h1
+    rw [List.zipIdx_map_fst 0 l] at h1
     exact h1
   set P := pieceLengths (A ∪ B) with hP
   set M := P.mergeSort (· ≥ ·) with hM
@@ -208,6 +191,7 @@ theorem L_mem_Icc (A B : Finset ℝ)
   have hL : L A B = ((M.zipIdx.filter (fun p => p.2 % 2 = 0)).map (fun p => p.1)).sum := rfl
   rw [hL]
   exact ⟨hge0, hle1⟩
+
 
 open scoped BigOperators
 
@@ -402,7 +386,7 @@ lemma card_cutsOfLengths (l : List ℝ) (hne : l ≠ [])
     cases l with
     | nil => contradiction
     | cons => simp
-  omega
+  lia
 
 lemma admissible_cutsOfLengths (n : ℕ) (l : List ℝ) (hne : l ≠ [])
     (hpos : ∀ x ∈ l, 0 < x) (hsum : l.sum = 1)
@@ -412,7 +396,7 @@ lemma admissible_cutsOfLengths (n : ℕ) (l : List ℝ) (hne : l ≠ [])
     exact mem_interiorPartialSums_Ioo l hne hpos hsum
       (by simpa [cutsOfLengths] using hz)
   · have hcard := card_cutsOfLengths l hne hpos
-    omega
+    lia
 
 lemma exists_reply_of_refinement (n : ℕ) (A : Finset ℝ) (l : List ℝ)
     (hne : l ≠ []) (hpos : ∀ x ∈ l, 0 < x) (hsum : l.sum = 1)
@@ -442,7 +426,7 @@ lemma exists_reply_of_refinement_length (n : ℕ) (A : Finset ℝ) (l : List ℝ
       L A B = firstPlayerShare l := by
   apply exists_reply_of_refinement n A l hne hpos hsum hsub
   have hcard := card_cutsOfLengths l hne hpos
-  omega
+  lia
 
 lemma exists_reply_of_piece_refinement (n : ℕ) (A : Finset ℝ) (l : List ℝ)
     (hne : l ≠ []) (hpos : ∀ x ∈ l, 0 < x) (hsum : l.sum = 1)
@@ -477,12 +461,12 @@ lemma evenSum_zipIdx_offset' (l : List ℝ) (n m : ℕ) (h : n % 2 = m % 2) :
   | nil => simp
   | cons a l ih =>
     rw [List.zipIdx_cons, List.zipIdx_cons, List.filter_cons, List.filter_cons]
-    have h' : (n + 1) % 2 = (m + 1) % 2 := by omega
+    have h' : (n + 1) % 2 = (m + 1) % 2 := by lia
     by_cases hn : n % 2 = 0
-    · have hm : m % 2 = 0 := by omega
+    · have hm : m % 2 = 0 := by lia
       simp [hn, hm]
       exact ih (n + 1) (m + 1) h'
-    · have hm : ¬ m % 2 = 0 := by omega
+    · have hm : ¬ m % 2 = 0 := by lia
       simp [hn, hm]
       exact ih (n + 1) (m + 1) h'
 
@@ -540,8 +524,8 @@ lemma even_zip_sum_pairDup_aux (xs : List ℝ) (n : ℕ) (hn : n % 2 = 0) :
   induction xs generalizing n with
   | nil => simp [pairDup]
   | cons x xs ih =>
-      have hn2 : (n + 1 + 1) % 2 = 0 := by omega
-      have hn1 : (n + 1) % 2 ≠ 0 := by omega
+      have hn2 : (n + 1 + 1) % 2 = 0 := by lia
+      have hn1 : (n + 1) % 2 ≠ 0 := by lia
       simp [pairDup, List.zipIdx_cons, hn, hn1]
       change ((((pairDup xs).zipIdx (n + 1 + 1)).filter
         (fun p => p.2 % 2 = 0)).map (fun p => p.1)).sum = xs.sum
@@ -558,8 +542,8 @@ lemma odd_zip_sum_pairDup_aux (xs : List ℝ) (n : ℕ) (hn : n % 2 = 1) :
   induction xs generalizing n with
   | nil => simp [pairDup]
   | cons x xs ih =>
-      have hn1 : (n + 1) % 2 = 0 := by omega
-      have hn2 : (n + 1 + 1) % 2 = 1 := by omega
+      have hn1 : (n + 1) % 2 = 0 := by lia
+      have hn2 : (n + 1 + 1) % 2 = 1 := by lia
       simp [pairDup, List.zipIdx_cons, hn, hn1]
       change ((((pairDup xs).zipIdx (n + 1 + 1)).filter
         (fun p => p.2 % 2 = 0)).map (fun p => p.1)).sum = xs.sum
@@ -570,7 +554,7 @@ lemma zip_sum_pairDup_aux (xs : List ℝ) (n : ℕ) :
       = xs.sum := by
   by_cases hn : n % 2 = 0
   · exact even_zip_sum_pairDup_aux xs n hn
-  · have hn' : n % 2 = 1 := by omega
+  · have hn' : n % 2 = 1 := by lia
     exact odd_zip_sum_pairDup_aux xs n hn'
 
 lemma length_pairDup (xs : List ℝ) : (pairDup xs).length = 2 * xs.length := by
@@ -579,7 +563,7 @@ lemma length_pairDup (xs : List ℝ) : (pairDup xs).length = 2 * xs.length := by
   | cons x xs ih =>
       rw [show pairDup (x :: xs) = x :: x :: pairDup xs by rfl]
       simp [ih]
-      omega
+      lia
 
 lemma even_zip_sum_pairs_singleton_pairs (xs ys : List ℝ) (r : ℝ) :
     (((((pairDup xs) ++ r :: pairDup ys).zipIdx).filter
@@ -589,7 +573,7 @@ lemma even_zip_sum_pairs_singleton_pairs (xs ys : List ℝ) (r : ℝ) :
   rw [zip_sum_pairDup_aux]
   have heven : (pairDup xs).length % 2 = 0 := by
     rw [length_pairDup]
-    omega
+    lia
   simp [heven]
   rw [zip_sum_pairDup_aux]
   ring
@@ -668,7 +652,6 @@ lemma pow_two_punch {ι : Type} [Fintype ι] [DecidableEq ι]
     (p : ι → ℕ) (hp : Function.Injective p)
     (s : ι → ℝ) (hs : ∀ i, s i = 1 ∨ s i = -1 ∨ s i = 0) (hne : ∃ i, s i ≠ 0) :
     1 ≤ |∑ i, s i * 2 ^ p i| := by
-  classical
   set supp := univ.filter (fun i => s i ≠ 0) with hsupp
   obtain ⟨i₀, hi₀⟩ := hne
   have hsupp_ne : supp.Nonempty := ⟨i₀, mem_filter.mpr ⟨mem_univ _, hi₀⟩⟩
@@ -721,7 +704,7 @@ lemma pow_two_punch {ι : Type} [Fintype ι] [DecidableEq ι]
       rw [mem_range]
       have hle : p i ≤ p a := hmax i hi.2
       have hne : p i ≠ p a := fun h => hi.1 (hp h)
-      omega
+      lia
     refine (sum_le_sum_of_subset_of_nonneg hsub (fun j _ _ => le_of_lt (hp2_pos j))).trans
       ?_
     rw [geom_two]
@@ -767,7 +750,7 @@ lemma codex_sum_map_div (l : List ℝ) (d : ℝ) :
 lemma codexDenom_pos (n : ℕ) : 0 < codexDenom n := by
   unfold codexDenom
   have hpow : (1 : ℝ) < 2 ^ (n + 1) := by
-    exact one_lt_pow₀ (by norm_num) (by omega)
+    exact one_lt_pow₀ (by norm_num) (by lia)
   linarith
 
 lemma codexDyadicWeights_pos (n : ℕ) :
@@ -854,7 +837,7 @@ theorem sign3_cases (z : ZMod 3) : sign3 z = 0 ∨ sign3 z = 1 ∨ sign3 z = -1 
     · simp [sign3, h0, h1]
 
 theorem sign3_ne_zero {z : ZMod 3} (hz : z ≠ 0) : sign3 z ≠ 0 := by
-  simp only [sign3, hz, if_false]
+  simp only [sign3, hz, ite_false]
   split <;> norm_num
 
 theorem zmod3_cases (z : ZMod 3) : z = 0 ∨ z = 1 ∨ z = -1 := by
@@ -865,7 +848,7 @@ theorem zmod3_cases (z : ZMod 3) : z = 0 ∨ z = 1 ∨ z = -1 := by
     apply Or.inr
     apply ZMod.val_injective 3
     rw [ZMod.val_neg_one]
-    exact ZMod.val_natCast_of_lt (n := 3) (a := 2) (by omega)
+    exact ZMod.val_natCast_of_lt (n := 3) (a := 2) (by lia)
 
 theorem sign3_add_eq_zero {x y : ZMod 3} (h : x + y = 0) :
     sign3 x + sign3 y = 0 := by
@@ -963,7 +946,7 @@ theorem length_pairUp : ∀ l : List α, (pairUp l).length = l.length / 2 := by
   induction l using pairUp.induct with
   | case1 a b t ih =>
       simp only [pairUp, List.length_cons, ih]
-      omega
+      lia
   | case2 l h =>
       cases l with
       | nil => simp [pairUp]
@@ -979,7 +962,7 @@ theorem unpaired_isSome_iff : ∀ l : List α,
   | case1 a b t ih =>
       rw [unpaired, ih]
       simp only [List.length_cons]
-      omega
+      lia
   | case2 l h =>
       cases l with
       | nil => simp [unpaired]
@@ -1109,29 +1092,10 @@ theorem surplus_scale (D : ℝ) : ∀ l : List ℝ,
   | case2 x => simp [surplus]
   | case3 x y t ih => simp [surplus, ih]; ring
 
-theorem map_fst_mergeSort_tagged (l : List (ℝ × ι)) :
-    (l.mergeSort (fun a b => a.1 ≥ b.1)).map Prod.fst =
-      (l.map Prod.fst).mergeSort (· ≥ ·) := by
-  have hperm :
-      List.Perm ((l.mergeSort (fun a b => a.1 ≥ b.1)).map Prod.fst)
-        ((l.map Prod.fst).mergeSort (· ≥ ·)) :=
-    ((List.mergeSort_perm _ _).map _).trans
-      ((List.mergeSort_perm (l.map Prod.fst) (· ≥ ·)).symm)
-  have htag :
-      (l.mergeSort (fun a b : ℝ × ι => a.1 ≥ b.1)).Pairwise
-        (fun a b : ℝ × ι => a.1 ≥ b.1) :=
-    List.pairwise_mergeSort' _ _
-  have hleft : ((l.mergeSort (fun a b => a.1 ≥ b.1)).map Prod.fst).Pairwise (· ≥ ·) :=
-    htag.map Prod.fst (fun _ _ h => h)
-  have hright : ((l.map Prod.fst).mergeSort (· ≥ ·)).Pairwise (· ≥ ·) :=
-    List.pairwise_mergeSort' _ _
-  exact hperm.eq_of_pairwise' hleft hright
-
 theorem sum_sign_labelWeight {ι : Type*} [Fintype ι] [DecidableEq ι]
     (s : ι → ℝ) : ∀ l : List (ℝ × ι),
     (∑ v, s v * labelWeight l v) =
       (l.map (fun z => s z.2 * z.1)).sum := by
-  classical
   intro l
   induction l with
   | nil => simp [labelWeight]
@@ -1148,7 +1112,7 @@ theorem sum_sign_labelWeight {ι : Type*} [Fintype ι] [DecidableEq ι]
               exact Finset.sum_add_distrib
         _ = s z.2 * z.1 + ∑ v, s v * labelWeight t v := by
               congr 1
-              simpa only [mul_ite, mul_zero, Finset.mem_univ, if_true] using
+              simpa only [mul_ite, mul_zero, Finset.mem_univ, ite_true] using
                 (Finset.sum_ite_eq (Finset.univ : Finset ι) z.2
                   (fun v => s v * z.1))
         _ = s z.2 * z.1 + (t.map (fun z => s z.2 * z.1)).sum := by rw [ih]
@@ -1177,7 +1141,6 @@ theorem abstract_even_lower {ι : Type} [Fintype ι] [DecidableEq ι]
     (hlen : l.length < 2 * Fintype.card ι)
     (hweight : ∀ i, labelWeight l i = (2 : ℝ) ^ p i) :
     1 ≤ surplus (l.map Prod.fst) := by
-  classical
   let P := pairUp l
   let src : Fin P.length → ι := fun e => (P.get e).1.2
   let dst : Fin P.length → ι := fun e => (P.get e).2.2
@@ -1187,7 +1150,7 @@ theorem abstract_even_lower {ι : Type} [Fintype ι] [DecidableEq ι]
     simp only [Fintype.card_fin]
     change (pairUp l).length < Fintype.card ι
     rw [length_pairUp]
-    omega
+    lia
   have htotal : ∀ s : ι → ℝ,
       (∑ v, s v * labelWeight l v) =
         ∑ e, (s (src e) * x e + s (dst e) * y e) := by
@@ -1248,7 +1211,6 @@ theorem abstract_lower {ι : Type} [Fintype ι] [DecidableEq ι]
     (hlen : l.length < 2 * Fintype.card ι)
     (hweight : ∀ i, labelWeight l i = (2 : ℝ) ^ p i) :
     1 ≤ surplus (l.map Prod.fst) := by
-  classical
   let P := pairUp l
   let src : Fin P.length → ι := fun e => (P.get e).1.2
   let dst : Fin P.length → ι := fun e => (P.get e).2.2
@@ -1258,7 +1220,7 @@ theorem abstract_lower {ι : Type} [Fintype ι] [DecidableEq ι]
     simp only [Fintype.card_fin]
     change (pairUp l).length < Fintype.card ι
     rw [length_pairUp]
-    omega
+    lia
   obtain ⟨s, hs, hsne, hsedge⟩ :=
     CodexMod3.exists_real_signing src dst hcardP
   let rem : ℝ := (unpaired l).elim 0 (fun z => s z.2 * z.1)
@@ -1428,7 +1390,7 @@ lemma blockIndices_eq_range' (f : ℕ → ℕ) (hf : Monotone f) (N : ℕ) :
         _ = List.range' (f 0)
               ((f N - f 0) + (f (N + 1) - f N)) := by
                 simp
-        _ = List.range' (f 0) (f (N + 1) - f 0) := by congr 2; omega
+        _ = List.range' (f 0) (f (N + 1) - f 0) := by congr 2; lia
 
 lemma map_val_finRange (N : ℕ) :
     (List.finRange N).map (fun i => i.val) = List.range N := by
@@ -1510,18 +1472,18 @@ lemma pieceLengths_eq_indexedDiffs_boundaryPoints (S : Finset ℝ) :
   exact zipWith_tail_diff_eq_indexedDiffs _
 
 def clippedEmbedding {N M : ℕ} (e : Fin (N + 1) ↪o Fin (M + 1)) (j : ℕ) : ℕ :=
-  (e ⟨min j N, by omega⟩).val
+  (e ⟨min j N, by lia⟩).val
 
 lemma clippedEmbedding_mono {N M : ℕ} (e : Fin (N + 1) ↪o Fin (M + 1)) :
     Monotone (clippedEmbedding e) := by
   intro a b hab
   apply e.monotone
   simp only [Fin.mk_le_mk]
-  omega
+  lia
 
 lemma clippedEmbedding_of_le {N M : ℕ} (e : Fin (N + 1) ↪o Fin (M + 1))
     {j : ℕ} (hj : j ≤ N) :
-    clippedEmbedding e j = (e ⟨j, by omega⟩).val := by
+    clippedEmbedding e j = (e ⟨j, by lia⟩).val := by
   simp [clippedEmbedding, Nat.min_eq_left hj]
 
 theorem exists_tagged_piece_refinement {S T : Finset ℝ}
@@ -1554,43 +1516,43 @@ theorem exists_tagged_piece_refinement {S T : Finset ℝ}
     have hri : (e ix).val < r.length := by
       rw [hrLen]
       exact (e ix).isLt
-    rw [List.getD_eq_getElem (hn := by omega),
+    rw [List.getD_eq_getElem (hn := by lia),
       List.getD_eq_getElem (hn := hri)]
     simpa [e] using he₀ ((Fin.castOrderIso hqLen.symm) ix)
-  have hq0 : q.get ⟨0, by omega⟩ = 0 := by simp [q, boundaryPoints]
-  have hr0 : r.get ⟨0, by omega⟩ = 0 := by simp [r, boundaryPoints]
+  have hq0 : q.get ⟨0, by lia⟩ = 0 := by simp [q, boundaryPoints]
+  have hr0 : r.get ⟨0, by lia⟩ = 0 := by simp [r, boundaryPoints]
   have hq0D : q.getD 0 0 = 0 := by simp [q, boundaryPoints]
   have hr0D : r.getD 0 0 = 0 := by simp [r, boundaryPoints]
-  have hqLast : q.get ⟨N, by omega⟩ = 1 := by
+  have hqLast : q.get ⟨N, by lia⟩ = 1 := by
     dsimp [q, N, boundaryPoints]
     simp [Finset.length_sort]
-  have hrLast : r.get ⟨M, by omega⟩ = 1 := by
+  have hrLast : r.get ⟨M, by lia⟩ = 1 := by
     dsimp [r, M, boundaryPoints]
     simp [Finset.length_sort]
   have hrNodup : r.Nodup := by
     exact (boundaryPoints_pairwise T hT).nodup
-  have he0 : e ⟨0, by omega⟩ = ⟨0, by omega⟩ := by
+  have he0 : e ⟨0, by lia⟩ = ⟨0, by lia⟩ := by
     apply Fin.ext
-    let a : Fin r.length := ⟨(e ⟨0, by omega⟩).val, by rw [hrLen]; omega⟩
-    let b : Fin r.length := ⟨0, by omega⟩
-    have hv : r.getD (e ⟨0, by omega⟩).val 0 = r.getD 0 0 := by
-      rw [← he ⟨0, by omega⟩]
+    let a : Fin r.length := ⟨(e ⟨0, by lia⟩).val, by rw [hrLen]; lia⟩
+    let b : Fin r.length := ⟨0, by lia⟩
+    have hv : r.getD (e ⟨0, by lia⟩).val 0 = r.getD 0 0 := by
+      rw [← he ⟨0, by lia⟩]
       rw [hq0D, hr0D]
-    have hra : (e ⟨0, by omega⟩).val < r.length := by rw [hrLen]; omega
-    have hrb : 0 < r.length := by omega
+    have hra : (e ⟨0, by lia⟩).val < r.length := by rw [hrLen]; lia
+    have hrb : 0 < r.length := by lia
     rw [List.getD_eq_getElem (hn := hra), List.getD_eq_getElem (hn := hrb)] at hv
     have hab : a = b := hrNodup.injective_get (by simpa [a, b] using hv)
     simpa [a, b] using congrArg Fin.val hab
-  have heLast : e ⟨N, by omega⟩ = ⟨M, by omega⟩ := by
+  have heLast : e ⟨N, by lia⟩ = ⟨M, by lia⟩ := by
     apply Fin.ext
-    let a : Fin r.length := ⟨(e ⟨N, by omega⟩).val, by rw [hrLen]; omega⟩
-    let b : Fin r.length := ⟨M, by omega⟩
-    have hv : r.getD (e ⟨N, by omega⟩).val 0 = r.getD M 0 := by
-      rw [← he ⟨N, by omega⟩]
+    let a : Fin r.length := ⟨(e ⟨N, by lia⟩).val, by rw [hrLen]; lia⟩
+    let b : Fin r.length := ⟨M, by lia⟩
+    have hv : r.getD (e ⟨N, by lia⟩).val 0 = r.getD M 0 := by
+      rw [← he ⟨N, by lia⟩]
       rw [List.getD_eq_getElem, List.getD_eq_getElem]
       simpa using hqLast.trans hrLast.symm
-    have hra : (e ⟨N, by omega⟩).val < r.length := by rw [hrLen]; omega
-    have hrb : M < r.length := by omega
+    have hra : (e ⟨N, by lia⟩).val < r.length := by rw [hrLen]; lia
+    have hrb : M < r.length := by lia
     rw [List.getD_eq_getElem (hn := hra), List.getD_eq_getElem (hn := hrb)] at hv
     have hab : a = b := hrNodup.injective_get (by simpa [a, b] using hv)
     simpa [a, b] using congrArg Fin.val hab
@@ -1599,11 +1561,11 @@ theorem exists_tagged_piece_refinement {S T : Finset ℝ}
   let l : List (ℝ × Fin N) := taggedBlocks (intervalBlock rv F)
   have hFmono : Monotone F := clippedEmbedding_mono e
   have hF0 : F 0 = 0 := by
-    rw [show F 0 = (e ⟨0, by omega⟩).val by
+    rw [show F 0 = (e ⟨0, by lia⟩).val by
       exact clippedEmbedding_of_le e (Nat.zero_le N)]
     rw [he0]
   have hFN : F N = M := by
-    rw [show F N = (e ⟨N, by omega⟩).val by
+    rw [show F N = (e ⟨N, by lia⟩).val by
       exact clippedEmbedding_of_le e (le_rfl)]
     rw [heLast]
   refine ⟨l, ?_, ?_⟩
@@ -1626,21 +1588,21 @@ theorem exists_tagged_piece_refinement {S T : Finset ℝ}
     rw [intervalBlock_sum rv F i (hFmono (Nat.le_succ i.val))]
     have hi : i.val ≤ N := Nat.le_of_lt i.isLt
     have his : i.val + 1 ≤ N := i.isLt
-    have hFi : F i.val = (e ⟨i.val, by omega⟩).val :=
+    have hFi : F i.val = (e ⟨i.val, by lia⟩).val :=
       clippedEmbedding_of_le e hi
-    have hFis : F (i.val + 1) = (e ⟨i.val + 1, by omega⟩).val :=
+    have hFis : F (i.val + 1) = (e ⟨i.val + 1, by lia⟩).val :=
       clippedEmbedding_of_le e his
     rw [hFi, hFis]
     unfold rv
-    change r.getD (e ⟨i.val + 1, by omega⟩).val 0 -
-        r.getD (e ⟨i.val, by omega⟩).val 0 =
+    change r.getD (e ⟨i.val + 1, by lia⟩).val 0 -
+        r.getD (e ⟨i.val, by lia⟩).val 0 =
       (pieceLengths S).getD i.val 0
-    rw [← he ⟨i.val + 1, by omega⟩, ← he ⟨i.val, by omega⟩]
+    rw [← he ⟨i.val + 1, by lia⟩, ← he ⟨i.val, by lia⟩]
     rw [pieceLengths_eq_indexedDiffs_boundaryPoints]
     dsimp [q]
     have hiq : i.val < (boundaryPoints S).length - 1 := by
       rw [boundaryPoints_length]
-      omega
+      lia
     rw [indexedDiffs_getD _ hiq]
 
 
@@ -1652,7 +1614,7 @@ lemma codexLowerCuts_card (n : ℕ) : (codexLowerCuts n).card = n := by
     (codexDyadicWeights_ne_nil n) (codexDyadicWeights_pos n)
   have h' : (codexLowerCuts n).card + 1 = n + 1 := by
     simpa [codexLowerCuts, codexDyadicWeights_length] using h
-  omega
+  lia
 
 lemma codexLowerCuts_piece_getD (n : ℕ) (i : Fin (n + 1)) :
     (pieceLengths (codexLowerCuts n)).getD i.val 0 =
@@ -1679,7 +1641,7 @@ theorem codex_lower_bound_complete (n : ℕ) (_hn : 0 < n) :
     exact Set.union_subset hA.1 hB.1
   obtain ⟨l, hlmap, hlweight⟩ := exists_tagged_piece_refinement
     (S := A) (T := T) (Finset.subset_union_left) hA.1 hT
-  have hAcard : A.card = n := by exact codexLowerCuts_card n
+  have hAcard : A.card = n := codexLowerCuts_card n
   let D := codexDenom n
   let ls := l.mergeSort (fun a b : ℝ × Fin (A.card + 1) => a.1 ≥ b.1)
   let scaled := ls.map fun z => (D * z.1, z.2)
@@ -1709,7 +1671,7 @@ theorem codex_lower_bound_complete (n : ℕ) (_hn : 0 < n) :
     simp only [scaled, List.length_map, ls, List.length_mergeSort, Fintype.card_fin]
     rw [hlenL, hTcard]
     have hBcard : B.card ≤ n := hB.2
-    omega
+    lia
   have hscaledWeight : ∀ i : Fin (A.card + 1),
       labelWeight scaled i = (2 : ℝ) ^ i.val := by
     intro i
@@ -1718,7 +1680,7 @@ theorem codex_lower_bound_complete (n : ℕ) (_hn : 0 < n) :
     rw [show labelWeight ls i = labelWeight l i by
       exact labelWeight_perm (List.mergeSort_perm l _) i]
     rw [hlweight]
-    have hi' : i.val < n + 1 := by omega
+    have hi' : i.val < n + 1 := by lia
     let j : Fin (n + 1) := ⟨i.val, hi'⟩
     rw [show (pieceLengths A).getD i.val 0 =
         (2 : ℝ) ^ i.val / D by
@@ -1731,7 +1693,7 @@ theorem codex_lower_bound_complete (n : ℕ) (_hn : 0 < n) :
       (pieceLengths T).mergeSort (· ≥ ·) := by
     calc
       ls.map Prod.fst = (l.map Prod.fst).mergeSort (· ≥ ·) := by
-        exact map_fst_mergeSort_tagged l
+        exact List.map_mergeSort fun _ _ _ => congrFun rfl
       _ = (pieceLengths T).mergeSort (· ≥ ·) := by rw [hlmap]
   have hscaledMap : scaled.map Prod.fst =
       ((pieceLengths T).mergeSort (· ≥ ·)).map (fun x => D * x) := by
@@ -1889,7 +1851,7 @@ lemma exists_bisect_reply (n : ℕ) (A : Finset ℝ)
       rw [bisectLengths_length]
       dsimp [p]
       rw [pieceLengths_length]
-      omega)
+      lia)
   refine ⟨B, hBadm, hdisj, ?_⟩
   rw [hL, firstPlayerShare_bisectLengths, hpsum]
 
@@ -1936,7 +1898,6 @@ theorem exists_close_pair_of_finite {α : Type*} [Fintype α]
     (h0 : ∀ a, 0 ≤ f a) (h1 : ∀ a, f a ≤ 1) :
     ∃ a b, a ≠ b ∧
       |f a - f b| ≤ 1 / ((Fintype.card α : ℝ) - 1) := by
-  classical
   by_cases hf : Function.Injective f
   · let _ : LinearOrder α := LinearOrder.lift' f hf
     let s : List α := Finset.univ.sort (· ≤ ·)
@@ -1953,10 +1914,10 @@ theorem exists_close_pair_of_finite {α : Type*} [Fintype α]
     | nil =>
       simp [hs] at hslen
       exfalso
-      omega
+      lia
     | cons a t =>
       cases ht : t with
-      | nil => simp [hs, ht] at hslen; omega
+      | nil => simp [hs, ht] at hslen; lia
       | cons b u =>
         have hsform : s = a :: b :: u := by simp [hs, ht]
         let p : List (α × α) := (a :: b :: u).zip (b :: u)
@@ -1983,10 +1944,10 @@ theorem exists_close_pair_of_finite {α : Type*} [Fintype α]
           simp only [List.headD_cons] at htel
           rw [htel]
           linarith [h0 a, h1 ((a :: b :: u).getLastD a)]
-        have hden_nat : 1 ≤ Fintype.card α := by omega
+        have hden_nat : 1 ≤ Fintype.card α := by lia
         have hden_pos : 0 < (Fintype.card α : ℝ) - 1 := by
           have hc : (1 : ℝ) < Fintype.card α := by
-            exact_mod_cast (show 1 < Fintype.card α by omega)
+            exact_mod_cast (show 1 < Fintype.card α by lia)
           linarith
         have hconst_sum :
             (p.map (fun _ => 1 / ((Fintype.card α : ℝ) - 1))).sum = 1 := by
@@ -2010,7 +1971,7 @@ theorem exists_close_pair_of_finite {α : Type*} [Fintype α]
     refine ⟨a, b, hne, ?_⟩
     rw [hab, sub_self, abs_zero]
     have hc : (1 : ℝ) < Fintype.card α := by
-      exact_mod_cast (show 1 < Fintype.card α by omega)
+      exact_mod_cast (show 1 < Fintype.card α by lia)
     positivity
 
 theorem exists_disjoint_subset_sums_close (m : ℕ) (hm : 0 < m)
@@ -2018,11 +1979,10 @@ theorem exists_disjoint_subset_sums_close (m : ℕ) (hm : 0 < m)
     ∃ I J : Finset (Fin m), Disjoint I J ∧ (I ∪ J).Nonempty ∧
       0 ≤ (∑ i ∈ I, a i) - ∑ j ∈ J, a j ∧
       (∑ i ∈ I, a i) - ∑ j ∈ J, a j ≤ 1 / ((2 : ℝ) ^ m - 1) := by
-  classical
   have hcard : 2 ≤ Fintype.card (Finset (Fin m)) := by
     simp only [Fintype.card_finset, Fintype.card_fin]
     have hpow : 2 ^ 1 ≤ 2 ^ m :=
-      Nat.pow_le_pow_right (by omega) (by omega)
+      Nat.pow_le_pow_right (by lia) (by lia)
     simpa using hpow
   have hsum0 : ∀ I : Finset (Fin m), 0 ≤ ∑ i ∈ I, a i := by
     intro I
@@ -2041,12 +2001,7 @@ theorem exists_disjoint_subset_sums_close (m : ℕ) (hm : 0 < m)
       Nat.cast_ofNat] using hABclose
   let I₀ := A \ B
   let J₀ := B \ A
-  have hdisj : Disjoint I₀ J₀ := by
-    rw [Finset.disjoint_left]
-    intro x hxI hxJ
-    simp only [I₀, Finset.mem_sdiff] at hxI
-    simp only [J₀, Finset.mem_sdiff] at hxJ
-    exact hxI.2 hxJ.1
+  have hdisj : Disjoint I₀ J₀ := disjoint_sdiff_sdiff
   have hnonempty : (I₀ ∪ J₀).Nonempty := by
     by_contra h
     rw [Finset.not_nonempty_iff_eq_empty, Finset.union_eq_empty] at h
@@ -2056,12 +2011,8 @@ theorem exists_disjoint_subset_sums_close (m : ℕ) (hm : 0 < m)
     · exact Finset.sdiff_eq_empty_iff_subset.mp (by simpa [J₀] using h.2)
   have hdiff :
       (∑ i ∈ I₀, a i) - ∑ j ∈ J₀, a j =
-        (∑ i ∈ A, a i) - ∑ j ∈ B, a j := by
-    have hA := Finset.sum_inter_add_sum_sdiff A B a
-    have hB := Finset.sum_inter_add_sum_sdiff B A a
-    rw [Finset.inter_comm B A] at hB
-    dsimp [I₀, J₀]
-    linarith
+        (∑ i ∈ A, a i) - ∑ j ∈ B, a j :=
+    Finset.sum_sdiff_sub_sum_sdiff
   by_cases horient : (∑ j ∈ B, a j) ≤ ∑ i ∈ A, a i
   · refine ⟨I₀, J₀, hdisj, hnonempty, ?_, ?_⟩
     · rw [hdiff]
@@ -2231,20 +2182,8 @@ noncomputable def commonAtoms : List ℝ → List ℝ → List ℝ
       else
         y :: commonAtoms ((x - y) :: xs) ys
 termination_by xs ys => xs.length + ys.length
-decreasing_by all_goals simp_all <;> omega
+decreasing_by all_goals simp_all <;> lia
 
-lemma sum_pos_of_all_pos {l : List ℝ} (hne : l ≠ [])
-    (hpos : ∀ x ∈ l, 0 < x) : 0 < l.sum := by
-  cases l with
-  | nil => contradiction
-  | cons x xs =>
-      have hx : 0 < x := hpos x List.mem_cons_self
-      have hxs : 0 ≤ xs.sum := List.sum_nonneg fun z hz =>
-        (hpos z (List.mem_cons_of_mem _ hz)).le
-      simp only [List.sum_cons]
-      linarith
-
-set_option maxHeartbeats 1000000 in
 theorem commonAtoms_spec (xs ys : List ℝ)
     (hxpos : ∀ x ∈ xs, 0 < x) (hypos : ∀ y ∈ ys, 0 < y)
     (hsum : xs.sum = ys.sum) :
@@ -2255,7 +2194,7 @@ theorem commonAtoms_spec (xs ys : List ℝ)
   | nil =>
       have hys : ys = [] := by
         by_contra hne
-        have hp := sum_pos_of_all_pos hne hypos
+        have hp := List.sum_pos ys hypos hne
         simp at hsum
         linarith
       subst ys
@@ -2264,7 +2203,7 @@ theorem commonAtoms_spec (xs ys : List ℝ)
       cases ys with
       | nil =>
           have hxs : (x :: xt).sum > 0 :=
-            sum_pos_of_all_pos (by simp) hxpos
+            List.sum_pos (x :: xt) hxpos (by simp)
           have hz : (x :: xt).sum = 0 := by simpa using hsum
           exact (ne_of_gt hxs hz).elim
       | cons y yt =>
@@ -2288,7 +2227,7 @@ theorem commonAtoms_spec (xs ys : List ℝ)
             · simp [commonAtoms, ih.2.1]
             · simp [commonAtoms]
               have hlen := ih.2.2
-              omega
+              lia
           · by_cases hlt : x < y
             · have hdiff : 0 < y - x := sub_pos.mpr hlt
               have hnewpos : ∀ z ∈ (y - x) :: yt, 0 < z := by
@@ -2310,7 +2249,7 @@ theorem commonAtoms_spec (xs ys : List ℝ)
               · simp [commonAtoms, heq, hlt]
                 have hlen := ih.2.2
                 simp only [List.length_cons] at hlen
-                omega
+                lia
             · have hyx : y < x := lt_of_le_of_ne (le_of_not_gt hlt) (Ne.symm heq)
               have hdiff : 0 < x - y := sub_pos.mpr hyx
               have hnewpos : ∀ z ∈ (x - y) :: xt, 0 < z := by
@@ -2334,9 +2273,19 @@ theorem commonAtoms_spec (xs ys : List ℝ)
               · simp [commonAtoms, heq, hlt]
                 have hlen := ih.2.2
                 simp only [List.length_cons] at hlen
-                omega
+                lia
 termination_by xs.length + ys.length
-decreasing_by all_goals simp_all <;> omega
+decreasing_by
+  · rename_i hxs _ hys _ _ _
+    subst hxs hys
+    simp
+    lia
+  · rename_i hxs _ hys
+    subst hxs hys
+    simp
+  · rename_i hxs _ hys
+    subst hxs hys
+    simp
 
 def ScanRefines (coarse fine : List ℝ) : Prop :=
   ∀ a z, z ∈ coarse.scanl (· + ·) a → z ∈ fine.scanl (· + ·) a
@@ -2363,7 +2312,6 @@ lemma ScanRefines.absorb_left {d : ℝ} {coarse fine : List ℝ}
     apply List.mem_cons_of_mem
     simpa only [add_assoc] using hz
 
-set_option maxHeartbeats 1000000 in
 theorem commonAtoms_scanRefines (xs ys : List ℝ)
     (hxpos : ∀ x ∈ xs, 0 < x) (hypos : ∀ y ∈ ys, 0 < y)
     (hsum : xs.sum = ys.sum) :
@@ -2373,7 +2321,7 @@ theorem commonAtoms_scanRefines (xs ys : List ℝ)
   | nil =>
       have hys : ys = [] := by
         by_contra hne
-        have hp := sum_pos_of_all_pos hne hypos
+        have hp := List.sum_pos ys hypos hne
         simp at hsum
         linarith
       subst ys
@@ -2382,7 +2330,7 @@ theorem commonAtoms_scanRefines (xs ys : List ℝ)
       cases ys with
       | nil =>
           have hxs : (x :: xt).sum > 0 :=
-            sum_pos_of_all_pos (by simp) hxpos
+            List.sum_pos (x :: xt) hxpos (by simp)
           have hz : (x :: xt).sum = 0 := by simpa using hsum
           exact (ne_of_gt hxs hz).elim
       | cons y yt =>
@@ -2441,7 +2389,7 @@ theorem commonAtoms_scanRefines (xs ys : List ℝ)
                   (y :: commonAtoms (d :: xt) yt) := ih.2.cons_same y
               simpa [commonAtoms, heq, hlt, d] using And.intro hleft hright
 termination_by xs.length + ys.length
-decreasing_by all_goals simp_all <;> omega
+decreasing_by all_goals simp_all <;> lia
 
 
 open scoped BigOperators List
@@ -2493,36 +2441,36 @@ theorem exists_blocks_of_scanRefines (coarse fine : List ℝ)
     have hlast := scanl_last_eq_sum coarse 0 (by simp)
     rw [List.getLast_eq_getElem] at hlast
     simp only [zero_add] at hlast
-    rw [List.getD_eq_getElem (hn := by rw [hqLen]; omega)]
+    rw [List.getD_eq_getElem (hn := by rw [hqLen]; lia)]
     convert hlast using 1; simp [q, N]
   have hrLastD : r.getD M 0 = fine.sum := by
     have hlast := scanl_last_eq_sum fine 0 (by simp)
     rw [List.getLast_eq_getElem] at hlast
     simp only [zero_add] at hlast
-    rw [List.getD_eq_getElem (hn := by rw [hrLen]; omega)]
+    rw [List.getD_eq_getElem (hn := by rw [hrLen]; lia)]
     convert hlast using 1; simp [r, M]
   have hrNodup : r.Nodup := by
     dsimp [r]
     exact (pairwise_scanl_lt fine 0 hfpos).nodup
-  have he0 : e ⟨0, by omega⟩ = ⟨0, by omega⟩ := by
+  have he0 : e ⟨0, by lia⟩ = ⟨0, by lia⟩ := by
     apply Fin.ext
-    let a : Fin r.length := ⟨(e ⟨0, by omega⟩).val, by rw [hrLen]; omega⟩
-    let b : Fin r.length := ⟨0, by rw [hrLen]; omega⟩
-    have hv : r.getD (e ⟨0, by omega⟩).val 0 = r.getD 0 0 := by
-      rw [← he ⟨0, by omega⟩, hq0D, hr0D]
-    have hra : (e ⟨0, by omega⟩).val < r.length := by rw [hrLen]; omega
-    have hrb : 0 < r.length := by rw [hrLen]; omega
+    let a : Fin r.length := ⟨(e ⟨0, by lia⟩).val, by rw [hrLen]; lia⟩
+    let b : Fin r.length := ⟨0, by rw [hrLen]; lia⟩
+    have hv : r.getD (e ⟨0, by lia⟩).val 0 = r.getD 0 0 := by
+      rw [← he ⟨0, by lia⟩, hq0D, hr0D]
+    have hra : (e ⟨0, by lia⟩).val < r.length := by rw [hrLen]; lia
+    have hrb : 0 < r.length := by rw [hrLen]; lia
     rw [List.getD_eq_getElem (hn := hra), List.getD_eq_getElem (hn := hrb)] at hv
     have hab : a = b := hrNodup.injective_get (by simpa [a, b] using hv)
     simpa [a, b] using congrArg Fin.val hab
-  have heLast : e ⟨N, by omega⟩ = ⟨M, by omega⟩ := by
+  have heLast : e ⟨N, by lia⟩ = ⟨M, by lia⟩ := by
     apply Fin.ext
-    let a : Fin r.length := ⟨(e ⟨N, by omega⟩).val, by rw [hrLen]; omega⟩
-    let b : Fin r.length := ⟨M, by rw [hrLen]; omega⟩
-    have hv : r.getD (e ⟨N, by omega⟩).val 0 = r.getD M 0 := by
-      rw [← he ⟨N, by omega⟩, hqLastD, hrLastD, hsum]
-    have hra : (e ⟨N, by omega⟩).val < r.length := by rw [hrLen]; omega
-    have hrb : M < r.length := by rw [hrLen]; omega
+    let a : Fin r.length := ⟨(e ⟨N, by lia⟩).val, by rw [hrLen]; lia⟩
+    let b : Fin r.length := ⟨M, by rw [hrLen]; lia⟩
+    have hv : r.getD (e ⟨N, by lia⟩).val 0 = r.getD M 0 := by
+      rw [← he ⟨N, by lia⟩, hqLastD, hrLastD, hsum]
+    have hra : (e ⟨N, by lia⟩).val < r.length := by rw [hrLen]; lia
+    have hrb : M < r.length := by rw [hrLen]; lia
     rw [List.getD_eq_getElem (hn := hra), List.getD_eq_getElem (hn := hrb)] at hv
     have hab : a = b := hrNodup.injective_get (by simpa [a, b] using hv)
     simpa [a, b] using congrArg Fin.val hab
@@ -2531,11 +2479,11 @@ theorem exists_blocks_of_scanRefines (coarse fine : List ℝ)
   let b : Fin N → List ℝ := intervalBlock rv F
   have hFmono : Monotone F := clippedEmbedding_mono e
   have hF0 : F 0 = 0 := by
-    rw [show F 0 = (e ⟨0, by omega⟩).val by
+    rw [show F 0 = (e ⟨0, by lia⟩).val by
       exact clippedEmbedding_of_le e (Nat.zero_le N)]
     rw [he0]
   have hFN : F N = M := by
-    rw [show F N = (e ⟨N, by omega⟩).val by
+    rw [show F N = (e ⟨N, by lia⟩).val by
       exact clippedEmbedding_of_le e (le_rfl)]
     rw [heLast]
   have hflat : flattenFinBlocks b = fine := by
@@ -2559,14 +2507,14 @@ theorem exists_blocks_of_scanRefines (coarse fine : List ℝ)
     rw [intervalBlock_sum rv F i (hFmono (Nat.le_succ i.val))]
     have hi : i.val ≤ N := Nat.le_of_lt i.isLt
     have his : i.val + 1 ≤ N := i.isLt
-    have hFi : F i.val = (e ⟨i.val, by omega⟩).val :=
+    have hFi : F i.val = (e ⟨i.val, by lia⟩).val :=
       clippedEmbedding_of_le e hi
-    have hFis : F (i.val + 1) = (e ⟨i.val + 1, by omega⟩).val :=
+    have hFis : F (i.val + 1) = (e ⟨i.val + 1, by lia⟩).val :=
       clippedEmbedding_of_le e his
     rw [hFi, hFis]
     unfold rv
-    rw [← he ⟨i.val + 1, by omega⟩, ← he ⟨i.val, by omega⟩]
-    have hiq : i.val < q.length - 1 := by rw [hqLen]; omega
+    rw [← he ⟨i.val + 1, by lia⟩, ← he ⟨i.val, by lia⟩]
+    have hiq : i.val < q.length - 1 := by rw [hqLen]; lia
     rw [← indexedDiffs_getD q hiq]
     rw [show indexedDiffs q = coarse by
       dsimp [q]
@@ -2577,16 +2525,16 @@ theorem exists_blocks_of_scanRefines (coarse fine : List ℝ)
     intro i hnil
     have hi : i.val ≤ N := Nat.le_of_lt i.isLt
     have his : i.val + 1 ≤ N := i.isLt
-    have hFi : F i.val = (e ⟨i.val, by omega⟩).val :=
+    have hFi : F i.val = (e ⟨i.val, by lia⟩).val :=
       clippedEmbedding_of_le e hi
-    have hFis : F (i.val + 1) = (e ⟨i.val + 1, by omega⟩).val :=
+    have hFis : F (i.val + 1) = (e ⟨i.val + 1, by lia⟩).val :=
       clippedEmbedding_of_le e his
     have hlt : F i.val < F (i.val + 1) := by
       rw [hFi, hFis]
       exact e.strictMono (by simp)
     have hlen := congrArg List.length hnil
     simp [b, intervalBlock] at hlen
-    omega
+    lia
   have hbpos : ∀ i, ∀ x ∈ b i, 0 < x := by
     intro i x hx
     apply hfpos x
@@ -3085,7 +3033,7 @@ noncomputable def prefixRefinementBlocks (pre : List ℝ) (x : ℝ)
     (bm : Fin (pre ++ [t]).length → List ℝ) :
     Fin (pre ++ x :: post).length → List ℝ := fun i =>
   if hpre : i.val < pre.length then
-    bm ⟨i.val, by simp; omega⟩
+    bm ⟨i.val, by simp; lia⟩
   else if hcross : i.val = pre.length then
     bm ⟨pre.length, by simp⟩ ++ residualList rho
   else
@@ -3097,9 +3045,9 @@ lemma prefixRefinementBlocks_ne_nil (pre : List ℝ) (x : ℝ)
     ∀ i, prefixRefinementBlocks pre x post t rho bm i ≠ [] := by
   intro i
   by_cases hpre : i.val < pre.length
-  · simpa [prefixRefinementBlocks, hpre] using hbm ⟨i.val, by simp; omega⟩
+  · simpa [prefixRefinementBlocks, hpre] using hbm ⟨i.val, by simp; lia⟩
   · by_cases hcross : i.val = pre.length
-    · rw [prefixRefinementBlocks, dif_neg hpre, dif_pos hcross]
+    · rw [prefixRefinementBlocks, dite_eq_right hpre, dite_eq_left hcross]
       exact List.append_ne_nil_of_left_ne_nil (hbm ⟨pre.length, by simp⟩)
         (residualList rho)
     · simp [prefixRefinementBlocks, hpre, hcross]
@@ -3112,10 +3060,10 @@ lemma prefixRefinementBlocks_pos (pre : List ℝ) (x : ℝ)
     ∀ i, ∀ z ∈ prefixRefinementBlocks pre x post t rho bm i, 0 < z := by
   intro i z hz
   by_cases hpre : i.val < pre.length
-  · exact hbm ⟨i.val, by simp; omega⟩ z (by
+  · exact hbm ⟨i.val, by simp; lia⟩ z (by
       simpa [prefixRefinementBlocks, hpre] using hz)
   · by_cases hcross : i.val = pre.length
-    · rw [prefixRefinementBlocks, dif_neg hpre, dif_pos hcross] at hz
+    · rw [prefixRefinementBlocks, dite_eq_right hpre, dite_eq_left hcross] at hz
       rw [List.mem_append] at hz
       rcases hz with hz | hz
       · exact hbm ⟨pre.length, by simp⟩ z hz
@@ -3138,7 +3086,7 @@ lemma prefixRefinementBlocks_sum (pre : List ℝ) (x : ℝ)
     rw [List.get_eq_getElem, List.get_eq_getElem,
       List.getElem_append_left hpre, List.getElem_append_left hpre]
   · by_cases hcross : i.val = pre.length
-    · rw [prefixRefinementBlocks, dif_neg hpre, dif_pos hcross,
+    · rw [prefixRefinementBlocks, dite_eq_right hpre, dite_eq_left hcross,
         List.sum_append, residualList_sum, hbmsum]
       have hiEq : i = ⟨pre.length, by simp⟩ := Fin.ext hcross
       subst i
@@ -3173,7 +3121,7 @@ noncomputable def prefixFlattenBlocks (pre : List ℝ) (x : ℝ)
     Fin (pre ++ x :: post).length → List ℝ := fun i =>
   let hlen : (pre ++ x :: post).length = (pre.length + 1) + post.length := by
     simp only [List.length_append, List.length_cons]
-    omega
+    lia
   let k : Fin ((pre.length + 1) + post.length) := Fin.cast hlen i
   Fin.append
     (appendToLast (n := pre.length) bm (residualList rho))
@@ -3193,15 +3141,15 @@ lemma prefixRefinementBlocks_eq_prefixFlattenBlocks (pre : List ℝ) (x : ℝ)
     · split <;> rename_i hlast
       · have hv := congrArg Fin.val hlast
         simp at hv
-        omega
+        lia
       · congr 2
-    · omega
+    · lia
   · by_cases hcross : i.val = pre.length
     · simp [prefixRefinementBlocks, prefixFlattenBlocks, appendToLast,
         hcross, Fin.append, Fin.addCases]
       split <;> rename_i hlast
       · rw [hlast]
-        have heq : (⟨pre.length, by omega⟩ : Fin (pre.length + 1)) =
+        have heq : (⟨pre.length, by lia⟩ : Fin (pre.length + 1)) =
             Fin.last pre.length := by apply Fin.ext; rfl
         rw [heq]
       · exfalso
@@ -3211,19 +3159,19 @@ lemma prefixRefinementBlocks_eq_prefixFlattenBlocks (pre : List ℝ) (x : ℝ)
     · simp [prefixRefinementBlocks, prefixFlattenBlocks, appendToLast, hpre,
         hcross, Fin.append, Fin.addCases]
       split <;> rename_i houter
-      · omega
+      · lia
       · have hiPost : i.val - (pre.length + 1) < post.length := by
           have hi := i.isLt
           simp only [List.length_append, List.length_cons] at hi
-          omega
+          lia
         have hval : (pre ++ x :: post).get i =
             post.get ⟨i.val - (pre.length + 1), hiPost⟩ := by
           rw [List.get_eq_getElem, List.get_eq_getElem]
-          rw [List.getElem_append_right (by omega)]
+          rw [List.getElem_append_right (by lia)]
           have hidx : i.val - pre.length =
-              (i.val - (pre.length + 1)) + 1 := by omega
+              (i.val - (pre.length + 1)) + 1 := by lia
           have hs := List.getElem_cons_succ x post
-            (i.val - (pre.length + 1)) (by simp; omega)
+            (i.val - (pre.length + 1)) (by simp; lia)
           simpa only [hidx] using hs
         have hval' : (pre ++ x :: post)[i.val]'i.isLt =
             post[i.val - (pre.length + 1)]'hiPost := by
@@ -3273,7 +3221,7 @@ lemma finBlocks_prefixFlattenBlocks (pre : List ℝ) (x : ℝ)
   rw [← List.ofFn_eq_map]
   let hlen : (pre ++ x :: post).length = (pre.length + 1) + post.length := by
     simp only [List.length_append, List.length_cons]
-    omega
+    lia
   rw [List.ofFn_congr hlen]
   change List.ofFn (Fin.append
       (appendToLast (n := pre.length) bm (residualList rho))
@@ -3361,7 +3309,7 @@ lemma prefix_local_length (c post : List ℝ) (rho : ℝ) :
     (c ++ residualList rho ++ bisectLengths post ++ c).length =
       2 * c.length + (residualList rho).length + 2 * post.length := by
   simp only [List.length_append, bisectLengths_length]
-  omega
+  lia
 
 lemma prefix_local_length_le (c post : List ℝ) (rho : ℝ)
     (p q : ℕ) (hpq : 0 < p + q) (hc : c.length ≤ p + q - 1) :
@@ -3369,7 +3317,7 @@ lemma prefix_local_length_le (c post : List ℝ) (rho : ℝ)
       2 * (p + q + post.length) - 1 := by
   rw [prefix_local_length]
   have hr := residualList_length_le_one rho
-  omega
+  lia
 
 lemma prefix_global_perm_pairs (c post outside : List ℝ) (rho : ℝ) :
     (c ++ residualList rho ++ bisectLengths post ++ c ++
@@ -3412,7 +3360,7 @@ lemma prefix_global_length (c post outside : List ℝ) (rho : ℝ) :
       2 * c.length + (residualList rho).length +
         2 * post.length + 2 * outside.length := by
   simp only [List.length_append, bisectLengths_length]
-  omega
+  lia
 
 
 open scoped BigOperators List
@@ -3626,7 +3574,7 @@ theorem exists_positive_prefix_data (xs ys : List ℝ)
       simp [matched]
     rw [prefix_local_length]
     simp only [List.length_append, List.length_cons] at ⊢
-    omega
+    lia
   exact ⟨{
     c := c
     post := post
@@ -3710,7 +3658,8 @@ theorem exists_positive_close_refinement (p : List ℝ)
   have hlne : l ≠ [] := flattenFinBlocks_ne_nil b hm hbne
   have hlpos : ∀ z ∈ l, 0 < z := flattenFinBlocks_pos b hbpos
   have hlsum : l.sum = 1 := by
-    rwa [flattenFinBlocks_sum p b hbsum]
+    rw [flattenFinBlocks_sum p b hbsum]
+    exact hpsum
   have hlcuts : cutsOfLengths p ⊆ cutsOfLengths l := by
     exact cutsOfLengths_subset_assembleTwoSelectedBlocks p hpne hppos hpsum
       I J hIJ d.bX d.bY d.bX_ne d.bY_ne d.bX_pos d.bY_pos
@@ -3756,7 +3705,7 @@ theorem exists_positive_close_refinement (p : List ℝ)
             simp only [List.length_append]
       _ ≤ (2 * (xs.length + ys.length) - 1) + 2 * outside.length := by
             exact Nat.add_le_add d.local_length (by rw [bisectLengths_length])
-      _ = 2 * p.length - 1 := by omega
+      _ = 2 * p.length - 1 := by lia
   exact ⟨l, hlne, hlpos, hlsum, hlcuts, hlen, hshare⟩
 
 
@@ -3829,7 +3778,8 @@ theorem exists_singleton_close_refinement (p : List ℝ)
   have hlne : l ≠ [] := flattenFinBlocks_ne_nil b hm hbne
   have hlpos : ∀ z ∈ l, 0 < z := flattenFinBlocks_pos b hbpos
   have hlsum : l.sum = 1 := by
-    rwa [flattenFinBlocks_sum p b hbsum]
+    rw [flattenFinBlocks_sum p b hbsum]
+    exact hpsum
   have hlcuts : cutsOfLengths p ⊆ cutsOfLengths l := by
     exact cutsOfLengths_subset_assembleTwoSelectedBlocks p hpne hppos hpsum
       I J hIJ bI bJ hbINe hbJNe hbIPos hbJPos hbISum hbJSum
@@ -3870,7 +3820,7 @@ theorem exists_singleton_close_refinement (p : List ℝ)
   have hlen : l.length = 2 * p.length - 1 := by
     rw [hcanon.length_eq, List.length_append, bisectLengths_length]
     simp only [List.length_singleton]
-    omega
+    lia
   exact ⟨l, hlne, hlpos, hlsum, hlcuts, hlen, hshare⟩
 
 
@@ -3941,7 +3891,7 @@ open scoped BigOperators List
 lemma upper_denom_pos (n : ℕ) :
     0 < (2 : ℝ) ^ (n + 1) - 1 := by
   have hpow : (1 : ℝ) < 2 ^ (n + 1) :=
-    one_lt_pow₀ (by norm_num) (by omega)
+    one_lt_pow₀ (by norm_num) (by lia)
   linarith
 
 lemma upper_answer_identity (n : ℕ) :
@@ -3976,10 +3926,10 @@ theorem exists_hard_reply (n : ℕ) (A : Finset ℝ)
   obtain ⟨l, hlne, hlpos, hlsum, hlcuts, hllen, hlshare⟩ :=
     exists_close_refinement p hpne hppos hpsum
   have hplen : p.length = n + 1 := by
-    rw [show p.length = A.card + 1 by exact pieceLengths_length A, hcard]
+    rw [pieceLengths_length A, hcard]
   have hreplyLen : l.length ≤ A.card + n + 1 := by
     rw [hplen] at hllen
-    omega
+    lia
   obtain ⟨B, hBadm, hdisj, hL⟩ :=
     exists_reply_of_piece_refinement n A l hlne hlpos hlsum hlcuts hreplyLen
   refine ⟨B, hBadm, hdisj, ?_⟩
@@ -3999,7 +3949,7 @@ theorem codex_upper_bound_aux (n : ℕ) (_hn : 0 < n) :
     rw [hL]
     exact half_le_upper_answer n
   · have hcardle : A.card ≤ n := hA.2
-    have hcard : A.card = n := by omega
+    have hcard : A.card = n := by lia
     exact exists_hard_reply n A hA hcard
 
 /-- Auxiliary form of the lower bound, declared before `V_eq` so that the main
@@ -4036,7 +3986,7 @@ theorem upper_bound (n : ℕ) (hn : 0 < n) :
         L A B ≤ (2 : ℝ) ^ n / ((2 : ℝ) ^ (n + 1) - 1) := by
   exact upper_bound_aux n hn
 
--- **Main statement.** For every positive integer `n`, Liu Bang's guaranteed value equals `2^n / (2^(n+1) - 1)`.
+/-! **Main statement.** For every positive integer `n`, Liu Bang's guaranteed value equals `2^n / (2^(n+1) - 1)`. -/
 snip end
 
 problem imo2026_p3 (n : ℕ) (hn : 0 < n) : V n = answer n := by

@@ -56,7 +56,8 @@ theorem sum_dvd_cong {p a b c d : ℤ} (hpab : p ∣ a + b) (hpcd : p ∣ c + d)
     rw [e]
     exact dvd_neg.mpr hpcd
   have h := (hab.mul_right d).add (hcd.mul_left b)
-  rwa [show -b * d + b * -d = -2 * b * d from by ring] at h
+  ring_nf at h ⊢
+  exact h
 
 /-- If `p ∣ a * d + b * c` and `a * d + b * c ≡ -2 * b * d (mod p)`,
 then `p ∣ 2 * b * d`. -/
@@ -65,7 +66,7 @@ theorem dvd_two_mul_mul_of_dvd {p a b c d : ℤ}
     p ∣ 2 * b * d := by
   rw [Int.modEq_iff_dvd] at hcong
   have h3 := dvd_add h hcong
-  rw [show a * d + b * c + (-2 * b * d - (a * d + b * c)) = -(2 * b * d) from by ring] at h3
+  rw [add_sub_cancel, neg_mul, neg_mul] at h3
   exact dvd_neg.mp h3
 
 /-- An odd prime dividing neither `b` nor `d` does not divide `2 * b * d`. -/
@@ -157,7 +158,7 @@ theorem Writable.exists_rep {m n : ℕ} (hm : 0 < m) (hn : 0 < n) (hmn : m.Copri
 /-- Any natural number `≥ 2` that is not a power of two has an odd prime factor. -/
 theorem exists_odd_prime_dvd {N : ℕ} (hN : 2 ≤ N) (h : ∀ k : ℕ, N ≠ 2 ^ k) :
     ∃ p : ℕ, p.Prime ∧ Odd p ∧ p ∣ N := by
-  obtain ⟨e, t, ht, hNeq⟩ := Nat.exists_eq_two_pow_mul_odd (n := N) (by omega)
+  obtain ⟨e, t, ht, hNeq⟩ := Nat.exists_eq_two_pow_mul_odd (n := N) (by lia)
   have ht1 : t ≠ 1 := by
     rintro rfl
     rw [mul_one] at hNeq
@@ -165,13 +166,13 @@ theorem exists_odd_prime_dvd {N : ℕ} (hN : 2 ≤ N) (h : ∀ k : ℕ, N ≠ 2 
   have ht0 : t ≠ 0 := by
     rintro rfl
     rw [mul_zero] at hNeq
-    omega
+    lia
   obtain ⟨p, hp, hpt⟩ := Nat.exists_prime_and_dvd ht1
   have hp2 : p ≠ 2 := by
     rintro rfl
     rw [Nat.dvd_iff_mod_eq_zero] at hpt
     rw [Nat.odd_iff] at ht
-    omega
+    lia
   exact ⟨p, hp, hp.odd_of_ne_two hp2, hNeq ▸ dvd_mul_of_dvd_right hpt (2 ^ e)⟩
 
 /-- Any dyadic weighted average of two writable numbers is writable
@@ -183,7 +184,7 @@ theorem writable_combo {m n : ℕ} (k : ℕ) :
   | zero =>
     intro a b x y hab hx hy
     rw [pow_zero] at hab
-    have h : (a = 0 ∧ b = 1) ∨ (a = 1 ∧ b = 0) := by omega
+    have h : (a = 0 ∧ b = 1) ∨ (a = 1 ∧ b = 0) := by lia
     rcases h with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
     · simpa using hy
     · simpa using hx
@@ -193,10 +194,10 @@ theorem writable_combo {m n : ℕ} (k : ℕ) :
     have h2k1 : (2 : ℕ) ^ (k + 1) = 2 * 2 ^ k := by ring
     rw [h2k1] at hab
     rcases le_total a (2 ^ k) with hle | hle
-    · have hu := ih (a := a) (b := 2 ^ k - a) (by omega) hx hy
+    · have hu := ih (a := a) (b := 2 ^ k - a) (by lia) hx hy
       have e : ((a : ℚ) * x + (b : ℚ) * y) / ((2 ^ (k + 1) : ℕ) : ℚ) =
           (((a : ℚ) * x + ((2 ^ k - a : ℕ) : ℚ) * y) / ((2 ^ k : ℕ) : ℚ) + y) / 2 := by
-        have hbeq : b = (2 ^ k - a) + 2 ^ k := by omega
+        have hbeq : b = (2 ^ k - a) + 2 ^ k := by lia
         rw [hbeq, h2k1]
         push_cast [Nat.cast_sub hle]
         have h2k1' : (2 : ℚ) * (2 : ℚ) ^ k ≠ 0 := mul_ne_zero two_ne_zero h2k
@@ -204,11 +205,11 @@ theorem writable_combo {m n : ℕ} (k : ℕ) :
         ring
       rw [e]
       exact Writable.am hu hy
-    · have hleb : b ≤ 2 ^ k := by omega
-      have hu := ih (a := 2 ^ k - b) (b := b) (by omega) hx hy
+    · have hleb : b ≤ 2 ^ k := by lia
+      have hu := ih (a := 2 ^ k - b) (b := b) (by lia) hx hy
       have e : ((a : ℚ) * x + (b : ℚ) * y) / ((2 ^ (k + 1) : ℕ) : ℚ) =
           ((((2 ^ k - b : ℕ) : ℚ) * x + (b : ℚ) * y) / ((2 ^ k : ℕ) : ℚ) + x) / 2 := by
-        have haeq : a = (2 ^ k - b) + 2 ^ k := by omega
+        have haeq : a = (2 ^ k - b) + 2 ^ k := by lia
         rw [haeq, h2k1]
         push_cast [Nat.cast_sub hleb]
         have h2k1' : (2 : ℚ) * (2 : ℚ) ^ k ≠ 0 := mul_ne_zero two_ne_zero h2k
@@ -231,11 +232,11 @@ problem usa2019_p5 (m n : ℕ) (hm : 0 < m) (hn : 0 < n) (hmn : m.Coprime n) :
     change ∃ k : ℕ, m + n = 2 ^ k at h
     obtain ⟨k, hk⟩ := h
     have hw := writable_combo k (a := n) (b := m) (x := (m : ℚ) / (n : ℚ))
-      (y := (n : ℚ) / (m : ℚ)) (by omega) Writable.base₁ Writable.base₂
+      (y := (n : ℚ) / (m : ℚ)) (by lia) Writable.base₁ Writable.base₂
     have hm0 : (m : ℚ) ≠ 0 := by exact_mod_cast hm.ne'
     have hn0 : (n : ℚ) ≠ 0 := by exact_mod_cast hn.ne'
     have hmn0 : (m : ℚ) + (n : ℚ) ≠ 0 := by
-      have h1 : (0 : ℚ) < (m : ℚ) + (n : ℚ) := by exact_mod_cast (by omega)
+      have h1 : (0 : ℚ) < (m : ℚ) + (n : ℚ) := by exact_mod_cast (by lia)
       exact ne_of_gt h1
     have e3 : ((n : ℚ) * ((m : ℚ) / (n : ℚ)) + (m : ℚ) * ((n : ℚ) / (m : ℚ))) /
         ((2 ^ k : ℕ) : ℚ) = 1 := by
@@ -249,7 +250,7 @@ problem usa2019_p5 (m n : ℕ) (hm : 0 < m) (hn : 0 < n) (hmn : m.Coprime n) :
     by_contra h
     change ¬∃ k : ℕ, m + n = 2 ^ k at h
     rw [not_exists] at h
-    obtain ⟨p, hp, hodd, hpd⟩ := exists_odd_prime_dvd (by omega) h
+    obtain ⟨p, hp, hodd, hpd⟩ := exists_odd_prime_dvd (by lia) h
     have hp2 : p ≠ 2 := by
       rintro rfl
       exact (by decide : ¬ Odd 2) hodd

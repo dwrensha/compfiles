@@ -113,20 +113,20 @@ noncomputable def constr (i : ℕ) : ℝ :=
 lemma constr_even (k : ℕ) :
     constr (2 * k) = (4 * (k : ℝ) + 3) / (2 * Real.sqrt ((k : ℝ) + 1)) := by
   have h1 : Even (2 * k) := ⟨k, two_mul k⟩
-  have h2 : (2 * k) / 2 = k := by omega
-  simp only [constr, if_pos h1, h2]
+  have h2 : (2 * k) / 2 = k := by lia
+  simp only [constr, ite_eq_left h1, h2]
 
 lemma constr_odd (k : ℕ) :
     constr (2 * k + 1) = 2 * Real.sqrt ((k : ℝ) + 1) := by
   have h1 : ¬ Even (2 * k + 1) := Nat.not_even_iff_odd.mpr ⟨k, rfl⟩
-  have h2 : (2 * k + 1) / 2 = k := by omega
-  simp only [constr, if_neg h1, h2]
+  have h2 : (2 * k + 1) / 2 = k := by lia
+  simp only [constr, ite_eq_right h1, h2]
 
 lemma constr_pos (i : ℕ) : 0 < constr i := by
   by_cases h : Even i
-  · simp only [constr, if_pos h]
+  · simp only [constr, ite_eq_left h]
     positivity
-  · simp only [constr, if_neg h]
+  · simp only [constr, ite_eq_right h]
     positivity
 
 /-- The product of two consecutive terms is exactly `4k + 3`. -/
@@ -194,22 +194,22 @@ lemma ineq_oo {p q : ℝ} (hp : 0 ≤ p) (hq : 0 ≤ q) :
 /-- The construction satisfies `aᵢaⱼ ≤ (i+1) + (j+1)` for all `i < j`. -/
 lemma constr_ineq {i j : ℕ} (hij : i < j) :
     constr i * constr j ≤ (i : ℝ) + 1 + ((j : ℝ) + 1) := by
-  obtain ⟨p, rfl | rfl⟩ : ∃ p, i = 2 * p ∨ i = 2 * p + 1 := ⟨i / 2, by omega⟩
-  · obtain ⟨q, rfl | rfl⟩ : ∃ q, j = 2 * q ∨ j = 2 * q + 1 := ⟨j / 2, by omega⟩
-    · have hpq : p + 1 ≤ q := by omega
+  obtain ⟨p, rfl | rfl⟩ : ∃ p, i = 2 * p ∨ i = 2 * p + 1 := ⟨i / 2, by lia⟩
+  · obtain ⟨q, rfl | rfl⟩ : ∃ q, j = 2 * q ∨ j = 2 * q + 1 := ⟨j / 2, by lia⟩
+    · have hpq : p + 1 ≤ q := by lia
       rw [constr_even, constr_even]
       push_cast
       have h := ineq_ee (p := (p : ℝ)) (q := (q : ℝ)) (Nat.cast_nonneg p)
         (by exact_mod_cast hpq)
       linarith [h]
-    · have hpq : p ≤ q := by omega
+    · have hpq : p ≤ q := by lia
       rw [constr_even, constr_odd]
       push_cast
       have h := ineq_eo (p := (p : ℝ)) (q := (q : ℝ)) (Nat.cast_nonneg p)
         (by exact_mod_cast hpq)
       linarith [h]
-  · obtain ⟨q, rfl | rfl⟩ : ∃ q, j = 2 * q ∨ j = 2 * q + 1 := ⟨j / 2, by omega⟩
-    · have hpq : p + 1 ≤ q := by omega
+  · obtain ⟨q, rfl | rfl⟩ : ∃ q, j = 2 * q ∨ j = 2 * q + 1 := ⟨j / 2, by lia⟩
+    · have hpq : p + 1 ≤ q := by lia
       rw [constr_odd, constr_even]
       push_cast
       have h := ineq_oe (p := (p : ℝ)) (q := (q : ℝ)) (Nat.cast_nonneg p)
@@ -231,21 +231,21 @@ problem usa2010_p3 :
       x = ∏ i ∈ Finset.range 2010, a i} answer := by
   constructor
   · refine ⟨constr, fun i _ ↦ constr_pos i, fun i j hij _ ↦ constr_ineq hij, ?_⟩
-    rw [show (2010 : ℕ) = 2 * 1005 from by norm_num, prod_range_pair constr 1005]
+    rw [prod_range_pair constr 1005]
     show (∏ k ∈ Finset.range 1005, (4 * (k : ℝ) + 3))
       = ∏ k ∈ Finset.range 1005, constr (2 * k) * constr (2 * k + 1)
     exact Finset.prod_congr rfl fun k _ ↦ (constr_pair k).symm
   · intro y hy
     obtain ⟨a, hpos, hineq, heq⟩ := hy
     rw [heq]
-    rw [show (2010 : ℕ) = 2 * 1005 from by norm_num, prod_range_pair a 1005]
+    rw [prod_range_pair a 1005]
     show (∏ k ∈ Finset.range 1005, a (2 * k) * a (2 * k + 1))
       ≤ ∏ k ∈ Finset.range 1005, (4 * (k : ℝ) + 3)
     refine Finset.prod_le_prod (fun k hk ↦ ?_) (fun k hk ↦ ?_)
     · have hk' := Finset.mem_range.mp hk
-      exact mul_nonneg (hpos _ (by omega)).le (hpos _ (by omega)).le
+      exact mul_nonneg (hpos _ (by lia)).le (hpos _ (by lia)).le
     · have hk' := Finset.mem_range.mp hk
-      have h := hineq (2 * k) (2 * k + 1) (by omega) (by omega)
+      have h := hineq (2 * k) (2 * k + 1) (by lia) (by lia)
       push_cast at h
       linarith [h]
 

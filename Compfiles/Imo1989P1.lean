@@ -82,7 +82,7 @@ lemma A_injective : Function.Injective A := by
 
 lemma A_le_S (i : Fin n) : A i ≤ S := by
   intro x hx; obtain ⟨j, _, rfl⟩ := Finset.mem_image.mp hx
-  unfold row; simp [S]; split_ifs <;> (simp [n] at *; lia)
+  unfold row; rw [S]; split_ifs <;> (simp [n] at *; lia)
 
 lemma A_disjoint {i₁ i₂ : Fin n} (h : i₁ ≠ i₂) : Disjoint (A i₁) (A i₂) := by
   rw [Finset.disjoint_left]

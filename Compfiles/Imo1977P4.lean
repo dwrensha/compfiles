@@ -85,13 +85,13 @@ problem imo1977_p4 (f : ℝ → ℝ) (a b A B : ℝ)
         _ = R * (p * p + q * q) := by
           rw [hθ_cos, hθ_sin]
         _ = R * 1 := by
-          have h₁₂ : p * p + q * q = 1 := by simp only [←sq, hpq_sq]
+          have h₁₂ : p * p + q * q = 1 := by simp only [← sq, hpq_sq]
           rw [h₁₂]
         _ = R := by ring
 
     have h₁₁ : A * Real.cos θ + B * Real.sin θ > 1 := by
-      have h₁₂ : R > 1 := by
-        rw [hR_def, gt_iff_lt, ←one_lt_sq_iff₀ (a := √(A^2 + B^2)) (by positivity)]
+      have h₁₂ : 1 < R := by
+        rw [hR_def, ← one_lt_sq_iff₀ (a := √(A^2 + B^2)) (by positivity)]
         rw [Real.sq_sqrt (by positivity)]
         exact h
       linarith only [h₁₀, h₁₂]
@@ -193,14 +193,14 @@ problem imo1977_p4 (f : ℝ → ℝ) (a b A B : ℝ)
           ring_nf
         _ = R * 1 := by
           have h₆ : p ^ 2 + q ^ 2 = 1 := hpq_sq
-          have h₇ : p * p + q * q = 1 := by simp only [←sq, h₆]
+          have h₇ : p * p + q * q = 1 := by simp only [← sq, h₆]
           rw [h₇]
         _ = R := by ring
 
     have h₆ : C * Real.cos θ - D * Real.sin θ > 2 := by
       have h₇ : R > 2 := by
         have h₉ : C ^ 2 + D ^ 2 > 4 := hC_sq_add_D_sq_gt_4
-        rw [←hR_sq, show 4 = (2:ℝ)^2 by norm_num] at h₉
+        rw [← hR_sq, show 4 = (2:ℝ)^2 by norm_num] at h₉
         exact (sq_lt_sq₀ (by positivity) (by positivity)).mp h₉
       lia
 

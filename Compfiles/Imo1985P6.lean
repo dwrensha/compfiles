@@ -124,7 +124,7 @@ lemma aux_5
   rw [← hn₁, hf₃]
   have hmo₃: ∀ n, 0 < n → Function.Injective (f₀ n) := by
     exact fun n a => StrictMono.injective (hmo₂ n a)
-  have hn₂: (Function.invFun (f₀ n)) ∘ (f₀ n) = id := by exact Function.invFun_comp (hmo₃ n hn₀)
+  have hn₂: (Function.invFun (f₀ n)) ∘ (f₀ n) = id := Function.invFun_comp (hmo₃ n hn₀)
   rw [Function.comp_def (Function.invFun (f₀ n)) (f₀ n)] at hn₂
   have hn₃ : (fun x => Function.invFun (f₀ n) (f₀ n x)) x = id x :=
     (NNReal.eq (congrArg NNReal.toReal (congrFun hn₂.symm x))).symm
@@ -199,7 +199,7 @@ lemma aux_7
         exact Real.toNNReal_coe
       · intro d hd₀ hd₁
         rw [hf₂ (d + 1) 0 (by lia), h₁ d 0 (by lia)]
-        have hd₂: 0 ≤ f d 0 := by exact h₃ d 0 hd₀
+        have hd₂: 0 ≤ f d 0 := h₃ d 0 hd₀
         have hd₃: f d 0 = 0 := by
           rw [hf₂ d 0 (by lia)] at hd₁
           apply Real.toNNReal_eq_zero.mp at hd₁
@@ -223,7 +223,7 @@ lemma aux_8
   (hfb₁ : ∀ (n : ↑sn), f₀ (↑n) (fb n) = 1 - 1 / ↑↑n) :
   ∀ (n : ↑sn), fb n < 1 := by
   intro n
-  have hn₀: 0 < (n:ℕ) := by exact (hsn₁ n).2
+  have hn₀: 0 < (n:ℕ) := (hsn₁ n).2
   let z := fb n
   have hz₀: z = fb n := by rfl
   rw [← hz₀]
@@ -288,7 +288,7 @@ lemma aux_9
   intro m hm₀
   rw [hfb₀]
   refine Nat.le_induction ?_ ?_ m hm₀
-  · have g₁: fi 1 0 = 0 := by exact hf₅ 0
+  · have g₁: fi 1 0 = 0 := hf₅ 0
     have g₂: (2:NNReal).HolderConjugate (2:NNReal) := NNReal.HolderConjugate.two_two
     simp
     norm_cast
@@ -297,11 +297,11 @@ lemma aux_9
     have hx₀: x = fi 2 2⁻¹ := by rfl
     have hx₁: f₀ 2 x = 2⁻¹ := by
       rw [hx₀]
-      have g₃: Function.RightInverse (fi 2) (f₀ 2) := by exact hmo₇ 2 (by lia)
+      have g₃: Function.RightInverse (fi 2) (f₀ 2) := hmo₇ 2 (by lia)
       exact g₃ 2⁻¹
     rw [← hx₀]
     contrapose! hx₁
-    have hc₁: x = 0 := by exact nonpos_iff_eq_zero.mp hx₁
+    have hc₁: x = 0 := nonpos_iff_eq_zero.mp hx₁
     have hc₃: f₀ 2 x = 0 := by
       rw [hc₁, hf₂ 2 0 (by lia), h₁ 1 0 (by lia), h₀ 0]
       norm_cast
@@ -328,7 +328,7 @@ lemma aux_9
         refine inv_lt_one_of_one_lt₀ ?_
         norm_cast
         exact Nat.lt_add_right 1 hn₀
-      · have g₀: (↑n:NNReal)⁻¹ ≤ 1 := by exact Nat.cast_inv_le_one n
+      · have g₀: (↑n:NNReal)⁻¹ ≤ 1 := Nat.cast_inv_le_one n
         rw [NNReal.coe_sub g₀, NNReal.coe_inv]
         simp
         refine inv_strictAnti₀ ?_ ?_
@@ -368,7 +368,7 @@ lemma aux_10
     have g₁: (2:NNReal).HolderConjugate (2:NNReal) := NNReal.HolderConjugate.two_two
     rw [hfb₀]
     simp
-    have hnb₁: nb.val = 2 := by exact rfl
+    have hnb₁: nb.val = 2 := rfl
     rw [hnb₁]
     norm_cast
     rw [NNReal.HolderConjugate.one_sub_inv g₁]
@@ -376,11 +376,11 @@ lemma aux_10
     have hx₀: x = fi 2 2⁻¹ := by rfl
     have hx₁: f₀ 2 x = 2⁻¹ := by
       rw [hx₀]
-      have g₃: Function.RightInverse (fi 2) (f₀ 2) := by exact hmo₇ 2 (by lia)
+      have g₃: Function.RightInverse (fi 2) (f₀ 2) := hmo₇ 2 (by lia)
       exact g₃ 2⁻¹
     rw [← hx₀]
     contrapose! hx₁
-    have hc₁: x = 0 := by exact nonpos_iff_eq_zero.mp hx₁
+    have hc₁: x = 0 := nonpos_iff_eq_zero.mp hx₁
     have hc₃: f₀ 2 x = 0 := by
       rw [hc₁, hf₂ 2 0 (by lia), h₁ 1 0 (by lia), h₀ 0]
       norm_cast
@@ -434,9 +434,9 @@ lemma aux_11
     · rw [hn₁]
       exact hfc₂ nb
   by_contra! hc₀
-  have hc₁: ∃ x ∈ sbr, cr < x ∧ x ≤ br := by exact IsLUB.exists_between hbr₀ hc₀
+  have hc₁: ∃ x ∈ sbr, cr < x ∧ x ≤ br := IsLUB.exists_between hbr₀ hc₀
   let ⟨x, hx₀, hx₁, _⟩ := hc₁
-  have hc₂: ∃ y ∈ scr, cr ≤ y ∧ y < x := by exact IsGLB.exists_between hcr₀ hx₁
+  have hc₂: ∃ y ∈ scr, cr ≤ y ∧ y < x := IsGLB.exists_between hcr₀ hx₁
   let ⟨y, hy₀, _, hy₂⟩ := hc₂
   have hc₃: x < y := by
     have hx₃: x.toNNReal ∈ sb := by
@@ -459,7 +459,7 @@ lemma aux_11
     let ⟨ny, hny₀⟩ := hy₃
     have hy₄: 0 < y := by
       contrapose! hy₃
-      have hy₅: y.toNNReal = 0 := by exact Real.toNNReal_of_nonpos hy₃
+      have hy₅: y.toNNReal = 0 := Real.toNNReal_of_nonpos hy₃
       intro z
       rw [hy₅]
       exact ne_zero_of_lt (hfc₂ z)
@@ -501,8 +501,8 @@ lemma aux_exists
   obtain hu₆ | hu₆ := lt_or_eq_of_le hu₅
   · apply exists_between at hu₆
     let ⟨a, ha₀, ha₁⟩ := hu₆
-    have ha₂: 0 < a := by exact gt_trans ha₀ hbr₁
-    have ha₃: 0 < a.toNNReal := by exact Real.toNNReal_pos.mpr ha₂
+    have ha₂: 0 < a := gt_trans ha₀ hbr₁
+    have ha₃: 0 < a.toNNReal := Real.toNNReal_pos.mpr ha₂
     use a.toNNReal
     intro n hn₀
     have hn₁: n ∈ sn := by
@@ -679,9 +679,9 @@ lemma aux_unique_top_ind
       exact hn₀
     let nn : ↑sd := ⟨n, hn₃⟩
     have hn₄: nn.1 + 1 ∈ sd := hd₃ nn
-    have hn₅: fd a b nn * (2 - 1 / ↑n) ≤ fd a b ⟨nn.1 + 1, hn₄⟩ := by exact hd₂ nn
+    have hn₅: fd a b nn * (2 - 1 / ↑n) ≤ fd a b ⟨nn.1 + 1, hn₄⟩ := hd₂ nn
     rw [hfd₁ a b ⟨nn.1 + 1, hn₄⟩] at hn₅
-    have hn₆: f (↑nn + 1) b - f (↑nn + 1) a = f (n + 1) b - f (n + 1) a := by exact rfl
+    have hn₆: f (↑nn + 1) b - f (↑nn + 1) a = f (n + 1) b - f (n + 1) a := rfl
     rw [hn₆] at hn₅
     refine le_trans ?_ hn₅
     rw [hn₂, pow_succ (3/2) (n - 2), ← mul_assoc (fd a b i)]
@@ -766,7 +766,7 @@ lemma aux_unique_top
     · refine one_le_pow₀ ?_
       norm_num
   · push Not at hz₀
-    have hz₁: 0 < fd a b i := by exact hd₁ i a b ha₀
+    have hz₁: 0 < fd a b i := hd₁ i a b ha₀
     have hz₂: 0 < Real.log (z / fd a b i) := by
       refine Real.log_pos ?_
       exact (one_lt_div hz₁).mpr hz₀
@@ -817,10 +817,10 @@ lemma aux_unique_nhds
     exact Set.nonempty_Ici_subtype
   refine tendsto_atTop_nhds.mpr ?_
   intro U hU₀ hU₁
-  have hU₂: U ∈ nhds 0 := by exact IsOpen.mem_nhds hU₁ hU₀
+  have hU₂: U ∈ nhds 0 := IsOpen.mem_nhds hU₁ hU₀
   apply mem_nhds_iff_exists_Ioo_subset.mp at hU₂
   obtain ⟨l, u, hl₀, hl₁⟩ := hU₂
-  have hl₂: 0 < u := by exact (Set.mem_Ioo.mpr hl₀).2
+  have hl₂: 0 < u := (Set.mem_Ioo.mpr hl₀).2
   let nd := 2 + Nat.ceil (1/u)
   have hnd₀: nd ∈ sd := by
     rw [hsd]
@@ -837,8 +837,8 @@ lemma aux_unique_nhds
     exact (Set.mem_Ioo.mp hl₀).1
   · have hn₁: fd a b n < 1 / n := by
       rw [hfd₁]
-      have ha₂: 1 - 1 / n < f n a := by exact (ha₁ n).1.1
-      have hb₁: f n b < 1 := by exact (ha₁ n).2.2
+      have ha₂: 1 - 1 / n < f n a := (ha₁ n).1.1
+      have hb₁: f n b < 1 := (ha₁ n).2.2
       refine sub_lt_iff_lt_add.mpr ?_
       refine lt_trans hb₁ ?_
       exact sub_lt_iff_lt_add'.mp ha₂
@@ -874,7 +874,7 @@ lemma aux_unique
   intro x y hx₀ hy₀
   let sd : Set ℕ := Set.Ici 2
   let fd : NNReal → NNReal → ↑sd → ℝ := fun y₁ y₂ n => (f n.1 y₂ - f n.1 y₁)
-  have hfd₁: ∀ y₁ y₂ n, fd y₁ y₂ n = f n.1 y₂ - f n.1 y₁ := by exact fun y₁ y₂ n => rfl
+  have hfd₁: ∀ y₁ y₂ n, fd y₁ y₂ n = f n.1 y₂ - f n.1 y₁ := fun y₁ y₂ n => rfl
   have hd₁: ∀ n a b, a < b → 0 < fd a b n := by
     intro nd a b hnd₀
     rw [hfd₁]
@@ -895,7 +895,7 @@ lemma aux_unique
   · have hy₂: Filter.Tendsto (fd x y) Filter.atTop Filter.atTop := by
       refine hfd₂ x y hy₁ ?_
       intro nd
-      have hnd₀: 0 < nd.1 := by exact lt_of_lt_of_le (two_pos) nd.2
+      have hnd₀: 0 < nd.1 := lt_of_lt_of_le (two_pos) nd.2
       constructor
       · exact (hx₀ nd.1 hnd₀).2.1
       · exact (hy₀ nd.1 hnd₀).2.1
@@ -905,7 +905,7 @@ lemma aux_unique
       have hnd₀: 0 < nd.1 := by
         refine lt_of_lt_of_le ?_ nd.2
         exact Nat.zero_lt_two
-      have hnd₁: nd.1 - 1 + 1 = nd.1 := by exact Nat.sub_add_cancel hnd₀
+      have hnd₁: nd.1 - 1 + 1 = nd.1 := Nat.sub_add_cancel hnd₀
       have hnd₂: 0 < nd.1 - 1 := by
         refine Nat.sub_pos_of_lt ?_
         refine lt_of_lt_of_le ?_ nd.2
@@ -933,7 +933,7 @@ lemma aux_unique
     constructor
     · exact isOpen_Ioo
     · intro N
-      have hy₅: ∃ i, ∀ (a : ↑sd), i ≤ a → N + 3 ≤ fd x y a := by exact hy₂ (N + 3)
+      have hy₅: ∃ i, ∀ (a : ↑sd), i ≤ a → N + 3 ≤ fd x y a := hy₂ (N + 3)
       obtain ⟨i, hi₀⟩ := hy₅
       have hi₁: (N.1 + i.1) ∈ sd := by
         refine Set.mem_Ici.mpr ?_
@@ -958,15 +958,15 @@ lemma aux_unique
     have hy₃: Filter.Tendsto (fd y x) Filter.atTop Filter.atTop := by
       refine hfd₂ y x hy₂ ?_
       intro nd
-      have hnd₀: 0 < nd.1 := by exact lt_of_lt_of_le (two_pos) nd.2
+      have hnd₀: 0 < nd.1 := lt_of_lt_of_le (two_pos) nd.2
       constructor
       · exact (hy₀ nd.1 hnd₀).2.1
       · exact (hx₀ nd.1 hnd₀).2.1
     have hy₄: Filter.Tendsto (fd y x) Filter.atTop (nhds 0) := by
       refine hfd₃ y x hy₂ ?_
       intro nd
-      have hnd₀: 0 < nd.1 := by exact lt_of_lt_of_le (Nat.zero_lt_two) nd.2
-      have hnd₁: nd.1 - 1 + 1 = nd.1 := by exact Nat.sub_add_cancel hnd₀
+      have hnd₀: 0 < nd.1 := lt_of_lt_of_le (Nat.zero_lt_two) nd.2
+      have hnd₁: nd.1 - 1 + 1 = nd.1 := Nat.sub_add_cancel hnd₀
       have hnd₂: 0 < nd.1 - 1 := by
         refine Nat.sub_pos_of_lt ?_
         exact lt_of_lt_of_le (Nat.one_lt_two) nd.2
@@ -993,7 +993,7 @@ lemma aux_unique
     constructor
     · exact isOpen_Ioo
     · intro N
-      have hy₅: ∃ i, ∀ (a : ↑sd), i ≤ a → N + 3 ≤ fd y x a := by exact hy₃ (N + 3)
+      have hy₅: ∃ i, ∀ (a : ↑sd), i ≤ a → N + 3 ≤ fd y x a := hy₃ (N + 3)
       obtain ⟨i, hi₀⟩ := hy₅
       have hi₁: (N.1 + i.1) ∈ sd := by
         refine Set.mem_Ici.mpr ?_
@@ -1083,7 +1083,7 @@ lemma imo_1985_p6_nnreal
   let fc : ↑sn → NNReal := sn.domRestrict (fun (n:ℕ) => fi n 1)
   have hsn₁: ∀ n:↑sn, ↑n ∈ sn ∧ 0 < (↑n:ℕ) := by
     intro n
-    have hn₀: ↑n ∈ sn := by exact Subtype.coe_prop n
+    have hn₀: ↑n ∈ sn := Subtype.coe_prop n
     constructor
     · exact Subtype.coe_prop n
     · exact hn₀
@@ -1091,19 +1091,19 @@ lemma imo_1985_p6_nnreal
   have hfc₀: fc = fun (n:↑sn) => fi n 1 := by rfl
   have hfb₁: ∀ n:↑sn, f₀ n (fb n) = 1 - 1 / (n:NNReal) := by
     intro n
-    have hn₀: 0 < (n:ℕ) := by exact (hsn₁ n).2
+    have hn₀: 0 < (n:ℕ) := (hsn₁ n).2
     rw [hfb₀]
     exact hmo₁ n hn₀ (congrArg (f n) (hmo₇ n hn₀ (1 - 1 / (n:NNReal))))
   have hfc₁: ∀ n:↑sn, f₀ n (fc n) = 1 := by
     intro n
-    have hn₀: 0 < (n:ℕ) := by exact (hsn₁ n).2
+    have hn₀: 0 < (n:ℕ) := (hsn₁ n).2
     rw [hfc₀]
     exact hmo₁ n hn₀ (congrArg (f n) (hmo₇ n hn₀ 1))
   have hu₁: ∀ n:↑sn, fb n < 1 := by
     exact aux_8 f h₀ h₁ hmo₀ hmo₁ f₀ hf₂ sn fb hsn₁ hfb₁
   have hfc₂: ∀ n:↑sn, fb n < fc n := by
     intro n
-    have hn₀: 0 < (n:ℕ) := by exact (hsn₁ n).2
+    have hn₀: 0 < (n:ℕ) := (hsn₁ n).2
     have g₀: f₀ n (fb n) < f₀ n (fc n) := by
       rw [hfb₁ n, hfc₁ n]
       simp
@@ -1120,21 +1120,21 @@ lemma imo_1985_p6_nnreal
     have g₀: StrictAntiOn (fun n => fi n 1) sn := by
       refine strictAntiOn_Ici_of_lt_pred ?_
       intro m hm₀
-      have hm₁: 0 < m - 1 := by exact Nat.zero_lt_sub_of_lt hm₀
+      have hm₁: 0 < m - 1 := Nat.zero_lt_sub_of_lt hm₀
       have hm₂: m = m - 1 + 1 := by rw [Nat.sub_add_cancel (le_of_lt hm₀)]
-      have hm₃: 0 < m := by exact Nat.zero_lt_of_lt hm₀
+      have hm₃: 0 < m := Nat.zero_lt_of_lt hm₀
       simp
       let x := fi m 1
       let y := fi (m - 1) 1
       have hx₀: x = fi m 1 := by rfl
       have hy₀: y = fi (m - 1) 1 := by rfl
-      have hx₁: f₀ m x = 1 := by exact (hf₇ m x 1 (by lia)).mpr hx₀.symm
+      have hx₁: f₀ m x = 1 := (hf₇ m x 1 (by lia)).mpr hx₀.symm
       have hy₁: f₀ (m - 1) y = 1 := by
         exact (hf₇ (m - 1) y 1 hm₁).mpr hy₀.symm
       have hy₂: f (m - 1) y = 1 := by
         rw [hf₁ (m - 1) y hm₁, hy₁]
         exact rfl
-      have hf: StrictMono (f m) := by exact hmo₀ m hm₃
+      have hf: StrictMono (f m) := hmo₀ m hm₃
       refine (StrictMono.lt_iff_lt hf).mp ?_
       rw [← hx₀, ← hy₀]
       rw [hf₁ m x hm₃, hf₁ m y hm₃]
@@ -1147,8 +1147,8 @@ lemma imo_1985_p6_nnreal
     simp
     let mn : ℕ := ↑m
     let nn : ℕ := ↑n
-    have hm₀: mn ∈ sn := by exact Subtype.coe_prop m
-    have hn₀: nn ∈ sn := by exact Subtype.coe_prop n
+    have hm₀: mn ∈ sn := Subtype.coe_prop m
+    have hn₀: nn ∈ sn := Subtype.coe_prop n
     exact g₀ hm₀ hn₀ hmn
   let sb := Set.range fb
   let sc := Set.range fc
@@ -1217,7 +1217,7 @@ lemma imo_1985_p6_nnreal
 
 snip end
 
-problem imo_1985_p6
+problem imo1985_p6
   (f : ℕ → ℝ → ℝ)
   (h₀ : ∀ x, f 1 x = x)
   (h₁ : ∀ n x, 0 < n → f (n + 1) x = f n x * (f n x + 1 / n)) :

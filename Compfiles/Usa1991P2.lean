@@ -39,11 +39,11 @@ snip begin
 lemma icc_one_succ (n : ℕ) : Icc 1 (n + 1) = insert (n + 1) (Icc 1 n) := by
   ext i
   simp only [mem_Icc, mem_insert]
-  omega
+  lia
 
 lemma not_mem_icc_one (n : ℕ) : n + 1 ∉ Icc 1 n := by
   simp only [mem_Icc]
-  omega
+  lia
 
 /-- Splitting the quantity attached to `insert (n + 1) T` for `T ⊆ {1, ..., n}`:
 the sum of the elements increases by `n + 1` while the product is multiplied
@@ -70,7 +70,7 @@ lemma prod_one_add_inv (n : ℕ) : ∏ i ∈ Icc 1 n, (1 + ((i : ℚ))⁻¹) = (
   induction n with
   | zero => simp
   | succ n ih =>
-    rw [prod_Icc_succ_top (show 1 ≤ n + 1 by omega), ih]
+    rw [prod_Icc_succ_top (show 1 ≤ n + 1 by lia), ih]
     have hn : (n : ℚ) + 1 ≠ 0 := by positivity
     push_cast
     field_simp
@@ -125,7 +125,7 @@ problem usa1991_p2 (n : ℕ) :
   | succ n ih =>
     have hsplit : ∑ i ∈ Finset.Icc 1 (n + 1), (1 : ℚ) / i =
         (∑ i ∈ Finset.Icc 1 n, (1 : ℚ) / i) + (1 : ℚ) / (n + 1 : ℕ) := by
-      rw [sum_Icc_succ_top (show 1 ≤ n + 1 by omega)]
+      rw [sum_Icc_succ_top (show 1 ≤ n + 1 by lia)]
     rw [main_sum_succ, ih, hsplit]
     have hn : (n : ℚ) + 1 ≠ 0 := by positivity
     push_cast

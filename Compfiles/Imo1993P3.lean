@@ -36,7 +36,7 @@ noncomputable def initPos (n : ℕ) : Finset (ℤ × ℤ) := Ico 0 (n : ℤ) ×�
 lemma mem_initPos {n : ℕ} {c : ℤ × ℤ} :
     c ∈ initPos n ↔ 0 ≤ c.1 ∧ c.1 < (n : ℤ) ∧ 0 ≤ c.2 ∧ c.2 < (n : ℤ) := by
   simp [initPos, Finset.mem_product, Finset.mem_Ico]
-  omega
+  lia
 
 /-- A single move: the piece at `c` jumps over the adjacent piece at `c + d`
  onto the empty square `c + d + d`; the jumped-over piece is removed. -/
@@ -64,15 +64,15 @@ def g2 (k : ℤ) : ZMod 2 := if k % 3 = 0 then 0 else 1
 def Wt (g : ℤ → ZMod 2) (s : Finset (ℤ × ℤ)) : ZMod 2 := ∑ c ∈ s, g (c.1 + c.2)
 
 lemma g1_sum3 (t : ℤ) : g1 t + g1 (t + 1) + g1 (t + 2) = 0 := by
-  have e1 : (t + 1) % 3 = (t % 3 + 1) % 3 := by omega
-  have e2 : (t + 2) % 3 = (t % 3 + 2) % 3 := by omega
-  have h : t % 3 = 0 ∨ t % 3 = 1 ∨ t % 3 = 2 := by omega
+  have e1 : (t + 1) % 3 = (t % 3 + 1) % 3 := by lia
+  have e2 : (t + 2) % 3 = (t % 3 + 2) % 3 := by lia
+  have h : t % 3 = 0 ∨ t % 3 = 1 ∨ t % 3 = 2 := by lia
   rcases h with h | h | h <;> simp only [g1, h, e1, e2] <;> norm_num <;> decide
 
 lemma g2_sum3 (t : ℤ) : g2 t + g2 (t + 1) + g2 (t + 2) = 0 := by
-  have e1 : (t + 1) % 3 = (t % 3 + 1) % 3 := by omega
-  have e2 : (t + 2) % 3 = (t % 3 + 2) % 3 := by omega
-  have h : t % 3 = 0 ∨ t % 3 = 1 ∨ t % 3 = 2 := by omega
+  have e1 : (t + 1) % 3 = (t % 3 + 1) % 3 := by lia
+  have e2 : (t + 2) % 3 = (t % 3 + 2) % 3 := by lia
+  have h : t % 3 = 0 ∨ t % 3 = 1 ∨ t % 3 = 2 := by lia
   rcases h with h | h | h <;> simp only [g2, h, e1, e2] <;> norm_num <;> decide
 
 lemma zmod2_self_add (x : ZMod 2) : x + x = 0 := by
@@ -91,7 +91,7 @@ lemma Wt_move {g : ℤ → ZMod 2} (hg : ∀ t : ℤ, g t + g (t + 1) + g (t + 2
   have hne1 : ((c1 + d1, c2 + d2) : ℤ × ℤ) ≠ ((c1, c2) : ℤ × ℤ) := by
     intro h
     injection h with h1 h2
-    omega
+    lia
   have hm2 : ((c1 + d1, c2 + d2) : ℤ × ℤ) ∈ s.erase ((c1, c2) : ℤ × ℤ) :=
     Finset.mem_erase.mpr ⟨hne1, hcd⟩
   have hnm : ((c1 + d1 + d1, c2 + d2 + d2) : ℤ × ℤ) ∉
@@ -151,16 +151,16 @@ lemma gsum_interval {g : ℤ → ZMod 2} (hg : ∀ t : ℤ, g t + g (t + 1) + g 
           {a + 3 * (m : ℤ), a + 3 * (m : ℤ) + 1, a + 3 * (m : ℤ) + 2} := by
         ext x
         simp only [Finset.mem_Ico, Finset.mem_insert, Finset.mem_singleton]
-        omega
+        lia
       rw [hset,
-        Finset.sum_insert (by simp only [Finset.mem_insert, Finset.mem_singleton]; omega),
-        Finset.sum_insert (by simp only [Finset.mem_singleton]; omega), Finset.sum_singleton,
+        Finset.sum_insert (by simp only [Finset.mem_insert, Finset.mem_singleton]; lia),
+        Finset.sum_insert (by simp only [Finset.mem_singleton]; lia), Finset.sum_singleton,
         ← add_assoc]
       exact hg _
     · rw [Finset.disjoint_left]
       intro x hx1 hx2
       simp only [Finset.mem_Ico] at hx1 hx2
-      omega
+      lia
 
 /-- The weight of the initial `3m × 3m` block is zero. -/
 lemma Wt_init {g : ℤ → ZMod 2} (hg : ∀ t : ℤ, g t + g (t + 1) + g (t + 2) = 0) (m : ℕ) :
@@ -227,7 +227,7 @@ lemma purge {s : Finset (ℤ × ℤ)} {p u w : ℤ × ℤ}
       ((px, py) + w ≠ (px, py) + u + u) ∧ ((px, py) + w ≠ (px, py) - w) := by
     refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;>
       simp only [ne_eq, Prod.ext_iff, Prod.fst_add, Prod.snd_add, Prod.fst_sub,
-        Prod.snd_sub] <;> omega
+        Prod.snd_sub] <;> lia
   have m1 : IsMove s (insert ((px, py) - w) ((s.erase ((px, py) + w)).erase (px, py))) := by
     refine ⟨(px, py) + w, ⟨-w, ?_⟩, hpw, ?_, ?_, ?_⟩
     · simp only [dirs, Finset.mem_insert, Finset.mem_singleton] at hw ⊢
@@ -315,15 +315,8 @@ lemma purge {s : Finset (ℤ × ℤ)} {p u w : ℤ × ℤ}
       ((s.erase ((px, py) + w)).erase (px, py))).erase ((px, py) + u + u)).erase
       ((px, py) + u))).erase ((px, py) - w)).erase (px, py)) =
       s \ {(px, py), (px, py) + u, (px, py) + u + u} := by
-    have ec : ∀ (t : Finset (ℤ × ℤ)) (a b : ℤ × ℤ), (t.erase a).erase b = (t.erase b).erase a := by
-      intro t a b
-      ext x
-      simp only [Finset.mem_erase]
-      constructor
-      · rintro ⟨h1, h2, h3⟩
-        exact ⟨h2, h1, h3⟩
-      · rintro ⟨h1, h2, h3⟩
-        exact ⟨h2, h1, h3⟩
+    have ec : ∀ (t : Finset (ℤ × ℤ)) (a b : ℤ × ℤ), (t.erase a).erase b = (t.erase b).erase a :=
+      fun _ _ _ => erase_right_comm
     have hn1 : (px, py) ∉ (((insert ((px, py) - w) ((s.erase ((px, py) + w)).erase (px, py))).erase
         ((px, py) + u + u)).erase ((px, py) + u)).erase ((px, py) - w) := by
       intro h
@@ -386,9 +379,9 @@ lemma phase1_step (n k : ℕ) (hk : k < n) :
     Relation.ReflTransGen IsMove (stateA n k) (stateA n (k + 1)) := by
   have h := purge (s := stateA n k) (p := ((k : ℤ), (n : ℤ))) (u := ((0 : ℤ), (1 : ℤ)))
     (w := ((1 : ℤ), (0 : ℤ))) (by decide) (by decide) (by decide)
-    (by simp only [stateA, mem_initPos, Finset.mem_filter]; omega) (by simp only [stateA, mem_initPos, Finset.mem_filter, Prod.mk_add_mk]; omega)
-    (by simp only [stateA, mem_initPos, Finset.mem_filter, Prod.mk_add_mk]; omega) (by simp only [stateA, mem_initPos, Finset.mem_filter, Prod.mk_add_mk]; omega)
-    (by simp only [stateA, mem_initPos, Finset.mem_filter, Prod.fst_sub, Prod.snd_sub]; omega)
+    (by simp only [stateA, mem_initPos, Finset.mem_filter]; lia) (by simp only [stateA, mem_initPos, Finset.mem_filter, Prod.mk_add_mk]; lia)
+    (by simp only [stateA, mem_initPos, Finset.mem_filter, Prod.mk_add_mk]; lia) (by simp only [stateA, mem_initPos, Finset.mem_filter, Prod.mk_add_mk]; lia)
+    (by simp only [stateA, mem_initPos, Finset.mem_filter, Prod.fst_sub, Prod.snd_sub]; lia)
   rw [show stateA n (k + 1) = stateA n k \ {((k : ℤ), (n : ℤ)), ((k : ℤ), (n : ℤ)) + ((0 : ℤ), (1 : ℤ)),
       ((k : ℤ), (n : ℤ)) + ((0 : ℤ), (1 : ℤ)) + ((0 : ℤ), (1 : ℤ))} by
     ext ⟨a, b⟩
@@ -405,7 +398,7 @@ lemma phase1 (n : ℕ) (k : ℕ) (hk : k ≤ n) :
     rw [show stateA n 0 = initPos (n + 3) by
       ext ⟨a, b⟩
       simp only [stateA, mem_initPos, Finset.mem_filter]
-      omega]
+      lia]
   | succ k ih => exact (ih (Nat.le_of_succ_le hk)).trans (phase1_step n k hk)
 
 /-- One step of phase 2a: purge the horizontal triple in row `n + 2 - k` of the right
@@ -414,16 +407,16 @@ lemma phase2a_step (n k : ℕ) (hk : k < n) :
     Relation.ReflTransGen IsMove (stateB n k) (stateB n (k + 1)) := by
   have h := purge (s := stateB n k) (p := ((n : ℤ), (n : ℤ) + 2 - (k : ℤ))) (u := ((1 : ℤ), (0 : ℤ)))
     (w := ((0 : ℤ), (-1 : ℤ))) (by decide) (by decide) (by decide)
-    (by simp only [stateB, mem_initPos, Finset.mem_filter]; omega) (by simp only [stateB, mem_initPos, Finset.mem_filter, Prod.mk_add_mk]; omega)
-    (by simp only [stateB, mem_initPos, Finset.mem_filter, Prod.mk_add_mk]; omega) (by simp only [stateB, mem_initPos, Finset.mem_filter, Prod.mk_add_mk]; omega)
-    (by simp only [stateB, mem_initPos, Finset.mem_filter, Prod.fst_sub, Prod.snd_sub]; omega)
+    (by simp only [stateB, mem_initPos, Finset.mem_filter]; lia) (by simp only [stateB, mem_initPos, Finset.mem_filter, Prod.mk_add_mk]; lia)
+    (by simp only [stateB, mem_initPos, Finset.mem_filter, Prod.mk_add_mk]; lia) (by simp only [stateB, mem_initPos, Finset.mem_filter, Prod.mk_add_mk]; lia)
+    (by simp only [stateB, mem_initPos, Finset.mem_filter, Prod.fst_sub, Prod.snd_sub]; lia)
   rw [show stateB n (k + 1) = stateB n k \ {((n : ℤ), (n : ℤ) + 2 - (k : ℤ)),
       ((n : ℤ), (n : ℤ) + 2 - (k : ℤ)) + ((1 : ℤ), (0 : ℤ)),
       ((n : ℤ), (n : ℤ) + 2 - (k : ℤ)) + ((1 : ℤ), (0 : ℤ)) + ((1 : ℤ), (0 : ℤ))} by
     ext ⟨a, b⟩
     simp only [stateB, mem_initPos, Finset.mem_filter, Finset.mem_sdiff, Finset.mem_insert,
       Finset.mem_singleton, Prod.ext_iff, Prod.mk_add_mk]
-    omega]
+    lia]
   exact h
 
 /-- Phase 2a: clear the right strip rows from top to bottom, down to row 3. -/
@@ -434,7 +427,7 @@ lemma phase2a (n : ℕ) (k : ℕ) (hk : k ≤ n) :
     rw [show stateB n 0 = stateA n n by
       ext ⟨a, b⟩
       simp only [stateA, stateB, mem_initPos, Finset.mem_filter]
-      omega]
+      lia]
     exact phase1 n n le_rfl
   | succ k ih => exact (ih (Nat.le_of_succ_le hk)).trans (phase2a_step n k hk)
 
@@ -443,9 +436,9 @@ lemma phase2a (n : ℕ) (k : ℕ) (hk : k ≤ n) :
 lemma phase2b (n : ℕ) (hn : 1 ≤ n) : Relation.ReflTransGen IsMove (stateB n n) (initPos n) := by
   have h1 := purge (s := stateB n n) (p := (((n : ℤ) + 2), (0 : ℤ))) (u := ((0 : ℤ), (1 : ℤ)))
     (w := ((-1 : ℤ), (0 : ℤ))) (by decide) (by decide) (by decide)
-    (by simp only [stateB, mem_initPos, Finset.mem_filter]; omega) (by simp only [stateB, mem_initPos, Finset.mem_filter, Prod.mk_add_mk]; omega)
-    (by simp only [stateB, mem_initPos, Finset.mem_filter, Prod.mk_add_mk]; omega) (by simp only [stateB, mem_initPos, Finset.mem_filter, Prod.mk_add_mk]; omega)
-    (by simp only [stateB, mem_initPos, Finset.mem_filter, Prod.fst_sub, Prod.snd_sub]; omega)
+    (by simp only [stateB, mem_initPos, Finset.mem_filter]; lia) (by simp only [stateB, mem_initPos, Finset.mem_filter, Prod.mk_add_mk]; lia)
+    (by simp only [stateB, mem_initPos, Finset.mem_filter, Prod.mk_add_mk]; lia) (by simp only [stateB, mem_initPos, Finset.mem_filter, Prod.mk_add_mk]; lia)
+    (by simp only [stateB, mem_initPos, Finset.mem_filter, Prod.fst_sub, Prod.snd_sub]; lia)
   rw [show stateB n n \ {((n : ℤ) + 2, (0 : ℤ)), ((n : ℤ) + 2, (0 : ℤ)) + ((0 : ℤ), (1 : ℤ)),
       ((n : ℤ) + 2, (0 : ℤ)) + ((0 : ℤ), (1 : ℤ)) + ((0 : ℤ), (1 : ℤ))} = stateC n by
     ext ⟨a, b⟩
@@ -454,9 +447,9 @@ lemma phase2b (n : ℕ) (hn : 1 ≤ n) : Relation.ReflTransGen IsMove (stateB n 
     omega] at h1
   have h2 := purge (s := stateC n) (p := (((n : ℤ) + 1), (0 : ℤ))) (u := ((0 : ℤ), (1 : ℤ)))
     (w := ((-1 : ℤ), (0 : ℤ))) (by decide) (by decide) (by decide)
-    (by simp only [stateC, mem_initPos, Finset.mem_filter]; omega) (by simp only [stateC, mem_initPos, Finset.mem_filter, Prod.mk_add_mk]; omega)
-    (by simp only [stateC, mem_initPos, Finset.mem_filter, Prod.mk_add_mk]; omega) (by simp only [stateC, mem_initPos, Finset.mem_filter, Prod.mk_add_mk]; omega)
-    (by simp only [stateC, mem_initPos, Finset.mem_filter, Prod.fst_sub, Prod.snd_sub]; omega)
+    (by simp only [stateC, mem_initPos, Finset.mem_filter]; lia) (by simp only [stateC, mem_initPos, Finset.mem_filter, Prod.mk_add_mk]; lia)
+    (by simp only [stateC, mem_initPos, Finset.mem_filter, Prod.mk_add_mk]; lia) (by simp only [stateC, mem_initPos, Finset.mem_filter, Prod.mk_add_mk]; lia)
+    (by simp only [stateC, mem_initPos, Finset.mem_filter, Prod.fst_sub, Prod.snd_sub]; lia)
   rw [show stateC n \ {((n : ℤ) + 1, (0 : ℤ)), ((n : ℤ) + 1, (0 : ℤ)) + ((0 : ℤ), (1 : ℤ)),
       ((n : ℤ) + 1, (0 : ℤ)) + ((0 : ℤ), (1 : ℤ)) + ((0 : ℤ), (1 : ℤ))} = stateD n by
     ext ⟨a, b⟩
@@ -465,9 +458,9 @@ lemma phase2b (n : ℕ) (hn : 1 ≤ n) : Relation.ReflTransGen IsMove (stateB n 
     omega] at h2
   have h3 := purge (s := stateD n) (p := ((n : ℤ), (0 : ℤ))) (u := ((0 : ℤ), (1 : ℤ)))
     (w := ((-1 : ℤ), (0 : ℤ))) (by decide) (by decide) (by decide)
-    (by simp only [stateD, mem_initPos, Finset.mem_filter, true_and]; omega) (by simp only [stateD, mem_initPos, Finset.mem_filter, Prod.mk_add_mk]; omega)
-    (by simp only [stateD, mem_initPos, Finset.mem_filter, Prod.mk_add_mk]; omega) (by simp only [stateD, mem_initPos, Finset.mem_filter, Prod.mk_add_mk]; omega)
-    (by simp only [stateD, mem_initPos, Finset.mem_filter, Prod.fst_sub, Prod.snd_sub]; omega)
+    (by simp only [stateD, mem_initPos, Finset.mem_filter, true_and]; lia) (by simp only [stateD, mem_initPos, Finset.mem_filter, Prod.mk_add_mk]; lia)
+    (by simp only [stateD, mem_initPos, Finset.mem_filter, Prod.mk_add_mk]; lia) (by simp only [stateD, mem_initPos, Finset.mem_filter, Prod.mk_add_mk]; lia)
+    (by simp only [stateD, mem_initPos, Finset.mem_filter, Prod.fst_sub, Prod.snd_sub]; lia)
   rw [show stateD n \ {((n : ℤ), (0 : ℤ)), ((n : ℤ), (0 : ℤ)) + ((0 : ℤ), (1 : ℤ)),
       ((n : ℤ), (0 : ℤ)) + ((0 : ℤ), (1 : ℤ)) + ((0 : ℤ), (1 : ℤ))} = initPos n by
     ext ⟨a, b⟩
@@ -487,7 +480,7 @@ lemma solvable_one : Solvable 1 := by
   rw [show initPos 1 = {((0 : ℤ), (0 : ℤ))} by
     ext ⟨a, b⟩
     simp only [mem_initPos, Finset.mem_singleton, Prod.ext_iff]
-    omega]
+    lia]
 
 /-- The 2 × 2 board is solved in three moves. -/
 lemma solvable_two : Solvable 2 := by
@@ -495,28 +488,28 @@ lemma solvable_two : Solvable 2 := by
   have m1 : IsMove (initPos 2)
       (insert ((2 : ℤ), (0 : ℤ)) (((initPos 2).erase ((0 : ℤ), (0 : ℤ))).erase ((1 : ℤ), (0 : ℤ)))) := by
     refine ⟨((0 : ℤ), (0 : ℤ)), ⟨((1 : ℤ), (0 : ℤ)), by decide⟩, ?_, ?_, ?_, ?_⟩
-    · simp only [mem_initPos]; omega
-    · simp only [mem_initPos, Prod.mk_add_mk]; omega
-    · simp only [mem_initPos, Prod.mk_add_mk]; omega
+    · simp only [mem_initPos]; lia
+    · simp only [mem_initPos, Prod.mk_add_mk]; lia
+    · simp only [mem_initPos, Prod.mk_add_mk]; lia
     · ext ⟨a, b⟩
       simp only [mem_initPos, Finset.mem_insert, Finset.mem_erase, ne_eq, Prod.ext_iff,
         Prod.mk_add_mk]
-      omega
+      lia
   have m2 : IsMove
       (insert ((2 : ℤ), (0 : ℤ)) (((initPos 2).erase ((0 : ℤ), (0 : ℤ))).erase ((1 : ℤ), (0 : ℤ))))
       (insert ((2 : ℤ), (1 : ℤ)) (((insert ((2 : ℤ), (0 : ℤ)) (((initPos 2).erase
         ((0 : ℤ), (0 : ℤ))).erase ((1 : ℤ), (0 : ℤ)))).erase ((0 : ℤ), (1 : ℤ))).erase
         ((1 : ℤ), (1 : ℤ)))) := by
     refine ⟨((0 : ℤ), (1 : ℤ)), ⟨((1 : ℤ), (0 : ℤ)), by decide⟩, ?_, ?_, ?_, ?_⟩
-    · simp only [mem_initPos, Finset.mem_insert, Finset.mem_erase, ne_eq, Prod.ext_iff]; omega
+    · simp only [mem_initPos, Finset.mem_insert, Finset.mem_erase, ne_eq, Prod.ext_iff]; lia
     · simp only [mem_initPos, Finset.mem_insert, Finset.mem_erase, ne_eq, Prod.ext_iff,
-        Prod.mk_add_mk]; omega
+        Prod.mk_add_mk]; lia
     · simp only [mem_initPos, Finset.mem_insert, Finset.mem_erase, ne_eq, Prod.ext_iff,
-        Prod.mk_add_mk]; omega
+        Prod.mk_add_mk]; lia
     · ext ⟨a, b⟩
       simp only [mem_initPos, Finset.mem_insert, Finset.mem_erase, ne_eq, Prod.ext_iff,
         Prod.mk_add_mk]
-      omega
+      lia
   have m3 : IsMove
       (insert ((2 : ℤ), (1 : ℤ)) (((insert ((2 : ℤ), (0 : ℤ)) (((initPos 2).erase
         ((0 : ℤ), (0 : ℤ))).erase ((1 : ℤ), (0 : ℤ)))).erase ((0 : ℤ), (1 : ℤ))).erase
@@ -524,15 +517,15 @@ lemma solvable_two : Solvable 2 := by
       {((2 : ℤ), (2 : ℤ))} := by
     refine ⟨((2 : ℤ), (0 : ℤ)), ⟨((0 : ℤ), (1 : ℤ)), by decide⟩, ?_, ?_, ?_, ?_⟩
     · simp only [mem_initPos, Finset.mem_insert, Finset.mem_erase, ne_eq, Prod.ext_iff,
-        true_and, and_true, true_or]; omega
+        true_and, and_true, true_or]; lia
     · simp only [mem_initPos, Finset.mem_insert, Finset.mem_erase, ne_eq, Prod.ext_iff,
-        Prod.mk_add_mk]; omega
+        Prod.mk_add_mk]; lia
     · simp only [mem_initPos, Finset.mem_insert, Finset.mem_erase, ne_eq, Prod.ext_iff,
-        Prod.mk_add_mk]; omega
+        Prod.mk_add_mk]; lia
     · ext ⟨a, b⟩
       simp only [mem_initPos, Finset.mem_insert, Finset.mem_erase, ne_eq, Prod.ext_iff,
         Prod.mk_add_mk, Finset.mem_singleton]
-      omega
+      lia
   exact Relation.ReflTransGen.head m1 (Relation.ReflTransGen.head m2 (Relation.ReflTransGen.head
     m3 Relation.ReflTransGen.refl))
 
@@ -540,7 +533,7 @@ lemma solvable_three_mul_add_one (m : ℕ) : Solvable (3 * m + 1) := by
   induction m with
   | zero => exact solvable_one
   | succ m ih =>
-    have h := reduction (3 * m + 1) (by omega) ih
+    have h := reduction (3 * m + 1) (by lia) ih
     rw [show 3 * m + 1 + 3 = 3 * (m + 1) + 1 by ring] at h
     exact h
 
@@ -548,17 +541,17 @@ lemma solvable_three_mul_add_two (m : ℕ) : Solvable (3 * m + 2) := by
   induction m with
   | zero => exact solvable_two
   | succ m ih =>
-    have h := reduction (3 * m + 2) (by omega) ih
+    have h := reduction (3 * m + 2) (by lia) ih
     rw [show 3 * m + 2 + 3 = 3 * (m + 1) + 2 by ring] at h
     exact h
 
 lemma solvable_of_pos_not_three_dvd (n : ℕ) (_h0 : 0 < n) (h3 : ¬ 3 ∣ n) : Solvable n := by
-  have hmod : n % 3 = 1 ∨ n % 3 = 2 := by omega
+  have hmod : n % 3 = 1 ∨ n % 3 = 2 := by lia
   rcases hmod with h | h
-  · have e : n = 3 * (n / 3) + 1 := by omega
+  · have e : n = 3 * (n / 3) + 1 := by lia
     rw [e]
     exact solvable_three_mul_add_one (n / 3)
-  · have e : n = 3 * (n / 3) + 2 := by omega
+  · have e : n = 3 * (n / 3) + 2 := by lia
     rw [e]
     exact solvable_three_mul_add_two (n / 3)
 

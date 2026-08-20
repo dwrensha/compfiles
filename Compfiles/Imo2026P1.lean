@@ -15,8 +15,6 @@ public import ProblemExtraction
 
 @[expose] public section
 
-set_option backward.isDefEq.respectTransparency false
-
 problem_file {
   tags := [.NumberTheory]
   problemImportedFrom :=
@@ -117,8 +115,8 @@ terminal value explicitly.
 lemma move_ge_one {B B' : Board} (hmove : Move B B') (hB : ∀ a ∈ B, 1 ≤ a) :
     ∀ a ∈ B', 1 ≤ a := by
   obtain ⟨m, n, s, hm, hn, rfl, rfl⟩ := hmove
-  have hm0 : m ≠ 0 := by omega
-  have hn0 : n ≠ 0 := by omega
+  have hm0 : m ≠ 0 := by lia
+  have hn0 : n ≠ 0 := by lia
   intro a ha
   rw [Multiset.mem_cons] at ha
   rcases ha with rfl | ha
@@ -151,8 +149,8 @@ lemma ge_one_reachable {B₀ B : Board} (hge : ∀ a ∈ B₀, 1 ≤ a) (hreach 
 lemma large_count_pos_of_move {B B' : Board} (hmove : Move B B') :
     1 ≤ (B'.filter fun a => 1 < a).card := by
   obtain ⟨m, n, s, hm, hn, rfl, rfl⟩ := hmove
-  have hm0 : m ≠ 0 := by omega
-  have hn0 : n ≠ 0 := by omega
+  have hm0 : m ≠ 0 := by lia
+  have hn0 : n ≠ 0 := by lia
   have card_pos_of_mem {x : ℕ}
       (hx : x ∈ (Nat.gcd m n ::ₘ (Nat.lcm m n / Nat.gcd m n) ::ₘ s).filter (fun a => 1 < a)) :
       1 ≤ ((Nat.gcd m n ::ₘ (Nat.lcm m n / Nat.gcd m n) ::ₘ s).filter fun a => 1 < a).card := by
@@ -168,7 +166,7 @@ lemma large_count_pos_of_move {B B' : Board} (hmove : Move B B') :
         have hg0 : 0 < Nat.gcd m n := Nat.pos_of_ne_zero (fun h => by
           rw [Nat.gcd_eq_zero_iff] at h
           exact hm0 h.1)
-        omega
+        lia
       have hlcm : Nat.lcm m n = m * n := by
         have h := Nat.gcd_mul_lcm m n
         rw [hg1, one_mul] at h
@@ -198,8 +196,8 @@ lemma gExp_move {m n : ℕ} (hm : 1 < m) (hn : 1 < n) (s : Board) {p : ℕ} (hp 
     gExp p (Nat.gcd m n ::ₘ (Nat.lcm m n / Nat.gcd m n) ::ₘ s) =
       gExp p (m ::ₘ n ::ₘ s) := by
   have : Fact p.Prime := ⟨hp⟩
-  have hm0 : m ≠ 0 := by omega
-  have hn0 : n ≠ 0 := by omega
+  have hm0 : m ≠ 0 := by lia
+  have hn0 : n ≠ 0 := by lia
   have hg0 : Nat.gcd m n ≠ 0 := fun h => by
     rw [Nat.gcd_eq_zero_iff] at h
     exact hm0 h.1
@@ -225,7 +223,7 @@ lemma gExp_move {m n : ℕ} (hm : 1 < m) (hn : 1 < n) (s : Board) {p : ℕ} (hp 
       Nat.mul_div_cancel' ((Nat.gcd_dvd_left m n).trans (Nat.dvd_lcm_left m n))
     have h := padicValNat.mul (p := p) hg0 hl0
     rw [hgl, hvlcm, hvg] at h
-    omega
+    lia
   simp only [gExp, Multiset.map_cons, Multiset.gcd_cons]
   rw [hvg, hvdiv]
   change Nat.gcd (min (padicValNat p m) (padicValNat p n))
@@ -238,12 +236,12 @@ lemma gExp_move {m n : ℕ} (hm : 1 < m) (hn : 1 < n) (s : Board) {p : ℕ} (hp 
 /-- `Mval` is invariant under a move, for boards whose remaining entries are `≥ 1`. -/
 lemma Mval_move {m n : ℕ} (hm : 1 < m) (hn : 1 < n) (s : Board) (hs : ∀ a ∈ s, 1 ≤ a) :
     Mval (Nat.gcd m n ::ₘ (Nat.lcm m n / Nat.gcd m n) ::ₘ s) = Mval (m ::ₘ n ::ₘ s) := by
-  have hm0 : m ≠ 0 := by omega
-  have hn0 : n ≠ 0 := by omega
+  have hm0 : m ≠ 0 := by lia
+  have hn0 : n ≠ 0 := by lia
   have hP0 : s.prod ≠ 0 := fun h => by
     rw [Multiset.prod_eq_zero_iff] at h
     have := hs 0 h
-    omega
+    lia
   have hlcm0 : Nat.lcm m n ≠ 0 := fun h => by
     have h2 := Nat.gcd_mul_lcm m n
     rw [h, mul_zero] at h2
@@ -298,7 +296,7 @@ lemma Mval_terminal {B' : Board} (hge : ∀ a ∈ B', 1 ≤ a) (huniq : HasUniqu
     intro a ha
     rw [Multiset.mem_filter] at ha
     have h1 := hge a ha.1
-    omega
+    lia
   have hprod : B'.prod = M := by
     conv_lhs => rw [hsplit]
     rw [Multiset.prod_add, hfilt, Multiset.prod_singleton,
@@ -315,7 +313,7 @@ lemma Mval_terminal {B' : Board} (hge : ∀ a ∈ B', 1 ≤ a) (huniq : HasUniqu
     conv_lhs => rw [hsplit]
     rw [Multiset.map_add, Multiset.gcd_add, hfilt, Multiset.map_singleton,
       Multiset.gcd_singleton, hz, gcd_zero_right, normalize_idem, normalize_eq]
-  have hM0 : M ≠ 0 := by omega
+  have hM0 : M ≠ 0 := by lia
   have hfin : M = M.factorization.prod (· ^ ·) := (Nat.prod_factorization_pow_eq_self hM0).symm
   unfold Mval
   rw [hprod]
@@ -333,7 +331,7 @@ lemma unique_large_of_reachable_terminal (B₀ : Board) (hB₀ : IsInitial B₀)
   have hf : B₀.filter (fun a => 1 < a) = B₀ := Multiset.filter_eq_self.mpr hB₀.2
   have h0 : 1 ≤ (B₀.filter fun a => 1 < a).card := by
     have hc : (B₀.filter fun a => 1 < a).card = 2026 := by rw [hf, hB₀.1]
-    omega
+    lia
   have h1 : 1 ≤ (B'.filter fun a => 1 < a).card := large_count_pos_of_reachable h0 hreach
   exact le_antisymm hterm h1
 
@@ -360,7 +358,7 @@ problem imo2026_p1a_termination (B₀ : Board) (hB₀ : IsInitial B₀) :
     intro B h
     have h0 : (0 : ℕ) ∉ B := fun h0 => by
       have := h 0 h0
-      omega
+      lia
     exact Nat.pos_of_ne_zero (fun hp => h0 (Multiset.prod_eq_zero_iff.mp hp))
   -- Local helper: the lexicographic measure `(product, number of entries > 1)`
   -- strictly decreases under a move, on boards whose entries are all `≥ 1`.
@@ -369,8 +367,8 @@ problem imo2026_p1a_termination (B₀ : Board) (hB₀ : IsInitial B₀) :
         toLex (B.prod, (B.filter fun a => 1 < a).card) := by
     intro B B' hmove hB
     obtain ⟨m, n, s, hm, hn, rfl, rfl⟩ := hmove
-    have hm0 : m ≠ 0 := by omega
-    have hn0 : n ≠ 0 := by omega
+    have hm0 : m ≠ 0 := by lia
+    have hn0 : n ≠ 0 := by lia
     have hg0 : 0 < Nat.gcd m n := Nat.pos_of_ne_zero (fun h => by
       rw [Nat.gcd_eq_zero_iff] at h
       exact hm0 h.1)
@@ -403,28 +401,28 @@ problem imo2026_p1a_termination (B₀ : Board) (hB₀ : IsInitial B₀) :
           rw [hlcm, hg1, Nat.div_one]
           calc 1 < 2 * 2 := by norm_num
             _ ≤ m * n := Nat.mul_le_mul hm hn
-        have hg1' : ¬ (1 < Nat.gcd m n) := by omega
+        have hg1' : ¬ (1 < Nat.gcd m n) := by lia
         have cfB : ((m ::ₘ n ::ₘ s).filter fun a => 1 < a).card =
             (s.filter fun a => 1 < a).card + 2 := by
-          rw [Multiset.filter_cons, Multiset.filter_cons, if_pos hm, if_pos hn,
+          rw [Multiset.filter_cons, Multiset.filter_cons, ite_eq_left hm, ite_eq_left hn,
             Multiset.card_add, Multiset.card_add, Multiset.card_singleton,
             Multiset.card_singleton]
-          omega
+          lia
         have cfB' : ((Nat.gcd m n ::ₘ (Nat.lcm m n / Nat.gcd m n) ::ₘ s).filter
               fun a => 1 < a).card = (s.filter fun a => 1 < a).card + 1 := by
-          rw [Multiset.filter_cons, Multiset.filter_cons, if_neg hg1', if_pos hl1,
+          rw [Multiset.filter_cons, Multiset.filter_cons, ite_eq_right hg1', ite_eq_left hl1,
             Multiset.card_add, Multiset.card_add, Multiset.card_singleton,
             Multiset.card_zero]
-          omega
+          lia
         rw [cfB', cfB]
-        omega
+        lia
     · left
-      have hg2 : 2 ≤ Nat.gcd m n := by omega
+      have hg2 : 2 ≤ Nat.gcd m n := by lia
       rw [hprodB, hprodB']
       have hpos : 0 < Nat.lcm m n * s.prod := Nat.mul_pos hlcm0 hPs
       calc Nat.lcm m n * s.prod = 1 * (Nat.lcm m n * s.prod) := (one_mul _).symm
         _ < Nat.gcd m n * (Nat.lcm m n * s.prod) :=
-            Nat.mul_lt_mul_of_pos_right (by omega) hpos
+            Nat.mul_lt_mul_of_pos_right (by lia) hpos
   -- Local helper: the lexicographic order on `ℕ ×ₗ ℕ` is well-founded, so it
   -- admits no infinite descending sequence.
   have no_descending : ∀ (x : ℕ ×ₗ ℕ),
@@ -513,24 +511,24 @@ problem imo2026_p1_mval_gt_one (B₀ : Board) (hB₀ : IsInitial B₀) : 1 < Mva
     exact absurd hcard (by decide)
   obtain ⟨a, ha⟩ := Multiset.exists_mem_of_ne_zero hB₀ne
   have ha2 : 2 ≤ a := hge2 a ha
-  obtain ⟨p, hpp, hpdvd⟩ := Nat.exists_prime_and_dvd (n := a) (by omega)
+  obtain ⟨p, hpp, hpdvd⟩ := Nat.exists_prime_and_dvd (n := a) (by lia)
   have hproddvd : a ∣ B₀.prod := Multiset.dvd_prod ha
   have hpd : p ∣ B₀.prod := hpdvd.trans hproddvd
   have hp0 : B₀.prod ≠ 0 := by
     rw [Ne, Multiset.prod_eq_zero_iff]
     intro h0
     have := hge2 0 h0
-    omega
+    lia
   have hpmem : p ∈ B₀.prod.primeFactors := Nat.mem_primeFactors.mpr ⟨hpp, hpd, hp0⟩
   have : Fact p.Prime := ⟨hpp⟩
-  have hva : 1 ≤ padicValNat p a := one_le_padicValNat_of_dvd (by omega) hpdvd
+  have hva : 1 ≤ padicValNat p a := one_le_padicValNat_of_dvd (by lia) hpdvd
   have hgexp : 1 ≤ gExp p B₀ := by
     have hmem : padicValNat p a ∈ B₀.map (fun a => padicValNat p a) :=
       Multiset.mem_map.mpr ⟨a, ha, rfl⟩
     have hne : (B₀.map fun a => padicValNat p a).gcd ≠ 0 := by
       intro hz0
       rw [Multiset.gcd_eq_zero_iff] at hz0
-      exact (show padicValNat p a ≠ 0 by omega) (hz0 _ hmem)
+      exact (show padicValNat p a ≠ 0 by lia) (hz0 _ hmem)
     exact Nat.one_le_iff_ne_zero.mpr hne
   have hpow : p ≤ p ^ gExp p B₀ := by
     conv_lhs => rw [← pow_one p]

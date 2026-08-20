@@ -98,13 +98,13 @@ theorem lemma1
       obtain ⟨⟨p3, p3_ne⟩, p3_mem_α, p3_eq⟩ := hp3'
       obtain ⟨⟨p4, p4_ne⟩, p4_mem_α, p4_eq⟩ := hp4'
       dsimp at p3_eq p4_eq
-      rw [←p3_eq, ←p4_eq]
+      rw [← p3_eq, ← p4_eq]
       have hne : p3 ≠ p4 := by rwa [p3_eq, p4_eq]
       have h8 := h6 ⟨⟨p3, p3_ne⟩, p3_mem_α⟩ ⟨⟨p4, p4_ne⟩, p4_mem_α⟩
                     (by simp[hne, Person'])
       let t3': Topic' := ⟨discusses p3 p4, h8⟩
       have h9 := ht3 t3'
-      rw [←h9]
+      rw [← h9]
 
 snip end
 
@@ -211,7 +211,7 @@ problem imo1964_p4
       obtain ⟨⟨⟨p3', p3_mem_person'⟩, p3_mem_α⟩, p3_mem_s, hp3eq⟩ := hp3
       obtain ⟨⟨⟨p4', p4_mem_person'⟩, p4_mem_α⟩, p4_mem_s, hp4eq⟩ := hp4
       simp only [DFunLike.coe] at hp3eq hp4eq
-      rw [←hp3eq, ←hp4eq]
+      rw [← hp3eq, ← hp4eq]
       have hne : p3' ≠ p4' := by rwa[hp3eq, hp4eq]
       have h6 := hs2 ⟨⟨p3', p3_mem_person'⟩, p3_mem_α⟩ p3_mem_s
                      ⟨⟨p4', p4_mem_person'⟩, p4_mem_α⟩ p4_mem_s

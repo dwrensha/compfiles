@@ -50,14 +50,14 @@ sequence `a`, then `a` satisfies all the required identities. -/
 lemma condition_of_sum_eq_zero {n : ℕ} {P : Finset ℕ} {c : ℕ → ℤ}
     (h : ∑ j ∈ Finset.Icc 1 n, (j : ℤ) * mulSeq P c j = 0) (k : ℕ) (hk : 1 ≤ k) :
     ∑ j ∈ Finset.Icc 1 n, (j : ℤ) * mulSeq P c (j * k) = 0 := by
-  have hk0 : k ≠ 0 := by omega
+  have hk0 : k ≠ 0 := by lia
   calc ∑ j ∈ Finset.Icc 1 n, (j : ℤ) * mulSeq P c (j * k)
       = ∑ j ∈ Finset.Icc 1 n, mulSeq P c k * ((j : ℤ) * mulSeq P c j) := by
         apply Finset.sum_congr rfl
         intro j hj
         have hj0 : j ≠ 0 := by
           have h1 := (Finset.mem_Icc.mp hj).1
-          omega
+          lia
         rw [mulSeq_mul P c hj0 hk0]; ring
     _ = mulSeq P c k * ∑ j ∈ Finset.Icc 1 n, (j : ℤ) * mulSeq P c j := by
         rw [Finset.mul_sum]
@@ -70,23 +70,23 @@ lemma bezout_nonzero {A B c : ℤ} (hA : 0 < A) (hB : 0 < B) (h : IsCoprime A B)
   have huc2 : -((u * c).natAbs : ℤ) ≤ u * c := by
     have h1 := Int.le_natAbs (a := -(u * c))
     rw [Int.natAbs_neg] at h1
-    omega
+    lia
   have hvc1 : v * c ≤ ((v * c).natAbs : ℤ) := Int.le_natAbs
   set t : ℤ := ((u * c).natAbs : ℤ) + ((v * c).natAbs : ℤ) + 1 with ht
-  have ht0 : 0 < t := by omega
+  have ht0 : 0 < t := by lia
   have hBt : ((u * c).natAbs : ℤ) < B * t := by
     have h1 : t ≤ B * t := by
       have h2 : (1 : ℤ) * t ≤ B * t :=
-        mul_le_mul_of_nonneg_right (by omega) (le_of_lt ht0)
+        mul_le_mul_of_nonneg_right (by lia) (le_of_lt ht0)
       rwa [one_mul] at h2
-    omega
+    lia
   have hAt : ((v * c).natAbs : ℤ) < A * t := by
     have h1 : t ≤ A * t := by
       have h2 : (1 : ℤ) * t ≤ A * t :=
-        mul_le_mul_of_nonneg_right (by omega) (le_of_lt ht0)
+        mul_le_mul_of_nonneg_right (by lia) (le_of_lt ht0)
       rwa [one_mul] at h2
-    omega
-  refine ⟨u * c + B * t, v * c - A * t, by omega, by omega, ?_⟩
+    lia
+  refine ⟨u * c + B * t, v * c - A * t, by lia, by lia, ?_⟩
   have e : A * (u * c + B * t) + B * (v * c - A * t) = c * (u * A + v * B) := by ring
   rw [e, huv, mul_one]
 
@@ -122,7 +122,7 @@ lemma not_property_two {a : ℕ → ℤ} (ha : ∀ i, 1 ≤ i → a i ≠ 0)
     exact ha 1 le_rfl
   have hj : (a 1).natAbs < 2 ^ (a 1).natAbs := Nat.lt_two_pow_self
   have hle := Nat.le_of_dvd hpos (hdvdn (a 1).natAbs)
-  omega
+  lia
 
 /-- The coefficient function assigning `x` to `p`, `y` to `q`, and `1` to
 everything else. -/
@@ -151,13 +151,13 @@ lemma mulSeq_cfun_2p {p q : ℕ} {x y : ℤ} (hp : p.Prime) (hq : q.Prime) (hp5 
   have hfac1 : Nat.factorization (2 * p) p = 1 := by
     rw [Nat.factorization_mul (by norm_num) hp.ne_zero, Finsupp.add_apply,
       Nat.factorization_eq_zero_of_not_dvd
-        (Nat.not_dvd_of_pos_of_lt (by norm_num) (by omega)),
+        (Nat.not_dvd_of_pos_of_lt (by norm_num) (by lia)),
       hp.factorization_self]
   have hfac2 : Nat.factorization (2 * p) q = 0 := by
     apply Nat.factorization_eq_zero_of_not_dvd
     intro h
     rcases hq.dvd_mul.mp h with h2 | hp'
-    · exact Nat.not_dvd_of_pos_of_lt (by norm_num) (by omega) h2
+    · exact Nat.not_dvd_of_pos_of_lt (by norm_num) (by lia) h2
     · exact Nat.not_dvd_of_pos_of_lt hp.pos hplt hp'
   rw [mulSeq_cfun_apply hpq, hfac1, hfac2]
   simp
@@ -169,13 +169,13 @@ lemma mulSeq_cfun_3p {p q : ℕ} {x y : ℤ} (hp : p.Prime) (hq : q.Prime) (hp5 
   have hfac1 : Nat.factorization (3 * p) p = 1 := by
     rw [Nat.factorization_mul (by norm_num) hp.ne_zero, Finsupp.add_apply,
       Nat.factorization_eq_zero_of_not_dvd
-        (Nat.not_dvd_of_pos_of_lt (by norm_num) (by omega)),
+        (Nat.not_dvd_of_pos_of_lt (by norm_num) (by lia)),
       hp.factorization_self]
   have hfac2 : Nat.factorization (3 * p) q = 0 := by
     apply Nat.factorization_eq_zero_of_not_dvd
     intro h
     rcases hq.dvd_mul.mp h with h3 | hp'
-    · exact Nat.not_dvd_of_pos_of_lt (by norm_num) (by omega) h3
+    · exact Nat.not_dvd_of_pos_of_lt (by norm_num) (by lia) h3
     · exact Nat.not_dvd_of_pos_of_lt hp.pos hplt hp'
   rw [mulSeq_cfun_apply hpq, hfac1, hfac2]
   simp
@@ -197,8 +197,8 @@ lemma term_eq_zero {n p q j : ℕ} {x y : ℤ} (hplt : p < q)
     (h1 : j ≠ p) (h2 : j ≠ 2 * p) (h3 : j ≠ 3 * p) (h4 : j ≠ q) :
     (j : ℤ) * (mulSeq {p, q} (cfun p q x y) j - 1) = 0 := by
   have hpq : p ≠ q := ne_of_lt hplt
-  have h4p' : n < p * 4 := by omega
-  have h2q' : n < q * 2 := by omega
+  have h4p' : n < p * 4 := by lia
+  have h2q' : n < q * 2 := by lia
   have hpdvd : ¬ p ∣ j := by
     rintro ⟨e, rfl⟩
     have he1 : 1 ≤ e := by
@@ -237,25 +237,25 @@ lemma sum_mulSeq_cfun_sub_one {n p q : ℕ} {x y : ℤ} (hp : p.Prime) (hq : q.P
   have h2p_ne : 2 * p ≠ q := by
     have hqodd : q % 2 = 1 := by
       rcases hq.eq_two_or_odd with h | h
-      · omega
+      · lia
       · exact h
-    omega
+    lia
   have h3p_ne : 3 * p ≠ q := by
     intro h
     exact hpq ((Nat.prime_dvd_prime_iff_eq hp hq).mp ⟨3, by rw [mul_comm]; exact h.symm⟩)
   by_cases h2 : 2 * p ≤ n
   · by_cases h3 : 3 * p ≤ n
     · -- case `3 * p ≤ n`: multiples of `p` in `[1, n]` are `p, 2p, 3p`
-      rw [if_pos h2, if_pos h3]
+      rw [ite_eq_left h2, ite_eq_left h3]
       have hss : ({p, 2 * p, 3 * p, q} : Finset ℕ) ⊆ Finset.Icc 1 n := by
         intro j hj
         simp only [Finset.mem_insert, Finset.mem_singleton] at hj
         rw [Finset.mem_Icc]
         rcases hj with rfl | rfl | rfl | rfl
-        · exact ⟨by omega, hpn⟩
-        · exact ⟨by omega, h2⟩
-        · exact ⟨by omega, h3⟩
-        · exact ⟨by omega, hqn⟩
+        · exact ⟨by lia, hpn⟩
+        · exact ⟨by lia, h2⟩
+        · exact ⟨by lia, h3⟩
+        · exact ⟨by lia, hqn⟩
       have hvan : ∀ j ∈ Finset.Icc 1 n, j ∉ ({p, 2 * p, 3 * p, q} : Finset ℕ) →
           (j : ℤ) * (mulSeq {p, q} (cfun p q x y) j - 1) = 0 := by
         intro j hj hjs
@@ -264,54 +264,54 @@ lemma sum_mulSeq_cfun_sub_one {n p q : ℕ} {x y : ℤ} (hp : p.Prime) (hq : q.P
         push Not at hjs
         exact term_eq_zero hplt h2q h4p hj.1 hj.2 hjs.1 hjs.2.1 hjs.2.2.1 hjs.2.2.2
       have hsub := (Finset.sum_subset hss hvan).symm
-      rw [hsub, Finset.sum_insert (by simp; omega),
-        Finset.sum_insert (by simp; omega), Finset.sum_insert (by simp; omega),
+      rw [hsub, Finset.sum_insert (by simp; lia),
+        Finset.sum_insert (by simp; lia), Finset.sum_insert (by simp; lia),
         Finset.sum_singleton, mulSeq_cfun_p hp hplt, mulSeq_cfun_2p hp hq hp5 hq7 hplt,
         mulSeq_cfun_3p hp hq hp5 hq7 hplt, mulSeq_cfun_q hp hq hplt]
       ring
     · -- case `2 * p ≤ n < 3 * p`: multiples of `p` in `[1, n]` are `p, 2p`
-      rw [if_pos h2, if_neg h3]
+      rw [ite_eq_left h2, ite_eq_right h3]
       have hss : ({p, 2 * p, q} : Finset ℕ) ⊆ Finset.Icc 1 n := by
         intro j hj
         simp only [Finset.mem_insert, Finset.mem_singleton] at hj
         rw [Finset.mem_Icc]
         rcases hj with rfl | rfl | rfl
-        · exact ⟨by omega, hpn⟩
-        · exact ⟨by omega, h2⟩
-        · exact ⟨by omega, hqn⟩
+        · exact ⟨by lia, hpn⟩
+        · exact ⟨by lia, h2⟩
+        · exact ⟨by lia, hqn⟩
       have hvan : ∀ j ∈ Finset.Icc 1 n, j ∉ ({p, 2 * p, q} : Finset ℕ) →
           (j : ℤ) * (mulSeq {p, q} (cfun p q x y) j - 1) = 0 := by
         intro j hj hjs
         simp only [Finset.mem_insert, Finset.mem_singleton] at hjs
         rw [Finset.mem_Icc] at hj
         push Not at hjs
-        exact term_eq_zero hplt h2q h4p hj.1 hj.2 hjs.1 hjs.2.1 (by omega) hjs.2.2
+        exact term_eq_zero hplt h2q h4p hj.1 hj.2 hjs.1 hjs.2.1 (by lia) hjs.2.2
       have hsub := (Finset.sum_subset hss hvan).symm
-      rw [hsub, Finset.sum_insert (by simp; omega),
-        Finset.sum_insert (by simp; omega), Finset.sum_singleton,
+      rw [hsub, Finset.sum_insert (by simp; lia),
+        Finset.sum_insert (by simp; lia), Finset.sum_singleton,
         mulSeq_cfun_p hp hplt, mulSeq_cfun_2p hp hq hp5 hq7 hplt,
         mulSeq_cfun_q hp hq hplt]
       ring
   · by_cases h3 : 3 * p ≤ n
-    · omega
+    · lia
     · -- case `n < 2 * p`: the only multiple of `p` in `[1, n]` is `p`
-      rw [if_neg h2, if_neg h3]
+      rw [ite_eq_right h2, ite_eq_right h3]
       have hss : ({p, q} : Finset ℕ) ⊆ Finset.Icc 1 n := by
         intro j hj
         simp only [Finset.mem_insert, Finset.mem_singleton] at hj
         rw [Finset.mem_Icc]
         rcases hj with rfl | rfl
-        · exact ⟨by omega, hpn⟩
-        · exact ⟨by omega, hqn⟩
+        · exact ⟨by lia, hpn⟩
+        · exact ⟨by lia, hqn⟩
       have hvan : ∀ j ∈ Finset.Icc 1 n, j ∉ ({p, q} : Finset ℕ) →
           (j : ℤ) * (mulSeq {p, q} (cfun p q x y) j - 1) = 0 := by
         intro j hj hjs
         simp only [Finset.mem_insert, Finset.mem_singleton] at hjs
         rw [Finset.mem_Icc] at hj
         push Not at hjs
-        exact term_eq_zero hplt h2q h4p hj.1 hj.2 hjs.1 (by omega) (by omega) hjs.2
+        exact term_eq_zero hplt h2q h4p hj.1 hj.2 hjs.1 (by lia) (by lia) hjs.2
       have hsub := (Finset.sum_subset hss hvan).symm
-      rw [hsub, Finset.sum_insert (by simp; omega), Finset.sum_singleton,
+      rw [hsub, Finset.sum_insert (by simp; lia), Finset.sum_singleton,
         mulSeq_cfun_p hp hplt, mulSeq_cfun_q hp hq hplt]
       ring
 
@@ -322,8 +322,8 @@ lemma exists_good_seq_of_nine_le {n : ℕ} (hn : 9 ≤ n) :
     ∃ a : ℕ → ℤ, (∀ i, 1 ≤ i → a i ≠ 0) ∧
       ∀ k, 1 ≤ k → ∑ j ∈ Finset.Icc 1 n, (j : ℤ) * a (j * k) = 0 := by
   obtain ⟨q, hq, hm_lt, hq_le⟩ :=
-    Nat.exists_prime_lt_and_le_two_mul ((n + 1) / 2) (by omega)
-  have hq6 : 6 ≤ q := by omega
+    Nat.exists_prime_lt_and_le_two_mul ((n + 1) / 2) (by lia)
+  have hq6 : 6 ≤ q := by lia
   have hq7 : 7 ≤ q := by
     rcases lt_or_ge q 7 with h | h
     · interval_cases q
@@ -331,27 +331,27 @@ lemma exists_good_seq_of_nine_le {n : ℕ} (hn : 9 ≤ n) :
     · exact h
   have hqodd : q % 2 = 1 := by
     rcases hq.eq_two_or_odd with h | h
-    · omega
+    · lia
     · exact h
-  have h2q : n < 2 * q := by omega
+  have h2q : n < 2 * q := by lia
   have hq_le_n : q ≤ n := by
     by_contra hlt
     push Not at hlt
-    have hqn1 : q = n + 1 := by omega
+    have hqn1 : q = n + 1 := by lia
     subst hqn1
-    omega
+    lia
   obtain ⟨p, hp, hp_gt, hp_le⟩ :=
-    Nat.exists_prime_lt_and_le_two_mul ((q - 1) / 2) (by omega)
-  have hp4 : 4 ≤ p := by omega
+    Nat.exists_prime_lt_and_le_two_mul ((q - 1) / 2) (by lia)
+  have hp4 : 4 ≤ p := by lia
   have hp5 : 5 ≤ p := by
     rcases lt_or_ge p 5 with h | h
     · interval_cases p
       · norm_num at hp
     · exact h
-  have hplt : p < q := by omega
-  have h2p_ge : q ≤ 2 * p := by omega
-  have h4p : n < 4 * p := by omega
-  have hpn : p ≤ n := by omega
+  have hplt : p < q := by lia
+  have h2p_ge : q ≤ 2 * p := by lia
+  have h4p : n < 4 * p := by lia
+  have hpn : p ≤ n := by lia
   set S : ℤ := ∑ j ∈ Finset.Icc 1 n, (j : ℤ) with hS
   have build : ∀ m : ℕ, 0 < m → Nat.Coprime m q →
       (m : ℤ) = (p : ℤ) + (if 2 * p ≤ n then ((2 * p : ℕ) : ℤ) else 0)
@@ -372,11 +372,11 @@ lemma exists_good_seq_of_nine_le {n : ℕ} (hn : 9 ≤ n) :
       rcases hr with hrp | hrq
       · rw [hrp]
         show (if p = p then x else if p = q then y else 1) ≠ 0
-        rw [if_pos rfl]
+        rw [ite_eq_left rfl]
         exact hx
       · rw [hrq]
         show (if q = p then x else if q = q then y else 1) ≠ 0
-        rw [if_neg (ne_of_lt hplt).symm, if_pos rfl]
+        rw [ite_eq_right (ne_of_lt hplt).symm, ite_eq_left rfl]
         exact hy
     · intro k hk
       apply condition_of_sum_eq_zero _ k hk
@@ -387,15 +387,15 @@ lemma exists_good_seq_of_nine_le {n : ℕ} (hn : 9 ≤ n) :
         exact Finset.sum_congr rfl fun j _ => by ring
       rw [hsplit, sum_mulSeq_cfun_sub_one hp hq hp5 hq7 hplt h2q h4p hpn hq_le_n]
       by_cases h3 : 3 * p ≤ n
-      · have h2 : 2 * p ≤ n := by omega
-        simp only [if_pos h2, if_pos h3] at hm_eq hbez ⊢
+      · have h2 : 2 * p ≤ n := by lia
+        simp only [ite_eq_left h2, ite_eq_left h3] at hm_eq hbez ⊢
         rw [hm_eq] at hbez
         linear_combination hbez
       · by_cases h2 : 2 * p ≤ n
-        · simp only [if_neg h3, if_pos h2] at hm_eq hbez ⊢
+        · simp only [ite_eq_right h3, ite_eq_left h2] at hm_eq hbez ⊢
           rw [hm_eq] at hbez
           linear_combination hbez
-        · simp only [if_neg h3, if_neg h2] at hm_eq hbez ⊢
+        · simp only [ite_eq_right h3, ite_eq_right h2] at hm_eq hbez ⊢
           rw [hm_eq] at hbez
           linear_combination hbez
   rcases lt_or_ge n (3 * p) with h3 | h3
@@ -405,8 +405,8 @@ lemma exists_good_seq_of_nine_le {n : ℕ} (hn : 9 ≤ n) :
         apply Nat.Coprime.symm
         rw [hq.coprime_iff_not_dvd]
         exact Nat.not_dvd_of_pos_of_lt hp.pos hplt
-      exact build p (by omega) hcop (by
-        rw [if_neg (by omega : ¬ 2 * p ≤ n), if_neg (by omega : ¬ 3 * p ≤ n)]
+      exact build p (by lia) hcop (by
+        rw [ite_eq_right (by lia : ¬ 2 * p ≤ n), ite_eq_right (by lia : ¬ 3 * p ≤ n)]
         ring)
     · -- here the multiples of `p` in `[1, n]` are `p, 2p`, and `3 * p` is coprime to `q`
       have hcop : Nat.Coprime (3 * p) q := by
@@ -414,10 +414,10 @@ lemma exists_good_seq_of_nine_le {n : ℕ} (hn : 9 ≤ n) :
         rw [hq.coprime_iff_not_dvd]
         intro h
         rcases hq.dvd_mul.mp h with h3' | hp'
-        · exact Nat.not_dvd_of_pos_of_lt (by norm_num) (by omega) h3'
+        · exact Nat.not_dvd_of_pos_of_lt (by norm_num) (by lia) h3'
         · exact Nat.not_dvd_of_pos_of_lt hp.pos hplt hp'
-      exact build (3 * p) (by omega) hcop (by
-        rw [if_pos h2, if_neg (by omega : ¬ 3 * p ≤ n)]
+      exact build (3 * p) (by lia) hcop (by
+        rw [ite_eq_left h2, ite_eq_right (by lia : ¬ 3 * p ≤ n)]
         push_cast
         ring)
   · -- here the multiples of `p` in `[1, n]` are `p, 2p, 3p`, and `6 * p` is coprime to `q`
@@ -426,11 +426,11 @@ lemma exists_good_seq_of_nine_le {n : ℕ} (hn : 9 ≤ n) :
       rw [hq.coprime_iff_not_dvd]
       intro h
       rcases hq.dvd_mul.mp h with h6 | hp'
-      · exact Nat.not_dvd_of_pos_of_lt (by norm_num) (by omega) h6
+      · exact Nat.not_dvd_of_pos_of_lt (by norm_num) (by lia) h6
       · exact Nat.not_dvd_of_pos_of_lt hp.pos hplt hp'
-    exact build (6 * p) (by omega) hcop (by
-      have h2 : 2 * p ≤ n := by omega
-      rw [if_pos h2, if_pos h3]
+    exact build (6 * p) (by lia) hcop (by
+      have h2 : 2 * p ≤ n := by lia
+      rw [ite_eq_left h2, ite_eq_left h3]
       push_cast
       ring)
 
@@ -602,11 +602,11 @@ problem usa2012_p3 (n : ℕ) (hn : 1 < n) :
             Finset.sum_insert (by decide), Finset.sum_singleton,
             m1, m2, m3, m4, m5, m6, m7, m8]
           norm_num)
-    · exact exists_good_seq_of_nine_le (by omega)
+    · exact exists_good_seq_of_nine_le (by lia)
   · rintro ⟨a, ha, hsum⟩
     by_contra hlt
     push Not at hlt
-    have hn2 : n = 2 := by omega
+    have hn2 : n = 2 := by lia
     subst hn2
     have h2 : ∀ k, 1 ≤ k → a k + 2 * a (2 * k) = 0 := by
       intro k hk

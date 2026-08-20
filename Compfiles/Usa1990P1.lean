@@ -90,7 +90,7 @@ theorem hammingDist_ge_two_of_sum_eq {n : ℕ} {p q : Fin n → ZMod 10}
     rw [Finset.sum_singleton, hsub] at hss
     exact hpj (sub_eq_zero.mp hss)
   have hpos : 0 < hammingDist p q := hammingDist_pos.mpr hne
-  omega
+  lia
 
 /-- Upper bound: a valid collection of plates has at most `10 ^ 5`
 members. Indeed, two plates agreeing on the first five digits differ in
@@ -112,7 +112,7 @@ theorem card_le_of_valid {S : Finset Plate} (hS : IsValid S) :
       calc hammingDist p q = (Finset.univ.filter fun i ↦ p i ≠ q i).card := rfl
         _ ≤ ({Fin.last 5} : Finset (Fin 6)).card := Finset.card_le_card hsub
         _ = 1 := Finset.card_singleton _
-    omega
+    lia
   calc S.card ≤ (Finset.univ : Finset (Fin 5 → ZMod 10)).card :=
         Finset.card_le_card_of_injOn _ (fun p _ ↦ Finset.mem_univ _) hinj
     _ = 10 ^ 5 := by

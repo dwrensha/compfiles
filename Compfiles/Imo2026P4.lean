@@ -42,8 +42,6 @@ Humanfia's Kimi-K3 solutions (https://github.com/humanfia/imo2026).
 
 namespace Imo2026P4
 
-set_option backward.isDefEq.respectTransparency false
-
 /-- A triangle, viewed as the multiset of its three interior angles (in degrees):
 positive reals summing to `180`. -/
 def IsTriangle (s : Multiset ℝ) : Prop :=
@@ -127,18 +125,18 @@ lemma exists_nat_mul_in (θ : ℝ) (hθ0 : 0 < θ) (u v : ℝ) (hu : 0 < u)
     by_contra h9
     push Not at h9
     have h10 : ((⌊u / θ⌋ + 1 : ℤ) : ℝ) ≤ 0 := by
-      exact_mod_cast (by omega : ⌊u / θ⌋ + 1 ≤ 0)
+      exact_mod_cast (by lia : ⌊u / θ⌋ + 1 ≤ 0)
     have h11 : ((⌊u / θ⌋ + 1 : ℤ) : ℝ) * θ ≤ 0 :=
       mul_nonpos_of_nonpos_of_nonneg h10 (le_of_lt hθ0)
     linarith
   have hcast : ((⌊u / θ⌋ + 1).toNat : ℝ) = ((⌊u / θ⌋ + 1 : ℤ) : ℝ) := by
     have h12 : ((⌊u / θ⌋ + 1).toNat : ℤ) = ⌊u / θ⌋ + 1 :=
-      Int.toNat_of_nonneg (by omega)
+      Int.toNat_of_nonneg (by lia)
     exact_mod_cast h12
   refine ⟨(⌊u / θ⌋ + 1).toNat, ?_, ?_, ?_⟩
   · have h12 : ((⌊u / θ⌋ + 1).toNat : ℤ) = ⌊u / θ⌋ + 1 :=
-      Int.toNat_of_nonneg (by omega)
-    omega
+      Int.toNat_of_nonneg (by lia)
+    lia
   · rw [hcast]
     exact h1
   · rw [hcast]
@@ -163,7 +161,7 @@ lemma good_wins (θ : ℝ) (hθ0 : 0 < θ) : ∀ k : ℕ, 1 ≤ k → ∀ s : Mu
     obtain ⟨t, ht⟩ := Multiset.exists_cons_of_mem hmem
     have hcardt : t.card = 2 := by
       have h1 : s.card = t.card + 1 := by rw [ht, Multiset.card_cons]
-      omega
+      lia
     obtain ⟨B, C, htBC⟩ := Multiset.card_eq_two.mp hcardt
     have hs' : s = {((k + 1 : ℕ) : ℝ) * θ, B, C} := by
       rw [ht, htBC]
@@ -177,7 +175,7 @@ lemma good_wins (θ : ℝ) (hθ0 : 0 < θ) : ∀ k : ℕ, 1 ≤ k → ∀ s : Mu
       rw [hs', triple_sum] at hsum
       exact hsum
     have hkθ : (0 : ℝ) < (k : ℝ) * θ := by
-      have h1 : (0 : ℝ) < (k : ℝ) := by exact_mod_cast (by omega : 0 < k)
+      have h1 : (0 : ℝ) < (k : ℝ) := by exact_mod_cast (by lia : 0 < k)
       positivity
     have hx1 : C < C + θ := by linarith
     have hx2 : C + θ < 180 - B := by linarith
@@ -246,7 +244,7 @@ lemma find_cut (θ : ℝ) (hθ0 : 0 < θ) : ∀ n : ℕ, 2 ≤ n → (n : ℝ) *
             linarith
           have ha_eq : a = θ := by linarith
           exact hmul ⟨1, le_refl 1, Or.inl (by rw [ha_eq]; simp)⟩
-        have hn2' : n = 2 := by omega
+        have hn2' : n = 2 := by lia
         have h2θ : 2 * θ = 180 := by
           rw [hn2'] at hnθ
           push_cast at hnθ
@@ -329,7 +327,6 @@ integer `n ≥ 2`. -/
 snip end
 problem imo2026_p4 (θ : ℝ) (hθ0 : 0 < θ) (hθ180 : θ < 180) :
     MulanCanGuarantee θ ↔ θ ∈ answer := by
-  classical
   change MulanCanGuarantee θ ↔ ∃ n : ℕ, 2 ≤ n ∧ θ = 180 / n
   constructor
   · -- (⇒) If Mulan can guarantee victory, then `θ = 180 / n` for some `n ≥ 2`.
@@ -342,27 +339,24 @@ problem imo2026_p4 (θ : ℝ) (hθ0 : 0 < θ) (hθ180 : θ < 180) :
       have hm1 : 1 ≤ m := by
         by_contra h
         push Not at h
-        have h1 : ((m : ℤ) : ℝ) ≤ 0 := by exact_mod_cast (by omega : m ≤ 0)
+        have h1 : ((m : ℤ) : ℝ) ≤ 0 := by exact_mod_cast (by lia : m ≤ 0)
         have h2 : ((m : ℤ) : ℝ) * θ ≤ 0 :=
           mul_nonpos_of_nonpos_of_nonneg h1 (le_of_lt hθ0)
         linarith
       have hm2 : 2 ≤ m := by
         by_contra h
         push Not at h
-        have h1 : m = 1 := by omega
+        have h1 : m = 1 := by lia
         subst h1
         simp only [Int.cast_one, one_mul] at hm
         linarith
       have hmn : ((m.toNat : ℕ) : ℝ) = ((m : ℤ) : ℝ) := by
-        have h2 : ((m.toNat : ℕ) : ℤ) = m := Int.toNat_of_nonneg (by omega)
+        have h2 : ((m.toNat : ℕ) : ℤ) = m := Int.toNat_of_nonneg (by lia)
         exact_mod_cast h2
       have hm2n : 2 ≤ m.toNat := by
-        have h2 : ((m.toNat : ℕ) : ℤ) = m := Int.toNat_of_nonneg (by omega)
-        omega
-      have hne : ((m.toNat : ℕ) : ℝ) ≠ 0 := by
-        rw [hmn]
-        have h3 : (0 : ℝ) < ((m : ℤ) : ℝ) := by exact_mod_cast (by omega : 0 < m)
-        exact ne_of_gt h3
+        have h2 : ((m.toNat : ℕ) : ℤ) = m := Int.toNat_of_nonneg (by lia)
+        lia
+      have hne : ((m.toNat : ℕ) : ℝ) ≠ 0 := by positivity
       exact hθ m.toNat hm2n ((eq_div_iff hne).mpr (by rw [hmn, mul_comm]; exact hm.symm))
     -- The equilateral triangle is a valid starting triangle.
     have hsum60 : ({60, 60, 60} : Multiset ℝ).sum = 180 := by
@@ -386,22 +380,19 @@ problem imo2026_p4 (θ : ℝ) (hθ0 : 0 < θ) (hθ180 : θ < 180) :
       have hk1 : 1 ≤ k := by
         by_contra h
         push Not at h
-        have h1 : ((k : ℤ) : ℝ) ≤ 0 := by exact_mod_cast (by omega : k ≤ 0)
+        have h1 : ((k : ℤ) : ℝ) ≤ 0 := by exact_mod_cast (by lia : k ≤ 0)
         have h2 : ((k : ℤ) : ℝ) * θ ≤ 0 :=
           mul_nonpos_of_nonpos_of_nonneg h1 (le_of_lt hθ0)
         linarith
       have hkn : ((3 * k.toNat : ℕ) : ℝ) = 3 * ((k : ℤ) : ℝ) := by
-        have h2 : ((k.toNat : ℕ) : ℤ) = k := Int.toNat_of_nonneg (by omega)
+        have h2 : ((k.toNat : ℕ) : ℤ) = k := Int.toNat_of_nonneg (by lia)
         have h3 : ((k.toNat : ℕ) : ℝ) = ((k : ℤ) : ℝ) := by exact_mod_cast h2
         push_cast
         rw [h3]
       have h2n : 2 ≤ 3 * k.toNat := by
-        have h2 : ((k.toNat : ℕ) : ℤ) = k := Int.toNat_of_nonneg (by omega)
-        omega
-      have hne : ((3 * k.toNat : ℕ) : ℝ) ≠ 0 := by
-        rw [hkn]
-        have h3 : (0 : ℝ) < ((k : ℤ) : ℝ) := by exact_mod_cast (by omega : 0 < k)
-        exact ne_of_gt (mul_pos (by norm_num) h3)
+        have h2 : ((k.toNat : ℕ) : ℤ) = k := Int.toNat_of_nonneg (by lia)
+        lia
+      have hne : ((3 * k.toNat : ℕ) : ℝ) ≠ 0 := by positivity
       exact hθ (3 * k.toNat) h2n ((eq_div_iff hne).mpr (by
         rw [hkn, show θ * (3 * ((k : ℤ) : ℝ)) = 3 * (((k : ℤ) : ℝ) * θ) by ring, ← hky]
         norm_num))
@@ -418,7 +409,7 @@ problem imo2026_p4 (θ : ℝ) (hθ0 : 0 < θ) (hθ180 : θ < 180) :
       rw [triple_sum] at hsum
       exact hsum
     have hn0 : (n : ℝ) ≠ 0 := by
-      have h1 : (0 : ℝ) < (n : ℝ) := by exact_mod_cast (by omega : 0 < n)
+      have h1 : (0 : ℝ) < (n : ℝ) := by exact_mod_cast (by lia : 0 < n)
       exact ne_of_gt h1
     have hnθ : (n : ℝ) * θ = 180 := by
       rw [hθn]
@@ -444,9 +435,9 @@ problem imo2026_p4 (θ : ℝ) (hθ0 : 0 < θ) (hθ180 : θ < 180) :
         have h1 : (m : ℝ) * θ < (n : ℝ) * θ := by linarith
         have h2 : (m : ℝ) < (n : ℝ) := lt_of_mul_lt_mul_right h1 (le_of_lt hθ0)
         have h3 : m < n := by exact_mod_cast h2
-        omega
+        lia
       have hnm : (((n - m : ℕ)) : ℝ) * θ = 180 - (m : ℝ) * θ := by
-        rw [Nat.cast_sub (by omega : m ≤ n), sub_mul, hnθ]
+        rw [Nat.cast_sub (by lia : m ≤ n), sub_mul, hnθ]
       refine MulanWins.move (L := {B, (m : ℝ) * θ, 180 - B - (m : ℝ) * θ})
         (R := {C, 180 - (m : ℝ) * θ, (m : ℝ) * θ - C})
         ⟨A, B, C, (m : ℝ) * θ, hsABC, hmC, hmB, rfl, rfl⟩ ?_ ?_
@@ -461,7 +452,7 @@ problem imo2026_p4 (θ : ℝ) (hθ0 : 0 < θ) (hθ180 : θ < 180) :
           · linarith
         · rw [triple_sum]
           ring
-      · refine good_wins θ hθ0 (n - m) (by omega) _ ?_ (triple_card _ _ _) ?_ ?_
+      · refine good_wins θ hθ0 (n - m) (by lia) _ ?_ (triple_card _ _ _) ?_ ?_
         · rw [hnm, mem3]
           exact Or.inr (Or.inl rfl)
         · intro y hy

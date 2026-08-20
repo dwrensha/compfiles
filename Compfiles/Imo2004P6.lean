@@ -36,12 +36,12 @@ lemma not_alternating_of_dvd_twenty {M : ℕ} (h : 20 ∣ M) : ¬ Alternating M 
   rintro ⟨hpos, hchain⟩
   obtain ⟨q, rfl⟩ := h
   rw [Nat.digits_def' (by norm_num : (1:ℕ) < 10) hpos] at hchain
-  have h1 : 20 * q % 10 = 0 := by omega
-  have h2 : 20 * q / 10 = 2 * q := by omega
+  have h1 : 20 * q % 10 = 0 := by lia
+  have h2 : 20 * q / 10 = 2 * q := by lia
   rw [h1, h2] at hchain
-  rw [Nat.digits_def' (by norm_num : (1:ℕ) < 10) (by omega : 0 < 2 * q)] at hchain
+  rw [Nat.digits_def' (by norm_num : (1:ℕ) < 10) (by lia : 0 < 2 * q)] at hchain
   rw [List.isChain_cons_cons] at hchain
-  exact hchain.1 (show 0 % 2 = (2 * q % 10) % 2 by omega)
+  exact hchain.1 (show 0 % 2 = (2 * q % 10) % 2 by lia)
 
 /-- Digit lists (little-endian) whose entry at each position has the parity
 of the position, so that consecutive digits have different parity. -/
@@ -59,9 +59,9 @@ lemma Nice.append {L M : List ℕ} (hL : Nice L) (hM : Nice M)
       exact hL.2 i hi
     · rw [List.getElem_append_right hi]
       have h' : i - L.length < M.length := by
-        rw [List.length_append] at h; omega
+        rw [List.length_append] at h; lia
       have := hM.2 (i - L.length) h'
-      omega
+      lia
 
 lemma Nice.snoc {L : List ℕ} (hL : Nice L) {e : ℕ} (he : e < 10)
     (hp : e % 2 = L.length % 2) : Nice (L ++ [e]) := by
@@ -69,43 +69,43 @@ lemma Nice.snoc {L : List ℕ} (hL : Nice L) {e : ℕ} (he : e < 10)
   · rcases List.mem_append.mp hd with h' | h'
     · exact hL.1 d h'
     · simp only [List.mem_singleton] at h'
-      omega
+      lia
   · rcases Nat.lt_or_ge i L.length with hi | hi
     · rw [List.getElem_append_left hi]
       exact hL.2 i hi
     · have h' : (L ++ [e]).length = L.length + 1 := by simp
-      have hieq : i = L.length := by omega
+      have hieq : i = L.length := by lia
       rw [List.getElem_append_right hi, List.getElem_singleton]
-      omega
+      lia
 
 lemma Nice.isChain {L : List ℕ} (hL : Nice L) :
     L.IsChain (fun k l ↦ ¬ k ≡ l [MOD 2]) := by
   rw [List.isChain_iff_getElem]
   intro i h
-  have h1 := hL.2 i (by omega)
+  have h1 := hL.2 i (by lia)
   have h2 := hL.2 (i + 1) h
   intro hc
   have hc' : L[i] % 2 = L[i + 1] % 2 := hc
-  omega
+  lia
 
 /-- If `u` is coprime to `x` and `2 ≤ x`, then `u` divides some sum
 `1 + x + x ^ 2 + ⋯ + x ^ (t - 1)` with `0 < t`. -/
 lemma dvd_geom_sum {u x : ℕ} (hux : Nat.Coprime x u) (hx : 2 ≤ x) :
     ∃ t, 0 < t ∧ u ∣ ∑ i ∈ Finset.range t, x ^ i := by
-  have hu0 : 0 < u := Nat.pos_of_ne_zero fun h ↦ by simp [h, Nat.Coprime] at hux; omega
-  have hU0 : 0 < u * (x - 1) := Nat.mul_pos hu0 (by omega)
+  have hu0 : 0 < u := Nat.pos_of_ne_zero fun h ↦ by simp [h, Nat.Coprime] at hux; lia
+  have hU0 : 0 < u * (x - 1) := Nat.mul_pos hu0 (by lia)
   have hcop : Nat.Coprime x (u * (x - 1)) := by
     refine Nat.Coprime.mul_right hux ?_
     have h1 := Nat.dvd_sub (Nat.gcd_dvd_left x (x - 1)) (Nat.gcd_dvd_right x (x - 1))
-    rw [show x - (x - 1) = 1 by omega] at h1
+    rw [show x - (x - 1) = 1 by lia] at h1
     exact Nat.dvd_one.mp h1
   refine ⟨(u * (x - 1)).totient, Nat.totient_pos.mpr hU0, ?_⟩
   have h2 : x ^ (u * (x - 1)).totient ≡ 1 [MOD u * (x - 1)] :=
     Nat.ModEq.pow_totient hcop
   have h4 : u * (x - 1) ∣ x ^ (u * (x - 1)).totient - 1 :=
-    (Nat.modEq_iff_dvd' (pow_pos (by omega : 0 < x) _)).mp h2.symm
-  rw [← geom_sum_mul_of_one_le (by omega : 1 ≤ x) (u * (x - 1)).totient] at h4
-  exact (Nat.mul_dvd_mul_iff_right (by omega : 0 < x - 1)).mp h4
+    (Nat.modEq_iff_dvd' (pow_pos (by lia : 0 < x) _)).mp h2.symm
+  rw [← geom_sum_mul_of_one_le (by lia : 1 ≤ x) (u * (x - 1)).totient] at h4
+  exact (Nat.mul_dvd_mul_iff_right (by lia : 0 < x - 1)).mp h4
 
 lemma nice_flatten_replicate {L : List ℕ} (hL : Nice L) (hlen : L.length % 2 = 0)
     (t : ℕ) :
@@ -134,7 +134,7 @@ lemma exists_alternating_multiple {n u : ℕ} (hu : Nat.Coprime u 10)
   have hx10 : 10 ≤ 10 ^ L.length := by
     calc (10:ℕ) = 10 ^ 1 := (pow_one 10).symm
     _ ≤ 10 ^ L.length := Nat.pow_le_pow_right (by norm_num) hlpos
-  obtain ⟨t, ht0, huS⟩ := dvd_geom_sum (hu.symm.pow_left L.length) (by omega)
+  obtain ⟨t, ht0, huS⟩ := dvd_geom_sum (hu.symm.pow_left L.length) (by lia)
   obtain ⟨hniceJ, hlenJ, hofJ⟩ := nice_flatten_replicate hnice hlen t
   have hJlen : 0 < ((List.replicate t L).flatten).length := by
     rw [hlenJ]
@@ -147,8 +147,8 @@ lemma exists_alternating_multiple {n u : ℕ} (hu : Nat.Coprime u 10)
     have hJeven : ((List.replicate t L).flatten).length % 2 = 0 := by
       rw [hlenJ, Nat.mul_mod, hlen]
       simp
-    have hp := hniceJ.2 (((List.replicate t L).flatten).length - 1) (by omega)
-    omega
+    have hp := hniceJ.2 (((List.replicate t L).flatten).length - 1) (by lia)
+    lia
   have hdigits : Nat.digits 10 (Nat.ofDigits 10 ((List.replicate t L).flatten)) =
       (List.replicate t L).flatten :=
     Nat.digits_ofDigits 10 (by norm_num) _ hniceJ.1 hlast
@@ -186,19 +186,19 @@ lemma two_block (k : ℕ) : ∃ L : List ℕ, L.length = 2 * k + 2 ∧ Nice L �
   | succ k ih =>
     obtain ⟨L, hlen, hnice, m, hm⟩ := ih
     set d : ℕ := (14 - 2 * m % 8) % 8 with hd
-    have hd8 : d < 8 := by omega
-    have hd2 : d % 2 = 0 := by omega
+    have hd8 : d < 8 := by lia
+    have hd2 : d % 2 = 0 := by lia
     have hnice2 : Nice [d, 1] := by
       refine ⟨?_, ?_⟩
       · intro e he
         simp only [List.mem_cons, List.not_mem_nil, or_false] at he
-        omega
+        lia
       · intro i h
         simp only [List.length_cons, List.length_nil] at h
         interval_cases i
         · simpa using hd2
         · simp
-    refine ⟨L ++ [d, 1], ?_, hnice.append hnice2 (by omega), ?_⟩
+    refine ⟨L ++ [d, 1], ?_, hnice.append hnice2 (by lia), ?_⟩
     · simp only [List.length_append, List.length_cons, List.length_nil, hlen]
       ring
     · rw [Nat.ofDigits_append, hlen, hm]
@@ -212,11 +212,11 @@ lemma two_block (k : ℕ) : ∃ L : List ℕ, L.length = 2 * k + 2 ∧ Nice L �
         rw [h5, Nat.pow_mod]
         norm_num
       obtain ⟨p, hp⟩ : ∃ p, (5:ℕ) ^ (2 * k + 2) = 8 * p + 1 :=
-        ⟨5 ^ (2 * k + 2) / 8, by omega⟩
+        ⟨5 ^ (2 * k + 2) / 8, by lia⟩
       have key : 2 ^ 3 ∣ 2 * m + 5 ^ (2 * k + 2) * (d + 10) := by
         rw [hp, show (8 * p + 1) * (d + 10) = 8 * (p * (d + 10)) + d + 10 by ring]
         show 8 ∣ _
-        omega
+        lia
       have heq : 2 ^ (2 * k + 3) * m + 10 ^ (2 * k + 2) * (d + 10)
           = 2 ^ (2 * k + 2) * (2 * m + 5 ^ (2 * k + 2) * (d + 10)) := by
         rw [show (10:ℕ) ^ (2 * k + 2) = 2 ^ (2 * k + 2) * 5 ^ (2 * k + 2) by
@@ -243,11 +243,11 @@ lemma five_block (b : ℕ) : ∃ L : List ℕ, L.length = b + 1 ∧ Nice L ∧
       intro h
       have h1 : (5:ℕ) ∣ 2 ^ b := Nat.dvd_of_mod_eq_zero h
       have h2 : (5:ℕ) ∣ 2 := Nat.Prime.dvd_of_dvd_pow (by norm_num) h1
-      omega
+      lia
     obtain ⟨e, he10, hepar, hemod⟩ := five_digit_choice (2 ^ b % 5) hc5 hc0
       (m % 5) (Nat.mod_lt _ (by norm_num)) ((b + 1) % 2) (Nat.mod_lt _ (by norm_num))
     rw [Finset.mem_range] at he10
-    refine ⟨L ++ [e], by simp [hlen], hnice.snoc he10 (by omega), ?_⟩
+    refine ⟨L ++ [e], by simp [hlen], hnice.snoc he10 (by lia), ?_⟩
     rw [Nat.ofDigits_append, hlen, hm]
     have hof : Nat.ofDigits 10 [e] = e := by
       norm_num [Nat.ofDigits]
@@ -255,7 +255,7 @@ lemma five_block (b : ℕ) : ∃ L : List ℕ, L.length = b + 1 ∧ Nice L ∧
     have key : 5 ∣ m + e * 2 ^ b := by
       have h1 : (e * 2 ^ b) % 5 = (e * (2 ^ b % 5)) % 5 :=
         (Nat.ModEq.mul_left e (Nat.mod_modEq (2 ^ b) 5)).symm
-      omega
+      lia
     have heq : 10 * 5 ^ b * m + 10 ^ (b + 1) * e
         = 10 * 5 ^ b * (m + e * 2 ^ b) := by
       rw [show (10:ℕ) ^ (b + 1) = 10 * (2 ^ b * 5 ^ b) by
@@ -276,33 +276,33 @@ lemma exists_alternating_multiple' {n : ℕ} (hn : 0 < n) (h20 : ¬ 20 ∣ n) :
       · rw [pow_zero, one_mul] at h5
         exact absurd h5 hc5
       · exact h
-    obtain ⟨b', rfl⟩ : ∃ b', b = b' + 1 := ⟨b - 1, by omega⟩
+    obtain ⟨b', rfl⟩ : ∃ b', b = b' + 1 := ⟨b - 1, by lia⟩
     -- use a block of even length `k + 1` for some `k ≥ b'`
     obtain ⟨k, hbk, hkeven⟩ : ∃ k, b' ≤ k ∧ (k + 1) % 2 = 0 := by
       by_cases hpar : (b' + 1) % 2 = 0
       · exact ⟨b', Nat.le_refl _, hpar⟩
-      · exact ⟨b' + 1, Nat.le_succ _, by omega⟩
+      · exact ⟨b' + 1, Nat.le_succ _, by lia⟩
     obtain ⟨L, hlen, hnice, hdvd⟩ := five_block k
     have hdvd' : 2 ^ 1 * 5 ^ (b' + 1) ∣ Nat.ofDigits 10 L := by
       refine dvd_trans ?_ hdvd
       rw [show (10:ℕ) * 5 ^ k = 2 ^ 1 * 5 ^ (k + 1) by rw [pow_succ]; ring]
-      exact Nat.mul_dvd_mul_left _ (pow_dvd_pow 5 (by omega))
+      exact Nat.mul_dvd_mul_left _ (pow_dvd_pow 5 (by lia))
     obtain ⟨v, hv2, hv5, hvdvd⟩ : ∃ v, ¬ 2 ∣ v ∧ ¬ 5 ∣ v ∧
         5 ^ (b' + 1) * c ∣ 2 ^ 1 * 5 ^ (b' + 1) * v := by
       rcases Nat.even_or_odd c with ⟨v, hv⟩ | hco
-      · exact ⟨v, fun h2 ↦ h4 (Dvd.dvd.mul_left (by omega : (4:ℕ) ∣ c) _),
-          fun h5' ↦ hc5 (by omega), ⟨1, by rw [hv]; ring⟩⟩
-      · exact ⟨c, by have := Nat.odd_iff.mp hco; omega, hc5, ⟨2, by ring⟩⟩
+      · exact ⟨v, fun h2 ↦ h4 (Dvd.dvd.mul_left (by lia : (4:ℕ) ∣ c) _),
+          fun h5' ↦ hc5 (by lia), ⟨1, by rw [hv]; ring⟩⟩
+      · exact ⟨c, by have := Nat.odd_iff.mp hco; lia, hc5, ⟨2, by ring⟩⟩
     exact exists_alt_multiple_of_dvd hv2 hv5
-      (List.ne_nil_of_length_pos (by omega)) (by omega) hnice hdvd' hvdvd
+      (List.ne_nil_of_length_pos (by lia)) (by lia) hnice hdvd' hvdvd
   · obtain ⟨a, u, hu2, rfl⟩ := Nat.exists_eq_pow_mul_and_not_dvd hn.ne' 2 (by norm_num)
     have hu5 : ¬ 5 ∣ u := fun h ↦ h5 (h.mul_left _)
     obtain ⟨L, hlen, hnice, hdvd⟩ := two_block a
     have h2a : (2:ℕ) ^ a * 5 ^ 0 ∣ Nat.ofDigits 10 L := by
       rw [pow_zero, mul_one]
-      exact (pow_dvd_pow 2 (by omega)).trans hdvd
+      exact (pow_dvd_pow 2 (by lia)).trans hdvd
     exact exists_alt_multiple_of_dvd hu2 hu5
-      (List.ne_nil_of_length_pos (by omega)) (by omega) hnice h2a
+      (List.ne_nil_of_length_pos (by lia)) (by lia) hnice h2a
       (dvd_of_eq (by rw [pow_zero, mul_one]))
 
 snip end

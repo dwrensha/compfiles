@@ -203,7 +203,7 @@ lemma square_of_pow_of_first_k_prime_mod_two_eq {k m n : ℕ}
     · rw [funext_iff] at hmn
       have hmn'' := hmn k'
       rw [funext_iff] at hmn''
-      have h'k' : k' ∈ Finset.range (k + 1) := by exact Finset.mem_range_succ_iff.mpr hk'
+      have h'k' : k' ∈ Finset.range (k + 1) := Finset.mem_range_succ_iff.mpr hk'
       have hmn''' := hmn'' h'k'
       simp only [pow_of_first_k_prime_mod_two] at hmn'''
       exact hmn'''
@@ -304,7 +304,7 @@ problem imo1985_p4 (M : Finset ℕ) (Mcard : M.card = 1985) (Mpos : ∀ m ∈ M,
     (Mdivisors : ∀ m ∈ M, ∀ n, n ∈ m.primeFactors → n ≤ 23)
     : ∃ M' : Finset ℕ, M' ⊆ M ∧ M'.card = 4 ∧ ∃ k, M'.prod id = k^4 := by
   replace Mdivisors : ∀ m ∈ M, ∀ n, n.Prime ∧ n ∣ m → n ≤ 23 := fun m hm n ↦ by
-    rw [←Nat.mem_primeFactors_of_ne_zero (Mpos m hm).ne.symm]
+    rw [← Nat.mem_primeFactors_of_ne_zero (Mpos m hm).ne.symm]
     grind
   let k := 8
   have h₁ : Nat.nth Nat.Prime k = 23 := by

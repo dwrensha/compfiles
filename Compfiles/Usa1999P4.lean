@@ -62,9 +62,7 @@ snip end
 problem usa1999_p4 (n : ℕ) (hn : 3 < n) (a : Fin n → ℝ)
     (hsum : (n : ℝ) ≤ ∑ i, a i) (hsq : (n : ℝ) ^ 2 ≤ ∑ i, (a i) ^ 2) :
     ∃ i, 2 ≤ a i := by
-  classical
-  by_contra hlt2
-  push Not at hlt2
+  by_contra! hlt2
   -- `P` = indices of the nonnegative entries, `N` = indices of the negative ones.
   set P := Finset.univ.filter fun i ↦ 0 ≤ a i with hP
   set N := Finset.univ.filter fun i ↦ ¬ 0 ≤ a i with hN
@@ -81,7 +79,7 @@ problem usa1999_p4 (n : ℕ) (hn : 3 < n) (a : Fin n → ℝ)
     have hsum4 : ∑ i, (a i) ^ 2 < 4 * n := by
       have hlt : ∑ i, (a i) ^ 2 < ∑ _i : Fin n, (4 : ℝ) := by
         apply Finset.sum_lt_sum_of_nonempty
-        · have : Nonempty (Fin n) := ⟨⟨0, by omega⟩⟩
+        · have : Nonempty (Fin n) := ⟨⟨0, by lia⟩⟩
           exact Finset.univ_nonempty
         · intro i _
           have h1 := hnonneg i
@@ -112,7 +110,7 @@ problem usa1999_p4 (n : ℕ) (hn : 3 < n) (a : Fin n → ℝ)
       rw [hSdef, hMdef]
       linarith [hsum, hp]
     have hSpos : 0 < S := by
-      have hnpos : (0 : ℝ) < n := by exact_mod_cast (show 0 < n by omega)
+      have hnpos : (0 : ℝ) < n := by exact_mod_cast (show 0 < n by lia)
       linarith [hSM, hMpos, hnpos]
     -- Bound the two parts of `∑ aᵢ²`: on `P` use `aᵢ² ≤ 2aᵢ`, on `N` the
     -- cross terms of `M²` are nonnegative.
@@ -160,7 +158,7 @@ problem usa1999_p4 (n : ℕ) (hn : 3 < n) (a : Fin n → ℝ)
           (p := fun i ↦ 0 ≤ a i)
         rwa [Finset.card_univ, Fintype.card_fin] at h2
       have h2 : 1 ≤ N.card := Finset.card_pos.mpr hNne
-      have h3 : P.card + 1 ≤ n := by omega
+      have h3 : P.card + 1 ≤ n := by lia
       exact_mod_cast h3
     have hfin : 2 * (P.card : ℝ) ≤ 2 * n - 2 := by linarith [hcard]
     linarith [hSge, hSlt, hfin]

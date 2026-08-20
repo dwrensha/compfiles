@@ -71,7 +71,7 @@ problem imo1984_p3 {ι : Type*} [Fintype ι] (O A : ℂ) (hOA : O ≠ A) (color 
       rw [hdiv, hw]
       exact Complex.arg_mul_cos_add_sin_mul_I (div_pos hρ hAOpos) hθmem
     have haang : aang O A Y = θ₀ := by
-      unfold aang; rw [harg, if_pos hθpos.le]
+      unfold aang; rw [harg, ite_eq_left hθpos.le]
     have hnormw : ‖w‖ = ρ / ‖A - O‖ := by
       rw [hw, norm_mul, Complex.norm_cos_add_sin_mul_I, mul_one, Complex.norm_real,
         Real.norm_of_nonneg (div_pos hρ hAOpos).le]

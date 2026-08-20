@@ -8,6 +8,7 @@ module
 
 public import Mathlib.Tactic
 public import Mathlib.Algebra.IsPrimePow
+public import Mathlib.Data.Finset.NatDivisors
 public import Mathlib.NumberTheory.Divisors
 public import ProblemExtraction
 
@@ -75,13 +76,6 @@ def BWinsStart (n : ℕ) : Prop := ∀ m, AMove n m → m ≠ 1990 ∧ BWins m
 
 snip begin
 
-theorem prime_pow_ne_one {p r : ℕ} (hp : p.Prime) (hr : 1 ≤ r) : p ^ r ≠ 1 := by
-  have h2 : 2 ≤ p ^ r := by
-    calc 2 ≤ p := hp.two_le
-      _ = p ^ 1 := (pow_one p).symm
-      _ ≤ p ^ r := Nat.pow_le_pow_right hp.pos hr
-  omega
-
 /-- B can win from the move `m` (by choosing 1) iff `m` is a prime power. -/
 theorem bmove_one_iff_isPrimePow {m : ℕ} : BMove m 1 ↔ IsPrimePow m := by
   constructor
@@ -104,105 +98,63 @@ theorem not_isPrimePow_of_dvd_of_dvd {m a b : ℕ} (ha : a.Prime) (hb : b.Prime)
   have h₂ : b = p := (Nat.prime_dvd_prime_iff_eq hb hp).mp hbp
   exact hab (h₁.trans h₂.symm)
 
-theorem not_pp6 : ¬ IsPrimePow 6 :=
-  not_isPrimePow_of_dvd_of_dvd (a := 2) (b := 3) (by norm_num) (by norm_num) (by decide)
-    (by decide) (by decide)
-theorem not_pp10 : ¬ IsPrimePow 10 :=
-  not_isPrimePow_of_dvd_of_dvd (a := 2) (b := 5) (by norm_num) (by norm_num) (by decide)
-    (by decide) (by decide)
-theorem not_pp12 : ¬ IsPrimePow 12 :=
-  not_isPrimePow_of_dvd_of_dvd (a := 2) (b := 3) (by norm_num) (by norm_num) (by decide)
-    (by decide) (by decide)
-theorem not_pp14 : ¬ IsPrimePow 14 :=
-  not_isPrimePow_of_dvd_of_dvd (a := 2) (b := 7) (by norm_num) (by norm_num) (by decide)
-    (by decide) (by decide)
-theorem not_pp15 : ¬ IsPrimePow 15 :=
-  not_isPrimePow_of_dvd_of_dvd (a := 3) (b := 5) (by norm_num) (by norm_num) (by decide)
-    (by decide) (by decide)
-theorem not_pp18 : ¬ IsPrimePow 18 :=
-  not_isPrimePow_of_dvd_of_dvd (a := 2) (b := 3) (by norm_num) (by norm_num) (by decide)
-    (by decide) (by decide)
-theorem not_pp20 : ¬ IsPrimePow 20 :=
-  not_isPrimePow_of_dvd_of_dvd (a := 2) (b := 5) (by norm_num) (by norm_num) (by decide)
-    (by decide) (by decide)
-theorem not_pp21 : ¬ IsPrimePow 21 :=
-  not_isPrimePow_of_dvd_of_dvd (a := 3) (b := 7) (by norm_num) (by norm_num) (by decide)
-    (by decide) (by decide)
-theorem not_pp24 : ¬ IsPrimePow 24 :=
-  not_isPrimePow_of_dvd_of_dvd (a := 2) (b := 3) (by norm_num) (by norm_num) (by decide)
-    (by decide) (by decide)
-theorem not_pp28 : ¬ IsPrimePow 28 :=
-  not_isPrimePow_of_dvd_of_dvd (a := 2) (b := 7) (by norm_num) (by norm_num) (by decide)
-    (by decide) (by decide)
-theorem not_pp30 : ¬ IsPrimePow 30 :=
-  not_isPrimePow_of_dvd_of_dvd (a := 2) (b := 3) (by norm_num) (by norm_num) (by decide)
-    (by decide) (by decide)
-theorem not_pp35 : ¬ IsPrimePow 35 :=
-  not_isPrimePow_of_dvd_of_dvd (a := 5) (b := 7) (by norm_num) (by norm_num) (by decide)
-    (by decide) (by decide)
-theorem not_pp36 : ¬ IsPrimePow 36 :=
-  not_isPrimePow_of_dvd_of_dvd (a := 2) (b := 3) (by norm_num) (by norm_num) (by decide)
-    (by decide) (by decide)
-theorem not_pp40 : ¬ IsPrimePow 40 :=
-  not_isPrimePow_of_dvd_of_dvd (a := 2) (b := 5) (by norm_num) (by norm_num) (by decide)
-    (by decide) (by decide)
-theorem not_pp42 : ¬ IsPrimePow 42 :=
-  not_isPrimePow_of_dvd_of_dvd (a := 2) (b := 3) (by norm_num) (by norm_num) (by decide)
-    (by decide) (by decide)
-theorem not_pp56 : ¬ IsPrimePow 56 :=
-  not_isPrimePow_of_dvd_of_dvd (a := 2) (b := 7) (by norm_num) (by norm_num) (by decide)
-    (by decide) (by decide)
-theorem not_pp60 : ¬ IsPrimePow 60 :=
-  not_isPrimePow_of_dvd_of_dvd (a := 2) (b := 3) (by norm_num) (by norm_num) (by decide)
-    (by decide) (by decide)
-theorem not_pp63 : ¬ IsPrimePow 63 :=
-  not_isPrimePow_of_dvd_of_dvd (a := 3) (b := 7) (by norm_num) (by norm_num) (by decide)
-    (by decide) (by decide)
-theorem not_pp70 : ¬ IsPrimePow 70 :=
-  not_isPrimePow_of_dvd_of_dvd (a := 2) (b := 5) (by norm_num) (by norm_num) (by decide)
-    (by decide) (by decide)
-theorem not_pp72 : ¬ IsPrimePow 72 :=
-  not_isPrimePow_of_dvd_of_dvd (a := 2) (b := 3) (by norm_num) (by norm_num) (by decide)
-    (by decide) (by decide)
-theorem not_pp84 : ¬ IsPrimePow 84 :=
-  not_isPrimePow_of_dvd_of_dvd (a := 2) (b := 3) (by norm_num) (by norm_num) (by decide)
-    (by decide) (by decide)
-theorem not_pp126 : ¬ IsPrimePow 126 :=
-  not_isPrimePow_of_dvd_of_dvd (a := 2) (b := 3) (by norm_num) (by norm_num) (by decide)
-    (by decide) (by decide)
-theorem not_pp140 : ¬ IsPrimePow 140 :=
-  not_isPrimePow_of_dvd_of_dvd (a := 2) (b := 5) (by norm_num) (by norm_num) (by decide)
-    (by decide) (by decide)
-theorem not_pp168 : ¬ IsPrimePow 168 :=
-  not_isPrimePow_of_dvd_of_dvd (a := 2) (b := 3) (by norm_num) (by norm_num) (by decide)
-    (by decide) (by decide)
-theorem not_pp252 : ¬ IsPrimePow 252 :=
-  not_isPrimePow_of_dvd_of_dvd (a := 2) (b := 3) (by norm_num) (by norm_num) (by decide)
-    (by decide) (by decide)
-theorem not_pp280 : ¬ IsPrimePow 280 :=
-  not_isPrimePow_of_dvd_of_dvd (a := 2) (b := 5) (by norm_num) (by norm_num) (by decide)
-    (by decide) (by decide)
-theorem not_pp504 : ¬ IsPrimePow 504 :=
-  not_isPrimePow_of_dvd_of_dvd (a := 2) (b := 3) (by norm_num) (by norm_num) (by decide)
-    (by decide) (by decide)
-theorem not_pp1991 : ¬ IsPrimePow 1991 :=
-  not_isPrimePow_of_dvd_of_dvd (a := 11) (b := 181) (by norm_num) (by norm_num) (by decide)
-    (by decide) (by decide)
+/-- The legal responses available to B after A chooses `m`.  Keeping only divisors
+whose complementary factor is a prime power avoids reasoning about impossible moves. -/
+def bResponses (m : ℕ) : Finset ℕ :=
+  m.divisors.filter fun m' => IsPrimePow (m / m')
 
-theorem divisors30 : Nat.divisors 30 = {1, 2, 3, 5, 6, 10, 15, 30} := by decide
-theorem divisors60 : Nat.divisors 60 = {1, 2, 3, 4, 5, 6, 10, 12, 15, 20, 30, 60} := by
-  decide
-theorem divisors140 : Nat.divisors 140 = {1, 2, 4, 5, 7, 10, 14, 20, 28, 35, 70, 140} := by
-  decide
-theorem divisors280 :
-    Nat.divisors 280 = {1, 2, 4, 5, 7, 8, 10, 14, 20, 28, 35, 40, 56, 70, 140, 280} := by
-  decide
-theorem divisors504 : Nat.divisors 504 =
-    {1, 2, 3, 4, 6, 7, 8, 9, 12, 14, 18, 21, 24, 28, 36, 42, 56, 63, 72, 84, 126, 168,
-      252, 504} := by
-  decide
-set_option maxRecDepth 10000 in
-theorem divisors1991 : Nat.divisors 1991 = {1, 11, 181, 1991} := by decide
+theorem bmove_iff_mem_bResponses {m m' : ℕ} (hm : m ≠ 0) :
+    BMove m m' ↔ m' ∈ bResponses m := by
+  rw [bResponses, Finset.mem_filter, Nat.mem_divisors]
+  constructor
+  · rintro ⟨p, r, hp, hr, h⟩
+    have hm' : 0 < m' := by
+      by_contra hm'
+      simp only [not_lt, nonpos_iff_eq_zero] at hm'
+      rw [hm', zero_mul] at h
+      exact hm h
+    refine ⟨⟨⟨p ^ r, h⟩, hm⟩, (isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, ?_⟩⟩
+    exact (Nat.div_eq_of_eq_mul_right hm' h).symm
+  · rintro ⟨⟨hd, -⟩, hpp⟩
+    obtain ⟨p, r, hp, hr, hpr⟩ := (isPrimePow_nat_iff _).mp hpp
+    exact ⟨p, r, hp, hr, (Nat.mul_div_cancel' hd).symm.trans (by rw [← hpr])⟩
+
+theorem not_bmove_one_of_not_mem {m : ℕ} (hm : m ≠ 0) (h1 : 1 ∉ bResponses m) :
+    ¬ BMove m 1 := fun h => h1 ((bmove_iff_mem_bResponses hm).mp h)
+
+theorem bResponses_30 : bResponses 30 = {6, 10, 15} := by decide +kernel
+theorem bResponses_60 : bResponses 60 = {12, 15, 20, 30} := by decide +kernel
+theorem bResponses_140 : bResponses 140 = {20, 28, 35, 70} := by decide +kernel
+theorem bResponses_280 : bResponses 280 = {35, 40, 56, 70, 140} := by decide +kernel
+theorem bResponses_504 : bResponses 504 = {56, 63, 72, 126, 168, 252} := by
+  decide +kernel
+theorem bResponses_1991 : bResponses 1991 = {11, 181} := by decide +kernel
+
+/-- The finite trap used for the drawn starting positions. -/
+def trap : Finset ℕ := {30, 60, 140, 280, 504}
+
+lemma ne_zero_of_mem_trap {m : ℕ} (hm : m ∈ trap) : m ≠ 0 := by
+  rw [trap] at hm
+  fin_cases hm <;> decide
+
+lemma one_not_mem_bResponses_of_mem_trap {m : ℕ} (hm : m ∈ trap) :
+    1 ∉ bResponses m := by
+  rw [trap] at hm
+  fin_cases hm <;>
+    simp [bResponses_30, bResponses_60, bResponses_140, bResponses_280, bResponses_504]
+
+/-- Whatever B plays from a trap number, A can legally return to that same number. -/
+lemma return_to_trap {m m' : ℕ} (hm : m ∈ trap) (hm' : m' ∈ bResponses m) :
+    AMove m' m := by
+  rw [trap] at hm
+  fin_cases hm
+  all_goals first
+    | rw [bResponses_30] at hm'
+    | rw [bResponses_60] at hm'
+    | rw [bResponses_140] at hm'
+    | rw [bResponses_280] at hm'
+    | rw [bResponses_504] at hm'
+  all_goals fin_cases hm' <;> decide
 
 /-! ### A wins from `n₀ ≥ 8`
 
@@ -216,168 +168,58 @@ theorem aw_45_1990 {n : ℕ} (h₁ : 45 ≤ n) (h₂ : n ≤ 1990) : AWins n := 
 
 theorem aw_23_44 {n : ℕ} (h₁ : 23 ≤ n) (h₂ : n ≤ 44) : AWins n := by
   apply AWins.move (m := 504)
-  · exact ⟨by omega, by nlinarith [h₁]⟩
-  · exact mt bmove_one_iff_isPrimePow.mp not_pp504
+  · exact ⟨by lia, by nlinarith [h₁]⟩
+  · exact not_bmove_one_of_not_mem (by decide) (by simp [bResponses_504])
   · intro m' hm'
-    obtain ⟨p, r, hp, hr, h⟩ := hm'
-    have hd : m' ∈ Nat.divisors 504 := Nat.mem_divisors.mpr ⟨⟨p ^ r, h⟩, by decide⟩
-    rw [divisors504] at hd
-    fin_cases hd
-    · have hpr : p ^ r = 504 := by omega
-      exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp504
-    · have hpr : p ^ r = 252 := by omega
-      exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp252
-    · have hpr : p ^ r = 168 := by omega
-      exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp168
-    · have hpr : p ^ r = 126 := by omega
-      exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp126
-    · have hpr : p ^ r = 84 := by omega
-      exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp84
-    · have hpr : p ^ r = 72 := by omega
-      exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp72
-    · have hpr : p ^ r = 63 := by omega
-      exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp63
-    · have hpr : p ^ r = 56 := by omega
-      exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp56
-    · have hpr : p ^ r = 42 := by omega
-      exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp42
-    · have hpr : p ^ r = 36 := by omega
-      exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp36
-    · have hpr : p ^ r = 28 := by omega
-      exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp28
-    · have hpr : p ^ r = 24 := by omega
-      exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp24
-    · have hpr : p ^ r = 21 := by omega
-      exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp21
-    · have hpr : p ^ r = 18 := by omega
-      exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp18
-    · have hpr : p ^ r = 14 := by omega
-      exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp14
-    · have hpr : p ^ r = 12 := by omega
-      exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp12
-    · exact aw_45_1990 (by decide) (by decide)
-    · exact aw_45_1990 (by decide) (by decide)
-    · exact aw_45_1990 (by decide) (by decide)
-    · have hpr : p ^ r = 6 := by omega
-      exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp6
-    · exact aw_45_1990 (by decide) (by decide)
-    · exact aw_45_1990 (by decide) (by decide)
-    · exact aw_45_1990 (by decide) (by decide)
-    · have hpr : p ^ r = 1 := by omega
-      exact absurd hpr (prime_pow_ne_one hp hr)
+    have hm' := (bmove_iff_mem_bResponses (m := 504) (by decide)).mp hm'
+    rw [bResponses_504] at hm'
+    fin_cases hm' <;> exact aw_45_1990 (by decide) (by decide)
 
 theorem aw_17_22 {n : ℕ} (h₁ : 17 ≤ n) (h₂ : n ≤ 22) : AWins n := by
   apply AWins.move (m := 280)
-  · exact ⟨by omega, by nlinarith [h₁]⟩
-  · exact mt bmove_one_iff_isPrimePow.mp not_pp280
+  · exact ⟨by lia, by nlinarith [h₁]⟩
+  · exact not_bmove_one_of_not_mem (by decide) (by simp [bResponses_280])
   · intro m' hm'
-    obtain ⟨p, r, hp, hr, h⟩ := hm'
-    have hd : m' ∈ Nat.divisors 280 := Nat.mem_divisors.mpr ⟨⟨p ^ r, h⟩, by decide⟩
-    rw [divisors280] at hd
-    fin_cases hd
-    · have hpr : p ^ r = 280 := by omega
-      exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp280
-    · have hpr : p ^ r = 140 := by omega
-      exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp140
-    · have hpr : p ^ r = 70 := by omega
-      exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp70
-    · have hpr : p ^ r = 56 := by omega
-      exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp56
-    · have hpr : p ^ r = 40 := by omega
-      exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp40
-    · have hpr : p ^ r = 35 := by omega
-      exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp35
-    · have hpr : p ^ r = 28 := by omega
-      exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp28
-    · have hpr : p ^ r = 20 := by omega
-      exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp20
-    · have hpr : p ^ r = 14 := by omega
-      exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp14
-    · have hpr : p ^ r = 10 := by omega
-      exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp10
-    · exact aw_23_44 (by decide) (by decide)
-    · exact aw_23_44 (by decide) (by decide)
-    · exact aw_45_1990 (by decide) (by decide)
-    · exact aw_45_1990 (by decide) (by decide)
-    · exact aw_45_1990 (by decide) (by decide)
-    · have hpr : p ^ r = 1 := by omega
-      exact absurd hpr (prime_pow_ne_one hp hr)
+    have hm' := (bmove_iff_mem_bResponses (m := 280) (by decide)).mp hm'
+    rw [bResponses_280] at hm'
+    fin_cases hm' <;> first
+      | exact aw_23_44 (by decide) (by decide)
+      | exact aw_45_1990 (by decide) (by decide)
 
 theorem aw_12_16 {n : ℕ} (h₁ : 12 ≤ n) (h₂ : n ≤ 16) : AWins n := by
   apply AWins.move (m := 140)
-  · exact ⟨by omega, by nlinarith [h₁]⟩
-  · exact mt bmove_one_iff_isPrimePow.mp not_pp140
+  · exact ⟨by lia, by nlinarith [h₁]⟩
+  · exact not_bmove_one_of_not_mem (by decide) (by simp [bResponses_140])
   · intro m' hm'
-    obtain ⟨p, r, hp, hr, h⟩ := hm'
-    have hd : m' ∈ Nat.divisors 140 := Nat.mem_divisors.mpr ⟨⟨p ^ r, h⟩, by decide⟩
-    rw [divisors140] at hd
-    fin_cases hd
-    · have hpr : p ^ r = 140 := by omega
-      exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp140
-    · have hpr : p ^ r = 70 := by omega
-      exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp70
-    · have hpr : p ^ r = 35 := by omega
-      exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp35
-    · have hpr : p ^ r = 28 := by omega
-      exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp28
-    · have hpr : p ^ r = 20 := by omega
-      exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp20
-    · have hpr : p ^ r = 14 := by omega
-      exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp14
-    · have hpr : p ^ r = 10 := by omega
-      exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp10
-    · exact aw_17_22 (by decide) (by decide)
-    · exact aw_23_44 (by decide) (by decide)
-    · exact aw_23_44 (by decide) (by decide)
-    · exact aw_45_1990 (by decide) (by decide)
-    · have hpr : p ^ r = 1 := by omega
-      exact absurd hpr (prime_pow_ne_one hp hr)
+    have hm' := (bmove_iff_mem_bResponses (m := 140) (by decide)).mp hm'
+    rw [bResponses_140] at hm'
+    fin_cases hm' <;> first
+      | exact aw_17_22 (by decide) (by decide)
+      | exact aw_23_44 (by decide) (by decide)
+      | exact aw_45_1990 (by decide) (by decide)
 
 theorem aw_8_11 {n : ℕ} (h₁ : 8 ≤ n) (h₂ : n ≤ 11) : AWins n := by
   apply AWins.move (m := 60)
-  · exact ⟨by omega, by nlinarith [h₁]⟩
-  · exact mt bmove_one_iff_isPrimePow.mp not_pp60
+  · exact ⟨by lia, by nlinarith [h₁]⟩
+  · exact not_bmove_one_of_not_mem (by decide) (by simp [bResponses_60])
   · intro m' hm'
-    obtain ⟨p, r, hp, hr, h⟩ := hm'
-    have hd : m' ∈ Nat.divisors 60 := Nat.mem_divisors.mpr ⟨⟨p ^ r, h⟩, by decide⟩
-    rw [divisors60] at hd
-    fin_cases hd
-    · have hpr : p ^ r = 60 := by omega
-      exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp60
-    · have hpr : p ^ r = 30 := by omega
-      exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp30
-    · have hpr : p ^ r = 20 := by omega
-      exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp20
-    · have hpr : p ^ r = 15 := by omega
-      exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp15
-    · have hpr : p ^ r = 12 := by omega
-      exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp12
-    · have hpr : p ^ r = 10 := by omega
-      exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp10
-    · have hpr : p ^ r = 6 := by omega
-      exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp6
-    · exact aw_12_16 (by decide) (by decide)
-    · exact aw_12_16 (by decide) (by decide)
-    · exact aw_17_22 (by decide) (by decide)
-    · exact aw_23_44 (by decide) (by decide)
-    · have hpr : p ^ r = 1 := by omega
-      exact absurd hpr (prime_pow_ne_one hp hr)
+    have hm' := (bmove_iff_mem_bResponses (m := 60) (by decide)).mp hm'
+    rw [bResponses_60] at hm'
+    fin_cases hm' <;> first
+      | exact aw_12_16 (by decide) (by decide)
+      | exact aw_17_22 (by decide) (by decide)
+      | exact aw_23_44 (by decide) (by decide)
 
 theorem aw_1991 : AWins 1991 := by
   apply AWins.move (m := 1991)
   · exact ⟨by decide, by decide⟩
-  · exact mt bmove_one_iff_isPrimePow.mp not_pp1991
+  · exact not_bmove_one_of_not_mem (by decide) (by simp [bResponses_1991])
   · intro m' hm'
-    obtain ⟨p, r, hp, hr, h⟩ := hm'
-    have hd : m' ∈ Nat.divisors 1991 := Nat.mem_divisors.mpr ⟨⟨p ^ r, h⟩, by decide⟩
-    rw [divisors1991] at hd
-    fin_cases hd
-    · have hpr : p ^ r = 1991 := by omega
-      exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp1991
-    · exact aw_8_11 (by decide) (by decide)
-    · exact aw_45_1990 (by decide) (by decide)
-    · have hpr : p ^ r = 1 := by omega
-      exact absurd hpr (prime_pow_ne_one hp hr)
+    have hm' := (bmove_iff_mem_bResponses (m := 1991) (by decide)).mp hm'
+    rw [bResponses_1991] at hm'
+    fin_cases hm' <;> first
+      | exact aw_8_11 (by decide) (by decide)
+      | exact aw_45_1990 (by decide) (by decide)
 
 /-- For `n ≥ 1992` there is an exponent `r ≥ 1` with `11 ^ r * 181 < n ≤
 11 ^ (r + 1) * 181`, i.e. the intervals `(11^r·181, 11^(r+1)·181]` cover `[1992, ∞)`. -/
@@ -385,21 +227,21 @@ theorem exists_interval {n : ℕ} (h : 1992 ≤ n) :
     ∃ r, 1 ≤ r ∧ 11 ^ r * 181 < n ∧ n ≤ 11 ^ (r + 1) * 181 := by
   have hne : ∃ r, n ≤ 11 ^ (r + 1) * 181 := by
     refine ⟨n, le_trans (Nat.lt_pow_self (by decide : (1 : ℕ) < 11)).le ?_⟩
-    exact le_trans (Nat.pow_le_pow_right (by decide) (by omega))
+    exact le_trans (Nat.pow_le_pow_right (by decide) (by lia))
       (Nat.le_mul_of_pos_right _ (by decide))
   have hr1 : 1 ≤ Nat.find hne := by
     by_contra hc
-    have h0 : Nat.find hne = 0 := by omega
+    have h0 : Nat.find hne = 0 := by lia
     have hr3 := Nat.find_spec hne
     rw [h0] at hr3
     norm_num at hr3
-    omega
+    lia
   have hr2 : 11 ^ Nat.find hne * 181 < n := by
     by_contra hc
-    have hrlt : Nat.find hne - 1 < Nat.find hne := by omega
+    have hrlt : Nat.find hne - 1 < Nat.find hne := by lia
     have hmin := Nat.find_min hne hrlt
     rw [Nat.sub_add_cancel hr1] at hmin
-    exact hmin (by omega)
+    exact hmin (by lia)
   exact ⟨Nat.find hne, hr1, hr2, Nat.find_spec hne⟩
 
 theorem aw_big {n : ℕ} (h : 1992 ≤ n) (IH : ∀ m', m' < n → 8 ≤ m' → AWins m') :
@@ -429,7 +271,7 @@ theorem aw_big {n : ℕ} (h : 1992 ≤ n) (IH : ∀ m', m' < n → 8 ≤ m' → 
     intro m' hm'
     obtain ⟨p, k, hp, hk, h⟩ := hm'
     have hpm : p ∣ 11 ^ (r + 1) * 181 := by
-      have h1 : p ∣ p ^ k := dvd_pow_self p (by omega)
+      have h1 : p ∣ p ^ k := dvd_pow_self p (by lia)
       have h2 : p ^ k ∣ 11 ^ (r + 1) * 181 := ⟨m', h.trans (mul_comm m' (p ^ k))⟩
       exact dvd_trans h1 h2
     rcases (hp.dvd_mul.mp hpm) with hp11 | hp181
@@ -446,11 +288,11 @@ theorem aw_big {n : ℕ} (h : 1992 ≤ n) (IH : ∀ m', m' < n → 8 ≤ m' → 
           have h3 :=
             (Nat.prime_dvd_prime_iff_eq (by norm_num : Nat.Prime 181)
               (by norm_num : Nat.Prime 11)).mp h2
-          omega
+          lia
       obtain ⟨c, rfl⟩ := h181
       have hc : 0 < c := by
         by_contra hc0
-        have h0 : c = 0 := by omega
+        have h0 : c = 0 := by lia
         rw [h0] at h
         simp only [mul_zero, zero_mul] at h
         exact absurd h (ne_of_gt (by positivity : 0 < 11 ^ (r + 1) * 181))
@@ -480,11 +322,11 @@ theorem aw_big {n : ℕ} (h : 1992 ≤ n) (IH : ∀ m', m' < n → 8 ≤ m' → 
           have h3 :=
             (Nat.prime_dvd_prime_iff_eq (by norm_num : Nat.Prime 11)
               (by norm_num : Nat.Prime 181)).mp h2
-          omega
+          lia
       obtain ⟨c, rfl⟩ := h11
       have hc : 0 < c := by
         by_contra hc0
-        have h0 : c = 0 := by omega
+        have h0 : c = 0 := by lia
         rw [h0] at h
         simp only [mul_zero, zero_mul] at h
         exact absurd h (ne_of_gt (by positivity : 0 < 11 ^ (r + 1) * 181))
@@ -513,7 +355,7 @@ theorem awins_of_ge_8 (n : ℕ) : 8 ≤ n → AWins n := by
     by_cases hbig : 1992 ≤ n
     · exact aw_big hbig IH
     · have h' : n ≤ 11 ∨ (12 ≤ n ∧ n ≤ 16) ∨ (17 ≤ n ∧ n ≤ 22) ∨
-        (23 ≤ n ∧ n ≤ 44) ∨ (45 ≤ n ∧ n ≤ 1990) ∨ n = 1991 := by omega
+        (23 ≤ n ∧ n ≤ 44) ∨ (45 ≤ n ∧ n ≤ 1990) ∨ n = 1991 := by lia
       rcases h' with h' | h' | h' | h' | h' | h'
       · exact aw_8_11 h h'
       · exact aw_12_16 h'.1 h'.2
@@ -583,11 +425,11 @@ theorem awins_ge {n : ℕ} (h : AWins n) : n = 1 ∨ 8 ≤ n := by
       obtain ⟨-, h₂⟩ := h
       right
       by_contra hc
-      have h44 : n ≤ 44 := by omega
+      have h44 : n ≤ 44 := by lia
       have h3 : n ^ 2 ≤ 1936 := by
         calc n ^ 2 ≤ 44 ^ 2 := Nat.pow_le_pow_left h44 2
           _ = 1936 := by decide
-      omega
+      lia
   | move n m h₁ h₂ h₃ IH =>
       by_cases hn : 8 ≤ n
       · exact Or.inr hn
@@ -596,16 +438,16 @@ theorem awins_ge {n : ℕ} (h : AWins n) : n = 1 ∨ 8 ≤ n := by
         · by_cases hn0 : n = 0
           · subst hn0
             have h₂' : m ≤ 0 := by simpa using h₁.2
-            have hm0 : m = 0 := by omega
+            have hm0 : m = 0 := by lia
             subst hm0
             exact IH 0 ⟨2, 1, by norm_num, by decide, by decide⟩
-          · have h2n : 2 ≤ n := by omega
-            have h7n : n ≤ 7 := by omega
+          · have h2n : 2 ≤ n := by lia
+            have h7n : n ≤ 7 := by lia
             obtain ⟨m', hbm, h2', h7'⟩ := escape_le49 (le_trans h2n h₁.1)
               (le_trans h₁.2 (le_trans (Nat.pow_le_pow_left h7n 2) (by decide)))
               (mt bmove_one_iff_isPrimePow.mpr h₂)
             have hIH := IH m' hbm
-            omega
+            lia
 
 /-! ### Determinism: A and B cannot both have a winning strategy -/
 
@@ -639,7 +481,7 @@ theorem bw_le_11 {m : ℕ} (h₁ : 2 ≤ m) (h₂ : m ≤ 11) : BWins m := by
   · apply BWins.move (m := 6) (m' := 2) (⟨3, 1, by norm_num, by decide, by decide⟩ : BMove 6 2) (by decide)
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 4 := le_trans h₂ (by decide)
-      omega
+      lia
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 4 := le_trans h₂ (by decide)
       interval_cases m''
@@ -652,7 +494,7 @@ theorem bw_le_11 {m : ℕ} (h₁ : 2 ≤ m) (h₂ : m ≤ 11) : BWins m := by
   · apply BWins.move (m := 10) (m' := 2) (⟨5, 1, by norm_num, by decide, by decide⟩ : BMove 10 2) (by decide)
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 4 := le_trans h₂ (by decide)
-      omega
+      lia
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 4 := le_trans h₂ (by decide)
       interval_cases m''
@@ -670,7 +512,7 @@ theorem bw_le_19 {m : ℕ} (h₁ : 2 ≤ m) (h₂ : m ≤ 19) : BWins m := by
   · apply BWins.move (m := 6) (m' := 2) (⟨3, 1, by norm_num, by decide, by decide⟩ : BMove 6 2) (by decide)
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 4 := le_trans h₂ (by decide)
-      omega
+      lia
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 4 := le_trans h₂ (by decide)
       interval_cases m'' <;> exact bw_le_11 (by decide) (by decide)
@@ -680,7 +522,7 @@ theorem bw_le_19 {m : ℕ} (h₁ : 2 ≤ m) (h₂ : m ≤ 19) : BWins m := by
   · apply BWins.move (m := 10) (m' := 2) (⟨5, 1, by norm_num, by decide, by decide⟩ : BMove 10 2) (by decide)
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 4 := le_trans h₂ (by decide)
-      omega
+      lia
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 4 := le_trans h₂ (by decide)
       interval_cases m'' <;> exact bw_le_11 (by decide) (by decide)
@@ -688,7 +530,7 @@ theorem bw_le_19 {m : ℕ} (h₁ : 2 ≤ m) (h₂ : m ≤ 19) : BWins m := by
   · apply BWins.move (m := 12) (m' := 3) (⟨2, 2, by norm_num, by decide, by decide⟩ : BMove 12 3) (by decide)
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 9 := le_trans h₂ (by decide)
-      omega
+      lia
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 9 := le_trans h₂ (by decide)
       interval_cases m'' <;> exact bw_le_11 (by decide) (by decide)
@@ -696,14 +538,14 @@ theorem bw_le_19 {m : ℕ} (h₁ : 2 ≤ m) (h₂ : m ≤ 19) : BWins m := by
   · apply BWins.move (m := 14) (m' := 2) (⟨7, 1, by norm_num, by decide, by decide⟩ : BMove 14 2) (by decide)
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 4 := le_trans h₂ (by decide)
-      omega
+      lia
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 4 := le_trans h₂ (by decide)
       interval_cases m'' <;> exact bw_le_11 (by decide) (by decide)
   · apply BWins.move (m := 15) (m' := 3) (⟨5, 1, by norm_num, by decide, by decide⟩ : BMove 15 3) (by decide)
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 9 := le_trans h₂ (by decide)
-      omega
+      lia
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 9 := le_trans h₂ (by decide)
       interval_cases m'' <;> exact bw_le_11 (by decide) (by decide)
@@ -712,7 +554,7 @@ theorem bw_le_19 {m : ℕ} (h₁ : 2 ≤ m) (h₂ : m ≤ 19) : BWins m := by
   · apply BWins.move (m := 18) (m' := 2) (⟨3, 2, by norm_num, by decide, by decide⟩ : BMove 18 2) (by decide)
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 4 := le_trans h₂ (by decide)
-      omega
+      lia
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 4 := le_trans h₂ (by decide)
       interval_cases m'' <;> exact bw_le_11 (by decide) (by decide)
@@ -727,7 +569,7 @@ theorem bw_le_29 {m : ℕ} (h₁ : 2 ≤ m) (h₂ : m ≤ 29) : BWins m := by
   · apply BWins.move (m := 6) (m' := 2) (⟨3, 1, by norm_num, by decide, by decide⟩ : BMove 6 2) (by decide)
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 4 := le_trans h₂ (by decide)
-      omega
+      lia
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 4 := le_trans h₂ (by decide)
       interval_cases m'' <;> exact bw_le_11 (by decide) (by decide)
@@ -737,7 +579,7 @@ theorem bw_le_29 {m : ℕ} (h₁ : 2 ≤ m) (h₂ : m ≤ 29) : BWins m := by
   · apply BWins.move (m := 10) (m' := 2) (⟨5, 1, by norm_num, by decide, by decide⟩ : BMove 10 2) (by decide)
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 4 := le_trans h₂ (by decide)
-      omega
+      lia
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 4 := le_trans h₂ (by decide)
       interval_cases m'' <;> exact bw_le_11 (by decide) (by decide)
@@ -745,7 +587,7 @@ theorem bw_le_29 {m : ℕ} (h₁ : 2 ≤ m) (h₂ : m ≤ 29) : BWins m := by
   · apply BWins.move (m := 12) (m' := 3) (⟨2, 2, by norm_num, by decide, by decide⟩ : BMove 12 3) (by decide)
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 9 := le_trans h₂ (by decide)
-      omega
+      lia
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 9 := le_trans h₂ (by decide)
       interval_cases m'' <;> exact bw_le_11 (by decide) (by decide)
@@ -753,14 +595,14 @@ theorem bw_le_29 {m : ℕ} (h₁ : 2 ≤ m) (h₂ : m ≤ 29) : BWins m := by
   · apply BWins.move (m := 14) (m' := 2) (⟨7, 1, by norm_num, by decide, by decide⟩ : BMove 14 2) (by decide)
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 4 := le_trans h₂ (by decide)
-      omega
+      lia
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 4 := le_trans h₂ (by decide)
       interval_cases m'' <;> exact bw_le_11 (by decide) (by decide)
   · apply BWins.move (m := 15) (m' := 3) (⟨5, 1, by norm_num, by decide, by decide⟩ : BMove 15 3) (by decide)
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 9 := le_trans h₂ (by decide)
-      omega
+      lia
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 9 := le_trans h₂ (by decide)
       interval_cases m'' <;> exact bw_le_11 (by decide) (by decide)
@@ -769,7 +611,7 @@ theorem bw_le_29 {m : ℕ} (h₁ : 2 ≤ m) (h₂ : m ≤ 29) : BWins m := by
   · apply BWins.move (m := 18) (m' := 2) (⟨3, 2, by norm_num, by decide, by decide⟩ : BMove 18 2) (by decide)
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 4 := le_trans h₂ (by decide)
-      omega
+      lia
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 4 := le_trans h₂ (by decide)
       interval_cases m'' <;> exact bw_le_11 (by decide) (by decide)
@@ -777,21 +619,21 @@ theorem bw_le_29 {m : ℕ} (h₁ : 2 ≤ m) (h₂ : m ≤ 29) : BWins m := by
   · apply BWins.move (m := 20) (m' := 4) (⟨5, 1, by norm_num, by decide, by decide⟩ : BMove 20 4) (by decide)
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 16 := le_trans h₂ (by decide)
-      omega
+      lia
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 16 := le_trans h₂ (by decide)
       interval_cases m'' <;> exact bw_le_19 (by decide) (by decide)
   · apply BWins.move (m := 21) (m' := 3) (⟨7, 1, by norm_num, by decide, by decide⟩ : BMove 21 3) (by decide)
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 9 := le_trans h₂ (by decide)
-      omega
+      lia
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 9 := le_trans h₂ (by decide)
       interval_cases m'' <;> exact bw_le_11 (by decide) (by decide)
   · apply BWins.move (m := 22) (m' := 2) (⟨11, 1, by norm_num, by decide, by decide⟩ : BMove 22 2) (by decide)
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 4 := le_trans h₂ (by decide)
-      omega
+      lia
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 4 := le_trans h₂ (by decide)
       interval_cases m'' <;> exact bw_le_11 (by decide) (by decide)
@@ -799,7 +641,7 @@ theorem bw_le_29 {m : ℕ} (h₁ : 2 ≤ m) (h₂ : m ≤ 29) : BWins m := by
   · apply BWins.move (m := 24) (m' := 3) (⟨2, 3, by norm_num, by decide, by decide⟩ : BMove 24 3) (by decide)
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 9 := le_trans h₂ (by decide)
-      omega
+      lia
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 9 := le_trans h₂ (by decide)
       interval_cases m'' <;> exact bw_le_11 (by decide) (by decide)
@@ -807,7 +649,7 @@ theorem bw_le_29 {m : ℕ} (h₁ : 2 ≤ m) (h₂ : m ≤ 29) : BWins m := by
   · apply BWins.move (m := 26) (m' := 2) (⟨13, 1, by norm_num, by decide, by decide⟩ : BMove 26 2) (by decide)
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 4 := le_trans h₂ (by decide)
-      omega
+      lia
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 4 := le_trans h₂ (by decide)
       interval_cases m'' <;> exact bw_le_11 (by decide) (by decide)
@@ -815,7 +657,7 @@ theorem bw_le_29 {m : ℕ} (h₁ : 2 ≤ m) (h₂ : m ≤ 29) : BWins m := by
   · apply BWins.move (m := 28) (m' := 4) (⟨7, 1, by norm_num, by decide, by decide⟩ : BMove 28 4) (by decide)
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 16 := le_trans h₂ (by decide)
-      omega
+      lia
     · intro m'' ⟨h₁, h₂⟩
       have hb : m'' ≤ 16 := le_trans h₂ (by decide)
       interval_cases m'' <;> exact bw_le_19 (by decide) (by decide)
@@ -824,193 +666,46 @@ theorem bw_le_29 {m : ℕ} (h₁ : 2 ≤ m) (h₂ : m ≤ 29) : BWins m := by
 theorem bwinsstart_2 : BWinsStart 2 := by
   intro m ⟨h₁, h₂⟩
   have h4 : m ≤ 4 := le_trans h₂ (by decide)
-  exact ⟨by omega, bw_le_11 (by omega) (by omega)⟩
+  exact ⟨by lia, bw_le_11 (by lia) (by lia)⟩
 
 theorem bwinsstart_3 : BWinsStart 3 := by
   intro m ⟨h₁, h₂⟩
   have h9 : m ≤ 9 := le_trans h₂ (by decide)
-  exact ⟨by omega, bw_le_11 (by omega) (by omega)⟩
+  exact ⟨by lia, bw_le_11 (by lia) (by lia)⟩
 
 theorem bwinsstart_4 : BWinsStart 4 := by
   intro m ⟨h₁, h₂⟩
   have h16 : m ≤ 16 := le_trans h₂ (by decide)
-  exact ⟨by omega, bw_le_19 (by omega) (by omega)⟩
+  exact ⟨by lia, bw_le_19 (by lia) (by lia)⟩
 
 theorem bwinsstart_5 : BWinsStart 5 := by
   intro m ⟨h₁, h₂⟩
   have h25 : m ≤ 25 := le_trans h₂ (by decide)
-  exact ⟨by omega, bw_le_29 (by omega) (by omega)⟩
+  exact ⟨by lia, bw_le_29 (by lia) (by lia)⟩
 
 /-! ### B does not win from 30, hence not from `n₀ ∈ {6, 7}` -/
 
-/-- B has no winning strategy from any of 30, 60, 140, 280, 504: from each of these,
-every legal move of B either is impossible, loses to A grabbing 1990, or lands back in
-the same set (the induction hypothesis applies). -/
-theorem not_bwins_trap {m : ℕ} (h : BWins m) :
-    m ≠ 30 ∧ m ≠ 60 ∧ m ≠ 140 ∧ m ≠ 280 ∧ m ≠ 504 := by
+/-- B has no winning strategy from a trap number: A can always restore it. -/
+theorem not_bwins_trap {m : ℕ} (h : BWins m) : m ∉ trap := by
   induction h with
   | one m h =>
-      obtain ⟨p, r, hp, hr, hmr⟩ := h
-      refine ⟨?_, ?_, ?_, ?_, ?_⟩ <;> intro heq <;> subst heq
-      · exact not_pp30 ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, by omega⟩)
-      · exact not_pp60 ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, by omega⟩)
-      · exact not_pp140 ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, by omega⟩)
-      · exact not_pp280 ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, by omega⟩)
-      · exact not_pp504 ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, by omega⟩)
+      intro hm
+      exact one_not_mem_bResponses_of_mem_trap hm
+        ((bmove_iff_mem_bResponses (ne_zero_of_mem_trap hm)).mp h)
   | move m m' hl hm1 hm2 hm3 IH =>
-      refine ⟨?_, ?_, ?_, ?_, ?_⟩ <;> intro heq <;> subst heq
-      · -- B to move at 30
-        obtain ⟨p, r, hp, hr, h⟩ := hl
-        have hd : m' ∈ Nat.divisors 30 := Nat.mem_divisors.mpr ⟨⟨p ^ r, h⟩, by decide⟩
-        rw [divisors30] at hd
-        fin_cases hd
-        · exact absurd rfl hm1
-        · have hpr : p ^ r = 15 := by omega
-          exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp15
-        · have hpr : p ^ r = 10 := by omega
-          exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp10
-        · have hpr : p ^ r = 6 := by omega
-          exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp6
-        · exact (IH 30 ⟨by decide, by decide⟩).1 rfl
-        · exact (IH 60 ⟨by decide, by decide⟩).2.1 rfl
-        · exact (IH 140 ⟨by decide, by decide⟩).2.2.1 rfl
-        · have hpr : p ^ r = 1 := by omega
-          exact absurd hpr (prime_pow_ne_one hp hr)
-      · -- B to move at 60
-        obtain ⟨p, r, hp, hr, h⟩ := hl
-        have hd : m' ∈ Nat.divisors 60 := Nat.mem_divisors.mpr ⟨⟨p ^ r, h⟩, by decide⟩
-        rw [divisors60] at hd
-        fin_cases hd
-        · exact absurd rfl hm1
-        · have hpr : p ^ r = 30 := by omega
-          exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp30
-        · have hpr : p ^ r = 20 := by omega
-          exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp20
-        · have hpr : p ^ r = 15 := by omega
-          exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp15
-        · have hpr : p ^ r = 12 := by omega
-          exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp12
-        · have hpr : p ^ r = 10 := by omega
-          exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp10
-        · have hpr : p ^ r = 6 := by omega
-          exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp6
-        · exact (IH 140 ⟨by decide, by decide⟩).2.2.1 rfl
-        · exact (IH 140 ⟨by decide, by decide⟩).2.2.1 rfl
-        · exact (IH 280 ⟨by decide, by decide⟩).2.2.2.1 rfl
-        · exact (IH 504 ⟨by decide, by decide⟩).2.2.2.2 rfl
-        · have hpr : p ^ r = 1 := by omega
-          exact absurd hpr (prime_pow_ne_one hp hr)
-      · -- B to move at 140
-        obtain ⟨p, r, hp, hr, h⟩ := hl
-        have hd : m' ∈ Nat.divisors 140 := Nat.mem_divisors.mpr ⟨⟨p ^ r, h⟩, by decide⟩
-        rw [divisors140] at hd
-        fin_cases hd
-        · exact absurd rfl hm1
-        · have hpr : p ^ r = 70 := by omega
-          exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp70
-        · have hpr : p ^ r = 35 := by omega
-          exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp35
-        · have hpr : p ^ r = 28 := by omega
-          exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp28
-        · have hpr : p ^ r = 20 := by omega
-          exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp20
-        · have hpr : p ^ r = 14 := by omega
-          exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp14
-        · have hpr : p ^ r = 10 := by omega
-          exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp10
-        · exact (IH 280 ⟨by decide, by decide⟩).2.2.2.1 rfl
-        · exact (IH 504 ⟨by decide, by decide⟩).2.2.2.2 rfl
-        · exact (IH 504 ⟨by decide, by decide⟩).2.2.2.2 rfl
-        · exact hm2 1990 ⟨by decide, by decide⟩ rfl
-        · have hpr : p ^ r = 1 := by omega
-          exact absurd hpr (prime_pow_ne_one hp hr)
-      · -- B to move at 280
-        obtain ⟨p, r, hp, hr, h⟩ := hl
-        have hd : m' ∈ Nat.divisors 280 := Nat.mem_divisors.mpr ⟨⟨p ^ r, h⟩, by decide⟩
-        rw [divisors280] at hd
-        fin_cases hd
-        · exact absurd rfl hm1
-        · have hpr : p ^ r = 140 := by omega
-          exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp140
-        · have hpr : p ^ r = 70 := by omega
-          exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp70
-        · have hpr : p ^ r = 56 := by omega
-          exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp56
-        · have hpr : p ^ r = 40 := by omega
-          exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp40
-        · have hpr : p ^ r = 35 := by omega
-          exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp35
-        · have hpr : p ^ r = 28 := by omega
-          exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp28
-        · have hpr : p ^ r = 20 := by omega
-          exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp20
-        · have hpr : p ^ r = 14 := by omega
-          exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp14
-        · have hpr : p ^ r = 10 := by omega
-          exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp10
-        · exact (IH 504 ⟨by decide, by decide⟩).2.2.2.2 rfl
-        · exact (IH 504 ⟨by decide, by decide⟩).2.2.2.2 rfl
-        · exact hm2 1990 ⟨by decide, by decide⟩ rfl
-        · exact hm2 1990 ⟨by decide, by decide⟩ rfl
-        · exact hm2 1990 ⟨by decide, by decide⟩ rfl
-        · have hpr : p ^ r = 1 := by omega
-          exact absurd hpr (prime_pow_ne_one hp hr)
-      · -- B to move at 504
-        obtain ⟨p, r, hp, hr, h⟩ := hl
-        have hd : m' ∈ Nat.divisors 504 := Nat.mem_divisors.mpr ⟨⟨p ^ r, h⟩, by decide⟩
-        rw [divisors504] at hd
-        fin_cases hd
-        · exact absurd rfl hm1
-        · have hpr : p ^ r = 252 := by omega
-          exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp252
-        · have hpr : p ^ r = 168 := by omega
-          exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp168
-        · have hpr : p ^ r = 126 := by omega
-          exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp126
-        · have hpr : p ^ r = 84 := by omega
-          exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp84
-        · have hpr : p ^ r = 72 := by omega
-          exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp72
-        · have hpr : p ^ r = 63 := by omega
-          exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp63
-        · have hpr : p ^ r = 56 := by omega
-          exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp56
-        · have hpr : p ^ r = 42 := by omega
-          exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp42
-        · have hpr : p ^ r = 36 := by omega
-          exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp36
-        · have hpr : p ^ r = 28 := by omega
-          exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp28
-        · have hpr : p ^ r = 24 := by omega
-          exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp24
-        · have hpr : p ^ r = 21 := by omega
-          exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp21
-        · have hpr : p ^ r = 18 := by omega
-          exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp18
-        · have hpr : p ^ r = 14 := by omega
-          exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp14
-        · have hpr : p ^ r = 12 := by omega
-          exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp12
-        · exact hm2 1990 ⟨by decide, by decide⟩ rfl
-        · exact hm2 1990 ⟨by decide, by decide⟩ rfl
-        · exact hm2 1990 ⟨by decide, by decide⟩ rfl
-        · have hpr : p ^ r = 6 := by omega
-          exact absurd ((isPrimePow_nat_iff _).mpr ⟨p, r, hp, hr, hpr⟩) not_pp6
-        · exact hm2 1990 ⟨by decide, by decide⟩ rfl
-        · exact hm2 1990 ⟨by decide, by decide⟩ rfl
-        · exact hm2 1990 ⟨by decide, by decide⟩ rfl
-        · have hpr : p ^ r = 1 := by omega
-          exact absurd hpr (prime_pow_ne_one hp hr)
+      intro hm
+      have hm' := (bmove_iff_mem_bResponses (ne_zero_of_mem_trap hm)).mp hl
+      exact IH m (return_to_trap hm hm') hm
 
 theorem not_bwinsstart_6 : ¬ BWinsStart 6 := by
   intro h
   obtain ⟨h1, h2⟩ := h 30 ⟨by decide, by decide⟩
-  exact (not_bwins_trap h2).1 rfl
+  exact not_bwins_trap h2 (by decide)
 
 theorem not_bwinsstart_7 : ¬ BWinsStart 7 := by
   intro h
   obtain ⟨h1, h2⟩ := h 30 ⟨by decide, by decide⟩
-  exact (not_bwins_trap h2).1 rfl
+  exact not_bwins_trap h2 (by decide)
 
 snip end
 
@@ -1027,7 +722,7 @@ problem imo1990_p5 (n : ℕ) (hn : 2 ≤ n) :
   · constructor
     · intro h
       rcases awins_ge h with h1 | h1
-      · exfalso; omega
+      · exfalso; lia
       · exact h1
     · intro h
       exact awins_of_ge_8 n h
@@ -1061,7 +756,7 @@ problem imo1990_p5 (n : ℕ) (hn : 2 ≤ n) :
         · decide
     · intro h
       fin_cases h
-      · exact ⟨fun hA => by rcases awins_ge hA with h1 | h1 <;> omega, not_bwinsstart_6⟩
-      · exact ⟨fun hA => by rcases awins_ge hA with h1 | h1 <;> omega, not_bwinsstart_7⟩
+      · exact ⟨fun hA => by rcases awins_ge hA with h1 | h1 <;> lia, not_bwinsstart_6⟩
+      · exact ⟨fun hA => by rcases awins_ge hA with h1 | h1 <;> lia, not_bwinsstart_7⟩
 
 end Imo1990P5

@@ -83,15 +83,15 @@ problem imo1974_p1
 
   -- Each round, the players win p+q+r counters in total.
   have h_total i : C i 0 + C i 1 + C i 2 = p + q + r := by
-    rw [←Fin.sum_univ_three]
+    rw [← Fin.sum_univ_three]
     unfold C
-    rw [←Fintype.sum_equiv (game i)⁻¹ _ _ (fun _ ↦ rfl)]
+    rw [← Fintype.sum_equiv (game i)⁻¹ _ _ (fun _ ↦ rfl)]
     simp [Fin.sum_univ_three]
 
   -- The total score, 39, equals n(p+q+r).
   have h1 : n*(p+q+r) = 39 := calc
     _ = ∑ k ∈ Finset.range n, (p+q+r) := by simp
-    _ = ∑ k ∈ Finset.range n, (C k 0 + C k 1 + C k 2) := by congr; ext i; rw [←h_total]
+    _ = ∑ k ∈ Finset.range n, (C k 0 + C k 1 + C k 2) := by congr; ext i; rw [← h_total]
     _ = ∑ k ∈ Finset.range n, (C k 0)
       + ∑ k ∈ Finset.range n, (C k 1)
       + ∑ k ∈ Finset.range n, (C k 2) := by repeat rw [Finset.sum_add_distrib]
@@ -114,7 +114,7 @@ problem imo1974_p1
   simp only [Finset.range_val, Multiset.range_succ, Multiset.range_zero, Multiset.cons_zero,
     Fin.isValue, Multiset.map_cons, Multiset.map_singleton, Multiset.sum_cons,
     Multiset.sum_singleton] at hA hB hC
-  rw [←Nat.add_assoc] at hA hB hC
+  rw [← Nat.add_assoc] at hA hB hC
 
   -- Show 2+r ≤ 10, and thus r ≤ 8:
   have h5 : 2+r ≤ 10 := calc
@@ -161,7 +161,7 @@ problem imo1974_p1
 
   -- So (game 0) 2 ≠ 0 (bijective).
   have hg020 : game 0 2 ≠ 0 := by
-    intro h; rw [←h] at hg01
+    intro h; rw [← h] at hg01
     have := Equiv.injective (game 0) hg01
     simp only [Fin.isValue, Fin.reduceEq] at this
 

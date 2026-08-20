@@ -106,13 +106,13 @@ theorem generalized (n : ℕ) (hn' : ¬2 ∣ n) : IsGreatest { x₀ | ∃ x : �
       by_cases hi' : i < n
       · right
         have hi'' : i - 1 < n := by lia
-        rw [if_pos hi', if_pos hi'']
+        rw [ite_eq_left hi', ite_eq_left hi'']
         rw [Nat.cast_sub (by lia:_), Nat.cast_one, ← sub_add, Real.rpow_add_one (by norm_num:_)]
         field
       · left
         have hi'' : i - 1 < n := by lia
         have hi''' : i = n := by lia
-        rw [if_neg hi', if_pos hi'', hi''']
+        rw [ite_eq_right hi', ite_eq_left hi'', hi''']
         rw [Nat.cast_sub (by lia:_), Nat.cast_one, one_div, ← Real.rpow_neg (by norm_num:_)]
         congr
         ring

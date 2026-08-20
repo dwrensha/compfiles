@@ -65,11 +65,11 @@ problem usa2001_p4
       have h4 : 0 < ∠ X Z Y - Real.pi / 2 := sub_pos.mpr hObtuse
       have h10 : ({X, Y, Z} : Set _) = {X, Z, Y} :=
         congrArg (Set.insert _) (Set.pair_comm _ _)
-      have h8 : ¬ Collinear ℝ {X, Z, Y} := by rwa [←h10]
+      have h8 : ¬ Collinear ℝ {X, Z, Y} := by rwa [← h10]
       have h7 : ∠ X Z Y < Real.pi := EuclideanGeometry.angle_lt_pi_of_not_collinear h8
       have h5 : ∠ X Z Y < Real.pi + Real.pi / 2 := by linarith only [h4, h7]
       exact Real.cos_neg_of_pi_div_two_lt_of_lt hObtuse h5
-    simp only [←sq] at h2
+    simp only [← sq] at h2
     have h13 : 2 * dist X Z * dist Y Z * Real.cos (∠ X Z Y) < 0 := by
       have h14 : 0 < 2 * dist X Z * dist Y Z := by positivity
       exact mul_neg_iff.mpr (Or.inl ⟨h14, h3⟩)
@@ -101,7 +101,7 @@ problem usa2001_p4
     pow_lt_pow_left₀ h23 dist_nonneg (by norm_num)
   rw [Real.sq_sqrt (by positivity)] at h23
   have h30 := EuclideanGeometry.law_cos B A C
-  simp only [←sq] at h30
+  simp only [← sq] at h30
   rw [h30] at h23; clear h30
   rw [dist_comm C A] at h23
   have h31 : 0 < 2 * dist B A * dist A C * Real.cos (∠ B A C) := by linarith only [h23]

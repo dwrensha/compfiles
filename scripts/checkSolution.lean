@@ -2,6 +2,7 @@ module
 
 public import Mathlib.Data.String.Defs
 public import Batteries.Data.String.Basic
+public import Batteries.Recycling.RBTree.Basic
 public import Lean.Environment
 public import Lean.Elab.Print
 public import Lean.Meta.Basic
@@ -50,15 +51,12 @@ unsafe def compileProblem (problem_id : String) : IO CompileProblemResult := do
   let state := {env}
   Prod.fst <$> (CoreM.toIO · ctx state) do
     let mst ← ProblemExtraction.extractProblems
-    let mut found_it : Bool := false
-    for ⟨m, problem_src⟩ in mst do
-      if m.toString = ("Compfiles." ++ problem_id) then do
-        let h ← IO.FS.Handle.mk lean_file IO.FS.Mode.write
-        h.putStr problem_src
-        h.flush
-        found_it := true
-    if !found_it
-    then panic! s!"no such problem {problem_id}"
+    let (.some problem_src) := mst.find? (.str (.mkSimple "Compfiles") problem_id)
+    | panic! s!"no such problem {problem_id}"
+
+    let h ← IO.FS.Handle.mk lean_file IO.FS.Mode.write
+    h.putStr problem_src
+    h.flush
 
   let s := ProblemExtraction.determineDeclsExtension.getState env
   -- We always expect a sorry from the problem file
@@ -75,12 +73,9 @@ unsafe def verifyTypesAndAxioms (problem_mod : Name) (solution_mod : Name)
       let prob_ctx := {fileName := "", fileMap := default}
       let prob_state := {env := prob_env}
       let prob_infos ← Prod.fst <$> (CoreM.toIO · prob_ctx prob_state) do
-        let mut infos : RBMap Name ConstantInfo Name.quickCmp := {}
         let decls ← ProblemExtraction.getDeclsInPackage problem_mod
-        for d in decls do
-          if not d.isInternal then
-            infos := infos.insert d (← getConstInfo d)
-        pure infos
+        let declInfos ← decls.filter (not ·.isInternal) |>.mapM (fun d => return (d, ← getConstInfo d))
+        return declInfos.toList.toRBMap Name.quickCmp
 
       let sol_ctx := {fileName := "", fileMap := default}
       let sol_state := {env := sol_env}
@@ -124,7 +119,7 @@ unsafe def replayFromImports (module : Name) : IO Unit := do
   for (part, _) in parts do
     for name in part.constNames, ci in part.constants do
       newConstants := newConstants.insert name ci
-  let env' ← env.replay newConstants
+  let env' := Environment.ofKernelEnv (← env.toKernelEnv.replay newConstants)
   env'.freeRegions
 
 unsafe def printDetermineVals (determineDecls : List Name) (solution_mod : Name)

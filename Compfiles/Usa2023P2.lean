@@ -39,10 +39,10 @@ snip begin
 lemma val_div (a b : ℝ+) : (a / b).val = a.val / b.val := by rfl
 
 lemma lemma_1 (a b c : ℝ+) : (a + b)/c = a/c + b/c := by
-  rw [division_def, add_mul, ←division_def, ←division_def]
+  rw [division_def, add_mul, ← division_def, ← division_def]
 
 lemma lemma_3 {a b c : ℝ+} (h : a = b + c) : c < a := by
-  rw [h, ←Subtype.coe_lt_coe, Positive.coe_add]
+  rw [h, ← Subtype.coe_lt_coe, Positive.coe_add]
   exact lt_add_of_pos_left _ b.2
 
 snip end
@@ -58,7 +58,7 @@ problem usa2023_p2 (f : ℝ+ → ℝ+) :
     intro x y
     rw [hf]
     dsimp only
-    rw [mul_add, ←add_assoc (x*y), mul_one, add_assoc (x * y + x)]
+    rw [mul_add, ← add_assoc (x*y), mul_one, add_assoc (x * y + x)]
     congr
     rw [Subtype.mk_eq_mk]
     norm_num
@@ -71,14 +71,14 @@ problem usa2023_p2 (f : ℝ+ → ℝ+) :
       rw [solution_set, Set.mem_singleton_iff]
       obtain ⟨a, b, ha, hab⟩ := h
       funext x
-      rw [←Subtype.coe_inj]
+      rw [← Subtype.coe_inj]
 
       suffices h : a = 1 ∧ b = 1 by simp [hab, h]
 
       have P1 : ∀ x : ℝ+, a^2 * x.val + a * b + b = b * x.val + 2 := by
         intro x
         have P2 := P x 1
-        rw [←Subtype.coe_inj] at P2
+        rw [← Subtype.coe_inj] at P2
         simp only [mul_one, Positive.coe_add, Positive.val_mul, hab, Positive.val_one] at P2
         linarith
 
@@ -92,7 +92,7 @@ problem usa2023_p2 (f : ℝ+ → ℝ+) :
 
       have h0 : a^2 = b := by linear_combination hp2 - hp1
 
-      rw [←h0] at hp1 hp2
+      rw [← h0] at hp1 hp2
       have h1 : a = 1 := by nlinarith
       rw [h1, sq, mul_one] at h0
       exact ⟨h1, h0.symm⟩
@@ -141,7 +141,7 @@ problem usa2023_p2 (f : ℝ+ → ℝ+) :
       have h12 := P 1 ⟨1 - (f 1).val, h11⟩
       rw [one_mul, one_mul] at h12
       have h13 : ⟨1 - (f 1).val, h11⟩ + f 1 = 1 := by
-        rw [←Subtype.coe_inj]; simp only [Positive.coe_add, sub_add_cancel, Positive.val_one]
+        rw [← Subtype.coe_inj]; simp only [Positive.coe_add, sub_add_cancel, Positive.val_one]
       rw [h13] at h12; clear h13
       have h14 : ⟨2, two_pos⟩ < f 1 := lemma_3 h12
       have h15 : (1:ℝ+) < ⟨2, two_pos⟩ := by rw [Subtype.mk_lt_mk]; exact one_lt_two
@@ -163,7 +163,7 @@ problem usa2023_p2 (f : ℝ+ → ℝ+) :
       have h21 : (⟨(x + c).val - 1, h11 _⟩ : ℝ+) + 1 = x + c := by
         obtain ⟨x, hx⟩ := x
         obtain ⟨cc, hcc⟩ := c
-        rw [←Subtype.coe_inj]
+        rw [← Subtype.coe_inj]
         simp
       rw [h21] at h20
       exact h20
@@ -172,7 +172,7 @@ problem usa2023_p2 (f : ℝ+ → ℝ+) :
     intro x
 
     have h15 := h12 x
-    rw [←Subtype.coe_inj] at h15
+    rw [← Subtype.coe_inj] at h15
     rw [Positive.coe_add] at h15
     rw [val_div, Positive.val_mul, @Subtype.coe_mk _ _ 2] at h15
     rw [Subtype.coe_mk]

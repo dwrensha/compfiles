@@ -106,7 +106,7 @@ theorem a_prime_lemma (n1 n2 p : ℕ) (h1 : n1 < n2) (h2 : p ∣ 2 ^ (a n1) - 3)
       apply Finset.dvd_prod_of_mem
       simp [h3, h2]
       grind only [= Nat.odd_iff, a_ge_and_A_odd n1]
-    · replace ih1 := ih1 (by omega)
+    · replace ih1 := ih1 (by lia)
       exact Nat.dvd_mul_right_of_dvd ih1 _
 
 
@@ -126,10 +126,10 @@ theorem a_pairwise_coprime : pairwise_coprime_f (Set.range a) := by
     and_intros
     · exact h1
     · apply dvd_trans h2
-      rw [<-hi1]
+      rw [← hi1]
       exact Nat.gcd_dvd_right _ _
     · apply dvd_trans h2
-      rw [<-hi2]
+      rw [← hi2]
       exact Nat.gcd_dvd_left _ _
   have pOdd : Odd p := by
     apply Odd.of_dvd_nat _ ph1
@@ -143,7 +143,7 @@ theorem a_pairwise_coprime : pairwise_coprime_f (Set.range a) := by
     rw [bh, pow_mul]
     apply Int.prime_dvd_pow_sub_one php
     refine IsCoprime.pow_left ?_
-    rw [<-Nat.cast_ofNat, Nat.isCoprime_iff_coprime]
+    rw [← Nat.cast_ofNat, Nat.isCoprime_iff_coprime]
     apply pOdd.coprime_two_left
   have : ↑p ∣ B - (2 ^ a i2 - 3) := by
     zify at ph2

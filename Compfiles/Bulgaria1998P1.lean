@@ -102,13 +102,13 @@ private lemma of_check9 (color : Set.Icc 1 9 → Fin 2)
     replace hcij := of_decide_eq_true hcij
     replace hcik := of_decide_eq_true hcik
     have hmem : 2 * (j.val + 1) - (i.val + 1) ∈ Set.Icc 1 9 := by
-      simp only [Set.mem_Icc]; omega
-    refine ⟨⟨i.val + 1, by simp only [Set.mem_Icc]; omega⟩,
-           ⟨j.val + 1, by simp only [Set.mem_Icc]; omega⟩,
-           by simp only [Subtype.mk_lt_mk]; omega, hmem, hcij, ?_⟩
-    have heq : 2 * (j.val + 1) - (i.val + 1) = 2 * j.val - i.val + 1 := by omega
+      simp only [Set.mem_Icc]; lia
+    refine ⟨⟨i.val + 1, by simp only [Set.mem_Icc]; lia⟩,
+           ⟨j.val + 1, by simp only [Set.mem_Icc]; lia⟩,
+           by simp only [Subtype.mk_lt_mk]; lia, hmem, hcij, ?_⟩
+    have heq : 2 * (j.val + 1) - (i.val + 1) = 2 * j.val - i.val + 1 := by lia
     have : (⟨2 * (j.val + 1) - (i.val + 1), hmem⟩ : Set.Icc 1 9) =
-           ⟨2 * j.val - i.val + 1, by simp only [Set.mem_Icc]; omega⟩ :=
+           ⟨2 * j.val - i.val + 1, by simp only [Set.mem_Icc]; lia⟩ :=
       Subtype.ext heq
     rw [this]; exact hcik
   case isFalse hk => simp at hrest

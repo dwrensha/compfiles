@@ -39,17 +39,17 @@ def shiftSet (p : ℕ) (A : Finset ℕ) : Finset ℕ := A.image (shift p)
 
 theorem shiftSet_eq (p : ℕ) (A : Finset ℕ) : shiftSet p A = A.image (shift p) := rfl
 
-theorem shift_of_mem {p x : ℕ} (hx : x ∈ Finset.Icc 1 p) : shift p x = x % p + 1 := if_pos hx
+theorem shift_of_mem {p x : ℕ} (hx : x ∈ Finset.Icc 1 p) : shift p x = x % p + 1 := ite_eq_left hx
 
-theorem shift_of_not_mem {p x : ℕ} (hx : x ∉ Finset.Icc 1 p) : shift p x = x := if_neg hx
+theorem shift_of_not_mem {p x : ℕ} (hx : x ∉ Finset.Icc 1 p) : shift p x = x := ite_eq_right hx
 
 theorem shift_mem_Icc {p x : ℕ} (hp : 0 < p) (hx : x ∈ Finset.Icc 1 p) :
     shift p x ∈ Finset.Icc 1 p := by
-  have h : shift p x = x % p + 1 := if_pos hx
+  have h : shift p x = x % p + 1 := ite_eq_left hx
   rw [Finset.mem_Icc] at hx ⊢
   rw [h]
   have hlt := Nat.mod_lt x hp
-  omega
+  lia
 
 theorem shift_mem_iff {p x : ℕ} (hp : 0 < p) :
     shift p x ∈ Finset.Icc 1 p ↔ x ∈ Finset.Icc 1 p := by
@@ -63,44 +63,44 @@ theorem shift_mem_iff {p x : ℕ} (hp : 0 < p) :
 theorem shift_injective {p : ℕ} (hp : 0 < p) : Function.Injective (shift p) := by
   intro x y hxy
   by_cases hx : x ∈ Finset.Icc 1 p <;> by_cases hy : y ∈ Finset.Icc 1 p
-  · have hxp : shift p x = x % p + 1 := if_pos hx
-    have hyp : shift p y = y % p + 1 := if_pos hy
+  · have hxp : shift p x = x % p + 1 := ite_eq_left hx
+    have hyp : shift p y = y % p + 1 := ite_eq_left hy
     rw [hxp, hyp] at hxy
-    have hmod : x % p = y % p := by omega
+    have hmod : x % p = y % p := by lia
     rw [Finset.mem_Icc] at hx hy
     by_cases hx2 : x = p
     · have h0 : y % p = 0 := by rw [← hmod, hx2, Nat.mod_self]
       have hd : p ∣ y := Nat.dvd_of_mod_eq_zero h0
-      have hle : p ≤ y := Nat.le_of_dvd (by omega) hd
-      omega
+      have hle : p ≤ y := Nat.le_of_dvd (by lia) hd
+      lia
     · by_cases hy2 : y = p
       · have h0 : x % p = 0 := by rw [hmod, hy2, Nat.mod_self]
         have hd : p ∣ x := Nat.dvd_of_mod_eq_zero h0
-        have hle : p ≤ x := Nat.le_of_dvd (by omega) hd
-        omega
-      · have hxm : x % p = x := Nat.mod_eq_of_lt (by omega)
-        have hym : y % p = y := Nat.mod_eq_of_lt (by omega)
-        omega
-  · have hxp : shift p x = x % p + 1 := if_pos hx
-    have hyp : shift p y = y := if_neg hy
+        have hle : p ≤ x := Nat.le_of_dvd (by lia) hd
+        lia
+      · have hxm : x % p = x := Nat.mod_eq_of_lt (by lia)
+        have hym : y % p = y := Nat.mod_eq_of_lt (by lia)
+        lia
+  · have hxp : shift p x = x % p + 1 := ite_eq_left hx
+    have hyp : shift p y = y := ite_eq_right hy
     rw [hxp, hyp] at hxy
     have hxI : x % p + 1 ∈ Finset.Icc 1 p := by
       rw [Finset.mem_Icc] at hx ⊢
       have hlt := Nat.mod_lt x hp
-      omega
+      lia
     rw [hxy] at hxI
     exact absurd hxI hy
-  · have hxp : shift p x = x := if_neg hx
-    have hyp : shift p y = y % p + 1 := if_pos hy
+  · have hxp : shift p x = x := ite_eq_right hx
+    have hyp : shift p y = y % p + 1 := ite_eq_left hy
     rw [hxp, hyp] at hxy
     have hyI : y % p + 1 ∈ Finset.Icc 1 p := by
       rw [Finset.mem_Icc] at hy ⊢
       have hlt := Nat.mod_lt y hp
-      omega
+      lia
     rw [← hxy] at hyI
     exact absurd hyI hx
-  · have hxp : shift p x = x := if_neg hx
-    have hyp : shift p y = y := if_neg hy
+  · have hxp : shift p x = x := ite_eq_right hx
+    have hyp : shift p y = y := ite_eq_right hy
     rw [hxp, hyp] at hxy
     exact hxy
 
@@ -110,42 +110,38 @@ theorem shift_iterate_mem_Icc {p : ℕ} (hp : 0 < p) {x : ℕ} (hx : x ∈ Finse
   | zero =>
     simp only [Function.iterate_zero, id_eq, Nat.add_zero]
     rw [Finset.mem_Icc] at hx
-    rw [Nat.mod_eq_of_lt (by omega : x - 1 < p), Nat.sub_add_cancel hx.1]
+    rw [Nat.mod_eq_of_lt (by lia : x - 1 < p), Nat.sub_add_cancel hx.1]
   | succ k ih =>
     have hmem : (x - 1 + k) % p + 1 ∈ Finset.Icc 1 p := by
       rw [Finset.mem_Icc] at hx ⊢
       have hlt := Nat.mod_lt (x - 1 + k) hp
-      omega
+      lia
     rw [Function.iterate_succ_apply', ih]
-    have h : shift p ((x - 1 + k) % p + 1) = ((x - 1 + k) % p + 1) % p + 1 := if_pos hmem
-    have hmod : ∀ a : ℕ, (a % p + 1) % p = (a + 1) % p := by
-      intro a
-      have e : a + 1 = a % p + 1 + p * (a / p) := by
-        have hd := Nat.div_add_mod a p
-        omega
-      rw [e, Nat.add_mul_mod_self_left]
+    have h : shift p ((x - 1 + k) % p + 1) = ((x - 1 + k) % p + 1) % p + 1 := ite_eq_left hmem
+    have hmod : ∀ a : ℕ, (a % p + 1) % p = (a + 1) % p :=
+      fun a => Nat.mod_add_mod a p 1
     rw [h, hmod]
     have hx' : 1 ≤ x := (Finset.mem_Icc.1 hx).1
-    rw [show x - 1 + k + 1 = x - 1 + (k + 1) from by omega]
+    congr 1
 
 theorem shift_iterate_not_mem {p : ℕ} {x : ℕ} (hx : x ∉ Finset.Icc 1 p) (k : ℕ) :
     (shift p)^[k] x = x := by
   induction k with
   | zero => rfl
-  | succ k ih => rw [Function.iterate_succ_apply', ih]; exact if_neg hx
+  | succ k ih => rw [Function.iterate_succ_apply', ih]; exact ite_eq_right hx
 
 theorem shift_iterate_mem_Icc' {p : ℕ} (hp : 0 < p) {x : ℕ} (hx : x ∈ Finset.Icc 1 p) (k : ℕ) :
     (shift p)^[k] x ∈ Finset.Icc 1 p := by
   rw [shift_iterate_mem_Icc hp hx k]
   rw [Finset.mem_Icc]
   have hlt := Nat.mod_lt (x - 1 + k) hp
-  omega
+  lia
 
 theorem shift_iterate_p {p : ℕ} (hp : 0 < p) (x : ℕ) : (shift p)^[p] x = x := by
   by_cases hx : x ∈ Finset.Icc 1 p
   · rw [shift_iterate_mem_Icc hp hx p]
     rw [Finset.mem_Icc] at hx
-    rw [Nat.add_mod_right, Nat.mod_eq_of_lt (by omega : x - 1 < p), Nat.sub_add_cancel hx.1]
+    rw [Nat.add_mod_right, Nat.mod_eq_of_lt (by lia : x - 1 < p), Nat.sub_add_cancel hx.1]
   · exact shift_iterate_not_mem hx p
 
 theorem shiftSet_iterate (p : ℕ) (A : Finset ℕ) (k : ℕ) :
@@ -170,9 +166,9 @@ theorem sum_shiftSet {p : ℕ} (hp : 0 < p) (A : Finset ℕ) :
   rw [shiftSet_eq, Finset.sum_image (fun x _ y _ h ↦ shift_injective hp h),
     ← Finset.sum_filter_add_sum_filter_not A (· ∈ Finset.Icc 1 p) (shift p)]
   have hL : ∀ x ∈ A.filter (· ∈ Finset.Icc 1 p), shift p x = x % p + 1 :=
-    fun x hx ↦ if_pos (Finset.mem_filter.1 hx).2
+    fun x hx ↦ ite_eq_left (Finset.mem_filter.1 hx).2
   have hH : ∀ x ∈ A.filter (· ∉ Finset.Icc 1 p), shift p x = x :=
-    fun x hx ↦ if_neg (Finset.mem_filter.1 hx).2
+    fun x hx ↦ ite_eq_right (Finset.mem_filter.1 hx).2
   rw [Finset.sum_congr rfl hL, Finset.sum_congr rfl hH]
   have h1 : (∑ x ∈ A.filter (· ∈ Finset.Icc 1 p), (x % p + 1)) ≡
       ∑ x ∈ A.filter (· ∈ Finset.Icc 1 p), x + (A.filter (· ∈ Finset.Icc 1 p)).card [MOD p] := by
@@ -242,7 +238,7 @@ theorem shiftSet_iterate_mem {p : ℕ} (hp : 0 < p) {A : Finset ℕ}
     by_cases hxI : x ∈ Finset.Icc 1 p
     · have h1 := shift_iterate_mem_Icc' hp hxI i
       rw [Finset.mem_Icc] at h1 ⊢
-      omega
+      lia
     · rw [shift_iterate_not_mem hxI i]
       exact hsub hx
   · rw [Finset.card_image_of_injective _ (Function.Injective.iterate (shift_injective hp) i), hcard]
@@ -266,12 +262,12 @@ theorem shiftSet_iterate_Icc_right {p : ℕ} (i : ℕ) :
   constructor
   · rintro ⟨x, hx, rfl⟩
     rw [Finset.mem_Icc] at hx
-    rw [shift_iterate_not_mem (show x ∉ Finset.Icc 1 p by rw [Finset.mem_Icc]; omega) i]
+    rw [shift_iterate_not_mem (show x ∉ Finset.Icc 1 p by rw [Finset.mem_Icc]; lia) i]
     exact Finset.mem_Icc.2 hx
   · intro hy
     refine ⟨y, hy, ?_⟩
     rw [Finset.mem_Icc] at hy
-    exact shift_iterate_not_mem (show y ∉ Finset.Icc 1 p by rw [Finset.mem_Icc]; omega) i
+    exact shift_iterate_not_mem (show y ∉ Finset.Icc 1 p by rw [Finset.mem_Icc]; lia) i
 
 theorem shiftSet_iterate_mem_U {p : ℕ} (hp : 0 < p) {A : Finset ℕ}
     (hA : A ∈ (Finset.Icc 1 (2 * p)).powersetCard p \
@@ -308,12 +304,12 @@ theorem low_card_bounds {p : ℕ} (hp : 0 < p) {A : Finset ℕ}
   have hne_p : (A.filter (· ∈ Finset.Icc 1 p)).card ≠ p := by
     intro hcp
     have heq : A.filter (· ∈ Finset.Icc 1 p) = Finset.Icc 1 p :=
-      Finset.eq_of_subset_of_card_le hsubf (by rw [Nat.card_Icc]; omega)
+      Finset.eq_of_subset_of_card_le hsubf (by rw [Nat.card_Icc]; lia)
     have hsubA : Finset.Icc 1 p ⊆ A := by
       intro x hx
       rw [← heq] at hx
       exact (Finset.mem_filter.1 hx).1
-    exact hne1 (Finset.eq_of_subset_of_card_le hsubA (by rw [Nat.card_Icc, hcard]; omega)).symm
+    exact hne1 (Finset.eq_of_subset_of_card_le hsubA (by rw [Nat.card_Icc, hcard]; lia)).symm
   have hne_0 : (A.filter (· ∈ Finset.Icc 1 p)).card ≠ 0 := by
     intro hc0
     rw [Finset.card_eq_zero] at hc0
@@ -326,9 +322,9 @@ theorem low_card_bounds {p : ℕ} (hp : 0 < p) {A : Finset ℕ}
         rw [hc0] at hxm
         simp at hxm
       rw [Finset.mem_Icc] at hxT hxnot ⊢
-      omega
-    exact hne2 (Finset.eq_of_subset_of_card_le hsubA (by rw [Nat.card_Icc]; omega))
-  exact ⟨by omega, by omega⟩
+      lia
+    exact hne2 (Finset.eq_of_subset_of_card_le hsubA (by rw [Nat.card_Icc]; lia))
+  exact ⟨by lia, by lia⟩
 
 /-- For `A` as above, among the `p` sets `A, σ A, ..., σ^{p-1} A` exactly one has
 sum divisible by `p` (here `σ` is `shiftSet p`). -/
@@ -354,8 +350,8 @@ theorem card_range_filter_eq_one {p : ℕ} (hp : p.Prime) {A : Finset ℕ}
   have hc0 : (((A.filter (· ∈ Finset.Icc 1 p)).card : ℕ) : ZMod p) ≠ 0 := by
     rw [Ne, ZMod.natCast_eq_zero_iff]
     intro hdiv
-    have hle := Nat.le_of_dvd (by omega) hdiv
-    omega
+    have hle := Nat.le_of_dvd (by lia) hdiv
+    lia
   have hinj : Function.Injective
       (fun j : ZMod p ↦ (∑ x ∈ A, x : ZMod p) + j *
         ((A.filter (· ∈ Finset.Icc 1 p)).card : ZMod p)) := by
@@ -429,19 +425,19 @@ problem imo1995_p6 (p : ℕ) (hp : p.Prime) (hodd : Odd p) :
   -- The two "fixed" `p`-subsets `{1, ..., p}` and `{p + 1, ..., 2p}`.
   have hB1mem : Finset.Icc 1 p ∈ (Finset.Icc 1 (2 * p)).powersetCard p := by
     rw [Finset.mem_powersetCard]
-    refine ⟨Finset.Icc_subset_Icc (le_refl 1) (by omega), ?_⟩
+    refine ⟨Finset.Icc_subset_Icc (le_refl 1) (by lia), ?_⟩
     rw [Nat.card_Icc, Nat.add_sub_cancel]
   have hB2mem : Finset.Icc (p + 1) (2 * p) ∈ (Finset.Icc 1 (2 * p)).powersetCard p := by
     rw [Finset.mem_powersetCard]
-    refine ⟨Finset.Icc_subset_Icc (by omega) (le_refl _), ?_⟩
+    refine ⟨Finset.Icc_subset_Icc (by lia) (le_refl _), ?_⟩
     rw [Nat.card_Icc]
-    omega
+    lia
   have hB1neB2 : Finset.Icc 1 p ≠ Finset.Icc (p + 1) (2 * p) := by
     intro h
     have h1 : (1 : ℕ) ∈ Finset.Icc (p + 1) (2 * p) := h ▸ by
-      rw [Finset.mem_Icc]; exact ⟨le_refl 1, by omega⟩
+      rw [Finset.mem_Icc]; exact ⟨le_refl 1, by lia⟩
     rw [Finset.mem_Icc] at h1
-    omega
+    lia
   have hsub2 : ({Finset.Icc 1 p, Finset.Icc (p + 1) (2 * p)} : Finset (Finset ℕ)) ⊆
       (Finset.Icc 1 (2 * p)).powersetCard p := by
     intro A hA
@@ -457,15 +453,15 @@ problem imo1995_p6 (p : ℕ) (hp : p.Prime) (hodd : Odd p) :
   -- Both fixed subsets have sum divisible by `p` (here we use that `p` is odd).
   obtain ⟨k, hk⟩ := hodd
   have hsumB1 : p ∣ ∑ x ∈ Finset.Icc 1 p, x := by
-    have h0 : (0 : ℕ) ∉ Finset.Icc 1 p := by rw [Finset.mem_Icc]; omega
+    have h0 : (0 : ℕ) ∉ Finset.Icc 1 p := by rw [Finset.mem_Icc]; lia
     have hIcc : Finset.range (p + 1) = insert 0 (Finset.Icc 1 p) := by
       ext x
       rw [Nat.range_succ_eq_Icc_zero, Finset.mem_insert, Finset.mem_Icc, Finset.mem_Icc]
-      omega
+      lia
     have h1 : ∑ x ∈ Finset.Icc 1 p, x = ∑ x ∈ Finset.range (p + 1), x := by
       rw [hIcc, Finset.sum_insert h0, zero_add]
     rw [h1, Finset.sum_range_id, Nat.add_sub_cancel, mul_comm (p + 1) p,
-      Nat.mul_div_assoc _ ⟨k + 1, by omega⟩]
+      Nat.mul_div_assoc _ ⟨k + 1, by lia⟩]
     exact ⟨(p + 1) / 2, by ring⟩
   have hsumB2 : p ∣ ∑ x ∈ Finset.Icc (p + 1) (2 * p), x := by
     have himg : (Finset.Icc 1 p).image (· + p) = Finset.Icc (p + 1) (2 * p) := by
@@ -473,10 +469,10 @@ problem imo1995_p6 (p : ℕ) (hp : p.Prime) (hodd : Odd p) :
       simp only [Finset.mem_image, Finset.mem_Icc]
       constructor
       · rintro ⟨x, ⟨hx1, hx2⟩, rfl⟩
-        omega
+        lia
       · intro hy
-        exact ⟨y - p, ⟨by omega, by omega⟩, by omega⟩
-    rw [← himg, Finset.sum_image (fun x _ y _ h ↦ by omega)]
+        exact ⟨y - p, ⟨by lia, by lia⟩, by lia⟩
+    rw [← himg, Finset.sum_image (fun x _ y _ h ↦ by lia)]
     rw [Finset.sum_add_distrib, Finset.sum_const, Nat.card_Icc, Nat.add_sub_cancel, smul_eq_mul]
     exact dvd_add hsumB1 (dvd_mul_right p p)
   -- The double count: pairs `(A, i)` with `A` a good subset, `i < p`, and
@@ -555,6 +551,6 @@ problem imo1995_p6 (p : ℕ) (hp : p.Prime) (hodd : Odd p) :
           + 2 := by
         rw [Finset.card_union_of_disjoint hdisj, hfilter2,
           Finset.card_insert_of_notMem (by simp [hB1neB2]), Finset.card_singleton]
-    _ = 2 + (Nat.choose (2 * p) p - 2) / p := by rw [hM]; omega
+    _ = 2 + (Nat.choose (2 * p) p - 2) / p := by rw [hM]; lia
 
 end Imo1995P6

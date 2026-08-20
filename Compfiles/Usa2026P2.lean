@@ -91,11 +91,11 @@ def S : List ℕ → ℕ
 
 theorem innerSum_le_four_mul_sum : ∀ l : List ℕ, innerSum l ≤ 4 * l.sum
   | [] => by simp
-  | [x] => by simp; omega
+  | [x] => by simp; lia
   | x :: y :: rest => by
       have ih := innerSum_le_four_mul_sum (y :: rest)
       simp only [innerSum_cons_cons, List.sum_cons] at ih ⊢
-      omega
+      lia
 
 /-- The bound `S a` is always less than four times the sum of the row. -/
 theorem S_lt_four_mul_sum : ∀ (a : List ℕ), a ≠ [] → (∀ x ∈ a, 0 < x) → S a < 4 * a.sum
@@ -103,24 +103,24 @@ theorem S_lt_four_mul_sum : ∀ (a : List ℕ), a ≠ [] → (∀ x ∈ a, 0 < x
   | [x], _, h => by
       have hx : 0 < x := h x (List.mem_singleton_self x)
       simp only [S_singleton, List.sum_singleton]
-      omega
+      lia
   | x :: y :: rest, _, h => by
       have hx : 0 < x := h x List.mem_cons_self
       have h1 := innerSum_le_four_mul_sum (y :: rest)
       simp only [S_cons_cons, List.sum_cons] at h1 ⊢
-      omega
+      lia
 
 /-- The last entry of a nonempty row, doubled, is at most `innerSum` of the row. -/
 theorem two_mul_last_le_innerSum : ∀ (q : List ℕ) (y : ℕ), 2 * y ≤ innerSum (q ++ [y])
   | [], y => le_refl _
   | [x], y => by
       simp only [List.singleton_append, innerSum_cons_cons, innerSum_singleton]
-      omega
+      lia
   | x :: z :: q', y => by
       have ih := two_mul_last_le_innerSum (z :: q') y
       rw [show (x :: z :: q') ++ [y] = x :: z :: (q' ++ [y]) from rfl, innerSum_cons_cons,
         show z :: (q' ++ [y]) = (z :: q') ++ [y] from rfl]
-      omega
+      lia
 
 /-- The last entry of a row with at least two entries, doubled, is at most `S` of
 the row. -/
@@ -136,7 +136,7 @@ theorem two_mul_getLast_le_S (a : List ℕ) (ha : 2 ≤ a.length) (h : a ≠ [])
   have h2 := two_mul_last_le_innerSum (y :: rest).dropLast
     ((y :: rest).getLast (List.cons_ne_nil y rest))
   rw [List.dropLast_concat_getLast] at h2
-  omega
+  lia
 
 /-- Expanding `innerSum` at the head of a nonempty tail: the head entry is counted
 with coefficient `4` in `innerSum` but with coefficient `2` in `S`. -/
@@ -182,7 +182,7 @@ theorem exists_split (a : List ℕ) (ha : 2 ≤ a.length) :
     have htk : (x :: y :: rest).take 1 = [x] := rfl
     rw [htk, S_singleton, S_cons_cons]
     exact Nat.le_add_right _ _
-  have h1 : 1 ≤ a.length - 1 := by omega
+  have h1 : 1 ≤ a.length - 1 := by lia
   -- Take the longest prefix whose doubled `S`-value is still at most `S a`.
   obtain ⟨k, hk1, hkle, hPk, hmax⟩ : ∃ k, 1 ≤ k ∧ k ≤ a.length - 1 ∧
       2 * S (a.take k) ≤ S a ∧ ∀ m, k < m → m ≤ a.length - 1 →
@@ -193,7 +193,7 @@ theorem exists_split (a : List ℕ) (ha : 2 ≤ a.length) :
      Nat.findGreatest_spec (P := fun k => 2 * S (a.take k) ≤ S a) h1 hP1,
      fun m hm hml => Nat.findGreatest_is_greatest
        (P := fun k => 2 * S (a.take k) ≤ S a) hm hml⟩
-  have hklt : k < a.length := by omega
+  have hklt : k < a.length := by lia
   refine ⟨k, hk1, hklt, hPk, ?_⟩
   by_cases hcase : k = a.length - 1
   · -- The suffix consists of the last entry alone, which is at most `S a / 2`.
@@ -201,21 +201,21 @@ theorem exists_split (a : List ℕ) (ha : 2 ≤ a.length) :
     exact two_mul_getLast_le_S a ha hne
   · -- The next longer prefix `take (k+1) a` violates the bound; the overlap identity
     -- `S a = S (take (k+1) a) + S (drop k a)` then gives the claim for the suffix.
-    have hkn : k + 1 ≤ a.length - 1 := by omega
-    have hnot : ¬ 2 * S (a.take (k + 1)) ≤ S a := hmax (k + 1) (by omega) hkn
+    have hkn : k + 1 ≤ a.length - 1 := by lia
+    have hnot : ¬ 2 * S (a.take (k + 1)) ≤ S a := hmax (k + 1) (by lia) hkn
     have hp : a.take k ≠ [] := by
       rw [ne_eq, List.take_eq_nil_iff]
       rintro (h | h)
-      · omega
+      · lia
       · exact absurd h hne
     have hq : a.drop (k + 1) ≠ [] := by
       rw [ne_eq, List.drop_eq_nil_iff]
-      omega
+      lia
     have hid : S a = S (a.take (k + 1)) + S (a.drop k) := by
       conv_lhs => rw [← List.take_append_drop k a]
       rw [List.drop_eq_getElem_cons hklt, S_append _ _ _ hp hq,
         List.take_append_getElem hklt]
-    omega
+    lia
 
 /-- `Reduces a m` means that the row `a` can be reduced to the single number `m` by a
 sequence of legal moves.  A derivation is a full binary tree whose leaves are the
@@ -251,22 +251,22 @@ theorem exists_reduces_le :
       · -- Split the row, reduce both halves inductively, and combine the results.
         have hlen : 2 ≤ (x :: y :: rest).length := by simp
         obtain ⟨k, hk1, hkn, htk, hdk⟩ := exists_split (x :: y :: rest) hlen
-        have hkn' : k < n := by omega
+        have hkn' : k < n := by lia
         have hne_take : (x :: y :: rest).take k ≠ [] := by
           rw [ne_eq, List.take_eq_nil_iff]
           rintro (h | h)
-          · omega
+          · lia
           · simp at h
         have hlen_take : ((x :: y :: rest).take k).length = k := by
-          rw [List.length_take]; omega
+          rw [List.length_take]; lia
         have hp_take : ∀ m ∈ (x :: y :: rest).take k, IsPow2 m :=
           fun m hm => hp m (List.mem_of_mem_take hm)
         obtain ⟨m₁, hm₁r, hm₁s⟩ := ih k hkn' _ hlen_take hne_take hp_take
-        have hlt_drop : n - k < n := by omega
+        have hlt_drop : n - k < n := by lia
         have hlen_drop : ((x :: y :: rest).drop k).length = n - k := by
-          rw [List.length_drop]; omega
+          rw [List.length_drop]; lia
         have hne_drop : (x :: y :: rest).drop k ≠ [] := by
-          rw [ne_eq, List.drop_eq_nil_iff]; omega
+          rw [ne_eq, List.drop_eq_nil_iff]; lia
         have hp_drop : ∀ m ∈ (x :: y :: rest).drop k, IsPow2 m :=
           fun m hm => hp m (List.mem_of_mem_drop hm)
         obtain ⟨m₂, hm₂r, hm₂s⟩ := ih (n - k) hlt_drop _ hlen_drop hne_drop hp_drop
@@ -274,20 +274,20 @@ theorem exists_reduces_le :
         obtain ⟨q, rfl⟩ := reduces_isPow2 hm₂r hp_drop
         refine ⟨2 ^ (max p q + 1), ?_, ?_⟩
         · have hlt1 : (2 : ℕ) ^ p < 2 ^ (max p q + 1) :=
-            pow_lt_pow_right₀ (by norm_num) (by omega)
+            pow_lt_pow_right₀ (by norm_num) (by lia)
           have hlt2 : (2 : ℕ) ^ q < 2 ^ (max p q + 1) :=
-            pow_lt_pow_right₀ (by norm_num) (by omega)
+            pow_lt_pow_right₀ (by norm_num) (by lia)
           have hr := Reduces.append _ _ _ _ _ hm₁r hm₂r ⟨max p q + 1, rfl⟩ hlt1 hlt2
           rwa [List.take_append_drop] at hr
-        · have h2p : 2 * (2 : ℕ) ^ p ≤ S (x :: y :: rest) := by omega
-          have h2q : 2 * (2 : ℕ) ^ q ≤ S (x :: y :: rest) := by omega
+        · have h2p : 2 * (2 : ℕ) ^ p ≤ S (x :: y :: rest) := by lia
+          have h2q : 2 * (2 : ℕ) ^ q ≤ S (x :: y :: rest) := by lia
           have hmax : max ((2 : ℕ) ^ p) (2 ^ q) = 2 ^ max p q := by
             rcases le_total p q with h | h
             · rw [max_eq_right h, max_eq_right (pow_le_pow_right₀ (by norm_num) h)]
             · rw [max_eq_left h, max_eq_left (pow_le_pow_right₀ (by norm_num) h)]
           have hz : (2 : ℕ) ^ (max p q + 1) = 2 * 2 ^ max p q := by rw [pow_succ]; ring
           rw [hz, ← hmax]
-          omega
+          lia
 
 /-- Moves can also be performed with an additional row appended on the right. -/
 theorem Move.append_right {a b : List ℕ} (h : Move a b) (r : List ℕ) :

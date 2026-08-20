@@ -187,7 +187,7 @@ lemma prime_dvd_other_factor_of_square {p : ℕ} (hp : Nat.Prime p) {x y : ℤ}
   have h_val : padicValInt p x + padicValInt p y = 2 * padicValInt p z := by
     have := Fact.mk hp
     rw [← padicValInt.mul hx hy, hz, padicValInt.mul hz_ne hz_ne]
-    omega
+    lia
   contrapose! hodd
   simp_all +decide [padicValInt.eq_zero_of_not_dvd]
 

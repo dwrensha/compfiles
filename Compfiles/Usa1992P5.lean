@@ -85,15 +85,15 @@ lemma exists_pseq_eval_eq_zero :
     intro S hne hcard
     exfalso
     have hpos := Finset.card_pos.mpr hne
-    omega
+    lia
   | succ n ih =>
     intro S hne hcard
     rcases lt_or_ge n S.card with hgt | hle
-    · have hcard' : S.card = n + 1 := by omega
+    · have hcard' : S.card = n + 1 := by lia
       by_cases h1 : S.card ≤ 1
       · -- `S = {s}` is a singleton (so `n = 0`); take `z₁ = s`.
         obtain ⟨s, hs⟩ := hne
-        have hn0 : n = 0 := by omega
+        have hn0 : n = 0 := by lia
         subst hn0
         refine ⟨[s], rfl, fun w hw => ?_⟩
         have hws : w = s := Finset.card_le_one.mp h1 w hw s hs
@@ -120,12 +120,12 @@ lemma exists_pseq_eval_eq_zero :
           calc ((S.erase a).image fun s => (s - m) ^ 2).card
               ≤ (S.erase a).card := Finset.card_image_le
             _ = S.card - 1 := Finset.card_erase_of_mem ha
-            _ = n := by omega
+            _ = n := by lia
         obtain ⟨zs, hlen, hvan⟩ := ih _ (Finset.Nonempty.image hne _) hTcard
         have hzs : zs ≠ [] := by
           rintro rfl
           simp only [List.length_nil] at hlen
-          omega
+          lia
         refine ⟨m :: zs, by simp [hlen], fun w hw => ?_⟩
         rw [pseq_cons_eval m hzs]
         exact hvan _ (Finset.mem_image.mpr ⟨w, hw, rfl⟩)
@@ -135,36 +135,10 @@ lemma exists_pseq_eval_eq_zero :
       have hzs : zs ≠ [] := by
         rintro rfl
         simp only [List.length_nil] at hlen
-        omega
+        lia
       refine ⟨zs ++ [0], by simp [hlen], fun w hw => ?_⟩
       rw [pseq_concat hzs]
       simp [hvan w hw]
-
-lemma isCoprime_X_sub_C_prod_map {a : ℂ} {s : Multiset ℂ} :
-    (∀ b ∈ s, a ≠ b) → IsCoprime (X - C a) (s.map fun b => X - C b).prod := by
-  induction s using Multiset.induction with
-  | empty => simp [isCoprime_one_right]
-  | cons b s ih =>
-    intro h
-    rw [Multiset.map_cons, Multiset.prod_cons]
-    refine IsCoprime.mul_right ?_ (ih fun c hc => h c (Multiset.mem_cons_of_mem hc))
-    exact isCoprime_X_sub_C_of_isUnit_sub
-      (isUnit_iff_ne_zero.mpr (sub_ne_zero.mpr (h b (Multiset.mem_cons_self b s))))
-
-/-- A product of distinct linear factors `X - C a`, each dividing `P`, divides
-`P`. -/
-lemma prod_map_X_sub_C_dvd {P : ℂ[X]} {s : Multiset ℂ} :
-    s.Nodup → (∀ a ∈ s, P.eval a = 0) → (s.map fun a => X - C a).prod ∣ P := by
-  induction s using Multiset.induction with
-  | empty => simp
-  | cons a s ih =>
-    rw [Multiset.nodup_cons]
-    rintro ⟨ha, hs'⟩ h
-    rw [Multiset.map_cons, Multiset.prod_cons]
-    exact IsCoprime.mul_dvd
-      (isCoprime_X_sub_C_prod_map fun b hb hba => ha (hba ▸ hb))
-      (dvd_iff_isRoot.mpr (h a (Multiset.mem_cons_self a s)))
-      (ih hs' fun b hb => h b (Multiset.mem_cons_of_mem hb))
 
 snip end
 
@@ -183,10 +157,24 @@ problem usa1992_p5 {q : ℂ[X]} (hq : q.natDegree = 1992) (hq' : q.roots.Nodup) 
   obtain ⟨zs, hlen, hvan⟩ :=
     exists_pseq_eval_eq_zero 1992 q.roots.toFinset hSne
       (le_of_eq (by rw [Multiset.toFinset_card_of_nodup hq', hcard]))
+  have hprod : (∏ a ∈ q.roots.toFinset, (X - C a : ℂ[X])) ∣ pseq zs := by
+    apply Finset.prod_dvd_of_coprime
+    · intro a _ b _ hab
+      exact isCoprime_X_sub_C_of_isUnit_sub
+        (isUnit_iff_ne_zero.mpr (sub_ne_zero.mpr hab))
+    · intro a ha
+      exact dvd_iff_isRoot.mpr (hvan a ha)
+  have hprod' : (q.roots.map fun a => X - C a).prod ∣ pseq zs := by
+    rw [Finset.prod_multiset_map_count]
+    convert hprod using 1
+    apply Finset.prod_congr rfl
+    intro a ha
+    have ha' : a ∈ q.roots := by simpa using ha
+    rw [Multiset.count_eq_one_of_mem hq' ha', pow_one]
   refine ⟨zs, hlen, ?_⟩
-  rw [← C_leadingCoeff_mul_prod_multiset_X_sub_C (splits_iff_card_roots.mp hsplit)]
+  rw [hsplit.eq_prod_roots]
   exact (IsUnit.mul_left_dvd
     (isUnit_C.mpr (isUnit_iff_ne_zero.mpr (leadingCoeff_ne_zero.mpr hq0)))).mpr
-    (prod_map_X_sub_C_dvd hq' fun a ha => hvan a (Multiset.mem_toFinset.mpr ha))
+    hprod'
 
 end Usa1992P5

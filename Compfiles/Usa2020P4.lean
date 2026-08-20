@@ -148,7 +148,7 @@ private lemma eq_of_det_eq_of_le {P Q₁ Q₂ : ℕ × ℕ} (hP : Nat.Coprime P.
       rw [zero_mul, add_zero] at hta'
       rw [zero_mul, add_zero] at htb'
       exact Prod.ext_iff.mpr ⟨Nat.cast_inj.mp hta', Nat.cast_inj.mp htb'⟩
-    · have htn : 1 ≤ -t := by omega
+    · have htn : 1 ≤ -t := by lia
       have huu : (u₂ : ℤ) = u₁ + (-t) * a := by linear_combination -hta'
       have hvv : (v₂ : ℤ) = v₁ + (-t) * b := by linear_combination -htb'
       obtain ⟨hu1, hv1⟩ := eq_zero_of_eq_add_mul (Int.natCast_nonneg _)
@@ -216,17 +216,17 @@ private lemma card_goodSets_le : ∀ n : ℕ, 2 ≤ n → ∀ S : Finset (ℕ ×
   | _ n IH =>
     intro hn S hcard
     rcases Nat.lt_or_ge n 3 with hlt | hge
-    · have hn2 : n = 2 := by omega
+    · have hn2 : n = 2 := by lia
       subst hn2
       calc (goodSets S).card ≤ (S.powersetCard 2).card := Finset.card_filter_le _ _
         _ = 1 := by rw [Finset.card_powersetCard, hcard]; decide
-    · have hne : S.Nonempty := Finset.card_pos.mp (by rw [hcard]; omega)
+    · have hne : S.Nonempty := Finset.card_pos.mp (by rw [hcard]; lia)
       obtain ⟨P, hPS, hmax⟩ :=
         Finset.exists_max_image S (fun Q : ℕ × ℕ => Q.1 ^ 2 + Q.2 ^ 2) hne
       have hcard' : (S.erase P).card = n - 1 := by
         rw [Finset.card_erase_of_mem hPS, hcard]
       have hIH : (goodSets (S.erase P)).card ≤ 2 * (n - 1) - 3 :=
-        IH (n - 1) (by omega) (by omega) (S.erase P) hcard'
+        IH (n - 1) (by lia) (by lia) (S.erase P) hcard'
       have hpart : ((S.erase P).filter fun Q => |det P Q| = 1).card ≤ 2 :=
         card_partners_le_two hmax
       have hcover : goodSets S ⊆ goodSets (S.erase P) ∪
@@ -267,7 +267,7 @@ private lemma card_goodSets_le : ∀ n : ℕ, 2 ≤ n → ∀ S : Finset (ℕ ×
             (fun Q => ({P, Q} : Finset (ℕ × ℕ)))).card ≤
           (2 * (n - 1) - 3) + 2 :=
         add_le_add hIH (le_trans Finset.card_image_le hpart)
-      have h4 : (2 * (n - 1) - 3) + 2 = 2 * n - 3 := by omega
+      have h4 : (2 * (n - 1) - 3) + 2 = 2 * n - 3 := by lia
       exact h1.trans ((h2.trans h3).trans_eq h4)
 
 set_option maxRecDepth 4096 in
@@ -308,7 +308,7 @@ private lemma card_goodPairs_eq {v : Fin 100 → ℕ × ℕ} (hv : Function.Inje
     · rcases h2 with h2 | h2
       · have e1 : p.1 = q.2 := hv h1
         have e2 : p.2 = q.1 := hv h2
-        exfalso; omega
+        exfalso; lia
       · exact absurd (hv (h1.trans h2.symm)) hp.1.ne
   · intro s hs
     rw [goodSets, Finset.mem_filter, Finset.mem_powersetCard] at hs
@@ -343,14 +343,12 @@ private lemma card_goodPairs_eq {v : Fin 100 → ℕ × ℕ} (hv : Function.Inje
 snip end
 
 /-- USA Mathematical Olympiad 2020, Problem 4 -/
-problem usamo2020_p4 :
+problem usa2020_p4 :
     IsGreatest {N : ℕ | ∃ v : Fin 100 → ℕ × ℕ, Function.Injective v ∧
       N = (Finset.univ.filter fun p : Fin 100 × Fin 100 =>
         p.1 < p.2 ∧ |det (v p.1) (v p.2)| = 1).card} answer := by
   constructor
-  · refine ⟨fun i => if i = 0 then (1, 0) else (i.val, 1), ?_, ?_⟩
-    · decide
-    · set_option maxRecDepth 10000 in decide
+  · refine ⟨fun i => if i = 0 then (1, 0) else (i.val, 1), by decide, by decide +kernel⟩
   · intro N hN
     obtain ⟨v, hv, hN'⟩ := hN
     rw [hN']

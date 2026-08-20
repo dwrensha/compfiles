@@ -66,23 +66,6 @@ lemma seq_shift (p : ℕ → ℕ) (x₀ : ℝ) :
     rw [seq_succ (fun n ↦ p (n + 1)) (seq p x₀ 1) k, seq_shift p x₀ k,
       seq_succ p x₀ (k + 1)]
 
-/-- The fractional part of a fraction with natural numerator and denominator
-is again such a fraction, with numerator given by the remainder. -/
-lemma fract_natCast_mul_div (n m c : ℕ) (hc : 0 < c) :
-    Int.fract (((n * m : ℕ) : ℝ) / c) = (((n * m) % c : ℕ) : ℝ) / c := by
-  have hc' : (c : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr hc.ne'
-  rw [← Int.self_sub_floor]
-  have hfloor : (⌊((n * m : ℕ) : ℝ) / c⌋ : ℝ) = (((n * m) / c : ℕ) : ℝ) := by
-    rw [Int.floor_div_natCast, Int.floor_natCast, ← Int.natCast_div]
-    exact Int.cast_natCast _
-  rw [hfloor]
-  have hmod : ((n * m : ℕ) : ℝ) =
-      (c : ℝ) * (((n * m) / c : ℕ) : ℝ) + (((n * m) % c : ℕ) : ℝ) := by
-    exact_mod_cast (Nat.div_add_mod (n * m) c).symm
-  rw [hmod]
-  field_simp
-  ring
-
 /-- First direction: starting from a positive rational `a / b`, the sequence
 reaches zero, because the numerator strictly decreases at each nonzero step.
 (The values `p k` only need to be positive integers; primality is irrelevant
@@ -98,12 +81,12 @@ lemma terminates_of_rat :
     have hb' : (b : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr hb.ne'
     have hx : (a : ℝ) / b ≠ 0 := div_ne_zero ha' hb'
     have h1 : seq p ((a : ℝ) / b) 1 = (((p 0 * b) % a : ℕ) : ℝ) / a := by
-      rw [seq_succ, seq_zero, if_neg hx]
+      rw [seq_succ, seq_zero, ite_eq_right hx]
       have e1 : (p 0 : ℝ) / ((a : ℝ) / b) = (((p 0 * b : ℕ) : ℝ)) / a := by
         rw [Nat.cast_mul]
         field_simp
       rw [e1]
-      exact fract_natCast_mul_div (p 0) b a ha
+      exact Int.fract_div_natCast_eq_div_natCast_mod
     by_cases hr : (p 0 * b) % a = 0
     · exact ⟨1, by rw [h1, hr]; simp⟩
     · have hrpos : 0 < (p 0 * b) % a := Nat.pos_of_ne_zero hr
@@ -122,7 +105,7 @@ lemma rat_cast_of_seq_succ (p : ℕ → ℕ) (hp : ∀ k, 0 < p k) (x₀ : ℝ) 
   by_cases hk : seq p x₀ k = 0
   · exact ⟨0, by simp [hk]⟩
   · obtain ⟨q, hq⟩ := h
-    rw [seq_succ, if_neg hk] at hq
+    rw [seq_succ, ite_eq_right hk] at hq
     have hpa : (p k : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr (hp k).ne'
     have ha0 : (p k : ℝ) / seq p x₀ k ≠ 0 := div_ne_zero hpa hk
     have hfloor : (p k : ℝ) / seq p x₀ k =

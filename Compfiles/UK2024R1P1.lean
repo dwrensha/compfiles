@@ -56,7 +56,7 @@ def S' (k : ℕ) (m : Fin (k + 2)) := {f | f ∈ S (k + 2) ∧ f 0 = m}
 lemma g_nonzero_ne_m {g : Equiv.Perm (Fin (k + 2))}
     (hg : g ∈ (S' k m)) (n : Fin (k + 2)) (hn : n ≠ 0) : g n ≠ m := by
   contrapose! hn
-  rwa [←Equiv.apply_eq_iff_eq g, hg.2]
+  rwa [← Equiv.apply_eq_iff_eq g, hg.2]
 
 def f_toFun (g : Equiv.Perm (Fin (k + 2))) (hg : g ∈ (S' k m)) (n : Fin (k + 1)) : Fin (k + 1) :=
   if hg' : g n.succ ≤ m then
@@ -76,13 +76,13 @@ def f_invFun (g : Equiv.Perm (Fin (k + 2))) (hg : g ∈ (S' k m)) (n : Fin (k + 
       contrapose! hg'
       rw [le_iff_lt_or_eq]
       right
-      rw [←hg.2, ←hg', Equiv.apply_symm_apply]
+      rw [← hg.2, ← hg', Equiv.apply_symm_apply]
     )
   else
     (g.symm n.succ).pred (by
       contrapose! hg'
       rw [Equiv.symm_apply_eq, hg.2] at hg'
-      simp only [←hg', Fin.castSucc_lt_succ_iff, le_refl]
+      simp only [← hg', Fin.castSucc_lt_succ_iff, le_refl]
     )
 
 lemma f_left_inv (g : Equiv.Perm (Fin (k + 2))) (hg : g ∈ (S' k m)) :
@@ -94,11 +94,11 @@ lemma f_left_inv (g : Equiv.Perm (Fin (k + 2))) (hg : g ∈ (S' k m)) :
     replace hg' := lt_iff_le_and_ne.2 ⟨hg', g_nonzero_ne_m hg n.succ (Fin.succ_ne_zero n)⟩
     simp [hg']
   · simp only [hg', reduceDIte, Fin.succ_pred, Equiv.symm_apply_apply, Fin.pred_succ]
-    apply dif_neg
+    apply dite_eq_right
     intro hg''
     apply hg'
     push Not at hg'
-    rwa [←Fin.lt_castPred_iff (Fin.ne_last_of_lt hg'), Fin.pred_lt_castPred_iff] at hg''
+    rwa [← Fin.lt_castPred_iff (Fin.ne_last_of_lt hg'), Fin.pred_lt_castPred_iff] at hg''
 
 lemma f_right_inv (g : Equiv.Perm (Fin (k + 2))) (hg : g ∈ (S' k m)) :
     Function.RightInverse (f_invFun g hg) (f_toFun g hg) := by
@@ -109,7 +109,7 @@ lemma f_right_inv (g : Equiv.Perm (Fin (k + 2))) (hg : g ∈ (S' k m)) :
     replace hg' := le_of_lt hg'
     simp [hg']
   · simp only [hg', reduceDIte, Fin.succ_pred, Equiv.apply_symm_apply, Fin.pred_succ]
-    apply dif_neg
+    apply dite_eq_right
     intro hg''
     apply hg'
     exact hg''
@@ -157,7 +157,7 @@ lemma f'_right_inv (g : Equiv.Perm (Fin (k + 1))) :
                Fin.succ_ne_zero, reduceIte]
   · simp_rw [hg, reduceDIte, Fin.succ_ne_zero, reduceDIte, Fin.pred_succ,
              Equiv.apply_symm_apply, Fin.succ_pred]
-    apply dif_neg
+    apply dite_eq_right
     push Not at *
     rw [Fin.le_castSucc_pred_iff]
     exact lt_iff_le_and_ne.2 ⟨hg, Ne.symm hn⟩
@@ -177,7 +177,7 @@ lemma f'_in_S'_k (hm : m ≤ 1) {g : Equiv.Perm (Fin (k + 1))} (hg : g ∈ S (k 
       · apply le_trans (Fin.castSucc_le_castSucc_iff.2 (hg (n.pred hn)))
         rw [Fin.succ_pred]
         exact le_of_lt Fin.castSucc_lt_succ
-      · rw [←Fin.succ_castSucc]
+      · rw [← Fin.succ_castSucc]
         apply le_trans (Fin.succ_le_succ_iff.2 (hg (n.pred hn)))
         rw [Fin.succ_pred]
   · simp [f', f'_toFun]
@@ -189,9 +189,9 @@ lemma f_f'_left_inv {g : Equiv.Perm (Fin (k + 2))} (hg : g ∈ S' k m) : f' m (f
   obtain hx | hx := em (x = 0) <;> simp [hx, hg.2]
   obtain hx' | hx' := em (g x ≤ m)
   · simp only [hx', reduceDIte, Fin.castSucc_castPred]
-    exact dif_pos (lt_iff_le_and_ne.2 ⟨hx', g_nonzero_ne_m hg x hx⟩)
+    exact dite_eq_left (lt_iff_le_and_ne.2 ⟨hx', g_nonzero_ne_m hg x hx⟩)
   · simp only [hx', reduceDIte, Fin.succ_pred]
-    apply dif_neg
+    apply dite_eq_right
     push Not at *
     rwa [Fin.le_castSucc_pred_iff]
 
@@ -202,9 +202,9 @@ lemma f_f'_right_inv (hm : m ≤ 1) {g : Equiv.Perm (Fin (k + 1))} (hg : g ∈ S
   simp [f, f_toFun, f', f'_toFun, Fin.succ_ne_zero]
   obtain hx | hx := em ((g x).castSucc < m)
   · simp only [hx, reduceIte, Fin.castPred_castSucc]
-    exact dif_pos (le_of_lt hx)
+    exact dite_eq_left (le_of_lt hx)
   · simp_rw [hx, reduceIte, Fin.pred_succ]
-    apply dif_neg
+    apply dite_eq_right
     contrapose! hx
     rwa [Fin.castSucc_lt_iff_succ_le]
 
@@ -223,15 +223,15 @@ lemma S'_k_card_eq_S_succ_k_card (hm : m ≤ 1) : (S' k m).ncard = (S (k + 1)).n
         rw [Fin.pred_succ]
         exact n.succ.succ_ne_zero
     · intro a b ha hb hab
-      rw [←f_f'_left_inv ha, ←f_f'_left_inv hb, hab]
+      rw [← f_f'_left_inv ha, ← f_f'_left_inv hb, hab]
     · intro b hb
       exact ⟨f' m b, ⟨f'_in_S'_k hm hb, f_f'_right_inv hm hb⟩⟩
 
 lemma S_succ_succ_k_card_eq_two_mul_S_succ_k_card : (S (k + 2)).ncard = (S (k + 1)).ncard * 2 := by
     let S₁ := S' k 0
     let S₂ := S' k 1
-    have h1 : S₁.ncard = (S (k + 1)).ncard := by exact S'_k_card_eq_S_succ_k_card (by norm_num)
-    have h2 : S₂.ncard = (S (k + 1)).ncard := by exact S'_k_card_eq_S_succ_k_card (by norm_num)
+    have h1 : S₁.ncard = (S (k + 1)).ncard := S'_k_card_eq_S_succ_k_card (by norm_num)
+    have h2 : S₂.ncard = (S (k + 1)).ncard := S'_k_card_eq_S_succ_k_card (by norm_num)
     have h3 : Disjoint S₁ S₂ := by {
       rw [Set.disjoint_left]
       rintro f ⟨_, hf⟩
@@ -245,7 +245,7 @@ lemma S_succ_succ_k_card_eq_two_mul_S_succ_k_card : (S (k + 2)).ncard = (S (k + 
       intro x
       constructor <;> intro hx
       · have hx' : (x 0) ≤ 1 := by
-          rw [←Fin.val_fin_le, Fin.val_one]
+          rw [← Fin.val_fin_le, Fin.val_one]
           exact hx 0
         obtain hx' | hx' := le_iff_lt_or_eq.mp hx'
         · left
@@ -271,7 +271,7 @@ lemma S_succ_k_card_eq_two_pow_k {k : ℕ} :
       · intro h
         simp [h, f, Fin.eq_zero]
   | succ n hn =>
-      rw [Nat.pow_succ, ←hn, S_succ_succ_k_card_eq_two_mul_S_succ_k_card]
+      rw [Nat.pow_succ, ← hn, S_succ_succ_k_card_eq_two_mul_S_succ_k_card]
 snip end
 
 determine solution_value : ℕ := 256

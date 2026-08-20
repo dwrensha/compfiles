@@ -76,7 +76,7 @@ lemma eval_prod_X_sub_C_self (m : ℕ) :
       intro j hj
       rw [Finset.mem_range] at hj
       show ((m : ℝ) - (j : ℝ)) = ((m - 1 - j : ℕ) : ℝ) + 1
-      rw [Nat.cast_sub (by omega : j ≤ m - 1), Nat.cast_sub (by omega : 1 ≤ m)]
+      rw [Nat.cast_sub (by lia : j ≤ m - 1), Nat.cast_sub (by lia : 1 ≤ m)]
       push_cast
       ring
     rw [e, prod_range_add_one_cast]
@@ -101,7 +101,7 @@ problem usa1975_p3 (n : ℕ) (p : ℝ[X]) (hp : p.natDegree = n)
     have hp_ne : p ≠ 0 := by
       rintro rfl
       rw [natDegree_zero] at hp
-      omega
+      lia
     set q : ℝ[X] := (X + 1) * p - X with hq
     have hq_eval : ∀ k ∈ Finset.range (n + 1), q.eval (k : ℝ) = 0 := by
       intro k hk
@@ -115,7 +115,7 @@ problem usa1975_p3 (n : ℕ) (p : ℝ[X]) (hp : p.natDegree = n)
     have hcoeff : q.coeff (n + 1) = p.leadingCoeff := by
       have hexp : (X + 1 : ℝ[X]) * p = X * p + p := by ring
       rw [hq, hexp, coeff_sub, coeff_add, coeff_X_mul, hpn, coeff_X,
-        if_neg (by omega : (1 : ℕ) ≠ n + 1), add_zero, sub_zero, ← coeff_natDegree, hp]
+        ite_eq_right (by lia : (1 : ℕ) ≠ n + 1), add_zero, sub_zero, ← coeff_natDegree, hp]
     have hne : q.coeff (n + 1) ≠ 0 := by
       rw [hcoeff]
       exact leadingCoeff_ne_zero.mpr hp_ne
@@ -133,7 +133,7 @@ problem usa1975_p3 (n : ℕ) (p : ℝ[X]) (hp : p.natDegree = n)
         _ ≤ max (((X + 1 : ℝ[X]) * p).natDegree) (X : ℝ[X]).natDegree :=
             natDegree_sub_le ((X + 1 : ℝ[X]) * p) X
         _ = max (n + 1) 1 := by rw [hdeg1, natDegree_X]
-        _ = n + 1 := max_eq_left (by omega)
+        _ = n + 1 := max_eq_left (by lia)
     -- Hence `q` is a constant multiple of `∏_{i ≤ n} (X - i)`.
     have hdvd : (∏ i ∈ Finset.range (n + 1), (X - C (i : ℝ))) ∣ q := by
       refine Finset.prod_dvd_of_coprime ?_ ?_
@@ -146,7 +146,7 @@ problem usa1975_p3 (n : ℕ) (p : ℝ[X]) (hp : p.natDegree = n)
       intro hd0
       have hnd := natDegree_prod_X_sub_C (n + 1)
       rw [hd0, natDegree_zero] at hnd
-      omega
+      lia
     have hr_ne : r ≠ 0 := by
       intro h0
       rw [h0, mul_zero] at hr
@@ -156,7 +156,7 @@ problem usa1975_p3 (n : ℕ) (p : ℝ[X]) (hp : p.natDegree = n)
           (∏ i ∈ Finset.range (n + 1), (X - C (i : ℝ))).natDegree + r.natDegree := by
         rw [hr, natDegree_mul hd_ne hr_ne]
       rw [hq_deg, natDegree_prod_X_sub_C] at h1
-      omega
+      lia
     obtain ⟨c, rfl⟩ : ∃ c : ℝ, r = C c := ⟨r.coeff 0, eq_C_of_natDegree_eq_zero hr_deg⟩
     have hc_ne : c ≠ 0 := by
       intro hcc
@@ -209,14 +209,14 @@ problem usa1975_p3 (n : ℕ) (p : ℝ[X]) (hp : p.natDegree = n)
       have h1 : (-1 : ℝ) ^ (n + 1) = -1 := heven.add_one.neg_one_pow
       rw [h1]
       show ((n : ℝ) + 1 + -1) / ((n : ℝ) + 2) = if Odd n then (1 : ℝ) else (n : ℝ) / (n + 2)
-      rw [if_neg (Nat.not_odd_iff_even.mpr heven)]
+      rw [ite_eq_right (Nat.not_odd_iff_even.mpr heven)]
       congr 1
       ring
     · -- `n` odd: `(-1)^(n+1) = 1` and `p (n+1) = 1`.
       have h1 : (-1 : ℝ) ^ (n + 1) = 1 := hodd.add_one.neg_one_pow
       rw [h1]
       show ((n : ℝ) + 1 + 1) / ((n : ℝ) + 2) = if Odd n then (1 : ℝ) else (n : ℝ) / (n + 2)
-      rw [if_pos hodd, div_eq_one_iff_eq (ne_of_gt hn2)]
+      rw [ite_eq_left hodd, div_eq_one_iff_eq (ne_of_gt hn2)]
       ring
 
 end Usa1975P3

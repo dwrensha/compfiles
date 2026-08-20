@@ -128,7 +128,7 @@ lemma exists_new_prime_factor {n q : ℕ} (hn : 3 ≤ n)
     (hqdvd : q ∣ 2 ^ n + 1) :
     ∃ r, Nat.Prime r ∧ r ∣ 2 ^ (n * q) + 1 ∧ ¬ r ∣ (2 ^ n + 1) := by
   set Φ := (2 ^ (n * q) + 1) / (2 ^ n + 1) with hΦ_def
-  have hq3 : 3 ≤ q := by have := hq_prime.two_le; omega
+  have hq3 : 3 ≤ q := by have := hq_prime.two_le; lia
   have hdvd : (2 ^ n + 1) ∣ (2 ^ (n * q) + 1) := by
     simpa [pow_mul] using (hq_prime.odd_of_ne_two hq_odd).nat_add_dvd_pow_add_pow (2 ^ n) 1
   have hΦ_pos : 0 < Φ :=
@@ -146,7 +146,7 @@ lemma exists_new_prime_factor {n q : ℕ} (hn : 3 ≤ n)
         _ = 2 ^ (n + q + 1) := by ring_nf
     have h2 : 2 ^ (n + q + 1) ≤ 2 ^ (n * q) :=
       Nat.pow_le_pow_right (by norm_num) (by nlinarith)
-    omega
+    lia
   have h_not_dvd : ∀ p : ℕ, Nat.Prime p → p ≠ q → p ∣ 2 ^ n + 1 → ¬ p ∣ Φ :=
     fun p hp hpq hpdvd => quotient_not_dvd_of_ne hp hq_prime hq_odd hpq hpdvd
   have h_emultiplicity_q : emultiplicity q Φ = 1 :=
@@ -164,7 +164,7 @@ lemma exists_new_prime_factor {n q : ℕ} (hn : 3 ≤ n)
     by_cases hpq : p = q
     · subst hpq; exact hm_ndvd hp_dvd_m
     · exact h_not_dvd p hp hpq hp_dvd (hm_eq ▸ dvd_mul_of_dvd_right hp_dvd_m _)
-  have hm_ne_one : m ≠ 1 := fun h => by rw [h, mul_one] at hm_eq; omega
+  have hm_ne_one : m ≠ 1 := fun h => by rw [h, mul_one] at hm_eq; lia
   obtain ⟨r, hr_prime, hr_dvd_m⟩ := Nat.exists_prime_and_dvd hm_ne_one
   refine ⟨r, hr_prime, ?_, fun h => h_coprime r hr_prime h hr_dvd_m⟩
   have h_r_dvd_Φ : r ∣ Φ := hm_eq ▸ dvd_mul_of_dvd_right hr_dvd_m _
@@ -174,14 +174,14 @@ lemma increase_prime_factors (n : ℕ) (hn : 0 < n) (hd : n ∣ 2 ^ n + 1) :
     ∃ m, 0 < m ∧ m ∣ 2 ^ m + 1 ∧ m.primeFactors.card = n.primeFactors.card + 1 := by
   by_cases hn3 : 3 ≤ n
   · -- Pick the minimum prime factor q of 2^n + 1; it's odd since 2 ∤ 2^n + 1.
-    have h_2n_pos : 1 < 2 ^ n + 1 := by have := Nat.one_le_two_pow (n := n); omega
+    have h_2n_pos : 1 < 2 ^ n + 1 := by have := Nat.one_le_two_pow (n := n); lia
     obtain ⟨q, hq_prime, hqdvd, hq_odd⟩ : ∃ q, Nat.Prime q ∧ q ∣ 2 ^ n + 1 ∧ q ≠ 2 := by
       refine ⟨Nat.minFac (2 ^ n + 1), Nat.minFac_prime h_2n_pos.ne',
              Nat.minFac_dvd _, fun h => ?_⟩
       have h2_dvd : (2 : ℕ) ∣ 2 ^ n + 1 := by
         have := Nat.minFac_dvd (2 ^ n + 1); rwa [h] at this
-      have h2_pow : 2 ∣ 2 ^ n := dvd_pow_self 2 (by omega)
-      omega
+      have h2_pow : 2 ∣ 2 ^ n := dvd_pow_self 2 (by lia)
+      lia
     by_cases hq : q ∣ n
     · -- q ∣ n: get a new prime r and let m = n * q * r
       obtain ⟨r, hr_prime, hr_dvd_pow, hr_not_dvd⟩ :=
@@ -190,7 +190,7 @@ lemma increase_prime_factors (n : ℕ) (hn : 0 < n) (hd : n ∣ 2 ^ n + 1) :
       have hr_ne_2 : r ≠ 2 := by
         rintro rfl
         have h2_pow : 2 ∣ 2 ^ (n * q) := dvd_pow_self 2 (by positivity)
-        omega
+        lia
       have hr_not_n : ¬ r ∣ n := fun h => hr_not_dvd (h.trans hd)
       refine ⟨n * q * r, Nat.mul_pos hnq_pos hr_prime.pos,
               extend_divisibility (extend_divisibility hd q hq_prime hq_odd hqdvd)
@@ -215,7 +215,7 @@ lemma increase_prime_factors (n : ℕ) (hn : 0 < n) (hd : n ∣ 2 ^ n + 1) :
   · interval_cases n
     · exact ⟨3, by norm_num, by norm_num, by
         rw [Nat.Prime.primeFactors (by decide : Nat.Prime 3)]; simp⟩
-    · omega
+    · lia
 
 theorem exists_dvd_two_pow_add_one (k : ℕ) :
     ∃ n : ℕ, 0 < n ∧ n.primeFactors.card = k ∧ n ∣ 2 ^ n + 1 := by
@@ -224,13 +224,13 @@ theorem exists_dvd_two_pow_add_one (k : ℕ) :
   | succ k ih =>
     obtain ⟨n, hn_pos, hn_card, hn_dvd⟩ := ih
     obtain ⟨m, hm_pos, hm_dvd, hm_card⟩ := increase_prime_factors n hn_pos hn_dvd
-    exact ⟨m, hm_pos, by omega, hm_dvd⟩
+    exact ⟨m, hm_pos, by lia, hm_dvd⟩
 
 snip end
 
 determine solution : Bool := true
 
-problem imo2000P5 :
+problem imo2000_p5 :
     ∃ n, 0 < n ∧ n.primeFactors.card = 2000 ∧ n ∣ 2 ^ n + 1
     ↔ solution := by
   obtain ⟨n, hn, hcard, hdvd⟩ := exists_dvd_two_pow_add_one 2000

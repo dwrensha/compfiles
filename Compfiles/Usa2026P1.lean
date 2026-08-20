@@ -111,7 +111,7 @@ lemma f_rewrite (n : ℕ) (hn : 1 ≤ n) (y : ℝ) : f n (1 - y) = solution_valu
     have h_Icc : Icc 1 n = insert 1 (Icc 2 n) := by
       ext x
       simp only [mem_Icc, mem_insert]
-      omega
+      lia
     rw [h_Icc, sum_insert (by simp [mem_Icc])]
     norm_num
 
@@ -122,12 +122,12 @@ lemma f_rewrite (n : ℕ) (hn : 1 ≤ n) (y : ℝ) : f n (1 - y) = solution_valu
 lemma T_eq_zero_of_small_y (n : ℕ) (y : ℝ) (hn : 2 ≤ n) (hy1 : 0 < y) (hy2 : y ≤ 1 / (n : ℝ)) :
   T n y = 0 := by
   unfold T
-  have hn_pos : (0 : ℝ) < (n : ℝ) := Nat.cast_pos.mpr (by omega)
+  have hn_pos : (0 : ℝ) < (n : ℝ) := Nat.cast_pos.mpr (by lia)
   have h_ceil : ∀ k ∈ Icc 1 n, ⌈(k : ℝ) * y⌉ = 1 := by
     intro k hk
     have hk1 : 1 ≤ k := (mem_Icc.mp hk).1
     have hkn : k ≤ n := (mem_Icc.mp hk).2
-    have hk_pos : (0 : ℝ) < (k : ℝ) := Nat.cast_pos.mpr (by omega)
+    have hk_pos : (0 : ℝ) < (k : ℝ) := Nat.cast_pos.mpr (by lia)
     have hk_le_n : (k : ℝ) ≤ (n : ℝ) := Nat.cast_le.mpr hkn
     have h1 : 0 < (k : ℝ) * y := mul_pos hk_pos hy1
     have h2 : (k : ℝ) * y ≤ 1 := by
@@ -141,7 +141,7 @@ lemma T_eq_zero_of_small_y (n : ℕ) (y : ℝ) (hn : 2 ≤ n) (hy1 : 0 < y) (hy2
     · push_cast
       exact h2
 
-  have hn_in : n ∈ Icc 1 n := mem_Icc.mpr ⟨by omega, le_rfl⟩
+  have hn_in : n ∈ Icc 1 n := mem_Icc.mpr ⟨by lia, le_rfl⟩
   rw [h_ceil n hn_in]
   have h_sum_zero : ∑ k ∈ Icc 1 n, (((⌈(k : ℝ) * y⌉ : ℤ) - 1 : ℤ) : ℝ) / (k : ℝ) = 0 := by
     apply sum_eq_zero
@@ -159,7 +159,7 @@ lemma core_sum_bound (n p : ℕ) (hp1 : 1 ≤ p) (hpn : p < n) :
   have h_1981 := Usa1981P5.usa1981_p5 x n
 
   have h_right : (⌊(n : ℝ) * x⌋ : ℝ) = (p : ℝ) := by
-    have hn_pos : (0 : ℝ) < (n : ℝ) := Nat.cast_pos.mpr (by omega)
+    have hn_pos : (0 : ℝ) < (n : ℝ) := Nat.cast_pos.mpr (by lia)
     have hn_ne_zero : (n : ℝ) ≠ 0 := ne_of_gt hn_pos
 
     have h_inside : (n : ℝ) * x = (p : ℝ) + 1 - 1 / (2 * (n : ℝ)) := by
@@ -177,7 +177,7 @@ lemma core_sum_bound (n p : ℕ) (hp1 : 1 ≤ p) (hpn : p < n) :
 
     have h_lower : (p : ℝ) ≤ (n : ℝ) * x := by
       rw [h_inside]
-      have h_n_ge_2 : (2 : ℝ) ≤ (n : ℝ) := by exact_mod_cast (by omega : 2 ≤ n)
+      have h_n_ge_2 : (2 : ℝ) ≤ (n : ℝ) := by exact_mod_cast (by lia : 2 ≤ n)
       have h_pos : 0 < 2 * (n : ℝ) := by linarith
       have h_bound : 1 / (2 * (n : ℝ)) ≤ 1 := by
         rw [div_le_iff₀ h_pos]
@@ -202,7 +202,7 @@ lemma core_sum_bound (n p : ℕ) (hp1 : 1 ≤ p) (hpn : p < n) :
   have h_pointwise : ∀ k ∈ Icc 1 n,
     (((⌈(k : ℝ) * ((p + 1 : ℝ) / (n : ℝ))⌉ : ℤ) - 1 : ℤ) : ℝ) ≤ (⌊(k : ℝ) * x⌋ : ℝ) := by
     intro k hk
-    have hn_pos : 0 < (n : ℝ) := by exact_mod_cast (by omega : 0 < n)
+    have hn_pos : 0 < (n : ℝ) := by exact_mod_cast (by lia : 0 < n)
     have hn_ne : (n : ℝ) ≠ 0 := ne_of_gt hn_pos
     have hk_pos : 0 < (k : ℝ) := by
       have : 1 ≤ k := (mem_Icc.mp hk).1
@@ -251,7 +251,7 @@ lemma core_sum_bound (n p : ℕ) (hp1 : 1 ≤ p) (hpn : p < n) :
           calc δ ≤ 1 / (n : ℝ) := hδ_le
             _ ≤ 1 := by
               rw [div_le_one hn_pos]
-              exact_mod_cast (by omega : 1 ≤ n)
+              exact_mod_cast (by lia : 1 ≤ n)
         have : (((⌈y⌉ : ℤ) - 1 : ℤ) : ℝ) = y - 1 := by
           rw [h_ceil]; push_cast; linarith [hy_int]
         linarith
@@ -313,7 +313,7 @@ lemma core_sum_bound (n p : ℕ) (hp1 : 1 ≤ p) (hpn : p < n) :
 
 lemma T_nonneg (n : ℕ) (y : ℝ) (hn : 2 ≤ n) (hy1 : 0 < y) (hy2 : y ≤ 1) :
   0 ≤ T n y := by
-  have hn_pos : (0 : ℝ) < (n : ℝ) := Nat.cast_pos.mpr (by omega)
+  have hn_pos : (0 : ℝ) < (n : ℝ) := Nat.cast_pos.mpr (by lia)
   set p_int := ⌈(n : ℝ) * y⌉ - 1
   have hp_ge_zero : 0 ≤ p_int := by
     have : (0 : ℝ) < (n : ℝ) * y := mul_pos hn_pos hy1
@@ -322,7 +322,7 @@ lemma T_nonneg (n : ℕ) (y : ℝ) (hn : 2 ≤ n) (hy1 : 0 < y) (hy2 : y ≤ 1) 
   by_cases h_p_zero : p_int = 0
   · have h_ceil_one : ⌈(n : ℝ) * y⌉ = 1 := by linarith
     have h_ny_le_1 : (n : ℝ) * y ≤ 1 := by
-      have h_ceil_le_1 : ⌈(n : ℝ) * y⌉ ≤ (1 : ℤ) := by omega
+      have h_ceil_le_1 : ⌈(n : ℝ) * y⌉ ≤ (1 : ℤ) := by lia
       exact_mod_cast Int.ceil_le.mp h_ceil_le_1
     have hy_le_1_n : y ≤ 1 / (n : ℝ) := by
       rw [le_div_iff₀ hn_pos]
@@ -360,7 +360,7 @@ lemma T_nonneg (n : ℕ) (y : ℝ) (hn : 2 ≤ n) (hy1 : 0 < y) (hy2 : y ≤ 1) 
       have h1 : 0 ≤ p_int := hp_ge_zero
       have h2 : p_int ≠ 0 := h_p_zero
       have h3 : 0 < p_int := lt_of_le_of_ne h1 h2.symm
-      have h4 : 1 ≤ (p : ℤ) := by omega
+      have h4 : 1 ≤ (p : ℤ) := by lia
       exact_mod_cast h4
 
     have h_T_eq : T n y = (p : ℝ) - ∑ k ∈ Icc 1 n, (((⌈(k : ℝ) * y⌉ : ℤ) - 1 : ℤ) : ℝ) / (k : ℝ) := by
@@ -371,7 +371,7 @@ lemma T_nonneg (n : ℕ) (y : ℝ) (hn : 2 ≤ n) (hy1 : 0 < y) (hy2 : y ≤ 1) 
     have h_sum_le : ∑ k ∈ Icc 1 n, (((⌈(k : ℝ) * y⌉ : ℤ) - 1 : ℤ) : ℝ) / (k : ℝ) ≤ (p : ℝ) := by
       have h_term_le : ∀ k ∈ Icc 1 n, (((⌈(k : ℝ) * y⌉ : ℤ) - 1 : ℤ) : ℝ) / (k : ℝ) ≤ (((⌈(k : ℝ) * ((p + 1 : ℝ) / (n : ℝ))⌉ : ℤ) - 1 : ℤ) : ℝ) / (k : ℝ) := by
         intro k hk
-        have hk_pos : (0 : ℝ) < (k : ℝ) := Nat.cast_pos.mpr (by have := (mem_Icc.mp hk).1; omega)
+        have hk_pos : (0 : ℝ) < (k : ℝ) := Nat.cast_pos.mpr (by have := (mem_Icc.mp hk).1; lia)
         apply div_le_div_of_nonneg_right _ (le_of_lt hk_pos)
         apply Int.cast_le.mpr
         apply sub_le_sub_right
@@ -430,14 +430,14 @@ problem usa2026_p1 (n : ℕ) (hn : 2 ≤ n) :
       push_cast
       ring
 
-    have hn_ge_1 : 1 ≤ n := by omega
+    have hn_ge_1 : 1 ≤ n := by lia
     rw [h_fx_eq, f_rewrite n hn_ge_1 y]
     have h_T_nonneg : 0 ≤ T n y := T_nonneg n y hn hy1 hy2
     linarith
 
   · use 1 - 1 / (n : ℝ)
-    have hn_pos : (0 : ℝ) < (n : ℝ) := Nat.cast_pos.mpr (by omega)
-    have hn_ge_1 : 1 ≤ n := by omega
+    have hn_pos : (0 : ℝ) < (n : ℝ) := Nat.cast_pos.mpr (by lia)
+    have hn_ge_1 : 1 ≤ n := by lia
     have hy1 : 0 < 1 / (n : ℝ) := one_div_pos.mpr hn_pos
     have hy2 : 1 / (n : ℝ) ≤ 1 / (n : ℝ) := le_rfl
 

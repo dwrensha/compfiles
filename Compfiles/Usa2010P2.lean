@@ -76,36 +76,36 @@ instance {n : ℕ} (e : Fin n ≃ ZMod n) (a b c : Fin n) : Decidable (StateA e 
 /-! ### Elementary facts about `ZMod.val` -/
 
 lemma val_one' {n : ℕ} (hn : 2 ≤ n) : (1 : ZMod n).val = 1 := by
-  have : NeZero n := ⟨by omega⟩
+  have : NeZero n := ⟨by lia⟩
   rw [← Nat.cast_one]
-  exact ZMod.val_natCast_of_lt (by omega)
+  exact ZMod.val_natCast_of_lt (by lia)
 
 lemma val_neg_one' {n : ℕ} (hn : 1 ≤ n) : (-1 : ZMod n).val = n - 1 := by
-  have : NeZero n := ⟨by omega⟩
+  have : NeZero n := ⟨by lia⟩
   have h : (-1 : ZMod n) = ((n - 1 : ℕ) : ZMod n) := by
     rw [Nat.cast_sub hn, Nat.cast_one, ZMod.natCast_self, zero_sub]
   rw [h]
-  exact ZMod.val_natCast_of_lt (by omega)
+  exact ZMod.val_natCast_of_lt (by lia)
 
 lemma val_add_one' {n : ℕ} (hn : 2 ≤ n) (x : ZMod n) (hx : x ≠ -1) :
     (x + 1).val = x.val + 1 := by
-  have : NeZero n := ⟨by omega⟩
+  have : NeZero n := ⟨by lia⟩
   have h1 : x.val < n := ZMod.val_lt x
   have h2 : x.val ≠ n - 1 := by
     intro hbad
-    exact hx (ZMod.val_injective n (by rw [val_neg_one' (by omega : 1 ≤ n)]; omega))
-  rw [ZMod.val_add, val_one' hn, Nat.mod_eq_of_lt (by omega)]
+    exact hx (ZMod.val_injective n (by rw [val_neg_one' (by lia : 1 ≤ n)]; lia))
+  rw [ZMod.val_add, val_one' hn, Nat.mod_eq_of_lt (by lia)]
 
 lemma val_sub_one' {n : ℕ} (hn : 1 ≤ n) (x : ZMod n) (hx : x ≠ 0) :
     (x - 1).val = x.val - 1 := by
-  have : NeZero n := ⟨by omega⟩
+  have : NeZero n := ⟨by lia⟩
   have h1 : x.val ≠ 0 := by
     intro hbad
     exact hx ((ZMod.val_eq_zero x).mp hbad)
   have h2 : x.val < n := ZMod.val_lt x
   rw [sub_eq_add_neg, ZMod.val_add, val_neg_one' hn,
-    show x.val + (n - 1) = x.val - 1 + n by omega, Nat.add_mod_right,
-    Nat.mod_eq_of_lt (by omega)]
+    show x.val + (n - 1) = x.val - 1 + n by lia, Nat.add_mod_right,
+    Nat.mod_eq_of_lt (by lia)]
 
 lemma val_sub_ne_of_ne {n : ℕ} [NeZero n] {q r s : ZMod n} (h : q ≠ r) :
     (q - s).val ≠ (r - s).val := by
@@ -130,7 +130,7 @@ lemma eq_of_sub_eq_neg_one {n : ℕ} {q r : ZMod n} (h : q - r = -1) : r = q + 1
 lemma stateA_of_pair {n : ℕ} (hn : 2 ≤ n) {a b c : Fin n} {e : Fin n ≃ ZMod n} {p : ZMod n}
     (hea : e a = p) (heb : e b = p + 1) (hac : a ≠ c) (hbc : b ≠ c) :
     StateA e a b c := by
-  have : NeZero n := ⟨by omega⟩
+  have : NeZero n := ⟨by lia⟩
   have h1 : (e b - e a).val = 1 := by
     rw [heb, hea, add_sub_cancel_left]
     exact val_one' hn
@@ -143,7 +143,7 @@ lemma stateA_of_pair {n : ℕ} (hn : 2 ≤ n) {a b c : Fin n} {e : Fin n ≃ ZMo
         have ht : e c = 1 + e a := sub_eq_iff_eq_add.mp heq
         rw [ht, hea, heb, add_comm]
       exact hbc (e.injective this).symm
-    omega
+    lia
   unfold StateA
   rw [h1]
   exact h2
@@ -152,7 +152,7 @@ lemma stateA_of_pair {n : ℕ} (hn : 2 ≤ n) {a b c : Fin n} {e : Fin n ≃ ZMo
 lemma not_stateA_of_pair {n : ℕ} (hn : 2 ≤ n) {a b c : Fin n} {e : Fin n ≃ ZMod n} {p : ZMod n}
     (hec : e c = p) (heb : e b = p + 1) (hab : a ≠ b) :
     ¬ StateA e a b c := by
-  have : NeZero n := ⟨by omega⟩
+  have : NeZero n := ⟨by lia⟩
   have h : (e c - e a).val < (e b - e a).val := by
     have h1 : e b - e a = (e c - e a) + 1 := by rw [heb, hec]; ring
     have hne : e c - e a ≠ -1 := by
@@ -169,7 +169,7 @@ lemma not_stateA_of_pair {n : ℕ} (hn : 2 ≤ n) {a b c : Fin n} {e : Fin n ≃
 lemma not_stateA_swap {n : ℕ} (hn : 2 ≤ n) {a b c : Fin n} {e : Fin n ≃ ZMod n} {p : ZMod n}
     (hea : e a = p) (heb : e b = p + 1) (hca : c ≠ a) (hcb : c ≠ b) :
     ¬ StateA (e.trans (Equiv.swap p (p + 1))) a b c := by
-  have : NeZero n := ⟨by omega⟩
+  have : NeZero n := ⟨by lia⟩
   have h1 : (e.trans (Equiv.swap p (p + 1))) a = p + 1 := by
     rw [Equiv.trans_apply, hea]
     exact Equiv.swap_apply_left _ _
@@ -185,20 +185,20 @@ lemma not_stateA_swap {n : ℕ} (hn : 2 ≤ n) {a b c : Fin n} {e : Fin n ≃ ZM
     intro hbad
     have heq : e c - (p + 1) = p - (p + 1) := by
       apply ZMod.val_injective n
-      rw [h6, val_neg_one' (by omega : 1 ≤ n)]
+      rw [h6, val_neg_one' (by lia : 1 ≤ n)]
       exact hbad
     exact hcp (sub_left_inj.mp heq)
   intro hA
   unfold StateA at hA
-  rw [h1, h2, h3, h6, val_neg_one' (by omega : 1 ≤ n)] at hA
+  rw [h1, h2, h3, h6, val_neg_one' (by lia : 1 ≤ n)] at hA
   have h7 : (e c - (p + 1)).val < n := ZMod.val_lt _
-  omega
+  lia
 
 /-- L4: after `b` (behind) and `c` (front) switch, the triple is in state A. -/
 lemma stateA_swap {n : ℕ} (hn : 2 ≤ n) {a b c : Fin n} {e : Fin n ≃ ZMod n} {p : ZMod n}
     (hec : e c = p) (heb : e b = p + 1) (hac : a ≠ c) (hab : a ≠ b) :
     StateA (e.trans (Equiv.swap p (p + 1))) a b c := by
-  have : NeZero n := ⟨by omega⟩
+  have : NeZero n := ⟨by lia⟩
   have h1 : (e.trans (Equiv.swap p (p + 1))) c = p + 1 := by
     rw [Equiv.trans_apply, hec]
     exact Equiv.swap_apply_left _ _
@@ -227,16 +227,16 @@ lemma stateA_swap_iff {n : ℕ} (hn : 2 ≤ n) {a b c : Fin n} {e : Fin n ≃ ZM
     (hJ : (e.symm p, e.symm (p + 1)) ≠ (a, b))
     (hM : (e.symm p, e.symm (p + 1)) ≠ (c, b)) :
     StateA (e.trans (Equiv.swap p (p + 1))) a b c ↔ StateA e a b c := by
-  have : NeZero n := ⟨by omega⟩
+  have : NeZero n := ⟨by lia⟩
   have hbval : b.val < n := b.isLt
   have hac : a ≠ c := by
     intro hbad
     rw [hbad] at hc
-    omega
+    lia
   have hab' : a ≠ b := by
     intro hbad
     rw [hbad] at hab
-    omega
+    lia
   have hcb' : c ≠ b := by
     intro hbad
     rw [hbad] at hcb
@@ -259,7 +259,7 @@ lemma stateA_swap_iff {n : ℕ} (hn : 2 ≤ n) {a b c : Fin n} {e : Fin n ≃ ZM
     have hxc : e.symm (p + 1) ≠ c := by
       intro hbad
       rw [hya, hbad, hc] at hleg
-      omega
+      lia
     have hbn : e b ≠ p := fun hbad => hab' (e.injective (hbad.trans hea.symm)).symm
     have hbq : e b ≠ p + 1 := fun hbad => hxb (e.injective (hbad.trans hxe.symm)).symm
     have hcn : e c ≠ p := fun hbad => hac (e.injective (hbad.trans hea.symm)).symm
@@ -272,22 +272,22 @@ lemma stateA_swap_iff {n : ℕ} (hn : 2 ≤ n) {a b c : Fin n} {e : Fin n ≃ ZM
     have hc0 : e c - p ≠ 0 := sub_ne_zero_of_ne hcn
     have hrb : (e b - (p + 1) : ZMod n) = (e b - p) - 1 := by rw [sub_sub]
     have hrc : (e c - (p + 1) : ZMod n) = (e c - p) - 1 := by rw [sub_sub]
-    rw [hrb, hrc, val_sub_one' (by omega : 1 ≤ n) _ hb0, val_sub_one' (by omega : 1 ≤ n) _ hc0,
+    rw [hrb, hrc, val_sub_one' (by lia : 1 ≤ n) _ hb0, val_sub_one' (by lia : 1 ≤ n) _ hc0,
       hea]
     have hub : 1 ≤ (e b - p).val := val_sub_pos_of_ne hbn
     have huc : 1 ≤ (e c - p).val := val_sub_pos_of_ne hcn
-    omega
+    lia
   · by_cases hyb : e.symm p = b
     · -- `b` is in front and moves one step backwards; the distance to `b` grows by one
       have heb : e b = p := by rw [← hyb]; exact hye
       have hxa : e.symm (p + 1) ≠ a := by
         intro hbad
         rw [hyb, hbad] at hleg
-        omega
+        lia
       have hxc : e.symm (p + 1) ≠ c := by
         intro hbad
         rw [hyb, hbad] at hleg
-        omega
+        lia
       have han : e a ≠ p := fun hbad => hab' (e.injective (hbad.trans heb.symm))
       have haq : e a ≠ p + 1 := fun hbad => hxa (e.injective (hbad.trans hxe.symm)).symm
       have hcn : e c ≠ p := fun hbad => hcb' (e.injective (hbad.trans heb.symm))
@@ -305,14 +305,14 @@ lemma stateA_swap_iff {n : ℕ} (hn : 2 ≤ n) {a b c : Fin n} {e : Fin n ≃ ZM
       rw [hrel, val_add_one' hn _ hne]
       have hu'ne' := hu'ne
       rw [h1, h2, h3, hrel, val_add_one' hn _ hne] at hu'ne'
-      omega
+      lia
     · by_cases hyc : e.symm p = c
       · -- `c` is in front and moves one step backwards; the distance to `c` grows by one
         have hec : e c = p := by rw [← hyc]; exact hye
         have hxa : e.symm (p + 1) ≠ a := by
           intro hbad
           rw [hyc, hbad, hc] at hleg
-          omega
+          lia
         have hxb : e.symm (p + 1) ≠ b := fun hbad =>
           hM (by rw [Prod.mk.injEq]; exact ⟨hyc, hbad⟩)
         have han : e a ≠ p := fun hbad => hac (e.injective (hbad.trans hec.symm))
@@ -332,18 +332,18 @@ lemma stateA_swap_iff {n : ℕ} (hn : 2 ≤ n) {a b c : Fin n} {e : Fin n ≃ ZM
         rw [hrel, val_add_one' hn _ hne]
         have hu'ne' := hu'ne
         rw [h1, h2, h3, hrel, val_add_one' hn _ hne] at hu'ne'
-        omega
+        lia
       · by_cases hxa : e.symm (p + 1) = a
         · -- `a` is behind and moves one step forwards; both distances grow by one
           have hea : e a = p + 1 := by rw [← hxa]; exact hxe
           have hyb : e.symm p ≠ b := by
             intro hbad
             rw [hbad, hxa] at hleg
-            omega
+            lia
           have hyc : e.symm p ≠ c := by
             intro hbad
             rw [hbad, hxa, hc] at hleg
-            omega
+            lia
           have hbn : e b ≠ p := fun hbad => hyb (e.injective (hbad.trans hye.symm)).symm
           have hbnq : e b ≠ p + 1 := fun hbad => hab' (e.injective (hbad.trans hea.symm)).symm
           have hcn : e c ≠ p := fun hbad => hyc (e.injective (hbad.trans hye.symm)).symm
@@ -369,7 +369,7 @@ lemma stateA_swap_iff {n : ℕ} (hn : 2 ≤ n) {a b c : Fin n} {e : Fin n ≃ ZM
             have hc_eq : e c = p := (add_right_cancel_iff.mp hcon).symm
             exact hcn hc_eq
           rw [hrelb, hrelc, val_add_one' hn _ hneb, val_add_one' hn _ hnec]
-          omega
+          lia
         · by_cases hxb : e.symm (p + 1) = b
           · -- `b` is behind and moves one step forwards; the distance to `b` drops by one
             have heb : e b = p + 1 := by rw [← hxb]; exact hxe
@@ -389,21 +389,21 @@ lemma stateA_swap_iff {n : ℕ} (hn : 2 ≤ n) {a b c : Fin n} {e : Fin n ≃ ZM
             rw [h1, h2, h3]
             have hrel : (p - e a : ZMod n) = (e b - e a) - 1 := by rw [heb]; ring
             have hb0 : e b - e a ≠ 0 := sub_ne_zero_of_ne (fun hbad => hab' (e.injective hbad).symm)
-            rw [hrel, val_sub_one' (by omega : 1 ≤ n) _ hb0]
+            rw [hrel, val_sub_one' (by lia : 1 ≤ n) _ hb0]
             have hu'ne' := hu'ne
-            rw [h1, h2, h3, hrel, val_sub_one' (by omega : 1 ≤ n) _ hb0] at hu'ne'
-            omega
+            rw [h1, h2, h3, hrel, val_sub_one' (by lia : 1 ≤ n) _ hb0] at hu'ne'
+            lia
           · by_cases hxc : e.symm (p + 1) = c
             · -- `c` is behind and moves one step forwards; the distance to `c` drops by one
               have hec : e c = p + 1 := by rw [← hxc]; exact hxe
               have hya' : e.symm p ≠ a := by
                 intro hbad
                 rw [hbad, hxc, hc] at hleg
-                omega
+                lia
               have hyb' : e.symm p ≠ b := by
                 intro hbad
                 rw [hbad, hxc] at hleg
-                omega
+                lia
               have han : e a ≠ p := fun hbad => hya' (e.injective (hbad.trans hye.symm)).symm
               have haq : e a ≠ p + 1 := fun hbad => hac (e.injective (hbad.trans hec.symm))
               have hbn : e b ≠ p := fun hbad => hyb' (e.injective (hbad.trans hye.symm)).symm
@@ -417,10 +417,10 @@ lemma stateA_swap_iff {n : ℕ} (hn : 2 ≤ n) {a b c : Fin n} {e : Fin n ≃ ZM
               rw [h1, h2, h3]
               have hrel : (p - e a : ZMod n) = (e c - e a) - 1 := by rw [hec]; ring
               have hc0 : e c - e a ≠ 0 := sub_ne_zero_of_ne (fun hbad => hac (e.injective hbad).symm)
-              rw [hrel, val_sub_one' (by omega : 1 ≤ n) _ hc0]
+              rw [hrel, val_sub_one' (by lia : 1 ≤ n) _ hc0]
               have hu'ne' := hu'ne
-              rw [h1, h2, h3, hrel, val_sub_one' (by omega : 1 ≤ n) _ hc0] at hu'ne'
-              omega
+              rw [h1, h2, h3, hrel, val_sub_one' (by lia : 1 ≤ n) _ hc0] at hu'ne'
+              lia
             · -- the switch does not involve the triple at all
               have han : e a ≠ p := fun hbad => hya (e.injective (hbad.trans hye.symm)).symm
               have haq : e a ≠ p + 1 := fun hbad => hxa (e.injective (hbad.trans hxe.symm)).symm
@@ -461,7 +461,7 @@ lemma evPairs_lt {n : ℕ} {e : Fin n ≃ ZMod n} {ps : List (ZMod n)} (hL : Leg
     ∀ pr ∈ evPairs e ps, pr.1 < pr.2 := by
   intro pr hmem
   have h := evPairs_le hL pr hmem
-  exact Fin.lt_def.mpr (by omega)
+  exact Fin.lt_def.mpr (by lia)
 
 lemma length_evPairs {n : ℕ} (e : Fin n ≃ ZMod n) (ps : List (ZMod n)) :
     (evPairs e ps).length = ps.length := by
@@ -475,7 +475,6 @@ lemma length_eq_sum_count {n : ℕ} (L : List (Fin n × Fin n))
     (hL : ∀ pr ∈ L, pr.1 < pr.2) :
     L.length = ∑ pr ∈ (Finset.univ.filter (fun pr : Fin n × Fin n => pr.1 < pr.2)),
       L.count pr := by
-  classical
   induction L with
   | nil => simp
   | cons x xs ih =>
@@ -502,7 +501,7 @@ lemma length_eq_sum_count {n : ℕ} (L : List (Fin n × Fin n))
         by_cases h : pr = x
         · subst h
           simp
-        · rw [if_neg h]
+        · rw [ite_eq_right h]
           have h2 : (x == pr) = false := beq_eq_false_iff_ne.mpr (fun h3 => h h3.symm)
           simp [h2]
       rw [e1, Finset.sum_ite_eq']
@@ -524,19 +523,19 @@ lemma alternation {n : ℕ} (hn : 2 ≤ n) (a b : Fin n) (hab : a.val + 2 ≤ b.
       (¬ StateA e a b (fsucc a ha) →
         (evPairs e ps).count (a, b) ≤ (evPairs e ps).count (fsucc a ha, b) ∧
         (evPairs e ps).count (fsucc a ha, b) ≤ (evPairs e ps).count (a, b) + 1) := by
-  have : NeZero n := ⟨by omega⟩
+  have : NeZero n := ⟨by lia⟩
   have hbval : b.val < n := b.isLt
   have hac : a ≠ fsucc a ha := by
     intro hbad
     have : a.val = a.val + 1 := congrArg Fin.val hbad
-    omega
+    lia
   have hac' : fsucc a ha ≠ a := hac.symm
   have hbc : b ≠ fsucc a ha := by
     intro hbad
     have : b.val = a.val + 1 := congrArg Fin.val hbad
-    omega
+    lia
   have hbc' : fsucc a ha ≠ b := hbc.symm
-  have hcb : (fsucc a ha).val < b.val := by simp [fsucc]; omega
+  have hcb : (fsucc a ha).val < b.val := by simp [fsucc]; lia
   intro e ps
   induction ps generalizing e with
   | nil =>
@@ -573,14 +572,14 @@ lemma alternation {n : ℕ} (hn : 2 ≤ n) (a b : Fin n) (hab : a.val + 2 ≤ b.
       refine ⟨fun _ => ?_, fun hbad => absurd hAe hbad⟩
       rw [hcJ, hcM]
       obtain ⟨h1, h2⟩ := hIH.2 hA1
-      omega
+      lia
     · by_cases hM : (e.symm p, e.symm (p + 1)) = (fsucc a ha, b)
       · -- the head switch is the pair `(a+1, b)`
         have hyc : e.symm p = fsucc a ha := congrArg Prod.fst hM
         have hxb : e.symm (p + 1) = b := congrArg Prod.snd hM
         have hec : e (fsucc a ha) = p := by rw [← hyc]; exact hye
         have heb : e b = p + 1 := by rw [← hxb]; exact hxe
-        have hab' : a ≠ b := fun hbad => by rw [hbad] at hab; omega
+        have hab' : a ≠ b := fun hbad => by rw [hbad] at hab; lia
         have hnAe : ¬ StateA e a b (fsucc a ha) := not_stateA_of_pair hn hec heb hab'
         have hA1 : StateA (e.trans (Equiv.swap p (p + 1))) a b (fsucc a ha) :=
           stateA_swap hn hec heb hac hab'
@@ -593,7 +592,7 @@ lemma alternation {n : ℕ} (hn : 2 ≤ n) (a b : Fin n) (hab : a.val + 2 ≤ b.
         refine ⟨fun hbad => absurd hbad hnAe, fun _ => ?_⟩
         rw [hcJ, hcM]
         obtain ⟨h1, h2⟩ := hIH.1 hA1
-        omega
+        lia
       · -- the head switch involves no pair of the triple
         have hiff := stateA_swap_iff hn rfl hab hcb hfront hJ hM
         have hcJ : (evPairs e (p :: ps)).count (a, b) =
@@ -622,7 +621,7 @@ lemma count_bound {n : ℕ} (hn : 2 ≤ n) (d : ℕ) :
       rw [List.count_eq_zero]
       intro hmem
       have h2 : a.val + 2 ≤ b.val := evPairs_le hL _ hmem
-      omega
+      lia
     rw [h0]
   | succ k ih =>
     intro a b e ps hL hd
@@ -632,19 +631,19 @@ lemma count_bound {n : ℕ} (hn : 2 ≤ n) (d : ℕ) :
         rw [List.count_eq_zero]
         intro hmem
         have h2 : a.val + 2 ≤ b.val := evPairs_le hL _ hmem
-        omega
+        lia
       rw [h0]
     · obtain ⟨m, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (Nat.ne_of_gt hk)
-      have hab : a.val + 2 ≤ b.val := by omega
-      have ha : a.val + 1 < n := by have := b.isLt; omega
+      have hab : a.val + 2 ≤ b.val := by lia
+      have ha : a.val + 1 < n := by have := b.isLt; lia
       have halt := alternation hn a b hab ha e ps hL
       have h1 : (evPairs e ps).count (a, b) ≤ (evPairs e ps).count (fsucc a ha, b) + 1 := by
         by_cases hA : StateA e a b (fsucc a ha)
         · exact (halt.1 hA).1
         · exact (halt.2 hA).1.trans (Nat.le_add_right _ _)
       have hfs : (fsucc a ha).val = a.val + 1 := rfl
-      have h2 := ih (fsucc a ha) b e ps hL (by rw [hfs]; omega)
-      omega
+      have h2 := ih (fsucc a ha) b e ps hL (by rw [hfs]; lia)
+      lia
 
 lemma sum_range_choose_two (n : ℕ) : ∑ k ∈ Finset.range n, k.choose 2 = n.choose 3 := by
   induction n with
@@ -656,7 +655,7 @@ lemma inner_sum (k : ℕ) : ∑ i ∈ Finset.range k, (k - i - 1) = k.choose 2 :
   have e1 : ∑ i ∈ Finset.range k, (k - i - 1) = ∑ i ∈ Finset.range k, (k - 1 - i) := by
     apply Finset.sum_congr rfl
     intro i _
-    omega
+    lia
   have e2 := Finset.sum_range_reflect (fun j : ℕ => j) k
   rw [e1, e2, Finset.sum_range_id, Nat.choose_two_right]
 
@@ -715,8 +714,8 @@ problem usa2010_p2 {n : ℕ} (e : Fin n ≃ ZMod n) (ps : List (ZMod n)) (h : Le
       simp only [Legal] at h
       obtain ⟨h1, -⟩ := h
       have h2 : (e.symm (p + 1)).val < n := (e.symm (p + 1)).isLt
-      omega
-  · have h2 : 2 ≤ n := by omega
+      lia
+  · have h2 : 2 ≤ n := by lia
     rw [← length_evPairs e ps, length_eq_sum_count _ (evPairs_lt h)]
     calc ∑ pr ∈ Finset.univ.filter (fun pr : Fin n × Fin n => pr.1 < pr.2),
           (evPairs e ps).count pr

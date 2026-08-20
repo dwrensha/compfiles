@@ -101,7 +101,7 @@ lemma four_additive {f : ℝ → ℝ} (hf : FE f) (a : ℝ) (b : ℝ) (c : ℝ) 
 lemma main_proof {f : ℝ → ℝ} (hf : FE f) (x : ℝ)  :
     f x = f 1 * x := by
   have h := squarish hf (x+1)
-  rw [show (f (x+1)) = _ by exact additive hf x 1] at h
+  rw [additive hf x 1] at h
   rw [show (x+1)^2 = x^2 + x + x + 1 by ring] at h
   rw [four_additive hf] at h
   rw [squarish hf] at h

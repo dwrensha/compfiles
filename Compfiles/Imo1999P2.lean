@@ -122,18 +122,17 @@ problem imo1999_p2 (n : ℕ) (hn : 2 ≤ n) :
     have hne : (⟨0, h0n⟩ : Fin n) ≠ ⟨1, h1n⟩ := ne_of_lt hlt
     set i0 : Fin n := ⟨0, h0n⟩
     set i1 : Fin n := ⟨1, h1n⟩
-    classical
     let y : Fin n → ℝ := fun i => if i = i0 then 1 else if i = i1 then 1 else 0
     have hy0 : ∀ i, 0 ≤ y i := by
       intro i
       positivity
-    have hyi0 : y i0 = 1 := by simp only [y, if_pos rfl]
+    have hyi0 : y i0 = 1 := by simp only [y, ite_eq_left rfl]
     have hyi1 : y i1 = 1 := by
       simp [y]
     have hyother : ∀ i, i ≠ i0 → i ≠ i1 → y i = 0 := by
       intro i h1 h2
       simp only [y]
-      rw [if_neg h1, if_neg h2]
+      rw [ite_eq_right h1, ite_eq_right h2]
     have hsum : ∑ i, y i = 2 := by
       have h1 : ∑ i ∈ ({i0, i1} : Finset (Fin n)), y i = 2 := by
         rw [Finset.sum_pair hne, hyi0, hyi1]; norm_num

@@ -100,13 +100,13 @@ theorem ncard_le_of_exists_min {P : Polynomial ℤ} (hP : 0 < P.natDegree) {r : 
       rw [hr] at hk
       norm_num at hk
     have hdvd : k - r ∣ 2 := sub_dvd_two hr hk
-    have hpos : 0 < k - r := by omega
+    have hpos : 0 < k - r := by lia
     have hle2 : k - r ≤ 2 := Int.le_of_dvd (by norm_num) hdvd
-    have hmem : k = r + 1 ∨ k = r + 2 := by omega
+    have hmem : k = r + 1 ∨ k = r + 2 := by lia
     simpa only [Set.mem_insert_iff, Set.mem_singleton_iff] using hmem
   have hB : {k : ℤ | P.eval k = -1}.ncard ≤ 2 :=
     (Set.ncard_le_ncard hsub ((Set.finite_singleton _).insert _)).trans
-      (le_of_eq (Set.ncard_pair (by omega)))
+      (le_of_eq (Set.ncard_pair (by lia)))
   calc ({k : ℤ | P.eval k = 1} ∪ {k : ℤ | P.eval k = -1}).ncard
       ≤ {k : ℤ | P.eval k = 1}.ncard + {k : ℤ | P.eval k = -1}.ncard :=
         Set.ncard_union_le _ _

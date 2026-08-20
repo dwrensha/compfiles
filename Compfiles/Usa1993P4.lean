@@ -33,7 +33,7 @@ snip begin
 
 /-- Dividing out all factors of two from `2 * m` yields `m` when `m` is odd. -/
 theorem ordCompl_two_mul {m : ℕ} (hm : Odd m) : ordCompl[2] (2 * m) = m := by
-  have h2m : m ≠ 0 := by obtain ⟨k, hk⟩ := hm; omega
+  have h2m : m ≠ 0 := by obtain ⟨k, hk⟩ := hm; lia
   have hfac2 : (2 : ℕ).factorization 2 = 1 := Nat.Prime.factorization_self Nat.prime_two
   have hnot2 : ¬ (2 : ℕ) ∣ m :=
     fun hd ↦ ((Nat.not_even_iff_odd).mpr hm) ((even_iff_two_dvd).mpr hd)
@@ -42,7 +42,7 @@ theorem ordCompl_two_mul {m : ℕ} (hm : Odd m) : ordCompl[2] (2 * m) = m := by
     rw [Nat.factorization_mul (by norm_num) h2m, Finsupp.add_apply, hfac2, hfacm]
   show 2 * m / 2 ^ (2 * m).factorization 2 = m
   rw [hfac, pow_one]
-  omega
+  lia
 
 variable {r s : ℕ} (hr : Odd r) (hs : Odd s) {a : ℕ → ℕ}
     (ha0 : a 0 = r) (ha1 : a 1 = s)
@@ -55,12 +55,12 @@ theorem odd_and_pos (n : ℕ) : Odd (a n) ∧ 0 < a n := by
   induction n using Nat.twoStepInduction with
   | zero =>
     rw [ha0]
-    exact ⟨hr, by obtain ⟨k, hk⟩ := hr; omega⟩
+    exact ⟨hr, by obtain ⟨k, hk⟩ := hr; lia⟩
   | one =>
     rw [ha1]
-    exact ⟨hs, by obtain ⟨k, hk⟩ := hs; omega⟩
+    exact ⟨hs, by obtain ⟨k, hk⟩ := hs; lia⟩
   | more n ih1 ih2 =>
-    have hsum : a (n + 1) + a n ≠ 0 := by omega
+    have hsum : a (n + 1) + a n ≠ 0 := by lia
     have h2 : ¬ (2 : ℕ) ∣ ordCompl[2] (a (n + 1) + a n) :=
       Nat.not_dvd_ordCompl Nat.prime_two hsum
     have hodd : Odd (ordCompl[2] (a (n + 1) + a n)) :=
@@ -72,7 +72,7 @@ theorem odd_and_pos (n : ℕ) : Odd (a n) ∧ 0 < a n := by
 theorem le_half (n : ℕ) : a (n + 2) ≤ (a (n + 1) + a n) / 2 := by
   obtain ⟨hoddn, hposn⟩ := odd_and_pos hr hs ha0 ha1 han n
   obtain ⟨hoddn1, hposn1⟩ := odd_and_pos hr hs ha0 ha1 han (n + 1)
-  have hsum : a (n + 1) + a n ≠ 0 := by omega
+  have hsum : a (n + 1) + a n ≠ 0 := by lia
   have h2dvd : 2 ∣ a (n + 1) + a n := (hoddn1.add_odd hoddn).two_dvd
   have hfact : 0 < (a (n + 1) + a n).factorization 2 :=
     Nat.Prime.factorization_pos_of_dvd Nat.prime_two hsum h2dvd
@@ -85,7 +85,7 @@ theorem le_half (n : ℕ) : a (n + 2) ≤ (a (n + 1) + a n) / 2 := by
           Nat.mul_le_mul hproj le_rfl
       _ = a (n + 1) + a n := Nat.ordProj_mul_ordCompl_eq_self _ _
   rw [han n]
-  omega
+  lia
 
 /-- If two consecutive terms differ, the maximum of the pair strictly
 decreases two steps later. -/
@@ -93,7 +93,7 @@ theorem descent (n : ℕ) (hne : a n ≠ a (n + 1)) :
     max (a (n + 2)) (a (n + 3)) < max (a n) (a (n + 1)) := by
   have h2 := le_half hr hs ha0 ha1 han n
   have h3 : a (n + 3) ≤ (a (n + 2) + a (n + 1)) / 2 := le_half hr hs ha0 ha1 han (n + 1)
-  omega
+  lia
 
 /-- Some two consecutive terms are eventually equal. -/
 theorem eventual_eq : ∃ n, a n = a (n + 1) := by
@@ -107,11 +107,11 @@ theorem eventual_eq : ∃ n, a n = a (n + 1) := by
       have hd : max (a (2 * k + 2)) (a (2 * k + 2 + 1)) < max (a (2 * k)) (a (2 * k + 1)) :=
         descent hr hs ha0 ha1 han (2 * k) (hcon (2 * k))
       show max (a (2 * k + 2)) (a (2 * k + 2 + 1)) + (k + 1) ≤ max (a 0) (a 1)
-      omega
+      lia
   have hM := hstep (max (a 0) (a 1))
   obtain ⟨-, hpos⟩ := odd_and_pos hr hs ha0 ha1 han (2 * max (a 0) (a 1) + 1)
   have hle := Nat.le_max_right (a (2 * max (a 0) (a 1))) (a (2 * max (a 0) (a 1) + 1))
-  omega
+  lia
 
 /-- Once two consecutive terms agree, the sequence is constant from then on. -/
 theorem stable (n : ℕ) (h : a n = a (n + 1)) (k : ℕ) : a (n + k) = a n := by
@@ -132,7 +132,7 @@ theorem gcd_invariant (n : ℕ) :
     Nat.gcd (a (n + 1)) (a (n + 2)) = Nat.gcd (a n) (a (n + 1)) := by
   obtain ⟨hodd1, hpos1⟩ := odd_and_pos hr hs ha0 ha1 han (n + 1)
   obtain ⟨-, hposn⟩ := odd_and_pos hr hs ha0 ha1 han n
-  have hsum : a (n + 1) + a n ≠ 0 := by omega
+  have hsum : a (n + 1) + a n ≠ 0 := by lia
   have hdecomp := Nat.ordProj_mul_ordCompl_eq_self (a (n + 1) + a n) 2
   have hcop : Nat.Coprime (ordProj[2] (a (n + 1) + a n)) (a (n + 1)) :=
     Nat.Coprime.pow_left _ ((Nat.coprime_two_left).mpr hodd1)

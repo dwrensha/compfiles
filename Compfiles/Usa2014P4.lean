@@ -99,7 +99,7 @@ lemma mem_Dirs {v : Cell} : v ∈ Dirs ↔ v = (1, 0) ∨ v = (0, 1) ∨ v = (1,
 /-- Adjacent cells are never both shaded: adjacent cells have different colors. -/
 lemma adj_not_both_shaded {c d : Cell} (h : Adj c d) : ¬ (shaded c ∧ shaded d) := by
   unfold Adj at h; rw [mem_offsets] at h; unfold shaded
-  rcases h with h | h | h | h | h | h <;> obtain ⟨h1, h2⟩ := Prod.ext_iff.mp h <;> omega
+  rcases h with h | h | h | h | h | h <;> obtain ⟨h1, h2⟩ := Prod.ext_iff.mp h <;> lia
 
 /-- The cells of a line are distinct. -/
 lemma step_eq_of_eq {d : Cell} (hd : d ∈ Dirs) (p : Cell) {i j : ℕ}
@@ -121,13 +121,13 @@ lemma two_shaded_of_line {d : Cell} (hd : d ∈ Dirs) (p : Cell) :
   have hi₀lt : i₀ < 3 := by
     have h1 : 0 ≤ (-(p.1 - p.2) * (d.1 - d.2)) % 3 := Int.emod_nonneg _ (by norm_num)
     have h2 : (-(p.1 - p.2) * (d.1 - d.2)) % 3 < 3 := Int.emod_lt_of_pos _ (by norm_num)
-    omega
-  refine ⟨i₀, i₀ + 3, by omega, by omega, ?_, ?_, ?_⟩
-  · unfold shaded; rw [e]; rcases hδ with hδ | hδ | hδ <;> rw [hδ] at hi₀z ⊢ <;> omega
-  · unfold shaded; rw [e]; rcases hδ with hδ | hδ | hδ <;> rw [hδ] at hi₀z ⊢ <;> omega
+    lia
+  refine ⟨i₀, i₀ + 3, by lia, by lia, ?_, ?_, ?_⟩
+  · unfold shaded; rw [e]; rcases hδ with hδ | hδ | hδ <;> rw [hδ] at hi₀z ⊢ <;> lia
+  · unfold shaded; rw [e]; rcases hδ with hδ | hδ | hδ <;> rw [hδ] at hi₀z ⊢ <;> lia
   · intro hcontra
     have := step_eq_of_eq hd p hcontra
-    omega
+    lia
 
 /-- Player `B` has a strategy preventing `A` from ever getting six consecutive
 cells in a line: `B` always removes a counter on a shaded cell. -/
@@ -202,16 +202,16 @@ theorem not_ACanWin_six : ¬ ACanWin 6 := by
 lemma winning_of_neg {k : ℕ} {s : Finset Cell} {d : Cell} (hd : d ∈ Dirs) {p : Cell}
     (h : ∀ i : ℕ, i < k → step p (-d) i ∈ s) : Winning k s := by
   rcases k with _ | k
-  · exact ⟨d, hd, p, fun i hi => by omega⟩
+  · exact ⟨d, hd, p, fun i hi => by lia⟩
   · refine ⟨d, hd, step p (-d) k, fun i hi => ?_⟩
     have hneg : (-d : Cell) = (-d.1, -d.2) := rfl
     have e : step (step p (-d) k) d i = step p (-d) (k - i) := by
       rw [hneg, Prod.ext_iff]
       unfold step
-      rw [Nat.cast_sub (by omega : i ≤ k)]
+      rw [Nat.cast_sub (by lia : i ≤ k)]
       exact ⟨by ring, by ring⟩
     rw [e]
-    exact h (k - i) (by omega)
+    exact h (k - i) (by lia)
 
 /-- Generic transport of `AForce` along a map preserving the game structure. -/
 lemma AForce_image {k : ℕ} {φ : Cell → Cell} (hφ : Function.Injective φ)
@@ -264,8 +264,8 @@ lemma rot_injective : Function.Injective rot := by
   unfold rot at h
   rw [Prod.ext_iff] at h
   obtain ⟨h1, h2⟩ := h
-  have : c.2 = d.2 := by omega
-  have : c.1 = d.1 := by omega
+  have : c.2 = d.2 := by lia
+  have : c.1 = d.1 := by lia
   exact Prod.ext ‹_› ‹_›
 
 lemma adj_rot {c d : Cell} : Adj (rot c) (rot d) ↔ Adj c d := by
@@ -326,7 +326,7 @@ lemma transl_injective (t : Cell) : Function.Injective (transl t) := by
   intro c d h
   unfold transl at h
   rw [Prod.ext_iff] at h ⊢
-  omega
+  lia
 
 lemma adj_transl (t : Cell) {c d : Cell} : Adj (transl t c) (transl t d) ↔ Adj c d := by
   have hlin : ((transl t d).1 - (transl t c).1, (transl t d).2 - (transl t c).2)
@@ -356,7 +356,7 @@ lemma mirror_injective : Function.Injective mirror := by
   intro c d h
   unfold mirror at h
   rw [Prod.ext_iff] at h ⊢
-  omega
+  lia
 
 lemma adj_mirror {c d : Cell} : Adj (mirror c) (mirror d) ↔ Adj c d := by
   have hset : offsets.image (fun v : Cell => (-v.1, -v.2)) = offsets := by decide
@@ -372,7 +372,7 @@ lemma adj_mirror {c d : Cell} : Adj (mirror c) (mirror d) ↔ Adj c d := by
     have : w = (d.1 - c.1, d.2 - c.2) := by
       rw [Prod.ext_iff] at hwv ⊢
       simp_all
-      omega
+      lia
     rwa [this] at hw
   · intro h
     rw [← hset]
@@ -922,10 +922,10 @@ lemma midphase : ∀ n : ℕ, ∀ Nx Ny P : Finset Cell,
             simp only [Finset.insert_eq]
             ac_rfl
           rw [e]
-          apply ih (n - 1) (by omega) Nx (insert sy Ny) {x₀} _ hNx
+          apply ih (n - 1) (by lia) Nx (insert sy Ny) {x₀} _ hNx
             (Finset.insert_subset hsy hNy) (Or.inl rfl)
           have hcard : (insert sy Ny).card = Ny.card + 1 := Finset.card_insert_of_notMem hsyNy
-          omega
+          lia
         · -- `B` removes the fresh slot `sy`: `A` completes row 0 and wins.
           apply win_now0 (fun h => h2B (Finset.mem_of_mem_erase h))
             (fun h => h3B (Finset.mem_of_mem_erase h))
@@ -984,10 +984,10 @@ lemma midphase : ∀ n : ℕ, ∀ Nx Ny P : Finset Cell,
               simp only [Finset.insert_eq]
               ac_rfl
             rw [e]
-            apply ih (n - 1) (by omega) Nx (insert sy Ny) {y₀} _ hNx
+            apply ih (n - 1) (by lia) Nx (insert sy Ny) {y₀} _ hNx
               (Finset.insert_subset hsy hNy) (Or.inr rfl)
             have hcard : (insert sy Ny).card = Ny.card + 1 := Finset.card_insert_of_notMem hsyNy
-            omega
+            lia
     · -- #### `x₀` is missing; `A` replaces it.  (Mirror of the previous branch.)
       by_cases hfull : Nx = xSlots
       · -- All of `x₀`'s neighbor slots are filled: saturate `x₀` with `(2, 0)`.
@@ -1099,10 +1099,10 @@ lemma midphase : ∀ n : ℕ, ∀ Nx Ny P : Finset Cell,
             simp only [Finset.insert_eq]
             ac_rfl
           rw [e]
-          apply ih (n - 1) (by omega) (insert sx Nx) Ny {y₀} _
+          apply ih (n - 1) (by lia) (insert sx Nx) Ny {y₀} _
             (Finset.insert_subset hsx hNx) hNy (Or.inr rfl)
           have hcard : (insert sx Nx).card = Nx.card + 1 := Finset.card_insert_of_notMem hsxNx
-          omega
+          lia
         · -- `B` removes the fresh slot `sx`: `A` completes row 0 and wins.
           apply win_now0 (fun h => h2B (Finset.mem_of_mem_erase h))
             (fun h => h3B (Finset.mem_of_mem_erase h))
@@ -1161,10 +1161,10 @@ lemma midphase : ∀ n : ℕ, ∀ Nx Ny P : Finset Cell,
               simp only [Finset.insert_eq]
               ac_rfl
             rw [e]
-            apply ih (n - 1) (by omega) (insert sx Nx) Ny {x₀} _
+            apply ih (n - 1) (by lia) (insert sx Nx) Ny {x₀} _
               (Finset.insert_subset hsx hNx) hNy (Or.inl rfl)
             have hcard : (insert sx Nx).card = Nx.card + 1 := Finset.card_insert_of_notMem hsxNx
-            omega
+            lia
 /-- With counters on two adjacent cells of a line, `A` places the mirror pair
 two spaces down the same line, reaching the midgame invariant. -/
 lemma canonical_pair : AForce 5 ({(0, 0), (1, 0)}) := by
@@ -1285,7 +1285,7 @@ lemma AForce_mono {k l : ℕ} (hkl : k ≤ l) {s : Finset Cell} (h : AForce l s)
   induction h
   case of_win s s' m w =>
     obtain ⟨d, hd, p, hline⟩ := w
-    exact AForce.of_win m ⟨d, hd, p, fun i hi => hline i (by omega)⟩
+    exact AForce.of_win m ⟨d, hd, p, fun i hi => hline i (by lia)⟩
   case of_step s s' m h ih =>
     exact AForce.of_step m ih
 
@@ -1300,7 +1300,7 @@ problem usa2014_p4 : IsLeast {k : ℕ | 0 < k ∧ ¬ ACanWin k} solution := by
     show 6 ≤ k
     by_contra hlt
     push Not at hlt
-    have hwin : ACanWin k := AForce_mono (by omega : k ≤ 5) ACanWin_five
+    have hwin : ACanWin k := AForce_mono (by lia : k ≤ 5) ACanWin_five
     exact hk hwin
 
 end Usa2014P4

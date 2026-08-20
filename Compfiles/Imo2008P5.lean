@@ -144,7 +144,7 @@ lemma even_subsets_card {α : Type} [Fintype α] :
                 Fintype.card (Finset α) := by
       have := @Fintype.card_subtype_compl (Finset α) _ (fun s => Even s.card) _ _
       have := Fintype.card_subtype_le (fun s : Finset α => Even s.card)
-      omega
+      lia
     rw [Fintype.card_finset] at hsum
     have h1 : 2 ^ Fintype.card α = 2 * 2 ^ (Fintype.card α - 1) := by
       cases hn : Fintype.card α with
@@ -244,8 +244,7 @@ lemma claim (n k : ℕ) (hn : 0 < n) (hnk : n ≤ k) (_he : Even (k - n))
       · intro i hi1 hi2
         let i' : Fin n := ⟨i - n, by lia⟩
         have hi' : n + ↑i' = i := Nat.add_sub_of_le hi1
-        rw [show {j : Fin k | ↑(g1 j) = i} = {j | ↑(g1 j) = n + ↑i'} from by
-          ext j; simp [hi'], Nat.card_coe_set_eq, hhigh i']
+        rw [← hi', Nat.card_coe_set_eq, hhigh i']
         exact hsel_even i'
     let hgg : ψ n k ⟨g1, hg1⟩ = f := by
       rcases hg1 with ⟨hg1a, hg1b⟩
@@ -276,7 +275,7 @@ lemma claim (n k : ℕ) (hn : 0 < n) (hnk : n ≤ k) (_he : Even (k - n))
     rw [Nat.sub_add_cancel hnk]
     have h2 : n = ∑ i : Fin n, 1 := by simp
     simp_rw [h2]
-    rw [←Finset.sum_add_distrib]
+    rw [← Finset.sum_add_distrib]
     have h3 : ∀ x ∈ Finset.univ (α := Fin n), c x - 1 + 1 = c x := by
       intro x hx
       exact Nat.sub_add_cancel (hcp x)
@@ -349,7 +348,7 @@ lemma claim (n k : ℕ) (hn : 0 < n) (hnk : n ≤ k) (_he : Even (k - n))
             · intro y
               exact ⟨⟨⟨y.1, hfi_of_high i y.1 y.2⟩, by simp [s, y.2]⟩, Subtype.ext rfl⟩
           have : s.card = Nat.card {j : Fin k | (gfun j).val = n + i} := by
-            rw [Nat.card_eq_fintype_card, ← show Fintype.card {x // x ∈ s} = s.card from by simp]
+            rw [Nat.card_eq_fintype_card, ← Fintype.card_coe]
             exact Fintype.card_of_bijective hbij
           rw [this]; exact hgN2 (n + i) (by lia) (by lia)
         ⟨s, hsEven⟩
@@ -392,9 +391,9 @@ lemma claim (n k : ℕ) (hn : 0 < n) (hnk : n ≤ k) (_he : Even (k - n))
         simpa [hlow] using hpv
   have h2 : Fintype.card S = Fintype.card {g | ψ n k g = f} :=
     Fintype.card_of_bijective h1
-  nth_rewrite 2 [←Nat.card_eq_fintype_card] at h2
+  nth_rewrite 2 [← Nat.card_eq_fintype_card] at h2
   rw [Nat.card_coe_set_eq] at h2
-  rw [←h2, Scard']
+  rw [← h2, Scard']
 
 lemma lemma1 (α : Type) (A B : Set α) (hA : A.Finite) (hB : B.Finite)
     (f : {x // A x} → {x // B x})
@@ -433,7 +432,7 @@ problem imo2008_p5 (n k : ℕ) (hn : 0 < n)
   have h1 := lemma1 (Sequence n k) (NSequence n k) (MSequence n k) hA hB (ψ n k)
               (2 ^ (k - n))
               (claim n k hn hnk he)
-  rw [←h1]
+  rw [← h1]
   push_cast
   rfl
 

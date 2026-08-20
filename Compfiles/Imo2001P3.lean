@@ -98,7 +98,7 @@ lemma card_not_easy_le_210 {α β : Type} [Fintype α] [Fintype β]
       gcongr with i
       rw [sum_const, smul_eq_mul]
       exact mul_le_mul_left (card_not_easy_le_five hcard_α (hA _) (hB _)) _
-    _ = _ := by simp [←hcard_β]
+    _ = _ := by simp [← hcard_β]
 
 snip end
 
@@ -118,9 +118,9 @@ problem imo2001_p3
   have cG := card_not_easy_le_210 hcard_girl hcard_boy B_le_6 B_inter_G
   rw [← card_map ⟨_, Prod.swap_injective⟩] at cG
   have key := (card_union_le _ _).trans (add_le_add cB cG) |>.trans_lt
-    (show _ < #(@univ (Girl × Boy) _) by simp [←hcard_boy, ←hcard_girl])
+    (show _ < #(@univ (Girl × Boy) _) by simp [← hcard_boy, ← hcard_girl])
   obtain ⟨⟨i, j⟩, -, hij⟩ := exists_mem_notMem_of_card_lt_card key
-  simp_rw [mem_union, mem_map, mem_filter, mem_univ, Function.Embedding.coeFn_mk, Prod.exists,
+  simp only [mem_union, mem_map, mem_filter, mem_univ, Function.Embedding.coeFn_mk, Prod.exists,
     Prod.swap_prod_mk, Prod.mk.injEq, existsAndEq, true_and, and_true, not_or, not_exists,
     not_and', not_not, mem_inter, and_imp] at hij
   obtain ⟨p, pG, pB⟩ := not_disjoint_iff.mp (G_inter_B i j)

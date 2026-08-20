@@ -129,7 +129,7 @@ lemma usa2002_p1_generalized
         · obtain ⟨h6, h7⟩ := h4 hfs1
           have hfs2 : f s2 = Color.red := by rwa [hs12] at hfs1
           obtain ⟨h6', h7'⟩ := h4' hfs2
-          rw [←h7] at h7'
+          rw [← h7] at h7'
           have h8 := hf1' _ _ h7'
           simp [hs12, h6, h6', f]
           rw [Finset.subtype_union, Finset.union_comm]
@@ -196,7 +196,7 @@ lemma usa2002_p1_generalized
         · obtain ⟨h6, h7⟩ := h4 hfs1
           have hfs2 : f s2 = Color.blue := by rwa [hs12] at hfs1
           obtain ⟨h6', h7'⟩ := h4' hfs2
-          rw [←h7] at h7'
+          rw [← h7] at h7'
           have h8 := hf1' _ _ h7'
           simp (config := {decide := true}) only [hs12, Finset.mem_union, h6, h6', f]
           rw [Finset.subtype_union, Finset.union_comm]
@@ -244,7 +244,7 @@ lemma usa2002_p1_generalized
           · intro x
             match x with
             | .inl ⟨y, hy⟩ =>
-              have h5 : f y = Color.red := if_pos hy
+              have h5 : f y = Color.red := ite_eq_left hy
               use ⟨y, h5⟩
               simp only [ne_eq, hy, dite_true, b]
             | .inr ⟨y, hy⟩ =>
@@ -271,7 +271,7 @@ lemma usa2002_p1_generalized
                 rw [has] at ha
                 contradiction
               exact Finset.filter_eq_self.mpr h7
-          rw [←Fintype.card_of_bijective hb]
+          rw [← Fintype.card_of_bijective hb]
           exact h5
 
         simp only [Fintype.card_sum, h4, hf2']

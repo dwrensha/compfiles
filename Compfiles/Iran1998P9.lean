@@ -120,9 +120,9 @@ problem iran1998_p9
   have hyyy : y * ((y - 1) / y) = y - 1 := by field_simp
   have hzzz : z * ((z - 1) / z) = z - 1 := by field_simp
 
-  rw [←Real.sqrt_mul hx0 ((x - 1) / x),
-      ←Real.sqrt_mul hy0 ((y - 1) / y),
-      ←Real.sqrt_mul hz0 ((z - 1) / z),
+  rw [← Real.sqrt_mul hx0 ((x - 1) / x),
+      ← Real.sqrt_mul hy0 ((y - 1) / y),
+      ← Real.sqrt_mul hz0 ((z - 1) / z),
       hxxx, hyyy, hzzz] at hinner
 
   rw [hinner] at cauchy_schwarz

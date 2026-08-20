@@ -236,21 +236,21 @@ theorem two_x_add_y (n : ℕ) : 2 * countCol n 0 1 + countCol n 2 2 = 2 ^ n := b
   | zero => rw [x_zero, y_zero]; rfl
   | succ n ih =>
     rw [x_succ, y_succ, pow_succ]
-    omega
+    lia
 
 /-- The key identity: `a_{n+1} + a_n = 2 ^ (n+1)`. -/
 theorem key (n : ℕ) : a (n + 1) + a n = 2 ^ (n + 1) := by
   have h := two_x_add_y n
   unfold a
   rw [x_succ, y_succ, pow_succ]
-  omega
+  lia
 
 snip end
 
 problem usa2013_p2 (n : ℕ) (hn : 4 ≤ n) : a (n - 1) + a n = 2 ^ n := by
   have h := key (n - 1)
-  have e : n - 1 + 1 = n := by omega
+  have e : n - 1 + 1 = n := by lia
   rw [e] at h
-  omega
+  lia
 
 end Usa2013P2

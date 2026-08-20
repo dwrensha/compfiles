@@ -92,25 +92,25 @@ lemma cdist_if (a b : Fin m) :
     cdist a b = if a.val ≤ b.val then b.val - a.val else b.val + m - a.val := by
   show (b.val + m - a.val) % m = _
   split_ifs with h
-  · have e : b.val + m - a.val = (b.val - a.val) + m := by omega
-    rw [e, Nat.add_mod_right, Nat.mod_eq_of_lt (by omega : b.val - a.val < m)]
-  · exact Nat.mod_eq_of_lt (by omega)
+  · have e : b.val + m - a.val = (b.val - a.val) + m := by lia
+    rw [e, Nat.add_mod_right, Nat.mod_eq_of_lt (by lia : b.val - a.val < m)]
+  · exact Nat.mod_eq_of_lt (by lia)
 
 lemma shift_cdist (a b : Fin m) : shift a (cdist a b) = b := by
   apply Fin.ext
   show (a.val + (b.val + m - a.val) % m) % m = b.val
   rcases le_total a.val b.val with h | h
-  · have e : b.val + m - a.val = (b.val - a.val) + m := by omega
-    rw [e, Nat.add_mod_right, Nat.mod_eq_of_lt (by omega : b.val - a.val < m)]
-    have e2 : a.val + (b.val - a.val) = b.val := by omega
+  · have e : b.val + m - a.val = (b.val - a.val) + m := by lia
+    rw [e, Nat.add_mod_right, Nat.mod_eq_of_lt (by lia : b.val - a.val < m)]
+    have e2 : a.val + (b.val - a.val) = b.val := by lia
     rw [e2, Nat.mod_eq_of_lt b.isLt]
   · rcases eq_or_lt_of_le h with hbeq | hlt
-    · have e : b.val + m - a.val = m := by omega
+    · have e : b.val + m - a.val = m := by lia
       rw [e, Nat.mod_self, Nat.add_zero, Nat.mod_eq_of_lt a.isLt, hbeq]
     · have e : (b.val + m - a.val) % m = b.val + m - a.val :=
-        Nat.mod_eq_of_lt (by omega)
+        Nat.mod_eq_of_lt (by lia)
       rw [e]
-      have e2 : a.val + (b.val + m - a.val) = b.val + m := by omega
+      have e2 : a.val + (b.val + m - a.val) = b.val + m := by lia
       rw [e2, Nat.add_mod_right, Nat.mod_eq_of_lt b.isLt]
 
 lemma cdist_left_inj {a b₁ b₂ : Fin m} (h : cdist a b₁ = cdist a b₂) : b₁ = b₂ := by
@@ -119,20 +119,20 @@ lemma cdist_left_inj {a b₁ b₂ : Fin m} (h : cdist a b₁ = cdist a b₂) : b
 lemma cdist_pos {a b : Fin m} (h : a ≠ b) : 0 < cdist a b := by
   rw [cdist_if]
   have hab : a.val ≠ b.val := fun e => h (Fin.ext e)
-  split_ifs with h2 <;> omega
+  split_ifs with h2 <;> lia
 
 lemma cdist_add_of_lt {a b e : Fin m} (h : cdist a b < cdist a e) :
     cdist a e = cdist a b + cdist b e := by
   simp only [cdist_if] at h ⊢
   have ha := a.isLt; have hb := b.isLt; have he := e.isLt
-  split_ifs at h ⊢ <;> omega
+  split_ifs at h ⊢ <;> lia
 
 lemma arc_rotate {a b e : Fin m} (hab : a ≠ b) (h : cdist a b < cdist a e) :
     cdist b e < cdist b a := by
   simp only [cdist_if] at h ⊢
   have ha := a.isLt; have hb := b.isLt; have he := e.isLt
   have hab' : a.val ≠ b.val := fun e' => hab (Fin.ext e')
-  split_ifs at h ⊢ <;> omega
+  split_ifs at h ⊢ <;> lia
 
 /-- Key fact for the swapping argument: if `p` lies on the open counterclockwise
 arc from `y` to `x`, then `wrap p y` and `wrap p x` differ by an amount that does
@@ -145,7 +145,7 @@ lemma wrap_eq_of_mem_arc {y x p : Fin m} (hpy : p ≠ y) (h : cdist y p < cdist 
   have e1 : wrap p y = if y.val < p.val then 1 else 0 := rfl
   have e2 : wrap p x = if x.val < p.val then 1 else 0 := rfl
   rw [e1, e2]
-  split_ifs at h hp0 ⊢ <;> omega
+  split_ifs at h hp0 ⊢ <;> lia
 
 end GeometryLemmas
 
@@ -159,7 +159,7 @@ lemma mem_avail {used : Finset (Fin m)} {b : Fin m} :
 
 lemma nb_eq_choose {used : Finset (Fin m)} {r : Fin m} (h : (avail c used).Nonempty) :
     nb c used r = Classical.choose (Finset.exists_min_image (avail c used) (cdist r) h) :=
-  dif_pos h
+  dite_eq_left h
 
 lemma nb_mem {used : Finset (Fin m)} {r : Fin m} (h : (avail c used).Nonempty) :
     nb c used r ∈ avail c used := by
@@ -200,15 +200,15 @@ lemma wraps_swap_pair {r r' : Fin m} (hr : c r = true) (hr' : c r' = true)
       wrap r' (nb c used r') + wrap r (nb c (insert (nb c used r') used) r) ∧
     insert (nb c (insert (nb c used r) used) r') (insert (nb c used r) used) =
       insert (nb c (insert (nb c used r') used) r) (insert (nb c used r') used) := by
-  have hne : (avail c used).Nonempty := Finset.card_pos.mp (by omega)
+  have hne : (avail c used).Nonempty := Finset.card_pos.mp (by lia)
   have hb1 : nb c used r ∈ avail c used := nb_mem c hne
   have hd1 : nb c used r' ∈ avail c used := nb_mem c hne
   have hne2 : (avail c (insert (nb c used r) used)).Nonempty := by
     rw [← Finset.card_pos, card_avail_insert c hb1]
-    omega
+    lia
   have hne2' : (avail c (insert (nb c used r') used)).Nonempty := by
     rw [← Finset.card_pos, card_avail_insert c hd1]
-    omega
+    lia
   have hb2 : nb c (insert (nb c used r) used) r' ∈ avail c (insert (nb c used r) used) :=
     nb_mem c hne2
   -- the nearest blue point to `r` is strictly closer than any other available one
@@ -259,7 +259,7 @@ lemma wraps_swap_pair {r r' : Fin m} (hr : c r = true) (hr' : c r' = true)
         cdist_add_of_lt (hlt_rq q hqmem hqne)
       have hmin : cdist r' (nb c (insert (nb c used r) used) r') ≤ cdist r' q :=
         nb_min c hne2 hq
-      omega
+      lia
     have hd2_eq : nb c (insert (nb c used r') used) r =
         nb c (insert (nb c used r) used) r' := by
       rw [← hcase]
@@ -298,7 +298,7 @@ lemma wraps_swap_pair {r r' : Fin m} (hr : c r = true) (hr' : c r' = true)
     refine ⟨?_, rfl⟩
     have w1 := wrap_eq_of_mem_arc hr_ne_b2 harc2
     have w2 := wrap_eq_of_mem_arc hr'_ne_b2 harc2'
-    omega
+    lia
   · -- Case B: the two red points have different nearest blue points; each keeps
     -- its own blue point regardless of the order.
     have hd1mem : nb c used r' ∈ avail c (insert (nb c used r) used) := by
@@ -336,13 +336,13 @@ lemma wraps_perm {l₁ l₂ : List (Fin m)} (h : List.Perm l₁ l₂) :
   · intro a x y hp ih hred used hcard
     have hpos : 0 < (avail c used).card := by
       have hlen : (a :: x).length = x.length + 1 := rfl
-      omega
+      lia
     have hb : nb c used a ∈ avail c used := nb_mem c (Finset.card_pos.mp hpos)
     rw [wraps_cons, wraps_cons]
     have hcard' : x.length ≤ (avail c (insert (nb c used a) used)).card := by
       rw [card_avail_insert c hb]
       have hlen : (a :: x).length = x.length + 1 := rfl
-      omega
+      lia
     rw [ih (fun r hr => hred r (List.mem_cons_of_mem a hr))
       (insert (nb c used a) used) hcard']
   · intro a b l hred used hcard
@@ -350,11 +350,11 @@ lemma wraps_perm {l₁ l₂ : List (Fin m)} (h : List.Perm l₁ l₂) :
     have hb : c b = true := hred b (by simp)
     have h2 : 2 ≤ (avail c used).card := by
       have hlen : (b :: a :: l).length = l.length + 2 := rfl
-      omega
+      lia
     obtain ⟨hsum, hset⟩ := wraps_swap_pair c hb ha h2
     simp only [wraps_cons]
     rw [hset]
-    omega
+    lia
   · intro x y z hp1 hp2 ih1 ih2 hred used hcard
     exact (ih1 hred used hcard).trans
       (ih2 (fun r hr => hred r ((hp1.mem_iff).mpr hr)) used (hp1.length_eq ▸ hcard))
@@ -410,7 +410,7 @@ problem usa2017_p4 (n : ℕ) (_hn : 0 < n) (c : Fin (2 * n) → Bool)
       rw [h, Finset.card_filter_add_card_filter_not (s := Finset.univ)
         (p := fun i => c i = true)]
       simp
-    omega
+    lia
   exact wraps_perm c hperm hred₁ ∅ (by rw [hblue, hlen₁])
 
 end Usa2017P4

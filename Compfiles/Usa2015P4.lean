@@ -131,7 +131,7 @@ theorem equivPilings_of_signature {n : ℕ} :
     | cons s S' =>
       have hk' : S'.card < k := by
         have hc : (s ::ₘ S').card = S'.card + 1 := Multiset.card_cons s S'
-        omega
+        lia
       -- Find a stone `t` of `T` lying in the same row as `s`.
       have hsx : s.1 ∈ T.map Prod.fst := by
         rw [← hfst]
@@ -336,9 +336,9 @@ problem usa2015_p4 (m n : ℕ) (hm : 1 ≤ m) (hn : 1 ≤ n) :
     Nat.card (Quotient (pilingSetoid m n)) = solution m n := by
   rw [Nat.card_congr (quotientEquivSignatures m n), Nat.card_prod,
     Nat.card_eq_fintype_card, Sym.card_sym_eq_choose, Fintype.card_fin]
-  have hle : m ≤ n + m - 1 := by omega
-  have hsub : n + m - 1 - m = n - 1 := by omega
-  rw [← Nat.choose_symm hle, hsub, show n + m - 1 = m + n - 1 by omega]
+  have hle : m ≤ n + m - 1 := by lia
+  have hsub : n + m - 1 - m = n - 1 := by lia
+  rw [← Nat.choose_symm hle, hsub, show n + m - 1 = m + n - 1 by lia]
   rw [show solution m n = ((m + n - 1).choose (n - 1)) ^ 2 from rfl, pow_two]
 
 end Usa2015P4

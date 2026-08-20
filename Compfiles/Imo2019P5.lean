@@ -58,7 +58,7 @@ coin from the left, where `k` is the number of heads. -/
 def flipIx {n : ℕ} (c : Fin n → Bool) (h : numHeads c ≠ 0) : Fin n :=
   ⟨numHeads c - 1, by
     have h1 : numHeads c ≤ n := (card_le_univ _).trans (by simp)
-    omega⟩
+    lia⟩
 
 /-- One step of Harry's process: if there are `k > 0` heads, flip the `k`-th
 coin from the left; otherwise (all coins show tails) do nothing. -/
@@ -163,7 +163,7 @@ theorem meas_eq_zero_iff {n : ℕ} (c : Fin n → Bool) : meas c = 0 ↔ numHead
     have h2 : (numHeads c : ℤ) = 0 := by
       have hnn : (0 : ℤ) ≤ (numHeads c : ℤ) := Int.natCast_nonneg _
       linarith [h, h1]
-    omega
+    lia
   · intro h
     have hf : ∀ i : Fin n, c i = false := by
       intro i
@@ -209,8 +209,8 @@ theorem headsZ_update {n : ℕ} (c : Fin n → Bool) (p : Fin n) :
   rw [h1, sum_update_of_mem (mem_univ p), sdiff_singleton_eq_erase,
     ← add_sum_erase univ _ (mem_univ p)]
   by_cases hc : c p
-  · simp only [if_pos hc]; ring
-  · simp only [if_neg hc]; ring
+  · simp only [ite_eq_left hc]; ring
+  · simp only [ite_eq_right hc]; ring
 
 /-- How the weighted sum changes when coin `p` is flipped. -/
 theorem weightedZ_update {n : ℕ} (c : Fin n → Bool) (p : Fin n) :
@@ -229,21 +229,21 @@ theorem weightedZ_update {n : ℕ} (c : Fin n → Bool) (p : Fin n) :
   rw [h1, sum_update_of_mem (mem_univ p), sdiff_singleton_eq_erase,
     ← add_sum_erase univ _ (mem_univ p)]
   by_cases hc : c p
-  · simp only [if_pos hc]; ring
-  · simp only [if_neg hc]; ring
+  · simp only [ite_eq_left hc]; ring
+  · simp only [ite_eq_right hc]; ring
 
 /-- The measure drops by exactly one at each step. -/
 theorem step_meas {n : ℕ} (c : Fin n → Bool) (h : numHeads c ≠ 0) :
     meas (step c) = meas c - 1 := by
   have hstep : step c = Function.update c (flipIx c h) (!c (flipIx c h)) := by
     unfold step
-    rw [dif_neg h]
+    rw [dite_eq_right h]
   rw [hstep]
   set p := flipIx c h with hp
   have hp2 : (p : ℕ) + 1 = numHeads c := by
     have h1 : 0 < numHeads c := Nat.pos_of_ne_zero h
     have hpv : (p : ℕ) = numHeads c - 1 := by rw [hp]; rfl
-    omega
+    lia
   have hpv : ((p : ℕ) + 1 : ℤ) = ∑ i : Fin n, (if c i then (1 : ℤ) else 0) := by
     rw [← numHeads_cast c]
     exact_mod_cast hp2
@@ -359,7 +359,7 @@ theorem card_filter_true {n : ℕ} (hn : 0 < n) (i : Fin n) :
     rw [h, card_univ, Fintype.card_fun, Fintype.card_bool, Fintype.card_fin]
   have h2n : 2 ^ n = 2 * 2 ^ (n - 1) := by
     rcases n with _ | n'
-    · omega
+    · lia
     · rw [Nat.add_one_sub_one, pow_succ]
       exact mul_comm _ _
   have hkey : 2 * (univ.filter fun c : Fin n → Bool ↦ c i = true).card = 2 ^ n := by
@@ -426,7 +426,7 @@ theorem card_filter_pair {n : ℕ} (hn : 0 < n) {i j : Fin n} (hij : i ≠ j) :
     rw [← Fintype.one_lt_card_iff_nontrivial] at hnont
     rwa [Fintype.card_fin] at hnont
   have h3 : 2 ^ (n - 1) = 2 * 2 ^ (n - 2) := by
-    have h : n - 1 = n - 2 + 1 := by omega
+    have h : n - 1 = n - 2 + 1 := by lia
     rw [h, pow_succ]
     exact mul_comm _ _
   rw [h3] at h2
@@ -558,23 +558,23 @@ theorem sum_four_L {n : ℕ} (hn : 0 < n) :
           - (n * (2 : ℤ) ^ (n - 1) + n * ((n - 1 : ℕ) : ℤ) * (2 : ℤ) ^ (n - 2)) := by
           rw [hsumW, hsumH]
   rcases lt_or_ge n 2 with hlt | hge
-  · have hn1 : n = 1 := by omega
+  · have hn1 : n = 1 := by lia
     subst hn1
     have h2T' : 2 * T = 2 := by norm_num [h2T]
     rw [hsumL]
     norm_num
     linarith [h2T']
   · have hq1 : (2 : ℤ) ^ (n - 1) = 2 * (2 : ℤ) ^ (n - 2) := by
-      have h : n - 1 = n - 2 + 1 := by omega
+      have h : n - 1 = n - 2 + 1 := by lia
       rw [h, pow_succ]
       exact mul_comm _ _
     have hq2 : (2 : ℤ) ^ n = 4 * (2 : ℤ) ^ (n - 2) := by
-      have h : n = n - 2 + 2 := by omega
+      have h : n = n - 2 + 2 := by lia
       conv_lhs => rw [h]
       rw [pow_add]
       ring
     have hcast : ((n - 1 : ℕ) : ℤ) = (n : ℤ) - 1 := by
-      rw [Nat.cast_sub (by omega : 1 ≤ n)]
+      rw [Nat.cast_sub (by lia : 1 ≤ n)]
       simp
     rw [hsumL, hq1, hq2, hcast]
     linear_combination 8 * (2 : ℤ) ^ (n - 2) * h2T

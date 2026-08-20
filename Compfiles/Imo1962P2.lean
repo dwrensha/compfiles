@@ -40,7 +40,7 @@ lemma lemma2 {x : ℝ} (hx4 : 0 ≤ 3 - x) (hx5 : 0 ≤ x + 1) :
    _ = (3 - x) - 2 * Real.sqrt (3 - x) * Real.sqrt (x + 1)
        + (x + 1) := by rw [Real.sq_sqrt hx4, add_left_cancel_iff, Real.sq_sqrt hx5]
    _ = 4 - 2 * (Real.sqrt (3 - x) * Real.sqrt (x + 1)) := by ring
-   _ = 4 - 2 * Real.sqrt ((3 - x) * (x + 1)) := by rw[←Real.sqrt_mul hx4]
+   _ = 4 - 2 * Real.sqrt ((3 - x) * (x + 1)) := by rw[← Real.sqrt_mul hx4]
 
 snip end
 

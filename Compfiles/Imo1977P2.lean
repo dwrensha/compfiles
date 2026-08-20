@@ -12,7 +12,7 @@ public import ProblemExtraction
 
 @[expose] public section
 
-problem_file
+problem_file { tags := [.Combinatorics] }
 
 /-!
 # International Mathematical Olympiad 1977, Problem 2
@@ -56,7 +56,7 @@ snip end
 determine max_num_terms : ℕ := 16
 
 problem imo1977_p2 :
-    Maximal (λn ↦ ∃ s : Fin n → ℝ, ∀ i0, (∀ h7, sum_successive_terms s i0 7 h7 < 0) ∧ (∀ h11, sum_successive_terms s i0 11 h11 > 0)) max_num_terms := by
+    Maximal (λn ↦ ∃ s : Fin n → ℝ, ∀ i0, (∀ h7, sum_successive_terms s i0 7 h7 < 0) ∧ (∀ h11, 0 < sum_successive_terms s i0 11 h11)) max_num_terms := by
   rw [maximal_iff_forall_gt]
   and_intros
   · use example_16
@@ -64,13 +64,13 @@ problem imo1977_p2 :
     and_intros <;> {
       intro _
       unfold example_16
-      rw [<-sum_successive_terms_intCast]
-      simp only [gt_iff_lt, Int.cast_pos, Int.cast_lt_zero]
+      rw [← sum_successive_terms_intCast]
+      simp only [Int.cast_pos, Int.cast_lt_zero]
       decide +revert
     }
   · intro n ngt
     have := NeZero.of_gt ngt
-    simp only [Nat.add_one_sub_one, gt_iff_lt, not_exists, not_forall, not_and, not_lt]
+    simp only [Nat.add_one_sub_one, not_exists, not_forall, not_and, not_lt]
     intro x
     by_contra! c
 
@@ -89,11 +89,10 @@ problem imo1977_p2 :
         simp <;> grind only [= Fin.val_castLT, = Lean.Grind.toInt_fin, = Finset.mem_Icc]
       }
 
-    have cpos : ∀ j, (A *ᵥ 1) j > 0 := by
+    have cpos : ∀ j, 0 < (A *ᵥ 1) j := by
       intro j
       rw [Matrix.mulVec_eq_sum]
-      simp only [Finset.sum_apply, Pi.smul_apply, Matrix.transpose_apply, Pi.one_apply,
-        gt_iff_lt]
+      simp only [Finset.sum_apply, Pi.smul_apply, Matrix.transpose_apply, Pi.one_apply]
       unfold A
       have := (c (j.castLT (by lia))).right (by rw [Fin.val_castLT]; lia)
       unfold sum_successive_terms at this
@@ -107,7 +106,7 @@ problem imo1977_p2 :
       apply Fintype.sum_neg
       exact lt_of_strongLT rneg
     have : 0 < (1 ᵥ* A) ⬝ᵥ 1 := by
-      rw [<-Matrix.dotProduct_mulVec, one_dotProduct]
+      rw [← Matrix.dotProduct_mulVec, one_dotProduct]
       apply Fintype.sum_pos
       exact lt_of_strongLT cpos
     linarith

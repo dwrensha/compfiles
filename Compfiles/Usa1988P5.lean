@@ -57,8 +57,8 @@ lemma coeff_comp_neg_X (p : ℚ[X]) (n : ℕ) :
       rw [e, ← mul_assoc, ← map_mul, coeff_C_mul_X_pow, coeff_C_mul_X_pow]
       by_cases h : k = n
       · subst h
-        rw [if_pos rfl, if_pos rfl, mul_comm]
-      · rw [if_neg (fun e => h e.symm), if_neg (fun e => h e.symm), mul_zero]
+        rw [ite_eq_left rfl, ite_eq_left rfl, mul_comm]
+      · rw [ite_eq_right (fun e => h e.symm), ite_eq_right (fun e => h e.symm), mul_zero]
 
 lemma coeff_comp_X_sq (q : ℚ[X]) (j : ℕ) :
     (q.comp (X ^ 2)).coeff (2 * j) = q.coeff j := by
@@ -69,9 +69,9 @@ lemma coeff_comp_X_sq (q : ℚ[X]) (j : ℕ) :
         coeff_C_mul_X_pow, coeff_C_mul_X_pow]
       by_cases h : k = j
       · subst h
-        rw [if_pos rfl, if_pos rfl]
-      · have h2 : ¬ 2 * k = 2 * j := by omega
-        rw [if_neg (fun e => h2 e.symm), if_neg (fun e => h e.symm)]
+        rw [ite_eq_left rfl, ite_eq_left rfl]
+      · have h2 : ¬ 2 * k = 2 * j := by lia
+        rw [ite_eq_right (fun e => h2 e.symm), ite_eq_right (fun e => h e.symm)]
 
 /-- Binomial expansion of the coefficients of `(1 - X^n)^a`. -/
 lemma coeff_one_sub_pow (n a k : ℕ) :
@@ -90,13 +90,13 @@ lemma coeff_one_sub_pow (n a k : ℕ) :
     show ((a.choose j : ℚ[X])) = C ((a.choose j : ℚ)) by simp, ← map_mul,
     coeff_C_mul_X_pow]
   by_cases h : k = j * n
-  · rw [if_pos h, if_pos h.symm, mul_comm]
-  · rw [if_neg h, if_neg (fun e => h e.symm)]
+  · rw [ite_eq_left h, ite_eq_left h.symm, mul_comm]
+  · rw [ite_eq_right h, ite_eq_right (fun e => h e.symm)]
 
 lemma coeff_zero_factor {n a : ℕ} (hn : 1 ≤ n) :
     ((1 - X ^ n) ^ a : ℚ[X]).coeff 0 = 1 := by
   rw [coeff_zero_eq_eval_zero, eval_pow, eval_sub, eval_one, eval_pow, eval_X,
-    zero_pow (by omega : n ≠ 0)]
+    zero_pow (by lia : n ≠ 0)]
   simp
 
 lemma coeff_one_factor {n a : ℕ} (hn : 2 ≤ n) :
@@ -109,8 +109,8 @@ lemma coeff_one_factor {n a : ℕ} (hn : 2 ≤ n) :
     rcases Nat.eq_zero_or_pos j with rfl | hj
     · simp at h
     · have := Nat.mul_le_mul hj hn
-      omega
-  · rw [if_neg h]
+      lia
+  · rw [ite_eq_right h]
 
 lemma coeff_two_factor {n a : ℕ} (hn : 3 ≤ n) :
     ((1 - X ^ n) ^ a : ℚ[X]).coeff 2 = 0 := by
@@ -122,8 +122,8 @@ lemma coeff_two_factor {n a : ℕ} (hn : 3 ≤ n) :
     rcases Nat.eq_zero_or_pos j with rfl | hj
     · simp at h
     · have := Nat.mul_le_mul hj hn
-      omega
-  · rw [if_neg h]
+      lia
+  · rw [ite_eq_right h]
 
 lemma coeff_zero_one_sub_X (a : ℕ) : ((1 - X) ^ a : ℚ[X]).coeff 0 = 1 := by
   rw [show (1 - X : ℚ[X]) = 1 - X ^ (1:ℕ) by simp]
@@ -134,29 +134,29 @@ lemma coeff_one_one_sub_X (a : ℕ) : ((1 - X) ^ a : ℚ[X]).coeff 1 = -(a : ℚ
   rcases Nat.eq_zero_or_pos a with rfl | ha
   · simp
   · rw [Finset.sum_eq_single 1]
-    · rw [if_pos rfl, pow_one, Nat.choose_one_right, neg_one_mul]
+    · rw [ite_eq_left rfl, pow_one, Nat.choose_one_right, neg_one_mul]
     · intro j _ hj1
-      rw [if_neg (by rw [mul_one]; exact hj1)]
+      rw [ite_eq_right (by rw [mul_one]; exact hj1)]
     · intro h
       rw [Finset.mem_range] at h
-      omega
+      lia
 
 lemma coeff_two_one_sub_X (a : ℕ) :
     ((1 - X) ^ a : ℚ[X]).coeff 2 = (a.choose 2 : ℚ) := by
   rw [show (1 - X : ℚ[X]) = 1 - X ^ (1:ℕ) by simp, coeff_one_sub_pow 1 a 2]
   by_cases ha : 2 ≤ a
   · rw [Finset.sum_eq_single 2]
-    · rw [if_pos rfl, Even.neg_one_pow even_two, one_mul]
+    · rw [ite_eq_left rfl, Even.neg_one_pow even_two, one_mul]
     · intro j _ hj2
-      rw [if_neg (by rw [mul_one]; exact hj2)]
+      rw [ite_eq_right (by rw [mul_one]; exact hj2)]
     · intro h
       rw [Finset.mem_range] at h
-      omega
-  · rw [Nat.choose_eq_zero_of_lt (show a < 2 by omega), Nat.cast_zero]
+      lia
+  · rw [Nat.choose_eq_zero_of_lt (show a < 2 by lia), Nat.cast_zero]
     apply Finset.sum_eq_zero
     intro j hj
     rw [Finset.mem_range] at hj
-    rw [if_neg (by rw [mul_one]; omega)]
+    rw [ite_eq_right (by rw [mul_one]; lia)]
 
 lemma coeff_two_one_sub_X_sq (a : ℕ) :
     ((1 - X ^ 2) ^ a : ℚ[X]).coeff 2 = -(a : ℚ) := by
@@ -164,12 +164,12 @@ lemma coeff_two_one_sub_X_sq (a : ℕ) :
   rcases Nat.eq_zero_or_pos a with rfl | ha
   · simp
   · rw [Finset.sum_eq_single 1]
-    · rw [if_pos rfl, pow_one, Nat.choose_one_right, neg_one_mul]
+    · rw [ite_eq_left rfl, pow_one, Nat.choose_one_right, neg_one_mul]
     · intro j _ hj1
-      rw [if_neg (by omega : ¬ j * 2 = 2)]
+      rw [ite_eq_right (by lia : ¬ j * 2 = 2)]
     · intro h
       rw [Finset.mem_range] at h
-      omega
+      lia
 
 lemma coeff_mul_two (f g : ℚ[X]) :
     (f * g).coeff 2 =
@@ -233,7 +233,7 @@ lemma coeff_two_prod (s : Finset ℕ) (f : ℕ → ℚ[X])
 lemma nextA_support {a : ℕ → ℕ} (ha : ∀ i, 32 < i → a i = 0) {i : ℕ}
     (hi : 32 < i) : nextA a i = 0 := by
   have h1 : a i = 0 := ha i hi
-  have h2 : a (2 * i) = 0 := ha (2 * i) (by omega)
+  have h2 : a (2 * i) = 0 := ha (2 * i) (by lia)
   simp [nextA, h1, h2]
 
 lemma nextA_even (a : ℕ → ℕ) {j : ℕ} (hj : ¬ Odd j) :
@@ -288,15 +288,15 @@ lemma prod_double {a : ℕ → ℕ} (ha : ∀ i, 32 < i → a i = 0) :
     · intro j hj
       rw [Finset.mem_Icc] at hj
       rw [Finset.mem_filter, Finset.mem_Icc]
-      exact ⟨⟨by omega, by omega⟩, Nat.not_odd_iff_even.mpr ⟨j, two_mul j⟩⟩
+      exact ⟨⟨by lia, by lia⟩, Nat.not_odd_iff_even.mpr ⟨j, two_mul j⟩⟩
     · intro j1 _ j2 _ h
-      omega
+      lia
     · intro i hi
       rw [Finset.mem_filter, Finset.mem_Icc] at hi
       obtain ⟨⟨h1, h32⟩, hev⟩ := hi
       rw [Nat.not_odd_iff_even] at hev
       obtain ⟨r, hr⟩ := hev
-      exact ⟨r, by rw [Finset.mem_Icc]; omega, by omega⟩
+      exact ⟨r, by rw [Finset.mem_Icc]; lia, by lia⟩
     · intro j _
       rw [← pow_mul X 2 j]
   rw [← Finset.prod_filter_mul_prod_filter_not (Finset.Icc 1 32) (fun i => Odd i)
@@ -310,7 +310,7 @@ lemma prod_double {a : ℕ → ℕ} (ha : ∀ i, 32 < i → a i = 0) :
     apply Finset.prod_congr rfl
     intro j hj
     rw [Finset.mem_filter] at hj
-    rw [nextA, if_pos hj.2, pow_add]
+    rw [nextA, ite_eq_left hj.2, pow_add]
   have hRe : (∏ j ∈ (Finset.Icc 1 32).filter (fun j => ¬ Odd j),
         (1 - ((X : ℚ[X]) ^ 2) ^ j) ^ nextA a j)
       = ∏ j ∈ (Finset.Icc 1 32).filter (fun j => ¬ Odd j),
@@ -318,16 +318,16 @@ lemma prod_double {a : ℕ → ℕ} (ha : ∀ i, 32 < i → a i = 0) :
     apply Finset.prod_congr rfl
     intro j hj
     rw [Finset.mem_filter] at hj
-    rw [nextA, if_neg hj.2, zero_add]
+    rw [nextA, ite_eq_right hj.2, zero_add]
   have hRest : (∏ j ∈ Finset.Icc 1 16, (1 - ((X : ℚ[X]) ^ 2) ^ j) ^ (2 * a (2 * j)))
       = ∏ j ∈ Finset.Icc 1 32, (1 - ((X : ℚ[X]) ^ 2) ^ j) ^ (2 * a (2 * j)) := by
     apply Finset.prod_subset
     · intro j hj
       rw [Finset.mem_Icc] at hj ⊢
-      omega
+      lia
     · intro j hj32 hj16
       rw [Finset.mem_Icc] at hj32 hj16
-      have hz : a (2 * j) = 0 := ha (2 * j) (by omega)
+      have hz : a (2 * j) = 0 := ha (2 * j) (by lia)
       rw [hz, mul_zero, pow_zero]
   rw [← Finset.prod_filter_mul_prod_filter_not (Finset.Icc 1 32) (fun j => Odd j)
       (fun j => (1 - ((X : ℚ[X]) ^ 2) ^ j) ^ nextA a j), hRo, hRe, hRest,
@@ -364,12 +364,12 @@ lemma good_transport {p q : ℚ[X]} {c : ℚ} {m : ℕ} (hm : 2 ≤ m)
     rw [hpc (2 * j - i)]
     rcases eq_or_ne i 0 with rfl | hi0
     · simp only [Nat.sub_zero]
-      rw [hz (2 * j) (by omega) (by omega)]
+      rw [hz (2 * j) (by lia) (by lia)]
       simp
     · rcases eq_or_ne i 1 with rfl | hi1
-      · rw [hz (2 * j - 1) (by omega) (by omega)]
+      · rw [hz (2 * j - 1) (by lia) (by lia)]
         simp
-      · rw [hz i (by omega) (by omega)]
+      · rw [hz i (by lia) (by lia)]
         simp
 
 /-- Reading off the two lowest coefficients of a product `∏ (1 - X^i)^(b i)`:
@@ -379,7 +379,7 @@ lemma extract {b : ℕ → ℕ} (h1 : (prodForm b).coeff 1 = -65536)
     (h2 : (prodForm b).coeff 2 = 0) :
     b 1 = 65536 ∧ b 2 = (65536).choose 2 := by
   unfold prodForm at h1 h2
-  have hs1 : (1 : ℕ) ∈ Finset.Icc 1 32 := by rw [Finset.mem_Icc]; omega
+  have hs1 : (1 : ℕ) ∈ Finset.Icc 1 32 := by rw [Finset.mem_Icc]; lia
   rw [← Finset.mul_prod_erase (Finset.Icc 1 32) (fun i => (1 - X ^ i : ℚ[X]) ^ b i)
     hs1] at h1 h2
   rw [pow_one] at h1 h2
@@ -389,17 +389,17 @@ lemma extract {b : ℕ → ℕ} (h1 : (prodForm b).coeff 1 = -65536)
     intro i hi
     apply coeff_zero_factor
     rw [Finset.mem_erase, Finset.mem_Icc] at hi
-    omega
+    lia
   have hR11 : R1.coeff 1 = 0 := by
     apply coeff_one_prod
     · intro i hi
       apply coeff_zero_factor
       rw [Finset.mem_erase, Finset.mem_Icc] at hi
-      omega
+      lia
     · intro i hi
       apply coeff_one_factor
       rw [Finset.mem_erase, Finset.mem_Icc] at hi
-      omega
+      lia
   rw [Polynomial.mul_coeff_one, hR10, hR11, coeff_one_one_sub_X,
     coeff_zero_one_sub_X] at h1
   have hb1 : b 1 = 65536 := by
@@ -407,7 +407,7 @@ lemma extract {b : ℕ → ℕ} (h1 : (prodForm b).coeff 1 = -65536)
     exact_mod_cast h1
   have hs2 : (2 : ℕ) ∈ (Finset.Icc 1 32).erase 1 := by
     rw [Finset.mem_erase, Finset.mem_Icc]
-    omega
+    lia
   have hR1eq : R1 = (1 - X ^ (2:ℕ) : ℚ[X]) ^ b 2
       * ∏ x ∈ ((Finset.Icc 1 32).erase 1).erase 2, (1 - X ^ x) ^ b x := by
     rw [hR1def, ← Finset.mul_prod_erase _ (fun x => (1 - X ^ x : ℚ[X]) ^ b x) hs2]
@@ -418,35 +418,35 @@ lemma extract {b : ℕ → ℕ} (h1 : (prodForm b).coeff 1 = -65536)
     intro i hi
     apply coeff_zero_factor
     rw [Finset.mem_erase, Finset.mem_erase, Finset.mem_Icc] at hi
-    omega
+    lia
   have hR21 : R2.coeff 1 = 0 := by
     apply coeff_one_prod
     · intro i hi
       apply coeff_zero_factor
       rw [Finset.mem_erase, Finset.mem_erase, Finset.mem_Icc] at hi
-      omega
+      lia
     · intro i hi
       apply coeff_one_factor
       rw [Finset.mem_erase, Finset.mem_erase, Finset.mem_Icc] at hi
-      omega
+      lia
   have hR22 : R2.coeff 2 = 0 := by
     apply coeff_two_prod
     · intro i hi
       apply coeff_zero_factor
       rw [Finset.mem_erase, Finset.mem_erase, Finset.mem_Icc] at hi
-      omega
+      lia
     · intro i hi
       apply coeff_one_factor
       rw [Finset.mem_erase, Finset.mem_erase, Finset.mem_Icc] at hi
-      omega
+      lia
     · intro i hi
       apply coeff_two_factor
       rw [Finset.mem_erase, Finset.mem_erase, Finset.mem_Icc] at hi
-      omega
+      lia
   have hR12 : R1.coeff 2 = -(b 2 : ℚ) := by
     rw [hR1eq, coeff_mul_two, hR20, hR21, hR22, coeff_two_one_sub_X_sq,
-      coeff_zero_factor (show (1:ℕ) ≤ 2 by omega),
-      coeff_one_factor (show (2:ℕ) ≤ 2 by omega)]
+      coeff_zero_factor (show (1:ℕ) ≤ 2 by lia),
+      coeff_one_factor (show (2:ℕ) ≤ 2 by lia)]
     simp
   rw [coeff_mul_two, hR11, hR10, coeff_two_one_sub_X, coeff_zero_one_sub_X,
     coeff_one_one_sub_X] at h2
@@ -472,19 +472,19 @@ problem usa1988_p5 (a : ℕ → ℕ)
   have hprod : prodForm b = prodForm a := by
     apply Finset.prod_congr rfl
     intro i hi
-    rw [show b i = a i from if_pos hi]
+    rw [show b i = a i from ite_eq_left hi]
   have ha : ∀ i, 32 < i → b i = 0 := by
     intro i hi
-    have hni : i ∉ Finset.Icc 1 32 := by rw [Finset.mem_Icc]; omega
-    exact if_neg hni
-  have hb32 : b 32 = a 32 := if_pos (by rw [Finset.mem_Icc]; omega)
+    have hni : i ∉ Finset.Icc 1 32 := by rw [Finset.mem_Icc]; lia
+    exact ite_eq_right hni
+  have hb32 : b 32 = a 32 := ite_eq_left (by rw [Finset.mem_Icc]; lia)
   rw [← hprod] at h1 hz
   have h0 : (prodForm b).coeff 0 = 1 := by
     apply coeff_zero_prod
     intro i hi
     apply coeff_zero_factor
     rw [Finset.mem_Icc] at hi
-    omega
+    lia
   have g0 : Good (prodForm b) (-2) 32 := ⟨h0, h1, hz⟩
   -- Four doubling steps: `p(x) p(-x)`, each time squaring the linear
   -- coefficient and halving the number of vanishing coefficients.
@@ -513,7 +513,7 @@ problem usa1988_p5 (a : ℕ → ℕ)
     rw [← chain]
     exact hb2
   rw [Nat.choose_two_right] at hfin
-  have hanswer : b 32 = 2 ^ 27 - 2 ^ 11 := by omega
+  have hanswer : b 32 = 2 ^ 27 - 2 ^ 11 := by lia
   rw [hb32] at hanswer
   exact hanswer
 

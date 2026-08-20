@@ -64,7 +64,7 @@ lemma lt_of_dvd_factorial_sub {d t : ℕ} {c : ℤ} (h : (d : ℤ) ∣ (t ! : �
   by_contra htd
   replace htd : d ≤ t := not_lt.mp htd
   have h1 : (d : ℤ) ∣ (t ! : ℤ) :=
-    Int.natCast_dvd_natCast.mpr (Nat.dvd_factorial (by omega) htd)
+    Int.natCast_dvd_natCast.mpr (Nat.dvd_factorial (by lia) htd)
   have h2 : (d : ℤ) ∣ (t ! : ℤ) - ((t ! : ℤ) - c) := dvd_sub h1 h
   have h3 : (t ! : ℤ) - ((t ! : ℤ) - c) = c := by ring
   rw [h3] at h2
@@ -81,9 +81,9 @@ lemma iterFac_ge (r : ℕ) : r + 3 ≤ iterFac r := by
   induction r with
   | zero => exact le_refl _
   | succ r ih =>
-    have hlt : iterFac r < (iterFac r)! := Nat.lt_factorial_self (le_trans (by omega) ih)
+    have hlt : iterFac r < (iterFac r)! := Nat.lt_factorial_self (le_trans (by lia) ih)
     show (r + 1) + 3 ≤ (iterFac r)!
-    omega
+    lia
 
 /-- Every iterated factorial of `3` is a fixed point of `f`, once `f 3 = 3`. -/
 lemma f_iterFac {f : ℕ → ℕ} (hfact : ∀ n, 0 < n → f (n !) = (f n)!) (hf3 : f 3 = 3)
@@ -91,7 +91,7 @@ lemma f_iterFac {f : ℕ → ℕ} (hfact : ∀ n, 0 < n → f (n !) = (f n)!) (h
   induction r with
   | zero => exact hf3
   | succ r ih =>
-    have hpos : 0 < iterFac r := by have h := iterFac_ge r; omega
+    have hpos : 0 < iterFac r := by have h := iterFac_ge r; lia
     show f ((iterFac r)!) = (iterFac r)!
     rw [hfact _ hpos, ih]
 
@@ -105,16 +105,16 @@ lemma eq_one_const_of_f_two_eq_one {f : ℕ → ℕ} (hpos : ∀ n, 0 < n → 0 
     have hne : m ! ≠ 2 := by
       have h6 : 3 ! ≤ m ! := Nat.factorial_le hm
       have h36 : (3 !) = 6 := rfl
-      omega
+      lia
     have h := hdiv (m !) 2 (Nat.factorial_pos m) (by norm_num) hne
-    rw [hfact m (by omega), hf2] at h
+    rw [hfact m (by lia), hf2] at h
     have h2m : ((2 : ℕ) : ℤ) ∣ (m ! : ℤ) :=
-      Int.natCast_dvd_natCast.mpr (Nat.dvd_factorial (by norm_num) (by omega))
+      Int.natCast_dvd_natCast.mpr (Nat.dvd_factorial (by norm_num) (by lia))
     have h22 : ((2 : ℕ) : ℤ) ∣ ((2 : ℕ) : ℤ) := by decide
     have h2 := dvd_trans (dvd_sub h2m h22) h
     have hlt : f m < 2 := lt_of_dvd_factorial_sub (d := 2) h2 (by norm_num) (by decide)
-    have hp := hpos m (by omega)
-    omega
+    have hp := hpos m (by lia)
+    lia
   rcases lt_or_ge n 3 with h | h
   · interval_cases n
     · have hf1 : f 1 = (f 1)! := by
@@ -135,13 +135,13 @@ lemma eq_two_const_of_f_one_two_eq_two {f : ℕ → ℕ} (hpos : ∀ n, 0 < n �
     (hdiv : ∀ (m n : ℕ), 0 < m → 0 < n → m ≠ n → (m : ℤ) - n ∣ (f m : ℤ) - f n)
     (hf1 : f 1 = 2) (hf2 : f 2 = 2) (n : ℕ) (hn : 0 < n) : f n = 2 := by
   have hf6 : f 6 = (f 3)! := by
-    have h := hfact 3 (by norm_num)
+    have h := hfact 3 (Nat.zero_lt_succ _)
     rwa [show 3 ! = 6 from rfl] at h
   have hf3 : f 3 = 2 := by
-    have h := hdiv 6 1 (by norm_num) (by norm_num) (by norm_num)
-    rw [hf6, hf1, show ((6 : ℕ) : ℤ) - ((1 : ℕ) : ℤ) = ((5 : ℕ) : ℤ) from by norm_num] at h
+    have h := hdiv 6 1 (Nat.zero_lt_succ _) (Nat.zero_lt_succ _) (by norm_num)
+    rw [hf6, hf1] at h
     have hlt : f 3 < 5 := lt_of_dvd_factorial_sub (d := 5) h (by norm_num) (by decide)
-    have hp : 0 < f 3 := hpos 3 (by norm_num)
+    have hp : 0 < f 3 := hpos 3 (Nat.zero_lt_succ _)
     interval_cases f 3
     · exact absurd h (by decide)
     · rfl
@@ -153,15 +153,15 @@ lemma eq_two_const_of_f_one_two_eq_two {f : ℕ → ℕ} (hpos : ∀ n, 0 < n �
     have hne : m ! ≠ 6 := by
       have h24 : 4 ! ≤ m ! := Nat.factorial_le hm
       have h424 : (4 !) = 24 := rfl
-      omega
+      lia
     have h := hdiv (m !) 6 (Nat.factorial_pos m) (by norm_num) hne
-    rw [hfact m (by omega), hf6'] at h
+    rw [hfact m (by lia), hf6'] at h
     have h3m : ((3 : ℕ) : ℤ) ∣ (m ! : ℤ) :=
-      Int.natCast_dvd_natCast.mpr (Nat.dvd_factorial (by norm_num) (by omega))
+      Int.natCast_dvd_natCast.mpr (Nat.dvd_factorial (by norm_num) (by lia))
     have h36 : ((3 : ℕ) : ℤ) ∣ ((6 : ℕ) : ℤ) := by decide
     have h3 := dvd_trans (dvd_sub h3m h36) h
     have hlt : f m < 3 := lt_of_dvd_factorial_sub (d := 3) h3 (by norm_num) (by decide)
-    have hp : 0 < f m := hpos m (by omega)
+    have hp : 0 < f m := hpos m (by lia)
     interval_cases f m
     · exact absurd h3 (by decide)
     · rfl
@@ -177,14 +177,12 @@ lemma eq_id_of_f_one_eq_one {f : ℕ → ℕ} (hpos : ∀ n, 0 < n → 0 < f n)
     (hfact : ∀ n, 0 < n → f (n !) = (f n)!)
     (hdiv : ∀ (m n : ℕ), 0 < m → 0 < n → m ≠ n → (m : ℤ) - n ∣ (f m : ℤ) - f n)
     (hf1 : f 1 = 1) (hf2 : f 2 = 2) (n : ℕ) (hn : 0 < n) : f n = n := by
-  have hf6 : f 6 = (f 3)! := by
-    have h := hfact 3 (by norm_num)
-    rwa [show 3 ! = 6 from rfl] at h
+  have hf6 : f 6 = (f 3)! := hfact 3 (Nat.zero_lt_succ _)
   have hf3 : f 3 = 3 := by
-    have h1 := hdiv 6 1 (by norm_num) (by norm_num) (by norm_num)
-    rw [hf6, hf1, show ((6 : ℕ) : ℤ) - ((1 : ℕ) : ℤ) = ((5 : ℕ) : ℤ) from by norm_num] at h1
-    have h2 := hdiv 6 2 (by norm_num) (by norm_num) (by norm_num)
-    rw [hf6, hf2, show ((6 : ℕ) : ℤ) - ((2 : ℕ) : ℤ) = ((4 : ℕ) : ℤ) from by norm_num] at h2
+    have h1 := hdiv 6 1 (Nat.zero_lt_succ _) (Nat.zero_lt_succ _) (by norm_num)
+    rw [hf6, hf1] at h1
+    have h2 := hdiv 6 2 (Nat.zero_lt_succ _) (Nat.zero_lt_succ _) (by norm_num)
+    rw [hf6, hf2] at h2
     have hlt : f 3 < 5 := lt_of_dvd_factorial_sub (d := 5) h1 (by norm_num) (by decide)
     have hp : 0 < f 3 := hpos 3 (by norm_num)
     interval_cases f 3
@@ -194,17 +192,15 @@ lemma eq_id_of_f_one_eq_one {f : ℕ → ℕ} (hpos : ∀ n, 0 < n → 0 < f n)
     · exact absurd h1 (by decide)
   by_contra hne
   have hd : (n : ℤ) - (f n : ℤ) ≠ 0 := by
-    intro h0
-    have h1 : (n : ℤ) = (f n : ℤ) := sub_eq_zero.mp h0
-    have h2 : n = f n := by exact_mod_cast h1
-    exact hne h2.symm
+    rw [Ne, sub_eq_zero, Int.ofNat_inj]
+    exact Ne.symm hne
   obtain ⟨r, hr⟩ : ∃ r, n + Int.natAbs ((n : ℤ) - (f n : ℤ)) + 1 ≤ iterFac r :=
     ⟨n + Int.natAbs ((n : ℤ) - (f n : ℤ)), by
       have h := iterFac_ge (n + Int.natAbs ((n : ℤ) - (f n : ℤ)))
-      omega⟩
-  have hMn : n < iterFac r := by omega
+      lia⟩
+  have hMn : n < iterFac r := by lia
   have hfr : f (iterFac r) = iterFac r := f_iterFac hfact hf3 r
-  have h := hdiv (iterFac r) n (by omega) hn (by omega)
+  have h := hdiv (iterFac r) n (by lia) hn (by lia)
   rw [hfr] at h
   have hdvd : ((iterFac r : ℤ) - (n : ℤ)) ∣ ((n : ℤ) - (f n : ℤ)) := by
     have h2 := dvd_sub h (dvd_refl _)
@@ -216,7 +212,7 @@ lemma eq_id_of_f_one_eq_one {f : ℕ → ℕ} (hpos : ∀ n, 0 < n → 0 < f n)
   have hle : Int.natAbs ((iterFac r : ℤ) - (n : ℤ)) ≤ Int.natAbs ((n : ℤ) - (f n : ℤ)) :=
     Nat.le_of_dvd hposd (Int.natAbs_dvd_natAbs.mpr hdvd)
   rw [Int.natAbs_natCast_sub_natCast_of_ge (le_of_lt hMn)] at hle
-  omega
+  lia
 
 snip end
 

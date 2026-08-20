@@ -83,7 +83,7 @@ theorem Walk.drop_append_of_length_eq {V : Type} {G : SimpleGraph V} {u v w : V}
 theorem isTerminalWalk_copy {V : Type} {G : SimpleGraph V} {u v u' v' : V} (h1 : u = u') (h2 : v = v') (w : G.Walk u v) : isTerminalWalk w → isTerminalWalk (w.copy h1 h2) := by
   unfold isTerminalWalk
   intro h
-  simp [<-h2, h]
+  simp [← h2, h]
 
 theorem isTerminalWalk_map {V V' : Type} {G : SimpleGraph V} {G' : SimpleGraph V'} (f : G ↪g G') {u v : V} (w : G.Walk u v) :
     isTerminalWalk w → isTerminalWalk (w.map f.toHom) := by
@@ -101,7 +101,7 @@ theorem isTerminalWalk_of_isSubwalk {V : Type} {G : SimpleGraph V} {u u' t : V} 
   unfold isTerminalWalk at htw ⊢
   rw [Walk.isSubwalk_iff_support_isInfix, List.IsInfix] at hsub
   let ⟨ru, rv, h⟩ := hsub
-  rw [<-h, List.append_assoc, List.dropLast_append_of_ne_nil (by simp), List.dropLast_append] at htw
+  rw [← h, List.append_assoc, List.dropLast_append_of_ne_nil (by simp), List.dropLast_append] at htw
   contrapose! htw
   split_ifs with h
   · exact List.mem_append_right ru htw
@@ -150,14 +150,16 @@ def C_G_symm (n : ℕ) : {w : Octagon.Walk C E // isTerminalWalk w ∧ w.length 
     simp only [RelEmbedding.coe_toRelHom, RelIso.coe_toRelEmbedding, Subtype.mk.injEq]
     unfold Octagon.mirror
     apply Walk.ext_support
-    set_option backward.isDefEq.respectTransparency false in
     simp [Walk.copy_rfl_rfl, Walk.map_map]
+    -- deal with defeq
+    simp [Iso.toHom, Iso.toEmbedding, Embedding.toHom, Hom.comp, RelHom.comp]
   right_inv := fun ⟨w, h⟩ => by
     simp only [RelEmbedding.coe_toRelHom, RelIso.coe_toRelEmbedding, Subtype.mk.injEq]
     apply Walk.ext_support
     unfold Octagon.mirror
-    set_option backward.isDefEq.respectTransparency false in
     simp [Walk.copy_rfl_rfl, Walk.map_map]
+    -- deal with defeq
+    simp [Iso.toHom, Iso.toEmbedding, Embedding.toHom, Hom.comp, RelHom.comp]
 }
 
 def isTerminalWalk_length_cons_equiv {V : Type} {G : SimpleGraph V} {u t : V} (m n : ℕ) (npos : 0 < n) :
@@ -195,7 +197,7 @@ def isTerminalWalk_length_cons_equiv {V : Type} {G : SimpleGraph V} {u t : V} (m
       subst m n
       simp only [Walk.take_append, Walk.drop_append_of_length_eq, Sigma.mk.injEq,
         Walk.append_getVert, true_and]
-      congr! 1
+      congr 1
       · rw [Walk.append_getVert]
       · rw [Walk.append_getVert]
       · congr! 1
@@ -225,7 +227,7 @@ theorem a_b_recurrence_1 (n : ℕ) (npos : 0 < n) : a (n+2) = 2 * a n + 2 * b n 
     _ = ∑ v ∈ {A,C,G}, Fintype.card {w : Octagon.Walk A v // E ∉ w.support ∧ w.length = 2} * Fintype.card {w : Octagon.Walk v E // isTerminalWalk w ∧ w.length = n} := by
       rw [Fintype.card_eq.mpr (Nonempty.intro (isTerminalWalk_length_cons_equiv _ _ npos))]
       rw [Fintype.card_sigma]
-      simp_rw [Fintype.card_prod]
+      simp only [Fintype.card_prod]
       rw [eq_comm, Finset.sum_subset]
       · simp
       · intro _ _ _
@@ -236,7 +238,7 @@ theorem a_b_recurrence_1 (n : ℕ) (npos : 0 < n) : a (n+2) = 2 * a n + 2 * b n 
       rw [Finset.sum_singleton]
       repeat rw [walks_from_A]
       simp only [Set.ncard_eq_toFinset_card', Set.toFinset_card, Set.coe_ofPred]
-      rw [<-Fintype.card_eq.mpr (Nonempty.intro (C_G_symm _))]
+      rw [← Fintype.card_eq.mpr (Nonempty.intro (C_G_symm _))]
       ring_nf
 
 theorem a_b_recurrence_2 (n : ℕ) (npos : 0 < n) : b (n+2) = a n + 2 * b n := by
@@ -270,15 +272,15 @@ theorem a_b_recurrence_2 (n : ℕ) (npos : 0 < n) : b (n+2) = a n + 2 * b n := b
 
 
 theorem a_even (n : ℕ) (npos : 0 < n) : a (2*n) = ((2+√2)^(n-1) - (2-√2)^(n-1)) / √2 := by
-  suffices a (2*n) = ((2+√2)^(n-1) - (2-√2)^(n-1)) / √2 ∧ b (2*n) = ((2+√2)^(n-1) + (2-√2)^(n-1)) / 2 by exact this.left
+  suffices a (2*n) = ((2+√2)^(n-1) - (2-√2)^(n-1)) / √2 ∧ b (2*n) = ((2+√2)^(n-1) + (2-√2)^(n-1)) / 2 from this.left
   revert n
   apply Nat.le_induction
   · unfold a b
     simp only [Set.ncard_eq_toFinset_card', Set.toFinset_card,
       show Fintype.card ↑{w : Octagon.Walk A E | isTerminalWalk w ∧ w.length = 2 * Nat.succ 0} = 0
-        from by decide,
+        by decide,
       show Fintype.card ↑{w : Octagon.Walk C E | isTerminalWalk w ∧ w.length = 2 * Nat.succ 0} = 1
-        from by decide]
+        by decide]
     norm_num
   · intro n npos ih
     rw [mul_add, mul_one]
@@ -313,9 +315,7 @@ theorem a_odd (n : ℕ) (npos : 0 < n) : a (2*n-1) = 0 := by
 snip end
 
 
-problem imo1979_p6 (n : ℕ) (npos : 0 < n) : a (2*n-1) = 0 ∧ a (2*n) = ((2+√2)^(n-1) - (2-√2)^(n-1)) / √2 := by
-  and_intros
-  · exact a_odd n npos
-  · exact a_even n npos
+problem imo1979_p6 (n : ℕ) (npos : 0 < n) : a (2*n-1) = 0 ∧ a (2*n) = ((2+√2)^(n-1) - (2-√2)^(n-1)) / √2 :=
+  ⟨a_odd n npos, a_even n npos⟩
 
 end Imo1979P6

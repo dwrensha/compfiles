@@ -42,22 +42,9 @@ lemma coeff_iterate_derivative_factor (F : ℝ[X]) (j m : ℕ) :
     rw [Function.iterate_succ_apply', coeff_derivative]
     obtain ⟨N, hN⟩ := ih (m + 1)
     refine ⟨N * (m + 1), ?_⟩
-    rw [hN, Nat.cast_mul, show m + (j + 1) = m + 1 + j by omega]
+    rw [hN, Nat.cast_mul, show m + (j + 1) = m + 1 + j by lia]
     push_cast
     ring
-
-/-- Over the reals (characteristic zero), differentiation lowers the degree of a
-nonconstant polynomial by exactly one. -/
-lemma natDegree_derivative_sub_one (F : ℝ[X]) (hF : F.natDegree ≠ 0) :
-    F.derivative.natDegree = F.natDegree - 1 := by
-  refine le_antisymm (natDegree_derivative_le F) (le_natDegree_of_ne_zero ?_)
-  have hF0 : F ≠ 0 := by rintro rfl; simp at hF
-  rw [coeff_derivative, show F.natDegree - 1 + 1 = F.natDegree by omega]
-  have e2 : (↑(F.natDegree - 1) : ℝ) + 1 = F.natDegree := by
-    rw [Nat.cast_sub (by omega), Nat.cast_one]; ring
-  rw [e2]
-  exact mul_ne_zero (by rw [coeff_natDegree]; exact leadingCoeff_ne_zero.mpr hF0)
-    (Nat.cast_ne_zero.mpr hF)
 
 /-- The degree of an iterated formal derivative, as long as it is nonzero. -/
 lemma natDegree_iterate_derivative_eq (F : ℝ[X]) (j : ℕ) (hj : j ≤ F.natDegree) :
@@ -65,17 +52,15 @@ lemma natDegree_iterate_derivative_eq (F : ℝ[X]) (j : ℕ) (hj : j ≤ F.natDe
   induction j with
   | zero => simp [Function.iterate_zero_apply]
   | succ j ih =>
-    have hjj : j ≤ F.natDegree := by omega
-    rw [Function.iterate_succ_apply',
-      natDegree_derivative_sub_one _ (by rw [ih hjj]; omega), ih hjj]
-    omega
+    have hjj : j ≤ F.natDegree := by lia
+    rw [Function.iterate_succ_apply', natDegree_derivative, ih hjj]
+    lia
 
 /-- **Rolle's theorem**: if a real polynomial has all of its roots real and distinct,
 then so does its derivative. -/
 lemma good_derivative {F : ℝ[X]}
     (h : F.roots.Nodup ∧ Multiset.card F.roots = F.natDegree) :
     F.derivative.roots.Nodup ∧ Multiset.card F.derivative.roots = F.derivative.natDegree := by
-  classical
   obtain ⟨hnd, hcard⟩ := h
   by_cases hm : F.natDegree ≤ 1
   · -- `F'` is (at most) a nonzero constant or zero; either way it has no roots.
@@ -87,26 +72,25 @@ lemma good_derivative {F : ℝ[X]}
     exact ⟨Multiset.nodup_zero, by rw [Multiset.card_zero]; exact hdeg.symm⟩
   · push Not at hm
     have hF0 : F ≠ 0 := by rintro rfl; simp at hm
-    have hdeg : F.derivative.natDegree = F.natDegree - 1 :=
-      natDegree_derivative_sub_one F (by omega)
+    have hdeg : F.derivative.natDegree = F.natDegree - 1 := natDegree_derivative F
     have hF'0 : F.derivative ≠ 0 := by
-      intro hz; rw [hz, natDegree_zero] at hdeg; omega
+      intro hz; rw [hz, natDegree_zero] at hdeg; lia
     set l := F.roots.sort (· ≤ ·) with hl
     have hlen : l.length = F.natDegree := by rw [hl, Multiset.length_sort, hcard]
     have hpair : l.Pairwise (· ≤ ·) := Multiset.pairwise_sort _ _
     have hlnd : l.Nodup := Multiset.coe_nodup.mp (by rw [hl, Multiset.sort_eq]; exact hnd)
     -- Between two consecutive roots of `F`, Rolle's theorem gives a root of `F'`.
     have hrolle : ∀ i : Fin (F.natDegree - 1), ∃ c,
-        c ∈ Set.Ioo (l.get ⟨i, by omega⟩) (l.get ⟨i + 1, by omega⟩) ∧
+        c ∈ Set.Ioo (l.get ⟨i, by lia⟩) (l.get ⟨i + 1, by lia⟩) ∧
           F.derivative.eval c = 0 := by
       intro i
-      have hlt : (⟨i.val, by omega⟩ : Fin l.length) < ⟨i.val + 1, by omega⟩ := by
+      have hlt : (⟨i.val, by lia⟩ : Fin l.length) < ⟨i.val + 1, by lia⟩ := by
         rw [Fin.lt_def]; simp
-      have hne : l.get ⟨i.val, by omega⟩ ≠ l.get ⟨i.val + 1, by omega⟩ := by
+      have hne : l.get ⟨i.val, by lia⟩ ≠ l.get ⟨i.val + 1, by lia⟩ := by
         intro hget
         have hij := hlnd.get_inj_iff.mp hget
-        exact absurd hij (by rw [Fin.ext_iff]; omega)
-      have hab : l.get ⟨i.val, by omega⟩ < l.get ⟨i.val + 1, by omega⟩ :=
+        exact absurd hij (by rw [Fin.ext_iff]; lia)
+      have hab : l.get ⟨i.val, by lia⟩ < l.get ⟨i.val + 1, by lia⟩ :=
         lt_of_le_of_ne (hpair.rel_get_of_lt hlt) hne
       have heval : ∀ x ∈ l, F.eval x = 0 := fun x hx =>
         IsRoot.def.mp ((mem_roots hF0).mp ((Multiset.mem_sort _).mp hx))
@@ -119,15 +103,15 @@ lemma good_derivative {F : ℝ[X]}
     -- The Rolle points are pairwise distinct, since they lie in disjoint intervals.
     have hcinj : Function.Injective c := by
       refine StrictMono.injective (fun i j hij => ?_)
-      have h1 : c i < l.get ⟨i.val + 1, by omega⟩ := (hc i).1.2
-      have h2 : l.get ⟨j.val, by omega⟩ < c j := (hc j).1.1
-      have h3 : l.get ⟨i.val + 1, by omega⟩ ≤ l.get ⟨j.val, by omega⟩ := by
-        have hij' : i.val + 1 ≤ j.val := by rw [Fin.lt_def] at hij; omega
+      have h1 : c i < l.get ⟨i.val + 1, by lia⟩ := (hc i).1.2
+      have h2 : l.get ⟨j.val, by lia⟩ < c j := (hc j).1.1
+      have h3 : l.get ⟨i.val + 1, by lia⟩ ≤ l.get ⟨j.val, by lia⟩ := by
+        have hij' : i.val + 1 ≤ j.val := by rw [Fin.lt_def] at hij; lia
         rcases Nat.eq_or_lt_of_le hij' with he | hlt
-        · have hfin : (⟨i.val + 1, by omega⟩ : Fin l.length) = ⟨j.val, by omega⟩ :=
+        · have hfin : (⟨i.val + 1, by lia⟩ : Fin l.length) = ⟨j.val, by lia⟩ :=
             Fin.ext he
           exact le_of_eq (congrArg l.get hfin)
-        · exact hpair.rel_get_of_lt (by rw [Fin.lt_def]; omega)
+        · exact hpair.rel_get_of_lt (by rw [Fin.lt_def]; lia)
       linarith
     have hsub : (Finset.univ.image c) ⊆ F.derivative.roots.toFinset := by
       intro x hx
@@ -175,14 +159,13 @@ lemma dvd_X_pow_two_iterate_derivative (R : ℝ[X]) {t : ℕ} (ht : 1 ≤ t)
   intro d hd
   obtain ⟨N, hN⟩ := coeff_iterate_derivative_factor R (t - 1) d
   interval_cases d
-  · rw [hN, show 0 + (t - 1) = t - 1 by omega, h0, zero_mul]
-  · rw [hN, show 1 + (t - 1) = t by omega, h1, zero_mul]
+  · rw [hN, show 0 + (t - 1) = t - 1 by lia, h0, zero_mul]
+  · rw [hN, show 1 + (t - 1) = t by lia, h1, zero_mul]
 
 /-- A nonzero polynomial divisible by `X^2` has `0` as a multiple root, so its root
 multiset is duplicate-free nowhere. -/
 lemma not_nodup_roots_of_X_pow_two_dvd {F : ℝ[X]} (hF : F ≠ 0)
     (h : (X : ℝ[X]) ^ 2 ∣ F) : ¬ F.roots.Nodup := by
-  classical
   intro hnd
   have h2 : 2 ≤ F.rootMultiplicity 0 := by
     rw [le_rootMultiplicity_iff hF]
@@ -190,7 +173,7 @@ lemma not_nodup_roots_of_X_pow_two_dvd {F : ℝ[X]} (hF : F ≠ 0)
   rw [Multiset.nodup_iff_count_le_one] at hnd
   have hcnt := hnd 0
   rw [count_roots] at hcnt
-  omega
+  lia
 
 /-- The combinatorial heart of the problem. Let `s` be a set of `k + 1` real numbers
 (with `k ≥ 1`). Then it is impossible that for every `i ∈ s`, the polynomial
@@ -202,18 +185,17 @@ lemma core_pigeonhole {k : ℕ} (hk : 1 ≤ k) {s : Finset ℝ} (hscard : s.card
     (H : ∀ i ∈ s, ∃ t ∈ Finset.Icc 1 (k - 1),
       (∏ r ∈ s.erase i, (X - C r)).coeff t = 0) :
     False := by
-  classical
   have H' : ∀ i : s, ∃ t : ℕ, t ∈ Finset.Icc 1 (k - 1) ∧
       (∏ r ∈ s.erase (i : ℝ), (X - C r)).coeff t = 0 := fun i => H i i.2
   choose f hf using H'
   set g : ℝ → ℕ := fun i => if h : i ∈ s then f ⟨i, h⟩ else 0 with hg
   have hgc : (Finset.Icc 1 (k - 1)).card < s.card := by
-    rw [Nat.card_Icc, hscard]; omega
+    rw [Nat.card_Icc, hscard]; lia
   obtain ⟨i1, hi1, i2, hi2, hne, heq⟩ :=
     Finset.exists_ne_map_eq_of_card_lt_of_maps_to hgc (f := g) fun i hi => by
-      rw [show g i = f ⟨i, hi⟩ from dif_pos hi]; exact (hf ⟨i, hi⟩).1
-  have hg1 : g i1 = f ⟨i1, hi1⟩ := dif_pos hi1
-  have hg2 : g i2 = f ⟨i2, hi2⟩ := dif_pos hi2
+      rw [show g i = f ⟨i, hi⟩ from dite_eq_left hi]; exact (hf ⟨i, hi⟩).1
+  have hg1 : g i1 = f ⟨i1, hi1⟩ := dite_eq_left hi1
+  have hg2 : g i2 = f ⟨i2, hi2⟩ := dite_eq_left hi2
   have hft : f ⟨i1, hi1⟩ = f ⟨i2, hi2⟩ := by rw [← hg1, ← hg2]; exact heq
   set t := f ⟨i1, hi1⟩ with ht_def
   have ht : t ∈ Finset.Icc 1 (k - 1) := (hf ⟨i1, hi1⟩).1
@@ -228,7 +210,7 @@ lemma core_pigeonhole {k : ℕ} (hk : 1 ≤ k) {s : Finset ℝ} (hscard : s.card
   have hucard : u.card = k - 1 := by
     rw [hu, Finset.card_erase_of_mem (Finset.mem_erase.mpr ⟨hne.symm, hi2⟩),
       Finset.card_erase_of_mem hi1, hscard]
-    omega
+    lia
   have hRdeg : R.natDegree = k - 1 := by
     rw [hR, natDegree_prod_of_monic _ (fun r => X - C r) fun r _ => monic_X_sub_C r]
     simp [hucard]
@@ -243,26 +225,25 @@ lemma core_pigeonhole {k : ℕ} (hk : 1 ≤ k) {s : Finset ℝ} (hscard : s.card
     push Not
     exact fun _ => Finset.notMem_erase i1 _
   have hfac1 : (∏ r ∈ s.erase i1, (X - C r)) = (X - C i2) * R := by
-    have h : s.erase i1 = insert i2 u := by
+    have h : insert i2 u = s.erase i1 := by
       rw [hu]
-      exact (Finset.insert_erase (Finset.mem_erase.mpr ⟨hne.symm, hi2⟩)).symm
-    rw [h, hR, Finset.prod_insert hi2u]
+      exact Finset.insert_erase (Finset.mem_erase.mpr ⟨hne.symm, hi2⟩)
+    rw [← h, hR, Finset.prod_insert hi2u]
   have hfac2 : (∏ r ∈ s.erase i2, (X - C r)) = (X - C i1) * R := by
-    have h1 : s.erase i2 = insert i1 ((s.erase i2).erase i1) :=
-      (Finset.insert_erase (Finset.mem_erase.mpr ⟨hne, hi1⟩)).symm
+    have h1 : insert i1 ((s.erase i2).erase i1) = s.erase i2 :=
+      Finset.insert_erase (Finset.mem_erase.mpr ⟨hne, hi1⟩)
     have h2 : (s.erase i2).erase i1 = u := by
       rw [hu]
       ext x
       simp only [Finset.mem_erase]
       tauto
-    rw [h1, h2, hR, Finset.prod_insert hi1u]
+    rw [← h1, h2, hR, Finset.prod_insert hi1u]
   -- The vanishing-coefficient equations: `coeff t` of `(X - c) * R` is
   -- `R.coeff (t - 1) - c * R.coeff t`.
   have hcoeff : ∀ c : ℝ, ∀ m : ℕ, 1 ≤ m →
       ((X - C c) * R).coeff m = R.coeff (m - 1) - c * R.coeff m := by
     intro c m hm
-    rw [sub_mul, coeff_sub, coeff_C_mul, show m = m - 1 + 1 by omega, coeff_X_mul,
-      show m - 1 + 1 - 1 = m - 1 from by omega]
+    simp [sub_mul, ← coeff_X_mul R (m-1), ← (Nat.sub_eq_iff_eq_add hm).mp rfl]
   have he1 : R.coeff (t - 1) = i2 * R.coeff t := by
     have h := hc1
     rw [hfac1, hcoeff i2 t ht.1] at h
@@ -286,10 +267,10 @@ lemma core_pigeonhole {k : ℕ} (hk : 1 ≤ k) {s : Finset ℝ} (hscard : s.card
     dvd_X_pow_two_iterate_derivative R ht.1 hRt1 hRt
   have hGood := good_iterate R (t - 1) hRgood
   have hG0 : derivative^[t - 1] R ≠ 0 := by
-    have hd := natDegree_iterate_derivative_eq R (t - 1) (by rw [hRdeg]; omega)
+    have hd := natDegree_iterate_derivative_eq R (t - 1) (by rw [hRdeg]; lia)
     intro hz
     rw [hz, natDegree_zero, hRdeg] at hd
-    omega
+    lia
   exact not_nodup_roots_of_X_pow_two_dvd hG0 hX2 hGood.1
 
 /-- If every complex root of a squarefree real polynomial `P` is real, then the real
@@ -298,7 +279,6 @@ roots of `P` are distinct and there are `deg P` many of them (i.e. `P` splits ov
 lemma roots_real_aux {P : ℝ[X]} (hP : P ≠ 0) (hsq : Squarefree P)
     (h : ∀ z : ℂ, aeval z P = 0 → z.im = 0) :
     P.roots.Nodup ∧ Multiset.card P.roots = P.natDegree := by
-  classical
   have hsep : P.Separable := PerfectField.separable_iff_squarefree.mpr hsq
   have hnodup : P.roots.Nodup := nodup_roots hsep
   refine ⟨hnodup, ?_⟩
@@ -346,8 +326,7 @@ problem usa2025_p2 (n k : ℕ) (hn : k < n) (hk : 1 ≤ k) (P : ℝ[X])
     (hdeg : P.natDegree = n) (hsq : Squarefree P) (h0 : P.eval 0 ≠ 0)
     (H : ∀ a : Fin (k + 1) → ℝ, (∑ i, C (a i) * X ^ (i : ℕ)) ∣ P → ∏ i, a i = 0) :
     ∃ z : ℂ, aeval z P = 0 ∧ z.im ≠ 0 := by
-  classical
-  have hP : P ≠ 0 := by rintro rfl; simp at hdeg; omega
+  have hP : P ≠ 0 := by rintro rfl; simp at hdeg; lia
   -- Suppose for contradiction that `P` has no nonreal root.
   by_contra hcon
   push Not at hcon
@@ -362,7 +341,7 @@ problem usa2025_p2 (n k : ℕ) (hn : k < n) (hk : 1 ≤ k) (P : ℝ[X])
     exact h0
   -- Pick any `k + 1` of the roots (the reduction to `n = k + 1`).
   obtain ⟨s, hs, hscard⟩ :=
-    Finset.exists_subset_card_eq (show k + 1 ≤ f.card by omega)
+    Finset.exists_subset_card_eq (show k + 1 ≤ f.card by lia)
   have hs0 : 0 ∉ s := fun h => hf0 (hs h)
   -- The product over these `k + 1` roots divides `P`.
   have hQdvd : (∏ r ∈ s, (X - C r)) ∣ P := by
@@ -408,12 +387,12 @@ problem usa2025_p2 (n k : ℕ) (hn : k < n) (hk : 1 ≤ k) (P : ℝ[X])
     exact one_ne_zero
   have hj0 : j.val ≠ 0 := by
     intro hjv
-    rw [show j = ⟨0, by omega⟩ from Fin.ext hjv] at hj
+    rw [show j = ⟨0, by lia⟩ from Fin.ext hjv] at hj
     exact hc0 hj
   have hjk : j.val ≠ k := by
     intro hjv
-    rw [show j = ⟨k, by omega⟩ from Fin.ext hjv] at hj
+    rw [show j = ⟨k, by lia⟩ from Fin.ext hjv] at hj
     exact hck hj
-  exact ⟨by omega, by have hlt := j.isLt; omega⟩
+  exact ⟨by lia, by have hlt := j.isLt; lia⟩
 
 end Usa2025P2

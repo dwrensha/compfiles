@@ -170,7 +170,7 @@ lemma count_good {n m : ℕ} (hm : n = 2 * m) (i : Fin (2 * n + 1)) :
       have hne' : (j - i).val ≠ 0 :=
         fun h ↦ hne (Fin.val_inj.mp (by rw [h, Fin.val_zero]))
       have hvn := Fin.val_neg (j - i)
-      rw [if_neg hne, neg_sub] at hvn
+      rw [ite_eq_right hne, neg_sub] at hvn
       have hlt := (j - i).isLt
       simp only [Finset.mem_Icc] at hgood
       rw [hvn] at hgood
@@ -196,7 +196,7 @@ lemma count_good {n m : ℕ} (hm : n = 2 * m) (i : Fin (2 * n + 1)) :
       rw [Finset.mem_filter, Finset.mem_erase]
       refine ⟨⟨fun heq ↦ hc0 (by rw [← hxv, heq, sub_self]), Finset.mem_univ _⟩, ?_⟩
       have hvn := Fin.val_neg (⟨x, hlt⟩ : Fin (2 * n + 1))
-      rw [if_neg hc0] at hvn
+      rw [ite_eq_right hc0] at hvn
       have hisub : i - ((⟨x, hlt⟩ : Fin (2 * n + 1)) + i) = -⟨x, hlt⟩ := by
         rw [← neg_sub (⟨x, hlt⟩ + i) i, hxv]
       have hval : (⟨x, hlt⟩ : Fin (2 * n + 1)).val = x := rfl

@@ -59,7 +59,7 @@ problem india1998_p1b (n a b : ℤ) (hn : a^2 + 3 * b^2 = 7 * n) :
     obtain ⟨m2, hm2⟩ := exists_eq_mul_right_of_dvd h16
     use m1; use m2
     have h20 : (7 * m1) ^ 2 + 3 * (7 * m2) ^ 2 = 7 * 7 * n := by
-      rw [←hm1, ←hm2]; linear_combination 7 * hn
+      rw [← hm1, ← hm2]; linear_combination 7 * hn
 
     exact (mul_right_inj' h22).mp (by linear_combination h20)
 
@@ -79,7 +79,7 @@ problem india1998_p1b (n a b : ℤ) (hn : a^2 + 3 * b^2 = 7 * n) :
     obtain ⟨m2, hm2⟩ := exists_eq_mul_right_of_dvd h16
     use m1; use m2
     have h20 : (7 * m1) ^ 2 + 3 * (7 * m2) ^ 2 = 7 * 7 * n := by
-      rw [←hm1, ←hm2]; linear_combination 7 * hn
+      rw [← hm1, ← hm2]; linear_combination 7 * hn
 
     exact (mul_right_inj' h22).mp (by linear_combination h20)
 

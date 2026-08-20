@@ -12,7 +12,7 @@ public import ProblemExtraction
 
 @[expose] public section
 
-problem_file
+problem_file { tags := [.Combinatorics, .Inequality] }
 
 /-!
 # International Mathematical Olympiad 1992, Problem 5
@@ -140,8 +140,7 @@ private theorem main (S : Finset (ℝ × ℝ × ℝ)) :
       _ ≤ ∑ r ∈ R, (sz * ar r * br r).sqrt := Finset.sum_le_sum hslice
       _ = ∑ r ∈ R, sz.sqrt * (ar r * br r).sqrt := by
             congr 1; ext r
-            rw [show sz * ar r * br r = sz * (ar r * br r) from by ring,
-                Real.sqrt_mul (Nat.cast_nonneg _)]
+            rw [mul_assoc, Real.sqrt_mul (Nat.cast_nonneg _)]
       _ = sz.sqrt * ∑ r ∈ R, (ar r * br r).sqrt := (Finset.mul_sum ..).symm
   -- Step 3: Square both sides: |S|² ≤ sz · (Σ √(ar · br))²
   have hS2 : (S.card : ℝ) ^ 2 ≤ sz * (∑ r ∈ R, (ar r * br r).sqrt) ^ 2 := by
@@ -179,7 +178,6 @@ problem imo1992_p5 (S: Finset (ℝ × ℝ × ℝ)) : S.card^2 ≤
     (Finset.image (fun p => ((0: ℝ) , p.2.1, p.2.2)) S).card *
     (Finset.image (fun p => (p.1, ((0: ℝ) , p.2.2))) S).card *
     (Finset.image (fun p => (p.1, p.2.1, (0: ℝ) )) S).card := by
-  have h := main S
-  exact_mod_cast h
+  exact_mod_cast main S
 
 end Imo1992P5

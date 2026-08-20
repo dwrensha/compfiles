@@ -149,29 +149,29 @@ lemma phase1_pos {r : Fin 3 → ℝ} {a : Fin 3 → ℤ} {i j k : Fin 3}
             rcases lt_trichotomy (a i + a j) 0 with h0 | h0 | h0
             · exfalso
               rw [abs_of_neg h0, abs_of_neg hajl] at hc
-              omega
+              lia
             · exfalso
               rw [h0, abs_zero] at hc
               have e2 : |a j| = -(a j) := abs_of_neg hajl
-              omega
+              lia
             · exact h0
           have hpos2 : 0 < a i + a k := by
             rcases lt_trichotomy (a i + a k) 0 with h0 | h0 | h0
             · exfalso
               rw [abs_of_neg h0, abs_of_neg hakl] at hc2
-              omega
+              lia
             · exfalso
               rw [h0, abs_zero] at hc2
               have e2 : |a k| = -(a k) := abs_of_neg hakl
-              omega
+              lia
             · exact h0
           have h3 : a i + 2 * a j ≥ 0 := by
             rw [abs_of_pos hpos1, abs_of_neg hajl] at hc
-            omega
+            lia
           have h4 : a i + 2 * a k ≥ 0 := by
             rw [abs_of_pos hpos2, abs_of_neg hakl] at hc2
-            omega
-          have h5 : 0 ≤ a i + a j + a k := by omega
+            lia
+          have h5 : 0 ≤ a i + a j + a k := by lia
           have h6 : ((a i : ℝ) + (a j : ℝ) + (a k : ℝ)) * r j < 0 := by
             have haiR : (0:ℝ) < a i := by exact_mod_cast hai
             have hakR : (a k : ℝ) < 0 := by exact_mod_cast hakl
@@ -195,8 +195,8 @@ lemma phase1_pos {r : Fin 3 → ℝ} {a : Fin 3 → ℤ} {i j k : Fin 3}
         exact_mod_cast e4
       have hdec : (a j + a i).natAbs < (a j).natAbs := by
         rw [← Int.ofNat_lt, Int.natCast_natAbs, Int.natCast_natAbs,
-          abs_of_neg (show a j + a i < 0 by omega), abs_of_neg hajl]
-        omega
+          abs_of_neg (show a j + a i < 0 by lia), abs_of_neg hajl]
+        lia
       obtain ⟨r', hs, hn, a', hane, hrel, hdec3⟩ :=
         move_lemma hik hij hjk.symm (fun l => (hpos l).le) (le_of_lt hrj)
           (by linarith [hsum]) (ne_of_gt hai) hdec
@@ -226,8 +226,8 @@ lemma phase1_pos {r : Fin 3 → ℝ} {a : Fin 3 → ℤ} {i j k : Fin 3}
       exact_mod_cast e4
     have hdec : (a k + a i).natAbs < (a k).natAbs := by
       rw [← Int.ofNat_lt, Int.natCast_natAbs, Int.natCast_natAbs,
-        abs_of_neg (show a k + a i < 0 by omega), abs_of_neg hakl]
-      omega
+        abs_of_neg (show a k + a i < 0 by lia), abs_of_neg hakl]
+      lia
     obtain ⟨r', hs, hn, a', hane, hrel, hdec3⟩ :=
       move_lemma hij hik hjk (fun l => (hpos l).le) (le_of_lt (lt_trans hrk hrj))
         hsum (ne_of_gt hai) hdec

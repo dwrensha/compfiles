@@ -54,7 +54,7 @@ lemma start_or_interior_or_end {u v : V} {w : G.Walk u v} {x : V} (hx : x ∈ w.
   have hlen : w.support.length = w.length + 1 := w.length_support
   have hx2 : w.getVert (w.support.idxOf x) = x := w.getVert_support_idxOf hx
   set i := w.support.idxOf x with hi
-  have hile : i ≤ w.length := by omega
+  have hile : i ≤ w.length := by lia
   rcases Nat.lt_or_eq_of_le hile with hilt | hie
   · rcases Nat.eq_zero_or_pos i with hi0 | hipos
     · left
@@ -62,7 +62,7 @@ lemma start_or_interior_or_end {u v : V} {w : G.Walk u v} {x : V} (hx : x ∈ w.
       exact w.getVert_zero
     · right; left
       rw [mem_interiorVerts]
-      exact ⟨i - 1, by omega, by rw [Nat.sub_add_cancel hipos]; exact hx2⟩
+      exact ⟨i - 1, by lia, by rw [Nat.sub_add_cancel hipos]; exact hx2⟩
   · right; right
     rw [← hx2, hie]
     exact w.getVert_length
@@ -84,7 +84,7 @@ lemma exists_maximal_trail {s₀ : V} (h : ∃ x, G.Adj s₀ x) :
     exact ⟨s(s₀, x), by rw [SimpleGraph.mem_edgeFinset]; exact G.mem_edgeSet.mpr hx⟩
   have h1T : 1 ∈ T := by
     simp only [hTdef, mem_filter, mem_range]
-    refine ⟨by omega, x, Walk.cons hx Walk.nil, ?_, by simp⟩
+    refine ⟨by lia, x, Walk.cons hx Walk.nil, ?_, by simp⟩
     rw [Walk.isTrail_cons]
     simp
   obtain ⟨m, hmT, hmaxle⟩ : ∃ m, m ∈ T ∧ ∀ a ∈ T, a ≤ m :=
@@ -94,7 +94,7 @@ lemma exists_maximal_trail {s₀ : V} (h : ∃ x, G.Adj s₀ x) :
   obtain ⟨hmle, t, w, htrail, hlen⟩ := hmT'
   refine ⟨t, w, htrail, ?_, ?_⟩
   · have h1m : 1 ≤ m := hmaxle 1 h1T
-    omega
+    lia
   · intro x hx
     by_contra hmem
     have htrail' : (w.concat hx).IsTrail := by
@@ -110,9 +110,9 @@ lemma exists_maximal_trail {s₀ : V} (h : ∃ x, G.Adj s₀ x) :
       simp only [hTdef, mem_filter, mem_range]
       have hb := htrail'.length_le_card_edgeFinset
       rw [hlen'] at hb
-      exact ⟨by omega, x, w.concat hx, htrail', hlen'⟩
+      exact ⟨by lia, x, w.concat hx, htrail', hlen'⟩
     have := hmaxle (m + 1) hmemT
-    omega
+    lia
 
 omit [Fintype V] [DecidableRel G.Adj] in
 /-- Key walk lemma: from a vertex `u` that still has an edge outside the trail `w`,
@@ -177,12 +177,12 @@ def trailLabel {s₀ t : V} (w : G.Walk s₀ t) (n : ℕ) (Φ' : Sym2 V → ℕ)
 omit [Fintype V] [DecidableRel G.Adj] in
 lemma trailLabel_of_mem {s₀ t : V} {w : G.Walk s₀ t} {n : ℕ} {Φ' : Sym2 V → ℕ} {e : Sym2 V}
     (h : e ∈ w.edges) : trailLabel w n Φ' e = n + 1 + w.edges.idxOf e := by
-  rw [trailLabel, if_pos h]
+  rw [trailLabel, ite_eq_left h]
 
 omit [Fintype V] [DecidableRel G.Adj] in
 lemma trailLabel_of_not_mem {s₀ t : V} {w : G.Walk s₀ t} {n : ℕ} {Φ' : Sym2 V → ℕ} {e : Sym2 V}
     (h : e ∉ w.edges) : trailLabel w n Φ' e = Φ' e := by
-  rw [trailLabel, if_neg h]
+  rw [trailLabel, ite_eq_right h]
 
 omit [Fintype V] [DecidableEq V] in
 /-- If two elements of a finset have consecutive labels, the gcd of all labels is 1. -/
@@ -191,7 +191,7 @@ lemma gcd_eq_one_of_consecutive {s : Finset (Sym2 V)} {Φ : Sym2 V → ℕ} {e�
     s.gcd Φ = 1 := by
   have d1 : s.gcd Φ ∣ Φ e₁ := Finset.gcd_dvd he₁
   have d2 : s.gcd Φ ∣ Φ e₂ := Finset.gcd_dvd he₂
-  have hsub : Φ e₂ - Φ e₁ = 1 := by omega
+  have hsub : Φ e₂ - Φ e₁ = 1 := by lia
   have h3 := Nat.dvd_sub d2 d1
   rw [hsub] at h3
   exact Nat.dvd_one.mp h3
@@ -218,8 +218,8 @@ lemma gcd_interior {s₀ t : V} {w : G.Walk s₀ t} (htrail : w.IsTrail) {n : �
     (G.incidenceFinset v).gcd (trailLabel w n Φ') = 1 := by
   rw [mem_interiorVerts] at hv
   obtain ⟨i, hilt, hiv⟩ := hv
-  have hi1 : i < w.edges.length := by rw [w.length_edges]; omega
-  have hi2 : i + 1 < w.edges.length := by rw [w.length_edges]; omega
+  have hi1 : i < w.edges.length := by rw [w.length_edges]; lia
+  have hi2 : i + 1 < w.edges.length := by rw [w.length_edges]; lia
   have e1inc : w.edges[i] ∈ G.incidenceFinset v := by
     rw [G.mem_incidenceFinset]
     exact ⟨w.edges_subset_edgeSet (List.getElem_mem _),
@@ -247,12 +247,12 @@ lemma no_trail_edge_at {s₀ t : V} {w : G.Walk s₀ t} {v : V}
     · rw [hj0, w.getVert_zero] at h
       exact hvs h
     · exact hvi (mem_interiorVerts.mpr
-        ⟨j - 1, by have hle := w.length_edges; omega,
+        ⟨j - 1, by have hle := w.length_edges; lia,
          by rw [Nat.sub_add_cancel hjpos]; exact h.symm⟩)
   · by_cases hjm : j + 1 = w.length
     · rw [hjm, w.getVert_length] at h
       exact hvt h
-    · exact hvi (mem_interiorVerts.mpr ⟨j, by have hle := w.length_edges; omega, h.symm⟩)
+    · exact hvi (mem_interiorVerts.mpr ⟨j, by have hle := w.length_edges; lia, h.symm⟩)
 
 /-- If all edges of the trail are incident to the endpoint `t` (maximality) and `t`
 is neither the start nor an interior vertex, then at most one edge is incident to `t`. -/
@@ -274,13 +274,13 @@ lemma degree_endpoint_le_one {s₀ t : V} {w : G.Walk s₀ t}
       · rw [hj0, w.getVert_zero] at h1
         exact absurd h1.symm hts
       · exact absurd (mem_interiorVerts.mpr
-          ⟨j - 1, by have hle := w.length_edges; omega,
+          ⟨j - 1, by have hle := w.length_edges; lia,
            by rw [Nat.sub_add_cancel hjpos]; exact h1⟩) hti
     · by_cases hjm : j + 1 = w.length
-      · have hjl' : j = w.edges.length - 1 := by have hle := w.length_edges; omega
+      · have hjl' : j = w.edges.length - 1 := by have hle := w.length_edges; lia
         exact ⟨j, hj, by rw [Walk.getElem_edges hj, h1, h2]; exact Sym2.eq_swap, hjl'⟩
       · exact absurd (mem_interiorVerts.mpr
-          ⟨j, by have hle := w.length_edges; omega, h2⟩) hti
+          ⟨j, by have hle := w.length_edges; lia, h2⟩) hti
   obtain ⟨j₁, hj₁, he₁q, hj₁q⟩ :=
     key e₁ ((G.mem_incidenceFinset t e₁).mp he₁).1 ((G.mem_incidenceFinset t e₁).mp he₁).2
   obtain ⟨j₂, hj₂, he₂q, hj₂q⟩ :=
@@ -346,7 +346,7 @@ theorem exists_labeling : ∀ (k : ℕ) (H : SimpleGraph V) [DecidableRel H.Adj]
           ext e
           rw [H.mem_incidenceFinset]
           simp [SimpleGraph.incidenceSet, hempty]
-        omega
+        lia
     · -- Pick an edge, get a vertex of `S` in its component, and take a maximal trail.
       have hcardpos : 0 < H.edgeFinset.card := hk ▸ Nat.pos_of_ne_zero hk0
       obtain ⟨e₀, he₀⟩ := Finset.card_pos.mp hcardpos
@@ -364,7 +364,7 @@ theorem exists_labeling : ∀ (k : ℕ) (H : SimpleGraph V) [DecidableRel H.Adj]
       obtain ⟨t, w, htrail, hmlen, hmax⟩ := exists_maximal_trail hs₀edge
       have hmlek : w.length ≤ k := by
         have := htrail.length_le_card_edgeFinset
-        omega
+        lia
       have hcard' : (H.deleteEdges (↑w.edges.toFinset)).edgeFinset.card = k - w.length := by
         have hsub : w.edges.toFinset ⊆ H.edgeFinset := by
           intro e he
@@ -374,7 +374,7 @@ theorem exists_labeling : ∀ (k : ℕ) (H : SimpleGraph V) [DecidableRel H.Adj]
         rw [SimpleGraph.edgeFinset_deleteEdges, Finset.card_sdiff,
           Finset.inter_eq_left.mpr hsub,
           List.toFinset_card_of_nodup htrail.edges_nodup, w.length_edges, hk]
-      have hcardlt : (H.deleteEdges (↑w.edges.toFinset)).edgeFinset.card < k := by omega
+      have hcardlt : (H.deleteEdges (↑w.edges.toFinset)).edgeFinset.card < k := by lia
       have hS' : ∀ u v : V, (H.deleteEdges (↑w.edges.toFinset)).Adj u v →
           ∃ s ∈ S ∪ interiorVerts w, (H.deleteEdges (↑w.edges.toFinset)).Reachable u s := by
         intro u v huv
@@ -395,17 +395,17 @@ theorem exists_labeling : ∀ (k : ℕ) (H : SimpleGraph V) [DecidableRel H.Adj]
         · rw [trailLabel_of_mem h]
           have hle := w.length_edges
           have hi : w.edges.idxOf e < w.edges.length := List.idxOf_lt_length_of_mem h
-          constructor <;> omega
+          constructor <;> lia
         · rw [trailLabel_of_not_mem h]
           have he' : e ∈ (H.deleteEdges (↑w.edges.toFinset)).edgeSet :=
             mem_edgeSet_deleteEdges.mpr ⟨he, by simpa using h⟩
           obtain ⟨h1, h2⟩ := hΦ'b e he'
-          constructor <;> omega
+          constructor <;> lia
       · -- Injectivity.
         intro e₁ he₁ e₂ he₂ heq
         by_cases h1 : e₁ ∈ w.edges <;> by_cases h2 : e₂ ∈ w.edges
         · rw [trailLabel_of_mem h1, trailLabel_of_mem h2] at heq
-          have hidx : w.edges.idxOf e₁ = w.edges.idxOf e₂ := by omega
+          have hidx : w.edges.idxOf e₁ = w.edges.idxOf e₂ := by lia
           exact (List.idxOf_inj h1).mp hidx
         · rw [trailLabel_of_mem h1, trailLabel_of_not_mem h2] at heq
           have hle := w.length_edges
@@ -413,14 +413,14 @@ theorem exists_labeling : ∀ (k : ℕ) (H : SimpleGraph V) [DecidableRel H.Adj]
           have he₂' : e₂ ∈ (H.deleteEdges (↑w.edges.toFinset)).edgeSet :=
             mem_edgeSet_deleteEdges.mpr ⟨he₂, by simpa using h2⟩
           have hlo := (hΦ'b e₂ he₂').1
-          omega
+          lia
         · rw [trailLabel_of_not_mem h1, trailLabel_of_mem h2] at heq
           have hle := w.length_edges
           have hi : w.edges.idxOf e₂ < w.edges.length := List.idxOf_lt_length_of_mem h2
           have he₁' : e₁ ∈ (H.deleteEdges (↑w.edges.toFinset)).edgeSet :=
             mem_edgeSet_deleteEdges.mpr ⟨he₁, by simpa using h1⟩
           have hlo := (hΦ'b e₁ he₁').1
-          omega
+          lia
         · rw [trailLabel_of_not_mem h1, trailLabel_of_not_mem h2] at heq
           have he₁' : e₁ ∈ (H.deleteEdges (↑w.edges.toFinset)).edgeSet :=
             mem_edgeSet_deleteEdges.mpr ⟨he₁, by simpa using h1⟩
@@ -436,7 +436,7 @@ theorem exists_labeling : ∀ (k : ℕ) (H : SimpleGraph V) [DecidableRel H.Adj]
             have hts : v ≠ s₀ := fun h => hvS (h ▸ hs₀S)
             have h1 := degree_endpoint_le_one hmax hts hvi
             rw [H.card_incidenceFinset_eq_degree] at h1
-            omega
+            lia
           · have hvs : v ≠ s₀ := fun h => hvS (h ▸ hs₀S)
             have hnone : ∀ e ∈ H.incidenceFinset v, e ∉ w.edges :=
               fun e he => no_trail_edge_at hvs hvi hvt he
@@ -478,7 +478,7 @@ problem imo1991_p4 {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V)
         ext e
         rw [G.mem_incidenceFinset]
         simp [SimpleGraph.incidenceSet, hempty]
-      omega
+      lia
   · -- Take a maximal trail from an endpoint of some edge, then apply the induction.
     have hcardpos : 0 < G.edgeFinset.card := Nat.pos_of_ne_zero hk0
     obtain ⟨e₀, he₀⟩ := Finset.card_pos.mp hcardpos
@@ -518,20 +518,20 @@ problem imo1991_p4 {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V)
         have hle := w.length_edges
         have hi : w.edges.idxOf e < w.edges.length := List.idxOf_lt_length_of_mem h
         rw [← hcard]
-        constructor <;> omega
+        constructor <;> lia
       · rw [trailLabel_of_not_mem h]
         have he' : e ∈ (G.deleteEdges (↑w.edges.toFinset)).edgeSet :=
           mem_edgeSet_deleteEdges.mpr ⟨he, by simpa using h⟩
         obtain ⟨h1, h2⟩ := hΦ'b e he'
         rw [← hcard]
-        constructor <;> omega
+        constructor <;> lia
     -- Injectivity.
     have hinj : ∀ e₁ ∈ G.edgeSet, ∀ e₂ ∈ G.edgeSet,
         trailLabel w 0 Φ' e₁ = trailLabel w 0 Φ' e₂ → e₁ = e₂ := by
       intro e₁ he₁ e₂ he₂ heq
       by_cases h1 : e₁ ∈ w.edges <;> by_cases h2 : e₂ ∈ w.edges
       · rw [trailLabel_of_mem h1, trailLabel_of_mem h2] at heq
-        have hidx : w.edges.idxOf e₁ = w.edges.idxOf e₂ := by omega
+        have hidx : w.edges.idxOf e₁ = w.edges.idxOf e₂ := by lia
         exact (List.idxOf_inj h1).mp hidx
       · rw [trailLabel_of_mem h1, trailLabel_of_not_mem h2] at heq
         have hle := w.length_edges
@@ -539,14 +539,14 @@ problem imo1991_p4 {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V)
         have he₂' : e₂ ∈ (G.deleteEdges (↑w.edges.toFinset)).edgeSet :=
           mem_edgeSet_deleteEdges.mpr ⟨he₂, by simpa using h2⟩
         have hlo := (hΦ'b e₂ he₂').1
-        omega
+        lia
       · rw [trailLabel_of_not_mem h1, trailLabel_of_mem h2] at heq
         have hle := w.length_edges
         have hi : w.edges.idxOf e₂ < w.edges.length := List.idxOf_lt_length_of_mem h2
         have he₁' : e₁ ∈ (G.deleteEdges (↑w.edges.toFinset)).edgeSet :=
           mem_edgeSet_deleteEdges.mpr ⟨he₁, by simpa using h1⟩
         have hlo := (hΦ'b e₁ he₁').1
-        omega
+        lia
       · rw [trailLabel_of_not_mem h1, trailLabel_of_not_mem h2] at heq
         have he₁' : e₁ ∈ (G.deleteEdges (↑w.edges.toFinset)).edgeSet :=
           mem_edgeSet_deleteEdges.mpr ⟨he₁, by simpa using h1⟩
@@ -559,7 +559,7 @@ problem imo1991_p4 {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V)
       intro v hdeg
       by_cases hva : v = a
       · subst hva
-        have h0len : 0 < w.edges.length := by rw [w.length_edges]; omega
+        have h0len : 0 < w.edges.length := by rw [w.length_edges]; lia
         have hmem : w.edges[0]'h0len ∈ G.incidenceFinset v := by
           rw [G.mem_incidenceFinset]
           exact ⟨w.edges_subset_edgeSet (List.getElem_mem _),
@@ -572,7 +572,7 @@ problem imo1991_p4 {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V)
           · subst hvt
             have h1 := degree_endpoint_le_one hmax hva hvi
             rw [G.card_incidenceFinset_eq_degree] at h1
-            omega
+            lia
           · have hnone : ∀ e ∈ G.incidenceFinset v, e ∉ w.edges :=
               fun e he => no_trail_edge_at hva hvi hvt he
             have hfin := incidenceFinset_deleteEdges_of_none hnone

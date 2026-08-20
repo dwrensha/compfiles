@@ -35,18 +35,14 @@ Humanfia's Kimi-K3 solutions (https://github.com/humanfia/imo2026).
 
 namespace Imo2026P5
 
-set_option backward.isDefEq.respectTransparency false
-
 /-- The subtype of positive real numbers, representing `\mathbb{R}_{>0}`. -/
 abbrev PositiveReal : Type := {x : ℝ // 0 < x}
 
 /-- The two-sided inequality defining admissible functions on positive real numbers. -/
 def IsAdmissible (f : PositiveReal → PositiveReal) : Prop :=
   ∀ x y : PositiveReal,
-    Real.sqrt (((x : ℝ) ^ 2 + (f y : ℝ) ^ 2) / 2) ≥
-        ((f x : ℝ) + (y : ℝ)) / 2 ∧
-      ((f x : ℝ) + (y : ℝ)) / 2 ≥
-        Real.sqrt ((x : ℝ) * (f y : ℝ))
+    ((f x : ℝ) + (y : ℝ)) / 2 ≤ Real.sqrt (((x : ℝ) ^ 2 + (f y : ℝ) ^ 2) / 2) ∧
+      Real.sqrt ((x : ℝ) * (f y : ℝ)) ≤ ((f x : ℝ) + (y : ℝ)) / 2
 
 snip begin
 
@@ -164,7 +160,6 @@ lemma cross (f : PositiveReal → PositiveReal) (h : IsAdmissible f) (a b : Posi
     ring
   linarith [h1, hid]
 
-set_option maxHeartbeats 800000 in
 /-- Two positive defect values cannot be strictly ordered. -/
 lemma absurd_lt (f : PositiveReal → PositiveReal) (h : IsAdmissible f) (a b : PositiveReal)
     (ha : (0 : ℝ) < (f a : ℝ) - (a : ℝ)) (hb : (0 : ℝ) < (f b : ℝ) - (b : ℝ))
@@ -187,11 +182,11 @@ lemma absurd_lt (f : PositiveReal → PositiveReal) (h : IsAdmissible f) (a b : 
   have hmp_ge : (n : ℝ) * q - p / 2 ≤ (m : ℝ) * p := by
     have h2 := mul_lt_mul_of_pos_right hm2 hb
     rw [add_mul, div_mul_cancel₀ _ (ne_of_gt hb)] at h2
-    nlinarith [h2]
+    linarith [h2]
   have hmp_le : (m : ℝ) * p ≤ (n : ℝ) * q + p / 2 := by
     have h2 := mul_le_mul_of_nonneg_right hm1 (le_of_lt hb)
     rw [add_mul, div_mul_cancel₀ _ (ne_of_gt hb)] at h2
-    nlinarith [h2]
+    linarith [h2]
   have hc := cross f h a b m n
   rw [orbit f h b m, orbit f h a n] at hc
   have hsq : ((b : ℝ) + (m : ℝ) * p - ((a : ℝ) + (n : ℝ) * q) - p) ^ 2 ≤ K ^ 2 := by
@@ -210,13 +205,13 @@ lemma absurd_lt (f : PositiveReal → PositiveReal) (h : IsAdmissible f) (a b : 
   have h4 : 4 * ((b : ℝ) + (n : ℝ) * q - p / 2) * (q - p) ≤
       4 * ((b : ℝ) + (m : ℝ) * p) * (q - p) := by
     have h5 := mul_le_mul_of_nonneg_right hX (le_of_lt hqp)
-    nlinarith [h5]
+    linarith only [h5]
   have h6 : K ^ 2 < 4 * ((b : ℝ) + (n : ℝ) * q - p / 2) * (q - p) := by
     have h7 : K ^ 2 / (4 * (q - p)) < (b : ℝ) + (n : ℝ) * q - p / 2 := by linarith [hnq]
     have h8 := mul_lt_mul_of_pos_right h7 (by linarith [hqp] : (0 : ℝ) < 4 * (q - p))
     rw [div_mul_cancel₀ _ (ne_of_gt (by linarith [hqp] : (0 : ℝ) < 4 * (q - p)))] at h8
-    nlinarith [h8]
-  nlinarith [hc, hsq, h4, h6]
+    linarith only [h8]
+  linarith only [hc, hsq, h4, h6]
 
 /-- All positive values of the defect coincide. -/
 lemma eq_of_pos (f : PositiveReal → PositiveReal) (h : IsAdmissible f) (a b : PositiveReal)
@@ -394,12 +389,9 @@ lemma zero_contra (f : PositiveReal → PositiveReal) (h : IsAdmissible f) (a : 
           | succ j ih =>
             intro hjk hj
             have hjk' : j ≤ k := Nat.le_of_succ_le hjk
-            have hjfloor : j ≤ ⌊((b : ℝ) - 2 * d) / d⌋₊ := by omega
-            have h1 : (j : ℝ) ≤ ((b : ℝ) - 2 * d) / d := by
-              have h2 := Nat.floor_le hu
-              have h3 : (j : ℝ) ≤ (⌊((b : ℝ) - 2 * d) / d⌋₊ : ℝ) :=
-                Nat.cast_le.mpr hjfloor
-              linarith [h2, h3]
+            have hjfloor : j ≤ ⌊((b : ℝ) - 2 * d) / d⌋₊ := by lia
+            have h1 : (j : ℝ) ≤ ((b : ℝ) - 2 * d) / d :=
+              (Nat.le_floor_iff hu).mp hjfloor
             have hbd : (2 : ℝ) * d ≤ (b : ℝ) - (j : ℝ) * d := by
               have hmul := mul_le_mul_of_nonneg_right h1 (le_of_lt hd)
               rw [div_mul_cancel₀ _ (ne_of_gt hd)] at hmul
@@ -502,10 +494,10 @@ problem imo2026_p5 (f : PositiveReal → PositiveReal) :
     rw [hfc x, hfc y]
     constructor
     · have hpos : (0 : ℝ) ≤ ((x : ℝ) + c + (y : ℝ)) / 2 := by linarith [hx, hy, hc]
-      rw [ge_iff_le, Real.le_sqrt hpos (by positivity)]
+      rw [Real.le_sqrt hpos (by positivity)]
       nlinarith [sq_nonneg ((x : ℝ) - ((y : ℝ) + c))]
     · have hpos : (0 : ℝ) ≤ ((x : ℝ) + c + (y : ℝ)) / 2 := by linarith [hx, hy, hc]
-      rw [ge_iff_le, Real.sqrt_le_iff]
+      rw [Real.sqrt_le_iff]
       refine ⟨hpos, ?_⟩
       nlinarith [sq_nonneg ((x : ℝ) - ((y : ℝ) + c))]
 
