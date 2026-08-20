@@ -96,7 +96,7 @@ lemma arcSet_card {m : ℕ} [NeZero m] {c : ZMod m} {l : ℕ} (hl : l ≤ m) :
   intro t₁ ht₁ t₂ ht₂ h
   rw [Finset.mem_coe, Finset.mem_range] at ht₁ ht₂
   simp only [add_left_cancel_iff] at h
-  exact natCast_injective_of_lt (by omega) (by omega) h
+  exact natCast_injective_of_lt (by lia) (by lia) h
 
 lemma sum_arcSet {m : ℕ} [NeZero m] {c : ZMod m} {l : ℕ} (hl : l ≤ m) (w : ZMod m → ℝ) :
     ∑ x ∈ arcSet c l, w x = ∑ t ∈ Finset.range l, w (c + (t : ZMod m)) := by
@@ -104,7 +104,7 @@ lemma sum_arcSet {m : ℕ} [NeZero m] {c : ZMod m} {l : ℕ} (hl : l ≤ m) (w :
   intro t₁ ht₁ t₂ ht₂ h
   rw [Finset.mem_coe, Finset.mem_range] at ht₁ ht₂
   simp only [add_left_cancel_iff] at h
-  exact natCast_injective_of_lt (by omega) (by omega) h
+  exact natCast_injective_of_lt (by lia) (by lia) h
 
 lemma arcSet_univ {m : ℕ} [NeZero m] {c : ZMod m} :
     arcSet c m = Finset.univ := by
@@ -120,7 +120,7 @@ lemma k_pos (P : CirclePartition m k) (hm : 0 < m) : 0 < k := by
     exact Finset.univ_eq_empty
   have hsum := P.len_sum
   rw [e, Finset.sum_empty] at hsum
-  omega
+  lia
 
 /-- Periodic extension of the offsets: the total length of the first `a` arcs
 (going around the circle repeatedly). -/
@@ -150,7 +150,7 @@ lemma off_eq_offExt (hk : 0 < k) (i : Fin k) : P.off i = P.offExt hk i.val := by
     exact Fin.ext h
   · intro b hb
     rw [Finset.mem_range] at hb
-    refine ⟨⟨b, by omega⟩, ?_, rfl⟩
+    refine ⟨⟨b, by lia⟩, ?_, rfl⟩
     rw [Finset.mem_filter]
     exact ⟨Finset.mem_univ _, by rw [Fin.lt_def]; exact hb⟩
   · intro a ha
@@ -158,7 +158,7 @@ lemma off_eq_offExt (hk : 0 < k) (i : Fin k) : P.off i = P.offExt hk i.val := by
     have hlt : a.val < k := by
       have := i.isLt
       rw [Fin.lt_def] at ha
-      omega
+      lia
     exact (len_congr P hk (Nat.mod_eq_of_lt hlt)).symm
 
 lemma offExt_k (hk : 0 < k) : P.offExt hk k = m := by
@@ -176,7 +176,7 @@ lemma offExt_add_period (hk : 0 < k) (a : ℕ) :
   | succ a ih =>
     have e : P.len ⟨(a + k) % k, Nat.mod_lt (a + k) hk⟩ = P.len ⟨a % k, Nat.mod_lt a hk⟩ :=
       len_congr P hk (Nat.add_mod_right a k)
-    rw [show a + 1 + k = (a + k) + 1 by omega, offExt_succ, e, ih, offExt_succ]
+    rw [show a + 1 + k = (a + k) + 1 by lia, offExt_succ, e, ih, offExt_succ]
     ring
 
 lemma offExt_mono (hk : 0 < k) {a b : ℕ} (h : a ≤ b) : P.offExt hk a ≤ P.offExt hk b := by
@@ -186,12 +186,12 @@ lemma offExt_mono (hk : 0 < k) {a b : ℕ} (h : a ≤ b) : P.offExt hk a ≤ P.o
   | succ c ih =>
     rw [Nat.add_succ, offExt_succ]
     have hpos := P.len_pos ⟨(a + c) % k, Nat.mod_lt (a + c) hk⟩
-    omega
+    lia
 
 lemma offExt_lt_succ (hk : 0 < k) (a : ℕ) : P.offExt hk a < P.offExt hk (a + 1) := by
   rw [offExt_succ]
   have := P.len_pos ⟨a % k, Nat.mod_lt a hk⟩
-  omega
+  lia
 
 /-- The periodic weight function on `ℕ` associated to a score function. -/
 def perW (w : ZMod m → ℝ) (t : ℕ) : ℝ := w (P.base + (t : ZMod m))
@@ -220,13 +220,13 @@ lemma offExt_strictMono (hk : 0 < k) : StrictMono (P.offExt hk) := by
   have step : ∀ d, P.offExt hk (a + d) < P.offExt hk (a + d + 1) := fun d => by
     rw [offExt_succ]
     have hpos := P.len_pos ⟨(a + d) % k, Nat.mod_lt (a + d) hk⟩
-    omega
+    lia
   induction c with
   | zero => simpa using step 0
   | succ c ih =>
     have h2 := step (c + 1)
-    rw [show a + (c + 1) = a + c + 1 by omega] at h2 ⊢
-    omega
+    rw [show a + (c + 1) = a + c + 1 by lia] at h2 ⊢
+    lia
 
 lemma off_le_off (hk : 0 < k) {i j : Fin k} (h : i ≤ j) : P.off i ≤ P.off j := by
   rw [off_eq_offExt, off_eq_offExt]
@@ -235,18 +235,18 @@ lemma off_le_off (hk : 0 < k) {i j : Fin k} (h : i ≤ j) : P.off i ≤ P.off j 
 lemma off_add_len_le_off (hk : 0 < k) {i j : Fin k} (h : i ≤ j) :
     P.off i + P.len i ≤ P.off j + P.len j := by
   rw [← offExt_succ_fin, ← offExt_succ_fin]
-  exact P.offExt_mono hk (by rw [Fin.le_def] at h; omega)
+  exact P.offExt_mono hk (by rw [Fin.le_def] at h; lia)
 
 /-- Every position in `[0, m)` lies in a unique arc interval; existence part. -/
 lemma exists_Ico_of_mono {off : ℕ → ℕ} {K p : ℕ} (h0 : off 0 ≤ p) (hp : p < off K) :
     ∃ j < K, off j ≤ p ∧ p < off (j + 1) := by
   induction K with
-  | zero => omega
+  | zero => lia
   | succ K ih =>
     by_cases h : p < off K
     · obtain ⟨j, hj, hj1, hj2⟩ := ih h
       exact ⟨j, Nat.lt_succ_of_lt hj, hj1, hj2⟩
-    · exact ⟨K, Nat.lt_succ_self _, by omega, by omega⟩
+    · exact ⟨K, Nat.lt_succ_self _, by lia, by lia⟩
 
 /-- The position of a point relative to the basepoint. -/
 def pos (x : ZMod m) : ℕ := (x - P.base).val
@@ -263,7 +263,7 @@ lemma pos_start_add (hk : 0 < k) [NeZero m] (i : Fin k) {t : ℕ} (ht : t < P.le
     abel
   rw [pos, h1, ZMod.val_natCast, Nat.mod_eq_of_lt (by
     have := P.off_add_len_le hk i
-    omega)]
+    lia)]
 
 lemma arcOf_cover (hk : 0 < k) [NeZero m] (x : ZMod m) :
     ∃ i : Fin k, x ∈ P.arcOf i := by
@@ -278,7 +278,7 @@ lemma arcOf_cover (hk : 0 < k) [NeZero m] (x : ZMod m) :
     exact hj2
   refine ⟨⟨j, hjk⟩, ?_⟩
   rw [arcOf, mem_arcSet]
-  refine ⟨P.pos x - P.off ⟨j, hjk⟩, by omega, ?_⟩
+  refine ⟨P.pos x - P.off ⟨j, hjk⟩, by lia, ?_⟩
   have e : (P.off ⟨j, hjk⟩ : ZMod m) + ((P.pos x - P.off ⟨j, hjk⟩ : ℕ) : ZMod m)
       = (P.pos x : ZMod m) := by
     rw [← Nat.cast_add, Nat.add_sub_cancel' hj1']
@@ -298,12 +298,12 @@ lemma arcOf_disjoint (hk : 0 < k) [NeZero m] {i j : Fin k} (h : i ≠ j) :
   rcases lt_or_gt_of_ne hij with hlt | hgt
   · have hle : P.off i + P.len i ≤ P.off j := by
       rw [← offExt_succ_fin P hk, off_eq_offExt P hk]
-      exact P.offExt_mono hk (by omega)
-    omega
+      exact P.offExt_mono hk (by lia)
+    lia
   · have hle : P.off j + P.len j ≤ P.off i := by
       rw [← offExt_succ_fin P hk, off_eq_offExt P hk]
-      exact P.offExt_mono hk (by omega)
-    omega
+      exact P.offExt_mono hk (by lia)
+    lia
 
 
 lemma perW_sum_shift (w : ZMod m → ℝ) (a s : ℕ) :
@@ -311,16 +311,16 @@ lemma perW_sum_shift (w : ZMod m → ℝ) (a s : ℕ) :
   apply Finset.sum_bij (fun t _ => t - m)
   · intro t ht
     simp only [Finset.mem_Ico] at ht ⊢
-    omega
+    lia
   · intro t₁ ht₁ t₂ ht₂ h
     simp only [Finset.mem_Ico] at ht₁ ht₂
-    omega
+    lia
   · intro b hb
     simp only [Finset.mem_Ico] at hb
-    refine ⟨b + m, by simp only [Finset.mem_Ico]; omega, by omega⟩
+    refine ⟨b + m, by simp only [Finset.mem_Ico]; lia, by lia⟩
   · intro t ht
     simp only [Finset.mem_Ico] at ht
-    have e : t - m + m = t := by omega
+    have e : t - m + m = t := by lia
     conv_lhs => rw [← e, perW_periodic]
 
 lemma perW_sum_period (w : ZMod m → ℝ) (q a s : ℕ) :
@@ -374,7 +374,7 @@ lemma perW_sum_mono (w : ZMod m → ℝ) (hnn : ∀ x, 0 ≤ w x) {a b c d : ℕ
   · rw [Finset.subset_iff]
     intro x hx
     simp only [Finset.mem_Ico] at hx ⊢
-    omega
+    lia
   · intro x _ _
     exact hnn _
 
@@ -400,8 +400,8 @@ lemma exists_gap (D : Finset (ZMod m)) (hD : D ≠ Finset.univ) (x : ZMod m) :
         intro h
         rw [ZMod.val_eq_zero] at h
         exact hyx (by rwa [sub_eq_zero] at h)
-      omega
-    · exact le_trans (ZMod.val_le _) (by omega)
+      lia
+    · exact le_trans (ZMod.val_le _) (by lia)
     · rw [ZMod.natCast_val, ZMod.cast_id, add_comm, sub_add_cancel]
       exact hy
 
@@ -418,7 +418,7 @@ lemma gapSize_mem (D : Finset (ZMod m)) (hD : D ≠ Finset.univ) (x : ZMod m) {s
   have h := Nat.find_min (exists_gap D hD x) h2
   have h3 := gapSize_spec D hD x
   by_contra hnot
-  exact h ⟨h1, by omega, hnot⟩
+  exact h ⟨h1, by lia, hnot⟩
 
 /-- The successor of `x` in the circle with `D` deleted. -/
 noncomputable def nextD (D : Finset (ZMod m)) (hD : D ≠ Finset.univ) (x : ZMod m) : ZMod m :=
@@ -462,7 +462,7 @@ lemma skipMap_injective [NeZero (m - l)] (hl : l ≤ m) :
   intro i₁ i₂ h
   rw [skipMap, skipMap, add_left_cancel_iff] at h
   have hv := natCast_injective_of_lt (m := m) (t₁ := i₁.val) (t₂ := i₂.val)
-    (by have := ZMod.val_lt i₁; omega) (by have := ZMod.val_lt i₂; omega) h
+    (by have := ZMod.val_lt i₁; lia) (by have := ZMod.val_lt i₂; lia) h
   exact ZMod.val_injective _ hv
 
 lemma skipMap_notMem [NeZero (m - l)] (hl : l ≤ m) (i : ZMod (m - l)) :
@@ -474,8 +474,8 @@ lemma skipMap_notMem [NeZero (m - l)] (hl : l ≤ m) (i : ZMod (m - l)) :
     rw [Nat.cast_add]
     exact h
   have h3 := natCast_injective_of_lt (m := m) (t₁ := t) (t₂ := l + i.val)
-    (by have := ZMod.val_lt i; omega) (by have := ZMod.val_lt i; omega) h2
-  omega
+    (by have := ZMod.val_lt i; lia) (by have := ZMod.val_lt i; lia) h2
+  lia
 
 lemma skipMap_cover [NeZero (m - l)] (hl : l ≤ m) (y : ZMod m) (hy : y ∉ arcSet a₀ l) :
     ∃ i, skipMap a₀ l i = y := by
@@ -487,7 +487,7 @@ lemma skipMap_cover [NeZero (m - l)] (hl : l ≤ m) (y : ZMod m) (hy : y ∉ arc
     refine ⟨((u - l : ℕ) : ZMod (m - l)), ?_⟩
     have hival : (((u - l : ℕ) : ZMod (m - l)).val) = u - l := by
       rw [ZMod.val_natCast]
-      exact Nat.mod_eq_of_lt (by omega)
+      exact Nat.mod_eq_of_lt (by lia)
     rw [skipMap, hival]
     have e : (l : ZMod m) + ((u - l : ℕ) : ZMod m) = (u : ZMod m) := by
       rw [← Nat.cast_add, Nat.add_sub_cancel' hu]
@@ -496,7 +496,7 @@ lemma skipMap_cover [NeZero (m - l)] (hl : l ≤ m) (y : ZMod m) (hy : y ∉ arc
   · exfalso
     apply hy
     rw [mem_arcSet]
-    exact ⟨(y - a₀).val, by have := ZMod.val_lt (y - a₀); omega, huy⟩
+    exact ⟨(y - a₀).val, by have := ZMod.val_lt (y - a₀); lia, huy⟩
 
 
 omit [NeZero m] in
@@ -518,7 +518,7 @@ lemma mem_arcSet_iff (hl : l ≤ m) (u s : ℕ) :
   · rintro ⟨t, htl, h⟩
     rw [add_left_cancel_iff, ZMod.natCast_eq_natCast_iff] at h
     have h' : t % m = (l + u + s) % m := h
-    rw [Nat.mod_eq_of_lt (by omega : t < m)] at h'
+    rw [Nat.mod_eq_of_lt (by lia : t < m)] at h'
     rw [← h']
     exact htl
   · intro h
@@ -538,54 +538,54 @@ lemma skipMap_next [NeZero (m - l)] (hl : l ≤ m) (hlD : arcSet a₀ l ≠ Fins
   have hone : (1 : ZMod (m - l)) = ((1 : ℕ) : ZMod (m - l)) := by simp
   by_cases hcase : i.val + 1 < m - l
   · have hnot : skipMap a₀ l i + ((1 : ℕ) : ZMod m) ∉ arcSet a₀ l := by
-      rw [skipMap_add, mem_arcSet_iff hl, Nat.mod_eq_of_lt (by omega : l + i.val + 1 < m)]
-      omega
+      rw [skipMap_add, mem_arcSet_iff hl, Nat.mod_eq_of_lt (by lia : l + i.val + 1 < m)]
+      lia
     have hgap : gapSize (arcSet a₀ l) hlD (skipMap a₀ l i) = 1 := by
       apply le_antisymm
       · exact Nat.find_min' (exists_gap (arcSet a₀ l) hlD (skipMap a₀ l i))
           ⟨le_refl 1, Nat.pos_of_ne_zero (NeZero.ne m), hnot⟩
       · exact (gapSize_spec _ _ _).1
     have hival : (i + 1).val = i.val + 1 := by
-      rw [hone, ZMod.val_add, ZMod.val_natCast, Nat.mod_eq_of_lt (by omega : 1 < m - l)]
-      exact Nat.mod_eq_of_lt (by omega)
+      rw [hone, ZMod.val_add, ZMod.val_natCast, Nat.mod_eq_of_lt (by lia : 1 < m - l)]
+      exact Nat.mod_eq_of_lt (by lia)
     have h1 : nextD (arcSet a₀ l) hlD (skipMap a₀ l i)
         = skipMap a₀ l i + ((1 : ℕ) : ZMod m) := by
       rw [nextD, hgap]
     rw [h1, skipMap_add, skipMap_eq, hival, add_left_cancel_iff, ZMod.natCast_eq_natCast_iff]
-    have e : l + (i.val + 1) = l + i.val + 1 := by omega
+    have e : l + (i.val + 1) = l + i.val + 1 := by lia
     rw [e]
-  · have hu : i.val = m - l - 1 := by omega
+  · have hu : i.val = m - l - 1 := by lia
     have hnot : skipMap a₀ l i + ((l + 1 : ℕ) : ZMod m) ∉ arcSet a₀ l := by
       rw [skipMap_add, mem_arcSet_iff hl]
-      have e1 : l + i.val + (l + 1) = m + l := by omega
+      have e1 : l + i.val + (l + 1) = m + l := by lia
       rw [e1, Nat.add_mod_left, Nat.mod_eq_of_lt hlm]
       exact Nat.lt_irrefl l
     have hmem : ∀ s : ℕ, 1 ≤ s → s ≤ l → skipMap a₀ l i + (s : ZMod m) ∈ arcSet a₀ l := by
       intro s hs1 hs2
       rw [skipMap_add, mem_arcSet_iff hl]
-      have e1 : l + i.val + s = m + (s - 1) := by omega
-      rw [e1, Nat.add_mod_left, Nat.mod_eq_of_lt (by omega : s - 1 < m)]
-      omega
+      have e1 : l + i.val + s = m + (s - 1) := by lia
+      rw [e1, Nat.add_mod_left, Nat.mod_eq_of_lt (by lia : s - 1 < m)]
+      lia
     have hgap : gapSize (arcSet a₀ l) hlD (skipMap a₀ l i) = l + 1 := by
       apply le_antisymm
       · exact Nat.find_min' (exists_gap (arcSet a₀ l) hlD (skipMap a₀ l i))
-          ⟨by omega, by omega, hnot⟩
+          ⟨by lia, by lia, hnot⟩
       · by_contra hlt
         push Not at hlt
         have hspec := gapSize_spec (arcSet a₀ l) hlD (skipMap a₀ l i)
-        exact hspec.2.2 (hmem _ hspec.1 (by omega))
+        exact hspec.2.2 (hmem _ hspec.1 (by lia))
     have hival : (i + 1).val = 0 := by
       by_cases hml : m - l = 1
       · have h1 : (i + 1).val < m - l := ZMod.val_lt (i + 1)
-        omega
-      · rw [hone, ZMod.val_add, ZMod.val_natCast, Nat.mod_eq_of_lt (by omega : 1 < m - l),
-          hu, show m - l - 1 + 1 = m - l by omega, Nat.mod_self]
+        lia
+      · rw [hone, ZMod.val_add, ZMod.val_natCast, Nat.mod_eq_of_lt (by lia : 1 < m - l),
+          hu, show m - l - 1 + 1 = m - l by lia, Nat.mod_self]
     have h1 : nextD (arcSet a₀ l) hlD (skipMap a₀ l i)
         = skipMap a₀ l i + ((l + 1 : ℕ) : ZMod m) := by
       rw [nextD, hgap]
     rw [h1, skipMap_add, skipMap_eq, hival, add_left_cancel_iff, ZMod.natCast_eq_natCast_iff]
-    have e1 : l + 0 = l := by omega
-    have e2 : l + i.val + (l + 1) = m + l := by omega
+    have e1 : l + 0 = l := by lia
+    have e2 : l + i.val + (l + 1) = m + l := by lia
     rw [e1, e2, Nat.ModEq, Nat.add_mod_left]
 
 /-- The circular embedding given by skipping a single arc. -/
@@ -628,84 +628,84 @@ lemma skipMap_nextD [NeZero (m - l)] (hl : l ≤ m)
   set G := (if l + x.val + g < m then g else g + l) with hG_def
   have hGL : skipMap a₀ l x + (G : ZMod m) = skipMap a₀ l (nextD D₂ hD₂ x) := by
     by_cases hc : l + x.val + g < m
-    · rw [hG_def, if_pos hc]
+    · rw [hG_def, ite_eq_left hc]
       have h1 : (x + ((g : ℕ) : ZMod (m - l))).val = x.val + g := by
         rw [ZMod.val_add, ZMod.val_natCast, Nat.add_mod_mod,
-          Nat.mod_eq_of_lt (by omega)]
+          Nat.mod_eq_of_lt (by lia)]
       rw [skipMap_add, nextD, ← hg_def, skipMap_eq, h1, add_left_cancel_iff,
-        ZMod.natCast_eq_natCast_iff, show l + x.val + g = l + (x.val + g) by omega]
-    · rw [hG_def, if_neg hc]
+        ZMod.natCast_eq_natCast_iff, show l + x.val + g = l + (x.val + g) by lia]
+    · rw [hG_def, ite_eq_right hc]
       have h1 : (x + ((g : ℕ) : ZMod (m - l))).val = x.val + g - (m - l) := by
         rw [ZMod.val_add, ZMod.val_natCast, Nat.add_mod_mod,
-          Nat.mod_eq_sub_mod (by omega : m - l ≤ x.val + g),
-          Nat.mod_eq_of_lt (by omega : x.val + g - (m - l) < m - l)]
+          Nat.mod_eq_sub_mod (by lia : m - l ≤ x.val + g),
+          Nat.mod_eq_of_lt (by lia : x.val + g - (m - l) < m - l)]
       rw [skipMap_add, nextD, ← hg_def, skipMap_eq, h1, add_left_cancel_iff,
         ZMod.natCast_eq_natCast_iff]
-      have e : l + x.val + (g + l) = (l + (x.val + g - (m - l))) + m := by omega
+      have e : l + x.val + (g + l) = (l + (x.val + g - (m - l))) + m := by lia
       rw [e, Nat.ModEq, Nat.add_mod_right]
   have hG1 : 1 ≤ G := by
     by_cases hc : l + x.val + g < m
-    · rw [hG_def, if_pos hc]; omega
-    · rw [hG_def, if_neg hc]; omega
+    · rw [hG_def, ite_eq_left hc]; lia
+    · rw [hG_def, ite_eq_right hc]; lia
   have hGm : G ≤ m := by
     by_cases hc : l + x.val + g < m
-    · rw [hG_def, if_pos hc]; omega
-    · rw [hG_def, if_neg hc]; omega
+    · rw [hG_def, ite_eq_left hc]; lia
+    · rw [hG_def, ite_eq_right hc]; lia
   have hmem_walk : ∀ s : ℕ, 1 ≤ s → s < G →
       skipMap a₀ l x + (s : ZMod m) ∈ arcSet a₀ l ∪ D₂.image (skipMap a₀ l) := by
     intro s hs1 hsG
     by_cases hc : l + x.val + g < m
-    · rw [hG_def, if_pos hc] at hsG
+    · rw [hG_def, ite_eq_left hc] at hsG
       have h1 : skipMap a₀ l x + (s : ZMod m) = skipMap a₀ l (x + (s : ZMod (m - l))) := by
         rw [skipMap_add, skipMap, ZMod.val_add, ZMod.val_natCast, Nat.add_mod_mod,
-          Nat.mod_eq_of_lt (by omega : x.val + s < m - l),
+          Nat.mod_eq_of_lt (by lia : x.val + s < m - l),
           add_assoc a₀ (l : ZMod m) (↑(x.val + s)), ← Nat.cast_add,
-          show l + x.val + s = l + (x.val + s) by omega]
+          show l + x.val + s = l + (x.val + s) by lia]
       rw [h1, Finset.mem_union]
       right
       rw [mem_image_skipMap D₂ hl]
       exact gapSize_mem D₂ hD₂ x hs1 hsG
-    · rw [hG_def, if_neg hc] at hsG
+    · rw [hG_def, ite_eq_right hc] at hsG
       set s₀ := m - l - x.val with hs₀_def
       by_cases hs2 : s < s₀
       · have h1 : skipMap a₀ l x + (s : ZMod m) = skipMap a₀ l (x + (s : ZMod (m - l))) := by
           rw [skipMap_add, skipMap, ZMod.val_add, ZMod.val_natCast, Nat.add_mod_mod,
-            Nat.mod_eq_of_lt (by omega : x.val + s < m - l),
+            Nat.mod_eq_of_lt (by lia : x.val + s < m - l),
             add_assoc a₀ (l : ZMod m) (↑(x.val + s)), ← Nat.cast_add,
-            show l + x.val + s = l + (x.val + s) by omega]
+            show l + x.val + s = l + (x.val + s) by lia]
         rw [h1, Finset.mem_union]
         right
         rw [mem_image_skipMap D₂ hl]
-        exact gapSize_mem D₂ hD₂ x hs1 (by omega)
+        exact gapSize_mem D₂ hD₂ x hs1 (by lia)
       · by_cases hs3 : s < s₀ + l
         · rw [Finset.mem_union]
           left
           rw [skipMap_add, mem_arcSet_iff hl,
-            Nat.mod_eq_sub_mod (by omega : m ≤ l + x.val + s),
-            Nat.mod_eq_of_lt (by omega : l + x.val + s - m < m)]
-          omega
+            Nat.mod_eq_sub_mod (by lia : m ≤ l + x.val + s),
+            Nat.mod_eq_of_lt (by lia : l + x.val + s - m < m)]
+          lia
         · have h2 : (x + ((s - l : ℕ) : ZMod (m - l))).val = x.val + (s - l) - (m - l) := by
             rw [ZMod.val_add, ZMod.val_natCast, Nat.add_mod_mod,
-              Nat.mod_eq_sub_mod (by omega : m - l ≤ x.val + (s - l)),
-              Nat.mod_eq_of_lt (by omega : x.val + (s - l) - (m - l) < m - l)]
+              Nat.mod_eq_sub_mod (by lia : m - l ≤ x.val + (s - l)),
+              Nat.mod_eq_of_lt (by lia : x.val + (s - l) - (m - l) < m - l)]
           have h1 : skipMap a₀ l x + (s : ZMod m)
               = skipMap a₀ l (x + ((s - l : ℕ) : ZMod (m - l))) := by
             rw [skipMap_add, skipMap, h2,
               add_assoc a₀ (l : ZMod m) (↑(x.val + (s - l) - (m - l))), ← Nat.cast_add,
               add_left_cancel_iff, ZMod.natCast_eq_natCast_iff]
-            have e : l + x.val + s = (l + (x.val + (s - l) - (m - l))) + m := by omega
+            have e : l + x.val + s = (l + (x.val + (s - l) - (m - l))) + m := by lia
             rw [e, Nat.ModEq, Nat.add_mod_right]
           rw [h1, Finset.mem_union]
           right
           rw [mem_image_skipMap D₂ hl]
-          exact gapSize_mem D₂ hD₂ x (by omega) (by omega)
+          exact gapSize_mem D₂ hD₂ x (by lia) (by lia)
   have hgap : gapSize (arcSet a₀ l ∪ D₂.image (skipMap a₀ l)) hD (skipMap a₀ l x) = G := by
     apply le_antisymm
     · exact Nat.find_min' (exists_gap _ hD _) ⟨hG1, hGm, by rw [hGL]; exact hLHS_notMem⟩
     · by_contra hlt
       push Not at hlt
       have hspec := gapSize_spec _ hD (skipMap a₀ l x)
-      exact hspec.2.2 (hmem_walk _ hspec.1 (by omega))
+      exact hspec.2.2 (hmem_walk _ hspec.1 (by lia))
   conv_rhs => rw [nextD, hgap]
   exact hGL.symm
 
@@ -803,22 +803,22 @@ lemma transport_arc {m : ℕ} [NeZero m] {a₀ : ZMod m} {l : ℕ} [NeZero (m - 
       exact ⟨0, hl₁, by simp⟩
     exact Finset.disjoint_left.mp hdisj hmem hmem2
   set v₀ := (c - a₀).val - l with hv₀_def
-  have hv₀ : v₀ < m - l := by omega
+  have hv₀ : v₀ < m - l := by lia
   have hcv : c = a₀ + (l : ZMod m) + (v₀ : ZMod m) := by
     rw [← hcuy]
     have e : ((c - a₀).val : ZMod m) = (l : ZMod m) + (v₀ : ZMod m) := by
-      rw [← Nat.cast_add, Nat.add_sub_cancel' (by omega : l ≤ (c - a₀).val)]
+      rw [← Nat.cast_add, Nat.add_sub_cancel' (by lia : l ≤ (c - a₀).val)]
     rw [e]
     abel
   have hle : v₀ + l₁ ≤ m - l := by
     by_contra h
     push Not at h
     set t := m - l - v₀ with ht_def
-    have ht1 : t < l₁ := by omega
+    have ht1 : t < l₁ := by lia
     have ht2 : a₀ ∈ arcSet c l₁ := by
       rw [mem_arcSet]
       refine ⟨t, ht1, ?_⟩
-      have e2 : l + v₀ + t = m := by omega
+      have e2 : l + v₀ + t = m := by lia
       have e3 : (l : ZMod m) + (v₀ : ZMod m) + (t : ZMod m) = ((l + v₀ + t : ℕ) : ZMod m) := by
         rw [Nat.cast_add, Nat.cast_add]
       rw [hcv, show (a₀ + ↑l + ↑v₀) + ↑t = a₀ + (↑l + ↑v₀ + ↑t) by abel, e3, e2,
@@ -827,7 +827,7 @@ lemma transport_arc {m : ℕ} [NeZero m] {a₀ : ZMod m} {l : ℕ} [NeZero (m - 
       rw [mem_arcSet]
       exact ⟨0, hl1, by simp⟩
     exact Finset.disjoint_left.mp hdisj ht3 ht2
-  refine ⟨((v₀ : ℕ) : ZMod (m - l)), by omega, ?_, ?_⟩
+  refine ⟨((v₀ : ℕ) : ZMod (m - l)), by lia, ?_, ?_⟩
   · apply Finset.eq_of_subset_of_card_le
     · intro y hy
       rw [Finset.mem_image] at hy
@@ -836,18 +836,18 @@ lemma transport_arc {m : ℕ} [NeZero m] {a₀ : ZMod m} {l : ℕ} [NeZero (m - 
       obtain ⟨s, hs1, hs2⟩ := hz
       refine ⟨s, hs1, ?_⟩
       have e : (((v₀ : ℕ) : ZMod (m - l)) + (s : ZMod (m - l))).val = v₀ + s := by
-        rw [← Nat.cast_add, ZMod.val_natCast, Nat.mod_eq_of_lt (by omega : v₀ + s < m - l)]
+        rw [← Nat.cast_add, ZMod.val_natCast, Nat.mod_eq_of_lt (by lia : v₀ + s < m - l)]
       rw [← hzy, ← hs2, skipMap, e, hcv, Nat.cast_add]
       abel
-    · rw [Finset.card_image_of_injective _ (skipMap_injective hl), arcSet_card (by omega),
-        arcSet_card (by omega)]
+    · rw [Finset.card_image_of_injective _ (skipMap_injective hl), arcSet_card (by lia),
+        arcSet_card (by lia)]
   · intro w
-    rw [sum_arcSet (by omega : l₁ ≤ m), sum_arcSet (by omega : l₁ ≤ m - l)]
+    rw [sum_arcSet (by lia : l₁ ≤ m), sum_arcSet (by lia : l₁ ≤ m - l)]
     apply Finset.sum_congr rfl
     intro s hs
     rw [Finset.mem_range] at hs
     have e : (((v₀ : ℕ) : ZMod (m - l)) + (s : ZMod (m - l))).val = v₀ + s := by
-      rw [← Nat.cast_add, ZMod.val_natCast, Nat.mod_eq_of_lt (by omega : v₀ + s < m - l)]
+      rw [← Nat.cast_add, ZMod.val_natCast, Nat.mod_eq_of_lt (by lia : v₀ + s < m - l)]
     have e2 : c + (s : ZMod m) = a₀ + (l : ZMod m) + ((v₀ + s : ℕ) : ZMod m) := by
       rw [hcv, Nat.cast_add]
       abel
@@ -897,7 +897,7 @@ lemma surgeryMany {t : ℕ} :
         rw [Finset.mem_biUnion]
         exact ⟨0, Finset.mem_univ _, by rw [h2, arcSet_univ]; exact Finset.mem_univ x⟩
       · exact h2
-    have : NeZero (m - la 0) := ⟨by omega⟩
+    have : NeZero (m - la 0) := ⟨by lia⟩
     have htr : ∀ s : Fin t, ∃ v : ZMod (m - la 0), la s.succ ≤ m - la 0 ∧
       (arcSet v (la s.succ)).image (skipMap (ca 0) (la 0)) = arcSet (ca s.succ) (la s.succ) ∧
       (∀ w : ZMod m → ℝ, ∑ x ∈ arcSet (ca s.succ) (la s.succ), w x
@@ -965,13 +965,13 @@ lemma surgeryMany {t : ℕ} :
       exact CircleEmb.congr_D hdecomp
         (circleEmb_comp_skipMap (Nat.le_of_lt hl0) _ hD' ψ hψ hD)
     · rw [Fin.sum_univ_succ]
-      omega
+      lia
 
 
 lemma off_zero (hk : 0 < k) : P.off ⟨0, hk⟩ = 0 := by
   rw [off, Finset.filter_eq_empty_iff.mpr (fun j _ => by
     simp only [Fin.lt_def]
-    omega), Finset.sum_empty]
+    lia), Finset.sum_empty]
 
 lemma off_succ (i : Fin k) (h : i.val + 1 < k) : P.off ⟨i.val + 1, h⟩ = P.off i + P.len i := by
   rw [off, off]
@@ -983,17 +983,17 @@ lemma off_succ (i : Fin k) (h : i.val + 1 < k) : P.off ⟨i.val + 1, h⟩ = P.of
     · intro h1
       by_cases h2 : x.val < i.val
       · exact Or.inl h2
-      · exact Or.inr (Fin.ext (by omega))
+      · exact Or.inr (Fin.ext (by lia))
     · rintro (h1 | h1)
-      · omega
-      · rw [h1]; omega
+      · lia
+      · rw [h1]; lia
   rw [e, Finset.sum_union (by
     rw [Finset.disjoint_left]
     intro x hx hx2
     simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_singleton,
       Fin.lt_def] at hx hx2
     rw [hx2] at hx
-    omega)]
+    lia)]
   simp
 
 /-- The single-arc merge lemma: deleting an arc of value `< 1` from the circle
@@ -1014,7 +1014,7 @@ lemma mergeOne {m k : ℕ} [NeZero m] (P : CirclePartition m k) (hk : 0 < k) (hk
       exact le_trans h1 (Finset.sum_le_sum_of_subset_of_nonneg (Finset.subset_univ _)
         (fun x _ _ => hnn x))
     linarith
-  have : NeZero (m - l) := ⟨by omega⟩
+  have : NeZero (m - l) := ⟨by lia⟩
   obtain ⟨j, hj⟩ := P.arcOf_cover hk a₀
   rw [arcOf, mem_arcSet] at hj
   obtain ⟨tj, htj, htj2⟩ := hj
@@ -1039,15 +1039,15 @@ lemma mergeOne {m k : ℕ} [NeZero m] (P : CirclePartition m k) (hk : 0 < k) (hk
         P.perW w t ≤ ∑ t ∈ Finset.Ico p (p + l), P.perW w t := by
       apply P.perW_sum_mono w hnn
       · rw [offExt_succ_fin P hk]
-        omega
-      · omega
+        lia
+      · lia
     have hge : 1 ≤ ∑ t ∈ Finset.Ico (P.offExt hk (j.val + 1)) (P.offExt hk (j.val + 2)),
         P.perW w t := by
       have h1 := hval ⟨(j.val + 1) % k, Nat.mod_lt _ hk⟩
       rw [← sum_arcOf_ext P hk (j.val + 1) (j := ⟨(j.val + 1) % k, Nat.mod_lt _ hk⟩) rfl w] at h1
       have e : P.offExt hk (j.val + 2)
           = P.offExt hk (j.val + 1) + P.len ⟨(j.val + 1) % k, Nat.mod_lt _ hk⟩ := by
-        rw [show j.val + 2 = (j.val + 1) + 1 by omega, offExt_succ]
+        rw [show j.val + 2 = (j.val + 1) + 1 by lia, offExt_succ]
       rw [e]
       exact h1
     have hA2 : ∑ t ∈ Finset.Ico p (p + l), P.perW w t < 1 := hAIco ▸ hA
@@ -1056,10 +1056,10 @@ lemma mergeOne {m k : ℕ} [NeZero m] (P : CirclePartition m k) (hk : 0 < k) (hk
   set T := P.offExt hk (j.val + 2) - p - l with hT_def
   have hoff2 : P.offExt hk (j.val + 2)
       = P.off j + P.len j + P.len ⟨(j.val + 1) % k, Nat.mod_lt _ hk⟩ := by
-    rw [show j.val + 2 = (j.val + 1) + 1 by omega, offExt_succ, offExt_succ_fin P hk]
+    rw [show j.val + 2 = (j.val + 1) + 1 by lia, offExt_succ, offExt_succ_fin P hk]
   have hHT : H + T = P.len j + P.len ⟨(j.val + 1) % k, Nat.mod_lt _ hk⟩ - l := by
     rw [hH_def, hT_def, hoff2]
-    omega
+    lia
   have hHT1 : 1 ≤ H + T := by
     rw [hHT]
     by_cases hp0 : p = P.off j
@@ -1068,7 +1068,7 @@ lemma mergeOne {m k : ℕ} [NeZero m] (P : CirclePartition m k) (hk : 0 < k) (hk
         push Not at hl''
         have hsub : ∑ t ∈ Finset.Ico (P.off j) (P.off j + P.len j), P.perW w t
             ≤ ∑ t ∈ Finset.Ico p (p + l), P.perW w t := by
-          apply P.perW_sum_mono w hnn <;> omega
+          apply P.perW_sum_mono w hnn <;> lia
         have hge : 1 ≤ ∑ t ∈ Finset.Ico (P.off j) (P.off j + P.len j), P.perW w t := by
           have h1 := hval j
           rw [sum_arcOf P hk] at h1
@@ -1076,8 +1076,8 @@ lemma mergeOne {m k : ℕ} [NeZero m] (P : CirclePartition m k) (hk : 0 < k) (hk
         have hA2 : ∑ t ∈ Finset.Ico p (p + l), P.perW w t < 1 := hAIco ▸ hA
         linarith
       have hlen1 := P.len_pos ⟨(j.val + 1) % k, Nat.mod_lt _ hk⟩
-      omega
-    · omega
+      lia
+    · lia
   have hdisj : (j.val + 1) % k ≠ j.val := by
     intro h
     have h1 : (j.val + 1) % k = j.val := h
@@ -1085,8 +1085,8 @@ lemma mergeOne {m k : ℕ} [NeZero m] (P : CirclePartition m k) (hk : 0 < k) (hk
       refine ⟨(j.val + 1) / k, ?_⟩
       conv_lhs => rw [← Nat.mod_add_div (j.val + 1) k, h1]
     obtain ⟨q, hq⟩ := h2
-    have h3 : k ≤ 1 := Nat.le_of_dvd (by omega : 0 < 1) ⟨q, by omega⟩
-    omega
+    have h3 : k ≤ 1 := Nat.le_of_dvd (by lia : 0 < 1) ⟨q, by lia⟩
+    lia
   have hHTm : H + T ≤ m - l := by
     have hle : P.len j + P.len ⟨(j.val + 1) % k, Nat.mod_lt _ hk⟩ ≤ m := by
       have hsum : ∑ i ∈ ({j, ⟨(j.val + 1) % k, Nat.mod_lt _ hk⟩} : Finset (Fin k)), P.len i
@@ -1094,22 +1094,22 @@ lemma mergeOne {m k : ℕ} [NeZero m] (P : CirclePartition m k) (hk : 0 < k) (hk
         apply Finset.sum_le_sum_of_subset_of_nonneg (Finset.subset_univ _)
         intro x _ _
         have := P.len_pos x
-        omega
+        lia
       rw [P.len_sum, Finset.sum_insert (by
         rw [Finset.mem_singleton]
         intro h
         exact hdisj (congr_arg Fin.val h).symm), Finset.sum_singleton] at hsum
       exact hsum
-    omega
+    lia
   set base' := ((m - l - H : ℕ) : ZMod (m - l)) with hbase'_def
   set len' : Fin (k - 1) → ℕ := fun i =>
     if i.val = 0 then H + T else P.len ⟨(j.val + 1 + i.val) % k, Nat.mod_lt _ hk⟩ with hlen'_def
   have hlen'_pos : ∀ i : Fin (k - 1), 1 ≤ len' i := by
     intro i
     by_cases hi : i.val = 0
-    · simp only [hlen'_def, hi, if_true]
+    · simp only [hlen'_def, hi, ite_true]
       exact hHT1
-    · simp only [hlen'_def, hi, if_false]
+    · simp only [hlen'_def, hi, ite_false]
       exact P.len_pos _
   have hk' : 0 < k - 1 := Nat.sub_pos_of_lt hk2
   have hofj : P.off j = P.offExt hk j.val := off_eq_offExt P hk j
@@ -1131,7 +1131,7 @@ lemma mergeOne {m k : ℕ} [NeZero m] (P : CirclePartition m k) (hk : 0 < k) (hk
         apply Finset.sum_congr rfl
         intro i hi
         simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hi
-        simp only [hlen'_def, hi, if_false]
+        simp only [hlen'_def, hi, ite_false]
       rw [e3]
       rw [show (∑ i ∈ Finset.univ.filter (fun i : Fin (k - 1) => i.val ≠ 0),
           P.len ⟨(j.val + 1 + i.val) % k, Nat.mod_lt _ hk⟩)
@@ -1143,23 +1143,23 @@ lemma mergeOne {m k : ℕ} [NeZero m] (P : CirclePartition m k) (hk : 0 < k) (hk
         have e6 : (∑ i ∈ Finset.range (j.val + 2), P.len ⟨i % k, Nat.mod_lt i hk⟩)
             + ∑ s ∈ Finset.Ico (j.val + 2) (j.val + k), P.len ⟨s % k, Nat.mod_lt s hk⟩
             = ∑ i ∈ Finset.range (j.val + k), P.len ⟨i % k, Nat.mod_lt i hk⟩ :=
-          Finset.sum_range_add_sum_Ico _ (by omega)
+          Finset.sum_range_add_sum_Ico _ (by lia)
         rw [e4, e5, offExt_add_period, hoff2, hofj] at e6
-        omega
+        lia
       · apply Finset.sum_bij (fun i _ => j.val + 1 + i.val)
         · intro i hi
           simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hi
           simp only [Finset.mem_Ico]
-          omega
+          lia
         · intro i₁ _ i₂ _ h
-          exact Fin.ext (by omega)
+          exact Fin.ext (by lia)
         · intro b hb
           simp only [Finset.mem_Ico] at hb
-          refine ⟨⟨b - j.val - 1, by omega⟩, ?_, ?_⟩
+          refine ⟨⟨b - j.val - 1, by lia⟩, ?_, ?_⟩
           · simp only [Finset.mem_filter, Finset.mem_univ, true_and]
-            omega
+            lia
           · show j.val + 1 + (b - j.val - 1) = b
-            omega
+            lia
         · intro i _
           rfl
     have e1 : ∑ i, len' i = (H + T) + ∑ i ∈ Finset.univ.filter (fun i : Fin (k - 1) => i.val ≠ 0),
@@ -1168,9 +1168,9 @@ lemma mergeOne {m k : ℕ} [NeZero m] (P : CirclePartition m k) (hk : 0 < k) (hk
         (p := fun i => i.val = 0) (f := len')]
       congr 1
       rw [hz, Finset.sum_singleton]
-      simp only [hlen'_def, if_pos rfl]
+      simp only [hlen'_def, ite_eq_left rfl]
     rw [e1, e2, hHT]
-    omega
+    lia
   set P' : CirclePartition (m - l) (k - 1) :=
     { base := base', len := len', len_pos := hlen'_pos, len_sum := hlen'_sum } with hP'_def
   have hP'base : P'.base = base' := rfl
@@ -1190,7 +1190,7 @@ lemma mergeOne {m k : ℕ} [NeZero m] (P : CirclePartition m k) (hk : 0 < k) (hk
       P'.off ⟨n, hn2⟩ = P.offExt hk (j.val + 1 + n) - P.off j - l := by
     intro n hn
     induction n with
-    | zero => omega
+    | zero => lia
     | succ n ih =>
       intro hn2
       by_cases hn0 : n = 0
@@ -1198,28 +1198,28 @@ lemma mergeOne {m k : ℕ} [NeZero m] (P : CirclePartition m k) (hk : 0 < k) (hk
         have h1 : P'.off ⟨0 + 1, hn2⟩ = P'.off ⟨0, hk'⟩ + P'.len ⟨0, hk'⟩ :=
           off_succ P' ⟨0, hk'⟩ hn2
         rw [h1, off_zero P' hk', hP'len]
-        simp only [hlen'_def, if_pos rfl, zero_add]
+        simp only [hlen'_def, ite_eq_left rfl, zero_add]
         rw [hHT, hoff2, hofj]
-        omega
-      · have ih' := ih (by omega) (by omega)
-        have h1 : P'.off ⟨n + 1, hn2⟩ = P'.off ⟨n, by omega⟩ + P'.len ⟨n, by omega⟩ :=
-          off_succ P' ⟨n, by omega⟩ hn2
+        lia
+      · have ih' := ih (by lia) (by lia)
+        have h1 : P'.off ⟨n + 1, hn2⟩ = P'.off ⟨n, by lia⟩ + P'.len ⟨n, by lia⟩ :=
+          off_succ P' ⟨n, by lia⟩ hn2
         have hge : P.off j + l ≤ P.offExt hk (j.val + 1 + n) := by
           have h2 : P.offExt hk (j.val + 2) ≤ P.offExt hk (j.val + 1 + n) := by
             apply P.offExt_mono hk
-            omega
+            lia
           rw [hoff2, hofj] at h2
-          omega
+          lia
         rw [h1, ih', hP'len]
-        simp only [hlen'_def, hn0, if_false]
-        rw [show j.val + 1 + (n + 1) = j.val + 1 + n + 1 by omega, offExt_succ]
-        omega
+        simp only [hlen'_def, hn0, ite_false]
+        rw [show j.val + 1 + (n + 1) = j.val + 1 + n + 1 by lia, offExt_succ]
+        lia
   refine ⟨P', ?_⟩
   intro i
   by_cases hi0 : i.val = 0
   · have hlen0 : P'.len i = H + T := by
       rw [hP'len]
-      simp only [hlen'_def, hi0, if_true]
+      simp only [hlen'_def, hi0, ite_true]
     have hoff0 : P'.off i = 0 := by
       rw [show i = ⟨0, hk'⟩ from Fin.ext hi0]
       exact off_zero P' hk'
@@ -1227,7 +1227,7 @@ lemma mergeOne {m k : ℕ} [NeZero m] (P : CirclePartition m k) (hk : 0 < k) (hk
     have hsplit : ∑ t ∈ Finset.Ico 0 (H + T), P'.perW (w ∘ skipMap a₀ l) t
         = (∑ t ∈ Finset.Ico 0 H, P'.perW (w ∘ skipMap a₀ l) t)
           + ∑ t ∈ Finset.Ico H (H + T), P'.perW (w ∘ skipMap a₀ l) t := by
-      rw [Finset.sum_Ico_consecutive _ (by omega : 0 ≤ H) (by omega : H ≤ H + T)]
+      rw [Finset.sum_Ico_consecutive _ (by lia : 0 ≤ H) (by lia : H ≤ H + T)]
     rw [hsplit]
     have hpart1 : ∑ t ∈ Finset.Ico 0 H, P'.perW (w ∘ skipMap a₀ l) t
         = ∑ t ∈ Finset.Ico (P.off j) p, P.perW w t := by
@@ -1237,19 +1237,19 @@ lemma mergeOne {m k : ℕ} [NeZero m] (P : CirclePartition m k) (hk : 0 < k) (hk
       rw [Finset.mem_range] at ht
       by_cases hH0 : H = 0
       · rw [hH0] at ht
-        omega
+        lia
       · have hbv : base'.val = m - l - H := by
           rw [hbase'_def, ZMod.val_natCast (m - l) (m - l - H),
-            Nat.mod_eq_of_lt (by omega)]
-        rw [hperW' (0 + t), hbv, show m - l - H + (0 + t) = m - l - H + t by omega,
-          Nat.mod_eq_of_lt (by omega : m - l - H + t < m - l)]
-        have e : p + l + (m - l - H + t) = (p - H + t) + m := by omega
+            Nat.mod_eq_of_lt (by lia)]
+        rw [hperW' (0 + t), hbv, show m - l - H + (0 + t) = m - l - H + t by lia,
+          Nat.mod_eq_of_lt (by lia : m - l - H + t < m - l)]
+        have e : p + l + (m - l - H + t) = (p - H + t) + m := by lia
         rw [e, perW_periodic]
-        have e2 : p - H + t = P.off j + t := by omega
+        have e2 : p - H + t = P.off j + t := by lia
         rw [e2]
     have hpart2 : ∑ t ∈ Finset.Ico H (H + T), P'.perW (w ∘ skipMap a₀ l) t
         = ∑ t ∈ Finset.Ico (p + l) (P.offExt hk (j.val + 2)), P.perW w t := by
-      rw [show P.offExt hk (j.val + 2) = p + l + T by omega]
+      rw [show P.offExt hk (j.val + 2) = p + l + T by lia]
       rw [Finset.sum_Ico_eq_sum_range, Finset.sum_Ico_eq_sum_range]
       simp only [Nat.add_sub_cancel_left]
       apply Finset.sum_congr rfl
@@ -1260,13 +1260,13 @@ lemma mergeOne {m k : ℕ} [NeZero m] (P : CirclePartition m k) (hk : 0 < k) (hk
           rw [hbase'_def, hH0, Nat.sub_zero, ZMod.val_natCast (m - l) (m - l), Nat.mod_self]
         rw [hperW' (H + t), hH0, hbv]
         simp only [zero_add]
-        rw [Nat.mod_eq_of_lt (by omega : t < m - l)]
+        rw [Nat.mod_eq_of_lt (by lia : t < m - l)]
       · have hbv : base'.val = m - l - H := by
           rw [hbase'_def, ZMod.val_natCast (m - l) (m - l - H),
-            Nat.mod_eq_of_lt (by omega)]
+            Nat.mod_eq_of_lt (by lia)]
         rw [hperW' (H + t), hbv]
-        have e1 : m - l - H + (H + t) = (m - l) + t := by omega
-        rw [e1, Nat.add_mod_left, Nat.mod_eq_of_lt (by omega : t < m - l)]
+        have e1 : m - l - H + (H + t) = (m - l) + t := by lia
+        rw [e1, Nat.add_mod_left, Nat.mod_eq_of_lt (by lia : t < m - l)]
     have hvj : ∑ x ∈ P.arcOf j, w x
         = ∑ t ∈ Finset.Ico (P.off j) (P.off j + P.len j), P.perW w t :=
       sum_arcOf P hk j w
@@ -1284,50 +1284,50 @@ lemma mergeOne {m k : ℕ} [NeZero m] (P : CirclePartition m k) (hk : 0 < k) (hk
       rw [← offExt_succ_fin P hk j,
         show P.offExt hk (j.val + 1) + P.len ⟨(j.val + 1) % k, Nat.mod_lt _ hk⟩
           = P.offExt hk (j.val + 2) by
-          rw [show j.val + 2 = (j.val + 1) + 1 by omega, offExt_succ P hk (j.val + 1)]]
+          rw [show j.val + 2 = (j.val + 1) + 1 by lia, offExt_succ P hk (j.val + 1)]]
       exact Finset.sum_Ico_consecutive _
-        (by rw [hofj]; exact P.offExt_mono hk (by omega))
-        (P.offExt_mono hk (by omega))
+        (by rw [hofj]; exact P.offExt_mono hk (by lia))
+        (P.offExt_mono hk (by lia))
     have hVsplit : ∑ t ∈ Finset.Ico (P.off j) (P.offExt hk (j.val + 2)), P.perW w t
         = ∑ t ∈ Finset.Ico (P.off j) p, P.perW w t
           + ∑ t ∈ Finset.Ico p (p + l), P.perW w t
           + ∑ t ∈ Finset.Ico (p + l) (P.offExt hk (j.val + 2)), P.perW w t := by
-      rw [← Finset.sum_Ico_consecutive _ (by omega : P.off j ≤ p + l) hpl,
-        ← Finset.sum_Ico_consecutive _ (by omega : P.off j ≤ p) (by omega : p ≤ p + l)]
+      rw [← Finset.sum_Ico_consecutive _ (by lia : P.off j ≤ p + l) hpl,
+        ← Finset.sum_Ico_consecutive _ (by lia : P.off j ≤ p) (by lia : p ≤ p + l)]
     rw [hpart1, hpart2]
     linarith
   · have hleni : P'.len i = P.len ⟨(j.val + 1 + i.val) % k, Nat.mod_lt _ hk⟩ := by
       rw [hP'len]
-      simp only [hlen'_def, hi0, if_false]
+      simp only [hlen'_def, hi0, ite_false]
     have hoffi : P'.off i = P.offExt hk (j.val + 1 + i.val) - P.off j - l := by
-      have h3 := off'_eq i.val (by omega) i.isLt
+      have h3 := off'_eq i.val (by lia) i.isLt
       rw [show i = ⟨i.val, i.isLt⟩ from Fin.eta i _]
       exact h3
     have hbound : P.offExt hk (j.val + 1 + i.val) - P.off j - l + P.len ⟨(j.val + 1 + i.val) % k,
         Nat.mod_lt _ hk⟩ ≤ m - l := by
       have h1 : P.offExt hk (j.val + 2 + i.val) ≤ P.offExt hk (j.val + k) := by
         apply P.offExt_mono hk
-        omega
-      rw [show j.val + 2 + i.val = (j.val + 1 + i.val) + 1 by omega, offExt_succ,
+        lia
+      rw [show j.val + 2 + i.val = (j.val + 1 + i.val) + 1 by lia, offExt_succ,
         offExt_add_period] at h1
       have h2 : P.offExt hk (j.val + 2) ≤ P.offExt hk (j.val + 1 + i.val) := by
         apply P.offExt_mono hk
-        omega
+        lia
       rw [hoff2, hofj] at h2
-      omega
+      lia
     rw [sum_arcOf P' hk' i (w ∘ skipMap a₀ l), hoffi, hleni, Finset.sum_Ico_eq_sum_range,
       Nat.add_sub_cancel_left]
     have hoffH : H ≤ P.offExt hk (j.val + 1 + i.val) - P.off j - l := by
       have h1 : P.offExt hk (j.val + 2) ≤ P.offExt hk (j.val + 1 + i.val) := by
         apply P.offExt_mono hk
-        omega
+        lia
       rw [hoff2, hofj] at h1
-      omega
+      lia
     have hge2 : P.off j + l ≤ P.offExt hk (j.val + 1 + i.val) := by
       have h1 : P.offExt hk (j.val + 2) ≤ P.offExt hk (j.val + 1 + i.val) := by
         apply P.offExt_mono hk
-        omega
-      omega
+        lia
+      lia
     have hpt : ∀ t : ℕ, t < P.len ⟨(j.val + 1 + i.val) % k, Nat.mod_lt _ hk⟩ →
         P'.perW (w ∘ skipMap a₀ l) (P.offExt hk (j.val + 1 + i.val) - P.off j - l + t)
         = P.perW w (P.offExt hk (j.val + 1 + i.val) + t) := by
@@ -1335,31 +1335,31 @@ lemma mergeOne {m k : ℕ} [NeZero m] (P : CirclePartition m k) (hk : 0 < k) (hk
       rw [hperW']
       have hX2 : P.offExt hk (j.val + 1 + i.val) - P.off j - l + t < m - l := by
         have hb := hbound
-        omega
+        lia
       by_cases hH0 : H = 0
       · have hbv : base'.val = 0 := by
           rw [hbase'_def, hH0, Nat.sub_zero, ZMod.val_natCast (m - l) (m - l), Nat.mod_self]
         rw [hbv, zero_add, Nat.mod_eq_of_lt hX2]
         have e2 : p + l + (P.offExt hk (j.val + 1 + i.val) - P.off j - l + t)
             = P.offExt hk (j.val + 1 + i.val) + t := by
-          omega
+          lia
         rw [e2]
       · have hbv : base'.val = m - l - H := by
           rw [hbase'_def, ZMod.val_natCast (m - l) (m - l - H),
-            Nat.mod_eq_of_lt (by omega)]
+            Nat.mod_eq_of_lt (by lia)]
         rw [hbv]
         have hX1 : H ≤ P.offExt hk (j.val + 1 + i.val) - P.off j - l + t :=
-          le_trans hoffH (by omega)
+          le_trans hoffH (by lia)
         have e1 : (m - l - H + (P.offExt hk (j.val + 1 + i.val) - P.off j - l + t)) % (m - l)
             = (m - l - H + (P.offExt hk (j.val + 1 + i.val) - P.off j - l + t)) - (m - l) := by
-          rw [Nat.mod_eq_sub_mod (by omega : m - l ≤ m - l - H +
+          rw [Nat.mod_eq_sub_mod (by lia : m - l ≤ m - l - H +
               (P.offExt hk (j.val + 1 + i.val) - P.off j - l + t)),
-            Nat.mod_eq_of_lt (by omega : (m - l - H +
+            Nat.mod_eq_of_lt (by lia : (m - l - H +
               (P.offExt hk (j.val + 1 + i.val) - P.off j - l + t)) - (m - l) < m - l)]
         rw [e1]
         have e2 : p + l + ((m - l - H + (P.offExt hk (j.val + 1 + i.val) - P.off j - l + t))
             - (m - l)) = P.offExt hk (j.val + 1 + i.val) + t := by
-          omega
+          lia
         rw [e2]
     rw [show ∑ t ∈ Finset.range (P.len ⟨(j.val + 1 + i.val) % k, Nat.mod_lt _ hk⟩),
         P'.perW (w ∘ skipMap a₀ l) (P.offExt hk (j.val + 1 + i.val) - P.off j - l + t)
@@ -1496,8 +1496,8 @@ lemma mergeValues {t : ℕ} :
     exact hval i
   | succ t ih =>
     intro m k hm P hk ca la w hnn hval hla1 hlam hdij harcval htk m' hm' φ hD hφ
-    have hk2 : 2 ≤ k := by omega
-    have hk' : 0 < k - 1 := by omega
+    have hk2 : 2 ≤ k := by lia
+    have hk' : 0 < k - 1 := by lia
     obtain ⟨P₁, hP₁⟩ := mergeOne P hk hk2 w hnn hval (hla1 0) (hlam 0) (harcval 0)
     have hl0 : la 0 < m := by
       have h1 := hlam 0
@@ -1512,7 +1512,7 @@ lemma mergeValues {t : ℕ} :
         rw [huniv] at h1
         linarith
       · exact h2
-    have : NeZero (m - la 0) := ⟨by omega⟩
+    have : NeZero (m - la 0) := ⟨by lia⟩
     have htr : ∀ s : Fin t, ∃ v : ZMod (m - la 0), la s.succ ≤ m - la 0 ∧
       (arcSet v (la s.succ)).image (skipMap (ca 0) (la 0)) = arcSet (ca s.succ) (la s.succ) ∧
       (∀ w : ZMod m → ℝ, ∑ x ∈ arcSet (ca s.succ) (la s.succ), w x
@@ -1580,10 +1580,10 @@ lemma mergeValues {t : ℕ} :
         rw [← hi]
         exact Finset.mem_image_of_mem _ hxi
     obtain ⟨φ', hφ'comp, hφ'⟩ := circleEmb_factor (Nat.le_of_lt hl0) _ hD' _ hD hdecomp.symm φ hφ
-    have htk' : t < k - 1 := by omega
+    have htk' : t < k - 1 := by lia
     obtain ⟨P', hP'⟩ := ih P₁ hk' v (fun s => la s.succ) (w ∘ skipMap (ca 0) (la 0))
       (fun x => hnn _) hP₁ (fun s => hla1 s.succ) hvle hdij' harcval' htk' φ' hφ'
-    have hcast : (k - 1) - t = k - (t + 1) := by omega
+    have hcast : (k - 1) - t = k - (t + 1) := by lia
     refine ⟨CirclePartition.cast hcast P', ?_⟩
     intro i
     rw [circlePartition_cast_arcOf hcast P' i]
@@ -1601,7 +1601,6 @@ theorem hall_deficiency {n : ℕ} [NeZero n] (r : Fin n → Fin n → Prop) [Dec
       (∀ p ∈ M, f p ∈ T ∧ r p (f p)) ∧
       (∀ p₁ ∈ M, ∀ p₂ ∈ M, f p₁ = f p₂ → p₁ = p₂) ∧
       (∀ p, p ∉ M → ∀ j ∈ T, ¬ r p j) := by
-  classical
   -- neighborhood of a person: the set of jobs they are compatible with
   set N : Fin n → Finset (Fin n) := fun p => Finset.univ.filter (r p) with hN
   -- the deficiency of a set of people
@@ -1617,7 +1616,7 @@ theorem hall_deficiency {n : ℕ} [NeZero n] (r : Fin n → Fin n → Prop) [Dec
       intro s
       have hs := hBmax s (Finset.mem_univ s)
       rw [hd_apply s] at hs
-      have hle : (s.card : ℤ) ≤ ((s.biUnion N).card : ℤ) := by omega
+      have hle : (s.card : ℤ) ≤ ((s.biUnion N).card : ℤ) := by lia
       exact_mod_cast hle
     obtain ⟨f, hinj, hf⟩ := (Finset.all_card_le_biUnion_card_iff_exists_injective N).mp hHall
     refine ⟨Finset.univ, Finset.univ, f, Finset.mem_univ _, rfl, ?_, ?_, ?_⟩
@@ -1632,12 +1631,8 @@ theorem hall_deficiency {n : ℕ} [NeZero n] (r : Fin n → Fin n → Prop) [Dec
     -- pip cannot lie in B, since N pip = univ would force the deficiency of B to be ≤ 0
     have hpipB : pip ∉ B := by
       intro hmem
-      have hNp : N pip = Finset.univ := by
-        apply Finset.eq_univ_of_forall
-        intro j
-        have hj : j ∈ Finset.univ.filter (r pip) :=
-          Finset.mem_filter.mpr ⟨Finset.mem_univ j, hpip j⟩
-        exact hj
+      have hNp : N pip = Finset.univ :=
+        Finset.filter_eq_self.mpr fun x _ => hpip x
       have hsub : (Finset.univ : Finset (Fin n)) ⊆ B.biUnion N := by
         rw [← hNp]
         exact Finset.subset_biUnion_of_mem N hmem
@@ -1648,7 +1643,7 @@ theorem hall_deficiency {n : ℕ} [NeZero n] (r : Fin n → Fin n → Prop) [Dec
         rw [Fintype.card_fin] at h
         exact_mod_cast h
       have hdBexp := hd_apply B
-      omega
+      lia
     set M : Finset (Fin n) := Finset.univ \ B with hM
     set Y : Finset (Fin n) := Finset.univ \ B.biUnion N with hY
     have hpipM : pip ∈ M := Finset.mem_sdiff.mpr ⟨Finset.mem_univ pip, hpipB⟩
@@ -1679,7 +1674,7 @@ theorem hall_deficiency {n : ℕ} [NeZero n] (r : Fin n → Fin n → Prop) [Dec
         Finset.card_union_of_disjoint hdisj2
       have hmax := hBmax (B ∪ s) (Finset.mem_univ _)
       rw [hd_apply (B ∪ s), hd_apply B, hcard_union, hbiU, hunion, hcard2] at hmax
-      omega
+      lia
     -- Hall's theorem applied to the subtype of M
     have hHallSub : ∀ s : Finset {x // x ∈ M},
         s.card ≤ (s.biUnion (fun p => N p.val ∩ Y)).card := by
@@ -1715,7 +1710,7 @@ theorem hall_deficiency {n : ℕ} [NeZero n] (r : Fin n → Fin n → Prop) [Dec
         (fun p : {x // x ∈ M} => N p.val ∩ Y)).mp hHallSub
     -- extend f' to all of Fin n by the identity outside M
     set f : Fin n → Fin n := fun p => if h : p ∈ M then f' ⟨p, h⟩ else p with hf
-    have hfM : ∀ (p : Fin n) (hp : p ∈ M), f p = f' ⟨p, hp⟩ := fun p hp => dif_pos hp
+    have hfM : ∀ (p : Fin n) (hp : p ∈ M), f p = f' ⟨p, hp⟩ := fun p hp => dite_eq_left hp
     set T : Finset (Fin n) := M.image f with hT
     have hinjM : Set.InjOn f M := by
       intro p₁ hp₁ p₂ hp₂ h
@@ -1763,12 +1758,12 @@ theorem usa2025_p6_main (N : ℕ) (hN : 0 < N) : ∀ (m : ℕ) [NeZero m] (_hmn 
     intro m hm' hmn like hnn hpart
     rcases Nat.eq_or_lt_of_le hN with rfl | hN2
     · obtain ⟨P, hP⟩ := hpart ⟨0, hN⟩
-      have h1 := hP ⟨0, by omega⟩
-      have hlen : P.len ⟨0, by omega⟩ = m := by
+      have h1 := hP ⟨0, by lia⟩
+      have hlen : P.len ⟨0, by lia⟩ = m := by
         have hsum := P.len_sum
         rw [Fin.sum_univ_one] at hsum
         exact hsum
-      have huniv : P.arcOf ⟨0, by omega⟩ = Finset.univ := by
+      have huniv : P.arcOf ⟨0, by lia⟩ = Finset.univ := by
         rw [arcOf, hlen, arcSet_univ]
       rw [huniv] at h1
       refine ⟨fun _ => (⟨0, hN⟩ : Fin 1), fun p => ?_⟩
@@ -1782,7 +1777,6 @@ theorem usa2025_p6_main (N : ℕ) (hN : 0 < N) : ∀ (m : ℕ) [NeZero m] (_hmn 
       rw [hfilter]
       exact h1
     · obtain ⟨Pπ, hPπ⟩ := hpart ⟨0, hN⟩
-      classical
       have : NeZero N := ⟨(Nat.ne_of_lt hN).symm⟩
       have hk : 0 < N := hN
       have hk2 : 2 ≤ N := hN2
@@ -1841,17 +1835,11 @@ theorem usa2025_p6_main (N : ℕ) (hN : 0 < N) : ∀ (m : ℕ) [NeZero m] (_hmn 
             Finset.inter_univ, ht_def]
         have htN : t < N := by
           have h2 : 1 ≤ B.card := Finset.card_pos.mpr hBne
-          omega
+          lia
         set e := M.orderEmbOfFin rfl with he_def
         have heM : ∀ s : Fin t, e s ∈ M := fun s => M.orderEmbOfFin_mem rfl s
-        have himageM : Finset.univ.image e = M := by
-          apply Finset.eq_of_subset_of_card_le
-          · intro y hy
-            rw [Finset.mem_image] at hy
-            obtain ⟨s, _, rfl⟩ := hy
-            exact heM s
-          · rw [Finset.card_image_of_injective _ e.injective]
-            simp
+        have himageM : Finset.univ.image e = M :=
+          Finset.image_orderEmbOfFin_univ M rfl
         have hesurj : ∀ q ∈ M, ∃ s : Fin t, e s = q := by
           intro q hq
           rw [← himageM, Finset.mem_image] at hq
@@ -1880,7 +1868,7 @@ theorem usa2025_p6_main (N : ℕ) (hN : 0 < N) : ∀ (m : ℕ) [NeZero m] (_hmn 
             rw [Finset.sdiff_eq_empty_iff_subset] at hempty
             have h2 : T.card = N := by
               rw [le_antisymm (Finset.subset_univ T) hempty, Finset.card_univ, Fintype.card_fin]
-            omega
+            lia
           obtain ⟨j, hj⟩ := hNT
           simp only [Finset.mem_sdiff, Finset.mem_univ, true_and] at hj
           obtain ⟨x, hx⟩ : (Pπ.arcOf j).Nonempty := by
@@ -1923,7 +1911,7 @@ theorem usa2025_p6_main (N : ℕ) (hN : 0 < N) : ∀ (m : ℕ) [NeZero m] (_hmn 
             rw [Finset.sum_const, nsmul_eq_mul, mul_one] at h1
             exact h1
           rw [hm'eq, hBcard, hsum1, hsum2]
-          omega
+          lia
         set g := B.orderEmbOfFin rfl with hg_def
         have hgM : ∀ p : Fin B.card, g p ∈ B := fun p => B.orderEmbOfFin_mem rfl p
         have hgMin : ∀ p : Fin B.card, g p ∉ M := by
@@ -1932,14 +1920,8 @@ theorem usa2025_p6_main (N : ℕ) (hN : 0 < N) : ∀ (m : ℕ) [NeZero m] (_hmn 
           have h2 : g p ∈ Finset.univ \ M := hB_def ▸ h1
           rw [Finset.mem_sdiff] at h2
           exact h2.2
-        have hgimage : Finset.univ.image g = B := by
-          apply Finset.eq_of_subset_of_card_le
-          · intro y hy
-            rw [Finset.mem_image] at hy
-            obtain ⟨s, _, rfl⟩ := hy
-            exact hgM s
-          · rw [Finset.card_image_of_injective _ g.injective]
-            simp
+        have hgimage : Finset.univ.image g = B :=
+          Finset.image_orderEmbOfFin_univ B rfl
         have gsurj : ∀ q ∈ B, ∃ p : Fin B.card, g p = q := by
           intro q hq
           rw [← hgimage, Finset.mem_image] at hq
@@ -1962,8 +1944,8 @@ theorem usa2025_p6_main (N : ℕ) (hN : 0 < N) : ∀ (m : ℕ) [NeZero m] (_hmn 
           exact ⟨CirclePartition.cast hcast Pp, fun i => by
             rw [circlePartition_cast_arcOf hcast Pp i]
             exact hPp (Fin.cast hcast.symm i)⟩
-        have hBcard0 : 0 < B.card := by omega
-        obtain ⟨a', ha'⟩ := ih B.card (by omega) hBcard0 m' hm'ge
+        have hBcard0 : 0 < B.card := by lia
+        obtain ⟨a', ha'⟩ := ih B.card (by lia) hBcard0 m' hm'ge
           (fun p y => like (g p) (φ y)) (fun p y => hnn _ _) hpart'
         -- the final assignment
         have hDM : ∀ x ∈ D, ∃ q ∈ M, x ∈ Pπ.arcOf (f q) := by
@@ -1984,10 +1966,10 @@ theorem usa2025_p6_main (N : ℕ) (hN : 0 < N) : ∀ (m : ℕ) [NeZero m] (_hmn 
             constructor
             · intro hxq
               by_cases hx : x ∈ D
-              · rw [dif_pos hx] at hxq
+              · rw [dite_eq_left hx] at hxq
                 rw [← hxq]
                 exact (Classical.choose_spec (hDM x hx)).2
-              · rw [dif_neg hx] at hxq
+              · rw [dite_eq_right hx] at hxq
                 exfalso
                 have h2 : g (a' (Classical.choose (hφ.cover x hx))) ∈ B := hgM _
                 have h3 : g (a' (Classical.choose (hφ.cover x hx))) ∈ Finset.univ \ M :=
@@ -1996,7 +1978,7 @@ theorem usa2025_p6_main (N : ℕ) (hN : 0 < N) : ∀ (m : ℕ) [NeZero m] (_hmn 
                 exact h3.2 (hxq ▸ hqM)
             · intro hx
               by_cases hxD : x ∈ D
-              · rw [dif_pos hxD]
+              · rw [dite_eq_left hxD]
                 have h1 := (Classical.choose_spec (hDM x hxD)).2
                 by_cases hff : f (Classical.choose (hDM x hxD)) = f q
                 · exact finj _ (Classical.choose_spec (hDM x hxD)).1 _ hqM hff
@@ -2025,20 +2007,20 @@ theorem usa2025_p6_main (N : ℕ) (hN : 0 < N) : ∀ (m : ℕ) [NeZero m] (_hmn 
             constructor
             · intro hxq
               by_cases hx : x ∈ D
-              · rw [dif_pos hx] at hxq
+              · rw [dite_eq_left hx] at hxq
                 exfalso
                 have h1 := (Classical.choose_spec (hDM x hx)).1
                 have h2 : q ∈ Finset.univ \ M := hB_def ▸ hqB
                 rw [Finset.mem_sdiff] at h2
                 exact h2.2 (hxq ▸ h1)
-              · rw [dif_neg hx] at hxq
+              · rw [dite_eq_right hx] at hxq
                 refine ⟨Classical.choose (hφ.cover x hx), ?_, ?_⟩
                 · apply g.injective
                   rw [hxq, hp]
                 · exact Classical.choose_spec (hφ.cover x hx)
             · rintro ⟨y, hy, rfl⟩
               have hynot : φ y ∉ D := hφ.notMem y
-              rw [dif_neg hynot]
+              rw [dite_eq_right hynot]
               have hy2 : Classical.choose (hφ.cover (φ y) hynot) = y := by
                 have h1 := Classical.choose_spec (hφ.cover (φ y) hynot)
                 exact hφ.inj h1

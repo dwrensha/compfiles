@@ -76,7 +76,7 @@ problem usa1976_p5 (a b c d : Polynomial ℂ)
       Finset.card_image_iff.mpr (isPrimitiveRoot_ω.injOn_pow.mono (by
         intro j hj
         simp only [Finset.coe_Icc, Set.mem_Icc, Finset.coe_range, Set.mem_Iio] at hj ⊢
-        omega)), Nat.card_Icc]
+        lia)), Nat.card_Icc]
   -- A polynomial of degree at most 2 with three roots is zero.
   have hdeg : f.natDegree ≤ 2 := by
     rw [hf_def]
@@ -92,7 +92,7 @@ problem usa1976_p5 (a b c d : Polynomial ℂ)
       rw [Finset.mem_image] at hx
       obtain ⟨j, hj, rfl⟩ := hx
       rw [Finset.mem_Icc] at hj
-      exact key j (by omega) (by omega)
+      exact key j (by lia) (by lia)
     · rw [hcard]
       exact lt_of_le_of_lt hdeg (by norm_num)
   -- In particular its constant coefficient `a(1)` is zero.

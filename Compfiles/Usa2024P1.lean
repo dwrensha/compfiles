@@ -71,9 +71,9 @@ The answer is `n ∈ {3, 4}`, following Evan Chen's write-up
 `n ! = ∏ i ∈ Finset.range n, (i + 1)`. -/
 lemma mul_dvd_factorial_of_ne {a b n : ℕ} (ha : 0 < a) (hb : 0 < b) (hab : a ≠ b)
     (han : a ≤ n) (hbn : b ≤ n) : a * b ∣ Nat.factorial n := by
-  have ha' : a - 1 ∈ Finset.range n := Finset.mem_range.mpr (by omega)
+  have ha' : a - 1 ∈ Finset.range n := Finset.mem_range.mpr (by lia)
   have hb' : b - 1 ∈ (Finset.range n).erase (a - 1) :=
-    Finset.mem_erase.mpr ⟨by omega, Finset.mem_range.mpr (by omega)⟩
+    Finset.mem_erase.mpr ⟨by lia, Finset.mem_range.mpr (by lia)⟩
   have e1 := Finset.mul_prod_erase _ (fun x => x + 1) ha'
   have e2 := Finset.mul_prod_erase _ (fun x => x + 1) hb'
   rw [Nat.sub_add_cancel ha] at e1
@@ -123,7 +123,7 @@ lemma not_good_of_seven_le {n : ℕ} (h7 : 7 ≤ n) (hn12 : n ≤ 12) : ¬ Good 
   have hd15 : 15 ∣ Nat.factorial n := (by decide : 15 ∣ Nat.factorial 7).trans hfact7
   have hd13 : ¬ 13 ∣ Nat.factorial n := by
     rw [Nat.Prime.dvd_factorial (by norm_num : Nat.Prime 13)]
-    omega
+    lia
   have hmem : ∀ {d : ℕ}, d ∣ Nat.factorial n → d ∈ (Nat.factorial n).divisors :=
     fun hd => Nat.mem_divisors.mpr ⟨hd, Nat.factorial_ne_zero n⟩
   have hsucc1 : ∀ d ∈ (Nat.factorial n).divisors, d ≤ 12 ∨ 14 ≤ d := by
@@ -132,10 +132,10 @@ lemma not_good_of_seven_le {n : ℕ} (h7 : 7 ≤ n) (hn12 : n ≤ 12) : ¬ Good 
     · exact Or.inl hle
     · rcases le_or_gt 14 d with hle2 | hlt2
       · exact Or.inr hle2
-      · have hd13' : d = 13 := by omega
+      · have hd13' : d = 13 := by lia
         subst hd13'
         exact absurd (Nat.mem_divisors.mp hd).1 hd13
-  have hsucc2 : ∀ d ∈ (Nat.factorial n).divisors, d ≤ 14 ∨ 15 ≤ d := fun d _ => by omega
+  have hsucc2 : ∀ d ∈ (Nat.factorial n).divisors, d ≤ 14 ∨ 15 ≤ d := fun d _ => by lia
   have key := h 12 (hmem hd12) 14 (hmem hd14) 15 (hmem hd15) (by norm_num) (by norm_num)
     hsucc1 hsucc2
   norm_num at key
@@ -147,31 +147,31 @@ contradicts Bertrand's postulate: there is a prime `p` with `n < p ≤ 2n ≤ m�
 lemma not_good_of_thirteen_le {n : ℕ} (hn : 13 ≤ n) : ¬ Good n := by
   intro hGood
   unfold Good at hGood
-  obtain ⟨m, hm2, hm1⟩ : ∃ m, 2 * m ≤ n ∧ n ≤ 2 * m + 1 := ⟨n / 2, by omega⟩
-  have hm6 : 6 ≤ m := by omega
+  obtain ⟨m, hm2, hm1⟩ : ∃ m, 2 * m ≤ n ∧ n ≤ 2 * m + 1 := ⟨n / 2, by lia⟩
+  have hm6 : 6 ≤ m := by lia
   have hmsq : 4 * m + 4 ≤ m ^ 2 := by
-    obtain ⟨t, rfl⟩ : ∃ t, m = 6 + t := ⟨m - 6, by omega⟩
+    obtain ⟨t, rfl⟩ : ∃ t, m = 6 + t := ⟨m - 6, by lia⟩
     nlinarith [sq_nonneg t]
   have hmem : ∀ {d : ℕ}, d ∣ Nat.factorial n → d ∈ (Nat.factorial n).divisors :=
     fun hd => Nat.mem_divisors.mpr ⟨hd, Nat.factorial_ne_zero n⟩
   -- `m² ∣ n !`, as `m` and `2m` are distinct factors of `n !`.
   have hA : m ^ 2 ∣ Nat.factorial n := by
-    have h := mul_dvd_factorial_of_ne (show 0 < m by omega) (show 0 < 2 * m by omega)
-      (show m ≠ 2 * m by omega) (show m ≤ n by omega) (show 2 * m ≤ n by omega)
+    have h := mul_dvd_factorial_of_ne (show 0 < m by lia) (show 0 < 2 * m by lia)
+      (show m ≠ 2 * m by lia) (show m ≤ n by lia) (show 2 * m ≤ n by lia)
     have e : m * (2 * m) = m ^ 2 * 2 := by ring
     exact (dvd_mul_right (m ^ 2) 2).trans (e ▸ h)
   -- `m² - 1 ∣ n !`, as `m - 1` and `m + 1` are distinct factors of `n !`.
   have hB : m ^ 2 - 1 ∣ Nat.factorial n := by
-    have h := mul_dvd_factorial_of_ne (show 0 < m - 1 by omega) (show 0 < m + 1 by omega)
-      (show m - 1 ≠ m + 1 by omega) (show m - 1 ≤ n by omega) (show m + 1 ≤ n by omega)
+    have h := mul_dvd_factorial_of_ne (show 0 < m - 1 by lia) (show 0 < m + 1 by lia)
+      (show m - 1 ≠ m + 1 by lia) (show m - 1 ≤ n by lia) (show m + 1 ≤ n by lia)
     have e : m ^ 2 - 1 = (m - 1) * (m + 1) := by
       have h2 : m ^ 2 = (m - 1) * (m + 1) + 1 := by
-        zify [show (1 : ℕ) ≤ m by omega]
+        zify [show (1 : ℕ) ≤ m by lia]
         ring
-      omega
+      lia
     rwa [e]
   -- Bertrand's postulate: a prime `p` with `n < p ≤ 2n ≤ m² - 2`.
-  obtain ⟨p, hpprime, hpn, hp2n⟩ := Nat.exists_prime_lt_and_le_two_mul n (by omega)
+  obtain ⟨p, hpprime, hpn, hp2n⟩ := Nat.exists_prime_lt_and_le_two_mul n (by lia)
   have hpp : 0 < p := hpprime.pos
   -- Downward induction: every integer in `[m² - 1 - k, m²]` divides `n !`.
   have key : ∀ k : ℕ, k ≤ m ^ 2 - 2 → ∀ j : ℕ, m ^ 2 - 1 - k ≤ j → j ≤ m ^ 2 →
@@ -180,19 +180,19 @@ lemma not_good_of_thirteen_le {n : ℕ} (hn : 13 ≤ n) : ¬ Good n := by
     induction k with
     | zero =>
         intro _ j hj1 hj2
-        have hcases : j = m ^ 2 - 1 ∨ j = m ^ 2 := by omega
+        have hcases : j = m ^ 2 - 1 ∨ j = m ^ 2 := by lia
         rcases hcases with rfl | rfl
         · exact hB
         · exact hA
     | succ k ih =>
         intro hk j hj1 hj2
-        have ht2 : 2 ≤ m ^ 2 - 1 - k := by omega
-        have htD : m ^ 2 - 1 - k ∣ Nat.factorial n := ih (by omega) _ le_rfl (by omega)
+        have ht2 : 2 ≤ m ^ 2 - 1 - k := by lia
+        have htD : m ^ 2 - 1 - k ∣ Nat.factorial n := ih (by lia) _ le_rfl (by lia)
         have ht1D : m ^ 2 - 1 - k + 1 ∣ Nat.factorial n :=
-          ih (by omega) _ (by omega) (by omega)
+          ih (by lia) _ (by lia) (by lia)
         have h1mem : (1 : ℕ) ∈ (Nat.factorial n).divisors := hmem (one_dvd _)
         have hSne : ((Nat.factorial n).divisors.filter (· ≤ m ^ 2 - 1 - k - 1)).Nonempty :=
-          ⟨1, Finset.mem_filter.mpr ⟨h1mem, by omega⟩⟩
+          ⟨1, Finset.mem_filter.mpr ⟨h1mem, by lia⟩⟩
         set q := ((Nat.factorial n).divisors.filter (· ≤ m ^ 2 - 1 - k - 1)).max' hSne
         have hqmem' : q ∈ (Nat.factorial n).divisors.filter (· ≤ m ^ 2 - 1 - k - 1) :=
           Finset.max'_mem _ hSne
@@ -203,22 +203,22 @@ lemma not_good_of_thirteen_le {n : ℕ} (hn : 13 ≤ n) : ¬ Good n := by
           intro d hd
           rcases le_or_gt d (m ^ 2 - 1 - k - 1) with hle | hgt
           · exact Or.inl (Finset.le_max' _ d (Finset.mem_filter.mpr ⟨hd, hle⟩))
-          · exact Or.inr (by omega)
+          · exact Or.inr (by lia)
         have hssuct : ∀ d ∈ (Nat.factorial n).divisors,
-            d ≤ m ^ 2 - 1 - k ∨ m ^ 2 - 1 - k + 1 ≤ d := fun d _ => by omega
-        have hqt : q < m ^ 2 - 1 - k := by omega
+            d ≤ m ^ 2 - 1 - k ∨ m ^ 2 - 1 - k + 1 ≤ d := fun d _ => by lia
+        have hqt : q < m ^ 2 - 1 - k := by lia
         have hgap : m ^ 2 - 1 - k - q ≤ m ^ 2 - 1 - k + 1 - (m ^ 2 - 1 - k) :=
-          hGood q hqmem _ (hmem htD) _ (hmem ht1D) hqt (by omega) hsuccq hssuct
-        have hqeq : q = m ^ 2 - 1 - k - 1 := by omega
+          hGood q hqmem _ (hmem htD) _ (hmem ht1D) hqt (by lia) hsuccq hssuct
+        have hqeq : q = m ^ 2 - 1 - k - 1 := by lia
         have hm1D : m ^ 2 - 1 - k - 1 ∣ Nat.factorial n :=
           hqeq ▸ (Nat.mem_divisors.mp hqmem).1
-        have hcases : j = m ^ 2 - 1 - k - 1 ∨ m ^ 2 - 1 - k ≤ j := by omega
+        have hcases : j = m ^ 2 - 1 - k - 1 ∨ m ^ 2 - 1 - k ≤ j := by lia
         rcases hcases with rfl | hge
         · exact hm1D
-        · exact ih (by omega) j hge hj2
-  have hpD : p ∣ Nat.factorial n := key (m ^ 2 - 2) le_rfl p (by omega) (by omega)
+        · exact ih (by lia) j hge hj2
+  have hpD : p ∣ Nat.factorial n := key (m ^ 2 - 2) le_rfl p (by lia) (by lia)
   have hple := (Nat.Prime.dvd_factorial hpprime).mp hpD
-  omega
+  lia
 
 snip end
 
@@ -233,7 +233,7 @@ problem usa2024_p1 (n : ℕ) (hn : 3 ≤ n) : n ∈ solution_set ↔ Good n := b
     · exact good_four
   · intro hGood
     simp only [solution_set, Set.mem_insert_iff, Set.mem_singleton_iff]
-    rcases (by omega : n = 3 ∨ n = 4 ∨ n = 5 ∨ n = 6 ∨ (7 ≤ n ∧ n ≤ 12) ∨ 13 ≤ n) with
+    rcases (by lia : n = 3 ∨ n = 4 ∨ n = 5 ∨ n = 6 ∨ (7 ≤ n ∧ n ≤ 12) ∨ 13 ≤ n) with
       rfl | rfl | rfl | rfl | ⟨h7, h12⟩ | h13
     · exact Or.inl rfl
     · exact Or.inr rfl

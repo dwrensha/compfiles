@@ -63,18 +63,17 @@ of those. But then no vertex of `{A, B, C, D}` is joined to the other three,
 a contradiction. -/
 lemma card_universal_ge (G : SimpleGraph (Fin 1982)) (hG : FourPointProperty G) :
     1979 ≤ (Finset.univ.filter (IsUniversal G)).card := by
-  classical
   set NU := Finset.univ.filter (fun v => ¬ IsUniversal G v) with hNU
   have hpartition : (Finset.univ.filter (IsUniversal G)).card + NU.card = 1982 := by
     have h := Finset.card_filter_add_card_filter_not
       (s := (Finset.univ : Finset (Fin 1982))) (p := IsUniversal G)
     rw [Finset.card_univ, Fintype.card_fin] at h
     exact h
-  suffices h : NU.card ≤ 3 by omega
+  suffices h : NU.card ≤ 3 by lia
   by_contra hcon
   push Not at hcon
   -- Pick a non-universal vertex `A` and a vertex `B` not joined to `A`.
-  obtain ⟨A, hA⟩ := Finset.card_pos.mp (show 0 < NU.card by omega)
+  obtain ⟨A, hA⟩ := Finset.card_pos.mp (show 0 < NU.card by lia)
   have hA' : ¬ IsUniversal G A := (Finset.mem_filter.mp hA).2
   obtain ⟨B, hBA, hAB⟩ : ∃ w, w ≠ A ∧ ¬ G.Adj A w := by
     by_contra hB
@@ -98,10 +97,10 @@ lemma card_universal_ge (G : SimpleGraph (Fin 1982)) (hG : FourPointProperty G) 
   have hCD2 : 1 < ((NU.erase A).erase B).card := by
     by_cases hB : B ∈ NU.erase A
     · have hBe := Finset.card_erase_of_mem hB
-      omega
+      lia
     · have hBe : ((NU.erase A).erase B).card = (NU.erase A).card := by
         rw [Finset.erase_eq_of_notMem hB]
-      omega
+      lia
   obtain ⟨C, hC, D, hD, hCD⟩ := Finset.one_lt_card.mp hCD2
   obtain ⟨hCB, hC⟩ := Finset.mem_erase.mp hC
   obtain ⟨hCA, hC⟩ := Finset.mem_erase.mp hC
@@ -194,7 +193,6 @@ lemma extremal_universal_iff (v : Fin 1982) :
 /-- The extremal graph satisfies the four-point condition: any four vertices
 contain one outside `{0, 1, 2}`, and that vertex is joined to all others. -/
 lemma extremal_fourPoint : FourPointProperty extremalGraph := by
-  classical
   intro s hs
   obtain ⟨v, hv, hvnot⟩ : ∃ v ∈ s, v ∉ ({0, 1, 2} : Finset (Fin 1982)) := by
     by_contra hcon
@@ -212,7 +210,6 @@ lemma extremal_fourPoint : FourPointProperty extremalGraph := by
 /-- The extremal graph has exactly 1979 universal vertices. -/
 lemma extremal_count :
     (Finset.univ.filter (IsUniversal extremalGraph)).card = 1979 := by
-  classical
   have h1 : Finset.univ.filter (IsUniversal extremalGraph) =
       Finset.univ \ ({0, 1, 2} : Finset (Fin 1982)) := by
     ext v

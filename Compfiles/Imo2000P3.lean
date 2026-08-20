@@ -148,7 +148,7 @@ lemma move_potential_bound (hn : 2 ≤ n) {lam : ℝ} (hlam : 0 < lam)
     {x y : Fin n → ℝ} (h : Move lam x y) :
     (1 / lam - ((n : ℝ) - 1)) * (rightmost y - rightmost x) ≤
       potential x - potential y := by
-  have : Nonempty (Fin n) := ⟨⟨0, by omega⟩⟩
+  have : Nonempty (Fin n) := ⟨⟨0, by lia⟩⟩
   obtain ⟨i, j, hij, rfl⟩ := h
   set c := x j + lam * (x j - x i) with hc
   have hci : 0 < c - x i := by
@@ -225,7 +225,7 @@ lemma reachable_potential_bound (hn : 2 ≤ n) {lam : ℝ} (hlam : 0 < lam)
 fleas cannot all be moved arbitrarily far to the right. -/
 lemma not_allRightOf_of_lt (hn : 2 ≤ n) {lam : ℝ} (hlam : 0 < lam)
     (hlt : lam < 1 / ((n : ℝ) - 1)) : ¬ AllRightOf (n := n) lam := by
-  have : Nonempty (Fin n) := ⟨⟨0, by omega⟩⟩
+  have : Nonempty (Fin n) := ⟨⟨0, by lia⟩⟩
   have hn1 : (0 : ℝ) < (n : ℝ) - 1 := by
     have h2 : (1 : ℝ) < (n : ℝ) := by exact_mod_cast lt_of_lt_of_le one_lt_two hn
     linarith
@@ -235,11 +235,11 @@ lemma not_allRightOf_of_lt (hn : 2 ≤ n) {lam : ℝ} (hlam : 0 < lam)
     linarith
   set x₀ : Fin n → ℝ := fun k => (k : ℝ) with hx₀
   have hnc : ∃ i j, x₀ i ≠ x₀ j := by
-    refine ⟨⟨0, by omega⟩, ⟨1, by omega⟩, ?_⟩
+    refine ⟨⟨0, by lia⟩, ⟨1, by lia⟩, ?_⟩
     intro hcon
     rw [hx₀] at hcon
-    have h2 : ((⟨0, by omega⟩ : Fin n).val : ℝ) = ((⟨1, by omega⟩ : Fin n).val : ℝ) := hcon
-    have h3 : (⟨0, by omega⟩ : Fin n).val = (⟨1, by omega⟩ : Fin n).val :=
+    have h2 : ((⟨0, by lia⟩ : Fin n).val : ℝ) = ((⟨1, by lia⟩ : Fin n).val : ℝ) := hcon
+    have h3 : (⟨0, by lia⟩ : Fin n).val = (⟨1, by lia⟩ : Fin n).val :=
       Nat.cast_injective h2
     exact Nat.zero_ne_one h3
   intro hPA
@@ -254,8 +254,8 @@ lemma not_allRightOf_of_lt (hn : 2 ≤ n) {lam : ℝ} (hlam : 0 < lam)
       rw [le_div_iff₀ hk0]
       linarith
     linarith
-  have h5 := hyM ⟨0, by omega⟩
-  have h6 := le_rightmost y ⟨0, by omega⟩
+  have h5 := hyM ⟨0, by lia⟩
+  have h6 := le_rightmost y ⟨0, by lia⟩
   linarith
 
 /-- One step of Woeginger's strategy: move the leftmost flea over the rightmost flea.
@@ -266,7 +266,7 @@ lemma strat_step (hn : 2 ≤ n) {lam : ℝ} (hlam : 1 / ((n : ℝ) - 1) ≤ lam)
     ∃ y, Move lam x y ∧
       rightmost x + lam * potential x / ((n : ℝ) - 1) ≤ rightmost y ∧
       potential x ≤ potential y := by
-  have : Nonempty (Fin n) := ⟨⟨0, by omega⟩⟩
+  have : Nonempty (Fin n) := ⟨⟨0, by lia⟩⟩
   have hn1 : (0 : ℝ) < (n : ℝ) - 1 := by
     have h2 : (1 : ℝ) < (n : ℝ) := by exact_mod_cast lt_of_lt_of_le one_lt_two hn
     linarith
@@ -311,7 +311,7 @@ lemma strat_step (hn : 2 ≤ n) {lam : ℝ} (hlam : 1 / ((n : ℝ) - 1) ≤ lam)
         exact leftmost_le x l
       linarith
     rw [card_erase_of_mem (mem_univ j), card_univ, Fintype.card_fin, nsmul_eq_mul,
-      Nat.cast_sub (by omega : 1 ≤ n), Nat.cast_one] at h8
+      Nat.cast_sub (by lia : 1 ≤ n), Nat.cast_one] at h8
     rw [potential_eq x, ← hj]
     linarith
   have hz : lam * potential x / ((n : ℝ) - 1) ≤ lam * (x j - x i) := by
@@ -372,7 +372,7 @@ lemma phase2 (hn : 2 ≤ n) {lam : ℝ} (hlam : 0 < lam) (M : ℝ) :
     · obtain ⟨k, hk⟩ := hempty
       rw [mem_filter] at hk
       obtain ⟨-, hkM⟩ := hk
-      have : Nonempty (Fin n) := ⟨⟨0, by omega⟩⟩
+      have : Nonempty (Fin n) := ⟨⟨0, by lia⟩⟩
       obtain ⟨j, hj⟩ := exists_eq_rightmost y
       have hkj : y k < y j := by
         rw [hj]
@@ -402,7 +402,7 @@ lemma phase2 (hn : 2 ≤ n) {lam : ℝ} (hlam : 0 < lam) (M : ℝ) :
         rw [card_erase_of_mem (by rw [mem_filter]; exact ⟨mem_univ k, hkM⟩)] at hcle
         have hpos : 0 < (univ.filter fun l => y l ≤ M).card :=
           card_pos.mpr ⟨k, by rw [mem_filter]; exact ⟨mem_univ k, hkM⟩⟩
-        omega
+        lia
       obtain ⟨z, hzreach, hzM⟩ :=
         ih (Function.update y k c) hcard' (by rw [hry]; linarith)
       exact ⟨z, (Relation.ReflTransGen.single ⟨k, j, hkj, by rw [hc]⟩).trans hzreach, hzM⟩
@@ -420,7 +420,7 @@ then jump every other flea over the rightmost flea) takes all fleas to the right
 given point `M`. -/
 lemma allRightOf_of_ge (hn : 2 ≤ n) {lam : ℝ} (hlam : 1 / ((n : ℝ) - 1) ≤ lam) :
     AllRightOf (n := n) lam := by
-  have : Nonempty (Fin n) := ⟨⟨0, by omega⟩⟩
+  have : Nonempty (Fin n) := ⟨⟨0, by lia⟩⟩
   have hn1 : (0 : ℝ) < (n : ℝ) - 1 := by
     have h2 : (1 : ℝ) < (n : ℝ) := by exact_mod_cast lt_of_lt_of_le one_lt_two hn
     linarith

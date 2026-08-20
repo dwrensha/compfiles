@@ -188,7 +188,7 @@ problem imo2025_p3 :
               rw [← Nat.cast_sub t]
               simp
               have g2' := PNat.sub_coe (f b) b
-              rw [if_pos hb] at g2'
+              rw [ite_eq_left hb] at g2'
               rw [g2'] at hp1
               exact hp1
             have g3 := Int.eq_zero_of_dvd_of_nonneg_of_lt g1 g2 r9
@@ -482,9 +482,9 @@ problem imo2025_p3 :
         unfold Bonza
         intro a b
         by_cases r1: a = 4
-        · have g1 : f a = 16 := if_pos r1
+        · have g1 : f a = 16 := ite_eq_left r1
           by_cases t1: b = 4
-          · have g2 : f b = 16 := if_pos t1
+          · have g2 : f b = 16 := ite_eq_left t1
             rw [g1,g2,r1,t1]
             decide
           · by_cases t2: Odd (b:ℕ)

@@ -67,7 +67,6 @@ lemma fin2_eq_of_ne (u v b : Fin 2) (hu : u ≠ b) (hv : v ≠ b) : u = v := by
 complete graph on 6 vertices contains a monochromatic triangle. -/
 lemma ramsey6 (f : Fin 6 → Fin 6 → Fin 2) (hsym : ∀ i j, f i j = f j i) :
     ∃ i j k : Fin 6, i ≠ j ∧ j ≠ k ∧ k ≠ i ∧ f i j = f j k ∧ f j k = f k i := by
-  classical
   -- Among the 5 edges leaving vertex `0`, at least 3 have the same color `b`.
   have hcard : ((Finset.univ : Finset (Fin 6)).erase 0).card = 5 := by
     rw [Finset.card_erase_of_mem (Finset.mem_univ _), Finset.card_univ,
@@ -85,14 +84,14 @@ lemma ramsey6 (f : Fin 6 → Fin 6 → Fin 2) (hsym : ∀ i j, f i j = f j i) :
         fun j => f 0 j = b).card ≤ ∑ _b : Fin 2, 2 :=
       Finset.sum_le_sum fun b _ => Nat.le_of_lt_succ (h b)
     have hfour : ∑ _b : Fin 2, (2 : ℕ) = 4 := by norm_num [Fin.sum_univ_two]
-    omega
+    lia
   -- Pick three distinct vertices `x y z` joined to `0` by an edge of color `b`.
   have hFpos : 0 < (((Finset.univ : Finset (Fin 6)).erase 0).filter
-      fun j => f 0 j = b).card := by omega
+      fun j => f 0 j = b).card := by lia
   obtain ⟨x, hx⟩ := Finset.card_pos.mp hFpos
   have hF2 : 1 < ((((Finset.univ : Finset (Fin 6)).erase 0).filter
       fun j => f 0 j = b).erase x).card := by
-    rw [Finset.card_erase_of_mem hx]; omega
+    rw [Finset.card_erase_of_mem hx]; lia
   obtain ⟨y, hy, z, hz, hyz⟩ := Finset.one_lt_card.mp hF2
   have hyF : y ∈ ((Finset.univ : Finset (Fin 6)).erase 0).filter
       (fun j => f 0 j = b) := Finset.mem_of_mem_erase hy
@@ -158,7 +157,7 @@ lemma mono_triangle_of_colored_ge (c : EdgeColoring)
   have hsum : c.coloredEdges.card + c.uncoloredEdges.card = 36 := by
     rw [← hpairs, hcong_col, hcong_uncol]
     exact Finset.card_filter_add_card_filter_not _
-  have huncol : c.uncoloredEdges.card ≤ 3 := by omega
+  have huncol : c.uncoloredEdges.card ≤ 3 := by lia
   -- The smaller endpoints of the uncolored edges form a set `C` of at most
   -- 3 vertices covering every uncolored edge.
   set C := c.uncoloredEdges.image minEndpoint with hCdef
@@ -187,7 +186,7 @@ lemma mono_triangle_of_colored_ge (c : EdgeColoring)
   have hs : 6 ≤ ((Finset.univ : Finset (Fin 9)) \ C).card := by
     rw [Finset.card_sdiff_of_subset (Finset.subset_univ C), Finset.card_univ,
       Fintype.card_fin]
-    omega
+    lia
   obtain ⟨t, hts, ht⟩ := Finset.exists_subset_card_eq hs
   -- Reindex these 6 vertices by `Fin 6` and apply the Ramsey fact.
   let e := t.orderIsoOfFin ht
@@ -259,8 +258,8 @@ lemma shrinkColor_diag (P : Finset (Sym2 (Fin 9))) :
   intro i
   rw [shrinkColor_apply]
   by_cases h : s(i, i) ∈ P
-  · rw [if_pos h]
-  · rw [if_neg h]
+  · rw [ite_eq_left h]
+  · rw [ite_eq_right h]
     exact auxColor_diag i
 
 /-- The shrunk coloring, packaged as an `EdgeColoring`. -/
@@ -272,9 +271,9 @@ lemma shrinkColor_some_of {P : Finset (Sym2 (Fin 9))} {e : Sym2 (Fin 9)} {b : Fi
     (h : shrinkColor P e = some b) : auxColor e = some b := by
   rw [shrinkColor_apply] at h
   by_cases hc : e ∈ P
-  · rw [if_pos hc] at h
+  · rw [ite_eq_left hc] at h
     simp at h
-  · rw [if_neg hc] at h
+  · rw [ite_eq_right hc] at h
     exact h
 
 lemma shrink_coloredEdges (P : Finset (Sym2 (Fin 9))) :
@@ -288,12 +287,12 @@ lemma shrink_coloredEdges (P : Finset (Sym2 (Fin 9))) :
   constructor
   · intro hsome
     by_cases hc : e ∈ P
-    · rw [shrinkColor_apply, if_pos hc] at hsome
+    · rw [shrinkColor_apply, ite_eq_left hc] at hsome
       simp at hsome
-    · rw [shrinkColor_apply, if_neg hc] at hsome
+    · rw [shrinkColor_apply, ite_eq_right hc] at hsome
       exact ⟨hsome, hc⟩
   · intro ⟨hsome, hnotP⟩
-    rw [shrinkColor_apply, if_neg hnotP]
+    rw [shrinkColor_apply, ite_eq_right hnotP]
     exact hsome
 
 /-- Second part: for every `m ≤ 32` there is a coloring with exactly `m`
@@ -301,7 +300,7 @@ colored edges and no monochromatic triangle. -/
 lemma exists_avoiding (m : ℕ) (hm : m ≤ 32) :
     ∃ c : EdgeColoring, c.coloredEdges.card = m ∧ ¬ c.HasMonoTriangle := by
   obtain ⟨P, hPsub, hPcard⟩ := Finset.exists_subset_card_eq
-    (show 32 - m ≤ auxColoring.coloredEdges.card by rw [aux_colored_card]; omega)
+    (show 32 - m ≤ auxColoring.coloredEdges.card by rw [aux_colored_card]; lia)
   refine ⟨shrinkColoring P, ?_, ?_⟩
   · rw [shrink_coloredEdges P, Finset.card_sdiff_of_subset hPsub,
       aux_colored_card, hPcard, Nat.sub_sub_self hm]
@@ -319,11 +318,11 @@ problem imo1992_p3 :
   rw [show answer = 33 from rfl]
   constructor
   · intro c hc
-    exact mono_triangle_of_colored_ge c (by omega)
+    exact mono_triangle_of_colored_ge c (by lia)
   · intro m hm
     by_contra hlt
     push Not at hlt
-    obtain ⟨cc, hcard, hnottri⟩ := exists_avoiding m (by omega)
+    obtain ⟨cc, hcard, hnottri⟩ := exists_avoiding m (by lia)
     exact hnottri (hm cc hcard)
 
 end Imo1992P3

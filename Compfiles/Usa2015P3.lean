@@ -115,12 +115,7 @@ lemma blueCard_ne_zero_inter_all (F : Finset (Finset (Fin n))) :
         ext i
         simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_inter,
           Finset.mem_cons]
-        constructor
-        · intro h
-          exact ⟨h a (Or.inl rfl), fun T hT => h T (Or.inr hT)⟩
-        · rintro ⟨ha', hs'⟩ T (rfl | hT)
-          · exact ha'
-          · exact hs' T hT
+        exact forall_eq_or_imp
       rw [h3]
       exact blueCard_ne_zero_inter hv h1 h2
 
@@ -206,7 +201,7 @@ lemma blueCard_singleton (i : Fin n) (hi : i ∉ X c) (hne : ∃ T, c T = true) 
           Finset.mem_union.mpr (Or.inr (Finset.mem_singleton_self i))
         rwa [← h] at h4
       exact hi h3
-    rw [if_pos hb, blueCard, h1, Finset.card_insert_of_notMem h2, Finset.card_singleton]
+    rw [ite_eq_left hb, blueCard, h1, Finset.card_insert_of_notMem h2, Finset.card_singleton]
   · have h1 : (X c ∪ {i}).powerset.filter (fun W => c W = true) = {X c} := by
       ext W
       simp only [Finset.mem_filter, Finset.mem_powerset, Finset.mem_singleton]
@@ -219,7 +214,7 @@ lemma blueCard_singleton (i : Fin n) (hi : i ∉ X c) (hne : ∃ T, c T = true) 
       · intro hW
         rw [hW]
         exact ⟨Finset.subset_union_left, X_blue hv hne⟩
-    rw [if_neg hb, blueCard, h1, Finset.card_singleton]
+    rw [ite_eq_right hb, blueCard, h1, Finset.card_singleton]
 
 /-- `blueCard` is multiplicative over the elements of a set disjoint from `X c`. -/
 lemma blueCard_prod (U : Finset (Fin n)) (hne : ∃ T, c T = true) :
@@ -404,7 +399,7 @@ def colorOf (X₀ B₀ : Finset (Fin n)) : Coloring n := fun T => decide (X₀ �
 lemma blueCard_colorOf {X₀ B₀ : Finset (Fin n)} (h : Disjoint X₀ B₀) (T : Finset (Fin n)) :
     blueCard (colorOf X₀ B₀) T = if X₀ ⊆ T then 2 ^ (T ∩ B₀).card else 0 := by
   by_cases hT : X₀ ⊆ T
-  · rw [if_pos hT]
+  · rw [ite_eq_left hT]
     have hbij : T.powerset.filter (fun W => colorOf X₀ B₀ W = true) =
         (T ∩ B₀).powerset.image (X₀ ∪ ·) := by
       ext W
@@ -449,7 +444,7 @@ lemma blueCard_colorOf {X₀ B₀ : Finset (Fin n)} (h : Disjoint X₀ B₀) (T 
     have e1 := e V₁ hVB1
     have e2 := e V₂ hVB2
     rw [← e1, heq, e2]
-  · rw [if_neg hT]
+  · rw [ite_eq_right hT]
     have h1 : T.powerset.filter (fun W => colorOf X₀ B₀ W = true) = ∅ := by
       apply Finset.filter_false_of_mem
       intro W hW
@@ -464,8 +459,8 @@ lemma isValid_colorOf {X₀ B₀ : Finset (Fin n)} (h : Disjoint X₀ B₀) :
   intro T₁ T₂
   rw [blueCard_colorOf h, blueCard_colorOf h, blueCard_colorOf h, blueCard_colorOf h]
   by_cases h1 : X₀ ⊆ T₁ <;> by_cases h2 : X₀ ⊆ T₂
-  · rw [if_pos h1, if_pos h2, if_pos (Finset.Subset.trans h1 Finset.subset_union_left),
-      if_pos (Finset.subset_inter h1 h2), ← pow_add, ← pow_add]
+  · rw [ite_eq_left h1, ite_eq_left h2, ite_eq_left (Finset.Subset.trans h1 Finset.subset_union_left),
+      ite_eq_left (Finset.subset_inter h1 h2), ← pow_add, ← pow_add]
     congr 1
     have e1 : (T₁ ∪ T₂) ∩ B₀ = (T₁ ∩ B₀) ∪ (T₂ ∩ B₀) :=
       Finset.union_inter_distrib_right _ _ _
@@ -473,11 +468,11 @@ lemma isValid_colorOf {X₀ B₀ : Finset (Fin n)} (h : Disjoint X₀ B₀) :
       Finset.inter_inter_distrib_right _ _ _
     rw [e1, e2]
     exact (Finset.card_union_add_card_inter _ _).symm
-  · rw [if_pos h1, if_neg h2, if_neg
+  · rw [ite_eq_left h1, ite_eq_right h2, ite_eq_right
       (fun h => h2 (Finset.Subset.trans h Finset.inter_subset_right)), mul_zero, mul_zero]
-  · rw [if_neg h1, if_pos h2, if_neg
+  · rw [ite_eq_right h1, ite_eq_left h2, ite_eq_right
       (fun h => h1 (Finset.Subset.trans h Finset.inter_subset_left)), zero_mul, mul_zero]
-  · rw [if_neg h1, if_neg h2, if_neg
+  · rw [ite_eq_right h1, ite_eq_right h2, ite_eq_right
       (fun h => h1 (Finset.Subset.trans h Finset.inter_subset_left)), zero_mul, mul_zero]
 
 lemma isValid_all_red {n : ℕ} : IsValid (fun _ => false : Coloring n) := by
@@ -551,7 +546,7 @@ def mainEquiv (n : ℕ) : ValidColorings n ≃ Option (DisjointPairs n) where
     by_cases h : ∃ T, c T = true
     · show toColoring (fromColoring c hv) = ⟨c, hv⟩
       unfold fromColoring
-      rw [dif_pos h]
+      rw [dite_eq_left h]
       simp only [toColoring]
       apply Subtype.ext
       funext T
@@ -560,7 +555,7 @@ def mainEquiv (n : ℕ) : ValidColorings n ≃ Option (DisjointPairs n) where
       exact (blue_iff hv h T).symm
     · show toColoring (fromColoring c hv) = ⟨c, hv⟩
       unfold fromColoring
-      rw [dif_neg h]
+      rw [dite_eq_right h]
       simp only [toColoring]
       apply Subtype.ext
       funext T
@@ -573,14 +568,14 @@ def mainEquiv (n : ℕ) : ValidColorings n ≃ Option (DisjointPairs n) where
     · simp only [toColoring]
       show fromColoring (fun _ => false : Coloring n) isValid_all_red = none
       unfold fromColoring
-      rw [dif_neg]
+      rw [dite_eq_right]
       intro h
       obtain ⟨T, hT⟩ := h
       exact Bool.false_ne_true hT
     · simp only [toColoring]
       show fromColoring (colorOf X₀ B₀) (isValid_colorOf hd) = some ⟨⟨X₀, B₀⟩, hd⟩
       unfold fromColoring
-      rw [dif_pos (⟨X₀, by simp [colorOf]⟩ : ∃ T, colorOf X₀ B₀ T = true)]
+      rw [dite_eq_left (⟨X₀, by simp [colorOf]⟩ : ∃ T, colorOf X₀ B₀ T = true)]
       congr 1
       apply Subtype.ext
       apply Prod.ext
@@ -607,45 +602,45 @@ def disjointPairEquiv (n : ℕ) : DisjointPairs n ≃ (Fin n → Fin 3) where
       constructor
       · intro h
         by_contra hi
-        rw [if_neg hi] at h
+        rw [ite_eq_right hi] at h
         by_cases hi2 : i ∈ B₀
-        · rw [if_pos hi2] at h
+        · rw [ite_eq_left hi2] at h
           exact absurd h (by decide)
-        · rw [if_neg hi2] at h
+        · rw [ite_eq_right hi2] at h
           exact absurd h (by decide)
       · intro h
-        rw [if_pos h]
+        rw [ite_eq_left h]
     · ext i
       simp only [Finset.mem_filter, Finset.mem_univ, true_and]
       constructor
       · intro h
         by_cases hi1 : i ∈ X₀
-        · rw [if_pos hi1] at h
+        · rw [ite_eq_left hi1] at h
           exact absurd h (by decide)
-        · rw [if_neg hi1] at h
+        · rw [ite_eq_right hi1] at h
           by_cases hi2 : i ∈ B₀
           · exact hi2
-          · rw [if_neg hi2] at h
+          · rw [ite_eq_right hi2] at h
             exact absurd h (by decide)
       · intro h
         have hi1 : i ∉ X₀ := Finset.disjoint_right.mp hd h
-        rw [if_neg hi1, if_pos h]
+        rw [ite_eq_right hi1, ite_eq_left h]
   right_inv := fun g => by
     funext i
     show (if i ∈ Finset.univ.filter (fun j => g j = 0) then (0 : Fin 3)
         else if i ∈ Finset.univ.filter (fun j => g j = 1) then 1 else 2) = g i
     simp only [Finset.mem_filter, Finset.mem_univ, true_and]
     have hlt := (g i).isLt
-    have h3 : (g i).val = 0 ∨ (g i).val = 1 ∨ (g i).val = 2 := by omega
+    have h3 : (g i).val = 0 ∨ (g i).val = 1 ∨ (g i).val = 2 := by lia
     rcases h3 with h | h | h
     · have e : g i = 0 := Fin.ext h
-      rw [if_pos e]
+      rw [ite_eq_left e]
       exact e.symm
     · have e : g i = 1 := Fin.ext h
-      rw [if_neg (by rw [e]; decide), if_pos e]
+      rw [ite_eq_right (by rw [e]; decide), ite_eq_left e]
       exact e.symm
     · have e : g i = 2 := Fin.ext h
-      rw [if_neg (by rw [e]; decide), if_neg (by rw [e]; decide)]
+      rw [ite_eq_right (by rw [e]; decide), ite_eq_right (by rw [e]; decide)]
       exact e.symm
 
 lemma card_disjointPairs (n : ℕ) : Fintype.card (DisjointPairs n) = 3 ^ n := by

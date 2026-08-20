@@ -39,7 +39,7 @@ def f : ℕ → ℕ
   | 0 => 1
   | n + 1 => f n + if (n + 1) % 2 = 0 then f ((n + 1) / 2) else 0
 termination_by n => n
-decreasing_by all_goals omega
+decreasing_by all_goals lia
 
 snip begin
 
@@ -50,13 +50,13 @@ lemma f_succ (n : ℕ) :
 
 /-- A representation of an odd number must contain a `1`. -/
 lemma f_odd (m : ℕ) : f (2 * m + 1) = f (2 * m) := by
-  rw [f_succ (2 * m), if_neg (by omega), add_zero]
+  rw [f_succ (2 * m), ite_eq_right (by lia), add_zero]
 
 /-- The recurrence at even arguments. -/
 lemma f_even (m : ℕ) : f (2 * m + 2) = f (2 * m + 1) + f (m + 1) := by
-  rw [f_succ, add_assoc, Nat.add_mod_right, Nat.mul_mod_right, if_pos rfl]
+  rw [f_succ, add_assoc, Nat.add_mod_right, Nat.mul_mod_right, ite_eq_left rfl]
   congr
-  omega
+  lia
 
 /-- The recurrence at even arguments, shifted form. -/
 lemma f_even' (m : ℕ) (hm : 1 ≤ m) : f (2 * m) = f (2 * m - 1) + f m := by
@@ -103,7 +103,7 @@ lemma f_two_mul_lt (m : ℕ) (hm : 2 ≤ m) : f (2 * m) < (m + 1) * f m := by
   have h1 : f 2 ≤ f m := f_mono hm
   have h2 : f 0 = 1 := f_zero
   have h3 : f 2 = 2 := f_two
-  omega
+  lia
 
 /-- The key pairing inequality for the lower bound: the pairs
 `f k + f (2r + 1 - k)` are nonincreasing in `k` for `1 ≤ k ≤ r`. -/
@@ -115,7 +115,7 @@ lemma f_pair_step (r k : ℕ) (hk : 1 ≤ k) (hkr : k < r) :
       ← Nat.mul_sub, f_odd (r - t)]
   · rw [f_even t, Nat.add_sub_add_right, Nat.sub_add_eq, ← Nat.mul_sub, f_even' (r - t) (by lia)]
     have hle : f (t + 1) ≤ f (r - t) := f_mono (by lia)
-    omega
+    lia
 
 /-- Every pair in the sum is at least `2 * f r`. -/
 lemma f_pair_ge (r k : ℕ) (hk : 1 ≤ k) (hkr : k ≤ r) :
@@ -130,7 +130,7 @@ lemma f_pair_ge (r k : ℕ) (hk : 1 ≤ k) (hkr : k ≤ r) :
       exact f_mono <| Nat.le_add_right r 1
     | succ j ih =>
       intro hj
-      have step := f_pair_step r (r - (j + 1)) (by omega) (by omega)
+      have step := f_pair_step r (r - (j + 1)) (by lia) (by lia)
       have : 1 ≤ r - j := by lia
       calc
         2 * f r
@@ -151,7 +151,7 @@ lemma f_sum_pair (r : ℕ) (hr : 1 ≤ r) :
     refine Finset.sum_congr rfl fun i hi => ?_
     have hi' : i < r := Finset.mem_range.mp hi
     congr 1
-    omega
+    lia
   rw [split, hrefl, ← Finset.sum_add_distrib]
   have hconst : 2 * r * f r = ∑ i ∈ Finset.range r, 2 * f r := by
     rw [Finset.sum_const, Finset.card_range, smul_eq_mul]
@@ -159,7 +159,7 @@ lemma f_sum_pair (r : ℕ) (hr : 1 ≤ r) :
   rw [hconst]
   refine Finset.sum_le_sum fun i hi => ?_
   have hi' : i < r := Finset.mem_range.mp hi
-  have h := f_pair_ge r (i + 1) (by omega) (by omega)
+  have h := f_pair_ge r (i + 1) (by lia) (by lia)
   rwa [Nat.add_sub_add_right] at h
 
 /-- The two-step lower-bound recurrence: `f (2^(n+1)) > 2^n * f (2^(n-1))`. -/
@@ -175,7 +175,7 @@ lemma f_lower_step (n : ℕ) (hn : 1 ≤ n) :
     rw [pow_succ, mul_comm]
   rw [e2] at hpair
   have hf0 : f 0 = 1 := f_zero
-  omega
+  lia
 
 /-- The lower bound in integer form: `(f (2^n))^4 > 2^(n²)`, proved by
 two-step induction; note `4 * (n + 2) + (n + 1)² = (n + 3)²`. -/
@@ -183,11 +183,11 @@ lemma f_lower_main (n : ℕ) (hn : 1 ≤ n) : 2 ^ (n ^ 2) < (f (2 ^ n)) ^ 4 := b
   induction n using Nat.strong_induction_on with
   | _ n ih =>
     rcases n with _ | _ | _ | n
-    · omega
+    · lia
     · norm_num [f_two]
     · norm_num [f_four]
-    · have ihn := ih (n + 1) (by omega) (by omega)
-      have step := f_lower_step (n + 2) (by omega)
+    · have ihn := ih (n + 1) (by lia) (by lia)
+      have step := f_lower_step (n + 2) (by lia)
       rw [Nat.add_succ_sub_one, add_assoc] at step
       calc
         2 ^ (n + 3) ^ 2
@@ -202,7 +202,7 @@ lemma f_sq_step (n : ℕ) (hn : 2 ≤ n) (ih : (f (2 ^ n)) ^ 2 ≤ 2 ^ (n ^ 2)) 
     (f (2 ^ (n + 1))) ^ 2 < 2 ^ ((n + 1) ^ 2) := by
   have h2n : (2 : ℕ) ≤ 2 ^ n := by
     calc (2 : ℕ) = 2 ^ 1 := by norm_num
-      _ ≤ 2 ^ n := Nat.pow_le_pow_right (by norm_num) (by omega)
+      _ ≤ 2 ^ n := Nat.pow_le_pow_right (by norm_num) (by lia)
   have hstep : f (2 ^ (n + 1)) < (2 ^ n + 1) * f (2 ^ n) := by
     rw [pow_succ, mul_comm (2 ^ n) 2]
     exact f_two_mul_lt (2 ^ n) h2n
@@ -215,12 +215,12 @@ lemma f_sq_step (n : ℕ) (hn : 2 ≤ n) (ih : (f (2 ^ n)) ^ 2 ≤ 2 ^ (n ^ 2)) 
       calc 2 ^ (n + 1) + 1
           ≤ 2 ^ (n + 1) + 2 ^ (n + 1) := by
             have hpos : (1 : ℕ) ≤ 2 ^ (n + 1) := Nat.one_le_two_pow
-            omega
+            lia
         _ = 2 ^ (n + 2) := by ring
-        _ ≤ 2 ^ (2 * n) := Nat.pow_le_pow_right (by norm_num) (by omega)
+        _ ≤ 2 ^ (2 * n) := Nat.pow_le_pow_right (by norm_num) (by lia)
     calc (2 ^ n + 1) ^ 2
         = 2 ^ (2 * n) + (2 ^ (n + 1) + 1) := by rw [e2n, en1]; ring
-      _ ≤ 2 ^ (2 * n) + 2 ^ (2 * n) := by omega
+      _ ≤ 2 ^ (2 * n) + 2 ^ (2 * n) := by lia
       _ = 2 ^ (2 * n + 1) := by ring
   have key : ((2 ^ n + 1) * f (2 ^ n)) ^ 2 ≤ 2 ^ ((n + 1) ^ 2) := by
     calc ((2 ^ n + 1) * f (2 ^ n)) ^ 2
@@ -240,12 +240,12 @@ lemma f_sq_le (n : ℕ) (hn : 2 ≤ n) : (f (2 ^ n)) ^ 2 ≤ 2 ^ (n ^ 2) := by
 /-- The upper bound in integer form, strict for `n ≥ 3`. -/
 lemma f_sq_lt (n : ℕ) (hn : 3 ≤ n) : (f (2 ^ n)) ^ 2 < 2 ^ (n ^ 2) := by
   have h := f_sq_step (n - 1) (Nat.le_sub_one_of_lt hn) (f_sq_le (n - 1) (Nat.le_sub_one_of_lt hn))
-  rwa [Nat.sub_add_cancel (by omega)] at h
+  rwa [Nat.sub_add_cancel (by lia)] at h
 
 /-- The lower bound with real powers: `2^(n²/4) < f (2^n)`. -/
 lemma f_gt_lower (n : ℕ) (hn : 3 ≤ n) :
     (2 : ℝ) ^ ((n : ℝ) ^ 2 / 4) < (f (2 ^ n) : ℝ) := by
-  have h := f_lower_main n (by omega)
+  have h := f_lower_main n (by lia)
   have hr : (2 : ℝ) ^ (n ^ 2 : ℕ) < (f (2 ^ n) : ℝ) ^ 4 := by exact_mod_cast h
   have hp : ((2 : ℝ) ^ ((n : ℝ) ^ 2 / 4)) ^ 4 = (2 : ℝ) ^ (n ^ 2 : ℕ) := by
     rw [← Real.rpow_natCast ((2 : ℝ) ^ ((n : ℝ) ^ 2 / 4)) 4,

@@ -60,7 +60,7 @@ lemma not_cube_mul_cube {p q r a b : ℕ} (hp : p.Prime) (hq : q.Prime) (hr : r.
     Nat.factorization_pow] at hcon
   simp only [Finsupp.add_apply, Finsupp.smul_apply, smul_eq_mul,
     factorization_pqr hp hq hr hpq hpr] at hcon
-  omega
+  lia
 
 /-- The cube root of a product of three pairwise distinct primes is irrational:
 it cannot be written as a quotient of two integers. Indeed, from

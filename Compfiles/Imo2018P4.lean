@@ -137,7 +137,7 @@ lemma blacks_card : blacks.card = 200 := by
   rw [h400] at hsum
   have hbij : (Finset.univ.filter fun c : Site => (c.1.val + c.2.val) % 2 = 0).card =
       (Finset.univ.filter fun c : Site => ¬ (c.1.val + c.2.val) % 2 = 0).card := by
-    apply Finset.card_bij (fun c _ => (c.1, ⟨19 - c.2.val, by have := c.2.isLt; omega⟩))
+    apply Finset.card_bij (fun c _ => (c.1, ⟨19 - c.2.val, by have := c.2.isLt; lia⟩))
     · intro c hc
       have hc' : (c.1.val + c.2.val) % 2 = 0 := by
         simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hc
@@ -151,24 +151,24 @@ lemma blacks_card : blacks.card = 200 := by
       have h2' : 19 - a.2.val = 19 - b.2.val := Fin.mk.inj_iff.mp h2
       have := a.2.isLt
       have := b.2.isLt
-      exact Prod.ext h1 (Fin.ext (by omega))
+      exact Prod.ext h1 (Fin.ext (by lia))
     · intro d hd
       have hd' : ¬ (d.1.val + d.2.val) % 2 = 0 := by
         simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hd
         exact hd
       have := d.2.isLt
-      refine ⟨(d.1, ⟨19 - d.2.val, by omega⟩), ?_, ?_⟩
+      refine ⟨(d.1, ⟨19 - d.2.val, by lia⟩), ?_, ?_⟩
       · simp only [Finset.mem_filter, Finset.mem_univ, true_and]
         show (d.1.val + (19 - d.2.val)) % 2 = 0
         omega
-      · show (d.1, ⟨19 - (19 - d.2.val), by omega⟩) = d
+      · show (d.1, ⟨19 - (19 - d.2.val), by lia⟩) = d
         apply Prod.ext
         · rfl
         · apply Fin.ext
           show 19 - (19 - d.2.val) = d.2.val
-          omega
+          lia
   unfold blacks
-  omega
+  lia
 
 /-- No two black squares are at knight's move distance. -/
 lemma not_knightAdj_of_black {a b : Site} (ha : a ∈ blacks) (hb : b ∈ blacks) :
@@ -176,7 +176,7 @@ lemma not_knightAdj_of_black {a b : Site} (ha : a ∈ blacks) (hb : b ∈ blacks
   simp only [blacks, Finset.mem_filter, Finset.mem_univ, true_and] at ha hb
   intro h
   rcases h with ⟨h1, h2⟩ | ⟨h1, h2⟩ | ⟨h1, h2⟩ | ⟨h1, h2⟩ | ⟨h1, h2⟩ | ⟨h1, h2⟩ |
-    ⟨h1, h2⟩ | ⟨h1, h2⟩ <;> omega
+    ⟨h1, h2⟩ | ⟨h1, h2⟩ <;> lia
 
 /-- Every unoccupied black square is a legal move for Amy. -/
 lemma black_sdiff_subset_amyMoves {red blue : Finset Site} (hsub : red ⊆ blacks) :
@@ -235,17 +235,17 @@ lemma cyc_lt_100 : ∀ c : Site, cyc c < 100 := by
   have := c.1.isLt
   have := c.2.isLt
   have hlab : lab (c.1.val % 4) (c.2.val % 4) ≤ 3 :=
-    lab_le ⟨c.1.val % 4, Nat.mod_lt _ (by omega)⟩
-      ⟨c.2.val % 4, Nat.mod_lt _ (by omega)⟩
+    lab_le ⟨c.1.val % 4, Nat.mod_lt _ (by lia)⟩
+      ⟨c.2.val % 4, Nat.mod_lt _ (by lia)⟩
   unfold cyc
-  omega
+  lia
 
 /-- The opposite coordinate within a `4×4` block: `i ↦ 3 − i` within
 the block. -/
 def oppCoord (x : ℕ) : ℕ := 4 * (x / 4) + (3 - x % 4)
 
 lemma oppCoord_lt {x : ℕ} (hx : x < 20) : oppCoord x < 20 := by
-  unfold oppCoord; omega
+  unfold oppCoord; lia
 
 /-- The opposite site of a site in its 4-cycle: the two sites of the
 cycle that are *not* a knight's move apart. -/
@@ -256,7 +256,7 @@ lemma opp_ne : ∀ c : Site, opp c ≠ c := by
   intro c h
   have h1 : c.1.val = (opp c).1.val := by rw [h]
   have h2 : c.1.val = 4 * (c.1.val / 4) + (3 - c.1.val % 4) := h1
-  omega
+  lia
 
 lemma opp_opp : ∀ c : Site, opp (opp c) = c := by
   intro c
@@ -281,8 +281,8 @@ lemma cyc_opp : ∀ c : Site, cyc (opp c) = cyc c := by
   have hlab : lab ((opp c).1.val % 4) ((opp c).2.val % 4) =
       lab (c.1.val % 4) (c.2.val % 4) := by
     rw [hd1.2, hd2.2]
-    exact lab_opp ⟨c.1.val % 4, Nat.mod_lt _ (by omega)⟩
-      ⟨c.2.val % 4, Nat.mod_lt _ (by omega)⟩
+    exact lab_opp ⟨c.1.val % 4, Nat.mod_lt _ (by lia)⟩
+      ⟨c.2.val % 4, Nat.mod_lt _ (by lia)⟩
   unfold cyc
   rw [hd1.1, hd2.1, hlab]
 
@@ -296,29 +296,29 @@ lemma eq_or_opp_or_adj_of_cyc_eq :
   have := b.1.isLt
   have := b.2.isLt
   have hla : lab (a.1.val % 4) (a.2.val % 4) ≤ 3 :=
-    lab_le ⟨a.1.val % 4, Nat.mod_lt _ (by omega)⟩
-      ⟨a.2.val % 4, Nat.mod_lt _ (by omega)⟩
+    lab_le ⟨a.1.val % 4, Nat.mod_lt _ (by lia)⟩
+      ⟨a.2.val % 4, Nat.mod_lt _ (by lia)⟩
   have hlb : lab (b.1.val % 4) (b.2.val % 4) ≤ 3 :=
-    lab_le ⟨b.1.val % 4, Nat.mod_lt _ (by omega)⟩
-      ⟨b.2.val % 4, Nat.mod_lt _ (by omega)⟩
+    lab_le ⟨b.1.val % 4, Nat.mod_lt _ (by lia)⟩
+      ⟨b.2.val % 4, Nat.mod_lt _ (by lia)⟩
   unfold cyc at h
-  have hblk : a.1.val / 4 = b.1.val / 4 ∧ a.2.val / 4 = b.2.val / 4 := by omega
+  have hblk : a.1.val / 4 = b.1.val / 4 ∧ a.2.val / 4 = b.2.val / 4 := by lia
   have hlab : lab (a.1.val % 4) (a.2.val % 4) = lab (b.1.val % 4) (b.2.val % 4) := by
-    omega
-  rcases lab_eq_cases ⟨a.1.val % 4, Nat.mod_lt _ (by omega)⟩
-      ⟨a.2.val % 4, Nat.mod_lt _ (by omega)⟩ ⟨b.1.val % 4, Nat.mod_lt _ (by omega)⟩
-      ⟨b.2.val % 4, Nat.mod_lt _ (by omega)⟩ hlab with hc | hc | hc
+    lia
+  rcases lab_eq_cases ⟨a.1.val % 4, Nat.mod_lt _ (by lia)⟩
+      ⟨a.2.val % 4, Nat.mod_lt _ (by lia)⟩ ⟨b.1.val % 4, Nat.mod_lt _ (by lia)⟩
+      ⟨b.2.val % 4, Nat.mod_lt _ (by lia)⟩ hlab with hc | hc | hc
   · -- The in-block offsets agree, so the sites are equal.
     obtain ⟨hi, hj⟩ := hc
     have hi' : a.1.val % 4 = b.1.val % 4 := congrArg Fin.val hi
     have hj' : a.2.val % 4 = b.2.val % 4 := congrArg Fin.val hj
-    exact Or.inl (Prod.ext (Fin.ext (by omega)) (Fin.ext (by omega)))
+    exact Or.inl (Prod.ext (Fin.ext (by lia)) (Fin.ext (by lia)))
   · -- The in-block offsets are opposite, so the sites are opposite.
     obtain ⟨hi, hj⟩ := hc
     have hi' : a.1.val % 4 = 3 - b.1.val % 4 := hi
     have hj' : a.2.val % 4 = 3 - b.2.val % 4 := hj
-    have e1 : a.1.val = oppCoord b.1.val := by unfold oppCoord; omega
-    have e2 : a.2.val = oppCoord b.2.val := by unfold oppCoord; omega
+    have e1 : a.1.val = oppCoord b.1.val := by unfold oppCoord; lia
+    have e2 : a.2.val = oppCoord b.2.val := by unfold oppCoord; lia
     exact Or.inr (Or.inl (Prod.ext (Fin.ext e1) (Fin.ext e2)))
   · -- The in-block offsets are a knight's move apart, and so are the sites.
     refine Or.inr (Or.inr ?_)
@@ -327,28 +327,28 @@ lemma eq_or_opp_or_adj_of_cyc_eq :
       ⟨h1, h2⟩ | ⟨h1, h2⟩
     · have h1' : a.1.val % 4 + 1 = b.1.val % 4 := h1
       have h2' : a.2.val % 4 + 2 = b.2.val % 4 := h2
-      exact Or.inl ⟨by omega, by omega⟩
+      exact Or.inl ⟨by lia, by lia⟩
     · have h1' : a.1.val % 4 + 2 = b.1.val % 4 := h1
       have h2' : a.2.val % 4 + 1 = b.2.val % 4 := h2
-      exact Or.inr (Or.inl ⟨by omega, by omega⟩)
+      exact Or.inr (Or.inl ⟨by lia, by lia⟩)
     · have h1' : a.1.val % 4 + 1 = b.1.val % 4 := h1
       have h2' : b.2.val % 4 + 2 = a.2.val % 4 := h2
-      exact Or.inr (Or.inr (Or.inl ⟨by omega, by omega⟩))
+      exact Or.inr (Or.inr (Or.inl ⟨by lia, by lia⟩))
     · have h1' : a.1.val % 4 + 2 = b.1.val % 4 := h1
       have h2' : b.2.val % 4 + 1 = a.2.val % 4 := h2
-      exact Or.inr (Or.inr (Or.inr (Or.inl ⟨by omega, by omega⟩)))
+      exact Or.inr (Or.inr (Or.inr (Or.inl ⟨by lia, by lia⟩)))
     · have h1' : b.1.val % 4 + 1 = a.1.val % 4 := h1
       have h2' : a.2.val % 4 + 2 = b.2.val % 4 := h2
-      exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inl ⟨by omega, by omega⟩))))
+      exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inl ⟨by lia, by lia⟩))))
     · have h1' : b.1.val % 4 + 2 = a.1.val % 4 := h1
       have h2' : a.2.val % 4 + 1 = b.2.val % 4 := h2
-      exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl ⟨by omega, by omega⟩)))))
+      exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl ⟨by lia, by lia⟩)))))
     · have h1' : b.1.val % 4 + 1 = a.1.val % 4 := h1
       have h2' : b.2.val % 4 + 2 = a.2.val % 4 := h2
-      exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl ⟨by omega, by omega⟩))))))
+      exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl ⟨by lia, by lia⟩))))))
     · have h1' : b.1.val % 4 + 2 = a.1.val % 4 := h1
       have h2' : b.2.val % 4 + 1 = a.2.val % 4 := h2
-      exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ⟨by omega, by omega⟩))))))
+      exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ⟨by lia, by lia⟩))))))
 
 /-- Ben's invariant: every 4-cycle contains at most one red stone, and
 the blue stones are exactly the opposite sites of the red stones. -/
@@ -421,14 +421,14 @@ lemma canEnsure_of_black {K : ℕ} :
         rw [hB] at hss
         exact Finset.subset_empty.mp hss
       rw [hS0, Finset.card_empty] at hpot
-      exact .zero (by omega)
+      exact .zero (by lia)
   | succ fuel ih =>
       intro red blue hsub hfuel hpot
       by_cases hKle : K ≤ red.card
       · exact canEnsure_of_card_le hKle
       · -- Here `K > red.card`, so at least two black sites are still free.
-        have hm2 : 2 ≤ (blacks \ (red ∪ blue)).card := by omega
-        obtain ⟨a, ha⟩ := Finset.card_pos.mp (by omega : 0 < (blacks \ (red ∪ blue)).card)
+        have hm2 : 2 ≤ (blacks \ (red ∪ blue)).card := by lia
+        obtain ⟨a, ha⟩ := Finset.card_pos.mp (by lia : 0 < (blacks \ (red ∪ blue)).card)
         have hab : a ∈ blacks := (Finset.mem_sdiff.mp ha).1
         have haX : a ∉ red ∪ blue := (Finset.mem_sdiff.mp ha).2
         have har : a ∉ red := fun hr => haX (Finset.mem_union.mpr (Or.inl hr))
@@ -444,7 +444,7 @@ lemma canEnsure_of_black {K : ℕ} :
           have h0 : ((blacks \ (red ∪ blue)).erase a).card = 0 :=
             Finset.card_eq_zero.mpr hsub2
           rw [Finset.card_erase_of_mem ha] at h0
-          omega
+          lia
         · -- Ben replies `b`; the potential is preserved.
           intro b hb
           have hb' : b ∉ insert a red ∪ blue := by
@@ -474,19 +474,19 @@ lemma canEnsure_of_black {K : ℕ} :
             rw [insert_union_insert, Finset.sdiff_insert, Finset.sdiff_insert,
               Finset.card_erase_of_mem hamem, Finset.card_erase_of_mem hbmem]
           have hfuel' : (benMoves (insert a red) (insert b blue)).card ≤ fuel := by
-            rw [hB']; omega
+            rw [hB']; lia
           have hS' : (blacks \ (red ∪ blue)).card ≤
               (blacks \ (insert a red ∪ insert b blue)).card + 2 := by
             rw [insert_union_insert, Finset.sdiff_insert, Finset.sdiff_insert]
             by_cases hbb : b ∈ blacks \ (red ∪ blue)
             · rw [Finset.card_erase_of_mem (Finset.mem_erase.mpr ⟨hba.symm, ha⟩),
                 Finset.card_erase_of_mem hbb]
-              omega
+              lia
             · rw [Finset.erase_eq_of_notMem hbb, Finset.card_erase_of_mem ha]
-              omega
+              lia
           have hpot' : 2 * K ≤ 2 * (insert a red).card +
               (blacks \ (insert a red ∪ insert b blue)).card := by
-            rw [hcard]; omega
+            rw [hcard]; lia
           exact ih hsub' hfuel' hpot'
 
 /-- Ben's strategy: always reply with the opposite site of the 4-cycle in
@@ -500,13 +500,13 @@ lemma not_canEnsure_101_of_benInv :
       intro red blue h hc
       have hle100 := card_le_100_of_benInv h
       cases hc with
-      | zero hcard => omega
+      | zero hcard => lia
   | succ fuel ih =>
       intro red blue h hc
       cases hc
       case of_no_move hm hcard =>
           have hle100 := card_le_100_of_benInv h
-          omega
+          lia
       case of_move a ha hend hcont =>
         simp only [amyMoves, Finset.mem_filter, Finset.mem_sdiff, Finset.mem_univ,
           true_and] at ha

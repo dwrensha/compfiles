@@ -431,7 +431,7 @@ lemma eventual_step_eq_of_eventual_res_step_eq
         N + l ≤ max N (l + 1) + l := by simp [add_comm]
         _ ≤ n := hn
     change (N : ℕ) ≤ ((n - l : ℕ+) : ℕ)
-    rw [PNat.sub_coe, if_pos hlt]
+    rw [PNat.sub_coe, ite_eq_left hlt]
     lia
   have h₂ := (hstab (n - l) h₁).symm
   rw [PNat.sub_add_of_lt hlt] at h₂

@@ -40,7 +40,6 @@ lemma card_bad_pairs_le (X : Finset ℕ) (f : Finset ℕ → ℕ) :
     ((X.powersetCard 10).sigma
         (fun Y ↦ Y.filter (fun k ↦ f (Y.erase k) = k))).card
       ≤ (X.powersetCard 9).card := by
-  classical
   apply card_le_card_of_injOn (fun p : Σ _Y : Finset ℕ, ℕ ↦ p.1.erase p.2)
   · rintro ⟨Y, k⟩ hp
     simp only [mem_coe, mem_sigma, mem_powersetCard, mem_filter] at hp
@@ -65,9 +64,7 @@ snip end
 problem usa1988_p3 (f : Finset ℕ → ℕ) :
     ∃ Y : Finset ℕ, Y ⊆ Finset.Icc 1 20 ∧ Y.card = 10 ∧
       ∀ k ∈ Y, f (Y.erase k) ≠ k := by
-  classical
-  by_contra hcon
-  push Not at hcon
+  by_contra! hcon
   -- Every 10-element subset Y of {1, ..., 20} has some k ∈ Y with
   -- f (Y.erase k) = k, so there are at least as many "bad pairs" (Y, k)
   -- as there are 10-element subsets.

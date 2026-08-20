@@ -170,7 +170,6 @@ lemma ncard_fillings_insert {n : ℕ} {D : Set (Cell n)} {s : Cell n} (hs : s �
     (hAt : ∀ f ∈ Fillings n D, (A f).card ≤ target s) :
     (Fillings n (insert s D)).ncard =
       (c₀ - a₀).choose (target s - a₀) * (Fillings n D).ncard := by
-  classical
   have hfib : ∀ f : ↥(Fillings n D),
       Nat.card (Fiber A C s f) = (c₀ - a₀).choose (target s - a₀) := by
     intro f
@@ -226,6 +225,7 @@ lemma ncard_fillings_insert {n : ℕ} {D : Set (Cell n)} {s : Cell n} (hs : s �
     subst ef
     subst eX
     rfl
+  classical
   have hcard : Nat.card ↥(Fillings n (insert s D)) =
       Nat.card (Σ f : ↥(Fillings n D), Fiber A C s f) := by
     apply le_antisymm
@@ -279,24 +279,24 @@ lemma stageA (n : ℕ) : ∀ j, j ≤ n →
   | succ j ih =>
     intro hj
     have hj' : j ≤ n := Nat.le_of_succ_le hj
-    have hjn : j < n + 1 := by omega
-    have hjn1 : j + 1 < n + 1 := by omega
+    have hjn : j < n + 1 := by lia
+    have hjn1 : j + 1 < n + 1 := by lia
     have h0n : (0 : ℕ) < n + 1 := Nat.zero_lt_succ n
     have hid : colZero n (j + 1) =
         insert (⟨0, h0n⟩, ⟨j + 1, hjn1⟩) (colZero n j) := by
       ext c
       simp only [colZero, Set.mem_insert_iff, Set.mem_ofPred_eq, cell_ext]
-      constructor <;> intro h <;> omega
+      constructor <;> intro h <;> lia
     have hs : (⟨0, h0n⟩, ⟨j + 1, hjn1⟩) ∉ colZero n j := by
       simp only [colZero, Set.mem_ofPred_eq]
-      omega
+      lia
     have ha₀ : (⟨0, h0n⟩, ⟨j, hjn⟩) ∈ colZero n j := ⟨rfl, le_refl _⟩
     have hcount : (2 * n - target (⟨0, h0n⟩, ⟨j, hjn⟩)).choose
         (target (⟨0, h0n⟩, ⟨j + 1, hjn1⟩) - target (⟨0, h0n⟩, ⟨j, hjn⟩)) = 2 * n - j := by
       have h1 : target (⟨0, h0n⟩, ⟨j, hjn⟩) = j := Nat.zero_add j
       have h2 : target (⟨0, h0n⟩, ⟨j + 1, hjn1⟩) - target (⟨0, h0n⟩, ⟨j, hjn⟩) = 1 := by
         show 0 + (j + 1) - (0 + j) = 1
-        omega
+        lia
       rw [h1] at h2
       rw [h1, h2, Nat.choose_one_right]
     rw [hid, ncard_fillings_insert hs
@@ -306,20 +306,20 @@ lemma stageA (n : ℕ) : ∀ j, j ≤ n →
         apply hf.2.1 d hd _ ha₀
         simp only [colZero, Set.mem_ofPred_eq] at hd
         simp only [Prod.le_def, Fin.le_def]
-        exact ⟨by omega, by omega⟩)
+        exact ⟨by lia, by lia⟩)
       (by
         intro f hf d hd hds
         simp only [colZero, Set.mem_ofPred_eq] at hd
         simp only [Prod.le_def, Fin.le_def] at hds
-        omega)
+        lia)
       (by
         intro g hg
         rw [Function.update_of_ne (by
           intro hcon
           simp only [cell_ext] at hcon
-          omega)]
+          lia)]
         exact hg.2.1 _ (Set.mem_insert_of_mem _ ha₀) _ (Set.mem_insert _ _)
-          (by simp only [Prod.le_def, Fin.le_def]; omega))
+          (by simp only [Prod.le_def, Fin.le_def]; lia))
       (by intro g hg; exact Finset.subset_univ _)
       (by intro f hf; exact Finset.subset_univ _)
       (by intro f hf; exact hf.1 _ ha₀)
@@ -328,7 +328,7 @@ lemma stageA (n : ℕ) : ∀ j, j ≤ n →
         intro f hf
         rw [hf.1 _ ha₀]
         show 0 + j ≤ 0 + (j + 1)
-        omega),
+        lia),
       hcount, ih hj', Finset.prod_range_succ]
     ring
 
@@ -343,35 +343,35 @@ lemma stageB (n : ℕ) : ∀ i, i ≤ n →
     have h0 : topRow n 0 = (∅ : Set (Cell n)) := by
       ext c
       simp only [topRow, Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false]
-      omega
+      lia
     rw [h0, Set.union_empty, Finset.prod_range_zero, one_mul, stageA n n (le_refl n)]
   | succ i ih =>
     intro hi
     have hi' : i ≤ n := Nat.le_of_succ_le hi
-    have hin : i < n + 1 := by omega
-    have hin1 : i + 1 < n + 1 := by omega
+    have hin : i < n + 1 := by lia
+    have hin1 : i + 1 < n + 1 := by lia
     have hnn : n < n + 1 := Nat.lt_succ_self n
     have hid : colZero n n ∪ topRow n (i + 1) =
         insert (⟨i + 1, hin1⟩, ⟨n, hnn⟩) (colZero n n ∪ topRow n i) := by
       ext c
       simp only [colZero, topRow, Set.mem_insert_iff, Set.mem_union, Set.mem_ofPred_eq,
         cell_ext]
-      constructor <;> intro h <;> omega
+      constructor <;> intro h <;> lia
     have hs : (⟨i + 1, hin1⟩, ⟨n, hnn⟩) ∉ colZero n n ∪ topRow n i := by
       simp only [colZero, topRow, Set.mem_union, Set.mem_ofPred_eq]
-      omega
+      lia
     have ha₀ : (⟨i, hin⟩, ⟨n, hnn⟩) ∈ colZero n n ∪ topRow n i := by
       by_cases hi0 : i = 0
       · subst hi0; exact Or.inl ⟨rfl, le_refl _⟩
-      · exact Or.inr ⟨by show (1 : ℕ) ≤ i; omega, le_refl i, rfl⟩
+      · exact Or.inr ⟨by show (1 : ℕ) ≤ i; lia, le_refl i, rfl⟩
     have hcount : (2 * n - target (⟨i, hin⟩, ⟨n, hnn⟩)).choose
         (target (⟨i + 1, hin1⟩, ⟨n, hnn⟩) - target (⟨i, hin⟩, ⟨n, hnn⟩)) = n - i := by
       have h1 : 2 * n - target (⟨i, hin⟩, ⟨n, hnn⟩) = n - i := by
         show 2 * n - (i + n) = n - i
-        omega
+        lia
       have h2 : target (⟨i + 1, hin1⟩, ⟨n, hnn⟩) - target (⟨i, hin⟩, ⟨n, hnn⟩) = 1 := by
         show i + 1 + n - (i + n) = 1
-        omega
+        lia
       rw [h1, h2, Nat.choose_one_right]
     rw [hid, ncard_fillings_insert hs
       (A := fun f ↦ f (⟨i, hin⟩, ⟨n, hnn⟩)) (C := fun _ ↦ Finset.univ)
@@ -381,20 +381,20 @@ lemma stageB (n : ℕ) : ∀ i, i ≤ n →
         simp only [colZero, topRow, Set.mem_union, Set.mem_ofPred_eq] at hd
         simp only [Prod.le_def, Fin.le_def]
         show d.1.val ≤ i ∧ d.2.val ≤ n
-        omega)
+        lia)
       (by
         intro f hf d hd hds
         simp only [colZero, topRow, Set.mem_union, Set.mem_ofPred_eq] at hd
         simp only [Prod.le_def, Fin.le_def] at hds
-        omega)
+        lia)
       (by
         intro g hg
         rw [Function.update_of_ne (by
           intro hcon
           simp only [cell_ext] at hcon
-          omega)]
+          lia)]
         exact hg.2.1 _ (Set.mem_insert_of_mem _ ha₀) _ (Set.mem_insert _ _)
-          (by simp only [Prod.le_def, Fin.le_def]; omega))
+          (by simp only [Prod.le_def, Fin.le_def]; lia))
       (by intro g hg; exact Finset.subset_univ _)
       (by intro f hf; exact Finset.subset_univ _)
       (by intro f hf; exact hf.1 _ ha₀)
@@ -403,7 +403,7 @@ lemma stageB (n : ℕ) : ∀ i, i ≤ n →
         intro f hf
         rw [hf.1 _ ha₀]
         show i + n ≤ i + 1 + n
-        omega),
+        lia),
       hcount, ih hi', Finset.prod_range_succ]
     ring
 
@@ -419,40 +419,40 @@ lemma stageC_inner (n : ℕ) : ∀ r, r ≤ n → ∀ k, k < n →
     have h0 : colPart n (k + 1) 0 = (∅ : Set (Cell n)) := by
       ext c
       simp only [colPart, Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false]
-      omega
+      lia
     rw [h0, Set.union_empty, pow_zero, one_mul]
   | succ r ih =>
     intro hr k hk
     have hr' : r ≤ n := Nat.le_of_succ_le hr
-    have hkn : k < n + 1 := by omega
-    have hkn1 : k + 1 < n + 1 := by omega
-    have hnr : n - r < n + 1 := by omega
-    have hnr1 : n - r - 1 < n + 1 := by omega
+    have hkn : k < n + 1 := by lia
+    have hkn1 : k + 1 < n + 1 := by lia
+    have hnr : n - r < n + 1 := by lia
+    have hnr1 : n - r - 1 < n + 1 := by lia
     have hid : colZero n n ∪ topRow n n ∪ intCols n k ∪ colPart n (k + 1) (r + 1) =
         insert (⟨k + 1, hkn1⟩, ⟨n - r - 1, hnr1⟩)
           (colZero n n ∪ topRow n n ∪ intCols n k ∪ colPart n (k + 1) r) := by
       ext c
       simp only [colZero, topRow, intCols, colPart, Set.mem_insert_iff, Set.mem_union,
         Set.mem_ofPred_eq, cell_ext]
-      constructor <;> intro h <;> omega
+      constructor <;> intro h <;> lia
     have hs : (⟨k + 1, hkn1⟩, ⟨n - r - 1, hnr1⟩) ∉
         colZero n n ∪ topRow n n ∪ intCols n k ∪ colPart n (k + 1) r := by
       simp only [colZero, topRow, intCols, colPart, Set.mem_union, Set.mem_ofPred_eq]
-      omega
+      lia
     have ha₀ : (⟨k, hkn⟩, ⟨n - r - 1, hnr1⟩) ∈
         colZero n n ∪ topRow n n ∪ intCols n k ∪ colPart n (k + 1) r := by
       by_cases hk0 : k = 0
       · subst hk0
-        exact Or.inl (Or.inl (Or.inl ⟨rfl, by show n - r - 1 ≤ n; omega⟩))
-      · exact Or.inl (Or.inr ⟨by show (1 : ℕ) ≤ k; omega, le_refl k,
-          by show n - r - 1 < n; omega⟩)
+        exact Or.inl (Or.inl (Or.inl ⟨rfl, by show n - r - 1 ≤ n; lia⟩))
+      · exact Or.inl (Or.inr ⟨by show (1 : ℕ) ≤ k; lia, le_refl k,
+          by show n - r - 1 < n; lia⟩)
     have hc₀ : (⟨k + 1, hkn1⟩, ⟨n - r, hnr⟩) ∈
         colZero n n ∪ topRow n n ∪ intCols n k ∪ colPart n (k + 1) r := by
       by_cases hr0 : r = 0
       · subst hr0
-        exact Or.inl (Or.inl (Or.inr ⟨by show (1 : ℕ) ≤ k + 1; omega,
-          by show k + 1 ≤ n; omega, by show n - 0 = n; omega⟩))
-      · exact Or.inr ⟨rfl, le_refl _, by show n - r < n; omega⟩
+        exact Or.inl (Or.inl (Or.inr ⟨by show (1 : ℕ) ≤ k + 1; lia,
+          by show k + 1 ≤ n; lia, by show n - 0 = n; lia⟩))
+      · exact Or.inr ⟨rfl, le_refl _, by show n - r < n; lia⟩
     have hcount : (target (⟨k + 1, hkn1⟩, ⟨n - r, hnr⟩) -
         target (⟨k, hkn⟩, ⟨n - r - 1, hnr1⟩)).choose
         (target (⟨k + 1, hkn1⟩, ⟨n - r - 1, hnr1⟩) -
@@ -460,11 +460,11 @@ lemma stageC_inner (n : ℕ) : ∀ r, r ≤ n → ∀ k, k < n →
       have h1 : target (⟨k + 1, hkn1⟩, ⟨n - r, hnr⟩) -
           target (⟨k, hkn⟩, ⟨n - r - 1, hnr1⟩) = 2 := by
         show k + 1 + (n - r) - (k + (n - r - 1)) = 2
-        omega
+        lia
       have h2 : target (⟨k + 1, hkn1⟩, ⟨n - r - 1, hnr1⟩) -
           target (⟨k, hkn⟩, ⟨n - r - 1, hnr1⟩) = 1 := by
         show k + 1 + (n - r - 1) - (k + (n - r - 1)) = 1
-        omega
+        lia
       rw [h1, h2, Nat.choose_one_right]
     rw [hid, ncard_fillings_insert hs
       (A := fun f ↦ f (⟨k, hkn⟩, ⟨n - r - 1, hnr1⟩))
@@ -474,39 +474,39 @@ lemma stageC_inner (n : ℕ) : ∀ r, r ≤ n → ∀ k, k < n →
         apply hf.2.1 d hd _ ha₀
         simp only [colZero, topRow, intCols, colPart, Set.mem_union, Set.mem_ofPred_eq] at hd
         simp only [Prod.le_def, Fin.le_def] at hds ⊢
-        omega)
+        lia)
       (by
         intro f hf d hd hds
         apply hf.2.1 _ hc₀ d hd
         simp only [colZero, topRow, intCols, colPart, Set.mem_union, Set.mem_ofPred_eq] at hd
         simp only [Prod.le_def, Fin.le_def] at hds ⊢
-        omega)
+        lia)
       (by
         intro g hg
         rw [Function.update_of_ne (by
           intro hcon
           simp only [cell_ext] at hcon
-          omega)]
+          lia)]
         exact hg.2.1 _ (Set.mem_insert_of_mem _ ha₀) _ (Set.mem_insert _ _)
-          (by simp only [Prod.le_def, Fin.le_def]; omega))
+          (by simp only [Prod.le_def, Fin.le_def]; lia))
       (by
         intro g hg
         rw [Function.update_of_ne (by
           intro hcon
           simp only [cell_ext] at hcon
-          omega)]
+          lia)]
         exact hg.2.1 _ (Set.mem_insert _ _) _ (Set.mem_insert_of_mem _ hc₀)
-          (by simp only [Prod.le_def, Fin.le_def]; omega))
+          (by simp only [Prod.le_def, Fin.le_def]; lia))
       (by
         intro f hf
-        exact hf.2.1 _ ha₀ _ hc₀ (by simp only [Prod.le_def, Fin.le_def]; omega))
+        exact hf.2.1 _ ha₀ _ hc₀ (by simp only [Prod.le_def, Fin.le_def]; lia))
       (by intro f hf; exact hf.1 _ ha₀)
       (by intro f hf; exact hf.1 _ hc₀)
       (by
         intro f hf
         rw [hf.1 _ ha₀]
         show k + (n - r - 1) ≤ k + 1 + (n - r - 1)
-        omega),
+        lia),
       hcount, ih hr' k hk, pow_succ]
     ring
 
@@ -522,17 +522,17 @@ lemma stageC (n : ℕ) : ∀ k, k ≤ n →
     have h0 : intCols n 0 = (∅ : Set (Cell n)) := by
       ext c
       simp only [intCols, Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false]
-      omega
+      lia
     rw [h0, Set.union_empty, stageB n n (le_refl n)]
     simp
   | succ k ih =>
     intro hk
-    have hk' : k < n := by omega
+    have hk' : k < n := by lia
     have hid : colZero n n ∪ topRow n n ∪ intCols n (k + 1) =
         colZero n n ∪ topRow n n ∪ intCols n k ∪ colPart n (k + 1) n := by
       ext c
       simp only [colZero, topRow, intCols, colPart, Set.mem_union, Set.mem_ofPred_eq]
-      constructor <;> intro h <;> omega
+      constructor <;> intro h <;> lia
     rw [hid, stageC_inner n n (le_refl n) k hk', ih (Nat.le_of_succ_le hk),
       Nat.mul_succ, pow_add]
     ring
@@ -543,7 +543,7 @@ theorem prod_range_self_sub (n : ℕ) :
     ← Finset.prod_range_reflect (fun j => j + 1) n]
   refine Finset.prod_congr rfl fun j hj => ?_
   rw [Finset.mem_range] at hj
-  omega
+  lia
 
 theorem prod_range_two_mul_sub_mul (n : ℕ) :
     (∏ j ∈ Finset.range n, (2 * n - j)) * (∏ i ∈ Finset.range n, (n - i)) = (2 * n) ! := by
@@ -551,7 +551,7 @@ theorem prod_range_two_mul_sub_mul (n : ℕ) :
     rw [← Finset.prod_range_reflect (fun j => 2 * n - j) n]
     refine Finset.prod_congr rfl fun j hj => ?_
     rw [Finset.mem_range] at hj
-    omega
+    lia
   have h3 : (∏ x ∈ Finset.range n, (n + x + 1)) * (∏ x ∈ Finset.range n, (x + 1))
       = (2 * n)! := by
     have h := Finset.prod_range_add (fun i => i + 1) n n
@@ -569,7 +569,7 @@ lemma main_count (n : ℕ) : (Fillings n Set.univ).ncard = (2 * n)! * 2 ^ (n ^ 2
       true_iff]
     have h1 := c.1.isLt
     have h2 := c.2.isLt
-    omega
+    lia
   rw [huniv, stageC n n (le_refl n),
     mul_comm (∏ i ∈ Finset.range n, (n - i)) (∏ j ∈ Finset.range n, (2 * n - j)),
     prod_range_two_mul_sub_mul, show n * n = n ^ 2 from (pow_two n).symm, mul_comm]
@@ -582,7 +582,6 @@ problem usa2019_p4 (n : ℕ) :
     Nat.card {S : Fin (n + 1) → Fin (n + 1) → Finset (Fin (2 * n)) //
       (∀ i j, (S i j).card = i.val + j.val) ∧
       (∀ i k j l, i ≤ k → j ≤ l → S i j ⊆ S k l)} = answer n := by
-  classical
   have e : {S : Fin (n + 1) → Fin (n + 1) → Finset (Fin (2 * n)) //
       (∀ i j, (S i j).card = i.val + j.val) ∧
       (∀ i k j l, i ≤ k → j ≤ l → S i j ⊆ S k l)} ≃ ↥(Fillings n Set.univ) := by

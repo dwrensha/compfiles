@@ -67,7 +67,7 @@ theorem prod_le_of_le (x : ℕ → ℝ) (hx : ∀ n, 0 < x n)
     (h : ∀ n, x n * x (n + 2) ≤ x (n + 1) ^ 2)
     {a b : ℕ} (ha : 1 ≤ a) (hab : a ≤ b) :
     x (a - 1) * x (b + 1) ≤ x a * x b := by
-  have hr := ratio_antitone x hx h (show a - 1 ≤ b by omega)
+  have hr := ratio_antitone x hx h (show a - 1 ≤ b by lia)
   dsimp only at hr
   rw [Nat.sub_add_cancel ha] at hr
   rw [div_le_div_iff₀ (hx b) (hx (a - 1))] at hr
@@ -83,10 +83,10 @@ theorem x0_mul_xn_le (x : ℕ → ℝ) (hx : ∀ n, 0 < x n)
   | zero => intro n _; simp
   | succ i ih =>
     intro n h2i
-    have step := prod_le_of_le x hx h (a := i + 1) (b := n - i - 1) (by omega) (by omega)
-    rw [Nat.add_sub_cancel, show n - i - 1 + 1 = n - i by omega] at step
-    have IH : x 0 * x n ≤ x i * x (n - i) := ih (n := n) (by omega)
-    rw [show n - (i + 1) = n - i - 1 by omega]
+    have step := prod_le_of_le x hx h (a := i + 1) (b := n - i - 1) (by lia) (by lia)
+    rw [Nat.add_sub_cancel, show n - i - 1 + 1 = n - i by lia] at step
+    have IH : x 0 * x n ≤ x i * x (n - i) := ih (n := n) (by lia)
+    rw [show n - (i + 1) = n - i - 1 by lia]
     exact le_trans IH step
 
 /-- Each paired sum `x i + x (n - i)` is at least `2 * √(x 0 * x n)`. -/
@@ -97,8 +97,8 @@ theorem pair_ge (x : ℕ → ℝ) (hx : ∀ n, 0 < x n)
   have hprod : x 0 * x n ≤ x i * x (n - i) := by
     by_cases h2i : 2 * i ≤ n
     · exact x0_mul_xn_le x hx h h2i
-    · have h' := x0_mul_xn_le x hx h (i := n - i) (n := n) (by omega)
-      rw [show n - (n - i) = i by omega, mul_comm (x (n - i)) (x i)] at h'
+    · have h' := x0_mul_xn_le x hx h (i := n - i) (n := n) (by lia)
+      rw [show n - (n - i) = i by lia, mul_comm (x (n - i)) (x i)] at h'
       exact h'
   have hsqrt : Real.sqrt (x 0 * x n) ≤ Real.sqrt (x i * x (n - i)) :=
     Real.sqrt_le_sqrt hprod
@@ -118,16 +118,16 @@ theorem sum_pair_ge (x : ℕ → ℝ) (hx : ∀ n, 0 < x n)
     refine Finset.sum_congr rfl (fun i hi ↦ ?_)
     rw [Finset.mem_range] at hi
     congr 1
-    omega
+    lia
   calc ((n : ℝ) - 1) * (2 * Real.sqrt (x 0 * x n))
       = ∑ i ∈ Finset.range (n - 1), (2 * Real.sqrt (x 0 * x n)) := by
         rw [Finset.sum_const, Finset.card_range, nsmul_eq_mul,
-          Nat.cast_sub (by omega : 1 ≤ n), Nat.cast_one]
+          Nat.cast_sub (by lia : 1 ≤ n), Nat.cast_one]
     _ ≤ ∑ i ∈ Finset.range (n - 1), (x (i + 1) + x (n - 1 - i)) := by
         refine Finset.sum_le_sum (fun i hi ↦ ?_)
         rw [Finset.mem_range] at hi
-        have hpg := pair_ge x hx h (i := i + 1) (n := n) (by omega)
-        rw [show n - (i + 1) = n - 1 - i by omega] at hpg
+        have hpg := pair_ge x hx h (i := i + 1) (n := n) (by lia)
+        rw [show n - (i + 1) = n - 1 - i by lia] at hpg
         exact hpg
     _ = 2 * ∑ i ∈ Finset.range (n - 1), x (i + 1) := by
         rw [Finset.sum_add_distrib, h2sum]
@@ -189,12 +189,12 @@ problem usa1993_p5 (x : ℕ → ℝ) (hx : ∀ n, 0 < x n)
   have hkey := key_ineq x hx h hn
   have ha : ∑ i ∈ Finset.range (n + 1), x i =
       x 0 + (∑ i ∈ Finset.range (n - 1), x (i + 1)) + x n := by
-    rw [show n + 1 = n - 1 + 2 by omega, sum_decomp x (n - 1),
-      show n - 1 + 1 = n by omega]
+    rw [show n + 1 = n - 1 + 2 by lia, sum_decomp x (n - 1),
+      show n - 1 + 1 = n by lia]
   have hb : ∑ i ∈ Finset.range n, x (i + 1) =
       (∑ i ∈ Finset.range (n - 1), x (i + 1)) + x n := by
-    conv_lhs => rw [show n = n - 1 + 1 by omega]
-    rw [Finset.sum_range_succ, show n - 1 + 1 = n by omega]
+    conv_lhs => rw [show n = n - 1 + 1 by lia]
+    rw [Finset.sum_range_succ, show n - 1 + 1 = n by lia]
   have ha1 : ∑ i ∈ Finset.range (n - 1 + 1), x i =
       x 0 + (∑ i ∈ Finset.range (n - 1), x (i + 1)) := by
     rw [Finset.sum_range_succ']
@@ -202,7 +202,7 @@ problem usa1993_p5 (x : ℕ → ℝ) (hx : ∀ n, 0 < x n)
   simp only [a_avg, b_avg]
   rw [ha, hb, ha1]
   have cn : ((n - 1 : ℕ) : ℝ) = (n : ℝ) - 1 := by
-    rw [Nat.cast_sub (show 1 ≤ n by omega), Nat.cast_one]
+    rw [Nat.cast_sub (show 1 ≤ n by lia), Nat.cast_one]
   rw [cn, sub_add_cancel]
   exact final_algebra hN hN1 hkey
 

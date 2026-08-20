@@ -67,13 +67,13 @@ lemma sum_abs_le_sqrt {n : ℕ} {x : Fin n → ℝ} (hx : ∑ i, x i ^ 2 = 1) :
 lemma fin_coe_le {k : ℕ} (hk : 2 ≤ k) (b : Fin k) : ((b : ℕ) : ℝ) ≤ (k : ℝ) - 1 := by
   have h : (b : ℕ) ≤ k - 1 := Nat.le_pred_of_lt b.isLt
   calc ((b : ℕ) : ℝ) ≤ ((k - 1 : ℕ) : ℝ) := by exact_mod_cast h
-  _ = (k : ℝ) - 1 := by rw [Nat.cast_sub (by omega : 1 ≤ k), Nat.cast_one]
+  _ = (k : ℝ) - 1 := by rw [Nat.cast_sub (by lia : 1 ≤ k), Nat.cast_one]
 
 /-- Every coefficient of `b : Fin k` is at most `k - 1`, as an integer. -/
 lemma fin_coe_le_int {k : ℕ} (hk : 2 ≤ k) (b : Fin k) : ((b : ℕ) : ℤ) ≤ (k : ℤ) - 1 := by
   have h : (b : ℕ) ≤ k - 1 := Nat.le_pred_of_lt b.isLt
   calc ((b : ℕ) : ℤ) ≤ ((k - 1 : ℕ) : ℤ) := by exact_mod_cast h
-  _ = (k : ℤ) - 1 := by rw [Nat.cast_sub (by omega : 1 ≤ k), Nat.cast_one]
+  _ = (k : ℤ) - 1 := by rw [Nat.cast_sub (by lia : 1 ≤ k), Nat.cast_one]
 
 lemma S_nonneg {n : ℕ} (x : Fin n → ℝ) {k : ℕ} (b : Fin n → Fin k) : 0 ≤ S x b :=
   Finset.sum_nonneg fun i _ => by positivity
@@ -122,10 +122,10 @@ lemma coef_cast_mul {n : ℕ} {x : Fin n → ℝ} {k : ℕ} (b b' : Fin n → Fi
     (coef x b b' i : ℝ) * x i = (((b i : ℕ) : ℝ) - ((b' i : ℕ) : ℝ)) * |x i| := by
   unfold coef
   by_cases h : 0 ≤ x i
-  · rw [if_pos h, abs_of_nonneg h]
+  · rw [ite_eq_left h, abs_of_nonneg h]
     push_cast
     ring
-  · rw [if_neg h, abs_of_neg (lt_of_not_ge h)]
+  · rw [ite_eq_right h, abs_of_neg (lt_of_not_ge h)]
     push_cast
     ring
 
@@ -140,8 +140,8 @@ problem imo1987_p3 {n : ℕ} (hn : 0 < n) (x : Fin n → ℝ) (hx : ∑ i, x i ^
   have hkn2 : 2 ≤ k ^ n := by
     calc 2 ≤ k := hk
     _ = k ^ 1 := (pow_one k).symm
-    _ ≤ k ^ n := pow_le_pow_right' (by omega : (1 : ℕ) ≤ k) (by omega : 1 ≤ n)
-  have hkn1 : 1 ≤ k ^ n := by omega
+    _ ≤ k ^ n := pow_le_pow_right' (by lia : (1 : ℕ) ≤ k) (by lia : 1 ≤ n)
+  have hkn1 : 1 ≤ k ^ n := by lia
   have hk2 : (2 : ℝ) ≤ k := by exact_mod_cast hk
   have hk1 : (0 : ℝ) < (k : ℝ) - 1 := by linarith
   have hkn2' : (2 : ℝ) ≤ (k : ℝ) ^ n := by exact_mod_cast hkn2
@@ -163,10 +163,10 @@ problem imo1987_p3 {n : ℕ} (hn : 0 < n) (x : Fin n → ℝ) (hx : ∑ i, x i ^
   have hbnd : ∀ b : Fin n → Fin k, min (⌊S x b * M / L⌋.toNat) (k ^ n - 2) < k ^ n - 1 := by
     intro b
     calc min (⌊S x b * M / L⌋.toNat) (k ^ n - 2) ≤ k ^ n - 2 := min_le_right _ _
-    _ < k ^ n - 1 := by omega
+    _ < k ^ n - 1 := by lia
   have hcard : Fintype.card (Fin (k ^ n - 1)) < Fintype.card (Fin n → Fin k) := by
     simp only [Fintype.card_fun, Fintype.card_fin]
-    omega
+    lia
   obtain ⟨b, b', hne, hge⟩ := Fintype.exists_ne_map_eq_of_card_lt
     (fun b : Fin n → Fin k =>
       (⟨min (⌊S x b * M / L⌋.toNat) (k ^ n - 2), hbnd b⟩ : Fin (k ^ n - 1)))
@@ -210,7 +210,7 @@ problem imo1987_p3 {n : ℕ} (hn : 0 < n) (x : Fin n → ℝ) (hx : ∑ i, x i ^
     show |(if 0 ≤ x i then (1 : ℤ) else -1) * (((b i : ℕ) : ℤ) - ((b' i : ℕ) : ℤ))|
         ≤ (k : ℤ) - 1
     rw [abs_mul, hsign, one_mul, abs_le]
-    constructor <;> omega
+    constructor <;> lia
   · obtain ⟨i, hi⟩ := Function.ne_iff.mp hne
     refine ⟨i, ?_⟩
     have hv' : (b i : ℕ) ≠ (b' i : ℕ) := fun h' => hi (Fin.ext h')

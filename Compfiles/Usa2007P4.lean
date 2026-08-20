@@ -88,7 +88,7 @@ lemma gridAdj_cases {a b : ℤ × ℤ} (h : gridAdj a b) :
     (b.1 = a.1 + 1 ∧ b.2 = a.2) ∨ (b.1 = a.1 - 1 ∧ b.2 = a.2) ∨
     (b.1 = a.1 ∧ b.2 = a.2 + 1) ∨ (b.1 = a.1 ∧ b.2 = a.2 - 1) := by
   unfold gridAdj at h
-  omega
+  lia
 
 /-- The explicit four-element finset of neighbours of a cell. -/
 def neighbors4 (a : ℤ × ℤ) : Finset (ℤ × ℤ) :=
@@ -107,13 +107,13 @@ lemma card_neighbors4_le (a : ℤ × ℤ) : (neighbors4 a).card ≤ 4 := by
     ({(a.1, a.2 - 1)} : Finset (ℤ × ℤ))
   have h4 : ({(a.1, a.2 - 1)} : Finset (ℤ × ℤ)).card = 1 := Finset.card_singleton _
   unfold neighbors4
-  omega
+  lia
 
 lemma card_erase_neighbors4_le {a x : ℤ × ℤ} (hx : x ∈ neighbors4 a) :
     ((neighbors4 a).erase x).card ≤ 3 := by
   rw [Finset.card_erase_of_mem hx]
   have h := card_neighbors4_le a
-  omega
+  lia
 
 /-- If every cell of `T` reaches a fixed cell `v ∈ T` in the induced subgraph
 on `T`, then that subgraph is preconnected. -/
@@ -155,22 +155,22 @@ noncomputable def dw (c : ℤ × ℤ) : ℕ :=
 lemma dw_spec {c : ℤ × ℤ} (hc : c ∈ D) :
     ∃ w : (gridGraph.induce (D : Set (ℤ × ℤ))).Walk ⟨r, hr⟩ ⟨c, hc⟩,
       w.length = dw D r hr hpre c := by
-  simp only [dw, dif_pos hc]
+  simp only [dw, dite_eq_left hc]
   exact Nat.find_spec (exists_walk_length D r hr hpre c hc)
 
 lemma dw_le {c : ℤ × ℤ} (hc : c ∈ D)
     (w : (gridGraph.induce (D : Set (ℤ × ℤ))).Walk ⟨r, hr⟩ ⟨c, hc⟩) :
     dw D r hr hpre c ≤ w.length := by
-  simp only [dw, dif_pos hc]
+  simp only [dw, dite_eq_left hc]
   exact Nat.find_le ⟨w, rfl⟩
 
 lemma dw_root : dw D r hr hpre r = 0 := by
-  simp only [dw, dif_pos hr]
+  simp only [dw, dite_eq_left hr]
   exact Nat.eq_zero_of_le_zero (Nat.find_le ⟨.nil, rfl⟩)
 
 lemma eq_of_dw_eq_zero {c : ℤ × ℤ} (hc : c ∈ D) (h : dw D r hr hpre c = 0) :
     c = r := by
-  simp only [dw, dif_pos hc] at h
+  simp only [dw, dite_eq_left hc] at h
   obtain ⟨w, hw⟩ := Nat.find_spec (exists_walk_length D r hr hpre c hc)
   rw [h] at hw
   have he := SimpleGraph.Walk.exists_length_eq_zero_iff.mp ⟨w, hw⟩
@@ -188,14 +188,14 @@ lemma parent_exists {c : ℤ × ℤ} (hc : c ∈ D) (hcr : c ≠ r) :
       exact hcr (congrArg Subtype.val he).symm
     · exact h0
   refine ⟨(w.getVert (w.length - 1) : ℤ × ℤ), (w.getVert (w.length - 1)).2, ?_, ?_⟩
-  · have hadj := w.adj_getVert_succ (i := w.length - 1) (by omega)
-    have h1 : w.length - 1 + 1 = w.length := by omega
+  · have hadj := w.adj_getVert_succ (i := w.length - 1) (by lia)
+    have h1 : w.length - 1 + 1 = w.length := by lia
     rw [h1, SimpleGraph.Walk.getVert_length] at hadj
     exact gridAdj_of_gridAdj (SimpleGraph.induce_adj.mp hadj)
   · have hlt := dw_le D r hr hpre (w.getVert (w.length - 1)).2 (w.take (w.length - 1))
     rw [SimpleGraph.Walk.take_length] at hlt
     rw [← hw]
-    exact lt_of_le_of_lt (le_trans hlt (Nat.min_le_left _ _)) (by omega)
+    exact lt_of_le_of_lt (le_trans hlt (Nat.min_le_left _ _)) (by lia)
 
 /-- The parent map: for `c ∈ D`, `c ≠ r` a chosen neighbour of `c` of smaller
 depth; anything else is mapped to itself. -/
@@ -205,26 +205,26 @@ noncomputable def parent (c : ℤ × ℤ) : ℤ × ℤ :=
 lemma parent_mem {c : ℤ × ℤ} (hc : c ∈ D) : parent D r hr hpre c ∈ D := by
   simp only [parent]
   by_cases h : c ∈ D ∧ c ≠ r
-  · rw [dif_pos h]
+  · rw [dite_eq_left h]
     exact (parent_exists D r hr hpre h.1 h.2).choose_spec.1
-  · rw [dif_neg h]
+  · rw [dite_eq_right h]
     exact hc
 
 lemma gridAdj_parent {c : ℤ × ℤ} (hc : c ∈ D) (hcr : c ≠ r) :
     gridAdj c (parent D r hr hpre c) := by
   simp only [parent]
-  rw [dif_pos ⟨hc, hcr⟩]
+  rw [dite_eq_left ⟨hc, hcr⟩]
   exact (parent_exists D r hr hpre hc hcr).choose_spec.2.1
 
 lemma dw_parent_lt {c : ℤ × ℤ} (hc : c ∈ D) (hcr : c ≠ r) :
     dw D r hr hpre (parent D r hr hpre c) < dw D r hr hpre c := by
   simp only [parent]
-  rw [dif_pos ⟨hc, hcr⟩]
+  rw [dite_eq_left ⟨hc, hcr⟩]
   exact (parent_exists D r hr hpre hc hcr).choose_spec.2.2
 
 lemma parent_root : parent D r hr hpre r = r := by
   simp only [parent]
-  rw [dif_neg (fun h => h.2 rfl)]
+  rw [dite_eq_right (fun h => h.2 rfl)]
 
 lemma parent_ne_self {c : ℤ × ℤ} (hc : c ∈ D) (hcr : c ≠ r) :
     parent D r hr hpre c ≠ c :=
@@ -247,18 +247,18 @@ lemma dw_iterate_parent_lt {c : ℤ × ℤ} (hc : c ∈ D) (hcr : c ≠ r) {i : 
     (hi : 1 ≤ i) :
     dw D r hr hpre ((parent D r hr hpre)^[i] c) < dw D r hr hpre c := by
   induction i generalizing c with
-  | zero => exact absurd hi (by omega)
+  | zero => exact absurd hi (by lia)
   | succ i ih =>
     by_cases hi0 : i = 0
     · subst hi0
       exact dw_parent_lt D r hr hpre hc hcr
-    · have hi1 : 1 ≤ i := by omega
+    · have hi1 : 1 ≤ i := by lia
       rw [Function.iterate_succ_apply']
       by_cases hcr2 : (parent D r hr hpre)^[i] c = r
       · rw [hcr2, parent_root, dw_root]
         have hne : dw D r hr hpre c ≠ 0 :=
           fun h => hcr (eq_of_dw_eq_zero D r hr hpre hc h)
-        omega
+        lia
       · have hmem : (parent D r hr hpre)^[i] c ∈ D := iterate_parent_mem D r hr hpre hc i
         exact lt_trans (dw_parent_lt D r hr hpre hmem hcr2) (ih hc hcr hi1)
 
@@ -271,7 +271,7 @@ lemma exists_iterate_parent_eq_root {c : ℤ × ℤ} (hc : c ∈ D) :
     induction n with
     | zero =>
       intro c hc hdw
-      have h0 : dw D r hr hpre c = 0 := by omega
+      have h0 : dw D r hr hpre c = 0 := by lia
       exact ⟨0, eq_of_dw_eq_zero D r hr hpre hc h0⟩
     | succ n ih =>
       intro c hc hdw
@@ -284,7 +284,7 @@ lemma exists_iterate_parent_eq_root {c : ℤ × ℤ} (hc : c ∈ D) :
           exact hle (Nat.zero_le _)
         obtain ⟨i, hi⟩ := ih (parent D r hr hpre c) (parent_mem D r hr hpre hc) (by
           have hlt := dw_parent_lt D r hr hpre hc hcr
-          omega)
+          lia)
         exact ⟨i + 1, by rw [Function.iterate_succ_apply]; exact hi⟩
   exact key (dw D r hr hpre c) c hc (le_refl _)
 
@@ -403,7 +403,7 @@ lemma subtree_eq {v : ℤ × ℤ} (hv : v ∈ D) :
         ⟨iterate_parent_mem D r hr hpre hcD j, hmin, ?_⟩, hcD, j, rfl⟩
       intro hjv
       have hle := Nat.find_min' hP hjv
-      omega
+      lia
   · rintro (rfl | ⟨u, ⟨huD, hpu, -⟩, hcD, j, hj⟩)
     · exact ⟨hv, 0, rfl⟩
     · exact ⟨hcD, j + 1, by rw [Function.iterate_succ_apply', hj, hpu]⟩
@@ -428,7 +428,7 @@ lemma disjoint_subtree_children {v : ℤ × ℤ} (hv : v ∈ D) :
         rw [← Function.iterate_add_apply, Nat.sub_add_cancel (Nat.le_of_lt hlt)]
       rw [hi₁] at h
       exact h.trans hi₂
-    obtain ⟨j, hj⟩ := Nat.exists_eq_succ_of_ne_zero (n := i₂ - i₁) (by omega)
+    obtain ⟨j, hj⟩ := Nat.exists_eq_succ_of_ne_zero (n := i₂ - i₁) (by lia)
     rw [hj, Function.iterate_succ_apply] at h2
     obtain ⟨hu₁D, hpu₁, -⟩ := (mem_children D r hr hpre).mp hu₁
     rw [hpu₁] at h2
@@ -442,9 +442,9 @@ lemma disjoint_subtree_children {v : ℤ × ℤ} (hv : v ∈ D) :
         exact hu₂ne h2.symm
       · have hdw : dw D r hr hpre u₂ < dw D r hr hpre v := by
           rw [← h2]
-          exact dw_iterate_parent_lt D r hr hpre hv hvr (by omega)
+          exact dw_iterate_parent_lt D r hr hpre hv hvr (by lia)
         have hdw2 := dw_child D r hr hpre hu₂
-        omega
+        lia
   rcases lt_trichotomy i₁ i₂ with h | h | h
   · exact key hu₁ hu₂ hi₁ hi₂ h
   · exact hne ((h ▸ hi₁).symm.trans hi₂)
@@ -472,10 +472,10 @@ lemma card_subtree {v : ℤ × ℤ} (hv : v ∈ D) :
           rw [← hj]
           exact dw_iterate_parent_lt D r hr hpre hv hvr hj0
         have hdw2 := dw_child D r hr hpre hu
-        omega
+        lia
   rw [subtree_eq D r hr hpre hv, Finset.card_insert_of_notMem hnot,
     Finset.card_biUnion (disjoint_subtree_children D r hr hpre hv)]
-  omega
+  lia
 
 /-- If the parent chain from `c` stays inside `T` and reaches `v`, then `c`
 reaches `v` in the induced subgraph on `T`. -/
@@ -499,11 +499,11 @@ lemma reachable_of_chain (T : Finset (ℤ × ℤ)) (hTD : T ⊆ D) {c v : ℤ ×
         rw [iterate_parent_root] at hiv
         exact hcv hiv
       have hcD : c ∈ D := hTD hc
-      have hpc : parent D r hr hpre c ∈ T := hchain 1 (by omega)
+      have hpc : parent D r hr hpre c ∈ T := hchain 1 (by lia)
       have hadj : gridAdj c (parent D r hr hpre c) := gridAdj_parent D r hr hpre hcD hcr
       have hchain' : ∀ j ≤ i, (parent D r hr hpre)^[j] (parent D r hr hpre c) ∈ T := by
         intro j hj
-        have h := hchain (j + 1) (by omega)
+        have h := hchain (j + 1) (by lia)
         rwa [Function.iterate_succ_apply] at h
       have hiv' : (parent D r hr hpre)^[i] (parent D r hr hpre c) = v := by
         rwa [Function.iterate_succ_apply] at hiv
@@ -549,13 +549,12 @@ lemma isAnimal_sdiff_subtree {v : ℤ × ℤ} (_hv : v ∈ D) (hvr : v ≠ r) :
 partitioned into two dinosaurs; in particular it is not primitive. -/
 lemma exists_split (hcard : 4 * 2007 - 2 ≤ D.card) :
     ∃ A B : Finset (ℤ × ℤ), IsDinosaur A ∧ IsDinosaur B ∧ Disjoint A B ∧ A ∪ B = D := by
-  classical
   set S := D.filter (fun v => 2007 ≤ (subtree D r hr hpre v).card) with hS
   have hrS : r ∈ S := by
     rw [hS, Finset.mem_filter]
     refine ⟨hr, ?_⟩
     rw [subtree_root]
-    omega
+    lia
   obtain ⟨v, hvS, hmax⟩ := Finset.exists_max_image S (fun c => dw D r hr hpre c) ⟨r, hrS⟩
   rw [hS, Finset.mem_filter] at hvS
   obtain ⟨hvD, hkv⟩ := hvS
@@ -565,10 +564,10 @@ lemma exists_split (hcard : 4 * 2007 - 2 ≤ D.card) :
     have hcon : 2006 < (subtree D r hr hpre u).card := Nat.lt_of_not_le hcon
     have huS : u ∈ S := by
       rw [hS, Finset.mem_filter]
-      exact ⟨((mem_children D r hr hpre).mp hu).1, by omega⟩
+      exact ⟨((mem_children D r hr hpre).mp hu).1, by lia⟩
     have hle := hmax u huS
     have hlt := dw_child D r hr hpre hu
-    omega
+    lia
   have hcardv := card_subtree D r hr hpre hvD
   by_cases hvr : v = r
   · subst v
@@ -580,20 +579,20 @@ lemma exists_split (hcard : 4 * 2007 - 2 ≤ D.card) :
       exact le_trans h (Nat.mul_le_mul h4 (le_refl 2006))
     rw [subtree_root] at hcardv
     exfalso
-    omega
+    lia
   · have h3 := card_children_le_three D r hr hpre hvD hvr
     have hsum : ∑ u ∈ children D r hr hpre v, (subtree D r hr hpre u).card ≤ 3 * 2006 := by
       have h := Finset.sum_le_card_nsmul (children D r hr hpre v)
         (fun u => (subtree D r hr hpre u).card) 2006 hchild
       rw [nsmul_eq_mul] at h
       exact le_trans h (Nat.mul_le_mul h3 (le_refl 2006))
-    have hAv : (subtree D r hr hpre v).card ≤ 6019 := by omega
+    have hAv : (subtree D r hr hpre v).card ≤ 6019 := by lia
     have hsub : subtree D r hr hpre v ⊆ D := Finset.filter_subset _ _
     refine ⟨subtree D r hr hpre v, D \ subtree D r hr hpre v,
       ⟨isAnimal_subtree D r hr hpre hvD, hkv⟩,
       ⟨isAnimal_sdiff_subtree D r hr hpre hvD hvr, ?_⟩, ?_, ?_⟩
     · rw [Finset.card_sdiff, Finset.inter_eq_left.mpr hsub]
-      omega
+      lia
     · exact Finset.disjoint_sdiff
     · exact Finset.union_sdiff_of_subset hsub
 
@@ -659,7 +658,7 @@ lemma mem_cross_of_nat {n : ℕ} (hn : n ≤ 2006) :
       (((0 : ℤ), (n : ℤ)) ∈ cross) ∧ (((0 : ℤ), -((n : ℤ))) ∈ cross) := by
   have h0 : (0 : ℤ) ≤ (n : ℤ) := Int.natCast_nonneg n
   have hn' : (n : ℤ) ≤ 2006 := by exact_mod_cast hn
-  refine ⟨?_, ?_, ?_, ?_⟩ <;> rw [mem_cross_iff] <;> dsimp only <;> omega
+  refine ⟨?_, ?_, ?_, ?_⟩ <;> rw [mem_cross_iff] <;> dsimp only <;> lia
 
 lemma card_aux : crossAux.card = 8025 := by
   have cardprod : ∀ (s t : Finset ℤ), (Finset.product s t).card = s.card * t.card :=
@@ -686,7 +685,7 @@ lemma card_aux : crossAux.card = 8025 := by
   have hcross : crossAux = (Finset.Icc (-2006) 2006).product {(0 : ℤ)} ∪
       Finset.product {(0 : ℤ)} (Finset.Icc (-2006) 2006) := rfl
   rw [hcross]
-  omega
+  lia
 
 lemma card_cross : cross.card = 8025 := by
   rw [cross_def]
@@ -704,7 +703,7 @@ lemma reach_right :
     exact SimpleGraph.Reachable.refl _
   | succ n ih =>
     intro hn h
-    have hn' : n ≤ 2006 := by omega
+    have hn' : n ≤ 2006 := by lia
     have hmem : ((n : ℤ), 0) ∈ cross := (mem_cross_of_nat hn').1
     have hadj : gridAdj (((n + 1 : ℕ) : ℤ), 0) ((n : ℤ), 0) := by
       unfold gridAdj
@@ -729,7 +728,7 @@ lemma reach_left :
     exact SimpleGraph.Reachable.refl _
   | succ n ih =>
     intro hn h
-    have hn' : n ≤ 2006 := by omega
+    have hn' : n ≤ 2006 := by lia
     have hmem : (-((n : ℤ)), 0) ∈ cross := (mem_cross_of_nat hn').2.1
     have hadj : gridAdj ((-(((n + 1 : ℕ)) : ℤ)), 0) (-((n : ℤ)), 0) := by
       unfold gridAdj
@@ -754,7 +753,7 @@ lemma reach_up :
     exact SimpleGraph.Reachable.refl _
   | succ n ih =>
     intro hn h
-    have hn' : n ≤ 2006 := by omega
+    have hn' : n ≤ 2006 := by lia
     have hmem : ((0 : ℤ), (n : ℤ)) ∈ cross := (mem_cross_of_nat hn').2.2.1
     have hadj : gridAdj ((0 : ℤ), (((n + 1 : ℕ)) : ℤ)) ((0 : ℤ), (n : ℤ)) := by
       unfold gridAdj
@@ -779,7 +778,7 @@ lemma reach_down :
     exact SimpleGraph.Reachable.refl _
   | succ n ih =>
     intro hn h
-    have hn' : n ≤ 2006 := by omega
+    have hn' : n ≤ 2006 := by lia
     have hmem : ((0 : ℤ), -((n : ℤ))) ∈ cross := (mem_cross_of_nat hn').2.2.2
     have hadj : gridAdj ((0 : ℤ), -(((n + 1 : ℕ)) : ℤ)) ((0 : ℤ), -((n : ℤ))) := by
       unfold gridAdj
@@ -806,24 +805,24 @@ lemma isAnimal_cross : IsAnimal cross := by
       · generalize hn : Int.natAbs x = n
         rw [hn] at heq
         subst heq
-        have hnle : n ≤ 2006 := by omega
+        have hnle : n ≤ 2006 := by lia
         exact reach_right n hnle hc
       · generalize hn : Int.natAbs x = n
         rw [hn] at heq
         subst heq
-        have hnle : n ≤ 2006 := by omega
+        have hnle : n ≤ 2006 := by lia
         exact reach_left n hnle hc
     · subst hx
       rcases Int.natAbs_eq y with heq | heq
       · generalize hn : Int.natAbs y = n
         rw [hn] at heq
         subst heq
-        have hnle : n ≤ 2006 := by omega
+        have hnle : n ≤ 2006 := by lia
         exact reach_up n hnle hc
       · generalize hn : Int.natAbs y = n
         rw [hn] at heq
         subst heq
-        have hnle : n ≤ 2006 := by omega
+        have hnle : n ≤ 2006 := by lia
         exact reach_down n hnle hc
   exact (key u).trans (key v).symm
 
@@ -836,7 +835,7 @@ def InSameArm (a b : ℤ × ℤ) : Prop :=
 lemma inSameArm_refl {a : ℤ × ℤ} (ha : a ∈ cross) : InSameArm a a := by
   have ha' := mem_cross_iff.mp ha
   rcases ha' with ⟨h1, h2, h3⟩ | ⟨h1, h2, h3⟩ <;>
-    exact ⟨fun hx => by omega, fun hx => by omega, fun hx => by omega, fun hx => by omega⟩
+    exact ⟨fun hx => by lia, fun hx => by lia, fun hx => by lia, fun hx => by lia⟩
 
 lemma inSameArm_trans {a b c : ℤ × ℤ} (hab : InSameArm a b) (hbc : InSameArm b c) :
     InSameArm a c := by
@@ -855,7 +854,7 @@ lemma inSameArm_of_gridAdj {a b : ℤ × ℤ} (ha : a ∈ cross) (hb : b ∈ cro
   rcases gridAdj_cases h with ⟨e1, e2⟩ | ⟨e1, e2⟩ | ⟨e1, e2⟩ | ⟨e1, e2⟩ <;>
     rcases ha' with ⟨h1, h2, h3⟩ | ⟨h1, h2, h3⟩ <;>
     rcases hb' with ⟨g1, g2, g3⟩ | ⟨g1, g2, g3⟩ <;>
-    exact ⟨fun hx => by omega, fun hx => by omega, fun hx => by omega, fun hx => by omega⟩
+    exact ⟨fun hx => by lia, fun hx => by lia, fun hx => by lia, fun hx => by lia⟩
 
 /-- Any walk inside a center-free subset of the cross stays in one arm. -/
 lemma inSameArm_walk {T : Finset (ℤ × ℤ)} (hsub : T ⊆ cross) (h0 : ((0, 0) : ℤ × ℤ) ∉ T)
@@ -890,7 +889,7 @@ lemma mem_center_of_dinosaur_subset {T : Finset (ℤ × ℤ)} (hT : IsDinosaur T
         have hbc := mem_cross_iff.mp (hsub hb)
         simp only [Finset.product_eq_sprod, Finset.mem_product, Finset.mem_singleton,
           Finset.mem_Icc]
-        rcases hbc with ⟨g1, g2, g3⟩ | ⟨g1, g2, g3⟩ <;> omega
+        rcases hbc with ⟨g1, g2, g3⟩ | ⟨g1, g2, g3⟩ <;> lia
       have cardprod : ∀ (s t : Finset ℤ), (Finset.product s t).card = s.card * t.card :=
         fun s t => Finset.card_product s t
       have hc : ((Finset.Icc (-2006) (-1)).product {(0 : ℤ)}).card = 2006 := by
@@ -905,7 +904,7 @@ lemma mem_center_of_dinosaur_subset {T : Finset (ℤ × ℤ)} (hT : IsDinosaur T
         have hbc := mem_cross_iff.mp (hsub hb)
         simp only [Finset.product_eq_sprod, Finset.mem_product, Finset.mem_singleton,
           Finset.mem_Icc]
-        rcases hbc with ⟨g1, g2, g3⟩ | ⟨g1, g2, g3⟩ <;> omega
+        rcases hbc with ⟨g1, g2, g3⟩ | ⟨g1, g2, g3⟩ <;> lia
       have cardprod : ∀ (s t : Finset ℤ), (Finset.product s t).card = s.card * t.card :=
         fun s t => Finset.card_product s t
       have hc : ((Finset.Icc (1 : ℤ) 2006).product {(0 : ℤ)}).card = 2006 := by
@@ -921,7 +920,7 @@ lemma mem_center_of_dinosaur_subset {T : Finset (ℤ × ℤ)} (hT : IsDinosaur T
         have hbc := mem_cross_iff.mp (hsub hb)
         simp only [Finset.product_eq_sprod, Finset.mem_product, Finset.mem_singleton,
           Finset.mem_Icc]
-        rcases hbc with ⟨g1, g2, g3⟩ | ⟨g1, g2, g3⟩ <;> omega
+        rcases hbc with ⟨g1, g2, g3⟩ | ⟨g1, g2, g3⟩ <;> lia
       have cardprod : ∀ (s t : Finset ℤ), (Finset.product s t).card = s.card * t.card :=
         fun s t => Finset.card_product s t
       have hc : (Finset.product {(0 : ℤ)} (Finset.Icc (-2006) (-1))).card = 2006 := by
@@ -936,7 +935,7 @@ lemma mem_center_of_dinosaur_subset {T : Finset (ℤ × ℤ)} (hT : IsDinosaur T
         have hbc := mem_cross_iff.mp (hsub hb)
         simp only [Finset.product_eq_sprod, Finset.mem_product, Finset.mem_singleton,
           Finset.mem_Icc]
-        rcases hbc with ⟨g1, g2, g3⟩ | ⟨g1, g2, g3⟩ <;> omega
+        rcases hbc with ⟨g1, g2, g3⟩ | ⟨g1, g2, g3⟩ <;> lia
       have cardprod : ∀ (s t : Finset ℤ), (Finset.product s t).card = s.card * t.card :=
         fun s t => Finset.card_product s t
       have hc : (Finset.product {(0 : ℤ)} (Finset.Icc (1 : ℤ) 2006)).card = 2006 := by
@@ -977,7 +976,7 @@ problem usa2007_p4 :
   obtain ⟨hAni, -⟩ := hdino
   by_contra hle
   have hle' : 8025 < d.card := Nat.lt_of_not_le hle
-  have hcard : 4 * 2007 - 2 ≤ d.card := by omega
+  have hcard : 4 * 2007 - 2 ≤ d.card := by lia
   obtain ⟨r, hr⟩ := hAni.nonempty
   obtain ⟨A, B, hA, hB, hdisj, hunion⟩ :=
     exists_split d r hr hAni.preconnected hcard
@@ -991,7 +990,7 @@ problem usa2007_p4 :
     exact Finset.notMem_empty a ha
   have hcard2 : ({A, B} : Finset (Finset (ℤ × ℤ))).card = 2 :=
     Finset.card_pair_eq_two_iff.mpr hne
-  refine ⟨{A, B}, by omega, ?_, ?_, ?_⟩
+  refine ⟨{A, B}, by lia, ?_, ?_, ?_⟩
   · intro p hp
     rw [Finset.mem_insert, Finset.mem_singleton] at hp
     rcases hp with rfl | rfl

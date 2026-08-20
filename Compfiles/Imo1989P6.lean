@@ -316,7 +316,7 @@ def A_equiv_B [NeZero n] : Equiv (A n) (B n) := {
         let k_add_1 : Finset.Icc 1 (2*n) := ⟨k+1, by grind⟩
         simp_rw [show ↑k + 1 = k_add_1.val by grind]
         simp only [Subtype.coe_eta, SetLike.coe_eq_coe]
-        rw [Eq.comm, apply_eq_iff_eq_symm_apply, symm_symm]
+        rw [Eq.comm, ← eq_symm_apply, symm_symm]
         rw [partial_cycle.symm.apply_of_gt n _ _ _ (by unfold k_add_1; simp)]
     · simp_rw [partial_cycle.symm.apply_of_eq n _ _ 1 rfl]
       unfold B at h
@@ -330,7 +330,7 @@ def A_equiv_B [NeZero n] : Equiv (A n) (B n) := {
       let k_add_1 : Finset.Icc 1 (2*n) := ⟨k+1, by grind⟩
       simp_rw [show ↑k + 1 = k_add_1.val by grind]
       simp only [Subtype.coe_eta, SetLike.coe_eq_coe]
-      rw [Eq.comm, apply_eq_iff_eq_symm_apply, symm_symm]
+      rw [Eq.comm, ← eq_symm_apply, symm_symm]
       rw [partial_cycle.symm.apply_of_gt n _ _ _ (by unfold k_add_1; simp)]
 }
 

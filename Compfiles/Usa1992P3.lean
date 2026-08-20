@@ -42,12 +42,12 @@ lemma monotone_of_consec_lt (a : ℕ → ℕ) (h : ∀ i, i < 10 → a i < a (i 
     | zero => intro; exact le_rfl
     | succ k ih =>
       intro hk
-      have h1 := ih (by omega)
-      have h2 := h (i + k) (by omega)
+      have h1 := ih (by lia)
+      have h2 := h (i + k) (by lia)
       rw [show i + (k + 1) = i + k + 1 by ring]
       exact le_trans h1 (le_of_lt h2)
-  have e : i + (j - i) = j := by omega
-  have h3 := aux (j - i) (by omega)
+  have e : i + (j - i) = j := by lia
+  have h3 := aux (j - i) (by lia)
   rwa [e] at h3
 
 /--
@@ -64,7 +64,7 @@ lemma gap (a : ℕ → ℕ)
     (hs : ∑ i ∈ Finset.range j, a i < 1500) :
     a j ≤ ∑ i ∈ Finset.range j, a i + 1 := by
   obtain ⟨t, ht, htsum⟩ :=
-    hsub (∑ i ∈ Finset.range j, a i + 1) (by omega) (by omega)
+    hsub (∑ i ∈ Finset.range j, a i + 1) (by lia) (by lia)
   by_contra hcon
   push Not at hcon
   have hlt : ∀ i ∈ t, i < j := by
@@ -73,15 +73,15 @@ lemma gap (a : ℕ → ℕ)
     push Not at hij
     have hi10 : i ≤ 10 := by
       have h11 : i < 11 := Finset.mem_range.mp (ht hi)
-      omega
+      lia
     have hge : a j ≤ a i := hmono hij hi10
     have hle : a i ≤ ∑ x ∈ t, a x :=
       Finset.single_le_sum (fun x _ ↦ Nat.zero_le _) hi
-    omega
+    lia
   have htr : t ⊆ Finset.range j := fun i hi ↦ Finset.mem_range.mpr (hlt i hi)
   have hle2 : ∑ i ∈ t, a i ≤ ∑ i ∈ Finset.range j, a i :=
     Finset.sum_le_sum_of_subset htr
-  omega
+  lia
 
 /--
 Induction using the gap lemma: the sum of the `k` smallest elements is at
@@ -97,14 +97,14 @@ lemma pow_bound (a : ℕ → ℕ)
   | zero => intro; simp
   | succ k ih =>
     intro hk
-    have ih' := ih (by omega)
-    have hpow : (2 : ℕ) ^ k ≤ 2 ^ 9 := pow_le_pow_right' (by norm_num) (by omega)
-    have hlt : ∑ i ∈ Finset.range k, a i < 1500 := by omega
-    have hgap := gap a hsub hmono (j := k) (by omega) hlt
+    have ih' := ih (by lia)
+    have hpow : (2 : ℕ) ^ k ≤ 2 ^ 9 := pow_le_pow_right' (by norm_num) (by lia)
+    have hlt : ∑ i ∈ Finset.range k, a i < 1500 := by lia
+    have hgap := gap a hsub hmono (j := k) (by lia) hlt
     rw [Finset.sum_range_succ]
     have _ : (2 : ℕ) ^ (k + 1) = 2 * 2 ^ k := pow_succ' 2 k
     have hX : 0 < (2 : ℕ) ^ k := pow_pos (by norm_num) k
-    omega
+    lia
 
 snip end
 
@@ -139,30 +139,30 @@ problem usa1992_p3 : IsLeast {x : ℕ | ∃ a : ℕ → ℕ, Good a ∧ x = a 9}
           intro _ m hm
           have hm0 : m = 0 := by
             norm_num at hm
-            omega
+            lia
           exact ⟨∅, by simp, by simp [hm0]⟩
         | succ k ih =>
           intro hk m hm
           have hpow : (2 : ℕ) ^ (k + 1) = 2 * 2 ^ k := pow_succ' 2 k
           have hpos : 0 < (2 : ℕ) ^ k := pow_pos (by norm_num) k
           by_cases hcase : m ≤ 2 ^ k - 1
-          · obtain ⟨t, ht, htsum⟩ := ih (by omega) m hcase
-            exact ⟨t, ht.trans (Finset.range_subset_range.mpr (by omega)), htsum⟩
+          · obtain ⟨t, ht, htsum⟩ := ih (by lia) m hcase
+            exact ⟨t, ht.trans (Finset.range_subset_range.mpr (by lia)), htsum⟩
           · push Not at hcase
-            have hk7 : k ≤ 7 := by omega
+            have hk7 : k ≤ 7 := by lia
             have hfk : List.getD [1, 2, 4, 8, 16, 32, 64, 128, 247, 248, 750] k 0
                 = 2 ^ k := by
               interval_cases k <;> rfl
-            obtain ⟨t, ht, htsum⟩ := ih (by omega) (m - 2 ^ k) (by omega)
+            obtain ⟨t, ht, htsum⟩ := ih (by lia) (m - 2 ^ k) (by lia)
             have hkt : k ∉ t := fun hmem ↦ by
               have hlt := Finset.mem_range.mp (ht hmem)
-              omega
+              lia
             refine ⟨insert k t, ?_, ?_⟩
             · rw [Finset.insert_subset_iff]
-              exact ⟨Finset.mem_range.mpr (by omega),
-                ht.trans (Finset.range_subset_range.mpr (by omega))⟩
+              exact ⟨Finset.mem_range.mpr (by lia),
+                ht.trans (Finset.range_subset_range.mpr (by lia))⟩
             · rw [Finset.sum_insert hkt, hfk, htsum]
-              omega
+              lia
       -- Adjoining an element `v ≤ B + 1` extends the covered range from `[0, B]` to
       -- `[0, B + v]`.
       have extend : ∀ (B v j : ℕ), v ≤ B + 1 →
@@ -174,18 +174,18 @@ problem usa1992_p3 : IsLeast {x : ℕ | ∃ a : ℕ → ℕ, Good a ∧ x = a 9}
         intro B v j hv hfj cover m hm
         by_cases h : m ≤ B
         · obtain ⟨t, ht, htsum⟩ := cover m h
-          exact ⟨t, ht.trans (Finset.range_subset_range.mpr (by omega)), htsum⟩
+          exact ⟨t, ht.trans (Finset.range_subset_range.mpr (by lia)), htsum⟩
         · push Not at h
-          obtain ⟨t, ht, htsum⟩ := cover (m - v) (by omega)
+          obtain ⟨t, ht, htsum⟩ := cover (m - v) (by lia)
           have hjt : j ∉ t := fun hmem ↦ by
             have hlt := Finset.mem_range.mp (ht hmem)
-            omega
+            lia
           refine ⟨insert j t, ?_, ?_⟩
           · rw [Finset.insert_subset_iff]
-            exact ⟨Finset.mem_range.mpr (by omega),
-              ht.trans (Finset.range_subset_range.mpr (by omega))⟩
+            exact ⟨Finset.mem_range.mpr (by lia),
+              ht.trans (Finset.range_subset_range.mpr (by lia))⟩
           · rw [Finset.sum_insert hjt, hfj, htsum]
-            omega
+            lia
       have cover8 : ∀ m : ℕ, m ≤ 255 → ∃ t : Finset ℕ, t ⊆ Finset.range 8 ∧
           ∑ i ∈ t, List.getD [1, 2, 4, 8, 16, 32, 64, 128, 247, 248, 750] i 0 = m :=
         fun m hm ↦ helper 8 (le_refl 8) m (by show m ≤ 255; exact hm)
@@ -198,14 +198,7 @@ problem usa1992_p3 : IsLeast {x : ℕ | ∃ a : ℕ → ℕ, Good a ∧ x = a 9}
       have cover11 : ∀ m : ℕ, m ≤ 1500 → ∃ t : Finset ℕ, t ⊆ Finset.range 11 ∧
           ∑ i ∈ t, List.getD [1, 2, 4, 8, 16, 32, 64, 128, 247, 248, 750] i 0 = m :=
         fun m hm ↦ extend 750 750 10 (by norm_num) rfl cover10 m hm
-      have key : ∀ m ∈ Finset.Icc 1 1500, ∃ t ∈ (Finset.range 11).powerset,
-          ∑ i ∈ t, List.getD [1, 2, 4, 8, 16, 32, 64, 128, 247, 248, 750] i 0 = m := by
-        intro m hm
-        rw [Finset.mem_Icc] at hm
-        obtain ⟨t, ht, htsum⟩ := cover11 m hm.2
-        exact ⟨t, Finset.mem_powerset.mpr ht, htsum⟩
-      obtain ⟨t, ht, htsum⟩ := key n (Finset.mem_Icc.mpr ⟨hn1, hn2⟩)
-      exact ⟨t, Finset.mem_powerset.mp ht, htsum⟩
+      exact cover11 n hn2
   · -- No smaller value of the second largest element is possible.
     intro x hx
     obtain ⟨a, ⟨_hpos, hinc, hsub⟩, rfl⟩ := hx
@@ -218,21 +211,21 @@ problem usa1992_p3 : IsLeast {x : ℕ | ∃ a : ℕ → ℕ, Good a ∧ x = a 9}
     have hs11 : 1500 ≤ ∑ i ∈ Finset.range 11, a i := by
       have hle : ∑ i ∈ t11, a i ≤ ∑ i ∈ Finset.range 11, a i :=
         Finset.sum_le_sum_of_subset ht11
-      omega
+      lia
     have hgap10 : a 10 ≤ ∑ i ∈ Finset.range 10, a i + 1 := by
       have hb10 := hb 10 (by norm_num)
       have h2 : (2 : ℕ) ^ 10 - 1 < 1500 := by norm_num
-      exact gap a hsub hmono (by norm_num) (by omega)
+      exact gap a hsub hmono (by norm_num) (by lia)
     have hs10 : 750 ≤ ∑ i ∈ Finset.range 10, a i := by
       have e11 : ∑ i ∈ Finset.range 11, a i = ∑ i ∈ Finset.range 10, a i + a 10 :=
         Finset.sum_range_succ _ _
-      omega
+      lia
     have e10 : ∑ i ∈ Finset.range 10, a i = ∑ i ∈ Finset.range 9, a i + a 9 :=
       Finset.sum_range_succ _ _
     have e9 : ∑ i ∈ Finset.range 9, a i = ∑ i ∈ Finset.range 8, a i + a 8 :=
       Finset.sum_range_succ _ _
     have h89 : a 8 ≤ a 9 := hmono (by norm_num) (by norm_num)
     show (248 : ℕ) ≤ a 9
-    omega
+    lia
 
 end Usa1992P3

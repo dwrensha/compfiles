@@ -157,7 +157,7 @@ problem imo2012_p2 (n : ℕ) (hn : 3 ≤ n) (a : Finset.Icc 2 n → ℝ)
   have haa' : ∀ i : Finset.Icc 2 n, i ∈ Finset.univ → a i = a' i.val := by
     intro i hi
     simp only [a']
-    rw [dif_pos]
+    rw [dite_eq_left]
   rw [Finset.prod_congr (by rfl) haa'] at aprod
   rw [← Finset.prod_subtype (Finset.Icc 2 n) (by simp)] at aprod
   have ha'i : ∀ i : Finset.Icc 2 n, i ∈ Finset.univ →
@@ -176,9 +176,9 @@ problem imo2012_p2 (n : ℕ) (hn : 3 ≤ n) (a : Finset.Icc 2 n → ℝ)
     intro i
     simp only [a']
     by_cases! hi : i ∈ Finset.Icc 2 n
-    · rw [dif_pos hi]
+    · rw [dite_eq_left hi]
       apply apos
-    · rw [dif_neg hi]
+    · rw [dite_eq_right hi]
       norm_num
   have hnn' : ∀ i ∈ Finset.Icc 2 n, 0 < (i : ℝ) ^ i / ((i : ℝ) - 1) ^ (i - 1) * a' i := by
     intro i hi

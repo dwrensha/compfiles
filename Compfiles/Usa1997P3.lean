@@ -49,7 +49,7 @@ def digit (u v : ℤ) : ℤ := (6 * v - 5 * u) % 10
 lemma digit_props (u v : ℤ) :
     0 ≤ digit u v ∧ digit u v ≤ 9 ∧ digit u v % 2 = u % 2 ∧ digit u v % 5 = v % 5 := by
   unfold digit
-  refine ⟨by omega, by omega, by omega, by omega⟩
+  refine ⟨by lia, by lia, by lia, by lia⟩
 
 /-- One step of the extraction: the successor pair
 `((digit u v - u)/2, (digit u v - v)/5)` keeps the invariant `u ≡ v (mod 3)`,
@@ -64,15 +64,15 @@ lemma step_props (u v : ℤ) (h3 : (u - v) % 3 = 0) :
     (v.natAbs ≤ 2 → 9 < u.natAbs → ((digit u v - u) / 2).natAbs < u.natAbs) ∧
     (v.natAbs ≤ 2 → ((digit u v - v) / 5).natAbs ≤ 2) := by
   obtain ⟨hd0, hd9, hd2, hd5⟩ := digit_props u v
-  have h2 : 2 ∣ digit u v - u := by omega
-  have h5 : 5 ∣ digit u v - v := by omega
+  have h2 : 2 ∣ digit u v - u := by lia
+  have h5 : 5 ∣ digit u v - v := by lia
   have h2' : 2 * ((digit u v - u) / 2) = digit u v - u := by
     obtain ⟨k, hk⟩ := h2
     rw [hk, Int.mul_ediv_cancel_left k (by norm_num)]
   have h5' : 5 * ((digit u v - v) / 5) = digit u v - v := by
     obtain ⟨k, hk⟩ := h5
     rw [hk, Int.mul_ediv_cancel_left k (by norm_num)]
-  exact ⟨hd0, hd9, h2', h5', by omega, by omega, by omega, by omega⟩
+  exact ⟨hd0, hd9, h2', h5', by lia, by lia, by lia, by lia⟩
 
 /-- The polynomial whose coefficients are the given list of digits,
 in little-endian order. -/
@@ -88,12 +88,12 @@ lemma coeff_polyOfDigits_cons (d : ℤ) (ds : List ℤ) (i : ℕ) :
     (polyOfDigits (d :: ds)).coeff i = if i = 0 then d else (polyOfDigits ds).coeff (i - 1) := by
   cases i with
   | zero =>
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
     simp only [polyOfDigits, coeff_add, coeff_C_zero, mul_coeff_zero, coeff_X_zero,
       zero_mul, add_zero]
   | succ j =>
-    have hj : j + 1 ≠ 0 := by omega
-    rw [if_neg hj, Nat.add_sub_cancel]
+    have hj : j + 1 ≠ 0 := by lia
+    rw [ite_eq_right hj, Nat.add_sub_cancel]
     simp only [polyOfDigits, coeff_add, coeff_C_succ, coeff_X_mul, zero_add]
 
 lemma coeff_polyOfDigits (ds : List ℤ) (h : ∀ d ∈ ds, 0 ≤ d ∧ d ≤ 9) (i : ℕ) :
@@ -129,20 +129,20 @@ lemma build_correct (fuel : ℕ) (u v : ℤ) (ds : List ℤ) (h : build fuel u v
   | zero =>
     simp only [build] at h
     by_cases huv : u = 0 ∧ v = 0
-    · rw [if_pos huv] at h
+    · rw [ite_eq_left huv] at h
       obtain ⟨rfl, rfl⟩ := huv
       obtain rfl := Option.some.inj h
       exact ⟨by simp [polyOfDigits], by simp [polyOfDigits], fun d hd ↦ by simp at hd⟩
-    · rw [if_neg huv] at h
+    · rw [ite_eq_right huv] at h
       simp at h
   | succ fuel ih =>
     simp only [build] at h
     by_cases huv : u = 0 ∧ v = 0
-    · rw [if_pos huv] at h
+    · rw [ite_eq_left huv] at h
       obtain ⟨rfl, rfl⟩ := huv
       obtain rfl := Option.some.inj h
       exact ⟨by simp [polyOfDigits], by simp [polyOfDigits], fun d hd ↦ by simp at hd⟩
-    · rw [if_neg huv] at h
+    · rw [ite_eq_right huv] at h
       obtain ⟨hd0, hd9, h2, h5, h3', -, -, -⟩ := step_props u v h3
       cases hb : build fuel ((digit u v - u) / 2) ((digit u v - v) / 5) with
       | none => rw [hb] at h; simp at h
@@ -151,8 +151,8 @@ lemma build_correct (fuel : ℕ) (u v : ℤ) (ds : List ℤ) (h : build fuel u v
         obtain rfl := Option.some.inj h
         obtain ⟨e2, e5, hdig⟩ := ih _ _ _ hb h3'
         refine ⟨?_, ?_, fun d hd ↦ ?_⟩
-        · rw [eval_polyOfDigits_cons, e2]; omega
-        · rw [eval_polyOfDigits_cons, e5]; omega
+        · rw [eval_polyOfDigits_cons, e2]; lia
+        · rw [eval_polyOfDigits_cons, e5]; lia
         · rcases List.mem_cons.mp hd with rfl | hd'
           · exact ⟨hd0, hd9⟩
           · exact hdig _ hd'
@@ -169,11 +169,11 @@ lemma build_region_all :
 lemma build_region_some (u v : ℤ) (hu : -9 ≤ u ∧ u ≤ 9) (hv : -2 ≤ v ∧ v ≤ 2)
     (h3 : (u - v) % 3 = 0) : ∃ ds, build 8 u v = some ds := by
   have ha : ∃ a ∈ Finset.range 19, (a : ℤ) - 9 = u := by
-    refine ⟨(u + 9).toNat, Finset.mem_range.mpr ?_, by omega⟩
-    omega
+    refine ⟨(u + 9).toNat, Finset.mem_range.mpr ?_, by lia⟩
+    lia
   have hb : ∃ b ∈ Finset.range 5, (b : ℤ) - 2 = v := by
-    refine ⟨(v + 2).toNat, Finset.mem_range.mpr ?_, by omega⟩
-    omega
+    refine ⟨(v + 2).toNat, Finset.mem_range.mpr ?_, by lia⟩
+    lia
   obtain ⟨a, ham, hae⟩ := ha
   obtain ⟨b, hbm, hbe⟩ := hb
   rw [← hae, ← hbe] at h3 ⊢
@@ -204,8 +204,8 @@ lemma good_of_good_step (u v : ℤ) (h3 : (u - v) % 3 = 0)
         simp only [coeff_add, coeff_C_succ, coeff_X_mul, zero_add]
       rw [hs]
       exact hc j
-  · simp [e2]; omega
-  · simp [e5]; omega
+  · simp [e2]; lia
+  · simp [e5]; lia
 
 /-- Existence for all pairs in the region `|v| ≤ 2`, by strong descent on
 `|u|`: either `|u| ≤ 9` and we are in the finite region checked by
@@ -214,12 +214,12 @@ theorem exists_good_region (u v : ℤ) (hv2 : v.natAbs ≤ 2) (h3 : (u - v) % 3 
     ∃ Q, Good u v Q := by
   induction hM : u.natAbs using Nat.strong_induction_on generalizing u v with | _ M ih
   by_cases hsmall : u.natAbs ≤ 9
-  · obtain ⟨ds, hds⟩ := build_region_some u v (by omega) (by omega) h3
+  · obtain ⟨ds, hds⟩ := build_region_some u v (by lia) (by lia) h3
     obtain ⟨e2, e5, hdig⟩ := build_correct _ _ _ _ hds h3
     exact ⟨polyOfDigits ds, coeff_polyOfDigits ds hdig, e2, e5⟩
   · obtain ⟨hd0, hd9, h2, h5, h3', hvdec, hudec, hvin⟩ := step_props u v h3
     obtain ⟨Q, hQ⟩ := ih (((digit u v - u) / 2).natAbs)
-      (by have hlt := hudec hv2 (by omega); omega) _ _ (hvin hv2) h3' rfl
+      (by have hlt := hudec hv2 (by lia); lia) _ _ (hvin hv2) h3' rfl
     exact good_of_good_step u v h3 ⟨Q, hQ⟩
 
 /-- Existence for all pairs `(u, v)` with `u ≡ v (mod 3)`, by strong descent
@@ -231,7 +231,7 @@ theorem exists_good (u v : ℤ) (h3 : (u - v) % 3 = 0) : ∃ Q, Good u v Q := by
   · exact exists_good_region u v hsmall h3
   · obtain ⟨hd0, hd9, h2, h5, h3', hvdec, -, -⟩ := step_props u v h3
     obtain ⟨Q, hQ⟩ := ih (((digit u v - v) / 5).natAbs)
-      (by have hlt := hvdec (by omega); omega) _ _ h3' rfl
+      (by have hlt := hvdec (by lia); lia) _ _ h3' rfl
     exact good_of_good_step u v h3 ⟨Q, hQ⟩
 
 /-- Uniqueness: the difference `D` of two good polynomials has coefficients in
@@ -276,7 +276,7 @@ theorem good_unique (Q₁ Q₂ : ℤ[X]) (n : ℤ) (h₁ : Good n n Q₁) (h₂ 
     _ = D.coeff D.natTrailingDegree := by rw [← hF]
     _ = D.trailingCoeff := rfl
   have h10 : (10 : ℤ) ∣ D.trailingCoeff := by
-    have h : (10 : ℤ) ∣ F.eval 0 := by omega
+    have h : (10 : ℤ) ∣ F.eval 0 := by lia
     rwa [← coeff_zero_eq_eval_zero, hFc] at h
   have hb : -9 ≤ D.trailingCoeff ∧ D.trailingCoeff ≤ 9 := by
     have ha := hc1 D.natTrailingDegree
@@ -285,8 +285,8 @@ theorem good_unique (Q₁ Q₂ : ℤ[X]) (n : ℤ) (h₁ : Good n n Q₁) (h₂ 
         Q₁.coeff D.natTrailingDegree - Q₂.coeff D.natTrailingDegree := by
       rw [hD]; exact coeff_sub _ _ _
     show -9 ≤ D.coeff D.natTrailingDegree ∧ D.coeff D.natTrailingDegree ≤ 9
-    rw [hDk]; omega
-  exact htc (by omega)
+    rw [hDk]; lia
+  exact htc (by lia)
 
 snip end
 

@@ -85,15 +85,15 @@ lemma exists_pseq_eval_eq_zero :
     intro S hne hcard
     exfalso
     have hpos := Finset.card_pos.mpr hne
-    omega
+    lia
   | succ n ih =>
     intro S hne hcard
     rcases lt_or_ge n S.card with hgt | hle
-    · have hcard' : S.card = n + 1 := by omega
+    · have hcard' : S.card = n + 1 := by lia
       by_cases h1 : S.card ≤ 1
       · -- `S = {s}` is a singleton (so `n = 0`); take `z₁ = s`.
         obtain ⟨s, hs⟩ := hne
-        have hn0 : n = 0 := by omega
+        have hn0 : n = 0 := by lia
         subst hn0
         refine ⟨[s], rfl, fun w hw => ?_⟩
         have hws : w = s := Finset.card_le_one.mp h1 w hw s hs
@@ -120,12 +120,12 @@ lemma exists_pseq_eval_eq_zero :
           calc ((S.erase a).image fun s => (s - m) ^ 2).card
               ≤ (S.erase a).card := Finset.card_image_le
             _ = S.card - 1 := Finset.card_erase_of_mem ha
-            _ = n := by omega
+            _ = n := by lia
         obtain ⟨zs, hlen, hvan⟩ := ih _ (Finset.Nonempty.image hne _) hTcard
         have hzs : zs ≠ [] := by
           rintro rfl
           simp only [List.length_nil] at hlen
-          omega
+          lia
         refine ⟨m :: zs, by simp [hlen], fun w hw => ?_⟩
         rw [pseq_cons_eval m hzs]
         exact hvan _ (Finset.mem_image.mpr ⟨w, hw, rfl⟩)
@@ -135,7 +135,7 @@ lemma exists_pseq_eval_eq_zero :
       have hzs : zs ≠ [] := by
         rintro rfl
         simp only [List.length_nil] at hlen
-        omega
+        lia
       refine ⟨zs ++ [0], by simp [hlen], fun w hw => ?_⟩
       rw [pseq_concat hzs]
       simp [hvan w hw]

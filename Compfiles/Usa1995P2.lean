@@ -127,15 +127,15 @@ lemma reachable_sqrt_div (m n : ℕ) (hm : 0 < m) (hn : 0 < n) :
     rw [h2]
 termination_by m + n
 decreasing_by
-  · omega
-  · omega
+  · lia
+  · lia
 
 snip end
 
 problem usa1995_p2 (x : ℚ) (hx : 0 < x) :
     ∃ l : List TrigMap, run l 0 = (x : ℝ) := by
   have hnum : 0 < x.num := Rat.num_pos.2 hx
-  have hm2 : 0 < x.num.toNat ^ 2 := pow_pos (by omega) 2
+  have hm2 : 0 < x.num.toNat ^ 2 := pow_pos (by lia) 2
   obtain ⟨l, hl⟩ := reachable_sqrt_div (x.num.toNat ^ 2) (x.den ^ 2) hm2 (pow_pos x.den_pos 2)
   refine ⟨l, ?_⟩
   rw [hl]

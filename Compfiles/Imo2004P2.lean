@@ -55,7 +55,7 @@ problem imo2004_p2 (P : Polynomial ℝ) :
     by_cases! hn : n = 2 ∨ n = 4
     · rcases hn with (hn|hn) <;> rw [hn] <;> simp
     · simp
-      repeat rw [if_neg (by tauto : _)]
+      repeat rw [ite_eq_right (by tauto : _)]
       rw [add_zero]
       by_cases! hn'' : n = 0
       · have h := habc 0 0 0 (by ring : _)

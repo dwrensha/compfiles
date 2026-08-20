@@ -43,7 +43,7 @@ lemma coprimeSet_card (n : ℕ) : (coprimeSet n).card = n.totient :=
 
 lemma one_mem_coprimeSet (n : ℕ) (hn : 2 ≤ n) : 1 ∈ coprimeSet n := by
   rw [mem_coprimeSet]
-  exact ⟨by omega, Nat.coprime_one_right n⟩
+  exact ⟨by lia, Nat.coprime_one_right n⟩
 
 lemma powSum_pos (n : ℕ) (hn : 2 ≤ n) (k : ℕ) : 0 < powSum n k := by
   have h1 : 1 ∈ coprimeSet n := one_mem_coprimeSet n hn
@@ -67,8 +67,8 @@ lemma add_mul_inj {n a h a' h' : ℕ} (ha : a < n) (ha' : a' < n)
   have hmod : (a + n * h) % n = (a' + n * h') % n := congrArg (· % n) heq
   rw [Nat.add_mul_mod_self_left, Nat.add_mul_mod_self_left,
     Nat.mod_eq_of_lt ha, Nat.mod_eq_of_lt ha'] at hmod
-  have hnpos : 0 < n := by omega
-  have hnmul : n * h = n * h' := by omega
+  have hnpos : 0 < n := by lia
+  have hnmul : n * h = n * h' := by lia
   exact ⟨hmod, Nat.eq_of_mul_eq_mul_left hnpos hnmul⟩
 
 /-- Key identity, case `q ∣ n`: the reduced residues mod `n*q` are exactly
@@ -77,7 +77,7 @@ lemma powSum_mul_prime_of_dvd {n q : ℕ} (hn : 2 ≤ n) (hq : q.Prime) (hqd : q
     powSum (n * q) k = ∑ a ∈ coprimeSet n, ∑ h ∈ Finset.range q, (a + n * h) ^ k := by
   -- Note: primality of `q` is not needed in this case, only `q ∣ n`.
   have := hq.pos
-  have hn0 : 0 < n := by omega
+  have hn0 : 0 < n := by lia
   have hset : coprimeSet (n * q) =
       (coprimeSet n ×ˢ Finset.range q).image (fun p : ℕ × ℕ => p.1 + n * p.2) := by
     ext x
@@ -129,7 +129,7 @@ lemma powSum_mul_prime_of_dvd {n q : ℕ} (hn : 2 ≤ n) (hq : q.Prime) (hqd : q
 lemma powSum_mul_prime_of_not_dvd {n q : ℕ} (hn : 2 ≤ n) (hq : q.Prime) (hqd : ¬ q ∣ n) (k : ℕ) :
     powSum (n * q) k + q ^ k * powSum n k =
       ∑ a ∈ coprimeSet n, ∑ h ∈ Finset.range q, (a + n * h) ^ k := by
-  have hn0 : 0 < n := by omega
+  have hn0 : 0 < n := by lia
   have hq0 : 0 < q := hq.pos
   have hnq : Nat.Coprime n q := Nat.coprime_comm.mp (hq.coprime_iff_not_dvd.mpr hqd)
   have hset : (coprimeSet n ×ˢ Finset.range q).image (fun p : ℕ × ℕ => p.1 + n * p.2) =
@@ -298,8 +298,8 @@ lemma pow_pred_dvd_powSum_prime_pow {p : ℕ} (hp : p.Prime) :
     exact one_dvd _
   | succ e he ih =>
     intro k
-    have hpe2 : 2 ≤ p ^ e := le_trans hp.two_le (Nat.le_self_pow (by omega : e ≠ 0) p)
-    have hpd : p ∣ p ^ e := dvd_pow_self p (by omega : e ≠ 0)
+    have hpe2 : 2 ≤ p ^ e := le_trans hp.two_le (Nat.le_self_pow (by lia : e ≠ 0) p)
+    have hpd : p ∣ p ^ e := dvd_pow_self p (by lia : e ≠ 0)
     have hid := powSum_mul_prime_of_dvd hpe2 hp hpd k
     rw [sum_add_pow_eq] at hid
     rw [pow_succ p e, hid, Nat.add_sub_cancel_right]
@@ -307,14 +307,14 @@ lemma pow_pred_dvd_powSum_prime_pow {p : ℕ} (hp : p.Prime) :
     · have h := ih k
       have h1 : p ^ e = p * p ^ (e - 1) := by
         rw [mul_pow_sub_one ?_ p]
-        omega
+        lia
       nth_rewrite 1 [h1]
       exact mul_dvd_mul_left _ h
     · apply Finset.dvd_sum
       intro j _hj
       have h2 : p ^ e ∣ (p ^ e) ^ (j + 1) := by
         rw [← pow_mul]
-        exact pow_dvd_pow p (Nat.le_mul_of_pos_right e (by omega : 0 < j + 1))
+        exact pow_dvd_pow p (Nat.le_mul_of_pos_right e (by lia : 0 < j + 1))
       have h3 : (p ^ e) ^ (j + 1) ∣
           (p ^ e) ^ (j + 1) * powSum (p ^ e) (k - (j + 1)) *
             ∑ h ∈ Finset.range p, h ^ (j + 1) :=
@@ -326,13 +326,13 @@ lemma sum_range_pow_eq_sum_Icc (q j : ℕ) :
     ∑ h ∈ Finset.range q, h ^ (j + 1) = ∑ h ∈ Finset.Icc 1 (q - 1), h ^ (j + 1) := by
   rcases Nat.eq_zero_or_pos q with rfl | hq
   · simp
-  · obtain ⟨q, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (by omega : q ≠ 0)
+  · obtain ⟨q, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (by lia : q ≠ 0)
     rw [Finset.sum_range_succ' (fun h => h ^ (j + 1)) q,
-      zero_pow (by omega : j + 1 ≠ 0), add_zero]
+      zero_pow (by lia : j + 1 ≠ 0), add_zero]
     have hIcc : Finset.Icc 1 (q + 1 - 1) = Finset.Ico 1 (q + 1) := by
       ext x
       simp only [Finset.mem_Icc, Finset.mem_Ico]
-      omega
+      lia
     rw [hIcc, Finset.sum_Ico_eq_sum_range]
     exact Finset.sum_congr rfl fun x _ => by rw [add_comm]
 
@@ -384,7 +384,7 @@ lemma pow_pred_dvd_sum_pow_Icc {p : ℕ} (hp : p.Prime) :
         rw [h1, Nat.mul_div_cancel_left _ hp0]
       have hdvd : p ^ (c - 1) ∣ ∑ y ∈ Finset.Icc 1 (t / p), y ^ j :=
         ih (t / p) (htp.symm ▸ dvd_mul_right _ _) j hj
-      have hle : c ≤ c - 1 + j := by omega
+      have hle : c ≤ c - 1 + j := by lia
       have hfinal : p ^ c ∣ p ^ (c - 1) * p ^ j := by
         rw [← pow_add]
         exact pow_dvd_pow p hle
@@ -396,7 +396,7 @@ lemma pow_pred_dvd_sum_pow_Icc {p : ℕ} (hp : p.Prime) :
           ((Finset.range w ×ˢ coprimeSet m)).image (fun x => x.1 * m + x.2) := by
         have hpm : p ∣ m := by
           rw [hm]
-          exact dvd_pow_self p (by omega : c + 1 ≠ 0)
+          exact dvd_pow_self p (by lia : c + 1 ≠ 0)
         ext x
         constructor
         · intro hx
@@ -406,12 +406,12 @@ lemma pow_pred_dvd_sum_pow_Icc {p : ℕ} (hp : p.Prime) :
           obtain ⟨h1, h2⟩ := hxIcc
           have hlt : (x - 1) / m < w := by
             rw [Nat.div_lt_iff_lt_mul hm0]
-            calc x - 1 < t := by omega
+            calc x - 1 < t := by lia
               _ = w * m := by rw [htw, mul_comm]
           have hmod : (x - 1) % m < m := Nat.mod_lt _ hm0
           have hxeq2 : x = m * ((x - 1) / m) + ((x - 1) % m + 1) := by
             have hda : m * ((x - 1) / m) + (x - 1) % m = x - 1 := Nat.div_add_mod (x - 1) m
-            calc x = (x - 1) + 1 := by omega
+            calc x = (x - 1) + 1 := by lia
               _ = m * ((x - 1) / m) + (x - 1) % m + 1 := by rw [hda]
               _ = m * ((x - 1) / m) + ((x - 1) % m + 1) := by rw [add_assoc]
           have hr1 : (x - 1) % m + 1 < m := by
@@ -423,7 +423,7 @@ lemma pow_pred_dvd_sum_pow_Icc {p : ℕ} (hp : p.Prime) :
               exact dvd_add (dvd_mul_of_dvd_left hpm _) hpm
             exact hpx hpx'
           have hr2 : Nat.Coprime m ((x - 1) % m + 1) := by
-            rw [hm, Nat.coprime_pow_left_iff (by omega : 0 < c + 1), hp.coprime_iff_not_dvd]
+            rw [hm, Nat.coprime_pow_left_iff (by lia : 0 < c + 1), hp.coprime_iff_not_dvd]
             intro hpr
             have hpdx : p ∣ x := by
               rw [hxeq2]
@@ -454,13 +454,13 @@ lemma pow_pred_dvd_sum_pow_Icc {p : ℕ} (hp : p.Prime) :
             exact hrp (dvd_zero p)
           rw [Finset.mem_filter, Finset.mem_Icc]
           refine ⟨⟨?_, ?_⟩, ?_⟩
-          · omega
+          · lia
           · have h4 : (u + 1) * m ≤ w * m := by
               gcongr
-              omega
+              lia
             rw [Nat.succ_mul] at h4
             have htw' : t = w * m := by rw [htw, mul_comm]
-            omega
+            lia
           · intro hpx
             have h5 : p ∣ u * m := dvd_mul_of_dvd_right hpm u
             have h6 : p ∣ r := (Nat.dvd_add_iff_left h5).2 (add_comm (u * m) r ▸ hpx)
@@ -484,7 +484,7 @@ lemma pow_pred_dvd_sum_pow_Icc {p : ℕ} (hp : p.Prime) :
           rw [e1, e2] at h
           exact h
         have hAB : u1 * m = u2 * m := by rw [h12]
-        have h22 : r1 = r2 := by omega
+        have h22 : r1 = r2 := by lia
         exact Prod.ext h12 h22)]
       rw [Finset.sum_product]
       apply Finset.dvd_sum
@@ -508,7 +508,7 @@ lemma pow_pred_dvd_sum_pow_Icc {p : ℕ} (hp : p.Prime) :
       rcases Nat.eq_zero_or_pos i with rfl | hi0
       · rw [pow_zero]
         simp only [Nat.choose_zero_right, one_mul, mul_one, tsub_zero]
-        have h6 := pow_pred_dvd_powSum_prime_pow hp (c + 1) (by omega) j
+        have h6 := pow_pred_dvd_powSum_prime_pow hp (c + 1) (by lia) j
         rwa [Nat.add_sub_cancel] at h6
       · have h5 : p ^ c ∣ (u * m) ^ i := by
           rw [hm, mul_pow, ← pow_mul]
@@ -547,24 +547,20 @@ lemma padicValNat_totient_mul_prime_of_dvd {p q : ℕ} (hp : p.Prime) (hq : q.Pr
     exact hqdv
   have hq1 : q - 1 ≠ 0 := by
     have := hq.two_le
-    omega
+    lia
   have htv : Nat.totient v ≠ 0 := (Nat.totient_pos.2 (Nat.pos_of_ne_zero hvnz)).ne'
   have hqnz : q ≠ 0 := hq.ne_zero
-  have hvpow : ∀ e : ℕ, padicValNat p (q ^ e) = 0 := by
-    intro e
-    rw [padicValNat.eq_zero_iff]
-    refine Or.inr (Or.inr ?_)
-    intro hd
-    exact hpq ((Nat.prime_dvd_prime_iff_eq hp hq).1 (hp.dvd_of_dvd_pow hd))
+  have hvpow : ∀ e : ℕ, padicValNat p (q ^ e) = 0 := fun e =>
+    padicValNat_prime_prime_pow e hpq
   have htn : Nat.totient n = q ^ (f - 1) * (q - 1) * Nat.totient v := by
-    rw [hnv, Nat.totient_mul (hcv f (by omega)), Nat.totient_prime_pow hq (by omega : 0 < f)]
+    rw [hnv, Nat.totient_mul (hcv f (by lia)), Nat.totient_prime_pow hq (by lia : 0 < f)]
   have htnq : Nat.totient (n * q) = q ^ f * (q - 1) * Nat.totient v := by
     have hnq : n * q = q ^ (f + 1) * v := by
       have h1 : n * q = (q ^ f * v) * q := by rw [← hnv]
       rw [h1, pow_succ]
       ring
-    rw [hnq, Nat.totient_mul (hcv (f + 1) (by omega)),
-      Nat.totient_prime_pow hq (by omega : 0 < f + 1), Nat.add_sub_cancel]
+    rw [hnq, Nat.totient_mul (hcv (f + 1) (by lia)),
+      Nat.totient_prime_pow hq (by lia : 0 < f + 1), Nat.add_sub_cancel]
   rw [htn, htnq,
     padicValNat.mul (mul_ne_zero (pow_ne_zero _ hqnz) hq1) htv,
     padicValNat.mul (mul_ne_zero (pow_ne_zero _ hqnz) hq1) htv,
@@ -580,7 +576,7 @@ lemma padicValNat_totient_mul_prime_of_not_dvd {p q : ℕ} (hp : p.Prime) (hq : 
   have hcop : Nat.Coprime n q := (hq.coprime_iff_not_dvd.2 hqd).symm
   have hq1 : q - 1 ≠ 0 := by
     have := hq.two_le
-    omega
+    lia
   rw [Nat.totient_mul hcop, Nat.totient_prime hq,
     padicValNat.mul (Nat.totient_pos.2 (Nat.pos_of_ne_zero hn)).ne' hq1]
 
@@ -594,8 +590,8 @@ lemma pow_padicValNat_totient_dvd_powSum {p : ℕ} (hp : p.Prime) :
     intro hn2 hpn k
     rcases k with _ | k
     · rw [powSum_zero]
-      exact pow_padicValNat_dvd' hp (Nat.totient_pos.2 (by omega)).ne'
-    · have hnnz : n ≠ 0 := by omega
+      exact pow_padicValNat_dvd' hp (Nat.totient_pos.2 (by lia)).ne'
+    · have hnnz : n ≠ 0 := by lia
       set e := padicValNat p n with he
       have he1 : 1 ≤ e := one_le_padicValNat_of_dvd hnnz hpn
       have hpen : p ^ e ∣ n := pow_padicValNat_dvd' hp hnnz
@@ -609,23 +605,23 @@ lemma pow_padicValNat_totient_dvd_powSum {p : ℕ} (hp : p.Prime) :
         exact hnnz hnu
       rcases Nat.lt_or_ge u 2 with hu2 | hu2
       · -- `u = 1`, i.e. `n = p ^ e`: the prime power case
-        have hu1' : u = 1 := by omega
+        have hu1' : u = 1 := by lia
         have hnp : n = p ^ e := by rw [hnu, hu1', mul_one]
         have hp2 := hp.two_le
-        rw [hnp, Nat.totient_prime_pow hp (by omega : 0 < e),
-          padicValNat.mul (pow_ne_zero _ hp.ne_zero) (by omega : p - 1 ≠ 0),
+        rw [hnp, Nat.totient_prime_pow hp (by lia : 0 < e),
+          padicValNat.mul (pow_ne_zero _ hp.ne_zero) (by lia : p - 1 ≠ 0),
           padicValNat.prime_pow]
         have h0 : padicValNat p (p - 1) = 0 := by
           rw [padicValNat.eq_zero_iff]
           refine Or.inr (Or.inr ?_)
           intro hd
-          have hle := Nat.le_of_dvd (by omega : 0 < p - 1) hd
-          omega
+          have hle := Nat.le_of_dvd (by lia : 0 < p - 1) hd
+          lia
         rw [h0, add_zero]
         exact pow_pred_dvd_powSum_prime_pow hp e he1 (k + 1)
       · -- `u ≥ 2`: strip off the prime `q = minFac u ≠ p` and use induction
         set q := Nat.minFac u with hqdef
-        have hune1 : u ≠ 1 := by omega
+        have hune1 : u ≠ 1 := by lia
         have hq : q.Prime := Nat.minFac_prime hune1
         have hq2 := hq.two_le
         have hqu : q ∣ u := Nat.minFac_dvd u
@@ -643,7 +639,7 @@ lemma pow_padicValNat_totient_dvd_powSum {p : ℕ} (hp : p.Prime) :
         have hnn' : n = n' * q := (Nat.div_mul_cancel hqn).symm
         have hpen' : p ^ e ∣ n' := by
           have hcop : Nat.Coprime (p ^ e) q := by
-            rw [Nat.coprime_pow_left_iff (by omega : 0 < e), hp.coprime_iff_not_dvd]
+            rw [Nat.coprime_pow_left_iff (by lia : 0 < e), hp.coprime_iff_not_dvd]
             exact fun h => hpq ((Nat.prime_dvd_prime_iff_eq hp hq).1 h)
           have h2 : p ^ e * q ∣ n := hcop.mul_dvd_of_dvd_of_dvd hpen hqn
           obtain ⟨s, hs⟩ := h2
@@ -651,24 +647,24 @@ lemma pow_padicValNat_totient_dvd_powSum {p : ℕ} (hp : p.Prime) :
             have h3 : n' * q = (p ^ e * s) * q := by
               rw [← hnn', hs]
               ring
-            exact Nat.mul_right_cancel (by omega : 0 < q) h3
+            exact Nat.mul_right_cancel (by lia : 0 < q) h3
           rw [hs']
           exact dvd_mul_right _ _
-        have hpn' : p ∣ n' := dvd_trans (dvd_pow_self p (by omega : e ≠ 0)) hpen'
+        have hpn' : p ∣ n' := dvd_trans (dvd_pow_self p (by lia : e ≠ 0)) hpen'
         have hn'2 : 2 ≤ n' := by
           have hpos : 0 < n' := by
             by_contra hcon
             have hcon' : n' ≤ 0 := Nat.not_lt.1 hcon
             interval_cases n'
             simp at hnn'
-            omega
+            lia
           exact le_trans hp.two_le (Nat.le_of_dvd hpos hpn')
-        have hn'lt : n' < n := Nat.div_lt_self (by omega : 0 < n) hq.one_lt
+        have hn'lt : n' < n := Nat.div_lt_self (by lia : 0 < n) hq.one_lt
         have IH' : ∀ k', p ^ padicValNat p (Nat.totient n') ∣ powSum n' k' :=
           fun k' => IH n' hn'lt hn'2 hpn' k'
         by_cases hcase : q ∣ n'
         · -- case `q ∣ n'`: no extra factor of `p` in `φ (n'*q)`
-          have hval := padicValNat_totient_mul_prime_of_dvd hp hq hpq (by omega : n' ≠ 0) hcase
+          have hval := padicValNat_totient_mul_prime_of_dvd hp hq hpq (by lia : n' ≠ 0) hcase
           rw [hnn', hval]
           have hid := powSum_mul_prime_of_dvd hn'2 hq hcase (k + 1)
           rw [sum_add_pow_eq] at hid
@@ -680,13 +676,13 @@ lemma pow_padicValNat_totient_dvd_powSum {p : ℕ} (hp : p.Prime) :
             exact dvd_mul_of_dvd_right (dvd_mul_of_dvd_left (dvd_mul_of_dvd_right (IH' _) _) _) _
         · -- case `q ∤ n'`: `ν_p` gains `ν_p (q - 1)`
           have hval :=
-            padicValNat_totient_mul_prime_of_not_dvd hp hq (by omega : n' ≠ 0) hcase
+            padicValNat_totient_mul_prime_of_not_dvd hp hq (by lia : n' ≠ 0) hcase
           rw [hnn', hval]
           have hid := powSum_mul_prime_of_not_dvd hn'2 hq hcase (k + 1)
           rw [sum_add_pow_eq] at hid
           have hqq : q ≤ q ^ (k + 1) := by
             calc q = q ^ 1 := (pow_one q).symm
-              _ ≤ q ^ (k + 1) := Nat.pow_le_pow_right (by omega : 0 < q) (by omega)
+              _ ≤ q ^ (k + 1) := Nat.pow_le_pow_right (by lia : 0 < q) (by lia)
           have hsplit : q ^ (k + 1) * powSum n' (k + 1) =
               (q ^ (k + 1) - q) * powSum n' (k + 1) + q * powSum n' (k + 1) := by
             rw [Nat.sub_mul, Nat.sub_add_cancel (Nat.mul_le_mul hqq le_rfl)]
@@ -711,14 +707,14 @@ lemma pow_padicValNat_totient_dvd_powSum {p : ℕ} (hp : p.Prime) :
               · have hc1 : 1 ≤ padicValNat p (q - 1) := h0
                 have hd1 : p ^ 1 ∣ n' ^ (j + 1) := by
                   rw [pow_one]
-                  exact dvd_pow hpn' (by omega : j + 1 ≠ 0)
+                  exact dvd_pow hpn' (by lia : j + 1 ≠ 0)
                 have hd2 : p ^ (padicValNat p (q - 1) - 1) ∣
                     ∑ h ∈ Finset.range q, h ^ (j + 1) := by
                   rw [sum_range_pow_eq_sum_Icc]
                   exact pow_pred_dvd_sum_pow_Icc hp _ hc1 (q - 1)
-                    (pow_padicValNat_dvd' hp (by omega : q - 1 ≠ 0)) _ (by omega)
+                    (pow_padicValNat_dvd' hp (by lia : q - 1 ≠ 0)) _ (by lia)
                 have hadd : padicValNat p (q - 1) = 1 + (padicValNat p (q - 1) - 1) := by
-                  omega
+                  lia
                 rw [hadd, pow_add]
                 exact mul_dvd_mul hd1 hd2
             have hdvd1 : p ^ (padicValNat p (Nat.totient n') + padicValNat p (q - 1)) ∣
@@ -734,7 +730,7 @@ lemma pow_padicValNat_totient_dvd_powSum {p : ℕ} (hp : p.Prime) :
               rw [hsub]
               have hd : q - 1 ∣ q ^ k - 1 := Nat.sub_one_dvd_pow_sub_one q k
               exact dvd_mul_of_dvd_right
-                (dvd_trans (pow_padicValNat_dvd' hp (by omega : q - 1 ≠ 0)) hd) q
+                (dvd_trans (pow_padicValNat_dvd' hp (by lia : q - 1 ≠ 0)) hd) q
             exact dvd_trans ((pow_add p _ _).symm ▸ mul_dvd_mul (IH' (k + 1)) h1) ⟨1, by ring⟩
           have hA : powSum (n' * q) (k + 1) =
               (∑ j ∈ Finset.range (k + 1), ((k + 1).choose (j + 1)) *
@@ -751,7 +747,7 @@ snip end
 problem usa2018_p3 (n : ℕ) (hn : 2 ≤ n) (k : ℕ) (_hk : 1 ≤ k)
     (h : ∀ p : ℕ, p.Prime → p ∣ n.totient → p ∣ n) :
     n.totient ∣ ∑ a ∈ (Finset.range n).filter (Nat.Coprime n), a ^ k := by
-  have htot : n.totient ≠ 0 := (Nat.totient_pos.2 (by omega)).ne'
+  have htot : n.totient ≠ 0 := (Nat.totient_pos.2 (by lia)).ne'
   have hS : powSum n k ≠ 0 := (powSum_pos n hn k).ne'
   show n.totient ∣ powSum n k
   rw [← Nat.factorization_prime_le_iff_dvd htot hS]

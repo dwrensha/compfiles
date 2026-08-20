@@ -56,7 +56,6 @@ theorem exists_pairwise_disjoint_edges (G : SimpleGraph V) [DecidableRel G.Adj]
     ∃ s : Finset (Sym2 V), s ⊆ G.edgeFinset ∧
       Fintype.card V - #G.edgeFinset ≤ #s ∧
       ∀ e₁ ∈ s, ∀ e₂ ∈ s, e₁ ≠ e₂ → ∀ v : V, ¬ (v ∈ e₁ ∧ v ∈ e₂) := by
-  classical
   -- For each vertex choose one "first" incident edge.
   have hne : ∀ v : V, (G.incidenceFinset v).Nonempty :=
     fun v ↦ incidenceFinset_nonempty_of_degree_pos G (hdeg v)
@@ -87,12 +86,12 @@ theorem exists_pairwise_disjoint_edges (G : SimpleGraph V) [DecidableRel G.Adj]
         rw [← Finset.sum_add_distrib]
         exact Finset.sum_congr rfl fun v _ ↦ Nat.sub_add_cancel (hdeg v)
       rwa [SimpleGraph.sum_degrees_eq_twice_card_edges] at h3
-    omega
+    lia
   -- The surviving edges are pairwise vertex-disjoint.
   refine ⟨G.edgeFinset \ bad, Finset.sdiff_subset, ?_, ?_⟩
   · -- cardinality bound
     rw [Finset.card_sdiff_of_subset hbad_sub]
-    omega
+    lia
   · -- disjointness
     intro e₁ he₁ e₂ he₂ hne12 v ⟨hv1, hv2⟩
     rw [Finset.mem_sdiff] at he₁ he₂
@@ -116,7 +115,7 @@ problem usa1989_p2
       #(s.biUnion Sym2.toFinset) = 12 := by
   obtain ⟨s, hsub, hcard', hdisj⟩ := exists_pairwise_disjoint_edges G hdeg
   rw [hcard, Fintype.card_fin] at hcard'
-  obtain ⟨t, hts, htc⟩ := Finset.exists_subset_card_eq (show 6 ≤ #s by omega)
+  obtain ⟨t, hts, htc⟩ := Finset.exists_subset_card_eq (show 6 ≤ #s by lia)
   refine ⟨t, hts.trans hsub, htc, ?_⟩
   have hpair : (t : Set (Sym2 (Fin 20))).PairwiseDisjoint Sym2.toFinset := by
     intro e₁ he₁ e₂ he₂ hne

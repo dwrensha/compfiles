@@ -88,7 +88,7 @@ problem imo1968_p5b :
     have h3 : c = 1 := h1.symm.trans h2
     have h4 : solution_func 1 = 1/2 := by
       have h6 : ¬ Even ⌊(1:ℝ)⌋ := by simp
-      exact if_neg h6
+      exact ite_eq_right h6
     have h5 : c = 1/2 := h1'.symm.trans h4
     rw [h3] at h5
     norm_num at h5

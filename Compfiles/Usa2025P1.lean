@@ -34,7 +34,7 @@ lemma residue_mod {n k ℓ : ℕ} (hodd : Odd n) (hℓ1 : 1 ≤ ℓ) (hℓk : �
     ∃ c : ℕ, Odd c ∧ 1 ≤ c ∧ n ^ k % (2 * n) ^ ℓ = c * n ^ ℓ := by
   have hn0 : 0 < n := hodd.pos
   have hc_odd : Odd (n ^ (k - ℓ) % 2 ^ ℓ) := by
-    rw [Nat.odd_iff, Nat.mod_mod_of_dvd _ (dvd_pow_self 2 (by omega : ℓ ≠ 0))]
+    rw [Nat.odd_iff, Nat.mod_mod_of_dvd _ (dvd_pow_self 2 (by lia : ℓ ≠ 0))]
     exact Nat.odd_iff.mp hodd.pow
   refine ⟨n ^ (k - ℓ) % 2 ^ ℓ, hc_odd, hc_odd.pos, ?_⟩
   have hdvd : (2 * n) ^ ℓ ∣ n ^ k - (n ^ (k - ℓ) % 2 ^ ℓ) * n ^ ℓ := by
@@ -53,7 +53,7 @@ lemma residue_mod {n k ℓ : ℕ} (hodd : Odd n) (hℓ1 : 1 ≤ ℓ) (hℓk : �
   have hlt : (n ^ (k - ℓ) % 2 ^ ℓ) * n ^ ℓ < (2 * n) ^ ℓ := by
     rw [mul_pow]
     exact mul_lt_mul_of_pos_right
-      (Nat.mod_lt _ (Nat.pow_pos (by omega : (0 : ℕ) < 2))) (Nat.pow_pos hn0)
+      (Nat.mod_lt _ (Nat.pow_pos (by lia : (0 : ℕ) < 2))) (Nat.pow_pos hn0)
   have hnk : n ^ k = (n ^ (k - ℓ) % 2 ^ ℓ) * n ^ ℓ + (2 * n) ^ ℓ * q := by
     rw [← hq]
     exact (Nat.add_sub_cancel' hle).symm
@@ -64,7 +64,7 @@ equals `E / b ^ i`, where `E = m % b ^ (i + 1)` is the residue of `m` modulo
 the next power of `b`. -/
 lemma digit_of_mod {m b E i : ℕ} (hb : 1 < b) (hm : m % b ^ (i + 1) = E) :
     m / b ^ i % b = E / b ^ i := by
-  have hb0 : 0 < b := by omega
+  have hb0 : 0 < b := by lia
   have hE : E < b ^ (i + 1) := by
     rw [← hm]
     exact Nat.mod_lt _ (Nat.pow_pos hb0)
@@ -95,21 +95,21 @@ problem usa2025_p1 (k d : ℕ) (hk : 0 < k) (_hd : 0 < d) :
   -- `n ^ k < (2 * n) ^ k`, so `n ^ k` has at most `k` base-`(2 * n)` digits and `i < k`.
   have hik : i < k := by
     have hlen : (Nat.digits (2 * n) (n ^ k)).length ≤ k := by
-      rw [Nat.digits_length_le_iff (by omega : 1 < 2 * n)]
-      exact Nat.pow_lt_pow_left (by omega : n < 2 * n) (by omega : k ≠ 0)
-    omega
+      rw [Nat.digits_length_le_iff (by lia : 1 < 2 * n)]
+      exact Nat.pow_lt_pow_left (by lia : n < 2 * n) (by lia : k ≠ 0)
+    lia
   -- The digit value: `a = n ^ k / (2 * n) ^ i % (2 * n)`.
   have ha_eq : a = n ^ k / (2 * n) ^ i % (2 * n) := by
     have h1 : (Nat.digits (2 * n) (n ^ k)).getD i 0 = n ^ k / (2 * n) ^ i % (2 * n) :=
-      Nat.getD_digits _ _ (by omega : 2 ≤ 2 * n)
+      Nat.getD_digits _ _ (by lia : 2 ≤ 2 * n)
     rw [List.getD_eq_getElem _ _ hi_lt] at h1
     exact hi_eq.symm.trans h1
   -- The residue computation: `n ^ k % (2 * n) ^ (i + 1) = c * n ^ (i + 1)` with `1 ≤ c`.
   obtain ⟨c, -, hc1, hres⟩ := residue_mod (n := n) (k := k) (ℓ := i + 1) hodd
-    (by omega) (by omega)
+    (by lia) (by lia)
   -- Hence `a = c * n ^ (i + 1) / (2 * n) ^ i = c * n / 2 ^ i`.
   have hdig : n ^ k / (2 * n) ^ i % (2 * n) = c * n ^ (i + 1) / (2 * n) ^ i :=
-    digit_of_mod (by omega : 1 < 2 * n) hres
+    digit_of_mod (by lia : 1 < 2 * n) hres
   have hsimp : c * n ^ (i + 1) / (2 * n) ^ i = c * n / 2 ^ i := by
     rw [mul_pow, pow_succ]
     have h : c * (n ^ i * n) = (c * n) * n ^ i := by ring
@@ -123,7 +123,7 @@ problem usa2025_p1 (k d : ℕ) (hk : 0 < k) (_hd : 0 < d) :
     have hsplit : 2 ^ (k - 1) = 2 ^ (k - 1 - i) * 2 ^ i := by
       rw [← pow_add]
       congr 1
-      omega
+      lia
     rw [hsplit] at hge
     have h1 : (d + 1) * 2 ^ (k - 1 - i) ≤ c * n / 2 ^ i := by
       have h3 : (d + 1) * (2 ^ (k - 1 - i) * 2 ^ i)
@@ -131,9 +131,9 @@ problem usa2025_p1 (k d : ℕ) (hk : 0 < k) (_hd : 0 < d) :
       rw [h3] at hge
       have h4 : 2 ^ i * ((d + 1) * 2 ^ (k - 1 - i)) / 2 ^ i ≤ c * n / 2 ^ i :=
         Nat.div_le_div_right hge
-      rwa [Nat.mul_div_right _ (Nat.pow_pos (by omega : (0 : ℕ) < 2))] at h4
+      rwa [Nat.mul_div_right _ (Nat.pow_pos (by lia : (0 : ℕ) < 2))] at h4
     exact (Nat.le_mul_of_pos_right (d + 1)
-      (Nat.pow_pos (by omega : (0 : ℕ) < 2))).trans h1
+      (Nat.pow_pos (by lia : (0 : ℕ) < 2))).trans h1
   rw [ha_eq, hdig, hsimp]
   exact hbound
 

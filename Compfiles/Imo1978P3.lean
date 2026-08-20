@@ -218,7 +218,6 @@ problem imo1978_p3
     (hcover : ∀ k, 0 < k → (∃ n, 0 < n ∧ f n = k) ∨ (∃ n, 0 < n ∧ g n = k))
     (hgf : ∀ n, 0 < n → g n = f (f n) + 1) :
     f 240 = solution := by
-  classical
   -- A sequence strictly increasing on the positives is injective and monotone there.
   have injOn_of : ∀ (h : ℕ → ℕ) (b : ℕ), (∀ p q, 0 < p → p < q → h p < h q) →
       Set.InjOn h ↑(Finset.Icc 1 b) := by

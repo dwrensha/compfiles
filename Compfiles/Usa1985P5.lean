@@ -66,7 +66,7 @@ lemma sum_indicator_right {a : ℕ → ℕ} {hu : ∀ n, ∃ i, n ≤ a i} {j : 
     simp only [Finset.mem_filter, Finset.mem_range]
     constructor
     · exact fun h => h.2
-    · exact fun h => ⟨by have h2 := lt_of_lt_of_le h hj; omega, h⟩
+    · exact fun h => ⟨by have h2 := lt_of_lt_of_le h hj; lia, h⟩
   rw [h, Finset.card_range]
 
 /-- The key identity: the sum is *constant*. Double-count the pairs
@@ -84,14 +84,14 @@ lemma sum_eq (a : ℕ → ℕ) (hm : Monotone a) (hu : ∀ n, ∃ i, n ≤ a i)
     intro i hi
     have hi18 : i ≤ 18 := by
       have h := Finset.mem_range.mp hi
-      omega
+      lia
     rw [← h19]
     exact hm hi18
   have hc18 : ∀ j ∈ Finset.range 85, c a hu (j + 1) ≤ 18 := by
     intro j hj
     have hj85 : j + 1 ≤ 85 := by
       have h := Finset.mem_range.mp hj
-      omega
+      lia
     exact Nat.find_le (by rw [h19]; exact hj85)
   have e1 : ∑ i ∈ Finset.range 19, a i
       = ∑ i ∈ Finset.range 19, ∑ j ∈ Finset.range 85, (if j < a i then 1 else 0) := by
@@ -122,8 +122,8 @@ lemma sum_eq (a : ℕ → ℕ) (hm : Monotone a) (hu : ∀ n, ∃ i, n ≤ a i)
     apply Finset.sum_congr rfl
     intro j _
     by_cases h : j < a i
-    · rw [if_pos h, if_neg (fun hc => Nat.not_le.mpr h ((key i j).mp hc))]
-    · rw [if_neg h, if_pos ((key i j).mpr (Nat.le_of_not_lt h))]
+    · rw [ite_eq_left h, ite_eq_right (fun hc => Nat.not_le.mpr h ((key i j).mp hc))]
+    · rw [ite_eq_right h, ite_eq_left ((key i j).mpr (Nat.le_of_not_lt h))]
   have hsum : (∑ i ∈ Finset.range 19, ∑ j ∈ Finset.range 85, (if j < a i then 1 else 0)) +
         (∑ i ∈ Finset.range 19, ∑ j ∈ Finset.range 85,
           (if i < c a hu (j + 1) then 1 else 0)) = 1615 := by
@@ -144,7 +144,7 @@ problem usa1985_p5 :
     Nat.add_le_add_left (Nat.sub_le_sub_right hij 18) 85
   have hpos : 0 < (fun i => 85 + (i - 18)) 0 := by decide
   have hunb : ∀ n, ∃ i, n ≤ (fun i => 85 + (i - 18)) i := fun n =>
-    ⟨n, by show n ≤ 85 + (n - 18); omega⟩
+    ⟨n, by show n ≤ 85 + (n - 18); lia⟩
   have h85 : (fun i => 85 + (i - 18)) 18 = 85 := by decide
   refine ⟨?_, ?_⟩
   · refine ⟨fun i => 85 + (i - 18), hmono, hpos, hunb, h85, ?_⟩

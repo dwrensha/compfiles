@@ -204,10 +204,7 @@ lemma solution_of_conds {u v w : ℝ} (h1 : v * w = 1)
     have hsv : √v = 0 := Real.sqrt_eq_zero_of_nonpos (le_of_lt hv_neg)
     exact hs_ne (by rw [hsv, hsw, add_zero])
   have hu_pos : 0 < u := by
-    have hs2_pos : 0 < (√v + √w) ^ 2 := by
-      have hsv_pos : 0 < √v := Real.sqrt_pos.mpr hv_pos
-      have hspos : 0 < √v + √w := by linarith [Real.sqrt_nonneg w]
-      exact pow_pos hspos 2
+    have hs2_pos : 0 < (√v + √w) ^ 2 := by positivity
     by_contra hu'
     push Not at hu'
     have hle : u * (√v + √w) ^ 2 ≤ 0 := mul_nonpos_of_nonpos_of_nonneg hu' (sq_nonneg _)

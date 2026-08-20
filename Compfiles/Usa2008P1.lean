@@ -66,7 +66,7 @@ lemma main_identity (n : ℕ) :
 -- kₙ₊₁ = xₙ² - xₙ + 1
 lemma kseq_succ_eq (n : ℕ) : kseq (n + 1) = xseq n ^ 2 - xseq n + 1 := by
   unfold kseq xseq
-  simp only [Nat.add_sub_cancel, if_neg (Nat.succ_ne_zero n)]
+  simp only [Nat.add_sub_cancel, ite_eq_right (Nat.succ_ne_zero n)]
   ring_nf
 
 -- gcd(x² + x + 1, x² - x + 1) = 1

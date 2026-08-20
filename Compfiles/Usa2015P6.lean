@@ -35,7 +35,7 @@ lemma sum_Icc_one_eq_sum_range_add {M : Type*} [AddCommMonoid M] (f : ℕ → M)
   induction n with
   | zero => simp
   | succ n ih =>
-    rw [Finset.sum_Icc_succ_top (by omega), ih, Finset.sum_range_succ]
+    rw [Finset.sum_Icc_succ_top (by lia), ih, Finset.sum_range_succ]
 
 /-- Abel summation identity: the sum of the elements of the multiset `A` not
 exceeding `n` equals `n + 1` times their number minus the sum of the counts. -/
@@ -46,7 +46,7 @@ lemma sum_elements_sub_card (A : ℕ → ℕ) (n : ℕ) :
   induction n with
   | zero => simp
   | succ n ih =>
-    have h1 : (1 : ℕ) ≤ n + 1 := by omega
+    have h1 : (1 : ℕ) ≤ n + 1 := by lia
     rw [Finset.sum_Icc_succ_top h1 (fun m => ∑ m ∈ Finset.Icc 1 m, (A m : ℝ)),
       Finset.sum_Icc_succ_top h1 (fun m => (A m : ℝ)),
       Finset.sum_Icc_succ_top h1 (fun m => (m : ℝ) * (A m : ℝ)), ih]
@@ -67,7 +67,7 @@ lemma recurrent_averages_absurd
     (hx_avg : ∀ n ≥ N, (n : ℝ) * x n < ∑ k ∈ Finset.range n, x k)
     (hx_step : ∀ n, ε ≤ |x (n + 1) - x n|) :
     False := by
-  have hN' : (0 : ℝ) < (N : ℝ) := by exact_mod_cast (by omega : 0 < N)
+  have hN' : (0 : ℝ) < (N : ℝ) := by exact_mod_cast (by lia : 0 < N)
   -- every term is below the average of the previous ones
   have hx_lt_avg : ∀ n ≥ N, x n < (∑ k ∈ Finset.range n, x k) / n := by
     intro n hn
@@ -93,7 +93,7 @@ lemma recurrent_averages_absurd
     have h2 := hx_lt_avg n hn
     have h4 := havg_lt n hn
     have h3 : x (n + 1) < (∑ k ∈ Finset.range n, x k) / n := by
-      have h2' := hx_lt_avg (n + 1) (by omega)
+      have h2' := hx_lt_avg (n + 1) (by lia)
       push_cast at h2'
       exact lt_trans h2' h4
     have hstep := hx_step n
@@ -105,7 +105,7 @@ lemma recurrent_averages_absurd
         linarith
     have hS2 : ∑ k ∈ Finset.range (n + 2), x k
         = (∑ k ∈ Finset.range n, x k) + x n + x (n + 1) := by
-      rw [show n + 2 = n + 1 + 1 by omega, Finset.sum_range_succ, Finset.sum_range_succ]
+      rw [show n + 2 = n + 1 + 1 by lia, Finset.sum_range_succ, Finset.sum_range_succ]
     rw [hS2, div_lt_iff₀ hn2, sub_mul, div_mul_cancel₀ _ hn2.ne', mul_add,
       div_mul_cancel₀ _ hn0.ne']
     linarith [hpair]
@@ -117,7 +117,7 @@ lemma recurrent_averages_absurd
     induction k with
     | zero => simp
     | succ k ih =>
-      have h6 := hF6 (N + 2 * k) (by omega)
+      have h6 := hF6 (N + 2 * k) (by lia)
       rw [Finset.sum_range_succ (fun j => 1 / ((N : ℝ) + 2 * j + 2)) k,
         show N + 2 * (k + 1) = N + 2 * k + 2 by ring, mul_add, mul_one_div]
       push_cast at h6 ⊢
@@ -184,7 +184,7 @@ problem usa2015_p6 {lam : ℝ} (hlam : 0 < lam ∧ lam < 1) (A : ℕ → ℕ)
     by_contra hcon
     push Not at hcon
     have hle := hN hcon
-    omega
+    lia
   -- the defect sequence `x n = λ n - |A_n|`
   set x : ℕ → ℝ := fun n => lam * n - ∑ m ∈ Finset.Icc 1 n, (A m : ℝ) with hx
   have hx_nonneg : ∀ n, 0 ≤ x n := by
@@ -201,7 +201,7 @@ problem usa2015_p6 {lam : ℝ} (hlam : 0 < lam ∧ lam < 1) (A : ℕ → ℕ)
     induction n with
     | zero => simp
     | succ n ih =>
-      rw [Finset.sum_Icc_succ_top (by omega : (1 : ℕ) ≤ n + 1) (fun k => (k : ℝ)), ih]
+      rw [Finset.sum_Icc_succ_top (by lia : (1 : ℕ) ≤ n + 1) (fun k => (k : ℝ)), ih]
       push_cast
       ring
   -- sum of the defects over `Icc 1 n`
@@ -235,7 +235,7 @@ problem usa2015_p6 {lam : ℝ} (hlam : 0 < lam ∧ lam < 1) (A : ℕ → ℕ)
     have hstep : x (n + 1) - x n = lam - (A (n + 1) : ℝ) := by
       have hsucc : (∑ m ∈ Finset.Icc 1 (n + 1), (A m : ℝ))
           = (∑ m ∈ Finset.Icc 1 n, (A m : ℝ)) + (A (n + 1) : ℝ) :=
-        Finset.sum_Icc_succ_top (by omega) _
+        Finset.sum_Icc_succ_top (by lia) _
       simp only [hx]
       rw [hsucc]
       push_cast
@@ -249,7 +249,7 @@ problem usa2015_p6 {lam : ℝ} (hlam : 0 < lam ∧ lam < 1) (A : ℕ → ℕ)
       rw [abs_of_neg hneg]
       have hmin := min_le_right lam (1 - lam)
       linarith [hk, hlam.2, hmin]
-  exact recurrent_averages_absurd x (min lam (1 - lam)) hε (N + 1) (by omega)
+  exact recurrent_averages_absurd x (min lam (1 - lam)) hε (N + 1) (by lia)
     hx_nonneg havg hx_step
 
 end Usa2015P6

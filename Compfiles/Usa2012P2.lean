@@ -83,7 +83,6 @@ lemma exists_rotation {S C avoid : Finset (ZMod 432)} {k : ℕ}
     (havoid : ∀ x ∈ S, ∀ t ∈ avoid, x + t ∉ C)
     (hcard : (432 - avoid.card) * k < S.card * C.card) :
     ∃ t, t ∉ avoid ∧ ∃ T, T ⊆ S ∧ k < T.card ∧ ∀ x ∈ T, x + t ∈ C := by
-  classical
   suffices ∃ t, t ∉ avoid ∧ k < (S.filter fun x => x + t ∈ C).card by
     obtain ⟨t, ht, h⟩ := this
     exact ⟨t, ht, S.filter (fun x => x + t ∈ C), Finset.filter_subset _ _, h,
@@ -133,7 +132,6 @@ problem usa2012_p2 (color : ZMod 432 → Fin 4)
       (∀ x ∈ U, ∀ y ∈ U, arcDist x y = arcDist (x + t₁) (y + t₁)) ∧
       (∀ x ∈ U, ∀ y ∈ U, arcDist x y = arcDist (x + t₂) (y + t₂)) ∧
       (∀ x ∈ U, ∀ y ∈ U, arcDist x y = arcDist (x + t₃) (y + t₃)) := by
-  classical
   -- Step 1: some nonzero rotation `t₁` moves at least 28 red points onto
   -- green points, since 108 * 108 = 11664 > 11637 = 431 * 27.
   obtain ⟨t₁, ht₁, S₁, hS₁R, hS₁card, hS₁G⟩ :=
@@ -161,7 +159,7 @@ problem usa2012_p2 (color : ZMod 432 → Fin 4)
             (disjoint_color (show (0 : Fin 4) ≠ 2 by decide)) (hS₁R hx)
         · exact Finset.disjoint_left.mp
             (disjoint_color (show (1 : Fin 4) ≠ 2 by decide)) (hS₁G x hx))
-      (by rw [hcolor 2, Finset.card_pair ht₁0.symm]; omega)
+      (by rw [hcolor 2, Finset.card_pair ht₁0.symm]; lia)
   have ht₂0 : t₂ ≠ 0 := by
     intro h
     subst h
@@ -190,7 +188,7 @@ problem usa2012_p2 (color : ZMod 432 → Fin 4)
             (disjoint_color (show (1 : Fin 4) ≠ 3 by decide)) (hS₁G x (hS₂S₁ hx))
         · exact Finset.disjoint_left.mp
             (disjoint_color (show (2 : Fin 4) ≠ 3 by decide)) (hS₂B x hx))
-      (by rw [hcolor 3, hcard012]; omega)
+      (by rw [hcolor 3, hcard012]; lia)
   -- keep exactly 3 of the at-least-3 points
   obtain ⟨U, hUS₃, hUcard⟩ :=
     Finset.exists_subset_card_eq (Nat.succ_le_of_lt hS₃card)

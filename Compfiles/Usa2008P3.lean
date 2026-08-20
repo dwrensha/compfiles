@@ -109,9 +109,9 @@ def GH (n : ℕ) : List (ℤ × ℤ) → Prop
   | [p] => ¬ blue n p ∨ p.2 = 0
   | p :: q :: _ => ¬ blue n p ∨ (p.2 = 0 ∧ ¬ blue n q)
 
-lemma chi_of_blue {n : ℕ} {p : ℤ × ℤ} (h : blue n p) : chi n p = 1 := if_pos h
+lemma chi_of_blue {n : ℕ} {p : ℤ × ℤ} (h : blue n p) : chi n p = 1 := ite_eq_left h
 
-lemma chi_of_not_blue {n : ℕ} {p : ℤ × ℤ} (h : ¬ blue n p) : chi n p = -1 := if_neg h
+lemma chi_of_not_blue {n : ℕ} {p : ℤ × ℤ} (h : ¬ blue n p) : chi n p = -1 := ite_eq_right h
 
 lemma sig_cons (n : ℕ) (p : ℤ × ℤ) (tl : List (ℤ × ℤ)) :
     sig n (p :: tl) = chi n p + sig n tl := rfl
@@ -122,19 +122,19 @@ lemma b0_cons (n : ℕ) (p : ℤ × ℤ) (tl : List (ℤ × ℤ)) :
     b0 n (p :: tl) = (if blue n p ∧ p.2 = 0 then (1 : ℤ) else 0) + b0 n tl := by
   unfold b0
   by_cases h : blue n p ∧ p.2 = 0
-  · rw [if_pos h, List.filter_cons_of_pos (by simp [h]), List.length_cons]
+  · rw [ite_eq_left h, List.filter_cons_of_pos (by simp [h]), List.length_cons]
     push_cast
     ring
-  · rw [if_neg h, List.filter_cons_of_neg (by simp [h])]
+  · rw [ite_eq_right h, List.filter_cons_of_neg (by simp [h])]
     simp
 
 lemma b0_nil (n : ℕ) : b0 n [] = 0 := rfl
 
 lemma rowK_of_nonneg (n : ℕ) {y : ℤ} (hy : 0 ≤ y) : rowK n y = (n : ℤ) - 1 - y := by
-  rw [show rowK n y = if 0 ≤ y then (n : ℤ) - 1 - y else (n : ℤ) + y from rfl, if_pos hy]
+  rw [show rowK n y = if 0 ≤ y then (n : ℤ) - 1 - y else (n : ℤ) + y from rfl, ite_eq_left hy]
 
 lemma rowK_of_neg (n : ℕ) {y : ℤ} (hy : ¬ 0 ≤ y) : rowK n y = (n : ℤ) + y := by
-  rw [show rowK n y = if 0 ≤ y then (n : ℤ) - 1 - y else (n : ℤ) + y from rfl, if_neg hy]
+  rw [show rowK n y = if 0 ≤ y then (n : ℤ) - 1 - y else (n : ℤ) + y from rfl, ite_eq_right hy]
 
 /-! ## Geometry: membership of `S n` and the adjacency lemmas -/
 
@@ -151,24 +151,24 @@ lemma mem_S {n : ℕ} {p : ℤ × ℤ} :
     by_cases hy0 : 0 ≤ p.2
     · rw [rowK_of_nonneg n hy0] at h1 h2
       have hp1 : |p.1| ≤ (n : ℤ) - 1 - p.2 := abs_le.mpr ⟨h1, h2⟩
-      have hp2 : |2 * p.2 + 1| = 2 * p.2 + 1 := abs_of_nonneg (by omega)
-      omega
+      have hp2 : |2 * p.2 + 1| = 2 * p.2 + 1 := abs_of_nonneg (by lia)
+      lia
     · rw [rowK_of_neg n hy0] at h1 h2
       have hp1 : |p.1| ≤ (n : ℤ) + p.2 := abs_le.mpr ⟨h1, h2⟩
-      have hp2 : |2 * p.2 + 1| = -(2 * p.2 + 1) := abs_of_neg (by omega)
-      omega
+      have hp2 : |2 * p.2 + 1| = -(2 * p.2 + 1) := abs_of_neg (by lia)
+      lia
   · intro h
     have hk : |p.1| ≤ rowK n p.2 ∧ p.2 ∈ Finset.Icc (-(n : ℤ)) ((n : ℤ) - 1) := by
       rw [Finset.mem_Icc]
       by_cases hy0 : 0 ≤ p.2
       · rw [rowK_of_nonneg n hy0]
-        have hp2 : |2 * p.2 + 1| = 2 * p.2 + 1 := abs_of_nonneg (by omega)
+        have hp2 : |2 * p.2 + 1| = 2 * p.2 + 1 := abs_of_nonneg (by lia)
         have hb := abs_nonneg (p.1 : ℤ)
-        omega
+        lia
       · rw [rowK_of_neg n hy0]
-        have hp2 : |2 * p.2 + 1| = -(2 * p.2 + 1) := abs_of_neg (by omega)
+        have hp2 : |2 * p.2 + 1| = -(2 * p.2 + 1) := abs_of_neg (by lia)
         have hb := abs_nonneg (p.1 : ℤ)
-        omega
+        lia
     obtain ⟨hk1, hk2⟩ := hk
     have hk3 := abs_le.mp hk1
     exact ⟨p.2, hk2, by
@@ -179,7 +179,7 @@ lemma rowK_nonneg (n : ℕ) {y : ℤ} (hy : y ∈ Finset.Icc (-(n : ℤ)) ((n : 
     0 ≤ rowK n y := by
   rw [Finset.mem_Icc] at hy
   show 0 ≤ (if 0 ≤ y then (n : ℤ) - 1 - y else (n : ℤ) + y)
-  split_ifs <;> omega
+  split_ifs <;> lia
 
 /-- Adjacent points differ by a unit step in exactly one coordinate. -/
 lemma adj_cases {p q : ℤ × ℤ} (h : Adj p q) :
@@ -187,7 +187,7 @@ lemma adj_cases {p q : ℤ × ℤ} (h : Adj p q) :
       (p.2 = q.2 ∧ (p.1 = q.1 + 1 ∨ p.1 = q.1 - 1)) := by
   unfold Adj at h
   rcases abs_cases (p.1 - q.1) with ⟨h1, h1'⟩ | ⟨h1, h1'⟩ <;>
-    rcases abs_cases (p.2 - q.2) with ⟨h2, h2'⟩ | ⟨h2, h2'⟩ <;> omega
+    rcases abs_cases (p.2 - q.2) with ⟨h2, h2'⟩ | ⟨h2, h2'⟩ <;> lia
 
 /-- Along an edge, `f` changes by `±2`, except for the vertical pairs crossing
 the axis `y = -1/2`, where it does not change. -/
@@ -209,13 +209,13 @@ lemma f_diff {p q : ℤ × ℤ} (h : Adj p q) :
         rcases abs_cases (2 * q.2 + 3) with ⟨h3, h3'⟩ | ⟨h3, h3'⟩ <;>
           rcases abs_cases (2 * q.2 + 1) with ⟨h4, h4'⟩ | ⟨h4, h4'⟩ <;>
           · rw [h3, h4, abs_le]
-            omega
+            lia
       · rw [hfp, hfq] at hfeq
         rcases abs_cases (2 * q.2 + 3) with ⟨h3, h3'⟩ | ⟨h3, h3'⟩ <;>
           rcases abs_cases (2 * q.2 + 1) with ⟨h4, h4'⟩ | ⟨h4, h4'⟩ <;>
           · rw [h3, h4] at hfeq
             rw [hx, hy]
-            omega
+            lia
     · -- `p.1 = q.1`, `p.2 = q.2 - 1`
       have hfp : f p = 2 * q.1 + |2 * q.2 - 1| := by
         have e : f p = 2 * p.1 + |2 * p.2 + 1| := rfl
@@ -229,13 +229,13 @@ lemma f_diff {p q : ℤ × ℤ} (h : Adj p q) :
         rcases abs_cases (2 * q.2 - 1) with ⟨h3, h3'⟩ | ⟨h3, h3'⟩ <;>
           rcases abs_cases (2 * q.2 + 1) with ⟨h4, h4'⟩ | ⟨h4, h4'⟩ <;>
           · rw [h3, h4, abs_le]
-            omega
+            lia
       · rw [hfp, hfq] at hfeq
         rcases abs_cases (2 * q.2 - 1) with ⟨h3, h3'⟩ | ⟨h3, h3'⟩ <;>
           rcases abs_cases (2 * q.2 + 1) with ⟨h4, h4'⟩ | ⟨h4, h4'⟩ <;>
           · rw [h3, h4] at hfeq
             rw [hx, hy]
-            omega
+            lia
   · rcases hx with hx | hx
     · -- `p.2 = q.2`, `p.1 = q.1 + 1`
       have hfp : f p = 2 * q.1 + 2 + |2 * p.2 + 1| := by
@@ -245,9 +245,9 @@ lemma f_diff {p q : ℤ × ℤ} (h : Adj p q) :
       have hfq : f q = 2 * q.1 + |2 * q.2 + 1| := rfl
       refine ⟨?_, fun hfeq ↦ ?_⟩
       · rw [hfp, hfq, hy, abs_le]
-        omega
+        lia
       · rw [hfp, hfq, hy] at hfeq
-        omega
+        lia
     · -- `p.2 = q.2`, `p.1 = q.1 - 1`
       have hfp : f p = 2 * q.1 - 2 + |2 * p.2 + 1| := by
         have e : f p = 2 * p.1 + |2 * p.2 + 1| := rfl
@@ -256,9 +256,9 @@ lemma f_diff {p q : ℤ × ℤ} (h : Adj p q) :
       have hfq : f q = 2 * q.1 + |2 * q.2 + 1| := rfl
       refine ⟨?_, fun hfeq ↦ ?_⟩
       · rw [hfp, hfq, hy, abs_le]
-        omega
+        lia
       · rw [hfp, hfq, hy] at hfeq
-        omega
+        lia
 
 /-- Two adjacent blue points form a vertical pair crossing the axis. -/
 lemma blue_adj {n : ℕ} {p q : ℤ × ℤ} (hadj : Adj p q) (hp : blue n p) (hq : blue n q) :
@@ -268,7 +268,7 @@ lemma blue_adj {n : ℕ} {p q : ℤ × ℤ} (hadj : Adj p q) (hp : blue n p) (hq
     have h2 : f p ≡ f q [ZMOD 4] := hp.trans hq.symm
     rw [Int.modEq_iff_dvd] at h2
     rw [abs_le] at h1
-    omega
+    lia
   exact (f_diff hadj).2 hfe
 
 /-! ## Counting: the colour sum over `S n` and the count of blue axial points -/
@@ -279,16 +279,16 @@ lemma Icc_neg_eq_map (K : ℕ) :
       (Finset.range (2 * K + 1)).map ⟨fun i : ℕ ↦ (i : ℤ) - (K : ℤ), by
         intro a b h
         dsimp only at h
-        omega⟩ := by
+        lia⟩ := by
   ext x
   simp only [Finset.mem_Icc, Finset.mem_map, Finset.mem_range, Function.Embedding.coeFn_mk]
   constructor
   · rintro ⟨h1, h2⟩
-    have h0 : (0 : ℤ) ≤ x + (K : ℤ) := by omega
+    have h0 : (0 : ℤ) ≤ x + (K : ℤ) := by lia
     have h1' := Int.toNat_of_nonneg h0
-    exact ⟨(x + (K : ℤ)).toNat, by omega, by omega⟩
+    exact ⟨(x + (K : ℤ)).toNat, by lia, by lia⟩
   · rintro ⟨i, hi, rfl⟩
-    constructor <;> omega
+    constructor <;> lia
 
 lemma sum_range_neg_one (k : ℕ) : ∑ i ∈ Finset.range (2 * k + 1), (-1 : ℤ) ^ i = 1 := by
   induction k with
@@ -307,9 +307,9 @@ lemma row_sum (K : ℕ) (c : ℤ) (hc : Even (c - (K : ℤ))) :
     simp only [even_iff_two_dvd] at hc ⊢
     constructor
     · intro hd
-      omega
+      lia
     · intro hd
-      omega
+      lia
   have hpar2 : ∀ i : ℕ, Even (i : ℤ) ↔ Even i := by
     intro i
     rw [← Int.not_odd_iff_even, Int.odd_coe_nat, Nat.not_odd_iff_even]
@@ -324,18 +324,18 @@ lemma chi_eq (n : ℕ) (x y : ℤ) :
       if 0 ≤ y then (if Even (x + y + 1 - (n : ℤ)) then (1 : ℤ) else -1)
         else (if Even (x - y - (n : ℤ)) then (1 : ℤ) else -1) := by
   by_cases hy : 0 ≤ y
-  · rw [if_pos hy]
+  · rw [ite_eq_left hy]
     have hf : f (x, y) = 2 * x + (2 * y + 1) := by
       have e : f (x, y) = 2 * x + |2 * y + 1| := rfl
-      rw [e, abs_of_nonneg (by omega : (0 : ℤ) ≤ 2 * y + 1)]
+      rw [e, abs_of_nonneg (by lia : (0 : ℤ) ≤ 2 * y + 1)]
     by_cases hb : blue n (x, y)
     · rw [chi_of_blue hb]
       have hb2 : f (x, y) ≡ 2 * (n : ℤ) - 1 [ZMOD 4] := hb
       rw [hf, Int.modEq_iff_dvd] at hb2
       have hev : Even (x + y + 1 - (n : ℤ)) := by
         rw [even_iff_two_dvd]
-        omega
-      rw [if_pos hev]
+        lia
+      rw [ite_eq_left hev]
     · rw [chi_of_not_blue hb]
       have hne : ¬ Even (x + y + 1 - (n : ℤ)) := by
         rw [even_iff_two_dvd]
@@ -343,12 +343,12 @@ lemma chi_eq (n : ℕ) (x y : ℤ) :
         apply hb
         show f (x, y) ≡ 2 * (n : ℤ) - 1 [ZMOD 4]
         rw [hf, Int.modEq_iff_dvd]
-        omega
-      rw [if_neg hne]
-  · rw [if_neg hy]
+        lia
+      rw [ite_eq_right hne]
+  · rw [ite_eq_right hy]
     have hf : f (x, y) = 2 * x - (2 * y + 1) := by
       have e : f (x, y) = 2 * x + |2 * y + 1| := rfl
-      rw [e, abs_of_neg (by omega : 2 * y + 1 < 0)]
+      rw [e, abs_of_neg (by lia : 2 * y + 1 < 0)]
       ring
     by_cases hb : blue n (x, y)
     · rw [chi_of_blue hb]
@@ -356,8 +356,8 @@ lemma chi_eq (n : ℕ) (x y : ℤ) :
       rw [hf, Int.modEq_iff_dvd] at hb2
       have hev : Even (x - y - (n : ℤ)) := by
         rw [even_iff_two_dvd]
-        omega
-      rw [if_pos hev]
+        lia
+      rw [ite_eq_left hev]
     · rw [chi_of_not_blue hb]
       have hne : ¬ Even (x - y - (n : ℤ)) := by
         rw [even_iff_two_dvd]
@@ -365,8 +365,8 @@ lemma chi_eq (n : ℕ) (x y : ℤ) :
         apply hb
         show f (x, y) ≡ 2 * (n : ℤ) - 1 [ZMOD 4]
         rw [hf, Int.modEq_iff_dvd]
-        omega
-      rw [if_neg hne]
+        lia
+      rw [ite_eq_right hne]
 
 /-- The colour sum over the row at height `y` equals `1`. -/
 lemma inner_sum (n : ℕ) (y : ℤ) (hy : y ∈ Finset.Icc (-(n : ℤ)) ((n : ℤ) - 1)) :
@@ -383,7 +383,7 @@ lemma inner_sum (n : ℕ) (y : ℤ) (hy : y ∈ Finset.Icc (-(n : ℤ)) ((n : �
     have e : ∀ x ∈ Finset.Icc (-((rowK n y).toNat : ℤ)) ((rowK n y).toNat : ℤ),
         chi n (x, y) = (if Even (x + (y + 1 - (n : ℤ))) then (1 : ℤ) else -1) := by
       intro x hx
-      rw [chi_eq, if_pos hy0]
+      rw [chi_eq, ite_eq_left hy0]
       have he : x + y + 1 - (n : ℤ) = x + (y + 1 - (n : ℤ)) := by ring
       rw [he]
     rw [Finset.sum_congr rfl e]
@@ -394,7 +394,7 @@ lemma inner_sum (n : ℕ) (y : ℤ) (hy : y ∈ Finset.Icc (-(n : ℤ)) ((n : �
     have e : ∀ x ∈ Finset.Icc (-((rowK n y).toNat : ℤ)) ((rowK n y).toNat : ℤ),
         chi n (x, y) = (if Even (x + (-y - (n : ℤ))) then (1 : ℤ) else -1) := by
       intro x hx
-      rw [chi_eq, if_neg hy0]
+      rw [chi_eq, ite_eq_right hy0]
       have he : x - y - (n : ℤ) = x + (-y - (n : ℤ)) := by ring
       rw [he]
     rw [Finset.sum_congr rfl e]
@@ -437,26 +437,26 @@ lemma card_B0 (n : ℕ) :
       rw [mem_S] at hpS
       have hpa : |2 * p.2 + 1| = 1 := by rw [hp0]; norm_num
       rw [hpa] at hpS
-      have hk : |p.1| ≤ (n : ℤ) - 1 := by omega
+      have hk : |p.1| ≤ (n : ℤ) - 1 := by lia
       have hk' := abs_le.mp hk
       have h2 : f p ≡ 2 * (n : ℤ) - 1 [ZMOD 4] := hpb
       rw [Int.modEq_iff_dvd, hf1 p hp0] at h2
-      refine ⟨⟨⟨?_, ?_⟩, ?_⟩, hp0⟩ <;> omega
+      refine ⟨⟨⟨?_, ?_⟩, ?_⟩, hp0⟩ <;> lia
     · rintro ⟨⟨⟨h1, h2⟩, hmod⟩, hp0⟩
       refine ⟨?_, ?_, hp0⟩
       · rw [mem_S]
         have hpa : |2 * p.2 + 1| = 1 := by rw [hp0]; norm_num
         rw [hpa]
         have hk : |p.1| ≤ (n : ℤ) - 1 := abs_le.mpr ⟨h1, h2⟩
-        omega
+        lia
       · show f p ≡ 2 * (n : ℤ) - 1 [ZMOD 4]
         rw [Int.modEq_iff_dvd, hf1 p hp0]
-        omega
+        lia
   rw [hset, Finset.card_product, Finset.card_singleton, mul_one]
   have hinj : Function.Injective (fun t : ℤ ↦ (n : ℤ) - 1 - 2 * t) := by
     intro a b h
     dsimp only at h
-    omega
+    lia
   have hmap : (Finset.Icc (-((n : ℤ) - 1)) ((n : ℤ) - 1)).filter
         (fun x ↦ (x + 1 - (n : ℤ)) % 2 = 0)
       = (Finset.Icc (0 : ℤ) ((n : ℤ) - 1)).map
@@ -466,9 +466,9 @@ lemma card_B0 (n : ℕ) :
     simp only [Function.Embedding.coeFn_mk, Finset.mem_Icc]
     constructor
     · rintro ⟨⟨h1, h2⟩, hmod⟩
-      exact ⟨((n : ℤ) - 1 - x) / 2, ⟨by omega, by omega⟩, by omega⟩
+      exact ⟨((n : ℤ) - 1 - x) / 2, ⟨by lia, by lia⟩, by lia⟩
     · rintro ⟨t, ⟨ht1, ht2⟩, rfl⟩
-      refine ⟨⟨?_, ?_⟩, ?_⟩ <;> omega
+      refine ⟨⟨?_, ?_⟩, ?_⟩ <;> lia
   rw [hmap, Finset.card_map, Int.card_Icc]
   rw [show (n : ℤ) - 1 + 1 - 0 = (n : ℤ) by ring, Int.toNat_natCast]
 
@@ -493,12 +493,12 @@ lemma path_bound {n : ℕ} (P : List (ℤ × ℤ)) (hchain : P.IsChain Adj) (hno
       by_cases hb : blue n p
       · by_cases h0 : p.2 = 0
         · refine ⟨?_, fun _ ↦ ?_⟩
-          · rw [sig_cons, sig_nil, b0_cons, b0_nil, chi_of_blue hb, if_pos ⟨hb, h0⟩]
+          · rw [sig_cons, sig_nil, b0_cons, b0_nil, chi_of_blue hb, ite_eq_left ⟨hb, h0⟩]
             norm_num
-          · rw [sig_cons, sig_nil, b0_cons, b0_nil, chi_of_blue hb, if_pos ⟨hb, h0⟩]
+          · rw [sig_cons, sig_nil, b0_cons, b0_nil, chi_of_blue hb, ite_eq_left ⟨hb, h0⟩]
         · refine ⟨?_, fun hgh ↦ ?_⟩
           · rw [sig_cons, sig_nil, b0_cons, b0_nil, chi_of_blue hb,
-              if_neg (fun ⟨_, h'⟩ ↦ h0 h')]
+              ite_eq_right (fun ⟨_, h'⟩ ↦ h0 h')]
             norm_num
           · simp only [GH] at hgh
             rcases hgh with hcontra | hcontra
@@ -506,10 +506,10 @@ lemma path_bound {n : ℕ} (P : List (ℤ × ℤ)) (hchain : P.IsChain Adj) (hno
             · exact absurd hcontra h0
       · refine ⟨?_, fun _ ↦ ?_⟩
         · rw [sig_cons, sig_nil, b0_cons, b0_nil, chi_of_not_blue hb,
-            if_neg (fun ⟨h', _⟩ ↦ hb h')]
+            ite_eq_right (fun ⟨h', _⟩ ↦ hb h')]
           norm_num
         · rw [sig_cons, sig_nil, b0_cons, b0_nil, chi_of_not_blue hb,
-            if_neg (fun ⟨h', _⟩ ↦ hb h')]
+            ite_eq_right (fun ⟨h', _⟩ ↦ hb h')]
           norm_num
     · -- `P = p :: q :: rest`
       obtain ⟨ihA, ihB⟩ := ih hchaintl hnodtl
@@ -517,7 +517,7 @@ lemma path_bound {n : ℕ} (P : List (ℤ × ℤ)) (hchain : P.IsChain Adj) (hno
       · by_cases h0 : p.2 = 0
         · -- `p ∈ B₀`
           refine ⟨?_, fun hgh ↦ ?_⟩
-          · rw [sig_cons, b0_cons, chi_of_blue hb, if_pos ⟨hb, h0⟩]
+          · rw [sig_cons, b0_cons, chi_of_blue hb, ite_eq_left ⟨hb, h0⟩]
             linarith [ihA]
           · have hnq : ¬ blue n q := by
               have h : GH n (p :: q :: rest) := hgh
@@ -529,7 +529,7 @@ lemma path_bound {n : ℕ} (P : List (ℤ × ℤ)) (hchain : P.IsChain Adj) (hno
               cases rest with
               | nil => simp only [GH]; exact Or.inl hnq
               | cons r rest2 => simp only [GH]; exact Or.inl hnq
-            rw [sig_cons, b0_cons, chi_of_blue hb, if_pos ⟨hb, h0⟩]
+            rw [sig_cons, b0_cons, chi_of_blue hb, ite_eq_left ⟨hb, h0⟩]
             linarith [ihB ghq]
         · -- `p` blue, `p.2 ≠ 0`
           have hnp0 : ¬ (blue n p ∧ p.2 = 0) := fun ⟨_, h'⟩ ↦ h0 h'
@@ -552,7 +552,7 @@ lemma path_bound {n : ℕ} (P : List (ℤ × ℤ)) (hchain : P.IsChain Adj) (hno
                     have hr2 : r.2 = -1 := by
                       rcases hy2 with ⟨h1, h2⟩ | ⟨h1, h2⟩
                       · exact h2
-                      · omega
+                      · lia
                     have hr_eq : r = p :=
                       Prod.ext (hx2.symm.trans hx1.symm) (hr2.trans hp2.1.symm)
                     subst hr_eq
@@ -562,7 +562,7 @@ lemma path_bound {n : ℕ} (P : List (ℤ × ℤ)) (hchain : P.IsChain Adj) (hno
               · cases rest with
                 | nil => simp only [GH]; exact Or.inl hbq
                 | cons r rest2 => simp only [GH]; exact Or.inl hbq
-            rw [sig_cons, b0_cons, chi_of_blue hb, if_neg hnp0]
+            rw [sig_cons, b0_cons, chi_of_blue hb, ite_eq_right hnp0]
             linarith [ihB ghq]
           · have h : GH n (p :: q :: rest) := hgh
             simp only [GH] at h
@@ -572,18 +572,12 @@ lemma path_bound {n : ℕ} (P : List (ℤ × ℤ)) (hchain : P.IsChain Adj) (hno
       · -- `p` red
         have hnb : ¬ (blue n p ∧ p.2 = 0) := fun ⟨h', _⟩ ↦ hb h'
         refine ⟨?_, fun _ ↦ ?_⟩
-        · rw [sig_cons, b0_cons, chi_of_not_blue hb, if_neg hnb]
+        · rw [sig_cons, b0_cons, chi_of_not_blue hb, ite_eq_right hnb]
           linarith [ihA]
-        · rw [sig_cons, b0_cons, chi_of_not_blue hb, if_neg hnb]
+        · rw [sig_cons, b0_cons, chi_of_not_blue hb, ite_eq_right hnb]
           linarith [ihA]
 
 /-! ## List/Finset bridges -/
-
-lemma sum_toFinset_of_nodup {l : List (ℤ × ℤ)} (hl : l.Nodup) (g : ℤ × ℤ → ℤ) :
-    (∑ x ∈ l.toFinset, g x) = (l.map g).sum := by
-  have h1 : l.toFinset.1 = (l : Multiset (ℤ × ℤ)) := by
-    rw [List.toFinset_val, List.Nodup.dedup hl]
-  rw [Finset.sum, h1, Multiset.map_coe, Multiset.sum_coe]
 
 lemma sum_map_flatten (L : List (List (ℤ × ℤ))) (g : ℤ × ℤ → ℤ) :
     (L.map (fun P ↦ (P.map g).sum)).sum = (L.flatten.map g).sum := by
@@ -636,7 +630,7 @@ problem usa2008_p3 (n : ℕ) (_hn : 0 < n) (paths : List (List (ℤ × ℤ)))
     have h1 : (paths.map (sig n)).sum = (paths.flatten.map (chi n)).sum := by
       show (paths.map (fun P ↦ (P.map (chi n)).sum)).sum = _
       exact sum_map_flatten paths (chi n)
-    rw [h1, ← sum_toFinset_of_nodup hjoinN (chi n), hjoin, sum_chi]
+    rw [h1, ← List.sum_toFinset (chi n) hjoinN, hjoin, sum_chi]
   -- the total number of blue axial points over all paths equals `n`
   have hb0 : (paths.map (b0 n)).sum = (((S n).filter (fun p ↦ blue n p ∧ p.2 = 0)).card : ℤ) := by
     have hN1 : (paths.flatten.filter (fun p ↦ decide (blue n p ∧ p.2 = 0))).Nodup :=

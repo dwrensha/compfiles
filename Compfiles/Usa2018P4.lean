@@ -165,7 +165,7 @@ lemma exists_F_card_lt (hp : p.Prime) : ∃ k : ZMod p, (F a k).card < p := by
     exact hle
   have h3 := sum_card_F_add a hp
   have hp0 : 0 < p := hp.pos
-  omega
+  lia
 
 /-- If `N` distinct values are attained and `C` ordered pairs collide, then
 `2 * p ≤ C + 2 * N`: writing `nᵥ ≥ 1` for the fiber sizes we have `p = Σ nᵥ`,
@@ -206,13 +206,13 @@ lemma two_mul_le_card_F_add (k : ZMod p) :
     have key : ∀ c n : ℕ, 1 ≤ n → c + n = n * n → 2 * n ≤ c + 2 := by
       intro c n _hn hcn
       rcases n with _ | m
-      · omega
+      · lia
       · have hm : m ≤ m * m := by
           rcases m with _ | m
           · simp
           · exact Nat.le_mul_of_pos_right (m + 1) (Nat.succ_pos m)
         have hexp : (m + 1) * (m + 1) = m * m + 2 * m + 1 := by ring
-        omega
+        lia
     exact key _ _ h1 hcount
   have h2p : 2 * p = ∑ v ∈ im a k, 2 * (fib a k v).card := by
     have h : 2 * p = 2 * ∑ v ∈ im a k, (fib a k v).card := congrArg (2 * ·) hpsum
@@ -234,7 +234,7 @@ problem usa2018_p4 (p : ℕ) (hp : p.Prime) (a : Fin p → ℤ) :
       (a i : ZMod p) + ((i : ℕ) : ZMod p) * (k : ZMod p)).card := by
   obtain ⟨K, hK⟩ := exists_F_card_lt (fun i ↦ (a i : ZMod p)) hp
   have hineq := two_mul_le_card_F_add (fun i ↦ (a i : ZMod p)) K
-  have hcomb : p ≤ 2 * (im (fun i ↦ (a i : ZMod p)) K).card := by omega
+  have hcomb : p ≤ 2 * (im (fun i ↦ (a i : ZMod p)) K).card := by lia
   refine ⟨ZMod.cast K, ?_⟩
   rw [ZMod.intCast_zmod_cast]
   exact hcomb

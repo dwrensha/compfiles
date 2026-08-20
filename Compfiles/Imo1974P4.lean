@@ -102,8 +102,8 @@ lemma Rect.card_cells (R : Rect) (hh : 1 ≤ R.h) (hw : 1 ≤ R.w) :
       Finset.Icc R.r (R.r + (R.h - 1)) ×ˢ Finset.Icc R.c (R.c + (R.w - 1)) :=
     rfl
   rw [hcells, Finset.card_product, Nat.card_Icc, Nat.card_Icc]
-  have e1 : R.r + (R.h - 1) + 1 - R.r = R.h := by omega
-  have e2 : R.c + (R.w - 1) + 1 - R.c = R.w := by omega
+  have e1 : R.r + (R.h - 1) + 1 - R.r = R.h := by lia
+  have e2 : R.c + (R.w - 1) + 1 - R.c = R.w := by lia
   rw [e1, e2]
 
 /-- White and black squares together make up all squares of a rectangle. -/
@@ -119,7 +119,7 @@ lemma Rect.one_le_whiteCount (R : Rect) (hh : 1 ≤ R.h) (hw : 1 ≤ R.w)
   have hcard := R.card_cells hh hw
   have hsum := R.whiteCount_add_blackCount
   have hm : 1 ≤ R.h * R.w := Nat.mul_le_mul hh hw
-  omega
+  lia
 
 /-- A finite set of `k` distinct positive integers has sum at least
 `1 + 2 + ... + k`, here phrased as `k * (k + 1) ≤ 2 * ∑ x ∈ S, x`. -/
@@ -140,15 +140,15 @@ lemma card_mul_succ_le_two_mul_sum (S : Finset ℕ) :
     fun x hx ↦ Finset.mem_Icc.mpr ⟨h x hx, hmax x hx⟩
   have hcardle : S.card ≤ m :=
     calc S.card ≤ (Finset.Icc 1 m).card := Finset.card_le_card hsub
-      _ = m := by rw [Nat.card_Icc]; omega
+      _ = m := by rw [Nat.card_Icc]; lia
   have hsum := Finset.add_sum_erase S (fun x ↦ x) hm
   set k := (S.erase m).card with hk
   set s := ∑ x ∈ S.erase m, x with hs
-  have e1 : S.card = k + 1 := by omega
-  have e2 : ∑ x ∈ S, x = m + s := by omega
+  have e1 : S.card = k + 1 := by lia
+  have e2 : ∑ x ∈ S, x = m + s := by lia
   rw [e1, e2]
   calc (k + 1) * (k + 2) = k * (k + 1) + 2 * (k + 1) := by ring
-    _ ≤ 2 * s + 2 * m := Nat.add_le_add ih' (by omega)
+    _ ≤ 2 * s + 2 * m := Nat.add_le_add ih' (by lia)
     _ = 2 * (m + s) := by ring
 
 /-- The total number of white squares in a valid decomposition is 32. -/
@@ -166,13 +166,7 @@ lemma sum_whiteCount (T : Finset Rect) (hT : ValidDecomp T) :
   have hunion : T.biUnion (fun R ↦ R.cells.filter isWhite) =
       board.filter isWhite := by
     rw [← hcover]
-    ext x
-    simp only [Finset.mem_biUnion, Finset.mem_filter]
-    constructor
-    · rintro ⟨R, hR, hxcell, hxw⟩
-      exact ⟨⟨R, hR, hxcell⟩, hxw⟩
-    · rintro ⟨⟨R, hR, hxcell⟩, hxw⟩
-      exact ⟨R, hR, hxcell, hxw⟩
+    exact Eq.symm (Finset.filter_biUnion T Rect.cells isWhite)
   have hcard : (board.filter isWhite).card = 32 := by decide
   have key := Finset.card_biUnion hpd
   rw [hunion, hcard] at key
@@ -250,8 +244,8 @@ problem imo1974_p4 :
       push Not at hcon
       have h1 := card_mul_succ_le_two_mul_sum _ hSpos
       rw [hdist, hSsum] at h1
-      have h2 : 8 * 9 ≤ T.card * (T.card + 1) := Nat.mul_le_mul hcon (by omega)
-      omega
+      have h2 : 8 * 9 ≤ T.card * (T.card + 1) := Nat.mul_le_mul hcon (by lia)
+      lia
     refine ⟨hub, fun hcard7 ↦ ?_⟩
     have hScard : (T.image Rect.whiteCount).card = 7 := by
       rw [hdist]; exact hcard7
@@ -264,7 +258,7 @@ problem imo1974_p4 :
       rw [hcard_erase] at h1
       have h2 := Finset.add_sum_erase _ (fun y ↦ y) hx
       rw [hSsum] at h2
-      omega
+      lia
     have henum := seven_distinct_sum_32 _ hScard hSpos hSmax hSsum
     simp only [Finset.mem_insert, Finset.mem_singleton] at henum
     rcases henum with h | h | h | h | h
@@ -280,12 +274,12 @@ problem imo1974_p4 :
       have hbalR := hbal R hR
       have h1h : 1 ≤ R.h := (hfit R hR).1
       have h1w : 1 ≤ R.w := (hfit R hR).2.1
-      have hh8 : R.h ≤ 8 := by have := (hfit R hR).2.2.1; omega
-      have hw8 : R.w ≤ 8 := by have := (hfit R hR).2.2.2; omega
-      have h22 : R.h * R.w = 22 := by omega
+      have hh8 : R.h ≤ 8 := by have := (hfit R hR).2.2.1; lia
+      have hw8 : R.w ≤ 8 := by have := (hfit R hR).2.2.2; lia
+      have h22 : R.h * R.w = 22 := by lia
       set a := R.h with ha
       set b := R.w with hb
-      interval_cases a <;> omega
+      interval_cases a <;> lia
     · rw [h]; decide
     · rw [h]; decide
     · rw [h]; decide

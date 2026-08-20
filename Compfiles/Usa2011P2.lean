@@ -151,18 +151,18 @@ lemma win_at_zero (a : Config) (hsum : ∑ i, a i = 2011) (hinv : invariant a = 
   rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl
   · show (2011 : ℤ) = a 0 + 2 * 0 - (-2 * k + a 3 + a 4)
       - (-3 * k + a 2 + a 3 + 2 * a 4)
-    omega
+    lia
   · show (0 : ℤ) = a 1 + 2 * (-k - a 1) - (-3 * k + a 2 + a 3 + 2 * a 4)
       - (-4 * k + a 2 + 2 * a 3 + 2 * a 4)
-    omega
+    lia
   · show (0 : ℤ) = a 2 + 2 * (-2 * k + a 3 + a 4)
       - (-4 * k + a 2 + 2 * a 3 + 2 * a 4) - 0
-    omega
+    lia
   · show (0 : ℤ) = a 3 + 2 * (-3 * k + a 2 + a 3 + 2 * a 4) - 0 - (-k - a 1)
-    omega
+    lia
   · show (0 : ℤ) = a 4 + 2 * (-4 * k + a 2 + 2 * a 3 + 2 * a 4) - (-k - a 1)
       - (-2 * k + a 3 + a 4)
-    omega
+    lia
 
 snip end
 

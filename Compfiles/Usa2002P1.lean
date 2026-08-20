@@ -244,7 +244,7 @@ lemma usa2002_p1_generalized
           · intro x
             match x with
             | .inl ⟨y, hy⟩ =>
-              have h5 : f y = Color.red := if_pos hy
+              have h5 : f y = Color.red := ite_eq_left hy
               use ⟨y, h5⟩
               simp only [ne_eq, hy, dite_true, b]
             | .inr ⟨y, hy⟩ =>

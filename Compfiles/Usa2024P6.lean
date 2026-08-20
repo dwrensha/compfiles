@@ -63,7 +63,6 @@ lemma vvv_def {n k : ℕ} (x : Fin k → ℝ) (A : Fin k → Finset (Fin n)) (p 
 /-- Intersection cardinality as a sum of indicators. -/
 lemma card_inter_cast {n : ℕ} (A B : Finset (Fin n)) :
     ((A ∩ B).card : ℝ) = ∑ p : Fin n, (if p ∈ A ∧ p ∈ B then (1 : ℝ) else 0) := by
-  classical
   have h1 : A ∩ B = Finset.univ.filter (fun p => p ∈ A ∧ p ∈ B) := by
     ext p
     simp [Finset.mem_inter]
@@ -75,13 +74,8 @@ lemma sum_swap4 {n k : ℕ} (F : Fin k → Fin k → Fin n → Fin n → ℝ) :
       ∑ p : Fin n, ∑ q : Fin n, ∑ i : Fin k, ∑ j : Fin k, F i j p q := by
   rw [show (∑ i : Fin k, ∑ j : Fin k, ∑ p : Fin n, ∑ q : Fin n, F i j p q) =
       ∑ i : Fin k, ∑ p : Fin n, ∑ q : Fin n, ∑ j : Fin k, F i j p q from
-    Finset.sum_congr rfl fun i _ => by
-      rw [show (∑ j : Fin k, ∑ p : Fin n, ∑ q : Fin n, F i j p q) =
-          ∑ p : Fin n, ∑ j : Fin k, ∑ q : Fin n, F i j p q from Finset.sum_comm]
-      exact Finset.sum_congr rfl fun p _ => Finset.sum_comm]
-  rw [show (∑ i : Fin k, ∑ p : Fin n, ∑ q : Fin n, ∑ j : Fin k, F i j p q) =
-      ∑ p : Fin n, ∑ q : Fin n, ∑ i : Fin k, ∑ j : Fin k, F i j p q from
-    by rw [Finset.sum_comm]; exact Finset.sum_congr rfl fun p _ => Finset.sum_comm]
+    Finset.sum_congr rfl fun i _ => Eq.symm Finset.sum_comm_cycle]
+  exact Eq.symm Finset.sum_comm_cycle
 
 /-- The key rewriting step: the left-hand side of the inequality equals the
 sum of the squares of the `v_{p,q}`. -/
@@ -89,7 +83,6 @@ lemma lhs_eq_sum_v_sq {n k : ℕ} (x : Fin k → ℝ) (A : Fin k → Finset (Fin
     ∑ i : Fin k, ∑ j : Fin k, x i * x j *
         (((A i ∩ A j).card : ℝ) ^ 2 / ((A i).card : ℝ) / ((A j).card : ℝ)) =
       ∑ p : Fin n, ∑ q : Fin n, (vvv x A p q) ^ 2 := by
-  classical
   have per : ∀ i j : Fin k,
       x i * x j *
           (((A i ∩ A j).card : ℝ) ^ 2 / ((A i).card : ℝ) / ((A j).card : ℝ)) =
@@ -102,11 +95,11 @@ lemma lhs_eq_sum_v_sq {n k : ℕ} (x : Fin k → ℝ) (A : Fin k → Finset (Fin
       rw [card_inter_cast]
       refine Finset.sum_congr rfl fun p _ => ?_
       by_cases hp : p ∈ A i ∧ p ∈ A j
-      · rw [if_pos hp]
+      · rw [ite_eq_left hp]
         have h1 : e i p = 1 := by simp [he, hp.1]
         have h2 : e j p = 1 := by simp [he, hp.2]
         rw [h1, h2, mul_one]
-      · rw [if_neg hp]
+      · rw [ite_eq_right hp]
         rcases not_and_or.mp hp with hpi | hpj
         · have h1 : e i p = 0 := by simp [he, hpi]
           rw [h1, zero_mul]
@@ -170,7 +163,6 @@ lemma sum_offdiag {n k : ℕ} (x : Fin k → ℝ) (A : Fin k → Finset (Fin n))
     (hA : ∀ i, (A i).card ≠ 0) :
     ∑ t ∈ Finset.univ.sigma (fun p : Fin n => Finset.univ.erase p), vvv x A t.1 t.2 =
       ∑ i : Fin k, (((A i).card : ℝ) - 1) * x i := by
-  classical
   simp only [vvv_def]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => ?_
@@ -207,9 +199,9 @@ lemma sum_sq_split {n k : ℕ} (x : Fin k → ℝ) (A : Fin k → Finset (Fin n)
 lemma solution_eq {n ℓ : ℕ} (hn : 2 < n) (S : ℝ) :
     solution n ℓ * S ^ 2 =
       S ^ 2 / (n : ℝ) + ((ℓ : ℝ) - 1) ^ 2 * S ^ 2 / ((n : ℝ) * ((n : ℝ) - 1)) := by
-  have hn0 : (n : ℝ) ≠ 0 := by exact_mod_cast (by omega : n ≠ 0)
+  have hn0 : (n : ℝ) ≠ 0 := by exact_mod_cast (by lia : n ≠ 0)
   have hn1 : (n : ℝ) - 1 ≠ 0 := by
-    have h1 : (1 : ℝ) < (n : ℝ) := by exact_mod_cast (by omega : 1 < n)
+    have h1 : (1 : ℝ) < (n : ℝ) := by exact_mod_cast (by lia : 1 < n)
     exact sub_ne_zero.mpr (ne_of_gt h1)
   unfold solution
   field_simp
@@ -221,7 +213,7 @@ lemma solution_works {n ℓ : ℕ} (hn : 2 < n) (hℓ1 : 1 ≤ ℓ) :
   intro k _hk x hx A hA
   have hA0 : ∀ i, (A i).card ≠ 0 := fun i => by
     have h1 := hA i
-    omega
+    lia
   rw [lhs_eq_sum_v_sq, sum_sq_split, ← sum_sigma_erase]
   rw [solution_eq hn (∑ i, x i)]
   refine add_le_add ?_ ?_
@@ -231,7 +223,7 @@ lemma solution_works {n ℓ : ℕ} (hn : 2 < n) (hℓ1 : 1 ≤ ℓ) :
       (f := fun p => vvv x A p p)
     rw [Finset.card_univ, Fintype.card_fin] at hQM
     rw [hsum] at hQM
-    rw [div_le_iff₀ (show (0 : ℝ) < (n : ℝ) by exact_mod_cast (by omega : 0 < n))]
+    rw [div_le_iff₀ (show (0 : ℝ) < (n : ℝ) by exact_mod_cast (by lia : 0 < n))]
     exact le_trans hQM (le_of_eq (mul_comm _ _))
   · -- Off-diagonal part: `(ℓ-1)²S²/(n(n-1)) ≤ ∑ p≠q, (v_{p,q})²`.
     have hsum := sum_offdiag x A hA0
@@ -243,9 +235,9 @@ lemma solution_works {n ℓ : ℕ} (hn : 2 < n) (hℓ1 : 1 ≤ ℓ) :
     have hS : (0 : ℝ) ≤ ∑ i, x i := Finset.sum_nonneg fun i _ => hx i
     have hℓ1' : (0 : ℝ) ≤ (ℓ : ℝ) - 1 := sub_nonneg.mpr (by exact_mod_cast hℓ1)
     have hnn : (0 : ℝ) < (n : ℝ) * ((n : ℝ) - 1) := by
-      have h1 : (0 : ℝ) < (n : ℝ) := by exact_mod_cast (by omega : 0 < n)
+      have h1 : (0 : ℝ) < (n : ℝ) := by exact_mod_cast (by lia : 0 < n)
       have h2 : (0 : ℝ) < (n : ℝ) - 1 := by
-        have h3 : (1 : ℝ) < (n : ℝ) := by exact_mod_cast (by omega : 1 < n)
+        have h3 : (1 : ℝ) < (n : ℝ) := by exact_mod_cast (by lia : 1 < n)
         linarith
       exact mul_pos h1 h2
     have hle : (((ℓ : ℝ) - 1) * ∑ i, x i) ^ 2 ≤
@@ -256,7 +248,7 @@ lemma solution_works {n ℓ : ℕ} (hn : 2 < n) (hℓ1 : 1 ≤ ℓ) :
         (n : ℝ) * ((n : ℝ) - 1) := by
       have h1 : ∀ p : Fin n, ((Finset.univ.erase p).card : ℝ) = (n : ℝ) - 1 := fun p => by
         rw [Finset.card_erase_of_mem (Finset.mem_univ p), Finset.card_univ, Fintype.card_fin]
-        rw [Nat.cast_sub (by omega : 1 ≤ n), Nat.cast_one]
+        rw [Nat.cast_sub (by lia : 1 ≤ n), Nat.cast_one]
       rw [Finset.card_sigma, Nat.cast_sum, Finset.sum_congr rfl (fun p _ => h1 p)]
       rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
     have hQM := sq_sum_le_card_mul_sum_sq
@@ -292,7 +284,6 @@ lemma pair_filter_eq {n : ℕ} (B : Finset (Fin n)) :
 lemma card_pairs {n : ℕ} (B : Finset (Fin n)) :
     ∑ p : Fin n, ∑ q ∈ Finset.univ.erase p, (if p ∈ B ∧ q ∈ B then (1 : ℝ) else 0) =
       (B.card : ℝ) * ((B.card : ℝ) - 1) := by
-  classical
   rw [Finset.sum_sigma']
   rw [← Finset.sum_filter, pair_filter_eq B]
   rw [Finset.sum_const, nsmul_eq_mul, mul_one]
@@ -326,9 +317,9 @@ lemma exists_perm_eq {n : ℕ} (p q p' q' : Fin n) (hpq : p ≠ q) (hpq' : p' �
 /-- The image of an `ℓ`-subset under a permutation is still an `ℓ`-subset. -/
 lemma finsetCongr_mem_powersetCard {n ℓ : ℕ} (π : Equiv.Perm (Fin n)) (B : Finset (Fin n))
     (hB : B ∈ Finset.powersetCard ℓ (Finset.univ : Finset (Fin n))) :
-    π.finsetCongr B ∈ Finset.powersetCard ℓ (Finset.univ : Finset (Fin n)) := by
+    (Equiv.Finset.congr π) B ∈ Finset.powersetCard ℓ (Finset.univ : Finset (Fin n)) := by
   rw [Finset.mem_powersetCard] at hB ⊢
-  exact ⟨Finset.subset_univ _, by rw [Equiv.finsetCongr_apply, Finset.card_map, hB.2]⟩
+  exact ⟨Finset.subset_univ _, by rw [Equiv.Finset.congr_apply, Finset.card_map, hB.2]⟩
 
 /-- The number of `ℓ`-subsets containing a given point does not depend on the
 point. -/
@@ -337,30 +328,29 @@ lemma cntS_single {n ℓ : ℕ} (p q : Fin n) :
         (fun B => p ∈ B)).card =
       ((Finset.powersetCard ℓ (Finset.univ : Finset (Fin n))).filter
         (fun B => q ∈ B)).card := by
-  classical
-  refine Finset.card_bij' (fun B _ => (Equiv.swap p q).finsetCongr B)
-    (fun B _ => (Equiv.swap p q).finsetCongr B) ?_ ?_ ?_ ?_
+  refine Finset.card_bij' (fun B _ => (Equiv.Finset.congr (Equiv.swap p q)) B)
+    (fun B _ => (Equiv.Finset.congr (Equiv.swap p q)) B) ?_ ?_ ?_ ?_
   · intro B hB
     rw [Finset.mem_filter] at hB ⊢
     exact ⟨finsetCongr_mem_powersetCard _ _ hB.1, by
-      rw [Equiv.finsetCongr_apply, Finset.mem_map]
+      rw [Equiv.Finset.congr_apply, Finset.mem_map]
       exact ⟨p, hB.2, Equiv.swap_apply_left p q⟩⟩
   · intro B hB
     rw [Finset.mem_filter] at hB ⊢
     exact ⟨finsetCongr_mem_powersetCard _ _ hB.1, by
-      rw [Equiv.finsetCongr_apply, Finset.mem_map]
+      rw [Equiv.Finset.congr_apply, Finset.mem_map]
       exact ⟨q, hB.2, Equiv.swap_apply_right p q⟩⟩
   · intro B _
-    show (Equiv.swap p q).finsetCongr ((Equiv.swap p q).finsetCongr B) = B
-    rw [show (Equiv.swap p q).finsetCongr ((Equiv.swap p q).finsetCongr B) =
-        ((Equiv.swap p q).finsetCongr.trans (Equiv.swap p q).finsetCongr) B from rfl]
-    rw [Equiv.finsetCongr_trans, Equiv.swap_swap, Equiv.finsetCongr_refl]
+    show (Equiv.Finset.congr (Equiv.swap p q)) ((Equiv.Finset.congr (Equiv.swap p q)) B) = B
+    rw [show (Equiv.Finset.congr (Equiv.swap p q)) ((Equiv.Finset.congr (Equiv.swap p q)) B) =
+        ((Equiv.Finset.congr (Equiv.swap p q)).trans (Equiv.Finset.congr (Equiv.swap p q))) B from rfl]
+    rw [Equiv.Finset.congr_trans, Equiv.swap_swap, Equiv.Finset.congr_refl]
     rfl
   · intro B _
-    show (Equiv.swap p q).finsetCongr ((Equiv.swap p q).finsetCongr B) = B
-    rw [show (Equiv.swap p q).finsetCongr ((Equiv.swap p q).finsetCongr B) =
-        ((Equiv.swap p q).finsetCongr.trans (Equiv.swap p q).finsetCongr) B from rfl]
-    rw [Equiv.finsetCongr_trans, Equiv.swap_swap, Equiv.finsetCongr_refl]
+    show (Equiv.Finset.congr (Equiv.swap p q)) ((Equiv.Finset.congr (Equiv.swap p q)) B) = B
+    rw [show (Equiv.Finset.congr (Equiv.swap p q)) ((Equiv.Finset.congr (Equiv.swap p q)) B) =
+        ((Equiv.Finset.congr (Equiv.swap p q)).trans (Equiv.Finset.congr (Equiv.swap p q))) B from rfl]
+    rw [Equiv.Finset.congr_trans, Equiv.swap_swap, Equiv.Finset.congr_refl]
     rfl
 
 /-- The number of `ℓ`-subsets containing two given distinct points does not
@@ -370,35 +360,34 @@ lemma cntS_pair {n ℓ : ℕ} (p q p' q' : Fin n) (hpq : p ≠ q) (hpq' : p' ≠
         (fun B => p ∈ B ∧ q ∈ B)).card =
       ((Finset.powersetCard ℓ (Finset.univ : Finset (Fin n))).filter
         (fun B => p' ∈ B ∧ q' ∈ B)).card := by
-  classical
   obtain ⟨π, hπp, hπq⟩ := exists_perm_eq p q p' q' hpq hpq'
-  refine Finset.card_bij' (fun B _ => π.finsetCongr B) (fun B _ => π.symm.finsetCongr B)
+  refine Finset.card_bij' (fun B _ => (Equiv.Finset.congr π) B) (fun B _ => (Equiv.Finset.congr π.symm) B)
     ?_ ?_ ?_ ?_
   · intro B hB
     rw [Finset.mem_filter] at hB ⊢
     refine ⟨finsetCongr_mem_powersetCard _ _ hB.1, ?_, ?_⟩
-    · rw [← hπp, Equiv.finsetCongr_apply, Finset.mem_map]
+    · rw [← hπp, Equiv.Finset.congr_apply, Finset.mem_map]
       exact ⟨p, hB.2.1, rfl⟩
-    · rw [← hπq, Equiv.finsetCongr_apply, Finset.mem_map]
+    · rw [← hπq, Equiv.Finset.congr_apply, Finset.mem_map]
       exact ⟨q, hB.2.2, rfl⟩
   · intro B hB
     rw [Finset.mem_filter] at hB ⊢
     refine ⟨finsetCongr_mem_powersetCard π.symm _ hB.1, ?_, ?_⟩
-    · rw [Equiv.finsetCongr_apply, Finset.mem_map]
+    · rw [Equiv.Finset.congr_apply, Finset.mem_map]
       exact ⟨p', hB.2.1, by rw [← hπp]; exact Equiv.symm_apply_apply π p⟩
-    · rw [Equiv.finsetCongr_apply, Finset.mem_map]
+    · rw [Equiv.Finset.congr_apply, Finset.mem_map]
       exact ⟨q', hB.2.2, by rw [← hπq]; exact Equiv.symm_apply_apply π q⟩
   · intro B _
-    show π.symm.finsetCongr (π.finsetCongr B) = B
-    rw [show π.symm.finsetCongr (π.finsetCongr B) =
-        (π.finsetCongr.trans π.symm.finsetCongr) B from rfl]
-    rw [Equiv.finsetCongr_trans, Equiv.self_trans_symm, Equiv.finsetCongr_refl]
+    show (Equiv.Finset.congr π.symm) ((Equiv.Finset.congr π) B) = B
+    rw [show (Equiv.Finset.congr π.symm) ((Equiv.Finset.congr π) B) =
+        ((Equiv.Finset.congr π).trans (Equiv.Finset.congr π.symm)) B from rfl]
+    rw [Equiv.Finset.congr_trans, Equiv.self_trans_symm, Equiv.Finset.congr_refl]
     rfl
   · intro B _
-    show π.finsetCongr (π.symm.finsetCongr B) = B
-    rw [show π.finsetCongr (π.symm.finsetCongr B) =
-        (π.symm.finsetCongr.trans π.finsetCongr) B from rfl]
-    rw [Equiv.finsetCongr_trans, Equiv.symm_trans_self, Equiv.finsetCongr_refl]
+    show (Equiv.Finset.congr π) ((Equiv.Finset.congr π.symm) B) = B
+    rw [show (Equiv.Finset.congr π) ((Equiv.Finset.congr π.symm) B) =
+        ((Equiv.Finset.congr π.symm).trans (Equiv.Finset.congr π)) B from rfl]
+    rw [Equiv.Finset.congr_trans, Equiv.symm_trans_self, Equiv.Finset.congr_refl]
     rfl
 
 /-- Reindexing: counting indices `i` with `p, q ∈ A i` equals counting sets of
@@ -441,7 +430,6 @@ limit sense of the inequality) by taking all `ℓ`-subsets once with weight `1`
 (second part of `IsGreatest`). -/
 lemma solution_le_of_works {n ℓ : ℕ} (hn : 2 < n) (hℓ1 : 1 ≤ ℓ) (hℓn : ℓ ≤ n) (c : ℝ)
     (hc : Works n ℓ c) : c ≤ solution n ℓ := by
-  classical
   -- The extremal family: all `ℓ`-subsets of `[n]`, each used once, weights `1`.
   set s : Finset (Finset (Fin n)) := Finset.powersetCard ℓ Finset.univ with hs
   have hscard : s.card = Nat.choose n ℓ := by
@@ -455,10 +443,10 @@ lemma solution_le_of_works {n ℓ : ℕ} (hn : 2 < n) (hℓ1 : 1 ≤ ℓ) (hℓn
   have hAinj : Function.Injective A := fun i₁ i₂ h => e.symm.injective (Subtype.ext h)
   have hAsurj : ∀ B ∈ s, ∃ i, A i = B := fun B hB =>
     ⟨e ⟨B, hB⟩, congrArg Subtype.val (Equiv.symm_apply_apply e ⟨B, hB⟩)⟩
-  have hℓ0 : (ℓ : ℝ) ≠ 0 := by exact_mod_cast (by omega : ℓ ≠ 0)
-  have hn0 : (n : ℝ) ≠ 0 := by exact_mod_cast (by omega : n ≠ 0)
+  have hℓ0 : (ℓ : ℝ) ≠ 0 := by exact_mod_cast (by lia : ℓ ≠ 0)
+  have hn0 : (n : ℝ) ≠ 0 := by exact_mod_cast (by lia : n ≠ 0)
   have hn1 : (n : ℝ) - 1 ≠ 0 := by
-    have h1 : (1 : ℝ) < (n : ℝ) := by exact_mod_cast (by omega : 1 < n)
+    have h1 : (1 : ℝ) < (n : ℝ) := by exact_mod_cast (by lia : 1 < n)
     exact sub_ne_zero.mpr (ne_of_gt h1)
   have hnn : (n : ℝ) * ((n : ℝ) - 1) ≠ 0 := mul_ne_zero hn0 hn1
   -- Each `v_{p,q}` is `1/ℓ` times the number of sets containing `p, q`.
@@ -544,7 +532,7 @@ lemma solution_le_of_works {n ℓ : ℕ} (hn : 2 < n) (hℓ1 : 1 ≤ ℓ) (hℓn
       rw [Finset.sum_congr rfl (fun p' _ => by
         rw [Finset.card_erase_of_mem (Finset.mem_univ p'), Finset.card_univ, Fintype.card_fin])]
       rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin]
-      rw [nsmul_eq_mul, nsmul_eq_mul, Nat.cast_sub (show 1 ≤ n by omega), Nat.cast_one]
+      rw [nsmul_eq_mul, nsmul_eq_mul, Nat.cast_sub (show 1 ≤ n by lia), Nat.cast_one]
       ring
     rw [eq_div_iff hnn]
     exact h2
@@ -576,7 +564,7 @@ lemma solution_le_of_works {n ℓ : ℕ} (hn : 2 < n) (hℓ1 : 1 ≤ ℓ) (hℓn
     rw [Finset.sum_congr rfl (fun p _ => by
       rw [Finset.card_erase_of_mem (Finset.mem_univ p), Finset.card_univ, Fintype.card_fin])]
     rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin]
-    rw [nsmul_eq_mul, nsmul_eq_mul, Nat.cast_sub (show 1 ≤ n by omega), Nat.cast_one]
+    rw [nsmul_eq_mul, nsmul_eq_mul, Nat.cast_sub (show 1 ≤ n by lia), Nat.cast_one]
     field_simp
   have hLHS : ∑ i : Fin k, ∑ j : Fin k, (1 : Fin k → ℝ) i * (1 : Fin k → ℝ) j *
         (((A i ∩ A j).card : ℝ) ^ 2 / ((A i).card : ℝ) / ((A j).card : ℝ)) =
