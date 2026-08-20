@@ -447,7 +447,7 @@ problem bulgaria1998_p6
   let a := x^2 + y^2
   let b := 2 * x * y
   have h3 : a^2 + b^2  = (2 * z ^ 2 - (x ^ 2 + y ^ 2)) ^ 2 :=
-     by linear_combination h2
+    by linear_combination h2
   have h4 : IsSquare (a^2 + b^2) := by use 2 * z ^ 2 - (x ^ 2 + y ^ 2); rwa [← sq]
   have h5 : IsSquare (a^2 - b^2) := by use (x^2 - y^2); ring
   have h6 : IsSquare ((a^2 + b^2) * (a^2 - b^2)) := IsSquare.mul h4 h5

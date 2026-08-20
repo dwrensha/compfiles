@@ -148,9 +148,7 @@ theorem NicePlotOfP.findRoot.spec_gt {n} {npos} (pl : NicePlotOfP n npos) (i:ℕ
 theorem NicePlotOfP.findRoot.spec_lt {n} {npos} (pl : NicePlotOfP n npos) (i:ℕ) (hi : i+1 < pl.k) (i') (e : i'.val = i+1)  :
     (NicePlotOfP.findRoot pl i hi).choose < (pl.x i') := by
   let := Exists.choose_spec (NicePlotOfP.findRoot pl i hi)
-  conv =>
-    rhs
-    rw [show i' = ⟨i+1, hi⟩ by simp_rw [← e]]
+  conv_rhs => rw [show i' = ⟨i+1, hi⟩ by simp_rw [← e]]
   exact (Set.mem_Ioo.mpr this.left).right
 
 theorem NicePlotOfP.findRoot.spec_root {n} {npos} (pl : NicePlotOfP n npos) (i:ℕ) (hi : i+1 < pl.k) :

@@ -102,18 +102,12 @@ problem imo1975_p4 : sum_digits_B = (Nat.digits 10 B).sum := by
   have sumBmod'' : (Nat.digits 10 B).sum ≡ sum_digits_B [MOD 9] := by
     grw [sumBmod, sumBmod']
 
-  have : A ≤ 159993 := by
-    unfold A
-    apply le_trans (Nat.digits_sum_le_of_le _ _ _ (by simp) le_rfl)
-    calc
-      _ ≤ (Nat.clog 10 4444 * 4444 + 1) * 9 := by
-        simp only [Nat.add_one_sub_one, Nat.ofNat_pos, mul_le_mul_iff_left₀, add_le_add_iff_right]
-        apply Nat.clog_pow_le_clog_mul
-        simp
-      _ = (4 * 4444 + 1) * 9 := by
-        rfl
-      _ = _ := by
-        rfl
+  have : A ≤ 159993 := calc
+    _ ≤ (Nat.clog 10 (4444 ^ 4444) + 1) * (10 - 1) := Nat.digits_sum_le_of_le _ _ _ (by simp) le_rfl
+    _ ≤ (Nat.clog 10 4444 * 4444 + 1) * 9 := by
+      simp only [Nat.add_one_sub_one, Nat.ofNat_pos, mul_le_mul_iff_left₀, add_le_add_iff_right]
+      apply Nat.clog_pow_le_clog_mul
+      simp
   have : B ≤ 63 := by
     unfold B
     apply le_trans (Nat.digits_sum_le_of_le _ _ _ (by simp) this)

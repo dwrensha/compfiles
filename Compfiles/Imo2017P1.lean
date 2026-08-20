@@ -146,11 +146,9 @@ lemma climb (ha₁ : Rule a) (hx : 1 < x) {i c : ℕ} (hi : a x i = c)
         by rw [Nat.mul_mod, show (c.sqrt + 1) % 3 = 0 by lia, h]⟩
     · exact ⟨c.sqrt + 2, by lia, by lia,
         by rw [Nat.mul_mod, show (c.sqrt + 2) % 3 = 1 by lia, h]⟩
-  have hcr : c ≤ r * r := by
-    have h1 : c < (c.sqrt + 1) * (c.sqrt + 1) := Nat.lt_succ_sqrt c
-    have h2 : (c.sqrt + 1) * (c.sqrt + 1) ≤ r * r :=
-      Nat.mul_le_mul (by lia) (by lia)
-    lia
+  have hcr : c < r * r := calc
+    c < (c.sqrt + 1) * (c.sqrt + 1) := Nat.lt_succ_sqrt c
+    _ ≤ r * r := Nat.mul_le_mul (by lia) (by lia)
   have he : c + 3 * ((r * r - c) / 3) = r * r := by lia
   have hex : ∃ t, IsSquare (c + 3 * t) := ⟨(r * r - c) / 3, r, he⟩
   set t₀ := Nat.find hex with ht₀

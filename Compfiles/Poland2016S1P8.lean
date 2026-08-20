@@ -36,11 +36,8 @@ lemma even_of_add {a b : ℤ} (ha : Even a) (hb : Even (a + b)) : Even b := by
   exact Even.sub hb ha
 
 lemma div_4_mul_of_both_even {a b : ℤ } (H : Even a ∧ Even b) : 4 ∣ a * b := by
-  obtain ⟨k, Hk⟩ := H.left
-  obtain ⟨l, Hl⟩ := H.right
+  obtain ⟨⟨k, rfl⟩, ⟨l, rfl⟩⟩ := H
   use k * l
-  rw[Hk]
-  rw[Hl]
   ring
 
 snip end
