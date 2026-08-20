@@ -1579,8 +1579,8 @@ theorem tree_key_lt_hill {m : ℕ} (hm : 2 ≤ m) (x y : Cell m)
   omega
 
 /-- A tree cell in an earlier strip has a smaller key. -/
-lemma keyFn_lt_of_strip_lt {m : ℕ} (hm : 2 ≤ m) (y x : Cell m) (jy jx : ℕ)
-    (hyT : isTree m y = true) (hxT : isTree m x = true)
+lemma keyFn_lt_of_strip_lt {m : ℕ} (hm : 2 ≤ m) (jy jx : ℕ) {y : Cell m}
+    (hyT : isTree m y = true) {x : Cell m} (hxT : isTree m x = true)
     (hjy : y.2.1 + pOffset m = jy) (hjx : x.2.1 + pOffset m = jx)
     (hst : jy / 3 < jx / 3) (hry : y.1.1 < m) :
     keyFn m y < keyFn m x := by
@@ -1651,8 +1651,8 @@ lemma subKey_odd_of_ge_two {m j r : ℕ} (hj : (j / 3) % 2 ≠ 0) (hr : 2 ≤ r)
   rw [ite_eq_right hj, ite_eq_right (by omega : r ≠ 0), ite_eq_right (by omega : r ≠ 1)]
 
 /-- Between two tree cells in the same strip, the key order is the `subKey` order. -/
-lemma keyFn_lt_of_same_strip {m : ℕ} (y x : Cell m) (jy jx : ℕ)
-    (hyT : isTree m y = true) (hxT : isTree m x = true)
+lemma keyFn_lt_of_same_strip {m : ℕ} (jy jx : ℕ) {y : Cell m}
+    (hyT : isTree m y = true) {x : Cell m} (hxT : isTree m x = true)
     (hjy : y.2.1 + pOffset m = jy) (hjx : x.2.1 + pOffset m = jx)
     (hst : jy / 3 = jx / 3) (hsub : subKey m jy y.1.1 < subKey m jx x.1.1) :
     keyFn m y < keyFn m x := by
@@ -1664,12 +1664,13 @@ lemma keyFn_lt_of_same_strip {m : ℕ} (y x : Cell m) (jy jx : ℕ)
 theorem parent_exists {m : ℕ} (hm : 2 ≤ m) (x : Cell m)
     (hx : isTree m x = true) (hx0 : x ≠ rootCell m hm) :
     ∃ y : Cell m, Adjacent x y ∧ isTree m y = true ∧ keyFn m y < keyFn m x := by
-  have hr : x.1.1 < m := x.1.2
-  have hc : x.2.1 < m := x.2.2
+  obtain ⟨r, c⟩ := x
+  have hr : r.1 < m := r.2
+  have hc : c.1 < m := c.2
   have hoff : pOffset m ≤ 1 := by unfold pOffset; split <;> omega
-  set j : ℕ := x.2.1 + pOffset m with hj
-  have hT : isTreeJ (j % 6) x.1.1 = true := hx
-  have hne_root : ¬ (x.1.1 = 0 ∧ x.2.1 = 0) := by
+  set j : ℕ := c.1 + pOffset m with hj
+  have hT : isTreeJ (j % 6) r.1 = true := hx
+  have hne_root : ¬ (r.1 = 0 ∧ c.1 = 0) := by
     rintro ⟨h0, h1⟩
     apply hx0
     unfold rootCell
@@ -1682,297 +1683,297 @@ theorem parent_exists {m : ℕ} (hm : 2 ≤ m) (x : Cell m)
   rcases h6cases with h6 | h6 | h6 | h6 | h6 | h6
   · -- even strip, column `0` of the strip: tree rows are the even rows
     rw [h6] at hT
-    have hcond : x.1.1 % 2 = 0 := by
+    have hcond : r.1 % 2 = 0 := by
       unfold isTreeJ at hT
       rw [ite_eq_right (by norm_num : ¬((0 : ℕ) = 1)), ite_eq_right (by norm_num : ¬((0 : ℕ) = 4)),
         ite_eq_left (by norm_num : (0 : ℕ) = 0 ∨ (0 : ℕ) = 2), decide_eq_true_eq] at hT
       exact hT
-    rcases Nat.eq_zero_or_pos x.1.1 with h0 | h0
+    rcases Nat.eq_zero_or_pos r.1 with h0 | h0
     · -- `x = (0, c)`: the parent is the last row-0 cell of the previous strip
       have hj6 : 6 ≤ j := by
         by_contra hlt
         have hj0 : j = 0 := by omega
-        have hc0 : x.2.1 = 0 := by omega
+        have hc0 : c.1 = 0 := by omega
         exact hne_root ⟨h0, hc0⟩
-      have hc1 : 1 ≤ x.2.1 := by omega
-      have hyT : isTree m (x.1, ⟨x.2.1 - 1, by omega⟩) = true := by
-        show isTreeJ ((x.2.1 - 1 + pOffset m) % 6) x.1.1 = true
-        rw [show x.2.1 - 1 + pOffset m = j - 1 by omega, show (j - 1) % 6 = 5 by omega, h0]
+      have hc1 : ↑c - 1 < m := by omega
+      have hyT : isTree m (r, ⟨c.1 - 1, hc1⟩) = true := by
+        show isTreeJ ((c.1 - 1 + pOffset m) % 6) r.1 = true
+        rw [show c.1 - 1 + pOffset m = j - 1 by omega, show (j - 1) % 6 = 5 by omega, h0]
         exact isTreeJ_five_zero
-      refine ⟨(x.1, ⟨x.2.1 - 1, by omega⟩), ?_, hyT, ?_⟩
+      refine ⟨(r, ⟨c.1 - 1, by omega⟩), ?_, hyT, ?_⟩
       · simp only [Adjacent, Nat.dist, Nat.sub_self, Nat.add_zero, Nat.zero_add]
         omega
-      · exact keyFn_lt_of_strip_lt hm _ x (j - 1) j hyT hx
-          (by show x.2.1 - 1 + pOffset m = j - 1; omega) hj.symm (by omega) hr
+      · exact keyFn_lt_of_strip_lt hm (j - 1) j hyT hx
+          (by show c.1 - 1 + pOffset m = j - 1; omega) hj.symm (by omega) hr
     · -- `x = (r, c)` with `r ≥ 2` even: the parent is the middle-column cell `(r, c+1)`
-      have hr2 : 2 ≤ x.1.1 := by omega
-      have hc1 : x.2.1 + 1 < m := by
+      have hr2 : 2 ≤ r.1 := by omega
+      have hc1 : c.1 + 1 < m := by
         by_cases hm3 : m % 3 = 1
         · have h1 : pOffset m = 1 := by unfold pOffset; rw [ite_eq_left hm3]
           omega
         · have h0' : pOffset m = 0 := by unfold pOffset; rw [ite_eq_right hm3]
           omega
-      have hyT : isTree m (x.1, ⟨x.2.1 + 1, by omega⟩) = true := by
-        show isTreeJ ((x.2.1 + 1 + pOffset m) % 6) x.1.1 = true
-        rw [show x.2.1 + 1 + pOffset m = j + 1 by omega, show (j + 1) % 6 = 1 by omega]
+      have hyT : isTree m (r, ⟨c.1 + 1, hc1⟩) = true := by
+        show isTreeJ ((c.1 + 1 + pOffset m) % 6) r.1 = true
+        rw [show c.1 + 1 + pOffset m = j + 1 by omega, show (j + 1) % 6 = 1 by omega]
         exact isTreeJ_one _
-      refine ⟨(x.1, ⟨x.2.1 + 1, by omega⟩), ?_, hyT, ?_⟩
+      refine ⟨(r, ⟨c.1 + 1, by omega⟩), ?_, hyT, ?_⟩
       · simp only [Adjacent, Nat.dist, Nat.sub_self, Nat.add_zero, Nat.zero_add]
         omega
-      · have hsub : subKey m (j + 1) x.1.1 < subKey m j x.1.1 := by
-          rw [subKey_even_of_ne_zero (by omega : ((j + 1) / 3) % 2 = 0) (by omega : x.1.1 ≠ 0),
-            subKey_even_of_ne_zero (by omega : (j / 3) % 2 = 0) (by omega : x.1.1 ≠ 0),
+      · have hsub : subKey m (j + 1) r.1 < subKey m j r.1 := by
+          rw [subKey_even_of_ne_zero (by omega : ((j + 1) / 3) % 2 = 0) (by omega : r.1 ≠ 0),
+            subKey_even_of_ne_zero (by omega : (j / 3) % 2 = 0) (by omega : r.1 ≠ 0),
             show (j + 1) % 3 = 1 by omega, show j % 3 = 0 by omega, cspos_one, cspos_zero]
           omega
-        exact keyFn_lt_of_same_strip _ x (j + 1) j hyT hx
-          (by show x.2.1 + 1 + pOffset m = j + 1; omega) hj.symm (by omega) hsub
+        exact keyFn_lt_of_same_strip (j + 1) j hyT hx
+          (by show c.1 + 1 + pOffset m = j + 1; omega) hj.symm (by omega) hsub
   · -- even strip, column `1` of the strip: all rows are tree cells
-    rcases Nat.eq_zero_or_pos x.1.1 with h0 | h0
+    rcases Nat.eq_zero_or_pos r.1 with h0 | h0
     · -- `x = (0, c)`: the parent is `(0, c-1)`, the strip's first cell (or the root)
-      have hc1 : 1 ≤ x.2.1 := by
+      have hc1 : 1 ≤ c.1 := by
         by_contra hlt
-        have hc0 : x.2.1 = 0 := by omega
+        have hc0 : c.1 = 0 := by omega
         exact hne_root ⟨h0, hc0⟩
-      have hyT : isTree m (x.1, ⟨x.2.1 - 1, by omega⟩) = true := by
-        show isTreeJ ((x.2.1 - 1 + pOffset m) % 6) x.1.1 = true
-        rw [show x.2.1 - 1 + pOffset m = j - 1 by omega, show (j - 1) % 6 = 0 by omega, h0]
+      have hyT : isTree m (r, ⟨c.1 - 1, by omega⟩) = true := by
+        show isTreeJ ((c.1 - 1 + pOffset m) % 6) r.1 = true
+        rw [show c.1 - 1 + pOffset m = j - 1 by omega, show (j - 1) % 6 = 0 by omega, h0]
         exact isTreeJ_zero_zero
-      refine ⟨(x.1, ⟨x.2.1 - 1, by omega⟩), ?_, hyT, ?_⟩
+      refine ⟨(r, ⟨c.1 - 1, by omega⟩), ?_, hyT, ?_⟩
       · simp only [Adjacent, Nat.dist, Nat.sub_self, Nat.add_zero, Nat.zero_add]
         omega
-      · have hsub : subKey m (j - 1) x.1.1 < subKey m j x.1.1 := by
+      · have hsub : subKey m (j - 1) r.1 < subKey m j r.1 := by
           rw [h0, subKey_even_zero (by omega : ((j - 1) / 3) % 2 = 0),
             subKey_even_zero (by omega : (j / 3) % 2 = 0)]
           omega
-        exact keyFn_lt_of_same_strip _ x (j - 1) j hyT hx
-          (by show x.2.1 - 1 + pOffset m = j - 1; omega) hj.symm (by omega) hsub
+        exact keyFn_lt_of_same_strip (j - 1) j hyT hx
+          (by show c.1 - 1 + pOffset m = j - 1; omega) hj.symm (by omega) hsub
     · -- `x = (r, c)` with `r ≥ 1`: the parent is `(r-1, c)` directly above
-      have hyT : isTree m (⟨x.1.1 - 1, by omega⟩, x.2) = true := by
-        show isTreeJ (j % 6) (x.1.1 - 1) = true
+      have hyT : isTree m (⟨r.1 - 1, by omega⟩, c) = true := by
+        show isTreeJ (j % 6) (r.1 - 1) = true
         rw [h6]
         exact isTreeJ_one _
-      refine ⟨(⟨x.1.1 - 1, by omega⟩, x.2), ?_, hyT, ?_⟩
+      refine ⟨(⟨r.1 - 1, by omega⟩, c), ?_, hyT, ?_⟩
       · simp only [Adjacent, Nat.dist, Nat.sub_self, Nat.add_zero]
         omega
-      · have hsub : subKey m j (x.1.1 - 1) < subKey m j x.1.1 := by
-          by_cases h1 : x.1.1 = 1
+      · have hsub : subKey m j (r.1 - 1) < subKey m j r.1 := by
+          by_cases h1 : r.1 = 1
           · rw [h1]
             show subKey m j 0 < subKey m j 1
             rw [subKey_even_zero (by omega : (j / 3) % 2 = 0),
               subKey_even_of_ne_zero (by omega : (j / 3) % 2 = 0) (by norm_num : (1 : ℕ) ≠ 0),
               show j % 3 = 1 by omega, cspos_one]
             omega
-          · have hr2 : 2 ≤ x.1.1 := by omega
-            rw [subKey_even_of_ne_zero (by omega : (j / 3) % 2 = 0) (by omega : x.1.1 - 1 ≠ 0),
-              subKey_even_of_ne_zero (by omega : (j / 3) % 2 = 0) (by omega : x.1.1 ≠ 0),
+          · have hr2 : 2 ≤ r.1 := by omega
+            rw [subKey_even_of_ne_zero (by omega : (j / 3) % 2 = 0) (by omega : r.1 - 1 ≠ 0),
+              subKey_even_of_ne_zero (by omega : (j / 3) % 2 = 0) (by omega : r.1 ≠ 0),
               show j % 3 = 1 by omega, cspos_one]
             omega
-        exact keyFn_lt_of_same_strip _ x j j hyT hx hj.symm hj.symm rfl hsub
+        exact keyFn_lt_of_same_strip j j hyT hx hj.symm hj.symm rfl hsub
   · -- even strip, column `2` of the strip: tree rows are the even rows
     rw [h6] at hT
-    have hcond : x.1.1 % 2 = 0 := by
+    have hcond : r.1 % 2 = 0 := by
       unfold isTreeJ at hT
       rw [ite_eq_right (by norm_num : ¬((2 : ℕ) = 1)), ite_eq_right (by norm_num : ¬((2 : ℕ) = 4)),
         ite_eq_left (by norm_num : (2 : ℕ) = 0 ∨ (2 : ℕ) = 2), decide_eq_true_eq] at hT
       exact hT
-    rcases Nat.eq_zero_or_pos x.1.1 with h0 | h0
+    rcases Nat.eq_zero_or_pos r.1 with h0 | h0
     · -- `x = (0, c)`: the parent is `(0, c-1)`, the middle cell of row `0` in this strip
-      have hc1 : 1 ≤ x.2.1 := by omega
-      have hyT : isTree m (x.1, ⟨x.2.1 - 1, by omega⟩) = true := by
-        show isTreeJ ((x.2.1 - 1 + pOffset m) % 6) x.1.1 = true
-        rw [show x.2.1 - 1 + pOffset m = j - 1 by omega, show (j - 1) % 6 = 1 by omega]
+      have hc1 : 1 ≤ c.1 := by omega
+      have hyT : isTree m (r, ⟨c.1 - 1, by omega⟩) = true := by
+        show isTreeJ ((c.1 - 1 + pOffset m) % 6) r.1 = true
+        rw [show c.1 - 1 + pOffset m = j - 1 by omega, show (j - 1) % 6 = 1 by omega]
         exact isTreeJ_one _
-      refine ⟨(x.1, ⟨x.2.1 - 1, by omega⟩), ?_, hyT, ?_⟩
+      refine ⟨(r, ⟨c.1 - 1, by omega⟩), ?_, hyT, ?_⟩
       · simp only [Adjacent, Nat.dist, Nat.sub_self, Nat.add_zero, Nat.zero_add]
         omega
-      · have hsub : subKey m (j - 1) x.1.1 < subKey m j x.1.1 := by
+      · have hsub : subKey m (j - 1) r.1 < subKey m j r.1 := by
           rw [h0, subKey_even_zero (by omega : ((j - 1) / 3) % 2 = 0),
             subKey_even_zero (by omega : (j / 3) % 2 = 0)]
           omega
-        exact keyFn_lt_of_same_strip _ x (j - 1) j hyT hx
-          (by show x.2.1 - 1 + pOffset m = j - 1; omega) hj.symm (by omega) hsub
+        exact keyFn_lt_of_same_strip (j - 1) j hyT hx
+          (by show c.1 - 1 + pOffset m = j - 1; omega) hj.symm (by omega) hsub
     · -- `x = (r, c)` with `r ≥ 2` even: the parent is `(r, c-1)`
-      have hr2 : 2 ≤ x.1.1 := by omega
-      have hc1 : 1 ≤ x.2.1 := by omega
-      have hyT : isTree m (x.1, ⟨x.2.1 - 1, by omega⟩) = true := by
-        show isTreeJ ((x.2.1 - 1 + pOffset m) % 6) x.1.1 = true
-        rw [show x.2.1 - 1 + pOffset m = j - 1 by omega, show (j - 1) % 6 = 1 by omega]
+      have hr2 : 2 ≤ r.1 := by omega
+      have hc1 : 1 ≤ c.1 := by omega
+      have hyT : isTree m (r, ⟨c.1 - 1, by omega⟩) = true := by
+        show isTreeJ ((c.1 - 1 + pOffset m) % 6) r.1 = true
+        rw [show c.1 - 1 + pOffset m = j - 1 by omega, show (j - 1) % 6 = 1 by omega]
         exact isTreeJ_one _
-      refine ⟨(x.1, ⟨x.2.1 - 1, by omega⟩), ?_, hyT, ?_⟩
+      refine ⟨(r, ⟨c.1 - 1, by omega⟩), ?_, hyT, ?_⟩
       · simp only [Adjacent, Nat.dist, Nat.sub_self, Nat.add_zero, Nat.zero_add]
         omega
-      · have hsub : subKey m (j - 1) x.1.1 < subKey m j x.1.1 := by
-          rw [subKey_even_of_ne_zero (by omega : ((j - 1) / 3) % 2 = 0) (by omega : x.1.1 ≠ 0),
-            subKey_even_of_ne_zero (by omega : (j / 3) % 2 = 0) (by omega : x.1.1 ≠ 0),
+      · have hsub : subKey m (j - 1) r.1 < subKey m j r.1 := by
+          rw [subKey_even_of_ne_zero (by omega : ((j - 1) / 3) % 2 = 0) (by omega : r.1 ≠ 0),
+            subKey_even_of_ne_zero (by omega : (j / 3) % 2 = 0) (by omega : r.1 ≠ 0),
             show (j - 1) % 3 = 1 by omega, show j % 3 = 2 by omega, cspos_one, cspos_two]
           omega
-        exact keyFn_lt_of_same_strip _ x (j - 1) j hyT hx
-          (by show x.2.1 - 1 + pOffset m = j - 1; omega) hj.symm (by omega) hsub
+        exact keyFn_lt_of_same_strip (j - 1) j hyT hx
+          (by show c.1 - 1 + pOffset m = j - 1; omega) hj.symm (by omega) hsub
   · -- odd strip, column `0` of the strip: tree rows are row `0` and the odd rows
     rw [h6] at hT
-    have hcond : x.1.1 % 2 = 1 ∨ x.1.1 = 0 := by
+    have hcond : r.1 % 2 = 1 ∨ r.1 = 0 := by
       unfold isTreeJ at hT
       rw [ite_eq_right (by norm_num : ¬((3 : ℕ) = 1)), ite_eq_right (by norm_num : ¬((3 : ℕ) = 4)),
         ite_eq_right (by norm_num : ¬((3 : ℕ) = 0 ∨ (3 : ℕ) = 2)), decide_eq_true_eq] at hT
       exact hT
-    rcases Nat.eq_zero_or_pos x.1.1 with h0 | h0
+    rcases Nat.eq_zero_or_pos r.1 with h0 | h0
     · -- `x = (0, c)`: the parent is the last row-0 cell of the previous strip
-      have hc1 : 1 ≤ x.2.1 := by omega
-      have hyT : isTree m (x.1, ⟨x.2.1 - 1, by omega⟩) = true := by
-        show isTreeJ ((x.2.1 - 1 + pOffset m) % 6) x.1.1 = true
-        rw [show x.2.1 - 1 + pOffset m = j - 1 by omega, show (j - 1) % 6 = 2 by omega, h0]
+      have hc1 : 1 ≤ c.1 := by omega
+      have hyT : isTree m (r, ⟨c.1 - 1, by omega⟩) = true := by
+        show isTreeJ ((c.1 - 1 + pOffset m) % 6) r.1 = true
+        rw [show c.1 - 1 + pOffset m = j - 1 by omega, show (j - 1) % 6 = 2 by omega, h0]
         exact isTreeJ_two_zero
-      refine ⟨(x.1, ⟨x.2.1 - 1, by omega⟩), ?_, hyT, ?_⟩
+      refine ⟨(r, ⟨c.1 - 1, by omega⟩), ?_, hyT, ?_⟩
       · simp only [Adjacent, Nat.dist, Nat.sub_self, Nat.add_zero, Nat.zero_add]
         omega
-      · exact keyFn_lt_of_strip_lt hm _ x (j - 1) j hyT hx
-          (by show x.2.1 - 1 + pOffset m = j - 1; omega) hj.symm (by omega) hr
-    · have hcond1 : x.1.1 % 2 = 1 := by
+      · exact keyFn_lt_of_strip_lt hm (j - 1) j hyT hx
+          (by show c.1 - 1 + pOffset m = j - 1; omega) hj.symm (by omega) hr
+    · have hcond1 : r.1 % 2 = 1 := by
         rcases hcond with h | h
         · exact h
         · omega
-      by_cases h1 : x.1.1 = 1
+      by_cases h1 : r.1 = 1
       · -- `x = (1, c)`: the parent is `(0, c)` directly above
-        have hyT : isTree m (⟨0, by omega⟩, x.2) = true := by
+        have hyT : isTree m (⟨0, by omega⟩, c) = true := by
           show isTreeJ (j % 6) 0 = true
           rw [h6]
           exact isTreeJ_three_zero
-        refine ⟨(⟨0, by omega⟩, x.2), ?_, hyT, ?_⟩
+        refine ⟨(⟨0, by omega⟩, c), ?_, hyT, ?_⟩
         · simp only [Adjacent, Nat.dist, Nat.sub_self, Nat.add_zero]
           omega
-        · have hsub : subKey m j 0 < subKey m j x.1.1 := by
+        · have hsub : subKey m j 0 < subKey m j r.1 := by
             rw [h1, subKey_odd_zero (by omega : (j / 3) % 2 ≠ 0),
               subKey_odd_one (by omega : (j / 3) % 2 ≠ 0), show j % 3 = 0 by omega, ite_eq_left rfl]
             omega
-          exact keyFn_lt_of_same_strip _ x j j hyT hx hj.symm hj.symm rfl hsub
+          exact keyFn_lt_of_same_strip j j hyT hx hj.symm hj.symm rfl hsub
       · -- `x = (r, c)` with `r ≥ 3` odd: the parent is `(r, c+1)`
-        have hr3 : 3 ≤ x.1.1 := by omega
-        have hc1 : x.2.1 + 1 < m := by
+        have hr3 : 3 ≤ r.1 := by omega
+        have hc1 : c.1 + 1 < m := by
           by_cases hm3 : m % 3 = 1
           · have h1' : pOffset m = 1 := by unfold pOffset; rw [ite_eq_left hm3]
             omega
           · have h0' : pOffset m = 0 := by unfold pOffset; rw [ite_eq_right hm3]
             omega
-        have hyT : isTree m (x.1, ⟨x.2.1 + 1, by omega⟩) = true := by
-          show isTreeJ ((x.2.1 + 1 + pOffset m) % 6) x.1.1 = true
-          rw [show x.2.1 + 1 + pOffset m = j + 1 by omega, show (j + 1) % 6 = 4 by omega]
-          exact isTreeJ_four (by omega : 1 ≤ x.1.1)
-        refine ⟨(x.1, ⟨x.2.1 + 1, by omega⟩), ?_, hyT, ?_⟩
+        have hyT : isTree m (r, ⟨c.1 + 1, by omega⟩) = true := by
+          show isTreeJ ((c.1 + 1 + pOffset m) % 6) r.1 = true
+          rw [show c.1 + 1 + pOffset m = j + 1 by omega, show (j + 1) % 6 = 4 by omega]
+          exact isTreeJ_four (by omega : 1 ≤ r.1)
+        refine ⟨(r, ⟨c.1 + 1, by omega⟩), ?_, hyT, ?_⟩
         · simp only [Adjacent, Nat.dist, Nat.sub_self, Nat.add_zero, Nat.zero_add]
           omega
-        · have hsub : subKey m (j + 1) x.1.1 < subKey m j x.1.1 := by
-            rw [subKey_odd_of_ge_two (by omega : ((j + 1) / 3) % 2 ≠ 0) (by omega : 2 ≤ x.1.1),
-              subKey_odd_of_ge_two (by omega : (j / 3) % 2 ≠ 0) (by omega : 2 ≤ x.1.1),
+        · have hsub : subKey m (j + 1) r.1 < subKey m j r.1 := by
+            rw [subKey_odd_of_ge_two (by omega : ((j + 1) / 3) % 2 ≠ 0) (by omega : 2 ≤ r.1),
+              subKey_odd_of_ge_two (by omega : (j / 3) % 2 ≠ 0) (by omega : 2 ≤ r.1),
               show (j + 1) % 3 = 1 by omega, show j % 3 = 0 by omega, cspos_one, cspos_zero]
             omega
-          exact keyFn_lt_of_same_strip _ x (j + 1) j hyT hx
-            (by show x.2.1 + 1 + pOffset m = j + 1; omega) hj.symm (by omega) hsub
+          exact keyFn_lt_of_same_strip (j + 1) j hyT hx
+            (by show c.1 + 1 + pOffset m = j + 1; omega) hj.symm (by omega) hsub
   · -- odd strip, column `1` of the strip: tree rows are the rows `≥ 1`
     rw [h6] at hT
-    have hr1 : 1 ≤ x.1.1 := by
+    have hr1 : 1 ≤ r.1 := by
       unfold isTreeJ at hT
       rw [ite_eq_right (by norm_num : ¬((4 : ℕ) = 1)), ite_eq_left rfl, decide_eq_true_eq] at hT
       exact hT
-    by_cases h1 : x.1.1 = 1
+    by_cases h1 : r.1 = 1
     · -- `x = (1, c)`: the parent is `(1, c-1)`
-      have hc1 : 1 ≤ x.2.1 := by omega
-      have hyT : isTree m (x.1, ⟨x.2.1 - 1, by omega⟩) = true := by
-        show isTreeJ ((x.2.1 - 1 + pOffset m) % 6) x.1.1 = true
-        rw [show x.2.1 - 1 + pOffset m = j - 1 by omega, show (j - 1) % 6 = 3 by omega, h1]
+      have hc1 : 1 ≤ c.1 := by omega
+      have hyT : isTree m (r, ⟨c.1 - 1, by omega⟩) = true := by
+        show isTreeJ ((c.1 - 1 + pOffset m) % 6) r.1 = true
+        rw [show c.1 - 1 + pOffset m = j - 1 by omega, show (j - 1) % 6 = 3 by omega, h1]
         exact isTreeJ_three_one
-      refine ⟨(x.1, ⟨x.2.1 - 1, by omega⟩), ?_, hyT, ?_⟩
+      refine ⟨(r, ⟨c.1 - 1, by omega⟩), ?_, hyT, ?_⟩
       · simp only [Adjacent, Nat.dist, Nat.sub_self, Nat.add_zero, Nat.zero_add]
         omega
-      · have hsub : subKey m (j - 1) x.1.1 < subKey m j x.1.1 := by
+      · have hsub : subKey m (j - 1) r.1 < subKey m j r.1 := by
           rw [h1, subKey_odd_one (by omega : ((j - 1) / 3) % 2 ≠ 0),
             subKey_odd_one (by omega : (j / 3) % 2 ≠ 0),
             show (j - 1) % 3 = 0 by omega, show j % 3 = 1 by omega]
           omega
-        exact keyFn_lt_of_same_strip _ x (j - 1) j hyT hx
-          (by show x.2.1 - 1 + pOffset m = j - 1; omega) hj.symm (by omega) hsub
+        exact keyFn_lt_of_same_strip (j - 1) j hyT hx
+          (by show c.1 - 1 + pOffset m = j - 1; omega) hj.symm (by omega) hsub
     · -- `x = (r, c)` with `r ≥ 2`: the parent is `(r-1, c)` directly above
-      have hr2 : 2 ≤ x.1.1 := by omega
-      have hyT : isTree m (⟨x.1.1 - 1, by omega⟩, x.2) = true := by
-        show isTreeJ (j % 6) (x.1.1 - 1) = true
+      have hr2 : 2 ≤ r.1 := by omega
+      have hyT : isTree m (⟨r.1 - 1, by omega⟩, c) = true := by
+        show isTreeJ (j % 6) (r.1 - 1) = true
         rw [h6]
-        exact isTreeJ_four (by omega : 1 ≤ x.1.1 - 1)
-      refine ⟨(⟨x.1.1 - 1, by omega⟩, x.2), ?_, hyT, ?_⟩
+        exact isTreeJ_four (by omega : 1 ≤ r.1 - 1)
+      refine ⟨(⟨r.1 - 1, by omega⟩, c), ?_, hyT, ?_⟩
       · simp only [Adjacent, Nat.dist, Nat.sub_self, Nat.add_zero]
         omega
-      · have hsub : subKey m j (x.1.1 - 1) < subKey m j x.1.1 := by
-          by_cases h2 : x.1.1 = 2
+      · have hsub : subKey m j (r.1 - 1) < subKey m j r.1 := by
+          by_cases h2 : r.1 = 2
           · rw [h2]
             show subKey m j 1 < subKey m j 2
             rw [subKey_odd_one (by omega : (j / 3) % 2 ≠ 0),
               subKey_odd_of_ge_two (by omega : (j / 3) % 2 ≠ 0) (by norm_num : (2 : ℕ) ≤ 2),
               show j % 3 = 1 by omega, cspos_one]
             omega
-          · have hr3 : 3 ≤ x.1.1 := by omega
-            rw [subKey_odd_of_ge_two (by omega : (j / 3) % 2 ≠ 0) (by omega : 2 ≤ x.1.1 - 1),
-              subKey_odd_of_ge_two (by omega : (j / 3) % 2 ≠ 0) (by omega : 2 ≤ x.1.1),
+          · have hr3 : 3 ≤ r.1 := by omega
+            rw [subKey_odd_of_ge_two (by omega : (j / 3) % 2 ≠ 0) (by omega : 2 ≤ r.1 - 1),
+              subKey_odd_of_ge_two (by omega : (j / 3) % 2 ≠ 0) (by omega : 2 ≤ r.1),
               show j % 3 = 1 by omega, cspos_one]
             omega
-        exact keyFn_lt_of_same_strip _ x j j hyT hx hj.symm hj.symm rfl hsub
+        exact keyFn_lt_of_same_strip j j hyT hx hj.symm hj.symm rfl hsub
   · -- odd strip, column `2` of the strip: tree rows are row `0` and the odd rows
     rw [h6] at hT
-    have hcond : x.1.1 % 2 = 1 ∨ x.1.1 = 0 := by
+    have hcond : r.1 % 2 = 1 ∨ r.1 = 0 := by
       unfold isTreeJ at hT
       rw [ite_eq_right (by norm_num : ¬((5 : ℕ) = 1)), ite_eq_right (by norm_num : ¬((5 : ℕ) = 4)),
         ite_eq_right (by norm_num : ¬((5 : ℕ) = 0 ∨ (5 : ℕ) = 2)), decide_eq_true_eq] at hT
       exact hT
-    rcases Nat.eq_zero_or_pos x.1.1 with h0 | h0
+    rcases Nat.eq_zero_or_pos r.1 with h0 | h0
     · -- `x = (0, c)`: the parent is `(1, c)` directly below
-      have hyT : isTree m (⟨1, by omega⟩, x.2) = true := by
+      have hyT : isTree m (⟨1, by omega⟩, c) = true := by
         show isTreeJ (j % 6) 1 = true
         rw [h6]
         exact isTreeJ_five_one
-      refine ⟨(⟨1, by omega⟩, x.2), ?_, hyT, ?_⟩
+      refine ⟨(⟨1, by omega⟩, c), ?_, hyT, ?_⟩
       · simp only [Adjacent, Nat.dist, Nat.sub_self, Nat.add_zero]
         omega
-      · have hsub : subKey m j 1 < subKey m j x.1.1 := by
+      · have hsub : subKey m j 1 < subKey m j r.1 := by
           rw [h0, subKey_odd_one (by omega : (j / 3) % 2 ≠ 0),
             subKey_odd_zero (by omega : (j / 3) % 2 ≠ 0), show j % 3 = 2 by omega,
             ite_eq_right (by norm_num : ¬((2 : ℕ) = 0))]
           omega
-        exact keyFn_lt_of_same_strip _ x j j hyT hx hj.symm hj.symm rfl hsub
-    · have hcond1 : x.1.1 % 2 = 1 := by
+        exact keyFn_lt_of_same_strip j j hyT hx hj.symm hj.symm rfl hsub
+    · have hcond1 : r.1 % 2 = 1 := by
         rcases hcond with h | h
         · exact h
         · omega
-      by_cases h1 : x.1.1 = 1
+      by_cases h1 : r.1 = 1
       · -- `x = (1, c)`: the parent is `(1, c-1)`
-        have hc1 : 1 ≤ x.2.1 := by omega
-        have hyT : isTree m (x.1, ⟨x.2.1 - 1, by omega⟩) = true := by
-          show isTreeJ ((x.2.1 - 1 + pOffset m) % 6) x.1.1 = true
-          rw [show x.2.1 - 1 + pOffset m = j - 1 by omega, show (j - 1) % 6 = 4 by omega, h1]
+        have hc1 : 1 ≤ c.1 := by omega
+        have hyT : isTree m (r, ⟨c.1 - 1, by omega⟩) = true := by
+          show isTreeJ ((c.1 - 1 + pOffset m) % 6) r.1 = true
+          rw [show c.1 - 1 + pOffset m = j - 1 by omega, show (j - 1) % 6 = 4 by omega, h1]
           exact isTreeJ_four (by norm_num : 1 ≤ 1)
-        refine ⟨(x.1, ⟨x.2.1 - 1, by omega⟩), ?_, hyT, ?_⟩
+        refine ⟨(r, ⟨c.1 - 1, by omega⟩), ?_, hyT, ?_⟩
         · simp only [Adjacent, Nat.dist, Nat.sub_self, Nat.add_zero, Nat.zero_add]
           omega
-        · have hsub : subKey m (j - 1) x.1.1 < subKey m j x.1.1 := by
+        · have hsub : subKey m (j - 1) r.1 < subKey m j r.1 := by
             rw [h1, subKey_odd_one (by omega : ((j - 1) / 3) % 2 ≠ 0),
               subKey_odd_one (by omega : (j / 3) % 2 ≠ 0),
               show (j - 1) % 3 = 1 by omega, show j % 3 = 2 by omega]
             omega
-          exact keyFn_lt_of_same_strip _ x (j - 1) j hyT hx
-            (by show x.2.1 - 1 + pOffset m = j - 1; omega) hj.symm (by omega) hsub
+          exact keyFn_lt_of_same_strip (j - 1) j hyT hx
+            (by show c.1 - 1 + pOffset m = j - 1; omega) hj.symm (by omega) hsub
       · -- `x = (r, c)` with `r ≥ 3` odd: the parent is `(r, c-1)`
-        have hr3 : 3 ≤ x.1.1 := by omega
-        have hc1 : 1 ≤ x.2.1 := by omega
-        have hyT : isTree m (x.1, ⟨x.2.1 - 1, by omega⟩) = true := by
-          show isTreeJ ((x.2.1 - 1 + pOffset m) % 6) x.1.1 = true
-          rw [show x.2.1 - 1 + pOffset m = j - 1 by omega, show (j - 1) % 6 = 4 by omega]
-          exact isTreeJ_four (by omega : 1 ≤ x.1.1)
-        refine ⟨(x.1, ⟨x.2.1 - 1, by omega⟩), ?_, hyT, ?_⟩
+        have hr3 : 3 ≤ r.1 := by omega
+        have hc1 : 1 ≤ c.1 := by omega
+        have hyT : isTree m (r, ⟨c.1 - 1, by omega⟩) = true := by
+          show isTreeJ ((c.1 - 1 + pOffset m) % 6) r.1 = true
+          rw [show c.1 - 1 + pOffset m = j - 1 by omega, show (j - 1) % 6 = 4 by omega]
+          exact isTreeJ_four (by omega : 1 ≤ r.1)
+        refine ⟨(r, ⟨c.1 - 1, by omega⟩), ?_, hyT, ?_⟩
         · simp only [Adjacent, Nat.dist, Nat.sub_self, Nat.add_zero, Nat.zero_add]
           omega
-        · have hsub : subKey m (j - 1) x.1.1 < subKey m j x.1.1 := by
-            rw [subKey_odd_of_ge_two (by omega : ((j - 1) / 3) % 2 ≠ 0) (by omega : 2 ≤ x.1.1),
-              subKey_odd_of_ge_two (by omega : (j / 3) % 2 ≠ 0) (by omega : 2 ≤ x.1.1),
+        · have hsub : subKey m (j - 1) r.1 < subKey m j r.1 := by
+            rw [subKey_odd_of_ge_two (by omega : ((j - 1) / 3) % 2 ≠ 0) (by omega : 2 ≤ r.1),
+              subKey_odd_of_ge_two (by omega : (j / 3) % 2 ≠ 0) (by omega : 2 ≤ r.1),
               show (j - 1) % 3 = 1 by omega, show j % 3 = 2 by omega, cspos_one, cspos_two]
             omega
-          exact keyFn_lt_of_same_strip _ x (j - 1) j hyT hx
-            (by show x.2.1 - 1 + pOffset m = j - 1; omega) hj.symm (by omega) hsub
+          exact keyFn_lt_of_same_strip (j - 1) j hyT hx
+            (by show c.1 - 1 + pOffset m = j - 1; omega) hj.symm (by omega) hsub
 
 
 theorem keyFn_tree_eq {m : ℕ} (x : Cell m) (hx : isTree m x = true) :
@@ -2368,7 +2369,7 @@ theorem tree_not_hill {m : ℕ} (hm : 2 ≤ m) (x : Cell m)
       subKey m (b.1 + pOffset m) a.1 < subKey m (y.2.1 + pOffset m) y.1.1 →
       keyFn m (a, b) < keyFn m y := by
     exact fun y hy hs hsk =>
-      keyFn_lt_of_same_strip (a, b) y (b.1 + pOffset m) (y.2.1 + pOffset m) hx hy rfl rfl
+      keyFn_lt_of_same_strip (b.1 + pOffset m) (y.2.1 + pOffset m) hx hy rfl rfl
         hs.symm hsk
   have hx' : isTreeJ ((b.1 + pOffset m) % 6) a.1 = true := hx
   have h6lt : (b.1 + pOffset m) % 6 < 6 := Nat.mod_lt _ (by omega)
