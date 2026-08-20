@@ -96,11 +96,8 @@ problem usa1981_p5 (x : ℝ) (n : ℕ) :
       exact hm2 ⟨ii, h22⟩
     have h19 : ∑ _i ∈ Finset.Ico (n - m + 1) (n + 1), a m / ↑m ≤
                ∑ i ∈ Finset.Ico (n - m + 1) (n + 1), a i / ↑i := Finset.sum_le_sum h18
-    rw [Finset.sum_const, Nat.card_Ico, nsmul_eq_mul] at h19
-    have h20 : n + 1 - (n - m + 1) = m := by
-      rw [Nat.add_sub_add_right]
-      exact Nat.sub_sub_self hm4
-    rw [h20, ← mul_div_assoc] at h19
+    rw [Finset.sum_const, Nat.card_Ico, nsmul_eq_mul,
+      Nat.add_sub_add_right, Nat.sub_sub_self hm4, ← mul_div_assoc] at h19
     exact h19
   calc _ ≤ a (n - m) + a m := h11
        _ ≤ _ := add_le_add h9 h14

@@ -175,11 +175,10 @@ lemma wythoff_unique (F A : ℕ → ℕ)
     intro P Q hPmono hQmono hQpos coverP disjQ n hn IH
     have hPcancel : ∀ p q, 0 < q → P p < P q → p < q := by
       intro p q hq h
-      by_contra hcon
-      rw [not_lt] at hcon
+      by_contra! hcon
       rcases eq_or_lt_of_le hcon with h2 | h2
       · rw [h2] at h; exact lt_irrefl _ h
-      · exact absurd (hPmono q p hq h2) (by lia)
+      · exact absurd (hPmono q p hq h2) h.not_gt
     -- every positive `m < P n` is hit by `P k` or `P k + k` with `k < n`
     have lowP : ∀ m, 0 < m → m < P n →
         (∃ k, 0 < k ∧ k < n ∧ P k = m) ∨ (∃ k, 0 < k ∧ k < n ∧ P k + k = m) := by
@@ -195,15 +194,13 @@ lemma wythoff_unique (F A : ℕ → ℕ)
         exact absurd hkeq (ne_of_lt (hQmono k n hk hkn))
       · rw [IH k hkn hk] at hkeq
         exact disjQ n k hn hk hkeq.symm
-    by_contra hcon
-    rw [not_le] at hcon
+    by_contra! hcon
     exact hQnot (lowP (Q n) (hQpos n hn) hcon)
-  intro n
+  intro n hn
   induction n using Nat.strong_induction_on with
   | _ n IH =>
-  intro hn
-  have h1 := step F A hFmono hAmono hApos coverF disjA n hn (fun k hkn hk => IH k hkn hk)
-  have h2 := step A F hAmono hFmono hFpos coverA disjF n hn (fun k hkn hk => (IH k hkn hk).symm)
+  have h1 := step F A hFmono hAmono hApos coverF disjA n hn IH
+  have h2 := step A F hAmono hFmono hFpos coverA disjF n hn (IH · · · |>.symm)
   lia
 
 snip end

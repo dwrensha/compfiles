@@ -75,15 +75,10 @@ lemma g2_sum3 (t : ℤ) : g2 t + g2 (t + 1) + g2 (t + 2) = 0 := by
   have h : t % 3 = 0 ∨ t % 3 = 1 ∨ t % 3 = 2 := by lia
   rcases h with h | h | h <;> simp only [g2, h, e1, e2] <;> norm_num <;> decide
 
-lemma zmod2_self_add (x : ZMod 2) : x + x = 0 := by
-  have htwo : (2 : ZMod 2) = 0 := by decide
-  rw [← two_mul, htwo, zero_mul]
-
 /-- A move changes the weight by `g x + g (x+δ) + g (x+2δ) = 0`. -/
 lemma Wt_move {g : ℤ → ZMod 2} (hg : ∀ t : ℤ, g t + g (t + 1) + g (t + 2) = 0)
     {s s' : Finset (ℤ × ℤ)} (h : IsMove s s') : Wt g s' = Wt g s := by
-  obtain ⟨c, ⟨⟨d1, d2⟩, hd⟩, hc, hcd, hn, rfl⟩ := h
-  obtain ⟨c1, c2⟩ := c
+  obtain ⟨⟨c1, c2⟩, ⟨⟨d1, d2⟩, hd⟩, hc, hcd, hn, rfl⟩ := h
   simp only [Prod.mk_add_mk] at hc hcd hn ⊢
   have hδ : d1 + d2 = 1 ∨ d1 + d2 = -1 := by
     simp only [dirs, Finset.mem_insert, Finset.mem_singleton, Prod.mk.injEq] at hd
@@ -99,33 +94,18 @@ lemma Wt_move {g : ℤ → ZMod 2} (hg : ∀ t : ℤ, g t + g (t + 1) + g (t + 2
     fun hh => hn (Finset.mem_of_mem_erase (Finset.mem_of_mem_erase hh))
   have e1 := Finset.sum_erase_add _ (fun c : ℤ × ℤ => g (c.1 + c.2)) hc
   have e2 := Finset.sum_erase_add _ (fun c : ℤ × ℤ => g (c.1 + c.2)) hm2
-  have key : g (c1 + c2) + g (c1 + d1 + (c2 + d2)) + g (c1 + d1 + d1 + (c2 + d2 + d2)) = 0 := by
-    rw [show c1 + d1 + (c2 + d2) = (c1 + c2) + (d1 + d2) by ring,
-      show c1 + d1 + d1 + (c2 + d2 + d2) = (c1 + c2) + (d1 + d2) + (d1 + d2) by ring]
-    rcases hδ with h | h
-    · rw [h, show (c1 + c2) + 1 + 1 = (c1 + c2) + 2 by ring]
-      exact hg _
-    · have hgg := hg ((c1 + c2) - 2)
-      rw [show (c1 + c2) - 2 + 2 = c1 + c2 by ring] at hgg
-      rw [h, show (c1 + c2) + -1 + -1 = (c1 + c2) - 2 by ring,
-        show (c1 + c2) + -1 = (c1 + c2) - 2 + 1 by ring]
-      linear_combination hgg
   simp only [Wt]
-  rw [Finset.sum_insert hnm]
-  dsimp only at e1 e2 ⊢
-  rw [← e1, ← e2]
-  have key2 : g (c1 + d1 + d1 + (c2 + d2 + d2)) = g (c1 + c2) + g (c1 + d1 + (c2 + d2)) := by
-    calc g (c1 + d1 + d1 + (c2 + d2 + d2))
-        = g (c1 + d1 + d1 + (c2 + d2 + d2)) +
-            ((g (c1 + c2) + g (c1 + d1 + (c2 + d2))) +
-              (g (c1 + c2) + g (c1 + d1 + (c2 + d2)))) := by
-          rw [zmod2_self_add, add_zero]
-      _ = (g (c1 + c2) + g (c1 + d1 + (c2 + d2)) + g (c1 + d1 + d1 + (c2 + d2 + d2))) +
-            (g (c1 + c2) + g (c1 + d1 + (c2 + d2))) := by ring
-      _ = 0 + (g (c1 + c2) + g (c1 + d1 + (c2 + d2))) := by rw [key]
-      _ = g (c1 + c2) + g (c1 + d1 + (c2 + d2)) := by rw [zero_add]
-  rw [key2]
-  ring
+  rw [Finset.sum_insert hnm, ← e1, ← e2, add_comm, add_assoc _ (g _), add_left_cancel_iff]
+  rw [← sub_eq_iff_eq_add', ← sub_eq_zero, CharTwo.sub_eq_add, CharTwo.sub_eq_add]
+  rw [add_add_add_comm c1,
+        show c1 + d1 + d1 + (c2 + d2 + d2) = (c1 + c2) + 2 * (d1 + d2) by ring]
+  rcases hδ with h | h
+  · rw [h, mul_one]
+    linear_combination hg (c1 + c2)
+  · have hgg := hg ((c1 + c2) - 2)
+    rw [Int.sub_add_cancel] at hgg
+    rw [h, mul_neg_one, Int.add_neg_eq_sub, show (c1 + c2) + -1 = (c1 + c2) - 2 + 1 by ring]
+    linear_combination hgg
 
 lemma Wt_reachable {g : ℤ → ZMod 2} (hg : ∀ t : ℤ, g t + g (t + 1) + g (t + 2) = 0)
     {s t : Finset (ℤ × ℤ)} (h : Relation.ReflTransGen IsMove s t) : Wt g s = Wt g t := by
