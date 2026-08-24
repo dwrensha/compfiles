@@ -451,8 +451,6 @@ namespace factorization
 
 open Nat
 
-lemma f_self {n : ℕ} (hn : n.Prime) : factorization n n = 1 := Prime.factorization_self hn
-
 lemma f22 : factorization 2 2 = 1 := by norm_num
 
 lemma f23 : factorization 2 3 = 0 := by norm_num
