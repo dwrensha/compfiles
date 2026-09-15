@@ -1339,8 +1339,7 @@ lemma constr_edge_ncard : constrGraph.edgeSet.ncard = 3031 := by
     · exact Finset.sum_congr rfl (fun i _ => hcard3 i)
     · rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin, smul_eq_mul]
   -- count: `1 + 1010 * 3 = 3031`
-  unfold constrEdges
-  rw [Finset.card_union_of_disjoint (by rwa [Finset.disjoint_singleton_left]),
+  rw [constrEdges, Finset.card_union_of_disjoint (Finset.disjoint_singleton_left.mpr hnotmem),
     Finset.card_singleton, hbU]
 
 snip end

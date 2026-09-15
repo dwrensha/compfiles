@@ -240,7 +240,7 @@ lemma no_trail_edge_at {s₀ t : V} {w : G.Walk s₀ t} {v : V}
     {e : Sym2 V} (he : e ∈ G.incidenceFinset v) : e ∉ w.edges := by
   intro hew
   obtain ⟨j, hj, rfl⟩ := List.mem_iff_getElem.mp hew
-  have hv2 := (G.mem_incidenceFinset v _).mp he |>.2
+  have hv2 := SimpleGraph.mem_incidenceFinset.mp he |>.2
   rw [Walk.getElem_edges hj, Sym2.mem_iff] at hv2
   rcases hv2 with h | h
   · rcases Nat.eq_zero_or_pos j with hj0 | hjpos
@@ -282,9 +282,9 @@ lemma degree_endpoint_le_one {s₀ t : V} {w : G.Walk s₀ t}
       · exact absurd (mem_interiorVerts.mpr
           ⟨j, by have hle := w.length_edges; lia, h2⟩) hti
   obtain ⟨j₁, hj₁, he₁q, hj₁q⟩ :=
-    key e₁ ((G.mem_incidenceFinset t e₁).mp he₁).1 ((G.mem_incidenceFinset t e₁).mp he₁).2
+    key e₁ (SimpleGraph.mem_incidenceFinset.mp he₁).1 (SimpleGraph.mem_incidenceFinset.mp he₁).2
   obtain ⟨j₂, hj₂, he₂q, hj₂q⟩ :=
-    key e₂ ((G.mem_incidenceFinset t e₂).mp he₂).1 ((G.mem_incidenceFinset t e₂).mp he₂).2
+    key e₂ (SimpleGraph.mem_incidenceFinset.mp he₂).1 (SimpleGraph.mem_incidenceFinset.mp he₂).2
   subst hj₁q
   subst hj₂q
   exact he₁q.symm.trans he₂q
@@ -299,7 +299,7 @@ lemma incidenceFinset_deleteEdges_of_none {s₀ t : V} {w : G.Walk s₀ t} {v : 
   constructor
   · rintro ⟨he, hv⟩
     exact ⟨mem_edgeSet_deleteEdges.mpr ⟨he,
-      by simpa using hnone e ((G.mem_incidenceFinset v e).mpr ⟨he, hv⟩)⟩, hv⟩
+      by simpa using hnone e (SimpleGraph.mem_incidenceFinset.mpr ⟨he, hv⟩)⟩, hv⟩
   · rintro ⟨he, hv⟩
     exact ⟨(mem_edgeSet_deleteEdges.mp he).1, hv⟩
 

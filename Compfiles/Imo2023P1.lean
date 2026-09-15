@@ -251,7 +251,7 @@ theorem minFac_cons_factor {n : ℕ} (hn : 1 < n) (h : ¬IsPrimePow n)
 
   -- Show that both `p ^ e` and `p ^ (e + 1)` divide `n`.
   have {e : ℕ} : e ≤ n.factorization p → p ^ e ∣ n :=
-    Nat.multiplicity_eq_factorization p_prime n_ne_0
+    Nat.multiplicity_eq_factorization p_prime
       ▸ pow_dvd_of_le_multiplicity
   have p_e_dvd_n : p ^ e ∣ n :=
     (he ▸ this ∘ Nat.le_of_add_right_le) (Nat.min_le_left _ _)

@@ -370,7 +370,7 @@ problem usa1992_p1 (n : ℕ) :
   have h2 : ∀ m, b m < 10^(∑ i ∈ Finset.range (m + 1), 2^i) := fun m ↦ by
     dsimp [b]
     rw [← Finset.prod_pow_eq_pow_sum]
-    refine Finset.prod_lt_prod_of_nonempty ?_ ?_ Finset.nonempty_range_add_one
+    refine Finset.prod_lt_prod_of_nonempty₀ ?_ ?_ Finset.nonempty_range_add_one
     · intro i hi
       exact ha1 i
     · intro i hi
@@ -405,7 +405,7 @@ problem usa1992_p1 (n : ℕ) :
 
   have h7 : 1 ≤ b n := by
     dsimp [b]
-    exact Finset.one_le_prod' fun i a ↦ ha1 i
+    exact Finset.one_le_prod fun i a ↦ ha1 i
 
   -- ... so b (n + 1) = (b n - 1)10^N + (10^N - b n)
   have h6 : b (n + 1) = (b n - 1) * 10 ^(2^(n+1)) + (10 ^(2^(n+1)) - b n) := by

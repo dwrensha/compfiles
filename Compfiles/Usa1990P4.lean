@@ -9,6 +9,7 @@ module
 public import Mathlib.Algebra.Order.Ring.Star
 public import Mathlib.Data.Nat.Digits.Lemmas
 public import Mathlib.Data.Set.Card
+public import Mathlib.Data.Set.Finite.Lattice
 public import Mathlib.Order.CompletePartialOrder
 public import ProblemExtraction
 

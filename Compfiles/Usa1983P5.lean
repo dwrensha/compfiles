@@ -8,7 +8,7 @@ module
 
 public import Mathlib.Data.Set.Card
 public import Mathlib.Data.Nat.Factorization.Basic
-public import Mathlib.Data.Real.Basic
+public import Mathlib.Basic.Real.Basic
 public import Mathlib.Tactic.Linarith
 public import Mathlib.Tactic.Order
 

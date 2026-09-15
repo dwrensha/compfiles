@@ -78,7 +78,8 @@ problem imo1984_p1  (x y z : ℝ)
         · suffices habs : abs ((1 - 2 * x) * (1 - 2 * y) * (1 - 2 * z)) ≤ 1 by
             have ⟨i, _⟩ := abs_le.mp habs; linarith only [i]
           rw [abs_mul, abs_mul]
-          refine mul_le_one₀ (mul_le_one₀ ?_ (by positivity) ?_) (by positivity) ?_ <;>
+          refine (mul_le_of_le_one_left (by positivity)
+            ((mul_le_of_le_one_left (by positivity) ?_).trans ?_)).trans ?_ <;>
           (rw [abs_le]; constructor) <;> linarith
         · suffices habs : ((1 - 2 * x) * (1 - 2 * y) * (1 - 2 * z)) ≤ (1 : ℝ) / 27 by linarith [habs]
           conv => lhs; rw [← h₁]

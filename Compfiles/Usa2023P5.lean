@@ -65,7 +65,7 @@ def trygub (n q r c : ℕ) : ℕ :=
 
 lemma trygub_row_zero (n q c : ℕ) : trygub n q 0 c = c := rfl
 
-lemma trygub_lt {n q r c : ℕ} (hr : r < n) (hc : c < n) (hq : 2 ≤ q) (hqn : q + 1 ≤ n) :
+lemma trygub_lt {n q r c : ℕ} (hr : r < n) (hc : c < n) (_hq : 2 ≤ q) (hqn : q + 1 ≤ n) :
     trygub n q r c < n ^ 2 := by
   unfold trygub
   split_ifs with h0 hle

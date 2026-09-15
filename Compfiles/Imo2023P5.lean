@@ -140,7 +140,7 @@ lemma one_le_f (j : JapaneseTriangle n) {i : ℕ} (hi : 1 ≤ i) :
 def redsUpto (P : NinjaPath n) (j : JapaneseTriangle n) (i : ℕ) : ℕ :=
   ∑ k ∈ Finset.Icc 1 i, if redPos j k = pathPos P k then 1 else 0
 
-lemma redsUpto_succ (P : NinjaPath n) (j : JapaneseTriangle n) (i : ℕ) (hi : 1 ≤ i) :
+lemma redsUpto_succ (P : NinjaPath n) (j : JapaneseTriangle n) (i : ℕ) (_hi : 1 ≤ i) :
     redsUpto P j (i + 1) = redsUpto P j i +
       (if redPos j (i + 1) = pathPos P (i + 1) then 1 else 0) := by
   simp only [redsUpto]

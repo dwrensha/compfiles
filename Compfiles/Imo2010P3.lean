@@ -60,11 +60,11 @@ lemma injective_of_sq (g : ℤ>0 → ℤ>0)
   have h_sq_a : IsSquare ((g m + a).val * p) := by
     obtain ⟨k, hk⟩ := h m a
     use k.val
-    convert congr_arg Subtype.val hk using 1 <;> norm_num [m]
+    convert congr_arg Subtype.val hk using 1; norm_num [m]
   have h_sq_b : IsSquare ((g m + b).val * p) := by
     obtain ⟨k, hk⟩ := h m b
     use k.val
-    convert congr_arg Subtype.val hk using 1 <;> simp +zetaDelta at *
+    convert congr_arg Subtype.val hk using 1; simp +zetaDelta at *
     grind
   obtain ⟨k, hk⟩ := h_sq_a
   obtain ⟨l, hl⟩ := h_sq_b

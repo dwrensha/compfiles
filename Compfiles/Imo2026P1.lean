@@ -537,7 +537,7 @@ problem imo2026_p1_mval_gt_one (B₀ : Board) (hB₀ : IsInitial B₀) : 1 < Mva
   have hbig : 1 < p ^ gExp p B₀ := lt_of_lt_of_le hp2 hpow
   unfold Mval
   exact lt_of_lt_of_le hbig
-    (Finset.single_le_prod'
+    (Finset.single_le_prod
       (fun q hq => Nat.one_le_pow (gExp q B₀) q (Nat.prime_of_mem_primeFactors hq).pos) hpmem)
 
 end Imo2026P1

@@ -40,7 +40,7 @@ lemma Finset.prod_eq_prod_iff_of_pos_of_le {ι : Type u} {R : Type v}
     rw [← Finset.insert_erase hi] at h
     repeat rw [Finset.prod_insert (Finset.notMem_erase i s)] at h
     have h' : ∏ x ∈ s.erase i, f x ≤ ∏ x ∈ s.erase i, g x := by
-      apply Finset.prod_le_prod
+      apply Finset.prod_le_prod₀
       · intro i' hi'
         exact le_of_lt (h₀ i' (Finset.mem_of_mem_erase hi'))
       · intro i' hi'
@@ -195,7 +195,7 @@ problem imo2012_p2 (n : ℕ) (hn : 3 ≤ n) (a : Finset.Icc 2 n → ℝ)
   have hann : ∀ i ∈ Finset.Icc 2 n, (i : ℝ) ^ i / ((i : ℝ) - 1) ^ (i - 1) * a' i ≤ (1 + a' i) ^ i := by
     intro i hi
     exact aux₄ (Finset.mem_Icc.mp hi).left (ha'pos i)
-  apply lt_of_le_of_ne (Finset.prod_le_prod hnn'' hann)
+  apply lt_of_le_of_ne (Finset.prod_le_prod₀ hnn'' hann)
   contrapose! aprod with h'
   rw [Finset.prod_eq_prod_iff_of_pos_of_le hnn' hann] at h'
   have hann' : ∀ i ∈ Finset.Icc 2 n,

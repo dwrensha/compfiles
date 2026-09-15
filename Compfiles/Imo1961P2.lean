@@ -6,7 +6,7 @@ Authors: lean-tom (with assistance from Gemini)
 
 module
 
-public import Mathlib.Data.Real.Basic
+public import Mathlib.Basic.Real.Basic
 public import Mathlib.Analysis.SpecialFunctions.Sqrt
 public import Mathlib.Tactic
 

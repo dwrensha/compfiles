@@ -7,7 +7,7 @@ Authors: David Renshaw, Jason Reed
 module
 
 public import Mathlib.Algebra.Ring.Equiv
-public import Mathlib.Data.Real.Basic
+public import Mathlib.Basic.Real.Basic
 public import Mathlib.Topology.Order
 public import Mathlib.Topology.MetricSpace.Basic
 public import Mathlib.Topology.Algebra.Ring.Basic

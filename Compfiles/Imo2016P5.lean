@@ -273,7 +273,7 @@ lemma key (x : ℝ) :
             linarith [hb j hj]
           have hba : (∏ j ∈ Finset.range 503, ((x - (4 * (j : ℝ) + 3)) * (x - (4 * (j : ℝ) + 6))))
               < ∏ j ∈ Finset.range 503, ((x - (4 * (j : ℝ) + 4)) * (x - (4 * (j : ℝ) + 5))) := by
-            apply Finset.prod_lt_prod
+            apply Finset.prod_lt_prod₀
             · exact hb
             · intro j hj
               rw [hab2 j]
@@ -338,7 +338,7 @@ lemma key (x : ℝ) :
         exact lt_of_le_of_ne' (hneg k hk) (hzu k hk)
       have hlt : (∏ k ∈ Finset.range 504, ((x - (4 * (k : ℝ) + 1)) * (x - (4 * (k : ℝ) + 4))))
           < ∏ k ∈ Finset.range 504, ((x - (4 * (k : ℝ) + 2)) * (x - (4 * (k : ℝ) + 3))) := by
-        apply Finset.prod_lt_prod
+        apply Finset.prod_lt_prod₀
         · exact hu_pos
         · intro k hk
           rw [huv k]

@@ -284,7 +284,7 @@ lemma getLast?_drop_of_lt {l : List V} {k : ℕ} (h : k < l.length) :
   congr 1
   exact List.getLast_drop h1
 
-omit [Fintype V] in
+omit [Fintype V] [DecidableEq V] in
 lemma head?_take_of_pos {l : List V} {k : ℕ} (h : 0 < k) : (l.take k).head? = l.head? := by
   cases l with
   | nil => simp
@@ -524,7 +524,7 @@ lemma decompose (a b : E → V) (U : Finset E) (hU : ∀ x, Even (∑ e ∈ U, m
         have h1 := hF'U T' hT' e (List.mem_toFinset.mp heT')
         exact Finset.mem_sdiff.mp h1 |>.2 he
 
-omit [Fintype V] [Fintype E] [DecidableEq E] in
+omit [Fintype V] [DecidableEq V] [Fintype E] [DecidableEq E] in
 lemma CTrail.rotate_head? {a b : E → V} {v : V} (T : CTrail a b) (k : ℕ) (hk : k < T.es.length)
     (hv : T.vs[k]? = some v) : (T.rotate k hk).vs.head? = some v := by
   have hlen : T.vs.length = T.es.length + 1 := T.walk.length
@@ -533,7 +533,7 @@ lemma CTrail.rotate_head? {a b : E → V} {v : V} (T : CTrail a b) (k : ℕ) (hk
     rw [List.ne_nil_iff_length_pos, List.length_drop]; lia), List.head?_drop]
   exact hv
 
-omit [Fintype V] [Fintype E] in
+omit [Fintype V] [DecidableEq V] [Fintype E] in
 lemma CTrail.rotate_es_toFinset {a b : E → V} (T : CTrail a b) (k : ℕ) (hk : k < T.es.length) :
     (T.rotate k hk).es.toFinset = T.es.toFinset := by
   show (T.es.rotate k).toFinset = T.es.toFinset

@@ -581,8 +581,7 @@ theorem sos_13_0mod3 : ∀ k:ℕ, k≠0 → k ≤ 13^2-14 → k%3=0 → is_sum_o
     · rw [Finset.mem_Icc]
       and_intros
       · have : (msos.repeat_shift C).card = 9 := by decide +kernel
-        rw [this]
-        assumption
+        rwa [this]
       · unfold C
         simp
         lia
@@ -616,8 +615,7 @@ theorem sos_13_1mod3 : ∀ k:ℕ, k ≤ 13^2-14 → k%3=1 → is_sum_of_pos_squa
     · rw [Finset.mem_Icc]
       and_intros
       · have : (msos.repeat_shift C).card = 7 := by decide +kernel
-        rw [this]
-        assumption
+        rwa [this]
       · unfold C
         simp
         lia
@@ -651,8 +649,7 @@ theorem sos_13_2mod3 : ∀ k:ℕ, k ≤ 13^2-14 → k%3=2 → is_sum_of_pos_squa
     · rw [Finset.mem_Icc]
       and_intros
       · have : (msos.repeat_shift C).card = 5 := by decide +kernel
-        rw [this]
-        assumption
+        rwa [this]
       · unfold C
         simp
         lia

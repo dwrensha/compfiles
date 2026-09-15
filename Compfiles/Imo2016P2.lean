@@ -97,7 +97,7 @@ lemma row_block_count (a : ℕ) (c : Letter) :
     ((Finset.range 9).filter (fun j ↦ Fin.ofNat 3 (a + j / 3) = c)).card = 3 := by
   have ha : a % 3 < 3 := Nat.mod_lt _ (by lia)
   interval_cases h : a % 3 <;> fin_cases c <;>
-    norm_num [Fin.ofNat, Nat.add_mod, h] <;> decide
+    norm_num [Fin.ofNat, Nat.add_mod, h, Fin.ext_iff] <;> decide
 
 lemma row_periodic_count (a : ℕ) (c : Letter) (k : ℕ) :
     ((Finset.range (9 * k)).filter
@@ -139,7 +139,7 @@ lemma add_block_count (a : ℕ) (c : Letter) :
     ((Finset.range 3).filter (fun j ↦ Fin.ofNat 3 (a + j) = c)).card = 1 := by
   have ha : a % 3 < 3 := Nat.mod_lt _ (by lia)
   interval_cases h : a % 3 <;> fin_cases c <;>
-    norm_num [Fin.ofNat, Nat.add_mod, h] <;> decide
+    norm_num [Fin.ofNat, Nat.add_mod, h, Fin.ext_iff] <;> decide
 
 lemma add_periodic_count (a : ℕ) (c : Letter) (k : ℕ) :
     ((Finset.range (3 * k)).filter

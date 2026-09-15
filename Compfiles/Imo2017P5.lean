@@ -384,7 +384,7 @@ theorem aux : ∀ (N M : ℕ) (c : Fin M → Fin N),
 
 /-- Colouring by height: `c i` is the index of the block of `N + 1`
 consecutive height ranks containing the player at position `i`. -/
-theorem main_aux (N : ℕ) (hN : 1 ≤ N) (a : Fin (N * (N + 1)) → ℕ)
+theorem main_aux (N : ℕ) (_hN : 1 ≤ N) (a : Fin (N * (N + 1)) → ℕ)
     (ha : Function.Injective a) :
     ∃ f : Fin (2 * N) ↪o Fin (N * (N + 1)), ∀ k : Fin N, ∀ i j : Fin (2 * N),
       (univ.filter fun t ↦ a (f t) > a (f i)).card = 2 * k.val →

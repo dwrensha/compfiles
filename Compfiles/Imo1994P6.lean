@@ -56,7 +56,7 @@ lemma minFac_prod_primes {S : Set ℕ} (k i : ℕ) (f : ℕ ≃o S)
   have hfi_prime : ((f i) : ℕ).Prime := hS _ (f i).prop
   have hprod_ne_one : ∏ p ∈ Sf, (p : ℕ) ≠ 1 := by
     intro h
-    exact absurd ((Finset.prod_eq_one_iff_of_one_le'
+    exact absurd ((Finset.prod_eq_one_iff_of_one_le
       (fun x hx ↦ (hS x.val x.prop).one_le)).mp h _ hfi_mem) hfi_prime.one_lt.ne'
   apply le_antisymm
   · exact Nat.minFac_le_of_dvd hfi_prime.two_le (Finset.dvd_prod_of_mem _ hfi_mem)

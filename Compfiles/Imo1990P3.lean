@@ -214,9 +214,12 @@ lemma imo_1990_p3_forward
         exact hh₂ hh₁
     obtain ⟨d, hn₁, hd₀⟩ := hp₆
     have hk₀ : 0 < k := by
-      refine dvd_iff_multiplicity_pos.mpr ?_
-      rw [← hp₃]
-      exact Nat.dvd_of_mem_primeFactors hp₀
+      refine (dvd_iff_multiplicity_pos ?_).mpr ?_
+      · refine Nat.finiteMultiplicity_iff.mpr ?_
+        simp
+        exact Nat.zero_lt_of_lt h₀
+      · rw [← hp₃]
+        exact Nat.dvd_of_mem_primeFactors hp₀
     have hk₁: k = 1 := by
       have hp₄: _root_.Prime (3 : ℕ) := by
         rw [← @Nat.prime_iff]

@@ -85,7 +85,6 @@ problem imo1968_p6 (n : ℕ) : ∑' k, (n + 2^k) / 2^(k+1) = n_ans n := by
       · apply Nat.div_le_self
       · gcongr
         · norm_num
-        · norm_num
 
   rw [telescoping k_max]
 

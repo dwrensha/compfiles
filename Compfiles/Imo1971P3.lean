@@ -48,7 +48,7 @@ theorem a_ge_and_A_odd (n : ℕ) : 3 ≤ a n ∧ Odd (2 ^ (a n) - 3) := by
     have h : 3 ≤ 2 ^ (a n * ∏ p ∈ (2 ^ a n - 3).primeFactors, (p - 1)) := by
       have : 0 < ∏ p ∈ (2 ^ a n - 3).primeFactors, (p - 1) := by
         rw [Nat.lt_iff_add_one_le]
-        apply Finset.one_le_prod'
+        apply Finset.one_le_prod
         · simp only [Nat.mem_primeFactors, ne_eq, and_imp]
           intro x xp _ _
           exact Nat.le_sub_one_of_lt xp.two_le

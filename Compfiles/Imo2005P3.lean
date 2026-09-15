@@ -5,7 +5,7 @@ Authors: Manuel Candales
 -/
 module
 
-public import Mathlib.Data.Real.Basic
+public import Mathlib.Basic.Real.Basic
 public import Mathlib.Tactic
 
 public import ProblemExtraction

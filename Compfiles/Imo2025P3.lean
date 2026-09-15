@@ -10,7 +10,7 @@ public import Mathlib.Data.ENat.Basic
 public import Mathlib.NumberTheory.LSeries.PrimesInAP
 public import Mathlib.NumberTheory.Multiplicity
 public import Mathlib.Data.Nat.Basic
-public import Mathlib.Data.Real.Basic
+public import Mathlib.Basic.Real.Basic
 public import Mathlib.Order.Bounds.Basic
 public import ProblemExtraction
 
@@ -332,13 +332,8 @@ problem imo2025_p3 :
           specialize hf a 3
           rw [h9] at hf
           simp at hf
-          have g1 : (f a:ℕ) ≠ 0 := by
-            simp
-          have g2 : (a:ℕ) ≠ 0 := by
-            simp
-          rw [← Nat.multiplicity_eq_factorization (by decide) g1]
-          rw [← Nat.multiplicity_eq_factorization (by decide) g2]
-          clear g1 g2
+          rw [← Nat.multiplicity_eq_factorization (n := (f a : ℕ)) Nat.prime_two]
+          rw [← Nat.multiplicity_eq_factorization (n := (a : ℕ)) Nat.prime_two]
           have r1 : emultiplicity 2 (f a:ℕ) = multiplicity 2 (f a:ℕ) := by
             apply FiniteMultiplicity.emultiplicity_eq_multiplicity
             apply Nat.finiteMultiplicity_iff.mpr

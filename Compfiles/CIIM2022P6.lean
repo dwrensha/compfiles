@@ -171,7 +171,7 @@ lemma sum_div_pow_le_one (P : Finset ℕ) (v : ℕ → ℕ) :
       obtain ⟨p, hp⟩ := hP'ne
       have h1 : p ^ v p ≤ M := by
         rw [hMdef]
-        exact Finset.single_le_prod' (fun i hi => Nat.one_le_pow _ _ (hP'prime i hi).pos) hp
+        exact Finset.single_le_prod (fun i hi => Nat.one_le_pow _ _ (hP'prime i hi).pos) hp
       have hvp : 1 ≤ v p := hP'v p hp
       have h2 : 2 ≤ p ^ v p := (hP'prime p hp).two_le.trans (Nat.le_self_pow (by lia : v p ≠ 0) p)
       exact h2.trans h1
@@ -181,7 +181,7 @@ lemma sum_div_pow_le_one (P : Finset ℕ) (v : ℕ → ℕ) :
           intro p hp
           have h1 : p ^ v p ≤ M := by
             rw [hMdef]
-            exact Finset.single_le_prod' (fun i hi => Nat.one_le_pow _ _ (hP'prime i hi).pos) hp
+            exact Finset.single_le_prod (fun i hi => Nat.one_le_pow _ _ (hP'prime i hi).pos) hp
           have hvp : 1 ≤ v p := hP'v p hp
           have h2 : p ≤ p ^ v p := Nat.le_self_pow (by lia : v p ≠ 0) p
           have h3 : 2 ≤ p := (hP'prime p hp).two_le
@@ -305,7 +305,7 @@ lemma prod_factorization_le (n : ℕ) (hn : 0 < n) :
         ≤ (∏ p ∈ P, (((Nat.factorial n).factorization p + 1 : ℕ) : ℚ))
           * (∏ p ∈ P, (1 + (((n + 1).factorization p * p : ℕ) : ℚ) / (N : ℚ) : ℚ)) := by
       rw [← Finset.prod_mul_distrib]
-      exact Finset.prod_le_prod (fun p _ => by positivity) h1
+      exact Finset.prod_le_prod₀ (fun p _ => by positivity) h1
     have hprod2 : (∏ p ∈ P, (1 + (((n + 1).factorization p * p : ℕ) : ℚ) / (N : ℚ) : ℚ)) ≤ 2 := by
       have hcomm : (∏ p ∈ P, (1 + (((n + 1).factorization p * p : ℕ) : ℚ) / (N : ℚ) : ℚ))
           = ∏ p ∈ P, ((((n + 1).factorization p * p : ℕ) : ℚ) / (N : ℚ) + 1) :=
@@ -322,7 +322,7 @@ lemma prod_factorization_le (n : ℕ) (hn : 0 < n) :
         intro t ht
         rw [Finset.prod_div_distrib, Finset.prod_const]
         refine (div_le_div_iff_of_pos_right (by positivity : (0 : ℚ) < (N : ℚ) ^ t.card)).2 ?_
-        exact_mod_cast Finset.prod_le_prod (fun p _ => Nat.zero_le _)
+        exact_mod_cast Finset.prod_le_prod
           (fun p hp => mul_le_self_pow (hpP p (Finset.mem_powerset.1 ht hp)).two_le
             (hwP p (Finset.mem_powerset.1 ht hp)))
       have h5 : ∑ t ∈ P.powerset,

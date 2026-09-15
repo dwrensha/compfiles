@@ -35,8 +35,7 @@ theorem f_zero (f: ℝ→ℝ) (hf : f_good f) : f 0 = 0 := by
     simp at hf
     rw [← pow_two, ← two_mul] at hf
     apply eq_zero_of_mul_eq_self_left (by norm_num) at hf
-    rw [sq_eq_zero_iff] at hf
-    assumption
+    rwa [sq_eq_zero_iff] at hf
 
 theorem f_t_even (f: ℝ→ℝ) (hf : f_good f) : ∀t, f t ≠ 0 → f t = f (-t) := by
     intro t y_ne_zero
@@ -64,8 +63,7 @@ lemma f_even_zero (f: ℝ→ℝ) (hf : f_good f) : ∀t, f t = 0 → f (-t) = 0 
     rw [mul_eq_mul_left_iff] at hf
     intro ftz
     obtain hl | hr := hf
-    · rw [← hl]
-      assumption
+    · rwa [← hl]
     assumption
 
 
@@ -94,8 +92,7 @@ theorem f_half_zero (f: ℝ→ℝ) (hf : f_good f) : ∀t, f t = 0 → f (t/2) =
     simp at hf
     rw [← div_eq_mul_inv] at hf
     symm at hf
-    rw [sq_eq_zero_iff] at hf
-    assumption
+    rwa [sq_eq_zero_iff] at hf
   assumption
 
 
@@ -112,8 +109,7 @@ lemma eq_2 (f: ℝ→ℝ) (hf : f_good f) (t:ℝ) : f t + f (-t) - 2 * t ^ 2 = 0
       intro t
       rw [← mul_sub_right_distrib, ← add_mul]
       ring_nf
-  rw [factor, mul_eq_zero] at hf
-  assumption
+  rwa [factor, mul_eq_zero] at hf
 
 theorem hf_opts (f: ℝ→ℝ) (hf : f_good f) : ∀t, f t = t^2 ∨ f t = 0 := by
     intro t
@@ -127,14 +123,12 @@ theorem hf_opts (f: ℝ→ℝ) (hf : f_good f) : ∀t, f t = t^2 ∨ f t = 0 := 
       swap; · assumption
       rw [← hf_zero, ← two_mul, ← mul_sub] at sq
       simp at sq
-      rw [sub_eq_zero] at sq
-      assumption
+      rwa [sub_eq_zero] at sq
     right
     have : f (2 * t) = 0 := by
       apply f_half_zero at z
       · ring_nf at z
-        rw [mul_comm] at z
-        assumption
+        rwa [mul_comm] at z
       assumption
     apply f_half_zero at this
     swap; · assumption
@@ -149,8 +143,7 @@ lemma eq_3 (f: ℝ→ℝ) (hf : f_good f) : ∀t, (f t + 3*t^2) * f (t*8) = f (t
   rw [f_zero f] at hf
   swap; · assumption
   simp at hf
-  rw [← mul_rotate, ← add_mul, add_comm] at hf
-  assumption
+  rwa [← mul_rotate, ← add_mul, add_comm] at hf
 
 theorem f_two_zero (f: ℝ→ℝ) (hf : f_good f) : ∀t, f t = 0 → f (2 * t) = 0 := by
   have l2 : ∀t, f (t * 4) = 0 → f (t * 8) = 0 := by
@@ -238,11 +231,9 @@ theorem f_eq_zero_if_not_sq (f: ℝ→ℝ) (hf : f_good f) :
     · apply H at hb'
       · intro ex
         apply hb' at ex
-        rw [f_even f hf]
-        assumption
+        rwa [f_even f hf]
       push Not
-      rw [neg_ne_zero]
-      assumption
+      rwa [neg_ne_zero]
     push Not at hb'
     simp at hb hb'
     have : b = 0 := by linarith
@@ -288,8 +279,7 @@ theorem f_eq_zero_if_not_sq (f: ℝ→ℝ) (hf : f_good f) :
       simp
       nth_rw 2 [mul_comm]
       apply f_two_zero at ih
-      · rw [← mul_assoc] at ih
-        assumption
+      · rwa [← mul_assoc] at ih
       assumption
     | pred i ih =>
       rw [← neg_add', zpow_neg]
@@ -301,8 +291,7 @@ theorem f_eq_zero_if_not_sq (f: ℝ→ℝ) (hf : f_good f) :
       rw [zpow_neg, mul_comm] at ih
       norm_num at ih
       apply f_half_zero at ih
-      · rw [mul_div_right_comm] at ih
-        assumption
+      · rwa [mul_div_right_comm] at ih
       assumption
 
   have f_c_zero : f c = 0 := by
@@ -310,11 +299,9 @@ theorem f_eq_zero_if_not_sq (f: ℝ→ℝ) (hf : f_good f) :
     have hh1 : f (a * 2 ^ (⌈Real.logb 2 (b/a)⌉)) = 0 := by
       specialize f_two_pow_zero a (⌈Real.logb 2 (b / a)⌉)
       apply f_two_pow_zero at f_a_zero
-      rw [mul_comm]
-      assumption
+      rwa [mul_comm]
     apply f_two_zero at hh1
-    · rw [← mul_assoc] at hh1
-      assumption
+    · rwa [← mul_assoc] at hh1
     assumption
 
   have hf_c := hf
@@ -392,8 +379,7 @@ problem usa2016_p4 (f : ℝ → ℝ) : f ∈ solution_set ↔ f_good f := by
   rcases eq_2 with sq | zero
   · rw [mul_eq_zero] at sq
     rcases sq with triv | imp
-    · rw [sub_eq_zero] at triv
-      assumption
+    · rwa [sub_eq_zero] at triv
     linarith
   by_cases hw : w = 0
   · simp [hw]

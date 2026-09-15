@@ -155,10 +155,9 @@ lemma no_odd_SilverMatrix {n : ℕ} (hn : 1 < n) (hnodd : Odd n) :
     rw [sum_row_col_val M, Multiset.count_nsmul]
     exact even_two_mul _
   apply Nat.not_odd_iff_even.mpr heven
-  rw [sum_row_col_val_silver h, Multiset.count_add, hx₂, zero_add,
+  rwa [sum_row_col_val_silver h, Multiset.count_add, hx₂, zero_add,
     Multiset.count_nsmul, Multiset.count_eq_one_of_mem Multiset.nodup_Icc hx₁,
     mul_one]
-  assumption
 
 /-! ### Part (b): doubling a silver matrix -/
 

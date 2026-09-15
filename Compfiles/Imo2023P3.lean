@@ -293,7 +293,7 @@ lemma diff_le {k : ℕ} (hk : 2 ≤ k) {P : Polynomial ℤ} (hmon : P.Monic)
     have e : A (m + 1) ^ k = ∏ i ∈ Finset.range k, A (m + 1) := by
       rw [Finset.prod_const, Finset.card_range]
     rw [e]
-    apply Finset.prod_le_prod
+    apply Finset.prod_le_prod₀
     · intro i _; exact Nat.zero_le _
     · intro i _
       exact hmono (by lia)
@@ -890,7 +890,7 @@ lemma backward_unbounded {k : ℕ} (hk : 2 ≤ k) {P : Polynomial ℤ} (hmon : P
           rcases lt_trichotomy t c with htc | htc | htc
           · have hlt : ∏ i ∈ Finset.range k, ((A m' : ℤ) + t + (i : ℤ) * c) <
                 ∏ i ∈ Finset.range k, ((A m' : ℤ) + (i + 1) * c) := by
-              apply Finset.prod_lt_prod_of_nonempty
+              apply Finset.prod_lt_prod_of_nonempty₀
               · intro i _
                 positivity
               · intro i hi
@@ -902,7 +902,7 @@ lemma backward_unbounded {k : ℕ} (hk : 2 ≤ k) {P : Polynomial ℤ} (hmon : P
             linarith [htc]
           · have hgt : ∏ i ∈ Finset.range k, ((A m' : ℤ) + t + (i : ℤ) * c) >
                 ∏ i ∈ Finset.range k, ((A m' : ℤ) + (i + 1) * c) := by
-              apply Finset.prod_lt_prod_of_nonempty
+              apply Finset.prod_lt_prod_of_nonempty₀
               · intro i _
                 positivity
               · intro i hi

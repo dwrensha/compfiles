@@ -15,6 +15,7 @@ public import Mathlib.Algebra.Order.Ring.Star
 public import Mathlib.Data.Rat.Star
 public import Mathlib.Tactic.FieldSimp
 public import Mathlib.Tactic.Positivity.Basic
+public import Mathlib.Tactic.Ring
 public import ProblemExtraction
 
 @[expose] public section

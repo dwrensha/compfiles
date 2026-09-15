@@ -127,7 +127,7 @@ lemma prod_le_lcm_mul_pow (N m : ℕ) (hm : N < m) :
     have hG : ∏ j ∈ Finset.range N,
           Nat.gcd ((Finset.range (j + 1)).lcm (fun i => m - i)) (m - (j + 1)) ≤
         ∏ j ∈ Finset.range N, N ^ (j + 1) :=
-      Finset.prod_le_prod (fun i _ => Nat.zero_le _) (fun j hj => gcd_lcm_le_pow m N j hm hj)
+      Finset.prod_le_prod (fun j hj => gcd_lcm_le_pow m N j hm hj)
     rw [Finset.prod_pow_eq_pow_sum] at hG
     have hexp : (∑ j ∈ Finset.range N, (j + 1)) ≤ N * (N + 1) :=
       calc (∑ j ∈ Finset.range N, (j + 1)) ≤ (Finset.range N).card • N :=
@@ -316,7 +316,7 @@ lemma clearPoly_eq_of_large (a : ℕ → ℤ)
     have h1 : (m - N) ^ (N + 1) = ∏ i ∈ Finset.range (N + 1), (m - N) := by
       rw [Finset.prod_const, Finset.card_range]
     rw [h1]
-    refine Finset.prod_le_prod (fun i _ => Nat.zero_le _) (fun i hi => ?_)
+    refine Finset.prod_le_prod (fun i hi => ?_)
     have hi' : i < N + 1 := Finset.mem_range.mp hi
     exact Nat.sub_le_sub_left (by lia) m
   have hkey : m ^ (N + 1) ≤ 2 ^ (N + 1) * (m - N) ^ (N + 1) := by

@@ -7,7 +7,7 @@ Authors: Jeremy Tan
 module
 
 public import Mathlib.Algebra.Group.Submonoid.Membership
-public import Mathlib.Data.Real.Sign
+public import Mathlib.Basic.Real.Sign
 public import Mathlib.GroupTheory.Perm.Sign
 public import Mathlib.Tactic
 

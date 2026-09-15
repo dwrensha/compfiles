@@ -108,16 +108,14 @@ problem usa1975_p1b (m n : ℕ) : (m ! * n ! * (3*m+n) ! * (3*n+m) !) ∣ ((5*m)
   rw [Nat.dvd_iff_prime_pow_dvd_dvd]
   intro p k hp h_dvd
   have h_p_ne_one := Nat.Prime.ne_one hp
-  have h_p_prime : Prime p := Nat.prime_iff.mp hp
+  have : Fact p.Prime := ⟨hp⟩
   rw [Nat.pow_dvd_iff_le_padicValNat h_p_ne_one <| by simp [Nat.factorial_ne_zero] ] at h_dvd ⊢
 
   refine h_dvd.trans ?_
-  repeat' rw [padicValNat_def' h_p_ne_one (by simp [Nat.factorial_ne_zero])]
-  have multiplicity_mul' {a b : ℕ} (h: a * b ≠ 0) := multiplicity_mul h_p_prime (FiniteMultiplicity.of_prime_left h_p_prime h)
-  repeat' rw [multiplicity_mul' <| by simp [Nat.factorial_ne_zero] ] at ⊢
+  repeat' rw [padicValNat.mul (by simp [Nat.factorial_ne_zero]) (by simp [Nat.factorial_ne_zero])]
 
   let b := Finset.sup' {5 * n, 5 * m, 3 * n + m, 3 * m + n, n, m} (by simp) (Nat.log p ·) + 1
-  repeat' rw [@Nat.Prime.multiplicity_factorial _ hp _ b <| Nat.lt_add_one_iff.mpr <| Finset.le_sup' _ (by simp)] at ⊢
+  repeat' rw [@padicValNat_factorial p _ b _ <| Nat.lt_add_one_iff.mpr <| Finset.le_sup' _ (by simp)]
 
   apply @Nat.cast_le ℤ _ _ _ _ _ _ _ |>.mp
   simp only [Nat.cast_add, Nat.cast_sum, ↓Int.div_eq_floor]

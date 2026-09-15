@@ -48,7 +48,7 @@ lemma condition_two_mul_int (m : ℤ) : Condition (2 * m) := by
 
 lemma condition_sub_two_mul_int_iff {α : ℝ} (m : ℤ) : Condition (α - 2 * m) ↔ Condition α := by
   unfold Condition
-  peel with n hn
+  refine forall_congr' fun n ↦ imp_congr_right fun hn ↦ ?_
   refine dvd_iff_dvd_of_dvd_sub ?_
   simp_rw [← Finset.sum_sub_distrib, mul_sub]
   norm_cast

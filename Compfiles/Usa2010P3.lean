@@ -241,7 +241,7 @@ problem usa2010_p3 :
     rw [prod_range_pair a 1005]
     show (∏ k ∈ Finset.range 1005, a (2 * k) * a (2 * k + 1))
       ≤ ∏ k ∈ Finset.range 1005, (4 * (k : ℝ) + 3)
-    refine Finset.prod_le_prod (fun k hk ↦ ?_) (fun k hk ↦ ?_)
+    refine Finset.prod_le_prod₀ (fun k hk ↦ ?_) (fun k hk ↦ ?_)
     · have hk' := Finset.mem_range.mp hk
       exact mul_nonneg (hpos _ (by lia)).le (hpos _ (by lia)).le
     · have hk' := Finset.mem_range.mp hk

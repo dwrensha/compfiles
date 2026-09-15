@@ -199,7 +199,7 @@ problem imo2006_p4 :
                   rw [show n₁ - 1 = n₁ - 2 + 1 by simp; rw [Nat.sub_add_cancel]; exact h₁, Nat.pow_add_one']
                   ring
               apply Nat.eq_add_of_sub_eq at ht
-              · simp [h1, h2] at h'
+              · simp [← Nat.factorization_def _ Nat.prime_two, h1, h2] at h'
                 use t, ht', 1
                 simp [ht, h']
               · exact hypos
@@ -241,7 +241,7 @@ problem imo2006_p4 :
                   apply Nat.factorization_eq_zero_iff _ _ |>.mpr
                   right; left
                   exact Odd.not_two_dvd_nat hmul
-                simp [h1, h2] at h'
+                simp [← Nat.factorization_def _ Nat.prime_two, h1, h2] at h'
                 apply Nat.eq_add_of_sub_eq at ht
                 · use s, hs', -1
                   simp [ht, h', pow_add]

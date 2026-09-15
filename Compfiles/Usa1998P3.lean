@@ -6,7 +6,7 @@ Authors: David Renshaw
 
 module
 
-public import Mathlib.Data.Real.Basic
+public import Mathlib.Basic.Real.Basic
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 public import Mathlib.Analysis.MeanInequalities
 public import Mathlib.Tactic
@@ -209,7 +209,7 @@ problem usa1998_p3
       have := sub_nonneg.mpr (le_of_lt (lemma1 (a ii) (ha ii hii.2)))
       have := Real.rpow_nonneg this (1 / ↑n)
       exact this -- if I try to collapse this to the previous line, i get timeouts.
-    have h21 := Finset.prod_le_prod h20 h5
+    have h21 := Finset.prod_le_prod₀ h20 h5
     have h23 : ∏ i ∈ Finset.range (n + 1),
                 ∏ j ∈ Finset.erase (Finset.range (n + 1)) i, (1 - y j) ^ (1 / (n:ℝ))
                 = ∏ i ∈ Finset.range (n + 1), (1 - y i) := by

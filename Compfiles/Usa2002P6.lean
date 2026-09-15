@@ -489,7 +489,7 @@ theorem patTearing_disjoint {n : ℕ} (hn : 6 ≤ n) {s t : Finset (ℕ × ℕ)}
     exact hst rfl
 
 /-- Every cell satisfying `cov` is torn out by the pattern. -/
-theorem cov_covered {n i j : ℕ} (hn : 6 ≤ n) (hi : i < n) (hj : j < n) (h : cov n i j) :
+theorem cov_covered {n i j : ℕ} (hn : 6 ≤ n) (_hi : i < n) (hj : j < n) (h : cov n i j) :
     ∃ s ∈ patRowTearing n i, (i, j) ∈ s := by
   rcases h with ⟨h3, hj2⟩ | ⟨h1, h2, h3⟩ | ⟨h3, hj3⟩
   · -- the extra left block covers the cell

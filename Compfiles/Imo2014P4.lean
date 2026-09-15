@@ -124,7 +124,7 @@ lemma mem_circumsphere_of_concyclic
   have h : S = Affine.Simplex.circumsphere ABC := by
     apply hABC
     constructor
-    · rw [Affine.Simplex.span_eq_top ABC planeFiniteDim.out]
+    · rw [Affine.Simplex.affineSpan_eq_top ABC planeFiniteDim.out]
       apply AffineSubspace.mem_top
     · intro x hx
       simp at hx

@@ -115,7 +115,7 @@ theorem bipartite_edge {α β : Type} {G : SimpleGraph (α ⊕ β)} (hbip : G �
 theorem G.bipartite : G n r ≤ completeBipartiteGraph _ _ := by
   rw [le_iff_adj]
   intro u v hadj
-  grind [G, completeBipartiteGraph_adj]
+  grind [G]
 
 theorem G.card_edgeFinset : #(G n r).edgeFinset = Nat.choose (n+1) (r+1) := by
   rw [show n+1 = #(Icc 0 n) by simp, ← card_powersetCard, eq_comm]

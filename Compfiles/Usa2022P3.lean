@@ -6,8 +6,8 @@ Authors: Zhiyi Luo
 
 module
 
-public import Mathlib.Data.Real.Basic
-public import Mathlib.Data.NNReal.Basic
+public import Mathlib.Basic.Real.Basic
+public import Mathlib.Basic.NNReal.Basic
 public import Mathlib.Algebra.Order.Positive.Field
 public import Mathlib.Tactic
 

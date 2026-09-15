@@ -12,7 +12,7 @@ public import Mathlib.Algebra.BigOperators.Intervals
 public import Mathlib.AlgebraicTopology.SimplexCategory.Basic
 public import Mathlib.Combinatorics.Hall.Basic
 public import Mathlib.Data.Int.ConditionallyCompleteOrder
-public import Mathlib.Data.Real.Basic
+public import Mathlib.Basic.Real.Basic
 public import Mathlib.Data.ZMod.Basic
 public import Mathlib.Tactic.Abel
 public import Mathlib.Tactic.Linarith.Lemmas
@@ -457,7 +457,7 @@ section SkipMap
 
 variable {m : ℕ} [NeZero m] {a₀ : ZMod m} {l : ℕ}
 
-lemma skipMap_injective [NeZero (m - l)] (hl : l ≤ m) :
+lemma skipMap_injective [NeZero (m - l)] (_hl : l ≤ m) :
     Function.Injective (skipMap a₀ l) := by
   intro i₁ i₂ h
   rw [skipMap, skipMap, add_left_cancel_iff] at h

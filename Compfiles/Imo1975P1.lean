@@ -5,7 +5,7 @@ Authors: Mantas Bakšys
 -/
 module
 
-public import Mathlib.Data.Real.Basic
+public import Mathlib.Basic.Real.Basic
 public import Mathlib.Algebra.Order.Rearrangement
 public import Mathlib.Algebra.BigOperators.Ring.Finset
 public import Mathlib.Order.Interval.Finset.Nat

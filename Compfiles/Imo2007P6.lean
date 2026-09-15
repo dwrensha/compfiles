@@ -45,8 +45,8 @@ noncomputable def rootFactor (i : Fin 3) (x : ℝ) : MvPolynomial (Fin 3) ℝ :=
   MvPolynomial.X i - MvPolynomial.C x
 
 lemma coeff_rootFactor (i : Fin 3) (x : ℝ) :
-    MvPolynomial.coeff (Finsupp.single i 1) (rootFactor i x) = 1 := by
-  simp [rootFactor, MvPolynomial.coeff_sub, MvPolynomial.coeff_C]
+    (rootFactor i x).coeff (Finsupp.single i 1) = 1 := by
+  simp [rootFactor, MvPolynomial.coeff_C]
   intro h
   simpa using (DFunLike.congr (x := i) h rfl)
 
@@ -68,8 +68,8 @@ lemma rootFactor_inj {i j : Fin 3} {r s : ℝ} (h : rootFactor i r = rootFactor 
     linarith
   constructor
   · by_contra hij
-    have hcoeff := congrArg (MvPolynomial.coeff (Finsupp.single i 1)) h
-    simp [rootFactor, MvPolynomial.coeff_sub, MvPolynomial.coeff_C, Finsupp.ext_iff, hrs] at hcoeff
+    have hcoeff := congrArg (fun p : MvPolynomial (Fin 3) ℝ => p.coeff (Finsupp.single i 1)) h
+    simp [rootFactor, MvPolynomial.coeff_C, Finsupp.ext_iff, hrs] at hcoeff
     exact hij hcoeff.symm
   · exact hrs
 
@@ -163,11 +163,11 @@ lemma totalDegree_PolyFromRoots {S : Fin 3 → Finset ℝ} {A : MvPolynomial (Fi
 lemma coeff_rootFactor_mul_top {p : MvPolynomial (Fin 3) ℝ} {t : Fin 3 →₀ ℕ}
     {i : Fin 3} {x : ℝ} (hpdeg : p.totalDegree = t.degree) (hpcoeff : p.coeff t = 1) :
     (rootFactor i x * p).coeff (t + Finsupp.single i 1) = 1 := by
-  have hC : MvPolynomial.coeff (t + Finsupp.single i 1) (MvPolynomial.C x * p) = 0 := by
+  have hC : (MvPolynomial.C x * p).coeff (t + Finsupp.single i 1) = 0 := by
     rw [MvPolynomial.coeff_C_mul, MvPolynomial.coeff_eq_zero_of_totalDegree_lt, mul_zero]
     rw [hpdeg, ← Finsupp.degree_apply, map_add, Finsupp.degree_single]
     lia
-  simp [rootFactor, sub_mul, MvPolynomial.coeff_sub, MvPolynomial.coeff_X_mul', hpcoeff, hC]
+  simp [rootFactor, sub_mul, MvPolynomial.coeff_X_mul', hpcoeff, hC]
 
 lemma coeff_rootFactorFinset_mul_top (s : Finset ℝ) (i : Fin 3)
     {p : MvPolynomial (Fin 3) ℝ} {t : Fin 3 →₀ ℕ}

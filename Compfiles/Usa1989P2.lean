@@ -43,6 +43,7 @@ snip begin
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
 
+omit [DecidableEq V] in
 /-- Every vertex of positive degree is incident to at least one edge. -/
 lemma incidenceFinset_nonempty_of_degree_pos (G : SimpleGraph V) [DecidableRel G.Adj]
     {v : V} (hv : 1 ≤ G.degree v) : (G.incidenceFinset v).Nonempty := by
@@ -99,7 +100,7 @@ theorem exists_pairwise_disjoint_edges (G : SimpleGraph V) [DecidableRel G.Adj]
     have key : ∀ e : Sym2 V, e ∈ G.edgeFinset → e ∉ bad → v ∈ e → e = first v := by
       intro e heE hebad hve
       have heI : e ∈ G.incidenceFinset v :=
-        (G.mem_incidenceFinset v e).mpr ⟨SimpleGraph.mem_edgeFinset.mp heE, hve⟩
+        SimpleGraph.mem_incidenceFinset.mpr ⟨SimpleGraph.mem_edgeFinset.mp heE, hve⟩
       by_contra hne'
       exact hebad (Finset.subset_biUnion_of_mem _ (Finset.mem_univ v)
         (Finset.mem_erase.mpr ⟨hne', heI⟩))

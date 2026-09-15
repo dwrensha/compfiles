@@ -587,7 +587,7 @@ noncomputable def coverConfig.shift (C : coverConfig) (v : Plane) : coverConfig 
     · intro L' hL'; simp only [Finset.mem_filter, Finset.mem_map] at hL'
       obtain ⟨⟨L, hL1, hL2⟩, hS'⟩ := hL'
       simp only [Finset.mem_filter, hS', shift_sunny, and_true]
-      rw [← hL2, shift_line_inv]; assumption
+      rwa [← hL2, shift_line_inv]
     · intros; rw [shift_line_inv]
     · intros; nth_rw 1 [show v = -(-v) by simp]; rw [shift_line_inv]
 

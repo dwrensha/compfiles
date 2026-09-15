@@ -7,6 +7,8 @@ Authors:
 module
 
 public import Mathlib.Data.Set.Card
+public import Mathlib.Data.Set.Finite.Lattice
+public import Mathlib.Data.Set.Finite.Range
 public import Mathlib.Data.Nat.Choose.Sum
 public import Mathlib.Tactic.NormNum.Basic
 public import Mathlib.Tactic.Ring.RingNF

@@ -691,7 +691,7 @@ lemma row_bound (a b n : ℕ) (ha : 0 < a) (hb : 0 < b) (hn : 2 ^ 15 ≤ n)
       exact (hq j hj).2.2.1
   have hprod_ge : (M + 1) ^ #I ≤ ∏ p ∈ I, p := by
     rw [← Finset.prod_const]
-    apply Finset.prod_le_prod
+    apply Finset.prod_le_prod₀
     · intro p hp
       positivity
     · intro p hp

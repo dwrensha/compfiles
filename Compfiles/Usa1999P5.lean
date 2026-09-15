@@ -801,7 +801,7 @@ lemma main_induction (τ : Strategy) :
 /-- A good second setup move exists after the second player's first move,
     whatever the first player does (that is not immediately losing). -/
 lemma exists_second_setup {q p r : ℕ} {lq lr : Piece}
-    (_hq : q < 2000) (hp : p < 2000) (hr : r < 2000)
+    (_hq : q < 2000) (hp : p < 2000) (_hr : r < 2000)
     (hpq : q + 500 ≤ p ∨ p + 500 ≤ q) (hp5 : p = 500 ∨ p = 1500)
     (hqr : q ≠ r) (hpr : p ≠ r)
     (hTF : ThreatFree (Function.update (Function.update

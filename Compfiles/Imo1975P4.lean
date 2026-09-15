@@ -54,7 +54,7 @@ theorem Nat.modEq_iff_eq_lt (n : ℕ) {a b : ℕ} (ha : a < n) (hb : b < n) :
 
 
 theorem Nat.digits_sum_le_mul_digits_length (n b : ℕ) (hb : 1 < b) : (Nat.digits b n).sum ≤ (Nat.digits b n).length * (b-1) := by
-  apply List.sum_le_card_nsmul
+  apply List.sum_le_length_nsmul
   intro x xh
   rw [Nat.le_sub_one_iff_lt (Nat.zero_lt_of_lt hb)]
   apply Nat.digits_lt_base hb xh

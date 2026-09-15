@@ -508,7 +508,7 @@ lemma IsCycle.mem_edges_of_adj {G : SimpleGraph V} {v : V} {C : G.Walk v v}
     refine ⟨hpath, ?_⟩
     intro hmem
     exact hcontra (hq_edges _ (Sym2.eq_swap ▸ hmem))
-  have hle := SimpleGraph.girth_le_length hnew
+  have hle := hnew.girth_le_length
   rw [Walk.length_cons] at hle
   lia
 
@@ -712,7 +712,7 @@ lemma exists_toggle_connected (G : SimpleGraph V) (hconn : G.Connected) (htree :
     have htf : ∀ x y z : V, G.Adj x y → G.Adj y z → G.Adj z x → False := by
       intro x y z hxy hyz hzx
       obtain ⟨hc3, hlen3⟩ := isCycle_triangle hxy hyz hzx
-      have hle := SimpleGraph.girth_le_length hc3
+      have hle := hc3.girth_le_length
       rw [hlen3, hg] at hle
       lia
     obtain ⟨z₀, hz₀⟩ := exists_notMem_support_of_isCycle hC hg hodd
