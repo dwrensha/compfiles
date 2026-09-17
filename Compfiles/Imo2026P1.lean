@@ -75,6 +75,8 @@ def HasUniqueLarge (B : Board) : Prop :=
 terminal board `B'` is precisely a witness of `Reachable B B'` with `IsTerminal B'`. -/
 def Reachable (B B' : Board) : Prop := Relation.ReflTransGen Move B B'
 
+snip begin
+
 /-- The exponent `g_p` for a prime `p` and board `B`: the `gcd` of the `p`-adic
 valuations of the entries of `B`.  Since `gcd(a, 0) = a`, valuations equal to `0`
 (entries not divisible by `p`) do not affect this gcd, so `gExp p B` is the gcd of
@@ -87,8 +89,6 @@ noncomputable def gExp (p : ℕ) (B : Board) : ℕ :=
 of `B` of `p` raised to the gcd of the `p`-adic valuations. -/
 noncomputable def Mval (B : Board) : ℕ :=
   ∏ p ∈ B.prod.primeFactors, p ^ gExp p B
-
-snip begin
 
 /-!
 ### Proof sketch
