@@ -46,10 +46,10 @@ def IsValidSeq (a : ℕ → ℕ) : Prop :=
         (∀ b, a n < b → b < a (n + 1) → ∃ i ≤ n, Nat.gcd b (a i) = 1))
 
 /-- For any sequence satisfying Definition 1, there exist positive integers `T` and `L` such that
-`a (n + T) = a n + L` for every `n`. Equivalently, the sequence of consecutive differences is
-purely periodic. -/
+`a (n + T) = a n + L` for every `n`.  -/
 problem imo2026_p6 (a : ℕ → ℕ) (ha : IsValidSeq a) :
     ∃ T L : ℕ, 0 < T ∧ 0 < L ∧ ∀ n, a (n + T) = a n + L := by
+  -- Equivalently, the sequence of consecutive differences is purely periodic .
   -- Any later term shares a common factor with every earlier term.
   have hgcd : ∀ i j : ℕ, i < j → 1 < Nat.gcd (a j) (a i) := by
     intro i j hij
