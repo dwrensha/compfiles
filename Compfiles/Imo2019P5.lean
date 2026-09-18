@@ -65,6 +65,8 @@ coin from the left; otherwise (all coins show tails) do nothing. -/
 def step {n : ℕ} (c : Fin n → Bool) : Fin n → Bool :=
   if h : numHeads c = 0 then c else Function.update c (flipIx c h) (!c (flipIx c h))
 
+snip begin
+
 /-- The sum of the 1-based positions of the coins showing heads. -/
 def weightedSum {n : ℕ} (c : Fin n → Bool) : ℕ :=
   ∑ i : Fin n, (i.val + 1) * (if c i then 1 else 0)
@@ -76,9 +78,11 @@ step (see `step_meas`), hence it equals the number of steps the process takes. -
 def meas {n : ℕ} (c : Fin n → Bool) : ℤ :=
   2 * (weightedSum c : ℤ) - (numHeads c : ℤ) ^ 2
 
+snip end
+
 /-- The number of steps that Harry's process takes starting from
 configuration `c`. -/
-def L {n : ℕ} (c : Fin n → Bool) : ℕ := (meas c).toNat
+determine L {n : ℕ} (c : Fin n → Bool) : ℕ := (meas c).toNat
 
 snip begin
 
@@ -588,6 +592,18 @@ determine averageSteps (n : ℕ) : ℚ := n * (n + 1) / 4
 problem imo2019_p5_parta (n : ℕ) (c : Fin n → Bool) :
     ∃ m : ℕ, step^[m] c = fun _ ↦ false :=
   ⟨L c, iterate_L c⟩
+
+/-- Part (b): The number of steps that Harry's process takes starting from
+configuration `c` is L -/
+problem imo2019_p5_partb_definition (n : ℕ) (c : Fin n → Bool) :
+    IsLeast {m : ℕ| step^[m] c = fun _ ↦ false} (L c) := by
+  simp [IsLeast]
+  constructor
+  · exact iterate_L c
+  · rw [mem_lowerBounds]
+    intro a ha
+    contrapose! ha
+    exact not_iterate_lt_L _ ha
 
 /-- Part (b): the average number of steps over all `2 ^ n` configurations is
 `n * (n + 1) / 4`. -/

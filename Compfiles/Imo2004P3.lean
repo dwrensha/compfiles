@@ -48,6 +48,14 @@ def hookShapes : Finset (Finset (ℤ × ℤ)) :=
 /-- A hook is a translate of one of the eight orientations. -/
 def IsHook (s : Finset (ℤ × ℤ)) : Prop := ∃ σ ∈ hookShapes, ∃ t, s = σ.image (· + t)
 
+/-- `R` can be tiled by hooks: there is a finite family of pairwise
+disjoint hooks whose union is `R`. -/
+def Tileable (R : Finset (ℤ × ℤ)) : Prop :=
+  ∃ 𝒯 : Finset (Finset (ℤ × ℤ)), (∀ H ∈ 𝒯, IsHook H) ∧
+    (∀ H₁ ∈ 𝒯, ∀ H₂ ∈ 𝒯, H₁ ≠ H₂ → Disjoint H₁ H₂) ∧ R = 𝒯.biUnion id
+
+snip begin
+
 /-- The six orientations of the two-hook "tiles" (pairs of interlocking
 hooks): the `3 × 4` rectangle, the `4 × 3` rectangle, and the four
 orientations of the zigzag shape. -/
@@ -61,14 +69,6 @@ def tileShapes : Finset (Finset (ℤ × ℤ)) :=
 
 /-- A tile is a translate of one of the six tile shapes. -/
 def IsTile (s : Finset (ℤ × ℤ)) : Prop := ∃ τ ∈ tileShapes, ∃ t, s = τ.image (· + t)
-
-/-- `R` can be tiled by hooks: there is a finite family of pairwise
-disjoint hooks whose union is `R`. -/
-def Tileable (R : Finset (ℤ × ℤ)) : Prop :=
-  ∃ 𝒯 : Finset (Finset (ℤ × ℤ)), (∀ H ∈ 𝒯, IsHook H) ∧
-    (∀ H₁ ∈ 𝒯, ∀ H₂ ∈ 𝒯, H₁ ≠ H₂ → Disjoint H₁ H₂) ∧ R = 𝒯.biUnion id
-
-snip begin
 
 /-- The lower-left corner of the bounding box of a set of cells. -/
 def lo (s : Finset (ℤ × ℤ)) : ℤ × ℤ :=
@@ -1156,14 +1156,12 @@ lemma not_tileable_5 (n : ℕ) (hn : 0 < n) : ¬ Tileable (rect 5 n) := by
     exact ⟨hm.1, hm.2.1, hm.2.2.1, by lia⟩
   exact corner_check τ hτ h00T τ' hτ'' v hv_mem hbounds hdisj
 
-snip end
-
 /-- The predicate characterising the rectangles that can be tiled by hooks. -/
 def GoodRect (m n : ℕ) : Prop :=
   m ≠ 1 ∧ m ≠ 2 ∧ m ≠ 5 ∧ n ≠ 1 ∧ n ≠ 2 ∧ n ≠ 5 ∧ (3 ∣ m ∨ 3 ∣ n) ∧ (4 ∣ m ∨ 4 ∣ n)
 
-/-- The answer: exactly the rectangles with `{1, 2, 5} ∩ {m, n} = ∅`,
-`3 ∣ mn` (i.e. `3 ∣ m` or `3 ∣ n`) and `4 ∣ mn` (i.e. `4 ∣ m` or `4 ∣ n`). -/
+snip end
+
 determine answer : Set (ℕ × ℕ) :=
   {p | GoodRect p.1 p.2}
 

@@ -40,8 +40,6 @@ K such that Amy can ensure that she places at least K stones.
   occupies two new sites, so `CanEnsure K 400 ∅ ∅` (with fuel exceeding
   any possible length of play) is the exact game-theoretic meaning of
   "Amy can ensure at least `K` stones", abbreviated `AmyEnsures K`.
-
-The answer is `K = 100`.
 -/
 
 namespace Imo2018P4

@@ -1043,7 +1043,7 @@ end
 snip end
 
 /-- The answer to the question "can the hunter always ensure that the distance
-between her and the rabbit becomes at most 100?" is no. -/
+between her and the rabbit becomes at most 100?" -/
 determine does_exist : Bool := false
 
 problem imo2017_p3 :
