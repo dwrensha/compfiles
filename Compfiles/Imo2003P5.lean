@@ -201,17 +201,16 @@ problem imo2003_p5 (n : ℕ) (hn : 2 < n) (x : ℕ → ℝ) (hx : MonotoneOn x (
         exact sum_congr rfl fun i _ => sum_congr rfl fun j _ => by
           rw [yeq i, yeq j]; congr 1; ring
 
-/-- The equality case: equality holds iff the sequence is an arithmetic progression.
-
-For the forward direction, with `y i = x i - m` (so `∑ y = 0`) the equality rewrites as
-`(∑ cᵢ yᵢ)² = (∑ cᵢ²)(∑ yᵢ²)` with `cᵢ = 2i + 1 - n`, i.e. equality in Cauchy-Schwarz.
-With `t = (∑ cᵢ yᵢ)/(∑ cᵢ²)` we get `∑ (t cᵢ - yᵢ)² = 0`, hence `yᵢ = t cᵢ` for all `i`,
-which says exactly that the `xᵢ` form an arithmetic progression. -/
+/-- The equality case: equality holds iff the sequence is an arithmetic progression. -/
 problem imo2003_p5_equality (n : ℕ) (hn : 2 < n) (x : ℕ → ℝ) (hx : MonotoneOn x (range n)) :
     (∑ i ∈ range n, ∑ j ∈ range n, |x i - x j|) ^ 2 =
       2 / 3 * ((n : ℝ) ^ 2 - 1) * ∑ i ∈ range n, ∑ j ∈ range n, (x i - x j) ^ 2 ↔
     ∃ a d : ℝ, ∀ i ∈ range n, x i = a + d * (i : ℝ) := by
   constructor
+    /- For the forward direction, with `y i = x i - m` (so `∑ y = 0`) the equality rewrites as
+    `(∑ cᵢ yᵢ)² = (∑ cᵢ²)(∑ yᵢ²)` with `cᵢ = 2i + 1 - n`, i.e. equality in Cauchy-Schwarz.
+    With `t = (∑ cᵢ yᵢ)/(∑ cᵢ²)` we get `∑ (t cᵢ - yᵢ)² = 0`, hence `yᵢ = t cᵢ` for all `i`,
+    which says exactly that the `xᵢ` form an arithmetic progression. -/
   · intro heq
     have hn0 : (n : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr (by lia)
     set S : ℝ := ∑ i ∈ range n, x i with hS
