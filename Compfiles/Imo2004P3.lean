@@ -1156,14 +1156,12 @@ lemma not_tileable_5 (n : ℕ) (hn : 0 < n) : ¬ Tileable (rect 5 n) := by
     exact ⟨hm.1, hm.2.1, hm.2.2.1, by lia⟩
   exact corner_check τ hτ h00T τ' hτ'' v hv_mem hbounds hdisj
 
-snip end
-
 /-- The predicate characterising the rectangles that can be tiled by hooks. -/
 def GoodRect (m n : ℕ) : Prop :=
   m ≠ 1 ∧ m ≠ 2 ∧ m ≠ 5 ∧ n ≠ 1 ∧ n ≠ 2 ∧ n ≠ 5 ∧ (3 ∣ m ∨ 3 ∣ n) ∧ (4 ∣ m ∨ 4 ∣ n)
 
-/-- The answer: exactly the rectangles with `{1, 2, 5} ∩ {m, n} = ∅`,
-`3 ∣ mn` (i.e. `3 ∣ m` or `3 ∣ n`) and `4 ∣ mn` (i.e. `4 ∣ m` or `4 ∣ n`). -/
+snip end
+
 determine answer : Set (ℕ × ℕ) :=
   {p | GoodRect p.1 p.2}
 
