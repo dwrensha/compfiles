@@ -48,6 +48,14 @@ def hookShapes : Finset (Finset (ℤ × ℤ)) :=
 /-- A hook is a translate of one of the eight orientations. -/
 def IsHook (s : Finset (ℤ × ℤ)) : Prop := ∃ σ ∈ hookShapes, ∃ t, s = σ.image (· + t)
 
+/-- `R` can be tiled by hooks: there is a finite family of pairwise
+disjoint hooks whose union is `R`. -/
+def Tileable (R : Finset (ℤ × ℤ)) : Prop :=
+  ∃ 𝒯 : Finset (Finset (ℤ × ℤ)), (∀ H ∈ 𝒯, IsHook H) ∧
+    (∀ H₁ ∈ 𝒯, ∀ H₂ ∈ 𝒯, H₁ ≠ H₂ → Disjoint H₁ H₂) ∧ R = 𝒯.biUnion id
+
+snip begin
+
 /-- The six orientations of the two-hook "tiles" (pairs of interlocking
 hooks): the `3 × 4` rectangle, the `4 × 3` rectangle, and the four
 orientations of the zigzag shape. -/
@@ -61,14 +69,6 @@ def tileShapes : Finset (Finset (ℤ × ℤ)) :=
 
 /-- A tile is a translate of one of the six tile shapes. -/
 def IsTile (s : Finset (ℤ × ℤ)) : Prop := ∃ τ ∈ tileShapes, ∃ t, s = τ.image (· + t)
-
-/-- `R` can be tiled by hooks: there is a finite family of pairwise
-disjoint hooks whose union is `R`. -/
-def Tileable (R : Finset (ℤ × ℤ)) : Prop :=
-  ∃ 𝒯 : Finset (Finset (ℤ × ℤ)), (∀ H ∈ 𝒯, IsHook H) ∧
-    (∀ H₁ ∈ 𝒯, ∀ H₂ ∈ 𝒯, H₁ ≠ H₂ → Disjoint H₁ H₂) ∧ R = 𝒯.biUnion id
-
-snip begin
 
 /-- The lower-left corner of the bounding box of a set of cells. -/
 def lo (s : Finset (ℤ × ℤ)) : ℤ × ℤ :=
