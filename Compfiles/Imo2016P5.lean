@@ -333,9 +333,8 @@ lemma key (x : ℝ) :
       -- pair on the right.
       push Not at hneg
       have hu_pos : ∀ k ∈ Finset.range 504,
-          0 < (x - (4 * (k : ℝ) + 1)) * (x - (4 * (k : ℝ) + 4)) := by
-        intro k hk
-        exact lt_of_le_of_ne' (hneg k hk) (hzu k hk)
+          0 < (x - (4 * (k : ℝ) + 1)) * (x - (4 * (k : ℝ) + 4)) :=
+        fun k hk ↦ lt_of_le_of_ne' (hneg k hk) (hzu k hk)
       have hlt : (∏ k ∈ Finset.range 504, ((x - (4 * (k : ℝ) + 1)) * (x - (4 * (k : ℝ) + 4))))
           < ∏ k ∈ Finset.range 504, ((x - (4 * (k : ℝ) + 2)) * (x - (4 * (k : ℝ) + 3))) := by
         apply Finset.prod_lt_prod₀

@@ -348,11 +348,7 @@ lemma all_on_of_lamp1_only {n : ℕ} [NeZero n] (hn : 2 < n)
         lia
       rw [hoff, Bool.not_false]
     · rw [ite_eq_right hi, key n (by lia) le_rfl, decide_eq_true_eq]
-      have hvi : i.val ≠ 0 := by
-        intro hv
-        apply hi
-        rw [Fin.ext_iff, hv]
-        simp
+      have hvi : i.val ≠ 0 := Fin.val_ne_zero_iff.mpr hi
       have hlt := i.isLt
       lia
   have hfin : n * (n - 2) + (n + 1) = n ^ 2 - n + 1 := by
@@ -549,9 +545,7 @@ lemma roundInv {n : ℕ} [NeZero n] (x : Fin n → ZMod 2) (m : ℕ) (hm : m ≤
     rw [ih hmn, hpos]
     simp only [zero_add]
     funext j
-    have hvm : ((m : Fin n)).val = m := by
-      rw [Fin.val_natCast]
-      exact Nat.mod_eq_of_lt hlt
+    have hvm : ((m : Fin n)).val = m := Fin.val_cast_of_lt hlt
     by_cases hj : j = (m : Fin n)
     · subst hj
       rw [Function.update_self, hvm, ite_eq_left (Nat.lt_succ_self m)]
@@ -563,15 +557,12 @@ lemma roundInv {n : ℕ} [NeZero n] (x : Fin n → ZMod 2) (m : ℕ) (hm : m ≤
         rw [hv0, Finset.sum_range_one]
         have hmk : (⟨0 % n, Nat.mod_lt 0 (NeZero.pos n)⟩ : Fin n) = (0 : Fin n) := by
           apply Fin.ext
-          show 0 % n = ((0 : Fin n)).val
-          rw [hv0]
-          exact Nat.zero_mod n
+          exact (Fin.coe_ofNat_eq_mod n 0).symm
         rw [hmk, add_comm (x (0 : Fin n)) (x (lasti n))]
       · have hsub : ((m : Fin n) - 1) = ⟨m - 1, by lia⟩ := by
           apply Fin.ext
           rw [Fin.val_sub_one_of_ne_zero]
-          · show ((m : Fin n)).val - 1 = m - 1
-            rw [Fin.val_natCast, Nat.mod_eq_of_lt hlt]
+          · exact congrArg (· - 1) hvm
           · intro hc
             rw [Fin.ext_iff] at hc
             simp [Fin.val_natCast, Nat.mod_eq_of_lt hlt] at hc
@@ -582,9 +573,7 @@ lemma roundInv {n : ℕ} [NeZero n] (x : Fin n → ZMod 2) (m : ℕ) (hm : m ≤
         rw [hm1, Finset.sum_range_succ]
         have hmk : (⟨m % n, Nat.mod_lt m (NeZero.pos n)⟩ : Fin n) = (m : Fin n) := by
           apply Fin.ext
-          show m % n = ((m : Fin n)).val
-          rw [hvm]
-          exact Nat.mod_eq_of_lt hlt
+          exact (Fin.val_natCast m n).symm
         rw [hmk]
         ring
     · rw [Function.update_of_ne hj]
@@ -627,8 +616,8 @@ lemma tot_cat {n : ℕ} [NeZero n] (y z : Fin n → ZMod 2) :
   rw [tot_eq, tot_eq, tot_eq]
   have hsplit : ∀ f : ℕ → ZMod 2,
       (∑ i ∈ Finset.range (n + n), f i)
-        = (∑ i ∈ Finset.range n, f i) + ∑ i ∈ Finset.range n, f (n + i) := by
-    exact fun f => Finset.sum_range_add f n n
+        = (∑ i ∈ Finset.range n, f i) + ∑ i ∈ Finset.range n, f (n + i) :=
+    fun f => Finset.sum_range_add f n n
   rw [hsplit]
   have hleft : (∑ i ∈ Finset.range n,
       cat y z ⟨i % (n + n), Nat.mod_lt i (NeZero.pos _)⟩)
@@ -645,8 +634,7 @@ lemma tot_cat {n : ℕ} [NeZero n] (y z : Fin n → ZMod 2) :
     rw [dite_eq_left (show i < n by lia)]
     congr 1
     apply Fin.ext
-    show i = i % n
-    rw [Nat.mod_eq_of_lt hi]
+    exact (Nat.mod_eq_of_lt hi).symm
   have hright : (∑ i ∈ Finset.range n,
       cat y z ⟨(n + i) % (n + n), Nat.mod_lt (n + i) (NeZero.pos _)⟩)
       = ∑ i ∈ Finset.range n, z ⟨i % n, Nat.mod_lt i (NeZero.pos n)⟩ := by
@@ -740,8 +728,7 @@ lemma catL {n : ℕ} [NeZero n] (y z : Fin n → ZMod 2) :
         rw [dite_eq_left (show i < n by lia)]
         congr 1
         apply Fin.ext
-        show i = i % n
-        rw [Nat.mod_eq_of_lt hi]
+        exact (Nat.mod_eq_of_lt hi).symm
       · apply Finset.sum_congr rfl
         intro i hi
         rw [Finset.mem_range] at hi
@@ -857,8 +844,7 @@ lemma stepLemma (n : ℕ) [NeZero n] (h2 : 2 ≤ n) (hA : A n) (hB : B n) (hC : 
         · funext i
           show L (eFn n) i + tot (eFn n) = eFn n i
           rw [hσ, L_eFn, Pi.add_apply]
-          show (1 : ZMod 2) + eFn n i + 1 = eFn n i
-          rw [add_assoc, ← add_left_comm (eFn n i) 1 1, one_add_one_zmod, add_zero]
+          exact one_add_one_cancel (eFn n i)
       · have h1j : 1 ≤ j := by lia
         rw [show n - 1 + (j + 1) = (n - 1 + j) + 1 by lia, Function.iterate_succ_apply',
           ih h1j (by lia : j ≤ n), catL (n := n)]
@@ -882,16 +868,12 @@ lemma stepLemma (n : ℕ) [NeZero n] (h2 : 2 ≤ n) (hA : A n) (hB : B n) (hC : 
         · funext i
           show L (eFn n) i + 1 = eFn n i
           rw [L_eFn, Pi.add_apply]
-          show (1 : ZMod 2) + eFn n i + 1 = eFn n i
-          rw [add_assoc, ← add_left_comm (eFn n i) 1 1, one_add_one_zmod, add_zero]
+          exact one_add_one_cancel (eFn n i)
   refine ⟨?_, ?_, ?_, ?_⟩
   · -- A (n + n)
     show L^[n + n - 1] (fun _ => 1) = eFn (n + n)
     rw [show n + n - 1 = n - 1 + n by lia, hPB n (by lia : 1 ≤ n) (le_refl n), hA]
-    have hee : eFn n + eFn n = (0 : Fin n → ZMod 2) := by
-      funext i
-      rw [Pi.add_apply, zadd_self]
-      rfl
+    have hee : eFn n + eFn n = (0 : Fin n → ZMod 2) := ZModModule.add_self (eFn n)
     rw [hee]
     funext i
     show cat (0 : Fin n → ZMod 2) (eFn n) i = eFn (n + n) i
@@ -1071,7 +1053,6 @@ lemma LcState {n' : ℕ} [NeZero n'] [NeZero (n' + 1)] (h2 : 2 ≤ n') (x : Fin 
     have hmk : (⟨0 % (n' + 1), Nat.mod_lt 0 (NeZero.pos _)⟩ : Fin (n' + 1))
         = ⟨0, by lia⟩ := by
       apply Fin.ext
-      show 0 % (n' + 1) = 0
       exact Nat.zero_mod _
     rw [hmk]
     show (if (0 : ℕ) = 1 then (1 : ZMod 2) else if h : 2 ≤ (0 : ℕ) then x ⟨0 - 2, by lia⟩ else 0) = 0
@@ -1152,9 +1133,7 @@ lemma invC (k : ℕ) (hk : 1 ≤ k) :
   have : NeZero (2 ^ k) := ⟨pow_ne_zero _ (by decide)⟩
   have : NeZero (2 ^ k + 1) := ⟨ne_of_gt (by positivity)⟩
   have hcore := core k hk (2 ^ k) rfl
-  have h22 : 2 ≤ 2 ^ k := by
-    have h : (2 : ℕ) ^ 1 ≤ 2 ^ k := Nat.pow_le_pow_right (by decide) (by lia)
-    rwa [pow_one] at h
+  have h22 : 2 ≤ 2 ^ k := Nat.le_pow hk
   intro m
   induction m with
   | zero => intro h; lia
@@ -1200,9 +1179,7 @@ lemma cState_eFn (k : ℕ) (hk : 1 ≤ k) :
     cStateVec (eFn (2 ^ k)) = fun i => if i.val = 1 then (1 : ZMod 2) else 0 := by
   have : NeZero (2 ^ k) := ⟨pow_ne_zero _ (by decide)⟩
   have : NeZero (2 ^ k + 1) := ⟨ne_of_gt (by positivity)⟩
-  have h22 : 2 ≤ 2 ^ k := by
-    have h : (2 : ℕ) ^ 1 ≤ 2 ^ k := Nat.pow_le_pow_right (by decide) (by lia)
-    rwa [pow_one] at h
+  have h22 : 2 ≤ 2 ^ k := Nat.le_pow hk
   funext i
   show (if i.val = 1 then (1 : ZMod 2)
     else if h : 2 ≤ i.val then eFn (2 ^ k) ⟨i.val - 2, by lia⟩ else 0)
@@ -1226,9 +1203,7 @@ theorem lamp1_only_of_two_pow_add_one (n k : ℕ) [NeZero n] (hk : 0 < k) (hn : 
   intro i
   have hk1 : 1 ≤ k := hk
   have hcore := core k hk1 (2 ^ k) rfl
-  have h22 : 2 ≤ 2 ^ k := by
-    have h : (2 : ℕ) ^ 1 ≤ 2 ^ k := Nat.pow_le_pow_right (by decide) (by lia)
-    rwa [pow_one] at h
+  have h22 : 2 ≤ 2 ^ k := Nat.le_pow hk
   have hinv := invC k hk1 (2 ^ k - 1) (by lia) (le_refl _)
   rw [hcore.1] at hinv
   show (step^[(2 ^ k + 1) * (2 ^ k + 1 - 2)] (initial (2 ^ k + 1))).1 i = decide (i.val = 1)

@@ -214,12 +214,8 @@ lemma aliceWeight_step_ask {σ : Strategy N} {t : ℕ} {S : Finset (Fin N)}
   set W := aliceWeight σ t
   have hsplit : ∑ x ∈ S, weightBase ^ (e x) + ∑ x ∈ Sᶜ, weightBase ^ (e x) = W :=
     Finset.sum_add_sum_compl S _
-  have hcard : ∀ T : Finset (Fin N), (T.card : ℝ) ≤ N := by
-    intro T
-    have h1 : T.card ≤ N := by
-      have := Finset.card_le_card (Finset.subset_univ T)
-      rwa [Finset.card_univ, Fintype.card_fin] at this
-    exact_mod_cast h1
+  have hcard : ∀ T : Finset (Fin N), (T.card : ℝ) ≤ N := fun T =>
+    mod_cast card_finset_fin_le T
   by_cases hC : ∑ x ∈ S, weightBase ^ (e x) ≤ ∑ x ∈ Sᶜ, weightBase ^ (e x)
   · -- Alice chooses `S` as the bad set: candidates in `S` get their streak increased.
     have hW : ∑ x ∈ S, weightBase ^ (e x) ≤ W / 2 := by linarith
@@ -989,9 +985,7 @@ lemma bob_measure (hk : 1 ≤ k) (ans : ℕ → Bool) (t : ℕ)
             have hce : ((bobStateOf N k ans t).pool.erase (bobSpecial _ _)).card =
                 (bobStateOf N k ans t).pool.card - 1 := Finset.card_erase_of_mem hmem
             rw [hce]
-            have hc : (bobStateOf N k ans t).pool.card ≤ N := by
-              have h2 := Finset.card_le_card (Finset.subset_univ (bobStateOf N k ans t).pool)
-              rwa [Finset.card_univ, Fintype.card_fin] at h2
+            have hc : (bobStateOf N k ans t).pool.card ≤ N := card_finset_fin_le _
             have hc1 : 1 ≤ (bobStateOf N k ans t).pool.card :=
               Finset.card_pos.mpr ⟨_, hmem⟩
             have e1 : N - ((bobStateOf N k ans t).pool.card - 1) =
@@ -1019,9 +1013,7 @@ lemma bob_measure (hk : 1 ≤ k) (ans : ℕ → Bool) (t : ℕ)
           have hce : ((bobStateOf N k ans t).pool.erase _).card =
               (bobStateOf N k ans t).pool.card - 1 := Finset.card_erase_of_mem hmem
           rw [hce]
-          have hc : (bobStateOf N k ans t).pool.card ≤ N := by
-            have h2 := Finset.card_le_card (Finset.subset_univ (bobStateOf N k ans t).pool)
-            rwa [Finset.card_univ, Fintype.card_fin] at h2
+          have hc : (bobStateOf N k ans t).pool.card ≤ N := card_finset_fin_le _
           have hc1 : 1 ≤ (bobStateOf N k ans t).pool.card := Finset.card_pos.mpr ⟨_, hmem⟩
           have e1 : N - ((bobStateOf N k ans t).pool.card - 1) =
               N - (bobStateOf N k ans t).pool.card + 1 := by lia
@@ -1053,9 +1045,7 @@ lemma bob_terminates (hk : 1 ≤ k) (ans : ℕ → Bool) :
   have hbound : ∀ t, t ≤ (2 * k + 1) * (N - 2 ^ k - 1) + 2 * k := by
     intro t
     have hm := bob_measure (N := N) (k := k) hk ans t (hcard t)
-    have hc : (bobStateOf N k ans t).pool.card ≤ N := by
-      have h2 := Finset.card_le_card (Finset.subset_univ (bobStateOf N k ans t).pool)
-      rwa [Finset.card_univ, Fintype.card_fin] at h2
+    have hc : (bobStateOf N k ans t).pool.card ≤ N := card_finset_fin_le _
     have hpa : (bobStateOf N k ans t).phase.answers ≤ 2 * k := by
       have hinv := bob_phase_inv (N := N) (k := k) hk ans t
       cases hph : (bobStateOf N k ans t).phase with
@@ -1267,8 +1257,7 @@ lemma bob_mem_pool (hk : 1 ≤ k) {x : Fin N} {ans : ℕ → Bool} {t : ℕ}
 lemma bob_guaranteesWin (n : ℕ) (hk : 1 ≤ k) (hn : 2 ^ k ≤ n) :
     GuaranteesWin k n (bobStrategy (N := N) k) := by
   constructor
-  · intro x ans _
-    exact bob_terminates (N := N) (k := k) hk ans
+  · exact fun _ ans _ => bob_terminates hk ans
   · intro x ans T X hguess hcons
     by_cases hT : (bobStateOf N k ans T).pool.card ≤ 2 ^ k
     · rw [bobStrategy_move_guess hT] at hguess

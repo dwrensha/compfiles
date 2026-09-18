@@ -136,10 +136,7 @@ lemma gsum_interval {g : ℤ → ZMod 2} (hg : ∀ t : ℤ, g t + g (t + 1) + g 
         Finset.sum_insert (by simp only [Finset.mem_singleton]; lia), Finset.sum_singleton,
         ← add_assoc]
       exact hg _
-    · rw [Finset.disjoint_left]
-      intro x hx1 hx2
-      simp only [Finset.mem_Ico] at hx1 hx2
-      lia
+    · exact Finset.Ico_disjoint_Ico_consecutive _ _ _
 
 /-- The weight of the initial `3m × 3m` block is zero. -/
 lemma Wt_init {g : ℤ → ZMod 2} (hg : ∀ t : ℤ, g t + g (t + 1) + g (t + 2) = 0) (m : ℕ) :

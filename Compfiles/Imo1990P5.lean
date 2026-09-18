@@ -279,9 +279,7 @@ theorem aw_big {n : ℕ} (h : 1992 ≤ n) (IH : ∀ m', m' < n → 8 ≤ m' → 
         (Nat.prime_dvd_prime_iff_eq hp (by norm_num)).mp (hp.dvd_of_dvd_pow hp11)
       subst hp11'
       have h181 : 181 ∣ m' := by
-        have h181m : (181 : ℕ) ∣ m' * 11 ^ k := by
-          rw [← h]
-          exact ⟨11 ^ (r + 1), by rw [mul_comm (11 ^ (r + 1)) 181]⟩
+        have h181m : (181 : ℕ) ∣ m' * 11 ^ k := dvd_of_mul_left_eq _ h
         rcases ((by norm_num : Nat.Prime 181).dvd_mul.mp h181m) with h' | h'
         · exact h'
         · have h2 : (181 : ℕ) ∣ 11 := (by norm_num : Nat.Prime 181).dvd_of_dvd_pow h'
@@ -297,9 +295,7 @@ theorem aw_big {n : ℕ} (h : 1992 ≤ n) (IH : ∀ m', m' < n → 8 ≤ m' → 
         simp only [mul_zero, zero_mul] at h
         exact absurd h (ne_of_gt (by positivity : 0 < 11 ^ (r + 1) * 181))
       have hub : 181 * c ≤ 11 ^ r * 181 := by
-        have e1 : (11 : ℕ) ≤ 11 ^ k := by
-          calc (11 : ℕ) = 11 ^ 1 := (pow_one _).symm
-            _ ≤ 11 ^ k := Nat.pow_le_pow_right (by decide) hk
+        have e1 : (11 : ℕ) ≤ 11 ^ k := Nat.le_pow hk
         have h1 : (181 * c) * 11 ≤ (181 * c) * 11 ^ k := Nat.mul_le_mul (le_refl _) e1
         have h2 : (181 * c) * 11 ^ k = 11 ^ (r + 1) * 181 := h.symm
         rw [h2, pow_succ'] at h1
@@ -331,9 +327,7 @@ theorem aw_big {n : ℕ} (h : 1992 ≤ n) (IH : ∀ m', m' < n → 8 ≤ m' → 
         simp only [mul_zero, zero_mul] at h
         exact absurd h (ne_of_gt (by positivity : 0 < 11 ^ (r + 1) * 181))
       have hub : 11 * c ≤ 11 ^ (r + 1) := by
-        have e1 : (181 : ℕ) ≤ 181 ^ k := by
-          calc (181 : ℕ) = 181 ^ 1 := (pow_one _).symm
-            _ ≤ 181 ^ k := Nat.pow_le_pow_right (by decide) hk
+        have e1 : (181 : ℕ) ≤ 181 ^ k := Nat.le_pow hk
         have h1 : (11 * c) * 181 ≤ (11 * c) * 181 ^ k := Nat.mul_le_mul (le_refl _) e1
         have h2 : (11 * c) * 181 ^ k = 11 ^ (r + 1) * 181 := h.symm
         rw [h2] at h1

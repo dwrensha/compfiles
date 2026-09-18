@@ -64,9 +64,7 @@ theorem mem_iff {a b : ℕ} {l : List ℕ} (h : IV a b l) (d : ℕ) :
   induction h with
   | single d₀ =>
       rw [List.mem_singleton]
-      constructor
-      · intro h; subst h; exact ⟨Nat.le_refl _, Nat.le_refl _⟩
-      · rintro ⟨h1, h2⟩; exact Nat.le_antisymm h2 h1
+      exact ge_antisymm_iff
   | consLo h ih =>
       have h1 := lo_le_hi h
       rw [List.mem_cons, ih]; lia
@@ -256,10 +254,8 @@ theorem getLast?_descend : ∀ b, (descend b).getLast? = some 0 := by
       rw [List.getLast?_cons_of_ne_nil (descend_ne_nil k)]
       exact ih
 
-theorem getLast_descend (b : ℕ) (h : descend b ≠ []) : (descend b).getLast h = 0 := by
-  have h2 := getLast?_descend b
-  rw [List.getLast?_eq_some_getLast h] at h2
-  exact Option.some.inj h2
+theorem getLast_descend (b : ℕ) (h : descend b ≠ []) : (descend b).getLast h = 0 :=
+  (List.getLast_eq_iff_getLast?_eq_some h).mpr (getLast?_descend b)
 
 /-- Among `IV 0 b` lists, only the decreasing list ends in `0`. -/
 theorem eq_descend {a b : ℕ} {l : List ℕ} (h : IV a b l)

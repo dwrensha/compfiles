@@ -454,7 +454,7 @@ lemma lt_card_filter_eq_of_small_nth_lt {i j t : ℕ} (hj0 : 0 < j) (h : Small a
     (ht : Nat.nth (a · = j) t < i) : t < #{m ∈ Finset.range i | a m = j} := by
   rw [← hc.infinite_setOf_apply_eq_iff_small hj0] at h
   rw [← Nat.count_eq_card_filter_range]
-  exact (Nat.nth_lt_nth h).mp (ht.trans_le (Nat.le_nth_count h _))
+  exact (Nat.lt_nth_iff_count_lt h).mpr ht
 
 lemma k_lt_card_filter_eq_of_small_of_N'aux_le {i j : ℕ} (hj0 : 0 < j) (h : Small a j)
     (hN'aux : N'aux a N < i) : k a < #{m ∈ Finset.range i | a m = j} :=

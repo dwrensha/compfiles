@@ -152,9 +152,7 @@ problem imo2002_p5 (f : ℝ → ℝ) :
     contrapose! h5
     replace h5 : f 0 + f 0 ≠ 0 := by
       contrapose! h5; linarith only [h5]
-    have h6 := h4 y1 y1
-    rw [mul_eq_left₀ h5] at h6
-    exact h6
+    exact (mul_eq_left₀ h5).mp (h4 y1 y1)
   have h4 : ∀ x y, f (x * y) = f x * f y := fun x y ↦ by
     have h5 := hf x y 0 0
     simp only [mul_zero, sub_zero, add_zero, h3] at h5

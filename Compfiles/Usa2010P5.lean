@@ -56,8 +56,7 @@ lemma sum_one_div_eq_div_prod {s : Finset ℕ} {c : ℕ → ℚ} (hc : ∀ i ∈
     rw [← Finset.mul_prod_erase s c hi, mul_right_comm, mul_one_div_cancel (hc i hi),
       one_mul]
   have hprod : ∏ i ∈ s, c i ≠ 0 := Finset.prod_ne_zero_iff.2 hc
-  rw [eq_div_iff hprod, mul_comm (∑ i ∈ s, 1 / c i) (∏ i ∈ s, c i)]
-  exact h
+  exact EuclideanDomain.eq_div_of_mul_eq_right hprod h
 
 snip end
 
@@ -267,9 +266,7 @@ problem usa2010_p5 (p q : ℕ) (hpp : Nat.Prime p) (hpo : Odd p) (hq : q = (3*p-
     intro i hi hdiv
     rw [Finset.mem_range] at hi
     have hP2 : ((2*t+1 : ℕ):ℤ) ∣ ((2*t+1 : ℕ):ℤ)^2 := ⟨_, by ring⟩
-    have hi2 : ((2*t+1 : ℕ):ℤ) ∣ ((1+i : ℕ):ℤ)^2 := by
-      have hsub := dvd_sub hP2 hdiv
-      rwa [Int.sub_sub_self] at hsub
+    have hi2 : ((2*t+1 : ℕ):ℤ) ∣ ((1+i : ℕ):ℤ)^2 := (Int.dvd_iff_dvd_of_dvd_sub hdiv).mp hP2
     have hiP : ((2*t+1 : ℕ):ℤ) ∣ ((1+i : ℕ):ℤ) := hpZ.dvd_of_dvd_pow hi2
     have hPdvdN : (2*t+1) ∣ (1+i) := by exact_mod_cast hiP
     have hle : (2*t+1) ≤ (1+i) := Nat.le_of_dvd (by lia) hPdvdN

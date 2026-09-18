@@ -185,10 +185,7 @@ lemma card_roots_le_two {k M : ℕ} (hM : Nat.Prime M) (T : Finset ℕ)
       set m₂ := (T.erase m₁).min' hT2' with hm₂
       have hm₁T : m₁ ∈ T := T.min'_mem hT
       have hm₂T : m₂ ∈ T := (T.erase m₁).min'_mem hT2' |> Finset.mem_of_mem_erase
-      have hm₂ne : m₂ ≠ m₁ := by
-        have h := (T.erase m₁).min'_mem hT2'
-        rw [Finset.mem_erase] at h
-        exact h.1
+      have hm₂ne : m₂ ≠ m₁ := Finset.min'_erase_ne_self hT2'
       have hsub : T ⊆ {m₁, m₂} := by
         intro x hx
         by_contra hnot
@@ -203,7 +200,7 @@ lemma card_roots_le_two {k M : ℕ} (hM : Nat.Prime M) (T : Finset ℕ)
             (hT2 m₁ hm₁T) (hT2 m₂ hm₂T)
         exact hmx (by lia)
       calc T.card ≤ ({m₁, m₂} : Finset ℕ).card := Finset.card_le_card hsub
-        _ ≤ 2 := by simpa using Finset.card_insert_le m₁ ({m₂} : Finset ℕ)
+        _ ≤ 2 := Finset.card_le_two
     · have hsub : T ⊆ {T.min' hT} := by
         intro x hx
         by_contra hnot
@@ -600,10 +597,7 @@ lemma connectedP_delPerm {S : Finset ℕ} {τ : Equiv.Perm S} {M : S}
         refine ⟨m' + 1, ?_⟩
         rw [Function.iterate_succ_apply', hm']
         have hτ : τ ⟨u.1, Finset.mem_of_mem_erase huS⟩
-            = ⟨t.1, Finset.mem_of_mem_erase t.2⟩ := by
-          have he : (⟨u.1, Finset.mem_of_mem_erase huS⟩ : S) = u := Subtype.ext rfl
-          rw [he]
-          exact h
+            = ⟨t.1, Finset.mem_of_mem_erase t.2⟩ := h
         apply Subtype.ext
         show (del ⟨u.1, huS⟩).1 = t.1
         rw [delPerm_val, hτ,
@@ -795,10 +789,7 @@ lemma perm_unique {k : ℕ} (n : ℕ) :
     classical
     set F := (S.erase M).filter (good k M ·) with hFdef
     have hF2 : F.card ≤ 2 := by
-      apply card_good_le_two hMprime
-      intro q hq
-      exact lt_of_le_of_ne (S.le_max' _ (Finset.mem_of_mem_erase hq))
-        (Finset.mem_erase.mp hq).1
+      exact card_good_le_two hMprime _ fun q hq => Finset.lt_max'_of_mem_erase_max' S hne hq
     have hpair : ∀ σ : Equiv.Perm S, σ M' ≠ M' → σ⁻¹ M' ≠ M' → σ⁻¹ M' ≠ σ M' →
         good k M (σ M').1 → good k M (σ⁻¹ M').1 → F = {(σ⁻¹ M').1, (σ M').1} := by
       intro σ h1 h2 h3 hg1 hg2
@@ -927,9 +918,7 @@ lemma perm_unique {k : ℕ} (n : ℕ) :
                 else (τ₂ ⟨s.1, Finset.mem_of_mem_erase hs1⟩).1) := by
               have hv1s := delPerm_val (τ := τ₁) (M := M') (hrM := hrM) ⟨s.1, hs1⟩
               have hv2s := delPerm_val (τ := τ₂) (M := M') (hrM := hrM2) ⟨s.1, hs1⟩
-              have hdel' : delPerm τ₁ M' hrM = delPerm τ₂ M' hrM2 := by
-                rw [← hdel1def, ← hdel2def]
-                exact hdel
+              have hdel' : delPerm τ₁ M' hrM = delPerm τ₂ M' hrM2 := hdel
               rw [← hv1s, ← hv2s, hdel']
             have heta : (⟨s.1, Finset.mem_of_mem_erase hs1⟩ : S) = s := Subtype.ext rfl
             by_cases h1 : τ₁ ⟨s.1, Finset.mem_of_mem_erase hs1⟩ = M'
@@ -967,8 +956,6 @@ lemma perm_unique {k : ℕ} (n : ℕ) :
             apply Subtype.ext
             show (del₁ ⟨q.1, hqS⟩).1 = r.1
             rw [delPerm_val, ite_eq_left _, hrdef]
-            have he : (⟨q.1, Finset.mem_of_mem_erase hqS⟩ : S) = q := Subtype.ext rfl
-            rw [he]
             exact hτ1q
           have hτ2q : τ₂ q = M' := by
             have hq2 : q = τ₂⁻¹ M' := hqdef.trans hq
@@ -1007,10 +994,7 @@ lemma perm_unique {k : ℕ} (n : ℕ) :
             have h : del₁ ⟨q.1, hqS⟩ = (del₂⁻¹) ⟨q.1, hqS⟩ := by rw [hdel]
             rw [← hd1, h, hd2]
           have hreq : (τ₂⁻¹ q : S) = r := Subtype.ext (congrArg Subtype.val hval).symm
-          have hτ2r : τ₂ r = q := by
-            have h3 : τ₂ (τ₂⁻¹ q) = q := Equiv.apply_symm_apply τ₂ q
-            rw [hreq] at h3
-            exact h3
+          have hτ2r : τ₂ r = q := Equiv.Perm.eq_inv_iff_eq.mp hreq.symm
           have hτ2M : τ₂ M' = r := hr.symm.trans hrdef.symm
           have horb : ∀ m : ℕ, τ₂^[m] M' ∈ ({M', r, q} : Finset ↥S) := by
             intro m
@@ -1052,9 +1036,7 @@ lemma perm_unique {k : ℕ} (n : ℕ) :
         rw [← hset]
         exact Finset.mem_insert_of_mem (Finset.mem_singleton_self _)
       rw [Finset.mem_insert, Finset.mem_singleton] at hmem
-      rcases hmem with h | h
-      · exact Or.inr h
-      · exact Or.inl h
+      exact Or.comm.mp hmem
     rcases hcase with hsame | hflip
     · have hrs : σ₁ M' = σ₂ M' := Subtype.ext hsame
       have hqs : σ₁⁻¹ M' = σ₂⁻¹ M' := by

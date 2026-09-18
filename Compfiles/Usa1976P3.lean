@@ -114,8 +114,7 @@ lemma eq_zero_of_solution_aux (a : ℤ) :
     obtain ⟨a', b', c', ha, _, _, h_new⟩ := descent_step a b c k h
     rw [ha]
     rw [pow_succ']
-    apply Int.mul_dvd_mul_left
-    exact ih a' b' c' (k + 1) h_new
+    exact Int.mul_dvd_mul_left _ (ih a' b' c' (k + 1) h_new)
 
 snip end
 

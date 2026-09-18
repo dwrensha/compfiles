@@ -100,12 +100,6 @@ lemma injOn_mul_succ_sub_one (p M : ℕ) (hp : 0 < p) :
   have h4 := Nat.mul_left_cancel hp h3
   lia
 
-/-- There are exactly `i / p` elements `j < i` with `p ∣ j + 1`. -/
-lemma card_filter_dvd_succ_range (p i : ℕ) (hp : 0 < p) :
-    ((range i).filter (fun j => p ∣ j + 1)).card = i / p := by
-  rw [filter_dvd_succ_range p i hp, card_image_of_injOn (injOn_mul_succ_sub_one p (i / p) hp),
-    card_range]
-
 /-- Splitting `n.choose i * (i)! = ∏ j ∈ range i, (n - j)` into the factors with `p ∣ j + 1`
 and those with `p ∤ j + 1`, and cancelling the common factor `p ^ (i / p) * (i / p)!`,
 gives `n.choose i * P = (M - 1).choose (i / p) * R`, where `P = ∏ j, (j + 1)` and
@@ -176,15 +170,13 @@ lemma choose_cast_zmod {p e n M i : ℕ} (hp : p.Prime) (he : 1 ≤ e) (hdvd : p
     (hM : p * M = n + 1) (hi : i ≤ n) :
     ((n.choose i : ℕ) : ZMod (p ^ e))
       = (-1) ^ (i - i / p) * (((M - 1).choose (i / p) : ℕ) : ZMod (p ^ e)) := by
-  have hn1 : ((n + 1 : ℕ) : ZMod (p ^ e)) = 0 := by
-    rw [← Nat.cast_zero, ZMod.natCast_eq_natCast_iff, Nat.modEq_zero_iff_dvd]
-    exact hdvd
+  have hn1 : ((n + 1 : ℕ) : ZMod (p ^ e)) = 0 := (ZMod.natCast_eq_zero_iff _ _).mpr hdvd
   have hprod := choose_mul_prod_filter_eq hp.pos hM hi
   have hcard : ((range i).filter (fun j => ¬ p ∣ j + 1)).card = i - i / p := by
     have h1 : ((range i).filter (fun j => p ∣ j + 1)).card
         + ((range i).filter (fun j => ¬ p ∣ j + 1)).card = (range i).card :=
       card_filter_add_card_filter_not _
-    rw [card_range, card_filter_dvd_succ_range p i hp.pos] at h1
+    rw [card_range, Nat.card_multiples i p] at h1
     lia
   have hcast : ((∏ j ∈ (range i).filter (fun j => ¬ p ∣ j + 1), (n - j) : ℕ) : ZMod (p ^ e))
       = (-1) ^ (i - i / p)
@@ -214,9 +206,8 @@ lemma choose_cast_zmod {p e n M i : ℕ} (hp : p.Prime) (he : 1 ≤ e) (hdvd : p
     rw [Nat.coprime_pow_right_iff he, Nat.coprime_comm]
     exact (hp.coprime_iff_not_dvd).mpr (mem_filter.mp hj).2
   have hunit : IsUnit
-      (((∏ j ∈ (range i).filter (fun j => ¬ p ∣ j + 1), (j + 1)) : ℕ) : ZMod (p ^ e)) := by
-    rw [← ZMod.coe_unitOfCoprime _ hcop]
-    exact Units.isUnit _
+      (((∏ j ∈ (range i).filter (fun j => ¬ p ∣ j + 1), (j + 1)) : ℕ) : ZMod (p ^ e)) :=
+    (ZMod.isUnit_iff_coprime _ _).mpr hcop
   have key : ((∏ j ∈ (range i).filter (fun j => ¬ p ∣ j + 1), (j + 1) : ℕ) : ZMod (p ^ e))
         * ((n.choose i : ℕ) : ZMod (p ^ e))
       = ((∏ j ∈ (range i).filter (fun j => ¬ p ∣ j + 1), (j + 1) : ℕ) : ZMod (p ^ e))
@@ -339,8 +330,8 @@ lemma even_of_dvd {k : ℕ}
   have h2 : (3 : ℕ) ∣ ∑ i ∈ range 3, ((2 : ℕ).choose i) ^ k := h 2 (by lia)
   have hS : ∑ i ∈ range 3, ((2 : ℕ).choose i) ^ k = 2 + 2 ^ k := by
     have h0 : ∑ i ∈ range 0, ((2 : ℕ).choose i) ^ k = 0 := sum_range_zero _
-    have h1 : ∑ i ∈ range 1, ((2 : ℕ).choose i) ^ k = ((2 : ℕ).choose 0) ^ k := by
-      rw [show (1 : ℕ) = 0 + 1 from rfl, sum_range_succ, h0, zero_add]
+    have h1 : ∑ i ∈ range 1, ((2 : ℕ).choose i) ^ k = ((2 : ℕ).choose 0) ^ k :=
+      sum_range_one _
     have h2' : ∑ i ∈ range 2, ((2 : ℕ).choose i) ^ k
         = ((2 : ℕ).choose 0) ^ k + ((2 : ℕ).choose 1) ^ k := by
       rw [show (2 : ℕ) = 1 + 1 from rfl, sum_range_succ, h1]
@@ -348,9 +339,7 @@ lemma even_of_dvd {k : ℕ}
       Nat.choose_zero_right, Nat.choose_one_right, Nat.choose_self, one_pow]
     ring
   rw [hS] at h2
-  have h3 : ((2 + 2 ^ k : ℕ) : ZMod 3) = 0 := by
-    rw [← Nat.cast_zero, ZMod.natCast_eq_natCast_iff, Nat.modEq_zero_iff_dvd]
-    exact h2
+  have h3 : ((2 + 2 ^ k : ℕ) : ZMod 3) = 0 := (ZMod.natCast_eq_zero_iff _ _).mpr h2
   have h2k : ((2 : ℕ) : ZMod 3) ^ k = -1 := by
     have h2eq : ((2 : ℕ) : ZMod 3) = -1 := by decide
     rw [h2eq, hne.neg_one_pow]

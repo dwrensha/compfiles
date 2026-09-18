@@ -50,9 +50,7 @@ lemma rpow_inv_eq_iff {x y : ℝ} (hx : 0 ≤ x) (hy : 0 ≤ y) {k : ℕ} (hk : 
   rw [one_div]
   constructor
   · intro h
-    have hx2 : x = (x ^ ((k:ℝ)⁻¹)) ^ k := by
-      rw [← Real.rpow_natCast, ← Real.rpow_mul hx, inv_mul_cancel₀ (by exact_mod_cast hk),
-        Real.rpow_one]
+    have hx2 : x = (x ^ ((k:ℝ)⁻¹)) ^ k := (Real.rpow_inv_natCast_pow hx hk).symm
     rw [hx2, h]
   · intro h
     rw [h, ← Real.rpow_natCast, ← Real.rpow_mul hy, mul_inv_cancel₀ (by exact_mod_cast hk),
@@ -146,9 +144,8 @@ lemma all_equal {n : ℕ} (hn : 1 < n) (f : Fin n → ℕ+)
     have hgt : ∀ i, (g m0 : ℕ) < (g i : ℕ) → P ∣ (g i : ℕ) := by
       intro i hi
       by_contra hndiv
-      have himem : i ∈ Finset.univ.filter (fun j => ¬ P ∣ (g j : ℕ)) := by
-        rw [Finset.mem_filter]
-        exact ⟨Finset.mem_univ i, hndiv⟩
+      have himem : i ∈ Finset.univ.filter (fun j => ¬ P ∣ (g j : ℕ)) :=
+        (Finset.mem_filter_univ i).mpr hndiv
       have hle : (g i : ℕ) ≤ (g m0 : ℕ) := hm0max i himem
       lia
     have hne : i1 ≠ m0 := by

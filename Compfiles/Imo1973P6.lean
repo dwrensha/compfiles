@@ -89,7 +89,7 @@ theorem imo1973_p6_of_n_eq_one (hn : n = 1) (hq : q ∈ Set.Ioo 0 1) (apos : ∀
   · rw [lt_mul_iff_one_lt_left (apos 0)]
     refine (Real.lt_sqrt ?_).mpr ?_ <;> linarith
   · rw [mul_lt_mul_iff_left₀ (apos 0)]
-    refine (Real.sqrt_lt' ?_).mpr ?_ <;> nlinarith
+    exact Real.sqrt_lt_self_iff.mpr this
 
 
 snip end
@@ -140,12 +140,10 @@ problem imo1973_p6 (npos : 0 < n) (hq : q ∈ Set.Ioo 0 1) (apos : ∀ i, 0 < a 
       · intro _
         subst qq
         apply Finset.mem_union_left
-        unfold Xi
         exact (Finset.mem_filter_univ i).mpr e
       · intro _
         subst qq
         apply Finset.mem_union_right
-        unfold Yi
         exact (Finset.mem_filter_univ i).mpr e
     have XY_disj : Disjoint Xi Yi := by
       unfold Xi Yi
@@ -218,8 +216,7 @@ problem imo1973_p6 (npos : 0 < n) (hq : q ∈ Set.Ioo 0 1) (apos : ∀ i, 0 < a 
         _ = ∑ j ∈ Finset.range n, q ^ (j - i.val : ℤ).natAbs := by
           apply Finset.sum_bij (fun i _ => i.val)
           · simp
-          · intro a _ b _ e
-            exact Fin.eq_of_val_eq e
+          · exact fun _ _ _ _ e ↦ Fin.eq_of_val_eq e
           · intro a h
             use ⟨a, Finset.mem_range.mp h⟩
             simp

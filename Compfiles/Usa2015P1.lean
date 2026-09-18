@@ -92,7 +92,7 @@ problem usa2015_p1 (x y : ℤ) :
         rw [← hd]; apply Even.add_one; apply Even.mul_right; exact Int.even_iff.mpr rfl
       have Odd_d  : Odd d := (Int.odd_pow' (by positivity)).mp Odd_dd
       set n := d / 2 with hn
-      have nd : d = 2 * n + 1 := by rw [hn]; symm; exact Int.two_mul_ediv_two_add_one_of_odd Odd_d
+      have nd : d = 2 * n + 1 := (Int.two_mul_ediv_two_add_one_of_odd Odd_d).symm
       have ht5 := nd ▸ hd
       rw [add_sq, mul_pow] at ht5
       have ht6 : 4 * t = 4 * (n * (n + 1)) := by linear_combination 1 * ht5

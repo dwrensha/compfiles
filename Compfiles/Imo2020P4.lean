@@ -85,9 +85,7 @@ noncomputable instance instFintypeEdgeSetOfFinite {V : Type*} [Finite V] (G : Si
 lemma Sym2.exists_mk {α : Type u} (z : Sym2 α) : ∃ x y : α, z = s(x, y) := by
   have h := Sym2.out_fst_mem z
   rw [Sym2.mem_iff_exists] at h
-  rcases h with ⟨y, hy⟩
-  use (Quot.out z).1
-  use y
+  exact ⟨_, h⟩
 
 lemma SimpleGraph.sum_card_connectedComponent_eq_card
   {V : Type u} [Fintype V] {G : SimpleGraph V}
@@ -98,11 +96,9 @@ lemma SimpleGraph.sum_card_connectedComponent_eq_card
       rw [← SetLike.coe_sort_coe, Nat.card_coe_set_eq]
       congr
     rw [h₁]
-    have h_finite : ∀ (c : G.ConnectedComponent), (c.supp).Finite := by
-      intro c
-      apply Set.Finite.subset Set.finite_univ (Set.subset_univ _)
-    have h_disjoint : Pairwise (Function.onFun Disjoint (@SimpleGraph.ConnectedComponent.supp _ G)) := by
-      apply SimpleGraph.pairwise_disjoint_supp_connectedComponent
+    have h_finite : ∀ (c : G.ConnectedComponent), (c.supp).Finite := fun c => Set.toFinite c.supp
+    have h_disjoint : Pairwise (Function.onFun Disjoint (@SimpleGraph.ConnectedComponent.supp _ G)) :=
+      SimpleGraph.pairwise_disjoint_supp_connectedComponent G
     have h₂ := Set.ncard_iUnion_of_finite h_finite h_disjoint
     rw [finsum_eq_sum_of_fintype] at h₂
     rw [← h₂]
@@ -164,8 +160,7 @@ lemma SimpleGraph.sum_card_edgeFinset_toSimpleGraph_connectedComponent_eq_edgeFi
       rw [Sym2.map_mk] at hee'
       rw [← hee']
       rw [SimpleGraph.mem_edgeFinset, SimpleGraph.mem_edgeSet] at he' ⊢
-      rw [SimpleGraph.ConnectedComponent.toSimpleGraph_adj] at he'
-      exact he'
+      exact (c.toSimpleGraph_adj v.2 u.2).mp he'
     · intro he
       rcases Sym2.exists_mk e with ⟨v, u, rfl⟩
       use G.connectedComponentMk v
@@ -181,8 +176,7 @@ lemma SimpleGraph.sum_card_edgeFinset_toSimpleGraph_connectedComponent_eq_edgeFi
       use s(⟨v, hv⟩, ⟨u, hu⟩)
       constructor
       · rw [SimpleGraph.mem_edgeFinset, SimpleGraph.mem_edgeSet] at he ⊢
-        rw [SimpleGraph.ConnectedComponent.toSimpleGraph_adj]
-        exact he
+        exact ((G.connectedComponentMk v).toSimpleGraph_adj hv hu).mpr he
       · dsimp
 
 lemma SimpleGraph.card_connectedComponent_add_card_edge_eq_card_vertex_of_acyclic
@@ -305,9 +299,7 @@ lemma Company.low_le_of_mem_path {n k : ℕ} {c : Company n k} {l h : Fin (n ^ 2
     rcases SimpleGraph.Walk.mem_support_iff_exists_getVert.mp h'v' with ⟨i, hiv', hi⟩
     by_cases! hi' : i = 0
     · rw [hi', SimpleGraph.Walk.getVert_zero] at hiv'
-      rw [hiv']
-      apply h''v'
-      exact hx
+      exact hiv'.trans_le (h''v' x hx)
     · have hi'' : i < p.length := by
         apply lt_of_le_of_ne hi
         contrapose! h''v'
@@ -365,9 +357,7 @@ lemma Company.le_high_of_mem_path {n k : ℕ} {c : Company n k} {l h : Fin (n ^ 
     rcases SimpleGraph.Walk.mem_support_iff_exists_getVert.mp h'v' with ⟨i, hiv', hi⟩
     by_cases! hi' : i = p.length
     · rw [hi', SimpleGraph.Walk.getVert_length] at hiv'
-      rw [hiv']
-      apply h''v'
-      exact hx
+      exact (h''v' x hx).trans_eq hiv'.symm
     · have hi'' : i < p.length := by
         apply lt_of_le_of_ne hi hi'
       have hi''' : i ≠ 0 := by
@@ -428,9 +418,7 @@ lemma Company.linked_of_graph_reachable {n k : ℕ} {c : Company n k} {l h : Fin
     · have hl'p : l' ∈ (SimpleGraph.Walk.cons hll' p').support := by
         rw [SimpleGraph.Walk.support_cons]
         apply List.mem_cons_of_mem
-        rw [SimpleGraph.Walk.mem_support_iff]
-        left
-        rfl
+        exact p'.start_mem_support
       have h'll' := c.low_le_of_mem_path h₂ hp hl'p
       have h'l'h := c.le_high_of_mem_path h₂ hp hl'p
       rw [le_iff_eq_or_lt] at h'l'h
@@ -807,9 +795,7 @@ problem imo2020_p4 (n : Set.Ioi 1) :
     rw [Finset.mem_filter] at hx hy
     have hxyA : A.graph.Reachable x y := by
       rw [← SimpleGraph.ConnectedComponent.eq, hx.right, hy.right]
-    have hxyB : B.graph.Reachable x y := by
-      rw [← SimpleGraph.ConnectedComponent.eq]
-      exact hxy₂
+    have hxyB : B.graph.Reachable x y := SimpleGraph.ConnectedComponent.eq.mp hxy₂
     by_cases! hxy₃ : x < y
     · rw [Subtype.mk_lt_mk] at hxy₃
       use x

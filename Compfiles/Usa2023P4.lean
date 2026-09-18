@@ -91,10 +91,7 @@ lemma lemma1 (a : ℕ+) (s : State 1) (he : BobCanForceEnd a 1 s) :
       rw [hi, hj]
     rw [hmm] at ih
     exact ih
-  | AliceTurn bb _ ih =>
-    apply EndInevitable.Step
-    intro m' hm'
-    exact ih m' hm'
+  | AliceTurn bb _ ih => exact EndInevitable.Step _ ih
 
 /-- end is inevitable in M moves -/
 inductive EndInevitableIn (a : ℕ+) (n : ℕ) : ℕ → State n → Prop where

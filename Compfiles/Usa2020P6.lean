@@ -68,8 +68,7 @@ lemma card_fiber_eq {n : ℕ} (i a b : Fin n) :
     refine ⟨Equiv.swap a b * τ, ?_, ?_⟩
     · rw [Finset.mem_filter]
       exact ⟨Finset.mem_univ _, by rw [Equiv.Perm.mul_apply, hτ.2, Equiv.swap_apply_right]⟩
-    · show Equiv.swap a b * (Equiv.swap a b * τ) = τ
-      rw [← mul_assoc, Equiv.swap_mul_self, one_mul]
+    · exact Equiv.swap_mul_self_mul a b τ
 
 /-- Each fiber of the evaluation map `σ ↦ σ i` has cardinality `(n-1)!`. -/
 lemma card_fiber {n : ℕ} (hn : 1 ≤ n) (i a : Fin n) :
@@ -129,8 +128,7 @@ lemma card_fiber₂_eq {n : ℕ} (i j : Fin n) (b a₁ a₂ : Fin n) (h₁ : a�
       · rw [Equiv.Perm.mul_apply, hτ.2.1, Equiv.swap_apply_right]
       · rw [Equiv.Perm.mul_apply, hτ.2.2,
           Equiv.swap_apply_of_ne_of_ne (Ne.symm h₁) (Ne.symm h₂)]
-    · show Equiv.swap a₁ a₂ * (Equiv.swap a₁ a₂ * τ) = τ
-      rw [← mul_assoc, Equiv.swap_mul_self, one_mul]
+    · exact Equiv.swap_mul_self_mul a₁ a₂ τ
 
 /-- Each fiber of `σ ↦ (σ i, σ j)` over a pair `(a, b)` with `a ≠ b` has
 cardinality `(n-2)!`. -/
@@ -392,8 +390,7 @@ lemma fin_strictMono_ge {m : ℕ} {g : Fin m → ℕ} (hg : StrictMono g) (j : F
       have h1 : v ≤ g ⟨v, hvm⟩ := ih hvm
       have h2 : g ⟨v, hvm⟩ < g ⟨v + 1, hv⟩ := hg (by rw [Fin.mk_lt_mk]; exact Nat.lt_succ_self v)
       lia
-  have h3 := h j.val j.isLt
-  rwa [Fin.eta j j.isLt] at h3
+  exact h j.val j.isLt
 
 /-- The sum of an antitone function over any finset is at most the sum over an initial
 segment of the same cardinality. -/
@@ -432,9 +429,7 @@ lemma bottomsum {n : ℕ} (y : Fin n → ℝ) (hy : Antitone y) (s : Finset (Fin
     ∑ j : Fin m, y (Fin.rev ⟨j.val, lt_of_lt_of_le j.isLt hmn⟩) ≤ ∑ i ∈ s, y i := by
   have h1 := topsum' (fun i => -y i) (fun a b hab => neg_le_neg (hy hab)) s hm hmn
   rw [Finset.sum_neg_distrib, Finset.sum_neg_distrib] at h1
-  have h2 := neg_le_neg h1
-  rw [neg_neg, neg_neg] at h2
-  exact h2
+  exact le_of_neg_le_neg h1
 
 /-- Summation by parts: if `z` has zero sum and nonnegative partial sums, and `x` is
 decreasing on `range n`, then `∑ x i * z i ≥ 0`. -/
@@ -515,11 +510,8 @@ lemma rearr_upper {n : ℕ} (x y : Fin n → ℝ) (hx : Antitone x) (hy : Antito
     ∑ i, x i * y (σ i) ≤ ∑ i, x i * y i := by
   have hz : (∑ i ∈ Finset.range n, (if h : i < n then (y ⟨i, h⟩ - y (σ ⟨i, h⟩)) else 0)) = 0 := by
     have e1 : (∑ i ∈ Finset.range n, (if h : i < n then (y ⟨i, h⟩ - y (σ ⟨i, h⟩)) else 0)) =
-        ∑ i : Fin n, (y i - y (σ i)) := by
-      rw [Finset.sum_range]
-      apply Finset.sum_congr rfl
-      intro i _
-      simp only [dite_eq_left i.isLt, Fin.eta i i.isLt]
+        ∑ i : Fin n, (y i - y (σ i)) :=
+      (Finset.sum_fin_eq_sum_range fun i => y i - y (σ i)).symm
     rw [e1, Finset.sum_sub_distrib, Equiv.sum_comp σ y, sub_self]
   have hxd : ∀ k : ℕ, k + 1 < n → 0 ≤ (if h : k < n then x ⟨k, h⟩ else 0) -
       (if h : k + 1 < n then x ⟨k + 1, h⟩ else 0) := by
@@ -533,9 +525,7 @@ lemma rearr_upper {n : ℕ} (x y : Fin n → ℝ) (hx : Antitone x) (hy : Antito
         ∑ i : Fin (k + 1), (y ⟨i.val, lt_of_lt_of_le i.isLt hk⟩ -
           y (σ ⟨i.val, lt_of_lt_of_le i.isLt hk⟩)) := by
       rw [Finset.sum_range]
-      apply Finset.sum_congr rfl
-      intro i _
-      simp only [dite_eq_left (lt_of_lt_of_le i.isLt hk)]
+      exact Finset.sum_congr rfl fun i _ => dite_eq_left (lt_of_lt_of_le i.isLt hk)
     rw [e1, Finset.sum_sub_distrib, sub_nonneg]
     let e : Fin (k + 1) ↪ Fin n := ⟨fun i => σ ⟨i.val, lt_of_lt_of_le i.isLt hk⟩, by
       intro a b hab
@@ -572,11 +562,8 @@ lemma rearr_lower {n : ℕ} (x y : Fin n → ℝ) (hx : Antitone x) (hy : Antito
     ∑ i, x i * y (Fin.rev i) ≤ ∑ i, x i * y (σ i) := by
   have hz : (∑ i ∈ Finset.range n, (if h : i < n then (y (σ ⟨i, h⟩) - y (Fin.rev ⟨i, h⟩)) else 0)) = 0 := by
     have e1 : (∑ i ∈ Finset.range n, (if h : i < n then (y (σ ⟨i, h⟩) - y (Fin.rev ⟨i, h⟩)) else 0)) =
-        ∑ i : Fin n, (y (σ i) - y (Fin.rev i)) := by
-      rw [Finset.sum_range]
-      apply Finset.sum_congr rfl
-      intro i _
-      simp only [dite_eq_left i.isLt, Fin.eta i i.isLt]
+        ∑ i : Fin n, (y (σ i) - y (Fin.rev i)) :=
+      (Finset.sum_fin_eq_sum_range fun i => y (σ i) - y (Fin.rev i)).symm
     rw [e1, Finset.sum_sub_distrib, Equiv.sum_comp σ y]
     have hrev : (∑ i : Fin n, y (Fin.rev i)) = ∑ i : Fin n, y i := Equiv.sum_comp Fin.revPerm y
     rw [hrev, sub_self]
@@ -592,9 +579,7 @@ lemma rearr_lower {n : ℕ} (x y : Fin n → ℝ) (hx : Antitone x) (hy : Antito
         ∑ i : Fin (k + 1), (y (σ ⟨i.val, lt_of_lt_of_le i.isLt hk⟩) -
           y (Fin.rev ⟨i.val, lt_of_lt_of_le i.isLt hk⟩)) := by
       rw [Finset.sum_range]
-      apply Finset.sum_congr rfl
-      intro i _
-      simp only [dite_eq_left (lt_of_lt_of_le i.isLt hk)]
+      exact Finset.sum_congr rfl fun i _ => dite_eq_left (lt_of_lt_of_le i.isLt hk)
     rw [e1, Finset.sum_sub_distrib, sub_nonneg]
     let e : Fin (k + 1) ↪ Fin n := ⟨fun i => σ ⟨i.val, lt_of_lt_of_le i.isLt hk⟩, by
       intro a b hab

@@ -63,9 +63,7 @@ lemma not_ten_dvd_num {a b s : ℕ} (hs : 1 ≤ s) (hab : a % 10 ≠ b % 10) :
       rw [add_right_comm, h2]
     rw [e]
     simpa using h1.add_right b
-  have h4 : a * (10 ^ s - 1) + b + a ≡ a [MOD 10] := by
-    have hN : a * (10 ^ s - 1) + b ≡ 0 [MOD 10] := Nat.modEq_zero_iff_dvd.mpr h
-    simpa using hN.add_right a
+  have h4 : a * (10 ^ s - 1) + b + a ≡ a [MOD 10] := (Nat.right_modEq_add_iff.mpr h).symm
   exact hab (h4.symm.trans h3)
 
 snip end

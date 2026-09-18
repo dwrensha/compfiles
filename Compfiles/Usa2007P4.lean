@@ -256,9 +256,7 @@ lemma dw_iterate_parent_lt {c : ℤ × ℤ} (hc : c ∈ D) (hcr : c ≠ r) {i : 
       rw [Function.iterate_succ_apply']
       by_cases hcr2 : (parent D r hr hpre)^[i] c = r
       · rw [hcr2, parent_root, dw_root]
-        have hne : dw D r hr hpre c ≠ 0 :=
-          fun h => hcr (eq_of_dw_eq_zero D r hr hpre hc h)
-        lia
+        exact Nat.zero_lt_of_lt (ih hc hcr hi1)
       · have hmem : (parent D r hr hpre)^[i] c ∈ D := iterate_parent_mem D r hr hpre hc i
         exact lt_trans (dw_parent_lt D r hr hpre hmem hcr2) (ih hc hcr hi1)
 

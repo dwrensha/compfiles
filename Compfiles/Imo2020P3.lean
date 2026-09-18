@@ -197,10 +197,7 @@ lemma altCount_closed {a b : E → V} {vs : List V} {es : List E} (h : IsWalk a 
     cases h with
     | nil v => simp at hne
     | @cons v w e vs es hconn hw =>
-      have hd : (v :: w :: vs).dropLast = v :: (w :: vs).dropLast := by
-        cases hw with
-        | nil => rfl
-        | cons _ _ => rfl
+      have hd : (v :: w :: vs).dropLast = v :: (w :: vs).dropLast := List.dropLast_cons_cons
       simp only [hd, List.count_cons, List.drop_succ_cons, List.drop_zero, List.head?_cons,
         and_true, beq_iff_eq, Option.some.injEq]
 
@@ -225,10 +222,7 @@ lemma IsWalk.append {a b : E → V} {vs ws : List V} {es fs : List E}
       simpa using h₂
   | @cons v w e vs' es' hconn hw ih =>
     have h' : (w :: vs').getLast? = ws.head? := by
-      have hh : (v :: w :: vs').getLast? = (w :: vs').getLast? := by
-        cases vs' with
-        | nil => rfl
-        | cons a l => rfl
+      have hh : (v :: w :: vs').getLast? = (w :: vs').getLast? := List.getLast?_cons_cons
       rw [← hh]; exact h
     exact IsWalk.cons hconn (ih h')
 
@@ -353,9 +347,8 @@ def CTrail.rotate {a b : E → V} (T : CTrail a b) (k : ℕ) (hk : k < T.es.leng
       rw [getLast?_tail_of_ne hne2, getLast?_take_succ (by lia)]
 
 lemma list_sum_eq_toFinset_sum {α : Type*} [DecidableEq α] {l : List α} (hn : l.Nodup)
-    {f : α → ℕ} : (l.map f).sum = ∑ e ∈ l.toFinset, f e := by
-  rw [Finset.sum_eq_multiset_sum, List.toFinset_val, List.dedup_eq_self.mpr hn,
-    Multiset.map_coe, Multiset.sum_coe]
+    {f : α → ℕ} : (l.map f).sum = ∑ e ∈ l.toFinset, f e :=
+  (List.sum_toFinset f hn).symm
 
 omit [Fintype V] [DecidableEq V] [Fintype E] in
 /-- A maximal walk from `v` using only edges of `U`, with distinct edges. -/
@@ -377,7 +370,7 @@ lemma exists_max_walk (a b : E → V) (U : Finset E) (v : V) :
   obtain ⟨_, vs, es, hwalk, hhead, hnodup, hsub, hlen⟩ := hmS
   have hne : vs ≠ [] := hwalk.vs_ne_nil
   refine ⟨vs, es, vs.getLast hne, hwalk, hhead, ?_, hnodup, hsub, ?_⟩
-  · rw [List.getLast?_eq_getLast_of_ne_nil hne]
+  · exact List.getLast?_eq_some_getLast hne
   · intro e heU w hconn
     by_contra he
     have happ : IsWalk a b (vs ++ [w]) (es ++ [e]) := by
@@ -514,8 +507,7 @@ lemma decompose (a b : E → V) (U : Finset E) (hU : ∀ x, Even (∑ e ∈ U, m
         by_cases heT : e ∈ T.es.toFinset
         · exact ⟨T, by simp, List.mem_toFinset.mp heT⟩
         · have heU' : e ∈ U \ T.es.toFinset := Finset.mem_sdiff.mpr ⟨he, heT⟩
-          obtain ⟨T', hT', heT'⟩ := hF'cov e heU'
-          exact ⟨T', List.mem_cons_of_mem T hT', heT'⟩
+          exact List.exists_mem_cons_of_exists (hF'cov e heU')
       · rw [List.pairwise_cons]
         refine ⟨?_, hF'dj⟩
         intro T' hT'
@@ -710,11 +702,7 @@ lemma merge_disjoint (a b : E → V) :
       by_cases hEq : F[i] = F[j]
       · have hd := (List.pairwise_iff_getElem.mp disj) i j hi hj hij
         rw [hEq, Finset.disjoint_self_iff_empty] at hd
-        have hEj : F[j].es = [] := by
-          by_contra hne
-          obtain ⟨e, he⟩ := List.exists_mem_of_ne_nil _ hne
-          rw [← List.mem_toFinset, hd] at he
-          simp at he
+        have hEj : F[j].es = [] := (List.toFinset_eq_empty_iff _).mp hd
         exact hneF F[j] (List.getElem_mem hj) hEj
       · exact hshare ⟨F[i], List.getElem_mem hi, F[j], List.getElem_mem hj, hEq, v, hv1, hv2⟩
 
@@ -976,7 +964,7 @@ lemma univ_eq_map_union :
     · right
       refine ⟨⟨4 * n - 1 - j.val, by lia⟩, trivial, ?_⟩
       exact Fin.ext (by show 4 * n - 1 - (4 * n - 1 - j.val) = j.val; lia)
-  · rintro (⟨k, -, rfl⟩ | ⟨k, -, rfl⟩) <;> simp
+  · exact fun _ => trivial
 
 lemma disjoint_map_map :
     Disjoint (Finset.univ.map ⟨apeb, @apeb_inj n⟩) (Finset.univ.map ⟨bpeb, @bpeb_inj n⟩) := by
@@ -1031,7 +1019,7 @@ lemma weight_sum (r : Fin (2 * n) → Bool) :
     have hv2 : (bpeb k).val = 4 * n - 1 - k.val := rfl
     rw [hv1, hv2]
     lia
-  rw [Finset.sum_congr rfl (fun k _ => hpair k), Finset.sum_const, nsmul_eq_mul, Nat.cast_id]
+  exact Finset.sum_const_nat fun k _ => hpair k
 
 lemma red_card (_h : ∀ i, #{j | c j = i} = 4) (red : Fin (2 * n) → Bool)
     (hred : ∀ x : Fin n, (∑ e : Fin (2 * n), if red e then mult (pgA c) (pgB c) e x else 0) = 2) :

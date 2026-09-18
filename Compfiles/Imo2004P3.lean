@@ -873,10 +873,7 @@ lemma mod4_eq_two_of {a b : ℕ} (h4ab : 4 ∣ a * b) (h4a : ¬ 4 ∣ a) (h4b : 
   have hb : b % 2 = 0 := by
     by_contra hbo
     have hbo1 : b % 2 = 1 := by lia
-    have h2a : 2 ∣ a := by
-      rcases (Nat.Prime.dvd_mul (by decide : Nat.Prime 2)).mp h2ab with h2a | h2b
-      · exact h2a
-      · exact absurd h2b (by lia)
+    have h2a : 2 ∣ a := Nat.dvd_of_mod_eq_zero ha
     obtain ⟨a', rfl⟩ := h2a
     have h2ab' : 2 ∣ a' * b := by
       obtain ⟨k, hk⟩ := h4ab
@@ -987,9 +984,7 @@ lemma four_dvd_of_tileable {m n : ℕ} (h : Tileable (rect m n)) : 4 ∣ m ∨ 4
     have decomp : ∀ T ∈ Tiles, (1 : ℕ) = ((T.filter fun c => 4 ∣ c.2)).card % 2 +
         ((T.filter fun c => 4 ∣ c.1)).card % 2 := fun T hT' => (hpar T hT').symm
     rw [hcs, Finset.sum_congr rfl decomp, Finset.sum_add_distrib]
-    obtain ⟨q1, hq1⟩ := hcol2
-    obtain ⟨q2, hq2⟩ := hrow2
-    exact ⟨q1 + q2, by lia⟩
+    exact hcol2.add hrow2
   -- final contradiction modulo 8
   obtain ⟨s, hs⟩ := hcard
   have em : m = 4 * (m / 4) + 2 := by lia
@@ -1130,11 +1125,7 @@ lemma not_tileable_5 (n : ℕ) (hn : 0 < n) : ¬ Tileable (rect 5 n) := by
   have hv_mem : v ∈ τ'.image (fun c => cornerCell τ - c) := by
     rw [Finset.mem_image] at hxU
     obtain ⟨c', hc', hcv⟩ := hxU
-    refine Finset.mem_image.mpr ⟨c', hc', ?_⟩
-    have e1 := congrArg Prod.fst hcv
-    have e2 := congrArg Prod.snd hcv
-    simp only [Prod.fst_add, Prod.snd_add] at e1 e2
-    ext <;> simp <;> lia
+    exact Finset.mem_image.mpr ⟨c', hc', sub_eq_of_eq_add' hcv.symm⟩
   have hbounds : ∀ cell ∈ τ'.image (· + v), 0 ≤ cell.1 ∧ cell.1 < 5 ∧ 0 ≤ cell.2 ∧ cell.2 < 6 := by
     intro cell hcell
     rw [Finset.mem_image] at hcell

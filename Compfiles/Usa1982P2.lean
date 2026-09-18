@@ -251,10 +251,7 @@ problem usa1982_p2 (m n : ℕ) (hm : 0 < m) (hn : 0 < n)
   · rcases Nat.even_or_odd n with hne | hno
     · -- `m, n` both even: the equation at `(1, -1, 0)` forces `m = n = 4`,
       -- which fails at `(1, 1, -2)`.
-      have hmn_ev : Even (m + n) := by
-        obtain ⟨a, ha⟩ := hme
-        obtain ⟨b, hb⟩ := hne
-        exact ⟨a + b, by rw [ha, hb]; ring⟩
+      have hmn_ev : Even (m + n) := hme.add hne
       rw [hmn_ev.neg_one_pow, hme.neg_one_pow, hne.neg_one_pow] at eqA
       have hmnR2 : (m : ℝ) * n = 2 * ((m : ℝ) + n) := by
         field_simp at eqA

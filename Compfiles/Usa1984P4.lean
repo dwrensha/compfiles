@@ -109,10 +109,8 @@ lemma sum_pupils_pair {Pupil : Type} [Fintype Pupil] (attempt : Pupil → Finset
 so summing the constant `2` over them gives `54`. -/
 lemma sum_two_distinct (q1 : Fin 28) :
     ∑ q2 : Fin 28, (if q1 ≠ q2 then (2 : ℕ) else 0) = 54 := by
-  have hset : (Finset.univ.filter fun q2 : Fin 28 ↦ q1 ≠ q2) = Finset.univ.erase q1 := by
-    ext q2
-    simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_erase, and_true]
-    exact ne_comm
+  have hset : (Finset.univ.filter fun q2 : Fin 28 ↦ q1 ≠ q2) = Finset.univ.erase q1 :=
+    Finset.filter_ne Finset.univ q1
   rw [← Finset.sum_filter, hset, Finset.sum_const,
     Finset.card_erase_of_mem (Finset.mem_univ q1), Finset.card_univ, Fintype.card_fin,
     smul_eq_mul]
@@ -134,9 +132,8 @@ lemma card_pupils {Pupil : Type} [Fintype Pupil] (attempt : Pupil → Finset (Fi
   have step2 : ∑ p : Pupil, ∑ q1 : Fin 28, ∑ q2 : Fin 28,
         (if q1 ∈ attempt p ∧ q2 ∈ attempt p ∧ q1 ≠ q2 then (1 : ℕ) else 0)
       = ∑ q1 : Fin 28, ∑ q2 : Fin 28, ∑ p : Pupil,
-        (if q1 ∈ attempt p ∧ q2 ∈ attempt p ∧ q1 ≠ q2 then (1 : ℕ) else 0) := by
-    rw [Finset.sum_comm]
-    exact Finset.sum_congr rfl (fun q1 _ ↦ Finset.sum_comm)
+        (if q1 ∈ attempt p ∧ q2 ∈ attempt p ∧ q1 ≠ q2 then (1 : ℕ) else 0) :=
+    Finset.sum_comm_cycle.symm
   have step3 : ∑ q1 : Fin 28, ∑ q2 : Fin 28, ∑ p : Pupil,
         (if q1 ∈ attempt p ∧ q2 ∈ attempt p ∧ q1 ≠ q2 then (1 : ℕ) else 0)
       = 28 * 27 * 2 := by

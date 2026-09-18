@@ -278,10 +278,6 @@ lemma sqrt_est (n : ℝ) (hn : 1 ≤ n) : n - 1 / n ≤ Real.sqrt (n ^ 2 - 1) �
     Real.sqrt (n ^ 2 - 1) ≤ n := by
   have hn0 : (0:ℝ) < n := by linarith
   have hnn : (0:ℝ) ≤ n := le_of_lt hn0
-  have h1 : (0:ℝ) ≤ n - 1 / n := by
-    have h2 : (1:ℝ) / n ≤ 1 := by
-      rw [div_le_one hn0]; exact hn
-    linarith
   have e1 : n * (1 / n) = 1 := mul_one_div_cancel (ne_of_gt hn0)
   have e2 : (1:ℝ) ≤ n ^ 2 := by nlinarith [hn, hnn]
   have e3 : (1 / n) ^ 2 ≤ (1:ℝ) := by
@@ -289,8 +285,7 @@ lemma sqrt_est (n : ℝ) (hn : 1 ≤ n) : n - 1 / n ≤ Real.sqrt (n ^ 2 - 1) �
     nlinarith [e2]
   have h2 : (n - 1 / n) ^ 2 ≤ n ^ 2 - 1 := by nlinarith [e1, e3, sq_nonneg (1 / n)]
   constructor
-  · rw [Real.le_sqrt h1 (by nlinarith [sq_nonneg n])]
-    exact h2
+  · exact Real.le_sqrt_of_sq_le h2
   · calc Real.sqrt (n ^ 2 - 1) ≤ Real.sqrt (n ^ 2) :=
           Real.sqrt_le_sqrt (by nlinarith [sq_nonneg n])
       _ = n := Real.sqrt_sq hnn
@@ -599,8 +594,7 @@ lemma escStep_spec (σ : Strategy) (hσ : ValidStrategy σ) (s : PState) (u w : 
   by_cases hc : dist H (s.a + t • u - w) ≤ dist H (s.a + t • u + w)
   · rw [ite_eq_left hc]
     refine ⟨escPath_zero _ _ _ _ _, rfl, ?_, ?_, rfl, ?_⟩
-    · intro k _
-      exact escPath_step _ _ _ _ _ hnpos hvnX k
+    · exact fun k _ => escPath_step _ _ _ _ _ hnpos hvnX k
     · intro k _ hk
       exact escReps_dist _ _ _ _ _ hnpos hw1 k (by exact_mod_cast hk)
     · have hend := escPath_end s.a u w t (phaseLen s.j) hnpos
@@ -618,8 +612,7 @@ lemma escStep_spec (σ : Strategy) (hσ : ValidStrategy σ) (s : PState) (u w : 
   · rw [ite_eq_right hc]
     push Not at hc
     refine ⟨escPathY_zero _ _ _ _ _, rfl, ?_, ?_, rfl, ?_⟩
-    · intro k _
-      exact escPathY_step _ _ _ _ _ hnpos hvnY k
+    · exact fun k _ => escPathY_step _ _ _ _ _ hnpos hvnY k
     · intro k _ hk
       exact escReps_distY _ _ _ _ _ hnpos hw1 k (by exact_mod_cast hk)
     · have hend := escPathY_end s.a u w t (phaseLen s.j) hnpos

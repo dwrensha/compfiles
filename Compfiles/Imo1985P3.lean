@@ -164,8 +164,7 @@ lemma map_sum_one_add_X_pow (S : Finset ℕ) :
     (∑ i ∈ S, (1 + X : ℤ[X]) ^ i).map (Int.castRingHom (ZMod 2)) =
       ∑ i ∈ S, (1 + X : (ZMod 2)[X]) ^ i := by
   rw [Polynomial.map_sum]
-  exact Finset.sum_congr rfl fun i _ ↦ by
-    rw [Polynomial.map_pow, Polynomial.map_add, Polynomial.map_one, Polynomial.map_X]
+  exact Finset.sum_congr rfl fun i _ ↦ map_one_add_X_pow i
 
 /-- The main inequality over `ZMod 2`, proved by strong induction on the largest
 index `N`. -/

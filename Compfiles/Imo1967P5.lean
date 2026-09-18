@@ -142,9 +142,8 @@ lemma aux_recursive (I : Finset (Fin 8)) (a : Fin 8 → ℝ)
         intro n h_odd
         have h_eq_pow_n : ∀ j ∈ J, a j^n = (p j) * amax^n := by
           intro i hi
-          have hp_pow_odd_n : ∀ i n, Odd n → p i = p i^n := by
-            intro i n h_odd
-            exact (SignType.pow_odd (p i) h_odd).symm
+          have hp_pow_odd_n : ∀ i n, Odd n → p i = p i^n :=
+            fun i n h_odd => (SignType.pow_odd (p i) h_odd).symm
           calc
             a i^n = ((p i) * amax)^n := by simp [h_eq i hi]
             _ = p i^n * amax^n := mul_pow ↑(p i) amax n

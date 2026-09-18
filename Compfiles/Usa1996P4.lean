@@ -88,10 +88,7 @@ theorem sget_diff_build {n : ℕ} (x : Fin n → Bool) (c : Bool) :
   have hi' : i < n + 1 := by lia
   have hi1 : i + 1 < n + 1 := by lia
   rw [sget_build x c hi', sget_build x c hi1, buildAux_succ]
-  generalize buildAux x c i = u
-  generalize sget x i = v
-  revert u v
-  decide
+  exact Bool.bne_self_left _ _
 
 theorem sget_diff {n : ℕ} (y : Fin (n + 1) → Bool) :
     ∀ i : ℕ, i < n → xor (sget y i) (sget y (i + 1)) = sget (diff y) i := by
@@ -167,10 +164,7 @@ theorem build_diff {n : ℕ} (y : Fin (n + 1) → Bool) :
     have hkn : k < n + 1 := by lia
     have hkn' : k < n := by lia
     rw [buildAux_succ, ← sget_diff y k hkn', ih hkn, sget_lt y hkn, sget_lt y hk]
-    generalize y ⟨k, hkn⟩ = u
-    generalize y ⟨k + 1, hk⟩ = v
-    revert u v
-    decide
+    exact Bool.bne_self_left _ _
 
 /-- The 2-to-1 correspondence: a `B`-good sequence of length `n + 1` is
 determined by its first term (two choices) and its difference sequence, which

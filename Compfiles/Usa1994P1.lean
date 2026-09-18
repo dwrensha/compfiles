@@ -84,9 +84,8 @@ problem usa1994_p1 (a : ℕ → ℕ) (ha : ∀ i, 0 < a i)
     rw [Finset.sum_range_succ, ← heq]
     exact Nat.lt_add_of_pos_right (ha (k + 1))
   · -- Otherwise `(m₀ + 1)²` lies in the required range.
-    have hlt' : (∑ i ∈ Finset.range (k + 1), a i) < (m₀ + 1) ^ 2 := by
-      have hs := Nat.lt_succ_sqrt' (∑ i ∈ Finset.range (k + 1), a i)
-      rwa [← hm₀, Nat.succ_eq_add_one] at hs
+    have hlt' : (∑ i ∈ Finset.range (k + 1), a i) < (m₀ + 1) ^ 2 :=
+      Nat.lt_succ_sqrt' _
     refine ⟨m₀ + 1, le_of_lt hlt', ?_⟩
     rw [Finset.sum_range_succ]
     -- It suffices to show `2 * m₀ ≤ a k + 1`, which follows from `key`.

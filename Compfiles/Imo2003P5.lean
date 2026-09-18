@@ -165,9 +165,7 @@ problem imo2003_p5 (n : ℕ) (hn : 2 < n) (x : ℕ → ℝ) (hx : MonotoneOn x (
   let y : ℕ → ℝ := fun i => x i - m
   have yeq : ∀ i : ℕ, y i = x i - m := fun _ => rfl
   have hmy : MonotoneOn y (range n) := fun i hi j hj hij => sub_le_sub_right (hx hi hj hij) m
-  have hnm : (n : ℝ) * m = S := by
-    rw [hm, mul_comm]
-    exact div_mul_cancel₀ S hn0
+  have hnm : (n : ℝ) * m = S := mul_div_cancel₀ S hn0
   have hsumy : ∑ i ∈ range n, y i = 0 := by
     simp_rw [yeq, sum_sub_distrib, sum_const, card_range, nsmul_eq_mul, ← hS, hnm, sub_self]
   have habsy : ∑ i ∈ range n, ∑ j ∈ range n, |y i - y j|
@@ -218,9 +216,7 @@ problem imo2003_p5_equality (n : ℕ) (hn : 2 < n) (x : ℕ → ℝ) (hx : Monot
     let y : ℕ → ℝ := fun i => x i - m
     have yeq : ∀ i : ℕ, y i = x i - m := fun _ => rfl
     have hmy : MonotoneOn y (range n) := fun i hi j hj hij => sub_le_sub_right (hx hi hj hij) m
-    have hnm : (n : ℝ) * m = S := by
-      rw [hm, mul_comm]
-      exact div_mul_cancel₀ S hn0
+    have hnm : (n : ℝ) * m = S := mul_div_cancel₀ S hn0
     have hsumy : ∑ i ∈ range n, y i = 0 := by
       simp_rw [yeq, sum_sub_distrib, sum_const, card_range, nsmul_eq_mul, ← hS, hnm, sub_self]
     set C : ℝ := ∑ i ∈ range n, (2 * (i : ℝ) + 1 - (n : ℝ)) * y i with hC
@@ -256,12 +252,8 @@ problem imo2003_p5_equality (n : ℕ) (hn : 2 < n) (x : ℕ → ℝ) (hx : Monot
       exact div_pos (mul_pos h2 h1) three_pos
     have hDne : D ≠ 0 := ne_of_gt hDpos
     set t : ℝ := C / D with ht
-    have hQ'e : Q' = C ^ 2 / D := by
-      rw [key]
-      exact (mul_div_cancel_left₀ Q' hDne).symm
-    have htD : t * D = C := by
-      rw [ht]
-      exact div_mul_cancel₀ C hDne
+    have hQ'e : Q' = C ^ 2 / D := by rw [key, mul_div_cancel_left₀ Q' hDne]
+    have htD : t * D = C := div_mul_cancel₀ C hDne
     have ht2D : t ^ 2 * D = t * C := by rw [pow_two, mul_assoc, htD]
     have htC : t * C = Q' := by rw [ht, div_mul_eq_mul_div, ← pow_two, ← hQ'e]
     have hzero : ∑ i ∈ range n, (t * (2 * (i : ℝ) + 1 - (n : ℝ)) - y i) ^ 2 = 0 := by

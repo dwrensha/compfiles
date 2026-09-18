@@ -274,9 +274,7 @@ lemma stateA_swap_iff {n : ℕ} (hn : 2 ≤ n) {a b c : Fin n} {e : Fin n ≃ ZM
     have hrc : (e c - (p + 1) : ZMod n) = (e c - p) - 1 := by rw [sub_sub]
     rw [hrb, hrc, val_sub_one' (by lia : 1 ≤ n) _ hb0, val_sub_one' (by lia : 1 ≤ n) _ hc0,
       hea]
-    have hub : 1 ≤ (e b - p).val := val_sub_pos_of_ne hbn
-    have huc : 1 ≤ (e c - p).val := val_sub_pos_of_ne hcn
-    lia
+    exact Nat.sub_lt_sub_iff_right (val_sub_pos_of_ne hbn)
   · by_cases hyb : e.symm p = b
     · -- `b` is in front and moves one step backwards; the distance to `b` grows by one
       have heb : e b = p := by rw [← hyb]; exact hye
@@ -336,14 +334,6 @@ lemma stateA_swap_iff {n : ℕ} (hn : 2 ≤ n) {a b c : Fin n} {e : Fin n ≃ ZM
       · by_cases hxa : e.symm (p + 1) = a
         · -- `a` is behind and moves one step forwards; both distances grow by one
           have hea : e a = p + 1 := by rw [← hxa]; exact hxe
-          have hyb : e.symm p ≠ b := by
-            intro hbad
-            rw [hbad, hxa] at hleg
-            lia
-          have hyc : e.symm p ≠ c := by
-            intro hbad
-            rw [hbad, hxa, hc] at hleg
-            lia
           have hbn : e b ≠ p := fun hbad => hyb (e.injective (hbad.trans hye.symm)).symm
           have hbnq : e b ≠ p + 1 := fun hbad => hab' (e.injective (hbad.trans hea.symm)).symm
           have hcn : e c ≠ p := fun hbad => hyc (e.injective (hbad.trans hye.symm)).symm
@@ -396,17 +386,9 @@ lemma stateA_swap_iff {n : ℕ} (hn : 2 ≤ n) {a b c : Fin n} {e : Fin n ≃ ZM
           · by_cases hxc : e.symm (p + 1) = c
             · -- `c` is behind and moves one step forwards; the distance to `c` drops by one
               have hec : e c = p + 1 := by rw [← hxc]; exact hxe
-              have hya' : e.symm p ≠ a := by
-                intro hbad
-                rw [hbad, hxc, hc] at hleg
-                lia
-              have hyb' : e.symm p ≠ b := by
-                intro hbad
-                rw [hbad, hxc] at hleg
-                lia
-              have han : e a ≠ p := fun hbad => hya' (e.injective (hbad.trans hye.symm)).symm
+              have han : e a ≠ p := fun hbad => hya (e.injective (hbad.trans hye.symm)).symm
               have haq : e a ≠ p + 1 := fun hbad => hac (e.injective (hbad.trans hec.symm))
-              have hbn : e b ≠ p := fun hbad => hyb' (e.injective (hbad.trans hye.symm)).symm
+              have hbn : e b ≠ p := fun hbad => hyb (e.injective (hbad.trans hye.symm)).symm
               have hbq : e b ≠ p + 1 := fun hbad => hcb' (e.injective (hbad.trans hec.symm)).symm
               have h1 : e₁ c = p := by
                 rw [he₁, Equiv.trans_apply, hec]; exact Equiv.swap_apply_right _ _

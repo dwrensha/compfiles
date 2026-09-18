@@ -151,8 +151,7 @@ lemma phiPoly_eq_zero (P : Polynomial ℝ)
           x + y + (x + y) / (2 * x * y - 1) := by
         rw [mul_div_assoc', div_eq_iff hw, add_mul, div_mul_cancel₀ _ hw]
         ring
-      rw [hQ x y ((x + y) / (2 * x * y - 1)) hx hy0 hz0 hcon]
-      ring
+      exact mul_eq_zero_of_right _ (hQ x y ((x + y) / (2 * x * y - 1)) hx hy0 hz0 hcon)
     exact Set.Infinite.mono hsub
       (Set.Finite.infinite_compl (Finset.finite_toSet _))
   apply ext
@@ -189,15 +188,12 @@ lemma comp_neg_X_of_phiPoly_eq_zero (P : Polynomial ℝ) (hPhi : PhiPoly P = 0) 
       have hw : (2 : ℝ) * t * 0 - 1 = -1 := by ring
       have hz : (t + 0) / (-1 : ℝ) = -t := by ring
       rw [hw, hz] at h1
-      exact (mul_eq_zero.mp h1).resolve_left
-        (pow_ne_zero _ (by norm_num : (-1 : ℝ) ≠ 0))
+      exact neg_one_pow_mul_eq_zero_iff.mp h1
     rw [Qfun] at h2
     simp only [eval_mul, eval_X, eval_sub, eval_comp, eval_neg]
     simp only [zero_mul, mul_zero, sub_zero, add_zero] at h2
     linarith [h2]
-  have hG0 : X * (P.comp (-X) - P) = 0 := by
-    apply eq_zero_of_infinite_isRoot
-    exact Set.Infinite.mono (fun t _ => IsRoot.def.mpr (hG t)) Set.infinite_univ
+  have hG0 : X * (P.comp (-X) - P) = 0 := zero_of_eval_zero _ hG
   rcases mul_eq_zero.mp hG0 with hX | hP
   · exact absurd hX X_ne_zero
   · exact eq_of_sub_eq_zero hP
@@ -413,9 +409,8 @@ lemma natDegree_le_two (P : Polynomial ℝ) (hP0 : P ≠ 0) (hPhi : PhiPoly P = 
   -- coefficient comparison
   by_contra hlt
   have hlt : 2 < P.natDegree := lt_of_not_ge hlt
-  set n := P.natDegree with hn
-  have hnPc : Pc.natDegree = n := by
-    rw [hPc, hn, natDegree_map_eq_of_injective Complex.ofReal_injective]
+  set n := P.natDegree
+  have hnPc : Pc.natDegree = n := natDegree_map Complex.ofRealHom
   have hcoeff0 : (Pc.comp (X + C h) + Pc.comp (X - C h) - 2 * Pc).coeff (n - 2) = 0 := by
     rw [hE]
     simp [Polynomial.coeff_C, Nat.sub_ne_zero_iff_lt.mpr hlt]
@@ -435,9 +430,7 @@ lemma natDegree_le_two (P : Polynomial ℝ) (hP0 : P ≠ 0) (hPhi : PhiPoly P = 
     rw [← Finset.sum_add_distrib, ← Finset.sum_sub_distrib, Polynomial.finsetSum_coeff]
     have hnmem : n ∈ Pc.support := by
       rw [Polynomial.mem_support_iff]
-      have h1 : Pc ≠ 0 := by
-        rw [hPc]
-        exact (Polynomial.map_ne_zero_iff Complex.ofReal_injective).mpr hP0
+      have h1 : Pc ≠ 0 := Polynomial.map_ne_zero hP0
       rw [← hnPc]
       exact Polynomial.leadingCoeff_ne_zero.mpr h1
     rw [Finset.sum_eq_single_of_mem n hnmem]

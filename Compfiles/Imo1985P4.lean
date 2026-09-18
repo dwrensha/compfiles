@@ -261,15 +261,11 @@ theorem generalized (M : Finset ℕ) (k : ℕ)
     (Mdivisors : ∀ m ∈ M, ∀ n, n.Prime ∧ n ∣ m → n ≤ Nat.nth Nat.Prime k) :
     ∃ M' : Finset ℕ, M' ⊆ M ∧ M'.card = 4 ∧ ∃ k, M'.prod id = k^4 := by
   let f₁ := fun (n : ℕ) ↦ pow_of_first_k_prime_mod_two (k+1) n
-  have hf₁ : ∀ n ∈ M, f₁ n ∈ two_pow_k_finset (k + 1) := by
-    intro m hm
-    simp [f₁]
-    apply pow_of_first_k_prime_mod_two_mem_two_pow_k_finset
+  have hf₁ : ∀ n ∈ M, f₁ n ∈ two_pow_k_finset (k + 1) :=
+    fun n _ ↦ pow_of_first_k_prime_mod_two_mem_two_pow_k_finset (k + 1) n
   let f₂ := fun (n : Finset ℕ) ↦ pow_of_first_k_prime_mod_two (k+1) (Nat.sqrt (∏ x ∈ n, x))
-  have hf₂ : ∀ n ⊆ M, f₂ n ∈ two_pow_k_finset (k + 1) := by
-    intro m hm
-    simp [f₂]
-    apply pow_of_first_k_prime_mod_two_mem_two_pow_k_finset
+  have hf₂ : ∀ n ⊆ M, f₂ n ∈ two_pow_k_finset (k + 1) :=
+    fun n _ ↦ pow_of_first_k_prime_mod_two_mem_two_pow_k_finset (k + 1) _
   have hs : 2 * (two_pow_k_finset (k + 1)).card + (two_pow_k_finset (k + 1)).card + 1 ≤ M.card := by
     rw [two_pow_k_finset, Finset.card_pi, Finset.card_range, Finset.prod_const, Finset.card_range]
     lia

@@ -69,9 +69,7 @@ lemma negFourQuotient_natAbs_lt (n : ℤ) (hn₀ : n ≠ 0) (hn₁ : n ≠ -1) :
   by_cases hn : 0 ≤ n
   · have hnpos : 0 < n := by lia
     have hqnonpos : n / (-4) ≤ 0 := by lia
-    have hqabs : ((n / (-4)).natAbs : ℤ) = -(n / (-4)) := by
-      rw [← Int.natAbs_neg]
-      exact Int.natAbs_of_nonneg (by lia)
+    have hqabs : ((n / (-4)).natAbs : ℤ) = -(n / (-4)) := Int.ofNat_natAbs_of_nonpos hqnonpos
     have hnabs : (n.natAbs : ℤ) = n := Int.natAbs_of_nonneg hn
     have hcast : ((n / (-4)).natAbs : ℤ) < (n.natAbs : ℤ) := by lia
     exact Int.ofNat_lt.mp hcast

@@ -126,14 +126,12 @@ lemma nice_flatten_replicate {L : List ℕ} (hL : Nice L) (hlen : L.length % 2 =
 alternating multiple of `n * u`, where `n` divides the block and `u` is
 coprime to `10`. -/
 lemma exists_alternating_multiple {n u : ℕ} (hu : Nat.Coprime u 10)
-    (hnu : Nat.Coprime n u) {L : List ℕ} (hne : L ≠ [])
+    {L : List ℕ} (hne : L ≠ [])
     (hlen : L.length % 2 = 0) (hnice : Nice L)
     (hdvd : n ∣ Nat.ofDigits 10 L) :
     ∃ M, Alternating M ∧ n * u ∣ M := by
   have hlpos : 0 < L.length := List.length_pos_of_ne_nil hne
-  have hx10 : 10 ≤ 10 ^ L.length := by
-    calc (10:ℕ) = 10 ^ 1 := (pow_one 10).symm
-    _ ≤ 10 ^ L.length := Nat.pow_le_pow_right (by norm_num) hlpos
+  have hx10 : 10 ≤ 10 ^ L.length := Nat.le_pow hlpos
   obtain ⟨t, ht0, huS⟩ := dvd_geom_sum (hu.symm.pow_left L.length) (by lia)
   obtain ⟨hniceJ, hlenJ, hofJ⟩ := nice_flatten_replicate hnice hlen t
   have hJlen : 0 < ((List.replicate t L).flatten).length := by
@@ -158,7 +156,7 @@ lemma exists_alternating_multiple {n u : ℕ} (hu : Nat.Coprime u 10)
   · rw [hdigits]
     exact hniceJ.isChain
   · rw [hofJ]
-    exact hnu.mul_dvd_of_dvd_of_dvd (Dvd.dvd.mul_right hdvd _) (Dvd.dvd.mul_left huS _)
+    exact Nat.mul_dvd_mul hdvd huS
 
 /-- Any `n` dividing `2 ^ i * 5 ^ j * u`, where `u` avoids `2` and `5` and
 some `Nice` block of even length is divisible by `2 ^ i * 5 ^ j`, has an
@@ -172,9 +170,7 @@ lemma exists_alt_multiple_of_dvd {u n i j : ℕ} (hu2 : ¬ 2 ∣ u) (hu5 : ¬ 5 
   have hu10 : Nat.Coprime u 10 := by
     rw [show (10:ℕ) = 2 * 5 by norm_num]
     exact (Nat.Coprime.mul_left c2 c5).symm
-  have hcop : Nat.Coprime (2 ^ i * 5 ^ j) u :=
-    Nat.Coprime.mul_left (c2.pow_left _) (c5.pow_left _)
-  obtain ⟨M, hM, hMdvd⟩ := exists_alternating_multiple hu10 hcop hne hlen hnice hdvd
+  obtain ⟨M, hM, hMdvd⟩ := exists_alternating_multiple hu10 hne hlen hnice hdvd
   exact ⟨M, hM, hn.trans hMdvd⟩
 
 /-- For every `k` there is a `Nice` digit block of length `2 * k + 2`

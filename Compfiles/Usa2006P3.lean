@@ -77,10 +77,7 @@ lemma bddCond_iff (f : ℤ[X]) : BddCond f ↔ ∃ B, Pbound f B := by
     have hne := (hB n).1
     have hqmem : q ∈ (f.eval ((n : ℤ) ^ 2)).natAbs.primeFactors := by
       rw [Nat.mem_primeFactors]
-      refine ⟨hq, ?_, Int.natAbs_ne_zero.mpr hne⟩
-      have h1 : (q : ℤ).natAbs ∣ (f.eval ((n : ℤ) ^ 2)).natAbs :=
-        Int.natAbs_dvd_natAbs.mpr hdvd
-      rwa [Int.natAbs_natCast] at h1
+      exact ⟨hq, Int.ofNat_dvd_left.mp hdvd, Int.natAbs_ne_zero.mpr hne⟩
     have hnonempty : (f.eval ((n : ℤ) ^ 2)).natAbs.primeFactors.Nonempty := ⟨q, hqmem⟩
     have hqle : q ≤ gpd (f.eval ((n : ℤ) ^ 2)) := by
       rw [gpd_eq_max' hnonempty]
@@ -137,8 +134,7 @@ lemma prime_dvd_list_prod {q : ℕ} (hq : q.Prime) (L : List ℕ)
     rw [List.prod_cons] at h
     rcases (Nat.Prime.dvd_mul hq).mp h with h | h
     · exact ⟨b, List.mem_cons_self, h⟩
-    · obtain ⟨a, ha, hd⟩ := ih h
-      exact ⟨a, List.mem_cons_of_mem b ha, hd⟩
+    · exact List.exists_mem_cons_of_exists (ih h)
 
 lemma eval_factor (a x : ℤ) :
     (C 4 * X - C (a ^ 2)).eval x = 4 * x - a ^ 2 := by
@@ -342,7 +338,7 @@ lemma schur (h : ℤ[X]) (hd : h.natDegree ≠ 0) (s : Finset ℕ) (hs : ∀ q �
         linarith
       rw [h2, hx]
       ring
-    set w := 1 + P * (t₁ * g.eval x) with hw
+    set w := 1 + P * (t₁ * g.eval x)
     have hw0 : w ≠ 0 := fun h1 ↦ hne3 (by rw [hev, h1, mul_zero])
     have hw1 : w ≠ 1 := fun h1 ↦ hne1 (by rw [hev, h1, mul_one])
     have hw_1 : w ≠ -1 := fun h1 ↦ hne2 (by rw [hev, h1, mul_neg, mul_one])
@@ -360,13 +356,9 @@ lemma schur (h : ℤ[X]) (hd : h.natDegree ≠ 0) (s : Finset ℕ) (hs : ∀ q �
       exact Int.natAbs_dvd.mpr hpd
     have hqs : q ∉ s := by
       intro hmem
-      have hqP : (q : ℤ) ∣ P := by
-        rw [hP]
-        exact Finset.dvd_prod_of_mem (fun q₀ : ℕ ↦ (q₀ : ℤ)) hmem
+      have hqP : (q : ℤ) ∣ P := Finset.dvd_prod_of_mem _ hmem
       have h1 : (q : ℤ) ∣ P * (t₁ * g.eval x) := dvd_mul_of_dvd_left hqP _
-      have h2 : (q : ℤ) ∣ 1 := by
-        have h3 := dvd_sub hqdw h1
-        rwa [show w - P * (t₁ * g.eval x) = 1 by rw [hw]; abel] at h3
+      have h2 : (q : ℤ) ∣ 1 := (Int.dvd_add_left h1).mp hqdw
       have h4 : q ∣ 1 := by exact_mod_cast h2
       exact hqp.ne_one (Nat.dvd_one.mp h4)
     refine ⟨q, hqp, hqs, x.natAbs, ?_⟩
@@ -467,10 +459,7 @@ lemma exists_root_of_pbound (f : ℤ[X]) (hd : f.natDegree ≠ 0) (B : ℕ) (hB 
       exact hcon k h1
   -- A nonzero integer that would be divisible by every large Schur prime.
   set M : ℤ := ∏ k ∈ Finset.range (B + 1), Fs f ((2 * k + 1 : ℕ) : ℤ) with hM
-  have hM0 : M ≠ 0 := by
-    rw [hM, Finset.prod_ne_zero_iff]
-    intro k _
-    exact hFs k
+  have hM0 : M ≠ 0 := Finset.prod_ne_zero_iff.mpr fun k _ ↦ hFs k
   -- Schur's theorem applied to `f ∘ X²`.
   have hcomp : (f.comp (X ^ 2)).natDegree ≠ 0 := by
     rw [natDegree_comp, natDegree_X_pow]
@@ -503,10 +492,7 @@ lemma exists_root_of_pbound (f : ℤ[X]) (hd : f.natDegree ≠ 0) (B : ℕ) (hB 
     rw [e, add_sub_cancel_right]
     exact dvd_mul_right _ _
   have hqn₀ : (q : ℤ) ∣ f.eval (((m % q : ℕ) : ℤ) ^ 2) := by
-    have h1 := eval_modEq f (Int.ModEq.pow 2 hmod₀)
-    rw [Int.modEq_iff_dvd] at h1
-    have h2 := dvd_sub hqev h1
-    rwa [sub_sub_self] at h2
+    exact (eval_modEq f (Int.ModEq.pow 2 hmod₀)).symm.dvd_iff.mp hqev
   obtain ⟨n, hnq, hqn⟩ : ∃ n : ℕ, 2 * n + 1 ≤ q ∧ (q : ℤ) ∣ f.eval ((n : ℤ) ^ 2) := by
     by_cases hcase : 2 * (m % q) < q
     · exact ⟨m % q, hcase, hqn₀⟩
@@ -530,10 +516,7 @@ lemma exists_root_of_pbound (f : ℤ[X]) (hd : f.natDegree ≠ 0) (B : ℕ) (hB 
         have hsq : (((q - m % q : ℕ) : ℤ) ^ 2) ≡ (((m % q : ℕ) : ℤ) ^ 2) [ZMOD (q : ℤ)] := by
           have h1 := Int.ModEq.pow 2 hmod
           rwa [neg_sq] at h1
-        have h2 := eval_modEq f hsq
-        rw [Int.modEq_iff_dvd] at h2
-        have h3 := dvd_sub hqn₀ h2
-        rwa [sub_sub_self] at h3
+        exact (eval_modEq f hsq).symm.dvd_iff.mp hqn₀
   -- Apply the bound: `q ≤ 2n + B`, so `q = 2n + 2k + 1` for some `k ≤ B`.
   have hqB := (hB n).2 q hq hqn
   obtain ⟨j, hj1, hjB, hjodd⟩ : ∃ j : ℕ, q = 2 * n + j ∧ j ≤ B ∧ Odd j := by
@@ -569,16 +552,8 @@ lemma exists_root_of_pbound (f : ℤ[X]) (hd : f.natDegree ≠ 0) (B : ℕ) (hB 
       (Finset.dvd_prod_of_mem _ (Finset.mem_range.mpr (by lia)))
   have hqmem : q ∈ M.natAbs.primeFactors := by
     rw [Nat.mem_primeFactors]
-    refine ⟨hq, ?_, Int.natAbs_ne_zero.mpr hM0⟩
-    have h1 : (q : ℤ).natAbs ∣ M.natAbs := Int.natAbs_dvd_natAbs.mpr hqM
-    rwa [Int.natAbs_natCast] at h1
+    exact ⟨hq, Int.ofNat_dvd_left.mp hqM, Int.natAbs_ne_zero.mpr hM0⟩
   exact hqs (Finset.mem_insert_of_mem hqmem)
-
-lemma odd_nat_coprime_two {m : ℕ} (h : Odd m) : Nat.Coprime 2 m := by
-  rw [Nat.prime_two.coprime_iff_not_dvd]
-  rintro ⟨l, hl⟩
-  obtain ⟨k, hk⟩ := h
-  lia
 
 lemma coeff_factor_one (a : ℤ) : (C 4 * X - C (a ^ 2) : ℤ[X]).coeff 1 = 4 := by
   rw [coeff_sub, coeff_C_mul, coeff_X_one, coeff_C_succ, mul_one, sub_zero]
@@ -604,18 +579,11 @@ lemma isPrimitive_factor {a : ℤ} (ha : Odd a) : (C 4 * X - C (a ^ 2)).IsPrimit
     have h := Int.natAbs_dvd_natAbs.mpr h0
     rwa [Int.natAbs_neg, Int.natAbs_pow] at h
   have hcop : Nat.Coprime 4 (a.natAbs ^ 2) :=
-    ((odd_nat_coprime_two (Odd.natAbs ha)).pow_left 2).pow_right 2
+    ((Nat.coprime_two_left.mpr (Odd.natAbs ha)).pow_left 2).pow_right 2
   have h1' : r.natAbs ∣ 1 := by
     rw [← hcop.gcd_eq_one]
     exact Nat.dvd_gcd hn4 hnA
-  have h2' : r.natAbs = 1 := Nat.dvd_one.mp h1'
-  rw [Int.isUnit_iff]
-  rw [Int.natAbs_eq_iff] at h2'
-  rcases h2' with h | h
-  · left
-    exact_mod_cast h
-  · right
-    exact_mod_cast h
+  exact Int.isUnit_iff_natAbs_eq.mpr (Nat.dvd_one.mp h1')
 
 /-- If `f` has the root `(2k+1)²/4` over `ℚ`, then `4X − (2k+1)²`
 divides `f` over `ℤ` (Gauss's lemma). -/

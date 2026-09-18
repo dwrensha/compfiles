@@ -272,9 +272,7 @@ lemma construction (n e : ℕ) (he : 1 ≤ e) (h : n * (n + 1) / 2 < 10 ^ e) :
           rw [Nat.mul_sub, mul_one]
         have e2 : 10 ^ e * ((∑ i ∈ I, i) - 1) = (∑ i ∈ I, i) * 10 ^ e - 10 ^ e := by
           rw [Nat.mul_sub, Nat.mul_one, Nat.mul_comm]
-        have hiP : 10 ^ e ≤ (∑ i ∈ I, i) * 10 ^ e := by
-          calc 10 ^ e = 1 * 10 ^ e := by ring
-            _ ≤ (∑ i ∈ I, i) * 10 ^ e := Nat.mul_le_mul ht1 le_rfl
+        have hiP : 10 ^ e ≤ (∑ i ∈ I, i) * 10 ^ e := le_mul_of_one_le_left' ht1
         rw [e1, e2]
         lia
       rw [hsplit, s_concat e ((∑ i ∈ I, i) - 1) (10 ^ e - (∑ i ∈ I, i)) (by lia)]
@@ -324,8 +322,7 @@ lemma stable_lower (k e : ℕ) (he : 1 ≤ e) (S : Finset ℕ) (hS : IsStable k 
       have h1 : (l.take j).take i ++ (l.take j).drop i = l.take j := List.take_append_drop _ _
       have h2 : (l.take j).take i = l.take i := by
         rw [List.take_take, min_eq_left (le_of_lt hltij)]
-      have h3 : (l.take j).drop i = u := by
-        rw [hu, List.take_drop, Nat.add_sub_cancel' (le_of_lt hltij)]
+      have h3 : (l.take j).drop i = u := List.drop_take
       rw [← h1, h2, h3]
     have hsum_split : p j = p i + u.sum := by
       show (l.take j).sum = (l.take i).sum + u.sum
@@ -349,9 +346,7 @@ lemma stable_lower (k e : ℕ) (he : 1 ≤ e) (S : Finset ℕ) (hS : IsStable k 
       intro x hx
       rw [List.mem_toFinset] at hx
       exact huS x hx
-    have hXne : u.toFinset.Nonempty := by
-      obtain ⟨x, hx⟩ := List.exists_mem_of_ne_nil u hune
-      exact ⟨x, List.mem_toFinset.mpr hx⟩
+    have hXne : u.toFinset.Nonempty := (List.toFinset_nonempty_iff u).mpr hune
     have hsum_toFinset : ∑ x ∈ u.toFinset, x = u.sum := by
       have h2 := List.sum_toFinset (fun x => x) hunodup
       simpa using h2

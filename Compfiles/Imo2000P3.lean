@@ -431,9 +431,8 @@ lemma allRightOf_of_ge (hn : 2 ≤ n) {lam : ℝ} (hlam : 1 / ((n : ℝ) - 1) �
     div_pos (mul_pos hlampos hp) hn1
   obtain ⟨t, ht⟩ := exists_nat_gt ((M - rightmost x) / (lam * potential x / ((n : ℝ) - 1)))
   obtain ⟨y, hyreach, hyp, hyr⟩ := phase1 hn hlam x hp t
-  have htδ : M - rightmost x < (t : ℝ) * (lam * potential x / ((n : ℝ) - 1)) := by
-    rw [div_lt_iff₀ hδpos] at ht
-    exact ht
+  have htδ : M - rightmost x < (t : ℝ) * (lam * potential x / ((n : ℝ) - 1)) :=
+    (div_lt_iff₀ hδpos).mp ht
   have hrM : M < rightmost y := by linarith
   obtain ⟨z, hzreach, hzM⟩ :=
     phase2 hn hlampos M (univ.filter (fun k => y k ≤ M)).card y le_rfl hrM

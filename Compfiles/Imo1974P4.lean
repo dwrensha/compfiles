@@ -161,7 +161,7 @@ lemma sum_whiteCount (T : Finset Rect) (hT : ValidDecomp T) :
     have hD : Disjoint R₁.cells R₂.cells :=
       Finset.disjoint_iff_inter_eq_empty.mpr
         (hdisj R₁ (Finset.mem_coe.mp h₁) R₂ (Finset.mem_coe.mp h₂) hne)
-    exact Disjoint.mono (Finset.filter_subset _ _) (Finset.filter_subset _ _) hD
+    exact Finset.disjoint_filter_filter hD
   have hunion : T.biUnion (fun R ↦ R.cells.filter isWhite) =
       board.filter isWhite := by
     rw [← hcover]

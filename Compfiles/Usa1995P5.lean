@@ -150,9 +150,7 @@ problem usa1995_p5 {n : ℕ} [NeZero n] (G : SimpleGraph (Fin n))
       rw [hHand, ← hB] at h2
       nlinarith [h2]
     exact h4
-  have hne : (Finset.univ : Finset (Fin n)).Nonempty := by
-    have : Nonempty (Fin n) := ⟨⟨0, NeZero.pos n⟩⟩
-    exact Finset.univ_nonempty
+  have hne : (Finset.univ : Finset (Fin n)).Nonempty := Finset.univ_nonempty
   obtain ⟨P, -, hP⟩ := Finset.exists_le_of_sum_le hne hAvg
   -- For this `P`, the number of "far" edges is `k - ∑ Q ∈ N(P), deg Q`.
   refine ⟨P, ?_⟩

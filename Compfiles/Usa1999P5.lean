@@ -605,12 +605,7 @@ lemma exists_safe_move {b : Board} (hBOK : BOK b) (hTF : ThreatFree b)
     rcases even_card_losing hBOK hTF with ⟨r, hr⟩
     rcases hodd with ⟨k, hk⟩
     lia
-  obtain ⟨x, hxe, hxnl⟩ : ∃ x ∈ empties b, x ∉ losing b := by
-    by_contra hcon
-    push Not at hcon
-    have hsub2 : empties b ⊆ losing b := hcon
-    have := Finset.card_le_card hsub2
-    lia
+  obtain ⟨x, hxe, hxnl⟩ := Finset.exists_mem_notMem_of_card_lt_card hlt
   rw [mem_empties] at hxe
   obtain ⟨hx, hxe'⟩ := hxe
   have hnl : ¬ IsLosing b x := fun hL => hxnl (mem_losing.mpr ⟨hx, hL⟩)
@@ -996,10 +991,7 @@ problem usa1999_p5 :
   have hBOK2 : BOK b₂ := bOK_update hBOK1 hp2000 Piece.S
   have hlet2 : (letters b₂).card = 2 := by
     rw [hb₂def, letters_update_card hp2000 hbp1 Piece.S, hcardl1]
-  have hSOS2 : ¬ HasSOS b₂ := by
-    intro hS
-    have h3 := three_le_card_letters_of_hasSOS hS
-    lia
+  have hSOS2 : ¬ HasSOS b₂ := not_hasSOS_update_of_threatFree hTF1 hp2000 hbp1 Piece.S
   have hcard2 : (empties b₂).card = 1998 := by
     rw [hb₂def, empties_update_card hp2000 hbp1 Piece.S, hcard1]
   have hne2 : empties b₂ ≠ ∅ := empties_ne_empty (by lia)

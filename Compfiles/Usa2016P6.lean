@@ -769,10 +769,8 @@ lemma exists_perm_injOn {n : ℕ} (a : Fin (2 * n) → Fin n)
       _ = d i := hdapp i
   -- Step 7: extend `g` to a permutation of `Fin (2 * n)` fixing everything outside `Q`.
   set τ : Equiv.Perm (Fin (2 * n)) := Equiv.Perm.extendDomain g (Equiv.refl ↥Q) with hτEq
-  have hτfix : ∀ i, i ∉ Q → τ i = i := by
-    intro i hi
-    rw [hτEq]
-    exact Equiv.Perm.extendDomain_apply_not_subtype g (Equiv.refl ↥Q) hi
+  have hτfix : ∀ i, i ∉ Q → τ i = i :=
+    fun i hi => Equiv.Perm.extendDomain_apply_not_subtype g (Equiv.refl ↥Q) hi
   have hτQ : ∀ i : Fin (2 * n), i ∈ Q → a (τ i) = d i := by
     intro i hi
     have h1 : τ i = (g ⟨i, hi⟩ : Fin (2 * n)) := by

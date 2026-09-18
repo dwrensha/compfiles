@@ -303,15 +303,12 @@ theorem NordicSquare.gapPath_lastTwo {n : ℕ} (ns : NordicSquare (n + 1)) (a b 
       rw [List.getElem?_eq_getElem (by rw [List.length_append, List.length_singleton]; omega)]
       rw [Option.getD_some]
       rw [List.getElem_append_left (by omega : (pathTo ns a).length + 1 - 2 < (pathTo ns a).length)]
-      have hgl : (pathTo ns a).getLast (pathTo_ne_nil ns a) = a := by
-        have h := (pathTo_props ns a).2.2.2
-        rw [List.getLast?_eq_some_getLast (pathTo_ne_nil ns a)] at h
-        exact Option.some.inj h
+      have hgl : (pathTo ns a).getLast (pathTo_ne_nil ns a) = a :=
+        (List.getLast_eq_iff_getLast?_eq_some (pathTo_ne_nil ns a)).mpr (pathTo_props ns a).2.2.2
       rw [List.getLast_eq_getElem] at hgl
       have hid : (pathTo ns a).length + 1 - 2 = (pathTo ns a).length - 1 := by omega
       simpa only [hid] using hgl
-    · simp only
-      exact List.getLast_append_singleton _
+    · exact List.getLast_concat
   · apply Prod.ext
     · simp only
       have hpos : 0 < (pathTo ns b).length := List.length_pos_iff_ne_nil.2 (pathTo_ne_nil ns b)
@@ -320,15 +317,12 @@ theorem NordicSquare.gapPath_lastTwo {n : ℕ} (ns : NordicSquare (n + 1)) (a b 
       rw [List.getElem?_eq_getElem (by rw [List.length_append, List.length_singleton]; omega)]
       rw [Option.getD_some]
       rw [List.getElem_append_left (by omega : (pathTo ns b).length + 1 - 2 < (pathTo ns b).length)]
-      have hgl : (pathTo ns b).getLast (pathTo_ne_nil ns b) = b := by
-        have h := (pathTo_props ns b).2.2.2
-        rw [List.getLast?_eq_some_getLast (pathTo_ne_nil ns b)] at h
-        exact Option.some.inj h
+      have hgl : (pathTo ns b).getLast (pathTo_ne_nil ns b) = b :=
+        (List.getLast_eq_iff_getLast?_eq_some (pathTo_ne_nil ns b)).mpr (pathTo_props ns b).2.2.2
       rw [List.getLast_eq_getElem] at hgl
       have hid : (pathTo ns b).length + 1 - 2 = (pathTo ns b).length - 1 := by omega
       simpa only [hid] using hgl
-    · simp only
-      exact List.getLast_append_singleton _
+    · exact List.getLast_concat
 
 /-- A direction for a gap between two adjacent cells. -/
 inductive GapDir : Type
@@ -503,9 +497,7 @@ noncomputable instance (n : ℕ) (ns : NordicSquare n) : Fintype ns.UphillPath :
 
 /-- The cardinal of the type of uphill paths as a natural. -/
 theorem mk_uphillPath (n : ℕ) (ns : NordicSquare n) :
-    #ns.UphillPath = (Nat.card ns.UphillPath : Cardinal) := by
-  rw [← Fintype.card_eq_nat_card]
-  exact Cardinal.mk_eq_nat_iff.2 ⟨Fintype.equivFin ns.UphillPath⟩
+    #ns.UphillPath = (Nat.card ns.UphillPath : Cardinal) := Nat.cast_card.symm
 
 /-- The dropLast of an uphill path of length at least 2 is an uphill path. -/
 def NordicSquare.UphillPath.dropLast {n : ℕ} {ns : NordicSquare n} (p : ns.UphillPath)
@@ -651,11 +643,9 @@ theorem NordicSquare.countTo_eq_one_of_not_hill {n : ℕ} (ns : NordicSquare n) 
       apply NordicSquare.UphillPath.ext
       rw [ns.cells_eq_pathTo_of_good hg c hc p.1 p.2,
         ns.cells_eq_pathTo_of_good hg c hc q.1 q.2]⟩
-  have : Nonempty {p : ns.UphillPath // p.cells.getLast p.nonempty = c} := by
-    refine ⟨⟨ns.uphillPathTo c, ?_⟩⟩
-    have h := ns.uphillPathTo_getLast? c
-    rw [List.getLast?_eq_some_getLast (ns.uphillPathTo c).nonempty] at h
-    exact Option.some.inj h
+  have : Nonempty {p : ns.UphillPath // p.cells.getLast p.nonempty = c} :=
+    ⟨⟨ns.uphillPathTo c, (List.getLast_eq_iff_getLast?_eq_some (ns.uphillPathTo c).nonempty).mpr
+      (ns.uphillPathTo_getLast? c)⟩⟩
   exact Nat.card_unique
 
 /-- The degree of a cell: the number of cells adjacent to it. -/
@@ -942,7 +932,6 @@ noncomputable def decPairEquivGaps {n : ℕ} (ns : NordicSquare n) :
       rw [hs]
       exact hgo
     · rw [dite_eq_right hif]
-      show gapOfPair (gapCells g.1 g.2) _ = g
       exact hgo
 
 /-- The number of decreasing adjacent pairs is the number of gaps. -/
@@ -1092,7 +1081,7 @@ theorem nat_card_uphillPath_one (ns : NordicSquare 1) : Nat.card ns.UphillPath =
     obtain ⟨b, hb⟩ := List.length_eq_one_iff.1 hq
     rw [ha, hb, Subsingleton.elim a b]⟩
   have : Nonempty ns.UphillPath := ⟨NordicSquare.trivialPath ns⟩
-  exact Nat.card_eq_one_iff_unique.2 ⟨inferInstance, inferInstance⟩
+  exact Nat.card_unique
 
 /-- The column offset of the construction (handles the case `m % 3 = 1`). -/
 def pOffset (m : ℕ) : ℕ := if m % 3 = 1 then 1 else 0
@@ -1352,10 +1341,7 @@ theorem keyFn_injective {m : ℕ} (hm : 2 ≤ m) : Function.Injective (keyFn m) 
       rw [hs] at hxy
       exact Nat.add_left_cancel hxy
     obtain ⟨hr, hcs⟩ := subKey_inj_both hs ht1 ht2 hsub
-    have hj : x.2.1 + pOffset m = y.2.1 + pOffset m := by
-      have h1 := Nat.div_add_mod (x.2.1 + pOffset m) 3
-      have h2 := Nat.div_add_mod (y.2.1 + pOffset m) 3
-      omega
+    have hj : x.2.1 + pOffset m = y.2.1 + pOffset m := Nat.ext_div_mod hs hcs
     have hx2 : x.2.1 = y.2.1 := by omega
     have hx1 : x.1.1 = y.1.1 := hr
     exact Prod.ext (Fin.ext hx1) (Fin.ext hx2)
@@ -1399,12 +1385,7 @@ def OrderedCell.of {m : ℕ} : Cell m ≃ OrderedCell m := Equiv.refl _
 /-- The key function is injective for all `m`. -/
 theorem keyFn_injective' (m : ℕ) : Function.Injective (keyFn m) := by
   rcases Nat.lt_or_ge m 2 with hm | hm
-  · interval_cases m
-    · intro x y _
-      obtain ⟨x1, x2⟩ := x
-      obtain ⟨y1, y2⟩ := y
-      exact Subsingleton.elim _ _
-    · exact Function.injective_of_subsingleton (keyFn 1)
+  · interval_cases m <;> exact Function.injective_of_subsingleton _
   · exact keyFn_injective hm
 
 /-- The linear order on ordered cells given by the key function. -/
@@ -1517,9 +1498,7 @@ theorem rootCell_key_min (m : ℕ) (hm : 2 ≤ m) (x : Cell m) (hx : x ≠ rootC
   have hpoff : pOffset m ≤ 1 := by
     unfold pOffset
     split <;> omega
-  have hrootT : isTree m (rootCell m hm) = true := by
-    unfold isTree isTreeJ pOffset rootCell
-    split <;> simp
+  have hrootT : isTree m (rootCell m hm) = true := rootCell_isTree m hm
   have hrootkey : keyFn m (rootCell m hm) = pOffset m := by
     have e1 : (rootCell m hm).1.1 = 0 := rfl
     have e2 : (rootCell m hm).2.1 = 0 := rfl
@@ -1550,9 +1529,8 @@ theorem rootCell_key_min (m : ℕ) (hm : 2 ≤ m) (x : Cell m) (hx : x ≠ rootC
       · rw [ite_eq_right hr, hj]
         omega
     · have h1 : 1 ≤ (x.2.1 + pOffset m) / 3 := by omega
-      have hge : 3 * m ≤ (3 * m) * ((x.2.1 + pOffset m) / 3) := by
-        have hmul := Nat.mul_le_mul_left (3 * m) h1
-        rwa [mul_one] at hmul
+      have hge : 3 * m ≤ (3 * m) * ((x.2.1 + pOffset m) / 3) :=
+        le_mul_of_one_le_right' h1
       have h6 : 6 ≤ 3 * m := by
         have := Nat.mul_le_mul_left 3 hm
         omega
@@ -1988,13 +1966,6 @@ theorem subKey_even_pos {m j r : ℕ} (hs : (j / 3) % 2 = 0) (hr : 1 ≤ r) :
   unfold subKey
   rw [ite_eq_left hs, ite_eq_right (by omega : ¬ r = 0)]
 
-/-- `subKey` in an odd strip, row `0`. -/
-
-theorem subKey_odd_ge2 {m j r : ℕ} (hs : ¬ (j / 3) % 2 = 0) (hr : 2 ≤ r) :
-    subKey m j r = 5 + 3 * (r - 2) + cspos (j % 3) := by
-  unfold subKey
-  rw [ite_eq_right hs, ite_eq_right (by omega : ¬ r = 0), ite_eq_right (by omega : ¬ r = 1)]
-
 /-- If the tree cell `y` directly below the tree cell `x` has smaller key, then `x`
 has pattern column `5` (mod 6) and row `0`. -/
 
@@ -2035,11 +2006,11 @@ theorem rule_down {m : ℕ} (_hm : 2 ≤ m) (x y : Cell m)
     · have hr1 : 1 ≤ r := by omega
       by_cases hr1e : r = 1
       · subst hr1e
-        rw [show (1 : ℕ) + 1 = 2 from rfl, subKey_odd_ge2 hs (show 2 ≤ (2 : ℕ) by omega),
+        rw [show (1 : ℕ) + 1 = 2 from rfl, subKey_odd_of_ge_two hs (show 2 ≤ (2 : ℕ) by omega),
           subKey_odd_one hs] at hsub
         omega
       · have hr2 : 2 ≤ r := by omega
-        rw [subKey_odd_ge2 hs (show 2 ≤ r + 1 by omega), subKey_odd_ge2 hs hr2] at hsub
+        rw [subKey_odd_of_ge_two hs (by omega), subKey_odd_of_ge_two hs hr2] at hsub
         omega
 
 /-- If the tree cell `y` directly above the tree cell `x` has smaller key, then `x`
@@ -2154,7 +2125,7 @@ theorem rule_left {m : ℕ} (_hm : 2 ≤ m) (x y : Cell m)
             have hj6 : j % 6 = 4 := by omega
             exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inl ⟨hj6, rfl⟩))))
           · have hr2 : 2 ≤ r := by omega
-            rw [subKey_odd_ge2 hsye hr2, subKey_odd_ge2 hs hr2] at hsub
+            rw [subKey_odd_of_ge_two hsye hr2, subKey_odd_of_ge_two hs hr2] at hsub
             rw [hjy3, hc1, cspos_zero, cspos_one] at hsub
             omega
     · have hc2 : j % 3 = 2 := by omega
@@ -2254,7 +2225,7 @@ theorem rule_right {m : ℕ} (hm : 2 ≤ m) (x y : Cell m)
             rw [hjy3, hc1] at hsub
             omega
           · have hr2 : 2 ≤ r := by omega
-            rw [subKey_odd_ge2 hsye hr2, subKey_odd_ge2 hs hr2] at hsub
+            rw [subKey_odd_of_ge_two hsye hr2, subKey_odd_of_ge_two hs hr2] at hsub
             rw [hjy3, hc1, cspos_two, cspos_one] at hsub
             omega
     · have hc2 : j % 3 = 2 := by omega
@@ -2743,9 +2714,7 @@ theorem nordicSquare_good (m : ℕ) (hm : 2 ≤ m) : ∃ ns : NordicSquare m, ns
       by_contra hF
       simp only [Bool.not_eq_true] at hF
       exact hnh (hill_iff c |>.2 hF)
-    have hcne : c ≠ rootCell m hm := by
-      intro hce
-      exact hnv (valley_iff c |>.2 hce)
+    have hcne : c ≠ rootCell m hm := fun hce ↦ hnv ((valley_iff c).2 hce)
     obtain ⟨y, hadj, hTy, hlt⟩ := parent_exists hm c hcT hcne
     refine ⟨y, ⟨hadj, (nsOf_lt_iff hm _ _).2 hlt⟩, fun z hz ↦ ?_⟩
     obtain ⟨hzadj, hzlt⟩ := hz

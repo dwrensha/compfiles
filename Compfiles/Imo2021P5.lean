@@ -62,10 +62,7 @@ def blackPairs (c : Fin 2021 → Bool) : ZMod 2 :=
 
 theorem fin_val_one : (1 : Fin 2021).val = 1 := rfl
 
-theorem fin_sub_one_add_one (h : Fin 2021) : h - 1 + 1 = h := by
-  apply Fin.ext
-  rw [Fin.val_add, Fin.val_sub, fin_val_one]
-  lia
+theorem fin_sub_one_add_one (h : Fin 2021) : h - 1 + 1 = h := sub_add_cancel h 1
 
 theorem fin_sub_one_ne_self (h : Fin 2021) : h - 1 ≠ h := by
   intro hc

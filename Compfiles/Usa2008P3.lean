@@ -310,9 +310,7 @@ lemma row_sum (K : ℕ) (c : ℤ) (hc : Even (c - (K : ℤ))) :
       lia
     · intro hd
       lia
-  have hpar2 : ∀ i : ℕ, Even (i : ℤ) ↔ Even i := by
-    intro i
-    rw [← Int.not_odd_iff_even, Int.odd_coe_nat, Nat.not_odd_iff_even]
+  have hpar2 : ∀ i : ℕ, Even (i : ℤ) ↔ Even i := fun i ↦ Int.even_coe_nat i
   rw [Icc_neg_eq_map, Finset.sum_map]
   simp only [Function.Embedding.coeFn_mk]
   rw [Finset.sum_congr rfl (fun i _ ↦ if_congr (hpar1 i |>.trans (hpar2 i)) rfl rfl

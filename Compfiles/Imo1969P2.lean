@@ -104,8 +104,7 @@ problem imo1969_p2
     have h₈: ∀ x, f x = 0 → Real.cos x = 0 := by
       intro x hx₀
       rw [h₇ x] at hx₀
-      refine eq_zero_of_ne_zero_of_mul_left_eq_zero ?_ hx₀
-      exact h₄
+      exact (mul_eq_zero_iff_left h₄).mp hx₀
     have hm₀: ∃ t:ℤ , x₂ = (2 * ↑ t + 1) * π / 2 := by
       refine Real.cos_eq_zero_iff.mp ?_
       exact h₈ x₂ h₂

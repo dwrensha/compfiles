@@ -139,9 +139,7 @@ lemma region2_aux {N : ℝ} (hN : N = 10 ^ 10) {x y : ℝ}
   have hA316 : (316:ℝ) < x ^ 2 - ((10:ℝ) ^ 10 + 1 / 2) := by
     by_contra hle
     push Not at hle
-    have hsq : (x ^ 2 - ((10:ℝ) ^ 10 + 1 / 2)) ^ 2 ≤ (316:ℝ) ^ 2 := by
-      nlinarith [mul_nonneg hA0
-        (show (0:ℝ) ≤ 316 - (x ^ 2 - ((10:ℝ) ^ 10 + 1 / 2)) by linarith)]
+    have hsq : (x ^ 2 - ((10:ℝ) ^ 10 + 1 / 2)) ^ 2 ≤ (316:ℝ) ^ 2 := pow_le_pow_left₀ hA0 hle 2
     nlinarith [hsq, e1, hx5]
   have hle1 : (y + x) * (x ^ 2 - ((10:ℝ) ^ 10 + 1 / 2)) ≤ 1 := by
     have hsum : x ^ 2 - ((10:ℝ) ^ 10 + 1 / 2) ≤

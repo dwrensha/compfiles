@@ -89,10 +89,7 @@ lemma trygub_lt {n q r c : ℕ} (hr : r < n) (hc : c < n) (_hq : 2 ≤ q) (hqn :
       have h32 : (n - (q + 2)) * n + (n * q + 2 * n) = n * n := by
         rw [Nat.mul_comm n q, ← add_mul, ← Nat.add_mul, Nat.sub_add_cancel hqn2]
       lia
-    have hle2 : n * q + 2 * n ≤ n * n := by
-      have := Nat.mul_le_mul_right n hqn2
-      rw [add_mul, Nat.mul_comm q n] at this
-      exact this
+    have hle2 : n * q + 2 * n ≤ n * n := Nat.le_of_add_left_le h3
     rw [pow_two]
     lia
 
@@ -186,12 +183,8 @@ lemma trygub_inj {n q r₁ r₂ c₁ c₂ : ℕ} (hn : 4 ≤ n) (hq : 2 ≤ q) (
           rw [ite_eq_right h10, ite_eq_right h1q, ite_eq_right h20, ite_eq_right h2q] at h
           have h' : (r₁ - q - 1) * n + c₁ = (r₂ - q - 1) * n + c₂ := by lia
           have hc : c₁ = c₂ := by
-            have m1 : ((r₁ - q - 1) * n + c₁) % n = c₁ := by
-              rw [Nat.add_comm, Nat.add_mul_mod_self_right]
-              exact Nat.mod_eq_of_lt hc₁
-            have m2 : ((r₂ - q - 1) * n + c₂) % n = c₂ := by
-              rw [Nat.add_comm, Nat.add_mul_mod_self_right]
-              exact Nat.mod_eq_of_lt hc₂
+            have m1 : ((r₁ - q - 1) * n + c₁) % n = c₁ := Nat.mul_add_mod_of_lt hc₁
+            have m2 : ((r₂ - q - 1) * n + c₂) % n = c₂ := Nat.mul_add_mod_of_lt hc₂
             rw [h'] at m1
             exact m1.symm.trans m2
           subst hc
@@ -251,11 +244,6 @@ lemma trygub_top (n q r c : ℕ) (hle : ¬ r ≤ q) :
     trygub n q r c = n * q + n + (r - q - 1) * n + c := by
   unfold trygub
   rw [ite_eq_right (by lia : r ≠ 0), ite_eq_right hle]
-
-/-- Two naturals with the same quotient and remainder mod `m` are equal. -/
-lemma eq_of_div_mod_eq {v₁ v₂ m : ℕ} (hdiv : v₁ / m = v₂ / m) (hmod : v₁ % m = v₂ % m) :
-    v₁ = v₂ := by
-  rw [← Nat.div_add_mod v₁ m, ← Nat.div_add_mod v₂ m, hdiv, hmod]
 
 /-- The quotient of an element of `Fin (n^2)` by `n` is again in `Fin n`. -/
 lemma div_lt_of_mem {n : ℕ} (v : Fin (n ^ 2)) : v.val / n < n :=
@@ -376,7 +364,7 @@ problem usa2023_p5 (n : ℕ) (hn : 2 < n) :
       have hdiv : (a r j₁).val / n = (a r j₂).val / n := congrArg Fin.val hje
       have hmod : (a r j₁).val % n = (a r j₂).val % n := by
         rw [hres r hd j₁, hres r hd j₂]
-      have hv : (a r j₁).val = (a r j₂).val := eq_of_div_mod_eq hdiv hmod
+      have hv : (a r j₁).val = (a r j₂).val := Nat.ext_div_mod hdiv hmod
       exact (ha.right r) (Fin.ext hv)
     by_cases hcase : ∃ r₀ : Fin n, n ∣ k r₀
     · -- Case A: some row has difference divisible by `n`; then so does every row,
@@ -404,7 +392,7 @@ problem usa2023_p5 (n : ℕ) (hn : 2 < n) :
         have hmod : (a r₀ j₀).val % n = (a r (p r m₀)).val % n := by
           rw [hres r₀ hr₀ j₀]
           exact hvres.symm
-        have hv : (a r₀ j₀).val = (a r (p r m₀)).val := eq_of_div_mod_eq hdiv hmod
+        have hv : (a r₀ j₀).val = (a r (p r m₀)).val := Nat.ext_div_mod hdiv hmod
         obtain ⟨hrr, -⟩ := ha (Fin.ext hv)
         exact hnr (hrr ▸ hr₀)
       -- The residues of the rows form a permutation of `Fin n`.
@@ -420,7 +408,7 @@ problem usa2023_p5 (n : ℕ) (hn : 2 < n) :
         have hmod : (a r₁ j₁).val % n = (a r₂ (p r₂ ⟨0, hn0⟩)).val % n := by
           rw [hres r₁ (hall r₁) j₁]
           exact hmod12
-        have hv : (a r₁ j₁).val = (a r₂ (p r₂ ⟨0, hn0⟩)).val := eq_of_div_mod_eq hdiv hmod
+        have hv : (a r₁ j₁).val = (a r₂ (p r₂ ⟨0, hn0⟩)).val := Nat.ext_div_mod hdiv hmod
         obtain ⟨hrr, -⟩ := ha (Fin.ext hv)
         exact hrr
       set σ : Fin n → Fin n := fun r ↦ (⟨(a r (p r ⟨0, hn0⟩)).val % n, Nat.mod_lt _ hn0⟩ : Fin n)
@@ -490,7 +478,7 @@ problem usa2023_p5 (n : ℕ) (hn : 2 < n) :
         have hdiv : (a r₁ (π r₁ c)).val / n = (a r₂ (π r₂ c)).val / n := congrArg Fin.val h
         have hmod : (a r₁ (π r₁ c)).val % n = (a r₂ (π r₂ c)).val % n := by
           rw [key r₁, key r₂]
-        have hv : (a r₁ (π r₁ c)).val = (a r₂ (π r₂ c)).val := eq_of_div_mod_eq hdiv hmod
+        have hv : (a r₁ (π r₁ c)).val = (a r₂ (π r₂ c)).val := Nat.ext_div_mod hdiv hmod
         exact ((injective_of_permuted_rows ha hπinj) (Fin.ext hv)).1
       set G := Equiv.ofBijective _ ((Finite.injective_iff_bijective).mp ginj) with hGdef
       -- Every entry of the grid has value `(column) + (quotient) * n`.
@@ -597,9 +585,8 @@ problem usa2023_p5 (n : ℕ) (hn : 2 < n) :
       have hmaxle : (a (ρ c ⟨0, hn0⟩) (π (ρ c ⟨0, hn0⟩) c)).val + (n - 1) * kk c ≤
           n ^ 2 - 1 := by
         have e1 : (a (ρ c ⟨n - 1, hnm1⟩) (π (ρ c ⟨n - 1, hnm1⟩) c)).val =
-            (a (ρ c ⟨0, hn0⟩) (π (ρ c ⟨0, hn0⟩) c)).val + (n - 1) * kk c := by
-          have e1 := hkk c ⟨n - 1, hnm1⟩
-          rwa [show ((⟨n - 1, hnm1⟩ : Fin n).val) = n - 1 from rfl] at e1
+            (a (ρ c ⟨0, hn0⟩) (π (ρ c ⟨0, hn0⟩) c)).val + (n - 1) * kk c :=
+          hkk c ⟨n - 1, hnm1⟩
         have e2 : (a (ρ c ⟨n - 1, hnm1⟩) (π (ρ c ⟨n - 1, hnm1⟩) c)).val < n ^ 2 :=
           (a _ _).isLt
         lia

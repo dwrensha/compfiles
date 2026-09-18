@@ -147,9 +147,7 @@ theorem min_kernel_nonneg {ι : Type*} [DecidableEq ι] (z : ι → ℝ) :
         have hvi : ∀ i ∈ T, i ∉ T.erase i₀ →
             (∑ j ∈ T, z i * z j * min (s i - s i₀) (s j - s i₀)) = 0 := by
           intro i hi hi'
-          have hii : i = i₀ := by
-            by_contra hne
-            exact hi' (Finset.mem_erase.mpr ⟨hne, hi⟩)
+          have hii : i = i₀ := Finset.eq_of_mem_of_notMem_erase hi hi'
           rw [hii]
           apply Finset.sum_eq_zero
           intro j hj

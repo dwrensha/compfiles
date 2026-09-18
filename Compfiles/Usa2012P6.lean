@@ -87,9 +87,8 @@ lemma sum_subsetSum_sq {n : ℕ} (hn : 2 ≤ n) (x : Fin n → ℝ)
       ∑ i : Fin n, ∑ j : Fin n, if i ∈ A ∧ j ∈ A then x i * x j else 0 := by
     intro A
     have e : ∀ i j : Fin n, (if i ∈ A ∧ j ∈ A then x i * x j else 0) =
-        (if i ∈ A then x i else 0) * (if j ∈ A then x j else 0) := by
-      intro i j
-      by_cases hi : i ∈ A <;> by_cases hj : j ∈ A <;> simp [hi, hj]
+        (if i ∈ A then x i else 0) * (if j ∈ A then x j else 0) :=
+      fun i j => (ite_zero_mul_ite_zero _ _ _ _).symm
     calc (∑ i ∈ A, x i) ^ 2
         = (∑ i, if i ∈ A then x i else 0) * (∑ j, if j ∈ A then x j else 0) := by
           rw [pow_two]
@@ -142,9 +141,7 @@ lemma sum_subsetSum_sq {n : ℕ} (hn : 2 ≤ n) (x : Fin n → ℝ)
           if i ∈ A ∧ j ∈ A then x i * x j else 0 :=
         sum_congr rfl fun A _ => hexpand A
     _ = ∑ i : Fin n, ∑ j : Fin n, ∑ A ∈ univ.powerset,
-          if i ∈ A ∧ j ∈ A then x i * x j else 0 := by
-        rw [sum_comm]
-        exact sum_congr rfl fun i _ => sum_comm
+          if i ∈ A ∧ j ∈ A then x i * x j else 0 := sum_comm_cycle.symm
     _ = ∑ i : Fin n, ∑ j : Fin n,
           (2 : ℝ) ^ ((n : ℤ) - 2) * (x i * x j) * (if i = j then (2 : ℝ) else 1) :=
         sum_congr rfl fun i _ => sum_congr rfl fun j _ => hcount i j
@@ -295,9 +292,7 @@ lemma subsetSum_eq_of_card_eq {n : ℕ} (hn : 2 ≤ n) (x : Fin n → ℝ)
       calc ∑ A ∈ T, (∑ i ∈ A, x i) ^ 2
           ≤ ∑ A ∈ P, (∑ i ∈ A, x i) ^ 2 :=
             sum_le_sum_of_subset_of_nonneg hsub (fun A _ _ => sq_nonneg _)
-        _ = (2 : ℝ) ^ ((n : ℤ) - 3) := by
-            rw [hPdef]
-            exact sum_pos_subsetSum_sq hn x hsum hsq
+        _ = (2 : ℝ) ^ ((n : ℤ) - 3) := sum_pos_subsetSum_sq hn x hsum hsq
     linarith [h1, h2, hsumT_lam]
   have hT_eq : ∀ A ∈ T, (∑ i ∈ A, x i) ^ 2 = lam ^ 2 := by
     have hsumT' : ∑ A ∈ T, ((∑ i ∈ A, x i) ^ 2 - lam ^ 2) = 0 := by
@@ -351,11 +346,7 @@ lemma equality_case_of_card_eq {n : ℕ} (hn : 2 ≤ n) (x : Fin n → ℝ)
       have hiff := (sum_eq_zero_iff_of_nonpos (s := univ) (f := x)
         (fun i _ => h i)).mp hsum
       exact fun i => hiff i (mem_univ i)
-    have h0 : ∑ i : Fin n, x i ^ 2 = 0 := by
-      apply sum_eq_zero
-      intro i _
-      rw [hall i]
-      ring
+    have h0 : ∑ i : Fin n, x i ^ 2 = 0 := (sum_sq_eq_zero_iff _ _).mpr fun i _ => hall i
     rw [hsq] at h0
     exact one_ne_zero h0
   obtain ⟨i₀, hi₀⟩ := hexists_pos
@@ -599,8 +590,7 @@ problem usa2012_p6_equality_cases {n : ℕ} (hn : 2 ≤ n) (x : Fin n → ℝ)
         (2 : ℝ) ^ ((n : ℤ) - 3) / lam ^ 2 ↔
       equality_cases x lam := by
   constructor
-  · intro heq
-    exact equality_case_of_card_eq hn x hsum hsq lam hlam heq
+  · exact equality_case_of_card_eq hn x hsum hsq lam hlam
   · rintro ⟨i, j, hij, hxi, hxj, hrest, hlam⟩
     exact card_eq_of_equality_case hn x lam i j hij hxi hxj hrest hlam
 

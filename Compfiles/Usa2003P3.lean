@@ -422,9 +422,7 @@ theorem main_aux (n : ℕ) : 1 ≤ n → ∀ a : ℕ → ℕ, (∀ i ≤ n, a i 
                     apply Finset.filter_true_of_mem
                     intro j hj
                     rw [Finset.mem_range] at hj
-                    have e3 : a j = 0 := hz j hj
-                    rw [e3]
-                    exact fun hh => hknz hh.symm
+                    exact (hz j hj).trans_ne hknz.symm
                   rw [hf, Finset.card_range]
                 have e2 : t^[2] a i' = i' := by
                   show t (t a) i' = i'

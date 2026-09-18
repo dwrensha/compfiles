@@ -167,13 +167,9 @@ lemma large_count_pos_of_move {B B' : Board} (hmove : Move B B') :
           rw [Nat.gcd_eq_zero_iff] at h
           exact hm0 h.1)
         lia
-      have hlcm : Nat.lcm m n = m * n := by
-        have h := Nat.gcd_mul_lcm m n
-        rw [hg1, one_mul] at h
-        exact h
+      have hlcm : Nat.lcm m n = m * n := Nat.Coprime.lcm_eq_mul hg1
       rw [hlcm, hg1, Nat.div_one]
-      calc 1 < 2 * 2 := by norm_num
-        _ ≤ m * n := Nat.mul_le_mul hm hn
+      exact Left.one_lt_mul' hm hn
     exact card_pos_of_mem (Multiset.mem_filter.mpr
       ⟨Multiset.mem_cons_of_mem (Multiset.mem_cons_self _ _), hl⟩)
 
@@ -394,13 +390,9 @@ problem imo2026_p1a_termination (B₀ : Board) (hB₀ : IsInitial B₀) :
       refine ⟨?_, ?_⟩
       · rw [hprodB, hprodB', hg1, one_mul]
       · have hl1 : 1 < Nat.lcm m n / Nat.gcd m n := by
-          have hlcm : Nat.lcm m n = m * n := by
-            have h := Nat.gcd_mul_lcm m n
-            rw [hg1, one_mul] at h
-            exact h
+          have hlcm : Nat.lcm m n = m * n := Nat.Coprime.lcm_eq_mul hg1
           rw [hlcm, hg1, Nat.div_one]
-          calc 1 < 2 * 2 := by norm_num
-            _ ≤ m * n := Nat.mul_le_mul hm hn
+          exact Left.one_lt_mul' hm hn
         have hg1' : ¬ (1 < Nat.gcd m n) := by lia
         have cfB : ((m ::ₘ n ::ₘ s).filter fun a => 1 < a).card =
             (s.filter fun a => 1 < a).card + 2 := by

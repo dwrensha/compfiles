@@ -230,11 +230,8 @@ problem imo1978_p3
     rcases eq_or_lt_of_le hpq with he | hlt
     · rw [he]
     · exact le_of_lt (hmono p q hp hlt)
-  have hg_le_cancel : ∀ p q, 0 < q → g p ≤ g q → p ≤ q := by
-    intro p q hq h
-    by_contra hcon
-    rw [not_le] at hcon
-    exact absurd (hgmono q p hq hcon) (by lia)
+  have hg_le_cancel : ∀ p q, 0 < q → g p ≤ g q → p ≤ q :=
+    fun p q hq => le_imp_le_of_lt_imp_lt (hgmono q p hq)
   -- Part (I): `g n = f n + n`, via counting the integers in `[1, g n]`.
   have hg_eq : ∀ n, 0 < n → g n = f n + n := by
     intro n hn
@@ -278,8 +275,7 @@ problem imo1978_p3
           have h1 : f (f n) < f k := hfmono (f n) k hffn hcon
           have h2 : f k ≤ G := by rw [hkeq]; exact hm.2
           have h3 : f k = G := by lia
-          have hfg : f k = g n := by rw [h3]
-          exact hdisjoint k n hk hn hfg
+          exact hdisjoint k n hk hn h3
         · right
           refine ⟨k, ?_, hkeq⟩
           rw [Finset.mem_Icc]
@@ -309,10 +305,8 @@ problem imo1978_p3
     rcases hcover m hm with ⟨k, hk, hkeq⟩ | ⟨k, hk, hkeq⟩
     · exact Or.inl ⟨k, hk, hkeq⟩
     · exact Or.inr ⟨k, hk, by rw [← hg_eq k hk]; exact hkeq⟩
-  have disj_f : ∀ p q, 0 < p → 0 < q → f p ≠ f q + q := by
-    intro p q hp hq
-    rw [← hg_eq q hq]
-    exact hdisjoint p q hp hq
+  have disj_f : ∀ p q, 0 < p → 0 < q → f p ≠ f q + q :=
+    fun p q hp hq => (hdisjoint p q hp hq).trans_eq (hg_eq q hq)
   -- Part (II): `f` is the lower Wythoff sequence `a`, by the uniqueness lemma.
   have huniq := wythoff_unique f a hfmono (fun _ _ _ h => a_strictMono h)
     hfpos (fun k hk => a_pos hk) cover_f ha_cover disj_f ha_disj

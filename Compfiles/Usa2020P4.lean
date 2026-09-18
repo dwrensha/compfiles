@@ -241,10 +241,7 @@ private lemma card_goodSets_le : ∀ n : ℕ, 2 ≤ n → ∀ S : Finset (ℕ ×
           have hQs : Q ∈ s := Finset.mem_of_mem_erase hQse
           have hQP : P ≠ Q := fun h => (Finset.mem_erase.mp (h ▸ hQse)).1 rfl
           have hs_eq : s = {P, Q} := by rw [← Finset.insert_erase hPs, hQe]
-          have hQS : Q ∈ S.erase P := by
-            have hsub : s.erase P ⊆ S.erase P := Finset.erase_subset_erase P hsS
-            rw [hQe] at hsub
-            exact Finset.singleton_subset_iff.mp hsub
+          have hQS : Q ∈ S.erase P := Finset.erase_subset_erase P hsS hQse
           have hQgood : |det P Q| = 1 := hsgood P hPs Q hQs hQP
           exact Finset.mem_union_right _ (Finset.mem_image.mpr
             ⟨Q, Finset.mem_filter.mpr ⟨hQS, hQgood⟩, hs_eq.symm⟩)

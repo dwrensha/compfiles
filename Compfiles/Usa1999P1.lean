@@ -147,14 +147,9 @@ lemma checkerGraph_preconnected {n : ℕ} {c : Finset (checkerboard n)}
     List.isChain_pmap_of_isChain
       (fun a b ha hb hab ↦ by simpa [checkerGraph] using gridGraph_adj.mpr hab) hchain hp
   have hreach := (SimpleGraph.Walk.ofSupport q hqne hqchain).reachable
-  have hphead : p.head hpne = x.1 := by
-    have := List.head?_eq_some_head hpne
-    rw [hhead] at this
-    exact Option.some.inj this.symm
-  have hplast : p.getLast hpne = y.1 := by
-    have := List.getLast?_eq_some_getLast hpne
-    rw [hlast] at this
-    exact Option.some.inj this.symm
+  have hphead : p.head hpne = x.1 := List.head_of_head?_eq_some hhead
+  have hplast : p.getLast hpne = y.1 :=
+    (List.getLast_eq_iff_getLast?_eq_some hpne).mpr hlast
   convert hreach using 1 <;> apply Subtype.ext <;> simp [q, hphead, hplast]
 
 -- A preconnected finite graph has internal degree sum at least twice its vertex count minus two.
@@ -220,10 +215,7 @@ lemma emptySquares_card_le_boundary_sum {n : ℕ} (c : Finset (checkerboard n))
     (emptySquares c).card ≤
         ((Finset.univ : Finset c).biUnion (boundaryNeighbors c)).card :=
       Finset.card_le_card hcover
-    _ ≤ ∑ x : c, (boundaryNeighbors c x).card := by
-      simpa using
-        (Finset.card_biUnion_le
-          (s := (Finset.univ : Finset c)) (t := boundaryNeighbors c))
+    _ ≤ ∑ x : c, (boundaryNeighbors c x).card := Finset.card_biUnion_le
 
 -- Empty squares and checker squares partition the board.
 lemma emptySquares_card_add_checker_card {n : ℕ} (c : Finset (checkerboard n)) :

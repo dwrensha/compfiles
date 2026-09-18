@@ -231,27 +231,21 @@ problem usa2002_p3 (n : ℕ) (p : ℝ[X]) (hpm : p.Monic) (hpn : p.natDegree = n
       rw [Nat.card_Icc, Nat.add_sub_cancel] at h
       rw [hpdeg]
       exact h
-    have hudeg' : (-u).degree < p.degree := by rwa [degree_neg]
     set q : ℝ[X] := p + u with hqdef
     set r : ℝ[X] := p - u with hrdef
     have hqmonic : q.Monic := hpm.add_of_left hudeg
-    have hrmonic : r.Monic := by
-      rw [hrdef, sub_eq_add_neg]
-      exact hpm.add_of_left hudeg'
+    have hrmonic : r.Monic := hpm.sub_of_left hudeg
     have hqdeg : q.natDegree = n := by
       have h1 : q.degree = p.degree := degree_add_eq_left_of_degree_lt hudeg
       rw [degree_eq_natDegree hqmonic.ne_zero, hpdeg] at h1
       exact WithBot.coe_eq_coe.mp h1
     have hrdeg : r.natDegree = n := by
-      have h1 : r.degree = p.degree := by
-        rw [hrdef, sub_eq_add_neg]
-        exact degree_add_eq_left_of_degree_lt hudeg'
+      have h1 : r.degree = p.degree := degree_sub_eq_left_of_degree_lt hudeg
       rw [degree_eq_natDegree hrmonic.ne_zero, hpdeg] at h1
       exact WithBot.coe_eq_coe.mp h1
     -- The values of `u` at the integer points.
-    have huval : ∀ i ∈ Finset.Icc 1 n, u.eval (i : ℝ) = (-1 : ℝ) ^ (i + 1) * M := by
-      intro i hi
-      exact Lagrange.eval_interpolate_at_node (fun i : ℕ => (-1 : ℝ) ^ (i + 1) * M) hinj hi
+    have huval : ∀ i ∈ Finset.Icc 1 n, u.eval (i : ℝ) = (-1 : ℝ) ^ (i + 1) * M :=
+      fun i hi ↦ Lagrange.eval_interpolate_at_node _ hinj hi
     -- The sign of `q = p + u` at the integer `i` is that of `(-1)^(i+1)`.
     have hqsign : ∀ i ∈ Finset.Icc 1 n, 0 < q.eval (i : ℝ) * (-1 : ℝ) ^ (i + 1) := by
       intro i hi

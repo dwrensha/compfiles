@@ -359,9 +359,7 @@ lemma exists_good_seq_of_nine_le {n : ℕ} (hn : 9 ≤ n) :
       ∃ a : ℕ → ℤ, (∀ i, 1 ≤ i → a i ≠ 0) ∧
         ∀ k, 1 ≤ k → ∑ j ∈ Finset.Icc 1 n, (j : ℤ) * a (j * k) = 0 := by
     intro m hm0 hcop_nat hm_eq
-    have hcop : IsCoprime (m : ℤ) (q : ℤ) := by
-      rw [Int.isCoprime_iff_gcd_eq_one, Int.gcd_natCast_natCast]
-      exact hcop_nat
+    have hcop : IsCoprime (m : ℤ) (q : ℤ) := Nat.isCoprime_iff_coprime.mpr hcop_nat
     obtain ⟨x, y, hx, hy, hbez⟩ := bezout_nonzero (A := (m : ℤ)) (B := (q : ℤ))
       (c := (m : ℤ) + q - S) (Nat.cast_pos.mpr hm0) (Nat.cast_pos.mpr hq.pos) hcop
     refine ⟨mulSeq {p, q} (cfun p q x y), ?_, ?_⟩

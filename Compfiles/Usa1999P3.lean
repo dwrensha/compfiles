@@ -101,8 +101,7 @@ lemma chi_eq_one_iff {p : ℕ} (hp : p.Prime) (j : ZMod p) : chi p j = 1 ↔ j =
   · intro h
     have hdvd : p ∣ j.val := (hζ.pow_eq_one_iff_dvd j.val).mp h
     have hz : j.val = 0 := Nat.eq_zero_of_dvd_of_lt hdvd j.val_lt
-    have hj0 : (j.val : ZMod p) = 0 := by rw [hz, Nat.cast_zero]
-    rwa [ZMod.natCast_zmod_val] at hj0
+    exact (ZMod.val_eq_zero j).mp hz
   · rintro rfl
     exact chi_zero p
 
@@ -234,11 +233,7 @@ lemma Sw_mul_sub_one {p : ℕ} [NeZero p] (hp : p.Prime) (hp2 : 2 < p) {j : ZMod
       = (p : ℂ) := by
     have h10 : (∑ k : ZMod p, (if k = 0 then (p : ℂ) else 0) * chi p (j * k))
         = ∑ k : ZMod p, (if k = 0 then (p : ℂ) * chi p (j * k) else 0) := by
-      apply Finset.sum_congr rfl
-      intro k _
-      by_cases hk : k = 0
-      · rw [ite_eq_left hk, ite_eq_left hk]
-      · rw [ite_eq_right hk, ite_eq_right hk, zero_mul]
+      exact Finset.sum_congr rfl fun k _ => ite_zero_mul _ _ _
     rw [h10, Finset.sum_ite_eq']
     simp [chi_zero]
   exact h9
@@ -636,9 +631,7 @@ problem usa1999_p3 (p : ℕ) (hp : p.Prime) (hp2 : 2 < p) (a b c d : ℤ)
         chi p (m * C') + chi p (m * D')))
         = ∑ m : ZMod p, chi p ((-A') * m) * (chi p (-(m * A')) + chi p (-(m * B')) +
           chi p (-(m * C')) + chi p (-(m * D'))) := by
-      apply Finset.sum_congr rfl
-      intro m _
-      rw [oddEq m]
+      exact Finset.sum_congr rfl fun m _ => congrArg _ (oddEq m)
     rw [← finF, ← finG]
     exact hFG
   have h2A : A' + A' ≠ 0 := by

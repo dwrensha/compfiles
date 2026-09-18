@@ -98,7 +98,7 @@ theorem seven_mem_digits_of_le_lt {y E : ℕ} (h1 : 7 * 10 ^ E ≤ y)
   rw [h4, digits_mul_pow_add (by norm_num : (0 : ℕ) < 7) h3]
   have h7 : Nat.digits 10 7 = [7] := Nat.digits_of_lt 10 7 (by norm_num) (by norm_num)
   rw [h7]
-  exact List.mem_append_right _ (List.mem_singleton_self 7)
+  exact List.mem_concat_self
 
 /-- The decimal digits of `10 ^ s - 1` are exactly `s` nines. -/
 theorem digits_ten_pow_sub_one (s : ℕ) :
@@ -254,7 +254,7 @@ theorem coeff_stable {f : Polynomial ℕ} (hf : ∀ n ∈ K, f.eval n ∈ K)
         rw [hb]
         simp [h5]
       rw [h6]
-      exact pow_pos (by norm_num : (0 : ℕ) < 10) (S + 1)
+      exact Nat.pos_of_neZero _
   have hEm : 10 ^ (S + 1) * m ∈ K := by
     constructor
     · exact Nat.mul_pos (pow_pos (by norm_num) (S + 1)) hmpos
@@ -284,7 +284,7 @@ theorem coeff_stable {f : Polynomial ℕ} (hf : ∀ n ∈ K, f.eval n ∈ K)
     obtain ⟨j, _, hl⟩ := hl
     rw [List.mem_append] at hl
     rcases hl with hl | hl
-    · exact Nat.digits_lt_base (by norm_num) hl
+    · exact Nat.digits_lt_base' hl
     · rw [List.mem_replicate] at hl
       rw [hl.2]
       norm_num
@@ -336,9 +336,7 @@ theorem eq_ten_pow_of_stable {c : ℕ} (hc : c ≠ 0) (hstab : ∀ m ∈ K, c * 
   have hd7 : d ≠ 7 := by
     intro h7
     apply hc7
-    have h1 : d * 10 ^ e + c % 10 ^ e = c := by
-      rw [hd, mul_comm (c / 10 ^ e) (10 ^ e)]
-      exact Nat.div_add_mod c (10 ^ e)
+    have h1 : d * 10 ^ e + c % 10 ^ e = c := Nat.div_add_mod' c (10 ^ e)
     have h2 : Nat.digits 10 (d * 10 ^ e + c % 10 ^ e)
         = Nat.digits 10 (c % 10 ^ e)
           ++ List.replicate (e - (Nat.digits 10 (c % 10 ^ e)).length) 0 ++ Nat.digits 10 d :=
@@ -347,7 +345,7 @@ theorem eq_ten_pow_of_stable {c : ℕ} (hc : c ≠ 0) (hstab : ∀ m ∈ K, c * 
     rw [h2, h7]
     have h77 : Nat.digits 10 7 = [7] := Nat.digits_of_lt 10 7 (by norm_num) (by norm_num)
     rw [h77]
-    exact List.mem_append_right _ (List.mem_singleton_self 7)
+    exact List.mem_concat_self
   have hE1 : 10 ^ (e + 1) = 10 * 10 ^ e := by rw [pow_add]; ring
   have hE2 : 10 ^ (e + 2) = 100 * 10 ^ e := by rw [pow_add]; ring
   interval_cases d
@@ -370,10 +368,7 @@ theorem eq_ten_pow_of_stable {c : ℕ} (hc : c ≠ 0) (hstab : ∀ m ∈ K, c * 
         rw [Nat.mul_sub, Nat.sub_mul]
         have h4 : c * (7 * 10 ^ (e + 2)) = 7 * c * 10 ^ (e + 2) := by ring
         rw [h4]
-        have h5 : 10 ^ (e + 2) ≤ 7 * c * 10 ^ (e + 2) := by
-          have h6 : 7 * c = 1 + (7 * c - 1) := by lia
-          rw [h6, add_mul, one_mul]
-          exact Nat.le_add_right _ _
+        have h5 : 10 ^ (e + 2) ≤ 7 * c * 10 ^ (e + 2) := le_mul_of_one_le_left' h3
         lia
       have h7x : 7 ∈ Nat.digits 10 (c * (7 * 10 ^ (e + 2) - 1)) := by
         rw [hcx, digits_mul_pow_add (by lia : 0 < 7 * c - 1)
@@ -544,9 +539,8 @@ theorem const_lt_of_linear_stable {e k : ℕ}
   push Not at hlt
   have hP0 : 0 < 10 ^ e := pow_pos (by norm_num) e
   obtain ⟨q, r, hq, hr, hkr⟩ : ∃ q r : ℕ, 0 < q ∧ r < 10 ^ e ∧ k = q * 10 ^ e + r :=
-    ⟨k / 10 ^ e, k % 10 ^ e, Nat.div_pos hlt hP0, Nat.mod_lt k hP0, by
-      rw [mul_comm (k / 10 ^ e) (10 ^ e)]
-      exact (Nat.div_add_mod k (10 ^ e)).symm⟩
+    ⟨k / 10 ^ e, k % 10 ^ e, Nat.div_pos hlt hP0, Nat.mod_lt k hP0,
+     (Nat.div_add_mod' k (10 ^ e)).symm⟩
   have h7 : ∀ n ∈ K, 7 ∉ Nat.digits 10 (n + q) := by
     intro n hn h7mem
     have hnpos : 0 < n := hn.1
@@ -568,7 +562,7 @@ theorem const_lt_of_linear_stable {e k : ℕ}
     rw [h4, digits_mul_pow_add (by norm_num : (0 : ℕ) < 7) h5]
     have h77 : Nat.digits 10 7 = [7] := Nat.digits_of_lt 10 7 (by norm_num) (by norm_num)
     rw [h77]
-    exact List.mem_append_right _ (List.mem_singleton_self 7)
+    exact List.mem_concat_self
   exact h7 _ hn h3
 
 /-- The polynomials `10 ^ e * x + k` with `k < 10 ^ e` and `k ∈ K ∪ {0}` do
@@ -656,7 +650,7 @@ problem usa2019_p3 (f : Polynomial ℕ) :
         have hdeg3 : 2 ≤ f.natDegree := by lia
         have hlead : f.coeff f.natDegree ≠ 0 := by
           rw [Polynomial.coeff_natDegree]
-          exact Polynomial.leadingCoeff_ne_zero.mpr hfne
+          exact leadingCoeff_ne_zero.mpr hfne
         exact (not_stable_of_degree_two_le hlead hdeg3 fun m hm => hmono _ hlead m hm).elim
   · rintro (⟨k, hkK, rfl⟩ | ⟨e, k, hlt, hk, rfl⟩)
     · intro n _

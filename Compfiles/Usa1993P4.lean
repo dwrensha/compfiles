@@ -138,7 +138,7 @@ theorem gcd_invariant (n : ℕ) :
     Nat.Coprime.pow_left _ ((Nat.coprime_two_left).mpr hodd1)
   have h1 : Nat.gcd (a (n + 1)) (ordProj[2] (a (n + 1) + a n) * ordCompl[2] (a (n + 1) + a n))
       = Nat.gcd (a (n + 1)) (ordCompl[2] (a (n + 1) + a n)) := by
-    rw [Nat.gcd_comm (a (n + 1)) _, Nat.Coprime.gcd_mul_left_cancel _ hcop, Nat.gcd_comm]
+    exact Nat.Coprime.gcd_mul_left_cancel_right _ hcop
   rw [han n, ← h1, hdecomp, Nat.gcd_self_add_right, Nat.gcd_comm]
 
 /-- The gcd of any two consecutive terms equals `gcd r s`. -/

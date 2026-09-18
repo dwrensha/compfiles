@@ -168,11 +168,7 @@ theorem exists_odd_prime_dvd {N : ℕ} (hN : 2 ≤ N) (h : ∀ k : ℕ, N ≠ 2 
     rw [mul_zero] at hNeq
     lia
   obtain ⟨p, hp, hpt⟩ := Nat.exists_prime_and_dvd ht1
-  have hp2 : p ≠ 2 := by
-    rintro rfl
-    rw [Nat.dvd_iff_mod_eq_zero] at hpt
-    rw [Nat.odd_iff] at ht
-    lia
+  have hp2 : p ≠ 2 := ht.ne_two_of_dvd_nat hpt
   exact ⟨p, hp, hp.odd_of_ne_two hp2, hNeq ▸ dvd_mul_of_dvd_right hpt (2 ^ e)⟩
 
 /-- Any dyadic weighted average of two writable numbers is writable

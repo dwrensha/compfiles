@@ -339,6 +339,6 @@ problem usa2015_p4 (m n : ℕ) (hm : 1 ≤ m) (hn : 1 ≤ n) :
   have hle : m ≤ n + m - 1 := by lia
   have hsub : n + m - 1 - m = n - 1 := by lia
   rw [← Nat.choose_symm hle, hsub, show n + m - 1 = m + n - 1 by lia]
-  rw [show solution m n = ((m + n - 1).choose (n - 1)) ^ 2 from rfl, pow_two]
+  exact (Nat.pow_two _).symm
 
 end Usa2015P4

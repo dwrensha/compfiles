@@ -66,12 +66,8 @@ lemma step_props (u v : ℤ) (h3 : (u - v) % 3 = 0) :
   obtain ⟨hd0, hd9, hd2, hd5⟩ := digit_props u v
   have h2 : 2 ∣ digit u v - u := by lia
   have h5 : 5 ∣ digit u v - v := by lia
-  have h2' : 2 * ((digit u v - u) / 2) = digit u v - u := by
-    obtain ⟨k, hk⟩ := h2
-    rw [hk, Int.mul_ediv_cancel_left k (by norm_num)]
-  have h5' : 5 * ((digit u v - v) / 5) = digit u v - v := by
-    obtain ⟨k, hk⟩ := h5
-    rw [hk, Int.mul_ediv_cancel_left k (by norm_num)]
+  have h2' : 2 * ((digit u v - u) / 2) = digit u v - u := Int.mul_ediv_cancel' h2
+  have h5' : 5 * ((digit u v - v) / 5) = digit u v - v := Int.mul_ediv_cancel' h5
   exact ⟨hd0, hd9, h2', h5', by lia, by lia, by lia, by lia⟩
 
 /-- The polynomial whose coefficients are the given list of digits,

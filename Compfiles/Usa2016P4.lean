@@ -73,10 +73,7 @@ theorem f_even (f: ℝ→ℝ) (hf : f_good f) : ∀t, f t = f (-t) := by
   by_cases hfz : f t = 0
   · have hnfz := f_even_zero f hf t hfz
     rw [hfz, hnfz]
-  push Not at hfz
-  apply f_t_even at hfz
-  · assumption
-  assumption
+  · exact f_t_even f hf t hfz
 
 theorem f_half_zero (f: ℝ→ℝ) (hf : f_good f) : ∀t, f t = 0 → f (t/2) = 0 := by
   intro t ftz
@@ -91,8 +88,7 @@ theorem f_half_zero (f: ℝ→ℝ) (hf : f_good f) : ∀t, f t = 0 → f (t/2) =
     rw [ftz] at hf
     simp at hf
     rw [← div_eq_mul_inv] at hf
-    symm at hf
-    rwa [sq_eq_zero_iff] at hf
+    exact eq_zero_of_pow_eq_zero hf.symm
   assumption
 
 
@@ -191,12 +187,7 @@ theorem ha_zero (f: ℝ→ℝ) (hf : f_good f) :
   constructor
   · intro h
     obtain ⟨a, a_ne_z, f_a_z⟩ := h
-    have f_even_zero := f_even_zero f hf a
-    have f_nega_z := f_even_zero f_a_z
-    have fa_even : f a = f (-a) := by
-      rw [← f_a_z] at f_nega_z
-      symm
-      assumption
+    have f_nega_z := f_even_zero f hf a f_a_z
     by_cases ha: a > 0
     · use a
     push Not at ha
@@ -243,10 +234,7 @@ theorem f_eq_zero_if_not_sq (f: ℝ→ℝ) (hf : f_good f) :
   have ha_zero := ha_zero f hf b
   rw [ha_zero] at h
   obtain ⟨a, a_pos, f_a_zero⟩ := h
-  have hab_pos : b/a > 0 := by
-      apply div_pos
-      · assumption
-      assumption
+  have hab_pos : b/a > 0 := div_pos hb a_pos
 
   let c:ℝ := 2 * a * 2 ^ (⌈Real.logb 2 (b/a)⌉)
 
@@ -394,9 +382,7 @@ problem usa2016_p4 (f : ℝ → ℝ) : f ∈ solution_set ↔ f_good f := by
       simp [hw, zero] at f_eq_zero_or_sq
       by_contra hn'
       apply hfun
-      funext n
-      specialize f_eq_zero_or_sq n
-      assumption
+      exact funext f_eq_zero_or_sq
     assumption
   assumption
 

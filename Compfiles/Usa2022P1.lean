@@ -320,8 +320,7 @@ lemma exists_transversal_with_many_good_cells
     have hlt : (R.biUnion t).card < R.card := Nat.lt_of_not_ge hle
     have hline_count_le :
         ((univ : Finset (Fin N)) \ R).card + (neighborCols good R).card ≤ k - 1 := by
-      apply line_count_le_of_hall_failure (good := good) (k := k) (R := R)
-      simpa [t] using hlt
+      exact line_count_le_of_hall_failure good hlt
     have hgood_card_le : (univ.filter good).card ≤ (k - 1) * N :=
       good_cells_card_le_of_neighbor_line_count (good := good) (k := k) R hline_count_le
     exact not_lt_of_ge hgood_card_le hcard

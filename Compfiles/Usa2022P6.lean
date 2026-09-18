@@ -238,8 +238,7 @@ def initialCover (G : SimpleGraph V) [DecidableRel G.Adj] : Cover G G where
   assigned := by
     intro K hK
     simp only [Finset.mem_image, SimpleGraph.mem_edgeFinset] at hK
-    obtain ⟨e, he, rfl⟩ := hK
-    exact ⟨e, he, rfl⟩
+    exact hK
 
 omit [Fintype V] in
 /-- Any family `F` of at most three of the four edges of the 4-cycle `abcd` has at
@@ -454,7 +453,7 @@ lemma Cover.merge {G G' : SimpleGraph V} [DecidableRel G.Adj] (cov : Cover G G')
   have hL2C : L2 ∈ cov.C := cov.label_mem e2 he2E
   have hL3C : L3 ∈ cov.C := cov.label_mem e3 he3E
   have hL4C : L4 ∈ cov.C := cov.label_mem e4 he4E
-  have hL1S : L1 ∈ S := by rw [hS]; exact Finset.mem_insert_self _ _
+  have hL1S : L1 ∈ S := Finset.mem_insert_self _ _
   have hL2S : L2 ∈ S := by rw [hS]; simp
   have hL3S : L3 ∈ S := by rw [hS]; simp
   have hL4S : L4 ∈ S := by rw [hS]; simp
@@ -510,7 +509,7 @@ lemma Cover.merge {G G' : SimpleGraph V} [DecidableRel G.Adj] (cov : Cover G G')
     rw [hS]
     exact Finset.card_le_four
   -- the set `E4` of the four edges has cardinality 4
-  have he1E4 : e1 ∈ E4 := by rw [hE4]; exact Finset.mem_insert_self _ _
+  have he1E4 : e1 ∈ E4 := Finset.mem_insert_self _ _
   have he2E4 : e2 ∈ E4 := by rw [hE4]; simp
   have he3E4 : e3 ∈ E4 := by rw [hE4]; simp
   have he4E4 : e4 ∈ E4 := by rw [hE4]; simp
@@ -979,7 +978,7 @@ lemma lower_bound_of_terminal {G G' : SimpleGraph V} [DecidableRel G.Adj]
       rw [SimpleGraph.mem_edgeFinset] at he
       have hadj : G.Adj x y := he
       exact hall x y hadj.ne
-  have hbound := cov.theta_bound Kstar (by rw [hCsingle]; exact Finset.mem_singleton_self Kstar)
+  have hbound := cov.theta_bound Kstar hKstarC
   rw [hθ, hKstaruniv, Finset.card_univ] at hbound
   exact hbound
 

@@ -121,8 +121,7 @@ problem imo2006_p4 :
           have : y + 1 = 2 * (s + 1) := by
             trans y - 1 + 2
             · simp
-              rw [Nat.sub_add_cancel]
-              exact hypos
+              exact (Nat.sub_one_add_one_eq_of_pos hypos).symm
             · rw [hs]
               ring
           rw [hs, this]
@@ -216,8 +215,7 @@ problem imo2006_p4 :
               have : y + 1 = 2 * (t + 1) := by
                 rw [mul_add, ← ht]
                 simp
-                rw [Nat.sub_add_cancel]
-                exact hypos
+                exact (Nat.sub_one_add_one_eq_of_pos hypos).symm
               let n₂ := (t + 1).factorization 2
               obtain ⟨s, hs⟩ : 2 ^ n₂ ∣ t + 1 := Nat.ordProj_dvd (t + 1) 2
               have hs' : Odd s := by
@@ -317,8 +315,7 @@ problem imo2006_p4 :
           norm_cast at hm'
           have hm' : m < 3 := by
             have : m ^ 2 < 3 ^ 2 := by apply lt_of_le_of_lt hm'; simp
-            apply Nat.pow_lt_pow_iff_left ?_ |>.mp this
-            simp
+            exact lt_of_pow_lt_pow_left' 2 this
           lia
         · -- For $\epsilon=-1$ equation (2) gives us $$ 1+m=2^{x-2}\left(m^{2}-8\right) \geq 2\left(m^{2}-8\right),
           simp [hε] at this

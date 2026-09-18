@@ -174,8 +174,7 @@ lemma box_capacity_lt_one (m : ℕ) :
     have hpos : (0 : ℚ) < ((2 * m + 1 : ℕ) : ℚ) := by exact_mod_cast Nat.succ_pos (2 * m)
     have hlt : ((2 * m + 1 : ℕ) : ℚ) < ((2 * m + 2 : ℕ) : ℚ) := by
       exact_mod_cast Nat.lt_succ_self (2 * m + 1)
-    have := one_div_lt_one_div_of_lt hpos hlt
-    rwa [inv_eq_one_div, inv_eq_one_div]
+    exact inv_strictAnti₀ hpos hlt
   linarith
 
 /-- Greedy distribution of the "light" coins (of denomination at least `2k+1`)

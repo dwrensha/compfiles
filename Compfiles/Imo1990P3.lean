@@ -86,20 +86,16 @@ lemma imo_1990_p3_forward
         simp [Nat.pow_mul']
       rw [Nat.sq_sub_sq] at h₃₀
       rw [h₃₀, one_pow]
-      exact Nat.dvd_mul_right ((2 : ℕ) ^ n + (1 : ℕ)) ((2 : ℕ) ^ n - (1 : ℕ))
+      exact Nat.dvd_mul_right (2 ^ n + 1) (2 ^ n - 1)
     have h₄: ∀ p, Nat.Prime p → 3 ≤ p → p ∣ 2 ^ (p - 1) - 1 := by
       intro p hp₀ hp₁
-      have hp₃: Odd p := by
-        refine Nat.Prime.odd_of_ne_two hp₀ ?_
-        exact Ne.symm (Nat.ne_of_lt hp₁)
+      have hp₃: Odd p := hp₀.odd_iff.mpr hp₁
       have hp₄: 2 ^ (p - 1) ≡ 1 [ZMOD p] := by
         refine Int.ModEq.pow_card_sub_one_eq_one hp₀ ?_
         refine Int.isCoprime_iff_gcd_eq_one.mpr ?_
         norm_cast
         exact Nat.coprime_two_left.mpr hp₃
-      have hp₆₄: (p:ℤ) ∣ 2 ^ (↑p - 1) - 1 := by
-        refine Int.modEq_iff_dvd.mp ?_
-        exact Int.ModEq.symm hp₄
+      have hp₆₄: (p:ℤ) ∣ 2 ^ (↑p - 1) - 1 := Int.modEq_iff_dvd.mp hp₄.symm
       rw [@Int.natCast_dvd] at hp₆₄
       refine dvd_trans hp₆₄ ?_
       refine dvd_of_eq ?_
@@ -108,9 +104,7 @@ lemma imo_1990_p3_forward
       norm_num
     let sp : Finset ℕ := n.primeFactors
     have hsp₁: sp.Nonempty := by
-      refine Nat.nonempty_primeFactors.mpr ?_
-      refine lt_trans ?_ hn₀
-      exact Nat.one_lt_two
+      exact Nat.nonempty_primeFactors.mpr h₀
     let p : ℕ := Finset.min' sp hsp₁
     have hp₀: p ∈ sp := Finset.min'_mem sp hsp₁
     have hp₁: Nat.Prime p := Nat.prime_of_mem_primeFactors hp₀
@@ -161,9 +155,7 @@ lemma imo_1990_p3_forward
             have hh₀₀: ((n).gcd (p - (1 : ℕ))).primeFactors = ∅ := by
               rw [Nat.primeFactors_gcd g₀ g₁]
               refine Finset.disjoint_iff_inter_eq_empty.mp ?_
-              have g₂: ∀ x ∈ n.primeFactors, p ≤ x := by
-                intro x hx₀
-                exact Finset.min'_le sp x hx₀
+              have g₂: ∀ x ∈ n.primeFactors, p ≤ x := fun x hx₀ ↦ Finset.min'_le sp x hx₀
               have g₃: ∀ x ∈ (p - (1 : ℕ)).primeFactors, x < p := by
                 intro x hx₀
                 refine Nat.lt_of_le_pred hp₁.pos ?_
@@ -203,14 +195,14 @@ lemma imo_1990_p3_forward
       · by_contra! hh₀
         have hh₁: (3 : ℕ) * (3 : ℕ) ^ k ∣ n := by
           rw [mul_comm]
-          exact (Nat.dvd_div_iff_mul_dvd hp₆₀).mp hh₀
+          exact Nat.mul_dvd_of_dvd_div hp₆₀ hh₀
         rw [← Nat.pow_succ'] at hh₁
         have hh₂: ¬ (3 : ℕ) ^ k.succ ∣ n := by
           refine (FiniteMultiplicity.multiplicity_lt_iff_not_dvd ?_).mp ?_
           · refine Nat.finiteMultiplicity_iff.mpr ?_
             simp
             exact Nat.zero_lt_of_lt h₀
-          · exact Nat.lt_add_one (multiplicity (3 : ℕ) n)
+          · exact Nat.lt_add_one _
         exact hh₂ hh₁
     obtain ⟨d, hn₁, hd₀⟩ := hp₆
     have hk₀ : 0 < k := by
@@ -230,7 +222,7 @@ lemma imo_1990_p3_forward
         exact Nat.ne_zero_of_lt h₀
       have hn₃: FiniteMultiplicity (3 : ℕ) ((2 : ℕ) ^ n + (1 : ℕ) ^ n) := by
         refine FiniteMultiplicity.of_prime_left hp₄ ?_
-        exact Ne.symm (NeZero.ne' ((2 : ℕ) ^ n + (1 : ℕ) ^ n))
+        exact Ne.symm (NeZero.ne' _)
       have hk₂: multiplicity 3 (2 ^ n + 1 ^ n) = k + 1 := by
         have hk₂₀: k = multiplicity (3 : ℕ) n := by rfl
         rw [hk₂₀]
@@ -251,7 +243,7 @@ lemma imo_1990_p3_forward
         · exact FiniteMultiplicity.pow hp₄ hn₂
         · refine FiniteMultiplicity.of_prime_left hp₄ ?_
           exact Ne.symm (Nat.zero_ne_add_one ((2 : ℕ) ^ n))
-        · exact fun (n_2 : ℕ) (a : (3 : ℕ) ^ n_2 ∣ n ^ (2 : ℕ)) ↦ Nat.dvd_trans a h₁
+        · exact fun _ h ↦ h.trans h₁
       have hk₄: multiplicity 3 (n ^ 2) = 2 * k := by
         exact FiniteMultiplicity.multiplicity_pow hp₄ hn₂
       rw [one_pow] at hk₂
@@ -278,12 +270,9 @@ lemma imo_1990_p3_forward
           interval_cases q <;> grind
         have hq₉: q = 7 := by
           have hh₀: Nat.gcd n (q - 1) = 1 ∨ Nat.gcd n (q - 1) = 3 := by
-            have hh₀₁: ∀ x ∈ (q - 1).primeFactors, x ≤ q - 1 := by
-              intro x hx₀
-              · exact Nat.le_of_mem_primeFactors hx₀
-            have hh₀₂: ∀ x ∈ d.primeFactors, q ≤ x := by
-              intro x hx₀
-              exact Finset.min'_le sq x hx₀
+            have hh₀₁: ∀ x ∈ (q - 1).primeFactors, x ≤ q - 1 :=
+              fun x hx₀ ↦ Nat.le_of_mem_primeFactors hx₀
+            have hh₀₂: ∀ x ∈ d.primeFactors, q ≤ x := fun x hx₀ ↦ Finset.min'_le sq x hx₀
             have hh₀₃: Nat.gcd (q - 1) d = 1 := by
               have hh₀₃₀: q - (1 : ℕ) ≠ (0 : ℕ) := by lia
               have hh₀₃₁: d ≠ 0 := Nat.ne_zero_of_lt hd₂

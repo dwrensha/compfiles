@@ -77,10 +77,7 @@ lemma sum_Icc_one_div_le_clog (M : ℕ) :
     ∑ k ∈ Finset.Icc 1 M, (1 : ℚ) / k ≤ Nat.clog 2 (M + 1) := by
   have hle : M + 1 ≤ 2 ^ Nat.clog 2 (M + 1) := Nat.le_pow_clog (by norm_num) (M + 1)
   have hM : M ≤ 2 ^ Nat.clog 2 (M + 1) - 1 := by lia
-  have hIcc : Finset.Icc 1 M = Finset.Ico 1 (M + 1) := by
-    ext x
-    simp only [Finset.mem_Icc, Finset.mem_Ico]
-    lia
+  have hIcc : Finset.Icc 1 M = Finset.Ico 1 (M + 1) := (Ico_add_one_right_eq_Icc 1 M).symm
   have h1 : ∑ k ∈ Finset.Icc 1 M, (1 : ℚ) / k
       = ∑ j ∈ Finset.range M, (1 : ℚ) / ((1 + j : ℕ) : ℚ) := by
     rw [hIcc, Finset.sum_Ico_eq_sum_range, Nat.add_sub_cancel_right]
@@ -221,8 +218,7 @@ lemma card_filter_dvd_le (a N p : ℕ) (ha : 0 < a) (hp : 0 < p) :
     rw [Nat.cast_sub (by lia : 1 ≤ a + N)]
     push_cast
     ring
-  have e2 : ((a - 1 : ℕ) : ℚ) = (a : ℚ) - 1 := by
-    rw [Nat.cast_sub (by lia : 1 ≤ a), Nat.cast_one]
+  have e2 : ((a - 1 : ℕ) : ℚ) = (a : ℚ) - 1 := Nat.cast_pred ha
   have hA : (((a + N - 1) / p : ℕ) : ℚ) ≤ ((a + N - 1 : ℕ) : ℚ) / (p : ℚ) := Nat.cast_div_le
   rw [e1] at hA
   have hB : ((a : ℚ) - 1) / p < (((a - 1) / p : ℕ) : ℚ) + 1 := by
@@ -261,9 +257,7 @@ lemma two_hundred_mul_succ_le_pow (k : ℕ) (hk : 15 ≤ k) : 200 * (k + 1) ≤ 
 lemma hundred_clog_le (n M : ℕ) (hn : 2 ^ 15 ≤ n) (hM : M + 1 ≤ n ^ 2) :
     100 * Nat.clog 2 (M + 1) ≤ n := by
   have h2 : (1 : ℕ) < 2 := by norm_num
-  have hk15 : 15 ≤ Nat.log 2 n := by
-    have h : Nat.log 2 (2 ^ 15) ≤ Nat.log 2 n := Nat.log_mono_right hn
-    rwa [Nat.log_pow h2 15] at h
+  have hk15 : 15 ≤ Nat.log 2 n := Nat.le_log_of_pow_le h2 hn
   have hnpow : n < 2 ^ (Nat.log 2 n + 1) := Nat.lt_pow_succ_log_self h2 n
   have hclog : Nat.clog 2 (M + 1) ≤ 2 * (Nat.log 2 n + 1) := by
     have h1 : Nat.clog 2 (M + 1) ≤ Nat.clog 2 (n ^ 2) := Nat.clog_mono_right 2 hM
@@ -272,9 +266,8 @@ lemma hundred_clog_le (n M : ℕ) (hn : 2 ^ 15 ≤ n) (hM : M + 1 ≤ n ^ 2) :
       rw [← pow_mul] at h
       have e : (Nat.log 2 n + 1) * 2 = 2 * (Nat.log 2 n + 1) := by ring
       rwa [e] at h
-    have h2' : Nat.clog 2 (n ^ 2) ≤ 2 * (Nat.log 2 n + 1) := by
-      rw [← Nat.clog_pow 2 (2 * (Nat.log 2 n + 1)) h2]
-      exact Nat.clog_mono_right 2 hsq
+    have h2' : Nat.clog 2 (n ^ 2) ≤ 2 * (Nat.log 2 n + 1) :=
+      (Nat.clog_le_iff_le_pow h2).mpr hsq
     exact h1.trans h2'
   have h200 := two_hundred_mul_succ_le_pow (Nat.log 2 n) hk15
   have hkn : 2 ^ Nat.log 2 n ≤ n := Nat.pow_log_le_self 2 (by lia)
@@ -418,9 +411,7 @@ lemma pow_gt_final (n : ℕ) (hn : 2 ^ 15 ≤ n) :
       _ < X ^ (2 * e) := by linarith
   by_contra! hcon
   have hle : (X ^ e) ^ 2 ≤ (u + (n : ℝ)) ^ 2 := pow_le_pow_left₀ (pow_nonneg hX0 e) hcon 2
-  have heq : (X ^ e) ^ 2 = X ^ (2 * e) := by
-    rw [← pow_mul]
-    rw [show e * 2 = 2 * e by ring]
+  have heq : (X ^ e) ^ 2 = X ^ (2 * e) := (pow_mul' X 2 e).symm
   rw [heq] at hle
   linarith
 
@@ -510,9 +501,7 @@ lemma row_bound (a b n : ℕ) (ha : 0 < a) (hb : 0 < b) (hn : 2 ^ 15 ≤ n)
       ring
     rw [Finset.sum_congr rfl hterm, Finset.sum_add_distrib, Finset.sum_add_distrib,
       ← Finset.mul_sum, ← Finset.mul_sum, Finset.sum_const, nsmul_eq_mul, mul_one, add_assoc]
-  have hsum1 : ∑ p ∈ P, (1 : ℚ) / p ^ 2 ≤ 47 / 100 := by
-    rw [hP]
-    exact primesum_inv_sq_le M hM50
+  have hsum1 : ∑ p ∈ P, (1 : ℚ) / p ^ 2 ≤ 47 / 100 := primesum_inv_sq_le M hM50
   have hsum2 : ∑ p ∈ P, (1 : ℚ) / p ≤ Nat.clog 2 (M + 1) := by
     have hsub2 : P ⊆ Icc 1 M := by
       intro p hp
@@ -714,9 +703,7 @@ lemma row_bound (a b n : ℕ) (ha : 0 < a) (hb : 0 < b) (hn : 2 ^ 15 ≤ n)
       _ ≤ ((a + i₀ : ℕ) : ℝ) := by exact_mod_cast h1
       _ = (a : ℝ) + i₀ := by push_cast; ring
   have hi0n : (i₀ : ℝ) ≤ (n : ℝ) := by
-    have h1 : i₀ ≤ n := by
-      rw [hN, Finset.mem_range] at hi₀
-      lia
+    have h1 : i₀ ≤ n := mem_range_succ_iff.mp hi₀
     exact_mod_cast h1
   have hchain1 : ((n : ℝ) ^ 2 / 1000) ^ ((n + 3) / 2) ≤ ((M : ℝ) + 1) ^ ((n + 3) / 2) :=
     pow_le_pow_left₀ (by positivity) hMQ _

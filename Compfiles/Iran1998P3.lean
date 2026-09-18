@@ -78,8 +78,8 @@ problem iran1998_p3
       intro i _; exact abs_of_pos (x_positive i)
     rw [Finset.sum_congr rfl habs] at holder
 
-    have habs3 : ∀ i ∈ Finset.range 4, |x i| ^ (3:ℝ) = x i ^ (3:ℝ) := by
-      intro i hi; have := habs i hi; exact congr_fun (congr_arg _ this) 3
+    have habs3 : ∀ i ∈ Finset.range 4, |x i| ^ (3:ℝ) = x i ^ (3:ℝ) :=
+      fun i hi ↦ by rw [habs i hi]
     rw [Finset.sum_congr rfl habs3] at holder
     have hccc: (4:ℝ) * C =  ∑ i ∈ Finset.range 4, x i := by simp [C]
     rw [← hccc] at holder
@@ -146,11 +146,8 @@ problem iran1998_p3
       rw [← h, ← Finset.prod_erase_mul _ _ hj]
       have : x j ≠ 0 := ne_of_gt (x_positive j)
       field_simp
-    have h4 : ∀ j ∈ Finset.range 4, 1 / x j ≤ 1 / 3 * B j := by
-      intro j hj
-      have h2j := h2 j hj
-      rw [h3 j hj] at h2j
-      exact h2j
+    have h4 : ∀ j ∈ Finset.range 4, 1 / x j ≤ 1 / 3 * B j :=
+      fun j hj ↦ (h3 j hj).symm.trans_le (h2 j hj)
     have h5 : ∑ i ∈ Finset.range 4, 1 / x i ≤ A := by
       have h5': ∑ i ∈ Finset.range 4, 1 / x i ≤ ∑ i ∈ Finset.range 4, (1 / 3) * B i :=
         Finset.sum_le_sum h4

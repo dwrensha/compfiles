@@ -313,9 +313,7 @@ lemma rep_eq_self_or_neg {S : Finset (ℤ × ℤ)} {s : ℤ × ℤ} :
   by_cases h1 : canon s ∧ s ∈ S
   · rw [ite_eq_left h1]; exact Or.inl rfl
   · rw [ite_eq_right h1]
-    by_cases h2 : canon (-s) ∧ (-s) ∈ S
-    · rw [ite_eq_left h2]; exact Or.inr rfl
-    · rw [ite_eq_right h2]; exact Or.inl rfl
+    exact (ite_eq_or_eq _ _ _).symm
 
 lemma rep_neg {S : Finset (ℤ × ℤ)} {s : ℤ × ℤ} (hs : s ∈ S) (hns : -s ∈ S)
     (hs0 : s ≠ (0, 0)) : rep S (-s) = rep S s := by
@@ -474,15 +472,11 @@ lemma Xf_deg : Xf.deg = 1 := rfl
 
 lemma Yf_deg : Yf.deg = 1 := rfl
 
-lemma zmod_natCast_eq_zero_iff_dvd (a n : ℕ) : ((a : ZMod n)) = 0 ↔ n ∣ a := by
-  rw [show ((a : ZMod n)) = ((a : ℤ) : ZMod n) by norm_cast,
-    ZMod.intCast_zmod_eq_zero_iff_dvd, Int.natCast_dvd_natCast]
-
 lemma not_coprime_of_both_dvd {x y : ℤ} (h : IsCoprime x y) {c : ℤ}
     (hx : c ∣ x) (hy : c ∣ y) : c ∣ 1 := by
   obtain ⟨u, v, huv⟩ := h
   rw [← huv]
-  exact dvd_add (hx.mul_left u) (hy.mul_left v)
+  exact hx.linear_comb hy u v
 
 /-- In `ZMod 2`, the form `x² + xy + y²` does not vanish at a primitive point. -/
 lemma two_not_dvd_quad_zmod {x y : ℤ} (h : IsCoprime x y) :
@@ -591,8 +585,7 @@ lemma exists_g (S : Finset (ℤ × ℤ)) (hS : ∀ s ∈ S, IsCoprime s.1 s.2)
   have hDne : D ≠ 0 := by
     rw [hD, Finset.prod_ne_zero_iff]
     intro t ht
-    rw [Finset.prod_ne_zero_iff]
-    exact hdne t ht
+    exact Finset.prod_ne_zero_iff.mpr (hdne t ht)
   -- bad primes
   set Ps : Finset ℕ := D.natAbs.primeFactors with hPs
   -- the degree
@@ -672,11 +665,7 @@ lemma exists_g (S : Finset (ℤ × ℤ)) (hS : ∀ s ∈ S, IsCoprime s.1 s.2)
       ∑ p ∈ Ps, (up p * (Mp p : ℤ)) * (Hp p).eval x y := by
     intro x y
     rw [hG, HForm.eval_sum]
-    apply Finset.sum_congr rfl
-    intro p hp
-    show (HForm.cmul (up p * (Mp p : ℤ)) (Hp p)).eval x y =
-      (up p * (Mp p : ℤ)) * (Hp p).eval x y
-    rw [HForm.eval_cmul]
+    exact Finset.sum_congr rfl fun p _ => HForm.eval_cmul _ _ x y
   have hCRT : ∀ t ∈ TS, ∀ p ∈ Ps, (G.eval t.1 t.2 : ZMod p) = (Hp p).eval t.1 t.2 := by
     intro t ht p hp
     have h1 : (up p : ZMod p) * (Mp p : ZMod p) = 1 := by
@@ -685,7 +674,7 @@ lemma exists_g (S : Finset (ℤ × ℤ)) (hS : ∀ s ∈ S, IsCoprime s.1 s.2)
         rw [← hbez']
         norm_cast
       push_cast at hcast
-      have hp0 : ((p : ZMod p)) = 0 := (zmod_natCast_eq_zero_iff_dvd p p).mpr dvd_rfl
+      have hp0 : ((p : ZMod p)) = 0 := (ZMod.natCast_eq_zero_iff p p).mpr dvd_rfl
       rw [hp0, zero_mul, add_zero] at hcast
       rw [mul_comm]
       exact hcast
@@ -698,7 +687,7 @@ lemma exists_g (S : Finset (ℤ × ℤ)) (hS : ∀ s ∈ S, IsCoprime s.1 s.2)
         show p ∣ ∏ r ∈ Ps.erase q, r
         exact Finset.dvd_prod_of_mem (fun r => r) (Finset.mem_erase.mpr ⟨hqp.symm, hp⟩)
       have hM0 : ((Mp q : ℕ) : ZMod p) = 0 :=
-        (zmod_natCast_eq_zero_iff_dvd (Mp q) p).mpr hpdvd
+        (ZMod.natCast_eq_zero_iff (Mp q) p).mpr hpdvd
       rw [hM0, mul_zero, zero_mul]
     · intro hnotin
       exact (hnotin hp).elim
@@ -752,7 +741,7 @@ lemma exists_g (S : Finset (ℤ × ℤ)) (hS : ∀ s ∈ S, IsCoprime s.1 s.2)
     rw [hgeval] at hcast
     push_cast at hcast
     have hM0 : ((M : ℕ) : ZMod p) = 0 :=
-      (zmod_natCast_eq_zero_iff_dvd M p).mpr (Finset.dvd_prod_of_mem (fun q => q) hp)
+      (ZMod.natCast_eq_zero_iff M p).mpr (Finset.dvd_prod_of_mem (fun q => q) hp)
     rw [hM0, zero_mul, zero_mul, add_zero] at hcast
     rw [hCRT t ht p hp] at hcast
     exact hHpne t ht p hp hcast
@@ -763,8 +752,7 @@ lemma exists_g (S : Finset (ℤ × ℤ)) (hS : ∀ s ∈ S, IsCoprime s.1 s.2)
     apply hgcop t ht p
     rw [hPs, Nat.mem_primeFactors]
     refine ⟨hpp, ?_, ?_⟩
-    · have h1 : (p : ℤ).natAbs ∣ D.natAbs := Int.natAbs_dvd_natAbs.mpr hpdvdD
-      rwa [Int.natAbs_natCast] at h1
+    · exact Int.ofNat_dvd_left.mp hpdvdD
     · exact Int.natAbs_ne_zero.mpr hDne
 
 
@@ -843,8 +831,7 @@ problem imo2017_p6 (S : Finset (ℤ × ℤ)) (hS : ∀ s ∈ S, gcd s.1 s.2 = 1)
     have hKge : TS.card ≤ K := by
       rw [hK]
       have h1 : 1 ≤ ∏ t ∈ TS, (Δ t).natAbs.totient := Finset.prod_pos htotpos
-      calc TS.card = TS.card * 1 := (Nat.mul_one _).symm
-        _ ≤ TS.card * ∏ t ∈ TS, (Δ t).natAbs.totient := Nat.mul_le_mul_left _ h1
+      exact le_mul_of_one_le_right' h1
     -- Euler's theorem: `Δ t ∣ v t ^ K - 1`
     have hEuler : ∀ t ∈ TS, Δ t ∣ v t ^ K - 1 := by
       intro t ht
@@ -876,10 +863,8 @@ problem imo2017_p6 (S : Finset (ℤ × ℤ)) (hS : ∀ s ∈ S, gcd s.1 s.2 = 1)
       exact Int.natAbs_dvd.mp hmain
     -- correction constants
     set c : ℤ × ℤ → ℤ := fun t => (v t ^ K - 1) / Δ t with hc
-    have hct : ∀ t ∈ TS, c t * Δ t = v t ^ K - 1 := by
-      intro t ht
-      show (v t ^ K - 1) / Δ t * Δ t = v t ^ K - 1
-      exact Int.ediv_mul_cancel (hEuler t ht)
+    have hct : ∀ t ∈ TS, c t * Δ t = v t ^ K - 1 :=
+      fun t ht => Int.ediv_mul_cancel (hEuler t ht)
     -- correction exponent
     set m : ℕ := E * K - (TS.card - 1) * E with hm
     have hmle : (TS.card - 1) * E ≤ E * K := by
@@ -969,8 +954,7 @@ problem imo2017_p6 (S : Finset (ℤ × ℤ)) (hS : ∀ s ∈ S, gcd s.1 s.2 = 1)
         rw [hsum, hhformeval t htT, hL t htT, one_pow, mul_one, hPeval t htT]
         rw [show c t * (∏ t' ∈ TS.erase t, ((ell t').eval t.1 t.2) ^ E) = v t ^ K - 1 from
           hct t htT]
-        show v t ^ K - (v t ^ K - 1) = 1
-        ring
+        exact Int.sub_sub_self (v t ^ K) 1
       rcases hts with h | h
       · rw [h]
         exact hmain

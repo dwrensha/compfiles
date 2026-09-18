@@ -190,9 +190,7 @@ problem usa2006_p2 (k : ℕ) (hk : 0 < k) :
     rw [Finset.mem_powersetCard] at hTmem
     obtain ⟨hTsub, hTcard⟩ := hTmem
     have hN1 : 2 * ∑ x ∈ T, x ≤ N := hsub T hTsub hTcard
-    have hTs : T ∩ s = T := by
-      rw [Finset.inter_comm]
-      exact Finset.inter_eq_right.mpr hTsub
+    have hTs : T ∩ s = T := Finset.inter_eq_left.mpr hTsub
     have hcardu : (s \ T).card = k + 1 := by
       rw [Finset.card_sdiff, hTs, hcard, hTcard]
       lia

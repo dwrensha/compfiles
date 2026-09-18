@@ -436,9 +436,7 @@ lemma gval_mono (x : Fin 2022 → ℝ) {j ns nt : ℕ}
       have h2j : (1:ℝ) ≤ (2:ℝ) ^ j := one_le_pow₀ (by norm_num)
       have h1 : xe x ns ≤ |xe x ns| := le_abs_self _
       have h2 : (0:ℝ) ≤ (cval ns : ℝ) * Bnd x := mul_nonneg (Nat.cast_nonneg _) (le_of_lt hB)
-      have h3 : Bnd x ≤ (2:ℝ) ^ j * Bnd x := by
-        nth_rewrite 1 [← one_mul (Bnd x)]
-        exact mul_le_mul_of_nonneg_right h2j (le_of_lt hB)
+      have h3 : Bnd x ≤ (2:ℝ) ^ j * Bnd x := (le_mul_iff_one_le_left hB).mpr h2j
       linarith
   · rcases eq_or_lt_of_le hj_t with hjt | hjt
     · lia

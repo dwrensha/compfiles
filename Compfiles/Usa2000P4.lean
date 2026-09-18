@@ -151,14 +151,8 @@ lemma card_le_of_good {m n : ℕ} (hm : 2 ≤ m) (hn : 2 ≤ n)
       lia
     rw [h2, ← hlightC] at h
     lia
-  have rows_le : rows.card ≤ m := by
-    rw [hrows]
-    calc (S.image Prod.fst).card ≤ Fintype.card (Fin m) := Finset.card_le_univ _
-      _ = m := Fintype.card_fin m
-  have cols_le : cols.card ≤ n := by
-    rw [hcols]
-    calc (S.image Prod.snd).card ≤ Fintype.card (Fin n) := Finset.card_le_univ _
-      _ = n := Fintype.card_fin n
+  have rows_le : rows.card ≤ m := card_finset_fin_le rows
+  have cols_le : cols.card ≤ n := card_finset_fin_le cols
   -- Every square in a heavy row is the unique chosen square of its column.
   have key : ∀ s ∈ S, 2 ≤ (rowFiber S s.1).card → (colFiber S s.2).card = 1 := by
     intro s hsS hcard

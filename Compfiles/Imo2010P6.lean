@@ -37,9 +37,8 @@ variable {a f : ℕ+ → ℝ}
 variable {l s n N : ℕ+}
 
 lemma exists_max_ratio (a : ℕ+ → ℝ) (s : ℕ+) :
-    ∃ l ∈ Finset.Icc 1 s, ∀ i ∈ Finset.Icc 1 s, a i / (i : ℝ) ≤ a l / (l : ℝ) := by
-  have hsne : (Finset.Icc 1 s).Nonempty := ⟨1, by simp [one_le]⟩
-  simpa using Finset.exists_max_image (Finset.Icc 1 s) (fun i : ℕ+ ↦ a i / (i : ℝ)) hsne
+    ∃ l ∈ Finset.Icc 1 s, ∀ i ∈ Finset.Icc 1 s, a i / (i : ℝ) ≤ a l / (l : ℝ) :=
+  Finset.exists_max_image (Finset.Icc 1 s) (fun i : ℕ+ ↦ a i / (i : ℝ)) ⟨1, by simp [one_le]⟩
 
 lemma finset_nonempty (n : ℕ+) : (Finset.Icc 1 n).Nonempty := Finset.nonempty_Icc.mpr one_le
 
@@ -252,9 +251,7 @@ lemma res_rec (l : ℕ+) (hrec : Rec s a) : Rec s (res a l) := by
     congr 1
     apply Finset.image_congr
     intro k hk
-    have hk_lt_n : k < n := lt_of_le_of_lt (Finset.mem_Icc.mp hk).2 <| by
-      rw [← PNat.sub_add_of_lt h_one_lt_n]
-      exact PNat.lt_add_right (n - 1) 1
+    have hk_lt_n : k < n := lt_of_le_of_lt (Finset.mem_Icc.mp hk).2 (sub_lt h_one_lt_n)
     grind only [res, coe_mul_sub]
   rw [this, res, hrec n hn, max_of_image_sub (finset_nonempty (n - 1)), rec_max, mul_comm]
 

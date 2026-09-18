@@ -48,11 +48,7 @@ theorem lemma1 (c1 : ℝ) :
     have h1' := h1 (1 / 2 : ℝ) (by norm_num)
     have h5 : f ⟨(1 / 2 : ℝ), by norm_num⟩ = (0 : ℝ) := by
       simp [f]
-    have h6 : (0 : ℝ) ≤ c1 * (1 / 2 : ℝ) := by
-      have h7 : f ⟨(1 / 2 : ℝ), by norm_num⟩ ≤ c1 * (1 / 2 : ℝ) := by
-        simpa using h1'
-      rw [h5] at h7
-      exact h7
+    have h6 : (0 : ℝ) ≤ c1 * (1 / 2 : ℝ) := h5.symm.trans_le h1'
     linarith
   have h9 : ∃ a : ℝ, (1 / 2 : ℝ) < a ∧ a ≤ (1 : ℝ) ∧ c1 * a < 1 := by
     use (1 + (2 - c1) / 4) / 2

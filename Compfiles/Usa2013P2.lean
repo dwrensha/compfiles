@@ -163,9 +163,7 @@ def dropLastEquiv {n : ℕ} (s t : Fin 3) :
     have h1 : (Fin.snoc c' t : Fin (n + 2) → Fin 3) (Fin.castSucc (Fin.last n)) = r := by
       rw [Fin.snoc_castSucc, hlast]
     have h2 : Fin.init (Fin.snoc c' t : Fin (n + 2) → Fin 3) = c' := Fin.init_snoc _ _
-    refine Sigma.ext h1 ?_
-    subst h1
-    exact heq_of_eq (Subtype.ext h2)
+    exact Sigma.subtype_ext h1 h2
 
 /-- The count recurrence obtained from `dropLastEquiv`. -/
 theorem countCol_succ {n : ℕ} (s t : Fin 3) :

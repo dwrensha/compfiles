@@ -98,8 +98,7 @@ problem imo1996_p6 {p q n : ℕ} (x : ℕ → ℤ)
     obtain ⟨q', hq'⟩ := exists_eq_mul_left_of_dvd (Nat.gcd_dvd_right p q)
     have : ∃ x' : ℕ → ℤ, ∀ i ≤ n, x i = x' i * w := by
       use (fun i ↦ (x i) / w)
-      intro i hi
-      exact (Int.ediv_mul_cancel (h_w_dvd_xi i hi)).symm
+      exact fun i hi ↦ (Int.ediv_mul_cancel (h_w_dvd_xi i hi)).symm
 
     obtain ⟨x', hx'⟩ := this
     have h₁' : 0 < p' := by rw [hp'] at h₁ ; exact Nat.pos_of_mul_pos_right h₁
@@ -310,6 +309,6 @@ problem imo1996_p6 {p q n : ℕ} (x : ℕ → ℤ)
 termination_by p
 decreasing_by
   rw [hp']
-  exact (Nat.lt_mul_iff_one_lt_right (Nat.zero_lt_of_lt h₁')).mpr h_one_lt_w
+  exact (Nat.lt_mul_iff_one_lt_right h₁').mpr h_one_lt_w
 
 end Imo1996P6

@@ -429,9 +429,8 @@ theorem card_le_of_good {α : Type*} [DecidableEq α] :
         have hgood' : ∀ s ∈ S', ∀ t ∈ S', s ≠ t → (s ∩ t).card ≠ 1 :=
           fun s hs t ht ↦ hgood s (mem_of_mem_filter _ hs) t (mem_of_mem_filter _ ht)
         exact ih T.card hTlt T S' rfl hS'sub hsub3' hgood'
-      have hScard : S.card = M.card + S'.card := by
-        rw [hM, hS']
-        exact (card_filter_add_card_filter_not (fun s ↦ A ∈ s) (s := S)).symm
+      have hScard : S.card = M.card + S'.card :=
+        (card_filter_add_card_filter_not fun s ↦ A ∈ s).symm
       have h2n : avoid.card ≤ n := hX ▸ card_le_card havoidX
       lia
     rcases hcases with hB2 | hC2

@@ -217,7 +217,7 @@ lemma chain_u_mono_le
   intro a ha b hb hx
   rcases lt_or_eq_of_le hx with h_lt | h_eq
   · exact le_of_lt (h_u_mono a ha b hb h_lt)
-  · have := h_u_inj a ha b hb h_eq; subst this; exact le_refl _
+  · exact (congrArg py (h_u_inj a ha b hb h_eq)).le
 
 lemma chain_v_mono_le
     (h_v_mono : ∀ a ∈ v, ∀ b ∈ v, px a < px b → py b < py a)
@@ -226,7 +226,7 @@ lemma chain_v_mono_le
   intro a ha b hb hx
   rcases lt_or_eq_of_le hx with h_lt | h_eq
   · exact le_of_lt (h_v_mono a ha b hb h_lt)
-  · have := h_v_inj a ha b hb h_eq; subst this; exact le_refl _
+  · exact (congrArg py (h_v_inj b hb a ha h_eq.symm)).le
 
 lemma chain_u_inj_y
     (h_u_mono : ∀ a ∈ u, ∀ b ∈ u, px a < px b → py a < py b)
@@ -348,8 +348,8 @@ lemma card_filter_ge_sub_one {α : Type*} [DecidableEq α]
     (S : Finset α) (P : α → Prop) [DecidablePred P]
     (h_boundary : (S.filter (fun x => ¬ P x)).card ≤ 1) :
     (S.filter P).card ≥ S.card - 1 := by
-  have h_card_split : S.card = (S.filter P).card + (S.filter (fun x => ¬ P x)).card := by
-    rw [← card_union_of_disjoint (disjoint_filter_filter_not S S P), filter_union_filter_not_eq]
+  have h_card_split : S.card = (S.filter P).card + (S.filter (fun x => ¬ P x)).card :=
+    (card_filter_add_card_filter_not P).symm
   lia
 
 macro "solve_boundary_count" S:term "," P:term "," h_unique:term "," mem_thm:term : tactic =>
@@ -629,13 +629,11 @@ lemma covering_of_maximal_v
   · intro q hq hx_lt
     specialize h_not_up q hq
     have h_x_le : px q ≤ px p := le_of_lt hx_lt
-    have h_not_y_le : ¬(py q ≤ py p) := fun h => h_not_up h_x_le h
-    linarith
+    exact Nat.lt_of_not_le (h_not_up h_x_le)
   · intro q hq hx_lt
     specialize h_not_lo q hq
     have h_x_le : px p ≤ px q := le_of_lt hx_lt
-    have h_not_y_le : ¬(py p ≤ py q) := fun h => h_not_lo h_x_le h
-    linarith
+    exact Nat.lt_of_not_le (h_not_lo h_x_le)
 
 lemma incidence_count_of_others
     (p : Point n) (hp : p ∈ all_black) (hp_not_u : p ∉ u) (hp_not_v : p ∉ v)
@@ -1474,7 +1472,7 @@ lemma valid_label_pos_not_black {n : ℕ} [NeZero n] (c : IntersectionSetup n)
       · simp at h
       · simp at h; linarith
     exact label_pos_S_absurd c.h_unique_y h_src_black h_lt h_pos_black
-  · exact (not_valid_label_X c { source := source, type := .X } hl rfl).elim
+  · exact not_valid_label_X c { source := source, type := .X } hl rfl
 
 theorem matildas_count_ge_intersection_bound
     (matildas_partition : Finset (Matilda n c.all_black))
@@ -2844,8 +2842,7 @@ lemma rect_subset_M (s t : Int) (p : Point n)
       have h_diff_lt  : val_s k p - s * M < M := by linarith [h_val_s_strict.2]
       rw [Int.emod_eq_of_lt (le_of_lt h_diff_pos) h_diff_lt]
       exact ne_of_gt h_diff_pos
-    change ¬(val_s k p % M = 0 ∧ _)
-    simp [h_val_s_mod_ne_zero]
+    exact not_and_of_not_left _ h_val_s_mod_ne_zero
   · constructor
     · rw [calc_s]
       rw [Int.ediv_eq_iff_of_pos h_pos]
@@ -3153,7 +3150,7 @@ lemma unique_row_all_black (k : ℕ) (hk : 2 ≤ k) :
   obtain ⟨_, ht1⟩ := hp1
   obtain ⟨_, ht2⟩ := hp2
   let M := mod_base k
-  have h_pos : M > 0 := by apply Int.add_pos_of_nonneg_of_pos (sq_nonneg _) (by decide)
+  have h_pos : M > 0 := mod_base_pos k
   have h_equiv : val_t k p1 ≡ val_t k p2 [ZMOD M] := ht1.2.trans ht2.2.symm
   dsimp [val_t] at h_equiv
   rw [Int.ofNat_inj.mpr hx] at h_equiv
@@ -3164,11 +3161,8 @@ lemma unique_row_all_black (k : ℕ) (hk : 2 ≤ k) :
     dsimp [C]; ring
   rw [h_step, h_step2] at h_equiv
   rw [sub_eq_add_neg, sub_eq_add_neg] at h_equiv
-  have h_neg_y : -(p1.2 : ℤ) ≡ -(p2.2 : ℤ) [ZMOD M] := by
-    exact Int.ModEq.add_left_cancel  (Int.ModEq.refl C) h_equiv
-  have h_y_equiv : (p1.2 : ℤ) ≡ p2.2 [ZMOD M] := by
-    apply Int.ModEq.neg at h_neg_y
-    simpa using h_neg_y
+  have h_neg_y : -(p1.2 : ℤ) ≡ -(p2.2 : ℤ) [ZMOD M] := Int.ModEq.add_left_cancel' C h_equiv
+  have h_y_equiv : (p1.2 : ℤ) ≡ p2.2 [ZMOD M] := Int.neg_modEq_neg.mp h_neg_y
   have h_y_eq : p1.2 = p2.2 := eq_of_modEq_fin hk h_y_equiv
   ext
   · exact hx
@@ -3181,7 +3175,7 @@ lemma unique_col_all_black (k : ℕ) (hk : 2 ≤ k) :
   obtain ⟨_, hs1⟩ := hp1
   obtain ⟨_, hs2⟩ := hp2
   let M := mod_base k
-  have h_pos : M > 0 := by apply Int.add_pos_of_nonneg_of_pos (sq_nonneg _) (by decide)
+  have h_pos : M > 0 := mod_base_pos k
   have h_equiv : val_s k p1 ≡ val_s k p2 [ZMOD M] := hs1.1.trans hs2.1.symm
   dsimp [val_s] at h_equiv
   rw [Int.ofNat_inj.mpr hy] at h_equiv
@@ -3324,7 +3318,7 @@ lemma mem_matilda_iff_mem_M_st {k : ℕ} {hk : 2 ≤ k} [NeZero k]
     simp [rect_finset, in_white_rect]
     rcases h.2.1 with hx_le | hp1_zero
     · constructor
-      · exact (And.imp_left (fun a ↦ hx_le) h.symm).symm
+      · exact ⟨h.1, hx_le⟩
       · constructor
         · exact h.2.2.1
         · rcases h.2.2.2 with hy_le | hp2_zero
@@ -3477,7 +3471,7 @@ theorem matilda_solution_general (k : ℕ) (hk : 2 ≤ k) :
           card_all_black_k_eq_n k hk,
           unique_row_all_black k hk,
           unique_col_all_black k hk,
-          by dsimp [P]; exact construction_is_valid_partition k hk
+          construction_is_valid_partition k hk
         ⟩
         have h_lower := matilda_lower_bound
           h_valid_P.1 h_valid_P.2.1 h_valid_P.2.2.1 P h_valid_P.2.2.2

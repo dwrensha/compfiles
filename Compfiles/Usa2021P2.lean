@@ -429,11 +429,7 @@ theorem arrivals_le_three {σ₀ : P.V × P.V × Bool} (h₀ : P.Valid σ₀) (v
     exact P.walk_inj_of_lt_period h₀ hk₁.1 hk₂.1 htri
   set M := F.image φ with hM
   have hMcard : M.card = F.card := Finset.card_image_of_injOn hinj
-  have hMT : M ⊆ T := by
-    intro x hx
-    simp only [hM, Finset.mem_image] at hx
-    obtain ⟨k, hk, rfl⟩ := hx
-    exact hmaps hk
+  have hMT : M ⊆ T := Finset.mapsTo_iff_image_subset.mp hmaps
   -- the mirror involution on the turns at `v`
   set m : P.V × Bool → P.V × Bool := fun x ↦ (P.turn v x.1 x.2, !x.2) with hm
   have mfst : ∀ x, (m x).1 = P.turn v x.1 x.2 := fun _ ↦ rfl
@@ -443,10 +439,7 @@ theorem arrivals_le_three {σ₀ : P.V × P.V × Bool} (h₀ : P.Valid σ₀) (v
     simp only [hT, Finset.mem_coe, Finset.mem_product, Finset.mem_filter] at hx₁ hx₂
     obtain ⟨a₁, b₁⟩ := x₁
     obtain ⟨a₂, b₂⟩ := x₂
-    have hb : b₁ = b₂ := by
-      have h2' := congrArg Prod.snd h
-      have h2'' : (!b₁) = (!b₂) := h2'
-      cases b₁ <;> cases b₂ <;> simp_all
+    have hb : b₁ = b₂ := Bool.not_inj_iff.mp (congrArg Prod.snd h)
     have ha : a₁ = a₂ := by
       have h' := congrArg Prod.fst h
       rw [mfst, mfst, ← hb] at h'

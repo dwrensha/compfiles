@@ -79,7 +79,7 @@ lemma redPos_lt (j : JapaneseTriangle n) {m : ℕ} (h : m ∈ Finset.Icc 1 n) :
 lemma redPos_one (j : JapaneseTriangle n) : redPos j 1 = 0 := by
   by_cases h : (1 : ℕ) ∈ Finset.Icc 1 n
   · rw [redPos_val j h]
-    exact Nat.eq_zero_of_le_zero (Nat.le_of_lt_succ (j.red ⟨1, h⟩).2)
+    exact Fin.val_eq_zero (j.red ⟨1, h⟩)
   · exact dite_eq_right h
 
 /-- `f j i p` is the maximum number of red dots on a ninja path from the top
@@ -174,8 +174,7 @@ lemma pathPos_step (P : NinjaPath n) {k : ℕ} (hk : k ∈ Finset.Icc 1 n) (h : 
   rw [e] at hv
   rcases hv with h1 | h1
   · exact le_of_eq h1
-  · have h1' : (P.steps ⟨k, hk⟩).val + 1 = (P.steps ⟨k + 1, hmem⟩).val := h1
-    lia
+  · exact Nat.le.intro h1
 
 lemma pathPos_mono (P : NinjaPath n) {a : ℕ} (ha : 1 ≤ a) (b : ℕ) (hab : a ≤ b)
     (hb : b ≤ n) : pathPos P a ≤ pathPos P b := by

@@ -117,9 +117,7 @@ problem usa2025_p1 (k d : ℕ) (hk : 0 < k) (_hd : 0 < d) :
   -- The lower bound: `d + 1 ≤ c * n / 2 ^ i`, because `c ≥ 1` and
   -- `n ≥ (d + 1) * 2 ^ (k - 1)` with `2 ^ i ∣ 2 ^ (k - 1)`.
   have hbound : d + 1 ≤ c * n / 2 ^ i := by
-    have hge : (d + 1) * 2 ^ (k - 1) ≤ c * n := by
-      calc (d + 1) * 2 ^ (k - 1) ≤ n := hn
-        _ ≤ c * n := Nat.le_mul_of_pos_left n hc1
+    have hge : (d + 1) * 2 ^ (k - 1) ≤ c * n := hn.trans (Nat.le_mul_of_pos_left n hc1)
     have hsplit : 2 ^ (k - 1) = 2 ^ (k - 1 - i) * 2 ^ i := by
       rw [← pow_add]
       congr 1

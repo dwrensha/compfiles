@@ -88,8 +88,7 @@ lemma inner_pos_of_angle_lt {u v : Pt} (hu : u ≠ 0) (hv : v ≠ 0)
       ⟨by linarith [InnerProductGeometry.angle_nonneg u v, Real.pi_pos], h⟩
   rw [InnerProductGeometry.cos_angle] at h0
   have hn : 0 < ‖u‖ * ‖v‖ := mul_pos (norm_pos_iff.mpr hu) (norm_pos_iff.mpr hv)
-  have h1 := mul_pos h0 hn
-  rwa [div_mul_cancel₀ _ hn.ne'] at h1
+  exact (div_pos_iff_of_pos_right hn).mp h0
 
 /-- If `A` is a combination of `B`, `C`, `D` with positive weights (an interior point
 of the triangle `B C D`), then the angles `∠ B A C` and `∠ B A D` cannot both be
@@ -127,9 +126,7 @@ lemma quad_case {A B C D Q : Pt} (hAC : Sbtw ℝ A Q C) (hBD : Sbtw ℝ B Q D)
   have sA : ∠ B A D = ∠ B A Q + ∠ Q A D := (angle_add_angle_eq_of_sbtw hBD).symm
   have sC : ∠ B C D = ∠ B C Q + ∠ Q C D := (angle_add_angle_eq_of_sbtw hBD).symm
   have rA1 : ∠ B A Q = ∠ B A C := hAC.angle_eq_right B
-  have rA2 : ∠ Q A D = ∠ C A D := by
-    rw [angle_comm Q A D, angle_comm C A D]
-    exact hAC.angle_eq_right D
+  have rA2 : ∠ Q A D = ∠ C A D := hAC.angle_eq_left D
   have rC1 : ∠ B C Q = ∠ B C A := hAC.symm.angle_eq_right B
   have rC2 : ∠ Q C D = ∠ A C D := by
     rw [angle_comm Q C D, angle_comm A C D]

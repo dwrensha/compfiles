@@ -218,7 +218,7 @@ lemma scanl_mem_ge (l : List ℝ) (a : ℝ)
       · exact le_rfl
       · have hx : 0 ≤ x := hnn x List.mem_cons_self
         have htail : ∀ z ∈ xs, 0 ≤ z := fun z hz => hnn z (List.mem_cons_of_mem _ hz)
-        exact le_trans (by linarith : a ≤ a + x) (ih (a := a + x) htail hy)
+        exact le_of_add_le_of_nonneg_left (ih (a + x) htail hy) hx
 
 lemma pairwise_scanl_lt (l : List ℝ) (a : ℝ)
     (hpos : ∀ x ∈ l, 0 < x) : (l.scanl (· + ·) a).Pairwise (· < ·) := by
@@ -385,10 +385,7 @@ lemma card_cutsOfLengths (l : List ℝ) (hne : l ≠ [])
   rw [List.toFinset_card_of_nodup (interiorPartialSums_pairwise l hpos).nodup]
   unfold interiorPartialSums
   rw [List.length_dropLast, List.length_tail, List.length_scanl]
-  have hlen : 0 < l.length := by
-    cases l with
-    | nil => contradiction
-    | cons => simp
+  have hlen : 0 < l.length := List.length_pos_iff.mpr hne
   lia
 
 lemma admissible_cutsOfLengths (n : ℕ) (l : List ℝ) (hne : l ≠ [])
@@ -418,8 +415,7 @@ lemma exists_reply_of_refinement (n : ℕ) (A : Finset ℝ) (l : List ℝ)
         using hnew
   · exact Finset.sdiff_disjoint.symm
   · unfold L
-    rw [show A ∪ B = cutsOfLengths l by
-      simpa [B] using Finset.union_sdiff_of_subset hsub]
+    rw [show A ∪ B = cutsOfLengths l from Finset.union_sdiff_of_subset hsub]
     rw [pieceLengths_cutsOfLengths l hne hpos hsum]
 
 lemma exists_reply_of_refinement_length (n : ℕ) (A : Finset ℝ) (l : List ℝ)
@@ -536,8 +532,8 @@ lemma even_zip_sum_pairDup_aux (xs : List ℝ) (n : ℕ) (hn : n % 2 = 0) :
 
 lemma even_zip_sum_pairDup (xs : List ℝ) :
     ((((pairDup xs).zipIdx).filter (fun p => p.2 % 2 = 0)).map (fun p => p.1)).sum
-      = xs.sum := by
-  exact even_zip_sum_pairDup_aux xs 0 (by simp)
+      = xs.sum :=
+  even_zip_sum_pairDup_aux xs 0 rfl
 
 lemma odd_zip_sum_pairDup_aux (xs : List ℝ) (n : ℕ) (hn : n % 2 = 1) :
     ((((pairDup xs).zipIdx n).filter (fun p => p.2 % 2 = 0)).map (fun p => p.1)).sum
@@ -694,9 +690,7 @@ lemma pow_two_punch {ι : Type} [Fintype ι] [DecidableEq ι]
       have hsi1 : |s i| ≤ 1 := by
         rcases hs i with h | h | h <;> simp [h]
       rw [abs_mul, abs_of_pos (hp2_pos _)]
-      calc |s i| * 2 ^ p i ≤ 1 * 2 ^ p i :=
-            mul_le_mul_of_nonneg_right hsi1 (le_of_lt (hp2_pos _))
-        _ = 2 ^ p i := one_mul _
+      exact (mul_le_iff_le_one_left (hp2_pos (p i))).mpr hsi1
     refine h1.trans ?_
     rw [← sum_image (fun x _ y _ h => hp h)]
     have hsub : (supp.erase a).image p ⊆ range (p a) := by
@@ -880,8 +874,7 @@ theorem exists_real_signing {V E : Type*} [Fintype V] [Fintype E]
   refine ⟨fun v => sign3 (t v), (fun v => sign3_cases (t v)), ?_, ?_⟩
   · obtain ⟨v, hv⟩ := htne
     exact ⟨v, sign3_ne_zero hv⟩
-  · intro e
-    exact sign3_add_eq_zero (htE e)
+  · exact fun e => sign3_add_eq_zero (htE e)
 
 theorem exists_signed_edge_bound {V E : Type*} [Fintype V] [Fintype E]
     (src dst : E → V) (x y : E → ℝ) (weight : V → ℝ)
@@ -1172,18 +1165,11 @@ theorem abstract_even_lower {ι : Type} [Fintype ι] [DecidableEq ι]
       _ = ∑ e, (s (src e) * x e + s (dst e) * y e) := by rfl
   obtain ⟨s, hs, hsne, hbound⟩ :=
     CodexMod3.exists_signed_edge_bound src dst x y (labelWeight l) hcardP htotal
-  have hspow : ∀ i, s i = 1 ∨ s i = -1 ∨ s i = 0 := by
-    intro i
-    rcases hs i with h | h | h
-    · exact Or.inr (Or.inr h)
-    · exact Or.inl h
-    · exact Or.inr (Or.inl h)
+  have hspow : ∀ i, s i = 1 ∨ s i = -1 ∨ s i = 0 := fun i => or_rotate.mp (hs i)
   have hpunch := pow_two_punch (ι := ι) p hp s hspow hsne
   have hsumpow :
-      (∑ i, s i * labelWeight l i) = ∑ i, s i * 2 ^ p i := by
-    apply Finset.sum_congr rfl
-    intro i _
-    rw [hweight]
+      (∑ i, s i * labelWeight l i) = ∑ i, s i * 2 ^ p i :=
+    Finset.sum_congr rfl fun i _ => by rw [hweight]
   rw [hsumpow] at hbound
   have hedge_nonneg : ∀ q ∈ P, 0 ≤ q.1.1 - q.2.1 := by
     intro q hq
@@ -1196,9 +1182,7 @@ theorem abstract_even_lower {ι : Type} [Fintype ι] [DecidableEq ι]
     have habs : (P.map (fun q => |q.1.1 - q.2.1|)).sum =
         (P.map (fun q => q.1.1 - q.2.1)).sum := by
       apply congrArg List.sum
-      apply List.map_congr_left
-      intro z hz
-      rw [abs_of_nonneg (hedge_nonneg z hz)]
+      exact List.map_congr_left fun z hz => abs_of_nonneg (hedge_nonneg z hz)
     rw [habs]
     have hsur := surplus_eq_pairUp (l.map Prod.fst)
     simpa [pairUp_map, unpaired_map, hunpaired, P, List.map_map,
@@ -1278,18 +1262,11 @@ theorem abstract_lower {ι : Type} [Fintype ι] [DecidableEq ι]
       (∑ e, |x e - y e|) + r := by
     rw [hfull]
     exact (abs_add_le _ _).trans (add_le_add hedge_bound hrem_bound)
-  have hspow : ∀ i, s i = 1 ∨ s i = -1 ∨ s i = 0 := by
-    intro i
-    rcases hs i with h | h | h
-    · exact Or.inr (Or.inr h)
-    · exact Or.inl h
-    · exact Or.inr (Or.inl h)
+  have hspow : ∀ i, s i = 1 ∨ s i = -1 ∨ s i = 0 := fun i => or_rotate.mp (hs i)
   have hpunch := pow_two_punch (ι := ι) p hp s hspow hsne
   have hsumpow :
-      (∑ i, s i * labelWeight l i) = ∑ i, s i * 2 ^ p i := by
-    apply Finset.sum_congr rfl
-    intro i _
-    rw [hweight]
+      (∑ i, s i * labelWeight l i) = ∑ i, s i * 2 ^ p i :=
+    Finset.sum_congr rfl fun i _ => by rw [hweight]
   rw [hsumpow] at hbound
   have hedge_nonneg : ∀ q ∈ P, 0 ≤ q.1.1 - q.2.1 := by
     intro q hq
@@ -1302,9 +1279,7 @@ theorem abstract_lower {ι : Type} [Fintype ι] [DecidableEq ι]
     have habs : (P.map (fun q => |q.1.1 - q.2.1|)).sum =
         (P.map (fun q => q.1.1 - q.2.1)).sum := by
       apply congrArg List.sum
-      apply List.map_congr_left
-      intro z hz
-      rw [abs_of_nonneg (hedge_nonneg z hz)]
+      exact List.map_congr_left fun z hz => abs_of_nonneg (hedge_nonneg z hz)
     rw [habs]
     have hsur := surplus_eq_pairUp (l.map Prod.fst)
     simpa [pairUp_map, unpaired_map, P, r, List.map_map,
@@ -1366,8 +1341,7 @@ lemma intervalBlock_sum {N : ℕ} (r : ℕ → ℝ) (f : ℕ → ℕ) (i : Fin N
   unfold intervalBlock
   rw [← List.sum_toFinset _ (List.nodup_range')]
   rw [List.toFinset_range'_1, Nat.add_sub_of_le hf]
-  rw [Finset.sum_Ico_eq_sub _ hf, Finset.sum_range_sub, Finset.sum_range_sub]
-  ring
+  exact Finset.sum_Ico_sub r hf
 
 def blockIndices (f : ℕ → ℕ) (N : ℕ) : List ℕ :=
   (List.range N).flatMap fun i => List.range' (f i) (f (i + 1) - f i)
@@ -1395,13 +1369,6 @@ lemma blockIndices_eq_range' (f : ℕ → ℕ) (hf : Monotone f) (N : ℕ) :
                 simp
         _ = List.range' (f 0) (f (N + 1) - f 0) := by congr 2; lia
 
-lemma map_val_finRange (N : ℕ) :
-    (List.finRange N).map (fun i => i.val) = List.range N := by
-  apply List.ext_getElem
-  · simp
-  · intro i h₁ h₂
-    simp
-
 lemma map_fst_tagged_intervalBlocks {N : ℕ} (r : ℕ → ℝ) (f : ℕ → ℕ)
     (hf : Monotone f) :
     (taggedBlocks (intervalBlock r f : Fin N → List ℝ)).map Prod.fst =
@@ -1419,7 +1386,7 @@ lemma map_fst_tagged_intervalBlocks {N : ℕ} (r : ℕ → ℝ) (f : ℕ → ℕ
         (List.range' (f i) (f (i + 1) - f i)).map
           (fun j => r (j + 1) - r j)) by
         rw [List.flatMap_map]]
-  rw [map_val_finRange]
+  rw [List.map_coe_finRange_eq_range]
   rw [← List.map_flatMap]
   change (blockIndices f N).map (fun j => r (j + 1) - r j) = _
   rw [blockIndices_eq_range' f hf N]
@@ -1499,15 +1466,9 @@ theorem exists_tagged_piece_refinement {S T : Finset ℝ}
   let M := T.card + 1
   let q := boundaryPoints S
   let r := boundaryPoints T
-  have hqLen : q.length = N + 1 := by
-    dsimp [q, N]
-    rw [boundaryPoints_length]
-  have hrLen : r.length = M + 1 := by
-    dsimp [r, M]
-    rw [boundaryPoints_length]
-  have hsub : q <+ r := by
-    dsimp [q, r]
-    exact boundaryPoints_sublist hST
+  have hqLen : q.length = N + 1 := boundaryPoints_length S
+  have hrLen : r.length = M + 1 := boundaryPoints_length T
+  have hsub : q <+ r := boundaryPoints_sublist hST
   rw [List.sublist_iff_exists_fin_orderEmbedding_get_eq] at hsub
   obtain ⟨e₀, he₀⟩ := hsub
   let e : Fin (N + 1) ↪o Fin (M + 1) :=
@@ -1582,8 +1543,7 @@ theorem exists_tagged_piece_refinement {S T : Finset ℝ}
       rw [Nat.sub_zero, hrLen]
       simp only [Nat.add_sub_cancel_right]
       exact List.range_eq_range'.symm]
-    change indexedDiffs r = pieceLengths T
-    rw [pieceLengths_eq_indexedDiffs_boundaryPoints]
+    exact (pieceLengths_eq_indexedDiffs_boundaryPoints T).symm
   · intro i
     change labelWeight l i = _
     rw [show labelWeight l i = (intervalBlock rv F i).sum by
@@ -1667,9 +1627,7 @@ theorem codex_lower_bound_complete (n : ℕ) (_hn : 0 < n) :
       (hl_nonneg w ((List.mergeSort_perm l _).mem_iff.mp hw))
   have hlenL : l.length = T.card + 1 := by
     rw [← pieceLengths_length T, ← hlmap, List.length_map]
-  have hTcard : T.card = A.card + B.card := by
-    dsimp [T]
-    rw [Finset.card_union_of_disjoint hdisj]
+  have hTcard : T.card = A.card + B.card := Finset.card_union_of_disjoint hdisj
   have hscaledLen : scaled.length < 2 * Fintype.card (Fin (A.card + 1)) := by
     simp only [scaled, List.length_map, ls, List.length_mergeSort, Fintype.card_fin]
     rw [hlenL, hTcard]
@@ -1751,12 +1709,7 @@ lemma bisectLengths_sum (l : List ℝ) : (bisectLengths l).sum = l.sum := by
       ring
 
 lemma sum_map_half (l : List ℝ) :
-    (l.map fun x => x / 2).sum = l.sum / 2 := by
-  induction l with
-  | nil => simp
-  | cons x xs ih =>
-      rw [List.map_cons, List.sum_cons, List.sum_cons, ih]
-      ring
+    (l.map fun x => x / 2).sum = l.sum / 2 := codex_sum_map_div l 2
 
 lemma bisectLengths_length (l : List ℝ) :
     (bisectLengths l).length = 2 * l.length := by
@@ -1817,7 +1770,7 @@ lemma firstPlayerShare_bisectLengths (l : List ℝ) :
   have hp : List.Perm h hs := (List.mergeSort_perm h (· ≥ ·)).symm
   have hpdup : List.Perm (pairDup h) (pairDup hs) := by
     unfold pairDup
-    exact hp.flatMap fun a _ => List.Perm.refl [a, a]
+    exact hp.flatMap_right fun a => [a, a]
   calc
     firstPlayerShare (bisectLengths l) = firstPlayerShare (pairDup hs) := by
       apply firstPlayerShare_congr
@@ -1984,17 +1937,13 @@ theorem exists_disjoint_subset_sums_close (m : ℕ) (hm : 0 < m)
       (∑ i ∈ I, a i) - ∑ j ∈ J, a j ≤ 1 / ((2 : ℝ) ^ m - 1) := by
   have hcard : 2 ≤ Fintype.card (Finset (Fin m)) := by
     simp only [Fintype.card_finset, Fintype.card_fin]
-    have hpow : 2 ^ 1 ≤ 2 ^ m :=
-      Nat.pow_le_pow_right (by lia) (by lia)
-    simpa using hpow
-  have hsum0 : ∀ I : Finset (Fin m), 0 ≤ ∑ i ∈ I, a i := by
-    intro I
-    exact Finset.sum_nonneg fun i _ => ha i
+    exact Nat.le_pow hm
+  have hsum0 : ∀ I : Finset (Fin m), 0 ≤ ∑ i ∈ I, a i :=
+    fun I => Finset.sum_nonneg fun i _ => ha i
   have hsum1 : ∀ I : Finset (Fin m), (∑ i ∈ I, a i) ≤ 1 := by
     intro I
     rw [← hasum]
-    exact Finset.sum_le_sum_of_subset_of_nonneg (Finset.subset_univ I)
-      (fun i _ _ => ha i)
+    exact Finset.sum_le_univ_sum_of_nonneg ha
   obtain ⟨A, B, hABne, hABclose⟩ :=
     exists_close_pair_of_finite (fun I : Finset (Fin m) => ∑ i ∈ I, a i)
       hcard hsum0 hsum1
@@ -2021,8 +1970,7 @@ theorem exists_disjoint_subset_sums_close (m : ℕ) (hm : 0 < m)
     · rw [hdiff]
       linarith
     · rw [hdiff]
-      rw [abs_of_nonneg (sub_nonneg.mpr horient)] at hclose
-      exact hclose
+      exact le_of_abs_le hclose
   · refine ⟨J₀, I₀, hdisj.symm, by simpa [Finset.union_comm] using hnonempty, ?_, ?_⟩
     · rw [← neg_sub, hdiff]
       linarith
@@ -2157,10 +2105,7 @@ lemma cutsOfLengths_subset_flattenFinBlocks (p : List ℝ)
   have hzfull : z ∈ p.scanl (· + ·) 0 := by
     exact List.mem_of_mem_tail (List.mem_of_mem_dropLast hzint)
   have hzfull' := scanl_piece_mem_flattenFinBlocks p b hbsum hzfull
-  have hm : 0 < p.length := by
-    cases p with
-    | nil => contradiction
-    | cons => simp
+  have hm : 0 < p.length := List.length_pos_iff.mpr hpne
   have hfne : flattenFinBlocks b ≠ [] := flattenFinBlocks_ne_nil b hm hbne
   have hfpos : ∀ x ∈ flattenFinBlocks b, 0 < x :=
     flattenFinBlocks_pos b hbpos
@@ -2519,11 +2464,8 @@ theorem exists_blocks_of_scanRefines (coarse fine : List ℝ)
     rw [← he ⟨i.val + 1, by lia⟩, ← he ⟨i.val, by lia⟩]
     have hiq : i.val < q.length - 1 := by rw [hqLen]; lia
     rw [← indexedDiffs_getD q hiq]
-    rw [show indexedDiffs q = coarse by
-      dsimp [q]
-      exact indexedDiffs_scanl coarse 0]
-    rw [List.getD_eq_getElem (hn := by simp [N])]
-    rfl
+    rw [show indexedDiffs q = coarse from indexedDiffs_scanl coarse 0]
+    exact List.getD_eq_get coarse 0 i
   have hbne : ∀ i, b i ≠ [] := by
     intro i hnil
     have hi : i.val ≤ N := Nat.le_of_lt i.isLt
@@ -2818,12 +2760,8 @@ theorem exists_equal_subset_common_blocks (p : List ℝ)
   let x := selectedList p I
   let y := selectedList p J
   let c := commonAtoms x y
-  have hxpos : ∀ z ∈ x, 0 < z := by
-    dsimp [x]
-    exact selectedList_pos p I hp
-  have hypos : ∀ z ∈ y, 0 < z := by
-    dsimp [y]
-    exact selectedList_pos p J hp
+  have hxpos : ∀ z ∈ x, 0 < z := selectedList_pos p I hp
+  have hypos : ∀ z ∈ y, 0 < z := selectedList_pos p J hp
   have hxy : x.sum = y.sum := by simpa [x, y] using hsum
   have hspec := commonAtoms_spec x y hxpos hypos hxy
   have href := commonAtoms_scanRefines x y hxpos hypos hxy
@@ -2853,8 +2791,7 @@ theorem firstPlayerShare_pairDup_append_singleton (xs : List ℝ) (r : ℝ) :
   let lo := L.mergeSort (· ≥ ·)
   have hhiPerm : hi.Perm H := List.mergeSort_perm H (· ≥ ·)
   have hloPerm : lo.Perm L := List.mergeSort_perm L (· ≥ ·)
-  have hpartition : (H ++ L).Perm xs := by
-    simpa [H, L] using List.filter_append_perm (fun x : ℝ => decide (r ≤ x)) xs
+  have hpartition : (H ++ L).Perm xs := List.filter_append_perm _ xs
   have hhiloperm : (hi ++ lo).Perm xs :=
     (hhiPerm.append hloPerm).trans hpartition
   have hhipw : hi.Pairwise (· ≥ ·) := List.pairwise_mergeSort' (· ≥ ·) H
@@ -2894,7 +2831,7 @@ theorem firstPlayerShare_pairDup_append_singleton (xs : List ℝ) (r : ℝ) :
       · exact (hpairLo y hy).trans (hpairHi x hx)
   have hdup : (pairDup (hi ++ lo)).Perm (pairDup xs) := by
     unfold pairDup
-    exact hhiloperm.flatMap fun a _ => List.Perm.refl [a, a]
+    exact hhiloperm.flatMap_right fun a => [a, a]
   have harrange : (pairDup xs ++ [r]).Perm (pairDup hi ++ r :: pairDup lo) := by
     have h₁ : (pairDup xs ++ [r]).Perm (pairDup (hi ++ lo) ++ [r]) :=
       hdup.symm.append_right [r]
@@ -2920,7 +2857,7 @@ theorem firstPlayerShare_pairDup (xs : List ℝ) :
   have hsperm : s.Perm xs := List.mergeSort_perm xs (· ≥ ·)
   have hdup : (pairDup s).Perm (pairDup xs) := by
     unfold pairDup
-    exact hsperm.flatMap fun a _ => List.Perm.refl [a, a]
+    exact hsperm.flatMap_right fun a => [a, a]
   calc
     firstPlayerShare (pairDup xs) = firstPlayerShare (pairDup s) :=
       firstPlayerShare_congr hdup.symm
@@ -3533,9 +3470,7 @@ theorem exists_positive_prefix_data (xs ys : List ℝ)
     exists_blocks_of_scanRefines ys c hypos hspec.1 hysC href.2
   let bm' : Fin (pre.length + 1) → List ℝ := fun i =>
     bm (Fin.cast (by simp [matched]) i)
-  have hbm'Ne : ∀ i, bm' i ≠ [] := by
-    intro i
-    exact hbmNe (Fin.cast (by simp [matched]) i)
+  have hbm'Ne : ∀ i, bm' i ≠ [] := fun i => hbmNe (Fin.cast (by simp [matched]) i)
   have hbm'Pos : ∀ i, ∀ z ∈ bm' i, 0 < z := by
     intro i z hz
     exact hbmPos (Fin.cast (by simp [matched]) i) z hz
@@ -3549,10 +3484,9 @@ theorem exists_positive_prefix_data (xs ys : List ℝ)
         exact flattenFinBlocks_cast (by simp [matched]) bm
       _ = c := hbmFlat
   let bX := prefixFlattenBlocks pre x post t rho bm'
-  have hbXNe : ∀ i, bX i ≠ [] := by
-    exact prefixFlattenBlocks_ne_nil pre x post t rho bm' hbm'Ne
-  have hbXPos : ∀ i, ∀ z ∈ bX i, 0 < z := by
-    apply prefixFlattenBlocks_pos pre x post t rho bm' hxpos hrho hbm'Pos
+  have hbXNe : ∀ i, bX i ≠ [] := prefixFlattenBlocks_ne_nil pre x post t rho bm' hbm'Ne
+  have hbXPos : ∀ i, ∀ z ∈ bX i, 0 < z :=
+    prefixFlattenBlocks_pos pre x post t rho bm' hxpos hrho hbm'Pos
   have hbXSum : ∀ i, (bX i).sum = (pre ++ x :: post).get i := by
     exact prefixFlattenBlocks_sum pre x post t rho hx bm' hbm'Sum
   have hbXFlat : flattenFinBlocks bX =
@@ -3654,19 +3588,14 @@ theorem exists_positive_close_refinement (p : List ℝ)
     assembleTwoSelectedBlocks_pos p I J d.bX d.bY hppos d.bX_pos d.bY_pos
   have hbsum : ∀ i, (b i).sum = p.get i :=
     assembleTwoSelectedBlocks_sum p I J hIJ d.bX d.bY d.bX_sum d.bY_sum
-  have hm : 0 < p.length := by
-    cases p with
-    | nil => contradiction
-    | cons => simp
+  have hm : 0 < p.length := List.length_pos_iff.mpr hpne
   have hlne : l ≠ [] := flattenFinBlocks_ne_nil b hm hbne
   have hlpos : ∀ z ∈ l, 0 < z := flattenFinBlocks_pos b hbpos
   have hlsum : l.sum = 1 := by
     rw [flattenFinBlocks_sum p b hbsum]
     exact hpsum
-  have hlcuts : cutsOfLengths p ⊆ cutsOfLengths l := by
-    exact cutsOfLengths_subset_assembleTwoSelectedBlocks p hpne hppos hpsum
-      I J hIJ d.bX d.bY d.bX_ne d.bY_ne d.bX_pos d.bY_pos
-      d.bX_sum d.bY_sum
+  have hlcuts : cutsOfLengths p ⊆ cutsOfLengths l :=
+    cutsOfLengths_subset_flattenFinBlocks p hpne hppos hpsum b hbne hbpos hbsum
   have hperm := flatten_assembleTwoSelectedBlocks_perm p I J hIJ d.bX d.bY
   have hcanon : l.Perm
       (d.c ++ residualList d.rho ++ bisectLengths d.post ++ d.c ++
@@ -3683,21 +3612,13 @@ theorem exists_positive_close_refinement (p : List ℝ)
     have hc := d.c_sum
     have hr := d.sum_relation
     linarith
-  have hrhoDelta : d.rho ≤ delta := by
-    have hr := d.rho_le
-    dsimp [xs, ys] at hr
-    exact hr.trans hdiff
+  have hrhoDelta : d.rho ≤ delta := d.rho_le.trans hdiff
   have hshare : firstPlayerShare l ≤ (1 + delta) / 2 := by
     rw [hshareEq]
     linarith
-  have hpartLen : xs.length + ys.length + outside.length = p.length := by
-    simpa [xs, ys, outside] using selected_partition_length p I J hIJ
-  have hysLen : 0 < ys.length := by
-    have hysPos : 0 < ys.sum := by simpa [ys] using hJsum
-    apply List.length_pos_iff.mpr
-    intro hnil
-    rw [hnil] at hysPos
-    norm_num at hysPos
+  have hpartLen : xs.length + ys.length + outside.length = p.length :=
+    selected_partition_length p I J hIJ
+  have hysLen : 0 < ys.length := List.length_pos_of_sum_pos ys hJsum
   have hlen : l.length ≤ 2 * p.length - 1 := by
     calc
       l.length =
@@ -3791,9 +3712,7 @@ theorem exists_singleton_close_refinement (p : List ℝ)
   have hbJFlat : flattenFinBlocks bJ = [] := by
     unfold flattenFinBlocks finBlocks
     have hlen : ys.length = 0 := congrArg List.length hys
-    have hrange : List.finRange ys.length = [] := by
-      apply List.eq_nil_of_length_eq_zero
-      simp [hlen]
+    have hrange : List.finRange ys.length = [] := List.finRange_eq_nil_iff.mpr hlen
     rw [hrange]
     simp
   have hperm := flatten_assembleTwoSelectedBlocks_perm p I J hIJ bI bJ

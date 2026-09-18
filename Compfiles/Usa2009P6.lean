@@ -350,10 +350,7 @@ problem usa2009_p6 (s t : ℕ → ℚ) (hs : ¬ ∀ i j, s i = s j) (ht : ¬ ∀
       · exact absurd (sub_eq_zero.mp h') h01
       · exact sub_eq_zero.mp h'
     obtain ⟨j₀, j₁, hj⟩ := ht
-    have hj0 : t j₀ ≠ t i₀ ∨ t j₁ ≠ t i₀ := by
-      by_contra h2
-      push Not at h2
-      exact hj (h2.1.trans h2.2.symm)
+    have hj0 : t j₀ ≠ t i₀ ∨ t j₁ ≠ t i₀ := Ne.ne_or_ne (t i₀) hj
     rcases hj0 with hj0 | hj0
     · have hs1 : s j₀ = s i₀ := by
         rcases mul_eq_zero.mp (hcon j₀ i₀) with h' | h'

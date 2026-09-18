@@ -83,9 +83,7 @@ def rowRed (m n : ℕ) (p : ℕ) : ℕ :=
 lemma rowRed_eq {m n : ℕ} (hn : 0 < n) (t a : ℕ) (ha : a < n) :
     rowRed m n (t * n + a) = if n + 1 - m ≤ a ∧ a + t < n then 1 else 0 := by
   unfold rowRed
-  have h1 : (t * n + a) % n = a := by
-    rw [show t * n + a = a + n * t by ring, Nat.add_mul_mod_self_left,
-      Nat.mod_eq_of_lt ha]
+  have h1 : (t * n + a) % n = a := Nat.mul_add_mod_of_lt ha
   have h2 : (t * n + a) / n = t := by
     rw [show t * n + a = a + n * t by ring, Nat.add_mul_div_left _ _ hn,
       Nat.div_eq_of_lt ha, Nat.zero_add]

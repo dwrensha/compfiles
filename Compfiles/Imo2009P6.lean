@@ -66,10 +66,7 @@ noncomputable abbrev extendPerm {m n : ℕ} (f : Equiv.Perm (Fin m)) (h : m ≤ 
     · simp only [Fin.mk.injEq] at hxy
       have h1 := Fin.eq_of_val_eq hxy
       aesop
-    · have : f' y = y := by
-        dsimp [f']; simp only [dite_eq_right_iff]
-        intro hh
-        exact (h2 hh).elim
+    · have : f' y = y := dite_eq_right h2
       aesop
     · aesop
     · aesop
@@ -367,19 +364,12 @@ theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
       have hmpos : 0 < m := by omega
       have hrest_ne : ∀ j, restEmb j ≠ r := by
         intro j h
-        have h' : rCast.succAbove j = rCast := by
-          apply Fin.ext
-          have hv := congrArg Fin.val h
-          dsimp [restEmb, rCast] at hv ⊢
-          exact hv
+        have h' : rCast.succAbove j = rCast := Fin.ext (Fin.mk.inj_iff.mp h)
         exact Fin.succAbove_ne rCast j h'
       have hrest_inj : Function.Injective restEmb := by
         intro i j hij
         apply Fin.succAbove_right_injective (p := rCast)
-        apply Fin.ext
-        have hv := congrArg Fin.val hij
-        dsimp [restEmb] at hv ⊢
-        exact hv
+        exact Fin.ext (Fin.mk.inj_iff.mp hij)
       have hrest_mono : ∀ {i j : Fin m}, i < j → restEmb i < restEmb j := by
         intro i j hij
         have hs : rCast.succAbove i < rCast.succAbove j := (Fin.strictMono_succAbove rCast) hij
@@ -389,15 +379,11 @@ theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
       have binj : b.Injective := by
         intro i j hij
         have hsmall_eq : restSmall i = restSmall j := ainj hij
-        have hrest_eq : restEmb i = restEmb j := by
-          apply Fin.ext
-          have hv := congrArg Fin.val hsmall_eq
-          simpa [restSmall, small] using hv
+        have hrest_eq : restEmb i = restEmb j := Fin.ext (Fin.mk.inj_iff.mp hsmall_eq)
         exact hrest_inj hrest_eq
       have bpos : ∀ i, 0 < b i := fun i => apos (restSmall i)
-      have bsorted : ∀ i j, i < j → b i < b j := by
-        intro i j hij
-        exact asorted (restSmall i) (restSmall j) (hrest_mono hij)
+      have bsorted : ∀ i j, i < j → b i < b j :=
+        fun i j hij => asorted (restSmall i) (restSmall j) (hrest_mono hij)
       have hsum_m1 : ∑ i : Fin (m + 1), a (smallM i) = x := by
         simpa [x, smallM] using sum_init_of_eq (n := n) (k := m + 1) (by omega) a
       have hsum_rest : ∑ j : Fin m, b j = x - a (small r) := by
@@ -465,8 +451,7 @@ theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
         · simp [hi, hj] at hij
           have hrest_eq : p' ⟨i.val, hi⟩ = p' ⟨j.val, hj⟩ := hrest_inj hij
           have hidx : (⟨i.val, hi⟩ : Fin m) = ⟨j.val, hj⟩ := p'.injective hrest_eq
-          apply Fin.ext
-          exact congrArg (fun z : Fin m => z.val) hidx
+          exact Fin.ext (Fin.mk.inj_iff.mp hidx)
         · simp [hi, hj] at hij
           exact (hrest_ne (p' ⟨i.val, hi⟩) hij).elim
         · simp [hi, hj] at hij
@@ -550,9 +535,8 @@ theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
             simp
           have hle_total :
               ∑ j ∈ Finset.filter (· ≤ i') Finset.univ, b (p' j) ≤ ∑ j : Fin m, b (p' j) := by
-            exact Finset.sum_le_sum_of_subset_of_nonneg hsubset (by
-              intro z hz1 hz2
-              exact le_of_lt (bpos (p' z)))
+            exact Finset.sum_le_sum_of_subset_of_nonneg hsubset
+              (fun z _ _ => le_of_lt (bpos (p' z)))
           have hsum_perm : (∑ j : Fin m, b (p' j)) = ∑ j : Fin m, b j := Equiv.sum_comp p' b
           calc
             ∑ j ∈ Finset.filter (· ≤ i') Finset.univ, b (p' j) ≤ ∑ j : Fin m, b (p' j) := hle_total
@@ -561,9 +545,7 @@ theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
         intro hmem
         exact hnotM' (Finset.mem_filter.mpr ⟨hmem, hle_t⟩)
       · by_cases hi_second_val : i.val = m
-        · have hi_second : i = secondLast := by
-            apply Fin.ext
-            simpa [secondLast] using hi_second_val
+        · have hi_second : i = secondLast := Fin.eq_mk_iff_val_eq.mpr hi_second_val
           subst hi_second
           let P : Finset (Fin n) := Finset.filter (· ≤ secondLast) Finset.univ
           have hPsecond : secondLast ∈ P := by simp [P]
@@ -658,10 +640,9 @@ theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
           exact hM
       let n' := n - 1
       let a' := fun i : Fin n' ↦ a ⟨i, by lia⟩
-      have ainj' : a'.Injective := by simpa [a', n'] using init_injective (a := a) ainj
-      have apos' : ∀ (i : Fin n'), 0 < a' i := by simpa [a', n'] using init_pos (a := a) apos
-      have asorted' : ∀ (i j : Fin n'), i < j → a' i < a' j := by
-        simpa [a', n'] using init_sorted (a := a) asorted
+      have ainj' : a'.Injective := init_injective ainj
+      have apos' : ∀ (i : Fin n'), 0 < a' i := init_pos apos
+      have asorted' : ∀ (i j : Fin n'), i < j → a' i < a' j := init_sorted asorted
       have Mpos' : (∀ m ∈ M', 0 < m) := by
         intro m hm
         rw [Finset.mem_filter] at hm
@@ -671,9 +652,7 @@ theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
           simpa [a', x, n'] using sum_init a
         rw [← h14] at h1
         rw [Finset.mem_filter]
-        push Not
-        intro h15
-        exact (h1 h15).elim
+        exact not_and_of_not_left _ h1
       obtain ⟨p', hp⟩ :=
         ih n' (by lia) (by lia) a' ainj' apos' asorted' M' Mpos' (by lia) hM'
       clear ih
@@ -686,8 +665,8 @@ theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
         rw [Finset.mem_filter] at h31
         have h35 : n' ≤ n := Nat.sub_le n 1
         have h33 : ∑ j ∈ Finset.filter (· ≤ i') Finset.univ, a' (p' j) =
-                   ∑ j ∈ Finset.filter (· ≤ i) Finset.univ, a (p j) := by
-          simpa [a', p] using (prefix_extendPerm a p' (Nat.sub_le n 1) i h30).symm
+                   ∑ j ∈ Finset.filter (· ≤ i) Finset.univ, a (p j) :=
+          (prefix_extendPerm a p' (Nat.sub_le n 1) i h30).symm
         rw [h33] at h31
         have h34 : ∑ j ∈ Finset.filter (· ≤ i) Finset.univ, a (p j) ≤ x := by
           rw [← h33]
@@ -726,18 +705,15 @@ theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
     · have hnonempty : M.Nonempty := Finset.nonempty_iff_ne_empty.mpr hMempty
       let z : ℤ := M.max' hnonempty
       have hzM : z ∈ M := Finset.max'_mem M hnonempty
-      have hzmax : ∀ w ∈ M, w ≤ z := by
-        intro w hw
-        exact Finset.le_max' M w hw
+      have hzmax : ∀ w ∈ M, w ≤ z := Finset.le_max' M
       have hcard_pos : 0 < M.card := Finset.card_pos.mpr hnonempty
       have hn2 : 2 ≤ n := by omega
       let n' := n - 1
       have hn'pos : 0 < n' := by omega
       let a' := fun i : Fin n' => a ⟨i, by omega⟩
-      have ainj' : a'.Injective := by simpa [a', n'] using init_injective (a := a) ainj
-      have apos' : ∀ (i : Fin n'), 0 < a' i := by simpa [a', n'] using init_pos (a := a) apos
-      have asorted' : ∀ (i j : Fin n'), i < j → a' i < a' j := by
-        simpa [a', n'] using init_sorted (a := a) asorted
+      have ainj' : a'.Injective := init_injective ainj
+      have apos' : ∀ (i : Fin n'), 0 < a' i := init_pos apos
+      have asorted' : ∀ (i j : Fin n'), i < j → a' i < a' j := init_sorted asorted
       let M' := M.erase z
       have Mpos' : ∀ m ∈ M', 0 < m := by
         intro m hm
@@ -824,10 +800,8 @@ theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
           rw [extendPerm_apply_of_lt p' (Nat.sub_le n 1) (emb j) hjn']
           simp [a', emb, embedFinLE]
         have hbig : a' (p' k) < a lastFull := by
-          let idxFull : Fin n := ⟨((p' k : Fin n') : ℕ), by
-            have hlt := (p' k).isLt
-            dsimp [n'] at hlt ⊢
-            omega⟩
+          let idxFull : Fin n :=
+            ⟨((p' k : Fin n') : ℕ), Nat.lt_of_lt_of_le (p' k).isLt (Nat.sub_le n 1)⟩
           have hlt_fin : idxFull < lastFull := by
             change ((p' k : Fin n') : ℕ) < n - 1
             have hlt := (p' k).isLt
@@ -845,9 +819,7 @@ theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
           exact hM
         · by_cases hi_before : i.val < k.val
           · let i' : Fin n' := ⟨i.val, by omega⟩
-            have hik : i' < k := by
-              change i.val < k.val
-              exact hi_before
+            have hik : i' < k := Fin.mk_lt_of_lt_val hi_before
             have hprefix :
                 ∑ j ∈ Finset.filter (· ≤ i) Finset.univ, a (p j) =
                   ∑ j ∈ Finset.filter (· ≤ i') Finset.univ, a' (p' j) := by
@@ -919,9 +891,8 @@ theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
                 intro q hq
                 simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hq ⊢
                 exact le_trans hq hle_hit_i
-              exact Finset.sum_le_sum_of_subset_of_nonneg hsubset (by
-                intro q hq1 hq2
-                exact le_of_lt (apos (p q)))
+              exact Finset.sum_le_sum_of_subset_of_nonneg hsubset
+                (fun q _ _ => le_of_lt (apos (p q)))
             have hgtz : z < ∑ j ∈ Finset.filter (· ≤ i) Finset.univ, a (p j) := by
               omega
             intro hmem
@@ -934,8 +905,8 @@ theorem imo2009_p6_aux1 (n : ℕ) (hn : 0 < n)
         · let i' : Fin n' := ⟨i.val, hi⟩
           have hprefix :
               ∑ j ∈ Finset.filter (· ≤ i) Finset.univ, a (p j) =
-                ∑ j ∈ Finset.filter (· ≤ i') Finset.univ, a' (p' j) := by
-            simpa [a', p, p0] using prefix_extendPerm a p' (Nat.sub_le n 1) i hi
+                ∑ j ∈ Finset.filter (· ≤ i') Finset.univ, a' (p' j) :=
+            prefix_extendPerm a p' (Nat.sub_le n 1) i hi
           have hnotM' : ∑ j ∈ Finset.filter (· ≤ i) Finset.univ, a (p j) ∉ M' := by
             simpa [hprefix] using hp' i'
           intro hmem

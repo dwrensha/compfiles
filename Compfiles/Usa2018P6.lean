@@ -580,7 +580,7 @@ lemma conjPerm_involutive {n : ℕ} {σ φ : Equiv.Perm (Fin n)}
     have h1 : conjPerm σ φ z = z :=
       conjPerm_apply_of_not_mem fun x hx => by
         obtain ⟨h1, h2⟩ := hz x hx
-        exact ⟨fun h => h1 h.symm, fun h => h2 h.symm⟩
+        exact ⟨h1.symm, h2.symm⟩
     rw [h1, h1]
 
 lemma newSwitch_involutive {n : ℕ} {σ φ : Equiv.Perm (Fin n)}
@@ -598,7 +598,7 @@ lemma newSwitch_involutive {n : ℕ} {σ φ : Equiv.Perm (Fin n)}
     have h1 : newSwitch σ φ z = z :=
       newSwitch_apply_of_not_mem fun x hx => by
         obtain ⟨h1, h2⟩ := hz x hx
-        exact ⟨fun h => h1 h.symm, fun h => h2 h.symm⟩
+        exact ⟨h1.symm, h2.symm⟩
     rw [h1, h1]
 
 /-- The flipped involution `π σ π` is involutive. -/
@@ -614,15 +614,8 @@ lemma flip1_involutive {n : ℕ} {σ φ : Equiv.Perm (Fin n)}
 lemma flip1_fixed_iff {n : ℕ} {σ φ : Equiv.Perm (Fin n)}
     (hσ : Function.Involutive σ) (hφ : IsSwitch σ φ) (z : Fin n) :
     (conjPerm σ φ * σ * conjPerm σ φ) z = z ↔ σ (conjPerm σ φ z) = conjPerm σ φ z := by
-  have hπ := conjPerm_involutive hσ hφ
   simp only [Equiv.Perm.mul_apply]
-  constructor
-  · intro h
-    have h2 := congrArg (⇑(conjPerm σ φ)) h
-    rw [hπ] at h2
-    exact h2
-  · intro h
-    rw [h, hπ]
+  exact (conjPerm_involutive hσ hφ).eq_iff
 
 /-- The flipped involution has the same number of fixed points as `σ`. -/
 lemma flip1_fixed_card {n : ℕ} {σ φ : Equiv.Perm (Fin n)}
@@ -1159,11 +1152,7 @@ lemma perm_compl_of_perm_ab {n : ℕ} {ψ : Equiv.Perm (Fin n)} {a b : Fin n}
     (h : ∀ y ∈ ({a, b} : Finset (Fin n)), ψ y ∈ ({a, b} : Finset (Fin n)))
     (y : Fin n) (hy : y ∉ ({a, b} : Finset (Fin n))) :
     ψ y ∉ ({a, b} : Finset (Fin n)) := by
-  have hsub : Finset.image ψ {a, b} ⊆ ({a, b} : Finset (Fin n)) := by
-    intro z hz
-    obtain ⟨w, hw, hwz⟩ := Finset.mem_image.1 hz
-    rw [← hwz]
-    exact h w hw
+  have hsub : Finset.image ψ {a, b} ⊆ ({a, b} : Finset (Fin n)) := Finset.image_subset_iff.mpr h
   have hcard : (Finset.image ψ {a, b}).card = ({a, b} : Finset (Fin n)).card := by
     rw [Finset.card_image_of_injective _ ψ.injective]
   have h2 : Finset.image ψ {a, b} = {a, b} :=
@@ -1409,7 +1398,7 @@ lemma isSwitch_mul {n : ℕ} {σ : Equiv.Perm (Fin n)} (hσ : Function.Involutiv
   have h0sq : ψ₀ * ψ₀ = 1 := by
     cases hψ₀ with
     | inl h1 => rw [h1, one_mul]
-    | inr h1 => rw [h1]; exact Perm_mul_self_eq_one_of_involutive (Equiv.swap_apply_self a b)
+    | inr h1 => rw [h1]; exact Equiv.swap_mul_self a b
   have h1sq : ψ₁ * ψ₁ = 1 := Perm_mul_self_eq_one_of_involutive hψ₁.1
   have hsq : (ψ₀ * ψ₁) * (ψ₀ * ψ₁) = 1 := by
     calc (ψ₀ * ψ₁) * (ψ₀ * ψ₁)
@@ -1742,8 +1731,7 @@ theorem involutive_symm_succ {n : ℕ} (j : Fin (n + 1)) (e : Equiv.Perm (Fin (n
       have h0 := h 0
       rw [Equiv.Perm.decomposeFin_symm_apply_zero] at h0
       rw [Equiv.Perm.decomposeFin_symm_apply_succ] at h0
-      have hs := swap0 _ h0
-      rwa [Fin.succ_inj] at hs
+      exact Fin.succ_inj.mp (swap0 _ h0)
     refine ⟨?_, hej⟩
     intro x
     have hx := h x.succ
@@ -2328,10 +2316,7 @@ theorem fcard_parity (n : ℕ) : (Even n → Odd (fcard n)) ∧ (Odd n → fcard
       have hn' : Even n := by
         rw [Nat.even_iff] at hn ⊢
         lia
-      have ho : Odd (n + 1) := by
-        rw [Nat.odd_iff]
-        rw [Nat.even_iff] at hn'
-        lia
+      have ho : Odd (n + 1) := hn'.add_one
       exact ho.mul (ihn.1 hn')
     · intro hn
       rw [fcard_succ_succ, ihn.2 (by
@@ -2345,17 +2330,11 @@ theorem vcard_odd (n : ℕ) : Odd (vcard n) := by
   | more n ihn _ =>
     rw [vcard_succ_succ]
     rcases Nat.even_or_odd n with hn | hn
-    · have ho : Odd (n + 1) := by
-        rw [Nat.odd_iff]
-        rw [Nat.even_iff] at hn
-        lia
+    · have ho : Odd (n + 1) := hn.add_one
       have h1 : fcard (n + 1) = 0 := (fcard_parity (n + 1)).2 ho
       rw [h1, Nat.zero_add]
       exact ho.mul ihn
-    · have he : Even (n + 1) := by
-        rw [Nat.even_iff]
-        rw [Nat.odd_iff] at hn
-        lia
+    · have he : Even (n + 1) := hn.add_one
       have h2 : Odd (fcard (n + 1)) := (fcard_parity (n + 1)).1 he
       exact h2.add_even (he.mul_right (vcard n))
 
@@ -2402,9 +2381,7 @@ problem usa2018_p6 (n : ℕ) (_hn : 1 ≤ n) :
         toFun := fun x => ⟨x.1.1, x.1.2, by
           have h : (x.1.1)⁻¹ = x.1.1 := congrArg Subtype.val x.2
           exact fun y => by
-            have h2 : x.1.1 * x.1.1 = 1 := by
-              have h3 := mul_inv_cancel (x.1.1)
-              rwa [h] at h3
+            have h2 : x.1.1 * x.1.1 = 1 := mul_eq_one_iff_eq_inv.mpr h.symm
             have h3 := Equiv.Perm.mul_apply (x.1.1) (x.1.1) y
             rw [h2, Equiv.Perm.one_apply] at h3
             exact h3.symm⟩

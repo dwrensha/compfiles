@@ -149,8 +149,7 @@ problem integers_in_a_circle
       have : y.val - x.val ≤ 101 :=
            calc _ ≤ y.val := Nat.sub_le _ _
                 _ ≤ 101 := le_of_lt y.prop
-      rw [add_comm]
-      exact Iff.mp (Nat.sub_eq_iff_eq_add this) rfl
+      exact (Nat.sub_eq_iff_eq_add' this).mp rfl
 
     have h18 : Finset.range 101 =
         Finset.range ((y.val - x.val) + (101 - (y.val - x.val))) := by congr

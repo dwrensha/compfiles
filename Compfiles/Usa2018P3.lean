@@ -90,9 +90,7 @@ lemma powSum_mul_prime_of_dvd {n q : ℕ} (hn : 2 ≤ n) (hq : q.Prime) (hqd : q
       rw [Finset.mem_product, mem_coprimeSet, Finset.mem_range]
       refine ⟨⟨Nat.mod_lt x hn0,
           coprime_mod_left' (hxcp.coprime_dvd_left (Nat.dvd_mul_right n q))⟩, ?_⟩
-      show x / n < q
-      rw [Nat.div_lt_iff_lt_mul hn0, mul_comm q n]
-      exact hxlt
+      exact Nat.div_lt_of_lt_mul hxlt
     · intro hx
       rw [Finset.mem_image] at hx
       obtain ⟨⟨a, h⟩, hmem, rfl⟩ := hx
@@ -152,10 +150,8 @@ lemma powSum_mul_prime_of_not_dvd {n q : ℕ} (hn : 2 ≤ n) (hq : q.Prime) (hqd
           · rw [Nat.div_lt_iff_lt_mul hq0]
             exact Nat.add_mul_lt_mul_of_lt_of_lt halt hh
           · exact ((Nat.coprime_add_mul_left_right n a h).mpr hacp).coprime_dvd_right
-              ⟨q, by rw [mul_comm ((a + n * h) / q) q]; exact (Nat.mul_div_cancel' hqx).symm⟩
-        · show (a + n * h) / q * q = a + n * h
-          rw [mul_comm ((a + n * h) / q) q]
-          exact Nat.mul_div_cancel' hqx
+              ⟨q, (Nat.div_mul_cancel hqx).symm⟩
+        · exact Nat.div_mul_cancel hqx
       · rw [Finset.mem_union]
         left
         rw [mem_coprimeSet]
@@ -172,9 +168,7 @@ lemma powSum_mul_prime_of_not_dvd {n q : ℕ} (hn : 2 ≤ n) (hq : q.Prime) (hqd
         rw [Finset.mem_product, mem_coprimeSet, Finset.mem_range]
         refine ⟨⟨Nat.mod_lt x hn0,
             coprime_mod_left' (hxcp.coprime_dvd_left (Nat.dvd_mul_right n q))⟩, ?_⟩
-        show x / n < q
-        rw [Nat.div_lt_iff_lt_mul hn0, mul_comm q n]
-        exact hxlt
+        exact Nat.div_lt_of_lt_mul hxlt
       · rw [Finset.mem_image] at hx
         obtain ⟨a, ha, rfl⟩ := hx
         rw [mem_coprimeSet] at ha
@@ -184,7 +178,7 @@ lemma powSum_mul_prime_of_not_dvd {n q : ℕ} (hn : 2 ≤ n) (hq : q.Prime) (hqd
         refine ⟨⟨Nat.mod_lt _ hn0, coprime_mod_left' (hacp.mul_right hnq)⟩, ?_⟩
         show (a * q) / n < q
         rw [Nat.div_lt_iff_lt_mul hn0, mul_comm q n]
-        exact (Nat.mul_lt_mul_right hq0).mpr halt
+        exact Nat.mul_lt_mul_of_pos_right halt hq0
   have hdisj : Disjoint (coprimeSet (n * q)) ((coprimeSet n).image (· * q)) := by
     rw [Finset.disjoint_left]
     intro x hx hxim
@@ -356,8 +350,7 @@ lemma pow_pred_dvd_sum_pow_Icc {p : ℕ} (hp : p.Prime) :
     have hsplit : ∑ h ∈ Finset.Icc 1 t, h ^ j =
         ∑ h ∈ (Finset.Icc 1 t).filter (fun h => p ∣ h), h ^ j +
         ∑ h ∈ (Finset.Icc 1 t).filter (fun h => ¬ p ∣ h), h ^ j := by
-      rw [← Finset.sum_union (Finset.disjoint_filter_filter_not _ _ _),
-        Finset.filter_union_filter_not_eq]
+      exact (Finset.sum_filter_add_sum_filter_not _ _ _).symm
     rw [hsplit]
     apply dvd_add
     · -- multiples of `p`: `∑ = (∑ i ∈ Icc 1 (t/p), i^j) * p^j`
@@ -516,11 +509,6 @@ lemma pow_pred_dvd_sum_pow_Icc {p : ℕ} (hp : p.Prime) :
             (pow_dvd_pow p (le_trans (Nat.le_succ c) (Nat.le_mul_of_pos_right (c + 1) hi0))) _
         exact dvd_trans h5 (dvd_mul_of_dvd_left (dvd_mul_of_dvd_left (dvd_refl _) _) _)
 
-/-- `p ^ padicValNat p m ∣ m` for nonzero `m`. -/
-lemma pow_padicValNat_dvd' {p m : ℕ} (hp : p.Prime) (hm : m ≠ 0) : p ^ padicValNat p m ∣ m := by
-  have := Fact.mk hp
-  exact (padicValNat_dvd_iff_le hm).2 le_rfl
-
 lemma padicValNat_totient_mul_prime_of_dvd {p q : ℕ} (hp : p.Prime) (hq : q.Prime)
     (hpq : p ≠ q) {n : ℕ} (hn : n ≠ 0) (hqd : q ∣ n) :
     padicValNat p (Nat.totient (n * q)) = padicValNat p (Nat.totient n) := by
@@ -528,7 +516,7 @@ lemma padicValNat_totient_mul_prime_of_dvd {p q : ℕ} (hp : p.Prime) (hq : q.Pr
   have : Fact p.Prime := ⟨hp⟩
   set f := padicValNat q n with hf
   have hf1 : 1 ≤ f := one_le_padicValNat_of_dvd hn hqd
-  have hqfn : q ^ f ∣ n := pow_padicValNat_dvd' hq hn
+  have hqfn : q ^ f ∣ n := pow_padicValNat_dvd
   set v := n / q ^ f with hv
   have hnv : n = q ^ f * v := (Nat.mul_div_cancel' hqfn).symm
   have hvnz : v ≠ 0 := by
@@ -590,11 +578,11 @@ lemma pow_padicValNat_totient_dvd_powSum {p : ℕ} (hp : p.Prime) :
     intro hn2 hpn k
     rcases k with _ | k
     · rw [powSum_zero]
-      exact pow_padicValNat_dvd' hp (Nat.totient_pos.2 (by lia)).ne'
+      exact pow_padicValNat_dvd
     · have hnnz : n ≠ 0 := by lia
       set e := padicValNat p n with he
       have he1 : 1 ≤ e := one_le_padicValNat_of_dvd hnnz hpn
-      have hpen : p ^ e ∣ n := pow_padicValNat_dvd' hp hnnz
+      have hpen : p ^ e ∣ n := pow_padicValNat_dvd
       set u := n / p ^ e with hu
       have hnu : n = p ^ e * u := (Nat.mul_div_cancel' hpen).symm
       have hu1 : 1 ≤ u := by
@@ -648,8 +636,7 @@ lemma pow_padicValNat_totient_dvd_powSum {p : ℕ} (hp : p.Prime) :
               rw [← hnn', hs]
               ring
             exact Nat.mul_right_cancel (by lia : 0 < q) h3
-          rw [hs']
-          exact dvd_mul_right _ _
+          exact ⟨s, hs'⟩
         have hpn' : p ∣ n' := dvd_trans (dvd_pow_self p (by lia : e ≠ 0)) hpen'
         have hn'2 : 2 ≤ n' := by
           have hpos : 0 < n' := by
@@ -711,8 +698,7 @@ lemma pow_padicValNat_totient_dvd_powSum {p : ℕ} (hp : p.Prime) :
                 have hd2 : p ^ (padicValNat p (q - 1) - 1) ∣
                     ∑ h ∈ Finset.range q, h ^ (j + 1) := by
                   rw [sum_range_pow_eq_sum_Icc]
-                  exact pow_pred_dvd_sum_pow_Icc hp _ hc1 (q - 1)
-                    (pow_padicValNat_dvd' hp (by lia : q - 1 ≠ 0)) _ (by lia)
+                  exact pow_pred_dvd_sum_pow_Icc hp _ hc1 (q - 1) pow_padicValNat_dvd _ (by lia)
                 have hadd : padicValNat p (q - 1) = 1 + (padicValNat p (q - 1) - 1) := by
                   lia
                 rw [hadd, pow_add]
@@ -730,15 +716,14 @@ lemma pow_padicValNat_totient_dvd_powSum {p : ℕ} (hp : p.Prime) :
               rw [hsub]
               have hd : q - 1 ∣ q ^ k - 1 := Nat.sub_one_dvd_pow_sub_one q k
               exact dvd_mul_of_dvd_right
-                (dvd_trans (pow_padicValNat_dvd' hp (by lia : q - 1 ≠ 0)) hd) q
+                (dvd_trans pow_padicValNat_dvd hd) q
             exact dvd_trans ((pow_add p _ _).symm ▸ mul_dvd_mul (IH' (k + 1)) h1) ⟨1, by ring⟩
           have hA : powSum (n' * q) (k + 1) =
               (∑ j ∈ Finset.range (k + 1), ((k + 1).choose (j + 1)) *
                 (n' ^ (j + 1) * powSum n' (k + 1 - (j + 1)) *
                   ∑ h ∈ Finset.range q, h ^ (j + 1))) -
                 (q ^ (k + 1) - q) * powSum n' (k + 1) := by
-            rw [← hJ]
-            exact (Nat.add_sub_cancel _ _).symm
+            exact Nat.eq_sub_of_add_eq hJ
           rw [hA]
           exact Nat.dvd_sub hdJ hdX
 

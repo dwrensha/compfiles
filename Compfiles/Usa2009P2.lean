@@ -212,10 +212,8 @@ lemma card_le_case3 {m : ℕ} (hm : 1 ≤ m) {A : Finset ℤ}
           rw [Finset.mem_Icc] at hxa hxb
           simp only [Finset.mem_insert, Finset.mem_singleton]
           lia
-    have htri : ({2 * (m : ℤ), 2 * (m : ℤ) - 1, -((2 * (m : ℤ)) - 1)} : Finset ℤ).card ≤ 3 := by
-      refine le_trans (Finset.card_insert_le _ _) ?_
-      refine le_trans (Nat.add_le_add_right (Finset.card_insert_le _ _) 1) ?_
-      simp
+    have htri : ({2 * (m : ℤ), 2 * (m : ℤ) - 1, -((2 * (m : ℤ)) - 1)} : Finset ℤ).card ≤ 3 :=
+      Finset.card_le_three
     have h3 : ((A ∩ Finset.Icc 1 (2 * (m : ℤ) - 2)) ∪
           (A ∩ Finset.Icc (-(2 * (m : ℤ)) + 2) (-2))).card ≤ (m - 1) + (m - 2) :=
       le_trans (Finset.card_union_le _ _) (by lia)
@@ -390,10 +388,7 @@ problem usa2009_p2 (n : ℕ) (hn : 0 < n) :
         obtain ⟨t, ht⟩ := hev
         lia
       · rw [ite_eq_right hev]
-        have hoddn : n % 2 = 1 := by
-          rcases Nat.even_or_odd n with h | h
-          · exact absurd h hev
-          · exact Nat.odd_iff.mp h
+        have hoddn : n % 2 = 1 := Nat.not_even_iff.mp hev
         lia
   · -- Upper bound: the odd case reduces to the even case applied to `[-(n+1), n+1]`.
     intro k hk

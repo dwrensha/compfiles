@@ -266,11 +266,7 @@ lemma usa2002_p1_generalized
             · rintro ⟨x, hx⟩
               use Finset.subtype _ x
               simp only [Finset.subtype_map, Subtype.mk.injEq, b]
-              have h7 : ∀ a ∈ x, ¬ a = s := by
-                intro a ha has
-                rw [has] at ha
-                contradiction
-              exact Finset.filter_eq_self.mpr h7
+              exact Finset.filter_eq_self.mpr fun a ha => ne_of_mem_of_not_mem ha hx
           rw [← Fintype.card_of_bijective hb]
           exact h5
 

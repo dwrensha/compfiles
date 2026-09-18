@@ -42,8 +42,7 @@ lemma fermat_little_theorem: ∀p:ℕ+, (Nat.Prime (p:ℕ)) → (∀a:ℕ, (a^(p
     have h2: a ^ (p:ℕ) ≡ 0 ^ (p:ℕ) [MOD p] := by
       exact Nat.ModEq.pow (p:ℕ) h1
     simp at h2
-    apply Nat.ModEq.symm at h1
-    exact Nat.ModEq.trans h2 h1
+    exact h2.trans h1.symm
   · have h2 : (p:ℕ).Coprime a := (Nat.Prime.coprime_iff_not_dvd hp).mpr h1
     apply Nat.Coprime.symm at h2
     have h3 := Nat.ModEq.pow_totient h2
@@ -97,9 +96,7 @@ problem imo2025_p3 :
         specialize hf a a
         have g1 : (f a : Int) ∣ (f a : Int) ^ (f a : ℕ) := by
           simp
-        have g2 := dvd_add hf g1
-        simp at g2
-        exact g2
+        exact (Int.dvd_iff_dvd_of_dvd_sub hf).mpr g1
 
       by_cases h2 : ∀b:ℕ+, f b <= b
       · specialize h2 n
@@ -296,8 +293,7 @@ problem imo2025_p3 :
           have r1 : ∀ (p : ℕ), Nat.Prime p ∧ p ∣ (f a :ℕ) → p = 2 := by
             intro p hp
             obtain ⟨hp1,hp2⟩ := hp
-            have hppos : p>0 := by
-              exact Nat.zero_lt_of_ne_zero (Nat.Prime.ne_zero hp1)
+            have hppos : p>0 := hp1.pos
             let q :ℕ+ := ⟨p,hppos⟩
             have hq1 : Nat.Prime (q:ℕ) := by
               unfold q

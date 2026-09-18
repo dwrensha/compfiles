@@ -191,10 +191,8 @@ lemma nthDiv_one (n : ℕ) (hn : 1 < n) : nthDiv n 1 = n.minFac := by
       have hc' : j.val < 1 := Fin.lt_def.mp hc
       have hz : j.val = 0 := by lia
       exact hj0 (Fin.ext hz)
-    have hmono : n.divisors.orderEmbOfFin rfl ⟨1, h1k⟩ ≤ n.divisors.orderEmbOfFin rfl j := by
-      rcases eq_or_lt_of_le hle with h | h
-      · rw [h]
-      · exact le_of_lt ((n.divisors.orderEmbOfFin rfl).strictMono h)
+    have hmono : n.divisors.orderEmbOfFin rfl ⟨1, h1k⟩ ≤ n.divisors.orderEmbOfFin rfl j :=
+      (n.divisors.orderEmbOfFin rfl).monotone hle
     rw [hj] at hmono
     exact hmono
   · -- `n.minFac ≤ e ⟨1⟩`: `e ⟨1⟩` is a divisor that is `≥ 2`.

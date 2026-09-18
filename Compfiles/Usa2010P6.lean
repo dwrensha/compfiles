@@ -211,9 +211,7 @@ lemma loop_excl {L : List (ℤ × ℤ)} (hL : ValidBoard L) (i : Fin (nV L)) :
   by_cases h : (-(kE L i : ℤ), -(kE L i : ℤ)) ∈ L
   · have hai : aE L i = -(kE L i : ℤ) := by simp [aE, h]
     rw [hai]
-    simp only [neg_neg]
-    have := hL.no_both_loops (-(kE L i : ℤ)) h
-    rwa [neg_neg] at this
+    exact hL.no_both_loops (-(kE L i : ℤ)) h
   · have hai : aE L i = (kE L i : ℤ) := by simp [aE, h]
     rw [hai]
     exact h
@@ -274,12 +272,6 @@ lemma list_filter_length {α : Type*} (l : List α) (p : α → Bool) :
     · rw [List.filter_cons_of_neg h, List.map_cons, List.sum_cons, ih]
       simp [h]
 
-lemma list_const_mul_sum {α : Type*} (c : ℚ) (l : List α) (f : α → ℚ) :
-    c * (l.map f).sum = (l.map (fun a => c * f a)).sum := by
-  induction l with
-  | nil => simp
-  | cons x xs ih => simp [List.map_cons, List.sum_cons, mul_add, ih]
-
 lemma sum_finset_list_map {α β : Type*} (s : Finset α) (l : List β) (F : α → β → ℚ) :
     ∑ a ∈ s, (l.map (F a)).sum = (l.map (fun b => ∑ a ∈ s, F a b)).sum := by
   induction l with
@@ -315,7 +307,7 @@ lemma expected_score (L : List (ℤ × ℤ)) :
     _ = ∑ t : Finset (Fin (nV L)),
           (L.map (fun p => w (nV L) qProb t *
             (if p.1 ∈ Tof L t ∨ p.2 ∈ Tof L t then (1:ℚ) else 0))).sum :=
-        Finset.sum_congr rfl (fun t _ => list_const_mul_sum _ _ _)
+        Finset.sum_congr rfl (fun t _ => (List.sum_map_mul_left _ _ _).symm)
     _ = (L.map (fun p => ∑ t : Finset (Fin (nV L)), w (nV L) qProb t *
           (if p.1 ∈ Tof L t ∨ p.2 ∈ Tof L t then (1:ℚ) else 0))).sum :=
         sum_finset_list_map Finset.univ L _
@@ -324,9 +316,7 @@ lemma expected_score (L : List (ℤ × ℤ)) :
         congr 1
         apply List.map_congr_left
         intro p _
-        apply Finset.sum_congr rfl
-        intro t _
-        by_cases h : p.1 ∈ Tof L t ∨ p.2 ∈ Tof L t <;> simp [h]
+        exact Finset.sum_congr rfl fun t _ => mul_boole _ _
 
 /-! ### Edge case analysis -/
 
@@ -340,17 +330,11 @@ lemma W_ge {L : List (ℤ × ℤ)} (hL : ValidBoard L) {p : ℤ × ℤ} (hp : p 
   have hp1 : p.1 = aE L i ∨ p.1 = -aE L i := by
     have habs : (p.1).natAbs = (aE L i).natAbs := by
       rw [aE_natAbs]; exact hi.symm
-    rw [Int.natAbs_eq_natAbs_iff] at habs
-    rcases habs with h | h
-    · exact Or.inl h
-    · exact Or.inr h
+    exact Int.natAbs_eq_natAbs_iff.mp habs
   have hp2 : p.2 = aE L j ∨ p.2 = -aE L j := by
     have habs : (p.2).natAbs = (aE L j).natAbs := by
       rw [aE_natAbs]; exact hj.symm
-    rw [Int.natAbs_eq_natAbs_iff] at habs
-    rcases habs with h | h
-    · exact Or.inl h
-    · exact Or.inr h
+    exact Int.natAbs_eq_natAbs_iff.mp habs
   have hmem1 : ∀ t : Finset (Fin (nV L)),
       p.1 ∈ Tof L t ↔ (p.1 = aE L i ∧ i ∈ t) ∨ (p.1 = -aE L i ∧ i ∉ t) := by
     intro t
@@ -710,7 +694,7 @@ lemma upper_negUnscored (T : Finset ℤ) (hT : ValidErase T) :
       = ∑ i ∈ Finset.range 8, if i ∈ A then (A ∩ Finset.range i).card else 0 := by
     rw [← Finset.sum_filter]
     congr 1
-    rw [Finset.filter_mem_eq_inter, Finset.inter_eq_right.mpr hsub]
+    exact (Finset.filter_mem_eq_of_subset hsub).symm
   rw [hAsum, upperNegList_def, List.filter_flatMap, List.length_flatMap, upper_sum_map_range]
   apply Finset.sum_le_sum
   intro i _
@@ -783,9 +767,7 @@ problem usa2010_p6 :
     IsGreatest {m : ℕ | ∀ L : List (ℤ × ℤ), ValidBoard L →
       ∃ T : Finset ℤ, ValidErase T ∧ m ≤ score L T} N := by
   constructor
-  · intro L hL
-    obtain ⟨T, hT, hscore⟩ := lower_bound L hL
-    exact ⟨T, hT, hscore⟩
+  · exact lower_bound
   · intro m hm
     obtain ⟨T, hT, hscore⟩ := hm L0 validBoard_L0
     exact le_trans hscore (upper_score T hT)

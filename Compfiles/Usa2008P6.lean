@@ -227,9 +227,7 @@ lemma Tmap_surjective : Function.Surjective (Tmap G) := by
   ext ⟨x, hx⟩
   rw [Tmap_apply]
   show ∑ v, ψ (Pi.single v 1) * x v = φ ⟨x, hx⟩
-  have hxdecomp : x = ∑ v, x v • Pi.single v (1 : ZMod 2) := by
-    funext u
-    simp [Finset.sum_apply, Pi.smul_apply, smul_eq_mul, Pi.single_apply]
+  have hxdecomp : x = ∑ v, x v • Pi.single v (1 : ZMod 2) := pi_eq_sum_univ' x
   have e1 : ψ x = ∑ v : Fin n, x v * ψ (Pi.single v 1) := by
     conv_lhs => rw [hxdecomp]
     rw [map_sum]

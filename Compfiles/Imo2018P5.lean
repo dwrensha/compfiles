@@ -165,10 +165,8 @@ lemma val_rule (a : ℕ → ℤ) (apos : ∀ n, 0 < a n) {p : ℕ} (hp : p.Prime
           rw [hqD, hqE, hcase, ← hkDE, padicValRat.of_int, ← hκ] at hge
           lia
         · have heq := padicValRat.add_eq_min (p := p) hkne (by exact_mod_cast hD0)
-            (by exact_mod_cast sub_ne_zero.mpr (by
-              intro he
-              apply hne
-              rw [hV, hV', he])) (by rw [hqD, hqE]; exact_mod_cast hcase)
+            (by exact_mod_cast sub_ne_zero.mpr (ne_of_apply_ne (padicValInt p) hne))
+            (by rw [hqD, hqE]; exact_mod_cast hcase)
           rw [hqD, hqE, ← hkDE, padicValRat.of_int, ← hκ] at heq
           lia
     exact ⟨hkV.symm, by lia⟩

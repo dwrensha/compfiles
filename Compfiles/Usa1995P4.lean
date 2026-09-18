@@ -147,9 +147,7 @@ sequence are interpolated by a rational polynomial of degree at most `N`. -/
 lemma interpolate_exists (a : ℕ → ℤ) (N : ℕ) :
     ∃ q : ℚ[X], q.natDegree ≤ N ∧ ∀ i : ℕ, i ≤ N → q.eval (i : ℚ) = (a i : ℚ) := by
   have hinj : Set.InjOn (fun i : ℕ => (i : ℚ)) (↑(Finset.range (N + 1))) :=
-    fun i _ j _ h => by
-      have h' : (i : ℚ) = (j : ℚ) := h
-      exact_mod_cast h'
+    fun i _ j _ h => Rat.natCast_inj.mp h
   refine ⟨Lagrange.interpolate (Finset.range (N + 1)) (fun i : ℕ => (i : ℚ))
       (fun i : ℕ => (a i : ℚ)), ?_, ?_⟩
   · have hdeg := Lagrange.degree_interpolate_lt (r := fun i : ℕ => (a i : ℚ)) hinj
@@ -304,8 +302,7 @@ lemma clearPoly_eq_of_large (a : ℕ → ℤ)
     have h2 : ((m - i : ℕ) : ℤ) = (m : ℤ) - (i : ℤ) :=
       Nat.cast_sub (by have hi' : i < N + 1 := Finset.mem_range.mp hi; lia)
     rw [← h2] at h1
-    have h3 := (Int.natAbs_dvd_natAbs).mpr h1
-    rwa [Int.natAbs_natCast] at h3
+    exact Int.ofNat_dvd_left.mp h1
   have hLlcm : (Finset.range (N + 1)).lcm (fun i => m - i) ∣ Z.natAbs :=
     Finset.lcm_dvd hpoint
   have hLle : (Finset.range (N + 1)).lcm (fun i => m - i) ≤ Z.natAbs :=
@@ -313,8 +310,8 @@ lemma clearPoly_eq_of_large (a : ℕ → ℤ)
   -- The lcm is large: at least `(m - N) ^ (N + 1) / N ^ (N * (N + 1))`.
   have hprod := prod_le_lcm_mul_pow N m hmN
   have hconsec : (m - N) ^ (N + 1) ≤ ∏ i ∈ Finset.range (N + 1), (m - i) := by
-    have h1 : (m - N) ^ (N + 1) = ∏ i ∈ Finset.range (N + 1), (m - N) := by
-      rw [Finset.prod_const, Finset.card_range]
+    have h1 : (m - N) ^ (N + 1) = ∏ i ∈ Finset.range (N + 1), (m - N) :=
+      Finset.pow_eq_prod_const (m - N) (N + 1)
     rw [h1]
     refine Finset.prod_le_prod (fun i hi => ?_)
     have hi' : i < N + 1 := Finset.mem_range.mp hi
@@ -332,15 +329,13 @@ lemma clearPoly_eq_of_large (a : ℕ → ℤ)
   have hZup : |Z| ≤ ((C + denomProd q N * C₁ : ℕ) : ℤ) * (m : ℤ) ^ N := by
     rw [hZ]
     have hsub : |(clearPoly q N).eval (m : ℤ) - (denomProd q N : ℤ) * a m| ≤
-        |(clearPoly q N).eval (m : ℤ)| + |(denomProd q N : ℤ) * a m| := by
-      have h := abs_add_le ((clearPoly q N).eval (m : ℤ)) (-((denomProd q N : ℤ) * a m))
-      rwa [abs_neg, ← sub_eq_add_neg] at h
+        |(clearPoly q N).eval (m : ℤ)| + |(denomProd q N : ℤ) * a m| := abs_sub _ _
     refine hsub.trans ?_
     calc |(clearPoly q N).eval (m : ℤ)| + |(denomProd q N : ℤ) * a m|
         ≤ (C : ℤ) * (m : ℤ) ^ N + (denomProd q N : ℤ) * ((C₁ : ℤ) * (m : ℤ) ^ N) := by
           have h2 : |(denomProd q N : ℤ) * a m| ≤
               (denomProd q N : ℤ) * ((C₁ : ℤ) * (m : ℤ) ^ N) := by
-            rw [abs_mul, abs_of_nonneg (by exact_mod_cast Nat.zero_le (denomProd q N))]
+            rw [abs_mul, abs_of_nonneg (Int.natCast_nonneg (denomProd q N))]
             exact mul_le_mul_of_nonneg_left (hC₁ m hm1) (by exact_mod_cast Nat.zero_le _)
           exact add_le_add (hC m hm1) h2
       _ = ((C + denomProd q N * C₁ : ℕ) : ℤ) * (m : ℤ) ^ N := by push_cast; ring
@@ -419,8 +414,7 @@ lemma clearPoly_eq_all (a : ℕ → ℤ)
   have hMn : ((M - n : ℕ) : ℤ) = (M : ℤ) - (n : ℤ) := Nat.cast_sub (by lia : n ≤ M)
   rw [← hMn] at h5
   have h6 : (M - n) ∣ z := by
-    have h := (Int.natAbs_dvd_natAbs).mpr h5
-    rwa [Int.natAbs_natCast, ← hz] at h
+    exact Int.ofNat_dvd_left.mp h5
   have h7 : z = 0 := Nat.eq_zero_of_dvd_of_lt h6 hMlt
   have h8 : Zn.natAbs = 0 := by rw [← hz]; exact h7
   have h9 : Zn = 0 := Int.natAbs_eq_zero.mp h8

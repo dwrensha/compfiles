@@ -46,8 +46,7 @@ lemma piecewise_concave_add {s₁ s₂ : Finset ℝ} {f₁ f₂ : ℝ → ℝ}
   · apply h₂ l r hlr
     intro t ht
     apply hslr
-    apply Finset.mem_union_right
-    exact ht
+    exact Finset.mem_union_right _ ht
 
 lemma piecewise_concave_sum {α : Type u} [DecidableEq α] (s : Finset α)
     (s' : α → Finset ℝ) (f' : α → ℝ → ℝ)
@@ -234,12 +233,8 @@ lemma exists_decrease_of_piecewise_concave_plus {s : Finset ℝ} {f : ℝ → �
         exact ⟨hl''.right, hr''.right⟩
       have h'' := ConcaveOn.min_le_of_mem_Icc h' (Set.left_mem_Icc.mpr hl'r') (Set.right_mem_Icc.mpr hl'r') ht
       rcases min_choice (f l') (f r') with hmin|hmin <;> rw [hmin] at h''
-      · use l'
-        rw [and_iff_left h'']
-        exact hl''.left
-      · use r'
-        rw [and_iff_left h'']
-        exact hr''.left
+      · exact ⟨l', hl''.left, h''⟩
+      · exact ⟨r', hr''.left, h''⟩
     · have hlr'' : (l = ⊥ ∧ r ≠ ⊤) ∨ (l ≠ ⊥ ∧ r = ⊤) := by tauto
       rcases hlr'' with ⟨hl, hr⟩|⟨hl, hr⟩
       · set r' := WithTop.untop r hr with hr'
@@ -274,9 +269,7 @@ lemma exists_decrease_of_piecewise_concave_plus {s : Finset ℝ} {f : ℝ → �
           use min t l'
           rw [and_iff_right (min_le_right _ _)]
           exact lt_of_le_of_lt h'' (lt_add_one _)
-        · use r'
-          rw [and_iff_left h'']
-          exact hr''.left
+        · exact ⟨r', hr''.left, h''⟩
       · set l' := WithBot.unbot l hl with hl'
         rw [WithBot.eq_unbot_iff] at hl'
         simp only [l] at hl'
@@ -305,9 +298,7 @@ lemma exists_decrease_of_piecewise_concave_plus {s : Finset ℝ} {f : ℝ → �
           exact ⟨hl''.right, le_max_left _ _⟩
         have h'' := ConcaveOn.min_le_of_mem_Icc h' (Set.left_mem_Icc.mpr hl'r') (Set.right_mem_Icc.mpr hl'r') ht
         rcases min_choice (f l') (f (max t r')) with hmin|hmin <;> rw [hmin] at h''
-        · use l'
-          rw [and_iff_left h'']
-          exact hl''.left
+        · exact ⟨l', hl''.left, h''⟩
         · contrapose! hr'
           use (max t r')
           rw [and_iff_right (le_max_right _ _)]
@@ -431,9 +422,8 @@ lemma piecewise_concave_plus_sqrt_dist (x : ℝ) :
 
 lemma piecewise_concave_plus_sum_sqrt_dist {α : Type u} [DecidableEq α] (s : Finset α) (hs : s.Nonempty) (x : α → ℝ) :
       PiecewiseConcavePlusOn (s.image x) (Finset.SumSqrtDist s x) := by
-    have h' : ∀ i ∈ s, PiecewiseConcavePlusOn {x i} (fun t ↦ √|x i - t|) := by
-      intro i hi
-      exact piecewise_concave_plus_sqrt_dist (x i)
+    have h' : ∀ i ∈ s, PiecewiseConcavePlusOn {x i} (fun t ↦ √|x i - t|) :=
+      fun i _ ↦ piecewise_concave_plus_sqrt_dist (x i)
     have h := piecewise_concave_plus_sum s hs (fun i ↦ {x i}) (fun i ↦ fun t ↦ √|x i - t|) h'
     have hsum : ∑ i ∈ s, (fun t ↦ √|x i - t|) = Finset.SumSqrtDist s x := by
       ext t
@@ -467,9 +457,7 @@ lemma decrease_sum {α : Type u} [DecidableEq α] (s : Finset α) (hs : s.Nonemp
   simp [Finset.sum_product] at hkl
   use k
   rw [and_iff_right hkls.left]
-  use l
-  rw [and_iff_right hkls.right]
-  exact hkl
+  exact ⟨l, hkls.right, hkl⟩
 
 theorem imo2021_p2_finset_version {α : Type u} [DecidableEq α] (s : Finset α) (x : α → ℝ) :
     ∑ i ∈ s, ∑ j ∈ s, √|x i - x j| ≤ ∑ i ∈ s, ∑ j ∈ s, √|x i + x j| := by

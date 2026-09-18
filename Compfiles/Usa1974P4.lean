@@ -132,8 +132,7 @@ problem usa1974_p4
   have hc0 : 0 < win .B .C := (hwin .B .C (by decide)).1
   have ha1 : win .A .B < 1 := by
     have h1 := (hwin .A .B (by decide)).2; have h2 := (hwin .B .A (by decide)).1; linarith
-  have hb1 : win .A .C < 1 := by
-    have h1 := (hwin .A .C (by decide)).2; have h2 := (hwin .C .A (by decide)).1; linarith
+  have hb1 : win .A .C < 1 := hweak.trans ha1
   have hc1 : win .B .C < 1 := by
     have h1 := (hwin .B .C (by decide)).2; have h2 := (hwin .C .B (by decide)).1; linarith
   have ha1' : (0:ℝ) < 1 - win .A .B := sub_pos.mpr ha1

@@ -104,9 +104,7 @@ problem imo2022_p2 (f : ℝ+ → ℝ+) :
         obtain ⟨y, _, hy2⟩ := hf x
         by_contra! H2
         have h3 := hy2 x H2
-        have h4 : y = friend x := by
-          have h5 := Classical.choose_spec (hf x).exists
-          exact (hy2 (friend x) h5).symm
+        have h4 : y = friend x := (hy2 (friend x) (h11 x)).symm
         rw [h4] at h3
         exact H h3.symm
       have h6' : 1 < x * f x := by
@@ -119,9 +117,7 @@ problem imo2022_p2 (f : ℝ+ → ℝ+) :
           obtain ⟨y, _, hy2⟩ := hf (friend x)
           by_contra! H2
           have h3 := hy2 (friend x) H2
-          have h4 : y = (friend (friend x)) := by
-            have h5 := Classical.choose_spec (hf (friend x)).exists
-            exact (hy2 (friend (friend x)) h5).symm
+          have h4 : y = (friend (friend x)) := (hy2 (friend (friend x)) (h11 (friend x))).symm
           rw [h0] at h4
           rw [h4] at h3
           exact H h3

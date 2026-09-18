@@ -39,8 +39,7 @@ theorem star_eval {P : ℂ[X]} (hreal : ∀ n : ℕ, (P.coeff n).im = 0) (z : �
     refine Finset.sum_congr rfl fun k _ ↦ ?_
     rw [map_mul, map_pow]
     congr 1
-    rw [starRingEnd_apply, Complex.star_def, Complex.conj_eq_iff_im]
-    exact hreal k
+    exact Complex.conj_eq_iff_im.mpr (hreal k)
   exact h
 
 /-- For a complex number `r`, the product of the squared distances from `r`
@@ -103,11 +102,7 @@ problem usa1989_p3
     linarith [hge]
   have hprod_ge : 1 ≤ (P.roots.map fun r ↦
         Complex.normSq (Complex.I - r) * Complex.normSq (Complex.I + r)).prod := by
-    apply Multiset.one_le_prod
-    intro x hx
-    rw [Multiset.mem_map] at hx
-    obtain ⟨r, hr, rfl⟩ := hx
-    exact hfactor r hr
+    exact Multiset.one_le_prod_map hfactor
   -- But the product of all the factors equals ‖P.eval i‖⁴ < 1.
   have hstar : P.eval (-Complex.I) = star (P.eval Complex.I) := by
     rw [star_eval hreal]

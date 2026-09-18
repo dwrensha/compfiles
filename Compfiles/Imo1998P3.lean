@@ -201,8 +201,7 @@ lemma exists_distinct_primes (t n : ℕ) (hnneq0 : n ≠ 0) (primes : List ℕ) 
               have hnewlebound : new ≤ bound := by
                 have hnewinexisting : new ∈ existing_numbers := by
                   apply List.mem_append_left
-                  apply List.mem_append_left
-                  exact hin
+                  exact List.mem_append_left _ hin
                 exact List.le_max_of_mem hnewinexisting
               linarith [hnewlebound, hnewgtbound]
             have hnewcoprimen : new.Coprime n := by
@@ -224,9 +223,7 @@ lemma exists_distinct_primes (t n : ℕ) (hnneq0 : n ≠ 0) (primes : List ℕ) 
               right
               left
               exact hnewinl
-            have hle : new ≤ bound := by
-              simp [bound]
-              exact List.le_max_of_mem hnewinexisting
+            have hle : new ≤ bound := List.le_max_of_mem hnewinexisting
             linarith
           rw [List.singleton_append.symm] at hconsnodup
           exact List.nodup_append_comm.mp hconsnodup
@@ -269,7 +266,7 @@ lemma d_of_factorization (t : ℕ) (ps exps : List ℕ)
         have hnltpslen : n < ps.length := Nat.lt_of_lt_of_eq hnltexpslen hlen.symm
         have hpsnprime : Nat.Prime (ps[n]'hnltpslen) :=
           hallprime ps[n] (List.get_mem ps ⟨n, hnltpslen⟩)
-        exact @prime_power_divisors ps[n] exps[n] hpsnprime
+        exact prime_power_divisors hpsnprime
     · apply List.Nodup.pairwise_of_forall_ne
       · rw [List.nodup_iff_pairwise_ne, List.pairwise_map]
         refine List.Pairwise.imp_of_mem (R := Ne) (fun {a b} ha hb hneq => ?_) ?_
@@ -411,8 +408,7 @@ theorem odd_k_satisfies (k : ℕ)
             rw [Nat.sub_sub]
             rw [← hkkeqjt]
             rw [Nat.add_sub_add_right]
-            apply Nat.sub_pos_of_lt
-            exact hjltkk
+            exact Nat.sub_pos_of_lt hjltkk
           let exps := (List.range t).map (fun i ↦ C * 2^i)
           let x := ((ps.zip exps).map (fun (p, e) ↦ p ^ e)).prod
           have hxnⱼcoprime : Nat.Coprime x nⱼ := by
@@ -424,8 +420,7 @@ theorem odd_k_satisfies (k : ℕ)
             have hpinps : p ∈ ps := (List.of_mem_zip hpk.left).left
             have hpcoprime : Nat.Coprime p nⱼ := (hps.left p hpinps).right.right
             rw [← hpk.right]
-            apply Nat.Coprime.pow_left
-            exact hpcoprime
+            exact hpcoprime.pow_left _
           have hxneq0 : x ≠ 0 := by
             dsimp only [x]
             apply List.prod_ne_zero

@@ -117,9 +117,7 @@ lemma frontContrib_gt {t : ℕ} (c x : ℤ) (w : Fin t → ℤ) (h : c < x) :
   apply Finset.sum_congr rfl; intro ℓ _
   have hiff : invPair c x (w ℓ) ↔ (c < w ℓ ∧ w ℓ < x) := by
     rw [invPair_iff]; lia
-  by_cases h1 : c < w ℓ ∧ w ℓ < x
-  · rw [ite_eq_left (hiff.mpr h1), ite_eq_left h1]
-  · rw [ite_eq_right (fun hp => h1 (hiff.mp hp)), ite_eq_right h1]
+  exact if_congr hiff rfl rfl
 
 lemma skipEmb_ne {n : ℕ} (p : Fin (n + 1)) (i : Fin n) : skipEmb p i ≠ p := by
   have h : Equiv.swap 0 p i.succ ≠ Equiv.swap 0 p 0 :=
@@ -483,11 +481,7 @@ lemma list_sum_take_eq_sum_range (l : List ℕ) {j : ℕ} (hj : j ≤ l.length) 
     rw [List.length_take]
     lia
   have h2 : t < l.length := by lia
-  have g1 : (l.take j)[t]! = (l.take j)[t]'h1 := by
-    rw [List.getElem!_eq_getElem?_getD, List.getElem?_eq_getElem h1, Option.getD_some]
-  have g2 : l[t]! = l[t]'h2 := by
-    rw [List.getElem!_eq_getElem?_getD, List.getElem?_eq_getElem h2, Option.getD_some]
-  rw [g1, g2, List.getElem_take]
+  rw [getElem!_pos (l.take j) t h1, getElem!_pos l t h2, List.getElem_take]
 
 /-- In a sorted list of integers, the elements `≤ c` form an initial segment. -/
 lemma sorted_filter_eq_take (l : List ℤ) (c : ℤ) (hp : l.Pairwise (· ≤ ·)) :
@@ -632,24 +626,17 @@ lemma pureId_value {n : ℕ} (m : Fin (n + 1) → ℤ) (c : ℤ) :
   set k := (vs.filter (· ≤ c)).length with hk
   have hp : vs.Pairwise (· ≤ ·) := Finset.pairwise_sort _ _
   have hn : vs.Nodup := Finset.sort_nodup _ _
-  have hvsval : (vs : Multiset ℤ) = (univ.image m).val := Finset.sort_eq _ _
   have hlen : es.length = vs.length := by simp [hes]
   have hkvs : k ≤ vs.length := List.length_filter_le _ _
   have hkes : k ≤ es.length := by lia
   have hesget : ∀ t : ℕ, t < vs.length → es[t]! = eCnt m (vs[t]!) := by
     intro t ht
     have ht' : t < es.length := by lia
-    have g1 : es[t]! = es[t]'ht' := by
-      rw [List.getElem!_eq_getElem?_getD, List.getElem?_eq_getElem ht', Option.getD_some]
-    have g2 : vs[t]! = vs[t]'ht := by
-      rw [List.getElem!_eq_getElem?_getD, List.getElem?_eq_getElem ht, Option.getD_some]
-    rw [g1, g2]
-    show (vs.map (eCnt m))[t]'ht' = eCnt m (vs[t]'ht)
-    simp only [List.getElem_map]
+    rw [getElem!_pos es t ht', getElem!_pos vs t ht]
+    exact List.getElem_map (eCnt m)
   have hesum : es.sum = n + 1 := by
-    have h1 : es.sum = ∑ v ∈ univ.image m, eCnt m v := by
-      rw [hes, ← Multiset.sum_coe, ← Multiset.map_coe, hvsval]
-      rfl
+    have h1 : es.sum = ∑ v ∈ univ.image m, eCnt m v :=
+      (sum_image_eq_sort_map_sum m (eCnt m)).symm
     have h2 : ∑ v ∈ univ.image m, eCnt m v = (valMul m).card :=
       Multiset.toFinset_sum_count_eq (valMul m)
     have h3 : (valMul m).card = n + 1 := by
@@ -900,11 +887,7 @@ lemma QL {n : ℕ} : ∀ (m : Fin (n + 1) → ℤ) (p : Fin (n + 1)),
   induction n with
   | zero =>
     intro m p
-    have h1 : ∀ i : Fin 1, i = 0 := fun i => by
-      have hlt := i.is_lt
-      ext
-      simp only [Fin.val_zero]
-      lia
+    have h1 : ∀ i : Fin 1, i = 0 := Fin.fin_one_eq_zero
     have hp : p = 0 := h1 p
     subst hp
     have he : eCnt m (m 0) = 1 := by

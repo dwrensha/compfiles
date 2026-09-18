@@ -56,36 +56,28 @@ lemma descent_aux {a b p q : ℤ} (ha : 0 < a) (_hb : 0 < b)
   have g2 : Int.gcd p (p - q) = 1 := by
     have h1 : ((Int.gcd p (p - q) : ℕ) : ℤ) ∣ p := Int.gcd_dvd_left p (p - q)
     have h2 : ((Int.gcd p (p - q) : ℕ) : ℤ) ∣ p - q := Int.gcd_dvd_right p (p - q)
-    have h3 : ((Int.gcd p (p - q) : ℕ) : ℤ) ∣ q := by
-      have h := dvd_sub h1 h2
-      rwa [show p - (p - q) = q by ring] at h
+    have h3 : ((Int.gcd p (p - q) : ℕ) : ℤ) ∣ q := (Int.dvd_iff_dvd_of_dvd_sub h2).mp h1
     have h4 := Int.dvd_coe_gcd h1 h3
     rw [hgcd] at h4
     exact Nat.dvd_one.mp (Int.natCast_dvd.mp h4)
   have g3 : Int.gcd p (p + q) = 1 := by
     have h1 : ((Int.gcd p (p + q) : ℕ) : ℤ) ∣ p := Int.gcd_dvd_left p (p + q)
     have h2 : ((Int.gcd p (p + q) : ℕ) : ℤ) ∣ p + q := Int.gcd_dvd_right p (p + q)
-    have h3 : ((Int.gcd p (p + q) : ℕ) : ℤ) ∣ q := by
-      have h := dvd_sub h2 h1
-      rwa [show p + q - p = q by ring] at h
+    have h3 : ((Int.gcd p (p + q) : ℕ) : ℤ) ∣ q := (Int.dvd_add_right h1).mp h2
     have h4 := Int.dvd_coe_gcd h1 h3
     rw [hgcd] at h4
     exact Nat.dvd_one.mp (Int.natCast_dvd.mp h4)
   have g4 : Int.gcd q (p - q) = 1 := by
     have h1 : ((Int.gcd q (p - q) : ℕ) : ℤ) ∣ q := Int.gcd_dvd_left q (p - q)
     have h2 : ((Int.gcd q (p - q) : ℕ) : ℤ) ∣ p - q := Int.gcd_dvd_right q (p - q)
-    have h3 : ((Int.gcd q (p - q) : ℕ) : ℤ) ∣ p := by
-      have h := dvd_add h2 h1
-      rwa [show p - q + q = p by ring] at h
+    have h3 : ((Int.gcd q (p - q) : ℕ) : ℤ) ∣ p := (Int.dvd_iff_dvd_of_dvd_sub h2).mpr h1
     have h4 := Int.dvd_coe_gcd h3 h1
     rw [hgcd] at h4
     exact Nat.dvd_one.mp (Int.natCast_dvd.mp h4)
   have g5 : Int.gcd q (p + q) = 1 := by
     have h1 : ((Int.gcd q (p + q) : ℕ) : ℤ) ∣ q := Int.gcd_dvd_left q (p + q)
     have h2 : ((Int.gcd q (p + q) : ℕ) : ℤ) ∣ p + q := Int.gcd_dvd_right q (p + q)
-    have h3 : ((Int.gcd q (p + q) : ℕ) : ℤ) ∣ p := by
-      have h := dvd_sub h2 h1
-      rwa [show p + q - q = p by ring] at h
+    have h3 : ((Int.gcd q (p + q) : ℕ) : ℤ) ∣ p := (Int.dvd_add_left h1).mp h2
     have h4 := Int.dvd_coe_gcd h3 h1
     rw [hgcd] at h4
     exact Nat.dvd_one.mp (Int.natCast_dvd.mp h4)
@@ -331,10 +323,7 @@ lemma lemma_1'
           exact pos_of_mul_pos_right hpos (by linarith)
         have hpq : q < p := by
           have e1 : q ^ 2 < p ^ 2 := by linarith [hu1, hn]
-          by_contra hle
-          push Not at hle
-          have e2 : p ^ 2 ≤ q ^ 2 := pow_le_pow_left₀ (le_of_lt hp) hle 2
-          linarith
+          exact lt_of_pow_lt_pow_left₀ 2 hu6 e1
         have hbeq : (b : ℤ) ^ 2 = 4 * (p * q * (p ^ 2 - q ^ 2)) := by
           linear_combination ht2 + 4 * p * q * hu1 + 2 * n * hu2
         obtain ⟨A, B, C, hA, hB, hC, hlt, hABC⟩ :=
@@ -356,10 +345,7 @@ lemma lemma_1'
           exact pos_of_mul_pos_right hpos (by linarith)
         have hpq : q < p := by
           have e1 : q ^ 2 < p ^ 2 := by linarith [hu1, hm]
-          by_contra hle
-          push Not at hle
-          have e2 : p ^ 2 ≤ q ^ 2 := pow_le_pow_left₀ (le_of_lt hp) hle 2
-          linarith
+          exact lt_of_pow_lt_pow_left₀ 2 hu6 e1
         have hbeq : (b : ℤ) ^ 2 = 4 * (p * q * (p ^ 2 - q ^ 2)) := by
           linear_combination ht2 + 4 * p * q * hu1 + 2 * m * hu2
         obtain ⟨A, B, C, hA, hB, hC, hlt, hABC⟩ :=
@@ -372,14 +358,8 @@ lemma lemma_1'
     have hpb : p ∣ b := dvd_trans hpd (Nat.gcd_dvd_right a b)
     obtain ⟨a1, rfl⟩ := hpa
     obtain ⟨b1, rfl⟩ := hpb
-    have ha1 : 0 < a1 := by
-      rcases Nat.eq_zero_or_pos a1 with h0 | h0
-      · simp [h0] at ha
-      · exact h0
-    have hb1 : 0 < b1 := by
-      rcases Nat.eq_zero_or_pos b1 with h0 | h0
-      · simp [h0] at hb
-      · exact h0
+    have ha1 : 0 < a1 := Nat.pos_of_lt_mul_left ha
+    have hb1 : 0 < b1 := Nat.pos_of_lt_mul_left hb
     have hpc : p ^ 2 ∣ c := by
       have hzc : ((p : ℤ) * a1) ^ 4 = ((p : ℤ) * b1) ^ 4 + (c : ℤ) ^ 2 := by exact_mod_cast h
       have e1 : (p : ℤ) ^ 4 ∣ ((p : ℤ) * a1) ^ 4 :=
@@ -398,10 +378,7 @@ lemma lemma_1'
         exact e3
       exact Int.natCast_dvd.mp e4
     obtain ⟨c1, rfl⟩ := hpc
-    have hc1 : 0 < c1 := by
-      rcases Nat.eq_zero_or_pos c1 with h0 | h0
-      · simp [h0] at hc
-      · exact h0
+    have hc1 : 0 < c1 := Nat.pos_of_lt_mul_left hc
     have heq : a1 ^ 4 = b1 ^ 4 + c1 ^ 2 := by
       have h2 : p ^ 4 * a1 ^ 4 = p ^ 4 * (b1 ^ 4 + c1 ^ 2) := by
         calc p ^ 4 * a1 ^ 4 = (p * a1) ^ 4 := by ring

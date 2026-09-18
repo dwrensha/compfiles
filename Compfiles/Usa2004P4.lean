@@ -748,14 +748,8 @@ lemma inv_update_mate {b₀ b₁ b₂ : Cell → Option ℚ} (hinv : Inv b₀)
     have hiso : ∀ c ∈ S, ∀ d ∈ S, (A₀ c < A₀ d ↔ B₀ c < B₀ d) := by
       intro c hc d hd
       rw [hS, Set.mem_ofPred_eq] at hc hd
-      obtain ⟨ac, hac⟩ : ∃ v, b₀ c.1 = some v := by
-        cases hbo : b₀ c.1 with
-        | none => exact absurd hbo hc
-        | some v => exact ⟨v, rfl⟩
-      obtain ⟨ad, had⟩ : ∃ v, b₀ d.1 = some v := by
-        cases hbo : b₀ d.1 with
-        | none => exact absurd hbo hd
-        | some v => exact ⟨v, rfl⟩
+      obtain ⟨ac, hac⟩ : ∃ v, b₀ c.1 = some v := Option.ne_none_iff_exists'.mp hc
+      obtain ⟨ad, had⟩ : ∃ v, b₀ d.1 = some v := Option.ne_none_iff_exists'.mp hd
       have hc01 : c.1.1.1 ≤ 1 := by rw [c.2]; exact hx01
       have hd01 : d.1.1.1 ≤ 1 := by rw [d.2]; exact hx01
       obtain ⟨amc, hamc⟩ : ∃ v, b₀ (mate c.1) = some v := by
@@ -788,10 +782,7 @@ lemma inv_update_mate {b₀ b₁ b₂ : Cell → Option ℚ} (hinv : Inv b₀)
     have hnew : ∀ z ∈ S, (A₀ z < vx → B₀ z < w) ∧ (vx < A₀ z → w < B₀ z) := by
       intro z hz
       rw [hS, Set.mem_ofPred_eq] at hz
-      obtain ⟨az, haz⟩ : ∃ v, b₀ z.1 = some v := by
-        cases hbo : b₀ z.1 with
-        | none => exact absurd hbo hz
-        | some v => exact ⟨v, rfl⟩
+      obtain ⟨az, haz⟩ : ∃ v, b₀ z.1 = some v := Option.ne_none_iff_exists'.mp hz
       have hz01 : z.1.1.1 ≤ 1 := by rw [z.2]; exact hx01
       obtain ⟨amz, hamz⟩ : ∃ v, b₀ (mate z.1) = some v := by
         cases hbo : b₀ (mate z.1) with
@@ -827,10 +818,7 @@ lemma inv_update_mate {b₀ b₁ b₂ : Cell → Option ℚ} (hinv : Inv b₀)
     have hA : ∀ z ∈ S, A₀ z ≠ vx := by
       intro z hz hcon
       rw [hS, Set.mem_ofPred_eq] at hz
-      obtain ⟨az, haz⟩ : ∃ v, b₀ z.1 = some v := by
-        cases hbo : b₀ z.1 with
-        | none => exact absurd hbo hz
-        | some v => exact ⟨v, rfl⟩
+      obtain ⟨az, haz⟩ : ∃ v, b₀ z.1 = some v := Option.ne_none_iff_exists'.mp hz
       have hzx : z.1 ≠ x := fun h => hz (h.symm ▸ hx)
       have hAz : A₀ z = az := by
         show (b₀ z.1).getD 0 = az
@@ -1137,7 +1125,6 @@ lemma inv_prefBoard (p : Play) (hp : FollowsStrategy bobMove p) :
         apply hcT
         exact Finset.mem_filter.mpr ⟨(hmemF c).mpr hcon, hc2⟩
       obtain ⟨hc₂2, hc₂none⟩ := bobCell2_spec hex2
-      show Inv (Function.update b₁ (bobCell2 b₁) (some (bobFreshValue b₁)))
       exact inv_update_rows2 hih hx2 hc₂2 hb₁eq rfl
 
 snip end

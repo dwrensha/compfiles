@@ -176,8 +176,7 @@ problem usa1998_p3
        simp [w, Finset.card_erase_of_mem hi]
        field_simp
     have hw : ∀ j ∈ (Finset.range (n + 1)).erase i, 0 ≤ w j := by
-      intro j _hj
-      simp only [w, one_div, inv_nonneg, Nat.cast_nonneg]
+      exact fun j _ ↦ Nat.one_div_cast_nonneg n
     have hz : ∀ j ∈ (Finset.range (n + 1)).erase i, 0 ≤ 1 - y j := by
       intro j hj
       rw [Finset.mem_erase] at hj

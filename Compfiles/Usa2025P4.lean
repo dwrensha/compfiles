@@ -127,7 +127,7 @@ lemma angle_lt_pi_div_two_inner_pos (p q r : EuclideanSpace ℝ (Fin 2))
   rw [hcos] at hpos
   have hden : 0 < ‖p -ᵥ q‖ * ‖r -ᵥ q‖ := by
     apply mul_pos <;> rw [norm_pos_iff] <;> [exact sub_ne_zero.mpr hq1; exact sub_ne_zero.mpr hq2]
-  nlinarith [mul_pos hpos hden, div_mul_cancel₀ (⟪p -ᵥ q, r -ᵥ q⟫) (ne_of_gt hden)]
+  exact (div_pos_iff_of_pos_right hden).mp hpos
 
 lemma p4_not_collinear (A B C H F P O : EuclideanSpace ℝ (Fin 2)) (r : ℝ)
     (htri : AffineIndependent ℝ ![A, B, C])

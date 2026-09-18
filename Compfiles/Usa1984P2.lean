@@ -152,9 +152,7 @@ problem usa1984_p2b :
   -- So `d + 1` divides `ν_p a - ν_p b`, whose absolute value is `d`: impossible.
   have hdvd := factorization_eq_of_pow (d + 1) (Nat.succ_pos d) a b (∏ x ∈ c, x) ha0 hb0 hC0 u hu v hv p
   have hle : d + 1 ≤ d := by
-    have h2 : d + 1 ∣ d := by
-      rw [hd, ← Int.natCast_dvd_natCast]
-      exact Int.dvd_natAbs.mpr hdvd
+    have h2 : d + 1 ∣ d := Int.ofNat_dvd_left.mp hdvd
     exact Nat.le_of_dvd hd0 h2
   exact Nat.not_succ_le_self d hle
 

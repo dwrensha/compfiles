@@ -78,16 +78,12 @@ problem poland2016_s1_p8 (a b c : ℤ) : ∃ n : ℤ, n > 0 ∧ ¬ IsSquare (n^3
           use m
           ring
         have m_minus_k_even : Even (m - k) := even_of_add m_plus_k_even this
-        constructor
-        · exact m_plus_k_even
-        · exact m_minus_k_even
+        exact ⟨m_plus_k_even, m_minus_k_even⟩
       · have : Even ((m - k) + (m + k)) := by
           use m
           ring
         have m_plus_k_even : Even (m + k) := even_of_add m_minus_k_even this
-        constructor
-        · exact m_plus_k_even
-        · exact m_minus_k_even
+        exact ⟨m_plus_k_even, m_minus_k_even⟩
     exact div_4_mul_of_both_even both_factors_even_m_k
   have four_divides_n_square_minus_l_square : 4 ∣ (n + l) * (n - l) := by
     have both_factors_even_n_l : Even (n + l) ∧ Even (n - l) := by
@@ -98,16 +94,12 @@ problem poland2016_s1_p8 (a b c : ℤ) : ∃ n : ℤ, n > 0 ∧ ¬ IsSquare (n^3
           use n
           ring
         have n_minus_l_even : Even (n - l) := even_of_add n_plus_l_even this
-        constructor
-        · exact n_plus_l_even
-        · exact n_minus_l_even
+        exact ⟨n_plus_l_even, n_minus_l_even⟩
       · have : Even ((n - l) + (n + l)) := by
           use n
           ring
         have n_plus_l_even : Even (n + l) := even_of_add n_minus_l_even this
-        constructor
-        · exact n_plus_l_even
-        · exact n_minus_l_even
+        exact ⟨n_plus_l_even, n_minus_l_even⟩
     exact div_4_mul_of_both_even both_factors_even_n_l
   lia
 

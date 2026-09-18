@@ -149,10 +149,7 @@ lemma poly_fwdDiff (m : ℕ) (P : ℝ[X]) (hP : P.natDegree < m) (k : ℕ) :
         have hm : 1 ≤ m := by lia
         have hcomp_deg : (P.comp (X + C 1)).natDegree = P.natDegree := by
           rw [Polynomial.natDegree_comp, Polynomial.natDegree_X_add_C, mul_one]
-        have hcomp_ne : P.comp (X + C 1) ≠ 0 := by
-          intro hzero
-          rw [hzero, Polynomial.natDegree_zero] at hcomp_deg
-          lia
+        have hcomp_ne : P.comp (X + C 1) ≠ 0 := comp_X_add_C_ne_zero_iff.mpr hP0
         have hcomp_lc : (P.comp (X + C 1)).leadingCoeff = P.leadingCoeff := by
           have hnd : (X + C (1 : ℝ)).natDegree ≠ 0 := by
             rw [Polynomial.natDegree_X_add_C]; norm_num
@@ -163,8 +160,7 @@ lemma poly_fwdDiff (m : ℕ) (P : ℝ[X]) (hP : P.natDegree < m) (k : ℕ) :
           have hd : (P.comp (X + C 1)).degree = P.degree := by
             rw [Polynomial.degree_eq_natDegree hcomp_ne, Polynomial.degree_eq_natDegree hP0,
               hcomp_deg]
-          have hlt := Polynomial.degree_sub_lt_left hd hcomp_ne hcomp_lc
-          rwa [hd] at hlt
+          exact degree_sub_lt_right hd hP0 hcomp_lc
         have hQ : (P.comp (X + C 1) - P).natDegree < m := by
           rcases eq_or_ne (P.comp (X + C 1) - P) 0 with hz0 | hnz
           · rw [hz0, Polynomial.natDegree_zero]; lia

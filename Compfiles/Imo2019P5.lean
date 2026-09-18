@@ -292,9 +292,7 @@ theorem iterate_L {n : ℕ} (c : Fin n → Bool) : step^[L c] c = fun _ ↦ fals
       mem_filter.mpr ⟨mem_univ i, hi⟩
     rw [h5] at hmem
     exact notMem_empty i hmem
-  · cases hv : (step^[L c] c) i
-    · rfl
-    · exact absurd hv hi
+  · exact Bool.eq_false_of_ne_true hi
 
 /-- Before step `L c`, the process has not stopped yet. -/
 theorem not_iterate_lt_L {n : ℕ} (c : Fin n → Bool) {m : ℕ} (hm : m < L c) :
@@ -425,10 +423,7 @@ theorem two_mul_card_filter_pair {n : ℕ} (hn : 0 < n) {i j : Fin n} (hij : i �
 theorem card_filter_pair {n : ℕ} (hn : 0 < n) {i j : Fin n} (hij : i ≠ j) :
     (univ.filter fun c : Fin n → Bool ↦ c i = true ∧ c j = true).card = 2 ^ (n - 2) := by
   have h2 := two_mul_card_filter_pair hn hij
-  have hn2 : 2 ≤ n := by
-    have hnont := nontrivial_of_ne i j hij
-    rw [← Fintype.one_lt_card_iff_nontrivial] at hnont
-    rwa [Fintype.card_fin] at hnont
+  have hn2 : 2 ≤ n := Fin.nontrivial_iff_two_le.mp (nontrivial_of_ne i j hij)
   have h3 : 2 ^ (n - 1) = 2 * 2 ^ (n - 2) := by
     have h : n - 1 = n - 2 + 1 := by lia
     rw [h, pow_succ]

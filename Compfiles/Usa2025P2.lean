@@ -232,11 +232,7 @@ lemma core_pigeonhole {k : ℕ} (hk : 1 ≤ k) {s : Finset ℝ} (hscard : s.card
   have hfac2 : (∏ r ∈ s.erase i2, (X - C r)) = (X - C i1) * R := by
     have h1 : insert i1 ((s.erase i2).erase i1) = s.erase i2 :=
       Finset.insert_erase (Finset.mem_erase.mpr ⟨hne, hi1⟩)
-    have h2 : (s.erase i2).erase i1 = u := by
-      rw [hu]
-      ext x
-      simp only [Finset.mem_erase]
-      tauto
+    have h2 : (s.erase i2).erase i1 = u := Finset.erase_right_comm
     rw [← h1, h2, hR, Finset.prod_insert hi1u]
   -- The vanishing-coefficient equations: `coeff t` of `(X - c) * R` is
   -- `R.coeff (t - 1) - c * R.coeff t`.
@@ -350,10 +346,7 @@ problem usa2025_p2 (n k : ℕ) (hn : k < n) (hk : 1 ≤ k) (P : ℝ[X])
       rwa [show f.val = P.roots from hnodup.dedup] at h1
     have h1 : (s.val.map fun r => X - C r).prod ∣ (P.roots.map fun r => X - C r).prod :=
       Multiset.prod_dvd_prod_of_le (Multiset.map_le_map hsv)
-    have h2 : (P.roots.map fun r => X - C r).prod ∣ P := by
-      refine ⟨C P.leadingCoeff, ?_⟩
-      rw [mul_comm]
-      exact (C_leadingCoeff_mul_prod_multiset_X_sub_C (by rw [hcard, hdeg])).symm
+    have h2 : (P.roots.map fun r => X - C r).prod ∣ P := prod_multiset_X_sub_C_dvd P
     rw [Finset.prod_eq_multiset_prod]
     exact h1.trans h2
   -- For every root `i ∈ s`, the product over `s ∖ {i}` has degree `k` and divides

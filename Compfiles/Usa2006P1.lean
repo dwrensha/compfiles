@@ -280,9 +280,7 @@ lemma mod_iff_not_dvd {p s : ℕ} (hp : p.Prime) (hs0 : 0 < s) (hs1 : s < p) :
       have hdvd : p ∣ 1 + s * t := by
         have e : ((1 + s * t : ℕ) : ZMod p) = 0 := by
           rw [Nat.cast_add, Nat.cast_one, Nat.cast_mul, hst, add_neg_cancel]
-        have h2 := congrArg ZMod.val e
-        rw [ZMod.val_natCast, ZMod.val_zero] at h2
-        exact Nat.dvd_of_mod_eq_zero h2
+        exact (ZMod.natCast_eq_zero_iff _ _).mp e
       have h1st : 1 + s * t = p := by
         obtain ⟨c, hc⟩ := hdvd
         have hub : 1 + s * t < 2 * p := by

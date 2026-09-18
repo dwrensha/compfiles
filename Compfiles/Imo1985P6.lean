@@ -749,9 +749,8 @@ lemma aux_unique_top
     rw [hsd]
     decide
   let i : ↑sd := ⟨(2:ℕ), hi⟩
-  have hd₃: ∀ nd, fd a b i * (3 / 2) ^ (nd.1 - 2) ≤ fd a b nd := by
-    intro nd
-    exact aux_unique_top_ind f sd hsd fd hfd₁ hd₁ a b ha₀ hd₀ hd₂ hi i rfl nd
+  have hd₃: ∀ nd, fd a b i * (3 / 2) ^ (nd.1 - 2) ≤ fd a b nd :=
+    aux_unique_top_ind f sd hsd fd hfd₁ hd₁ a b ha₀ hd₀ hd₂ hi i rfl
   have hsd₁: Nonempty ↑sd := Nonempty.intro i
   refine Filter.tendsto_atTop_atTop.mpr ?_
   intro z
@@ -882,14 +881,12 @@ lemma aux_unique
     refine hmo₀ nd.1 ?_ hnd₀
     exact lt_of_lt_of_le (Nat.zero_lt_two) nd.2
   have hfd₂: ∀ a b, a < b → (∀ n:↑sd, f n.1 a < f (n.1 + 1) a ∧ f n.1 b < f (n.1 + 1) b)
-      → Filter.Tendsto (fd a b) Filter.atTop Filter.atTop := by
-    intro a b ha₀ ha₁
-    exact aux_unique_top f h₁ h₇ sd rfl fd hfd₁ hd₁ a b ha₀ ha₁
+      → Filter.Tendsto (fd a b) Filter.atTop Filter.atTop :=
+    aux_unique_top f h₁ h₇ sd rfl fd hfd₁ hd₁
   have hfd₃: ∀ a b, a < b →
     (∀ (n:↑sd), (1 - 1 / n.1 < f n.1 a ∧ 1 - 1 / n.1 < f n.1 b) ∧ (f n.1 a < 1 ∧ f n.1 b < 1))
-        → Filter.Tendsto (fd a b) Filter.atTop (nhds 0) := by
-    intro a b ha₀ ha₁
-    exact aux_unique_nhds f sd rfl fd hfd₁ hd₁ a b ha₀ ha₁
+        → Filter.Tendsto (fd a b) Filter.atTop (nhds 0) :=
+    aux_unique_nhds f sd rfl fd hfd₁ hd₁
   by_contra! hc₀
   by_cases hy₁: x < y
   · have hy₂: Filter.Tendsto (fd x y) Filter.atTop Filter.atTop := by
@@ -1048,11 +1045,8 @@ lemma imo_1985_p6_nnreal
   have hmo₁: ∀ n, 0 < n → Function.Injective (f n) := fun n a => StrictMono.injective (hmo₀ n a)
   let f₀: ℕ → NNReal → NNReal := fun n x => (f n x).toNNReal
   have hf₀: f₀ = fun n x => (f n x).toNNReal := by rfl
-  have hf₁: ∀ n x, 0 < n → f n x = f₀ n x := by
-    intro n x hn₀
-    rw [hf₀]
-    simp
-    exact h₃ n x hn₀
+  have hf₁: ∀ n x, 0 < n → f n x = f₀ n x :=
+    fun n x hn₀ ↦ (Real.coe_toNNReal _ (h₃ n x hn₀)).symm
   have hf₂: ∀ n x, 0 < n → f₀ n x = (f n x).toNNReal := by
     intro n x _
     rw [hf₀]
@@ -1068,13 +1062,11 @@ lemma imo_1985_p6_nnreal
       exact fun n x y a a_1 => aux_2 f h₀ h₁ h₃ n x y a a_1
     refine aux_7 f h₀ h₁ h₃ ?_ f₀ hf₂ hmo₂ ?_ n hn₀
     · exact fun n x a => aux_3 f h₀ h₁ h₄ n x a
-    · intro m hm₀
-      exact aux_6 f h₀ h₁ f₀ hf₀ m hm₀
+    · exact aux_6 f h₀ h₁ f₀ hf₀
   have hf₇: ∀ n x y, 0 < n → (f₀ n x = y ↔ fi n y = x) := by
     intro n x y hn₀
     constructor
-    · intro hn₁
-      exact aux_5 f hmo₁ f₀ hmo₂ fi rfl n x y hn₀ hn₁
+    · exact aux_5 f hmo₁ f₀ hmo₂ fi rfl n x y hn₀
     · intro hn₁
       rw [← hn₁]
       exact hmo₁ n hn₀ (congrArg (f n) (hmo₇ n hn₀ y))
@@ -1131,9 +1123,7 @@ lemma imo_1985_p6_nnreal
       have hx₁: f₀ m x = 1 := (hf₇ m x 1 (by lia)).mpr hx₀.symm
       have hy₁: f₀ (m - 1) y = 1 := by
         exact (hf₇ (m - 1) y 1 hm₁).mpr hy₀.symm
-      have hy₂: f (m - 1) y = 1 := by
-        rw [hf₁ (m - 1) y hm₁, hy₁]
-        exact rfl
+      have hy₂: f (m - 1) y = 1 := Real.toNNReal_eq_one.mp hy₁
       have hf: StrictMono (f m) := hmo₀ m hm₃
       refine (StrictMono.lt_iff_lt hf).mp ?_
       rw [← hx₀, ← hy₀]
@@ -1212,8 +1202,7 @@ lemma imo_1985_p6_nnreal
   · exact aux_exists f h₂ hmo₀ f₀ hf₁ sn (by rfl)
            fb fc hfb₁ hfc₁ hfb₃ hfc₃ sb sc hsb₀ hsc₀
            fr (by rfl) sbr scr (by rfl) (by rfl) br cr h₈ hbr₁ hu₅ hbr₃ hcr₃
-  · intro x y hx₀ hy₀
-    exact aux_unique f h₁ hmo₀ h₇ x y hx₀ hy₀
+  · exact aux_unique f h₁ hmo₀ h₇
 
 snip end
 

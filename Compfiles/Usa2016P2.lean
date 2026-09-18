@@ -168,10 +168,7 @@ lemma sum_range_mod_add_ge {q b m : ℕ} (hb : b ≤ q) (hm : m ≤ q) :
 remainders of `n, n+1, …, n+k-1` modulo `q`. -/
 lemma sum_mod_le_sum_add_mod (k n q : ℕ) (hq : 0 < q) :
     ∑ j ∈ Finset.range k, j % q ≤ ∑ j ∈ Finset.range k, (j + n) % q := by
-  have hk : k = k / q * q + k % q := by
-    have h := Nat.div_add_mod k q
-    rw [mul_comm] at h
-    exact h.symm
+  have hk : k = k / q * q + k % q := (Nat.div_add_mod' k q).symm
   have hF1 : ∀ j, (j + q) % q = j % q := fun j => Nat.add_mod_right j q
   have hF2 : ∀ j, (j + q + n) % q = (j + n) % q := by
     intro j

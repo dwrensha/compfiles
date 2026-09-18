@@ -131,11 +131,8 @@ lemma sum_multiplicity {α : Type*} [DecidableEq α] (As : Fin 11 → Finset α)
   set U := Finset.univ.biUnion As with hU
   have hsubU : ∀ i, As i ⊆ U := fun i a ha ↦
     Finset.mem_biUnion.mpr ⟨i, Finset.mem_univ i, ha⟩
-  have hfilter_self : ∀ i : Fin 11, U.filter (fun a ↦ a ∈ As i) = As i := by
-    intro i
-    ext a
-    simp only [Finset.mem_filter]
-    exact ⟨fun ⟨_, h⟩ ↦ h, fun h ↦ ⟨hsubU i h, h⟩⟩
+  have hfilter_self : ∀ i : Fin 11, U.filter (fun a ↦ a ∈ As i) = As i :=
+    fun i ↦ Finset.filter_mem_eq_of_subset (hsubU i)
   calc ∑ a ∈ U, (Finset.univ.filter fun i ↦ a ∈ As i).card
       = ∑ i : Fin 11, (U.filter fun a ↦ a ∈ As i).card :=
         sum_card_filter_comm fun i a ↦ a ∈ As i
@@ -282,10 +279,7 @@ problem usa2011_p6_sharp :
   · -- `|As i ∩ As j| = 9` for `i ≠ j`.
     intro i j hij
     have hfi : (U₀.filter fun T ↦ i ∈ T) ∩ (U₀.filter fun T ↦ j ∈ T)
-        = U₀.filter fun T ↦ i ∈ T ∧ j ∈ T := by
-      ext T
-      simp only [Finset.mem_inter, Finset.mem_filter]
-      tauto
+        = U₀.filter fun T ↦ i ∈ T ∧ j ∈ T := (Finset.filter_and _ _ _).symm
     have hinter : ((U₀.filter fun T ↦ i ∈ T).image Sum.inl ∩
         (U₀.filter fun T ↦ j ∈ T).image Sum.inl : Finset (Finset (Fin 11) ⊕ Fin 60))
         = (U₀.filter fun T ↦ i ∈ T ∧ j ∈ T).image Sum.inl := by

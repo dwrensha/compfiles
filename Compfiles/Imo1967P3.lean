@@ -66,8 +66,7 @@ lemma aux_3
   (h₁ : Nat.Prime (k + m + 1))
   (h₂ : n + 1 < k + m + 1) :
   (n + 1).factorial ∣ ∏ i ∈ Finset.Icc 1 n, (m + i + k + 1) := by
-  have h₃: ∀ (n m : ℕ), 0 < n → n.factorial ∣ ∏ i ∈ Finset.Icc 1 n, (m + i) := by
-    exact fun (n m : ℕ) (a : 0 < n) ↦ aux_2 n m a
+  have h₃: ∀ (n m : ℕ), 0 < n → n.factorial ∣ ∏ i ∈ Finset.Icc 1 n, (m + i) := aux_2
   have h₄: (n + (1 : ℕ)).factorial ∣ (k + m + 1) * (∏ i ∈ Finset.Icc (1 : ℕ) n, (m + i + k + (1 : ℕ))) := by
     have hn₀ : 0 < n + 1 := Nat.zero_lt_succ n
     have h₈₁: ∀ i, m + i + k + (1 : ℕ) = m + k + (1 : ℕ) + i := by bound
@@ -142,9 +141,7 @@ problem imo1967_p3
       rw [Nat.mul_comm]
       exact Finset.prod_mul_distrib
     have h₇: n.factorial ∣ (∏ i ∈ Finset.Icc 1 n, (m + i - k)) := by
-      have h₇₀: ∀ i, m + i - k = m - k + i := by
-        intro i
-        exact Nat.sub_add_comm hk₀
+      have h₇₀: ∀ i, m + i - k = m - k + i := fun i ↦ Nat.sub_add_comm hk₀
       simp_rw [h₇₀]
       exact aux_2 n (m - k) h₀.2.2
     have h₈: (n + (1 : ℕ)).factorial ∣ (∏ i ∈ Finset.Icc (1 : ℕ) n, (m + i + k + (1 : ℕ))) := by
@@ -195,4 +192,4 @@ problem imo1967_p3
         · have h₇₀: ∏ i ∈ Finset.Icc 1 n, (k + (m + i) + 1) = ∏ i ∈ Finset.Icc 1 n, (m + i + k + 1) := by group
           rw [h₇₀]
           exact aux_3 k m n h₀ h₂ h₃
-      exact Dvd.dvd.mul_right h₇ (∏ x ∈ Finset.Icc 1 n, -1)
+      exact h₇.mul_right _

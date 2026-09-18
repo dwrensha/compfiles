@@ -659,8 +659,7 @@ theorem assemble (cfg : ColombianConfiguration)
       have hxC' : x ∈ S \ (C \ Z) := by
         rw [Finset.mem_sdiff]
         exact ⟨hx.1, fun hc => hx.2 (Finset.mem_sdiff.mp hc).1⟩
-      obtain ⟨ℓ, hℓL, hℓ⟩ := hsep' p hpC' x hxC'
-      exact ⟨ℓ, List.mem_cons_of_mem _ hℓL, hℓ⟩
+      exact List.exists_mem_cons_of_exists (hsep' p hpC' x hxC')
   set L : List (AffineSubspace ℝ Pt) := ℓ₀ :: L' with hL
   have hLlen : L.length = 2013 := by
     rw [hL, List.length_cons, hlen]

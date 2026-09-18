@@ -61,10 +61,7 @@ lemma S_set_bounded (n) : ∀ k ∈ S_set n, k ≤ n^2 := by
   rw [sh1]
   calc
     _ = ∑ i : Fin k, 1 := by simp
-    _ ≤ _ := by
-      apply Finset.sum_le_sum
-      intro i _
-      exact Nat.one_le_pow 2 (s i) (sh2 i)
+    _ ≤ _ := Finset.sum_le_sum fun i _ ↦ Nat.one_le_pow 2 (s i) (sh2 i)
 
 lemma S_set_Finite (n) : Set.Finite (S_set n) := by
   apply Set.Finite.of_finite_image (f:=Subtype.val)
@@ -193,9 +190,7 @@ theorem imo1992_p6_a : ∀ n ≥ 4, S n ≤ n^2-14 := by
         lia
       _ ≤ ∑ i ∈ Finset.univ \ {j}, s i ^ 2 + s j ^ 2 := by
         rw [add_le_add_iff_right]
-        apply Finset.sum_le_sum
-        intro i _
-        exact Nat.one_le_pow 2 (s i) (sh2 i)
+        exact Finset.sum_le_sum fun i _ ↦ Nat.one_le_pow 2 (s i) (sh2 i)
       _ = ∑ i, s i ^ 2 := by rw [Finset.sdiff_singleton_eq_erase,
           Finset.sum_erase_add _ _ (Finset.mem_univ j)]
       _ = n^2 := sh1.symm
@@ -203,9 +198,7 @@ theorem imo1992_p6_a : ∀ n ≥ 4, S n ≤ n^2-14 := by
   let V : Type := Finset.Ioo 0 4
   let s' (i) : V := ⟨s i, by {
     simp
-    and_intros
-    · exact sh2 i
-    · exact slt4 i
+    exact ⟨sh2 i, slt4 i⟩
   }⟩
   have sh1' : n ^ 2 = ∑ i, (s' i).val ^ 2 := by
     unfold s'
@@ -696,7 +689,6 @@ theorem sos_add (z1 z2 k1 k2: ℕ) (h1 : is_sum_of_pos_squares z1 k1) (h2 : is_s
       apply Finset.sum_nbij' (fun i => ⟨⟨i.val+k1, by grind⟩, by simp⟩) (fun j => ⟨j.val.val-k1, by grind⟩) <;> simp
       intro i b
       apply Fin.eq_of_val_eq
-      simp only
       exact Nat.sub_add_cancel b
   · intro i
     simp only
@@ -713,9 +705,7 @@ theorem sos_mul (z1 z2 k1 k2: ℕ) (h1 : is_sum_of_pos_squares z1 k1) (h2 : is_s
   and_intros
   · rw [s1h, s2h]
     rw [Finset.sum_mul_sum]
-    have : ∀ i, ∀ j, s1 i ^ 2 * s2 j ^ 2 = f i j ^ 2 := by
-      unfold f
-      simp_rw [mul_pow, implies_true]
+    have : ∀ i, ∀ j, s1 i ^ 2 * s2 j ^ 2 = f i j ^ 2 := fun i j ↦ (mul_pow (s1 i) (s2 j) 2).symm
     simp_rw [this]
     rw [← Finset.sum_fiberwise (ι:=Fin (k1*k2)) _ (fun x => (equi x).1)]
     congr
@@ -1018,10 +1008,7 @@ theorem complete_mul (n1 n2) (lb1 : 13 ≤ n1) (lb2 : 13 ≤ n2) (n1h : complete
         · apply n2h
           rfl
       · rw [mul_comm]
-        apply sos_mul_const
-        · exact dpos
-        · apply n2h v
-          exact vb
+        exact sos_mul_const _ _ _ dpos (n2h v vb)
     · trans 13 <;> simp [lb2]
     · trans 13 <;> simp [lb1]
 

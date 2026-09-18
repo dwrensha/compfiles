@@ -126,7 +126,7 @@ problem imo1977_p5
     (h₁ : q = (a ^ 2 + b ^ 2) / (a + b)) :
     q ^ 2 + r = 1977 ↔ (a, b) ∈ solution_set := by
   constructor
-  · exact fun (a_1 : q ^ 2 + r = 1977) ↦ aux_2 a b q r hp h₀ h₁ a_1
+  · exact aux_2 a b q r hp h₀ h₁
   · simp only [Set.mem_insert_iff, Prod.mk.injEq, Set.mem_singleton_iff]
     intro h₂
     lia

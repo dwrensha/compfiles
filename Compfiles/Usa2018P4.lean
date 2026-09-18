@@ -207,10 +207,7 @@ lemma two_mul_le_card_F_add (k : ZMod p) :
       intro c n _hn hcn
       rcases n with _ | m
       · lia
-      · have hm : m ≤ m * m := by
-          rcases m with _ | m
-          · simp
-          · exact Nat.le_mul_of_pos_right (m + 1) (Nat.succ_pos m)
+      · have hm : m ≤ m * m := Nat.le_mul_self m
         have hexp : (m + 1) * (m + 1) = m * m + 2 * m + 1 := by ring
         lia
     exact key _ _ h1 hcount

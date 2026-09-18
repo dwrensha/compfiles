@@ -111,10 +111,8 @@ lemma prefixSum_succ_lt_two_mul_sum (A : Finset ℕ) (hAS : A ⊆ S)
     by_contra hcon
     push Not at hcon
     have hsub : Finset.univ.filter (fun i : Fin S.card ↦ S.orderEmbOfFin rfl i ∈ A) ⊆
-        Finset.univ.filter (fun i : Fin S.card ↦ i.val < m) := by
-      intro i hi
-      simp only [Finset.mem_filter, Finset.mem_univ, true_and]
-      exact hcon i hi
+        Finset.univ.filter (fun i : Fin S.card ↦ i.val < m) :=
+      fun i hi ↦ (Finset.mem_filter_univ i).mpr (hcon i hi)
     have hle : (∑ i ∈ Finset.univ.filter (fun i : Fin S.card ↦ S.orderEmbOfFin rfl i ∈ A),
           S.orderEmbOfFin rfl i) ≤
         ∑ i ∈ Finset.univ.filter (fun i : Fin S.card ↦ i.val < m), S.orderEmbOfFin rfl i :=
@@ -155,7 +153,7 @@ problem usa1996_p2 (S : Finset ℕ) (hS : ∀ s ∈ S, 0 < s) :
       have hpos : 0 < A.sum id := Finset.sum_pos (fun a ha ↦ hS a (hAS ha)) hAne
       have hle : A.sum id ≤ prefixSum S S.card := by
         rw [prefixSum_card]
-        exact Finset.sum_le_sum_of_subset_of_nonneg hAS (fun _ _ _ ↦ Nat.zero_le _)
+        exact Finset.sum_le_sum_of_subset hAS
       have H : ∃ k, k ≤ S.card ∧ A.sum id ≤ prefixSum S k := ⟨S.card, le_rfl, hle⟩
       obtain ⟨hk₀le, hk₀x⟩ := Nat.find_spec H
       have hk₀pos : Nat.find H ≠ 0 := by

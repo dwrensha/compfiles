@@ -257,9 +257,7 @@ theorem exists_superset_card {s : Finset (Fin 6)} {k : ℕ} (h1 : s.card ≤ k) 
   refine ⟨s ∪ u, Finset.subset_union_left, ?_⟩
   rw [Finset.card_union_of_disjoint ?_, huc]
   · lia
-  · rw [Finset.disjoint_left]
-    intro x hxs hxu
-    exact Finset.mem_compl.mp (hus hxu) hxs
+  · exact subset_compl_iff_disjoint_left.mp hus
 
 /-- The number of contestants who solved both problems of the pair `P`. -/
 def pairCount {n : ℕ} (s : Fin n → Finset (Fin 6)) (P : Finset (Fin 6)) : ℕ :=
@@ -453,7 +451,7 @@ problem imo2005_p6 {n : ℕ} (s : Fin n → Finset (Fin 6))
       intro x hx
       rw [Finset.mem_filter] at hx ⊢
       exact ⟨hx.1, hsub x hx.2.1, hsub x hx.2.2⟩
-    exact lt_of_lt_of_le (pair p q hpq) (Nat.mul_le_mul_left 5 hle)
+    exact lt_mul_of_lt_mul_left (pair p q hpq) hle
   -- Relabel the problems so that `c0` missed problem `5`.
   obtain ⟨m, hm⟩ : ∃ m : Fin 6, Finset.univ \ s' c0 = {m} := by
     have hcard1 : (Finset.univ \ s' c0).card = 1 := by

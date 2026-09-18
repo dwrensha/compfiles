@@ -32,10 +32,8 @@ snip begin
 -- Solution adapted from Art of Problem Solving
 -- from https://leanprover.zulipchat.com/#narrow/channel/217875-Is-there-code-for-X.3F/topic/Sylvester-Schur.3A.20.20p-adic.20valuation/near/525085669
 lemma Nat.Prime.multiplicity_factorial {p : ℕ} (hp : Prime p) {n b : ℕ} (h : log p n < b) :
-  multiplicity p n.factorial = ∑ i ∈ Finset.Ico 1 b, n / p ^ i := by
-  have := Nat.Prime.emultiplicity_factorial hp h
-  rw [FiniteMultiplicity.emultiplicity_eq_multiplicity <| finiteMultiplicity_of_emultiplicity_eq_natCast this] at this
-  exact_mod_cast this
+  multiplicity p n.factorial = ∑ i ∈ Finset.Ico 1 b, n / p ^ i :=
+  multiplicity_eq_of_emultiplicity_eq_some (Nat.Prime.emultiplicity_factorial hp h)
 
 lemma Int.intCast_add_floor (x : ℝ) (a: ℤ) : ⌊a + x⌋ = ⌊x⌋ + a := by
   simp [add_comm]

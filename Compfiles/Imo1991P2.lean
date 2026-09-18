@@ -147,7 +147,6 @@ problem imo1991_p2 (n : ℕ) (hn : 6 < n)
     have hd1 : d = 1 := by
       have h21 := (h' 2 (by lia) (by lia)).mp h2
       have hdd := (Nat.modEq_iff_dvd' (by lia : 1 ≤ 2)).mp h21.symm
-      rw [show (2:ℕ) - 1 = 1 by lia] at hdd
       exact Nat.dvd_one.mp hdd
     subst hd1
     apply Nat.prime_of_coprime n (by lia)

@@ -63,8 +63,6 @@ problem usa1988_p2 (a b c r s t : ℝ) (hrs : s ≤ r) (hst : t ≤ s)
       rw [hk]
       nlinarith [mul_nonneg (sub_nonneg.mpr hrs) (sub_nonneg.mpr hst)]
     have hrt : 0 ≤ r - t := by linarith
-    calc Real.sqrt (a ^ 2 - 3 * b) ≤ Real.sqrt ((r - t) ^ 2) :=
-          Real.sqrt_le_sqrt hle
-      _ = r - t := Real.sqrt_sq hrt
+    exact (Real.sqrt_le_left hrt).mpr hle
 
 end Usa1988P2

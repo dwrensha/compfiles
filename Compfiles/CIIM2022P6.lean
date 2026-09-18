@@ -65,8 +65,7 @@ lemma sum_div_pow_le_one (P : Finset ℕ) (v : ℕ → ℕ) :
   set N : ℕ := ∏ p ∈ P, p ^ v p with hNdef
   set A : ℚ := ∑ S ∈ P'.powerset.erase ∅, ((∏ p ∈ S, p ^ v p : ℕ) : ℚ) / (N : ℚ) ^ S.card with hAdef
   set AM : ℚ := ∑ S ∈ P'.powerset.erase ∅, ((∏ p ∈ S, p ^ v p : ℕ) : ℚ) / (M : ℚ) ^ S.card with hAMdef
-  have hNeq : N = M * qq := by
-    rw [hNdef, ← hPP', Finset.prod_insert hp₀notin, ← hqqdef, ← hMdef, mul_comm]
+  have hNeq : N = M * qq := (Finset.prod_erase_mul P (fun p => p ^ v p) hmax).symm
   have hMpos : 0 < M := by
     rw [hMdef]
     exact Finset.prod_pos fun p hp => pow_pos (hP'prime p hp).pos _
@@ -127,9 +126,7 @@ lemma sum_div_pow_le_one (P : Finset ℕ) (v : ℕ → ℕ) :
   have himg_sum : ∑ S ∈ P'.powerset.image (insert p₀), ((∏ p ∈ S, p ^ v p : ℕ) : ℚ) / (N : ℚ) ^ S.card
       = (1 / (M : ℚ)) * ∑ S ∈ P'.powerset, ((∏ p ∈ S, p ^ v p : ℕ) : ℚ) / (N : ℚ) ^ S.card := by
     rw [Finset.sum_image himg, Finset.mul_sum]
-    apply Finset.sum_congr rfl
-    intro S hS
-    exact hterm S hS
+    exact Finset.sum_congr rfl hterm
   have h1' : insert ∅ (P'.powerset.erase ∅) = P'.powerset :=
     Finset.insert_erase (Finset.empty_mem_powerset _)
   have hsumA : ∑ S ∈ P'.powerset, ((∏ p ∈ S, p ^ v p : ℕ) : ℚ) / (N : ℚ) ^ S.card = 1 + A := by
@@ -166,7 +163,6 @@ lemma sum_div_pow_le_one (P : Finset ℕ) (v : ℕ → ℕ) :
     rw [hgoal_eq, hA0, hM1]
     norm_num
   · -- `P'` nonempty: use `(qq - 2)(M - 2) ≥ 0` and `qq + M ≥ 5`.
-    have hP'ne0 : P' ≠ ∅ := Finset.nonempty_iff_ne_empty.1 hP'ne
     have hM2 : 2 ≤ M := by
       obtain ⟨p, hp⟩ := hP'ne
       have h1 : p ^ v p ≤ M := by
@@ -187,10 +183,7 @@ lemma sum_div_pow_le_one (P : Finset ℕ) (v : ℕ → ℕ) :
           have h3 : 2 ≤ p := (hP'prime p hp).two_le
           rw [Finset.mem_singleton]
           lia
-        have hP'2 : P' = {2} := by
-          rcases Finset.subset_singleton_iff.1 hsub with h | h
-          · exact absurd h hP'ne0
-          · exact h
+        have hP'2 : P' = {2} := (Finset.Nonempty.subset_singleton_iff hP'ne).mp hsub
         have hp₀ne2 : p₀ ≠ 2 := by
           have h : p₀ ∉ ({2} : Finset ℕ) := hP'2 ▸ hp₀notin
           exact Finset.notMem_singleton.1 h
@@ -235,9 +228,8 @@ lemma prod_factorization_le (n : ℕ) (hn : 0 < n) :
   have hpP : ∀ p ∈ P, p.Prime := fun p hp => (Nat.mem_primeFactors.1 hp).1
   have hwP : ∀ p ∈ P, 1 ≤ (n + 1).factorization p := fun p hp =>
     (hpP p hp).factorization_pos_of_dvd hn1 (Nat.mem_primeFactors.1 hp).2.1
-  have hNN : ∏ p ∈ P, p ^ (n + 1).factorization p = n + 1 := by
-    rw [hPdef, Nat.prod_primeFactors_prod_factorization]
-    exact Nat.prod_factorization_pow_eq_self hn1
+  have hNN : ∏ p ∈ P, p ^ (n + 1).factorization p = n + 1 :=
+    (Nat.prod_primeFactors_pow_factorization hn1).symm
   have hbP : ∀ p ∈ P, n + 1 ≤ p * ((Nat.factorial n).factorization p + 1) := by
     intro p hp
     have hpp : p.Prime := hpP p hp
@@ -400,10 +392,7 @@ problem ciim2022_p6 (n : ℕ) (hn : 0 < n) :
       = (∏ p ∈ (Nat.factorial n).primeFactors \ (n + 1).primeFactors, ((Nat.factorial n).factorization p + 1))
         * ∏ p ∈ (Nat.factorial n).primeFactors ∩ (n + 1).primeFactors, ((Nat.factorial n).factorization p + 1) := by
     have h1 : (Nat.factorial n).primeFactors \ ((Nat.factorial n).primeFactors ∩ (n + 1).primeFactors)
-        = (Nat.factorial n).primeFactors \ (n + 1).primeFactors := by
-      ext p
-      simp only [Finset.mem_sdiff, Finset.mem_inter]
-      tauto
+        = (Nat.factorial n).primeFactors \ (n + 1).primeFactors := Finset.sdiff_inter_self_left _ _
     rw [← h1]
     exact (Finset.prod_sdiff (f := fun p => (Nat.factorial n).factorization p + 1)
       Finset.inter_subset_left).symm

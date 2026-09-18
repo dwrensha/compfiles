@@ -101,11 +101,8 @@ lemma exists_factorization (n : ℕ) (hn : 2 < n) :
       lia
     obtain ⟨Fp, hFp, hFpprod⟩ := ih p hplt hp
     obtain ⟨Fq, hFq, hFqprod⟩ := ih q hqlt hq
-    exact ⟨Fp + Fq, fun d hd => by
-      rw [Multiset.mem_add] at hd
-      rcases hd with hd | hd
-      · exact hFp d hd
-      · exact hFq d hd, by rw [Multiset.prod_add, hFpprod, hFqprod]⟩
+    exact ⟨Fp + Fq, fun d hd => (Multiset.mem_add.mp hd).elim (hFp d) (hFq d),
+      by rw [Multiset.prod_add, hFpprod, hFqprod]⟩
 
 snip end
 

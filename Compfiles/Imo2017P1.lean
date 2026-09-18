@@ -173,11 +173,7 @@ lemma climb (ha₁ : Rule a) (hx : 1 < x) {i c : ℕ} (hi : a x i = c)
   refine ⟨i + t₀ + 1, ?_⟩
   rw [step_sq ha₁ hx ⟨s, hsq⟩, hsq, Nat.sqrt_eq]
   -- s ≤ r ≤ √c + 3
-  have h1 : s ≤ r := by
-    have h2 : s * s ≤ r * r := by lia
-    calc s = (s * s).sqrt := (Nat.sqrt_eq s).symm
-    _ ≤ (r * r).sqrt := Nat.sqrt_le_sqrt h2
-    _ = r := Nat.sqrt_eq r
+  have h1 : s ≤ r := Nat.mul_self_le_mul_self_iff.mp (by lia)
   lia
 
 /-- If the sequence never hits the class 2 mod 3, then its minimum value

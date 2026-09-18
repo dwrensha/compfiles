@@ -88,7 +88,7 @@ lemma mem_arcSet {m : ℕ} {c : ZMod m} {l : ℕ} {x : ZMod m} :
 lemma natCast_injective_of_lt {m : ℕ} [NeZero m] {t₁ t₂ : ℕ} (h₁ : t₁ < m) (h₂ : t₂ < m)
     (h : (t₁ : ZMod m) = (t₂ : ZMod m)) : t₁ = t₂ := by
   rw [ZMod.natCast_eq_natCast_iff] at h
-  rwa [Nat.ModEq, Nat.mod_eq_of_lt h₁, Nat.mod_eq_of_lt h₂] at h
+  exact Nat.ModEq.eq_of_lt_of_lt h h₁ h₂
 
 lemma arcSet_card {m : ℕ} [NeZero m] {c : ZMod m} {l : ℕ} (hl : l ≤ m) :
     (arcSet c l).card = l := by
@@ -155,10 +155,7 @@ lemma off_eq_offExt (hk : 0 < k) (i : Fin k) : P.off i = P.offExt hk i.val := by
     exact ⟨Finset.mem_univ _, by rw [Fin.lt_def]; exact hb⟩
   · intro a ha
     rw [Finset.mem_filter] at ha
-    have hlt : a.val < k := by
-      have := i.isLt
-      rw [Fin.lt_def] at ha
-      lia
+    have hlt : a.val < k := a.isLt
     exact (len_congr P hk (Nat.mod_eq_of_lt hlt)).symm
 
 lemma offExt_k (hk : 0 < k) : P.offExt hk k = m := by
@@ -217,10 +214,8 @@ lemma offExt_strictMono (hk : 0 < k) : StrictMono (P.offExt hk) := by
   intro a b h
   obtain ⟨c, rfl⟩ := Nat.exists_eq_add_of_lt h
   clear h
-  have step : ∀ d, P.offExt hk (a + d) < P.offExt hk (a + d + 1) := fun d => by
-    rw [offExt_succ]
-    have hpos := P.len_pos ⟨(a + d) % k, Nat.mod_lt (a + d) hk⟩
-    lia
+  have step : ∀ d, P.offExt hk (a + d) < P.offExt hk (a + d + 1) := fun d =>
+    offExt_lt_succ P hk (a + d)
   induction c with
   | zero => simpa using step 0
   | succ c ih =>
@@ -344,8 +339,7 @@ lemma offExt_eq_off_add_div (hk : 0 < k) (a : ℕ) {j : Fin k} (hj : a % k = j.v
     P.offExt hk a = P.off j + (a / k) * m := by
   conv_lhs => rw [← Nat.mod_add_div a k, Nat.mul_comm k (a / k)]
   rw [offExt_add_mul_period, off_eq_offExt P hk j]
-  congr 1
-  exact congr_arg (P.offExt hk) hj
+  exact Nat.add_right_cancel_iff.mpr (congrArg (P.offExt hk) hj)
 
 lemma sum_arcOf (hk : 0 < k) [NeZero m] (i : Fin k) (w : ZMod m → ℝ) :
     ∑ x ∈ P.arcOf i, w x = ∑ t ∈ Finset.Ico (P.off i) (P.off i + P.len i), P.perW w t := by
@@ -371,10 +365,7 @@ lemma perW_sum_mono (w : ZMod m → ℝ) (hnn : ∀ x, 0 ≤ w x) {a b c d : ℕ
     (h1 : c ≤ a) (h2 : b ≤ d) :
     ∑ t ∈ Finset.Ico a b, P.perW w t ≤ ∑ t ∈ Finset.Ico c d, P.perW w t := by
   apply Finset.sum_le_sum_of_subset_of_nonneg
-  · rw [Finset.subset_iff]
-    intro x hx
-    simp only [Finset.mem_Ico] at hx ⊢
-    lia
+  · exact Finset.Ico_subset_Ico h1 h2
   · intro x _ _
     exact hnn _
 
@@ -925,10 +916,8 @@ lemma surgeryMany {t : ℕ} :
       have hb : ((Finset.univ.biUnion fun s : Fin t => arcSet (v s) (la s.succ)).image
           (skipMap (ca 0) (la 0)))
           = Finset.univ.biUnion fun s : Fin t =>
-            (arcSet (v s) (la s.succ)).image (skipMap (ca 0) (la 0)) := by
-        ext x
-        simp only [Finset.mem_image, Finset.mem_biUnion]
-        tauto
+            (arcSet (v s) (la s.succ)).image (skipMap (ca 0) (la 0)) :=
+        Finset.biUnion_image
       rw [hb]
       ext x
       rw [Finset.mem_union, Finset.mem_biUnion, Finset.mem_biUnion]
@@ -1046,8 +1035,8 @@ lemma mergeOne {m k : ℕ} [NeZero m] (P : CirclePartition m k) (hk : 0 < k) (hk
       have h1 := hval ⟨(j.val + 1) % k, Nat.mod_lt _ hk⟩
       rw [← sum_arcOf_ext P hk (j.val + 1) (j := ⟨(j.val + 1) % k, Nat.mod_lt _ hk⟩) rfl w] at h1
       have e : P.offExt hk (j.val + 2)
-          = P.offExt hk (j.val + 1) + P.len ⟨(j.val + 1) % k, Nat.mod_lt _ hk⟩ := by
-        rw [show j.val + 2 = (j.val + 1) + 1 by lia, offExt_succ]
+          = P.offExt hk (j.val + 1) + P.len ⟨(j.val + 1) % k, Nat.mod_lt _ hk⟩ :=
+        offExt_succ P hk (j.val + 1)
       rw [e]
       exact h1
     have hA2 : ∑ t ∈ Finset.Ico p (p + l), P.perW w t < 1 := hAIco ▸ hA
@@ -1091,14 +1080,11 @@ lemma mergeOne {m k : ℕ} [NeZero m] (P : CirclePartition m k) (hk : 0 < k) (hk
     have hle : P.len j + P.len ⟨(j.val + 1) % k, Nat.mod_lt _ hk⟩ ≤ m := by
       have hsum : ∑ i ∈ ({j, ⟨(j.val + 1) % k, Nat.mod_lt _ hk⟩} : Finset (Fin k)), P.len i
           ≤ ∑ i, P.len i := by
-        apply Finset.sum_le_sum_of_subset_of_nonneg (Finset.subset_univ _)
-        intro x _ _
-        have := P.len_pos x
-        lia
+        exact Finset.sum_le_sum_of_subset_of_nonneg (Finset.subset_univ _)
+          (fun _ _ _ => Nat.zero_le _)
       rw [P.len_sum, Finset.sum_insert (by
         rw [Finset.mem_singleton]
-        intro h
-        exact hdisj (congr_arg Fin.val h).symm), Finset.sum_singleton] at hsum
+        exact Fin.ne_of_val_ne hdisj.symm), Finset.sum_singleton] at hsum
       exact hsum
     lia
   set base' := ((m - l - H : ℕ) : ZMod (m - l)) with hbase'_def
@@ -1118,11 +1104,7 @@ lemma mergeOne {m k : ℕ} [NeZero m] (P : CirclePartition m k) (hk : 0 < k) (hk
         = {⟨0, hk'⟩} := by
       ext i
       simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_singleton]
-      constructor
-      · intro h
-        exact Fin.ext h
-      · intro h
-        rw [h]
+      exact Fin.eq_mk_iff_val_eq.symm
     have e2 : ∑ i ∈ Finset.univ.filter (fun i : Fin (k - 1) => i.val ≠ 0), len' i
         = m - P.len j - P.len ⟨(j.val + 1) % k, Nat.mod_lt _ hk⟩ := by
       have e3 : ∑ i ∈ Finset.univ.filter (fun i : Fin (k - 1) => i.val ≠ 0), len' i
@@ -1217,9 +1199,7 @@ lemma mergeOne {m k : ℕ} [NeZero m] (P : CirclePartition m k) (hk : 0 < k) (hk
   refine ⟨P', ?_⟩
   intro i
   by_cases hi0 : i.val = 0
-  · have hlen0 : P'.len i = H + T := by
-      rw [hP'len]
-      simp only [hlen'_def, hi0, ite_true]
+  · have hlen0 : P'.len i = H + T := ite_eq_left hi0
     have hoff0 : P'.off i = 0 := by
       rw [show i = ⟨0, hk'⟩ from Fin.ext hi0]
       exact off_zero P' hk'
@@ -1283,8 +1263,7 @@ lemma mergeOne {m k : ℕ} [NeZero m] (P : CirclePartition m k) (hk : 0 < k) (hk
         = ∑ t ∈ Finset.Ico (P.off j) (P.offExt hk (j.val + 2)), P.perW w t := by
       rw [← offExt_succ_fin P hk j,
         show P.offExt hk (j.val + 1) + P.len ⟨(j.val + 1) % k, Nat.mod_lt _ hk⟩
-          = P.offExt hk (j.val + 2) by
-          rw [show j.val + 2 = (j.val + 1) + 1 by lia, offExt_succ P hk (j.val + 1)]]
+          = P.offExt hk (j.val + 2) from (offExt_succ P hk (j.val + 1)).symm]
       exact Finset.sum_Ico_consecutive _
         (by rw [hofj]; exact P.offExt_mono hk (by lia))
         (P.offExt_mono hk (by lia))
@@ -1296,13 +1275,9 @@ lemma mergeOne {m k : ℕ} [NeZero m] (P : CirclePartition m k) (hk : 0 < k) (hk
         ← Finset.sum_Ico_consecutive _ (by lia : P.off j ≤ p) (by lia : p ≤ p + l)]
     rw [hpart1, hpart2]
     linarith
-  · have hleni : P'.len i = P.len ⟨(j.val + 1 + i.val) % k, Nat.mod_lt _ hk⟩ := by
-      rw [hP'len]
-      simp only [hlen'_def, hi0, ite_false]
+  · have hleni : P'.len i = P.len ⟨(j.val + 1 + i.val) % k, Nat.mod_lt _ hk⟩ := ite_eq_right hi0
     have hoffi : P'.off i = P.offExt hk (j.val + 1 + i.val) - P.off j - l := by
-      have h3 := off'_eq i.val (by lia) i.isLt
-      rw [show i = ⟨i.val, i.isLt⟩ from Fin.eta i _]
-      exact h3
+      exact off'_eq i.val (by lia) i.isLt
     have hbound : P.offExt hk (j.val + 1 + i.val) - P.off j - l + P.len ⟨(j.val + 1 + i.val) % k,
         Nat.mod_lt _ hk⟩ ≤ m - l := by
       have h1 : P.offExt hk (j.val + 2 + i.val) ≤ P.offExt hk (j.val + k) := by
@@ -1546,10 +1521,8 @@ lemma mergeValues {t : ℕ} :
       have hb : ((Finset.univ.biUnion fun s : Fin t => arcSet (v s) (la s.succ)).image
           (skipMap (ca 0) (la 0)))
           = Finset.univ.biUnion fun s : Fin t =>
-            (arcSet (v s) (la s.succ)).image (skipMap (ca 0) (la 0)) := by
-        ext x
-        simp only [Finset.mem_image, Finset.mem_biUnion]
-        tauto
+            (arcSet (v s) (la s.succ)).image (skipMap (ca 0) (la 0)) :=
+        Finset.biUnion_image
       rw [hb]
       ext x
       rw [Finset.mem_union, Finset.mem_biUnion, Finset.mem_biUnion]
@@ -1621,8 +1594,7 @@ theorem hall_deficiency {n : ℕ} [NeZero n] (r : Fin n → Fin n → Prop) [Dec
     obtain ⟨f, hinj, hf⟩ := (Finset.all_card_le_biUnion_card_iff_exists_injective N).mp hHall
     refine ⟨Finset.univ, Finset.univ, f, Finset.mem_univ _, rfl, ?_, ?_, ?_⟩
     · intro p _
-      have hfp : f p ∈ Finset.univ.filter (r p) := hf p
-      exact ⟨Finset.mem_univ _, (Finset.mem_filter.mp hfp).2⟩
+      exact Finset.mem_filter.mp (hf p)
     · intro p₁ _ p₂ _ h
       exact hinj h
     · intro p hp
@@ -1716,9 +1688,7 @@ theorem hall_deficiency {n : ℕ} [NeZero n] (r : Fin n → Fin n → Prop) [Dec
       intro p₁ hp₁ p₂ hp₂ h
       rw [hfM p₁ hp₁, hfM p₂ hp₂] at h
       exact congrArg Subtype.val (hinj' h)
-    have hTcard : T.card = M.card := by
-      rw [hT]
-      exact Finset.card_image_of_injOn hinjM
+    have hTcard : T.card = M.card := Finset.card_image_iff.mpr hinjM
     refine ⟨M, T, f, hpipM, hTcard, ?_, ?_, ?_⟩
     · intro p hpM
       refine ⟨Finset.mem_image_of_mem f hpM, ?_⟩
@@ -1741,10 +1711,7 @@ theorem hall_deficiency {n : ℕ} [NeZero n] (r : Fin n → Fin n → Prop) [Dec
           exact hf' ⟨q, hqM⟩
         exact (Finset.mem_inter.mp h1).2
       rw [hY, Finset.mem_sdiff] at hjY
-      have hjNp : j ∈ N p := by
-        have h2 : j ∈ Finset.univ.filter (r p) :=
-          Finset.mem_filter.mpr ⟨Finset.mem_univ j, hrpj⟩
-        exact h2
+      have hjNp : j ∈ N p := (Finset.mem_filter_univ j).mpr hrpj
       have hsub : N p ⊆ B.biUnion N := Finset.subset_biUnion_of_mem N hpB
       exact hjY.2 (hsub hjNp)
 
@@ -1770,10 +1737,7 @@ theorem usa2025_p6_main (N : ℕ) (hN : 0 < N) : ∀ (m : ℕ) [NeZero m] (_hmn 
       have hp0 : p = ⟨0, hN⟩ := Subsingleton.elim _ _
       rw [hp0]
       have hfilter : ((Finset.univ : Finset (ZMod m)).filter ((fun x => (⟨0, hN⟩ : Fin 1))
-          · = ⟨0, hN⟩)) = Finset.univ := by
-        apply Finset.filter_true_of_mem
-        intro x _
-        rfl
+          · = ⟨0, hN⟩)) = Finset.univ := Finset.filter_true_of_mem fun _ _ => rfl
       rw [hfilter]
       exact h1
     · obtain ⟨Pπ, hPπ⟩ := hpart ⟨0, hN⟩
@@ -1796,7 +1760,7 @@ theorem usa2025_p6_main (N : ℕ) (hN : 0 < N) : ∀ (m : ℕ) [NeZero m] (_hmn 
       · have hM : M = Finset.univ := by
           rw [hB_def] at hB
           rw [Finset.sdiff_eq_empty_iff_subset] at hB
-          exact le_antisymm (Finset.subset_univ M) hB
+          exact Finset.univ_subset_iff.mp hB
         have hT : T = Finset.univ := by
           apply Finset.eq_univ_of_card
           rw [cardMT, ht_def, hM, Finset.card_univ]
@@ -1892,11 +1856,7 @@ theorem usa2025_p6_main (N : ℕ) (hN : 0 < N) : ∀ (m : ℕ) [NeZero m] (_hmn 
           have hsum2 : ∑ q ∈ M, Pπ.len (f q) = ∑ q ∈ T, Pπ.len q := by
             rw [← hMT, Finset.sum_image (fun a ha b hb h => finj a ha b hb h)]
           have htotal : ∑ q ∈ T, Pπ.len q + ∑ q ∈ Finset.univ \ T, Pπ.len q = m := by
-            have hdis : Disjoint T (Finset.univ \ T) := by
-              rw [Finset.disjoint_left]
-              intro x hx hx2
-              rw [Finset.mem_sdiff] at hx2
-              exact hx2.2 hx
+            have hdis : Disjoint T (Finset.univ \ T) := Finset.disjoint_sdiff
             rw [← Finset.sum_union hdis, Finset.union_sdiff_of_subset (Finset.subset_univ T),
               Pπ.len_sum]
           have hNT_card : (Finset.univ \ T).card = N - t := by
@@ -1904,10 +1864,8 @@ theorem usa2025_p6_main (N : ℕ) (hN : 0 < N) : ∀ (m : ℕ) [NeZero m] (_hmn 
               cardMT]
           have hge2 : N - t ≤ ∑ q ∈ Finset.univ \ T, Pπ.len q := by
             rw [← hNT_card]
-            have h1 : ∑ q ∈ Finset.univ \ T, 1 ≤ ∑ q ∈ Finset.univ \ T, Pπ.len q := by
-              apply Finset.sum_le_sum
-              intro q _
-              exact Pπ.len_pos q
+            have h1 : ∑ q ∈ Finset.univ \ T, 1 ≤ ∑ q ∈ Finset.univ \ T, Pπ.len q :=
+              Finset.sum_le_sum fun q _ => Pπ.len_pos q
             rw [Finset.sum_const, nsmul_eq_mul, mul_one] at h1
             exact h1
           rw [hm'eq, hBcard, hsum1, hsum2]
@@ -1935,9 +1893,7 @@ theorem usa2025_p6_main (N : ℕ) (hN : 0 < N) : ∀ (m : ℕ) [NeZero m] (_hmn 
             intro s
             rw [hca_la]
             have h1 : f (e s) ∈ T := (fprop _ (heM s)).1
-            have h2 := hate (g p) (hgMin p) (f (e s)) h1
-            rw [not_le] at h2
-            exact h2
+            exact not_le.mp (hate (g p) (hgMin p) (f (e s)) h1)
           obtain ⟨Pp, hPp⟩ := mergeValues Qp hk ca la (like (g p)) (fun x => hnn _ x) hQp
             hla1 hlam hdij harcval' htN φ hφ
           have hcast : N - t = B.card := hBcard.symm

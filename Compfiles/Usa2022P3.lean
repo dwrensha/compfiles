@@ -80,21 +80,14 @@ problem usa2022_p3 (f : ℝ+ → ℝ+) :
     have hx' : f^[2] x + x' = c := by
       apply Subtype.mk_eq_mk.mpr
       simp [x']
-    have h := h1 x x'
-    rw [hx'] at h
-
-    exact h
+    exact hx' ▸ h1 x x'
 
   have h3 : ∀ x : ℝ+, f^[2] x ≥ x := by
     by_contra! h
     rcases h with ⟨x, hx⟩
-    have : f x < f x := h2 x x hx
-    exact lt_irrefl (f x) this
+    exact lt_irrefl _ (h2 x x hx)
 
-  have h4 : ∀ c x : ℝ+, f c ≥ f x → c ≤ f^[2] x := by
-    intro c x
-    contrapose!
-    exact h2 c x
+  have h4 : ∀ c x : ℝ+, f c ≥ f x → c ≤ f^[2] x := fun c x ↦ le_imp_le_of_lt_imp_lt (h2 c x)
 
   have h5 : ∀ x : ℝ+, f^[2] x = f^[4] x := by
     intro x
@@ -208,8 +201,7 @@ problem usa2022_p3 (f : ℝ+ → ℝ+) :
     change c = f x * (1 + f^[2] x') at h
     simp [hx', h7] at h
 
-    rw [h]
-    nth_rw 1 [mul_div_cancel_right]
+    exact eq_div_of_mul_eq' h.symm
 
   have h10 : ∀ x < c, f x = c / x := by
     intro x hx

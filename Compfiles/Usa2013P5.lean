@@ -58,9 +58,7 @@ lemma digitCount_mul_ten_mod (t x d : ℕ) (ht : 0 < t) (hx : x < 10^t - 1) :
   have h10t : 10 ^ (t' + 1) = P * 10 := by rw [pow_succ, ← hP]
   set b := x / P with hb
   set w := x % P with hw
-  have hxbw : x = b * P + w := by
-    rw [hb, hw, Nat.mul_comm (x / P) P]
-    exact (Nat.div_add_mod x P).symm
+  have hxbw : x = b * P + w := (Nat.div_add_mod' x P).symm
   have hwle : w + 1 ≤ P := Nat.mod_lt x hPpos
   have hble : b ≤ 9 := by
     have hx2 : x < 10 ^ (t' + 1) := Nat.lt_of_lt_of_le hx (Nat.sub_le _ _)
@@ -126,7 +124,7 @@ lemma digitCount_pow_ten_mul_mod (t : ℕ) (ht : 0 < t) (x e d : ℕ) (hx : x < 
         = (10 * ((10^e * x) % (10^t - 1))) % (10^t - 1) := by
       have h2 : 10 ^ (e + 1) * x = 10 * (10^e * x) := by rw [pow_succ']; ring
       rw [h2]
-      exact (Nat.ModEq.mul_left 10 (Nat.mod_modEq _ _)).symm
+      exact (Nat.mul_mod_mod _ _ _).symm
     rw [h1, digitCount_mul_ten_mod t _ d ht (Nat.mod_lt _ hT), ih]
 
 /-- For a nonzero digit `d`, the number of occurrences of `d` in the decimal
@@ -185,9 +183,7 @@ problem usa2013_p5 (m n : ℕ) (hm : 0 < m) (hn : 0 < n) :
   have h25 : 2 ^ r * 5 ^ s ∣ m :=
     (Nat.Coprime.pow r s (by norm_num : Nat.Coprime 2 5)).mul_dvd_of_dvd_of_dvd h2r h5s
   set k := m / (2 ^ r * 5 ^ s) with hk
-  have hmk : m = 2 ^ r * 5 ^ s * k := by
-    rw [hk, Nat.mul_comm (2 ^ r * 5 ^ s) (m / (2 ^ r * 5 ^ s))]
-    exact (Nat.div_mul_cancel h25).symm
+  have hmk : m = 2 ^ r * 5 ^ s * k := (Nat.mul_div_cancel' h25).symm
   have h2k : ¬ 2 ∣ k := by
     rintro ⟨k', hk'⟩
     have h1 : 2 ^ (r + 1) * 5 ^ s ∣ m := ⟨k', by rw [hmk, hk', pow_succ]; ring⟩
@@ -236,13 +232,10 @@ problem usa2013_p5 (m n : ℕ) (hm : 0 < m) (hn : 0 < n) :
   have hA25 : 2 ^ r * 5 ^ s ∣ 10 ^ e * n - m :=
     (Nat.Coprime.pow r s (by norm_num : Nat.Coprime 2 5)).mul_dvd_of_dvd_of_dvd hA2 hA5
   set D := (10 ^ e * n - m) / (2 ^ r * 5 ^ s) with hD
-  have hAD : 10 ^ e * n - m = 2 ^ r * 5 ^ s * D := by
-    rw [hD, Nat.mul_comm (2 ^ r * 5 ^ s) ((10 ^ e * n - m) / (2 ^ r * 5 ^ s))]
-    exact (Nat.div_mul_cancel hA25).symm
+  have hAD : 10 ^ e * n - m = 2 ^ r * 5 ^ s * D := (Nat.mul_div_cancel' hA25).symm
   have hDmax : max m n < D := by
     have h1 : 2 ^ r * 5 ^ s * max m n < 10 ^ e * n - m := by lia
-    rw [hAD] at h1
-    exact lt_of_mul_lt_mul_left h1 (Nat.zero_le _)
+    exact (Nat.lt_div_iff_mul_lt' hA25 _).mpr h1
   have hD2 : ¬ 2 ∣ D := by
     rintro ⟨D', hD'⟩
     have h1 : 2 ^ (r + 1) * 5 ^ s ∣ 10 ^ e * n - m :=
@@ -291,8 +284,7 @@ problem usa2013_p5 (m n : ℕ) (hm : 0 < m) (hn : 0 < n) :
   have hc0 : 0 < c := by
     have h1 : 1 < 10 ^ t := Nat.one_lt_pow (Nat.pos_iff_ne_zero.mp ht0) (by norm_num)
     have hDT : D ≤ 10 ^ t - 1 := Nat.le_of_dvd (Nat.sub_pos_of_lt h1) hDdvd
-    rw [hc]
-    exact (Nat.le_div_iff_mul_le hD0).mpr (by simpa using hDT)
+    exact Nat.div_pos hDT hD0
   refine ⟨c, hc0, fun d hd => ?_⟩
   rw [Finset.mem_Icc] at hd
   have hd0 : d ≠ 0 := by lia
@@ -307,10 +299,7 @@ problem usa2013_p5 (m n : ℕ) (hm : 0 < m) (hn : 0 < n) :
   have hcm10 : c * m < 10 ^ t := lt_of_lt_of_le hcmT (Nat.sub_le _ _)
   have hcn10 : c * n < 10 ^ t := lt_of_lt_of_le hcnT (Nat.sub_le _ _)
   have hcong : 10 ^ e * (c * n) = c * m + (10 ^ t - 1) * (2 ^ r * 5 ^ s) := by
-    have h1 : 10 ^ e * n = m + 2 ^ r * 5 ^ s * D := by
-      have h2 : 10 ^ e * n - m + m = 10 ^ e * n := Nat.sub_add_cancel hmn
-      rw [hAD] at h2
-      rw [← h2]; ring
+    have h1 : 10 ^ e * n = m + 2 ^ r * 5 ^ s * D := (Nat.sub_eq_iff_eq_add' hmn).mp hAD
     calc 10 ^ e * (c * n) = c * (10 ^ e * n) := by ring
       _ = c * (m + 2 ^ r * 5 ^ s * D) := by rw [h1]
       _ = c * m + (2 ^ r * 5 ^ s) * (c * D) := by ring

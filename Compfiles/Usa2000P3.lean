@@ -153,11 +153,7 @@ lemma lowestScore_le_add_blue :
   · have b1 : 3 * A * B ≤ A * C := by rw [← h]; exact lowestScore_le_ac A B C
     by_cases hA : A = 0
     · subst hA
-      have hL0 : lowestScore 0 B C = 0 := by
-        apply le_antisymm
-        · calc lowestScore 0 B C ≤ 3 * 0 * B := lowestScore_le_ab 0 B C
-            _ = 0 := by ring
-        · exact Nat.zero_le _
+      have hL0 : lowestScore 0 B C = 0 := lowestScore_zero_b_c B C
       rw [hL0]
       calc lowestScore (0 + 1) B C ≤ (0 + 1) * C :=
             le_trans (min_le_left _ _) (min_le_left _ _)
@@ -200,11 +196,7 @@ lemma lowestScore_le_add_red (A B C : ℕ) :
         have hB' : 0 < B := Nat.pos_of_ne_zero hB
         nlinarith [b2, hB', h32]
       subst hB
-      have hL0 : lowestScore A 0 C = 0 := by
-        apply le_antisymm
-        · calc lowestScore A 0 C ≤ 3 * A * 0 := lowestScore_le_ab A 0 C
-            _ = 0 := by ring
-        · exact Nat.zero_le _
+      have hL0 : lowestScore A 0 C = 0 := lowestScore_a_zero_c A C
       rw [hL0]
       calc lowestScore A (0 + 1) C ≤ 3 * A * (0 + 1) :=
             le_trans (min_le_left _ _) (min_le_right _ _)
@@ -228,11 +220,7 @@ lemma lowestScore_le_add_white (A B C : ℕ) :
         have hC' : 0 < C := Nat.pos_of_ne_zero hC
         nlinarith [b3, hC', hA2]
       subst hC
-      have hL0 : lowestScore A B 0 = 0 := by
-        apply le_antisymm
-        · calc lowestScore A B 0 ≤ A * 0 := lowestScore_le_ac A B 0
-            _ = 0 := by ring
-        · exact Nat.zero_le _
+      have hL0 : lowestScore A B 0 = 0 := lowestScore_a_b_zero A B
       rw [hL0]
       calc lowestScore A B (0 + 1) ≤ 2 * B * (0 + 1) := min_le_right _ _
         _ = 2 * B := by ring
@@ -252,11 +240,7 @@ lemma tight_blue (A B C : ℕ) :
   · intro he
     by_cases hC : C = 0
     · subst hC
-      have hz : lowestScore (A + 1) B 0 = 0 := by
-        apply le_antisymm
-        · calc lowestScore (A + 1) B 0 ≤ 2 * B * 0 := min_le_right _ _
-            _ = 0 := by ring
-        · exact Nat.zero_le _
+      have hz : lowestScore (A + 1) B 0 = 0 := lowestScore_a_b_zero (A + 1) B
       rw [hz]; ring
     · by_cases hA : A = 0
       · subst hA
@@ -285,7 +269,7 @@ lemma tight_blue (A B C : ℕ) :
         · exact absurd h hne
   · intro hmin
     have le1 : (A + 1) * C ≤ 3 * (A + 1) * B := by
-      rw [← hmin]; exact le_trans (min_le_left _ _) (min_le_right _ _)
+      rw [← hmin]; exact lowestScore_le_ab (A + 1) B C
     have le2 : (A + 1) * C ≤ 2 * B * C := by
       rw [← hmin]; exact min_le_right _ _
     have g1 : A * C ≤ 3 * A * B := by
@@ -309,18 +293,14 @@ lemma tight_red (A B C : ℕ) :
       rw [hz]; ring
     · by_cases hC : C = 0
       · subst hC
-        have hL0 : lowestScore A B 0 = 0 := by
-          apply le_antisymm
-          · calc lowestScore A B 0 ≤ A * 0 := lowestScore_le_ac A B 0
-              _ = 0 := by ring
-          · exact Nat.zero_le _
+        have hL0 : lowestScore A B 0 = 0 := lowestScore_a_b_zero A B
         have hL0' : lowestScore A (B + 1) 0 = 0 := lowestScore_a_b_zero A (B + 1)
         rw [hL0, hL0'] at he
         have hAz : A = 0 := by lia
         exact absurd hAz hA
       · have hA' : 0 < A := Nat.pos_of_ne_zero hA
         have b1 : 3 * A + lowestScore A B C ≤ A * C := by
-          rw [he]; exact le_trans (min_le_left _ _) (min_le_left _ _)
+          rw [he]; exact lowestScore_le_ac A (B + 1) C
         have hne : lowestScore A B C ≠ A * C := by
           intro hh
           rw [hh] at b1
@@ -346,7 +326,7 @@ lemma tight_red (A B C : ℕ) :
               lia
   · intro hmin
     have le1 : 3 * A * (B + 1) ≤ A * C := by
-      rw [← hmin]; exact le_trans (min_le_left _ _) (min_le_left _ _)
+      rw [← hmin]; exact lowestScore_le_ac A (B + 1) C
     have le2 : 3 * A * (B + 1) ≤ 2 * (B + 1) * C := by
       rw [← hmin]; exact min_le_right _ _
     have g1 : 3 * A * B ≤ A * C := by nlinarith [le1]
@@ -378,7 +358,7 @@ lemma tight_white (A B C : ℕ) :
       · have hA' : 0 < A := Nat.pos_of_ne_zero hA
         have hB' : 0 < B := Nat.pos_of_ne_zero hB
         have b2 : 2 * B + lowestScore A B C ≤ 3 * A * B := by
-          rw [he]; exact le_trans (min_le_left _ _) (min_le_right _ _)
+          rw [he]; exact lowestScore_le_ab A B (C + 1)
         have hne : lowestScore A B C ≠ 3 * A * B := by
           intro hh
           rw [hh] at b2
@@ -405,9 +385,9 @@ lemma tight_white (A B C : ℕ) :
         · rw [← he, h]; ring
   · intro hmin
     have le1 : 2 * B * (C + 1) ≤ A * (C + 1) := by
-      rw [← hmin]; exact le_trans (min_le_left _ _) (min_le_left _ _)
+      rw [← hmin]; exact lowestScore_le_ac A B (C + 1)
     have le2 : 2 * B * (C + 1) ≤ 3 * A * B := by
-      rw [← hmin]; exact le_trans (min_le_left _ _) (min_le_right _ _)
+      rw [← hmin]; exact lowestScore_le_ab A B (C + 1)
     have g1 : 2 * B * C ≤ A * C := by
       have h2A : 2 * B ≤ A := by nlinarith [le1, Nat.succ_pos C]
       nlinarith [h2A, Nat.zero_le C]
@@ -637,9 +617,7 @@ lemma fewestWays_rec (A B C : ℕ) (h : 0 < A + B + C) :
                 intro hh
                 have e : 2 * B * C = A * C := by rw [← hL]; exact hh.2
                 have hA' : 0 < A := hh.1
-                have hA2 : A = 2 * B := by
-                  apply_fun (· * C) using mul_left_injective₀ (by lia)
-                  exact e.symm
+                have hA2 : A = 2 * B := Nat.eq_of_mul_eq_mul_right hC' e.symm
                 have hCnl : ¬ C < 3 * B := fun hh' => h5 ⟨hA2, hh'⟩
                 have hB' : 0 < B := by lia
                 have h1' : C ≤ 3 * B := by nlinarith [f2, hA2, hB']
@@ -773,14 +751,6 @@ lemma score_wbr (A B C : ℕ) :
 def optPlays (A B C : ℕ) : Finset (List Card) :=
   (plays A B C).filter (fun l ↦ score l = lowestScore A B C)
 
-lemma eq_cons_of_head?_eq_some {l : List Card} {c : Card} (h : l.head? = some c) :
-    ∃ t, l = c :: t := by
-  cases l with
-  | nil => simp at h
-  | cons a t =>
-    rw [List.head?_cons] at h
-    exact ⟨t, by rw [Option.some.inj h]⟩
-
 lemma card_optPlays_head_blue (A B C : ℕ) :
     ((optPlays A B C).filter (fun l ↦ l.head? = some .blue)).card =
       if 0 < A ∧ lowestScore A B C = A * C then (optPlays (A - 1) B C).card else 0 := by
@@ -790,7 +760,7 @@ lemma card_optPlays_head_blue (A B C : ℕ) :
       rw [Finset.eq_empty_iff_forall_notMem]
       intro l hl
       rw [Finset.mem_filter, optPlays, Finset.mem_filter] at hl
-      obtain ⟨t, rfl⟩ := eq_cons_of_head?_eq_some hl.2
+      obtain ⟨t, rfl⟩ := List.head?_eq_some_iff.mp hl.2
       have hc := (mem_plays.mp hl.1.1).1
       simp at hc
     rw [hempty, Finset.card_empty, ite_eq_right]
@@ -804,7 +774,7 @@ lemma card_optPlays_head_blue (A B C : ℕ) :
         constructor
         · intro hl
           rw [Finset.mem_filter, optPlays, Finset.mem_filter] at hl
-          obtain ⟨t, rfl⟩ := eq_cons_of_head?_eq_some hl.2
+          obtain ⟨t, rfl⟩ := List.head?_eq_some_iff.mp hl.2
           obtain ⟨hb, hr, hw⟩ := mem_plays.mp hl.1.1
           rw [List.count_cons_self] at hb
           rw [List.count_cons_of_ne (by decide : Card.blue ≠ Card.red)] at hr
@@ -833,7 +803,7 @@ lemma card_optPlays_head_blue (A B C : ℕ) :
         rw [Finset.eq_empty_iff_forall_notMem]
         intro l hl
         rw [Finset.mem_filter, optPlays, Finset.mem_filter] at hl
-        obtain ⟨t, rfl⟩ := eq_cons_of_head?_eq_some hl.2
+        obtain ⟨t, rfl⟩ := List.head?_eq_some_iff.mp hl.2
         obtain ⟨hb, hr, hw⟩ := mem_plays.mp hl.1.1
         rw [List.count_cons_self] at hb
         rw [List.count_cons_of_ne (by decide : Card.blue ≠ Card.red)] at hr
@@ -859,7 +829,7 @@ lemma card_optPlays_head_red (A B C : ℕ) :
       rw [Finset.eq_empty_iff_forall_notMem]
       intro l hl
       rw [Finset.mem_filter, optPlays, Finset.mem_filter] at hl
-      obtain ⟨t, rfl⟩ := eq_cons_of_head?_eq_some hl.2
+      obtain ⟨t, rfl⟩ := List.head?_eq_some_iff.mp hl.2
       have hc := (mem_plays.mp hl.1.1).2.1
       simp at hc
     rw [hempty, Finset.card_empty, ite_eq_right]
@@ -873,7 +843,7 @@ lemma card_optPlays_head_red (A B C : ℕ) :
         constructor
         · intro hl
           rw [Finset.mem_filter, optPlays, Finset.mem_filter] at hl
-          obtain ⟨t, rfl⟩ := eq_cons_of_head?_eq_some hl.2
+          obtain ⟨t, rfl⟩ := List.head?_eq_some_iff.mp hl.2
           obtain ⟨hb, hr, hw⟩ := mem_plays.mp hl.1.1
           rw [List.count_cons_of_ne (by decide : Card.red ≠ Card.blue)] at hb
           rw [List.count_cons_self] at hr
@@ -902,7 +872,7 @@ lemma card_optPlays_head_red (A B C : ℕ) :
         rw [Finset.eq_empty_iff_forall_notMem]
         intro l hl
         rw [Finset.mem_filter, optPlays, Finset.mem_filter] at hl
-        obtain ⟨t, rfl⟩ := eq_cons_of_head?_eq_some hl.2
+        obtain ⟨t, rfl⟩ := List.head?_eq_some_iff.mp hl.2
         obtain ⟨hb, hr, hw⟩ := mem_plays.mp hl.1.1
         rw [List.count_cons_of_ne (by decide : Card.red ≠ Card.blue)] at hb
         rw [List.count_cons_self] at hr
@@ -928,7 +898,7 @@ lemma card_optPlays_head_white (A B C : ℕ) :
       rw [Finset.eq_empty_iff_forall_notMem]
       intro l hl
       rw [Finset.mem_filter, optPlays, Finset.mem_filter] at hl
-      obtain ⟨t, rfl⟩ := eq_cons_of_head?_eq_some hl.2
+      obtain ⟨t, rfl⟩ := List.head?_eq_some_iff.mp hl.2
       have hc := (mem_plays.mp hl.1.1).2.2
       simp at hc
     rw [hempty, Finset.card_empty, ite_eq_right]
@@ -942,7 +912,7 @@ lemma card_optPlays_head_white (A B C : ℕ) :
         constructor
         · intro hl
           rw [Finset.mem_filter, optPlays, Finset.mem_filter] at hl
-          obtain ⟨t, rfl⟩ := eq_cons_of_head?_eq_some hl.2
+          obtain ⟨t, rfl⟩ := List.head?_eq_some_iff.mp hl.2
           obtain ⟨hb, hr, hw⟩ := mem_plays.mp hl.1.1
           rw [List.count_cons_of_ne (by decide : Card.white ≠ Card.blue)] at hb
           rw [List.count_cons_of_ne (by decide : Card.white ≠ Card.red)] at hr
@@ -971,7 +941,7 @@ lemma card_optPlays_head_white (A B C : ℕ) :
         rw [Finset.eq_empty_iff_forall_notMem]
         intro l hl
         rw [Finset.mem_filter, optPlays, Finset.mem_filter] at hl
-        obtain ⟨t, rfl⟩ := eq_cons_of_head?_eq_some hl.2
+        obtain ⟨t, rfl⟩ := List.head?_eq_some_iff.mp hl.2
         obtain ⟨hb, hr, hw⟩ := mem_plays.mp hl.1.1
         rw [List.count_cons_of_ne (by decide : Card.white ≠ Card.blue)] at hb
         rw [List.count_cons_of_ne (by decide : Card.white ≠ Card.red)] at hr

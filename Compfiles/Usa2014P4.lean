@@ -294,17 +294,17 @@ lemma winning_rot {k : ℕ} {s : Finset Cell} (h : Winning k s) : Winning k (s.i
   · refine ⟨(0, 1), by simp [Dirs], rot p, fun i hi => ?_⟩
     have h1 : (0, 1) = rot (1, 0) := by decide
     rw [h1, step_rot]
-    exact Finset.mem_image.mpr ⟨_, hline i hi, rfl⟩
+    exact Finset.mem_image_of_mem rot (hline i hi)
   · apply winning_of_neg (d := (1, -1)) (by simp [Dirs]) (p := rot p)
     intro i hi
     have h1 : (-(1, -1) : Cell) = rot (0, 1) := by decide
     have h2 : step (rot p) (-(1, -1)) i = rot (step p (0, 1) i) := by rw [h1, step_rot]
     rw [h2]
-    exact Finset.mem_image.mpr ⟨_, hline i hi, rfl⟩
+    exact Finset.mem_image_of_mem rot (hline i hi)
   · refine ⟨(1, 0), by simp [Dirs], rot p, fun i hi => ?_⟩
     have h1 : (1, 0) = rot (1, -1) := by decide
     rw [h1, step_rot]
-    exact Finset.mem_image.mpr ⟨_, hline i hi, rfl⟩
+    exact Finset.mem_image_of_mem rot (hline i hi)
 
 lemma AForce_image_rot {k : ℕ} {s : Finset Cell} (h : AForce k s) :
     AForce k (s.image rot) :=
@@ -342,7 +342,7 @@ lemma winning_transl {k : ℕ} (t : Cell) {s : Finset Cell} (h : Winning k s) :
     Winning k (s.image (transl t)) := by
   obtain ⟨d, hd, p, hline⟩ := h
   exact ⟨d, hd, transl t p, fun i hi => by
-    rw [step_transl]; exact Finset.mem_image.mpr ⟨_, hline i hi, rfl⟩⟩
+    rw [step_transl]; exact Finset.mem_image_of_mem (transl t) (hline i hi)⟩
 
 lemma AForce_image_transl {k : ℕ} (t : Cell) {s : Finset Cell} (h : AForce k s) :
     AForce k (s.image (transl t)) :=
@@ -389,7 +389,7 @@ lemma winning_mirror {k : ℕ} {s : Finset Cell} (h : Winning k s) :
     unfold step mirror
     exact ⟨by ring, by ring⟩
   rw [e]
-  exact Finset.mem_image.mpr ⟨_, hline i hi, rfl⟩
+  exact Finset.mem_image_of_mem mirror (hline i hi)
 
 lemma AForce_image_mirror {k : ℕ} {s : Finset Cell} (h : AForce k s) :
     AForce k (s.image mirror) :=
@@ -929,7 +929,7 @@ lemma midphase : ∀ n : ℕ, ∀ Nx Ny P : Finset Cell,
         · -- `B` removes the fresh slot `sy`: `A` completes row 0 and wins.
           apply win_now0 (fun h => h2B (Finset.mem_of_mem_erase h))
             (fun h => h3B (Finset.mem_of_mem_erase h))
-          · exact Finset.mem_erase.mpr ⟨fun h => hsynbase0 h.symm, inB00⟩
+          · exact Finset.mem_erase_of_ne_of_mem hsynbase0.symm inB00
           · exact Finset.mem_erase.mpr ⟨hsynx₀.symm, inBx₀⟩
           · exact Finset.mem_erase.mpr ⟨hsyne.symm, inBy₀⟩
         · -- `B` removes something else.
@@ -1106,7 +1106,7 @@ lemma midphase : ∀ n : ℕ, ∀ Nx Ny P : Finset Cell,
         · -- `B` removes the fresh slot `sx`: `A` completes row 0 and wins.
           apply win_now0 (fun h => h2B (Finset.mem_of_mem_erase h))
             (fun h => h3B (Finset.mem_of_mem_erase h))
-          · exact Finset.mem_erase.mpr ⟨fun h => hsxnbase0 h.symm, inB00⟩
+          · exact Finset.mem_erase_of_ne_of_mem hsxnbase0.symm inB00
           · exact Finset.mem_erase.mpr ⟨hsxne.symm, inBx₀⟩
           · exact Finset.mem_erase.mpr ⟨hsxny₀.symm, inBy₀⟩
         · -- `B` removes something else.
@@ -1276,7 +1276,7 @@ theorem ACanWin_five : ACanWin 5 := by
         · have e : ({(0, 0), (1, 0), (0, 1)} : Finset Cell).erase (0, 1)
               = {(0, 0), (1, 0)} := by decide
           rw [e]
-          exact adjacent_pair (by decide) (by decide)
+          exact canonical_pair
 
 /-- If `A` can force a win with target `l`, `A` can also force a win with any
 smaller target `k ≤ l` (a line of `l` consecutive cells contains a line of `k`). -/

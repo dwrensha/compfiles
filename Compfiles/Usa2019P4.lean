@@ -229,10 +229,8 @@ lemma ncard_fillings_insert {n : ℕ} {D : Set (Cell n)} {s : Cell n} (hs : s �
   have hcard : Nat.card ↥(Fillings n (insert s D)) =
       Nat.card (Σ f : ↥(Fillings n D), Fiber A C s f) := by
     apply le_antisymm
-    · rw [Nat.card_eq_fintype_card, Nat.card_eq_fintype_card]
-      exact Fintype.card_le_of_injective toSigma inj
-    · rw [Nat.card_eq_fintype_card, Nat.card_eq_fintype_card]
-      exact Fintype.card_le_of_injective fromSigma inj2
+    · exact Nat.card_le_card_of_injective toSigma inj
+    · exact Nat.card_le_card_of_injective fromSigma inj2
   rw [← Nat.card_coe_set_eq, ← Nat.card_coe_set_eq]
   calc Nat.card ↥(Fillings n (insert s D))
       = Nat.card (Σ f : ↥(Fillings n D), Fiber A C s f) := hcard
@@ -314,10 +312,7 @@ lemma stageA (n : ℕ) : ∀ j, j ≤ n →
         lia)
       (by
         intro g hg
-        rw [Function.update_of_ne (by
-          intro hcon
-          simp only [cell_ext] at hcon
-          lia)]
+        rw [Function.update_of_ne (ne_of_mem_of_not_mem ha₀ hs)]
         exact hg.2.1 _ (Set.mem_insert_of_mem _ ha₀) _ (Set.mem_insert _ _)
           (by simp only [Prod.le_def, Fin.le_def]; lia))
       (by intro g hg; exact Finset.subset_univ _)
@@ -389,10 +384,7 @@ lemma stageB (n : ℕ) : ∀ i, i ≤ n →
         lia)
       (by
         intro g hg
-        rw [Function.update_of_ne (by
-          intro hcon
-          simp only [cell_ext] at hcon
-          lia)]
+        rw [Function.update_of_ne (ne_of_mem_of_not_mem ha₀ hs)]
         exact hg.2.1 _ (Set.mem_insert_of_mem _ ha₀) _ (Set.mem_insert _ _)
           (by simp only [Prod.le_def, Fin.le_def]; lia))
       (by intro g hg; exact Finset.subset_univ _)
@@ -483,18 +475,12 @@ lemma stageC_inner (n : ℕ) : ∀ r, r ≤ n → ∀ k, k < n →
         lia)
       (by
         intro g hg
-        rw [Function.update_of_ne (by
-          intro hcon
-          simp only [cell_ext] at hcon
-          lia)]
+        rw [Function.update_of_ne (ne_of_mem_of_not_mem ha₀ hs)]
         exact hg.2.1 _ (Set.mem_insert_of_mem _ ha₀) _ (Set.mem_insert _ _)
           (by simp only [Prod.le_def, Fin.le_def]; lia))
       (by
         intro g hg
-        rw [Function.update_of_ne (by
-          intro hcon
-          simp only [cell_ext] at hcon
-          lia)]
+        rw [Function.update_of_ne (ne_of_mem_of_not_mem hc₀ hs)]
         exact hg.2.1 _ (Set.mem_insert _ _) _ (Set.mem_insert_of_mem _ hc₀)
           (by simp only [Prod.le_def, Fin.le_def]; lia))
       (by
@@ -602,8 +588,7 @@ problem usa2019_p4 (n : ℕ) :
           exact S.2.2.1 (i, j) (Set.mem_univ _) (k, l) (Set.mem_univ _)
             (Prod.le_def.mpr ⟨hik, hjl⟩)⟩
     · intro S
-      apply Subtype.ext
-      rfl
+      exact Subtype.ext rfl
     · intro S
       apply Subtype.ext
       funext c

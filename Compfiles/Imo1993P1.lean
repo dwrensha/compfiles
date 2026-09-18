@@ -198,9 +198,7 @@ problem imo1993_p1 : ∀ n > 1, ¬∃ p q : ℤ[X], f n = p*q ∧ ¬ isConstant 
         rw [← C_ofNat, degree_C (by simp)]
         simp [Nat.zero_lt_of_lt n_gt_1]
 
-  have degbc : (b*c).natDegree = n := by
-    rw [natDegree, WithBot.unbotD_eq_iff]
-    simp [degbc, Nat.cast_withBot]
+  have degbc : (b*c).natDegree = n := natDegree_eq_of_degree_eq_some degbc
 
   have degc : c.degree = 1 := by
     suffices c.natDegree = 1 by

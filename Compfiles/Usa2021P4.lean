@@ -104,14 +104,13 @@ theorem card_divisors_filter_dvd {s p : ℕ} (hp : p.Prime) (hs0 : s ≠ 0) (hps
   · intro d₁ hd₁ d₂ hd₂ hdiv
     obtain ⟨hd₁S, hpd₁⟩ := Finset.mem_filter.mp hd₁
     obtain ⟨hd₂S, hpd₂⟩ := Finset.mem_filter.mp hd₂
-    rw [← Nat.mul_div_cancel' hpd₁, ← Nat.mul_div_cancel' hpd₂, hdiv]
+    exact (Nat.div_left_inj hpd₁ hpd₂).mp hdiv
   · intro e he
     obtain ⟨hedvd, -⟩ := Nat.mem_divisors.mp he
     refine ⟨p * e, Finset.mem_filter.mpr ⟨?_, Nat.dvd_mul_right p e⟩,
       Nat.mul_div_cancel_left e hp.pos⟩
     refine Nat.mem_divisors.mpr ⟨?_, hs0⟩
-    rw [← Nat.mul_div_cancel' hps]
-    exact Nat.mul_dvd_mul_left p hedvd
+    exact Nat.mul_dvd_of_dvd_div hps hedvd
 
 /-- The ratio identity for the divisor counting function: if `p ∣ s` is prime and
 `e = νₚ(s)`, then `(e + 1) * τ(s / p) = e * τ(s)`. -/
@@ -426,8 +425,7 @@ problem usa2021_p4 (n : ℕ) :
   show (∃ k : ℕ, n = 2 ^ k) ↔ ∃ S : Finset ℕ, IsValid S ∧ S.Nonempty ∧ S.card = n
   constructor
   · rintro ⟨k, rfl⟩
-    obtain ⟨S, hS, hne, hcard⟩ := exists_isValid k
-    exact ⟨S, hS, hne, hcard⟩
+    exact exists_isValid k
   · rintro ⟨S, hS, hne, hcard⟩
     obtain ⟨k, hk⟩ := card_eq_two_pow hS hne
     exact ⟨k, hcard ▸ hk⟩

@@ -392,9 +392,7 @@ theorem g_linear {k l : ℝ} (hsum : k + 3 * l = 1)
     (hmid : ∀ x : ℝ, 1 / 8 ≤ x → x ≤ 3 / 8 → g f x = k * x + l)
     {x : ℝ} (hx0 : 0 < x) (hx1 : x < 1) : g f x = k * x + l := by
   rcases le_or_gt x (3 / 8 : ℝ) with h | h
-  · rcases le_or_gt (1 / 8 : ℝ) x with h2 | h2
-    · exact hmid x h2 h
-    · exact g_linear_ext_low fe hmid hx0 h2
+  · exact g_linear_low fe hmid hx0 h
   · exact g_linear_ext_high fe hsum hmid (le_of_lt h) hx1
 
 include fpos in

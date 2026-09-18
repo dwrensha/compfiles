@@ -146,8 +146,7 @@ lemma aux_1
         rw [h₁₄]
         have hc₆: 0 ≤ d ^ 2 := sq_nonneg d
         linarith
-      exfalso
-      exact hc₅ ((2 : ℝ) * (1 : ℝ) * y + -(a ^ (2 : ℕ) + b ^ (2 : ℕ)) / ((2 : ℝ) * a)) h₁₁
+      exact absurd h₁₁ (hc₅ _)
     · have hc₅: s = 0 := by linarith
       grind
 

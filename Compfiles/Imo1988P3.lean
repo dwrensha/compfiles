@@ -72,8 +72,7 @@ lemma binaryReverse_fixed_iff_binaryPalindrome (n : ℕ) :
     apply List.Palindrome.of_reverse_eq
     apply Nat.ofDigits_inj_of_len_eq (b := 2) (by decide : 1 < 2)
     · simp
-    · intro l hl
-      exact Nat.digits_lt_base (by decide : 1 < 2) (by simpa using hl)
+    · exact fun l hl => Nat.digits_lt_base' (List.mem_reverse.mp hl)
     · intro l hl
       exact Nat.digits_lt_base (by decide : 1 < 2) hl
     · unfold binaryReverse at h

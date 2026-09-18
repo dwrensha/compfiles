@@ -67,8 +67,7 @@ lemma aux₃ {a b : Real.Angle} (h : a + b = Real.pi) (h' : a.sign ≠ 0)
     rw [h]
     exact Real.Angle.two_nsmul_coe_pi
   have h₂ := aux₂ h
-  exact Real.Angle.abs_toReal_add_abs_toReal_eq_pi_of_two_zsmul_add_eq_zero_of_sign_eq
-    h₁ h₂ h'
+  exact Real.Angle.abs_toReal_add_abs_toReal_eq_pi_of_two_nsmul_add_eq_zero_of_sign_eq h₁ h₂ h'
 
 lemma aux₄ {a b c : Real.Angle}
   (ha : a.sign ≠ 0)
@@ -433,8 +432,7 @@ lemma Sphere.IsTangentAt_of_two_zsmul_oangle_eq {s : Sphere Pt} {P P₁ P₂ Q :
   rw [← h, ← smul_add, add_comm, oangle_add hPQ.symm hPP₁.symm h_OP] at h'
   rw [EuclideanGeometry.angle_eq_abs_oangle_toReal hPQ.symm h_OP]
   rw [Real.Angle.abs_toReal_eq_pi_div_two_iff]
-  rw [← Real.Angle.two_nsmul_eq_pi_iff]
-  exact h'
+  exact Real.Angle.two_zsmul_eq_pi_iff.mp h'
 
 -- reverse of EuclideanGeometry.sbtw_of_collinear_of_dist_center_lt_radius
 omit hd2 [Oriented ℝ V (Fin 2)] in
@@ -559,8 +557,7 @@ lemma diag_inter_set_rotate (P₁ P₂ P₃ P₄ : Pt)
   · exact mem_diag_inter_set_rotate V Pt h
   · apply mem_diag_inter_set_rotate
     apply mem_diag_inter_set_rotate
-    apply mem_diag_inter_set_rotate
-    exact h
+    exact mem_diag_inter_set_rotate V Pt h
 
 namespace SphereOrder
 
@@ -760,8 +757,7 @@ lemma trans' {P₅ : Pt} (h : SphereOrder V Pt P₁ P₂ P₃ P₄)
 lemma trans'' {P₅ : Pt} (h : SphereOrder V Pt P₁ P₂ P₃ P₄)
   (h' : SphereOrder V Pt P₃ P₄ P₅ P₁) : SphereOrder V Pt P₄ P₅ P₁ P₂ := by
   have h'' := h.trans V Pt h'
-  have h''' := h.trans' V Pt h'
-  exact h''.trans V Pt h'''
+  exact h'.trans' V Pt h''
 
 lemma exists_diag_inter (h : SphereOrder V Pt P₁ P₂ P₃ P₄)
   : ∃ X : Pt, X ∈ diag_inter_set V Pt P₁ P₂ P₃ P₄ := by
@@ -776,7 +772,7 @@ lemma exists_diag_inter (h : SphereOrder V Pt P₁ P₂ P₃ P₄)
   have h_312_124' : (∡ P₃ P₁ P₂).sign = (∡ P₁ P₂ P₄).sign := by
     rw [← EuclideanGeometry.oangle_rotate_sign]
     rw [← h.rotate'.sign_oangle₁₂₃_eq_sign_oangle₂₃₄]
-    rw [← EuclideanGeometry.oangle_rotate_sign]
+    exact (oangle_rotate_sign P₄ P₁ P₂).symm
   have h_312 : (∡ P₃ P₁ P₂).sign ≠ 0 := by
     rw [← EuclideanGeometry.oangle_rotate_sign]
     exact h.sign_oangle₁₂₃_ne_zero
@@ -947,8 +943,7 @@ lemma Sphere.antipode_isDiameter {s : Sphere Pt} {p : Pt} (h : p ∈ s)
   rw [Sphere.antipode, EuclideanGeometry.Sphere.isDiameter_iff_mem_and_mem_and_wbtw]
   constructorm* _ ∧ _
   · exact h
-  · rw [EuclideanGeometry.Sphere.secondInter_mem]
-    exact h
+  · exact (EuclideanGeometry.Sphere.secondInter_mem _).mpr h
   · apply EuclideanGeometry.Sphere.wbtw_secondInter h
     rw [dist_self]
     apply Sphere.radius_nonneg_of_mem h
@@ -1146,7 +1141,7 @@ lemma sphereOrder_BASC : SphereOrder V Pt cfg.B cfg.A cfg.S cfg.C := by
     · exact cfg.S_ne_B
   · rw [EuclideanGeometry.oangle_rotate_sign]
     rw [cfg.sign_oangle_SBA_eq_sign_oangle_CBS]
-    rw [EuclideanGeometry.oangle_rotate_sign]
+    exact oangle_rotate_sign cfg.S cfg.C cfg.B
 
 noncomputable def M := Sphere.antipode V Pt cfg.Ω cfg.S
 
@@ -1235,8 +1230,7 @@ lemma oangle_CMS_eq_oangle_SMB :
   have h'' := cfg.angle_SMB_lt
   rw [EuclideanGeometry.angle_eq_abs_oangle_toReal cfg.M_ne_C.symm cfg.S_ne_M] at h'
   rw [EuclideanGeometry.angle_eq_abs_oangle_toReal cfg.S_ne_M cfg.M_ne_B.symm] at h''
-  rw [Real.Angle.two_zsmul_eq_iff_eq_of_abs_toReal_lt_pi_div_two h' h''] at h
-  exact h
+  exact (Real.Angle.two_zsmul_eq_iff_eq_of_abs_toReal_lt_pi_div_two h' h'').mp h
 
 lemma sphereOrder_BSCM : SphereOrder V Pt cfg.B cfg.S cfg.C cfg.M := by
   apply SphereOrder.rotate'
@@ -1309,8 +1303,7 @@ lemma X_ne_O
   rw [← oangle_rotate_sign] at h
   rw [← (cfg.sbtw_AXM V Pt hX).symm.oangle_eq_right] at h
   rw [← cfg.sbtw_SOM.symm.oangle_eq_left] at h
-  contrapose! h
-  rw [h, oangle_self_left_right, Real.Angle.sign_zero]
+  exact (left_ne_right_of_oangle_sign_ne_zero h).symm
 
 lemma oangle_BAM_eq_oangle_MAC :
     ∡ cfg.B cfg.A cfg.M = ∡ cfg.M cfg.A cfg.C := by
@@ -1431,8 +1424,7 @@ lemma perp_A_BC_eq_AE : cfg.perp_A_BC = line[ℝ, cfg.A, cfg.E] := by
     rw [Set.pair_subset_iff]
     constructor
     · exact cfg.h_perp_A_BC.right
-    · rw [Set.mem_inter_iff] at h_E
-      exact h_E.left
+    · exact Set.mem_of_mem_inter_left h_E
   apply AffineSubspace.eq_of_direction_eq_of_nonempty_of_le
   · apply Submodule.eq_of_le_of_finrank_eq (AffineSubspace.direction_le h)
     apply eq_of_le_of_ge (Submodule.finrank_mono (AffineSubspace.direction_le h))
@@ -1602,7 +1594,7 @@ lemma sign_oangle_BAE_eq_sign_oangle_BAM
   rw [EuclideanGeometry.oangle_rotate_sign]
   rw [cfg.sphereOrder_BACE.rotate'.sign_oangle₁₂₃_eq_sign_oangle₂₃₄]
   rw [← cfg.sphereOrder_BACM.rotate'.sign_oangle₁₂₃_eq_sign_oangle₂₃₄]
-  rw [← EuclideanGeometry.oangle_rotate_sign]
+  exact (oangle_rotate_sign cfg.M cfg.B cfg.A).symm
 
 lemma angle_BAE_eq_BAH :
   ∠ cfg.B cfg.A cfg.E = ∠ cfg.B cfg.A cfg.H := by
@@ -1658,7 +1650,7 @@ lemma sphereOrder_BAME : SphereOrder V Pt cfg.B cfg.A cfg.M cfg.E := by
   · exact cfg.sphereOrder_BACE.rotate'.sign_oangle₁₂₃_ne_zero
   · rw [← EuclideanGeometry.oangle_rotate_sign]
     rw [← sign_oangle_EAM_eq_sign_oangle_BAE]
-    rw [← EuclideanGeometry.oangle_rotate_sign]
+    exact (oangle_rotate_sign cfg.E cfg.A cfg.M).symm
 
 lemma sphereOrder_BASE : SphereOrder V Pt cfg.B cfg.A cfg.S cfg.E := by
   exact (cfg.sphereOrder_BACE.symm.trans' V Pt cfg.sphereOrder_BASC).rotate
@@ -1749,8 +1741,7 @@ lemma prll_D_BC_eq_LD : cfg.prll_D_BC = line[ℝ, cfg.L, cfg.D] := by
     apply affineSpan_le_of_subset_coe
     rw [Set.pair_subset_iff]
     constructor
-    · rw [Set.mem_inter_iff] at h_L
-      exact h_L.left
+    · exact Set.mem_of_mem_inter_left h_L
     · exact cfg.h_prll_D_BC.left
   apply AffineSubspace.eq_of_direction_eq_of_nonempty_of_le
   · apply Submodule.eq_of_le_of_finrank_eq (AffineSubspace.direction_le h)
@@ -2515,7 +2506,7 @@ lemma oangle_MAE_eq_oangle_AMS
   apply aux₆
   · rw [← oangle_rotate_sign, ← oangle_swap₁₃_sign]
     rw [← cfg.sphereOrder_ASME.sign_oangle₁₂₃_eq_sign_oangle₃₄₁]
-    rw [← oangle_rotate_sign, oangle_swap₁₃_sign]
+    exact oangle_swap₂₃_sign cfg.A cfg.S cfg.M
   · rw [← oangle_rotate_sign, ← oangle_swap₁₃_sign]
     rw [SignType.neg_eq_zero_iff.ne]
     exact cfg.sphereOrder_ASME.sign_oangle₃₄₁_ne_zero
@@ -2939,10 +2930,7 @@ lemma XP_eq_XA  {X : Pt} (hX : X ∈ cfg.X_set)
   have h := cfg.angle_APY_eq V Pt hY
   rw [EuclideanGeometry.Sphere.angle_eq_pi_div_two_iff_mem_sphere_ofDiameter] at h
   rw [EuclideanGeometry.mem_sphere'] at h
-  have h' : X = (Sphere.ofDiameter cfg.A Y).center := by
-    rw [Sphere.ofDiameter]
-    dsimp
-    exact cfg.X_eq_midpoint_AY V Pt hX hY
+  have h' : X = (Sphere.ofDiameter cfg.A Y).center := cfg.X_eq_midpoint_AY V Pt hX hY
   rw [h', h]
   symm
   rw [← EuclideanGeometry.mem_sphere']

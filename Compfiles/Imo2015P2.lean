@@ -271,8 +271,7 @@ problem imo2015_p2 (a b c : ℤ) :
           contrapose! ha'
           rw [← ha']
           rw [← even_iff_two_dvd] at hb' ⊢
-          rw [Int.not_even_iff_odd] at hb'
-          exact Odd.add_one hb'
+          exact Int.even_add_one.mpr hb'
         rw [← hcab] at h₂
         have hc_three : c = 3 := by
           contrapose! h₂ with h'

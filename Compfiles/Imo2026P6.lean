@@ -145,10 +145,7 @@ problem imo2026_p6 (a : ℕ → ℕ) (ha : IsValidSeq a) :
       have hqp : q ∣ p * m := dvd_trans hqdiv (Nat.gcd_dvd_left _ _)
       have hqai : q ∣ a i := dvd_trans hqdiv (Nat.gcd_dvd_right _ _)
       rcases (hq.dvd_mul).mp hqp with h3 | h3
-      · have hqeq : q = p := by
-          rcases (Nat.dvd_prime hp).mp h3 with h4 | h4
-          · exact absurd h4 hq.ne_one
-          · exact h4
+      · have hqeq : q = p := (Nat.prime_dvd_prime_iff_eq hq hp).mp h3
         rw [hqeq] at hqai
         exact absurd hqai (hnew i hi)
       · have h4 : q ∣ Nat.gcd m (a i) := Nat.dvd_gcd h3 hqai

@@ -618,10 +618,7 @@ lemma not_pq_of_three_le_card {m : ℕ} (h3 : 3 ≤ m.primeFactors.card) :
     rw [hrm, Nat.primeFactors_mul hr.ne_zero hs.ne_zero, hr.primeFactors,
       hs.primeFactors, Finset.union_singleton]
   rw [h1] at h3
-  have hle : ({s, r} : Finset ℕ).card ≤ 2 := by
-    by_cases h2 : s = r
-    · subst h2; simp
-    · simp [Finset.card_pair h2]
+  have hle : ({s, r} : Finset ℕ).card ≤ 2 := Finset.card_le_two
   lia
 
 /-- For `a` non-zero and `b ≥ 2`, neither `a * b` nor `b * a` equals `a`. -/
@@ -758,9 +755,7 @@ lemma goodCircle_three_primes {p q r : ℕ} (hp : p.Prime) (hq : q.Prime) (hr : 
       exact hp.ne_one h3.symm
     have e16 : r ≠ r * p := (mul_ne_self hr.pos hp.two_le).1.symm
     have e17 : r ≠ p := hpr.symm
-    have e18 : r ≠ p * q * r := by
-      rw [show p * q * r = q * p * r by ring]
-      exact ne_of_prime_mul_mul hr hq hqr.symm p r
+    have e18 : r ≠ p * q * r := ne_of_prime_mul_mul hr hp e17 q r
     have e19 : r * p ≠ p := (mul_ne_self hp.pos hr.two_le).2
     have e20 : r * p ≠ p * q * r := by
       rw [show p * q * r = r * p * q by ring]
@@ -840,10 +835,8 @@ lemma goodCircle_of_not_pq : ∀ (k : ℕ) (n : ℕ), n.primeFactors.card = k �
   | succ k ih =>
     intro n hk hn hnp h
     have hn0 : n ≠ 0 := by lia
-    have key : ∏ p ∈ n.primeFactors, p ^ n.factorization p = n := by
-      have h1 := Nat.prod_factorization_pow_eq_self hn0
-      show ∏ p ∈ n.factorization.support, p ^ n.factorization p = n
-      exact h1
+    have key : ∏ p ∈ n.primeFactors, p ^ n.factorization p = n :=
+      (Nat.prod_primeFactors_pow_factorization hn0).symm
     rcases k with - | - | k
     · -- exactly one prime factor: `n` is a prime power `p ^ a` with `a ≥ 2`
       obtain ⟨p, hp⟩ := Finset.card_eq_one.mp hk

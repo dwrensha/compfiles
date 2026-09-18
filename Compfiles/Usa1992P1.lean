@@ -399,9 +399,7 @@ problem usa1992_p1 (n : ℕ) :
     rw [Finset.prod_range_succ]
 
   -- But b n < 10^N,
-  have h5 : b n < 10 ^ 2 ^ (n + 1) := by
-    calc _ < 10 ^ ∑ i ∈ Finset.range (n + 1), 2 ^ i := h2 _
-         _ < 10 ^ 2 ^ (n + 1) := h3 (n + 1)
+  have h5 : b n < 10 ^ 2 ^ (n + 1) := (h2 n).trans (h3 (n + 1))
 
   have h7 : 1 ≤ b n := by
     dsimp [b]

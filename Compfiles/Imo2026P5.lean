@@ -300,7 +300,6 @@ lemma ascend (f : PositiveReal → PositiveReal) (h : IsAdmissible f) (a : Posit
         intro hj
         have hjpos : (0 : ℝ) < (t : ℝ) + (j : ℝ) * δ :=
           add_pos_of_pos_of_nonneg htpos (mul_nonneg (Nat.cast_nonneg _) (le_of_lt hδ))
-        have ih' := ih hjpos
         have hclose : |(t : ℝ) + ((j + 1 : ℕ) : ℝ) * δ - ((t : ℝ) + (j : ℝ) * δ)| <
             Real.sqrt (2 * d * ((t : ℝ) + (j : ℝ) * δ)) := by
           have e : (t : ℝ) + ((j + 1 : ℕ) : ℝ) * δ - ((t : ℝ) + (j : ℝ) * δ) = δ := by
@@ -315,7 +314,7 @@ lemma ascend (f : PositiveReal → PositiveReal) (h : IsAdmissible f) (a : Posit
           have h2 : δ < Real.sqrt (2 * d * (t : ℝ)) := by linarith [hδ_def, hs]
           exact lt_of_lt_of_le h2 hsqrt
         exact ball f h a ha hdval ⟨(t : ℝ) + (j : ℝ) * δ, hjpos⟩
-          ⟨(t : ℝ) + ((j + 1 : ℕ) : ℝ) * δ, hj⟩ ih' hclose
+          ⟨(t : ℝ) + ((j + 1 : ℕ) : ℝ) * δ, hj⟩ (ih hjpos) hclose
     exact step i htipos
   have hclose2 : |(x : ℝ) - (ti : ℝ)| < Real.sqrt (2 * d * (ti : ℝ)) := by
     have e : (ti : ℝ) = (t : ℝ) + (i : ℝ) * δ := rfl
@@ -356,11 +355,7 @@ lemma zero_contra (f : PositiveReal → PositiveReal) (h : IsAdmissible f) (a : 
       set k := ⌊((b : ℝ) - 2 * d) / d⌋₊ + 1 with hk_def
       have hu : (0 : ℝ) ≤ ((b : ℝ) - 2 * d) / d :=
         div_nonneg (sub_nonneg.mpr (le_of_lt hb2)) (le_of_lt hd)
-      have hk1 : ((b : ℝ) - 2 * d) / d < (k : ℝ) := by
-        have h1 := Nat.lt_floor_add_one (((b : ℝ) - 2 * d) / d)
-        rw [hk_def]
-        push_cast
-        linarith [h1]
+      have hk1 : ((b : ℝ) - 2 * d) / d < (k : ℝ) := Nat.lt_succ_floor _
       have hk2 : (k : ℝ) ≤ ((b : ℝ) - 2 * d) / d + 1 := by
         have h1 := Nat.floor_le hu
         rw [hk_def]
@@ -417,9 +412,7 @@ lemma zero_contra (f : PositiveReal → PositiveReal) (h : IsAdmissible f) (a : 
         have h1 : (t0 : ℝ) ^ 2 ≤ 2 * d * (t0 : ℝ) := by
           have hmul := mul_le_mul_of_nonneg_right ht0le (le_of_lt t0.2)
           nlinarith [hmul]
-        have h2 : (t0 : ℝ) ≤ Real.sqrt (2 * d * (t0 : ℝ)) := by
-          rw [Real.le_sqrt (le_of_lt t0.2) (mul_nonneg (mul_nonneg (le_of_lt two_pos) (le_of_lt hd)) (le_of_lt t0.2))]
-          exact h1
+        have h2 : (t0 : ℝ) ≤ Real.sqrt (2 * d * (t0 : ℝ)) := Real.le_sqrt_of_sq_le h1
         rw [abs_of_nonpos (by linarith : (x : ℝ) - (t0 : ℝ) ≤ 0)]
         have hxp := x.2
         linarith [h2, hxp]

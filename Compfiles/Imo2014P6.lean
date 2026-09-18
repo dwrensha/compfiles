@@ -113,7 +113,7 @@ lemma val_interPt_left {ℓ m : Line} (h : ℓ.det m ≠ 0) : ℓ.val (ℓ.inter
     simp only [val, interPt]
     rw [add_mul, add_mul, mul_assoc, mul_assoc, div_mul_cancel₀ _ h, div_mul_cancel₀ _ h]
     exact key
-  exact (mul_eq_zero.mp e2).resolve_right h
+  exact (mul_eq_zero_iff_right h).mp e2
 
 lemma val_interPt_right {ℓ m : Line} (h : ℓ.det m ≠ 0) : m.val (ℓ.interPt m) = 0 := by
   have key : m.a * (ℓ.b * m.c - m.b * ℓ.c) + m.b * (m.a * ℓ.c - ℓ.a * m.c) +
@@ -124,7 +124,7 @@ lemma val_interPt_right {ℓ m : Line} (h : ℓ.det m ≠ 0) : m.val (ℓ.interP
     simp only [val, interPt]
     rw [add_mul, add_mul, mul_assoc, mul_assoc, div_mul_cancel₀ _ h, div_mul_cancel₀ _ h]
     exact key
-  exact (mul_eq_zero.mp e2).resolve_right h
+  exact (mul_eq_zero_iff_right h).mp e2
 
 lemma eq_interPt {ℓ m : Line} (h : ℓ.det m ≠ 0) {p : ℝ × ℝ}
     (h₁ : ℓ.val p = 0) (h₂ : m.val p = 0) : p = ℓ.interPt m := by
@@ -466,12 +466,12 @@ lemma param_constraint_iff {L : Finset Line} {ℓ : Line} (hGP : GeneralPosition
 lemma abs_fst_sub_le_dist (p q : ℝ × ℝ) : |p.1 - q.1| ≤ dist p q := by
   rw [dist_eq_norm]
   calc |p.1 - q.1| = ‖(p - q).1‖ := by simp [Real.norm_eq_abs]
-    _ ≤ ‖p - q‖ := by rw [Prod.norm_def]; exact le_max_left _ _
+    _ ≤ ‖p - q‖ := norm_fst_le (p - q)
 
 lemma abs_snd_sub_le_dist (p q : ℝ × ℝ) : |p.2 - q.2| ≤ dist p q := by
   rw [dist_eq_norm]
   calc |p.2 - q.2| = ‖(p - q).2‖ := by simp [Real.norm_eq_abs]
-    _ ≤ ‖p - q‖ := by rw [Prod.norm_def]; exact le_max_right _ _
+    _ ≤ ‖p - q‖ := norm_snd_le (p - q)
 
 /-- A bounded cell of an arrangement in general position, together with a
 distinguished boundary line `ℓ`. -/
@@ -1169,17 +1169,10 @@ lemma opp_sides {L B : Finset Line} (hGP : GeneralPosition L)
       _ = (Wj.g1 hGP hjL).param (Wj.s_b hGP hjL) := hb_j
       _ = (Wi.g1 hGP hiL).param (Wj.s_b hGP hjL) := hpg _
   have hs : Wi.s_b hGP hiL = Wj.s_b hGP hjL := (Wi.g1 hGP hiL).param_injective hpeq
-  have hne1 : Wi.s_r hGP hiL ≠ Wi.s_b hGP hiL := by
-    intro h
-    have h2 : Wi.r hGP hiL = Wi.b hGP hiL := by
-      rw [Wi.r_eq_param_s_r hGP hiL, hb_i, h]
-    exact Wi.b_ne_r hGP hiL h2.symm
+  have hne1 : Wi.s_r hGP hiL ≠ Wi.s_b hGP hiL := Wi.s_r_ne_s_b hGP hiL
   have hne2 : Wj.s_r hGP hjL ≠ Wi.s_b hGP hiL := by
     rw [hs]
-    intro h
-    have h2 : Wj.r hGP hjL = Wj.b hGP hjL := by
-      rw [Wj.r_eq_param_s_r hGP hjL, hb_j, h]
-    exact Wj.b_ne_r hGP hjL h2.symm
+    exact Wj.s_r_ne_s_b hGP hjL
   have hne3 : Wi.s_r hGP hiL ≠ Wj.s_r hGP hjL := by
     intro h
     have h1 : Wi.r hGP hiL = Wj.r hGP hjL := by
@@ -1386,9 +1379,7 @@ lemma turn_at_blue_pt {L B : Finset Line} (hGP : GeneralPosition L)
             exact (Wr.r_mem_closure hGP hrL).2
           have hℓr2 : ℓr ≠ W.g2 hGP hkL := by
             rw [← hv'2]
-            intro h6
-            rw [h6] at hrB
-            exact hrB hv'B
+            exact (ne_of_mem_of_not_mem hv'B hrB).symm
           have huncut := W.g2_edge_uncut hGP hkL hrL hℓr2 hIoo
           rw [← hv'2] at huncut
           exact huncut hvr
@@ -1446,30 +1437,16 @@ lemma turn_at_blue_pt {L B : Finset Line} (hGP : GeneralPosition L)
       rw [← hri, ← hwr]
       exact hhw
     have hℓri : ℓi.val (Wi.r hGP hiL) = 0 := (Wi.r_mem_closure hGP hiL).2
-    have hv'ri : v'.val (Wi.r hGP hiL) = 0 := by
-      rw [← hri]
-      exact Line.val_param _ _
+    have hv'ri : v'.val (Wi.r hGP hiL) = 0 := Wi.g1_val_r hGP hiL
     rcases Finset.mem_insert.mp hins with h1 | h1
     · -- `h = ℓₖ`
       rw [h1] at hhri
-      have hv'ℓi : v' ≠ ℓi := by
-        intro h2
-        rw [h2] at hv'B
-        exact hiB hv'B
-      have hℓₖv' : ℓₖ ≠ v' := by
-        intro h2
-        rw [← h2] at hv'B
-        exact hkB hv'B
+      have hv'ℓi : v' ≠ ℓi := Wi.g1_ne hGP hiL
+      have hℓₖv' : ℓₖ ≠ v' := (ne_of_mem_of_not_mem hv'B hkB).symm
       exact GP.not_concurrent hGP hkL hiL hv'L hki hℓₖv' (Ne.symm hv'ℓi) hhri hℓri hv'ri
     · -- `h ∈ B`
-      have hhℓi : h ≠ ℓi := by
-        intro h2
-        rw [h2] at h1
-        exact hiB h1
-      have hv'ℓi : v' ≠ ℓi := by
-        intro h2
-        rw [h2] at hv'B
-        exact hiB hv'B
+      have hhℓi : h ≠ ℓi := ne_of_mem_of_not_mem h1 hiB
+      have hv'ℓi : v' ≠ ℓi := Wi.g1_ne hGP hiL
       exact GP.not_concurrent hGP hhL hv'L hiL hhv' hhℓi hv'ℓi hhri hv'ri hℓri
   · -- symmetric with `rⱼ`
     have hrj : (Wi.g1 hGP hiL).param (Wj.s_r hGP hjL) = Wj.r hGP hjL := by
@@ -1484,23 +1461,11 @@ lemma turn_at_blue_pt {L B : Finset Line} (hGP : GeneralPosition L)
       exact Line.val_param _ _
     rcases Finset.mem_insert.mp hins with h1 | h1
     · rw [h1] at hhrj
-      have hv'ℓj : v' ≠ ℓj := by
-        intro h2
-        rw [h2] at hv'B
-        exact hjB hv'B
-      have hℓₖv' : ℓₖ ≠ v' := by
-        intro h2
-        rw [← h2] at hv'B
-        exact hkB hv'B
+      have hv'ℓj : v' ≠ ℓj := ne_of_mem_of_not_mem hv'B hjB
+      have hℓₖv' : ℓₖ ≠ v' := (ne_of_mem_of_not_mem hv'B hkB).symm
       exact GP.not_concurrent hGP hkL hjL hv'L hkj hℓₖv' (Ne.symm hv'ℓj) hhrj hℓrj hv'rj
-    · have hhℓj : h ≠ ℓj := by
-        intro h2
-        rw [h2] at h1
-        exact hjB h1
-      have hv'ℓj : v' ≠ ℓj := by
-        intro h2
-        rw [h2] at hv'B
-        exact hjB hv'B
+    · have hhℓj : h ≠ ℓj := ne_of_mem_of_not_mem h1 hjB
+      have hv'ℓj : v' ≠ ℓj := ne_of_mem_of_not_mem hv'B hjB
       exact GP.not_concurrent hGP hhL hv'L hjL hhv' hhℓj hv'ℓj hhrj hv'rj hℓrj
 
 /-- Two distinct points determine a line (in general position). -/
@@ -1681,26 +1646,17 @@ lemma fiber_card_le_two (L B : Finset Line) (W : ∀ m ∈ L \ B, Witness L B m)
       exact (lt_irrefl 0) o12
     nlinarith [o12, o13, o23, sq_pos_of_ne_zero ha]
   · -- pair (1,2) on `W₁.g₁`, third `ℓ₃` on `W₁.g₂`
-    have hgW : W₁.g1 hGP h1L' ≠ W₃.g1 hGP h3L' := by
-      intro h
-      rw [g13] at h
-      exact hg2ne h.symm
+    have hgW : W₁.g1 hGP h1L' ≠ W₃.g1 hGP h3L' := (g13.trans_ne hg2ne).symm
     have o12 := opp h1L h2L hq1 hq2 g12.symm rd12
     exact turn_at_blue_pt hGP W₃ W₁ W₂ h3L' h1L' h2L' h3B h1B h2B d31 h23.symm
       g12.symm (hq1.trans hq2.symm) (hq3.trans hq1.symm) hgW o12
   · -- pair (1,3) on `W₁.g₁`, third `ℓ₂` on `W₁.g₂`
-    have hgW : W₁.g1 hGP h1L' ≠ W₂.g1 hGP h2L' := by
-      intro h
-      rw [g12] at h
-      exact hg2ne h.symm
+    have hgW : W₁.g1 hGP h1L' ≠ W₂.g1 hGP h2L' := (g12.trans_ne hg2ne).symm
     have o13 := opp h1L h3L hq1 hq3 g13.symm rd13
     exact turn_at_blue_pt hGP W₂ W₁ W₃ h2L' h1L' h3L' h2B h1B h3B d21 h23
       g13.symm (hq1.trans hq3.symm) (hq2.trans hq1.symm) hgW o13
   · -- pair (2,3) on `W₁.g₂`, third `ℓ₁` on `W₁.g₁`
-    have hgW : W₂.g1 hGP h2L' ≠ W₁.g1 hGP h1L' := by
-      intro h
-      rw [g12] at h
-      exact hg2ne h
+    have hgW : W₂.g1 hGP h2L' ≠ W₁.g1 hGP h1L' := g12.trans_ne hg2ne
     have o23 := opp h2L h3L hq2 hq3 (g12.trans g13.symm) rd23
     exact turn_at_blue_pt hGP W₁ W₂ W₃ h1L' h2L' h3L' h1B h2B h3B d12 d13
       (g12.trans g13.symm) (hq2.trans hq3.symm) (hq1.trans hq2.symm) hgW o23
@@ -1875,16 +1831,12 @@ lemma two_mul_card_bluePts {L : Finset Line} {B : Finset Line}
     · rw [Finset.mem_offDiag]
       exact ⟨hg2, hg1, Ne.symm hgg12⟩
     · exact Line.interPt_comm (GP.det_ne hGP (hBL hg2) (hBL hg1) (Ne.symm hgg12))
-  have hne2 : gg ≠ (gg.2, gg.1) := by
-    intro h
-    have h1 : gg.1 = gg.2 := (Prod.ext_iff.mp h).1
-    exact hgg12 h1
+  have hne2 : gg ≠ (gg.2, gg.1) := ne_of_apply_ne Prod.fst hgg12
   have hsub : ({gg, (gg.2, gg.1)} : Finset (Line × Line)) ⊆
       B.offDiag.filter (fun a => a.1.interPt a.2 = gg.1.interPt gg.2) := by
     rw [Finset.insert_subset_iff, Finset.singleton_subset_iff]
     exact ⟨hmem1, hmem2⟩
-  have hcard : ({gg, (gg.2, gg.1)} : Finset (Line × Line)).card = 2 := by
-    rw [Finset.card_insert_of_notMem (by simp [hne2]), Finset.card_singleton]
+  have hcard : ({gg, (gg.2, gg.1)} : Finset (Line × Line)).card = 2 := Finset.card_pair hne2
   rw [← hcard]
   exact Finset.card_le_card hsub
 
@@ -1913,8 +1865,7 @@ lemma card_red_le (L B : Finset Line) (W : ∀ m ∈ L \ B, Witness L B m)
     (hGP : GeneralPosition L) :
     (L \ B).card ≤ 2 * ((L \ B).image (assocB L B W hGP)).card := by
   apply Finset.card_le_mul_card_image
-  intro p hp
-  exact fiber_card_le_two L B W hGP p
+  exact fun p _ ↦ fiber_card_le_two L B W hGP p
 
 /-- The grand count: `n ≤ k²`. -/
 lemma main_counting {L : Finset Line} {B : Finset Line} (hGP : GeneralPosition L) (hBL : B ⊆ L)
@@ -1961,8 +1912,7 @@ lemma not_frontier_subset_of_validBlue {L : Finset Line} {B : Finset Line}
     intro p hp
     have h := hSB hp
     simp only [Set.mem_iUnion] at h
-    obtain ⟨mm, hmm, hpm⟩ := h
-    exact ⟨mm, hmm, hpm⟩
+    exact bex_def.mp h
   choose f hf using hchoice
   set g := fun p : S => f p p.2 with hg
   have : Infinite S := Set.infinite_coe_iff.mpr hSI
@@ -2008,7 +1958,6 @@ problem imo2014_p6 :
   obtain ⟨B, hBL, hk, hBV⟩ := main_result L hGP
   refine ⟨B, hBL, ?_, ?_⟩
   · rwa [hn] at hk
-  · intro σ hne hbdd
-    exact not_frontier_subset_of_validBlue hGP hBL hBV hne hbdd
+  · exact fun _ => not_frontier_subset_of_validBlue hGP hBL hBV
 
 end Imo2014P6

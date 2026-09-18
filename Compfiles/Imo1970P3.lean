@@ -81,8 +81,7 @@ lemma term_bound (seq : IncreasingSequenceFromOne) (k : ℕ) :
       linarith
     ring_nf
     simp [field]
-    rw [IsUnit.div_mul_left haUnit]
-    exact inv_eq_one_div √(seq.a k)
+    exact (IsUnit.div_mul_cancel_right haUnit √(seq.a k)).symm
 
   -- Factor 1/a_{k-1} - 1/a_k using difference of squares
   have h2 : 1 / seq.a (k - 1) - 1 / seq.a k =

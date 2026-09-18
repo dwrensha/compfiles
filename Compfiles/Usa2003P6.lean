@@ -71,13 +71,6 @@ lemma cmax_attained (f : Conf) : ∃ i, f i = cmax f := by
 
 /-! ### Parity machinery -/
 
-lemma cast_abs2 (n : ℤ) : ((|n| : ℤ) : ZMod 2) = (n : ZMod 2) := by
-  rcases abs_choice n with h | h
-  · rw [h]
-  · rw [h, Int.cast_neg]
-    have h2 : ∀ x : ZMod 2, -x = x := by decide
-    rw [h2]
-
 lemma odd_iff_cast (n : ℤ) : Odd n ↔ (n : ZMod 2) = 1 :=
   ZMod.intCast_eq_one_iff_odd.symm
 
@@ -106,7 +99,7 @@ lemma par_step (f : Conf) (j : ZMod 6) :
   by_cases hij : i = j
   · subst hij
     simp only [step, step2, Function.update_self]
-    rw [cast_abs2, Int.cast_sub, sub_eq_add_neg]
+    rw [ZMod.intCast_abs_mod_two, Int.cast_sub, sub_eq_add_neg]
     have h2 : ∀ x : ZMod 2, -x = x := by decide
     rw [h2]
   · simp only [step, step2, Function.update_of_ne hij]
@@ -487,11 +480,7 @@ lemma winnable_aux (f : Conf) (hnn : ∀ i, 0 ≤ f i) (hodd : Odd (∑ i, f i))
     have g'k : ∀ i, i ≠ 0 → (g' i : ZMod 2) = 0 := by
       intro i hi
       show (g (i + p) : ZMod 2) = 0
-      apply gpk
-      intro hip
-      apply hi
-      have h2 : i + p = 0 + p := by rw [hip, zero_add]
-      exact add_right_cancel h2
+      exact gpk _ (add_ne_right.mpr hi)
     have g'cmax : cmax g' = cmax g := by
       apply le_antisymm
       · apply cmax_le

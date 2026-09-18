@@ -820,8 +820,7 @@ lemma kernel_of_reduction {n : ℕ} (hn : 0 < n) (hn2 : 2 ≤ n) (v S : Moves n)
       have h1 : v3.z i = v3.z ⟨i.val, i.2⟩ := congrArg v3.z (Fin.ext rfl)
       rw [h1, h_z i.val i.2]
       exact x_all (n - 1 - i.val) (lt_n1j i.2)
-  have hA : Moves.vxor v S = zeroMove n := by rwa [hv3] at hv3z
-  exact vxor_eq_zero hA
+  exact vxor_eq_zero hv3z
 
 /-- The kernel classification: a move that flips every token an even number of
 times is one of the eight span elements. -/
@@ -834,18 +833,9 @@ lemma kernel_eq_span {n : ℕ} (hn : 0 < n) {v : Moves n}
     have key : (v.x z ^^ v.y z ^^ v.z z) = false := by
       have h00 : (0 : ℕ) + 0 < 1 := by lia
       exact congrFun hv ⟨(0, 0), h00⟩
-    have cx : v.x = fun _ => v.x z := by
-      funext i
-      congr 1
-      exact Fin.ext (by lia)
-    have cy : v.y = fun _ => v.y z := by
-      funext i
-      congr 1
-      exact Fin.ext (by lia)
-    have cz : v.z = fun _ => v.z z := by
-      funext i
-      congr 1
-      exact Fin.ext (by lia)
+    have cx : v.x = fun _ => v.x z := funext fun i ↦ congrArg v.x (Subsingleton.elim i z)
+    have cy : v.y = fun _ => v.y z := funext fun i ↦ congrArg v.y (Subsingleton.elim i z)
+    have cz : v.z = fun _ => v.z z := funext fun i ↦ congrArg v.z (Subsingleton.elim i z)
     generalize hA : v.x z = A
     generalize hB : v.y z = B
     generalize hC : v.z z = C
@@ -988,9 +978,7 @@ lemma qon_eval {n : ℕ} (F : Fin n → Bool) (P : ℕ → Bool) (hF : ∀ i, F 
       (((Finset.range r).filter fun i => ((P i && decide (i % 2 = s))) = true).card) := by
   have e1 : qon F = (Finset.univ.filter fun i : Fin n => (F i && (e n i)) = true).card := by
     apply congrArg Finset.card
-    apply Finset.filter_congr
-    intro i _
-    cases (F i) <;> cases (e n i) <;> simp
+    exact Finset.filter_congr fun i _ ↦ Bool.and_eq_true_iff.symm
   rw [e1]
   rw [show (Finset.univ.filter fun i : Fin n => (F i && (e n i)) = true) =
       (Finset.univ.filter fun i : Fin n => (P i.val && decide (i.val % 2 = n % 2)) = true) from

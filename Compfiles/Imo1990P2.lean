@@ -111,10 +111,7 @@ theorem val_mod_translate {n : ℕ} [NeZero (2 * n - 1)] (h3n : 3 ∣ n + 1)
     exact ZMod.natCast_rightInverse _
   have hmod3 : (x + ((n + 1 : ℕ) : ZMod (2 * n - 1))).val ≡ x.val [MOD 3] := by
     have h1 := hmodN.of_dvd h3N
-    have h2 : x.val + (n + 1) ≡ x.val [MOD 3] := by
-      obtain ⟨c, hc⟩ := h3n
-      show (x.val + (n + 1)) % 3 = x.val % 3
-      lia
+    have h2 : x.val + (n + 1) ≡ x.val [MOD 3] := Nat.add_modEq_left_iff.mpr h3n
     exact h1.trans h2
   exact hmod3
 

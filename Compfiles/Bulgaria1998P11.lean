@@ -73,7 +73,7 @@ lemma mod_three_ne_two_of_sq_eq_neg_three {p : ℕ} (hp : p.Prime) (hp2 : p ≠ 
     simp at hroot
   have h3dvd : (3 : ℕ) ∣ p - 1 := by
     rw [← orderOf_eq_prime (by linear_combination (ω - 1) * hroot : ω ^ 3 = 1) hω1]
-    exact orderOf_dvd_of_pow_eq_one (ZMod.pow_card_sub_one_eq_one hω0)
+    exact ZMod.orderOf_dvd_card_sub_one hω0
   have := hp.two_le
   lia
 

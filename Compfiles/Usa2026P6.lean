@@ -144,12 +144,8 @@ lemma quotient_eq_three {a b : ℕ} (ha : 0 < a) (hb : 0 < b)
 
 /-- The Fibonacci recurrence over four steps: `F_{n+4} + F_n = 3 * F_{n+2}`. -/
 lemma fib_add_four (n : ℕ) : Nat.fib (n + 4) + Nat.fib n = 3 * Nat.fib (n + 2) := by
-  have h1 : Nat.fib (n + 4) = Nat.fib (n + 2) + Nat.fib (n + 3) := by
-    have h := @Nat.fib_add_two (n + 2)
-    rwa [show n + 2 + 2 = n + 4 by lia, show n + 2 + 1 = n + 3 by lia] at h
-  have h2 : Nat.fib (n + 3) = Nat.fib (n + 1) + Nat.fib (n + 2) := by
-    have h := @Nat.fib_add_two (n + 1)
-    rwa [show n + 1 + 2 = n + 3 by lia, show n + 1 + 1 = n + 2 by lia] at h
+  have h1 : Nat.fib (n + 4) = Nat.fib (n + 2) + Nat.fib (n + 3) := Nat.fib_add_two
+  have h2 : Nat.fib (n + 3) = Nat.fib (n + 1) + Nat.fib (n + 2) := Nat.fib_add_two
   have h3 : Nat.fib (n + 2) = Nat.fib n + Nat.fib (n + 1) := Nat.fib_add_two
   lia
 
@@ -168,8 +164,7 @@ lemma fib_pair_aux {s : ℕ}
       have h2 : a * a + a * a + 1 = 3 * (a * a) := by
         rw [← mul_assoc 3 a a, ← h, pow_two a]
       lia
-    have ha1 : a = 1 := Nat.eq_one_of_mul_eq_one_right h1
-    exact ⟨ha1, ha1⟩
+    exact mul_eq_one.mp h1
   · -- `a < b`: jump down to `(b', a)` with `b' = 3a - b ≤ a`
     have hbk : b ≤ 3 * a := by
       have h1 : b * b ≤ b * (3 * a) := by
@@ -444,8 +439,7 @@ problem usa2026_p6 {a b : ℕ} (ha : 0 < a) (hb : 0 < b)
         rw [Nat.cast_add, Nat.cast_add, Nat.cast_pow, Nat.cast_pow, Nat.cast_one] at h1
         exact h1
       have hpe_z : (p : ZMod m) ^ e = 0 := by
-        have h1 : p ^ e = m * p := by
-          conv_lhs => rw [show e = e - 1 + 1 by lia, pow_succ, ← hm]
+        have h1 : p ^ e = m * p := (Nat.pow_pred_mul he).symm
         have h2 : ((p ^ e : ℕ) : ZMod m) = 0 := by
           rw [h1, Nat.cast_mul, ZMod.natCast_self, zero_mul]
         rw [← Nat.cast_pow]

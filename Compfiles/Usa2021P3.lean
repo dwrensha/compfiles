@@ -215,14 +215,14 @@ lemma extract_step {n : ℕ} {b b' : Board} (h : Step n b b') :
         rw [Finset.mem_product]
         exact ⟨Finset.mem_range.2 hr, Finset.mem_singleton_self r⟩
       rw [ite_eq_left rfl, ite_eq_left (hfull hmem), ite_eq_right]
-      exact fun h ↦ (Finset.mem_sdiff.1 h).2 hmem
+      exact Finset.notMem_sdiff_of_mem_right hmem
     · rw [ite_eq_right hcr, zero_add]
       by_cases hb : (r', c) ∈ b
       · rw [ite_eq_left hb, ite_eq_left]
         exact Finset.mem_sdiff.2 ⟨hb, fun hmem ↦
           hcr (Finset.mem_singleton.1 (Finset.mem_product.1 hmem).2)⟩
       · rw [ite_eq_right hb, ite_eq_right]
-        exact fun h ↦ hb (Finset.mem_sdiff.1 h).1
+        exact Finset.notMem_sdiff_of_notMem_left hb
   | clearCol c hfull =>
     refine ⟨fun _ _ ↦ 0, fun x ↦ if x = c then 1 else 0, fun _ ↦ 0, by simp [Support], ?_⟩
     intro r c' hr hc
@@ -233,14 +233,14 @@ lemma extract_step {n : ℕ} {b b' : Board} (h : Step n b b') :
         rw [Finset.mem_product]
         exact ⟨Finset.mem_singleton_self c, Finset.mem_range.2 hc⟩
       rw [ite_eq_left rfl, ite_eq_left (hfull hmem), ite_eq_right]
-      exact fun h ↦ (Finset.mem_sdiff.1 h).2 hmem
+      exact Finset.notMem_sdiff_of_mem_right hmem
     · rw [ite_eq_right hcr, zero_add]
       by_cases hb : (r, c') ∈ b
       · rw [ite_eq_left hb, ite_eq_left]
         exact Finset.mem_sdiff.2 ⟨hb, fun hmem ↦
           hcr (Finset.mem_singleton.1 (Finset.mem_product.1 hmem).1)⟩
       · rw [ite_eq_right hb, ite_eq_right]
-        exact fun h ↦ hb (Finset.mem_sdiff.1 h).1
+        exact Finset.notMem_sdiff_of_notMem_left hb
 
 /-- A whole sequence of moves, seen through the counting functions. -/
 lemma extract {n : ℕ} {b b' : Board} (h : Reach n b b') :
@@ -525,11 +525,8 @@ lemma key_identity {n : ℕ} (hn : 2 ≤ n) {a : ℕ → ℕ → ℕ} {ρ γ : �
       intro c hc
       rw [hcell r c (Finset.mem_range.1 hr) (Finset.mem_range.1 hc), Nat.cast_add]
     have t1 : ∑ r ∈ Finset.range n, ∑ c ∈ Finset.range n, (ρ r : ℂ) * ζ ^ r * η ^ c =
-        (∑ r ∈ Finset.range n, (ρ r : ℂ) * ζ ^ r) * ∑ c ∈ Finset.range n, η ^ c := by
-      rw [Finset.sum_mul]
-      apply Finset.sum_congr rfl
-      intro r _
-      rw [Finset.mul_sum]
+        (∑ r ∈ Finset.range n, (ρ r : ℂ) * ζ ^ r) * ∑ c ∈ Finset.range n, η ^ c :=
+      (Finset.sum_mul_sum _ _ _ _).symm
     have t2 : ∑ r ∈ Finset.range n, ∑ c ∈ Finset.range n, (γ c : ℂ) * ζ ^ r * η ^ c =
         (∑ c ∈ Finset.range n, (γ c : ℂ) * η ^ c) * ∑ r ∈ Finset.range n, ζ ^ r := by
       rw [Finset.sum_comm, Finset.sum_mul]
@@ -556,19 +553,14 @@ lemma one_add_ne_zero {n : ℕ} (hn : 2 ≤ n) (h3 : ¬ 3 ∣ n) {ζ η : ℂ}
     intro h0
     rw [h0] at hζ
     simp [hn0] at hζ
-  have ns_pow : ∀ (z : ℂ) (k : ℕ), Complex.normSq (z ^ k) = (Complex.normSq z) ^ k := by
-    intro z k
-    induction k with
-    | zero => simp
-    | succ k ih => rw [pow_succ, Complex.normSq_mul, ih, pow_succ]
   have ns1 : Complex.normSq ζ = 1 := by
     have h1 : (Complex.normSq ζ) ^ n = 1 := by
-      rw [← ns_pow, hζ]
+      rw [← map_pow, hζ]
       exact Complex.normSq_one
     exact (pow_eq_one_iff_of_nonneg (Complex.normSq_nonneg _) hn0).1 h1
   have ns2 : Complex.normSq η = 1 := by
     have h1 : (Complex.normSq η) ^ n = 1 := by
-      rw [← ns_pow, hη]
+      rw [← map_pow, hη]
       exact Complex.normSq_one
     exact (pow_eq_one_iff_of_nonneg (Complex.normSq_nonneg _) hn0).1 h1
   have hmul : ζ * η = -1 - ζ := by linear_combination h
@@ -1200,9 +1192,7 @@ lemma solvable_of_three_dvd {n : ℕ} (hn : 2 ≤ n) (h3 : 3 ∣ n) : Solvable n
     · intro p hp q hq hpq
       exact disjBB p hp q hq hpq
     · exact freshB
-  have r3 : Reach (3 * k) B2 B3 := by
-    rw [hB3]
-    exact reach_clearCols Cols B2 fullCols
+  have r3 : Reach (3 * k) B2 B3 := reach_clearCols Cols B2 fullCols
   have r4 : Reach (3 * k) B3 B4 := by
     rw [hB4]
     apply reach_place idx (fun p ↦ (3 * p.1, 3 * p.2)) B3
@@ -1212,12 +1202,8 @@ lemma solvable_of_three_dvd {n : ℕ} (hn : 2 ≤ n) (h3 : 3 ∣ n) : Solvable n
     · intro p hp q hq hpq
       exact disjCC p hp q hq hpq
     · exact freshC
-  have r5 : Reach (3 * k) B4 B5 := by
-    rw [hB5]
-    exact reach_clearRows Rows0 B4 fullRows0
-  have r6 : Reach (3 * k) B5 B6 := by
-    rw [hB6]
-    exact reach_clearRows Rows1 B5 fullRows1
+  have r5 : Reach (3 * k) B4 B5 := reach_clearRows Rows0 B4 fullRows0
+  have r6 : Reach (3 * k) B5 B6 := reach_clearRows Rows1 B5 fullRows1
   rw [hB6empty] at r6
   exact ((((r1.trans r2).trans r3).trans r4).trans r5).trans r6
 
@@ -1231,7 +1217,6 @@ problem usa2021_p3 (n : ℕ) (hn : 2 ≤ n) : Solvable n ↔ answer n := by
   · intro h
     by_contra h3
     exact not_solvable_of_not_three_dvd hn h3 h
-  · intro h
-    exact solvable_of_three_dvd hn h
+  · exact solvable_of_three_dvd hn
 
 end Usa2021P3

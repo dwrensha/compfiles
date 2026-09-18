@@ -280,10 +280,7 @@ lemma Toggle.edgeFinset_card {G G' : SimpleGraph V} (hT : Toggle G G') :
   have h2 : s(a, c) ∈ G.edgeSet := (mem_edgeSet _).mpr hac
   have h12 : s(a, b) ≠ s(a, c) := sym2_ne (Or.inr hbc) (Or.inl (G.ne_of_adj hac))
   have h3 : s(b, c) ∉ G.edgeSet := fun h => hnbc ((mem_edgeSet _).mp h)
-  have hsub : ({s(a, b), s(a, c)} : Set (Sym2 V)) ⊆ G.edgeSet := by
-    intro e he
-    simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at he
-    rcases he with rfl | rfl <;> assumption
+  have hsub : ({s(a, b), s(a, c)} : Set (Sym2 V)) ⊆ G.edgeSet := Set.pair_subset h1 h2
   rw [Set.ncard_union_eq (by
       rw [Set.disjoint_left]
       rintro e ⟨he, -⟩ heq
@@ -368,17 +365,6 @@ lemma isPath_transfer {G H : SimpleGraph V} {u v : V} {p : G.Walk u v}
     (hp : ∀ e, e ∈ p.edges → e ∈ H.edgeSet) :
     (p.transfer H hp).IsPath ↔ p.IsPath := by
   rw [Walk.isPath_def, Walk.isPath_def, Walk.support_transfer]
-
-omit [Fintype V] [DecidableEq V] in
-/-- IsCycle is preserved by `Walk.transfer`. -/
-lemma isCycle_transfer {G H : SimpleGraph V} {u : V} {p : G.Walk u u}
-    (hp : ∀ e, e ∈ p.edges → e ∈ H.edgeSet) :
-    (p.transfer H hp).IsCycle ↔ p.IsCycle := by
-  have hnil : p.transfer H hp = Walk.nil ↔ p = Walk.nil := by
-    rw [Walk.eq_nil_iff_nil, Walk.eq_nil_iff_nil, ← Walk.length_eq_zero_iff,
-      ← Walk.length_eq_zero_iff, Walk.length_transfer]
-  rw [Walk.isCycle_def, Walk.isCycle_def, Walk.isTrail_def, Walk.isTrail_def,
-    Walk.edges_transfer, Walk.support_transfer, ne_eq, ne_eq, hnil]
 
 omit [Fintype V] [DecidableEq V] in
 /-- If the second vertex of a cycle `C` at `x` is `y`, then deleting the first edge
@@ -553,8 +539,7 @@ lemma degree_eq_two_of_forall_mem_support {G : SimpleGraph V} {v : V} {C : G.Wal
       rw [Finset.mem_insert, Finset.mem_singleton] at hw
       rcases hw with rfl | rfl
       · exact Walk.adj_snd hnnil
-      · exact (Walk.adj_of_mem_edges _
-          ((C.rotate z (hspan z)).mk_penultimate_end_mem_edges hnnil)).symm
+      · exact (Walk.adj_penultimate hnnil).symm
   rw [← SimpleGraph.card_neighborFinset_eq_degree G z, hN,
     Finset.card_pair hγ.snd_ne_penultimate]
 
@@ -844,7 +829,7 @@ lemma isAcyclic_toggle {G G' : SimpleGraph V} (hT : Toggle G G') (hacyc : G.IsAc
       · exact h1
       · rw [Set.mem_singleton_iff] at h1
         exact absurd (h1 ▸ he) hmem
-    exact hacyc _ ((isCycle_transfer hsub).mpr hγ)
+    exact hacyc _ ((Walk.isCycle_transfer hsub).mpr hγ)
 
 /-- **Phase 2**: any forest can be toggled to a graph in which every vertex has degree
 at most `1`. -/

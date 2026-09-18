@@ -151,8 +151,7 @@ lemma entry_le_four_mul_entry {n : ℕ} {a : Fin n → ℝ} (ha : ∀ i, 0 < a i
       have hsq4 : t ^ 2 ≤ (2 : ℝ) ^ 2 := pow_le_pow_left₀ ht0.le ht2 2
       norm_num at hsq4
       exact hsq4
-    calc a p = (a p / a q) * a q := (div_mul_cancel₀ _ (ha q).ne').symm
-      _ ≤ 4 * a q := mul_le_mul_of_nonneg_right hfinal (ha q).le
+    exact (div_le_iff₀ (ha q)).mp hfinal
 
 snip end
 

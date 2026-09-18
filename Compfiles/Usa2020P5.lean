@@ -507,8 +507,7 @@ lemma overdetermined_subset_constrSet_iff {n : ℕ} {T : Finset (ℝ × ℝ)}
         rw [tail, Finset.mem_coe, Finset.mem_image] at ha hb
         rcases ha with ⟨i, -, rfl⟩
         rcases hb with ⟨j, -, rfl⟩
-        have hij : (i : ℝ) = (j : ℝ) := hab
-        rw [Nat.cast_injective hij]
+        exact Prod.mk_left_inj.mpr hab
       have hX : ∀ x ∈ (T \ {((1 : ℝ), (1 : ℝ))}).image Prod.fst,
           (P - Polynomial.C 2).eval x = 0 := by
         intro x hx

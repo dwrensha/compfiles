@@ -109,12 +109,8 @@ problem imo1977_p4 (f : ℝ → ℝ) (a b A B : ℝ)
         have h₁₇ : f (θ / 2 + Real.pi) = 1 - a * Real.cos (θ / 2 + Real.pi) - b * Real.sin (θ / 2 + Real.pi) - A * Real.cos (2 * (θ / 2 + Real.pi)) - B * Real.sin (2 * (θ / 2 + Real.pi)) := by
           rw [h₀]
         rw [h₁₆, h₁₇]
-        have h₁₈ : Real.cos (θ / 2 + Real.pi) = -Real.cos (θ / 2) := by
-          rw [Real.cos_add]
-          simp [Real.cos_pi, Real.sin_pi]
-        have h₁₉ : Real.sin (θ / 2 + Real.pi) = -Real.sin (θ / 2) := by
-          rw [Real.sin_add]
-          simp [Real.cos_pi, Real.sin_pi]
+        have h₁₈ : Real.cos (θ / 2 + Real.pi) = -Real.cos (θ / 2) := Real.cos_add_pi (θ / 2)
+        have h₁₉ : Real.sin (θ / 2 + Real.pi) = -Real.sin (θ / 2) := Real.sin_add_pi (θ / 2)
         have h₂₀ : Real.cos (2 * (θ / 2 + Real.pi)) = Real.cos (2 * (θ / 2)) := by
           have h₂₁ : 2 * (θ / 2 + Real.pi) = 2 * (θ / 2) + 2 * Real.pi := by ring_nf
           rw [h₂₁]
@@ -205,8 +201,7 @@ problem imo1977_p4 (f : ℝ → ℝ) (a b A B : ℝ)
       lia
 
     have h₇ : C * Real.cos θ - D * Real.sin θ ≤ 2 := by
-      have h₈ : f θ + f (θ + Real.pi / 2) ≥ 0 := by
-        exact Left.add_nonneg (h₁ θ) (h₁ (θ + Real.pi / 2))
+      have h₈ : f θ + f (θ + Real.pi / 2) ≥ 0 := add_nonneg (h₁ θ) (h₁ (θ + Real.pi / 2))
       have h₉ : f θ + f (θ + Real.pi / 2) = 2 - (C * Real.cos θ - D * Real.sin θ) := by
         have h₁₀ : f θ = 1 - a * Real.cos θ - b * Real.sin θ - A * Real.cos (2 * θ) - B * Real.sin (2 * θ) := by
           rw [h₀]

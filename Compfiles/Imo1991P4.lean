@@ -97,13 +97,7 @@ lemma exists_maximal_trail {s₀ : V} (h : ∃ x, G.Adj s₀ x) :
     lia
   · intro x hx
     by_contra hmem
-    have htrail' : (w.concat hx).IsTrail := by
-      rw [Walk.concat_eq_append, Walk.isTrail_append]
-      refine ⟨htrail, ?_, ?_⟩
-      · rw [Walk.isTrail_cons]
-        simp
-      · simp only [Walk.edges_cons, Walk.edges_nil, List.disjoint_singleton]
-        exact hmem
+    have htrail' : (w.concat hx).IsTrail := htrail.concat hx hmem
     have hlen' : (w.concat hx).length = m + 1 := by
       simp [Walk.concat_eq_append, hlen]
     have hmemT : m + 1 ∈ T := by

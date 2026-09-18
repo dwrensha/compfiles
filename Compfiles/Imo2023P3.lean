@@ -67,13 +67,6 @@ lemma pnat_prod_coe {ι : Type*} (s : Finset ι) (f : ι → ℕ+) :
     ((∏ i ∈ s, f i : ℕ+) : ℤ) = ∏ i ∈ s, ((f i : ℕ+) : ℤ) := by
   norm_cast
 
-/-- Telescoping sum of consecutive differences over `ℤ`. -/
-lemma sum_range_sub_self {f : ℕ → ℤ} (n : ℕ) :
-    ∑ i ∈ Finset.range n, (f (i + 1) - f i) = f n - f 0 := by
-  induction n with
-  | zero => simp
-  | succ n ih => rw [Finset.sum_range_succ, ih]; ring
-
 /-- For naturals, `x ^ k ≤ y ^ k` implies `x ≤ y`. -/
 lemma le_of_pow_le {x y k : ℕ} (hk : 0 < k) (h : x ^ k ≤ y ^ k) : x ≤ y := by
   by_cases h' : x ≤ y
@@ -513,10 +506,8 @@ lemma root_bound {F : Polynomial ℤ} {B : ℤ} (hF : F ≠ 0) (hB : ∀ j, |F.c
         rw [abs_mul, abs_pow, abs_of_nonneg (by lia : 0 ≤ x)]
       rw [← e]
       exact habs
-    have hbn : 1 ≤ |F.coeff F.natDegree| := by
-      have hne : F.coeff F.natDegree ≠ 0 := Polynomial.leadingCoeff_ne_zero.2 hF
-      have hpos : 0 < |F.coeff F.natDegree| := abs_pos.2 hne
-      lia
+    have hbn : 1 ≤ |F.coeff F.natDegree| :=
+      Int.one_le_abs (Polynomial.leadingCoeff_ne_zero.2 hF)
     have h5 : x ^ F.natDegree ≤ B * F.natDegree * x ^ (F.natDegree - 1) := by
       calc x ^ F.natDegree = 1 * x ^ F.natDegree := by ring
         _ ≤ |F.coeff F.natDegree| * x ^ F.natDegree :=
@@ -627,9 +618,7 @@ lemma diff_eventually_const {k : ℕ} (hk : 2 ≤ k) {P : Polynomial ℤ} (hmon 
   rw [← hM] at hMm
   have hdM : ∀ j ≥ N₀, Dif A j ≤ (M : ℤ) := by
     intro j hj
-    have h4 : (Dif A j).toNat ≤ M := le_csSup hSbd ⟨j, hj, rfl⟩
-    have h5 : ((Dif A j).toNat : ℤ) ≤ (M : ℤ) := by exact_mod_cast h4
-    rwa [Int.toNat_of_nonneg (hd0 j)] at h5
+    exact Int.toNat_le.mp (le_csSup hSbd ⟨j, hj, rfl⟩)
   have hdm : Dif A m = (M : ℤ) := by
     rw [hMm, Int.toNat_of_nonneg (hd0 m)]
   have hkey : ∀ j ≥ N₀, Dif A j = (M : ℤ) → ∀ l ∈ Finset.range k, Dif A (j + 1 + l) = (M : ℤ) := by

@@ -94,11 +94,7 @@ lemma maxCliqueCard_insert_le [DecidableEq V] {A : Finset V} (x : V) :
     have h2 := card_le_maxCliqueCard G h1 (isClique_of_subset G (Finset.erase_subset x s) hsc)
     have h3 : s.card = (s.erase x).card + 1 := (Finset.card_erase_add_one hx).symm
     lia
-  · have h1 : s ⊆ A := by
-      intro y hy
-      rcases Finset.mem_insert.mp (hsA hy) with h | h
-      · exact absurd (h ▸ hy) hx
-      · exact h
+  · have h1 : s ⊆ A := (Finset.subset_insert_iff_of_notMem hx).mp hsA
     exact (card_le_maxCliqueCard G h1 hsc).trans (by lia)
 
 lemma maxCliqueCard_erase_le [DecidableEq V] {A : Finset V} (x : V) :
@@ -183,10 +179,7 @@ problem imo2007_p3 {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V)
       maxCliqueCard G (K \ T)ᶜ = maxCliqueCard G (K \ T) + 1 := by lia
   rcases hcases with hEq | hLt
   · -- The two rooms already have equal clique numbers.
-    refine ⟨K \ T, (K \ T)ᶜ, ?_, Finset.union_compl _, hEq.symm⟩
-    rw [Finset.disjoint_left]
-    intro x hx hxc
-    exact (Finset.mem_compl.mp hxc) hx
+    exact ⟨K \ T, (K \ T)ᶜ, disjoint_compl_right, Finset.union_compl _, hEq.symm⟩
   · -- Step 2: the clique number of the second room is exactly one larger.
     set A := K \ T with hAdef
     have hAK : A ⊆ K := by rw [hAdef]; exact Finset.sdiff_subset
@@ -258,10 +251,7 @@ problem imo2007_p3 {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V)
         have hCcard := h𝒞card C hC
         by_contra hne
         rw [Finset.not_nonempty_iff_eq_empty] at hne
-        have hCK : C ⊆ K := by
-          intro x hx
-          by_contra hxK
-          exact Finset.notMem_empty x (hne ▸ Finset.mem_sdiff.mpr ⟨hx, hxK⟩)
+        have hCK : C ⊆ K := Finset.sdiff_eq_empty_iff_subset.mp hne
         have h2 := Finset.card_le_card (Finset.subset_inter hCB hCK)
         rw [hBK, hCcard] at h2
         lia

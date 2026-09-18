@@ -97,37 +97,23 @@ lemma not_prime_dvd_three {a b : ℤ} (h1 : Int.gcd a b = 1)
     have hAB : p ∣ (a + b) * (a - b) := by
       have e : (a + b) * (a - b) = a^2 - b^2 := by ring
       rwa [e]
-    rcases hp.dvd_or_dvd hAB with h | h
-    · exact Or.inr h
-    · exact Or.inl h
+    exact (hp.dvd_or_dvd hAB).symm
   have dvd_gcd_ab : p ∣ a → p ∣ b → False := by
     intro hpa hpb
-    have hgc : p ∣ (Int.gcd a b : ℤ) := by
-      rw [Int.gcd_eq_gcd_ab]
-      exact dvd_add (dvd_mul_of_dvd_left hpa _) (dvd_mul_of_dvd_left hpb _)
+    have hgc : p ∣ (Int.gcd a b : ℤ) := Int.dvd_coe_gcd hpa hpb
     have hp1 : p ∣ (1 : ℤ) := by simpa [h1] using hgc
     exact hp.not_dvd_one hp1
   rcases ha_or with hpa | hpa2
   · rcases hb_or with hpb | hpb2
     · exact dvd_gcd_ab hpa hpb
     · rcases hab_or with h | h
-      · exact dvd_gcd_ab hpa (by
-          have h' := dvd_sub hpa h
-          rwa [show a - (a - b) = b by ring] at h')
-      · exact dvd_gcd_ab hpa (by
-          have h' := dvd_sub h hpa
-          rwa [show a + b - a = b by ring] at h')
+      · exact dvd_gcd_ab hpa ((Int.dvd_iff_dvd_of_dvd_sub h).mp hpa)
+      · exact dvd_gcd_ab hpa ((Int.dvd_add_right hpa).mp h)
   · rcases hb_or with hpb | hpb2
     · rcases hab_or with h | h
-      · exact dvd_gcd_ab (by
-          have h' := dvd_add h hpb
-          rwa [show a - b + b = a by ring] at h') hpb
-      · exact dvd_gcd_ab (by
-          have h' := dvd_sub h hpb
-          rwa [show a + b - b = a by ring] at h') hpb
-    · have hgc : p ∣ (Int.gcd (a - 2) (b - 2) : ℤ) := by
-        rw [Int.gcd_eq_gcd_ab]
-        exact dvd_add (dvd_mul_of_dvd_left hpa2 _) (dvd_mul_of_dvd_left hpb2 _)
+      · exact dvd_gcd_ab ((Int.dvd_iff_dvd_of_dvd_sub h).mpr hpb) hpb
+      · exact dvd_gcd_ab ((Int.dvd_add_left hpb).mp h) hpb
+    · have hgc : p ∣ (Int.gcd (a - 2) (b - 2) : ℤ) := Int.dvd_coe_gcd hpa2 hpb2
       have hp1 : p ∣ (1 : ℤ) := by simpa [h2] using hgc
       exact hp.not_dvd_one hp1
 

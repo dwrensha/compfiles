@@ -149,9 +149,7 @@ lemma balance_ne_zero {l : List (ℕ × Bool)} (hne : l ≠ []) (hnd : (l.map Pr
       _ = ((m.map Prod.fst).toFinset).sum (fun i ↦ (2 : ℤ) ^ i) := hsum_eq
       _ ≤ (Finset.range M).sum (fun i ↦ (2 : ℤ) ^ i) := h2
       _ = (2 : ℤ) ^ M - 1 := h3
-      _ < (2 : ℤ) ^ M := by
-        have hpos : (0 : ℤ) < (2 : ℤ) ^ M := pow_pos (by norm_num) M
-        lia
+      _ < (2 : ℤ) ^ M := sub_one_lt _
   -- The largest weight `2^M` dominates the sum of all the others.
   have hSne0 : (l.map Prod.fst).toFinset.Nonempty := by
     cases l with
@@ -527,13 +525,9 @@ lemma insertList_removeList {n : ℕ} (w : Ways (n + 1)) :
     rw [List.mem_append] at hp
     exact hp.elim (hfst.1 p) (hfst.2 p))]
   have htake : (w.1.take (removeIdx w) ++ w.1.drop (removeIdx w + 1)).take (removeIdx w) =
-      w.1.take (removeIdx w) := by
-    rw [List.take_append_of_le_length (by lia)]
-    exact List.take_of_length_le (by lia)
+      w.1.take (removeIdx w) := List.take_left' hlen1
   have hdrop : (w.1.take (removeIdx w) ++ w.1.drop (removeIdx w + 1)).drop (removeIdx w) =
-      w.1.drop (removeIdx w + 1) := by
-    rw [List.drop_append_of_le_length (by lia)]
-    rw [List.drop_eq_nil_of_le (by lia), List.nil_append]
+      w.1.drop (removeIdx w + 1) := List.drop_left' hlen1
   rw [htake, hdrop]
   exact (ways_split w).symm
 

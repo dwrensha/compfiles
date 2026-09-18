@@ -44,9 +44,8 @@ lemma f_periodic (n : ℕ) (x : ℝ) : f n (x + 1) = f n x := by
   unfold f
   simp_rw [mul_add, mul_one]
 
-  have h_floor : ∀ m : ℕ, ⌊(m : ℝ) * x + (m : ℝ)⌋ = ⌊(m : ℝ) * x⌋ + (m : ℤ) := by
-    intro m
-    exact Int.floor_add_natCast (↑m * x) m
+  have h_floor : ∀ m : ℕ, ⌊(m : ℝ) * x + (m : ℝ)⌋ = ⌊(m : ℝ) * x⌋ + (m : ℤ) :=
+    fun m ↦ Int.floor_add_natCast _ m
 
   have h2 : ∀ k ∈ Icc 1 n, (⌊(k : ℝ) * x + (k : ℝ)⌋ : ℝ) / (k : ℝ) = ((⌊(k : ℝ) * x⌋ : ℝ) / (k : ℝ)) + 1 := by
     intro k hk
@@ -255,10 +254,7 @@ lemma core_sum_bound (n p : ℕ) (hp1 : 1 ≤ p) (hpn : p < n) :
         have : (((⌈y⌉ : ℤ) - 1 : ℤ) : ℝ) = y - 1 := by
           rw [h_ceil]; push_cast; linarith [hy_int]
         linarith
-      · have h_fract_pos : 0 < Int.fract y := by
-          rw [Int.fract_pos]
-          intro hfr
-          exact hy_int hfr
+      · have h_fract_pos : 0 < Int.fract y := Int.fract_pos.mpr hy_int
         have h_frac_bound : 1 / (n : ℝ) ≤ Int.fract y := by
           have h_nfr_pos : 0 < (n : ℝ) * Int.fract y := mul_pos hn_pos h_fract_pos
           have h_ny_eq : (n : ℝ) * y = ((k * (p + 1) : ℕ) : ℝ) := by
@@ -301,9 +297,7 @@ lemma core_sum_bound (n p : ℕ) (hp1 : 1 ≤ p) (hpn : p < n) :
   have h_frac_le : ∀ k ∈ Icc 1 n,
     (((⌈(k : ℝ) * ((p + 1 : ℝ) / (n : ℝ))⌉ : ℤ) - 1 : ℤ) : ℝ) / (k : ℝ) ≤ (⌊(k : ℝ) * x⌋ : ℝ) / (k : ℝ) := by
     intro k hk
-    apply div_le_div_of_nonneg_right (h_pointwise k hk)
-    have : 1 ≤ k := (mem_Icc.mp hk).1
-    positivity
+    exact div_le_div_of_nonneg_right (h_pointwise k hk) (Nat.cast_nonneg' k)
 
   calc
     ∑ k ∈ Icc 1 n, (((⌈(k : ℝ) * ((p + 1 : ℝ) / (n : ℝ))⌉ : ℤ) - 1 : ℤ) : ℝ) / (k : ℝ)
@@ -328,9 +322,8 @@ lemma T_nonneg (n : ℕ) (y : ℝ) (hn : 2 ≤ n) (hy1 : 0 < y) (hy2 : y ≤ 1) 
       rw [le_div_iff₀ hn_pos]
       linarith
     rw [T_eq_zero_of_small_y n y hn hy1 hy_le_1_n]
-  · have ⟨p, hp_eq⟩ : ∃ p : ℕ, (p : ℤ) = p_int := by
-      have h1 : 0 ≤ p_int := hp_ge_zero
-      exact ⟨p_int.toNat, Int.toNat_of_nonneg h1⟩
+  · have ⟨p, hp_eq⟩ : ∃ p : ℕ, (p : ℤ) = p_int :=
+      ⟨p_int.toNat, Int.toNat_of_nonneg hp_ge_zero⟩
 
     have hp_real : (p : ℝ) = (((⌈(n : ℝ) * y⌉ : ℤ) - 1 : ℤ) : ℝ) := by
       have : (p : ℤ) = ((⌈(n : ℝ) * y⌉ : ℤ) - 1 : ℤ) := hp_eq
@@ -376,7 +369,7 @@ lemma T_nonneg (n : ℕ) (y : ℝ) (hn : 2 ≤ n) (hy1 : 0 < y) (hy2 : y ≤ 1) 
         apply Int.cast_le.mpr
         apply sub_le_sub_right
         apply Int.ceil_mono
-        exact mul_le_mul_of_nonneg_left hy_le_frac (le_of_lt hk_pos)
+        exact mul_le_mul_of_nonneg_left hy_le_frac hk_pos.le
       calc
         ∑ k ∈ Icc 1 n, (((⌈(k : ℝ) * y⌉ : ℤ) - 1 : ℤ) : ℝ) / (k : ℝ)
           ≤ ∑ k ∈ Icc 1 n, (((⌈(k : ℝ) * ((p + 1 : ℝ) / (n : ℝ))⌉ : ℤ) - 1 : ℤ) : ℝ) / (k : ℝ) := sum_le_sum h_term_le

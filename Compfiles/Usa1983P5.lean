@@ -247,8 +247,8 @@ lemma card_le_half_of_no_dvd
     s.card ≤ (n + 1) / 2 := by
   let oddIndex : {a // a ∈ s} → Fin ((n + 1) / 2) := fun a =>
     ⟨oddPart a.1 / 2, oddPart_index_lt_half (hs a.2)⟩
-  have oddIndex_injective : Function.Injective oddIndex := by
-    simpa [oddIndex] using oddIndex_injective_of_no_dvd hs hantichain
+  have oddIndex_injective : Function.Injective oddIndex :=
+    oddIndex_injective_of_no_dvd hs hantichain
   simpa [oddIndex] using Fintype.card_le_of_injective oddIndex oddIndex_injective
 
 lemma denoms_subset_Icc (x : ℝ) (n : ℕ) :

@@ -428,9 +428,7 @@ problem imo2026_p4 (θ : ℝ) (hθ0 : 0 < θ) (hθ180 : θ < 180) :
         find_cut θ hθ0 n hn2 hnθ a b c ha hb hc hsum3 hmul
       have hB0 : 0 < B := hpos B (by rw [hsABC, mem3]; exact Or.inr (Or.inl rfl))
       have hC0 : 0 < C := hpos C (by rw [hsABC, mem3]; exact Or.inr (Or.inr rfl))
-      have hmθ : (0 : ℝ) < (m : ℝ) * θ := by
-        have h1 : (0 : ℝ) < (m : ℝ) := by exact_mod_cast hm1
-        positivity
+      have hmθ : (0 : ℝ) < (m : ℝ) * θ := hC0.trans hmC
       have hmn : m ≤ n - 1 := by
         have h1 : (m : ℝ) * θ < (n : ℝ) * θ := by linarith
         have h2 : (m : ℝ) < (n : ℝ) := lt_of_mul_lt_mul_right h1 (le_of_lt hθ0)
