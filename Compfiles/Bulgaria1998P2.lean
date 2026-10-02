@@ -32,9 +32,15 @@ open EuclideanGeometry
 
 problem bulgaria1998_p2
     (A B C D E M : EuclideanSpace ℝ (Fin 2))
+    -- ABCD is a nondegenerate convex quadrilateral: its diagonals AC and BD
+    -- cross at a point strictly inside both of them.
+    (hABC : ¬ Collinear ℝ {A, B, C})
+    (hConvex : ∃ Q, Sbtw ℝ A Q C ∧ Sbtw ℝ B Q D)
     (H1 : dist D A = dist D C)
     (H2 : ∠ D A B = ∠ A B C)
-    (H3 : M = midpoint ℝ B C) :
+    (H3 : M = midpoint ℝ B C)
+    (hEAB : Collinear ℝ {A, B, E})
+    (hEDM : Collinear ℝ {D, M, E}) :
     ∠ B E C = ∠ D A C := by
   let x := ∠ D A C
   have : ∠ D A C = ∠ D C A := EuclideanGeometry.angle_eq_angle_of_dist_eq H1
