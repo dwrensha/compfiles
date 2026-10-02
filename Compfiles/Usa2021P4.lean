@@ -33,7 +33,7 @@ such that for every `s ∈ S` and every positive divisor `d` of `s` there exists
 def IsValid (S : Finset ℕ) : Prop :=
   (∀ s ∈ S, 0 < s) ∧ ∀ s ∈ S, ∀ d : ℕ, 0 < d → d ∣ s → ∃! t : ℕ, t ∈ S ∧ Nat.gcd s t = d
 
-determine solution_set : Set ℕ := {n | ∃ k : ℕ, n = 2 ^ k}
+determine solution_set : Set ℕ := {n | n = 0 ∨ ∃ k : ℕ, n = 2 ^ k}
 
 snip begin
 
@@ -421,13 +421,17 @@ theorem exists_isValid (k : ℕ) : ∃ S : Finset ℕ, IsValid S ∧ S.Nonempty 
 snip end
 
 problem usa2021_p4 (n : ℕ) :
-    n ∈ solution_set ↔ ∃ S : Finset ℕ, IsValid S ∧ S.Nonempty ∧ S.card = n := by
-  show (∃ k : ℕ, n = 2 ^ k) ↔ ∃ S : Finset ℕ, IsValid S ∧ S.Nonempty ∧ S.card = n
+    n ∈ solution_set ↔ ∃ S : Finset ℕ, IsValid S ∧ S.card = n := by
+  show (n = 0 ∨ ∃ k : ℕ, n = 2 ^ k) ↔ ∃ S : Finset ℕ, IsValid S ∧ S.card = n
   constructor
-  · rintro ⟨k, rfl⟩
-    exact exists_isValid k
-  · rintro ⟨S, hS, hne, hcard⟩
-    obtain ⟨k, hk⟩ := card_eq_two_pow hS hne
-    exact ⟨k, hcard ▸ hk⟩
+  · rintro (rfl | ⟨k, rfl⟩)
+    · -- The empty set satisfies the condition vacuously.
+      exact ⟨∅, ⟨by simp, by simp⟩, rfl⟩
+    · obtain ⟨S, hS, -, hcard⟩ := exists_isValid k
+      exact ⟨S, hS, hcard⟩
+  · rintro ⟨S, hS, rfl⟩
+    rcases S.eq_empty_or_nonempty with rfl | hne
+    · exact Or.inl rfl
+    · exact Or.inr (card_eq_two_pow hS hne)
 
 end Usa2021P4
