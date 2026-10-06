@@ -61,6 +61,7 @@ public import Compfiles.Imo1973P3
 public import Compfiles.Imo1973P5
 public import Compfiles.Imo1973P6
 public import Compfiles.Imo1974P1
+public import Compfiles.Imo1974P2
 public import Compfiles.Imo1974P3
 public import Compfiles.Imo1974P4
 public import Compfiles.Imo1974P5
