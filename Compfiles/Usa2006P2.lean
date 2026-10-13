@@ -9,8 +9,8 @@ module
 public import Mathlib.Algebra.BigOperators.Intervals
 public import Mathlib.Algebra.BigOperators.Ring.Finset
 public import Mathlib.Algebra.Order.Ring.Star
-public import Mathlib.Data.Int.ConditionallyCompleteOrder
-public import Mathlib.Data.Int.Star
+public import Mathlib.Order.Int.ConditionallyCompleteOrder
+public import Mathlib.Algebra.Order.Star.Int
 public import Mathlib.Tactic.Linarith
 public import Mathlib.Tactic.Linarith.Lemmas
 public import Mathlib.Tactic.LinearCombination

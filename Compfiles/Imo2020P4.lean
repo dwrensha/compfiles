@@ -780,9 +780,7 @@ problem imo2020_p4 (n : Set.Ioi 1) :
       rw [Fintype.card_fin, hA, pow_two]
       rw [Nat.mul_lt_mul_right (by lia)]
       lia
-    have : DecidableEq A.graph.ConnectedComponent := by
-      intro a b
-      use Classical.propDecidable _
+    have : DecidableEq A.graph.ConnectedComponent := Classical.decEq _
     have h₁ := Fintype.exists_lt_card_fiber_of_mul_lt_card (fun v : Fin (n ^ 2) ↦ A.graph.connectedComponentMk v) h₁'
     rcases h₁ with ⟨CC_A, hCC_A⟩
     have h₂' : Fintype.card B.graph.ConnectedComponent < Fintype.card ({x | A.graph.connectedComponentMk x = CC_A} : Finset _) := by

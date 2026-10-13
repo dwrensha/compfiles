@@ -193,7 +193,7 @@ lemma ineq3 {x y z : ℝ} (hx : 0 ≤ x) (hy : 0 ≤ y) (hz : 0 ≤ z) :
 snip end
 
 problem usa1979_p3 (n : ℕ) [NeZero n] (a : Fin n → ℕ) (_ha : ∀ i, 0 < a i) :
-    1 / 4 ≤ (PMF.uniformOfFintype (Fin 3 → Fin n)).toOuterMeasure
+    1 / 4 ≤ MeasureTheory.Measure.uniformOfFinset (Finset.univ : Finset (Fin 3 → Fin n))
       {t | 3 ∣ a (t 0) + a (t 1) + a (t 2)} := by
   set c₀ := cnt a 0 with hc₀
   set c₁ := cnt a 1 with hc₁
@@ -216,9 +216,9 @@ problem usa1979_p3 (n : ℕ) [NeZero n] (a : Fin n → ℕ) (_ha : ∀ i, 0 < a 
     rw [one_div]
     exact ENNReal.inv_mul_cancel (by norm_num) (by simp)
   have hcast : ((n ^ 3 : ℕ) : ENNReal) ≤ 4 * (N : ENNReal) := by exact_mod_cast hnat
-  rw [PMF.toOuterMeasure_uniformOfFintype_apply, ← Nat.card_eq_fintype_card,
-    show ↥{t : Fin 3 → Fin n | 3 ∣ a (t 0) + a (t 1) + a (t 2)}
-      = {t : Fin 3 → Fin n // 3 ∣ a (t 0) + a (t 1) + a (t 2)} from rfl,
+  rw [MeasureTheory.Measure.uniformOfFinset_apply]
+  simp only [Set.mem_ofPred_eq]
+  rw [← Fintype.card_subtype, Finset.card_univ, ← Nat.card_eq_fintype_card (α := {t // _}),
     hnum, htot, ENNReal.le_div_iff_mul_le (Or.inl hside0) (Or.inl hside1)]
   calc (1 / 4 : ENNReal) * ((n ^ 3 : ℕ) : ENNReal)
       ≤ (1 / 4 : ENNReal) * (4 * (N : ENNReal)) := mul_le_mul_right hcast _

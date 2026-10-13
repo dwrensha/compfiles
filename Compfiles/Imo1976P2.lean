@@ -285,17 +285,17 @@ theorem P_intersect_X {n : ℕ} {npos : 0 < n} (pl : NicePlotOfP n npos) (i : �
     · apply pl.strictMono.monotone
       simp
     · apply pl.strictMono
-      grind only [= Finset.mem_range, = Lean.Grind.toInt_fin]
+      grind only [= Finset.mem_range]
   have : 0 < i → -2 < a  := by
     intro ih'
     rw [← pl.x_first]
     apply pl.strictMono
-    grind only [= Finset.mem_range, = Lean.Grind.toInt_fin]
+    grind only [= Finset.mem_range]
   have : -2 < b ∧ b < 2 := by
     rw [← pl.x_first, ← pl.x_last]
     and_intros <;> {
       apply pl.strictMono
-      grind only [= Finset.mem_range, = Lean.Grind.toInt_fin, pl.len]
+      grind only [= Finset.mem_range, pl.len]
     }
   have fafb : f a * f b < 0 := by
     unfold f

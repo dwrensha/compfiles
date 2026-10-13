@@ -236,13 +236,13 @@ problem imo1973_p6 (npos : 0 < n) (hq : q ∈ Set.Ioo 0 1) (apos : ∀ i, 0 < a 
             intro x xh
             congr
             unfold Int.natAbs
-            split <;> grind only [= Finset.mem_Iic, = Finset.mem_Ioo, = Lean.Grind.toInt_fin]
+            split <;> grind only [= Finset.mem_Iic, = Finset.mem_Ioo]
           }
         _ = ∑ k ≤ i.val, q ^ k + ∑ k ∈ Finset.Ioo 0 (n-i.val), q ^ k := by
           congr 1
           · apply Finset.sum_bij (fun j h => i.val-j)
             · simp
-            · grind only [= Finset.mem_Iic, = Lean.Grind.toInt_fin]
+            · grind only [= Finset.mem_Iic]
             · intro y yh
               use i.val - y
               simp only [Finset.mem_Iic, tsub_le_iff_right, le_add_iff_nonneg_right, zero_le,
@@ -253,7 +253,7 @@ problem imo1973_p6 (npos : 0 < n) (hq : q ∈ Set.Ioo 0 1) (apos : ∀ i, 0 < a 
           · apply Finset.sum_bij (fun j h => j-i.val)
             · simp only [Finset.mem_Ioo, and_imp]
               lia
-            · grind only [= Finset.mem_Ioo, = Lean.Grind.toInt_fin]
+            · grind only [= Finset.mem_Ioo]
             · intro y yh
               use y + i.val
               simp only [add_tsub_cancel_right, Finset.mem_Ioo,

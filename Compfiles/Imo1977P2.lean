@@ -85,9 +85,8 @@ problem imo1977_p2 :
       have := (c (j.castLT (by lia))).left (by rw [Fin.val_castLT]; lia)
       unfold sum_successive_terms at this
       apply this.trans_eq'
-      apply Finset.sum_bij' (fun x h => ⟨x.val-j.val, by grind⟩) (fun y _ => ⟨j.val+y.val, by lia⟩) <;> {
-        simp <;> grind only [= Fin.val_castLT, = Lean.Grind.toInt_fin, = Finset.mem_Icc]
-      }
+      apply Finset.sum_bij' (fun x h => ⟨x.val-j.val, by grind⟩) (fun y _ => ⟨j.val+y.val, by lia⟩) <;>
+        simp <;> grind only [= Fin.val_castLT, = Finset.mem_Icc]
 
     have cpos : ∀ j, 0 < (A *ᵥ 1) j := by
       intro j
@@ -97,9 +96,8 @@ problem imo1977_p2 :
       have := (c (j.castLT (by lia))).right (by rw [Fin.val_castLT]; lia)
       unfold sum_successive_terms at this
       apply this.trans_eq
-      apply Finset.sum_bij' (fun x h => ⟨x.val-j.val, by grind⟩) (fun y _ => ⟨j.val+y.val, by lia⟩) <;> {
-        simp <;> grind only [= Fin.val_castLT, = Lean.Grind.toInt_fin, = Finset.mem_Icc]
-      }
+      apply Finset.sum_bij' (fun x h => ⟨x.val-j.val, by grind⟩) (fun y _ => ⟨j.val+y.val, by lia⟩) <;>
+        simp <;> grind only [= Fin.val_castLT, = Finset.mem_Icc]
 
     have : (1 ᵥ* A) ⬝ᵥ 1 < 0 := by
       rw [dotProduct_one]

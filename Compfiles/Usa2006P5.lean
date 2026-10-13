@@ -8,8 +8,8 @@ module
 
 public import Mathlib.Algebra.CharP.Defs
 public import Mathlib.Algebra.Order.Ring.Star
-public import Mathlib.Data.Int.ConditionallyCompleteOrder
-public import Mathlib.Data.Int.Star
+public import Mathlib.Order.Int.ConditionallyCompleteOrder
+public import Mathlib.Algebra.Order.Star.Int
 public import Mathlib.Data.Nat.Factorization.Defs
 public import Mathlib.Order.Lattice.Nat
 public import Mathlib.Tactic.Linarith

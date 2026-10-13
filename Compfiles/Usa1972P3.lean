@@ -29,7 +29,8 @@ namespace Usa1972P3
 abbrev Digit := Fin 9
 abbrev DigitSeq (n : ℕ) := Fin n → Digit
 
-noncomputable def unifDistN (n : ℕ) := PMF.uniformOfFintype (DigitSeq n)
+noncomputable def unifDistN (n : ℕ) :=
+  MeasureTheory.Measure.uniformOfFinset (Finset.univ : Finset (DigitSeq n))
 
 
 def to_nat_digit : Digit → ℕ := fun d ↦ d + 1
@@ -137,10 +138,10 @@ noncomputable determine solution (n : ℕ) : ENNReal :=
   1 + (4 / 9) ^ n - (8 / 9) ^ n - (5 / 9) ^ n
 
 problem usa1972_p3 (n : ℕ) (_hn : 1 < n) :
-  (unifDistN n).toOuterMeasure good_seqs = solution n := by
+  unifDistN n good_seqs = solution n := by
   classical
   have hcard := card_good_balance n
-  rw [unifDistN, PMF.uniformOfFintype, PMF.toOuterMeasure_uniformOfFinset_apply]
+  rw [unifDistN, MeasureTheory.Measure.uniformOfFinset_apply]
   simp only [good_seqs, Set.mem_ofPred_eq, Finset.card_univ, Fintype.card_pi, Fintype.card_fin,
     Finset.prod_const, Nat.cast_pow, Nat.cast_ofNat]
   rw [solution]

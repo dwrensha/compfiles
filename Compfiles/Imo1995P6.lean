@@ -7,6 +7,7 @@ Authors: Kimi K3
 module
 
 public import Mathlib.Algebra.BigOperators.Intervals
+public import Mathlib.Algebra.BigOperators.Ring.Finset
 public import Mathlib.Algebra.BigOperators.ModEq
 public import Mathlib.Algebra.Field.ZMod
 public import Mathlib.Tactic.Ring

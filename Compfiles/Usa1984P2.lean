@@ -7,7 +7,7 @@ Authors: Kimi K3
 module
 
 public import Mathlib.Algebra.Order.Star.Basic
-public import Mathlib.Data.Int.ConditionallyCompleteOrder
+public import Mathlib.Order.Int.ConditionallyCompleteOrder
 public import Mathlib.Data.Nat.Factorization.Defs
 public import Mathlib.GroupTheory.GroupAction.Ring
 public import Mathlib.Order.Interval.Finset.Nat

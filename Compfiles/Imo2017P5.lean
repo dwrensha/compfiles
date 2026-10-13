@@ -10,7 +10,7 @@ public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Algebra.Order.Ring.Star
 public import Mathlib.AlgebraicTopology.SimplexCategory.Basic
 public import Mathlib.Data.Finset.Fin
-public import Mathlib.Data.Nat.SuccPred
+public import Mathlib.Order.SuccPred.Nat
 public import Mathlib.Data.ZMod.Defs
 public import Mathlib.Order.Interval.Finset.Nat
 public import Mathlib.Tactic.Ring

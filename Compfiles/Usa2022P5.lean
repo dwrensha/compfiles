@@ -14,7 +14,7 @@ public import Mathlib.AlgebraicTopology.SimplexCategory.Basic
 public import Mathlib.Data.Fintype.BigOperators
 public import Mathlib.Data.Nat.Bitwise
 public import Mathlib.Data.Nat.Log
-public import Mathlib.Data.Nat.SuccPred
+public import Mathlib.Order.SuccPred.Nat
 public import Mathlib.Tactic.IntervalCases
 public import ProblemExtraction
 

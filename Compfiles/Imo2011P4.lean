@@ -10,8 +10,8 @@ public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import Mathlib.Algebra.Order.Ring.Star
 public import Mathlib.Algebra.Ring.GeomSum
 public import Mathlib.AlgebraicTopology.SimplexCategory.Basic
-public import Mathlib.Data.Int.ConditionallyCompleteOrder
-public import Mathlib.Data.Int.Star
+public import Mathlib.Order.Int.ConditionallyCompleteOrder
+public import Mathlib.Algebra.Order.Star.Int
 public import Mathlib.Data.Nat.Factorial.DoubleFactorial
 public import Mathlib.Order.Lattice.Nat
 public import Mathlib.SetTheory.Cardinal.Finite

@@ -10,7 +10,7 @@ public import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import Mathlib.Algebra.Order.Ring.Nat
 public import Mathlib.Data.Finset.Max
-public import Mathlib.Data.Nat.SuccPred
+public import Mathlib.Order.SuccPred.Nat
 public import Mathlib.Tactic.Ring
 public import ProblemExtraction
 

@@ -6,6 +6,7 @@ Authors: Kimi K3
 
 module
 
+public import Mathlib.Data.Finset.Basic
 public import Mathlib.Data.Finset.Card
 public import Mathlib.Tactic.Ring
 public import Mathlib.Tactic.Ring.Basic

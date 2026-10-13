@@ -214,7 +214,7 @@ problem imo2012_p4 (f : ℤ → ℤ) :
           have «fx=x²f1» (x : ℤ) : f x = x ^ 2 * f 1 := by
             wlog pos : x ≥ 0 with H
 
-            case inr =>
+            case isFalse =>
               rcases x with x | x; case ofNat => simp at pos
               rw [Int.negSucc_eq, even, neg_pow_two]
               apply H <;> try assumption

@@ -10,8 +10,8 @@ public import Mathlib.Algebra.Order.Ring.Star
 public import Mathlib.Algebra.Polynomial.Roots
 public import Mathlib.Algebra.Ring.IsFormallyReal
 public import Mathlib.Analysis.Normed.Field.Basic
-public import Mathlib.Data.Int.ConditionallyCompleteOrder
-public import Mathlib.Data.Int.Star
+public import Mathlib.Order.Int.ConditionallyCompleteOrder
+public import Mathlib.Algebra.Order.Star.Int
 public import Mathlib.Order.Interval.Set.Infinite
 public import Mathlib.Tactic.FieldSimp
 public import Mathlib.Tactic.IntervalCases

@@ -7,8 +7,8 @@ Authors: Kimi K3
 module
 
 public import Mathlib.Algebra.Order.Ring.Star
-public import Mathlib.Data.Int.ConditionallyCompleteOrder
-public import Mathlib.Data.Int.Star
+public import Mathlib.Order.Int.ConditionallyCompleteOrder
+public import Mathlib.Algebra.Order.Star.Int
 public import Mathlib.Data.Nat.Choose.Factorization
 public import ProblemExtraction
 

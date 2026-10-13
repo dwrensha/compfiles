@@ -84,7 +84,7 @@ lemma collinear_iff_sum {a b c : ℝ} (hab : a ≠ b) (hbc : b ≠ c) (hca : c �
   simp only [LinearEquiv.coe_coe]
   let M : Matrix (Fin 2) (Fin 2) ℝ := .of (isom ∘ X)
   rw [show isom ∘ X = M.row by rfl]
-  rw [Matrix.linearIndependent_rows_iff_isUnit, Matrix.isUnit_iff_isUnit_det, isUnit_iff_ne_zero]
+  rw [Matrix.linearIndependent_row_iff_isUnit, Matrix.isUnit_iff_isUnit_det, isUnit_iff_ne_zero]
   -- Write the explicit matrix
   have hM : M = !![a-c, (a-(2014/3))^3-(c-(2014/3))^3; b-c, (b-(2014/3))^3-(c-(2014/3))^3] := by
     rw [← Matrix.ext_iff, Fin.forall_fin_succ]

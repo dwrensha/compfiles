@@ -10,7 +10,7 @@ public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import Mathlib.Algebra.Order.Field.Basic
 public import Mathlib.Algebra.Order.Ring.Star
 public import Mathlib.Data.Fintype.BigOperators
-public import Mathlib.Data.Rat.Star
+public import Mathlib.Algebra.Order.Star.Rat
 public import Mathlib.Tactic.FieldSimp
 public import Mathlib.Tactic.FieldSimp.Lemmas
 public import Mathlib.Tactic.IntervalCases

@@ -9,8 +9,8 @@ module
 public import Mathlib.Algebra.CharP.Defs
 public import Mathlib.Algebra.Order.Archimedean.Real.Basic
 public import Mathlib.Algebra.Order.Ring.Star
-public import Mathlib.Data.Int.ConditionallyCompleteOrder
-public import Mathlib.Data.Int.Star
+public import Mathlib.Order.Int.ConditionallyCompleteOrder
+public import Mathlib.Algebra.Order.Star.Int
 public import Mathlib.Data.Nat.Nth
 public import Mathlib.Data.Nat.PrimeFin
 public import ProblemExtraction

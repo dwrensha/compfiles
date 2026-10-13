@@ -8,7 +8,7 @@ module
 
 public import Mathlib.Algebra.BigOperators.Ring.Finset
 public import Mathlib.Algebra.Field.ZMod
-public import Mathlib.Data.Int.ConditionallyCompleteOrder
+public import Mathlib.Order.Int.ConditionallyCompleteOrder
 public import Mathlib.Data.Nat.Dist
 public import Mathlib.Tactic.Ring
 public import Mathlib.Tactic.Ring.Basic
@@ -501,8 +501,7 @@ lemma winnable_aux (f : Conf) (hnn : ∀ i, 0 ≤ f i) (hodd : Odd (∑ i, f i))
       have e1 : g' ∘ (· + -p) = g := by
         funext i
         show g (i + -p + p) = g i
-        congr 1
-        ring
+        rw [neg_add_cancel_right]
       have e2 : (0 : Conf) ∘ (· + -p) = 0 := rfl
       rw [e1, e2] at ht
       exact ht

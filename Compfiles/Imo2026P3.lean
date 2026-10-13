@@ -2130,7 +2130,7 @@ noncomputable def commonAtoms : List ℝ → List ℝ → List ℝ
       else
         y :: commonAtoms ((x - y) :: xs) ys
 termination_by xs ys => xs.length + ys.length
-decreasing_by all_goals simp_all <;> lia
+decreasing_by all_goals simp_all; all_goals lia
 
 theorem commonAtoms_spec (xs ys : List ℝ)
     (hxpos : ∀ x ∈ xs, 0 < x) (hypos : ∀ y ∈ ys, 0 < y)
@@ -2337,7 +2337,7 @@ theorem commonAtoms_scanRefines (xs ys : List ℝ)
                   (y :: commonAtoms (d :: xt) yt) := ih.2.cons_same y
               simpa [commonAtoms, heq, hlt, d] using And.intro hleft hright
 termination_by xs.length + ys.length
-decreasing_by all_goals simp_all <;> lia
+decreasing_by all_goals simp_all; all_goals lia
 
 
 open scoped BigOperators List

@@ -7,7 +7,7 @@ Authors: Kimi K3
 module
 
 public import Mathlib.Algebra.Order.Ring.Star
-public import Mathlib.Data.Int.Star
+public import Mathlib.Algebra.Order.Star.Int
 public import Mathlib.Data.Nat.Prime.Factorial
 public import Mathlib.NumberTheory.Bertrand
 public import ProblemExtraction
@@ -122,7 +122,7 @@ lemma not_good_of_seven_le {n : ℕ} (h7 : 7 ≤ n) (hn12 : n ≤ 12) : ¬ Good 
   have hd14 : 14 ∣ Nat.factorial n := (by decide : 14 ∣ Nat.factorial 7).trans hfact7
   have hd15 : 15 ∣ Nat.factorial n := (by decide : 15 ∣ Nat.factorial 7).trans hfact7
   have hd13 : ¬ 13 ∣ Nat.factorial n := by
-    rw [Nat.Prime.dvd_factorial (by norm_num : Nat.Prime 13)]
+    rw [Nat.Prime.dvd_factorial (by decide : Nat.Prime 13)]
     lia
   have hmem : ∀ {d : ℕ}, d ∣ Nat.factorial n → d ∈ (Nat.factorial n).divisors :=
     fun hd => Nat.mem_divisors.mpr ⟨hd, Nat.factorial_ne_zero n⟩

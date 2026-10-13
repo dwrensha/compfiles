@@ -72,7 +72,7 @@ lemma A_sum (i : Fin n) : (A i).sum id = 16915 := by
   simp only [Finset.sum_range_succ, Finset.sum_range_zero, id, row]
   norm_num [n]
   have hi := i.isLt; simp only [n] at hi
-  lia
+  generalize (i : ℕ) = k at *; lia
 
 lemma A_injective : Function.Injective A := by
   intro i₁ i₂ h

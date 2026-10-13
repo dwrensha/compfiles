@@ -12,7 +12,7 @@ public import Mathlib.Algebra.BigOperators.Ring.Finset
 public import Mathlib.Algebra.CharP.Defs
 public import Mathlib.Algebra.Order.BigOperators.GroupWithZero.Finset
 public import Mathlib.Algebra.Order.Ring.Star
-public import Mathlib.Data.Rat.Star
+public import Mathlib.Algebra.Order.Star.Rat
 public import Mathlib.Tactic.FieldSimp
 public import Mathlib.Tactic.Positivity.Basic
 public import Mathlib.Tactic.Ring

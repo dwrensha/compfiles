@@ -9,7 +9,7 @@ module
 public import Mathlib.Algebra.Order.Ring.Star
 public import Mathlib.AlgebraicTopology.SimplexCategory.Basic
 public import Mathlib.Analysis.Normed.Ring.Lemmas
-public import Mathlib.Data.Int.Star
+public import Mathlib.Algebra.Order.Star.Int
 public import Mathlib.RingTheory.Coprime.Lemmas
 public import Mathlib.Tactic.LinearCombination
 public import Mathlib.Tactic.LinearCombination.Lemmas

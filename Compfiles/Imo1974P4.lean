@@ -286,9 +286,9 @@ problem imo1974_p4 :
   · -- Each of the four sets is realised by an explicit decomposition.
     simp only [solutions, Finset.mem_insert, Finset.mem_singleton] at hs
     rcases hs with rfl | rfl | rfl | rfl
-    · exact ⟨decomp₁, by decide, by decide, by decide⟩
-    · exact ⟨decomp₂, by decide, by decide, by decide⟩
-    · exact ⟨decomp₃, by decide, by decide, by decide⟩
-    · exact ⟨decomp₄, by decide, by decide, by decide⟩
+    · exact ⟨decomp₁, by decide +kernel, by decide, by decide⟩
+    · exact ⟨decomp₂, by decide +kernel, by decide, by decide⟩
+    · exact ⟨decomp₃, by decide +kernel, by decide, by decide⟩
+    · exact ⟨decomp₄, by decide +kernel, by decide, by decide⟩
 
 end Imo1974P4

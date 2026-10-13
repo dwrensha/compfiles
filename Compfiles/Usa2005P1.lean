@@ -9,8 +9,8 @@ module
 public import Mathlib.Algebra.Order.Ring.Star
 public import Mathlib.Data.Finset.NatDivisors
 public import Mathlib.Data.Finset.Sort
-public import Mathlib.Data.Int.ConditionallyCompleteOrder
-public import Mathlib.Data.Int.Star
+public import Mathlib.Order.Int.ConditionallyCompleteOrder
+public import Mathlib.Algebra.Order.Star.Int
 public import Mathlib.Data.Nat.Factorization.Basic
 public import Mathlib.Tactic.Linarith
 public import Mathlib.Tactic.NormNum.Ineq
@@ -603,7 +603,6 @@ lemma not_pq_of_factorization_ge_two {m p : ℕ} (_hp : p.Prime)
     · by_cases h3 : p = s
       · rw [h3, Finsupp.add_apply, Finsupp.single_eq_same,
           Finsupp.single_eq_of_ne hrs.symm]
-        try lia
       · rw [Finsupp.add_apply, Finsupp.single_eq_of_ne h2,
           Finsupp.single_eq_of_ne h3]
         try lia
@@ -932,7 +931,7 @@ lemma goodCircle_of_not_pq : ∀ (k : ℕ) (n : ℕ), n.primeFactors.card = k �
           have h1 : m.factorization ps ≤ 1 := by
             rw [hmp.factorization]
             by_cases h2 : ps = m
-            · subst h2; rw [Finsupp.single_eq_same]; try lia
+            · subst h2; rw [Finsupp.single_eq_same]
             · rw [Finsupp.single_eq_of_ne h2]; try lia
           lia
         have hmnpq : ¬ ∃ r s : ℕ, r.Prime ∧ s.Prime ∧ r ≠ s ∧ m = r * s :=

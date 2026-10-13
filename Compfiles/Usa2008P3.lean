@@ -10,10 +10,10 @@ public import Mathlib.Algebra.BigOperators.Group.Finset.Sigma
 public import Mathlib.Algebra.CharP.Defs
 public import Mathlib.Algebra.Order.BigOperators.Group.List
 public import Mathlib.Algebra.Order.Ring.Star
-public import Mathlib.Data.Int.ConditionallyCompleteOrder
+public import Mathlib.Order.Int.ConditionallyCompleteOrder
 public import Mathlib.Data.Int.Interval
 public import Mathlib.Data.Int.ModEq
-public import Mathlib.Data.Int.Star
+public import Mathlib.Algebra.Order.Star.Int
 public import Mathlib.Order.ConditionallyCompleteLattice.Basic
 public import Mathlib.Tactic.Linarith
 public import Mathlib.Tactic.Linarith.Lemmas

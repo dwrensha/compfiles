@@ -11,7 +11,7 @@ public import Mathlib.Algebra.BigOperators.Fin
 public import Mathlib.Algebra.BigOperators.Intervals
 public import Mathlib.AlgebraicTopology.SimplexCategory.Basic
 public import Mathlib.Combinatorics.Hall.Basic
-public import Mathlib.Data.Int.ConditionallyCompleteOrder
+public import Mathlib.Order.Int.ConditionallyCompleteOrder
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.Data.ZMod.Basic
 public import Mathlib.Tactic.Abel

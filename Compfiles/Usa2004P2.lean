@@ -9,7 +9,7 @@ module
 public import Mathlib.Algebra.BigOperators.Ring.Finset
 public import Mathlib.Algebra.CharP.Defs
 public import Mathlib.Algebra.GCDMonoid.Finset
-public import Mathlib.Data.Int.ConditionallyCompleteOrder
+public import Mathlib.Order.Int.ConditionallyCompleteOrder
 public import Mathlib.Order.ConditionallyCompleteLattice.Basic
 public import Mathlib.Tactic.NormNum.DivMod
 public import Mathlib.Tactic.Ring

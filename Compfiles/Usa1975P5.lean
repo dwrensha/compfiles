@@ -10,7 +10,7 @@ public import Mathlib.Algebra.BigOperators.Ring.Finset
 public import Mathlib.Algebra.EuclideanDomain.Basic
 public import Mathlib.Algebra.EuclideanDomain.Field
 public import Mathlib.Algebra.Order.Ring.Star
-public import Mathlib.Data.Rat.Star
+public import Mathlib.Algebra.Order.Star.Rat
 public import Mathlib.Order.Interval.Finset.Nat
 public import Mathlib.Tactic.CancelDenoms.Core
 public import Mathlib.Tactic.Linarith

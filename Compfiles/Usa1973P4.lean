@@ -7,6 +7,7 @@ Authors: Shalev Wengrowsky
 module
 
 public import Mathlib.Basic.Complex.Basic
+public import Mathlib.Tactic.LinearCombination
 
 public import ProblemExtraction
 
@@ -30,8 +31,20 @@ problem usa1973_p4 (x y z : ℂ) :
     x ^ 2 + y ^ 2 + z ^ 2 = 3 ∧
     x ^ 3 + y ^ 3 + z ^ 3 = 3 ↔ ⟨x,y,z⟩ ∈ solution_set := by
   constructor
-  · intro
-    ext <;> grind
+  · rintro ⟨h1, h2, h3⟩
+    have e2 : x*y + y*z + z*x = 3 := by
+      linear_combination (1/2 : ℂ) * ((x+y+z+3) * h1 - h2)
+    have e3 : x*y*z = 1 := by
+      linear_combination (1/3 : ℂ) * (h3 - (x^2+y^2+z^2 - (x*y+y*z+z*x)) * h1 - 3 * h2 + 3 * e2)
+    have key : ∀ t, t = x ∨ t = y ∨ t = z → t = 1 := by
+      rintro t ht
+      have : (t - 1)^3 = 0 := by
+        rcases ht with rfl | rfl | rfl
+        · linear_combination t^2 * h1 - t * e2 + e3
+        · linear_combination t^2 * h1 - t * e2 + e3
+        · linear_combination t^2 * h1 - t * e2 + e3
+      exact sub_eq_zero.mp (pow_eq_zero_iff (by norm_num) |>.mp this)
+    simp [solution_set, key x (by simp), key y (by simp), key z (by simp)]
   rintro _
   grind
 

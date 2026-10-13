@@ -9,8 +9,8 @@ module
 public import Mathlib.Algebra.Order.Ring.Star
 public import Mathlib.Algebra.Ring.IsFormallyReal
 public import Mathlib.Analysis.Normed.Field.Lemmas
-public import Mathlib.Data.Int.Star
-public import Mathlib.Data.Rat.Star
+public import Mathlib.Algebra.Order.Star.Int
+public import Mathlib.Algebra.Order.Star.Rat
 public import Mathlib.RingTheory.Int.Basic
 public import Mathlib.RingTheory.Polynomial.GaussLemma
 public import ProblemExtraction

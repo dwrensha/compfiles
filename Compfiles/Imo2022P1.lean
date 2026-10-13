@@ -1295,7 +1295,7 @@ lemma List.chainLeft_eq {α : Type u} [DecidableEq α] (l : List α) (k : Fin l.
         constructorm* _ ∧ _
         · apply le_of_lt
           apply List.blockIndex_lt
-        · grind only [= Lean.Grind.toInt_fin]
+        · grind only
         · intro j hj₁ hj₂
           set m := List.blockIndex l k with hm
           symm at hm
@@ -1308,12 +1308,12 @@ lemma List.chainLeft_eq {α : Type u} [DecidableEq α] (l : List α) (k : Fin l.
       contrapose! hi₂
       use ⟨(List.take (blockIndex l k) (blocks l)).sum - 1, by lia⟩
       constructorm* _ ∧ _
-      · grind only [= Lean.Grind.toInt_fin]
-      · grind only [= Lean.Grind.toInt_fin]
+      · grind only
+      · grind only
       · rw [← Option.some_inj.ne, List.some_get_eq_head?_get?_segments_blockIndex, List.some_get_eq_head?_get?_segments_blockIndex]
         apply List.head?_get?_segments_blockIndex_ne_of
         · have h : 0 < (List.take (blockIndex l k) (blocks l)).sum := by
-              grind only [=Lean.Grind.toInt_fin]
+              grind only
           have h' : 1 ≤ blockIndex l k := by
             rw [Nat.one_le_iff_ne_zero]
             contrapose! h
@@ -1391,16 +1391,16 @@ lemma List.chainRight_succ_eq {α : Type u} [DecidableEq α] (l : List α) (k : 
             rw [← List.sum_take_add_sum_drop (List.take j (blocks l)) (blockIndex l k + 1)]
             rw [List.take_take, min_eq_left hj₂]
             apply Nat.le_add_right
-          grind only [= Lean.Grind.toInt_fin]
+          grind only
     · intro i hi
       simp only [Finset.mem_filter, Finset.mem_Ici] at hi
       rcases hi with ⟨hi₁, hi₂⟩
       contrapose! hi₂
-      have h_use : (List.take (blockIndex l k + 1) (blocks l)).sum < l.length := by grind only [= Lean.Grind.toInt_fin]
+      have h_use : (List.take (blockIndex l k + 1) (blocks l)).sum < l.length := by grind only
       use ⟨(List.take (blockIndex l k + 1) (blocks l)).sum, h_use⟩
       constructorm* _ ∧ _
-      · grind only [= Lean.Grind.toInt_fin]
-      · grind only [= Lean.Grind.toInt_fin]
+      · grind only
+      · grind only
       · rw [← Option.some_inj.ne, List.some_get_eq_head?_get?_segments_blockIndex, List.some_get_eq_head?_get?_segments_blockIndex]
         symm
         have h : blockIndex l ⟨(List.take (blockIndex l k + 1) (blocks l)).sum, h_use⟩ = blockIndex l k + 1 := by

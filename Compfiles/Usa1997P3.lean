@@ -12,7 +12,7 @@ public import Mathlib.Algebra.Order.Ring.Star
 public import Mathlib.Algebra.Polynomial.Div
 public import Mathlib.Algebra.Ring.IsFormallyReal
 public import Mathlib.Analysis.Normed.Ring.Lemmas
-public import Mathlib.Data.Int.Star
+public import Mathlib.Algebra.Order.Star.Int
 public import ProblemExtraction
 
 @[expose] public section

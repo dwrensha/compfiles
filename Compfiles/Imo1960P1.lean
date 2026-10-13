@@ -89,7 +89,7 @@ theorem right_direction {n : ℕ} : ProblemPredicate n → SolutionPredicate n :
   iterate 82
     replace :=
       searchUpTo_step this (by norm_num1; rfl) (by norm_num1; rfl) rfl
-        (by norm_num <;> decide)
+        (by decide)
   exact searchUpTo_end this
 
 /-

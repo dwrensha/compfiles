@@ -3061,7 +3061,6 @@ def clipped_rect [NeZero k] (hk : 2 ≤ k) (s t : Int) : Option (Matilda (k * k)
         intro p hp h_in_rect
         zify at h_in_rect
         obtain ⟨hx1, hx2, hy1, hy2⟩ := h_in_rect
-        try zify at hx1 hx2 hy1 hy2
         have h_xmin_nonneg : 0 ≤ new_xmin := le_max_left 0 r_xmin
         have h_ymin_nonneg : 0 ≤ new_ymin := le_max_left 0 r_ymin
         have h_xmax_nonneg : 0 ≤ new_xmax := le_trans h_xmin_nonneg h_valid.1
@@ -3389,7 +3388,7 @@ lemma construction_is_valid_partition (k : ℕ) (hk : 2 ≤ k) [NeZero k]
       simp only [px, py]
       zify
       simp at *
-      repeat (first | constructor | linarith[hx_range, hy_range,
+      repeat (first | apply And.intro | apply Or.inl | linarith[hx_range, hy_range,
         h_in_M.1.1, h_in_M.1.2, h_in_M.2.1, h_in_M.2.2])
     · exfalso
       simp only [rect_finset, mem_filter, mem_univ, true_and, in_white_rect] at h_in_M

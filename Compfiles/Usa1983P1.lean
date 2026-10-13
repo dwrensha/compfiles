@@ -31,6 +31,9 @@ matters for this problem, and all `6!` orders are equally likely, so we take
 the uniform distribution on `Equiv.Perm (Fin 6)` as the sample space. -/
 abbrev Ordering := Equiv.Perm (Fin 6)
 
+/-- Every set of orderings is an event. -/
+instance : MeasurableSpace Ordering := ⊤
+
 /-- The event that the triangle formed by the first three points is disjoint
 from the triangle formed by the last three points. With six points on a
 circle, the two triangles are disjoint iff the two vertex sets do not
@@ -64,10 +67,11 @@ lemma card_orderings : Fintype.card Ordering = 720 := by
 snip end
 
 problem usa1983_p1 :
-    (PMF.uniformOfFintype Ordering).toOuterMeasure {σ | Favorable σ} = solution := by
-  rw [PMF.toOuterMeasure_uniformOfFintype_apply, Fintype.card_subtype]
+    MeasureTheory.Measure.uniformOfFinset (Finset.univ : Finset Ordering) {σ | Favorable σ} =
+      solution := by
+  rw [MeasureTheory.Measure.uniformOfFinset_apply]
   simp only [Set.mem_ofPred_eq]
-  rw [card_favorable, card_orderings, solution]
+  rw [card_favorable, Finset.card_univ, card_orderings, solution]
   rw [ENNReal.div_eq_div_iff (by norm_num) (by norm_num) (by norm_num) (by norm_num)]
   norm_num
 

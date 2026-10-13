@@ -9,9 +9,9 @@ module
 public import Mathlib.Algebra.Order.Ring.Star
 public import Mathlib.AlgebraicTopology.SimplexCategory.Basic
 public import Mathlib.Combinatorics.Enumerative.DoubleCounting
-public import Mathlib.Data.Int.ConditionallyCompleteOrder
+public import Mathlib.Order.Int.ConditionallyCompleteOrder
 public import Mathlib.Data.Int.ModEq
-public import Mathlib.Data.Int.Star
+public import Mathlib.Algebra.Order.Star.Int
 public import Mathlib.Tactic.Linarith
 public import Mathlib.Tactic.Ring
 public import ProblemExtraction

@@ -112,7 +112,7 @@ theorem isTerminalWalk_of_isSubwalk {V : Type} {G : SimpleGraph V} {u u' t : V} 
 
 instance instDecidableIsTerminalWalk {V : Type} [DecidableEq V] {G : SimpleGraph V} {u v : V} : DecidablePred (fun (w : G.Walk u v) => isTerminalWalk w) := fun w => by
   unfold isTerminalWalk
-  use inferInstance
+  exact inferInstance
 
 
 abbrev C : Fin 8 := 2

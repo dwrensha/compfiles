@@ -9,7 +9,7 @@ module
 public import Mathlib.Algebra.GCDMonoid.Multiset
 public import Mathlib.Algebra.GCDMonoid.Nat
 public import Mathlib.Algebra.Order.Ring.Star
-public import Mathlib.Data.Prod.Lex
+public import Mathlib.Order.Prod.Lex.Basic
 public import Mathlib.NumberTheory.Padics.PadicVal.Basic
 public import ProblemExtraction
 

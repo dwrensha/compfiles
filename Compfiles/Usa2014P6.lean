@@ -13,7 +13,7 @@ public import Mathlib.Algebra.Order.Star.Real
 public import Mathlib.Data.Nat.Cast.Order.Field
 public import Mathlib.Data.Nat.Factorization.Basic
 public import Mathlib.Data.Nat.Log
-public import Mathlib.Data.Rat.Star
+public import Mathlib.Algebra.Order.Star.Rat
 public import Mathlib.Tactic.Linarith
 public import Mathlib.Tactic.NormNum
 public import Mathlib.Tactic.Positivity.Basic

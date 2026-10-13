@@ -9,7 +9,7 @@ module
 public import Mathlib.Algebra.Field.ZMod
 public import Mathlib.Algebra.Order.Ring.Star
 public import Mathlib.Data.Rat.Floor
-public import Mathlib.Data.Rat.Star
+public import Mathlib.Algebra.Order.Star.Rat
 public import ProblemExtraction
 
 @[expose] public section

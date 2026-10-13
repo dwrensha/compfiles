@@ -8,7 +8,7 @@ module
 
 public import Mathlib.Algebra.Order.Ring.Star
 public import Mathlib.Analysis.MeanInequalities
-public import Mathlib.Data.Rat.Star
+public import Mathlib.Algebra.Order.Star.Rat
 public import Mathlib.NumberTheory.Real.Irrational
 public import Mathlib.Tactic.NormNum.Prime
 public import ProblemExtraction

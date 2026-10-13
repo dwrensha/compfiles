@@ -9,7 +9,7 @@ module
 public import Mathlib.Algebra.Order.Ring.Star
 public import Mathlib.Algebra.Order.Star.Real
 public import Mathlib.Algebra.Ring.IsFormallyReal
-public import Mathlib.Data.Int.Star
+public import Mathlib.Algebra.Order.Star.Int
 public import Mathlib.Tactic.LinearCombination
 public import Mathlib.Tactic.LinearCombination.Lemmas
 public import Mathlib.Tactic.Linarith

@@ -10,7 +10,7 @@ public import Mathlib.Algebra.Order.Field.Basic
 public import Mathlib.Algebra.Order.Ring.Star
 public import Mathlib.AlgebraicTopology.SimplexCategory.Basic
 public import Mathlib.Data.Nat.Dist
-public import Mathlib.Data.Rat.Star
+public import Mathlib.Algebra.Order.Star.Rat
 public import Mathlib.Order.Interval.Set.Infinite
 public import Mathlib.Tactic.Linarith
 public import Mathlib.Tactic.Ring
@@ -1125,6 +1125,7 @@ lemma inv_prefBoard (p : Play) (hp : FollowsStrategy bobMove p) :
         apply hcT
         exact Finset.mem_filter.mpr ⟨(hmemF c).mpr hcon, hc2⟩
       obtain ⟨hc₂2, hc₂none⟩ := bobCell2_spec hex2
+      dsimp only
       exact inv_update_rows2 hih hx2 hc₂2 hb₁eq rfl
 
 snip end

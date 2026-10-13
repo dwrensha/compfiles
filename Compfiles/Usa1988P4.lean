@@ -6,7 +6,7 @@ Authors: Karl Mehltretter
 
 module
 
-public import Mathlib.Geometry.Euclidean.Incenter
+public import Mathlib.Geometry.Euclidean.Incenter.Basic
 public import Mathlib.Geometry.Euclidean.Circumcenter
 public import Mathlib.Geometry.Euclidean.Triangle
 

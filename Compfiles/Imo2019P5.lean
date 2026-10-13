@@ -12,9 +12,10 @@ public import Mathlib.Algebra.CharP.Defs
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import Mathlib.Algebra.Order.Ring.Star
 public import Mathlib.Data.Finset.Sort
-public import Mathlib.Data.Int.ConditionallyCompleteOrder
-public import Mathlib.Data.Int.Star
-public import Mathlib.Data.Rat.Star
+public import Mathlib.Data.Fintype.BigOperators
+public import Mathlib.Order.Int.ConditionallyCompleteOrder
+public import Mathlib.Algebra.Order.Star.Int
+public import Mathlib.Algebra.Order.Star.Rat
 public import Mathlib.Tactic.FieldSimp
 public import Mathlib.Tactic.Linarith
 public import Mathlib.Tactic.LinearCombination

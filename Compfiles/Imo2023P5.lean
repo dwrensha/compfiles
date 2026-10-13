@@ -6,8 +6,10 @@ Authors: David Renshaw, Kimi K3
 
 module
 
+public import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
 public import Mathlib.Algebra.BigOperators.Intervals
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
+public import Mathlib.Data.Finset.Max
 public import Mathlib.Data.Nat.Log
 public import Mathlib.Tactic.NormNum
 public import Mathlib.Tactic.NormNum.Ineq
