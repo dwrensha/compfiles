@@ -314,12 +314,6 @@ lemma aux₁₀ {a b : Real.Angle} (h : 2 • a + 2 • b = Real.pi)
           _ < 2 * Real.pi := h₃
     exact aux₉ h₄ ha hb
 
-lemma angle_eq_of_oangle_eq {A₁ A₂ A₃ B₁ B₂ B₃ : Pt}
-  (h : ∡ A₁ A₂ A₃ = ∡ B₁ B₂ B₃)
-  (hA₁ : A₁ ≠ A₂) (hA₂ : A₃ ≠ A₂) (hB₁ : B₁ ≠ B₂) (hB₂ : B₃ ≠ B₂)
-  : ∠ A₁ A₂ A₃ = ∠ B₁ B₂ B₃ := by
-  rw [angle_eq_abs_oangle_toReal hA₁ hA₂, angle_eq_abs_oangle_toReal hB₁ hB₂, h]
-
 omit hd2 [Oriented ℝ V (Fin 2)] in
 lemma angle_eq_of_cos_angle_eq {A₁ A₂ A₃ B₁ B₂ B₃ : Pt}
   (h : Real.cos (∠ A₁ A₂ A₃) = Real.cos (∠ B₁ B₂ B₃)) : ∠ A₁ A₂ A₃ = ∠ B₁ B₂ B₃ := by
@@ -1093,7 +1087,7 @@ lemma oangle_BSC_eq_oangle_BAC :  ∡ cfg.B cfg.S cfg.C = ∡ cfg.B cfg.A cfg.C 
   exact cfg.h_S_A.symm
 
 lemma angle_BSC_eq_angle_BAC :  ∠ cfg.B cfg.S cfg.C = ∠ cfg.B cfg.A cfg.C := by
-  apply angle_eq_of_oangle_eq V Pt _ cfg.S_ne_B.symm cfg.S_ne_C.symm cfg.B_ne_A cfg.C_ne_A
+  apply angle_eq_of_oangle_eq _ cfg.S_ne_B.symm cfg.S_ne_C.symm cfg.B_ne_A cfg.C_ne_A
   exact cfg.oangle_BSC_eq_oangle_BAC
 
 lemma angle_CBS_eq : ∠ cfg.C cfg.B cfg.S = (∠ cfg.C cfg.B cfg.A + ∠ cfg.A cfg.C cfg.B) / 2 := by
@@ -1327,7 +1321,7 @@ lemma oangle_BAM_eq_oangle_MAC :
 
 lemma angle_BAM_eq_angle_MAC :
   ∠ cfg.B cfg.A cfg.M = ∠ cfg.M cfg.A cfg.C := by
-  exact angle_eq_of_oangle_eq V Pt cfg.oangle_BAM_eq_oangle_MAC
+  exact angle_eq_of_oangle_eq cfg.oangle_BAM_eq_oangle_MAC
     cfg.B_ne_A cfg.M_ne_A cfg.M_ne_A cfg.C_ne_A
 
 lemma oangle_BAX_eq_oangle_XAC
@@ -1343,7 +1337,7 @@ lemma oangle_BAX_eq_oangle_XAC
 lemma angle_BAX_eq_angle_XAC
     {X : Pt} (hX : X ∈ cfg.X_set) :
     ∠ cfg.B cfg.A X = ∠ X cfg.A cfg.C := by
-  exact angle_eq_of_oangle_eq V Pt (cfg.oangle_BAX_eq_oangle_XAC V Pt hX)
+  exact angle_eq_of_oangle_eq (cfg.oangle_BAX_eq_oangle_XAC V Pt hX)
     cfg.B_ne_A (cfg.X_ne_A V Pt hX) (cfg.X_ne_A V Pt hX) cfg.C_ne_A
 
 lemma angle_BAM_acute : ∠ cfg.B cfg.A cfg.M < π / 2 := by

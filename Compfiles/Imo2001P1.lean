@@ -359,14 +359,11 @@ lemma BCO_CAB : ∠ cfg.B cfg.C cfg.O + ∠ cfg.C cfg.A cfg.B = Real.pi / 2 := b
 
 lemma xCP_eq_xCB : ∀ x, x ≠ cfg.C → ∠ x cfg.C cfg.P = ∠ x cfg.C cfg.B := by
   intro x hx
-  have h₁ : ∡ x cfg.C cfg.P = ∡ x cfg.C cfg.B := by
-    apply eq_of_sub_eq_zero
-    rw [oangle_sub_left hx (C_ne_B cfg).symm (P_ne_C cfg)]
-    rw [oangle_eq_zero_iff_wbtw, wbtw_comm]
-    exact wbtw_BPC cfg
-  rw [angle_eq_abs_oangle_toReal hx (C_ne_B cfg).symm]
-  rw [angle_eq_abs_oangle_toReal hx (P_ne_C cfg)]
-  rw [h₁]
+  apply angle_eq_of_oangle_eq _ hx (P_ne_C cfg) hx (C_ne_B cfg).symm
+  apply eq_of_sub_eq_zero
+  rw [oangle_sub_left hx (C_ne_B cfg).symm (P_ne_C cfg)]
+  rw [oangle_eq_zero_iff_wbtw, wbtw_comm]
+  exact wbtw_BPC cfg
 
 lemma OCP_eq_OCB : ∠ cfg.O cfg.C cfg.P = ∠ cfg.O cfg.C cfg.B := by
   exact xCP_eq_xCB cfg cfg.O (C_ne_O cfg)

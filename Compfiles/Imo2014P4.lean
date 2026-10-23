@@ -40,12 +40,6 @@ noncomputable local instance someOrientation :
     Module.Oriented ℝ (EuclideanSpace ℝ (Fin 2)) (Fin 2) :=
   ⟨Module.Basis.orientation (Module.finBasisOfFinrankEq _ _ planeFiniteDim.out)⟩
 
-lemma angle_eq_of_oangle_eq {A₁ A₂ A₃ B₁ B₂ B₃ : EuclideanSpace ℝ (Fin 2)}
-  (h: ∡ A₁ A₂ A₃ = ∡ B₁ B₂ B₃)
-  (hA₁: A₁ ≠ A₂) (hA₂: A₃ ≠ A₂) (hB₁: B₁ ≠ B₂) (hB₂: B₃ ≠ B₂)
-  : ∠ A₁ A₂ A₃ = ∠ B₁ B₂ B₃ := by
-  rw [angle_eq_abs_oangle_toReal hA₁ hA₂, angle_eq_abs_oangle_toReal hB₁ hB₂, h]
-
 lemma angle_eq_of_cos_angle_eq {A₁ A₂ A₃ B₁ B₂ B₃ : EuclideanSpace ℝ (Fin 2)}
   (h : Real.cos (∠ A₁ A₂ A₃) = Real.cos (∠ B₁ B₂ B₃)) : ∠ A₁ A₂ A₃ = ∠ B₁ B₂ B₃ := by
   unfold EuclideanGeometry.angle at *
