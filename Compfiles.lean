@@ -19,6 +19,7 @@ public import Compfiles.Imo1960P2
 public import Compfiles.Imo1961P1
 public import Compfiles.Imo1961P2
 public import Compfiles.Imo1961P3
+public import Compfiles.Imo1961P4
 public import Compfiles.Imo1962P1
 public import Compfiles.Imo1962P2
 public import Compfiles.Imo1962P4
