@@ -34,7 +34,7 @@ lemma iff_comm {a b c : Prop} : (a → c) → (b → c) → (c → (a ↔ b)) �
 
 snip end
 
-determine f (p : ℝ) : Set ℝ :=
+noncomputable determine f (p : ℝ) : Set ℝ :=
   if 0 ≤ p ∧ p ≤ (4 : ℝ) / 3
   then { (4 - p) / (2 * Real.sqrt (4 - 2 * p)) }
   else ∅

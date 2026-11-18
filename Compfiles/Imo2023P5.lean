@@ -487,7 +487,7 @@ def extremal (n : ℕ) : JapaneseTriangle n where
   red := fun i => ⟨2 ^ Nat.clog 2 (i.val + 1) - 1 - i.val, by
     have hi1 : 1 ≤ i.val := (Finset.mem_Icc.mp i.2).1
     have h1 : 2 ^ (Nat.clog 2 (i.val + 1) - 1) < i.val + 1 :=
-      Nat.pow_pred_clog_lt_self (by norm_num) (by lia)
+      Nat.pow_pred_clog_lt_self 2 (by lia)
     have h2 : i.val + 1 ≤ 2 ^ Nat.clog 2 (i.val + 1) :=
       Nat.le_pow_clog (by norm_num) _
     have h3 : 1 ≤ Nat.clog 2 (i.val + 1) := Nat.clog_pos (by norm_num) (by lia)

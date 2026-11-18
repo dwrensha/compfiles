@@ -105,7 +105,7 @@ problem imo1978_p1 (m n : ℕ)
   clear m' n' h1 h2 h3 h4 h5 h6
 
   intro r
-  induction r using Nat.strong_induction_on with | h r ih =>
+  induction r using Nat.strong_induction_on with | ind r ih =>
   intro hr0 hr
 
   -- By Euler's theorem, 1978^φ(125) = 1 (mod 125).

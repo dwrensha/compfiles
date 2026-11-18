@@ -58,7 +58,7 @@ lemma lemma1 (a : ℝ+) : a + a = ⟨2, two_pos⟩ * a := by
 
 snip end
 
-determine solution_set : Set (ℝ+ → ℝ+) := { fun x ↦ 1 / x }
+noncomputable determine solution_set : Set (ℝ+ → ℝ+) := { fun x ↦ 1 / x }
 
 problem imo2022_p2 (f : ℝ+ → ℝ+) :
     f ∈ solution_set ↔

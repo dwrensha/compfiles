@@ -149,11 +149,11 @@ lemma List.splitBy_append' {α : Type u} {r : α → α → Bool} {a b : List α
   : List.splitBy r (a ++ b) = (List.splitBy r a).dropLast ++ [(List.splitBy r a).getLast?.getD [] ++ (List.splitBy r b).head?.getD []] ++ (List.splitBy r b).tail := by
     rcases hab with ⟨p, hp, q, hq, hpq⟩
     have ha : a ≠ [] := by
-      contrapose! hp
+      contrapose hp
       rw [hp, List.getLast?_nil]
       apply Option.not_mem_none
     have hb : b ≠ [] := by
-      contrapose! hq
+      contrapose hq
       rw [hq, List.head?_nil]
       apply Option.not_mem_none
     rw [Option.mem_def, ← List.getLast_eq_iff_getLast?_eq_some ha] at hp
@@ -175,16 +175,16 @@ lemma List.splitBy_append' {α : Type u} {r : α → α → Bool} {a b : List α
       push Not
       constructorm* _ ∧ _
       · have h := List.nil_notMem_splitBy r a
-        contrapose! h
+        contrapose h
         apply List.mem_of_mem_dropLast h
       · symm
         apply List.append_ne_nil_of_left_ne_nil
         have h := List.nil_notMem_splitBy r a
-        contrapose! h
+        contrapose h
         rw [← h]
         apply List.getLast_mem
       · have h := List.nil_notMem_splitBy r b
-        contrapose! h
+        contrapose h
         apply List.mem_of_mem_tail h
     · intro l hl
       rw [List.mem_append, List.mem_append, List.mem_singleton] at hl
@@ -199,11 +199,11 @@ lemma List.splitBy_append' {α : Type u} {r : α → α → Bool} {a b : List α
           apply List.head_mem
         · intro p' hp' q' hq'
           have ha'' : (List.splitBy r a).getLast ha' ≠ [] := by
-            contrapose! hp'
+            contrapose hp'
             rw [hp', List.getLast?_nil]
             apply Option.not_mem_none
           have hb'' : (List.splitBy r b).head hb' ≠ [] := by
-            contrapose! hq'
+            contrapose hq'
             rw [hq', List.head?_nil]
             apply Option.not_mem_none
           rw [Option.mem_def, ← List.getLast_eq_iff_getLast?_eq_some ha''] at hp'
@@ -560,7 +560,7 @@ lemma List.exists_replicate_of_isChain_beq {α : Type u} [DecidableEq α] {l : L
         use n + 1
         use a
         have hn : ¬n = 0  := by
-          contrapose! has
+          contrapose has
           rw [hni, has, List.replicate_zero]
         have hi' : i ∈ as.head? := by
           rw [hni]
@@ -582,7 +582,7 @@ lemma segments_getElem?_map_eq (l : List Coin) (i : ℕ) (hi : i < (List.segment
       · rw [← List.head?_eq_getElem?, ite_eq_left Even.zero]
         have h : (List.splitBy (fun x1 x2 ↦ x1 == x2) l) ≠ [] := List.splitBy_ne_nil.mpr hl
         have h' : ((List.splitBy (fun x1 x2 ↦ x1 == x2) l).head h) ≠ [] := by
-          contrapose! h_mem
+          contrapose h_mem
           rw [← h_mem]
           apply List.head_mem
         rw [List.head?_eq_some_head h, Option.bind_some, List.head?_eq_some_head h']
@@ -617,7 +617,7 @@ lemma segments_getElem?_map_eq (l : List Coin) (i : ℕ) (hi : i < (List.segment
         rw [ite_eq_right h_l] at h'
         rw [Option.some_inj] at ⊢ h'
         rw [← h'', h']
-        by_cases! hi' : Even i
+        by_cases hi' : Even i
         · rw [ite_eq_left hi']
           have hi'' : ¬Even (i + 1) := by
             rw [Nat.even_add_one, not_not]
@@ -735,7 +735,7 @@ lemma List.head?_flatten_of_nil_not_mem {α : Type u} {l : List (List α)} (hl :
       rw [has, List.flatten_cons, List.head?_cons, Option.bind_some, List.head?_append]
       apply Option.or_eq_left_of_isSome
       rw [List.isSome_head?]
-      contrapose! hl
+      contrapose hl
       rw [← hl, has]
       apply List.mem_cons_self
 
@@ -1077,11 +1077,11 @@ lemma List.length_blocks_append_lt_of {α : Type u} [DecidableEq α] {a b : List
       List.length_dropLast, List.length_singleton, List.length_tail]
     rcases hab with ⟨p, hp, q, hq, hpq⟩
     have ha : a ≠ [] := by
-      contrapose! hp
+      contrapose hp
       rw [hp, List.getLast?_nil]
       apply Option.not_mem_none
     have hb : b ≠ [] := by
-      contrapose! hq
+      contrapose hq
       rw [hq, List.head?_nil]
       apply Option.not_mem_none
     have ha' : (List.splitBy (fun x1 x2 ↦ x1 == x2) a) ≠ [] := List.splitBy_ne_nil.mpr ha
@@ -1938,7 +1938,7 @@ lemma Row.exists_length_blocks_operationOneBased_iterate_lt
         apply List.mem_singleton_self
       · norm_num
     by_cases! h₂ : indexInBlock c.blocks (k - 1) = c.blocks.length - 1
-    · by_cases! h₃ : Odd c.blocks.length
+    · by_cases h₃ : Odd c.blocks.length
       · use 1
         rw [Function.iterate_one]
         apply Row.length_blocks_operationOneBased_lt_of_odd_last _ _ h₃ (by lia) rfl h₂

@@ -442,7 +442,7 @@ end
 
 snip end
 
-determine solution_set (n : ℕ) : Set ℝ := Set.Ici (1 / ((n : ℝ) - 1))
+noncomputable determine solution_set (n : ℕ) : Set ℝ := Set.Ici (1 / ((n : ℝ) - 1))
 
 problem imo2000_p3 (n : ℕ) (hn : 2 ≤ n) (lam : ℝ) :
     lam ∈ solution_set n ↔ (0 < lam ∧ AllRightOf (n := n) lam) := by

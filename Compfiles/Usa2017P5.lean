@@ -27,7 +27,7 @@ a labeling of the lattice points in ℤ² with positive integers for which:
 
 namespace Usa2017P5
 
-determine solution_set : Set ℝ := Set.Ioo 0 (Real.sqrt 2)
+noncomputable determine solution_set : Set ℝ := Set.Ioo 0 (Real.sqrt 2)
 
 noncomputable def dist : ℤ × ℤ → ℤ × ℤ → ℝ
 | ⟨x1, y1⟩, ⟨x2, y2⟩ => Real.sqrt ((x2 - x1)^2 + (y2 - y1)^2)

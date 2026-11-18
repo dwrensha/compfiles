@@ -362,7 +362,7 @@ theorem odd_k_satisfies (k : ℕ)
     (hkodd : k % 2 = 1) :
     (∃ n : ℕ, n ≠ 0 ∧ d (n ^ 2) = k * d n) := by
   induction k using Nat.strong_induction_on with
-  | h k ih =>
+  | ind k ih =>
       rcases k with (_ | k_minus_1)
       · contradiction
       · by_cases hk1 : k_minus_1 = 0

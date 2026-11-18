@@ -37,7 +37,7 @@ lemma sol_prop {a : ℝ} (ha : -1 < a) : -1 < -a / (1 + a) :=
 
 snip end
 
-determine solution_set : Set (S → S) := { fun x ↦ ⟨-x.val / (1 + x.val), sol_prop x.property⟩ }
+noncomputable determine solution_set : Set (S → S) := { fun x ↦ ⟨-x.val / (1 + x.val), sol_prop x.property⟩ }
 
 problem imo1994_p5 (f : S → S) :
     f ∈ solution_set ↔

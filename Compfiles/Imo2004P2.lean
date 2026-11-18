@@ -50,8 +50,7 @@ problem imo2004_p2 (P : Polynomial ℝ) :
       apply habc (Pa.eval r) (Pb.eval r) (Pc.eval r)
       simp only [← eval_add, ← eval_mul, hPaPbPc', eval_zero]
     use P.coeff 4, P.coeff 2
-    apply ext
-    intro n
+    ext n
     by_cases! hn : n = 2 ∨ n = 4
     · rcases hn with (hn|hn) <;> rw [hn] <;> simp
     · simp
@@ -67,15 +66,14 @@ problem imo2004_p2 (P : Polynomial ℝ) :
       · by_cases! hn' : ¬2 ∣ n
         · have h' := hPaPbPc X 0 0 (by ring : _)
           ring_nf at h'
-          rw [ext_iff] at h'
-          have h := h' n
+          have h := congr_arg (fun p : ℝ[X] => p.coeff n) h'
           simp only [coeff_add, ← C_ofNat, coeff_mul_C] at h
           rw [neg_eq_neg_one_mul, ← C_1, ← C_neg, comp_C_mul_X_coeff] at h
           rw [comp_X, comp_zero, coeff_C_of_ne_zero hn'', ← sub_eq_zero, add_zero] at h
           nth_rw 1 [← mul_one (P.coeff n)] at h
           simp only [← mul_add, ← mul_sub] at h
           apply (mul_eq_zero_iff_right _).mp h
-          contrapose! hn'
+          contrapose hn'
           ring_nf at hn'
           rw [neg_add_eq_sub, sub_eq_zero] at hn'
           rw [neg_one_pow_eq_one_iff_even (by norm_num : _), even_iff_two_dvd] at hn'
@@ -85,8 +83,7 @@ problem imo2004_p2 (P : Polynomial ℝ) :
             interval_cases n <;> norm_num at *
           have h' := hPaPbPc (- 2 • X) (3 • X) (6 • X) (by ring : _)
           ring_nf at h'
-          rw [ext_iff] at h'
-          have h := h' n
+          have h := congr_arg (fun p : ℝ[X] => p.coeff n) h'
           simp only [coeff_add, ← C_ofNat, coeff_mul_C, X_mul_C, ← neg_mul, ← C_neg, comp_C_mul_X_coeff] at h
           rw [← sub_eq_zero] at h
           simp only [← mul_add, mul_assoc, ← mul_sub] at h

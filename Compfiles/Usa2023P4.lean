@@ -111,37 +111,37 @@ lemma end_inevitable_n {a : ℕ+} {n : ℕ} {m : ℕ} {s : State n}
   | AliceTurn _ _ _ _ ih => exact .Step _ ih
 
 lemma lemma3 (N : ℕ) (b : Blackboard N)
-    (hd : ∑ i : Fin N, padicValNat 2 (b i) = 0) :
+    (hd : ∑ i : Fin N, multiplicity (2 : ℕ) (b i).val = 0) :
     ∀ i : Fin N, ¬ Even (b i).val := by
   intro i hei
-  have h1 : 0 < padicValNat 2 (b i).val := by
+  have h1 : 0 < multiplicity (2 : ℕ) (b i).val := by
      have h2 : 2 ∣ (b i : ℕ) := even_iff_two_dvd.mp hei
      replace h2 : 2^1 ∣ (b i : ℕ) := h2
-     exact (Nat.pow_dvd_iff_le_padicValNat (by lia) (PNat.ne_zero (b i))).mp h2
+     exact (Nat.pow_dvd_iff_le_multiplicity (by lia) (PNat.ne_zero (b i))).mp h2
   rw [Finset.sum_eq_zero_iff] at hd
   have h2 := hd i (Finset.mem_univ i)
   lia
 
 lemma lemma5 {a x : ℕ} (hx : 0 < x)
-    (hax : padicValNat 2 x < padicValNat 2 a) :
-    padicValNat 2 (x + a) < padicValNat 2 a := by
+    (hax : multiplicity (2 : ℕ) x < multiplicity (2 : ℕ) a) :
+    multiplicity (2 : ℕ) (x + a) < multiplicity (2 : ℕ) a := by
   by_contra! H
-  have h1 : 2 ^ (padicValNat 2 (x + a)) ∣ x + a := pow_padicValNat_dvd
-  have h2 : 2 ^ (padicValNat 2 a) ∣ a := pow_padicValNat_dvd
-  have h4 : 2 ^ (padicValNat 2 a) ∣ x + a :=
+  have h1 : 2 ^ (multiplicity (2 : ℕ) (x + a)) ∣ x + a := pow_multiplicity_dvd _ _
+  have h2 : 2 ^ (multiplicity (2 : ℕ) a) ∣ a := pow_multiplicity_dvd _ _
+  have h4 : 2 ^ (multiplicity (2 : ℕ) a) ∣ x + a :=
     Nat.pow_dvd_of_le_of_pow_dvd H h1
-  have h5 : 2 ^ (padicValNat 2 a) ∣ x := (Nat.dvd_add_iff_left h2).mpr h4
-  have h6 := (Nat.pow_dvd_iff_le_padicValNat (by lia) (Nat.ne_zero_of_lt hx)).mp h5
+  have h5 : 2 ^ (multiplicity (2 : ℕ) a) ∣ x := (Nat.dvd_add_iff_left h2).mpr h4
+  have h6 := (Nat.pow_dvd_iff_le_multiplicity (by lia) (Nat.ne_zero_of_lt hx)).mp h5
   lia
 
 lemma lemma5' {a x : ℕ} (hx : 0 < x)
-    (hax : padicValNat 2 x < padicValNat 2 a) :
-    padicValNat 2 (x + a) = padicValNat 2 x := by
-  have h1 : 2 ^ (padicValNat 2 (x + a)) ∣ x + a := pow_padicValNat_dvd
-  have h2 : 2 ^ (padicValNat 2 a) ∣ a := pow_padicValNat_dvd
-  have h4 : 2 ^ (padicValNat 2 x) ∣ x := pow_padicValNat_dvd
+    (hax : multiplicity (2 : ℕ) x < multiplicity (2 : ℕ) a) :
+    multiplicity (2 : ℕ) (x + a) = multiplicity (2 : ℕ) x := by
+  have h1 : 2 ^ (multiplicity (2 : ℕ) (x + a)) ∣ x + a := pow_multiplicity_dvd _ _
+  have h2 : 2 ^ (multiplicity (2 : ℕ) a) ∣ a := pow_multiplicity_dvd _ _
+  have h4 : 2 ^ (multiplicity (2 : ℕ) x) ∣ x := pow_multiplicity_dvd _ _
 
-  obtain ⟨c, hc⟩ : ∃ c, (padicValNat 2 a) = (padicValNat 2 x) + 1 + c :=
+  obtain ⟨c, hc⟩ : ∃ c, (multiplicity (2 : ℕ) a) = (multiplicity (2 : ℕ) x) + 1 + c :=
     Nat.exists_eq_add_of_le hax
 
   obtain ⟨aa, haa⟩ := h2
@@ -149,14 +149,14 @@ lemma lemma5' {a x : ℕ} (hx : 0 < x)
   obtain ⟨xa, hxa⟩ := h1
   rw [hc, add_assoc, pow_add] at haa
 
-  have h10 : x + a = 2 ^ padicValNat 2 x * (xx + 2 ^ (1 + c) * aa) := by
+  have h10 : x + a = 2 ^ multiplicity (2 : ℕ) x * (xx + 2 ^ (1 + c) * aa) := by
     nth_rw 1 [hxx]
     nth_rw 1 [haa]
     rw [mul_assoc, ← mul_add]
 
-  have h12 : 2 ^ padicValNat 2 x ∣ x + a := Dvd.intro _ h10.symm
-  replace h12 := (Nat.pow_dvd_iff_le_padicValNat (by lia) (by lia)).mp h12
-  suffices H : padicValNat 2 (x + a) ≤ padicValNat 2 x from Nat.le_antisymm H h12
+  have h12 : 2 ^ multiplicity (2 : ℕ) x ∣ x + a := Dvd.intro _ h10.symm
+  replace h12 := (Nat.pow_dvd_iff_le_multiplicity (by lia) (by lia)).mp h12
+  suffices H : multiplicity (2 : ℕ) (x + a) ≤ multiplicity (2 : ℕ) x from Nat.le_antisymm H h12
   by_contra! H
 
   rw [h10] at H
@@ -164,8 +164,8 @@ lemma lemma5' {a x : ℕ} (hx : 0 < x)
   have h16 : ¬ 2 ∣ xx := by
     rintro ⟨z, rfl⟩
     rw [← mul_assoc, ← pow_succ] at hxx
-    have h17 : 2 ^ (padicValNat 2 x + 1) ∣ x := Dvd.intro z hxx.symm
-    replace h17 := (Nat.pow_dvd_iff_le_padicValNat (by lia) (Nat.ne_zero_of_lt hx)).mp h17
+    have h17 : 2 ^ (multiplicity (2 : ℕ) x + 1) ∣ x := Dvd.intro z hxx.symm
+    replace h17 := (Nat.pow_dvd_iff_le_multiplicity (by lia) (Nat.ne_zero_of_lt hx)).mp h17
     lia
 
   have h15 : ¬ 2 ∣ xx + 2 ^ (1 + c) * aa := by
@@ -182,18 +182,18 @@ lemma lemma5' {a x : ℕ} (hx : 0 < x)
     rw [hk]
     exact Nat.zero_lt_succ (2 * k)
 
-  replace h15 : padicValNat 2 (xx + 2 ^ (1 + c) * aa) = 0 :=
-    padicValNat.eq_zero_of_not_dvd h15
+  replace h15 : multiplicity (2 : ℕ) (xx + 2 ^ (1 + c) * aa) = 0 :=
+    multiplicity_eq_zero_of_not_dvd h15
 
-  rw [padicValNat_base_pow_mul one_lt_two h13.ne'] at H
+  rw [multiplicity_base_pow_mul one_lt_two h13.ne'] at H
   rw [h15, zero_add] at H
   lia
 
 lemma alice_move_preserves_nu
      (a : ℕ+) (N : ℕ) (b0 : Blackboard N)
-     (hd : ∀ i : Fin N, padicValNat 2 (b0 i) < padicValNat 2 a)
+     (hd : ∀ i : Fin N, multiplicity (2 : ℕ) (b0 i).val < multiplicity (2 : ℕ) a.val)
      (s1 : State N) (hs1 : s1 ∈ valid_moves a N ⟨b0, .Alice⟩) :
-     ∀ i : Fin N, padicValNat 2 (s1.board i) < padicValNat 2 a := by
+     ∀ i : Fin N, multiplicity (2 : ℕ) (s1.board i).val < multiplicity (2 : ℕ) a.val := by
   intro i
   dsimp [valid_moves] at hs1
   obtain ⟨j, rfl⟩ := hs1
@@ -215,9 +215,9 @@ lemma alice_move_preserves_nu
 
 lemma alice_move_preserves_nu'
      (a : ℕ+) (N : ℕ) (b0 : Blackboard N)
-     (hd : ∀ i : Fin N, padicValNat 2 (b0 i) < padicValNat 2 a)
+     (hd : ∀ i : Fin N, multiplicity (2 : ℕ) (b0 i).val < multiplicity (2 : ℕ) a.val)
      (s1 : State N) (hs1 : s1 ∈ valid_moves a N ⟨b0, .Alice⟩) :
-     ∀ i, padicValNat 2 (s1.board i) =  padicValNat 2 (b0 i) := by
+     ∀ i, multiplicity (2 : ℕ) (s1.board i).val = multiplicity (2 : ℕ) (b0 i).val := by
   intro i
   dsimp [valid_moves] at hs1
   obtain ⟨j, rfl⟩ := hs1
@@ -245,19 +245,19 @@ lemma bob_moves_after_alice {a : ℕ+} {N : Nat} (b0 : Blackboard N)
   simp
 
 lemma lemma6 {x : ℕ} (hp : 0 < x) (hx : Even x)
-    : padicValNat 2 (x / 2) + 1 = padicValNat 2 x := by
+    : multiplicity (2 : ℕ) (x / 2) + 1 = multiplicity (2 : ℕ) x := by
   have h2 : (2 : ℕ) ∣ x := even_iff_two_dvd.mp hx
-  have hv : 1 ≤ padicValNat 2 x := by
-    rwa [← Nat.pow_dvd_iff_le_padicValNat (by lia) (by lia), pow_one]
-  rw [padicValNat.div h2]
+  have hv : 1 ≤ multiplicity (2 : ℕ) x := by
+    rwa [← Nat.pow_dvd_iff_le_multiplicity (by lia) (by lia), pow_one]
+  rw [Nat.multiplicity_div h2]
   lia
 
 -- When N ≥ 2, if ν2(x) < ν2(a) for all x ∈ S, the game must terminate
 -- in ∑_{x∈S} ν2(x) moves, no matter what either player does.
 lemma lemma2' (a : ℕ+) (N : ℕ) (hN : 1 < N) (s0 : State N)
-    (hd : ∀ i : Fin N, padicValNat 2 (s0.board i) < padicValNat 2 a) :
-    EndInevitableIn a N (∑ i : Fin N, padicValNat 2 (s0.board i)) s0 := by
-  generalize hms : ∑ i : Fin N, padicValNat 2 (s0.board i) = ms
+    (hd : ∀ i : Fin N, multiplicity (2 : ℕ) (s0.board i).val < multiplicity (2 : ℕ) a.val) :
+    EndInevitableIn a N (∑ i : Fin N, multiplicity (2 : ℕ) (s0.board i).val) s0 := by
+  generalize hms : ∑ i : Fin N, multiplicity (2 : ℕ) (s0.board i).val = ms
   revert s0
   induction' ms with ms' ih
   · intro s0 hd hms
@@ -276,10 +276,10 @@ lemma lemma2' (a : ℕ+) (N : ℕ) (hN : 1 < N) (s0 : State N)
       apply EndInevitableIn.AliceTurn _ ⟨b0, .Alice⟩
       intro s hs
       have h2 : Even (a:ℕ) := by
-        have ha : 0 < padicValNat 2 ↑a := by
+        have ha : 0 < multiplicity (2 : ℕ) ↑a := by
           have := hd ⟨0, by lia⟩
           lia
-        have ha1 : 2 ^ padicValNat 2 (a : ℕ) ∣ (a : ℕ) := pow_padicValNat_dvd
+        have ha1 : 2 ^ multiplicity (2 : ℕ) (a : ℕ) ∣ (a : ℕ) := pow_multiplicity_dvd _ _
         rw [even_iff_two_dvd]
         exact Nat.dvd_of_pow_dvd ha ha1
       apply EndInevitableIn.BaseCase
@@ -322,16 +322,16 @@ lemma lemma2' (a : ℕ+) (N : ℕ) (hN : 1 < N) (s0 : State N)
         by_cases hki : k = i
         · subst hki
           rw [Function.update_self k (⟨↑(b0 k) / 2, halve_even _ hie⟩ : ℕ+) b0]
-          show padicValNat 2 (↑(b0 k) / 2) < padicValNat 2 ↑a
+          show multiplicity (2 : ℕ) (↑(b0 k) / 2) < multiplicity (2 : ℕ) ↑a
           have hv1 := lemma6 (b0 k).pos hie; have := hd k; lia
         · rw [Function.update_of_ne hki (⟨↑(b0 i) / 2, halve_even _ hie⟩ : ℕ+) b0]
           exact hd k
       · simp only at hd hms ⊢
         have hv := lemma6 (b0 i).pos hie
-        have hae : padicValNat 2 ↑(b0 i) + ∑ k ∈ Finset.univ.erase i, padicValNat 2 ↑(b0 k)
-            = ∑ k, padicValNat 2 ↑(b0 k) :=
-          Finset.add_sum_erase _ (fun k => padicValNat 2 ↑(b0 k)) (Finset.mem_univ i)
-        trans (padicValNat 2 (↑(b0 i) / 2) + ∑ k ∈ Finset.univ.erase i, padicValNat 2 ↑(b0 k))
+        have hae : multiplicity (2 : ℕ) ↑(b0 i) + ∑ k ∈ Finset.univ.erase i, multiplicity (2 : ℕ) ↑(b0 k)
+            = ∑ k, multiplicity (2 : ℕ) ↑(b0 k) :=
+          Finset.add_sum_erase _ (fun k => multiplicity (2 : ℕ) ↑(b0 k)) (Finset.mem_univ i)
+        trans (multiplicity (2 : ℕ) (↑(b0 i) / 2) + ∑ k ∈ Finset.univ.erase i, multiplicity (2 : ℕ) ↑(b0 k))
         · rw [← Finset.add_sum_erase _ _ (Finset.mem_univ i)]
           congr 1
           · rw [Function.update_self i (⟨↑(b0 i) / 2, halve_even _ hie⟩ : ℕ+) b0]
@@ -345,7 +345,7 @@ lemma lemma2' (a : ℕ+) (N : ℕ) (hN : 1 < N) (s0 : State N)
     intro s hs
     have h1 := alice_move_preserves_nu' a N b0 hd s hs
     dsimp at hms
-    have h2 : ∑ i : Fin N, padicValNat 2 ↑(b0 i) = ∑ i : Fin N, padicValNat 2 ↑(s.board i) := by
+    have h2 : ∑ i : Fin N, multiplicity (2 : ℕ) ↑(b0 i) = ∑ i : Fin N, multiplicity (2 : ℕ) ↑(s.board i) := by
       congr
       ext i
       exact (h1 i).symm
@@ -363,7 +363,7 @@ lemma lemma2' (a : ℕ+) (N : ℕ) (hN : 1 < N) (s0 : State N)
     subst hj
     apply ih
     · intro k
-      have hd1 : ∀ k, padicValNat 2 ↑(b1 k) < padicValNat 2 ↑a := by
+      have hd1 : ∀ k, multiplicity (2 : ℕ) ↑(b1 k) < multiplicity (2 : ℕ) ↑a := by
         intro k; subst hi
         by_cases hki : k = i
         · subst hki; simp only [Function.update_self]; push_cast
@@ -373,17 +373,17 @@ lemma lemma2' (a : ℕ+) (N : ℕ) (hN : 1 < N) (s0 : State N)
       by_cases hkj : k = j
       · subst hkj
         rw [Function.update_self k (⟨↑(b1 k) / 2, halve_even _ hje⟩ : ℕ+) b1]
-        show padicValNat 2 (↑(b1 k) / 2) < padicValNat 2 ↑a
+        show multiplicity (2 : ℕ) (↑(b1 k) / 2) < multiplicity (2 : ℕ) ↑a
         have hv1 := lemma6 (b1 k).pos hje
         have := hd1 k; lia
       · rw [Function.update_of_ne hkj (⟨↑(b1 j) / 2, halve_even _ hje⟩ : ℕ+) b1]
         exact hd1 k
     · simp only at hms ⊢
       have hv := lemma6 (b1 j).pos hje
-      have hae : padicValNat 2 ↑(b1 j) + ∑ k ∈ Finset.univ.erase j, padicValNat 2 ↑(b1 k)
-          = ∑ k, padicValNat 2 ↑(b1 k) :=
-        Finset.add_sum_erase _ (fun k => padicValNat 2 ↑(b1 k)) (Finset.mem_univ j)
-      trans (padicValNat 2 (↑(b1 j) / 2) + ∑ k ∈ Finset.univ.erase j, padicValNat 2 ↑(b1 k))
+      have hae : multiplicity (2 : ℕ) ↑(b1 j) + ∑ k ∈ Finset.univ.erase j, multiplicity (2 : ℕ) ↑(b1 k)
+          = ∑ k, multiplicity (2 : ℕ) ↑(b1 k) :=
+        Finset.add_sum_erase _ (fun k => multiplicity (2 : ℕ) ↑(b1 k)) (Finset.mem_univ j)
+      trans (multiplicity (2 : ℕ) (↑(b1 j) / 2) + ∑ k ∈ Finset.univ.erase j, multiplicity (2 : ℕ) ↑(b1 k))
       · rw [← Finset.add_sum_erase _ _ (Finset.mem_univ j)]
         congr 1
         · rw [Function.update_self j (⟨↑(b1 j) / 2, halve_even _ hje⟩ : ℕ+) b1]
@@ -397,32 +397,32 @@ lemma lemma2' (a : ℕ+) (N : ℕ) (hN : 1 < N) (s0 : State N)
 -- When N ≥ 2, if ν2(x) < ν2(a) for all x ∈ S, the game must terminate no
 -- matter what either player does.
 lemma lemma2 (a : ℕ+) (N : ℕ) (hN : 1 < N) (s0 : State N)
-    (hd : ∀ i : Fin N, padicValNat 2 (s0.board i) < padicValNat 2 a) :
+    (hd : ∀ i : Fin N, multiplicity (2 : ℕ) (s0.board i).val < multiplicity (2 : ℕ) a.val) :
     EndInevitable a N s0 := by
   exact end_inevitable_n (lemma2' a N hN s0 hd)
 
 -- Key fact: when ν₂(x) = ν₂(a), ν₂(x+a) ≥ ν₂(a) + 1
 lemma lemma7 {x a : ℕ} (hx : 0 < x) (ha : 0 < a)
-    (heq : padicValNat 2 x = padicValNat 2 a) :
-    padicValNat 2 a + 1 ≤ padicValNat 2 (x + a) := by
-  set k := padicValNat 2 a with hk_def
+    (heq : multiplicity (2 : ℕ) x = multiplicity (2 : ℕ) a) :
+    multiplicity (2 : ℕ) a + 1 ≤ multiplicity (2 : ℕ) (x + a) := by
+  set k := multiplicity (2 : ℕ) a with hk_def
   suffices h : 2 ^ (k + 1) ∣ (x + a) from
-    (Nat.pow_dvd_iff_le_padicValNat (by lia) (by lia)).mp h
-  have hkx : 2 ^ k ∣ x := by rw [← heq]; exact pow_padicValNat_dvd
-  have hka : 2 ^ k ∣ a := pow_padicValNat_dvd
+    (Nat.pow_dvd_iff_le_multiplicity (by lia) (by lia)).mp h
+  have hkx : 2 ^ k ∣ x := by rw [← heq]; exact pow_multiplicity_dvd _ _
+  have hka : 2 ^ k ∣ a := pow_multiplicity_dvd _ _
   obtain ⟨x', hx'⟩ := hkx
   obtain ⟨a', ha'⟩ := hka
   have hx'_odd : ¬ 2 ∣ x' := by
     intro ⟨z, hz⟩
     have h1 : 2 ^ (k + 1) ∣ x := by
       rw [hx', hz, pow_succ]; exact mul_dvd_mul_left _ (dvd_mul_right (2 : ℕ) z)
-    have h2 := (Nat.pow_dvd_iff_le_padicValNat (by lia) (by lia)).mp h1
+    have h2 := (Nat.pow_dvd_iff_le_multiplicity (by lia) (by lia)).mp h1
     lia
   have ha'_odd : ¬ 2 ∣ a' := by
     intro ⟨z, hz⟩
     have h1 : 2 ^ (k + 1) ∣ a := by
       rw [ha', hz, pow_succ]; exact mul_dvd_mul_left _ (dvd_mul_right (2 : ℕ) z)
-    have h2 := (Nat.pow_dvd_iff_le_padicValNat (by lia) (by lia)).mp h1
+    have h2 := (Nat.pow_dvd_iff_le_multiplicity (by lia) (by lia)).mp h1
     lia
   have hse : 2 ∣ (x' + a') := by
     rw [Nat.dvd_iff_mod_eq_zero]
@@ -436,8 +436,8 @@ lemma lemma7 {x a : ℕ} (hx : 0 < x) (ha : 0 < a)
 lemma alice_prevents_end (a : ℕ+) (N : ℕ) (hN : 1 < N)
     (s : State N) (he : BobCanForceEnd a N s)
     (hinv : ∃ i : Fin N,
-      padicValNat 2 ↑a + (match s.turn with | .Alice => 0 | .Bob => 1) ≤
-      padicValNat 2 ↑(s.board i)) :
+      multiplicity (2 : ℕ) ↑a + (match s.turn with | .Alice => 0 | .Bob => 1) ≤
+      multiplicity (2 : ℕ) ↑(s.board i)) :
     False := by
   induction he with
   | BaseCase b hnm =>
@@ -445,7 +445,7 @@ lemma alice_prevents_end (a : ℕ+) (N : ℕ) (hN : 1 < N)
     simp only at hi
     have heven : Even (↑(b i) : ℕ) := by
       rw [even_iff_two_dvd]
-      exact Nat.dvd_of_pow_dvd (by lia : 1 ≤ padicValNat 2 ↑(b i)) pow_padicValNat_dvd
+      exact Nat.dvd_of_pow_dvd (by lia : 1 ≤ multiplicity (2 : ℕ) ↑(b i)) (pow_multiplicity_dvd _ _)
     rw [Set.eq_empty_iff_forall_notMem] at hnm
     exact hnm ⟨Function.update b i ⟨↑(b i) / 2, halve_even _ heven⟩, .Alice⟩ ⟨i, heven, rfl⟩
   | BobTurn b m hm he' ih =>
@@ -458,7 +458,7 @@ lemma alice_prevents_end (a : ℕ+) (N : ℕ) (hN : 1 < N)
     · subst hji
       refine ⟨j, ?_⟩
       rw [Function.update_self j (⟨↑(b j) / 2, halve_even _ hje⟩ : ℕ+) b]
-      show padicValNat 2 ↑a ≤ padicValNat 2 (↑(b j) / 2)
+      show multiplicity (2 : ℕ) ↑a ≤ multiplicity (2 : ℕ) (↑(b j) / 2)
       have := lemma6 (b j).pos hje; lia
     · refine ⟨i₀, ?_⟩
       have hboard : (Function.update b j ⟨↑(b j) / 2, halve_even _ hje⟩ : Blackboard N) i₀ = b i₀ := by
@@ -467,15 +467,17 @@ lemma alice_prevents_end (a : ℕ+) (N : ℕ) (hN : 1 < N)
   | AliceTurn b hall ih =>
     obtain ⟨i, hi⟩ := hinv
     dsimp at hi
-    by_cases heq : padicValNat 2 ↑(b i) = padicValNat 2 ↑a
+    by_cases heq : multiplicity (2 : ℕ) ↑(b i) = multiplicity (2 : ℕ) ↑a
     · apply ih ⟨Function.update b i (b i + a), .Bob⟩ ⟨i, rfl⟩
       dsimp
       refine ⟨i, ?_⟩; simp only [Function.update_self]
       push_cast; exact lemma7 (b i).pos a.pos heq
-    · have hi_gt : padicValNat 2 ↑a + 1 ≤ padicValNat 2 ↑(b i) := by lia
+    · have hi_gt : multiplicity (2 : ℕ) ↑a + 1 ≤ multiplicity (2 : ℕ) ↑(b i) := by lia
       obtain ⟨j, hji⟩ : ∃ j : Fin N, j ≠ i := by
-        exact ⟨if i = ⟨0, by lia⟩ then ⟨1, by lia⟩ else ⟨0, by lia⟩,
-               by split_ifs with h <;> (simp_all [Fin.ext_iff]; try lia)⟩
+        refine ⟨if i = ⟨0, by lia⟩ then ⟨1, by lia⟩ else ⟨0, by lia⟩, ?_⟩
+        split_ifs with h
+        · simp [Fin.ext_iff, h]
+        · exact Ne.symm h
       apply ih ⟨Function.update b j (b j + a), .Bob⟩ ⟨j, rfl⟩
       dsimp
       refine ⟨i, ?_⟩
@@ -492,7 +494,7 @@ problem usa2023_p4 (a : ℕ+) (N : ℕ) (hN : 0 < N) (b0 : Blackboard N)
   -- https://web.evanchen.cc/exams/USAMO-2023-notes.pdf
   obtain rfl | hN : 1 = N ∨ 1 < N := LE.le.eq_or_lt hN
   · exact lemma1 a ⟨b0, .Alice⟩ he
-  suffices h : ∀ i : Fin N, padicValNat 2 ↑(b0 i) < padicValNat 2 ↑a from
+  suffices h : ∀ i : Fin N, multiplicity (2 : ℕ) ↑(b0 i) < multiplicity (2 : ℕ) ↑a from
     lemma2 a N hN ⟨b0, .Alice⟩ h
   by_contra h_not
   push Not at h_not

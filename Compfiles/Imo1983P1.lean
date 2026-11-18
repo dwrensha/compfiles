@@ -31,7 +31,7 @@ abbrev PosReal : Type := { x : ℝ // 0 < x }
 
 notation "ℝ+" => PosReal
 
-determine SolutionSet : Set (ℝ+ → ℝ+) := { fun x ↦ 1 / x }
+noncomputable determine SolutionSet : Set (ℝ+ → ℝ+) := { fun x ↦ 1 / x }
 
 problem imo1983_p1 (f : ℝ+ → ℝ+) :
     f ∈ SolutionSet ↔

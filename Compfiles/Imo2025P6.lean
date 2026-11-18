@@ -1254,7 +1254,7 @@ lemma b_pos : 1 ≤ c.b :=
 lemma disj_piv_u : Disjoint {c.pivot} (c.u \ {c.pivot}) := disjoint_sdiff_self_right
 lemma disj_piv_v : Disjoint {c.pivot} (c.v \ {c.pivot}) := disjoint_sdiff_self_right
 lemma disj_u_v_diff : Disjoint (c.u \ {c.pivot}) (c.v \ {c.pivot}) := by
-   rw [disjoint_iff_inter_eq_empty]; ext p; simp [← h_inter]; tauto
+   rw [disjoint_iff_inter_eq_empty]; ext p; simp [← h_inter]
 lemma disj_middle : Disjoint ({c.pivot} ∪ (c.u \ {c.pivot})) (c.v \ {c.pivot}) := by
   rw [disjoint_union_left]; exact ⟨c.disj_piv_v, c.disj_u_v_diff⟩
 
@@ -1270,7 +1270,7 @@ lemma partition_eq :
 
 lemma disj_others :
     Disjoint ({c.pivot} ∪ (c.u \ {c.pivot}) ∪ (c.v \ {c.pivot})) c.Others := by
-  rw [disjoint_iff_inter_eq_empty]; ext p; rw [← h_inter]; simp [Others]; tauto
+  rw [disjoint_iff_inter_eq_empty]; ext p; rw [← h_inter]; simp [Others]
 
 theorem total_labels_eq_sum :
     (targetsW c.u c.v c.all_black).card + (targetsN c.u c.v c.all_black).card +
@@ -1427,12 +1427,12 @@ lemma matilda_covers_at_most_one (m : Matilda n c.all_black) :
 
 lemma grid_size_ge_two_of_label {source : Point n} {lbl : LabelType}
     (hl : { source := source, type := lbl } ∈ c.validLabels) : 2 ≤ n := by
-  cases lbl <;>
-  { simp only [validLabels, mem_targetsWin, mem_targetsW,
+  cases lbl
+  all_goals
+    simp only [validLabels, mem_targetsWin, mem_targetsW,
                mem_union, mem_map] at hl
     simp_all
-    try lia
-  }
+  all_goals lia
 
 lemma valid_label_pos_not_black {n : ℕ} [NeZero n] (c : IntersectionSetup n)
     (l : Label n) (hl : l ∈ validLabels c) : (label_pos l).2 ∉ c.all_black := by
@@ -2329,13 +2329,11 @@ lemma card_validLabels_disjoint :
     card_union_of_disjoint]
   · simp only [card_map, card_singleton]
   all_goals {
-    try rw [disjoint_left]
-    try intro x h1 h2
-    try simp only [mem_union, mem_map, Label.emb, Function.Embedding.coeFn_mk] at h1 h2
-    try {
-      rcases x with ⟨src, type⟩
-      cases type <;> simp at h1 h2
-    }
+    rw [disjoint_left]
+    intro x h1 h2
+    simp only [mem_union, mem_map, Label.emb, Function.Embedding.coeFn_mk] at h1 h2
+    rcases x with ⟨src, type⟩
+    cases type <;> simp at h1 h2
   }
 
 theorem disjoint_case_final_bound

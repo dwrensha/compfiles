@@ -62,7 +62,7 @@ problem bulgaria1998_p8 (n : ℕ) (x y : R) : P n x y = P n y x := by
   -- So we take n > 1 and suppose that the result is true for
   -- Pₙ₋₁(x,y) and Pₙ₋₂(x,y).
   revert x y
-  induction n using Nat.strong_induction_on with | h n ih =>
+  induction n using Nat.strong_induction_on with | ind n ih =>
   cases n with | zero => intros; rfl | succ n =>
   cases n with | zero => intros; dsimp only [P]; ring | succ n =>
 

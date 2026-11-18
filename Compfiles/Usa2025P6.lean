@@ -1721,7 +1721,7 @@ theorem usa2025_p6_main (N : ℕ) (hN : 0 < N) : ∀ (m : ℕ) [NeZero m] (_hmn 
     (_hpart : ∀ p, ∃ P : CirclePartition m N, ∀ i, 1 ≤ ∑ x ∈ P.arcOf i, like p x),
     ∃ a : ZMod m → Fin N, ∀ p, 1 ≤ ∑ c ∈ Finset.univ.filter (a · = p), like p c := by
   induction N using Nat.strong_induction_on with
-  | h N ih =>
+  | ind N ih =>
     intro m hm' hmn like hnn hpart
     rcases Nat.eq_or_lt_of_le hN with rfl | hN2
     · obtain ⟨P, hP⟩ := hpart ⟨0, hN⟩

@@ -126,7 +126,7 @@ determine terminates : Bool := true
 problem imo1986_p3 (s₀ : State) (h_sum : 0 < s₀.sum) :
     if terminates then Acc Step s₀ else ¬ Acc Step s₀ := by
   induction hn : (potential s₀).toNat using Nat.strong_induction_on generalizing s₀ with
-  | h n ih =>
+  | ind n ih =>
     subst hn
     apply Acc.intro
     rintro next_state ⟨i, h_neg, rfl⟩

@@ -509,14 +509,14 @@ lemma pow_pred_dvd_sum_pow_Icc {p : ℕ} (hp : p.Prime) :
             (pow_dvd_pow p (le_trans (Nat.le_succ c) (Nat.le_mul_of_pos_right (c + 1) hi0))) _
         exact dvd_trans h5 (dvd_mul_of_dvd_left (dvd_mul_of_dvd_left (dvd_refl _) _) _)
 
-lemma padicValNat_totient_mul_prime_of_dvd {p q : ℕ} (hp : p.Prime) (hq : q.Prime)
+lemma multiplicity_totient_mul_prime_of_dvd {p q : ℕ} (hp : p.Prime) (hq : q.Prime)
     (hpq : p ≠ q) {n : ℕ} (hn : n ≠ 0) (hqd : q ∣ n) :
-    padicValNat p (Nat.totient (n * q)) = padicValNat p (Nat.totient n) := by
+    multiplicity p (Nat.totient (n * q)) = multiplicity p (Nat.totient n) := by
   have : Fact q.Prime := ⟨hq⟩
   have : Fact p.Prime := ⟨hp⟩
-  set f := padicValNat q n with hf
-  have hf1 : 1 ≤ f := one_le_padicValNat_of_dvd hn hqd
-  have hqfn : q ^ f ∣ n := pow_padicValNat_dvd
+  set f := multiplicity q n with hf
+  have hf1 : 1 ≤ f := one_le_multiplicity_of_dvd hn hqd
+  have hqfn : q ^ f ∣ n := pow_multiplicity_dvd _ _
   set v := n / q ^ f with hv
   have hnv : n = q ^ f * v := (Nat.mul_div_cancel' hqfn).symm
   have hvnz : v ≠ 0 := by
@@ -528,7 +528,7 @@ lemma padicValNat_totient_mul_prime_of_dvd {p q : ℕ} (hp : p.Prime) (hq : q.Pr
     have h : q ^ (f + 1) ∣ n := by
       rw [hnv, pow_succ]
       exact mul_dvd_mul_left _ hqv
-    exact pow_succ_padicValNat_not_dvd hn h
+    exact pow_succ_multiplicity_not_dvd hn h
   have hcv : ∀ e : ℕ, 0 < e → Nat.Coprime (q ^ e) v := by
     intro e he
     rw [Nat.coprime_pow_left_iff he, hq.coprime_iff_not_dvd]
@@ -538,8 +538,8 @@ lemma padicValNat_totient_mul_prime_of_dvd {p q : ℕ} (hp : p.Prime) (hq : q.Pr
     lia
   have htv : Nat.totient v ≠ 0 := (Nat.totient_pos.2 (Nat.pos_of_ne_zero hvnz)).ne'
   have hqnz : q ≠ 0 := hq.ne_zero
-  have hvpow : ∀ e : ℕ, padicValNat p (q ^ e) = 0 := fun e =>
-    padicValNat_prime_prime_pow e hpq
+  have hvpow : ∀ e : ℕ, multiplicity p (q ^ e) = 0 := fun e =>
+    multiplicity_prime_prime_pow e hpq
   have htn : Nat.totient n = q ^ (f - 1) * (q - 1) * Nat.totient v := by
     rw [hnv, Nat.totient_mul (hcv f (by lia)), Nat.totient_prime_pow hq (by lia : 0 < f)]
   have htnq : Nat.totient (n * q) = q ^ f * (q - 1) * Nat.totient v := by
@@ -550,27 +550,27 @@ lemma padicValNat_totient_mul_prime_of_dvd {p q : ℕ} (hp : p.Prime) (hq : q.Pr
     rw [hnq, Nat.totient_mul (hcv (f + 1) (by lia)),
       Nat.totient_prime_pow hq (by lia : 0 < f + 1), Nat.add_sub_cancel]
   rw [htn, htnq,
-    padicValNat.mul (mul_ne_zero (pow_ne_zero _ hqnz) hq1) htv,
-    padicValNat.mul (mul_ne_zero (pow_ne_zero _ hqnz) hq1) htv,
-    padicValNat.mul (pow_ne_zero _ hqnz) hq1,
-    padicValNat.mul (pow_ne_zero _ hqnz) hq1,
+    Nat.multiplicity_mul (mul_ne_zero (pow_ne_zero _ hqnz) hq1) htv,
+    Nat.multiplicity_mul (mul_ne_zero (pow_ne_zero _ hqnz) hq1) htv,
+    Nat.multiplicity_mul (pow_ne_zero _ hqnz) hq1,
+    Nat.multiplicity_mul (pow_ne_zero _ hqnz) hq1,
     hvpow f, hvpow (f - 1)]
 
-lemma padicValNat_totient_mul_prime_of_not_dvd {p q : ℕ} (hp : p.Prime) (hq : q.Prime)
+lemma multiplicity_totient_mul_prime_of_not_dvd {p q : ℕ} (hp : p.Prime) (hq : q.Prime)
     {n : ℕ} (hn : n ≠ 0) (hqd : ¬ q ∣ n) :
-    padicValNat p (Nat.totient (n * q)) =
-      padicValNat p (Nat.totient n) + padicValNat p (q - 1) := by
+    multiplicity p (Nat.totient (n * q)) =
+      multiplicity p (Nat.totient n) + multiplicity p (q - 1) := by
   have : Fact p.Prime := ⟨hp⟩
   have hcop : Nat.Coprime n q := (hq.coprime_iff_not_dvd.2 hqd).symm
   have hq1 : q - 1 ≠ 0 := by
     have := hq.two_le
     lia
   rw [Nat.totient_mul hcop, Nat.totient_prime hq,
-    padicValNat.mul (Nat.totient_pos.2 (Nat.pos_of_ne_zero hn)).ne' hq1]
+    Nat.multiplicity_mul (Nat.totient_pos.2 (Nat.pos_of_ne_zero hn)).ne' hq1]
 
 /-- The main claim: for `p` prime with `p ∣ n`, `p ^ ν_p (φ n) ∣ powSum n k`. -/
-lemma pow_padicValNat_totient_dvd_powSum {p : ℕ} (hp : p.Prime) :
-    ∀ n : ℕ, 2 ≤ n → p ∣ n → ∀ k : ℕ, p ^ padicValNat p (Nat.totient n) ∣ powSum n k := by
+lemma pow_multiplicity_totient_dvd_powSum {p : ℕ} (hp : p.Prime) :
+    ∀ n : ℕ, 2 ≤ n → p ∣ n → ∀ k : ℕ, p ^ multiplicity p (Nat.totient n) ∣ powSum n k := by
   have := Fact.mk hp
   intro n
   induction n using Nat.strong_induction_on with
@@ -578,11 +578,11 @@ lemma pow_padicValNat_totient_dvd_powSum {p : ℕ} (hp : p.Prime) :
     intro hn2 hpn k
     rcases k with _ | k
     · rw [powSum_zero]
-      exact pow_padicValNat_dvd
+      exact pow_multiplicity_dvd p _
     · have hnnz : n ≠ 0 := by lia
-      set e := padicValNat p n with he
-      have he1 : 1 ≤ e := one_le_padicValNat_of_dvd hnnz hpn
-      have hpen : p ^ e ∣ n := pow_padicValNat_dvd
+      set e := multiplicity p n with he
+      have he1 : 1 ≤ e := one_le_multiplicity_of_dvd hnnz hpn
+      have hpen : p ^ e ∣ n := pow_multiplicity_dvd _ _
       set u := n / p ^ e with hu
       have hnu : n = p ^ e * u := (Nat.mul_div_cancel' hpen).symm
       have hu1 : 1 ≤ u := by
@@ -597,10 +597,10 @@ lemma pow_padicValNat_totient_dvd_powSum {p : ℕ} (hp : p.Prime) :
         have hnp : n = p ^ e := by rw [hnu, hu1', mul_one]
         have hp2 := hp.two_le
         rw [hnp, Nat.totient_prime_pow hp (by lia : 0 < e),
-          padicValNat.mul (pow_ne_zero _ hp.ne_zero) (by lia : p - 1 ≠ 0),
-          padicValNat.prime_pow]
-        have h0 : padicValNat p (p - 1) = 0 := by
-          rw [padicValNat.eq_zero_iff]
+          Nat.multiplicity_mul (pow_ne_zero _ hp.ne_zero) (by lia : p - 1 ≠ 0),
+          Nat.multiplicity_prime_pow]
+        have h0 : multiplicity p (p - 1) = 0 := by
+          rw [Nat.multiplicity_eq_zero_iff]
           refine Or.inr (Or.inr ?_)
           intro hd
           have hle := Nat.le_of_dvd (by lia : 0 < p - 1) hd
@@ -621,7 +621,7 @@ lemma pow_padicValNat_totient_dvd_powSum {p : ℕ} (hp : p.Prime) :
           have hd : p ^ (e + 1) ∣ n := by
             rw [hnu, pow_succ]
             exact mul_dvd_mul_left _ hpu
-          exact pow_succ_padicValNat_not_dvd hnnz hd
+          exact pow_succ_multiplicity_not_dvd hnnz hd
         have hpq : p ≠ q := fun h => hpnu (h ▸ hqu)
         set n' := n / q with hn'def
         have hnn' : n = n' * q := (Nat.div_mul_cancel hqn).symm
@@ -647,11 +647,11 @@ lemma pow_padicValNat_totient_dvd_powSum {p : ℕ} (hp : p.Prime) :
             lia
           exact le_trans hp.two_le (Nat.le_of_dvd hpos hpn')
         have hn'lt : n' < n := Nat.div_lt_self (by lia : 0 < n) hq.one_lt
-        have IH' : ∀ k', p ^ padicValNat p (Nat.totient n') ∣ powSum n' k' :=
+        have IH' : ∀ k', p ^ multiplicity p (Nat.totient n') ∣ powSum n' k' :=
           fun k' => IH n' hn'lt hn'2 hpn' k'
         by_cases hcase : q ∣ n'
         · -- case `q ∣ n'`: no extra factor of `p` in `φ (n'*q)`
-          have hval := padicValNat_totient_mul_prime_of_dvd hp hq hpq (by lia : n' ≠ 0) hcase
+          have hval := multiplicity_totient_mul_prime_of_dvd hp hq hpq (by lia : n' ≠ 0) hcase
           rw [hnn', hval]
           have hid := powSum_mul_prime_of_dvd hn'2 hq hcase (k + 1)
           rw [sum_add_pow_eq] at hid
@@ -663,7 +663,7 @@ lemma pow_padicValNat_totient_dvd_powSum {p : ℕ} (hp : p.Prime) :
             exact dvd_mul_of_dvd_right (dvd_mul_of_dvd_left (dvd_mul_of_dvd_right (IH' _) _) _) _
         · -- case `q ∤ n'`: `ν_p` gains `ν_p (q - 1)`
           have hval :=
-            padicValNat_totient_mul_prime_of_not_dvd hp hq (by lia : n' ≠ 0) hcase
+            multiplicity_totient_mul_prime_of_not_dvd hp hq (by lia : n' ≠ 0) hcase
           rw [hnn', hval]
           have hid := powSum_mul_prime_of_not_dvd hn'2 hq hcase (k + 1)
           rw [sum_add_pow_eq] at hid
@@ -679,44 +679,44 @@ lemma pow_padicValNat_totient_dvd_powSum {p : ℕ} (hp : p.Prime) :
                 (n' ^ (j + 1) * powSum n' (k + 1 - (j + 1)) *
                   ∑ h ∈ Finset.range q, h ^ (j + 1)) :=
             Nat.add_right_cancel hid
-          have hdJ : p ^ (padicValNat p (Nat.totient n') + padicValNat p (q - 1)) ∣
+          have hdJ : p ^ (multiplicity p (Nat.totient n') + multiplicity p (q - 1)) ∣
               ∑ j ∈ Finset.range (k + 1), ((k + 1).choose (j + 1)) *
                 (n' ^ (j + 1) * powSum n' (k + 1 - (j + 1)) *
                   ∑ h ∈ Finset.range q, h ^ (j + 1)) := by
             apply Finset.dvd_sum
             intro j _hj
             have hS := IH' (k + 1 - (j + 1))
-            have hT : p ^ padicValNat p (q - 1) ∣
+            have hT : p ^ multiplicity p (q - 1) ∣
                 n' ^ (j + 1) * ∑ h ∈ Finset.range q, h ^ (j + 1) := by
-              rcases Nat.eq_zero_or_pos (padicValNat p (q - 1)) with h0 | h0
+              rcases Nat.eq_zero_or_pos (multiplicity p (q - 1)) with h0 | h0
               · rw [h0, pow_zero]
                 exact one_dvd _
-              · have hc1 : 1 ≤ padicValNat p (q - 1) := h0
+              · have hc1 : 1 ≤ multiplicity p (q - 1) := h0
                 have hd1 : p ^ 1 ∣ n' ^ (j + 1) := by
                   rw [pow_one]
                   exact dvd_pow hpn' (by lia : j + 1 ≠ 0)
-                have hd2 : p ^ (padicValNat p (q - 1) - 1) ∣
+                have hd2 : p ^ (multiplicity p (q - 1) - 1) ∣
                     ∑ h ∈ Finset.range q, h ^ (j + 1) := by
                   rw [sum_range_pow_eq_sum_Icc]
-                  exact pow_pred_dvd_sum_pow_Icc hp _ hc1 (q - 1) pow_padicValNat_dvd _ (by lia)
-                have hadd : padicValNat p (q - 1) = 1 + (padicValNat p (q - 1) - 1) := by
+                  exact pow_pred_dvd_sum_pow_Icc hp _ hc1 (q - 1) (pow_multiplicity_dvd _ _) _ (by lia)
+                have hadd : multiplicity p (q - 1) = 1 + (multiplicity p (q - 1) - 1) := by
                   lia
                 rw [hadd, pow_add]
                 exact mul_dvd_mul hd1 hd2
-            have hdvd1 : p ^ (padicValNat p (Nat.totient n') + padicValNat p (q - 1)) ∣
+            have hdvd1 : p ^ (multiplicity p (Nat.totient n') + multiplicity p (q - 1)) ∣
                 powSum n' (k + 1 - (j + 1)) *
                   (n' ^ (j + 1) * ∑ h ∈ Finset.range q, h ^ (j + 1)) :=
               (pow_add p _ _).symm ▸ mul_dvd_mul hS hT
             exact dvd_trans hdvd1 ⟨((k + 1).choose (j + 1)), by ring⟩
-          have hdX : p ^ (padicValNat p (Nat.totient n') + padicValNat p (q - 1)) ∣
+          have hdX : p ^ (multiplicity p (Nat.totient n') + multiplicity p (q - 1)) ∣
               (q ^ (k + 1) - q) * powSum n' (k + 1) := by
-            have h1 : p ^ padicValNat p (q - 1) ∣ q ^ (k + 1) - q := by
+            have h1 : p ^ multiplicity p (q - 1) ∣ q ^ (k + 1) - q := by
               have hsub : q ^ (k + 1) - q = q * (q ^ k - 1) := by
                 rw [Nat.mul_sub_left_distrib, mul_one, pow_succ, mul_comm]
               rw [hsub]
               have hd : q - 1 ∣ q ^ k - 1 := Nat.sub_one_dvd_pow_sub_one q k
               exact dvd_mul_of_dvd_right
-                (dvd_trans pow_padicValNat_dvd hd) q
+                (dvd_trans (pow_multiplicity_dvd _ _) hd) q
             exact dvd_trans ((pow_add p _ _).symm ▸ mul_dvd_mul (IH' (k + 1)) h1) ⟨1, by ring⟩
           have hA : powSum (n' * q) (k + 1) =
               (∑ j ∈ Finset.range (k + 1), ((k + 1).choose (j + 1)) *
@@ -741,10 +741,10 @@ problem usa2018_p3 (n : ℕ) (hn : 2 ≤ n) (k : ℕ) (_hk : 1 ≤ k)
   rw [Nat.factorization_def _ hq, Nat.factorization_def _ hq]
   by_cases hqd : q ∣ n.totient
   · have hqn : q ∣ n := h q hq hqd
-    have hdvd := pow_padicValNat_totient_dvd_powSum hq n hn hqn k
-    exact (padicValNat_dvd_iff_le hS).1 hdvd
-  · rw [show padicValNat q n.totient = 0 from
-      padicValNat.eq_zero_iff.2 (Or.inr (Or.inr hqd))]
+    have hdvd := pow_multiplicity_totient_dvd_powSum hq n hn hqn k
+    exact (multiplicity_dvd_iff_le hS).1 hdvd
+  · rw [show multiplicity q n.totient = 0 from
+      Nat.multiplicity_eq_zero_iff.2 (Or.inr (Or.inr hqd))]
     exact Nat.zero_le _
 
 end Usa2018P3

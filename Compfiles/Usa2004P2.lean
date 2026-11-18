@@ -340,8 +340,8 @@ lemma all_linear_comb (h0 : (0 : ℤ) ∈ S) (ha : ∀ i, a i ∈ S)
                   Int.dvd_coe_gcd (Even.two_dvd hu2) (Even.two_dvd hv2)
                 rw [huv] at h2dvd
                 norm_num at h2dvd
-              have hodp : Odd (c p) := Int.not_even_iff_odd.mp (he p hpT)
-              have hodq : Odd (c q) := Int.not_even_iff_odd.mp (he q hqT)
+              have hodp : Odd (c p) := he p hpT
+              have hodq : Odd (c q) := he q hqT
               by_cases hve : Even v
               · have hou : Odd u := Int.not_even_iff_odd.mp (fun hu2 => huv2 ⟨hu2, hve⟩)
                 have heven : Even (c' q) := by rw [hcq]; exact hodq.sub_odd hou

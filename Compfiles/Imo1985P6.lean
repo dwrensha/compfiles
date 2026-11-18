@@ -56,7 +56,7 @@ lemma aux_2
   ∀ n x y, 0 < n → x < y → f n x < f n y := by
   intro n x y hn hxy
   induction n using Nat.strong_induction_on with
-  | h n ih =>
+  | ind n ih =>
     cases n with
     | zero => exact absurd hn (Nat.lt_irrefl _)
     | succ n =>

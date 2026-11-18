@@ -396,21 +396,21 @@ lemma claim (n k : ℕ) (hn : 0 < n) (hnk : n ≤ k) (_he : Even (k - n))
   rw [← h2, Scard']
 
 lemma lemma1 (α : Type) (A B : Set α) (hA : A.Finite) (hB : B.Finite)
-    (f : {x // A x} → {x // B x})
+    (f : {x // x ∈ A} → {x // x ∈ B})
     (n : Nat) (h1 : ∀ b, Set.ncard { a | f a = b } = n)
     : B.ncard * n = A.ncard := by
   classical
-  have hfa : Fintype {x // A x} := hA.fintype
-  have hfb : Fintype {x // B x} := hB.fintype
-  have : ∀ b, Fintype { a : {x // A x} // f a = b } := fun b =>
-    have : Fintype { x // A x } := hfa; setFintype fun x ↦ f x = b
-  have h2 : ∀ b, Fintype.card { a : {x // A x} // f a = b } = n := by
+  have hfa : Fintype {x // x ∈ A} := hA.fintype
+  have hfb : Fintype {x // x ∈ B} := hB.fintype
+  have : ∀ b, Fintype { a : {x // x ∈ A} // f a = b } := fun b =>
+    have : Fintype { x // x ∈ A } := hfa; inferInstance
+  have h2 : ∀ b, Fintype.card { a : {x // x ∈ A} // f a = b } = n := by
     intro b; rw [Fintype.card_eq_nat_card]; exact_mod_cast h1 b
-  have key : Fintype.card {x // A x} = Fintype.card {x // B x} * n := by
+  have key : Fintype.card {x // x ∈ A} = Fintype.card {x // x ∈ B} * n := by
     conv_lhs => rw [← Fintype.card_congr (Equiv.sigmaFiberEquiv f), Fintype.card_sigma]
     rw [Finset.sum_congr rfl (fun b _ => h2 b), Finset.sum_const, Finset.card_univ, smul_eq_mul]
   rw [← Nat.card_coe_set_eq, ← Nat.card_coe_set_eq (s := A)]
-  change Nat.card {x // B x} * n = Nat.card {x // A x}
+  change Nat.card {x // x ∈ B} * n = Nat.card {x // x ∈ A}
   rw [Nat.card_eq_fintype_card, Nat.card_eq_fintype_card]
   lia
 
@@ -426,10 +426,10 @@ determine solution (n k : ℕ) : ℚ := 2 ^ (k - n)
 
 problem imo2008_p5 (n k : ℕ) (hn : 0 < n)
     (hnk : n ≤ k) (he : Even (k - n))
-    : Set.ncard (MSequence n k) * solution n k = Set.ncard (NSequence n k) := by
+    : Set.ncard { f | MSequence n k f } * solution n k = Set.ncard { f | NSequence n k f } := by
   have hA : Set.Finite { f | NSequence n k f } := Set.toFinite _
   have hB : Set.Finite { f | MSequence n k f } := Set.toFinite _
-  have h1 := lemma1 (Sequence n k) (NSequence n k) (MSequence n k) hA hB (ψ n k)
+  have h1 := lemma1 (Sequence n k) { f | NSequence n k f } { f | MSequence n k f } hA hB (ψ n k)
               (2 ^ (k - n))
               (claim n k hn hnk he)
   rw [← h1]

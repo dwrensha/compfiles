@@ -44,7 +44,7 @@ lemma lemma2 {x : ℝ} (hx4 : 0 ≤ 3 - x) (hx5 : 0 ≤ x + 1) :
 
 snip end
 
-determine SolutionSet : Set ℝ := Set.Ico (-1) (1 - √31 / 8)
+noncomputable determine SolutionSet : Set ℝ := Set.Ico (-1) (1 - √31 / 8)
 
 problem imo1962_p2 (x : ℝ) :
     x ∈ SolutionSet ↔

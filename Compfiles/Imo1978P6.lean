@@ -239,7 +239,7 @@ theorem compute_finite_induction [NeZero N] (hC : ∀ (j i k), C i = C j → C j
     have hcom' : ∀ n ≤ N, 0 < @compute_k M N n := by
       clear hC
       intro n nb
-      apply Nat.decreasingInduction' (P:=fun n => 0 < @compute_k M N n) _ nb hcom
+      apply Nat.decreasingInduction' (motive:=fun n => 0 < @compute_k M N n) _ nb hcom
       intro k _ _ h
       unfold compute_k at h
       contrapose! h

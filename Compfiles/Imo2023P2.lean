@@ -1259,7 +1259,7 @@ lemma sphereOrder_BACM : SphereOrder V Pt cfg.B cfg.A cfg.C cfg.M := by
 lemma M_ne_A : cfg.M ≠ cfg.A := by
   exact cfg.sphereOrder_BASM.P₂_ne_P₄.symm
 
-def X_set := diag_inter_set V Pt cfg.B cfg.A cfg.S cfg.M
+noncomputable def X_set := diag_inter_set V Pt cfg.B cfg.A cfg.S cfg.M
 
 lemma exists_X : ∃ X : Pt, X ∈ cfg.X_set := by
   exact cfg.sphereOrder_BASM.exists_diag_inter
@@ -2161,8 +2161,8 @@ lemma oangle_SEF_eq_oangle_EFS : (2 : ℤ) • ∡ cfg.S cfg.E (F V Pt cfg) = (2
   rw [EuclideanGeometry.oangle_eq_oangle_of_dist_eq cfg.h_S_Ω.left.symm]
   abel
 
-def K'_set := (cfg.prll_D_BC : Set Pt) ∩ (line[ℝ, cfg.S, cfg.F] : Set Pt)
-def K_set := diag_inter_set V Pt cfg.A cfg.S cfg.C cfg.F
+noncomputable def K'_set := (cfg.prll_D_BC : Set Pt) ∩ (line[ℝ, cfg.S, cfg.F] : Set Pt)
+noncomputable def K_set := diag_inter_set V Pt cfg.A cfg.S cfg.C cfg.F
 
 lemma K'_ne_D {K' : Pt} (hK' : K' ∈ cfg.K'_set)
   : K' ≠ cfg.D := by
@@ -2373,7 +2373,7 @@ lemma P_ne_M : cfg.P ≠ cfg.M := by
 lemma sphereOrder_PSFM : SphereOrder V Pt cfg.P cfg.S cfg.F cfg.M := by
   exact (cfg.sphereOrder_ASFM.trans' V Pt cfg.sphereOrder_PAFM.symm).rotate'
 
-def Z_set := diag_inter_set V Pt cfg.P cfg.S cfg.F cfg.M
+noncomputable def Z_set := diag_inter_set V Pt cfg.P cfg.S cfg.F cfg.M
 
 lemma exists_Z : ∃ Z : Pt, Z ∈ cfg.Z_set := by
   exact cfg.sphereOrder_PSFM.exists_diag_inter
@@ -2755,7 +2755,7 @@ lemma XO_paralell_FP {X : Pt} (hX : X ∈ cfg.X_set)
   rw [add_zero, add_zero]
   rw [cfg.oangle_OXS_eq_oangle_ZDS V Pt hX hZ]
 
-def Y_set := diag_inter_set V Pt cfg.P cfg.A cfg.F cfg.M
+noncomputable def Y_set := diag_inter_set V Pt cfg.P cfg.A cfg.F cfg.M
 
 lemma exists_Y : ∃ Y : Pt, Y ∈ cfg.Y_set := by
   exact cfg.sphereOrder_PAFM.exists_diag_inter

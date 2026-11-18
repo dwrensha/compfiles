@@ -32,12 +32,12 @@ lemma exists_least_prime_factor {n : ℕ} (hn : n ≠ 1) :
   intro q hq hqn
   exact Nat.minFac_le_of_dvd hq.two_le hqn
 
-lemma padicValNat_le_padicValNat_of_dvd {p a b : ℕ} (hb : b ≠ 0) (hp : p.Prime) (hab : a ∣ b) :
-    padicValNat p a ≤ padicValNat p b := by
+lemma multiplicity_le_multiplicity_of_dvd {p a b : ℕ} (hb : b ≠ 0) (hp : p.Prime) (hab : a ∣ b) :
+    multiplicity p a ≤ multiplicity p b := by
   have : Fact (Nat.Prime p) := Fact.mk hp
-  rw [← padicValNat_dvd_iff_le hb]
+  rw [← multiplicity_dvd_iff_le hb]
   apply dvd_trans _ hab
-  exact pow_padicValNat_dvd
+  exact pow_multiplicity_dvd p a
 
 lemma aux₁ {a p n : ℕ} (hp : p.Prime) (hp' : 2 < p) (hn : 0 < n)
     (hnp : (p - 1).Coprime n) (hpa: p ∣ a ^ n + 1) :
@@ -129,15 +129,15 @@ problem imo1999_p4 (n p : ℕ) :
           rw [Nat.odd_pow_iff (by lia:_), Nat.odd_sub' (by lia:_)] at hn'
           norm_num at hn'
           contrapose! hp_odd
-          exact Nat.not_odd_iff_even.mpr hn'
+          exact hn'
         have hq2 : ¬q = 2 := by
           push Not
           exact Odd.ne_two_of_dvd_nat hn_odd hq₂
         have hqp := aux₁ hq₁ (by lia:_) (by lia:_) (aux₂ hq₁ hq₃) hq''
         rw [Nat.sub_add_cancel (by lia:_), Nat.prime_dvd_prime_iff_eq hq₁ hp] at hqp
         rw [hqp] at hq₂
-        have hp_padic_le := padicValNat_le_padicValNat_of_dvd (by positivity:_) hp h
-        rw [padicValNat.pow n (p - 1)] at hp_padic_le
+        have hp_padic_le := multiplicity_le_multiplicity_of_dvd (by positivity:_) hp h
+        rw [Nat.multiplicity_pow n (p - 1)] at hp_padic_le
         nth_rw 3 [← one_pow n] at hp_padic_le
         have hlte₁ : p ∣ (p - 1) + 1 := by
           rw [Nat.sub_add_cancel (by lia:_)]
@@ -145,15 +145,15 @@ problem imo1999_p4 (n p : ℕ) :
           intro h'p
           apply Nat.le_of_dvd (by lia:_) at h'p
           lia
-        rw [padicValNat.pow_add_pow hp_odd hlte₁ hlte₂ hn_odd] at hp_padic_le
-        rw [Nat.sub_add_cancel (by lia:_), padicValNat_self] at hp_padic_le
-        have hpadic_pn := one_le_padicValNat_of_dvd (by lia:_) hq₂
+        rw [Nat.multiplicity_pow_add_pow hp_odd hlte₁ hlte₂ hn_odd] at hp_padic_le
+        rw [Nat.sub_add_cancel (by lia:_), Nat.Prime.multiplicity_self] at hp_padic_le
+        have hpadic_pn := one_le_multiplicity_of_dvd (by lia:_) hq₂
         have hp3' : p ≤ 3 := by
           contrapose! hp_padic_le
-          calc 1 + padicValNat p n
-              ≤ padicValNat p n + padicValNat p n := add_le_add_left hpadic_pn _
-            _ = 2 * padicValNat p n := by ring
-            _ < (p - 1) * padicValNat p n := (mul_lt_mul_iff_left₀ (by lia:_)).mpr (by lia:_)
+          calc 1 + multiplicity p n
+              ≤ multiplicity p n + multiplicity p n := add_le_add_left hpadic_pn _
+            _ = 2 * multiplicity p n := by ring
+            _ < (p - 1) * multiplicity p n := (mul_lt_mul_iff_left₀ (by lia:_)).mpr (by lia:_)
         have hp3 : p = 3 := by lia
         rw [hp3] at h hp_padic_le hq₂
         norm_num at h hp_padic_le
@@ -169,7 +169,7 @@ problem imo1999_p4 (n p : ℕ) :
         · rw [hp3, hm, hm1]
           norm_num
         · have hmn : m ∣ n := Dvd.intro 3 (id (Eq.symm hm))
-          rw [hm, padicValNat.mul (by lia:_) (by norm_num:_), padicValNat_self] at hp_padic_le
+          rw [hm, Nat.multiplicity_mul (by lia:_) (by norm_num:_), Nat.Prime.multiplicity_self] at hp_padic_le
           rcases exists_least_prime_factor hm1 with ⟨qq, ⟨hqq₁, hqq₂, hqq₃⟩⟩
           have hqq'' : qq ∣ 8 ^ m + 1 := dvd_trans (dvd_mul_of_dvd_left (dvd_pow hqq₂ (by lia:_)) 9) h
           have hq1' := hqq₁.two_le
@@ -184,7 +184,7 @@ problem imo1999_p4 (n p : ℕ) :
           have : Fact (Nat.Prime 3) := ⟨by norm_num⟩
           have hm0 : m ≠ 0 := by rintro rfl; lia
           have h3m : (3 : ℕ) ∣ m := hqq3 ▸ hqq₂
-          have hv1 : 1 ≤ padicValNat 3 m := one_le_padicValNat_of_dvd hm0 h3m
+          have hv1 : 1 ≤ multiplicity 3 m := one_le_multiplicity_of_dvd hm0 h3m
           lia
 
 end Imo1999P4

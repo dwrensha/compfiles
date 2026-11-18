@@ -396,7 +396,7 @@ lemma coverConfig.nS_leq_n (C : coverConfig) : C.nS ≤ C.n := by
   simp [Finset.card_filter_le]
 
 /-- `shiftSet v g` is the result of shifting every point in `g` by the vector `v`. -/
-def shiftSet (v : Plane) (g : Set Plane) : Set Plane :=
+noncomputable def shiftSet (v : Plane) (g : Set Plane) : Set Plane :=
   Set.image (AffineEquiv.constVAdd ℝ Plane v) g
 
 def gridShift (d : Fin 3) : Plane := match d with
@@ -436,7 +436,7 @@ lemma grid_shift (n : ℕ) (d : Fin 3) :
         rw [add_tsub_cancel_left] at ha
         rw [ha, ← Nat.cast_pred ha0]
       · use b
-        constructor <;> (try (first | assumption | lia))
+        constructor <;> (first | assumption | lia)
     · have : b ≠ 1 := by intro hC; rw [hC] at hb
                          simp only [Fin.isValue, Nat.cast_one, add_eq_left] at hb; exact h2 hb
       use a
@@ -447,7 +447,7 @@ lemma grid_shift (n : ℕ) (d : Fin 3) :
         · apply_fun (·-1) at hb
           rw [add_tsub_cancel_left] at hb
           rw [hb, ← Nat.cast_pred hb0]
-        · constructor <;> (try (first | assumption | lia))
+        · constructor <;> (first | assumption | lia)
     · have : a + b ≠ n + 2 := by
         intro hC; rw [ha, hb] at h2; norm_cast at h2; lia
       use a
@@ -455,7 +455,7 @@ lemma grid_shift (n : ℕ) (d : Fin 3) :
       · exact ha
       · use b; constructor
         · exact hb
-        · constructor <;> (try (first | assumption | lia))
+        · constructor <;> (first | assumption | lia)
   · intro ⟨a, ha, b, hb, ha0, hb0, hab⟩
     fin_cases d
     · constructor
@@ -792,7 +792,7 @@ lemma coverGridNoEdgeConfig.cover_no_edge_line_inj (C : coverGridNoEdgeConfig) (
   let y := C.edgePoint d j
   apply C.find_same_line
     (C.edgePoint d i) (C.edgePoint d j) (C.edge_point_in_grid d i) (C.edge_point_in_grid d j)
-  · dsimp only [coverGridConfig.edgePoint]; fin_cases d <;> try (
+  · dsimp only [coverGridConfig.edgePoint]; fin_cases d <;> (
       simp only
       intro hC'; rw [vec_eq] at hC'; obtain ⟨hC'1, hC'2⟩ := hC'
       norm_cast at hC'1; norm_cast at hC'2
@@ -986,10 +986,10 @@ lemma coverGridNoEdgeConfig.cover_no_edge_3_lines (C : coverGridNoEdgeConfig)
   simp only [corner_set, Finset.mem_filter, Finset.mem_map, Finset.mem_univ,
     Function.Embedding.coeFn_mk, true_and, and_iff_left_iff_imp]
   intro ⟨i, hi⟩
-  fin_cases i <;> rw [← hi]; try simp only
-  · apply line_sunny_two_points _ 1 1 2 2 <;> try (first | tauto | norm_num)
-  · apply line_sunny_two_points _ 1 3 2 1 <;> try (first | tauto | norm_num)
-  · apply line_sunny_two_points _ 3 1 1 2 <;> try (first | tauto | norm_num)
+  fin_cases i <;> rw [← hi]
+  · apply line_sunny_two_points _ 1 1 2 2 <;> (first | tauto | norm_num)
+  · apply line_sunny_two_points _ 1 3 2 1 <;> (first | tauto | norm_num)
+  · apply line_sunny_two_points _ 3 1 1 2 <;> (first | tauto | norm_num)
 
 /-- It is impossible to have a `coverGridNoEdgeConfig` with `n ≥ 4`. -/
 lemma coverGridNoEdgeConfig.cover_no_edge_4_impossible (C : coverGridNoEdgeConfig)
@@ -1164,14 +1164,13 @@ noncomputable def threeSunnyLine (d : Fin 3) := line' (threeSunnyLineCoeffs d)
 /-- The lines of a 3 sunny solution are distinct. -/
 lemma threeSunnyLineInj : Function.Injective threeSunnyLine := by
   intro d e h
-  fin_cases d
+  fin_cases d <;> fin_cases e
   all_goals
-    fin_cases e
-    any_goals rfl
-    all_goals
-      simp only [threeSunnyLine, line', threeSunnyLineCoeffs] at h
-      apply line_eq_check at h <;> norm_num
-      norm_num at h
+    first
+    | rfl
+    | ( simp only [threeSunnyLine, line', threeSunnyLineCoeffs] at h
+        apply line_eq_check at h <;> norm_num
+        norm_num at h )
 
 /-- The set of lines of a 3 sunny solution -/
 noncomputable def threeSunnyLines :=
@@ -1227,11 +1226,11 @@ noncomputable def threeSunny : strongCoverGridConfig where
       dsimp only [threeSunnyLine, line', threeSunnyLineCoeffs]
       rw [hx]
       simp [point_on_line]
-      try norm_num
+    all_goals norm_num
   sunny_count := by
     have hS (d : Fin 3): Sunny (threeSunnyLine d) := by
       dsimp only [threeSunnyLine, line', threeSunnyLineCoeffs]
-      rw [sunny_slope] <;> fin_cases d <;> (simp only; try norm_num)
+      rw [sunny_slope] <;> fin_cases d <;> (simp only; norm_num)
     calc
     _ = #threeSunnyLines := by
       congr 1; ext l
@@ -1248,7 +1247,7 @@ noncomputable def threeSunny : strongCoverGridConfig where
     all_goals
       rw [hL]
       simp [point_on_line]
-      try norm_num
+    all_goals norm_num
 
 /-- Add a diagonal line `x + y = n + 2` to a `countAndStrongCover` -/
 noncomputable def strongCoverGridConfig.extend (C : strongCoverGridConfig) :
@@ -1300,7 +1299,7 @@ noncomputable def strongCoverGridConfig.extend (C : strongCoverGridConfig) :
       have := grid_remove_diag C.n
       rw [← C.g_is_grid] at this
       rw [← this] at hx1
-      exact Set.mem_of_mem_inter_left hx1
+      exact Set.mem_of_mem_sdiff hx1
   where hNew : edgeLine (C.n + 1) 2 ∉ C.lines := by {
     intro hC
     obtain ⟨x, hx1, hx2⟩ := C.lines_used (edgeLine (C.n + 1) 2) hC

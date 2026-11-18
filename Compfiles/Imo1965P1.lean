@@ -27,7 +27,7 @@ namespace Imo1965P1
 
 open Real Set
 
-determine the_answer : Set ℝ := Icc (π/4) (7*π/4)
+noncomputable determine the_answer : Set ℝ := Icc (π/4) (7*π/4)
 
 problem imo1965_p1 :
     {x ∈ Icc 0 (2*π) |

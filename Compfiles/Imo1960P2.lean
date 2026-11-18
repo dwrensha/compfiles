@@ -44,7 +44,7 @@ structure IsGood (x : ℝ) : Prop where
   /-- The number belongs to the domain of the denominator. -/
   denom_dom : (1 - sqrt (2 * x + 1)) ^ 2 ≠ 0
 
-determine SolutionSet : Set ℝ := Ico (-1/2) (45/8) \ {0}
+noncomputable determine SolutionSet : Set ℝ := Ico (-1/2) (45/8) \ {0}
 
 problem imo1960_p2 {x} : IsGood x ↔ x ∈ SolutionSet := by
   -- We follow the solution at

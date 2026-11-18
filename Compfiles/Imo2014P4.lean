@@ -186,7 +186,7 @@ noncomputable def L := midpoint ℝ cfg.B cfg.C
 def ABC : Affine.Triangle ℝ (EuclideanSpace ℝ (Fin 2)) :=
   ⟨![cfg.A, cfg.B, cfg.C], cfg.hABC⟩
 
-def D_set := ((line[ℝ, cfg.B, cfg.M] : Set _) ∩ (line[ℝ, cfg.C, cfg.N] : Set (EuclideanSpace ℝ (Fin 2))))
+noncomputable def D_set := ((line[ℝ, cfg.B, cfg.M] : Set _) ∩ (line[ℝ, cfg.C, cfg.N] : Set (EuclideanSpace ℝ (Fin 2))))
 
 lemma L_symm : cfg.L = cfg.symm.L := by
   simp [L, symm]

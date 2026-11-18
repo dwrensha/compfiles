@@ -69,10 +69,10 @@ lemma isInt_of_val_nonneg {q : ℚ} (h : ∀ p : ℕ, p.Prime → 0 ≤ padicVal
     have hcop : Nat.gcd q.num.natAbs q.den = 1 := Rat.reduced q
     have hp2 : p ∣ 1 := hcop ▸ Nat.dvd_gcd hp1 hpd
     exact hpp.ne_one (Nat.dvd_one.mp hp2)
-  have hden_pos : 0 < padicValNat p q.den := by
+  have hden_pos : 0 < multiplicity p q.den := by
     rw [Nat.pos_iff_ne_zero]
     intro h0
-    rw [padicValNat.eq_zero_iff] at h0
+    rw [Nat.multiplicity_eq_zero_iff] at h0
     rcases h0 with h1 | h1 | h1
     · exact hpp.ne_one h1
     · exact Rat.den_nz q h1
@@ -160,7 +160,7 @@ positive natural `d` dividing every term, and such that for every prime `p` the 
 valuation of `d` is attained at some nonzero term of the sequence. -/
 lemma gcd_seq (T : ℕ → ℤ) {b : ℕ} (hb : T b ≠ 0) :
     ∃ d : ℕ, d ≠ 0 ∧ (∀ i, (d : ℤ) ∣ T i) ∧
-      ∀ p : ℕ, p.Prime → ∃ j, T j ≠ 0 ∧ padicValInt p (T j) = padicValNat p d := by
+      ∀ p : ℕ, p.Prime → ∃ j, T j ≠ 0 ∧ padicValInt p (T j) = multiplicity p d := by
   -- The sequence `k ↦ seqGcd T (b + k)` is antitone, hence eventually constant.
   have hanti : Antitone (fun k => seqGcd T (b + k)) :=
     antitone_nat_of_succ_le fun k => seqGcd_succ_le T (Nat.le_add_right b k) hb
@@ -190,28 +190,28 @@ lemma gcd_seq (T : ℕ → ℤ) {b : ℕ} (hb : T b ≠ 0) :
       exact h1 ▸ h2
     by_contra hcon
     push Not at hcon
-    -- Every nonzero term has valuation `≥ padicValNat p d + 1`, so `p ^ (e + 1)` divides `d`.
+    -- Every nonzero term has valuation `≥ multiplicity p d + 1`, so `p ^ (e + 1)` divides `d`.
     have hge : ∀ j, T j ≠ 0 →
-        padicValNat p (seqGcd T (b + n₀)) + 1 ≤ padicValNat p (T j).natAbs := by
+        multiplicity p (seqGcd T (b + n₀)) + 1 ≤ multiplicity p (T j).natAbs := by
       intro j hTj
       obtain ⟨m, hm⟩ := hdvdN j
       have hm0 : m ≠ 0 := by
         intro h0
         rw [h0, mul_zero] at hm
         exact hTj (Int.natAbs_eq_zero.mp hm)
-      have hle : padicValNat p (seqGcd T (b + n₀)) ≤ padicValNat p (T j).natAbs := by
-        rw [hm, padicValNat.mul hd0 hm0]
+      have hle : multiplicity p (seqGcd T (b + n₀)) ≤ multiplicity p (T j).natAbs := by
+        rw [hm, Nat.multiplicity_mul hd0 hm0]
         exact Nat.le_add_right _ _
-      have hne' : padicValNat p (seqGcd T (b + n₀)) ≠ padicValNat p (T j).natAbs :=
+      have hne' : multiplicity p (seqGcd T (b + n₀)) ≠ multiplicity p (T j).natAbs :=
         (hcon j hTj).symm
       exact Nat.succ_le_of_lt (lt_of_le_of_ne hle hne')
-    have hfinal : p ^ (padicValNat p (seqGcd T (b + n₀)) + 1) ∣ seqGcd T (b + n₀) := by
+    have hfinal : p ^ (multiplicity p (seqGcd T (b + n₀)) + 1) ∣ seqGcd T (b + n₀) := by
       apply Finset.dvd_gcd
       intro i _
       by_cases hTi : T i = 0
       · simp [hTi]
-      · exact (padicValNat_dvd_iff_le (Int.natAbs_ne_zero.mpr hTi)).mpr (hge i hTi)
-    have := (padicValNat_dvd_iff_le hd0).mp hfinal
+      · exact (multiplicity_dvd_iff_le (Int.natAbs_ne_zero.mpr hTi)).mpr (hge i hTi)
+    have := (multiplicity_dvd_iff_le hd0).mp hfinal
     lia
 
 /-- The key valuation bound: if `tⱼ` is a nonzero integer of `p`-adic valuation `e` (the
@@ -323,7 +323,7 @@ lemma normalized {s t : ℕ → ℚ} {a b : ℕ} {n : ℤ} (hn : n ≠ 0)
     have := Fact.mk hpp
     obtain ⟨j, hTj0, hTjv⟩ := hmin p hpp
     have htj : t j ≠ 0 := by rw [hT j]; exact_mod_cast hTj0
-    have htjv : padicValRat p (t j) = (padicValNat p d : ℤ) := by
+    have htjv : padicValRat p (t j) = (multiplicity p d : ℤ) := by
       rw [hT j, padicValRat.of_int, hTjv]
     have hbound := s_val_ge hpp (Nat.cast_nonneg _) (st j) (st i) (cross i j) htj htjv
     rw [padicValRat.mul hsi hd0', padicValRat.of_nat]

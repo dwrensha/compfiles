@@ -2,7 +2,6 @@ module
 
 public import Mathlib.Data.String.Defs
 public import Batteries.Data.String.Basic
-public import Batteries.Recycling.RBTree.Basic
 public import Lean.Environment
 public import Lean.Elab.Print
 public import Lean.Meta.Basic
@@ -38,8 +37,6 @@ structure CompileProblemResult where
   determineDecls : List Name
 
 unsafe def compileProblem (problem_id : String) : IO CompileProblemResult := do
-  initSearchPath (← findSysroot)
-
   let lean_file := workDir.join (problem_id ++ ".lean")
   let olean_file := workDir.join (problem_id ++ ".olean")
 
@@ -65,9 +62,6 @@ unsafe def compileProblem (problem_id : String) : IO CompileProblemResult := do
 
 unsafe def verifyTypesAndAxioms (problem_mod : Name) (solution_mod : Name)
     : IO Unit := do
-  initSearchPath (← findSysroot) [workDir]
-  Lean.enableInitializersExecution
-
   withImportModules #[{module := problem_mod}] {} (trustLevel := 1024) fun prob_env =>
     withImportModules #[{module := solution_mod}] {} (trustLevel := 1024) fun sol_env => do
       let prob_ctx := {fileName := "", fileMap := default}
@@ -75,7 +69,7 @@ unsafe def verifyTypesAndAxioms (problem_mod : Name) (solution_mod : Name)
       let prob_infos ← Prod.fst <$> (CoreM.toIO · prob_ctx prob_state) do
         let decls ← ProblemExtraction.getDeclsInPackage problem_mod
         let declInfos ← decls.filter (not ·.isInternal) |>.mapM (fun d => return (d, ← getConstInfo d))
-        return declInfos.toList.toRBMap Name.quickCmp
+        return Std.TreeMap.ofList declInfos.toList Name.quickCmp
 
       let sol_ctx := {fileName := "", fileMap := default}
       let sol_state := {env := sol_env}
@@ -84,7 +78,7 @@ unsafe def verifyTypesAndAxioms (problem_mod : Name) (solution_mod : Name)
         let mut prob_infos := prob_infos
         for d in decls do
           if not d.isInternal then
-           if let .some prob_const := prob_infos.find? d then
+           if let .some prob_const := prob_infos.get? d then
             prob_infos := prob_infos.erase d
             let sol_const ← getConstInfo d
             Lean.Meta.MetaM.run' do
@@ -101,8 +95,6 @@ unsafe def verifyTypesAndAxioms (problem_mod : Name) (solution_mod : Name)
 
 -- copied from lean4checker (https://github.com/leanprover/lean4checker/)
 unsafe def replayFromImports (module : Name) : IO Unit := do
-  initSearchPath (← findSysroot) [workDir]
-  Lean.enableInitializersExecution
   let mFile ← findOLean module
   unless (← mFile.pathExists) do
     throw <| IO.userError s!"object file '{mFile}' of module {module} does not exist"
@@ -113,20 +105,15 @@ unsafe def replayFromImports (module : Name) : IO Unit := do
   let parts ← readModuleDataParts files
   let some (firstPart, _) := parts[0]? |
     throw <| IO.userError s!"module data for {module} is empty"
-  let (_, s) ← importModulesCore firstPart.imports |>.run
-  let env ← finalizeImport s #[{module}] {} 0 True True
   let mut newConstants := {}
   for (part, _) in parts do
     for name in part.constNames, ci in part.constants do
       newConstants := newConstants.insert name ci
-  let env' := Environment.ofKernelEnv (← env.toKernelEnv.replay newConstants)
-  env'.freeRegions
+  withImportModules firstPart.imports {} (trustLevel := 0) fun env => do
+    let _ ← env.toKernelEnv.replay newConstants
 
 unsafe def printDetermineVals (determineDecls : List Name) (solution_mod : Name)
     : IO Unit := do
-  initSearchPath (← findSysroot) [workDir]
-  Lean.enableInitializersExecution
-
   withImportModules #[{module := solution_mod}] {} (trustLevel := 1024) fun sol_env => do
     let sol_ctx := {fileName := "", fileMap := default}
     let sol_state := {env := sol_env}
@@ -157,6 +144,7 @@ unsafe def main (args : List String) : IO Unit := do
   let solution_mod := Name.mkSimple solution_id
 
   IO.FS.createDirAll workDir
+  initSearchPath (← findSysroot) [workDir]
 
   -- 1. extract problem, take note of any `determine`
   -- 2. compile problem to olean

@@ -137,8 +137,8 @@ problem usa2014_p2 {f : ℤ → ℤ} : P f ↔ f ∈ S := by
   rw [Pi.zero_apply] at hm
 
   have hm1 : m ≠ 0 := by
-    contrapose! hm
-    simp [hm, h1]
+    rintro rfl
+    exact hm h1
 
   have hm2 : m ^ 2 ≠ 0 := pow_ne_zero 2 hm1
 
@@ -146,7 +146,7 @@ problem usa2014_p2 {f : ℤ → ℤ} : P f ↔ f ∈ S := by
 
   have hm4 : Odd m := by
     by_contra! hg
-    rw [Int.not_odd_iff_even, even_iff_exists_two_mul] at hg
+    rw [even_iff_exists_two_mul] at hg
     obtain ⟨k, rfl⟩ := hg
     exact hm (h7 k)
 

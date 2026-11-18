@@ -40,7 +40,7 @@ example (a b c d e : ℕ)
   (h4 : a = b + c) : b = 6 := by lia
 
 lemma lemma2 (A B : Finset U) : A = (A ∩ B) ∪ (A \ B) := by
-  ext x; simp; tauto
+  ext x; simp
 
 lemma lemma4 (A B C : Finset U) :
   (A ∩ B) \ C = (A \ C) ∩ (B \ C) := by
@@ -73,18 +73,9 @@ problem imo1966_p1 (A B C : Finset U)
     simp [a, b, c, d, e]
     repeat rw [← Finset.card_union_of_disjoint]
     · grind
-    repeat {
-      intro S h1' h2'
-      simp at h1' h2' ⊢
-      ext x
-      constructor
-      · intro h3'
-        have h1' := h1' h3'
-        have h2' := h2' h3'
-        simp at h1' h2'
-        grind
-      · intro; grind
-    }
+    all_goals
+      rw [Finset.disjoint_left]
+      grind
   }
 
   have h_eq2: b + d = 2 * (c + d) := by {

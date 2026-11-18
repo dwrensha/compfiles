@@ -26,19 +26,19 @@ namespace Imo2012P4
 
 snip begin
 
-def odd_const : Set (ℤ → ℤ) := fun f =>
+def odd_const : Set (ℤ → ℤ) := { f |
   ∃ c : ℤ, ∀ x : ℤ,
-    (Odd x → f x = c) ∧ (Even x → f x = 0)
+    (Odd x → f x = c) ∧ (Even x → f x = 0) }
 
-def mod4_cycle : Set (ℤ → ℤ) := fun f =>
+def mod4_cycle : Set (ℤ → ℤ) := { f |
   ∃ c : ℤ, ∀ x : ℤ, f x =
   match x % 4 with
     | 0 => 0
     | 2 => 4 * c
-    | _ => c
+    | _ => c }
 
-def square_set : Set (ℤ → ℤ) := fun f =>
-  ∃ c : ℤ, ∀ x : ℤ, f x = x ^ 2 * c
+def square_set : Set (ℤ → ℤ) := { f |
+  ∃ c : ℤ, ∀ x : ℤ, f x = x ^ 2 * c }
 
 theorem sub_sq'' {x y : Int} : x ^ 2 + y ^ 2 = (2 * x * y) ↔ x = y := by
   rw [← sub_eq_zero, ← sub_sq', sq_eq_zero_iff, sub_eq_zero]
@@ -159,7 +159,7 @@ problem imo2012_p4 (f : ℤ → ℤ) :
     case inr «f2=4*f1» =>
       simp at «f2=4*f1»
 
-      have when_f4_is_0 («f4=0» : f 4 = 0) : mod4_cycle f := by
+      have when_f4_is_0 («f4=0» : f 4 = 0) : f ∈ mod4_cycle := by
         exists f 1
         have «f(x+4)=fx» (x : ℤ) : f (x + 4) = f x := by
           have «P(4,x)» := P 4 x
@@ -277,6 +277,7 @@ problem imo2012_p4 (f : ℤ → ℤ) :
     all_goals
       intro a b c H
       have c_eq : c = - (a + b) := by lia
+      simp only [odd_const, mod4_cycle, square_set, Set.mem_ofPred_eq] at sol
       rcases sol with ⟨d, h⟩
 
     · have ⟨hal, har⟩ := h a

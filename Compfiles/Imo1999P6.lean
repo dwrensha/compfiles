@@ -26,7 +26,7 @@ for all x,y ∈ ℝ.
 
 namespace Imo1999P6
 
-determine SolutionSet : Set (ℝ → ℝ) := { fun x ↦ 1 - x^2 / 2 }
+noncomputable determine SolutionSet : Set (ℝ → ℝ) := { fun x ↦ 1 - x^2 / 2 }
 
 problem imo1999_p6 (f : ℝ → ℝ) :
     f ∈ SolutionSet ↔

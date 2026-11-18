@@ -70,7 +70,7 @@ lemma extended_pigeonhole {α : Type u} {β : Type v} [DecidableEq α] [Decidabl
       apply Finset.card_insert_of_notMem
       rw [Finset.subset_sdiff] at hpqs''
       have h' := hpqs''.right
-      contrapose! h'
+      contrapose h'
       simp
       intro htn'
       use {p, q}
@@ -98,7 +98,7 @@ lemma extended_pigeonhole {α : Type u} {β : Type v} [DecidableEq α] [Decidabl
         have has'' := hpqs'' ha
         rw [Finset.mem_sdiff] at has''
         have hatn' := has''.right
-        contrapose! hatn'
+        contrapose hatn'
         rw [hatn']
         simp
         use j
@@ -141,7 +141,7 @@ lemma double_pigeonhole {α : Type u} {β : Type v} {γ : Type w} [DecidableEq �
   · exact hpq₂
 
 noncomputable def pow_of_kth_prime_mod_two (k : ℕ) (n : ℕ) : ℕ :=
-  (padicValNat (Nat.nth Nat.Prime k) n) % 2
+  (multiplicity (Nat.nth Nat.Prime k) n) % 2
 
 def two_pow_k_finset (k : ℕ) := Finset.pi (Finset.range k) (fun _ ↦ Finset.range 2)
 
@@ -160,10 +160,10 @@ lemma square_of_pow_of_pow_of_kth_prime_mod_two_eq {m n : ℕ}
     (hm₀ : m ≠ 0) (hn₀ : n ≠ 0)
     (hmn : ∀ k , pow_of_kth_prime_mod_two k m = pow_of_kth_prime_mod_two k n) :
   ∃ k, m * n = k ^ 2 := by
-  let k := ∏ p ∈ Finset.range (m * n + 1) with Nat.Prime p, p ^ ((padicValNat p m + padicValNat p n) / 2)
+  let k := ∏ p ∈ Finset.range (m * n + 1) with Nat.Prime p, p ^ ((multiplicity p m + multiplicity p n) / 2)
   use k
   have hmn₀ : m * n ≠ 0 := Nat.mul_ne_zero hm₀ hn₀
-  rw [← Nat.prod_pow_prime_padicValNat (m * n) hmn₀ (m * n + 1) (by lia:_)]
+  rw [← Nat.prod_pow_prime_multiplicity (m * n) hmn₀ (m * n + 1) (by lia:_)]
   rw [← Finset.prod_pow]
   apply Finset.prod_congr rfl
   intro p hp
@@ -172,7 +172,7 @@ lemma square_of_pow_of_pow_of_kth_prime_mod_two_eq {m n : ℕ}
   rw [← pow_mul]
   congr
   have : Fact (Nat.Prime p) := { out := hp' }
-  rw [padicValNat.mul hm₀ hn₀]
+  rw [Nat.multiplicity_mul hm₀ hn₀]
   symm
   apply Nat.div_mul_cancel
   apply Nat.dvd_of_mod_eq_zero
@@ -183,10 +183,10 @@ lemma square_of_pow_of_pow_of_kth_prime_mod_two_eq {m n : ℕ}
 
 lemma padicValNat_eq_zero_of_divisors {k m k': ℕ} (hm₀ : m ≠ 0)
     (hm : ∀ p, p.Prime ∧ p ∣ m → p ≤ Nat.nth Nat.Prime k) (hk' : k < k'):
-    padicValNat (Nat.nth Nat.Prime k') m = 0 := by
+    multiplicity (Nat.nth Nat.Prime k') m = 0 := by
   by_contra! hdiv
   have : Fact (Nat.Prime (Nat.nth Nat.Prime k')) := Fact.mk (Nat.prime_nth_prime k')
-  rw [← dvd_iff_padicValNat_ne_zero hm₀] at hdiv
+  rw [← dvd_iff_multiplicity_ne_zero hm₀] at hdiv
   have hdiv' := hm (Nat.nth Nat.Prime k') ⟨Nat.prime_nth_prime k', hdiv⟩
   rw [Nat.nth_le_nth Nat.infinite_setOfPred_prime] at hdiv'
   lia

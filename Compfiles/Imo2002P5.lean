@@ -104,7 +104,7 @@ lemma extend_function_mono
 
 snip end
 
-determine SolutionSet : Set (ℝ → ℝ) :=
+noncomputable determine SolutionSet : Set (ℝ → ℝ) :=
   { fun x ↦ 0, fun x ↦ 1/2, fun x ↦ x^2 }
 
 problem imo2002_p5 (f : ℝ → ℝ) :

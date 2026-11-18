@@ -566,7 +566,8 @@ lemma padicValNat_step_thirteen_twelfths {x y : ℕ} (hx : x ≠ 0) (hy : 12 * y
   have hy0 : y ≠ 0 := by lia
   have h12 : padicValNat 2 12 = 2 := by decide +kernel
   have hval := congrArg (padicValNat 2) hy
-  norm_num [padicValNat.mul, hx, hy0, padicValNat.eq_zero_of_not_dvd, h12] at hval
+  simp only [Nat.padicValNat_def] at h12 hval ⊢
+  norm_num [Nat.multiplicity_mul, hx, hy0, multiplicity_eq_zero_of_not_dvd, h12] at hval
   lia
 
 lemma padicValNat_descends_thirteen_twelfths (hpos : ∀ j, 0 < a j) (hstep : ∀ j, 12 * a (j + 1) = 13 * a j) :

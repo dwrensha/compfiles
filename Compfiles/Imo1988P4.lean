@@ -383,7 +383,7 @@ lemma I_compl : (⋃ i, I i)ᶜ = Set.Iio 1 ∪ (⋃ i: singularities, Set.Ico (
       · right
         have : x ∉ I last := by
           simp only [Set.mem_compl_iff] at hx
-          contrapose! hx
+          contrapose hx
           exact ⟨I last, by simp, hx⟩
         rw [I] at this; split at this
           <;> (simp only [Nat.cast_ofNat, Set.mem_Icc, Set.mem_Ioc, not_and, not_le] at this; exact this (by grind))
@@ -427,10 +427,10 @@ lemma I_aligned : ⋃ i, I i = S := by
       · exact h <| Set.Ioo_subset_Ioc_self h3
     · apply h; simpa [h2] using p
   · simp_rw [← f_aligned]
-    contrapose!
+    contrapose
     -- check the components of the complement
-    rw [← Set.mem_compl_iff, I_compl, Set.mem_ofPred]
-    push Not
+    rw [← Set.mem_compl_iff, I_compl]
+    simp only [Set.mem_ofPred_eq, not_le]
 
     have hr : (70: ℝ) < r last := r_bounds₂ last
     rintro ((h | h) | h)

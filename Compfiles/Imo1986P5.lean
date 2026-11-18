@@ -81,7 +81,7 @@ theorem map_eq (x : ℝ≥0) : f x = 2 / (2 - x) :=
 end IsGood
 snip end
 
-determine SolutionSet : Set (ℝ≥0 → ℝ≥0) := { fun x ↦ 2 / (2 - x) }
+noncomputable determine SolutionSet : Set (ℝ≥0 → ℝ≥0) := { fun x ↦ 2 / (2 - x) }
 
 problem imo1986_p5 {f : ℝ≥0 → ℝ≥0} : IsGood f ↔ f ∈ SolutionSet := by
   refine ⟨fun hf ↦ funext hf.map_eq, ?_⟩

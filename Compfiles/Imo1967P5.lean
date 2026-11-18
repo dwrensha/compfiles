@@ -46,8 +46,7 @@ lemma odd_if_sum_eq_zero {α : Type*} {n : ℕ}
     : ∑ i ∈ I, f i^n = 0 → Odd n := by
   intro h2
   obtain ⟨m, hm, hm2⟩ := h
-  by_contra! h_not_odd
-  have h_even := Nat.not_odd_iff_even.mp h_not_odd
+  by_contra! h_even
   have h_pos : 0 < ∑ i ∈ I, f i^n := by calc
     0 < f m^n := Even.pow_pos h_even hm2
     _ ≤ ∑ i ∈ I, f i^n := Finset.single_le_sum (fun i a ↦ Even.pow_nonneg h_even (f i)) hm

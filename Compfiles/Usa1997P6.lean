@@ -51,7 +51,7 @@ lemma key_ineq (a : ℕ → ℕ)
     exact H (m + n) m n rfl hm hn hmN hnN
   intro k
   induction k using Nat.strong_induction_on with
-  | h k ih =>
+  | ind k ih =>
     intro m n hsum hm hn hmN hnN
     rcases lt_trichotomy m n with hmn | rfl | hmn
     · -- Case `m < n`: write `n = m + s` and apply the IH to the pair `(m, s)`.

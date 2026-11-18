@@ -154,8 +154,7 @@ lemma phiPoly_eq_zero (P : Polynomial ℝ)
       exact mul_eq_zero_of_right _ (hQ x y ((x + y) / (2 * x * y - 1)) hx hy0 hz0 hcon)
     exact Set.Infinite.mono hsub
       (Set.Finite.infinite_compl (Finset.finite_toSet _))
-  apply ext
-  intro k
+  ext k
   have h2 : (PhiPoly P).coeff k = 0 := by
     apply eq_zero_of_infinite_isRoot
     have hsub : (({(0 : ℝ)} : Finset ℝ) : Set ℝ)ᶜ ⊆

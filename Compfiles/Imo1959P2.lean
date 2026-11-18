@@ -118,7 +118,7 @@ theorem isGood_iff_of_sqrt_two_lt (hA : sqrt 2 < A) : IsGood x A ↔ x = (A / 2)
       linarith
 snip end
 
-determine solution_set_sqrt2 : Set ℝ := Icc (1 / 2) 1
+noncomputable determine solution_set_sqrt2 : Set ℝ := Icc (1 / 2) 1
 
 problem imo1959_p2a : IsGood x (sqrt 2) ↔ x ∈ solution_set_sqrt2 := by
   refine ⟨fun h ↦ ?_, fun h ↦ (isGood_iff_eq_sqrt_two h).2 rfl⟩
@@ -131,7 +131,7 @@ problem imo1959_p2b : IsGood x 1 ↔ x ∈ solution_set_one := by
     h.sqrt_two_le.not_gt <| (lt_sqrt zero_le_one).2 (by norm_num)
   exact iff_of_false not_isGood_one fun a ↦ a
 
-determine solution_set_two : Set ℝ := { 3 / 2 }
+noncomputable determine solution_set_two : Set ℝ := { 3 / 2 }
 
 problem imo1959_p2c : IsGood x 2 ↔ x ∈ solution_set_two := by
   rw [mem_singleton_iff]

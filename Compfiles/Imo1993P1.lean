@@ -33,7 +33,7 @@ problem imo1993_p1 : ∀ n > 1, ¬∃ p q : ℤ[X], f n = p*q ∧ ¬ isConstant 
   -- We follow the solution of https://artofproblemsolving.com/wiki/index.php/1993_IMO_Problems/Problem_1
 
   intro n n_gt_1
-  by_contra! t
+  by_contra t
   let ⟨b, c, fprod, bnc, cnc⟩ := t
   unfold f at fprod
 
@@ -101,7 +101,7 @@ problem imo1993_p1 : ∀ n > 1, ¬∃ p q : ℤ[X], f n = p*q ∧ ¬ isConstant 
   have h3 : ∀ i, i < n-1 → 3 ∣ b.coeff i := by
     intro i ibd
     induction i using Nat.strong_induction_on with
-    | h i ih =>
+    | ind i ih =>
       match i with
       | 0 => exact w
       | i + 1 =>
@@ -232,8 +232,7 @@ problem imo1993_p1 : ∀ n > 1, ¬∃ p q : ℤ[X], f n = p*q ∧ ¬ isConstant 
 
   obtain ⟨x, xr⟩ : ∃ x, c.eval x = 0 := by
     have : c = c.leadingCoeff * (X : ℤ[X]) + C (c.coeff 0) := by
-      refine ext ?_
-      intro i
+      ext i
       rw [coeff_add, coeff_C]
       simp only [coeff_intCast_mul, Int.cast_eq, coeff_X, mul_ite, mul_one, mul_zero]
       split_ifs with h1 h2 h3

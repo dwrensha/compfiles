@@ -166,7 +166,7 @@ lemma usa2002_p1_generalized
               intro y1 hy1 hy1n; rw [hy1n] at hy1; exact h4 hy1
             rw [Finset.subtype_map_of_mem h3',
                 Finset.subtype_map_of_mem h4'] at hxy
-            exact SetCoe.ext hxy
+            exact Subtype.ext hxy
           · rintro ⟨x, hx⟩
             use ⟨Finset.map (Function.Embedding.subtype _) x,
                  by simp [Finset.subtype_map_subtype, hx, f]⟩
@@ -230,7 +230,7 @@ lemma usa2002_p1_generalized
           · rintro ⟨x, hx⟩ ⟨y, hy⟩ hxy
             simp only [S', b] at hxy
             split_ifs at hxy with h4 h5 h6
-            · simp at hxy; exact SetCoe.ext hxy
+            · simp at hxy; exact Subtype.ext hxy
             · simp only [Sum.inr.injEq, Subtype.mk.injEq] at hxy
               obtain hxx | hxx := (h2' x).mp hx
               · contradiction

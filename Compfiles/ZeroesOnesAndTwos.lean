@@ -133,7 +133,7 @@ lemma prepend_one_mod (n : ℕ) (hn : 0 < n) : prepend_one n % 10 = n % 10 := by
 
 lemma prepend_one_eq_append (n : ℕ) :
     Nat.digits 10 (prepend_one n) = (Nat.digits 10 n) ++ [1] := by
-  induction n using Nat.strong_induction_on with | h n' ih =>
+  induction n using Nat.strong_induction_on with | ind n' ih =>
   cases n' with
   | zero => simp [prepend_one]
   | succ n' =>
@@ -174,7 +174,7 @@ lemma prepend_two_mod (n : ℕ) (hn : 0 < n) : prepend_two n % 10 = n % 10 := by
 
 lemma prepend_two_eq_append (n : ℕ) :
     Nat.digits 10 (prepend_two n) = (Nat.digits 10 n) ++ [2] := by
-  induction n using Nat.strong_induction_on with | h n' ih =>
+  induction n using Nat.strong_induction_on with | ind n' ih =>
   cases n' with
   | zero => norm_num [prepend_two]
   | succ n' =>

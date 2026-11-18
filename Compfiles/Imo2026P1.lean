@@ -208,16 +208,17 @@ lemma gExp_move {m n : ℕ} (hm : 1 < m) (hn : 1 < n) (s : Board) {p : ℕ} (hp 
     have h2 : 0 < Nat.gcd m n := Nat.pos_of_ne_zero hg0
     exact (Nat.div_pos hgl h2).ne'
   have hvg : padicValNat p (Nat.gcd m n) = min (padicValNat p m) (padicValNat p n) := by
-    rw [← Nat.factorization_def _ hp, ← Nat.factorization_def _ hp,
-      ← Nat.factorization_def _ hp, Nat.factorization_gcd hm0 hn0, Finsupp.inf_apply]
+    simp only [Nat.padicValNat_def, ← Nat.factorization_def _ hp,
+      Nat.factorization_gcd hm0 hn0, Finsupp.inf_apply]
   have hvlcm : padicValNat p (Nat.lcm m n) = max (padicValNat p m) (padicValNat p n) := by
-    rw [← Nat.factorization_def _ hp, ← Nat.factorization_def _ hp,
-      ← Nat.factorization_def _ hp, Nat.factorization_lcm hm0 hn0, Finsupp.sup_apply]
+    simp only [Nat.padicValNat_def, ← Nat.factorization_def _ hp,
+      Nat.factorization_lcm hm0 hn0, Finsupp.sup_apply]
   have hvdiv : padicValNat p (Nat.lcm m n / Nat.gcd m n) =
       max (padicValNat p m) (padicValNat p n) - min (padicValNat p m) (padicValNat p n) := by
     have hgl : Nat.gcd m n * (Nat.lcm m n / Nat.gcd m n) = Nat.lcm m n :=
       Nat.mul_div_cancel' ((Nat.gcd_dvd_left m n).trans (Nat.dvd_lcm_left m n))
-    have h := padicValNat.mul (p := p) hg0 hl0
+    have h := Nat.multiplicity_mul (p := p) hg0 hl0
+    simp only [← Nat.padicValNat_def] at h
     rw [hgl, hvlcm, hvg] at h
     lia
   simp only [gExp, Multiset.map_cons, Multiset.gcd_cons]
@@ -304,7 +305,7 @@ lemma Mval_terminal {B' : Board} (hge : ∀ a ∈ B', 1 ≤ a) (huniq : HasUniqu
       intro x hx
       rw [Multiset.mem_map] at hx
       obtain ⟨a, ha, rfl⟩ := hx
-      rw [hnot1 a ha, padicValNat_one_right]
+      rw [hnot1 a ha, Nat.padicValNat_def, multiplicity_one_right]
     simp only [gExp]
     conv_lhs => rw [hsplit]
     rw [Multiset.map_add, Multiset.gcd_add, hfilt, Multiset.map_singleton,
@@ -317,7 +318,7 @@ lemma Mval_terminal {B' : Board} (hge : ∀ a ∈ B', 1 ≤ a) (huniq : HasUniqu
   apply Finset.prod_congr rfl
   intro p hp
   have hpp := Nat.prime_of_mem_primeFactors hp
-  rw [hgexp p hpp, Nat.factorization_def M hpp]
+  rw [hgexp p hpp, Nat.padicValNat_def, Nat.factorization_def M hpp]
 
 /-- Any terminal board reachable from an initial board `B₀` has exactly one
 entry `> 1`. -/
