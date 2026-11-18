@@ -313,6 +313,7 @@ public import Compfiles.Usa1974P1
 public import Compfiles.Usa1974P2
 public import Compfiles.Usa1974P4
 public import Compfiles.Usa1975P1
+public import Compfiles.Usa1975P2
 public import Compfiles.Usa1975P3
 public import Compfiles.Usa1975P5
 public import Compfiles.Usa1976P1
