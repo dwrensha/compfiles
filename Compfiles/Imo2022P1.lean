@@ -101,50 +101,6 @@ def isValidRow (l : List Coin) := 2 * (l.count Coin.A) = l.length
 
 universe u
 
-lemma List.count_ofFn {α : Type u} [DecidableEq α] {n : ℕ} (f : Fin n → α) (a : α)
-  : #{i | f i = a} = List.count a (List.ofFn f) := by
-    induction' n with n h
-    · rw [List.ofFn_zero, List.count_nil]
-      rw [Finset.card_eq_zero]
-      apply Finset.eq_empty_of_isEmpty
-    · rw [List.ofFn_succ, List.count_cons, ← h]
-      rw [← Finset.card_filter_add_card_filter_not (fun i ↦ i ≠ 0)]
-      rw [Finset.filter_filter, Finset.filter_filter]
-      congr 1
-      · have h : ({i | f i = a ∧ i ≠ 0} : Finset _) = Finset.image Fin.succ {i | f i.succ = a} := by
-          ext x
-          simp
-          constructor
-          · rintro ⟨hxa, hx⟩
-            rcases Fin.exists_succ_eq_of_ne_zero hx with ⟨x', hxx'⟩
-            use x'
-            rw [hxx', hxa]
-            constructor <;> rfl
-          · rintro ⟨x', hxa, hx⟩
-            rw [← hx, and_iff_right hxa]
-            apply Fin.succ_ne_zero
-        rw [h]
-        apply Finset.card_image_of_injective
-        apply Fin.succ_injective
-      · by_cases! h' : f 0 = a
-        · rw [beq_of_eq h', ite_eq_left rfl, Finset.card_eq_one]
-          use 0
-          rw [Finset.eq_singleton_iff_unique_mem]
-          simp
-          exact h'
-        · rw [beq_false_of_ne h', ite_eq_right Bool.false_ne_true, Finset.card_eq_zero]
-          rw [Finset.eq_empty_iff_forall_notMem]
-          intro i
-          simp
-          intro hi
-          contrapose h'
-          rw [h'] at hi
-          exact hi
-
-lemma List.sum_rotate {α : Type u} [AddCommMonoid α] (l : List α) {n : ℕ} : (l.rotate n).sum = l.sum := by
-  apply List.Perm.sum_eq
-  apply List.rotate_perm
-
 lemma List.splitBy_append' {α : Type u} {r : α → α → Bool} {a b : List α} (hab : ∃ x ∈ a.getLast?, ∃ y ∈ b.head?, r x y = true)
   : List.splitBy r (a ++ b) = (List.splitBy r a).dropLast ++ [(List.splitBy r a).getLast?.getD [] ++ (List.splitBy r b).head?.getD []] ++ (List.splitBy r b).tail := by
     rcases hab with ⟨p, hp, q, hq, hpq⟩
