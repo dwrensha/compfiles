@@ -605,33 +605,12 @@ lemma firstPlayerShare_pairDup_of_pairwise (xs : List ℝ)
   rw [List.mergeSort_eq_self (r := (· ≥ ·)) (pairwise_pairDup hxs)]
   exact even_zip_sum_pairDup xs
 
-lemma sum_pairDup (xs : List ℝ) : (pairDup xs).sum = 2 * xs.sum := by
-  induction xs with
-  | nil => simp [pairDup]
-  | cons x xs ih =>
-      rw [show pairDup (x :: xs) = x :: x :: pairDup xs by rfl,
-        List.sum_cons, List.sum_cons, ih, List.sum_cons]
-      ring
-
-lemma twice_firstPlayerShare_pairDup (xs : List ℝ) (hxs : xs.Pairwise (· ≥ ·)) :
-    2 * firstPlayerShare (pairDup xs) = (pairDup xs).sum := by
-  rw [firstPlayerShare_pairDup_of_pairwise xs hxs, sum_pairDup]
-
 lemma firstPlayerShare_pairs_singleton_pairs (xs ys : List ℝ) (r : ℝ)
     (hsorted : (pairDup xs ++ r :: pairDup ys).Pairwise (· ≥ ·)) :
     firstPlayerShare (pairDup xs ++ r :: pairDup ys) = xs.sum + r + ys.sum := by
   unfold firstPlayerShare
   rw [List.mergeSort_eq_self (r := (· ≥ ·)) hsorted]
   exact even_zip_sum_pairs_singleton_pairs xs ys r
-
-lemma surplus_pairs_singleton_pairs (xs ys : List ℝ) (r : ℝ)
-    (hsorted : (pairDup xs ++ r :: pairDup ys).Pairwise (· ≥ ·)) :
-    2 * firstPlayerShare (pairDup xs ++ r :: pairDup ys) =
-      (pairDup xs ++ r :: pairDup ys).sum + r := by
-  rw [firstPlayerShare_pairs_singleton_pairs xs ys r hsorted,
-    List.sum_append, List.sum_cons, sum_pairDup, sum_pairDup]
-  ring
-
 
 open scoped BigOperators
 open Finset
@@ -876,35 +855,6 @@ theorem exists_real_signing {V E : Type*} [Fintype V] [Fintype E]
     exact ⟨v, sign3_ne_zero hv⟩
   · exact fun e => sign3_add_eq_zero (htE e)
 
-theorem exists_signed_edge_bound {V E : Type*} [Fintype V] [Fintype E]
-    (src dst : E → V) (x y : E → ℝ) (weight : V → ℝ)
-    (hcard : Fintype.card E < Fintype.card V)
-    (htotal : ∀ s : V → ℝ,
-      (∑ v, s v * weight v) =
-        ∑ e, (s (src e) * x e + s (dst e) * y e)) :
-    ∃ s : V → ℝ,
-      (∀ v, s v = 0 ∨ s v = 1 ∨ s v = -1) ∧
-      (∃ v, s v ≠ 0) ∧
-      |∑ v, s v * weight v| ≤ ∑ e, |x e - y e| := by
-  obtain ⟨s, hs, hsne, hsedge⟩ := exists_real_signing src dst hcard
-  refine ⟨s, hs, hsne, ?_⟩
-  rw [htotal s]
-  calc
-    |∑ e, (s (src e) * x e + s (dst e) * y e)| =
-        |∑ e, s (src e) * (x e - y e)| := by
-          congr 1
-          apply Finset.sum_congr rfl
-          intro e _
-          have he := hsedge e
-          have he' : s (dst e) = -s (src e) := by linarith
-          rw [he']
-          ring
-    _ ≤ ∑ e, |s (src e) * (x e - y e)| := Finset.abs_sum_le_sum_abs _ _
-    _ ≤ ∑ e, |x e - y e| := by
-      apply Finset.sum_le_sum
-      intro e _
-      rcases hs (src e) with h | h | h <;> rw [h] <;> simp [abs_sub_comm]
-
 end CodexMod3
 
 open scoped BigOperators
@@ -924,19 +874,6 @@ def unpair : List (α × α) → List α
   | [] => []
   | (a, b) :: t => a :: b :: unpair t
 
-theorem unpair_pairUp_append_unpaired : ∀ l : List α,
-    unpair (pairUp l) ++ (unpaired l).toList = l := by
-  intro l
-  induction l using pairUp.induct with
-  | case1 a b t ih => simp [pairUp, unpaired, unpair, ih]
-  | case2 l h =>
-      cases l with
-      | nil => simp [pairUp, unpaired, unpair]
-      | cons a t =>
-          cases t with
-          | nil => simp [pairUp, unpaired, unpair]
-          | cons b u => exact (h a b u rfl).elim
-
 theorem length_pairUp : ∀ l : List α, (pairUp l).length = l.length / 2 := by
   intro l
   induction l using pairUp.induct with
@@ -949,22 +886,6 @@ theorem length_pairUp : ∀ l : List α, (pairUp l).length = l.length / 2 := by
       | cons a t =>
           cases t with
           | nil => simp [pairUp]
-          | cons b u => exact (h a b u rfl).elim
-
-theorem unpaired_isSome_iff : ∀ l : List α,
-    (unpaired l).isSome ↔ l.length % 2 = 1 := by
-  intro l
-  induction l using pairUp.induct with
-  | case1 a b t ih =>
-      rw [unpaired, ih]
-      simp only [List.length_cons]
-      lia
-  | case2 l h =>
-      cases l with
-      | nil => simp [unpaired]
-      | cons a t =>
-          cases t with
-          | nil => simp [unpaired]
           | cons b u => exact (h a b u rfl).elim
 
 theorem pairUp_sum (f : α → ℝ) : ∀ l : List α,
@@ -1128,67 +1049,6 @@ theorem sum_sign_weight_pairUp {ι : Type*} [Fintype ι] [DecidableEq ι]
       (unpaired l).elim 0 (fun z => s z.2 * z.1) := by
   rw [sum_sign_labelWeight]
   exact pairUp_sum (fun z => s z.2 * z.1) l
-
-theorem abstract_even_lower {ι : Type} [Fintype ι] [DecidableEq ι]
-    (p : ι → ℕ) (hp : Function.Injective p)
-    (l : List (ℝ × ι))
-    (hsorted : l.Pairwise (fun a b => a.1 ≥ b.1))
-    (hunpaired : unpaired l = none)
-    (hlen : l.length < 2 * Fintype.card ι)
-    (hweight : ∀ i, labelWeight l i = (2 : ℝ) ^ p i) :
-    1 ≤ surplus (l.map Prod.fst) := by
-  let P := pairUp l
-  let src : Fin P.length → ι := fun e => (P.get e).1.2
-  let dst : Fin P.length → ι := fun e => (P.get e).2.2
-  let x : Fin P.length → ℝ := fun e => (P.get e).1.1
-  let y : Fin P.length → ℝ := fun e => (P.get e).2.1
-  have hcardP : Fintype.card (Fin P.length) < Fintype.card ι := by
-    simp only [Fintype.card_fin]
-    change (pairUp l).length < Fintype.card ι
-    rw [length_pairUp]
-    lia
-  have htotal : ∀ s : ι → ℝ,
-      (∑ v, s v * labelWeight l v) =
-        ∑ e, (s (src e) * x e + s (dst e) * y e) := by
-    intro s
-    have hpair := sum_sign_weight_pairUp s l
-    rw [hunpaired] at hpair
-    simp only [Option.elim_none, add_zero] at hpair
-    calc
-      (∑ v, s v * labelWeight l v) =
-          (P.map (fun q => s q.1.2 * q.1.1 + s q.2.2 * q.2.1)).sum := by
-            simpa [P] using hpair
-      _ = ∑ e : Fin P.length,
-          (fun q => s q.1.2 * q.1.1 + s q.2.2 * q.2.1) (P.get e) := by
-            exact (fin_sum_get_map P
-              (fun q => s q.1.2 * q.1.1 + s q.2.2 * q.2.1)).symm
-      _ = ∑ e, (s (src e) * x e + s (dst e) * y e) := by rfl
-  obtain ⟨s, hs, hsne, hbound⟩ :=
-    CodexMod3.exists_signed_edge_bound src dst x y (labelWeight l) hcardP htotal
-  have hspow : ∀ i, s i = 1 ∨ s i = -1 ∨ s i = 0 := fun i => or_rotate.mp (hs i)
-  have hpunch := pow_two_punch (ι := ι) p hp s hspow hsne
-  have hsumpow :
-      (∑ i, s i * labelWeight l i) = ∑ i, s i * 2 ^ p i :=
-    Finset.sum_congr rfl fun i _ => by rw [hweight]
-  rw [hsumpow] at hbound
-  have hedge_nonneg : ∀ q ∈ P, 0 ≤ q.1.1 - q.2.1 := by
-    intro q hq
-    exact sub_nonneg.mpr (pairUp_rel hsorted q (by simpa [P] using hq))
-  have hright : (∑ e, |x e - y e|) = surplus (l.map Prod.fst) := by
-    rw [show (∑ e, |x e - y e|) =
-        (P.map (fun q => |q.1.1 - q.2.1|)).sum by
-      simpa [x, y] using
-        (fin_sum_get_map P (fun q => |q.1.1 - q.2.1|))]
-    have habs : (P.map (fun q => |q.1.1 - q.2.1|)).sum =
-        (P.map (fun q => q.1.1 - q.2.1)).sum := by
-      apply congrArg List.sum
-      exact List.map_congr_left fun z hz => abs_of_nonneg (hedge_nonneg z hz)
-    rw [habs]
-    have hsur := surplus_eq_pairUp (l.map Prod.fst)
-    simpa [pairUp_map, unpaired_map, hunpaired, P, List.map_map,
-      Function.comp_def] using hsur.symm
-  rw [hright] at hbound
-  exact hpunch.trans hbound
 
 theorem abstract_lower {ι : Type} [Fintype ι] [DecidableEq ι]
     (p : ι → ℕ) (hp : Function.Injective p)
@@ -1980,806 +1840,6 @@ theorem exists_disjoint_subset_sums_close (m : ℕ) (hm : 0 < m)
 
 end CodexClosePoints
 
-open List
-
-
-theorem subperm_perm_of_length_eq {α : Type*} {a b : List α}
-    (h : a <+~ b) (hl : a.length = b.length) : a ~ b := by
-  rw [subperm_iff] at h
-  obtain ⟨l, hlb, hal⟩ := h
-  have hlen : a.length = l.length := by
-    rw [hl, hlb.length_eq]
-  have hal_eq : a = l := hal.eq_of_length hlen
-  simpa [hal_eq] using hlb
-
-open scoped BigOperators
-
-variable {m : ℕ}
-
-def finBlocks (b : Fin m → List ℝ) : List (List ℝ) :=
-  (List.finRange m).map b
-
-def flattenFinBlocks (b : Fin m → List ℝ) : List ℝ :=
-  (finBlocks b).flatten
-
-lemma map_fst_taggedBlocks_eq_flattenFinBlocks (b : Fin m → List ℝ) :
-    (taggedBlocks b).map Prod.fst = flattenFinBlocks b := by
-  unfold taggedBlocks flattenFinBlocks finBlocks
-  rw [List.map_flatMap]
-  change (List.finRange m).flatMap
-      (fun i => ((b i).map fun x => (x, i)).map Prod.fst) =
-    (List.finRange m).flatMap b
-  apply List.flatMap_congr
-  intro i hi
-  rw [List.map_map]
-  change (b i).map (fun x => x) = b i
-  simp
-
-lemma indexedDiffs_scanl (l : List ℝ) (a : ℝ) :
-    indexedDiffs (l.scanl (· + ·) a) = l := by
-  rw [← zipWith_tail_diff_eq_indexedDiffs]
-  exact zipWith_scanl_tail l a
-
-lemma map_sum_finBlocks_eq (p : List ℝ) (b : Fin p.length → List ℝ)
-    (hsum : ∀ i, (b i).sum = p.get i) :
-    (finBlocks b).map List.sum = p := by
-  unfold finBlocks
-  rw [List.map_map]
-  have hcongr : (List.finRange p.length).map (List.sum ∘ b) =
-      (List.finRange p.length).map p.get := by
-    apply List.map_congr_left
-    intro i hi
-    exact hsum i
-  rw [hcongr]
-  exact List.map_get_finRange p
-
-lemma flattenFinBlocks_sum (p : List ℝ) (b : Fin p.length → List ℝ)
-    (hsum : ∀ i, (b i).sum = p.get i) :
-    (flattenFinBlocks b).sum = p.sum := by
-  unfold flattenFinBlocks
-  rw [List.sum_flatten, map_sum_finBlocks_eq p b hsum]
-
-lemma flattenFinBlocks_pos (b : Fin m → List ℝ)
-    (hpos : ∀ i, ∀ x ∈ b i, 0 < x) :
-    ∀ x ∈ flattenFinBlocks b, 0 < x := by
-  intro x hx
-  simp only [flattenFinBlocks, finBlocks, List.mem_flatten, List.mem_map,
-    List.mem_finRange, true_and] at hx
-  obtain ⟨block, ⟨i, rfl⟩, hx⟩ := hx
-  exact hpos i x hx
-
-lemma flattenFinBlocks_ne_nil (b : Fin m → List ℝ)
-    (hm : 0 < m) (hne : ∀ i, b i ≠ []) :
-    flattenFinBlocks b ≠ [] := by
-  intro h
-  have i : Fin m := ⟨0, hm⟩
-  have hmem : b i ∈ finBlocks b := by
-    simp [finBlocks]
-  have : b i = [] := by
-    exact List.flatten_eq_nil_iff.mp (by simpa [flattenFinBlocks] using h) _ hmem
-  exact hne i this
-
-lemma scanl_blockSums_mem_flatten (L : List (List ℝ)) (a z : ℝ)
-    (hz : z ∈ (L.map List.sum).scanl (· + ·) a) :
-    z ∈ L.flatten.scanl (· + ·) a := by
-  induction L generalizing a z with
-  | nil => simpa using hz
-  | cons block rest ih =>
-      rw [List.map_cons, List.scanl_cons] at hz
-      rcases List.mem_cons.mp hz with rfl | hz
-      · rw [List.flatten_cons, List.scanl_append]
-        exact List.mem_append_left _ (by cases block <;> simp [List.scanl_cons])
-      · have hz' := ih (a := a + block.sum) (z := z) hz
-        have hscan : rest.flatten.scanl (· + ·) (a + block.sum) =
-            (a + block.sum) ::
-              (rest.flatten.scanl (· + ·) (a + block.sum)).tail := by
-          cases rest.flatten <;> simp [List.scanl_cons]
-        rw [hscan] at hz'
-        rcases List.mem_cons.mp hz' with hzeq | hztail
-        · rw [hzeq, List.flatten_cons, List.scanl_append, foldl_add_init]
-          apply List.mem_append_left
-          have hlast := scanl_last_eq_sum block a (by simp)
-          rw [← hlast]
-          exact List.getLast_mem (by simp)
-        · rw [List.flatten_cons, List.scanl_append, foldl_add_init]
-          exact List.mem_append_right _ hztail
-
-lemma scanl_piece_mem_flattenFinBlocks (p : List ℝ)
-    (b : Fin p.length → List ℝ)
-    (hsum : ∀ i, (b i).sum = p.get i) {z : ℝ}
-    (hz : z ∈ p.scanl (· + ·) 0) :
-    z ∈ (flattenFinBlocks b).scanl (· + ·) 0 := by
-  have hmapsum := map_sum_finBlocks_eq p b hsum
-  rw [← hmapsum] at hz
-  exact scanl_blockSums_mem_flatten (finBlocks b) 0 z hz
-
-lemma cutsOfLengths_subset_flattenFinBlocks (p : List ℝ)
-    (hpne : p ≠ []) (hppos : ∀ x ∈ p, 0 < x) (hpsum : p.sum = 1)
-    (b : Fin p.length → List ℝ) (hbne : ∀ i, b i ≠ [])
-    (hbpos : ∀ i, ∀ x ∈ b i, 0 < x)
-    (hbsum : ∀ i, (b i).sum = p.get i) :
-    cutsOfLengths p ⊆ cutsOfLengths (flattenFinBlocks b) := by
-  intro z hz
-  have hzint : z ∈ interiorPartialSums p := by simpa [cutsOfLengths] using hz
-  have hzIoo := mem_interiorPartialSums_Ioo p hpne hppos hpsum hzint
-  have hzfull : z ∈ p.scanl (· + ·) 0 := by
-    exact List.mem_of_mem_tail (List.mem_of_mem_dropLast hzint)
-  have hzfull' := scanl_piece_mem_flattenFinBlocks p b hbsum hzfull
-  have hm : 0 < p.length := List.length_pos_iff.mpr hpne
-  have hfne : flattenFinBlocks b ≠ [] := flattenFinBlocks_ne_nil b hm hbne
-  have hfpos : ∀ x ∈ flattenFinBlocks b, 0 < x :=
-    flattenFinBlocks_pos b hbpos
-  have hfsum : (flattenFinBlocks b).sum = 1 := by
-    rw [flattenFinBlocks_sum p b hbsum, hpsum]
-  have hzint' := mem_interiorPartialSums_of_mem_scanl_Ioo
-    (flattenFinBlocks b) hfne hfpos hfsum hzfull' hzIoo
-  simpa [cutsOfLengths] using hzint'
-
-
-open scoped BigOperators
-
-
-noncomputable def commonAtoms : List ℝ → List ℝ → List ℝ
-  | [], _ => []
-  | _, [] => []
-  | x :: xs, y :: ys =>
-      if x = y then
-        x :: commonAtoms xs ys
-      else if x < y then
-        x :: commonAtoms xs ((y - x) :: ys)
-      else
-        y :: commonAtoms ((x - y) :: xs) ys
-termination_by xs ys => xs.length + ys.length
-decreasing_by all_goals simp_all; all_goals lia
-
-theorem commonAtoms_spec (xs ys : List ℝ)
-    (hxpos : ∀ x ∈ xs, 0 < x) (hypos : ∀ y ∈ ys, 0 < y)
-    (hsum : xs.sum = ys.sum) :
-    (∀ z ∈ commonAtoms xs ys, 0 < z) ∧
-      (commonAtoms xs ys).sum = xs.sum ∧
-      (commonAtoms xs ys).length ≤ xs.length + ys.length - 1 := by
-  cases xs with
-  | nil =>
-      have hys : ys = [] := by
-        by_contra hne
-        have hp := List.sum_pos ys hypos hne
-        simp at hsum
-        linarith
-      subst ys
-      simp [commonAtoms]
-  | cons x xt =>
-      cases ys with
-      | nil =>
-          have hxs : (x :: xt).sum > 0 :=
-            List.sum_pos (x :: xt) hxpos (by simp)
-          have hz : (x :: xt).sum = 0 := by simpa using hsum
-          exact (ne_of_gt hxs hz).elim
-      | cons y yt =>
-          have hx : 0 < x := hxpos x List.mem_cons_self
-          have hy : 0 < y := hypos y List.mem_cons_self
-          have hxt : ∀ z ∈ xt, 0 < z :=
-            fun z hz => hxpos z (List.mem_cons_of_mem _ hz)
-          have hyt : ∀ z ∈ yt, 0 < z :=
-            fun z hz => hypos z (List.mem_cons_of_mem _ hz)
-          by_cases heq : x = y
-          · subst y
-            have htailSum : xt.sum = yt.sum := by
-              simpa using hsum
-            have ih := commonAtoms_spec xt yt hxt hyt htailSum
-            refine ⟨?_, ?_, ?_⟩
-            · intro z hz
-              simp [commonAtoms] at hz
-              rcases hz with rfl | hz
-              · exact hx
-              · exact ih.1 z hz
-            · simp [commonAtoms, ih.2.1]
-            · simp [commonAtoms]
-              have hlen := ih.2.2
-              lia
-          · by_cases hlt : x < y
-            · have hdiff : 0 < y - x := sub_pos.mpr hlt
-              have hnewpos : ∀ z ∈ (y - x) :: yt, 0 < z := by
-                intro z hz
-                rcases List.mem_cons.mp hz with rfl | hz
-                · exact hdiff
-                · exact hyt z hz
-              have hnewsum : xt.sum = ((y - x) :: yt).sum := by
-                simp only [List.sum_cons] at hsum ⊢
-                linarith
-              have ih := commonAtoms_spec xt ((y - x) :: yt) hxt hnewpos hnewsum
-              refine ⟨?_, ?_, ?_⟩
-              · intro z hz
-                simp [commonAtoms, heq, hlt] at hz
-                rcases hz with rfl | hz
-                · exact hx
-                · exact ih.1 z hz
-              · simp [commonAtoms, heq, hlt, ih.2.1]
-              · simp [commonAtoms, heq, hlt]
-                have hlen := ih.2.2
-                simp only [List.length_cons] at hlen
-                lia
-            · have hyx : y < x := lt_of_le_of_ne (le_of_not_gt hlt) (Ne.symm heq)
-              have hdiff : 0 < x - y := sub_pos.mpr hyx
-              have hnewpos : ∀ z ∈ (x - y) :: xt, 0 < z := by
-                intro z hz
-                rcases List.mem_cons.mp hz with rfl | hz
-                · exact hdiff
-                · exact hxt z hz
-              have hnewsum : ((x - y) :: xt).sum = yt.sum := by
-                simp only [List.sum_cons] at hsum ⊢
-                linarith
-              have ih := commonAtoms_spec ((x - y) :: xt) yt hnewpos hyt hnewsum
-              refine ⟨?_, ?_, ?_⟩
-              · intro z hz
-                simp [commonAtoms, heq, hlt] at hz
-                rcases hz with rfl | hz
-                · exact hy
-                · exact ih.1 z hz
-              · simp [commonAtoms, heq, hlt, ih.2.1]
-                simp only [List.sum_cons] at hsum
-                linarith
-              · simp [commonAtoms, heq, hlt]
-                have hlen := ih.2.2
-                simp only [List.length_cons] at hlen
-                lia
-termination_by xs.length + ys.length
-decreasing_by
-  · rename_i hxs _ hys _ _ _
-    subst hxs hys
-    simp
-    lia
-  · rename_i hxs _ hys
-    subst hxs hys
-    simp
-  · rename_i hxs _ hys
-    subst hxs hys
-    simp
-
-def ScanRefines (coarse fine : List ℝ) : Prop :=
-  ∀ a z, z ∈ coarse.scanl (· + ·) a → z ∈ fine.scanl (· + ·) a
-
-lemma ScanRefines.cons_same {coarse fine : List ℝ}
-    (h : ScanRefines coarse fine) (x : ℝ) :
-    ScanRefines (x :: coarse) (x :: fine) := by
-  intro a z hz
-  rw [List.scanl_cons] at hz ⊢
-  rcases List.mem_cons.mp hz with rfl | hz
-  · exact List.mem_cons_self
-  · exact List.mem_cons_of_mem _ (h (a + x) z hz)
-
-lemma ScanRefines.absorb_left {d : ℝ} {coarse fine : List ℝ}
-    (h : ScanRefines (d :: coarse) fine) (x : ℝ) :
-    ScanRefines ((x + d) :: coarse) (x :: fine) := by
-  intro a z hz
-  rw [List.scanl_cons] at hz ⊢
-  rcases List.mem_cons.mp hz with rfl | hz
-  · exact List.mem_cons_self
-  · apply List.mem_cons_of_mem
-    apply h (a + x) z
-    rw [List.scanl_cons]
-    apply List.mem_cons_of_mem
-    simpa only [add_assoc] using hz
-
-theorem commonAtoms_scanRefines (xs ys : List ℝ)
-    (hxpos : ∀ x ∈ xs, 0 < x) (hypos : ∀ y ∈ ys, 0 < y)
-    (hsum : xs.sum = ys.sum) :
-    ScanRefines xs (commonAtoms xs ys) ∧
-      ScanRefines ys (commonAtoms xs ys) := by
-  cases xs with
-  | nil =>
-      have hys : ys = [] := by
-        by_contra hne
-        have hp := List.sum_pos ys hypos hne
-        simp at hsum
-        linarith
-      subst ys
-      constructor <;> intro a z hz <;> simpa [commonAtoms] using hz
-  | cons x xt =>
-      cases ys with
-      | nil =>
-          have hxs : (x :: xt).sum > 0 :=
-            List.sum_pos (x :: xt) hxpos (by simp)
-          have hz : (x :: xt).sum = 0 := by simpa using hsum
-          exact (ne_of_gt hxs hz).elim
-      | cons y yt =>
-          have hx : 0 < x := hxpos x List.mem_cons_self
-          have hy : 0 < y := hypos y List.mem_cons_self
-          have hxt : ∀ z ∈ xt, 0 < z :=
-            fun z hz => hxpos z (List.mem_cons_of_mem _ hz)
-          have hyt : ∀ z ∈ yt, 0 < z :=
-            fun z hz => hypos z (List.mem_cons_of_mem _ hz)
-          by_cases heq : x = y
-          · subst y
-            have htailSum : xt.sum = yt.sum := by simpa using hsum
-            have ih := commonAtoms_scanRefines xt yt hxt hyt htailSum
-            simpa [commonAtoms] using
-              And.intro (ih.1.cons_same x) (ih.2.cons_same x)
-          · by_cases hlt : x < y
-            · let d := y - x
-              have hd : 0 < d := sub_pos.mpr hlt
-              have hnewpos : ∀ z ∈ d :: yt, 0 < z := by
-                intro z hz
-                rcases List.mem_cons.mp hz with rfl | hz
-                · exact hd
-                · exact hyt z hz
-              have hnewsum : xt.sum = (d :: yt).sum := by
-                dsimp [d]
-                simp only [List.sum_cons] at hsum ⊢
-                linarith
-              have ih := commonAtoms_scanRefines xt (d :: yt) hxt hnewpos hnewsum
-              have hleft : ScanRefines (x :: xt)
-                  (x :: commonAtoms xt (d :: yt)) := ih.1.cons_same x
-              have hright0 : ScanRefines ((x + d) :: yt)
-                  (x :: commonAtoms xt (d :: yt)) := ih.2.absorb_left x
-              have hxd : x + d = y := by dsimp [d]; ring
-              have hright : ScanRefines (y :: yt)
-                  (x :: commonAtoms xt (d :: yt)) := by simpa [hxd] using hright0
-              simpa [commonAtoms, heq, hlt, d] using And.intro hleft hright
-            · have hyx : y < x := lt_of_le_of_ne (le_of_not_gt hlt) (Ne.symm heq)
-              let d := x - y
-              have hd : 0 < d := sub_pos.mpr hyx
-              have hnewpos : ∀ z ∈ d :: xt, 0 < z := by
-                intro z hz
-                rcases List.mem_cons.mp hz with rfl | hz
-                · exact hd
-                · exact hxt z hz
-              have hnewsum : (d :: xt).sum = yt.sum := by
-                dsimp [d]
-                simp only [List.sum_cons] at hsum ⊢
-                linarith
-              have ih := commonAtoms_scanRefines (d :: xt) yt hnewpos hyt hnewsum
-              have hleft0 : ScanRefines ((y + d) :: xt)
-                  (y :: commonAtoms (d :: xt) yt) := ih.1.absorb_left y
-              have hyd : y + d = x := by dsimp [d]; ring
-              have hleft : ScanRefines (x :: xt)
-                  (y :: commonAtoms (d :: xt) yt) := by simpa [hyd] using hleft0
-              have hright : ScanRefines (y :: yt)
-                  (y :: commonAtoms (d :: xt) yt) := ih.2.cons_same y
-              simpa [commonAtoms, heq, hlt, d] using And.intro hleft hright
-termination_by xs.length + ys.length
-decreasing_by all_goals simp_all; all_goals lia
-
-
-open scoped BigOperators List
-
-
-theorem scanl_sublist_of_scanRefines (coarse fine : List ℝ)
-    (hcpos : ∀ x ∈ coarse, 0 < x) (hfpos : ∀ x ∈ fine, 0 < x)
-    (href : ScanRefines coarse fine) :
-    coarse.scanl (· + ·) 0 <+ fine.scanl (· + ·) 0 := by
-  apply List.sublist_of_subperm_of_sortedLE
-  · apply List.subperm_of_subset (pairwise_scanl_lt coarse 0 hcpos).nodup
-    intro z hz
-    exact href 0 z hz
-  · exact ((pairwise_scanl_lt coarse 0 hcpos).imp fun h => h.le).sortedLE
-  · exact ((pairwise_scanl_lt fine 0 hfpos).imp fun h => h.le).sortedLE
-
-theorem exists_blocks_of_scanRefines (coarse fine : List ℝ)
-    (hcpos : ∀ x ∈ coarse, 0 < x) (hfpos : ∀ x ∈ fine, 0 < x)
-    (hsum : coarse.sum = fine.sum) (href : ScanRefines coarse fine) :
-    ∃ b : Fin coarse.length → List ℝ,
-      (∀ i, b i ≠ []) ∧
-      (∀ i, ∀ x ∈ b i, 0 < x) ∧
-      (∀ i, (b i).sum = coarse.get i) ∧
-      flattenFinBlocks b = fine := by
-  let N := coarse.length
-  let M := fine.length
-  let q := coarse.scanl (· + ·) 0
-  let r := fine.scanl (· + ·) 0
-  have hqLen : q.length = N + 1 := by simp [q, N]
-  have hrLen : r.length = M + 1 := by simp [r, M]
-  have hsub : q <+ r := by
-    dsimp [q, r]
-    exact scanl_sublist_of_scanRefines coarse fine hcpos hfpos href
-  rw [List.sublist_iff_exists_fin_orderEmbedding_get_eq] at hsub
-  obtain ⟨e₀, he₀⟩ := hsub
-  let e : Fin (N + 1) ↪o Fin (M + 1) :=
-    (Fin.castOrderIso hqLen.symm).toOrderEmbedding |>.trans
-      (e₀.trans (Fin.castOrderIso hrLen).toOrderEmbedding)
-  have he : ∀ ix : Fin (N + 1),
-      q.getD ix.val 0 = r.getD (e ix).val 0 := by
-    intro ix
-    have hri : (e ix).val < r.length := by rw [hrLen]; exact (e ix).isLt
-    rw [List.getD_eq_getElem (hn := by rw [hqLen]; exact ix.isLt),
-      List.getD_eq_getElem (hn := hri)]
-    simpa [e] using he₀ ((Fin.castOrderIso hqLen.symm) ix)
-  have hq0D : q.getD 0 0 = 0 := by simp [q]
-  have hr0D : r.getD 0 0 = 0 := by simp [r]
-  have hqLastD : q.getD N 0 = coarse.sum := by
-    have hlast := scanl_last_eq_sum coarse 0 (by simp)
-    rw [List.getLast_eq_getElem] at hlast
-    simp only [zero_add] at hlast
-    rw [List.getD_eq_getElem (hn := by rw [hqLen]; lia)]
-    convert hlast using 1; simp [q, N]
-  have hrLastD : r.getD M 0 = fine.sum := by
-    have hlast := scanl_last_eq_sum fine 0 (by simp)
-    rw [List.getLast_eq_getElem] at hlast
-    simp only [zero_add] at hlast
-    rw [List.getD_eq_getElem (hn := by rw [hrLen]; lia)]
-    convert hlast using 1; simp [r, M]
-  have hrNodup : r.Nodup := by
-    dsimp [r]
-    exact (pairwise_scanl_lt fine 0 hfpos).nodup
-  have he0 : e ⟨0, by lia⟩ = ⟨0, by lia⟩ := by
-    apply Fin.ext
-    let a : Fin r.length := ⟨(e ⟨0, by lia⟩).val, by rw [hrLen]; lia⟩
-    let b : Fin r.length := ⟨0, by rw [hrLen]; lia⟩
-    have hv : r.getD (e ⟨0, by lia⟩).val 0 = r.getD 0 0 := by
-      rw [← he ⟨0, by lia⟩, hq0D, hr0D]
-    have hra : (e ⟨0, by lia⟩).val < r.length := by rw [hrLen]; lia
-    have hrb : 0 < r.length := by rw [hrLen]; lia
-    rw [List.getD_eq_getElem (hn := hra), List.getD_eq_getElem (hn := hrb)] at hv
-    have hab : a = b := hrNodup.injective_get (by simpa [a, b] using hv)
-    simpa [a, b] using congrArg Fin.val hab
-  have heLast : e ⟨N, by lia⟩ = ⟨M, by lia⟩ := by
-    apply Fin.ext
-    let a : Fin r.length := ⟨(e ⟨N, by lia⟩).val, by rw [hrLen]; lia⟩
-    let b : Fin r.length := ⟨M, by rw [hrLen]; lia⟩
-    have hv : r.getD (e ⟨N, by lia⟩).val 0 = r.getD M 0 := by
-      rw [← he ⟨N, by lia⟩, hqLastD, hrLastD, hsum]
-    have hra : (e ⟨N, by lia⟩).val < r.length := by rw [hrLen]; lia
-    have hrb : M < r.length := by rw [hrLen]; lia
-    rw [List.getD_eq_getElem (hn := hra), List.getD_eq_getElem (hn := hrb)] at hv
-    have hab : a = b := hrNodup.injective_get (by simpa [a, b] using hv)
-    simpa [a, b] using congrArg Fin.val hab
-  let F : ℕ → ℕ := clippedEmbedding e
-  let rv : ℕ → ℝ := fun j => r.getD j 0
-  let b : Fin N → List ℝ := intervalBlock rv F
-  have hFmono : Monotone F := clippedEmbedding_mono e
-  have hF0 : F 0 = 0 := by
-    rw [show F 0 = (e ⟨0, by lia⟩).val by
-      exact clippedEmbedding_of_le e (Nat.zero_le N)]
-    rw [he0]
-  have hFN : F N = M := by
-    rw [show F N = (e ⟨N, by lia⟩).val by
-      exact clippedEmbedding_of_le e (le_rfl)]
-    rw [heLast]
-  have hflat : flattenFinBlocks b = fine := by
-    rw [← map_fst_taggedBlocks_eq_flattenFinBlocks]
-    rw [show (taggedBlocks b).map Prod.fst =
-        (List.range' (F 0) (F N - F 0)).map
-          (fun j => rv (j + 1) - rv j) by
-      exact map_fst_tagged_intervalBlocks rv F hFmono]
-    rw [hF0, hFN]
-    unfold rv
-    rw [show List.range' 0 (M - 0) = List.range (r.length - 1) by
-      rw [Nat.sub_zero, hrLen]
-      simp only [Nat.add_sub_cancel_right]
-      exact List.range_eq_range'.symm]
-    change indexedDiffs r = fine
-    dsimp [r]
-    exact indexedDiffs_scanl fine 0
-  have hbsum : ∀ i, (b i).sum = coarse.get i := by
-    intro i
-    change (intervalBlock rv F i).sum = coarse.get i
-    rw [intervalBlock_sum rv F i (hFmono (Nat.le_succ i.val))]
-    have hi : i.val ≤ N := Nat.le_of_lt i.isLt
-    have his : i.val + 1 ≤ N := i.isLt
-    have hFi : F i.val = (e ⟨i.val, by lia⟩).val :=
-      clippedEmbedding_of_le e hi
-    have hFis : F (i.val + 1) = (e ⟨i.val + 1, by lia⟩).val :=
-      clippedEmbedding_of_le e his
-    rw [hFi, hFis]
-    unfold rv
-    rw [← he ⟨i.val + 1, by lia⟩, ← he ⟨i.val, by lia⟩]
-    have hiq : i.val < q.length - 1 := by rw [hqLen]; lia
-    rw [← indexedDiffs_getD q hiq]
-    rw [show indexedDiffs q = coarse from indexedDiffs_scanl coarse 0]
-    exact List.getD_eq_get coarse 0 i
-  have hbne : ∀ i, b i ≠ [] := by
-    intro i hnil
-    have hi : i.val ≤ N := Nat.le_of_lt i.isLt
-    have his : i.val + 1 ≤ N := i.isLt
-    have hFi : F i.val = (e ⟨i.val, by lia⟩).val :=
-      clippedEmbedding_of_le e hi
-    have hFis : F (i.val + 1) = (e ⟨i.val + 1, by lia⟩).val :=
-      clippedEmbedding_of_le e his
-    have hlt : F i.val < F (i.val + 1) := by
-      rw [hFi, hFis]
-      exact e.strictMono (by simp)
-    have hlen := congrArg List.length hnil
-    simp [b, intervalBlock] at hlen
-    lia
-  have hbpos : ∀ i, ∀ x ∈ b i, 0 < x := by
-    intro i x hx
-    apply hfpos x
-    have hxflat : x ∈ flattenFinBlocks b := by
-      simp only [flattenFinBlocks, finBlocks, List.mem_flatten, List.mem_map,
-        List.mem_finRange, true_and]
-      exact ⟨b i, ⟨i, rfl⟩, hx⟩
-    simpa [hflat] using hxflat
-  exact ⟨b, hbne, hbpos, hbsum, hflat⟩
-
-
-open scoped BigOperators List
-
-
-noncomputable def selectedList (p : List ℝ) (I : Finset (Fin p.length)) : List ℝ :=
-  (I.sort (· ≤ ·)).map p.get
-
-lemma selectedList_length (p : List ℝ) (I : Finset (Fin p.length)) :
-    (selectedList p I).length = I.card := by
-  simp [selectedList, Finset.length_sort]
-
-lemma selectedList_pos (p : List ℝ) (I : Finset (Fin p.length))
-    (hp : ∀ x ∈ p, 0 < x) :
-    ∀ x ∈ selectedList p I, 0 < x := by
-  intro x hx
-  simp only [selectedList, List.mem_map] at hx
-  obtain ⟨i, hi, rfl⟩ := hx
-  exact hp (p.get i) (List.get_mem p i)
-
-lemma selectedList_sum (p : List ℝ) (I : Finset (Fin p.length)) :
-    (selectedList p I).sum = ∑ i ∈ I, p.get i := by
-  unfold selectedList
-  rw [← List.sum_toFinset p.get (Finset.sort_nodup I (· ≤ ·))]
-  simp
-
-noncomputable def selectedIndex (p : List ℝ) (I : Finset (Fin p.length))
-    (i : Fin p.length) (hi : i ∈ I) : Fin (selectedList p I).length :=
-  Fin.cast (selectedList_length p I).symm
-    ((I.orderIsoOfFin rfl).symm ⟨i, hi⟩)
-
-lemma selectedList_get_orderEmb (p : List ℝ) (I : Finset (Fin p.length))
-    (k : Fin I.card) :
-    (selectedList p I).get (Fin.cast (selectedList_length p I).symm k) =
-      p.get (I.orderEmbOfFin rfl k) := by
-  unfold selectedList
-  rw [List.get_eq_getElem]
-  simp only [List.getElem_map]
-  apply congrArg p.get
-  apply Fin.ext
-  rfl
-
-lemma selectedList_get_selectedIndex (p : List ℝ) (I : Finset (Fin p.length))
-    (i : Fin p.length) (hi : i ∈ I) :
-    (selectedList p I).get (selectedIndex p I i hi) = p.get i := by
-  unfold selectedIndex
-  rw [selectedList_get_orderEmb]
-  apply congrArg p.get
-  apply Fin.ext
-  change ↑(I.orderIsoOfFin rfl ((I.orderIsoOfFin rfl).symm ⟨i, hi⟩)) = i.val
-  rw [OrderIso.apply_symm_apply]
-
-lemma selectedIndex_orderEmb (p : List ℝ) (I : Finset (Fin p.length))
-    (k : Fin I.card) :
-    selectedIndex p I (I.orderEmbOfFin rfl k) (I.orderEmbOfFin_mem rfl k) =
-      Fin.cast (selectedList_length p I).symm k := by
-  unfold selectedIndex
-  apply Fin.ext
-  change ↑((I.orderIsoOfFin rfl).symm (I.orderIsoOfFin rfl k)) = k.val
-  rw [OrderIso.symm_apply_apply]
-
-lemma sort_eq_ofFn_orderEmb (I : Finset (Fin m)) :
-    I.sort (· ≤ ·) = List.ofFn (I.orderEmbOfFin rfl) := by
-  apply List.ext_getElem
-  · simp [Finset.length_sort]
-  · intro k h₁ h₂
-    simp only [List.getElem_ofFn]
-    exact (Finset.orderEmbOfFin_apply I rfl ⟨k, by simpa using h₁⟩).symm
-
-noncomputable def selectedBlockAt (p : List ℝ)
-    (I : Finset (Fin p.length))
-    (b : Fin (selectedList p I).length → List ℝ) (i : Fin p.length) : List ℝ :=
-  if hi : i ∈ I then b (selectedIndex p I i hi) else []
-
-lemma flatMap_sort_selectedBlockAt (p : List ℝ)
-    (I : Finset (Fin p.length))
-    (b : Fin (selectedList p I).length → List ℝ) :
-    (I.sort (· ≤ ·)).flatMap (selectedBlockAt p I b) = flattenFinBlocks b := by
-  rw [sort_eq_ofFn_orderEmb]
-  unfold List.flatMap flattenFinBlocks finBlocks
-  rw [← List.ofFn_eq_map]
-  have hmap : (List.ofFn (I.orderEmbOfFin rfl)).map (selectedBlockAt p I b) =
-      List.ofFn (fun k : Fin I.card => b (Fin.cast
-        (selectedList_length p I).symm k)) := by
-    rw [← List.ofFn_comp']
-    rw [List.ofFn_inj]
-    funext k
-    simp [selectedBlockAt, selectedIndex_orderEmb]
-  rw [hmap]
-  rw [List.ofFn_congr (selectedList_length p I).symm]
-  congr 2
-
-noncomputable def halfBlockAt (p : List ℝ) (i : Fin p.length) : List ℝ :=
-  [p.get i / 2, p.get i / 2]
-
-lemma flatMap_sort_halfBlockAt (p : List ℝ) (I : Finset (Fin p.length)) :
-    (I.sort (· ≤ ·)).flatMap (halfBlockAt p) = bisectLengths (selectedList p I) := by
-  unfold selectedList
-  generalize I.sort (· ≤ ·) = idxs
-  induction idxs with
-  | nil => simp [bisectLengths, pairDup]
-  | cons i tail ih =>
-      simp [halfBlockAt, bisectLengths, pairDup, ih]
-
-noncomputable def assembleSelectedBlocks (p : List ℝ)
-    (I : Finset (Fin p.length))
-    (b : Fin (selectedList p I).length → List ℝ) :
-    Fin p.length → List ℝ := fun i =>
-  if hi : i ∈ I then b (selectedIndex p I i hi)
-  else [p.get i / 2, p.get i / 2]
-
-lemma assembleSelectedBlocks_ne_nil (p : List ℝ)
-    (I : Finset (Fin p.length))
-    (b : Fin (selectedList p I).length → List ℝ)
-    (hbne : ∀ k, b k ≠ []) :
-    ∀ i, assembleSelectedBlocks p I b i ≠ [] := by
-  intro i
-  by_cases hi : i ∈ I
-  · simpa [assembleSelectedBlocks, hi] using hbne (selectedIndex p I i hi)
-  · simp [assembleSelectedBlocks, hi]
-
-lemma assembleSelectedBlocks_pos (p : List ℝ)
-    (I : Finset (Fin p.length))
-    (b : Fin (selectedList p I).length → List ℝ)
-    (hp : ∀ x ∈ p, 0 < x) (hbpos : ∀ k, ∀ x ∈ b k, 0 < x) :
-    ∀ i, ∀ x ∈ assembleSelectedBlocks p I b i, 0 < x := by
-  intro i x hx
-  by_cases hi : i ∈ I
-  · exact hbpos (selectedIndex p I i hi) x (by
-      simpa [assembleSelectedBlocks, hi] using hx)
-  · have hx' : x = p.get i / 2 := by
-      simpa [assembleSelectedBlocks, hi] using hx
-    subst x
-    exact div_pos (hp (p.get i) (List.get_mem p i)) (by norm_num)
-
-lemma assembleSelectedBlocks_sum (p : List ℝ)
-    (I : Finset (Fin p.length))
-    (b : Fin (selectedList p I).length → List ℝ)
-    (hbsum : ∀ k, (b k).sum = (selectedList p I).get k) :
-    ∀ i, (assembleSelectedBlocks p I b i).sum = p.get i := by
-  intro i
-  by_cases hi : i ∈ I
-  · simp only [assembleSelectedBlocks, hi, dite_true]
-    rw [hbsum, selectedList_get_selectedIndex]
-  · simp [assembleSelectedBlocks, hi]
-
-lemma cutsOfLengths_subset_assembleSelectedBlocks (p : List ℝ)
-    (hpne : p ≠ []) (hp : ∀ x ∈ p, 0 < x) (hpsum : p.sum = 1)
-    (I : Finset (Fin p.length))
-    (b : Fin (selectedList p I).length → List ℝ)
-    (hbne : ∀ k, b k ≠ []) (hbpos : ∀ k, ∀ x ∈ b k, 0 < x)
-    (hbsum : ∀ k, (b k).sum = (selectedList p I).get k) :
-    cutsOfLengths p ⊆
-      cutsOfLengths (flattenFinBlocks (assembleSelectedBlocks p I b)) := by
-  apply cutsOfLengths_subset_flattenFinBlocks p hpne hp hpsum
-  · exact assembleSelectedBlocks_ne_nil p I b hbne
-  · exact assembleSelectedBlocks_pos p I b hp hbpos
-  · exact assembleSelectedBlocks_sum p I b hbsum
-
-lemma flatten_assembleSelectedBlocks_pos (p : List ℝ)
-    (hp : ∀ x ∈ p, 0 < x) (I : Finset (Fin p.length))
-    (b : Fin (selectedList p I).length → List ℝ)
-    (hbpos : ∀ k, ∀ x ∈ b k, 0 < x) :
-    ∀ x ∈ flattenFinBlocks (assembleSelectedBlocks p I b), 0 < x := by
-  exact flattenFinBlocks_pos _ (assembleSelectedBlocks_pos p I b hp hbpos)
-
-lemma flatten_assembleSelectedBlocks_sum (p : List ℝ)
-    (I : Finset (Fin p.length))
-    (b : Fin (selectedList p I).length → List ℝ)
-    (hbsum : ∀ k, (b k).sum = (selectedList p I).get k) :
-    (flattenFinBlocks (assembleSelectedBlocks p I b)).sum = p.sum := by
-  exact flattenFinBlocks_sum p _ (assembleSelectedBlocks_sum p I b hbsum)
-
-noncomputable def assembleTwoSelectedBlocks (p : List ℝ)
-    (I J : Finset (Fin p.length))
-    (bI : Fin (selectedList p I).length → List ℝ)
-    (bJ : Fin (selectedList p J).length → List ℝ) :
-    Fin p.length → List ℝ := fun i =>
-  if hi : i ∈ I then bI (selectedIndex p I i hi)
-  else if hj : i ∈ J then bJ (selectedIndex p J i hj)
-  else [p.get i / 2, p.get i / 2]
-
-lemma assembleTwoSelectedBlocks_ne_nil (p : List ℝ)
-    (I J : Finset (Fin p.length))
-    (bI : Fin (selectedList p I).length → List ℝ)
-    (bJ : Fin (selectedList p J).length → List ℝ)
-    (hIne : ∀ k, bI k ≠ []) (hJne : ∀ k, bJ k ≠ []) :
-    ∀ i, assembleTwoSelectedBlocks p I J bI bJ i ≠ [] := by
-  intro i
-  by_cases hi : i ∈ I
-  · simpa [assembleTwoSelectedBlocks, hi] using hIne (selectedIndex p I i hi)
-  · by_cases hj : i ∈ J
-    · simpa [assembleTwoSelectedBlocks, hi, hj] using hJne (selectedIndex p J i hj)
-    · simp [assembleTwoSelectedBlocks, hi, hj]
-
-lemma assembleTwoSelectedBlocks_pos (p : List ℝ)
-    (I J : Finset (Fin p.length))
-    (bI : Fin (selectedList p I).length → List ℝ)
-    (bJ : Fin (selectedList p J).length → List ℝ)
-    (hp : ∀ x ∈ p, 0 < x)
-    (hIpos : ∀ k, ∀ x ∈ bI k, 0 < x)
-    (hJpos : ∀ k, ∀ x ∈ bJ k, 0 < x) :
-    ∀ i, ∀ x ∈ assembleTwoSelectedBlocks p I J bI bJ i, 0 < x := by
-  intro i x hx
-  by_cases hi : i ∈ I
-  · exact hIpos (selectedIndex p I i hi) x (by
-      simpa [assembleTwoSelectedBlocks, hi] using hx)
-  · by_cases hj : i ∈ J
-    · exact hJpos (selectedIndex p J i hj) x (by
-        simpa [assembleTwoSelectedBlocks, hi, hj] using hx)
-    · have hx' : x = p.get i / 2 := by
-        simpa [assembleTwoSelectedBlocks, hi, hj] using hx
-      subst x
-      exact div_pos (hp (p.get i) (List.get_mem p i)) (by norm_num)
-
-lemma assembleTwoSelectedBlocks_sum (p : List ℝ)
-    (I J : Finset (Fin p.length)) (_hIJ : Disjoint I J)
-    (bI : Fin (selectedList p I).length → List ℝ)
-    (bJ : Fin (selectedList p J).length → List ℝ)
-    (hIsum : ∀ k, (bI k).sum = (selectedList p I).get k)
-    (hJsum : ∀ k, (bJ k).sum = (selectedList p J).get k) :
-    ∀ i, (assembleTwoSelectedBlocks p I J bI bJ i).sum = p.get i := by
-  intro i
-  by_cases hi : i ∈ I
-  · simp only [assembleTwoSelectedBlocks, hi, dite_true]
-    rw [hIsum, selectedList_get_selectedIndex]
-  · by_cases hj : i ∈ J
-    · simp only [assembleTwoSelectedBlocks, hi, dite_false, hj, dite_true]
-      rw [hJsum, selectedList_get_selectedIndex]
-    · simp [assembleTwoSelectedBlocks, hi, hj]
-
-lemma cutsOfLengths_subset_assembleTwoSelectedBlocks (p : List ℝ)
-    (hpne : p ≠ []) (hp : ∀ x ∈ p, 0 < x) (hpsum : p.sum = 1)
-    (I J : Finset (Fin p.length)) (hIJ : Disjoint I J)
-    (bI : Fin (selectedList p I).length → List ℝ)
-    (bJ : Fin (selectedList p J).length → List ℝ)
-    (hIne : ∀ k, bI k ≠ []) (hJne : ∀ k, bJ k ≠ [])
-    (hIpos : ∀ k, ∀ x ∈ bI k, 0 < x)
-    (hJpos : ∀ k, ∀ x ∈ bJ k, 0 < x)
-    (hIsum : ∀ k, (bI k).sum = (selectedList p I).get k)
-    (hJsum : ∀ k, (bJ k).sum = (selectedList p J).get k) :
-    cutsOfLengths p ⊆ cutsOfLengths
-      (flattenFinBlocks (assembleTwoSelectedBlocks p I J bI bJ)) := by
-  apply cutsOfLengths_subset_flattenFinBlocks p hpne hp hpsum
-  · exact assembleTwoSelectedBlocks_ne_nil p I J bI bJ hIne hJne
-  · exact assembleTwoSelectedBlocks_pos p I J bI bJ hp hIpos hJpos
-  · exact assembleTwoSelectedBlocks_sum p I J hIJ bI bJ hIsum hJsum
-
-
-open scoped BigOperators List
-
-
-theorem exists_equal_subset_common_blocks (p : List ℝ)
-    (hp : ∀ x ∈ p, 0 < x) (I J : Finset (Fin p.length))
-    (hsum : (selectedList p I).sum = (selectedList p J).sum) :
-    ∃ c : List ℝ,
-      (∀ z ∈ c, 0 < z) ∧
-      c.length ≤ I.card + J.card - 1 ∧
-      ∃ bI : Fin (selectedList p I).length → List ℝ,
-        (∀ i, bI i ≠ []) ∧
-        (∀ i, ∀ z ∈ bI i, 0 < z) ∧
-        (∀ i, (bI i).sum = (selectedList p I).get i) ∧
-        flattenFinBlocks bI = c ∧
-      ∃ bJ : Fin (selectedList p J).length → List ℝ,
-        (∀ j, bJ j ≠ []) ∧
-        (∀ j, ∀ z ∈ bJ j, 0 < z) ∧
-        (∀ j, (bJ j).sum = (selectedList p J).get j) ∧
-        flattenFinBlocks bJ = c := by
-  let x := selectedList p I
-  let y := selectedList p J
-  let c := commonAtoms x y
-  have hxpos : ∀ z ∈ x, 0 < z := selectedList_pos p I hp
-  have hypos : ∀ z ∈ y, 0 < z := selectedList_pos p J hp
-  have hxy : x.sum = y.sum := by simpa [x, y] using hsum
-  have hspec := commonAtoms_spec x y hxpos hypos hxy
-  have href := commonAtoms_scanRefines x y hxpos hypos hxy
-  have hxc : x.sum = c.sum := by
-    dsimp [c]
-    exact hspec.2.1.symm
-  have hyc : y.sum = c.sum := by
-    rw [← hxy]
-    exact hxc
-  obtain ⟨bI, hIne, hIpos, hIsum, hIflat⟩ :=
-    exists_blocks_of_scanRefines x c hxpos hspec.1 hxc href.1
-  obtain ⟨bJ, hJne, hJpos, hJsum, hJflat⟩ :=
-    exists_blocks_of_scanRefines y c hypos hspec.1 hyc href.2
-  refine ⟨c, hspec.1, ?_, bI, hIne, hIpos, hIsum, hIflat,
-    bJ, hJne, hJpos, hJsum, hJflat⟩
-  simpa [c, x, y, selectedList_length] using hspec.2.2
-
-
 open scoped BigOperators List
 
 
@@ -2878,877 +1938,207 @@ lemma pairDup_perm_append_self (xs : List ℝ) :
         exact List.perm_middle.symm)
 
 
-open scoped BigOperators List
+/-! ## Xiang Yu's reply
 
+We describe Xiang Yu's cuts on the level of multisets of piece lengths:
+`Refines s t` says that the pieces `t` arise from the pieces `s` by repeatedly
+cutting a piece in two. -/
 
-theorem exists_crossing_decomposition (xs : List ℝ)
-    (hpos : ∀ x ∈ xs, 0 < x) (target : ℝ)
-    (htarget : 0 < target) (hle : target ≤ xs.sum) :
-    ∃ pre x post, xs = pre ++ x :: post ∧
-      pre.sum < target ∧ target ≤ pre.sum + x := by
-  induction xs generalizing target with
-  | nil => simp at hle; linarith
-  | cons x tail ih =>
-      have hx : 0 < x := hpos x List.mem_cons_self
-      have htail : ∀ z ∈ tail, 0 < z :=
-        fun z hz => hpos z (List.mem_cons_of_mem _ hz)
-      by_cases htx : target ≤ x
-      · exact ⟨[], x, tail, by simp, by simpa using htarget, by simpa using htx⟩
-      · have hxt : x < target := lt_of_not_ge htx
-        have ht' : 0 < target - x := sub_pos.mpr hxt
-        have hle' : target - x ≤ tail.sum := by
-          simp only [List.sum_cons] at hle
-          linarith
-        obtain ⟨pre, y, post, htailEq, hpre, hcross⟩ :=
-          ih htail (target - x) ht' hle'
-        refine ⟨x :: pre, y, post, ?_, ?_, ?_⟩
-        · simp [htailEq]
-        · simp only [List.sum_cons]
-          linarith
-        · simp only [List.sum_cons]
-          linarith
+/-- `Refines s t`: the multiset of pieces `t` is obtained from the multiset of
+pieces `s` by repeatedly cutting one piece into two. -/
+inductive Refines : Multiset ℝ → Multiset ℝ → Prop
+  | refl (s : Multiset ℝ) : Refines s s
+  | cut {s t : Multiset ℝ} {a b : ℝ} (ha : 0 < a) (hb : 0 < b) :
+      Refines (a ::ₘ b ::ₘ s) t → Refines ((a + b) ::ₘ s) t
 
-theorem exists_prefix_match_residual (xs : List ℝ)
-    (hpos : ∀ x ∈ xs, 0 < x) (target : ℝ)
-    (htarget : 0 < target) (hle : target ≤ xs.sum) :
-    ∃ pre x post t rho,
-      xs = pre ++ x :: post ∧
-      0 < t ∧ 0 ≤ rho ∧ rho ≤ xs.sum - target ∧
-      x = t + rho ∧ (pre ++ [t]).sum = target := by
-  obtain ⟨pre, x, post, hxs, hpre, hcross⟩ :=
-    exists_crossing_decomposition xs hpos target htarget hle
-  let t := target - pre.sum
-  let rho := pre.sum + x - target
-  have ht : 0 < t := by dsimp [t]; linarith
-  have hrho : 0 ≤ rho := by dsimp [rho]; linarith
-  have hpost : 0 ≤ post.sum := List.sum_nonneg fun z hz =>
-    (hpos z (by rw [hxs]; simp [hz])).le
-  have hxsum : xs.sum = pre.sum + x + post.sum := by
-    rw [hxs, List.sum_append, List.sum_cons]
-    ring
-  have hrhoBound : rho ≤ xs.sum - target := by
-    dsimp [rho]
-    linarith
-  refine ⟨pre, x, post, t, rho, hxs, ht, hrho, hrhoBound, ?_, ?_⟩
-  · dsimp [t, rho]
-    ring
-  · dsimp [t]
-    rw [List.sum_append]
-    simp only [List.sum_singleton]
-    ring
+lemma Refines.trans {s t u : Multiset ℝ} (h : Refines s t) (h' : Refines t u) :
+    Refines s u := by
+  induction h with
+  | refl => exact h'
+  | cut ha hb _ ih => exact .cut ha hb (ih h')
 
+lemma Refines.add_right {s t : Multiset ℝ} (h : Refines s t) (u : Multiset ℝ) :
+    Refines (s + u) (t + u) := by
+  induction h with
+  | refl s => exact .refl _
+  | cut ha hb _ ih =>
+    rw [Multiset.cons_add]
+    exact .cut ha hb (by simpa only [Multiset.cons_add] using ih)
 
-open scoped BigOperators List
+lemma Refines.add {s t s' t' : Multiset ℝ} (h : Refines s t) (h' : Refines s' t') :
+    Refines (s + s') (t + t') :=
+  (h.add_right s').trans (by simpa only [add_comm] using h'.add_right t)
 
+lemma Refines.sum_eq {s t : Multiset ℝ} (h : Refines s t) : t.sum = s.sum := by
+  induction h with
+  | refl => rfl
+  | cut _ _ _ ih => rw [ih]; simp [add_assoc]
 
-noncomputable def residualList (rho : ℝ) : List ℝ :=
-  if rho = 0 then [] else [rho]
+lemma Refines.pos {s t : Multiset ℝ} (h : Refines s t) (hs : ∀ x ∈ s, 0 < x) :
+    ∀ x ∈ t, 0 < x := by
+  induction h with
+  | refl => exact hs
+  | cut ha hb _ ih =>
+    refine ih fun x hx ↦ ?_
+    simp only [Multiset.mem_cons] at hx hs
+    rcases hx with rfl | rfl | hx
+    · exact ha
+    · exact hb
+    · exact hs x (.inr hx)
 
-lemma residualList_sum (rho : ℝ) : (residualList rho).sum = rho := by
-  by_cases h : rho = 0 <;> simp [residualList, h]
+/-- Cutting the piece `a` into `b` and `a - b`. -/
+lemma Refines.cut_sub {a b : ℝ} (hb : 0 < b) (hab : b < a) (s : Multiset ℝ) :
+    Refines (a ::ₘ s) (b ::ₘ (a - b) ::ₘ s) := by
+  have := Refines.cut hb (sub_pos.mpr hab) (.refl (b ::ₘ (a - b) ::ₘ s))
+  rwa [add_sub_cancel] at this
 
-lemma residualList_length_le_one (rho : ℝ) : (residualList rho).length ≤ 1 := by
-  by_cases h : rho = 0 <;> simp [residualList, h]
+/-- Every piece can be cut in half. -/
+lemma Refines.bisect (o : Multiset ℝ) (ho : ∀ x ∈ o, 0 < x) :
+    Refines o (o.map (· / 2) + o.map (· / 2)) := by
+  induction o using Multiset.induction with
+  | empty => exact .refl _
+  | cons a o ih =>
+    have ha : 0 < a := ho a (Multiset.mem_cons_self a o)
+    have h1 := (Refines.cut_sub (half_pos ha) (half_lt_self ha) 0).add
+      (ih fun x hx ↦ ho x (Multiset.mem_cons_of_mem hx))
+    rw [sub_half] at h1
+    convert h1 using 1
+    · simp
+    · rw [Multiset.map_cons]; simp only [← Multiset.singleton_add, add_zero]; abel
 
-lemma residualList_pos {rho : ℝ} (hrho : 0 ≤ rho) :
-    ∀ z ∈ residualList rho, 0 < z := by
+/-- The partial sums of a list, excluding the last one. -/
+lemma dropLast_scanl_cons (c x : ℝ) (l : List ℝ) :
+    ((x :: l).scanl (· + ·) c).dropLast = c :: (l.scanl (· + ·) (c + x)).dropLast := by
+  rw [List.scanl_cons, List.dropLast_cons_of_ne_nil (by simp)]
+
+/-- Cutting a piece of the stick in two only adds a cut point. -/
+lemma cutsOfLengths_subset_cut (u v : List ℝ) (a b : ℝ) :
+    cutsOfLengths (u ++ (a + b) :: v) ⊆ cutsOfLengths (u ++ a :: b :: v) := by
+  have key : ∀ c : ℝ, List.Sublist ((u ++ (a + b) :: v).scanl (· + ·) c).dropLast
+      ((u ++ a :: b :: v).scanl (· + ·) c).dropLast := by
+    induction u with
+    | nil =>
+      intro c
+      simp only [List.nil_append, dropLast_scanl_cons, add_assoc]
+      exact .cons_cons _ (.cons _ (.refl _))
+    | cons x u ih =>
+      intro c
+      simp only [List.cons_append, dropLast_scanl_cons]
+      exact .cons_cons _ (ih _)
   intro z hz
-  by_cases h : rho = 0
-  · simp [residualList, h] at hz
-  · have : 0 < rho := lt_of_le_of_ne hrho (Ne.symm h)
-    have hz' : z = rho := by simpa [residualList, h] using hz
-    subst z
-    exact this
+  simp only [cutsOfLengths, interiorPartialSums, List.mem_toFinset, ← List.tail_dropLast]
+    at hz ⊢
+  exact (key 0).tail.subset hz
 
-lemma firstPlayerShare_pairDup_residualList (xs : List ℝ) (rho : ℝ) :
-    firstPlayerShare (pairDup xs ++ residualList rho) = xs.sum + rho := by
-  by_cases h : rho = 0
-  · subst rho
-    simpa [residualList] using firstPlayerShare_pairDup xs
-  · simpa [residualList, h] using
-      firstPlayerShare_pairDup_append_singleton xs rho
+/-- A refinement of multisets of pieces can be carried out on the stick. -/
+lemma Refines.exists_list {s t : Multiset ℝ} (h : Refines s t) :
+    ∀ p : List ℝ, (p : Multiset ℝ) = s →
+      ∃ l : List ℝ, (l : Multiset ℝ) = t ∧ cutsOfLengths p ⊆ cutsOfLengths l := by
+  induction h with
+  | refl s => exact fun p hp ↦ ⟨p, hp, subset_rfl⟩
+  | @cut s t a b ha hb _ ih =>
+    intro p hp
+    have hmem : a + b ∈ p := by
+      have : a + b ∈ (p : Multiset ℝ) := hp ▸ Multiset.mem_cons_self _ _
+      simpa using this
+    obtain ⟨u, v, rfl⟩ := List.append_of_mem hmem
+    have hs : s = ↑(u ++ v) := by
+      have h1 : (a + b) ::ₘ (↑(u ++ v) : Multiset ℝ) = (a + b) ::ₘ s := by
+        rw [← hp]
+        exact (Multiset.coe_eq_coe.mpr List.perm_middle).symm
+      exact ((Multiset.cons_inj_right _).mp h1).symm
+    obtain ⟨l, hl, hsub⟩ := ih (u ++ a :: b :: v) (by
+      rw [hs]
+      exact Multiset.coe_eq_coe.mpr (List.perm_middle.trans (List.perm_middle.cons a)))
+    exact ⟨l, hl, (cutsOfLengths_subset_cut u v a b).trans hsub⟩
 
-noncomputable def prefixRefinementBlocks (pre : List ℝ) (x : ℝ)
-    (post : List ℝ) (t rho : ℝ)
-    (bm : Fin (pre ++ [t]).length → List ℝ) :
-    Fin (pre ++ x :: post).length → List ℝ := fun i =>
-  if hpre : i.val < pre.length then
-    bm ⟨i.val, by simp; lia⟩
-  else if hcross : i.val = pre.length then
-    bm ⟨pre.length, by simp⟩ ++ residualList rho
-  else
-    [((pre ++ x :: post).get i) / 2, ((pre ++ x :: post).get i) / 2]
+/-- **Matching.** Given two groups of pieces `s` and `t`, where `t` has total
+length at most that of `s`, Xiang Yu can cut the pieces of `s + t` so that all
+resulting pieces come in pairs of equal length, except for at most one piece, of
+length at most the difference of the totals.  The number of cuts needed is less
+than the number of pieces in `s + t`.
 
-lemma prefixRefinementBlocks_ne_nil (pre : List ℝ) (x : ℝ)
-    (post : List ℝ) (t rho : ℝ)
-    (bm : Fin (pre ++ [t]).length → List ℝ) (hbm : ∀ k, bm k ≠ []) :
-    ∀ i, prefixRefinementBlocks pre x post t rho bm i ≠ [] := by
-  intro i
-  by_cases hpre : i.val < pre.length
-  · simpa [prefixRefinementBlocks, hpre] using hbm ⟨i.val, by simp; lia⟩
-  · by_cases hcross : i.val = pre.length
-    · rw [prefixRefinementBlocks, dite_eq_right hpre, dite_eq_left hcross]
-      exact List.append_ne_nil_of_left_ne_nil (hbm ⟨pre.length, by simp⟩)
-        (residualList rho)
-    · simp [prefixRefinementBlocks, hpre, hcross]
-
-lemma prefixRefinementBlocks_pos (pre : List ℝ) (x : ℝ)
-    (post : List ℝ) (t rho : ℝ)
-    (bm : Fin (pre ++ [t]).length → List ℝ)
-    (horig : ∀ z ∈ pre ++ x :: post, 0 < z)
-    (hrho : 0 ≤ rho) (hbm : ∀ k, ∀ z ∈ bm k, 0 < z) :
-    ∀ i, ∀ z ∈ prefixRefinementBlocks pre x post t rho bm i, 0 < z := by
-  intro i z hz
-  by_cases hpre : i.val < pre.length
-  · exact hbm ⟨i.val, by simp; lia⟩ z (by
-      simpa [prefixRefinementBlocks, hpre] using hz)
-  · by_cases hcross : i.val = pre.length
-    · rw [prefixRefinementBlocks, dite_eq_right hpre, dite_eq_left hcross] at hz
-      rw [List.mem_append] at hz
-      rcases hz with hz | hz
-      · exact hbm ⟨pre.length, by simp⟩ z hz
-      · exact residualList_pos hrho z hz
-    · have hz' : z = (pre ++ x :: post).get i / 2 := by
-        simpa [prefixRefinementBlocks, hpre, hcross] using hz
-      subst z
-      exact div_pos (horig _ (List.get_mem _ i)) (by norm_num)
-
-lemma prefixRefinementBlocks_sum (pre : List ℝ) (x : ℝ)
-    (post : List ℝ) (t rho : ℝ) (hx : x = t + rho)
-    (bm : Fin (pre ++ [t]).length → List ℝ)
-    (hbmsum : ∀ k, (bm k).sum = (pre ++ [t]).get k) :
-    ∀ i, (prefixRefinementBlocks pre x post t rho bm i).sum =
-      (pre ++ x :: post).get i := by
-  intro i
-  by_cases hpre : i.val < pre.length
-  · simp only [prefixRefinementBlocks, hpre, dite_true]
-    rw [hbmsum]
-    rw [List.get_eq_getElem, List.get_eq_getElem,
-      List.getElem_append_left hpre, List.getElem_append_left hpre]
-  · by_cases hcross : i.val = pre.length
-    · rw [prefixRefinementBlocks, dite_eq_right hpre, dite_eq_left hcross,
-        List.sum_append, residualList_sum, hbmsum]
-      have hiEq : i = ⟨pre.length, by simp⟩ := Fin.ext hcross
-      subst i
-      simp [List.get_eq_getElem, hx]
-    · simp [prefixRefinementBlocks, hpre, hcross]
-
-
-open scoped BigOperators List
-
-
-def appendToLast {n : ℕ} (b : Fin (n + 1) → List ℝ) (extra : List ℝ) :
-    Fin (n + 1) → List ℝ := fun i =>
-  if i = Fin.last n then b i ++ extra else b i
-
-lemma ofFn_appendToLast {n : ℕ} (b : Fin (n + 1) → List ℝ)
-    (extra : List ℝ) :
-    List.ofFn (appendToLast b extra) =
-      (List.ofFn b).dropLast ++ [b (Fin.last n) ++ extra] := by
-  rw [List.ofFn_succ', List.ofFn_succ']
-  have hfront :
-      List.ofFn (fun i : Fin n => appendToLast b extra (Fin.castSucc i)) =
-        List.ofFn (fun i : Fin n => b (Fin.castSucc i)) := by
-    rw [List.ofFn_inj]
-    funext i
-    simp [appendToLast]
-  rw [hfront]
-  simp [appendToLast]
-
-noncomputable def prefixFlattenBlocks (pre : List ℝ) (x : ℝ)
-    (post : List ℝ) (_t rho : ℝ)
-    (bm : Fin (pre.length + 1) → List ℝ) :
-    Fin (pre ++ x :: post).length → List ℝ := fun i =>
-  let hlen : (pre ++ x :: post).length = (pre.length + 1) + post.length := by
-    simp only [List.length_append, List.length_cons]
-    lia
-  let k : Fin ((pre.length + 1) + post.length) := Fin.cast hlen i
-  Fin.append
-    (appendToLast (n := pre.length) bm (residualList rho))
-    (fun j : Fin post.length => [post.get j / 2, post.get j / 2]) k
-
-lemma prefixRefinementBlocks_eq_prefixFlattenBlocks (pre : List ℝ) (x : ℝ)
-    (post : List ℝ) (t rho : ℝ)
-    (bm : Fin (pre.length + 1) → List ℝ) :
-    prefixRefinementBlocks pre x post t rho
-        (fun k => bm (Fin.cast (by simp) k)) =
-      prefixFlattenBlocks pre x post t rho bm := by
-  funext i
-  by_cases hpre : i.val < pre.length
-  · simp [prefixRefinementBlocks, prefixFlattenBlocks, appendToLast, hpre,
-      Fin.append, Fin.addCases]
-    split <;> rename_i houter
-    · split <;> rename_i hlast
-      · have hv := congrArg Fin.val hlast
-        simp at hv
-        lia
-      · congr 2
-    · lia
-  · by_cases hcross : i.val = pre.length
-    · simp [prefixRefinementBlocks, prefixFlattenBlocks, appendToLast,
-        hcross, Fin.append, Fin.addCases]
-      split <;> rename_i hlast
-      · rw [hlast]
-        have heq : (⟨pre.length, by lia⟩ : Fin (pre.length + 1)) =
-            Fin.last pre.length := by apply Fin.ext; rfl
-        rw [heq]
-      · exfalso
-        apply hlast
-        apply Fin.ext
-        simpa using hcross
-    · simp [prefixRefinementBlocks, prefixFlattenBlocks, appendToLast, hpre,
-        hcross, Fin.append, Fin.addCases]
-      split <;> rename_i houter
-      · lia
-      · have hiPost : i.val - (pre.length + 1) < post.length := by
-          have hi := i.isLt
-          simp only [List.length_append, List.length_cons] at hi
-          lia
-        have hval : (pre ++ x :: post).get i =
-            post.get ⟨i.val - (pre.length + 1), hiPost⟩ := by
-          rw [List.get_eq_getElem, List.get_eq_getElem]
-          rw [List.getElem_append_right (by lia)]
-          have hidx : i.val - pre.length =
-              (i.val - (pre.length + 1)) + 1 := by lia
-          have hs := List.getElem_cons_succ x post
-            (i.val - (pre.length + 1)) (by simp; lia)
-          simpa only [hidx] using hs
-        have hval' : (pre ++ x :: post)[i.val]'i.isLt =
-            post[i.val - (pre.length + 1)]'hiPost := by
-          simpa only [List.get_eq_getElem] using hval
-        rw [hval']
-
-lemma prefixFlattenBlocks_ne_nil (pre : List ℝ) (x : ℝ)
-    (post : List ℝ) (t rho : ℝ)
-    (bm : Fin (pre.length + 1) → List ℝ) (hbm : ∀ k, bm k ≠ []) :
-    ∀ i, prefixFlattenBlocks pre x post t rho bm i ≠ [] := by
-  rw [← prefixRefinementBlocks_eq_prefixFlattenBlocks]
-  apply prefixRefinementBlocks_ne_nil
-  intro k
-  exact hbm (Fin.cast (by simp) k)
-
-lemma prefixFlattenBlocks_pos (pre : List ℝ) (x : ℝ)
-    (post : List ℝ) (t rho : ℝ)
-    (bm : Fin (pre.length + 1) → List ℝ)
-    (horig : ∀ z ∈ pre ++ x :: post, 0 < z)
-    (hrho : 0 ≤ rho) (hbm : ∀ k, ∀ z ∈ bm k, 0 < z) :
-    ∀ i, ∀ z ∈ prefixFlattenBlocks pre x post t rho bm i, 0 < z := by
-  rw [← prefixRefinementBlocks_eq_prefixFlattenBlocks]
-  apply prefixRefinementBlocks_pos pre x post t rho _ horig hrho
-  intro k z hz
-  exact hbm (Fin.cast (by simp) k) z hz
-
-lemma prefixFlattenBlocks_sum (pre : List ℝ) (x : ℝ)
-    (post : List ℝ) (t rho : ℝ) (hx : x = t + rho)
-    (bm : Fin (pre.length + 1) → List ℝ)
-    (hbmsum : ∀ k, (bm k).sum =
-      (pre ++ [t]).get (Fin.cast (by simp) k)) :
-    ∀ i, (prefixFlattenBlocks pre x post t rho bm i).sum =
-      (pre ++ x :: post).get i := by
-  rw [← prefixRefinementBlocks_eq_prefixFlattenBlocks]
-  apply prefixRefinementBlocks_sum pre x post t rho hx
-  intro k
-  have h := hbmsum (Fin.cast (by simp) k)
-  simpa using h
-
-lemma finBlocks_prefixFlattenBlocks (pre : List ℝ) (x : ℝ)
-    (post : List ℝ) (t rho : ℝ)
-    (bm : Fin (pre.length + 1) → List ℝ) :
-    finBlocks (prefixFlattenBlocks pre x post t rho bm) =
-      List.ofFn (appendToLast (n := pre.length) bm (residualList rho)) ++
-        List.ofFn (fun j : Fin post.length => [post.get j / 2, post.get j / 2]) := by
-  unfold finBlocks
-  rw [← List.ofFn_eq_map]
-  let hlen : (pre ++ x :: post).length = (pre.length + 1) + post.length := by
-    simp only [List.length_append, List.length_cons]
-    lia
-  rw [List.ofFn_congr hlen]
-  change List.ofFn (Fin.append
-      (appendToLast (n := pre.length) bm (residualList rho))
-      (fun j : Fin post.length => [post.get j / 2, post.get j / 2])) = _
-  exact List.ofFn_fin_append _ _
-
-lemma flatten_ofFn_appendToLast {n : ℕ} (b : Fin (n + 1) → List ℝ)
-    (extra : List ℝ) :
-    (List.ofFn (appendToLast b extra)).flatten =
-      (List.ofFn b).flatten ++ extra := by
-  rw [ofFn_appendToLast, List.flatten_append, List.flatten_singleton]
-  have hbne : List.ofFn b ≠ [] := by simp
-  have hlast : (List.ofFn b).getLast hbne = b (Fin.last n) := by
-    exact List.getLast_ofFn_succ b
-  have hdecomp := List.dropLast_append_getLast hbne
-  rw [hlast] at hdecomp
-  calc
-    (List.ofFn b).dropLast.flatten ++ (b (Fin.last n) ++ extra) =
-        ((List.ofFn b).dropLast.flatten ++ b (Fin.last n)) ++ extra := by
-      rw [List.append_assoc]
-    _ = ((List.ofFn b).dropLast ++ [b (Fin.last n)]).flatten ++ extra := by
-      simp
-    _ = (List.ofFn b).flatten ++ extra := by rw [hdecomp]
-
-lemma flatten_map_halfBlock (post : List ℝ) :
-    (post.map (fun z : ℝ => [z / 2, z / 2])).flatten = bisectLengths post := by
-  induction post with
-  | nil => simp [bisectLengths, pairDup]
-  | cons z zs ih => simp [bisectLengths, pairDup, ih]
-
-lemma flattenFinBlocks_prefixFlattenBlocks (pre : List ℝ) (x : ℝ)
-    (post : List ℝ) (t rho : ℝ)
-    (bm : Fin (pre.length + 1) → List ℝ) :
-    flattenFinBlocks (prefixFlattenBlocks pre x post t rho bm) =
-      flattenFinBlocks bm ++ residualList rho ++ bisectLengths post := by
-  unfold flattenFinBlocks
-  rw [finBlocks_prefixFlattenBlocks, List.flatten_append,
-    flatten_ofFn_appendToLast]
-  rw [show finBlocks bm = List.ofFn bm by
-    exact List.ofFn_eq_map.symm]
-  rw [show (List.ofFn
-      (fun j : Fin post.length => [post.get j / 2, post.get j / 2])).flatten =
-      bisectLengths post by
-    change (List.ofFn (fun j : Fin post.length =>
-      (fun z : ℝ => [z / 2, z / 2]) (post.get j))).flatten = _
-    have hof : List.ofFn (fun j : Fin post.length =>
-        (fun z : ℝ => [z / 2, z / 2]) (post.get j)) =
-        post.map (fun z : ℝ => [z / 2, z / 2]) := by
-      calc
-        _ = (List.ofFn post.get).map (fun z : ℝ => [z / 2, z / 2]) :=
-          List.ofFn_comp' post.get (fun z : ℝ => [z / 2, z / 2])
-        _ = _ := by rw [List.ofFn_get]
-    rw [hof]
-    exact flatten_map_halfBlock post]
-
-lemma prefix_local_perm_pairs (c post : List ℝ) (rho : ℝ) :
-    (c ++ residualList rho ++ bisectLengths post ++ c).Perm
-      (pairDup (c ++ post.map fun z => z / 2) ++ residualList rho) := by
-  let R := residualList rho
-  let H := pairDup (post.map fun z => z / 2)
-  have hbis : bisectLengths post = H := by rfl
-  rw [hbis]
-  have h₁ : (c ++ R ++ H ++ c).Perm (c ++ c ++ R ++ H) := by
-    have hmove : ((R ++ H) ++ c).Perm (c ++ (R ++ H)) :=
-      List.perm_append_comm
-    simpa [List.append_assoc] using hmove.append_left c
-  have h₂ : (c ++ c ++ R ++ H).Perm (c ++ c ++ H ++ R) := by
-    simpa [List.append_assoc] using List.perm_append_comm.append_left (c ++ c)
-  have h₃ : (c ++ c ++ H ++ R).Perm (pairDup c ++ H ++ R) := by
-    simpa [List.append_assoc] using
-      (pairDup_perm_append_self c).symm.append_right (H ++ R)
-  have heq : pairDup c ++ H = pairDup (c ++ post.map fun z => z / 2) := by
-    simp [H, pairDup, List.flatMap_append]
-  exact (h₁.trans (h₂.trans h₃)).trans (by
-    rw [← heq])
-
-theorem firstPlayerShare_prefix_local (c post : List ℝ) (rho : ℝ) :
-    firstPlayerShare (c ++ residualList rho ++ bisectLengths post ++ c) =
-      c.sum + post.sum / 2 + rho := by
-  rw [firstPlayerShare_congr (prefix_local_perm_pairs c post rho)]
-  rw [firstPlayerShare_pairDup_residualList]
-  rw [List.sum_append, sum_map_half]
-
-lemma prefix_local_length (c post : List ℝ) (rho : ℝ) :
-    (c ++ residualList rho ++ bisectLengths post ++ c).length =
-      2 * c.length + (residualList rho).length + 2 * post.length := by
-  simp only [List.length_append, bisectLengths_length]
-  lia
-
-lemma prefix_local_length_le (c post : List ℝ) (rho : ℝ)
-    (p q : ℕ) (hpq : 0 < p + q) (hc : c.length ≤ p + q - 1) :
-    (c ++ residualList rho ++ bisectLengths post ++ c).length ≤
-      2 * (p + q + post.length) - 1 := by
-  rw [prefix_local_length]
-  have hr := residualList_length_le_one rho
-  lia
-
-lemma prefix_global_perm_pairs (c post outside : List ℝ) (rho : ℝ) :
-    (c ++ residualList rho ++ bisectLengths post ++ c ++
-        bisectLengths outside).Perm
-      (pairDup (c ++ (post.map fun z => z / 2) ++
-        (outside.map fun z => z / 2)) ++ residualList rho) := by
-  let X := c ++ post.map fun z => z / 2
-  let Y := outside.map fun z => z / 2
-  have hlocal := (prefix_local_perm_pairs c post rho).append_right
-    (bisectLengths outside)
-  have hbis : bisectLengths outside = pairDup Y := by rfl
-  have hswap : (pairDup X ++ residualList rho ++ pairDup Y).Perm
-      (pairDup X ++ pairDup Y ++ residualList rho) := by
-    simpa [List.append_assoc] using
-      List.perm_append_comm.append_left (pairDup X)
-  have heq : pairDup X ++ pairDup Y = pairDup (X ++ Y) := by
-    simp [pairDup, List.flatMap_append]
-  have hlocal' :
-      (c ++ residualList rho ++ bisectLengths post ++ c ++
-          bisectLengths outside).Perm
-        (pairDup X ++ residualList rho ++ pairDup Y) := by
-    simpa [X, Y, List.append_assoc, hbis] using hlocal
-  have hfinal :
-      (pairDup X ++ pairDup Y ++ residualList rho).Perm
-        (pairDup (X ++ Y) ++ residualList rho) := by
-    rw [← heq]
-  exact hlocal'.trans (hswap.trans hfinal)
-
-theorem firstPlayerShare_prefix_global (c post outside : List ℝ) (rho : ℝ) :
-    firstPlayerShare (c ++ residualList rho ++ bisectLengths post ++ c ++
-        bisectLengths outside) =
-      c.sum + post.sum / 2 + outside.sum / 2 + rho := by
-  rw [firstPlayerShare_congr (prefix_global_perm_pairs c post outside rho)]
-  rw [firstPlayerShare_pairDup_residualList]
-  rw [List.sum_append, List.sum_append, sum_map_half, sum_map_half]
-
-lemma prefix_global_length (c post outside : List ℝ) (rho : ℝ) :
-    (c ++ residualList rho ++ bisectLengths post ++ c ++
-        bisectLengths outside).length =
-      2 * c.length + (residualList rho).length +
-        2 * post.length + 2 * outside.length := by
-  simp only [List.length_append, bisectLengths_length]
-  lia
-
+To do so, compare a piece `a` of `s` to a piece `b` of `t`, cut the longer of
+the two so as to split off a copy of the shorter, and repeat.  Once `t` is used
+up, halve all but one of the remaining pieces of `s`. -/
+lemma exists_refines_pairs (s t : Multiset ℝ) (hs : ∀ x ∈ s, 0 < x)
+    (ht : ∀ x ∈ t, 0 < x) (hst : t.sum ≤ s.sum) :
+    ∃ xs res : Multiset ℝ, Refines (s + t) (xs + xs + res) ∧ res.card ≤ 1 ∧
+      res.sum ≤ s.sum - t.sum ∧
+      2 * xs.card + res.card ≤ 2 * (s.card + t.card) - 1 := by
+  induction hN : s.card + t.card using Nat.strong_induction_on generalizing s t with
+  | _ N ih =>
+  subst hN
+  -- the pair `a, a` together with a solution of a smaller problem
+  have step : ∀ (a : ℝ) (u s' t' : Multiset ℝ), Refines u (a ::ₘ a ::ₘ (s' + t')) →
+      (∀ x ∈ s', 0 < x) → (∀ x ∈ t', 0 < x) → t'.sum ≤ s'.sum →
+      s'.card + t'.card < s.card + t.card → s'.sum - t'.sum ≤ s.sum - t.sum →
+      (2 * (s'.card + t'.card) - 1) + 2 ≤ 2 * (s.card + t.card) - 1 →
+      ∃ xs res : Multiset ℝ, Refines u (xs + xs + res) ∧ res.card ≤ 1 ∧
+        res.sum ≤ s.sum - t.sum ∧ 2 * xs.card + res.card ≤ 2 * (s.card + t.card) - 1 := by
+    intro a u s' t' hu hs' ht' hst' hlt hsum hcard
+    obtain ⟨xs, res, h1, h2, h3, h4⟩ := ih _ hlt s' t' hs' ht' hst' rfl
+    refine ⟨a ::ₘ xs, res, hu.trans ?_, h2, h3.trans hsum, ?_⟩
+    · convert (Refines.refl {a, a}).add h1 using 1
+      · simp
+      · simp only [← Multiset.singleton_add, Multiset.insert_eq_cons]; abel
+    · rw [Multiset.card_cons]; lia
+  obtain rfl | ⟨b, hb⟩ := t.empty_or_exists_mem
+  · obtain rfl | ⟨a, ha⟩ := s.empty_or_exists_mem
+    · exact ⟨0, 0, by simpa using Refines.refl 0, by simp, by simp, by simp⟩
+    obtain ⟨s', rfl⟩ := Multiset.exists_cons_of_mem ha
+    obtain rfl | hs0 := eq_or_ne s' 0
+    · -- a single piece: leave it alone
+      exact ⟨0, {a}, by simpa using Refines.refl {a}, by simp, by simp, by simp⟩
+    · -- halve `a` and continue
+      have ha0 := hs a ha
+      have hs' : ∀ x ∈ s', 0 < x := fun x hx ↦ hs x (Multiset.mem_cons_of_mem hx)
+      have hc : 0 < s'.card := Multiset.card_pos.mpr hs0
+      refine step (a / 2) _ s' 0 ?_ hs' (by simp)
+        (by simpa using Multiset.sum_nonneg fun x hx ↦ (hs' x hx).le)
+        (by simp) (by simp; linarith) (by simp only [Multiset.card_cons]; lia)
+      have := Refines.cut_sub (half_pos ha0) (half_lt_self ha0) s'
+      rw [sub_half] at this
+      simpa using this
+  · obtain ⟨t', rfl⟩ := Multiset.exists_cons_of_mem hb
+    have hb0 := ht b hb
+    have ht' : ∀ x ∈ t', 0 < x := fun x hx ↦ ht x (Multiset.mem_cons_of_mem hx)
+    have ht0 : 0 ≤ t'.sum := Multiset.sum_nonneg fun x hx ↦ (ht' x hx).le
+    obtain ⟨a, ha⟩ : ∃ a, a ∈ s := by
+      obtain rfl | h := s.empty_or_exists_mem
+      · simp at hst; linarith
+      · exact h
+    obtain ⟨s', rfl⟩ := Multiset.exists_cons_of_mem ha
+    have ha0 := hs a ha
+    have hs' : ∀ x ∈ s', 0 < x := fun x hx ↦ hs x (Multiset.mem_cons_of_mem hx)
+    simp only [Multiset.sum_cons, Multiset.card_cons] at hst step ⊢
+    obtain hab | rfl | hab := lt_trichotomy a b
+    · -- cut `b` into `a` and `b - a`
+      refine step a _ s' ((b - a) ::ₘ t') ?_ hs'
+        (by simpa using ⟨hab, ht'⟩) (by simp; linarith)
+        (by simp only [Multiset.card_cons]; lia) (by simp; linarith)
+        (by simp only [Multiset.card_cons]; lia)
+      convert (Refines.cut_sub ha0 hab (a ::ₘ (s' + t'))) using 1
+      · simp only [← Multiset.singleton_add]; abel
+      · simp only [← Multiset.singleton_add]; abel
+    · -- equal pieces: no cut needed
+      refine step a _ s' t' ?_ hs' ht' (by linarith) (by lia) (by linarith) (by lia)
+      convert Refines.refl (a ::ₘ a ::ₘ (s' + t')) using 1
+      simp only [← Multiset.singleton_add]; abel
+    · -- cut `a` into `b` and `a - b`
+      refine step b _ ((a - b) ::ₘ s') t' ?_
+        (by simpa using ⟨hab, hs'⟩) ht' (by simp; linarith)
+        (by simp only [Multiset.card_cons]; lia) (by simp; linarith)
+        (by simp only [Multiset.card_cons]; lia)
+      convert (Refines.cut_sub hb0 hab (b ::ₘ (s' + t'))) using 1
+      · simp only [← Multiset.singleton_add]; abel
+      · simp only [← Multiset.singleton_add]; abel
 
 open scoped BigOperators List
 
-
-def outsideIndices (I J : Finset (Fin m)) : Finset (Fin m) :=
-  Finset.univ \ (I ∪ J)
-
-noncomputable def groupedIndices (I J : Finset (Fin m)) : List (Fin m) :=
-  I.sort (· ≤ ·) ++ J.sort (· ≤ ·) ++ (outsideIndices I J).sort (· ≤ ·)
-
-lemma groupedIndices_nodup {I J : Finset (Fin m)} (hIJ : Disjoint I J) :
-    (groupedIndices I J).Nodup := by
-  have hI := Finset.sort_nodup I (· ≤ ·)
-  have hJ := Finset.sort_nodup J (· ≤ ·)
-  have hK := Finset.sort_nodup (outsideIndices I J) (· ≤ ·)
-  unfold groupedIndices
-  rw [List.append_assoc]
-  apply hI.append (hJ.append hK ?_) ?_
-  · rw [List.disjoint_left]
-    intro x hxJ hxK
-    have hxJ' : x ∈ J := (Finset.mem_sort (· ≤ ·)).mp hxJ
-    have hxK' : x ∈ outsideIndices I J :=
-      (Finset.mem_sort (· ≤ ·)).mp hxK
-    exact (Finset.mem_sdiff.mp hxK').2 (Finset.mem_union_right I hxJ')
-  · rw [List.disjoint_left]
-    intro x hxI hxRest
-    have hxI' : x ∈ I := (Finset.mem_sort (· ≤ ·)).mp hxI
-    rcases List.mem_append.mp hxRest with hxJ | hxK
-    · exact (Finset.disjoint_left.mp hIJ hxI'
-        ((Finset.mem_sort (· ≤ ·)).mp hxJ))
-    · have hxK' : x ∈ outsideIndices I J :=
-        (Finset.mem_sort (· ≤ ·)).mp hxK
-      exact (Finset.mem_sdiff.mp hxK').2 (Finset.mem_union_left J hxI')
-
-lemma groupedIndices_length (I J : Finset (Fin m)) (hIJ : Disjoint I J) :
-    (groupedIndices I J).length = m := by
-  have hnd := groupedIndices_nodup hIJ
-  calc
-    (groupedIndices I J).length = (groupedIndices I J).toFinset.card :=
-      (List.toFinset_card_of_nodup hnd).symm
-    _ = m := by
-      have heq : I ∪ (J ∪ outsideIndices I J) = Finset.univ := by
-        ext i
-        simp [outsideIndices]
-        tauto
-      simp [groupedIndices, heq]
-
-lemma groupedIndices_perm_finRange (I J : Finset (Fin m))
-    (hIJ : Disjoint I J) :
-    (groupedIndices I J).Perm (List.finRange m) := by
-  have hsub : (groupedIndices I J) <+~ List.finRange m := by
-    apply List.subperm_of_subset (groupedIndices_nodup hIJ)
-    intro i hi
-    simp
-  exact subperm_perm_of_length_eq hsub (by
-    rw [groupedIndices_length I J hIJ, List.length_finRange])
-
-theorem flatten_assembleTwoSelectedBlocks_perm (p : List ℝ)
-    (I J : Finset (Fin p.length)) (hIJ : Disjoint I J)
-    (bI : Fin (selectedList p I).length → List ℝ)
-    (bJ : Fin (selectedList p J).length → List ℝ) :
-    (flattenFinBlocks (assembleTwoSelectedBlocks p I J bI bJ)).Perm
-      (flattenFinBlocks bI ++ flattenFinBlocks bJ ++
-        bisectLengths (selectedList p (outsideIndices I J))) := by
-  let b := assembleTwoSelectedBlocks p I J bI bJ
-  let K := outsideIndices I J
-  have hI : (I.sort (· ≤ ·)).flatMap b = flattenFinBlocks bI := by
-    rw [← flatMap_sort_selectedBlockAt p I bI]
-    apply List.flatMap_congr
-    intro i hi
-    have hii : i ∈ I := (Finset.mem_sort (· ≤ ·)).mp hi
-    simp [b, assembleTwoSelectedBlocks, selectedBlockAt, hii]
-  have hJ : (J.sort (· ≤ ·)).flatMap b = flattenFinBlocks bJ := by
-    rw [← flatMap_sort_selectedBlockAt p J bJ]
-    apply List.flatMap_congr
-    intro i hi
-    have hij : i ∈ J := (Finset.mem_sort (· ≤ ·)).mp hi
-    have hni : i ∉ I := fun hii => Finset.disjoint_left.mp hIJ hii hij
-    simp [b, assembleTwoSelectedBlocks, selectedBlockAt, hij, hni]
-  have hK : (K.sort (· ≤ ·)).flatMap b =
-      bisectLengths (selectedList p K) := by
-    rw [← flatMap_sort_halfBlockAt p K]
-    apply List.flatMap_congr
-    intro i hi
-    have hik : i ∈ K := (Finset.mem_sort (· ≤ ·)).mp hi
-    have hik' : i ∈ Finset.univ \ (I ∪ J) := by
-      simpa [K, outsideIndices] using hik
-    have hni : i ∉ I := fun hii =>
-      (Finset.mem_sdiff.mp hik').2 (Finset.mem_union_left J hii)
-    have hnj : i ∉ J := fun hij =>
-      (Finset.mem_sdiff.mp hik').2 (Finset.mem_union_right I hij)
-    simp [b, assembleTwoSelectedBlocks, halfBlockAt, hni, hnj]
-  have hidx := groupedIndices_perm_finRange I J hIJ
-  have hflat := hidx.flatMap (f := b) (g := b)
-    (fun _ _ => List.Perm.refl _)
-  unfold groupedIndices at hflat
-  simp only [List.flatMap_append] at hflat
-  rw [hI, hJ, hK] at hflat
-  change ((List.finRange p.length).flatMap b).Perm _
-  simpa [b, K] using hflat.symm
-
-
-open scoped BigOperators List
-
-
-lemma flattenFinBlocks_cast {m n : ℕ} (h : m = n)
-    (b : Fin n → List ℝ) :
-    flattenFinBlocks (fun i : Fin m => b (Fin.cast h i)) =
-      flattenFinBlocks b := by
-  subst n
-  simp
-
-structure PositivePrefixData (xs ys : List ℝ) where
-  c : List ℝ
-  post : List ℝ
-  rho : ℝ
-  bX : Fin xs.length → List ℝ
-  bY : Fin ys.length → List ℝ
-  rho_nonneg : 0 ≤ rho
-  rho_le : rho ≤ xs.sum - ys.sum
-  sum_relation : xs.sum = ys.sum + rho + post.sum
-  c_pos : ∀ z ∈ c, 0 < z
-  c_sum : c.sum = ys.sum
-  bX_ne : ∀ i, bX i ≠ []
-  bX_pos : ∀ i, ∀ z ∈ bX i, 0 < z
-  bX_sum : ∀ i, (bX i).sum = xs.get i
-  bY_ne : ∀ j, bY j ≠ []
-  bY_pos : ∀ j, ∀ z ∈ bY j, 0 < z
-  bY_sum : ∀ j, (bY j).sum = ys.get j
-  flatten_bX : flattenFinBlocks bX =
-    c ++ residualList rho ++ bisectLengths post
-  flatten_bY : flattenFinBlocks bY = c
-  local_length :
-    (c ++ residualList rho ++ bisectLengths post ++ c).length ≤
-      2 * (xs.length + ys.length) - 1
-
-theorem exists_positive_prefix_data (xs ys : List ℝ)
-    (hxpos : ∀ x ∈ xs, 0 < x) (hypos : ∀ y ∈ ys, 0 < y)
-    (hysum : 0 < ys.sum) (hle : ys.sum ≤ xs.sum) :
-    Nonempty (PositivePrefixData xs ys) := by
-  obtain ⟨pre, x, post, t, rho, hxs, ht, hrho, hrhoBound,
-      hx, hmatch⟩ :=
-    exists_prefix_match_residual xs hxpos ys.sum hysum hle
-  subst xs
-  let matched := pre ++ [t]
-  let c := commonAtoms matched ys
-  have hmatchedPos : ∀ z ∈ matched, 0 < z := by
-    intro z hz
-    rcases List.mem_append.mp hz with hz | hz
-    · exact hxpos z (by simp [hz])
-    · have hz' : z = t := by simpa using hz
-      simpa [hz'] using ht
-  have hmatchedSum : matched.sum = ys.sum := by
-    simpa [matched] using hmatch
-  have hspec := commonAtoms_spec matched ys hmatchedPos hypos hmatchedSum
-  have href := commonAtoms_scanRefines matched ys hmatchedPos hypos hmatchedSum
-  have hmatchedC : matched.sum = c.sum := by
-    dsimp [c]
-    exact hspec.2.1.symm
-  have hysC : ys.sum = c.sum := by
-    rw [← hmatchedSum]
-    exact hmatchedC
-  obtain ⟨bm, hbmNe, hbmPos, hbmSum, hbmFlat⟩ :=
-    exists_blocks_of_scanRefines matched c hmatchedPos hspec.1 hmatchedC href.1
-  obtain ⟨bY, hbYNe, hbYPos, hbYSum, hbYFlat⟩ :=
-    exists_blocks_of_scanRefines ys c hypos hspec.1 hysC href.2
-  let bm' : Fin (pre.length + 1) → List ℝ := fun i =>
-    bm (Fin.cast (by simp [matched]) i)
-  have hbm'Ne : ∀ i, bm' i ≠ [] := fun i => hbmNe (Fin.cast (by simp [matched]) i)
-  have hbm'Pos : ∀ i, ∀ z ∈ bm' i, 0 < z := by
-    intro i z hz
-    exact hbmPos (Fin.cast (by simp [matched]) i) z hz
-  have hbm'Sum : ∀ i, (bm' i).sum =
-      (pre ++ [t]).get (Fin.cast (by simp) i) := by
-    intro i
-    simpa [bm', matched] using hbmSum (Fin.cast (by simp [matched]) i)
-  have hbm'Flat : flattenFinBlocks bm' = c := by
-    calc
-      flattenFinBlocks bm' = flattenFinBlocks bm := by
-        exact flattenFinBlocks_cast (by simp [matched]) bm
-      _ = c := hbmFlat
-  let bX := prefixFlattenBlocks pre x post t rho bm'
-  have hbXNe : ∀ i, bX i ≠ [] := prefixFlattenBlocks_ne_nil pre x post t rho bm' hbm'Ne
-  have hbXPos : ∀ i, ∀ z ∈ bX i, 0 < z :=
-    prefixFlattenBlocks_pos pre x post t rho bm' hxpos hrho hbm'Pos
-  have hbXSum : ∀ i, (bX i).sum = (pre ++ x :: post).get i := by
-    exact prefixFlattenBlocks_sum pre x post t rho hx bm' hbm'Sum
-  have hbXFlat : flattenFinBlocks bX =
-      c ++ residualList rho ++ bisectLengths post := by
-    rw [show flattenFinBlocks bX =
-        flattenFinBlocks bm' ++ residualList rho ++ bisectLengths post by
-      exact flattenFinBlocks_prefixFlattenBlocks pre x post t rho bm']
-    rw [hbm'Flat]
-  have hsumRelation : (pre ++ x :: post).sum =
-      ys.sum + rho + post.sum := by
-    have hm : pre.sum + t = ys.sum := by
-      simpa [matched, List.sum_append] using hmatchedSum
-    simp only [List.sum_append, List.sum_cons]
-    linarith
-  have hcLen : c.length ≤ matched.length + ys.length - 1 := by
-    simpa [c, matched] using hspec.2.2
-  have hlocalLen :
-      (c ++ residualList rho ++ bisectLengths post ++ c).length ≤
-        2 * ((pre ++ x :: post).length + ys.length) - 1 := by
-    have hrlen := residualList_length_le_one rho
-    have hmatchedLen : matched.length = pre.length + 1 := by
-      simp [matched]
-    rw [prefix_local_length]
-    simp only [List.length_append, List.length_cons] at ⊢
-    lia
-  exact ⟨{
-    c := c
-    post := post
-    rho := rho
-    bX := bX
-    bY := bY
-    rho_nonneg := hrho
-    rho_le := hrhoBound
-    sum_relation := hsumRelation
-    c_pos := hspec.1
-    c_sum := hspec.2.1.trans hmatchedSum
-    bX_ne := hbXNe
-    bX_pos := hbXPos
-    bX_sum := hbXSum
-    bY_ne := hbYNe
-    bY_pos := hbYPos
-    bY_sum := hbYSum
-    flatten_bX := hbXFlat
-    flatten_bY := hbYFlat
-    local_length := hlocalLen
-  }⟩
-
-
-open scoped BigOperators List
-
-
-theorem selected_partition_sum (p : List ℝ)
-    (I J : Finset (Fin p.length)) (hIJ : Disjoint I J) :
-    (selectedList p I).sum + (selectedList p J).sum +
-        (selectedList p (outsideIndices I J)).sum = p.sum := by
-  have hperm := (groupedIndices_perm_finRange I J hIJ).map p.get
-  have hsum := hperm.sum_eq
-  unfold groupedIndices at hsum
-  simp only [List.map_append, List.sum_append] at hsum
-  simpa [selectedList] using hsum
-
-theorem selected_partition_length (p : List ℝ)
-    (I J : Finset (Fin p.length)) (hIJ : Disjoint I J) :
-    (selectedList p I).length + (selectedList p J).length +
-        (selectedList p (outsideIndices I J)).length = p.length := by
-  have hlen := (groupedIndices_perm_finRange I J hIJ).length_eq
-  unfold groupedIndices at hlen
-  simpa [selectedList_length, Finset.length_sort, Nat.add_assoc] using hlen
-
-theorem exists_positive_close_refinement (p : List ℝ)
-    (hpne : p ≠ []) (hppos : ∀ x ∈ p, 0 < x) (hpsum : p.sum = 1)
-    (I J : Finset (Fin p.length)) (hIJ : Disjoint I J)
-    (hJsum : 0 < (selectedList p J).sum)
-    (hdiff0 : 0 ≤ (selectedList p I).sum - (selectedList p J).sum)
-    {delta : ℝ}
-    (hdiff : (selectedList p I).sum - (selectedList p J).sum ≤ delta) :
-    ∃ l : List ℝ,
-      l ≠ [] ∧
-      (∀ z ∈ l, 0 < z) ∧
-      l.sum = 1 ∧
-      cutsOfLengths p ⊆ cutsOfLengths l ∧
-      l.length ≤ 2 * p.length - 1 ∧
-      firstPlayerShare l ≤ (1 + delta) / 2 := by
-  let xs := selectedList p I
-  let ys := selectedList p J
-  let outside := selectedList p (outsideIndices I J)
-  have hxpos : ∀ x ∈ xs, 0 < x := selectedList_pos p I hppos
-  have hypos : ∀ y ∈ ys, 0 < y := selectedList_pos p J hppos
-  have hyle : ys.sum ≤ xs.sum := by
-    dsimp [xs, ys]
-    linarith
-  obtain ⟨d⟩ := exists_positive_prefix_data xs ys hxpos hypos
-    (by simpa [ys] using hJsum) hyle
-  let b := assembleTwoSelectedBlocks p I J d.bX d.bY
-  let l := flattenFinBlocks b
-  have hbne : ∀ i, b i ≠ [] :=
-    assembleTwoSelectedBlocks_ne_nil p I J d.bX d.bY d.bX_ne d.bY_ne
-  have hbpos : ∀ i, ∀ z ∈ b i, 0 < z :=
-    assembleTwoSelectedBlocks_pos p I J d.bX d.bY hppos d.bX_pos d.bY_pos
-  have hbsum : ∀ i, (b i).sum = p.get i :=
-    assembleTwoSelectedBlocks_sum p I J hIJ d.bX d.bY d.bX_sum d.bY_sum
-  have hm : 0 < p.length := List.length_pos_iff.mpr hpne
-  have hlne : l ≠ [] := flattenFinBlocks_ne_nil b hm hbne
-  have hlpos : ∀ z ∈ l, 0 < z := flattenFinBlocks_pos b hbpos
-  have hlsum : l.sum = 1 := by
-    rw [flattenFinBlocks_sum p b hbsum]
-    exact hpsum
-  have hlcuts : cutsOfLengths p ⊆ cutsOfLengths l :=
-    cutsOfLengths_subset_flattenFinBlocks p hpne hppos hpsum b hbne hbpos hbsum
-  have hperm := flatten_assembleTwoSelectedBlocks_perm p I J hIJ d.bX d.bY
-  have hcanon : l.Perm
-      (d.c ++ residualList d.rho ++ bisectLengths d.post ++ d.c ++
-        bisectLengths outside) := by
-    rw [d.flatten_bX, d.flatten_bY] at hperm
-    simpa [l, b, outside, List.append_assoc] using hperm
-  have hpartSum : xs.sum + ys.sum + outside.sum = 1 := by
-    have h := selected_partition_sum p I J hIJ
-    rw [hpsum] at h
-    simpa [xs, ys, outside] using h
-  have hshareEq : firstPlayerShare l = (1 + d.rho) / 2 := by
-    rw [firstPlayerShare_congr hcanon]
-    rw [firstPlayerShare_prefix_global]
-    have hc := d.c_sum
-    have hr := d.sum_relation
-    linarith
-  have hrhoDelta : d.rho ≤ delta := d.rho_le.trans hdiff
-  have hshare : firstPlayerShare l ≤ (1 + delta) / 2 := by
-    rw [hshareEq]
-    linarith
-  have hpartLen : xs.length + ys.length + outside.length = p.length :=
-    selected_partition_length p I J hIJ
-  have hysLen : 0 < ys.length := List.length_pos_of_sum_pos ys hJsum
-  have hlen : l.length ≤ 2 * p.length - 1 := by
-    calc
-      l.length =
-          (d.c ++ residualList d.rho ++ bisectLengths d.post ++ d.c ++
-            bisectLengths outside).length := hcanon.length_eq
-      _ = (d.c ++ residualList d.rho ++ bisectLengths d.post ++ d.c).length +
-          (bisectLengths outside).length := by
-            simp only [List.length_append]
-      _ ≤ (2 * (xs.length + ys.length) - 1) + 2 * outside.length := by
-            exact Nat.add_le_add d.local_length (by rw [bisectLengths_length])
-      _ = 2 * p.length - 1 := by lia
-  exact ⟨l, hlne, hlpos, hlsum, hlcuts, hlen, hshare⟩
-
-
-open scoped BigOperators List
-
-
-lemma flattenFinBlocks_singletons (xs : List ℝ) :
-    flattenFinBlocks (fun i : Fin xs.length => [xs.get i]) = xs := by
-  unfold flattenFinBlocks finBlocks
-  rw [← List.ofFn_eq_map]
-  rw [show List.ofFn (fun i : Fin xs.length => [xs.get i]) =
-      xs.map (fun x => [x]) by
-    calc
-      List.ofFn (fun i : Fin xs.length => [xs.get i]) =
-          (List.ofFn xs.get).map (fun x => [x]) :=
-        List.ofFn_comp' xs.get (fun x => [x])
-      _ = xs.map (fun x => [x]) := by rw [List.ofFn_get]]
-  induction xs with
-  | nil => simp
-  | cons x tail ih => simp [ih]
-
-theorem exists_singleton_close_refinement (p : List ℝ)
-    (hpne : p ≠ []) (hppos : ∀ x ∈ p, 0 < x) (hpsum : p.sum = 1)
-    (i : Fin p.length) {delta : ℝ} (hiDelta : p.get i ≤ delta) :
-    ∃ l : List ℝ,
-      l ≠ [] ∧
-      (∀ z ∈ l, 0 < z) ∧
-      l.sum = 1 ∧
-      cutsOfLengths p ⊆ cutsOfLengths l ∧
-      l.length = 2 * p.length - 1 ∧
-      firstPlayerShare l ≤ (1 + delta) / 2 := by
-  let I : Finset (Fin p.length) := {i}
-  let J : Finset (Fin p.length) := ∅
-  let xs := selectedList p I
-  let ys := selectedList p J
-  let outside := selectedList p (outsideIndices I J)
-  have hIJ : Disjoint I J := Finset.disjoint_empty_right I
-  have hxs : xs = [p.get i] := by
-    simp [xs, I, selectedList]
-  have hys : ys = [] := by
-    simp [ys, J, selectedList]
-  let bI : Fin xs.length → List ℝ := fun k => [xs.get k]
-  let bJ : Fin ys.length → List ℝ := fun k =>
-    Fin.elim0 (Fin.cast (congrArg List.length hys) k)
-  have hbINe : ∀ k, bI k ≠ [] := by simp [bI]
-  have hbIPos : ∀ k, ∀ z ∈ bI k, 0 < z := by
-    intro k z hz
-    have hz' : z = xs.get k := by simpa [bI] using hz
-    subst z
-    exact selectedList_pos p I hppos _ (List.get_mem xs k)
-  have hbISum : ∀ k, (bI k).sum = xs.get k := by simp [bI]
-  have hbJNe : ∀ k, bJ k ≠ [] := by
-    intro k
-    exact Fin.elim0 (Fin.cast (congrArg List.length hys) k)
-  have hbJPos : ∀ k, ∀ z ∈ bJ k, 0 < z := by
-    intro k
-    exact Fin.elim0 (Fin.cast (congrArg List.length hys) k)
-  have hbJSum : ∀ k, (bJ k).sum = ys.get k := by
-    intro k
-    exact Fin.elim0 (Fin.cast (congrArg List.length hys) k)
-  let b := assembleTwoSelectedBlocks p I J bI bJ
-  let l := flattenFinBlocks b
-  have hbne : ∀ k, b k ≠ [] :=
-    assembleTwoSelectedBlocks_ne_nil p I J bI bJ hbINe hbJNe
-  have hbpos : ∀ k, ∀ z ∈ b k, 0 < z :=
-    assembleTwoSelectedBlocks_pos p I J bI bJ hppos hbIPos hbJPos
-  have hbsum : ∀ k, (b k).sum = p.get k :=
-    assembleTwoSelectedBlocks_sum p I J hIJ bI bJ hbISum hbJSum
-  have hm : 0 < p.length := List.length_pos_iff.mpr hpne
-  have hlne : l ≠ [] := flattenFinBlocks_ne_nil b hm hbne
-  have hlpos : ∀ z ∈ l, 0 < z := flattenFinBlocks_pos b hbpos
-  have hlsum : l.sum = 1 := by
-    rw [flattenFinBlocks_sum p b hbsum]
-    exact hpsum
-  have hlcuts : cutsOfLengths p ⊆ cutsOfLengths l := by
-    exact cutsOfLengths_subset_assembleTwoSelectedBlocks p hpne hppos hpsum
-      I J hIJ bI bJ hbINe hbJNe hbIPos hbJPos hbISum hbJSum
-  have hbIFlat : flattenFinBlocks bI = [p.get i] := by
-    rw [flattenFinBlocks_singletons xs, hxs]
-  have hbJFlat : flattenFinBlocks bJ = [] := by
-    unfold flattenFinBlocks finBlocks
-    have hlen : ys.length = 0 := congrArg List.length hys
-    have hrange : List.finRange ys.length = [] := List.finRange_eq_nil_iff.mpr hlen
-    rw [hrange]
-    simp
-  have hperm := flatten_assembleTwoSelectedBlocks_perm p I J hIJ bI bJ
-  rw [hbIFlat, hbJFlat] at hperm
-  have hcanon : l.Perm (bisectLengths outside ++ [p.get i]) := by
-    have hswap : ([p.get i] ++ bisectLengths outside).Perm
-        (bisectLengths outside ++ [p.get i]) := List.perm_append_comm
-    have hperm' : l.Perm ([p.get i] ++ bisectLengths outside) := by
-      simpa [l, b, outside] using hperm
-    exact hperm'.trans hswap
-  have hpartSum : p.get i + outside.sum = 1 := by
-    have h := selected_partition_sum p I J hIJ
-    rw [hpsum] at h
-    simpa [xs, ys, outside, hxs, hys] using h
-  have hshareEq : firstPlayerShare l = (1 + p.get i) / 2 := by
-    rw [firstPlayerShare_congr hcanon]
-    rw [show bisectLengths outside =
-        pairDup (outside.map fun x => x / 2) by rfl]
-    rw [firstPlayerShare_pairDup_append_singleton, sum_map_half]
-    linarith
-  have hshare : firstPlayerShare l ≤ (1 + delta) / 2 := by
-    rw [hshareEq]
-    linarith
-  have hpartLen : 1 + outside.length = p.length := by
-    have h := selected_partition_length p I J hIJ
-    simpa [xs, ys, outside, hxs, hys] using h
-  have hlen : l.length = 2 * p.length - 1 := by
-    rw [hcanon.length_eq, List.length_append, bisectLengths_length]
-    simp only [List.length_singleton]
-    lia
-  exact ⟨l, hlne, hlpos, hlsum, hlcuts, hlen, hshare⟩
-
-
-open scoped BigOperators List
-
-
+/-- Xiang Yu's reply.  Among the subsets of Liu Bang's `m` pieces, two have total
+lengths differing by at most `1 / (2 ^ m - 1)`.  Xiang Yu matches the pieces of
+the two (disjoint) subsets against each other and halves all other pieces. -/
 theorem exists_close_refinement (p : List ℝ)
     (hpne : p ≠ []) (hppos : ∀ x ∈ p, 0 < x) (hpsum : p.sum = 1) :
     ∃ l : List ℝ,
@@ -3760,51 +2150,71 @@ theorem exists_close_refinement (p : List ℝ)
       firstPlayerShare l ≤
         (1 + 1 / ((2 : ℝ) ^ p.length - 1)) / 2 := by
   have hm : 0 < p.length := List.length_pos_iff.mpr hpne
-  have hnonneg : ∀ i : Fin p.length, 0 ≤ p.get i := fun i =>
-    (hppos (p.get i) (List.get_mem p i)).le
+  have hpos : ∀ i : Fin p.length, 0 < p.get i := fun i ↦ hppos _ (List.get_mem p i)
+  have hunivval : (Finset.univ : Finset (Fin p.length)).val.map p.get = ↑p := by
+    rw [Fin.univ_val_map, List.ofFn_get]
   have hsumFin : ∑ i : Fin p.length, p.get i = 1 := by
-    have hbridge : (∑ i : Fin p.length, p.get i) =
-        ((List.finRange p.length).map p.get).sum := by
-      symm
-      simp
-    rw [hbridge, List.map_get_finRange, hpsum]
+    rw [Finset.sum_eq_multiset_sum, hunivval, Multiset.sum_coe, hpsum]
   obtain ⟨I, J, hIJ, hnonempty, hdiff0, hdiff⟩ :=
     CodexClosePoints.exists_disjoint_subset_sums_close
-      p.length hm p.get hnonneg hsumFin
-  have hdiff0' :
-      0 ≤ (selectedList p I).sum - (selectedList p J).sum := by
-    simpa only [selectedList_sum] using hdiff0
-  have hdiff' :
-      (selectedList p I).sum - (selectedList p J).sum ≤
-        1 / ((2 : ℝ) ^ p.length - 1) := by
-    simpa only [selectedList_sum] using hdiff
-  by_cases hJpos : 0 < (selectedList p J).sum
-  · exact exists_positive_close_refinement p hpne hppos hpsum I J hIJ
-      hJpos hdiff0' hdiff'
-  · have hJnonneg : 0 ≤ (selectedList p J).sum :=
-      List.sum_nonneg fun z hz =>
-        (selectedList_pos p J hppos z hz).le
-    have hJzero : (selectedList p J).sum = 0 := by linarith
-    have hJempty : J = ∅ := by
-      rw [← Finset.not_nonempty_iff_eq_empty]
-      rintro ⟨j, hj⟩
-      have hjle : p.get j ≤ ∑ k ∈ J, p.get k :=
-        Finset.single_le_sum (fun k _ => hnonneg k) hj
-      rw [← selectedList_sum] at hjle
-      have hjpos := hppos (p.get j) (List.get_mem p j)
+      p.length hm p.get (fun i ↦ (hpos i).le) hsumFin
+  -- the pieces in `I`, the pieces in `J`, and all other pieces
+  set s := I.val.map p.get with hs_def
+  set t := J.val.map p.get with ht_def
+  set o := (I ∪ J)ᶜ.val.map p.get with ho_def
+  have hmempos : ∀ K : Finset (Fin p.length), ∀ x ∈ K.val.map p.get, 0 < x := by
+    intro K x hx
+    obtain ⟨i, -, rfl⟩ := Multiset.mem_map.mp hx
+    exact hpos i
+  have hp : (p : Multiset ℝ) = s + t + o := by
+    have e1 : (I ∪ J).val = I.val + J.val := by
+      rw [← Finset.disjUnion_eq_union _ _ hIJ]; rfl
+    have e2 : (Finset.univ : Finset (Fin p.length)).val = (I ∪ J).val + (I ∪ J)ᶜ.val := by
+      rw [← Finset.union_compl (I ∪ J), ← Finset.disjUnion_eq_union _ _ disjoint_compl_right]
+      rfl
+    rw [← hunivval, e2, e1, Multiset.map_add, Multiset.map_add]
+  have hcard : p.length = s.card + t.card + o.card := by
+    simpa using congrArg Multiset.card hp
+  have hcard1 : 0 < s.card + t.card := by
+    simpa [hs_def, ht_def, ← Finset.card_union_of_disjoint hIJ] using hnonempty.card_pos
+  obtain ⟨xs, res, href, hres1, hres, hlen⟩ :=
+    exists_refines_pairs s t (hmempos I) (hmempos J) (sub_nonneg.mp hdiff0)
+  replace hres : res.sum ≤ 1 / ((2 : ℝ) ^ p.length - 1) := hres.trans hdiff
+  -- all pieces now come in pairs `ys + ys`, except for `res`
+  set ys := xs + o.map (· / 2) with hys
+  have href' : Refines (↑p) (ys + ys + res) := by
+    convert href.add (Refines.bisect o (hmempos _)) using 1
+    rw [hys]; abel
+  obtain ⟨l, hl, hcuts⟩ := href'.exists_list p rfl
+  have hlsum : l.sum = 1 := by
+    rw [← Multiset.sum_coe, hl, href'.sum_eq, Multiset.sum_coe, hpsum]
+  have hshare : firstPlayerShare l = ys.sum + res.sum := by
+    clear_value ys
+    obtain ⟨ys', rfl⟩ : ∃ ys' : List ℝ, (ys' : Multiset ℝ) = ys := ⟨_, ys.coe_toList⟩
+    obtain ⟨res', rfl⟩ : ∃ res' : List ℝ, (res' : Multiset ℝ) = res := ⟨_, res.coe_toList⟩
+    have hperm : l ~ pairDup ys' ++ res' :=
+      (Multiset.coe_eq_coe.mp (by simpa using hl) : l ~ ys' ++ ys' ++ res').trans
+        ((pairDup_perm_append_self ys').symm.append_right res')
+    rw [firstPlayerShare_congr hperm]
+    match res', hres1 with
+    | [], _ => simpa using firstPlayerShare_pairDup ys'
+    | [r], _ => simpa using firstPlayerShare_pairDup_append_singleton ys' r
+  refine ⟨l, ?_, ?_, hlsum, hcuts, ?_, ?_⟩
+  · rintro rfl; simp at hlsum
+  · intro z hz
+    exact href'.pos (fun x hx ↦ hppos x (by simpa using hx)) z (hl ▸ (by simpa using hz))
+  · have : l.length = 2 * xs.card + res.card + 2 * o.card := by
+      have := congrArg Multiset.card hl
+      simp [hys] at this
+      lia
+    lia
+  · have h2 : 2 * ys.sum + res.sum = 1 := by
+      have := href'.sum_eq
+      rw [Multiset.sum_coe, hpsum] at this
+      simp at this
       linarith
-    have hInonempty : I.Nonempty := by
-      rw [hJempty] at hnonempty
-      simpa using hnonempty
-    obtain ⟨i, hi⟩ := hInonempty
-    have hipiece : p.get i ≤ (selectedList p I).sum := by
-      rw [selectedList_sum]
-      exact Finset.single_le_sum (fun k _ => hnonneg k) hi
-    have hiDelta : p.get i ≤ 1 / ((2 : ℝ) ^ p.length - 1) := by
-      linarith
-    obtain ⟨l, hlne, hlpos, hlsum, hlcuts, hllen, hlshare⟩ :=
-      exists_singleton_close_refinement p hpne hppos hpsum i hiDelta
-    exact ⟨l, hlne, hlpos, hlsum, hlcuts, hllen.le, hlshare⟩
+    rw [hshare]
+    linarith
 
 
 open scoped BigOperators List
