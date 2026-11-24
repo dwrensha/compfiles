@@ -336,6 +336,7 @@ public import Compfiles.Usa1981P2
 public import Compfiles.Usa1981P5
 public import Compfiles.Usa1982P1
 public import Compfiles.Usa1982P2
+public import Compfiles.Usa1982P3
 public import Compfiles.Usa1982P4
 public import Compfiles.Usa1983P1
 public import Compfiles.Usa1983P2
