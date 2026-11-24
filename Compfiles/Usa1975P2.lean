@@ -29,6 +29,11 @@ problem usa1975_p2
     (A B C D : E) :
     ‖A - C‖ ^ 2 + ‖B - D‖ ^ 2 + ‖A - D‖ ^ 2 + ‖B - C‖ ^ 2
       ≥ ‖A - B‖ ^ 2 + ‖C - D‖ ^ 2 := by
-  sorry
-
+  have h :
+      ‖A - C‖ ^ 2 + ‖B - D‖ ^ 2 + ‖A - D‖ ^ 2 + ‖B - C‖ ^ 2 =
+        ‖A - B‖ ^ 2 + ‖C - D‖ ^ 2 + ‖(A + B) - (C + D)‖ ^ 2 := by
+    simp only [norm_sub_sq_real, norm_add_sq_real, inner_add_left, inner_add_right]
+    ring
+  rw [h]
+  exact le_add_of_nonneg_right (sq_nonneg _)
 end Usa1975P2
