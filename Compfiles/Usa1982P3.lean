@@ -34,7 +34,7 @@ The isoperimetric quotient is area divided by the square of perimeter.
 -/
 
 /-- The perimeter of the triangle with vertices `A`, `B`, and `C`. -/
-def trianglePerimeter (A B C : Point) : ℝ :=
+noncomputable def trianglePerimeter (A B C : Point) : ℝ :=
   dist A B + dist B C + dist C A
 
 /-- The area of a triangle, expressed by Heron's formula. -/
