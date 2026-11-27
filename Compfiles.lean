@@ -11,6 +11,7 @@ public import Compfiles.Canada1998P3
 public import Compfiles.Canada1998P5
 public import Compfiles.Egmo2023P1
 public import Compfiles.Hungary1998P6
+public import Compfiles.Ibero2026P4
 public import Compfiles.Imo1959P1
 public import Compfiles.Imo1959P2
 public import Compfiles.Imo1959P3
